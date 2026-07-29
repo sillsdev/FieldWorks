@@ -13,14 +13,14 @@ using Avalonia.Input;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
 using NUnit.Framework;
-using SIL.FieldWorks.Common.FwAvalonia.Region;
+using SIL.FieldWorks.Common.FwAvalonia.Detail;
 using SIL.FieldWorks.Common.FwAvalonia.ViewDefinition;
 
 namespace FwAvaloniaTests
 {
 	/// <summary>
 	/// End-to-end selection behaviour of the wired-up multistring value box (<see cref="FwMultiWsTextField"/>):
-	/// the seam where our <c>RegionBidirectionalTextNavigation</c> override meets the live Avalonia
+	/// the seam where our <c>DetailBidirectionalTextNavigation</c> override meets the live Avalonia
 	/// <see cref="TextBox"/> through real headless keyboard/pointer input. The pure navigation math is covered
 	/// in RegionModelTests; these drive the actual focused box so a regression in the handler wiring (routing,
 	/// caret/selection ordering) is caught where the pure-function tests cannot see it. String literals with
@@ -29,24 +29,24 @@ namespace FwAvaloniaTests
 	[TestFixture]
 	public class FwFieldSelectionInputTests
 	{
-		private static RegionField LtrField(string text)
-			=> new RegionField(
-				"LexEntry/x/#0", "Lexeme Form", "Form", "vernacular", RegionFieldKind.Text,
+		private static DetailField LtrField(string text)
+			=> new DetailField(
+				"LexEntry/x/#0", "Lexeme Form", "Form", "vernacular", DetailFieldKind.Text,
 				EditorClassification.Known, "SelEditor", null, SurfaceRouting.Product,
-				new List<RegionWsValue> { new RegionWsValue("en", text, wsTag: "en") },
+				new List<DetailWsValue> { new DetailWsValue("en", text, wsTag: "en") },
 				null, null);
 
-		private static RegionField RtlField(string text)
-			=> new RegionField(
-				"LexEntry/x/#0", "Lexeme Form", "Form", "vernacular", RegionFieldKind.Text,
+		private static DetailField RtlField(string text)
+			=> new DetailField(
+				"LexEntry/x/#0", "Lexeme Form", "Form", "vernacular", DetailFieldKind.Text,
 				EditorClassification.Known, "SelEditor", null, SurfaceRouting.Product,
-				new List<RegionWsValue>
+				new List<DetailWsValue>
 				{
-					new RegionWsValue("ar", text, "Scheherazade New", 0, rightToLeft: true, wsTag: "ar")
+					new DetailWsValue("ar", text, "Scheherazade New", 0, rightToLeft: true, wsTag: "ar")
 				},
 				null, null);
 
-		private static (TextBox box, Window window) ShowFocused(RegionField field)
+		private static (TextBox box, Window window) ShowFocused(DetailField field)
 		{
 			var control = new FwMultiWsTextField(field, field.AutomationId, new FakeRegionEditContext(), null);
 			var window = new Window { Content = control, Width = 420, Height = 80 };

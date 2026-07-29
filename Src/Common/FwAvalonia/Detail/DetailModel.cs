@@ -9,7 +9,7 @@ using System.Linq;
 using Avalonia.Controls;
 using SIL.FieldWorks.Common.FwAvalonia.ViewDefinition;
 
-namespace SIL.FieldWorks.Common.FwAvalonia.Region
+namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 {
 	/// <summary>
 	/// The renderable kind of a region field, derived from the typed view definition's editor
@@ -17,7 +17,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 	/// known-editors map to <see cref="Text"/> for the first slice; obsolete editors map to
 	/// <see cref="Unsupported"/>.
 	/// </summary>
-	public enum RegionFieldKind
+	public enum DetailFieldKind
 	{
 		/// <summary>A (possibly multi-writing-system) text editor.</summary>
 		Text,
@@ -33,15 +33,15 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 
 		/// <summary>
 		/// An editable reference vector: current items plus the possibility list's options
-		/// (hierarchy on <see cref="RegionChoiceOption.Depth"/>), edited through
-		/// <see cref="IRegionEditContext.TryAddReferenceItem"/>/<see cref="IRegionEditContext.TryRemoveReferenceItem"/> —
+		/// (hierarchy on <see cref="DetailChoiceOption.Depth"/>), edited through
+		/// <see cref="IDetailEditContext.TryAddReferenceItem"/>/<see cref="IDetailEditContext.TryRemoveReferenceItem"/> —
 		/// the legacy possibility-vector slice with its trailing type-ahead add slot.
 		/// </summary>
 		ReferenceVector,
 
 		/// <summary>
 		/// A plugin-claimed custom editor: the row carries a
-		/// <see cref="RegionField.ControlFactory"/> built by the composer from the
+		/// <see cref="DetailField.ControlFactory"/> built by the composer from the
 		/// claiming <c>IRegionEditorPlugin</c>; the view renders the factory's control in the value
 		/// column at the slice's real position, falling back to the unsupported rendering when the
 		/// factory is missing or fails.
@@ -51,8 +51,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		/// <summary>
 		/// An editable multi-paragraph structured-text (StText) field — the legacy
 		/// <c>StTextSlice</c>'s RootSite rich editor. The row carries an ordered
-		/// <see cref="RegionField.Paragraphs"/> list (each a run-aware
-		/// <see cref="RegionParagraph"/> with a per-paragraph named style); the owned
+		/// <see cref="DetailField.Paragraphs"/> list (each a run-aware
+		/// <see cref="DetailParagraph"/> with a per-paragraph named style); the owned
 		/// <c>FwStructuredTextField</c> edits paragraph text, adds/deletes paragraphs, and sets the
 		/// per-paragraph style, each as one undoable step through the edit context's paragraph CRUD
 		/// seam (<see cref="IStructuredTextEditing.TrySetParagraphText"/> et al.). An ORC-bearing paragraph
@@ -70,12 +70,12 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 
 	/// <summary>
 	/// The kind of an embedded object (ORC) a run carries, classified LCModel-free from the
-	/// FIRST character of <see cref="RegionTextRun.ObjectData"/> (the value the xWorks adapter projects
+	/// FIRST character of <see cref="DetailTextRun.ObjectData"/> (the value the xWorks adapter projects
 	/// from the TsString's <c>ktptObjData</c>). The numeric tags mirror
 	/// <c>SIL.LCModel.Core.KernelInterfaces.FwObjDataTypes</c> — the view layer is LCModel-free, so it
 	/// reads the opaque <c>ObjectData</c> string the adapter produced rather than the enum itself.
 	/// </summary>
-	public enum RegionOrcKind
+	public enum DetailOrcKind
 	{
 		/// <summary>The run carries no embedded object (plain text).</summary>
 		None,
@@ -98,9 +98,9 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 	/// Avalonia contract LCModel-free while preserving the run boundaries and supported properties the
 	/// product text model already carries.
 	/// </summary>
-	public sealed class RegionTextRun
+	public sealed class DetailTextRun
 	{
-		public RegionTextRun(string text, string writingSystemTag = null, string namedStyle = null,
+		public DetailTextRun(string text, string writingSystemTag = null, string namedStyle = null,
 			string fontFamily = null, int fontSizeMilliPoints = 0, bool bold = false,
 			bool italic = false, bool underline = false, string objectData = null)
 		{
@@ -138,21 +138,21 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 
 		/// <summary>
 		/// The embedded-object kind, classified from the first character of <see cref="ObjectData"/>
-		/// (mirroring FwObjDataTypes). <see cref="RegionOrcKind.None"/> for a plain-text run.
+		/// (mirroring FwObjDataTypes). <see cref="DetailOrcKind.None"/> for a plain-text run.
 		/// </summary>
-		public RegionOrcKind OrcKind
+		public DetailOrcKind OrcKind
 		{
 			get
 			{
 				if (string.IsNullOrEmpty(ObjectData))
-					return RegionOrcKind.None;
+					return DetailOrcKind.None;
 				switch (ObjectData[0])
 				{
-					case ObjDataExternalLink: return RegionOrcKind.ExternalLink;
-					case ObjDataPicture: return RegionOrcKind.Picture;
+					case ObjDataExternalLink: return DetailOrcKind.ExternalLink;
+					case ObjDataPicture: return DetailOrcKind.Picture;
 					case ObjDataFootnoteOwn:
-					case ObjDataFootnoteName: return RegionOrcKind.Footnote;
-					default: return RegionOrcKind.Other;
+					case ObjDataFootnoteName: return DetailOrcKind.Footnote;
+					default: return DetailOrcKind.Other;
 				}
 			}
 		}
@@ -162,7 +162,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		/// char), or null when this run is not a hyperlink.
 		/// </summary>
 		public string HyperlinkUrl
-			=> OrcKind == RegionOrcKind.ExternalLink ? ObjectData.Substring(1) : null;
+			=> OrcKind == DetailOrcKind.ExternalLink ? ObjectData.Substring(1) : null;
 	}
 
 	/// <summary>
@@ -170,36 +170,36 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 	/// preserved so the product edge can reconstruct the original <c>ITsString</c> losslessly before
 	/// the owned editor starts modifying runs.
 	/// </summary>
-	public sealed class RegionRichTextValue
+	public sealed class DetailRichTextValue
 	{
-		public RegionRichTextValue(string plainText, IReadOnlyList<RegionTextRun> runs,
+		public DetailRichTextValue(string plainText, IReadOnlyList<DetailTextRun> runs,
 			string richXml = null, bool requiresRichEditor = false, bool canEditRichText = true,
 			bool lossyProperties = false)
 		{
 			PlainText = plainText ?? string.Empty;
-			Runs = runs ?? new List<RegionTextRun>();
+			Runs = runs ?? new List<DetailTextRun>();
 			RichXml = richXml;
 			RequiresRichEditor = requiresRichEditor;
 			LossyProperties = lossyProperties;
 			// An embedded object (ORC) does not force the value read-only — a link ORC is fully
 			// editable (insert/edit/delete) and ANY ORC run is deletable, so the run-replay path rebuilds
 			// the value with its ObjectData preserved. A value is held read-only ONLY when an edit would
-			// SILENTLY DROP data: a run carrying a TsString property the RegionTextRun model does not
+			// SILENTLY DROP data: a run carrying a TsString property the DetailTextRun model does not
 			// round-trip (colour, offset, superscript — flagged lossyProperties) since the first plain-text
 			// edit skips the lossless RichXml fast-path. The explicit canEditRichText flag still lets a
 			// caller force read-only for a reason unrelated to runs (e.g. a voice/audio alternative).
 			CanEditRichText = canEditRichText && !lossyProperties;
-			GraphemeClusterStarts = RegionTextGraphemeClusters.GetClusterStarts(PlainText);
+			GraphemeClusterStarts = DetailTextGraphemeClusters.GetClusterStarts(PlainText);
 		}
 
 		public string PlainText { get; }
-		public IReadOnlyList<RegionTextRun> Runs { get; }
+		public IReadOnlyList<DetailTextRun> Runs { get; }
 		public string RichXml { get; }
 		public bool RequiresRichEditor { get; }
 		public bool CanEditRichText { get; }
 
 		/// <summary>
-		/// Whether at least one run carries a TsString text property the <see cref="RegionTextRun"/>
+		/// Whether at least one run carries a TsString text property the <see cref="DetailTextRun"/>
 		/// model does NOT round-trip (e.g. foreground/background colour, character offset,
 		/// super/subscript — anything beyond ws/named-style/font-family/font-size/bold/italic/underline/
 		/// object-data). The neutral run-replay in <c>RegionRichTextAdapter.ToTsString</c> re-emits only
@@ -217,7 +217,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 	/// Unicode grapheme-cluster boundaries for a region text value. The editor layer uses this to keep
 	/// caret movement and deletion on user-visible characters instead of raw UTF-16 code units.
 	/// </summary>
-	public static class RegionTextGraphemeClusters
+	public static class DetailTextGraphemeClusters
 	{
 		private const char ZeroWidthJoiner = '\u200D';
 
@@ -249,9 +249,9 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 	/// boundaries and maps left/right keys through the active run direction so RTL/LTR spans behave
 	/// like legacy editors without native Views hit-testing services.
 	/// </summary>
-	public static class RegionBidirectionalTextNavigation
+	public static class DetailBidirectionalTextNavigation
 	{
-		public static int MoveCaret(string text, IReadOnlyList<RegionTextRun> runs, int caretIndex,
+		public static int MoveCaret(string text, IReadOnlyList<DetailTextRun> runs, int caretIndex,
 			bool physicalLeft, bool defaultRightToLeft)
 		{
 			text = text ?? string.Empty;
@@ -264,7 +264,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 			return moveForward ? NextClusterBoundary(text, index) : PreviousClusterBoundary(text, index);
 		}
 
-		public static int CollapseSelectionEdge(string text, IReadOnlyList<RegionTextRun> runs,
+		public static int CollapseSelectionEdge(string text, IReadOnlyList<DetailTextRun> runs,
 			int selectionStart, int selectionEnd, bool physicalLeft, bool defaultRightToLeft)
 		{
 			text = text ?? string.Empty;
@@ -278,18 +278,18 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 			return collapseToEnd ? end : start;
 		}
 
-		public static RegionSelectionRange NormalizeSelectionToClusters(string text,
+		public static DetailSelectionRange NormalizeSelectionToClusters(string text,
 			int selectionStart, int selectionEnd)
 		{
 			text = text ?? string.Empty;
 			var start = Clamp(Math.Min(selectionStart, selectionEnd), 0, text.Length);
 			var end = Clamp(Math.Max(selectionStart, selectionEnd), 0, text.Length);
 			if (start == end)
-				return new RegionSelectionRange(start, end);
+				return new DetailSelectionRange(start, end);
 
 			var normalizedStart = PreviousClusterBoundary(text, start);
 			var normalizedEnd = NextClusterBoundary(text, end);
-			return new RegionSelectionRange(normalizedStart, normalizedEnd);
+			return new DetailSelectionRange(normalizedStart, normalizedEnd);
 		}
 
 		public static int NormalizeHitTestCaretIndex(string text, int caretIndex)
@@ -301,7 +301,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 			return PreviousClusterBoundary(text, index);
 		}
 
-		private static bool IsActiveRunRightToLeft(string text, IReadOnlyList<RegionTextRun> runs,
+		private static bool IsActiveRunRightToLeft(string text, IReadOnlyList<DetailTextRun> runs,
 			int caretIndex, bool defaultRightToLeft)
 		{
 			var byText = ProbeDirectionFromText(text, caretIndex);
@@ -379,7 +379,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 			if (index <= 0 || string.IsNullOrEmpty(text))
 				return 0;
 
-			var starts = RegionTextGraphemeClusters.GetClusterStarts(text);
+			var starts = DetailTextGraphemeClusters.GetClusterStarts(text);
 			for (var i = starts.Count - 1; i >= 0; i--)
 			{
 				if (starts[i] < index)
@@ -396,7 +396,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 			if (index >= text.Length)
 				return text.Length;
 
-			var starts = RegionTextGraphemeClusters.GetClusterStarts(text);
+			var starts = DetailTextGraphemeClusters.GetClusterStarts(text);
 			for (var i = 0; i < starts.Count; i++)
 			{
 				if (starts[i] > index)
@@ -410,9 +410,9 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 			=> Math.Max(min, Math.Min(max, value));
 	}
 
-	public struct RegionSelectionRange
+	public struct DetailSelectionRange
 	{
-		public RegionSelectionRange(int start, int end)
+		public DetailSelectionRange(int start, int end)
 		{
 			Start = start;
 			End = end;
@@ -432,9 +432,9 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 	/// already works through the platform. Wire explicit composition control here only if that standard path
 	/// is demonstrated insufficient for a specific keyboard/scenario.</para>
 	/// </summary>
-	public sealed class RegionImeCompositionState
+	public sealed class DetailImeCompositionState
 	{
-		public RegionImeCompositionState(string committedText = "")
+		public DetailImeCompositionState(string committedText = "")
 		{
 			CommittedText = committedText ?? string.Empty;
 		}
@@ -479,7 +479,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 			if (!IsActive || _compositionText.Length == 0)
 				return DisplayText;
 
-			var starts = RegionTextGraphemeClusters.GetClusterStarts(_compositionText);
+			var starts = DetailTextGraphemeClusters.GetClusterStarts(_compositionText);
 			if (starts.Count <= 1)
 			{
 				_compositionText = string.Empty;
@@ -521,11 +521,11 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 
 	/// <summary>
 	/// Which character-formatting attribute a span-formatting gesture toggles: the
-	/// supported, round-tripped emphasis set (<see cref="RegionTextRun.Bold"/>/<see cref="RegionTextRun.Italic"/>/
-	/// <see cref="RegionTextRun.Underline"/>). These are exactly the three int props
+	/// supported, round-tripped emphasis set (<see cref="DetailTextRun.Bold"/>/<see cref="DetailTextRun.Italic"/>/
+	/// <see cref="DetailTextRun.Underline"/>). These are exactly the three int props
 	/// <c>RegionRichTextAdapter.ToTsString</c> re-emits, so a formatted run round-trips losslessly.
 	/// </summary>
-	public enum RegionRunFormat
+	public enum DetailRunFormat
 	{
 		/// <summary>Bold emphasis (ktptBold).</summary>
 		Bold,
@@ -541,11 +541,11 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 	/// Plain-text edit helpers over the neutral rich-text model. This lets the first owned rich-text
 	/// field preserve unaffected run metadata while the user edits the combined visible string.
 	/// </summary>
-	public static class RegionRichTextEditAlgorithms
+	public static class DetailRichTextEditAlgorithms
 	{
 		/// <summary>
 		/// Applies (or clears) one character-formatting attribute over the half-open span
-		/// <c>[start, end)</c>, returning a NEW <see cref="RegionRichTextValue"/> with the same plain
+		/// <c>[start, end)</c>, returning a NEW <see cref="DetailRichTextValue"/> with the same plain
 		/// text. Runs are split at the selection boundaries (reusing the same run-span machinery as
 		/// <see cref="ApplyPlainTextEdit"/>); every run fully covered by the span gets the attribute set
 		/// to <paramref name="on"/> while runs outside the span keep their metadata untouched.
@@ -558,8 +558,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		/// text is unchanged), dropping the new emphasis. Clearing it forces the run-replay path, which
 		/// re-emits the bold/italic/underline the runs now carry.</para>
 		/// </summary>
-		public static RegionRichTextValue ApplySpanFormatting(RegionRichTextValue value, int start, int end,
-			RegionRunFormat which, bool on)
+		public static DetailRichTextValue ApplySpanFormatting(DetailRichTextValue value, int start, int end,
+			DetailRunFormat which, bool on)
 		{
 			if (value == null)
 				return null;
@@ -575,17 +575,17 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 			// Snap the span outward to grapheme-cluster boundaries so a combining cluster is never
 			// split mid-character: floor the start to the cluster boundary at-or-before it, ceil the
 			// end to the boundary at-or-after it (a boundary index is left where it is).
-			var clusters = RegionTextGraphemeClusters.GetClusterStarts(text);
+			var clusters = DetailTextGraphemeClusters.GetClusterStarts(text);
 			lo = ClusterFloor(clusters, lo);
 			hi = ClusterCeiling(clusters, text.Length, hi);
 			if (lo >= hi)
 				return value;
 
-			var spans = BuildRunSpans(value.Runs ?? Array.Empty<RegionTextRun>());
+			var spans = BuildRunSpans(value.Runs ?? Array.Empty<DetailTextRun>());
 			if (spans.Count == 0)
 				return value;
 
-			var newRuns = new List<RegionTextRun>();
+			var newRuns = new List<DetailTextRun>();
 			foreach (var span in spans)
 			{
 				// Three (possibly empty) slices of this run: before the span, inside it, after it.
@@ -609,9 +609,9 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 
 		/// <summary>
 		/// Applies (or clears) a NAMED CHARACTER STYLE over the half-open span <c>[start, end)</c>,
-		/// returning a NEW <see cref="RegionRichTextValue"/> with the same plain text. Reuses the same
+		/// returning a NEW <see cref="DetailRichTextValue"/> with the same plain text. Reuses the same
 		/// run-split + grapheme-cluster-safe machinery as <see cref="ApplySpanFormatting"/>: every run fully
-		/// covered by the (cluster-snapped) span has its <see cref="RegionTextRun.NamedStyle"/> set to
+		/// covered by the (cluster-snapped) span has its <see cref="DetailTextRun.NamedStyle"/> set to
 		/// <paramref name="styleName"/> while runs outside the span keep their metadata untouched.
 		/// <para>A null/empty <paramref name="styleName"/> CLEARS the named style over the span (the
 		/// covered runs revert to the default/no-style paragraph style), matching the picker's
@@ -624,7 +624,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		/// dropping the new style; clearing it forces the run-replay path, which re-emits the
 		/// <c>ktptNamedStyle</c> the runs now carry.</para>
 		/// </summary>
-		public static RegionRichTextValue ApplySpanNamedStyle(RegionRichTextValue value, int start, int end,
+		public static DetailRichTextValue ApplySpanNamedStyle(DetailRichTextValue value, int start, int end,
 			string styleName)
 		{
 			if (value == null)
@@ -638,20 +638,20 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 			if (lo >= hi)
 				return value; // zero-length selection: no-op (no pending caret style)
 
-			var clusters = RegionTextGraphemeClusters.GetClusterStarts(text);
+			var clusters = DetailTextGraphemeClusters.GetClusterStarts(text);
 			lo = ClusterFloor(clusters, lo);
 			hi = ClusterCeiling(clusters, text.Length, hi);
 			if (lo >= hi)
 				return value;
 
-			var spans = BuildRunSpans(value.Runs ?? Array.Empty<RegionTextRun>());
+			var spans = BuildRunSpans(value.Runs ?? Array.Empty<DetailTextRun>());
 			if (spans.Count == 0)
 				return value;
 
 			// Normalize an empty style name to null so cleared runs carry no style (not "").
 			var normalizedStyle = string.IsNullOrEmpty(styleName) ? null : styleName;
 
-			var newRuns = new List<RegionTextRun>();
+			var newRuns = new List<DetailTextRun>();
 			foreach (var span in spans)
 			{
 				// Three (possibly empty) slices of this run: before the span, inside it, after it.
@@ -675,10 +675,10 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 
 		/// <summary>
 		/// Retags the WRITING SYSTEM over the half-open span <c>[start, end)</c>, returning a
-		/// NEW <see cref="RegionRichTextValue"/> with the same plain text. Reuses the same run-split +
+		/// NEW <see cref="DetailRichTextValue"/> with the same plain text. Reuses the same run-split +
 		/// grapheme-cluster-safe machinery as <see cref="ApplySpanFormatting"/>/<see cref="ApplySpanNamedStyle"/>:
 		/// every run fully covered by the (cluster-snapped) span has its
-		/// <see cref="RegionTextRun.WritingSystemTag"/> set to <paramref name="wsTag"/> while runs outside
+		/// <see cref="DetailTextRun.WritingSystemTag"/> set to <paramref name="wsTag"/> while runs outside
 		/// the span keep their metadata untouched. The per-run ws tag is exactly what
 		/// <c>RegionRichTextAdapter.ToTsString</c> re-emits as <c>ktptWs</c>, so a retagged run round-trips
 		/// losslessly into the product <c>ITsString</c>.
@@ -692,7 +692,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		/// dropping the new writing system; clearing it forces the run-replay path, which re-emits the
 		/// <c>ktptWs</c> the runs now carry.</para>
 		/// </summary>
-		public static RegionRichTextValue RetagSpanWritingSystem(RegionRichTextValue value, int start, int end,
+		public static DetailRichTextValue RetagSpanWritingSystem(DetailRichTextValue value, int start, int end,
 			string wsTag)
 		{
 			if (value == null)
@@ -708,17 +708,17 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 			if (lo >= hi)
 				return value; // zero-length selection: no-op (no pending caret ws)
 
-			var clusters = RegionTextGraphemeClusters.GetClusterStarts(text);
+			var clusters = DetailTextGraphemeClusters.GetClusterStarts(text);
 			lo = ClusterFloor(clusters, lo);
 			hi = ClusterCeiling(clusters, text.Length, hi);
 			if (lo >= hi)
 				return value;
 
-			var spans = BuildRunSpans(value.Runs ?? Array.Empty<RegionTextRun>());
+			var spans = BuildRunSpans(value.Runs ?? Array.Empty<DetailTextRun>());
 			if (spans.Count == 0)
 				return value;
 
-			var newRuns = new List<RegionTextRun>();
+			var newRuns = new List<DetailTextRun>();
 			foreach (var span in spans)
 			{
 				// Three (possibly empty) slices of this run: before the span, inside it, after it.
@@ -742,14 +742,14 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 
 		/// <summary>
 		/// Applies an EXTERNAL-LINK ORC (a hyperlink) over the half-open span <c>[start, end)</c>,
-		/// returning a NEW <see cref="RegionRichTextValue"/> with the same plain text whose covered runs
+		/// returning a NEW <see cref="DetailRichTextValue"/> with the same plain text whose covered runs
 		/// carry the link's <c>ObjectData</c> (the <c>kodtExternalPathName</c> tag char + the URL) — the
 		/// model side of <c>FwEditingHelper.AddHyperlink</c>. Reuses the same run-split + cluster-snap
 		/// machinery as the style/ws helpers. A collapsed selection or a null/empty URL is a no-op (the
 		/// original value is returned). Lossy / read-only values are returned unchanged. The result drops
 		/// <c>RichXml</c> so the adapter re-emits the new ObjectData via run-replay.
 		/// </summary>
-		public static RegionRichTextValue ApplyHyperlink(RegionRichTextValue value, int start, int end,
+		public static DetailRichTextValue ApplyHyperlink(DetailRichTextValue value, int start, int end,
 			string url)
 		{
 			if (value == null)
@@ -765,13 +765,13 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 			if (lo >= hi)
 				return value; // collapsed selection: nothing to link
 
-			var clusters = RegionTextGraphemeClusters.GetClusterStarts(text);
+			var clusters = DetailTextGraphemeClusters.GetClusterStarts(text);
 			lo = ClusterFloor(clusters, lo);
 			hi = ClusterCeiling(clusters, text.Length, hi);
 			if (lo >= hi)
 				return value;
 
-			var objData = RegionTextRun.ObjDataExternalLink + url;
+			var objData = DetailTextRun.ObjDataExternalLink + url;
 			return WithSpanObjectData(value, lo, hi, objData);
 		}
 
@@ -781,20 +781,20 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		/// to the new URL. A position that is not inside a link run, or a null/empty URL, is a no-op. The
 		/// result drops <c>RichXml</c> so the adapter re-emits via run-replay.
 		/// </summary>
-		public static RegionRichTextValue EditHyperlinkUrl(RegionRichTextValue value, int position, string url)
+		public static DetailRichTextValue EditHyperlinkUrl(DetailRichTextValue value, int position, string url)
 		{
 			if (value == null)
 				return null;
 			if (!value.CanEditRichText || string.IsNullOrEmpty(url))
 				return value;
 
-			var spans = BuildRunSpans(value.Runs ?? Array.Empty<RegionTextRun>());
-			var objData = RegionTextRun.ObjDataExternalLink + url;
+			var spans = BuildRunSpans(value.Runs ?? Array.Empty<DetailTextRun>());
+			var objData = DetailTextRun.ObjDataExternalLink + url;
 			var changed = false;
-			var newRuns = new List<RegionTextRun>();
+			var newRuns = new List<DetailTextRun>();
 			foreach (var span in spans)
 			{
-				if (!changed && span.Run.OrcKind == RegionOrcKind.ExternalLink
+				if (!changed && span.Run.OrcKind == DetailOrcKind.ExternalLink
 					&& position >= span.Start && position < span.End)
 				{
 					newRuns.Add(WithObjectData(span.Run, objData));
@@ -820,12 +820,12 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		/// not the start of an ORC run is a no-op. The result drops <c>RichXml</c> so the adapter re-emits
 		/// via run-replay.
 		/// </summary>
-		public static RegionRichTextValue DeleteOrcRun(RegionRichTextValue value, int orcStart)
+		public static DetailRichTextValue DeleteOrcRun(DetailRichTextValue value, int orcStart)
 		{
 			if (value == null)
 				return null;
 
-			var spans = BuildRunSpans(value.Runs ?? Array.Empty<RegionTextRun>());
+			var spans = BuildRunSpans(value.Runs ?? Array.Empty<DetailTextRun>());
 			var target = spans.FirstOrDefault(s => s.Run.IsOrc && s.Start == orcStart);
 			if (target == null)
 				return value; // no ORC run starts here
@@ -841,13 +841,13 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		/// <c>[start, end)</c> (a collapsed selection probes the run at that caret), or -1 when no ORC run
 		/// overlaps. The UI uses this to enable "delete embedded object" / "edit link" over a selection.
 		/// </summary>
-		public static int FirstOrcRunStart(RegionRichTextValue value, int start, int end)
+		public static int FirstOrcRunStart(DetailRichTextValue value, int start, int end)
 		{
 			if (value == null)
 				return -1;
 			var lo = Math.Min(start, end);
 			var hi = Math.Max(start, end);
-			foreach (var span in BuildRunSpans(value.Runs ?? Array.Empty<RegionTextRun>()))
+			foreach (var span in BuildRunSpans(value.Runs ?? Array.Empty<DetailTextRun>()))
 			{
 				if (!span.Run.IsOrc)
 					continue;
@@ -862,14 +862,14 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		// Clones every run fully covered by [lo, hi) with the supplied ObjectData (splitting the
 		// boundary runs), preserving all other run metadata; runs outside the span are untouched. The
 		// result drops RichXml (like the style/ws helpers) so the adapter re-emits via run-replay.
-		private static RegionRichTextValue WithSpanObjectData(RegionRichTextValue value, int lo, int hi,
+		private static DetailRichTextValue WithSpanObjectData(DetailRichTextValue value, int lo, int hi,
 			string objData)
 		{
-			var spans = BuildRunSpans(value.Runs ?? Array.Empty<RegionTextRun>());
+			var spans = BuildRunSpans(value.Runs ?? Array.Empty<DetailTextRun>());
 			if (spans.Count == 0)
 				return value;
 
-			var newRuns = new List<RegionTextRun>();
+			var newRuns = new List<DetailTextRun>();
 			foreach (var span in spans)
 			{
 				var beforeLen = Math.Max(0, Math.Min(span.End, lo) - span.Start);
@@ -890,8 +890,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		}
 
 		// A copy of the run with its ObjectData replaced; every other property is preserved.
-		private static RegionTextRun WithObjectData(RegionTextRun run, string objData)
-			=> new RegionTextRun(run.Text, run.WritingSystemTag, run.NamedStyle, run.FontFamily,
+		private static DetailTextRun WithObjectData(DetailTextRun run, string objData)
+			=> new DetailTextRun(run.Text, run.WritingSystemTag, run.NamedStyle, run.FontFamily,
 				run.FontSizeMilliPoints, run.Bold, run.Italic, run.Underline, objData);
 
 		/// <summary>
@@ -900,7 +900,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		/// tags (mixed). The picker uses this to show the current span's writing system as selected. An
 		/// empty / collapsed span returns null.
 		/// </summary>
-		public static string SpanWritingSystem(RegionRichTextValue value, int start, int end)
+		public static string SpanWritingSystem(DetailRichTextValue value, int start, int end)
 		{
 			if (value == null)
 				return null;
@@ -911,13 +911,13 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 			if (lo >= hi)
 				return null;
 
-			var clusters = RegionTextGraphemeClusters.GetClusterStarts(text);
+			var clusters = DetailTextGraphemeClusters.GetClusterStarts(text);
 			lo = ClusterFloor(clusters, lo);
 			hi = ClusterCeiling(clusters, text.Length, hi);
 			if (lo >= hi)
 				return null;
 
-			var spans = BuildRunSpans(value.Runs ?? Array.Empty<RegionTextRun>());
+			var spans = BuildRunSpans(value.Runs ?? Array.Empty<DetailTextRun>());
 			string common = null;
 			var sawAny = false;
 			foreach (var span in spans)
@@ -946,7 +946,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		/// distinguish a uniform "no style" from a mixed selection: both report null here, but the picker
 		/// can still apply or clear). An empty / collapsed span returns null.
 		/// </summary>
-		public static string SpanNamedStyle(RegionRichTextValue value, int start, int end)
+		public static string SpanNamedStyle(DetailRichTextValue value, int start, int end)
 		{
 			if (value == null)
 				return null;
@@ -957,13 +957,13 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 			if (lo >= hi)
 				return null;
 
-			var clusters = RegionTextGraphemeClusters.GetClusterStarts(text);
+			var clusters = DetailTextGraphemeClusters.GetClusterStarts(text);
 			lo = ClusterFloor(clusters, lo);
 			hi = ClusterCeiling(clusters, text.Length, hi);
 			if (lo >= hi)
 				return null;
 
-			var spans = BuildRunSpans(value.Runs ?? Array.Empty<RegionTextRun>());
+			var spans = BuildRunSpans(value.Runs ?? Array.Empty<DetailTextRun>());
 			string common = null;
 			var sawAny = false;
 			foreach (var span in spans)
@@ -991,7 +991,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		/// Ctrl+B/I/U gesture's direction — an all-on selection toggles off, otherwise it turns on.
 		/// An empty / collapsed span returns false (nothing to toggle off).
 		/// </summary>
-		public static bool SpanFullyHasFormat(RegionRichTextValue value, int start, int end, RegionRunFormat which)
+		public static bool SpanFullyHasFormat(DetailRichTextValue value, int start, int end, DetailRunFormat which)
 		{
 			if (value == null)
 				return false;
@@ -1002,13 +1002,13 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 			if (lo >= hi)
 				return false;
 
-			var clusters = RegionTextGraphemeClusters.GetClusterStarts(text);
+			var clusters = DetailTextGraphemeClusters.GetClusterStarts(text);
 			lo = ClusterFloor(clusters, lo);
 			hi = ClusterCeiling(clusters, text.Length, hi);
 			if (lo >= hi)
 				return false;
 
-			var spans = BuildRunSpans(value.Runs ?? Array.Empty<RegionTextRun>());
+			var spans = BuildRunSpans(value.Runs ?? Array.Empty<DetailTextRun>());
 			foreach (var span in spans)
 			{
 				if (span.End <= lo || span.Start >= hi)
@@ -1045,49 +1045,49 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 			return textLength;
 		}
 
-		private static bool HasFormat(RegionTextRun run, RegionRunFormat which)
+		private static bool HasFormat(DetailTextRun run, DetailRunFormat which)
 		{
 			switch (which)
 			{
-				case RegionRunFormat.Bold: return run.Bold;
-				case RegionRunFormat.Italic: return run.Italic;
-				case RegionRunFormat.Underline: return run.Underline;
+				case DetailRunFormat.Bold: return run.Bold;
+				case DetailRunFormat.Italic: return run.Italic;
+				case DetailRunFormat.Underline: return run.Underline;
 				default: return false;
 			}
 		}
 
-		private static RegionTextRun WithFormat(RegionTextRun run, RegionRunFormat which, bool on)
+		private static DetailTextRun WithFormat(DetailTextRun run, DetailRunFormat which, bool on)
 		{
-			var bold = which == RegionRunFormat.Bold ? on : run.Bold;
-			var italic = which == RegionRunFormat.Italic ? on : run.Italic;
-			var underline = which == RegionRunFormat.Underline ? on : run.Underline;
-			return new RegionTextRun(run.Text, run.WritingSystemTag, run.NamedStyle, run.FontFamily,
+			var bold = which == DetailRunFormat.Bold ? on : run.Bold;
+			var italic = which == DetailRunFormat.Italic ? on : run.Italic;
+			var underline = which == DetailRunFormat.Underline ? on : run.Underline;
+			return new DetailTextRun(run.Text, run.WritingSystemTag, run.NamedStyle, run.FontFamily,
 				run.FontSizeMilliPoints, bold, italic, underline, run.ObjectData);
 		}
 
 		// A copy of the run with its named style replaced (null clears it); every other
 		// property is preserved so a restyled slice keeps its WS, font, and emphasis.
-		private static RegionTextRun WithNamedStyle(RegionTextRun run, string namedStyle)
+		private static DetailTextRun WithNamedStyle(DetailTextRun run, string namedStyle)
 		{
-			return new RegionTextRun(run.Text, run.WritingSystemTag, namedStyle, run.FontFamily,
+			return new DetailTextRun(run.Text, run.WritingSystemTag, namedStyle, run.FontFamily,
 				run.FontSizeMilliPoints, run.Bold, run.Italic, run.Underline, run.ObjectData);
 		}
 
 		// A copy of the run with its writing-system tag replaced; every other property is
 		// preserved so a retagged slice keeps its named style, font, and emphasis.
-		private static RegionTextRun WithWritingSystem(RegionTextRun run, string wsTag)
+		private static DetailTextRun WithWritingSystem(DetailTextRun run, string wsTag)
 		{
-			return new RegionTextRun(run.Text, wsTag, run.NamedStyle, run.FontFamily,
+			return new DetailTextRun(run.Text, wsTag, run.NamedStyle, run.FontFamily,
 				run.FontSizeMilliPoints, run.Bold, run.Italic, run.Underline, run.ObjectData);
 		}
 
-		public static RegionRichTextValue ApplyPlainTextEdit(RegionRichTextValue current, string updatedPlainText)
+		public static DetailRichTextValue ApplyPlainTextEdit(DetailRichTextValue current, string updatedPlainText)
 		{
 			updatedPlainText = updatedPlainText ?? string.Empty;
 			if (current == null)
 			{
 				return FromRuns(updatedPlainText,
-					new List<RegionTextRun> { new RegionTextRun(updatedPlainText) });
+					new List<DetailTextRun> { new DetailTextRun(updatedPlainText) });
 			}
 
 			if (current.PlainText == updatedPlainText)
@@ -1097,8 +1097,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 			{
 				return FromRuns(updatedPlainText,
 					string.IsNullOrEmpty(updatedPlainText)
-						? (IReadOnlyList<RegionTextRun>)Array.Empty<RegionTextRun>()
-						: new[] { new RegionTextRun(updatedPlainText) },
+						? (IReadOnlyList<DetailTextRun>)Array.Empty<DetailTextRun>()
+						: new[] { new DetailTextRun(updatedPlainText) },
 					canEditRichText: current.CanEditRichText);
 			}
 
@@ -1125,8 +1125,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 			{
 				return FromRuns(updatedPlainText,
 					string.IsNullOrEmpty(updatedPlainText)
-						? (IReadOnlyList<RegionTextRun>)Array.Empty<RegionTextRun>()
-						: new[] { new RegionTextRun(updatedPlainText) },
+						? (IReadOnlyList<DetailTextRun>)Array.Empty<DetailTextRun>()
+						: new[] { new DetailTextRun(updatedPlainText) },
 					canEditRichText: current.CanEditRichText);
 			}
 
@@ -1141,7 +1141,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 				? FindRunIndex(spans, originalEditEnd - 1, preferNextAtBoundary: false)
 				: startRun;
 
-			var newRuns = new List<RegionTextRun>();
+			var newRuns = new List<DetailTextRun>();
 			for (var i = 0; i < startRun; i++)
 				newRuns.Add(spans[i].Run);
 
@@ -1175,15 +1175,15 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 			return FromRuns(updatedPlainText, compacted, canEditRichText: current.CanEditRichText);
 		}
 
-		public static RegionRichTextValue FromRuns(string plainText, IReadOnlyList<RegionTextRun> runs,
+		public static DetailRichTextValue FromRuns(string plainText, IReadOnlyList<DetailTextRun> runs,
 			string richXml = null, bool canEditRichText = true)
 		{
-			return new RegionRichTextValue(plainText, runs, richXml,
+			return new DetailRichTextValue(plainText, runs, richXml,
 				requiresRichEditor: RequiresRichEditor(runs),
 				canEditRichText: canEditRichText);
 		}
 
-		private static bool RequiresRichEditor(IReadOnlyList<RegionTextRun> runs)
+		private static bool RequiresRichEditor(IReadOnlyList<DetailTextRun> runs)
 		{
 			if (runs == null || runs.Count == 0)
 				return false;
@@ -1200,8 +1200,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 				|| !string.IsNullOrEmpty(run.ObjectData);
 		}
 
-		private static RegionTextRun CloneRun(RegionTextRun source, string text)
-			=> new RegionTextRun(text, source.WritingSystemTag, source.NamedStyle, source.FontFamily,
+		private static DetailTextRun CloneRun(DetailTextRun source, string text)
+			=> new DetailTextRun(text, source.WritingSystemTag, source.NamedStyle, source.FontFamily,
 				source.FontSizeMilliPoints, source.Bold, source.Italic, source.Underline, source.ObjectData);
 
 		private static int FindRunIndex(IReadOnlyList<RunSpan> spans, int position, bool preferNextAtBoundary)
@@ -1231,7 +1231,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 			return 0;
 		}
 
-		private static List<RunSpan> BuildRunSpans(IReadOnlyList<RegionTextRun> runs)
+		private static List<RunSpan> BuildRunSpans(IReadOnlyList<DetailTextRun> runs)
 		{
 			var spans = new List<RunSpan>();
 			var start = 0;
@@ -1247,14 +1247,14 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 
 		private sealed class RunSpan
 		{
-			public RunSpan(RegionTextRun run, int start, int end)
+			public RunSpan(DetailTextRun run, int start, int end)
 			{
 				Run = run;
 				Start = start;
 				End = end;
 			}
 
-			public RegionTextRun Run { get; }
+			public DetailTextRun Run { get; }
 			public int Start { get; }
 			public int End { get; }
 		}
@@ -1264,11 +1264,11 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 	/// One writing-system alternative's value plus the rendering metadata legacy slices honor
 	/// (project font, flow direction) and the stable WS tag the keyboard-switch seam keys on (6.2).
 	/// </summary>
-	public sealed class RegionWsValue
+	public sealed class DetailWsValue
 	{
-		public RegionWsValue(string wsAbbrev, string value, string fontFamily = null, double fontSize = 0,
+		public DetailWsValue(string wsAbbrev, string value, string fontFamily = null, double fontSize = 0,
 			bool rightToLeft = false, string wsTag = null, bool bold = false,
-			RegionRichTextValue richText = null, bool isAudio = false)
+			DetailRichTextValue richText = null, bool isAudio = false)
 		{
 			WsAbbrev = wsAbbrev;
 			Value = value ?? richText?.PlainText ?? string.Empty;
@@ -1296,7 +1296,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		public string WsTag { get; }
 
 		/// <summary>Optional rich-text projection of the value's original TsString runs.</summary>
-		public RegionRichTextValue RichText { get; }
+		public DetailRichTextValue RichText { get; }
 
 		/// <summary>
 		/// ITEM 3: whether this alternative belongs to a voice/audio (IsVoice) writing system. The new
@@ -1325,9 +1325,9 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 	/// License and Creator live in the image file's Palaso metadata and the adapter applies them only when
 	/// the file is present/writable. Every field is optional — a null/empty value clears the property.
 	/// </summary>
-	public sealed class RegionPictureMetadata
+	public sealed class DetailPictureMetadata
 	{
-		public RegionPictureMetadata(string caption = null, string description = null,
+		public DetailPictureMetadata(string caption = null, string description = null,
 			string license = null, string creator = null)
 		{
 			Caption = caption;
@@ -1353,16 +1353,16 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 	/// The result of the picture-properties dialog (LCModel-free): the edited metadata plus the chosen
 	/// image file. Consumed by the FwAvaloniaDialogs picture-properties dialog view-model.
 	/// </summary>
-	public sealed class RegionPictureDialogResult
+	public sealed class DetailPictureDialogResult
 	{
-		public RegionPictureDialogResult(RegionPictureMetadata metadata, string sourceFile)
+		public DetailPictureDialogResult(DetailPictureMetadata metadata, string sourceFile)
 		{
-			Metadata = metadata ?? new RegionPictureMetadata();
+			Metadata = metadata ?? new DetailPictureMetadata();
 			SourceFile = sourceFile;
 		}
 
 		/// <summary>The edited caption/description/license/creator.</summary>
-		public RegionPictureMetadata Metadata { get; }
+		public DetailPictureMetadata Metadata { get; }
 
 		/// <summary>
 		/// The chosen image file (absolute path) — non-null for a new picture or when the user replaced the
@@ -1373,23 +1373,23 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 
 	/// <summary>
 	/// One paragraph of an editable multi-paragraph structured-text (StText) field, projected
-	/// LCModel-free. The paragraph's text is the SAME run-aware <see cref="RegionRichTextValue"/> the
+	/// LCModel-free. The paragraph's text is the SAME run-aware <see cref="DetailRichTextValue"/> the
 	/// rest of the text path edits (so the lossless RichXml round-trip and the
-	/// <see cref="RegionRichTextValue.CanEditRichText"/> read-only safety carry over verbatim); the
+	/// <see cref="DetailRichTextValue.CanEditRichText"/> read-only safety carry over verbatim); the
 	/// per-paragraph named style is the legacy <c>StPara.StyleName</c>. An ORC-bearing / lossy paragraph
 	/// is held read-only (<see cref="CanEditText"/> false) and preserved, exactly as a lossy single-WS
 	/// value is — full editing of such a paragraph stays in the classic view.
 	/// </summary>
-	public sealed class RegionParagraph
+	public sealed class DetailParagraph
 	{
-		public RegionParagraph(RegionRichTextValue text, string paragraphStyle = null)
+		public DetailParagraph(DetailRichTextValue text, string paragraphStyle = null)
 		{
-			Text = text ?? RegionRichTextEditAlgorithms.FromRuns(string.Empty, Array.Empty<RegionTextRun>());
+			Text = text ?? DetailRichTextEditAlgorithms.FromRuns(string.Empty, Array.Empty<DetailTextRun>());
 			ParagraphStyle = paragraphStyle;
 		}
 
 		/// <summary>The paragraph's run-aware text (the same model the single-WS text editor edits).</summary>
-		public RegionRichTextValue Text { get; }
+		public DetailRichTextValue Text { get; }
 
 		/// <summary>The paragraph's named style id (legacy <c>StPara.StyleName</c>), or null for the default.</summary>
 		public string ParagraphStyle { get; }
@@ -1397,20 +1397,20 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		/// <summary>
 		/// Whether this paragraph's text can be edited by the managed editor. False for an ORC-bearing /
 		/// lossy paragraph: it renders read-only with the embedded-object tooltip and is
-		/// preserved losslessly, like a lossy single-WS value (<see cref="RegionRichTextValue.CanEditRichText"/>).
+		/// preserved losslessly, like a lossy single-WS value (<see cref="DetailRichTextValue.CanEditRichText"/>).
 		/// </summary>
 		public bool CanEditText => Text == null || Text.CanEditRichText;
 	}
 
 	/// <summary>
 	/// One project writing system the per-run WS retag picker can offer (its stable IETF tag
-	/// plus a display name). The tag is what <see cref="RegionTextRun.WritingSystemTag"/> carries and
+	/// plus a display name). The tag is what <see cref="DetailTextRun.WritingSystemTag"/> carries and
 	/// what <c>RegionRichTextAdapter.ToTsString</c> re-emits as <c>ktptWs</c>; the display name is what
 	/// the picker shows. Kept LCModel-free so the composer is the only edge that knows about the cache.
 	/// </summary>
-	public sealed class RegionWritingSystemOption
+	public sealed class DetailWritingSystemOption
 	{
-		public RegionWritingSystemOption(string tag, string displayName)
+		public DetailWritingSystemOption(string tag, string displayName)
 		{
 			Tag = tag;
 			DisplayName = displayName;
@@ -1426,14 +1426,14 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 	/// <summary>
 	/// The font a writing system renders with (per-run font rendering), supplied LCModel-free by the
 	/// host (the composer reads it from the project's per-ws <c>DefaultFontName</c>). The per-run-font
-	/// display layer maps each run's <see cref="RegionTextRun.WritingSystemTag"/> through the field's
-	/// <see cref="RegionField.WritingSystemFonts"/> map to this descriptor; a run also overrides
-	/// the family with its own <see cref="RegionTextRun.FontFamily"/> when set, and its
+	/// display layer maps each run's <see cref="DetailTextRun.WritingSystemTag"/> through the field's
+	/// <see cref="DetailField.WritingSystemFonts"/> map to this descriptor; a run also overrides
+	/// the family with its own <see cref="DetailTextRun.FontFamily"/> when set, and its
 	/// bold/italic/named-style toggles still apply on top.
 	/// </summary>
-	public sealed class RegionRunFont
+	public sealed class DetailRunFont
 	{
-		public RegionRunFont(string fontFamily, bool rightToLeft = false)
+		public DetailRunFont(string fontFamily, bool rightToLeft = false)
 		{
 			FontFamily = fontFamily;
 			RightToLeft = rightToLeft;
@@ -1447,9 +1447,9 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 	}
 
 	/// <summary>A chooser option (key + display name).</summary>
-	public sealed class RegionChoiceOption
+	public sealed class DetailChoiceOption
 	{
-		public RegionChoiceOption(string key, string name, int depth = 0)
+		public DetailChoiceOption(string key, string name, int depth = 0)
 		{
 			Key = key;
 			Name = name;
@@ -1473,9 +1473,9 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 	/// <c>LinkType.kGotoLink</c>), composed from the layout's <c>chooserLink type="goto"</c>
 	/// metadata. Clicking it asks the host to jump to the tool that edits the underlying list.
 	/// </summary>
-	public sealed class RegionChooserLink
+	public sealed class DetailChooserLink
 	{
-		public RegionChooserLink(string label, string tool, string targetGuid = null)
+		public DetailChooserLink(string label, string tool, string targetGuid = null)
 		{
 			Label = label;
 			Tool = tool;
@@ -1501,39 +1501,39 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 	/// chooser does on link click — mediator <c>FollowLink</c> with <c>FwLinkArgs(tool, target)</c>
 	/// (<c>ReallySimpleListChooser.HandleAnyJump</c>).
 	/// </summary>
-	public sealed class RegionLinkRequest
+	public sealed class DetailLinkRequest
 	{
-		public RegionLinkRequest(RegionField field, RegionChooserLink link)
+		public DetailLinkRequest(DetailField field, DetailChooserLink link)
 		{
 			Field = field;
 			Link = link;
 		}
 
-		public RegionField Field { get; }
+		public DetailField Field { get; }
 
-		public RegionChooserLink Link { get; }
+		public DetailChooserLink Link { get; }
 	}
 
 	/// <summary>
 	/// A field on a lexical-edit region, projected from a typed <see cref="ViewNode"/> and bound to live
-	/// values by an <see cref="IRegionValueProvider"/>. This is the product contract that replaces the
+	/// values by an <see cref="IDetailValueProvider"/>. This is the product contract that replaces the
 	/// old detached preview DTO path: structure comes from the typed view definition, values from the
 	/// provider, so the region scales to arbitrary layouts instead of three fixed fields.
 	/// </summary>
-	public sealed class RegionField
+	public sealed class DetailField
 	{
-		public RegionField(
+		public DetailField(
 			string stableId,
 			string label,
 			string field,
 			string writingSystem,
-			RegionFieldKind kind,
+			DetailFieldKind kind,
 			EditorClassification editorClassification,
 			string automationId,
 			string localizationKey,
 			SurfaceRouting routing,
-			IReadOnlyList<RegionWsValue> values,
-			IReadOnlyList<RegionChoiceOption> options,
+			IReadOnlyList<DetailWsValue> values,
+			IReadOnlyList<DetailChoiceOption> options,
 			string selectedOptionKey,
 			bool isEditable = true,
 			int indent = 0,
@@ -1544,15 +1544,15 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 			string hotlinksId = null,
 			int objectHvo = 0,
 			string ghostPrompt = null,
-			IReadOnlyList<RegionChoiceOption> items = null,
+			IReadOnlyList<DetailChoiceOption> items = null,
 			Func<Control> controlFactory = null,
-			Func<string, IReadOnlyList<RegionChoiceOption>> searchOptions = null,
-			IReadOnlyList<RegionChooserLink> chooserLinks = null,
-			IReadOnlyList<RegionParagraph> paragraphs = null)
+			Func<string, IReadOnlyList<DetailChoiceOption>> searchOptions = null,
+			IReadOnlyList<DetailChooserLink> chooserLinks = null,
+			IReadOnlyList<DetailParagraph> paragraphs = null)
 		{
-			Paragraphs = paragraphs ?? Array.Empty<RegionParagraph>();
-			ChooserLinks = chooserLinks ?? new List<RegionChooserLink>();
-			Items = items ?? new List<RegionChoiceOption>();
+			Paragraphs = paragraphs ?? Array.Empty<DetailParagraph>();
+			ChooserLinks = chooserLinks ?? new List<DetailChooserLink>();
+			Items = items ?? new List<DetailChoiceOption>();
 			ControlFactory = controlFactory;
 			SearchOptions = searchOptions;
 			GhostPrompt = ghostPrompt;
@@ -1573,8 +1573,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 			AutomationId = automationId;
 			LocalizationKey = localizationKey;
 			Routing = routing;
-			Values = values ?? new List<RegionWsValue>();
-			Options = options ?? new List<RegionChoiceOption>();
+			Values = values ?? new List<DetailWsValue>();
+			Options = options ?? new List<DetailChoiceOption>();
 			SelectedOptionKey = selectedOptionKey;
 		}
 
@@ -1588,20 +1588,20 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		public string Label { get; }
 		public string Field { get; }
 		public string WritingSystem { get; }
-		public RegionFieldKind Kind { get; }
+		public DetailFieldKind Kind { get; }
 		public EditorClassification EditorClassification { get; }
 		public string AutomationId { get; }
 		public string LocalizationKey { get; }
 		public SurfaceRouting Routing { get; }
-		public IReadOnlyList<RegionWsValue> Values { get; }
-		public IReadOnlyList<RegionChoiceOption> Options { get; }
+		public IReadOnlyList<DetailWsValue> Values { get; }
+		public IReadOnlyList<DetailChoiceOption> Options { get; }
 		public string SelectedOptionKey { get; }
 
 		/// <summary>
-		/// The CURRENT items of a <see cref="RegionFieldKind.ReferenceVector"/> row, in vector order
+		/// The CURRENT items of a <see cref="DetailFieldKind.ReferenceVector"/> row, in vector order
 		/// (key = possibility guid, name = display name). Empty for other kinds.
 		/// </summary>
-		public IReadOnlyList<RegionChoiceOption> Items { get; }
+		public IReadOnlyList<DetailChoiceOption> Items { get; }
 
 		/// <summary>False for display-only fields (e.g. reference fields without chooser write-back yet).</summary>
 		public bool IsEditable { get; }
@@ -1672,26 +1672,26 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		/// time (like <see cref="AvailableNamedStyles"/>), keeping this FwAvalonia layer LCModel-free. A
 		/// test can supply its own list directly.
 		/// </summary>
-		public IReadOnlyList<RegionWritingSystemOption> AvailableWritingSystems { get; set; }
-			= Array.Empty<RegionWritingSystemOption>();
+		public IReadOnlyList<DetailWritingSystemOption> AvailableWritingSystems { get; set; }
+			= Array.Empty<DetailWritingSystemOption>();
 
 		/// <summary>
 		/// A map from writing-system tag to the font that ws renders with
-		/// (<see cref="RegionRunFont"/>), supplied by the composer from each ws's <c>DefaultFontName</c>.
+		/// (<see cref="DetailRunFont"/>), supplied by the composer from each ws's <c>DefaultFontName</c>.
 		/// The owned editors use it to draw the inline-display-on-blur per-run font layer for a value /
 		/// paragraph whose runs differ by ws or style. Empty when no font info is reachable; the display
 		/// layer then falls back to the editor's single font. Kept a settable map so this layer stays
 		/// LCModel-free (like <see cref="AvailableWritingSystems"/>); a test can supply its own.
 		/// </summary>
-		public IReadOnlyDictionary<string, RegionRunFont> WritingSystemFonts { get; set; }
-			= new Dictionary<string, RegionRunFont>();
+		public IReadOnlyDictionary<string, DetailRunFont> WritingSystemFonts { get; set; }
+			= new Dictionary<string, DetailRunFont>();
 
 		/// <summary>
-		/// The ordered paragraphs of a <see cref="RegionFieldKind.StructuredText"/> row (each a
-		/// run-aware <see cref="RegionParagraph"/> with a per-paragraph named style). Empty for every
+		/// The ordered paragraphs of a <see cref="DetailFieldKind.StructuredText"/> row (each a
+		/// run-aware <see cref="DetailParagraph"/> with a per-paragraph named style). Empty for every
 		/// other kind. The owned <c>FwStructuredTextField</c> renders one editor row per paragraph.
 		/// </summary>
-		public IReadOnlyList<RegionParagraph> Paragraphs { get; }
+		public IReadOnlyList<DetailParagraph> Paragraphs { get; }
 
 		/// <summary>
 		/// The project's available PARAGRAPH-type style names the structured-text editor offers in
@@ -1703,7 +1703,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		public IReadOnlyList<string> AvailableParagraphStyles { get; set; } = Array.Empty<string>();
 
 		/// <summary>
-		/// For a <see cref="RegionFieldKind.Custom"/> row: the
+		/// For a <see cref="DetailFieldKind.Custom"/> row: the
 		/// deferred control factory the claiming plugin supplied via the composer. The view invokes
 		/// it at render time and places the returned control in the value column; null (or a
 		/// failing factory) renders the unsupported row instead. Null for every other kind.
@@ -1711,27 +1711,27 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		public Func<Control> ControlFactory { get; }
 
 		/// <summary>
-		/// For a <see cref="RegionFieldKind.ReferenceVector"/> row whose targets are searched rather
+		/// For a <see cref="DetailFieldKind.ReferenceVector"/> row whose targets are searched rather
 		/// than enumerated (possibility lists enumerate, lexicons
 		/// search): a type-ahead search delegate the composer supplied (e.g. a headword-prefix search
 		/// over the entry repository). When non-null the add slot opens a search flyout instead of the
 		/// full <see cref="Options"/> list; selecting a result stages through
-		/// <see cref="IRegionEditContext.TryAddReferenceItem"/> with the result's key. Like
+		/// <see cref="IDetailEditContext.TryAddReferenceItem"/> with the result's key. Like
 		/// <see cref="ControlFactory"/>, a plain delegate keeps this layer LCModel-free.
 		/// </summary>
-		public Func<string, IReadOnlyList<RegionChoiceOption>> SearchOptions { get; }
+		public Func<string, IReadOnlyList<DetailChoiceOption>> SearchOptions { get; }
 
 		/// <summary>
 		/// The list-editor jump links of a chooser/reference-vector row: composed from the
 		/// layout's <c>chooserLink type="goto"</c> metadata (e.g. "Edit the Publications list" →
 		/// publicationsEdit). The gear flyout surfaces them below the options; clicking raises the
-		/// host's <c>RegionLinkRequest</c> callback. Empty for rows without chooser metadata.
+		/// host's <c>DetailLinkRequest</c> callback. Empty for rows without chooser metadata.
 		/// </summary>
-		public IReadOnlyList<RegionChooserLink> ChooserLinks { get; }
+		public IReadOnlyList<DetailChooserLink> ChooserLinks { get; }
 	}
 
 	/// <summary>Which legacy menu a right-click maps to (section 13).</summary>
-	public enum RegionMenuKind
+	public enum DetailMenuKind
 	{
 		/// <summary>The slice menu (layout `menu=`), legacy right-click on the tree node/label.</summary>
 		SliceMenu,
@@ -1748,9 +1748,9 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 	/// resolves the menu id against the xCore window configuration and shows the same menu the
 	/// legacy slice shows, at the given screen point, with the row's bound object as command target.
 	/// </summary>
-	public sealed class RegionMenuRequest
+	public sealed class DetailMenuRequest
 	{
-		public RegionMenuRequest(RegionField field, RegionMenuKind kind, int screenX, int screenY)
+		public DetailMenuRequest(DetailField field, DetailMenuKind kind, int screenX, int screenY)
 		{
 			Field = field;
 			Kind = kind;
@@ -1758,8 +1758,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 			ScreenY = screenY;
 		}
 
-		public RegionField Field { get; }
-		public RegionMenuKind Kind { get; }
+		public DetailField Field { get; }
+		public DetailMenuKind Kind { get; }
 		public int ScreenX { get; }
 		public int ScreenY { get; }
 	}
@@ -1768,23 +1768,23 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 	/// A flattened, value-bound region projected from a typed <see cref="ViewDefinitionModel"/>. Carries
 	/// the source diagnostics so unsupported constructs are surfaced, not silently dropped.
 	/// </summary>
-	public sealed class RegionModel
+	public sealed class DetailModel
 	{
-		public RegionModel(
+		public DetailModel(
 			string className,
 			string layoutName,
-			IReadOnlyList<RegionField> fields,
+			IReadOnlyList<DetailField> fields,
 			IReadOnlyList<ViewDiagnostic> diagnostics)
 		{
 			ClassName = className;
 			LayoutName = layoutName;
-			Fields = fields ?? new List<RegionField>();
+			Fields = fields ?? new List<DetailField>();
 			Diagnostics = diagnostics ?? new List<ViewDiagnostic>();
 		}
 
 		public string ClassName { get; }
 		public string LayoutName { get; }
-		public IReadOnlyList<RegionField> Fields { get; }
+		public IReadOnlyList<DetailField> Fields { get; }
 		public IReadOnlyList<ViewDiagnostic> Diagnostics { get; }
 	}
 
@@ -1793,13 +1793,13 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 	/// implementation lives at the product edge (LCModel-backed in xWorks; faked in tests), keeping this
 	/// FwAvalonia layer free of any LCModel dependency.
 	/// </summary>
-	public interface IRegionValueProvider
+	public interface IDetailValueProvider
 	{
 		/// <summary>The per-writing-system values for a text field node.</summary>
-		IReadOnlyList<RegionWsValue> GetValues(ViewNode fieldNode);
+		IReadOnlyList<DetailWsValue> GetValues(ViewNode fieldNode);
 
 		/// <summary>The selectable options for a chooser field node.</summary>
-		IReadOnlyList<RegionChoiceOption> GetOptions(ViewNode fieldNode);
+		IReadOnlyList<DetailChoiceOption> GetOptions(ViewNode fieldNode);
 
 		/// <summary>The currently selected option key for a chooser field node.</summary>
 		string GetSelectedOptionKey(ViewNode fieldNode);

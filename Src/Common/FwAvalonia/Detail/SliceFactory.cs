@@ -11,12 +11,12 @@ using Avalonia.Media;
 using SIL.FieldWorks.Common.FwAvalonia;
 using SIL.FieldWorks.Common.FwAvalonia.Seams;
 
-namespace SIL.FieldWorks.Common.FwAvalonia.Region
+namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 {
 	/// <summary>
-	/// The small bundle of (all-nullable) collaborators a <see cref="RegionFieldKind"/> editor needs,
+	/// The small bundle of (all-nullable) collaborators a <see cref="DetailFieldKind"/> editor needs,
 	/// passed to <see cref="SliceFactory.Build"/> so the SAME field→control dispatch serves
-	/// every hosting surface (today the detail-pane region view, <c>RegionDataTree.BuildEditor</c>;
+	/// every hosting surface (today the detail-pane region view, <c>DataTree.BuildEditor</c>;
 	/// any future in-cell editor passes only the collaborators it has). Every member is optional: a null
 	/// edit context yields read-only display; a null callback simply disables that affordance.
 	/// One switch, so new kinds live in one place.
@@ -24,10 +24,10 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 	public sealed class SliceFactoryContext
 	{
 		public SliceFactoryContext(
-			IRegionEditContext editContext = null,
+			IDetailEditContext editContext = null,
 			Action<string> writingSystemFocused = null,
-			Action<RegionMenuRequest> menuRequested = null,
-			Action<RegionLinkRequest> linkRequested = null,
+			Action<DetailMenuRequest> menuRequested = null,
+			Action<DetailLinkRequest> linkRequested = null,
 			IFwClipboard clipboard = null,
 			Action save = null,
 			bool showWritingSystemAbbreviation = true)
@@ -42,16 +42,16 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		}
 
 		/// <summary>The shared edit-session/staging context; null → read-only display.</summary>
-		public IRegionEditContext EditContext { get; }
+		public IDetailEditContext EditContext { get; }
 
 		/// <summary>Per-WS keyboard activation callback for text fields (null → no keyboard switch).</summary>
 		public Action<string> WritingSystemFocused { get; }
 
 		/// <summary>Right-click slice/section menu callback (null on surfaces without a slice menu).</summary>
-		public Action<RegionMenuRequest> MenuRequested { get; }
+		public Action<DetailMenuRequest> MenuRequested { get; }
 
 		/// <summary>Hyperlink follow callback for choosers/vectors (null → no link affordance).</summary>
-		public Action<RegionLinkRequest> LinkRequested { get; }
+		public Action<DetailLinkRequest> LinkRequested { get; }
 
 		/// <summary>Clipboard seam for text fields (null → framework default).</summary>
 		public IFwClipboard Clipboard { get; }
@@ -71,8 +71,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 	}
 
 	/// <summary>
-	/// The single <see cref="RegionFieldKind"/>→Avalonia-control dispatch. The detail
-	/// pane (<c>RegionDataTree.BuildEditor</c>, all 7 kinds) and the browse in-cell editor
+	/// The single <see cref="DetailFieldKind"/>→Avalonia-control dispatch. The detail
+	/// pane (<c>DataTree.BuildEditor</c>, all 7 kinds) and the browse in-cell editor
 	/// (<c>EditableCellHost.Activate</c>, a 2-kind Chooser/Text subset) both route here rather than
 	/// hand-rolling their own dispatch, so adding a kind (or changing how a kind is built) happens once.
 	/// The factory is pure (static) — all per-surface variation arrives through the
@@ -80,7 +80,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 	/// </summary>
 	public static class SliceFactory
 	{
-		public static Control Build(RegionField field, string automationId,
+		public static Control Build(DetailField field, string automationId,
 			SliceFactoryContext context)
 		{
 			if (field == null) throw new ArgumentNullException(nameof(field));
@@ -88,9 +88,9 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 
 			switch (field.Kind)
 			{
-				case RegionFieldKind.Custom:
+				case DetailFieldKind.Custom:
 					return BuildCustom(field, automationId);
-				case RegionFieldKind.ReferenceVector:
+				case DetailFieldKind.ReferenceVector:
 					// Reference add/remove gestures commit immediately (legacy chooser-dialog behavior): the
 					// staged session would otherwise sit open — LCModel broadcasts PropChanged only at
 					// EndUndoTask and the row's Items are a compose-time snapshot, so the user would see no
@@ -99,7 +99,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 					// that owns its own commit (an in-cell editor) passes a null Save and just stages.
 					return new FwReferenceVectorField(field, automationId, context.EditContext,
 						context.EditContext == null ? null : context.Save, context.LinkRequested);
-				case RegionFieldKind.StructuredText:
+				case DetailFieldKind.StructuredText:
 					// An editable multi-paragraph StText field. Per-paragraph text edits stage and
 					// ride the focus-loss autosave; structural gestures (add/delete/style) commit
 					// immediately through the SAME validation-gated Save the reference vector uses, whose
@@ -108,11 +108,11 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 					return new FwStructuredTextField(field, automationId, context.EditContext,
 						context.WritingSystemFocused,
 						context.EditContext == null ? null : context.Save, context.Clipboard);
-				case RegionFieldKind.Chooser:
+				case DetailFieldKind.Chooser:
 					return new FwChooserField(field, automationId, context.EditContext, context.LinkRequested);
-				case RegionFieldKind.Literal:
+				case DetailFieldKind.Literal:
 					return BuildLiteral(field, automationId);
-				case RegionFieldKind.Unsupported:
+				case DetailFieldKind.Unsupported:
 					return BuildUnsupported(field, automationId);
 				default:
 					return new FwMultiWsTextField(field, automationId, context.EditContext,
@@ -123,7 +123,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 
 		// Literal / "lit" slice (legacy MessageSlice): static read-only label text in the value
 		// column (the label/message text IS the content). No edit affordance, no value binding.
-		private static Control BuildLiteral(RegionField field, string automationId)
+		private static Control BuildLiteral(DetailField field, string automationId)
 		{
 			var text = field.Values.Count > 0 && !string.IsNullOrEmpty(field.Values[0].Value)
 				? field.Values[0].Value
@@ -143,7 +143,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		// control in the value column, at the slice's real position. Null guard: a missing, null-returning,
 		// or throwing factory degrades to the explicit unsupported row — never a crash, never a silently
 		// blank row.
-		private static Control BuildCustom(RegionField field, string automationId)
+		private static Control BuildCustom(DetailField field, string automationId)
 		{
 			if (field.ControlFactory == null)
 			{
@@ -175,7 +175,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 			}
 		}
 
-		private static Control BuildUnsupported(RegionField field, string automationId)
+		private static Control BuildUnsupported(DetailField field, string automationId)
 		{
 			var block = new TextBlock
 			{

@@ -12,7 +12,7 @@ using Avalonia.Layout;
 using Avalonia.Media;
 using SIL.FieldWorks.Common.FwAvalonia;
 
-namespace SIL.FieldWorks.Common.FwAvalonia.Region
+namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 {
 	/// <summary>
 	/// A field editor whose row decorations include hover-revealed affordances (the chooser's settings
@@ -193,7 +193,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 	/// (chooser, reference vector, dialog launcher) draws the IDENTICAL settings-gear icon from
 	/// this one factory, so the affordance reads the same across all rows.
 	/// </summary>
-	internal static class RegionChrome
+	internal static class DetailChrome
 	{
 		// A real cog drawn as geometry (circle + teeth + hub hole, even-odd fill), not a text/emoji
 		// glyph: 8 teeth on a 24-unit canvas rendered at ~14px in the muted ws-abbreviation hue.

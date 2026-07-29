@@ -13,24 +13,24 @@ using Avalonia.Media;
 using SIL.FieldWorks.Common.FwAvalonia;
 using SIL.FieldWorks.Common.FwAvalonia.Seams;
 
-namespace SIL.FieldWorks.Common.FwAvalonia.Region
+namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 {
 	/// <summary>
-	/// A data-driven Avalonia view that renders a <see cref="RegionModel"/>.
+	/// A data-driven Avalonia view that renders a <see cref="DetailModel"/>.
 	/// It builds one row per region field from the typed view definition, so the same renderer scales
 	/// from preview scenarios to product-backed layouts. Each field's renderer is chosen from its
-	/// <see cref="RegionFieldKind"/>.
+	/// <see cref="DetailFieldKind"/>.
 	/// Stable, nonlocalized automation ids come from the field (falling back to the stable node id).
 	///
-	/// Editing: when an <see cref="IRegionEditContext"/> is supplied,
+	/// Editing: when an <see cref="IDetailEditContext"/> is supplied,
 	/// field editors stage writes through it (which opens the fenced LCModel session on the first
 	/// edit) and the session auto-commits on focus loss — the legacy save-as-you-go behavior, one
 	/// undo step per field, no Save/Cancel buttons. Validation failures show inline and block the
 	/// commit; Escape rolls the session back. Without a context the view is read-only display.
 	/// </summary>
-	public sealed class RegionDataTree : UserControl
+	public sealed class DataTree : UserControl
 	{
-		private readonly IRegionEditContext _editContext;
+		private readonly IDetailEditContext _editContext;
 		private readonly Action<string> _writingSystemFocused;
 		private readonly List<List<Control>> _rowControls = new List<List<Control>>();
 		// Collapsible section toggle buttons, keyed by field stable id — captured at build time so
@@ -42,8 +42,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 
 		private readonly Func<string, bool?> _getExpansionState;
 		private readonly Action<string, bool> _expansionChanged;
-		private readonly Action<RegionMenuRequest> _menuRequested;
-		private readonly Action<RegionLinkRequest> _linkRequested;
+		private readonly Action<DetailMenuRequest> _menuRequested;
+		private readonly Action<DetailLinkRequest> _linkRequested;
 		private readonly IFwClipboard _clipboard;
 
 		/// <summary>
@@ -55,12 +55,12 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		/// the splitter position the same way (11.15): the host owns the remembered width so it
 		/// survives re-shows WITHOUT a process-global field — each host/window keeps its own.
 		/// </summary>
-		public RegionDataTree(RegionModel model, IRegionEditContext editContext = null,
+		public DataTree(DetailModel model, IDetailEditContext editContext = null,
 			Action<string> writingSystemFocused = null,
 			Func<string, bool?> getExpansionState = null,
 			Action<string, bool> expansionChanged = null,
-			Action<RegionMenuRequest> menuRequested = null,
-			Action<RegionLinkRequest> linkRequested = null,
+			Action<DetailMenuRequest> menuRequested = null,
+			Action<DetailLinkRequest> linkRequested = null,
 			IFwClipboard clipboard = null,
 			Func<double?> getLabelColumnWidth = null,
 			Action<double> labelColumnWidthChanged = null)
@@ -193,7 +193,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		}
 
 		/// <summary>The region model this view renders.</summary>
-		public RegionModel Model { get; }
+		public DetailModel Model { get; }
 
 		/// <summary>
 		/// Raised after a commit or cancel completed, so the host can re-resolve and re-show the
@@ -243,14 +243,14 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 			EditCompleted?.Invoke(this, EventArgs.Empty);
 		}
 
-		private void AddField(Grid grid, int row, RegionField field)
+		private void AddField(Grid grid, int row, DetailField field)
 		{
 			var automationId = string.IsNullOrEmpty(field.AutomationId) ? field.StableId : field.AutomationId;
 			var indent = new Thickness(field.Indent * 12, 0, 0, 0);
 
 			// Section/group headers from full-layout composition span both columns
 			// (the legacy tree's section rows).
-			if (field.Kind == RegionFieldKind.Header)
+			if (field.Kind == DetailFieldKind.Header)
 			{
 				Control header;
 				if (field.IsCollapsible)
@@ -290,7 +290,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 				// Discoverability parity (legacy SummaryCommandControl): a section header with hotlinks
 				// shows its commands as an ALWAYS-VISIBLE inline command-link strip directly beneath the
 				// header — the kebab alone is a hover-gated discoverability regression. The strip raises
-				// the SAME hotlinks request the kebab does (RegionMenuKind.Hotlinks), so it dispatches
+				// the SAME hotlinks request the kebab does (DetailMenuKind.Hotlinks), so it dispatches
 				// through the existing host bridge identically.
 				var hotlinkStrip = BuildHotlinkStrip(field, automationId, indent);
 
@@ -381,12 +381,12 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		// Section 13: each field/header row surfaces its legacy slice menu (or the section's hotlinks when
 		// only those exist) through the host bridge — the same menu ids legacy DTMenuHandler resolves from
 		// the layout. The affordance is a hover/keyboard-focus-revealed "⋮" button in a thin left gutter
-		// (it REPLACED right-click): clicking or pressing Enter/Space on it raises the SAME RegionMenuRequest
+		// (it REPLACED right-click): clicking or pressing Enter/Space on it raises the SAME DetailMenuRequest
 		// as right-click, anchored at the icon. Returns <paramref name="inner"/> wrapped with that
 		// gutter for the row, and reports the revealed kebab (or null) so the caller folds it into the row's
 		// hover group. With no host bridge the content is returned unwrapped, so non-product views
 		// (previews/tests with no menu callback) are unchanged.
-		private Control WrapWithFieldMenu(Control inner, RegionField field, string automationId,
+		private Control WrapWithFieldMenu(Control inner, DetailField field, string automationId,
 			out Control kebab)
 		{
 			kebab = null;
@@ -407,19 +407,19 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 			var hasHotlinks = !string.IsNullOrEmpty(field.HotlinksId);
 			if (hasMenu || hasHotlinks)
 			{
-				var button = RegionChrome.CreateKebabButton();
+				var button = DetailChrome.CreateKebabButton();
 				AutomationProperties.SetAutomationId(button, automationId + ".FieldMenu");
 				AutomationProperties.SetName(button, FwAvaloniaStrings.FieldOptionsMenu);
 				ToolTip.SetTip(button, FwAvaloniaStrings.FieldOptionsMenu);
-				var kind = hasMenu ? RegionMenuKind.SliceMenu : RegionMenuKind.Hotlinks;
+				var kind = hasMenu ? DetailMenuKind.SliceMenu : DetailMenuKind.Hotlinks;
 				// Button.Click fires for both a mouse click and keyboard activation (Enter/Space), so the
 				// affordance is fully keyboard-operable once Tab focus reveals it.
 				button.Click += (s, e) =>
 				{
 					// Anchor the menu to the icon (drop from its bottom-left) — the screen-coordinate
-					// contract the host's RegionMenuRequest handler positions the xCore menu by.
+					// contract the host's DetailMenuRequest handler positions the xCore menu by.
 					var screen = button.PointToScreen(new Point(0, button.Bounds.Height));
-					_menuRequested(new RegionMenuRequest(field, kind, screen.X, screen.Y));
+					_menuRequested(new DetailMenuRequest(field, kind, screen.X, screen.Y));
 				};
 				rail.Child = button;
 				kebab = button;
@@ -439,13 +439,13 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		// Discoverability parity: the always-visible inline hotlinks command strip beneath a section
 		// header (legacy SummaryCommandControl). The host bridge resolves the hotlinks MENU id at click
 		// time and exposes no per-command labels to this layer, so we render a SINGLE always-visible flat
-		// command link (not per-command links) that raises the SAME RegionMenuRequest(kind=Hotlinks) the
+		// command link (not per-command links) that raises the SAME DetailMenuRequest(kind=Hotlinks) the
 		// kebab raises — it dispatches through the existing host bridge identically, and the host's
 		// hotlinks handler then surfaces the individual commands. Returns null when the header has no
 		// hotlinks or no host bridge is wired (previews/tests with no menu callback), so those surfaces
 		// are unchanged. The strip is NOT hover-gated — it stays fully visible and clickable at rest,
 		// which is the whole point versus the kebab.
-		private Control BuildHotlinkStrip(RegionField field, string automationId, Thickness indent)
+		private Control BuildHotlinkStrip(DetailField field, string automationId, Thickness indent)
 		{
 			if (_menuRequested == null || string.IsNullOrEmpty(field.HotlinksId))
 				return null;
@@ -473,7 +473,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 				// Anchor the hotlinks menu to the link (drop from its bottom-left), the same
 				// screen-coordinate contract the kebab uses.
 				var screen = link.PointToScreen(new Point(0, link.Bounds.Height));
-				_menuRequested(new RegionMenuRequest(field, RegionMenuKind.Hotlinks, screen.X, screen.Y));
+				_menuRequested(new DetailMenuRequest(field, DetailMenuKind.Hotlinks, screen.X, screen.Y));
 			};
 			return link;
 		}
@@ -488,14 +488,14 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		// We therefore recompute visibility for the whole region from the current expanded states on
 		// every toggle and on initial render, so re-expanding a parent does not force a still-collapsed
 		// child's rows back into view (the legacy SliceTreeNode behavior).
-		private void WireCollapsibleHeaders(IReadOnlyList<RegionField> fields)
+		private void WireCollapsibleHeaders(IReadOnlyList<DetailField> fields)
 		{
 			// Compute each collapsible header's ownership range once, and seed its expanded state.
 			var headers = new List<CollapsibleHeader>();
 			for (var i = 0; i < fields.Count; i++)
 			{
 				var field = fields[i];
-				if (field.Kind != RegionFieldKind.Header || !field.IsCollapsible)
+				if (field.Kind != DetailFieldKind.Header || !field.IsCollapsible)
 					continue;
 				// The toggle button was captured at build time (the header is now wrapped in the
 				// field-menu gutter, and the kebab is also a Button, so locating it by tree shape would
@@ -578,8 +578,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		// The field→control dispatch is shared with the browse in-cell editor through
 		// SliceFactory. The detail pane passes its full callback set (per-WS keyboard, slice
 		// menu, link, clipboard) and routes reference-vector gesture completion to its validation-gated
-		// OnSave (the autosave). New RegionFieldKinds are added once, in the factory.
-		private Control BuildEditor(RegionField field, string automationId)
+		// OnSave (the autosave). New DetailFieldKinds are added once, in the factory.
+		private Control BuildEditor(DetailField field, string automationId)
 			=> SliceFactory.Build(field, automationId, new SliceFactoryContext(
 				editContext: _editContext,
 				writingSystemFocused: _writingSystemFocused,

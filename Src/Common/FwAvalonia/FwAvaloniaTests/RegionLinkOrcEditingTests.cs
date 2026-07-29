@@ -13,7 +13,7 @@ using Avalonia.Threading;
 using Avalonia.VisualTree;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwAvalonia;
-using SIL.FieldWorks.Common.FwAvalonia.Region;
+using SIL.FieldWorks.Common.FwAvalonia.Detail;
 using SIL.FieldWorks.Common.FwAvalonia.ViewDefinition;
 using FwAvaloniaTests.VisualChecks;
 using FwAvaloniaDialogsTests;
@@ -33,14 +33,14 @@ namespace FwAvaloniaTests
 		private const char Picture = (char)8;
 		private const char FootnoteOwn = (char)5;
 
-		private static RegionField FieldWith(RegionRichTextValue rich, bool isEditable = true)
-			=> new RegionField("LexEntry/Bib@1", "Bibliography", "Bibliography", null,
-				RegionFieldKind.Text, EditorClassification.Known, "BibEditor", null, SurfaceRouting.Product,
-				new List<RegionWsValue> { new RegionWsValue("anal", rich.PlainText, wsTag: "en", richText: rich) },
+		private static DetailField FieldWith(DetailRichTextValue rich, bool isEditable = true)
+			=> new DetailField("LexEntry/Bib@1", "Bibliography", "Bibliography", null,
+				DetailFieldKind.Text, EditorClassification.Known, "BibEditor", null, SurfaceRouting.Product,
+				new List<DetailWsValue> { new DetailWsValue("anal", rich.PlainText, wsTag: "en", richText: rich) },
 				null, null, isEditable: isEditable);
 
 		private static (FwMultiWsTextField Control, FakeRegionEditContext Context, Window Window)
-			Show(RegionField field)
+			Show(DetailField field)
 		{
 			var context = new FakeRegionEditContext();
 			var control = new FwMultiWsTextField(field, "BibEditor", context, null);
@@ -78,8 +78,8 @@ namespace FwAvaloniaTests
 		[AvaloniaTest]
 		public void LinkAffordance_InsertsAHyperlinkOverTheSelection()
 		{
-			var rich = RegionRichTextEditAlgorithms.FromRuns("see SIL here",
-				new[] { new RegionTextRun("see SIL here", "en") });
+			var rich = DetailRichTextEditAlgorithms.FromRuns("see SIL here",
+				new[] { new DetailTextRun("see SIL here", "en") });
 			var (control, context, window) = Show(FieldWith(rich));
 
 			var box = Find<TextBox>(control, "BibEditor.en");
@@ -106,7 +106,7 @@ namespace FwAvaloniaTests
 
 			Assert.That(context.RichTextEdits, Has.Count.EqualTo(1), "the link stages through the rich seam");
 			var staged = context.RichTextEdits[0].Value;
-			var linkRun = staged.Runs.Single(r => r.OrcKind == RegionOrcKind.ExternalLink);
+			var linkRun = staged.Runs.Single(r => r.OrcKind == DetailOrcKind.ExternalLink);
 			Assert.That(linkRun.Text, Is.EqualTo("SIL"));
 			Assert.That(linkRun.HyperlinkUrl, Is.EqualTo("https://software.sil.org/fieldworks"));
 		}
@@ -114,12 +114,12 @@ namespace FwAvaloniaTests
 		[AvaloniaTest]
 		public void LinkAffordance_PrefillsAndEditsAnExistingLinksUrl()
 		{
-			var rich = RegionRichTextEditAlgorithms.FromRuns("a SIL b",
+			var rich = DetailRichTextEditAlgorithms.FromRuns("a SIL b",
 				new[]
 				{
-					new RegionTextRun("a ", "en"),
-					new RegionTextRun("SIL", "en", objectData: ExternalLink + "https://old.example"),
-					new RegionTextRun(" b", "en")
+					new DetailTextRun("a ", "en"),
+					new DetailTextRun("SIL", "en", objectData: ExternalLink + "https://old.example"),
+					new DetailTextRun(" b", "en")
 				});
 			var (control, context, _) = Show(FieldWith(rich));
 
@@ -142,15 +142,15 @@ namespace FwAvaloniaTests
 			Dispatcher.UIThread.RunJobs();
 
 			Assert.That(context.RichTextEdits, Has.Count.EqualTo(1));
-			var linkRun = context.RichTextEdits[0].Value.Runs.Single(r => r.OrcKind == RegionOrcKind.ExternalLink);
+			var linkRun = context.RichTextEdits[0].Value.Runs.Single(r => r.OrcKind == DetailOrcKind.ExternalLink);
 			Assert.That(linkRun.HyperlinkUrl, Is.EqualTo("https://new.example"));
 		}
 
 		[AvaloniaTest]
 		public void LinkFlyout_WithBlankUrl_StagesNothing()
 		{
-			var rich = RegionRichTextEditAlgorithms.FromRuns("text",
-				new[] { new RegionTextRun("text", "en") });
+			var rich = DetailRichTextEditAlgorithms.FromRuns("text",
+				new[] { new DetailTextRun("text", "en") });
 			var (control, context, _) = Show(FieldWith(rich));
 			var box = Find<TextBox>(control, "BibEditor.en");
 			box.SelectionStart = 0;
@@ -174,12 +174,12 @@ namespace FwAvaloniaTests
 		[AvaloniaTest]
 		public void OrcDelete_RemovesAPictureOrc_OverTheSelection()
 		{
-			var rich = RegionRichTextEditAlgorithms.FromRuns("a￼b",
+			var rich = DetailRichTextEditAlgorithms.FromRuns("a￼b",
 				new[]
 				{
-					new RegionTextRun("a", "en"),
-					new RegionTextRun("￼", "en", objectData: Picture.ToString()),
-					new RegionTextRun("b", "en")
+					new DetailTextRun("a", "en"),
+					new DetailTextRun("￼", "en", objectData: Picture.ToString()),
+					new DetailTextRun("b", "en")
 				});
 			var (control, context, window) = Show(FieldWith(rich));
 
@@ -204,12 +204,12 @@ namespace FwAvaloniaTests
 		[AvaloniaTest]
 		public void OrcDelete_AlsoRemovesAFootnoteOrc_DeferredButDeletable()
 		{
-			var rich = RegionRichTextEditAlgorithms.FromRuns("x￼y",
+			var rich = DetailRichTextEditAlgorithms.FromRuns("x￼y",
 				new[]
 				{
-					new RegionTextRun("x", "en"),
-					new RegionTextRun("￼", "en", objectData: FootnoteOwn.ToString()),
-					new RegionTextRun("y", "en")
+					new DetailTextRun("x", "en"),
+					new DetailTextRun("￼", "en", objectData: FootnoteOwn.ToString()),
+					new DetailTextRun("y", "en")
 				});
 			var (control, context, _) = Show(FieldWith(rich));
 			var box = Find<TextBox>(control, "BibEditor.en");
@@ -228,8 +228,8 @@ namespace FwAvaloniaTests
 		[AvaloniaTest]
 		public void LinkRow_IsEditable_NotABlanketReadOnlyBlock()
 		{
-			var rich = RegionRichTextEditAlgorithms.FromRuns("SIL",
-				new[] { new RegionTextRun("SIL", "en", objectData: ExternalLink + "https://software.sil.org") });
+			var rich = DetailRichTextEditAlgorithms.FromRuns("SIL",
+				new[] { new DetailTextRun("SIL", "en", objectData: ExternalLink + "https://software.sil.org") });
 			var (control, _, _) = Show(FieldWith(rich));
 			var box = Find<TextBox>(control, "BibEditor.en");
 			Assert.That(box.IsReadOnly, Is.False, "a link ORC value is editable (§19c)");

@@ -10,10 +10,12 @@ using System.Linq;
 using System.Windows.Forms;
 using System.Xml;
 using SIL.FieldWorks.Common.FwAvalonia;
-using SIL.FieldWorks.Common.FwAvalonia.Region;
+using SIL.FieldWorks.Common.FwAvalonia.Detail;
 using SIL.FieldWorks.Common.FwAvalonia.Seams;
 using SIL.FieldWorks.Common.FwAvalonia.ViewDefinition;
 using SIL.FieldWorks.Common.Framework.DetailControls;
+// Bare DataTree in this file means the legacy WinForms tree; the Avalonia twin stays qualified.
+using DataTree = SIL.FieldWorks.Common.Framework.DetailControls.DataTree;
 using SIL.LCModel;
 using SIL.LCModel.Utils;
 using XCore;
@@ -31,7 +33,7 @@ namespace SIL.FieldWorks.XWorks
 {
 	/// <summary>
 	/// The Avalonia half of <see cref="RecordEditView"/>: everything that only exists because a
-	/// record can be shown on the new <see cref="RegionHostControl"/> surface instead of the
+	/// record can be shown on the new <see cref="DetailHostControl"/> surface instead of the
 	/// legacy <see cref="DataTree"/>. Kept in its own file (mirroring this codebase's
 	/// Form/Form.Designer.cs split) so the legacy-facing file stays small; nothing here
 	/// changes behavior when <c>UIMode</c> is Legacy.
@@ -41,7 +43,7 @@ namespace SIL.FieldWorks.XWorks
 		private EditSurface m_lexicalEditSurface;
 		private readonly EditSurfaceFactory m_lexicalEditSurfaceFactory;
 		private readonly EditSurfaceSelectionService m_surfaceSelectionService = new EditSurfaceSelectionService();
-		private RegionHostControl m_avaloniaEntryForm;
+		private DetailHostControl m_avaloniaEntryForm;
 		private RecordClerkNavigationContext m_recordNavigationContext;
 		// Owns the fenced edit context; swapping/clearing through it cancels any open session so an
 		// open undo task is never orphaned (an orphan makes the shutdown Save throw "Commit at wrong place").
@@ -190,7 +192,7 @@ namespace SIL.FieldWorks.XWorks
 			if (m_avaloniaEntryForm != null)
 				return;
 
-			m_avaloniaEntryForm = (RegionHostControl)m_lexicalEditSurfaceFactory.Create(EditSurface.Avalonia);
+			m_avaloniaEntryForm = (DetailHostControl)m_lexicalEditSurfaceFactory.Create(EditSurface.Avalonia);
 			m_avaloniaEntryForm.Dock = DockStyle.Fill;
 			m_avaloniaEntryForm.RegionEditCompleted += OnAvaloniaRegionEditCompleted;
 			if (!m_panel.Controls.Contains(m_avaloniaEntryForm))
@@ -321,8 +323,8 @@ namespace SIL.FieldWorks.XWorks
 			var showHidden = m_propertyTable.GetBoolProperty("ShowHiddenFields-" + toolName, false,
 				PropertyTable.SettingsGroup.LocalSettings);
 
-			RegionModel region = null;
-			IRegionEditContext editContext = null;
+			DetailModel region = null;
+			IDetailEditContext editContext = null;
 			ComposedRegion composed = null;
 			try
 			{
@@ -426,7 +428,7 @@ namespace SIL.FieldWorks.XWorks
 			return menus;
 		}
 
-		private void OnRegionMenuRequested(RegionMenuRequest request)
+		private void OnRegionMenuRequested(DetailMenuRequest request)
 		{
 			try
 			{
@@ -445,11 +447,11 @@ namespace SIL.FieldWorks.XWorks
 				var ids = new List<string>();
 				switch (request.Kind)
 				{
-					case RegionMenuKind.ContextMenu:
+					case DetailMenuKind.ContextMenu:
 						ids.AddRange(ComposeContextMenuIds(request.Field.ContextMenuId,
 							request.Field.IsMultiStringRow));
 						break;
-					case RegionMenuKind.Hotlinks:
+					case DetailMenuKind.Hotlinks:
 						ids.Add(request.Field.HotlinksId);
 						break;
 					default:
@@ -525,7 +527,7 @@ namespace SIL.FieldWorks.XWorks
 		/// carries no (class, layout) context, e.g. the first-slice fallback rows; that keeps the legacy
 		/// behavior intact when the override layer cannot be addressed.
 		/// </summary>
-		private Func<ChoiceBase, RegionMenuItem> BuildOverrideCommandInterceptor(RegionField field)
+		private Func<ChoiceBase, DetailMenuItem> BuildOverrideCommandInterceptor(DetailField field)
 		{
 			if (field == null || string.IsNullOrEmpty(field.ClassName) || string.IsNullOrEmpty(field.LayoutName)
 				|| ViewOverrideStore == null)
@@ -579,27 +581,27 @@ namespace SIL.FieldWorks.XWorks
 
 		// A Field Visibility menu item: checked when it is the field's current visibility, executes the
 		// SetVisibility override mutation (idempotent — re-choosing the current value is a harmless write).
-		private RegionMenuItem VisibilityItem(ChoiceBase choice, RegionField field,
+		private DetailMenuItem VisibilityItem(ChoiceBase choice, DetailField field,
 			string templateId, ViewNodeLocation location, ViewVisibility target)
 		{
 			var label = XCoreMenuBridge.StripAccelerator(choice.GetDisplayProperties().Text);
 			var isChecked = location.Visibility == target;
-			return new RegionMenuItem(label, isEnabled: true, isChecked: isChecked, children: null,
+			return new DetailMenuItem(label, isEnabled: true, isChecked: isChecked, children: null,
 				execute: () => ApplyFieldVisibility(field, templateId, target));
 		}
 
 		// A Move Field item: disabled at the first sibling (up) / last sibling (down) / when alone.
-		private RegionMenuItem MoveItem(ChoiceBase choice, RegionField field,
+		private DetailMenuItem MoveItem(ChoiceBase choice, DetailField field,
 			ViewNodeLocation location, bool up)
 		{
 			var label = XCoreMenuBridge.StripAccelerator(choice.GetDisplayProperties().Text);
 			var canMove = up ? location.CanMoveUp : location.CanMoveDown;
-			return new RegionMenuItem(label, isEnabled: canMove, isChecked: false, children: null,
+			return new DetailMenuItem(label, isEnabled: canMove, isChecked: false, children: null,
 				execute: canMove ? (Action)(() => ApplyMoveField(field, location, up)) : null);
 		}
 
 		// Writes a SetVisibility op for the field's template id into the project override and recomposes.
-		private void ApplyFieldVisibility(RegionField field, string templateId, ViewVisibility target)
+		private void ApplyFieldVisibility(DetailField field, string templateId, ViewVisibility target)
 		{
 			var op = new ViewOverrideOperation(ViewOverrideOperationKind.SetVisibility, templateId,
 				visibility: target);
@@ -608,7 +610,7 @@ namespace SIL.FieldWorks.XWorks
 
 		// Writes a ReorderChildren op on the field's PARENT (the sibling order with this field swapped one
 		// position) into the project override and recomposes. A no-op when the move is not possible.
-		private void ApplyMoveField(RegionField field, ViewNodeLocation location, bool up)
+		private void ApplyMoveField(DetailField field, ViewNodeLocation location, bool up)
 		{
 			var moved = ViewDefinitionOverrideEditor.ComputeMovedOrder(location.SiblingOrder, location.Index, up);
 			if (moved == null || string.IsNullOrEmpty(location.ParentStableId))
@@ -620,7 +622,7 @@ namespace SIL.FieldWorks.XWorks
 
 		// Loads-or-creates the (class, layout) override, folds the op in, saves it, and recomposes the
 		// Avalonia region so the change is visible immediately. The legacy DataTree/Inventory is untouched.
-		private void MutateOverrideAndRefresh(RegionField field, ViewOverrideOperation op)
+		private void MutateOverrideAndRefresh(DetailField field, ViewOverrideOperation op)
 		{
 			try
 			{
@@ -649,7 +651,7 @@ namespace SIL.FieldWorks.XWorks
 		/// fenced edit session settles first (the jump navigates away from this record), then the
 		/// same mediator message posts.
 		/// </summary>
-		private void OnRegionLinkRequested(RegionLinkRequest request)
+		private void OnRegionLinkRequested(DetailLinkRequest request)
 		{
 			try
 			{
@@ -670,7 +672,7 @@ namespace SIL.FieldWorks.XWorks
 		/// lexeme-editor chooserInfos set <c>flidTextParam</c>, so empty mirrors legacy exactly).
 		/// Internal so the mapping is unit-testable without a mediator.
 		/// </summary>
-		internal static FwLinkArgs BuildFollowLinkArgs(RegionLinkRequest request)
+		internal static FwLinkArgs BuildFollowLinkArgs(DetailLinkRequest request)
 		{
 			var target = Guid.Empty;
 			if (!string.IsNullOrEmpty(request.Link.TargetGuid))

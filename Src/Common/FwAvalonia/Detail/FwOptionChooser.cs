@@ -19,7 +19,7 @@ using Avalonia.Styling;
 using Avalonia.VisualTree;
 using SIL.FieldWorks.Common.FwAvalonia;
 
-namespace SIL.FieldWorks.Common.FwAvalonia.Region
+namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 {
 	/// <summary>
 	/// The ONE compact, filterable select-from-list control every Avalonia option surface uses:
@@ -36,7 +36,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 	/// options filter by case-insensitive contains over the option name; a search-backed picker
 	/// (a non-null search delegate) forwards the typed query to the host instead (lexicons search,
 	/// lists enumerate). The shared item template preserves
-	/// possibility-list indentation via <see cref="RegionChoiceOption.Depth"/>, while the compact
+	/// possibility-list indentation via <see cref="DetailChoiceOption.Depth"/>, while the compact
 	/// item theme keeps the legacy menu density and a pointer-release guard stops scrollbar clicks
 	/// from committing the highlighted item.
 	///
@@ -64,13 +64,13 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 			return sw;
 		}
 
-		private readonly IReadOnlyList<RegionChoiceOption> _options;
-		private readonly Func<string, IReadOnlyList<RegionChoiceOption>> _searchOptions;
+		private readonly IReadOnlyList<DetailChoiceOption> _options;
+		private readonly Func<string, IReadOnlyList<DetailChoiceOption>> _searchOptions;
 		private readonly HashSet<string> _unavailableKeys;
 		private readonly string _automationId;
 		private readonly TextBox _filterBox;
 		private readonly ListBox _list;
-		private IReadOnlyList<RegionChoiceOption> _currentResults = Array.Empty<RegionChoiceOption>();
+		private IReadOnlyList<DetailChoiceOption> _currentResults = Array.Empty<DetailChoiceOption>();
 
 		// Multi-select mode (the legacy ReallySimpleListChooser multi-check chooser): the list rows
 		// carry a leading checkbox, Enter/click TOGGLES the highlighted row instead of committing, an
@@ -84,9 +84,9 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		private readonly List<string> _checkedOrder = new List<string>();
 		private readonly HashSet<string> _checkedKeys = new HashSet<string>(StringComparer.Ordinal);
 		// Resolved options by key, so a committed key (which may have scrolled out of the current
-		// result set) still resolves to its full RegionChoiceOption for the batch.
-		private readonly Dictionary<string, RegionChoiceOption> _seenByKey =
-			new Dictionary<string, RegionChoiceOption>(StringComparer.Ordinal);
+		// result set) still resolves to its full DetailChoiceOption for the batch.
+		private readonly Dictionary<string, DetailChoiceOption> _seenByKey =
+			new Dictionary<string, DetailChoiceOption>(StringComparer.Ordinal);
 		// The last plainly-toggled row, the anchor for shift+click range selection (multi-select only).
 		private string _anchorKey;
 		private readonly Button _addButton;
@@ -108,16 +108,16 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		private bool _dropdownOpen;
 		// The committed selection shown collapsed (dropdown mode); tracks OptionCommitted and external
 		// SelectedIndex moves (the VM's derive-on-type reselection) so the closed label stays in sync.
-		private RegionChoiceOption _selectedOption;
+		private DetailChoiceOption _selectedOption;
 
-		public FwOptionChooser(IReadOnlyList<RegionChoiceOption> options,
-			Func<string, IReadOnlyList<RegionChoiceOption>> searchOptions,
+		public FwOptionChooser(IReadOnlyList<DetailChoiceOption> options,
+			Func<string, IReadOnlyList<DetailChoiceOption>> searchOptions,
 			string automationId,
 			IEnumerable<string> unavailableKeys = null,
 			bool multiSelect = false,
 			bool dropdown = false)
 		{
-			_options = options ?? Array.Empty<RegionChoiceOption>();
+			_options = options ?? Array.Empty<DetailChoiceOption>();
 			_searchOptions = searchOptions;
 			_unavailableKeys = new HashSet<string>(unavailableKeys ?? Array.Empty<string>(), StringComparer.Ordinal);
 			_multiSelect = multiSelect;
@@ -383,7 +383,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		// moves, e.g. the VM's initial select and derive-on-type reselection).
 		private void SyncDropdownLabel()
 		{
-			if (_list.SelectedItem is RegionChoiceOption option)
+			if (_list.SelectedItem is DetailChoiceOption option)
 				_selectedOption = option;
 			UpdateDropdownLabel();
 		}
@@ -438,7 +438,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		public SelectingItemsControl OptionsList => _list;
 
 		/// <summary>The current filtered/result set shown by the list.</summary>
-		public IReadOnlyList<RegionChoiceOption> CurrentItems => _currentResults;
+		public IReadOnlyList<DetailChoiceOption> CurrentItems => _currentResults;
 
 		/// <summary>True when this picker was built in collapsed dropdown mode (opt-in; else inline).</summary>
 		public bool IsDropdown => _dropdown;
@@ -450,7 +450,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		public string DropdownText => _dropdownLabel?.Text ?? string.Empty;
 
 		/// <summary>The currently-selected option reflected by the collapsed dropdown (dropdown mode only; else null).</summary>
-		public RegionChoiceOption SelectedOption => _selectedOption;
+		public DetailChoiceOption SelectedOption => _selectedOption;
 
 		/// <summary>Opens the dropdown's option-list popup (no-op outside dropdown mode). Same effect as clicking the box.</summary>
 		public void OpenDropdown()
@@ -463,14 +463,14 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		/// Raised when the user commits a SINGLE option (Enter or click) in single-select mode.
 		/// Never raised in multi-select mode (use <see cref="OptionsCommitted"/>).
 		/// </summary>
-		public event Action<RegionChoiceOption> OptionCommitted;
+		public event Action<DetailChoiceOption> OptionCommitted;
 
 		/// <summary>
 		/// Raised when the user commits the CHECKED SET (the "Add" button) in multi-select mode — the
 		/// whole batch in one signal so the host stages it as one undoable step. Never raised in
 		/// single-select mode. Empty checked set does not raise it (the Add button is disabled).
 		/// </summary>
-		public event Action<IReadOnlyList<RegionChoiceOption>> OptionsCommitted;
+		public event Action<IReadOnlyList<DetailChoiceOption>> OptionsCommitted;
 
 		/// <summary>Raised when the user dismisses the picker (Escape); the host hides its flyout.</summary>
 		public event EventHandler Dismissed;
@@ -487,7 +487,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		/// </summary>
 		public void CommitHighlighted()
 		{
-			var option = (_list.SelectedItem as RegionChoiceOption) ?? _currentResults.FirstOrDefault();
+			var option = (_list.SelectedItem as DetailChoiceOption) ?? _currentResults.FirstOrDefault();
 			if (option == null || !IsOptionAvailable(option))
 				return;
 			if (_multiSelect)
@@ -526,7 +526,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 				OptionsCommitted?.Invoke(batch);
 		}
 
-		private void ToggleChecked(RegionChoiceOption option)
+		private void ToggleChecked(DetailChoiceOption option)
 		{
 			var key = option.Key ?? string.Empty;
 			SetCheckedState(option, !_checkedKeys.Contains(key));
@@ -542,7 +542,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		{
 			if (!_multiSelect)
 				return;
-			var option = (_list.SelectedItem as RegionChoiceOption) ?? _currentResults.FirstOrDefault();
+			var option = (_list.SelectedItem as DetailChoiceOption) ?? _currentResults.FirstOrDefault();
 			if (option != null && IsOptionAvailable(option))
 				ToggleCheckedRange(option);
 		}
@@ -551,7 +551,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		// in visible order) to the state a normal toggle of the target would produce. The anchor is kept so
 		// chained shift+clicks re-range from the same start, matching the chooser's range-select. Falls back
 		// to a plain toggle when there is no live anchor in the current result set.
-		private void ToggleCheckedRange(RegionChoiceOption target)
+		private void ToggleCheckedRange(DetailChoiceOption target)
 		{
 			var targetKey = target.Key ?? string.Empty;
 			var anchorIndex = _anchorKey == null ? -1 : IndexOfKey(_anchorKey);
@@ -582,7 +582,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		}
 
 		// Adds/removes ONE key from the checked set (no re-render); callers batch a RerenderChecks().
-		private void SetCheckedState(RegionChoiceOption option, bool isChecked)
+		private void SetCheckedState(DetailChoiceOption option, bool isChecked)
 		{
 			var key = option.Key ?? string.Empty;
 			if (isChecked)
@@ -611,7 +611,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 			_list.SelectedIndex = current;
 		}
 
-		private void RememberSeen(IReadOnlyList<RegionChoiceOption> options)
+		private void RememberSeen(IReadOnlyList<DetailChoiceOption> options)
 		{
 			if (!_multiSelect || options == null)
 				return;
@@ -622,10 +622,10 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 			}
 		}
 
-		private bool IsOptionAvailable(RegionChoiceOption option)
+		private bool IsOptionAvailable(DetailChoiceOption option)
 			=> option != null && !_unavailableKeys.Contains(option.Key ?? string.Empty);
 
-		private static int FirstEnabledIndex(IReadOnlyList<RegionChoiceOption> options, Func<RegionChoiceOption, bool> predicate)
+		private static int FirstEnabledIndex(IReadOnlyList<DetailChoiceOption> options, Func<DetailChoiceOption, bool> predicate)
 		{
 			if (options == null)
 				return -1;
@@ -638,7 +638,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 			return -1;
 		}
 
-		private int FirstEnabledIndex(IReadOnlyList<RegionChoiceOption> options)
+		private int FirstEnabledIndex(IReadOnlyList<DetailChoiceOption> options)
 			=> FirstEnabledIndex(options, IsOptionAvailable);
 
 		private void ApplyFilter()
@@ -655,8 +655,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 			else
 			{
 				_currentResults = string.IsNullOrWhiteSpace(query)
-					? Array.Empty<RegionChoiceOption>()
-					: (_searchOptions(query) ?? Array.Empty<RegionChoiceOption>());
+					? Array.Empty<DetailChoiceOption>()
+					: (_searchOptions(query) ?? Array.Empty<DetailChoiceOption>());
 			}
 
 			RememberSeen(_currentResults);
@@ -767,7 +767,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 
 		private IDataTemplate OptionTemplate()
 		{
-			return new FuncDataTemplate<RegionChoiceOption>((option, _) =>
+			return new FuncDataTemplate<DetailChoiceOption>((option, _) =>
 			{
 				if (option == null)
 					return null;

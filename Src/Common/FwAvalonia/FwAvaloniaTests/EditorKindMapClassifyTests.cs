@@ -53,36 +53,36 @@ namespace FwAvaloniaTests
 		public void UnrecognizedNonEmpty_IsUnknown(string editor)
 			=> Assert.That(EditorKindMap.Classify(editor), Is.EqualTo(EditorClassification.Unknown));
 
-		// ----- ClassifyRegionFieldKind: the dispatch table the composer + mapper both consume -----
+		// ----- ClassifyDetailFieldKind: the dispatch table the composer + mapper both consume -----
 
-		[TestCase(null, RegionEditorCategory.Grouping)]
-		[TestCase("", RegionEditorCategory.Grouping)]
-		[TestCase("multistring", RegionEditorCategory.Text)]
-		[TestCase("string", RegionEditorCategory.Text)]
-		[TestCase("morphtypeatomicreference", RegionEditorCategory.MorphTypeChooser)]
-		[TestCase("summary", RegionEditorCategory.Summary)]
-		[TestCase("lit", RegionEditorCategory.Literal)]
-		[TestCase("picture", RegionEditorCategory.Picture)]
-		[TestCase("image", RegionEditorCategory.Picture)]
-		[TestCase("jtview", RegionEditorCategory.EmbeddedView)]
-		[TestCase("command", RegionEditorCategory.Command)]
-		[TestCase("possatomicreference", RegionEditorCategory.AtomicReferenceChooser)]
-		[TestCase("defaultatomicreference", RegionEditorCategory.AtomicReferenceChooser)]
-		[TestCase("msareferencecombobox", RegionEditorCategory.MsaChooser)]
-		[TestCase("derivmsareference", RegionEditorCategory.MsaChooser)]
-		[TestCase("inflmsareference", RegionEditorCategory.MsaChooser)]
-		[TestCase("MULTISTRING", RegionEditorCategory.Text)] // case-insensitive
-		[TestCase("notreal", RegionEditorCategory.Other)]
-		public void ClassifyRegionFieldKind_MapsEditorToCategory(string editor, RegionEditorCategory expected)
-			=> Assert.That(EditorKindMap.ClassifyRegionFieldKind(editor), Is.EqualTo(expected));
+		[TestCase(null, DetailEditorCategory.Grouping)]
+		[TestCase("", DetailEditorCategory.Grouping)]
+		[TestCase("multistring", DetailEditorCategory.Text)]
+		[TestCase("string", DetailEditorCategory.Text)]
+		[TestCase("morphtypeatomicreference", DetailEditorCategory.MorphTypeChooser)]
+		[TestCase("summary", DetailEditorCategory.Summary)]
+		[TestCase("lit", DetailEditorCategory.Literal)]
+		[TestCase("picture", DetailEditorCategory.Picture)]
+		[TestCase("image", DetailEditorCategory.Picture)]
+		[TestCase("jtview", DetailEditorCategory.EmbeddedView)]
+		[TestCase("command", DetailEditorCategory.Command)]
+		[TestCase("possatomicreference", DetailEditorCategory.AtomicReferenceChooser)]
+		[TestCase("defaultatomicreference", DetailEditorCategory.AtomicReferenceChooser)]
+		[TestCase("msareferencecombobox", DetailEditorCategory.MsaChooser)]
+		[TestCase("derivmsareference", DetailEditorCategory.MsaChooser)]
+		[TestCase("inflmsareference", DetailEditorCategory.MsaChooser)]
+		[TestCase("MULTISTRING", DetailEditorCategory.Text)] // case-insensitive
+		[TestCase("notreal", DetailEditorCategory.Other)]
+		public void ClassifyRegionFieldKind_MapsEditorToCategory(string editor, DetailEditorCategory expected)
+			=> Assert.That(EditorKindMap.ClassifyDetailFieldKind(editor), Is.EqualTo(expected));
 
 		[Test]
 		public void ClassifyRegionFieldKind_EnumCombo_IsClosedCombo_NotFreeFormText()
 		{
 			// Safety: a closed enum combo must NOT degrade to a free-form editor that could persist
 			// invalid enum values — this is the regression this dispatch arm guards against.
-			Assert.That(EditorKindMap.ClassifyRegionFieldKind("enumcombobox"),
-				Is.EqualTo(RegionEditorCategory.EnumCombo));
+			Assert.That(EditorKindMap.ClassifyDetailFieldKind("enumcombobox"),
+				Is.EqualTo(DetailEditorCategory.EnumCombo));
 		}
 	}
 }

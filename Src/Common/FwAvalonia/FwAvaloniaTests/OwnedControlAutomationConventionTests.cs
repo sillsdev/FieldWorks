@@ -11,7 +11,7 @@ using Avalonia.Threading;
 using Avalonia.VisualTree;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwAvalonia;
-using SIL.FieldWorks.Common.FwAvalonia.Region;
+using SIL.FieldWorks.Common.FwAvalonia.Detail;
 using SIL.FieldWorks.Common.FwAvalonia.ViewDefinition;
 
 namespace FwAvaloniaTests
@@ -27,13 +27,13 @@ namespace FwAvaloniaTests
 	[TestFixture]
 	public class OwnedControlAutomationConventionTests
 	{
-		private static RegionField MakeTextField(string stableId, string label, string automationId)
+		private static DetailField MakeTextField(string stableId, string label, string automationId)
 		{
-			return new RegionField(stableId, label, "Form", null,
-				RegionFieldKind.Text, EditorClassification.Known, automationId, null, SurfaceRouting.Inherit,
-				new List<RegionWsValue>
+			return new DetailField(stableId, label, "Form", null,
+				DetailFieldKind.Text, EditorClassification.Known, automationId, null, SurfaceRouting.Inherit,
+				new List<DetailWsValue>
 				{
-					new RegionWsValue("fr", "bonjour", wsTag: "fr")
+					new DetailWsValue("fr", "bonjour", wsTag: "fr")
 				}, null, null);
 		}
 

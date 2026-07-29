@@ -17,7 +17,7 @@ using Avalonia.Threading;
 using Avalonia.VisualTree;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwAvalonia;
-using SIL.FieldWorks.Common.FwAvalonia.Region;
+using SIL.FieldWorks.Common.FwAvalonia.Detail;
 using FwAvaloniaTests.VisualChecks; // DialogSnapshot — the PNG harness
 using FwAvaloniaDialogsTests;        // DialogLayoutAssert — the shared geometry tripwire
 
@@ -35,19 +35,19 @@ namespace FwAvaloniaTests
 	[TestFixture]
 	public class FwOptionChooserTests
 	{
-		private static IReadOnlyList<RegionChoiceOption> Tree() => new List<RegionChoiceOption>
+		private static IReadOnlyList<DetailChoiceOption> Tree() => new List<DetailChoiceOption>
 		{
-			new RegionChoiceOption("u", "Universe", 0),
-			new RegionChoiceOption("u-sky", "Sky", 1),
-			new RegionChoiceOption("u-weather", "Weather", 1),
-			new RegionChoiceOption("p", "Person", 0)
+			new DetailChoiceOption("u", "Universe", 0),
+			new DetailChoiceOption("u-sky", "Sky", 1),
+			new DetailChoiceOption("u-weather", "Weather", 1),
+			new DetailChoiceOption("p", "Person", 0)
 		};
 
-		private static (FwOptionChooser picker, Window window, List<RegionChoiceOption> committed,
+		private static (FwOptionChooser picker, Window window, List<DetailChoiceOption> committed,
 			int dismissed) ShowStatic()
 		{
 			var picker = new FwOptionChooser(Tree(), null, "Domains");
-			var committed = new List<RegionChoiceOption>();
+			var committed = new List<DetailChoiceOption>();
 			picker.OptionCommitted += committed.Add;
 			var dismissed = 0;
 			picker.Dismissed += (s, e) => dismissed++;
@@ -59,11 +59,11 @@ namespace FwAvaloniaTests
 			return (picker, window, committed, dismissed);
 		}
 
-		private static (FwOptionChooser picker, Window window, List<RegionChoiceOption> committed) ShowStaticWithUnavailable(
+		private static (FwOptionChooser picker, Window window, List<DetailChoiceOption> committed) ShowStaticWithUnavailable(
 			params string[] unavailableKeys)
 		{
 			var picker = new FwOptionChooser(Tree(), null, "Domains", unavailableKeys);
-			var committed = new List<RegionChoiceOption>();
+			var committed = new List<DetailChoiceOption>();
 			picker.OptionCommitted += committed.Add;
 			var window = new Window { Content = picker, Width = 400, Height = 420 };
 			window.Show();
@@ -85,7 +85,7 @@ namespace FwAvaloniaTests
 			Dispatcher.UIThread.RunJobs();
 		}
 
-		private static IReadOnlyList<RegionChoiceOption> Items(FwOptionChooser picker)
+		private static IReadOnlyList<DetailChoiceOption> Items(FwOptionChooser picker)
 			=> picker.CurrentItems;
 
 		[AvaloniaTest]
@@ -228,7 +228,7 @@ namespace FwAvaloniaTests
 		public void Escape_RaisesDismissed_WithoutCommitting()
 		{
 			var picker = new FwOptionChooser(Tree(), null, "Domains");
-			var committed = new List<RegionChoiceOption>();
+			var committed = new List<DetailChoiceOption>();
 			picker.OptionCommitted += committed.Add;
 			var dismissed = 0;
 			picker.Dismissed += (s, e) => dismissed++;
@@ -292,10 +292,10 @@ namespace FwAvaloniaTests
 		public void SearchBackedPicker_EnumeratesNothingUpFront_AndForwardsTheQuery()
 		{
 			var queries = new List<string>();
-			var lexicon = new List<RegionChoiceOption>
+			var lexicon = new List<DetailChoiceOption>
 			{
-				new RegionChoiceOption("e-casa", "casa"),
-				new RegionChoiceOption("e-cantar", "cantar")
+				new DetailChoiceOption("e-casa", "casa"),
+				new DetailChoiceOption("e-cantar", "cantar")
 			};
 			var picker = new FwOptionChooser(null,
 				q =>
@@ -304,7 +304,7 @@ namespace FwAvaloniaTests
 					return lexicon.Where(o => o.Name.StartsWith(q, StringComparison.OrdinalIgnoreCase)).ToList();
 				},
 				"Components");
-			var committed = new List<RegionChoiceOption>();
+			var committed = new List<DetailChoiceOption>();
 			picker.OptionCommitted += committed.Add;
 			var window = new Window { Content = picker, Width = 400, Height = 420 };
 			window.Show();
@@ -357,10 +357,10 @@ namespace FwAvaloniaTests
 			// Enough options to overflow the capped list, so the scrollbar is a real part of
 			// the gesture surface.
 			var options = Enumerable.Range(0, 60)
-				.Select(i => new RegionChoiceOption("k" + i, "Option " + i))
+				.Select(i => new DetailChoiceOption("k" + i, "Option " + i))
 				.ToList();
 			var picker = new FwOptionChooser(options, null, "Domains");
-			var committed = new List<RegionChoiceOption>();
+			var committed = new List<DetailChoiceOption>();
 			picker.OptionCommitted += committed.Add;
 			var window = new Window { Content = picker, Width = 400, Height = 420 };
 			window.Show();
@@ -399,12 +399,12 @@ namespace FwAvaloniaTests
 
 		// ===== Multi-select mode (the legacy multi-check chooser) =====
 
-		private static (FwOptionChooser picker, Window window, List<IReadOnlyList<RegionChoiceOption>> batches)
-			ShowMultiSelect(IReadOnlyList<RegionChoiceOption> options = null,
-				Func<string, IReadOnlyList<RegionChoiceOption>> search = null)
+		private static (FwOptionChooser picker, Window window, List<IReadOnlyList<DetailChoiceOption>> batches)
+			ShowMultiSelect(IReadOnlyList<DetailChoiceOption> options = null,
+				Func<string, IReadOnlyList<DetailChoiceOption>> search = null)
 		{
 			var picker = new FwOptionChooser(options ?? Tree(), search, "Domains", null, multiSelect: true);
-			var batches = new List<IReadOnlyList<RegionChoiceOption>>();
+			var batches = new List<IReadOnlyList<DetailChoiceOption>>();
 			picker.OptionsCommitted += batches.Add;
 			var window = new Window { Content = picker, Width = 400, Height = 420 };
 			window.Show();
@@ -463,7 +463,7 @@ namespace FwAvaloniaTests
 
 			// Shift-toggle row 3 ("Person"): the whole visible range 1..3 is checked, anchor included.
 			picker.OptionsList.SelectedIndex = 3;
-			var targetKey = ((RegionChoiceOption)picker.OptionsList.SelectedItem).Key;
+			var targetKey = ((DetailChoiceOption)picker.OptionsList.SelectedItem).Key;
 			picker.ToggleHighlightedRange();
 			Dispatcher.UIThread.RunJobs();
 
@@ -495,13 +495,13 @@ namespace FwAvaloniaTests
 		[AvaloniaTest]
 		public void MultiSelect_ChecksPersistAcrossSearchReQueries_AndCommitTogether()
 		{
-			var lexicon = new List<RegionChoiceOption>
+			var lexicon = new List<DetailChoiceOption>
 			{
-				new RegionChoiceOption("e-casa", "casa"),
-				new RegionChoiceOption("e-cantar", "cantar"),
-				new RegionChoiceOption("e-perro", "perro")
+				new DetailChoiceOption("e-casa", "casa"),
+				new DetailChoiceOption("e-cantar", "cantar"),
+				new DetailChoiceOption("e-perro", "perro")
 			};
-			Func<string, IReadOnlyList<RegionChoiceOption>> search = q =>
+			Func<string, IReadOnlyList<DetailChoiceOption>> search = q =>
 				lexicon.Where(o => o.Name.StartsWith(q, StringComparison.OrdinalIgnoreCase)).ToList();
 			var (picker, window, batches) = ShowMultiSelect(search: search);
 			window.UpdateLayout();
@@ -564,11 +564,11 @@ namespace FwAvaloniaTests
 
 		// ===== Dropdown (collapsed) mode (the MorphType picker) =====
 
-		private static (FwOptionChooser picker, Window window, List<RegionChoiceOption> committed) ShowDropdown(
-			IReadOnlyList<RegionChoiceOption> options = null)
+		private static (FwOptionChooser picker, Window window, List<DetailChoiceOption> committed) ShowDropdown(
+			IReadOnlyList<DetailChoiceOption> options = null)
 		{
 			var picker = new FwOptionChooser(options ?? Tree(), null, "Domains", dropdown: true);
-			var committed = new List<RegionChoiceOption>();
+			var committed = new List<DetailChoiceOption>();
 			picker.OptionCommitted += committed.Add;
 			var window = new Window { Content = picker, Width = 400, Height = 420 };
 			window.Show();

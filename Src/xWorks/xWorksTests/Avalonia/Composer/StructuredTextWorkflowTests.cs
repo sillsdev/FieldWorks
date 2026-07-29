@@ -6,7 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
-using SIL.FieldWorks.Common.FwAvalonia.Region;
+using SIL.FieldWorks.Common.FwAvalonia.Detail;
 using SIL.LCModel;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.DomainServices;
@@ -66,14 +66,14 @@ namespace SIL.FieldWorks.XWorks
 
 		// The StructuredText field + composed edit context wired exactly as RegionComposer does:
 		// each setter mutates m_definition inside the shared fenced Stage().
-		private (RegionField Field, ComposedRegionEditContext Context) Build()
+		private (DetailField Field, ComposedRegionEditContext Context) Build()
 		{
 			var paragraphs = m_definition.ParagraphsOS.OfType<IStTxtPara>()
-				.Select(p => new RegionParagraph(
+				.Select(p => new DetailParagraph(
 					RegionRichTextAdapter.FromTsString(p.Contents, Cache.WritingSystemFactory), p.StyleName))
 				.ToList();
-			var field = new RegionField(StableId, "Definition", "Definition", null,
-				RegionFieldKind.StructuredText,
+			var field = new DetailField(StableId, "Definition", "Definition", null,
+				DetailFieldKind.StructuredText,
 				SIL.FieldWorks.Common.FwAvalonia.ViewDefinition.EditorClassification.Known, null, null,
 				SIL.FieldWorks.Common.FwAvalonia.ViewDefinition.SurfaceRouting.Product, null, null, null,
 				isEditable: true, paragraphs: paragraphs)
@@ -124,14 +124,14 @@ namespace SIL.FieldWorks.XWorks
 			return (field, context);
 		}
 
-		private static RegionRichTextValue Rich(string text)
-			=> RegionRichTextEditAlgorithms.FromRuns(text, new[] { new RegionTextRun(text) });
+		private static DetailRichTextValue Rich(string text)
+			=> DetailRichTextEditAlgorithms.FromRuns(text, new[] { new DetailTextRun(text) });
 
-		// The host re-show: re-project the StText from domain truth into fresh RegionParagraphs, exactly
+		// The host re-show: re-project the StText from domain truth into fresh DetailParagraphs, exactly
 		// as a recompose/reopen of the entry would. Asserting against THIS proves the round-trip.
-		private List<RegionParagraph> ReProject()
+		private List<DetailParagraph> ReProject()
 			=> m_definition.ParagraphsOS.OfType<IStTxtPara>()
-				.Select(p => new RegionParagraph(
+				.Select(p => new DetailParagraph(
 					RegionRichTextAdapter.FromTsString(p.Contents, Cache.WritingSystemFactory), p.StyleName))
 				.ToList();
 

@@ -4,7 +4,7 @@
 
 using System.Diagnostics;
 using NUnit.Framework;
-using SIL.FieldWorks.Common.FwAvalonia.Region;
+using SIL.FieldWorks.Common.FwAvalonia.Detail;
 
 namespace FwAvaloniaTests
 {
@@ -17,18 +17,18 @@ namespace FwAvaloniaTests
 		[TestCase(1.5, 8.0)]
 		public void TypingHarness_MeetsPerKeystrokeThresholds(double dpiScale, double maxMsPerKey)
 		{
-			var rich = RegionRichTextEditAlgorithms.FromRuns(string.Empty,
-				new[] { new RegionTextRun(string.Empty, "qaa-x-kal") });
+			var rich = DetailRichTextEditAlgorithms.FromRuns(string.Empty,
+				new[] { new DetailTextRun(string.Empty, "qaa-x-kal") });
 			var text = string.Empty;
 
 			var timer = Stopwatch.StartNew();
 			for (var i = 0; i < Keystrokes; i++)
 			{
 				text += "a";
-				rich = RegionRichTextEditAlgorithms.ApplyPlainTextEdit(rich, text);
+				rich = DetailRichTextEditAlgorithms.ApplyPlainTextEdit(rich, text);
 
 				var rtl = (i % 11) == 0;
-				_ = RegionBidirectionalTextNavigation.MoveCaret(text, rich.Runs, text.Length,
+				_ = DetailBidirectionalTextNavigation.MoveCaret(text, rich.Runs, text.Length,
 					physicalLeft: rtl, defaultRightToLeft: rtl);
 			}
 

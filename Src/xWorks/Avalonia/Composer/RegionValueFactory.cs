@@ -4,7 +4,7 @@
 
 using System;
 using System.Collections.Generic;
-using SIL.FieldWorks.Common.FwAvalonia.Region;
+using SIL.FieldWorks.Common.FwAvalonia.Detail;
 using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Core.Text;
@@ -24,41 +24,41 @@ namespace SIL.FieldWorks.XWorks
 	internal static class RegionValueFactory
 	{
 		/// <summary>
-		/// One <see cref="RegionWsValue"/> per writing system, in list order, carrying the
+		/// One <see cref="DetailWsValue"/> per writing system, in list order, carrying the
 		/// project's per-ws display metadata (abbreviation, default font, RTL, IETF tag);
 		/// <paramref name="readText"/> supplies each alternative's text (null reads as empty).
 		/// </summary>
-		internal static IReadOnlyList<RegionWsValue> BuildMultiWsValues(
+		internal static IReadOnlyList<DetailWsValue> BuildMultiWsValues(
 			IEnumerable<CoreWritingSystemDefinition> systems,
 			Func<CoreWritingSystemDefinition, string> readText,
 			double fontSize = 0, bool boldEmphasis = false)
 		{
-			var values = new List<RegionWsValue>();
+			var values = new List<DetailWsValue>();
 			foreach (var ws in systems)
 			{
-				values.Add(new RegionWsValue(ws.Abbreviation, readText(ws) ?? string.Empty,
+				values.Add(new DetailWsValue(ws.Abbreviation, readText(ws) ?? string.Empty,
 					ws.DefaultFontName, fontSize, ws.RightToLeftScript, ws.Id, boldEmphasis));
 			}
 			return values;
 		}
 
 		/// <summary>
-		/// One <see cref="RegionWsValue"/> per writing system from an <c>ITsString</c>-backed value,
+		/// One <see cref="DetailWsValue"/> per writing system from an <c>ITsString</c>-backed value,
 		/// preserving the source rich-text runs in a neutral Avalonia-facing shape while keeping the
 		/// common project free of any LCModel dependency.
 		/// </summary>
-		internal static IReadOnlyList<RegionWsValue> BuildMultiWsValues(
+		internal static IReadOnlyList<DetailWsValue> BuildMultiWsValues(
 			IEnumerable<CoreWritingSystemDefinition> systems,
 			Func<CoreWritingSystemDefinition, ITsString> readText,
 			ILgWritingSystemFactory writingSystemFactory,
 			double fontSize = 0, bool boldEmphasis = false)
 		{
-			var values = new List<RegionWsValue>();
+			var values = new List<DetailWsValue>();
 			foreach (var ws in systems)
 			{
 				var tss = readText(ws);
 				var richText = RegionRichTextAdapter.FromTsString(tss, writingSystemFactory);
-				values.Add(new RegionWsValue(ws.Abbreviation, tss?.Text ?? string.Empty,
+				values.Add(new DetailWsValue(ws.Abbreviation, tss?.Text ?? string.Empty,
 					ws.DefaultFontName, fontSize, ws.RightToLeftScript, ws.Id, boldEmphasis, richText));
 			}
 			return values;
@@ -66,7 +66,7 @@ namespace SIL.FieldWorks.XWorks
 
 		/// <summary>
 		/// Walks a possibility list's tree in document order (parent before children) into
-		/// chooser options, hierarchy carried as <see cref="RegionChoiceOption.Depth"/> — exactly
+		/// chooser options, hierarchy carried as <see cref="DetailChoiceOption.Depth"/> — exactly
 		/// the indented tree the legacy chooser shows. <paramref name="flat"/> (a chooserInfo
 		/// "FlatList" guicontrol spec, e.g. PeopleFlatList) keeps the order but suppresses the
 		/// hierarchy, like the legacy flat chooser. Option names use the composer's fallback rule
@@ -74,13 +74,13 @@ namespace SIL.FieldWorks.XWorks
 		/// already performs the best-analysis-then-vernacular resolution itself
 		/// (ShortNameTSS), so the vernacular fallback is covered.
 		/// </summary>
-		internal static IReadOnlyList<RegionChoiceOption> BuildPossibilityOptions(
+		internal static IReadOnlyList<DetailChoiceOption> BuildPossibilityOptions(
 			ICmPossibilityList list, bool flat)
 		{
-			var options = new List<RegionChoiceOption>();
+			var options = new List<DetailChoiceOption>();
 			void Add(ICmPossibility possibility, int depth)
 			{
-				options.Add(new RegionChoiceOption(possibility.Guid.ToString(),
+				options.Add(new DetailChoiceOption(possibility.Guid.ToString(),
 					possibility.Name.BestAnalysisAlternative?.Text ?? possibility.ShortName ?? possibility.Guid.ToString(),
 					flat ? 0 : depth));
 				foreach (var sub in possibility.SubPossibilitiesOS)
@@ -95,12 +95,12 @@ namespace SIL.FieldWorks.XWorks
 
 	internal static class RegionRichTextAdapter
 	{
-		internal static RegionRichTextValue FromTsString(ITsString tss, ILgWritingSystemFactory writingSystemFactory)
+		internal static DetailRichTextValue FromTsString(ITsString tss, ILgWritingSystemFactory writingSystemFactory)
 		{
 			if (tss == null)
 				return null;
 
-			var runs = new List<RegionTextRun>();
+			var runs = new List<DetailTextRun>();
 			var lossyProperties = false;
 			for (var irun = 0; irun < tss.RunCount; irun++)
 			{
@@ -117,11 +117,11 @@ namespace SIL.FieldWorks.XWorks
 
 				lossyProperties |= RunCarriesUnsupportedProperty(props);
 
-				runs.Add(new RegionTextRun(tss.get_RunText(irun), wsTag, namedStyle, fontFamily,
+				runs.Add(new DetailTextRun(tss.get_RunText(irun), wsTag, namedStyle, fontFamily,
 					fontSize > 0 ? fontSize : 0, bold, italic, underline, objectData));
 			}
 
-			return new RegionRichTextValue(
+			return new DetailRichTextValue(
 				tss.Text ?? string.Empty,
 				runs,
 				TsStringUtils.GetXmlRep(tss, writingSystemFactory, 0),
@@ -134,7 +134,7 @@ namespace SIL.FieldWorks.XWorks
 				lossyProperties: lossyProperties);
 		}
 
-		// The TsString text properties the RegionTextRun model captures in FromTsString AND re-emits in
+		// The TsString text properties the DetailTextRun model captures in FromTsString AND re-emits in
 		// ToTsString's run-replay path. Any other int/string property on a run is silently dropped the
 		// first time the plain text changes (the edit skips the lossless RichXml fast-path), so a run
 		// carrying one outside this set is flagged lossy and the value is held read-only. ktptWs is
@@ -181,7 +181,7 @@ namespace SIL.FieldWorks.XWorks
 			return false;
 		}
 
-		internal static ITsString ToTsString(RegionRichTextValue richText,
+		internal static ITsString ToTsString(DetailRichTextValue richText,
 			ILgWritingSystemFactory writingSystemFactory, int fallbackWs)
 		{
 			if (richText == null)

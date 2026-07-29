@@ -4,7 +4,7 @@
 
 using System.Linq;
 using NUnit.Framework;
-using SIL.FieldWorks.Common.FwAvalonia.Region;
+using SIL.FieldWorks.Common.FwAvalonia.Detail;
 using SIL.LCModel;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Infrastructure;
@@ -21,7 +21,7 @@ namespace SIL.FieldWorks.XWorks
 	/// ReferenceVector rows carrying the current items plus the list's options, edited through
 	/// Add/Remove on the fenced session (sda Replace on the vector flid, the legacy
 	/// VectorReferenceView update). Deep lists (semantic domains) carry hierarchy on the options
-	/// (B8: RegionChoiceOption.Depth) so the chooser can render the legacy indented tree.
+	/// (B8: DetailChoiceOption.Depth) so the chooser can render the legacy indented tree.
 	/// </summary>
 	[TestFixture]
 	public class FullEntryRegionReferenceChooserTests : MemoryOnlyBackendProviderTestBase
@@ -136,8 +136,8 @@ namespace SIL.FieldWorks.XWorks
 		private ComposedRegion Compose(bool showHidden = false)
 			=> RegionComposer.Compose(m_entry, Cache, showHidden);
 
-		private static RegionField VectorField(ComposedRegion composed, string field)
-			=> composed.Model.Fields.Single(f => f.Field == field && f.Kind == RegionFieldKind.ReferenceVector);
+		private static DetailField VectorField(ComposedRegion composed, string field)
+			=> composed.Model.Fields.Single(f => f.Field == field && f.Kind == DetailFieldKind.ReferenceVector);
 
 		[Test]
 		public void Compose_SemanticDomains_IsEditableReferenceVector_WithHierarchicalOptions()
@@ -267,7 +267,7 @@ namespace SIL.FieldWorks.XWorks
 			var composed = Compose();
 			var status = composed.Model.Fields.Single(f => f.Field == "Status" && f.ObjectHvo == m_sense.Hvo);
 
-			Assert.That(status.Kind, Is.EqualTo(RegionFieldKind.Chooser),
+			Assert.That(status.Kind, Is.EqualTo(DetailFieldKind.Chooser),
 				"possAtomicReference takes the chooser path, like the morph type");
 			Assert.That(status.IsEditable, Is.True);
 			Assert.That(status.SelectedOptionKey, Is.EqualTo(m_statusConfirmed.Guid.ToString()));
@@ -318,7 +318,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var composed = Compose();
 			var morphType = composed.Model.Fields
-				.Single(f => f.Field == "MorphType" && f.Kind == RegionFieldKind.Chooser);
+				.Single(f => f.Field == "MorphType" && f.Kind == DetailFieldKind.Chooser);
 
 			Assert.That(morphType.Options.Select(o => o.Key), Has.None.EqualTo(string.Empty),
 				"MorphTypeAtomicLauncher.AllowEmptyItem == false — no empty choice here");
@@ -331,7 +331,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var composed = Compose();
 			var morphType = composed.Model.Fields
-				.Single(f => f.Field == "MorphType" && f.Kind == RegionFieldKind.Chooser);
+				.Single(f => f.Field == "MorphType" && f.Kind == DetailFieldKind.Chooser);
 
 			var expected = ((IMoForm)m_entry.LexemeFormOA)
 				.ReferenceTargetCandidates(MoFormTags.kflidMorphType)
@@ -374,7 +374,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var composed = Compose();
 			var publishIn = composed.Model.Fields.Single(f => f.Field == "PublishIn"
-				&& f.Kind == RegionFieldKind.ReferenceVector && f.ObjectHvo == m_entry.Hvo);
+				&& f.Kind == DetailFieldKind.ReferenceVector && f.ObjectHvo == m_entry.Hvo);
 
 			Assert.That(publishIn.ChooserLinks, Has.Count.EqualTo(1),
 				"the Publish In row carries the layout's jump link");
@@ -396,7 +396,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var composed = Compose();
 			var morphType = composed.Model.Fields
-				.Single(f => f.Field == "MorphType" && f.Kind == RegionFieldKind.Chooser);
+				.Single(f => f.Field == "MorphType" && f.Kind == DetailFieldKind.Chooser);
 
 			Assert.That(morphType.ChooserLinks, Has.Count.EqualTo(1),
 				"no authored link, but the morph-type list resolves a lists-area editor");
@@ -464,7 +464,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var composed = Compose();
 			var publishIn = composed.Model.Fields.Single(f => f.Field == "PublishIn"
-				&& f.Kind == RegionFieldKind.ReferenceVector && f.ObjectHvo == m_entry.Hvo);
+				&& f.Kind == DetailFieldKind.ReferenceVector && f.ObjectHvo == m_entry.Hvo);
 
 			Assert.That(publishIn.ChooserLinks, Has.Count.EqualTo(1),
 				"the authored goto link rides alone — derivation only fills gaps");

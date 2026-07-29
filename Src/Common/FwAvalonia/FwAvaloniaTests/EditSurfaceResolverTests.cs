@@ -6,7 +6,7 @@ using System;
 using System.Linq;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwAvalonia;
-using SIL.FieldWorks.Common.FwAvalonia.Region;
+using SIL.FieldWorks.Common.FwAvalonia.Detail;
 
 namespace FwAvaloniaTests
 {
@@ -362,7 +362,7 @@ namespace FwAvaloniaTests
 		[Test]
 		public void FwAvaloniaAssembly_HasNoNativeViewsOrGraphiteReferences()
 		{
-			var referenced = typeof(RegionDataTree).Assembly.GetReferencedAssemblies();
+			var referenced = typeof(DataTree).Assembly.GetReferencedAssemblies();
 			var forbidden = new[] { "Graphite", "ViewsInterfaces", "Views.dll", "RootSite", "Gecko", "Geckofx" };
 
 			foreach (var name in referenced.Select(r => r.Name))

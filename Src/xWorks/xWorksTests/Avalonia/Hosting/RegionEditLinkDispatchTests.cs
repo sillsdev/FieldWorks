@@ -4,7 +4,7 @@
 
 using System;
 using NUnit.Framework;
-using SIL.FieldWorks.Common.FwAvalonia.Region;
+using SIL.FieldWorks.Common.FwAvalonia.Detail;
 using SIL.FieldWorks.Common.FwAvalonia.ViewDefinition;
 using SIL.FieldWorks.Common.FwUtils;
 
@@ -23,12 +23,12 @@ namespace SIL.FieldWorks.XWorks
 	[TestFixture]
 	public class RegionEditLinkDispatchTests
 	{
-		private static RegionLinkRequest Request(string tool, string targetGuid = null)
-			=> new RegionLinkRequest(
-				new RegionField("LexEntry/Normal/#0@1", "Publish Entry In", "PublishIn",
-					null, RegionFieldKind.ReferenceVector, EditorClassification.Known, "PublishIn",
+		private static DetailLinkRequest Request(string tool, string targetGuid = null)
+			=> new DetailLinkRequest(
+				new DetailField("LexEntry/Normal/#0@1", "Publish Entry In", "PublishIn",
+					null, DetailFieldKind.ReferenceVector, EditorClassification.Known, "PublishIn",
 					null, SurfaceRouting.Inherit, null, null, null),
-				new RegionChooserLink("Edit the Publications list", tool, targetGuid));
+				new DetailChooserLink("Edit the Publications list", tool, targetGuid));
 
 		[Test]
 		public void BuildFollowLinkArgs_PlainToolJump_UsesGuidEmpty_LikeTheLegacyChooser()

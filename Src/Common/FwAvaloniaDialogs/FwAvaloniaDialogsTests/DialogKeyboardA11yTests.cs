@@ -15,7 +15,7 @@ using Avalonia.VisualTree;
 using FwAvaloniaDialogs;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwAvalonia;
-using SIL.FieldWorks.Common.FwAvalonia.Region;
+using SIL.FieldWorks.Common.FwAvalonia.Detail;
 
 namespace FwAvaloniaDialogsTests
 {
@@ -30,11 +30,11 @@ namespace FwAvaloniaDialogsTests
 	[TestFixture]
 	public class DialogKeyboardA11yTests
 	{
-		private static IReadOnlyList<RegionChoiceOption> Candidates() => new List<RegionChoiceOption>
+		private static IReadOnlyList<DetailChoiceOption> Candidates() => new List<DetailChoiceOption>
 		{
-			new RegionChoiceOption("g-noun", "Noun", 0),
-			new RegionChoiceOption("g-verb", "Verb", 0),
-			new RegionChoiceOption("g-adj", "Adjective", 0)
+			new DetailChoiceOption("g-noun", "Noun", 0),
+			new DetailChoiceOption("g-verb", "Verb", 0),
+			new DetailChoiceOption("g-adj", "Adjective", 0)
 		};
 
 		private static void Pump(Window window, Control view)

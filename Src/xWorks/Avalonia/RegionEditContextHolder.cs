@@ -6,14 +6,14 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows.Forms;
-using SIL.FieldWorks.Common.FwAvalonia.Region;
+using SIL.FieldWorks.Common.FwAvalonia.Detail;
 using SIL.LCModel.Application;
 using SIL.LCModel.Core.KernelInterfaces;
 
 namespace SIL.FieldWorks.XWorks
 {
 	/// <summary>
-	/// Owns the host's current <see cref="IRegionEditContext"/> and enforces the lifecycle rules
+	/// Owns the host's current <see cref="IDetailEditContext"/> and enforces the lifecycle rules
 	/// that keep the fenced edit session (an open LCModel undo task) safe against the rest of the
 	/// app:
 	/// (1) a context with an open session is NEVER orphaned — re-showing the region swaps in a
@@ -35,7 +35,7 @@ namespace SIL.FieldWorks.XWorks
 		private EventHandler m_settleOnDeactivate;
 
 		/// <summary>The context currently bound to the shown region, or null.</summary>
-		public IRegionEditContext Current { get; private set; }
+		public IDetailEditContext Current { get; private set; }
 
 		/// <summary>
 		/// ITEM 2 (invalid-edit-on-navigate UX): invoked when <see cref="Settle"/> rolls back an open
@@ -54,7 +54,7 @@ namespace SIL.FieldWorks.XWorks
 		/// never killed by redundant wiring. Hosts normally <see cref="Settle"/> first; this
 		/// cancel is the safety net, not the auto-save path.
 		/// </summary>
-		public void Replace(IRegionEditContext next)
+		public void Replace(IDetailEditContext next)
 		{
 			var previous = Current;
 			if (!ReferenceEquals(previous, next) && previous != null && previous.IsOpen)

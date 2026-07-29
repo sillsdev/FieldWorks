@@ -13,7 +13,7 @@ using Avalonia.VisualTree;
 using FwAvaloniaDialogs;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwAvalonia;
-using SIL.FieldWorks.Common.FwAvalonia.Region;
+using SIL.FieldWorks.Common.FwAvalonia.Detail;
 using SIL.FieldWorks.Common.FwAvalonia.ViewDefinition;
 
 namespace FwAvaloniaDialogsTests
@@ -40,12 +40,12 @@ namespace FwAvaloniaDialogsTests
 			new FwInflectionSlot("s-number", "Number")
 		};
 
-		private static RegionField TextField(string name, string automationId, params string[] wsTags)
+		private static DetailField TextField(string name, string automationId, params string[] wsTags)
 		{
-			var values = wsTags.Select(tag => new RegionWsValue(tag, string.Empty, wsTag: tag)).ToList();
-			return new RegionField(name, name, name, null, RegionFieldKind.Text,
+			var values = wsTags.Select(tag => new DetailWsValue(tag, string.Empty, wsTag: tag)).ToList();
+			return new DetailField(name, name, name, null, DetailFieldKind.Text,
 				default(EditorClassification), automationId, name, default(SurfaceRouting),
-				values, new List<RegionChoiceOption>(), null, isEditable: true);
+				values, new List<DetailChoiceOption>(), null, isEditable: true);
 		}
 
 		private static AddNewSenseDlgInput BasicInput(FwMsaType msaType = FwMsaType.Stem) =>

@@ -3,7 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using SIL.FieldWorks.Common.FwAvalonia.Region;
+using SIL.FieldWorks.Common.FwAvalonia.Detail;
 using SIL.FieldWorks.Common.FwAvalonia.Seams;
 
 namespace SIL.FieldWorks.Common.FwAvalonia
@@ -11,10 +11,10 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 	/// <summary>
 	/// WinForms wrapper that hosts the Avalonia lexical-edit region inside the product app. The in-process
 	/// net48 host plumbing (Avalonia bootstrap, companion strip, keyboard interop, context menus, message
-	/// states) lives in the reusable <see cref="AvaloniaRegionHostControl"/> base; this class
+	/// states) lives in the reusable <see cref="AvaloniaHostControlBase"/> base; this class
 	/// adds only the lexical-edit region projection and its per-host splitter memory.
 	/// </summary>
-	public sealed class RegionHostControl : AvaloniaRegionHostControl
+	public sealed class DetailHostControl : AvaloniaHostControlBase
 	{
 		// The splitter (label/value column) width the user dragged, remembered across re-shows for
 		// THIS host only — deliberately per-instance, never a process-global static. Used only
@@ -23,19 +23,19 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 		// also survives across SESSIONS, mirroring legacy slice-splitter persistence.
 		private double? _rememberedLabelColumnWidth;
 
-		public RegionHostControl()
+		public DetailHostControl()
 		{
 			Name = "RegionHostControl";
 			AccessibleName = "RecordEditView.AvaloniaHost";
 			AccessibleDescription = FwAvaloniaStrings.AvaloniaHostName;
 		}
 
-		public void ShowRegion(RegionModel region, IRegionEditContext editContext = null,
+		public void ShowRegion(DetailModel region, IDetailEditContext editContext = null,
 			Action<string> writingSystemFocused = null,
 			Func<string, bool?> getExpansionState = null,
 			Action<string, bool> expansionChanged = null,
-			Action<RegionMenuRequest> menuRequested = null,
-			Action<RegionLinkRequest> linkRequested = null,
+			Action<DetailMenuRequest> menuRequested = null,
+			Action<DetailLinkRequest> linkRequested = null,
 			IFwClipboard clipboard = null,
 			Func<double?> getLabelColumnWidth = null,
 			Action<double> labelColumnWidthChanged = null)
@@ -46,7 +46,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 			// field. When the product host supplies persistence hooks, the read/write chains
 			// through them too, so a width dragged in one session is restored in the next; otherwise it
 			// falls back to the process-only field (e.g. the preview host / headless tests).
-			var view = new RegionDataTree(region, editContext, writingSystemFocused,
+			var view = new DataTree(region, editContext, writingSystemFocused,
 				getExpansionState, expansionChanged, menuRequested, linkRequested, clipboard,
 				() => getLabelColumnWidth?.Invoke() ?? _rememberedLabelColumnWidth,
 				w =>
@@ -56,14 +56,14 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 				});
 			view.EditCompleted += (s, e) => RaiseRegionEditCompleted();
 
-			var focusMemento = RegionFocusMemory.Capture(CurrentContent);
+			var focusMemento = DetailFocusMemory.Capture(CurrentContent);
 			if (focusMemento != null)
-				RegionFocusMemory.TryRestoreScroll(view, focusMemento);
+				DetailFocusMemory.TryRestoreScroll(view, focusMemento);
 			SetHostContent(view);
 			if (!string.IsNullOrEmpty(focusMemento?.AutomationId))
 			{
 				Avalonia.Threading.Dispatcher.UIThread.Post(
-					() => RegionFocusMemory.TryRestoreFocus(view, focusMemento),
+					() => DetailFocusMemory.TryRestoreFocus(view, focusMemento),
 					Avalonia.Threading.DispatcherPriority.Input);
 			}
 		}

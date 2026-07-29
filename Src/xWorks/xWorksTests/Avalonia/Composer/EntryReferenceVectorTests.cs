@@ -5,7 +5,7 @@
 using System;
 using System.Linq;
 using NUnit.Framework;
-using SIL.FieldWorks.Common.FwAvalonia.Region;
+using SIL.FieldWorks.Common.FwAvalonia.Detail;
 using SIL.LCModel;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Infrastructure;
@@ -16,7 +16,7 @@ namespace SIL.FieldWorks.XWorks
 	/// Entry-reference vectors: the legacy
 	/// <c>EntrySequenceReferenceSlice</c> fields (ComponentLexemes/PrimaryLexemes on LexEntryRef,
 	/// targeting ILexEntry OR ILexSense) compose as EDITABLE ReferenceVector rows whose items are
-	/// headwords and whose ADD is a type-ahead lexicon search (<see cref="RegionField.SearchOptions"/>)
+	/// headwords and whose ADD is a type-ahead lexicon search (<see cref="DetailField.SearchOptions"/>)
 	/// — possibility lists enumerate, lexicons search, so the whole lexicon is never materialized
 	/// as Options. Writes ride sda.Replace inside the fenced session, plus the legacy launcher's
 	/// ComponentLexemes coupling (first component becomes the primary lexeme; the complex form
@@ -64,9 +64,9 @@ namespace SIL.FieldWorks.XWorks
 
 		private ComposedRegion Compose() => RegionComposer.Compose(m_entry, Cache);
 
-		private static RegionField ComponentsField(ComposedRegion composed)
+		private static DetailField ComponentsField(ComposedRegion composed)
 			=> composed.Model.Fields.Single(f => f.Field == "ComponentLexemes"
-				&& f.Kind == RegionFieldKind.ReferenceVector);
+				&& f.Kind == DetailFieldKind.ReferenceVector);
 
 		[Test]
 		public void Compose_ComponentLexemes_IsEditableReferenceVector_WithHeadwordItems_AndSearchNotOptions()

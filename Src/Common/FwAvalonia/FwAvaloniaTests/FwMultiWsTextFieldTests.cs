@@ -10,7 +10,7 @@ using Avalonia.Headless.NUnit;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
 using NUnit.Framework;
-using SIL.FieldWorks.Common.FwAvalonia.Region;
+using SIL.FieldWorks.Common.FwAvalonia.Detail;
 using SIL.FieldWorks.Common.FwAvalonia.ViewDefinition;
 using FwAvaloniaTests.VisualChecks; // DialogSnapshot — the PNG harness
 using FwAvaloniaDialogsTests;        // DialogLayoutAssert — the shared geometry tripwire
@@ -28,16 +28,16 @@ namespace FwAvaloniaTests
 	[TestFixture]
 	public class FwMultiWsTextFieldTests
 	{
-		private static RegionField Field(IReadOnlyList<RegionWsValue> values,
+		private static DetailField Field(IReadOnlyList<DetailWsValue> values,
 			string label = "Lexeme Form", string automationId = "LexEntry_Form", bool isEditable = true)
-			=> new RegionField(
+			=> new DetailField(
 				stableId: "LexEntry/Form", label: label, field: "Form", writingSystem: null,
-				kind: RegionFieldKind.Text, editorClassification: EditorClassification.Known,
+				kind: DetailFieldKind.Text, editorClassification: EditorClassification.Known,
 				automationId: automationId, localizationKey: null, routing: SurfaceRouting.Product,
 				values: values, options: null, selectedOptionKey: null, isEditable: isEditable);
 
-		private static (FwMultiWsTextField Field, Window Window) Show(RegionField field,
-			IRegionEditContext editContext = null, bool showAbbrev = true)
+		private static (FwMultiWsTextField Field, Window Window) Show(DetailField field,
+			IDetailEditContext editContext = null, bool showAbbrev = true)
 		{
 			var control = new FwMultiWsTextField(field, field.AutomationId, editContext, null,
 				showWritingSystemAbbreviation: showAbbrev);
@@ -61,10 +61,10 @@ namespace FwAvaloniaTests
 		[AvaloniaTest]
 		public void EmptyMultiRow_RendersOneRowPerWritingSystem_WithTheWsLabels()
 		{
-			var field = Field(new List<RegionWsValue>
+			var field = Field(new List<DetailWsValue>
 			{
-				new RegionWsValue("en", string.Empty, wsTag: "en"),
-				new RegionWsValue("fr", string.Empty, wsTag: "fr")
+				new DetailWsValue("en", string.Empty, wsTag: "en"),
+				new DetailWsValue("fr", string.Empty, wsTag: "fr")
 			});
 			var (control, window) = Show(field);
 
@@ -80,10 +80,10 @@ namespace FwAvaloniaTests
 		[AvaloniaTest]
 		public void Populated_ShowsTheValuesInEachWritingSystemRow()
 		{
-			var field = Field(new List<RegionWsValue>
+			var field = Field(new List<DetailWsValue>
 			{
-				new RegionWsValue("en", "house", wsTag: "en"),
-				new RegionWsValue("fr", "maison", wsTag: "fr")
+				new DetailWsValue("en", "house", wsTag: "en"),
+				new DetailWsValue("fr", "maison", wsTag: "fr")
 			});
 			var (control, window) = Show(field);
 
@@ -98,7 +98,7 @@ namespace FwAvaloniaTests
 		[AvaloniaTest]
 		public void SingleWs_RendersExactlyOneRow()
 		{
-			var field = Field(new List<RegionWsValue> { new RegionWsValue("en", "casa", wsTag: "en") });
+			var field = Field(new List<DetailWsValue> { new DetailWsValue("en", "casa", wsTag: "en") });
 			var (control, window) = Show(field);
 
 			DialogSnapshot.Capture(window, "FwMultiWsTextField-03-single-ws");
@@ -112,11 +112,11 @@ namespace FwAvaloniaTests
 		[AvaloniaTest]
 		public void MultiWs_RendersARowForEveryWritingSystem_InOrder()
 		{
-			var field = Field(new List<RegionWsValue>
+			var field = Field(new List<DetailWsValue>
 			{
-				new RegionWsValue("en", "house", wsTag: "en"),
-				new RegionWsValue("fr", "maison", wsTag: "fr"),
-				new RegionWsValue("es", "casa", wsTag: "es")
+				new DetailWsValue("en", "house", wsTag: "en"),
+				new DetailWsValue("fr", "maison", wsTag: "fr"),
+				new DetailWsValue("es", "casa", wsTag: "es")
 			});
 			var (control, window) = Show(field);
 
@@ -135,7 +135,7 @@ namespace FwAvaloniaTests
 		[AvaloniaTest]
 		public void RichTextOperations_AreContextMenuItems_NotInlineRowButtons()
 		{
-			var field = Field(new List<RegionWsValue> { new RegionWsValue("en", "house", wsTag: "en") });
+			var field = Field(new List<DetailWsValue> { new DetailWsValue("en", "house", wsTag: "en") });
 			var context = new FakeRegionEditContext();
 			var control = new FwMultiWsTextField(field, field.AutomationId, context, null);
 			var window = new Window { Content = control, Width = 360, Height = 160 };
@@ -163,9 +163,9 @@ namespace FwAvaloniaTests
 		[AvaloniaTest]
 		public void Abbreviation_And_Value_AreInSeparateGridColumns_WithNoOverlap()
 		{
-			var field = Field(new List<RegionWsValue>
+			var field = Field(new List<DetailWsValue>
 			{
-				new RegionWsValue("Sŏ", "testes", wsTag: "seh", bold: true)
+				new DetailWsValue("Sŏ", "testes", wsTag: "seh", bold: true)
 			});
 			var (control, _) = Show(field);
 

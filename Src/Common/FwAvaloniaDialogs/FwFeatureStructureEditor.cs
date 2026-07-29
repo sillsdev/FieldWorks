@@ -41,7 +41,7 @@ namespace FwAvaloniaDialogs
 	/// A lightweight, LCModel-FREE node in the feature system fed to <see cref="FwFeatureStructureEditor"/>.
 	/// The host builds these from the live feature system in DOCUMENT ORDER, tagging each with
 	/// its <see cref="Depth"/> (0 for a top-level feature, +1 per nesting) and its <see cref="Kind"/> — the same
-	/// depth-folding seam <c>FwPosNode</c>/<c>RegionChoiceOption</c> use, so the editor can rebuild the tree
+	/// depth-folding seam <c>FwPosNode</c>/<c>DetailChoiceOption</c> use, so the editor can rebuild the tree
 	/// without any model reference. A <see cref="Kind"/>=<see cref="FwFeatureNodeKind.Value"/> node attaches
 	/// under the nearest shallower <see cref="FwFeatureNodeKind.Closed"/> node (its feature); a Closed/Complex
 	/// node attaches under the nearest shallower Complex node. <see cref="Id"/> is an opaque stable identifier (a

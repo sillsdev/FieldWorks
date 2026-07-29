@@ -6,13 +6,13 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
-using SIL.FieldWorks.Common.FwAvalonia.Region;
+using SIL.FieldWorks.Common.FwAvalonia.Detail;
 
 namespace FwAvaloniaDialogs
 {
 	/// <summary>
-	/// One node in the chooser's collapsible tree: a <see cref="RegionChoiceOption"/> (key = guid string,
-	/// name = display text) plus its child nodes, built from the candidates' <see cref="RegionChoiceOption.Depth"/>
+	/// One node in the chooser's collapsible tree: a <see cref="DetailChoiceOption"/> (key = guid string,
+	/// name = display text) plus its child nodes, built from the candidates' <see cref="DetailChoiceOption.Depth"/>
 	/// sequence by <see cref="ChooserTreeBuilder"/>. <see cref="IsChecked"/> backs the multi-select checkbox — checks
 	/// are INDEPENDENT per node (checking a parent does NOT cascade to children), matching the legacy
 	/// <c>ReallySimpleListChooser</c> default (its only cascade is the Ctrl-modifier path, which this chooser omits).
@@ -21,14 +21,14 @@ namespace FwAvaloniaDialogs
 	/// </summary>
 	public sealed partial class ChooserTreeNode : ObservableObject
 	{
-		public ChooserTreeNode(RegionChoiceOption option)
+		public ChooserTreeNode(DetailChoiceOption option)
 		{
 			Option = option ?? throw new ArgumentNullException(nameof(option));
 			Children = new ObservableCollection<ChooserTreeNode>();
 		}
 
-		/// <summary>The underlying option this node represents (its <see cref="RegionChoiceOption.Key"/> is the result key).</summary>
-		public RegionChoiceOption Option { get; }
+		/// <summary>The underlying option this node represents (its <see cref="DetailChoiceOption.Key"/> is the result key).</summary>
+		public DetailChoiceOption Option { get; }
 
 		/// <summary>The option key (guid string) returned when this node is chosen.</summary>
 		public string Key => Option.Key ?? string.Empty;
@@ -56,7 +56,7 @@ namespace FwAvaloniaDialogs
 
 	/// <summary>
 	/// Builds the chooser's tree from candidates that arrive in DOCUMENT ORDER carrying a
-	/// <see cref="RegionChoiceOption.Depth"/> level (0 for top-level, +1 per nesting). The Depth sequence fully
+	/// <see cref="DetailChoiceOption.Depth"/> level (0 for top-level, +1 per nesting). The Depth sequence fully
 	/// determines the tree: a candidate at depth D is a child of the most recent earlier candidate at depth D-1
 	/// (the running parent at the level above). This mirrors how <c>LcmChooserDialogLauncher.BuildCandidates</c>
 	/// flattens a possibility list (parent before its sub-possibilities). Pure + static so it is unit-testable
@@ -71,7 +71,7 @@ namespace FwAvaloniaDialogs
 		/// gracefully (the node attaches to the nearest shallower ancestor, else becomes a root) so a malformed
 		/// sequence never throws.
 		/// </summary>
-		public static IReadOnlyList<ChooserTreeNode> Build(IReadOnlyList<RegionChoiceOption> candidates)
+		public static IReadOnlyList<ChooserTreeNode> Build(IReadOnlyList<DetailChoiceOption> candidates)
 		{
 			var roots = new List<ChooserTreeNode>();
 			if (candidates == null)

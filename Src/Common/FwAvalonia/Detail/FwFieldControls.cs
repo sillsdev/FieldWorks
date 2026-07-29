@@ -15,7 +15,7 @@ using Avalonia.Media;
 using SIL.FieldWorks.Common.FwAvalonia;
 using SIL.FieldWorks.Common.FwAvalonia.Seams;
 
-namespace SIL.FieldWorks.Common.FwAvalonia.Region
+namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 {
 	/// <summary>
 	/// FieldWorks-owned multi-writing-system text field over an IR-projected region field
@@ -25,11 +25,11 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 	/// slices get from <c>EditingHelper.SetKeyboardForWs</c>). Write-through staging goes to the
 	/// edit context when one is supplied; otherwise the field is read-only display.
 	/// Multi-run/styled content IS editable here as plain-text-over-preserved-runs: the original
-	/// TsString runs are projected into <see cref="RegionRichTextValue"/>, a keystroke replays the
+	/// TsString runs are projected into <see cref="DetailRichTextValue"/>, a keystroke replays the
 	/// untouched runs around the edit, and the edit context rebuilds the TsString. A value is held
 	/// read-only ONLY when that replay would corrupt it — an embedded object the runs cannot rebuild,
 	/// or a run carrying a TsString property the model does not round-trip
-	/// (<see cref="RegionRichTextValue.CanEditRichText"/>); such a value shows the explanatory tooltip
+	/// (<see cref="DetailRichTextValue.CanEditRichText"/>); such a value shows the explanatory tooltip
 	/// and stays full-fidelity in the classic view.
 	/// Menus: a row whose layout binds a slice menu (`menu=`, e.g. the Lexeme Form's
 	/// mnuDataTree-LexemeForm with Swap/Convert commands) surfaces it on RIGHT-CLICK only (the
@@ -53,11 +53,11 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		private bool _disposed;
 
 		public FwMultiWsTextField(
-			RegionField field,
+			DetailField field,
 			string automationId,
-			IRegionEditContext editContext,
+			IDetailEditContext editContext,
 			Action<string> writingSystemFocused,
-			Action<RegionMenuRequest> menuRequested = null,
+			Action<DetailMenuRequest> menuRequested = null,
 			IFwClipboard clipboard = null,
 			bool showWritingSystemAbbreviation = true,
 			Action save = null)
@@ -75,10 +75,10 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		// editing/clipboard/menu wiring when the field is editable), and the two-column row layout. One
 		// call per WS alternative; the shared per-row editor state (currentRich/lastStaged) lives here so
 		// the value box's handlers and its context-menu Copy see the same mutations.
-		private void BuildValueRow(RegionField field, string automationId,
-			IRegionEditContext editContext, Action<string> writingSystemFocused,
-			Action<RegionMenuRequest> menuRequested, IFwClipboard clipboard,
-			bool showWritingSystemAbbreviation, RegionWsValue value)
+		private void BuildValueRow(DetailField field, string automationId,
+			IDetailEditContext editContext, Action<string> writingSystemFocused,
+			Action<DetailMenuRequest> menuRequested, IFwClipboard clipboard,
+			bool showWritingSystemAbbreviation, DetailWsValue value)
 		{
 				var currentRich = value.RichText;
 				var abbrev = BuildWsAbbrev(value);
@@ -89,7 +89,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 				// READ-ONLY — and says so explicitly (tooltip) — rather than presenting an editable box
 				// whose first keystroke silently drops content. Two cases feed CanEditRichText: a run
 				// carrying an embedded object (ORC) the managed editor cannot rebuild, and a run carrying
-				// a TsString property the RegionTextRun model does not round-trip (e.g. fore/back colour,
+				// a TsString property the DetailTextRun model does not round-trip (e.g. fore/back colour,
 				// offset, superscript). The original TsString is preserved losslessly (RichXml), so the
 				// field round-trips and remains fully editable in the classic view.
 				// A voice/audio writing-system alternative renders as READ-ONLY text (the audio filename);
@@ -101,7 +101,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 				WireGhostPrompt(box, field);
 
 				var hasBridge = WireBridgeContextMenu(box, field, menuRequested);
-				// Both edits AND the per-row automation id (which RegionFocusMemory keys focus
+				// Both edits AND the per-row automation id (which DetailFocusMemory keys focus
 				// restore on) address the writing system by its unique IETF tag (WsTag): the
 				// abbreviation is user-editable and can collide across writing systems. Tag-less
 				// rows (tests/fakes using aliases like "vern") keep the abbreviation fallback.
@@ -142,7 +142,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 
 						if (!hasShift && box.SelectionStart != box.SelectionEnd)
 						{
-							var collapse = RegionBidirectionalTextNavigation.CollapseSelectionEdge(text, runs,
+							var collapse = DetailBidirectionalTextNavigation.CollapseSelectionEdge(text, runs,
 								box.SelectionStart, box.SelectionEnd, physicalLeft, value.RightToLeft);
 							box.CaretIndex = collapse;
 							box.SelectionStart = collapse;
@@ -155,7 +155,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 						var currentCaret = box.SelectionStart == box.SelectionEnd
 							? box.CaretIndex
 							: box.SelectionEnd;
-						var nextCaret = RegionBidirectionalTextNavigation.MoveCaret(text, runs,
+						var nextCaret = DetailBidirectionalTextNavigation.MoveCaret(text, runs,
 							currentCaret, physicalLeft, value.RightToLeft);
 
 						if (hasShift)
@@ -194,14 +194,14 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 						var text = box.Text ?? string.Empty;
 						if (box.SelectionStart == box.SelectionEnd)
 						{
-							var normalizedCaret = RegionBidirectionalTextNavigation.NormalizeHitTestCaretIndex(text,
+							var normalizedCaret = DetailBidirectionalTextNavigation.NormalizeHitTestCaretIndex(text,
 								box.CaretIndex);
 							if (normalizedCaret != box.CaretIndex)
 								box.CaretIndex = normalizedCaret;
 							return;
 						}
 
-						var normalized = RegionBidirectionalTextNavigation.NormalizeSelectionToClusters(text,
+						var normalized = DetailBidirectionalTextNavigation.NormalizeSelectionToClusters(text,
 							box.SelectionStart, box.SelectionEnd);
 						if (normalized.Start == box.SelectionStart && normalized.End == box.SelectionEnd)
 							return;
@@ -218,7 +218,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 					// the last text the domain actually received, so further edits (including retyping
 					// the same text) re-attempt instead of being suppressed forever.
 					var lastStaged = value.Value ?? string.Empty;
-					RegionRichTextValue pendingRichOverride = null;
+					DetailRichTextValue pendingRichOverride = null;
 					EventHandler<TextChangedEventArgs> textChanged = (s, e) =>
 					{
 						var text = box.Text ?? string.Empty;
@@ -227,7 +227,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 						if (currentRich != null && currentRich.RequiresRichEditor)
 						{
 							var updatedRich = pendingRichOverride
-								?? RegionRichTextEditAlgorithms.ApplyPlainTextEdit(currentRich, text);
+								?? DetailRichTextEditAlgorithms.ApplyPlainTextEdit(currentRich, text);
 							pendingRichOverride = null;
 							if (editContext.TrySetRichText(field, wsKey, updatedRich))
 							{
@@ -256,12 +256,12 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 						if ((e.KeyModifiers & KeyModifiers.Control) == 0)
 							return;
 
-						RegionRunFormat which;
+						DetailRunFormat which;
 						switch (e.Key)
 						{
-							case Key.B: which = RegionRunFormat.Bold; break;
-							case Key.I: which = RegionRunFormat.Italic; break;
-							case Key.U: which = RegionRunFormat.Underline; break;
+							case Key.B: which = DetailRunFormat.Bold; break;
+							case Key.I: which = DetailRunFormat.Italic; break;
+							case Key.U: which = DetailRunFormat.Underline; break;
 							default: return;
 						}
 
@@ -278,13 +278,13 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 						// A row may carry only plain text (no projected rich value yet); synthesize a
 						// single-run rich projection so the first formatting gesture has runs to split.
 						var richSource = currentRich
-							?? RegionRichTextEditAlgorithms.FromRuns(box.Text ?? string.Empty,
-								new[] { new RegionTextRun(box.Text ?? string.Empty, value.WsTag) });
+							?? DetailRichTextEditAlgorithms.FromRuns(box.Text ?? string.Empty,
+								new[] { new DetailTextRun(box.Text ?? string.Empty, value.WsTag) });
 
 						// Toggle: if the entire selection already carries the attribute, turn it off.
-						var turnOn = !RegionRichTextEditAlgorithms.SpanFullyHasFormat(
+						var turnOn = !DetailRichTextEditAlgorithms.SpanFullyHasFormat(
 							richSource, selectionStart, selectionEnd, which);
-						var formatted = RegionRichTextEditAlgorithms.ApplySpanFormatting(
+						var formatted = DetailRichTextEditAlgorithms.ApplySpanFormatting(
 							richSource, selectionStart, selectionEnd, which, turnOn);
 
 						if (!ReferenceEquals(formatted, richSource)
@@ -312,14 +312,14 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 					{
 						// The picker's option set: a clear-style entry (empty key) plus one option per
 						// available character style (the style name is both key and display name).
-						var styleOptions = new List<RegionChoiceOption>
+						var styleOptions = new List<DetailChoiceOption>
 						{
-							new RegionChoiceOption(string.Empty, FwAvaloniaStrings.DefaultCharacterStyle)
+							new DetailChoiceOption(string.Empty, FwAvaloniaStrings.DefaultCharacterStyle)
 						};
 						foreach (var styleName in field.AvailableNamedStyles)
 						{
 							if (!string.IsNullOrEmpty(styleName))
-								styleOptions.Add(new RegionChoiceOption(styleName, styleName));
+								styleOptions.Add(new DetailChoiceOption(styleName, styleName));
 						}
 
 						var styleItem = new MenuItem { Header = FwAvaloniaStrings.CharacterStyle };
@@ -338,7 +338,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 						var styleSpanStart = 0;
 						var styleSpanEnd = 0;
 
-						Action<RegionChoiceOption> styleCommitted = option =>
+						Action<DetailChoiceOption> styleCommitted = option =>
 						{
 							styleFlyout.Hide();
 
@@ -358,12 +358,12 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 							// A row may still carry only plain text (no projected rich value yet);
 							// synthesize a single-run projection so the first style gesture has runs.
 							var richSource = currentRich
-								?? RegionRichTextEditAlgorithms.FromRuns(box.Text ?? string.Empty,
-									new[] { new RegionTextRun(box.Text ?? string.Empty, value.WsTag) });
+								?? DetailRichTextEditAlgorithms.FromRuns(box.Text ?? string.Empty,
+									new[] { new DetailTextRun(box.Text ?? string.Empty, value.WsTag) });
 
 							// The clear-style entry carries an empty key -> null clears the named style.
 							var styleName = string.IsNullOrEmpty(option?.Key) ? null : option.Key;
-							var restyled = RegionRichTextEditAlgorithms.ApplySpanNamedStyle(
+							var restyled = DetailRichTextEditAlgorithms.ApplySpanNamedStyle(
 								richSource, selectionStart, selectionEnd, styleName);
 
 							if (!ReferenceEquals(restyled, richSource)
@@ -387,7 +387,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 							styleSpanEnd = Math.Max(box.SelectionStart, box.SelectionEnd);
 							var current = currentRich == null
 								? null
-								: RegionRichTextEditAlgorithms.SpanNamedStyle(currentRich, styleSpanStart, styleSpanEnd);
+								: DetailRichTextEditAlgorithms.SpanNamedStyle(currentRich, styleSpanStart, styleSpanEnd);
 							var index = string.IsNullOrEmpty(current)
 								? 0
 								: styleOptions.FindIndex(o => string.Equals(o.Key, current, StringComparison.Ordinal));
@@ -415,11 +415,11 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 					// always carry a writing system, so the picker offers only real project writing systems.
 					if (!hasBridge && field.AvailableWritingSystems != null && field.AvailableWritingSystems.Count > 0)
 					{
-						var wsOptions = new List<RegionChoiceOption>();
+						var wsOptions = new List<DetailChoiceOption>();
 						foreach (var wsOption in field.AvailableWritingSystems)
 						{
 							if (wsOption != null && !string.IsNullOrEmpty(wsOption.Tag))
-								wsOptions.Add(new RegionChoiceOption(wsOption.Tag,
+								wsOptions.Add(new DetailChoiceOption(wsOption.Tag,
 									string.IsNullOrEmpty(wsOption.DisplayName) ? wsOption.Tag : wsOption.DisplayName));
 						}
 
@@ -441,7 +441,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 							var wsSpanStart = 0;
 							var wsSpanEnd = 0;
 
-							Action<RegionChoiceOption> wsCommitted = option =>
+							Action<DetailChoiceOption> wsCommitted = option =>
 							{
 								wsFlyout.Hide();
 
@@ -461,10 +461,10 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 								// A row may still carry only plain text (no projected rich value yet);
 								// synthesize a single-run projection so the first retag gesture has runs.
 								var richSource = currentRich
-									?? RegionRichTextEditAlgorithms.FromRuns(box.Text ?? string.Empty,
-										new[] { new RegionTextRun(box.Text ?? string.Empty, value.WsTag) });
+									?? DetailRichTextEditAlgorithms.FromRuns(box.Text ?? string.Empty,
+										new[] { new DetailTextRun(box.Text ?? string.Empty, value.WsTag) });
 
-								var retagged = RegionRichTextEditAlgorithms.RetagSpanWritingSystem(
+								var retagged = DetailRichTextEditAlgorithms.RetagSpanWritingSystem(
 									richSource, selectionStart, selectionEnd, option.Key);
 
 								if (!ReferenceEquals(retagged, richSource)
@@ -487,7 +487,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 								wsSpanEnd = Math.Max(box.SelectionStart, box.SelectionEnd);
 								var current = currentRich == null
 									? null
-									: RegionRichTextEditAlgorithms.SpanWritingSystem(currentRich, wsSpanStart, wsSpanEnd);
+									: DetailRichTextEditAlgorithms.SpanWritingSystem(currentRich, wsSpanStart, wsSpanEnd);
 								var index = string.IsNullOrEmpty(current)
 									? -1
 									: wsOptions.FindIndex(o => string.Equals(o.Key, current, StringComparison.Ordinal));
@@ -510,7 +510,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 						// opens a flyout with a URL TextBox + Apply (the dialog-light prompt the decision calls
 						// for). On open it snapshots the selection and, when that selection sits on an existing
 						// link run, pre-fills the URL for editing. Apply over a real selection inserts/edits the
-						// link through RegionRichTextEditAlgorithms and stages via TrySetRichText (the same seam
+						// link through DetailRichTextEditAlgorithms and stages via TrySetRichText (the same seam
 						// the style/ws pickers use). Built on every editable, non-lossy row that is not bridged
 						// (link needs no host list).
 						if (!hasBridge)
@@ -557,12 +557,12 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 								linkSpanEnd = Math.Max(box.SelectionStart, box.SelectionEnd);
 								var existing = currentRich == null
 									? -1
-									: RegionRichTextEditAlgorithms.FirstOrcRunStart(currentRich, linkSpanStart, linkSpanEnd);
+									: DetailRichTextEditAlgorithms.FirstOrcRunStart(currentRich, linkSpanStart, linkSpanEnd);
 								urlBox.Text = string.Empty;
 								if (existing >= 0 && currentRich != null)
 								{
 									var run = RunAt(currentRich, existing);
-									if (run != null && run.OrcKind == RegionOrcKind.ExternalLink)
+									if (run != null && run.OrcKind == DetailOrcKind.ExternalLink)
 										urlBox.Text = run.HyperlinkUrl ?? string.Empty;
 								}
 								linkFlyout.ShowAt(box);
@@ -576,16 +576,16 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 									return; // a blank URL inserts/edits nothing
 
 								var richSource = currentRich
-									?? RegionRichTextEditAlgorithms.FromRuns(box.Text ?? string.Empty,
-										new[] { new RegionTextRun(box.Text ?? string.Empty, value.WsTag) });
+									?? DetailRichTextEditAlgorithms.FromRuns(box.Text ?? string.Empty,
+										new[] { new DetailTextRun(box.Text ?? string.Empty, value.WsTag) });
 
-								var onLink = RegionRichTextEditAlgorithms.FirstOrcRunStart(richSource, linkSpanStart, linkSpanEnd);
+								var onLink = DetailRichTextEditAlgorithms.FirstOrcRunStart(richSource, linkSpanStart, linkSpanEnd);
 								var run = onLink >= 0 ? RunAt(richSource, onLink) : null;
-								RegionRichTextValue updated;
-								if (run != null && run.OrcKind == RegionOrcKind.ExternalLink)
-									updated = RegionRichTextEditAlgorithms.EditHyperlinkUrl(richSource, onLink, url);
+								DetailRichTextValue updated;
+								if (run != null && run.OrcKind == DetailOrcKind.ExternalLink)
+									updated = DetailRichTextEditAlgorithms.EditHyperlinkUrl(richSource, onLink, url);
 								else
-									updated = RegionRichTextEditAlgorithms.ApplyHyperlink(richSource, linkSpanStart, linkSpanEnd, url);
+									updated = DetailRichTextEditAlgorithms.ApplyHyperlink(richSource, linkSpanStart, linkSpanEnd, url);
 
 								if (!ReferenceEquals(updated, richSource)
 									&& editContext.TrySetRichText(field, wsKey, updated))
@@ -619,10 +619,10 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 									return;
 								var selStart = Math.Min(box.SelectionStart, box.SelectionEnd);
 								var selEnd = Math.Max(box.SelectionStart, box.SelectionEnd);
-								var orcStart = RegionRichTextEditAlgorithms.FirstOrcRunStart(currentRich, selStart, selEnd);
+								var orcStart = DetailRichTextEditAlgorithms.FirstOrcRunStart(currentRich, selStart, selEnd);
 								if (orcStart < 0)
 									return; // no ORC under the selection
-								var updated = RegionRichTextEditAlgorithms.DeleteOrcRun(currentRich, orcStart);
+								var updated = DetailRichTextEditAlgorithms.DeleteOrcRun(currentRich, orcStart);
 								if (!ReferenceEquals(updated, currentRich)
 									&& editContext.TrySetRichText(field, wsKey, updated))
 								{
@@ -667,7 +667,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 							if (payload.RichText != null && selectionStart == 0 && selectionEnd == existingText.Length)
 								pendingRichOverride = payload.RichText;
 							else
-								pendingRichOverride = RegionRichTextEditAlgorithms.ApplyPlainTextEdit(currentRich, newText);
+								pendingRichOverride = DetailRichTextEditAlgorithms.ApplyPlainTextEdit(currentRich, newText);
 
 							box.Text = newText;
 							box.CaretIndex = selectionStart + replacement.Length;
@@ -723,7 +723,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		// own fixed gutter column (see the row Grid below) so a bold vernacular value can never crowd
 		// or overlap it. ClipToBounds keeps an unusually long abbreviation inside the gutter width
 		// rather than bleeding into the value column.
-		private static TextBlock BuildWsAbbrev(RegionWsValue value)
+		private static TextBlock BuildWsAbbrev(DetailWsValue value)
 		{
 			return new TextBlock
 			{
@@ -739,7 +739,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 
 		// The flat value editor: a voice/audio or rich-content-lossy value is read-only and carries the
 		// explanatory tooltip; project WS font, size, bold, and RTL flow ride the value's own metadata.
-		private static TextBox BuildValueBox(RegionField field, RegionWsValue value, bool valueIsReadOnly)
+		private static TextBox BuildValueBox(DetailField field, DetailWsValue value, bool valueIsReadOnly)
 		{
 			var box = new TextBox
 			{
@@ -768,7 +768,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 			return box;
 		}
 
-		private void WireGhostPrompt(TextBox box, RegionField field)
+		private void WireGhostPrompt(TextBox box, DetailField field)
 		{
 			if (!string.IsNullOrEmpty(field.GhostPrompt))
 			{
@@ -792,8 +792,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		// path), routed through the host bridge. That host menu owns this field's commands, so it
 		// stays the single right-click surface for a bridged row; the relocated rich-text operations
 		// are offered on the LOCAL menu only for rows WITHOUT a bridge (built after the editor wiring).
-		private bool WireBridgeContextMenu(TextBox box, RegionField field,
-			Action<RegionMenuRequest> menuRequested)
+		private bool WireBridgeContextMenu(TextBox box, DetailField field,
+			Action<DetailMenuRequest> menuRequested)
 		{
 			var hasBridge = menuRequested != null && !string.IsNullOrEmpty(field.ContextMenuId);
 			if (hasBridge)
@@ -803,7 +803,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 					if (!e2.GetCurrentPoint(box).Properties.IsRightButtonPressed)
 						return;
 					var screen = box.PointToScreen(e2.GetPosition(box));
-					menuRequested(new RegionMenuRequest(field, RegionMenuKind.ContextMenu, screen.X, screen.Y));
+					menuRequested(new DetailMenuRequest(field, DetailMenuKind.ContextMenu, screen.X, screen.Y));
 					e2.Handled = true;
 				};
 				EventHandler<ContextRequestedEventArgs> swallowContext = (s2, e2) => e2.Handled = true;
@@ -824,7 +824,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 			return hasBridge;
 		}
 
-		private void WireWritingSystemKeyboard(TextBox box, RegionWsValue value,
+		private void WireWritingSystemKeyboard(TextBox box, DetailWsValue value,
 			Action<string> writingSystemFocused)
 		{
 			if (writingSystemFocused != null && !string.IsNullOrEmpty(value.WsTag))
@@ -874,14 +874,14 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		// value's runs warrant a per-run font display, wrap the editable box and a read-along TextBlock in a
 		// Panel: the TextBlock (each run in its own ws/style font from the host map) shows while unfocused;
 		// the box swaps in on focus / out on blur. A uniform value returns the bare box.
-		private Control BuildValueContentWithFontSwap(RegionField field, string automationId,
-			string wsKey, TextBox box, RegionRichTextValue currentRich, bool editable)
+		private Control BuildValueContentWithFontSwap(DetailField field, string automationId,
+			string wsKey, TextBox box, DetailRichTextValue currentRich, bool editable)
 		{
-			if (currentRich == null || !RegionRichTextChrome.ShouldRenderPerRunFontDisplay(currentRich))
+			if (currentRich == null || !DetailRichTextChrome.ShouldRenderPerRunFontDisplay(currentRich))
 				return box;
 
 			var rtl = box.FlowDirection == FlowDirection.RightToLeft;
-			var display = RegionRichTextChrome.BuildPerRunFontDisplay(currentRich, field.WritingSystemFonts,
+			var display = DetailRichTextChrome.BuildPerRunFontDisplay(currentRich, field.WritingSystemFonts,
 				automationId + "." + wsKey + ".Display", rtl);
 
 			// Exactly ONE of {display, box} occupies the row at a time (IsVisible collapses the other out
@@ -920,7 +920,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		}
 
 		// The run that STARTS at plain-text offset start, or null.
-		private static RegionTextRun RunAt(RegionRichTextValue rich, int start)
+		private static DetailTextRun RunAt(DetailRichTextValue rich, int start)
 		{
 			if (rich?.Runs == null)
 				return null;
@@ -958,7 +958,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		}
 
 		private static async System.Threading.Tasks.Task CopySelectionAsync(TextBox box,
-			RegionRichTextValue richText, IFwClipboard clipboard)
+			DetailRichTextValue richText, IFwClipboard clipboard)
 		{
 			var selectedText = box.SelectedText;
 			var useWholeValue = string.IsNullOrEmpty(selectedText) || selectedText == (box.Text ?? string.Empty);
@@ -980,34 +980,34 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 	/// <summary>
 	/// GEAR = CONFIGURE: the shared gear semantics of the chooser and reference-vector rows.
 	/// Clicking the gear DIRECTLY dispatches the list-editor jump — the host's
-	/// <see cref="RegionLinkRequest"/> callback rides the same path the legacy chooser dialog's
+	/// <see cref="DetailLinkRequest"/> callback rides the same path the legacy chooser dialog's
 	/// "Edit the … list" LinkLabel rides (ReallySimpleListChooser.AddLink kGotoLink →
 	/// FollowLink). NO flyout, NO context menu opens from the gear; option flyouts carry zero
 	/// link items. The gear renders ONLY when a list-edit target resolved at compose time (the
-	/// row carries at least one goto <see cref="RegionChooserLink"/>); the FIRST link wins when
+	/// row carries at least one goto <see cref="DetailChooserLink"/>); the FIRST link wins when
 	/// several resolved (rare). Rows without a resolvable list editor draw no gear at all.
 	/// </summary>
-	internal static class RegionGearChrome
+	internal static class DetailGearChrome
 	{
 		/// <summary>
 		/// Builds the configure gear for a row, or null when no list-edit target resolves
 		/// (no links on the row, or no host callback to dispatch through).
 		/// </summary>
-		internal static Button CreateConfigureGear(RegionField field, string automationId,
-			Action<RegionLinkRequest> linkRequested)
+		internal static Button CreateConfigureGear(DetailField field, string automationId,
+			Action<DetailLinkRequest> linkRequested)
 		{
 			if (linkRequested == null || field.ChooserLinks.Count == 0)
 				return null;
 
 			var link = field.ChooserLinks[0]; // first goto wins
-			var gear = RegionChrome.CreateGearButton();
+			var gear = DetailChrome.CreateGearButton();
 			AutomationProperties.SetAutomationId(gear, automationId + ".Settings");
 			AutomationProperties.SetName(gear, string.Format(FwAvaloniaStrings.FieldSettingsFormat,
 				field.Label ?? field.Field ?? automationId));
 			ToolTip.SetTip(gear, link.Label);
 			gear.Click += (s, e) =>
 			{
-				linkRequested(new RegionLinkRequest(field, link));
+				linkRequested(new DetailLinkRequest(field, link));
 				e.Handled = true;
 			};
 			return gear;
@@ -1024,8 +1024,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 	/// is a read-only display of the current selection.
 	/// Styling: the button is transparent/borderless — the value text reads flat like the legacy
 	/// combo. When the row's supporting list resolved a list-editor target (a composed goto
-	/// <see cref="RegionChooserLink"/>), a hover-revealed CONFIGURE gear sits after the value and
-	/// directly dispatches the host jump (<see cref="RegionGearChrome"/>) — it never opens the
+	/// <see cref="DetailChooserLink"/>), a hover-revealed CONFIGURE gear sits after the value and
+	/// directly dispatches the host jump (<see cref="DetailGearChrome"/>) — it never opens the
 	/// options. Rows without a resolvable list editor draw no gear.
 	/// </summary>
 	public sealed class FwChooserField : Button, IHoverAffordanceProvider, IDisposable
@@ -1039,10 +1039,10 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		private bool _disposed;
 
 		public FwChooserField(
-			RegionField field,
+			DetailField field,
 			string automationId,
-			IRegionEditContext editContext,
-			Action<RegionLinkRequest> linkRequested = null)
+			IDetailEditContext editContext,
+			Action<DetailLinkRequest> linkRequested = null)
 		{
 			_selectedKey = field.SelectedOptionKey;
 			Padding = FwAvaloniaDensity.EditorPadding;
@@ -1064,7 +1064,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 			// GEAR = CONFIGURE: only a resolved list-edit target draws the gear; clicking it
 			// dispatches the jump directly (a nested Button handles its own click, so the
 			// chooser's flyout does NOT open from a gear click).
-			_gear = RegionGearChrome.CreateConfigureGear(field, automationId, linkRequested);
+			_gear = DetailGearChrome.CreateConfigureGear(field, automationId, linkRequested);
 			if (_gear != null)
 				content.Children.Add(_gear);
 			Content = content;
@@ -1088,9 +1088,9 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 			var flyout = FwOptionChooser.CreateOptionFlyout(picker, PlacementMode.BottomEdgeAlignedLeft);
 			Flyout = flyout;
 
-			Action<RegionChoiceOption> committed = option =>
+			Action<DetailChoiceOption> committed = option =>
 			{
-				// The options are the field's own RegionChoiceOption instances, so the committed
+				// The options are the field's own DetailChoiceOption instances, so the committed
 				// option's key is exact even when display names repeat across options.
 				if (option.Key != _selectedKey && editContext.TrySetOption(field, option.Key))
 				{
@@ -1147,7 +1147,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		public IReadOnlyList<Control> HoverAffordances
 			=> _gear == null ? Array.Empty<Control>() : new Control[] { _gear };
 
-		private static string CurrentName(RegionField field)
+		private static string CurrentName(DetailField field)
 		{
 			var selected = field.Options.FirstOrDefault(o => o.Key == field.SelectedOptionKey);
 			return selected?.Name ?? string.Empty;
@@ -1160,13 +1160,13 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 	/// (VwSeparatorBox), with the TRAILING bar fronting the add slot — a "+" launcher whose flyout
 	/// is the shared compact <see cref="FwOptionChooser"/> (AutoCompleteBox-based OPTIONS ONLY,
 	/// zero link items): the
-	/// possibility tree indented by <see cref="RegionChoiceOption.Depth"/> for enumerated lists,
+	/// possibility tree indented by <see cref="DetailChoiceOption.Depth"/> for enumerated lists,
 	/// or the host search delegate's results for search-backed vectors (lexicons search, lists
 	/// enumerate), both behind the same filter box and virtualized capped list.
 	/// Right-clicking an item offers Remove. Without an edit context the row is read-only display.
 	/// Hover-reveal polish: the separator bars, the "+" launcher, and — only when the
 	/// row's list resolved a list-editor target — the CONFIGURE gear (which directly dispatches
-	/// the host jump, never a flyout: <see cref="RegionGearChrome"/>) fade in on row hover; the
+	/// the host jump, never a flyout: <see cref="DetailGearChrome"/>) fade in on row hover; the
 	/// items/text stay always visible.
 	/// </summary>
 	public sealed class FwReferenceVectorField : StackPanel, IHoverAffordanceProvider, IDisposable
@@ -1188,11 +1188,11 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		/// Failed stages never fire it.
 		/// </summary>
 		public FwReferenceVectorField(
-			RegionField field,
+			DetailField field,
 			string automationId,
-			IRegionEditContext editContext,
+			IDetailEditContext editContext,
 			Action gestureCompleted = null,
-			Action<RegionLinkRequest> linkRequested = null)
+			Action<DetailLinkRequest> linkRequested = null)
 		{
 			Orientation = Orientation.Horizontal;
 			// 14.2-style hit-testing rule: a null background only hit-tests the glyphs — the WHOLE
@@ -1276,7 +1276,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 			// context (the host commits once via gestureCompleted), so the multi-add is one undoable
 			// step. A batch with at least one successful stage completes the gesture; an all-rejected
 			// batch (every key a duplicate/invalid) leaves the row unchanged, like single add.
-			Action<IReadOnlyList<RegionChoiceOption>> committedSet = options =>
+			Action<IReadOnlyList<DetailChoiceOption>> committedSet = options =>
 			{
 				var anyAdded = false;
 				foreach (var option in options)
@@ -1307,7 +1307,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 
 			// GEAR = CONFIGURE (only when the row's list resolved a list-editor target): clicking
 			// dispatches the host jump directly — it does NOT open the add flyout.
-			var gearButton = RegionGearChrome.CreateConfigureGear(field, automationId, linkRequested);
+			var gearButton = DetailGearChrome.CreateConfigureGear(field, automationId, linkRequested);
 			if (gearButton != null)
 			{
 				Children.Add(gearButton);
@@ -1331,7 +1331,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		/// <summary>
 		/// Detaches the per-item Remove handlers and the add picker's subscriptions and drops the option
 		/// flyout so a recycled reference-vector cell does not retain its closures. Idempotent;
-		/// a no-op for read-only rows (none wired). The host (RegionDataTree / EditableCellHost)
+		/// a no-op for read-only rows (none wired). The host (DataTree / EditableCellHost)
 		/// already disposes IDisposable editors on teardown, so wiring IDisposable here is enough.
 		/// </summary>
 		public void Dispose()
@@ -1385,7 +1385,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 
 			// The legacy ButtonLauncher launch affordance, docked at the row's end like m_panel —
 			// drawn as the shared settings gear, hover-revealed like the chooser/vector ones.
-			_button = RegionChrome.CreateGearButton();
+			_button = DetailChrome.CreateGearButton();
 			_button.IsEnabled = launch != null;
 			AutomationProperties.SetName(_button, FwAvaloniaStrings.LaunchDialog);
 			if (launch == null)

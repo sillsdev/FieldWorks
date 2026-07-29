@@ -5,7 +5,7 @@
 using System;
 using System.Linq;
 using NUnit.Framework;
-using SIL.FieldWorks.Common.FwAvalonia.Region;
+using SIL.FieldWorks.Common.FwAvalonia.Detail;
 using SIL.LCModel;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Infrastructure;
@@ -64,9 +64,9 @@ namespace SIL.FieldWorks.XWorks
 
 		private ComposedRegion Compose() => RegionComposer.Compose(m_component, Cache);
 
-		private static RegionField FindField(ComposedRegion composed, string field)
+		private static DetailField FindField(ComposedRegion composed, string field)
 			=> composed.Model.Fields.SingleOrDefault(f => f.Field == field
-				&& f.Kind == RegionFieldKind.ReferenceVector);
+				&& f.Kind == DetailFieldKind.ReferenceVector);
 
 		// ===== Subentries =====
 
@@ -235,7 +235,7 @@ namespace SIL.FieldWorks.XWorks
 
 			var composed = RegionComposer.Compose(referenced, Cache);
 			var field = composed.Model.Fields.FirstOrDefault(f => f.Field == "VariantFormEntryBackRefs"
-				&& f.Kind == RegionFieldKind.ReferenceVector);
+				&& f.Kind == DetailFieldKind.ReferenceVector);
 			if (field != null)
 				Assert.That(field.IsEditable, Is.False,
 					"VariantFormEntryBackRefs is deferred: its legacy add inserts a NEW variant entry");

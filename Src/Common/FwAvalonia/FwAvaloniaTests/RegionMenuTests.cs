@@ -15,7 +15,7 @@ using Avalonia.Threading;
 using Avalonia.VisualTree;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwAvalonia;
-using SIL.FieldWorks.Common.FwAvalonia.Region;
+using SIL.FieldWorks.Common.FwAvalonia.Detail;
 using SIL.FieldWorks.Common.FwAvalonia.ViewDefinition;
 
 namespace FwAvaloniaTests
@@ -99,7 +99,7 @@ namespace FwAvaloniaTests
 	}
 
 	/// <summary>
-	/// Right-click on the Avalonia surface raises a <see cref="RegionMenuRequest"/>
+	/// Right-click on the Avalonia surface raises a <see cref="DetailMenuRequest"/>
 	/// through the host bridge with the legacy menu binding and screen coordinates: labels/headers
 	/// raise the slice menu (or hotlinks when only those exist), value boxes with a `contextMenu=`
 	/// binding raise the in-string context menu, and unbound rows raise nothing (they keep the
@@ -108,26 +108,26 @@ namespace FwAvaloniaTests
 	[TestFixture]
 	public class RegionMenuRequestTests
 	{
-		private static RegionField Field(string id, RegionFieldKind kind,
+		private static DetailField Field(string id, DetailFieldKind kind,
 			string menuId = null, string contextMenuId = null, string hotlinksId = null,
 			bool collapsible = false)
-			=> new RegionField(id, id, id, null, kind,
+			=> new DetailField(id, id, id, null, kind,
 				EditorClassification.Known, id, null, SurfaceRouting.Inherit,
-				kind == RegionFieldKind.Text
-					? new List<RegionWsValue> { new RegionWsValue("en", "value") }
+				kind == DetailFieldKind.Text
+					? new List<DetailWsValue> { new DetailWsValue("en", "value") }
 					: null,
-				null, null, isEditable: kind == RegionFieldKind.Text, indent: 0,
+				null, null, isEditable: kind == DetailFieldKind.Text, indent: 0,
 				isCollapsible: collapsible, isInitiallyExpanded: true,
 				menuId: menuId, contextMenuId: contextMenuId, hotlinksId: hotlinksId,
 				objectHvo: 1234);
 
-		private static (RegionDataTree view, List<RegionMenuRequest> requests) Show(
-			params RegionField[] fields)
+		private static (DataTree view, List<DetailMenuRequest> requests) Show(
+			params DetailField[] fields)
 		{
-			var requests = new List<RegionMenuRequest>();
-			var model = new RegionModel("LexEntry", "Normal",
+			var requests = new List<DetailMenuRequest>();
+			var model = new DetailModel("LexEntry", "Normal",
 				fields.ToList(), new List<ViewDiagnostic>());
-			var view = new RegionDataTree(model, null, null, null, null, requests.Add);
+			var view = new DataTree(model, null, null, null, null, requests.Add);
 			var window = new Window { Content = view, Width = 480, Height = 300 };
 			window.Show();
 			Dispatcher.UIThread.RunJobs();
@@ -167,13 +167,13 @@ namespace FwAvaloniaTests
 		[AvaloniaTest]
 		public void FieldMenuButton_OnLabelRow_RaisesTheSliceMenuRequest_WithTheLegacyMenuId()
 		{
-			var (view, requests) = Show(Field("Gloss", RegionFieldKind.Text, menuId: "mnuDataTree-Help"));
+			var (view, requests) = Show(Field("Gloss", DetailFieldKind.Text, menuId: "mnuDataTree-Help"));
 
 			// The "⋮" field-options button (which replaced right-click) opens the slice menu.
 			ClickKebab(Find<Button>(view, "Gloss.FieldMenu"));
 
 			Assert.That(requests, Has.Count.EqualTo(1));
-			Assert.That(requests[0].Kind, Is.EqualTo(RegionMenuKind.SliceMenu));
+			Assert.That(requests[0].Kind, Is.EqualTo(DetailMenuKind.SliceMenu));
 			Assert.That(requests[0].Field.MenuId, Is.EqualTo("mnuDataTree-Help"));
 			Assert.That(requests[0].Field.ObjectHvo, Is.EqualTo(1234),
 				"the request carries the bound object so command routing can target it");
@@ -182,7 +182,7 @@ namespace FwAvaloniaTests
 		[AvaloniaTest]
 		public void RightClick_OnLabel_NoLongerRaisesAnyRequest()
 		{
-			var (view, requests) = Show(Field("Gloss", RegionFieldKind.Text, menuId: "mnuDataTree-Help"));
+			var (view, requests) = Show(Field("Gloss", DetailFieldKind.Text, menuId: "mnuDataTree-Help"));
 
 			// The label does not open the menu; the "⋮" field-options button does.
 			RightClick(Find<TextBlock>(view, "Gloss.Label"));
@@ -193,14 +193,14 @@ namespace FwAvaloniaTests
 		[AvaloniaTest]
 		public void RightClick_OnValueBox_WithContextMenuBinding_RaisesTheContextMenuRequest()
 		{
-			var (view, requests) = Show(Field("CitationForm", RegionFieldKind.Text,
+			var (view, requests) = Show(Field("CitationForm", DetailFieldKind.Text,
 				menuId: "mnuDataTree-Help", contextMenuId: "mnuDataTree-CitationFormContext"));
 
 			var box = view.GetVisualDescendants().OfType<TextBox>().First();
 			RightClick(box);
 
 			Assert.That(requests, Has.Count.EqualTo(1));
-			Assert.That(requests[0].Kind, Is.EqualTo(RegionMenuKind.ContextMenu),
+			Assert.That(requests[0].Kind, Is.EqualTo(DetailMenuKind.ContextMenu),
 				"value-box right-click is the legacy MultiStringSlice in-string context menu");
 			Assert.That(requests[0].Field.ContextMenuId, Is.EqualTo("mnuDataTree-CitationFormContext"));
 		}
@@ -208,7 +208,7 @@ namespace FwAvaloniaTests
 		[AvaloniaTest]
 		public void FieldMenuButton_OnHotlinksOnlyHeader_RaisesTheHotlinksRequest()
 		{
-			var (view, requests) = Show(Field("Senses", RegionFieldKind.Header,
+			var (view, requests) = Show(Field("Senses", DetailFieldKind.Header,
 				hotlinksId: "mnuDataTree-Sense-Hotlinks", collapsible: true));
 
 			// The header's "⋮" button raises the hotlinks request; the collapsible toggle (id "Senses")
@@ -216,7 +216,7 @@ namespace FwAvaloniaTests
 			ClickKebab(Find<Button>(view, "Senses.FieldMenu"));
 
 			Assert.That(requests, Has.Count.EqualTo(1));
-			Assert.That(requests[0].Kind, Is.EqualTo(RegionMenuKind.Hotlinks));
+			Assert.That(requests[0].Kind, Is.EqualTo(DetailMenuKind.Hotlinks));
 			Assert.That(requests[0].Field.HotlinksId, Is.EqualTo("mnuDataTree-Sense-Hotlinks"));
 		}
 
@@ -225,7 +225,7 @@ namespace FwAvaloniaTests
 		[AvaloniaTest]
 		public void HotlinksStrip_AppearsForHotlinkHeader_IsAlwaysVisible_AndKeepsTheKebab()
 		{
-			var (view, _) = Show(Field("Senses", RegionFieldKind.Header,
+			var (view, _) = Show(Field("Senses", DetailFieldKind.Header,
 				hotlinksId: "mnuDataTree-Sense-Hotlinks", collapsible: true));
 
 			var strip = FindOrNull<Button>(view, "Senses.Hotlinks");
@@ -246,14 +246,14 @@ namespace FwAvaloniaTests
 		[AvaloniaTest]
 		public void HotlinksStrip_Activating_RaisesTheSameHotlinksRequest_AsTheKebab()
 		{
-			var (view, requests) = Show(Field("Senses", RegionFieldKind.Header,
+			var (view, requests) = Show(Field("Senses", DetailFieldKind.Header,
 				hotlinksId: "mnuDataTree-Sense-Hotlinks", collapsible: true));
 
 			// Activating the strip arrives as Button.Click (mouse OR keyboard), the same path the kebab uses.
 			ClickKebab(Find<Button>(view, "Senses.Hotlinks"));
 
 			Assert.That(requests, Has.Count.EqualTo(1));
-			Assert.That(requests[0].Kind, Is.EqualTo(RegionMenuKind.Hotlinks),
+			Assert.That(requests[0].Kind, Is.EqualTo(DetailMenuKind.Hotlinks),
 				"the strip dispatches the SAME hotlinks request the kebab raises");
 			Assert.That(requests[0].Field.HotlinksId, Is.EqualTo("mnuDataTree-Sense-Hotlinks"));
 		}
@@ -261,7 +261,7 @@ namespace FwAvaloniaTests
 		[AvaloniaTest]
 		public void HotlinksStrip_IsAbsent_ForHeaderWithoutHotlinks()
 		{
-			var (view, _) = Show(Field("Notes", RegionFieldKind.Header, menuId: "mnuDataTree-Object"));
+			var (view, _) = Show(Field("Notes", DetailFieldKind.Header, menuId: "mnuDataTree-Object"));
 
 			Assert.That(FindOrNull<Button>(view, "Notes.Hotlinks"), Is.Null,
 				"a header carrying only a slice menu (no hotlinks) gets no inline command strip");
@@ -273,13 +273,13 @@ namespace FwAvaloniaTests
 		[AvaloniaTest]
 		public void BridgedValueBox_DropsTheThemeFlyout_UnboundKeepsCopy()
 		{
-			var (boundView, _) = Show(Field("CitationForm", RegionFieldKind.Text,
+			var (boundView, _) = Show(Field("CitationForm", DetailFieldKind.Text,
 				contextMenuId: "mnuDataTree-CitationFormContext"));
 			var boundBox = boundView.GetVisualDescendants().OfType<TextBox>().First();
 			Assert.That(boundBox.ContextFlyout, Is.Null,
 				"a bridged box must not raise a second (built-in) menu");
 
-			var (plainView, _) = Show(Field("Comment", RegionFieldKind.Text));
+			var (plainView, _) = Show(Field("Comment", DetailFieldKind.Text));
 			var plainBox = plainView.GetVisualDescendants().OfType<TextBox>().First();
 			Assert.That(plainBox.ContextFlyout, Is.Not.Null, "unbound rows keep the local Copy flyout");
 		}
@@ -287,7 +287,7 @@ namespace FwAvaloniaTests
 		[AvaloniaTest]
 		public void RightClick_OnUnboundRow_RaisesNoRequest()
 		{
-			var (view, requests) = Show(Field("Comment", RegionFieldKind.Text));
+			var (view, requests) = Show(Field("Comment", DetailFieldKind.Text));
 
 			RightClick(Find<TextBlock>(view, "Comment.Label"));
 			RightClick(view.GetVisualDescendants().OfType<TextBox>().First());
@@ -301,7 +301,7 @@ namespace FwAvaloniaTests
 		[AvaloniaTest]
 		public void FieldMenuButton_IsHiddenAtRest_RevealedOnHover_AndKeyboardAddressable()
 		{
-			var (view, _) = Show(Field("Gloss", RegionFieldKind.Text, menuId: "mnuDataTree-Help"));
+			var (view, _) = Show(Field("Gloss", DetailFieldKind.Text, menuId: "mnuDataTree-Help"));
 
 			var kebab = Find<Button>(view, "Gloss.FieldMenu");
 			// Accessibility: a localized name so a screen reader announces the affordance.
@@ -326,18 +326,18 @@ namespace FwAvaloniaTests
 		public void RegionMenuFlyout_BuildsItems_AndClickExecutes()
 		{
 			var executed = 0;
-			var items = new List<RegionMenuItem>
+			var items = new List<DetailMenuItem>
 			{
-				new RegionMenuItem("Insert Sense", execute: () => executed++),
-				RegionMenuItem.Separator(),
-				new RegionMenuItem("Delete this Sense", isEnabled: false),
-				new RegionMenuItem("Field Visibility", children: new List<RegionMenuItem>
+				new DetailMenuItem("Insert Sense", execute: () => executed++),
+				DetailMenuItem.Separator(),
+				new DetailMenuItem("Delete this Sense", isEnabled: false),
+				new DetailMenuItem("Field Visibility", children: new List<DetailMenuItem>
 				{
-					new RegionMenuItem("Always visible", isChecked: true)
+					new DetailMenuItem("Always visible", isChecked: true)
 				})
 			};
 
-			var flyout = RegionMenuFlyout.Build(items);
+			var flyout = DetailMenuFlyout.Build(items);
 			Assert.That(flyout.Items.Count, Is.EqualTo(4));
 
 			var insert = (MenuItem)flyout.Items[0];
@@ -364,12 +364,12 @@ namespace FwAvaloniaTests
 		[AvaloniaTest]
 		public void RegionMenuFlyout_ItemDensity_IsPinnedCompact_IncludingSubmenus()
 		{
-			var flyout = RegionMenuFlyout.Build(new List<RegionMenuItem>
+			var flyout = DetailMenuFlyout.Build(new List<DetailMenuItem>
 			{
-				new RegionMenuItem("Insert Sense", execute: () => { }),
-				new RegionMenuItem("Field Visibility", children: new List<RegionMenuItem>
+				new DetailMenuItem("Insert Sense", execute: () => { }),
+				new DetailMenuItem("Field Visibility", children: new List<DetailMenuItem>
 				{
-					new RegionMenuItem("Always visible")
+					new DetailMenuItem("Always visible")
 				})
 			});
 
@@ -391,7 +391,7 @@ namespace FwAvaloniaTests
 		[AvaloniaTest]
 		public void LeftClick_OnBoundLabel_RaisesNoRequest()
 		{
-			var (view, requests) = Show(Field("Gloss", RegionFieldKind.Text, menuId: "mnuDataTree-Help"));
+			var (view, requests) = Show(Field("Gloss", DetailFieldKind.Text, menuId: "mnuDataTree-Help"));
 
 			var label = Find<TextBlock>(view, "Gloss.Label");
 			var root = (Visual)label.GetVisualRoot();

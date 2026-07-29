@@ -4,14 +4,14 @@
 
 using System;
 using System.Linq;
-using SIL.FieldWorks.Common.FwAvalonia.Region;
+using SIL.FieldWorks.Common.FwAvalonia.Detail;
 using SIL.LCModel;
 using SIL.LCModel.Core.Text;
 
 namespace SIL.FieldWorks.XWorks
 {
 	/// <summary>
-	/// The product <see cref="IRegionEditContext"/> for the LexEntry first slice (tasks 6.8/6.10):
+	/// The product <see cref="IDetailEditContext"/> for the LexEntry first slice (tasks 6.8/6.10):
 	/// stages writes directly into LCModel inside a lazily opened <see cref="LcmRegionEditSession"/>
 	/// (fenced undo task, owned by <see cref="RegionEditContextBase"/>), validates required fields,
 	/// and commits/cancels the fence. Field names match the compiled first-slice definition
@@ -26,7 +26,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <inheritdoc />
-		public override bool TrySetText(RegionField regionField, string ws, string value)
+		public override bool TrySetText(DetailField regionField, string ws, string value)
 		{
 			if (regionField != null && regionField.Values.Any(v => v.RequiresRichEditor))
 				return false;
@@ -62,8 +62,8 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		public override bool TrySetRichText(RegionField regionField, string ws,
-			RegionRichTextValue value)
+		public override bool TrySetRichText(DetailField regionField, string ws,
+			DetailRichTextValue value)
 		{
 			if (regionField != null && regionField.Values.Any(v => !v.CanEditRichText))
 				return false;
@@ -99,7 +99,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		// Tasks 6.2/6.13 (multi-WS write path): each per-WS row writes its own alternative. The row
-		// addresses its writing system by the unique IETF tag (RegionWsValue.WsTag/ws.Id) first;
+		// addresses its writing system by the unique IETF tag (DetailWsValue.WsTag/ws.Id) first;
 		// the user-editable Abbreviation (which can collide) and the legacy "vern"/"anal" aliases
 		// from the fixed first-slice definition are accepted as fallbacks. Any OTHER unknown key is
 		// rejected — a silent write to the DEFAULT alternative is worse than no
@@ -137,7 +137,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <inheritdoc />
-		public override bool TrySetOption(RegionField regionField, string optionKey)
+		public override bool TrySetOption(DetailField regionField, string optionKey)
 		{
 			if (regionField?.Field != "MorphType" || Entry.LexemeFormOA == null)
 				return false;
@@ -154,7 +154,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		// ITEM 1: the human-readable field label that names the undo step, falling back to the field name.
-		private static string FieldLabel(RegionField regionField)
+		private static string FieldLabel(DetailField regionField)
 			=> string.IsNullOrEmpty(regionField?.Label) ? regionField?.Field : regionField.Label;
 	}
 }

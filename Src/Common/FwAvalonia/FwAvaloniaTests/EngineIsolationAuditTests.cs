@@ -8,7 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using NUnit.Framework;
-using SIL.FieldWorks.Common.FwAvalonia.Region;
+using SIL.FieldWorks.Common.FwAvalonia.Detail;
 
 namespace FwAvaloniaTests
 {
@@ -32,11 +32,12 @@ namespace FwAvaloniaTests
 		};
 
 		// Identifiers from the forbidden-symbol list that
-		// production source must not name (native Views render/editor pipeline, legacy DataTree/Slice
+		// production source must not name (native Views render/editor pipeline, legacy Slice
 		// editor surface, native render engines, browser/PDF engines).
-		// "SliceFactory" is deliberately absent: FwAvalonia.Region owns its own SliceFactory (a
-		// cross-namespace twin of the legacy DetailControls.SliceFactory), so the bare stem is now a
-		// legitimate first-party code symbol. Isolation from the native twin is still enforced by
+		// "SliceFactory" and "DataTree" are deliberately absent: FwAvalonia.Detail owns its own
+		// SliceFactory and DataTree (cross-namespace twins of the legacy DetailControls types), so
+		// those bare stems are now legitimate first-party code symbols. Isolation from the native
+		// twins is still enforced by
 		// ProductionAssembly_ReferencesNoNativeRenderLegacyOrDomainAssemblies (DetailControls assembly).
 		private static readonly string[] ForbiddenSourceSymbols =
 		{
@@ -44,13 +45,13 @@ namespace FwAvaloniaTests
 			"IRenderEngine", "IRenderEngineFactory", "GraphiteEngineClass", "UniscribeEngineClass",
 			"FwGrEngine", "GraphiteSegment", "RootSiteControl",
 			"GeckoWebBrowser", "XWebBrowser", "GeckofxHtmlToPdf", "FieldWorksPdfMaker",
-			"DataTree", "Slice", "XmlView", "BrowseViewer"
+			"Slice", "XmlView", "BrowseViewer"
 		};
 
 		[Test]
 		public void ProductionAssembly_ReferencesNoNativeRenderLegacyOrDomainAssemblies()
 		{
-			var referenced = typeof(RegionDataTree).Assembly.GetReferencedAssemblies()
+			var referenced = typeof(DataTree).Assembly.GetReferencedAssemblies()
 				.Select(r => r.Name)
 				.ToList();
 

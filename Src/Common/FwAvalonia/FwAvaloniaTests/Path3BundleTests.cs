@@ -11,7 +11,7 @@ using Avalonia.Threading;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using NUnit.Framework;
-using SIL.FieldWorks.Common.FwAvalonia.Region;
+using SIL.FieldWorks.Common.FwAvalonia.Detail;
 using SIL.FieldWorks.Common.FwAvalonia.ViewDefinition;
 
 namespace FwAvaloniaTests
@@ -44,8 +44,8 @@ namespace FwAvaloniaTests
 			File.WriteAllText(semanticPath, definition.ToSnapshot());
 
 			// Avalonia visual evidence: a real Skia rendered frame of the region view.
-			var model = RegionModelProjector.FromViewDefinition(definition, new FakeRegionValueProvider());
-			var window = new Window { Content = new RegionDataTree(model), Width = 420, Height = 200 };
+			var model = DetailModelProjector.FromViewDefinition(definition, new FakeRegionValueProvider());
+			var window = new Window { Content = new DataTree(model), Width = 420, Height = 200 };
 			window.Show();
 			Dispatcher.UIThread.RunJobs();
 			var avaloniaPng = Path.Combine(bundleDir, "avalonia-visual.png");

@@ -13,7 +13,7 @@ using Avalonia.Controls.Primitives;
 using Avalonia.Layout;
 using Avalonia.Media;
 
-namespace SIL.FieldWorks.Common.FwAvalonia.Region
+namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 {
 	/// <summary>
 	/// Shared rich-text DEPTH chrome reused by both owned text editors (FwMultiWsTextField and
@@ -22,14 +22,14 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 	/// the multi-WS field pioneered for the character-style and writing-system pickers), so the structured
 	/// editor gets the SAME affordances without re-implementing them. Stays LCModel-free.
 	/// </summary>
-	internal static class RegionRichTextChrome
+	internal static class DetailRichTextChrome
 	{
 		/// <summary>
 		/// Whether a value's runs differ enough (more than one run, or any run carrying a named style / its
 		/// own font / a non-default ws) that a per-run font DISPLAY layer is worth building over the plain
 		/// editor. A uniform single-run value renders fine in the editor's own single font.
 		/// </summary>
-		internal static bool ShouldRenderPerRunFontDisplay(RegionRichTextValue rich)
+		internal static bool ShouldRenderPerRunFontDisplay(DetailRichTextValue rich)
 		{
 			var runs = rich?.Runs;
 			if (runs == null || runs.Count == 0)
@@ -47,8 +47,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		/// <c>FontWeight</c> (bold). This is the only way to show TRUE per-run fonts in the unfocused state;
 		/// the editable TextBox swaps in on focus. Carries the supplied automation id.
 		/// </summary>
-		internal static TextBlock BuildPerRunFontDisplay(RegionRichTextValue rich,
-			IReadOnlyDictionary<string, RegionRunFont> fontMap, string automationId, bool rightToLeft)
+		internal static TextBlock BuildPerRunFontDisplay(DetailRichTextValue rich,
+			IReadOnlyDictionary<string, DetailRunFont> fontMap, string automationId, bool rightToLeft)
 		{
 			var display = new TextBlock
 			{
@@ -89,9 +89,9 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		/// option; on commit, <paramref name="onCommitted"/> applies the gesture. The caller owns the
 		/// selection snapshot and the stage. Teardown actions are appended to <paramref name="teardown"/>.
 		/// </summary>
-		internal static Button BuildSpanPicker(IReadOnlyList<RegionChoiceOption> options, string content,
+		internal static Button BuildSpanPicker(IReadOnlyList<DetailChoiceOption> options, string content,
 			string accessibleName, string automationId, Action<FwOptionChooser> onOpen,
-			Action<RegionChoiceOption> onCommitted, List<Action> teardown)
+			Action<DetailChoiceOption> onCommitted, List<Action> teardown)
 		{
 			var button = new Button
 			{
@@ -116,7 +116,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 			var picker = new FwOptionChooser(options, null, automationId);
 			var flyout = FwOptionChooser.CreateOptionFlyout(picker, PlacementMode.BottomEdgeAlignedLeft);
 
-			Action<RegionChoiceOption> committed = option =>
+			Action<DetailChoiceOption> committed = option =>
 			{
 				flyout.Hide();
 				onCommitted(option);

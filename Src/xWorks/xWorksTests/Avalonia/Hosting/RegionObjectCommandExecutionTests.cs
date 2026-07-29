@@ -12,7 +12,7 @@ using System.Xml;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwAvalonia;
-using SIL.FieldWorks.Common.FwAvalonia.Region;
+using SIL.FieldWorks.Common.FwAvalonia.Detail;
 using SIL.FieldWorks.Common.Framework.DetailControls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
@@ -35,7 +35,7 @@ namespace SIL.FieldWorks.XWorks
 	///      its CurrentSlice at the slice bound to the clicked row's object (exactly what
 	///      <c>OnRegionMenuRequested</c> calls first).
 	///   2. <see cref="XCoreMenuBridge.BuildMenuItems(XWindow, string[])"/> — the same native-menu
-	///      materialization <c>OnRegionMenuRequested</c> performs; the resulting <see cref="RegionMenuItem"/>
+	///      materialization <c>OnRegionMenuRequested</c> performs; the resulting <see cref="DetailMenuItem"/>
 	///      carries an Execute action that dispatches the command through the mediator
 	///      (<c>ChoiceBase.OnClick</c> → hidden DataTree/DTMenuHandler colleagues → UOW mutation).
 	/// Invoking that Execute is the user clicking the item. We then assert (a) the model mutated and
@@ -318,14 +318,14 @@ namespace SIL.FieldWorks.XWorks
 			method.Invoke(m_view, new object[] { targetHvo });
 		}
 
-		private IReadOnlyList<RegionMenuItem> BuildItems(string[] menuIds)
+		private IReadOnlyList<DetailMenuItem> BuildItems(string[] menuIds)
 		{
 			var window = m_propertyTable.GetValue<XWindow>("window");
 			Assert.That(window, Is.Not.Null);
 			return XCoreMenuBridge.BuildMenuItems(window, menuIds);
 		}
 
-		private void InvokeItem(IReadOnlyList<RegionMenuItem> items, string label)
+		private void InvokeItem(IReadOnlyList<DetailMenuItem> items, string label)
 		{
 			var item = FindItem(items, label);
 			Assert.That(item, Is.Not.Null, "expected a '{0}' menu item to materialize", label);
@@ -336,7 +336,7 @@ namespace SIL.FieldWorks.XWorks
 
 		// Items come from XCoreMenuBridge with accelerators already stripped; match on the visible label,
 		// searching submenus too (some commands nest).
-		private static RegionMenuItem FindItem(IReadOnlyList<RegionMenuItem> items, string label)
+		private static DetailMenuItem FindItem(IReadOnlyList<DetailMenuItem> items, string label)
 		{
 			foreach (var item in items)
 			{
@@ -363,7 +363,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var composed = RegionComposer.Compose(m_entry, Cache);
 			Assert.That(composed, Is.Not.Null, "the entry must compose");
-			return composed.Model.Fields.Count(f => f.Kind == RegionFieldKind.Header && f.Field == "Senses");
+			return composed.Model.Fields.Count(f => f.Kind == DetailFieldKind.Header && f.Field == "Senses");
 		}
 
 		// Calls the host's real RefreshAvaloniaRegion and reports the field count of the recomposed

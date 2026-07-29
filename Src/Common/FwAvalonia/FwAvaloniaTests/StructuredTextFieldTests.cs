@@ -13,7 +13,7 @@ using Avalonia.Threading;
 using Avalonia.VisualTree;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwAvalonia;
-using SIL.FieldWorks.Common.FwAvalonia.Region;
+using SIL.FieldWorks.Common.FwAvalonia.Detail;
 using SIL.FieldWorks.Common.FwAvalonia.ViewDefinition;
 using FwAvaloniaTests.VisualChecks; // DialogSnapshot — the PNG harness
 using FwAvaloniaDialogsTests;        // DialogLayoutAssert — the shared geometry tripwire
@@ -31,28 +31,28 @@ namespace FwAvaloniaTests
 	[TestFixture]
 	public class StructuredTextFieldTests
 	{
-		private static RegionParagraph Para(string text, string style = null)
-			=> new RegionParagraph(
-				RegionRichTextEditAlgorithms.FromRuns(text ?? string.Empty,
+		private static DetailParagraph Para(string text, string style = null)
+			=> new DetailParagraph(
+				DetailRichTextEditAlgorithms.FromRuns(text ?? string.Empty,
 					string.IsNullOrEmpty(text)
-						? Array.Empty<RegionTextRun>()
-						: new[] { new RegionTextRun(text, "en") }),
+						? Array.Empty<DetailTextRun>()
+						: new[] { new DetailTextRun(text, "en") }),
 				style);
 
 		// An ORC/lossy paragraph: a value flagged lossy is held read-only.
-		private static RegionParagraph LossyPara(string text)
+		private static DetailParagraph LossyPara(string text)
 		{
-			var rich = new RegionRichTextValue(text, new[] { new RegionTextRun(text, "en") },
+			var rich = new DetailRichTextValue(text, new[] { new DetailTextRun(text, "en") },
 				richXml: null, requiresRichEditor: true, canEditRichText: true, lossyProperties: true);
-			return new RegionParagraph(rich);
+			return new DetailParagraph(rich);
 		}
 
-		private static RegionField Field(IReadOnlyList<RegionParagraph> paragraphs,
+		private static DetailField Field(IReadOnlyList<DetailParagraph> paragraphs,
 			bool isEditable = true, IReadOnlyList<string> paragraphStyles = null)
 		{
-			var field = new RegionField(
+			var field = new DetailField(
 				stableId: "LexEntry/Discussion@1", label: "Discussion", field: "Discussion",
-				writingSystem: null, kind: RegionFieldKind.StructuredText,
+				writingSystem: null, kind: DetailFieldKind.StructuredText,
 				editorClassification: EditorClassification.Known, automationId: "Discussion",
 				localizationKey: null, routing: SurfaceRouting.Product, values: null, options: null,
 				selectedOptionKey: null, isEditable: isEditable, paragraphs: paragraphs);
@@ -61,8 +61,8 @@ namespace FwAvaloniaTests
 			return field;
 		}
 
-		private static (FwStructuredTextField Field, Window Window) Show(RegionField field,
-			IRegionEditContext editContext = null, Action gestureCompleted = null)
+		private static (FwStructuredTextField Field, Window Window) Show(DetailField field,
+			IDetailEditContext editContext = null, Action gestureCompleted = null)
 		{
 			var control = new FwStructuredTextField(field, field.AutomationId, editContext, null, gestureCompleted);
 			var window = new Window { Content = control, Width = 420, Height = 220 };
@@ -79,7 +79,7 @@ namespace FwAvaloniaTests
 		[AvaloniaTest]
 		public void ReadOnlyBaseline_RendersOneRowPerParagraph_NoEditContext()
 		{
-			var field = Field(new List<RegionParagraph> { Para("First paragraph."), Para("Second paragraph.") });
+			var field = Field(new List<DetailParagraph> { Para("First paragraph."), Para("Second paragraph.") });
 			var (control, window) = Show(field, editContext: null);
 
 			DialogSnapshot.Capture(window, "Region-StText-01-readonly-baseline");
@@ -94,7 +94,7 @@ namespace FwAvaloniaTests
 		[AvaloniaTest]
 		public void Editable_RendersEditableRows_AndStagesAParagraphTextEdit()
 		{
-			var field = Field(new List<RegionParagraph> { Para("First paragraph."), Para("Second paragraph.") });
+			var field = Field(new List<DetailParagraph> { Para("First paragraph."), Para("Second paragraph.") });
 			var context = new FakeRegionEditContext();
 			var (control, window) = Show(field, context);
 
@@ -116,7 +116,7 @@ namespace FwAvaloniaTests
 		[AvaloniaTest]
 		public void MultiParagraph_RendersEachParagraphDistinctly()
 		{
-			var field = Field(new List<RegionParagraph>
+			var field = Field(new List<DetailParagraph>
 			{
 				Para("Alpha."), Para("Beta."), Para("Gamma.")
 			});
@@ -132,7 +132,7 @@ namespace FwAvaloniaTests
 		[AvaloniaTest]
 		public void EnterAtParagraph_StagesAnInsertAfterIt()
 		{
-			var field = Field(new List<RegionParagraph> { Para("Only paragraph.") });
+			var field = Field(new List<DetailParagraph> { Para("Only paragraph.") });
 			var context = new FakeRegionEditContext();
 			var (control, _) = Show(field, context, gestureCompleted: () => { });
 
@@ -153,7 +153,7 @@ namespace FwAvaloniaTests
 		[AvaloniaTest]
 		public void BackspaceInEmptyParagraph_StagesADelete_WhenMoreThanOneRemains()
 		{
-			var field = Field(new List<RegionParagraph> { Para("Keep this."), Para(string.Empty) });
+			var field = Field(new List<DetailParagraph> { Para("Keep this."), Para(string.Empty) });
 			var context = new FakeRegionEditContext();
 			var (control, _) = Show(field, context, gestureCompleted: () => { });
 
@@ -175,7 +175,7 @@ namespace FwAvaloniaTests
 		[AvaloniaTest]
 		public void OnlyParagraph_HasNoDeleteAffordance_AndBackspaceDoesNotDelete()
 		{
-			var field = Field(new List<RegionParagraph> { Para(string.Empty) });
+			var field = Field(new List<DetailParagraph> { Para(string.Empty) });
 			var context = new FakeRegionEditContext();
 			var (control, _) = Show(field, context, gestureCompleted: () => { });
 
@@ -197,7 +197,7 @@ namespace FwAvaloniaTests
 		[AvaloniaTest]
 		public void ParagraphStylePicker_AppliesAStyle()
 		{
-			var field = Field(new List<RegionParagraph> { Para("Styled paragraph.") },
+			var field = Field(new List<DetailParagraph> { Para("Styled paragraph.") },
 				paragraphStyles: new[] { "Block Quote", "Numbered List" });
 			var context = new FakeRegionEditContext();
 			var (control, window) = Show(field, context, gestureCompleted: () => { });
@@ -229,7 +229,7 @@ namespace FwAvaloniaTests
 		{
 			// A lossy/ORC paragraph is held read-only and preserved; the editable paragraph next
 			// to it is still fully editable.
-			var field = Field(new List<RegionParagraph> { Para("Editable."), LossyPara("Has unsupported formatting.") });
+			var field = Field(new List<DetailParagraph> { Para("Editable."), LossyPara("Has unsupported formatting.") });
 			var context = new FakeRegionEditContext();
 			var (control, _) = Show(field, context);
 
@@ -248,7 +248,7 @@ namespace FwAvaloniaTests
 		[AvaloniaTest]
 		public void Dispose_DetachesEveryWiredHandler()
 		{
-			var field = Field(new List<RegionParagraph> { Para("Alpha."), Para("Beta.") },
+			var field = Field(new List<DetailParagraph> { Para("Alpha."), Para("Beta.") },
 				paragraphStyles: new[] { "Block Quote" });
 			var context = new FakeRegionEditContext();
 			var (control, _) = Show(field, context, gestureCompleted: () => { });

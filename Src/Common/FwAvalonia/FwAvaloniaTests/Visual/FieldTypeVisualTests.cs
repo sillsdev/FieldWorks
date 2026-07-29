@@ -8,7 +8,7 @@ using System.Linq;
 using Avalonia.Headless.NUnit;
 using Avalonia.VisualTree;
 using NUnit.Framework;
-using SIL.FieldWorks.Common.FwAvalonia.Region;
+using SIL.FieldWorks.Common.FwAvalonia.Detail;
 using SIL.FieldWorks.Common.FwAvalonia.ViewDefinition;
 using FwAvaloniaTests; // FakeRegionEditContext
 using FwAvaloniaDialogsTests; // DialogLayoutAssert
@@ -26,36 +26,36 @@ namespace FwAvaloniaTests.VisualChecks
 	[TestFixture]
 	public class FieldTypeVisualTests
 	{
-		private static RegionDataTree Surface(IReadOnlyList<RegionField> fields,
+		private static DataTree Surface(IReadOnlyList<DetailField> fields,
 			out FakeRegionEditContext edit)
 		{
 			edit = new FakeRegionEditContext();
-			return new RegionDataTree(
-				new RegionModel("LexEntry", "detail", new List<RegionField>(fields),
+			return new DataTree(
+				new DetailModel("LexEntry", "detail", new List<DetailField>(fields),
 					new List<ViewDiagnostic>()),
 				edit);
 		}
 
-		private static RegionField Literal(string text) => new RegionField(
-			"f/#lit", string.Empty, "Self", null, RegionFieldKind.Literal,
+		private static DetailField Literal(string text) => new DetailField(
+			"f/#lit", string.Empty, "Self", null, DetailFieldKind.Literal,
 			EditorClassification.Known, "Lit", null, SurfaceRouting.Product,
-			new List<RegionWsValue> { new RegionWsValue("", text) }, null, null, isEditable: false);
+			new List<DetailWsValue> { new DetailWsValue("", text) }, null, null, isEditable: false);
 
-		private static RegionField Unsupported() => new RegionField(
-			"f/#uns", "Inflection Features", "InflectionFeatures", null, RegionFieldKind.Unsupported,
+		private static DetailField Unsupported() => new DetailField(
+			"f/#uns", "Inflection Features", "InflectionFeatures", null, DetailFieldKind.Unsupported,
 			EditorClassification.Known, "Uns", null, SurfaceRouting.Product, null, null, null,
 			isEditable: false);
 
-		private static RegionField Vector() => new RegionField(
-			"f/#vec", "Semantic Domains", "DomainTypes", null, RegionFieldKind.ReferenceVector,
+		private static DetailField Vector() => new DetailField(
+			"f/#vec", "Semantic Domains", "DomainTypes", null, DetailFieldKind.ReferenceVector,
 			EditorClassification.Known, "Domains", null, SurfaceRouting.Product, null,
-			new List<RegionChoiceOption>
+			new List<DetailChoiceOption>
 			{
-				new RegionChoiceOption("d1", "Universe, creation", 0),
-				new RegionChoiceOption("d2", "Sky", 1),
-				new RegionChoiceOption("d3", "Sun", 1)
+				new DetailChoiceOption("d1", "Universe, creation", 0),
+				new DetailChoiceOption("d2", "Sky", 1),
+				new DetailChoiceOption("d3", "Sun", 1)
 			},
-			null, isEditable: true, items: new List<RegionChoiceOption> { new RegionChoiceOption("d1", "Universe, creation") });
+			null, isEditable: true, items: new List<DetailChoiceOption> { new DetailChoiceOption("d1", "Universe, creation") });
 
 		// ----- Visual stages (one focused PNG per surviving kind) -----
 

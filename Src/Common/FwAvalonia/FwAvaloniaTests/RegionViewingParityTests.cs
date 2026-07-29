@@ -11,7 +11,7 @@ using Avalonia.Interactivity;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
 using NUnit.Framework;
-using SIL.FieldWorks.Common.FwAvalonia.Region;
+using SIL.FieldWorks.Common.FwAvalonia.Detail;
 using SIL.FieldWorks.Common.FwAvalonia.ViewDefinition;
 
 namespace FwAvaloniaTests
@@ -23,23 +23,23 @@ namespace FwAvaloniaTests
 	[TestFixture]
 	public class RegionViewingParityTests
 	{
-		private static RegionField Header(string id, string label, int indent,
-			bool expanded = true) => new RegionField(
-			id, label, null, null, RegionFieldKind.Header, EditorClassification.GroupingNone,
+		private static DetailField Header(string id, string label, int indent,
+			bool expanded = true) => new DetailField(
+			id, label, null, null, DetailFieldKind.Header, EditorClassification.GroupingNone,
 			null, null, SurfaceRouting.Inherit, null, null, null,
 			isEditable: false, indent: indent, isCollapsible: true, isInitiallyExpanded: expanded);
 
-		private static RegionField Text(string id, string label, int indent)
-			=> new RegionField(id, label, label, null, RegionFieldKind.Text,
+		private static DetailField Text(string id, string label, int indent)
+			=> new DetailField(id, label, label, null, DetailFieldKind.Text,
 				EditorClassification.Known, id, null, SurfaceRouting.Inherit,
-				new List<RegionWsValue> { new RegionWsValue("en", "value") }, null, null,
+				new List<DetailWsValue> { new DetailWsValue("en", "value") }, null, null,
 				isEditable: true, indent: indent);
 
-		private static RegionDataTree Show(params RegionField[] fields)
+		private static DataTree Show(params DetailField[] fields)
 		{
-			var model = new RegionModel("LexEntry", "Normal",
+			var model = new DetailModel("LexEntry", "Normal",
 				fields.ToList(), new List<ViewDiagnostic>());
-			var view = new RegionDataTree(model);
+			var view = new DataTree(model);
 			var window = new Window { Content = view, Width = 480, Height = 300 };
 			window.Show();
 			Dispatcher.UIThread.RunJobs();
@@ -174,11 +174,11 @@ namespace FwAvaloniaTests
 		{
 			// 11.8: toggles record into the store; a new view (re-show/record switch) applies them.
 			var store = new Dictionary<string, bool>();
-			var model = new RegionModel("LexEntry", "Normal",
-				new List<RegionField> { Header("h1", "Senses", 0), Text("g1", "Gloss", 1) },
+			var model = new DetailModel("LexEntry", "Normal",
+				new List<DetailField> { Header("h1", "Senses", 0), Text("g1", "Gloss", 1) },
 				new List<ViewDiagnostic>());
 
-			var first = new RegionDataTree(model, null, null,
+			var first = new DataTree(model, null, null,
 				id => store.TryGetValue(id, out var e) ? e : (bool?)null,
 				(id, e) => store[id] = e);
 			var w1 = new Window { Content = first, Width = 480, Height = 200 };
@@ -193,7 +193,7 @@ namespace FwAvaloniaTests
 			Assert.That(store["h1"], Is.False, "the collapse was recorded");
 			w1.Close();
 
-			var second = new RegionDataTree(model, null, null,
+			var second = new DataTree(model, null, null,
 				id => store.TryGetValue(id, out var e) ? e : (bool?)null,
 				(id, e) => store[id] = e);
 			var w2 = new Window { Content = second, Width = 480, Height = 200 };
@@ -208,9 +208,9 @@ namespace FwAvaloniaTests
 		[AvaloniaTest]
 		public void LabelTooltips_Splitter_BoldEmphasis_AndCopyMenu_RenderLikeLegacy()
 		{
-			var bold = new RegionField("lf", "Lexeme Form", "Form", null, RegionFieldKind.Text,
+			var bold = new DetailField("lf", "Lexeme Form", "Form", null, DetailFieldKind.Text,
 				EditorClassification.Known, "LexemeRow", null, SurfaceRouting.Inherit,
-				new List<RegionWsValue> { new RegionWsValue("seh", "casa", null, 14.4, false, "seh", bold: true) },
+				new List<DetailWsValue> { new DetailWsValue("seh", "casa", null, 14.4, false, "seh", bold: true) },
 				null, null);
 			var view = Show(bold);
 
@@ -272,21 +272,21 @@ namespace FwAvaloniaTests
 				MultiWsText("d1", "Citation Form", ("seh", "casa")),
 				MultiWsText("d2", "Gloss", ("en", "house"), ("pt", "casa")),
 			};
-			var model = new RegionModel("LexEntry", "detail", fields.ToList(),
+			var model = new DetailModel("LexEntry", "detail", fields.ToList(),
 				new List<ViewDiagnostic>());
 
-			FwMultiWsTextField Editor(RegionDataTree v, string id)
+			FwMultiWsTextField Editor(DataTree v, string id)
 				=> v.GetVisualDescendants().OfType<FwMultiWsTextField>()
 					.First(f => AutomationProperties.GetAutomationId(f) == id);
 
-			var roView = new RegionDataTree(model);
+			var roView = new DataTree(model);
 			var w1 = new Window { Content = roView, Width = 520, Height = 420 };
 			w1.Show();
 			Dispatcher.UIThread.RunJobs();
 			w1.UpdateLayout();
 			Dispatcher.UIThread.RunJobs();
 
-			var edView = new RegionDataTree(model, new FakeRegionEditContext());
+			var edView = new DataTree(model, new FakeRegionEditContext());
 			var w2 = new Window { Content = edView, Width = 520, Height = 420 };
 			w2.Show();
 			Dispatcher.UIThread.RunJobs();
@@ -305,13 +305,13 @@ namespace FwAvaloniaTests
 			}
 		}
 
-		private static RegionField MultiWsText(string id, string label,
+		private static DetailField MultiWsText(string id, string label,
 			params (string abbrev, string value)[] values)
 		{
-			var wsValues = new List<RegionWsValue>();
+			var wsValues = new List<DetailWsValue>();
 			foreach (var v in values)
-				wsValues.Add(new RegionWsValue(v.abbrev, v.value, wsTag: v.abbrev));
-			return new RegionField(id, label, label, null, RegionFieldKind.Text,
+				wsValues.Add(new DetailWsValue(v.abbrev, v.value, wsTag: v.abbrev));
+			return new DetailField(id, label, label, null, DetailFieldKind.Text,
 				EditorClassification.Known, id, null, SurfaceRouting.Product, wsValues, null, null,
 				isEditable: true);
 		}

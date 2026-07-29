@@ -10,10 +10,12 @@ using System.Linq;
 using System.Windows.Forms;
 using System.Xml;
 using SIL.FieldWorks.Common.FwAvalonia;
-using SIL.FieldWorks.Common.FwAvalonia.Region;
+using SIL.FieldWorks.Common.FwAvalonia.Detail;
 using SIL.FieldWorks.Common.FwAvalonia.Seams;
 using SIL.FieldWorks.Common.FwAvalonia.ViewDefinition;
 using SIL.FieldWorks.Common.Framework.DetailControls;
+// Bare DataTree in this file means the legacy WinForms tree; the Avalonia twin stays qualified.
+using DataTree = SIL.FieldWorks.Common.Framework.DetailControls.DataTree;
 using SIL.LCModel;
 using SIL.LCModel.Utils;
 using XCore;
@@ -92,7 +94,7 @@ namespace SIL.FieldWorks.XWorks
 			m_dataEntryForm = dataEntryForm;
 			m_lexicalEditSurfaceFactory = new EditSurfaceFactory(
 				() => m_dataEntryForm,
-				() => new RegionHostControl());
+				() => new DetailHostControl());
 			m_dataEntryForm.CurrentSliceChanged += m_dataEntryForm_CurrentSliceChanged;
 
 			// This call is required by the Windows.Forms Form Designer.

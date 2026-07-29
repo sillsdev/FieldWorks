@@ -8,7 +8,7 @@ using Avalonia.Controls;
 using Avalonia;
 using Avalonia.VisualTree;
 
-namespace SIL.FieldWorks.Common.FwAvalonia.Region
+namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 {
 	/// <summary>
 	/// Keeps keyboard focus stable across region re-shows. The host re-resolves and REPLACES the
@@ -19,7 +19,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 	/// view and gives it focus — automation ids are stable per field/writing system by design, so
 	/// they are the right cross-rebuild identity.
 	/// </summary>
-	public static class RegionFocusMemory
+	public static class DetailFocusMemory
 	{
 		/// <summary>What to restore: the focused editor's automation id/caret and the region scroll offset.</summary>
 		public sealed class Memento
