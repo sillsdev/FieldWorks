@@ -77,7 +77,7 @@ namespace SIL.FieldWorks.XWorks
 			EnsureCurrentRecord(control);
 			Assert.That(control.DatTree, Is.Not.Null);
 			Assert.That(GetPrivateFieldValue(control, "m_avaloniaEntryForm"), Is.Null);
-			Assert.That(GetPrivateFieldValue(control, "m_lexicalEditSurface"), Is.EqualTo(LexicalEditSurface.WinForms));
+			Assert.That(GetPrivateFieldValue(control, "m_lexicalEditSurface"), Is.EqualTo(EditSurface.WinForms));
 		}
 
 		[Test]
@@ -99,7 +99,7 @@ namespace SIL.FieldWorks.XWorks
 			var sameControl = m_propertyTable.GetValue<object>("currentContentControlObject", null) as RecordEditView;
 			Assert.That(sameControl, Is.SameAs(control), "Changing the UI mode should update the live content control rather than requiring a tool reload in the test harness.");
 			Assert.That(control.Clerk.CurrentObject, Is.Not.Null);
-			Assert.That(GetPrivateFieldValue(control, "m_lexicalEditSurface"), Is.EqualTo(LexicalEditSurface.Avalonia));
+			Assert.That(GetPrivateFieldValue(control, "m_lexicalEditSurface"), Is.EqualTo(EditSurface.Avalonia));
 		}
 
 		// LT-22582: flipping New->Legacy must tear down the Avalonia refresh controller + host NOW
@@ -118,14 +118,14 @@ namespace SIL.FieldWorks.XWorks
 			var control = m_propertyTable.GetValue<object>("currentContentControlObject", null) as RecordEditView;
 			Assert.That(control, Is.Not.Null);
 			EnsureCurrentRecord(control);
-			Assert.That(GetPrivateFieldValue(control, "m_lexicalEditSurface"), Is.EqualTo(LexicalEditSurface.Avalonia));
+			Assert.That(GetPrivateFieldValue(control, "m_lexicalEditSurface"), Is.EqualTo(EditSurface.Avalonia));
 			Assert.That(GetPrivateFieldValue(control, "m_avaloniaRefreshController"), Is.Not.Null,
 				"the Avalonia surface should own a refresh controller while active");
 
 			// Flip to Legacy: the host + refresh controller are disposed AND nulled now.
 			m_propertyTable.SetProperty("UIMode", "Legacy", true);
 			DrainMediatorAndIdleQueues();
-			Assert.That(GetPrivateFieldValue(control, "m_lexicalEditSurface"), Is.EqualTo(LexicalEditSurface.WinForms));
+			Assert.That(GetPrivateFieldValue(control, "m_lexicalEditSurface"), Is.EqualTo(EditSurface.WinForms));
 			Assert.That(GetPrivateFieldValue(control, "m_avaloniaRefreshController"), Is.Null,
 				"flipping to Legacy must dispose+null the refresh controller, not leave it on the PropChanged bus");
 			Assert.That(GetPrivateFieldValue(control, "m_avaloniaEntryForm"), Is.Null,
@@ -138,7 +138,7 @@ namespace SIL.FieldWorks.XWorks
 				DrainMediatorAndIdleQueues();
 				EnsureCurrentRecord(control);
 			}, "flip back to New must rebuild the Avalonia surface, not re-show a disposed host");
-			Assert.That(GetPrivateFieldValue(control, "m_lexicalEditSurface"), Is.EqualTo(LexicalEditSurface.Avalonia));
+			Assert.That(GetPrivateFieldValue(control, "m_lexicalEditSurface"), Is.EqualTo(EditSurface.Avalonia));
 			Assert.That(GetPrivateFieldValue(control, "m_avaloniaRefreshController"), Is.Not.Null,
 				"flipping back to New must rebuild the refresh controller");
 		}
@@ -160,7 +160,7 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(control, Is.Not.Null, "Expected RecordEditView for tool '{0}'.", toolValue);
 			Assert.That(
 				GetPrivateFieldValue(control, "m_lexicalEditSurface"),
-				Is.EqualTo(LexicalEditSurface.WinForms),
+				Is.EqualTo(EditSurface.WinForms),
 				"Tool '{0}' should explicitly fall back to legacy while Avalonia support is not yet implemented.",
 				toolValue);
 		}
@@ -168,7 +168,7 @@ namespace SIL.FieldWorks.XWorks
 		// The detail-editor tools registered for the Avalonia surface. They
 		// resolve to Avalonia under New mode. The interlinear (Analyses) and rule-formula tools (PhonologicalRuleEdit,
 		// EnvironmentEdit, compoundRuleAdvancedEdit, naturalClassedit, phonemeEdit, AdhocCoprohibEdit) are
-		// INERT (see LexicalEditSurfaceRegistry.Phase1FollowUpSurfaceTools); activating one registers it and
+		// INERT (see EditSurfaceRegistry.Phase1FollowUpSurfaceTools); activating one registers it and
 		// adds the corresponding TestCase row here.
 		[TestCase("notebookEdit")]
 		[TestCase("posEdit")]
@@ -184,7 +184,7 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(control, Is.Not.Null, "Expected RecordEditView for tool '{0}'.", toolValue);
 			Assert.That(
 				GetPrivateFieldValue(control, "m_lexicalEditSurface"),
-				Is.EqualTo(LexicalEditSurface.Avalonia),
+				Is.EqualTo(EditSurface.Avalonia),
 				"Tool '{0}' is registered for the Avalonia edit surface (§20.3), so New mode resolves to Avalonia.",
 				toolValue);
 		}

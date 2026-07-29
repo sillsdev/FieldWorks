@@ -88,9 +88,9 @@ namespace SIL.FieldWorks.XWorks
 		protected RecordEditView(DataTree dataEntryForm)
 		{
 			// This must be called before InitializeComponent()
-			SetLexicalEditSurface(LexicalEditSurface.WinForms);
+			SetEditSurface(EditSurface.WinForms);
 			m_dataEntryForm = dataEntryForm;
-			m_lexicalEditSurfaceFactory = new LexicalEditSurfaceFactory(
+			m_lexicalEditSurfaceFactory = new EditSurfaceFactory(
 				() => m_dataEntryForm,
 				() => new LexicalEditHostControl());
 			m_dataEntryForm.CurrentSliceChanged += m_dataEntryForm_CurrentSliceChanged;
@@ -135,7 +135,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 
 			// If possible make it use the style sheet appropriate for its main window.
-			SetLexicalEditSurface(ResolveConfiguredLexicalEditSurface());
+			SetEditSurface(ResolveConfiguredEditSurface());
 			if (!ShouldUseAvaloniaLexicalEdit)
 				m_dataEntryForm.StyleSheet = FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable);
 			m_fullyInitialized = true;
@@ -278,11 +278,11 @@ namespace SIL.FieldWorks.XWorks
 				return;
 			}
 
-			if (name != LexicalEditSurfaceResolver.UIModePropertyName
-				&& name != LexicalEditSurfaceResolver.UIModeDisabledToolsPropertyName)
+			if (name != EditSurfaceResolver.UIModePropertyName
+				&& name != EditSurfaceResolver.UIModeDisabledToolsPropertyName)
 				return;
 
-			var newSurface = ResolveConfiguredLexicalEditSurface();
+			var newSurface = ResolveConfiguredEditSurface();
 			var oldSurface = m_lexicalEditSurface;
 			if (newSurface == oldSurface)
 				return;
@@ -290,12 +290,12 @@ namespace SIL.FieldWorks.XWorks
 			// Settle any open fenced session BEFORE flipping the surface — without this, flipping
 			// UIMode mid-edit would let Clerk.SaveOnChangeRecord force-commit invalid staged state.
 			SettleRegionEdits();
-			SetLexicalEditSurface(newSurface);
+			SetEditSurface(newSurface);
 			// Flipping AWAY from the Avalonia surface tears down its PropChanged/undo/deactivate
 			// listeners and host NOW (symmetric with RecordBrowseView), not deferred to Dispose — so the
 			// refresh controller does not keep walking the notification bus for the view's remaining life.
 			// TearDownAvaloniaSurface nulls the host + controller, so a later flip back to New rebuilds them.
-			if (oldSurface == LexicalEditSurface.Avalonia && newSurface != LexicalEditSurface.Avalonia)
+			if (oldSurface == EditSurface.Avalonia && newSurface != EditSurface.Avalonia)
 				TearDownAvaloniaSurface();
 			ShowRecord(new RecordNavigationInfo(Clerk, Clerk.SuppressSaveOnChangeRecord, false, true));
 		}
@@ -570,7 +570,7 @@ namespace SIL.FieldWorks.XWorks
 			// InitBase() calls SetupDataContext() before RecordEditView.Init() resolves the surface, so
 			// resolve it here too — otherwise the first surface initialization would use the ctor default
 			// (WinForms) and the active-host contract would be violated for an Avalonia start.
-			SetLexicalEditSurface(ResolveConfiguredLexicalEditSurface());
+			SetEditSurface(ResolveConfiguredEditSurface());
 
 			// Surface-agnostic: the record list bar must update regardless of which detail surface is active.
 			Clerk.UpdateRecordTreeBarIfNeeded();

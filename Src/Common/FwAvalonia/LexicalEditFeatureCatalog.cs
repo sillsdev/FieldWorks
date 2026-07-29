@@ -9,7 +9,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 	/// <summary>
 	/// Display metadata (name, description, group) for one tool surface in
 	/// <see cref="LexicalEditFeatureCatalog"/>. Purely descriptive — <see cref="ToolName"/> is the same
-	/// id <see cref="LexicalEditSurfaceRegistry"/> and <see cref="LexicalEditSurfaceResolver"/> key on.
+	/// id <see cref="EditSurfaceRegistry"/> and <see cref="EditSurfaceResolver"/> key on.
 	/// </summary>
 	public sealed class LexicalEditFeatureDescriptor
 	{
@@ -30,7 +30,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 	/// <summary>
 	/// The single source of truth for which lexical-edit tool surfaces exist and how to describe them to
 	/// a user (the "Manage Individual Features" dialog's checkbox list; PR #964 review follow-up). This is
-	/// also what <see cref="LexicalEditSurfaceRegistry.DefaultSupportedTools"/> is built from, so the
+	/// also what <see cref="EditSurfaceRegistry.DefaultSupportedTools"/> is built from, so the
 	/// registry and the user-facing catalog can never drift out of sync — there is exactly one list of
 	/// "tools that ship with a working Avalonia surface today."
 	/// </summary>
@@ -52,7 +52,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 				FwAvaloniaStrings.FeatureGroupOtherRecordTypes)
 		};
 
-		/// <summary>The bare tool-name ids, in catalog order — what <see cref="LexicalEditSurfaceRegistry"/> registers by default.</summary>
+		/// <summary>The bare tool-name ids, in catalog order — what <see cref="EditSurfaceRegistry"/> registers by default.</summary>
 		public static readonly IReadOnlyList<string> ToolNames = BuildToolNames();
 
 		private static IReadOnlyList<string> BuildToolNames()
