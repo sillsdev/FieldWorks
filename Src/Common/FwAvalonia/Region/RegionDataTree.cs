@@ -576,11 +576,11 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		}
 
 		// The field→control dispatch is shared with the browse in-cell editor through
-		// RegionSliceFactory. The detail pane passes its full callback set (per-WS keyboard, slice
+		// SliceFactory. The detail pane passes its full callback set (per-WS keyboard, slice
 		// menu, link, clipboard) and routes reference-vector gesture completion to its validation-gated
 		// OnSave (the autosave). New RegionFieldKinds are added once, in the factory.
 		private Control BuildEditor(RegionField field, string automationId)
-			=> RegionSliceFactory.Build(field, automationId, new RegionSliceFactoryContext(
+			=> SliceFactory.Build(field, automationId, new SliceFactoryContext(
 				editContext: _editContext,
 				writingSystemFocused: _writingSystemFocused,
 				menuRequested: _menuRequested,

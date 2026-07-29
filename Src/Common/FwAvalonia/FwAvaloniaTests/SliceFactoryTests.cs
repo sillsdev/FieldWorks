@@ -15,12 +15,12 @@ namespace FwAvaloniaTests
 	/// The shared <see cref="RegionFieldKind"/>→control dispatch both the detail-pane region view
 	/// and the browse in-cell editor route through. These pin that one switch produces the right control
 	/// per surviving kind (Text / Chooser / ReferenceVector / Literal / Custom / Unsupported), and that
-	/// the all-nullable <see cref="RegionSliceFactoryContext"/> serves both surfaces — the browse cell
+	/// the all-nullable <see cref="SliceFactoryContext"/> serves both surfaces — the browse cell
 	/// passes null menu/link callbacks and suppresses the WS-abbreviation gutter while the detail pane
 	/// passes the full set — without either surface hand-rolling its own dispatch.
 	/// </summary>
 	[TestFixture]
-	public class RegionSliceFactoryTests
+	public class SliceFactoryTests
 	{
 		private static RegionField Field(RegionFieldKind kind, string selectedOption = null,
 			System.Func<Control> controlFactory = null)
@@ -33,22 +33,22 @@ namespace FwAvaloniaTests
 
 		[AvaloniaTest]
 		public void TextKind_BuildsMultiWsTextField()
-			=> Assert.That(RegionSliceFactory.Build(Field(RegionFieldKind.Text), "Auto.Id", null),
+			=> Assert.That(SliceFactory.Build(Field(RegionFieldKind.Text), "Auto.Id", null),
 				Is.InstanceOf<FwMultiWsTextField>());
 
 		[AvaloniaTest]
 		public void ChooserKind_BuildsChooserField()
-			=> Assert.That(RegionSliceFactory.Build(Field(RegionFieldKind.Chooser), "Auto.Id", null),
+			=> Assert.That(SliceFactory.Build(Field(RegionFieldKind.Chooser), "Auto.Id", null),
 				Is.InstanceOf<FwChooserField>());
 
 		[AvaloniaTest]
 		public void ReferenceVectorKind_BuildsReferenceVectorField()
-			=> Assert.That(RegionSliceFactory.Build(Field(RegionFieldKind.ReferenceVector), "Auto.Id", null),
+			=> Assert.That(SliceFactory.Build(Field(RegionFieldKind.ReferenceVector), "Auto.Id", null),
 				Is.InstanceOf<FwReferenceVectorField>());
 
 		[AvaloniaTest]
 		public void UnsupportedKind_BuildsUnsupportedTextBlock()
-			=> Assert.That(RegionSliceFactory.Build(Field(RegionFieldKind.Unsupported), "Auto.Id", null),
+			=> Assert.That(SliceFactory.Build(Field(RegionFieldKind.Unsupported), "Auto.Id", null),
 				Is.InstanceOf<TextBlock>());
 
 		// Literal: a static text renderer (legacy MessageSlice) — the label/message text is the
@@ -62,21 +62,21 @@ namespace FwAvaloniaTests
 				automationId: "Auto.Lit", localizationKey: null, routing: SurfaceRouting.Product,
 				values: new List<RegionWsValue> { new RegionWsValue("", "Read this carefully:") },
 				options: null, selectedOptionKey: null, isEditable: false);
-			var control = RegionSliceFactory.Build(field, "Auto.Lit", null);
+			var control = SliceFactory.Build(field, "Auto.Lit", null);
 			Assert.That(control, Is.InstanceOf<TextBlock>());
 			Assert.That(((TextBlock)control).Text, Is.EqualTo("Read this carefully:"));
 		}
 
 		[AvaloniaTest]
 		public void CustomKind_NullFactory_DegradesToUnsupportedRow()
-			=> Assert.That(RegionSliceFactory.Build(Field(RegionFieldKind.Custom, controlFactory: null),
+			=> Assert.That(SliceFactory.Build(Field(RegionFieldKind.Custom, controlFactory: null),
 				"Auto.Id", null), Is.InstanceOf<TextBlock>());
 
 		[AvaloniaTest]
 		public void CustomKind_FactoryControl_IsReturned()
 		{
 			var marker = new Border();
-			var control = RegionSliceFactory.Build(
+			var control = SliceFactory.Build(
 				Field(RegionFieldKind.Custom, controlFactory: () => marker), "Auto.Id", null);
 			Assert.That(control, Is.SameAs(marker));
 		}
@@ -86,9 +86,9 @@ namespace FwAvaloniaTests
 		{
 			// The dense browse cell context (null callbacks, no abbreviation gutter) must still build a
 			// usable text field — the same control the detail pane gets, just configured for the cell.
-			var browseContext = new RegionSliceFactoryContext(
+			var browseContext = new SliceFactoryContext(
 				editContext: null, writingSystemFocused: _ => { }, showWritingSystemAbbreviation: false);
-			Assert.That(RegionSliceFactory.Build(Field(RegionFieldKind.Text), "Auto.Id", browseContext),
+			Assert.That(SliceFactory.Build(Field(RegionFieldKind.Text), "Auto.Id", browseContext),
 				Is.InstanceOf<FwMultiWsTextField>());
 		}
 	}
