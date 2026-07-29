@@ -45,7 +45,7 @@ namespace FwAvaloniaTests
 
 			// Avalonia visual evidence: a real Skia rendered frame of the region view.
 			var model = RegionModelProjector.FromViewDefinition(definition, new FakeRegionValueProvider());
-			var window = new Window { Content = new LexicalEditRegionView(model), Width = 420, Height = 200 };
+			var window = new Window { Content = new RegionDataTree(model), Width = 420, Height = 200 };
 			window.Show();
 			Dispatcher.UIThread.RunJobs();
 			var avaloniaPng = Path.Combine(bundleDir, "avalonia-visual.png");

@@ -211,24 +211,24 @@ namespace FwAvaloniaTests
 			public string GetSelectedOptionKey(ViewNode fieldNode) => null;
 		}
 
-		private static (LexicalEditRegionView view, FakeRegionEditContext context, Window window) ShowEditable()
+		private static (RegionDataTree view, FakeRegionEditContext context, Window window) ShowEditable()
 		{
 			var model = RegionModelProjector.FromViewDefinition(SampleDefinition(), new EditingValueProvider());
 			var context = new FakeRegionEditContext();
-			var view = new LexicalEditRegionView(model, context);
+			var view = new RegionDataTree(model, context);
 			var window = new Window { Content = view, Width = 500, Height = 260 };
 			window.Show();
 			Dispatcher.UIThread.RunJobs();
 			return (view, context, window);
 		}
 
-		private static (LexicalEditRegionView view, FakeRegionEditContext context, Window window,
+		private static (RegionDataTree view, FakeRegionEditContext context, Window window,
 			InMemoryFwClipboard clipboard) ShowRichEditable()
 		{
 			var model = RegionModelProjector.FromViewDefinition(SampleDefinition(), new RichEditingValueProvider());
 			var context = new FakeRegionEditContext();
 			var clipboard = new InMemoryFwClipboard();
-			var view = new LexicalEditRegionView(model, context, clipboard: clipboard);
+			var view = new RegionDataTree(model, context, clipboard: clipboard);
 			var window = new Window { Content = view, Width = 500, Height = 260 };
 			window.Show();
 			Dispatcher.UIThread.RunJobs();
@@ -286,13 +286,13 @@ namespace FwAvaloniaTests
 		// TsString property the model does not round-trip) renders a READ-ONLY editor with the
 		// not-editable-here tooltip, even though an edit context is supplied — so a keystroke can
 		// never silently drop the property. The matching model/composer assertions live in xWorks's
-		// LexicalEditRegionEditingTests.Compose_RunWithUnsupportedProperty_ComposesReadOnly_*.
+		// RegionEditContextEditingTests.Compose_RunWithUnsupportedProperty_ComposesReadOnly_*.
 		[AvaloniaTest]
 		public void LossyValue_RendersReadOnly_WithTooltip()
 		{
 			var model = RegionModelProjector.FromViewDefinition(SampleDefinition(), new LossyEditingValueProvider());
 			var context = new FakeRegionEditContext();
-			var view = new LexicalEditRegionView(model, context);
+			var view = new RegionDataTree(model, context);
 			var window = new Window { Content = view, Width = 500, Height = 260 };
 			window.Show();
 			Dispatcher.UIThread.RunJobs();
@@ -562,7 +562,7 @@ namespace FwAvaloniaTests
 				isEditable: true, indent: 0, ghostPrompt: "Click here to add Lexeme Form");
 			var model = new RegionModel("LexEntry", "Normal",
 				new List<RegionField> { ghost }, new List<ViewDiagnostic>());
-			var view = new LexicalEditRegionView(model, new FakeRegionEditContext());
+			var view = new RegionDataTree(model, new FakeRegionEditContext());
 			var window = new Window { Content = view, Width = 480, Height = 200 };
 			window.Show();
 			Dispatcher.UIThread.RunJobs();
@@ -784,7 +784,7 @@ namespace FwAvaloniaTests
 			var model = new RegionModel("LexEntry", "test",
 				new List<RegionField> { PublishInField() }, new List<ViewDiagnostic>());
 			var context = new FakeRegionEditContext();
-			var view = new LexicalEditRegionView(model, context);
+			var view = new RegionDataTree(model, context);
 			var window = new Window { Content = view, Width = 500, Height = 260 };
 			window.Show();
 			Dispatcher.UIThread.RunJobs();
@@ -811,7 +811,7 @@ namespace FwAvaloniaTests
 			{
 				ValidateResult = new List<string> { "A Lexeme Form is required." }
 			};
-			var view = new LexicalEditRegionView(model, context);
+			var view = new RegionDataTree(model, context);
 			var window = new Window { Content = view, Width = 500, Height = 260 };
 			window.Show();
 			Dispatcher.UIThread.RunJobs();
@@ -830,7 +830,7 @@ namespace FwAvaloniaTests
 		public void WithoutEditContext_ViewIsReadOnlyDisplay_WithNoFooter()
 		{
 			var model = RegionModelProjector.FromViewDefinition(SampleDefinition(), new EditingValueProvider());
-			var view = new LexicalEditRegionView(model);
+			var view = new RegionDataTree(model);
 			var window = new Window { Content = view, Width = 500, Height = 260 };
 			window.Show();
 			Dispatcher.UIThread.RunJobs();
@@ -910,7 +910,7 @@ namespace FwAvaloniaTests
 		{
 			var model = RegionModelProjector.FromViewDefinition(SampleDefinition(), new LossyEditingValueProvider());
 			var context = new FakeRegionEditContext();
-			var view = new LexicalEditRegionView(model, context);
+			var view = new RegionDataTree(model, context);
 			var window = new Window { Content = view, Width = 500, Height = 260 };
 			window.Show();
 			Dispatcher.UIThread.RunJobs();

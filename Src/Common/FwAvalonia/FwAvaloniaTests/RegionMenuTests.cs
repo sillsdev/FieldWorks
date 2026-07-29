@@ -121,13 +121,13 @@ namespace FwAvaloniaTests
 				menuId: menuId, contextMenuId: contextMenuId, hotlinksId: hotlinksId,
 				objectHvo: 1234);
 
-		private static (LexicalEditRegionView view, List<RegionMenuRequest> requests) Show(
+		private static (RegionDataTree view, List<RegionMenuRequest> requests) Show(
 			params RegionField[] fields)
 		{
 			var requests = new List<RegionMenuRequest>();
 			var model = new RegionModel("LexEntry", "Normal",
 				fields.ToList(), new List<ViewDiagnostic>());
-			var view = new LexicalEditRegionView(model, null, null, null, null, requests.Add);
+			var view = new RegionDataTree(model, null, null, null, null, requests.Add);
 			var window = new Window { Content = view, Width = 480, Height = 300 };
 			window.Show();
 			Dispatcher.UIThread.RunJobs();

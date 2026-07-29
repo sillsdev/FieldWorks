@@ -184,14 +184,14 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		private static ScrollViewer FindScroller(Control root)
 		{
 			if (root is ScrollViewer selfScroller
-				&& AutomationProperties.GetAutomationId(selfScroller) == "LexicalEditRegionView.Scroll")
+				&& AutomationProperties.GetAutomationId(selfScroller) == "RegionDataTree.Scroll")
 			{
 				return selfScroller;
 			}
 
 			if (root is ContentControl contentControl
 				&& contentControl.Content is ScrollViewer directScroller
-				&& AutomationProperties.GetAutomationId(directScroller) == "LexicalEditRegionView.Scroll")
+				&& AutomationProperties.GetAutomationId(directScroller) == "RegionDataTree.Scroll")
 			{
 				return directScroller;
 			}
@@ -199,7 +199,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 			foreach (var visual in root.GetVisualDescendants())
 			{
 				if (visual is ScrollViewer scroller
-					&& AutomationProperties.GetAutomationId(scroller) == "LexicalEditRegionView.Scroll")
+					&& AutomationProperties.GetAutomationId(scroller) == "RegionDataTree.Scroll")
 				{
 					return scroller;
 				}

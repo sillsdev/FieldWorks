@@ -341,7 +341,7 @@ namespace FwAvaloniaTests
 	}
 
 	[TestFixture]
-	public class LexicalEditRegionViewTests
+	public class RegionDataTreeTests
 	{
 		private static ViewDefinitionModel SampleDefinition() => new ViewDefinitionModel(
 			"LexEntry", "identity", "detail",
@@ -360,12 +360,12 @@ namespace FwAvaloniaTests
 		public void RegionView_RendersFields_WithStableAutomationIds()
 		{
 			var model = RegionModelProjector.FromViewDefinition(SampleDefinition(), new FakeRegionValueProvider());
-			var view = new LexicalEditRegionView(model);
+			var view = new RegionDataTree(model);
 			var window = new Window { Content = view, Width = 420, Height = 240 };
 			window.Show();
 			Dispatcher.UIThread.RunJobs();
 
-			Assert.That(AutomationProperties.GetAutomationId(view), Is.EqualTo("LexicalEditRegionView"));
+			Assert.That(AutomationProperties.GetAutomationId(view), Is.EqualTo("RegionDataTree"));
 
 			var lexemeBox = view.GetVisualDescendants().OfType<TextBox>()
 				.FirstOrDefault(b => AutomationProperties.GetAutomationId(b) == "LexemeFormEditor.vern");

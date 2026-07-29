@@ -18,7 +18,7 @@ namespace FwAvaloniaTests
 	/// <summary>
 	/// advanced-entry-view (view layer): the per-field gear-menu commands work by changing the composed
 	/// model the surface renders — hiding a Never row, showing a non-empty IfData row, and reordering
-	/// siblings. These headless tests prove the <see cref="LexicalEditRegionView"/> renders EXACTLY the
+	/// siblings. These headless tests prove the <see cref="RegionDataTree"/> renders EXACTLY the
 	/// rows the (patched) model carries, in model order. The composer's filtering/reorder semantics are
 	/// covered in xWorksTests; here we prove the visible surface follows the model so the round trip is
 	/// closed at the rendering edge.
@@ -32,18 +32,18 @@ namespace FwAvaloniaTests
 				new List<RegionWsValue> { new RegionWsValue("en", "value") },
 				null, null, isEditable: true, indent: 0, objectHvo: 1234);
 
-		private static LexicalEditRegionView Render(params RegionField[] fields)
+		private static RegionDataTree Render(params RegionField[] fields)
 		{
 			var model = new RegionModel("LexEntry", "Normal", fields.ToList(),
 				new List<ViewDiagnostic>());
-			var view = new LexicalEditRegionView(model, null, null, null, null, null);
+			var view = new RegionDataTree(model, null, null, null, null, null);
 			var window = new Window { Content = view, Width = 480, Height = 360 };
 			window.Show();
 			Dispatcher.UIThread.RunJobs();
 			return view;
 		}
 
-		private static List<string> RenderedLabelIds(LexicalEditRegionView view)
+		private static List<string> RenderedLabelIds(RegionDataTree view)
 			=> view.GetVisualDescendants().OfType<TextBlock>()
 				.Select(t => AutomationProperties.GetAutomationId(t))
 				.Where(id => !string.IsNullOrEmpty(id) && id.EndsWith(".Label"))

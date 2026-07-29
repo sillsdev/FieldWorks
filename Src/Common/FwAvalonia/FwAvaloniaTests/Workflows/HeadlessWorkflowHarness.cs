@@ -66,23 +66,23 @@ namespace FwAvaloniaTests.Workflows
 	}
 
 	/// <summary>
-	/// Scenario driver for the lexical-edit (detail) surface (<see cref="LexicalEditRegionView"/>):
+	/// Scenario driver for the lexical-edit (detail) surface (<see cref="RegionDataTree"/>):
 	/// reading and typing field values. Field editors stamp the automation id
 	/// <c>{fieldAutomationId}.{ws}</c> (per writing system), so the driver locates a field's editor by
 	/// its automation-id prefix.
 	/// </summary>
 	public sealed class LexicalEditorDriver
 	{
-		private readonly LexicalEditRegionView _view;
+		private readonly RegionDataTree _view;
 		private readonly HeadlessStage _stage;
 
-		public LexicalEditorDriver(LexicalEditRegionView view, HeadlessStage stage)
+		public LexicalEditorDriver(RegionDataTree view, HeadlessStage stage)
 		{
 			_view = view ?? throw new ArgumentNullException(nameof(view));
 			_stage = stage;
 		}
 
-		public LexicalEditRegionView View => _view;
+		public RegionDataTree View => _view;
 
 		private TextBox Editor(string fieldAutomationId) => _view.GetVisualDescendants().OfType<TextBox>()
 			.FirstOrDefault(b => (AutomationProperties.GetAutomationId(b) ?? string.Empty)

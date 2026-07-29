@@ -28,7 +28,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 	/// undo step per field, no Save/Cancel buttons. Validation failures show inline and block the
 	/// commit; Escape rolls the session back. Without a context the view is read-only display.
 	/// </summary>
-	public sealed class LexicalEditRegionView : UserControl
+	public sealed class RegionDataTree : UserControl
 	{
 		private readonly IRegionEditContext _editContext;
 		private readonly Action<string> _writingSystemFocused;
@@ -55,7 +55,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		/// the splitter position the same way (11.15): the host owns the remembered width so it
 		/// survives re-shows WITHOUT a process-global field — each host/window keeps its own.
 		/// </summary>
-		public LexicalEditRegionView(RegionModel model, IRegionEditContext editContext = null,
+		public RegionDataTree(RegionModel model, IRegionEditContext editContext = null,
 			Action<string> writingSystemFocused = null,
 			Func<string, bool?> getExpansionState = null,
 			Action<string, bool> expansionChanged = null,
@@ -76,8 +76,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 			_labelColumnWidthChanged = labelColumnWidthChanged;
 			var labelColumnWidth = getLabelColumnWidth?.Invoke() ?? FwAvaloniaDensity.LabelColumnWidth;
 
-			Name = "LexicalEditRegionView";
-			AutomationProperties.SetAutomationId(this, "LexicalEditRegionView");
+			Name = "RegionDataTree";
+			AutomationProperties.SetAutomationId(this, "RegionDataTree");
 			AutomationProperties.SetName(this, FwAvaloniaStrings.RegionName);
 
 			// WinForms-density font baseline (12px) for the detail surface, applied to this view's own control
@@ -103,7 +103,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 				Background = Brushes.Transparent, // legacy splitter is window-colored/invisible (12.6)
 				Width = FwAvaloniaDensity.SplitterWidth
 			};
-			AutomationProperties.SetAutomationId(splitter, "LexicalEditRegionView.Splitter");
+			AutomationProperties.SetAutomationId(splitter, "RegionDataTree.Splitter");
 			Grid.SetColumn(splitter, 1);
 			Grid.SetRowSpan(splitter, Math.Max(1, model.Fields.Count * 2));
 			grid.Children.Add(splitter);
@@ -157,7 +157,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 				HorizontalScrollBarVisibility = Avalonia.Controls.Primitives.ScrollBarVisibility.Disabled,
 				VerticalScrollBarVisibility = Avalonia.Controls.Primitives.ScrollBarVisibility.Auto
 			};
-			AutomationProperties.SetAutomationId(scroller, "LexicalEditRegionView.Scroll");
+			AutomationProperties.SetAutomationId(scroller, "RegionDataTree.Scroll");
 			Content = scroller;
 
 			// Screen-local command shortcuts:
