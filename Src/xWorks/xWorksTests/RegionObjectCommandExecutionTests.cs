@@ -93,7 +93,7 @@ namespace SIL.FieldWorks.XWorks
 			m_view = m_propertyTable.GetValue<object>("currentContentControlObject", null) as RecordEditView;
 			Assert.That(m_view, Is.Not.Null, "expected the lexicon edit RecordEditView to load");
 			EnsureCurrentRecord(m_view);
-			Assert.That(GetField(m_view, "m_lexicalEditSurface"), Is.EqualTo(LexicalEditSurface.Avalonia),
+			Assert.That(GetField(m_view, "m_lexicalEditSurface"), Is.EqualTo(EditSurface.Avalonia),
 				"precondition: lexiconEdit resolves to the Avalonia surface under the New UI mode");
 		}
 

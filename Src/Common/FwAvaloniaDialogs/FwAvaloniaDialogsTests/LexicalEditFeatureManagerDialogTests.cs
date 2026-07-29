@@ -232,7 +232,7 @@ namespace FwAvaloniaDialogsTests
 			// The full bridge Show() relies on: seed from a CSV-derived set, then (without any user edits)
 			// extract back out. This is the "reopen Options and Manage Features still reflects what you saved"
 			// guarantee for every catalog tool.
-			var originalDisabled = LexicalEditSurfaceResolver.ParseDisabledTools("lexiconEditPopup,notebookEdit");
+			var originalDisabled = EditSurfaceResolver.ParseDisabledTools("lexiconEditPopup,notebookEdit");
 
 			var groups = LexicalEditFeatureManagerDialog.BuildGroups(LexicalEditFeatureCatalog.Features, originalDisabled);
 			var roundTripped = LexicalEditFeatureManagerDialog.ExtractDisabledToolNames(groups);

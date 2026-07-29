@@ -9,15 +9,15 @@ using SIL.FieldWorks.Common.FwAvalonia.Seams;
 namespace FwAvaloniaTests
 {
 	[TestFixture]
-	public class LexicalEditSurfaceSelectionServiceTests
+	public class EditSurfaceSelectionServiceTests
 	{
-		private readonly LexicalEditSurfaceSelectionService _service = new LexicalEditSurfaceSelectionService();
+		private readonly EditSurfaceSelectionService _service = new EditSurfaceSelectionService();
 
 		[Test]
 		public void NewMode_SupportedTool_IsSupportedAvalonia()
 		{
 			var decision = _service.Decide("New", "lexiconEdit");
-			Assert.That(decision.Surface, Is.EqualTo(LexicalEditSurface.Avalonia));
+			Assert.That(decision.Surface, Is.EqualTo(EditSurface.Avalonia));
 			Assert.That(decision.Behavior, Is.EqualTo(HostUiBehavior.SupportedAvalonia));
 		}
 
@@ -28,7 +28,7 @@ namespace FwAvaloniaTests
 			// so New mode is an explicit legacy fallback. (posEdit/notebookEdit are now registered and resolve
 			// to Avalonia; covered by RecordEditViewSwitchTests.)
 			var decision = _service.Decide("New", "domainTypeEdit");
-			Assert.That(decision.Surface, Is.EqualTo(LexicalEditSurface.WinForms));
+			Assert.That(decision.Surface, Is.EqualTo(EditSurface.WinForms));
 			Assert.That(decision.Behavior, Is.EqualTo(HostUiBehavior.ExplicitLegacyFallback));
 		}
 
@@ -36,7 +36,7 @@ namespace FwAvaloniaTests
 		public void LegacyMode_SupportedTool_IsLegacyActive()
 		{
 			var decision = _service.Decide("Legacy", "lexiconEdit");
-			Assert.That(decision.Surface, Is.EqualTo(LexicalEditSurface.WinForms));
+			Assert.That(decision.Surface, Is.EqualTo(EditSurface.WinForms));
 			Assert.That(decision.Behavior, Is.EqualTo(HostUiBehavior.LegacyActive));
 		}
 
@@ -44,7 +44,7 @@ namespace FwAvaloniaTests
 		public void Override_ForcesAvalonia_ForSupportedTool()
 		{
 			var decision = _service.Decide("Legacy", "lexiconEdit", overrideEnabled: true);
-			Assert.That(decision.Surface, Is.EqualTo(LexicalEditSurface.Avalonia));
+			Assert.That(decision.Surface, Is.EqualTo(EditSurface.Avalonia));
 			Assert.That(decision.Behavior, Is.EqualTo(HostUiBehavior.SupportedAvalonia));
 		}
 

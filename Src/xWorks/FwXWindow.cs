@@ -552,12 +552,12 @@ namespace SIL.FieldWorks.XWorks
 		internal static void SeedUIModeProperties(PropertyTable propertyTable, string settingsUiMode,
 			string settingsDisabledTools)
 		{
-			propertyTable.SetProperty(LexicalEditSurfaceResolver.UIModePropertyName,
-				LexicalEditSurfaceResolver.NormalizeUIMode(settingsUiMode), false);
-			propertyTable.SetPropertyPersistence(LexicalEditSurfaceResolver.UIModePropertyName, false);
-			propertyTable.SetProperty(LexicalEditSurfaceResolver.UIModeDisabledToolsPropertyName,
+			propertyTable.SetProperty(EditSurfaceResolver.UIModePropertyName,
+				EditSurfaceResolver.NormalizeUIMode(settingsUiMode), false);
+			propertyTable.SetPropertyPersistence(EditSurfaceResolver.UIModePropertyName, false);
+			propertyTable.SetProperty(EditSurfaceResolver.UIModeDisabledToolsPropertyName,
 				settingsDisabledTools ?? string.Empty, false);
-			propertyTable.SetPropertyPersistence(LexicalEditSurfaceResolver.UIModeDisabledToolsPropertyName, false);
+			propertyTable.SetPropertyPersistence(EditSurfaceResolver.UIModeDisabledToolsPropertyName, false);
 		}
 
 		/// ------------------------------------------------------------------------------------

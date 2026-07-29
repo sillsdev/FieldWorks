@@ -46,7 +46,7 @@ namespace SIL.FieldWorks.XWorks
 			FwXWindow.SeedUIModeProperties(m_propertyTable, persisted, null);
 
 			Assert.That(m_propertyTable.GetStringProperty(
-				LexicalEditSurfaceResolver.UIModePropertyName, null), Is.EqualTo(expected));
+				EditSurfaceResolver.UIModePropertyName, null), Is.EqualTo(expected));
 		}
 
 		[Test]
@@ -54,12 +54,12 @@ namespace SIL.FieldWorks.XWorks
 		{
 			FwXWindow.SeedUIModeProperties(m_propertyTable, "New", "lexiconEdit,posEdit");
 			Assert.That(m_propertyTable.GetStringProperty(
-				LexicalEditSurfaceResolver.UIModeDisabledToolsPropertyName, null),
+				EditSurfaceResolver.UIModeDisabledToolsPropertyName, null),
 				Is.EqualTo("lexiconEdit,posEdit"));
 
 			FwXWindow.SeedUIModeProperties(m_propertyTable, "New", null);
 			Assert.That(m_propertyTable.GetStringProperty(
-				LexicalEditSurfaceResolver.UIModeDisabledToolsPropertyName, null), Is.EqualTo(""));
+				EditSurfaceResolver.UIModeDisabledToolsPropertyName, null), Is.EqualTo(""));
 		}
 	}
 }

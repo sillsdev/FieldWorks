@@ -9,7 +9,7 @@ using System.Linq;
 namespace SIL.FieldWorks.Common.FwAvalonia.Seams
 {
 	/// <summary>Which framework renders a lexical-edit surface.</summary>
-	public enum LexicalEditSurfaceKind
+	public enum EditSurfaceKind
 	{
 		/// <summary>The legacy WinForms DataTree/Slice surface.</summary>
 		Legacy,
@@ -29,7 +29,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Seams
 	{
 		private readonly HashSet<string> _allowedBaselineAdapters;
 
-		public ActiveHostContract(LexicalEditSurfaceKind activeSurface, IEnumerable<string> allowedBaselineAdapters = null)
+		public ActiveHostContract(EditSurfaceKind activeSurface, IEnumerable<string> allowedBaselineAdapters = null)
 		{
 			ActiveSurface = activeSurface;
 			_allowedBaselineAdapters = new HashSet<string>(
@@ -37,7 +37,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Seams
 		}
 
 		/// <summary>The surface that is currently visible/active.</summary>
-		public LexicalEditSurfaceKind ActiveSurface { get; }
+		public EditSurfaceKind ActiveSurface { get; }
 
 		/// <summary>Baseline-only adapter ids that are permitted to touch legacy infrastructure even when Avalonia is active.</summary>
 		public IReadOnlyCollection<string> AllowedBaselineAdapters => _allowedBaselineAdapters;
@@ -49,7 +49,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Seams
 		/// </summary>
 		public bool PermitsLegacyDataTreeDrive(string adapterId = null)
 		{
-			if (ActiveSurface == LexicalEditSurfaceKind.Legacy)
+			if (ActiveSurface == EditSurfaceKind.Legacy)
 				return true;
 
 			return adapterId != null && _allowedBaselineAdapters.Contains(adapterId);
@@ -67,10 +67,10 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Seams
 		}
 
 		/// <summary>A contract for a legacy-active host (everything permitted).</summary>
-		public static ActiveHostContract ForLegacy() => new ActiveHostContract(LexicalEditSurfaceKind.Legacy);
+		public static ActiveHostContract ForLegacy() => new ActiveHostContract(EditSurfaceKind.Legacy);
 
 		/// <summary>A contract for an Avalonia-active host with the given approved baseline adapters (none by default).</summary>
 		public static ActiveHostContract ForAvalonia(params string[] allowedBaselineAdapters)
-			=> new ActiveHostContract(LexicalEditSurfaceKind.Avalonia, allowedBaselineAdapters);
+			=> new ActiveHostContract(EditSurfaceKind.Avalonia, allowedBaselineAdapters);
 	}
 }
