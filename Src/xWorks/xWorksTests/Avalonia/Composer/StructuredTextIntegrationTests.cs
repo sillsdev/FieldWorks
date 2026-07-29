@@ -334,7 +334,7 @@ namespace SIL.FieldWorks.XWorks
 			var flyout = (Flyout)styleButton.Flyout;
 			flyout.ShowAt(styleButton);
 			Dispatcher.UIThread.RunJobs();
-			var picker = (FwOptionPicker)flyout.Content;
+			var picker = (FwOptionChooser)flyout.Content;
 			picker.OptionsList.SelectedIndex = 1; // "Block Quote" (index 0 is Default)
 			picker.CommitHighlighted();
 			Dispatcher.UIThread.RunJobs();

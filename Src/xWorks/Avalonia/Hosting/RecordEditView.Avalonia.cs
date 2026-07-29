@@ -90,8 +90,10 @@ namespace SIL.FieldWorks.XWorks
 		/// the outgoing surface's open undo task never faults that commit. The same auto-save the surface
 		/// already performs on record navigation, UIMode flip, and go-away, exposed for the tool/area
 		/// switch (which reaches the surface from outside, not through a record/navigation path).
+		/// Explicit implementation: the class already carries the legacy vetoing
+		/// <c>bool PrepareToGoAway()</c> override, so the void seam keeps out of its way.
 		/// </summary>
-		public void SettlePendingEdits()
+		void IPrepareToGoAway.PrepareToGoAway()
 		{
 			if (IsDisposed)
 				return;

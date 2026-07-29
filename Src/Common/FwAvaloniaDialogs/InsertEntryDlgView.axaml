@@ -55,12 +55,12 @@
 
 			<TextBlock Text="{x:Static res:FwAvaloniaDialogsStrings.InsertEntryMorphTypeLabel}"
 			           AutomationProperties.AutomationId="InsertEntry.MorphTypeLabel"/>
-			<!-- The owned FwOptionPicker is injected here in code-behind. -->
+			<!-- The owned FwOptionChooser is injected here in code-behind. -->
 			<Border Name="PART_MorphTypeHost" Classes="fwFieldHost"
 			        AutomationProperties.AutomationId="InsertEntry.MorphTypeHost"/>
 
 			<!-- Complex Form Type picker (WinForms m_cbComplexFormType parity, LT-21666): a collapsed
-			     FwOptionPicker dropdown placed next to the Morph Type, since the morph-type selection gates its
+			     FwOptionChooser dropdown placed next to the Morph Type, since the morph-type selection gates its
 			     enabled state. The owned picker is injected here in code-behind. -->
 			<TextBlock Text="{x:Static res:FwAvaloniaDialogsStrings.InsertEntryComplexFormTypeLabel}"
 			           AutomationProperties.AutomationId="InsertEntry.ComplexFormTypeLabel"/>

@@ -266,7 +266,7 @@ namespace FwAvaloniaTests
 			ClickAt(window, chooser);
 			Assert.That(((Flyout)chooser.Flyout).IsOpen, Is.True,
 				"click-anywhere-on-value still opens the chooser");
-			Assert.That(((Flyout)chooser.Flyout).Content, Is.TypeOf<FwOptionPicker>(),
+			Assert.That(((Flyout)chooser.Flyout).Content, Is.TypeOf<FwOptionChooser>(),
 				"the options render in the one compact filterable picker");
 			Assert.That(linkRequests, Is.Empty, "the value click never dispatches the jump");
 		}
@@ -285,7 +285,7 @@ namespace FwAvaloniaTests
 			var flyout = (Flyout)addButton.Flyout;
 			Assert.That(flyout.IsOpen, Is.True, "the revealed + opens the add picker");
 
-			var picker = (FwOptionPicker)flyout.Content;
+			var picker = (FwOptionChooser)flyout.Content;
 			picker.OptionsList.SelectedIndex = 1;
 			picker.CommitHighlighted(); // multi-select: checks the row
 			picker.CommitChecked();     // Add: commits the checked set

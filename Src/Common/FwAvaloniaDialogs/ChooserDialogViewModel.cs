@@ -17,7 +17,7 @@ namespace FwAvaloniaDialogs
 	/// <c>ReallySimpleListChooser</c>/<c>SimpleListChooser</c>.
 	///
 	/// FLAT mode (the default when <see cref="ChooserDialogInput.Hierarchical"/> is false): it builds and
-	/// DRIVES the shared <see cref="FwOptionPicker"/> (single- or multi-select) — the picker is the owned native
+	/// DRIVES the shared <see cref="FwOptionChooser"/> (single- or multi-select) — the picker is the owned native
 	/// list control the view hosts — and mirrors the picker's commits into <see cref="ChosenKeys"/>.
 	///
 	/// HIERARCHICAL mode (when <see cref="ChooserDialogInput.Hierarchical"/> is true): the candidates are
@@ -84,7 +84,7 @@ namespace FwAvaloniaDialogs
 			}
 			else
 			{
-				Picker = new FwOptionPicker(Candidates, _input.SearchCandidates, "Chooser.List",
+				Picker = new FwOptionChooser(Candidates, _input.SearchCandidates, "Chooser.List",
 					unavailableKeys: null, multiSelect: _multi);
 
 				if (_multi)
@@ -112,7 +112,7 @@ namespace FwAvaloniaDialogs
 		/// The owned, code-behind list control the view hosts in FLAT mode (single- or multi-select per the input).
 		/// Null in hierarchical mode (the tree + flat-search list are used instead).
 		/// </summary>
-		public FwOptionPicker Picker { get; }
+		public FwOptionChooser Picker { get; }
 
 		/// <summary>The prompt shown above the list; empty hides it (see <see cref="HasPrompt"/>).</summary>
 		public string Prompt { get; }
@@ -228,7 +228,7 @@ namespace FwAvaloniaDialogs
 			}
 			else
 			{
-				// In-memory filter: case-insensitive contains over the candidate names (mirrors FwOptionPicker).
+				// In-memory filter: case-insensitive contains over the candidate names (mirrors FwOptionChooser).
 				matches = Candidates.Where(o => o.Name != null
 					&& o.Name.IndexOf(query, StringComparison.OrdinalIgnoreCase) >= 0);
 			}

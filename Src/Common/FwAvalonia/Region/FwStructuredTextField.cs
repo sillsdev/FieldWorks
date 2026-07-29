@@ -20,7 +20,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 	/// bordered, dense editor row per paragraph; each row carries a run-aware text editor (the SAME
 	/// staging the single-WS <see cref="FwMultiWsTextField"/> uses — TextChanged replays the untouched
 	/// runs around the edit and stages through <see cref="IStructuredTextEditing.TrySetParagraphText"/>),
-	/// a per-paragraph named-style picker (the shared <see cref="FwOptionPicker"/>), and add/delete
+	/// a per-paragraph named-style picker (the shared <see cref="FwOptionChooser"/>), and add/delete
 	/// paragraph affordances. Enter at a paragraph's end inserts a paragraph after it; Backspace in an
 	/// empty paragraph (when more than one remains) deletes it.
 	/// <para>Commit timing mirrors the reference-vector rule: per-paragraph TEXT edits stage and ride the
@@ -267,7 +267,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		}
 
 		// The per-paragraph named-style picker: a small "Paragraph Style" button opening the shared
-		// FwOptionPicker (single-select) seeded with a leading "Default" entry that CLEARS the style,
+		// FwOptionChooser (single-select) seeded with a leading "Default" entry that CLEARS the style,
 		// followed by the project's paragraph style names. Committing stages through the paragraph-style
 		// seam and completes the gesture (structural: commit immediately + re-show). Built only when the
 		// field carries available paragraph styles.
@@ -307,8 +307,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 			AutomationProperties.SetName(styleButton, FwAvaloniaStrings.ParagraphStyle);
 			ToolTip.SetTip(styleButton, FwAvaloniaStrings.ParagraphStyle);
 
-			var stylePicker = new FwOptionPicker(styleOptions, null, styleAutomationId);
-			var styleFlyout = FwOptionPicker.CreateOptionFlyout(stylePicker, PlacementMode.BottomEdgeAlignedLeft);
+			var stylePicker = new FwOptionChooser(styleOptions, null, styleAutomationId);
+			var styleFlyout = FwOptionChooser.CreateOptionFlyout(stylePicker, PlacementMode.BottomEdgeAlignedLeft);
 
 			Action<RegionChoiceOption> styleCommitted = option =>
 			{
@@ -399,7 +399,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		}
 
 		// The run-level CHARACTER-style picker for this paragraph (the FwMultiWsTextField pattern):
-		// a "Character Style" button opening the shared FwOptionPicker seeded with a leading "Default"
+		// a "Character Style" button opening the shared FwOptionChooser seeded with a leading "Default"
 		// clear entry plus the project's character styles, acting on the box's current selection and
 		// staging ApplySpanNamedStyle through the paragraph-text seam. Null when no character styles.
 		private Control BuildCharStyleAffordance(RegionField field, string automationId,
@@ -461,7 +461,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		}
 
 		// The run-level WRITING-SYSTEM retag picker for this paragraph (the FwMultiWsTextField
-		// pattern): a "Writing System" button opening the shared FwOptionPicker seeded with the project's
+		// pattern): a "Writing System" button opening the shared FwOptionChooser seeded with the project's
 		// writing systems (no clear entry), acting on the box's current selection and staging
 		// RetagSpanWritingSystem through the paragraph-text seam. Null when no writing systems.
 		private Control BuildWsRetagAffordance(RegionField field, string automationId,

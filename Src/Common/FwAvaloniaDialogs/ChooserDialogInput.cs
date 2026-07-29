@@ -55,7 +55,7 @@ namespace FwAvaloniaDialogs
 		/// <see cref="RegionChoiceOption.Depth"/> sequence — a candidate's children are the following candidates with
 		/// Depth+1 until Depth drops back (possibility lists arrive in document order with Depth, which fully
 		/// determines the tree). When false (the default) the candidates render as the FLAT indented list
-		/// (the shared <c>FwOptionPicker</c>). When a search term is active the hierarchical view falls
+		/// (the shared <c>FwOptionChooser</c>). When a search term is active the hierarchical view falls
 		/// back to the flat filtered results list and returns to the tree once the term is cleared.
 		/// </summary>
 		public bool Hierarchical { get; set; }

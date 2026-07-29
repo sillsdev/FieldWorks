@@ -345,7 +345,7 @@ namespace FwAvaloniaTests
 			flyout.ShowAt(chooser);
 			Dispatcher.UIThread.RunJobs();
 
-			var picker = (FwOptionPicker)flyout.Content;
+			var picker = (FwOptionChooser)flyout.Content;
 			var presenter = picker.GetVisualAncestors().OfType<FlyoutPresenter>().FirstOrDefault();
 			Assert.That(presenter, Is.Not.Null, "the picker is hosted inside a flyout presenter");
 			Assert.That(presenter.Padding, Is.EqualTo(new Thickness(0)),
@@ -365,7 +365,7 @@ namespace FwAvaloniaTests
 			var flyout = (Flyout)chooser.Flyout;
 			flyout.ShowAt(chooser);
 			Dispatcher.UIThread.RunJobs();
-			var picker = (FwOptionPicker)flyout.Content;
+			var picker = (FwOptionChooser)flyout.Content;
 			picker.OptionsList.SelectedIndex = 1; // "suffix"
 			picker.CommitHighlighted();
 			Dispatcher.UIThread.RunJobs();
@@ -469,7 +469,7 @@ namespace FwAvaloniaTests
 			var flyout = (Flyout)chooser.Flyout;
 			flyout.ShowAt(chooser);
 			Dispatcher.UIThread.RunJobs();
-			var picker = (FwOptionPicker)flyout.Content;
+			var picker = (FwOptionChooser)flyout.Content;
 			picker.OptionsList.SelectedIndex = 1;
 			picker.CommitHighlighted();
 			Dispatcher.UIThread.RunJobs();
@@ -621,7 +621,7 @@ namespace FwAvaloniaTests
 			var flyout = (Flyout)addButton.Flyout;
 			flyout.ShowAt(addButton);
 			Dispatcher.UIThread.RunJobs();
-			var picker = (FwOptionPicker)flyout.Content;
+			var picker = (FwOptionChooser)flyout.Content;
 			var searchBox = picker.FilterBox;
 			Assert.That(AutomationProperties.GetAutomationId(searchBox), Is.EqualTo("Components.Search"));
 			var results = picker.OptionsList;
@@ -751,7 +751,7 @@ namespace FwAvaloniaTests
 			var flyout = (Flyout)addButton.Flyout;
 			flyout.ShowAt(addButton);
 			Dispatcher.UIThread.RunJobs();
-			var picker = (FwOptionPicker)flyout.Content;
+			var picker = (FwOptionChooser)flyout.Content;
 
 			picker.OptionsList.SelectedIndex = 1; // "Pocket"
 			picker.CommitHighlighted(); // checks the row
@@ -766,7 +766,7 @@ namespace FwAvaloniaTests
 			context.ReferenceGestureResult = false;
 			flyout.ShowAt(addButton);
 			Dispatcher.UIThread.RunJobs();
-			var picker2 = (FwOptionPicker)flyout.Content;
+			var picker2 = (FwOptionChooser)flyout.Content;
 			picker2.OptionsList.SelectedIndex = 1;
 			picker2.CommitHighlighted();
 			picker2.CommitChecked();
@@ -1001,7 +1001,7 @@ namespace FwAvaloniaTests
 			styleItem.RaiseEvent(new RoutedEventArgs(MenuItem.ClickEvent));
 			Dispatcher.UIThread.RunJobs();
 			var flyout = (Flyout)styleItem.Tag;
-			var picker = (FwOptionPicker)flyout.Content;
+			var picker = (FwOptionChooser)flyout.Content;
 			// Options: [0]=Default(no style), [1]=Strong, [2]=Subtle Emphasis.
 			picker.OptionsList.SelectedIndex = 1; // "Strong"
 			picker.CommitHighlighted();
@@ -1034,7 +1034,7 @@ namespace FwAvaloniaTests
 			styleItem.RaiseEvent(new RoutedEventArgs(MenuItem.ClickEvent));
 			Dispatcher.UIThread.RunJobs();
 			var flyout = (Flyout)styleItem.Tag;
-			var picker = (FwOptionPicker)flyout.Content;
+			var picker = (FwOptionChooser)flyout.Content;
 			picker.OptionsList.SelectedIndex = 0; // "Default (no style)" -> clears
 			picker.CommitHighlighted();
 			Dispatcher.UIThread.RunJobs();
@@ -1060,7 +1060,7 @@ namespace FwAvaloniaTests
 			styleItem.RaiseEvent(new RoutedEventArgs(MenuItem.ClickEvent));
 			Dispatcher.UIThread.RunJobs();
 			var flyout = (Flyout)styleItem.Tag;
-			var picker = (FwOptionPicker)flyout.Content;
+			var picker = (FwOptionChooser)flyout.Content;
 			picker.OptionsList.SelectedIndex = 1;
 			picker.CommitHighlighted();
 			Dispatcher.UIThread.RunJobs();
@@ -1120,7 +1120,7 @@ namespace FwAvaloniaTests
 	/// <summary>
 	/// The per-run writing-system retag picker over a TextBox selection. An editable, non-lossy
 	/// row carrying the project's available writing systems exposes a "Writing System" affordance whose
-	/// FwOptionPicker commit retags the covered runs through TrySetRichText (same seam as Ctrl+B/I/U and
+	/// FwOptionChooser commit retags the covered runs through TrySetRichText (same seam as Ctrl+B/I/U and
 	/// the style picker), leaving the rest of the value untouched. No clear entry: a run always carries a
 	/// writing system.
 	/// </summary>
@@ -1193,7 +1193,7 @@ namespace FwAvaloniaTests
 			wsItem.RaiseEvent(new RoutedEventArgs(MenuItem.ClickEvent));
 			Dispatcher.UIThread.RunJobs();
 			var flyout = (Flyout)wsItem.Tag;
-			var picker = (FwOptionPicker)flyout.Content;
+			var picker = (FwOptionChooser)flyout.Content;
 			// Options: [0]=French(fr), [1]=German(de).
 			picker.OptionsList.SelectedIndex = 1; // German -> de
 			picker.CommitHighlighted();
@@ -1225,7 +1225,7 @@ namespace FwAvaloniaTests
 			wsItem.RaiseEvent(new RoutedEventArgs(MenuItem.ClickEvent));
 			Dispatcher.UIThread.RunJobs();
 			var flyout = (Flyout)wsItem.Tag;
-			var picker = (FwOptionPicker)flyout.Content;
+			var picker = (FwOptionChooser)flyout.Content;
 			picker.OptionsList.SelectedIndex = 0;
 			picker.CommitHighlighted();
 			Dispatcher.UIThread.RunJobs();
@@ -1334,7 +1334,7 @@ namespace FwAvaloniaTests
 			var chooser = new FwChooserField(LinkedChooserField(), "MorphTypeChooser",
 				new FakeRegionEditContext(), request => { });
 
-			var picker = (FwOptionPicker)((Flyout)chooser.Flyout).Content;
+			var picker = (FwOptionChooser)((Flyout)chooser.Flyout).Content;
 			Assert.That(picker.GetVisualDescendants().OfType<AutoCompleteBox>(), Is.Empty,
 				"the options flyout is the shared inline filter+list picker — no nested selector control");
 			Assert.That(picker.GetVisualDescendants().Contains(picker.OptionsList), Is.True,
@@ -1365,7 +1365,7 @@ namespace FwAvaloniaTests
 
 			var addButton = vector.GetVisualDescendants().OfType<Button>()
 				.Single(b => AutomationProperties.GetAutomationId(b) == "PublishIn.Add");
-			Assert.That(((Flyout)addButton.Flyout).Content, Is.TypeOf<FwOptionPicker>(),
+			Assert.That(((Flyout)addButton.Flyout).Content, Is.TypeOf<FwOptionChooser>(),
 				"the + opens the one compact picker — options only, no link items");
 
 			var gear = vector.GetVisualDescendants().OfType<Button>()
@@ -1392,7 +1392,7 @@ namespace FwAvaloniaTests
 			var chooser = new FwChooserField(noLinks, "PlainChooser", new FakeRegionEditContext(),
 				request => { });
 			Assert.That(chooser.HoverAffordances, Is.Empty, "no resolvable list editor, no gear");
-			Assert.That(((Flyout)chooser.Flyout).Content, Is.TypeOf<FwOptionPicker>(),
+			Assert.That(((Flyout)chooser.Flyout).Content, Is.TypeOf<FwOptionChooser>(),
 				"the options picker still opens from the value click");
 
 			// Links but no host callback (nothing to dispatch through): no gear either.

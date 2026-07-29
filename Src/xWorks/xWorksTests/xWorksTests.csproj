@@ -24,7 +24,7 @@
   </PropertyGroup>
   <ItemGroup>
     <!-- Compile-only (PrivateAssets): fake IRegionEditorPlugin implementations in
-         LexemeEditorBurnDownTests name Avalonia.Controls.Control (winforms-free-lexeme-editor.md
+         LexemeEditorInventoryTests name Avalonia.Controls.Control (winforms-free-lexeme-editor.md
          D1); the runtime assemblies are already in the shared output via FwAvalonia. -->
     <PackageReference Include="Avalonia" IncludeAssets="compile" PrivateAssets="all" />
     <!-- Avalonia's transitive analyzer carrier; IncludeAssets="none" keeps the AVA* analyzers out. -->

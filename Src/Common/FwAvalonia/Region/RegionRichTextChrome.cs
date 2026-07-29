@@ -18,7 +18,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 	/// <summary>
 	/// Shared rich-text DEPTH chrome reused by both owned text editors (FwMultiWsTextField and
 	/// FwStructuredTextField): the per-run-font read-along display layer (the inline-display-on-blur half
-	/// of the focus swap) and a small generic span-acting picker button (the same FwOptionPicker pattern
+	/// of the focus swap) and a small generic span-acting picker button (the same FwOptionChooser pattern
 	/// the multi-WS field pioneered for the character-style and writing-system pickers), so the structured
 	/// editor gets the SAME affordances without re-implementing them. Stays LCModel-free.
 	/// </summary>
@@ -84,13 +84,13 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 
 		/// <summary>
 		/// Builds a small span-acting picker button (transparent/borderless, dense) whose
-		/// <see cref="FwOptionPicker"/> flyout offers <paramref name="options"/>. On open,
+		/// <see cref="FwOptionChooser"/> flyout offers <paramref name="options"/>. On open,
 		/// <paramref name="onOpen"/> snapshots the editor's current selection and pre-selects the matching
 		/// option; on commit, <paramref name="onCommitted"/> applies the gesture. The caller owns the
 		/// selection snapshot and the stage. Teardown actions are appended to <paramref name="teardown"/>.
 		/// </summary>
 		internal static Button BuildSpanPicker(IReadOnlyList<RegionChoiceOption> options, string content,
-			string accessibleName, string automationId, Action<FwOptionPicker> onOpen,
+			string accessibleName, string automationId, Action<FwOptionChooser> onOpen,
 			Action<RegionChoiceOption> onCommitted, List<Action> teardown)
 		{
 			var button = new Button
@@ -113,8 +113,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 			AutomationProperties.SetName(button, accessibleName);
 			ToolTip.SetTip(button, accessibleName);
 
-			var picker = new FwOptionPicker(options, null, automationId);
-			var flyout = FwOptionPicker.CreateOptionFlyout(picker, PlacementMode.BottomEdgeAlignedLeft);
+			var picker = new FwOptionChooser(options, null, automationId);
+			var flyout = FwOptionChooser.CreateOptionFlyout(picker, PlacementMode.BottomEdgeAlignedLeft);
 
 			Action<RegionChoiceOption> committed = option =>
 			{

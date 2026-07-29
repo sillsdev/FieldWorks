@@ -21,7 +21,7 @@ namespace FwAvaloniaDialogsTests
 	/// <summary>
 	/// The reusable Insert Entry dialog: the Avalonia replacement for the legacy InsertEntryDlg in
 	/// New-UI mode. The view-model hosts a lexeme-form FwMultiWsTextField, a single-select morph-type
-	/// FwOptionPicker, and a gloss FwMultiWsTextField, staging the text fields into an in-memory edit context;
+	/// FwOptionChooser, and a gloss FwMultiWsTextField, staging the text fields into an in-memory edit context;
 	/// it gates OK on a non-empty best lexeme form, re-derives the morph type as the form changes, and snapshots
 	/// the per-WS form/gloss + morph-type key on OK. Runtime proof on a realized headless surface.
 	/// </summary>
@@ -512,7 +512,7 @@ namespace FwAvaloniaDialogsTests
 
 			Assert.That(vm.MorphTypePicker.IsDropdownOpen, Is.True,
 				"activating the collapsed box pops the option list up on top");
-			// The option list (the same FwOptionPicker list) carries the morph types when open. The list
+			// The option list (the same FwOptionChooser list) carries the morph types when open. The list
 			// lives in the popup's own top-level overlay (on top, may exceed the dialog bounds).
 			Assert.That(vm.MorphTypePicker.CurrentItems.Select(o => o.Name),
 				Does.Contain("prefix").And.Contain("suffix"),
