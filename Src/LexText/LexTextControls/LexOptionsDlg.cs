@@ -452,7 +452,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			m_uiModeChooser = new ComboBox();
 			m_uiModeBetaWarning = new Label();
 
-			m_uiModeGroup.Text = GetOptionString("UiModeGroupTitle", "Lexical Edit UI:");
+			m_uiModeGroup.Text = GetOptionString("UiModeGroupTitle", "New UI (preview):");
 			m_uiModeGroup.Left = groupBox1.Left;
 			m_uiModeGroup.Top = groupBox1.Bottom + 6;
 			m_uiModeGroup.Width = groupBox1.Width;

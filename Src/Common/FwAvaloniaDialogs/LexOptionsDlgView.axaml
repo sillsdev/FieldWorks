@@ -38,7 +38,7 @@
 					<TextBlock Text="{x:Static res:FwAvaloniaDialogsStrings.UiLanguageNote}"
 					           TextWrapping="Wrap" Opacity="0.8"/>
 
-					<TextBlock Text="{x:Static res:FwAvaloniaDialogsStrings.LexicalEditUiLabel}"
+					<TextBlock Text="{x:Static res:FwAvaloniaDialogsStrings.NewUiPreviewLabel}"
 					           Margin="{StaticResource DialogLabelGroupGapAbove}"/>
 					<StackPanel Orientation="Horizontal" Spacing="{StaticResource DialogButtonStripGap}">
 						<ComboBox ItemsSource="{Binding UiModes}" SelectedItem="{Binding SelectedUiMode}"

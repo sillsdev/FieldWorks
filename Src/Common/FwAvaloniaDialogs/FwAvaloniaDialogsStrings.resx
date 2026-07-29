@@ -40,8 +40,8 @@
   <data name="FwAvaloniaDialogs.UiLanguageNote" xml:space="preserve">
     <value>Changing the UI language requires restarting FieldWorks.</value>
   </data>
-  <data name="FwAvaloniaDialogs.LexicalEditUiLabel" xml:space="preserve">
-    <value>Lexical Edit UI</value>
+  <data name="FwAvaloniaDialogs.NewUiPreviewLabel" xml:space="preserve">
+    <value>New UI (preview)</value>
   </data>
   <data name="FwAvaloniaDialogs.UiModeLegacy" xml:space="preserve">
     <value>Legacy</value>
