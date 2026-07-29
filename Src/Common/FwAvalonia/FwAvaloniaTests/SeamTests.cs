@@ -6,6 +6,8 @@ using System;
 using System.Linq;
 using System.Reflection;
 using NUnit.Framework;
+using SIL.FieldWorks.Common.FwAvalonia;
+using SIL.FieldWorks.Common.FwAvalonia.Region;
 using SIL.FieldWorks.Common.FwAvalonia.Seams;
 
 namespace FwAvaloniaTests
