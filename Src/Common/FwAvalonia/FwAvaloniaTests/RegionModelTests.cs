@@ -379,7 +379,7 @@ namespace FwAvaloniaTests
 	}
 
 	/// <summary>
-	/// Phase 2 (pure): <see cref="RegionRichTextEditAlgorithms.ApplySpanFormatting"/> splits runs at the
+	/// Pure: <see cref="RegionRichTextEditAlgorithms.ApplySpanFormatting"/> splits runs at the
 	/// selection boundaries and sets the chosen attribute only on covered runs, leaving the rest of the
 	/// value's run metadata untouched — across run boundaries, partial runs, grapheme clusters, and the
 	/// lossy read-only guard.
@@ -478,7 +478,7 @@ namespace FwAvaloniaTests
 			Assert.That(result, Is.SameAs(original), "a collapsed selection is a no-op");
 		}
 
-		// Phase 2 test (d) at the pure layer: a lossy value is read-only and is returned unchanged.
+		// At the pure layer: a lossy value is read-only and is returned unchanged.
 		[Test]
 		public void ApplySpanFormatting_LossyValue_ReturnsUnchanged()
 		{
@@ -527,7 +527,7 @@ namespace FwAvaloniaTests
 	}
 
 	/// <summary>
-	/// Phase 3 (pure): <see cref="RegionRichTextEditAlgorithms.ApplySpanNamedStyle"/> splits runs at the
+	/// Pure: <see cref="RegionRichTextEditAlgorithms.ApplySpanNamedStyle"/> splits runs at the
 	/// selection boundaries and sets/clears the named character style only on covered runs, cluster-safe,
 	/// honoring the lossy read-only guard; <see cref="RegionRichTextEditAlgorithms.SpanNamedStyle"/>
 	/// reports the common style across the span (null when mixed/none).
@@ -652,7 +652,7 @@ namespace FwAvaloniaTests
 	}
 
 	/// <summary>
-	/// Phase 4 (pure): <see cref="RegionRichTextEditAlgorithms.RetagSpanWritingSystem"/> splits runs at
+	/// Pure: <see cref="RegionRichTextEditAlgorithms.RetagSpanWritingSystem"/> splits runs at
 	/// the selection boundaries and sets the writing-system tag only on covered runs, cluster-safe,
 	/// honoring the lossy read-only guard; <see cref="RegionRichTextEditAlgorithms.SpanWritingSystem"/>
 	/// reports the common writing system across the span (null when mixed).

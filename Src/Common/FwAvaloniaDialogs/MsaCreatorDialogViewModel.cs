@@ -10,8 +10,7 @@ using SIL.FieldWorks.Common.FwAvalonia;
 namespace FwAvaloniaDialogs
 {
 	/// <summary>
-	/// View-model for the reusable Avalonia "Create New Grammatical Info." dialog (MSA-port Stage 5 replacement for
-	/// the legacy <c>MsaCreatorDlg</c> in New-UI mode). The dialog is essentially the LCModel-free
+	/// View-model for the reusable Avalonia "Create New Grammatical Info." dialog. The dialog is essentially the LCModel-free
 	/// <see cref="FwMsaGroupBox"/> hosted over the entry's read-only context:
 	///   * a read-only LEXICAL ENTRY headword (the legacy <c>m_fwtbCitationForm</c>),
 	///   * a read-only SENSES summary (the legacy <c>m_fwtbSenses</c>; populated only when editing an existing MSA),
@@ -71,7 +70,7 @@ namespace FwAvaloniaDialogs
 				RefreshInflectionClassesForCurrentPos();
 				RefreshInflectionFeaturesForCurrentPos();
 			};
-			// Forward the box's create-feature / create-value requests (Stage 3 wires the feature dialogs).
+			// Forward the box's create-feature / create-value requests to the host.
 			MsaGroupBox.CreateNewFeatureRequested += () => CreateNewFeatureRequested?.Invoke();
 			MsaGroupBox.CreateNewValueRequested += id => CreateNewValueRequested?.Invoke(id);
 			MsaGroupBox.MainPosChooser.CreateNewPosRequested += () => CreateNewPosRequested?.Invoke(FwPosTarget.Main);
@@ -123,14 +122,13 @@ namespace FwAvaloniaDialogs
 
 		/// <summary>
 		/// Raised when the user clicks the inline "Create a new feature..." row in the hosted inflection-feature
-		/// editor (Phase-1 §19b Stage 2). Stage 3 wires the host to open the feature dialog and call back; the VM
-		/// performs NO create (it stays LCModel-free; an unsubscribed request is a harmless no-op).
+		/// editor. The VM performs NO create (it stays LCModel-free; an unsubscribed request is a harmless no-op).
 		/// </summary>
 		public event Action CreateNewFeatureRequested;
 
 		/// <summary>
 		/// Raised when the user invokes a closed feature's "Add a value..." affordance, carrying the closed feature's
-		/// id (Phase-1 §19b Stage 2). Stage 3 wires the host; the VM performs NO create.
+		/// id. The VM performs NO create.
 		/// </summary>
 		public event Action<string> CreateNewValueRequested;
 
@@ -173,7 +171,7 @@ namespace FwAvaloniaDialogs
 		}
 
 		// Re-runs the launcher's inflection-feature-system provider for the box's current main POS and refeeds the
-		// editor (the box shows it only for infl/deriv, so this is harmless for other types). Phase-1 §19b Stage 2.
+		// editor (the box shows it only for infl/deriv, so this is harmless for other types).
 		private void RefreshInflectionFeaturesForCurrentPos()
 		{
 			if (MsaGroupBox == null || _inflFeaturesForPos == null)

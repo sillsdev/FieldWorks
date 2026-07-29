@@ -8,8 +8,8 @@ using System.Collections.Generic;
 namespace FwAvaloniaDialogs
 {
 	/// <summary>
-	/// The LCModel-free input to the reusable Avalonia entry-search ("go") dialog — the kit replacement for the
-	/// legacy <c>EntryGoDlg</c> FAMILY (its first concrete consumer is Merge Entry; the same dialog later re-skins
+	/// The LCModel-free input to the reusable Avalonia entry-search ("go") dialog — the kit's analog of the
+	/// legacy <c>EntryGoDlg</c> FAMILY (one concrete consumer is Merge Entry; the same dialog re-skins
 	/// for AddAllomorph / LinkEntryOrSense / LinkAllomorph / LinkMSA with only title/button/prompt/filter
 	/// differences). The product edge (the LexText launcher) builds this from the live entry repository so the
 	/// Avalonia layer never sees an <c>ICmObject</c>: it supplies a <see cref="Search"/> delegate (the SAME matching

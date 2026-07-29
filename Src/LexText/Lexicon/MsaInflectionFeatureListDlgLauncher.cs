@@ -52,7 +52,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// </summary>
 		protected override void HandleChooser()
 		{
-			// New-UI gate (Phase-1 §19b Stage 3): in New mode launch the Avalonia inflection-feature chooser (the
+			// New-UI gate: in New mode launch the Avalonia inflection-feature chooser (the
 			// LCModel-free FwFeatureStructureEditor hosted over OK/Cancel); Legacy mode keeps the WinForms
 			// MsaInflectionFeatureListDlg. Both rebuild the slice's IFsFeatStruc (null is valid — all features removed).
 			var uiMode = m_propertyTable.GetStringProperty("UIMode", null);
@@ -161,7 +161,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		}
 
 		/// <summary>
-		/// The New-UI inflection-feature chooser path (Phase-1 §19b Stage 3): resolve the owning object + flid from the
+		/// The New-UI inflection-feature chooser path: resolve the owning object + flid from the
 		/// slice exactly as the legacy HandleChooser does, run the Avalonia <see cref="LcmInflectionFeatureChooserLauncher"/>,
 		/// and on OK re-init the launcher view with the rebuilt FS (null when all features were removed — valid).
 		///
@@ -174,10 +174,9 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// different context, e.g. the main data-entry view) posts a "FollowLink" FwLinkArgs("posEdit",
 		/// dlg.HighestPOS.Guid) via m_mediator to jump to the POS editor tool. Both branches are anchored to the
 		/// WinForms DataTree/Slice/VectorReferenceLauncher control-tree walk and the legacy dialog's always-visible
-		/// link affordance — neither has an Avalonia equivalent yet (the FeatureChooserDialogViewModel has no signal
-		/// for "switch tools", and the Avalonia dialog does not sit inside a WinForms DataTree to search). Adding this
-		/// UI affordance + navigation is deferred rather than silently dropped; the OK/Cancel-only contract here means
-		/// a user who would have used the "Add features to POS" link currently has no New-UI equivalent action.
+		/// link affordance — neither has an Avalonia equivalent (the FeatureChooserDialogViewModel has no signal
+		/// for "switch tools", and the Avalonia dialog does not sit inside a WinForms DataTree to search). The OK/Cancel-only contract here means
+		/// a user who would have used the "Add features to POS" link has no New-UI equivalent action.
 		/// </summary>
 		// NoInlining keeps the Avalonia assembly load out of the gated caller's JIT (Legacy loader isolation).
 		[MethodImpl(MethodImplOptions.NoInlining)]

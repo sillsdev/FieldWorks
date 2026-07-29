@@ -8,16 +8,16 @@ using CommunityToolkit.Mvvm.ComponentModel;
 namespace FwAvaloniaDialogs
 {
 	/// <summary>
-	/// View-model for the small "Create New Feature" / "Create New Feature Value" name-entry dialog (Phase-1 §19b
-	/// Stage 3) — the LCModel-free collector behind the inline create affordances of
-	/// <see cref="FwFeatureStructureEditor"/>. It is the Avalonia replacement for the
+	/// View-model for the small "Create New Feature" / "Create New Feature Value" name-entry dialog
+	/// — the LCModel-free collector behind the inline create affordances of
+	/// <see cref="FwFeatureStructureEditor"/>. It is the Avalonia analog of the
 	/// <c>MasterInflectionFeatureListDlg</c> / <c>MasterPhonologicalFeatureListDlg</c> blank-create link (and the
 	/// feature-system add-value flow): the user types a name (and optional abbreviation) and the LCModel-aware
 	/// launcher creates the feature/value in the feature system, then feeds the resulting <see cref="FwFeatureNode"/>
 	/// back to the editor.
 	///
-	/// The dialog is intentionally minimal (the heavy MGA-catalog import path is a documented PARITY deferral — it
-	/// needs the MGA assembly + GlossList XML parsing, outside this stage's clean reach). OK is gated on a non-empty
+	/// The dialog is intentionally minimal: it does not include the heavy MGA-catalog import path (which needs the
+	/// MGA assembly + GlossList XML parsing). OK is gated on a non-empty
 	/// name. The same VM serves both the feature and the value flows, parameterized by its labels (so the view binds
 	/// the right captions without a second VM type).
 	/// </summary>

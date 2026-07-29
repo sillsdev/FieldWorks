@@ -12,13 +12,12 @@ using SIL.LCModel;
 namespace SIL.FieldWorks.XWorks
 {
 	/// <summary>
-	/// winforms-free-lexeme-editor.md D1 — the one plugin contract for every remaining custom
+	/// The one plugin contract for every remaining custom
 	/// editor: builds an Avalonia control for (object, node, edit context) so a legacy dynamically
 	/// loaded slice (<c>editor="Custom" class=...</c>) can render in-tree at the slice's real
-	/// position instead of an unsupported row or the WinForms companion strip. Plugins are keyed by
+	/// position instead of an unsupported row. Plugins are keyed by
 	/// the <b>legacy layout identity</b> (<see cref="LegacyClassName"/>, the layout's `class=`
-	/// attribute already carried on the typed node) — zero layout edits per migration, and the
-	/// identical mechanism serves the next DataTree tools (Notebook, Morphology) for free.
+	/// attribute already carried on the typed node) — zero layout edits per migration.
 	/// </summary>
 	public interface IRegionEditorPlugin
 	{
@@ -70,7 +69,7 @@ namespace SIL.FieldWorks.XWorks
 	}
 
 	/// <summary>
-	/// winforms-free-lexeme-editor.md D1 — maps legacy slice class names to their
+	/// Maps legacy slice class names to their
 	/// <see cref="IRegionEditorPlugin"/>. The composer consults <see cref="Resolve"/> per node
 	/// while walking, FIRST in the resolution order (plugin → unsupported row).
 	/// Thread-safe by immutable snapshot: registration copies under a lock, resolution reads the
@@ -119,7 +118,7 @@ namespace SIL.FieldWorks.XWorks
 			return _snapshot.TryGetValue(legacyClassName, out var plugin) ? plugin : null;
 		}
 
-		/// <summary>The currently claimed legacy class names (a snapshot; burn-down governance, D5).</summary>
+		/// <summary>The currently claimed legacy class names (a snapshot).</summary>
 		public IReadOnlyCollection<string> RegisteredClassNames
 		{
 			get
@@ -136,10 +135,10 @@ namespace SIL.FieldWorks.XWorks
 			return registry;
 		}
 
-		// The builtin plugin list: the single native-conversion exemplar. The Reversal Entries slice
+		// The builtin plugin list. The Reversal Entries slice
 		// (ReversalIndexEntrySlice) composes as a native Avalonia editable multi-WS text field through
-		// the D1 plugin route. Every OTHER custom slice not absorbed by a composer route resolves to the
-		// labeled Unsupported worklist row — there is no launcher/companion fallback.
+		// the plugin route. Every OTHER custom slice not absorbed by a composer route resolves to the
+		// labeled Unsupported worklist row.
 		internal static void RegisterBuiltins(RegionEditorPluginRegistry registry)
 		{
 			registry.Register(new ReversalIndexEntryPlugin());

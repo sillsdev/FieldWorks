@@ -8,9 +8,8 @@ using System.Collections.Generic;
 namespace SIL.FieldWorks.Common.FwAvalonia.Region
 {
 	/// <summary>
-	/// The native-Views/C++ viewing capabilities a migrated lexical-edit region historically leaned
-	/// on (task 8.1 inventory) and must now provide itself in managed/Avalonia form (task 8.3). One
-	/// entry per capability the legacy RootSite/Views pipeline owned.
+	/// The native-Views/C++ viewing capabilities the lexical-edit region provides itself in
+	/// managed/Avalonia form. One entry per capability the legacy RootSite/Views pipeline owned.
 	/// </summary>
 	public enum RegionViewingCapability
 	{
@@ -38,11 +37,9 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 
 	/// <summary>
 	/// One viewing capability mapped to the FieldWorks-owned managed/Avalonia type that provides it
-	/// inside the migrated region. This is the as-built replacement contract task 8.3 records: the
-	/// positive complement to the <c>EngineIsolationAuditTests</c> negative audit (which proves no
-	/// native symbol is named). The exact native symbol each capability supersedes is documented in
-	/// `native-views-audit.md` §8.3 and cross-checked by `RegionViewingServiceReplacementTests`; it is
-	/// intentionally NOT named here, because the isolation audit forbids production source from naming
+	/// inside the region. It is the positive complement to the <c>EngineIsolationAuditTests</c> negative
+	/// audit (which proves no native symbol is named). The exact native symbol each capability supersedes
+	/// is intentionally NOT named here, because the isolation audit forbids production source from naming
 	/// the native pipeline at all.
 	/// </summary>
 	public sealed class RegionViewingServiceDescriptor
@@ -64,9 +61,9 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 	}
 
 	/// <summary>
-	/// A viewing concern deliberately left out of the migrated region's managed replacement, recorded
+	/// A viewing concern deliberately left out of the region's managed implementation, recorded
 	/// so the deferral is explicit (named with a reason, owning phase, and user-visible fallback)
-	/// rather than a silent gap. Tasks 8.3/8.5 require deferrals to be named, not assumed.
+	/// rather than a silent gap.
 	/// </summary>
 	public sealed class DeferredViewingConcern
 	{
@@ -89,10 +86,9 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 	}
 
 	/// <summary>
-	/// The migrated lexical-edit region's viewing-service decommissioning contract (task 8.3/8.5):
-	/// the as-built map from each native-Views viewing capability to the managed/Avalonia type that
-	/// now owns it, plus the explicitly-deferred concerns. This is the reusable foundation a later
-	/// region copies — it names what "replace the native viewing/render/editor seam" means in
+	/// The lexical-edit region's viewing-service contract: the map from each native-Views viewing
+	/// capability to the managed/Avalonia type that owns it, plus the explicitly-deferred concerns.
+	/// It names what "replace the native viewing/render/editor seam" means in
 	/// checkable terms and is asserted by <c>RegionViewingServiceReplacementTests</c>.
 	/// </summary>
 	public static class RegionViewingServices
@@ -139,7 +135,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 			};
 
 		/// <summary>
-		/// Viewing concerns explicitly deferred out of the region's managed replacement. Each is named
+		/// Viewing concerns explicitly deferred out of the region's managed implementation. Each is named
 		/// with its reason, owning phase, and the user-visible fallback so "decommissioned" carries no
 		/// silent asterisk.
 		/// </summary>

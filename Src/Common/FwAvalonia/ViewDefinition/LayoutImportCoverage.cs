@@ -26,16 +26,16 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 
 	/// <summary>
 	/// Measures how much of the shipped XML Parts/Layout vocabulary the <see cref="XmlLayoutImporter"/>
-	/// actually consumes (task 4.9). Two lenses:
+	/// actually consumes. Two lenses:
 	/// 1. A raw vocabulary census over the source files: every element and attribute occurrence,
 	///    classified handled/unhandled from the importer's published attribute sets.
 	/// 2. An import run over every detail layout, aggregating the importer's diagnostics by code.
 	/// The result renders to a deterministic markdown report so coverage is a tracked number, not an
-	/// assumption. This gates 7.x scaling and 9.x XML-retirement claims.
+	/// assumption.
 	/// </summary>
 	public static class LayoutImportCoverage
 	{
-		// B3: if/ifnot/choice/where/otherwise import as typed Conditional/ChoiceGroup nodes.
+		// if/ifnot/choice/where/otherwise import as typed Conditional/ChoiceGroup nodes.
 		private static readonly HashSet<string> HandledLayoutFileElements =
 			new HashSet<string>(StringComparer.Ordinal)
 			{
@@ -43,7 +43,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 				"if", "ifnot", "choice", "where", "otherwise"
 			};
 
-		// B7: chooserLink imports as typed metadata; chooserInfo is handled as the link container
+		// chooserLink imports as typed metadata; chooserInfo is handled as the link container
 		// (its OTHER attributes — title/text/guicontrol/… — stay measured as unhandled below).
 		private static readonly HashSet<string> HandledPartsFileElements =
 			new HashSet<string>(StringComparer.Ordinal)
@@ -171,14 +171,14 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 				case "if":
 				case "ifnot":
 				case "where":
-					// B3: the parsed condition vocabulary; publishing-only condition forms
+					// The parsed condition vocabulary; publishing-only condition forms
 					// (stringaltequals etc.) stay measured as unhandled.
 					return XmlLayoutImporter.HandledConditionAttributes.Contains(attributeName);
 				case "chooserLink":
-					// B7: the typed jump-link vocabulary.
+					// The typed jump-link vocabulary.
 					return XmlLayoutImporter.HandledChooserLinkAttributes.Contains(attributeName);
 				case "chooserInfo":
-					// B7 remainder: only the chooserLink children import; chooserInfo's own
+					// Only the chooserLink children import; chooserInfo's own
 					// attributes (title/text/textparam/flidTextParam/guicontrol/helpBrowser) do not.
 					return false;
 				case "choice":

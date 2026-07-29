@@ -11,7 +11,7 @@ using Avalonia.Media;
 namespace FwAvaloniaDialogs
 {
 	/// <summary>
-	/// §19d: the picture-properties dialog body — a pure-code <see cref="UserControl"/> (no XAML compiler
+	/// The picture-properties dialog body — a pure-code <see cref="UserControl"/> (no XAML compiler
 	/// dependency, like the FwAvalonia owned controls) bound to <see cref="PicturePropertiesDialogViewModel"/>.
 	/// Lays out caption / description / license / creator entries, the chosen-image row with a "Choose
 	/// image…" button (which calls back to the host's file picker through <see cref="ChooseImageRequested"/>),

@@ -15,11 +15,10 @@ using SIL.LCModel.Core.Text;
 namespace SIL.FieldWorks.Common.Framework.DetailControls
 {
 	/// <summary>
-	/// Task 2.13 (refresh-after-edit path): measures the legacy DataTree's re-show cost — a second
-	/// <c>ShowObject</c> on the live tree after a model edit, which exercises the slice-reuse
-	/// (ObjSeqHashMap) refresh path RecordEditView drives on record navigation and refresh. Numbers
-	/// accumulate into the same <c>Output/RenderBenchmarks/datatree-timings.json</c> artifact the
-	/// entry-open baselines use and feed region-manifest §5.
+	/// Measures the legacy DataTree's re-show cost — a second <c>ShowObject</c> on the live tree after
+	/// a model edit, which exercises the slice-reuse (ObjSeqHashMap) refresh path RecordEditView drives
+	/// on record navigation and refresh. Numbers accumulate into the same
+	/// <c>Output/RenderBenchmarks/datatree-timings.json</c> artifact the entry-open baselines use.
 	/// </summary>
 	[TestFixture]
 	public class DataTreeReshowTimingTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase

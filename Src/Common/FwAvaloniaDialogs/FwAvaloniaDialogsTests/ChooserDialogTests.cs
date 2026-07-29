@@ -21,7 +21,7 @@ using SIL.FieldWorks.Common.FwAvalonia.Region;
 namespace FwAvaloniaDialogsTests
 {
 	/// <summary>
-	/// The reusable chooser dialog (Phase 1, flat list): the Avalonia replacement for the legacy
+	/// The reusable chooser dialog (flat list): the Avalonia replacement for the legacy
 	/// ReallySimpleListChooser/SimpleListChooser. The view-model builds and drives a shared FwOptionPicker
 	/// (single or multi mode), mirrors the picker's commits into ChosenKeys, gates OK when a selection is
 	/// required, and snapshots the chosen set on OK. Runtime proof on a realized headless surface (compiled XAML

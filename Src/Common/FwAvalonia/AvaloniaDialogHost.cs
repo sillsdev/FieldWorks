@@ -14,7 +14,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 	/// <summary>
 	/// Reusable host that shows an Avalonia dialog body (a <c>UserControl</c>) inside a WinForms-owned
 	/// modal <see cref="Form"/> during coexistence — the turn-key piece for the MVVM dialog kit. Because
-	/// Avalonia modal windows are not supported while WinForms owns the message loop (dialog-ownership.md),
+	/// Avalonia modal windows are not supported while WinForms owns the message loop,
 	/// the dialog body is hosted in a WinForms modal window owned by the caller's form; the view-model
 	/// closes it by raising <see cref="IDialogViewModel.CloseRequested"/> (no windowing in the VM).
 	///
@@ -54,8 +54,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 			if (dialogBody == null) throw new ArgumentNullException(nameof(dialogBody));
 			if (viewModel == null) throw new ArgumentNullException(nameof(viewModel));
 
-			// Modal hosting + Avalonia share the single WinForms UI thread / message loop during coexistence
-			// (dialog-ownership.md). Showing a modal Form or touching Avalonia controls off that thread is a
+			// Modal hosting + Avalonia share the single WinForms UI thread / message loop during coexistence.
+			// Showing a modal Form or touching Avalonia controls off that thread is a
 			// re-entrancy/cross-thread bug; fail fast rather than corrupt the message loop. The owner control
 			// (when supplied) is the WinForms host whose thread we must be on.
 			if (owner is Control ownerControl && ownerControl.InvokeRequired)
@@ -68,7 +68,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 			// roomy Fluent defaults. Applied here (the single dialog chokepoint) so new dialogs inherit it.
 			CompactDialogStyles.Apply(dialogBody);
 
-			// dialog-ownership.md: remember the WinForms focus so it returns to the owner after close.
+			// Remember the WinForms focus so it returns to the owner after close.
 			var priorFocus = Form.ActiveForm?.ActiveControl;
 
 			try
@@ -97,7 +97,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 					FwAvaloniaPlatform.GuardHeadlessEmbed(host);
 					form.Controls.Add(host);
 
-					// A11Y-03 (legacy WinForms parity): focus the first input when the dialog opens so a
+					// Legacy WinForms parity: focus the first input when the dialog opens so a
 					// keyboard / screen-reader user lands in a field, not on an unfocused window (and, with
 					// the per-view TabIndex, not on the OK/Cancel strip). Done on Shown so the hosted Avalonia
 					// content is realized. Best-effort: a no-op if nothing qualifies (never throws).
@@ -238,7 +238,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 
 		/// <summary>
 		/// Focuses the first keyboard-focusable INPUT inside <paramref name="dialogBody"/> so a dialog opens
-		/// with the caret in its first field (legacy WinForms parity; A11Y-03). Buttons (OK/Cancel/Help) are
+		/// with the caret in its first field (legacy WinForms parity). Buttons (OK/Cancel/Help) are
 		/// never the initial focus — initial focus belongs to an input, and Enter/Escape already activate the
 		/// default/cancel buttons. Returns the control it focused, or null if none qualifies. Factored out
 		/// (like <see cref="ApplySizing"/> / <see cref="WireClose"/>) so the selection contract is unit-testable

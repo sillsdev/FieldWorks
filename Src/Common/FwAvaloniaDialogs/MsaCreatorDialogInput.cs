@@ -9,8 +9,7 @@ using SIL.FieldWorks.Common.FwAvalonia;
 namespace FwAvaloniaDialogs
 {
 	/// <summary>
-	/// The LCModel-free input to the reusable Avalonia "Create New Grammatical Info." dialog — the MSA-port Stage 5
-	/// replacement for the legacy <c>MsaCreatorDlg</c> in New-UI mode. The product edge (the LexText launcher)
+	/// The LCModel-free input to the reusable Avalonia "Create New Grammatical Info." dialog. The product edge (the LexText launcher)
 	/// builds this from the live cache so the Avalonia layer never sees an <c>ICmObject</c>: the read-only LEXICAL
 	/// ENTRY headword (<c>m_fwtbCitationForm</c>) and the read-only SENSES summary (<c>m_fwtbSenses</c>) are plain
 	/// display strings, and the grammatical-info section is fed exactly as the Insert Entry / Add New Sense dialogs
@@ -81,8 +80,7 @@ namespace FwAvaloniaDialogs
 		/// Builds the inflection-feature SYSTEM (a flat, document-order, depth-tagged <see cref="FwFeatureNode"/> list)
 		/// for a given main-POS id (guid string) — the launcher wraps the POS's <c>InflectableFeatsRC</c> (the lift of
 		/// <c>MsaInflectionFeatureListDlg.PopulateTreeFromPos</c>). Re-run when the MSA box's MAIN POS changes
-		/// (infl/deriv), refeeding <see cref="FwMsaGroupBox.SetInflectionFeatureNodes"/>. Null leaves the editor empty
-		/// (Phase-1 §19b Stage 2).
+		/// (infl/deriv), refeeding <see cref="FwMsaGroupBox.SetInflectionFeatureNodes"/>. Null leaves the editor empty.
 		/// </summary>
 		public Func<string, IReadOnlyList<FwFeatureNode>> InflectionFeaturesForPos { get; set; }
 

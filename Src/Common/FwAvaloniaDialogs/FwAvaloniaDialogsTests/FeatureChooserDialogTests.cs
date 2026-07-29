@@ -17,13 +17,12 @@ using NUnit.Framework;
 namespace FwAvaloniaDialogsTests
 {
 	/// <summary>
-	/// The standalone feature-structure chooser dialog (Phase-1 §19b Stage 3): the Avalonia replacement for the
-	/// WinForms MsaInflectionFeatureListDlg / PhonologicalFeatureChooserDlg. The dialog hosts the shared LCModel-free
+	/// The standalone feature-structure chooser dialog: the Avalonia replacement for the WinForms
+	/// MsaInflectionFeatureListDlg / PhonologicalFeatureChooserDlg. The dialog hosts the shared LCModel-free
 	/// FwFeatureStructureEditor over OK/Cancel/Help; it seeds the feature system + current assignments, has NO OK gate
 	/// (an empty pick is the valid "unspecified / delete the FS" outcome), snapshots the chosen assignment set on OK,
 	/// and forwards the editor's inline create-feature / add-value affordances. Runtime proof on a realized headless
-	/// surface, with per-stage PNGs for subjective visual review. Traceability: see
-	/// openspec/changes/lexical-edit-avalonia-migration/feature-structure-test-research.md (Stage 3).
+	/// surface, with per-stage PNGs for subjective visual review.
 	/// </summary>
 	[TestFixture]
 	public class FeatureChooserDialogTests
@@ -176,7 +175,7 @@ namespace FwAvaloniaDialogsTests
 				Is.EqualTo("v-future"), "the created value becomes the feature's pick");
 		}
 
-		// ----- T3 edge: empty feature system + complex-script names -----
+		// ----- Edge: empty feature system + complex-script names -----
 
 		[AvaloniaTest]
 		public void EmptyFeatureSystem_RendersWithoutCrowding()

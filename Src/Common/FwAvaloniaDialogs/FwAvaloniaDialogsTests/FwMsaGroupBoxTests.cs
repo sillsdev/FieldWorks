@@ -246,7 +246,7 @@ namespace FwAvaloniaDialogsTests
 			Assert.That(msa.SlotId, Is.Null);
 		}
 
-		// ----- inflection-class picker (Stage 6): shown for stem/root, hidden for affixes -----
+		// ----- inflection-class picker: shown for stem/root, hidden for affixes -----
 
 		[AvaloniaTest]
 		public void InflectionClass_ShownForStem_WithMainPos()
@@ -459,7 +459,7 @@ namespace FwAvaloniaDialogsTests
 			return node;
 		}
 
-		// ===== inflection-feature editor wiring (Phase-1 §19b Stage 2) =====
+		// ===== inflection-feature editor wiring =====
 
 		// A small feature system in document order: a closed feature "Number" {sg, pl} and a complex feature
 		// "Agreement" nesting a closed "Person" {1, 2}. Depth-tagged like the editor's seam.
@@ -572,7 +572,7 @@ namespace FwAvaloniaDialogsTests
 			Pump(window);
 			Assert.That(box.SandboxMsa.InflectionFeatures, Is.Not.Empty);
 
-			// Switching to stem drops the features from the payload (Stage 6/§19b scope it to infl/deriv).
+			// Switching to stem drops the features from the payload (scoped to infl/deriv).
 			box.MsaType = FwMsaType.Stem;
 			Pump(window);
 			Assert.That(box.SandboxMsa.InflectionFeatures, Is.Empty,

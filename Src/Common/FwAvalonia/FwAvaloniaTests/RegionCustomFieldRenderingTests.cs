@@ -18,7 +18,7 @@ using SIL.FieldWorks.Common.FwAvalonia.ViewDefinition;
 namespace FwAvaloniaTests
 {
 	/// <summary>
-	/// winforms-free-lexeme-editor.md D1 — a <see cref="RegionFieldKind.Custom"/> row
+	/// A <see cref="RegionFieldKind.Custom"/> row
 	/// renders its plugin control factory's Avalonia control in-tree in the value column, at the
 	/// slice's real position. The path is guarded: a missing, null-returning, or throwing factory
 	/// degrades to the explicit unsupported row — never a crash, never a silently blank row.

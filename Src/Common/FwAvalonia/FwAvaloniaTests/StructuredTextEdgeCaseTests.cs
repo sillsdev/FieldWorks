@@ -21,13 +21,13 @@ using FwAvaloniaDialogsTests;        // DialogLayoutAssert — the shared geomet
 namespace FwAvaloniaTests
 {
 	/// <summary>
-	/// §19a T3 — edge cases for the owned multi-paragraph structured-text (StText) editor
-	/// (<see cref="FwStructuredTextField"/>), derived from the sttext-test-research note: an empty
-	/// StText (zero / one paragraph), the only-paragraph-cannot-delete invariant, RTL + complex-script
-	/// (Khmer) content round-tripping, rapid interleaved insert/delete, ORC/lossy interleaving, and
-	/// clear-style → Normal mapping. These pin the corners the happy-path unit tests don't reach. The
-	/// view side stays LCModel-free (a recording fake context); the matching real-LCModel round-trip
-	/// assertions live in StructuredTextAdapterTests / StructuredTextWorkflowTests.
+	/// Edge cases for the owned multi-paragraph structured-text (StText) editor
+	/// (<see cref="FwStructuredTextField"/>): an empty StText (zero / one paragraph), the
+	/// only-paragraph-cannot-delete invariant, RTL + complex-script (Khmer) content round-tripping,
+	/// rapid interleaved insert/delete, ORC/lossy interleaving, and clear-style → Normal mapping.
+	/// These pin the corners the happy-path unit tests don't reach. The view side stays LCModel-free
+	/// (a recording fake context); the matching real-LCModel round-trip assertions live in
+	/// StructuredTextAdapterTests / StructuredTextWorkflowTests.
 	/// </summary>
 	[TestFixture]
 	public class StructuredTextEdgeCaseTests
@@ -40,7 +40,7 @@ namespace FwAvaloniaTests
 						: new[] { new RegionTextRun(text, ws) }),
 				style);
 
-		// An ORC/lossy paragraph: a value flagged lossy is held read-only (§19c.3).
+		// An ORC/lossy paragraph: a value flagged lossy is held read-only.
 		private static RegionParagraph LossyPara(string text)
 		{
 			var rich = new RegionRichTextValue(text, new[] { new RegionTextRun(text, "en") },
@@ -81,7 +81,7 @@ namespace FwAvaloniaTests
 			=> control.GetVisualDescendants().OfType<Button>()
 				.FirstOrDefault(b => AutomationProperties.GetAutomationId(b) == "Discussion.Para." + index + ".Delete");
 
-		// ---- C1 / C2 / B5: empty StText (zero / one paragraph) ----
+		// ---- empty StText (zero / one paragraph) ----
 
 		[AvaloniaTest]
 		public void EmptyStText_ShowsOneEditableRow_NoCrash()
@@ -118,7 +118,7 @@ namespace FwAvaloniaTests
 			Assert.That(context.ParagraphTextEdits[0].Value.PlainText, Is.EqualTo("first words"));
 		}
 
-		// ---- C2 / C3 / B6: the only paragraph cannot be deleted ----
+		// ---- the only paragraph cannot be deleted ----
 
 		[AvaloniaTest]
 		public void OnlyParagraph_CannotBeDeleted_ByButtonOrBackspace()
@@ -139,7 +139,7 @@ namespace FwAvaloniaTests
 			Assert.That(context.ParagraphDeletes, Is.Empty, "Backspace never deletes the last remaining paragraph");
 		}
 
-		// ---- C4 / B8: RTL + complex-script (Khmer) content stages and round-trips ----
+		// ---- RTL + complex-script (Khmer) content stages and round-trips ----
 
 		[AvaloniaTest]
 		public void RtlAndComplexScript_ParagraphStagesAndRoundTrips_LosslessRuns()
@@ -178,7 +178,7 @@ namespace FwAvaloniaTests
 				"the preserved run keeps its Khmer writing-system tag through the edit");
 		}
 
-		// ---- C5: rapid interleaved insert/delete do not crash or orphan an undo step ----
+		// ---- rapid interleaved insert/delete do not crash or orphan an undo step ----
 
 		[AvaloniaTest]
 		public void RapidInterleavedInsertDelete_DoNotCrashOrOrphanUndo()
@@ -227,12 +227,12 @@ namespace FwAvaloniaTests
 			Assert.That(gestures, Is.EqualTo(0), "a rejected gesture must not complete (no orphaned undo step)");
 		}
 
-		// ---- C7 / B9: ORC/lossy paragraph interleaved with editable paragraphs ----
+		// ---- ORC/lossy paragraph interleaved with editable paragraphs ----
 
 		[AvaloniaTest]
 		public void OrcParagraph_StaysReadOnly_WhileEditableParagraphsStillEdit()
 		{
-			// §19c.3: a lossy/ORC paragraph between two editable ones stays read-only and preserved; the
+			// A lossy/ORC paragraph between two editable ones stays read-only and preserved; the
 			// editable neighbors still edit and stage normally.
 			var field = Field(new List<RegionParagraph>
 			{
@@ -263,7 +263,7 @@ namespace FwAvaloniaTests
 				"only the editable paragraphs stage; the ORC paragraph (index 1) never does");
 		}
 
-		// ---- C8 / B4: clear-style maps to the Default picker entry (Normal on the LCModel side) ----
+		// ---- clear-style maps to the Default picker entry (Normal on the LCModel side) ----
 
 		[AvaloniaTest]
 		public void ClearStyle_PicksDefaultEntry_StagesNullStyle()

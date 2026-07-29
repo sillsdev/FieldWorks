@@ -8,8 +8,7 @@ using SIL.FieldWorks.Common.FwAvalonia.ViewDefinition;
 namespace FwAvaloniaTests
 {
 	/// <summary>
-	/// Shared ViewDefinitionModel fixtures for the browse-table test group (formerly reimplemented verbatim as
-	/// a private TwoColumnDefinition() in each test fixture; PR #964 review §6 cleanup #4).
+	/// Shared ViewDefinitionModel fixtures for the browse-table test group.
 	/// </summary>
 	internal static class ViewDefinitionTestBuilders
 	{

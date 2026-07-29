@@ -22,7 +22,7 @@ namespace SIL.FieldWorks.LexText.Controls
 	/// <summary>
 	/// The LCModel-aware launcher for the "Create a new Part of Speech" flow — the New-UI replacement for the
 	/// WinForms <see cref="MasterCategoryListDlg"/> that the legacy <c>POSPopupTreeManager</c> launches from the POS
-	/// tree's "More..." item (MSA-port Stage 4). Rather than build a brand-new tree dialog, it reuses the existing
+	/// tree's "More..." item. Rather than build a brand-new tree dialog, it reuses the existing
 	/// reusable Avalonia <see cref="ChooserDialogViewModel"/>/<c>ChooserDialogView</c> in HIERARCHICAL single-select
 	/// mode, fed the master-category (GOLDEtic) catalog as depth-tagged <see cref="RegionChoiceOption"/> candidates
 	/// (key = the catalog id). On OK it mirrors <see cref="MasterCategoryListDlg"/>'s create-in-project logic exactly:

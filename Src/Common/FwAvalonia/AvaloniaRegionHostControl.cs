@@ -12,12 +12,11 @@ using SIL.FieldWorks.Common.FwAvalonia.Seams;
 namespace SIL.FieldWorks.Common.FwAvalonia
 {
 	/// <summary>
-	/// Reusable WinForms host for an Avalonia region surface (Stage 2.1: generalized out of
-	/// <see cref="LexicalEditHostControl"/> so a second region host does not re-derive the in-process
-	/// net48 plumbing). Owns Avalonia bootstrap, the <see cref="WinFormsAvaloniaControlHost"/>, the
-	/// companion-control strip, the WinForms/Avalonia directional-key interop, focus-safe content
-	/// swapping, context menus, and the message/clear states. Region-specific projection (building the
-	/// region view) belongs to the derived class via <see cref="SetRegionContent"/>.
+	/// Reusable WinForms host for an Avalonia region surface. Owns Avalonia bootstrap, the
+	/// <see cref="WinFormsAvaloniaControlHost"/>, the companion-control strip, the WinForms/Avalonia
+	/// directional-key interop, focus-safe content swapping, context menus, and the message/clear
+	/// states. Region-specific projection (building the region view) belongs to the derived class
+	/// via <see cref="SetRegionContent"/>.
 	/// </summary>
 	public abstract class AvaloniaRegionHostControl : System.Windows.Forms.UserControl
 	{
@@ -76,7 +75,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 		protected Avalonia.Controls.Control CurrentContent => Host.Content as Avalonia.Controls.Control;
 
 		/// <summary>
-		/// §19d: the current hosted Avalonia content (public accessor), so the product host can resolve the
+		/// The current hosted Avalonia content (public accessor), so the product host can resolve the
 		/// surface's <c>TopLevel</c>/<c>IStorageProvider</c> for the managed file picker the picture media
 		/// seam uses. Null when no content is shown.
 		/// </summary>

@@ -18,7 +18,7 @@ using SIL.FieldWorks.Common.FwAvalonia.Region;
 namespace FwAvaloniaDialogsTests
 {
 	/// <summary>
-	/// The reusable chooser dialog, HIERARCHICAL mode (Phase 2): the candidates are folded from their Depth
+	/// The reusable chooser dialog, HIERARCHICAL mode: the candidates are folded from their Depth
 	/// sequence into a collapsible, virtualizing TreeView; an active search term switches to a flat filtered
 	/// results list and clearing it returns to the tree; single-select returns the clicked node's key; multi-select
 	/// returns the checked set (independent per-node checks, legacy default). Runtime proof on a realized headless
@@ -330,7 +330,7 @@ namespace FwAvaloniaDialogsTests
 				$"expanding a branch still does not realize the whole tree (realized {realizedExpanded})");
 		}
 
-		// ----- Phase 1 (flat) regression: a non-hierarchical input is unchanged -----
+		// ----- Flat-list regression: a non-hierarchical input is unchanged -----
 
 		[AvaloniaTest]
 		public void FlatInput_StillUsesThePicker_NoTree()

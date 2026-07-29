@@ -35,9 +35,9 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 
 	/// <summary>
 	/// Resolves a view definition for a surface, disabling runtime XML for a gated (migrated) surface in
-	/// favor of the committed canonical JSON, while retaining the XML import as the audit/fallback path
-	/// (task 9.4, per `canonical-view-definition-design.md` §4 step 4). For a non-gated surface, or when the
-	/// JSON is missing or unreadable, it falls back to compiling the layout XML and records a diagnostic so
+	/// favor of the committed canonical JSON, while retaining the XML import as the audit/fallback path.
+	/// For a non-gated surface, or when the JSON is missing or unreadable, it falls back to compiling the
+	/// layout XML and records a diagnostic so
 	/// the fallback is explicit, never silent. The actual gate source (PropertyTable/region manifest) and
 	/// JSON file location are the thin XCore wrapper above this framework-neutral core.
 	/// </summary>

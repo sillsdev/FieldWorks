@@ -22,7 +22,7 @@ namespace SIL.FieldWorks.Common.RootSites
 	/// This type (with the <see cref="TsStringFormat"/> OS clipboard format) is the cross-framework
 	/// rich-text clipboard contract: legacy native-Views surfaces write/read it in
 	/// <c>EditingHelper</c>, and the Avalonia coexistence bridge (<c>FwTsStringClipboard</c> in
-	/// xWorks, task 3.13) speaks the same format so copy/paste round-trips between frameworks.
+	/// xWorks) speaks the same format so copy/paste round-trips between frameworks.
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
 	[Serializable]

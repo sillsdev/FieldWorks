@@ -13,8 +13,8 @@ using SIL.FieldWorks.Common.FwAvalonia.Region;
 namespace FwAvaloniaTests
 {
 	/// <summary>
-	/// Tasks 5.5/5.8 (and the runtime half of 8.4): the region-manifest engine-isolation audit. The
-	/// migrated Avalonia path must carry no dependency on native Views rendering, native render
+	/// The engine-isolation audit. The
+	/// Avalonia path must carry no dependency on native Views rendering, native render
 	/// engines (Graphite/Uniscribe), Gecko/browser engines, or legacy view stacks — at the assembly
 	/// level (what the production assembly can even load) and at the source level (what production
 	/// code names). A failure of either test blocks Avalonia default readiness by construction.
@@ -31,7 +31,7 @@ namespace FwAvaloniaTests
 			"SIL.LCModel", "xCore", "XMLViews", "DetailControls"
 		};
 
-		// Identifiers from the region-manifest forbidden-symbol list (parity-evidence.md §4) that
+		// Identifiers from the forbidden-symbol list that
 		// production source must not name (native Views render/editor pipeline, legacy DataTree/Slice
 		// editor surface, native render engines, browser/PDF engines).
 		private static readonly string[] ForbiddenSourceSymbols =
@@ -81,7 +81,7 @@ namespace FwAvaloniaTests
 				// Comments and string literals are stripped before matching. The DataTree/Slice/
 				// SliceFactory/BrowseViewer parity symbols are legitimately named throughout this
 				// codebase's XML-doc comments and diagnostic message text to document exactly which
-				// legacy behavior a migrated code path mirrors (see parity-evidence.md); that is
+				// legacy behavior a migrated code path mirrors; that is
 				// documentation, not a dependency. What this audit must catch is the symbol being
 				// named as actual code — a using directive, type reference, base type, cast, member
 				// access, or the like — which would mean production code really depends on it.

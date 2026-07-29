@@ -11,8 +11,8 @@ using SIL.FieldWorks.Common.FwAvalonia.ViewDefinition;
 namespace FwAvaloniaTests
 {
 	/// <summary>
-	/// Task 4.7: localization/accessibility/routing metadata on typed view-definition nodes. Legacy XML
-	/// carries none of these, so imported legacy layouts keep their exact semantic snapshot; authored or
+	/// Localization/accessibility/routing metadata on typed view-definition nodes. Legacy XML carries
+	/// none of these, so imported legacy layouts keep their exact semantic snapshot; authored or
 	/// region-spec sources may set them and they then appear in the snapshot.
 	/// </summary>
 	[TestFixture]

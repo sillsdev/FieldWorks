@@ -10,9 +10,9 @@ using SIL.FieldWorks.Common.FwAvalonia.ViewDefinition;
 namespace FwAvaloniaTests
 {
 	/// <summary>
-	/// Task 9.2 (override migrator step 3): diffing a shipped definition against a project-customized
-	/// copy yields a sparse, stable-id-keyed override; non-representable customizations surface as
-	/// diagnostics, never silent drops. Pure logic — no Avalonia runtime.
+	/// Diffing a shipped definition against a project-customized copy yields a sparse, stable-id-keyed
+	/// override; non-representable customizations surface as diagnostics, never silent drops. Pure
+	/// logic — no Avalonia runtime.
 	/// </summary>
 	[TestFixture]
 	public class ViewDefinitionOverrideDifferTests
@@ -102,7 +102,7 @@ namespace FwAvaloniaTests
 			Assert.That(add.Index, Is.EqualTo(1), "the added node records its insertion index among siblings");
 			Assert.That(add.NodeKind, Is.EqualTo(ViewNodeKind.Field));
 			Assert.That(add.Label, Is.EqualTo("Custom"));
-			// A customer addition is now representable, not a lossy diagnostic.
+			// A customer addition is representable, not a lossy diagnostic.
 			Assert.That(diff.Diagnostics.Any(d => d.Code == "override-added-node"), Is.False);
 		}
 

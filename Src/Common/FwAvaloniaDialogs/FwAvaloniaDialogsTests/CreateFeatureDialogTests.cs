@@ -15,7 +15,7 @@ using NUnit.Framework;
 namespace FwAvaloniaDialogsTests
 {
 	/// <summary>
-	/// The minimal "Create New Feature" / "Create New Feature Value" name-entry dialog (Phase-1 §19b Stage 3): the
+	/// The minimal "Create New Feature" / "Create New Feature Value" name-entry dialog: the
 	/// LCModel-free collector behind the inline create affordances of the feature editor (the Avalonia replacement for
 	/// the MasterInflectionFeatureListDlg / MasterPhonologicalFeatureListDlg blank-create link). OK is gated on a
 	/// non-empty name; the same VM serves the feature + value flows via its labels. Runtime proof on a realized

@@ -16,13 +16,13 @@ using SIL.FieldWorks.Common.FwAvalonia.Seams;
 namespace SIL.FieldWorks.Common.FwAvalonia.Region
 {
 	/// <summary>
-	/// A data-driven Avalonia view that renders a <see cref="LexicalEditRegionModel"/> (task 4.8).
+	/// A data-driven Avalonia view that renders a <see cref="LexicalEditRegionModel"/>.
 	/// It builds one row per region field from the typed view definition, so the same renderer scales
 	/// from preview scenarios to product-backed layouts. Each field's renderer is chosen from its
 	/// <see cref="RegionFieldKind"/>.
 	/// Stable, nonlocalized automation ids come from the field (falling back to the stable node id).
 	///
-	/// Editing (tasks 6.8/6.10, autosave 14.4): when an <see cref="IRegionEditContext"/> is supplied,
+	/// Editing: when an <see cref="IRegionEditContext"/> is supplied,
 	/// field editors stage writes through it (which opens the fenced LCModel session on the first
 	/// edit) and the session auto-commits on focus loss — the legacy save-as-you-go behavior, one
 	/// undo step per field, no Save/Cancel buttons. Validation failures show inline and block the
@@ -160,7 +160,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 			AutomationProperties.SetAutomationId(scroller, "LexicalEditRegionView.Scroll");
 			Content = scroller;
 
-			// Screen-local command shortcuts (local phase of avalonia-command-focus, task 6.6):
+			// Screen-local command shortcuts:
 			// Enter commits (validation-gated), Escape cancels — handled at the view so they work
 			// from any field editor.
 			AddHandler(Avalonia.Input.InputElement.KeyDownEvent, OnViewKeyDown,
@@ -248,8 +248,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 			var automationId = string.IsNullOrEmpty(field.AutomationId) ? field.StableId : field.AutomationId;
 			var indent = new Thickness(field.Indent * 12, 0, 0, 0);
 
-			// Section/group headers from full-layout composition span both columns (task 7.4-style
-			// structure: the legacy tree's section rows).
+			// Section/group headers from full-layout composition span both columns
+			// (the legacy tree's section rows).
 			if (field.Kind == RegionFieldKind.Header)
 			{
 				Control header;

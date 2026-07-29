@@ -5,8 +5,8 @@
 namespace SIL.FieldWorks.Common.FwAvalonia
 {
 	/// <summary>
-	/// The deliberate product behavior of a host under the app-wide UI mode (task 3.9 / manifest
-	/// <c>uiModeBehavior</c>). Every host must resolve to one of these — there is no ambiguous
+	/// The deliberate product behavior of a host under the app-wide UI mode. Every host must resolve
+	/// to one of these — there is no ambiguous
 	/// "best effort" routing.
 	/// </summary>
 	public enum HostUiBehavior
@@ -45,7 +45,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 	}
 
 	/// <summary>
-	/// Explicit, central mapping from the app-wide UI mode to per-host behavior (task 3.9). Hosts such as
+	/// Explicit, central mapping from the app-wide UI mode to per-host behavior. Hosts such as
 	/// <c>RecordEditView</c> consume this instead of inferring product routing ad hoc from settings and
 	/// <c>PropertyTable</c> state. Pure logic over <see cref="LexicalEditSurfaceResolver"/>, with no
 	/// Avalonia dependency, so it is unit-testable without a UI runtime.

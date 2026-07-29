@@ -46,7 +46,7 @@ namespace LexTextControlsTests
 			_verb.AffixSlotsOC.Add(_tenseSlot);
 			_tenseSlot.Name.set_String(Cache.DefaultAnalWs, "Tense");
 
-			// An inflectable closed feature on the verb (Tense {past, present}) for the §19b inflection-feature tests.
+			// An inflectable closed feature on the verb (Tense {past, present}) for the inflection-feature tests.
 			_tenseFeature = Cache.ServiceLocator.GetInstance<IFsClosedFeatureFactory>().Create();
 			Cache.LangProject.MsFeatureSystemOA.FeaturesOC.Add(_tenseFeature);
 			_tenseFeature.Name.set_String(Cache.DefaultAnalWs, "Tense");
@@ -168,7 +168,7 @@ namespace LexTextControlsTests
 			Assert.That(inflMsa.SlotsRC.Contains(_tenseSlot), Is.True, "the chosen slot is resolved onto the MSA");
 		}
 
-		// ----- inflection-class feed + commit (Stage 6) -----
+		// ----- inflection-class feed + commit -----
 
 		[Test]
 		public void BuildInflectionClasses_ReturnsThePosClassesDepthTagged()
@@ -233,7 +233,7 @@ namespace LexTextControlsTests
 			Assert.That(stemMsa.InflectionClassRA, Is.Null, "<None> leaves the inflection class unset");
 		}
 
-		// ----- inflection features (§19b Stage 2): feed + persist on the sense's infl MSA -----
+		// ----- inflection features: feed + persist on the sense's infl MSA -----
 
 		[Test]
 		public void BuildInput_FeedsTheInflectionFeatureProvider()
@@ -244,7 +244,7 @@ namespace LexTextControlsTests
 				Is.True, "the provider returns the selected POS's inflectable features");
 		}
 
-		// T2 integration (I4): the sense create path composes gloss + infl MSA POS + INFLECTION FEATURE, and the
+		// The sense create path composes gloss + infl MSA POS + INFLECTION FEATURE, and the
 		// IFsFeatStruc is persisted on the created MSA.
 		[Test]
 		public void CreateSense_InflectionalAffix_PersistsInflectionFeatures()

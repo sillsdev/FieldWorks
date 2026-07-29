@@ -13,7 +13,7 @@ using SIL.LCModel.Core.Text;
 namespace SIL.FieldWorks.XWorks
 {
 	/// <summary>
-	/// The product cross-framework clipboard bridge (task 3.13): implements the LCModel-free
+	/// The product cross-framework clipboard bridge: implements the LCModel-free
 	/// <see cref="IFwClipboard"/> seam over the legacy OS clipboard contract that native-Views
 	/// surfaces already speak (<c>EditingHelper.SetTsStringOnClipboard</c>/<c>GetTsStringFromClipboard</c>):
 	/// the <see cref="TsStringWrapper.TsStringFormat"/> data format carrying a serialized
@@ -69,7 +69,7 @@ namespace SIL.FieldWorks.XWorks
 		/// Builds the dual-format OS data object for a payload — the same entries legacy
 		/// <c>EditingHelper.SetTsStringOnClipboard</c> writes, so legacy surfaces consume the rich
 		/// format exactly as if another Views surface had produced it. Shared by the clipboard seam
-		/// (3.13) and the drag-and-drop bridge (3.14), which carry identical text payloads.
+		/// and the drag-and-drop bridge, which carry identical text payloads.
 		/// </summary>
 		public static DataObject CreateDataObject(FwClipboardText payload)
 		{

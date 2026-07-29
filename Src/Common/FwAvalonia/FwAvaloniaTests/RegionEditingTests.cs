@@ -83,7 +83,7 @@ namespace FwAvaloniaTests
 			return OptionResult;
 		}
 
-		// §19a: recorded StText paragraph CRUD traffic, so the structured-text editor can be asserted
+		// Recorded StText paragraph CRUD traffic, so the structured-text editor can be asserted
 		// without LCModel. Each list captures the (field, paragraph index, value) the editor staged.
 		public readonly List<(string Field, int Index, RegionRichTextValue Value)> ParagraphTextEdits
 			= new List<(string, int, RegionRichTextValue)>();
@@ -139,7 +139,7 @@ namespace FwAvaloniaTests
 	}
 
 	/// <summary>
-	/// Tasks 6.8/6.10/6.6: the region view drives editing through the edit-context seam — staging on
+	/// The region view drives editing through the edit-context seam — staging on
 	/// text/option change, validation-gated Save, Cancel rollback — with stable automation ids.
 	/// </summary>
 	[TestFixture]
@@ -239,7 +239,7 @@ namespace FwAvaloniaTests
 			=> view.GetVisualDescendants().OfType<T>()
 				.FirstOrDefault(c => AutomationProperties.GetAutomationId(c) == automationId);
 
-		// The rich-text operations moved off the row onto the value box's right-click menu, so they are
+		// The rich-text operations live on the value box's right-click menu, so they are
 		// MenuItems in the box's ContextFlyout (a MenuFlyout), not visual-tree children. This locates one by
 		// its automation id.
 		private static MenuItem FindMenuItem(TextBox box, string automationId)
@@ -282,7 +282,7 @@ namespace FwAvaloniaTests
 				"the unchanged trailing run keeps its style metadata");
 		}
 
-		// DATA-SAFETY (Phase 1, test a — rendering tests): a value flagged lossy (a run carries a
+		// DATA-SAFETY: a value flagged lossy (a run carries a
 		// TsString property the model does not round-trip) renders a READ-ONLY editor with the
 		// not-editable-here tooltip, even though an edit context is supplied — so a keystroke can
 		// never silently drop the property. The matching model/composer assertions live in xWorks's
@@ -317,8 +317,8 @@ namespace FwAvaloniaTests
 			Dispatcher.UIThread.RunJobs();
 
 			var flyout = box.ContextFlyout as MenuFlyout;
-			// The menu now also carries the relocated rich-text operations (Link / delete embedded object),
-			// so Copy is no longer the sole item — pick it out by header.
+			// The menu also carries the rich-text operations (Link / delete embedded object),
+			// so Copy is not the sole item — pick it out by header.
 			var copyItem = flyout?.Items.OfType<MenuItem>()
 				.FirstOrDefault(i => (string)i.Header == FwAvaloniaStrings.Copy);
 			Assert.That(copyItem, Is.Not.Null);
@@ -376,7 +376,7 @@ namespace FwAvaloniaTests
 			Assert.That(chooser.ValueText, Is.EqualTo("suffix"));
 		}
 
-		// 14.4 — autosave: the legacy view saves as you go, so a staged session commits the moment
+		// Autosave: the legacy view saves as you go, so a staged session commits the moment
 		// an editor loses focus; there are no Save/Cancel buttons.
 		[AvaloniaTest]
 		public void AutoSave_OnFocusLoss_WhenClean_CommitsOnce_AndRaisesEditCompleted()
@@ -446,7 +446,7 @@ namespace FwAvaloniaTests
 			Assert.That(Find<Button>(view, "RegionEditor.Cancel"), Is.Null);
 		}
 
-		// Finding-4: chooser options can share a display name (e.g. identically named list items);
+		// Chooser options can share a display name (e.g. identically named list items);
 		// selection must map back by INDEX, never by name, or the wrong option's key is staged.
 		[AvaloniaTest]
 		public void Chooser_DuplicateDisplayNames_StagesTheOptionAtTheSelectedIndex()
@@ -481,7 +481,7 @@ namespace FwAvaloniaTests
 			Assert.That(chooser.SelectedKey, Is.EqualTo("g2"));
 		}
 
-		// Finding-3 (view side): edits address the writing system by its unique IETF tag
+		// Edits address the writing system by its unique IETF tag
 		// (RegionWsValue.WsTag); the user-editable abbreviation is only a fallback for tag-less
 		// rows (tests/fakes using aliases like "vern").
 		[AvaloniaTest]
@@ -512,7 +512,7 @@ namespace FwAvaloniaTests
 			Assert.That(context.TextEdits[1], Is.EqualTo(("Form", "du", "dos!")),
 				"tag-less rows keep the abbreviation alias");
 
-			// Review round 2: the per-row automation id (RegionFocusMemory's focus-restore key) must
+			// The per-row automation id (RegionFocusMemory's focus-restore key) must
 			// be unique too, so it uses the same tag-preferred key as edits — abbreviations collide.
 			Assert.That(AutomationProperties.GetAutomationId(boxes[0]), Is.EqualTo("TagField.qaa-x-one"),
 				"a tagged row's automation id keys on the unique IETF tag, not the collidable abbreviation");
@@ -521,8 +521,8 @@ namespace FwAvaloniaTests
 		}
 
 		// Voice/sound writing systems: a voice/audio alternative renders as READ-ONLY text (the audio
-		// filename) with no in-pane player. The media seam was removed, so there are no play/record
-		// affordances and the recording can never be corrupted by an edit — full audio editing stays
+		// filename) with no in-pane player. There are no play/record
+		// affordances, so the recording can never be corrupted by an edit — full audio editing stays
 		// in the classic view.
 		[AvaloniaTest]
 		public void AudioValue_RendersReadOnlyText_WithNoPlayerAndNoStagedEdit()
@@ -550,7 +550,7 @@ namespace FwAvaloniaTests
 			Assert.That(context.TextEdits, Is.Empty, "a read-only audio row never stages a text edit");
 		}
 
-		// 14.1 — the ghost add-prompt is a watermark: it disappears when the user clicks in, and
+		// The ghost add-prompt is a watermark: it disappears when the user clicks in, and
 		// comes back only if they leave without typing.
 		[AvaloniaTest]
 		public void GhostRow_WatermarkClearsOnFocus_AndRestoresWhenLeftEmpty()
@@ -581,7 +581,7 @@ namespace FwAvaloniaTests
 				"leaving without typing restores the prompt");
 		}
 
-		// winforms-free-lexeme-editor.md D3 — a search-backed reference vector (SearchOptions
+		// A search-backed reference vector (SearchOptions
 		// non-null): the add slot opens a SEARCH flyout (type-ahead TextBox + virtualized results
 		// list) instead of materializing a full options list; selecting a result stages through
 		// TryAddReferenceItem; the separator-bar affordance and item remove behavior are unchanged.
@@ -611,7 +611,7 @@ namespace FwAvaloniaTests
 			window.Show();
 			Dispatcher.UIThread.RunJobs();
 
-			// The 6.3 affordances are unchanged: item text + trailing separator bar + add launcher.
+			// The affordances: item text + trailing separator bar + add launcher.
 			Assert.That(Find<TextBlock>(vector, "Components.Item.e-burro"), Is.Not.Null);
 			Assert.That(vector.Children.OfType<Border>().Count(), Is.GreaterThanOrEqualTo(1),
 				"the separator-bar affordance stays");
@@ -695,8 +695,8 @@ namespace FwAvaloniaTests
 			return (vector, context);
 		}
 
-		// Bug "removing Publish In items not working" (a): item TextBlocks must hit-test their
-		// WHOLE box (14.2: a null background only hit-tests the glyph ink), or the right-click
+		// Bug "removing Publish In items not working": item TextBlocks must hit-test their
+		// WHOLE box (a null background only hit-tests the glyph ink), or the right-click
 		// Remove flyout only opens when the pointer happens to be over a letter.
 		[AvaloniaTest]
 		public void VectorItemText_HasATransparentBackground_SoTheWholeItemTakesTheRightClick()
@@ -707,7 +707,7 @@ namespace FwAvaloniaTests
 				"14.2: a null background only hit-tests the glyphs — right-click would miss between letters");
 		}
 
-		// Bug "removing Publish In items not working" (b): a successful remove stage completes the
+		// Bug "removing Publish In items not working": a successful remove stage completes the
 		// gesture — the callback (which the view wires to its commit/re-show) fires exactly once.
 		[AvaloniaTest]
 		public void ReferenceRemove_Success_StagesAndFiresTheGestureCallbackOnce()
@@ -775,7 +775,7 @@ namespace FwAvaloniaTests
 			Assert.That(gestures, Is.EqualTo(1), "a failed add must NOT complete the gesture");
 		}
 
-		// The view-level wiring of the same fix: the gesture callback runs the view's own
+		// At the view level: the gesture callback runs the view's own
 		// validation-gated OnSave, so a remove commits immediately and EditCompleted triggers the
 		// host re-show that rebuilds Items from domain truth (no waiting for a later focus loss).
 		[AvaloniaTest]
@@ -839,7 +839,7 @@ namespace FwAvaloniaTests
 			Assert.That(Find<Button>(view, "RegionEditor.Save"), Is.Null, "display mode has no Save/Cancel footer");
 		}
 
-		// ---- Phase 2: character formatting (Ctrl+B/I/U) over a TextBox selection ----
+		// ---- Character formatting (Ctrl+B/I/U) over a TextBox selection ----
 
 		private static void RaiseCtrlKey(TextBox box, Key key)
 		{
@@ -852,7 +852,7 @@ namespace FwAvaloniaTests
 			});
 		}
 
-		// Phase 2 test (b): Ctrl+B on a TextBox selection stages a TrySetRichText whose runs carry
+		// Ctrl+B on a TextBox selection stages a TrySetRichText whose runs carry
 		// bold over EXACTLY the selected span, leaving the rest of the value plain.
 		[AvaloniaTest]
 		public void CtrlB_OnSelection_StagesBoldOverExactlyTheSelectedSpan()
@@ -882,7 +882,7 @@ namespace FwAvaloniaTests
 				"the formatted value drops RichXml so ToTsString re-emits the new bold via run-replay");
 		}
 
-		// Phase 2 test (c): a second Ctrl+B over the same span toggles bold back OFF.
+		// A second Ctrl+B over the same span toggles bold back OFF.
 		[AvaloniaTest]
 		public void CtrlB_Twice_TogglesBoldOff()
 		{
@@ -903,7 +903,7 @@ namespace FwAvaloniaTests
 			Assert.That(rich.PlainText, Is.EqualTo("dog"));
 		}
 
-		// Phase 2 test (d): a lossy / read-only value never allows formatting (the whole rich-edit
+		// A lossy / read-only value never allows formatting (the whole rich-edit
 		// block is gated off, so no handler is even wired and nothing stages).
 		[AvaloniaTest]
 		public void CtrlB_OnLossyValue_DoesNotStageFormatting()
@@ -927,7 +927,7 @@ namespace FwAvaloniaTests
 			Assert.That(context.TextEdits, Is.Empty);
 		}
 
-		// Phase 2: a collapsed caret (no selection) is a no-op (no pending-format-for-caret in Phase 2).
+		// A collapsed caret (no selection) is a no-op (no pending-format-for-caret).
 		[AvaloniaTest]
 		public void CtrlB_WithNoSelection_StagesNothing()
 		{
@@ -943,7 +943,7 @@ namespace FwAvaloniaTests
 			Assert.That(context.RichTextEdits, Is.Empty, "a collapsed caret has no span to format");
 		}
 
-		// ---- Phase 3: named character style picker over a TextBox selection ----
+		// ---- Named character style picker over a TextBox selection ----
 
 		// A field carrying a rich value plus the project's available character styles, so the per-WS
 		// style picker affordance is built.
@@ -979,7 +979,7 @@ namespace FwAvaloniaTests
 			return (control, context, window);
 		}
 
-		// Phase 3 test (b): picking a style for a selection stages a TrySetRichText whose covered runs
+		// Picking a style for a selection stages a TrySetRichText whose covered runs
 		// carry the style; the rest of the value is untouched.
 		[AvaloniaTest]
 		public void StylePicker_PickingAStyle_StagesItOverTheSelectedSpan()
@@ -1019,7 +1019,7 @@ namespace FwAvaloniaTests
 				"the restyled value drops RichXml so ToTsString re-emits the new style via run-replay");
 		}
 
-		// Phase 3 test (b, clear): the leading "Default (no style)" entry clears the style over the span.
+		// The leading "Default (no style)" entry clears the style over the span.
 		[AvaloniaTest]
 		public void StylePicker_DefaultEntry_ClearsTheStyleOverTheSelectedSpan()
 		{
@@ -1045,7 +1045,7 @@ namespace FwAvaloniaTests
 				"the Default entry cleared the named style over the selection");
 		}
 
-		// Phase 3 test (b, no-op): with no selection the picker commit stages nothing.
+		// With no selection the picker commit stages nothing.
 		[AvaloniaTest]
 		public void StylePicker_WithNoSelection_StagesNothing()
 		{
@@ -1068,7 +1068,7 @@ namespace FwAvaloniaTests
 			Assert.That(context.RichTextEdits, Is.Empty, "a collapsed caret has no span to style");
 		}
 
-		// Phase 3 test (b, gating): a row with no available styles exposes NO style affordance.
+		// A row with no available styles exposes NO style affordance.
 		[AvaloniaTest]
 		public void StyleAffordance_Absent_WhenNoAvailableStyles()
 		{
@@ -1078,7 +1078,7 @@ namespace FwAvaloniaTests
 				"a field with no available character styles offers no style menu item");
 		}
 
-		// Phase 3 test (b, gating): a lossy / read-only value exposes NO style affordance (the whole
+		// A lossy / read-only value exposes NO style affordance (the whole
 		// editable block is gated off), so styling can never be attempted.
 		[AvaloniaTest]
 		public void StyleAffordance_Absent_OnLossyReadOnlyValue()
@@ -1104,7 +1104,7 @@ namespace FwAvaloniaTests
 			Assert.That(context.RichTextEdits, Is.Empty);
 		}
 
-		// Phase 3 test (b, automation/accessibility): the affordance carries a stable automation id and
+		// The affordance carries a stable automation id and
 		// accessible name.
 		[AvaloniaTest]
 		public void StyleAffordance_HasAutomationIdAndAccessibleName()
@@ -1118,7 +1118,7 @@ namespace FwAvaloniaTests
 	}
 
 	/// <summary>
-	/// Phase 4: the per-run writing-system retag picker over a TextBox selection. An editable, non-lossy
+	/// The per-run writing-system retag picker over a TextBox selection. An editable, non-lossy
 	/// row carrying the project's available writing systems exposes a "Writing System" affordance whose
 	/// FwOptionPicker commit retags the covered runs through TrySetRichText (same seam as Ctrl+B/I/U and
 	/// the style picker), leaving the rest of the value untouched. No clear entry: a run always carries a
@@ -1253,7 +1253,7 @@ namespace FwAvaloniaTests
 		}
 	}
 
-	/// <summary>Task 3.14: the framework-neutral record-key payload round-trips and rejects garbage.</summary>
+	/// <summary>The framework-neutral record-key payload round-trips and rejects garbage.</summary>
 	[TestFixture]
 	public class FwRecordKeyPayloadTests
 	{
@@ -1280,12 +1280,12 @@ namespace FwAvaloniaTests
 	}
 
 	/// <summary>
-	/// GEAR = CONFIGURE (the B7 rework): a chooser or reference-vector row whose supporting list
+	/// GEAR = CONFIGURE: a chooser or reference-vector row whose supporting list
 	/// resolved a list-editor target (a goto <see cref="RegionChooserLink"/>) draws the gear, and
 	/// clicking it DIRECTLY raises the host's <see cref="RegionLinkRequest"/> — no flyout, no
 	/// context menu. Option flyouts (single-select chooser click, vector "+") are OPTIONS ONLY:
 	/// they contain zero link items. Rows without a resolvable list editor draw no gear; text
-	/// rows NEVER draw one (the Lexeme Form slice menu reverted to right-click only).
+	/// rows NEVER draw one (the Lexeme Form slice menu is right-click only).
 	/// </summary>
 	[TestFixture]
 	public class RegionConfigureGearTests
@@ -1413,7 +1413,7 @@ namespace FwAvaloniaTests
 				Is.False, "no resolvable list editor, no vector gear");
 		}
 
-		// REVERT (gears never open context menus): the Lexeme Form text row draws NO gear; its
+		// Gears never open context menus: the Lexeme Form text row draws NO gear; its
 		// slice menu (menu="mnuDataTree-LexemeForm") stays on right-click only — the label path in
 		// the region view (RegionMenuTests) and the in-string path below are unchanged.
 		[AvaloniaTest]
@@ -1444,7 +1444,7 @@ namespace FwAvaloniaTests
 		}
 	}
 
-	/// <summary>Task 6.11: the product-facing strings resolve through the Avalonia localization accessor.</summary>
+	/// <summary>The product-facing strings resolve through the Avalonia localization accessor.</summary>
 	[TestFixture]
 	public class FwAvaloniaStringsTests
 	{

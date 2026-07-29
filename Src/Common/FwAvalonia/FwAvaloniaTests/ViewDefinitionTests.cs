@@ -143,7 +143,7 @@ namespace FwAvaloniaTests
 		[Test]
 		public void Import_JtViewSlice_CapturesNestedLayoutAsTargetLayout()
 		{
-			// §19e: a jtview slice's param/layout names the nested layout to compose inline; it must ride
+			// A jtview slice's param/layout names the nested layout to compose inline; it must ride
 			// the node as TargetLayout so the composer's WalkEmbeddedView can descend into it. The caller's
 			// param wins over the slice's layout attribute (legacy SliceFactory jtview).
 			var model = Import(@"
@@ -171,7 +171,7 @@ namespace FwAvaloniaTests
 		[Test]
 		public void Import_VisibleWritingSystems_CapturesThePerFieldWsOverride()
 		{
-			// §19e: a per-field visibleWritingSystems override (on the part ref) restricts the displayed
+			// A per-field visibleWritingSystems override (on the part ref) restricts the displayed
 			// writing systems. The ordered specs ride the node for the composer to intersect with the set.
 			var model = Import(@"
 <layout class='LexEntry' type='detail' name='PFW'>

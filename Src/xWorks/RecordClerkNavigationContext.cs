@@ -9,7 +9,7 @@ using SIL.LCModel;
 namespace SIL.FieldWorks.XWorks
 {
 	/// <summary>
-	/// The product selection bridge (task 3.12): implements <see cref="IRecordNavigationContext"/> over
+	/// The product selection bridge: implements <see cref="IRecordNavigationContext"/> over
 	/// a real xCore <see cref="RecordClerk"/> so an Avalonia surface follows and publishes the same
 	/// "current record" bus the legacy surfaces use.
 	///

@@ -18,7 +18,7 @@ using SIL.FieldWorks.Common.FwAvalonia.Region;
 namespace FwAvaloniaDialogsTests
 {
 	/// <summary>
-	/// The "Create a new Part of Speech" CATALOG chooser (MSA-port Stage 4). Rather than a brand-new tree dialog, the
+	/// The "Create a new Part of Speech" CATALOG chooser. Rather than a brand-new tree dialog, the
 	/// master-category (GOLDEtic) catalog is surfaced through the EXISTING reusable <see cref="ChooserDialogViewModel"/>
 	/// in hierarchical single-select mode — exactly what the LCModel-aware <c>LcmCreatePartOfSpeechLauncher.BuildInput</c>
 	/// produces (this kit layer has no LCModel reference, so it is fed a synthetic depth-tagged catalog identical in

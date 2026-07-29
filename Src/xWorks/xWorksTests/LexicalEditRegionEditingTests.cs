@@ -23,10 +23,10 @@ using SIL.LCModel.Infrastructure;
 namespace SIL.FieldWorks.XWorks
 {
 	/// <summary>
-	/// Tasks 6.8/6.10 — the first editable slice runs through real LCModel seams: a fenced edit
+	/// The first editable slice runs through real LCModel seams: a fenced edit
 	/// session whose commit is ONE step on the single global undo stack legacy surfaces share
 	/// (cross-framework Ctrl+Z by construction), cancel rolls everything back, and the validation
-	/// seam gates empty lexeme forms. Task 3.15 — the refresh controller follows the real
+	/// seam gates empty lexeme forms. The refresh controller follows the real
 	/// PropChanged bus, holding refreshes while this surface's own session is open.
 	/// </summary>
 	[TestFixture]
@@ -169,7 +169,7 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(context.IsOpen, Is.False, "rejected edits must not open the fence");
 		}
 
-		// ITEM 1: editing a single field opens the fenced session with a field-specific undo label
+		// Editing a single field opens the fenced session with a field-specific undo label
 		// (e.g. "Undo change to Gloss"), mirroring the legacy per-slice "Undo change to {field}" labels,
 		// instead of the generic "Undo Edit Entry".
 		[Test]
@@ -198,7 +198,7 @@ namespace SIL.FieldWorks.XWorks
 				Is.Not.EqualTo(FwAvaloniaStrings.UndoEditEntry));
 		}
 
-		// ITEM 1: the label is fixed at the first staged edit (the field that opens the session names
+		// The label is fixed at the first staged edit (the field that opens the session names
 		// it); a later edit to a different field in the SAME session does not relabel it.
 		[Test]
 		public void FirstStagedField_FixesTheUndoLabel_ForTheWholeSession()
@@ -222,7 +222,7 @@ namespace SIL.FieldWorks.XWorks
 				"the first staged field names the label; a later same-session edit does not relabel it");
 		}
 
-		// ITEM 1: the batch/bulk path that opens the session with NO single field keeps the generic
+		// The batch/bulk path that opens the session with NO single field keeps the generic
 		// "Undo Edit Entry" label (the field-specific labels are only for single-field edits).
 		[Test]
 		public void Stage_WithoutAFieldLabel_KeepsTheGenericUndoLabel()
@@ -261,7 +261,7 @@ namespace SIL.FieldWorks.XWorks
 			context.Cancel();
 		}
 
-		// Finding-3: writing-system identity is the unique IETF tag (ws.Id), never only the
+		// Writing-system identity is the unique IETF tag (ws.Id), never only the
 		// user-editable Abbreviation — an unmatched abbreviation must not silently write to the
 		// default writing system.
 		[Test]
@@ -300,7 +300,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		// Review round 2: an entirely unknown ws key must be rejected (no session, no write) instead
+		// An entirely unknown ws key must be rejected (no session, no write) instead
 		// of silently landing on the DEFAULT alternative — matching ComposedRegionEditContext. Only
 		// real ids/abbreviations and the legacy "vern"/"anal" first-slice aliases resolve.
 		[Test]
@@ -394,7 +394,7 @@ namespace SIL.FieldWorks.XWorks
 	}
 
 	/// <summary>
-	/// Sections 6/7 — the COMPLETE lexical edit view: `FullEntryRegionComposer` walks the live
+	/// The COMPLETE lexical edit view: `FullEntryRegionComposer` walks the live
 	/// compiled `LexEntry/Normal` layout across objects (entry → lexeme form → senses), emits
 	/// headers/indentation, hides empty ifdata fields, binds every editable field to LCModel by
 	/// metadata, and edits commit through the fenced session as one global undo step.
@@ -494,7 +494,7 @@ namespace SIL.FieldWorks.XWorks
 				"the sense's grammatical info now points at the chosen part of speech");
 		}
 
-		// GAP 2: the legacy Lexeme Form slice's button is its slice TREE-NODE MENU — MoForm-Detail-
+		// The legacy Lexeme Form slice's button is its slice TREE-NODE MENU — MoForm-Detail-
 		// AsLexemeForm (MorphologyParts.xml:219-221) binds menu="mnuDataTree-LexemeForm"
 		// (DataTreeInclude.xml:336-341: Show in Concordance / Swap with Allomorph / Convert to
 		// Affix Process/Allomorph), not a chooser launcher. The composed Lexeme Form text row must
@@ -556,7 +556,7 @@ namespace SIL.FieldWorks.XWorks
 				"Khmer fixture declares the Khmer script for automation/manual scenario setup");
 		}
 
-		// Review finding A: compiled definitions are memoized per (class, layout) for the lifetime
+		// Compiled definitions are memoized per (class, layout) for the lifetime
 		// of the loaded sources — a repeat compose serves every layout from the memo instead of
 		// rebuilding and re-fingerprinting the ~300KB parts snapshot per object per compose.
 		[Test]
@@ -590,7 +590,7 @@ namespace SIL.FieldWorks.XWorks
 				"the field appears once it has data");
 		}
 
-		// The closed enum-combo editor was dropped from the Avalonia region: the enumComboBox slice
+		// The Avalonia region does not compose the closed enum-combo editor: the enumComboBox slice
 		// (Allomorph Status, Morphology.fwlayout AsLexemeFormBasic over MoForm-Detail-AllomorphStatus,
 		// backed by the IsAbstract boolean flid) now composes as the labeled Unsupported worklist row
 		// rather than an option chooser.
@@ -717,7 +717,7 @@ namespace SIL.FieldWorks.XWorks
 				.GetStrPropValue((int)FwTextPropType.ktptNamedStyle), Is.EqualTo("Emphasis"));
 		}
 
-		// §19c: an external-link ORC is NO LONGER a blanket read-only block — it composes EDITABLE (the
+		// An external-link ORC is not a blanket read-only block — it composes EDITABLE (the
 		// link is insert/edit/delete here, the ORC is deletable), and a rich write-back round-trips the
 		// link's ObjData losslessly through the adapter.
 		[Test]
@@ -755,7 +755,7 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(objData.Substring(1), Is.EqualTo("https://software.sil.org/fieldworks"));
 		}
 
-		// §19c T4 (real-cache workflow): edit a run-bearing field → apply a named character style over a
+		// Real-cache workflow: edit a run-bearing field → apply a named character style over a
 		// span → retag another span's writing system → insert a hyperlink → commit → recompose → verify the
 		// run props (ktptNamedStyle, ktptWs) and the link ObjData all round-tripped through the adapter, as
 		// ONE undoable step on the global stack.
@@ -812,7 +812,7 @@ namespace SIL.FieldWorks.XWorks
 				"one undo reverts the whole §19c gesture session");
 		}
 
-		// DATA-SAFETY (Phase 1, test a): a run carrying a TsString property the RegionTextRun model
+		// DATA-SAFETY: a run carrying a TsString property the RegionTextRun model
 		// does NOT round-trip (here ktptForeColor) would be SILENTLY DROPPED on the first keystroke
 		// (the plain-text-changed edit skips the lossless RichXml fast-path and replays only the
 		// supported props). The value is held READ-ONLY rather than corrupting on edit; full fidelity
@@ -841,7 +841,7 @@ namespace SIL.FieldWorks.XWorks
 				"the composed row is read-only when its only value cannot be edited safely");
 
 			// The lossless RichXml still drives full-fidelity display: round-tripping the unedited
-			// value reproduces the original TsString, colour and all (test c, lossy variant).
+			// value reproduces the original TsString, colour and all.
 			var roundTripped = RegionRichTextAdapter.ToTsString(rich.Values.Single().RichText,
 				Cache.WritingSystemFactory, Cache.DefaultAnalWs);
 			Assert.That(roundTripped.get_Properties(0)
@@ -852,7 +852,7 @@ namespace SIL.FieldWorks.XWorks
 			// LexicalEditRegionEditingTests.LossyValue_RendersReadOnly_WithTooltip.
 		}
 
-		// DATA-SAFETY (Phase 1, test b): a multi-run value carrying ONLY supported properties
+		// DATA-SAFETY: a multi-run value carrying ONLY supported properties
 		// (named style + per-run WS + bold) STAYS editable, and a mid-run keystroke preserves every
 		// untouched run's properties through the full FromTsString -> edit -> ToTsString round-trip.
 		[Test]
@@ -910,7 +910,7 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(TsStringUtils.GetWsOfRun(stored, 1), Is.EqualTo(Cache.DefaultVernWs));
 		}
 
-		// PHASE 2 (test e): applying bold over a selected span, then committing through the edit
+		// Applying bold over a selected span, then committing through the edit
 		// context, stores a TsString whose covered span is bold while the rest stays plain — i.e.
 		// ApplySpanFormatting's new bold run round-trips through ToTsString into the domain.
 		[Test]
@@ -951,7 +951,7 @@ namespace SIL.FieldWorks.XWorks
 				"the unselected tail stays non-bold");
 		}
 
-		// PHASE 3 (test c): applying a NAMED CHARACTER STYLE over a selected span, then committing
+		// Applying a NAMED CHARACTER STYLE over a selected span, then committing
 		// through the edit context, stores a TsString whose covered span carries ktptNamedStyle while
 		// the rest stays unstyled. Clearing the style removes it.
 		[Test]
@@ -1001,7 +1001,7 @@ namespace SIL.FieldWorks.XWorks
 					Is.Null, "clearing removed the named style across the value");
 		}
 
-		// PHASE 3 (test d): the composer supplies the project's CHARACTER style names onto each editable
+		// The composer supplies the project's CHARACTER style names onto each editable
 		// text field's AvailableNamedStyles (the host seam the per-WS style picker reads), sourced from
 		// Cache.LangProject.StylesOC filtered to character-type styles. Paragraph styles are excluded.
 		[Test]
@@ -1029,7 +1029,7 @@ namespace SIL.FieldWorks.XWorks
 				"paragraph-type styles are excluded — only character styles are offered");
 		}
 
-		// PHASE 4 (test d): the composer supplies the project's WRITING SYSTEMS onto each editable text
+		// The composer supplies the project's WRITING SYSTEMS onto each editable text
 		// field's AvailableWritingSystems (the host seam the per-WS retag picker reads), sourced from the
 		// project's analysis + vernacular writing systems. Each option carries the stable IETF tag.
 		[Test]
@@ -1051,7 +1051,7 @@ namespace SIL.FieldWorks.XWorks
 				Is.True, "every offered writing system carries a display name");
 		}
 
-		// PHASE 4 (test c): a per-run writing-system retag round-trips through the composed edit context,
+		// A per-run writing-system retag round-trips through the composed edit context,
 		// preserving ktptWs on exactly the retagged span when the rebuilt TsString is stored.
 		[Test]
 		public void RetagWritingSystem_RoundTripsKtptWs_OverTheSpan_AndCommits()
@@ -1082,7 +1082,7 @@ namespace SIL.FieldWorks.XWorks
 				Is.EqualTo(Cache.DefaultAnalWs), "the untouched tail keeps its original writing system");
 		}
 
-		// TASK 2 (reversal plugin, test a): a sense with a reversal entry composes an EDITABLE reversal
+		// A sense with a reversal entry composes an EDITABLE reversal
 		// row through the ReversalIndexEntryPlugin — not the lone Unsupported row.
 		[Test]
 		public void Compose_SenseWithReversalEntry_ComposesEditableReversalRow_NotUnsupported()
@@ -1112,7 +1112,7 @@ namespace SIL.FieldWorks.XWorks
 				"the reversal plugin builds the editable multi-WS reversal-forms field");
 		}
 
-		// TASK 2 (reversal plugin, test b): editing a reversal form stages/commits through the edit
+		// Editing a reversal form stages/commits through the edit
 		// context — the reversal entry's ReversalForm is updated, on the same fenced session as the region.
 		[Test]
 		public void ReversalPlugin_EditingAForm_StagesAndCommitsThroughTheEditContext()
@@ -1161,7 +1161,7 @@ namespace SIL.FieldWorks.XWorks
 				"the reversal edit lands on the shared global undo stack");
 		}
 
-		// DATA-SAFETY (Phase 1, test c): ToTsString of an UNEDITED value reproduces the original
+		// DATA-SAFETY: ToTsString of an UNEDITED value reproduces the original
 		// TsString exactly via the lossless RichXml fast-path.
 		[Test]
 		public void RoundTrip_UneditedValue_ReproducesOriginalTsString()
@@ -1231,7 +1231,7 @@ namespace SIL.FieldWorks.XWorks
 				"empty ifdata fields appear under show-hidden");
 		}
 
-		// Finding-2 (WS spec resolution): the layout ws= spec resolves through the legacy pair —
+		// The layout ws= spec resolves through the legacy pair —
 		// WritingSystemServices.GetMagicWsIdFromName then GetWritingSystemList — not substring
 		// heuristics, so ordering ("analysis vernacular") and list membership match legacy slices.
 		[TestCase("all analysis")]
@@ -1299,7 +1299,7 @@ namespace SIL.FieldWorks.XWorks
 				"unmarked/unknown specs take GetWritingSystemList's analysis default, like legacy");
 		}
 
-		// Finding-3: the Abbreviation is user-editable and can collide across writing systems;
+		// The Abbreviation is user-editable and can collide across writing systems;
 		// composition must still succeed (no ToDictionary crash) and edits must route by the
 		// unique IETF tag, never to the wrong alternative.
 		[Test]
@@ -1348,7 +1348,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void Compose_BooleanFields_RenderAsUnsupportedWorklistRow()
 		{
-			// The checkbox editor was dropped from the Avalonia region. A boolean slice — e.g. an alternate
+			// The Avalonia region does not compose the checkbox editor. A boolean slice — e.g. an alternate
 			// form's "Is Abstract Form" (MoStemAllomorph/Normal, editor="Checkbox", visibility=never -> shows
 			// under show-hidden) — now composes as the labeled Unsupported worklist row rather than a checkbox.
 			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
@@ -1398,7 +1398,7 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(m_entry.LexemeFormOA.MorphTypeRA.Guid.ToString(), Is.EqualTo(target.Key));
 		}
 
-		// Review round 2: legacy MorphTypeAtomicLauncher gates stem<->affix morph-type swaps behind a
+		// Legacy MorphTypeAtomicLauncher gates stem<->affix morph-type swaps behind a
 		// data-loss prompt AND an allomorph class conversion. Until that class-conversion path lands,
 		// the composed chooser must reject a boundary-crossing assignment instead of creating a
 		// model-invalid stem-allomorph-with-affix-type.
@@ -1420,7 +1420,7 @@ namespace SIL.FieldWorks.XWorks
 			composed.EditContext.Cancel();
 		}
 
-		// 14.1 — ghost rows: the legacy "Click here to add ..." line is an editable watermark row;
+		// Ghost rows: the legacy "Click here to add ..." line is an editable watermark row;
 		// typing creates the missing object inside the fenced session (one undoable step) and routes
 		// the text into the layout's ghost field (ghost=/ghostWs=).
 		[Test]
@@ -1448,7 +1448,7 @@ namespace SIL.FieldWorks.XWorks
 				"the typed text landed in the ghost field (Form, ghostWs=vernacular)");
 		}
 
-		// Review round 2: the ghost setter's closure caches the created object's hvo, but a Cancel
+		// The ghost setter's closure caches the created object's hvo, but a Cancel
 		// rolls the MakeNewObject back — a later edit through the SAME still-visible view must
 		// re-create the object instead of writing to the deleted hvo (which throws).
 		[Test]
@@ -1500,7 +1500,7 @@ namespace SIL.FieldWorks.XWorks
 				"the typed text became the gloss (the LexSense ghost default)");
 		}
 
-		// B2 (xml-retirement-blockers) — ghost metadata generality: the shipped lexeme-form ghost
+		// Ghost metadata generality: the shipped lexeme-form ghost
 		// (LexEntryParts.xml LexEntry-Detail-LexemeForm) carries an explicit ghostClass
 		// ("MoStemAllomorph", differing from the abstract MoForm field signature) AND
 		// ghostInitMethod="SetMorphTypeToRoot". The composer must create the configured class and
@@ -1532,7 +1532,7 @@ namespace SIL.FieldWorks.XWorks
 				"creation + text + init method are ONE step on the global undo stack, like the legacy UOW");
 		}
 
-		// B2 — the Translations ghost (LexExampleSentence-Detail-TranslationsAllA): no ghostClass
+		// The Translations ghost (LexExampleSentence-Detail-TranslationsAllA): no ghostClass
 		// (the concrete CmTranslation comes from the field signature), ghostWs="analysis", and
 		// ghostInitMethod="SetTypeToFreeTrans" must type the new translation as Free Translation.
 		[Test]
@@ -1588,10 +1588,10 @@ namespace SIL.FieldWorks.XWorks
 				"no bare object was created behind the user's back");
 		}
 
-		// B3 (xml-retirement-blockers) — conditional display: the real shipped variant/complex-form
+		// Conditional display: the real shipped variant/complex-form
 		// divergence. LexEntryRef/Normal's VariantEntryTypes and ComplexEntryTypes parts are
 		// <if field="RefType" intequals="0|1"> twins (LexEntryParts.xml:1133-1162); exactly one may
-		// compose per record state. Before B3 both were dropped (conditional-dropped).
+		// compose per record state.
 		[Test]
 		public void Compose_EntryRefConditionals_VariantAndComplexForm_ComposeDifferently()
 		{
@@ -1619,7 +1619,7 @@ namespace SIL.FieldWorks.XWorks
 				"the variant twin's intequals=0 condition fails for a complex-form ref");
 		}
 
-		// B3 — lengthatleast: LexEntry-Detail-ShowMinorEntry wraps the PublishAsMinorEntry checkbox
+		// lengthatleast: LexEntry-Detail-ShowMinorEntry wraps the PublishAsMinorEntry checkbox
 		// in <if field="EntryRefs" lengthatleast="1"> — main entries (no refs) must not show it.
 		[Test]
 		public void Compose_ShowMinorEntry_OnlyWhenTheEntryHasEntryRefs()
@@ -1642,7 +1642,7 @@ namespace SIL.FieldWorks.XWorks
 				"the checkbox editor was dropped; the conditionally-visible boolean row renders the Unsupported worklist row");
 		}
 
-		// B3 — <choice>/<where guidequals>: MoAffixAllomorph-Detail-AsPosition shows the infix
+		// <choice>/<where guidequals>: MoAffixAllomorph-Detail-AsPosition shows the infix
 		// position slice only for infix (and infixing-interfix) morph types; no branch passes for a
 		// prefix, so nothing renders (the shipped choice has no otherwise).
 		[Test]
@@ -1673,7 +1673,7 @@ namespace SIL.FieldWorks.XWorks
 				"no where clause passes for a prefix, and the shipped choice has no otherwise");
 		}
 
-		// B3 — target="owner" + lengthatleast: MoAffixAllomorph-Detail-MsEnvFeaturesForLexemeForm is
+		// target="owner" + lengthatleast: MoAffixAllomorph-Detail-MsEnvFeaturesForLexemeForm is
 		// <if target="owner" field="MorphoSyntaxAnalyses" lengthatleast="1"> — the test reads the
 		// ENTRY's MSA count from the allomorph's row, so data on the allomorph alone must not show it.
 		[Test]
@@ -1707,7 +1707,7 @@ namespace SIL.FieldWorks.XWorks
 				"with an MSA the owner-hop condition passes and the Required Features row composes");
 		}
 
-		// Section 13.2 — composed rows carry the legacy menu bindings from the live shipped layouts
+		// Composed rows carry the legacy menu bindings from the live shipped layouts
 		// and the hvo of the object that owns them, so the host can show the same xCore menu and
 		// point command routing at the right object.
 		[Test]
@@ -1731,7 +1731,7 @@ namespace SIL.FieldWorks.XWorks
 				"menu bindings are pervasive in the shipped layouts, not a one-off");
 		}
 
-		// 15.3 — sense item headers inherit the sense layout's root binding (LexSense.fwlayout's
+		// Sense item headers inherit the sense layout's root binding (LexSense.fwlayout's
 		// HeavySummary part ref carries menu="mnuDataTree-Sense"); the Senses sequence node itself
 		// has no menu attribute, so without inheritance right-click could never offer Insert Sense.
 		[Test]
@@ -1762,7 +1762,7 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(commands, Does.Contain("CmdDataTree-Delete-Sense"));
 		}
 
-		// Section 13.6 — every menu id the composer emits (plus the ids the host always appends,
+		// Every menu id the composer emits (plus the ids the host always appends,
 		// matching legacy DTMenuHandler.ShowSliceContextMenu) must resolve to a <menu> definition
 		// in the shipped window configuration, so XWindow.ShowContextMenu can materialize it.
 		[Test]
@@ -1796,7 +1796,7 @@ namespace SIL.FieldWorks.XWorks
 	}
 
 	/// <summary>
-	/// B1 (xml-retirement-blockers, task 9.5) — custom fields must not vanish from the composed
+	/// Custom fields must not vanish from the composed
 	/// view: the `&lt;part customFields="here"/&gt;` placeholder expands from live MDC metadata the
 	/// way legacy DataTree.EnsureCustomFields injects a generated `&lt;part ref="Custom"/&gt;` per
 	/// custom field of the object's class (and base classes) and SliceFactory.MakeAutoCustomSlice
@@ -2076,7 +2076,7 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(single.IsEditable, Is.True);
 			Assert.That(single.Values.Single().Value, Is.EqualTo("from Smith"));
 
-			// GenDate: the date editor was dropped from the Avalonia region, so the custom GenDate field
+			// GenDate: the Avalonia region has no date editor, so the custom GenDate field
 			// composes as the labeled Unsupported worklist row (not silently omitted).
 			var date = fields.FirstOrDefault(f => f.Label == "Date Collected");
 			Assert.That(date, Is.Not.Null);
@@ -2092,7 +2092,7 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(listRef.Options.Select(o => o.Key), Does.Contain(m_listItem.Guid.ToString()),
 				"options come from the custom field's own possibility list");
 
-			// Integer: the integer editor was dropped, so the custom int field composes as the labeled
+			// Integer: the Avalonia region has no integer editor, so the custom int field composes as the labeled
 			// Unsupported worklist row.
 			var number = fields.FirstOrDefault(f => f.Label == "Frequency Count");
 			Assert.That(number, Is.Not.Null);
@@ -2401,7 +2401,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 	}
 
-	/// <summary>Task 3.14 — the cross-surface DnD payloads round-trip through OS data objects.</summary>
+	/// <summary>The cross-surface DnD payloads round-trip through OS data objects.</summary>
 	[TestFixture]
 	public class FwDragDropDataTests : MemoryOnlyBackendProviderTestBase
 	{

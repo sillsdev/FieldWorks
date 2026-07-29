@@ -11,11 +11,11 @@ using SIL.FieldWorks.Common.FwAvalonia.ViewDefinition;
 namespace FwAvaloniaTests
 {
 	/// <summary>
-	/// §20.1.4 (F-1) — the 4-key (class,type,name,choiceGuid) layout resolution that lets a record's
+	/// The 4-key (class,type,name,choiceGuid) layout resolution that lets a record's
 	/// layoutChoiceField pick the right layout variant. Legacy DataTree distinguishes e.g. the 11
-	/// RnGenericRec/detail/Normal layouts ONLY by choiceGuid; the old 3-key first-wins index collapsed them
+	/// RnGenericRec/detail/Normal layouts ONLY by choiceGuid; a 3-key first-wins index would collapse them
 	/// all to the document-first (Analysis) layout. These pure tests pin the index + selector behavior,
-	/// including the cache-collision negative case the plan review flagged.
+	/// including the cache-collision negative case.
 	/// </summary>
 	[TestFixture]
 	public class LayoutChoiceResolutionTests
@@ -93,7 +93,7 @@ namespace FwAvaloniaTests
 			Assert.That(LayoutSourceLoader.SelectLayoutForChoice(null, GuidA), Is.Null);
 		}
 
-		// Plan-review "missing block": two different choiceGuids on the SAME class must yield two DISTINCT
+		// Two different choiceGuids on the SAME class must yield two DISTINCT
 		// layouts (the selector is the cache-discriminator; the composer keys CompiledModels by choiceGuid).
 		[Test]
 		public void TwoChoiceGuids_OnSameKey_SelectDistinctLayouts_NoCollision()

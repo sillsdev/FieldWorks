@@ -32,8 +32,8 @@ namespace SIL.FieldWorks.LexText.Controls
 	}
 
 	/// <summary>
-	/// The LCModel-aware launcher for the "Create a new feature" / "Add a value to a feature" flows (Phase-1 §19b
-	/// Stage 3) — the New-UI replacement for the WinForms <c>MasterInflectionFeatureListDlg</c> /
+	/// The LCModel-aware launcher for the "Create a new feature" / "Add a value to a feature" flows — the New-UI
+	/// replacement for the WinForms <c>MasterInflectionFeatureListDlg</c> /
 	/// <c>MasterPhonologicalFeatureListDlg</c> BLANK-CREATE affordance (the "create a brand-new feature" link) and the
 	/// feature-system add-value flow. It is the feature-structure analogue of
 	/// <see cref="LcmCreatePartOfSpeechLauncher"/>: it opens a small Avalonia name-entry dialog
@@ -50,9 +50,9 @@ namespace SIL.FieldWorks.LexText.Controls
 	///     — exactly <c>MasterPhonologicalFeatureListDlg.linkLabel1_LinkClicked</c>.
 	///   * Add value: create an <c>IFsSymFeatVal</c> under the closed feature's <c>ValuesOC</c>, named from the dialog.
 	///
-	/// PARITY (§19b Stage 3): the MGA-catalog IMPORT path (pick a feature from EticGlossList.xml /
+	/// PARITY: the MGA-catalog IMPORT path (pick a feature from EticGlossList.xml /
 	/// PhonFeatsEticGlossList.xml via <c>AddFeatureFromXml</c>) is NOT ported here — it needs the MGA assembly + the
-	/// WinForms GlossList tree parser, outside this stage's clean reach. The blank-create primitive (the common
+	/// WinForms GlossList tree parser, outside this launcher's clean reach. The blank-create primitive (the common
 	/// "I need a feature that doesn't exist yet" case) is fully wired + tested; the catalog import remains the legacy
 	/// MasterInflectionFeatureListDlg / MasterPhonologicalFeatureListDlg flow.
 	///

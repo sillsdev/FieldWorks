@@ -33,7 +33,7 @@ namespace LexTextControlsTests
 		private IMoInflAffixSlot _tenseSlot;
 		private IMoInflClass _nounWeak;
 		private ILexEntryType _compoundType;
-		// An inflectable closed feature on the Verb POS (Tense {past, present}) for the §19b inflection-feature tests.
+		// An inflectable closed feature on the Verb POS (Tense {past, present}) for the inflection-feature tests.
 		private IFsClosedFeature _tenseFeature;
 		private IFsSymFeatVal _pastValue;
 
@@ -52,7 +52,7 @@ namespace LexTextControlsTests
 			_verb.AffixSlotsOC.Add(_tenseSlot);
 			_tenseSlot.Name.set_String(Cache.DefaultAnalWs, "Tense");
 
-			// An inflection class on the noun, so the Stage 6 inflection-class set can be exercised.
+			// An inflection class on the noun, so the inflection-class set can be exercised.
 			_nounWeak = Cache.ServiceLocator.GetInstance<IMoInflClassFactory>().Create();
 			_noun.InflectionClassesOC.Add(_nounWeak);
 			_nounWeak.Name.set_String(Cache.DefaultAnalWs, "Weak");
@@ -62,7 +62,7 @@ namespace LexTextControlsTests
 			Cache.LangProject.LexDbOA.ComplexEntryTypesOA.PossibilitiesOS.Add(_compoundType);
 			_compoundType.Name.set_String(Cache.DefaultAnalWs, "Compound");
 
-			// An inflectable closed feature on the verb (Tense {past, present}), so the §19b inflection-feature
+			// An inflectable closed feature on the verb (Tense {past, present}), so the inflection-feature
 			// editor feed + the IFsFeatStruc round-trip can be exercised on an inflectional-affix MSA.
 			_tenseFeature = Cache.ServiceLocator.GetInstance<IFsClosedFeatureFactory>().Create();
 			Cache.LangProject.MsFeatureSystemOA.FeaturesOC.Add(_tenseFeature);
@@ -360,7 +360,7 @@ namespace LexTextControlsTests
 			Assert.That(repo.Count, Is.EqualTo(before + 1), "the create path adds exactly one entry");
 		}
 
-		// ----- grammatical-info (MSA) feed + find-or-create on commit (Stage 3) -----
+		// ----- grammatical-info (MSA) feed + find-or-create on commit -----
 
 		[Test]
 		public void BuildInput_WiresTheMsaSection()
@@ -496,7 +496,7 @@ namespace LexTextControlsTests
 			Assert.That(derivMsa.ToPartOfSpeechRA, Is.SameAs(_noun), "the chosen 'changes to' POS is the to-POS");
 		}
 
-		// ----- inflection features (§19b Stage 2): feed + find-or-create + IFsFeatStruc round-trip -----
+		// ----- inflection features: feed + find-or-create + IFsFeatStruc round-trip -----
 
 		[Test]
 		public void BuildInput_FeedsTheInflectionFeatureProvider()
@@ -516,7 +516,7 @@ namespace LexTextControlsTests
 			Assert.That(LcmInsertEntryDialogLauncher.BuildInflectionFeatures(Cache, "not-a-guid"), Is.Empty);
 		}
 
-		// T2 integration: one realized create exercises morph type (suffix) + MSA POS + slot + INFLECTION FEATURE
+		// One realized create exercises morph type (suffix) + MSA POS + slot + INFLECTION FEATURE
 		// together; the find-or-created infl MSA composes all of them, and the IFsFeatStruc round-trips.
 		[Test]
 		public void Show_InflectionalAffix_ComposesMsaPosSlotAndInflectionFeatures()
@@ -548,7 +548,7 @@ namespace LexTextControlsTests
 				"the chosen inflection feature value round-trips into the IFsFeatStruc");
 		}
 
-		// T4 workflow: create entry → inflectional affix → pick POS → assign an inflection feature value → commit →
+		// Create entry → inflectional affix → pick POS → assign an inflection feature value → commit →
 		// reopen (read the FS back as the MsaCreator edit path would) → verify the IFsFeatStruc round-tripped.
 		[Test]
 		public void Workflow_CreateInflAffix_AssignFeature_Commit_Reopen_RoundTrips()

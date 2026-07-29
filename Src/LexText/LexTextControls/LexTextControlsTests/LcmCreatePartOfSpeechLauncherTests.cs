@@ -12,8 +12,8 @@ using SIL.LCModel;
 namespace LexTextControlsTests
 {
 	/// <summary>
-	/// The LCModel-aware side of the "Create a new Part of Speech" flow (<see cref="LcmCreatePartOfSpeechLauncher"/>),
-	/// MSA-port Stage 4: building the master-category catalog from an eticPOSList document (the same parse the WinForms
+	/// The LCModel-aware side of the "Create a new Part of Speech" flow (<see cref="LcmCreatePartOfSpeechLauncher"/>):
+	/// building the master-category catalog from an eticPOSList document (the same parse the WinForms
 	/// <see cref="MasterCategoryListDlg"/> uses), projecting it into hierarchical chooser candidates, and the
 	/// chosen-catalog-id → new <c>IPartOfSpeech</c> + <see cref="FwPosNode"/> round-trip — the unit-testable core that
 	/// mirrors <see cref="MasterCategoryListDlg"/>'s create-in-project logic (fixed guid + name/abbr + CatalogSourceId)

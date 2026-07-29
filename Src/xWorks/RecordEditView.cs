@@ -211,7 +211,7 @@ namespace SIL.FieldWorks.XWorks
 				window.ResumeIdleProcessing();
 			}
 
-			// Selection bridge (task 3.12): the real mediator broadcast delivered a record navigation
+			// Selection bridge: the real mediator broadcast delivered a record navigation
 			// for this host's clerk, so let bridge subscribers (the Avalonia surface) follow it.
 			m_recordNavigationContext?.NotifyCurrentRecordChanged();
 			return true;	//we handled this.
@@ -384,7 +384,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				if (ShouldUseAvaloniaLexicalEdit)
 				{
-					// Active-host contract (task 3.10): do not touch the legacy DataTree while Avalonia is active.
+					// Active-host contract: do not touch the legacy DataTree while Avalonia is active.
 					// The record may be gone (deleted elsewhere); cancel rather than orphan the session.
 					m_regionEditContext.Clear();
 					EnsureAvaloniaSurfaceActive();
@@ -400,7 +400,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 			try
 			{
-				// Active-host contract (task 3.10): when the Avalonia surface is active we do NOT initialize
+				// Active-host contract: when the Avalonia surface is active we do NOT initialize
 				// or drive the legacy DataTree. Only the active surface is created and shown.
 				if (ShouldUseAvaloniaLexicalEdit)
 				{
@@ -569,13 +569,13 @@ namespace SIL.FieldWorks.XWorks
 
 			// InitBase() calls SetupDataContext() before RecordEditView.Init() resolves the surface, so
 			// resolve it here too — otherwise the first surface initialization would use the ctor default
-			// (WinForms) and the active-host contract (task 3.10) would be violated for an Avalonia start.
+			// (WinForms) and the active-host contract would be violated for an Avalonia start.
 			SetLexicalEditSurface(ResolveConfiguredLexicalEditSurface());
 
 			// Surface-agnostic: the record list bar must update regardless of which detail surface is active.
 			Clerk.UpdateRecordTreeBarIfNeeded();
 
-			// Active-host contract (task 3.10): initialize only the active surface; the inactive surface is
+			// Active-host contract: initialize only the active surface; the inactive surface is
 			// not instantiated or driven. The legacy DataTree is initialized here only when legacy is active;
 			// the Avalonia surface is created lazily in ShowRecordOnIdle so its construction stays on the
 			// idle path (the inactive legacy DataTree is never built).

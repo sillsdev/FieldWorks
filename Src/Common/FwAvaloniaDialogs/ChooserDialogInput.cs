@@ -19,12 +19,11 @@ namespace FwAvaloniaDialogs
 	}
 
 	/// <summary>
-	/// The LCModel-free input to the reusable Avalonia chooser dialog — the Phase 1 (flat list) replacement for
-	/// the legacy <c>ReallySimpleListChooser</c>/<c>SimpleListChooser</c>. The product edge (the LexText launcher)
+	/// The LCModel-free input to the reusable Avalonia chooser dialog. The product edge (the LexText launcher)
 	/// builds this from a possibility list / reference target set so the Avalonia layer never sees an
 	/// <c>ICmObject</c>: candidates are plain <see cref="RegionChoiceOption"/>s (key = guid string, name = display
-	/// text, optional <see cref="RegionChoiceOption.Depth"/> rendered as a FLAT indented list — NOT a tree in
-	/// Phase 1), and the current selection / result are exchanged as guid-string keys.
+	/// text, optional <see cref="RegionChoiceOption.Depth"/> rendered as a FLAT indented list — NOT a tree),
+	/// and the current selection / result are exchanged as guid-string keys.
 	/// </summary>
 	public sealed class ChooserDialogInput
 	{
@@ -52,11 +51,11 @@ namespace FwAvaloniaDialogs
 		public Func<string, IReadOnlyList<RegionChoiceOption>> SearchCandidates { get; set; }
 
 		/// <summary>
-		/// When true the candidates are presented as a COLLAPSIBLE TREE (Phase 2) built from the
+		/// When true the candidates are presented as a COLLAPSIBLE TREE built from the
 		/// <see cref="RegionChoiceOption.Depth"/> sequence — a candidate's children are the following candidates with
 		/// Depth+1 until Depth drops back (possibility lists arrive in document order with Depth, which fully
-		/// determines the tree). When false (the default) the candidates render as the Phase 1 FLAT indented list
-		/// (the shared <c>FwOptionPicker</c>), unchanged. When a search term is active the hierarchical view falls
+		/// determines the tree). When false (the default) the candidates render as the FLAT indented list
+		/// (the shared <c>FwOptionPicker</c>). When a search term is active the hierarchical view falls
 		/// back to the flat filtered results list and returns to the tree once the term is cleared.
 		/// </summary>
 		public bool Hierarchical { get; set; }
@@ -64,7 +63,7 @@ namespace FwAvaloniaDialogs
 		/// <summary>The prompt shown above the list (localized by the caller); null/empty hides the prompt.</summary>
 		public string Prompt { get; set; }
 
-		/// <summary>The help topic id for the dialog's Help button (null/empty hides Help). Phase 1 carries it only.</summary>
+		/// <summary>The help topic id for the dialog's Help button (null/empty hides Help).</summary>
 		public string HelpTopic { get; set; }
 
 		/// <summary>

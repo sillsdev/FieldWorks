@@ -15,11 +15,11 @@ using SIL.WritingSystems;
 namespace SIL.FieldWorks.XWorks
 {
 	/// <summary>
-	/// §19d (voice/sound writing systems): the composer resolves WS rows, and a voice/audio (IsVoice)
+	/// Voice/sound writing systems: the composer resolves WS rows, and a voice/audio (IsVoice)
 	/// writing system stores a recording (its filename) rather than text. The alternative is flagged
 	/// IsAudio and composes its REAL filename on an EDITABLE row — the owned audio field renders
-	/// play/record/clear affordances and writes/clears the filename through the text setter. It is no
-	/// longer a blanket read-only placeholder.
+	/// play/record/clear affordances and writes/clears the filename through the text setter. It is not
+	/// a blanket read-only placeholder.
 	/// </summary>
 	[TestFixture]
 	public class FullEntryRegionVoiceWsTests : MemoryOnlyBackendProviderTestBase
@@ -71,8 +71,7 @@ namespace SIL.FieldWorks.XWorks
 				"the composer must surface the voice writing system's alternative, not drop it");
 
 			// Every voice-WS alternative is flagged IsAudio (so the view renders play/record/clear) and sits
-			// on an EDITABLE row (record/clear write the filename through the text setter). §19d removed the
-			// blanket read-only placeholder.
+			// on an EDITABLE row (record/clear write the filename through the text setter).
 			foreach (var x in audioValues)
 			{
 				Assert.That(x.Value.IsAudio, Is.True,

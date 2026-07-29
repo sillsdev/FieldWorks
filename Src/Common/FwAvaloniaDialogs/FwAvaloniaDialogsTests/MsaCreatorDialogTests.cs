@@ -17,7 +17,7 @@ using SIL.FieldWorks.Common.FwAvalonia;
 namespace FwAvaloniaDialogsTests
 {
 	/// <summary>
-	/// The reusable "Create New Grammatical Info." dialog (MSA-port Stage 5): the Avalonia replacement for the
+	/// The reusable "Create New Grammatical Info." dialog: the Avalonia replacement for the
 	/// legacy MsaCreatorDlg in New-UI mode. The dialog is essentially the LCModel-free FwMsaGroupBox hosted over the
 	/// entry's read-only context (lexical entry + senses); it seeds the box from the existing MSA / morph type, has
 	/// NO OK gate (like the legacy dialog), and snapshots the box's FwSandboxMsa on OK. Runtime proof on a realized

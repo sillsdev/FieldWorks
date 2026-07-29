@@ -10,10 +10,10 @@ namespace SIL.FieldWorks.LexText.Controls
 {
 	/// <summary>
 	/// Shared wiring for the inline create-feature / add-value affordances of the inflection-feature editor hosted
-	/// inside <see cref="FwMsaGroupBox"/> (Phase-1 §19b Stage 3) — the single place the three MSA-section launchers
+	/// inside <see cref="FwMsaGroupBox"/> — the single place the three MSA-section launchers
 	/// (Insert Entry, Add New Sense, MSA Creator) wire <c>MsaGroupBox.CreateNewFeatureRequested</c> /
-	/// <c>CreateNewValueRequested</c> to the <see cref="LcmCreateFeatureLauncher"/>, replacing the Stage-2 deferred
-	/// no-op. On a created feature/value it feeds the new <see cref="FwFeatureNode"/> back to the box's editor
+	/// <c>CreateNewValueRequested</c> to the <see cref="LcmCreateFeatureLauncher"/>. On a created feature/value it
+	/// feeds the new <see cref="FwFeatureNode"/> back to the box's editor
 	/// (<c>AcceptCreatedInflectionFeature</c> / <c>AcceptCreatedInflectionFeatureValue</c>), so the new item appears +
 	/// (for a value) becomes the feature's pick. The MSA box's editor edits the INFLECTION feature system, so both
 	/// flows target <see cref="FeatureSystemKind.Inflection"/>.

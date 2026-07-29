@@ -13,7 +13,7 @@ using SIL.FieldWorks.Common.FwAvalonia.ViewDefinition;
 namespace FwAvaloniaTests
 {
 	/// <summary>
-	/// Task 4.9: the importer must report every silently dropped layout construct/attribute as a
+	/// The importer must report every silently dropped layout construct/attribute as a
 	/// diagnostic, and importer coverage over the shipped layout files must be a measured number.
 	/// </summary>
 	[TestFixture]
@@ -90,7 +90,7 @@ namespace FwAvaloniaTests
 		[Test]
 		public void MenuAndHotlinks_OnSliceContent_AreImported_NotDropped()
 		{
-			// Section 13.1 superseded the old drop-warning: menu bindings now land on the node.
+			// Menu bindings land on the node.
 			var model = Import(@"
 <layout class='LexEntry' type='detail' name='T'>
   <part ref='MenuSection'/>
@@ -117,8 +117,8 @@ namespace FwAvaloniaTests
 		[Test]
 		public void ConditionalElements_WithSubstitutionValues_StillDropWithDiagnostics()
 		{
-			// B3 imports supported conditionals; a $-substituted condition value (the <generate>
-			// custom-field shape) still needs runtime substitution (B9), so it keeps the drop diagnostic.
+			// Supported conditionals import; a $-substituted condition value (the <generate>
+			// custom-field shape) still needs runtime substitution, so it keeps the drop diagnostic.
 			var model = Import(@"
 <layout class='LexEntry' type='detail' name='T'>
   <if target='$fieldName' is='StText'><part ref='CitationForm'/></if>
@@ -146,7 +146,7 @@ namespace FwAvaloniaTests
 		{
 			// Mirrors the real AsLexemeFormBasic shape: a slice-content part whose caller nests
 			// <indent><part .../></indent>. DataTree realizes these as indented child slices, so the
-			// importer must too (task 4.10).
+			// importer must too.
 			var model = Import(@"
 <layout class='LexEntry' type='detail' name='T'>
   <part ref='MenuSection'>
@@ -188,7 +188,7 @@ namespace FwAvaloniaTests
 			Assert.That(model.Diagnostics.Any(d => d.Code == "injected-child-dropped"), Is.True);
 		}
 
-		// B7: the chooserLink jump links import as typed metadata on the slice node — the exact
+		// The chooserLink jump links import as typed metadata on the slice node — the exact
 		// shape LexEntryParts.xml:48-53 gives the Publish In field (the legacy chooser dialog's
 		// "Edit the Publications list" link, ReallySimpleListChooser.cs:887-900).
 		[Test]
@@ -210,7 +210,7 @@ namespace FwAvaloniaTests
 				"a chooserInfo that only carries links is fully consumed");
 		}
 
-		// B7 remainder: chooserInfo's OTHER facets (title/text/guicontrol/…) stay reported, not
+		// chooserInfo's OTHER facets (title/text/guicontrol/…) stay reported, not
 		// silently dropped, so the remaining gap is still measured.
 		[Test]
 		public void ChooserInfo_NonLinkFacets_AreStillReported()
@@ -263,7 +263,7 @@ namespace FwAvaloniaTests
 	}
 
 	/// <summary>
-	/// B3 (xml-retirement-blockers): legacy <c>&lt;if&gt;</c>/<c>&lt;ifnot&gt;</c>/<c>&lt;choice&gt;</c>
+	/// Legacy <c>&lt;if&gt;</c>/<c>&lt;ifnot&gt;</c>/<c>&lt;choice&gt;</c>
 	/// import as typed Conditional/ChoiceGroup nodes carrying structured ViewCondition metadata —
 	/// the condition forms the shipped detail layouts use (boolequals/intequals/intlessthan/
 	/// intmemberof/lengthatleast/lengthatmost/guidequals/is/target) — and round-trip canonical JSON.
@@ -420,7 +420,7 @@ namespace FwAvaloniaTests
 	}
 
 	/// <summary>
-	/// B10 (cross-class part resolution): unit cases for the legacy-faithful resolution rules —
+	/// Unit cases for the legacy-faithful resolution rules —
 	/// the metadata-driven base-class walk (DataTree.cs:2444-2461) and case-insensitive part-id
 	/// lookup (Inventory.GetElementKey lowercases key attrvals, Inventory.cs:1516).
 	/// </summary>
@@ -491,7 +491,7 @@ namespace FwAvaloniaTests
 	}
 
 	/// <summary>
-	/// Task 4.9: runs the importer over every shipped .fwlayout/Parts.xml pair and regenerates the
+	/// Runs the importer over every shipped .fwlayout/Parts.xml pair and regenerates the
 	/// committed coverage report so importer coverage is a tracked number, not an assumption.
 	/// </summary>
 	[TestFixture]
@@ -530,7 +530,7 @@ namespace FwAvaloniaTests
 
 		/// <summary>
 		/// Loads the subclass → base class map from the pinned LCModel package's master model, the same
-		/// hierarchy production resolution walks via the MDC (B10: metadata-driven, not hand-maintained).
+		/// hierarchy production resolution walks via the MDC (metadata-driven, not hand-maintained).
 		/// </summary>
 		private static IReadOnlyDictionary<string, string> LoadBaseClassMap(string repoRoot)
 		{
@@ -568,7 +568,7 @@ namespace FwAvaloniaTests
 			Assert.That(report.DetailLayoutsImported, Is.GreaterThan(0), "no detail layouts were imported");
 			Assert.That(report.NodesProduced, Is.GreaterThan(0), "import produced no typed nodes");
 
-			// The whole point of task 4.9: the gap must be visible. If these start failing because the
+			// The gap must be visible. If these start failing because the
 			// numbers hit zero, the importer has reached full vocabulary coverage — celebrate, then
 			// tighten the assertions.
 			TestContext.WriteLine(
@@ -612,7 +612,7 @@ namespace FwAvaloniaTests
 		}
 
 		/// <summary>
-		/// B10 (cross-class part resolution): with the metadata-driven base-class walk the importer
+		/// With the metadata-driven base-class walk the importer
 		/// resolves every shipped part ref that legacy DataTree resolves. What remains is EXACTLY the
 		/// set of layout refs with no <c>{class-chain}-Detail-{ref}</c> part anywhere in the shipped
 		/// inventories — refs legacy DataTree also silently omits ("Just omit the missing part",
@@ -652,7 +652,7 @@ namespace FwAvaloniaTests
 				{ "LexSense-HeavySummary", 1 },
 				{ "LexSense-ImportResidue", 1 },
 				// LexSense `Pictures` has no LexSense-Detail-Pictures part, so legacy DataTree (and this
-				// importer) omit sense pictures; a candidate fix is proposed separately (PR: add the part).
+				// importer) omit sense pictures.
 				{ "LexSense-Pictures", 1 },
 				{ "MoAlloAdhocProhib-Message", 1 },
 				{ "MoEndoCompound-HeadLast", 2 },
@@ -679,7 +679,7 @@ namespace FwAvaloniaTests
 		}
 
 		/// <summary>
-		/// B10 fixture: the real CmAnthroItem 'default' layout has all its refs on the CmPossibility
+		/// The real CmAnthroItem 'default' layout has all its refs on the CmPossibility
 		/// base class — without base-class metadata resolution it raises 9 unresolved-part Errors.
 		/// With the metadata map the whole layout imports clean except the constructs other blockers own.
 		/// </summary>
@@ -692,7 +692,7 @@ namespace FwAvaloniaTests
 
 			Assert.That(model.Diagnostics.Where(d => d.Code == "unresolved-part"), Is.Empty);
 			// All 9 refs resolve and produce nodes; SubPossibilities' <choice> content imports as a
-			// typed ChoiceGroup since B3 landed (one empty where branch + the Subitems otherwise).
+			// typed ChoiceGroup (one empty where branch + the Subitems otherwise).
 			Assert.That(model.Roots.Count, Is.EqualTo(9), "NameAllA … SubPossibilities produce nodes");
 			Assert.That(model.Diagnostics.Count(d => d.Code == "unknown-part-content"), Is.EqualTo(0),
 				"the <choice> content is imported, no longer dropped");
@@ -704,7 +704,7 @@ namespace FwAvaloniaTests
 		}
 
 		/// <summary>
-		/// B10 fixture: CmBaseAnnotation 'Edit' resolves 'TextOnly' from CmAnnotation (one hop) and
+		/// CmBaseAnnotation 'Edit' resolves 'TextOnly' from CmAnnotation (one hop) and
 		/// 'BeginObjectLink' on the class itself.
 		/// </summary>
 		[Test]
@@ -719,8 +719,8 @@ namespace FwAvaloniaTests
 		}
 
 		/// <summary>
-		/// B10 fixture: the first-slice path's hand-maintained MoForm map (4.10) is now subsumed by the
-		/// metadata-driven hierarchy — MoStemAllomorph's 'AsLexemeFormBasic' resolves with no hand map.
+		/// The metadata-driven hierarchy subsumes the first-slice path's hand-maintained MoForm map —
+		/// MoStemAllomorph's 'AsLexemeFormBasic' resolves with no hand map.
 		/// </summary>
 		[Test]
 		public void MoStemAllomorphAsLexemeFormBasic_ResolvesViaMetadataMap_WithoutHandMaintainedMap()
@@ -734,7 +734,7 @@ namespace FwAvaloniaTests
 		}
 
 		/// <summary>
-		/// B10 fixture: a documented member of the remaining set. CmAnthroItem 'nested' refs 'Summary'
+		/// A documented member of the remaining set. CmAnthroItem 'nested' refs 'Summary'
 		/// and no Summary detail part exists on CmAnthroItem/CmPossibility/CmObject — legacy DataTree
 		/// omits the slice the same way (DataTree.cs:2455-2457).
 		/// </summary>
@@ -751,7 +751,7 @@ namespace FwAvaloniaTests
 		}
 
 		/// <summary>
-		/// B3 fixture: the real shipped variant/complex-form divergence. LexEntryRef/Normal's
+		/// The real shipped variant/complex-form divergence. LexEntryRef/Normal's
 		/// VariantEntryTypes and ComplexEntryTypes parts are <c>&lt;if field="RefType" intequals=…&gt;</c>
 		/// twins — they must import as Conditional nodes with the structured condition, so the
 		/// composer can show exactly one per record.
@@ -776,7 +776,7 @@ namespace FwAvaloniaTests
 		}
 
 		/// <summary>
-		/// B2 fixture: the shipped lexeme-form ghost configuration must arrive complete on the typed
+		/// The shipped lexeme-form ghost configuration must arrive complete on the typed
 		/// node — ghost/ghostWs/ghostLabel, the explicit ghostClass (MoStemAllomorph, differing from
 		/// the abstract MoForm field signature) AND the ghostInitMethod hook (SetMorphTypeToRoot).
 		/// </summary>
@@ -796,8 +796,8 @@ namespace FwAvaloniaTests
 		}
 
 		/// <summary>
-		/// B2 audit: every distinct ghost configuration in the shipped LEXICON detail parts imports
-		/// with its complete metadata (no ghost attribute is dropped from obj/seq nodes anymore).
+		/// Every distinct ghost configuration in the shipped LEXICON detail parts imports
+		/// with its complete metadata (no ghost attribute is dropped from obj/seq nodes).
 		/// The shipped `ghostAbbe` attribute is a typo legacy also ignores (it reads `ghostAbbr`,
 		/// DataTree.cs:2827), so it intentionally stays an unhandled-attribute diagnostic.
 		/// </summary>

@@ -20,8 +20,8 @@ using AvControl = Avalonia.Controls.Control;
 namespace SIL.FieldWorks.LexText.Controls
 {
 	/// <summary>
-	/// The LCModel-aware launcher for the reusable Avalonia Add New Sense dialog — the MSA-port Stage 5 product-side
-	/// replacement for the legacy <see cref="AddNewSenseDlg"/> in New-UI mode. It is a concrete
+	/// The LCModel-aware launcher for the reusable Avalonia Add New Sense dialog — the replacement for the legacy
+	/// <see cref="AddNewSenseDlg"/> in New-UI mode. It is a concrete
 	/// <see cref="AvaloniaDialogLauncher{TState,TViewModel,TPayload}"/>: the Avalonia layer (FwAvaloniaDialogs) stays
 	/// LCModel-free by exchanging an <see cref="AddNewSenseDialogInput"/> (the read-only citation form, a per-WS gloss
 	/// field, and the MSA section's POS nodes / slot provider / initial MsaType) and an <see cref="AddNewSensePayload"/>
@@ -127,10 +127,10 @@ namespace SIL.FieldWorks.LexText.Controls
 				InitialMsaType = initialMsaType,
 				InitialMainPosId = null,
 				SlotsForPos = posId => LcmInsertEntryDialogLauncher.BuildSlots(cache, posId, morphTypeGuid),
-				// Inflection-class picker (Stage 6): the selected main POS's classes, re-fed when the main POS changes.
+				// Inflection-class picker: the selected main POS's classes, re-fed when the main POS changes.
 				InflectionClassesForPos = posId => LcmInsertEntryDialogLauncher.BuildInflectionClasses(cache, posId),
 				InitialInflectionClassId = null,
-				// Inflection-feature editor (§19b Stage 2): the selected main POS's inflectable-feature system, re-fed
+				// Inflection-feature editor: the selected main POS's inflectable-feature system, re-fed
 				// when the main POS changes (infl/deriv). No initial features on the create path.
 				InflectionFeaturesForPos = posId => LcmInsertEntryDialogLauncher.BuildInflectionFeatures(cache, posId),
 				InitialInflectionFeatures = null
@@ -155,7 +155,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			_viewModel = new AddNewSenseDialogViewModel(state);
 			_viewModel.HelpRequested += OnHelpRequested;
 			_viewModel.CreateNewPosRequested += OnCreateNewPosRequested;
-			// §19b Stage 3: wire the inline create-feature / add-value affordances (replacing the deferred no-op).
+			// Wire the inline create-feature / add-value affordances.
 			_viewModel.CreateNewFeatureRequested += () =>
 				LcmInflectionFeatureCreateWiring.CreateFeature(_cache, _owner, _viewModel.MsaGroupBox);
 			_viewModel.CreateNewValueRequested += id =>
@@ -232,10 +232,10 @@ namespace SIL.FieldWorks.LexText.Controls
 
 			var morphType = ResolveMorphType(cache, FirstAllomorphMorphTypeGuid(entry));
 			sense.SandboxMSA = LcmInsertEntryDialogLauncher.BuildSandboxMsa(cache, payload.Msa, morphType);
-			// Stage 6: SandboxGenericMSA carries no inflection class, so set it on the find-or-created stem MSA AFTER
+			// SandboxGenericMSA carries no inflection class, so set it on the find-or-created stem MSA AFTER
 			// the SandboxMSA assign (the lift of InsertEntryDlg.SetEntryMsa). Same UOW as the create.
 			LcmInsertEntryDialogLauncher.ApplyInflectionClass(cache, sense, payload.Msa);
-			// §19b Stage 2: rebuild the inflection IFsFeatStruc on the find-or-created infl/deriv MSA from the chosen
+			// Rebuild the inflection IFsFeatStruc on the find-or-created infl/deriv MSA from the chosen
 			// assignment set, same UOW. A stem MSA (or no features) is a no-op.
 			LcmInsertEntryDialogLauncher.ApplyInflectionFeatures(cache, sense, payload.Msa);
 			return sense;

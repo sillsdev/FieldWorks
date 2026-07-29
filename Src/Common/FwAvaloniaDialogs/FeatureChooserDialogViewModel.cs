@@ -9,8 +9,8 @@ using CommunityToolkit.Mvvm.Input;
 namespace FwAvaloniaDialogs
 {
 	/// <summary>
-	/// View-model for the standalone feature-structure chooser dialog (Phase-1 §19b Stage 3) — the Avalonia
-	/// replacement for the WinForms <c>MsaInflectionFeatureListDlg</c> (assign inflection feature values to an MSA's
+	/// View-model for the standalone feature-structure chooser dialog — the Avalonia
+	/// analog of the WinForms <c>MsaInflectionFeatureListDlg</c> (assign inflection feature values to an MSA's
 	/// <c>IFsFeatStruc</c>) and <c>PhonologicalFeatureChooserDlg</c> (the phonological feature system). The dialog is
 	/// essentially the shared LCModel-free <see cref="FwFeatureStructureEditor"/> hosted over OK/Cancel/Help: the
 	/// host feeds the feature system + current assignments, the user picks values, and on OK

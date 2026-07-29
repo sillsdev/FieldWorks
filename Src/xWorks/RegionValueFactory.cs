@@ -65,15 +65,14 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
-		/// B8/B7: walks a possibility list's tree in document order (parent before children) into
+		/// Walks a possibility list's tree in document order (parent before children) into
 		/// chooser options, hierarchy carried as <see cref="RegionChoiceOption.Depth"/> — exactly
 		/// the indented tree the legacy chooser shows. <paramref name="flat"/> (a chooserInfo
 		/// "FlatList" guicontrol spec, e.g. PeopleFlatList) keeps the order but suppresses the
 		/// hierarchy, like the legacy flat chooser. Option names use the composer's fallback rule
-		/// — Name.BestAnalysisAlternative, then <c>ShortName</c>, then the guid — chosen over the
-		/// builder's old explicit analysis→vernacular walk because <c>CmPossibility.ShortName</c>
-		/// already performs the legacy best-analysis-then-vernacular resolution itself
-		/// (ShortNameTSS), so the vernacular fallback is subsumed, not lost.
+		/// — Name.BestAnalysisAlternative, then <c>ShortName</c>, then the guid. <c>CmPossibility.ShortName</c>
+		/// already performs the best-analysis-then-vernacular resolution itself
+		/// (ShortNameTSS), so the vernacular fallback is covered.
 		/// </summary>
 		internal static IReadOnlyList<RegionChoiceOption> BuildPossibilityOptions(
 			ICmPossibilityList list, bool flat)
@@ -127,7 +126,7 @@ namespace SIL.FieldWorks.XWorks
 				runs,
 				TsStringUtils.GetXmlRep(tss, writingSystemFactory, 0),
 				RequiresRichEditor(tss),
-				// §19c: an embedded object (ORC) no longer forces read-only — a link is fully editable and
+				// An embedded object (ORC) does not force read-only — a link is fully editable and
 				// any ORC is deletable, both of which the run-replay path rebuilds with ObjectData
 				// preserved. Only a genuinely-unsupported run property (lossyProperties) still blocks
 				// editing, because that data WOULD be silently dropped on the first plain-text edit.

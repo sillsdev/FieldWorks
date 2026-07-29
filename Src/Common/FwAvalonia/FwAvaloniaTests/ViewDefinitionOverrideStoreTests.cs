@@ -10,10 +10,10 @@ using SIL.FieldWorks.Common.FwAvalonia.ViewDefinition;
 namespace FwAvaloniaTests
 {
 	/// <summary>
-	/// advanced-entry-view: the per-project override store round-trips a patch through the
-	/// ConfigurationSettings-folder JSON file (one per class+layout), loads lazily, caches per key, and
-	/// treats an empty patch as "delete the file" (undo-to-base leaves no stale override). Corrupt or
-	/// mislabeled files degrade to "no override" rather than crashing compose.
+	/// The per-project override store round-trips a patch through the ConfigurationSettings-folder JSON
+	/// file (one per class+layout), loads lazily, caches per key, and treats an empty patch as "delete
+	/// the file" (undo-to-base leaves no stale override). Corrupt or mislabeled files degrade to "no
+	/// override" rather than crashing compose.
 	/// </summary>
 	[TestFixture]
 	public class ViewDefinitionOverrideStoreTests

@@ -41,7 +41,7 @@ namespace SIL.FieldWorks.XWorks
 
 	/// <summary>
 	/// Resolves the per-project sparse override patch for a compiled (class, layout), or null when the
-	/// project did not customize that layout (advanced-entry-view). The host wires this to the
+	/// project did not customize that layout. The host wires this to the
 	/// <c>ViewDefinitionOverrideStore</c> in the project ConfigurationSettings folder; tests supply an
 	/// in-memory resolver. Kept a delegate so the composer needs no reference to the file-backed store.
 	/// </summary>
@@ -84,13 +84,13 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		// Review finding A (observable memoization): counts the expensive snapshot builds (layout
+		// Observable memoization: counts the expensive snapshot builds (layout
 		// lookup + layout.ToString() + fingerprint + compile). A repeat compose must not grow it.
 		private static int s_snapshotCompileCount;
 
 		internal static int SnapshotCompileCount => s_snapshotCompileCount;
 
-		// Review finding A: the loaded sources are immutable for the process lifetime, so the layout
+		// The loaded sources are immutable for the process lifetime, so the layout
 		// lookup is indexed once and compiled definitions are memoized per (starting class, layout)
 		// — repeat composes (and the per-item menu peeks below) never rebuild/re-fingerprint the
 		// ~300KB parts snapshot. Class ids and the class hierarchy are fixed LCModel metadata, so
@@ -98,7 +98,7 @@ namespace SIL.FieldWorks.XWorks
 		private sealed class CompilerSources
 		{
 			public string PartsXml;
-			// §20.1.4 (F-2): the layout index keeps ALL (class,type,name) variants so a choiceGuid can pick
+			// The layout index keeps ALL (class,type,name) variants so a choiceGuid can pick
 			// the right one (legacy distinguishes e.g. 11 RnGenericRec/Normal layouts only by choiceGuid).
 			public Dictionary<(string ClassName, string Type, string Name), List<XElement>> LayoutIndex;
 			// Memoized per (starting class, layout, choiceGuid) — choiceGuid is part of the identity so two
@@ -113,7 +113,7 @@ namespace SIL.FieldWorks.XWorks
 			=> Compose((ICmObject)entry, cache, "Normal", showHiddenFields, plugins, overrides);
 
 		/// <summary>
-		/// §20.1: compose the structured region for ANY record root + starting layout — the lexicon's
+		/// Compose the structured region for ANY record root + starting layout — the lexicon's
 		/// LexEntry/Normal, a Notebook RnGenericRec, a Lists CmPossibility, a Grammar PartOfSpeech, etc. The
 		/// compile/walk engine is already class-general (<see cref="CompileForObject"/> keys on the object's
 		/// ClassID and compiles each descended object's own layout); this overload parameterizes the root
@@ -129,7 +129,7 @@ namespace SIL.FieldWorks.XWorks
 			if (cache == null) throw new ArgumentNullException(nameof(cache));
 			if (string.IsNullOrEmpty(layoutName)) layoutName = "Normal";
 
-			// §20.1.4 (F-2): when the tool's layout is type-selected (e.g. Notebook RnGenericRec uses
+			// When the tool's layout is type-selected (e.g. Notebook RnGenericRec uses
 			// layoutChoiceField="Type"), resolve the record's chosen possibility GUID so CompileForObject
 			// picks the matching layout variant instead of the document-first one.
 			var choiceGuid = ResolveLayoutChoiceGuid(cache, obj, layoutChoiceField);
@@ -138,7 +138,7 @@ namespace SIL.FieldWorks.XWorks
 			if (root == null)
 				return null;
 
-			// winforms-free-lexeme-editor.md D1: plugin rows close over the region's own edit
+			// Plugin rows close over the region's own edit
 			// context, which only exists after the walk has gathered every setter — a deferred
 			// accessor bridges the gap (plugin factories run at render time, never during compose).
 			IRegionEditContext composedContext = null;
@@ -156,7 +156,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
-		/// B8/B7: walks a possibility list's tree in document order (parent before children) into
+		/// Walks a possibility list's tree in document order (parent before children) into
 		/// chooser options, hierarchy carried as <see cref="RegionChoiceOption.Depth"/> — exactly
 		/// the indented tree the legacy chooser shows. <paramref name="flat"/> (a chooserInfo
 		/// "FlatList" guicontrol spec, e.g. PeopleFlatList) keeps the order but suppresses the
@@ -286,7 +286,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 
 			private readonly bool _showHidden;
-			// advanced-entry-view: the per-project override resolver, threaded into every CompileForObject
+			// The per-project override resolver, threaded into every CompileForObject
 			// so a descended object's layout gets its own patch applied; plus the (class, layout) of the
 			// model currently being walked, captured onto each emitted field so the host's per-field
 			// gear-menu commands target the right override file. A stack so the entry context restores
@@ -294,30 +294,30 @@ namespace SIL.FieldWorks.XWorks
 			private readonly ViewDefinitionOverrideResolver _overrides;
 			private readonly Stack<(string ClassName, string LayoutName)> _modelContext
 				= new Stack<(string, string)>();
-			// winforms-free-lexeme-editor.md D1: the plugin registry consulted FIRST for every
+			// The plugin registry consulted FIRST for every
 			// custom slice, plus the deferred accessor for the edit context plugin factories
 			// receive (resolved when the factory runs, after Compose has built the context).
 			private readonly RegionEditorPluginRegistry _plugins;
 			private readonly Func<IRegionEditContext> _editContextAccessor;
-			// Finding A: per-compose memos — the morph-type option list is identical for every
+			// Per-compose memos — the morph-type option list is identical for every
 			// IMoForm, and an item layout's menu/hotlinks binding is identical per (class, layout).
 			private List<RegionChoiceOption> _morphTypeOptions;
-			// Phase 3 (named character styles): the project's character-type style names, computed once
+			// The project's character-type style names, computed once
 			// per compose from Cache.LangProject.StylesOC and stamped onto every editable text row's
 			// LexicalEditRegionField.AvailableNamedStyles (the host seam the per-WS style picker reads).
 			// Sorted by name for a stable picker order; empty when no stylesheet/styles are reachable.
 			private IReadOnlyList<string> _characterStyleNames;
-			// §19a (paragraph styles): the project's PARAGRAPH-type style names, computed once per compose
+			// The project's PARAGRAPH-type style names, computed once per compose
 			// from Cache.LangProject.StylesOC and stamped onto every editable StText row's
 			// LexicalEditRegionField.AvailableParagraphStyles (the host seam the per-paragraph style picker
 			// reads). Sorted by name for a stable picker order; empty when no stylesheet/styles are reachable.
 			private IReadOnlyList<string> _paragraphStyleNames;
-			// Phase 4 (per-run writing-system retag): the project's writing systems (analysis + vernacular),
+			// The project's writing systems (analysis + vernacular),
 			// computed once per compose from Cache and stamped onto every editable text row's
 			// LexicalEditRegionField.AvailableWritingSystems (the host seam the per-WS retag picker reads).
 			// Empty when no writing systems are reachable; the WS picker affordance is then suppressed.
 			private IReadOnlyList<RegionWritingSystemOption> _writingSystemOptions;
-			// §19c (per-run font rendering): a map from ws tag to that ws's default font (+ RTL), computed
+			// A map from ws tag to that ws's default font (+ RTL), computed
 			// once per compose from the project's analysis + vernacular writing systems and stamped onto
 			// every editable text / StText row so the owned editors can draw the per-run font display.
 			private IReadOnlyDictionary<string, RegionRunFont> _writingSystemFonts;
@@ -343,7 +343,7 @@ namespace SIL.FieldWorks.XWorks
 				_mdc = (IFwMetaDataCacheManaged)cache.DomainDataByFlid.MetaDataCache;
 			}
 
-			// advanced-entry-view: track which compiled model the walk is currently inside so each emitted
+			// Track which compiled model the walk is currently inside so each emitted
 			// field is stamped with its (class, layout). EnterModel/ExitModel bracket each compiled model's
 			// roots (the entry's own, and each descended object's), AddField stamps from the top of stack.
 			public void EnterModel(ViewDefinitionModel model)
@@ -367,7 +367,7 @@ namespace SIL.FieldWorks.XWorks
 				Fields.Add(field);
 			}
 
-			// Phase 3 (named character styles): the project's character-type style names, sourced from
+			// The project's character-type style names, sourced from
 			// Cache.LangProject.StylesOC (the LcmStyleSheet's backing store) and filtered to
 			// StyleType.kstCharacter — the same set the legacy character-style combo offers. Computed once
 			// per compose and memoized; any failure reaching the styles (a bare/partial cache in a test)
@@ -394,7 +394,7 @@ namespace SIL.FieldWorks.XWorks
 				return _characterStyleNames;
 			}
 
-			// §19a (paragraph styles): the project's paragraph-type style names, sourced from
+			// The project's paragraph-type style names, sourced from
 			// Cache.LangProject.StylesOC filtered to StyleType.kstParagraph — the set the legacy StText
 			// paragraph-style combo offers. Computed once per compose and memoized; any failure reaching the
 			// styles (a bare/partial cache in a test) yields an empty list, which suppresses the per-paragraph
@@ -420,7 +420,7 @@ namespace SIL.FieldWorks.XWorks
 				return _paragraphStyleNames;
 			}
 
-			// Phase 4 (per-run writing-system retag): the project's writing systems (analysis + vernacular,
+			// The project's writing systems (analysis + vernacular,
 			// in that legacy order, deduped by handle), each as a (stable IETF tag, display name) option the
 			// FwAvalonia per-WS retag picker offers. The display name is the ws's full display label
 			// (ws.DisplayLabel), falling back to its abbreviation, then its tag. Computed once per compose and
@@ -462,7 +462,7 @@ namespace SIL.FieldWorks.XWorks
 				return _writingSystemOptions;
 			}
 
-			// §19c (per-run font rendering): each project writing system's default font + RTL, keyed by
+			// Each project writing system's default font + RTL, keyed by
 			// its IETF tag, so the owned editors can render a multi-run value with TRUE per-run fonts.
 			// Computed once per compose and memoized; any failure yields an empty map.
 			private IReadOnlyDictionary<string, RegionRunFont> WritingSystemFonts()
@@ -496,7 +496,7 @@ namespace SIL.FieldWorks.XWorks
 				return _writingSystemFonts;
 			}
 
-			// advanced-entry-view: every CompileForObject in the walk goes through here so the per-project
+			// Every CompileForObject in the walk goes through here so the per-project
 			// override patch for the descended object's own (class, layout) is applied to its model too.
 			private ViewDefinitionModel CompileForObjectWithOverrides(ICmObject obj, string layoutName)
 				=> CompileForObject(_cache, obj, layoutName, _overrides);
@@ -527,23 +527,23 @@ namespace SIL.FieldWorks.XWorks
 						WalkSequence(node, obj, depth);
 						break;
 					case ViewNodeKind.CustomFieldPlaceholder:
-						// B1 (xml-retirement-blockers): runtime expansion of `customFields="here"` from
-						// live MDC metadata. The `<generate>` compile-time path stays 9.2/9.3.
+						// Runtime expansion of `customFields="here"` from
+						// live MDC metadata.
 						WalkCustomFields(node, obj, depth);
 						break;
 					case ViewNodeKind.Conditional:
-						// B3: legacy <if>/<ifnot> — content composes only when the per-object condition
+						// Legacy <if>/<ifnot> — content composes only when the per-object condition
 						// passes (DataTree.ProcessSubpartNode cases "if"/"ifnot").
 						WalkConditional(node, obj, depth);
 						break;
 					case ViewNodeKind.ChoiceGroup:
-						// B3: legacy <choice> — first passing <where> (or the <otherwise>) only.
+						// Legacy <choice> — first passing <where> (or the <otherwise>) only.
 						WalkChoiceGroup(node, obj, depth);
 						break;
 				}
 			}
 
-			// B3: <if>/<ifnot> wrapper — evaluate and pass through; failing branches drop entirely.
+			// The <if>/<ifnot> wrapper — evaluate and pass through; failing branches drop entirely.
 			private void WalkConditional(ViewNode node, ICmObject obj, int depth)
 			{
 				if (node.Condition != null && !ConditionPasses(node.Condition, obj))
@@ -552,7 +552,7 @@ namespace SIL.FieldWorks.XWorks
 					Walk(child, obj, depth);
 			}
 
-			// B3: <choice> semantics from DataTree.ProcessSubpartNode case "choice": expand only the
+			// The <choice> semantics from DataTree.ProcessSubpartNode case "choice": expand only the
 			// FIRST <where> whose condition passes; an <otherwise> branch (null condition) always
 			// passes and stops the scan.
 			private void WalkChoiceGroup(ViewNode node, ICmObject obj, int depth)
@@ -569,7 +569,7 @@ namespace SIL.FieldWorks.XWorks
 				}
 			}
 
-			// B3: evaluate the imported condition per object, mirroring XmlVc.ConditionPasses exactly
+			// Evaluate the imported condition per object, mirroring XmlVc.ConditionPasses exactly
 			// as the legacy detail path invokes it (DataTree.cs:2639-2696 over XmlVc.cs:3276-3290):
 			// resolve the target object, then every test present must pass; <ifnot> negates the result.
 			private bool ConditionPasses(ViewCondition condition, ICmObject obj)
@@ -729,12 +729,12 @@ namespace SIL.FieldWorks.XWorks
 				return false;
 			}
 
-			// B1: a layout can reach the same object through two placeholders (e.g. a persisted
+			// A layout can reach the same object through two placeholders (e.g. a persisted
 			// user override duplicating the marker); legacy dedups generated parts by sibling
 			// scan (DataTree.CheckCustomFieldsSibling) — here a (hvo, flid) set does the same.
 			private readonly HashSet<(int Hvo, int Flid)> _emittedCustomFields = new HashSet<(int, int)>();
 
-			// B1: expand the placeholder the way legacy DataTree.EnsureCustomFields +
+			// Expand the placeholder the way legacy DataTree.EnsureCustomFields +
 			// SliceFactory.MakeAutoCustomSlice do — enumerate the MDC's custom fields whose class
 			// is the object's class or a base class (legacy walks FieldDescription.FieldDescriptors,
 			// i.e. the MDC field list; sorted by flid here for determinism = creation order per
@@ -767,7 +767,7 @@ namespace SIL.FieldWorks.XWorks
 			// switch: String/MultiString/MultiUnicode take the text path (multi-WS per the field's
 			// WsSelector, resolved through the same legacy magic-ws pair WalkTextField uses);
 			// Integer stays an editable int row, GenDate a read-only formatted row, references
-			// read-only joined names (chooser write-back rides 6.3), and OwningAtomic StText
+			// read-only joined names (chooser write-back rides the reference-vector path), and OwningAtomic StText
 			// read-only paragraphs — all via WalkOtherField's type dispatch. The label is the
 			// field's Userlabel (mdc.GetFieldLabel), the menu the autoCustom slice's
 			// mnuDataTree-Help (StandardParts.xml CmObject-Detail-Custom).
@@ -799,7 +799,7 @@ namespace SIL.FieldWorks.XWorks
 					null, null, menuId: "mnuDataTree-Help");
 			}
 
-			// B7: project the row's list-editor jump (the configure gear's direct dispatch target).
+			// Project the row's list-editor jump (the configure gear's direct dispatch target).
 			// The node's imported chooserLink metadata wins — the legacy chooser dialog's "Edit
 			// the … list" jump links (ReallySimpleListChooser.InitializeExtras,
 			// ReallySimpleListChooser.cs:887-926). Only the "goto" kind is implemented: it is the
@@ -854,7 +854,7 @@ namespace SIL.FieldWorks.XWorks
 			// banner) build the identical collapsible header row; one helper keeps them from drifting.
 			private void AddHeader(ViewNode node, ICmObject obj, int depth, string label)
 			{
-				// Header row construction is shared with the thin mapper (task 18.11) — one construction
+				// Header row construction is shared with the thin mapper — one construction
 				// site so the two projectors cannot drift. The composer passes its LCModel-enriched values.
 				AddField(RegionStructureProjector.BuildHeaderField(
 					StableId(node, obj), label, node.Field, node.WritingSystem, node.EditorClassification,
@@ -903,14 +903,14 @@ namespace SIL.FieldWorks.XWorks
 					return;
 				}
 
-				// winforms-free-lexeme-editor.md D1: a custom slice resolves plugin registry →
+				// A custom slice resolves plugin registry →
 				// Unsupported row, in that order and never the other way. The registry is consulted FIRST
 				// so a migrated class composes as a real in-tree Avalonia editor (a RegionFieldKind.Custom
-				// row carrying the plugin's control factory). The D3 reference-vector slices are recognized
+				// row carrying the plugin's control factory). The reference-vector slices are recognized
 				// by legacy class identity and compose as native ReferenceVector rows: GhostLexRefSlice and
 				// LexReferenceMultiSlice via the early checks above, EntrySequenceReferenceSlice via the
 				// field-type dispatch below. Every OTHER unclaimed custom slice renders the labeled
-				// Unsupported worklist row — there is no launcher or companion-strip fallback.
+				// Unsupported worklist row.
 				if (!string.IsNullOrEmpty(node.CustomEditorClass))
 				{
 					var plugin = _plugins?.Resolve(node.CustomEditorClass);
@@ -954,23 +954,23 @@ namespace SIL.FieldWorks.XWorks
 						AddHeader(node, obj, depth, Localize(node.Label) ?? node.Field);
 						break;
 					case RegionEditorCategory.Literal:
-						// §19e: a literal/"lit" slice (legacy MessageSlice) — static label text rendered as
+						// A literal/"lit" slice (legacy MessageSlice) — static label text rendered as
 						// the row content by the dedicated Literal renderer (the label IS the content).
 						AddLiteralRow(node, obj, depth);
 						break;
 					case RegionEditorCategory.Picture:
-						// Picture/image editing was removed from the Avalonia region; the slice renders the
-						// labeled Unsupported worklist row (a future native picture editor graduates it).
+						// Picture/image editing is not part of the Avalonia region; the slice renders the
+						// labeled Unsupported worklist row.
 						WalkUnsupported(node, obj, depth);
 						break;
 					case RegionEditorCategory.EmbeddedView:
-						// §19e: an embedded formatted view (legacy jtview / ViewSlice + XmlView) composes the
+						// An embedded formatted view (legacy jtview / ViewSlice + XmlView) composes the
 						// nested layout's fields INLINE for this same object, at depth+1 — the recursive
-						// sub-view the legacy XmlView renders. WalkEmbeddedView reuses the proven
+						// sub-view the legacy XmlView renders. WalkEmbeddedView reuses the
 						// CompileForObjectWithOverrides/EnterModel/Walk descent (the visited-set guards
-						// cycles); when the nested layout cannot be resolved it degrades to the prior
+						// cycles); when the nested layout cannot be resolved it degrades to the
 						// read-only ShortName row rather than vanishing.
-						// PARITY §19e: arbitrarily deep / hand-authored jtview nests are not exhaustively
+						// PARITY: arbitrarily deep / hand-authored jtview nests are not exhaustively
 						// reproduced — the visited-set caps recursion at one pass per (object, layout), the
 						// common single-level embed.
 						WalkEmbeddedView(node, obj, depth);
@@ -981,8 +981,8 @@ namespace SIL.FieldWorks.XWorks
 						WalkUnsupported(node, obj, depth);
 						break;
 					case RegionEditorCategory.EnumCombo:
-						// Closed enum combos were removed from the Avalonia region; the slice renders the
-						// labeled Unsupported worklist row (a future native enum editor graduates it).
+						// Closed enum combos are not part of the Avalonia region; the slice renders the
+						// labeled Unsupported worklist row.
 						WalkUnsupported(node, obj, depth);
 						break;
 					default:
@@ -1034,7 +1034,7 @@ namespace SIL.FieldWorks.XWorks
 				// superscript, …). Both feed CanEditRichText; the lossless original is preserved for
 				// display and stays fully editable in the classic view. Unicode props (no run
 				// structure) keep the plain-text setter.
-				// §19d: an audio (voice WS) row IS editable now — the owned audio field plays/records/clears
+				// An audio (voice WS) row IS editable — the owned audio field plays/records/clears
 				// the filename value through the SAME text setter (a voice alternative is a multistring alt
 				// whose text is the filename). It stays out of the rich-text/style pickers (handled by the
 				// view's IsAudio branch), but the row must be editable so its text setter is registered.
@@ -1052,15 +1052,15 @@ namespace SIL.FieldWorks.XWorks
 					EditorKindMap.MultiStringEditor, StringComparison.OrdinalIgnoreCase);
 				if (editable)
 				{
-					// Phase 3: an editable text row over a run-bearing TsString property (String/MultiString)
+					// An editable text row over a run-bearing TsString property (String/MultiString)
 					// can carry named character styles, so it gets the project's character style names for the
 					// per-WS style picker. Unicode props (no run structure) are never editable here, so the
 					// guard above already excludes them. Empty when no styles are reachable.
 					textField.AvailableNamedStyles = CharacterStyleNames();
-					// Phase 4: the same editable run-bearing row can be retagged per-run to another project
+					// The same editable run-bearing row can be retagged per-run to another project
 					// writing system, so it gets the project's writing systems for the per-WS retag picker.
 					textField.AvailableWritingSystems = WritingSystemOptions();
-					// §19c: and the per-ws fonts so a multi-run value renders with TRUE per-run fonts.
+					// The per-ws fonts so a multi-run value renders with TRUE per-run fonts.
 					textField.WritingSystemFonts = WritingSystemFonts();
 				}
 				AddField(textField);
@@ -1072,13 +1072,13 @@ namespace SIL.FieldWorks.XWorks
 			}
 
 			// The writing systems of a text row: the layout set restricted by the field's per-field
-			// visibleWritingSystems override (§19e), then collapsed to a single derived row ws for a
+			// visibleWritingSystems override, then collapsed to a single derived row ws for a
 			// single-alternative (String/Unicode) property. Split out of WalkTextField unchanged.
 			private IReadOnlyList<CoreWritingSystemDefinition> ResolveTextRowWritingSystems(int hvo, int flid,
 				CellarPropertyType type, ViewNode node)
 			{
 				IReadOnlyList<CoreWritingSystemDefinition> systems = ResolveWritingSystems(_cache, node.WritingSystem);
-				// §19e: a per-field writing-system visibility override (legacy visibleWritingSystems) restricts
+				// A per-field writing-system visibility override (legacy visibleWritingSystems) restricts
 				// the resolved set to the authored subset (in the override's order), intersected with the
 				// field's valid writing systems. An empty intersection keeps the full set rather than hiding
 				// the field entirely (defensive — a stale override must never blank a real field).
@@ -1119,13 +1119,13 @@ namespace SIL.FieldWorks.XWorks
 			}
 
 			// The per-writing-system display values of a text row, with any voice alternative swapped for
-			// its audio-flagged form (ITEM 3 / §19d). Reports whether any text/audio data was present so
-			// WalkTextField can honor HideWhenEmpty. Split out of WalkTextField unchanged.
+			// its audio-flagged form. Reports whether any text/audio data was present so
+			// WalkTextField can honor HideWhenEmpty.
 			private IReadOnlyList<RegionWsValue> BuildTextRowValues(int hvo, int flid, CellarPropertyType type,
 				IReadOnlyList<CoreWritingSystemDefinition> systems, ViewNode node, out bool anyData, out bool anyAudio)
 			{
 				var dataSeen = false;
-				// 11.15: the lexeme form's legacy bold/120% <properties> emphasis.
+				// The lexeme form's legacy bold/120% <properties> emphasis.
 				var fontSize = node.FontScalePercent > 0 ? 12.0 * node.FontScalePercent / 100.0 : 0;
 				// The per-ws value rows build through the shared factory
 				// (LexicalEditRegionBuilder uses the same one), this path only supplies the text.
@@ -1149,13 +1149,9 @@ namespace SIL.FieldWorks.XWorks
 					}, _cache.WritingSystemFactory, fontSize, node.BoldEmphasis);
 				}
 
-				// ITEM 3 (voice/sound writing systems): a voice WS stores an audio recording, not text.
-				// The new view has no sound player yet, so an audio alternative renders as a READ-ONLY
-				// row carrying an explicit "audio recording - edit in the classic view" placeholder -
-				// the data stays visible and diagnosable instead of a blank editable box whose first
-				// keystroke would corrupt the recording (the value here is the audio file name). A full
-				// Avalonia sound player is deferred. Recompute the per-WS values, swapping any voice
-				// alternative for the placeholder and flagging it IsAudio so the row is held read-only.
+				// A voice WS stores an audio recording, not text. When the row has a voice alternative,
+				// recompute the per-WS values, flagging the voice alternative IsAudio so the view renders
+				// play/record affordances (the value is the audio file name).
 				var audioSeen = false;
 				if (systems.Any(ws => ws.IsVoice))
 				{
@@ -1166,11 +1162,10 @@ namespace SIL.FieldWorks.XWorks
 						if (ws.IsVoice)
 						{
 							audioSeen = true;
-							// §19d: a voice (IsVoice) alternative stores the audio FILENAME as its value. We
-							// now keep the real filename (not a placeholder) so the owned audio field can play
-							// the file and clear/replace the value; isAudio:true tells the view to render the
-							// play/record affordances instead of a plain text box. The recording is no longer a
-							// blanket read-only placeholder.
+							// A voice (IsVoice) alternative stores the audio FILENAME as its value. Keep the
+							// real filename so the owned audio field can play the file and clear/replace the
+							// value; isAudio:true tells the view to render the play/record affordances instead
+							// of a plain text box.
 							rebuilt.Add(new RegionWsValue(ws.Abbreviation,
 								values[i]?.Value ?? string.Empty,
 								ws.DefaultFontName, fontSize,
@@ -1380,7 +1375,7 @@ namespace SIL.FieldWorks.XWorks
 				};
 			}
 
-			// 6.3: an atomic possibility reference takes the chooser path (legacy
+			// An atomic possibility reference takes the chooser path (legacy
 			// PossibilityAtomicReferenceSlice): options from the field's own list
 			// (ReferenceTargetOwner), write-back through the fenced session.
 			private void AddAtomicPossibilityChooser(ViewNode node, ICmObject obj, int depth, int flid,
@@ -1398,8 +1393,8 @@ namespace SIL.FieldWorks.XWorks
 					new RegionChoiceOption(string.Empty,
 						SIL.FieldWorks.Common.Framework.DetailControls.DetailControlsResourceAccess.NullItemLabel)
 				};
-				// B7 remainder: chooserInfo FlatList specs are not yet imported onto the node;
-				// until they are, the chooser renders the list's own hierarchy.
+				// chooserInfo FlatList specs are not imported onto the node;
+				// so the chooser renders the list's own hierarchy.
 				options.AddRange(BuildPossibilityOptions(list, flat: false));
 				var selected = targetHvo == 0
 					? null
@@ -1415,7 +1410,7 @@ namespace SIL.FieldWorks.XWorks
 				HandlerFor(stableId).Option = key =>
 				{
 					// The empty option clears the reference — legacy AddItem(null), i.e.
-					// SetObjProp(hvo, flid, 0) — inside the same fenced session (task 6).
+					// SetObjProp(hvo, flid, 0) — inside the same fenced session.
 					if (string.IsNullOrEmpty(key))
 					{
 						_sda.SetObjProp(hvo, flid, 0);
@@ -1429,7 +1424,7 @@ namespace SIL.FieldWorks.XWorks
 				};
 			}
 
-			// avalonia-rule-formula-editor: the atomic analog of AddGenericReferenceVector — an atomic
+			// The atomic analog of AddGenericReferenceVector — an atomic
 			// reference whose target is NOT a possibility list (e.g. the ad-hoc co-prohibition Key
 			// FirstMorpheme/FirstAllomorph) composes as an editable chooser over the field's
 			// ReferenceTargetCandidates, with a leading empty option to clear (legacy launcher parity).
@@ -1474,7 +1469,7 @@ namespace SIL.FieldWorks.XWorks
 				};
 			}
 
-			// 6.3/B8: an editable possibility-vector row — current items in vector order plus the
+			// An editable possibility-vector row — current items in vector order plus the
 			// whole list as hierarchical options; add/remove stage through sda.Replace on the flid
 			// (the legacy VectorReferenceView update), one undo step per settled session.
 			private void AddReferenceVector(ViewNode node, ICmObject obj, int depth, int flid,
@@ -1488,7 +1483,7 @@ namespace SIL.FieldWorks.XWorks
 					items.Add(new RegionChoiceOption(item.Guid.ToString(), ResolveShortName(itemHvo)));
 				}
 
-				var options = BuildPossibilityOptions(list, flat: false); // B7 remainder, see above
+				var options = BuildPossibilityOptions(list, flat: false); // FlatList not imported; see above
 				var stableId = StableId(node, obj);
 				AddField(new LexicalEditRegionField(stableId, Localize(node.Label) ?? node.Field, node.Field,
 					node.WritingSystem, RegionFieldKind.ReferenceVector, node.EditorClassification,
@@ -1529,7 +1524,7 @@ namespace SIL.FieldWorks.XWorks
 				};
 			}
 
-			// avalonia-rule-formula-editor: a reference vector whose targets are NOT a possibility list
+			// A reference vector whose targets are NOT a possibility list
 			// (e.g. PhNCSegments.Segments → phonemes, the ad-hoc RestOfAllos/RestOfMorphs → allomorphs/
 			// morphemes) — editable via the field's own ReferenceTargetCandidates (the canonical valid-target
 			// set the legacy choosers use). Options are the candidates' ShortNames; add validates the option
@@ -1637,7 +1632,7 @@ namespace SIL.FieldWorks.XWorks
 				return possibility.OwningList == list ? possibility : null;
 			}
 
-			// ---- winforms-free-lexeme-editor.md D3: the entry-reference vector path ----
+			// ---- The entry-reference vector path ----
 
 			internal const string EntrySequenceSliceClassName =
 				"SIL.FieldWorks.XWorks.LexEd.EntrySequenceReferenceSlice";
@@ -2014,7 +2009,7 @@ namespace SIL.FieldWorks.XWorks
 			// as plain CmObject). Virtual back-ref vectors (ComplexFormEntries, Subentries,
 			// VisibleComplexFormBackRefs, VariantFormEntries) stay read-only on this path: their writes
 			// land on the OTHER entry's LexEntryRef, not on this flid (the legacy launcher's
-			// AddNewObjectsToProperty overrides) — recorded as this path's deferred note.
+			// AddNewObjectsToProperty overrides).
 			private bool IsEntryOrSenseReferenceVector(ViewNode node, int flid)
 			{
 				if (_mdc.get_IsVirtual(flid))
@@ -2034,7 +2029,7 @@ namespace SIL.FieldWorks.XWorks
 					&& string.Equals(node.CustomEditorClass, EntrySequenceSliceClassName, StringComparison.Ordinal);
 			}
 
-			// D3: the editable entry/sense-reference vector — current refs as headword items, remove
+			// The editable entry/sense-reference vector — current refs as headword items, remove
 			// in-pane, add via type-ahead headword-prefix search over the entry repository (never the
 			// whole lexicon as options). Writes ride sda.Replace on the flid inside the fenced
 			// session, like the possibility path, plus the legacy ComponentLexemes coupling below.
@@ -2368,7 +2363,7 @@ namespace SIL.FieldWorks.XWorks
 				}
 			}
 
-			// D3's type-ahead path: case-insensitive headword-prefix search over the entry
+			// The type-ahead path: case-insensitive headword-prefix search over the entry
 			// repository (headword/citation form/lexeme form), excluding the pane's own entry and
 			// the vector's current members (read live, so a staged add drops out of the next
 			// search), capped at MaxEntrySearchResults, ordered by headword.
@@ -2404,7 +2399,7 @@ namespace SIL.FieldWorks.XWorks
 				=> !string.IsNullOrEmpty(text)
 					&& text.StartsWith(query, StringComparison.OrdinalIgnoreCase);
 
-			// Viewing parity (11.x): every field type the legacy slices display has a rendering here:
+			// Viewing parity: every field type the legacy slices display has a rendering here:
 			// booleans as checkboxes (editable), integers editable, dates/gendates formatted,
 			// structured text as paragraph text, references as value rows; explicit unsupported rows
 			// for the rest. Empty fields show under "show hidden fields" exactly like legacy.
@@ -2439,7 +2434,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				var targetHvo = _sda.get_ObjectProp(obj.Hvo, flid);
 
-				// 6.3: an atomic ref whose target owner is a possibility list takes the
+				// An atomic ref whose target owner is a possibility list takes the
 				// chooser path (legacy PossibilityAtomicReferenceSlice), like morph type.
 				if (obj.ReferenceTargetOwner(flid) is ICmPossibilityList list)
 				{
@@ -2449,7 +2444,7 @@ namespace SIL.FieldWorks.XWorks
 					return;
 				}
 
-				// avalonia-rule-formula-editor: an atomic ref whose targets are enumerable (e.g. the
+				// An atomic ref whose targets are enumerable (e.g. the
 				// ad-hoc Key FirstMorpheme/FirstAllomorph) composes as an editable chooser over its
 				// ReferenceTargetCandidates (the atomic analog of the generic editable vector).
 				var atomicCandidates = SafeReferenceTargetCandidates(obj, flid);
@@ -2470,8 +2465,8 @@ namespace SIL.FieldWorks.XWorks
 				AddReadOnlyRow(node, obj, depth, ResolveShortName(targetHvo));
 			}
 
-			// The owning-atomic dispatch of WalkOtherField, split out unchanged: an StText target composes
-			// as the editable multi-paragraph row (§19a); anything else is a read-only short-name row.
+			// The owning-atomic dispatch of WalkOtherField: an StText target composes
+			// as the editable multi-paragraph row; anything else is a read-only short-name row.
 			private void WalkOwningAtomicField(ViewNode node, ICmObject obj, int depth, int flid)
 			{
 				var targetHvo = _sda.get_ObjectProp(obj.Hvo, flid);
@@ -2481,10 +2476,10 @@ namespace SIL.FieldWorks.XWorks
 					return;
 				}
 
-				// §19a: structured text is now an EDITABLE multi-paragraph row (the legacy
+				// Structured text is an EDITABLE multi-paragraph row (the legacy
 				// StTextSlice rich editor) — paragraph text, add/delete paragraphs, and
 				// per-paragraph named style, each one undoable step. ORC-bearing paragraphs
-				// stay read-only/preserved (§19c.3). Replaces the old read-only flatten.
+				// stay read-only/preserved.
 				if (_cache.ServiceLocator.ObjectRepository.GetObject(targetHvo) is IStText stText)
 				{
 					var anyText = stText.ParagraphsOS.OfType<IStTxtPara>()
@@ -2498,7 +2493,7 @@ namespace SIL.FieldWorks.XWorks
 				AddReadOnlyRow(node, obj, depth, ResolveShortName(targetHvo));
 			}
 
-			// The reference-sequence/collection dispatch of WalkOtherField, split out unchanged: the vector
+			// The reference-sequence/collection dispatch of WalkOtherField: the vector
 			// composes as an editable chooser-backed ReferenceVector where its targets can be enumerated
 			// (possibility list, entry/sense search, editable back-ref, or generic candidates), else a
 			// read-only joined short-name row.
@@ -2506,7 +2501,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				var count = _sda.get_VecSize(obj.Hvo, flid);
 
-				// 6.3/B8: a vector whose targets live in a possibility list becomes an
+				// A vector whose targets live in a possibility list becomes an
 				// editable ReferenceVector row (the legacy possibility-vector slice with
 				// its trailing type-ahead add slot) — even when empty, so an always-visible
 				// field still offers the add affordance.
@@ -2518,7 +2513,7 @@ namespace SIL.FieldWorks.XWorks
 					return;
 				}
 
-				// winforms-free-lexeme-editor.md D3: a vector whose targets are
+				// A vector whose targets are
 				// entries/senses (the EntrySequenceReferenceSlice fields —
 				// ComponentLexemes, PrimaryLexemes, ... on LexEntryRef) composes as an
 				// editable ReferenceVector whose ADD is a type-ahead lexicon search
@@ -2547,7 +2542,7 @@ namespace SIL.FieldWorks.XWorks
 					return;
 				}
 
-				// avalonia-rule-formula-editor: any remaining reference vector whose valid targets
+				// Any remaining reference vector whose valid targets
 				// can be enumerated (e.g. natural-class Segments → phonemes, ad-hoc Others →
 				// allomorphs/morphemes) composes as an editable chooser-backed ReferenceVector,
 				// matching the legacy reference-vector slice. Entry/sense (huge) vectors were
@@ -2573,7 +2568,7 @@ namespace SIL.FieldWorks.XWorks
 				AddReadOnlyRow(node, obj, depth, string.Join("; ", names));
 			}
 
-			// §19e: a literal/"lit" slice (legacy MessageSlice) — the slice's label/message text is the
+			// A literal/"lit" slice (legacy MessageSlice) — the slice's label/message text is the
 			// static content. Routed to RegionFieldKind.Literal so the view renders it as static text in the
 			// value column rather than an (empty) editable row. The content is carried in the value slot so
 			// the renderer shows the message even when there is no separate label column.
@@ -2600,9 +2595,9 @@ namespace SIL.FieldWorks.XWorks
 					menuId: node.MenuId, contextMenuId: node.ContextMenuId, objectHvo: obj.Hvo));
 			}
 
-			// §19a: the editable multi-paragraph structured-text (StText) row — the managed replacement
-			// for the legacy StTextSlice. Builds one RegionParagraph per StTxtPara (run-aware text +
-			// per-paragraph named style; an ORC/lossy paragraph stays read-only/preserved, §19c.3) and
+			// The editable multi-paragraph structured-text (StText) row (legacy StTextSlice).
+			// Builds one RegionParagraph per StTxtPara (run-aware text +
+			// per-paragraph named style; an ORC/lossy paragraph stays read-only/preserved) and
 			// registers the four paragraph-CRUD setters that mutate the LCModel StText inside the open
 			// fenced session — text/style writes are one undo step (focus-loss autosave), add/delete one
 			// undo step (immediate commit + host re-show). The closures verify the StText/paragraph still
@@ -2626,7 +2621,7 @@ namespace SIL.FieldWorks.XWorks
 					isEditable: true, indent: depth, menuId: node.MenuId, contextMenuId: node.ContextMenuId,
 					hotlinksId: node.HotlinksId, objectHvo: obj.Hvo, paragraphs: paragraphs);
 				field.AvailableParagraphStyles = ParagraphStyleNames();
-				// §19c: the StText paragraph rows also expose the run-level character-style + ws pickers and
+				// The StText paragraph rows also expose the run-level character-style + ws pickers and
 				// the per-run font display, so they get the same host-supplied lists as the single-WS rows.
 				field.AvailableNamedStyles = CharacterStyleNames();
 				field.AvailableWritingSystems = WritingSystemOptions();
@@ -2696,7 +2691,7 @@ namespace SIL.FieldWorks.XWorks
 				};
 			}
 
-			// winforms-free-lexeme-editor.md D1: the plugin-claimed row — RegionFieldKind.Custom
+			// The plugin-claimed row — RegionFieldKind.Custom
 			// with the normal label/indent/menu metadata, carrying a factory that closes over
 			// (object, node, deferred edit context, cache). The factory runs in the view at render
 			// time, so composing stays side-effect free and the edit context exists by then.
@@ -2728,7 +2723,7 @@ namespace SIL.FieldWorks.XWorks
 					objectHvo: obj.Hvo));
 			}
 
-			// Viewing parity (11.14) + 14.1: empty always-visible object/sequence fields show the
+			// Viewing parity: empty always-visible object/sequence fields show the
 			// legacy ghost add-prompt as a WATERMARK on an editable row — clicking in clears the
 			// prompt, and typing creates the missing object inside the fenced session (the legacy
 			// ghost-slice create-on-edit path), routing the text into the layout's ghost field
@@ -2849,7 +2844,7 @@ namespace SIL.FieldWorks.XWorks
 							WriteTextProp(createdHvo, ghostFlid, ws.Handle,
 								(CellarPropertyType)_mdc.GetFieldType(ghostFlid), value);
 						}
-						// B2: invoke the layout's ghostInitMethod by reflection on the newly created
+						// Invoke the layout's ghostInitMethod by reflection on the newly created
 						// object, after the typed text lands — exactly GhostStringSliceView.
 						// MakeRealObject's order (GhostStringSlice.cs:305-328); e.g. SetMorphTypeToRoot
 						// on a new lexeme-form allomorph, SetTypeToFreeTrans on a new translation.
@@ -2886,7 +2881,7 @@ namespace SIL.FieldWorks.XWorks
 				var targetHvo = _sda.get_ObjectProp(obj.Hvo, flid);
 				if (targetHvo == 0)
 				{
-					// Ghost add-prompt for an empty always-visible object field (11.14).
+					// Ghost add-prompt for an empty always-visible object field.
 					if (!HideWhenEmpty(node))
 						AddGhostPrompt(node, obj, depth);
 					return;
@@ -2934,7 +2929,7 @@ namespace SIL.FieldWorks.XWorks
 						itemLabel = $"{sectionLabel} {i + 1}";
 					}
 
-					// 15.3: the item's own layout carries the slice menu (e.g. the sense's
+					// The item's own layout carries the slice menu (e.g. the sense's
 					// HeavySummary part ref binds mnuDataTree-Sense in LexSense.fwlayout) — the
 					// sequence node itself usually has none.
 					var itemBinding = ResolveItemMenuBinding(node, item);
@@ -2950,7 +2945,7 @@ namespace SIL.FieldWorks.XWorks
 				}
 			}
 
-			// 15.3: first root-level menu/hotlinks binding of the item's compiled layout (compile
+			// First root-level menu/hotlinks binding of the item's compiled layout (compile
 			// results are memoized per (class, layout), and the binding itself is memoized per
 			// compose state — finding A).
 			private (string MenuId, string HotlinksId) ResolveItemMenuBinding(ViewNode node, ICmObject item)
@@ -2976,7 +2971,7 @@ namespace SIL.FieldWorks.XWorks
 				return (menu, hotlinks);
 			}
 
-			// §19e: an embedded formatted view (legacy jtview / ViewSlice over an XmlView). The jtview's
+			// An embedded formatted view (legacy jtview / ViewSlice over an XmlView). The jtview's
 			// param/layout names a layout to render for the SAME object inline; we compile that layout and
 			// walk its fields at depth+1, exactly as DescendInto walks a descended object's layout. The
 			// visited-set guards against a layout that (directly or transitively) re-enters itself. When the
@@ -3028,7 +3023,7 @@ namespace SIL.FieldWorks.XWorks
 				var compiled = CompileForObjectWithOverrides(target, layoutName);
 				if (compiled != null && compiled.Roots.Count > 0)
 				{
-					// advanced-entry-view: rows from the descended model are stamped with ITS (class,
+					// Rows from the descended model are stamped with ITS (class,
 					// layout), so the gear-menu commands on a sense/allomorph row target that layout's
 					// override file, not the entry's.
 					EnterModel(compiled);
@@ -3081,7 +3076,7 @@ namespace SIL.FieldWorks.XWorks
 		// no kwsPronunciation branch), initialized on demand the same way legacy
 		// DefaultPronunciationWritingSystem initializes it. Empty/unknown specs take
 		// GetWritingSystemList's own analysis default — the legacy default for unmarked fields.
-		// §19e: filter the resolved writing systems to a per-field visibleWritingSystems override (in the
+		// Filter the resolved writing systems to a per-field visibleWritingSystems override (in the
 		// override's order), matching each spec against the ws Id (IETF tag). No override (null/empty) keeps
 		// the full set; an override that matches nothing also keeps the full set, so a stale override can
 		// never blank a real field (legacy degrades the same way — StringSliceUtils intersects with valid
@@ -3123,10 +3118,10 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Compiles the layout for an object's class, walking base classes the way legacy DataTree
 		/// does (e.g. MoStemAllomorph → MoForm) for both layout lookup and part resolution.
-		/// Memoized per (starting class, layout) for the lifetime of the loaded sources (finding A).
+		/// Memoized per (starting class, layout) for the lifetime of the loaded sources.
 		/// </summary>
 		/// <summary>
-		/// §20.1.4 (F-2): resolve the layout-choice GUID for a record whose detail layout is type-selected via
+		/// Resolve the layout-choice GUID for a record whose detail layout is type-selected via
 		/// a <c>layoutChoiceField</c> (e.g. RnGenericRec/Normal keyed on the record's <c>Type</c> possibility).
 		/// Returns the chosen possibility's GUID string, or null when there is no choice field / no value /
 		/// the field is not an atomic object reference — mirroring legacy DataTree, which then falls back to
@@ -3164,7 +3159,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Compiles (with the legacy base-class walk) and, when <paramref name="overrides"/> supplies a
 		/// per-project patch for the resulting (class, layout), returns the patched model
-		/// (advanced-entry-view). CRITICAL: the cache (<see cref="CompilerSources.CompiledModels"/>) holds
+		/// CRITICAL: the cache (<see cref="CompilerSources.CompiledModels"/>) holds
 		/// the SHIPPED model only — the override is applied on the way OUT to a fresh copy
 		/// (<see cref="ViewDefinitionOverrideApplier.Apply"/> is pure), so a patched project never poisons
 		/// the process-wide cache that other projects/classes read.
@@ -3202,7 +3197,7 @@ namespace SIL.FieldWorks.XWorks
 			while (true)
 			{
 				className = mdc.GetClassName(clsid);
-				// §20.1.4 (F-1/F-2): pick the choiceGuid-matching variant (exact match, else the choiceGuid-less
+				// Pick the choiceGuid-matching variant (exact match, else the choiceGuid-less
 				// fallback, else first) so a record's layoutChoiceField selects the right layout instead of the
 				// document-first one.
 				if (sources.LayoutIndex.TryGetValue((className, "detail", layoutName), out var variants))
@@ -3309,7 +3304,7 @@ namespace SIL.FieldWorks.XWorks
 
 		public ComposedRegionEditContext(
 			LcmCache cache,
-			ICmObject root, // §20.1: any record root (LexEntry today; RnGenericRec/CmPossibility/PartOfSpeech once other tools are wired)
+			ICmObject root, // any record root (LexEntry today)
 			IReadOnlyDictionary<string, FieldEditHandler> handlers)
 			: base(cache, root)
 		{
@@ -3328,7 +3323,7 @@ namespace SIL.FieldWorks.XWorks
 			var setter = Handler(field)?.Text;
 			if (setter == null)
 				return false;
-			// ITEM 1: a single field's edit names the undo label (e.g. "Undo change to Gloss").
+			// A single field's edit names the undo label (e.g. "Undo change to Gloss").
 			return Stage(() => setter(ws, value), FieldLabelFor(field));
 		}
 
@@ -3401,12 +3396,12 @@ namespace SIL.FieldWorks.XWorks
 			return Stage(() => setter(paragraphIndex), FieldLabelFor(field));
 		}
 
-		// ITEM 1: the human-readable field label that names the undo step, falling back to the
+		// The human-readable field label that names the undo step, falling back to the
 		// field name (never empty so the generic label is reserved for the batch/bulk path).
 		private static string FieldLabelFor(LexicalEditRegionField field)
 			=> string.IsNullOrEmpty(field?.Label) ? field?.Field : field.Label;
 
-		// The fenced-session staging helper (open-on-first-edit, close-empty-fence-on-reject) now lives
+		// The fenced-session staging helper (open-on-first-edit, close-empty-fence-on-reject) lives
 		// on RegionEditContextBase.Stage so a plugin editor's own writes (the Reversal Entries plugin)
 		// can ride the SAME undoable step through the shared context.
 	}

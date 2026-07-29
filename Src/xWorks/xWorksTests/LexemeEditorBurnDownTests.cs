@@ -16,20 +16,18 @@ using SIL.LCModel.Infrastructure;
 namespace SIL.FieldWorks.XWorks
 {
 	/// <summary>
-	/// winforms-free-lexeme-editor.md — the trimmed lexeme editor's custom-slice census, enforced by
-	/// tests rather than intentions. After the amputation the region has exactly ONE native-conversion
-	/// route (the <see cref="IRegionEditorPlugin"/> contract with <see cref="ReversalIndexEntryPlugin"/>
-	/// as the sole exemplar) plus the composer's D3 reference-vector absorption; every OTHER dynamically
-	/// loaded custom slice composes as the labeled Unsupported worklist row — the visible conversion
-	/// backlog. This census pins that only ReversalIndexEntrySlice is plugin-claimed, that the D3 classes
-	/// are composer-absorbed, and that the formerly launcher-routed slices plus the Chorus notes bar are
-	/// unclaimed (so they render Unsupported).
+	/// The trimmed lexeme editor's custom-slice census. The region has exactly ONE native-conversion
+	/// route (the <see cref="IRegionEditorPlugin"/> contract with <see cref="ReversalIndexEntryPlugin"/>)
+	/// plus the composer's reference-vector absorption; every OTHER dynamically loaded custom slice
+	/// composes as the labeled Unsupported worklist row. This census pins that only ReversalIndexEntrySlice
+	/// is plugin-claimed, that the composer-absorbed classes compose as reference vectors, and that the
+	/// feature-launcher slices plus the Chorus notes bar are unclaimed (so they render Unsupported).
 	/// </summary>
 	[TestFixture]
 	public class LexemeEditorBurnDownTests
 	{
 		// The legacy class identities the census parser and the route assertions reference. Held here
-		// (not on deleted plugin/companion types) so the census is self-contained.
+		// so the census is self-contained.
 		private const string MessageSliceClassName = "SIL.FieldWorks.XWorks.LexEd.MessageSlice";
 		private const string MsaFeatureSliceClassName =
 			"SIL.FieldWorks.XWorks.LexEd.MsaInflectionFeatureListDlgLauncherSlice";
@@ -43,7 +41,7 @@ namespace SIL.FieldWorks.XWorks
 		private const string LexReferenceMultiSliceClassName =
 			"SIL.FieldWorks.XWorks.LexEd.LexReferenceMultiSlice";
 
-		// The D3 classes the composer recognizes by legacy identity and absorbs as native ReferenceVector
+		// The classes the composer recognizes by legacy identity and absorbs as native ReferenceVector
 		// rows (no plugin). Kept in one place so the census and the route tests agree.
 		private static readonly string[] ComposerAbsorbedClassNames =
 		{
@@ -108,7 +106,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void Census_FindsTheMeasuredProblemClasses()
 		{
-			// The census parser must keep seeing the classes the decision doc measured — if the
+			// The census parser must keep seeing these known classes — if the
 			// attribute shapes in the part files ever change, the census must change with them rather
 			// than silently going empty (which would make every class "classified").
 			var census = LexemeEditorCustomSliceCensus();
@@ -121,8 +119,8 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void DefaultRegistry_BuiltinsAreExactlyTheReversalIndexEntryPlugin()
 		{
-			// The single native-conversion exemplar. Every other custom slice not absorbed by a composer
-			// route renders the Unsupported worklist row — there is no launcher/companion fallback.
+			// The single native-conversion route. Every other custom slice not absorbed by a composer
+			// route renders the Unsupported worklist row (no other native route exists).
 			Assert.That(RegionEditorPluginRegistry.Default.RegisteredClassNames,
 				Is.EquivalentTo(new[] { ReversalIndexEntryPlugin.ReversalIndexEntrySliceClassName }));
 			Assert.That(RegionEditorPluginRegistry.Default.Resolve(ReversalIndexEntryPlugin.ReversalIndexEntrySliceClassName),
@@ -132,9 +130,9 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void FormerlyLauncherRoutedClasses_AndTheChorusNotesBar_AreUnclaimed()
 		{
-			// The D4 launcher seam and the companion strip were removed: the MSA/phonological feature
-			// launchers, the audio-visual media slice, and the Chorus notes bar (MessageSlice) are no
-			// longer claimed by any plugin, so each composes as the labeled Unsupported worklist row.
+			// The MSA/phonological feature launchers, the audio-visual media slice, and the Chorus notes
+			// bar (MessageSlice) are not claimed by any plugin, so each composes as the labeled
+			// Unsupported worklist row.
 			foreach (var cls in new[]
 			{
 				MsaFeatureSliceClassName, PhonologicalFeatureSliceClassName,
@@ -151,7 +149,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void ComposerAbsorbedClasses_AreNotPluginClaimed()
 		{
-			// D3: the entry/sense reference-vector, ghost reference-vector, and lexical-relation slices
+			// The entry/sense reference-vector, ghost reference-vector, and lexical-relation slices
 			// are recognized by the composer's own routing (no plugin) and compose as native
 			// ReferenceVector rows, so the registry must NOT claim them.
 			foreach (var cls in ComposerAbsorbedClassNames)
@@ -199,10 +197,10 @@ namespace SIL.FieldWorks.XWorks
 	}
 
 	/// <summary>
-	/// winforms-free-lexeme-editor.md D1 — the composer's resolution order for a custom slice is now
+	/// The composer's resolution order for a custom slice is
 	/// plugin registry → Unsupported row. A plugin claiming a slice's legacy class composes it as a
 	/// RegionFieldKind.Custom row carrying the plugin's deferred control factory; an unclaimed custom
-	/// slice (with no launcher/companion fallback) composes as the labeled Unsupported worklist row.
+	/// slice composes as the labeled Unsupported worklist row.
 	/// </summary>
 	[TestFixture]
 	public class RegionEditorPluginResolutionOrderTests : MemoryOnlyBackendProviderTestBase
@@ -246,8 +244,8 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void Compose_UnclaimedCustomSlice_ComposesAsUnsupportedWorklistRow()
 		{
-			// No plugin claims the Chorus notes bar (MessageSlice), and there is no launcher/companion
-			// fallback, so the node composes as the labeled Unsupported worklist row — never a Custom row,
+			// No plugin claims the Chorus notes bar (MessageSlice), so the node composes as the labeled
+			// Unsupported worklist row — never a Custom row,
 			// never silently omitted.
 			var composed = FullEntryRegionComposer.Compose(m_entry, Cache,
 				plugins: new RegionEditorPluginRegistry());

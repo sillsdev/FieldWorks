@@ -11,8 +11,8 @@ using SIL.FieldWorks.Common.FwAvalonia.Region;
 namespace FwAvaloniaDialogs
 {
 	/// <summary>
-	/// View-model for the reusable Avalonia Add New Sense dialog (MSA-port Stage 5 replacement for the legacy
-	/// <c>AddNewSenseDlg</c> in New-UI mode). It hosts the owned controls the view mounts:
+	/// View-model for the reusable Avalonia Add New Sense dialog (the New-UI-mode analog of the legacy
+	/// <c>AddNewSenseDlg</c>). It hosts the owned controls the view mounts:
 	///   * a read-only CITATION FORM display string (the legacy <c>m_fwtbCitationForm</c>, never edited),
 	///   * a <see cref="FwMultiWsTextField"/> for the editable GLOSS (one row per analysis WS — <c>m_fwtbGloss</c>),
 	///     staged into an in-memory <see cref="InMemoryRegionEditContext"/> so the VM stays LCModel-free, and
@@ -81,7 +81,7 @@ namespace FwAvaloniaDialogs
 				RefreshInflectionClassesForCurrentPos();
 				RefreshInflectionFeaturesForCurrentPos();
 			};
-			// Forward the box's create-feature / create-value requests (Stage 3 wires the feature dialogs).
+			// Forward the box's create-feature / create-value requests to the host.
 			MsaGroupBox.CreateNewFeatureRequested += () => CreateNewFeatureRequested?.Invoke();
 			MsaGroupBox.CreateNewValueRequested += id => CreateNewValueRequested?.Invoke(id);
 			// Create-new-POS: forward each chooser's inline "Create a new Part of Speech..." request as a VM-level
@@ -142,10 +142,10 @@ namespace FwAvaloniaDialogs
 		/// </summary>
 		public event Action<FwPosTarget> CreateNewPosRequested;
 
-		/// <summary>Raised when the user clicks "Create a new feature..." in the inflection-feature editor (§19b Stage 2).</summary>
+		/// <summary>Raised when the user clicks "Create a new feature..." in the inflection-feature editor.</summary>
 		public event Action CreateNewFeatureRequested;
 
-		/// <summary>Raised when the user invokes a closed feature's "Add a value..." affordance (§19b Stage 2).</summary>
+		/// <summary>Raised when the user invokes a closed feature's "Add a value..." affordance.</summary>
 		public event Action<string> CreateNewValueRequested;
 
 		/// <summary>
@@ -186,7 +186,7 @@ namespace FwAvaloniaDialogs
 				_inflClassesForPos(MsaGroupBox.MainPosId) ?? Array.Empty<FwInflectionClass>());
 		}
 
-		// Re-runs the launcher's inflection-feature-system provider for the box's current main POS (§19b Stage 2).
+		// Re-runs the launcher's inflection-feature-system provider for the box's current main POS.
 		private void RefreshInflectionFeaturesForCurrentPos()
 		{
 			if (MsaGroupBox == null || _inflFeaturesForPos == null)

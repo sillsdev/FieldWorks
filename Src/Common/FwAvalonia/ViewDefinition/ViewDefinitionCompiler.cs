@@ -16,7 +16,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 	/// <summary>
 	/// An immutable snapshot of the XML source needed to compile one view definition. Taking this
 	/// snapshot up front (rather than reading live <c>Inventory</c>/<c>PropertyTable</c> state during an
-	/// off-thread compile) satisfies task 4.6: compilation works from immutable inputs only.
+	/// off-thread compile) means compilation works from immutable inputs only.
 	/// </summary>
 	public sealed class ViewDefinitionSourceSnapshot
 	{

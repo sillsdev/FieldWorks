@@ -17,8 +17,8 @@ using AvControl = Avalonia.Controls.Control;
 namespace SIL.FieldWorks.LexText.Controls
 {
 	/// <summary>
-	/// The LCModel-aware launcher for the reusable Avalonia "Create New Grammatical Info." dialog — the MSA-port
-	/// Stage 5 product-side replacement for the legacy <see cref="MsaCreatorDlg"/> in New-UI mode. It is a concrete
+	/// The LCModel-aware launcher for the reusable Avalonia "Create New Grammatical Info." dialog — the
+	/// replacement for the legacy <see cref="MsaCreatorDlg"/> in New-UI mode. It is a concrete
 	/// <see cref="AvaloniaDialogLauncher{TState,TViewModel,TPayload}"/>: the Avalonia layer stays LCModel-free by
 	/// exchanging a <see cref="MsaCreatorDialogInput"/> (the read-only lexical entry + senses summary, the POS nodes /
 	/// slot provider, and the box seeded from the existing <c>SandboxGenericMSA</c> / morph type) and a
@@ -87,7 +87,7 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		/// <summary>
 		/// Same as <see cref="Show(LcmCache, Mediator, PropertyTable, ILexEntry, SandboxGenericMSA, int, bool, string, IWin32Window, IHelpTopicProvider)"/>
-		/// but also returns the LCModel-free <see cref="FwSandboxMsa"/> the box chose (§19b Stage 3): the caller can
+		/// but also returns the LCModel-free <see cref="FwSandboxMsa"/> the box chose: the caller can
 		/// round-trip its inflection features onto the resolved MSA via
 		/// <see cref="LcmInsertEntryDialogLauncher.ApplyInflectionFeatures(LcmCache, IMoMorphSynAnalysis, FwSandboxMsa)"/>
 		/// after it has applied the SandboxGenericMSA (assign-to-sense path). Null + null on cancel.
@@ -154,11 +154,11 @@ namespace SIL.FieldWorks.LexText.Controls
 				InitialSecondaryPosId = seedMsa.SecondaryPOS?.Guid.ToString(),
 				InitialSlotId = seedMsa.Slot?.Guid.ToString(),
 				SlotsForPos = posId => LcmInsertEntryDialogLauncher.BuildSlots(cache, posId, morphTypeGuid),
-				// Inflection-class picker (Stage 6): the selected main POS's classes, re-fed when the main POS changes,
+				// Inflection-class picker: the selected main POS's classes, re-fed when the main POS changes,
 				// seeded from the existing stem/deriv-step MSA's inflection class.
 				InflectionClassesForPos = posId => LcmInsertEntryDialogLauncher.BuildInflectionClasses(cache, posId),
 				InitialInflectionClassId = InflectionClassIdFromExistingMsa(cache, hvoOriginalMsa),
-				// Inflection-feature editor (§19b Stage 2): the selected main POS's inflectable-feature system, re-fed
+				// Inflection-feature editor: the selected main POS's inflectable-feature system, re-fed
 				// when the main POS changes (infl/deriv), seeded from the existing MSA's IFsFeatStruc (the edit path).
 				InflectionFeaturesForPos = posId => LcmInsertEntryDialogLauncher.BuildInflectionFeatures(cache, posId),
 				InitialInflectionFeatures = InflectionFeaturesFromExistingMsa(cache, hvoOriginalMsa)
@@ -210,7 +210,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		}
 
 		/// <summary>
-		/// Reads the existing MSA's inflection-feature assignments to seed the editor (§19b Stage 2 edit path) — the
+		/// Reads the existing MSA's inflection-feature assignments to seed the editor (the edit path) — the
 		/// flat <c>(closedFeatureId, valueId)</c> set from an <c>IMoInflAffMsa.InflFeatsOA</c> /
 		/// <c>IMoDerivAffMsa.FromMsFeaturesOA</c>, via <see cref="FwFeatureStructureAdapter.ReadAssignments"/>. Empty on
 		/// the create path / non-infl-deriv MSA. Internal so the read is unit-testable against a real cache.
@@ -246,7 +246,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			_viewModel = new MsaCreatorDialogViewModel(state);
 			_viewModel.HelpRequested += OnHelpRequested;
 			_viewModel.CreateNewPosRequested += OnCreateNewPosRequested;
-			// §19b Stage 3: wire the inline create-feature / add-value affordances (replacing the deferred no-op) to
+			// Wire the inline create-feature / add-value affordances to
 			// the shared LcmCreateFeatureLauncher; on success feed the new node back to the hosted MSA box's editor.
 			_viewModel.CreateNewFeatureRequested += () =>
 				LcmInflectionFeatureCreateWiring.CreateFeature(_cache, _owner, _viewModel.MsaGroupBox);
@@ -287,19 +287,19 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 			ChosenSandboxMsa = LcmInsertEntryDialogLauncher.BuildSandboxMsa(_cache, payload.Msa, morphType);
 			ChosenBoxMsa = payload.Msa;
-			// §19b Stage 3: the chosen inflection-feature set now rides back to the caller via ChosenBoxMsa, so a caller
+			// The chosen inflection-feature set rides back to the caller via ChosenBoxMsa, so a caller
 			// that assigns the resolved SandboxGenericMSA to a definite MSA (MSAPopupTreeManager's
 			// m_sense.SandboxMSA = ...) can round-trip the features onto that MSA in its own UOW (via the Show out-param
 			// overload + LcmInsertEntryDialogLauncher.ApplyInflectionFeatures). PARITY: the MSADlgLauncher
 			// UpdateOrReplace path is NOT round-tripped — UpdateOrReplace may REPLACE the MSA with a different instance,
-			// so the post-apply feature target is ambiguous within a reasonable slice; it keeps this note. The Insert
+			// so the post-apply feature target is ambiguous. The Insert
 			// Entry and Add New Sense launchers (which own their created MSA) rebuild the inflection features fully.
-			// PARITY (Stage 6 inflection class): this launcher produces a SandboxGenericMSA for the CALLER to apply
+			// PARITY (inflection class): this launcher produces a SandboxGenericMSA for the CALLER to apply
 			// (m_sense.SandboxMSA = ... / UpdateOrReplace) and does NOT itself mutate the model (see the class PARITY
 			// note). SandboxGenericMSA carries no inflection-class field, so the chosen inflection class is SHOWN +
 			// seeded + refreshed in the box here but is not round-tripped through the MsaCreator caller's apply. Fully
 			// wiring it would require setting IMoStemMsa.InflectionClassRA on the resolved MSA at the call sites
-			// (MSAPopupTreeManager / MSADlgLauncher), which are outside this stage's file ownership. The Insert Entry
+			// (MSAPopupTreeManager / MSADlgLauncher), which are outside this launcher's file ownership. The Insert Entry
 			// and Add New Sense launchers (which own their created MSA) DO set the inflection class fully.
 			return payload;
 		}

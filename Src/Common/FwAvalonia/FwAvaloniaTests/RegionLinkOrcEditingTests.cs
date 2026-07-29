@@ -21,10 +21,10 @@ using FwAvaloniaDialogsTests;
 namespace FwAvaloniaTests
 {
 	/// <summary>
-	/// §19c (T1/T3/T5) — kind-aware ORC editing on the owned multi-WS text editor: external-link
+	/// Kind-aware ORC editing on the owned multi-WS text editor: external-link
 	/// insert / edit / delete (the dialog-light URL prompt flyout), generic ORC delete (any kind), and
-	/// the picture/footnote DEFER contract (rendered + deletable, NOT insert/caption here). An ORC is no
-	/// longer a blanket read-only block. LCModel-free: a recording fake context.
+	/// the picture/footnote DEFER contract (rendered + deletable, NOT insert/caption here). An ORC is
+	/// not a blanket read-only block. LCModel-free: a recording fake context.
 	/// </summary>
 	[TestFixture]
 	public class RegionLinkOrcEditingTests
@@ -56,7 +56,7 @@ namespace FwAvaloniaTests
 			=> root.GetVisualDescendants().OfType<T>()
 				.FirstOrDefault(c => AutomationProperties.GetAutomationId(c) == id);
 
-		// The link / delete-embedded-object operations moved off the row onto the value box's right-click
+		// The link / delete-embedded-object operations live on the value box's right-click
 		// menu, so they are MenuItems in the box's ContextFlyout, not visual-tree children. The link item
 		// carries the prompt flyout it opens in its Tag.
 		private static MenuItem FindMenuItem(TextBox box, string id)

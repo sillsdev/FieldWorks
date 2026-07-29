@@ -16,7 +16,7 @@ using AvControl = Avalonia.Controls.Control;
 namespace SIL.FieldWorks.LexText.Controls
 {
 	/// <summary>
-	/// The LCModel-aware launcher for the standalone INFLECTION-feature chooser dialog (Phase-1 §19b Stage 3) — the
+	/// The LCModel-aware launcher for the standalone INFLECTION-feature chooser dialog — the
 	/// New-UI replacement for the WinForms <see cref="MsaInflectionFeatureListDlg"/> the inflection-features slice
 	/// opens. It is a concrete <see cref="AvaloniaDialogLauncher{TState,TViewModel,TPayload}"/> that bridges LCModel ↔
 	/// the LCModel-free <see cref="FeatureChooserDialogViewModel"/>: it builds the POS's inflectable-feature system

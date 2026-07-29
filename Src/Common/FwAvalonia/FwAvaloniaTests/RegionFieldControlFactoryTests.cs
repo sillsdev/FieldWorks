@@ -51,7 +51,7 @@ namespace FwAvaloniaTests
 			=> Assert.That(RegionFieldControlFactory.Build(Field(RegionFieldKind.Unsupported), "Auto.Id", null),
 				Is.InstanceOf<TextBlock>());
 
-		// §19e — Literal: a static text renderer (legacy MessageSlice) — the label/message text is the
+		// Literal: a static text renderer (legacy MessageSlice) — the label/message text is the
 		// content, no editable value column.
 		[AvaloniaTest]
 		public void LiteralKind_BuildsStaticTextBlock_ShowingTheLabel()
