@@ -19,7 +19,7 @@ namespace FwAvaloniaDialogs
 	///
 	/// Selection and search are MVVM; the code-behind only bridges to the view-model — building the column
 	/// header/row cells from the column spec, translating double-click / Enter / arrow-key gestures into VM calls,
-	/// pruning the opt-in OK button and description region from the tree when a consumer doesn't use them, and
+	/// pruning the opt-in OK button and description pane from the tree when a consumer doesn't use them, and
 	/// applying the opt-in <see cref="EntryGoSearchFieldSpec"/> (font, flow direction, keyboard-switch callback)
 	/// to the search box.
 	/// </summary>
@@ -61,7 +61,7 @@ namespace FwAvaloniaDialogs
 			// keep their exact OK-less surface, so remove it from the tree (not merely hide it) once the VM arrives.
 			DataContextChanged += OnDataContextChangedRemoveOkIfSingleStage;
 
-			// The description region is opt-in; consumers that supply no label or rich content lose the entire
+			// The description pane is opt-in; consumers that supply no label or rich content lose the entire
 			// right column (removed from the tree) and the matching list takes the full width.
 			DataContextChanged += OnDataContextChangedRemoveDescriptionPaneIfUnused;
 
@@ -74,7 +74,7 @@ namespace FwAvaloniaDialogs
 		}
 
 		// Applies the opt-in search-field spec to the realized search box: the writing system's font family/size and
-		// right-to-left flow (the same value-application rules the region surface uses for its per-ws rows — empty
+		// right-to-left flow (the same value-application rules the detail surface uses for its per-ws rows — empty
 		// family / zero size keep the kit defaults). The keyboard-switch callback fires from OnSearchBoxGotFocus.
 		private void OnDataContextChangedApplySearchFieldSpec(object sender, System.EventArgs e)
 		{
@@ -116,7 +116,7 @@ namespace FwAvaloniaDialogs
 			(okButton?.Parent as Panel)?.Children.Remove(okButton);
 		}
 
-		// Removes the opt-in description region (and its gutter) from the tree when the consumer supplied neither
+		// Removes the opt-in description pane (and its gutter) from the tree when the consumer supplied neither
 		// a description label nor rich row content, zeroing their grid columns so the persistent matching list
 		// takes the full dialog width (the legacy BaseGoDlg surface, which has no description pane).
 		private void OnDataContextChangedRemoveDescriptionPaneIfUnused(object sender, System.EventArgs e)

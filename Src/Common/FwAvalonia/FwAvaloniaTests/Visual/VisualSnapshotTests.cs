@@ -46,7 +46,7 @@ namespace FwAvaloniaTests.VisualChecks
 	}
 
 	/// <summary>
-	/// Region visual coverage: the owned non-dialog surface (the lexical-edit detail view)
+	/// Detail visual coverage: the owned non-dialog surface (the lexical-edit detail view)
 	/// gets the SAME treatment as dialogs — a real PNG snapshot for subjective review AND the
 	/// shared <see cref="DialogLayoutAssert"/> hard-fail tripwire (overlap / zero-area text / crowding) —
 	/// so the visual standard is one standard across every Avalonia surface, not dialogs only.
@@ -82,7 +82,7 @@ namespace FwAvaloniaTests.VisualChecks
 			DialogLayoutAssert.AssertNoCrowding(view);
 		}
 
-		// ----- realistic region detail fixture (10 fields of varied kinds, no LCModel) -----
+		// ----- realistic detail fixture (10 fields of varied kinds, no LCModel) -----
 
 		[AvaloniaTest]
 		public void DetailEditView_RealisticMultiField_RendersCleanly()
@@ -151,7 +151,7 @@ namespace FwAvaloniaTests.VisualChecks
 			public string GetSelectedOptionKey(ViewNode fieldNode) => null;
 		}
 
-		// ----- realistic region fixture builders (fields built directly so kinds beyond Text/Chooser —
+		// ----- realistic detail fixture builders (fields built directly so kinds beyond Text/Chooser —
 		// ReferenceVector, Unsupported — are exercised; the mapper only classifies Text/Chooser/Unsupported) -----
 
 		// A realistic lexeme-entry detail: 10 fields of varied kinds, mirroring what the lexical edit pane shows.

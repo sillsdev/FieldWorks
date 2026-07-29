@@ -172,7 +172,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		}
 
 		// The first slice renders the selected nodes flat, so children (e.g. AllomorphStatus under the
-		// lexeme form) are stripped; they return when the region grows past the identity slice.
+		// lexeme form) are stripped; they return when the detail view grows past the identity slice.
 		private static ViewNode StampProductLeaf(ViewNode source, string automationId, string labelOverride)
 			=> new ViewNode(source.StableId, ViewNodeKind.Field, labelOverride ?? source.Label, source.Abbreviation,
 				source.Field, source.RawEditor, source.EditorClassification, source.WritingSystem, source.Visibility,

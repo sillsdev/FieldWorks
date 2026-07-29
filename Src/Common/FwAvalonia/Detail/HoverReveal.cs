@@ -16,7 +16,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 {
 	/// <summary>
 	/// A field editor whose row decorations include hover-revealed affordances (the chooser's settings
-	/// gear, the reference vector's separator bars and "+" launcher). The region view reads this
+	/// gear, the reference vector's separator bars and "+" launcher). The detail view reads this
 	/// to widen the hover surface to the WHOLE row (label + editor) — presentation only, no behavior.
 	/// </summary>
 	public interface IHoverAffordanceProvider

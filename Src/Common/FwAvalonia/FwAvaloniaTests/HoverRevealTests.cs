@@ -384,7 +384,7 @@ namespace FwAvaloniaTests
 		}
 
 		// Idempotence regression: controls attach their own affordances in their constructors and
-		// the region view attaches AGAIN to widen the hover surface to the row. Before the merge
+		// the detail view attaches AGAIN to widen the hover surface to the row. Before the merge
 		// fix each Attach stacked an independent handler set with its own watched list, and the
 		// LAST registration could hide the affordance while the pointer was still over a source
 		// only an EARLIER registration watched (correctness depended on the superset attaching

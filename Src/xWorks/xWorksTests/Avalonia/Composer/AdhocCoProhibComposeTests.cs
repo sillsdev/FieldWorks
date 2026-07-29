@@ -18,7 +18,7 @@ namespace SIL.FieldWorks.XWorks
 	///
 	/// Pins how the ad-hoc co-prohibition records compose on the Avalonia surface, to scope the remaining
 	/// work for the `AdhocCoprohibEdit` tool. Its Key/Others rows are custom slices; with the lexical-edit
-	/// region limited to string, list-choice, and the one native plugin, an unclaimed custom slice composes
+	/// detail view limited to string, list-choice, and the one native plugin, an unclaimed custom slice composes
 	/// as a labeled Unsupported worklist row.
 	/// </summary>
 	[TestFixture]
@@ -46,7 +46,7 @@ namespace SIL.FieldWorks.XWorks
 			var kinds = composed.Model.Fields.Select(f => f.Kind.ToString()).ToList();
 			TestContext.WriteLine("MoMorphAdhocProhib composed field kinds: " + string.Join(", ", kinds));
 			Assert.That(composed.Model.Fields, Is.Not.Empty, "the ad-hoc co-prohibition composes its detail");
-			// The Key (FirstMorpheme) and Others (RestOfMorphs) are custom slices. With the region limited
+			// The Key (FirstMorpheme) and Others (RestOfMorphs) are custom slices. With the detail view limited
 			// to string / list-choice / one native plugin, an unclaimed custom slice composes as a labeled
 			// Unsupported worklist row rather than a Chooser/ReferenceVector.
 			Assert.That(composed.Model.Fields.Any(f => f.Kind == DetailFieldKind.Unsupported),

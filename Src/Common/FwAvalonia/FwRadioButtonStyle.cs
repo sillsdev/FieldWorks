@@ -17,7 +17,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 {
 	/// <summary>
 	/// The radio-button counterpart of <see cref="FwCheckBoxStyle"/>: the ONE DETERMINISTIC, GLOBAL
-	/// RadioButton style, so every Avalonia surface (dialogs, region, bulk-edit bar) renders radios at a FIXED
+	/// RadioButton style, so every Avalonia surface (dialogs, detail view, bulk-edit bar) renders radios at a FIXED
 	/// size derived from <see cref="FwAvaloniaDensity.RadioBoxSize"/> (the same 14px the checkbox uses, a
 	/// function of the 12px surface font), so a radio NEVER inflates a row past the text line.
 	///
@@ -31,7 +31,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 	/// <c>Theme</c> setter) carrying that template plus the checked/disabled state styles.
 	///
 	/// AUTHORITATIVE SOURCE: this C# builder is the single definition, mirroring <see cref="FwCheckBoxStyle"/>.
-	/// <see cref="FwSurfaceStyles"/> (browse / region / bulk-bar path) adds it; the dialog path adds it via
+	/// <see cref="FwSurfaceStyles"/> (browse / detail / bulk-bar path) adds it; the dialog path adds it via
 	/// <c>DialogThemeBootstrap.Apply</c> (called by every dialog ctor, in BOTH the runtime host and the headless
 	/// dialog tests). One helper, both paths.
 	/// </summary>

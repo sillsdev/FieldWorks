@@ -31,7 +31,7 @@
     <PackageReference Include="Avalonia.BuildServices" IncludeAssets="none" PrivateAssets="all" />
     <!-- Headless Avalonia platform for the assembly-level SetUpFixture (AvaloniaHeadlessSetUpFixture):
          integration tests that drive the product surface (RecordEditView/RecordBrowseView host the
-         Avalonia region/browse surface) otherwise initialize the REAL Win32 Avalonia platform
+         Avalonia detail/browse surface) otherwise initialize the REAL Win32 Avalonia platform
          process-wide, so any flyout/dialog/popup becomes a real on-screen window that flashes and can
          steal keypresses. The fixture installs a headless builder (matching FwAvaloniaTests) before any
          test runs. Headless is test-only here; the production FwAvalonia DLL stays Headless-free. -->

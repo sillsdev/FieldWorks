@@ -139,7 +139,7 @@ namespace FwAvaloniaTests
 	}
 
 	/// <summary>
-	/// The region view drives editing through the edit-context seam — staging on
+	/// The detail view drives editing through the edit-context seam — staging on
 	/// text/option change, validation-gated Save, Cancel rollback — with stable automation ids.
 	/// </summary>
 	[TestFixture]

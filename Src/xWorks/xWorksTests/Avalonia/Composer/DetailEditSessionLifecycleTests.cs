@@ -16,7 +16,7 @@ namespace SIL.FieldWorks.XWorks
 	/// an LCModel undo task left open anywhere makes every later <c>IUndoStackManager.Save()</c> —
 	/// including the one FieldWorks runs at shutdown — throw. These tests pin down the failure
 	/// mechanism and prove the two seams that prevent it: <see cref="DetailEditContextHolder"/>
-	/// (the host never orphans an open context when re-showing a region) and the defensive
+	/// (the host never orphans an open context when re-showing a detail view) and the defensive
 	/// <see cref="LcmDetailEditSession"/> Commit/Cancel (safe even after the clerk force-ended the
 	/// task through <c>RecordClerk.SaveOnChangeRecord</c>, the LT-16673 path).
 	/// </summary>
@@ -129,7 +129,7 @@ namespace SIL.FieldWorks.XWorks
 			first.TrySetText(FormField, "vern", "half-typed");
 			Assert.That(first.IsOpen, Is.True);
 
-			// Re-showing the region (navigation, refresh, ShowHiddenFields, …) swaps the context.
+			// Re-showing the detail view (navigation, refresh, ShowHiddenFields, …) swaps the context.
 			var second = new LexiconFirstSliceEditContext(m_entry, Cache);
 			holder.Replace(second);
 

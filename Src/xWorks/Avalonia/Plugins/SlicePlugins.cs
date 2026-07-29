@@ -29,7 +29,7 @@ namespace SIL.FieldWorks.XWorks
 
 		/// <summary>
 		/// Builds the Avalonia control that replaces the legacy slice for one composed row. Invoked
-		/// lazily by the view (never during compose); the context carries the region's own edit
+		/// lazily by the view (never during compose); the context carries the detail view's own edit
 		/// context so plugin edits ride the same fenced session as every other row, plus the
 		/// optional host services. This is the ONE plugin contract — there is no separate
 		/// service-aware marker interface or overload.
@@ -39,7 +39,7 @@ namespace SIL.FieldWorks.XWorks
 
 	/// <summary>
 	/// Everything the composer hands a plugin factory, bundled into one contract:
-	/// the row's object and typed node, the region's edit context (resolved lazily through the
+	/// the row's object and typed node, the detail view's edit context (resolved lazily through the
 	/// composer's deferred accessor — the context object is created during compose, BEFORE the
 	/// edit context exists; plugin factories run at render time, after), and the cache.
 	/// </summary>
@@ -62,7 +62,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>The row's typed view node (layout identity, field, label, menu bindings).</summary>
 		public ViewNode Node { get; }
 
-		/// <summary>The region's edit context, resolved on read (null until the region composed).</summary>
+		/// <summary>The detail view's edit context, resolved on read (null until the detail view composed).</summary>
 		public IDetailEditContext EditContext => _editContextAccessor?.Invoke();
 
 		public LcmCache Cache { get; }

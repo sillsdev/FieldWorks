@@ -17,9 +17,9 @@ public sealed class AvaloniaHeadlessSetUpFixture
 	/// <summary>
 	/// Forces FieldWorks' in-process Avalonia runtime onto the HEADLESS windowing platform for the whole
 	/// xWorksTests run. Several integration tests drive the real product surface
-	/// (RecordEditView/RecordBrowseView, the region/browse hosts, AvaloniaDialogHost), which funnel
+	/// (RecordEditView/RecordBrowseView, the detail/browse hosts, AvaloniaDialogHost), which funnel
 	/// through <see cref="FwAvaloniaRuntime.EnsureInitialized"/>. In production that builds the REAL Win32
-	/// Avalonia platform, so any region flyout, dialog, or popup raised during a test becomes a real
+	/// Avalonia platform, so any detail-view flyout, dialog, or popup raised during a test becomes a real
 	/// on-screen OS window that flashes for a fraction of a second and can steal keypresses from whatever
 	/// the developer is doing. Mirroring the dedicated FwAvaloniaTests headless builder (Skia + headless,
 	/// drawing on) keeps that content off-screen while still constructing and laying it out, so the

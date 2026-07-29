@@ -15,7 +15,7 @@ using Avalonia.VisualTree;
 namespace SIL.FieldWorks.Common.FwAvalonia
 {
 	/// <summary>
-	/// The filter-box-over-list machinery the region pickers share: a case-insensitive contains
+	/// The filter-box-over-list machinery the detail pickers share: a case-insensitive contains
 	/// filter that swaps a tree out for a flat result list, keyboard highlight movement, the
 	/// pointer-release-over-own-item guard, and the compact/chromeless themes. Three controls draw
 	/// on it — <c>FwOptionChooser</c> (flat list, optional flyout), <c>FwPosChooser</c> (tree + flyout),

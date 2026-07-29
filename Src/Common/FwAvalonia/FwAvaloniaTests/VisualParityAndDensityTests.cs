@@ -19,7 +19,7 @@ using SIL.FieldWorks.Common.FwAvalonia.ViewDefinition;
 namespace FwAvaloniaTests
 {
 	/// <summary>
-	/// Control-level visual parity capture: with Skia-backed headless drawing the region view renders
+	/// Control-level visual parity capture: with Skia-backed headless drawing the detail view renders
 	/// real frames that are saved as parity artifacts (the Avalonia visual evidence of the Path 3
 	/// bundle). Stable automation ids on user-facing controls are locked by the other suites.
 	/// </summary>

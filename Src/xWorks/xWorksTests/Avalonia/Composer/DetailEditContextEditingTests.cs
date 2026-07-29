@@ -54,7 +54,7 @@ namespace SIL.FieldWorks.XWorks
 		private string GlossText => m_entry.SensesOS[0].Gloss.get_String(Cache.DefaultAnalWs).Text;
 
 		// The edit-context seam keys fixed slices by Field name; tests address fields the same way
-		// the view does — through a region field object.
+		// the view does — through a detail field object.
 		internal static SIL.FieldWorks.Common.FwAvalonia.Detail.DetailField F(string field)
 			=> new SIL.FieldWorks.Common.FwAvalonia.Detail.DetailField(
 				"test/" + field, field, field, null,
@@ -79,7 +79,7 @@ namespace SIL.FieldWorks.XWorks
 
 			// One global undo step covers both fields, on the same action handler legacy surfaces use.
 			Assert.That(Cache.ActionHandlerAccessor.CanUndo(), Is.True);
-			Cache.ActionHandlerAccessor.Undo(); // one undo = the whole region edit
+			Cache.ActionHandlerAccessor.Undo(); // one undo = the whole detail view edit
 			Assert.That(LexemeText, Is.EqualTo("casa"), "one undo reverts every field of the session");
 			Assert.That(GlossText, Is.EqualTo("house"));
 
@@ -590,7 +590,7 @@ namespace SIL.FieldWorks.XWorks
 				"the field appears once it has data");
 		}
 
-		// The Avalonia region does not compose the closed enum-combo editor: the enumComboBox slice
+		// The Avalonia detail view does not compose the closed enum-combo editor: the enumComboBox slice
 		// (Allomorph Status, Morphology.fwlayout AsLexemeFormBasic over MoForm-Detail-AllomorphStatus,
 		// backed by the IsAbstract boolean flid) now composes as the labeled Unsupported worklist row
 		// rather than an option chooser.
@@ -1113,7 +1113,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		// Editing a reversal form stages/commits through the edit
-		// context — the reversal entry's ReversalForm is updated, on the same fenced session as the region.
+		// context — the reversal entry's ReversalForm is updated, on the same fenced session as the detail view.
 		[Test]
 		public void ReversalPlugin_EditingAForm_StagesAndCommitsThroughTheEditContext()
 		{
@@ -1348,7 +1348,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void Compose_BooleanFields_RenderAsUnsupportedWorklistRow()
 		{
-			// The Avalonia region does not compose the checkbox editor. A boolean slice — e.g. an alternate
+			// The Avalonia detail view does not compose the checkbox editor. A boolean slice — e.g. an alternate
 			// form's "Is Abstract Form" (MoStemAllomorph/Normal, editor="Checkbox", visibility=never -> shows
 			// under show-hidden) — now composes as the labeled Unsupported worklist row rather than a checkbox.
 			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
@@ -2076,7 +2076,7 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(single.IsEditable, Is.True);
 			Assert.That(single.Values.Single().Value, Is.EqualTo("from Smith"));
 
-			// GenDate: the Avalonia region has no date editor, so the custom GenDate field
+			// GenDate: the Avalonia detail view has no date editor, so the custom GenDate field
 			// composes as the labeled Unsupported worklist row (not silently omitted).
 			var date = fields.FirstOrDefault(f => f.Label == "Date Collected");
 			Assert.That(date, Is.Not.Null);
@@ -2092,7 +2092,7 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(listRef.Options.Select(o => o.Key), Does.Contain(m_listItem.Guid.ToString()),
 				"options come from the custom field's own possibility list");
 
-			// Integer: the Avalonia region has no integer editor, so the custom int field composes as the labeled
+			// Integer: the Avalonia detail view has no integer editor, so the custom int field composes as the labeled
 			// Unsupported worklist row.
 			var number = fields.FirstOrDefault(f => f.Label == "Frequency Count");
 			Assert.That(number, Is.Not.Null);

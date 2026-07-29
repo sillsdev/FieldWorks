@@ -40,7 +40,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 
 	/// <summary>
 	/// A <see cref="WinFormsAvaloniaControlHost"/> that claims the keyboard-navigation keys the hosted
-	/// Avalonia surface needs, so the WinForms parent (a region pane, or a modal dialog form) does not
+	/// Avalonia surface needs, so the WinForms parent (a detail pane, or a modal dialog form) does not
 	/// consume Up/Down/Left/Right — and, when asked, Enter — as its own control-navigation / default-button
 	/// handling before the Avalonia content sees them. Without this, WinForms eats the presses and hosted
 	/// list/keyboard navigation does nothing. Keys are claimed only while this host holds focus, so they
@@ -58,7 +58,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 		/// </summary>
 		/// <param name="claimEnterKey">
 		/// Also claim Enter as an input key. A dialog host needs this so Enter reaches the hosted content
-		/// (e.g. commit-on-Enter in a search box) instead of activating the form's default button; a region
+		/// (e.g. commit-on-Enter in a search box) instead of activating the form's default button; a detail
 		/// pane host leaves it false so Enter keeps its normal meaning there.
 		/// </param>
 		public InputKeyClaimingAvaloniaHost(bool claimEnterKey = false)

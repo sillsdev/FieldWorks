@@ -11,7 +11,7 @@ using Avalonia.Threading;
 namespace FwAvaloniaTests.VisualChecks
 {
 	/// <summary>
-	/// Headless PNG snapshot harness: renders ANY Avalonia surface (dialog, region/detail view, or browse
+	/// Headless PNG snapshot harness: renders ANY Avalonia surface (dialog, detail view, or browse
 	/// table) with the Skia-backed headless backend (<c>UseHeadlessDrawing=false</c> in <c>TestAppBuilder</c>)
 	/// and saves a real frame to a gitignored ephemeral folder. Captures land in ONE FLAT folder with a
 	/// surface-prefixed file name — <c>Output/Snapshots/&lt;Surface&gt;-&lt;NN&gt;-&lt;stage&gt;.png</c> (e.g.

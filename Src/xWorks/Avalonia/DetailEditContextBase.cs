@@ -53,7 +53,7 @@ namespace SIL.FieldWorks.XWorks
 		public abstract bool TrySetOption(DetailField detailField, string optionKey);
 
 		/// <inheritdoc />
-		/// <remarks>Reference-vector editing exists only on composed regions; the first-slice
+		/// <remarks>Reference-vector editing exists only on composed detail views; the first-slice
 		/// fallback has no vector rows, so the base rejects.</remarks>
 		public virtual bool TryAddReferenceItem(DetailField detailField, string optionKey) => false;
 
@@ -151,7 +151,7 @@ namespace SIL.FieldWorks.XWorks
 		/// Stages an arbitrary domain write inside THIS context's fenced session (opening it on the first
 		/// edit), so a write routed from outside the registered setter dictionaries — e.g. a plugin
 		/// editor's own field (the Reversal Entries plugin) — still rides the SAME undoable step as every
-		/// other row in the region. A rejected write that opened the session here closes it again so an
+		/// other row in the detail view. A rejected write that opened the session here closes it again so an
 		/// empty fence never strands the UOW write lock. A throwing setter rolls back a session this call
 		/// opened, then rethrows.
 		/// </summary>

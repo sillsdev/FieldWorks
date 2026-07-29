@@ -12,7 +12,7 @@ using SIL.LCModel;
 namespace SIL.FieldWorks.XWorks
 {
 	/// <summary>
-	/// Builds the product Lexical Edit region model from the typed view definition plus live LCModel
+	/// Builds the product Lexical Edit detail model from the typed view definition plus live LCModel
 	/// values. Structure comes from <see cref="LexiconFirstSlice"/>, which compiles
 	/// the shipped layout inventory through <c>ViewDefinitionCompiler</c>; the authored definition
 	/// remains only as an explicit, diagnosed fallback. This type supplies values via
@@ -41,7 +41,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
-		/// Builds a region model for the current record, or null if it is not a <see cref="ILexEntry"/>
+		/// Builds a detail model for the current record, or null if it is not a <see cref="ILexEntry"/>
 		/// (the caller then shows an explicit unsupported state).
 		/// </summary>
 		public static DetailModel Build(ICmObject obj, LcmCache cache)

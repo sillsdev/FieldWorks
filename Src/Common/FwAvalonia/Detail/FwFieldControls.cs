@@ -18,7 +18,7 @@ using SIL.FieldWorks.Common.FwAvalonia.Seams;
 namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 {
 	/// <summary>
-	/// FieldWorks-owned multi-writing-system text field over an IR-projected region field
+	/// FieldWorks-owned multi-writing-system text field over an IR-projected detail field
 	/// (tasks 6.1/6.2): one compact row per writing-system alternative — abbreviation gutter plus a
 	/// text editor carrying the project WS font, right-to-left flow direction for RTL scripts, and
 	/// per-WS keyboard activation on focus through the supplied callback (the same behavior legacy
@@ -1016,7 +1016,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 
 	/// <summary>
 	/// FieldWorks-owned chooser field: a button opening a flyout of service-backed options
-	/// (the options come from the LCModel-sourced region model, not the control). The flyout is the
+	/// (the options come from the LCModel-sourced detail model, not the control). The flyout is the
 	/// shared compact <see cref="FwOptionChooser"/> — an AutoCompleteBox-based OPTIONS ONLY selector,
 	/// no link items. Committing an
 	/// option stages it through the edit context, closes the flyout, and returns focus to the button
@@ -1077,7 +1077,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			AutomationProperties.SetName(this, field.Label ?? field.Field ?? automationId);
 
 			// The gear (and only the gear) hides until hover; the button itself is a hover source.
-			// The region view widens the hover surface to the whole row (label included).
+			// The detail view widens the hover surface to the whole row (label included).
 			HoverReveal.Attach(new Control[] { this }, HoverAffordances);
 
 			if (editContext == null || !field.IsEditable)
@@ -1315,7 +1315,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			}
 
 			// Bars, launcher, and gear hide until hover; the whole field panel is a hover source
-			// (the region view widens the surface to the row's label too). Items stay always visible.
+			// (the detail view widens the surface to the row's label too). Items stay always visible.
 			HoverReveal.Attach(new Control[] { this }, _affordances);
 		}
 
@@ -1409,7 +1409,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			Children.Add(_button);
 			Children.Add(text);
 
-			// The gear hides until hover; the whole row panel is a hover source (the region view
+			// The gear hides until hover; the whole row panel is a hover source (the detail view
 			// widens the surface to the row's label too, via IHoverAffordanceProvider).
 			HoverReveal.Attach(new Control[] { this }, HoverAffordances);
 		}

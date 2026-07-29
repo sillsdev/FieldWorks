@@ -7,8 +7,8 @@ using SIL.FieldWorks.Common.FwAvalonia.ViewDefinition;
 namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 {
 	/// <summary>
-	/// The shared structural projection rules used by BOTH region projectors — the thin
-	/// <see cref="DetailModelProjector"/> (view-definition → region model, LCModel-free) and the full
+	/// The shared structural projection rules used by BOTH detail projectors — the thin
+	/// <see cref="DetailModelProjector"/> (view-definition → detail model, LCModel-free) and the full
 	/// xWorks <c>DetailComposer</c> (LCModel-backed). The section-header row
 	/// construction and the child-indent rule live ONCE here so the two paths cannot drift. (The third
 	/// structural rule — editor → renderable kind — is

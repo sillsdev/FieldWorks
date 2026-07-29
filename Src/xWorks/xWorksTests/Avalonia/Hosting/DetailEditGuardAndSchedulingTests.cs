@@ -20,7 +20,7 @@ namespace SIL.FieldWorks.XWorks
 	/// the holder's undo guard settles the session and converts the gesture into "close the
 	/// pending edit"; (2) Settle is the one auto-save policy (commit when valid, cancel when not)
 	/// shared by every host path (navigation, go-away, undo, dispose); (3) the refresh controller
-	/// coalesces PropChanged bursts through a host scheduler instead of recomposing the region
+	/// coalesces PropChanged bursts through a host scheduler instead of recomposing the detail view
 	/// synchronously once per notification.
 	/// </summary>
 	[TestFixture]

@@ -266,7 +266,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 
 			// Localization/accessibility/routing metadata. Legacy XML Parts/Layout does not carry these, so
 			// they stay null/Inherit for imported layouts (preserving semantic baselines); authored or
-			// region-spec sources may set them.
+			// detail-spec sources may set them.
 			var localizationKey = Attr(callerEl, "localizationKey") ?? Attr(contentEl, "localizationKey")
 				?? Attr(callerEl, "labelId") ?? Attr(contentEl, "labelId");
 

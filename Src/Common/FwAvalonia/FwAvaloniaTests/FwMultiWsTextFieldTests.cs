@@ -18,12 +18,12 @@ using FwAvaloniaDialogsTests;        // DialogLayoutAssert — the shared geomet
 namespace FwAvaloniaTests
 {
 	/// <summary>
-	/// The per-writing-system multistring editor (<see cref="FwMultiWsTextField"/>): the owned region
+	/// The per-writing-system multistring editor (<see cref="FwMultiWsTextField"/>): the owned detail-view
 	/// control behind every multistring field. It renders ONE row per writing system — a small raised WS
 	/// abbreviation hanging at the value start (the legacy 12.3 look) plus a flat, borderless value editor
 	/// (RootSite parity: no per-value box). These pin the structure (one row per WS, the WS label, empty vs
 	/// populated, single- vs multi-WS) and emit a PNG per stage for subjective review, paired with the
-	/// AssertNoCrowding tripwire. The editing/commit/teardown behavior itself lives in the Region tests.
+	/// AssertNoCrowding tripwire. The editing/commit/teardown behavior itself lives in the Detail tests.
 	/// </summary>
 	[TestFixture]
 	public class FwMultiWsTextFieldTests

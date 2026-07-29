@@ -17,9 +17,9 @@ using SIL.FieldWorks.Common.FwAvalonia.ViewDefinition;
 namespace FwAvaloniaTests
 {
 	/// <summary>
-	/// Every native-Views viewing capability the migrated lexical-edit region relies on has a
+	/// Every native-Views viewing capability the migrated lexical-edit detail view relies on has a
 	/// FieldWorks-owned managed/Avalonia replacement, recorded in <see cref="DetailViewingServices"/>
-	/// and exercised here. Where <c>EngineIsolationAuditTests</c> proves the region names NO native
+	/// and exercised here. Where <c>EngineIsolationAuditTests</c> proves the detail view names NO native
 	/// symbol, this proves the managed replacement is present, located in the isolated production
 	/// assembly, and (for the deferred embedded-object case) degrades to an explicit, lossless
 	/// read-only state — not a silent gap. Deferrals are asserted to be named, not assumed.

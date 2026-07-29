@@ -10,7 +10,7 @@ using SIL.FieldWorks.Common.FwAvalonia;
 namespace SIL.FieldWorks.Common.FwAvalonia.Seams
 {
 	/// <summary>
-	/// The active-host contract for a migrated region: the visible Avalonia path SHALL NOT
+	/// The active-host contract for a migrated detail view: the visible Avalonia path SHALL NOT
 	/// instantiate or drive hidden legacy <c>DataTree</c>/menu infrastructure, except through an
 	/// explicitly approved baseline adapter used only for comparison or fallback. This type makes the
 	/// rule data so a host can ask "may I drive the legacy DataTree right now?" and an audit test can

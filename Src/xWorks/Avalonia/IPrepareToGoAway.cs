@@ -9,7 +9,7 @@ namespace SIL.FieldWorks.XWorks
 	/// before the window runs its save-on-tool-switch commit. Named for the legacy
 	/// <c>DataTree</c>/<c>BrowseViewer</c> <c>PrepareToGoAway</c> idiom, with one deliberate contract
 	/// difference: the legacy method returns a bool and can veto the switch, while this returns nothing
-	/// and always settles. Implemented by the surface that owns a fenced region-edit session (an open
+	/// and always settles. Implemented by the surface that owns a fenced detail-edit session (an open
 	/// LCModel undo task): a task left standing when that commit fires makes it throw "Commit at wrong place."
 	/// </summary>
 	public interface IPrepareToGoAway

@@ -16,7 +16,7 @@ namespace SIL.FieldWorks.XWorks
 	/// An StText field becomes an editable <see cref="DetailFieldKind.StructuredText"/> row whose
 	/// paragraph CRUD (text / style / insert / delete) mutates the LCModel StText inside ONE fenced
 	/// <see cref="LcmDetailEditSession"/> — one step on the global undo stack legacy surfaces share, the
-	/// same undo-granularity rule the rest of the region follows. These tests build the composed
+	/// same undo-granularity rule the rest of the detail view follows. These tests build the composed
 	/// edit-context the way <see cref="DetailComposer"/> does (the same
 	/// <see cref="ComposedDetailEditContext"/> + paragraph setters), so they cover the real production
 	/// write path, not a stand-in. An ORC/lossy paragraph stays read-only/preserved.
@@ -58,7 +58,7 @@ namespace SIL.FieldWorks.XWorks
 		private string ParaStyle(int i) => ((IStTxtPara)m_stText.ParagraphsOS[i]).StyleName;
 		private int ParaCount => m_stText.ParagraphsOS.Count;
 
-		// A StructuredText region field + a composed edit context whose paragraph setters mutate m_stText
+		// A StructuredText detail field + a composed edit context whose paragraph setters mutate m_stText
 		// exactly as DetailComposer.AddStructuredText wires them. This is the production seam:
 		// ComposedDetailEditContext routes each gesture through the shared fenced Stage().
 		private (DetailField Field, ComposedDetailEditContext Context) Build()
@@ -211,7 +211,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void MultiParagraphRoundTrip_ProjectsEveryParagraphFromLcm()
 		{
-			// FromTsString projection mirrors what AddStructuredText builds for the region model.
+			// FromTsString projection mirrors what AddStructuredText builds for the detail model.
 			var paragraphs = m_stText.ParagraphsOS.OfType<IStTxtPara>()
 				.Select(p => new DetailParagraph(
 					DetailRichTextAdapter.FromTsString(p.Contents, Cache.WritingSystemFactory), p.StyleName))

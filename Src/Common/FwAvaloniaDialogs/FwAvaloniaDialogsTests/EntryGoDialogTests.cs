@@ -27,7 +27,7 @@ namespace FwAvaloniaDialogsTests
 	/// stays in the box (the legacy m_tbForm_KeyDown behavior). It is a COMMIT-ON-SELECT picker with no OK
 	/// button: picking a row (double-click, or Enter in the box / on the list) closes accepted with the chosen
 	/// id; Cancel/Escape closes with no result. The excluded id never appears, and the right-side description
-	/// region exists only when a consumer opts in. Runtime proof on a realized headless surface (compiled XAML
+	/// pane exists only when a consumer opts in. Runtime proof on a realized headless surface (compiled XAML
 	/// on net48 + source-generated commands).
 	/// </summary>
 	[TestFixture]
@@ -424,7 +424,7 @@ namespace FwAvaloniaDialogsTests
 				"the VM defensively drops the excluded id even when the provider returns it");
 		}
 
-		// ===== The right-side description region is OPT-IN: it exists only for a consumer that supplies a
+		// ===== The right-side description pane is OPT-IN: it exists only for a consumer that supplies a
 		// description label (the pane caption) or rich row content; otherwise the code-behind removes the entire
 		// right column from the tree and the persistent matching list takes the full width. =====
 
@@ -442,7 +442,7 @@ namespace FwAvaloniaDialogsTests
 					.Any(c => c is Control ctrl && AutomationProperties.GetAutomationId(ctrl) == "EntryGo.Description"),
 				Is.False, "no orphaned description text remains");
 
-			// With the region gone the matching list claims (nearly) the full dialog width.
+			// With the pane gone the matching list claims (nearly) the full dialog width.
 			var grid = FindByAutomationId<Grid>(view, "EntryGo.ResultsHeader");
 			var list = ResultsList(view);
 			var body = view.GetVisualDescendants().OfType<Grid>().First(g => g.Name == "PART_BodyGrid");
@@ -466,7 +466,7 @@ namespace FwAvaloniaDialogsTests
 		}
 
 		// An entry-search input where one row carries a RICH description payload (an arbitrary Avalonia control — a
-		// formatted, multi-line preview) and the others carry only plain text, so we exercise both region paths.
+		// formatted, multi-line preview) and the others carry only plain text, so we exercise both pane paths.
 		private static EntryGoDialogInput RichDescriptionInput()
 		{
 			var richPreview = new StackPanel
@@ -505,7 +505,7 @@ namespace FwAvaloniaDialogsTests
 			Assert.That(vm.HasDescriptionContent, Is.True, "the highlighted row carries a rich payload");
 			Assert.That(vm.SelectedDescriptionContent, Is.Not.Null);
 
-			// The right region's ContentControl shows the rich content; the plain-text fallback is hidden.
+			// The right pane's ContentControl shows the rich content; the plain-text fallback is hidden.
 			var content = FindByAutomationId<ContentControl>(view, "EntryGo.DescriptionContent");
 			Assert.That(content.IsVisible, Is.True, "the rich-content host is visible for a rich row");
 			Assert.That(content.GetVisualDescendants().OfType<TextBlock>().Any(t => t.Text == "noun · house"),

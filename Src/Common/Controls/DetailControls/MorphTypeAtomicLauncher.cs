@@ -482,7 +482,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 	}
 
 	/// <summary>
-	/// Exposes the legacy launchers' localized strings to the Avalonia region composer so the
+	/// Exposes the legacy launchers' localized strings to the Avalonia detail composer so the
 	/// migrated choosers reuse the SAME translated resources instead of minting duplicate resx
 	/// entries (<c>DetailControlsStrings</c> itself is internal to this assembly). Parked in this
 	/// file only because it is the launcher file the migration already touches; move it to its
