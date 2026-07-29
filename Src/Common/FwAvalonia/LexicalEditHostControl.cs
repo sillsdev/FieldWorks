@@ -46,7 +46,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 			// field. When the product host supplies persistence hooks, the read/write chains
 			// through them too, so a width dragged in one session is restored in the next; otherwise it
 			// falls back to the process-only field (e.g. the preview host / headless tests).
-			var view = new LexicalEditRegionView(region, editContext, writingSystemFocused,
+			var view = new RegionDataTree(region, editContext, writingSystemFocused,
 				getExpansionState, expansionChanged, menuRequested, linkRequested, clipboard,
 				() => getLabelColumnWidth?.Invoke() ?? _rememberedLabelColumnWidth,
 				w =>

@@ -47,10 +47,10 @@ namespace FwAvaloniaTests
 			public string GetSelectedOptionKey(ViewNode fieldNode) => null;
 		}
 
-		private static LexicalEditRegionView NewView()
-			=> new LexicalEditRegionView(RegionModelProjector.FromViewDefinition(Definition(), new Provider()));
+		private static RegionDataTree NewView()
+			=> new RegionDataTree(RegionModelProjector.FromViewDefinition(Definition(), new Provider()));
 
-		private static LexicalEditRegionView NewLongView()
+		private static RegionDataTree NewLongView()
 		{
 			var roots = new List<ViewNode>();
 			for (var i = 0; i < 60; i++)
@@ -62,12 +62,12 @@ namespace FwAvaloniaTests
 			}
 			var definition = new ViewDefinitionModel("LexEntry", "identity", "detail", roots,
 				new List<ViewDiagnostic>());
-			return new LexicalEditRegionView(RegionModelProjector.FromViewDefinition(definition, new Provider()));
+			return new RegionDataTree(RegionModelProjector.FromViewDefinition(definition, new Provider()));
 		}
 
 		private static ScrollViewer FindScroller(Control root)
 			=> root.GetVisualDescendants().OfType<ScrollViewer>()
-				.FirstOrDefault(s => AutomationProperties.GetAutomationId(s) == "LexicalEditRegionView.Scroll");
+				.FirstOrDefault(s => AutomationProperties.GetAutomationId(s) == "RegionDataTree.Scroll");
 
 		private static TextBox FindEditor(Control root, string automationId)
 		{
@@ -185,7 +185,7 @@ namespace FwAvaloniaTests
 		// A single-text-field view whose editor's stable automation id is exactly <paramref name="stableId"/>
 		// + ".vern" (null AutomationId falls back to StableId; the WS suffix is the WsTag). This lets the
 		// test reproduce the ghost id ("…@ownerHvo/ghost.vern") and its real successor ("…@newHvo.vern").
-		private static LexicalEditRegionView ViewWithEditorId(string stableId)
+		private static RegionDataTree ViewWithEditorId(string stableId)
 		{
 			var field = new RegionField(stableId, "Lexeme Form", "Form", "vernacular",
 				RegionFieldKind.Text, EditorClassification.Known, /*automationId*/ null, null,
@@ -194,7 +194,7 @@ namespace FwAvaloniaTests
 				null, null);
 			var model = new RegionModel("LexEntry", "Normal",
 				new List<RegionField> { field }, new List<ViewDiagnostic>());
-			return new LexicalEditRegionView(model);
+			return new RegionDataTree(model);
 		}
 
 		// Post-ghost-commit focus continuity (legacy RestoreSelection): the user types into a ghost

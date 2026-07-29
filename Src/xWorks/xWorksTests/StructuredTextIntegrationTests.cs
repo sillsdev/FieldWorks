@@ -23,7 +23,7 @@ using SIL.LCModel.Infrastructure;
 namespace SIL.FieldWorks.XWorks
 {
 	/// <summary>
-	/// INTEGRATION on ONE realized region surface: a single <see cref="LexicalEditRegionView"/>
+	/// INTEGRATION on ONE realized region surface: a single <see cref="RegionDataTree"/>
 	/// holding a sibling multistring (Citation Form) row AND an editable structured-text (StText) row,
 	/// driven through the REAL <see cref="ComposedRegionEditContext"/> over an in-memory LCModel (the same
 	/// fenced <see cref="LcmRegionEditSession"/> staging the production composer wires). These exercise
@@ -164,7 +164,7 @@ namespace SIL.FieldWorks.XWorks
 		/// ONE realized region surface hosting BOTH field controls over the SAME composed edit context:
 		/// the sibling multistring (<see cref="FwMultiWsTextField"/>) and the StText
 		/// (<see cref="FwStructuredTextField"/>) in one StackPanel. We realize the field controls directly
-		/// (rather than the whole <see cref="LexicalEditRegionView"/> surface, whose GridSplitter needs an
+		/// (rather than the whole <see cref="RegionDataTree"/> surface, whose GridSplitter needs an
 		/// input/cursor platform the bare headless xWorksTests host does not register) and wire the SAME
 		/// commit semantics the view's autosave/gesture path uses:
 		///   * structural gestures (add/delete/style) commit immediately + raise the re-show, via the
@@ -179,7 +179,7 @@ namespace SIL.FieldWorks.XWorks
 			public ComposedRegionEditContext Context;
 			public int Rebuilds;
 
-			// Mirrors LexicalEditRegionView.OnSave for a structural gesture: validation-gated commit of the
+			// Mirrors RegionDataTree.OnSave for a structural gesture: validation-gated commit of the
 			// one open fenced session, then the re-show signal (the host rebuilds the rows from domain truth).
 			public void CompleteGesture()
 			{

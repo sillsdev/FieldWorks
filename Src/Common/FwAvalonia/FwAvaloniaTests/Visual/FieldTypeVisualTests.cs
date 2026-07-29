@@ -26,11 +26,11 @@ namespace FwAvaloniaTests.VisualChecks
 	[TestFixture]
 	public class FieldTypeVisualTests
 	{
-		private static LexicalEditRegionView Surface(IReadOnlyList<RegionField> fields,
+		private static RegionDataTree Surface(IReadOnlyList<RegionField> fields,
 			out FakeRegionEditContext edit)
 		{
 			edit = new FakeRegionEditContext();
-			return new LexicalEditRegionView(
+			return new RegionDataTree(
 				new RegionModel("LexEntry", "detail", new List<RegionField>(fields),
 					new List<ViewDiagnostic>()),
 				edit);

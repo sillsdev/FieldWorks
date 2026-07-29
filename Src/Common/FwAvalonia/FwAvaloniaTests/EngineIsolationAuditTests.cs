@@ -46,7 +46,7 @@ namespace FwAvaloniaTests
 		[Test]
 		public void ProductionAssembly_ReferencesNoNativeRenderLegacyOrDomainAssemblies()
 		{
-			var referenced = typeof(LexicalEditRegionView).Assembly.GetReferencedAssemblies()
+			var referenced = typeof(RegionDataTree).Assembly.GetReferencedAssemblies()
 				.Select(r => r.Name)
 				.ToList();
 

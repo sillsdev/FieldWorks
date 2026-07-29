@@ -65,7 +65,7 @@ namespace FwAvaloniaTests
 				new RegionChooserLink("Edit the Publications list", "publicationsEdit")
 			});
 
-		private static (LexicalEditRegionView view, FakeRegionEditContext context, Window window,
+		private static (RegionDataTree view, FakeRegionEditContext context, Window window,
 			List<RegionLinkRequest> linkRequests) Show()
 		{
 			var model = new RegionModel("LexEntry", "test",
@@ -73,7 +73,7 @@ namespace FwAvaloniaTests
 				new List<ViewDiagnostic>());
 			var context = new FakeRegionEditContext();
 			var linkRequests = new List<RegionLinkRequest>();
-			var view = new LexicalEditRegionView(model, context, linkRequested: linkRequests.Add);
+			var view = new RegionDataTree(model, context, linkRequested: linkRequests.Add);
 			var window = new Window { Content = view, Width = 500, Height = 300 };
 			window.Show();
 			Dispatcher.UIThread.RunJobs();

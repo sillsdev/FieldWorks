@@ -47,7 +47,7 @@ namespace SIL.FieldWorks.XWorks
 		private LexicalEditRegionEditContext OpenSessionWith(string text)
 		{
 			var context = new LexicalEditRegionEditContext(m_entry, Cache);
-			Assert.That(context.TrySetText(LexicalEditRegionEditingTests.F("Form"), "vern", text), Is.True);
+			Assert.That(context.TrySetText(RegionEditContextEditingTests.F("Form"), "vern", text), Is.True);
 			Assert.That(context.IsOpen, Is.True);
 			return context;
 		}

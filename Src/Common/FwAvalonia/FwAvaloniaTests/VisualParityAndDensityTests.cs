@@ -50,7 +50,7 @@ namespace FwAvaloniaTests
 		public void RegionView_RendersARealFrame_SavedAsParityArtifact()
 		{
 			var model = RegionModelProjector.FromViewDefinition(Definition(), new Provider());
-			var window = new Window { Content = new LexicalEditRegionView(model), Width = 420, Height = 160 };
+			var window = new Window { Content = new RegionDataTree(model), Width = 420, Height = 160 };
 			window.Show();
 			Dispatcher.UIThread.RunJobs();
 
@@ -77,19 +77,19 @@ namespace FwAvaloniaTests
 	[TestFixture]
 	public class RegionEditorShortcutTests
 	{
-		private static (LexicalEditRegionView view, FakeRegionEditContext context) ShowEditable()
+		private static (RegionDataTree view, FakeRegionEditContext context) ShowEditable()
 		{
 			var model = new RegionModel("LexEntry", "identity",
 				new List<RegionField>(), new List<ViewDiagnostic>());
 			var context = new FakeRegionEditContext();
-			var view = new LexicalEditRegionView(model, context);
+			var view = new RegionDataTree(model, context);
 			var window = new Window { Content = view, Width = 400, Height = 160 };
 			window.Show();
 			Dispatcher.UIThread.RunJobs();
 			return (view, context);
 		}
 
-		private static void Press(LexicalEditRegionView view, Key key)
+		private static void Press(RegionDataTree view, Key key)
 		{
 			view.RaiseEvent(new KeyEventArgs
 			{

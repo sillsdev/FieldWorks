@@ -108,7 +108,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 					+ "no native Uniscribe/Graphite shaping engine is selected. Graphite parity is the "
 					+ "separate graphite-transition-support policy, not a native-engine dependency here."),
 				new RegionViewingServiceDescriptor(RegionViewingCapability.Measurement,
-					typeof(LexicalEditRegionView),
+					typeof(RegionDataTree),
 					"Row/field measurement and layout are Avalonia layout passes over the region view's "
 					+ "panels; no native box-layout pass is built."),
 				new RegionViewingServiceDescriptor(RegionViewingCapability.SelectionMetadata,
@@ -120,11 +120,11 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 					"Point-to-caret resolution uses Avalonia's TextBox hit test, normalized to grapheme "
 					+ "clusters by the managed model; no native root-box hit-test call."),
 				new RegionViewingServiceDescriptor(RegionViewingCapability.Scrolling,
-					typeof(LexicalEditRegionView),
+					typeof(RegionDataTree),
 					"The region scrolls through an Avalonia ScrollViewer (task 11.12), not a native RootSite "
 					+ "auto-scroll host."),
 				new RegionViewingServiceDescriptor(RegionViewingCapability.Rendering,
-					typeof(LexicalEditRegionView),
+					typeof(RegionDataTree),
 					"All on-screen drawing is Avalonia's renderer (Skia); the visual parity frame is captured "
 					+ "from it (task 6.9). No native buffered-draw path."),
 				new RegionViewingServiceDescriptor(RegionViewingCapability.EditorRealization,
