@@ -17,7 +17,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 {
 	/// <summary>
 	/// The ONE DETERMINISTIC, GLOBAL CheckBox style: every Avalonia surface (dialogs, browse table,
-	/// chooser flat list + tree, configure-columns, options, find/replace, insert-entry, region) renders
+	/// chooser flat list + tree, configure-columns, options, find/replace, insert-entry, detail view) renders
 	/// checkboxes at a FIXED size derived from <see cref="FwAvaloniaDensity.CheckboxBoxSize"/> (a function of
 	/// the 12px surface font), so a checkbox NEVER inflates a table/list/tree row past the text-row height.
 	///
@@ -33,7 +33,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 	/// rendered size is identical on every surface.
 	///
 	/// AUTHORITATIVE SOURCE: this C# builder is the single definition. <see cref="FwSurfaceStyles"/> (browse /
-	/// region / bulk-bar path) adds it; the dialog path adds it via <c>DialogThemeBootstrap.Apply</c> (called by
+	/// detail / bulk-bar path) adds it; the dialog path adds it via <c>DialogThemeBootstrap.Apply</c> (called by
 	/// every dialog ctor, in BOTH the runtime host and the headless dialog tests). One helper, both paths.
 	/// </summary>
 	public static class FwCheckBoxStyle

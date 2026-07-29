@@ -4,7 +4,7 @@
 		FwAvalonia (lexical-edit-avalonia-migration)
 
 		Owning project for the Avalonia lexical-edit migration: typed view-definition IR,
-		migration seams, region model, and the first-slice controls. Part of the normal repo
+		migration seams, detail model, and the first-slice controls. Part of the normal repo
 		build — included in the FieldWorks.proj traversal via the Src glob and listed in
 		FieldWorks.sln (lexical-edit task 1.11; gate history in
 		openspec/changes/avalonia-migration-roadmap).

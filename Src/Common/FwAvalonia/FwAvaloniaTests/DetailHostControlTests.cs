@@ -11,8 +11,8 @@ namespace FwAvaloniaTests
 	[TestFixture]
 	public class DetailHostControlTests
 	{
-		// A region pane host claims the arrow keys (never Enter) for the hosted Avalonia surface. The
-		// claiming decision is shared by every region host through InputKeyClaimPolicy; the pane case
+		// A detail pane host claims the arrow keys (never Enter) for the hosted Avalonia surface. The
+		// claiming decision is shared by every detail host through InputKeyClaimPolicy; the pane case
 		// passes claimEnterKey:false so Enter keeps its normal meaning in the pane.
 		private static bool ShouldBypass(bool hostContainsFocus, int keyCode)
 			=> InputKeyClaimPolicy.ShouldClaimKey((Keys)keyCode, hostContainsFocus, claimEnterKey: false);

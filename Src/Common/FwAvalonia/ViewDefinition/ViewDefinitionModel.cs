@@ -110,13 +110,13 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 
 	/// <summary>
 	/// Product-vs-preview routing for a node that can appear on a globally switchable surface.
-	/// <c>Inherit</c> defers to the region/host decision; <c>Product</c> is wired through real
+	/// <c>Inherit</c> defers to the detail-view/host decision; <c>Product</c> is wired through real
 	/// LCModel-backed contracts; <c>Preview</c> is preview-host/sample only; <c>Unsupported</c> renders a
 	/// resource-backed unsupported state instead of pretending to be a product editor.
 	/// </summary>
 	public enum SurfaceRouting
 	{
-		/// <summary>Defer to the enclosing region/host routing decision (default).</summary>
+		/// <summary>Defer to the enclosing detail-view/host routing decision (default).</summary>
 		Inherit,
 
 		/// <summary>Product surface: must use real edit-session/domain contracts.</summary>

@@ -24,7 +24,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 	/// paragraph affordances. Enter at a paragraph's end inserts a paragraph after it; Backspace in an
 	/// empty paragraph (when more than one remains) deletes it.
 	/// <para>Commit timing mirrors the reference-vector rule: per-paragraph TEXT edits stage and ride the
-	/// region view's focus-loss autosave (one undo step per field edit), while STRUCTURAL gestures
+	/// detail view's focus-loss autosave (one undo step per field edit), while STRUCTURAL gestures
 	/// (add/delete/style) commit immediately through the <paramref>gestureCompleted</paramref> callback
 	/// and the host re-shows — the paragraph list is a compose-time snapshot, so without an immediate
 	/// commit + re-show the change would not appear.</para>

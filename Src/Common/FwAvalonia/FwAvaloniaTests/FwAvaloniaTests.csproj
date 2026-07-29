@@ -3,7 +3,7 @@
 	<!--
 		FwAvaloniaTests (lexical-edit-avalonia-migration)
 
-		Headless Avalonia test suite for FwAvalonia: seams, typed view-definition IR, region
+		Headless Avalonia test suite for FwAvalonia: seams, typed view-definition IR, detail view
 		model, and first-slice control behavior (render, popup focus return, commit/cancel)
 		with no native Views or Graphite dependency. Part of the normal repo test path —
 		included in the FieldWorks.proj traversal (BuildTests=true) and FieldWorks.sln;
@@ -41,7 +41,7 @@
 	</ItemGroup>
 
 	<!-- Reuse the dialog visual-layout tripwire (DialogLayoutAssert) as the ONE shared layout standard, so
-	     region/browse surfaces get the same hard-fail overlap/zero-area/crowding checks the dialogs do —
+	     detail/browse surfaces get the same hard-fail overlap/zero-area/crowding checks the dialogs do —
 	     read-only link (owned by FwAvaloniaDialogsTests), no second competing guardrail. -->
 	<ItemGroup>
 		<Compile Include="..\..\FwAvaloniaDialogs\FwAvaloniaDialogsTests\DialogLayoutAssert.cs"

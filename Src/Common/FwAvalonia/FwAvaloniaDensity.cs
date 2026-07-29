@@ -129,7 +129,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 		public static readonly Avalonia.Media.IBrush PickerForegroundBrush =
 			new Avalonia.Media.SolidColorBrush(Avalonia.Media.Color.FromRgb(0x1A, 0x1A, 0x1A));
 
-		/// <summary>Inline validation-error text in the region edit footer.</summary>
+		/// <summary>Inline validation-error text in the detail edit footer.</summary>
 		public static readonly Avalonia.Media.IBrush ValidationErrorBrush = Avalonia.Media.Brushes.Firebrick;
 
 		/// <summary>The heavy 2px rule above top-level section headers (legacy heavy separator).</summary>

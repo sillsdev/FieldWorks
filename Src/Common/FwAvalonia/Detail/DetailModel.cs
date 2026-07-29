@@ -12,7 +12,7 @@ using SIL.FieldWorks.Common.FwAvalonia.ViewDefinition;
 namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 {
 	/// <summary>
-	/// The renderable kind of a region field, derived from the typed view definition's editor
+	/// The renderable kind of a detail field, derived from the typed view definition's editor
 	/// classification/editor string rather than hard-coded per field. Extensible: unknown
 	/// known-editors map to <see cref="Text"/> for the first slice; obsolete editors map to
 	/// <see cref="Unsupported"/>.
@@ -25,7 +25,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		/// <summary>An atomic reference / chooser editor.</summary>
 		Chooser,
 
-		/// <summary>An editor with no supported region rendering (renders an unsupported state).</summary>
+		/// <summary>An editor with no supported detail rendering (renders an unsupported state).</summary>
 		Unsupported,
 
 		/// <summary>A section/group header row (full-layout composition; not an editor).</summary>
@@ -83,7 +83,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		/// <summary>An external link / hyperlink (<c>kodtExternalPathName</c>, tag 4): insert/edit/delete here.</summary>
 		ExternalLink,
 
-		/// <summary>A picture/image (<c>kodtGuidMoveableObjDisp</c>, tag 8): render-only in the Avalonia region; insert/caption editing stays in the classic view.</summary>
+		/// <summary>A picture/image (<c>kodtGuidMoveableObjDisp</c>, tag 8): render-only in the Avalonia detail view; insert/caption editing stays in the classic view.</summary>
 		Picture,
 
 		/// <summary>A footnote (<c>kodtOwnNameGuidHot</c> tag 5 / <c>kodtNameGuidHot</c> tag 3): render + deletable; full edit DEFERRED (scripture).</summary>
@@ -214,7 +214,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 	}
 
 	/// <summary>
-	/// Unicode grapheme-cluster boundaries for a region text value. The editor layer uses this to keep
+	/// Unicode grapheme-cluster boundaries for a detail text value. The editor layer uses this to keep
 	/// caret movement and deletion on user-visible characters instead of raw UTF-16 code units.
 	/// </summary>
 	public static class DetailTextGraphemeClusters
@@ -1515,10 +1515,10 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 	}
 
 	/// <summary>
-	/// A field on a lexical-edit region, projected from a typed <see cref="ViewNode"/> and bound to live
+	/// A field on a lexical-edit detail view, projected from a typed <see cref="ViewNode"/> and bound to live
 	/// values by an <see cref="IDetailValueProvider"/>. This is the product contract that replaces the
 	/// old detached preview DTO path: structure comes from the typed view definition, values from the
-	/// provider, so the region scales to arbitrary layouts instead of three fixed fields.
+	/// provider, so the detail view scales to arbitrary layouts instead of three fixed fields.
 	/// </summary>
 	public sealed class DetailField
 	{
@@ -1744,7 +1744,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 	}
 
 	/// <summary>
-	/// A request to show a legacy-defined context menu for a region row (section 13): the host
+	/// A request to show a legacy-defined context menu for a detail row (section 13): the host
 	/// resolves the menu id against the xCore window configuration and shows the same menu the
 	/// legacy slice shows, at the given screen point, with the row's bound object as command target.
 	/// </summary>
@@ -1765,7 +1765,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 	}
 
 	/// <summary>
-	/// A flattened, value-bound region projected from a typed <see cref="ViewDefinitionModel"/>. Carries
+	/// A flattened, value-bound detail view projected from a typed <see cref="ViewDefinitionModel"/>. Carries
 	/// the source diagnostics so unsupported constructs are surfaced, not silently dropped.
 	/// </summary>
 	public sealed class DetailModel
@@ -1789,7 +1789,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 	}
 
 	/// <summary>
-	/// Supplies live field values/options for a region field, keyed by the typed source node. The
+	/// Supplies live field values/options for a detail field, keyed by the typed source node. The
 	/// implementation lives at the product edge (LCModel-backed in xWorks; faked in tests), keeping this
 	/// FwAvalonia layer free of any LCModel dependency.
 	/// </summary>

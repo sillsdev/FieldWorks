@@ -10,7 +10,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 	/// <summary>
 	/// Single, process-wide guard that initializes the in-process Avalonia runtime exactly once. Avalonia
 	/// throws if <c>SetupWithoutStarting</c> runs more than once, so every WinForms entry point that hosts
-	/// Avalonia content (the region host <see cref="AvaloniaHostControlBase"/> and the dialog host
+	/// Avalonia content (the detail host <see cref="AvaloniaHostControlBase"/> and the dialog host
 	/// <see cref="AvaloniaDialogHost"/>) must funnel through here rather than keeping its own guard.
 	/// </summary>
 	public static class FwAvaloniaRuntime

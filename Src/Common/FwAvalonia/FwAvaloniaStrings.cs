@@ -92,7 +92,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 		/// </summary>
 		public static string AudioRecordingReadOnly => Text("FwAvalonia.AudioRecordingReadOnly");
 
-		public static string RegionName => Text("FwAvalonia.RegionName");
+		public static string DetailAreaName => Text("FwAvalonia.DetailAreaName");
 
 		public static string AvaloniaHostName => Text("FwAvalonia.AvaloniaHostName");
 
@@ -164,7 +164,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 		// Seed text matches the canonical legacy wording in XMLViewsStrings (ksDeleteRows label uses
 		// "{0} (Rows)"; ksDelete; ksConfirmDeleteMulti/ksConfirmDeleteMultiMsg) and BulkEditBar's dual-mode
 		// "Delete what?" combo, so the English fallback is identical to the classic bulk-edit Delete tab and
-		// translation memory carries over. APPEND-ONLY: new accessors at the end of the region.
+		// translation memory carries over. APPEND-ONLY: new accessors at the end of the section.
 
 		// ----- Part-of-Speech chooser (FwPosChooser) -----
 		// Seed text mirrors the legacy WinForms POS picker (POSPopupTreeManager / PopupTreeManager): the

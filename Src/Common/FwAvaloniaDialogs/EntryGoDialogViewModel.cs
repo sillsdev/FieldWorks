@@ -21,10 +21,10 @@ namespace FwAvaloniaDialogs
 	/// - COMMIT-ON-SELECT (single-stage): there is no OK button. Picking a row IS accepting it —
 	///   <see cref="CommitCommand"/> snapshots the selection into <see cref="ChosenId"/> and closes accepted;
 	///   Cancel/Escape cancels.
-	/// - Auxiliary and description regions are OPT-IN. When the consumer supplies
+	/// - Auxiliary and description panes are OPT-IN. When the consumer supplies
 	///   <see cref="EntryGoDialogInput.AuxiliaryOptions"/> the dialog becomes TWO-STAGE: picking a result is
 	///   stage 1 (populates <see cref="AuxiliaryOptions"/> without committing) and the inherited OK commits stage 2,
-	///   gated on both an entry and an auxiliary option. The right-side description region exists only when the
+	///   gated on both an entry and an auxiliary option. The right-side description pane exists only when the
 	///   consumer supplies a label or rich per-row content (<see cref="HasDescriptionPane"/>).
 	/// </summary>
 	public partial class EntryGoDialogViewModel : DialogViewModelBase
@@ -83,7 +83,7 @@ namespace FwAvaloniaDialogs
 			_searchText = _input.InitialQuery ?? string.Empty;
 			RunSearch(_searchText);
 
-			// The right-side description region is opt-in: only a consumer that supplies a label (the pane's
+			// The right-side description pane is opt-in: only a consumer that supplies a label (the pane's
 			// caption) or rich per-row content gets the pane; everyone else gives the matching list the full
 			// width (the legacy BaseGoDlg has no description pane at all).
 			HasDescriptionPane = HasDescriptionLabel || Results.Any(r => r.HasDescriptionContent);
@@ -108,8 +108,8 @@ namespace FwAvaloniaDialogs
 		public bool HasDescriptionLabel { get; }
 
 		/// <summary>
-		/// True when the consumer opted into the right-side description region — by supplying a
-		/// <see cref="DescriptionLabel"/> or rows carrying rich description content. False removes the region
+		/// True when the consumer opted into the right-side description pane — by supplying a
+		/// <see cref="DescriptionLabel"/> or rows carrying rich description content. False removes the pane
 		/// entirely so the persistent matching list takes the full dialog width.
 		/// </summary>
 		public bool HasDescriptionPane { get; }
@@ -187,16 +187,16 @@ namespace FwAvaloniaDialogs
 
 		/// <summary>
 		/// The RICH extended-description payload of the selected row (the advanced entry view): an Avalonia control
-		/// or any content object the right-side region's <c>ContentControl</c> can present (formatted text, a
+		/// or any content object the right-side pane's <c>ContentControl</c> can present (formatted text, a
 		/// picture, a composite preview). Null when the selected row carries only plain text (or nothing is
-		/// selected), in which case the right region falls back to the <see cref="Description"/> string — see
+		/// selected), in which case the right pane falls back to the <see cref="Description"/> string — see
 		/// <see cref="HasDescriptionContent"/>.
 		/// </summary>
 		public object SelectedDescriptionContent => SelectedResult?.DescriptionContent;
 
 		/// <summary>
 		/// True when the selected row carries a rich <see cref="SelectedDescriptionContent"/> payload, so the right
-		/// region shows the formatted content; false when it falls back to the plain <see cref="Description"/> text.
+		/// pane shows the formatted content; false when it falls back to the plain <see cref="Description"/> text.
 		/// </summary>
 		public bool HasDescriptionContent => SelectedResult?.HasDescriptionContent ?? false;
 

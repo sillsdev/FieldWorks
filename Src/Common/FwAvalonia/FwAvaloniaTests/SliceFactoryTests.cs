@@ -12,7 +12,7 @@ using SIL.FieldWorks.Common.FwAvalonia.ViewDefinition;
 namespace FwAvaloniaTests
 {
 	/// <summary>
-	/// The shared <see cref="DetailFieldKind"/>→control dispatch both the detail-pane region view
+	/// The shared <see cref="DetailFieldKind"/>→control dispatch both the detail-pane detail view
 	/// and the browse in-cell editor route through. These pin that one switch produces the right control
 	/// per surviving kind (Text / Chooser / ReferenceVector / Literal / Custom / Unsupported), and that
 	/// the all-nullable <see cref="SliceFactoryContext"/> serves both surfaces — the browse cell

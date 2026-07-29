@@ -19,7 +19,7 @@ namespace FwAvaloniaTests.VisualChecks
 	/// Visual stages for the surviving detail-editor field kinds: a static literal row, an editable
 	/// reference-vector row, and the labeled Unsupported worklist row (the conversion worklist). Each is
 	/// captured as a Skia PNG for subjective review and run through the shared
-	/// <see cref="DialogLayoutAssert"/> crowding tripwire, plus ONE realized region surface holding them
+	/// <see cref="DialogLayoutAssert"/> crowding tripwire, plus ONE realized detail surface holding them
 	/// together. All LCModel-free: the model fields are built directly and a
 	/// <see cref="FakeDetailEditContext"/> records the staged edits.
 	/// </summary>

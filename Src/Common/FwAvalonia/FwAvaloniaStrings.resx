@@ -91,8 +91,8 @@
   <data name="FwAvalonia.AudioRecordingReadOnly" xml:space="preserve">
     <value>Audio recording (read-only in the new view)</value>
   </data>
-  <data name="FwAvalonia.RegionName" xml:space="preserve">
-    <value>Lexical edit region</value>
+  <data name="FwAvalonia.DetailAreaName" xml:space="preserve">
+    <value>Detail area</value>
   </data>
   <data name="FwAvalonia.AvaloniaHostName" xml:space="preserve">
     <value>Avalonia host</value>

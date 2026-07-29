@@ -16,7 +16,7 @@ using SIL.LCModel.Infrastructure;
 namespace SIL.FieldWorks.XWorks
 {
 	/// <summary>
-	/// The trimmed lexeme editor's custom-slice census. The region has exactly ONE native-conversion
+	/// The trimmed lexeme editor's custom-slice census. The detail view has exactly ONE native-conversion
 	/// route (the <see cref="ISlicePlugin"/> contract with <see cref="ReversalIndexEntryPlugin"/>)
 	/// plus the composer's reference-vector absorption; every OTHER dynamically loaded custom slice
 	/// composes as the labeled Unsupported worklist row. This census pins that only ReversalIndexEntrySlice

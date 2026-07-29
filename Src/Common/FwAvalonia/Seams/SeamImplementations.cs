@@ -19,7 +19,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Seams
 	}
 
 	/// <summary>
-	/// Region lifetime that disposes registered disposables exactly once, in reverse registration order.
+	/// Detail lifetime that disposes registered disposables exactly once, in reverse registration order.
 	/// </summary>
 	public sealed class DetailLifetime : IDetailLifetime
 	{

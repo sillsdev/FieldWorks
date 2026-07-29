@@ -16,7 +16,7 @@ using SIL.FieldWorks.Common.FwAvalonia.Detail;
 namespace FwAvaloniaTests
 {
 	/// <summary>
-	/// Headless tests for the preview-host sample path over the shared lexical-edit region renderer.
+	/// Headless tests for the preview-host sample path over the shared lexical-edit detail renderer.
 	/// These keep the preview path honest without preserving a second detached slice/editor stack.
 	/// </summary>
 	[TestFixture]

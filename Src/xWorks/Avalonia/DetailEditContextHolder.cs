@@ -16,7 +16,7 @@ namespace SIL.FieldWorks.XWorks
 	/// Owns the host's current <see cref="IDetailEditContext"/> and enforces the lifecycle rules
 	/// that keep the fenced edit session (an open LCModel undo task) safe against the rest of the
 	/// app:
-	/// (1) a context with an open session is NEVER orphaned — re-showing the region swaps in a
+	/// (1) a context with an open session is NEVER orphaned — re-showing the detail view swaps in a
 	/// fresh context and the displaced one is cancelled first (an orphaned open undo task makes
 	/// every later <c>IUndoStackManager.Save()</c> throw "Commit at wrong place.", which is fatal
 	/// at shutdown);
@@ -34,7 +34,7 @@ namespace SIL.FieldWorks.XWorks
 		private Form m_deactivateForm;
 		private EventHandler m_settleOnDeactivate;
 
-		/// <summary>The context currently bound to the shown region, or null.</summary>
+		/// <summary>The context currently bound to the shown detail view, or null.</summary>
 		public IDetailEditContext Current { get; private set; }
 
 		/// <summary>
