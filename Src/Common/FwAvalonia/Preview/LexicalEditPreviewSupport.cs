@@ -14,7 +14,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Preview
 	/// <summary>
 	/// Preview-host window for the shared lexical-edit region renderer. The host sets the
 	/// <see cref="Window.DataContext"/> from <see cref="LexicalEditPreviewDataProvider"/>; this
-	/// window responds by creating a fresh <see cref="LexicalEditRegionView"/> for that scenario.
+	/// window responds by creating a fresh <see cref="RegionDataTree"/> for that scenario.
 	/// </summary>
 	public sealed class LexicalEditPreviewWindow : Window
 	{
@@ -29,7 +29,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Preview
 		{
 			base.OnDataContextChanged(e);
 			if (DataContext is LexicalEditPreviewScenario scenario)
-				Content = new LexicalEditRegionView(scenario.Model, scenario.EditContext);
+				Content = new RegionDataTree(scenario.Model, scenario.EditContext);
 		}
 	}
 

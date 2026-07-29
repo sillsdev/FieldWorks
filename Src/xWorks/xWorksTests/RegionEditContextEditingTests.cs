@@ -30,7 +30,7 @@ namespace SIL.FieldWorks.XWorks
 	/// PropChanged bus, holding refreshes while this surface's own session is open.
 	/// </summary>
 	[TestFixture]
-	public class LexicalEditRegionEditingTests : MemoryOnlyBackendProviderTestBase
+	public class RegionEditContextEditingTests : MemoryOnlyBackendProviderTestBase
 	{
 		private ILexEntry m_entry;
 
@@ -849,7 +849,7 @@ namespace SIL.FieldWorks.XWorks
 				"the lossless RichXml round-trip preserves the colour for display");
 			// The matching headless test that the lossy value RENDERS a read-only editor with the
 			// not-editable-here tooltip lives in FwAvaloniaTests (the Avalonia rendering tests):
-			// LexicalEditRegionEditingTests.LossyValue_RendersReadOnly_WithTooltip.
+			// RegionEditContextEditingTests.LossyValue_RendersReadOnly_WithTooltip.
 		}
 
 		// DATA-SAFETY: a multi-run value carrying ONLY supported properties

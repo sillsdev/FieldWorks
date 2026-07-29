@@ -37,16 +37,16 @@ namespace FwAvaloniaTests
 				},
 				new List<ViewDiagnostic>());
 
-		private static LexicalEditRegionView Show(RegionModel model)
+		private static RegionDataTree Show(RegionModel model)
 		{
-			var view = new LexicalEditRegionView(model);
+			var view = new RegionDataTree(model);
 			var window = new Window { Content = view, Width = 420, Height = 200 };
 			window.Show();
 			Dispatcher.UIThread.RunJobs();
 			return view;
 		}
 
-		private static TextBlock FindUnsupportedBlock(LexicalEditRegionView view)
+		private static TextBlock FindUnsupportedBlock(RegionDataTree view)
 			=> view.GetVisualDescendants().OfType<TextBlock>()
 				.FirstOrDefault(t => t.Text == FwAvaloniaStrings.UnsupportedEditor);
 

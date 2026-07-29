@@ -64,7 +64,7 @@ namespace FwAvaloniaTests.VisualChecks
 			// Read-only display stage: the detail view is FLAT with subtle field separators (the WinForms
 			// DataTree look) — labels + values at the WinForms density font, no boxing per value.
 			var model = RegionModelProjector.FromViewDefinition(RegionDefinition(), new TwoFieldProvider());
-			var view = new LexicalEditRegionView(model);
+			var view = new RegionDataTree(model);
 
 			DialogSnapshot.Capture(view, "Region-01-initial", width: 420, height: 200);
 			DialogLayoutAssert.AssertNoCrowding(view);
@@ -76,7 +76,7 @@ namespace FwAvaloniaTests.VisualChecks
 			// Editable stage: an edit context is supplied so the value editors are live; the surface must still
 			// read flat/dense (no per-field box) the way the legacy editable DataTree does.
 			var model = RegionModelProjector.FromViewDefinition(RegionDefinition(), new TwoFieldProvider());
-			var view = new LexicalEditRegionView(model, new FakeRegionEditContext());
+			var view = new RegionDataTree(model, new FakeRegionEditContext());
 
 			DialogSnapshot.Capture(view, "Region-02-editable", width: 420, height: 200);
 			DialogLayoutAssert.AssertNoCrowding(view);
@@ -91,7 +91,7 @@ namespace FwAvaloniaTests.VisualChecks
 			// citation, a part-of-speech chooser, a date, a generic-date, an enum/option chooser, a boolean,
 			// a reference vector, and a multi-line note — the spread of kinds a real lexeme-entry detail shows.
 			// It must still read FLAT/dense (the WinForms DataTree look) with thin field separators, no boxing.
-			var view = new LexicalEditRegionView(RealisticRegionModel());
+			var view = new RegionDataTree(RealisticRegionModel());
 
 			DialogSnapshot.Capture(view, "Region-03-multi-field", width: 520, height: 420);
 			DialogLayoutAssert.AssertNoCrowding(view);
@@ -103,7 +103,7 @@ namespace FwAvaloniaTests.VisualChecks
 			// The same realistic field spread, now editable (an edit context makes the text/chooser editors
 			// live; dropped editors render Unsupported). The dense flat look must survive: live editors, no
 			// per-field box, aligned columns.
-			var view = new LexicalEditRegionView(RealisticRegionModel(), new FakeRegionEditContext());
+			var view = new RegionDataTree(RealisticRegionModel(), new FakeRegionEditContext());
 
 			DialogSnapshot.Capture(view, "Region-04-editable-multi", width: 520, height: 420);
 			DialogLayoutAssert.AssertNoCrowding(view);
@@ -121,7 +121,7 @@ namespace FwAvaloniaTests.VisualChecks
 					new[] { ("p1", "Main Dictionary"), ("p2", "Pocket Dictionary") },
 					new[] { ("p1", "Main Dictionary"), ("p2", "Pocket Dictionary"), ("p3", "School Dictionary") })
 			};
-			var view = new LexicalEditRegionView(
+			var view = new RegionDataTree(
 				new RegionModel("LexEntry", "detail", fields, new List<ViewDiagnostic>()),
 				new FakeRegionEditContext());
 

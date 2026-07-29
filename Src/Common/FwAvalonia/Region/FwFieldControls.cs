@@ -1331,7 +1331,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		/// <summary>
 		/// Detaches the per-item Remove handlers and the add picker's subscriptions and drops the option
 		/// flyout so a recycled reference-vector cell does not retain its closures. Idempotent;
-		/// a no-op for read-only rows (none wired). The host (LexicalEditRegionView / EditableCellHost)
+		/// a no-op for read-only rows (none wired). The host (RegionDataTree / EditableCellHost)
 		/// already disposes IDisposable editors on teardown, so wiring IDisposable here is enough.
 		/// </summary>
 		public void Dispose()

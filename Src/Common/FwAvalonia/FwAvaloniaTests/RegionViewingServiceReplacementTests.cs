@@ -57,7 +57,7 @@ namespace FwAvaloniaTests
 		[Test]
 		public void EveryCapability_HasManagedOwner_InTheIsolatedFwAvaloniaAssembly()
 		{
-			var productionAssembly = typeof(LexicalEditRegionView).Assembly;
+			var productionAssembly = typeof(RegionDataTree).Assembly;
 
 			foreach (var descriptor in RegionViewingServices.Replacements)
 			{

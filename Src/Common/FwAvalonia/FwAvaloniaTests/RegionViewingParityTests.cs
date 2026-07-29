@@ -35,11 +35,11 @@ namespace FwAvaloniaTests
 				new List<RegionWsValue> { new RegionWsValue("en", "value") }, null, null,
 				isEditable: true, indent: indent);
 
-		private static LexicalEditRegionView Show(params RegionField[] fields)
+		private static RegionDataTree Show(params RegionField[] fields)
 		{
 			var model = new RegionModel("LexEntry", "Normal",
 				fields.ToList(), new List<ViewDiagnostic>());
-			var view = new LexicalEditRegionView(model);
+			var view = new RegionDataTree(model);
 			var window = new Window { Content = view, Width = 480, Height = 300 };
 			window.Show();
 			Dispatcher.UIThread.RunJobs();
@@ -70,7 +70,7 @@ namespace FwAvaloniaTests
 			var view = Show(many);
 
 			var scroller = view.GetVisualDescendants().OfType<ScrollViewer>()
-				.FirstOrDefault(s => AutomationProperties.GetAutomationId(s) == "LexicalEditRegionView.Scroll");
+				.FirstOrDefault(s => AutomationProperties.GetAutomationId(s) == "RegionDataTree.Scroll");
 			Assert.That(scroller, Is.Not.Null, "the region is wrapped in a scroll viewer");
 			Assert.That(scroller.Extent.Height, Is.GreaterThan(scroller.Viewport.Height),
 				"60 rows overflow the viewport so the scrollbar engages");
@@ -178,7 +178,7 @@ namespace FwAvaloniaTests
 				new List<RegionField> { Header("h1", "Senses", 0), Text("g1", "Gloss", 1) },
 				new List<ViewDiagnostic>());
 
-			var first = new LexicalEditRegionView(model, null, null,
+			var first = new RegionDataTree(model, null, null,
 				id => store.TryGetValue(id, out var e) ? e : (bool?)null,
 				(id, e) => store[id] = e);
 			var w1 = new Window { Content = first, Width = 480, Height = 200 };
@@ -193,7 +193,7 @@ namespace FwAvaloniaTests
 			Assert.That(store["h1"], Is.False, "the collapse was recorded");
 			w1.Close();
 
-			var second = new LexicalEditRegionView(model, null, null,
+			var second = new RegionDataTree(model, null, null,
 				id => store.TryGetValue(id, out var e) ? e : (bool?)null,
 				(id, e) => store[id] = e);
 			var w2 = new Window { Content = second, Width = 480, Height = 200 };
@@ -219,7 +219,7 @@ namespace FwAvaloniaTests
 			Assert.That(ToolTip.GetTip(label), Is.EqualTo("Lexeme Form"), "11.17: label tooltips");
 
 			Assert.That(view.GetVisualDescendants().OfType<GridSplitter>()
-				.Any(g => AutomationProperties.GetAutomationId(g) == "LexicalEditRegionView.Splitter"),
+				.Any(g => AutomationProperties.GetAutomationId(g) == "RegionDataTree.Splitter"),
 				Is.True, "11.15: label/value splitter");
 
 			var box = view.GetVisualDescendants().OfType<TextBox>().First();
@@ -275,18 +275,18 @@ namespace FwAvaloniaTests
 			var model = new RegionModel("LexEntry", "detail", fields.ToList(),
 				new List<ViewDiagnostic>());
 
-			FwMultiWsTextField Editor(LexicalEditRegionView v, string id)
+			FwMultiWsTextField Editor(RegionDataTree v, string id)
 				=> v.GetVisualDescendants().OfType<FwMultiWsTextField>()
 					.First(f => AutomationProperties.GetAutomationId(f) == id);
 
-			var roView = new LexicalEditRegionView(model);
+			var roView = new RegionDataTree(model);
 			var w1 = new Window { Content = roView, Width = 520, Height = 420 };
 			w1.Show();
 			Dispatcher.UIThread.RunJobs();
 			w1.UpdateLayout();
 			Dispatcher.UIThread.RunJobs();
 
-			var edView = new LexicalEditRegionView(model, new FakeRegionEditContext());
+			var edView = new RegionDataTree(model, new FakeRegionEditContext());
 			var w2 = new Window { Content = edView, Width = 520, Height = 420 };
 			w2.Show();
 			Dispatcher.UIThread.RunJobs();

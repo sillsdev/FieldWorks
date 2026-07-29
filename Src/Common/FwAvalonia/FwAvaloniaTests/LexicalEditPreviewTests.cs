@@ -42,7 +42,7 @@ namespace FwAvaloniaTests
 		public void Preview_RendersTheSharedRegionEditors()
 		{
 			var window = ShowPreview();
-			Assert.That(Find<LexicalEditRegionView>(window, "LexicalEditRegionView"), Is.Not.Null);
+			Assert.That(Find<RegionDataTree>(window, "RegionDataTree"), Is.Not.Null);
 			Assert.That(Find<TextBox>(window, "LexemeFormEditor.seh"), Is.Not.Null);
 			Assert.That(Find<TextBox>(window, "LexemeFormEditor.en"), Is.Not.Null);
 			Assert.That(Find<FwChooserField>(window, "MorphTypeChooser"), Is.Not.Null);
@@ -86,8 +86,8 @@ namespace FwAvaloniaTests
 		public void Preview_UsesStableAutomationMetadata()
 		{
 			var window = ShowPreview();
-			Assert.That(AutomationProperties.GetAutomationId(Find<LexicalEditRegionView>(window, "LexicalEditRegionView")),
-				Is.EqualTo("LexicalEditRegionView"));
+			Assert.That(AutomationProperties.GetAutomationId(Find<RegionDataTree>(window, "RegionDataTree")),
+				Is.EqualTo("RegionDataTree"));
 			Assert.That(AutomationProperties.GetAutomationId(Find<TextBox>(window, "LexemeFormEditor.seh")),
 				Is.EqualTo("LexemeFormEditor.seh"));
 			Assert.That(AutomationProperties.GetAutomationId(Find<FwChooserField>(window, "MorphTypeChooser")),

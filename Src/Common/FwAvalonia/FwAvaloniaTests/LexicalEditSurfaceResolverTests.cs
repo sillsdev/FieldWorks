@@ -362,7 +362,7 @@ namespace FwAvaloniaTests
 		[Test]
 		public void FwAvaloniaAssembly_HasNoNativeViewsOrGraphiteReferences()
 		{
-			var referenced = typeof(LexicalEditRegionView).Assembly.GetReferencedAssemblies();
+			var referenced = typeof(RegionDataTree).Assembly.GetReferencedAssemblies();
 			var forbidden = new[] { "Graphite", "ViewsInterfaces", "Views.dll", "RootSite", "Gecko", "Geckofx" };
 
 			foreach (var name in referenced.Select(r => r.Name))
