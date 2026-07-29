@@ -8,7 +8,7 @@ using Avalonia.Threading;
 using FwAvaloniaDialogs;
 using FwAvaloniaTests.VisualChecks; // DialogSnapshot
 using NUnit.Framework;
-using SIL.FieldWorks.Common.FwAvalonia.Region;
+using SIL.FieldWorks.Common.FwAvalonia.Detail;
 
 namespace FwAvaloniaDialogsTests
 {
@@ -48,7 +48,7 @@ namespace FwAvaloniaDialogsTests
 		public void ExistingPicture_MetadataOnly_Ok_NoFile()
 		{
 			var vm = new PicturePropertiesDialogViewModel(
-				new RegionPictureMetadata(caption: "old", creator: "Bo"), isNew: false);
+				new DetailPictureMetadata(caption: "old", creator: "Bo"), isNew: false);
 			Assert.That(vm.IsValid, Is.True, "an existing picture allows metadata-only edits (no file required)");
 
 			vm.Caption = "edited";
@@ -64,7 +64,7 @@ namespace FwAvaloniaDialogsTests
 		public void Cancel_WritesNothing()
 		{
 			var vm = new PicturePropertiesDialogViewModel(
-				new RegionPictureMetadata(caption: "keep"), isNew: false);
+				new DetailPictureMetadata(caption: "keep"), isNew: false);
 			vm.Caption = "should not persist";
 			vm.CancelCommand.Execute(null);
 
@@ -76,7 +76,7 @@ namespace FwAvaloniaDialogsTests
 		public void Visual_PicturePropertiesDialog_RendersCleanly()
 		{
 			var vm = new PicturePropertiesDialogViewModel(
-				new RegionPictureMetadata(caption: "a kitten", description: "tabby", license: "CC-BY", creator: "Ada"),
+				new DetailPictureMetadata(caption: "a kitten", description: "tabby", license: "CC-BY", creator: "Ada"),
 				isNew: false);
 			var view = new PicturePropertiesDialogView(vm);
 

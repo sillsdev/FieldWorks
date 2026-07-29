@@ -7,7 +7,7 @@ using System.Linq;
 using System.Reflection;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwAvalonia;
-using SIL.FieldWorks.Common.FwAvalonia.Region;
+using SIL.FieldWorks.Common.FwAvalonia.Detail;
 using SIL.FieldWorks.Common.FwAvalonia.Seams;
 
 namespace FwAvaloniaTests
@@ -172,7 +172,7 @@ namespace FwAvaloniaTests
 		public void RegionLifetime_DisposesRegistered_InReverseOrder_Once()
 		{
 			var order = new System.Collections.Generic.List<int>();
-			var region = new RegionLifetime();
+			var region = new DetailLifetime();
 			region.Register(new Spy(() => order.Add(1)));
 			region.Register(new Spy(() => order.Add(2)));
 
@@ -187,7 +187,7 @@ namespace FwAvaloniaTests
 		public void RegionLifetime_LateRegistration_DisposesImmediately()
 		{
 			var disposed = false;
-			var region = new RegionLifetime();
+			var region = new DetailLifetime();
 			region.Dispose();
 			region.Register(new Spy(() => disposed = true));
 			Assert.That(disposed, Is.True);

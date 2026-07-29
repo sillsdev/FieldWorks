@@ -15,18 +15,18 @@ using Avalonia.Threading;
 using Avalonia.VisualTree;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwAvalonia;
-using SIL.FieldWorks.Common.FwAvalonia.Region;
+using SIL.FieldWorks.Common.FwAvalonia.Detail;
 using SIL.FieldWorks.Common.FwAvalonia.Seams;
 using SIL.FieldWorks.Common.FwAvalonia.ViewDefinition;
 
 namespace FwAvaloniaTests
 {
 	/// <summary>Records edit-context traffic so view editing behavior can be asserted without LCModel.</summary>
-	internal sealed class FakeRegionEditContext : IRegionEditContext, IStructuredTextEditing
+	internal sealed class FakeRegionEditContext : IDetailEditContext, IStructuredTextEditing
 	{
 		public readonly List<(string Field, string Ws, string Value)> TextEdits = new List<(string, string, string)>();
-		public readonly List<(string Field, string Ws, RegionRichTextValue Value)> RichTextEdits
-			= new List<(string, string, RegionRichTextValue)>();
+		public readonly List<(string Field, string Ws, DetailRichTextValue Value)> RichTextEdits
+			= new List<(string, string, DetailRichTextValue)>();
 		public readonly List<(string Field, string Key)> OptionEdits = new List<(string, string)>();
 		public readonly List<(string Field, string Key)> ReferenceAdds = new List<(string, string)>();
 		public readonly List<(string Field, string Key)> ReferenceRemoves = new List<(string, string)>();
@@ -34,13 +34,13 @@ namespace FwAvaloniaTests
 		/// <summary>What the next reference add/remove stage reports (false = failed stage).</summary>
 		public bool ReferenceGestureResult = true;
 
-		public bool TryAddReferenceItem(RegionField field, string optionKey)
+		public bool TryAddReferenceItem(DetailField field, string optionKey)
 		{
 			ReferenceAdds.Add((field.Field, optionKey));
 			return ReferenceGestureResult;
 		}
 
-		public bool TryRemoveReferenceItem(RegionField field, string optionKey)
+		public bool TryRemoveReferenceItem(DetailField field, string optionKey)
 		{
 			ReferenceRemoves.Add((field.Field, optionKey));
 			return ReferenceGestureResult;
@@ -62,13 +62,13 @@ namespace FwAvaloniaTests
 		/// <summary>What the next text stage reports (false = rejected, e.g. a non-numeric integer).</summary>
 		public bool TextResult = true;
 
-		public bool TrySetText(RegionField field, string ws, string value)
+		public bool TrySetText(DetailField field, string ws, string value)
 		{
 			TextEdits.Add((field.Field, ws, value));
 			return TextResult;
 		}
 
-		public bool TrySetRichText(RegionField field, string ws, RegionRichTextValue value)
+		public bool TrySetRichText(DetailField field, string ws, DetailRichTextValue value)
 		{
 			RichTextEdits.Add((field.Field, ws, value));
 			return true;
@@ -77,7 +77,7 @@ namespace FwAvaloniaTests
 		/// <summary>What the next option stage reports (false = rejected, e.g. an unparseable date).</summary>
 		public bool OptionResult = true;
 
-		public bool TrySetOption(RegionField field, string optionKey)
+		public bool TrySetOption(DetailField field, string optionKey)
 		{
 			OptionEdits.Add((field.Field, optionKey));
 			return OptionResult;
@@ -85,8 +85,8 @@ namespace FwAvaloniaTests
 
 		// Recorded StText paragraph CRUD traffic, so the structured-text editor can be asserted
 		// without LCModel. Each list captures the (field, paragraph index, value) the editor staged.
-		public readonly List<(string Field, int Index, RegionRichTextValue Value)> ParagraphTextEdits
-			= new List<(string, int, RegionRichTextValue)>();
+		public readonly List<(string Field, int Index, DetailRichTextValue Value)> ParagraphTextEdits
+			= new List<(string, int, DetailRichTextValue)>();
 		public readonly List<(string Field, int Index, string Style)> ParagraphStyleEdits
 			= new List<(string, int, string)>();
 		public readonly List<(string Field, int AfterIndex)> ParagraphInserts = new List<(string, int)>();
@@ -95,25 +95,25 @@ namespace FwAvaloniaTests
 		/// <summary>What the next paragraph CRUD stage reports (false = rejected, e.g. delete-the-only-para).</summary>
 		public bool ParagraphGestureResult = true;
 
-		public bool TrySetParagraphText(RegionField field, int paragraphIndex, RegionRichTextValue value)
+		public bool TrySetParagraphText(DetailField field, int paragraphIndex, DetailRichTextValue value)
 		{
 			ParagraphTextEdits.Add((field.Field, paragraphIndex, value));
 			return ParagraphGestureResult;
 		}
 
-		public bool TrySetParagraphStyle(RegionField field, int paragraphIndex, string styleName)
+		public bool TrySetParagraphStyle(DetailField field, int paragraphIndex, string styleName)
 		{
 			ParagraphStyleEdits.Add((field.Field, paragraphIndex, styleName));
 			return ParagraphGestureResult;
 		}
 
-		public bool TryInsertParagraph(RegionField field, int afterParagraphIndex)
+		public bool TryInsertParagraph(DetailField field, int afterParagraphIndex)
 		{
 			ParagraphInserts.Add((field.Field, afterParagraphIndex));
 			return ParagraphGestureResult;
 		}
 
-		public bool TryDeleteParagraph(RegionField field, int paragraphIndex)
+		public bool TryDeleteParagraph(DetailField field, int paragraphIndex)
 		{
 			ParagraphDeletes.Add((field.Field, paragraphIndex));
 			return ParagraphGestureResult;
@@ -158,35 +158,35 @@ namespace FwAvaloniaTests
 			},
 			new List<ViewDiagnostic>());
 
-		private sealed class EditingValueProvider : IRegionValueProvider
+		private sealed class EditingValueProvider : IDetailValueProvider
 		{
-			public IReadOnlyList<RegionWsValue> GetValues(ViewNode fieldNode)
+			public IReadOnlyList<DetailWsValue> GetValues(ViewNode fieldNode)
 				=> fieldNode.Field == "Form"
-					? new List<RegionWsValue> { new RegionWsValue("vern", "casa") }
-					: (IReadOnlyList<RegionWsValue>)new List<RegionWsValue>();
+					? new List<DetailWsValue> { new DetailWsValue("vern", "casa") }
+					: (IReadOnlyList<DetailWsValue>)new List<DetailWsValue>();
 
-			public IReadOnlyList<RegionChoiceOption> GetOptions(ViewNode fieldNode)
-				=> new List<RegionChoiceOption> { new RegionChoiceOption("g1", "stem"), new RegionChoiceOption("g2", "suffix") };
+			public IReadOnlyList<DetailChoiceOption> GetOptions(ViewNode fieldNode)
+				=> new List<DetailChoiceOption> { new DetailChoiceOption("g1", "stem"), new DetailChoiceOption("g2", "suffix") };
 
 			public string GetSelectedOptionKey(ViewNode fieldNode) => "g1";
 		}
 
-		private sealed class RichEditingValueProvider : IRegionValueProvider
+		private sealed class RichEditingValueProvider : IDetailValueProvider
 		{
-			public IReadOnlyList<RegionWsValue> GetValues(ViewNode fieldNode)
-				=> new List<RegionWsValue>
+			public IReadOnlyList<DetailWsValue> GetValues(ViewNode fieldNode)
+				=> new List<DetailWsValue>
 				{
-					new RegionWsValue("vern", "dog", wsTag: "qaa-x-rich",
-						richText: RegionRichTextEditAlgorithms.FromRuns("dog",
+					new DetailWsValue("vern", "dog", wsTag: "qaa-x-rich",
+						richText: DetailRichTextEditAlgorithms.FromRuns("dog",
 							new[]
 							{
-								new RegionTextRun("do", "qaa-x-rich"),
-								new RegionTextRun("g", "qaa-x-rich", namedStyle: "Emphasis")
+								new DetailTextRun("do", "qaa-x-rich"),
+								new DetailTextRun("g", "qaa-x-rich", namedStyle: "Emphasis")
 							}))
 				};
 
-			public IReadOnlyList<RegionChoiceOption> GetOptions(ViewNode fieldNode)
-				=> new List<RegionChoiceOption>();
+			public IReadOnlyList<DetailChoiceOption> GetOptions(ViewNode fieldNode)
+				=> new List<DetailChoiceOption>();
 
 			public string GetSelectedOptionKey(ViewNode fieldNode) => null;
 		}
@@ -194,41 +194,41 @@ namespace FwAvaloniaTests
 		// A value the run-replay would corrupt on edit: the run-model itself carries only supported
 		// props, but the source TsString had a property the model does not round-trip (e.g. a colour),
 		// so the product edge flagged the projection lossy. Such a value must render read-only.
-		private sealed class LossyEditingValueProvider : IRegionValueProvider
+		private sealed class LossyEditingValueProvider : IDetailValueProvider
 		{
-			public IReadOnlyList<RegionWsValue> GetValues(ViewNode fieldNode)
-				=> new List<RegionWsValue>
+			public IReadOnlyList<DetailWsValue> GetValues(ViewNode fieldNode)
+				=> new List<DetailWsValue>
 				{
-					new RegionWsValue("vern", "coloured", wsTag: "qaa-x-rich",
-						richText: new RegionRichTextValue("coloured",
-							new[] { new RegionTextRun("coloured", "qaa-x-rich") },
+					new DetailWsValue("vern", "coloured", wsTag: "qaa-x-rich",
+						richText: new DetailRichTextValue("coloured",
+							new[] { new DetailTextRun("coloured", "qaa-x-rich") },
 							richXml: "<Str/>", requiresRichEditor: true, lossyProperties: true))
 				};
 
-			public IReadOnlyList<RegionChoiceOption> GetOptions(ViewNode fieldNode)
-				=> new List<RegionChoiceOption>();
+			public IReadOnlyList<DetailChoiceOption> GetOptions(ViewNode fieldNode)
+				=> new List<DetailChoiceOption>();
 
 			public string GetSelectedOptionKey(ViewNode fieldNode) => null;
 		}
 
-		private static (RegionDataTree view, FakeRegionEditContext context, Window window) ShowEditable()
+		private static (DataTree view, FakeRegionEditContext context, Window window) ShowEditable()
 		{
-			var model = RegionModelProjector.FromViewDefinition(SampleDefinition(), new EditingValueProvider());
+			var model = DetailModelProjector.FromViewDefinition(SampleDefinition(), new EditingValueProvider());
 			var context = new FakeRegionEditContext();
-			var view = new RegionDataTree(model, context);
+			var view = new DataTree(model, context);
 			var window = new Window { Content = view, Width = 500, Height = 260 };
 			window.Show();
 			Dispatcher.UIThread.RunJobs();
 			return (view, context, window);
 		}
 
-		private static (RegionDataTree view, FakeRegionEditContext context, Window window,
+		private static (DataTree view, FakeRegionEditContext context, Window window,
 			InMemoryFwClipboard clipboard) ShowRichEditable()
 		{
-			var model = RegionModelProjector.FromViewDefinition(SampleDefinition(), new RichEditingValueProvider());
+			var model = DetailModelProjector.FromViewDefinition(SampleDefinition(), new RichEditingValueProvider());
 			var context = new FakeRegionEditContext();
 			var clipboard = new InMemoryFwClipboard();
-			var view = new RegionDataTree(model, context, clipboard: clipboard);
+			var view = new DataTree(model, context, clipboard: clipboard);
 			var window = new Window { Content = view, Width = 500, Height = 260 };
 			window.Show();
 			Dispatcher.UIThread.RunJobs();
@@ -290,9 +290,9 @@ namespace FwAvaloniaTests
 		[AvaloniaTest]
 		public void LossyValue_RendersReadOnly_WithTooltip()
 		{
-			var model = RegionModelProjector.FromViewDefinition(SampleDefinition(), new LossyEditingValueProvider());
+			var model = DetailModelProjector.FromViewDefinition(SampleDefinition(), new LossyEditingValueProvider());
 			var context = new FakeRegionEditContext();
-			var view = new RegionDataTree(model, context);
+			var view = new DataTree(model, context);
 			var window = new Window { Content = view, Width = 500, Height = 260 };
 			window.Show();
 			Dispatcher.UIThread.RunJobs();
@@ -451,13 +451,13 @@ namespace FwAvaloniaTests
 		[AvaloniaTest]
 		public void Chooser_DuplicateDisplayNames_StagesTheOptionAtTheSelectedIndex()
 		{
-			var field = new RegionField("LexEntry/x/#0", "Morph Type", "MorphType", null,
-				RegionFieldKind.Chooser, EditorClassification.Known, "DupChooser", null, SurfaceRouting.Inherit,
+			var field = new DetailField("LexEntry/x/#0", "Morph Type", "MorphType", null,
+				DetailFieldKind.Chooser, EditorClassification.Known, "DupChooser", null, SurfaceRouting.Inherit,
 				null,
-				new List<RegionChoiceOption>
+				new List<DetailChoiceOption>
 				{
-					new RegionChoiceOption("g1", "stem"),
-					new RegionChoiceOption("g2", "stem") // same display name, different key
+					new DetailChoiceOption("g1", "stem"),
+					new DetailChoiceOption("g2", "stem") // same display name, different key
 				},
 				"g1");
 			var context = new FakeRegionEditContext();
@@ -482,17 +482,17 @@ namespace FwAvaloniaTests
 		}
 
 		// Edits address the writing system by its unique IETF tag
-		// (RegionWsValue.WsTag); the user-editable abbreviation is only a fallback for tag-less
+		// (DetailWsValue.WsTag); the user-editable abbreviation is only a fallback for tag-less
 		// rows (tests/fakes using aliases like "vern").
 		[AvaloniaTest]
 		public void TextField_StagesEditsByWsTag_FallingBackToAbbrevWithoutOne()
 		{
-			var field = new RegionField("LexEntry/x/#1", "Form", "Form", null,
-				RegionFieldKind.Text, EditorClassification.Known, "TagField", null, SurfaceRouting.Inherit,
-				new List<RegionWsValue>
+			var field = new DetailField("LexEntry/x/#1", "Form", "Form", null,
+				DetailFieldKind.Text, EditorClassification.Known, "TagField", null, SurfaceRouting.Inherit,
+				new List<DetailWsValue>
 				{
-					new RegionWsValue("du", "uno", wsTag: "qaa-x-one"),
-					new RegionWsValue("du", "dos") // duplicate abbreviation, no tag
+					new DetailWsValue("du", "uno", wsTag: "qaa-x-one"),
+					new DetailWsValue("du", "dos") // duplicate abbreviation, no tag
 				}, null, null);
 			var context = new FakeRegionEditContext();
 			var fieldControl = new FwMultiWsTextField(field, "TagField", context, null);
@@ -512,7 +512,7 @@ namespace FwAvaloniaTests
 			Assert.That(context.TextEdits[1], Is.EqualTo(("Form", "du", "dos!")),
 				"tag-less rows keep the abbreviation alias");
 
-			// The per-row automation id (RegionFocusMemory's focus-restore key) must
+			// The per-row automation id (DetailFocusMemory's focus-restore key) must
 			// be unique too, so it uses the same tag-preferred key as edits — abbreviations collide.
 			Assert.That(AutomationProperties.GetAutomationId(boxes[0]), Is.EqualTo("TagField.qaa-x-one"),
 				"a tagged row's automation id keys on the unique IETF tag, not the collidable abbreviation");
@@ -527,12 +527,12 @@ namespace FwAvaloniaTests
 		[AvaloniaTest]
 		public void AudioValue_RendersReadOnlyText_WithNoPlayerAndNoStagedEdit()
 		{
-			var field = new RegionField("LexEntry/x/#audio", "Pronunciation", "Pronunciation",
-				null, RegionFieldKind.Text, EditorClassification.Known, "AudioField", null,
+			var field = new DetailField("LexEntry/x/#audio", "Pronunciation", "Pronunciation",
+				null, DetailFieldKind.Text, EditorClassification.Known, "AudioField", null,
 				SurfaceRouting.Inherit,
-				new List<RegionWsValue>
+				new List<DetailWsValue>
 				{
-					new RegionWsValue("aud", "casa.wav", wsTag: "qaa-Zxxx-x-audio", isAudio: true)
+					new DetailWsValue("aud", "casa.wav", wsTag: "qaa-Zxxx-x-audio", isAudio: true)
 				}, null, null, isEditable: true);
 			var context = new FakeRegionEditContext();
 			var fieldControl = new FwMultiWsTextField(field, "AudioField", context, null);
@@ -555,14 +555,14 @@ namespace FwAvaloniaTests
 		[AvaloniaTest]
 		public void GhostRow_WatermarkClearsOnFocus_AndRestoresWhenLeftEmpty()
 		{
-			var ghost = new RegionField("LexEntry/Normal/#0/ghost", "Lexeme Form",
-				"LexemeForm", null, RegionFieldKind.Text, EditorClassification.Known, "GhostRow", null,
+			var ghost = new DetailField("LexEntry/Normal/#0/ghost", "Lexeme Form",
+				"LexemeForm", null, DetailFieldKind.Text, EditorClassification.Known, "GhostRow", null,
 				SurfaceRouting.Inherit,
-				new List<RegionWsValue> { new RegionWsValue("vern", "") }, null, null,
+				new List<DetailWsValue> { new DetailWsValue("vern", "") }, null, null,
 				isEditable: true, indent: 0, ghostPrompt: "Click here to add Lexeme Form");
-			var model = new RegionModel("LexEntry", "Normal",
-				new List<RegionField> { ghost }, new List<ViewDiagnostic>());
-			var view = new RegionDataTree(model, new FakeRegionEditContext());
+			var model = new DetailModel("LexEntry", "Normal",
+				new List<DetailField> { ghost }, new List<ViewDiagnostic>());
+			var view = new DataTree(model, new FakeRegionEditContext());
 			var window = new Window { Content = view, Width = 480, Height = 200 };
 			window.Show();
 			Dispatcher.UIThread.RunJobs();
@@ -589,16 +589,16 @@ namespace FwAvaloniaTests
 		public void SearchBackedReferenceVector_SearchFlyout_RendersAndStagesSelectedResult()
 		{
 			var queries = new List<string>();
-			var lexicon = new List<RegionChoiceOption>
+			var lexicon = new List<DetailChoiceOption>
 			{
-				new RegionChoiceOption("e-casa", "casa"),
-				new RegionChoiceOption("e-cantar", "cantar"),
-				new RegionChoiceOption("e-perro", "perro")
+				new DetailChoiceOption("e-casa", "casa"),
+				new DetailChoiceOption("e-cantar", "cantar"),
+				new DetailChoiceOption("e-perro", "perro")
 			};
-			var field = new RegionField("LexEntryRef/x/#0", "Components", "ComponentLexemes",
-				null, RegionFieldKind.ReferenceVector, EditorClassification.Known, "Components", null,
+			var field = new DetailField("LexEntryRef/x/#0", "Components", "ComponentLexemes",
+				null, DetailFieldKind.ReferenceVector, EditorClassification.Known, "Components", null,
 				SurfaceRouting.Inherit, null, null, null, isEditable: true, indent: 0,
-				items: new List<RegionChoiceOption> { new RegionChoiceOption("e-burro", "burro") },
+				items: new List<DetailChoiceOption> { new DetailChoiceOption("e-burro", "burro") },
 				searchOptions: query =>
 				{
 					queries.Add(query);
@@ -651,11 +651,11 @@ namespace FwAvaloniaTests
 		[AvaloniaTest]
 		public void SearchBackedReferenceVector_ItemRemove_StillStagesThroughTheContext()
 		{
-			var field = new RegionField("LexEntryRef/x/#0", "Components", "ComponentLexemes",
-				null, RegionFieldKind.ReferenceVector, EditorClassification.Known, "Components2", null,
+			var field = new DetailField("LexEntryRef/x/#0", "Components", "ComponentLexemes",
+				null, DetailFieldKind.ReferenceVector, EditorClassification.Known, "Components2", null,
 				SurfaceRouting.Inherit, null, null, null, isEditable: true, indent: 0,
-				items: new List<RegionChoiceOption> { new RegionChoiceOption("e-burro", "burro") },
-				searchOptions: query => new List<RegionChoiceOption>());
+				items: new List<DetailChoiceOption> { new DetailChoiceOption("e-burro", "burro") },
+				searchOptions: query => new List<DetailChoiceOption>());
 			var context = new FakeRegionEditContext();
 			var vector = new FwReferenceVectorField(field, "Components2", context);
 			var window = new Window { Content = vector, Width = 480, Height = 240 };
@@ -672,17 +672,17 @@ namespace FwAvaloniaTests
 				"the remove behavior is unchanged for search-backed vectors");
 		}
 
-		private static RegionField PublishInField() => new RegionField(
+		private static DetailField PublishInField() => new DetailField(
 			"LexEntry/x/#9", "Publish Entry In", "PublishIn", null,
-			RegionFieldKind.ReferenceVector, EditorClassification.Known, "PublishIn", null,
+			DetailFieldKind.ReferenceVector, EditorClassification.Known, "PublishIn", null,
 			SurfaceRouting.Inherit, null,
-			new List<RegionChoiceOption>
+			new List<DetailChoiceOption>
 			{
-				new RegionChoiceOption("p1", "Main Dictionary"),
-				new RegionChoiceOption("p2", "Pocket")
+				new DetailChoiceOption("p1", "Main Dictionary"),
+				new DetailChoiceOption("p2", "Pocket")
 			},
 			null, isEditable: true, indent: 0,
-			items: new List<RegionChoiceOption> { new RegionChoiceOption("p1", "Main Dictionary") });
+			items: new List<DetailChoiceOption> { new DetailChoiceOption("p1", "Main Dictionary") });
 
 		private static (FwReferenceVectorField vector, FakeRegionEditContext context) ShowVector(
 			Action gestureCompleted)
@@ -781,10 +781,10 @@ namespace FwAvaloniaTests
 		[AvaloniaTest]
 		public void ReferenceGesture_InTheView_CommitsImmediately_AndRaisesEditCompleted()
 		{
-			var model = new RegionModel("LexEntry", "test",
-				new List<RegionField> { PublishInField() }, new List<ViewDiagnostic>());
+			var model = new DetailModel("LexEntry", "test",
+				new List<DetailField> { PublishInField() }, new List<ViewDiagnostic>());
 			var context = new FakeRegionEditContext();
-			var view = new RegionDataTree(model, context);
+			var view = new DataTree(model, context);
 			var window = new Window { Content = view, Width = 500, Height = 260 };
 			window.Show();
 			Dispatcher.UIThread.RunJobs();
@@ -805,13 +805,13 @@ namespace FwAvaloniaTests
 		[AvaloniaTest]
 		public void ReferenceGesture_InTheView_WithValidationErrors_BlocksTheCommitVisibly()
 		{
-			var model = new RegionModel("LexEntry", "test",
-				new List<RegionField> { PublishInField() }, new List<ViewDiagnostic>());
+			var model = new DetailModel("LexEntry", "test",
+				new List<DetailField> { PublishInField() }, new List<ViewDiagnostic>());
 			var context = new FakeRegionEditContext
 			{
 				ValidateResult = new List<string> { "A Lexeme Form is required." }
 			};
-			var view = new RegionDataTree(model, context);
+			var view = new DataTree(model, context);
 			var window = new Window { Content = view, Width = 500, Height = 260 };
 			window.Show();
 			Dispatcher.UIThread.RunJobs();
@@ -829,8 +829,8 @@ namespace FwAvaloniaTests
 		[AvaloniaTest]
 		public void WithoutEditContext_ViewIsReadOnlyDisplay_WithNoFooter()
 		{
-			var model = RegionModelProjector.FromViewDefinition(SampleDefinition(), new EditingValueProvider());
-			var view = new RegionDataTree(model);
+			var model = DetailModelProjector.FromViewDefinition(SampleDefinition(), new EditingValueProvider());
+			var view = new DataTree(model);
 			var window = new Window { Content = view, Width = 500, Height = 260 };
 			window.Show();
 			Dispatcher.UIThread.RunJobs();
@@ -908,9 +908,9 @@ namespace FwAvaloniaTests
 		[AvaloniaTest]
 		public void CtrlB_OnLossyValue_DoesNotStageFormatting()
 		{
-			var model = RegionModelProjector.FromViewDefinition(SampleDefinition(), new LossyEditingValueProvider());
+			var model = DetailModelProjector.FromViewDefinition(SampleDefinition(), new LossyEditingValueProvider());
 			var context = new FakeRegionEditContext();
-			var view = new RegionDataTree(model, context);
+			var view = new DataTree(model, context);
 			var window = new Window { Content = view, Width = 500, Height = 260 };
 			window.Show();
 			Dispatcher.UIThread.RunJobs();
@@ -947,18 +947,18 @@ namespace FwAvaloniaTests
 
 		// A field carrying a rich value plus the project's available character styles, so the per-WS
 		// style picker affordance is built.
-		private static RegionField StyleableField(params string[] styles)
+		private static DetailField StyleableField(params string[] styles)
 		{
-			var field = new RegionField("LexEntry/x/#0", "Bibliography", "Bibliography", null,
-				RegionFieldKind.Text, EditorClassification.Known, "BibEditor", null, SurfaceRouting.Inherit,
-				new List<RegionWsValue>
+			var field = new DetailField("LexEntry/x/#0", "Bibliography", "Bibliography", null,
+				DetailFieldKind.Text, EditorClassification.Known, "BibEditor", null, SurfaceRouting.Inherit,
+				new List<DetailWsValue>
 				{
-					new RegionWsValue("anal", "dog", wsTag: "qaa-x-rich",
-						richText: RegionRichTextEditAlgorithms.FromRuns("dog",
+					new DetailWsValue("anal", "dog", wsTag: "qaa-x-rich",
+						richText: DetailRichTextEditAlgorithms.FromRuns("dog",
 							new[]
 							{
-								new RegionTextRun("do", "qaa-x-rich"),
-								new RegionTextRun("g", "qaa-x-rich", namedStyle: "Emphasis")
+								new DetailTextRun("do", "qaa-x-rich"),
+								new DetailTextRun("g", "qaa-x-rich", namedStyle: "Emphasis")
 							}))
 				},
 				null, null, isEditable: true, indent: 0)
@@ -969,7 +969,7 @@ namespace FwAvaloniaTests
 		}
 
 		private static (FwMultiWsTextField control, FakeRegionEditContext context, Window window)
-			ShowStyleable(RegionField field)
+			ShowStyleable(DetailField field)
 		{
 			var context = new FakeRegionEditContext();
 			var control = new FwMultiWsTextField(field, "BibEditor", context, null);
@@ -1083,13 +1083,13 @@ namespace FwAvaloniaTests
 		[AvaloniaTest]
 		public void StyleAffordance_Absent_OnLossyReadOnlyValue()
 		{
-			var field = new RegionField("LexEntry/x/#0", "Bibliography", "Bibliography", null,
-				RegionFieldKind.Text, EditorClassification.Known, "BibEditor", null, SurfaceRouting.Inherit,
-				new List<RegionWsValue>
+			var field = new DetailField("LexEntry/x/#0", "Bibliography", "Bibliography", null,
+				DetailFieldKind.Text, EditorClassification.Known, "BibEditor", null, SurfaceRouting.Inherit,
+				new List<DetailWsValue>
 				{
-					new RegionWsValue("anal", "coloured", wsTag: "qaa-x-rich",
-						richText: new RegionRichTextValue("coloured",
-							new[] { new RegionTextRun("coloured", "qaa-x-rich") },
+					new DetailWsValue("anal", "coloured", wsTag: "qaa-x-rich",
+						richText: new DetailRichTextValue("coloured",
+							new[] { new DetailTextRun("coloured", "qaa-x-rich") },
 							richXml: "<Str/>", requiresRichEditor: true, lossyProperties: true))
 				},
 				null, null, isEditable: true, indent: 0)
@@ -1129,24 +1129,24 @@ namespace FwAvaloniaTests
 	{
 		// A field carrying a rich value plus the project's available writing systems, so the per-WS retag
 		// picker affordance is built. The field's own ws is "qaa-x-rich".
-		private static RegionField RetaggableField(params (string Tag, string Name)[] systems)
+		private static DetailField RetaggableField(params (string Tag, string Name)[] systems)
 		{
-			var field = new RegionField("LexEntry/x/#0", "Bibliography", "Bibliography", null,
-				RegionFieldKind.Text, EditorClassification.Known, "BibEditor", null, SurfaceRouting.Inherit,
-				new List<RegionWsValue>
+			var field = new DetailField("LexEntry/x/#0", "Bibliography", "Bibliography", null,
+				DetailFieldKind.Text, EditorClassification.Known, "BibEditor", null, SurfaceRouting.Inherit,
+				new List<DetailWsValue>
 				{
-					new RegionWsValue("anal", "dog", wsTag: "qaa-x-rich",
-						richText: RegionRichTextEditAlgorithms.FromRuns("dog",
+					new DetailWsValue("anal", "dog", wsTag: "qaa-x-rich",
+						richText: DetailRichTextEditAlgorithms.FromRuns("dog",
 							new[]
 							{
-								new RegionTextRun("do", "qaa-x-rich"),
-								new RegionTextRun("g", "qaa-x-other")
+								new DetailTextRun("do", "qaa-x-rich"),
+								new DetailTextRun("g", "qaa-x-other")
 							}))
 				},
 				null, null, isEditable: true, indent: 0)
 			{
 				AvailableWritingSystems = systems
-					.Select(s => new RegionWritingSystemOption(s.Tag, s.Name)).ToList()
+					.Select(s => new DetailWritingSystemOption(s.Tag, s.Name)).ToList()
 			};
 			return field;
 		}
@@ -1281,8 +1281,8 @@ namespace FwAvaloniaTests
 
 	/// <summary>
 	/// GEAR = CONFIGURE: a chooser or reference-vector row whose supporting list
-	/// resolved a list-editor target (a goto <see cref="RegionChooserLink"/>) draws the gear, and
-	/// clicking it DIRECTLY raises the host's <see cref="RegionLinkRequest"/> — no flyout, no
+	/// resolved a list-editor target (a goto <see cref="DetailChooserLink"/>) draws the gear, and
+	/// clicking it DIRECTLY raises the host's <see cref="DetailLinkRequest"/> — no flyout, no
 	/// context menu. Option flyouts (single-select chooser click, vector "+") are OPTIONS ONLY:
 	/// they contain zero link items. Rows without a resolvable list editor draw no gear; text
 	/// rows NEVER draw one (the Lexeme Form slice menu is right-click only).
@@ -1290,22 +1290,22 @@ namespace FwAvaloniaTests
 	[TestFixture]
 	public class RegionConfigureGearTests
 	{
-		private static RegionField LinkedChooserField() => new RegionField(
+		private static DetailField LinkedChooserField() => new DetailField(
 			"MoForm/x/#0", "Morph Type", "MorphType", null,
-			RegionFieldKind.Chooser, EditorClassification.Known, "MorphTypeChooser", null,
+			DetailFieldKind.Chooser, EditorClassification.Known, "MorphTypeChooser", null,
 			SurfaceRouting.Inherit, null,
-			new List<RegionChoiceOption> { new RegionChoiceOption("g1", "stem") }, "g1",
-			chooserLinks: new List<RegionChooserLink>
+			new List<DetailChoiceOption> { new DetailChoiceOption("g1", "stem") }, "g1",
+			chooserLinks: new List<DetailChooserLink>
 			{
-				new RegionChooserLink("Edit the Morpheme Types list", "morphTypeEdit"),
-				new RegionChooserLink("Edit something else", "otherEdit") // first goto wins
+				new DetailChooserLink("Edit the Morpheme Types list", "morphTypeEdit"),
+				new DetailChooserLink("Edit something else", "otherEdit") // first goto wins
 			});
 
 		[AvaloniaTest]
 		public void ChooserGear_Click_DispatchesTheFirstResolvedJump_NoFlyoutNoMenu()
 		{
 			var field = LinkedChooserField();
-			var requests = new List<RegionLinkRequest>();
+			var requests = new List<DetailLinkRequest>();
 			var context = new FakeRegionEditContext();
 			var chooser = new FwChooserField(field, "MorphTypeChooser", context, requests.Add);
 			var window = new Window { Content = chooser, Width = 420, Height = 200 };
@@ -1346,17 +1346,17 @@ namespace FwAvaloniaTests
 		[AvaloniaTest]
 		public void VectorGear_Click_DispatchesTheJumpDirectly_AndTheAddFlyoutHasNoLinks()
 		{
-			var field = new RegionField("LexEntry/x/#1", "Publish Entry In", "PublishIn", null,
-				RegionFieldKind.ReferenceVector, EditorClassification.Known, "PublishIn", null,
+			var field = new DetailField("LexEntry/x/#1", "Publish Entry In", "PublishIn", null,
+				DetailFieldKind.ReferenceVector, EditorClassification.Known, "PublishIn", null,
 				SurfaceRouting.Inherit, null,
-				new List<RegionChoiceOption> { new RegionChoiceOption("p1", "Main Dictionary") },
+				new List<DetailChoiceOption> { new DetailChoiceOption("p1", "Main Dictionary") },
 				null, isEditable: true, indent: 0,
-				items: new List<RegionChoiceOption>(),
-				chooserLinks: new List<RegionChooserLink>
+				items: new List<DetailChoiceOption>(),
+				chooserLinks: new List<DetailChooserLink>
 				{
-					new RegionChooserLink("Edit the Publications list", "publicationsEdit")
+					new DetailChooserLink("Edit the Publications list", "publicationsEdit")
 				});
-			var requests = new List<RegionLinkRequest>();
+			var requests = new List<DetailLinkRequest>();
 			var vector = new FwReferenceVectorField(field, "PublishIn", new FakeRegionEditContext(),
 				null, requests.Add);
 			var window = new Window { Content = vector, Width = 480, Height = 240 };
@@ -1385,10 +1385,10 @@ namespace FwAvaloniaTests
 		public void RowsWithoutAResolvableListEditor_HaveNoGear()
 		{
 			// No links: no gear, even with a host callback.
-			var noLinks = new RegionField("MoForm/x/#0", "Morph Type", "MorphType", null,
-				RegionFieldKind.Chooser, EditorClassification.Known, "PlainChooser", null,
+			var noLinks = new DetailField("MoForm/x/#0", "Morph Type", "MorphType", null,
+				DetailFieldKind.Chooser, EditorClassification.Known, "PlainChooser", null,
 				SurfaceRouting.Inherit, null,
-				new List<RegionChoiceOption> { new RegionChoiceOption("g1", "stem") }, "g1");
+				new List<DetailChoiceOption> { new DetailChoiceOption("g1", "stem") }, "g1");
 			var chooser = new FwChooserField(noLinks, "PlainChooser", new FakeRegionEditContext(),
 				request => { });
 			Assert.That(chooser.HoverAffordances, Is.Empty, "no resolvable list editor, no gear");
@@ -1401,11 +1401,11 @@ namespace FwAvaloniaTests
 			Assert.That(noCallback.HoverAffordances, Is.Empty, "no host bridge, no gear");
 
 			// A vector without links: bars + "+" only — no Settings button at all.
-			var vectorField = new RegionField("LexEntry/x/#1", "Publish Entry In",
-				"PublishIn", null, RegionFieldKind.ReferenceVector, EditorClassification.Known,
+			var vectorField = new DetailField("LexEntry/x/#1", "Publish Entry In",
+				"PublishIn", null, DetailFieldKind.ReferenceVector, EditorClassification.Known,
 				"PlainVector", null, SurfaceRouting.Inherit, null,
-				new List<RegionChoiceOption> { new RegionChoiceOption("p1", "Main Dictionary") },
-				null, isEditable: true, indent: 0, items: new List<RegionChoiceOption>());
+				new List<DetailChoiceOption> { new DetailChoiceOption("p1", "Main Dictionary") },
+				null, isEditable: true, indent: 0, items: new List<DetailChoiceOption>());
 			var vector = new FwReferenceVectorField(vectorField, "PlainVector",
 				new FakeRegionEditContext(), null, request => { });
 			Assert.That(vector.Children.OfType<Button>()
@@ -1419,16 +1419,16 @@ namespace FwAvaloniaTests
 		[AvaloniaTest]
 		public void TextRows_NeverDrawAGear_TheSliceMenuStaysOnRightClickOnly()
 		{
-			var field = new RegionField("MoStemAllomorph/AsLexemeFormBasic/#0", "Lexeme Form",
-				"Form", null, RegionFieldKind.Text, EditorClassification.Known, "LexemeFormRow", null,
+			var field = new DetailField("MoStemAllomorph/AsLexemeFormBasic/#0", "Lexeme Form",
+				"Form", null, DetailFieldKind.Text, EditorClassification.Known, "LexemeFormRow", null,
 				SurfaceRouting.Inherit,
-				new List<RegionWsValue>
+				new List<DetailWsValue>
 				{
-					new RegionWsValue("vern", "casa"),
-					new RegionWsValue("ipa", "kasa")
+					new DetailWsValue("vern", "casa"),
+					new DetailWsValue("ipa", "kasa")
 				},
 				null, null, isEditable: true, indent: 0, menuId: "mnuDataTree-LexemeForm");
-			var requests = new List<RegionMenuRequest>();
+			var requests = new List<DetailMenuRequest>();
 			var text = new FwMultiWsTextField(field, "LexemeFormRow", new FakeRegionEditContext(),
 				null, requests.Add);
 			var window = new Window { Content = text, Width = 420, Height = 200 };

@@ -15,7 +15,7 @@ using Avalonia.Threading;
 using Avalonia.VisualTree;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwAvalonia;
-using SIL.FieldWorks.Common.FwAvalonia.Region;
+using SIL.FieldWorks.Common.FwAvalonia.Detail;
 using SIL.FieldWorks.Common.FwAvalonia.ViewDefinition;
 using FwAvaloniaTests.VisualChecks;
 using FwAvaloniaDialogsTests;
@@ -33,23 +33,23 @@ namespace FwAvaloniaTests
 	[TestFixture]
 	public class StructuredTextRichDepthTests
 	{
-		private static RegionParagraph MultiRunPara()
-			=> new RegionParagraph(RegionRichTextEditAlgorithms.FromRuns("dog cat",
+		private static DetailParagraph MultiRunPara()
+			=> new DetailParagraph(DetailRichTextEditAlgorithms.FromRuns("dog cat",
 				new[]
 				{
-					new RegionTextRun("do", "en"),
-					new RegionTextRun("g", "en", namedStyle: "Emphasis"),
-					new RegionTextRun(" cat", "fr")
+					new DetailTextRun("do", "en"),
+					new DetailTextRun("g", "en", namedStyle: "Emphasis"),
+					new DetailTextRun(" cat", "fr")
 				}));
 
-		private static RegionField Field(IReadOnlyList<RegionParagraph> paragraphs,
+		private static DetailField Field(IReadOnlyList<DetailParagraph> paragraphs,
 			IReadOnlyList<string> charStyles = null,
-			IReadOnlyList<RegionWritingSystemOption> writingSystems = null,
-			IReadOnlyDictionary<string, RegionRunFont> fontMap = null)
+			IReadOnlyList<DetailWritingSystemOption> writingSystems = null,
+			IReadOnlyDictionary<string, DetailRunFont> fontMap = null)
 		{
-			var field = new RegionField(
+			var field = new DetailField(
 				stableId: "LexEntry/Discussion@1", label: "Discussion", field: "Discussion",
-				writingSystem: null, kind: RegionFieldKind.StructuredText,
+				writingSystem: null, kind: DetailFieldKind.StructuredText,
 				editorClassification: EditorClassification.Known, automationId: "Discussion",
 				localizationKey: null, routing: SurfaceRouting.Product, values: null, options: null,
 				selectedOptionKey: null, isEditable: true, paragraphs: paragraphs);
@@ -62,8 +62,8 @@ namespace FwAvaloniaTests
 			return field;
 		}
 
-		private static (FwStructuredTextField Field, Window Window) Show(RegionField field,
-			IRegionEditContext editContext)
+		private static (FwStructuredTextField Field, Window Window) Show(DetailField field,
+			IDetailEditContext editContext)
 		{
 			var control = new FwStructuredTextField(field, field.AutomationId, editContext, null, () => { });
 			var window = new Window { Content = control, Width = 460, Height = 240 };
@@ -83,7 +83,7 @@ namespace FwAvaloniaTests
 		[AvaloniaTest]
 		public void CharStylePicker_AppliesAStyleOverTheSelectedSpan_StagingParagraphText()
 		{
-			var field = Field(new List<RegionParagraph> { MultiRunPara() },
+			var field = Field(new List<DetailParagraph> { MultiRunPara() },
 				charStyles: new[] { "Strong", "Subtle Emphasis" });
 			var context = new FakeRegionEditContext();
 			var (control, window) = Show(field, context);
@@ -126,9 +126,9 @@ namespace FwAvaloniaTests
 		[AvaloniaTest]
 		public void RichTextTriggerButtons_AreNonFocusable_SoTheSelectionSurvivesOpeningTheirFlyout()
 		{
-			var field = Field(new List<RegionParagraph> { MultiRunPara() },
+			var field = Field(new List<DetailParagraph> { MultiRunPara() },
 				charStyles: new[] { "Strong" },
-				writingSystems: new[] { new RegionWritingSystemOption("fr", "French") });
+				writingSystems: new[] { new DetailWritingSystemOption("fr", "French") });
 			field.AvailableParagraphStyles = new[] { "Heading", "Block Quotation" };
 			var (control, _) = Show(field, new FakeRegionEditContext());
 
@@ -149,7 +149,7 @@ namespace FwAvaloniaTests
 		[AvaloniaTest]
 		public void CharStyleAffordance_Absent_WhenNoAvailableStyles()
 		{
-			var field = Field(new List<RegionParagraph> { MultiRunPara() } /* no char styles */);
+			var field = Field(new List<DetailParagraph> { MultiRunPara() } /* no char styles */);
 			var (control, _) = Show(field, new FakeRegionEditContext());
 			Assert.That(Find<Button>(control, "Discussion.Para.0.CharStyle"), Is.Null,
 				"a paragraph with no available character styles shows no char-style picker");
@@ -158,7 +158,7 @@ namespace FwAvaloniaTests
 		[AvaloniaTest]
 		public void CharStyleAffordance_HasAutomationIdAndAccessibleName()
 		{
-			var field = Field(new List<RegionParagraph> { MultiRunPara() }, charStyles: new[] { "Strong" });
+			var field = Field(new List<DetailParagraph> { MultiRunPara() }, charStyles: new[] { "Strong" });
 			var (control, _) = Show(field, new FakeRegionEditContext());
 			var styleButton = Find<Button>(control, "Discussion.Para.0.CharStyle");
 			Assert.That(styleButton, Is.Not.Null);
@@ -170,11 +170,11 @@ namespace FwAvaloniaTests
 		[AvaloniaTest]
 		public void WsRetagPicker_RetagsTheSelectedSpan_StagingParagraphText()
 		{
-			var field = Field(new List<RegionParagraph> { MultiRunPara() },
+			var field = Field(new List<DetailParagraph> { MultiRunPara() },
 				writingSystems: new[]
 				{
-					new RegionWritingSystemOption("fr", "French"),
-					new RegionWritingSystemOption("de", "German")
+					new DetailWritingSystemOption("fr", "French"),
+					new DetailWritingSystemOption("de", "German")
 				});
 			var context = new FakeRegionEditContext();
 			var (control, window) = Show(field, context);
@@ -208,7 +208,7 @@ namespace FwAvaloniaTests
 		[AvaloniaTest]
 		public void WsRetagAffordance_Absent_WhenNoAvailableWritingSystems()
 		{
-			var field = Field(new List<RegionParagraph> { MultiRunPara() } /* no ws */);
+			var field = Field(new List<DetailParagraph> { MultiRunPara() } /* no ws */);
 			var (control, _) = Show(field, new FakeRegionEditContext());
 			Assert.That(Find<Button>(control, "Discussion.Para.0.WritingSystem"), Is.Null,
 				"a paragraph with no available writing systems shows no ws picker");
@@ -219,12 +219,12 @@ namespace FwAvaloniaTests
 		[AvaloniaTest]
 		public void MultiRunParagraph_RendersPerRunFontDisplay_WhenUnfocused()
 		{
-			var fonts = new Dictionary<string, RegionRunFont>
+			var fonts = new Dictionary<string, DetailRunFont>
 			{
-				["en"] = new RegionRunFont("Charis SIL"),
-				["fr"] = new RegionRunFont("Times New Roman")
+				["en"] = new DetailRunFont("Charis SIL"),
+				["fr"] = new DetailRunFont("Times New Roman")
 			};
-			var field = Field(new List<RegionParagraph> { MultiRunPara() }, fontMap: fonts);
+			var field = Field(new List<DetailParagraph> { MultiRunPara() }, fontMap: fonts);
 			var context = new FakeRegionEditContext();
 			var (control, window) = Show(field, context);
 
@@ -246,12 +246,12 @@ namespace FwAvaloniaTests
 		[AvaloniaTest]
 		public void FocusSwapsToEditableTextBox_BlurSwapsBackToDisplay()
 		{
-			var fonts = new Dictionary<string, RegionRunFont>
+			var fonts = new Dictionary<string, DetailRunFont>
 			{
-				["en"] = new RegionRunFont("Charis SIL"),
-				["fr"] = new RegionRunFont("Times New Roman")
+				["en"] = new DetailRunFont("Charis SIL"),
+				["fr"] = new DetailRunFont("Times New Roman")
 			};
-			var field = Field(new List<RegionParagraph> { MultiRunPara() }, fontMap: fonts);
+			var field = Field(new List<DetailParagraph> { MultiRunPara() }, fontMap: fonts);
 			var control = new FwStructuredTextField(field, field.AutomationId, new FakeRegionEditContext(),
 				null, () => { });
 			// A sibling focusable button so blur has somewhere to go (the structured field panel itself is
@@ -294,10 +294,10 @@ namespace FwAvaloniaTests
 		public void SingleRunUniformParagraph_DoesNotBuildTheDisplayLayer()
 		{
 			// A uniform single-run paragraph needs no per-run font display: the plain TextBox is enough.
-			var para = new RegionParagraph(RegionRichTextEditAlgorithms.FromRuns("plain",
-				new[] { new RegionTextRun("plain", "en") }));
-			var fonts = new Dictionary<string, RegionRunFont> { ["en"] = new RegionRunFont("Charis SIL") };
-			var field = Field(new List<RegionParagraph> { para }, fontMap: fonts);
+			var para = new DetailParagraph(DetailRichTextEditAlgorithms.FromRuns("plain",
+				new[] { new DetailTextRun("plain", "en") }));
+			var fonts = new Dictionary<string, DetailRunFont> { ["en"] = new DetailRunFont("Charis SIL") };
+			var field = Field(new List<DetailParagraph> { para }, fontMap: fonts);
 			var (control, _) = Show(field, new FakeRegionEditContext());
 
 			Assert.That(Find<TextBlock>(control, "Discussion.Para.0.Display"), Is.Null,

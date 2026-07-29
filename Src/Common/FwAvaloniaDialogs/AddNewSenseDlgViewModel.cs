@@ -6,7 +6,7 @@ using System;
 using System.Collections.Generic;
 using CommunityToolkit.Mvvm.Input;
 using SIL.FieldWorks.Common.FwAvalonia;
-using SIL.FieldWorks.Common.FwAvalonia.Region;
+using SIL.FieldWorks.Common.FwAvalonia.Detail;
 
 namespace FwAvaloniaDialogs
 {
@@ -203,7 +203,7 @@ namespace FwAvaloniaDialogs
 
 		// ----- OK gating: empty gloss blocks OK (legacy ksFillInGloss) -----
 
-		private void OnGlossStaged(RegionField field, string ws, string value) => RefreshCanOk();
+		private void OnGlossStaged(DetailField field, string ws, string value) => RefreshCanOk();
 
 		protected override IEnumerable<string> GetValidationErrors()
 		{
@@ -246,8 +246,8 @@ namespace FwAvaloniaDialogs
 		}
 
 		// A placeholder editable text field so the VM never NREs when the launcher omits the gloss field (tests).
-		private static RegionField EmptyField(string name)
-			=> new RegionField(name, name, name, null, RegionFieldKind.Text,
-				default, name, name, default, new List<RegionWsValue>(), new List<RegionChoiceOption>(), null);
+		private static DetailField EmptyField(string name)
+			=> new DetailField(name, name, name, null, DetailFieldKind.Text,
+				default, name, name, default, new List<DetailWsValue>(), new List<DetailChoiceOption>(), null);
 	}
 }

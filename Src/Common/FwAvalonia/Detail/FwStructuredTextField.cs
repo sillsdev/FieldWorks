@@ -13,7 +13,7 @@ using Avalonia.Layout;
 using Avalonia.Media;
 using SIL.FieldWorks.Common.FwAvalonia.Seams;
 
-namespace SIL.FieldWorks.Common.FwAvalonia.Region
+namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 {
 	/// <summary>
 	/// FieldWorks-owned editable multi-paragraph structured-text (StText) field. A vertical stack of one
@@ -28,7 +28,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 	/// (add/delete/style) commit immediately through the <paramref>gestureCompleted</paramref> callback
 	/// and the host re-shows — the paragraph list is a compose-time snapshot, so without an immediate
 	/// commit + re-show the change would not appear.</para>
-	/// <para>An ORC-bearing / lossy paragraph (<see cref="RegionParagraph.CanEditText"/>
+	/// <para>An ORC-bearing / lossy paragraph (<see cref="DetailParagraph.CanEditText"/>
 	/// false) renders a READ-ONLY box with the embedded-object tooltip and is preserved losslessly — full
 	/// editing of such a paragraph stays in the classic view.</para>
 	/// </summary>
@@ -41,9 +41,9 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		/// so the host commits the one undoable step and re-shows the row (like the reference vector). Null
 		/// on surfaces that drive their own commit; structural gestures then just stage.</param>
 		public FwStructuredTextField(
-			RegionField field,
+			DetailField field,
 			string automationId,
-			IRegionEditContext editContext,
+			IDetailEditContext editContext,
 			Action<string> writingSystemFocused = null,
 			Action gestureCompleted = null,
 			IFwClipboard clipboard = null)
@@ -54,7 +54,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 
 			// Paragraph CRUD is the optional IStructuredTextEditing capability; a context without it leaves
 			// the rows displayed but inert (each gesture below no-ops), the same rejection the former core
-			// IRegionEditContext paragraph methods returned on a context with no StText rows.
+			// IDetailEditContext paragraph methods returned on a context with no StText rows.
 			var structuredText = editContext as IStructuredTextEditing;
 			var editable = editContext != null && field.IsEditable;
 			var paragraphs = field.Paragraphs;
@@ -70,14 +70,14 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 			if (paragraphs.Count == 0)
 			{
 				Children.Add(BuildParagraphRow(field, automationId, structuredText, writingSystemFocused,
-					gestureCompleted, clipboard, new RegionParagraph(null), 0, 1, editable));
+					gestureCompleted, clipboard, new DetailParagraph(null), 0, 1, editable));
 			}
 		}
 
 		private Control BuildParagraphRow(
-			RegionField field, string automationId, IStructuredTextEditing editContext,
+			DetailField field, string automationId, IStructuredTextEditing editContext,
 			Action<string> writingSystemFocused, Action gestureCompleted, IFwClipboard clipboard,
-			RegionParagraph paragraph, int index, int paragraphCount, bool fieldEditable)
+			DetailParagraph paragraph, int index, int paragraphCount, bool fieldEditable)
 		{
 			var paraEditable = fieldEditable && paragraph.CanEditText;
 			var currentRich = paragraph.Text;
@@ -243,8 +243,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		// a TextChanged stages a plain-text-over-preserved-runs edit through the paragraph seam. A
 		// last-staged guard keeps the template's initial set and no-op events from staging; the guard
 		// advances only on a successful stage so a failed write re-attempts.
-		private void WireParagraphTextEditing(RegionField field, IStructuredTextEditing editContext,
-			TextBox box, RegionRichTextValue currentRich, int index, Action<RegionRichTextValue> onStaged)
+		private void WireParagraphTextEditing(DetailField field, IStructuredTextEditing editContext,
+			TextBox box, DetailRichTextValue currentRich, int index, Action<DetailRichTextValue> onStaged)
 		{
 			var lastStaged = currentRich?.PlainText ?? string.Empty;
 			EventHandler<TextChangedEventArgs> textChanged = (s, e) =>
@@ -252,8 +252,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 				var text = box.Text ?? string.Empty;
 				if (text == lastStaged)
 					return;
-				var updatedRich = RegionRichTextEditAlgorithms.ApplyPlainTextEdit(
-					currentRich ?? RegionRichTextEditAlgorithms.FromRuns(string.Empty, Array.Empty<RegionTextRun>()),
+				var updatedRich = DetailRichTextEditAlgorithms.ApplyPlainTextEdit(
+					currentRich ?? DetailRichTextEditAlgorithms.FromRuns(string.Empty, Array.Empty<DetailTextRun>()),
 					text);
 				if (editContext != null && editContext.TrySetParagraphText(field, index, updatedRich))
 				{
@@ -271,20 +271,20 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		// followed by the project's paragraph style names. Committing stages through the paragraph-style
 		// seam and completes the gesture (structural: commit immediately + re-show). Built only when the
 		// field carries available paragraph styles.
-		private Control BuildStyleAffordance(RegionField field, string automationId,
-			IStructuredTextEditing editContext, Action gestureCompleted, RegionParagraph paragraph, int index)
+		private Control BuildStyleAffordance(DetailField field, string automationId,
+			IStructuredTextEditing editContext, Action gestureCompleted, DetailParagraph paragraph, int index)
 		{
 			if (field.AvailableParagraphStyles == null || field.AvailableParagraphStyles.Count == 0)
 				return null;
 
-			var styleOptions = new List<RegionChoiceOption>
+			var styleOptions = new List<DetailChoiceOption>
 			{
-				new RegionChoiceOption(string.Empty, FwAvaloniaStrings.DefaultParagraphStyle)
+				new DetailChoiceOption(string.Empty, FwAvaloniaStrings.DefaultParagraphStyle)
 			};
 			foreach (var styleName in field.AvailableParagraphStyles)
 			{
 				if (!string.IsNullOrEmpty(styleName))
-					styleOptions.Add(new RegionChoiceOption(styleName, styleName));
+					styleOptions.Add(new DetailChoiceOption(styleName, styleName));
 			}
 
 			var styleAutomationId = automationId + ".Para." + index + ".Style";
@@ -310,7 +310,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 			var stylePicker = new FwOptionChooser(styleOptions, null, styleAutomationId);
 			var styleFlyout = FwOptionChooser.CreateOptionFlyout(stylePicker, PlacementMode.BottomEdgeAlignedLeft);
 
-			Action<RegionChoiceOption> styleCommitted = option =>
+			Action<DetailChoiceOption> styleCommitted = option =>
 			{
 				styleFlyout.Hide();
 				var styleName = string.IsNullOrEmpty(option?.Key) ? null : option.Key;
@@ -346,10 +346,10 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		// display (differing runs), wrap the editable box and a read-along TextBlock in a Panel: the
 		// TextBlock shows (each run in its own ws/style font from the host map) while unfocused, and the
 		// box swaps in on focus. A uniform paragraph returns the bare box (no display layer).
-		private Control BuildValueContentWithFontSwap(RegionField field, string automationId,
-			int index, TextBox box, RegionRichTextValue currentRich, bool paraEditable)
+		private Control BuildValueContentWithFontSwap(DetailField field, string automationId,
+			int index, TextBox box, DetailRichTextValue currentRich, bool paraEditable)
 		{
-			if (currentRich == null || !RegionRichTextChrome.ShouldRenderPerRunFontDisplay(currentRich))
+			if (currentRich == null || !DetailRichTextChrome.ShouldRenderPerRunFontDisplay(currentRich))
 				return box;
 
 			var rtl = currentRich.Runs.Count > 0
@@ -358,7 +358,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 				&& field.WritingSystemFonts.TryGetValue(currentRich.Runs[0].WritingSystemTag, out var firstFont)
 				&& firstFont != null && firstFont.RightToLeft;
 
-			var display = RegionRichTextChrome.BuildPerRunFontDisplay(currentRich, field.WritingSystemFonts,
+			var display = DetailRichTextChrome.BuildPerRunFontDisplay(currentRich, field.WritingSystemFonts,
 				automationId + ".Para." + index + ".Display", rtl);
 
 			// Exactly ONE of {display, box} occupies the row at a time (IsVisible collapses the other out of
@@ -402,26 +402,26 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		// a "Character Style" button opening the shared FwOptionChooser seeded with a leading "Default"
 		// clear entry plus the project's character styles, acting on the box's current selection and
 		// staging ApplySpanNamedStyle through the paragraph-text seam. Null when no character styles.
-		private Control BuildCharStyleAffordance(RegionField field, string automationId,
+		private Control BuildCharStyleAffordance(DetailField field, string automationId,
 			IStructuredTextEditing editContext, Action gestureCompleted, TextBox box, int index,
-			Func<RegionRichTextValue> getRich, Action<RegionRichTextValue> setRich)
+			Func<DetailRichTextValue> getRich, Action<DetailRichTextValue> setRich)
 		{
 			if (field.AvailableNamedStyles == null || field.AvailableNamedStyles.Count == 0)
 				return null;
 
-			var options = new List<RegionChoiceOption>
+			var options = new List<DetailChoiceOption>
 			{
-				new RegionChoiceOption(string.Empty, FwAvaloniaStrings.DefaultCharacterStyle)
+				new DetailChoiceOption(string.Empty, FwAvaloniaStrings.DefaultCharacterStyle)
 			};
 			foreach (var name in field.AvailableNamedStyles)
 			{
 				if (!string.IsNullOrEmpty(name))
-					options.Add(new RegionChoiceOption(name, name));
+					options.Add(new DetailChoiceOption(name, name));
 			}
 
 			var spanStart = 0;
 			var spanEnd = 0;
-			return RegionRichTextChrome.BuildSpanPicker(options, FwAvaloniaStrings.CharacterStyle,
+			return DetailRichTextChrome.BuildSpanPicker(options, FwAvaloniaStrings.CharacterStyle,
 				FwAvaloniaStrings.CharacterStyle, automationId + ".Para." + index + ".CharStyle",
 				picker =>
 				{
@@ -429,7 +429,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 					spanEnd = Math.Max(box.SelectionStart, box.SelectionEnd);
 					var rich = getRich();
 					var current = rich == null ? null
-						: RegionRichTextEditAlgorithms.SpanNamedStyle(rich, spanStart, spanEnd);
+						: DetailRichTextEditAlgorithms.SpanNamedStyle(rich, spanStart, spanEnd);
 					var pos = string.IsNullOrEmpty(current) ? 0
 						: options.FindIndex(o => string.Equals(o.Key, current, StringComparison.Ordinal));
 					picker.OptionsList.SelectedIndex = pos < 0 ? 0 : pos;
@@ -446,10 +446,10 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 					if (lo == hi)
 						return; // no span: nothing to (re)style
 
-					var rich = getRich() ?? RegionRichTextEditAlgorithms.FromRuns(box.Text ?? string.Empty,
-						new[] { new RegionTextRun(box.Text ?? string.Empty) });
+					var rich = getRich() ?? DetailRichTextEditAlgorithms.FromRuns(box.Text ?? string.Empty,
+						new[] { new DetailTextRun(box.Text ?? string.Empty) });
 					var styleName = string.IsNullOrEmpty(option?.Key) ? null : option.Key;
-					var restyled = RegionRichTextEditAlgorithms.ApplySpanNamedStyle(rich, lo, hi, styleName);
+					var restyled = DetailRichTextEditAlgorithms.ApplySpanNamedStyle(rich, lo, hi, styleName);
 					if (!ReferenceEquals(restyled, rich)
 						&& editContext != null && editContext.TrySetParagraphText(field, index, restyled))
 					{
@@ -464,18 +464,18 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		// pattern): a "Writing System" button opening the shared FwOptionChooser seeded with the project's
 		// writing systems (no clear entry), acting on the box's current selection and staging
 		// RetagSpanWritingSystem through the paragraph-text seam. Null when no writing systems.
-		private Control BuildWsRetagAffordance(RegionField field, string automationId,
+		private Control BuildWsRetagAffordance(DetailField field, string automationId,
 			IStructuredTextEditing editContext, Action gestureCompleted, TextBox box, int index,
-			Func<RegionRichTextValue> getRich, Action<RegionRichTextValue> setRich)
+			Func<DetailRichTextValue> getRich, Action<DetailRichTextValue> setRich)
 		{
 			if (field.AvailableWritingSystems == null || field.AvailableWritingSystems.Count == 0)
 				return null;
 
-			var options = new List<RegionChoiceOption>();
+			var options = new List<DetailChoiceOption>();
 			foreach (var ws in field.AvailableWritingSystems)
 			{
 				if (ws != null && !string.IsNullOrEmpty(ws.Tag))
-					options.Add(new RegionChoiceOption(ws.Tag,
+					options.Add(new DetailChoiceOption(ws.Tag,
 						string.IsNullOrEmpty(ws.DisplayName) ? ws.Tag : ws.DisplayName));
 			}
 			if (options.Count == 0)
@@ -483,7 +483,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 
 			var spanStart = 0;
 			var spanEnd = 0;
-			return RegionRichTextChrome.BuildSpanPicker(options, FwAvaloniaStrings.WritingSystem,
+			return DetailRichTextChrome.BuildSpanPicker(options, FwAvaloniaStrings.WritingSystem,
 				FwAvaloniaStrings.WritingSystem, automationId + ".Para." + index + ".WritingSystem",
 				picker =>
 				{
@@ -491,7 +491,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 					spanEnd = Math.Max(box.SelectionStart, box.SelectionEnd);
 					var rich = getRich();
 					var current = rich == null ? null
-						: RegionRichTextEditAlgorithms.SpanWritingSystem(rich, spanStart, spanEnd);
+						: DetailRichTextEditAlgorithms.SpanWritingSystem(rich, spanStart, spanEnd);
 					var pos = string.IsNullOrEmpty(current) ? -1
 						: options.FindIndex(o => string.Equals(o.Key, current, StringComparison.Ordinal));
 					picker.OptionsList.SelectedIndex = pos < 0 ? 0 : pos;
@@ -508,9 +508,9 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 					if (lo == hi || string.IsNullOrEmpty(option?.Key))
 						return; // no span, or no real ws (a run must always carry a writing system)
 
-					var rich = getRich() ?? RegionRichTextEditAlgorithms.FromRuns(box.Text ?? string.Empty,
-						new[] { new RegionTextRun(box.Text ?? string.Empty) });
-					var retagged = RegionRichTextEditAlgorithms.RetagSpanWritingSystem(rich, lo, hi, option.Key);
+					var rich = getRich() ?? DetailRichTextEditAlgorithms.FromRuns(box.Text ?? string.Empty,
+						new[] { new DetailTextRun(box.Text ?? string.Empty) });
+					var retagged = DetailRichTextEditAlgorithms.RetagSpanWritingSystem(rich, lo, hi, option.Key);
 					if (!ReferenceEquals(retagged, rich)
 						&& editContext != null && editContext.TrySetParagraphText(field, index, retagged))
 					{
@@ -543,7 +543,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 			return button;
 		}
 
-		private static string FirstRunWsTag(RegionRichTextValue rich)
+		private static string FirstRunWsTag(DetailRichTextValue rich)
 		{
 			if (rich?.Runs == null)
 				return null;

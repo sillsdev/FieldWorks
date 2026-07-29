@@ -10,7 +10,7 @@ using Avalonia.Headless.NUnit;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
 using NUnit.Framework;
-using SIL.FieldWorks.Common.FwAvalonia.Region;
+using SIL.FieldWorks.Common.FwAvalonia.Detail;
 using SIL.FieldWorks.Common.FwAvalonia.ViewDefinition;
 
 namespace FwAvaloniaTests
@@ -37,20 +37,20 @@ namespace FwAvaloniaTests
 			},
 			new List<ViewDiagnostic>());
 
-		private sealed class Provider : IRegionValueProvider
+		private sealed class Provider : IDetailValueProvider
 		{
-			public IReadOnlyList<RegionWsValue> GetValues(ViewNode fieldNode)
-				=> new List<RegionWsValue> { new RegionWsValue("vern", "casa") };
+			public IReadOnlyList<DetailWsValue> GetValues(ViewNode fieldNode)
+				=> new List<DetailWsValue> { new DetailWsValue("vern", "casa") };
 
-			public IReadOnlyList<RegionChoiceOption> GetOptions(ViewNode fieldNode) => new List<RegionChoiceOption>();
+			public IReadOnlyList<DetailChoiceOption> GetOptions(ViewNode fieldNode) => new List<DetailChoiceOption>();
 
 			public string GetSelectedOptionKey(ViewNode fieldNode) => null;
 		}
 
-		private static RegionDataTree NewView()
-			=> new RegionDataTree(RegionModelProjector.FromViewDefinition(Definition(), new Provider()));
+		private static DataTree NewView()
+			=> new DataTree(DetailModelProjector.FromViewDefinition(Definition(), new Provider()));
 
-		private static RegionDataTree NewLongView()
+		private static DataTree NewLongView()
 		{
 			var roots = new List<ViewNode>();
 			for (var i = 0; i < 60; i++)
@@ -62,7 +62,7 @@ namespace FwAvaloniaTests
 			}
 			var definition = new ViewDefinitionModel("LexEntry", "identity", "detail", roots,
 				new List<ViewDiagnostic>());
-			return new RegionDataTree(RegionModelProjector.FromViewDefinition(definition, new Provider()));
+			return new DataTree(DetailModelProjector.FromViewDefinition(definition, new Provider()));
 		}
 
 		private static ScrollViewer FindScroller(Control root)
@@ -93,7 +93,7 @@ namespace FwAvaloniaTests
 			editor.CaretIndex = 2;
 			Dispatcher.UIThread.RunJobs();
 
-			var memento = RegionFocusMemory.Capture(first);
+			var memento = DetailFocusMemory.Capture(first);
 			Assert.That(memento, Is.Not.Null, "the focused editor inside the view must be captured");
 			Assert.That(memento.AutomationId, Is.EqualTo("GlossEditor.vern"));
 
@@ -101,7 +101,7 @@ namespace FwAvaloniaTests
 			window.Content = second;
 			Dispatcher.UIThread.RunJobs();
 
-			Assert.That(RegionFocusMemory.TryRestore(second, memento), Is.True);
+			Assert.That(DetailFocusMemory.TryRestore(second, memento), Is.True);
 			Dispatcher.UIThread.RunJobs();
 			var restored = FindEditor(second, "GlossEditor.vern");
 			Assert.That(restored.IsFocused, Is.True, "the same field/ws editor must own focus in the rebuilt view");
@@ -131,7 +131,7 @@ namespace FwAvaloniaTests
 			other.Focus();
 			Dispatcher.UIThread.RunJobs();
 
-			var memento = RegionFocusMemory.Capture(view);
+			var memento = DetailFocusMemory.Capture(view);
 			Assert.That(memento, Is.Not.Null);
 			Assert.That(memento.AutomationId, Is.Null,
 				"focus outside the region must not be restored into the view");
@@ -147,8 +147,8 @@ namespace FwAvaloniaTests
 			window.Show();
 			Dispatcher.UIThread.RunJobs();
 
-			var memento = new RegionFocusMemory.Memento("NoSuchEditor.vern", 0);
-			Assert.That(RegionFocusMemory.TryRestoreFocus(view, memento), Is.False);
+			var memento = new DetailFocusMemory.Memento("NoSuchEditor.vern", 0);
+			Assert.That(DetailFocusMemory.TryRestoreFocus(view, memento), Is.False);
 		}
 
 		[AvaloniaTest]
@@ -167,14 +167,14 @@ namespace FwAvaloniaTests
 			scroller.Offset = new Avalonia.Vector(0, 120);
 			Dispatcher.UIThread.RunJobs();
 
-			var memento = RegionFocusMemory.Capture(first);
+			var memento = DetailFocusMemory.Capture(first);
 			Assert.That(memento, Is.Not.Null);
 
 			var second = NewLongView();
 			window.Content = second;
 			Dispatcher.UIThread.RunJobs();
 
-			Assert.That(RegionFocusMemory.TryRestore(second, memento), Is.True);
+			Assert.That(DetailFocusMemory.TryRestore(second, memento), Is.True);
 			Dispatcher.UIThread.RunJobs();
 
 			var restoredScroller = FindScroller(second);
@@ -185,21 +185,21 @@ namespace FwAvaloniaTests
 		// A single-text-field view whose editor's stable automation id is exactly <paramref name="stableId"/>
 		// + ".vern" (null AutomationId falls back to StableId; the WS suffix is the WsTag). This lets the
 		// test reproduce the ghost id ("…@ownerHvo/ghost.vern") and its real successor ("…@newHvo.vern").
-		private static RegionDataTree ViewWithEditorId(string stableId)
+		private static DataTree ViewWithEditorId(string stableId)
 		{
-			var field = new RegionField(stableId, "Lexeme Form", "Form", "vernacular",
-				RegionFieldKind.Text, EditorClassification.Known, /*automationId*/ null, null,
+			var field = new DetailField(stableId, "Lexeme Form", "Form", "vernacular",
+				DetailFieldKind.Text, EditorClassification.Known, /*automationId*/ null, null,
 				SurfaceRouting.Product,
-				new List<RegionWsValue> { new RegionWsValue("vern", "casa", wsTag: "vern") },
+				new List<DetailWsValue> { new DetailWsValue("vern", "casa", wsTag: "vern") },
 				null, null);
-			var model = new RegionModel("LexEntry", "Normal",
-				new List<RegionField> { field }, new List<ViewDiagnostic>());
-			return new RegionDataTree(model);
+			var model = new DetailModel("LexEntry", "Normal",
+				new List<DetailField> { field }, new List<ViewDiagnostic>());
+			return new DataTree(model);
 		}
 
 		// Post-ghost-commit focus continuity (legacy RestoreSelection): the user types into a ghost
 		// add-prompt, the object is created, and the host recomposes into a NEW real editor whose stable
-		// id carries the created object's hvo and drops the "/ghost" marker. RegionFocusMemory must carry
+		// id carries the created object's hvo and drops the "/ghost" marker. DetailFocusMemory must carry
 		// focus from the "/ghost" editor into that successor even though the ids differ.
 		[AvaloniaTest]
 		public void TryRestore_AfterGhostCommit_LandsFocus_InTheNewRealEditor()
@@ -216,7 +216,7 @@ namespace FwAvaloniaTests
 			ghostEditor.CaretIndex = 2;
 			Dispatcher.UIThread.RunJobs();
 
-			var memento = RegionFocusMemory.Capture(ghost);
+			var memento = DetailFocusMemory.Capture(ghost);
 			Assert.That(memento.AutomationId, Is.EqualTo("LexEntry/Normal/#3@111/ghost.vern"));
 
 			// After commit + recompose: same node, the NEW object's hvo, no "/ghost" marker.
@@ -224,7 +224,7 @@ namespace FwAvaloniaTests
 			window.Content = real;
 			Dispatcher.UIThread.RunJobs();
 
-			Assert.That(RegionFocusMemory.TryRestore(real, memento), Is.True,
+			Assert.That(DetailFocusMemory.TryRestore(real, memento), Is.True,
 				"focus must continue into the recomposed real field");
 			Dispatcher.UIThread.RunJobs();
 
@@ -246,11 +246,11 @@ namespace FwAvaloniaTests
 			Dispatcher.UIThread.RunJobs();
 			FindEditor(ghost, "LexEntry/Normal/#3@111/ghost.vern").Focus();
 			Dispatcher.UIThread.RunJobs();
-			var memento = RegionFocusMemory.Capture(ghost);
+			var memento = DetailFocusMemory.Capture(ghost);
 
 			// A different node (#9) that also has a .vern editor must NOT be treated as the successor.
 			var unrelated = ViewWithEditorId("LexEntry/Normal/#9@222");
-			Assert.That(RegionFocusMemory.TryRestoreFocus(unrelated, memento), Is.False,
+			Assert.That(DetailFocusMemory.TryRestoreFocus(unrelated, memento), Is.False,
 				"only the same node-stable prefix is the ghost's successor, not any same-ws editor");
 		}
 
@@ -275,11 +275,11 @@ namespace FwAvaloniaTests
 			other.Focus();
 			Dispatcher.UIThread.RunJobs();
 
-			var memento = RegionFocusMemory.Capture(first);
+			var memento = DetailFocusMemory.Capture(first);
 			Assert.That(memento.AutomationId, Is.Null);
 
 			var second = NewLongView();
-			Assert.That(RegionFocusMemory.TryRestoreScroll(second, memento), Is.True);
+			Assert.That(DetailFocusMemory.TryRestoreScroll(second, memento), Is.True);
 			window.Content = second;
 			Dispatcher.UIThread.RunJobs();
 			var restoredScroller = FindScroller(second);

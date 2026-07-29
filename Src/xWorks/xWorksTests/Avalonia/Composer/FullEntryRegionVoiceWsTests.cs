@@ -5,7 +5,7 @@
 using System.Linq;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwAvalonia;
-using SIL.FieldWorks.Common.FwAvalonia.Region;
+using SIL.FieldWorks.Common.FwAvalonia.Detail;
 using SIL.LCModel;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.WritingSystems;
@@ -62,7 +62,7 @@ namespace SIL.FieldWorks.XWorks
 
 			// Find a composed text row that carries a value for the voice writing system.
 			var audioValues = composed.Model.Fields
-				.Where(f => f.Kind == RegionFieldKind.Text)
+				.Where(f => f.Kind == DetailFieldKind.Text)
 				.SelectMany(f => f.Values.Select(v => new { Field = f, Value = v }))
 				.Where(x => x.Value.WsTag == m_audioWs.Id)
 				.ToList();

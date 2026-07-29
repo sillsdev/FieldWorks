@@ -4,7 +4,7 @@
 
 using System.Linq;
 using NUnit.Framework;
-using SIL.FieldWorks.Common.FwAvalonia.Region;
+using SIL.FieldWorks.Common.FwAvalonia.Detail;
 using SIL.FieldWorks.Common.FwAvalonia.ViewDefinition;
 using SIL.LCModel;
 using SIL.LCModel.Core.Text;
@@ -61,8 +61,8 @@ namespace SIL.FieldWorks.XWorks
 			return entry;
 		}
 
-		private static RegionField Field(string field) => new RegionField(
-			"test/" + field, field, field, null, RegionFieldKind.Text, EditorClassification.Known,
+		private static DetailField Field(string field) => new DetailField(
+			"test/" + field, field, field, null, DetailFieldKind.Text, EditorClassification.Known,
 			null, null, SurfaceRouting.Product, null, null, null);
 
 		[Test]

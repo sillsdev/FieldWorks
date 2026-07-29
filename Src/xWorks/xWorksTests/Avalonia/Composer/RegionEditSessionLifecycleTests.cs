@@ -4,7 +4,7 @@
 
 using System;
 using NUnit.Framework;
-using SIL.FieldWorks.Common.FwAvalonia.Region;
+using SIL.FieldWorks.Common.FwAvalonia.Detail;
 using SIL.LCModel;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Infrastructure;
@@ -39,7 +39,7 @@ namespace SIL.FieldWorks.XWorks
 			});
 		}
 
-		private RegionField FormField => RegionEditContextEditingTests.F("Form");
+		private DetailField FormField => RegionEditContextEditingTests.F("Form");
 
 		private void ShutdownStyleSave()
 			=> Cache.ServiceLocator.GetInstance<IUndoStackManager>().Save();

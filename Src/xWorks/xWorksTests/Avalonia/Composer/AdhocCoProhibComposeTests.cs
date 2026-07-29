@@ -4,7 +4,7 @@
 
 using System.Linq;
 using NUnit.Framework;
-using SIL.FieldWorks.Common.FwAvalonia.Region;
+using SIL.FieldWorks.Common.FwAvalonia.Detail;
 using SIL.LCModel;
 using SIL.LCModel.Infrastructure;
 
@@ -49,10 +49,10 @@ namespace SIL.FieldWorks.XWorks
 			// The Key (FirstMorpheme) and Others (RestOfMorphs) are custom slices. With the region limited
 			// to string / list-choice / one native plugin, an unclaimed custom slice composes as a labeled
 			// Unsupported worklist row rather than a Chooser/ReferenceVector.
-			Assert.That(composed.Model.Fields.Any(f => f.Kind == RegionFieldKind.Unsupported),
+			Assert.That(composed.Model.Fields.Any(f => f.Kind == DetailFieldKind.Unsupported),
 				"the ad-hoc co-prohibition's custom slices compose as Unsupported worklist rows");
-			Assert.That(composed.Model.Fields.Any(f => f.Kind == RegionFieldKind.Chooser
-				|| f.Kind == RegionFieldKind.ReferenceVector), Is.False,
+			Assert.That(composed.Model.Fields.Any(f => f.Kind == DetailFieldKind.Chooser
+				|| f.Kind == DetailFieldKind.ReferenceVector), Is.False,
 				"no custom slice composes a list-choice editor now (that path is the plugin's job)");
 		}
 
@@ -74,8 +74,8 @@ namespace SIL.FieldWorks.XWorks
 			TestContext.WriteLine("MoAdhocProhibGr composed field kinds: " + string.Join(", ", kinds));
 			// The group's own scalar fields compose editably (Name/Description Text + Active checkbox).
 			// PARITY: the nested Members rows (recursive sub-prohibitions) are not composed.
-			Assert.That(composed.Model.Fields.Any(f => f.Kind == RegionFieldKind.Text), "Name/Description compose");
-			Assert.That(composed.Model.Fields.Any(f => f.Kind == RegionFieldKind.Unsupported),
+			Assert.That(composed.Model.Fields.Any(f => f.Kind == DetailFieldKind.Text), "Name/Description compose");
+			Assert.That(composed.Model.Fields.Any(f => f.Kind == DetailFieldKind.Unsupported),
 				"the Active boolean flag composes as a labeled Unsupported worklist row (checkbox editing dropped)");
 		}
 	}

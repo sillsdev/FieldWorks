@@ -4,12 +4,12 @@
 
 using System;
 using System.Collections.Generic;
-using SIL.FieldWorks.Common.FwAvalonia.Region;
+using SIL.FieldWorks.Common.FwAvalonia.Detail;
 
 namespace FwAvaloniaDialogs
 {
 	/// <summary>
-	/// A tiny in-memory <see cref="IRegionEditContext"/> for CREATE flows (the Insert Entry dialog): the owned
+	/// A tiny in-memory <see cref="IDetailEditContext"/> for CREATE flows (the Insert Entry dialog): the owned
 	/// <see cref="FwMultiWsTextField"/> stages each per-writing-system edit here into an in-memory bag instead of
 	/// against a live LCModel cache, so the dialog view-model stays LCModel-free and can read the staged text
 	/// back on OK. There is no real undo fence: <see cref="Commit"/>/<see cref="Cancel"/> only flip
@@ -18,14 +18,14 @@ namespace FwAvaloniaDialogs
 	/// Chooser/reference staging is rejected: the morph-type picker is driven by the view-model directly, not
 	/// through this context.
 	/// </summary>
-	public sealed class InMemoryRegionEditContext : IRegionEditContext
+	public sealed class InMemoryRegionEditContext : IDetailEditContext
 	{
 		// Per-field staged text, keyed by field identity then writing-system key.
 		private readonly Dictionary<string, Dictionary<string, string>> _staged =
 			new Dictionary<string, Dictionary<string, string>>(StringComparer.Ordinal);
 
 		/// <summary>Raised after a successful text stage so the view-model can re-derive / re-gate OK.</summary>
-		public event Action<RegionField, string, string> TextStaged;
+		public event Action<DetailField, string, string> TextStaged;
 
 		/// <inheritdoc />
 		public bool IsOpen { get; private set; }
@@ -34,14 +34,14 @@ namespace FwAvaloniaDialogs
 		/// The staged per-writing-system text for a field (the field's <see cref="FieldKey"/>), or an empty map
 		/// when nothing was staged. Keyed by the writing-system key the editor used (the WS tag).
 		/// </summary>
-		public IReadOnlyDictionary<string, string> GetStaged(RegionField field)
+		public IReadOnlyDictionary<string, string> GetStaged(DetailField field)
 		{
 			return _staged.TryGetValue(FieldKey(field), out var byWs)
 				? byWs
 				: new Dictionary<string, string>();
 		}
 
-		public bool TrySetText(RegionField field, string ws, string value)
+		public bool TrySetText(DetailField field, string ws, string value)
 		{
 			if (field == null || string.IsNullOrEmpty(ws))
 				return false;
@@ -58,15 +58,15 @@ namespace FwAvaloniaDialogs
 		}
 
 		// Rich text is flattened to its plain text: the Insert Entry fields are plain strings.
-		public bool TrySetRichText(RegionField field, string ws, RegionRichTextValue value)
+		public bool TrySetRichText(DetailField field, string ws, DetailRichTextValue value)
 			=> TrySetText(field, ws, value?.PlainText ?? string.Empty);
 
 		// The morph-type picker is driven by the view-model, not through this context; reject option staging.
-		public bool TrySetOption(RegionField field, string optionKey) => false;
+		public bool TrySetOption(DetailField field, string optionKey) => false;
 
-		public bool TryAddReferenceItem(RegionField field, string optionKey) => false;
+		public bool TryAddReferenceItem(DetailField field, string optionKey) => false;
 
-		public bool TryRemoveReferenceItem(RegionField field, string optionKey) => false;
+		public bool TryRemoveReferenceItem(DetailField field, string optionKey) => false;
 
 		// The Insert Entry dialog edits plain lexeme-form/gloss strings only; it implements neither
 		// IStructuredTextEditing (no StText rows) nor picture editing.
@@ -78,7 +78,7 @@ namespace FwAvaloniaDialogs
 		public void Cancel() => IsOpen = false;
 
 		// A composed field keys on StableId; a fixed field keys on Field; fall back to the automation id.
-		private static string FieldKey(RegionField field)
+		private static string FieldKey(DetailField field)
 			=> field.StableId ?? field.Field ?? field.AutomationId ?? string.Empty;
 	}
 }

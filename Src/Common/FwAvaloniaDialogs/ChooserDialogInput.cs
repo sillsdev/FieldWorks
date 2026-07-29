@@ -4,7 +4,7 @@
 
 using System;
 using System.Collections.Generic;
-using SIL.FieldWorks.Common.FwAvalonia.Region;
+using SIL.FieldWorks.Common.FwAvalonia.Detail;
 
 namespace FwAvaloniaDialogs
 {
@@ -21,14 +21,14 @@ namespace FwAvaloniaDialogs
 	/// <summary>
 	/// The LCModel-free input to the reusable Avalonia chooser dialog. The product edge (the LexText launcher)
 	/// builds this from a possibility list / reference target set so the Avalonia layer never sees an
-	/// <c>ICmObject</c>: candidates are plain <see cref="RegionChoiceOption"/>s (key = guid string, name = display
-	/// text, optional <see cref="RegionChoiceOption.Depth"/> rendered as a FLAT indented list — NOT a tree),
+	/// <c>ICmObject</c>: candidates are plain <see cref="DetailChoiceOption"/>s (key = guid string, name = display
+	/// text, optional <see cref="DetailChoiceOption.Depth"/> rendered as a FLAT indented list — NOT a tree),
 	/// and the current selection / result are exchanged as guid-string keys.
 	/// </summary>
 	public sealed class ChooserDialogInput
 	{
-		/// <summary>The selectable options (flat; <see cref="RegionChoiceOption.Depth"/> renders as indentation).</summary>
-		public IReadOnlyList<RegionChoiceOption> Candidates { get; set; } = Array.Empty<RegionChoiceOption>();
+		/// <summary>The selectable options (flat; <see cref="DetailChoiceOption.Depth"/> renders as indentation).</summary>
+		public IReadOnlyList<DetailChoiceOption> Candidates { get; set; } = Array.Empty<DetailChoiceOption>();
 
 		/// <summary>Single- vs multi-select. Drives whether the embedded picker shows checkboxes + an Add button.</summary>
 		public ChooserSelectionMode SelectionMode { get; set; } = ChooserSelectionMode.Single;
@@ -48,11 +48,11 @@ namespace FwAvaloniaDialogs
 		/// returns the candidate set to show. Null means the picker filters <see cref="Candidates"/> in memory
 		/// (case-insensitive contains).
 		/// </summary>
-		public Func<string, IReadOnlyList<RegionChoiceOption>> SearchCandidates { get; set; }
+		public Func<string, IReadOnlyList<DetailChoiceOption>> SearchCandidates { get; set; }
 
 		/// <summary>
 		/// When true the candidates are presented as a COLLAPSIBLE TREE built from the
-		/// <see cref="RegionChoiceOption.Depth"/> sequence — a candidate's children are the following candidates with
+		/// <see cref="DetailChoiceOption.Depth"/> sequence — a candidate's children are the following candidates with
 		/// Depth+1 until Depth drops back (possibility lists arrive in document order with Depth, which fully
 		/// determines the tree). When false (the default) the candidates render as the FLAT indented list
 		/// (the shared <c>FwOptionChooser</c>). When a search term is active the hierarchical view falls

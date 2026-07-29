@@ -6,7 +6,7 @@ using System.Globalization;
 using System.Linq;
 using FwAvaloniaDialogs;
 using NUnit.Framework;
-using SIL.FieldWorks.Common.FwAvalonia.Region;
+using SIL.FieldWorks.Common.FwAvalonia.Detail;
 using SIL.FieldWorks.LexText.Controls;
 using SIL.LCModel;
 using SIL.LCModel.Core.Text;

@@ -4,7 +4,7 @@
 
 using System.Linq;
 using NUnit.Framework;
-using SIL.FieldWorks.Common.FwAvalonia.Region;
+using SIL.FieldWorks.Common.FwAvalonia.Detail;
 using SIL.LCModel;
 using SIL.LCModel.Infrastructure;
 
@@ -50,11 +50,11 @@ namespace SIL.FieldWorks.XWorks
 			TestContext.WriteLine("MoExoCompound composed field kinds: " + string.Join(", ", kinds));
 
 			// The full non-headed compound detail composes editably.
-			Assert.That(composed.Model.Fields.Count(f => f.Kind == RegionFieldKind.Text), Is.GreaterThanOrEqualTo(2),
+			Assert.That(composed.Model.Fields.Count(f => f.Kind == DetailFieldKind.Text), Is.GreaterThanOrEqualTo(2),
 				"Name and Description compose as editable text rows (the <if Disabled> active branch now imports)");
-			Assert.That(composed.Model.Fields.Any(f => f.Kind == RegionFieldKind.Unsupported),
+			Assert.That(composed.Model.Fields.Any(f => f.Kind == DetailFieldKind.Unsupported),
 				"the Active boolean flag composes as a labeled Unsupported worklist row (checkbox editing dropped)");
-			Assert.That(composed.Model.Fields.Count(f => f.Kind == RegionFieldKind.Chooser), Is.GreaterThanOrEqualTo(3),
+			Assert.That(composed.Model.Fields.Count(f => f.Kind == DetailFieldKind.Chooser), Is.GreaterThanOrEqualTo(3),
 				"the Left Member / Right Member / Result CATEGORY pickers compose as editable choosers");
 		}
 	}

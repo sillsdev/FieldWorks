@@ -13,7 +13,7 @@ using FwAvaloniaDialogs;
 using FwAvaloniaTests.VisualChecks; // DialogSnapshot — the per-stage PNG harness (linked in via the csproj)
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwAvalonia;
-using SIL.FieldWorks.Common.FwAvalonia.Region;
+using SIL.FieldWorks.Common.FwAvalonia.Detail;
 using SIL.FieldWorks.Common.FwAvalonia.ViewDefinition;
 
 namespace FwAvaloniaDialogsTests
@@ -28,19 +28,19 @@ namespace FwAvaloniaDialogsTests
 	[TestFixture]
 	public class InsertEntryDialogTests
 	{
-		private static readonly IReadOnlyList<RegionChoiceOption> MorphTypes = new List<RegionChoiceOption>
+		private static readonly IReadOnlyList<DetailChoiceOption> MorphTypes = new List<DetailChoiceOption>
 		{
-			new RegionChoiceOption("guid-stem", "stem"),
-			new RegionChoiceOption("guid-prefix", "prefix"),
-			new RegionChoiceOption("guid-suffix", "suffix")
+			new DetailChoiceOption("guid-stem", "stem"),
+			new DetailChoiceOption("guid-prefix", "prefix"),
+			new DetailChoiceOption("guid-suffix", "suffix")
 		};
 
-		private static RegionField TextField(string name, string automationId, params string[] wsTags)
+		private static DetailField TextField(string name, string automationId, params string[] wsTags)
 		{
-			var values = wsTags.Select(tag => new RegionWsValue(tag, string.Empty, wsTag: tag)).ToList();
-			return new RegionField(name, name, name, null, RegionFieldKind.Text,
+			var values = wsTags.Select(tag => new DetailWsValue(tag, string.Empty, wsTag: tag)).ToList();
+			return new DetailField(name, name, name, null, DetailFieldKind.Text,
 				default(EditorClassification), automationId, name, default(SurfaceRouting),
-				values, new List<RegionChoiceOption>(), null, isEditable: true);
+				values, new List<DetailChoiceOption>(), null, isEditable: true);
 		}
 
 		// A small POS hierarchy + slots + a morph-type → MsaType map for the MSA section tests. guid-stem → Stem,
@@ -68,10 +68,10 @@ namespace FwAvaloniaDialogsTests
 		// The complex-form types + the morph-type → gating map for the complex-form picker tests (LT-21666).
 		// guid-root disables + forces Not-Applicable; guid-phrase enables + keeps the selection; guid-stem/-prefix/
 		// -suffix take the default (enabled, reset to Not-Applicable).
-		private static readonly IReadOnlyList<RegionChoiceOption> ComplexFormTypes = new List<RegionChoiceOption>
+		private static readonly IReadOnlyList<DetailChoiceOption> ComplexFormTypes = new List<DetailChoiceOption>
 		{
-			new RegionChoiceOption("cft-compound", "Compound"),
-			new RegionChoiceOption("cft-idiom", "Idiom")
+			new DetailChoiceOption("cft-compound", "Compound"),
+			new DetailChoiceOption("cft-idiom", "Idiom")
 		};
 
 		private static readonly IReadOnlyDictionary<string, ComplexFormGating> ComplexFormGatingMap =
@@ -103,7 +103,7 @@ namespace FwAvaloniaDialogsTests
 			MorphTypeToMsaType = withMsa ? MorphTypeToMsa : null,
 			InitialMsaType = FwMsaType.Stem,
 			SlotsForPos = withMsa ? (System.Func<string, IReadOnlyList<FwInflectionSlot>>)(_ => Slots) : null,
-			ComplexFormTypes = withComplexForm ? ComplexFormTypes : System.Array.Empty<RegionChoiceOption>(),
+			ComplexFormTypes = withComplexForm ? ComplexFormTypes : System.Array.Empty<DetailChoiceOption>(),
 			ComplexFormGatingByMorphType = withComplexForm ? ComplexFormGatingMap : null
 		};
 
@@ -735,14 +735,14 @@ namespace FwAvaloniaDialogsTests
 		// ----- complex-form type picker + morph-type gating (LT-21666) -----
 
 		// Morph types extended with root + phrase so the gating branches are reachable from the picker.
-		private static readonly IReadOnlyList<RegionChoiceOption> MorphTypesWithRootAndPhrase =
-			new List<RegionChoiceOption>
+		private static readonly IReadOnlyList<DetailChoiceOption> MorphTypesWithRootAndPhrase =
+			new List<DetailChoiceOption>
 			{
-				new RegionChoiceOption("guid-stem", "stem"),
-				new RegionChoiceOption("guid-prefix", "prefix"),
-				new RegionChoiceOption("guid-suffix", "suffix"),
-				new RegionChoiceOption("guid-root", "root"),
-				new RegionChoiceOption("guid-phrase", "phrase")
+				new DetailChoiceOption("guid-stem", "stem"),
+				new DetailChoiceOption("guid-prefix", "prefix"),
+				new DetailChoiceOption("guid-suffix", "suffix"),
+				new DetailChoiceOption("guid-root", "root"),
+				new DetailChoiceOption("guid-phrase", "phrase")
 			};
 
 		private static InsertEntryDlgInput ComplexFormInput()

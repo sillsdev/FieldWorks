@@ -10,12 +10,12 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 	/// <summary>
 	/// The renderable category of a legacy editor string — the ONE home for the
 	/// editor-string → category knowledge that the region composer's dispatch switch and
-	/// <c>RegionModelProjector</c>'s kind classification both consume — neither keeps a
+	/// <c>DetailModelProjector</c>'s kind classification both consume — neither keeps a
 	/// copy of its own. Consumers may still refine a category by LCModel field type
 	/// (e.g. the composer's <c>CellarPropertyType</c> dispatch for <see cref="Other"/>); only the
 	/// editor-string knowledge itself lives here.
 	/// </summary>
-	public enum RegionEditorCategory
+	public enum DetailEditorCategory
 	{
 		/// <summary>A null/empty editor: a grouping node, no renderable field of its own.</summary>
 		Grouping,
@@ -65,7 +65,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 	/// grouping (null) editor, and everything else as unknown. This lets the typed importer raise
 	/// faithful diagnostics for dynamic/unknown/obsolete editors (tasks 3.8 and 4.4) without
 	/// constructing any WinForms control. Also the single home of the named editor-string
-	/// constants and the <see cref="ClassifyRegionFieldKind"/> category API the region surfaces
+	/// constants and the <see cref="ClassifyDetailFieldKind"/> category API the region surfaces
 	/// dispatch on.
 	/// </summary>
 	public static class EditorKindMap
@@ -183,54 +183,54 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 		}
 
 		/// <summary>
-		/// Maps a legacy editor string onto its renderable <see cref="RegionEditorCategory"/> —
+		/// Maps a legacy editor string onto its renderable <see cref="DetailEditorCategory"/> —
 		/// the one editor-string dispatch table the composer's field switch and the mapper's kind
 		/// classification share. Case-insensitive like the legacy DataTree dispatch
-		/// (<c>editor.ToLower()</c>). Editors not named here are <see cref="RegionEditorCategory.Other"/>:
+		/// (<c>editor.ToLower()</c>). Editors not named here are <see cref="DetailEditorCategory.Other"/>:
 		/// consumers refine those by LCModel field type (the composer's <c>WalkOtherField</c>)
 		/// or render them as text (the first-slice mapper).
 		/// </summary>
-		public static RegionEditorCategory ClassifyRegionFieldKind(string rawEditor)
+		public static DetailEditorCategory ClassifyDetailFieldKind(string rawEditor)
 		{
 			if (string.IsNullOrEmpty(rawEditor))
 			{
-				return RegionEditorCategory.Grouping;
+				return DetailEditorCategory.Grouping;
 			}
 
 			switch (rawEditor.ToLowerInvariant())
 			{
 				case MultiStringEditor:
 				case StringEditor:
-					return RegionEditorCategory.Text;
+					return DetailEditorCategory.Text;
 				case MorphTypeAtomicReferenceEditor:
-					return RegionEditorCategory.MorphTypeChooser;
+					return DetailEditorCategory.MorphTypeChooser;
 				case SummaryEditor:
-					return RegionEditorCategory.Summary;
+					return DetailEditorCategory.Summary;
 				case LiteralEditor:
-					return RegionEditorCategory.Literal;
+					return DetailEditorCategory.Literal;
 				case PictureEditor:
 				case ImageEditor:
-					return RegionEditorCategory.Picture;
+					return DetailEditorCategory.Picture;
 				case JtViewEditor:
-					return RegionEditorCategory.EmbeddedView;
+					return DetailEditorCategory.EmbeddedView;
 				case CommandEditor:
-					return RegionEditorCategory.Command;
+					return DetailEditorCategory.Command;
 				case EnumComboBoxEditor:
 					// A closed enum combo must never degrade to a free-form int
 					// editor that can persist invalid enum values.
-					return RegionEditorCategory.EnumCombo;
+					return DetailEditorCategory.EnumCombo;
 				case "atomicreferencepos":
 				case "atomicreferenceposdisabled":
 				case "possatomicreference":
 				case "defaultatomicreference":
 				case "defaultatomicreferencedisabled":
-					return RegionEditorCategory.AtomicReferenceChooser;
+					return DetailEditorCategory.AtomicReferenceChooser;
 				case "msareferencecombobox":
 				case "derivmsareference":
 				case "inflmsareference":
-					return RegionEditorCategory.MsaChooser;
+					return DetailEditorCategory.MsaChooser;
 				default:
-					return RegionEditorCategory.Other;
+					return DetailEditorCategory.Other;
 			}
 		}
 	}

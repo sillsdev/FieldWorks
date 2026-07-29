@@ -4,7 +4,7 @@
 
 using System;
 using NUnit.Framework;
-using SIL.FieldWorks.Common.FwAvalonia.Region;
+using SIL.FieldWorks.Common.FwAvalonia.Detail;
 using SIL.FieldWorks.Common.FwAvalonia.ViewDefinition;
 using SIL.LCModel;
 
@@ -96,42 +96,42 @@ namespace SIL.FieldWorks.XWorks
 	}
 
 	/// <summary>
-	/// Review consolidation (editor-kind knowledge): <see cref="EditorKindMap.ClassifyRegionFieldKind"/>
+	/// Review consolidation (editor-kind knowledge): <see cref="EditorKindMap.ClassifyDetailFieldKind"/>
 	/// is the ONE editor-string → category table the composer's dispatch switch and
-	/// <c>RegionModelProjector.ClassifyKind</c> both consume. These cases pin the categories the
+	/// <c>DetailModelProjector.ClassifyKind</c> both consume. These cases pin the categories the
 	/// two consumers' behavior depends on.
 	/// </summary>
 	[TestFixture]
 	public class EditorKindMapRegionCategoryTests
 	{
-		[TestCase("multistring", RegionEditorCategory.Text)]
-		[TestCase("string", RegionEditorCategory.Text)]
-		[TestCase("MorphTypeAtomicReference", RegionEditorCategory.MorphTypeChooser)]
-		[TestCase("summary", RegionEditorCategory.Summary)]
-		[TestCase("lit", RegionEditorCategory.Literal)]
-		[TestCase("picture", RegionEditorCategory.Picture)]
-		[TestCase("image", RegionEditorCategory.Picture)]
-		[TestCase("jtview", RegionEditorCategory.EmbeddedView)]
-		[TestCase("command", RegionEditorCategory.Command)]
-		[TestCase("enumComboBox", RegionEditorCategory.EnumCombo)]
-		[TestCase("possatomicreference", RegionEditorCategory.AtomicReferenceChooser)]
-		[TestCase("atomicreferencepos", RegionEditorCategory.AtomicReferenceChooser)]
-		[TestCase("atomicreferenceposdisabled", RegionEditorCategory.AtomicReferenceChooser)]
-		[TestCase("defaultatomicreference", RegionEditorCategory.AtomicReferenceChooser)]
-		[TestCase("defaultatomicreferencedisabled", RegionEditorCategory.AtomicReferenceChooser)]
-		[TestCase(null, RegionEditorCategory.Grouping)]
-		[TestCase("", RegionEditorCategory.Grouping)]
+		[TestCase("multistring", DetailEditorCategory.Text)]
+		[TestCase("string", DetailEditorCategory.Text)]
+		[TestCase("MorphTypeAtomicReference", DetailEditorCategory.MorphTypeChooser)]
+		[TestCase("summary", DetailEditorCategory.Summary)]
+		[TestCase("lit", DetailEditorCategory.Literal)]
+		[TestCase("picture", DetailEditorCategory.Picture)]
+		[TestCase("image", DetailEditorCategory.Picture)]
+		[TestCase("jtview", DetailEditorCategory.EmbeddedView)]
+		[TestCase("command", DetailEditorCategory.Command)]
+		[TestCase("enumComboBox", DetailEditorCategory.EnumCombo)]
+		[TestCase("possatomicreference", DetailEditorCategory.AtomicReferenceChooser)]
+		[TestCase("atomicreferencepos", DetailEditorCategory.AtomicReferenceChooser)]
+		[TestCase("atomicreferenceposdisabled", DetailEditorCategory.AtomicReferenceChooser)]
+		[TestCase("defaultatomicreference", DetailEditorCategory.AtomicReferenceChooser)]
+		[TestCase("defaultatomicreferencedisabled", DetailEditorCategory.AtomicReferenceChooser)]
+		[TestCase(null, DetailEditorCategory.Grouping)]
+		[TestCase("", DetailEditorCategory.Grouping)]
 		// Other: consumers refine by CellarPropertyType (composer) or render as text (mapper).
-		[TestCase("checkbox", RegionEditorCategory.Other)]
-		[TestCase("gendate", RegionEditorCategory.Other)]
-		[TestCase("integer", RegionEditorCategory.Other)]
-		[TestCase("autocustom", RegionEditorCategory.Other)]
-		[TestCase("no-such-editor", RegionEditorCategory.Other)]
+		[TestCase("checkbox", DetailEditorCategory.Other)]
+		[TestCase("gendate", DetailEditorCategory.Other)]
+		[TestCase("integer", DetailEditorCategory.Other)]
+		[TestCase("autocustom", DetailEditorCategory.Other)]
+		[TestCase("no-such-editor", DetailEditorCategory.Other)]
 		public void ClassifyRegionFieldKind_RoutesLikeTheLegacyDispatch(string rawEditor,
-			RegionEditorCategory expected)
+			DetailEditorCategory expected)
 		{
 			// Case-insensitive, like DataTree's editor.ToLower() dispatch.
-			Assert.That(EditorKindMap.ClassifyRegionFieldKind(rawEditor), Is.EqualTo(expected));
+			Assert.That(EditorKindMap.ClassifyDetailFieldKind(rawEditor), Is.EqualTo(expected));
 		}
 	}
 }

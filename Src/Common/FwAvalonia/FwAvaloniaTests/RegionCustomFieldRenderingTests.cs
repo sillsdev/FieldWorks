@@ -12,13 +12,13 @@ using Avalonia.Threading;
 using Avalonia.VisualTree;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwAvalonia;
-using SIL.FieldWorks.Common.FwAvalonia.Region;
+using SIL.FieldWorks.Common.FwAvalonia.Detail;
 using SIL.FieldWorks.Common.FwAvalonia.ViewDefinition;
 
 namespace FwAvaloniaTests
 {
 	/// <summary>
-	/// A <see cref="RegionFieldKind.Custom"/> row
+	/// A <see cref="DetailFieldKind.Custom"/> row
 	/// renders its plugin control factory's Avalonia control in-tree in the value column, at the
 	/// slice's real position. The path is guarded: a missing, null-returning, or throwing factory
 	/// degrades to the explicit unsupported row — never a crash, never a silently blank row.
@@ -26,27 +26,27 @@ namespace FwAvaloniaTests
 	[TestFixture]
 	public class RegionCustomFieldRenderingTests
 	{
-		private static RegionModel Model(Func<Control> factory)
-			=> new RegionModel("LexEntry", "Normal",
-				new List<RegionField>
+		private static DetailModel Model(Func<Control> factory)
+			=> new DetailModel("LexEntry", "Normal",
+				new List<DetailField>
 				{
-					new RegionField("LexEntry/Normal/#0@1", "Messages", "Self", null,
-						RegionFieldKind.Custom, EditorClassification.Dynamic, null, null,
+					new DetailField("LexEntry/Normal/#0@1", "Messages", "Self", null,
+						DetailFieldKind.Custom, EditorClassification.Dynamic, null, null,
 						SurfaceRouting.Product, null, null, null, isEditable: true, indent: 0,
 						controlFactory: factory)
 				},
 				new List<ViewDiagnostic>());
 
-		private static RegionDataTree Show(RegionModel model)
+		private static DataTree Show(DetailModel model)
 		{
-			var view = new RegionDataTree(model);
+			var view = new DataTree(model);
 			var window = new Window { Content = view, Width = 420, Height = 200 };
 			window.Show();
 			Dispatcher.UIThread.RunJobs();
 			return view;
 		}
 
-		private static TextBlock FindUnsupportedBlock(RegionDataTree view)
+		private static TextBlock FindUnsupportedBlock(DataTree view)
 			=> view.GetVisualDescendants().OfType<TextBlock>()
 				.FirstOrDefault(t => t.Text == FwAvaloniaStrings.UnsupportedEditor);
 

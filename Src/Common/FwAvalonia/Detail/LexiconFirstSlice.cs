@@ -8,7 +8,7 @@ using System.IO;
 using System.Xml.Linq;
 using SIL.FieldWorks.Common.FwAvalonia.ViewDefinition;
 
-namespace SIL.FieldWorks.Common.FwAvalonia.Region
+namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 {
 	/// <summary>
 	/// Builds the LexEntry-identity first-slice view definition by compiling the live shipped layout

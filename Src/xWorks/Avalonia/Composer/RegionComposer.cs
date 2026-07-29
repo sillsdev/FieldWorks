@@ -9,7 +9,7 @@ using System.Globalization;
 using System.Linq;
 using System.Threading;
 using System.Xml.Linq;
-using SIL.FieldWorks.Common.FwAvalonia.Region;
+using SIL.FieldWorks.Common.FwAvalonia.Detail;
 using SIL.FieldWorks.Common.FwAvalonia.ViewDefinition;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
@@ -27,15 +27,15 @@ namespace SIL.FieldWorks.XWorks
 	/// <summary>A composed full-entry region: the renderable model plus its LCModel-bound edit context.</summary>
 	public sealed class ComposedRegion
 	{
-		public ComposedRegion(RegionModel model, IRegionEditContext editContext)
+		public ComposedRegion(DetailModel model, IDetailEditContext editContext)
 		{
 			Model = model;
 			EditContext = editContext;
 		}
 
-		public RegionModel Model { get; }
+		public DetailModel Model { get; }
 
-		public IRegionEditContext EditContext { get; }
+		public IDetailEditContext EditContext { get; }
 	}
 
 	/// <summary>
@@ -140,7 +140,7 @@ namespace SIL.FieldWorks.XWorks
 			// Plugin rows close over the region's own edit
 			// context, which only exists after the walk has gathered every setter — a deferred
 			// accessor bridges the gap (plugin factories run at render time, never during compose).
-			IRegionEditContext composedContext = null;
+			IDetailEditContext composedContext = null;
 			var state = new ComposeState(cache, showHiddenFields,
 				plugins ?? RegionEditorPluginRegistry.Default, () => composedContext, overrides);
 			state.EnterModel(root);
@@ -150,13 +150,13 @@ namespace SIL.FieldWorks.XWorks
 
 			var context = new ComposedRegionEditContext(cache, obj, state.Handlers);
 			composedContext = context;
-			var model = new RegionModel(obj.ClassName, layoutName, state.Fields, root.Diagnostics);
+			var model = new DetailModel(obj.ClassName, layoutName, state.Fields, root.Diagnostics);
 			return new ComposedRegion(model, context);
 		}
 
 		/// <summary>
 		/// Walks a possibility list's tree in document order (parent before children) into
-		/// chooser options, hierarchy carried as <see cref="RegionChoiceOption.Depth"/> — exactly
+		/// chooser options, hierarchy carried as <see cref="DetailChoiceOption.Depth"/> — exactly
 		/// the indented tree the legacy chooser shows. <paramref name="flat"/> (a chooserInfo
 		/// "FlatList" guicontrol spec, e.g. PeopleFlatList) keeps the order but suppresses the
 		/// hierarchy, like the legacy flat chooser. The implementation lives in
@@ -164,7 +164,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <see cref="LexiconEditErrorFallback"/> cannot drift; this wrapper keeps the composer's
 		/// established internal surface (and its tests).
 		/// </summary>
-		internal static IReadOnlyList<RegionChoiceOption> BuildPossibilityOptions(
+		internal static IReadOnlyList<DetailChoiceOption> BuildPossibilityOptions(
 			ICmPossibilityList list, bool flat)
 			=> RegionValueFactory.BuildPossibilityOptions(list, flat);
 
@@ -264,7 +264,7 @@ namespace SIL.FieldWorks.XWorks
 			private readonly IFwMetaDataCacheManaged _mdc;
 			private readonly HashSet<(int hvo, string layout)> _visited = new HashSet<(int, string)>();
 
-			public readonly List<RegionField> Fields = new List<RegionField>();
+			public readonly List<DetailField> Fields = new List<DetailField>();
 			// One edit handler per composed field, keyed by StableId. A field's text/rich-text/option/
 			// reference/paragraph write delegates live together on its handler (null where the field's kind
 			// does not support a gesture), replacing the former nine parallel setter dictionaries that had
@@ -297,29 +297,29 @@ namespace SIL.FieldWorks.XWorks
 			// custom slice, plus the deferred accessor for the edit context plugin factories
 			// receive (resolved when the factory runs, after Compose has built the context).
 			private readonly RegionEditorPluginRegistry _plugins;
-			private readonly Func<IRegionEditContext> _editContextAccessor;
+			private readonly Func<IDetailEditContext> _editContextAccessor;
 			// Per-compose memos — the morph-type option list is identical for every
 			// IMoForm, and an item layout's menu/hotlinks binding is identical per (class, layout).
-			private List<RegionChoiceOption> _morphTypeOptions;
+			private List<DetailChoiceOption> _morphTypeOptions;
 			// The project's character-type style names, computed once
 			// per compose from Cache.LangProject.StylesOC and stamped onto every editable text row's
-			// RegionField.AvailableNamedStyles (the host seam the per-WS style picker reads).
+			// DetailField.AvailableNamedStyles (the host seam the per-WS style picker reads).
 			// Sorted by name for a stable picker order; empty when no stylesheet/styles are reachable.
 			private IReadOnlyList<string> _characterStyleNames;
 			// The project's PARAGRAPH-type style names, computed once per compose
 			// from Cache.LangProject.StylesOC and stamped onto every editable StText row's
-			// RegionField.AvailableParagraphStyles (the host seam the per-paragraph style picker
+			// DetailField.AvailableParagraphStyles (the host seam the per-paragraph style picker
 			// reads). Sorted by name for a stable picker order; empty when no stylesheet/styles are reachable.
 			private IReadOnlyList<string> _paragraphStyleNames;
 			// The project's writing systems (analysis + vernacular),
 			// computed once per compose from Cache and stamped onto every editable text row's
-			// RegionField.AvailableWritingSystems (the host seam the per-WS retag picker reads).
+			// DetailField.AvailableWritingSystems (the host seam the per-WS retag picker reads).
 			// Empty when no writing systems are reachable; the WS picker affordance is then suppressed.
-			private IReadOnlyList<RegionWritingSystemOption> _writingSystemOptions;
+			private IReadOnlyList<DetailWritingSystemOption> _writingSystemOptions;
 			// A map from ws tag to that ws's default font (+ RTL), computed
 			// once per compose from the project's analysis + vernacular writing systems and stamped onto
 			// every editable text / StText row so the owned editors can draw the per-run font display.
-			private IReadOnlyDictionary<string, RegionRunFont> _writingSystemFonts;
+			private IReadOnlyDictionary<string, DetailRunFont> _writingSystemFonts;
 			// CHOICE-UNSAFE KEY: this cache key omits choiceGuid while the menu
 			// binding is derived from the compiled layout's root, which can differ per choice variant. It is
 			// correct ONLY because descent currently compiles every embedded object with choiceGuid=null
@@ -330,7 +330,7 @@ namespace SIL.FieldWorks.XWorks
 				= new Dictionary<(int, string), (string, string)>();
 
 			public ComposeState(LcmCache cache, bool showHiddenFields,
-				RegionEditorPluginRegistry plugins, Func<IRegionEditContext> editContextAccessor,
+				RegionEditorPluginRegistry plugins, Func<IDetailEditContext> editContextAccessor,
 				ViewDefinitionOverrideResolver overrides = null)
 			{
 				_cache = cache;
@@ -354,7 +354,7 @@ namespace SIL.FieldWorks.XWorks
 					_modelContext.Pop();
 			}
 
-			private void AddField(RegionField field)
+			private void AddField(DetailField field)
 			{
 				if (_modelContext.Count > 0)
 				{
@@ -426,14 +426,14 @@ namespace SIL.FieldWorks.XWorks
 			// memoized; any failure reaching the writing systems (a bare/partial cache in a test) yields an
 			// empty list, which simply suppresses the picker affordance. This is the host seam: the composer
 			// is the LCModel-aware edge that supplies the writing systems the FwAvalonia layer renders.
-			private IReadOnlyList<RegionWritingSystemOption> WritingSystemOptions()
+			private IReadOnlyList<DetailWritingSystemOption> WritingSystemOptions()
 			{
 				if (_writingSystemOptions != null)
 					return _writingSystemOptions;
 				try
 				{
 					var seen = new HashSet<int>();
-					var options = new List<RegionWritingSystemOption>();
+					var options = new List<DetailWritingSystemOption>();
 					void AddAll(IEnumerable<CoreWritingSystemDefinition> systems)
 					{
 						if (systems == null)
@@ -445,7 +445,7 @@ namespace SIL.FieldWorks.XWorks
 							var displayName = ws.DisplayLabel;
 							if (string.IsNullOrEmpty(displayName))
 								displayName = string.IsNullOrEmpty(ws.Abbreviation) ? ws.Id : ws.Abbreviation;
-							options.Add(new RegionWritingSystemOption(ws.Id, displayName));
+							options.Add(new DetailWritingSystemOption(ws.Id, displayName));
 						}
 					}
 
@@ -456,7 +456,7 @@ namespace SIL.FieldWorks.XWorks
 				}
 				catch (Exception)
 				{
-					_writingSystemOptions = Array.Empty<RegionWritingSystemOption>();
+					_writingSystemOptions = Array.Empty<DetailWritingSystemOption>();
 				}
 				return _writingSystemOptions;
 			}
@@ -464,13 +464,13 @@ namespace SIL.FieldWorks.XWorks
 			// Each project writing system's default font + RTL, keyed by
 			// its IETF tag, so the owned editors can render a multi-run value with TRUE per-run fonts.
 			// Computed once per compose and memoized; any failure yields an empty map.
-			private IReadOnlyDictionary<string, RegionRunFont> WritingSystemFonts()
+			private IReadOnlyDictionary<string, DetailRunFont> WritingSystemFonts()
 			{
 				if (_writingSystemFonts != null)
 					return _writingSystemFonts;
 				try
 				{
-					var map = new Dictionary<string, RegionRunFont>(StringComparer.Ordinal);
+					var map = new Dictionary<string, DetailRunFont>(StringComparer.Ordinal);
 					void AddAll(IEnumerable<CoreWritingSystemDefinition> systems)
 					{
 						if (systems == null)
@@ -479,7 +479,7 @@ namespace SIL.FieldWorks.XWorks
 						{
 							if (ws == null || string.IsNullOrEmpty(ws.Id) || map.ContainsKey(ws.Id))
 								continue;
-							map[ws.Id] = new RegionRunFont(ws.DefaultFontName, ws.RightToLeftScript);
+							map[ws.Id] = new DetailRunFont(ws.DefaultFontName, ws.RightToLeftScript);
 						}
 					}
 
@@ -490,7 +490,7 @@ namespace SIL.FieldWorks.XWorks
 				}
 				catch (Exception)
 				{
-					_writingSystemFonts = new Dictionary<string, RegionRunFont>();
+					_writingSystemFonts = new Dictionary<string, DetailRunFont>();
 				}
 				return _writingSystemFonts;
 			}
@@ -811,10 +811,10 @@ namespace SIL.FieldWorks.XWorks
 			// the tool derives from the list the same way the legacy jump path does (see
 			// ResolveListEditorTool); a list with no resolvable editor tool yields no link — and
 			// therefore NO gear on that row.
-			private IReadOnlyList<RegionChooserLink> BuildChooserLinks(ViewNode node,
+			private IReadOnlyList<DetailChooserLink> BuildChooserLinks(ViewNode node,
 				ICmPossibilityList list = null)
 			{
-				List<RegionChooserLink> links = null;
+				List<DetailChooserLink> links = null;
 				foreach (var link in node.ChooserLinks)
 				{
 					if (!string.Equals(link.Type, "goto", StringComparison.OrdinalIgnoreCase)
@@ -827,8 +827,8 @@ namespace SIL.FieldWorks.XWorks
 							$"RegionComposer: chooserLink type '{link.Type}' (tool '{link.Tool}') on {node.StableId} is not the goto kind the lexeme editor uses; skipped.");
 						continue;
 					}
-					(links ?? (links = new List<RegionChooserLink>()))
-						.Add(new RegionChooserLink(Localize(link.Label), link.Tool));
+					(links ?? (links = new List<DetailChooserLink>()))
+						.Add(new DetailChooserLink(Localize(link.Label), link.Tool));
 				}
 
 				if (links == null && list != null)
@@ -837,9 +837,9 @@ namespace SIL.FieldWorks.XWorks
 					if (tool != null)
 					{
 						var listName = list.Name?.BestAnalysisAlternative?.Text ?? string.Empty;
-						links = new List<RegionChooserLink>
+						links = new List<DetailChooserLink>
 						{
-							new RegionChooserLink(string.Format(CultureInfo.CurrentCulture,
+							new DetailChooserLink(string.Format(CultureInfo.CurrentCulture,
 								SIL.FieldWorks.Common.FwAvalonia.FwAvaloniaStrings.EditListFormat,
 								listName), tool)
 						};
@@ -855,7 +855,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				// Header row construction is shared with the thin mapper — one construction
 				// site so the two projectors cannot drift. The composer passes its LCModel-enriched values.
-				AddField(RegionStructureRules.BuildHeaderField(
+				AddField(DetailStructureRules.BuildHeaderField(
 					StableId(node, obj), label, node.Field, node.WritingSystem, node.EditorClassification,
 					node.AutomationId, node.LocalizationKey, node.Routing, depth,
 					isCollapsible: true, isInitiallyExpanded: node.Expansion != ViewExpansion.Collapsed,
@@ -876,7 +876,7 @@ namespace SIL.FieldWorks.XWorks
 				if (!string.IsNullOrEmpty(label))
 					AddHeader(node, obj, depth, label);
 
-				var childDepth = RegionStructureRules.ChildIndent(label, depth);
+				var childDepth = DetailStructureRules.ChildIndent(label, depth);
 				foreach (var child in node.Children)
 					Walk(child, obj, childDepth);
 
@@ -904,7 +904,7 @@ namespace SIL.FieldWorks.XWorks
 
 				// A custom slice resolves plugin registry →
 				// Unsupported row, in that order and never the other way. The registry is consulted FIRST
-				// so a migrated class composes as a real in-tree Avalonia editor (a RegionFieldKind.Custom
+				// so a migrated class composes as a real in-tree Avalonia editor (a DetailFieldKind.Custom
 				// row carrying the plugin's control factory). The reference-vector slices are recognized
 				// by legacy class identity and compose as native ReferenceVector rows: GhostLexRefSlice and
 				// LexReferenceMultiSlice via the early checks above, EntrySequenceReferenceSlice via the
@@ -937,32 +937,32 @@ namespace SIL.FieldWorks.XWorks
 				// without a dedicated case here (AtomicReferenceChooser, Grouping, Other) refine
 				// by CellarPropertyType in WalkOtherField — that LCModel knowledge stays in the
 				// composer.
-				switch (EditorKindMap.ClassifyRegionFieldKind(node.RawEditor))
+				switch (EditorKindMap.ClassifyDetailFieldKind(node.RawEditor))
 				{
-					case RegionEditorCategory.Text:
+					case DetailEditorCategory.Text:
 						WalkTextField(node, obj, depth);
 						break;
-					case RegionEditorCategory.MorphTypeChooser:
+					case DetailEditorCategory.MorphTypeChooser:
 						WalkMorphTypeChooser(node, obj, depth);
 						break;
-					case RegionEditorCategory.MsaChooser:
+					case DetailEditorCategory.MsaChooser:
 						WalkMsaChooser(node, obj, depth);
 						break;
-					case RegionEditorCategory.Summary:
+					case DetailEditorCategory.Summary:
 						// Summary slices are section header rows in legacy too.
 						AddHeader(node, obj, depth, Localize(node.Label) ?? node.Field);
 						break;
-					case RegionEditorCategory.Literal:
+					case DetailEditorCategory.Literal:
 						// A literal/"lit" slice (legacy MessageSlice) — static label text rendered as
 						// the row content by the dedicated Literal renderer (the label IS the content).
 						AddLiteralRow(node, obj, depth);
 						break;
-					case RegionEditorCategory.Picture:
+					case DetailEditorCategory.Picture:
 						// Picture/image editing is not part of the Avalonia region; the slice renders the
 						// labeled Unsupported worklist row.
 						WalkUnsupported(node, obj, depth);
 						break;
-					case RegionEditorCategory.EmbeddedView:
+					case DetailEditorCategory.EmbeddedView:
 						// An embedded formatted view (legacy jtview / ViewSlice + XmlView) composes the
 						// nested layout's fields INLINE for this same object, at depth+1 — the recursive
 						// sub-view the legacy XmlView renders. WalkEmbeddedView reuses the
@@ -974,12 +974,12 @@ namespace SIL.FieldWorks.XWorks
 						// common single-level embed.
 						WalkEmbeddedView(node, obj, depth);
 						break;
-					case RegionEditorCategory.Command:
+					case DetailEditorCategory.Command:
 						// Command slices (button rows) are not rendered in the Avalonia region; the slice
 						// renders the labeled Unsupported worklist row.
 						WalkUnsupported(node, obj, depth);
 						break;
-					case RegionEditorCategory.EnumCombo:
+					case DetailEditorCategory.EnumCombo:
 						// Closed enum combos are not part of the Avalonia region; the slice renders the
 						// labeled Unsupported worklist row.
 						WalkUnsupported(node, obj, depth);
@@ -1026,10 +1026,10 @@ namespace SIL.FieldWorks.XWorks
 
 				var stableId = StableId(node, obj);
 				// Multi-run/styled content IS editable: a keystroke replays the untouched runs around
-				// the edit (RegionRichTextEditAlgorithms) and the rich setter rebuilds the TsString.
+				// the edit (DetailRichTextEditAlgorithms) and the rich setter rebuilds the TsString.
 				// A row composes READ-ONLY only when that replay would corrupt the value — a run
 				// carrying an embedded object (ORC) the runs cannot rebuild, or a run carrying a
-				// TsString property the RegionTextRun model does not round-trip (colour, offset,
+				// TsString property the DetailTextRun model does not round-trip (colour, offset,
 				// superscript, …). Both feed CanEditRichText; the lossless original is preserved for
 				// display and stays fully editable in the classic view. Unicode props (no run
 				// structure) keep the plain-text setter.
@@ -1039,8 +1039,8 @@ namespace SIL.FieldWorks.XWorks
 				// view's IsAudio branch), but the row must be editable so its text setter is registered.
 				var editable = type != CellarPropertyType.Unicode
 					&& values.All(v => v.CanEditRichText || v.IsAudio);
-				var textField = new RegionField(stableId, Localize(node.Label) ?? node.Field, node.Field,
-					node.WritingSystem, RegionFieldKind.Text, node.EditorClassification, node.AutomationId,
+				var textField = new DetailField(stableId, Localize(node.Label) ?? node.Field, node.Field,
+					node.WritingSystem, DetailFieldKind.Text, node.EditorClassification, node.AutomationId,
 					node.LocalizationKey, node.Routing, values, null, null, editable, depth,
 					menuId: node.MenuId, contextMenuId: node.ContextMenuId, hotlinksId: node.HotlinksId,
 					objectHvo: obj.Hvo);
@@ -1120,7 +1120,7 @@ namespace SIL.FieldWorks.XWorks
 			// The per-writing-system display values of a text row, with any voice alternative swapped for
 			// its audio-flagged form. Reports whether any text/audio data was present so
 			// WalkTextField can honor HideWhenEmpty.
-			private IReadOnlyList<RegionWsValue> BuildTextRowValues(int hvo, int flid, CellarPropertyType type,
+			private IReadOnlyList<DetailWsValue> BuildTextRowValues(int hvo, int flid, CellarPropertyType type,
 				IReadOnlyList<CoreWritingSystemDefinition> systems, ViewNode node, out bool anyData, out bool anyAudio)
 			{
 				var dataSeen = false;
@@ -1128,7 +1128,7 @@ namespace SIL.FieldWorks.XWorks
 				var fontSize = node.FontScalePercent > 0 ? 12.0 * node.FontScalePercent / 100.0 : 0;
 				// The per-ws value rows build through the shared factory
 				// (LexiconEditErrorFallback uses the same one), this path only supplies the text.
-				IReadOnlyList<RegionWsValue> values;
+				IReadOnlyList<DetailWsValue> values;
 				if (type == CellarPropertyType.Unicode)
 				{
 					values = RegionValueFactory.BuildMultiWsValues(systems, ws =>
@@ -1154,7 +1154,7 @@ namespace SIL.FieldWorks.XWorks
 				var audioSeen = false;
 				if (systems.Any(ws => ws.IsVoice))
 				{
-					var rebuilt = new List<RegionWsValue>(values.Count);
+					var rebuilt = new List<DetailWsValue>(values.Count);
 					for (var i = 0; i < values.Count; i++)
 					{
 						var ws = systems[i];
@@ -1165,7 +1165,7 @@ namespace SIL.FieldWorks.XWorks
 							// real filename so the owned audio field can play the file and clear/replace the
 							// value; isAudio:true tells the view to render the play/record affordances instead
 							// of a plain text box.
-							rebuilt.Add(new RegionWsValue(ws.Abbreviation,
+							rebuilt.Add(new DetailWsValue(ws.Abbreviation,
 								values[i]?.Value ?? string.Empty,
 								ws.DefaultFontName, fontSize,
 								ws.RightToLeftScript, ws.Id, node.BoldEmphasis, isAudio: true));
@@ -1258,7 +1258,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 
 			private bool WriteRichTextProp(int hvo, int flid, int ws, CellarPropertyType type,
-				RegionRichTextValue value)
+				DetailRichTextValue value)
 			{
 				var tss = RegionRichTextAdapter.ToTsString(value, _cache.WritingSystemFactory, ws);
 				switch (type)
@@ -1286,20 +1286,20 @@ namespace SIL.FieldWorks.XWorks
 				var morphTypes = _cache.LangProject.LexDbOA?.MorphTypesOA;
 				if (_morphTypeOptions == null)
 				{
-					_morphTypeOptions = new List<RegionChoiceOption>();
+					_morphTypeOptions = new List<DetailChoiceOption>();
 					foreach (var possibility in form.ReferenceTargetCandidates(MoFormTags.kflidMorphType)
 						.OfType<IMoMorphType>()
 						.OrderBy(mt => mt.Name.BestAnalysisAlternative?.Text, StringComparer.Ordinal))
 					{
-						_morphTypeOptions.Add(new RegionChoiceOption(possibility.Guid.ToString(),
+						_morphTypeOptions.Add(new DetailChoiceOption(possibility.Guid.ToString(),
 							possibility.Name.BestAnalysisAlternative?.Text ?? possibility.Guid.ToString()));
 					}
 				}
 				var options = _morphTypeOptions;
 
 				var stableId = StableId(node, obj);
-				AddField(new RegionField(stableId, Localize(node.Label) ?? node.Field, node.Field,
-					node.WritingSystem, RegionFieldKind.Chooser, node.EditorClassification, node.AutomationId,
+				AddField(new DetailField(stableId, Localize(node.Label) ?? node.Field, node.Field,
+					node.WritingSystem, DetailFieldKind.Chooser, node.EditorClassification, node.AutomationId,
 					node.LocalizationKey, node.Routing, null, options, form.MorphTypeRA?.Guid.ToString(),
 					isEditable: true, indent: depth,
 					menuId: node.MenuId, contextMenuId: node.ContextMenuId, objectHvo: obj.Hvo,
@@ -1349,8 +1349,8 @@ namespace SIL.FieldWorks.XWorks
 				var selected = (sense.MorphoSyntaxAnalysisRA as IMoStemMsa)?.PartOfSpeechRA?.Guid.ToString();
 
 				var stableId = StableId(node, obj);
-				AddField(new RegionField(stableId, Localize(node.Label) ?? node.Field, node.Field,
-					node.WritingSystem, RegionFieldKind.Chooser, node.EditorClassification, node.AutomationId,
+				AddField(new DetailField(stableId, Localize(node.Label) ?? node.Field, node.Field,
+					node.WritingSystem, DetailFieldKind.Chooser, node.EditorClassification, node.AutomationId,
 					node.LocalizationKey, node.Routing, null, options, selected, isEditable: true, indent: depth,
 					menuId: node.MenuId, contextMenuId: node.ContextMenuId, hotlinksId: node.HotlinksId,
 					objectHvo: obj.Hvo, chooserLinks: BuildChooserLinks(node, posList)));
@@ -1387,9 +1387,9 @@ namespace SIL.FieldWorks.XWorks
 				// labeled with the SAME localized "<Empty>" the WinForms launchers use
 				// (DetailControlsStrings.ksNullLabel). The morph-type chooser deliberately offers
 				// no empty option (MorphTypeAtomicLauncher.AllowEmptyItem == false).
-				var options = new List<RegionChoiceOption>
+				var options = new List<DetailChoiceOption>
 				{
-					new RegionChoiceOption(string.Empty,
+					new DetailChoiceOption(string.Empty,
 						SIL.FieldWorks.Common.Framework.DetailControls.DetailControlsResourceAccess.NullItemLabel)
 				};
 				// chooserInfo FlatList specs are not imported onto the node;
@@ -1399,8 +1399,8 @@ namespace SIL.FieldWorks.XWorks
 					? null
 					: _cache.ServiceLocator.ObjectRepository.GetObject(targetHvo).Guid.ToString();
 				var stableId = StableId(node, obj);
-				AddField(new RegionField(stableId, Localize(node.Label) ?? node.Field, node.Field,
-					node.WritingSystem, RegionFieldKind.Chooser, node.EditorClassification, node.AutomationId,
+				AddField(new DetailField(stableId, Localize(node.Label) ?? node.Field, node.Field,
+					node.WritingSystem, DetailFieldKind.Chooser, node.EditorClassification, node.AutomationId,
 					node.LocalizationKey, node.Routing, null, options, selected, isEditable: true, indent: depth,
 					menuId: node.MenuId, contextMenuId: node.ContextMenuId, hotlinksId: node.HotlinksId,
 					objectHvo: obj.Hvo, chooserLinks: BuildChooserLinks(node, list)));
@@ -1431,9 +1431,9 @@ namespace SIL.FieldWorks.XWorks
 				IReadOnlyList<ICmObject> candidates, int targetHvo)
 			{
 				var candidateHvoByGuid = new Dictionary<Guid, int>();
-				var options = new List<RegionChoiceOption>
+				var options = new List<DetailChoiceOption>
 				{
-					new RegionChoiceOption(string.Empty,
+					new DetailChoiceOption(string.Empty,
 						SIL.FieldWorks.Common.Framework.DetailControls.DetailControlsResourceAccess.NullItemLabel)
 				};
 				foreach (var cand in candidates)
@@ -1441,14 +1441,14 @@ namespace SIL.FieldWorks.XWorks
 					if (candidateHvoByGuid.ContainsKey(cand.Guid))
 						continue;
 					candidateHvoByGuid[cand.Guid] = cand.Hvo;
-					options.Add(new RegionChoiceOption(cand.Guid.ToString(), cand.ShortName));
+					options.Add(new DetailChoiceOption(cand.Guid.ToString(), cand.ShortName));
 				}
 				var selected = targetHvo == 0
 					? null
 					: _cache.ServiceLocator.ObjectRepository.GetObject(targetHvo).Guid.ToString();
 				var stableId = StableId(node, obj);
-				AddField(new RegionField(stableId, Localize(node.Label) ?? node.Field, node.Field,
-					node.WritingSystem, RegionFieldKind.Chooser, node.EditorClassification, node.AutomationId,
+				AddField(new DetailField(stableId, Localize(node.Label) ?? node.Field, node.Field,
+					node.WritingSystem, DetailFieldKind.Chooser, node.EditorClassification, node.AutomationId,
 					node.LocalizationKey, node.Routing, null, options, selected, isEditable: true, indent: depth,
 					menuId: node.MenuId, contextMenuId: node.ContextMenuId, hotlinksId: node.HotlinksId,
 					objectHvo: obj.Hvo));
@@ -1474,18 +1474,18 @@ namespace SIL.FieldWorks.XWorks
 			private void AddReferenceVector(ViewNode node, ICmObject obj, int depth, int flid,
 				ICmPossibilityList list, int count)
 			{
-				var items = new List<RegionChoiceOption>();
+				var items = new List<DetailChoiceOption>();
 				for (var i = 0; i < count; i++)
 				{
 					var itemHvo = _sda.get_VecItem(obj.Hvo, flid, i);
 					var item = _cache.ServiceLocator.ObjectRepository.GetObject(itemHvo);
-					items.Add(new RegionChoiceOption(item.Guid.ToString(), ResolveShortName(itemHvo)));
+					items.Add(new DetailChoiceOption(item.Guid.ToString(), ResolveShortName(itemHvo)));
 				}
 
 				var options = BuildPossibilityOptions(list, flat: false); // FlatList not imported; see above
 				var stableId = StableId(node, obj);
-				AddField(new RegionField(stableId, Localize(node.Label) ?? node.Field, node.Field,
-					node.WritingSystem, RegionFieldKind.ReferenceVector, node.EditorClassification,
+				AddField(new DetailField(stableId, Localize(node.Label) ?? node.Field, node.Field,
+					node.WritingSystem, DetailFieldKind.ReferenceVector, node.EditorClassification,
 					node.AutomationId, node.LocalizationKey, node.Routing, null, options, null,
 					isEditable: true, indent: depth, menuId: node.MenuId, contextMenuId: node.ContextMenuId,
 					hotlinksId: node.HotlinksId, objectHvo: obj.Hvo, items: items,
@@ -1532,28 +1532,28 @@ namespace SIL.FieldWorks.XWorks
 			private void AddGenericReferenceVector(ViewNode node, ICmObject obj, int depth, int flid,
 				int count, IReadOnlyList<ICmObject> candidates)
 			{
-				var items = new List<RegionChoiceOption>();
+				var items = new List<DetailChoiceOption>();
 				for (var i = 0; i < count; i++)
 				{
 					var itemHvo = _sda.get_VecItem(obj.Hvo, flid, i);
-					items.Add(new RegionChoiceOption(
+					items.Add(new DetailChoiceOption(
 						_cache.ServiceLocator.ObjectRepository.GetObject(itemHvo).Guid.ToString(),
 						ResolveShortName(itemHvo)));
 				}
 
 				var candidateHvoByGuid = new Dictionary<Guid, int>();
-				var options = new List<RegionChoiceOption>();
+				var options = new List<DetailChoiceOption>();
 				foreach (var cand in candidates)
 				{
 					if (candidateHvoByGuid.ContainsKey(cand.Guid))
 						continue;
 					candidateHvoByGuid[cand.Guid] = cand.Hvo;
-					options.Add(new RegionChoiceOption(cand.Guid.ToString(), cand.ShortName));
+					options.Add(new DetailChoiceOption(cand.Guid.ToString(), cand.ShortName));
 				}
 
 				var stableId = StableId(node, obj);
-				AddField(new RegionField(stableId, Localize(node.Label) ?? node.Field, node.Field,
-					node.WritingSystem, RegionFieldKind.ReferenceVector, node.EditorClassification,
+				AddField(new DetailField(stableId, Localize(node.Label) ?? node.Field, node.Field,
+					node.WritingSystem, DetailFieldKind.ReferenceVector, node.EditorClassification,
 					node.AutomationId, node.LocalizationKey, node.Routing, null, options, null,
 					isEditable: true, indent: depth, menuId: node.MenuId, contextMenuId: node.ContextMenuId,
 					hotlinksId: node.HotlinksId, objectHvo: obj.Hvo, items: items));
@@ -1669,14 +1669,14 @@ namespace SIL.FieldWorks.XWorks
 
 					var stableId = StableId(node, obj) + "/lexref:" + relation.Guid;
 					var items = row.Targets
-						.Select(target => new RegionChoiceOption(target.Guid.ToString(), ResolveEntryOrSenseName(target)))
+						.Select(target => new DetailChoiceOption(target.Guid.ToString(), ResolveEntryOrSenseName(target)))
 						.ToList();
-					Func<string, IReadOnlyList<RegionChoiceOption>> searchOptions = null;
+					Func<string, IReadOnlyList<DetailChoiceOption>> searchOptions = null;
 					if (row.IsEditable)
 						searchOptions = query => SearchLexicalRelationTargets(query, obj, relation, row.MappingType);
 
-					AddField(new RegionField(stableId, row.Label, node.Field, node.WritingSystem,
-						RegionFieldKind.ReferenceVector, node.EditorClassification, node.AutomationId,
+					AddField(new DetailField(stableId, row.Label, node.Field, node.WritingSystem,
+						DetailFieldKind.ReferenceVector, node.EditorClassification, node.AutomationId,
 						node.LocalizationKey, node.Routing, null, null, null,
 						isEditable: row.IsEditable, indent: depth, menuId: row.MenuId,
 						contextMenuId: node.ContextMenuId, hotlinksId: node.HotlinksId,
@@ -1831,18 +1831,18 @@ namespace SIL.FieldWorks.XWorks
 				}
 			}
 
-			private IReadOnlyList<RegionChoiceOption> SearchLexicalRelationTargets(string query,
+			private IReadOnlyList<DetailChoiceOption> SearchLexicalRelationTargets(string query,
 				ICmObject current, ILexReference relation, LexRefTypeTags.MappingTypes mappingType)
 			{
 				if (string.IsNullOrWhiteSpace(query))
-					return Array.Empty<RegionChoiceOption>();
+					return Array.Empty<DetailChoiceOption>();
 				query = query.Trim();
 
 				var present = new HashSet<int>(relation.TargetsRS.Select(target => target.Hvo));
 				return EnumerateLexicalRelationCandidates(mappingType)
 					.Where(target => target.Hvo != current.Hvo && !present.Contains(target.Hvo)
 						&& StartsWithIgnoreCase(ResolveEntryOrSenseName(target), query))
-					.Select(target => new RegionChoiceOption(target.Guid.ToString(), ResolveEntryOrSenseName(target)))
+					.Select(target => new DetailChoiceOption(target.Guid.ToString(), ResolveEntryOrSenseName(target)))
 					.OrderBy(option => option.Name, StringComparer.OrdinalIgnoreCase)
 					.Take(MaxEntrySearchResults)
 					.ToList();
@@ -1928,25 +1928,25 @@ namespace SIL.FieldWorks.XWorks
 			private void AddGhostLexRefVector(ViewNode node, ILexEntry entry, int depth)
 			{
 				var stableId = StableId(node, entry);
-				AddField(new RegionField(stableId, Localize(node.Label) ?? node.Field, node.Field,
-					node.WritingSystem, RegionFieldKind.ReferenceVector, node.EditorClassification,
+				AddField(new DetailField(stableId, Localize(node.Label) ?? node.Field, node.Field,
+					node.WritingSystem, DetailFieldKind.ReferenceVector, node.EditorClassification,
 					node.AutomationId, node.LocalizationKey, node.Routing, null, null, null,
 					isEditable: true, indent: depth, menuId: node.MenuId, contextMenuId: node.ContextMenuId,
-					hotlinksId: node.HotlinksId, objectHvo: entry.Hvo, items: Array.Empty<RegionChoiceOption>(),
+					hotlinksId: node.HotlinksId, objectHvo: entry.Hvo, items: Array.Empty<DetailChoiceOption>(),
 					searchOptions: query => SearchGhostLexRefTargets(query, entry)));
 
 				HandlerFor(stableId).ReferenceAdd = key => TryCreateGhostEntryRef(entry, node.ForVariant, key);
 			}
 
-			private IReadOnlyList<RegionChoiceOption> SearchGhostLexRefTargets(string query, ILexEntry owningEntry)
+			private IReadOnlyList<DetailChoiceOption> SearchGhostLexRefTargets(string query, ILexEntry owningEntry)
 			{
 				if (string.IsNullOrWhiteSpace(query))
-					return Array.Empty<RegionChoiceOption>();
+					return Array.Empty<DetailChoiceOption>();
 				query = query.Trim();
 
 				return _cache.ServiceLocator.GetInstance<ILexEntryRepository>().AllInstances()
 					.Where(entry => entry != owningEntry && MatchesHeadwordPrefix(entry, query))
-					.Select(entry => new RegionChoiceOption(entry.Guid.ToString(), ResolveEntryOrSenseName(entry)))
+					.Select(entry => new DetailChoiceOption(entry.Guid.ToString(), ResolveEntryOrSenseName(entry)))
 					.OrderBy(option => option.Name, StringComparer.OrdinalIgnoreCase)
 					.Take(MaxEntrySearchResults)
 					.ToList();
@@ -2034,12 +2034,12 @@ namespace SIL.FieldWorks.XWorks
 			// session, like the possibility path, plus the legacy ComponentLexemes coupling below.
 			private void AddEntryReferenceVector(ViewNode node, ICmObject obj, int depth, int flid, int count)
 			{
-				var items = new List<RegionChoiceOption>();
+				var items = new List<DetailChoiceOption>();
 				for (var i = 0; i < count; i++)
 				{
 					var itemHvo = _sda.get_VecItem(obj.Hvo, flid, i);
 					var item = _cache.ServiceLocator.ObjectRepository.GetObject(itemHvo);
-					items.Add(new RegionChoiceOption(item.Guid.ToString(), ResolveEntryOrSenseName(item)));
+					items.Add(new DetailChoiceOption(item.Guid.ToString(), ResolveEntryOrSenseName(item)));
 				}
 
 				var stableId = StableId(node, obj);
@@ -2048,8 +2048,8 @@ namespace SIL.FieldWorks.XWorks
 				// object when it IS an entry, else its owning entry (e.g. obj is the LexEntryRef).
 				var owningEntry = obj as ILexEntry ?? obj.OwnerOfClass<ILexEntry>();
 
-				AddField(new RegionField(stableId, Localize(node.Label) ?? node.Field, node.Field,
-					node.WritingSystem, RegionFieldKind.ReferenceVector, node.EditorClassification,
+				AddField(new DetailField(stableId, Localize(node.Label) ?? node.Field, node.Field,
+					node.WritingSystem, DetailFieldKind.ReferenceVector, node.EditorClassification,
 					node.AutomationId, node.LocalizationKey, node.Routing, null, null, null,
 					isEditable: true, indent: depth, menuId: node.MenuId, contextMenuId: node.ContextMenuId,
 					hotlinksId: node.HotlinksId, objectHvo: obj.Hvo, items: items,
@@ -2168,7 +2168,7 @@ namespace SIL.FieldWorks.XWorks
 			private void AddBackRefReferenceVector(ViewNode node, ICmObject obj, int depth, int flid,
 				int count, BackRefVectorKind kind)
 			{
-				var items = new List<RegionChoiceOption>();
+				var items = new List<DetailChoiceOption>();
 				for (var i = 0; i < count; i++)
 				{
 					var itemHvo = _sda.get_VecItem(obj.Hvo, flid, i);
@@ -2177,14 +2177,14 @@ namespace SIL.FieldWorks.XWorks
 					// ILexEntryRef. Key on the OWNING complex-form entry either way, so the option
 					// key round-trips to the same entry the chooser offers.
 					var owningEntry = BackRefItemOwningEntry(item);
-					items.Add(new RegionChoiceOption(owningEntry.Guid.ToString(),
+					items.Add(new DetailChoiceOption(owningEntry.Guid.ToString(),
 						ResolveEntryOrSenseName(owningEntry)));
 				}
 
 				var stableId = StableId(node, obj);
 
-				AddField(new RegionField(stableId, Localize(node.Label) ?? node.Field, node.Field,
-					node.WritingSystem, RegionFieldKind.ReferenceVector, node.EditorClassification,
+				AddField(new DetailField(stableId, Localize(node.Label) ?? node.Field, node.Field,
+					node.WritingSystem, DetailFieldKind.ReferenceVector, node.EditorClassification,
 					node.AutomationId, node.LocalizationKey, node.Routing, null, null, null,
 					isEditable: true, indent: depth, menuId: node.MenuId, contextMenuId: node.ContextMenuId,
 					hotlinksId: node.HotlinksId, objectHvo: obj.Hvo, items: items,
@@ -2207,16 +2207,16 @@ namespace SIL.FieldWorks.XWorks
 			// The chooser candidates for the back-ref vectors: the complex-form entries of m_obj —
 			// the same source the legacy HandleChooserForBackRefs uses (m_obj.ComplexFormEntries).
 			// Type-ahead headword-prefix search, excluding entries already in the vector.
-			private IReadOnlyList<RegionChoiceOption> SearchBackRefCandidates(string query, ICmObject obj)
+			private IReadOnlyList<DetailChoiceOption> SearchBackRefCandidates(string query, ICmObject obj)
 			{
 				if (string.IsNullOrWhiteSpace(query))
-					return Array.Empty<RegionChoiceOption>();
+					return Array.Empty<DetailChoiceOption>();
 				query = query.Trim();
 
 				var candidates = BackRefComplexFormEntries(obj);
 				return candidates
 					.Where(entry => MatchesHeadwordPrefix(entry, query))
-					.Select(entry => new RegionChoiceOption(entry.Guid.ToString(),
+					.Select(entry => new DetailChoiceOption(entry.Guid.ToString(),
 						ResolveEntryOrSenseName(entry)))
 					.OrderBy(option => option.Name, StringComparer.OrdinalIgnoreCase)
 					.Take(MaxEntrySearchResults)
@@ -2366,11 +2366,11 @@ namespace SIL.FieldWorks.XWorks
 			// repository (headword/citation form/lexeme form), excluding the pane's own entry and
 			// the vector's current members (read live, so a staged add drops out of the next
 			// search), capped at MaxEntrySearchResults, ordered by headword.
-			private IReadOnlyList<RegionChoiceOption> SearchLexicon(string query, int hvo, int flid,
+			private IReadOnlyList<DetailChoiceOption> SearchLexicon(string query, int hvo, int flid,
 				ILexEntry owningEntry)
 			{
 				if (string.IsNullOrWhiteSpace(query))
-					return Array.Empty<RegionChoiceOption>();
+					return Array.Empty<DetailChoiceOption>();
 				query = query.Trim();
 
 				var present = new HashSet<int>();
@@ -2381,7 +2381,7 @@ namespace SIL.FieldWorks.XWorks
 				return _cache.ServiceLocator.GetInstance<ILexEntryRepository>().AllInstances()
 					.Where(entry => entry != owningEntry && !present.Contains(entry.Hvo)
 						&& MatchesHeadwordPrefix(entry, query))
-					.Select(entry => new RegionChoiceOption(entry.Guid.ToString(), ResolveEntryOrSenseName(entry)))
+					.Select(entry => new DetailChoiceOption(entry.Guid.ToString(), ResolveEntryOrSenseName(entry)))
 					.OrderBy(option => option.Name, StringComparer.OrdinalIgnoreCase)
 					.Take(MaxEntrySearchResults)
 					.ToList();
@@ -2568,7 +2568,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 
 			// A literal/"lit" slice (legacy MessageSlice) — the slice's label/message text is the
-			// static content. Routed to RegionFieldKind.Literal so the view renders it as static text in the
+			// static content. Routed to DetailFieldKind.Literal so the view renders it as static text in the
 			// value column rather than an (empty) editable row. The content is carried in the value slot so
 			// the renderer shows the message even when there is no separate label column.
 			private void AddLiteralRow(ViewNode node, ICmObject obj, int depth)
@@ -2577,25 +2577,25 @@ namespace SIL.FieldWorks.XWorks
 				// label column is left empty and the message rides the value slot so it renders ONCE, as the
 				// static gray content the legacy slice shows — not duplicated in both columns.
 				var message = Localize(node.Label) ?? node.Field ?? string.Empty;
-				AddField(new RegionField(StableId(node, obj), string.Empty,
-					node.Field, node.WritingSystem, RegionFieldKind.Literal, node.EditorClassification,
+				AddField(new DetailField(StableId(node, obj), string.Empty,
+					node.Field, node.WritingSystem, DetailFieldKind.Literal, node.EditorClassification,
 					node.AutomationId, node.LocalizationKey, node.Routing,
-					new List<RegionWsValue> { new RegionWsValue("", message) }, null, null,
+					new List<DetailWsValue> { new DetailWsValue("", message) }, null, null,
 					isEditable: false, indent: depth, objectHvo: obj.Hvo));
 			}
 
 			private void AddReadOnlyRow(ViewNode node, ICmObject obj, int depth, string display)
 			{
-				AddField(new RegionField(StableId(node, obj), Localize(node.Label) ?? node.Field,
-					node.Field, node.WritingSystem, RegionFieldKind.Text, node.EditorClassification,
+				AddField(new DetailField(StableId(node, obj), Localize(node.Label) ?? node.Field,
+					node.Field, node.WritingSystem, DetailFieldKind.Text, node.EditorClassification,
 					node.AutomationId, node.LocalizationKey, node.Routing,
-					new List<RegionWsValue> { new RegionWsValue("", display ?? string.Empty) }, null, null,
+					new List<DetailWsValue> { new DetailWsValue("", display ?? string.Empty) }, null, null,
 					isEditable: false, indent: depth,
 					menuId: node.MenuId, contextMenuId: node.ContextMenuId, objectHvo: obj.Hvo));
 			}
 
 			// The editable multi-paragraph structured-text (StText) row (legacy StTextSlice).
-			// Builds one RegionParagraph per StTxtPara (run-aware text +
+			// Builds one DetailParagraph per StTxtPara (run-aware text +
 			// per-paragraph named style; an ORC/lossy paragraph stays read-only/preserved) and
 			// registers the four paragraph-CRUD setters that mutate the LCModel StText inside the open
 			// fenced session — text/style writes are one undo step (focus-loss autosave), add/delete one
@@ -2603,19 +2603,19 @@ namespace SIL.FieldWorks.XWorks
 			// exists on each call (a Cancel can roll an insert/StText creation back under a still-shown view).
 			private void AddStructuredText(ViewNode node, ICmObject obj, int depth, int flid, IStText stText)
 			{
-				var paragraphs = new List<RegionParagraph>();
+				var paragraphs = new List<DetailParagraph>();
 				foreach (var par in stText.ParagraphsOS.OfType<IStTxtPara>())
 				{
 					var rich = RegionRichTextAdapter.FromTsString(par.Contents, _cache.WritingSystemFactory);
-					paragraphs.Add(new RegionParagraph(rich, par.StyleName));
+					paragraphs.Add(new DetailParagraph(rich, par.StyleName));
 				}
 
 				var stableId = StableId(node, obj);
 				// The field is editable when the field itself is not hidden and EVERY paragraph round-trips
 				// (no ORC/lossy paragraph). A lossy paragraph holds its own row read-only via CanEditText, but
 				// the row's structural affordances (add/delete) stay available, so the field stays editable.
-				var field = new RegionField(stableId, Localize(node.Label) ?? node.Field, node.Field,
-					node.WritingSystem, RegionFieldKind.StructuredText, node.EditorClassification,
+				var field = new DetailField(stableId, Localize(node.Label) ?? node.Field, node.Field,
+					node.WritingSystem, DetailFieldKind.StructuredText, node.EditorClassification,
 					node.AutomationId, node.LocalizationKey, node.Routing, null, null, null,
 					isEditable: true, indent: depth, menuId: node.MenuId, contextMenuId: node.ContextMenuId,
 					hotlinksId: node.HotlinksId, objectHvo: obj.Hvo, paragraphs: paragraphs);
@@ -2690,7 +2690,7 @@ namespace SIL.FieldWorks.XWorks
 				};
 			}
 
-			// The plugin-claimed row — RegionFieldKind.Custom
+			// The plugin-claimed row — DetailFieldKind.Custom
 			// with the normal label/indent/menu metadata, carrying a factory that closes over
 			// (object, node, deferred edit context, cache). The factory runs in the view at render
 			// time, so composing stays side-effect free and the edit context exists by then.
@@ -2701,8 +2701,8 @@ namespace SIL.FieldWorks.XWorks
 				// service-aware marker type test.
 				var context = new RegionEditorBuildContext(obj, node, _editContextAccessor, _cache);
 				Func<Avalonia.Controls.Control> factory = () => plugin.BuildControl(context);
-				AddField(new RegionField(StableId(node, obj), Localize(node.Label) ?? node.Field,
-					node.Field, node.WritingSystem, RegionFieldKind.Custom, node.EditorClassification,
+				AddField(new DetailField(StableId(node, obj), Localize(node.Label) ?? node.Field,
+					node.Field, node.WritingSystem, DetailFieldKind.Custom, node.EditorClassification,
 					node.AutomationId, node.LocalizationKey, node.Routing, null, null, null,
 					isEditable: true, indent: depth,
 					menuId: node.MenuId, contextMenuId: node.ContextMenuId, hotlinksId: node.HotlinksId,
@@ -2715,8 +2715,8 @@ namespace SIL.FieldWorks.XWorks
 				// The Unsupported worklist row still binds its object and slice menus so a right-click
 				// keeps the legacy per-object commands (Field Visibility / Move Field / Help), and so the
 				// row is addressable by its object (menu targeting, override editing) like any other row.
-				AddField(new RegionField(StableId(node, obj), Localize(node.Label) ?? node.Field,
-					node.Field, node.WritingSystem, RegionFieldKind.Unsupported, node.EditorClassification,
+				AddField(new DetailField(StableId(node, obj), Localize(node.Label) ?? node.Field,
+					node.Field, node.WritingSystem, DetailFieldKind.Unsupported, node.EditorClassification,
 					node.AutomationId, node.LocalizationKey, node.Routing, null, null, null,
 					isEditable: false, indent: depth, menuId: node.MenuId, contextMenuId: node.ContextMenuId,
 					objectHvo: obj.Hvo));
@@ -2737,10 +2737,10 @@ namespace SIL.FieldWorks.XWorks
 
 				var stableId = $"{StableId(node, obj)}/ghost";
 				var ghost = ResolveGhostCreation(node, obj);
-				AddField(new RegionField(stableId, label, node.Field,
-					node.WritingSystem, RegionFieldKind.Text, node.EditorClassification,
+				AddField(new DetailField(stableId, label, node.Field,
+					node.WritingSystem, DetailFieldKind.Text, node.EditorClassification,
 					node.AutomationId, node.LocalizationKey, node.Routing,
-					new List<RegionWsValue> { new RegionWsValue(ghost?.WsAbbrev ?? "", string.Empty, wsTag: ghost?.WsTag) },
+					new List<DetailWsValue> { new DetailWsValue(ghost?.WsAbbrev ?? "", string.Empty, wsTag: ghost?.WsTag) },
 					null, null, isEditable: ghost != null, indent: depth,
 					menuId: node.MenuId, hotlinksId: node.HotlinksId, objectHvo: obj.Hvo,
 					ghostPrompt: prompt));
@@ -2932,8 +2932,8 @@ namespace SIL.FieldWorks.XWorks
 					// HeavySummary part ref binds mnuDataTree-Sense in LexSense.fwlayout) — the
 					// sequence node itself usually has none.
 					var itemBinding = ResolveItemMenuBinding(node, item);
-					AddField(new RegionField($"{StableId(node, obj)}/item{i}",
-						itemLabel, node.Field, null, RegionFieldKind.Header,
+					AddField(new DetailField($"{StableId(node, obj)}/item{i}",
+						itemLabel, node.Field, null, DetailFieldKind.Header,
 						EditorClassification.GroupingNone, null, null, SurfaceRouting.Inherit,
 						null, null, null, isEditable: false, indent: depth + 1,
 						isCollapsible: true, isInitiallyExpanded: expanded,
@@ -3277,11 +3277,11 @@ namespace SIL.FieldWorks.XWorks
 	public sealed class FieldEditHandler
 	{
 		public Func<string, string, bool> Text;
-		public Func<string, RegionRichTextValue, bool> RichText;
+		public Func<string, DetailRichTextValue, bool> RichText;
 		public Func<string, bool> Option;
 		public Func<string, bool> ReferenceAdd;
 		public Func<string, bool> ReferenceRemove;
-		public Func<int, RegionRichTextValue, bool> ParagraphText;
+		public Func<int, DetailRichTextValue, bool> ParagraphText;
 		public Func<int, string, bool> ParagraphStyle;
 		public Func<int, bool> ParagraphInsert;
 		public Func<int, bool> ParagraphDelete;
@@ -3311,10 +3311,10 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		// The field's handler, or null when the field is unknown or carries no delegate for this gesture.
-		private FieldEditHandler Handler(RegionField field)
+		private FieldEditHandler Handler(DetailField field)
 			=> field != null && _handlers.TryGetValue(field.StableId, out var handler) ? handler : null;
 
-		public override bool TrySetText(RegionField field, string ws, string value)
+		public override bool TrySetText(DetailField field, string ws, string value)
 		{
 			if (field != null && field.Values.Any(v => v.RequiresRichEditor))
 				return false;
@@ -3326,7 +3326,7 @@ namespace SIL.FieldWorks.XWorks
 			return Stage(() => setter(ws, value), FieldLabelFor(field));
 		}
 
-		public override bool TrySetRichText(RegionField field, string ws, RegionRichTextValue value)
+		public override bool TrySetRichText(DetailField field, string ws, DetailRichTextValue value)
 		{
 			if (field != null && field.Values.Any(v => !v.CanEditRichText))
 				return false;
@@ -3337,7 +3337,7 @@ namespace SIL.FieldWorks.XWorks
 			return Stage(() => setter(ws, value), FieldLabelFor(field));
 		}
 
-		public override bool TrySetOption(RegionField field, string optionKey)
+		public override bool TrySetOption(DetailField field, string optionKey)
 		{
 			var setter = Handler(field)?.Option;
 			if (setter == null)
@@ -3345,7 +3345,7 @@ namespace SIL.FieldWorks.XWorks
 			return Stage(() => setter(optionKey), FieldLabelFor(field));
 		}
 
-		public override bool TryAddReferenceItem(RegionField field, string optionKey)
+		public override bool TryAddReferenceItem(DetailField field, string optionKey)
 		{
 			var setter = Handler(field)?.ReferenceAdd;
 			if (setter == null)
@@ -3353,7 +3353,7 @@ namespace SIL.FieldWorks.XWorks
 			return Stage(() => setter(optionKey), FieldLabelFor(field));
 		}
 
-		public override bool TryRemoveReferenceItem(RegionField field, string optionKey)
+		public override bool TryRemoveReferenceItem(DetailField field, string optionKey)
 		{
 			var setter = Handler(field)?.ReferenceRemove;
 			if (setter == null)
@@ -3361,8 +3361,8 @@ namespace SIL.FieldWorks.XWorks
 			return Stage(() => setter(optionKey), FieldLabelFor(field));
 		}
 
-		public bool TrySetParagraphText(RegionField field, int paragraphIndex,
-			RegionRichTextValue value)
+		public bool TrySetParagraphText(DetailField field, int paragraphIndex,
+			DetailRichTextValue value)
 		{
 			var setter = Handler(field)?.ParagraphText;
 			if (setter == null)
@@ -3370,7 +3370,7 @@ namespace SIL.FieldWorks.XWorks
 			return Stage(() => setter(paragraphIndex, value), FieldLabelFor(field));
 		}
 
-		public bool TrySetParagraphStyle(RegionField field, int paragraphIndex,
+		public bool TrySetParagraphStyle(DetailField field, int paragraphIndex,
 			string styleName)
 		{
 			var setter = Handler(field)?.ParagraphStyle;
@@ -3379,7 +3379,7 @@ namespace SIL.FieldWorks.XWorks
 			return Stage(() => setter(paragraphIndex, styleName), FieldLabelFor(field));
 		}
 
-		public bool TryInsertParagraph(RegionField field, int afterParagraphIndex)
+		public bool TryInsertParagraph(DetailField field, int afterParagraphIndex)
 		{
 			var setter = Handler(field)?.ParagraphInsert;
 			if (setter == null)
@@ -3387,7 +3387,7 @@ namespace SIL.FieldWorks.XWorks
 			return Stage(() => setter(afterParagraphIndex), FieldLabelFor(field));
 		}
 
-		public bool TryDeleteParagraph(RegionField field, int paragraphIndex)
+		public bool TryDeleteParagraph(DetailField field, int paragraphIndex)
 		{
 			var setter = Handler(field)?.ParagraphDelete;
 			if (setter == null)
@@ -3397,7 +3397,7 @@ namespace SIL.FieldWorks.XWorks
 
 		// The human-readable field label that names the undo step, falling back to the
 		// field name (never empty so the generic label is reserved for the batch/bulk path).
-		private static string FieldLabelFor(RegionField field)
+		private static string FieldLabelFor(DetailField field)
 			=> string.IsNullOrEmpty(field?.Label) ? field?.Field : field.Label;
 
 		// The fenced-session staging helper (open-on-first-edit, close-empty-fence-on-reject) lives

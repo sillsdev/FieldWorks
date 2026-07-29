@@ -5,7 +5,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
-using SIL.FieldWorks.Common.FwAvalonia.Region;
+using SIL.FieldWorks.Common.FwAvalonia.Detail;
 using SIL.FieldWorks.Common.FwAvalonia.ViewDefinition;
 using SIL.LCModel;
 using SIL.LCModel.Core.Text;
@@ -90,7 +90,7 @@ namespace SIL.FieldWorks.XWorks
 			// Pick a visible entry field, force it to "Normally hidden".
 			var baseline = RegionComposer.Compose(m_entry, Cache);
 			var victim = baseline.Model.Fields.First(f => f.ClassName == "LexEntry"
-				&& f.Kind == RegionFieldKind.Text);
+				&& f.Kind == DetailFieldKind.Text);
 			var templateId = ViewDefinitionOverrideEditor.StripRuntimeSuffix(victim.StableId);
 			var resolver = Resolver(EntryPatch(new ViewOverrideOperation(
 				ViewOverrideOperationKind.SetVisibility, templateId, visibility: ViewVisibility.Never)));
@@ -168,7 +168,7 @@ namespace SIL.FieldWorks.XWorks
 		public void Override_DoesNotPoisonProcessWideCompiledCache()
 		{
 			var victimId = EntryFieldTemplateId(RegionComposer.Compose(m_entry, Cache)
-				.Model.Fields.First(f => f.ClassName == "LexEntry" && f.Kind == RegionFieldKind.Text).Field);
+				.Model.Fields.First(f => f.ClassName == "LexEntry" && f.Kind == DetailFieldKind.Text).Field);
 			var resolver = Resolver(EntryPatch(new ViewOverrideOperation(
 				ViewOverrideOperationKind.SetVisibility, victimId, visibility: ViewVisibility.Never)));
 
@@ -197,7 +197,7 @@ namespace SIL.FieldWorks.XWorks
 				"the stale target is reported as a diagnostic, not silently dropped");
 		}
 
-		private static int RowPosition(RegionModel model, string templateId)
+		private static int RowPosition(DetailModel model, string templateId)
 		{
 			for (var i = 0; i < model.Fields.Count; i++)
 			{

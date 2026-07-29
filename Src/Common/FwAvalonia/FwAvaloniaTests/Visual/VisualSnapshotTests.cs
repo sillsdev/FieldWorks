@@ -8,7 +8,7 @@ using System.IO;
 using Avalonia.Controls;
 using Avalonia.Headless.NUnit;
 using NUnit.Framework;
-using SIL.FieldWorks.Common.FwAvalonia.Region;
+using SIL.FieldWorks.Common.FwAvalonia.Detail;
 using SIL.FieldWorks.Common.FwAvalonia.ViewDefinition;
 using FwAvaloniaTests; // FakeRegionEditContext — the LCModel-free editing seam fake (RegionEditingTests.cs)
 using FwAvaloniaDialogsTests; // DialogLayoutAssert — the shared layout tripwire (linked in via the csproj)
@@ -63,8 +63,8 @@ namespace FwAvaloniaTests.VisualChecks
 		{
 			// Read-only display stage: the detail view is FLAT with subtle field separators (the WinForms
 			// DataTree look) — labels + values at the WinForms density font, no boxing per value.
-			var model = RegionModelProjector.FromViewDefinition(RegionDefinition(), new TwoFieldProvider());
-			var view = new RegionDataTree(model);
+			var model = DetailModelProjector.FromViewDefinition(RegionDefinition(), new TwoFieldProvider());
+			var view = new DataTree(model);
 
 			DialogSnapshot.Capture(view, "Region-01-initial", width: 420, height: 200);
 			DialogLayoutAssert.AssertNoCrowding(view);
@@ -75,8 +75,8 @@ namespace FwAvaloniaTests.VisualChecks
 		{
 			// Editable stage: an edit context is supplied so the value editors are live; the surface must still
 			// read flat/dense (no per-field box) the way the legacy editable DataTree does.
-			var model = RegionModelProjector.FromViewDefinition(RegionDefinition(), new TwoFieldProvider());
-			var view = new RegionDataTree(model, new FakeRegionEditContext());
+			var model = DetailModelProjector.FromViewDefinition(RegionDefinition(), new TwoFieldProvider());
+			var view = new DataTree(model, new FakeRegionEditContext());
 
 			DialogSnapshot.Capture(view, "Region-02-editable", width: 420, height: 200);
 			DialogLayoutAssert.AssertNoCrowding(view);
@@ -91,7 +91,7 @@ namespace FwAvaloniaTests.VisualChecks
 			// citation, a part-of-speech chooser, a date, a generic-date, an enum/option chooser, a boolean,
 			// a reference vector, and a multi-line note — the spread of kinds a real lexeme-entry detail shows.
 			// It must still read FLAT/dense (the WinForms DataTree look) with thin field separators, no boxing.
-			var view = new RegionDataTree(RealisticRegionModel());
+			var view = new DataTree(RealisticRegionModel());
 
 			DialogSnapshot.Capture(view, "Region-03-multi-field", width: 520, height: 420);
 			DialogLayoutAssert.AssertNoCrowding(view);
@@ -103,7 +103,7 @@ namespace FwAvaloniaTests.VisualChecks
 			// The same realistic field spread, now editable (an edit context makes the text/chooser editors
 			// live; dropped editors render Unsupported). The dense flat look must survive: live editors, no
 			// per-field box, aligned columns.
-			var view = new RegionDataTree(RealisticRegionModel(), new FakeRegionEditContext());
+			var view = new DataTree(RealisticRegionModel(), new FakeRegionEditContext());
 
 			DialogSnapshot.Capture(view, "Region-04-editable-multi", width: 520, height: 420);
 			DialogLayoutAssert.AssertNoCrowding(view);
@@ -115,14 +115,14 @@ namespace FwAvaloniaTests.VisualChecks
 			// A focused stage on a reference-vector row (the legacy possibility-vector slice with its current
 			// items + trailing add slot), editable — confirming the chip-like items and the add launcher render
 			// without crowding their neighbours.
-			var fields = new List<RegionField>
+			var fields = new List<DetailField>
 			{
 				ReferenceVectorField("d/#ref", "Publish In", "PublishIn",
 					new[] { ("p1", "Main Dictionary"), ("p2", "Pocket Dictionary") },
 					new[] { ("p1", "Main Dictionary"), ("p2", "Pocket Dictionary"), ("p3", "School Dictionary") })
 			};
-			var view = new RegionDataTree(
-				new RegionModel("LexEntry", "detail", fields, new List<ViewDiagnostic>()),
+			var view = new DataTree(
+				new DetailModel("LexEntry", "detail", fields, new List<ViewDiagnostic>()),
 				new FakeRegionEditContext());
 
 			DialogSnapshot.Capture(view, "Region-06-reference", width: 520, height: 200);
@@ -143,11 +143,11 @@ namespace FwAvaloniaTests.VisualChecks
 					automationId: "GlossEditor", routing: SurfaceRouting.Product)
 			}, new List<ViewDiagnostic>());
 
-		private sealed class TwoFieldProvider : IRegionValueProvider
+		private sealed class TwoFieldProvider : IDetailValueProvider
 		{
-			public IReadOnlyList<RegionWsValue> GetValues(ViewNode fieldNode)
-				=> new[] { new RegionWsValue("en", fieldNode.Field == "Form" ? "casa" : "house", wsTag: "en") };
-			public IReadOnlyList<RegionChoiceOption> GetOptions(ViewNode fieldNode) => Array.Empty<RegionChoiceOption>();
+			public IReadOnlyList<DetailWsValue> GetValues(ViewNode fieldNode)
+				=> new[] { new DetailWsValue("en", fieldNode.Field == "Form" ? "casa" : "house", wsTag: "en") };
+			public IReadOnlyList<DetailChoiceOption> GetOptions(ViewNode fieldNode) => Array.Empty<DetailChoiceOption>();
 			public string GetSelectedOptionKey(ViewNode fieldNode) => null;
 		}
 
@@ -155,9 +155,9 @@ namespace FwAvaloniaTests.VisualChecks
 		// ReferenceVector, Unsupported — are exercised; the mapper only classifies Text/Chooser/Unsupported) -----
 
 		// A realistic lexeme-entry detail: 10 fields of varied kinds, mirroring what the lexical edit pane shows.
-		private static RegionModel RealisticRegionModel()
+		private static DetailModel RealisticRegionModel()
 		{
-			var fields = new List<RegionField>
+			var fields = new List<DetailField>
 			{
 				// Multistring vernacular (two writing systems) — the headword.
 				TextField("d/#0", "Lexeme Form", "LexemeForm", "LexemeFormEditor",
@@ -187,44 +187,44 @@ namespace FwAvaloniaTests.VisualChecks
 				TextField("d/#9", "General Note", "GeneralNote", "GeneralNoteEditor",
 					new[] { ("en", "Borrowed from Portuguese; common across the region.", "en") })
 			};
-			return new RegionModel("LexEntry", "detail", fields, new List<ViewDiagnostic>());
+			return new DetailModel("LexEntry", "detail", fields, new List<ViewDiagnostic>());
 		}
 
-		private static RegionField TextField(string stableId, string label, string field,
+		private static DetailField TextField(string stableId, string label, string field,
 			string automationId, (string abbrev, string value, string tag)[] values)
 		{
-			var wsValues = new List<RegionWsValue>();
+			var wsValues = new List<DetailWsValue>();
 			foreach (var v in values)
-				wsValues.Add(new RegionWsValue(v.abbrev, v.value, wsTag: v.tag));
-			return new RegionField(stableId, label, field, null, RegionFieldKind.Text,
+				wsValues.Add(new DetailWsValue(v.abbrev, v.value, wsTag: v.tag));
+			return new DetailField(stableId, label, field, null, DetailFieldKind.Text,
 				EditorClassification.Known, automationId, null, SurfaceRouting.Product, wsValues, null, null);
 		}
 
-		private static RegionField ChooserField(string stableId, string label, string field,
+		private static DetailField ChooserField(string stableId, string label, string field,
 			string selectedKey, (string key, string name)[] options)
 		{
-			var opts = new List<RegionChoiceOption>();
+			var opts = new List<DetailChoiceOption>();
 			foreach (var o in options)
-				opts.Add(new RegionChoiceOption(o.key, o.name));
-			return new RegionField(stableId, label, field, null, RegionFieldKind.Chooser,
+				opts.Add(new DetailChoiceOption(o.key, o.name));
+			return new DetailField(stableId, label, field, null, DetailFieldKind.Chooser,
 				EditorClassification.Known, field + "Chooser", null, SurfaceRouting.Product, null, opts, selectedKey);
 		}
 
-		private static RegionField UnsupportedField(string stableId, string label, string field)
-			=> new RegionField(stableId, label, field, null, RegionFieldKind.Unsupported,
+		private static DetailField UnsupportedField(string stableId, string label, string field)
+			=> new DetailField(stableId, label, field, null, DetailFieldKind.Unsupported,
 				EditorClassification.Known, field + "Editor", null, SurfaceRouting.Product, null, null, null,
 				isEditable: false);
 
-		private static RegionField ReferenceVectorField(string stableId, string label, string field,
+		private static DetailField ReferenceVectorField(string stableId, string label, string field,
 			(string key, string name)[] items, (string key, string name)[] options)
 		{
-			var itemList = new List<RegionChoiceOption>();
+			var itemList = new List<DetailChoiceOption>();
 			foreach (var i in items)
-				itemList.Add(new RegionChoiceOption(i.key, i.name));
-			var optList = new List<RegionChoiceOption>();
+				itemList.Add(new DetailChoiceOption(i.key, i.name));
+			var optList = new List<DetailChoiceOption>();
 			foreach (var o in options)
-				optList.Add(new RegionChoiceOption(o.key, o.name));
-			return new RegionField(stableId, label, field, null, RegionFieldKind.ReferenceVector,
+				optList.Add(new DetailChoiceOption(o.key, o.name));
+			return new DetailField(stableId, label, field, null, DetailFieldKind.ReferenceVector,
 				EditorClassification.Known, field, null, SurfaceRouting.Product, null, optList, null,
 				isEditable: true, items: itemList);
 		}

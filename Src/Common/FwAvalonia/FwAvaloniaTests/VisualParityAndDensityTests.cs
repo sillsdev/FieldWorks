@@ -13,7 +13,7 @@ using Avalonia.Interactivity;
 using Avalonia.Threading;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwAvalonia;
-using SIL.FieldWorks.Common.FwAvalonia.Region;
+using SIL.FieldWorks.Common.FwAvalonia.Detail;
 using SIL.FieldWorks.Common.FwAvalonia.ViewDefinition;
 
 namespace FwAvaloniaTests
@@ -36,12 +36,12 @@ namespace FwAvaloniaTests
 			},
 			new List<ViewDiagnostic>());
 
-		private sealed class Provider : IRegionValueProvider
+		private sealed class Provider : IDetailValueProvider
 		{
-			public IReadOnlyList<RegionWsValue> GetValues(ViewNode fieldNode)
-				=> new List<RegionWsValue> { new RegionWsValue("vern", "casa") };
+			public IReadOnlyList<DetailWsValue> GetValues(ViewNode fieldNode)
+				=> new List<DetailWsValue> { new DetailWsValue("vern", "casa") };
 
-			public IReadOnlyList<RegionChoiceOption> GetOptions(ViewNode fieldNode) => new List<RegionChoiceOption>();
+			public IReadOnlyList<DetailChoiceOption> GetOptions(ViewNode fieldNode) => new List<DetailChoiceOption>();
 
 			public string GetSelectedOptionKey(ViewNode fieldNode) => null;
 		}
@@ -49,8 +49,8 @@ namespace FwAvaloniaTests
 		[AvaloniaTest]
 		public void RegionView_RendersARealFrame_SavedAsParityArtifact()
 		{
-			var model = RegionModelProjector.FromViewDefinition(Definition(), new Provider());
-			var window = new Window { Content = new RegionDataTree(model), Width = 420, Height = 160 };
+			var model = DetailModelProjector.FromViewDefinition(Definition(), new Provider());
+			var window = new Window { Content = new DataTree(model), Width = 420, Height = 160 };
 			window.Show();
 			Dispatcher.UIThread.RunJobs();
 
@@ -77,19 +77,19 @@ namespace FwAvaloniaTests
 	[TestFixture]
 	public class RegionEditorShortcutTests
 	{
-		private static (RegionDataTree view, FakeRegionEditContext context) ShowEditable()
+		private static (DataTree view, FakeRegionEditContext context) ShowEditable()
 		{
-			var model = new RegionModel("LexEntry", "identity",
-				new List<RegionField>(), new List<ViewDiagnostic>());
+			var model = new DetailModel("LexEntry", "identity",
+				new List<DetailField>(), new List<ViewDiagnostic>());
 			var context = new FakeRegionEditContext();
-			var view = new RegionDataTree(model, context);
+			var view = new DataTree(model, context);
 			var window = new Window { Content = view, Width = 400, Height = 160 };
 			window.Show();
 			Dispatcher.UIThread.RunJobs();
 			return (view, context);
 		}
 
-		private static void Press(RegionDataTree view, Key key)
+		private static void Press(DataTree view, Key key)
 		{
 			view.RaiseEvent(new KeyEventArgs
 			{

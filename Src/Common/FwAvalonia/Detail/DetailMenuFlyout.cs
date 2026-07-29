@@ -6,7 +6,7 @@ using System;
 using System.Collections.Generic;
 using Avalonia.Controls;
 
-namespace SIL.FieldWorks.Common.FwAvalonia.Region
+namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 {
 	/// <summary>
 	/// Framework-neutral context-menu item (15.1): what the host resolved from its menu system
@@ -14,47 +14,47 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 	/// execute action that dispatches through the mediator). FwAvalonia renders these natively;
 	/// it knows nothing about xCore, preserving the engine-isolation boundary.
 	/// </summary>
-	public sealed class RegionMenuItem
+	public sealed class DetailMenuItem
 	{
-		public RegionMenuItem(string label, bool isEnabled = true, bool isChecked = false,
-			IReadOnlyList<RegionMenuItem> children = null, Action execute = null)
+		public DetailMenuItem(string label, bool isEnabled = true, bool isChecked = false,
+			IReadOnlyList<DetailMenuItem> children = null, Action execute = null)
 		{
 			Label = label ?? string.Empty;
 			IsEnabled = isEnabled;
 			IsChecked = isChecked;
-			Children = children ?? new List<RegionMenuItem>();
+			Children = children ?? new List<DetailMenuItem>();
 			Execute = execute;
 		}
 
-		private RegionMenuItem()
+		private DetailMenuItem()
 		{
 			IsSeparator = true;
 			Label = string.Empty;
-			Children = new List<RegionMenuItem>();
+			Children = new List<DetailMenuItem>();
 		}
 
-		public static RegionMenuItem Separator() => new RegionMenuItem();
+		public static DetailMenuItem Separator() => new DetailMenuItem();
 
 		public string Label { get; }
 		public bool IsEnabled { get; }
 		public bool IsChecked { get; }
 		public bool IsSeparator { get; }
-		public IReadOnlyList<RegionMenuItem> Children { get; }
+		public IReadOnlyList<DetailMenuItem> Children { get; }
 		public Action Execute { get; }
 	}
 
 	/// <summary>
-	/// Renders host-built <see cref="RegionMenuItem"/> trees as a native Avalonia
+	/// Renders host-built <see cref="DetailMenuItem"/> trees as a native Avalonia
 	/// <see cref="MenuFlyout"/> (15.1) — the same items, enablement, checkmarks, and submenus the
 	/// legacy WinForms adapter menu shows, rendered with native Avalonia controls. Density: every item carries the
 	/// explicit compact padding/height of the legacy WinForms menus
 	/// (<see cref="FwAvaloniaDensity.MenuItemPadding"/>/<see cref="FwAvaloniaDensity.MenuItemMinHeight"/>,
 	/// not the Fluent theme defaults); long menus keep the presenter's scrolling.
 	/// </summary>
-	public static class RegionMenuFlyout
+	public static class DetailMenuFlyout
 	{
 		/// <summary>Builds the flyout (separated from Show for headless testing).</summary>
-		public static MenuFlyout Build(IReadOnlyList<RegionMenuItem> items)
+		public static MenuFlyout Build(IReadOnlyList<DetailMenuItem> items)
 		{
 			var flyout = new MenuFlyout();
 			foreach (var control in BuildControls(items))
@@ -63,14 +63,14 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		}
 
 		/// <summary>Shows the flyout at the current pointer position over the target control.</summary>
-		public static void Show(IReadOnlyList<RegionMenuItem> items, Control target)
+		public static void Show(IReadOnlyList<DetailMenuItem> items, Control target)
 		{
 			if (items == null || items.Count == 0 || target == null)
 				return;
 			Build(items).ShowAt(target, showAtPointer: true);
 		}
 
-		private static IEnumerable<Control> BuildControls(IReadOnlyList<RegionMenuItem> items)
+		private static IEnumerable<Control> BuildControls(IReadOnlyList<DetailMenuItem> items)
 		{
 			foreach (var item in items)
 			{

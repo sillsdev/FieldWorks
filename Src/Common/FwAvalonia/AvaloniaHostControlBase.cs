@@ -6,7 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
 using Avalonia.Win32.Interoperability;
-using SIL.FieldWorks.Common.FwAvalonia.Region;
+using SIL.FieldWorks.Common.FwAvalonia.Detail;
 using SIL.FieldWorks.Common.FwAvalonia.Seams;
 
 namespace SIL.FieldWorks.Common.FwAvalonia
@@ -16,9 +16,9 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 	/// <see cref="WinFormsAvaloniaControlHost"/>, the companion-control strip, the WinForms/Avalonia
 	/// directional-key interop, focus-safe content swapping, context menus, and the message/clear
 	/// states. Region-specific projection (building the region view) belongs to the derived class
-	/// via <see cref="SetRegionContent"/>.
+	/// via <see cref="SetHostContent"/>.
 	/// </summary>
-	public abstract class AvaloniaRegionHostControl : System.Windows.Forms.UserControl
+	public abstract class AvaloniaHostControlBase : System.Windows.Forms.UserControl
 	{
 		/// <summary>The Avalonia content host. Protected so derived region hosts can set content directly.</summary>
 		protected readonly WinFormsAvaloniaControlHost Host;
@@ -27,7 +27,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 		/// <summary>Raised after a hosted region reports an edit completed (wired by the derived host).</summary>
 		public event EventHandler RegionEditCompleted;
 
-		protected AvaloniaRegionHostControl()
+		protected AvaloniaHostControlBase()
 		{
 			FwAvaloniaRuntime.EnsureInitialized();
 
@@ -132,10 +132,10 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 			_companionStrip.Visible = height > 0;
 		}
 
-		public void ShowContextMenu(IReadOnlyList<RegionMenuItem> items)
+		public void ShowContextMenu(IReadOnlyList<DetailMenuItem> items)
 		{
 			if (Host.Content is Avalonia.Controls.Control target)
-				RegionMenuFlyout.Show(items, target);
+				DetailMenuFlyout.Show(items, target);
 		}
 
 		public void ShowMessage(string message)

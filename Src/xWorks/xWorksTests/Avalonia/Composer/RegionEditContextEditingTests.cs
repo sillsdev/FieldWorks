@@ -8,7 +8,7 @@ using System.IO;
 using System.Linq;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwAvalonia;
-using SIL.FieldWorks.Common.FwAvalonia.Region;
+using SIL.FieldWorks.Common.FwAvalonia.Detail;
 using SIL.FieldWorks.Common.FwAvalonia.Seams;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
@@ -55,10 +55,10 @@ namespace SIL.FieldWorks.XWorks
 
 		// The edit-context seam keys fixed slices by Field name; tests address fields the same way
 		// the view does — through a region field object.
-		internal static SIL.FieldWorks.Common.FwAvalonia.Region.RegionField F(string field)
-			=> new SIL.FieldWorks.Common.FwAvalonia.Region.RegionField(
+		internal static SIL.FieldWorks.Common.FwAvalonia.Detail.DetailField F(string field)
+			=> new SIL.FieldWorks.Common.FwAvalonia.Detail.DetailField(
 				"test/" + field, field, field, null,
-				SIL.FieldWorks.Common.FwAvalonia.Region.RegionFieldKind.Text,
+				SIL.FieldWorks.Common.FwAvalonia.Detail.DetailFieldKind.Text,
 				SIL.FieldWorks.Common.FwAvalonia.ViewDefinition.EditorClassification.Known,
 				null, null, SIL.FieldWorks.Common.FwAvalonia.ViewDefinition.SurfaceRouting.Product,
 				null, null, null);
@@ -116,10 +116,10 @@ namespace SIL.FieldWorks.XWorks
 				Cache, () => m_entry, () => false, () => refreshes++, new RefreshCoordinator()))
 			{
 				var context = new LexiconFirstSliceEditContext(m_entry, Cache);
-				var rich = RegionRichTextEditAlgorithms.FromRuns("perro", new[]
+				var rich = DetailRichTextEditAlgorithms.FromRuns("perro", new[]
 				{
-					new RegionTextRun("per", Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Id),
-					new RegionTextRun("ro", Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Id,
+					new DetailTextRun("per", Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Id),
+					new DetailTextRun("ro", Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Id,
 						namedStyle: "Emphasis")
 				});
 
@@ -434,21 +434,21 @@ namespace SIL.FieldWorks.XWorks
 
 			Assert.That(fields.Count, Is.GreaterThan(10),
 				$"the complete view is far richer than the 3-field first slice (got {fields.Count})");
-			Assert.That(fields.Any(f => f.Field == "CitationForm" && f.Kind == RegionFieldKind.Text), Is.True,
+			Assert.That(fields.Any(f => f.Field == "CitationForm" && f.Kind == DetailFieldKind.Text), Is.True,
 				"entry-level fields come from the LexEntry layout");
-			Assert.That(fields.Any(f => f.Field == "Form" && f.Kind == RegionFieldKind.Text), Is.True,
+			Assert.That(fields.Any(f => f.Field == "Form" && f.Kind == DetailFieldKind.Text), Is.True,
 				"the lexeme form crosses into the MoForm object's layout");
-			Assert.That(fields.Any(f => f.Field == "MorphType" && f.Kind == RegionFieldKind.Chooser
+			Assert.That(fields.Any(f => f.Field == "MorphType" && f.Kind == DetailFieldKind.Chooser
 					&& f.Options.Count >= 2), Is.True,
 				"the morph-type chooser survives in the composed view with LCModel options");
 
-			var glossFields = fields.Where(f => f.Field == "Gloss" && f.Kind == RegionFieldKind.Text).ToList();
+			var glossFields = fields.Where(f => f.Field == "Gloss" && f.Kind == DetailFieldKind.Text).ToList();
 			Assert.That(glossFields.Count, Is.EqualTo(2), "one gloss row per sense");
 			Assert.That(glossFields.Select(f => f.StableId).Distinct().Count(), Is.EqualTo(2),
 				"each sense's gloss binds its own object");
 			Assert.That(glossFields.All(f => f.Indent > 0), Is.True, "sense fields are indented");
 
-			Assert.That(fields.Any(f => f.Kind == RegionFieldKind.Header && f.Field == "Senses"), Is.True,
+			Assert.That(fields.Any(f => f.Kind == DetailFieldKind.Header && f.Field == "Senses"), Is.True,
 				"the senses sequence renders a section header");
 		}
 
@@ -474,7 +474,7 @@ namespace SIL.FieldWorks.XWorks
 
 			var composed = RegionComposer.Compose(m_entry, Cache);
 			var gramInfo = composed.Model.Fields.SingleOrDefault(f =>
-				f.Field == "MorphoSyntaxAnalysis" && f.Kind == RegionFieldKind.Chooser
+				f.Field == "MorphoSyntaxAnalysis" && f.Kind == DetailFieldKind.Chooser
 				&& f.ObjectHvo == m_entry.SensesOS[0].Hvo);
 
 			Assert.That(gramInfo, Is.Not.Null, "the sense Grammatical Info slice composes as an editable POS chooser");
@@ -505,7 +505,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var composed = RegionComposer.Compose(m_entry, Cache);
 			var lexemeForm = composed.Model.Fields.Single(f => f.Field == "Form"
-				&& f.Kind == RegionFieldKind.Text && f.ObjectHvo == m_entry.LexemeFormOA.Hvo);
+				&& f.Kind == DetailFieldKind.Text && f.ObjectHvo == m_entry.LexemeFormOA.Hvo);
 
 			Assert.That(lexemeForm.Label,
 				Is.EqualTo(StringTable.Table.LocalizeAttributeValue("Lexeme Form")),
@@ -521,7 +521,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var composed = RegionComposer.Compose(m_entry, Cache);
 			var lexemeForm = composed.Model.Fields.Single(f => f.Field == "Form"
-				&& f.Kind == RegionFieldKind.Text && f.ObjectHvo == m_entry.LexemeFormOA.Hvo);
+				&& f.Kind == DetailFieldKind.Text && f.ObjectHvo == m_entry.LexemeFormOA.Hvo);
 
 			Assert.That(lexemeForm.Label,
 				Is.EqualTo(StringTable.Table.LocalizeAttributeValue("Lexeme Form")),
@@ -604,7 +604,7 @@ namespace SIL.FieldWorks.XWorks
 			var row = composed.Model.Fields.Single(f => f.Field == "IsAbstract"
 				&& f.ObjectHvo == m_entry.LexemeFormOA.Hvo);
 
-			Assert.That(row.Kind, Is.EqualTo(RegionFieldKind.Unsupported),
+			Assert.That(row.Kind, Is.EqualTo(DetailFieldKind.Unsupported),
 				"the enumComboBox editor was dropped; it renders the labeled Unsupported worklist row");
 			Assert.That(row.IsEditable, Is.False, "an Unsupported row is not editable");
 		}
@@ -650,7 +650,7 @@ namespace SIL.FieldWorks.XWorks
 				Cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Id, "flattened"),
 				Is.False, "the plain-text setter must reject rich rows so it cannot flatten them");
 
-			var updated = RegionRichTextEditAlgorithms.ApplyPlainTextEdit(
+			var updated = DetailRichTextEditAlgorithms.ApplyPlainTextEdit(
 				rich.Values.Single().RichText, "Smith 2001");
 			Assert.That(composed.EditContext.TrySetRichText(rich,
 				Cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Id, updated), Is.True);
@@ -693,7 +693,7 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(context.TrySetText(form, form.Values.Single().WsTag, "flattened"), Is.False,
 				"the plain-text setter must reject rich rows so it cannot flatten the TsString");
 
-			var edited = RegionRichTextEditAlgorithms.ApplyPlainTextEdit(form.Values.Single().RichText,
+			var edited = DetailRichTextEditAlgorithms.ApplyPlainTextEdit(form.Values.Single().RichText,
 				"ផ្ទះថ្មី house");
 			Assert.That(context.TrySetRichText(form, form.Values.Single().WsTag, edited), Is.True);
 			context.Commit();
@@ -738,7 +738,7 @@ namespace SIL.FieldWorks.XWorks
 				"a link ORC is editable (§19c): no longer a blanket read-only block");
 			var value = form.Values.Single();
 			Assert.That(value.CanEditRichText, Is.True);
-			Assert.That(value.RichText.Runs.Single().OrcKind, Is.EqualTo(RegionOrcKind.ExternalLink));
+			Assert.That(value.RichText.Runs.Single().OrcKind, Is.EqualTo(DetailOrcKind.ExternalLink));
 			Assert.That(value.RichText.Runs.Single().HyperlinkUrl,
 				Is.EqualTo("https://software.sil.org/fieldworks"));
 
@@ -782,11 +782,11 @@ namespace SIL.FieldWorks.XWorks
 			var rich = field.Values.Single().RichText;
 
 			// Apply "Emphasis" over "alpha" (0..5), link "beta" (6..10), retag "gamma" (11..16) to French.
-			rich = RegionRichTextEditAlgorithms.ApplySpanNamedStyle(rich, 0, 5, "Emphasis");
+			rich = DetailRichTextEditAlgorithms.ApplySpanNamedStyle(rich, 0, 5, "Emphasis");
 			Assert.That(region.EditContext.TrySetRichText(field, wsTag, rich), Is.True);
-			rich = RegionRichTextEditAlgorithms.RetagSpanWritingSystem(rich, 11, 16, frTag);
+			rich = DetailRichTextEditAlgorithms.RetagSpanWritingSystem(rich, 11, 16, frTag);
 			Assert.That(region.EditContext.TrySetRichText(field, wsTag, rich), Is.True);
-			rich = RegionRichTextEditAlgorithms.ApplyHyperlink(rich, 6, 10, "https://software.sil.org");
+			rich = DetailRichTextEditAlgorithms.ApplyHyperlink(rich, 6, 10, "https://software.sil.org");
 			Assert.That(region.EditContext.TrySetRichText(field, wsTag, rich), Is.True);
 
 			region.EditContext.Commit();
@@ -799,7 +799,7 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(styled, Is.EqualTo("alpha"), "the named style round-tripped on its span");
 			var retagged = string.Concat(reopened.Runs.Where(r => r.WritingSystemTag == frTag).Select(r => r.Text));
 			Assert.That(retagged, Is.EqualTo("gamma"), "the ws retag round-tripped on its span");
-			var linkRun = reopened.Runs.Single(r => r.OrcKind == RegionOrcKind.ExternalLink);
+			var linkRun = reopened.Runs.Single(r => r.OrcKind == DetailOrcKind.ExternalLink);
 			Assert.That(linkRun.Text, Is.EqualTo("beta"));
 			Assert.That(linkRun.HyperlinkUrl, Is.EqualTo("https://software.sil.org"),
 				"the link ObjData round-tripped");
@@ -808,11 +808,11 @@ namespace SIL.FieldWorks.XWorks
 			Cache.ActionHandlerAccessor.Undo();
 			var afterUndo = RegionComposer.Compose(m_entry, Cache).Model.Fields
 				.Single(f => f.Field == "Bibliography").Values.Single().RichText;
-			Assert.That(afterUndo.Runs.Any(r => r.OrcKind == RegionOrcKind.ExternalLink), Is.False,
+			Assert.That(afterUndo.Runs.Any(r => r.OrcKind == DetailOrcKind.ExternalLink), Is.False,
 				"one undo reverts the whole §19c gesture session");
 		}
 
-		// DATA-SAFETY: a run carrying a TsString property the RegionTextRun model
+		// DATA-SAFETY: a run carrying a TsString property the DetailTextRun model
 		// does NOT round-trip (here ktptForeColor) would be SILENTLY DROPPED on the first keystroke
 		// (the plain-text-changed edit skips the lossless RichXml fast-path and replays only the
 		// supported props). The value is held READ-ONLY rather than corrupting on edit; full fidelity
@@ -886,7 +886,7 @@ namespace SIL.FieldWorks.XWorks
 			// Mid-run keystroke INSIDE run 1 ("1999" -> "19999"): legacy insertion attaches to the
 			// preceding (containing) run, so run 0's style/bold must survive untouched.
 			var value = rich.Values.Single();
-			var edited = RegionRichTextEditAlgorithms.ApplyPlainTextEdit(value.RichText, "Smith 19999");
+			var edited = DetailRichTextEditAlgorithms.ApplyPlainTextEdit(value.RichText, "Smith 19999");
 
 			var composed = RegionComposer.Compose(m_entry, Cache);
 			var richField = composed.Model.Fields.Single(f => f.Field == "Bibliography");
@@ -929,8 +929,8 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(value.RichText.LossyProperties, Is.False);
 
 			// Bold the first word "important" (indices 0..9).
-			var formatted = RegionRichTextEditAlgorithms.ApplySpanFormatting(value.RichText, 0, 9,
-				RegionRunFormat.Bold, true);
+			var formatted = DetailRichTextEditAlgorithms.ApplySpanFormatting(value.RichText, 0, 9,
+				DetailRunFormat.Bold, true);
 			Assert.That(formatted.PlainText, Is.EqualTo("important note"),
 				"formatting never changes the plain text");
 
@@ -969,7 +969,7 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(value.RichText.LossyProperties, Is.False);
 
 			// Style the first word "important" (indices 0..9) with the built-in "Emphasis" style.
-			var styled = RegionRichTextEditAlgorithms.ApplySpanNamedStyle(value.RichText, 0, 9, "Emphasis");
+			var styled = DetailRichTextEditAlgorithms.ApplySpanNamedStyle(value.RichText, 0, 9, "Emphasis");
 			Assert.That(styled.PlainText, Is.EqualTo("important note"),
 				"styling never changes the plain text");
 
@@ -990,7 +990,7 @@ namespace SIL.FieldWorks.XWorks
 			var composedAfter = RegionComposer.Compose(m_entry, Cache);
 			var afterField = composedAfter.Model.Fields.Single(f => f.Field == "Bibliography");
 			var afterValue = afterField.Values.Single();
-			var cleared = RegionRichTextEditAlgorithms.ApplySpanNamedStyle(afterValue.RichText, 0, 9, null);
+			var cleared = DetailRichTextEditAlgorithms.ApplySpanNamedStyle(afterValue.RichText, 0, 9, null);
 			Assert.That(composedAfter.EditContext.TrySetRichText(afterField, afterValue.WsTag, cleared), Is.True);
 			composedAfter.EditContext.Commit();
 
@@ -1022,7 +1022,7 @@ namespace SIL.FieldWorks.XWorks
 
 			var composed = RegionComposer.Compose(m_entry, Cache);
 			var editableText = composed.Model.Fields
-				.First(f => f.Kind == RegionFieldKind.Text && f.IsEditable);
+				.First(f => f.Kind == DetailFieldKind.Text && f.IsEditable);
 			Assert.That(editableText.AvailableNamedStyles, Does.Contain("Strong"),
 				"the composer stamps the project's character style names onto editable text rows");
 			Assert.That(editableText.AvailableNamedStyles, Does.Not.Contain("Block Quote"),
@@ -1037,7 +1037,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var composed = RegionComposer.Compose(m_entry, Cache);
 			var editableText = composed.Model.Fields
-				.First(f => f.Kind == RegionFieldKind.Text && f.IsEditable);
+				.First(f => f.Kind == DetailFieldKind.Text && f.IsEditable);
 
 			Assert.That(editableText.AvailableWritingSystems, Is.Not.Empty,
 				"the composer stamps the project's writing systems onto editable text rows");
@@ -1068,7 +1068,7 @@ namespace SIL.FieldWorks.XWorks
 			var vernTag = Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Id;
 
 			// Retag "alpha" (the first 5 chars) to the vernacular ws.
-			var retagged = RegionRichTextEditAlgorithms.RetagSpanWritingSystem(value.RichText, 0, 5, vernTag);
+			var retagged = DetailRichTextEditAlgorithms.RetagSpanWritingSystem(value.RichText, 0, 5, vernTag);
 			Assert.That(composed.EditContext.TrySetRichText(field, value.WsTag, retagged), Is.True);
 			composed.EditContext.Commit();
 
@@ -1099,7 +1099,7 @@ namespace SIL.FieldWorks.XWorks
 
 			// The reversal slice composes a Custom (plugin) row, never an Unsupported row.
 			var reversalRow = composed.Model.Fields
-				.FirstOrDefault(f => f.Kind == RegionFieldKind.Custom
+				.FirstOrDefault(f => f.Kind == DetailFieldKind.Custom
 					&& (f.Field == "ReferringReversalIndexEntries"
 						|| (f.Label != null && f.Label.IndexOf("Reversal", System.StringComparison.OrdinalIgnoreCase) >= 0)));
 			Assert.That(reversalRow, Is.Not.Null, "the reversal slice composes as a plugin (Custom) row");
@@ -1108,7 +1108,7 @@ namespace SIL.FieldWorks.XWorks
 			// Building the control yields an editable FwMultiWsTextField (not the unsupported rendering).
 			var control = reversalRow.ControlFactory();
 			Assert.That(control,
-				Is.InstanceOf<SIL.FieldWorks.Common.FwAvalonia.Region.FwMultiWsTextField>(),
+				Is.InstanceOf<SIL.FieldWorks.Common.FwAvalonia.Detail.FwMultiWsTextField>(),
 				"the reversal plugin builds the editable multi-WS reversal-forms field");
 		}
 
@@ -1131,19 +1131,19 @@ namespace SIL.FieldWorks.XWorks
 			var plugin = new ReversalIndexEntryPlugin();
 			// Reuse the composer's resolved node so the plugin gets real metadata; resolve via the plugin
 			// directly with a build context closing over the composed edit context.
-			var node = composed.Model.Fields.First(f => f.Kind == RegionFieldKind.Custom
+			var node = composed.Model.Fields.First(f => f.Kind == DetailFieldKind.Custom
 				&& f.ObjectHvo == sense.Hvo);
 			var buildContext = new RegionEditorBuildContext(sense, null, () => composed.EditContext, Cache);
-			var reversalControl = (SIL.FieldWorks.Common.FwAvalonia.Region.FwMultiWsTextField)
+			var reversalControl = (SIL.FieldWorks.Common.FwAvalonia.Detail.FwMultiWsTextField)
 				plugin.BuildControl(buildContext);
 			Assert.That(reversalControl, Is.Not.Null);
 
 			// Stage an edit through the reversal context exposed by building the field's own context. We
 			// drive the edit through the composed edit context indirectly: the field staged via the
 			// plugin's ReversalRegionEditContext. Address it directly to assert the data path.
-			var field = new SIL.FieldWorks.Common.FwAvalonia.Region.RegionField(
+			var field = new SIL.FieldWorks.Common.FwAvalonia.Detail.DetailField(
 				"reversal/" + sense.Hvo, "Reversal Entries", "ReferringReversalIndexEntries", null,
-				SIL.FieldWorks.Common.FwAvalonia.Region.RegionFieldKind.Text,
+				SIL.FieldWorks.Common.FwAvalonia.Detail.DetailFieldKind.Text,
 				SIL.FieldWorks.Common.FwAvalonia.ViewDefinition.EditorClassification.Known,
 				"ReversalEntriesEditor", null,
 				SIL.FieldWorks.Common.FwAvalonia.ViewDefinition.SurfaceRouting.Product, null, null, null);
@@ -1195,7 +1195,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var composed = RegionComposer.Compose(m_entry, Cache);
 			var secondGloss = composed.Model.Fields
-				.Where(f => f.Field == "Gloss" && f.Kind == RegionFieldKind.Text)
+				.Where(f => f.Field == "Gloss" && f.Kind == DetailFieldKind.Text)
 				.Skip(1).First();
 			var wsAbbrev = secondGloss.Values[0].WsAbbrev;
 
@@ -1225,7 +1225,7 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(hidden.Any(f => f.Field == "DateCreated"), Is.True,
 				"visibility=never fields appear under show-hidden");
 			var created = hidden.First(f => f.Field == "DateCreated");
-			Assert.That(created.Kind, Is.EqualTo(RegionFieldKind.Unsupported),
+			Assert.That(created.Kind, Is.EqualTo(DetailFieldKind.Unsupported),
 				"the date editor was dropped; a Time field composes the labeled Unsupported worklist row");
 			Assert.That(hidden.Any(f => f.Field == "Bibliography"), Is.True,
 				"empty ifdata fields appear under show-hidden");
@@ -1320,7 +1320,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				var composed = RegionComposer.Compose(m_entry, Cache);
 				Assert.That(composed, Is.Not.Null, "duplicate abbreviations must not abort composition");
-				var gloss = composed.Model.Fields.First(f => f.Field == "Gloss" && f.Kind == RegionFieldKind.Text);
+				var gloss = composed.Model.Fields.First(f => f.Field == "Gloss" && f.Kind == DetailFieldKind.Text);
 				Assert.That(gloss.Values.Count, Is.EqualTo(2), "one row per current analysis writing system");
 				var secondRow = gloss.Values.Single(v => v.WsTag == second.Id);
 
@@ -1357,7 +1357,7 @@ namespace SIL.FieldWorks.XWorks
 
 			var hidden = RegionComposer.Compose(m_entry, Cache, showHiddenFields: true);
 			var boolField = hidden.Model.Fields.FirstOrDefault(f => f.Field == "IsAbstract"
-				&& f.Kind == RegionFieldKind.Unsupported);
+				&& f.Kind == DetailFieldKind.Unsupported);
 			Assert.That(boolField, Is.Not.Null,
 				"the boolean checkbox slice composes as a labeled Unsupported worklist row");
 			Assert.That(boolField.IsEditable, Is.False, "an Unsupported row is not editable");
@@ -1374,7 +1374,7 @@ namespace SIL.FieldWorks.XWorks
 			});
 
 			var fields = RegionComposer.Compose(m_entry, Cache).Model.Fields;
-			var headers = fields.Where(f => f.Kind == RegionFieldKind.Header).Select(f => f.Label).ToList();
+			var headers = fields.Where(f => f.Kind == DetailFieldKind.Header).Select(f => f.Label).ToList();
 
 			Assert.That(headers.Any(h => h.StartsWith("1 ") || h.StartsWith("1 ") || h.StartsWith("1 ", System.StringComparison.Ordinal) || h.StartsWith("1")), Is.True,
 				"top senses are numbered: " + string.Join(" | ", headers));
@@ -1390,7 +1390,7 @@ namespace SIL.FieldWorks.XWorks
 		public void Edit_MorphType_InComposedView_Commits()
 		{
 			var composed = RegionComposer.Compose(m_entry, Cache);
-			var morphType = composed.Model.Fields.Single(f => f.Field == "MorphType" && f.Kind == RegionFieldKind.Chooser);
+			var morphType = composed.Model.Fields.Single(f => f.Field == "MorphType" && f.Kind == DetailFieldKind.Chooser);
 			var target = morphType.Options.First(o => o.Key != morphType.SelectedOptionKey);
 
 			Assert.That(composed.EditContext.TrySetOption(morphType, target.Key), Is.True);
@@ -1406,7 +1406,7 @@ namespace SIL.FieldWorks.XWorks
 		public void Edit_MorphType_StemAllomorphWithAffixType_IsRejected()
 		{
 			var composed = RegionComposer.Compose(m_entry, Cache);
-			var morphType = composed.Model.Fields.Single(f => f.Field == "MorphType" && f.Kind == RegionFieldKind.Chooser);
+			var morphType = composed.Model.Fields.Single(f => f.Field == "MorphType" && f.Kind == DetailFieldKind.Chooser);
 			var before = m_entry.LexemeFormOA.MorphTypeRA;
 
 			Assert.That(composed.EditContext.TrySetOption(morphType,
@@ -1638,7 +1638,7 @@ namespace SIL.FieldWorks.XWorks
 			var after = RegionComposer.Compose(m_entry, Cache).Model.Fields;
 			var row = after.FirstOrDefault(f => f.Field == "PublishAsMinorEntry");
 			Assert.That(row, Is.Not.Null, "with an EntryRef the lengthatleast=1 condition passes");
-			Assert.That(row.Kind, Is.EqualTo(RegionFieldKind.Unsupported),
+			Assert.That(row.Kind, Is.EqualTo(DetailFieldKind.Unsupported),
 				"the checkbox editor was dropped; the conditionally-visible boolean row renders the Unsupported worklist row");
 		}
 
@@ -1715,7 +1715,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var fields = RegionComposer.Compose(m_entry, Cache).Model.Fields;
 
-			var citation = fields.First(f => f.Field == "CitationForm" && f.Kind == RegionFieldKind.Text);
+			var citation = fields.First(f => f.Field == "CitationForm" && f.Kind == DetailFieldKind.Text);
 			Assert.That(citation.MenuId, Is.EqualTo("mnuDataTree-Help"),
 				"the slice menu from LexEntryParts.xml CitationFormAllV rides the composed row");
 			Assert.That(citation.ContextMenuId, Is.EqualTo("mnuDataTree-CitationFormContext"),
@@ -1723,7 +1723,7 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(citation.ObjectHvo, Is.EqualTo(m_entry.Hvo),
 				"entry-level rows bind the entry");
 
-			var gloss = fields.First(f => f.Field == "Gloss" && f.Kind == RegionFieldKind.Text);
+			var gloss = fields.First(f => f.Field == "Gloss" && f.Kind == DetailFieldKind.Text);
 			Assert.That(gloss.ObjectHvo, Is.EqualTo(m_entry.SensesOS[0].Hvo),
 				"sense rows bind their own sense so commands (Delete Sense, etc.) target it");
 
@@ -1738,7 +1738,7 @@ namespace SIL.FieldWorks.XWorks
 		public void Compose_SenseHeaders_BindTheSenseMenu_WithInsertSenseDefined()
 		{
 			var fields = RegionComposer.Compose(m_entry, Cache).Model.Fields;
-			var senseHeader = fields.First(f => f.Kind == RegionFieldKind.Header
+			var senseHeader = fields.First(f => f.Kind == DetailFieldKind.Header
 				&& f.Field == "Senses" && f.ObjectHvo == m_entry.SensesOS[0].Hvo);
 
 			Assert.That(senseHeader.MenuId, Is.EqualTo("mnuDataTree-Sense"),
@@ -2051,7 +2051,7 @@ namespace SIL.FieldWorks.XWorks
 			return fd.Id;
 		}
 
-		private System.Collections.Generic.IReadOnlyList<RegionField> Compose(bool showHidden = false)
+		private System.Collections.Generic.IReadOnlyList<DetailField> Compose(bool showHidden = false)
 			=> RegionComposer.Compose(m_entry, Cache, showHidden).Model.Fields;
 
 		[Test]
@@ -2062,7 +2062,7 @@ namespace SIL.FieldWorks.XWorks
 			// Multistring: an editable text row, one value per ws of the field's WsSelector.
 			var multi = fields.FirstOrDefault(f => f.Label == "Tone Pattern");
 			Assert.That(multi, Is.Not.Null, "the custom multistring expands at the placeholder");
-			Assert.That(multi.Kind, Is.EqualTo(RegionFieldKind.Text));
+			Assert.That(multi.Kind, Is.EqualTo(DetailFieldKind.Text));
 			Assert.That(multi.IsEditable, Is.True);
 			Assert.That(multi.ObjectHvo, Is.EqualTo(m_entry.Hvo), "entry-level custom rows bind the entry");
 			var expectedWs = RegionComposer.ResolveWritingSystems(Cache, "analysis vernacular");
@@ -2080,7 +2080,7 @@ namespace SIL.FieldWorks.XWorks
 			// composes as the labeled Unsupported worklist row (not silently omitted).
 			var date = fields.FirstOrDefault(f => f.Label == "Date Collected");
 			Assert.That(date, Is.Not.Null);
-			Assert.That(date.Kind, Is.EqualTo(RegionFieldKind.Unsupported),
+			Assert.That(date.Kind, Is.EqualTo(DetailFieldKind.Unsupported),
 				"the GenDate editor was dropped; it renders the labeled Unsupported worklist row");
 
 			// Possibility-list reference: the 6.3 chooser path makes custom reference rows
@@ -2096,7 +2096,7 @@ namespace SIL.FieldWorks.XWorks
 			// Unsupported worklist row.
 			var number = fields.FirstOrDefault(f => f.Label == "Frequency Count");
 			Assert.That(number, Is.Not.Null);
-			Assert.That(number.Kind, Is.EqualTo(RegionFieldKind.Unsupported),
+			Assert.That(number.Kind, Is.EqualTo(DetailFieldKind.Unsupported),
 				"the Integer editor was dropped; it renders the labeled Unsupported worklist row");
 
 			// The sense-level custom field rides the sense's own placeholder, bound to the sense.
@@ -2178,16 +2178,16 @@ namespace SIL.FieldWorks.XWorks
 				"one MoForm custom row is emitted per visited allomorph object");
 			Assert.That(rootAllomorphDate, Is.Not.Null,
 				"nested MoForm GenDate custom fields still compose a row in the lexeme-form layout");
-			Assert.That(rootAllomorphDate.Kind, Is.EqualTo(RegionFieldKind.Unsupported),
+			Assert.That(rootAllomorphDate.Kind, Is.EqualTo(DetailFieldKind.Unsupported),
 				"the GenDate editor was dropped from the Avalonia region; it renders the labeled Unsupported worklist row");
 			Assert.That(rootAllomorphCategory, Is.Not.Null,
 				"nested MoForm atomic custom references render as chooser rows");
-			Assert.That(rootAllomorphCategory.Kind, Is.EqualTo(RegionFieldKind.Chooser));
+			Assert.That(rootAllomorphCategory.Kind, Is.EqualTo(DetailFieldKind.Chooser));
 			Assert.That(rootAllomorphCategory.IsEditable, Is.True);
 			Assert.That(rootAllomorphCategory.SelectedOptionKey, Is.EqualTo(m_listItem.Guid.ToString()));
 			Assert.That(rootAllomorphTags, Is.Not.Null,
 				"nested MoForm vector custom references render as reference-vector rows");
-			Assert.That(rootAllomorphTags.Kind, Is.EqualTo(RegionFieldKind.ReferenceVector));
+			Assert.That(rootAllomorphTags.Kind, Is.EqualTo(DetailFieldKind.ReferenceVector));
 			Assert.That(rootAllomorphTags.IsEditable, Is.True);
 			Assert.That(rootAllomorphTags.Items.Select(i => i.Key),
 				Does.Contain(m_listItem.Guid.ToString()).And.Contain(m_secondListItem.Guid.ToString()));
@@ -2196,15 +2196,15 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(exampleField.Values.Single().Value, Is.EqualTo("example note"));
 			Assert.That(exampleDate, Is.Not.Null,
 				"example custom GenDate fields still compose a row in the nested example layout");
-			Assert.That(exampleDate.Kind, Is.EqualTo(RegionFieldKind.Unsupported),
+			Assert.That(exampleDate.Kind, Is.EqualTo(DetailFieldKind.Unsupported),
 				"the GenDate editor was dropped from the Avalonia region; it renders the labeled Unsupported worklist row");
 			Assert.That(exampleCategory, Is.Not.Null,
 				"example custom atomic references render as chooser rows");
-			Assert.That(exampleCategory.Kind, Is.EqualTo(RegionFieldKind.Chooser));
+			Assert.That(exampleCategory.Kind, Is.EqualTo(DetailFieldKind.Chooser));
 			Assert.That(exampleCategory.SelectedOptionKey, Is.EqualTo(m_listItem.Guid.ToString()));
 			Assert.That(exampleTags, Is.Not.Null,
 				"example custom possibility vectors render as editable reference vectors");
-			Assert.That(exampleTags.Kind, Is.EqualTo(RegionFieldKind.ReferenceVector));
+			Assert.That(exampleTags.Kind, Is.EqualTo(DetailFieldKind.ReferenceVector));
 			Assert.That(exampleTags.Items.Select(i => i.Key),
 				Does.Contain(m_listItem.Guid.ToString()).And.Contain(m_secondListItem.Guid.ToString()));
 

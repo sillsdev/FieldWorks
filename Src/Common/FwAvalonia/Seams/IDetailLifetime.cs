@@ -7,7 +7,7 @@ using System;
 namespace SIL.FieldWorks.Common.FwAvalonia.Seams
 {
 	/// <summary>Region lifetime/disposal seam.</summary>
-	public interface IRegionLifetime : IDisposable
+	public interface IDetailLifetime : IDisposable
 	{
 		/// <summary>Whether the region has been disposed.</summary>
 		bool IsDisposed { get; }

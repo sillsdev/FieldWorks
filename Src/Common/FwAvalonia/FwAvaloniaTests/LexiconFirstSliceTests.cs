@@ -6,7 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Xml.Linq;
 using NUnit.Framework;
-using SIL.FieldWorks.Common.FwAvalonia.Region;
+using SIL.FieldWorks.Common.FwAvalonia.Detail;
 using SIL.FieldWorks.Common.FwAvalonia.ViewDefinition;
 
 namespace FwAvaloniaTests
@@ -76,12 +76,12 @@ namespace FwAvaloniaTests
 			var definition = LexiconFirstSlice.CompileFromLayoutDirectory(ShippedPartsDirectory());
 			Assert.That(definition, Is.Not.Null);
 
-			var region = RegionModelProjector.FromViewDefinition(definition, new FakeRegionValueProvider());
+			var region = DetailModelProjector.FromViewDefinition(definition, new FakeRegionValueProvider());
 
 			Assert.That(region.Fields, Has.Count.EqualTo(3));
-			Assert.That(region.Fields[0].Kind, Is.EqualTo(RegionFieldKind.Text));
-			Assert.That(region.Fields[1].Kind, Is.EqualTo(RegionFieldKind.Chooser));
-			Assert.That(region.Fields[2].Kind, Is.EqualTo(RegionFieldKind.Text));
+			Assert.That(region.Fields[0].Kind, Is.EqualTo(DetailFieldKind.Text));
+			Assert.That(region.Fields[1].Kind, Is.EqualTo(DetailFieldKind.Chooser));
+			Assert.That(region.Fields[2].Kind, Is.EqualTo(DetailFieldKind.Text));
 		}
 
 		[Test]

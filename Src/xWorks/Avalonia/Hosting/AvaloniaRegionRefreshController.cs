@@ -16,7 +16,7 @@ namespace SIL.FieldWorks.XWorks
 	/// the host to re-resolve/re-show the Avalonia region whenever a change lands inside the entry
 	/// the surface is displaying — whether it came from a legacy surface, F5/RefreshAllViews-driven
 	/// reloads, or any other writer. While the surface's own edit session is open, refreshes are
-	/// gated through an <see cref="IRegionRefreshCoordinator"/> (suspend/pending, the LT-22414
+	/// gated through an <see cref="IDetailRefreshCoordinator"/> (suspend/pending, the LT-22414
 	/// model) and delivered once on edit completion, so a half-typed edit is never stomped.
 	///
 	/// Delivery is coalesced through the host's <c>schedule</c> delegate: one
@@ -32,7 +32,7 @@ namespace SIL.FieldWorks.XWorks
 		private readonly Func<ICmObject> _currentRecord;
 		private readonly Func<bool> _isEditing;
 		private readonly Action _refresh;
-		private readonly IRegionRefreshCoordinator _coordinator;
+		private readonly IDetailRefreshCoordinator _coordinator;
 		private readonly Action<Action> _schedule;
 		private readonly Func<ICmObject, bool> _isRelevant;
 		private bool _refreshQueued;
@@ -55,7 +55,7 @@ namespace SIL.FieldWorks.XWorks
 			Func<ICmObject> currentRecord,
 			Func<bool> isEditing,
 			Action refresh,
-			IRegionRefreshCoordinator coordinator,
+			IDetailRefreshCoordinator coordinator,
 			Action<Action> schedule = null,
 			Func<ICmObject, bool> isRelevant = null)
 		{

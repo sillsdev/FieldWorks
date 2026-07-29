@@ -5,13 +5,13 @@
 using System;
 using System.Collections.Generic;
 
-namespace SIL.FieldWorks.Common.FwAvalonia.Region
+namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 {
 	/// <summary>
 	/// The native-Views/C++ viewing capabilities the lexical-edit region provides itself in
 	/// managed/Avalonia form. One entry per capability the legacy RootSite/Views pipeline owned.
 	/// </summary>
-	public enum RegionViewingCapability
+	public enum DetailViewingCapability
 	{
 		/// <summary>Glyph shaping/segmenting (legacy native Uniscribe/Graphite render engines).</summary>
 		TextShaping,
@@ -42,9 +42,9 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 	/// is intentionally NOT named here, because the isolation audit forbids production source from naming
 	/// the native pipeline at all.
 	/// </summary>
-	public sealed class RegionViewingServiceDescriptor
+	public sealed class DetailViewingServiceDescriptor
 	{
-		public RegionViewingServiceDescriptor(RegionViewingCapability capability, Type managedOwner,
+		public DetailViewingServiceDescriptor(DetailViewingCapability capability, Type managedOwner,
 			string notes)
 		{
 			Capability = capability;
@@ -52,7 +52,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 			Notes = notes;
 		}
 
-		public RegionViewingCapability Capability { get; }
+		public DetailViewingCapability Capability { get; }
 
 		/// <summary>The FieldWorks-owned managed type that owns this capability in the region.</summary>
 		public Type ManagedOwner { get; }
@@ -91,7 +91,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 	/// It names what "replace the native viewing/render/editor seam" means in
 	/// checkable terms and is asserted by <c>RegionViewingServiceReplacementTests</c>.
 	/// </summary>
-	public static class RegionViewingServices
+	public static class DetailViewingServices
 	{
 		/// <summary>
 		/// Every native viewing capability the region now provides managed, with its owner and the
@@ -99,35 +99,35 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		/// (per <c>EngineIsolationAuditTests</c>) cannot load native Views — so by construction these
 		/// replacements use Avalonia's own Skia/HarfBuzz text stack, not the C++ engine.
 		/// </summary>
-		public static IReadOnlyList<RegionViewingServiceDescriptor> Replacements { get; } =
-			new List<RegionViewingServiceDescriptor>
+		public static IReadOnlyList<DetailViewingServiceDescriptor> Replacements { get; } =
+			new List<DetailViewingServiceDescriptor>
 			{
-				new RegionViewingServiceDescriptor(RegionViewingCapability.TextShaping,
+				new DetailViewingServiceDescriptor(DetailViewingCapability.TextShaping,
 					typeof(FwMultiWsTextField),
 					"Glyph shaping comes from Avalonia's text stack (Skia/HarfBuzz) inside the owned editor; "
 					+ "no native Uniscribe/Graphite shaping engine is selected. Graphite parity is the "
 					+ "separate graphite-transition-support policy, not a native-engine dependency here."),
-				new RegionViewingServiceDescriptor(RegionViewingCapability.Measurement,
-					typeof(RegionDataTree),
+				new DetailViewingServiceDescriptor(DetailViewingCapability.Measurement,
+					typeof(DataTree),
 					"Row/field measurement and layout are Avalonia layout passes over the region view's "
 					+ "panels; no native box-layout pass is built."),
-				new RegionViewingServiceDescriptor(RegionViewingCapability.SelectionMetadata,
-					typeof(RegionBidirectionalTextNavigation),
+				new DetailViewingServiceDescriptor(DetailViewingCapability.SelectionMetadata,
+					typeof(DetailBidirectionalTextNavigation),
 					"Selection range/anchor and mixed-direction caret semantics are computed by the managed "
 					+ "navigator over the run model (RegionSelectionRange), not a native selection object."),
-				new RegionViewingServiceDescriptor(RegionViewingCapability.HitTesting,
-					typeof(RegionTextGraphemeClusters),
+				new DetailViewingServiceDescriptor(DetailViewingCapability.HitTesting,
+					typeof(DetailTextGraphemeClusters),
 					"Point-to-caret resolution uses Avalonia's TextBox hit test, normalized to grapheme "
 					+ "clusters by the managed model; no native root-box hit-test call."),
-				new RegionViewingServiceDescriptor(RegionViewingCapability.Scrolling,
-					typeof(RegionDataTree),
+				new DetailViewingServiceDescriptor(DetailViewingCapability.Scrolling,
+					typeof(DataTree),
 					"The region scrolls through an Avalonia ScrollViewer (task 11.12), not a native RootSite "
 					+ "auto-scroll host."),
-				new RegionViewingServiceDescriptor(RegionViewingCapability.Rendering,
-					typeof(RegionDataTree),
+				new DetailViewingServiceDescriptor(DetailViewingCapability.Rendering,
+					typeof(DataTree),
 					"All on-screen drawing is Avalonia's renderer (Skia); the visual parity frame is captured "
 					+ "from it (task 6.9). No native buffered-draw path."),
-				new RegionViewingServiceDescriptor(RegionViewingCapability.EditorRealization,
+				new DetailViewingServiceDescriptor(DetailViewingCapability.EditorRealization,
 					typeof(FwMultiWsTextField),
 					"Field definitions become live editors via the owned controls (FwMultiWsTextField / "
 					+ "FwChooserField / FwReferenceVectorField / FwDialogLauncherField over the IR), not "

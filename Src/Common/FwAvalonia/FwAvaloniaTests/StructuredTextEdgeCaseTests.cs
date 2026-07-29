@@ -13,7 +13,7 @@ using Avalonia.Threading;
 using Avalonia.VisualTree;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwAvalonia;
-using SIL.FieldWorks.Common.FwAvalonia.Region;
+using SIL.FieldWorks.Common.FwAvalonia.Detail;
 using SIL.FieldWorks.Common.FwAvalonia.ViewDefinition;
 using FwAvaloniaTests.VisualChecks; // DialogSnapshot — the PNG harness
 using FwAvaloniaDialogsTests;        // DialogLayoutAssert — the shared geometry tripwire
@@ -32,28 +32,28 @@ namespace FwAvaloniaTests
 	[TestFixture]
 	public class StructuredTextEdgeCaseTests
 	{
-		private static RegionParagraph Para(string text, string style = null, string ws = "en")
-			=> new RegionParagraph(
-				RegionRichTextEditAlgorithms.FromRuns(text ?? string.Empty,
+		private static DetailParagraph Para(string text, string style = null, string ws = "en")
+			=> new DetailParagraph(
+				DetailRichTextEditAlgorithms.FromRuns(text ?? string.Empty,
 					string.IsNullOrEmpty(text)
-						? Array.Empty<RegionTextRun>()
-						: new[] { new RegionTextRun(text, ws) }),
+						? Array.Empty<DetailTextRun>()
+						: new[] { new DetailTextRun(text, ws) }),
 				style);
 
 		// An ORC/lossy paragraph: a value flagged lossy is held read-only.
-		private static RegionParagraph LossyPara(string text)
+		private static DetailParagraph LossyPara(string text)
 		{
-			var rich = new RegionRichTextValue(text, new[] { new RegionTextRun(text, "en") },
+			var rich = new DetailRichTextValue(text, new[] { new DetailTextRun(text, "en") },
 				richXml: null, requiresRichEditor: true, canEditRichText: true, lossyProperties: true);
-			return new RegionParagraph(rich);
+			return new DetailParagraph(rich);
 		}
 
-		private static RegionField Field(IReadOnlyList<RegionParagraph> paragraphs,
+		private static DetailField Field(IReadOnlyList<DetailParagraph> paragraphs,
 			bool isEditable = true, IReadOnlyList<string> paragraphStyles = null)
 		{
-			var field = new RegionField(
+			var field = new DetailField(
 				stableId: "LexEntry/Discussion@1", label: "Discussion", field: "Discussion",
-				writingSystem: null, kind: RegionFieldKind.StructuredText,
+				writingSystem: null, kind: DetailFieldKind.StructuredText,
 				editorClassification: EditorClassification.Known, automationId: "Discussion",
 				localizationKey: null, routing: SurfaceRouting.Product, values: null, options: null,
 				selectedOptionKey: null, isEditable: isEditable, paragraphs: paragraphs);
@@ -62,8 +62,8 @@ namespace FwAvaloniaTests
 			return field;
 		}
 
-		private static (FwStructuredTextField Field, Window Window) Show(RegionField field,
-			IRegionEditContext editContext = null, Action gestureCompleted = null)
+		private static (FwStructuredTextField Field, Window Window) Show(DetailField field,
+			IDetailEditContext editContext = null, Action gestureCompleted = null)
 		{
 			var control = new FwStructuredTextField(field, field.AutomationId, editContext, null, gestureCompleted);
 			var window = new Window { Content = control, Width = 420, Height = 220 };
@@ -88,7 +88,7 @@ namespace FwAvaloniaTests
 		{
 			// The composer can hand an empty paragraph list for a not-yet-materialized StText; the editor
 			// must still show ONE empty editable row (StTextSlice.OnEnter's create-on-edit path).
-			var field = Field(new List<RegionParagraph>());
+			var field = Field(new List<DetailParagraph>());
 			var context = new FakeRegionEditContext();
 			var (control, window) = Show(field, context, gestureCompleted: () => { });
 
@@ -104,7 +104,7 @@ namespace FwAvaloniaTests
 		[AvaloniaTest]
 		public void EmptyStText_FirstKeystrokeMaterializesParagraph_StagesAtIndex0()
 		{
-			var field = Field(new List<RegionParagraph>());
+			var field = Field(new List<DetailParagraph>());
 			var context = new FakeRegionEditContext();
 			var (control, _) = Show(field, context, gestureCompleted: () => { });
 
@@ -123,7 +123,7 @@ namespace FwAvaloniaTests
 		[AvaloniaTest]
 		public void OnlyParagraph_CannotBeDeleted_ByButtonOrBackspace()
 		{
-			var field = Field(new List<RegionParagraph> { Para(string.Empty) });
+			var field = Field(new List<DetailParagraph> { Para(string.Empty) });
 			var context = new FakeRegionEditContext();
 			var (control, _) = Show(field, context, gestureCompleted: () => { });
 
@@ -148,7 +148,7 @@ namespace FwAvaloniaTests
 			// edited plain text WITHOUT reordering/normalizing the script, and preserve the run's ws tag.
 			const string arabic = "العربية";   // RTL
 			const string khmer = "ភាសាខ្មែរ";   // complex script with subscript consonants
-			var field = Field(new List<RegionParagraph>
+			var field = Field(new List<DetailParagraph>
 			{
 				Para(arabic, ws: "ar"),
 				Para(khmer, ws: "km")
@@ -186,7 +186,7 @@ namespace FwAvaloniaTests
 			// Each structural gesture completes immediately (the gestureCompleted callback the host wires
 			// to its one validation-gated commit + re-show). Interleaving them rapidly must remain
 			// one-completed-gesture-per-action — no missed or doubled completion (which would orphan undo).
-			var field = Field(new List<RegionParagraph> { Para("Alpha."), Para("Beta."), Para("Gamma.") });
+			var field = Field(new List<DetailParagraph> { Para("Alpha."), Para("Beta."), Para("Gamma.") });
 			var context = new FakeRegionEditContext();
 			var gestures = 0;
 			var (control, _) = Show(field, context, gestureCompleted: () => gestures++);
@@ -213,7 +213,7 @@ namespace FwAvaloniaTests
 		{
 			// If the seam rejects a gesture (e.g. the edit-context guard), the host commit must NOT fire,
 			// so a rejected action can never leave a stray empty undo step.
-			var field = Field(new List<RegionParagraph> { Para("Alpha."), Para("Beta.") });
+			var field = Field(new List<DetailParagraph> { Para("Alpha."), Para("Beta.") });
 			var context = new FakeRegionEditContext { ParagraphGestureResult = false };
 			var gestures = 0;
 			var (control, _) = Show(field, context, gestureCompleted: () => gestures++);
@@ -234,7 +234,7 @@ namespace FwAvaloniaTests
 		{
 			// A lossy/ORC paragraph between two editable ones stays read-only and preserved; the
 			// editable neighbors still edit and stage normally.
-			var field = Field(new List<RegionParagraph>
+			var field = Field(new List<DetailParagraph>
 			{
 				Para("Editable head."),
 				LossyPara("Has an embedded object."),
@@ -272,7 +272,7 @@ namespace FwAvaloniaTests
 			// style name. The composer's setter maps that null to StyleServices.NormalStyleName (asserted
 			// in StructuredTextAdapterTests.ParagraphStyle_AppliedAndCleared_OneUndoStep); here we pin that
 			// the view stages the CLEAR (null) when Default is chosen on a currently-styled paragraph.
-			var field = Field(new List<RegionParagraph> { Para("Styled.", style: "Block Quote") },
+			var field = Field(new List<DetailParagraph> { Para("Styled.", style: "Block Quote") },
 				paragraphStyles: new[] { "Block Quote", "Numbered List" });
 			var context = new FakeRegionEditContext();
 			var (control, _) = Show(field, context, gestureCompleted: () => { });

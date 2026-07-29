@@ -11,14 +11,14 @@ using Avalonia.Threading;
 using Avalonia.VisualTree;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwAvalonia;
-using SIL.FieldWorks.Common.FwAvalonia.Region;
+using SIL.FieldWorks.Common.FwAvalonia.Detail;
 using SIL.FieldWorks.Common.FwAvalonia.ViewDefinition;
 
 namespace FwAvaloniaTests
 {
 	/// <summary>
 	/// Every native-Views viewing capability the migrated lexical-edit region relies on has a
-	/// FieldWorks-owned managed/Avalonia replacement, recorded in <see cref="RegionViewingServices"/>
+	/// FieldWorks-owned managed/Avalonia replacement, recorded in <see cref="DetailViewingServices"/>
 	/// and exercised here. Where <c>EngineIsolationAuditTests</c> proves the region names NO native
 	/// symbol, this proves the managed replacement is present, located in the isolated production
 	/// assembly, and (for the deferred embedded-object case) degrades to an explicit, lossless
@@ -30,23 +30,23 @@ namespace FwAvaloniaTests
 		// The native symbol each capability supersedes. This cross-reference lives in the TEST (which
 		// the isolation audit excludes from its source scan), NOT in production source — the audit
 		// forbids production code from naming the native pipeline even in strings.
-		private static readonly Dictionary<RegionViewingCapability, string> SupersededNativeSymbol =
-			new Dictionary<RegionViewingCapability, string>
+		private static readonly Dictionary<DetailViewingCapability, string> SupersededNativeSymbol =
+			new Dictionary<DetailViewingCapability, string>
 			{
-				{ RegionViewingCapability.TextShaping, "IRenderEngine" },
-				{ RegionViewingCapability.Measurement, "IVwEnv" },
-				{ RegionViewingCapability.SelectionMetadata, "IVwSelection" },
-				{ RegionViewingCapability.HitTesting, "IVwRootBox" },
-				{ RegionViewingCapability.Scrolling, "SimpleRootSite" },
-				{ RegionViewingCapability.Rendering, "IVwDrawRootBuffered" },
-				{ RegionViewingCapability.EditorRealization, "RootSiteControl" }
+				{ DetailViewingCapability.TextShaping, "IRenderEngine" },
+				{ DetailViewingCapability.Measurement, "IVwEnv" },
+				{ DetailViewingCapability.SelectionMetadata, "IVwSelection" },
+				{ DetailViewingCapability.HitTesting, "IVwRootBox" },
+				{ DetailViewingCapability.Scrolling, "SimpleRootSite" },
+				{ DetailViewingCapability.Rendering, "IVwDrawRootBuffered" },
+				{ DetailViewingCapability.EditorRealization, "RootSiteControl" }
 			};
 
 		[Test]
 		public void EveryViewingCapability_IsCoveredExactlyOnce()
 		{
-			var covered = RegionViewingServices.Replacements.Select(r => r.Capability).ToList();
-			var expected = Enum.GetValues(typeof(RegionViewingCapability)).Cast<RegionViewingCapability>().ToList();
+			var covered = DetailViewingServices.Replacements.Select(r => r.Capability).ToList();
+			var expected = Enum.GetValues(typeof(DetailViewingCapability)).Cast<DetailViewingCapability>().ToList();
 
 			Assert.That(covered, Is.EquivalentTo(expected),
 				"every native viewing capability (shaping, measurement, selection, hit testing, "
@@ -57,9 +57,9 @@ namespace FwAvaloniaTests
 		[Test]
 		public void EveryCapability_HasManagedOwner_InTheIsolatedFwAvaloniaAssembly()
 		{
-			var productionAssembly = typeof(RegionDataTree).Assembly;
+			var productionAssembly = typeof(DataTree).Assembly;
 
-			foreach (var descriptor in RegionViewingServices.Replacements)
+			foreach (var descriptor in DetailViewingServices.Replacements)
 			{
 				Assert.That(descriptor.ManagedOwner, Is.Not.Null,
 					$"{descriptor.Capability} must name its managed owner");
@@ -72,7 +72,7 @@ namespace FwAvaloniaTests
 		[Test]
 		public void EveryCapability_SupersedesANamedNativeSymbol_AndExplainsItsReplacement()
 		{
-			foreach (var descriptor in RegionViewingServices.Replacements)
+			foreach (var descriptor in DetailViewingServices.Replacements)
 			{
 				Assert.That(SupersededNativeSymbol.ContainsKey(descriptor.Capability), Is.True,
 					$"{descriptor.Capability} must record (in §8.3 / this test) the native symbol it replaces");
@@ -82,16 +82,16 @@ namespace FwAvaloniaTests
 
 			// Every documented native symbol must map to a real capability (no orphan cross-references).
 			Assert.That(SupersededNativeSymbol.Keys, Is.EquivalentTo(
-				RegionViewingServices.Replacements.Select(r => r.Capability)));
+				DetailViewingServices.Replacements.Select(r => r.Capability)));
 		}
 
 		[Test]
 		public void DeferredConcerns_AreNamed_WithReasonPhaseAndFallback()
 		{
-			Assert.That(RegionViewingServices.Deferred, Is.Not.Empty,
+			Assert.That(DetailViewingServices.Deferred, Is.Not.Empty,
 				"deferrals must be enumerated, not implied");
 
-			foreach (var concern in RegionViewingServices.Deferred)
+			foreach (var concern in DetailViewingServices.Deferred)
 			{
 				Assert.That(concern.Name, Is.Not.Null.And.Not.Empty);
 				Assert.That(concern.Reason, Is.Not.Null.And.Not.Empty, $"{concern.Name} needs a reason");
@@ -100,7 +100,7 @@ namespace FwAvaloniaTests
 					$"{concern.Name} needs a named fallback (never silent data loss)");
 			}
 
-			var names = RegionViewingServices.Deferred.Select(c => c.Name).ToList();
+			var names = DetailViewingServices.Deferred.Select(c => c.Name).ToList();
 			Assert.That(names.Any(n => n.IndexOf("StText", StringComparison.OrdinalIgnoreCase) >= 0),
 				"StText multi-paragraph editing stays a named deferral");
 			Assert.That(names.Any(n => n.IndexOf("ORC", StringComparison.OrdinalIgnoreCase) >= 0
@@ -116,14 +116,14 @@ namespace FwAvaloniaTests
 		[AvaloniaTest]
 		public void EmbeddedObjectValue_RendersReadOnly_WithExplicitAffordance_AndNeverStages()
 		{
-			var orcRich = new RegionRichTextValue("link",
-				new List<RegionTextRun> { new RegionTextRun("link", "qaa-x-orc", objectData: "obj-ref-guid") },
+			var orcRich = new DetailRichTextValue("link",
+				new List<DetailTextRun> { new DetailTextRun("link", "qaa-x-orc", objectData: "obj-ref-guid") },
 				richXml: "<Str/>", requiresRichEditor: true, canEditRichText: false);
-			var field = new RegionField("LexEntry/x/#orc", "Cross Reference", "Form", null,
-				RegionFieldKind.Text, EditorClassification.Known, "OrcField", null, SurfaceRouting.Inherit,
-				new List<RegionWsValue>
+			var field = new DetailField("LexEntry/x/#orc", "Cross Reference", "Form", null,
+				DetailFieldKind.Text, EditorClassification.Known, "OrcField", null, SurfaceRouting.Inherit,
+				new List<DetailWsValue>
 				{
-					new RegionWsValue("vern", "link", wsTag: "qaa-x-orc", richText: orcRich)
+					new DetailWsValue("vern", "link", wsTag: "qaa-x-orc", richText: orcRich)
 				}, null, null);
 			var context = new FakeRegionEditContext();
 			var fieldControl = new FwMultiWsTextField(field, "OrcField", context, null);

@@ -17,7 +17,7 @@ using Avalonia.Threading;
 using Avalonia.VisualTree;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwAvalonia;
-using SIL.FieldWorks.Common.FwAvalonia.Region;
+using SIL.FieldWorks.Common.FwAvalonia.Detail;
 using SIL.FieldWorks.Common.FwAvalonia.ViewDefinition;
 
 namespace FwAvaloniaTests
@@ -34,46 +34,46 @@ namespace FwAvaloniaTests
 	[TestFixture]
 	public class HoverRevealTests
 	{
-		private static RegionField ChooserField() => new RegionField(
+		private static DetailField ChooserField() => new DetailField(
 			"LexEntry/x/#0", "Morph Type", "MorphType", null,
-			RegionFieldKind.Chooser, EditorClassification.Known, "MorphTypeChooser", null,
+			DetailFieldKind.Chooser, EditorClassification.Known, "MorphTypeChooser", null,
 			SurfaceRouting.Inherit, null,
-			new List<RegionChoiceOption>
+			new List<DetailChoiceOption>
 			{
-				new RegionChoiceOption("g1", "stem"),
-				new RegionChoiceOption("g2", "suffix")
+				new DetailChoiceOption("g1", "stem"),
+				new DetailChoiceOption("g2", "suffix")
 			},
 			"g1",
-			chooserLinks: new List<RegionChooserLink>
+			chooserLinks: new List<DetailChooserLink>
 			{
-				new RegionChooserLink("Edit the Morpheme Types list", "morphTypeEdit")
+				new DetailChooserLink("Edit the Morpheme Types list", "morphTypeEdit")
 			});
 
-		private static RegionField VectorField() => new RegionField(
+		private static DetailField VectorField() => new DetailField(
 			"LexEntry/x/#1", "Publish Entry In", "PublishIn", null,
-			RegionFieldKind.ReferenceVector, EditorClassification.Known, "PublishIn", null,
+			DetailFieldKind.ReferenceVector, EditorClassification.Known, "PublishIn", null,
 			SurfaceRouting.Inherit, null,
-			new List<RegionChoiceOption>
+			new List<DetailChoiceOption>
 			{
-				new RegionChoiceOption("p1", "Main Dictionary"),
-				new RegionChoiceOption("p2", "Pocket")
+				new DetailChoiceOption("p1", "Main Dictionary"),
+				new DetailChoiceOption("p2", "Pocket")
 			},
 			null, isEditable: true, indent: 0,
-			items: new List<RegionChoiceOption> { new RegionChoiceOption("p1", "Main Dictionary") },
-			chooserLinks: new List<RegionChooserLink>
+			items: new List<DetailChoiceOption> { new DetailChoiceOption("p1", "Main Dictionary") },
+			chooserLinks: new List<DetailChooserLink>
 			{
-				new RegionChooserLink("Edit the Publications list", "publicationsEdit")
+				new DetailChooserLink("Edit the Publications list", "publicationsEdit")
 			});
 
-		private static (RegionDataTree view, FakeRegionEditContext context, Window window,
-			List<RegionLinkRequest> linkRequests) Show()
+		private static (DataTree view, FakeRegionEditContext context, Window window,
+			List<DetailLinkRequest> linkRequests) Show()
 		{
-			var model = new RegionModel("LexEntry", "test",
-				new List<RegionField> { ChooserField(), VectorField() },
+			var model = new DetailModel("LexEntry", "test",
+				new List<DetailField> { ChooserField(), VectorField() },
 				new List<ViewDiagnostic>());
 			var context = new FakeRegionEditContext();
-			var linkRequests = new List<RegionLinkRequest>();
-			var view = new RegionDataTree(model, context, linkRequested: linkRequests.Add);
+			var linkRequests = new List<DetailLinkRequest>();
+			var view = new DataTree(model, context, linkRequested: linkRequests.Add);
 			var window = new Window { Content = view, Width = 500, Height = 300 };
 			window.Show();
 			Dispatcher.UIThread.RunJobs();
@@ -234,7 +234,7 @@ namespace FwAvaloniaTests
 		}
 
 		// GEAR = CONFIGURE: clicking the revealed gear DIRECTLY dispatches the list-editor jump
-		// (RegionLinkRequest with the row's resolved tool) — no flyout, no menu, no staging.
+		// (DetailLinkRequest with the row's resolved tool) — no flyout, no menu, no staging.
 		[AvaloniaTest]
 		public void ClickingTheGearAfterReveal_DispatchesTheListEditorJump_NoFlyoutOpens()
 		{

@@ -9,7 +9,7 @@ using System.Linq;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using SIL.FieldWorks.Common.FwAvalonia;
-using SIL.FieldWorks.Common.FwAvalonia.Region;
+using SIL.FieldWorks.Common.FwAvalonia.Detail;
 
 namespace FwAvaloniaDialogs
 {
@@ -39,7 +39,7 @@ namespace FwAvaloniaDialogs
 		private readonly InsertEntryDlgInput _input;
 		private readonly InMemoryRegionEditContext _formContext = new InMemoryRegionEditContext();
 		private readonly InMemoryRegionEditContext _glossContext = new InMemoryRegionEditContext();
-		private readonly IReadOnlyList<RegionChoiceOption> _morphTypes;
+		private readonly IReadOnlyList<DetailChoiceOption> _morphTypes;
 		// The live chosen morph-type key (guid string); starts at the input's initial key.
 		private string _morphTypeKey;
 		// Guards re-entrancy when the derivation re-sets the adjusted form (mirrors legacy m_updateTextMonitor).
@@ -72,7 +72,7 @@ namespace FwAvaloniaDialogs
 		private string _lastSlotPosId;
 		// The complex-form type options the picker shows (the launcher-supplied types with a leading "<Not
 		// Applicable>" row whose key is the empty string). The live chosen key is the empty string for Not-Applicable.
-		private readonly IReadOnlyList<RegionChoiceOption> _complexFormTypes;
+		private readonly IReadOnlyList<DetailChoiceOption> _complexFormTypes;
 		private string _complexFormTypeKey;
 		// The morph-type → complex-form gating map (the data lift of EnableComplexFormTypeCombo); null defaults every
 		// morph type to the WinForms "default" branch (enabled, reset to Not-Applicable).
@@ -93,7 +93,7 @@ namespace FwAvaloniaDialogs
 			HelpTopic = _input.HelpTopic;
 			HasHelp = !string.IsNullOrEmpty(_input.HelpTopic);
 
-			_morphTypes = _input.MorphTypes ?? Array.Empty<RegionChoiceOption>();
+			_morphTypes = _input.MorphTypes ?? Array.Empty<DetailChoiceOption>();
 			_morphTypeKey = _input.InitialMorphTypeKey;
 
 			// The owned lexeme-form + gloss fields stage into their in-memory contexts (a create flow, no cache).
@@ -177,12 +177,12 @@ namespace FwAvaloniaDialogs
 			// chosen key flows into the payload; the picker's enabled state + selection follow the morph type via the
 			// launcher-supplied gating map (the lift of EnableComplexFormTypeCombo).
 			_complexFormGating = _input.ComplexFormGatingByMorphType;
-			var complexTypes = new List<RegionChoiceOption>
+			var complexTypes = new List<DetailChoiceOption>
 			{
-				new RegionChoiceOption(ComplexFormNotApplicableKey,
+				new DetailChoiceOption(ComplexFormNotApplicableKey,
 					FwAvaloniaDialogsStrings.InsertEntryComplexFormTypeNotApplicable)
 			};
-			complexTypes.AddRange(_input.ComplexFormTypes ?? Array.Empty<RegionChoiceOption>());
+			complexTypes.AddRange(_input.ComplexFormTypes ?? Array.Empty<DetailChoiceOption>());
 			_complexFormTypes = complexTypes;
 			_complexFormTypeKey = string.IsNullOrEmpty(_input.InitialComplexFormTypeKey)
 				? ComplexFormNotApplicableKey
@@ -338,7 +338,7 @@ namespace FwAvaloniaDialogs
 
 		// ----- morph-type picker <-> chosen-key mirroring -----
 
-		private void OnMorphTypeCommitted(RegionChoiceOption option)
+		private void OnMorphTypeCommitted(DetailChoiceOption option)
 		{
 			_morphTypeKey = option?.Key;
 			OnPropertyChanged(nameof(MorphTypeKey));
@@ -405,7 +405,7 @@ namespace FwAvaloniaDialogs
 
 		// ----- complex-form type picker <-> chosen-key mirroring + morph-type gating (LT-21666) -----
 
-		private void OnComplexFormTypeCommitted(RegionChoiceOption option)
+		private void OnComplexFormTypeCommitted(DetailChoiceOption option)
 		{
 			// A null/empty key is the "<Not Applicable>" row (no complex-form type chosen).
 			_complexFormTypeKey = option?.Key ?? ComplexFormNotApplicableKey;
@@ -581,14 +581,14 @@ namespace FwAvaloniaDialogs
 
 		// A gloss edit refreshes the duplicate-detection matches (legacy tbGloss_TextChanged → UpdateMatches). The
 		// gloss does not affect the form-derived morph type, so no derivation runs here.
-		private void OnGlossStaged(RegionField field, string ws, string value)
+		private void OnGlossStaged(DetailField field, string ws, string value)
 		{
 			if (_deriving)
 				return;
 			RefreshMatches();
 		}
 
-		private void OnLexemeFormStaged(RegionField field, string ws, string value)
+		private void OnLexemeFormStaged(DetailField field, string ws, string value)
 		{
 			if (_deriving)
 				return;
@@ -776,8 +776,8 @@ namespace FwAvaloniaDialogs
 		}
 
 		// A placeholder editable text field so the VM never NREs when the launcher omits a field (tests, etc.).
-		private static RegionField EmptyField(string name)
-			=> new RegionField(name, name, name, null, RegionFieldKind.Text,
-				default, name, name, default, new List<RegionWsValue>(), new List<RegionChoiceOption>(), null);
+		private static DetailField EmptyField(string name)
+			=> new DetailField(name, name, name, null, DetailFieldKind.Text,
+				default, name, name, default, new List<DetailWsValue>(), new List<DetailChoiceOption>(), null);
 	}
 }

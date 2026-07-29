@@ -6,7 +6,7 @@ using System;
 using System.Collections.Generic;
 using Avalonia.Automation;
 using Avalonia.Controls;
-using SIL.FieldWorks.Common.FwAvalonia.Region;
+using SIL.FieldWorks.Common.FwAvalonia.Detail;
 using SIL.FieldWorks.Common.FwAvalonia.ViewDefinition;
 
 namespace SIL.FieldWorks.Common.FwAvalonia.Preview
@@ -14,7 +14,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Preview
 	/// <summary>
 	/// Preview-host window for the shared lexical-edit region renderer. The host sets the
 	/// <see cref="Window.DataContext"/> from <see cref="RegionPreviewDataProvider"/>; this
-	/// window responds by creating a fresh <see cref="RegionDataTree"/> for that scenario.
+	/// window responds by creating a fresh <see cref="DataTree"/> for that scenario.
 	/// </summary>
 	public sealed class RegionPreviewWindow : Window
 	{
@@ -29,7 +29,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Preview
 		{
 			base.OnDataContextChanged(e);
 			if (DataContext is RegionPreviewScenario scenario)
-				Content = new RegionDataTree(scenario.Model, scenario.EditContext);
+				Content = new DataTree(scenario.Model, scenario.EditContext);
 		}
 	}
 
@@ -45,34 +45,34 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Preview
 
 		internal static RegionPreviewScenario CreateScenario(bool sample)
 		{
-			var formValues = new List<RegionWsValue>
+			var formValues = new List<DetailWsValue>
 			{
-				new RegionWsValue("seh", sample ? "kumila" : string.Empty, "Charis SIL", wsTag: "seh"),
-				new RegionWsValue("en", sample ? "travel" : string.Empty, "Times New Roman", wsTag: "en")
+				new DetailWsValue("seh", sample ? "kumila" : string.Empty, "Charis SIL", wsTag: "seh"),
+				new DetailWsValue("en", sample ? "travel" : string.Empty, "Times New Roman", wsTag: "en")
 			};
 
-			var glossValues = new List<RegionWsValue>
+			var glossValues = new List<DetailWsValue>
 			{
-				new RegionWsValue("en", sample ? "go on a trip" : string.Empty, "Times New Roman", wsTag: "en"),
-				new RegionWsValue("pt", sample ? "viajar" : string.Empty, "Times New Roman", wsTag: "pt")
+				new DetailWsValue("en", sample ? "go on a trip" : string.Empty, "Times New Roman", wsTag: "en"),
+				new DetailWsValue("pt", sample ? "viajar" : string.Empty, "Times New Roman", wsTag: "pt")
 			};
 
-			var options = new List<RegionChoiceOption>
+			var options = new List<DetailChoiceOption>
 			{
-				new RegionChoiceOption("stem", "stem"),
-				new RegionChoiceOption("root", "root"),
-				new RegionChoiceOption("prefix", "prefix"),
-				new RegionChoiceOption("suffix", "suffix")
+				new DetailChoiceOption("stem", "stem"),
+				new DetailChoiceOption("root", "root"),
+				new DetailChoiceOption("prefix", "prefix"),
+				new DetailChoiceOption("suffix", "suffix")
 			};
 
-			var fields = new List<RegionField>
+			var fields = new List<DetailField>
 			{
-				new RegionField(
+				new DetailField(
 					"LexEntry/preview/#0",
 					FwAvaloniaStrings.LexemeFormLabel,
 					"Form",
 					"all vernacular",
-					RegionFieldKind.Text,
+					DetailFieldKind.Text,
 					EditorClassification.Known,
 					"LexemeFormEditor",
 					null,
@@ -80,12 +80,12 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Preview
 					formValues,
 					null,
 					null),
-				new RegionField(
+				new DetailField(
 					"LexEntry/preview/#1",
 					FwAvaloniaStrings.MorphTypeLabel,
 					"MorphType",
 					null,
-					RegionFieldKind.Chooser,
+					DetailFieldKind.Chooser,
 					EditorClassification.Known,
 					"MorphTypeChooser",
 					null,
@@ -93,12 +93,12 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Preview
 					null,
 					options,
 					"stem"),
-				new RegionField(
+				new DetailField(
 					"LexEntry/preview/#2",
 					FwAvaloniaStrings.GlossLabel,
 					"Gloss",
 					"all analysis",
-					RegionFieldKind.Text,
+					DetailFieldKind.Text,
 					EditorClassification.Known,
 					"SenseGlossEditor",
 					null,
@@ -109,7 +109,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Preview
 			};
 
 			return new RegionPreviewScenario(
-				new RegionModel("LexEntry", "preview", fields, Array.Empty<ViewDiagnostic>()),
+				new DetailModel("LexEntry", "preview", fields, Array.Empty<ViewDiagnostic>()),
 				new PreviewRegionEditContext());
 		}
 	}
@@ -120,70 +120,70 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Preview
 	/// </summary>
 	public sealed class RegionPreviewScenario
 	{
-		public RegionPreviewScenario(RegionModel model, IRegionEditContext editContext)
+		public RegionPreviewScenario(DetailModel model, IDetailEditContext editContext)
 		{
 			Model = model;
 			EditContext = editContext;
 		}
 
-		public RegionModel Model { get; }
-		public IRegionEditContext EditContext { get; }
+		public DetailModel Model { get; }
+		public IDetailEditContext EditContext { get; }
 	}
 
-	internal sealed class PreviewRegionEditContext : IRegionEditContext, IStructuredTextEditing
+	internal sealed class PreviewRegionEditContext : IDetailEditContext, IStructuredTextEditing
 	{
 		public bool IsOpen { get; private set; }
 
-		public bool TrySetText(RegionField field, string ws, string value)
+		public bool TrySetText(DetailField field, string ws, string value)
 		{
 			IsOpen = true;
 			return true;
 		}
 
-		public bool TrySetRichText(RegionField field, string ws, RegionRichTextValue value)
+		public bool TrySetRichText(DetailField field, string ws, DetailRichTextValue value)
 		{
 			IsOpen = true;
 			return true;
 		}
 
-		public bool TrySetOption(RegionField field, string optionKey)
+		public bool TrySetOption(DetailField field, string optionKey)
 		{
 			IsOpen = true;
 			return true;
 		}
 
-		public bool TryAddReferenceItem(RegionField field, string optionKey)
+		public bool TryAddReferenceItem(DetailField field, string optionKey)
 		{
 			IsOpen = true;
 			return true;
 		}
 
-		public bool TryRemoveReferenceItem(RegionField field, string optionKey)
+		public bool TryRemoveReferenceItem(DetailField field, string optionKey)
 		{
 			IsOpen = true;
 			return true;
 		}
 
 		// The preview context accepts every gesture so the preview shows editable StText affordances.
-		public bool TrySetParagraphText(RegionField field, int paragraphIndex, RegionRichTextValue value)
+		public bool TrySetParagraphText(DetailField field, int paragraphIndex, DetailRichTextValue value)
 		{
 			IsOpen = true;
 			return true;
 		}
 
-		public bool TrySetParagraphStyle(RegionField field, int paragraphIndex, string styleName)
+		public bool TrySetParagraphStyle(DetailField field, int paragraphIndex, string styleName)
 		{
 			IsOpen = true;
 			return true;
 		}
 
-		public bool TryInsertParagraph(RegionField field, int afterParagraphIndex)
+		public bool TryInsertParagraph(DetailField field, int afterParagraphIndex)
 		{
 			IsOpen = true;
 			return true;
 		}
 
-		public bool TryDeleteParagraph(RegionField field, int paragraphIndex)
+		public bool TryDeleteParagraph(DetailField field, int paragraphIndex)
 		{
 			IsOpen = true;
 			return true;

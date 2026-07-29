@@ -4,17 +4,17 @@
 
 using SIL.FieldWorks.Common.FwAvalonia.ViewDefinition;
 
-namespace SIL.FieldWorks.Common.FwAvalonia.Region
+namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 {
 	/// <summary>
 	/// The shared structural projection rules used by BOTH region projectors — the thin
-	/// <see cref="RegionModelProjector"/> (view-definition → region model, LCModel-free) and the full
+	/// <see cref="DetailModelProjector"/> (view-definition → region model, LCModel-free) and the full
 	/// xWorks <c>RegionComposer</c> (LCModel-backed). The section-header row
 	/// construction and the child-indent rule live ONCE here so the two paths cannot drift. (The third
 	/// structural rule — editor → renderable kind — is
-	/// likewise shared, in <see cref="EditorKindMap.ClassifyRegionFieldKind"/>.)
+	/// likewise shared, in <see cref="EditorKindMap.ClassifyDetailFieldKind"/>.)
 	/// </summary>
-	public static class RegionStructureRules
+	public static class DetailStructureRules
 	{
 		/// <summary>
 		/// The indent depth a grouping node gives its children: a labeled group indents one level; an
@@ -26,11 +26,11 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 
 		/// <summary>
 		/// Builds the canonical section-header row — the single construction site for
-		/// <see cref="RegionFieldKind.Header"/> rows across both projectors. The thin mapper passes the
+		/// <see cref="DetailFieldKind.Header"/> rows across both projectors. The thin mapper passes the
 		/// defaults (no collapse affordance, no menu/HVO); the composer passes its LCModel-enriched
 		/// values (collapsible state from expansion, slice menu/hotlinks, owning object HVO).
 		/// </summary>
-		public static RegionField BuildHeaderField(
+		public static DetailField BuildHeaderField(
 			string stableId,
 			string label,
 			string field,
@@ -46,8 +46,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 			string hotlinksId = null,
 			int objectHvo = 0)
 		{
-			return new RegionField(
-				stableId, label, field, writingSystem, RegionFieldKind.Header, editorClassification,
+			return new DetailField(
+				stableId, label, field, writingSystem, DetailFieldKind.Header, editorClassification,
 				automationId, localizationKey, routing, null, null, null,
 				isEditable: false, indent: depth,
 				isCollapsible: isCollapsible, isInitiallyExpanded: isInitiallyExpanded,
