@@ -9,13 +9,13 @@ namespace FwAvaloniaDialogs
 	/// <summary>
 	/// The LCModel-free snapshot the Add New Sense view-model writes on OK — the per-analysis-WS gloss values
 	/// (keyed by writing-system tag) plus the chosen grammatical info (the <see cref="FwSandboxMsa"/> the hosted
-	/// <see cref="FwMsaGroupBox"/> emitted). The LCModel-aware launcher reads this back to create the new
+	/// <see cref="MSAGroupBox"/> emitted). The LCModel-aware launcher reads this back to create the new
 	/// <c>ILexSense</c> (gloss + find-or-created MSA) in one undoable step — the lift of <c>AddNewSenseDlg</c>'s OK
 	/// branch (set the gloss; <c>lsNew.SandboxMSA = m_msaGroupBox.SandboxMSA</c>).
 	/// </summary>
-	public sealed class AddNewSensePayload
+	public sealed class AddNewSenseDlgPayload
 	{
-		public AddNewSensePayload(IReadOnlyDictionary<string, string> glossByWs, FwSandboxMsa msa)
+		public AddNewSenseDlgPayload(IReadOnlyDictionary<string, string> glossByWs, FwSandboxMsa msa)
 		{
 			GlossByWs = glossByWs ?? new Dictionary<string, string>();
 			Msa = msa;
@@ -32,6 +32,6 @@ namespace FwAvaloniaDialogs
 		public FwSandboxMsa Msa { get; }
 
 		/// <summary>An empty payload (no gloss, no MSA) for a cancelled dialog.</summary>
-		public static AddNewSensePayload Empty => new AddNewSensePayload(new Dictionary<string, string>(), null);
+		public static AddNewSenseDlgPayload Empty => new AddNewSenseDlgPayload(new Dictionary<string, string>(), null);
 	}
 }

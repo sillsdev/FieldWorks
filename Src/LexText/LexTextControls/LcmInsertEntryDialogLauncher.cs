@@ -26,9 +26,9 @@ namespace SIL.FieldWorks.LexText.Controls
 	/// The LCModel-aware launcher for the reusable Avalonia Insert Entry dialog — the replacement for the legacy
 	/// <see cref="InsertEntryDlg"/> in New-UI mode. It is a concrete
 	/// <see cref="AvaloniaDialogLauncher{TState,TViewModel,TPayload}"/>: the Avalonia layer (FwAvaloniaDialogs)
-	/// stays LCModel-free by exchanging an <see cref="InsertEntryDialogInput"/> (lexeme-form / gloss fields built
+	/// stays LCModel-free by exchanging an <see cref="InsertEntryDlgInput"/> (lexeme-form / gloss fields built
 	/// for the cache's current writing systems, morph types as guid-keyed <see cref="RegionChoiceOption"/>s, and a
-	/// plain <see cref="InsertEntryDialogInput.DeriveMorphType"/> delegate) and an <see cref="InsertEntryPayload"/>
+	/// plain <see cref="InsertEntryDlgInput.DeriveMorphType"/> delegate) and an <see cref="InsertEntryDlgPayload"/>
 	/// (per-WS form + gloss strings + the chosen morph-type key). This launcher builds that state from the live
 	/// cache and, on OK, creates the <c>ILexEntry</c> in ONE undoable step.
 	///
@@ -37,14 +37,14 @@ namespace SIL.FieldWorks.LexText.Controls
 	/// InternalsVisibleTo) without running the modal.
 	/// </summary>
 	public sealed class LcmInsertEntryDialogLauncher
-		: AvaloniaDialogLauncher<InsertEntryDialogInput, InsertEntryDialogViewModel, InsertEntryPayload>
+		: AvaloniaDialogLauncher<InsertEntryDlgInput, InsertEntryDlgViewModel, InsertEntryDlgPayload>
 	{
 		private readonly LcmCache _cache;
 		private readonly Mediator _mediator;
 		private readonly PropertyTable _propertyTable;
 		private readonly IHelpTopicProvider _helpProvider;
 		private readonly ITsString _tssForm;
-		private InsertEntryDialogViewModel _viewModel;
+		private InsertEntryDlgViewModel _viewModel;
 		// The WinForms host the Insert Entry modal is owned by — captured so the nested create-POS modal (raised from
 		// the MSA box's "Create a new Part of Speech..." affordance) can open over it.
 		private IWin32Window _owner;
@@ -150,17 +150,17 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 		}
 
-		protected override InsertEntryDialogInput BuildState() =>
+		protected override InsertEntryDlgInput BuildState() =>
 			BuildInput(_cache, _tssForm, _mediator, _propertyTable);
 
 		/// <summary>
-		/// Builds the LCModel-free <see cref="InsertEntryDialogInput"/> from the live cache: a per-vernacular-WS
+		/// Builds the LCModel-free <see cref="InsertEntryDlgInput"/> from the live cache: a per-vernacular-WS
 		/// lexeme-form field (seeded from <paramref name="tssForm"/> when it is a vernacular string), a
 		/// per-analysis-WS gloss field, the morph-type options, the default (stem) morph-type selection, and the
 		/// live affix-marker → morph-type derivation. Internal so the full state mapping is unit-testable against a
 		/// real cache without running the modal (mirrors LcmChooserDialogLauncher.BuildInput).
 		/// </summary>
-		internal static InsertEntryDialogInput BuildInput(LcmCache cache, ITsString tssForm,
+		internal static InsertEntryDlgInput BuildInput(LcmCache cache, ITsString tssForm,
 			Mediator mediator = null, PropertyTable propertyTable = null)
 		{
 			var wsContainer = cache.ServiceLocator.WritingSystems;
@@ -194,7 +194,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				wsContainer.CurrentAnalysisWritingSystems, initialGloss,
 				FwAvaloniaDialogsStrings.InsertEntryGlossLabel);
 
-			return new InsertEntryDialogInput
+			return new InsertEntryDlgInput
 			{
 				LexemeForm = lexemeForm,
 				Gloss = gloss,
@@ -210,7 +210,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				ApplyMorphTypeMarkers = (morphTypeKey, form) => ApplyMorphTypeMarkers(cache, morphTypeKey, form),
 				SearchMatches = BuildMatchSearch(cache, mediator, propertyTable),
 				// Grammatical-info (MSA) section: the project POS hierarchy + the morph-type → MsaType map +
-				// the per-POS slot provider, so the LCModel-free FwMsaGroupBox can drive its layout live.
+				// the per-POS slot provider, so the LCModel-free MSAGroupBox can drive its layout live.
 				PosNodes = BuildPosNodes(cache),
 				MorphTypeToMsaType = BuildMorphTypeToMsaTypeMap(cache),
 				InitialMsaType = MorphTypeToMsaType(MoMorphTypeTags.kguidMorphStem.ToString()),
@@ -778,9 +778,9 @@ namespace SIL.FieldWorks.LexText.Controls
 			return string.Empty;
 		}
 
-		protected override InsertEntryDialogViewModel CreateViewModel(InsertEntryDialogInput state)
+		protected override InsertEntryDlgViewModel CreateViewModel(InsertEntryDlgInput state)
 		{
-			_viewModel = new InsertEntryDialogViewModel(state);
+			_viewModel = new InsertEntryDlgViewModel(state);
 			_viewModel.HelpRequested += OnHelpRequested;
 			// Wire the inline "Create a new Part of Speech..." affordance. The
 			// VM raises CreateNewPosRequested with which chooser fired (main vs secondary); on it we run the
@@ -816,19 +816,19 @@ namespace SIL.FieldWorks.LexText.Controls
 			_viewModel.AcceptCreatedPos(target, node, BuildPosNodes(_cache));
 		}
 
-		protected override AvControl CreateView(InsertEntryDialogViewModel viewModel) =>
-			new InsertEntryDialogView { DataContext = viewModel };
+		protected override AvControl CreateView(InsertEntryDlgViewModel viewModel) =>
+			new InsertEntryDlgView { DataContext = viewModel };
 
 		/// <summary>
 		/// Applies the OK result: creates the new <c>ILexEntry</c> in ONE undoable step from the view-model's
 		/// snapshot (per-WS lexeme form + gloss alternatives + chosen morph type). Returns the same payload the
 		/// view-model produced; the created entry is exposed via <see cref="CreatedEntry"/>.
 		/// </summary>
-		protected override InsertEntryPayload Apply(InsertEntryDialogInput state)
+		protected override InsertEntryDlgPayload Apply(InsertEntryDlgInput state)
 		{
 			var payload = _viewModel?.Result;
 			if (payload == null)
-				return InsertEntryPayload.Empty;
+				return InsertEntryDlgPayload.Empty;
 
 			// "Go to similar entry": the user chose an EXISTING matching entry, so use it instead of creating a
 			// duplicate (the legacy m_fNewlyCreated = false outcome). Resolve the chosen id to the live entry; the
@@ -871,7 +871,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// on copied text — the same fix-up the legacy CollectValuesFromMultiStringControl applies. Internal so the
 		/// create is unit-testable against a real cache inside a UOW.
 		/// </summary>
-		internal ILexEntry CreateNewEntry(InsertEntryPayload payload)
+		internal ILexEntry CreateNewEntry(InsertEntryDlgPayload payload)
 		{
 			var components = BuildEntryComponents(_cache, payload);
 			var entry = _cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create(components);
@@ -962,7 +962,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			catch { return null; }
 		}
 
-		internal static LexEntryComponents BuildEntryComponents(LcmCache cache, InsertEntryPayload payload)
+		internal static LexEntryComponents BuildEntryComponents(LcmCache cache, InsertEntryDlgPayload payload)
 		{
 			var components = new LexEntryComponents { MorphType = ResolveMorphType(cache, payload.MorphTypeKey) };
 

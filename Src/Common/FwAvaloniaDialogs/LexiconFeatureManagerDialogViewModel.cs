@@ -63,7 +63,7 @@ namespace FwAvaloniaDialogs
 	/// UIMode=New switch defaults every catalog tool on), grouped and searchable by name/description.
 	/// Edits a product-supplied <see cref="LexiconFeatureManagerState"/> so the Avalonia layer stays
 	/// LCModel-free; each row's <see cref="FeatureOption.Enabled"/> is written through its two-way
-	/// checkbox binding directly onto the state (mirrors <c>OptionsDialogViewModel</c>'s Plugins
+	/// checkbox binding directly onto the state (mirrors <c>LexOptionsDlgViewModel</c>'s Plugins
 	/// convention), so there is no separate <c>ApplyChanges</c> override.
 	/// </summary>
 	public sealed partial class LexiconFeatureManagerDialogViewModel : DialogViewModelBase

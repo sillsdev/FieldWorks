@@ -21,22 +21,22 @@ namespace FwAvaloniaDialogs
 	///   * a <see cref="FwMultiWsTextField"/> for the GLOSS (one row per analysis WS).
 	/// The text fields stage their edits into an in-memory <see cref="InMemoryRegionEditContext"/> (no LCModel
 	/// cache), so the VM stays LCModel-free and can read the staged values back on OK. On a lexeme-form edit the
-	/// VM runs the launcher-supplied <see cref="InsertEntryDialogInput.DeriveMorphType"/> (the live affix-marker →
+	/// VM runs the launcher-supplied <see cref="InsertEntryDlgInput.DeriveMorphType"/> (the live affix-marker →
 	/// morph-type derivation): it reselects the morph-type picker, records the marker-adjusted form, and re-gates
 	/// OK. OK is gated through the kit's <c>GetValidationErrors</c> (one error when the best lexeme form is empty —
 	/// the legacy <c>LexFormNotEmpty</c> parity); <c>ApplyChanges</c> snapshots the per-WS form + gloss values +
 	/// chosen morph-type key into <see cref="Result"/>.
 	///
 	/// The duplicate-detection "matching entries" pane (the legacy <c>m_matchingObjectsBrowser</c>): as the
-	/// lexeme form changes the VM re-runs the launcher-supplied <see cref="InsertEntryDialogInput.SearchMatches"/>
+	/// lexeme form changes the VM re-runs the launcher-supplied <see cref="InsertEntryDlgInput.SearchMatches"/>
 	/// delegate and fills <see cref="Matches"/> with the existing entries whose form matches. Selecting a row and
 	/// invoking <see cref="UseSelectedEntryCommand"/> (the legacy "Go to similar entry" link) closes the dialog with
-	/// that existing entry's id snapshotted as <see cref="InsertEntryPayload.ChosenExistingEntryId"/> so the launcher
+	/// that existing entry's id snapshotted as <see cref="InsertEntryDlgPayload.ChosenExistingEntryId"/> so the launcher
 	/// jumps to it instead of creating a duplicate; the Create path is unchanged when no match is chosen.
 	/// </summary>
-	public partial class InsertEntryDialogViewModel : DialogViewModelBase
+	public partial class InsertEntryDlgViewModel : DialogViewModelBase
 	{
-		private readonly InsertEntryDialogInput _input;
+		private readonly InsertEntryDlgInput _input;
 		private readonly InMemoryRegionEditContext _formContext = new InMemoryRegionEditContext();
 		private readonly InMemoryRegionEditContext _glossContext = new InMemoryRegionEditContext();
 		private readonly IReadOnlyList<RegionChoiceOption> _morphTypes;
@@ -80,13 +80,13 @@ namespace FwAvaloniaDialogs
 		// The sentinel key of the leading "<Not Applicable>" row (no complex-form type chosen).
 		private const string ComplexFormNotApplicableKey = "";
 
-		public InsertEntryDialogViewModel() : this(new InsertEntryDialogInput())
+		public InsertEntryDlgViewModel() : this(new InsertEntryDlgInput())
 		{
 		}
 
-		public InsertEntryDialogViewModel(InsertEntryDialogInput input)
+		public InsertEntryDlgViewModel(InsertEntryDlgInput input)
 		{
-			_input = input ?? new InsertEntryDialogInput();
+			_input = input ?? new InsertEntryDlgInput();
 
 			Prompt = _input.Prompt ?? string.Empty;
 			HasPrompt = !string.IsNullOrEmpty(Prompt);
@@ -131,7 +131,7 @@ namespace FwAvaloniaDialogs
 			if (HasMatchSearch)
 				RefreshMatches();
 
-			// The grammatical-info (MSA) section: the LCModel-free FwMsaGroupBox, fed the project POS
+			// The grammatical-info (MSA) section: the LCModel-free MSAGroupBox, fed the project POS
 			// hierarchy + slot options + initial MsaType/POS by the launcher. The dialog's morph-type selection drives
 			// the box's MsaType LIVE (the launcher supplies the morph-type → MsaType map as data, so the kit stays
 			// LCModel-free), mirroring how WinForms InsertEntryDlg wires MSAGroupBox.MorphTypePreference.
@@ -139,7 +139,7 @@ namespace FwAvaloniaDialogs
 			_slotsForPos = _input.SlotsForPos;
 			_inflClassesForPos = _input.InflectionClassesForPos;
 			_inflFeaturesForPos = _input.InflectionFeaturesForPos;
-			MsaGroupBox = new FwMsaGroupBox();
+			MsaGroupBox = new MSAGroupBox();
 			MsaGroupBox.SetPosNodes(_input.PosNodes ?? Array.Empty<FwPosNode>());
 			MsaGroupBox.MsaType = ResolveMsaType(_morphTypeKey, _input.InitialMsaType);
 			MsaGroupBox.MainPosId = _input.InitialMainPosId;
@@ -206,10 +206,10 @@ namespace FwAvaloniaDialogs
 		public FwMultiWsTextField GlossField { get; }
 
 		/// <summary>
-		/// The owned grammatical-info (MSA) editor the view mounts — the LCModel-free <see cref="FwMsaGroupBox"/>.
+		/// The owned grammatical-info (MSA) editor the view mounts — the LCModel-free <see cref="MSAGroupBox"/>.
 		/// Reconfigures live as the morph-type selection changes; its <see cref="FwSandboxMsa"/> is snapshotted on OK.
 		/// </summary>
-		public FwMsaGroupBox MsaGroupBox { get; }
+		public MSAGroupBox MsaGroupBox { get; }
 
 		/// <summary>
 		/// The owned Complex Form Type picker the view mounts — a collapsed <see cref="FwOptionPicker"/> dropdown
@@ -243,7 +243,7 @@ namespace FwAvaloniaDialogs
 		/// The snapshot written on OK (per-WS form + gloss values + chosen morph-type key). Null until OK runs
 		/// <see cref="ApplyChanges"/>; the launcher reads it to build the LexEntryComponents.
 		/// </summary>
-		public InsertEntryPayload Result { get; private set; }
+		public InsertEntryDlgPayload Result { get; private set; }
 
 		// ----- duplicate-detection "matching entries" pane -----
 
@@ -274,7 +274,7 @@ namespace FwAvaloniaDialogs
 		/// <summary>
 		/// The legacy "Go to similar entry" outcome: close the dialog accepting the SELECTED existing entry rather
 		/// than creating a new one. Enabled only when a match is selected (the legacy link's enablement); it snapshots
-		/// the chosen existing-entry id into <see cref="InsertEntryPayload.ChosenExistingEntryId"/> and closes OK.
+		/// the chosen existing-entry id into <see cref="InsertEntryDlgPayload.ChosenExistingEntryId"/> and closes OK.
 		/// </summary>
 		[RelayCommand(CanExecute = nameof(CanUseSelectedEntry))]
 		private void UseSelectedEntry()
@@ -759,7 +759,7 @@ namespace FwAvaloniaDialogs
 			var complexFormTypeKey = (_useExisting || string.IsNullOrEmpty(_complexFormTypeKey))
 				? null
 				: _complexFormTypeKey;
-			Result = new InsertEntryPayload(formByWs, glossByWs, _morphTypeKey, chosenExistingId, msa,
+			Result = new InsertEntryDlgPayload(formByWs, glossByWs, _morphTypeKey, chosenExistingId, msa,
 				complexFormTypeKey);
 		}
 

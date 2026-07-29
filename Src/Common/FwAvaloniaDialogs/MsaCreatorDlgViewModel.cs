@@ -11,30 +11,30 @@ namespace FwAvaloniaDialogs
 {
 	/// <summary>
 	/// View-model for the reusable Avalonia "Create New Grammatical Info." dialog. The dialog is essentially the LCModel-free
-	/// <see cref="FwMsaGroupBox"/> hosted over the entry's read-only context:
+	/// <see cref="MSAGroupBox"/> hosted over the entry's read-only context:
 	///   * a read-only LEXICAL ENTRY headword (the legacy <c>m_fwtbCitationForm</c>),
 	///   * a read-only SENSES summary (the legacy <c>m_fwtbSenses</c>; populated only when editing an existing MSA),
-	///   * the <see cref="FwMsaGroupBox"/> grammatical-info editor, seeded from the existing MSA / morph type.
+	///   * the <see cref="MSAGroupBox"/> grammatical-info editor, seeded from the existing MSA / morph type.
 	///
 	/// Like the legacy dialog there is NO OK gate (the box always has a valid grammatical-info class). On OK
 	/// <see cref="ApplyChanges"/> snapshots the box's <see cref="FwSandboxMsa"/> into <see cref="Result"/>; the
 	/// launcher resolves it to a real <c>SandboxGenericMSA</c> and find-or-creates (or updates) the MSA.
 	/// </summary>
-	public partial class MsaCreatorDialogViewModel : DialogViewModelBase
+	public partial class MsaCreatorDlgViewModel : DialogViewModelBase
 	{
-		private readonly MsaCreatorDialogInput _input;
+		private readonly MsaCreatorDlgInput _input;
 		private readonly Func<string, IReadOnlyList<FwInflectionSlot>> _slotsForPos;
 		private readonly Func<string, IReadOnlyList<FwInflectionClass>> _inflClassesForPos;
 		private readonly Func<string, IReadOnlyList<FwFeatureNode>> _inflFeaturesForPos;
 		private string _lastSlotPosId;
 
-		public MsaCreatorDialogViewModel() : this(new MsaCreatorDialogInput())
+		public MsaCreatorDlgViewModel() : this(new MsaCreatorDlgInput())
 		{
 		}
 
-		public MsaCreatorDialogViewModel(MsaCreatorDialogInput input)
+		public MsaCreatorDlgViewModel(MsaCreatorDlgInput input)
 		{
-			_input = input ?? new MsaCreatorDialogInput();
+			_input = input ?? new MsaCreatorDlgInput();
 
 			LexicalEntry = _input.LexicalEntry ?? string.Empty;
 			HasLexicalEntry = !string.IsNullOrEmpty(LexicalEntry);
@@ -43,13 +43,13 @@ namespace FwAvaloniaDialogs
 			HelpTopic = _input.HelpTopic;
 			HasHelp = !string.IsNullOrEmpty(_input.HelpTopic);
 
-			// The grammatical-info (MSA) section: the LCModel-free FwMsaGroupBox, seeded from the existing MSA /
+			// The grammatical-info (MSA) section: the LCModel-free MSAGroupBox, seeded from the existing MSA /
 			// morph type (the legacy m_msaGroupBox.Initialize(..., sandboxMsa)). Seed MsaType first so the box is
 			// laid out for the right widgets before the POS/slot/secondary values are applied.
 			_slotsForPos = _input.SlotsForPos;
 			_inflClassesForPos = _input.InflectionClassesForPos;
 			_inflFeaturesForPos = _input.InflectionFeaturesForPos;
-			MsaGroupBox = new FwMsaGroupBox();
+			MsaGroupBox = new MSAGroupBox();
 			MsaGroupBox.SetPosNodes(_input.PosNodes ?? Array.Empty<FwPosNode>());
 			MsaGroupBox.MsaType = _input.InitialMsaType;
 			MsaGroupBox.MainPosId = _input.InitialMainPosId;
@@ -90,8 +90,8 @@ namespace FwAvaloniaDialogs
 		/// <summary>True when there is a non-empty <see cref="Senses"/> summary to show.</summary>
 		public bool HasSenses { get; }
 
-		/// <summary>The owned grammatical-info (MSA) editor the view mounts — the LCModel-free <see cref="FwMsaGroupBox"/>.</summary>
-		public FwMsaGroupBox MsaGroupBox { get; }
+		/// <summary>The owned grammatical-info (MSA) editor the view mounts — the LCModel-free <see cref="MSAGroupBox"/>.</summary>
+		public MSAGroupBox MsaGroupBox { get; }
 
 		/// <summary>The help topic id carried for the Help button.</summary>
 		public string HelpTopic { get; }
@@ -100,7 +100,7 @@ namespace FwAvaloniaDialogs
 		public bool HasHelp { get; }
 
 		/// <summary>The snapshot written on OK (the chosen MSA). Null until OK runs <see cref="ApplyChanges"/>.</summary>
-		public MsaCreatorPayload Result { get; private set; }
+		public MsaCreatorDlgPayload Result { get; private set; }
 
 		// ----- Help -----
 
@@ -111,7 +111,7 @@ namespace FwAvaloniaDialogs
 		[RelayCommand]
 		private void Help() => HelpRequested?.Invoke(HelpTopic);
 
-		// ----- create-new-POS wiring (mirrors InsertEntryDialogViewModel) -----
+		// ----- create-new-POS wiring (mirrors InsertEntryDlgViewModel) -----
 
 		/// <summary>
 		/// Raised when the user clicks the inline "Create a new Part of Speech..." row in EITHER POS chooser, carrying
@@ -191,7 +191,7 @@ namespace FwAvaloniaDialogs
 		/// <summary>Snapshots the chosen grammatical info (MSA) from the box into <see cref="Result"/> on OK.</summary>
 		protected override void ApplyChanges()
 		{
-			Result = new MsaCreatorPayload(MsaGroupBox?.SandboxMsa);
+			Result = new MsaCreatorDlgPayload(MsaGroupBox?.SandboxMsa);
 		}
 	}
 }

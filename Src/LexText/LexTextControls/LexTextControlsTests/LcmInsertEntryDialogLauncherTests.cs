@@ -170,7 +170,7 @@ namespace LexTextControlsTests
 		{
 			var vernTag = Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Id;
 			var analTag = Cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Id;
-			var payload = new InsertEntryPayload(
+			var payload = new InsertEntryDlgPayload(
 				new System.Collections.Generic.Dictionary<string, string> { [vernTag] = "casa" },
 				new System.Collections.Generic.Dictionary<string, string> { [analTag] = "house" },
 				MoMorphTypeTags.kguidMorphStem.ToString());
@@ -350,7 +350,7 @@ namespace LexTextControlsTests
 
 			// Create: build components + create (as the launcher's create branch does).
 			var vernTag = Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Id;
-			var payload = new InsertEntryPayload(
+			var payload = new InsertEntryDlgPayload(
 				new System.Collections.Generic.Dictionary<string, string> { [vernTag] = "nuevo" },
 				new System.Collections.Generic.Dictionary<string, string>(),
 				MoMorphTypeTags.kguidMorphStem.ToString());
@@ -407,7 +407,7 @@ namespace LexTextControlsTests
 		public void CreateNewEntry_StemMsa_FindOrCreatesAStemMsaWithTheChosenPos()
 		{
 			var vernTag = Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Id;
-			var payload = new InsertEntryPayload(
+			var payload = new InsertEntryDlgPayload(
 				new System.Collections.Generic.Dictionary<string, string> { [vernTag] = "perro" },
 				new System.Collections.Generic.Dictionary<string, string>(),
 				MoMorphTypeTags.kguidMorphStem.ToString(),
@@ -429,7 +429,7 @@ namespace LexTextControlsTests
 			var vernTag = Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Id;
 			var msa = new FwSandboxMsa(FwMsaType.Stem, mainPosId: _noun.Guid.ToString(),
 				inflectionClassId: _nounWeak.Guid.ToString());
-			var payload = new InsertEntryPayload(
+			var payload = new InsertEntryDlgPayload(
 				new System.Collections.Generic.Dictionary<string, string> { [vernTag] = "perro" },
 				new System.Collections.Generic.Dictionary<string, string>(),
 				MoMorphTypeTags.kguidMorphStem.ToString(), msa: msa);
@@ -458,7 +458,7 @@ namespace LexTextControlsTests
 		public void CreateNewEntry_InflectionalMsa_FindOrCreatesAnInflAffixMsaWithPosAndSlot()
 		{
 			var vernTag = Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Id;
-			var payload = new InsertEntryPayload(
+			var payload = new InsertEntryDlgPayload(
 				new System.Collections.Generic.Dictionary<string, string> { [vernTag] = "-s" },
 				new System.Collections.Generic.Dictionary<string, string>(),
 				MoMorphTypeTags.kguidMorphSuffix.ToString(),
@@ -479,7 +479,7 @@ namespace LexTextControlsTests
 		public void CreateNewEntry_DerivationalMsa_FindOrCreatesADerivMsaWithMainAndSecondaryPos()
 		{
 			var vernTag = Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Id;
-			var payload = new InsertEntryPayload(
+			var payload = new InsertEntryDlgPayload(
 				new System.Collections.Generic.Dictionary<string, string> { [vernTag] = "-er" },
 				new System.Collections.Generic.Dictionary<string, string>(),
 				MoMorphTypeTags.kguidMorphSuffix.ToString(),
@@ -528,7 +528,7 @@ namespace LexTextControlsTests
 				{
 					new FwFeatureValueAssignment(_tenseFeature.Guid.ToString(), _pastValue.Guid.ToString())
 				});
-			var payload = new InsertEntryPayload(
+			var payload = new InsertEntryDlgPayload(
 				new System.Collections.Generic.Dictionary<string, string> { [vernTag] = "-s" },
 				new System.Collections.Generic.Dictionary<string, string>(),
 				MoMorphTypeTags.kguidMorphSuffix.ToString(), msa: msa);
@@ -559,7 +559,7 @@ namespace LexTextControlsTests
 				{
 					new FwFeatureValueAssignment(_tenseFeature.Guid.ToString(), _pastValue.Guid.ToString())
 				});
-			var payload = new InsertEntryPayload(
+			var payload = new InsertEntryDlgPayload(
 				new System.Collections.Generic.Dictionary<string, string> { [vernTag] = "-ed" },
 				new System.Collections.Generic.Dictionary<string, string>(),
 				MoMorphTypeTags.kguidMorphSuffix.ToString(), msa: msa);
@@ -586,7 +586,7 @@ namespace LexTextControlsTests
 			var vernTag = Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Id;
 			// A stem MSA carrying (incorrectly) some inflection features — the adapter must no-op (scope is infl/deriv).
 			var msa = new FwSandboxMsa(FwMsaType.Stem, mainPosId: _noun.Guid.ToString());
-			var payload = new InsertEntryPayload(
+			var payload = new InsertEntryDlgPayload(
 				new System.Collections.Generic.Dictionary<string, string> { [vernTag] = "perro" },
 				new System.Collections.Generic.Dictionary<string, string>(),
 				MoMorphTypeTags.kguidMorphStem.ToString(), msa: msa);
@@ -649,7 +649,7 @@ namespace LexTextControlsTests
 		public void BuildEntryComponents_NoChosenMsa_FallsBackToTheMorphTypeDefault()
 		{
 			var vernTag = Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Id;
-			var payload = new InsertEntryPayload(
+			var payload = new InsertEntryDlgPayload(
 				new System.Collections.Generic.Dictionary<string, string> { [vernTag] = "gato" },
 				new System.Collections.Generic.Dictionary<string, string>(),
 				MoMorphTypeTags.kguidMorphStem.ToString()); // msa null
@@ -691,7 +691,7 @@ namespace LexTextControlsTests
 		public void CreateNewEntry_WithComplexFormType_AddsAComplexFormEntryRefInOneUow()
 		{
 			var vernTag = Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Id;
-			var payload = new InsertEntryPayload(
+			var payload = new InsertEntryDlgPayload(
 				new System.Collections.Generic.Dictionary<string, string> { [vernTag] = "casa grande" },
 				new System.Collections.Generic.Dictionary<string, string>(),
 				MoMorphTypeTags.kguidMorphPhrase.ToString(),
@@ -713,7 +713,7 @@ namespace LexTextControlsTests
 		public void CreateNewEntry_NotApplicable_AddsNoEntryRef()
 		{
 			var vernTag = Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Id;
-			var payload = new InsertEntryPayload(
+			var payload = new InsertEntryDlgPayload(
 				new System.Collections.Generic.Dictionary<string, string> { [vernTag] = "gato" },
 				new System.Collections.Generic.Dictionary<string, string>(),
 				MoMorphTypeTags.kguidMorphStem.ToString(),
@@ -731,7 +731,7 @@ namespace LexTextControlsTests
 		public void ApplyComplexFormType_UnresolvableId_AddsNoEntryRef()
 		{
 			var vernTag = Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Id;
-			var payload = new InsertEntryPayload(
+			var payload = new InsertEntryDlgPayload(
 				new System.Collections.Generic.Dictionary<string, string> { [vernTag] = "perro" },
 				new System.Collections.Generic.Dictionary<string, string>(),
 				MoMorphTypeTags.kguidMorphStem.ToString());

@@ -8,18 +8,18 @@ namespace FwAvaloniaDialogs
 {
 	/// <summary>
 	/// The reusable Add New Sense dialog body: a XAML-authored UserControl bound to
-	/// <see cref="AddNewSenseDialogViewModel"/> with compiled bindings for the read-only citation form +
+	/// <see cref="AddNewSenseDlgViewModel"/> with compiled bindings for the read-only citation form +
 	/// Create/Cancel/Help, plus the owned gloss field and grammatical-info group box hosted as code-behind children
-	/// (each is a native composite, not an MVVM-bindable control — the same pattern InsertEntryDialogView uses).
+	/// (each is a native composite, not an MVVM-bindable control — the same pattern InsertEntryDlgView uses).
 	/// Hosted as Avalonia content inside a WinForms-owned modal Form during coexistence via
 	/// <c>AvaloniaDialogHost.ShowModal</c>.
 	/// </summary>
-	public partial class AddNewSenseDialogView : UserControl
+	public partial class AddNewSenseDlgView : UserControl
 	{
 		private Border _glossHost;
 		private Border _msaHost;
 
-		public AddNewSenseDialogView()
+		public AddNewSenseDlgView()
 		{
 			DialogThemeBootstrap.Apply(this);
 			InitializeComponent();
@@ -35,7 +35,7 @@ namespace FwAvaloniaDialogs
 		/// </summary>
 		private void InjectControls()
 		{
-			var vm = DataContext as AddNewSenseDialogViewModel;
+			var vm = DataContext as AddNewSenseDlgViewModel;
 			if (_glossHost != null)
 				_glossHost.Child = vm?.GlossField;
 			if (_msaHost != null)

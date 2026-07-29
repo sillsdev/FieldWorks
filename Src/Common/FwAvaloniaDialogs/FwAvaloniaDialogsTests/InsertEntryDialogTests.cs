@@ -84,12 +84,12 @@ namespace FwAvaloniaDialogsTests
 				["guid-phrase"] = ComplexFormGating.EnabledKeepSelection
 			};
 
-		private static InsertEntryDialogInput BasicInput(
+		private static InsertEntryDlgInput BasicInput(
 			System.Func<string, (string, string)> derive = null,
 			System.Func<string, string, IReadOnlyList<EntryGoSearchResult>> searchMatches = null,
 			bool withMsa = false, bool withComplexForm = false,
 			System.Func<IReadOnlyDictionary<string, string>, string, InsertEntryMorphValidation> validate = null,
-			System.Func<string, string, string> applyMarkers = null) => new InsertEntryDialogInput
+			System.Func<string, string, string> applyMarkers = null) => new InsertEntryDlgInput
 		{
 			LexemeForm = TextField("LexemeForm", "InsertEntry.LexemeForm", "fr", "es"),
 			Gloss = TextField("Gloss", "InsertEntry.Gloss", "en"),
@@ -126,11 +126,11 @@ namespace FwAvaloniaDialogsTests
 					|| (!string.IsNullOrEmpty(gloss) && e.SubText.StartsWith(gloss, System.StringComparison.OrdinalIgnoreCase)))
 					.ToList();
 
-		private static (InsertEntryDialogView view, InsertEntryDialogViewModel vm) Show(
-			InsertEntryDialogInput input, string stageName = "InsertEntry-01-initial")
+		private static (InsertEntryDlgView view, InsertEntryDlgViewModel vm) Show(
+			InsertEntryDlgInput input, string stageName = "InsertEntry-01-initial")
 		{
-			var vm = new InsertEntryDialogViewModel(input);
-			var view = new InsertEntryDialogView { DataContext = vm };
+			var vm = new InsertEntryDlgViewModel(input);
+			var view = new InsertEntryDlgView { DataContext = vm };
 			// Match the launcher's runtime size (420x460) so snapshots reflect the real dialog, with room for the
 			// matching-entries pane below the fields.
 			AvaloniaDialogTestHarness.Realize(view, 420, 460, stageName, forceRenderTick: true);
@@ -145,12 +145,12 @@ namespace FwAvaloniaDialogsTests
 		}
 
 		// Finds the editable TextBox of a FwMultiWsTextField row by its per-WS automation id (id + "." + wsTag).
-		private static TextBox FormBox(InsertEntryDialogViewModel vm, string wsTag)
+		private static TextBox FormBox(InsertEntryDlgViewModel vm, string wsTag)
 			=> vm.LexemeFormField.GetVisualDescendants().OfType<TextBox>()
 				.First(b => Avalonia.Automation.AutomationProperties.GetAutomationId(b)
 					== "InsertEntry.LexemeForm." + wsTag);
 
-		private static TextBox GlossBox(InsertEntryDialogViewModel vm, string wsTag)
+		private static TextBox GlossBox(InsertEntryDlgViewModel vm, string wsTag)
 			=> vm.GlossField.GetVisualDescendants().OfType<TextBox>()
 				.First(b => Avalonia.Automation.AutomationProperties.GetAutomationId(b)
 					== "InsertEntry.Gloss." + wsTag);
@@ -745,7 +745,7 @@ namespace FwAvaloniaDialogsTests
 				new RegionChoiceOption("guid-phrase", "phrase")
 			};
 
-		private static InsertEntryDialogInput ComplexFormInput()
+		private static InsertEntryDlgInput ComplexFormInput()
 		{
 			var input = BasicInput(withComplexForm: true);
 			input.MorphTypes = MorphTypesWithRootAndPhrase;
@@ -861,7 +861,7 @@ namespace FwAvaloniaDialogsTests
 		}
 
 		// Selects a morph type through the picker by key (commits it, driving the gating path).
-		private static void SelectMorphType(InsertEntryDialogViewModel vm, string key)
+		private static void SelectMorphType(InsertEntryDlgViewModel vm, string key)
 		{
 			var index = vm.MorphTypePicker.CurrentItems
 				.Select((o, i) => (o, i)).First(t => t.o.Key == key).i;
@@ -883,7 +883,7 @@ namespace FwAvaloniaDialogsTests
 		[AvaloniaTest] // the VM ctor builds owned Avalonia controls — must run on the UI thread
 		public void CancelCommand_ClosesWithoutAccepting()
 		{
-			var vm = new InsertEntryDialogViewModel(BasicInput());
+			var vm = new InsertEntryDlgViewModel(BasicInput());
 			bool? closed = null;
 			vm.CloseRequested += (s, accepted) => closed = accepted;
 

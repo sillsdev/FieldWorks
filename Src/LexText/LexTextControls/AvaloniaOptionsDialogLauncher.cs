@@ -27,7 +27,7 @@ namespace SIL.FieldWorks.LexText.Controls
 	/// <summary>
 	/// Launches the Avalonia Tools → Options dialog (the replacement for <see cref="LexOptionsDlg"/>)
 	/// and applies the result to the real settings bus. The Avalonia layer (FwAvaloniaDialogs) stays
-	/// LCModel-free by editing an <see cref="OptionsState"/> DTO; this product-side launcher populates that
+	/// LCModel-free by editing an <see cref="LexOptionsDlgState"/> DTO; this product-side launcher populates that
 	/// state from the live settings and, on OK, applies it in roughly <c>LexOptionsDlg</c>'s apply order
 	/// (Privacy → Updates → UI mode → UI language → Plugins → Save → auto-open → restart prompt). It is shown
 	/// only when <c>UIMode == New</c>; Legacy keeps the WinForms dialog.
@@ -57,7 +57,7 @@ namespace SIL.FieldWorks.LexText.Controls
 	/// same session; they reopen Options afterward (now Avalonia, since UIMode is New) to do so.
 	/// </summary>
 	public sealed class AvaloniaOptionsDialogLauncher
-		: AvaloniaDialogLauncher<OptionsState, OptionsDialogViewModel, AvaloniaOptionsDialogLauncher.OptionsPayload>
+		: AvaloniaDialogLauncher<LexOptionsDlgState, LexOptionsDlgViewModel, AvaloniaOptionsDialogLauncher.OptionsPayload>
 	{
 		private const string UIModePropertyName = "UIMode";
 		private const string LegacyUIMode = "Legacy";
@@ -132,7 +132,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		protected override int DialogWidth => 430;
 		protected override int DialogHeight => 360;
 
-		protected override OptionsState BuildState()
+		protected override LexOptionsDlgState BuildState()
 		{
 			var state = BuildState(_cache, _mediator, _settings, _app, _userWs, _pluginDocs);
 			// Per-feature disable set (New mode), seeded from settings and edited by the "Manage Individual
@@ -146,7 +146,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <summary>
 		/// Opens the "Manage Individual Features" dialog seeded with <paramref name="disabledCsv"/> and returns
 		/// the edited CSV (or the same value on cancel). The Avalonia layer calls this through
-		/// <see cref="OptionsState.ManageFeatures"/> so it never references the feature catalog or an owner
+		/// <see cref="LexOptionsDlgState.ManageFeatures"/> so it never references the feature catalog or an owner
 		/// window itself. Mirrors <c>LexOptionsDlg.m_manageFeaturesButton_Click</c>.
 		/// </summary>
 		private string ShowManageFeaturesDialog(string disabledCsv)
@@ -156,22 +156,22 @@ namespace SIL.FieldWorks.LexText.Controls
 			return edited == null ? disabledCsv : EditSurfaceResolver.SerializeDisabledTools(edited);
 		}
 
-		protected override OptionsDialogViewModel CreateViewModel(OptionsState state) =>
-			new OptionsDialogViewModel(state);
+		protected override LexOptionsDlgViewModel CreateViewModel(LexOptionsDlgState state) =>
+			new LexOptionsDlgViewModel(state);
 
-		protected override AvControl CreateView(OptionsDialogViewModel viewModel) =>
-			new OptionsDialogView { DataContext = viewModel };
+		protected override AvControl CreateView(LexOptionsDlgViewModel viewModel) =>
+			new LexOptionsDlgView { DataContext = viewModel };
 
-		protected override OptionsPayload Apply(OptionsState state) =>
+		protected override OptionsPayload Apply(LexOptionsDlgState state) =>
 			Apply(_cache, _mediator, _propertyTable, _settings, _app, _userWs, state, _pluginDocs, _owner);
 
 		// ----- build the state from the live settings -----
 
-		internal static OptionsState BuildState(LcmCache cache, Mediator mediator, FwApplicationSettingsBase settings,
+		internal static LexOptionsDlgState BuildState(LcmCache cache, Mediator mediator, FwApplicationSettingsBase settings,
 			FwApp app, string userWs, IDictionary<string, XmlDocument> pluginDocs)
 		{
 			var normUserWs = NormalizeWs(userWs);
-			var state = new OptionsState
+			var state = new LexOptionsDlgState
 			{
 				AvailableUiLanguages = BuildLanguages(normUserWs, GetSatelliteResourceDirectory()),
 				UiLanguage = normUserWs,
@@ -321,7 +321,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		// ----- apply the edited state back to the live settings (mirrors LexOptionsDlg.m_btnOK_Click) -----
 
 		private static OptionsPayload Apply(LcmCache cache, Mediator mediator, PropertyTable propertyTable,
-			FwApplicationSettingsBase settings, FwApp app, string userWs, OptionsState state,
+			FwApplicationSettingsBase settings, FwApp app, string userWs, LexOptionsDlgState state,
 			IDictionary<string, XmlDocument> pluginDocs, IWin32Window owner)
 		{
 			var restartRequired = false;
@@ -419,7 +419,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// uninstalled. Internal so the diff/dispatch can be tested against temp source/target dirs without a
 		/// live mediator-driven dialog (InternalsVisibleTo("LexTextControlsTests")).
 		/// </summary>
-		internal static bool ApplyPlugins(Mediator mediator, OptionsState state, IDictionary<string, XmlDocument> pluginDocs)
+		internal static bool ApplyPlugins(Mediator mediator, LexOptionsDlgState state, IDictionary<string, XmlDocument> pluginDocs)
 		{
 			if (mediator == null || state.Plugins == null || state.Plugins.Count == 0)
 				return false;
@@ -433,11 +433,11 @@ namespace SIL.FieldWorks.LexText.Controls
 		}
 
 		/// <summary>
-		/// The pure diff/dispatch core of <see cref="ApplyPlugins(Mediator,OptionsState,IDictionary{string,XmlDocument})"/>,
+		/// The pure diff/dispatch core of <see cref="ApplyPlugins(Mediator,LexOptionsDlgState,IDictionary{string,XmlDocument})"/>,
 		/// taking the source/target roots explicitly so a test can drive install/uninstall against temp
 		/// directories instead of the real install layout. Returns true when at least one plugin changed.
 		/// </summary>
-		internal static bool ApplyPlugins(Mediator mediator, OptionsState state,
+		internal static bool ApplyPlugins(Mediator mediator, LexOptionsDlgState state,
 			IDictionary<string, XmlDocument> pluginDocs, string basePluginPath, string baseExtensionPath)
 		{
 			if (mediator == null || state.Plugins == null || state.Plugins.Count == 0)

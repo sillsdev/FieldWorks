@@ -13,12 +13,12 @@ namespace FwAvaloniaDialogs
 	/// builds this from the live cache so the Avalonia layer never sees an <c>ICmObject</c>: the read-only LEXICAL
 	/// ENTRY headword (<c>m_fwtbCitationForm</c>) and the read-only SENSES summary (<c>m_fwtbSenses</c>) are plain
 	/// display strings, and the grammatical-info section is fed exactly as the Insert Entry / Add New Sense dialogs
-	/// feed their <see cref="FwMsaGroupBox"/> — seeded from the existing MSA / morph type (the legacy
+	/// feed their <see cref="MSAGroupBox"/> — seeded from the existing MSA / morph type (the legacy
 	/// <c>m_msaGroupBox.Initialize(..., sandboxMsa)</c>).
 	///
-	/// The dialog is essentially the <see cref="FwMsaGroupBox"/> hosted over the entry's read-only context.
+	/// The dialog is essentially the <see cref="MSAGroupBox"/> hosted over the entry's read-only context.
 	/// </summary>
-	public sealed class MsaCreatorDialogInput
+	public sealed class MsaCreatorDlgInput
 	{
 		/// <summary>The dialog window title — "Create New Grammatical Info." for create, or an edit-context title.</summary>
 		public string Title { get; set; }
@@ -35,11 +35,11 @@ namespace FwAvaloniaDialogs
 		/// <summary>The help topic id for the dialog's Help button (null/empty hides Help).</summary>
 		public string HelpTopic { get; set; }
 
-		// ----- grammatical-info (MSA) section (mirrors InsertEntryDialogInput) -----
+		// ----- grammatical-info (MSA) section (mirrors InsertEntryDlgInput) -----
 
 		/// <summary>
 		/// The project's parts-of-speech hierarchy as a flat, document-order, depth-tagged <see cref="FwPosNode"/>
-		/// list, fed to BOTH POS choosers inside the hosted <see cref="FwMsaGroupBox"/>.
+		/// list, fed to BOTH POS choosers inside the hosted <see cref="MSAGroupBox"/>.
 		/// </summary>
 		public IReadOnlyList<FwPosNode> PosNodes { get; set; } = Array.Empty<FwPosNode>();
 
@@ -60,7 +60,7 @@ namespace FwAvaloniaDialogs
 
 		/// <summary>
 		/// Builds the inflectional-affix slot options for a given main-POS id (guid string). The dialog re-runs it
-		/// whenever the MSA box's main POS changes while inflectional, refeeding <see cref="FwMsaGroupBox.SetSlots"/>.
+		/// whenever the MSA box's main POS changes while inflectional, refeeding <see cref="MSAGroupBox.SetSlots"/>.
 		/// Null leaves the slot list empty.
 		/// </summary>
 		public Func<string, IReadOnlyList<FwInflectionSlot>> SlotsForPos { get; set; }
@@ -68,7 +68,7 @@ namespace FwAvaloniaDialogs
 		/// <summary>
 		/// Builds the inflection-class options for a given main-POS id (guid string) — the launcher wraps
 		/// <c>IPartOfSpeech.InflectionClassesOC</c> (incl. nested subclasses, depth-tagged). Re-run whenever the MSA
-		/// box's MAIN POS changes, refeeding <see cref="FwMsaGroupBox.SetInflectionClasses"/>. Null leaves the list
+		/// box's MAIN POS changes, refeeding <see cref="MSAGroupBox.SetInflectionClasses"/>. Null leaves the list
 		/// empty (only the "&lt;None&gt;" row).
 		/// </summary>
 		public Func<string, IReadOnlyList<FwInflectionClass>> InflectionClassesForPos { get; set; }
@@ -80,7 +80,7 @@ namespace FwAvaloniaDialogs
 		/// Builds the inflection-feature SYSTEM (a flat, document-order, depth-tagged <see cref="FwFeatureNode"/> list)
 		/// for a given main-POS id (guid string) — the launcher wraps the POS's <c>InflectableFeatsRC</c> (the lift of
 		/// <c>MsaInflectionFeatureListDlg.PopulateTreeFromPos</c>). Re-run when the MSA box's MAIN POS changes
-		/// (infl/deriv), refeeding <see cref="FwMsaGroupBox.SetInflectionFeatureNodes"/>. Null leaves the editor empty.
+		/// (infl/deriv), refeeding <see cref="MSAGroupBox.SetInflectionFeatureNodes"/>. Null leaves the editor empty.
 		/// </summary>
 		public Func<string, IReadOnlyList<FwFeatureNode>> InflectionFeaturesForPos { get; set; }
 

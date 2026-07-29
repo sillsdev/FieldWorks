@@ -21,7 +21,7 @@ namespace FwAvaloniaDialogsTests
 	/// <summary>
 	/// The reusable Add New Sense dialog: the Avalonia replacement for the legacy AddNewSenseDlg
 	/// in New-UI mode. The view-model hosts a read-only citation form, an editable gloss FwMultiWsTextField (staged
-	/// into an in-memory edit context), and the LCModel-free FwMsaGroupBox; it gates OK on a non-empty gloss
+	/// into an in-memory edit context), and the LCModel-free MSAGroupBox; it gates OK on a non-empty gloss
 	/// (ksFillInGloss parity) and snapshots the per-WS gloss + the box's FwSandboxMsa on OK. Runtime proof on a
 	/// realized headless surface, with per-stage PNGs for subjective visual review.
 	/// </summary>
@@ -48,8 +48,8 @@ namespace FwAvaloniaDialogsTests
 				values, new List<RegionChoiceOption>(), null, isEditable: true);
 		}
 
-		private static AddNewSenseDialogInput BasicInput(FwMsaType msaType = FwMsaType.Stem) =>
-			new AddNewSenseDialogInput
+		private static AddNewSenseDlgInput BasicInput(FwMsaType msaType = FwMsaType.Stem) =>
+			new AddNewSenseDlgInput
 			{
 				CitationForm = "casa",
 				Gloss = TextField("Gloss", "AddNewSense.Gloss", "en", "fr"),
@@ -58,11 +58,11 @@ namespace FwAvaloniaDialogsTests
 				SlotsForPos = _ => Slots
 			};
 
-		private static (AddNewSenseDialogView view, AddNewSenseDialogViewModel vm) Show(
-			AddNewSenseDialogInput input, string stageName = "AddNewSense-01-initial")
+		private static (AddNewSenseDlgView view, AddNewSenseDlgViewModel vm) Show(
+			AddNewSenseDlgInput input, string stageName = "AddNewSense-01-initial")
 		{
-			var vm = new AddNewSenseDialogViewModel(input);
-			var view = new AddNewSenseDialogView { DataContext = vm };
+			var vm = new AddNewSenseDlgViewModel(input);
+			var view = new AddNewSenseDlgView { DataContext = vm };
 			AvaloniaDialogTestHarness.Realize(view, 500, 360, stageName, forceRenderTick: true);
 			return (view, vm);
 		}
@@ -70,7 +70,7 @@ namespace FwAvaloniaDialogsTests
 		private static void Capture(Control view, string stageName)
 			=> AvaloniaDialogTestHarness.Recapture(view, stageName);
 
-		private static TextBox GlossBox(AddNewSenseDialogViewModel vm, string wsTag)
+		private static TextBox GlossBox(AddNewSenseDlgViewModel vm, string wsTag)
 			=> vm.GlossField.GetVisualDescendants().OfType<TextBox>()
 				.First(b => Avalonia.Automation.AutomationProperties.GetAutomationId(b)
 					== "AddNewSense.Gloss." + wsTag);
@@ -231,7 +231,7 @@ namespace FwAvaloniaDialogsTests
 		[AvaloniaTest] // the VM ctor builds owned Avalonia controls — must run on the UI thread
 		public void CancelCommand_ClosesWithoutAccepting()
 		{
-			var vm = new AddNewSenseDialogViewModel(BasicInput());
+			var vm = new AddNewSenseDlgViewModel(BasicInput());
 			bool? closed = null;
 			vm.CloseRequested += (s, accepted) => closed = accepted;
 

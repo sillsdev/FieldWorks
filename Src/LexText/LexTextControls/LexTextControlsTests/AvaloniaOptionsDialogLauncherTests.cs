@@ -350,8 +350,8 @@ namespace LexTextControlsTests
 			}
 		}
 
-		private static OptionsState StateWith(params PluginOption[] plugins) =>
-			new OptionsState { PluginsAvailable = true, Plugins = plugins.ToList() };
+		private static LexOptionsDlgState StateWith(params PluginOption[] plugins) =>
+			new LexOptionsDlgState { PluginsAvailable = true, Plugins = plugins.ToList() };
 
 		/// <summary>Builds a minimal, well-formed ExtensionManager-style manager doc (no dlls node, so install
 		/// copies only the named configfile into a temp target dir).</summary>

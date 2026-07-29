@@ -10,7 +10,7 @@ namespace FwAvaloniaDialogs
 {
 	/// <summary>
 	/// The LCModel-FREE mirror of the WinForms <c>MsaType</c> enum (LexText's <c>MsaType</c>), the morpheme
-	/// syntax-analysis class that drives <see cref="FwMsaGroupBox"/>'s adaptive layout exactly as it drives
+	/// syntax-analysis class that drives <see cref="MSAGroupBox"/>'s adaptive layout exactly as it drives
 	/// the WinForms <c>MSAGroupBox</c>. The host maps the entry's morph type to one of these (the same
 	/// mapping <c>MSAGroupBox.MorphTypePreference</c> performs) and feeds it in; the box shows the matching
 	/// widgets. <see cref="NotSet"/> is the unconfigured sentinel (legacy <c>kNotSet</c>).
@@ -32,7 +32,7 @@ namespace FwAvaloniaDialogs
 	}
 
 	/// <summary>
-	/// The lightweight, LCModel-FREE payload <see cref="FwMsaGroupBox"/> emits — the mirror of the WinForms
+	/// The lightweight, LCModel-FREE payload <see cref="MSAGroupBox"/> emits — the mirror of the WinForms
 	/// <c>SandboxGenericMSA</c> (MsaType + MainPOS + SecondaryPOS + Slot), but carrying opaque id STRINGS
 	/// instead of LCModel <c>IPartOfSpeech</c>/<c>IMoInflAffixSlot</c> objects. The launcher maps this back to a
 	/// real MSA (find-or-create) by resolving the ids through the project cache. Like the WinForms property,
@@ -94,7 +94,7 @@ namespace FwAvaloniaDialogs
 	}
 
 	/// <summary>
-	/// Which POS chooser inside <see cref="FwMsaGroupBox"/> raised a "Create a new Part of Speech..." request — the
+	/// Which POS chooser inside <see cref="MSAGroupBox"/> raised a "Create a new Part of Speech..." request — the
 	/// MAIN POS chooser (the "Category"/"Attaches to Category" field, present for every MsaType) or the SECONDARY
 	/// POS chooser (the derivational "Changes to Category" field). The host uses it to route the created node back to
 	/// the right chooser via <c>AcceptCreatedMainPos</c> / <c>AcceptCreatedSecondaryPos</c>. The merged create event
@@ -110,7 +110,7 @@ namespace FwAvaloniaDialogs
 	}
 
 	/// <summary>
-	/// A lightweight, LCModel-FREE inflection-affix slot option fed to <see cref="FwMsaGroupBox"/>'s Slot
+	/// A lightweight, LCModel-FREE inflection-affix slot option fed to <see cref="MSAGroupBox"/>'s Slot
 	/// picker (the mirror of an <c>IMoInflAffixSlot</c> the WinForms box loads into <c>m_fwcbSlots</c>). The
 	/// host builds these from the main POS's affix slots; <see cref="Id"/> is round-tripped verbatim.
 	/// </summary>
@@ -130,7 +130,7 @@ namespace FwAvaloniaDialogs
 	}
 
 	/// <summary>
-	/// A lightweight, LCModel-FREE inflection-class option fed to <see cref="FwMsaGroupBox"/>'s inflection-class
+	/// A lightweight, LCModel-FREE inflection-class option fed to <see cref="MSAGroupBox"/>'s inflection-class
 	/// picker (the mirror of an <c>IMoInflClass</c> in the selected main POS's <c>InflectionClassesOC</c>, including
 	/// nested <c>SubclassesOC</c>). The host builds these from the currently-selected main POS and re-feeds
 	/// them when the main POS changes — exactly how the slot list follows the POS. <see cref="Id"/> is round-tripped

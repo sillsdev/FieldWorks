@@ -473,7 +473,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			m_uiModeChooser.Items.Add(new UiModeMenuItem(LegacyUIMode, GetOptionString("UiModeLegacy", "Legacy")));
 			m_uiModeChooser.Items.Add(new UiModeMenuItem(NewUIMode, GetOptionString("UiModeNew", "New")));
 
-			// Parity with the Avalonia OptionsDialogView's UiModeBetaWarning note.
+			// Parity with the Avalonia LexOptionsDlgView's UiModeBetaWarning note.
 			m_uiModeBetaWarning.Left = 6;
 			m_uiModeBetaWarning.Top = 64;
 			m_uiModeBetaWarning.Width = m_uiModeGroup.Width - 18;
