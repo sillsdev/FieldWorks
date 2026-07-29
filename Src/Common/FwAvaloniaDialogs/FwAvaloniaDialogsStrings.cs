@@ -30,7 +30,7 @@ namespace FwAvaloniaDialogs
 		// General tab.
 		public static string UiLanguageLabel => Text("FwAvaloniaDialogs.UiLanguageLabel");
 		public static string UiLanguageNote => Text("FwAvaloniaDialogs.UiLanguageNote");
-		public static string LexicalEditUiLabel => Text("FwAvaloniaDialogs.LexicalEditUiLabel");
+		public static string NewUiPreviewLabel => Text("FwAvaloniaDialogs.NewUiPreviewLabel");
 		public static string UiModeLegacy => Text("FwAvaloniaDialogs.UiModeLegacy");
 		public static string UiModeNew => Text("FwAvaloniaDialogs.UiModeNew");
 		// Beta warning under the UI-mode chooser — parity with WinForms LexOptionsDlg m_uiModeBetaWarning.
