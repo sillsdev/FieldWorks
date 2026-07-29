@@ -24,7 +24,7 @@ namespace FwAvaloniaTests
 	/// closed at the rendering edge.
 	/// </summary>
 	[TestFixture]
-	public class RegionOverrideRenderingTests
+	public class DetailOverrideRenderingTests
 	{
 		private static DetailField TextField(string id, string label)
 			=> new DetailField(id, label, label, null, DetailFieldKind.Text,

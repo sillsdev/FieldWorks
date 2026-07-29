@@ -102,7 +102,7 @@ namespace SIL.FieldWorks.XWorks
 	/// two consumers' behavior depends on.
 	/// </summary>
 	[TestFixture]
-	public class EditorKindMapRegionCategoryTests
+	public class EditorKindMapDetailCategoryTests
 	{
 		[TestCase("multistring", DetailEditorCategory.Text)]
 		[TestCase("string", DetailEditorCategory.Text)]
@@ -127,7 +127,7 @@ namespace SIL.FieldWorks.XWorks
 		[TestCase("integer", DetailEditorCategory.Other)]
 		[TestCase("autocustom", DetailEditorCategory.Other)]
 		[TestCase("no-such-editor", DetailEditorCategory.Other)]
-		public void ClassifyRegionFieldKind_RoutesLikeTheLegacyDispatch(string rawEditor,
+		public void ClassifyDetailFieldKind_RoutesLikeTheLegacyDispatch(string rawEditor,
 			DetailEditorCategory expected)
 		{
 			// Case-insensitive, like DataTree's editor.ToLower() dispatch.

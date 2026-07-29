@@ -22,7 +22,7 @@ namespace SIL.FieldWorks.XWorks
 	/// a blanket read-only placeholder.
 	/// </summary>
 	[TestFixture]
-	public class FullEntryRegionVoiceWsTests : MemoryOnlyBackendProviderTestBase
+	public class DetailComposerVoiceWsTests : MemoryOnlyBackendProviderTestBase
 	{
 		private ILexEntry m_entry;
 		private CoreWritingSystemDefinition m_audioWs;

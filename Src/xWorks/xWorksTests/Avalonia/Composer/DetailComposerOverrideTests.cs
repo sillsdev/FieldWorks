@@ -23,7 +23,7 @@ namespace SIL.FieldWorks.XWorks
 	/// (which has its own round-trip tests in FwAvaloniaTests).
 	/// </summary>
 	[TestFixture]
-	public class FullEntryRegionOverrideTests : MemoryOnlyBackendProviderTestBase
+	public class DetailComposerOverrideTests : MemoryOnlyBackendProviderTestBase
 	{
 		private ILexEntry m_entry;
 		private IMoStemAllomorph m_morph;

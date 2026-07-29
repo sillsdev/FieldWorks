@@ -22,7 +22,7 @@ namespace FwAvaloniaTests
 	/// End-to-end selection behaviour of the wired-up multistring value box (<see cref="FwMultiWsTextField"/>):
 	/// the seam where our <c>DetailBidirectionalTextNavigation</c> override meets the live Avalonia
 	/// <see cref="TextBox"/> through real headless keyboard/pointer input. The pure navigation math is covered
-	/// in RegionModelTests; these drive the actual focused box so a regression in the handler wiring (routing,
+	/// in DetailModelTests; these drive the actual focused box so a regression in the handler wiring (routing,
 	/// caret/selection ordering) is caught where the pure-function tests cannot see it. String literals with
 	/// non-ASCII clusters use explicit \u escapes so the source keeps the exact code units under test.
 	/// </summary>

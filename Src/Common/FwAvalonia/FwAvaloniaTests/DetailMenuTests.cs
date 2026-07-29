@@ -106,7 +106,7 @@ namespace FwAvaloniaTests
 	/// local Copy flyout).
 	/// </summary>
 	[TestFixture]
-	public class RegionMenuRequestTests
+	public class DetailMenuRequestTests
 	{
 		private static DetailField Field(string id, DetailFieldKind kind,
 			string menuId = null, string contextMenuId = null, string hotlinksId = null,
@@ -323,7 +323,7 @@ namespace FwAvaloniaTests
 		// The host-resolved xCore items render as a native Avalonia flyout: items in order,
 		// separators, submenus, disabled state, checkmarks, and click dispatching the execute action.
 		[AvaloniaTest]
-		public void RegionMenuFlyout_BuildsItems_AndClickExecutes()
+		public void DetailMenuFlyout_BuildsItems_AndClickExecutes()
 		{
 			var executed = 0;
 			var items = new List<DetailMenuItem>
@@ -362,7 +362,7 @@ namespace FwAvaloniaTests
 		// WinForms menus (FwAvaloniaDensity tokens), never the (much taller) Fluent theme defaults —
 		// nested submenu items included.
 		[AvaloniaTest]
-		public void RegionMenuFlyout_ItemDensity_IsPinnedCompact_IncludingSubmenus()
+		public void DetailMenuFlyout_ItemDensity_IsPinnedCompact_IncludingSubmenus()
 		{
 			var flyout = DetailMenuFlyout.Build(new List<DetailMenuItem>
 			{

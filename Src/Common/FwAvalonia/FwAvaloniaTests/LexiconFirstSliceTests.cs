@@ -71,7 +71,7 @@ namespace FwAvaloniaTests
 		}
 
 		[Test]
-		public void CompiledDefinition_MapsToRegionFields_WithChooserAndTextKinds()
+		public void CompiledDefinition_MapsToDetailFields_WithChooserAndTextKinds()
 		{
 			var definition = LexiconFirstSlice.CompileFromLayoutDirectory(ShippedPartsDirectory());
 			Assert.That(definition, Is.Not.Null);

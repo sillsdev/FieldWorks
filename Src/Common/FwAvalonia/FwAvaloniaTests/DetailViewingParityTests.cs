@@ -21,7 +21,7 @@ namespace FwAvaloniaTests
 	/// (including initial collapsed state from the layout), and checkbox rendering for booleans.
 	/// </summary>
 	[TestFixture]
-	public class RegionViewingParityTests
+	public class DetailViewingParityTests
 	{
 		private static DetailField Header(string id, string label, int indent,
 			bool expanded = true) => new DetailField(
@@ -64,7 +64,7 @@ namespace FwAvaloniaTests
 		}
 
 		[AvaloniaTest]
-		public void Region_ScrollsLikeLegacyAutoScroll()
+		public void Detail_ScrollsLikeLegacyAutoScroll()
 		{
 			var many = Enumerable.Range(0, 60).Select(i => Text($"f{i}", $"Field {i}", 0)).ToArray();
 			var view = Show(many);

@@ -22,7 +22,7 @@ namespace FwAvaloniaTests
 	/// destroy the editor the user just moved into.
 	/// </summary>
 	[TestFixture]
-	public class RegionFocusMemoryTests
+	public class DetailFocusMemoryTests
 	{
 		private static ViewDefinitionModel Definition() => new ViewDefinitionModel(
 			"LexEntry", "identity", "detail",

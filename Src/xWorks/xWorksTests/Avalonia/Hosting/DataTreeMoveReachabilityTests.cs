@@ -30,7 +30,7 @@ namespace SIL.FieldWorks.XWorks
 	/// on the Avalonia menu).
 	/// </summary>
 	[TestFixture]
-	public class RegionDataTreeMoveReachabilityTests
+	public class DataTreeMoveReachabilityTests
 	{
 		private static string LexiconConfigDir => FwDirectoryFinder.GetCodeSubDirectory(
 			@"Language Explorer\Configuration\Lexicon");

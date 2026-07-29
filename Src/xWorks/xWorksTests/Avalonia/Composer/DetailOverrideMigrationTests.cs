@@ -18,7 +18,7 @@ namespace SIL.FieldWorks.XWorks
 	/// thin XmlNode→XElement bridge over this same core, build-verified by the xWorks build).
 	/// </summary>
 	[TestFixture]
-	public class RegionOverrideMigrationTests
+	public class DetailOverrideMigrationTests
 	{
 		private const string PartsXml = @"
 <PartInventory><bin>

@@ -9,7 +9,7 @@ using SIL.FieldWorks.Common.FwAvalonia;
 namespace FwAvaloniaTests
 {
 	[TestFixture]
-	public class RegionHostControlTests
+	public class DetailHostControlTests
 	{
 		// A region pane host claims the arrow keys (never Enter) for the hosted Avalonia surface. The
 		// claiming decision is shared by every region host through InputKeyClaimPolicy; the pane case

@@ -41,7 +41,7 @@ namespace FwAvaloniaTests
 	}
 
 	[TestFixture]
-	public class RegionModelProjectorTests
+	public class DetailModelProjectorTests
 	{
 		private static ViewDefinitionModel SampleDefinition()
 		{
@@ -341,7 +341,7 @@ namespace FwAvaloniaTests
 	}
 
 	[TestFixture]
-	public class RegionDataTreeTests
+	public class DataTreeTests
 	{
 		private static ViewDefinitionModel SampleDefinition() => new ViewDefinitionModel(
 			"LexEntry", "identity", "detail",
@@ -357,7 +357,7 @@ namespace FwAvaloniaTests
 			new List<ViewDiagnostic>());
 
 		[AvaloniaTest]
-		public void RegionView_RendersFields_WithStableAutomationIds()
+		public void DetailView_RendersFields_WithStableAutomationIds()
 		{
 			var model = DetailModelProjector.FromViewDefinition(SampleDefinition(), new FakeDetailValueProvider());
 			var view = new DataTree(model);
@@ -385,7 +385,7 @@ namespace FwAvaloniaTests
 	/// lossy read-only guard.
 	/// </summary>
 	[TestFixture]
-	public class RegionSpanFormattingTests
+	public class DetailSpanFormattingTests
 	{
 		private static DetailRichTextValue TwoRunDog() => DetailRichTextEditAlgorithms.FromRuns("dog", new[]
 		{
@@ -533,7 +533,7 @@ namespace FwAvaloniaTests
 	/// reports the common style across the span (null when mixed/none).
 	/// </summary>
 	[TestFixture]
-	public class RegionSpanNamedStyleTests
+	public class DetailSpanNamedStyleTests
 	{
 		// "do" (plain) + "g" (Emphasis) — a run boundary at index 2.
 		private static DetailRichTextValue TwoRunDog() => DetailRichTextEditAlgorithms.FromRuns("dog", new[]
@@ -658,7 +658,7 @@ namespace FwAvaloniaTests
 	/// reports the common writing system across the span (null when mixed).
 	/// </summary>
 	[TestFixture]
-	public class RegionSpanWritingSystemTests
+	public class DetailSpanWritingSystemTests
 	{
 		// "do" (qaa-x-one) + "g" (qaa-x-two) — a run boundary at index 2.
 		private static DetailRichTextValue TwoRunDog() => DetailRichTextEditAlgorithms.FromRuns("dog", new[]

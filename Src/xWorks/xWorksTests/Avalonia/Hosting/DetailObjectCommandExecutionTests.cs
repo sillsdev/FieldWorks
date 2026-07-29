@@ -44,7 +44,7 @@ namespace SIL.FieldWorks.XWorks
 	/// </summary>
 	[TestFixture]
 	[Apartment(System.Threading.ApartmentState.STA)]
-	public class RegionObjectCommandExecutionTests : XWorksAppTestBase
+	public class DetailObjectCommandExecutionTests : XWorksAppTestBase
 	{
 		private PropertyTable m_propertyTable;
 		private List<ICmObject> m_createdObjects;
@@ -118,7 +118,7 @@ namespace SIL.FieldWorks.XWorks
 		// ----------------------------------------------------------------------------------------
 
 		[Test]
-		public void InsertSense_FromSenseMenu_AddsSenseToModel_AndComposedRegionReflectsIt()
+		public void InsertSense_FromSenseMenu_AddsSenseToModel_AndComposedDetailReflectsIt()
 		{
 			var sensesBefore = m_entry.SensesOS.Count;
 			var senseHeadersBefore = ComposeSenseHeaderCount();
@@ -163,7 +163,7 @@ namespace SIL.FieldWorks.XWorks
 		// headlessly, so the core execution+refresh seam is still covered.
 		[Test]
 		[Explicit("Requires the live (laid-out, visible) legacy DataTree menu-display path; see note above. Runs in the desktop environment.")]
-		public void DeleteSense_RemovesSenseFromModel_AndComposedRegionReflectsIt()
+		public void DeleteSense_RemovesSenseFromModel_AndComposedDetailReflectsIt()
 		{
 			AddSense("extra gloss");
 			var sensesBefore = m_entry.SensesOS.Count;

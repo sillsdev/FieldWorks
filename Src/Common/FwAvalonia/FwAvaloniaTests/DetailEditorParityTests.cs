@@ -24,7 +24,7 @@ namespace FwAvaloniaTests
 	/// FwReferenceVectorField.Dispose detaches every handler it wired (count >0 → 0).
 	/// </summary>
 	[TestFixture]
-	public class RegionEditorParityTests
+	public class DetailEditorParityTests
 	{
 		// ---- The importer carries the enumComboBox stringList ----
 

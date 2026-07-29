@@ -24,7 +24,7 @@ namespace SIL.FieldWorks.XWorks
 	/// synchronously once per notification.
 	/// </summary>
 	[TestFixture]
-	public class RegionEditGuardAndSchedulingTests : MemoryOnlyBackendProviderTestBase
+	public class DetailEditGuardAndSchedulingTests : MemoryOnlyBackendProviderTestBase
 	{
 		private ILexEntry m_entry;
 
@@ -47,7 +47,7 @@ namespace SIL.FieldWorks.XWorks
 		private LexiconFirstSliceEditContext OpenSessionWith(string text)
 		{
 			var context = new LexiconFirstSliceEditContext(m_entry, Cache);
-			Assert.That(context.TrySetText(RegionEditContextEditingTests.F("Form"), "vern", text), Is.True);
+			Assert.That(context.TrySetText(DetailEditContextEditingTests.F("Form"), "vern", text), Is.True);
 			Assert.That(context.IsOpen, Is.True);
 			return context;
 		}

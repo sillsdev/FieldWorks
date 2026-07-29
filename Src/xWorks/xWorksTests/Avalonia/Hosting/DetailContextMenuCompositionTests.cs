@@ -15,7 +15,7 @@ namespace SIL.FieldWorks.XWorks
 	/// appear twice on a bridged row. These tests prove the composition adds at most one of the two.
 	/// </summary>
 	[TestFixture]
-	public class RegionContextMenuCompositionTests
+	public class DetailContextMenuCompositionTests
 	{
 		[Test]
 		public void MultiStringRow_AddsMultiStringSliceButNotObject()

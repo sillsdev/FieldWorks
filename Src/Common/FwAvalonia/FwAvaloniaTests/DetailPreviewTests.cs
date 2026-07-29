@@ -20,7 +20,7 @@ namespace FwAvaloniaTests
 	/// These keep the preview path honest without preserving a second detached slice/editor stack.
 	/// </summary>
 	[TestFixture]
-	public class RegionPreviewTests
+	public class DetailPreviewTests
 	{
 		private static Window ShowPreview(string dataMode = "sample")
 		{
@@ -39,7 +39,7 @@ namespace FwAvaloniaTests
 				.First(control => AutomationProperties.GetAutomationId(control) == automationId);
 
 		[AvaloniaTest]
-		public void Preview_RendersTheSharedRegionEditors()
+		public void Preview_RendersTheSharedDetailEditors()
 		{
 			var window = ShowPreview();
 			Assert.That(Find<DataTree>(window, "RegionDataTree"), Is.Not.Null);
