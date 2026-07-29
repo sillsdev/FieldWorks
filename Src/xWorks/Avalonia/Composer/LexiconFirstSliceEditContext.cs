@@ -12,13 +12,13 @@ namespace SIL.FieldWorks.XWorks
 {
 	/// <summary>
 	/// The product <see cref="IDetailEditContext"/> for the LexEntry first slice (tasks 6.8/6.10):
-	/// stages writes directly into LCModel inside a lazily opened <see cref="LcmRegionEditSession"/>
-	/// (fenced undo task, owned by <see cref="RegionEditContextBase"/>), validates required fields,
+	/// stages writes directly into LCModel inside a lazily opened <see cref="LcmDetailEditSession"/>
+	/// (fenced undo task, owned by <see cref="DetailEditContextBase"/>), validates required fields,
 	/// and commits/cancels the fence. Field names match the compiled first-slice definition
 	/// (`Form`/`Gloss`/`MorphType`). Detached DTO editing remains preview-only; this context is the
 	/// real domain write path.
 	/// </summary>
-	public sealed class LexiconFirstSliceEditContext : RegionEditContextBase
+	public sealed class LexiconFirstSliceEditContext : DetailEditContextBase
 	{
 		public LexiconFirstSliceEditContext(ILexEntry entry, LcmCache cache)
 			: base(cache, entry)
@@ -26,19 +26,19 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <inheritdoc />
-		public override bool TrySetText(DetailField regionField, string ws, string value)
+		public override bool TrySetText(DetailField detailField, string ws, string value)
 		{
-			if (regionField != null && regionField.Values.Any(v => v.RequiresRichEditor))
+			if (detailField != null && detailField.Values.Any(v => v.RequiresRichEditor))
 				return false;
 
-			switch (regionField?.Field)
+			switch (detailField?.Field)
 			{
 				case "Form":
 				{
 					if (!TryResolveWsHandle(ws, vernacular: true, out var wsHandle))
 						return false;
 					// ITEM 1: name the field in the undo label (e.g. "Undo change to Lexeme Form").
-					EnsureOpen(FieldLabel(regionField));
+					EnsureOpen(FieldLabel(detailField));
 					var text = TsStringUtils.MakeString(value ?? string.Empty, wsHandle);
 					// Mirror the read fallback: entries without a lexeme form object edit the citation form.
 					if (Entry.LexemeFormOA != null)
@@ -53,7 +53,7 @@ namespace SIL.FieldWorks.XWorks
 						return false;
 					if (!TryResolveWsHandle(ws, vernacular: false, out var wsHandle))
 						return false;
-					EnsureOpen(FieldLabel(regionField));
+					EnsureOpen(FieldLabel(detailField));
 					Entry.SensesOS[0].Gloss.set_String(wsHandle, TsStringUtils.MakeString(value ?? string.Empty, wsHandle));
 					return true;
 				}
@@ -62,20 +62,20 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		public override bool TrySetRichText(DetailField regionField, string ws,
+		public override bool TrySetRichText(DetailField detailField, string ws,
 			DetailRichTextValue value)
 		{
-			if (regionField != null && regionField.Values.Any(v => !v.CanEditRichText))
+			if (detailField != null && detailField.Values.Any(v => !v.CanEditRichText))
 				return false;
 
-			switch (regionField?.Field)
+			switch (detailField?.Field)
 			{
 				case "Form":
 				{
 					if (!TryResolveWsHandle(ws, vernacular: true, out var wsHandle))
 						return false;
-					EnsureOpen(FieldLabel(regionField));
-					var text = RegionRichTextAdapter.ToTsString(value, Cache.WritingSystemFactory, wsHandle);
+					EnsureOpen(FieldLabel(detailField));
+					var text = DetailRichTextAdapter.ToTsString(value, Cache.WritingSystemFactory, wsHandle);
 					if (Entry.LexemeFormOA != null)
 						Entry.LexemeFormOA.Form.set_String(wsHandle, text);
 					else
@@ -88,9 +88,9 @@ namespace SIL.FieldWorks.XWorks
 						return false;
 					if (!TryResolveWsHandle(ws, vernacular: false, out var wsHandle))
 						return false;
-					EnsureOpen(FieldLabel(regionField));
+					EnsureOpen(FieldLabel(detailField));
 					Entry.SensesOS[0].Gloss.set_String(wsHandle,
-						RegionRichTextAdapter.ToTsString(value, Cache.WritingSystemFactory, wsHandle));
+						DetailRichTextAdapter.ToTsString(value, Cache.WritingSystemFactory, wsHandle));
 					return true;
 				}
 				default:
@@ -103,7 +103,7 @@ namespace SIL.FieldWorks.XWorks
 		// the user-editable Abbreviation (which can collide) and the legacy "vern"/"anal" aliases
 		// from the fixed first-slice definition are accepted as fallbacks. Any OTHER unknown key is
 		// rejected — a silent write to the DEFAULT alternative is worse than no
-		// write, and it matches ComposedRegionEditContext, which also rejects unknown keys.
+		// write, and it matches ComposedDetailEditContext, which also rejects unknown keys.
 		private bool TryResolveWsHandle(string ws, bool vernacular, out int wsHandle)
 		{
 			var container = Cache.ServiceLocator.WritingSystems;
@@ -137,9 +137,9 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <inheritdoc />
-		public override bool TrySetOption(DetailField regionField, string optionKey)
+		public override bool TrySetOption(DetailField detailField, string optionKey)
 		{
-			if (regionField?.Field != "MorphType" || Entry.LexemeFormOA == null)
+			if (detailField?.Field != "MorphType" || Entry.LexemeFormOA == null)
 				return false;
 			if (!Guid.TryParse(optionKey, out var guid))
 				return false;
@@ -148,13 +148,13 @@ namespace SIL.FieldWorks.XWorks
 			if (!repository.TryGetObject(guid, out var morphType))
 				return false;
 
-			EnsureOpen(FieldLabel(regionField));
+			EnsureOpen(FieldLabel(detailField));
 			Entry.LexemeFormOA.MorphTypeRA = morphType;
 			return true;
 		}
 
 		// ITEM 1: the human-readable field label that names the undo step, falling back to the field name.
-		private static string FieldLabel(DetailField regionField)
-			=> string.IsNullOrEmpty(regionField?.Label) ? regionField?.Field : regionField.Label;
+		private static string FieldLabel(DetailField detailField)
+			=> string.IsNullOrEmpty(detailField?.Label) ? detailField?.Field : detailField.Label;
 	}
 }

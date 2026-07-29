@@ -62,9 +62,9 @@ namespace SIL.FieldWorks.XWorks
 			return ler;
 		}
 
-		private ComposedRegion Compose() => RegionComposer.Compose(m_component, Cache);
+		private ComposedDetail Compose() => DetailComposer.Compose(m_component, Cache);
 
-		private static DetailField FindField(ComposedRegion composed, string field)
+		private static DetailField FindField(ComposedDetail composed, string field)
 			=> composed.Model.Fields.SingleOrDefault(f => f.Field == field
 				&& f.Kind == DetailFieldKind.ReferenceVector);
 
@@ -233,7 +233,7 @@ namespace SIL.FieldWorks.XWorks
 				variantRef.ComponentLexemesRS.Add(referenced);
 			});
 
-			var composed = RegionComposer.Compose(referenced, Cache);
+			var composed = DetailComposer.Compose(referenced, Cache);
 			var field = composed.Model.Fields.FirstOrDefault(f => f.Field == "VariantFormEntryBackRefs"
 				&& f.Kind == DetailFieldKind.ReferenceVector);
 			if (field != null)

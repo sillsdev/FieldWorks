@@ -25,8 +25,8 @@ namespace SIL.FieldWorks.XWorks
 	/// <summary>
 	/// INTEGRATION on ONE realized region surface: a single <see cref="DataTree"/>
 	/// holding a sibling multistring (Citation Form) row AND an editable structured-text (StText) row,
-	/// driven through the REAL <see cref="ComposedRegionEditContext"/> over an in-memory LCModel (the same
-	/// fenced <see cref="LcmRegionEditSession"/> staging the production composer wires). These exercise
+	/// driven through the REAL <see cref="ComposedDetailEditContext"/> over an in-memory LCModel (the same
+	/// fenced <see cref="LcmDetailEditSession"/> staging the production composer wires). These exercise
 	/// StText editing COMBINED with other detail-view editing and assert:
 	/// (a) each change stages / commits correctly,
 	/// (b) undo grouping is correct across the combined gestures (text edits coalesce into one focus-loss
@@ -84,8 +84,8 @@ namespace SIL.FieldWorks.XWorks
 
 		// A region model with a sibling multistring (Citation Form) row + a StructuredText (Discussion)
 		// row, plus the composed edit context whose setters mutate the real LCModel exactly as
-		// RegionComposer wires them. This is the production seam, not a stand-in.
-		private (DetailModel Model, ComposedRegionEditContext Context) BuildSurface()
+		// DetailComposer wires them. This is the production seam, not a stand-in.
+		private (DetailModel Model, ComposedDetailEditContext Context) BuildSurface()
 		{
 			var citation = new DetailField(CitationStableId, "Citation Form", "CitationForm", null,
 				DetailFieldKind.Text, EditorClassification.Known, "CitationForm", null, SurfaceRouting.Product,
@@ -94,7 +94,7 @@ namespace SIL.FieldWorks.XWorks
 
 			var paragraphs = m_stText.ParagraphsOS.OfType<IStTxtPara>()
 				.Select(p => new DetailParagraph(
-					RegionRichTextAdapter.FromTsString(p.Contents, Cache.WritingSystemFactory), p.StyleName))
+					DetailRichTextAdapter.FromTsString(p.Contents, Cache.WritingSystemFactory), p.StyleName))
 				.ToList();
 			var stTextField = new DetailField(StTextStableId, "Discussion", "Discussion", null,
 				DetailFieldKind.StructuredText, EditorClassification.Known, "Discussion", null,
@@ -129,7 +129,7 @@ namespace SIL.FieldWorks.XWorks
 						while (m_stText.ParagraphsOS.Count <= index)
 							m_stText.InsertNewTextPara(m_stText.ParagraphsOS.Count, null);
 						((IStTxtPara)m_stText.ParagraphsOS[index]).Contents =
-							RegionRichTextAdapter.ToTsString(value, wsf, defaultWs);
+							DetailRichTextAdapter.ToTsString(value, wsf, defaultWs);
 						return true;
 					},
 					ParagraphStyle = (index, style) =>
@@ -156,7 +156,7 @@ namespace SIL.FieldWorks.XWorks
 				}
 			};
 
-			var context = new ComposedRegionEditContext(Cache, m_entry, handlers);
+			var context = new ComposedDetailEditContext(Cache, m_entry, handlers);
 			return (model, context);
 		}
 
@@ -176,7 +176,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			public Window Window;
 			public Control Root;
-			public ComposedRegionEditContext Context;
+			public ComposedDetailEditContext Context;
 			public int Rebuilds;
 
 			// Mirrors DataTree.OnSave for a structural gesture: validation-gated commit of the
@@ -196,7 +196,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		private Surface ShowSurface(DetailModel model, ComposedRegionEditContext context)
+		private Surface ShowSurface(DetailModel model, ComposedDetailEditContext context)
 		{
 			var surface = new Surface { Context = context };
 			var citationField = model.Fields[0];

@@ -19,7 +19,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 		// The splitter (label/value column) width the user dragged, remembered across re-shows for
 		// THIS host only — deliberately per-instance, never a process-global static. Used only
 		// as the in-process fallback when the host (RecordEditView) supplies no session-persistence
-		// hooks; the product host routes a PropertyTable LocalSetting through ShowRegion so the width
+		// hooks; the product host routes a PropertyTable LocalSetting through ShowDetail so the width
 		// also survives across SESSIONS, mirroring legacy slice-splitter persistence.
 		private double? _rememberedLabelColumnWidth;
 
@@ -30,7 +30,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 			AccessibleDescription = FwAvaloniaStrings.AvaloniaHostName;
 		}
 
-		public void ShowRegion(DetailModel region, IDetailEditContext editContext = null,
+		public void ShowDetail(DetailModel detail, IDetailEditContext editContext = null,
 			Action<string> writingSystemFocused = null,
 			Func<string, bool?> getExpansionState = null,
 			Action<string, bool> expansionChanged = null,
@@ -40,13 +40,13 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 			Func<double?> getLabelColumnWidth = null,
 			Action<double> labelColumnWidthChanged = null)
 		{
-			if (region == null) throw new ArgumentNullException(nameof(region));
+			if (detail == null) throw new ArgumentNullException(nameof(detail));
 			// Splitter position persists per-HOST across re-shows: this long-lived host owns
 			// the in-process remembered width, so each window/preview keeps its own — no process-global
 			// field. When the product host supplies persistence hooks, the read/write chains
 			// through them too, so a width dragged in one session is restored in the next; otherwise it
 			// falls back to the process-only field (e.g. the preview host / headless tests).
-			var view = new DataTree(region, editContext, writingSystemFocused,
+			var view = new DataTree(detail, editContext, writingSystemFocused,
 				getExpansionState, expansionChanged, menuRequested, linkRequested, clipboard,
 				() => getLabelColumnWidth?.Invoke() ?? _rememberedLabelColumnWidth,
 				w =>
@@ -54,7 +54,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 					_rememberedLabelColumnWidth = w;
 					labelColumnWidthChanged?.Invoke(w);
 				});
-			view.EditCompleted += (s, e) => RaiseRegionEditCompleted();
+			view.EditCompleted += (s, e) => RaiseDetailEditCompleted();
 
 			var focusMemento = DetailFocusMemory.Capture(CurrentContent);
 			if (focusMemento != null)

@@ -247,7 +247,7 @@ namespace SIL.FieldWorks.XWorks
 			// Auto-save (14.4): leaving the tool/area settles any open fenced session the same way
 			// legacy slices save as the user moves on. Unconditional (the helper no-ops when no
 			// session is open), so a session that survived a surface flip still settles safely.
-			SettleRegionEdits();
+			SettleDetailEdits();
 			if (!ShouldUseAvaloniaLexiconEdit && m_dataEntryForm != null)
 			{
 				m_dataEntryForm.PrepareToGoAway();
@@ -276,7 +276,7 @@ namespace SIL.FieldWorks.XWorks
 			if (name != null && name.StartsWith("ShowHiddenFields-", StringComparison.Ordinal))
 			{
 				if (ShouldUseAvaloniaLexiconEdit)
-					RefreshAvaloniaRegion();
+					RefreshAvaloniaDetail();
 				return;
 			}
 
@@ -291,7 +291,7 @@ namespace SIL.FieldWorks.XWorks
 
 			// Settle any open fenced session BEFORE flipping the surface — without this, flipping
 			// UIMode mid-edit would let Clerk.SaveOnChangeRecord force-commit invalid staged state.
-			SettleRegionEdits();
+			SettleDetailEdits();
 			SetEditSurface(newSurface);
 			// Flipping AWAY from the Avalonia surface tears down its PropChanged/undo/deactivate
 			// listeners and host NOW (symmetric with RecordBrowseView), not deferred to Dispose — so the
@@ -376,7 +376,7 @@ namespace SIL.FieldWorks.XWorks
 			// RecordClerk.SaveOnChangeRecord force-EndUndoTasks any open undo task wholesale
 			// (LT-16673), which would commit invalid staged state past the validation gate.
 			// Unconditional: a no-op while legacy is active (no fenced session can be open).
-			SettleRegionEdits();
+			SettleDetailEdits();
 			bool oldSuppressSaveOnChangeRecord = Clerk.SuppressSaveOnChangeRecord;
 			Clerk.SuppressSaveOnChangeRecord = rni.SuppressSaveOnChangeRecord;
 			PrepCacheForNewRecord();
@@ -388,7 +388,7 @@ namespace SIL.FieldWorks.XWorks
 				{
 					// Active-host contract: do not touch the legacy DataTree while Avalonia is active.
 					// The record may be gone (deleted elsewhere); cancel rather than orphan the session.
-					m_regionEditContext.Clear();
+					m_detailEditContext.Clear();
 					EnsureAvaloniaSurfaceActive();
 					m_avaloniaEntryForm.Clear();
 				}

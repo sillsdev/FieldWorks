@@ -57,7 +57,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			Assert.That(m_audioWs.IsVoice, Is.True, "precondition: the writing system is a voice WS");
 
-			var composed = RegionComposer.Compose(m_entry, Cache);
+			var composed = DetailComposer.Compose(m_entry, Cache);
 			Assert.That(composed, Is.Not.Null);
 
 			// Find a composed text row that carries a value for the voice writing system.

@@ -42,7 +42,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		/// <summary>
 		/// A plugin-claimed custom editor: the row carries a
 		/// <see cref="DetailField.ControlFactory"/> built by the composer from the
-		/// claiming <c>IRegionEditorPlugin</c>; the view renders the factory's control in the value
+		/// claiming <c>ISlicePlugin</c>; the view renders the factory's control in the value
 		/// column at the slice's real position, falling back to the unsupported rendering when the
 		/// factory is missing or fails.
 		/// </summary>
@@ -202,7 +202,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		/// Whether at least one run carries a TsString text property the <see cref="DetailTextRun"/>
 		/// model does NOT round-trip (e.g. foreground/background colour, character offset,
 		/// super/subscript — anything beyond ws/named-style/font-family/font-size/bold/italic/underline/
-		/// object-data). The neutral run-replay in <c>RegionRichTextAdapter.ToTsString</c> re-emits only
+		/// object-data). The neutral run-replay in <c>DetailRichTextAdapter.ToTsString</c> re-emits only
 		/// the supported set, so a first edit (which skips the lossless RichXml fast-path) would silently
 		/// drop the extra property. Such a value is shown read-only with the embedded-object tooltip
 		/// rather than corrupting on edit; the lossless RichXml round-trip still drives full-fidelity
@@ -523,7 +523,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 	/// Which character-formatting attribute a span-formatting gesture toggles: the
 	/// supported, round-tripped emphasis set (<see cref="DetailTextRun.Bold"/>/<see cref="DetailTextRun.Italic"/>/
 	/// <see cref="DetailTextRun.Underline"/>). These are exactly the three int props
-	/// <c>RegionRichTextAdapter.ToTsString</c> re-emits, so a formatted run round-trips losslessly.
+	/// <c>DetailRichTextAdapter.ToTsString</c> re-emits, so a formatted run round-trips losslessly.
 	/// </summary>
 	public enum DetailRunFormat
 	{
@@ -554,7 +554,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		/// <para>A zero-length (collapsed) selection — after clamping/snapping — is a no-op (the original
 		/// value is returned); there is no pending caret format.</para>
 		/// <para>The result intentionally carries NO <c>RichXml</c>: the lossless XML fast-path in
-		/// <c>RegionRichTextAdapter.ToTsString</c> would otherwise re-emit the ORIGINAL runs (the plain
+		/// <c>DetailRichTextAdapter.ToTsString</c> would otherwise re-emit the ORIGINAL runs (the plain
 		/// text is unchanged), dropping the new emphasis. Clearing it forces the run-replay path, which
 		/// re-emits the bold/italic/underline the runs now carry.</para>
 		/// </summary>
@@ -680,7 +680,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		/// every run fully covered by the (cluster-snapped) span has its
 		/// <see cref="DetailTextRun.WritingSystemTag"/> set to <paramref name="wsTag"/> while runs outside
 		/// the span keep their metadata untouched. The per-run ws tag is exactly what
-		/// <c>RegionRichTextAdapter.ToTsString</c> re-emits as <c>ktptWs</c>, so a retagged run round-trips
+		/// <c>DetailRichTextAdapter.ToTsString</c> re-emits as <c>ktptWs</c>, so a retagged run round-trips
 		/// losslessly into the product <c>ITsString</c>.
 		/// <para>A null/empty <paramref name="wsTag"/> is a no-op (a run must always carry a writing system;
 		/// the picker only offers real project writing systems, never a "clear").</para>
@@ -1405,7 +1405,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 	/// <summary>
 	/// One project writing system the per-run WS retag picker can offer (its stable IETF tag
 	/// plus a display name). The tag is what <see cref="DetailTextRun.WritingSystemTag"/> carries and
-	/// what <c>RegionRichTextAdapter.ToTsString</c> re-emits as <c>ktptWs</c>; the display name is what
+	/// what <c>DetailRichTextAdapter.ToTsString</c> re-emits as <c>ktptWs</c>; the display name is what
 	/// the picker shows. Kept LCModel-free so the composer is the only edge that knows about the cache.
 	/// </summary>
 	public sealed class DetailWritingSystemOption

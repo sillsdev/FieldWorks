@@ -42,8 +42,8 @@ namespace SIL.FieldWorks.XWorks
 				nc.SegmentsRC.Add(p);
 			});
 
-			var composed = RegionComposer.Compose(nc, Cache, layoutName: "Edit",
-				plugins: RegionEditorPluginRegistry.Default);
+			var composed = DetailComposer.Compose(nc, Cache, layoutName: "Edit",
+				plugins: SlicePluginRegistry.Default);
 
 			// The Segments phoneme collection composes as an editable ReferenceVector (the legacy phoneme
 			// chooser).
@@ -65,8 +65,8 @@ namespace SIL.FieldWorks.XWorks
 				nc.FeaturesOA = Cache.ServiceLocator.GetInstance<IFsFeatStrucFactory>().Create();
 			});
 
-			var composed = RegionComposer.Compose(nc, Cache, layoutName: "Edit",
-				plugins: RegionEditorPluginRegistry.Default);
+			var composed = DetailComposer.Compose(nc, Cache, layoutName: "Edit",
+				plugins: SlicePluginRegistry.Default);
 
 			// The phonological-feature dialog-launcher slice is unclaimed, so the Features field composes
 			// as a labeled Unsupported worklist row (never a Custom/plugin row).

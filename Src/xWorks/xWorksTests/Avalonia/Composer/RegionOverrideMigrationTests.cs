@@ -64,7 +64,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			File.WriteAllText(_overrideFile, OverrideLayout);
 
-			var patch = RegionOverrideMigration.MigrateProjectOverride(
+			var patch = DetailOverrideMigration.MigrateProjectOverride(
 				XElement.Parse(ShippedLayout), XElement.Parse(PartsXml), _overrideFile, _outputFile);
 
 			var op = patch.Operations.Single();
@@ -82,7 +82,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			File.WriteAllText(_overrideFile, ShippedLayout);
 
-			var patch = RegionOverrideMigration.MigrateProjectOverride(
+			var patch = DetailOverrideMigration.MigrateProjectOverride(
 				XElement.Parse(ShippedLayout), XElement.Parse(PartsXml), _overrideFile, _outputFile);
 
 			Assert.That(patch.IsEmpty, Is.True);

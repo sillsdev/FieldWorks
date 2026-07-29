@@ -91,11 +91,11 @@ namespace SIL.FieldWorks.XWorks
 		// Multi-WS read path: one row per *current* writing system — the same
 		// "all vernacular"/"all analysis" semantics the compiled slice definitions carry — rendered
 		// with the project's per-WS default font so both surfaces show the same record consistently.
-		// The per-ws row projection is the shared RegionValueFactory recipe (the
+		// The per-ws row projection is the shared DetailValueFactory recipe (the
 		// composer uses the same one); only the text reads live here.
 		private IReadOnlyList<DetailWsValue> GetLexemeFormValues()
 		{
-			return RegionValueFactory.BuildMultiWsValues(
+			return DetailValueFactory.BuildMultiWsValues(
 				_cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems, ws =>
 				{
 					var text = _entry.LexemeFormOA?.Form?.get_String(ws.Handle);
@@ -111,7 +111,7 @@ namespace SIL.FieldWorks.XWorks
 				return new List<DetailWsValue>();
 
 			var gloss = _entry.SensesOS[0].Gloss;
-			return RegionValueFactory.BuildMultiWsValues(
+			return DetailValueFactory.BuildMultiWsValues(
 				_cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems,
 				ws => gloss.get_String(ws.Handle), _cache.WritingSystemFactory);
 		}
@@ -131,8 +131,8 @@ namespace SIL.FieldWorks.XWorks
 
 			// The shared flattener (document order, hierarchy as Depth, and the
 			// composer's name-fallback rule — an analysis→vernacular fallback is
-			// subsumed by ShortName's own legacy resolution; see RegionValueFactory).
-			return RegionValueFactory.BuildPossibilityOptions(morphTypes, flat: false);
+			// subsumed by ShortName's own legacy resolution; see DetailValueFactory).
+			return DetailValueFactory.BuildPossibilityOptions(morphTypes, flat: false);
 		}
 
 		/// <inheritdoc />

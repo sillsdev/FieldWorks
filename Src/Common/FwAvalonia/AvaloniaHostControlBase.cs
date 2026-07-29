@@ -25,7 +25,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 		private readonly Panel _companionStrip;
 
 		/// <summary>Raised after a hosted region reports an edit completed (wired by the derived host).</summary>
-		public event EventHandler RegionEditCompleted;
+		public event EventHandler DetailEditCompleted;
 
 		protected AvaloniaHostControlBase()
 		{
@@ -62,7 +62,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 			Clear();
 		}
 
-		protected void RaiseRegionEditCompleted() => RegionEditCompleted?.Invoke(this, EventArgs.Empty);
+		protected void RaiseDetailEditCompleted() => DetailEditCompleted?.Invoke(this, EventArgs.Empty);
 
 		/// <summary>Swaps the hosted Avalonia content and shows the control.</summary>
 		protected void SetHostContent(Avalonia.Controls.Control content)

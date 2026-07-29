@@ -76,12 +76,12 @@ namespace FwAvaloniaTests
 			var definition = LexiconFirstSlice.CompileFromLayoutDirectory(ShippedPartsDirectory());
 			Assert.That(definition, Is.Not.Null);
 
-			var region = DetailModelProjector.FromViewDefinition(definition, new FakeRegionValueProvider());
+			var detail = DetailModelProjector.FromViewDefinition(definition, new FakeRegionValueProvider());
 
-			Assert.That(region.Fields, Has.Count.EqualTo(3));
-			Assert.That(region.Fields[0].Kind, Is.EqualTo(DetailFieldKind.Text));
-			Assert.That(region.Fields[1].Kind, Is.EqualTo(DetailFieldKind.Chooser));
-			Assert.That(region.Fields[2].Kind, Is.EqualTo(DetailFieldKind.Text));
+			Assert.That(detail.Fields, Has.Count.EqualTo(3));
+			Assert.That(detail.Fields[0].Kind, Is.EqualTo(DetailFieldKind.Text));
+			Assert.That(detail.Fields[1].Kind, Is.EqualTo(DetailFieldKind.Chooser));
+			Assert.That(detail.Fields[2].Kind, Is.EqualTo(DetailFieldKind.Text));
 		}
 
 		[Test]

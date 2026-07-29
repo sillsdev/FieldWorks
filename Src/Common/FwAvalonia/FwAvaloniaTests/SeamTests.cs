@@ -172,24 +172,24 @@ namespace FwAvaloniaTests
 		public void RegionLifetime_DisposesRegistered_InReverseOrder_Once()
 		{
 			var order = new System.Collections.Generic.List<int>();
-			var region = new DetailLifetime();
-			region.Register(new Spy(() => order.Add(1)));
-			region.Register(new Spy(() => order.Add(2)));
+			var detail = new DetailLifetime();
+			detail.Register(new Spy(() => order.Add(1)));
+			detail.Register(new Spy(() => order.Add(2)));
 
-			region.Dispose();
-			region.Dispose(); // idempotent
+			detail.Dispose();
+			detail.Dispose(); // idempotent
 
 			Assert.That(order, Is.EqualTo(new[] { 2, 1 }));
-			Assert.That(region.IsDisposed, Is.True);
+			Assert.That(detail.IsDisposed, Is.True);
 		}
 
 		[Test]
 		public void RegionLifetime_LateRegistration_DisposesImmediately()
 		{
 			var disposed = false;
-			var region = new DetailLifetime();
-			region.Dispose();
-			region.Register(new Spy(() => disposed = true));
+			var detail = new DetailLifetime();
+			detail.Dispose();
+			detail.Register(new Spy(() => disposed = true));
 			Assert.That(disposed, Is.True);
 		}
 
