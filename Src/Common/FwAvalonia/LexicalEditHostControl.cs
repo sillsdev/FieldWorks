@@ -30,7 +30,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 			AccessibleDescription = FwAvaloniaStrings.AvaloniaHostName;
 		}
 
-		public void ShowRegion(LexicalEditRegionModel region, IRegionEditContext editContext = null,
+		public void ShowRegion(RegionModel region, IRegionEditContext editContext = null,
 			Action<string> writingSystemFocused = null,
 			Func<string, bool?> getExpansionState = null,
 			Action<string, bool> expansionChanged = null,

@@ -49,7 +49,7 @@ namespace FwAvaloniaTests
 		[AvaloniaTest]
 		public void RegionView_RendersARealFrame_SavedAsParityArtifact()
 		{
-			var model = LexicalEditRegionMapper.FromViewDefinition(Definition(), new Provider());
+			var model = RegionModelProjector.FromViewDefinition(Definition(), new Provider());
 			var window = new Window { Content = new LexicalEditRegionView(model), Width = 420, Height = 160 };
 			window.Show();
 			Dispatcher.UIThread.RunJobs();
@@ -79,8 +79,8 @@ namespace FwAvaloniaTests
 	{
 		private static (LexicalEditRegionView view, FakeRegionEditContext context) ShowEditable()
 		{
-			var model = new LexicalEditRegionModel("LexEntry", "identity",
-				new List<LexicalEditRegionField>(), new List<ViewDiagnostic>());
+			var model = new RegionModel("LexEntry", "identity",
+				new List<RegionField>(), new List<ViewDiagnostic>());
 			var context = new FakeRegionEditContext();
 			var view = new LexicalEditRegionView(model, context);
 			var window = new Window { Content = view, Width = 400, Height = 160 };

@@ -27,9 +27,9 @@ namespace FwAvaloniaTests
 	[TestFixture]
 	public class OwnedControlAutomationConventionTests
 	{
-		private static LexicalEditRegionField MakeTextField(string stableId, string label, string automationId)
+		private static RegionField MakeTextField(string stableId, string label, string automationId)
 		{
-			return new LexicalEditRegionField(stableId, label, "Form", null,
+			return new RegionField(stableId, label, "Form", null,
 				RegionFieldKind.Text, EditorClassification.Known, automationId, null, SurfaceRouting.Inherit,
 				new List<RegionWsValue>
 				{

@@ -25,7 +25,7 @@ namespace SIL.FieldWorks.XWorks
 	{
 		private static RegionLinkRequest Request(string tool, string targetGuid = null)
 			=> new RegionLinkRequest(
-				new LexicalEditRegionField("LexEntry/Normal/#0@1", "Publish Entry In", "PublishIn",
+				new RegionField("LexEntry/Normal/#0@1", "Publish Entry In", "PublishIn",
 					null, RegionFieldKind.ReferenceVector, EditorClassification.Known, "PublishIn",
 					null, SurfaceRouting.Inherit, null, null, null),
 				new RegionChooserLink("Edit the Publications list", tool, targetGuid));

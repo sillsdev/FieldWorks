@@ -84,10 +84,10 @@ namespace SIL.FieldWorks.XWorks
 
 		// A region model with a sibling multistring (Citation Form) row + a StructuredText (Discussion)
 		// row, plus the composed edit context whose setters mutate the real LCModel exactly as
-		// FullEntryRegionComposer wires them. This is the production seam, not a stand-in.
-		private (LexicalEditRegionModel Model, ComposedRegionEditContext Context) BuildSurface()
+		// RegionComposer wires them. This is the production seam, not a stand-in.
+		private (RegionModel Model, ComposedRegionEditContext Context) BuildSurface()
 		{
-			var citation = new LexicalEditRegionField(CitationStableId, "Citation Form", "CitationForm", null,
+			var citation = new RegionField(CitationStableId, "Citation Form", "CitationForm", null,
 				RegionFieldKind.Text, EditorClassification.Known, "CitationForm", null, SurfaceRouting.Product,
 				new List<RegionWsValue> { new RegionWsValue("vern", CitationText, wsTag: "vern") },
 				null, null, isEditable: true);
@@ -96,15 +96,15 @@ namespace SIL.FieldWorks.XWorks
 				.Select(p => new RegionParagraph(
 					RegionRichTextAdapter.FromTsString(p.Contents, Cache.WritingSystemFactory), p.StyleName))
 				.ToList();
-			var stTextField = new LexicalEditRegionField(StTextStableId, "Discussion", "Discussion", null,
+			var stTextField = new RegionField(StTextStableId, "Discussion", "Discussion", null,
 				RegionFieldKind.StructuredText, EditorClassification.Known, "Discussion", null,
 				SurfaceRouting.Product, null, null, null, isEditable: true, paragraphs: paragraphs)
 			{
 				AvailableParagraphStyles = new[] { "Block Quote", "Numbered List" }
 			};
 
-			var model = new LexicalEditRegionModel("LexEntry", "Normal",
-				new List<LexicalEditRegionField> { citation, stTextField }, new List<ViewDiagnostic>());
+			var model = new RegionModel("LexEntry", "Normal",
+				new List<RegionField> { citation, stTextField }, new List<ViewDiagnostic>());
 
 			var defaultWs = Cache.DefaultAnalWs;
 			var wsf = Cache.WritingSystemFactory;
@@ -196,7 +196,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		private Surface ShowSurface(LexicalEditRegionModel model, ComposedRegionEditContext context)
+		private Surface ShowSurface(RegionModel model, ComposedRegionEditContext context)
 		{
 			var surface = new Surface { Context = context };
 			var citationField = model.Fields[0];

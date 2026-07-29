@@ -92,7 +92,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 		/// </summary>
 		public static string AudioRecordingReadOnly => Text("FwAvalonia.AudioRecordingReadOnly");
 
-		public static string LexicalEditRegionName => Text("FwAvalonia.LexicalEditRegionName");
+		public static string RegionName => Text("FwAvalonia.RegionName");
 
 		public static string AvaloniaHostName => Text("FwAvalonia.AvaloniaHostName");
 

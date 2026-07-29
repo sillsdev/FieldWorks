@@ -28,15 +28,15 @@ namespace FwAvaloniaTests
 	[TestFixture]
 	public class FwMultiWsTextFieldTests
 	{
-		private static LexicalEditRegionField Field(IReadOnlyList<RegionWsValue> values,
+		private static RegionField Field(IReadOnlyList<RegionWsValue> values,
 			string label = "Lexeme Form", string automationId = "LexEntry_Form", bool isEditable = true)
-			=> new LexicalEditRegionField(
+			=> new RegionField(
 				stableId: "LexEntry/Form", label: label, field: "Form", writingSystem: null,
 				kind: RegionFieldKind.Text, editorClassification: EditorClassification.Known,
 				automationId: automationId, localizationKey: null, routing: SurfaceRouting.Product,
 				values: values, options: null, selectedOptionKey: null, isEditable: isEditable);
 
-		private static (FwMultiWsTextField Field, Window Window) Show(LexicalEditRegionField field,
+		private static (FwMultiWsTextField Field, Window Window) Show(RegionField field,
 			IRegionEditContext editContext = null, bool showAbbrev = true)
 		{
 			var control = new FwMultiWsTextField(field, field.AutomationId, editContext, null,

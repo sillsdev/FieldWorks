@@ -55,8 +55,8 @@ namespace SIL.FieldWorks.XWorks
 
 		// The edit-context seam keys fixed slices by Field name; tests address fields the same way
 		// the view does — through a region field object.
-		internal static SIL.FieldWorks.Common.FwAvalonia.Region.LexicalEditRegionField F(string field)
-			=> new SIL.FieldWorks.Common.FwAvalonia.Region.LexicalEditRegionField(
+		internal static SIL.FieldWorks.Common.FwAvalonia.Region.RegionField F(string field)
+			=> new SIL.FieldWorks.Common.FwAvalonia.Region.RegionField(
 				"test/" + field, field, field, null,
 				SIL.FieldWorks.Common.FwAvalonia.Region.RegionFieldKind.Text,
 				SIL.FieldWorks.Common.FwAvalonia.ViewDefinition.EditorClassification.Known,
@@ -394,13 +394,13 @@ namespace SIL.FieldWorks.XWorks
 	}
 
 	/// <summary>
-	/// The COMPLETE lexical edit view: `FullEntryRegionComposer` walks the live
+	/// The COMPLETE lexical edit view: `RegionComposer` walks the live
 	/// compiled `LexEntry/Normal` layout across objects (entry → lexeme form → senses), emits
 	/// headers/indentation, hides empty ifdata fields, binds every editable field to LCModel by
 	/// metadata, and edits commit through the fenced session as one global undo step.
 	/// </summary>
 	[TestFixture]
-	public class FullEntryRegionComposerTests : MemoryOnlyBackendProviderTestBase
+	public class RegionComposerTests : MemoryOnlyBackendProviderTestBase
 	{
 		private ILexEntry m_entry;
 
@@ -428,7 +428,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void Compose_WalksTheFullCompiledLayout_AcrossObjects()
 		{
-			var composed = FullEntryRegionComposer.Compose(m_entry, Cache);
+			var composed = RegionComposer.Compose(m_entry, Cache);
 			Assert.That(composed, Is.Not.Null, "the shipped layouts must compose");
 			var fields = composed.Model.Fields;
 
@@ -472,7 +472,7 @@ namespace SIL.FieldWorks.XWorks
 				m_entry.SensesOS[0].MorphoSyntaxAnalysisRA = msa;
 			});
 
-			var composed = FullEntryRegionComposer.Compose(m_entry, Cache);
+			var composed = RegionComposer.Compose(m_entry, Cache);
 			var gramInfo = composed.Model.Fields.SingleOrDefault(f =>
 				f.Field == "MorphoSyntaxAnalysis" && f.Kind == RegionFieldKind.Chooser
 				&& f.ObjectHvo == m_entry.SensesOS[0].Hvo);
@@ -503,7 +503,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void Compose_LexemeFormRow_CarriesItsLegacySliceMenuBinding()
 		{
-			var composed = FullEntryRegionComposer.Compose(m_entry, Cache);
+			var composed = RegionComposer.Compose(m_entry, Cache);
 			var lexemeForm = composed.Model.Fields.Single(f => f.Field == "Form"
 				&& f.Kind == RegionFieldKind.Text && f.ObjectHvo == m_entry.LexemeFormOA.Hvo);
 
@@ -519,7 +519,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void Compose_RichTextReplacement_PreservesStringTableLabels_AndFwAvaloniaMessageLane()
 		{
-			var composed = FullEntryRegionComposer.Compose(m_entry, Cache);
+			var composed = RegionComposer.Compose(m_entry, Cache);
 			var lexemeForm = composed.Model.Fields.Single(f => f.Field == "Form"
 				&& f.Kind == RegionFieldKind.Text && f.ObjectHvo == m_entry.LexemeFormOA.Hvo);
 
@@ -562,22 +562,22 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void Compose_RepeatCompose_ServesCompiledLayoutsFromTheMemo()
 		{
-			Assert.That(FullEntryRegionComposer.Compose(m_entry, Cache), Is.Not.Null,
+			Assert.That(RegionComposer.Compose(m_entry, Cache), Is.Not.Null,
 				"priming compose populates the (class, layout) memo");
-			var compilesAfterFirst = FullEntryRegionComposer.SnapshotCompileCount;
+			var compilesAfterFirst = RegionComposer.SnapshotCompileCount;
 			Assert.That(compilesAfterFirst, Is.GreaterThan(0), "the first compose really compiled");
 
-			var second = FullEntryRegionComposer.Compose(m_entry, Cache);
+			var second = RegionComposer.Compose(m_entry, Cache);
 			Assert.That(second, Is.Not.Null);
 			Assert.That(second.Model.Fields, Is.Not.Empty, "the memoized models still compose fully");
-			Assert.That(FullEntryRegionComposer.SnapshotCompileCount, Is.EqualTo(compilesAfterFirst),
+			Assert.That(RegionComposer.SnapshotCompileCount, Is.EqualTo(compilesAfterFirst),
 				"a repeat compose must not rebuild any layout snapshot");
 		}
 
 		[Test]
 		public void Compose_HidesEmptyIfDataFields_AndShowsThemOnceFilled()
 		{
-			var before = FullEntryRegionComposer.Compose(m_entry, Cache).Model.Fields;
+			var before = RegionComposer.Compose(m_entry, Cache).Model.Fields;
 			Assert.That(before.Any(f => f.Field == "Bibliography"), Is.False,
 				"an empty ifdata field (Bibliography) is hidden, matching legacy");
 
@@ -585,7 +585,7 @@ namespace SIL.FieldWorks.XWorks
 				m_entry.Bibliography.set_String(Cache.DefaultAnalWs,
 					TsStringUtils.MakeString("Smith 1999", Cache.DefaultAnalWs)));
 
-			var after = FullEntryRegionComposer.Compose(m_entry, Cache).Model.Fields;
+			var after = RegionComposer.Compose(m_entry, Cache).Model.Fields;
 			Assert.That(after.Any(f => f.Field == "Bibliography"), Is.True,
 				"the field appears once it has data");
 		}
@@ -600,7 +600,7 @@ namespace SIL.FieldWorks.XWorks
 			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
 				m_entry.LexemeFormOA.IsAbstract = true);
 
-			var composed = FullEntryRegionComposer.Compose(m_entry, Cache);
+			var composed = RegionComposer.Compose(m_entry, Cache);
 			var row = composed.Model.Fields.Single(f => f.Field == "IsAbstract"
 				&& f.ObjectHvo == m_entry.LexemeFormOA.Hvo);
 
@@ -619,7 +619,7 @@ namespace SIL.FieldWorks.XWorks
 			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
 				m_entry.Bibliography.set_String(Cache.DefaultAnalWs,
 					TsStringUtils.MakeString("Smith 1999", Cache.DefaultAnalWs)));
-			var plain = FullEntryRegionComposer.Compose(m_entry, Cache).Model.Fields
+			var plain = RegionComposer.Compose(m_entry, Cache).Model.Fields
 				.Single(f => f.Field == "Bibliography");
 			Assert.That(plain.IsEditable, Is.True, "plain single-run content keeps the text editor");
 
@@ -636,7 +636,7 @@ namespace SIL.FieldWorks.XWorks
 				m_entry.Bibliography.set_String(Cache.DefaultAnalWs, bldr.GetString());
 			});
 
-			var composed = FullEntryRegionComposer.Compose(m_entry, Cache);
+			var composed = RegionComposer.Compose(m_entry, Cache);
 			var rich = composed.Model.Fields.Single(f => f.Field == "Bibliography");
 			Assert.That(rich.Values.Any(v => v.Value == "Smith 1999"), Is.True,
 				"the rich content still displays as text");
@@ -775,7 +775,7 @@ namespace SIL.FieldWorks.XWorks
 					TsStringUtils.MakeString("alpha beta gamma", Cache.DefaultAnalWs));
 			});
 
-			var region = FullEntryRegionComposer.Compose(m_entry, Cache);
+			var region = RegionComposer.Compose(m_entry, Cache);
 			var field = region.Model.Fields.Single(f => f.Field == "Bibliography");
 			Assert.That(field.IsEditable, Is.True);
 			var wsTag = field.Values.Single().WsTag;
@@ -792,7 +792,7 @@ namespace SIL.FieldWorks.XWorks
 			region.EditContext.Commit();
 
 			// Recompose from the committed cache and verify every run prop round-tripped.
-			var reopened = FullEntryRegionComposer.Compose(m_entry, Cache).Model.Fields
+			var reopened = RegionComposer.Compose(m_entry, Cache).Model.Fields
 				.Single(f => f.Field == "Bibliography").Values.Single().RichText;
 			Assert.That(reopened.PlainText, Is.EqualTo("alpha beta gamma"));
 			var styled = string.Concat(reopened.Runs.Where(r => r.NamedStyle == "Emphasis").Select(r => r.Text));
@@ -806,7 +806,7 @@ namespace SIL.FieldWorks.XWorks
 
 			// One undo reverts the whole gesture sequence (one fenced session).
 			Cache.ActionHandlerAccessor.Undo();
-			var afterUndo = FullEntryRegionComposer.Compose(m_entry, Cache).Model.Fields
+			var afterUndo = RegionComposer.Compose(m_entry, Cache).Model.Fields
 				.Single(f => f.Field == "Bibliography").Values.Single().RichText;
 			Assert.That(afterUndo.Runs.Any(r => r.OrcKind == RegionOrcKind.ExternalLink), Is.False,
 				"one undo reverts the whole §19c gesture session");
@@ -831,7 +831,7 @@ namespace SIL.FieldWorks.XWorks
 				m_entry.Bibliography.set_String(Cache.DefaultAnalWs, bldr.GetString());
 			});
 
-			var rich = FullEntryRegionComposer.Compose(m_entry, Cache).Model.Fields
+			var rich = RegionComposer.Compose(m_entry, Cache).Model.Fields
 				.Single(f => f.Field == "Bibliography");
 			Assert.That(rich.Values.Single().RichText.LossyProperties, Is.True,
 				"the run's foreground colour is not round-tripped by the run model, so it is lossy");
@@ -877,7 +877,7 @@ namespace SIL.FieldWorks.XWorks
 				m_entry.Bibliography.set_String(Cache.DefaultAnalWs, bldr.GetString());
 			});
 
-			var rich = FullEntryRegionComposer.Compose(m_entry, Cache).Model.Fields
+			var rich = RegionComposer.Compose(m_entry, Cache).Model.Fields
 				.Single(f => f.Field == "Bibliography");
 			Assert.That(rich.Values.Single().RichText.LossyProperties, Is.False,
 				"named style + per-run WS + bold are all round-tripped, so the value is not lossy");
@@ -888,7 +888,7 @@ namespace SIL.FieldWorks.XWorks
 			var value = rich.Values.Single();
 			var edited = RegionRichTextEditAlgorithms.ApplyPlainTextEdit(value.RichText, "Smith 19999");
 
-			var composed = FullEntryRegionComposer.Compose(m_entry, Cache);
+			var composed = RegionComposer.Compose(m_entry, Cache);
 			var richField = composed.Model.Fields.Single(f => f.Field == "Bibliography");
 			Assert.That(composed.EditContext.TrySetRichText(richField,
 				richField.Values.Single().WsTag, edited), Is.True);
@@ -923,7 +923,7 @@ namespace SIL.FieldWorks.XWorks
 					TsStringUtils.MakeString("important note", Cache.DefaultAnalWs));
 			});
 
-			var composedBefore = FullEntryRegionComposer.Compose(m_entry, Cache);
+			var composedBefore = RegionComposer.Compose(m_entry, Cache);
 			var richField = composedBefore.Model.Fields.Single(f => f.Field == "Bibliography");
 			var value = richField.Values.Single();
 			Assert.That(value.RichText.LossyProperties, Is.False);
@@ -963,7 +963,7 @@ namespace SIL.FieldWorks.XWorks
 					TsStringUtils.MakeString("important note", Cache.DefaultAnalWs));
 			});
 
-			var composedBefore = FullEntryRegionComposer.Compose(m_entry, Cache);
+			var composedBefore = RegionComposer.Compose(m_entry, Cache);
 			var richField = composedBefore.Model.Fields.Single(f => f.Field == "Bibliography");
 			var value = richField.Values.Single();
 			Assert.That(value.RichText.LossyProperties, Is.False);
@@ -987,7 +987,7 @@ namespace SIL.FieldWorks.XWorks
 				Is.Null, "the unstyled tail carries no named style");
 
 			// Now CLEAR the style back off the same span and round-trip again: ktptNamedStyle is gone.
-			var composedAfter = FullEntryRegionComposer.Compose(m_entry, Cache);
+			var composedAfter = RegionComposer.Compose(m_entry, Cache);
 			var afterField = composedAfter.Model.Fields.Single(f => f.Field == "Bibliography");
 			var afterValue = afterField.Values.Single();
 			var cleared = RegionRichTextEditAlgorithms.ApplySpanNamedStyle(afterValue.RichText, 0, 9, null);
@@ -1020,7 +1020,7 @@ namespace SIL.FieldWorks.XWorks
 				para.Type = StyleType.kstParagraph;
 			});
 
-			var composed = FullEntryRegionComposer.Compose(m_entry, Cache);
+			var composed = RegionComposer.Compose(m_entry, Cache);
 			var editableText = composed.Model.Fields
 				.First(f => f.Kind == RegionFieldKind.Text && f.IsEditable);
 			Assert.That(editableText.AvailableNamedStyles, Does.Contain("Strong"),
@@ -1035,7 +1035,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void Compose_SuppliesWritingSystemOptions_OnEditableTextField()
 		{
-			var composed = FullEntryRegionComposer.Compose(m_entry, Cache);
+			var composed = RegionComposer.Compose(m_entry, Cache);
 			var editableText = composed.Model.Fields
 				.First(f => f.Kind == RegionFieldKind.Text && f.IsEditable);
 
@@ -1062,7 +1062,7 @@ namespace SIL.FieldWorks.XWorks
 					TsStringUtils.MakeString("alpha beta", Cache.DefaultAnalWs));
 			});
 
-			var composed = FullEntryRegionComposer.Compose(m_entry, Cache);
+			var composed = RegionComposer.Compose(m_entry, Cache);
 			var field = composed.Model.Fields.Single(f => f.Field == "Bibliography");
 			var value = field.Values.Single();
 			var vernTag = Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Id;
@@ -1095,7 +1095,7 @@ namespace SIL.FieldWorks.XWorks
 				riEntry.SensesRS.Add(m_entry.SensesOS[0]);
 			});
 
-			var composed = FullEntryRegionComposer.Compose(m_entry, Cache);
+			var composed = RegionComposer.Compose(m_entry, Cache);
 
 			// The reversal slice composes a Custom (plugin) row, never an Unsupported row.
 			var reversalRow = composed.Model.Fields
@@ -1126,7 +1126,7 @@ namespace SIL.FieldWorks.XWorks
 				riEntry.SensesRS.Add(m_entry.SensesOS[0]);
 			});
 
-			var composed = FullEntryRegionComposer.Compose(m_entry, Cache);
+			var composed = RegionComposer.Compose(m_entry, Cache);
 			var sense = m_entry.SensesOS[0];
 			var plugin = new ReversalIndexEntryPlugin();
 			// Reuse the composer's resolved node so the plugin gets real metadata; resolve via the plugin
@@ -1141,7 +1141,7 @@ namespace SIL.FieldWorks.XWorks
 			// Stage an edit through the reversal context exposed by building the field's own context. We
 			// drive the edit through the composed edit context indirectly: the field staged via the
 			// plugin's ReversalRegionEditContext. Address it directly to assert the data path.
-			var field = new SIL.FieldWorks.Common.FwAvalonia.Region.LexicalEditRegionField(
+			var field = new SIL.FieldWorks.Common.FwAvalonia.Region.RegionField(
 				"reversal/" + sense.Hvo, "Reversal Entries", "ReferringReversalIndexEntries", null,
 				SIL.FieldWorks.Common.FwAvalonia.Region.RegionFieldKind.Text,
 				SIL.FieldWorks.Common.FwAvalonia.ViewDefinition.EditorClassification.Known,
@@ -1181,7 +1181,7 @@ namespace SIL.FieldWorks.XWorks
 				m_entry.Bibliography.set_String(Cache.DefaultAnalWs, original);
 			});
 
-			var value = FullEntryRegionComposer.Compose(m_entry, Cache).Model.Fields
+			var value = RegionComposer.Compose(m_entry, Cache).Model.Fields
 				.Single(f => f.Field == "Bibliography").Values.Single();
 
 			var roundTripped = RegionRichTextAdapter.ToTsString(value.RichText,
@@ -1193,7 +1193,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void Edit_NestedSecondSenseGloss_CommitsAsOneGlobalUndoStep()
 		{
-			var composed = FullEntryRegionComposer.Compose(m_entry, Cache);
+			var composed = RegionComposer.Compose(m_entry, Cache);
 			var secondGloss = composed.Model.Fields
 				.Where(f => f.Field == "Gloss" && f.Kind == RegionFieldKind.Text)
 				.Skip(1).First();
@@ -1215,8 +1215,8 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void Compose_ShowHiddenFields_SurfacesNeverAndEmptyIfdataFields()
 		{
-			var normal = FullEntryRegionComposer.Compose(m_entry, Cache).Model.Fields;
-			var hidden = FullEntryRegionComposer.Compose(m_entry, Cache, showHiddenFields: true).Model.Fields;
+			var normal = RegionComposer.Compose(m_entry, Cache).Model.Fields;
+			var hidden = RegionComposer.Compose(m_entry, Cache, showHiddenFields: true).Model.Fields;
 
 			Assert.That(hidden.Count, Is.GreaterThan(normal.Count),
 				"show-hidden surfaces strictly more rows, like legacy m_fShowAllFields");
@@ -1247,7 +1247,7 @@ namespace SIL.FieldWorks.XWorks
 			var expected = WritingSystemServices.GetWritingSystemList(Cache, magicId, forceIncludeEnglish: false);
 			Assert.That(expected, Is.Not.Empty);
 
-			var actual = FullEntryRegionComposer.ResolveWritingSystems(Cache, spec);
+			var actual = RegionComposer.ResolveWritingSystems(Cache, spec);
 			Assert.That(actual.Select(ws => ws.Handle), Is.EqualTo(expected.Select(ws => ws.Handle)),
 				"the composer resolves ws= specs exactly like legacy SliceFactory/MultiStringSlice");
 		}
@@ -1268,7 +1268,7 @@ namespace SIL.FieldWorks.XWorks
 			});
 			try
 			{
-				var actual = FullEntryRegionComposer.ResolveWritingSystems(Cache, "pronunciation");
+				var actual = RegionComposer.ResolveWritingSystems(Cache, "pronunciation");
 
 				var expected = WritingSystemServices.GetWritingSystemList(Cache,
 					WritingSystemServices.kwsPronunciations, forceIncludeEnglish: false);
@@ -1294,7 +1294,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var expected = WritingSystemServices.GetWritingSystemList(Cache,
 				WritingSystemServices.kwsAnal, forceIncludeEnglish: false);
-			var actual = FullEntryRegionComposer.ResolveWritingSystems(Cache, spec);
+			var actual = RegionComposer.ResolveWritingSystems(Cache, spec);
 			Assert.That(actual.Select(ws => ws.Handle), Is.EqualTo(expected.Select(ws => ws.Handle)),
 				"unmarked/unknown specs take GetWritingSystemList's analysis default, like legacy");
 		}
@@ -1318,7 +1318,7 @@ namespace SIL.FieldWorks.XWorks
 			});
 			try
 			{
-				var composed = FullEntryRegionComposer.Compose(m_entry, Cache);
+				var composed = RegionComposer.Compose(m_entry, Cache);
 				Assert.That(composed, Is.Not.Null, "duplicate abbreviations must not abort composition");
 				var gloss = composed.Model.Fields.First(f => f.Field == "Gloss" && f.Kind == RegionFieldKind.Text);
 				Assert.That(gloss.Values.Count, Is.EqualTo(2), "one row per current analysis writing system");
@@ -1355,7 +1355,7 @@ namespace SIL.FieldWorks.XWorks
 				m_entry.AlternateFormsOS.Add(
 					Cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>().Create()));
 
-			var hidden = FullEntryRegionComposer.Compose(m_entry, Cache, showHiddenFields: true);
+			var hidden = RegionComposer.Compose(m_entry, Cache, showHiddenFields: true);
 			var boolField = hidden.Model.Fields.FirstOrDefault(f => f.Field == "IsAbstract"
 				&& f.Kind == RegionFieldKind.Unsupported);
 			Assert.That(boolField, Is.Not.Null,
@@ -1373,7 +1373,7 @@ namespace SIL.FieldWorks.XWorks
 				sub.Gloss.set_String(Cache.DefaultAnalWs, TsStringUtils.MakeString("subgloss", Cache.DefaultAnalWs));
 			});
 
-			var fields = FullEntryRegionComposer.Compose(m_entry, Cache).Model.Fields;
+			var fields = RegionComposer.Compose(m_entry, Cache).Model.Fields;
 			var headers = fields.Where(f => f.Kind == RegionFieldKind.Header).Select(f => f.Label).ToList();
 
 			Assert.That(headers.Any(h => h.StartsWith("1 ") || h.StartsWith("1 ") || h.StartsWith("1 ", System.StringComparison.Ordinal) || h.StartsWith("1")), Is.True,
@@ -1389,7 +1389,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void Edit_MorphType_InComposedView_Commits()
 		{
-			var composed = FullEntryRegionComposer.Compose(m_entry, Cache);
+			var composed = RegionComposer.Compose(m_entry, Cache);
 			var morphType = composed.Model.Fields.Single(f => f.Field == "MorphType" && f.Kind == RegionFieldKind.Chooser);
 			var target = morphType.Options.First(o => o.Key != morphType.SelectedOptionKey);
 
@@ -1405,7 +1405,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void Edit_MorphType_StemAllomorphWithAffixType_IsRejected()
 		{
-			var composed = FullEntryRegionComposer.Compose(m_entry, Cache);
+			var composed = RegionComposer.Compose(m_entry, Cache);
 			var morphType = composed.Model.Fields.Single(f => f.Field == "MorphType" && f.Kind == RegionFieldKind.Chooser);
 			var before = m_entry.LexemeFormOA.MorphTypeRA;
 
@@ -1430,7 +1430,7 @@ namespace SIL.FieldWorks.XWorks
 			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
 				bare = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create());
 
-			var composed = FullEntryRegionComposer.Compose(bare, Cache);
+			var composed = RegionComposer.Compose(bare, Cache);
 			var ghost = composed.Model.Fields.FirstOrDefault(f =>
 				f.Field == "LexemeForm" && f.StableId.EndsWith("/ghost"));
 			Assert.That(ghost, Is.Not.Null, "an empty lexeme form renders the legacy ghost line");
@@ -1458,7 +1458,7 @@ namespace SIL.FieldWorks.XWorks
 			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
 				bare = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create());
 
-			var composed = FullEntryRegionComposer.Compose(bare, Cache);
+			var composed = RegionComposer.Compose(bare, Cache);
 			var ghost = composed.Model.Fields.First(f =>
 				f.Field == "LexemeForm" && f.StableId.EndsWith("/ghost"));
 
@@ -1486,7 +1486,7 @@ namespace SIL.FieldWorks.XWorks
 				morph.Form.set_String(Cache.DefaultVernWs, TsStringUtils.MakeString("casa", Cache.DefaultVernWs));
 			});
 
-			var composed = FullEntryRegionComposer.Compose(bare, Cache, showHiddenFields: true);
+			var composed = RegionComposer.Compose(bare, Cache, showHiddenFields: true);
 			var ghost = composed.Model.Fields.FirstOrDefault(f =>
 				f.Field == "Senses" && f.StableId.EndsWith("/ghost"));
 			Assert.That(ghost, Is.Not.Null, "an entry without senses renders the add-a-sense ghost");
@@ -1513,7 +1513,7 @@ namespace SIL.FieldWorks.XWorks
 			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
 				bare = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create());
 
-			var composed = FullEntryRegionComposer.Compose(bare, Cache);
+			var composed = RegionComposer.Compose(bare, Cache);
 			var ghost = composed.Model.Fields.First(f =>
 				f.Field == "LexemeForm" && f.StableId.EndsWith("/ghost"));
 			Assert.That(composed.EditContext.TrySetText(ghost, ghost.Values[0].WsAbbrev, "casa"), Is.True);
@@ -1547,7 +1547,7 @@ namespace SIL.FieldWorks.XWorks
 					TsStringUtils.MakeString("una casa", Cache.DefaultVernWs));
 			});
 
-			var composed = FullEntryRegionComposer.Compose(m_entry, Cache);
+			var composed = RegionComposer.Compose(m_entry, Cache);
 			var ghost = composed.Model.Fields.FirstOrDefault(f =>
 				f.Field == "Translations" && f.StableId.EndsWith("/ghost") && f.ObjectHvo == example.Hvo);
 			Assert.That(ghost, Is.Not.Null,
@@ -1572,7 +1572,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void Compose_GhostWithoutGhostField_IsNotEditable_SoTypingCannotCreateAndDiscard()
 		{
-			var composed = FullEntryRegionComposer.Compose(m_entry, Cache);
+			var composed = RegionComposer.Compose(m_entry, Cache);
 			var ghost = composed.Model.Fields.FirstOrDefault(f =>
 				f.Field == "AlternateForms" && f.StableId.EndsWith("/ghost"));
 			Assert.That(ghost, Is.Not.Null,
@@ -1603,7 +1603,7 @@ namespace SIL.FieldWorks.XWorks
 				entryRef.RefType = LexEntryRefTags.krtVariant; // RefType == 0
 			});
 
-			var variantFields = FullEntryRegionComposer.Compose(m_entry, Cache).Model.Fields;
+			var variantFields = RegionComposer.Compose(m_entry, Cache).Model.Fields;
 			Assert.That(variantFields.Any(f => f.Field == "VariantEntryTypes"), Is.True,
 				"a variant ref (RefType=0) composes the Variant Type slice");
 			Assert.That(variantFields.Any(f => f.Field == "ComplexEntryTypes"), Is.False,
@@ -1612,7 +1612,7 @@ namespace SIL.FieldWorks.XWorks
 			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
 				entryRef.RefType = LexEntryRefTags.krtComplexForm); // RefType == 1
 
-			var complexFields = FullEntryRegionComposer.Compose(m_entry, Cache).Model.Fields;
+			var complexFields = RegionComposer.Compose(m_entry, Cache).Model.Fields;
 			Assert.That(complexFields.Any(f => f.Field == "ComplexEntryTypes"), Is.True,
 				"a complex-form ref (RefType=1) composes the Complex Form Type slice");
 			Assert.That(complexFields.Any(f => f.Field == "VariantEntryTypes"), Is.False,
@@ -1624,7 +1624,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void Compose_ShowMinorEntry_OnlyWhenTheEntryHasEntryRefs()
 		{
-			var before = FullEntryRegionComposer.Compose(m_entry, Cache).Model.Fields;
+			var before = RegionComposer.Compose(m_entry, Cache).Model.Fields;
 			Assert.That(before.Any(f => f.Field == "PublishAsMinorEntry"), Is.False,
 				"a main entry without EntryRefs hides Show Minor Entry, like legacy");
 
@@ -1635,7 +1635,7 @@ namespace SIL.FieldWorks.XWorks
 				entryRef.RefType = LexEntryRefTags.krtVariant;
 			});
 
-			var after = FullEntryRegionComposer.Compose(m_entry, Cache).Model.Fields;
+			var after = RegionComposer.Compose(m_entry, Cache).Model.Fields;
 			var row = after.FirstOrDefault(f => f.Field == "PublishAsMinorEntry");
 			Assert.That(row, Is.Not.Null, "with an EntryRef the lengthatleast=1 condition passes");
 			Assert.That(row.Kind, Is.EqualTo(RegionFieldKind.Unsupported),
@@ -1661,14 +1661,14 @@ namespace SIL.FieldWorks.XWorks
 				allomorph.MorphTypeRA = morphTypes.GetObject(MoMorphTypeTags.kguidMorphInfix);
 			});
 
-			var infixFields = FullEntryRegionComposer.Compose(affixEntry, Cache).Model.Fields;
+			var infixFields = RegionComposer.Compose(affixEntry, Cache).Model.Fields;
 			Assert.That(infixFields.Any(f => f.Field == "Position"), Is.True,
 				"an infix allomorph composes the Infix Positions slice (guidequals where passes)");
 
 			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
 				allomorph.MorphTypeRA = morphTypes.GetObject(MoMorphTypeTags.kguidMorphPrefix));
 
-			var prefixFields = FullEntryRegionComposer.Compose(affixEntry, Cache).Model.Fields;
+			var prefixFields = RegionComposer.Compose(affixEntry, Cache).Model.Fields;
 			Assert.That(prefixFields.Any(f => f.Field == "Position"), Is.False,
 				"no where clause passes for a prefix, and the shipped choice has no otherwise");
 		}
@@ -1693,7 +1693,7 @@ namespace SIL.FieldWorks.XWorks
 				allomorph.MsEnvFeaturesOA = Cache.ServiceLocator.GetInstance<IFsFeatStrucFactory>().Create();
 			});
 
-			var withoutMsa = FullEntryRegionComposer.Compose(affixEntry, Cache).Model.Fields;
+			var withoutMsa = RegionComposer.Compose(affixEntry, Cache).Model.Fields;
 			Assert.That(withoutMsa.Any(f => f.Field == "MsEnvFeatures"), Is.False,
 				"no MSA on the owning entry: the target=owner lengthatleast=1 condition fails "
 				+ "even though the field itself has data");
@@ -1702,7 +1702,7 @@ namespace SIL.FieldWorks.XWorks
 				affixEntry.MorphoSyntaxAnalysesOC.Add(
 					Cache.ServiceLocator.GetInstance<IMoUnclassifiedAffixMsaFactory>().Create()));
 
-			var withMsa = FullEntryRegionComposer.Compose(affixEntry, Cache).Model.Fields;
+			var withMsa = RegionComposer.Compose(affixEntry, Cache).Model.Fields;
 			Assert.That(withMsa.Any(f => f.Field == "MsEnvFeatures"), Is.True,
 				"with an MSA the owner-hop condition passes and the Required Features row composes");
 		}
@@ -1713,7 +1713,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void Compose_ThreadsLegacyMenuBindings_AndOwningObjectHvos()
 		{
-			var fields = FullEntryRegionComposer.Compose(m_entry, Cache).Model.Fields;
+			var fields = RegionComposer.Compose(m_entry, Cache).Model.Fields;
 
 			var citation = fields.First(f => f.Field == "CitationForm" && f.Kind == RegionFieldKind.Text);
 			Assert.That(citation.MenuId, Is.EqualTo("mnuDataTree-Help"),
@@ -1737,7 +1737,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void Compose_SenseHeaders_BindTheSenseMenu_WithInsertSenseDefined()
 		{
-			var fields = FullEntryRegionComposer.Compose(m_entry, Cache).Model.Fields;
+			var fields = RegionComposer.Compose(m_entry, Cache).Model.Fields;
 			var senseHeader = fields.First(f => f.Kind == RegionFieldKind.Header
 				&& f.Field == "Senses" && f.ObjectHvo == m_entry.SensesOS[0].Hvo);
 
@@ -1768,7 +1768,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void Compose_EveryMenuBinding_ResolvesInTheShippedWindowConfiguration()
 		{
-			var fields = FullEntryRegionComposer.Compose(m_entry, Cache, showHiddenFields: true).Model.Fields;
+			var fields = RegionComposer.Compose(m_entry, Cache, showHiddenFields: true).Model.Fields;
 			var composedIds = fields
 				.SelectMany(f => new[] { f.MenuId, f.ContextMenuId, f.HotlinksId })
 				.Where(id => !string.IsNullOrEmpty(id))
@@ -2051,8 +2051,8 @@ namespace SIL.FieldWorks.XWorks
 			return fd.Id;
 		}
 
-		private System.Collections.Generic.IReadOnlyList<LexicalEditRegionField> Compose(bool showHidden = false)
-			=> FullEntryRegionComposer.Compose(m_entry, Cache, showHidden).Model.Fields;
+		private System.Collections.Generic.IReadOnlyList<RegionField> Compose(bool showHidden = false)
+			=> RegionComposer.Compose(m_entry, Cache, showHidden).Model.Fields;
 
 		[Test]
 		public void Compose_CustomFields_ExpandAtThePlaceholder_WithLegacyLabelsAndValues()
@@ -2065,7 +2065,7 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(multi.Kind, Is.EqualTo(RegionFieldKind.Text));
 			Assert.That(multi.IsEditable, Is.True);
 			Assert.That(multi.ObjectHvo, Is.EqualTo(m_entry.Hvo), "entry-level custom rows bind the entry");
-			var expectedWs = FullEntryRegionComposer.ResolveWritingSystems(Cache, "analysis vernacular");
+			var expectedWs = RegionComposer.ResolveWritingSystems(Cache, "analysis vernacular");
 			Assert.That(multi.Values.Count, Is.EqualTo(expectedWs.Count),
 				"kwsAnalVerns yields one row per analysis+vernacular ws, like legacy MultiStringSlice");
 			Assert.That(multi.Values.Select(v => v.Value), Does.Contain("high-low").And.Contain("alto-bajo"));
@@ -2208,7 +2208,7 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(exampleTags.Items.Select(i => i.Key),
 				Does.Contain(m_listItem.Guid.ToString()).And.Contain(m_secondListItem.Guid.ToString()));
 
-			var affixFields = FullEntryRegionComposer.Compose(affixEntry, Cache).Model.Fields;
+			var affixFields = RegionComposer.Compose(affixEntry, Cache).Model.Fields;
 			var affixCustom = affixFields.FirstOrDefault(f => f.Label == "Allomorph Note"
 				&& f.ObjectHvo == affixLexemeForm.Hvo);
 			Assert.That(affixCustom, Is.Not.Null,
@@ -2219,7 +2219,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void Edit_CustomFields_StageThroughTheFencedSession_AsOneUndoStep()
 		{
-			var composed = FullEntryRegionComposer.Compose(m_entry, Cache);
+			var composed = RegionComposer.Compose(m_entry, Cache);
 			var multi = composed.Model.Fields.First(f => f.Label == "Tone Pattern");
 			var single = composed.Model.Fields.First(f => f.Label == "Source Note");
 
@@ -2247,7 +2247,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void Edit_CustomFields_OnNestedAllomorphAndExampleLayouts_StageThroughTheFencedSession()
 		{
-			var composed = FullEntryRegionComposer.Compose(m_entry, Cache);
+			var composed = RegionComposer.Compose(m_entry, Cache);
 			var rootAllomorph = composed.Model.Fields.First(f => f.Label == "Allomorph Note"
 				&& f.ObjectHvo == m_entry.LexemeFormOA.Hvo);
 			var rootAllomorphCategory = composed.Model.Fields.First(f => f.Label == "Allomorph Category"
@@ -2330,7 +2330,7 @@ namespace SIL.FieldWorks.XWorks
 				sda.SetString(m_entry.Hvo, m_flidEntrySingle,
 					TsStringUtils.MakeString("vern note", vern.Handle)));
 
-			var composed = FullEntryRegionComposer.Compose(m_entry, Cache);
+			var composed = RegionComposer.Compose(m_entry, Cache);
 			var single = composed.Model.Fields.First(f => f.Label == "Source Note");
 			Assert.That(single.Values.Single().WsTag, Is.EqualTo(vern.Id),
 				"the row's ws (abbrev/font/RTL identity) follows the stored string's first run");
@@ -2356,7 +2356,7 @@ namespace SIL.FieldWorks.XWorks
 				morph.Form.set_String(Cache.DefaultVernWs, TsStringUtils.MakeString("gato", Cache.DefaultVernWs));
 			});
 
-			var composed = FullEntryRegionComposer.Compose(bare, Cache);
+			var composed = RegionComposer.Compose(bare, Cache);
 			var single = composed.Model.Fields.First(f => f.Label == "Source Note" && f.ObjectHvo == bare.Hvo);
 			Assert.That(single.Values.Single().WsTag,
 				Is.EqualTo(Cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Id),
@@ -2379,7 +2379,7 @@ namespace SIL.FieldWorks.XWorks
 
 			foreach (var showHidden in new[] { false, true })
 			{
-				var fields = FullEntryRegionComposer.Compose(bare, Cache, showHidden).Model.Fields;
+				var fields = RegionComposer.Compose(bare, Cache, showHidden).Model.Fields;
 				foreach (var label in new[] { "Tone Pattern", "Source Note", "Date Collected", "Field Category" })
 				{
 					var row = fields.FirstOrDefault(f => f.Label == label);

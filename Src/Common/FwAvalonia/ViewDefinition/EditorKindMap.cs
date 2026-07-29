@@ -10,7 +10,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 	/// <summary>
 	/// The renderable category of a legacy editor string — the ONE home for the
 	/// editor-string → category knowledge that the region composer's dispatch switch and
-	/// <c>LexicalEditRegionMapper</c>'s kind classification both consume — neither keeps a
+	/// <c>RegionModelProjector</c>'s kind classification both consume — neither keeps a
 	/// copy of its own. Consumers may still refine a category by LCModel field type
 	/// (e.g. the composer's <c>CellarPropertyType</c> dispatch for <see cref="Other"/>); only the
 	/// editor-string knowledge itself lives here.

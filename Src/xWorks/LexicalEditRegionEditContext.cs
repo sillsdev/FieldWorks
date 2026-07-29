@@ -26,7 +26,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <inheritdoc />
-		public override bool TrySetText(LexicalEditRegionField regionField, string ws, string value)
+		public override bool TrySetText(RegionField regionField, string ws, string value)
 		{
 			if (regionField != null && regionField.Values.Any(v => v.RequiresRichEditor))
 				return false;
@@ -62,7 +62,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		public override bool TrySetRichText(LexicalEditRegionField regionField, string ws,
+		public override bool TrySetRichText(RegionField regionField, string ws,
 			RegionRichTextValue value)
 		{
 			if (regionField != null && regionField.Values.Any(v => !v.CanEditRichText))
@@ -137,7 +137,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <inheritdoc />
-		public override bool TrySetOption(LexicalEditRegionField regionField, string optionKey)
+		public override bool TrySetOption(RegionField regionField, string optionKey)
 		{
 			if (regionField?.Field != "MorphType" || Entry.LexemeFormOA == null)
 				return false;
@@ -154,7 +154,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		// ITEM 1: the human-readable field label that names the undo step, falling back to the field name.
-		private static string FieldLabel(LexicalEditRegionField regionField)
+		private static string FieldLabel(RegionField regionField)
 			=> string.IsNullOrEmpty(regionField?.Label) ? regionField?.Field : regionField.Label;
 	}
 }

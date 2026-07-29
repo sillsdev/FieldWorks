@@ -504,7 +504,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// row's WsTag (the IETF tag) is the key the in-memory edit context stages each alternative under — and the
 		/// key Apply reads back to build the per-WS LexEntryComponents alternatives.
 		/// </summary>
-		internal static LexicalEditRegionField BuildTextField(string field, string automationId,
+		internal static RegionField BuildTextField(string field, string automationId,
 			IEnumerable<CoreWritingSystemDefinition> writingSystems, string initialForm, string label)
 		{
 			var values = new List<RegionWsValue>();
@@ -518,7 +518,7 @@ namespace SIL.FieldWorks.LexText.Controls
 					seeded = true;
 			}
 
-			return new LexicalEditRegionField(field, label, field, null, RegionFieldKind.Text,
+			return new RegionField(field, label, field, null, RegionFieldKind.Text,
 				default(SIL.FieldWorks.Common.FwAvalonia.ViewDefinition.EditorClassification), automationId, field,
 				default(SIL.FieldWorks.Common.FwAvalonia.ViewDefinition.SurfaceRouting), values,
 				new List<RegionChoiceOption>(), selectedOptionKey: null, isEditable: true);

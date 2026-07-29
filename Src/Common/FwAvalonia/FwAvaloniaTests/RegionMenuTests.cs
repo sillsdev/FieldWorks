@@ -108,10 +108,10 @@ namespace FwAvaloniaTests
 	[TestFixture]
 	public class RegionMenuRequestTests
 	{
-		private static LexicalEditRegionField Field(string id, RegionFieldKind kind,
+		private static RegionField Field(string id, RegionFieldKind kind,
 			string menuId = null, string contextMenuId = null, string hotlinksId = null,
 			bool collapsible = false)
-			=> new LexicalEditRegionField(id, id, id, null, kind,
+			=> new RegionField(id, id, id, null, kind,
 				EditorClassification.Known, id, null, SurfaceRouting.Inherit,
 				kind == RegionFieldKind.Text
 					? new List<RegionWsValue> { new RegionWsValue("en", "value") }
@@ -122,10 +122,10 @@ namespace FwAvaloniaTests
 				objectHvo: 1234);
 
 		private static (LexicalEditRegionView view, List<RegionMenuRequest> requests) Show(
-			params LexicalEditRegionField[] fields)
+			params RegionField[] fields)
 		{
 			var requests = new List<RegionMenuRequest>();
-			var model = new LexicalEditRegionModel("LexEntry", "Normal",
+			var model = new RegionModel("LexEntry", "Normal",
 				fields.ToList(), new List<ViewDiagnostic>());
 			var view = new LexicalEditRegionView(model, null, null, null, null, requests.Add);
 			var window = new Window { Content = view, Width = 480, Height = 300 };

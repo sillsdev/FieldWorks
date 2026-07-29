@@ -133,10 +133,10 @@ namespace SIL.FieldWorks.XWorks
 				Cache.LangProject.LexDbOA.MorphTypesOA = listFactory.Create();
 		}
 
-		private ComposedEntryRegion Compose(bool showHidden = false)
-			=> FullEntryRegionComposer.Compose(m_entry, Cache, showHidden);
+		private ComposedRegion Compose(bool showHidden = false)
+			=> RegionComposer.Compose(m_entry, Cache, showHidden);
 
-		private static LexicalEditRegionField VectorField(ComposedEntryRegion composed, string field)
+		private static RegionField VectorField(ComposedRegion composed, string field)
 			=> composed.Model.Fields.Single(f => f.Field == field && f.Kind == RegionFieldKind.ReferenceVector);
 
 		[Test]
@@ -411,17 +411,17 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void ResolveListEditorTool_MirrorsTheLegacyListsAreaMapping()
 		{
-			Assert.That(FullEntryRegionComposer.ResolveListEditorTool(
+			Assert.That(RegionComposer.ResolveListEditorTool(
 				Cache.LangProject.SemanticDomainListOA), Is.EqualTo("semanticDomainEdit"));
-			Assert.That(FullEntryRegionComposer.ResolveListEditorTool(
+			Assert.That(RegionComposer.ResolveListEditorTool(
 				Cache.LangProject.StatusOA), Is.EqualTo("statusEdit"));
-			Assert.That(FullEntryRegionComposer.ResolveListEditorTool(
+			Assert.That(RegionComposer.ResolveListEditorTool(
 				Cache.LangProject.LexDbOA.UsageTypesOA), Is.EqualTo("usageTypeEdit"));
-			Assert.That(FullEntryRegionComposer.ResolveListEditorTool(
+			Assert.That(RegionComposer.ResolveListEditorTool(
 				Cache.LangProject.AnthroListOA), Is.EqualTo("anthroEdit"));
-			Assert.That(FullEntryRegionComposer.ResolveListEditorTool(
+			Assert.That(RegionComposer.ResolveListEditorTool(
 				Cache.LangProject.LexDbOA.PublicationTypesOA), Is.EqualTo("publicationsEdit"));
-			Assert.That(FullEntryRegionComposer.ResolveListEditorTool(null), Is.Null);
+			Assert.That(RegionComposer.ResolveListEditorTool(null), Is.Null);
 		}
 
 		[Test]
@@ -436,7 +436,7 @@ namespace SIL.FieldWorks.XWorks
 
 			// Legacy AreaListener.GetCustomListToolName: Name without whitespace + "Edit" — the
 			// tool name the lists area generates for the custom list's dynamic tool node.
-			Assert.That(FullEntryRegionComposer.ResolveListEditorTool(custom),
+			Assert.That(RegionComposer.ResolveListEditorTool(custom),
 				Is.EqualTo("BirdSpeciesEdit"));
 		}
 
@@ -453,7 +453,7 @@ namespace SIL.FieldWorks.XWorks
 				Cache.LangProject.CheckListsOC.Add(checkList);
 			});
 
-			Assert.That(FullEntryRegionComposer.ResolveListEditorTool(checkList), Is.Null,
+			Assert.That(RegionComposer.ResolveListEditorTool(checkList), Is.Null,
 				"a list with no resolvable lists-area editor yields no jump (and no gear)");
 		}
 
@@ -478,11 +478,11 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void BuildPossibilityOptions_FlatSpec_FlattensTheHierarchy()
 		{
-			var hierarchical = FullEntryRegionComposer.BuildPossibilityOptions(
+			var hierarchical = RegionComposer.BuildPossibilityOptions(
 				Cache.LangProject.SemanticDomainListOA, flat: false);
 			Assert.That(hierarchical.Select(o => o.Depth), Is.EqualTo(new[] { 0, 1, 1 }));
 
-			var flat = FullEntryRegionComposer.BuildPossibilityOptions(
+			var flat = RegionComposer.BuildPossibilityOptions(
 				Cache.LangProject.SemanticDomainListOA, flat: true);
 			Assert.That(flat.Select(o => o.Key), Is.EqualTo(hierarchical.Select(o => o.Key)),
 				"flattening keeps the document order");

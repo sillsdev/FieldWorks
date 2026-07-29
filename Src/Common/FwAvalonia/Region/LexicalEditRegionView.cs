@@ -16,7 +16,7 @@ using SIL.FieldWorks.Common.FwAvalonia.Seams;
 namespace SIL.FieldWorks.Common.FwAvalonia.Region
 {
 	/// <summary>
-	/// A data-driven Avalonia view that renders a <see cref="LexicalEditRegionModel"/>.
+	/// A data-driven Avalonia view that renders a <see cref="RegionModel"/>.
 	/// It builds one row per region field from the typed view definition, so the same renderer scales
 	/// from preview scenarios to product-backed layouts. Each field's renderer is chosen from its
 	/// <see cref="RegionFieldKind"/>.
@@ -55,7 +55,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		/// the splitter position the same way (11.15): the host owns the remembered width so it
 		/// survives re-shows WITHOUT a process-global field — each host/window keeps its own.
 		/// </summary>
-		public LexicalEditRegionView(LexicalEditRegionModel model, IRegionEditContext editContext = null,
+		public LexicalEditRegionView(RegionModel model, IRegionEditContext editContext = null,
 			Action<string> writingSystemFocused = null,
 			Func<string, bool?> getExpansionState = null,
 			Action<string, bool> expansionChanged = null,
@@ -78,7 +78,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 
 			Name = "LexicalEditRegionView";
 			AutomationProperties.SetAutomationId(this, "LexicalEditRegionView");
-			AutomationProperties.SetName(this, FwAvaloniaStrings.LexicalEditRegionName);
+			AutomationProperties.SetName(this, FwAvaloniaStrings.RegionName);
 
 			// WinForms-density font baseline (12px) for the detail surface, applied to this view's own control
 			// subtree so it renders in both the runtime host and the headless tests. The view stays FLAT with
@@ -193,7 +193,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		}
 
 		/// <summary>The region model this view renders.</summary>
-		public LexicalEditRegionModel Model { get; }
+		public RegionModel Model { get; }
 
 		/// <summary>
 		/// Raised after a commit or cancel completed, so the host can re-resolve and re-show the
@@ -243,7 +243,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 			EditCompleted?.Invoke(this, EventArgs.Empty);
 		}
 
-		private void AddField(Grid grid, int row, LexicalEditRegionField field)
+		private void AddField(Grid grid, int row, RegionField field)
 		{
 			var automationId = string.IsNullOrEmpty(field.AutomationId) ? field.StableId : field.AutomationId;
 			var indent = new Thickness(field.Indent * 12, 0, 0, 0);
@@ -386,7 +386,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		// gutter for the row, and reports the revealed kebab (or null) so the caller folds it into the row's
 		// hover group. With no host bridge the content is returned unwrapped, so non-product views
 		// (previews/tests with no menu callback) are unchanged.
-		private Control WrapWithFieldMenu(Control inner, LexicalEditRegionField field, string automationId,
+		private Control WrapWithFieldMenu(Control inner, RegionField field, string automationId,
 			out Control kebab)
 		{
 			kebab = null;
@@ -445,7 +445,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		// hotlinks or no host bridge is wired (previews/tests with no menu callback), so those surfaces
 		// are unchanged. The strip is NOT hover-gated — it stays fully visible and clickable at rest,
 		// which is the whole point versus the kebab.
-		private Control BuildHotlinkStrip(LexicalEditRegionField field, string automationId, Thickness indent)
+		private Control BuildHotlinkStrip(RegionField field, string automationId, Thickness indent)
 		{
 			if (_menuRequested == null || string.IsNullOrEmpty(field.HotlinksId))
 				return null;
@@ -488,7 +488,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		// We therefore recompute visibility for the whole region from the current expanded states on
 		// every toggle and on initial render, so re-expanding a parent does not force a still-collapsed
 		// child's rows back into view (the legacy SliceTreeNode behavior).
-		private void WireCollapsibleHeaders(IReadOnlyList<LexicalEditRegionField> fields)
+		private void WireCollapsibleHeaders(IReadOnlyList<RegionField> fields)
 		{
 			// Compute each collapsible header's ownership range once, and seed its expanded state.
 			var headers = new List<CollapsibleHeader>();
@@ -579,7 +579,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		// RegionFieldControlFactory. The detail pane passes its full callback set (per-WS keyboard, slice
 		// menu, link, clipboard) and routes reference-vector gesture completion to its validation-gated
 		// OnSave (the autosave). New RegionFieldKinds are added once, in the factory.
-		private Control BuildEditor(LexicalEditRegionField field, string automationId)
+		private Control BuildEditor(RegionField field, string automationId)
 			=> RegionFieldControlFactory.Build(field, automationId, new RegionFieldControlContext(
 				editContext: _editContext,
 				writingSystemFocused: _writingSystemFocused,

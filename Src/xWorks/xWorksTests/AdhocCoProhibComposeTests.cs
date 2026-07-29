@@ -40,7 +40,7 @@ namespace SIL.FieldWorks.XWorks
 				Cache.LangProject.MorphologicalDataOA.AdhocCoProhibitionsOC.Add(rule);
 			});
 
-			var composed = FullEntryRegionComposer.Compose(rule, Cache, layoutName: "Edit",
+			var composed = RegionComposer.Compose(rule, Cache, layoutName: "Edit",
 				plugins: RegionEditorPluginRegistry.Default);
 
 			var kinds = composed.Model.Fields.Select(f => f.Kind.ToString()).ToList();
@@ -67,7 +67,7 @@ namespace SIL.FieldWorks.XWorks
 				group.Name.SetAnalysisDefaultWritingSystem("Group A");
 			});
 
-			var composed = FullEntryRegionComposer.Compose(group, Cache, layoutName: "Edit",
+			var composed = RegionComposer.Compose(group, Cache, layoutName: "Edit",
 				plugins: RegionEditorPluginRegistry.Default);
 
 			var kinds = composed.Model.Fields.Select(f => f.Kind.ToString()).ToList();

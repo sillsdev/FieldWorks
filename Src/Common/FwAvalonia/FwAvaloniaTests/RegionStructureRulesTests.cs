@@ -10,11 +10,11 @@ namespace FwAvaloniaTests
 {
 	/// <summary>
 	/// The section-header construction and child-indent rule are shared by both region
-	/// projectors (thin mapper + full composer) via <see cref="RegionStructureProjector"/>. These lock
+	/// projectors (thin mapper + full composer) via <see cref="RegionStructureRules"/>. These lock
 	/// the shared rules directly; the mapper/composer snapshot tests prove neither path's output changed.
 	/// </summary>
 	[TestFixture]
-	public class RegionStructureProjectorTests
+	public class RegionStructureRulesTests
 	{
 		[TestCase(null, 2, 2)]    // unlabeled passthrough group keeps depth
 		[TestCase("", 2, 2)]
@@ -22,13 +22,13 @@ namespace FwAvaloniaTests
 		[TestCase("Header", 0, 1)]
 		public void ChildIndent_LabeledGroupIndentsOneLevel(string label, int depth, int expected)
 		{
-			Assert.That(RegionStructureProjector.ChildIndent(label, depth), Is.EqualTo(expected));
+			Assert.That(RegionStructureRules.ChildIndent(label, depth), Is.EqualTo(expected));
 		}
 
 		[Test]
 		public void BuildHeaderField_Defaults_MatchTheThinMapperHeader()
 		{
-			var header = RegionStructureProjector.BuildHeaderField(
+			var header = RegionStructureRules.BuildHeaderField(
 				"g", "Group", "Field", "vern", EditorClassification.GroupingNone,
 				"autoId", "loc.key", SurfaceRouting.Inherit, depth: 2);
 
@@ -49,7 +49,7 @@ namespace FwAvaloniaTests
 		[Test]
 		public void BuildHeaderField_RichArgs_MatchTheComposerHeader()
 		{
-			var header = RegionStructureProjector.BuildHeaderField(
+			var header = RegionStructureRules.BuildHeaderField(
 				"g", "Group", "Field", "vern", EditorClassification.GroupingNone,
 				"autoId", "loc.key", SurfaceRouting.Inherit, depth: 1,
 				isCollapsible: true, isInitiallyExpanded: false,

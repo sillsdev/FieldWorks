@@ -62,9 +62,9 @@ namespace SIL.FieldWorks.XWorks
 			return ler;
 		}
 
-		private ComposedEntryRegion Compose() => FullEntryRegionComposer.Compose(m_component, Cache);
+		private ComposedRegion Compose() => RegionComposer.Compose(m_component, Cache);
 
-		private static LexicalEditRegionField FindField(ComposedEntryRegion composed, string field)
+		private static RegionField FindField(ComposedRegion composed, string field)
 			=> composed.Model.Fields.SingleOrDefault(f => f.Field == field
 				&& f.Kind == RegionFieldKind.ReferenceVector);
 
@@ -233,7 +233,7 @@ namespace SIL.FieldWorks.XWorks
 				variantRef.ComponentLexemesRS.Add(referenced);
 			});
 
-			var composed = FullEntryRegionComposer.Compose(referenced, Cache);
+			var composed = RegionComposer.Compose(referenced, Cache);
 			var field = composed.Model.Fields.FirstOrDefault(f => f.Field == "VariantFormEntryBackRefs"
 				&& f.Kind == RegionFieldKind.ReferenceVector);
 			if (field != null)

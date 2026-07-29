@@ -29,15 +29,15 @@ namespace FwAvaloniaTests
 	[TestFixture]
 	public class FwFieldSelectionInputTests
 	{
-		private static LexicalEditRegionField LtrField(string text)
-			=> new LexicalEditRegionField(
+		private static RegionField LtrField(string text)
+			=> new RegionField(
 				"LexEntry/x/#0", "Lexeme Form", "Form", "vernacular", RegionFieldKind.Text,
 				EditorClassification.Known, "SelEditor", null, SurfaceRouting.Product,
 				new List<RegionWsValue> { new RegionWsValue("en", text, wsTag: "en") },
 				null, null);
 
-		private static LexicalEditRegionField RtlField(string text)
-			=> new LexicalEditRegionField(
+		private static RegionField RtlField(string text)
+			=> new RegionField(
 				"LexEntry/x/#0", "Lexeme Form", "Form", "vernacular", RegionFieldKind.Text,
 				EditorClassification.Known, "SelEditor", null, SurfaceRouting.Product,
 				new List<RegionWsValue>
@@ -46,7 +46,7 @@ namespace FwAvaloniaTests
 				},
 				null, null);
 
-		private static (TextBox box, Window window) ShowFocused(LexicalEditRegionField field)
+		private static (TextBox box, Window window) ShowFocused(RegionField field)
 		{
 			var control = new FwMultiWsTextField(field, field.AutomationId, new FakeRegionEditContext(), null);
 			var window = new Window { Content = control, Width = 420, Height = 80 };
