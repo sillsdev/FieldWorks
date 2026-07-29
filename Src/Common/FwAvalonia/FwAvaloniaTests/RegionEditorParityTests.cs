@@ -18,9 +18,9 @@ using SIL.FieldWorks.Common.FwAvalonia.ViewDefinition;
 namespace FwAvaloniaTests
 {
 	/// <summary>
-	/// Editor-type parity for the lexical detail view (WinForms → Avalonia):
+	/// Editor-type parity for the lexical detail view:
 	/// the importer carries an enumComboBox's stringList ids/group onto the node (the metadata
-	/// survives even though the region no longer renders a closed enum combo);
+	/// survives even though the region does not render a closed enum combo);
 	/// FwReferenceVectorField.Dispose detaches every handler it wired (count >0 → 0).
 	/// </summary>
 	[TestFixture]

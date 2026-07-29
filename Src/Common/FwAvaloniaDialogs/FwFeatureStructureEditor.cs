@@ -93,7 +93,7 @@ namespace FwAvaloniaDialogs
 	}
 
 	/// <summary>
-	/// A reusable, LCModel-FREE feature-structure (<c>FsFeatStruc</c>) tree editor — the Avalonia replacement for
+	/// A reusable, LCModel-FREE feature-structure (<c>FsFeatStruc</c>) tree editor — the Avalonia analog of
 	/// the WinForms <c>FeatureStructureTreeView</c> (and the dialogs that host it:
 	/// <c>MsaInflectionFeatureListDlg</c>, <c>PhonologicalFeatureChooserDlg</c>). It renders the feature system
 	/// as a TREE: complex features expand to reveal their nested features; closed features expand to reveal their

@@ -12,7 +12,7 @@ using SIL.LCModel.Infrastructure;
 namespace LexTextControlsTests
 {
 	/// <summary>
-	/// The LCModel-aware side of the §19b Stage-3 create-feature / add-value flow
+	/// The LCModel-aware side of the create-feature / add-value flow
 	/// (<see cref="LcmCreateFeatureLauncher"/>): creating a closed feature in the inflection / phonological feature
 	/// system and adding a symbolic value to a closed feature, over a real LcmCache (via InternalsVisibleTo) — the
 	/// unit-testable core that mirrors MasterInflectionFeatureListDlg / MasterPhonologicalFeatureListDlg's blank-create
@@ -114,7 +114,7 @@ namespace LexTextControlsTests
 			Assert.That(node, Is.Null, "an empty name yields no feature");
 		}
 
-		// ----- T2 integration: create a feature, then it appears in the (rebuilt) phonological feature system -----
+		// ----- integration: create a feature, then it appears in the (rebuilt) phonological feature system -----
 
 		[Test]
 		public void Integration_CreatePhonologicalFeature_AppearsInRebuiltNodeSystem()

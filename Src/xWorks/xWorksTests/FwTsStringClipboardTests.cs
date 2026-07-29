@@ -13,7 +13,7 @@ using SIL.LCModel.Core.Text;
 namespace SIL.FieldWorks.XWorks
 {
 	/// <summary>
-	/// Task 3.13 — the shared cross-framework clipboard seam. Proves the bridge speaks the legacy
+	/// The shared cross-framework clipboard seam. Proves the bridge speaks the legacy
 	/// <c>"TsString"</c> + <c>UnicodeText</c> OS clipboard contract in both directions: what the bridge
 	/// writes, legacy code reads (same <see cref="TsStringWrapper"/> format), and what legacy
 	/// <c>EditingHelper</c> writes, the bridge reads — with multi-writing-system runs preserved.

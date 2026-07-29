@@ -10,7 +10,7 @@ using SIL.FieldWorks.Common.FwAvalonia.Region;
 namespace FwAvaloniaDialogs
 {
 	/// <summary>
-	/// The LCModel-free input to the reusable Avalonia Insert Entry dialog — the Phase 1 replacement for the
+	/// The LCModel-free input to the reusable Avalonia Insert Entry dialog — the Avalonia analog of the
 	/// legacy <c>InsertEntryDlg</c> in New-UI mode. The product edge (the LexText launcher) builds this from the
 	/// live cache so the Avalonia layer never sees an <c>ICmObject</c>: the lexeme form / gloss fields are
 	/// projected as <see cref="LexicalEditRegionField"/>s (one writing-system row per current vernacular /
@@ -18,9 +18,6 @@ namespace FwAvaloniaDialogs
 	/// types are flat <see cref="RegionChoiceOption"/>s (key = morph-type guid string), and the live
 	/// affix-marker → morph-type derivation rides the <see cref="DeriveMorphType"/> delegate (the launcher wraps
 	/// <c>MorphServices.GetTypeIfMatchesPrefix</c>/<c>FindMorphType</c>).
-	///
-	/// Scope: lexeme form + gloss + morph type, plus the duplicate-detection "matching entries" pane (P2, via
-	/// <see cref="SearchMatches"/>). The complex-form / MSA / Create-and-Edit affordances (P3) remain out of scope.
 	/// </summary>
 	public sealed class InsertEntryDialogInput
 	{
@@ -52,11 +49,11 @@ namespace FwAvaloniaDialogs
 		/// <summary>The prompt shown above the fields (localized by the caller); null/empty hides it.</summary>
 		public string Prompt { get; set; }
 
-		/// <summary>The help topic id for the dialog's Help button (null/empty hides Help). Phase 1 carries it only.</summary>
+		/// <summary>The help topic id for the dialog's Help button (null/empty hides Help).</summary>
 		public string HelpTopic { get; set; }
 
 		/// <summary>
-		/// The duplicate-detection ("matching entries") search delegate — the P2 lift of the legacy
+		/// The duplicate-detection ("matching entries") search delegate — the lift of the legacy
 		/// <c>InsertEntryDlg.UpdateMatches</c> / <c>MatchingObjectsBrowser</c>. Given the current best lexeme form AND
 		/// the current best gloss it returns the EXISTING entries whose lexeme/citation/alternate form OR gloss matches
 		/// (each a lightweight <see cref="EntryGoSearchResult"/>: id = entry hvo string, text = headword,
@@ -95,7 +92,7 @@ namespace FwAvaloniaDialogs
 		/// </summary>
 		public InsertEntryInitialFocus InitialFocus { get; set; } = InsertEntryInitialFocus.LexemeForm;
 
-		// ----- grammatical-info (MSA) section (Stage 3) -----
+		// ----- grammatical-info (MSA) section -----
 
 		/// <summary>
 		/// The project's parts-of-speech hierarchy as a flat, document-order, depth-tagged <see cref="FwPosNode"/>
@@ -145,7 +142,7 @@ namespace FwAvaloniaDialogs
 		/// for a given main-POS id (guid string) — the launcher wraps the POS's <c>InflectableFeatsRC</c> (incl. its
 		/// parent POSes', the lift of <c>MsaInflectionFeatureListDlg.PopulateTreeFromPos</c>). The dialog re-runs it
 		/// whenever the MSA box's MAIN POS changes (infl/deriv), refeeding
-		/// <see cref="FwMsaGroupBox.SetInflectionFeatureNodes"/>. Null leaves the editor empty (Phase-1 §19b Stage 2).
+		/// <see cref="FwMsaGroupBox.SetInflectionFeatureNodes"/>. Null leaves the editor empty.
 		/// </summary>
 		public Func<string, IReadOnlyList<FwFeatureNode>> InflectionFeaturesForPos { get; set; }
 

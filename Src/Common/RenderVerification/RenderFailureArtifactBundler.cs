@@ -12,8 +12,8 @@ namespace SIL.FieldWorks.Common.RenderVerification
 {
 	/// <summary>
 	/// Bundles render/parity verification FAILURE artifacts into a single CI-discoverable folder so a
-	/// failed snapshot comparison is diagnosable from the build output (task 2.5 of
-	/// lexical-edit-avalonia-migration). Given a failed <see cref="RenderBaselineVerificationResult"/>
+	/// failed snapshot comparison is diagnosable from the build output. Given a failed
+	/// <see cref="RenderBaselineVerificationResult"/>
 	/// it copies the received image, received metadata, and diff image into one folder and writes a
 	/// <c>failure-summary.json</c> describing the test and the pixel-diff metrics.
 	///

@@ -17,8 +17,8 @@ using SIL.FieldWorks.Common.FwAvalonia.ViewDefinition;
 namespace FwAvaloniaTests
 {
 	/// <summary>
-	/// Task 7.8 — produces the canonical Path 3 parity bundle for the first-slice scenario per the
-	/// 2.9 contract: shared scenarioId/bundleId/failureSummaryId plus an evidence manifest that records
+	/// Produces the canonical Path 3 parity bundle for the first-slice scenario:
+	/// shared scenarioId/bundleId/failureSummaryId plus an evidence manifest that records
 	/// each kind of evidence as proven or pending (never silently omitted). Evidence assembled here: semantic
 	/// snapshot (typed IR), Avalonia visual (Skia rendered frame), WinForms visual (the committed
 	/// verified baseline), workflow/accessibility (UIA suites), performance (timing baselines).

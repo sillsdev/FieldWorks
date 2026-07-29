@@ -14,7 +14,7 @@ using SIL.FieldWorks.Common.FwAvalonia.Region;
 namespace FwAvaloniaDialogs
 {
 	/// <summary>
-	/// View-model for the reusable Avalonia Insert Entry dialog (Phase 1 replacement for the legacy
+	/// View-model for the reusable Avalonia Insert Entry dialog (the Avalonia analog of the legacy
 	/// <c>InsertEntryDlg</c> in New-UI mode). It hosts the owned controls the view mounts:
 	///   * a <see cref="FwMultiWsTextField"/> for the LEXEME FORM (one row per vernacular WS),
 	///   * a single-select <see cref="FwOptionPicker"/> for the MORPH TYPE, and
@@ -27,7 +27,7 @@ namespace FwAvaloniaDialogs
 	/// the legacy <c>LexFormNotEmpty</c> parity); <c>ApplyChanges</c> snapshots the per-WS form + gloss values +
 	/// chosen morph-type key into <see cref="Result"/>.
 	///
-	/// P2 adds the duplicate-detection "matching entries" pane (the legacy <c>m_matchingObjectsBrowser</c>): as the
+	/// The duplicate-detection "matching entries" pane (the legacy <c>m_matchingObjectsBrowser</c>): as the
 	/// lexeme form changes the VM re-runs the launcher-supplied <see cref="InsertEntryDialogInput.SearchMatches"/>
 	/// delegate and fills <see cref="Matches"/> with the existing entries whose form matches. Selecting a row and
 	/// invoking <see cref="UseSelectedEntryCommand"/> (the legacy "Go to similar entry" link) closes the dialog with
@@ -44,7 +44,7 @@ namespace FwAvaloniaDialogs
 		private string _morphTypeKey;
 		// Guards re-entrancy when the derivation re-sets the adjusted form (mirrors legacy m_updateTextMonitor).
 		private bool _deriving;
-		// The launcher-supplied duplicate-detection search (P2); null disables/hides the matches pane. Takes the best
+		// The launcher-supplied duplicate-detection search; null disables/hides the matches pane. Takes the best
 		// lexeme form AND the best gloss (legacy GetFields searches both the form fields and the gloss).
 		private readonly Func<string, string, IReadOnlyList<EntryGoSearchResult>> _searchMatches;
 		// The launcher-supplied morphology validation (CheckMorphType + CircumfixProblem + invalid-form parse); null
@@ -66,7 +66,7 @@ namespace FwAvaloniaDialogs
 		// MSA box's main POS changes (stem/root); null leaves the picker with only the "<None>" row.
 		private readonly Func<string, IReadOnlyList<FwInflectionClass>> _inflClassesForPos;
 		// The launcher-supplied inflection-feature-system provider (main-POS id -> feature nodes), re-run when the MSA
-		// box's main POS changes (infl/deriv); null leaves the feature editor empty (§19b Stage 2).
+		// box's main POS changes (infl/deriv); null leaves the feature editor empty.
 		private readonly Func<string, IReadOnlyList<FwFeatureNode>> _inflFeaturesForPos;
 		// Guards re-entrancy while the VM seeds the MSA box's main POS during a slot refeed.
 		private string _lastSlotPosId;
@@ -123,7 +123,7 @@ namespace FwAvaloniaDialogs
 			MorphTypePicker.OptionCommitted += OnMorphTypeCommitted;
 			SelectMorphTypeInPicker(_morphTypeKey);
 
-			// The duplicate-detection ("matching entries") search (P2). When the launcher supplies it the matches
+			// The duplicate-detection ("matching entries") search. When the launcher supplies it the matches
 			// pane is shown and re-run as the form changes; otherwise it stays hidden (HasMatchSearch false). Prime
 			// it from any seeded initial form so a pre-filled lexeme form already lists its duplicates on open.
 			_searchMatches = _input.SearchMatches;
@@ -131,7 +131,7 @@ namespace FwAvaloniaDialogs
 			if (HasMatchSearch)
 				RefreshMatches();
 
-			// The grammatical-info (MSA) section (Stage 3): the LCModel-free FwMsaGroupBox, fed the project POS
+			// The grammatical-info (MSA) section: the LCModel-free FwMsaGroupBox, fed the project POS
 			// hierarchy + slot options + initial MsaType/POS by the launcher. The dialog's morph-type selection drives
 			// the box's MsaType LIVE (the launcher supplies the morph-type → MsaType map as data, so the kit stays
 			// LCModel-free), mirroring how WinForms InsertEntryDlg wires MSAGroupBox.MorphTypePreference.
@@ -158,10 +158,10 @@ namespace FwAvaloniaDialogs
 				RefreshInflectionClassesForCurrentPos();
 				RefreshInflectionFeaturesForCurrentPos();
 			};
-			// Forward the box's create-feature / create-value requests (Stage 3 wires the feature dialogs).
+			// Forward the box's create-feature / create-value requests to the host.
 			MsaGroupBox.CreateNewFeatureRequested += () => CreateNewFeatureRequested?.Invoke();
 			MsaGroupBox.CreateNewValueRequested += id => CreateNewValueRequested?.Invoke(id);
-			// Create-new-POS (Stage 4): the inline "Create a new Part of Speech..." affordance is wired through to
+			// Create-new-POS: the inline "Create a new Part of Speech..." affordance is wired through to
 			// the host's create-POS flow. Subscribe to EACH chooser's request directly (not the box's merged
 			// CreateNewPosRequested, which does not say which chooser fired) so the VM-level event carries the target
 			// (main vs secondary). The host (LcmCreatePartOfSpeechLauncher via LcmInsertEntryDialogLauncher) opens the
@@ -230,7 +230,7 @@ namespace FwAvaloniaDialogs
 		/// <summary>True when there is a non-empty <see cref="Prompt"/> to show.</summary>
 		public bool HasPrompt { get; }
 
-		/// <summary>The help topic id carried for the Help button (Phase 1 carries it only; wiring is P3).</summary>
+		/// <summary>The help topic id carried for the Help button.</summary>
 		public string HelpTopic { get; }
 
 		/// <summary>True when a <see cref="HelpTopic"/> is present, so the Help button shows.</summary>
@@ -245,7 +245,7 @@ namespace FwAvaloniaDialogs
 		/// </summary>
 		public InsertEntryPayload Result { get; private set; }
 
-		// ----- duplicate-detection "matching entries" pane (P2) -----
+		// ----- duplicate-detection "matching entries" pane -----
 
 		/// <summary>
 		/// The existing entries whose lexeme/citation/alternate form matches the current lexeme form (the legacy
@@ -328,7 +328,7 @@ namespace FwAvaloniaDialogs
 
 		/// <summary>
 		/// Raised when the user clicks Help, carrying the <see cref="HelpTopic"/>. The launcher subscribes to open
-		/// the help viewer; Phase 1 only carries the topic (an unsubscribed Help button is harmless).
+		/// the help viewer; an unsubscribed Help button is harmless.
 		/// </summary>
 		public event Action<string> HelpRequested;
 
@@ -472,7 +472,7 @@ namespace FwAvaloniaDialogs
 			}
 		}
 
-		// ----- grammatical-info (MSA) section: morph-type-driven reconfigure + slot refeed (Stage 3) -----
+		// ----- grammatical-info (MSA) section: morph-type-driven reconfigure + slot refeed -----
 
 		// Maps the current morph-type key to an MsaType (via the launcher-supplied data map) and sets it on the box,
 		// reconfiguring its widgets live — the LCModel-free lift of MSAGroupBox.MorphTypePreference. Then re-feeds the
@@ -518,7 +518,7 @@ namespace FwAvaloniaDialogs
 				_inflClassesForPos(MsaGroupBox.MainPosId) ?? Array.Empty<FwInflectionClass>());
 		}
 
-		// Re-runs the launcher's inflection-feature-system provider for the box's current main POS (§19b Stage 2).
+		// Re-runs the launcher's inflection-feature-system provider for the box's current main POS.
 		private void RefreshInflectionFeaturesForCurrentPos()
 		{
 			if (MsaGroupBox == null || _inflFeaturesForPos == null)
@@ -544,18 +544,18 @@ namespace FwAvaloniaDialogs
 		/// host (the LCModel-aware launcher) opens the master-category catalog, creates the POS in the project, then
 		/// calls <see cref="AcceptCreatedMainPos"/> / <see cref="AcceptCreatedSecondaryPos"/> with the new node so the
 		/// requesting chooser adds + selects it. The VM itself performs NO create (it stays LCModel-free); a request
-		/// with no host subscribed is a harmless no-op. (Stage 4 replaced the Stage-3 // TODO no-op.)
+		/// with no host subscribed is a harmless no-op.
 		/// </summary>
 		public event Action<FwPosTarget> CreateNewPosRequested;
 
-		/// <summary>Raised when the user clicks "Create a new feature..." in the inflection-feature editor (§19b Stage 2).</summary>
+		/// <summary>Raised when the user clicks "Create a new feature..." in the inflection-feature editor.</summary>
 		public event Action CreateNewFeatureRequested;
 
-		/// <summary>Raised when the user invokes a closed feature's "Add a value..." affordance (§19b Stage 2).</summary>
+		/// <summary>Raised when the user invokes a closed feature's "Add a value..." affordance.</summary>
 		public event Action<string> CreateNewValueRequested;
 
 		/// <summary>
-		/// Host callback after a successful create-POS flow (Stage 4): re-feeds the freshly rebuilt project POS
+		/// Host callback after a successful create-POS flow: re-feeds the freshly rebuilt project POS
 		/// hierarchy (which now INCLUDES the new POS, at its real catalog depth) to BOTH choosers so the new category
 		/// appears in each, then selects the new POS in the chooser that REQUESTED the create (<paramref name="target"/>).
 		/// Selecting after the refresh (rather than via the chooser's own append-and-select <c>AcceptCreatedNode</c>)
@@ -717,15 +717,15 @@ namespace FwAvaloniaDialogs
 		/// <summary>
 		/// True when the (deferred) inflectional-affix glossing-assistant affordance should show — the SAME condition
 		/// the legacy <c>m_lnkAssistant</c> "Inflectional Affix Gloss Builder" link was enabled under (an inflectional
-		/// affix MSA). The affordance is rendered VISIBLE but DISABLED (the MGA dialog + GlossFeatures write path are a
-		/// documented deferral); it must be SEEN, not silently omitted.
+		/// affix MSA). The affordance is rendered VISIBLE but DISABLED (the MGA dialog + GlossFeatures write path are
+		/// not available); it must be SEEN, not silently omitted.
 		/// </summary>
 		public bool ShowGlossingAssistantDeferred => MsaGroupBox != null && MsaGroupBox.MsaType == FwMsaType.Inflectional;
 
 		/// <summary>The disabled glossing-assistant affordance's label (legacy link seeded from the resx).</summary>
 		public string GlossingAssistantDeferredLabel => FwAvaloniaDialogsStrings.InsertEntryGlossingAssistantDeferred;
 
-		/// <summary>The disabled glossing-assistant affordance's tooltip (explains the deferral).</summary>
+		/// <summary>The disabled glossing-assistant affordance's tooltip (explains why it is unavailable).</summary>
 		public string GlossingAssistantDeferredTooltip => FwAvaloniaDialogsStrings.InsertEntryGlossingAssistantDeferredTooltip;
 
 		/// <summary>Which field takes the initial focus on open (legacy SetInitialFocus): lexeme form or gloss.</summary>

@@ -8,7 +8,7 @@ using SIL.FieldWorks.Common.FwAvalonia.Seams;
 
 namespace FwAvaloniaTests
 {
-	/// <summary>Task 3.13 — the LCModel-free clipboard seam contract and its in-memory implementation.</summary>
+	/// <summary>The LCModel-free clipboard seam contract and its in-memory implementation.</summary>
 	[TestFixture]
 	public class FwClipboardSeamTests
 	{

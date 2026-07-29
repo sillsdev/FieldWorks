@@ -19,9 +19,9 @@ using SIL.FieldWorks.Common.FwAvalonia.ViewDefinition;
 namespace FwAvaloniaTests
 {
 	/// <summary>
-	/// Task 6.9 — control-level visual parity capture: with Skia-backed headless drawing the region
-	/// view renders real frames that are saved as parity artifacts (the Avalonia visual evidence of the
-	/// Path 3 bundle). Stable automation ids on user-facing controls are locked by the other suites.
+	/// Control-level visual parity capture: with Skia-backed headless drawing the region view renders
+	/// real frames that are saved as parity artifacts (the Avalonia visual evidence of the Path 3
+	/// bundle). Stable automation ids on user-facing controls are locked by the other suites.
 	/// </summary>
 	[TestFixture]
 	public class VisualParityCaptureTests
@@ -71,8 +71,8 @@ namespace FwAvaloniaTests
 	}
 
 	/// <summary>
-	/// Task 6.6 — screen-local keyboard commands: Enter commits (validation-gated through the same
-	/// Save path), Escape cancels.
+	/// Screen-local keyboard commands: Enter commits (validation-gated through the same Save path),
+	/// Escape cancels.
 	/// </summary>
 	[TestFixture]
 	public class RegionEditorShortcutTests
@@ -127,8 +127,8 @@ namespace FwAvaloniaTests
 	}
 
 	/// <summary>
-	/// Task 6.7 — the shared density tokens are a locked gate before broad editor rollout: changing
-	/// the compact-baseline values is a reviewed parity decision, not a drive-by style tweak.
+	/// The shared density tokens are a locked gate before broad editor rollout: changing the
+	/// compact-baseline values is a reviewed parity decision, not a drive-by style tweak.
 	/// </summary>
 	[TestFixture]
 	public class DensityTokenGateTests

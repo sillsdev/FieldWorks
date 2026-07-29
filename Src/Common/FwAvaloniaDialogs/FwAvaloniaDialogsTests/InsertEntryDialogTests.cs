@@ -19,7 +19,7 @@ using SIL.FieldWorks.Common.FwAvalonia.ViewDefinition;
 namespace FwAvaloniaDialogsTests
 {
 	/// <summary>
-	/// The reusable Insert Entry dialog (Phase 1): the Avalonia replacement for the legacy InsertEntryDlg in
+	/// The reusable Insert Entry dialog: the Avalonia replacement for the legacy InsertEntryDlg in
 	/// New-UI mode. The view-model hosts a lexeme-form FwMultiWsTextField, a single-select morph-type
 	/// FwOptionPicker, and a gloss FwMultiWsTextField, staging the text fields into an in-memory edit context;
 	/// it gates OK on a non-empty best lexeme form, re-derives the morph type as the form changes, and snapshots
@@ -559,7 +559,7 @@ namespace FwAvaloniaDialogsTests
 			Assert.That(descendants.Contains(vm.GlossField), Is.True, "the gloss field is mounted");
 		}
 
-		// ----- grammatical-info (MSA) section (Stage 3) -----
+		// ----- grammatical-info (MSA) section -----
 
 		[AvaloniaTest]
 		public void Msa_SectionIsMountedAndRenders_StemConfig()
@@ -672,12 +672,12 @@ namespace FwAvaloniaDialogsTests
 				"the derivational secondary POS pick flows into the payload's FwSandboxMsa");
 		}
 
-		// ----- create-new-POS wiring (Stage 4, replaces the Stage-3 no-op) -----
+		// ----- create-new-POS wiring -----
 
 		[AvaloniaTest]
 		public void Msa_CreateNewPosRequest_FromMainChooser_RaisesVmEventWithMainTarget()
 		{
-			// Stage 4 wires the inline "Create a new Part of Speech..." affordance through to a VM-level event that
+			// The inline "Create a new Part of Speech..." affordance surfaces as a VM-level event that
 			// carries WHICH chooser fired (so the host routes the created POS back to the right chooser).
 			var (_, vm) = Show(BasicInput(withMsa: true));
 			FwPosTarget? target = null;

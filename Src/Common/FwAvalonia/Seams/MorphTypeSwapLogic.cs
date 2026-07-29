@@ -34,7 +34,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Seams
 	}
 
 	/// <summary>
-	/// Pure humble object extracted from <c>MorphTypeAtomicLauncher</c> (task 3.4): the stem/affix
+	/// Pure humble object extracted from <c>MorphTypeAtomicLauncher</c>: the stem/affix
 	/// classification and swap data-loss decision, with no WinForms dependency. The stem-type set
 	/// mirrors <c>MorphTypeAtomicLauncher.IsStemType</c> exactly (bound root/stem, enclitic, particle,
 	/// proclitic, root, stem, clitic, phrase, discontiguous phrase). Swapping across the stem/affix
@@ -56,7 +56,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Seams
 			MorphTypeKind.DiscontiguousPhrase
 		};
 
-		// Review consolidation (morph-type GUID knowledge): the ONE GUID → kind table. The seam is
+		// The ONE GUID → kind table. The seam is
 		// the cleaner home because it already owns MorphTypeKind and the stem/affix decision, and
 		// both the xWorks composer and any future surface can consume it without dragging WinForms
 		// along. This project is deliberately LCModel-free, so the fixed MoMorphTypeTags model GUIDs
@@ -64,7 +64,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Seams
 		// references both assemblies) pins every literal to its MoMorphTypeTags constant so the
 		// mirror cannot drift. The legacy WinForms MorphTypeAtomicLauncher.IsStemType still carries
 		// its own guid list (DetailControls cannot reference FwAvalonia today); the same test pins
-		// that set too, and the launcher retires with its surface.
+		// that set too.
 		private static readonly IReadOnlyDictionary<Guid, MorphTypeKind> KindByGuid =
 			new Dictionary<Guid, MorphTypeKind>
 			{

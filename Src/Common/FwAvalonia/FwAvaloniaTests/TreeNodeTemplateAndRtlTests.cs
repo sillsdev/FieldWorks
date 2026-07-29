@@ -21,9 +21,9 @@ using SIL.FieldWorks.Common.FwAvalonia.ViewDefinition;
 namespace FwAvaloniaTests
 {
 	/// <summary>
-	/// Task 6.4 — TreeView node-template density: multiple translations per sense rendered as compact
+	/// TreeView node-template density: multiple translations per sense rendered as compact
 	/// multi-writing-system node templates. Per the control-selection matrix, stock TreeView is
-	/// acceptable only for bounded trees (it does not virtualize); this fixture is the kept proof of the
+	/// acceptable only for bounded trees (it does not virtualize); this fixture proves the
 	/// node-template density story.
 	/// </summary>
 	[TestFixture]
@@ -91,7 +91,7 @@ namespace FwAvaloniaTests
 	}
 
 	/// <summary>
-	/// Task 6.13, RTL coverage — headless evidence that the owned multi-WS field edits right-to-left
+	/// RTL coverage — headless evidence that the owned multi-WS field edits right-to-left
 	/// script text: the editor takes RTL flow direction from the writing system, Arabic text
 	/// round-trips through editing, and caret/selection indices operate on the logical string
 	/// (Avalonia's TextLayout handles visual bidi reordering). IME composition and on-device

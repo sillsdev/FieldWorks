@@ -9,8 +9,8 @@ using SIL.FieldWorks.Common.FwAvalonia.ViewDefinition;
 namespace FwAvaloniaTests
 {
 	/// <summary>
-	/// Task 9.2 (override load side): applying a sparse patch to the shipped definition reproduces the
-	/// customized definition, and is the inverse of the differ for representable changes. Pure logic.
+	/// Override load side: applying a sparse patch to the shipped definition reproduces the customized
+	/// definition, and is the inverse of the differ for representable changes. Pure logic.
 	/// </summary>
 	[TestFixture]
 	public class ViewDefinitionOverrideApplierTests

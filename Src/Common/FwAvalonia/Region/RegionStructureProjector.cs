@@ -9,9 +9,9 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 	/// <summary>
 	/// The shared structural projection rules used by BOTH region projectors — the thin
 	/// <see cref="LexicalEditRegionMapper"/> (view-definition → region model, LCModel-free) and the full
-	/// xWorks <c>FullEntryRegionComposer</c> (LCModel-backed). Task 18.11: the section-header row
-	/// construction and the child-indent rule live ONCE here so the two paths cannot drift, before a
-	/// second region reuses the foundation. (The third structural rule — editor → renderable kind — is
+	/// xWorks <c>FullEntryRegionComposer</c> (LCModel-backed). The section-header row
+	/// construction and the child-indent rule live ONCE here so the two paths cannot drift. (The third
+	/// structural rule — editor → renderable kind — is
 	/// likewise shared, in <see cref="EditorKindMap.ClassifyRegionFieldKind"/>.)
 	/// </summary>
 	public static class RegionStructureProjector

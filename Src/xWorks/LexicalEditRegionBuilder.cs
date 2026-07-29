@@ -13,12 +13,12 @@ namespace SIL.FieldWorks.XWorks
 {
 	/// <summary>
 	/// Builds the product Lexical Edit region model from the typed view definition plus live LCModel
-	/// values (tasks 4.8/4.10). Structure comes from <see cref="LexicalEditFirstSlice"/>, which compiles
+	/// values. Structure comes from <see cref="LexicalEditFirstSlice"/>, which compiles
 	/// the shipped layout inventory through <c>ViewDefinitionCompiler</c>; the authored definition
 	/// remains only as an explicit, diagnosed fallback. This type supplies values via
 	/// <see cref="IRegionValueProvider"/>: text from the entry, and morph-type chooser options sourced
 	/// from the project's LCModel morph-type possibility list (no hardcoded option set). Values are read
-	/// on the UI thread; write-back goes through the LCModel edit session (tasks 6.x), not this builder.
+	/// on the UI thread; write-back goes through the LCModel edit session, not this builder.
 	/// </summary>
 	public sealed class LexicalEditRegionBuilder : IRegionValueProvider
 	{
@@ -54,7 +54,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
-		/// Task 4.10: compile the first-slice definition from the live shipped layout inventory. The
+		/// Compiles the first-slice definition from the live shipped layout inventory. The
 		/// authored definition (which carries an `authored-fallback` diagnostic) is used only when the
 		/// layout directory is unavailable or a shipped layout no longer yields the expected nodes.
 		/// </summary>
@@ -88,7 +88,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		// Tasks 6.2/6.13 (multi-WS read path): one row per *current* writing system — the same
+		// Multi-WS read path: one row per *current* writing system — the same
 		// "all vernacular"/"all analysis" semantics the compiled slice definitions carry — rendered
 		// with the project's per-WS default font so both surfaces show the same record consistently.
 		// The per-ws row projection is the shared RegionValueFactory recipe (the
@@ -119,7 +119,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Activates the writing system's configured keyboard (Keyman/Windows IME) when its editor
 		/// row gains focus on the Avalonia surface — the behavior legacy slices get from
-		/// <c>EditingHelper.SetKeyboardForWs</c> (task 6.2). Unknown tags fall back to the default keyboard.
+		/// <c>EditingHelper.SetKeyboardForWs</c>. Unknown tags fall back to the default keyboard.
 		/// </summary>
 		public static void ActivateKeyboardForWritingSystem(LcmCache cache, string wsTag)
 		{
@@ -148,7 +148,7 @@ namespace SIL.FieldWorks.XWorks
 			if (fieldNode.Field != MorphTypeField)
 				return new List<RegionChoiceOption>();
 
-			// Task 4.10: chooser options come from the project's morph-type possibility list, keyed by
+			// Chooser options come from the project's morph-type possibility list, keyed by
 			// guid, so every project-defined morph type (phrase, clitic, infix, ...) is offered instead
 			// of a hardcoded subset.
 			var morphTypes = _cache.LangProject.LexDbOA?.MorphTypesOA;

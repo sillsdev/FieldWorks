@@ -12,15 +12,14 @@ using Newtonsoft.Json.Linq;
 namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 {
 	/// <summary>
-	/// Canonical JSON serialization of the typed view definition (tasks 9.2/9.4, per
-	/// `canonical-view-definition-design.md`): deterministic property order, defaults omitted, and a
-	/// `formatVersion` header so per-project overrides can be validated. This is the migration
+	/// Canonical JSON serialization of the typed view definition: deterministic property order, defaults
+	/// omitted, and a `formatVersion` header so per-project overrides can be validated. This is the migration
 	/// tooling core — shipped XML compiles to the typed IR (existing importer), the IR serializes to
 	/// canonical JSON, and a gated surface can load JSON with the XML importer retained as fallback.
 	/// </summary>
 	public static class ViewDefinitionJsonSerializer
 	{
-		/// <summary>Successor version line to the legacy XML `LayoutVersionNumber`.</summary>
+		/// <summary>The canonical JSON format version.</summary>
 		public const int FormatVersion = 1;
 
 		public static string Serialize(ViewDefinitionModel model)
@@ -98,8 +97,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 			AddIfPresent(o, "ghostInitMethod", node.GhostInitMethod);
 			if (node.Condition != null)
 				o["condition"] = WriteCondition(node.Condition);
-			// B7: the chooser jump-link block, reserved in the canonical schema (xml-retirement-blockers
-			// cross-cutting deadline) — label/tool/type/target exactly as the legacy chooserLink carries.
+			// The chooser jump-link block — label/tool/type/target exactly as the legacy chooserLink carries.
 			if (node.ChooserLinks.Count > 0)
 				o["chooserLinks"] = new JArray(node.ChooserLinks.Select(WriteChooserLink));
 			if (node.Children.Count > 0)
@@ -129,8 +127,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 				(string)o["target"]);
 		}
 
-		// B3: the structured conditional-display metadata (legacy <if>/<ifnot>/<where>), reserved in
-		// the canonical schema before Layer-1 freezes (xml-retirement-blockers, cross-cutting deadline).
+		// The structured conditional-display metadata (legacy <if>/<ifnot>/<where>).
 		private static JObject WriteCondition(ViewCondition condition)
 		{
 			var o = new JObject();

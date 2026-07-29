@@ -7,7 +7,7 @@ using Avalonia.Controls;
 namespace FwAvaloniaDialogs
 {
 	/// <summary>
-	/// The minimal "Create New Feature" / "Create New Feature Value" name-entry dialog body (Phase-1 §19b Stage 3): a
+	/// The minimal "Create New Feature" / "Create New Feature Value" name-entry dialog body: a
 	/// XAML-authored UserControl bound to <see cref="CreateFeatureDialogViewModel"/> (name + abbreviation, OK gated on
 	/// a non-empty name). Hosted as Avalonia content inside a WinForms-owned modal Form during coexistence via
 	/// <c>AvaloniaDialogHost.ShowModal</c>.

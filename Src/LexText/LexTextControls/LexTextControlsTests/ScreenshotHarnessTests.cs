@@ -2,9 +2,8 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 //
-// legacy-screenshot-capture (option 3): renders legacy WinForms dialogs to "before" PNGs for the
-// WinForms->Avalonia migration docs (Docs/migration/**). THROWAWAY evidence tooling — dies with the
-// legacy code after the phase-2 migration; it exists only to capture a faithful visual baseline to
+// Renders legacy WinForms dialogs to "before" PNGs for the WinForms->Avalonia migration docs
+// (Docs/migration/**). THROWAWAY evidence tooling that captures a faithful visual baseline to
 // build and verify the Avalonia surfaces against. NO desktop/mouse interaction (pure in-process
 // construct + DrawToBitmap), so it runs unattended without grabbing the cursor.
 //
@@ -17,8 +16,8 @@
 //
 // DATA FLAVORS (CaptureContext): "sena3" = read-only temp COPY of Sena 3 (real stylesheet + data);
 // "minimal" = in-memory base cache. BEFORE/AFTER: this emits "<name>-before.png"; the Avalonia
-// "<name>-after.png" comes from the surface's FwAvaloniaDialogs(Tests) visual test (the
-// fieldworks-semantic-render-parity evidence type, same flavor); both attach to the JIRA ticket.
+// "<name>-after.png" comes from the surface's FwAvaloniaDialogs(Tests) visual test (same flavor);
+// both attach to the JIRA ticket.
 //
 // Run: .\test.ps1 -SkipNative -TestProject LexTextControlsTests -TestFilter "FullyQualifiedName~ScreenshotHarness"
 

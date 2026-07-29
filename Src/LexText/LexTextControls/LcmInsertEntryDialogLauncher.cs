@@ -23,8 +23,8 @@ using AvControl = Avalonia.Controls.Control;
 namespace SIL.FieldWorks.LexText.Controls
 {
 	/// <summary>
-	/// The LCModel-aware launcher for the reusable Avalonia Insert Entry dialog — the Phase 1 product-side
-	/// replacement for the legacy <see cref="InsertEntryDlg"/> in New-UI mode. It is a concrete
+	/// The LCModel-aware launcher for the reusable Avalonia Insert Entry dialog — the replacement for the legacy
+	/// <see cref="InsertEntryDlg"/> in New-UI mode. It is a concrete
 	/// <see cref="AvaloniaDialogLauncher{TState,TViewModel,TPayload}"/>: the Avalonia layer (FwAvaloniaDialogs)
 	/// stays LCModel-free by exchanging an <see cref="InsertEntryDialogInput"/> (lexeme-form / gloss fields built
 	/// for the cache's current writing systems, morph types as guid-keyed <see cref="RegionChoiceOption"/>s, and a
@@ -34,8 +34,7 @@ namespace SIL.FieldWorks.LexText.Controls
 	///
 	/// Layering mirrors <see cref="LcmChooserDialogLauncher"/>/AvaloniaOptionsDialogLauncher exactly: BuildState /
 	/// Apply are internal so the full state mapping + create are unit-testable against a real cache (via
-	/// InternalsVisibleTo) without running the modal. Phase 1 scope is lexeme form + gloss + morph type; the
-	/// duplicate-match list (P2) and the complex-form / MSA / Create-and-Edit affordances (P3) are deferred.
+	/// InternalsVisibleTo) without running the modal.
 	/// </summary>
 	public sealed class LcmInsertEntryDialogLauncher
 		: AvaloniaDialogLauncher<InsertEntryDialogInput, InsertEntryDialogViewModel, InsertEntryPayload>
@@ -47,7 +46,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		private readonly ITsString _tssForm;
 		private InsertEntryDialogViewModel _viewModel;
 		// The WinForms host the Insert Entry modal is owned by — captured so the nested create-POS modal (raised from
-		// the MSA box's "Create a new Part of Speech..." affordance, Stage 4) can open over it.
+		// the MSA box's "Create a new Part of Speech..." affordance) can open over it.
 		private IWin32Window _owner;
 
 		private LcmInsertEntryDialogLauncher(LcmCache cache, Mediator mediator, PropertyTable propertyTable,
@@ -67,11 +66,11 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <c>(null, false)</c>.
 		/// </summary>
 		/// <param name="cache">The live LCModel cache.</param>
-		/// <param name="mediator">The XCore mediator (carried for parity; unused in Phase 1).</param>
-		/// <param name="propertyTable">The XCore property table (carried for parity; unused in Phase 1).</param>
+		/// <param name="mediator">The XCore mediator.</param>
+		/// <param name="propertyTable">The XCore property table.</param>
 		/// <param name="owner">The WinForms host the modal is owned by.</param>
 		/// <param name="tssForm">An optional initial lexeme form (e.g. the word the user selected); null/empty starts empty.</param>
-		/// <param name="helpProvider">The help provider (carried; Help wiring is P3).</param>
+		/// <param name="helpProvider">The help provider.</param>
 		public static (ILexEntry entry, bool newlyCreated) Show(LcmCache cache, Mediator mediator,
 			PropertyTable propertyTable, IWin32Window owner, ITsString tssForm = null,
 			IHelpTopicProvider helpProvider = null)
@@ -107,7 +106,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		protected override bool Resizable => true;
 		protected override int DialogWidth => 420;
 		// Tall enough for the three fields + morph-type picker AND the duplicate-detection "matching entries" pane
-		// (P2) below them — the legacy InsertEntryDlg is similarly tall to fit its similar-entries browser.
+		// below them — the legacy InsertEntryDlg is similarly tall to fit its similar-entries browser.
 		protected override int DialogHeight => 460;
 
 		/// <summary>
@@ -210,17 +209,17 @@ namespace SIL.FieldWorks.LexText.Controls
 				// (FormWithMarkers parity).
 				ApplyMorphTypeMarkers = (morphTypeKey, form) => ApplyMorphTypeMarkers(cache, morphTypeKey, form),
 				SearchMatches = BuildMatchSearch(cache, mediator, propertyTable),
-				// Grammatical-info (MSA) section (Stage 3): the project POS hierarchy + the morph-type → MsaType map +
+				// Grammatical-info (MSA) section: the project POS hierarchy + the morph-type → MsaType map +
 				// the per-POS slot provider, so the LCModel-free FwMsaGroupBox can drive its layout live.
 				PosNodes = BuildPosNodes(cache),
 				MorphTypeToMsaType = BuildMorphTypeToMsaTypeMap(cache),
 				InitialMsaType = MorphTypeToMsaType(MoMorphTypeTags.kguidMorphStem.ToString()),
 				InitialMainPosId = null,
 				SlotsForPos = posId => BuildSlots(cache, posId, MoMorphTypeTags.kguidMorphStem.ToString()),
-				// Inflection-class picker (Stage 6): the selected main POS's classes, re-fed when the main POS changes.
+				// Inflection-class picker: the selected main POS's classes, re-fed when the main POS changes.
 				InflectionClassesForPos = posId => BuildInflectionClasses(cache, posId),
 				InitialInflectionClassId = null,
-				// Inflection-feature editor (§19b Stage 2): the selected main POS's inflectable-feature system, re-fed
+				// Inflection-feature editor: the selected main POS's inflectable-feature system, re-fed
 				// when the main POS changes (infl/deriv). No initial features on the create path.
 				InflectionFeaturesForPos = posId => BuildInflectionFeatures(cache, posId),
 				InitialInflectionFeatures = null,
@@ -396,7 +395,7 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		/// <summary>
 		/// Builds the inflection-feature SYSTEM for a main POS (guid string) as a flat, document-order, depth-tagged
-		/// <see cref="FwFeatureNode"/> list (Phase-1 §19b Stage 2) — the lift of
+		/// <see cref="FwFeatureNode"/> list — the lift of
 		/// <c>MsaInflectionFeatureListDlg.PopulateTreeFromPos</c> via <see cref="FwFeatureStructureAdapter.BuildNodes"/>:
 		/// the POS's (and its parent POSes') <c>InflectableFeatsRC</c>, closed features expanded to their values, complex
 		/// features expanded to their nested features. An empty/unknown POS yields no nodes. Shared by all three MSA-section
@@ -410,7 +409,7 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		/// <summary>
 		/// Rebuilds the inflection <c>IFsFeatStruc</c> on a sense's morpheme MSA from the chosen inflection-feature
-		/// assignment set (Phase-1 §19b Stage 2) — the create-side parity of <c>MsaInflectionFeatureListDlg_Closing</c>.
+		/// assignment set — the create-side parity of <c>MsaInflectionFeatureListDlg_Closing</c>.
 		/// Scoped to <c>IMoInflAffMsa.InflFeatsOA</c> / <c>IMoDerivAffMsa.FromMsFeaturesOA</c> (the surface the box edits);
 		/// other MSA flavours are a no-op. Resolves the feature-system nodes from the MSA's own POS (deterministic, so the
 		/// commit need not carry the live node list), then writes/clears the FS in the caller's UOW. Internal static so
@@ -783,12 +782,12 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			_viewModel = new InsertEntryDialogViewModel(state);
 			_viewModel.HelpRequested += OnHelpRequested;
-			// Stage 4: wire the inline "Create a new Part of Speech..." affordance (replacing the Stage-3 no-op). The
+			// Wire the inline "Create a new Part of Speech..." affordance. The
 			// VM raises CreateNewPosRequested with which chooser fired (main vs secondary); on it we run the
 			// create-POS flow and, on success, refresh BOTH choosers + select the new POS in the requesting one.
 			_viewModel.CreateNewPosRequested += OnCreateNewPosRequested;
-			// §19b Stage 3: wire the inline create-feature / add-value affordances (replacing the Stage-2 deferred
-			// no-op) to the shared LcmCreateFeatureLauncher; on success feed the new node back to the box's editor.
+			// Wire the inline create-feature / add-value affordances to the shared LcmCreateFeatureLauncher; on
+			// success feed the new node back to the box's editor.
 			_viewModel.CreateNewFeatureRequested += () =>
 				LcmInflectionFeatureCreateWiring.CreateFeature(_cache, _owner, _viewModel.MsaGroupBox);
 			_viewModel.CreateNewValueRequested += id =>
@@ -797,8 +796,8 @@ namespace SIL.FieldWorks.LexText.Controls
 		}
 
 		/// <summary>
-		/// Runs the create-POS flow when the user clicks "Create a new Part of Speech..." in either POS chooser
-		/// (Stage 4 — replaced the Stage-3 // TODO no-op). Opens the master-category catalog as a nested modal over
+		/// Runs the create-POS flow when the user clicks "Create a new Part of Speech..." in either POS chooser.
+		/// Opens the master-category catalog as a nested modal over
 		/// the Insert Entry dialog (<see cref="LcmCreatePartOfSpeechLauncher"/>); on a created/chosen POS it re-feeds
 		/// the freshly rebuilt project POS hierarchy to BOTH choosers (so the new category appears in each) and then
 		/// hands the new node to the REQUESTING chooser (<see cref="FwPosTarget"/>) so it adds + selects it — the
@@ -864,7 +863,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		}
 
 		/// <summary>
-		/// Builds a <c>LexEntryComponents</c> from the dialog payload and creates the entry — the Phase 1 lift of
+		/// Builds a <c>LexEntryComponents</c> from the dialog payload and creates the entry — the lift of
 		/// InsertEntryDlg's BuildEntryComponentsDTO + CreateNewEntryInternal (~1548-1601). The morph type comes from
 		/// the chosen key; the lexeme-form and gloss alternatives are rebuilt per writing system from the payload's
 		/// per-WS strings. LT-11950: each alternative's TsString is rebuilt with the alternative's OWN writing
@@ -876,11 +875,11 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			var components = BuildEntryComponents(_cache, payload);
 			var entry = _cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create(components);
-			// Stage 6: SandboxGenericMSA carries no inflection class, so set it on the find-or-created stem MSA AFTER
+			// SandboxGenericMSA carries no inflection class, so set it on the find-or-created stem MSA AFTER
 			// creation (the lift of InsertEntryDlg.SetEntryMsa, which sets IMoStemMsa.InflectionClassRA on the new
 			// sense's MSA). Same UOW as the create (this runs inside the caller's UndoableUnitOfWorkHelper.Do).
 			ApplyInflectionClass(_cache, entry, payload.Msa);
-			// §19b Stage 2: SandboxGenericMSA carries no inflection features either; rebuild the inflection IFsFeatStruc
+			// SandboxGenericMSA carries no inflection features either; rebuild the inflection IFsFeatStruc
 			// on the find-or-created infl/deriv MSA from the chosen assignment set, same UOW as the create. A stem MSA
 			// (or no features) is a no-op.
 			if (payload.Msa != null && entry.SensesOS.Count > 0)
@@ -896,7 +895,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// Sets the chosen inflection class (the box's <see cref="FwSandboxMsa.InflectionClassId"/>) on the entry's
 		/// first sense's STEM MSA — the lift of <c>InsertEntryDlg.SetEntryMsa</c> (set
 		/// <c>IMoStemMsa.InflectionClassRA</c> after the sense/MSA are created). PARITY: only the stem/root MSA is
-		/// covered (derivational from/to inflection classes are out of Stage 6 scope). A null/unresolvable id leaves
+		/// covered (derivational from/to inflection classes are out of scope). A null/unresolvable id leaves
 		/// the class null (the "&lt;None&gt;" pick). Internal static so the set is unit-testable inside a UOW.
 		/// </summary>
 		internal static void ApplyInflectionClass(LcmCache cache, ILexEntry entry, FwSandboxMsa chosen)
@@ -971,7 +970,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				cache.DefaultVernWs);
 			AddAlternatives(cache, payload.GlossByWs, components.GlossAlternatives, cache.DefaultAnalWs);
 
-			// Stage 3: build the real SandboxGenericMSA from the dialog's chosen grammatical info (the lift of
+			// Build the real SandboxGenericMSA from the dialog's chosen grammatical info (the lift of
 			// InsertEntryDlg's m_msaGroupBox.SandboxMSA). The LexEntryFactory.Create FIND-OR-CREATEs the matching MSA
 			// on the entry's first sense from this descriptor (POS + slot/secondary POS), exactly as the WinForms
 			// dialog does. When no MSA was chosen (older callers / no MSA section) fall back to the morph-type default.

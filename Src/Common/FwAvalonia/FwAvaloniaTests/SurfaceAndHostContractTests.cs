@@ -24,9 +24,9 @@ namespace FwAvaloniaTests
 		[Test]
 		public void NewMode_UnmigratedTool_IsExplicitLegacyFallback()
 		{
-			// domainTypeEdit (a Lists CmPossibility tool) is not yet registered for the Avalonia edit surface
-			// (pending the §20.3.1 F-4 predicate), so New mode is an explicit legacy fallback. (posEdit/notebookEdit
-			// are now registered — §20.3 — and resolve to Avalonia; covered by RecordEditViewSwitchTests.)
+			// domainTypeEdit (a Lists CmPossibility tool) is not yet registered for the Avalonia edit surface,
+			// so New mode is an explicit legacy fallback. (posEdit/notebookEdit are now registered and resolve
+			// to Avalonia; covered by RecordEditViewSwitchTests.)
 			var decision = _service.Decide("New", "domainTypeEdit");
 			Assert.That(decision.Surface, Is.EqualTo(LexicalEditSurface.WinForms));
 			Assert.That(decision.Behavior, Is.EqualTo(HostUiBehavior.ExplicitLegacyFallback));
@@ -86,9 +86,9 @@ namespace FwAvaloniaTests
 			Assert.That(contract.PermitsLegacyDataTreeDrive(), Is.False);
 		}
 
-		// Section 13.4: "command-menu-routing" is the approved adapter under which RecordEditView
-		// lazily initializes the HIDDEN legacy DataTree + DTMenuHandler purely as the command-target
-		// colleague chain for context menus — never shown, never the active surface.
+		// "command-menu-routing" is the approved adapter under which RecordEditView lazily initializes
+		// the HIDDEN legacy DataTree + DTMenuHandler purely as the command-target colleague chain for
+		// context menus — never shown, never the active surface.
 		[Test]
 		public void Avalonia_CommandMenuRouting_IsAnApprovableAdapter_ForContextMenuCommands()
 		{

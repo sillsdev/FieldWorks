@@ -13,14 +13,14 @@ using SIL.FieldWorks.Common.FwAvalonia.Region;
 namespace FwAvaloniaDialogs
 {
 	/// <summary>
-	/// View-model for the reusable Avalonia chooser dialog — the replacement for the legacy
+	/// View-model for the reusable Avalonia chooser dialog — the analog of the legacy
 	/// <c>ReallySimpleListChooser</c>/<c>SimpleListChooser</c>.
 	///
-	/// FLAT mode (Phase 1, the default when <see cref="ChooserDialogInput.Hierarchical"/> is false): it builds and
+	/// FLAT mode (the default when <see cref="ChooserDialogInput.Hierarchical"/> is false): it builds and
 	/// DRIVES the shared <see cref="FwOptionPicker"/> (single- or multi-select) — the picker is the owned native
 	/// list control the view hosts — and mirrors the picker's commits into <see cref="ChosenKeys"/>.
 	///
-	/// HIERARCHICAL mode (Phase 2, when <see cref="ChooserDialogInput.Hierarchical"/> is true): the candidates are
+	/// HIERARCHICAL mode (when <see cref="ChooserDialogInput.Hierarchical"/> is true): the candidates are
 	/// folded (by <see cref="ChooserTreeBuilder"/>) from their Depth sequence into a COLLAPSIBLE tree
 	/// (<see cref="TreeRoots"/>) shown in a virtualizing TreeView, and a search box drives a FLAT filtered results
 	/// list (<see cref="FilteredResults"/>): while a search term is active the view shows the flat matches (so the
@@ -120,7 +120,7 @@ namespace FwAvaloniaDialogs
 		/// <summary>True when there is a non-empty <see cref="Prompt"/> to show.</summary>
 		public bool HasPrompt { get; }
 
-		/// <summary>The help topic id carried for the Help button (Phase 1 carries it only; wiring is P3).</summary>
+		/// <summary>The help topic id carried for the Help button.</summary>
 		public string HelpTopic { get; }
 
 		/// <summary>True when a <see cref="HelpTopic"/> is present, so the Help button shows.</summary>
@@ -128,8 +128,7 @@ namespace FwAvaloniaDialogs
 
 		/// <summary>
 		/// Raised when the user clicks Help, carrying the <see cref="HelpTopic"/>. The product edge (the launcher)
-		/// subscribes to open the help viewer; Phase 1 only carries the topic and surfaces the request (the actual
-		/// goto/help wiring is P3), so an unsubscribed Help button is harmless.
+		/// subscribes to open the help viewer; an unsubscribed Help button is harmless.
 		/// </summary>
 		public event Action<string> HelpRequested;
 
@@ -140,7 +139,7 @@ namespace FwAvaloniaDialogs
 		/// <summary>True when the dialog selects several items (multi-check); false for a single choice.</summary>
 		public bool IsMultiSelect => _multi;
 
-		/// <summary>True when the dialog presents the candidates as a collapsible tree (Phase 2) rather than flat.</summary>
+		/// <summary>True when the dialog presents the candidates as a collapsible tree rather than flat.</summary>
 		public bool IsHierarchical => _hierarchical;
 
 		/// <summary>
@@ -150,14 +149,14 @@ namespace FwAvaloniaDialogs
 		/// </summary>
 		public IReadOnlyList<string> ChosenKeys => _chosenOrder;
 
-		// ===================== Hierarchical (Phase 2) =====================
+		// ===================== Hierarchical =====================
 
 		// Tree state. Nodes are kept by key so single-select commit / multi-select checks resolve fast, and the
 		// flat search results can mirror their check state onto the same node objects (one source of truth).
 		private readonly Dictionary<string, ChooserTreeNode> _nodesByKey =
 			new Dictionary<string, ChooserTreeNode>(StringComparer.Ordinal);
 
-		/// <summary>The tree forest (Phase 2): the candidates folded from their Depth sequence. Empty in flat mode.</summary>
+		/// <summary>The tree forest: the candidates folded from their Depth sequence. Empty in flat mode.</summary>
 		public IReadOnlyList<ChooserTreeNode> TreeRoots { get; private set; } = Array.Empty<ChooserTreeNode>();
 
 		/// <summary>The current search term in hierarchical mode (empty => the tree is shown).</summary>

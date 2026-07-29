@@ -10,7 +10,7 @@ using SIL.LCModel.Core.KernelInterfaces;
 namespace SIL.FieldWorks.XWorks
 {
 	/// <summary>
-	/// The cross-surface refresh propagation gate, Avalonia side only (task 3.15). Both surfaces
+	/// The cross-surface refresh propagation gate, Avalonia side only. Both surfaces
 	/// share one LCModel cache, so consistency stands on the <c>PropChanged</c> notification loop:
 	/// this controller subscribes to the real <see cref="ISilDataAccess"/> notification bus and asks
 	/// the host to re-resolve/re-show the Avalonia region whenever a change lands inside the entry

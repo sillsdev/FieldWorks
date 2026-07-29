@@ -34,7 +34,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 		/// <summary>Min height for compact line controls (buttons/combos/text boxes), vs the Fluent ~32px floor.
 		/// Genuine WinForms line controls run 20-23px, but that falls below the ~24px desktop pointer-target
 		/// accessibility floor, so 24 is used instead (see the note on <c>DialogMinControlHeight</c> in
-		/// DialogTheme.axaml and the "Dialog spacing tokens" note in style-system.md).
+		/// DialogTheme.axaml).
 		/// Mirrors <c>DialogMinControlHeight</c> in DialogTheme.axaml.</summary>
 		public const double LineControlMinHeight = 24.0;
 

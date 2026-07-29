@@ -680,14 +680,13 @@ namespace SIL.FieldWorks.Common.Framework
 				GetStyleNames(ActiveView as SimpleRootSite, EditingHelper.CurrentSelection.Selection,
 					ref paraStyleName, ref charStyleName);
 			}
-			// PARITY §19g: the Styles dialog (FwStylesDlg) is NOT migrated to the Avalonia dialog
+			// PARITY: the Styles dialog (FwStylesDlg) is NOT migrated to the Avalonia dialog
 			// kit. It hosts an IVwRootSite/SimpleRootSite (the live style PREVIEW pane renders through the
 			// Views engine — see the activeViewSite argument and the GetStyleNames selection walk above), which
-			// the dialog-kit hard rule (dialog-conversion.md §0) explicitly routes to the document engine
-			// (Stage 9), not this hand-authored MVVM kit. §19c ships named-style APPLY over a
-			// host-supplied style list (the common "set this run's style" path); authoring/managing the styles
-			// themselves needs the Views-engine preview and stays on the legacy WinForms dialog below until
-			// Stage 9.
+			// the dialog-kit hard rule explicitly routes to the document engine,
+			// not this hand-authored MVVM kit. Named-style APPLY over a
+			// host-supplied style list (the common "set this run's style" path) is available; authoring/managing the styles
+			// themselves needs the Views-engine preview and stays on the legacy WinForms dialog below.
 			using (FwStylesDlg stylesDlg = new FwStylesDlg(activeViewSite,
 				Cache, ActiveStyleSheet, (vc == null) ? false : vc.RightToLeft,
 				Cache.ServiceLocator.WritingSystems.AllWritingSystems.Any(ws => ws.RightToLeftScript),

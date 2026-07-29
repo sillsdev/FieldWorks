@@ -68,8 +68,8 @@ namespace FwAvaloniaDialogs
 	/// Avalonia analog of <see cref="System.Windows.Forms.MessageBox"/> for the FieldWorks dialog kit. Call sites
 	/// read like the legacy <c>MessageBox.Show(owner, message, title, buttons, icon)</c> but the dialog renders in
 	/// Avalonia (the kit's <see cref="MessageBoxView"/> + <see cref="MessageBoxViewModel"/>) hosted in a
-	/// WinForms-owned modal window via <see cref="AvaloniaDialogHost.ShowModal"/> during coexistence
-	/// (dialog-ownership.md). Button labels are localized (<see cref="FwAvaloniaDialogsStrings"/>), the default
+	/// WinForms-owned modal window via <see cref="AvaloniaDialogHost.ShowModal"/> during coexistence.
+	/// Button labels are localized (<see cref="FwAvaloniaDialogsStrings"/>), the default
 	/// button takes focus, and compact density is applied by the host. Replaces raw <c>MessageBox.Show</c> in the
 	/// migrated lexical-edit/options/browse surfaces so confirmations match the rest of the Avalonia UI.
 	/// </summary>
@@ -78,7 +78,7 @@ namespace FwAvaloniaDialogs
 		/// <summary>
 		/// Shows a modal message/confirmation dialog over <paramref name="owner"/> and returns the chosen button.
 		/// </summary>
-		/// <param name="owner">The WinForms host form that owns the modal window (dialog-ownership.md). May be null.</param>
+		/// <param name="owner">The WinForms host form that owns the modal window. May be null.</param>
 		/// <param name="message">The message body. Wraps; required.</param>
 		/// <param name="title">The window title (defaults to empty).</param>
 		/// <param name="buttons">Which buttons to show (defaults to a single OK).</param>

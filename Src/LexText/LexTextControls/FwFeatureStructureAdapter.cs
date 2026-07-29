@@ -12,8 +12,8 @@ namespace SIL.FieldWorks.LexText.Controls
 {
 	/// <summary>
 	/// The LCModel-AWARE adapter that round-trips a morpheme MSA's inflection-feature structure
-	/// (<c>IFsFeatStruc</c>) to/from the LCModel-free <see cref="FwFeatureStructureEditor"/> seam (Phase-1 §19b
-	/// Stage 2). It is the feature-editor analogue of the launchers' POS-node / slot / inflection-class feeds: the
+	/// (<c>IFsFeatStruc</c>) to/from the LCModel-free <see cref="FwFeatureStructureEditor"/> seam. It is the
+	/// feature-editor analogue of the launchers' POS-node / slot / inflection-class feeds: the
 	/// Avalonia layer never sees an <c>ICmObject</c>; this adapter builds the depth-tagged <see cref="FwFeatureNode"/>
 	/// system from a part of speech's <c>InflectableFeatsRC</c>, reads the current assignment set from an existing
 	/// <c>IFsFeatStruc</c>, and — on commit — REBUILDS the nested <c>IFsFeatStruc</c> from the editor's flat
@@ -110,7 +110,7 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		/// <summary>
 		/// Builds the PHONOLOGICAL feature system as a flat, document-order, depth-tagged <see cref="FwFeatureNode"/>
-		/// list (Phase-1 §19b Stage 3) — the degenerate flat case the WinForms <c>PhonologicalFeatureChooserDlg</c>
+		/// list — the degenerate flat case the WinForms <c>PhonologicalFeatureChooserDlg</c>
 		/// shows: every <c>IFsClosedFeature</c> in <c>PhFeatureSystemOA.FeaturesOC</c> (sorted by name, as the legacy
 		/// dialog sorts) with its <c>ValuesSorted</c> symbolic values as Value children. No complex features / nesting
 		/// (the phonological system is all closed features). A null cache yields an empty list.
@@ -357,7 +357,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		// ----- MSA owning-FS access (create / read / clear the inflection-feature structure) -----
 
 		/// <summary>
-		/// Reads the existing inflection-feature structure off a morpheme MSA (Phase-1 §19b Stage 2 scope): an
+		/// Reads the existing inflection-feature structure off a morpheme MSA: an
 		/// <c>IMoInflAffMsa</c>'s <c>InflFeatsOA</c>, or an <c>IMoDerivAffMsa</c>'s <c>FromMsFeaturesOA</c> (the surface
 		/// the legacy <c>PopulateTreeFromPosInEntry</c> edits). Null for any other MSA flavour or when none exists.
 		/// </summary>

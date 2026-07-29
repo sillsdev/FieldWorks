@@ -10,14 +10,12 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 {
 	/// <summary>
 	/// Applies a sparse <see cref="ViewDefinitionOverride"/> to a shipped <see cref="ViewDefinitionModel"/>
-	/// to produce the project-customized model (task 9.2 load side, per `canonical-view-definition-design.md`
-	/// Layer 2 → Layer 3). The inverse of <see cref="ViewDefinitionOverrideDiffer"/>: for representable
-	/// customizations, <c>Apply(base, Diff(base, custom))</c> reproduces <c>custom</c>. Pure logic over the
+	/// to produce the project-customized model. The inverse of <see cref="ViewDefinitionOverrideDiffer"/>:
+	/// for representable customizations, <c>Apply(base, Diff(base, custom))</c> reproduces <c>custom</c>. Pure logic over the
 	/// immutable IR — no XCore/Inventory or live cache.
 	///
 	/// Patches that reference a StableId no longer present in the shipped base are reported as diagnostics on
-	/// the result rather than throwing (canonical-view-definition-design.md: stale patches are quarantined
-	/// per-operation, not fatal).
+	/// the result rather than throwing (stale patches are quarantined per-operation, not fatal).
 	/// </summary>
 	public static class ViewDefinitionOverrideApplier
 	{
@@ -180,7 +178,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 			}
 
 			// Returns the duplicated node, or null (with a diagnostic) when the source is missing or has
-			// children (subtree duplication is not yet supported; never a silent wrong copy).
+			// children (subtree duplication is not supported; never a silent wrong copy).
 			private ViewNode BuildDuplicateNode(ViewOverrideOperation dupOp)
 			{
 				if (string.IsNullOrEmpty(dupOp.SourceStableId) ||

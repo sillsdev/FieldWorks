@@ -67,7 +67,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		// The fix: settle the open session (what the window now does before its save-on-tool-switch commit)
-		// and the commit no longer throws.
+		// and the commit does not throw.
 		[Test]
 		public void ToolSwitchCommit_AfterSettlingTheOpenSession_DoesNotThrow()
 		{

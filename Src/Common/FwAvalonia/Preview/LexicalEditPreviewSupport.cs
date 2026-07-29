@@ -164,7 +164,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Preview
 			return true;
 		}
 
-		// §19a: the preview context accepts every gesture so the preview shows editable StText affordances.
+		// The preview context accepts every gesture so the preview shows editable StText affordances.
 		public bool TrySetParagraphText(LexicalEditRegionField field, int paragraphIndex, RegionRichTextValue value)
 		{
 			IsOpen = true;

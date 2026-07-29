@@ -8,7 +8,7 @@ using SIL.FieldWorks.Common.FwAvalonia.Region;
 namespace FwAvaloniaDialogs
 {
 	/// <summary>
-	/// §19d: view-model for the Avalonia picture-properties dialog — the parity replacement for the
+	/// View-model for the Avalonia picture-properties dialog — the Avalonia parity of the
 	/// WinForms <c>PicturePropertiesDialog</c>. Edits a picture's caption / description / license / creator
 	/// and (for a NEW picture, or when replacing) carries the chosen image file. OK snapshots the edited
 	/// metadata + file into <see cref="Result"/>; the launcher's Apply reads it. Spec-only (no LCModel,

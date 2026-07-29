@@ -5,7 +5,7 @@
 namespace SIL.FieldWorks.Common.FwAvalonia
 {
 	/// <summary>
-	/// Localized product-facing strings for the Avalonia lexical-edit surfaces (task 6.11). Strings
+	/// Localized product-facing strings for the Avalonia lexical-edit surfaces. Strings
 	/// resolve through ResourceManager over FwAvaloniaStrings.resx — the neutral resx is the English
 	/// source of truth and translations ship as satellite assemblies (the FieldWorks .resx
 	/// localization strategy). Automation ids remain nonlocalized constants in code, never resource
@@ -22,7 +22,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 
 		public static string NoEntrySelected => Text("FwAvalonia.NoEntrySelected");
 
-		// §19e — structured generic-date (GenDate) qualifier editor (legacy GenDateChooserDlg).
+		// Structured generic-date (GenDate) qualifier editor (legacy GenDateChooserDlg).
 		public static string GenDateYear => Text("FwAvalonia.GenDateYear");
 
 		public static string GenDateEra => Text("FwAvalonia.GenDateEra");
@@ -73,7 +73,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 
 		public static string LexemeFormRequired => Text("FwAvalonia.LexemeFormRequired");
 
-		/// <summary>§20.3.1 (LE-4): validation message when a list item (CmPossibility) has neither a Name nor an Abbreviation.</summary>
+		/// <summary>Validation message when a list item (CmPossibility) has neither a Name nor an Abbreviation.</summary>
 		public static string PossibilityNameOrAbbreviationRequired => Text("FwAvalonia.PossibilityNameOrAbbreviationRequired");
 
 		/// <summary>
@@ -100,22 +100,22 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 
 		public static string Copy => Text("FwAvalonia.Copy");
 
-		/// <summary>"Remove" — reference-vector item context command (6.3).</summary>
+		/// <summary>"Remove" — reference-vector item context command.</summary>
 		public static string Remove => Text("FwAvalonia.Remove");
 
-		/// <summary>"Add item" — reference-vector add-slot launcher name (6.3).</summary>
+		/// <summary>"Add item" — reference-vector add-slot launcher name.</summary>
 		public static string AddItem => Text("FwAvalonia.AddItem");
 
-		/// <summary>"Type to search" — the search-backed add slot's type-ahead watermark (D3).</summary>
+		/// <summary>"Type to search" — the search-backed add slot's type-ahead watermark.</summary>
 		public static string SearchPrompt => Text("FwAvalonia.SearchPrompt");
 
 		/// <summary>"Add" — confirm button of the multi-select reference-vector add picker; commits the checked set in one undoable step.</summary>
 		public static string AddSelected => Text("FwAvalonia.AddSelected");
 
-		/// <summary>Accessible name of the "..." dialog-launcher button (D4).</summary>
+		/// <summary>Accessible name of the "..." dialog-launcher button.</summary>
 		public static string LaunchDialog => Text("FwAvalonia.LaunchDialog");
 
-		/// <summary>Tooltip of a disabled launcher button: no host dialog service (D4).</summary>
+		/// <summary>Tooltip of a disabled launcher button: no host dialog service.</summary>
 		public static string LauncherUnavailable => Text("FwAvalonia.LauncherUnavailable");
 
 		/// <summary>"{0} settings" — accessible name of a chooser's hover-revealed settings gear.</summary>
@@ -144,19 +144,19 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 
 		/// <summary>
 		/// Accessible name / tooltip of the character-style picker affordance on an editable text row
-		/// (Phase 3): opens the list of the project's character styles to apply to the current selection.
+		/// that opens the list of the project's character styles to apply to the current selection.
 		/// </summary>
 		public static string CharacterStyle => Text("FwAvalonia.CharacterStyle");
 
 		/// <summary>
-		/// The "Default/None" entry that leads the character-style picker (Phase 3): selecting it CLEARS
+		/// The "Default/None" entry that leads the character-style picker; selecting it CLEARS
 		/// any named character style on the current selection, reverting it to the paragraph's default.
 		/// </summary>
 		public static string DefaultCharacterStyle => Text("FwAvalonia.DefaultCharacterStyle");
 
 		/// <summary>
 		/// Accessible name / tooltip of the writing-system picker affordance on an editable text row
-		/// (Phase 4): opens the list of the project's writing systems to retag the current selection.
+		/// that opens the list of the project's writing systems to retag the current selection.
 		/// </summary>
 		public static string WritingSystem => Text("FwAvalonia.WritingSystem");
 
@@ -166,7 +166,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 		// "Delete what?" combo, so the English fallback is identical to the classic bulk-edit Delete tab and
 		// translation memory carries over. APPEND-ONLY: new accessors at the end of the region.
 
-		// ----- Part-of-Speech chooser (MSA-port Stage 1: FwPosChooser) -----
+		// ----- Part-of-Speech chooser (FwPosChooser) -----
 		// Seed text mirrors the legacy WinForms POS picker (POSPopupTreeManager / PopupTreeManager): the
 		// empty node shows "<Not sure>" by default (or "<Any>" when the host opts in via the empty-label
 		// override, as MSAGroupBox does), and the inline create affordance is the tree's "More..." item,
@@ -184,53 +184,52 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 		/// <summary>Accessible name of the collapsed Part-of-Speech chooser dropdown.</summary>
 		public static string PosChooserName => Text("FwAvalonia.Pos.ChooserName");
 
-		// ----- Rule-formula editor cell context menu (avalonia-rule-formula-editor, task 2.2) -----
+		// ----- Rule-formula editor cell context menu -----
 		// Seed text mirrors the legacy RegRuleFormulaControl cell operations. APPEND-ONLY.
 
-		// ----- Editable structured text (StText multi-paragraph fields, §19a) -----
+		// ----- Editable structured text (StText multi-paragraph fields) -----
 		// Seed text mirrors the legacy StTextSlice rich editor's paragraph operations. APPEND-ONLY.
 
-		/// <summary>Accessible name / tooltip of the per-paragraph "add paragraph" affordance in a structured-text field (§19a).</summary>
+		/// <summary>Accessible name / tooltip of the per-paragraph "add paragraph" affordance in a structured-text field.</summary>
 		public static string AddParagraph => Text("FwAvalonia.StText.AddParagraph");
 
-		/// <summary>Accessible name / tooltip of the per-paragraph "delete paragraph" affordance in a structured-text field (§19a).</summary>
+		/// <summary>Accessible name / tooltip of the per-paragraph "delete paragraph" affordance in a structured-text field.</summary>
 		public static string DeleteParagraph => Text("FwAvalonia.StText.DeleteParagraph");
 
 		/// <summary>
-		/// Accessible name / tooltip of the per-paragraph style picker in a structured-text field (§19a):
+		/// Accessible name / tooltip of the per-paragraph style picker in a structured-text field:
 		/// opens the list of the project's paragraph styles to apply to this paragraph.
 		/// </summary>
 		public static string ParagraphStyle => Text("FwAvalonia.StText.ParagraphStyle");
 
 		/// <summary>
-		/// The "Default" entry that leads the paragraph-style picker (§19a): selecting it CLEARS any named
+		/// The "Default" entry that leads the paragraph-style picker; selecting it CLEARS any named
 		/// paragraph style on the paragraph, reverting it to the default.
 		/// </summary>
 		public static string DefaultParagraphStyle => Text("FwAvalonia.StText.DefaultParagraphStyle");
 
-		// ----- Rich-text DEPTH: external links + embedded objects (ORC), §19c. APPEND-ONLY. -----
+		// ----- Rich-text DEPTH: external links + embedded objects (ORC). APPEND-ONLY. -----
 
 		/// <summary>
-		/// Accessible name / tooltip of the external-link affordance on an editable text row (§19c): opens
+		/// Accessible name / tooltip of the external-link affordance on an editable text row that opens
 		/// a small URL prompt that inserts a hyperlink over the selection, or edits an existing link's URL.
 		/// </summary>
 		public static string Link => Text("FwAvalonia.Link");
 
-		/// <summary>Watermark / accessible name of the URL entry in the link prompt flyout (§19c).</summary>
+		/// <summary>Watermark / accessible name of the URL entry in the link prompt flyout.</summary>
 		public static string LinkUrlPrompt => Text("FwAvalonia.LinkUrlPrompt");
 
-		/// <summary>The confirm button of the link prompt flyout: insert / update the hyperlink (§19c).</summary>
+		/// <summary>The confirm button of the link prompt flyout: insert / update the hyperlink.</summary>
 		public static string LinkApply => Text("FwAvalonia.LinkApply");
 
 		/// <summary>
-		/// Accessible name / tooltip of the delete-embedded-object affordance (§19c): removes the embedded
+		/// Accessible name / tooltip of the delete-embedded-object affordance that removes the embedded
 		/// object (link, picture, footnote, …) under the selection. Any ORC kind is deletable here even
-		/// when its insert/edit path lives elsewhere (picture insert/ORC DONE in §19d via the picture
-		/// insert flow; footnote insert deferred).
+		/// when its insert/edit path lives elsewhere.
 		/// </summary>
 		public static string DeleteEmbeddedObject => Text("FwAvalonia.DeleteEmbeddedObject");
 
-		// ----- Pictures (CmPicture editable parity, §19d). APPEND-ONLY. Seed text mirrors the legacy
+		// ----- Pictures (CmPicture editable parity). APPEND-ONLY. Seed text mirrors the legacy
 		// picture insert/properties/delete affordances (DTMenuHandler.OnInsertPicture / PictureSlice). -----
 
 		/// <summary>Insert-a-picture affordance on an empty picture field / "insert another" on a picture row (legacy Insert Picture).</summary>
@@ -242,7 +241,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 		/// <summary>Delete-picture affordance on a picture row.</summary>
 		public static string PictureDelete => Text("FwAvalonia.Picture.Delete");
 
-		// ----- Audio (voice writing systems: play + record, §19d). APPEND-ONLY. Seed text mirrors the
+		// ----- Audio (voice writing systems: play + record). APPEND-ONLY. Seed text mirrors the
 		// legacy voice-WS audio control (LabeledMultiStringView ShortSoundFieldControl play/record/delete). -----
 
 		/// <summary>Play affordance for an existing audio recording on a voice-WS row (legacy ShortSoundFieldControl play).</summary>
@@ -254,18 +253,18 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 		/// <summary>Clear-the-recording affordance for a voice-WS row (legacy ShortSoundFieldControl delete).</summary>
 		public static string AudioClear => Text("FwAvalonia.Audio.Clear");
 
-		/// <summary>Tooltip on the record affordance when recording is unavailable on this platform (cross-platform record deferred).</summary>
+		/// <summary>Tooltip on the record affordance when recording is unavailable on this platform.</summary>
 		public static string AudioRecordUnavailable => Text("FwAvalonia.Audio.RecordUnavailable");
 
 		/// <summary>Placeholder shown for a voice-WS row that has no recording yet.</summary>
 		public static string AudioNoRecording => Text("FwAvalonia.Audio.NoRecording");
 
-		// ----- Browse remainders (§19f). APPEND-ONLY. -----
+		// ----- Browse remainders. APPEND-ONLY. -----
 
-		// ----- StText (§19a) accessibility names. APPEND-ONLY. -----
+		// ----- StText accessibility names. APPEND-ONLY. -----
 
-		/// <summary>Screen-reader name for one paragraph editor in a multi-paragraph StText field
-		/// (§19a). {0} = the field label, {1} = the 1-based paragraph number.</summary>
+		/// <summary>Screen-reader name for one paragraph editor in a multi-paragraph StText field.
+		/// {0} = the field label, {1} = the 1-based paragraph number.</summary>
 		public static string StructuredTextParagraphName(string fieldLabel, int paragraphNumber)
 			=> string.Format(Text("FwAvalonia.StructuredText.ParagraphName"), fieldLabel, paragraphNumber);
 

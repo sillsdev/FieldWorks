@@ -15,13 +15,13 @@ using SIL.LCModel.Infrastructure;
 namespace SIL.FieldWorks.XWorks
 {
 	/// <summary>
-	/// §19a T4 — WORKFLOW (end-to-end, headless, real cache). Two complete journeys a user runs against
+	/// WORKFLOW (end-to-end, headless, real cache). Two complete journeys a user runs against
 	/// an editable StText, driven through the REAL composed paragraph CRUD seam over an in-memory LCModel
 	/// and then RE-PROJECTED from domain truth (the host re-show), so the assertions prove the data
 	/// genuinely round-tripped, not merely that a setter returned true:
-	///   WF2: edit a Definition paragraph → add a 2nd paragraph → apply a paragraph style to it → commit
+	///   edit a Definition paragraph→ add a 2nd paragraph → apply a paragraph style to it → commit
 	///        → re-project the StText → verify the two paragraphs + the style round-tripped.
-	///   WF3: delete a paragraph → undo restores it (text + order intact).
+	///   delete a paragraph→ undo restores it (text + order intact).
 	/// The StText is a Sense.Definition — the canonical StText the legacy StTextSlice edits.
 	/// </summary>
 	[TestFixture]
@@ -135,7 +135,7 @@ namespace SIL.FieldWorks.XWorks
 					RegionRichTextAdapter.FromTsString(p.Contents, Cache.WritingSystemFactory), p.StyleName))
 				.ToList();
 
-		// WF2: edit Definition text -> add a 2nd paragraph -> apply a paragraph style to it -> commit ->
+		// Edit Definition text -> add a 2nd paragraph -> apply a paragraph style to it -> commit ->
 		// re-show/reopen the entry -> verify the two paragraphs + style round-tripped.
 		[Test]
 		public void Workflow_EditDefinition_AddSecondPara_ApplyStyle_RoundTrips()
@@ -174,7 +174,7 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(ParaStyle(1), Is.EqualTo("Block Quote"));
 		}
 
-		// WF3: delete a paragraph -> undo restores it (text + order intact).
+		// Delete a paragraph -> undo restores it (text + order intact).
 		[Test]
 		public void Workflow_DeleteParagraph_ThenUndoRestoresIt()
 		{

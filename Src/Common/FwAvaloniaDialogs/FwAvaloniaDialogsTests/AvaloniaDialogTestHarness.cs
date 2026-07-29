@@ -13,10 +13,9 @@ using FwAvaloniaTests.VisualChecks; // DialogSnapshot — the per-stage PNG harn
 namespace FwAvaloniaDialogsTests
 {
 	/// <summary>
-	/// Shared realize/pump/capture idiom for headless dialog tests (formerly reimplemented verbatim as a
-	/// private Show()/Capture() pair in each *DialogTests.cs fixture; PR #964 review §6 cleanup #3).
-	/// Per-dialog VM/View construction stays in each fixture's own Show() — only the realize/pump/snapshot/
-	/// assert sequence and the automation-id lookup are shared here.
+	/// Shared realize/pump/capture idiom for headless dialog tests. Per-dialog VM/View construction
+	/// stays in each fixture's own Show() — only the realize/pump/snapshot/assert sequence and the
+	/// automation-id lookup are shared here.
 	/// </summary>
 	internal static class AvaloniaDialogTestHarness
 	{

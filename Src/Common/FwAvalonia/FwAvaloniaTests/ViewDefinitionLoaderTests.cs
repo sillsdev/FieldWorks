@@ -9,8 +9,8 @@ using SIL.FieldWorks.Common.FwAvalonia.ViewDefinition;
 namespace FwAvaloniaTests
 {
 	/// <summary>
-	/// Task 9.4: a gated (migrated) surface loads the committed canonical JSON instead of runtime XML,
-	/// with the XML import retained as the audit/fallback path and every fallback recorded as a diagnostic.
+	/// A gated (migrated) surface loads the committed canonical JSON instead of runtime XML, with the
+	/// XML import retained as the audit/fallback path and every fallback recorded as a diagnostic.
 	/// Pure logic over the real compiler + serializer.
 	/// </summary>
 	[TestFixture]

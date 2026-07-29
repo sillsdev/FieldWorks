@@ -967,8 +967,8 @@ namespace SIL.FieldWorks.XWorks
 		{
 			CheckDisposed();
 
-			// §19g: this menu command shells out to the OS character map (charmap.exe / gucharmap) — there is
-			// no FieldWorks character-picker dialog to migrate here. The §19g "special-char insert" work instead
+			// This menu command shells out to the OS character map (charmap.exe / gucharmap) — there is
+			// no FieldWorks character-picker dialog to migrate here. The "special-char insert" work instead
 			// ships a NET-NEW in-app Avalonia Unicode picker (SpecialCharacterDialogView/ViewModel in
 			// FwAvaloniaDialogs, headless-tested: filterable curated list → ChosenCharacter) for the New-UI
 			// insert-into-field affordance; this legacy OS-charmap shellout is preserved unchanged.
@@ -1573,13 +1573,13 @@ namespace SIL.FieldWorks.XWorks
 		{
 			CheckDisposed();
 
-			// PARITY §19g: the full Writing System SETUP dialog (FwWritingSystemSetupDlg over
+			// PARITY: the full Writing System SETUP dialog (FwWritingSystemSetupDlg over
 			// FwWritingSystemSetupModel — the WS-list manager with SLDR sharing, encoding converters, merge, the
 			// advanced script/region/variant editor, keyboards, and the numbering/character-inventory tabs) stays
-			// on the legacy WinForms path: it is far larger than a bounded §19g slice. The bounded managed
+			// on the legacy WinForms path: it is far larger than a bounded slice. The bounded managed
 			// name/abbr/font/direction/sort PROPERTIES core IS migrated to the Avalonia kit
-			// (WritingSystemPropertiesDialogView/ViewModel in FwAvaloniaDialogs, headless-tested) for the future
-			// single-WS Add/Edit New-UI surface; this list-management call site is not yet gated onto it.
+			// (WritingSystemPropertiesDialogView/ViewModel in FwAvaloniaDialogs, headless-tested); this
+			// list-management call site is not gated onto it.
 			var model = new FwWritingSystemSetupModel(Cache.LangProject, type, Cache.ServiceLocator.WritingSystemManager, Cache);
 			model.WritingSystemListUpdated += OnWritingSystemListChanged;
 			model.WritingSystemUpdated += OnWritingSystemUpdated;

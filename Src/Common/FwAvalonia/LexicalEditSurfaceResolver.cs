@@ -29,7 +29,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 	/// </summary>
 	public static class LexicalEditSurfaceResolver
 	{
-		// Stage 2.2: tool support now comes from an app-wide registry rather than a hardcoded array. The
+		// Tool support now comes from an app-wide registry rather than a hardcoded array. The
 		// default registry is seeded with the tools that ship with Avalonia support, so the static
 		// convenience methods below keep their exact original behavior.
 		private static readonly LexicalEditSurfaceRegistry DefaultRegistry =
@@ -93,7 +93,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 			=> Resolve(DefaultRegistry, overrideEnabled, uiMode, currentToolName);
 
 		/// <summary>
-		/// Registry-aware resolution (Stage 2.2): tool support comes from <paramref name="registry"/> rather
+		/// Registry-aware resolution: tool support comes from <paramref name="registry"/> rather
 		/// than a hardcoded list, so a host can register additional tools without editing this type. A null
 		/// registry uses the shipped default. Same precedence as the static overload: tool gate first, then
 		/// explicit override, then the persisted UI-mode preference.

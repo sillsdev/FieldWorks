@@ -15,12 +15,12 @@ using SIL.LCModel.Infrastructure;
 namespace LexTextControlsTests
 {
 	/// <summary>
-	/// The LCModel-aware side of the §19b Stage-3 standalone feature-structure chooser launchers
+	/// The LCModel-aware side of the standalone feature-structure chooser launchers
 	/// (<see cref="LcmInflectionFeatureChooserLauncher"/> / <see cref="LcmPhonologicalFeatureChooserLauncher"/>) and
 	/// the shared write path (<c>FwFeatureStructureAdapter.ApplyFeaturesToOwner</c>) over a real LcmCache: building the
 	/// feature system + current assignments, rebuilding the IFsFeatStruc from a chosen assignment set, the inflection
 	/// LT-13596 empty-FS delete vs the phonological keep-empty, and the create-feature → assign → commit → reopen
-	/// round-trip (T2/T4). The modal loop is desktop-only (exercised by the headless FeatureChooserDialogTests). The
+	/// round-trip. The modal loop is desktop-only (exercised by the headless FeatureChooserDialogTests). The
 	/// base opens an undoable UOW in TestSetup; the create cores open their own, so tests that create end the base
 	/// task first.
 	/// </summary>
@@ -134,7 +134,7 @@ namespace LexTextControlsTests
 				"the feature's +/- values feed under it");
 		}
 
-		// ----- T4 workflow: edit MSA -> need a feature that doesn't exist -> create it -> assign -> commit -> reopen ---
+		// ----- workflow: edit MSA -> need a feature that doesn't exist -> create it -> assign -> commit -> reopen ---
 
 		[Test]
 		public void Workflow_CreateFeature_AssignValue_Commit_Reopen_RoundTrips()

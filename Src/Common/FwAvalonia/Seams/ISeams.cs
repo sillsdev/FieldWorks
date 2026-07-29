@@ -7,7 +7,7 @@ using System;
 namespace SIL.FieldWorks.Common.FwAvalonia.Seams
 {
 	/// <summary>
-	/// Fenced edit-session boundary (see avalonia-edit-sessions). The product implementation fences a
+	/// Fenced edit-session boundary. The product implementation fences a
 	/// real LCModel undo task; both the legacy adapter and the Avalonia editors drive commit/cancel
 	/// through this contract.
 	/// </summary>
@@ -22,7 +22,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Seams
 
 	/// <summary>
 	/// Refresh policy seam over the legacy DataTree <c>DoNotRefresh</c>/<c>RefreshListNeeded</c> gate
-	/// (LT-22414). Lets refresh coordination be tested without a WinForms control (task 3.1, 3.2).
+	/// (LT-22414). Lets refresh coordination be tested without a WinForms control.
 	/// </summary>
 	public interface ILexicalRefreshCoordinator
 	{
@@ -48,7 +48,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Seams
 		bool RequestRefresh();
 	}
 
-	/// <summary>Thin UI-thread scheduling seam (see avalonia-ui-scheduler, task 3.7).</summary>
+	/// <summary>Thin UI-thread scheduling seam.</summary>
 	public interface IUiScheduler
 	{
 		/// <summary>Whether the caller is on the UI thread.</summary>
@@ -58,7 +58,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Seams
 		void Post(Action action);
 	}
 
-	/// <summary>Region lifetime/disposal seam (see avalonia-lifetime, task 3.7).</summary>
+	/// <summary>Region lifetime/disposal seam.</summary>
 	public interface IRegionLifetime : IDisposable
 	{
 		/// <summary>Whether the region has been disposed.</summary>
@@ -68,7 +68,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Seams
 		void Register(IDisposable disposable);
 	}
 
-	/// <summary>Command-bridge seam over the xCore mediator (task 3.1). Routes command ids to handlers.</summary>
+	/// <summary>Command-bridge seam over the xCore mediator. Routes command ids to handlers.</summary>
 	public interface IXCoreCommandBridge
 	{
 		/// <summary>Whether a command id can currently be executed.</summary>
@@ -79,7 +79,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Seams
 	}
 
 	/// <summary>
-	/// Record navigation context seam (tasks 3.1, 3.12): the bidirectional selection bridge over the
+	/// Record navigation context seam: the bidirectional selection bridge over the
 	/// xCore <c>RecordClerk</c>/<c>PropertyTable</c> "current record" bus. An Avalonia surface *follows*
 	/// the bus through <see cref="CurrentRecordChanged"/>/<see cref="CurrentRecord"/> and *publishes* its
 	/// own selection back through <see cref="PublishSelection"/> (and the movement methods), so legacy

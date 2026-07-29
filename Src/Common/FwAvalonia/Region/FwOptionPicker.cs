@@ -35,7 +35,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 	/// on the filter box (Down/Up move the highlight, Enter commits, Escape dismisses). Static
 	/// options filter by case-insensitive contains over the option name; a search-backed picker
 	/// (a non-null search delegate) forwards the typed query to the host instead (lexicons search,
-	/// lists enumerate — winforms-free-lexeme-editor.md D3). The shared item template preserves
+	/// lists enumerate). The shared item template preserves
 	/// possibility-list indentation via <see cref="RegionChoiceOption.Depth"/>, while the compact
 	/// item theme keeps the legacy menu density and a pointer-release guard stops scrollbar clicks
 	/// from committing the highlighted item.

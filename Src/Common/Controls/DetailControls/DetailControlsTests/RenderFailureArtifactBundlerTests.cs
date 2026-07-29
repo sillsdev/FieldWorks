@@ -9,9 +9,9 @@ using SIL.FieldWorks.Common.RenderVerification;
 namespace SIL.FieldWorks.Common.Framework.DetailControls
 {
 	/// <summary>
-	/// Tests for <see cref="RenderFailureArtifactBundler"/> (task 2.5): on a failed render/parity
-	/// verification, the bundler must gather the available artifacts and a summary into one
-	/// CI-discoverable folder, and must be a no-op for a passing result.
+	/// Tests for <see cref="RenderFailureArtifactBundler"/>: on a failed render/parity verification,
+	/// the bundler must gather the available artifacts and a summary into one CI-discoverable folder,
+	/// and must be a no-op for a passing result.
 	/// </summary>
 	[TestFixture]
 	public class RenderFailureArtifactBundlerTests

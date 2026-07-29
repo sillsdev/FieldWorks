@@ -7,7 +7,7 @@ using Avalonia.Controls;
 namespace FwAvaloniaDialogs
 {
 	/// <summary>
-	/// The reusable "Create New Grammatical Info." dialog body (MSA-port Stage 5): a XAML-authored UserControl bound
+	/// The reusable "Create New Grammatical Info." dialog body: a XAML-authored UserControl bound
 	/// to <see cref="MsaCreatorDialogViewModel"/> with compiled bindings for the read-only lexical entry / senses +
 	/// OK/Cancel/Help, plus the owned grammatical-info group box hosted as a code-behind child (it is a native
 	/// composite, not an MVVM-bindable control — the same pattern InsertEntryDialogView uses). Hosted as Avalonia

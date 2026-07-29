@@ -66,7 +66,7 @@ namespace FwAvaloniaDialogs
 		public static string CancelMnemonic => Text("FwAvaloniaDialogs.CancelMnemonic");
 		public static string HelpMnemonic => Text("FwAvaloniaDialogs.HelpMnemonic");
 
-		// Reusable chooser dialog (Phase 1).
+		// Reusable chooser dialog.
 		public static string ChooserEmptyOption => Text("FwAvaloniaDialogs.ChooserEmptyOption");
 		public static string ChooserMustSelect => Text("FwAvaloniaDialogs.ChooserMustSelect");
 		public static string ChooserSearchPrompt => Text("FwAvaloniaDialogs.ChooserSearchPrompt");
@@ -77,7 +77,7 @@ namespace FwAvaloniaDialogs
 		public static string FeatureManagerSelectAll => Text("FwAvaloniaDialogs.FeatureManagerSelectAll");
 		public static string FeatureManagerDeselectAll => Text("FwAvaloniaDialogs.FeatureManagerDeselectAll");
 
-		// Reusable Insert Entry dialog (Phase 1).
+		// Reusable Insert Entry dialog.
 		public static string InsertEntryTitle => Text("FwAvaloniaDialogs.InsertEntryTitle");
 		public static string InsertEntryCreate => Text("FwAvaloniaDialogs.InsertEntryCreate");
 		// A11Y-01 mnemonic variant ('_' access-key marker) for the Insert Entry primary button.
@@ -92,12 +92,12 @@ namespace FwAvaloniaDialogs
 		public static string InsertEntryInvalidLexForm => Text("FwAvaloniaDialogs.InsertEntryInvalidLexForm");
 		public static string InsertEntryCompleteCircumfix => Text("FwAvaloniaDialogs.InsertEntryCompleteCircumfix");
 		public static string InsertEntryInvalidForm => Text("FwAvaloniaDialogs.InsertEntryInvalidForm");
-		// The VISIBLE-but-DEFERRED glossing-assistant affordance (the legacy m_lnkAssistant "Inflectional Affix Gloss
-		// Builder" link, shown for an inflectional-affix MSA). The MGA dialog + GlossFeatures write path are deferred,
-		// so the affordance is rendered disabled with a tooltip explaining it is not yet available. APPEND-ONLY.
+		// The VISIBLE-but-DISABLED glossing-assistant affordance (the legacy m_lnkAssistant "Inflectional Affix Gloss
+		// Builder" link, shown for an inflectional-affix MSA). The MGA dialog + GlossFeatures write path are not
+		// available, so the affordance is rendered disabled with a tooltip explaining it is unavailable. APPEND-ONLY.
 		public static string InsertEntryGlossingAssistantDeferred => Text("FwAvaloniaDialogs.InsertEntryGlossingAssistantDeferred");
 		public static string InsertEntryGlossingAssistantDeferredTooltip => Text("FwAvaloniaDialogs.InsertEntryGlossingAssistantDeferredTooltip");
-		// Insert Entry duplicate-detection "matching entries" pane (P2). Seeded from the canonical legacy
+		// Insert Entry duplicate-detection "matching entries" pane. Seeded from the canonical legacy
 		// InsertEntryDlg.resx wording (the m_matchingEntriesGroupBox caption "Similar Entries" + the
 		// m_linkSimilarEntry link "Go to similar entry").
 		public static string InsertEntryMatchingEntriesLabel => Text("FwAvaloniaDialogs.InsertEntryMatchingEntriesLabel");
@@ -114,7 +114,7 @@ namespace FwAvaloniaDialogs
 		public static string IconError => Text("FwAvaloniaDialogs.Error");
 		public static string IconQuestion => Text("FwAvaloniaDialogs.IconQuestion");
 
-		// Reusable entry-search ("go") dialog — the EntryGoDlg/BaseGoDlg family (Merge Entry is the first consumer).
+		// Reusable entry-search ("go") dialog — the EntryGoDlg/BaseGoDlg family (Merge Entry is one consumer).
 		public static string EntryGoMustSelect => Text("FwAvaloniaDialogs.EntryGoMustSelect");
 		public static string EntryGoSearchWatermark => Text("FwAvaloniaDialogs.EntryGoSearchWatermark");
 		public static string EntryGoResultsLabel => Text("FwAvaloniaDialogs.EntryGoResultsLabel");
@@ -200,7 +200,7 @@ namespace FwAvaloniaDialogs
 		public static string MsaFillsSlotLabel => Text("FwAvaloniaDialogs.Msa.FillsSlotLabel");
 		public static string MsaChangesToCategoryLabel => Text("FwAvaloniaDialogs.Msa.ChangesToCategoryLabel");
 
-		// Create-a-new-Part-of-Speech catalog chooser (MSA-port Stage 4) — the inline "Create a new Part of
+		// Create-a-new-Part-of-Speech catalog chooser — the inline "Create a new Part of
 		// Speech..." affordance opens the master-category (GOLDEtic) catalog as a hierarchical single-select
 		// ChooserDialog. Seed text matches the canonical legacy MasterCategoryListDlg.resx wording ($this.Text
 		// "Add from Catalog" and the label1 instruction prompt) so the English fallback is identical and the
@@ -208,7 +208,7 @@ namespace FwAvaloniaDialogs
 		public static string CreatePosTitle => Text("FwAvaloniaDialogs.CreatePos.Title");
 		public static string CreatePosPrompt => Text("FwAvaloniaDialogs.CreatePos.Prompt");
 
-		// Add New Sense dialog (MSA-port Stage 5) — the Avalonia replacement for the WinForms AddNewSenseDlg
+		// Add New Sense dialog — the Avalonia analog of the WinForms AddNewSenseDlg
 		// (a read-only citation form + an editable gloss + the grammatical-info group box -> a new ILexSense).
 		// Seed text matches the canonical legacy AddNewSenseDlg.resx wording (label2 "Citation Form:" and label1
 		// "Gloss:", ampersand mnemonics + trailing colons dropped — the Avalonia labels carry neither) and the
@@ -221,7 +221,7 @@ namespace FwAvaloniaDialogs
 		// The legacy OK gate when the gloss is empty (LexTextControls.ksFillInGloss "Please fill in the gloss.").
 		public static string AddNewSenseFillInGloss => Text("FwAvaloniaDialogs.AddNewSense.FillInGloss");
 
-		// Create New Grammatical Info. dialog (MSA-port Stage 5) — the Avalonia replacement for the WinForms
+		// Create New Grammatical Info. dialog — the Avalonia analog of the WinForms
 		// MsaCreatorDlg (a read-only lexical entry + read-only senses + the grammatical-info group box -> an MSA).
 		// Seed text matches the canonical legacy MsaCreatorDlg.resx wording ($this.Text "Create New Grammatical
 		// Info.", label1 "Lexical Entry:" and label2 "Senses:", trailing colons dropped) so the English fallback is
@@ -232,7 +232,7 @@ namespace FwAvaloniaDialogs
 		public static string MsaCreatorGrammaticalInfoLabel => Text("FwAvaloniaDialogs.MsaCreator.GrammaticalInfoLabel");
 		public static string MsaCreatorCreate => Text("FwAvaloniaDialogs.MsaCreator.Create");
 
-		// The inflection-class picker label (MSA-port Stage 6) shown for the stem/root MSA — the inflection class
+		// The inflection-class picker label shown for the stem/root MSA — the inflection class
 		// of the selected main POS (the legacy InsertEntryDlg inflection-class affordance, IMoStemMsa.InflectionClassRA,
 		// driven by InflectionClassPopupTreeManager). Seed text matches the canonical field label "Inflection Class"
 		// (the m3 InflectionClass field label / DataTree "Inflection Class" slice). APPEND-ONLY.
@@ -248,8 +248,8 @@ namespace FwAvaloniaDialogs
 		public static string InsertEntryComplexFormTypeLabel => Text("FwAvaloniaDialogs.InsertEntry.ComplexFormTypeLabel");
 		public static string InsertEntryComplexFormTypeNotApplicable => Text("FwAvaloniaDialogs.InsertEntry.ComplexFormTypeNotApplicable");
 
-		// Feature-structure editor (FsFeatStruc tree editor, Phase-1 §19b Stage 1) — the Avalonia replacement
-		// for the WinForms FeatureStructureTreeView / MsaInflectionFeatureListDlg / PhonologicalFeatureChooserDlg.
+		// Feature-structure editor (FsFeatStruc tree editor) — the Avalonia analog
+		// of the WinForms FeatureStructureTreeView / MsaInflectionFeatureListDlg / PhonologicalFeatureChooserDlg.
 		// Seed text matches the canonical legacy wording so the English fallback is identical and the
 		// translation memory carries over: the unspecified value radio mirrors the legacy "None of the above"
 		// (LexTextControls.ksNoneOfTheAbove), shortened to "<None>" for the compact new-view tree; the create
@@ -268,13 +268,13 @@ namespace FwAvaloniaDialogs
 		/// <summary>Accessible name of the feature-structure editor control.</summary>
 		public static string FeatureEditorName => Text("FwAvaloniaDialogs.FeatureEditor.Name");
 
-		// MSA inflection-feature editor (Phase-1 §19b Stage 2) — the inflection-feature column the FwMsaGroupBox
+		// MSA inflection-feature editor — the inflection-feature column the FwMsaGroupBox
 		// shows for inflectional/derivational MSAs (where the WinForms box's "Inflection Features" affordance opens
 		// MsaInflectionFeatureListDlg over IMoInflAffMsa.InflFeatsOA / IMoDerivAffMsa.FromMsFeaturesOA). Seed text
 		// matches the canonical legacy field caption ("Inflection Features"). APPEND-ONLY.
 		public static string MsaInflectionFeaturesLabel => Text("FwAvaloniaDialogs.Msa.InflectionFeaturesLabel");
 
-		// Standalone feature-structure chooser dialogs (Phase-1 §19b Stage 3) — the Avalonia replacements for the
+		// Standalone feature-structure chooser dialogs — the Avalonia analogs of the
 		// WinForms MsaInflectionFeatureListDlg (assign inflection feature values to an MSA's IFsFeatStruc) and
 		// PhonologicalFeatureChooserDlg (the phonological feature system). Each hosts the shared
 		// FwFeatureStructureEditor over OK/Cancel/Help. Seed text matches the canonical legacy wording (the dialog
@@ -285,7 +285,7 @@ namespace FwAvaloniaDialogs
 		public static string PhonologicalFeatureChooserTitle => Text("FwAvaloniaDialogs.FeatureChooser.PhonologicalTitle");
 		public static string PhonologicalFeatureChooserPrompt => Text("FwAvaloniaDialogs.FeatureChooser.PhonologicalPrompt");
 
-		// Create-a-new-feature dialog (Phase-1 §19b Stage 3) — the Avalonia replacement for the
+		// Create-a-new-feature dialog — the Avalonia analog of the
 		// MasterInflectionFeatureListDlg / MasterPhonologicalFeatureListDlg blank-create affordance (create a new
 		// closed feature in the feature system, naming it; the phonological variant auto-creates the +/- values).
 		// Seed text matches the canonical legacy create-feature dialog wording. APPEND-ONLY.
@@ -294,7 +294,7 @@ namespace FwAvaloniaDialogs
 		public static string CreateFeatureAbbrLabel => Text("FwAvaloniaDialogs.CreateFeature.AbbrLabel");
 		public static string CreateFeatureNameRequired => Text("FwAvaloniaDialogs.CreateFeature.NameRequired");
 
-		// Create-a-new-value dialog (Phase-1 §19b Stage 3) — the Avalonia replacement for adding a symbolic value to
+		// Create-a-new-value dialog — the Avalonia analog of adding a symbolic value to
 		// an existing closed feature (the feature-system value editor flow the WinForms "add value" reached).
 		// APPEND-ONLY.
 		public static string CreateValueTitle => Text("FwAvaloniaDialogs.CreateValue.Title");
@@ -302,7 +302,7 @@ namespace FwAvaloniaDialogs
 		public static string CreateValueAbbrLabel => Text("FwAvaloniaDialogs.CreateValue.AbbrLabel");
 		public static string CreateValueNameRequired => Text("FwAvaloniaDialogs.CreateValue.NameRequired");
 
-		// Picture-properties dialog (§19d) — the Avalonia replacement for the WinForms PicturePropertiesDialog
+		// Picture-properties dialog — the Avalonia analog of the WinForms PicturePropertiesDialog
 		// (file pick + caption/description/license/creator). Seed text mirrors the canonical legacy picture
 		// metadata labels. APPEND-ONLY.
 		public static string PicturePropertiesTitle => Text("FwAvaloniaDialogs.PictureProperties.Title");

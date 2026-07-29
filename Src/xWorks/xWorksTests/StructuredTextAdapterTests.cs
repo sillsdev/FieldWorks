@@ -12,14 +12,14 @@ using SIL.LCModel.Infrastructure;
 namespace SIL.FieldWorks.XWorks
 {
 	/// <summary>
-	/// §19a — the LCModel-aware StText edit-context adapter, exercised against a REAL in-memory cache.
+	/// The LCModel-aware StText edit-context adapter, exercised against a REAL in-memory cache.
 	/// An StText field becomes an editable <see cref="RegionFieldKind.StructuredText"/> row whose
 	/// paragraph CRUD (text / style / insert / delete) mutates the LCModel StText inside ONE fenced
 	/// <see cref="LcmRegionEditSession"/> — one step on the global undo stack legacy surfaces share, the
 	/// same undo-granularity rule the rest of the region follows. These tests build the composed
 	/// edit-context the way <see cref="FullEntryRegionComposer"/> does (the same
 	/// <see cref="ComposedRegionEditContext"/> + paragraph setters), so they cover the real production
-	/// write path, not a stand-in. An ORC/lossy paragraph stays read-only/preserved (§19c.3).
+	/// write path, not a stand-in. An ORC/lossy paragraph stays read-only/preserved.
 	/// </summary>
 	[TestFixture]
 	public class StructuredTextAdapterTests : MemoryOnlyBackendProviderTestBase

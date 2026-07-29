@@ -16,7 +16,7 @@ using Avalonia.Media;
 namespace SIL.FieldWorks.Common.FwAvalonia.Region
 {
 	/// <summary>
-	/// §19c — shared rich-text DEPTH chrome reused by both owned text editors (FwMultiWsTextField and
+	/// Shared rich-text DEPTH chrome reused by both owned text editors (FwMultiWsTextField and
 	/// FwStructuredTextField): the per-run-font read-along display layer (the inline-display-on-blur half
 	/// of the focus swap) and a small generic span-acting picker button (the same FwOptionPicker pattern
 	/// the multi-WS field pioneered for the character-style and writing-system pickers), so the structured
@@ -104,7 +104,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 				Foreground = FwAvaloniaDensity.WsAbbrevBrush,
 				FontSize = FwAvaloniaDensity.WsAbbrevFontSize,
 				VerticalAlignment = VerticalAlignment.Top,
-				// 19i.2: the trigger must NOT take focus — clicking it would blur the editor, and Avalonia
+				// The trigger must NOT take focus — clicking it would blur the editor, and Avalonia
 				// collapses the TextBox selection to the caret on LostFocus, so onOpen would snapshot an EMPTY
 				// selection and the gesture would stage nothing. Keeping focus on the editor preserves the span.
 				Focusable = false

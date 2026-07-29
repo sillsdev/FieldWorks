@@ -13,7 +13,7 @@ using SIL.LCModel.DomainServices;
 namespace SIL.FieldWorks.LexText.Controls
 {
 	/// <summary>
-	/// The LCModel-aware <see cref="FwFeatureStructureAdapter"/> (Phase-1 §19b Stage 2): builds the depth-tagged
+	/// The LCModel-aware <see cref="FwFeatureStructureAdapter"/>: builds the depth-tagged
 	/// feature-node system from a POS's <c>InflectableFeatsRC</c>, reads the flat assignment set from an existing
 	/// <c>IFsFeatStruc</c>, and rebuilds the nested FS from the flat set (the recursive-ascent of
 	/// <c>BuildFeatureStructure</c>). Proven against a REAL <c>LcmCache</c> with a programmatically built feature

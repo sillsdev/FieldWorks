@@ -12,7 +12,7 @@ namespace SIL.FieldWorks.XWorks
 {
 	/// <summary>
 	/// xWorks adapter that migrates a project's legacy whole-copy <c>.fwlayout</c> override into a sparse
-	/// canonical JSON patch (task 9.2, project-file side). It bridges the live <see cref="Inventory"/> to
+	/// canonical JSON patch. It bridges the live <see cref="Inventory"/> to
 	/// the framework-neutral, fully-tested migration core
 	/// (<see cref="ViewDefinitionOverrideFileMigrator"/> + <see cref="DictionaryPartResolver"/>).
 	///

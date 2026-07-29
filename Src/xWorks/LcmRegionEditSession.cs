@@ -9,8 +9,7 @@ using SIL.LCModel;
 namespace SIL.FieldWorks.XWorks
 {
 	/// <summary>
-	/// The product fenced edit session (tasks 6.8/6.10, per the `avalonia-edit-sessions` and
-	/// `avalonia-undo-redo` seam specs): one LCModel undo task spanning the user's edit, applied
+	/// The product fenced edit session: one LCModel undo task spanning the user's edit, applied
 	/// directly to the domain. <see cref="Commit"/> ends the task — every staged field edit becomes
 	/// ONE step on the single global LCModel action-handler stack legacy surfaces share, so Ctrl+Z
 	/// works across frameworks in both directions by construction. <see cref="Cancel"/> rolls the

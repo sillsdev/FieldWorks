@@ -9,14 +9,14 @@ using Avalonia.Interactivity;
 namespace FwAvaloniaDialogs
 {
 	/// <summary>
-	/// The reusable chooser dialog body: the Avalonia replacement for the legacy
+	/// The reusable chooser dialog body: the Avalonia analog of the legacy
 	/// <c>ReallySimpleListChooser</c>/<c>SimpleListChooser</c>. A XAML-authored UserControl bound to
 	/// <see cref="ChooserDialogViewModel"/> with compiled bindings for the prompt + OK/Cancel/Help.
 	///
-	/// FLAT mode (Phase 1): the shared <c>FwOptionPicker</c> is hosted as a code-behind child (the picker is a
+	/// FLAT mode: the shared <c>FwOptionPicker</c> is hosted as a code-behind child (the picker is a
 	/// native composite, not an MVVM-bindable control, so it cannot be set through a compiled binding).
 	///
-	/// HIERARCHICAL mode (Phase 2): a XAML-authored search box over a virtualizing <see cref="TreeView"/> (the
+	/// HIERARCHICAL mode: a XAML-authored search box over a virtualizing <see cref="TreeView"/> (the
 	/// candidates folded from their Depth sequence) plus a flat filtered results <see cref="ListBox"/> shown while a
 	/// search term is active. Single-select commits the clicked node/row's key (via TreeView/ListBox selection);
 	/// multi-select toggles per-node checkboxes (two-way bound to the node, independent per node — legacy default),

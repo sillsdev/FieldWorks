@@ -16,11 +16,10 @@ namespace SIL.FieldWorks.XWorks
 	/// regardless of what the composer can already do — this file only proves the composer machinery, not that
 	/// the tool is live.
 	///
-	/// avalonia-rule-formula-editor (task 3.4) — pins how the ad-hoc co-prohibition records compose on the
-	/// Avalonia surface, to scope the remaining work for the `AdhocCoprohibEdit` tool. Its Key/Others rows
-	/// are custom slices; after the lexical-edit region was trimmed to string, list-choice, and the one
-	/// native plugin exemplar, an unclaimed custom slice composes as a labeled Unsupported worklist row.
-	/// The rule-formula editor graduates these by adding their own IRegionEditorPlugins.
+	/// Pins how the ad-hoc co-prohibition records compose on the Avalonia surface, to scope the remaining
+	/// work for the `AdhocCoprohibEdit` tool. Its Key/Others rows are custom slices; with the lexical-edit
+	/// region limited to string, list-choice, and the one native plugin, an unclaimed custom slice composes
+	/// as a labeled Unsupported worklist row.
 	/// </summary>
 	[TestFixture]
 	public class AdhocCoProhibComposeTests : MemoryOnlyBackendProviderTestBase
@@ -47,10 +46,9 @@ namespace SIL.FieldWorks.XWorks
 			var kinds = composed.Model.Fields.Select(f => f.Kind.ToString()).ToList();
 			TestContext.WriteLine("MoMorphAdhocProhib composed field kinds: " + string.Join(", ", kinds));
 			Assert.That(composed.Model.Fields, Is.Not.Empty, "the ad-hoc co-prohibition composes its detail");
-			// The Key (FirstMorpheme) and Others (RestOfMorphs) are custom slices. With the region trimmed
+			// The Key (FirstMorpheme) and Others (RestOfMorphs) are custom slices. With the region limited
 			// to string / list-choice / one native plugin, an unclaimed custom slice composes as a labeled
-			// Unsupported worklist row rather than a Chooser/ReferenceVector — the rule-formula editor
-			// converts them later via its own plugins.
+			// Unsupported worklist row rather than a Chooser/ReferenceVector.
 			Assert.That(composed.Model.Fields.Any(f => f.Kind == RegionFieldKind.Unsupported),
 				"the ad-hoc co-prohibition's custom slices compose as Unsupported worklist rows");
 			Assert.That(composed.Model.Fields.Any(f => f.Kind == RegionFieldKind.Chooser
@@ -75,7 +73,7 @@ namespace SIL.FieldWorks.XWorks
 			var kinds = composed.Model.Fields.Select(f => f.Kind.ToString()).ToList();
 			TestContext.WriteLine("MoAdhocProhibGr composed field kinds: " + string.Join(", ", kinds));
 			// The group's own scalar fields compose editably (Name/Description Text + Active checkbox).
-			// // PARITY: the nested Members rows (recursive sub-prohibitions) are not yet composed.
+			// PARITY: the nested Members rows (recursive sub-prohibitions) are not composed.
 			Assert.That(composed.Model.Fields.Any(f => f.Kind == RegionFieldKind.Text), "Name/Description compose");
 			Assert.That(composed.Model.Fields.Any(f => f.Kind == RegionFieldKind.Unsupported),
 				"the Active boolean flag composes as a labeled Unsupported worklist row (checkbox editing dropped)");

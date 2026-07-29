@@ -14,11 +14,10 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 {
 	/// <summary>
 	/// Characterization tests that lock down the CURRENT undo/redo transaction behavior for the
-	/// editor-replacement candidate fields shown by <see cref="DataTree"/> (task 2.6 of
-	/// lexical-edit-avalonia-migration). They assert on the LCModel source of truth and the action
-	/// handler's undo/redo state, which is framework-neutral: the Avalonia editors must commit through
-	/// the same fenced LCModel transactions (see avalonia-edit-sessions / avalonia-undo-redo) and
-	/// therefore reproduce exactly these undo/redo results.
+	/// editor-replacement candidate fields shown by <see cref="DataTree"/>. They assert on the LCModel
+	/// source of truth and the action handler's undo/redo state, which is framework-neutral: the
+	/// Avalonia editors must commit through the same fenced LCModel transactions and therefore
+	/// reproduce exactly these undo/redo results.
 	///
 	/// Pattern: the test base opens an ambient undo task during setup; we close it with
 	/// <c>m_actionHandler.EndUndoTask()</c>, then make discrete undoable edits via

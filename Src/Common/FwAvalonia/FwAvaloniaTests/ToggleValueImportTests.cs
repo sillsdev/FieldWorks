@@ -10,9 +10,9 @@ using SIL.FieldWorks.Common.FwAvalonia.ViewDefinition;
 namespace FwAvaloniaTests
 {
 	/// <summary>
-	/// §20.1.4 (F-7) — the importer must capture a boolean slice's legacy <c>toggleValue="true"</c> onto the
-	/// ViewNode (the composer then inverts read display + write commit so a toggled checkbox round-trips with
-	/// the same sense the WinForms slice shows). Mirrors the existing forVariant import coverage.
+	/// The importer must capture a boolean slice's legacy <c>toggleValue="true"</c> onto the ViewNode
+	/// (the composer then inverts read display + write commit so a toggled checkbox round-trips with the
+	/// same sense the WinForms slice shows). Mirrors the existing forVariant import coverage.
 	/// </summary>
 	[TestFixture]
 	public class ToggleValueImportTests

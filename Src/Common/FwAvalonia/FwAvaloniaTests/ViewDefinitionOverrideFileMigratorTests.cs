@@ -12,9 +12,9 @@ using SIL.FieldWorks.Common.FwAvalonia.ViewDefinition;
 namespace FwAvaloniaTests
 {
 	/// <summary>
-	/// Task 9.2 (override migrator, project-file side): reads a whole-copy <c>.fwlayout</c> override from
-	/// disk, diffs it against the shipped layout, and writes the canonical JSON patch — verified with temp
-	/// files and inline XML (no XCore/Inventory).
+	/// Project-file side: reads a whole-copy <c>.fwlayout</c> override from disk, diffs it against the
+	/// shipped layout, and writes the canonical JSON patch — verified with temp files and inline XML
+	/// (no XCore/Inventory).
 	/// </summary>
 	[TestFixture]
 	public class ViewDefinitionOverrideFileMigratorTests

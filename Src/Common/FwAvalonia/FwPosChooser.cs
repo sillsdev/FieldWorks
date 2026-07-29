@@ -22,7 +22,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 {
 	/// <summary>
 	/// A lightweight, LCModel-FREE node in the Part-of-Speech hierarchy fed to <see cref="FwPosChooser"/>.
-	/// The host (Stage 3) builds these from the project's parts-of-speech possibility list in DOCUMENT
+	/// The host builds these from the project's parts-of-speech possibility list in DOCUMENT
 	/// ORDER, tagging each with its <see cref="Depth"/> (0 for a top-level POS, +1 per sub-POS nesting) —
 	/// the same depth-folding seam <c>RegionChoiceOption</c> uses, so the chooser can rebuild the tree
 	/// without any model reference. <see cref="Id"/> is an opaque stable identifier (a guid string in the
@@ -52,7 +52,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 	}
 
 	/// <summary>
-	/// A reusable, LCModel-FREE hierarchical Part-of-Speech chooser — the Avalonia replacement for the
+	/// A reusable, LCModel-FREE hierarchical Part-of-Speech chooser — the Avalonia counterpart of the
 	/// WinForms <c>TreeCombo</c> + <c>POSPopupTreeManager</c> pair (<c>MSAGroupBox</c>'s
 	/// <c>m_tcMainPOS</c>/<c>m_tcSecondaryPOS</c>). It is a COLLAPSED dropdown (a toggle button showing
 	/// the selected POS name, or a "not specified" prompt) that opens a hierarchical TREE popup ON TOP on
@@ -67,8 +67,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 	/// (the chooser folds it into the tree), the current <see cref="SelectedPosId"/>, and the allow-empty
 	/// option. Picking a node commits + collapses + updates <see cref="SelectedPosId"/> and raises
 	/// <see cref="SelectionChanged"/>. The chooser holds NO model reference and performs NO create — it
-	/// just raises <see cref="CreateNewPosRequested"/> and accepts a returned new node (Stage 3 wires the
-	/// actual create-POS flow). Built in pure C# (no XAML) to match the rest of FwAvalonia.
+	/// just raises <see cref="CreateNewPosRequested"/> and accepts a returned new node. Built in pure
+	/// C# (no XAML) to match the rest of FwAvalonia.
 	/// </summary>
 	public sealed class FwPosChooser : Border
 	{
@@ -339,13 +339,11 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 		/// Raised when the user clicks the inline "Create a new Part of Speech..." row. The host opens its
 		/// create-POS flow and, on success, calls <see cref="AcceptCreatedNode"/> with the new node so the
 		/// chooser adds and selects it. The chooser itself performs NO create.
-		/// TODO Stage 3: the host wires this to MasterCategoryListDlg's Avalonia replacement (the
-		/// create-POS sub-dialog). Stage 1 ships only the event + AcceptCreatedNode acceptance hook.
 		/// </summary>
 		public event Action CreateNewPosRequested;
 
 		/// <summary>
-		/// Host callback after a successful create-POS flow (Stage 3): appends the new node to the source
+		/// Host callback after a successful create-POS flow: appends the new node to the source
 		/// list, rebuilds the tree, and selects it (raising <see cref="SelectionChanged"/>). The chooser
 		/// stays LCModel-free — the host supplies the already-built <see cref="FwPosNode"/>.
 		/// </summary>

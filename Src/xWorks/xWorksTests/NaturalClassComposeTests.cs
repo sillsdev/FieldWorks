@@ -16,12 +16,10 @@ namespace SIL.FieldWorks.XWorks
 	/// LexicalEditSurfaceRegistry.Phase1FollowUpSurfaceTools — this file describes what is actually
 	/// proven, not the tool's live state.
 	///
-	/// avalonia-rule-formula-editor (task 3.3) — the natural-class editor (tool `naturalClassedit`). A
-	/// PhNCFeatures composes its Features through the already-claimed phonological-feature launcher plugin;
-	/// PhNCSegments composes Name/Description/Abbreviation + an editable Segments phoneme reference vector
-	/// (via the generic ReferenceTargetCandidates editable-vector path). Both natural-class subclasses now
-	/// compose fully editably at the composer level, though the tool itself remains gated to Legacy pending
-	/// the follow-up PR.
+	/// The natural-class editor (tool `naturalClassedit`). A PhNCFeatures's Features slice is unclaimed
+	/// and composes as a labeled Unsupported worklist row; PhNCSegments composes
+	/// Name/Description/Abbreviation + an editable Segments phoneme reference vector (via the generic
+	/// ReferenceTargetCandidates editable-vector path).
 	/// </summary>
 	[TestFixture]
 	public class NaturalClassComposeTests : MemoryOnlyBackendProviderTestBase
@@ -47,8 +45,8 @@ namespace SIL.FieldWorks.XWorks
 			var composed = FullEntryRegionComposer.Compose(nc, Cache, layoutName: "Edit",
 				plugins: RegionEditorPluginRegistry.Default);
 
-			// Post generic-editable-vector fix: the Segments phoneme collection composes as an editable
-			// ReferenceVector (the legacy phoneme chooser), unblocking the naturalClassedit tool flip.
+			// The Segments phoneme collection composes as an editable ReferenceVector (the legacy phoneme
+			// chooser).
 			Assert.That(composed.Model.Fields, Is.Not.Empty, "the natural class composes its detail fields");
 			Assert.That(composed.Model.Fields.Any(f => f.Kind == RegionFieldKind.ReferenceVector),
 				"the Segments phonemes compose as an editable reference-vector row");
@@ -70,9 +68,8 @@ namespace SIL.FieldWorks.XWorks
 			var composed = FullEntryRegionComposer.Compose(nc, Cache, layoutName: "Edit",
 				plugins: RegionEditorPluginRegistry.Default);
 
-			// The phonological-feature dialog-launcher was removed when the region was trimmed. Its custom
-			// slice is now unclaimed, so the Features field composes as a labeled Unsupported worklist row
-			// (never a Custom/plugin row) until a native feature-structure editor plugin graduates it.
+			// The phonological-feature dialog-launcher slice is unclaimed, so the Features field composes
+			// as a labeled Unsupported worklist row (never a Custom/plugin row).
 			Assert.That(composed.Model.Fields, Is.Not.Empty, "the feature-based natural class composes");
 			Assert.That(composed.Model.Fields.Any(f => f.Kind == RegionFieldKind.Custom), Is.False,
 				"nothing claims the phonological-feature slice, so there is no Custom/plugin row");
