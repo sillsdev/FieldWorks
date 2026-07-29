@@ -37,7 +37,7 @@ namespace FwAvaloniaDialogs
 		public static string UiModeBetaWarning => Text("FwAvaloniaDialogs.UiModeBetaWarning");
 		// The "Manage Individual Features..." button shown in the Lexical Edit UI section when New is
 		// selected — parity with the WinForms LexOptionsDlg m_manageFeaturesButton. Opens the
-		// LexicalEditFeatureManagerDialog. (There is deliberately no live "Apply" button — parity with
+		// LexiconFeatureManagerDialog. (There is deliberately no live "Apply" button — parity with
 		// LexOptionsDlg: the mode applies on OK.)
 		public static string ManageIndividualFeatures => Text("FwAvaloniaDialogs.ManageIndividualFeatures");
 		public static string AutoOpenLastProject => Text("FwAvaloniaDialogs.AutoOpenLastProject");

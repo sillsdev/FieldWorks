@@ -8,12 +8,12 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 {
 	/// <summary>
 	/// Display metadata (name, description, group) for one tool surface in
-	/// <see cref="LexicalEditFeatureCatalog"/>. Purely descriptive — <see cref="ToolName"/> is the same
+	/// <see cref="LexiconFeatureCatalog"/>. Purely descriptive — <see cref="ToolName"/> is the same
 	/// id <see cref="EditSurfaceRegistry"/> and <see cref="EditSurfaceResolver"/> key on.
 	/// </summary>
-	public sealed class LexicalEditFeatureDescriptor
+	public sealed class LexiconFeatureDescriptor
 	{
-		public LexicalEditFeatureDescriptor(string toolName, string displayName, string description, string groupName)
+		public LexiconFeatureDescriptor(string toolName, string displayName, string description, string groupName)
 		{
 			ToolName = toolName;
 			DisplayName = displayName;
@@ -34,20 +34,20 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 	/// registry and the user-facing catalog can never drift out of sync — there is exactly one list of
 	/// "tools that ship with a working Avalonia surface today."
 	/// </summary>
-	public static class LexicalEditFeatureCatalog
+	public static class LexiconFeatureCatalog
 	{
-		public static readonly IReadOnlyList<LexicalEditFeatureDescriptor> Features = new[]
+		public static readonly IReadOnlyList<LexiconFeatureDescriptor> Features = new[]
 		{
-			new LexicalEditFeatureDescriptor("lexiconEdit",
+			new LexiconFeatureDescriptor("lexiconEdit",
 				FwAvaloniaStrings.FeatureLexiconEditName, FwAvaloniaStrings.FeatureLexiconEditDescription,
 				FwAvaloniaStrings.FeatureGroupLexicalEntryDialogs),
-			new LexicalEditFeatureDescriptor("lexiconEditPopup",
+			new LexiconFeatureDescriptor("lexiconEditPopup",
 				FwAvaloniaStrings.FeatureLexiconEditPopupName, FwAvaloniaStrings.FeatureLexiconEditPopupDescription,
 				FwAvaloniaStrings.FeatureGroupLexicalEntryDialogs),
-			new LexicalEditFeatureDescriptor("notebookEdit",
+			new LexiconFeatureDescriptor("notebookEdit",
 				FwAvaloniaStrings.FeatureNotebookEditName, FwAvaloniaStrings.FeatureNotebookEditDescription,
 				FwAvaloniaStrings.FeatureGroupOtherRecordTypes),
-			new LexicalEditFeatureDescriptor("posEdit",
+			new LexiconFeatureDescriptor("posEdit",
 				FwAvaloniaStrings.FeaturePosEditName, FwAvaloniaStrings.FeaturePosEditDescription,
 				FwAvaloniaStrings.FeatureGroupOtherRecordTypes)
 		};

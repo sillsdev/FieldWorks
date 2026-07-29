@@ -152,7 +152,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		private string ShowManageFeaturesDialog(string disabledCsv)
 		{
 			var disabledNow = EditSurfaceResolver.ParseDisabledTools(disabledCsv);
-			var edited = LexicalEditFeatureManagerDialog.Show(_owner, LexicalEditFeatureCatalog.Features, disabledNow);
+			var edited = LexiconFeatureManagerDialog.Show(_owner, LexiconFeatureCatalog.Features, disabledNow);
 			return edited == null ? disabledCsv : EditSurfaceResolver.SerializeDisabledTools(edited);
 		}
 
