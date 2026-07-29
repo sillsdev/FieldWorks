@@ -22,7 +22,7 @@ using SIL.FieldWorks.Common.FwAvalonia.ViewDefinition;
 namespace FwAvaloniaTests
 {
 	/// <summary>Records edit-context traffic so view editing behavior can be asserted without LCModel.</summary>
-	internal sealed class FakeRegionEditContext : IDetailEditContext, IStructuredTextEditing
+	internal sealed class FakeDetailEditContext : IDetailEditContext, IStructuredTextEditing
 	{
 		public readonly List<(string Field, string Ws, string Value)> TextEdits = new List<(string, string, string)>();
 		public readonly List<(string Field, string Ws, DetailRichTextValue Value)> RichTextEdits
@@ -211,10 +211,10 @@ namespace FwAvaloniaTests
 			public string GetSelectedOptionKey(ViewNode fieldNode) => null;
 		}
 
-		private static (DataTree view, FakeRegionEditContext context, Window window) ShowEditable()
+		private static (DataTree view, FakeDetailEditContext context, Window window) ShowEditable()
 		{
 			var model = DetailModelProjector.FromViewDefinition(SampleDefinition(), new EditingValueProvider());
-			var context = new FakeRegionEditContext();
+			var context = new FakeDetailEditContext();
 			var view = new DataTree(model, context);
 			var window = new Window { Content = view, Width = 500, Height = 260 };
 			window.Show();
@@ -222,11 +222,11 @@ namespace FwAvaloniaTests
 			return (view, context, window);
 		}
 
-		private static (DataTree view, FakeRegionEditContext context, Window window,
+		private static (DataTree view, FakeDetailEditContext context, Window window,
 			InMemoryFwClipboard clipboard) ShowRichEditable()
 		{
 			var model = DetailModelProjector.FromViewDefinition(SampleDefinition(), new RichEditingValueProvider());
-			var context = new FakeRegionEditContext();
+			var context = new FakeDetailEditContext();
 			var clipboard = new InMemoryFwClipboard();
 			var view = new DataTree(model, context, clipboard: clipboard);
 			var window = new Window { Content = view, Width = 500, Height = 260 };
@@ -291,7 +291,7 @@ namespace FwAvaloniaTests
 		public void LossyValue_RendersReadOnly_WithTooltip()
 		{
 			var model = DetailModelProjector.FromViewDefinition(SampleDefinition(), new LossyEditingValueProvider());
-			var context = new FakeRegionEditContext();
+			var context = new FakeDetailEditContext();
 			var view = new DataTree(model, context);
 			var window = new Window { Content = view, Width = 500, Height = 260 };
 			window.Show();
@@ -460,7 +460,7 @@ namespace FwAvaloniaTests
 					new DetailChoiceOption("g2", "stem") // same display name, different key
 				},
 				"g1");
-			var context = new FakeRegionEditContext();
+			var context = new FakeDetailEditContext();
 			var chooser = new FwChooserField(field, "DupChooser", context);
 			var window = new Window { Content = chooser, Width = 300, Height = 120 };
 			window.Show();
@@ -494,7 +494,7 @@ namespace FwAvaloniaTests
 					new DetailWsValue("du", "uno", wsTag: "qaa-x-one"),
 					new DetailWsValue("du", "dos") // duplicate abbreviation, no tag
 				}, null, null);
-			var context = new FakeRegionEditContext();
+			var context = new FakeDetailEditContext();
 			var fieldControl = new FwMultiWsTextField(field, "TagField", context, null);
 			var window = new Window { Content = fieldControl, Width = 300, Height = 120 };
 			window.Show();
@@ -534,7 +534,7 @@ namespace FwAvaloniaTests
 				{
 					new DetailWsValue("aud", "casa.wav", wsTag: "qaa-Zxxx-x-audio", isAudio: true)
 				}, null, null, isEditable: true);
-			var context = new FakeRegionEditContext();
+			var context = new FakeDetailEditContext();
 			var fieldControl = new FwMultiWsTextField(field, "AudioField", context, null);
 			var window = new Window { Content = fieldControl, Width = 300, Height = 120 };
 			window.Show();
@@ -562,7 +562,7 @@ namespace FwAvaloniaTests
 				isEditable: true, indent: 0, ghostPrompt: "Click here to add Lexeme Form");
 			var model = new DetailModel("LexEntry", "Normal",
 				new List<DetailField> { ghost }, new List<ViewDiagnostic>());
-			var view = new DataTree(model, new FakeRegionEditContext());
+			var view = new DataTree(model, new FakeDetailEditContext());
 			var window = new Window { Content = view, Width = 480, Height = 200 };
 			window.Show();
 			Dispatcher.UIThread.RunJobs();
@@ -605,7 +605,7 @@ namespace FwAvaloniaTests
 					return lexicon.Where(o => o.Name.StartsWith(query, StringComparison.OrdinalIgnoreCase))
 						.ToList();
 				});
-			var context = new FakeRegionEditContext();
+			var context = new FakeDetailEditContext();
 			var vector = new FwReferenceVectorField(field, "Components", context);
 			var window = new Window { Content = vector, Width = 480, Height = 240 };
 			window.Show();
@@ -656,7 +656,7 @@ namespace FwAvaloniaTests
 				SurfaceRouting.Inherit, null, null, null, isEditable: true, indent: 0,
 				items: new List<DetailChoiceOption> { new DetailChoiceOption("e-burro", "burro") },
 				searchOptions: query => new List<DetailChoiceOption>());
-			var context = new FakeRegionEditContext();
+			var context = new FakeDetailEditContext();
 			var vector = new FwReferenceVectorField(field, "Components2", context);
 			var window = new Window { Content = vector, Width = 480, Height = 240 };
 			window.Show();
@@ -684,10 +684,10 @@ namespace FwAvaloniaTests
 			null, isEditable: true, indent: 0,
 			items: new List<DetailChoiceOption> { new DetailChoiceOption("p1", "Main Dictionary") });
 
-		private static (FwReferenceVectorField vector, FakeRegionEditContext context) ShowVector(
+		private static (FwReferenceVectorField vector, FakeDetailEditContext context) ShowVector(
 			Action gestureCompleted)
 		{
-			var context = new FakeRegionEditContext();
+			var context = new FakeDetailEditContext();
 			var vector = new FwReferenceVectorField(PublishInField(), "PublishIn", context, gestureCompleted);
 			var window = new Window { Content = vector, Width = 480, Height = 200 };
 			window.Show();
@@ -783,7 +783,7 @@ namespace FwAvaloniaTests
 		{
 			var model = new DetailModel("LexEntry", "test",
 				new List<DetailField> { PublishInField() }, new List<ViewDiagnostic>());
-			var context = new FakeRegionEditContext();
+			var context = new FakeDetailEditContext();
 			var view = new DataTree(model, context);
 			var window = new Window { Content = view, Width = 500, Height = 260 };
 			window.Show();
@@ -807,7 +807,7 @@ namespace FwAvaloniaTests
 		{
 			var model = new DetailModel("LexEntry", "test",
 				new List<DetailField> { PublishInField() }, new List<ViewDiagnostic>());
-			var context = new FakeRegionEditContext
+			var context = new FakeDetailEditContext
 			{
 				ValidateResult = new List<string> { "A Lexeme Form is required." }
 			};
@@ -909,7 +909,7 @@ namespace FwAvaloniaTests
 		public void CtrlB_OnLossyValue_DoesNotStageFormatting()
 		{
 			var model = DetailModelProjector.FromViewDefinition(SampleDefinition(), new LossyEditingValueProvider());
-			var context = new FakeRegionEditContext();
+			var context = new FakeDetailEditContext();
 			var view = new DataTree(model, context);
 			var window = new Window { Content = view, Width = 500, Height = 260 };
 			window.Show();
@@ -968,10 +968,10 @@ namespace FwAvaloniaTests
 			return field;
 		}
 
-		private static (FwMultiWsTextField control, FakeRegionEditContext context, Window window)
+		private static (FwMultiWsTextField control, FakeDetailEditContext context, Window window)
 			ShowStyleable(DetailField field)
 		{
-			var context = new FakeRegionEditContext();
+			var context = new FakeDetailEditContext();
 			var control = new FwMultiWsTextField(field, "BibEditor", context, null);
 			var window = new Window { Content = control, Width = 480, Height = 200 };
 			window.Show();
@@ -1151,11 +1151,11 @@ namespace FwAvaloniaTests
 			return field;
 		}
 
-		private static (FwMultiWsTextField control, FakeRegionEditContext context, Window window)
+		private static (FwMultiWsTextField control, FakeDetailEditContext context, Window window)
 			ShowRetaggable(params (string Tag, string Name)[] systems)
 		{
 			var field = RetaggableField(systems);
-			var context = new FakeRegionEditContext();
+			var context = new FakeDetailEditContext();
 			var control = new FwMultiWsTextField(field, "BibEditor", context, null);
 			var window = new Window { Content = control, Width = 480, Height = 200 };
 			window.Show();
@@ -1306,7 +1306,7 @@ namespace FwAvaloniaTests
 		{
 			var field = LinkedChooserField();
 			var requests = new List<DetailLinkRequest>();
-			var context = new FakeRegionEditContext();
+			var context = new FakeDetailEditContext();
 			var chooser = new FwChooserField(field, "MorphTypeChooser", context, requests.Add);
 			var window = new Window { Content = chooser, Width = 420, Height = 200 };
 			window.Show();
@@ -1332,7 +1332,7 @@ namespace FwAvaloniaTests
 		public void ChooserFlyout_IsOptionsOnly_ZeroLinkItems()
 		{
 			var chooser = new FwChooserField(LinkedChooserField(), "MorphTypeChooser",
-				new FakeRegionEditContext(), request => { });
+				new FakeDetailEditContext(), request => { });
 
 			var picker = (FwOptionChooser)((Flyout)chooser.Flyout).Content;
 			Assert.That(picker.GetVisualDescendants().OfType<AutoCompleteBox>(), Is.Empty,
@@ -1357,7 +1357,7 @@ namespace FwAvaloniaTests
 					new DetailChooserLink("Edit the Publications list", "publicationsEdit")
 				});
 			var requests = new List<DetailLinkRequest>();
-			var vector = new FwReferenceVectorField(field, "PublishIn", new FakeRegionEditContext(),
+			var vector = new FwReferenceVectorField(field, "PublishIn", new FakeDetailEditContext(),
 				null, requests.Add);
 			var window = new Window { Content = vector, Width = 480, Height = 240 };
 			window.Show();
@@ -1389,7 +1389,7 @@ namespace FwAvaloniaTests
 				DetailFieldKind.Chooser, EditorClassification.Known, "PlainChooser", null,
 				SurfaceRouting.Inherit, null,
 				new List<DetailChoiceOption> { new DetailChoiceOption("g1", "stem") }, "g1");
-			var chooser = new FwChooserField(noLinks, "PlainChooser", new FakeRegionEditContext(),
+			var chooser = new FwChooserField(noLinks, "PlainChooser", new FakeDetailEditContext(),
 				request => { });
 			Assert.That(chooser.HoverAffordances, Is.Empty, "no resolvable list editor, no gear");
 			Assert.That(((Flyout)chooser.Flyout).Content, Is.TypeOf<FwOptionChooser>(),
@@ -1397,7 +1397,7 @@ namespace FwAvaloniaTests
 
 			// Links but no host callback (nothing to dispatch through): no gear either.
 			var noCallback = new FwChooserField(LinkedChooserField(), "NoCallbackChooser",
-				new FakeRegionEditContext());
+				new FakeDetailEditContext());
 			Assert.That(noCallback.HoverAffordances, Is.Empty, "no host bridge, no gear");
 
 			// A vector without links: bars + "+" only — no Settings button at all.
@@ -1407,7 +1407,7 @@ namespace FwAvaloniaTests
 				new List<DetailChoiceOption> { new DetailChoiceOption("p1", "Main Dictionary") },
 				null, isEditable: true, indent: 0, items: new List<DetailChoiceOption>());
 			var vector = new FwReferenceVectorField(vectorField, "PlainVector",
-				new FakeRegionEditContext(), null, request => { });
+				new FakeDetailEditContext(), null, request => { });
 			Assert.That(vector.Children.OfType<Button>()
 					.Any(b => AutomationProperties.GetAutomationId(b) == "PlainVector.Settings"),
 				Is.False, "no resolvable list editor, no vector gear");
@@ -1429,7 +1429,7 @@ namespace FwAvaloniaTests
 				},
 				null, null, isEditable: true, indent: 0, menuId: "mnuDataTree-LexemeForm");
 			var requests = new List<DetailMenuRequest>();
-			var text = new FwMultiWsTextField(field, "LexemeFormRow", new FakeRegionEditContext(),
+			var text = new FwMultiWsTextField(field, "LexemeFormRow", new FakeDetailEditContext(),
 				null, requests.Add);
 			var window = new Window { Content = text, Width = 420, Height = 200 };
 			window.Show();

@@ -18,7 +18,7 @@ namespace FwAvaloniaDialogs
 	/// Chooser/reference staging is rejected: the morph-type picker is driven by the view-model directly, not
 	/// through this context.
 	/// </summary>
-	public sealed class InMemoryRegionEditContext : IDetailEditContext
+	public sealed class InMemoryDetailEditContext : IDetailEditContext
 	{
 		// Per-field staged text, keyed by field identity then writing-system key.
 		private readonly Dictionary<string, Dictionary<string, string>> _staged =

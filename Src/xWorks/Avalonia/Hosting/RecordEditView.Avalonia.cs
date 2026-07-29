@@ -378,7 +378,7 @@ namespace SIL.FieldWorks.XWorks
 			if (!m_detailEditContext.IsDeactivateHookAttached)
 				m_detailEditContext.AttachDeactivateHook(FindForm());
 			m_avaloniaEntryForm.ShowDetail(detail, editContext,
-				wsTag => RegionKeyboard.ActivateForWritingSystem(Cache, wsTag),
+				wsTag => WritingSystemKeyboards.Activate(Cache, wsTag),
 				GetPersistedExpansionState, PersistExpansionState,
 				OnDetailMenuRequested, OnDetailLinkRequested,
 				new FwTsStringClipboard(Cache.WritingSystemFactory),

@@ -85,7 +85,7 @@ namespace FwAvaloniaTests
 		{
 			var field = Field(new List<DetailParagraph> { MultiRunPara() },
 				charStyles: new[] { "Strong", "Subtle Emphasis" });
-			var context = new FakeRegionEditContext();
+			var context = new FakeDetailEditContext();
 			var (control, window) = Show(field, context);
 
 			DialogSnapshot.Capture(window, "Region-StTextDepth-01-charstyle");
@@ -130,7 +130,7 @@ namespace FwAvaloniaTests
 				charStyles: new[] { "Strong" },
 				writingSystems: new[] { new DetailWritingSystemOption("fr", "French") });
 			field.AvailableParagraphStyles = new[] { "Heading", "Block Quotation" };
-			var (control, _) = Show(field, new FakeRegionEditContext());
+			var (control, _) = Show(field, new FakeDetailEditContext());
 
 			foreach (var id in new[]
 			{
@@ -150,7 +150,7 @@ namespace FwAvaloniaTests
 		public void CharStyleAffordance_Absent_WhenNoAvailableStyles()
 		{
 			var field = Field(new List<DetailParagraph> { MultiRunPara() } /* no char styles */);
-			var (control, _) = Show(field, new FakeRegionEditContext());
+			var (control, _) = Show(field, new FakeDetailEditContext());
 			Assert.That(Find<Button>(control, "Discussion.Para.0.CharStyle"), Is.Null,
 				"a paragraph with no available character styles shows no char-style picker");
 		}
@@ -159,7 +159,7 @@ namespace FwAvaloniaTests
 		public void CharStyleAffordance_HasAutomationIdAndAccessibleName()
 		{
 			var field = Field(new List<DetailParagraph> { MultiRunPara() }, charStyles: new[] { "Strong" });
-			var (control, _) = Show(field, new FakeRegionEditContext());
+			var (control, _) = Show(field, new FakeDetailEditContext());
 			var styleButton = Find<Button>(control, "Discussion.Para.0.CharStyle");
 			Assert.That(styleButton, Is.Not.Null);
 			Assert.That(AutomationProperties.GetName(styleButton), Is.EqualTo(FwAvaloniaStrings.CharacterStyle));
@@ -176,7 +176,7 @@ namespace FwAvaloniaTests
 					new DetailWritingSystemOption("fr", "French"),
 					new DetailWritingSystemOption("de", "German")
 				});
-			var context = new FakeRegionEditContext();
+			var context = new FakeDetailEditContext();
 			var (control, window) = Show(field, context);
 
 			DialogSnapshot.Capture(window, "Region-StTextDepth-02-wsretag");
@@ -209,7 +209,7 @@ namespace FwAvaloniaTests
 		public void WsRetagAffordance_Absent_WhenNoAvailableWritingSystems()
 		{
 			var field = Field(new List<DetailParagraph> { MultiRunPara() } /* no ws */);
-			var (control, _) = Show(field, new FakeRegionEditContext());
+			var (control, _) = Show(field, new FakeDetailEditContext());
 			Assert.That(Find<Button>(control, "Discussion.Para.0.WritingSystem"), Is.Null,
 				"a paragraph with no available writing systems shows no ws picker");
 		}
@@ -225,7 +225,7 @@ namespace FwAvaloniaTests
 				["fr"] = new DetailRunFont("Times New Roman")
 			};
 			var field = Field(new List<DetailParagraph> { MultiRunPara() }, fontMap: fonts);
-			var context = new FakeRegionEditContext();
+			var context = new FakeDetailEditContext();
 			var (control, window) = Show(field, context);
 
 			DialogSnapshot.Capture(window, "Region-StTextDepth-03-perrun-font-display");
@@ -252,7 +252,7 @@ namespace FwAvaloniaTests
 				["fr"] = new DetailRunFont("Times New Roman")
 			};
 			var field = Field(new List<DetailParagraph> { MultiRunPara() }, fontMap: fonts);
-			var control = new FwStructuredTextField(field, field.AutomationId, new FakeRegionEditContext(),
+			var control = new FwStructuredTextField(field, field.AutomationId, new FakeDetailEditContext(),
 				null, () => { });
 			// A sibling focusable button so blur has somewhere to go (the structured field panel itself is
 			// not focusable, so focusing it would not blur the box in headless).
@@ -298,7 +298,7 @@ namespace FwAvaloniaTests
 				new[] { new DetailTextRun("plain", "en") }));
 			var fonts = new Dictionary<string, DetailRunFont> { ["en"] = new DetailRunFont("Charis SIL") };
 			var field = Field(new List<DetailParagraph> { para }, fontMap: fonts);
-			var (control, _) = Show(field, new FakeRegionEditContext());
+			var (control, _) = Show(field, new FakeDetailEditContext());
 
 			Assert.That(Find<TextBlock>(control, "Discussion.Para.0.Display"), Is.Null,
 				"a uniform single-run paragraph builds no per-run font display");

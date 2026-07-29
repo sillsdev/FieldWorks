@@ -65,13 +65,13 @@ namespace FwAvaloniaTests
 				new DetailChooserLink("Edit the Publications list", "publicationsEdit")
 			});
 
-		private static (DataTree view, FakeRegionEditContext context, Window window,
+		private static (DataTree view, FakeDetailEditContext context, Window window,
 			List<DetailLinkRequest> linkRequests) Show()
 		{
 			var model = new DetailModel("LexEntry", "test",
 				new List<DetailField> { ChooserField(), VectorField() },
 				new List<ViewDiagnostic>());
-			var context = new FakeRegionEditContext();
+			var context = new FakeDetailEditContext();
 			var linkRequests = new List<DetailLinkRequest>();
 			var view = new DataTree(model, context, linkRequested: linkRequests.Add);
 			var window = new Window { Content = view, Width = 500, Height = 300 };

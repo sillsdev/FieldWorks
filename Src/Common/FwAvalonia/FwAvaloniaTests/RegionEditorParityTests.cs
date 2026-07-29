@@ -85,7 +85,7 @@ namespace FwAvaloniaTests
 		public void ReferenceVector_Dispose_DetachesEveryHandler()
 		{
 			var vector = new FwReferenceVectorField(VectorFieldWithItems(), "PublishIn",
-				new FakeRegionEditContext());
+				new FakeDetailEditContext());
 			var window = new Window { Content = vector, Width = 480, Height = 200 };
 			window.Show();
 			Dispatcher.UIThread.RunJobs();

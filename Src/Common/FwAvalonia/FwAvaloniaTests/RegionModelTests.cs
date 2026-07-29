@@ -19,7 +19,7 @@ namespace FwAvaloniaTests
 	/// A fake value provider so the mapper can be tested without LCModel. The LCModel-backed provider
 	/// lives in xWorks (<c>LexiconEditErrorFallback</c>).
 	/// </summary>
-	internal sealed class FakeRegionValueProvider : IDetailValueProvider
+	internal sealed class FakeDetailValueProvider : IDetailValueProvider
 	{
 		public IReadOnlyList<DetailWsValue> GetValues(ViewNode fieldNode)
 		{
@@ -63,7 +63,7 @@ namespace FwAvaloniaTests
 		[Test]
 		public void FromViewDefinition_ProjectsFields_FromTheTypedDefinition()
 		{
-			var model = DetailModelProjector.FromViewDefinition(SampleDefinition(), new FakeRegionValueProvider());
+			var model = DetailModelProjector.FromViewDefinition(SampleDefinition(), new FakeDetailValueProvider());
 
 			Assert.That(model.ClassName, Is.EqualTo("LexEntry"));
 			Assert.That(model.Fields.Select(f => f.Field), Is.EqualTo(new[] { "LexemeForm", "MorphType", "Gloss" }));
@@ -72,7 +72,7 @@ namespace FwAvaloniaTests
 		[Test]
 		public void TextFields_AreClassifiedAsText_AndBoundToValues()
 		{
-			var model = DetailModelProjector.FromViewDefinition(SampleDefinition(), new FakeRegionValueProvider());
+			var model = DetailModelProjector.FromViewDefinition(SampleDefinition(), new FakeDetailValueProvider());
 			var lexeme = model.Fields.Single(f => f.Field == "LexemeForm");
 
 			Assert.That(lexeme.Kind, Is.EqualTo(DetailFieldKind.Text));
@@ -80,7 +80,7 @@ namespace FwAvaloniaTests
 			Assert.That(lexeme.AutomationId, Is.EqualTo("LexemeFormEditor"));
 		}
 
-		private sealed class RichRegionValueProvider : IDetailValueProvider
+		private sealed class RichDetailValueProvider : IDetailValueProvider
 		{
 			public IReadOnlyList<DetailWsValue> GetValues(ViewNode fieldNode)
 				=> new List<DetailWsValue>
@@ -101,7 +101,7 @@ namespace FwAvaloniaTests
 			public string GetSelectedOptionKey(ViewNode fieldNode) => null;
 		}
 
-		private sealed class UnsupportedRichRegionValueProvider : IDetailValueProvider
+		private sealed class UnsupportedRichDetailValueProvider : IDetailValueProvider
 		{
 			public IReadOnlyList<DetailWsValue> GetValues(ViewNode fieldNode)
 				=> new List<DetailWsValue>
@@ -125,7 +125,7 @@ namespace FwAvaloniaTests
 		[Test]
 		public void RichTextFields_AreProjectedEditable_WhenRichRowsCanRoundTrip()
 		{
-			var model = DetailModelProjector.FromViewDefinition(SampleDefinition(), new RichRegionValueProvider());
+			var model = DetailModelProjector.FromViewDefinition(SampleDefinition(), new RichDetailValueProvider());
 			var lexeme = model.Fields.Single(f => f.Field == "LexemeForm");
 
 			Assert.That(lexeme.IsEditable, Is.True,
@@ -139,7 +139,7 @@ namespace FwAvaloniaTests
 		public void RichTextFields_WithUnsupportedObjectData_AreProjectedReadOnly()
 		{
 			var model = DetailModelProjector.FromViewDefinition(SampleDefinition(),
-				new UnsupportedRichRegionValueProvider());
+				new UnsupportedRichDetailValueProvider());
 			var lexeme = model.Fields.Single(f => f.Field == "LexemeForm");
 
 			Assert.That(lexeme.IsEditable, Is.False,
@@ -164,7 +164,7 @@ namespace FwAvaloniaTests
 		[Test]
 		public void ChooserField_IsClassifiedAsChooser_WithOptionsAndSelection()
 		{
-			var model = DetailModelProjector.FromViewDefinition(SampleDefinition(), new FakeRegionValueProvider());
+			var model = DetailModelProjector.FromViewDefinition(SampleDefinition(), new FakeDetailValueProvider());
 			var morph = model.Fields.Single(f => f.Field == "MorphType");
 
 			Assert.That(morph.Kind, Is.EqualTo(DetailFieldKind.Chooser));
@@ -182,7 +182,7 @@ namespace FwAvaloniaTests
 			};
 			var def = new ViewDefinitionModel("LexEntry", "identity", "detail", roots, new List<ViewDiagnostic>());
 
-			var model = DetailModelProjector.FromViewDefinition(def, new FakeRegionValueProvider());
+			var model = DetailModelProjector.FromViewDefinition(def, new FakeDetailValueProvider());
 			Assert.That(model.Fields, Is.Empty);
 		}
 
@@ -196,7 +196,7 @@ namespace FwAvaloniaTests
 			};
 			var def = new ViewDefinitionModel("LexEntry", "identity", "detail", roots, new List<ViewDiagnostic>());
 
-			var model = DetailModelProjector.FromViewDefinition(def, new FakeRegionValueProvider());
+			var model = DetailModelProjector.FromViewDefinition(def, new FakeDetailValueProvider());
 			Assert.That(model.Fields.Single().Kind, Is.EqualTo(DetailFieldKind.Unsupported));
 		}
 
@@ -206,7 +206,7 @@ namespace FwAvaloniaTests
 			var diags = new List<ViewDiagnostic> { new ViewDiagnostic(ViewDiagnosticSeverity.Warning, "x", "m", "p") };
 			var def = new ViewDefinitionModel("LexEntry", "identity", "detail", new List<ViewNode>(), diags);
 
-			var model = DetailModelProjector.FromViewDefinition(def, new FakeRegionValueProvider());
+			var model = DetailModelProjector.FromViewDefinition(def, new FakeDetailValueProvider());
 			Assert.That(model.Diagnostics, Has.Count.EqualTo(1));
 		}
 
@@ -359,7 +359,7 @@ namespace FwAvaloniaTests
 		[AvaloniaTest]
 		public void RegionView_RendersFields_WithStableAutomationIds()
 		{
-			var model = DetailModelProjector.FromViewDefinition(SampleDefinition(), new FakeRegionValueProvider());
+			var model = DetailModelProjector.FromViewDefinition(SampleDefinition(), new FakeDetailValueProvider());
 			var view = new DataTree(model);
 			var window = new Window { Content = view, Width = 420, Height = 240 };
 			window.Show();

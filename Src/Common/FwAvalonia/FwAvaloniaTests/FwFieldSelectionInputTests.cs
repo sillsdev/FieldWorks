@@ -48,7 +48,7 @@ namespace FwAvaloniaTests
 
 		private static (TextBox box, Window window) ShowFocused(DetailField field)
 		{
-			var control = new FwMultiWsTextField(field, field.AutomationId, new FakeRegionEditContext(), null);
+			var control = new FwMultiWsTextField(field, field.AutomationId, new FakeDetailEditContext(), null);
 			var window = new Window { Content = control, Width = 420, Height = 80 };
 			window.Show();
 			Dispatcher.UIThread.RunJobs();

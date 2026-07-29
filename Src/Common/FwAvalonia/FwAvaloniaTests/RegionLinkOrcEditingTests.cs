@@ -39,10 +39,10 @@ namespace FwAvaloniaTests
 				new List<DetailWsValue> { new DetailWsValue("anal", rich.PlainText, wsTag: "en", richText: rich) },
 				null, null, isEditable: isEditable);
 
-		private static (FwMultiWsTextField Control, FakeRegionEditContext Context, Window Window)
+		private static (FwMultiWsTextField Control, FakeDetailEditContext Context, Window Window)
 			Show(DetailField field)
 		{
-			var context = new FakeRegionEditContext();
+			var context = new FakeDetailEditContext();
 			var control = new FwMultiWsTextField(field, "BibEditor", context, null);
 			var window = new Window { Content = control, Width = 480, Height = 200 };
 			window.Show();

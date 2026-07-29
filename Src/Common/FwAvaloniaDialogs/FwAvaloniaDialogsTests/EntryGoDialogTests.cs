@@ -429,10 +429,10 @@ namespace FwAvaloniaDialogsTests
 		// right column from the tree and the persistent matching list takes the full width. =====
 
 		[AvaloniaTest]
-		public void DescriptionRegion_AbsentFromTree_WhenTheConsumerSuppliesNone()
+		public void DescriptionPane_AbsentFromTree_WhenTheConsumerSuppliesNone()
 		{
 			var (view, vm) = Show(Input(descriptionLabel: null), "EntryGo-09-no-description-region");
-			Assert.That(vm.HasDescriptionRegion, Is.False,
+			Assert.That(vm.HasDescriptionPane, Is.False,
 				"no label and no rich content: the consumer did not opt into the region");
 
 			Assert.That(view.GetVisualDescendants()
@@ -495,13 +495,13 @@ namespace FwAvaloniaDialogsTests
 		}
 
 		[AvaloniaTest]
-		public void DescriptionRegion_RendersRichContent_ForTheHighlightedEntry()
+		public void DescriptionPane_RendersRichContent_ForTheHighlightedEntry()
 		{
 			var (view, vm) = Show(RichDescriptionInput());
 			vm.SelectedResult = vm.Results.First(r => r.Id == "11");
 			Capture(view, "EntryGo-04-rich-description");
 
-			Assert.That(vm.HasDescriptionRegion, Is.True, "a consumer with a label/rich content keeps the region");
+			Assert.That(vm.HasDescriptionPane, Is.True, "a consumer with a label/rich content keeps the region");
 			Assert.That(vm.HasDescriptionContent, Is.True, "the highlighted row carries a rich payload");
 			Assert.That(vm.SelectedDescriptionContent, Is.Not.Null);
 
@@ -515,7 +515,7 @@ namespace FwAvaloniaDialogsTests
 		}
 
 		[AvaloniaTest]
-		public void DescriptionRegion_FallsBackToPlainText_WhenNoRichContent()
+		public void DescriptionPane_FallsBackToPlainText_WhenNoRichContent()
 		{
 			var (view, vm) = Show(RichDescriptionInput());
 			vm.SelectedResult = vm.Results.First(r => r.Id == "12"); // the plain-text-only row

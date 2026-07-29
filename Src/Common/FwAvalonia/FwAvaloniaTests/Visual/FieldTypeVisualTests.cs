@@ -10,7 +10,7 @@ using Avalonia.VisualTree;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwAvalonia.Detail;
 using SIL.FieldWorks.Common.FwAvalonia.ViewDefinition;
-using FwAvaloniaTests; // FakeRegionEditContext
+using FwAvaloniaTests; // FakeDetailEditContext
 using FwAvaloniaDialogsTests; // DialogLayoutAssert
 
 namespace FwAvaloniaTests.VisualChecks
@@ -21,15 +21,15 @@ namespace FwAvaloniaTests.VisualChecks
 	/// captured as a Skia PNG for subjective review and run through the shared
 	/// <see cref="DialogLayoutAssert"/> crowding tripwire, plus ONE realized region surface holding them
 	/// together. All LCModel-free: the model fields are built directly and a
-	/// <see cref="FakeRegionEditContext"/> records the staged edits.
+	/// <see cref="FakeDetailEditContext"/> records the staged edits.
 	/// </summary>
 	[TestFixture]
 	public class FieldTypeVisualTests
 	{
 		private static DataTree Surface(IReadOnlyList<DetailField> fields,
-			out FakeRegionEditContext edit)
+			out FakeDetailEditContext edit)
 		{
-			edit = new FakeRegionEditContext();
+			edit = new FakeDetailEditContext();
 			return new DataTree(
 				new DetailModel("LexEntry", "detail", new List<DetailField>(fields),
 					new List<ViewDiagnostic>()),
