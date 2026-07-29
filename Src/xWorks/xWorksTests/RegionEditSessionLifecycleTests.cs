@@ -54,7 +54,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void ToolSwitchCommit_WithAnOpenSession_ThrowsCommitAtWrongPlace()
 		{
-			var context = new LexicalEditRegionEditContext(m_entry, Cache);
+			var context = new LexiconFirstSliceEditContext(m_entry, Cache);
 			context.TrySetText(FormField, "vern", "perro");
 			Assert.That(context.IsOpen, Is.True);
 
@@ -72,7 +72,7 @@ namespace SIL.FieldWorks.XWorks
 		public void ToolSwitchCommit_AfterSettlingTheOpenSession_DoesNotThrow()
 		{
 			var holder = new RegionEditContextHolder();
-			var context = new LexicalEditRegionEditContext(m_entry, Cache);
+			var context = new LexiconFirstSliceEditContext(m_entry, Cache);
 			holder.Replace(context);
 			context.TrySetText(FormField, "vern", "perro");
 			Assert.That(context.IsOpen, Is.True);
@@ -90,7 +90,7 @@ namespace SIL.FieldWorks.XWorks
 		public void Settle_OnAToolSwitch_KeepsAValidStagedEditAsAnUndoableStep()
 		{
 			var holder = new RegionEditContextHolder();
-			var context = new LexicalEditRegionEditContext(m_entry, Cache);
+			var context = new LexiconFirstSliceEditContext(m_entry, Cache);
 			holder.Replace(context);
 			context.TrySetText(FormField, "vern", "perro");
 
@@ -108,7 +108,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void Save_WithAnAbandonedOpenSession_ThrowsCommitAtWrongPlace()
 		{
-			var abandoned = new LexicalEditRegionEditContext(m_entry, Cache);
+			var abandoned = new LexiconFirstSliceEditContext(m_entry, Cache);
 			abandoned.TrySetText(FormField, "vern", "half-typed");
 			Assert.That(abandoned.IsOpen, Is.True);
 
@@ -124,13 +124,13 @@ namespace SIL.FieldWorks.XWorks
 		public void Holder_ReplacingAContextMidEdit_CancelsTheOpenSession_SoShutdownSaveSucceeds()
 		{
 			var holder = new RegionEditContextHolder();
-			var first = new LexicalEditRegionEditContext(m_entry, Cache);
+			var first = new LexiconFirstSliceEditContext(m_entry, Cache);
 			holder.Replace(first);
 			first.TrySetText(FormField, "vern", "half-typed");
 			Assert.That(first.IsOpen, Is.True);
 
 			// Re-showing the region (navigation, refresh, ShowHiddenFields, …) swaps the context.
-			var second = new LexicalEditRegionEditContext(m_entry, Cache);
+			var second = new LexiconFirstSliceEditContext(m_entry, Cache);
 			holder.Replace(second);
 
 			Assert.That(first.IsOpen, Is.False, "the displaced context's open session must be cancelled, never orphaned");
@@ -143,7 +143,7 @@ namespace SIL.FieldWorks.XWorks
 		public void Holder_ClearMidEdit_CancelsTheOpenSession()
 		{
 			var holder = new RegionEditContextHolder();
-			var context = new LexicalEditRegionEditContext(m_entry, Cache);
+			var context = new LexiconFirstSliceEditContext(m_entry, Cache);
 			holder.Replace(context);
 			context.TrySetText(FormField, "vern", "half-typed");
 
@@ -158,7 +158,7 @@ namespace SIL.FieldWorks.XWorks
 		public void Holder_ReplacingWithTheSameContext_DoesNotCancelIt()
 		{
 			var holder = new RegionEditContextHolder();
-			var context = new LexicalEditRegionEditContext(m_entry, Cache);
+			var context = new LexiconFirstSliceEditContext(m_entry, Cache);
 			holder.Replace(context);
 			context.TrySetText(FormField, "vern", "still typing");
 
@@ -174,7 +174,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void Cancel_AfterTheClerkForceEndedTheTask_IsASafeNoOp()
 		{
-			var context = new LexicalEditRegionEditContext(m_entry, Cache);
+			var context = new LexiconFirstSliceEditContext(m_entry, Cache);
 			context.TrySetText(FormField, "vern", "perro");
 			Cache.ActionHandlerAccessor.EndUndoTask(); // what RecordClerk.SaveOnChangeRecord does
 
@@ -191,7 +191,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void Commit_AfterTheClerkForceEndedTheTask_IsASafeNoOp()
 		{
-			var context = new LexicalEditRegionEditContext(m_entry, Cache);
+			var context = new LexiconFirstSliceEditContext(m_entry, Cache);
 			context.TrySetText(FormField, "vern", "perro");
 			Cache.ActionHandlerAccessor.EndUndoTask(); // what RecordClerk.SaveOnChangeRecord does
 
@@ -210,7 +210,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void Commit_AfterForceEndAndAnotherTaskOpened_LeavesTheOtherTaskOpen()
 		{
-			var context = new LexicalEditRegionEditContext(m_entry, Cache);
+			var context = new LexiconFirstSliceEditContext(m_entry, Cache);
 			context.TrySetText(FormField, "vern", "perro");
 			Cache.ActionHandlerAccessor.EndUndoTask(); // what RecordClerk.SaveOnChangeRecord does
 			Cache.DomainDataByFlid.BeginUndoTask("Undo interloper", "Redo interloper");
@@ -235,7 +235,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void Cancel_AfterForceEndAndAnotherTaskOpened_DoesNotRollBackTheOtherTask()
 		{
-			var context = new LexicalEditRegionEditContext(m_entry, Cache);
+			var context = new LexiconFirstSliceEditContext(m_entry, Cache);
 			context.TrySetText(FormField, "vern", "perro");
 			Cache.ActionHandlerAccessor.EndUndoTask(); // what RecordClerk.SaveOnChangeRecord does
 			Cache.DomainDataByFlid.BeginUndoTask("Undo interloper", "Redo interloper");

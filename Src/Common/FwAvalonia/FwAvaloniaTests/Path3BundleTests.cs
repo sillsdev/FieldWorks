@@ -31,7 +31,7 @@ namespace FwAvaloniaTests
 		{
 			var repoRoot = FindRepoRoot();
 			var partsDir = Path.Combine(repoRoot, "DistFiles", "Language Explorer", "Configuration", "Parts");
-			var definition = LexicalEditFirstSlice.CompileFromLayoutDirectory(partsDir);
+			var definition = LexiconFirstSlice.CompileFromLayoutDirectory(partsDir);
 			Assert.That(definition, Is.Not.Null);
 
 			var bundleDir = Path.Combine(TestContext.CurrentContext.WorkDirectory, "path3-first-slice");

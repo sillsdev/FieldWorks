@@ -16,7 +16,7 @@ namespace FwAvaloniaTests
 	/// (not hand-authored), with stable ids derived from the real layout paths.
 	/// </summary>
 	[TestFixture]
-	public class LexicalEditFirstSliceTests
+	public class LexiconFirstSliceTests
 	{
 		private static string ShippedPartsDirectory()
 		{
@@ -33,7 +33,7 @@ namespace FwAvaloniaTests
 		[Test]
 		public void CompileFromLayoutDirectory_OverShippedLayouts_YieldsTheThreeFirstSliceFields()
 		{
-			var definition = LexicalEditFirstSlice.CompileFromLayoutDirectory(ShippedPartsDirectory());
+			var definition = LexiconFirstSlice.CompileFromLayoutDirectory(ShippedPartsDirectory());
 
 			Assert.That(definition, Is.Not.Null, "the shipped layouts must compile (fallback means a regression)");
 			Assert.That(definition.Roots.Select(r => r.Field), Is.EqualTo(new[] { "Form", "MorphType", "Gloss" }));
@@ -43,7 +43,7 @@ namespace FwAvaloniaTests
 		[Test]
 		public void CompiledFields_CarryRealLayoutBindings_AndProductMetadata()
 		{
-			var definition = LexicalEditFirstSlice.CompileFromLayoutDirectory(ShippedPartsDirectory());
+			var definition = LexiconFirstSlice.CompileFromLayoutDirectory(ShippedPartsDirectory());
 			Assert.That(definition, Is.Not.Null);
 
 			var form = definition.Roots[0];
@@ -73,7 +73,7 @@ namespace FwAvaloniaTests
 		[Test]
 		public void CompiledDefinition_MapsToRegionFields_WithChooserAndTextKinds()
 		{
-			var definition = LexicalEditFirstSlice.CompileFromLayoutDirectory(ShippedPartsDirectory());
+			var definition = LexiconFirstSlice.CompileFromLayoutDirectory(ShippedPartsDirectory());
 			Assert.That(definition, Is.Not.Null);
 
 			var region = RegionModelProjector.FromViewDefinition(definition, new FakeRegionValueProvider());
@@ -87,11 +87,11 @@ namespace FwAvaloniaTests
 		[Test]
 		public void MissingDirectory_ReturnsNull_AndAuthoredFallbackCarriesDiagnostic()
 		{
-			Assert.That(LexicalEditFirstSlice.CompileFromLayoutDirectory(null), Is.Null);
-			Assert.That(LexicalEditFirstSlice.CompileFromLayoutDirectory(
+			Assert.That(LexiconFirstSlice.CompileFromLayoutDirectory(null), Is.Null);
+			Assert.That(LexiconFirstSlice.CompileFromLayoutDirectory(
 				Path.Combine(Path.GetTempPath(), "no-such-layout-dir")), Is.Null);
 
-			var fallback = LexicalEditFirstSlice.AuthoredFallback();
+			var fallback = LexiconFirstSlice.AuthoredFallback();
 			Assert.That(fallback.Roots.Select(r => r.Field), Is.EqualTo(new[] { "Form", "MorphType", "Gloss" }));
 			Assert.That(fallback.Diagnostics.Single().Code, Is.EqualTo("authored-fallback"),
 				"falling back must be visible, not silent");

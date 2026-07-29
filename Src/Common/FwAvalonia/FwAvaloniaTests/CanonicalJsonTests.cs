@@ -31,7 +31,7 @@ namespace FwAvaloniaTests
 		[Test]
 		public void CompiledFirstSlice_RoundTripsThroughCanonicalJson_SnapshotIdentical()
 		{
-			var compiled = LexicalEditFirstSlice.CompileFromLayoutDirectory(ShippedPartsDirectory());
+			var compiled = LexiconFirstSlice.CompileFromLayoutDirectory(ShippedPartsDirectory());
 			Assert.That(compiled, Is.Not.Null);
 
 			var json = ViewDefinitionJsonSerializer.Serialize(compiled);
@@ -45,9 +45,9 @@ namespace FwAvaloniaTests
 		[Test]
 		public void Serialization_IsDeterministic()
 		{
-			var compiled = LexicalEditFirstSlice.AuthoredFallback();
+			var compiled = LexiconFirstSlice.AuthoredFallback();
 			Assert.That(ViewDefinitionJsonSerializer.Serialize(compiled),
-				Is.EqualTo(ViewDefinitionJsonSerializer.Serialize(LexicalEditFirstSlice.AuthoredFallback())));
+				Is.EqualTo(ViewDefinitionJsonSerializer.Serialize(LexiconFirstSlice.AuthoredFallback())));
 		}
 
 		[Test]

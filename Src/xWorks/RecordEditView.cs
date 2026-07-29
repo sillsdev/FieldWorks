@@ -92,7 +92,7 @@ namespace SIL.FieldWorks.XWorks
 			m_dataEntryForm = dataEntryForm;
 			m_lexicalEditSurfaceFactory = new EditSurfaceFactory(
 				() => m_dataEntryForm,
-				() => new LexicalEditHostControl());
+				() => new RegionHostControl());
 			m_dataEntryForm.CurrentSliceChanged += m_dataEntryForm_CurrentSliceChanged;
 
 			// This call is required by the Windows.Forms Form Designer.
@@ -136,7 +136,7 @@ namespace SIL.FieldWorks.XWorks
 
 			// If possible make it use the style sheet appropriate for its main window.
 			SetEditSurface(ResolveConfiguredEditSurface());
-			if (!ShouldUseAvaloniaLexicalEdit)
+			if (!ShouldUseAvaloniaLexiconEdit)
 				m_dataEntryForm.StyleSheet = FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable);
 			m_fullyInitialized = true;
 
@@ -246,7 +246,7 @@ namespace SIL.FieldWorks.XWorks
 			// legacy slices save as the user moves on. Unconditional (the helper no-ops when no
 			// session is open), so a session that survived a surface flip still settles safely.
 			SettleRegionEdits();
-			if (!ShouldUseAvaloniaLexicalEdit && m_dataEntryForm != null)
+			if (!ShouldUseAvaloniaLexiconEdit && m_dataEntryForm != null)
 			{
 				m_dataEntryForm.PrepareToGoAway();
 			}
@@ -273,7 +273,7 @@ namespace SIL.FieldWorks.XWorks
 			// region just like it rebuilds the legacy DataTree.
 			if (name != null && name.StartsWith("ShowHiddenFields-", StringComparison.Ordinal))
 			{
-				if (ShouldUseAvaloniaLexicalEdit)
+				if (ShouldUseAvaloniaLexiconEdit)
 					RefreshAvaloniaRegion();
 				return;
 			}
@@ -382,7 +382,7 @@ namespace SIL.FieldWorks.XWorks
 
 			if (Clerk.CurrentObject == null || Clerk.SuspendLoadingRecordUntilOnJumpToRecord)
 			{
-				if (ShouldUseAvaloniaLexicalEdit)
+				if (ShouldUseAvaloniaLexiconEdit)
 				{
 					// Active-host contract: do not touch the legacy DataTree while Avalonia is active.
 					// The record may be gone (deleted elsewhere); cancel rather than orphan the session.
@@ -402,7 +402,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				// Active-host contract: when the Avalonia surface is active we do NOT initialize
 				// or drive the legacy DataTree. Only the active surface is created and shown.
-				if (ShouldUseAvaloniaLexicalEdit)
+				if (ShouldUseAvaloniaLexiconEdit)
 				{
 					EnsureAvaloniaSurfaceActive();
 				}
@@ -422,7 +422,7 @@ namespace SIL.FieldWorks.XWorks
 						obj = obj.Owner;
 				}
 
-				if (ShouldUseAvaloniaLexicalEdit && m_avaloniaEntryForm != null)
+				if (ShouldUseAvaloniaLexiconEdit && m_avaloniaEntryForm != null)
 				{
 					// Sections 6/7: the product route composes the COMPLETE entry view from the live
 					// compiled layouts (full cross-object walk, headers, ifdata) and falls back to the
@@ -579,7 +579,7 @@ namespace SIL.FieldWorks.XWorks
 			// not instantiated or driven. The legacy DataTree is initialized here only when legacy is active;
 			// the Avalonia surface is created lazily in ShowRecordOnIdle so its construction stays on the
 			// idle path (the inactive legacy DataTree is never built).
-			if (!ShouldUseAvaloniaLexicalEdit)
+			if (!ShouldUseAvaloniaLexiconEdit)
 			{
 				EnsureLegacySurfaceInitialized();
 				EnsureLegacySurfaceVisible();
@@ -670,7 +670,7 @@ namespace SIL.FieldWorks.XWorks
 			if (targetCandidates == null)
 				throw new ArgumentNullException("targetCandidates");
 
-			if (ShouldUseAvaloniaLexicalEdit && m_avaloniaEntryForm != null)
+			if (ShouldUseAvaloniaLexiconEdit && m_avaloniaEntryForm != null)
 			{
 				targetCandidates.Add(m_avaloniaEntryForm);
 				return m_avaloniaEntryForm.ContainsFocus ? m_avaloniaEntryForm : null;

@@ -13,14 +13,14 @@ namespace SIL.FieldWorks.XWorks
 {
 	/// <summary>
 	/// Builds the product Lexical Edit region model from the typed view definition plus live LCModel
-	/// values. Structure comes from <see cref="LexicalEditFirstSlice"/>, which compiles
+	/// values. Structure comes from <see cref="LexiconFirstSlice"/>, which compiles
 	/// the shipped layout inventory through <c>ViewDefinitionCompiler</c>; the authored definition
 	/// remains only as an explicit, diagnosed fallback. This type supplies values via
 	/// <see cref="IRegionValueProvider"/>: text from the entry, and morph-type chooser options sourced
 	/// from the project's LCModel morph-type possibility list (no hardcoded option set). Values are read
 	/// on the UI thread; write-back goes through the LCModel edit session, not this builder.
 	/// </summary>
-	public sealed class LexicalEditRegionBuilder : IRegionValueProvider
+	public sealed class LexiconEditErrorFallback : IRegionValueProvider
 	{
 		// Field names as they appear in the compiled shipped layouts (MoForm AsLexemeForm slice,
 		// MoForm MorphTypeBasic slice, LexSense GlossAllA slice).
@@ -34,7 +34,7 @@ namespace SIL.FieldWorks.XWorks
 		private readonly ILexEntry _entry;
 		private readonly LcmCache _cache;
 
-		private LexicalEditRegionBuilder(ILexEntry entry, LcmCache cache)
+		private LexiconEditErrorFallback(ILexEntry entry, LcmCache cache)
 		{
 			_entry = entry;
 			_cache = cache;
@@ -49,7 +49,7 @@ namespace SIL.FieldWorks.XWorks
 			if (!(obj is ILexEntry entry))
 				return null;
 
-			var provider = new LexicalEditRegionBuilder(entry, cache);
+			var provider = new LexiconEditErrorFallback(entry, cache);
 			return RegionModelProjector.FromViewDefinition(FirstSliceDefinition.Value, provider);
 		}
 
@@ -70,8 +70,8 @@ namespace SIL.FieldWorks.XWorks
 				// No FieldWorks code directory in this environment (bare harness); use the fallback.
 			}
 
-			return LexicalEditFirstSlice.CompileFromLayoutDirectory(partsDirectory)
-				?? LexicalEditFirstSlice.AuthoredFallback();
+			return LexiconFirstSlice.CompileFromLayoutDirectory(partsDirectory)
+				?? LexiconFirstSlice.AuthoredFallback();
 		}
 
 		/// <inheritdoc />
@@ -114,32 +114,6 @@ namespace SIL.FieldWorks.XWorks
 			return RegionValueFactory.BuildMultiWsValues(
 				_cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems,
 				ws => gloss.get_String(ws.Handle), _cache.WritingSystemFactory);
-		}
-
-		/// <summary>
-		/// Activates the writing system's configured keyboard (Keyman/Windows IME) when its editor
-		/// row gains focus on the Avalonia surface — the behavior legacy slices get from
-		/// <c>EditingHelper.SetKeyboardForWs</c>. Unknown tags fall back to the default keyboard.
-		/// </summary>
-		public static void ActivateKeyboardForWritingSystem(LcmCache cache, string wsTag)
-		{
-			try
-			{
-				foreach (var ws in cache.ServiceLocator.WritingSystems.AllWritingSystems)
-				{
-					if (ws.Id == wsTag)
-					{
-						ws.LocalKeyboard?.Activate();
-						return;
-					}
-				}
-
-				SIL.Keyboarding.Keyboard.Controller.ActivateDefaultKeyboard();
-			}
-			catch (Exception)
-			{
-				// Keyboard switching must never take down editing; legacy swallows comparable failures.
-			}
 		}
 
 		/// <inheritdoc />
