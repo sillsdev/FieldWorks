@@ -89,12 +89,6 @@ namespace SIL.FieldWorks.XWorks
 		private List<ICmPossibility> m_rgVariantTypes;
 
 		/// <summary>
-		/// True if a MasterRefresh must be done when the dialog closes (even if the user cancels!)
-		/// This gets set if we change the global homograph configuration while running the dialog.
-		/// </summary>
-		public bool MasterRefreshRequired { get; set; }
-
-		/// <summary>
 		/// Label for top of Complex Entry Type list (and top of Minor Entry Type list in Root-based views).
 		/// </summary>
 		private readonly string m_noComplexEntryTypeLabel;

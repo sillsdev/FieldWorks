@@ -342,12 +342,6 @@ namespace SIL.FieldWorks.XWorks
 					var sNewLayout = m_propertyTable.GetStringProperty(sProp, null);
 					ResetTables(sNewLayout);
 				}
-				if (dlg.MasterRefreshRequired)
-				{
-#pragma warning disable 618 // suppress obsolete warning
-					m_mediator.SendMessage("MasterRefresh", null);
-#pragma warning restore 618
-				}
 			}
 		}
 
@@ -532,12 +526,6 @@ namespace SIL.FieldWorks.XWorks
 					{
 						(m_rootSite as XmlDocItemView).ResetTables(GetLayoutName(m_configurationParameters, m_mediator, m_propertyTable));
 					}
-				}
-				if (dlg.MasterRefreshRequired)
-				{
-#pragma warning disable 618 // suppress obsolete warning
-					m_mediator.SendMessage("MasterRefresh", null);
-#pragma warning restore 618
 				}
 
 				return true; // we handled it
