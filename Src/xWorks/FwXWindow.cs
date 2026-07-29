@@ -101,13 +101,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			CheckDisposed();
 
-			// Susanna asked that refresh affect only the currently active project, which is
-			// what the string and List variables below attempt to handle.  See LT-6444.
 			FwXWindow activeWnd = ActiveForm as FwXWindow;
-
-			LcmCache activeCache = null;
-			if (activeWnd != null)
-				activeCache = activeWnd.Cache;
 
 			List<FwXWindow> rgxw = new List<FwXWindow>();
 			foreach (IFwMainWnd wnd in m_app.MainWindows)
@@ -115,11 +109,8 @@ namespace SIL.FieldWorks.XWorks
 				FwXWindow xwnd = wnd as FwXWindow;
 				if (xwnd != null)
 				{
-					if (activeCache == null || xwnd.Cache == activeCache)
-					{
-						xwnd.PrepareToRefresh();
-						rgxw.Add(xwnd);
-					}
+					xwnd.PrepareToRefresh();
+					rgxw.Add(xwnd);
 				}
 			}
 			if (activeWnd != null)
@@ -1336,7 +1327,7 @@ namespace SIL.FieldWorks.XWorks
 			// any writing systems are removed that a rootsite is currently displaying
 			if (m_app is FwXApp)
 			{
-				((FwXApp)m_app).OnMasterRefresh(null);
+				((FwXApp)m_app).RefreshAllWindows();
 			}
 
 			ReversalIndexServices.CreateOrRemoveReversalIndexConfigurationFiles(m_app.Cache.ServiceLocator.WritingSystemManager,
@@ -1350,7 +1341,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			if (m_app is FwXApp)
 			{
-				((FwXApp)m_app).OnMasterRefresh(null);
+				((FwXApp)m_app).RefreshAllWindows();
 			}
 		}
 
@@ -1675,9 +1666,9 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
-		/// Called in FwXApp.OnMasterRefresh BEFORE clearing the cache, typically to
-		/// save any work in progress.
-		/// REVIEW (Hasso) 2023.07: 2/3 production callers call this in a foreach loop in OnMasterRefresh. There has to be a more efficient way.
+		/// Called during a master refresh (OnMasterRefresh / FwXApp.RefreshAllWindows)
+		/// BEFORE clearing the cache, typically to save any work in progress.
+		/// REVIEW (Hasso) 2023.07: 2/3 production callers call this in a foreach loop. There has to be a more efficient way.
 		/// </summary>
 		public void PrepareToRefresh()
 		{
@@ -1690,7 +1681,8 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
-		/// Called in FwXApp.OnMasterRefresh AFTER clearing the cache, to reset everything.
+		/// Called during a master refresh (OnMasterRefresh / FwXApp.RefreshAllWindows)
+		/// AFTER clearing the cache, to reset everything.
 		/// </summary>
 		/// <returns></returns>
 		public bool FinishRefresh()
@@ -1880,7 +1872,7 @@ namespace SIL.FieldWorks.XWorks
 			if (m_delegate.ShowStylesDialog(paraStyleName, charStyleName, setPropsToFactorySettings))
 			{
 				// Need to refresh to reload the cache.  See LT-6265.
-				(m_app as FwXApp).OnMasterRefresh(null);
+				(m_app as FwXApp).RefreshAllWindows();
 
 				// Refresh the fonts on popup windows.
 				Publisher.Publish(new PublisherParameterObject(EventConstants.RefreshPopupWindowFonts, null, this));

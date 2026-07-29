@@ -58,20 +58,16 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
-		/// This is the one (and should be only) handler for the user Refresh command.
-		/// Refresh wants to first clean up the cache, then give things like Clerks a
-		/// chance to reload stuff (calling the old OnRefresh methods), then give
-		/// windows a chance to redisplay themselves.
+		/// Refresh all main windows. This method is almost an exact duplicate of
+		/// FwXWindow.OnMasterRefresh(), but differing since this class overrides
+		/// ActiveForm. (Possible merge them into a single method.)
+		/// This method is intentionally NOT named OnMasterRefresh(), to prevent it from
+		/// being called by the Mediator's reflection dispatch. (LT-22644)
 		/// </summary>
-		public void OnMasterRefresh(object sender)
+		public void RefreshAllWindows()
 		{
-			// TODO: This is no longer called by the PropertyTable, since this class
-			// is no longer an xcore colleague. But, it can't be removed either,
-			// since it is used by another method on this clsss. :-(
 			CheckDisposed();
 
-			// Susanna asked that refresh affect only the currently active project, which is
-			// what the string and List variables below attempt to handle.  See LT-6444.
 			FwXWindow activeWnd = ActiveForm as FwXWindow;
 
 			List<FwXWindow> rgxw = new List<FwXWindow>();
