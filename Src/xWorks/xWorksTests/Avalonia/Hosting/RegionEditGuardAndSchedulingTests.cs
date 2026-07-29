@@ -55,7 +55,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void Settle_CommitsAValidOpenSession_AsOneUndoStep()
 		{
-			var holder = new RegionEditContextHolder();
+			var holder = new DetailEditContextHolder();
 			holder.Replace(OpenSessionWith("perro"));
 
 			holder.Settle();
@@ -69,7 +69,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void Settle_CancelsAnInvalidOpenSession()
 		{
-			var holder = new RegionEditContextHolder();
+			var holder = new DetailEditContextHolder();
 			holder.Replace(OpenSessionWith("")); // empties the lexeme form -> validation error
 
 			holder.Settle();
@@ -85,7 +85,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void Settle_InvalidOpenSession_SurfacesTheValidationReason_NotASilentRollback()
 		{
-			var holder = new RegionEditContextHolder();
+			var holder = new DetailEditContextHolder();
 			IReadOnlyList<string> surfaced = null;
 			holder.InvalidEditRolledBack = reasons => surfaced = reasons;
 			holder.Replace(OpenSessionWith("")); // clears the required lexeme form -> validation fails
@@ -106,7 +106,7 @@ namespace SIL.FieldWorks.XWorks
 		public void Settle_ValidCommitOrNoOp_DoesNotSurfaceAnyValidationReason()
 		{
 			var fired = 0;
-			var holder = new RegionEditContextHolder();
+			var holder = new DetailEditContextHolder();
 			holder.InvalidEditRolledBack = _ => fired++;
 
 			Assert.That(holder.Settle(), Is.Empty, "nothing open settles to no reasons");
@@ -156,7 +156,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			WithPriorUndoStepAndOpenSession(context =>
 			{
-				var holder = new RegionEditContextHolder();
+				var holder = new DetailEditContextHolder();
 				holder.AttachUndoGuard(Cache.ActionHandlerAccessor);
 				try
 				{
@@ -183,7 +183,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			WithPriorUndoStepAndOpenSession(context =>
 			{
-				var holder = new RegionEditContextHolder();
+				var holder = new DetailEditContextHolder();
 				holder.AttachUndoGuard(Cache.ActionHandlerAccessor);
 				holder.DetachUndoGuard();
 				holder.Replace(context);
@@ -203,7 +203,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var scheduled = new List<Action>();
 			var refreshes = 0;
-			using (new AvaloniaRegionRefreshController(
+			using (new AvaloniaDetailRefreshController(
 				Cache, () => m_entry, () => false, () => refreshes++, new RefreshCoordinator(),
 				schedule: scheduled.Add, isRelevant: LexicalRelevance))
 			{
@@ -240,7 +240,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var scheduled = new List<Action>();
 			var refreshes = 0;
-			AvaloniaRegionRefreshController controller = null;
+			AvaloniaDetailRefreshController controller = null;
 			void Refresh()
 			{
 				refreshes++;
@@ -253,7 +253,7 @@ namespace SIL.FieldWorks.XWorks
 							TsStringUtils.MakeString("inside", Cache.DefaultVernWs)));
 				}
 			}
-			using (controller = new AvaloniaRegionRefreshController(
+			using (controller = new AvaloniaDetailRefreshController(
 				Cache, () => m_entry, () => false, Refresh, new RefreshCoordinator(),
 				schedule: scheduled.Add))
 			{
@@ -284,7 +284,7 @@ namespace SIL.FieldWorks.XWorks
 				if (refreshes == 1)
 					throw new InvalidOperationException("rebuild failed");
 			}
-			using (new AvaloniaRegionRefreshController(
+			using (new AvaloniaDetailRefreshController(
 				Cache, () => m_entry, () => false, Refresh, new RefreshCoordinator(),
 				schedule: scheduled.Add))
 			{
@@ -316,7 +316,7 @@ namespace SIL.FieldWorks.XWorks
 					throw new ObjectDisposedException("host scheduler gone");
 				scheduled.Add(runner);
 			}
-			using (var controller = new AvaloniaRegionRefreshController(
+			using (var controller = new AvaloniaDetailRefreshController(
 				Cache, () => m_entry, () => false, () => refreshes++, new RefreshCoordinator(),
 				schedule: Schedule))
 			{
@@ -335,7 +335,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var editing = true;
 			var refreshes = 0;
-			using (var controller = new AvaloniaRegionRefreshController(
+			using (var controller = new AvaloniaDetailRefreshController(
 				Cache, () => m_entry, () => editing, () => refreshes++, new RefreshCoordinator()))
 			{
 				NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
@@ -347,7 +347,7 @@ namespace SIL.FieldWorks.XWorks
 				Assert.That(refreshes, Is.EqualTo(0),
 					"the host discards the held delivery when it is about to re-show anyway");
 
-				// The completion pair the host actually runs (OnAvaloniaRegionEditCompleted):
+				// The completion pair the host actually runs (OnAvaloniaDetailEditCompleted):
 				// discard + ONE explicit request — one recompose, not the held one plus its own.
 				controller.RequestRefresh();
 				Assert.That(refreshes, Is.EqualTo(1),
@@ -367,7 +367,7 @@ namespace SIL.FieldWorks.XWorks
 			var editing = true;
 			var refreshes = 0;
 			var queued = new List<Action>();
-			using (new AvaloniaRegionRefreshController(
+			using (new AvaloniaDetailRefreshController(
 				Cache, () => m_entry, () => editing, () => refreshes++, new RefreshCoordinator(),
 				schedule: a => queued.Add(a)))
 			{
@@ -395,7 +395,7 @@ namespace SIL.FieldWorks.XWorks
 		public void RefreshController_HostPredicate_CoversObjectsOwnedByTheDisplayedEntry()
 		{
 			var refreshes = 0;
-			using (new AvaloniaRegionRefreshController(
+			using (new AvaloniaDetailRefreshController(
 				Cache, () => m_entry, () => false, () => refreshes++, new RefreshCoordinator(),
 				isRelevant: LexicalRelevance))
 			{
@@ -416,7 +416,7 @@ namespace SIL.FieldWorks.XWorks
 				other = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create());
 
 			var refreshes = 0;
-			using (new AvaloniaRegionRefreshController(
+			using (new AvaloniaDetailRefreshController(
 				Cache, () => m_entry, () => false, () => refreshes++, new RefreshCoordinator(),
 				isRelevant: changed => true))
 			{

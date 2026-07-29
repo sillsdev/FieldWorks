@@ -126,13 +126,13 @@ namespace FwAvaloniaDialogs
 				return;
 			var grid = this.FindControl<Grid>("PART_BodyGrid");
 			var gutter = this.FindControl<Border>("PART_DescriptionGutter");
-			var region = this.FindControl<DockPanel>("PART_DescriptionColumn");
+			var detail = this.FindControl<DockPanel>("PART_DescriptionColumn");
 			if (grid == null)
 				return;
 			if (gutter != null)
 				grid.Children.Remove(gutter);
-			if (region != null)
-				grid.Children.Remove(region);
+			if (detail != null)
+				grid.Children.Remove(detail);
 			if (grid.ColumnDefinitions.Count == 3)
 			{
 				grid.ColumnDefinitions[1].Width = new GridLength(0);

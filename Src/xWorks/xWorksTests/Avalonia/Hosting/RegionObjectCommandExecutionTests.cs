@@ -33,13 +33,13 @@ namespace SIL.FieldWorks.XWorks
 	/// "command-menu-routing" baseline adapter. Each test drives a command through the PRODUCTION path:
 	///   1. <c>EnsureMenuCommandAdapter(targetHvo)</c> — builds/syncs the hidden adapter tree and points
 	///      its CurrentSlice at the slice bound to the clicked row's object (exactly what
-	///      <c>OnRegionMenuRequested</c> calls first).
+	///      <c>OnDetailMenuRequested</c> calls first).
 	///   2. <see cref="XCoreMenuBridge.BuildMenuItems(XWindow, string[])"/> — the same native-menu
-	///      materialization <c>OnRegionMenuRequested</c> performs; the resulting <see cref="DetailMenuItem"/>
+	///      materialization <c>OnDetailMenuRequested</c> performs; the resulting <see cref="DetailMenuItem"/>
 	///      carries an Execute action that dispatches the command through the mediator
 	///      (<c>ChoiceBase.OnClick</c> → hidden DataTree/DTMenuHandler colleagues → UOW mutation).
 	/// Invoking that Execute is the user clicking the item. We then assert (a) the model mutated and
-	/// (b) re-composing the entry (the same <see cref="RegionComposer.Compose"/> call
+	/// (b) re-composing the entry (the same <see cref="DetailComposer.Compose"/> call
 	/// <c>RecordEditView.ShowAvaloniaEntry</c> makes on refresh) reflects it.
 	/// </summary>
 	[TestFixture]
@@ -137,13 +137,13 @@ namespace SIL.FieldWorks.XWorks
 			var sensesBefore = m_entry.SensesOS.Count;
 
 			// Hotlinks is the production path for the section's quick-add affordance:
-			// OnRegionMenuRequested(Kind=Hotlinks) builds ONLY the HotlinksId menu through the same
+			// OnDetailMenuRequested(Kind=Hotlinks) builds ONLY the HotlinksId menu through the same
 			// XCoreMenuBridge; mnuDataTree-Sense-Hotlinks offers "Insert Sense".
 			InvokeHotlinksCommand(m_entry.SensesOS[0].Hvo, "mnuDataTree-Sense-Hotlinks", "Insert Sense");
 
 			Assert.That(m_entry.SensesOS.Count, Is.EqualTo(sensesBefore + 1),
 				"Insert Sense via the hotlinks path mutates the model end-to-end through XCoreMenuBridge");
-			Assert.That(RefreshedRegionFieldCount(), Is.GreaterThan(0),
+			Assert.That(RefreshedDetailFieldCount(), Is.GreaterThan(0),
 				"the host can re-show the region after a hotlink-create");
 		}
 
@@ -207,7 +207,7 @@ namespace SIL.FieldWorks.XWorks
 				"Move Up returns the sense to the front, restoring the original order");
 			Assert.That(m_entry.SensesOS[1].Hvo, Is.EqualTo(secondHvo));
 
-			Assert.That(RefreshedRegionFieldCount(), Is.GreaterThan(0),
+			Assert.That(RefreshedDetailFieldCount(), Is.GreaterThan(0),
 				"the region still composes after the reorder sequence");
 		}
 
@@ -273,7 +273,7 @@ namespace SIL.FieldWorks.XWorks
 		// Helpers — production-path command drivers
 		// ----------------------------------------------------------------------------------------
 
-		// Drives a SLICE-menu command exactly as OnRegionMenuRequested(Kind=SliceMenu) does: ensure the
+		// Drives a SLICE-menu command exactly as OnDetailMenuRequested(Kind=SliceMenu) does: ensure the
 		// adapter targets the object, materialize the menu (menuId + the host-appended mnuDataTree-Object)
 		// through XCoreMenuBridge, find the item by label, invoke its Execute (mediator dispatch). Then
 		// drain the mediator/idle queues so the UOW PropChanged + refresh settle.
@@ -285,7 +285,7 @@ namespace SIL.FieldWorks.XWorks
 			DrainMediatorAndIdleQueues();
 		}
 
-		// Drives a HOTLINKS command as OnRegionMenuRequested(Kind=Hotlinks) does: only the HotlinksId
+		// Drives a HOTLINKS command as OnDetailMenuRequested(Kind=Hotlinks) does: only the HotlinksId
 		// menu is materialized.
 		private void InvokeHotlinksCommand(int targetHvo, string hotlinksId, string itemLabel)
 		{
@@ -361,21 +361,21 @@ namespace SIL.FieldWorks.XWorks
 		// surface-visible proof that the recomposed region reflects the model mutation.
 		private int ComposeSenseHeaderCount()
 		{
-			var composed = RegionComposer.Compose(m_entry, Cache);
+			var composed = DetailComposer.Compose(m_entry, Cache);
 			Assert.That(composed, Is.Not.Null, "the entry must compose");
 			return composed.Model.Fields.Count(f => f.Kind == DetailFieldKind.Header && f.Field == "Senses");
 		}
 
-		// Calls the host's real RefreshAvaloniaRegion and reports the field count of the recomposed
+		// Calls the host's real RefreshAvaloniaDetail and reports the field count of the recomposed
 		// model, proving the host can re-render after the command without throwing.
-		private int RefreshedRegionFieldCount()
+		private int RefreshedDetailFieldCount()
 		{
-			var refresh = typeof(RecordEditView).GetMethod("RefreshAvaloniaRegion",
+			var refresh = typeof(RecordEditView).GetMethod("RefreshAvaloniaDetail",
 				BindingFlags.Instance | BindingFlags.NonPublic);
 			Assert.That(refresh, Is.Not.Null);
 			refresh.Invoke(m_view, null);
 			DrainMediatorAndIdleQueues();
-			return RegionComposer.Compose(m_entry, Cache).Model.Fields.Count;
+			return DetailComposer.Compose(m_entry, Cache).Model.Fields.Count;
 		}
 
 		// ----------------------------------------------------------------------------------------

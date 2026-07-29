@@ -47,8 +47,8 @@ namespace SIL.FieldWorks.XWorks
 		private RecordClerkNavigationContext m_recordNavigationContext;
 		// Owns the fenced edit context; swapping/clearing through it cancels any open session so an
 		// open undo task is never orphaned (an orphan makes the shutdown Save throw "Commit at wrong place").
-		private readonly RegionEditContextHolder m_regionEditContext = new RegionEditContextHolder();
-		private AvaloniaRegionRefreshController m_avaloniaRefreshController;
+		private readonly DetailEditContextHolder m_detailEditContext = new DetailEditContextHolder();
+		private AvaloniaDetailRefreshController m_avaloniaRefreshController;
 		// The per-project home of the sparse view-definition override patches that
 		// drive the Avalonia surface's per-field Field Visibility / Move Field commands. Lazily built from
 		// the project ConfigurationSettings folder; the Avalonia surface reads it at Compose and the gear
@@ -82,9 +82,9 @@ namespace SIL.FieldWorks.XWorks
 		/// so this is idempotent and safe to call unconditionally from ANY host path — including
 		/// while the legacy surface is active, when no fenced session can be open.
 		/// </summary>
-		private void SettleRegionEdits()
+		private void SettleDetailEdits()
 		{
-			m_regionEditContext.Settle();
+			m_detailEditContext.Settle();
 		}
 
 		/// <summary>
@@ -99,7 +99,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			if (IsDisposed)
 				return;
-			SettleRegionEdits();
+			SettleDetailEdits();
 		}
 
 		/// <summary>
@@ -132,13 +132,13 @@ namespace SIL.FieldWorks.XWorks
 		private void TearDownAvaloniaSurface()
 		{
 			if (m_avaloniaEntryForm != null)
-				m_avaloniaEntryForm.RegionEditCompleted -= OnAvaloniaRegionEditCompleted;
-			m_regionEditContext.DetachDeactivateHook();
-			m_regionEditContext.DetachUndoGuard();
-			m_regionEditContext.InvalidEditRolledBack = null;
+				m_avaloniaEntryForm.DetailEditCompleted -= OnAvaloniaDetailEditCompleted;
+			m_detailEditContext.DetachDeactivateHook();
+			m_detailEditContext.DetachUndoGuard();
+			m_detailEditContext.InvalidEditRolledBack = null;
 			m_avaloniaRefreshController?.Dispose();
-			SettleRegionEdits();
-			m_regionEditContext.Clear();
+			SettleDetailEdits();
+			m_detailEditContext.Clear();
 			m_avaloniaEntryForm?.Dispose();
 			// Null the host + refresh controller after disposing them. The recreation guards
 			// (EnsureAvaloniaSurfaceInitialized / EnsureAvaloniaRefreshController) key on `== null`, so a
@@ -194,7 +194,7 @@ namespace SIL.FieldWorks.XWorks
 
 			m_avaloniaEntryForm = (DetailHostControl)m_lexicalEditSurfaceFactory.Create(EditSurface.Avalonia);
 			m_avaloniaEntryForm.Dock = DockStyle.Fill;
-			m_avaloniaEntryForm.RegionEditCompleted += OnAvaloniaRegionEditCompleted;
+			m_avaloniaEntryForm.DetailEditCompleted += OnAvaloniaDetailEditCompleted;
 			if (!m_panel.Controls.Contains(m_avaloniaEntryForm))
 				m_panel.Controls.Add(m_avaloniaEntryForm);
 		}
@@ -213,34 +213,34 @@ namespace SIL.FieldWorks.XWorks
 			// deliveries and host-requested re-shows alike); the host only supplies UI-thread
 			// deferral, so a late-queued refresh still re-checks "is the user typing now?" inside
 			// the controller's runner before recomposing.
-			m_avaloniaRefreshController = new AvaloniaRegionRefreshController(
+			m_avaloniaRefreshController = new AvaloniaDetailRefreshController(
 				Cache,
 				() => Clerk?.CurrentObject,
-				() => m_regionEditContext.Current?.IsOpen == true,
-				RefreshAvaloniaRegion,
+				() => m_detailEditContext.Current?.IsOpen == true,
+				RefreshAvaloniaDetail,
 				new RefreshCoordinator(),
 				ScheduleOnUiThread,
 				// This lexical host's relevance rule; the controller itself stays host-agnostic.
 				changed => IsChangeWithinEntry(changed, Clerk?.CurrentObject));
 			// Global Undo/Redo while a fenced session is open would re-enter the UOW write lock
 			// (LockRecursionException); the guard settles the pending edit instead.
-			m_regionEditContext.AttachUndoGuard(Cache.ActionHandlerAccessor);
+			m_detailEditContext.AttachUndoGuard(Cache.ActionHandlerAccessor);
 			// When Settle rolls back a pending edit because it
 			// failed validation (e.g. the required lexeme form was cleared, then the user navigated
 			// away), tell the user WHY rather than discarding it silently. The rollback still happens
 			// (the safe close that keeps the open undo task from stranding); we only surface the reason.
-			m_regionEditContext.InvalidEditRolledBack = ShowInvalidEditRolledBackWarning;
+			m_detailEditContext.InvalidEditRolledBack = ShowInvalidEditRolledBackWarning;
 			// The guard only hooks THIS window's undo stack — it cannot reach other windows' stacks,
 			// so Ctrl+Z in another window while this one holds an open session would still re-enter
 			// the write lock. Mitigate by settling whenever this view's top-level window deactivates
 			// (the user must focus another window before they can undo there).
-			m_regionEditContext.AttachDeactivateHook(FindForm());
+			m_detailEditContext.AttachDeactivateHook(FindForm());
 		}
 
 		/// <summary>
 		/// The lexical host's refresh relevance: a change is relevant when the changed
 		/// object is, or is owned by, the entry on display. This is the predicate the host injects
-		/// into <see cref="AvaloniaRegionRefreshController"/>; static and internal so it is
+		/// into <see cref="AvaloniaDetailRefreshController"/>; static and internal so it is
 		/// unit-testable without a live view.
 		/// </summary>
 		internal static bool IsChangeWithinEntry(ICmObject changed, ICmObject current)
@@ -293,7 +293,7 @@ namespace SIL.FieldWorks.XWorks
 			// Auto-save: a session still open from the previous record/edit settles before
 			// the region is replaced (commit when valid, roll back when not) — the same policy
 			// every host path shares; Replace's cancel-on-displace stays the safety net.
-			SettleRegionEdits();
+			SettleDetailEdits();
 
 			// Adapter hygiene: the hidden command-routing DataTree must never answer mediator
 			// commands for a PREVIOUS record — reset it whenever the shown record changes; the next
@@ -307,7 +307,7 @@ namespace SIL.FieldWorks.XWorks
 
 			if (obj == null)
 			{
-				m_regionEditContext.Clear();
+				m_detailEditContext.Clear();
 				m_avaloniaEntryForm.ShowMessage(FwAvaloniaStrings.EntryTypeUnsupported);
 				return;
 			}
@@ -323,24 +323,24 @@ namespace SIL.FieldWorks.XWorks
 			var showHidden = m_propertyTable.GetBoolProperty("ShowHiddenFields-" + toolName, false,
 				PropertyTable.SettingsGroup.LocalSettings);
 
-			DetailModel region = null;
+			DetailModel detail = null;
 			IDetailEditContext editContext = null;
-			ComposedRegion composed = null;
+			ComposedDetail composed = null;
 			try
 			{
 				composed = lexEntry != null
-					? RegionComposer.Compose(lexEntry, Cache, showHidden,
+					? DetailComposer.Compose(lexEntry, Cache, showHidden,
 						overrides: ResolveViewOverride)
 					// Non-entry roots compose against the tool's configured layout
 					// (m_layoutName, default "Normal"); a type-selected layout (m_layoutChoiceField, e.g.
 					// Notebook RnGenericRec keyed on "Type") resolves to the right variant inside Compose.
-					: RegionComposer.Compose(obj, Cache,
+					: DetailComposer.Compose(obj, Cache,
 						string.IsNullOrEmpty(m_layoutName) ? "Normal" : m_layoutName, showHidden,
 						overrides: ResolveViewOverride,
 						layoutChoiceField: m_layoutChoiceField);
 				if (composed != null)
 				{
-					region = composed.Model;
+					detail = composed.Model;
 					editContext = composed.EditContext;
 				}
 			}
@@ -351,36 +351,36 @@ namespace SIL.FieldWorks.XWorks
 				Logger.WriteError("Full-entry composition failed; falling back to the first slice.", e);
 			}
 
-			if (region == null)
+			if (detail == null)
 			{
 				if (lexEntry == null)
 				{
 					// No first-slice fallback exists for a non-LexEntry root: show the unsupported state
 					// rather than crash.
-					m_regionEditContext.Clear();
+					m_detailEditContext.Clear();
 					m_avaloniaEntryForm.ShowMessage(FwAvaloniaStrings.EntryTypeUnsupported);
 					return;
 				}
-				region = LexiconEditErrorFallback.Build(lexEntry, Cache);
+				detail = LexiconEditErrorFallback.Build(lexEntry, Cache);
 				editContext = new LexiconFirstSliceEditContext(lexEntry, Cache);
 			}
 
 			// Re-showing mid-edit (record navigation, refresh delivery, Show Hidden Fields, window
 			// activation) must cancel the displaced context's open fenced session — orphaning the
 			// open undo task makes the shutdown Save throw "Commit at wrong place".
-			m_regionEditContext.Replace(editContext);
+			m_detailEditContext.Replace(editContext);
 
 			EnsureAvaloniaRefreshController();
 			// The deactivate-settle hook needs a realized top-level Form. If the handle was not yet
 			// created when the controller was first ensured (e.g. the very first record shows before
 			// the window realizes), retry here on each show until it attaches — otherwise the
 			// cross-window-undo mitigation would be silently lost for this host's lifetime.
-			if (!m_regionEditContext.IsDeactivateHookAttached)
-				m_regionEditContext.AttachDeactivateHook(FindForm());
-			m_avaloniaEntryForm.ShowRegion(region, editContext,
+			if (!m_detailEditContext.IsDeactivateHookAttached)
+				m_detailEditContext.AttachDeactivateHook(FindForm());
+			m_avaloniaEntryForm.ShowDetail(detail, editContext,
 				wsTag => RegionKeyboard.ActivateForWritingSystem(Cache, wsTag),
 				GetPersistedExpansionState, PersistExpansionState,
-				OnRegionMenuRequested, OnRegionLinkRequested,
+				OnDetailMenuRequested, OnDetailLinkRequested,
 				new FwTsStringClipboard(Cache.WritingSystemFactory),
 				GetPersistedLabelColumnWidth, PersistLabelColumnWidth);
 		}
@@ -428,7 +428,7 @@ namespace SIL.FieldWorks.XWorks
 			return menus;
 		}
 
-		private void OnRegionMenuRequested(DetailMenuRequest request)
+		private void OnDetailMenuRequested(DetailMenuRequest request)
 		{
 			try
 			{
@@ -543,7 +543,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				if (Cache.ServiceLocator.ObjectRepository.TryGetObject(field.ObjectHvo, out var fieldObj))
 				{
-					var model = RegionComposer.CompileForObject(Cache, fieldObj, field.LayoutName,
+					var model = DetailComposer.CompileForObject(Cache, fieldObj, field.LayoutName,
 						ResolveViewOverride);
 					if (model != null)
 						location = ViewDefinitionOverrideEditor.LocateTarget(model, templateId);
@@ -634,7 +634,7 @@ namespace SIL.FieldWorks.XWorks
 					?? new ViewDefinitionOverride(field.ClassName, field.LayoutName, "detail", null, null);
 				var merged = ViewDefinitionOverrideEditor.MergeOperation(existing, op);
 				store.Save(merged);
-				RefreshAvaloniaRegion();
+				RefreshAvaloniaDetail();
 			}
 			catch (Exception e)
 			{
@@ -651,11 +651,11 @@ namespace SIL.FieldWorks.XWorks
 		/// fenced edit session settles first (the jump navigates away from this record), then the
 		/// same mediator message posts.
 		/// </summary>
-		private void OnRegionLinkRequested(DetailLinkRequest request)
+		private void OnDetailLinkRequested(DetailLinkRequest request)
 		{
 			try
 			{
-				SettleRegionEdits();
+				SettleDetailEdits();
 #pragma warning disable 618 // legacy parity: ReallySimpleListChooser.HandleAnyJump posts the same way
 				m_mediator.PostMessage("FollowLink", BuildFollowLinkArgs(request));
 #pragma warning restore 618
@@ -828,7 +828,7 @@ namespace SIL.FieldWorks.XWorks
 
 		// Re-resolves and re-shows the region for the current record from current domain state
 		// (after an external edit or this surface's commit/cancel).
-		private void RefreshAvaloniaRegion()
+		private void RefreshAvaloniaDetail()
 		{
 			if (m_avaloniaEntryForm == null || !ShouldUseAvaloniaLexiconEdit)
 				return;
@@ -839,7 +839,7 @@ namespace SIL.FieldWorks.XWorks
 			ShowAvaloniaEntry(current);
 		}
 
-		private void OnAvaloniaRegionEditCompleted(object sender, EventArgs e)
+		private void OnAvaloniaDetailEditCompleted(object sender, EventArgs e)
 		{
 			// ONE re-show covers the completed edit AND any refresh held during it: drop the held
 			// delivery and request a single coalesced refresh through the controller's queue.
@@ -850,7 +850,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 			else
 			{
-				RefreshAvaloniaRegion();
+				RefreshAvaloniaDetail();
 			}
 		}
 

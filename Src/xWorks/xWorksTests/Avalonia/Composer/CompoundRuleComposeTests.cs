@@ -39,8 +39,8 @@ namespace SIL.FieldWorks.XWorks
 				rule.Description.SetAnalysisDefaultWritingSystem("a fusion of ndi + a personal pronoun");
 			});
 
-			var composed = RegionComposer.Compose(rule, Cache, layoutName: "Edit",
-				plugins: RegionEditorPluginRegistry.Default);
+			var composed = DetailComposer.Compose(rule, Cache, layoutName: "Edit",
+				plugins: SlicePluginRegistry.Default);
 
 			Assert.That(composed.Model.Fields, Is.Not.Empty, "the non-headed compound rule composes its detail fields");
 			// Report the composed field kinds so the editable-vs-readonly state is pinned (Name/Description

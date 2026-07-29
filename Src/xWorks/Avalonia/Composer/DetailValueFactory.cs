@@ -14,14 +14,14 @@ namespace SIL.FieldWorks.XWorks
 {
 	/// <summary>
 	/// The ONE home for the two value-projection recipes that
-	/// <see cref="RegionComposer"/> and <see cref="LexiconEditErrorFallback"/> both
+	/// <see cref="DetailComposer"/> and <see cref="LexiconEditErrorFallback"/> both
 	/// consume: the per-writing-system value rows and the possibility-list option
 	/// flattening. Sharing them here is what keeps the two surfaces from drifting
 	/// (e.g. an option-name fallback walking analysis → vernacular on one surface and
 	/// analysis → ShortName on the other; see <see cref="BuildPossibilityOptions"/> for the
 	/// deliberate resolution).
 	/// </summary>
-	internal static class RegionValueFactory
+	internal static class DetailValueFactory
 	{
 		/// <summary>
 		/// One <see cref="DetailWsValue"/> per writing system, in list order, carrying the
@@ -57,7 +57,7 @@ namespace SIL.FieldWorks.XWorks
 			foreach (var ws in systems)
 			{
 				var tss = readText(ws);
-				var richText = RegionRichTextAdapter.FromTsString(tss, writingSystemFactory);
+				var richText = DetailRichTextAdapter.FromTsString(tss, writingSystemFactory);
 				values.Add(new DetailWsValue(ws.Abbreviation, tss?.Text ?? string.Empty,
 					ws.DefaultFontName, fontSize, ws.RightToLeftScript, ws.Id, boldEmphasis, richText));
 			}
@@ -93,7 +93,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 	}
 
-	internal static class RegionRichTextAdapter
+	internal static class DetailRichTextAdapter
 	{
 		internal static DetailRichTextValue FromTsString(ITsString tss, ILgWritingSystemFactory writingSystemFactory)
 		{

@@ -25,9 +25,9 @@ using SIL.LCModel.Infrastructure;
 namespace SIL.FieldWorks.XWorks
 {
 	/// <summary>A composed full-entry region: the renderable model plus its LCModel-bound edit context.</summary>
-	public sealed class ComposedRegion
+	public sealed class ComposedDetail
 	{
-		public ComposedRegion(DetailModel model, IDetailEditContext editContext)
+		public ComposedDetail(DetailModel model, IDetailEditContext editContext)
 		{
 			Model = model;
 			EditContext = editContext;
@@ -57,7 +57,7 @@ namespace SIL.FieldWorks.XWorks
 	/// Unsupported constructs render an explicit unsupported row (visibility=always) or are skipped
 	/// (ifdata), never silently mis-rendered; compile diagnostics ride the region model.
 	/// </summary>
-	public static class RegionComposer
+	public static class DetailComposer
 	{
 		// The visited (hvo, layout) guard is the real recursion stop. This depth cap is only a
 		// backstop for malformed layouts, so it must still allow the deepest shipped lexeme-edit
@@ -106,8 +106,8 @@ namespace SIL.FieldWorks.XWorks
 				= new ConcurrentDictionary<(int, string, string), ViewDefinitionModel>();
 		}
 
-		public static ComposedRegion Compose(ILexEntry entry, LcmCache cache, bool showHiddenFields = false,
-			RegionEditorPluginRegistry plugins = null,
+		public static ComposedDetail Compose(ILexEntry entry, LcmCache cache, bool showHiddenFields = false,
+			SlicePluginRegistry plugins = null,
 			ViewDefinitionOverrideResolver overrides = null)
 			=> Compose((ICmObject)entry, cache, "Normal", showHiddenFields, plugins, overrides);
 
@@ -119,8 +119,8 @@ namespace SIL.FieldWorks.XWorks
 		/// object and the starting layout instead of hardcoding LexEntry/"Normal", so wiring a new tool onto
 		/// the Avalonia surface needs only its registration + (when its layout uses one) a layoutChoiceField.
 		/// </summary>
-		public static ComposedRegion Compose(ICmObject obj, LcmCache cache, string layoutName = "Normal",
-			bool showHiddenFields = false, RegionEditorPluginRegistry plugins = null,
+		public static ComposedDetail Compose(ICmObject obj, LcmCache cache, string layoutName = "Normal",
+			bool showHiddenFields = false, SlicePluginRegistry plugins = null,
 			ViewDefinitionOverrideResolver overrides = null,
 			string layoutChoiceField = null)
 		{
@@ -142,16 +142,16 @@ namespace SIL.FieldWorks.XWorks
 			// accessor bridges the gap (plugin factories run at render time, never during compose).
 			IDetailEditContext composedContext = null;
 			var state = new ComposeState(cache, showHiddenFields,
-				plugins ?? RegionEditorPluginRegistry.Default, () => composedContext, overrides);
+				plugins ?? SlicePluginRegistry.Default, () => composedContext, overrides);
 			state.EnterModel(root);
 			foreach (var node in root.Roots)
 				state.Walk(node, obj, 0);
 			state.ExitModel();
 
-			var context = new ComposedRegionEditContext(cache, obj, state.Handlers);
+			var context = new ComposedDetailEditContext(cache, obj, state.Handlers);
 			composedContext = context;
 			var model = new DetailModel(obj.ClassName, layoutName, state.Fields, root.Diagnostics);
-			return new ComposedRegion(model, context);
+			return new ComposedDetail(model, context);
 		}
 
 		/// <summary>
@@ -160,13 +160,13 @@ namespace SIL.FieldWorks.XWorks
 		/// the indented tree the legacy chooser shows. <paramref name="flat"/> (a chooserInfo
 		/// "FlatList" guicontrol spec, e.g. PeopleFlatList) keeps the order but suppresses the
 		/// hierarchy, like the legacy flat chooser. The implementation lives in
-		/// the shared <see cref="RegionValueFactory"/> so this composer and
+		/// the shared <see cref="DetailValueFactory"/> so this composer and
 		/// <see cref="LexiconEditErrorFallback"/> cannot drift; this wrapper keeps the composer's
 		/// established internal surface (and its tests).
 		/// </summary>
 		internal static IReadOnlyList<DetailChoiceOption> BuildPossibilityOptions(
 			ICmPossibilityList list, bool flat)
-			=> RegionValueFactory.BuildPossibilityOptions(list, flat);
+			=> DetailValueFactory.BuildPossibilityOptions(list, flat);
 
 		// The legacy generic possibility-list → lists-area-tool derivation, mirrored statically.
 		// Research (gear = configure): when a legacy jump's target object is owned by a
@@ -296,7 +296,7 @@ namespace SIL.FieldWorks.XWorks
 			// The plugin registry consulted FIRST for every
 			// custom slice, plus the deferred accessor for the edit context plugin factories
 			// receive (resolved when the factory runs, after Compose has built the context).
-			private readonly RegionEditorPluginRegistry _plugins;
+			private readonly SlicePluginRegistry _plugins;
 			private readonly Func<IDetailEditContext> _editContextAccessor;
 			// Per-compose memos — the morph-type option list is identical for every
 			// IMoForm, and an item layout's menu/hotlinks binding is identical per (class, layout).
@@ -330,7 +330,7 @@ namespace SIL.FieldWorks.XWorks
 				= new Dictionary<(int, string), (string, string)>();
 
 			public ComposeState(LcmCache cache, bool showHiddenFields,
-				RegionEditorPluginRegistry plugins, Func<IDetailEditContext> editContextAccessor,
+				SlicePluginRegistry plugins, Func<IDetailEditContext> editContextAccessor,
 				ViewDefinitionOverrideResolver overrides = null)
 			{
 				_cache = cache;
@@ -1131,7 +1131,7 @@ namespace SIL.FieldWorks.XWorks
 				IReadOnlyList<DetailWsValue> values;
 				if (type == CellarPropertyType.Unicode)
 				{
-					values = RegionValueFactory.BuildMultiWsValues(systems, ws =>
+					values = DetailValueFactory.BuildMultiWsValues(systems, ws =>
 					{
 						var text = _sda.get_UnicodeProp(hvo, flid);
 						dataSeen |= !string.IsNullOrEmpty(text);
@@ -1140,7 +1140,7 @@ namespace SIL.FieldWorks.XWorks
 				}
 				else
 				{
-					values = RegionValueFactory.BuildMultiWsValues(systems, ws =>
+					values = DetailValueFactory.BuildMultiWsValues(systems, ws =>
 					{
 						var tss = ReadTextProp(hvo, flid, ws.Handle, type);
 						dataSeen |= !string.IsNullOrEmpty(tss?.Text);
@@ -1260,7 +1260,7 @@ namespace SIL.FieldWorks.XWorks
 			private bool WriteRichTextProp(int hvo, int flid, int ws, CellarPropertyType type,
 				DetailRichTextValue value)
 			{
-				var tss = RegionRichTextAdapter.ToTsString(value, _cache.WritingSystemFactory, ws);
+				var tss = DetailRichTextAdapter.ToTsString(value, _cache.WritingSystemFactory, ws);
 				switch (type)
 				{
 					case CellarPropertyType.String:
@@ -2606,7 +2606,7 @@ namespace SIL.FieldWorks.XWorks
 				var paragraphs = new List<DetailParagraph>();
 				foreach (var par in stText.ParagraphsOS.OfType<IStTxtPara>())
 				{
-					var rich = RegionRichTextAdapter.FromTsString(par.Contents, _cache.WritingSystemFactory);
+					var rich = DetailRichTextAdapter.FromTsString(par.Contents, _cache.WritingSystemFactory);
 					paragraphs.Add(new DetailParagraph(rich, par.StyleName));
 				}
 
@@ -2647,7 +2647,7 @@ namespace SIL.FieldWorks.XWorks
 						live.InsertNewTextPara(paras.Count, null);
 					if (!(paras[index] is IStTxtPara para))
 						return false;
-					para.Contents = RegionRichTextAdapter.ToTsString(value, _cache.WritingSystemFactory, defaultWs);
+					para.Contents = DetailRichTextAdapter.ToTsString(value, _cache.WritingSystemFactory, defaultWs);
 					return true;
 				};
 
@@ -2694,12 +2694,12 @@ namespace SIL.FieldWorks.XWorks
 			// with the normal label/indent/menu metadata, carrying a factory that closes over
 			// (object, node, deferred edit context, cache). The factory runs in the view at render
 			// time, so composing stays side-effect free and the edit context exists by then.
-			private void AddPluginRow(ViewNode node, ICmObject obj, int depth, IRegionEditorPlugin plugin)
+			private void AddPluginRow(ViewNode node, ICmObject obj, int depth, ISlicePlugin plugin)
 			{
 				// ONE plugin contract — the build context bundles everything a
 				// plugin can need (object, node, deferred edit-context accessor, cache); there is no
 				// service-aware marker type test.
-				var context = new RegionEditorBuildContext(obj, node, _editContextAccessor, _cache);
+				var context = new SlicePluginBuildContext(obj, node, _editContextAccessor, _cache);
 				Func<Avalonia.Controls.Control> factory = () => plugin.BuildControl(context);
 				AddField(new DetailField(StableId(node, obj), Localize(node.Label) ?? node.Field,
 					node.Field, node.WritingSystem, DetailFieldKind.Custom, node.EditorClassification,
@@ -3270,7 +3270,7 @@ namespace SIL.FieldWorks.XWorks
 	/// <summary>
 	/// The edit operations of ONE composed field, keyed by StableId. Each delegate is null when the
 	/// field's kind does not support that gesture (a text row carries no paragraph delegates; an StText
-	/// row carries no option delegate), so <see cref="ComposedRegionEditContext"/> rejects an unsupported
+	/// row carries no option delegate), so <see cref="ComposedDetailEditContext"/> rejects an unsupported
 	/// gesture by finding a null slot. Gathers a field's write behavior into one object in place of the
 	/// nine parallel setter dictionaries that previously had to agree on the same stable id.
 	/// </summary>
@@ -3290,10 +3290,10 @@ namespace SIL.FieldWorks.XWorks
 	/// <summary>
 	/// The composed region's edit context: staging keyed by composed stable id (unique per object
 	/// occurrence, so each sense's Gloss binds its own sense), writes applied through the registered
-	/// LCModel setters inside the fenced session owned by <see cref="RegionEditContextBase"/>
+	/// LCModel setters inside the fenced session owned by <see cref="DetailEditContextBase"/>
 	/// (finding C — one shared session lifecycle + required-lexeme validation).
 	/// </summary>
-	public sealed class ComposedRegionEditContext : RegionEditContextBase, IStructuredTextEditing
+	public sealed class ComposedDetailEditContext : DetailEditContextBase, IStructuredTextEditing
 	{
 		// One handler per composed field, keyed by StableId; a null delegate slot means the field's kind
 		// does not support that gesture (rejected like an unknown field). Replaces the former nine parallel
@@ -3301,7 +3301,7 @@ namespace SIL.FieldWorks.XWorks
 		// across nine maps kept in sync by matching stable id.
 		private readonly IReadOnlyDictionary<string, FieldEditHandler> _handlers;
 
-		public ComposedRegionEditContext(
+		public ComposedDetailEditContext(
 			LcmCache cache,
 			ICmObject root, // any record root (LexEntry today)
 			IReadOnlyDictionary<string, FieldEditHandler> handlers)
@@ -3401,7 +3401,7 @@ namespace SIL.FieldWorks.XWorks
 			=> string.IsNullOrEmpty(field?.Label) ? field?.Field : field.Label;
 
 		// The fenced-session staging helper (open-on-first-edit, close-empty-fence-on-reject) lives
-		// on RegionEditContextBase.Stage so a plugin editor's own writes (the Reversal Entries plugin)
+		// on DetailEditContextBase.Stage so a plugin editor's own writes (the Reversal Entries plugin)
 		// can ride the SAME undoable step through the shared context.
 	}
 }

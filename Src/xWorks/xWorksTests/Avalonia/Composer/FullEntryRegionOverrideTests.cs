@@ -56,7 +56,7 @@ namespace SIL.FieldWorks.XWorks
 		// The template (override-key) StableId of an entry-level field: strip the runtime "@{hvo}" suffix.
 		private string EntryFieldTemplateId(string field)
 		{
-			var composed = RegionComposer.Compose(m_entry, Cache);
+			var composed = DetailComposer.Compose(m_entry, Cache);
 			var row = composed.Model.Fields.First(f => f.Field == field && f.ClassName == "LexEntry");
 			return ViewDefinitionOverrideEditor.StripRuntimeSuffix(row.StableId);
 		}
@@ -64,7 +64,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void Compose_StampsClassAndLayoutOnEntryFields()
 		{
-			var composed = RegionComposer.Compose(m_entry, Cache);
+			var composed = DetailComposer.Compose(m_entry, Cache);
 
 			var entryRows = composed.Model.Fields.Where(f => f.ObjectHvo == m_entry.Hvo).ToList();
 			Assert.That(entryRows, Is.Not.Empty, "the entry must contribute at least one row");
@@ -75,7 +75,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void Compose_StampsDescendedObjectsLayoutClass_NotTheEntrys()
 		{
-			var composed = RegionComposer.Compose(m_entry, Cache, showHiddenFields: true);
+			var composed = DetailComposer.Compose(m_entry, Cache, showHiddenFields: true);
 
 			// Sense rows are projected from the sense's own compiled layout, so they must carry LexSense.
 			var senseRows = composed.Model.Fields
@@ -88,19 +88,19 @@ namespace SIL.FieldWorks.XWorks
 		public void Visibility_Never_HidesRow_UnlessShowHidden()
 		{
 			// Pick a visible entry field, force it to "Normally hidden".
-			var baseline = RegionComposer.Compose(m_entry, Cache);
+			var baseline = DetailComposer.Compose(m_entry, Cache);
 			var victim = baseline.Model.Fields.First(f => f.ClassName == "LexEntry"
 				&& f.Kind == DetailFieldKind.Text);
 			var templateId = ViewDefinitionOverrideEditor.StripRuntimeSuffix(victim.StableId);
 			var resolver = Resolver(EntryPatch(new ViewOverrideOperation(
 				ViewOverrideOperationKind.SetVisibility, templateId, visibility: ViewVisibility.Never)));
 
-			var hidden = RegionComposer.Compose(m_entry, Cache, showHiddenFields: false,
+			var hidden = DetailComposer.Compose(m_entry, Cache, showHiddenFields: false,
 				overrides: resolver);
 			Assert.That(hidden.Model.Fields.Any(f => f.StableId == victim.StableId), Is.False,
 				"a Never field is hidden when showHidden is off");
 
-			var shown = RegionComposer.Compose(m_entry, Cache, showHiddenFields: true,
+			var shown = DetailComposer.Compose(m_entry, Cache, showHiddenFields: true,
 				overrides: resolver);
 			Assert.That(shown.Model.Fields.Any(f => f.StableId == victim.StableId), Is.True,
 				"a Never field reappears when showHidden is on");
@@ -111,7 +111,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			// CitationForm is empty on this entry; force IfData and confirm the empty row hides, then
 			// give it data and confirm it shows.
-			var baseline = RegionComposer.Compose(m_entry, Cache, showHiddenFields: true);
+			var baseline = DetailComposer.Compose(m_entry, Cache, showHiddenFields: true);
 			var citation = baseline.Model.Fields.FirstOrDefault(f => f.Field == "CitationForm"
 				&& f.ClassName == "LexEntry");
 			Assert.That(citation, Is.Not.Null, "the entry layout must offer a CitationForm row");
@@ -119,7 +119,7 @@ namespace SIL.FieldWorks.XWorks
 			var resolver = Resolver(EntryPatch(new ViewOverrideOperation(
 				ViewOverrideOperationKind.SetVisibility, templateId, visibility: ViewVisibility.IfData)));
 
-			var emptyHidden = RegionComposer.Compose(m_entry, Cache, showHiddenFields: false,
+			var emptyHidden = DetailComposer.Compose(m_entry, Cache, showHiddenFields: false,
 				overrides: resolver);
 			Assert.That(emptyHidden.Model.Fields.Any(f => f.Field == "CitationForm"), Is.False,
 				"an empty IfData field hides when showHidden is off");
@@ -128,7 +128,7 @@ namespace SIL.FieldWorks.XWorks
 				() => m_entry.CitationForm.set_String(Cache.DefaultVernWs,
 					TsStringUtils.MakeString("casita", Cache.DefaultVernWs)));
 
-			var nowShown = RegionComposer.Compose(m_entry, Cache, showHiddenFields: false,
+			var nowShown = DetailComposer.Compose(m_entry, Cache, showHiddenFields: false,
 				overrides: resolver);
 			Assert.That(nowShown.Model.Fields.Any(f => f.Field == "CitationForm"), Is.True,
 				"a non-empty IfData field shows even when showHidden is off");
@@ -139,7 +139,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			// Find two entry-level sibling fields under a shared parent (via the SAME LocateTarget the
 			// menu uses), then reorder them and assert the row order swapped in the composed model.
-			var model = RegionComposer.CompileForObject(Cache, m_entry, "Normal");
+			var model = DetailComposer.CompileForObject(Cache, m_entry, "Normal");
 			var siblings = FindSiblingPair(model);
 			Assert.That(siblings, Is.Not.Null, "the entry layout must have a parent with two locatable fields");
 
@@ -151,7 +151,7 @@ namespace SIL.FieldWorks.XWorks
 			var resolver = Resolver(EntryPatch(new ViewOverrideOperation(
 				ViewOverrideOperationKind.ReorderChildren, parentId, childOrder: moved)));
 
-			var reordered = RegionComposer.Compose(m_entry, Cache, showHiddenFields: true,
+			var reordered = DetailComposer.Compose(m_entry, Cache, showHiddenFields: true,
 				overrides: resolver);
 			var firstPos = RowPosition(reordered.Model, firstId);
 			var secondPos = RowPosition(reordered.Model, secondId);
@@ -159,7 +159,7 @@ namespace SIL.FieldWorks.XWorks
 				"the reorder override must move the second sibling's row ahead of the first");
 
 			// Survives a fresh recompose with the same resolver (the override is the source of truth).
-			var again = RegionComposer.Compose(m_entry, Cache, showHiddenFields: true,
+			var again = DetailComposer.Compose(m_entry, Cache, showHiddenFields: true,
 				overrides: resolver);
 			Assert.That(RowPosition(again.Model, secondId), Is.LessThan(RowPosition(again.Model, firstId)));
 		}
@@ -167,17 +167,17 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void Override_DoesNotPoisonProcessWideCompiledCache()
 		{
-			var victimId = EntryFieldTemplateId(RegionComposer.Compose(m_entry, Cache)
+			var victimId = EntryFieldTemplateId(DetailComposer.Compose(m_entry, Cache)
 				.Model.Fields.First(f => f.ClassName == "LexEntry" && f.Kind == DetailFieldKind.Text).Field);
 			var resolver = Resolver(EntryPatch(new ViewOverrideOperation(
 				ViewOverrideOperationKind.SetVisibility, victimId, visibility: ViewVisibility.Never)));
 
 			// Compose WITH the override (mutates nothing but the returned copy).
-			RegionComposer.Compose(m_entry, Cache, showHiddenFields: false, overrides: resolver);
+			DetailComposer.Compose(m_entry, Cache, showHiddenFields: false, overrides: resolver);
 
 			// A subsequent compose WITHOUT the override must see the shipped definition unchanged: the
 			// cached model was never patched in place.
-			var clean = RegionComposer.Compose(m_entry, Cache, showHiddenFields: false);
+			var clean = DetailComposer.Compose(m_entry, Cache, showHiddenFields: false);
 			Assert.That(clean.Model.Fields.Any(f => f.StableId.StartsWith(victimId)), Is.True,
 				"composing without the patch must see the shipped (unhidden) field — the cache stayed clean");
 		}
@@ -188,8 +188,8 @@ namespace SIL.FieldWorks.XWorks
 			var resolver = Resolver(EntryPatch(new ViewOverrideOperation(
 				ViewOverrideOperationKind.SetVisibility, "/#does/#not/#exist", visibility: ViewVisibility.Never)));
 
-			var baseline = RegionComposer.Compose(m_entry, Cache);
-			var withStale = RegionComposer.Compose(m_entry, Cache, overrides: resolver);
+			var baseline = DetailComposer.Compose(m_entry, Cache);
+			var withStale = DetailComposer.Compose(m_entry, Cache, overrides: resolver);
 
 			Assert.That(withStale.Model.Fields.Count, Is.EqualTo(baseline.Model.Fields.Count),
 				"a stale/unknown override target changes nothing");

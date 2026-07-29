@@ -57,7 +57,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 		/// Runs the census and the import pass and returns the aggregated result. The optional
 		/// <paramref name="baseClassMap"/> (subclass → base class, see <see cref="BuildBaseClassMap"/>)
 		/// mirrors the metadata-driven class-hierarchy walk the production compile path threads in from
-		/// the MDC (<c>RegionComposer.CompileForClass</c>), so the measured unresolved-part
+		/// the MDC (<c>DetailComposer.CompileForClass</c>), so the measured unresolved-part
 		/// count reflects what production resolution actually drops.
 		/// </summary>
 		public static LayoutImportCoverageReport Run(

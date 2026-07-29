@@ -58,7 +58,7 @@ namespace SIL.FieldWorks.XWorks
 			return reference;
 		}
 
-		private static DetailField RelationRow(ComposedRegion composed, int relationHvo)
+		private static DetailField RelationRow(ComposedDetail composed, int relationHvo)
 			=> composed.Model.Fields.Single(f => f.Kind == DetailFieldKind.ReferenceVector && f.ObjectHvo == relationHvo);
 
 		private const string LexReferenceMultiSliceClassName =
@@ -80,7 +80,7 @@ namespace SIL.FieldWorks.XWorks
 				relation = MakeReference(type, body, arm, leg);
 			});
 
-			var forward = RegionComposer.Compose(body, Cache);
+			var forward = DetailComposer.Compose(body, Cache);
 			var forwardRow = RelationRow(forward, relation.Hvo);
 			Assert.Multiple(() =>
 			{
@@ -90,7 +90,7 @@ namespace SIL.FieldWorks.XWorks
 				Assert.That(forwardRow.MenuId, Is.EqualTo("mnuDataTree-DeleteAddLexReference"));
 			});
 
-			var reverse = RegionComposer.Compose(arm, Cache);
+			var reverse = DetailComposer.Compose(arm, Cache);
 			var reverseRow = RelationRow(reverse, relation.Hvo);
 			Assert.Multiple(() =>
 			{
@@ -121,7 +121,7 @@ namespace SIL.FieldWorks.XWorks
 				relation = MakeReference(type, firstSense, secondSense);
 			});
 
-			var composed = RegionComposer.Compose(entry, Cache);
+			var composed = DetailComposer.Compose(entry, Cache);
 			var row = composed.Model.Fields.Single(f => f.Kind == DetailFieldKind.ReferenceVector
 				&& f.ObjectHvo == relation.Hvo
 				&& f.Items.Any(i => i.Key == secondSense.Guid.ToString()));

@@ -23,7 +23,7 @@
     <DebugType>portable</DebugType>
   </PropertyGroup>
   <ItemGroup>
-    <!-- Compile-only (PrivateAssets): fake IRegionEditorPlugin implementations in
+    <!-- Compile-only (PrivateAssets): fake ISlicePlugin implementations in
          LexemeEditorInventoryTests name Avalonia.Controls.Control (winforms-free-lexeme-editor.md
          D1); the runtime assemblies are already in the shared output via FwAvalonia. -->
     <PackageReference Include="Avalonia" IncludeAssets="compile" PrivateAssets="all" />

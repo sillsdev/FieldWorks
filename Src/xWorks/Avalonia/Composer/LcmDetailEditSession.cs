@@ -16,7 +16,7 @@ namespace SIL.FieldWorks.XWorks
 	/// whole task back to the depth captured at open (the same pattern legacy composition editing
 	/// uses, IbusRootSiteEventHandler). Idempotent: a second Commit/Cancel is a no-op.
 	/// </summary>
-	public sealed class LcmRegionEditSession : IEditSession
+	public sealed class LcmDetailEditSession : IEditSession
 	{
 		private readonly LcmCache _cache;
 		private readonly int _depth;
@@ -31,7 +31,7 @@ namespace SIL.FieldWorks.XWorks
 		// mirrors the legacy RootSiteEditingHelper rule (open a real task only at CurrentDepth == 0).
 		private readonly bool _ownsTask;
 
-		public LcmRegionEditSession(LcmCache cache, string undoLabel, string redoLabel)
+		public LcmDetailEditSession(LcmCache cache, string undoLabel, string redoLabel)
 		{
 			_cache = cache ?? throw new ArgumentNullException(nameof(cache));
 			_depth = cache.ActionHandlerAccessor.CurrentDepth;

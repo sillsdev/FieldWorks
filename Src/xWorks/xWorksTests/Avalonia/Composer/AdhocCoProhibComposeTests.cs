@@ -40,8 +40,8 @@ namespace SIL.FieldWorks.XWorks
 				Cache.LangProject.MorphologicalDataOA.AdhocCoProhibitionsOC.Add(rule);
 			});
 
-			var composed = RegionComposer.Compose(rule, Cache, layoutName: "Edit",
-				plugins: RegionEditorPluginRegistry.Default);
+			var composed = DetailComposer.Compose(rule, Cache, layoutName: "Edit",
+				plugins: SlicePluginRegistry.Default);
 
 			var kinds = composed.Model.Fields.Select(f => f.Kind.ToString()).ToList();
 			TestContext.WriteLine("MoMorphAdhocProhib composed field kinds: " + string.Join(", ", kinds));
@@ -67,8 +67,8 @@ namespace SIL.FieldWorks.XWorks
 				group.Name.SetAnalysisDefaultWritingSystem("Group A");
 			});
 
-			var composed = RegionComposer.Compose(group, Cache, layoutName: "Edit",
-				plugins: RegionEditorPluginRegistry.Default);
+			var composed = DetailComposer.Compose(group, Cache, layoutName: "Edit",
+				plugins: SlicePluginRegistry.Default);
 
 			var kinds = composed.Model.Fields.Select(f => f.Kind.ToString()).ToList();
 			TestContext.WriteLine("MoAdhocProhibGr composed field kinds: " + string.Join(", ", kinds));

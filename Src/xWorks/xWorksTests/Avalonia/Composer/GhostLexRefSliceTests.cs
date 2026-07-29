@@ -45,10 +45,10 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 
-		private ComposedRegion Compose(bool showHidden = false)
-			=> RegionComposer.Compose(m_entry, Cache, showHidden);
+		private ComposedDetail Compose(bool showHidden = false)
+			=> DetailComposer.Compose(m_entry, Cache, showHidden);
 
-		private static DetailField GhostRow(ComposedRegion composed, string label)
+		private static DetailField GhostRow(ComposedDetail composed, string label)
 			=> composed.Model.Fields.Single(f => f.Field == "EntryRefs" && f.Label == label);
 
 		[Test]
