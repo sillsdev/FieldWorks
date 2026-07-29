@@ -19,7 +19,7 @@ namespace FwAvaloniaDialogs
 	/// affix-marker → morph-type derivation rides the <see cref="DeriveMorphType"/> delegate (the launcher wraps
 	/// <c>MorphServices.GetTypeIfMatchesPrefix</c>/<c>FindMorphType</c>).
 	/// </summary>
-	public sealed class InsertEntryDialogInput
+	public sealed class InsertEntryDlgInput
 	{
 		/// <summary>
 		/// The lexeme-form field (one row per current vernacular writing system). The launcher seeds the row
@@ -97,7 +97,7 @@ namespace FwAvaloniaDialogs
 		/// <summary>
 		/// The project's parts-of-speech hierarchy as a flat, document-order, depth-tagged <see cref="FwPosNode"/>
 		/// list (the launcher builds it from <c>cache.LangProject.PartsOfSpeechOA</c>). Fed to BOTH POS choosers
-		/// inside the hosted <see cref="FwMsaGroupBox"/>. Empty (the default) leaves the MSA section's POS choosers
+		/// inside the hosted <see cref="MSAGroupBox"/>. Empty (the default) leaves the MSA section's POS choosers
 		/// with only the "&lt;Any&gt;" row — so existing consumers that never set it are unaffected.
 		/// </summary>
 		public IReadOnlyList<FwPosNode> PosNodes { get; set; } = Array.Empty<FwPosNode>();
@@ -105,7 +105,7 @@ namespace FwAvaloniaDialogs
 		/// <summary>
 		/// The morph-type → grammatical-info class map (key = morph-type guid string, value = <see cref="FwMsaType"/>),
 		/// mirroring the WinForms <c>MSAGroupBox.MorphTypePreference</c> switch. The dialog uses it to drive the MSA
-		/// box's <see cref="FwMsaGroupBox.MsaType"/> LIVE as the user's morph-type selection changes, so the kit stays
+		/// box's <see cref="MSAGroupBox.MsaType"/> LIVE as the user's morph-type selection changes, so the kit stays
 		/// LCModel-free. A morph type absent from the map (or a null map) falls back to <see cref="InitialMsaType"/>.
 		/// </summary>
 		public IReadOnlyDictionary<string, FwMsaType> MorphTypeToMsaType { get; set; }
@@ -120,7 +120,7 @@ namespace FwAvaloniaDialogs
 		/// Builds the inflectional-affix slot options (the legacy <c>MSAGroupBox.ResetSlotCombo</c>/<c>GetSlots</c>)
 		/// for a given main-POS id (guid string) — the launcher wraps the domain slot services
 		/// (<c>pos.AllAffixSlots</c> filtered by the prefixal/suffixal morph type). The dialog re-runs it whenever the
-		/// MSA box's main POS changes while the box is inflectional, refeeding <see cref="FwMsaGroupBox.SetSlots"/>.
+		/// MSA box's main POS changes while the box is inflectional, refeeding <see cref="MSAGroupBox.SetSlots"/>.
 		/// Null leaves the slot list empty.
 		/// </summary>
 		public Func<string, IReadOnlyList<FwInflectionSlot>> SlotsForPos { get; set; }
@@ -129,7 +129,7 @@ namespace FwAvaloniaDialogs
 		/// Builds the inflection-class options for a given main-POS id (guid string) — the launcher wraps
 		/// <c>IPartOfSpeech.InflectionClassesOC</c> (incl. nested <c>SubclassesOC</c>, depth-tagged). The dialog re-runs
 		/// it whenever the MSA box's MAIN POS changes (the parity of the WinForms POS-change path that resets the
-		/// inflection-class tree), refeeding <see cref="FwMsaGroupBox.SetInflectionClasses"/>. Null leaves the list
+		/// inflection-class tree), refeeding <see cref="MSAGroupBox.SetInflectionClasses"/>. Null leaves the list
 		/// empty (only the "&lt;None&gt;" row).
 		/// </summary>
 		public Func<string, IReadOnlyList<FwInflectionClass>> InflectionClassesForPos { get; set; }
@@ -142,7 +142,7 @@ namespace FwAvaloniaDialogs
 		/// for a given main-POS id (guid string) — the launcher wraps the POS's <c>InflectableFeatsRC</c> (incl. its
 		/// parent POSes', the lift of <c>MsaInflectionFeatureListDlg.PopulateTreeFromPos</c>). The dialog re-runs it
 		/// whenever the MSA box's MAIN POS changes (infl/deriv), refeeding
-		/// <see cref="FwMsaGroupBox.SetInflectionFeatureNodes"/>. Null leaves the editor empty.
+		/// <see cref="MSAGroupBox.SetInflectionFeatureNodes"/>. Null leaves the editor empty.
 		/// </summary>
 		public Func<string, IReadOnlyList<FwFeatureNode>> InflectionFeaturesForPos { get; set; }
 
@@ -201,7 +201,7 @@ namespace FwAvaloniaDialogs
 	}
 
 	/// <summary>
-	/// The morphology-validation verdict the launcher-supplied <see cref="InsertEntryDialogInput.ValidateMorphology"/>
+	/// The morphology-validation verdict the launcher-supplied <see cref="InsertEntryDlgInput.ValidateMorphology"/>
 	/// returns for the current lexeme form + morph-type combination — the data lift of the legacy
 	/// <c>InsertEntryDlg</c> OK-time checks. Each non-<see cref="Valid"/> verdict maps to a localized inline message
 	/// that also gates OK.

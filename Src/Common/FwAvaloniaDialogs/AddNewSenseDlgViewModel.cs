@@ -16,7 +16,7 @@ namespace FwAvaloniaDialogs
 	///   * a read-only CITATION FORM display string (the legacy <c>m_fwtbCitationForm</c>, never edited),
 	///   * a <see cref="FwMultiWsTextField"/> for the editable GLOSS (one row per analysis WS — <c>m_fwtbGloss</c>),
 	///     staged into an in-memory <see cref="InMemoryRegionEditContext"/> so the VM stays LCModel-free, and
-	///   * the LCModel-free <see cref="FwMsaGroupBox"/> grammatical-info editor, seeded from the entry's morph type
+	///   * the LCModel-free <see cref="MSAGroupBox"/> grammatical-info editor, seeded from the entry's morph type
 	///     and refined by the user (the legacy <c>m_msaGroupBox</c>).
 	///
 	/// OK is gated through the kit's <c>GetValidationErrors</c>: one error when the gloss is empty — the legacy
@@ -24,9 +24,9 @@ namespace FwAvaloniaDialogs
 	/// <c>ApplyChanges</c> snapshots the per-WS gloss values + the box's <see cref="FwSandboxMsa"/> into
 	/// <see cref="Result"/>; the launcher reads it to create the new sense in one undoable step.
 	/// </summary>
-	public partial class AddNewSenseDialogViewModel : DialogViewModelBase
+	public partial class AddNewSenseDlgViewModel : DialogViewModelBase
 	{
-		private readonly AddNewSenseDialogInput _input;
+		private readonly AddNewSenseDlgInput _input;
 		private readonly InMemoryRegionEditContext _glossContext = new InMemoryRegionEditContext();
 		// The launcher-supplied slot provider (main-POS id -> slot options), re-run when the MSA box's main POS
 		// changes while inflectional; null leaves the slot list empty (the kit stays LCModel-free).
@@ -35,13 +35,13 @@ namespace FwAvaloniaDialogs
 		private readonly Func<string, IReadOnlyList<FwFeatureNode>> _inflFeaturesForPos;
 		private string _lastSlotPosId;
 
-		public AddNewSenseDialogViewModel() : this(new AddNewSenseDialogInput())
+		public AddNewSenseDlgViewModel() : this(new AddNewSenseDlgInput())
 		{
 		}
 
-		public AddNewSenseDialogViewModel(AddNewSenseDialogInput input)
+		public AddNewSenseDlgViewModel(AddNewSenseDlgInput input)
 		{
-			_input = input ?? new AddNewSenseDialogInput();
+			_input = input ?? new AddNewSenseDlgInput();
 
 			CitationForm = _input.CitationForm ?? string.Empty;
 			HasCitationForm = !string.IsNullOrEmpty(CitationForm);
@@ -56,7 +56,7 @@ namespace FwAvaloniaDialogs
 				"AddNewSense.Gloss", _glossContext, writingSystemFocused: null);
 			_glossContext.TextStaged += OnGlossStaged;
 
-			// The grammatical-info (MSA) section: the LCModel-free FwMsaGroupBox, fed the project POS hierarchy +
+			// The grammatical-info (MSA) section: the LCModel-free MSAGroupBox, fed the project POS hierarchy +
 			// slot options + the initial MsaType the entry's morph type implies (the launcher computed the latter via
 			// the lift of MSAGroupBox.MorphTypePreference). The user refines the affix type inside the box itself —
 			// the Add New Sense dialog has no morph-type picker (the morph type is fixed by the entry, unlike Insert
@@ -64,7 +64,7 @@ namespace FwAvaloniaDialogs
 			_slotsForPos = _input.SlotsForPos;
 			_inflClassesForPos = _input.InflectionClassesForPos;
 			_inflFeaturesForPos = _input.InflectionFeaturesForPos;
-			MsaGroupBox = new FwMsaGroupBox();
+			MsaGroupBox = new MSAGroupBox();
 			MsaGroupBox.SetPosNodes(_input.PosNodes ?? Array.Empty<FwPosNode>());
 			MsaGroupBox.MsaType = _input.InitialMsaType;
 			MsaGroupBox.MainPosId = _input.InitialMainPosId;
@@ -101,10 +101,10 @@ namespace FwAvaloniaDialogs
 		public FwMultiWsTextField GlossField { get; }
 
 		/// <summary>
-		/// The owned grammatical-info (MSA) editor the view mounts — the LCModel-free <see cref="FwMsaGroupBox"/>.
+		/// The owned grammatical-info (MSA) editor the view mounts — the LCModel-free <see cref="MSAGroupBox"/>.
 		/// Its <see cref="FwSandboxMsa"/> is snapshotted on OK.
 		/// </summary>
-		public FwMsaGroupBox MsaGroupBox { get; }
+		public MSAGroupBox MsaGroupBox { get; }
 
 		/// <summary>The prompt shown above the fields; empty hides it (see <see cref="HasPrompt"/>).</summary>
 		public string Prompt { get; }
@@ -122,7 +122,7 @@ namespace FwAvaloniaDialogs
 		/// The snapshot written on OK (per-WS gloss values + chosen MSA). Null until OK runs <see cref="ApplyChanges"/>;
 		/// the launcher reads it to create the sense.
 		/// </summary>
-		public AddNewSensePayload Result { get; private set; }
+		public AddNewSenseDlgPayload Result { get; private set; }
 
 		// ----- Help -----
 
@@ -133,7 +133,7 @@ namespace FwAvaloniaDialogs
 		[RelayCommand]
 		private void Help() => HelpRequested?.Invoke(HelpTopic);
 
-		// ----- create-new-POS wiring (mirrors InsertEntryDialogViewModel) -----
+		// ----- create-new-POS wiring (mirrors InsertEntryDlgViewModel) -----
 
 		/// <summary>
 		/// Raised when the user clicks the inline "Create a new Part of Speech..." row in EITHER POS chooser, carrying
@@ -230,7 +230,7 @@ namespace FwAvaloniaDialogs
 		protected override void ApplyChanges()
 		{
 			var glossByWs = SnapshotNonEmpty(_glossContext.GetStaged(_input.Gloss ?? EmptyField("Gloss")));
-			Result = new AddNewSensePayload(glossByWs, MsaGroupBox?.SandboxMsa);
+			Result = new AddNewSenseDlgPayload(glossByWs, MsaGroupBox?.SandboxMsa);
 		}
 
 		private static IReadOnlyDictionary<string, string> SnapshotNonEmpty(IReadOnlyDictionary<string, string> staged)

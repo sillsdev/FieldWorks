@@ -11,13 +11,13 @@ namespace FwAvaloniaDialogs
 {
 	/// <summary>
 	/// The reusable Insert Entry dialog body: a XAML-authored UserControl bound to
-	/// <see cref="InsertEntryDialogViewModel"/> with compiled bindings for the prompt + Create/Cancel/Help, plus
+	/// <see cref="InsertEntryDlgViewModel"/> with compiled bindings for the prompt + Create/Cancel/Help, plus
 	/// the owned lexeme-form field, morph-type picker, and gloss field hosted as code-behind children (each is a
 	/// native composite, not an MVVM-bindable control, so it cannot be set through a compiled binding — the same
 	/// pattern ChooserDialogView uses). Hosted as Avalonia content inside a WinForms-owned modal Form during
 	/// coexistence via <c>AvaloniaDialogHost.ShowModal</c>.
 	/// </summary>
-	public partial class InsertEntryDialogView : UserControl
+	public partial class InsertEntryDlgView : UserControl
 	{
 		private Border _lexemeFormHost;
 		private Border _morphTypeHost;
@@ -25,7 +25,7 @@ namespace FwAvaloniaDialogs
 		private Border _glossHost;
 		private Border _msaHost;
 
-		public InsertEntryDialogView()
+		public InsertEntryDlgView()
 		{
 			DialogThemeBootstrap.Apply(this);
 			InitializeComponent();
@@ -46,7 +46,7 @@ namespace FwAvaloniaDialogs
 		{
 			try
 			{
-				var vm = DataContext as InsertEntryDialogViewModel;
+				var vm = DataContext as InsertEntryDlgViewModel;
 				var target = vm != null && vm.InitialFocus == InsertEntryInitialFocus.Gloss
 					? vm.GlossField
 					: vm?.LexemeFormField;
@@ -64,7 +64,7 @@ namespace FwAvaloniaDialogs
 		/// </summary>
 		private void InjectControls()
 		{
-			var vm = DataContext as InsertEntryDialogViewModel;
+			var vm = DataContext as InsertEntryDlgViewModel;
 			if (_lexemeFormHost != null)
 				_lexemeFormHost.Child = vm?.LexemeFormField;
 			if (_morphTypeHost != null)

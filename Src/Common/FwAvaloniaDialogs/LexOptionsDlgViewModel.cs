@@ -12,16 +12,16 @@ using SIL.FieldWorks.Common.FwAvalonia;
 namespace FwAvaloniaDialogs
 {
 	/// <summary>
-	/// View-model for the Tools → Options dialog. Edits a product-supplied <see cref="OptionsState"/>
+	/// View-model for the Tools → Options dialog. Edits a product-supplied <see cref="LexOptionsDlgState"/>
 	/// (the real settings bus, populated/applied at the LexText edge) so the Avalonia layer stays
 	/// LCModel-free. Covers the four legacy tabs — General (UI language, Lexical Edit UI mode,
 	/// auto-open), Plugins, Privacy, Updates. CommunityToolkit.Mvvm generates the observable properties
 	/// and <c>OkCommand</c>/<c>CancelCommand</c>; <see cref="IDialogViewModel.CloseRequested"/> closes
 	/// the hosting modal window. On OK the edited values are written back into the state for the edge to apply.
 	/// </summary>
-	public partial class OptionsDialogViewModel : DialogViewModelBase
+	public partial class LexOptionsDlgViewModel : DialogViewModelBase
 	{
-		private readonly OptionsState _state;
+		private readonly LexOptionsDlgState _state;
 
 		// General
 		[ObservableProperty] private NamedOption _selectedUiLanguage;
@@ -39,7 +39,7 @@ namespace FwAvaloniaDialogs
 		// the dialog on a later tab via the initialTab ctor parameter (used by parity screenshots / deep links).
 		[ObservableProperty] private int _selectedTabIndex;
 
-		public OptionsDialogViewModel() : this(new OptionsState())
+		public LexOptionsDlgViewModel() : this(new LexOptionsDlgState())
 		{
 		}
 
@@ -48,9 +48,9 @@ namespace FwAvaloniaDialogs
 		/// are clamped. Note: if the Updates tab is hidden (<see cref="UpdatesTabVisible"/> is false) index 3
 		/// has no visible tab to select.
 		/// </param>
-		public OptionsDialogViewModel(OptionsState state, int initialTab = 0)
+		public LexOptionsDlgViewModel(LexOptionsDlgState state, int initialTab = 0)
 		{
-			_state = state ?? new OptionsState();
+			_state = state ?? new LexOptionsDlgState();
 
 			UiLanguages = _state.AvailableUiLanguages;
 			SelectedUiLanguage = Match(UiLanguages, _state.UiLanguage);
@@ -104,7 +104,7 @@ namespace FwAvaloniaDialogs
 			SelectedUiMode != null && string.Equals(SelectedUiMode.Code, NewMode, StringComparison.Ordinal);
 
 		/// <summary>
-		/// Opens the "Manage Individual Features" dialog (via the product-supplied <see cref="OptionsState.ManageFeatures"/>
+		/// Opens the "Manage Individual Features" dialog (via the product-supplied <see cref="LexOptionsDlgState.ManageFeatures"/>
 		/// callback) seeded with the pending disabled-tools set, and keeps the edited result pending until OK.
 		/// Mirrors the WinForms <c>LexOptionsDlg.m_manageFeaturesButton_Click</c>. A no-op with no callback
 		/// (bare-bones/test contexts).
@@ -121,7 +121,7 @@ namespace FwAvaloniaDialogs
 			options?.FirstOrDefault(o => string.Equals(o.Code, code, StringComparison.Ordinal));
 
 		/// <summary>
-		/// Writes the edited values back into the product-supplied <see cref="OptionsState"/> (the
+		/// Writes the edited values back into the product-supplied <see cref="LexOptionsDlgState"/> (the
 		/// "ApplyTo(state)" convention). Invoked by the base OK command before the dialog closes.
 		/// </summary>
 		protected override void ApplyChanges()

@@ -2,13 +2,13 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vm="clr-namespace:FwAvaloniaDialogs"
              xmlns:res="clr-namespace:FwAvaloniaDialogs"
-             x:Class="FwAvaloniaDialogs.AddNewSenseDialogView"
-             x:DataType="vm:AddNewSenseDialogViewModel"
+             x:Class="FwAvaloniaDialogs.AddNewSenseDlgView"
+             x:DataType="vm:AddNewSenseDlgViewModel"
              Classes="fwDialogRoot"
              MinWidth="360" MinHeight="240">
 	<!-- The reusable Add New Sense dialog (MSA-port Stage 5): a read-only citation form, an editable gloss field,
 	     and the grammatical-info group box, over Create/Cancel/Help. The gloss field + MSA box are owned native
-	     controls injected as code-behind children (set on DataContextChanged like InsertEntryDialogView). Visible
+	     controls injected as code-behind children (set on DataContextChanged like InsertEntryDlgView). Visible
 	     text is localized via FwAvaloniaDialogsStrings; AutomationIds stay stable + nonlocalized. -->
 	<DockPanel>
 		<StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal"
@@ -48,7 +48,7 @@
 			<Border Name="PART_GlossHost" Classes="fwFieldHost"
 			        AutomationProperties.AutomationId="AddNewSense.GlossHost"/>
 
-			<!-- Grammatical-info (MSA) section: the owned FwMsaGroupBox is injected here in code-behind. It supplies
+			<!-- Grammatical-info (MSA) section: the owned MSAGroupBox is injected here in code-behind. It supplies
 			     its own dense border, so this host carries only the section caption above it (no second frame). -->
 			<TextBlock Text="{x:Static res:FwAvaloniaDialogsStrings.AddNewSenseGrammaticalInfoLabel}"
 			           AutomationProperties.AutomationId="AddNewSense.GrammaticalInfoLabel"/>

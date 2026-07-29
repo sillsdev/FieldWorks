@@ -59,7 +59,7 @@ namespace FwAvaloniaDialogs
 	/// because it depends only on the kit + <see cref="AvaloniaDialogHost"/> and has no LCModel/PropertyTable
 	/// dependency; the LCModel-aware concrete launcher lives in the product layer (LexText).
 	/// </summary>
-	/// <typeparam name="TState">The product-supplied state DTO the view-model edits (e.g. OptionsState).</typeparam>
+	/// <typeparam name="TState">The product-supplied state DTO the view-model edits (e.g. LexOptionsDlgState).</typeparam>
 	/// <typeparam name="TViewModel">The dialog view-model (carries the host-close contract via the kit base).</typeparam>
 	/// <typeparam name="TPayload">The dialog-specific follow-up signals returned on OK.</typeparam>
 	public abstract class AvaloniaDialogLauncher<TState, TViewModel, TPayload>

@@ -10,7 +10,7 @@ namespace SIL.FieldWorks.LexText.Controls
 {
 	/// <summary>
 	/// Shared wiring for the inline create-feature / add-value affordances of the inflection-feature editor hosted
-	/// inside <see cref="FwMsaGroupBox"/> — the single place the three MSA-section launchers
+	/// inside <see cref="FwAvaloniaDialogs.MSAGroupBox"/> — the single place the three MSA-section launchers
 	/// (Insert Entry, Add New Sense, MSA Creator) wire <c>MsaGroupBox.CreateNewFeatureRequested</c> /
 	/// <c>CreateNewValueRequested</c> to the <see cref="LcmCreateFeatureLauncher"/>. On a created feature/value it
 	/// feeds the new <see cref="FwFeatureNode"/> back to the box's editor
@@ -21,7 +21,7 @@ namespace SIL.FieldWorks.LexText.Controls
 	internal static class LcmInflectionFeatureCreateWiring
 	{
 		/// <summary>Runs the create-feature flow and, on success, adds the new feature to the box's editor.</summary>
-		public static void CreateFeature(LcmCache cache, IWin32Window owner, FwMsaGroupBox box)
+		public static void CreateFeature(LcmCache cache, IWin32Window owner, FwAvaloniaDialogs.MSAGroupBox box)
 		{
 			if (cache == null || box == null)
 				return;
@@ -33,7 +33,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		}
 
 		/// <summary>Runs the add-value flow for the given closed feature and, on success, adds + selects the value.</summary>
-		public static void AddValue(LcmCache cache, IWin32Window owner, string closedFeatureId, FwMsaGroupBox box)
+		public static void AddValue(LcmCache cache, IWin32Window owner, string closedFeatureId, FwAvaloniaDialogs.MSAGroupBox box)
 		{
 			if (cache == null || box == null || string.IsNullOrEmpty(closedFeatureId))
 				return;

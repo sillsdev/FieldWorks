@@ -18,7 +18,7 @@ namespace FwAvaloniaDialogsTests
 {
 	/// <summary>
 	/// The reusable "Create New Grammatical Info." dialog: the Avalonia replacement for the
-	/// legacy MsaCreatorDlg in New-UI mode. The dialog is essentially the LCModel-free FwMsaGroupBox hosted over the
+	/// legacy MsaCreatorDlg in New-UI mode. The dialog is essentially the LCModel-free MSAGroupBox hosted over the
 	/// entry's read-only context (lexical entry + senses); it seeds the box from the existing MSA / morph type, has
 	/// NO OK gate (like the legacy dialog), and snapshots the box's FwSandboxMsa on OK. Runtime proof on a realized
 	/// headless surface, with per-stage PNGs for subjective visual review.
@@ -38,9 +38,9 @@ namespace FwAvaloniaDialogsTests
 			new FwInflectionSlot("s-number", "Number")
 		};
 
-		private static MsaCreatorDialogInput BasicInput(FwMsaType msaType = FwMsaType.Stem,
+		private static MsaCreatorDlgInput BasicInput(FwMsaType msaType = FwMsaType.Stem,
 			string mainPosId = null, string secondaryPosId = null, string slotId = null, string senses = null) =>
-			new MsaCreatorDialogInput
+			new MsaCreatorDlgInput
 			{
 				Title = "Create New Grammatical Info.",
 				LexicalEntry = "cantar",
@@ -53,11 +53,11 @@ namespace FwAvaloniaDialogsTests
 				SlotsForPos = _ => Slots
 			};
 
-		private static (MsaCreatorDialogView view, MsaCreatorDialogViewModel vm) Show(
-			MsaCreatorDialogInput input, string stageName = "MsaCreator-01-initial")
+		private static (MsaCreatorDlgView view, MsaCreatorDlgViewModel vm) Show(
+			MsaCreatorDlgInput input, string stageName = "MsaCreator-01-initial")
 		{
-			var vm = new MsaCreatorDialogViewModel(input);
-			var view = new MsaCreatorDialogView { DataContext = vm };
+			var vm = new MsaCreatorDlgViewModel(input);
+			var view = new MsaCreatorDlgView { DataContext = vm };
 			AvaloniaDialogTestHarness.Realize(view, 500, 320, stageName, forceRenderTick: true);
 			return (view, vm);
 		}
@@ -186,7 +186,7 @@ namespace FwAvaloniaDialogsTests
 		[AvaloniaTest] // the VM ctor builds owned Avalonia controls — must run on the UI thread
 		public void CancelCommand_ClosesWithoutAccepting()
 		{
-			var vm = new MsaCreatorDialogViewModel(BasicInput());
+			var vm = new MsaCreatorDlgViewModel(BasicInput());
 			bool? closed = null;
 			vm.CloseRequested += (s, accepted) => closed = accepted;
 

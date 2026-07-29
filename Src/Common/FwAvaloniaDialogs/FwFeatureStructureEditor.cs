@@ -109,7 +109,7 @@ namespace FwAvaloniaDialogs
 	/// <see cref="Assignments"/>. The editor holds NO model reference and performs NO create — it just raises
 	/// <see cref="CreateNewFeatureRequested"/> / <see cref="CreateNewValueRequested"/> and accepts a returned new
 	/// node (the host wires the actual create flows). Built in pure C# (no XAML) to match the rest of the
-	/// FwAvalonia kit (<see cref="FwPosChooser"/>, <c>FwMsaGroupBox</c>).
+	/// FwAvalonia kit (<see cref="FwPosChooser"/>, <c>MSAGroupBox</c>).
 	/// </summary>
 	public sealed class FwFeatureStructureEditor : Border
 	{

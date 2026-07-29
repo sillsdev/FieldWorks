@@ -132,7 +132,7 @@ namespace LexTextControlsTests
 		public void CreateSense_AddsASenseWithTheGlossAndMsa()
 		{
 			var analTag = Cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Id;
-			var payload = new AddNewSensePayload(
+			var payload = new AddNewSenseDlgPayload(
 				new Dictionary<string, string> { [analTag] = "home" },
 				new FwSandboxMsa(FwMsaType.Stem, mainPosId: _noun.Guid.ToString()));
 
@@ -155,7 +155,7 @@ namespace LexTextControlsTests
 		public void CreateSense_InflectionalMsa_ResolvesTheSlot()
 		{
 			var analTag = Cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Id;
-			var payload = new AddNewSensePayload(
+			var payload = new AddNewSenseDlgPayload(
 				new Dictionary<string, string> { [analTag] = "PAST" },
 				new FwSandboxMsa(FwMsaType.Inflectional, mainPosId: _verb.Guid.ToString(),
 					slotId: _tenseSlot.Guid.ToString()));
@@ -205,7 +205,7 @@ namespace LexTextControlsTests
 		public void CreateSense_StemMsa_SetsTheChosenInflectionClassInOneUow()
 		{
 			var analTag = Cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Id;
-			var payload = new AddNewSensePayload(
+			var payload = new AddNewSenseDlgPayload(
 				new Dictionary<string, string> { [analTag] = "home" },
 				new FwSandboxMsa(FwMsaType.Stem, mainPosId: _noun.Guid.ToString(),
 					inflectionClassId: _nounWeak.Guid.ToString()));
@@ -223,7 +223,7 @@ namespace LexTextControlsTests
 		public void CreateSense_StemMsa_NoInflectionClass_LeavesItNull()
 		{
 			var analTag = Cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Id;
-			var payload = new AddNewSensePayload(
+			var payload = new AddNewSenseDlgPayload(
 				new Dictionary<string, string> { [analTag] = "home" },
 				new FwSandboxMsa(FwMsaType.Stem, mainPosId: _noun.Guid.ToString()));
 
@@ -250,7 +250,7 @@ namespace LexTextControlsTests
 		public void CreateSense_InflectionalAffix_PersistsInflectionFeatures()
 		{
 			var analTag = Cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Id;
-			var payload = new AddNewSensePayload(
+			var payload = new AddNewSenseDlgPayload(
 				new Dictionary<string, string> { [analTag] = "PAST" },
 				new FwSandboxMsa(FwMsaType.Inflectional, mainPosId: _verb.Guid.ToString(),
 					inflectionFeatures: new[]
@@ -342,7 +342,7 @@ namespace LexTextControlsTests
 			// The lift of AddNewSenseDlg_Closing sets each NON-empty gloss alternative; an empty row must be
 			// skipped rather than stomping the sense's gloss for that writing system with an empty string.
 			var analTag = Cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Id;
-			var payload = new AddNewSensePayload(
+			var payload = new AddNewSenseDlgPayload(
 				new Dictionary<string, string> { [analTag] = "" },
 				new FwSandboxMsa(FwMsaType.Stem, mainPosId: _noun.Guid.ToString()));
 
@@ -358,7 +358,7 @@ namespace LexTextControlsTests
 			// If the payload's ws tag doesn't resolve to a live writing system (ws == 0 — e.g. a stale/garbled tag),
 			// the create must still land the gloss somewhere sane (the default analysis WS) rather than silently
 			// dropping the user's typed gloss text.
-			var payload = new AddNewSensePayload(
+			var payload = new AddNewSenseDlgPayload(
 				new Dictionary<string, string> { ["zzz-bogus-ws-tag"] = "home" },
 				new FwSandboxMsa(FwMsaType.Stem, mainPosId: _noun.Guid.ToString()));
 

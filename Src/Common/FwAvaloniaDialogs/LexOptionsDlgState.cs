@@ -15,7 +15,7 @@ namespace FwAvaloniaDialogs
 	/// never references LCModel or the PropertyTable. Mirrors the four tabs of the legacy
 	/// <c>LexOptionsDlg</c>: General, Plugins, Privacy, Updates.
 	/// </summary>
-	public sealed class OptionsState
+	public sealed class LexOptionsDlgState
 	{
 		// --- General: user-interface language ---
 		public IReadOnlyList<NamedOption> AvailableUiLanguages { get; set; } = new List<NamedOption>();

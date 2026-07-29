@@ -18,7 +18,7 @@ using SIL.FieldWorks.Common.FwAvalonia;
 namespace FwAvaloniaDialogsTests
 {
 	/// <summary>
-	/// The Tools → Options dialog: the four real tabs bind to an <see cref="OptionsState"/> (the product
+	/// The Tools → Options dialog: the four real tabs bind to an <see cref="LexOptionsDlgState"/> (the product
 	/// settings bus) via compiled bindings, edits write back into the state on OK, the generated
 	/// commands close via <see cref="IDialogViewModel"/>, and the Updates tab hides off-Windows. Runtime
 	/// proof on a realized headless surface (compiled XAML on net48 + source-generated commands).
@@ -26,7 +26,7 @@ namespace FwAvaloniaDialogsTests
 	[TestFixture]
 	public class OptionsDialogTests
 	{
-		private static OptionsState SampleState() => new OptionsState
+		private static LexOptionsDlgState SampleState() => new LexOptionsDlgState
 		{
 			AvailableUiLanguages = new[] { new NamedOption("en", "English"), new NamedOption("fr", "Français") },
 			UiLanguage = "en",
@@ -43,11 +43,11 @@ namespace FwAvaloniaDialogsTests
 			Plugins = new List<PluginOption> { new PluginOption("Concorder", "A concordance tool", false) }
 		};
 
-		private static (OptionsDialogView view, OptionsDialogViewModel vm) Show(
-			OptionsState state = null, string stageName = "Options-01-initial")
+		private static (LexOptionsDlgView view, LexOptionsDlgViewModel vm) Show(
+			LexOptionsDlgState state = null, string stageName = "Options-01-initial")
 		{
-			var vm = new OptionsDialogViewModel(state ?? SampleState());
-			var view = new OptionsDialogView { DataContext = vm };
+			var vm = new LexOptionsDlgViewModel(state ?? SampleState());
+			var view = new LexOptionsDlgView { DataContext = vm };
 			AvaloniaDialogTestHarness.Realize(view, 480, 380, stageName);
 			return (view, vm);
 		}
@@ -184,7 +184,7 @@ namespace FwAvaloniaDialogsTests
 		[Test]
 		public void OkCommand_RaisesCloseRequestedTrue_AndSetsAccepted()
 		{
-			var vm = new OptionsDialogViewModel(SampleState());
+			var vm = new LexOptionsDlgViewModel(SampleState());
 			bool? closed = null;
 			vm.CloseRequested += (s, accepted) => closed = accepted;
 
@@ -197,7 +197,7 @@ namespace FwAvaloniaDialogsTests
 		[Test]
 		public void CancelCommand_RaisesCloseRequestedFalse()
 		{
-			var vm = new OptionsDialogViewModel(SampleState());
+			var vm = new LexOptionsDlgViewModel(SampleState());
 			bool? closed = null;
 			vm.CloseRequested += (s, accepted) => closed = accepted;
 
@@ -210,7 +210,7 @@ namespace FwAvaloniaDialogsTests
 		[Test]
 		public void WireClose_ForwardsCloseSignal_ThenUnsubscribesOnDispose()
 		{
-			var vm = new OptionsDialogViewModel(SampleState());
+			var vm = new LexOptionsDlgViewModel(SampleState());
 			var calls = 0;
 			var last = false;
 
@@ -254,17 +254,17 @@ namespace FwAvaloniaDialogsTests
 		[Test]
 		public void InitialTab_SetsAndClampsSelectedTabIndex()
 		{
-			Assert.That(new OptionsDialogViewModel(SampleState()).SelectedTabIndex, Is.EqualTo(0), "defaults to the first tab");
-			Assert.That(new OptionsDialogViewModel(SampleState(), 2).SelectedTabIndex, Is.EqualTo(2), "opens on the requested tab");
-			Assert.That(new OptionsDialogViewModel(SampleState(), 99).SelectedTabIndex, Is.EqualTo(3), "clamps above the last tab");
-			Assert.That(new OptionsDialogViewModel(SampleState(), -1).SelectedTabIndex, Is.EqualTo(0), "clamps below the first tab");
+			Assert.That(new LexOptionsDlgViewModel(SampleState()).SelectedTabIndex, Is.EqualTo(0), "defaults to the first tab");
+			Assert.That(new LexOptionsDlgViewModel(SampleState(), 2).SelectedTabIndex, Is.EqualTo(2), "opens on the requested tab");
+			Assert.That(new LexOptionsDlgViewModel(SampleState(), 99).SelectedTabIndex, Is.EqualTo(3), "clamps above the last tab");
+			Assert.That(new LexOptionsDlgViewModel(SampleState(), -1).SelectedTabIndex, Is.EqualTo(0), "clamps below the first tab");
 		}
 
 		[AvaloniaTest]
 		public void InitialTab_OpensDialogOnThatTab()
 		{
-			var vm = new OptionsDialogViewModel(SampleState(), 2); // Privacy
-			var view = new OptionsDialogView { DataContext = vm };
+			var vm = new LexOptionsDlgViewModel(SampleState(), 2); // Privacy
+			var view = new LexOptionsDlgView { DataContext = vm };
 			var window = new Window { Content = view, Width = 480, Height = 380 };
 			window.Show();
 			Dispatcher.UIThread.RunJobs();

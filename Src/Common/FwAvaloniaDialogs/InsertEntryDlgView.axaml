@@ -2,8 +2,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vm="clr-namespace:FwAvaloniaDialogs"
              xmlns:res="clr-namespace:FwAvaloniaDialogs"
-             x:Class="FwAvaloniaDialogs.InsertEntryDialogView"
-             x:DataType="vm:InsertEntryDialogViewModel"
+             x:Class="FwAvaloniaDialogs.InsertEntryDlgView"
+             x:DataType="vm:InsertEntryDlgViewModel"
              Classes="fwDialogRoot"
              MinWidth="360" MinHeight="260">
 	<!-- The reusable Insert Entry dialog (Phase 1): lexeme-form field + morph-type picker + gloss field, each
@@ -73,12 +73,12 @@
 			<Border Name="PART_GlossHost" Classes="fwFieldHost"
 			        AutomationProperties.AutomationId="InsertEntry.GlossHost"/>
 
-			<!-- Grammatical-info (MSA) section (Stage 3): the owned FwMsaGroupBox is injected here in code-behind. It
+			<!-- Grammatical-info (MSA) section (Stage 3): the owned MSAGroupBox is injected here in code-behind. It
 			     is itself a dense, bordered group box (it supplies its own frame), so the host carries only the
 			     section caption above it; the box reconfigures live with the morph-type selection. -->
 			<TextBlock Text="{x:Static res:FwAvaloniaDialogsStrings.InsertEntryGrammaticalInfoLabel}"
 			           AutomationProperties.AutomationId="InsertEntry.GrammaticalInfoLabel"/>
-			<!-- The FwMsaGroupBox supplies its own dense border, so this host carries no frame of its own (it is
+			<!-- The MSAGroupBox supplies its own dense border, so this host carries no frame of its own (it is
 			     intentionally NOT a PART_*Host fwFieldHost — a second frame around the group box would double-border
 			     it). -->
 			<Border Name="PART_MsaSection"

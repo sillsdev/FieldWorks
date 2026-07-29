@@ -2,12 +2,12 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vm="clr-namespace:FwAvaloniaDialogs"
              xmlns:res="clr-namespace:FwAvaloniaDialogs"
-             x:Class="FwAvaloniaDialogs.OptionsDialogView"
-             x:DataType="vm:OptionsDialogViewModel"
+             x:Class="FwAvaloniaDialogs.LexOptionsDlgView"
+             x:DataType="vm:LexOptionsDlgViewModel"
              Classes="fwDialogRoot"
              MinWidth="460" MinHeight="380">
 	<!-- The Tools → Options dialog: the four real tabs (General, Plugins, Privacy, Updates) wired to the
-	     product OptionsState. Visible text is localized via FwAvaloniaDialogsStrings (.resx); AutomationIds
+	     product LexOptionsDlgState. Visible text is localized via FwAvaloniaDialogsStrings (.resx); AutomationIds
 	     stay stable + nonlocalized. Combo item *values* are settings codes (language/channel/mode), not UI. -->
 	<DockPanel>
 		<!-- TabIndex=1 pushes the button strip AFTER the content in tab order (A11Y-02); it is declared
