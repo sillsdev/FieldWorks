@@ -49,7 +49,7 @@
 	</ItemGroup>
 
 	<!-- FwAvalonia.csproj excludes Preview/** from its own compile (it's sample code, not shipped
-	     product behavior); LexicalEditPreviewTests.cs exercises it headlessly, referencing it here
+	     product behavior); RegionPreviewTests.cs exercises it headlessly, referencing it here
 	     (not file-linking a duplicate compiled copy). -->
 	<ItemGroup>
 		<ProjectReference Include="..\Preview\FwAvalonia.Preview.csproj" />
