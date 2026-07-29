@@ -13,9 +13,9 @@ namespace FwAvaloniaDialogs
 	/// LCModel-aware launcher reads this back to build the <c>LexEntryComponents</c> and create the entry in one
 	/// undoable step.
 	/// </summary>
-	public sealed class InsertEntryPayload
+	public sealed class InsertEntryDlgPayload
 	{
-		public InsertEntryPayload(IReadOnlyDictionary<string, string> lexemeFormByWs,
+		public InsertEntryDlgPayload(IReadOnlyDictionary<string, string> lexemeFormByWs,
 			IReadOnlyDictionary<string, string> glossByWs, string morphTypeKey,
 			string chosenExistingEntryId = null, FwSandboxMsa msa = null, string complexFormTypeKey = null)
 		{
@@ -46,7 +46,7 @@ namespace FwAvaloniaDialogs
 
 		/// <summary>
 		/// The chosen grammatical info (MSA) — the LCModel-free <see cref="FwSandboxMsa"/> the hosted
-		/// <see cref="FwMsaGroupBox"/> emitted (MsaType + main/secondary POS ids + slot id). The launcher resolves
+		/// <see cref="MSAGroupBox"/> emitted (MsaType + main/secondary POS ids + slot id). The launcher resolves
 		/// the ids back to LCModel objects, builds a real <c>SandboxGenericMSA</c>, and find-or-creates the MSA on the
 		/// new entry's first sense (exactly as the WinForms <c>InsertEntryDlg</c> does). Null when the dialog had no
 		/// MSA section configured (the launcher then falls back to the morph-type's default MSA).
@@ -63,7 +63,7 @@ namespace FwAvaloniaDialogs
 		public string ComplexFormTypeKey { get; }
 
 		/// <summary>An empty payload (no values, no morph type) for a cancelled dialog.</summary>
-		public static InsertEntryPayload Empty =>
-			new InsertEntryPayload(new Dictionary<string, string>(), new Dictionary<string, string>(), null);
+		public static InsertEntryDlgPayload Empty =>
+			new InsertEntryDlgPayload(new Dictionary<string, string>(), new Dictionary<string, string>(), null);
 	}
 }

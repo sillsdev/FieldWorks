@@ -178,7 +178,7 @@ namespace FwAvaloniaDialogs
 		// over; {0} is the current entry, {1} the chosen survivor, {2} a newline.
 		public static string MergeConfirm => Text("FwAvaloniaDialogs.Merge.Confirm");
 
-		// MSA (grammatical-info) group box — the FwMsaGroupBox composite mirroring the WinForms MSAGroupBox.
+		// MSA (grammatical-info) group box — the MSAGroupBox composite mirroring the WinForms MSAGroupBox.
 		// Seed text matches the canonical legacy LexTextControls.resx / MSAGroupBox.resx wording (ampersand
 		// mnemonics dropped — the Avalonia controls don't use WinForms-style accelerators) so the English
 		// fallback is identical and translation memory carries over.
@@ -268,7 +268,7 @@ namespace FwAvaloniaDialogs
 		/// <summary>Accessible name of the feature-structure editor control.</summary>
 		public static string FeatureEditorName => Text("FwAvaloniaDialogs.FeatureEditor.Name");
 
-		// MSA inflection-feature editor — the inflection-feature column the FwMsaGroupBox
+		// MSA inflection-feature editor — the inflection-feature column the MSAGroupBox
 		// shows for inflectional/derivational MSAs (where the WinForms box's "Inflection Features" affordance opens
 		// MsaInflectionFeatureListDlg over IMoInflAffMsa.InflFeatsOA / IMoDerivAffMsa.FromMsFeaturesOA). Seed text
 		// matches the canonical legacy field caption ("Inflection Features"). APPEND-ONLY.

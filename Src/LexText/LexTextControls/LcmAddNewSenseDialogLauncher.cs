@@ -23,8 +23,8 @@ namespace SIL.FieldWorks.LexText.Controls
 	/// The LCModel-aware launcher for the reusable Avalonia Add New Sense dialog — the replacement for the legacy
 	/// <see cref="AddNewSenseDlg"/> in New-UI mode. It is a concrete
 	/// <see cref="AvaloniaDialogLauncher{TState,TViewModel,TPayload}"/>: the Avalonia layer (FwAvaloniaDialogs) stays
-	/// LCModel-free by exchanging an <see cref="AddNewSenseDialogInput"/> (the read-only citation form, a per-WS gloss
-	/// field, and the MSA section's POS nodes / slot provider / initial MsaType) and an <see cref="AddNewSensePayload"/>
+	/// LCModel-free by exchanging an <see cref="AddNewSenseDlgInput"/> (the read-only citation form, a per-WS gloss
+	/// field, and the MSA section's POS nodes / slot provider / initial MsaType) and an <see cref="AddNewSenseDlgPayload"/>
 	/// (per-WS gloss strings + the chosen <see cref="FwSandboxMsa"/>). This launcher builds that state from the live
 	/// cache and, on OK, creates the new <c>ILexSense</c> (gloss + find-or-created MSA) in ONE undoable step.
 	///
@@ -35,7 +35,7 @@ namespace SIL.FieldWorks.LexText.Controls
 	/// <c>AddNewSenseDlg.SetDlgInfo</c>'s <c>MorphTypePreference</c> loop.
 	/// </summary>
 	public sealed class LcmAddNewSenseDialogLauncher
-		: AvaloniaDialogLauncher<AddNewSenseDialogInput, AddNewSenseDialogViewModel, AddNewSensePayload>
+		: AvaloniaDialogLauncher<AddNewSenseDlgInput, AddNewSenseDlgViewModel, AddNewSenseDlgPayload>
 	{
 		private const string s_helpTopic = "khtpAddNewSense";
 
@@ -45,7 +45,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		private readonly IHelpTopicProvider _helpProvider;
 		private readonly ILexEntry _entry;
 		private readonly ITsString _tssCitationForm;
-		private AddNewSenseDialogViewModel _viewModel;
+		private AddNewSenseDlgViewModel _viewModel;
 		private IWin32Window _owner;
 
 		private LcmAddNewSenseDialogLauncher(LcmCache cache, Mediator mediator, PropertyTable propertyTable,
@@ -86,23 +86,23 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		protected override string DialogTitle => FwAvaloniaDialogsStrings.AddNewSenseTitle;
 		protected override bool Resizable => true;
-		// Wide enough to fit the FwMsaGroupBox's three-column affix layout (Affix Type + Attaches to Category +
+		// Wide enough to fit the MSAGroupBox's three-column affix layout (Affix Type + Attaches to Category +
 		// Fills Slot / Changes to Category) without clipping the trailing column caption.
 		protected override int DialogWidth => 500;
 		protected override int DialogHeight => 360;
 
-		protected override AddNewSenseDialogInput BuildState() =>
+		protected override AddNewSenseDlgInput BuildState() =>
 			BuildInput(_cache, _entry, _tssCitationForm);
 
 		/// <summary>
-		/// Builds the LCModel-free <see cref="AddNewSenseDialogInput"/> from the live cache: the read-only citation
+		/// Builds the LCModel-free <see cref="AddNewSenseDlgInput"/> from the live cache: the read-only citation
 		/// form (from the supplied tss or the entry's headword), a per-analysis-WS gloss field, the project POS
 		/// hierarchy + per-POS slot provider (shared with the Insert Entry launcher), and the initial MsaType the
 		/// entry's morph type implies (the lift of <c>AddNewSenseDlg.SetDlgInfo</c>'s <c>MorphTypePreference</c> loop:
 		/// the first allomorph's morph type drives the MSA class). Internal so the mapping is unit-testable against a
 		/// real cache without running the modal.
 		/// </summary>
-		internal static AddNewSenseDialogInput BuildInput(LcmCache cache, ILexEntry entry, ITsString tssCitationForm)
+		internal static AddNewSenseDlgInput BuildInput(LcmCache cache, ILexEntry entry, ITsString tssCitationForm)
 		{
 			var wsContainer = cache.ServiceLocator.WritingSystems;
 			var citation = tssCitationForm?.Text;
@@ -118,7 +118,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			var morphTypeGuid = FirstAllomorphMorphTypeGuid(entry);
 			var initialMsaType = LcmInsertEntryDialogLauncher.MorphTypeGuidToMsaType(morphTypeGuid);
 
-			return new AddNewSenseDialogInput
+			return new AddNewSenseDlgInput
 			{
 				CitationForm = citation,
 				Gloss = gloss,
@@ -150,9 +150,9 @@ namespace SIL.FieldWorks.LexText.Controls
 			return entry.LexemeFormOA?.MorphTypeRA?.Guid.ToString();
 		}
 
-		protected override AddNewSenseDialogViewModel CreateViewModel(AddNewSenseDialogInput state)
+		protected override AddNewSenseDlgViewModel CreateViewModel(AddNewSenseDlgInput state)
 		{
-			_viewModel = new AddNewSenseDialogViewModel(state);
+			_viewModel = new AddNewSenseDlgViewModel(state);
 			_viewModel.HelpRequested += OnHelpRequested;
 			_viewModel.CreateNewPosRequested += OnCreateNewPosRequested;
 			// Wire the inline create-feature / add-value affordances.
@@ -174,8 +174,8 @@ namespace SIL.FieldWorks.LexText.Controls
 			_viewModel.AcceptCreatedPos(target, node, LcmInsertEntryDialogLauncher.BuildPosNodes(_cache));
 		}
 
-		protected override AvControl CreateView(AddNewSenseDialogViewModel viewModel) =>
-			new AddNewSenseDialogView { DataContext = viewModel };
+		protected override AvControl CreateView(AddNewSenseDlgViewModel viewModel) =>
+			new AddNewSenseDlgView { DataContext = viewModel };
 
 		/// <summary>
 		/// Applies the OK result: creates the new <c>ILexSense</c> on the entry in ONE undoable step from the
@@ -184,11 +184,11 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <c>SandboxMSA</c> so the factory find-or-creates the matching MSA). Internal so the create is unit-testable
 		/// against a real cache inside a UOW.
 		/// </summary>
-		protected override AddNewSensePayload Apply(AddNewSenseDialogInput state)
+		protected override AddNewSenseDlgPayload Apply(AddNewSenseDlgInput state)
 		{
 			var payload = _viewModel?.Result;
 			if (payload == null)
-				return AddNewSensePayload.Empty;
+				return AddNewSenseDlgPayload.Empty;
 
 			ILexSense newSense = null;
 			UndoableUnitOfWorkHelper.Do(LexTextControls.ksUndoCreateNewSense, LexTextControls.ksRedoCreateNewSense,
@@ -204,7 +204,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// alternative's OWN writing-system handle, the LT-11950 fix-up), and assign <c>SandboxMSA</c> from the chosen
 		/// grammatical info so the model find-or-creates the matching MSA. Internal for unit testing inside a UOW.
 		/// </summary>
-		internal ILexSense CreateNewSense(AddNewSensePayload payload) => CreateSense(_cache, _entry, payload);
+		internal ILexSense CreateNewSense(AddNewSenseDlgPayload payload) => CreateSense(_cache, _entry, payload);
 
 		/// <summary>
 		/// Creates the sense on <paramref name="entry"/> and applies the gloss + MSA from <paramref name="payload"/>
@@ -214,7 +214,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// modal. The morph type (the entry's first allomorph) drives the default MSA flavor when no explicit MSA was
 		/// chosen; the SandboxMsa resolution reuses the Insert Entry launcher so the mapping is identical.
 		/// </summary>
-		internal static ILexSense CreateSense(LcmCache cache, ILexEntry entry, AddNewSensePayload payload)
+		internal static ILexSense CreateSense(LcmCache cache, ILexEntry entry, AddNewSenseDlgPayload payload)
 		{
 			var sense = cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
 			entry.SensesOS.Add(sense);

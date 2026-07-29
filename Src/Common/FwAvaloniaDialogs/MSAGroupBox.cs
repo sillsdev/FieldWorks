@@ -42,7 +42,7 @@ namespace FwAvaloniaDialogs
 	/// and forwards each chooser's <see cref="FwPosChooser.CreateNewPosRequested"/>. The control holds NO model
 	/// reference. Built in pure C# (no XAML) to match <see cref="FwPosChooser"/> and the rest of FwAvalonia.
 	/// </summary>
-	public sealed class FwMsaGroupBox : Border
+	public sealed class MSAGroupBox : Border
 	{
 		// The column panels (label-over-widget), mirroring the WinForms m_afxTypePanel / m_mainCatPanel /
 		// m_slotsPanel. Each is shown/hidden per MsaType. The inflection-class panel is the Avalonia parity
@@ -96,7 +96,7 @@ namespace FwAvaloniaDialogs
 			FwAvaloniaDialogsStrings.MsaAffixTypeDerivational
 		};
 
-		public FwMsaGroupBox()
+		public MSAGroupBox()
 		{
 			// A dense, bordered host (the group-box frame), following the shared density tokens.
 			Background = FwAvaloniaDensity.PickerBackgroundBrush;

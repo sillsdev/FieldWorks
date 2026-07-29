@@ -15,7 +15,7 @@ using SIL.FieldWorks.Common.FwAvalonia;
 namespace FwAvaloniaDialogsTests
 {
 	/// <summary>
-	/// The LCModel-free <see cref="FwMsaGroupBox"/> composite (the grammatical-info editor), the parity of the
+	/// The LCModel-free <see cref="MSAGroupBox"/> composite (the grammatical-info editor), the parity of the
 	/// WinForms <c>MSAGroupBox</c>. Proven on a realized headless surface: for EACH <see cref="FwMsaType"/> the
 	/// right widgets are visible and the others hidden; switching the type reconfigures live; the emitted
 	/// <see cref="FwSandboxMsa"/> payload reflects the picks per type; and the create-POS request forwards.
@@ -53,9 +53,9 @@ namespace FwAvaloniaDialogsTests
 		};
 
 		// Build, host, and pump a group box for the given type. Returns the box (and its hosting window for capture).
-		private static (FwMsaGroupBox box, Window window) Show(FwMsaType type)
+		private static (MSAGroupBox box, Window window) Show(FwMsaType type)
 		{
-			var box = new FwMsaGroupBox();
+			var box = new MSAGroupBox();
 			box.SetPosNodes(PosNodes());
 			box.SetSlots(Slots());
 			box.SetInflectionClasses(NounInflClasses());
@@ -475,9 +475,9 @@ namespace FwAvaloniaDialogsTests
 		};
 
 		// Build, host, and pump a group box of the given type with the POS + slot + feature feeds.
-		private static (FwMsaGroupBox box, Window window) ShowWithFeatures(FwMsaType type)
+		private static (MSAGroupBox box, Window window) ShowWithFeatures(FwMsaType type)
 		{
-			var box = new FwMsaGroupBox();
+			var box = new MSAGroupBox();
 			box.SetPosNodes(PosNodes());
 			box.SetSlots(Slots());
 			box.SetInflectionClasses(NounInflClasses());
@@ -635,7 +635,7 @@ namespace FwAvaloniaDialogsTests
 		[AvaloniaTest]
 		public void InflectionFeatures_ComplexScriptNames_NoCrowding()
 		{
-			var box = new FwMsaGroupBox();
+			var box = new MSAGroupBox();
 			box.SetPosNodes(PosNodes());
 			box.SetSlots(Slots());
 			// RTL / complex-script feature & value names (display safety).

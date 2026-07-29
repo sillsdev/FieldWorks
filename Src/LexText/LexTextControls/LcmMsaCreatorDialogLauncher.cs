@@ -20,9 +20,9 @@ namespace SIL.FieldWorks.LexText.Controls
 	/// The LCModel-aware launcher for the reusable Avalonia "Create New Grammatical Info." dialog — the
 	/// replacement for the legacy <see cref="MsaCreatorDlg"/> in New-UI mode. It is a concrete
 	/// <see cref="AvaloniaDialogLauncher{TState,TViewModel,TPayload}"/>: the Avalonia layer stays LCModel-free by
-	/// exchanging a <see cref="MsaCreatorDialogInput"/> (the read-only lexical entry + senses summary, the POS nodes /
+	/// exchanging a <see cref="MsaCreatorDlgInput"/> (the read-only lexical entry + senses summary, the POS nodes /
 	/// slot provider, and the box seeded from the existing <c>SandboxGenericMSA</c> / morph type) and a
-	/// <see cref="MsaCreatorPayload"/> (the chosen <see cref="FwSandboxMsa"/>). This launcher builds that state from
+	/// <see cref="MsaCreatorDlgPayload"/> (the chosen <see cref="FwSandboxMsa"/>). This launcher builds that state from
 	/// the live cache and, on OK, resolves the chosen <see cref="FwSandboxMsa"/> back into a real
 	/// <c>SandboxGenericMSA</c> (via the shared <see cref="LcmInsertEntryDialogLauncher.BuildSandboxMsa"/>), exposed
 	/// as <see cref="ChosenSandboxMsa"/>.
@@ -35,7 +35,7 @@ namespace SIL.FieldWorks.LexText.Controls
 	/// The Show overload returns null on cancel so the caller skips its UOW, mirroring the legacy <c>DialogResult</c>.
 	/// </summary>
 	public sealed class LcmMsaCreatorDialogLauncher
-		: AvaloniaDialogLauncher<MsaCreatorDialogInput, MsaCreatorDialogViewModel, MsaCreatorPayload>
+		: AvaloniaDialogLauncher<MsaCreatorDlgInput, MsaCreatorDlgViewModel, MsaCreatorDlgPayload>
 	{
 		private readonly LcmCache _cache;
 		private readonly Mediator _mediator;
@@ -46,7 +46,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		private readonly int _hvoOriginalMsa;
 		private readonly bool _useForEdit;
 		private readonly string _titleForEdit;
-		private MsaCreatorDialogViewModel _viewModel;
+		private MsaCreatorDlgViewModel _viewModel;
 		private IWin32Window _owner;
 
 		private LcmMsaCreatorDialogLauncher(LcmCache cache, Mediator mediator, PropertyTable propertyTable,
@@ -120,28 +120,28 @@ namespace SIL.FieldWorks.LexText.Controls
 		protected override string DialogTitle =>
 			_useForEdit && !string.IsNullOrEmpty(_titleForEdit) ? _titleForEdit : FwAvaloniaDialogsStrings.MsaCreatorTitle;
 		protected override bool Resizable => true;
-		// Wide enough to fit the FwMsaGroupBox's three-column affix layout (Affix Type + Attaches to Category +
+		// Wide enough to fit the MSAGroupBox's three-column affix layout (Affix Type + Attaches to Category +
 		// Fills Slot / Changes to Category) without clipping the trailing column caption.
 		protected override int DialogWidth => 500;
 		protected override int DialogHeight => 320;
 
-		protected override MsaCreatorDialogInput BuildState() =>
+		protected override MsaCreatorDlgInput BuildState() =>
 			BuildInput(_cache, _entry, _seedMsa, _hvoOriginalMsa, _useForEdit, _titleForEdit);
 
 		/// <summary>
-		/// Builds the LCModel-free <see cref="MsaCreatorDialogInput"/> from the live cache: the read-only lexical
+		/// Builds the LCModel-free <see cref="MsaCreatorDlgInput"/> from the live cache: the read-only lexical
 		/// entry headword (the legacy <c>m_fwtbCitationForm</c>), the read-only senses summary (the senses whose
 		/// MorphoSyntaxAnalysisRA is the original MSA — the legacy <c>m_fwtbSenses</c> loop, only on the edit path),
 		/// the project POS hierarchy + per-POS slot provider (shared with the Insert Entry launcher), and the box
 		/// seeded from <paramref name="seedMsa"/> (MsaType + POS/slot ids). Internal so the mapping is unit-testable.
 		/// </summary>
-		internal static MsaCreatorDialogInput BuildInput(LcmCache cache, ILexEntry entry, SandboxGenericMSA seedMsa,
+		internal static MsaCreatorDlgInput BuildInput(LcmCache cache, ILexEntry entry, SandboxGenericMSA seedMsa,
 			int hvoOriginalMsa, bool useForEdit, string titleForEdit)
 		{
 			// Pick the morph type that drives the slot filter (the entry's first allomorph, as the legacy box does).
 			var morphTypeGuid = LcmAddNewSenseDialogLauncher.FirstAllomorphMorphTypeGuid(entry);
 
-			return new MsaCreatorDialogInput
+			return new MsaCreatorDlgInput
 			{
 				Title = useForEdit && !string.IsNullOrEmpty(titleForEdit)
 					? titleForEdit : FwAvaloniaDialogsStrings.MsaCreatorTitle,
@@ -241,9 +241,9 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 		}
 
-		protected override MsaCreatorDialogViewModel CreateViewModel(MsaCreatorDialogInput state)
+		protected override MsaCreatorDlgViewModel CreateViewModel(MsaCreatorDlgInput state)
 		{
-			_viewModel = new MsaCreatorDialogViewModel(state);
+			_viewModel = new MsaCreatorDlgViewModel(state);
 			_viewModel.HelpRequested += OnHelpRequested;
 			_viewModel.CreateNewPosRequested += OnCreateNewPosRequested;
 			// Wire the inline create-feature / add-value affordances to
@@ -264,8 +264,8 @@ namespace SIL.FieldWorks.LexText.Controls
 			_viewModel.AcceptCreatedPos(target, node, LcmInsertEntryDialogLauncher.BuildPosNodes(_cache));
 		}
 
-		protected override AvControl CreateView(MsaCreatorDialogViewModel viewModel) =>
-			new MsaCreatorDialogView { DataContext = viewModel };
+		protected override AvControl CreateView(MsaCreatorDlgViewModel viewModel) =>
+			new MsaCreatorDlgView { DataContext = viewModel };
 
 		/// <summary>
 		/// Resolves the chosen grammatical info into a real <c>SandboxGenericMSA</c> (the legacy
@@ -273,9 +273,9 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// the caller applies it. Does NOT itself mutate the model — see the PARITY note on the class. Internal so the
 		/// resolution is unit-testable against a real cache.
 		/// </summary>
-		protected override MsaCreatorPayload Apply(MsaCreatorDialogInput state)
+		protected override MsaCreatorDlgPayload Apply(MsaCreatorDlgInput state)
 		{
-			var payload = _viewModel?.Result ?? MsaCreatorPayload.Empty;
+			var payload = _viewModel?.Result ?? MsaCreatorDlgPayload.Empty;
 			// The morph type drives the default MSA flavor when no explicit MSA was chosen (parity with the box's
 			// morph-type-driven default).
 			var morphTypeGuid = LcmAddNewSenseDialogLauncher.FirstAllomorphMorphTypeGuid(_entry);

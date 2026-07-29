@@ -21,7 +21,7 @@
     <DebugType>portable</DebugType>
   </PropertyGroup>
   <ItemGroup>
-    <!-- Compile-only Avalonia reference (the Options dialog launcher constructs the Avalonia OptionsDialogView
+    <!-- Compile-only Avalonia reference (the Options dialog launcher constructs the Avalonia LexOptionsDlgView
          and calls AvaloniaDialogHost); the runtime Avalonia assemblies ship via FwAvalonia in the shared
          output. IncludeAssets="none" on BuildServices keeps the AVA* analyzers out (see xWorks.csproj). -->
     <PackageReference Include="Avalonia" IncludeAssets="compile" PrivateAssets="all" />

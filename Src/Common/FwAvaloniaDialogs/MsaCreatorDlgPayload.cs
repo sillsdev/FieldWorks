@@ -6,14 +6,14 @@ namespace FwAvaloniaDialogs
 {
 	/// <summary>
 	/// The LCModel-free snapshot the "Create New Grammatical Info." view-model writes on OK — the chosen grammatical
-	/// info (the <see cref="FwSandboxMsa"/> the hosted <see cref="FwMsaGroupBox"/> emitted). The LCModel-aware
+	/// info (the <see cref="FwSandboxMsa"/> the hosted <see cref="MSAGroupBox"/> emitted). The LCModel-aware
 	/// launcher reads this back to find-or-create (or update) the matching MSA — the lift of <c>MsaCreatorDlg</c>'s
 	/// <c>SandboxMSA</c> property + its consumers (<c>m_sense.SandboxMSA = dlg.SandboxMSA</c> /
 	/// <c>originalMsa.UpdateOrReplace(dlg.SandboxMSA)</c>).
 	/// </summary>
-	public sealed class MsaCreatorPayload
+	public sealed class MsaCreatorDlgPayload
 	{
-		public MsaCreatorPayload(FwSandboxMsa msa)
+		public MsaCreatorDlgPayload(FwSandboxMsa msa)
 		{
 			Msa = msa;
 		}
@@ -26,6 +26,6 @@ namespace FwAvaloniaDialogs
 		public FwSandboxMsa Msa { get; }
 
 		/// <summary>An empty payload (no MSA) for a cancelled dialog.</summary>
-		public static MsaCreatorPayload Empty => new MsaCreatorPayload(null);
+		public static MsaCreatorDlgPayload Empty => new MsaCreatorDlgPayload(null);
 	}
 }
