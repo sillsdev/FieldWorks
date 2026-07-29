@@ -11,11 +11,11 @@ namespace FwAvaloniaDialogs
 	/// The product-supplied state for the "Manage Individual Features" dialog, carried across the
 	/// FwAvaloniaDialogs (Avalonia, LCModel-free) &#8596; product (LexText) boundary — mirrors
 	/// <see cref="OptionsState"/>'s DTO convention. The product edge builds <see cref="Groups"/> from
-	/// <c>LexicalEditFeatureCatalog</c> plus the persisted disabled-tools set; the dialog edits each
+	/// <c>LexiconFeatureCatalog</c> plus the persisted disabled-tools set; the dialog edits each
 	/// row's <see cref="FeatureOption.Enabled"/> directly through its two-way checkbox binding (no
 	/// separate apply step needed, same as <see cref="OptionsState"/>'s Plugins list).
 	/// </summary>
-	public sealed class LexicalEditFeatureManagerState
+	public sealed class LexiconFeatureManagerState
 	{
 		public IReadOnlyList<FeatureGroupOption> Groups { get; set; } = new List<FeatureGroupOption>();
 	}

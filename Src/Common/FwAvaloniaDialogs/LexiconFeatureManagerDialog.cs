@@ -11,12 +11,12 @@ using SIL.FieldWorks.Common.FwAvalonia;
 namespace FwAvaloniaDialogs
 {
 	/// <summary>
-	/// Avalonia analog of the old WinForms <c>LexicalEditFeatureManagerDlg</c>: call sites read like a plain
+	/// Avalonia analog of the old WinForms <c>LexiconFeatureManagerDlg</c>: call sites read like a plain
 	/// <c>MessageBox.Show</c>-style helper (mirrors <see cref="FwMessageBox"/>'s convention) but the dialog renders
-	/// in Avalonia (<see cref="LexicalEditFeatureManagerDialogView"/> + <see cref="LexicalEditFeatureManagerDialogViewModel"/>)
+	/// in Avalonia (<see cref="LexiconFeatureManagerDialogView"/> + <see cref="LexiconFeatureManagerDialogViewModel"/>)
 	/// hosted in a WinForms-owned modal window via <see cref="AvaloniaDialogHost.ShowModal"/>.
 	/// </summary>
-	public static class LexicalEditFeatureManagerDialog
+	public static class LexiconFeatureManagerDialog
 	{
 		/// <summary>
 		/// Shows the dialog modally over <paramref name="owner"/>, seeded from <paramref name="features"/>
@@ -27,12 +27,12 @@ namespace FwAvaloniaDialogs
 		/// existing set unchanged in that case).
 		/// </returns>
 		public static IReadOnlyList<string> Show(IWin32Window owner,
-			IEnumerable<LexicalEditFeatureDescriptor> features, IEnumerable<string> disabledToolNames)
+			IEnumerable<LexiconFeatureDescriptor> features, IEnumerable<string> disabledToolNames)
 		{
-			var state = new LexicalEditFeatureManagerState { Groups = BuildGroups(features, disabledToolNames) };
+			var state = new LexiconFeatureManagerState { Groups = BuildGroups(features, disabledToolNames) };
 
-			var viewModel = new LexicalEditFeatureManagerDialogViewModel(state);
-			var view = new LexicalEditFeatureManagerDialogView { DataContext = viewModel };
+			var viewModel = new LexiconFeatureManagerDialogViewModel(state);
+			var view = new LexiconFeatureManagerDialogView { DataContext = viewModel };
 
 			var accepted = AvaloniaDialogHost.ShowModal(owner, view, viewModel,
 				FwAvaloniaDialogsStrings.FeatureManagerTitle, 460, 440, resizable: true, minWidth: 380, minHeight: 340);
@@ -51,7 +51,7 @@ namespace FwAvaloniaDialogs
 		/// <see cref="ExtractDisabledToolNames"/>'s output, so a round trip through this dialog silently drops it.
 		/// </summary>
 		public static IReadOnlyList<FeatureGroupOption> BuildGroups(
-			IEnumerable<LexicalEditFeatureDescriptor> features, IEnumerable<string> disabledToolNames)
+			IEnumerable<LexiconFeatureDescriptor> features, IEnumerable<string> disabledToolNames)
 		{
 			if (features == null) throw new ArgumentNullException(nameof(features));
 

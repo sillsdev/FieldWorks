@@ -57,22 +57,22 @@ namespace FwAvaloniaDialogs
 
 	/// <summary>
 	/// View-model for the "Manage Individual Features" dialog (PR #964 review follow-up; replaces the
-	/// WinForms <c>LexicalEditFeatureManagerDlg</c>, whose hand-rolled <see cref="System.Windows.Forms.FlowLayoutPanel"/>
+	/// WinForms <c>LexiconFeatureManagerDlg</c>, whose hand-rolled <see cref="System.Windows.Forms.FlowLayoutPanel"/>
 	/// + absolute-positioned child <see cref="System.Windows.Forms.Panel"/> rows corrupted their own layout
 	/// on a checkbox click). Lets a user opt individual New-UI tool surfaces back out (the master
 	/// UIMode=New switch defaults every catalog tool on), grouped and searchable by name/description.
-	/// Edits a product-supplied <see cref="LexicalEditFeatureManagerState"/> so the Avalonia layer stays
+	/// Edits a product-supplied <see cref="LexiconFeatureManagerState"/> so the Avalonia layer stays
 	/// LCModel-free; each row's <see cref="FeatureOption.Enabled"/> is written through its two-way
 	/// checkbox binding directly onto the state (mirrors <c>OptionsDialogViewModel</c>'s Plugins
 	/// convention), so there is no separate <c>ApplyChanges</c> override.
 	/// </summary>
-	public sealed partial class LexicalEditFeatureManagerDialogViewModel : DialogViewModelBase
+	public sealed partial class LexiconFeatureManagerDialogViewModel : DialogViewModelBase
 	{
-		public LexicalEditFeatureManagerDialogViewModel() : this(new LexicalEditFeatureManagerState())
+		public LexiconFeatureManagerDialogViewModel() : this(new LexiconFeatureManagerState())
 		{
 		}
 
-		public LexicalEditFeatureManagerDialogViewModel(LexicalEditFeatureManagerState state)
+		public LexiconFeatureManagerDialogViewModel(LexiconFeatureManagerState state)
 		{
 			Groups = new ObservableCollection<FeatureGroupViewModel>(
 				(state?.Groups ?? Array.Empty<FeatureGroupOption>()).Select(g => new FeatureGroupViewModel(g)));

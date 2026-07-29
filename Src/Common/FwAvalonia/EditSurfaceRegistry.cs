@@ -26,9 +26,9 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 		// editors register via an area/persistContext predicate, not enumerated here.
 		// The composed detail-editor tools ship ON — all still
 		// gated behind UIMode=New (off by default), so no visible change to existing users.
-		// Sourced from LexicalEditFeatureCatalog — the single list of "tools with a working Avalonia
+		// Sourced from LexiconFeatureCatalog — the single list of "tools with a working Avalonia
 		// surface today," also used to build the per-tool checkbox list in the feature-manager dialog.
-		private static readonly string[] DefaultSupportedTools = ToArray(LexicalEditFeatureCatalog.ToolNames);
+		private static readonly string[] DefaultSupportedTools = ToArray(LexiconFeatureCatalog.ToolNames);
 
 		private static string[] ToArray(IReadOnlyList<string> source)
 		{
