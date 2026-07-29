@@ -14,7 +14,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 	/// states) lives in the reusable <see cref="AvaloniaRegionHostControl"/> base; this class
 	/// adds only the lexical-edit region projection and its per-host splitter memory.
 	/// </summary>
-	public sealed class LexicalEditHostControl : AvaloniaRegionHostControl
+	public sealed class RegionHostControl : AvaloniaRegionHostControl
 	{
 		// The splitter (label/value column) width the user dragged, remembered across re-shows for
 		// THIS host only — deliberately per-instance, never a process-global static. Used only
@@ -23,9 +23,9 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 		// also survives across SESSIONS, mirroring legacy slice-splitter persistence.
 		private double? _rememberedLabelColumnWidth;
 
-		public LexicalEditHostControl()
+		public RegionHostControl()
 		{
-			Name = "LexicalEditHostControl";
+			Name = "RegionHostControl";
 			AccessibleName = "RecordEditView.AvaloniaHost";
 			AccessibleDescription = FwAvaloniaStrings.AvaloniaHostName;
 		}

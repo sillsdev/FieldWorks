@@ -44,9 +44,9 @@ namespace SIL.FieldWorks.XWorks
 
 		private string LexemeText => m_entry.LexemeFormOA.Form.get_String(Cache.DefaultVernWs).Text;
 
-		private LexicalEditRegionEditContext OpenSessionWith(string text)
+		private LexiconFirstSliceEditContext OpenSessionWith(string text)
 		{
-			var context = new LexicalEditRegionEditContext(m_entry, Cache);
+			var context = new LexiconFirstSliceEditContext(m_entry, Cache);
 			Assert.That(context.TrySetText(RegionEditContextEditingTests.F("Form"), "vern", text), Is.True);
 			Assert.That(context.IsOpen, Is.True);
 			return context;
@@ -119,7 +119,7 @@ namespace SIL.FieldWorks.XWorks
 
 		// Each undo test needs a PRIOR committed bundle (CanUndo requires one) and must never leak
 		// an open session into the shared fixture cache, hence the try/finally shape.
-		private void WithPriorUndoStepAndOpenSession(Action<LexicalEditRegionEditContext> test)
+		private void WithPriorUndoStepAndOpenSession(Action<LexiconFirstSliceEditContext> test)
 		{
 			UndoableUnitOfWorkHelper.Do("Undo seed", "Redo seed", Cache.ActionHandlerAccessor, () =>
 				m_entry.CitationForm.set_String(Cache.DefaultVernWs,

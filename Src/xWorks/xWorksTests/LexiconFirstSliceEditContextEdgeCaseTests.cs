@@ -19,7 +19,7 @@ namespace SIL.FieldWorks.XWorks
 	/// and commit/cancel idempotency — plus the browse ws-spec normalizer.
 	/// </summary>
 	[TestFixture]
-	public class LexicalEditRegionEditContextEdgeCaseTests : MemoryOnlyBackendProviderTestBase
+	public class LexiconFirstSliceEditContextEdgeCaseTests : MemoryOnlyBackendProviderTestBase
 	{
 		private ILexEntry MakeEntryWithLexemeAndSense(string lexeme, string gloss)
 		{
@@ -69,7 +69,7 @@ namespace SIL.FieldWorks.XWorks
 		public void TrySetText_Gloss_WhenNoSense_IsRejected()
 		{
 			var entry = MakeEntryNoSense("casa");
-			var context = new LexicalEditRegionEditContext(entry, Cache);
+			var context = new LexiconFirstSliceEditContext(entry, Cache);
 			Assert.That(context.TrySetText(Field("Gloss"), "anal", "house"), Is.False,
 				"an entry with no sense has no gloss to write");
 			Assert.That(context.IsOpen, Is.False, "a rejected write opens no session");
@@ -79,7 +79,7 @@ namespace SIL.FieldWorks.XWorks
 		public void TrySetText_Form_WhenNoLexemeForm_WritesCitationForm()
 		{
 			var entry = MakeEntryNoLexemeForm("kanji");
-			var context = new LexicalEditRegionEditContext(entry, Cache);
+			var context = new LexiconFirstSliceEditContext(entry, Cache);
 			Assert.That(context.TrySetText(Field("Form"), "vern", "kana"), Is.True);
 			context.Commit();
 			Assert.That(entry.CitationForm.get_String(Cache.DefaultVernWs).Text, Is.EqualTo("kana"),
@@ -90,7 +90,7 @@ namespace SIL.FieldWorks.XWorks
 		public void TrySetText_BlankWs_IsRejected_NoSilentDefaultWrite()
 		{
 			var entry = MakeEntryWithLexemeAndSense("casa", "house");
-			var context = new LexicalEditRegionEditContext(entry, Cache);
+			var context = new LexiconFirstSliceEditContext(entry, Cache);
 			Assert.That(context.TrySetText(Field("Form"), "", "x"), Is.False, "a blank ws does not resolve");
 			Assert.That(entry.LexemeFormOA.Form.get_String(Cache.DefaultVernWs).Text, Is.EqualTo("casa"),
 				"no write leaked to the default writing system");
@@ -100,7 +100,7 @@ namespace SIL.FieldWorks.XWorks
 		public void TrySetText_UnknownField_IsRejected()
 		{
 			var entry = MakeEntryWithLexemeAndSense("casa", "house");
-			var context = new LexicalEditRegionEditContext(entry, Cache);
+			var context = new LexiconFirstSliceEditContext(entry, Cache);
 			Assert.That(context.TrySetText(Field("Bogus"), "vern", "x"), Is.False);
 		}
 
@@ -108,7 +108,7 @@ namespace SIL.FieldWorks.XWorks
 		public void Validate_WhitespaceOnlyLexeme_IsAnError()
 		{
 			var entry = MakeEntryWithLexemeAndSense("casa", "house");
-			var context = new LexicalEditRegionEditContext(entry, Cache);
+			var context = new LexiconFirstSliceEditContext(entry, Cache);
 			Assert.That(context.TrySetText(Field("Form"), "vern", "   "), Is.True, "whitespace stages");
 			Assert.That(context.Validate(), Is.Not.Empty, "a whitespace-only lexeme form fails validation");
 		}
@@ -117,7 +117,7 @@ namespace SIL.FieldWorks.XWorks
 		public void CommitOrCancel_WithoutAnyEdit_AreNoOps()
 		{
 			var entry = MakeEntryWithLexemeAndSense("casa", "house");
-			var context = new LexicalEditRegionEditContext(entry, Cache);
+			var context = new LexiconFirstSliceEditContext(entry, Cache);
 			Assert.That(context.IsOpen, Is.False);
 			Assert.DoesNotThrow(() => context.Commit(), "commit without an open session is a no-op");
 			Assert.DoesNotThrow(() => context.Cancel(), "cancel without an open session is a no-op");

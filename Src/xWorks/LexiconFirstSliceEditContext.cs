@@ -18,9 +18,9 @@ namespace SIL.FieldWorks.XWorks
 	/// (`Form`/`Gloss`/`MorphType`). Detached DTO editing remains preview-only; this context is the
 	/// real domain write path.
 	/// </summary>
-	public sealed class LexicalEditRegionEditContext : RegionEditContextBase
+	public sealed class LexiconFirstSliceEditContext : RegionEditContextBase
 	{
-		public LexicalEditRegionEditContext(ILexEntry entry, LcmCache cache)
+		public LexiconFirstSliceEditContext(ILexEntry entry, LcmCache cache)
 			: base(cache, entry)
 		{
 		}

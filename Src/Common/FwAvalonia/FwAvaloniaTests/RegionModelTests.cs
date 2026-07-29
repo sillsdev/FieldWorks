@@ -17,7 +17,7 @@ namespace FwAvaloniaTests
 {
 	/// <summary>
 	/// A fake value provider so the mapper can be tested without LCModel. The LCModel-backed provider
-	/// lives in xWorks (<c>LexicalEditRegionBuilder</c>).
+	/// lives in xWorks (<c>LexiconEditErrorFallback</c>).
 	/// </summary>
 	internal sealed class FakeRegionValueProvider : IRegionValueProvider
 	{
