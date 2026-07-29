@@ -4,7 +4,7 @@
 
 using System;
 using NUnit.Framework;
-using SIL.FieldWorks.Common.FwAvalonia.Seams;
+using SIL.FieldWorks.Common.FwAvalonia.Region;
 using SIL.FieldWorks.Common.FwAvalonia.ViewDefinition;
 using SIL.LCModel;
 

@@ -4,7 +4,6 @@
 
 using System;
 using Avalonia;
-using SIL.FieldWorks.Common.FwAvalonia.Seams;
 
 namespace SIL.FieldWorks.Common.FwAvalonia
 {
