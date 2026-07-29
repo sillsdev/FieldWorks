@@ -21,7 +21,7 @@ using SIL.FieldWorks.Common.FwAvalonia.ViewDefinition;
 namespace FwAvaloniaTests
 {
 	/// <summary>
-	/// Section 13.1 — the importer captures the legacy menu bindings (`menu=`, `contextMenu=`,
+	/// The importer captures the legacy menu bindings (`menu=`, `contextMenu=`,
 	/// `hotlinks=`) into the typed IR, from both the caller part ref and the slice/seq content,
 	/// so the Avalonia surface can show the SAME xCore-defined menus legacy DTMenuHandler shows.
 	/// </summary>
@@ -99,7 +99,7 @@ namespace FwAvaloniaTests
 	}
 
 	/// <summary>
-	/// Section 13.3 — right-click on the Avalonia surface raises a <see cref="RegionMenuRequest"/>
+	/// Right-click on the Avalonia surface raises a <see cref="RegionMenuRequest"/>
 	/// through the host bridge with the legacy menu binding and screen coordinates: labels/headers
 	/// raise the slice menu (or hotlinks when only those exist), value boxes with a `contextMenu=`
 	/// binding raise the in-string context menu, and unbound rows raise nothing (they keep the
@@ -184,7 +184,7 @@ namespace FwAvaloniaTests
 		{
 			var (view, requests) = Show(Field("Gloss", RegionFieldKind.Text, menuId: "mnuDataTree-Help"));
 
-			// Right-click was retired in favor of the "⋮" button — the label no longer opens the menu.
+			// The label does not open the menu; the "⋮" field-options button does.
 			RightClick(Find<TextBlock>(view, "Gloss.Label"));
 
 			Assert.That(requests, Is.Empty, "the slice menu now opens only from the field-options button");
@@ -267,7 +267,7 @@ namespace FwAvaloniaTests
 				"a header carrying only a slice menu (no hotlinks) gets no inline command strip");
 		}
 
-		// 15.2 — exactly one menu: a bridged value box must NOT keep the TextBox theme flyout
+		// Exactly one menu: a bridged value box must NOT keep the TextBox theme flyout
 		// (Cut/Copy/Paste) that otherwise opens alongside the bridged menu; unbound boxes keep
 		// the local Copy flyout.
 		[AvaloniaTest]
@@ -320,7 +320,7 @@ namespace FwAvaloniaTests
 			Assert.That(kebab.IsHitTestVisible, Is.True, "keyboard focus reveals the field-options button");
 		}
 
-		// 15.1 — the host-resolved xCore items render as a native Avalonia flyout: items in order,
+		// The host-resolved xCore items render as a native Avalonia flyout: items in order,
 		// separators, submenus, disabled state, checkmarks, and click dispatching the execute action.
 		[AvaloniaTest]
 		public void RegionMenuFlyout_BuildsItems_AndClickExecutes()

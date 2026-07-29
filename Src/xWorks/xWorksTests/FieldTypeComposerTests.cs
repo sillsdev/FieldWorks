@@ -16,7 +16,7 @@ using SIL.LCModel.Infrastructure;
 namespace SIL.FieldWorks.XWorks
 {
 	/// <summary>
-	/// §19e (composer, real LCModel) — the per-field writing-system visibility override restricts the
+	/// Composer path (real LCModel): the per-field writing-system visibility override restricts the
 	/// displayed writing systems, and the show-hidden toggle reveals/omits visibility=never fields. The
 	/// composer is the real product path; custom fields give us a plain entry the way the legacy generated
 	/// layout does.
@@ -63,7 +63,7 @@ namespace SIL.FieldWorks.XWorks
 			return fd.Id;
 		}
 
-		// ---- Per-field writing-system visibility override (E10/C9) ----
+		// ---- Per-field writing-system visibility override ----
 
 		[Test]
 		public void PerFieldWs_LimitsDisplayedWritingSystems_OneVsMany()

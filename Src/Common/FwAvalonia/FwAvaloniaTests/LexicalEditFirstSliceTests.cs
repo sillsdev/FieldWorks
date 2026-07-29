@@ -12,7 +12,7 @@ using SIL.FieldWorks.Common.FwAvalonia.ViewDefinition;
 namespace FwAvaloniaTests
 {
 	/// <summary>
-	/// Task 4.10: the product first-slice definition is compiled from the live shipped layout inventory
+	/// The product first-slice definition is compiled from the live shipped layout inventory
 	/// (not hand-authored), with stable ids derived from the real layout paths.
 	/// </summary>
 	[TestFixture]

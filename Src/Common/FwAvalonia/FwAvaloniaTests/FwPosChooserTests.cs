@@ -23,12 +23,12 @@ using FwAvaloniaDialogsTests;        // DialogLayoutAssert — the shared geomet
 namespace FwAvaloniaTests
 {
 	/// <summary>
-	/// The reusable, LCModel-free hierarchical Part-of-Speech chooser (FwPosChooser): the Avalonia
-	/// replacement for the WinForms TreeCombo + POSPopupTreeManager pair (MSAGroupBox's Main/Secondary
+	/// The reusable, LCModel-free hierarchical Part-of-Speech chooser (FwPosChooser), the counterpart
+	/// to the WinForms TreeCombo + POSPopupTreeManager pair (MSAGroupBox's Main/Secondary
 	/// POS pickers). Collapsed by default showing the selected POS (or a "not specified" prompt); opens a
 	/// hierarchical tree popup ON TOP on click; picking a node commits + collapses + raises
 	/// SelectionChanged; type-ahead filter and keyboard nav; the inline "Create a new Part of Speech..."
-	/// row raises CreateNewPosRequested (the actual create-POS flow is deferred to Stage 3).
+	/// row raises CreateNewPosRequested.
 	/// </summary>
 	[TestFixture]
 	public class FwPosChooserTests

@@ -19,7 +19,7 @@ using SIL.FieldWorks.Common.FwAvalonia.ViewDefinition;
 namespace FwAvaloniaDialogsTests
 {
 	/// <summary>
-	/// The reusable Add New Sense dialog (MSA-port Stage 5): the Avalonia replacement for the legacy AddNewSenseDlg
+	/// The reusable Add New Sense dialog: the Avalonia replacement for the legacy AddNewSenseDlg
 	/// in New-UI mode. The view-model hosts a read-only citation form, an editable gloss FwMultiWsTextField (staged
 	/// into an in-memory edit context), and the LCModel-free FwMsaGroupBox; it gates OK on a non-empty gloss
 	/// (ksFillInGloss parity) and snapshots the per-WS gloss + the box's FwSandboxMsa on OK. Runtime proof on a

@@ -37,7 +37,7 @@ namespace LexTextControlsTests
 			_verb = MakePos("Verb");
 			_noun = MakePos("Noun");
 
-			// An inflectable closed feature on the verb (Tense {past}) for the §19b inflection-feature edit-path seed.
+			// An inflectable closed feature on the verb (Tense {past}) for the inflection-feature edit-path seed.
 			_tenseFeature = Cache.ServiceLocator.GetInstance<IFsClosedFeatureFactory>().Create();
 			Cache.LangProject.MsFeatureSystemOA.FeaturesOC.Add(_tenseFeature);
 			_tenseFeature.Name.set_String(Cache.DefaultAnalWs, "Tense");
@@ -121,7 +121,7 @@ namespace LexTextControlsTests
 			Assert.That(resolved.MainPOS, Is.SameAs(_noun), "the chosen main POS id resolves to the live POS");
 		}
 
-		// ----- inflection-class feed + seed (Stage 6) -----
+		// ----- inflection-class feed + seed -----
 
 		[Test]
 		public void BuildInput_FeedsTheInflectionClassProviderAndSeedsFromAnExistingStemMsa()
@@ -212,7 +212,7 @@ namespace LexTextControlsTests
 				Is.Null, "an MSA type with no inflection-class concept seeds none, rather than failing");
 		}
 
-		// ----- inflection-feature feed + seed from an existing MSA (§19b Stage 2 edit path) -----
+		// ----- inflection-feature feed + seed from an existing MSA (edit path) -----
 
 		[Test]
 		public void BuildInput_FeedsTheInflectionFeatureProviderAndSeedsFromAnExistingInflMsa()

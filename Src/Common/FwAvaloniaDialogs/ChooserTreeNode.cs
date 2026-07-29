@@ -11,11 +11,11 @@ using SIL.FieldWorks.Common.FwAvalonia.Region;
 namespace FwAvaloniaDialogs
 {
 	/// <summary>
-	/// One node in the chooser's collapsible tree (Phase 2): a <see cref="RegionChoiceOption"/> (key = guid string,
+	/// One node in the chooser's collapsible tree: a <see cref="RegionChoiceOption"/> (key = guid string,
 	/// name = display text) plus its child nodes, built from the candidates' <see cref="RegionChoiceOption.Depth"/>
 	/// sequence by <see cref="ChooserTreeBuilder"/>. <see cref="IsChecked"/> backs the multi-select checkbox — checks
 	/// are INDEPENDENT per node (checking a parent does NOT cascade to children), matching the legacy
-	/// <c>ReallySimpleListChooser</c> default (its only cascade is the Ctrl-modifier path, which Phase 2 omits).
+	/// <c>ReallySimpleListChooser</c> default (its only cascade is the Ctrl-modifier path, which this chooser omits).
 	/// An <see cref="ObservableObject"/> so the tree view's compiled bindings (Name, IsChecked, IsExpanded) update
 	/// live as the user expands/collapses and checks.
 	/// </summary>
@@ -55,7 +55,7 @@ namespace FwAvaloniaDialogs
 	}
 
 	/// <summary>
-	/// Builds the chooser's tree (Phase 2) from candidates that arrive in DOCUMENT ORDER carrying a
+	/// Builds the chooser's tree from candidates that arrive in DOCUMENT ORDER carrying a
 	/// <see cref="RegionChoiceOption.Depth"/> level (0 for top-level, +1 per nesting). The Depth sequence fully
 	/// determines the tree: a candidate at depth D is a child of the most recent earlier candidate at depth D-1
 	/// (the running parent at the level above). This mirrors how <c>LcmChooserDialogLauncher.BuildCandidates</c>

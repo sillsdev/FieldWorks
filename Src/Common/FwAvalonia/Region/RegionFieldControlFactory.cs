@@ -100,7 +100,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 					return new FwReferenceVectorField(field, automationId, context.EditContext,
 						context.EditContext == null ? null : context.Save, context.LinkRequested);
 				case RegionFieldKind.StructuredText:
-					// §19a: an editable multi-paragraph StText field. Per-paragraph text edits stage and
+					// An editable multi-paragraph StText field. Per-paragraph text edits stage and
 					// ride the focus-loss autosave; structural gestures (add/delete/style) commit
 					// immediately through the SAME validation-gated Save the reference vector uses, whose
 					// re-show rebuilds the paragraph rows from domain truth (the Paragraphs list is a
@@ -121,7 +121,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 			}
 		}
 
-		// §19e — Literal / "lit" slice (legacy MessageSlice): static read-only label text in the value
+		// Literal / "lit" slice (legacy MessageSlice): static read-only label text in the value
 		// column (the label/message text IS the content). No edit affordance, no value binding.
 		private static Control BuildLiteral(LexicalEditRegionField field, string automationId)
 		{
@@ -139,7 +139,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 			return block;
 		}
 
-		// winforms-free-lexeme-editor.md D1: a plugin-claimed custom slice renders its plugin's own Avalonia
+		// A plugin-claimed custom slice renders its plugin's own Avalonia
 		// control in the value column, at the slice's real position. Null guard: a missing, null-returning,
 		// or throwing factory degrades to the explicit unsupported row — never a crash, never a silently
 		// blank row.

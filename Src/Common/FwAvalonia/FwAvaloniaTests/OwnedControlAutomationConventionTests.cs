@@ -17,7 +17,7 @@ using SIL.FieldWorks.Common.FwAvalonia.ViewDefinition;
 namespace FwAvaloniaTests
 {
 	/// <summary>
-	/// Stage 1.5 (developer-enablement kit) convention guard: owned field controls MUST stamp a stable,
+	/// Convention guard: owned field controls MUST stamp a stable,
 	/// nonlocalized <c>AutomationId</c> derived from the field's stable id, a localized <c>Name</c>, and
 	/// per-writing-system value boxes suffixed under that id. The stamping is implemented in
 	/// <c>FwFieldControls</c>; this test makes the convention executable (a convention that is

@@ -10,8 +10,7 @@ using SIL.FieldWorks.Common.FwAvalonia.Region;
 namespace FwAvaloniaDialogs
 {
 	/// <summary>
-	/// The LCModel-free input to the reusable Avalonia Add New Sense dialog — the MSA-port Stage 5 replacement for
-	/// the legacy <c>AddNewSenseDlg</c> in New-UI mode. The product edge (the LexText launcher) builds this from the
+	/// The LCModel-free input to the reusable Avalonia Add New Sense dialog. The product edge (the LexText launcher) builds this from the
 	/// live cache so the Avalonia layer never sees an <c>ICmObject</c>: the read-only CITATION FORM is a plain
 	/// display string (the legacy <c>m_fwtbCitationForm</c>, never edited), the editable GLOSS is projected as a
 	/// per-analysis-WS <see cref="LexicalEditRegionField"/> (the legacy <c>m_fwtbGloss</c>), and the
@@ -38,7 +37,7 @@ namespace FwAvaloniaDialogs
 		/// <summary>The prompt shown above the fields (localized by the caller); null/empty hides it.</summary>
 		public string Prompt { get; set; }
 
-		/// <summary>The help topic id for the dialog's Help button (null/empty hides Help). Phase 1 carries it only.</summary>
+		/// <summary>The help topic id for the dialog's Help button (null/empty hides Help).</summary>
 		public string HelpTopic { get; set; }
 
 		// ----- grammatical-info (MSA) section (mirrors InsertEntryDialogInput) -----
@@ -78,8 +77,7 @@ namespace FwAvaloniaDialogs
 		/// Builds the inflection-feature SYSTEM (a flat, document-order, depth-tagged <see cref="FwFeatureNode"/> list)
 		/// for a given main-POS id (guid string) — the launcher wraps the POS's <c>InflectableFeatsRC</c> (the lift of
 		/// <c>MsaInflectionFeatureListDlg.PopulateTreeFromPos</c>). Re-run when the MSA box's MAIN POS changes
-		/// (infl/deriv), refeeding <see cref="FwMsaGroupBox.SetInflectionFeatureNodes"/>. Null leaves the editor empty
-		/// (Phase-1 §19b Stage 2).
+		/// (infl/deriv), refeeding <see cref="FwMsaGroupBox.SetInflectionFeatureNodes"/>. Null leaves the editor empty.
 		/// </summary>
 		public Func<string, IReadOnlyList<FwFeatureNode>> InflectionFeaturesForPos { get; set; }
 

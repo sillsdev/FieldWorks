@@ -19,7 +19,7 @@ using XCore;
 namespace SIL.FieldWorks.XWorks
 {
 	/// <summary>
-	/// Task 3.12 — the bidirectional selection bridge. Proves on the real product host that
+	/// The bidirectional selection bridge. Proves on the real product host that
 	/// <c>RecordClerkNavigationContext</c> follows the clerk's actual mediator broadcast (no manual
 	/// handler calls) and publishes a surface-originated selection back through the same bus.
 	/// </summary>

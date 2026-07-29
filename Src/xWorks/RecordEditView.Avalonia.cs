@@ -33,8 +33,8 @@ namespace SIL.FieldWorks.XWorks
 	/// The Avalonia half of <see cref="RecordEditView"/>: everything that only exists because a
 	/// record can be shown on the new <see cref="LexicalEditHostControl"/> surface instead of the
 	/// legacy <see cref="DataTree"/>. Kept in its own file (mirroring this codebase's
-	/// Form/Form.Designer.cs split) so the legacy-facing file stays a small, reviewable diff over
-	/// the pre-Avalonia original; nothing here changes behavior when <c>UIMode</c> is Legacy.
+	/// Form/Form.Designer.cs split) so the legacy-facing file stays small; nothing here
+	/// changes behavior when <c>UIMode</c> is Legacy.
 	/// </summary>
 	public partial class RecordEditView
 	{
@@ -47,25 +47,23 @@ namespace SIL.FieldWorks.XWorks
 		// open undo task is never orphaned (an orphan makes the shutdown Save throw "Commit at wrong place").
 		private readonly RegionEditContextHolder m_regionEditContext = new RegionEditContextHolder();
 		private AvaloniaRegionRefreshController m_avaloniaRefreshController;
-		// advanced-entry-view: the per-project home of the sparse view-definition override patches that
+		// The per-project home of the sparse view-definition override patches that
 		// drive the Avalonia surface's per-field Field Visibility / Move Field commands. Lazily built from
 		// the project ConfigurationSettings folder; the Avalonia surface reads it at Compose and the gear
 		// menu writes it. The legacy WinForms DataTree path NEVER touches this — it keeps its Inventory
 		// store untouched.
 		private ViewDefinitionOverrideStore m_viewOverrideStore;
-		// 13.4: the approved baseline-adapter ids — the ONLY routes allowed to drive hidden legacy
-		// infrastructure while Avalonia is active. Keep in sync with the region manifest's
-		// allowedAdapters (openspec/changes/lexical-edit-avalonia-migration/region-manifest.md);
-		// hardcoded here because the manifest is documentation, not yet machine-readable.
+		// The approved baseline-adapter ids — the ONLY routes allowed to drive hidden legacy
+		// infrastructure while Avalonia is active.
 		internal const string CommandMenuRoutingAdapterId = "command-menu-routing";
 		private static readonly string[] ApprovedBaselineAdapters = { CommandMenuRoutingAdapterId };
-		// The active-host contract (task 3.10) for the CURRENT surface, kept in sync with every
+		// The active-host contract for the CURRENT surface, kept in sync with every
 		// m_lexicalEditSurface assignment (SetLexicalEditSurface) from the approved set above.
 		// Assert sites only pass the adapter id they claim, so an unlisted id actually trips — a
 		// contract constructed at the assert site from the very id it then asserts could never fail.
 		private ActiveHostContract m_activeHostContract;
 
-		// Viewing parity (11.8): expansion state persists per header stable id — in-session through the
+		// Viewing parity: expansion state persists per header stable id — in-session through the
 		// dictionary, across sessions through PropertyTable local settings, the legacy ExpansionStateKey
 		// behavior. Per-instance deliberately: a process-wide static would leak state across
 		// projects/windows for the app lifetime.
@@ -77,7 +75,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
-		/// Auto-save (14.4): settles any open fenced edit session — commit when validation is
+		/// Auto-save: settles any open fenced edit session — commit when validation is
 		/// clean, roll back otherwise. The holder guards internally (no-op when nothing is open),
 		/// so this is idempotent and safe to call unconditionally from ANY host path — including
 		/// while the legacy surface is active, when no fenced session can be open.
@@ -101,7 +99,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
-		/// ITEM 2 (invalid-edit-on-navigate UX): the host's response when <see cref="Settle"/> rolled
+		/// The host's response when <see cref="Settle"/> rolled
 		/// back a pending lexical edit because it failed validation. The data was already rolled back
 		/// safely; this only tells the user WHY, so a cleared-required-field edit is not silently lost
 		/// on navigate/close. The host is the sanctioned WinForms carve-out (the Avalonia pane stays
@@ -123,7 +121,7 @@ namespace SIL.FieldWorks.XWorks
 		/// The ordering-sensitive teardown of the Avalonia surface plumbing — this is the ONE
 		/// place that ordering lives. Teardown order matters: stop the event/notification
 		/// plumbing FIRST so the settle's commit/rollback PropChanged cannot re-enter a dying
-		/// view, then settle (auto-save 14.4 extends to teardown: a valid pending edit commits,
+		/// view, then settle (auto-save extends to teardown: a valid pending edit commits,
 		/// invalid rolls back), then drop the context, and only then dispose the companions and
 		/// the host control itself.
 		/// </summary>
@@ -146,7 +144,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
-		/// The bidirectional selection bridge for this host's clerk (task 3.12). Created on first use so
+		/// The bidirectional selection bridge for this host's clerk. Created on first use so
 		/// the clerk is initialized. Surfaces (including the Avalonia host) follow the current-record bus
 		/// through its event and publish their own selection back through it.
 		/// </summary>
@@ -162,7 +160,7 @@ namespace SIL.FieldWorks.XWorks
 
 		private LexicalEditSurface ResolveConfiguredLexicalEditSurface()
 		{
-			// Task 3.9: route the per-host decision through the explicit selection service rather than
+			// Route the per-host decision through the explicit selection service rather than
 			// inferring product routing ad hoc from settings/PropertyTable state.
 			var uiMode = m_propertyTable != null
 				? m_propertyTable.GetStringProperty(LexicalEditSurfaceResolver.UIModePropertyName, LexicalEditSurfaceResolver.LegacyUIMode)
@@ -198,7 +196,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
-		/// Task 3.15: subscribe the Avalonia surface to the real PropChanged bus so external edits to
+		/// Subscribe the Avalonia surface to the real PropChanged bus so external edits to
 		/// the displayed entry (legacy surfaces, refresh-driven reloads) re-resolve the region.
 		/// Refreshes are held while this surface's own edit session is open and delivered on completion.
 		/// </summary>
@@ -223,7 +221,7 @@ namespace SIL.FieldWorks.XWorks
 			// Global Undo/Redo while a fenced session is open would re-enter the UOW write lock
 			// (LockRecursionException); the guard settles the pending edit instead.
 			m_regionEditContext.AttachUndoGuard(Cache.ActionHandlerAccessor);
-			// ITEM 2 (invalid-edit-on-navigate UX): when Settle rolls back a pending edit because it
+			// When Settle rolls back a pending edit because it
 			// failed validation (e.g. the required lexeme form was cleared, then the user navigated
 			// away), tell the user WHY rather than discarding it silently. The rollback still happens
 			// (the safe close that keeps the open undo task from stranding); we only surface the reason.
@@ -236,7 +234,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
-		/// The lexical host's refresh relevance (task 3.15): a change is relevant when the changed
+		/// The lexical host's refresh relevance: a change is relevant when the changed
 		/// object is, or is owned by, the entry on display. This is the predicate the host injects
 		/// into <see cref="AvaloniaRegionRefreshController"/>; static and internal so it is
 		/// unit-testable without a live view.
@@ -245,11 +243,10 @@ namespace SIL.FieldWorks.XWorks
 		{
 			if (changed == null || current == null)
 				return false;
-			// §20.1.3: class-agnostic — a change is "within" the displayed record when the changed object IS
-			// the record or is OWNED (at any depth) by it. The old code special-cased ILexEntry via
-			// OwnerOfClass<ILexEntry>(); walking the owner chain up to the current record is equivalent for an
-			// entry root AND correct for any other record class (RnGenericRec, CmPossibility, …) so their edits
-			// also trigger the coalesced refresh.
+			// Class-agnostic — a change is "within" the displayed record when the changed object IS
+			// the record or is OWNED (at any depth) by it. Walking the owner chain up to the current
+			// record is correct for an entry root AND for any other record class (RnGenericRec,
+			// CmPossibility, …), so their edits also trigger the coalesced refresh.
 			for (var o = changed; o != null; o = o.Owner)
 				if (o.Hvo == current.Hvo)
 					return true;
@@ -289,12 +286,12 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		private void ShowAvaloniaEntry(ICmObject obj)
 		{
-			// Auto-save (14.4): a session still open from the previous record/edit settles before
+			// Auto-save: a session still open from the previous record/edit settles before
 			// the region is replaced (commit when valid, roll back when not) — the same policy
 			// every host path shares; Replace's cancel-on-displace stays the safety net.
 			SettleRegionEdits();
 
-			// 13.4 adapter hygiene: the hidden command-routing DataTree must never answer mediator
+			// Adapter hygiene: the hidden command-routing DataTree must never answer mediator
 			// commands for a PREVIOUS record — reset it whenever the shown record changes; the next
 			// right-click re-syncs it (EnsureMenuCommandAdapter). Without this, Insert Sense from
 			// the main menu could silently target the entry that was last right-clicked.
@@ -311,13 +308,12 @@ namespace SIL.FieldWorks.XWorks
 				return;
 			}
 
-			// §20.1.3: the composer is class-general — compose the structured view for ANY record root
-			// (LexEntry for the lexicon tool; RnGenericRec / CmPossibility / PartOfSpeech once other tools
-			// register). Only a LexEntry has the first-slice fallback below; any other class that fails to
-			// compose shows the unsupported message (never a NRE).
+			// The composer is class-general — compose the structured view for ANY record root
+			// (LexEntry for the lexicon tool). Only a LexEntry has the first-slice fallback below; any
+			// other class that fails to compose shows the unsupported message (never a NRE).
 			var lexEntry = obj as ILexEntry;
 
-			// Viewing parity (11.x): honor the same View → Show Hidden Fields setting legacy DataTree
+			// Viewing parity: honor the same View → Show Hidden Fields setting legacy DataTree
 			// reads (ShowHiddenFields-{tool}, local settings).
 			var toolName = m_propertyTable.GetStringProperty("currentContentControl", string.Empty);
 			var showHidden = m_propertyTable.GetBoolProperty("ShowHiddenFields-" + toolName, false,
@@ -331,7 +327,7 @@ namespace SIL.FieldWorks.XWorks
 				composed = lexEntry != null
 					? FullEntryRegionComposer.Compose(lexEntry, Cache, showHidden,
 						overrides: ResolveViewOverride)
-					// §20.1.3/§20.1.4: non-entry roots compose against the tool's configured layout
+					// Non-entry roots compose against the tool's configured layout
 					// (m_layoutName, default "Normal"); a type-selected layout (m_layoutChoiceField, e.g.
 					// Notebook RnGenericRec keyed on "Type") resolves to the right variant inside Compose.
 					: FullEntryRegionComposer.Compose(obj, Cache,
@@ -356,7 +352,7 @@ namespace SIL.FieldWorks.XWorks
 				if (lexEntry == null)
 				{
 					// No first-slice fallback exists for a non-LexEntry root: show the unsupported state
-					// rather than crash. (This path is only reachable once a non-lexicon tool registers.)
+					// rather than crash.
 					m_regionEditContext.Clear();
 					m_avaloniaEntryForm.ShowMessage(FwAvaloniaStrings.EntryTypeUnsupported);
 					return;
@@ -387,11 +383,11 @@ namespace SIL.FieldWorks.XWorks
 
 
 		/// <summary>
-		/// Section 13: shows the SAME xCore-defined context menu the legacy slice shows, over the
+		/// Shows the SAME xCore-defined context menu the legacy slice shows, over the
 		/// Avalonia surface — the menu ids come from the layout (imported into the typed IR), the menu
 		/// is materialized from the window configuration and dispatched through the mediator, exactly
 		/// the legacy `DTMenuHandler.MakeSliceContextMenu` recipe (menu + mnuDataTree-Object; in-string
-		/// menus add mnuDataTree-MultiStringSlice). Command targeting (13.4) uses the approved baseline
+		/// menus add mnuDataTree-MultiStringSlice). Command targeting uses the approved baseline
 		/// adapter "command-menu-routing": the legacy DataTree + DTMenuHandler are initialized lazily and
 		/// kept HIDDEN purely as the command-target colleague chain, with CurrentSlice pointed at the
 		/// slice bound to the clicked row's object — never shown, never the active surface.
@@ -465,12 +461,12 @@ namespace SIL.FieldWorks.XWorks
 				var idArray = ids.Where(id => !string.IsNullOrEmpty(id)).ToArray();
 				var window = m_propertyTable.GetValue<XWindow>("window");
 
-				// 15.1: render the SAME xCore menu natively in Avalonia (identical items, enablement,
+				// Render the SAME xCore menu natively in Avalonia (identical items, enablement,
 				// and mediator dispatch — only the rendering changes). The WinForms adapter menu remains
 				// the fallback so a materialization failure never costs the user the menu.
 				try
 				{
-					// advanced-entry-view: retarget the per-field Field Visibility / Move Field commands
+					// Retarget the per-field Field Visibility / Move Field commands
 					// to the project override layer for the Avalonia surface; every other command (Help,
 					// inserts, writing-system menu, ...) keeps its normal mediator dispatch.
 					var interceptor = BuildOverrideCommandInterceptor(request.Field);
@@ -496,8 +492,8 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		// advanced-entry-view: the per-(class, layout) override file lives in this project's
-		// ConfigurationSettings folder (canonical-view-definition-design.md Layer 2). Built lazily and
+		// The per-(class, layout) override file lives in this project's
+		// ConfigurationSettings folder. Built lazily and
 		// reused; one store per view instance, so it caches the patches it has loaded.
 		private ViewDefinitionOverrideStore ViewOverrideStore
 		{
@@ -521,7 +517,7 @@ namespace SIL.FieldWorks.XWorks
 					+ "'; using the shipped definition.", error));
 
 		/// <summary>
-		/// advanced-entry-view: builds the interceptor that retargets the per-field Field Visibility and
+		/// Builds the interceptor that retargets the per-field Field Visibility and
 		/// Move Field commands to the project override layer for the Avalonia surface. Returns null
 		/// (intercept nothing — every command keeps its normal mediator dispatch) when the clicked row
 		/// carries no (class, layout) context, e.g. the first-slice fallback rows; that keeps the legacy
@@ -643,7 +639,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
-		/// B7: follows a chooser jump link (e.g. "Edit the Publications list" on Publish In) the
+		/// Follows a chooser jump link (e.g. "Edit the Publications list" on Publish In) the
 		/// EXACT way the legacy chooser does on link click — the dialog closes, then
 		/// <c>ReallySimpleListChooser.HandleAnyJump</c> posts <c>FollowLink</c> with the
 		/// <c>FwLinkArgs(tool, guid)</c> built from the layout's <c>chooserLink</c>
@@ -680,13 +676,13 @@ namespace SIL.FieldWorks.XWorks
 			return new FwLinkArgs(request.Link.Tool, target);
 		}
 
-		// Approved baseline adapter "command-menu-routing" (13.4): the hidden legacy DataTree +
+		// Approved baseline adapter "command-menu-routing": the hidden legacy DataTree +
 		// DTMenuHandler provide the colleague chain and CurrentSlice context the legacy command
 		// handlers require. Created lazily on first right-click; never attached/visible while the
 		// Avalonia surface is active.
 		private void EnsureMenuCommandAdapter(int targetHvo)
 		{
-			// The active-host contract (3.10) is enforced, not just documented: driving the hidden
+			// The active-host contract is enforced, not just documented: driving the hidden
 			// legacy DataTree is legal only through an adapter id the host's contract lists. The
 			// contract was built from ApprovedBaselineAdapters when the surface activated; this
 			// site only claims its own id (the fallback covers a menu raised before activation).
@@ -698,7 +694,7 @@ namespace SIL.FieldWorks.XWorks
 				EnsureLegacySurfaceInitialized();
 				DetachLegacySurfaceFromPanel(); // adapter only: the Avalonia surface stays active
 			}
-			// 15.4: display logic gating on Visible (e.g. OnDisplayDataTreeInsert) treats the hidden
+			// Display logic gating on Visible (e.g. OnDisplayDataTreeInsert) treats the hidden
 			// adapter tree as active.
 			m_dataEntryForm.IsExternalCommandAdapter = true;
 
@@ -841,8 +837,7 @@ namespace SIL.FieldWorks.XWorks
 
 		private void OnAvaloniaRegionEditCompleted(object sender, EventArgs e)
 		{
-			// ONE re-show covers the completed edit AND any refresh held during it (the old
-			// NotifyEditCompleted + direct-refresh pair recomposed twice per commit): drop the held
+			// ONE re-show covers the completed edit AND any refresh held during it: drop the held
 			// delivery and request a single coalesced refresh through the controller's queue.
 			if (m_avaloniaRefreshController != null)
 			{
@@ -855,7 +850,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		// Assigns the resolved surface and keeps the active-host contract (task 3.10) in lockstep,
+		// Assigns the resolved surface and keeps the active-host contract in lockstep,
 		// so the contract reflects the resolved surface from construction on — not only after the
 		// first activation (which a headless host may never reach).
 		private void SetLexicalEditSurface(LexicalEditSurface surface)
@@ -886,7 +881,7 @@ namespace SIL.FieldWorks.XWorks
 			if (m_avaloniaEntryForm == null)
 				EnsureAvaloniaSurfaceInitialized();
 
-			// Task 3.15: the refresh controller must exist for the whole time the surface is active,
+			// The refresh controller must exist for the whole time the surface is active,
 			// not only once a record has actually been composed via ShowAvaloniaEntry. A tool that
 			// loads directly with UIMode=New (the ordinary case for a user who already has the setting
 			// on) shows the surface here on the first idle — and when the clerk has not yet selected a

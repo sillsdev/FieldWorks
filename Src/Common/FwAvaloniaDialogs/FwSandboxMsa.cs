@@ -34,7 +34,7 @@ namespace FwAvaloniaDialogs
 	/// <summary>
 	/// The lightweight, LCModel-FREE payload <see cref="FwMsaGroupBox"/> emits — the mirror of the WinForms
 	/// <c>SandboxGenericMSA</c> (MsaType + MainPOS + SecondaryPOS + Slot), but carrying opaque id STRINGS
-	/// instead of LCModel <c>IPartOfSpeech</c>/<c>IMoInflAffixSlot</c> objects. Stage 3 maps this back to a
+	/// instead of LCModel <c>IPartOfSpeech</c>/<c>IMoInflAffixSlot</c> objects. The launcher maps this back to a
 	/// real MSA (find-or-create) by resolving the ids through the project cache. Like the WinForms property,
 	/// only the fields RELEVANT to the current <see cref="MsaType"/> are populated:
 	///   * Stem / Root / Unclassified → <see cref="MainPosId"/> only.
@@ -74,19 +74,19 @@ namespace FwAvaloniaDialogs
 		/// Opaque id of the inflection class (the WinForms <c>InsertEntryDlg.InflectionClass</c> →
 		/// <c>IMoStemMsa.InflectionClassRA</c>), or null for "&lt;None&gt;". Only meaningful for the STEM/ROOT MSA
 		/// (the common case). PARITY: derivational from/to inflection classes (<c>IMoDerivAffMsa.FromInflectionClassRA</c>
-		/// / <c>ToInflectionClassRA</c>) are NOT carried here — Stage 6 scopes the inflection-class picker to the stem
+		/// / <c>ToInflectionClassRA</c>) are NOT carried here — the box scopes the inflection-class picker to the stem
 		/// MSA, matching how the legacy <c>InsertEntryDlg</c> exposes a single inflection class on the stem/deriv-step MSA.
 		/// </summary>
 		public string InflectionClassId { get; }
 
 		/// <summary>
-		/// The chosen inflection-feature assignments (Phase-1 §19b Stage 2) — the LCModel-free flat
+		/// The chosen inflection-feature assignments — the LCModel-free flat
 		/// <c>(closedFeatureId, valueId)</c> set the hosted <see cref="FwFeatureStructureEditor"/> emitted, carried only
 		/// for the INFLECTIONAL / DERIVATIONAL MSA (where the WinForms box opens <c>MsaInflectionFeatureListDlg</c> over
 		/// <c>IMoInflAffMsa.InflFeatsOA</c> / <c>IMoDerivAffMsa.FromMsFeaturesOA</c>). Empty when no feature was chosen
 		/// (the legacy "delete the FS" / unspecified case). The launcher rebuilds the nested <c>IFsFeatStruc</c> from
 		/// this flat set via recursive-ascent <c>GetOrCreateValue</c> on commit, in the SAME UOW as the MSA
-		/// find-or-create. PARITY (§19b): stem/root MSAs (<c>IMoStemMsa.MsFeaturesOA</c>) and the derivational TO
+		/// find-or-create. PARITY: stem/root MSAs (<c>IMoStemMsa.MsFeaturesOA</c>) and the derivational TO
 		/// features are not carried — the box scopes the inflection-feature editor to the infl/deriv-FROM surface, the
 		/// common case the legacy create/insert flow exposes. Never null.
 		/// </summary>
@@ -97,8 +97,8 @@ namespace FwAvaloniaDialogs
 	/// Which POS chooser inside <see cref="FwMsaGroupBox"/> raised a "Create a new Part of Speech..." request — the
 	/// MAIN POS chooser (the "Category"/"Attaches to Category" field, present for every MsaType) or the SECONDARY
 	/// POS chooser (the derivational "Changes to Category" field). The host uses it to route the created node back to
-	/// the right chooser via <c>AcceptCreatedMainPos</c> / <c>AcceptCreatedSecondaryPos</c>. Stage 4 added this so the
-	/// merged create event (which does not say which chooser fired) can be disambiguated by the VM.
+	/// the right chooser via <c>AcceptCreatedMainPos</c> / <c>AcceptCreatedSecondaryPos</c>. The merged create event
+	/// does not say which chooser fired, so this lets the VM disambiguate it.
 	/// </summary>
 	public enum FwPosTarget
 	{
@@ -112,7 +112,7 @@ namespace FwAvaloniaDialogs
 	/// <summary>
 	/// A lightweight, LCModel-FREE inflection-affix slot option fed to <see cref="FwMsaGroupBox"/>'s Slot
 	/// picker (the mirror of an <c>IMoInflAffixSlot</c> the WinForms box loads into <c>m_fwcbSlots</c>). The
-	/// host (Stage 3) builds these from the main POS's affix slots; <see cref="Id"/> is round-tripped verbatim.
+	/// host builds these from the main POS's affix slots; <see cref="Id"/> is round-tripped verbatim.
 	/// </summary>
 	public sealed class FwInflectionSlot
 	{
@@ -132,7 +132,7 @@ namespace FwAvaloniaDialogs
 	/// <summary>
 	/// A lightweight, LCModel-FREE inflection-class option fed to <see cref="FwMsaGroupBox"/>'s inflection-class
 	/// picker (the mirror of an <c>IMoInflClass</c> in the selected main POS's <c>InflectionClassesOC</c>, including
-	/// nested <c>SubclassesOC</c>). The host (Stage 6) builds these from the currently-selected main POS and re-feeds
+	/// nested <c>SubclassesOC</c>). The host builds these from the currently-selected main POS and re-feeds
 	/// them when the main POS changes — exactly how the slot list follows the POS. <see cref="Id"/> is round-tripped
 	/// verbatim; <see cref="Depth"/> carries the nesting level so the picker can indent subclasses like the WinForms
 	/// <c>InflectionClassPopupTreeManager</c> tree.

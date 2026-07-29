@@ -9,7 +9,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 {
 	/// <summary>
 	/// Migrates a legacy whole-copy <c>.fwlayout</c> override into a sparse, stable-id-keyed
-	/// <see cref="ViewDefinitionOverride"/> (task 9.2 step 3). It imports both the shipped layout and the
+	/// <see cref="ViewDefinitionOverride"/>. It imports both the shipped layout and the
 	/// project's customized copy to the typed IR (reusing <see cref="XmlLayoutImporter"/>), then diffs them
 	/// by <see cref="ViewNode.StableId"/>. Because a legacy override copies the shipped <c>&lt;layout&gt;</c>
 	/// under the same name, the imported StableIds align by position, so the diff is exactly the customer's
@@ -17,8 +17,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 	///
 	/// This is the framework-neutral migration core: it takes XML in and produces the patch. The thin
 	/// remaining wrapper (read the shipped layout from <c>Inventory</c> and the override file from the
-	/// project ConfigurationSettings folder, then write the patch file) is the XCore-coupled driver layer
-	/// (still open), kept out of here so the migration logic stays unit-testable with inline XML.
+	/// project ConfigurationSettings folder, then write the patch file) is the XCore-coupled driver layer,
+	/// kept out of here so the migration logic stays unit-testable with inline XML.
 	/// </summary>
 	public static class ViewDefinitionOverrideMigrator
 	{

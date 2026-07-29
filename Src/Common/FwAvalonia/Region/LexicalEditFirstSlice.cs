@@ -12,8 +12,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 {
 	/// <summary>
 	/// Builds the LexEntry-identity first-slice view definition by compiling the live shipped layout
-	/// inventory through <see cref="ViewDefinitionCompiler"/> (task 4.10), replacing the hand-authored
-	/// definition. The three first-slice fields are selected from the real compiled layouts:
+	/// inventory through <see cref="ViewDefinitionCompiler"/>. The three first-slice fields are selected from the real compiled layouts:
 	/// - lexeme form: the <c>AsLexemeForm</c> slice (<c>Form</c>, multistring) compiled from
 	///   <c>MoStemAllomorph/AsLexemeFormBasic</c> via the base-class part fallback to <c>MoForm</c>;
 	/// - morph type: its compiled <c>MorphTypeBasic</c> caller child (<c>MorphType</c>,

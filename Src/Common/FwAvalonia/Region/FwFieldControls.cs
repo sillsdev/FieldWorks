@@ -109,12 +109,12 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 				AutomationProperties.SetAutomationId(box, automationId + "." + wsKey);
 				AutomationProperties.SetName(box, (field.Label ?? automationId) + " " + value.WsAbbrev);
 
-				// The relocated rich-text operations for THIS writing-system row, each built as a right-click
-				// CONTEXT-MENU item (not an always-visible inline control) under the SAME gate that used to
-				// build its inline button: editable + non-lossy, plus per-op availability. Captured here so
-				// the local context menu can collect them after the editable wiring below populates them.
-				// Character style (has available styles), per-run writing-system retag (has available writing
-				// systems), external-link insert/edit and generic ORC-delete (any editable non-lossy row).
+				// The rich-text operations for THIS writing-system row, each built as a right-click
+				// CONTEXT-MENU item (not an always-visible inline control), gated on editable + non-lossy plus
+				// per-op availability. Captured here so the local context menu can collect them after the
+				// editable wiring below populates them. Character style (has available styles), per-run
+				// writing-system retag (has available writing systems), external-link insert/edit and generic
+				// ORC-delete (any editable non-lossy row).
 				MenuItem styleMenuItem = null;
 				MenuItem wsMenuItem = null;
 				MenuItem linkMenuItem = null;
@@ -243,13 +243,13 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 					box.TextChanged += textChanged;
 					_teardown.Add(() => box.TextChanged -= textChanged);
 
-					// Phase 2 — character formatting over a selection. Ctrl+B/I/U toggle bold/italic/
+					// Character formatting over a selection. Ctrl+B/I/U toggle bold/italic/
 					// underline on the TextBox's current selection. We chose keyboard shortcuts over a
 					// floating toolbar: they match the legacy Views editor (FwEditingHelper's
 					// Ctrl+B/I/U), need no extra decorations in the dense detail rows, and act on the same
 					// SelectionStart..SelectionEnd the bidi/clipboard handlers already use. The gesture
-					// only stages when the selection is non-empty (a collapsed caret is a no-op for
-					// Phase 2 — no pending-format-for-the-next-insert yet) and only on an editable,
+					// only stages when the selection is non-empty (a collapsed caret is a no-op —
+					// there is no pending format for the next insert) and only on an editable,
 					// non-lossy value (this whole block is gated on value.CanEditRichText already).
 					EventHandler<KeyEventArgs> formatKeyDown = (s, e) =>
 					{
@@ -299,7 +299,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 					box.AddHandler(InputElement.KeyDownEvent, formatKeyDown, Avalonia.Interactivity.RoutingStrategies.Tunnel);
 					_teardown.Add(() => box.RemoveHandler(InputElement.KeyDownEvent, formatKeyDown));
 
-					// Phase 3 — apply/clear a NAMED CHARACTER STYLE over the selection. A right-click menu
+					// Apply/clear a NAMED CHARACTER STYLE over the selection. A right-click menu
 					// item "Character style…" opens the shared FwOptionPicker (single-select) seeded with a
 					// leading "Default (no style)" entry that CLEARS the style, followed by the project's
 					// available character style names. It acts on the TextBox's current
@@ -353,7 +353,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 							}
 
 							if (selectionStart == selectionEnd)
-								return; // no span: nothing to (re)style (no pending caret style in Phase 3)
+								return; // no span: nothing to (re)style (no pending caret style)
 
 							// A row may still carry only plain text (no projected rich value yet);
 							// synthesize a single-run projection so the first style gesture has runs.
@@ -405,7 +405,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 						});
 					}
 
-					// Phase 4 — retag the WRITING SYSTEM of a selection. The affordance is a small "Writing
+					// Retag the WRITING SYSTEM of a selection. The affordance is a small "Writing
 					// System" button opening the shared FwOptionPicker (single-select) seeded with the
 					// project's available writing systems (tag = key, display name = caption). It acts on the
 					// TextBox's current SelectionStart..SelectionEnd; committing calls RetagSpanWritingSystem
@@ -454,7 +454,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 								}
 
 								if (selectionStart == selectionEnd)
-									return; // no span: nothing to retag (no pending caret ws in Phase 4)
+									return; // no span: nothing to retag (no pending caret ws)
 								if (string.IsNullOrEmpty(option?.Key))
 									return; // a run must always carry a writing system
 
@@ -1015,7 +1015,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 	}
 
 	/// <summary>
-	/// FieldWorks-owned chooser field (task 6.3): a button opening a flyout of service-backed options
+	/// FieldWorks-owned chooser field: a button opening a flyout of service-backed options
 	/// (the options come from the LCModel-sourced region model, not the control). The flyout is the
 	/// shared compact <see cref="FwOptionPicker"/> — an AutoCompleteBox-based OPTIONS ONLY selector,
 	/// no link items. Committing an
@@ -1155,14 +1155,14 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 	}
 
 	/// <summary>
-	/// FieldWorks-owned editable reference-vector field (6.3/B8): the current items rendered
+	/// FieldWorks-owned editable reference-vector field: the current items rendered
 	/// inline, each followed by the thin grey separator bar legacy reference slices draw
 	/// (VwSeparatorBox), with the TRAILING bar fronting the add slot — a "+" launcher whose flyout
 	/// is the shared compact <see cref="FwOptionPicker"/> (AutoCompleteBox-based OPTIONS ONLY,
 	/// zero link items): the
 	/// possibility tree indented by <see cref="RegionChoiceOption.Depth"/> for enumerated lists,
 	/// or the host search delegate's results for search-backed vectors (lexicons search, lists
-	/// enumerate — D3), both behind the same filter box and virtualized capped list.
+	/// enumerate), both behind the same filter box and virtualized capped list.
 	/// Right-clicking an item offers Remove. Without an edit context the row is read-only display.
 	/// Hover-reveal polish: the separator bars, the "+" launcher, and — only when the
 	/// row's list resolved a list-editor target — the CONFIGURE gear (which directly dispatches
@@ -1263,7 +1263,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 			AutomationProperties.SetName(addButton, FwAvaloniaStrings.AddItem);
 
 			// "+" = OPTIONS ONLY: the one compact filterable picker — static options enumerate
-			// (with Depth hierarchy), search-backed vectors ride the host search delegate (D3).
+			// (with Depth hierarchy), search-backed vectors ride the host search delegate.
 			// No link items ever ride this flyout. The vector add slot opens in MULTI-SELECT mode
 			// (checkboxes + an "Add" button): the user checks several candidates and commits the
 			// whole set in ONE edit-context batch (one undoable step), like the legacy multi-check

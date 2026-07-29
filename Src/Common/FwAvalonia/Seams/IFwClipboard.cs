@@ -5,7 +5,7 @@
 namespace SIL.FieldWorks.Common.FwAvalonia.Seams
 {
 	/// <summary>
-	/// The cross-framework clipboard payload (task 3.13). Two formats, written/read together:
+	/// The cross-framework clipboard payload. Two formats, written/read together:
 	/// - <see cref="PlainText"/>: the plain-text fallback every external consumer gets
 	///   (legacy writes it NFC-normalized to the OS <c>UnicodeText</c> format).
 	/// - <see cref="RichXml"/>: the FieldWorks rich format — the TsString XML representation
@@ -13,7 +13,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Seams
 	///   puts on the OS clipboard inside the <c>"TsString"</c> data format. Preserves writing-system
 	///   runs, styles, and string properties.
 	///
-	/// Fidelity decision (task 3.13): the shared format IS the existing legacy <c>"TsString"</c>
+	/// Fidelity decision: the shared format IS the existing legacy <c>"TsString"</c>
 	/// clipboard contract, not a new one, so Avalonia and native-Views surfaces round-trip multi-WS
 	/// rich text bidirectionally during coexistence. What does NOT round-trip:
 	/// - embedded-object runs (ORCs: pictures, footnotes, object links) reference objects in the source
@@ -45,7 +45,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Seams
 	}
 
 	/// <summary>
-	/// The shared clipboard seam (task 3.13). The product implementation (<c>FwTsStringClipboard</c> in
+	/// The shared clipboard seam. The product implementation (<c>FwTsStringClipboard</c> in
 	/// xWorks) speaks the legacy <c>"TsString"</c> + <c>UnicodeText</c> OS clipboard formats so legacy
 	/// native-Views surfaces and Avalonia surfaces read each other's copies; this layer stays
 	/// LCModel-free so Avalonia controls can consume it directly.

@@ -42,7 +42,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// </summary>
 		protected override void HandleChooser()
 		{
-			// New-UI gate (Phase-1 §19b Stage 3): in New mode launch the Avalonia phonological-feature chooser (the
+			// New-UI gate: in New mode launch the Avalonia phonological-feature chooser (the
 			// LCModel-free FwFeatureStructureEditor hosted over OK/Cancel); Legacy mode keeps the WinForms
 			// PhonologicalFeatureChooserDlg (incl. its rule-constraint polarity surface, used from the rule editor).
 			var uiMode = m_propertyTable.GetStringProperty("UIMode", null);
@@ -95,7 +95,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		}
 
 		/// <summary>
-		/// The New-UI phonological-feature chooser path (Phase-1 §19b Stage 3): resolve the existing FS + owning
+		/// The New-UI phonological-feature chooser path: resolve the existing FS + owning
 		/// object + flid from the slice exactly as the legacy HandleChooser does, run the Avalonia
 		/// <see cref="SIL.FieldWorks.LexText.Controls.LcmPhonologicalFeatureChooserLauncher"/>, and on OK update the
 		/// launcher view with the rebuilt FS.

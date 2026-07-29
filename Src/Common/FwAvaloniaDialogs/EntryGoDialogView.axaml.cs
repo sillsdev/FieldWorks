@@ -13,7 +13,7 @@ namespace FwAvaloniaDialogs
 {
 	/// <summary>
 	/// The reusable entry-search ("go") dialog body: a XAML-authored UserControl bound to
-	/// <see cref="EntryGoDialogViewModel"/>, the Avalonia replacement for the legacy
+	/// <see cref="EntryGoDialogViewModel"/>, the Avalonia analog of the legacy
 	/// <c>EntryGoDlg</c>/<c>BaseGoDlg</c> family. Hosted as Avalonia content inside a WinForms-owned modal Form
 	/// during coexistence via <c>AvaloniaDialogHost.ShowModal</c>.
 	///

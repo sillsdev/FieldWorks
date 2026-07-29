@@ -12,7 +12,7 @@ using CommunityToolkit.Mvvm.Input;
 namespace FwAvaloniaDialogs
 {
 	/// <summary>
-	/// View-model for the reusable Avalonia entry-search ("go") dialog — the kit replacement for the legacy
+	/// View-model for the reusable Avalonia entry-search ("go") dialog — the kit's analog of the legacy
 	/// <c>EntryGoDlg</c>/<c>BaseGoDlg</c> family (writing-system-aware search box + persistent matching list). It is
 	/// LCModel-free: the launcher supplies an <see cref="EntryGoDialogInput"/> with a search delegate and the
 	/// configurable title/prompt/filter text, and reads <see cref="ChosenId"/> back when the user commits.

@@ -12,7 +12,7 @@ using SIL.FieldWorks.Common.FwAvalonia.ViewDefinition;
 namespace FwAvaloniaTests
 {
 	/// <summary>
-	/// Tasks 9.2/9.4 — canonical JSON: the typed IR round-trips losslessly (snapshot-identical), the
+	/// Canonical JSON: the typed IR round-trips losslessly (snapshot-identical), the
 	/// shipped first slice serializes and reloads with runtime XML fully out of the loop, and version
 	/// mismatches are rejected rather than guessed.
 	/// </summary>
@@ -163,7 +163,7 @@ namespace FwAvaloniaTests
 				Assert.That(r.Condition.LengthAtMost, Is.EqualTo(4), "Condition.LengthAtMost");
 				Assert.That(r.Condition.GuidEquals, Is.EqualTo("d7f713da-e8cf-11d3-9764-00c04f186933"),
 					"Condition.GuidEquals");
-				// B7: the chooser jump-link block (label/tool/type/target) survives, including the
+				// The chooser jump-link block (label/tool/type/target) survives, including the
 				// "goto" default-type omission.
 				Assert.That(r.ChooserLinks, Has.Count.EqualTo(2), nameof(r.ChooserLinks));
 				Assert.That(r.ChooserLinks[0].Type, Is.EqualTo("goto"), "ChooserLinks[0].Type");
@@ -177,7 +177,7 @@ namespace FwAvaloniaTests
 	}
 
 	/// <summary>
-	/// Task 9.3 (override-fixture path): user-override-shaped layout XML — label/visibility overrides
+	/// User-override-shaped layout XML — label/visibility overrides
 	/// and a hidden part — imports with the overrides surfaced in the typed IR.
 	/// </summary>
 	[TestFixture]

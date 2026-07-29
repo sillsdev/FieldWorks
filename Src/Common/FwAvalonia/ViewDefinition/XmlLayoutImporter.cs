@@ -17,7 +17,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 	/// </summary>
 	public sealed class XmlLayoutImporter : IViewDefinitionImporter
 	{
-		// Task 4.9: the attribute vocabulary the importer actually consumes, per element role. Anything
+		// The attribute vocabulary the importer actually consumes, per element role. Anything
 		// outside these sets is reported with an `unhandled-attribute` diagnostic instead of being
 		// silently dropped, so importer coverage is measurable (see LayoutImportCoverage).
 		public static readonly HashSet<string> HandledLayoutAttributes =
@@ -47,13 +47,13 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 				"ghost", "ghostWs", "ghostClass", "ghostLabel", "ghostInitMethod"
 			};
 
-		// B7: the chooserLink attribute vocabulary the importer consumes (the legacy reader's exact
+		// The chooserLink attribute vocabulary the importer consumes (the legacy reader's exact
 		// set, ReallySimpleListChooser.cs:887-926). The shipped files carry type/label/tool on all 94
 		// links and target on 2 (grammar-area slot links).
 		public static readonly HashSet<string> HandledChooserLinkAttributes =
 			new HashSet<string>(System.StringComparer.Ordinal) { "type", "label", "tool", "target" };
 
-		// B3: the condition vocabulary the importer parses into ViewCondition — exactly the forms the
+		// The condition vocabulary the importer parses into ViewCondition — exactly the forms the
 		// shipped DETAIL layouts use (audited 2026-06-11 over DistFiles .../Parts: boolequals 44,
 		// intequals 9, lengthatleast/-most 8, intmemberof 2, intlessthan 5, guidequals 2, is/target on
 		// where clauses). Publishing-only forms (stringequals, stringaltequals, hvoequals,
@@ -113,8 +113,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 						var indentFlag = indentAttr == null || indentAttr != "false";
 						ProcessContainer(el.Elements(), parts, className, layoutType, parentPath, indentFlag, output, diagnostics);
 						break;
-					// Task 4.9: named drop codes for the real-layout constructs the importer does not
-					// expand yet, so coverage reports can count them instead of lumping them as unknown.
+					// Named drop codes for the real-layout constructs the importer does not
+					// expand, so coverage reports can count them instead of lumping them as unknown.
 					case "generate":
 						diagnostics.Add(new ViewDiagnostic(
 							ViewDiagnosticSeverity.Warning,
@@ -122,7 +122,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 							$"<generate class='{(string)el.Attribute("class")}' fieldType='{(string)el.Attribute("fieldType")}'> drives schema/custom-field UI generation and is not imported.",
 							$"{parentPath}/#{output.Count}"));
 						break;
-					// B3: conditionals import as typed Conditional/ChoiceGroup nodes (evaluated per
+					// Conditionals import as typed Conditional/ChoiceGroup nodes (evaluated per
 					// object at compose time); unsupported condition forms still drop with a diagnostic.
 					case "if":
 					case "ifnot":
@@ -201,7 +201,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 
 				if (recoverable.Count > 0)
 				{
-					// 15.3: the recovered children ride a group node that keeps the CALLER's bindings —
+					// The recovered children ride a group node that keeps the CALLER's bindings —
 					// HeavySummary's menu="mnuDataTree-Sense"/hotlinks survive here so the composed
 					// per-sense headers can offer the legacy sense menu (Insert Sense etc.).
 					var recoveredChildren = new List<ViewNode>();
@@ -222,7 +222,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 				return;
 			}
 
-			// Build a node per content child. A single-child part (the common case) is unchanged; a
+			// Build a node per content child. A single-child part (the common case) produces one node; a
 			// multi-child part (the grammar <if Disabled=true>/<if Disabled=false> pair) imports every
 			// child so the per-object Conditional walk can render the matching branch.
 			for (var i = 0; i < contents.Count; i++)
@@ -255,7 +255,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 			var field = Attr(contentEl, "field");
 			var ws = Attr(contentEl, "ws");
 
-			// Task 4.9: report attributes the importer drops instead of dropping them silently. The caller
+			// Report attributes the importer drops instead of dropping them silently. The caller
 			// element is reported only when distinct from the content element (inline children pass the
 			// same element for both).
 			if (!ReferenceEquals(callerEl, contentEl))
@@ -264,12 +264,13 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 				ReportSubstitutionValues(callerEl, HandledCallerPartAttributes, stableId, diagnostics);
 			}
 
-			// Task 4.7 metadata. Legacy XML Parts/Layout does not carry these, so they stay null/Inherit for
-			// imported layouts (preserving semantic baselines); authored or region-spec sources may set them.
+			// Localization/accessibility/routing metadata. Legacy XML Parts/Layout does not carry these, so
+			// they stay null/Inherit for imported layouts (preserving semantic baselines); authored or
+			// region-spec sources may set them.
 			var localizationKey = Attr(callerEl, "localizationKey") ?? Attr(contentEl, "localizationKey")
 				?? Attr(callerEl, "labelId") ?? Attr(contentEl, "labelId");
 
-			// 13.1: legacy menu bindings — slice menu from the caller (layout part) first, like
+			// Legacy menu bindings — slice menu from the caller (layout part) first, like
 			// DTMenuHandler.ShowContextMenu2Id; in-string contextMenu lives on the slice content.
 			var menuId = Attr(callerEl, "menu") ?? Attr(contentEl, "menu");
 			var contextMenuId = Attr(contentEl, "contextMenu");
@@ -284,7 +285,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 					var editor = Attr(contentEl, "editor");
 					var classification = EditorKindMap.Classify(editor);
 
-					// Viewing parity (11.15): capture the visual-emphasis <properties> legacy slices
+					// Viewing parity: capture the visual-emphasis <properties> legacy slices
 					// honor (bold + percentage fontsize, e.g. the lexeme form's bold/120%).
 					var boldEmphasis = false;
 					var fontScalePercent = 0;
@@ -314,7 +315,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 						}
 						else if (child.Name.LocalName == "chooserInfo")
 						{
-							// B7: the chooser jump links import as typed metadata (the legacy
+							// The chooser jump links import as typed metadata (the legacy
 							// "Edit the … list" links, ReallySimpleListChooser.InitializeExtras);
 							// chooserInfo's other facets (title/text/guicontrol/textparam) are still
 							// reported, not silently dropped.
@@ -332,7 +333,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 						}
 						else if (child.Name.LocalName != "properties")
 						{
-							// <properties> is consumed above (11.15 emphasis); the rest is reported.
+							// <properties> is consumed above; the rest is reported.
 							diagnostics.Add(new ViewDiagnostic(ViewDiagnosticSeverity.Info, "slice-content-dropped",
 								$"Slice content child <{child.Name.LocalName}> is not imported.", stableId));
 						}
@@ -341,7 +342,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 					var children = new List<ViewNode>();
 					BuildInlineChildren(childElements, parts, className, layoutType, stableId, children, diagnostics);
 
-					// §19e: a jtview slice (editor="jtview") names the nested layout to compose for this
+					// A jtview slice (editor="jtview") names the nested layout to compose for this
 					// object in its caller's param (legacy SliceFactory jtview: param ?? node layout attr).
 					// Carry it as the node's TargetLayout so the composer's WalkEmbeddedView can recurse the
 					// nested layout's fields, exactly as an obj/seq descent does. Only jtview slices read it;
@@ -350,7 +351,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 					if (string.Equals(editor, EditorKindMap.JtViewEditor, System.StringComparison.OrdinalIgnoreCase))
 						sliceTargetLayout = Attr(callerEl, "param") ?? Attr(contentEl, "layout");
 
-					// §19e: a per-field writing-system visibility override (legacy visibleWritingSystems on a
+					// A per-field writing-system visibility override (legacy visibleWritingSystems on a
 					// multistring slice or its persisted partRef property — a space/comma list of ws specs).
 					// Carry the ordered specs onto the node; the composer intersects them with the resolved
 					// ws= set so the field shows exactly that subset. Caller (partRef) wins over content,
@@ -361,7 +362,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 					// Caller children under a slice-content part (<indent>/<part> wrappers on a section
 					// part, e.g. AsLexemeForm's MorphTypeBasic) become child nodes, mirroring how
 					// DataTree.ProcessPartRefNode realizes them as indented child slices. Other caller
-					// child kinds are reported, not silently dropped (task 4.9).
+					// child kinds are reported, not silently dropped.
 					if (!ReferenceEquals(callerEl, contentEl))
 					{
 						var structuralCallerChildren = new List<XElement>();
@@ -394,8 +395,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 					}
 
 					// Dynamic custom slices keep their legacy class/assembly identity so the host can
-					// promote designated WinForms-only editors (e.g. the Chorus Messages notes bar) to
-					// the hybrid companion strip instead of an unsupported row. The attributes stay in
+					// handle designated WinForms-only editors (e.g. the Chorus Messages notes bar)
+					// instead of an unsupported row. The attributes stay in
 					// the unhandled-attribute report (no Avalonia editor consumes them).
 					return new ViewNode(stableId, ViewNodeKind.Field, label, abbreviation, field, editor,
 						classification, ws, visibility, expansion, indented, sliceTargetLayout, children,
@@ -407,7 +408,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 						chooserLinks: chooserLinks.Count > 0 ? chooserLinks : null,
 						enumStringList: enumStringList,
 						visibleWritingSystems: visibleWss,
-						// §20.1.4 (F-7): legacy toggleValue= on a boolean slice (the displayed checkbox is the
+						// Legacy toggleValue= on a boolean slice (the displayed checkbox is the
 						// logical inverse of the stored property); carried so the composer inverts read+write.
 						toggleValue: ParseOptionalBool(Attr(contentEl, "toggleValue")) ?? false);
 				}
@@ -420,7 +421,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 					ReportSubstitutionValues(contentEl, HandledObjSeqAttributes, stableId, diagnostics);
 					var children = new List<ViewNode>();
 					BuildInjectedChildren(callerEl, parts, layoutType, stableId, children, diagnostics);
-					// 14.1: the legacy ghost bindings ride the typed node so empty fields can offer
+					// The legacy ghost bindings ride the typed node so empty fields can offer
 					// the create-on-edit add-prompt line (DataTree ghost slices).
 					return new ViewNode(stableId, kind, label, abbreviation, field, null,
 						EditorClassification.GroupingNone, ws, visibility, expansion, indented, targetLayout, children,
@@ -430,11 +431,11 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 						ghostWs: Attr(contentEl, "ghostWs") ?? Attr(callerEl, "ghostWs"),
 						ghostClass: Attr(contentEl, "ghostClass") ?? Attr(callerEl, "ghostClass"),
 						ghostLabel: Attr(contentEl, "ghostLabel") ?? Attr(callerEl, "ghostLabel"),
-						// B2: the layout's post-create hook rides the node so the composer's ghost
+						// The layout's post-create hook rides the node so the composer's ghost
 						// setter can invoke it the way GhostStringSliceView.MakeRealObject does.
 						ghostInitMethod: Attr(contentEl, "ghostInitMethod") ?? Attr(callerEl, "ghostInitMethod"));
 				}
-				// B3: conditional display. <if>/<ifnot> wrap content shown only when the condition
+				// Conditional display. <if>/<ifnot> wrap content shown only when the condition
 				// passes (fails, for ifnot) — DataTree.ProcessSubpartNode cases "if"/"ifnot" over
 				// XmlVc.ConditionPasses. The condition is preserved as structured metadata; the
 				// composer evaluates it per object.
@@ -456,7 +457,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 						condition: condition);
 				}
 
-				// B3: <choice> holds <where> branches (first passing one renders) and an optional
+				// <choice> holds <where> branches (first passing one renders) and an optional
 				// trailing <otherwise> — DataTree.ProcessSubpartNode case "choice".
 				case "choice":
 				{
@@ -505,11 +506,11 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 			}
 		}
 
-		// B7: import a slice's <chooserInfo> — the chooserLink jump links become typed metadata in
+		// Import a slice's <chooserInfo> — the chooserLink jump links become typed metadata in
 		// document order, mirroring the legacy reader's attribute set exactly
 		// (ReallySimpleListChooser.cs:887-926: type defaults to "goto", label/tool/target verbatim).
 		// chooserInfo's OTHER facets (title/text/textparam/flidTextParam/guicontrol/helpBrowser) are
-		// not imported yet; they keep the slice-content-dropped report so the B7 remainder stays
+		// not imported; they keep the slice-content-dropped report so they stay
 		// measured rather than silently lost.
 		private static void ImportChooserInfo(
 			XElement chooserInfoEl, string stableId, List<ViewChooserLink> chooserLinks,
@@ -576,7 +577,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 			return new ViewStringList(idList, Attr(stringListEl, "group"));
 		}
 
-		// B3: a conditional wrapper's children are part content (<slice>/<seq>/<obj>, possibly nested
+		// A conditional wrapper's children are part content (<slice>/<seq>/<obj>, possibly nested
 		// conditionals) inside part definitions, or <part>/<indent> refs at layout level — exactly the
 		// child kinds DataTree.ProcessPartChildren dispatches.
 		private void BuildConditionalChildren(
@@ -610,7 +611,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 			}
 		}
 
-		// B3: parse an <if>/<ifnot>/<where> element's condition attributes into the typed
+		// Parse an <if>/<ifnot>/<where> element's condition attributes into the typed
 		// ViewCondition, or report conditional-dropped and return null when the element uses a
 		// condition form outside the supported detail-view vocabulary — never half-evaluate.
 		private static ViewCondition TryParseCondition(
@@ -628,7 +629,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 				}
 
 				// $-substituted values (e.g. target='$fieldName' inside <generate>) and slash field
-				// paths need runtime substitution/path hops the composer does not perform (B9).
+				// paths need runtime substitution/path hops the composer does not perform.
 				if (attr.Value.IndexOf('$') >= 0 || (name == "field" && attr.Value.IndexOf('/') >= 0))
 				{
 					diagnostics.Add(new ViewDiagnostic(ViewDiagnosticSeverity.Warning, "conditional-dropped",
@@ -696,7 +697,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 				if (child.Name.LocalName != "part")
 				{
 					// E.g. an <indent> wrapper under an obj/seq caller; its nested parts are not expanded
-					// here. Report rather than silently drop (task 4.9).
+					// here. Report rather than silently drop.
 					diagnostics.Add(new ViewDiagnostic(ViewDiagnosticSeverity.Warning, "injected-child-dropped",
 						$"Caller child <{child.Name.LocalName}> under an object/sequence part is not imported.",
 						$"{parentPath}/#{output.Count}"));
@@ -757,7 +758,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 
 		private static string Attr(XElement el, string name) => (string)el.Attribute(name);
 
-		// §19e: split a legacy visibleWritingSystems value (the legacy slice persists a comma-delimited ICU
+		// Split a legacy visibleWritingSystems value (the legacy slice persists a comma-delimited ICU
 		// locale list; layout authors also write space-separated). Null/blank => no override (full set).
 		private static IReadOnlyList<string> ParseWsList(string value)
 		{
@@ -767,7 +768,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 			return parts.Length == 0 ? null : parts;
 		}
 
-		// Task 4.9: one diagnostic per attribute the importer does not consume. Functional drops
+		// One diagnostic per attribute the importer does not consume. Functional drops
 		// (menus, ghost lines) are warnings; presentational drops (style, separators, numbering) are info.
 		private static void ReportUnhandledAttributes(
 			XElement el, HashSet<string> handled, string role, string stableId,
@@ -790,7 +791,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 			}
 		}
 
-		// Task 4.9: handled attributes whose values use runtime substitution ($param, {0}) are consumed
+		// Handled attributes whose values use runtime substitution ($param, {0}) are consumed
 		// literally by the importer; flag them so substitution semantics are not silently lost.
 		private static void ReportSubstitutionValues(
 			XElement el, HashSet<string> handled, string stableId, List<ViewDiagnostic> diagnostics)

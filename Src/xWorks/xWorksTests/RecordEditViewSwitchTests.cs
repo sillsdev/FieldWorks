@@ -143,9 +143,9 @@ namespace SIL.FieldWorks.XWorks
 				"flipping back to New must rebuild the refresh controller");
 		}
 
-		// §20.3 / §20.5.2: tools whose record-edit surface is NOT yet registered still fall back to legacy under
-		// New mode. (domainTypeEdit = a Lists CmPossibility tool pending the F-4 predicate.) Analyses rides
-		// the interlinear editor's Avalonia surface (avalonia-interlinear-editor W-4/W-5) — see
+		// Tools whose record-edit surface is not registered fall back to legacy under
+		// New mode. (domainTypeEdit = a Lists CmPossibility tool.) Analyses rides
+		// the interlinear editor's Avalonia surface — see
 		// RegisteredRecordEditTools_ResolveToAvalonia below.
 		[TestCase("domainTypeEdit")]
 		public void NonMigratedRecordEditTools_FallBackToLegacy_WhenUIModeIsNew(string toolValue)
@@ -165,7 +165,7 @@ namespace SIL.FieldWorks.XWorks
 				toolValue);
 		}
 
-		// §20.3 / §20.5.2: the detail-editor tools registered for the Avalonia surface. They
+		// The detail-editor tools registered for the Avalonia surface. They
 		// resolve to Avalonia under New mode. The interlinear (Analyses) and rule-formula tools (PhonologicalRuleEdit,
 		// EnvironmentEdit, compoundRuleAdvancedEdit, naturalClassedit, phonemeEdit, AdhocCoprohibEdit) are
 		// INERT (see LexicalEditSurfaceRegistry.Phase1FollowUpSurfaceTools); activating one registers it and

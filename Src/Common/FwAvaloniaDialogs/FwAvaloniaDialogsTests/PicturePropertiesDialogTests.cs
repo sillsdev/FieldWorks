@@ -13,8 +13,8 @@ using SIL.FieldWorks.Common.FwAvalonia.Region;
 namespace FwAvaloniaDialogsTests
 {
 	/// <summary>
-	/// §19d (T1 dialog / T3 cancel-vs-commit / T5 visual): the picture-properties dialog — the Avalonia
-	/// replacement for the WinForms PicturePropertiesDialog. Edits caption/description/license/creator and
+	/// The picture-properties dialog — the Avalonia replacement for the WinForms PicturePropertiesDialog.
+	/// Edits caption/description/license/creator and
 	/// carries the chosen image file. A NEW picture gates OK on a chosen file; an existing one allows
 	/// metadata-only edits. OK snapshots the result; Cancel writes nothing.
 	/// </summary>

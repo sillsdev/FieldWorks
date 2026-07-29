@@ -20,7 +20,7 @@ using XCore;
 namespace SIL.FieldWorks.XWorks
 {
 	/// <summary>
-	/// Task 3.10 audit: when the Avalonia surface is active, <c>RecordEditView</c> must not instantiate or
+	/// When the Avalonia surface is active, <c>RecordEditView</c> must not instantiate or
 	/// drive the hidden legacy <c>DataTree</c>. This proves the active-host contract on the real product
 	/// host by loading the lexicon edit tool fresh in the New UI mode and asserting the legacy surface was
 	/// never initialized, while the Avalonia surface was.
@@ -80,7 +80,7 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(GetPrivateFieldValue(control, "m_lexicalEditSurface"), Is.EqualTo(LexicalEditSurface.Avalonia),
 				"Precondition: the lexicon edit tool should resolve to the Avalonia surface under the New UI mode.");
 
-			// Active-host contract (task 3.10): the legacy DataTree must not have been initialized or driven
+			// Active-host contract: the legacy DataTree must not have been initialized or driven
 			// while Avalonia is the active surface. This is the audited invariant.
 			Assert.That(GetPrivateFieldValue(control, "m_legacySurfaceInitialized"), Is.EqualTo(false),
 				"The active Avalonia path must not instantiate or drive the hidden legacy DataTree (task 3.10).");

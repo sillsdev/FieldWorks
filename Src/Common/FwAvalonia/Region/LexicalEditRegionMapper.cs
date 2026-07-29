@@ -9,11 +9,9 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 {
 	/// <summary>
 	/// Projects a typed <see cref="ViewDefinitionModel"/> into a value-bound
-	/// <see cref="LexicalEditRegionModel"/> (task 4.8). It flattens the visible leaf field nodes,
+	/// <see cref="LexicalEditRegionModel"/>. It flattens the visible leaf field nodes,
 	/// classifies each into a <see cref="RegionFieldKind"/> from its editor, and asks the supplied
-	/// <see cref="IRegionValueProvider"/> for live values. This is the typed-definition-backed
-	/// replacement for the old detached preview DTO mapping: structure is owned by the view
-	/// definition, not by a bespoke three-field projection.
+	/// <see cref="IRegionValueProvider"/> for live values.
 	/// </summary>
 	public static class LexicalEditRegionMapper
 	{
@@ -59,7 +57,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 				&& node.Children.Count > 0)
 			{
 				// Section header row (legacy grouping slice); children indent one level under it. The
-				// header construction and indent rule are shared with the full composer (task 18.11).
+				// header construction and indent rule are shared with the full composer.
 				output.Add(RegionStructureProjector.BuildHeaderField(
 					node.StableId, node.Label, node.Field, node.WritingSystem, node.EditorClassification,
 					node.AutomationId, node.LocalizationKey, node.Routing, depth));

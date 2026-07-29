@@ -21,12 +21,12 @@ using FwAvaloniaDialogsTests;        // DialogLayoutAssert — the shared geomet
 namespace FwAvaloniaTests
 {
 	/// <summary>
-	/// §19a — the owned multi-paragraph structured-text (StText) editor (<see cref="FwStructuredTextField"/>),
-	/// the managed replacement for the legacy StTextSlice RootSite editor. These pin the editable behavior:
-	/// one editor row per paragraph; a paragraph text edit stages through the paragraph seam; Enter inserts a
-	/// paragraph; Backspace in an empty paragraph deletes it; the per-paragraph style picker applies a style;
-	/// an ORC/lossy paragraph stays read-only. A PNG per stage is emitted for subjective review, paired with
-	/// the AssertNoCrowding tripwire (paragraphs must render as distinct, dense, non-clipped rows).
+	/// The owned multi-paragraph structured-text (StText) editor (<see cref="FwStructuredTextField"/>).
+	/// These pin the editable behavior: one editor row per paragraph; a paragraph text edit stages
+	/// through the paragraph seam; Enter inserts a paragraph; Backspace in an empty paragraph deletes it;
+	/// the per-paragraph style picker applies a style; an ORC/lossy paragraph stays read-only. A PNG per
+	/// stage is emitted for subjective review, paired with the AssertNoCrowding tripwire (paragraphs must
+	/// render as distinct, dense, non-clipped rows).
 	/// </summary>
 	[TestFixture]
 	public class StructuredTextFieldTests
@@ -39,7 +39,7 @@ namespace FwAvaloniaTests
 						: new[] { new RegionTextRun(text, "en") }),
 				style);
 
-		// An ORC/lossy paragraph: a value flagged lossy is held read-only (§19c.3).
+		// An ORC/lossy paragraph: a value flagged lossy is held read-only.
 		private static RegionParagraph LossyPara(string text)
 		{
 			var rich = new RegionRichTextValue(text, new[] { new RegionTextRun(text, "en") },
@@ -227,7 +227,7 @@ namespace FwAvaloniaTests
 		[AvaloniaTest]
 		public void OrcParagraph_StaysReadOnly_AndEditableNeighborStaysEditable()
 		{
-			// §19c.3: a lossy/ORC paragraph is held read-only and preserved; the editable paragraph next
+			// A lossy/ORC paragraph is held read-only and preserved; the editable paragraph next
 			// to it is still fully editable.
 			var field = Field(new List<RegionParagraph> { Para("Editable."), LossyPara("Has unsupported formatting.") });
 			var context = new FakeRegionEditContext();

@@ -9,7 +9,7 @@ using System.Linq;
 namespace FwAvaloniaDialogs
 {
 	/// <summary>
-	/// The LCModel-FREE result of the standalone feature-structure chooser dialog (Phase-1 §19b Stage 3): the flat
+	/// The LCModel-FREE result of the standalone feature-structure chooser dialog: the flat
 	/// <c>(closedFeatureId, valueId)</c> assignment set the hosted <see cref="FwFeatureStructureEditor"/> emitted on
 	/// OK. The LCModel-aware launcher rebuilds the nested <c>IFsFeatStruc</c> from this set (recursive-ascent
 	/// <c>GetOrCreateValue</c>), and an EMPTY set is the legacy "delete the FS / unspecified" case (LT-13596).

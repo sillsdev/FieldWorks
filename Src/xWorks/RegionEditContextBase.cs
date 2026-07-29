@@ -30,9 +30,8 @@ namespace SIL.FieldWorks.XWorks
 
 		protected LcmCache Cache { get; }
 
-		/// <summary>§20.1: the record this context edits — a LexEntry for the lexicon tool, but any
-		/// <see cref="ICmObject"/> (RnGenericRec, CmPossibility, PartOfSpeech, …) once a non-lexicon tool
-		/// is wired onto the Avalonia surface. Derived contexts route writes against it.</summary>
+		/// <summary>The record this context edits — a LexEntry for the lexicon tool, but typed as any
+		/// <see cref="ICmObject"/>. Derived contexts route writes against it.</summary>
 		protected ICmObject RootObject { get; }
 
 		/// <summary>Convenience for the lexicon path: the root typed as <see cref="ILexEntry"/>, or null
@@ -54,7 +53,7 @@ namespace SIL.FieldWorks.XWorks
 		public abstract bool TrySetOption(LexicalEditRegionField regionField, string optionKey);
 
 		/// <inheritdoc />
-		/// <remarks>Reference-vector editing (6.3) exists only on composed regions; the first-slice
+		/// <remarks>Reference-vector editing exists only on composed regions; the first-slice
 		/// fallback has no vector rows, so the base rejects.</remarks>
 		public virtual bool TryAddReferenceItem(LexicalEditRegionField regionField, string optionKey) => false;
 
@@ -64,7 +63,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <inheritdoc />
 		public virtual IReadOnlyList<string> Validate()
 		{
-			// Validation seam (minimal rule set, deterministic order). §20.1: the lexeme/citation-form rule
+			// Validation seam (minimal rule set, deterministic order). The lexeme/citation-form rule
 			// applies ONLY when the root is a LexEntry; other record classes (RnGenericRec, CmPossibility, …)
 			// have no shared required-field rule here and may override this for their own (e.g. CmPossibility
 			// Name/Abbreviation). A non-entry root therefore validates clean by default rather than NRE-ing on
@@ -81,7 +80,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 			else if (RootObject is ICmPossibility poss)
 			{
-				// §20.1.4 (F-8) / §20.3.1 (LE-4): a list item must keep some Name or Abbreviation text — the
+				// A list item must keep some Name or Abbreviation text — the
 				// parity of the legacy Lists editor's required-field guard.
 				var name = poss.Name?.BestAnalysisAlternative?.Text;
 				var abbr = poss.Abbreviation?.BestAnalysisAlternative?.Text;
@@ -109,8 +108,8 @@ namespace SIL.FieldWorks.XWorks
 		/// single field to name. Single-field edits go through <see cref="EnsureOpen(string)"/> so the
 		/// undo label names the field, mirroring the legacy per-slice "Undo change to {field}" labels.
 		/// </summary>
-		/// <summary>§20.1: the generic undo/redo labels used when an edit opens the session without a single
-		/// field to name. Defaults to the lexicon "Edit Entry" labels (the lexicon path is unchanged); a
+		/// <summary>The generic undo/redo labels used when an edit opens the session without a single
+		/// field to name. Defaults to the lexicon "Edit Entry" labels; a
 		/// non-entry context overrides these so a Notebook/List/Grammar edit names its own record.</summary>
 		protected virtual string DefaultUndoLabel => FwAvaloniaStrings.UndoEditEntry;
 		protected virtual string DefaultRedoLabel => FwAvaloniaStrings.RedoEditEntry;
@@ -122,7 +121,7 @@ namespace SIL.FieldWorks.XWorks
 
 		/// <summary>
 		/// Opens the fenced session on the first staged edit, naming the field being edited in the
-		/// undo/redo label when <paramref name="fieldLabel"/> is supplied (ITEM 1 — field-specific
+		/// undo/redo label when <paramref name="fieldLabel"/> is supplied (field-specific
 		/// labels, e.g. "Undo change to Gloss"), falling back to the generic label otherwise. Because
 		/// the session opens lazily on the FIRST staged edit, the field that opens it names the label;
 		/// later same-session edits do not relabel it (the legacy single-step-per-gesture behavior).
@@ -163,7 +162,7 @@ namespace SIL.FieldWorks.XWorks
 
 		/// <summary>
 		/// As <see cref="Stage(Func{bool})"/>, but names <paramref name="fieldLabel"/> in the undo/redo
-		/// label when THIS call opens the session (ITEM 1 — field-specific labels). A write that joins an
+		/// label when THIS call opens the session (field-specific labels). A write that joins an
 		/// already-open session leaves that session's label untouched.
 		/// </summary>
 		public bool Stage(Func<bool> setter, string fieldLabel)

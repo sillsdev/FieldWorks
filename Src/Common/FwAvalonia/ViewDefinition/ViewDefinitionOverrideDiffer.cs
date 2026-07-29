@@ -9,9 +9,9 @@ using System.Linq;
 namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 {
 	/// <summary>
-	/// The kind of sparse override operation a customer layout customization maps to. Deliberately small
-	/// (canonical-view-definition-design.md §3 Layer 2): the representable customer edits over the shipped
-	/// definition. Anything outside this set is reported as a diagnostic, never silently dropped.
+	/// The kind of sparse override operation a customer layout customization maps to. Deliberately small:
+	/// the representable customer edits over the shipped definition. Anything outside this set is reported
+	/// as a diagnostic, never silently dropped.
 	/// </summary>
 	public enum ViewOverrideOperationKind
 	{
@@ -37,8 +37,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 
 	/// <summary>
 	/// One sparse override operation, keyed by the shipped node's <see cref="ViewNode.StableId"/>. This is
-	/// the delta-against-stable-identity model that replaces the legacy whole-<c>&lt;layout&gt;</c>-copy
-	/// override (canonical-view-definition-design.md legacy lesson 1).
+	/// the delta-against-stable-identity model for a per-project layout customization.
 	/// </summary>
 	public sealed class ViewOverrideOperation
 	{
@@ -131,11 +130,11 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 	/// <summary>
 	/// A sparse per-project override: the ordered set of representable operations against a shipped
 	/// definition, plus diagnostics for every customization that is NOT representable (so "migrated"
-	/// carries no silent asterisk). The successor to the legacy whole-copy <c>.fwlayout</c> override.
+	/// carries no silent asterisk).
 	/// </summary>
 	public sealed class ViewDefinitionOverride
 	{
-		/// <summary>The override-format version (successor to the legacy <c>LayoutVersionNumber</c>).</summary>
+		/// <summary>The override-format version.</summary>
 		public const int CurrentFormatVersion = 1;
 
 		public ViewDefinitionOverride(
@@ -167,8 +166,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 
 	/// <summary>
 	/// Computes a sparse <see cref="ViewDefinitionOverride"/> from a shipped definition and the same
-	/// layout as customized by a project (canonical-view-definition-design.md §4 step 3 / task 9.2). Both
-	/// inputs are the typed IR the importer already produces, so the diff keys on <see cref="ViewNode.StableId"/>
+	/// layout as customized by a project. Both inputs are the typed IR the importer already produces, so
+	/// the diff keys on <see cref="ViewNode.StableId"/>
 	/// — the identity scheme the semantic baselines already use — instead of a second one.
 	///
 	/// Representable edits (visibility, label, child reorder, node hidden) become operations; everything
@@ -205,7 +204,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 				}
 
 				// A change to binding/editor/kind is not a representable sparse override; report it rather
-				// than emit a wrong patch (canonical-view-definition-design.md: never a silent drop).
+				// than emit a wrong patch (never a silent drop).
 				if (shippedNode.Kind != overriddenNode.Kind ||
 					!string.Equals(shippedNode.Field, overriddenNode.Field, StringComparison.Ordinal) ||
 					!string.Equals(shippedNode.RawEditor, overriddenNode.RawEditor, StringComparison.Ordinal))

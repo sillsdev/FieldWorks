@@ -23,7 +23,7 @@ using FwAvaloniaDialogsTests;
 namespace FwAvaloniaTests
 {
 	/// <summary>
-	/// §19c (T1/T3/T5) — rich-text DEPTH on the owned structured-text (StText) editor: the per-paragraph
+	/// Rich-text DEPTH on the owned structured-text (StText) editor: the per-paragraph
 	/// run-level character-style picker and the per-run writing-system retag picker (the SAME pattern
 	/// FwMultiWsTextField has, staging through TrySetParagraphText), plus the inline-display-on-blur /
 	/// editable-TextBox-on-focus per-run font swap (a multi-run paragraph renders a read-along TextBlock
@@ -117,7 +117,7 @@ namespace FwAvaloniaTests
 			Assert.That(styled, Is.EqualTo("do"), "exactly the selected span carries the new style");
 		}
 
-		// 19i.2 (regression guard): the span-applying trigger buttons MUST be non-focusable. If a trigger
+		// Regression guard: the span-applying trigger buttons MUST be non-focusable. If a trigger
 		// takes focus, clicking it blurs the editor TextBox, Avalonia collapses the selection to the caret on
 		// LostFocus, and the gesture (style / WS retag / paragraph style) snapshots an EMPTY span and stages
 		// nothing — the bug the prior tests masked by setting SelectionStart/End and calling the flyout

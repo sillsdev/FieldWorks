@@ -7,7 +7,7 @@ using Avalonia.Controls;
 namespace FwAvaloniaDialogs
 {
 	/// <summary>
-	/// The standalone feature-structure chooser dialog body (Phase-1 §19b Stage 3): a XAML-authored UserControl bound
+	/// The standalone feature-structure chooser dialog body: a XAML-authored UserControl bound
 	/// to <see cref="FeatureChooserDialogViewModel"/> with compiled bindings for the prompt + OK/Cancel/Help, plus the
 	/// owned <see cref="FwFeatureStructureEditor"/> hosted as a code-behind child (it is a native control, not an
 	/// MVVM-bindable one — the same pattern <see cref="MsaCreatorDialogView"/> uses for the MSA box). Hosted as

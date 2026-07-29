@@ -10,9 +10,9 @@ using SIL.FieldWorks.Common.FwAvalonia.ViewDefinition;
 namespace FwAvaloniaTests
 {
 	/// <summary>
-	/// Task 9.2 (override migrator): a legacy whole-copy <c>.fwlayout</c> override imports + diffs into a
-	/// sparse patch capturing exactly the customer's edits. Reuses the real <see cref="XmlLayoutImporter"/>
-	/// over inline XML — no XCore/file I/O.
+	/// A legacy whole-copy <c>.fwlayout</c> override imports + diffs into a sparse patch capturing
+	/// exactly the customer's edits. Reuses the real <see cref="XmlLayoutImporter"/> over inline XML —
+	/// no XCore/file I/O.
 	/// </summary>
 	[TestFixture]
 	public class ViewDefinitionOverrideMigratorTests

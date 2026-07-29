@@ -9,10 +9,10 @@ using SIL.FieldWorks.Common.FwAvalonia.Region;
 namespace FwAvaloniaTests
 {
 	/// <summary>
-	/// §19c — the kind-aware ORC (embedded object) classification + link helpers + editability over the
+	/// The kind-aware ORC (embedded object) classification + link helpers + editability over the
 	/// EXISTING run model. The view layer stays LCModel-free, so the kind is derived from the first
 	/// character of <see cref="RegionTextRun.ObjectData"/> (the value the adapter projects from the
-	/// TsString's ktptObjData). These pin: ORC is no longer a blanket read-only block (a value carrying
+	/// TsString's ktptObjData). These pin: ORC is not a blanket read-only block (a value carrying
 	/// ONLY ORC runs is editable to the extent of link insert/edit/delete + generic ORC delete); the
 	/// lossy-property guard for genuinely-unsupported run props STILL forces read-only.
 	/// </summary>
@@ -72,7 +72,7 @@ namespace FwAvaloniaTests
 		[Test]
 		public void Value_WithOnlyAnExternalLinkRun_IsEditable_NotABlanketBlock()
 		{
-			// §19c hard requirement: an ORC run no longer forces the whole value read-only.
+			// An ORC run does not force the whole value read-only.
 			var value = RegionRichTextEditAlgorithms.FromRuns("SIL",
 				new[] { Orc("SIL", ExternalLink, "https://software.sil.org/fieldworks") });
 			Assert.That(value.CanEditRichText, Is.True,
@@ -105,7 +105,7 @@ namespace FwAvaloniaTests
 	}
 
 	/// <summary>
-	/// §19c — span-level link + ORC editing helpers over the run model (sibling of
+	/// Span-level link + ORC editing helpers over the run model (sibling of
 	/// ApplySpanNamedStyle / RetagSpanWritingSystem): apply a hyperlink over a selection, edit an
 	/// existing link's URL, delete an ORC run. Plain text / run metadata around the edit is preserved
 	/// and the result drops RichXml so the adapter re-emits via run-replay.

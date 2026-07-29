@@ -13,7 +13,7 @@ using SIL.LCModel.Infrastructure;
 namespace SIL.FieldWorks.XWorks
 {
 	/// <summary>
-	/// winforms-free-lexeme-editor.md D3 — entry-reference vectors: the legacy
+	/// Entry-reference vectors: the legacy
 	/// <c>EntrySequenceReferenceSlice</c> fields (ComponentLexemes/PrimaryLexemes on LexEntryRef,
 	/// targeting ILexEntry OR ILexSense) compose as EDITABLE ReferenceVector rows whose items are
 	/// headwords and whose ADD is a type-ahead lexicon search (<see cref="LexicalEditRegionField.SearchOptions"/>)
@@ -117,7 +117,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void Add_EntryBySearchKey_CommitsAsOneUndoStep_AndAppliesLegacyComponentCoupling()
 		{
-			// Legacy-coupling baseline (D3 item 3): a plain ComponentLexemesRS.Add in setup did NOT
+			// Legacy-coupling baseline: a plain ComponentLexemesRS.Add in setup did NOT
 			// populate PrimaryLexemes/ShowComplexFormsIn — LCModel has no ADD side effect, so the
 			// composer's setter must carry EntrySequenceReferenceLauncher.AddNewObjectsToProperty's
 			// coupling explicitly.
@@ -179,12 +179,12 @@ namespace SIL.FieldWorks.XWorks
 			composed.EditContext.Commit();
 
 			Assert.That(m_ref.ComponentLexemesRS, Is.Empty);
-			// Legacy-coupling finding (D3 item 3), pinned empirically: unlike ADD, the
+			// Legacy-coupling finding, pinned empirically: unlike ADD, the
 			// PrimaryLexemes REMOVE coupling IS an LCModel side effect, so the composer's plain
 			// sda.Replace removal needs no twin there. ShowComplexFormsIn is NOT cleared by
 			// LCModel — and the legacy slice's non-virtual remove path (VectorReferenceView →
 			// plain vector removal) adds no explicit coupling either, so retaining it is
-			// legacy-faithful (recorded in the D3 deferred notes).
+			// legacy-faithful.
 			Assert.That(m_ref.PrimaryLexemesRS, Is.Empty,
 				"LCModel's remove side effects clear the departing component from PrimaryLexemes");
 			Assert.That(m_ref.ShowComplexFormsInRS.Select(s => s.Guid), Is.EqualTo(new[] { m_casa.Guid }),

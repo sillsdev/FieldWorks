@@ -11,8 +11,8 @@ using SIL.FieldWorks.Common.FwAvalonia.ViewDefinition;
 namespace FwAvaloniaTests
 {
 	/// <summary>
-	/// Task 9.2 (override migrator): the per-project override patch serializes to deterministic canonical
-	/// JSON and round-trips losslessly, including its audit diagnostics. Pure logic — no Avalonia runtime.
+	/// The per-project override patch serializes to deterministic canonical JSON and round-trips
+	/// losslessly, including its audit diagnostics. Pure logic — no Avalonia runtime.
 	/// </summary>
 	[TestFixture]
 	public class ViewDefinitionOverrideJsonSerializerTests

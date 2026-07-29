@@ -34,7 +34,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 		CustomFieldPlaceholder,
 
 		/// <summary>
-		/// A conditional-display wrapper (legacy <c>&lt;if&gt;</c>/<c>&lt;ifnot&gt;</c>, B3): its
+		/// A conditional-display wrapper (legacy <c>&lt;if&gt;</c>/<c>&lt;ifnot&gt;</c>): its
 		/// <see cref="ViewNode.Condition"/> is evaluated per object at compose time and the children
 		/// render only when it passes. Inside a <see cref="ChoiceGroup"/> a null condition is the
 		/// legacy <c>&lt;otherwise&gt;</c> branch.
@@ -42,7 +42,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 		Conditional,
 
 		/// <summary>
-		/// A legacy <c>&lt;choice&gt;</c> (B3): children are <see cref="Conditional"/> branches
+		/// A legacy <c>&lt;choice&gt;</c>: children are <see cref="Conditional"/> branches
 		/// (<c>&lt;where&gt;</c>/<c>&lt;otherwise&gt;</c>); only the FIRST branch whose condition
 		/// passes renders, matching <c>DataTree.ProcessSubpartNode</c>'s choice handling.
 		/// </summary>
@@ -109,7 +109,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 	}
 
 	/// <summary>
-	/// Product-vs-preview routing for a node that can appear on a globally switchable surface (task 4.7).
+	/// Product-vs-preview routing for a node that can appear on a globally switchable surface.
 	/// <c>Inherit</c> defers to the region/host decision; <c>Product</c> is wired through real
 	/// LCModel-backed contracts; <c>Preview</c> is preview-host/sample only; <c>Unsupported</c> renders a
 	/// resource-backed unsupported state instead of pretending to be a product editor.
@@ -131,7 +131,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 
 	/// <summary>
 	/// A diagnostic raised while importing/compiling a view definition. Carries the layout part and
-	/// node path so unsupported constructs are reported, not silently dropped (task 4.4 / 3.8).
+	/// node path so unsupported constructs are reported, not silently dropped.
 	/// </summary>
 	public sealed class ViewDiagnostic
 	{
@@ -159,7 +159,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 
 	/// <summary>
 	/// Structured conditional-display metadata imported from legacy <c>&lt;if&gt;</c>/<c>&lt;ifnot&gt;</c>/
-	/// <c>&lt;where&gt;</c> elements (B3, xml-retirement-blockers). Attribute semantics mirror
+	/// <c>&lt;where&gt;</c> elements. Attribute semantics mirror
 	/// <c>XmlVc.ConditionPasses</c> exactly as <c>DataTree.ProcessSubpartNode</c> invokes it: every test
 	/// present must pass (conjunction); <c>&lt;ifnot&gt;</c> sets <see cref="Negated"/>. Only the condition
 	/// vocabulary the shipped DETAIL layouts actually use is represented — <c>target</c>, <c>is</c>,
@@ -283,7 +283,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 
 	/// <summary>
 	/// A chooser jump link imported from the legacy <c>&lt;chooserInfo&gt;&lt;chooserLink&gt;</c>
-	/// element (B7, xml-retirement-blockers): the cross-tool "Edit the … list" link the legacy
+	/// element: the cross-tool "Edit the … list" link the legacy
 	/// chooser dialog shows (<c>ReallySimpleListChooser.InitializeExtras</c>,
 	/// ReallySimpleListChooser.cs:887-926). Attributes are preserved verbatim: <see cref="Type"/>
 	/// defaults to "goto" like the legacy reader; <see cref="Target"/> carries the rare
@@ -345,8 +345,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 
 	/// <summary>
 	/// An immutable typed view-definition node. This is the framework-neutral migration contract that
-	/// both the legacy WinForms adapter and the future Avalonia adapter consume instead of raw XML.
-	/// In the hybrid roadmap this is the typed node that the DataTree region's <c>SliceSpec</c> realizes.
+	/// both the legacy WinForms adapter and the Avalonia adapter consume instead of raw XML.
 	/// </summary>
 	public sealed class ViewNode
 	{
@@ -446,11 +445,11 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 
 		public bool Indented { get; }
 
-		/// <summary>For object/sequence nodes, the destination layout name (deep expansion is deferred).</summary>
+		/// <summary>For object/sequence nodes, the destination layout name.</summary>
 		public string TargetLayout { get; }
 
 		/// <summary>
-		/// §19e: an optional per-field writing-system visibility override (legacy
+		/// An optional per-field writing-system visibility override (legacy
 		/// <c>visibleWritingSystems</c> on a multistring slice / its persisted layout property): the ordered
 		/// list of writing-system specs/tags the field should show, restricting the layout's full ws= set.
 		/// Null when the field carries no override (show the full configured set). Each entry is the raw
@@ -462,19 +461,19 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 		public IReadOnlyList<ViewNode> Children { get; }
 
 		/// <summary>
-		/// Optional localization/resource key for this node's user-facing text (task 4.7). Null when the
+		/// Optional localization/resource key for this node's user-facing text. Null when the
 		/// source carries no key; the label is then treated as a literal. Carried so a globally switchable
 		/// surface can resolve localized strings without re-deriving them from incidental layout text.
 		/// </summary>
 		public string LocalizationKey { get; }
 
 		/// <summary>
-		/// Optional stable, nonlocalized accessibility identity for this node (task 4.7), stamped on the
+		/// Optional stable, nonlocalized accessibility identity for this node, stamped on the
 		/// rendered control's <c>AutomationProperties.AutomationId</c>. Null when not authored.
 		/// </summary>
 		public string AutomationId { get; }
 
-		/// <summary>Product-vs-preview routing for this node (task 4.7). Defaults to <see cref="SurfaceRouting.Inherit"/>.</summary>
+		/// <summary>Product-vs-preview routing for this node. Defaults to <see cref="SurfaceRouting.Inherit"/>.</summary>
 		public SurfaceRouting Routing { get; }
 
 		/// <summary>Bold emphasis from the part's &lt;properties&gt;&lt;bold value='on'/&gt; (e.g. the lexeme form).</summary>
@@ -483,7 +482,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 		/// <summary>Font scale percent from &lt;properties&gt;&lt;fontsize value='120%'/&gt;; 0 = unscaled.</summary>
 		public int FontScalePercent { get; }
 
-		/// <summary>Legacy slice context menu id (layout `menu=`), e.g. mnuDataTree-Sense (13.1).</summary>
+		/// <summary>Legacy slice context menu id (layout `menu=`), e.g. mnuDataTree-Sense.</summary>
 		public string MenuId { get; }
 
 		/// <summary>Legacy in-string context menu id (`contextMenu=`), e.g. mnuDataTree-LexemeFormContext.</summary>
@@ -512,9 +511,9 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 
 		/// <summary>
 		/// For a legacy dynamically loaded slice (<c>editor="Custom"</c>), the fully qualified slice
-		/// class (`class=`). Carried so hosts can promote designated WinForms-only custom slices
-		/// (e.g. the Chorus Messages notes bar) to a hybrid companion strip instead of rendering an
-		/// unsupported row. Null for every other node.
+		/// class (`class=`). Carried so hosts can identify designated WinForms-only custom slices
+		/// (e.g. the Chorus Messages notes bar) instead of rendering an unsupported row. Null for every
+		/// other node.
 		/// </summary>
 		public string CustomEditorClass { get; }
 
@@ -523,21 +522,21 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 
 		/// <summary>
 		/// Legacy `ghostInitMethod=`: a no-argument method invoked by reflection on the newly created
-		/// object after the ghost text lands (B2; <c>GhostStringSliceView.MakeRealObject</c>,
+		/// object after the ghost text lands (<c>GhostStringSliceView.MakeRealObject</c>,
 		/// GhostStringSlice.cs:321-328), e.g. <c>SetMorphTypeToRoot</c> on a new lexeme-form allomorph
 		/// or <c>SetTypeToFreeTrans</c> on a new example translation.
 		/// </summary>
 		public string GhostInitMethod { get; }
 
 		/// <summary>
-		/// Conditional-display metadata (B3): non-null on <see cref="ViewNodeKind.Conditional"/> nodes
+		/// Conditional-display metadata: non-null on <see cref="ViewNodeKind.Conditional"/> nodes
 		/// (except the <c>&lt;otherwise&gt;</c> branch of a <see cref="ViewNodeKind.ChoiceGroup"/>,
 		/// which renders when no sibling condition passed). Evaluated per object at compose time.
 		/// </summary>
 		public ViewCondition Condition { get; }
 
 		/// <summary>
-		/// The chooser jump links from the slice's <c>&lt;chooserInfo&gt;</c> (B7), in document order
+		/// The chooser jump links from the slice's <c>&lt;chooserInfo&gt;</c>, in document order
 		/// (legacy shows at most two). Empty for nodes without chooser metadata.
 		/// </summary>
 		public IReadOnlyList<ViewChooserLink> ChooserLinks { get; }
@@ -550,7 +549,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 		public ViewStringList EnumStringList { get; }
 
 		/// <summary>
-		/// §20.1.4 (F-7): legacy <c>toggleValue="true"</c> on a boolean slice — the displayed checkbox shows
+		/// Legacy <c>toggleValue="true"</c> on a boolean slice — the displayed checkbox shows
 		/// the LOGICAL INVERSE of the stored property (BasicTypeSlices.cs:181-203 inverts on both read and
 		/// write). The composer's Boolean case inverts read display + write commit when this is set so e.g. a
 		/// PartOfSpeech "Final" / inflection-class flag round-trips with the same sense the WinForms slice shows.
@@ -625,7 +624,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 			}
 		}
 
-		// Task 4.7 metadata is appended only when present so existing semantic baselines (which carry no
+		// Metadata is appended only when present so existing semantic baselines (which carry no
 		// localization/accessibility/routing metadata) keep their exact snapshot.
 		private static string AppendMetadata(ViewNode node)
 		{
@@ -636,18 +635,17 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 				sb.Append($" | autoId={node.AutomationId}");
 			if (node.Routing != SurfaceRouting.Inherit)
 				sb.Append($" | routing={node.Routing}");
-			// B3: conditional nodes are new (never in pre-existing baselines), so the condition summary
+			// Conditional nodes are new (never in pre-existing baselines), so the condition summary
 			// rides the snapshot — JSON round-trip equality fails if condition metadata is dropped.
 			if (node.Condition != null)
 				sb.Append($" | cond=[{node.Condition}]");
-			// B7: chooser links likewise ride the snapshot so a lossy round trip fails loudly.
+			// Chooser links likewise ride the snapshot so a lossy round trip fails loudly.
 			if (node.ChooserLinks.Count > 0)
 				sb.Append($" | links=[{string.Join(";", node.ChooserLinks)}]");
 			// NOTE: EnumStringList is deliberately NOT in the snapshot. The canonical
-			// JSON serializer does not yet persist it, so adding it here would break the lossless
+			// JSON serializer does not persist it, so adding it here would break the lossless
 			// JSON round-trip parity test. The importer carrier is covered directly by
-			// RegionEditorParityTests instead. Add it here in the same change that teaches
-			// ViewDefinitionJsonSerializer to round-trip it.
+			// RegionEditorParityTests instead.
 			if (node.ForVariant)
 				sb.Append(" | forVariant=1");
 			return sb.ToString();

@@ -12,9 +12,8 @@ using Newtonsoft.Json.Linq;
 namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 {
 	/// <summary>
-	/// Canonical JSON wire format for a per-project <see cref="ViewDefinitionOverride"/> (task 9.2 step 3,
-	/// per `canonical-view-definition-design.md` Layer 2): deterministic, sparse, keyed by StableId, with a
-	/// `formatVersion` header that succeeds the legacy `LayoutVersionNumber`. Mirrors the conventions of
+	/// Canonical JSON wire format for a per-project <see cref="ViewDefinitionOverride"/>: deterministic,
+	/// sparse, keyed by StableId, with a `formatVersion` header. Mirrors the conventions of
 	/// <see cref="ViewDefinitionJsonSerializer"/> (Newtonsoft, ordered keys, defaults omitted) so the
 	/// override store and the base store read alike and diff cleanly under review.
 	/// </summary>

@@ -23,7 +23,7 @@ using SIL.LCModel.Infrastructure;
 namespace SIL.FieldWorks.XWorks
 {
 	/// <summary>
-	/// §19a T2 — INTEGRATION on ONE realized region surface: a single <see cref="LexicalEditRegionView"/>
+	/// INTEGRATION on ONE realized region surface: a single <see cref="LexicalEditRegionView"/>
 	/// holding a sibling multistring (Citation Form) row AND an editable structured-text (StText) row,
 	/// driven through the REAL <see cref="ComposedRegionEditContext"/> over an in-memory LCModel (the same
 	/// fenced <see cref="LcmRegionEditSession"/> staging the production composer wires). These exercise

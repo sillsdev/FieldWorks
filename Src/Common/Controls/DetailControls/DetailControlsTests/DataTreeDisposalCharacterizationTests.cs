@@ -13,12 +13,11 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 {
 	/// <summary>
 	/// Characterization tests that lock down the CURRENT disposal, event-unsubscription, focus, and
-	/// accessibility behavior of <see cref="DataTree"/> and <see cref="Slice"/> BEFORE the Avalonia
-	/// refactor (task 2.7 of lexical-edit-avalonia-migration). These protect the refactor: an Avalonia
-	/// adapter selected by the two-adapter flag must preserve this observable behavior.
+	/// accessibility behavior of <see cref="DataTree"/> and <see cref="Slice"/>. The Avalonia editors
+	/// that replace these controls must preserve this observable behavior.
 	///
 	/// They assert observable behavior only (IsDisposed, no-throw after Dispose, AccessibleName,
-	/// focus order) so they remain robust across the refactor rather than pinning private internals.
+	/// focus order) so they remain robust rather than pinning private internals.
 	/// </summary>
 	[TestFixture]
 	public class DataTreeDisposalCharacterizationTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase

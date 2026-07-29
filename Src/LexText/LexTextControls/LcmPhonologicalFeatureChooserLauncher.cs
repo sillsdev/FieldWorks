@@ -16,7 +16,7 @@ using AvControl = Avalonia.Controls.Control;
 namespace SIL.FieldWorks.LexText.Controls
 {
 	/// <summary>
-	/// The LCModel-aware launcher for the standalone PHONOLOGICAL-feature chooser dialog (Phase-1 §19b Stage 3) — the
+	/// The LCModel-aware launcher for the standalone PHONOLOGICAL-feature chooser dialog — the
 	/// New-UI replacement for the WinForms <see cref="PhonologicalFeatureChooserDlg"/> the phonological-features slice
 	/// opens. It bridges LCModel ↔ the LCModel-free <see cref="FeatureChooserDialogViewModel"/>: it builds the
 	/// PHONOLOGICAL feature system (every closed feature in <c>PhFeatureSystemOA</c> + its values, the flat case —
@@ -28,7 +28,7 @@ namespace SIL.FieldWorks.LexText.Controls
 	/// targeting the phonological feature system (a new closed feature + its default +/- values, the
 	/// MasterPhonologicalFeatureListDlg parity).
 	///
-	/// PARITY (§19b Stage 3): the legacy dialog can also drive phonological-RULE feature CONSTRAINTS (agree/disagree
+	/// PARITY: the legacy dialog can also drive phonological-RULE feature CONSTRAINTS (agree/disagree
 	/// polarity over <c>IPhFeatureConstraint</c>), used only from the rule-formula control. That polarity surface is
 	/// NOT ported here (the New-UI gate covers the slice's plain feature-assignment case); the rule-formula call site
 	/// keeps the legacy dialog. The plain value-assignment case (the phoneme / NC-features slice) is fully wired.

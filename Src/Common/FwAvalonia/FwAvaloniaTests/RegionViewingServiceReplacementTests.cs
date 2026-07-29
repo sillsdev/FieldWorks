@@ -17,21 +17,19 @@ using SIL.FieldWorks.Common.FwAvalonia.ViewDefinition;
 namespace FwAvaloniaTests
 {
 	/// <summary>
-	/// Task 8.3 (positive complement of the 8.4 negative audit): every native-Views viewing capability
-	/// the migrated lexical-edit region used to lean on now has a FieldWorks-owned managed/Avalonia
-	/// replacement, recorded in <see cref="RegionViewingServices"/> and exercised here. Where
-	/// <c>EngineIsolationAuditTests</c> proves the region names NO native symbol, this proves the
-	/// managed replacement is present, located in the isolated production assembly, and (for the
-	/// deferred embedded-object case) degrades to an explicit, lossless read-only state — not a silent
-	/// gap. Tasks 8.5/8.6 deferrals are asserted to be named, not assumed.
+	/// Every native-Views viewing capability the migrated lexical-edit region relies on has a
+	/// FieldWorks-owned managed/Avalonia replacement, recorded in <see cref="RegionViewingServices"/>
+	/// and exercised here. Where <c>EngineIsolationAuditTests</c> proves the region names NO native
+	/// symbol, this proves the managed replacement is present, located in the isolated production
+	/// assembly, and (for the deferred embedded-object case) degrades to an explicit, lossless
+	/// read-only state — not a silent gap. Deferrals are asserted to be named, not assumed.
 	/// </summary>
 	[TestFixture]
 	public class RegionViewingServiceReplacementTests
 	{
 		// The native symbol each capability supersedes. This cross-reference lives in the TEST (which
 		// the isolation audit excludes from its source scan), NOT in production source — the audit
-		// forbids production code from naming the native pipeline even in strings. The human-readable
-		// version is `native-views-audit.md` §8.3.
+		// forbids production code from naming the native pipeline even in strings.
 		private static readonly Dictionary<RegionViewingCapability, string> SupersededNativeSymbol =
 			new Dictionary<RegionViewingCapability, string>
 			{
@@ -112,9 +110,9 @@ namespace FwAvaloniaTests
 				"the hidden-DataTree command-routing adapter stays a named, contract-gated deferral");
 		}
 
-		// Task 8.3 deferral made honest: a text value carrying an embedded object (ORC) the managed
-		// editor cannot rebuild renders READ-ONLY with an explicit tooltip and stages nothing — rather
-		// than a silently-editable box whose edits the edit context would reject.
+		// A text value carrying an embedded object (ORC) the managed editor cannot rebuild renders
+		// READ-ONLY with an explicit tooltip and stages nothing — rather than a silently-editable box
+		// whose edits the edit context would reject.
 		[AvaloniaTest]
 		public void EmbeddedObjectValue_RendersReadOnly_WithExplicitAffordance_AndNeverStages()
 		{

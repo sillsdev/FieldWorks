@@ -24,11 +24,9 @@ using SIL.FieldWorks.Common.FwAvalonia;
 namespace FwAvaloniaDialogsTests
 {
 	/// <summary>
-	/// The LCModel-free <see cref="FwFeatureStructureEditor"/> (the FsFeatStruc tree editor), parity of the
-	/// WinForms <c>FeatureStructureTreeView</c> / <c>MsaInflectionFeatureListDlg</c> /
-	/// <c>PhonologicalFeatureChooserDlg</c>. Proven on a realized headless surface per the §19.0 rubric (T1
-	/// unit, T2 integration, T3 edges, T4 workflow, T5 visual). Traceability: see
-	/// openspec/changes/lexical-edit-avalonia-migration/feature-structure-test-research.md.
+	/// The LCModel-free <see cref="FwFeatureStructureEditor"/> (the FsFeatStruc tree editor), parity of
+	/// the WinForms <c>FeatureStructureTreeView</c> / <c>MsaInflectionFeatureListDlg</c> /
+	/// <c>PhonologicalFeatureChooserDlg</c>. Proven on a realized headless surface.
 	/// </summary>
 	[TestFixture]
 	public class FwFeatureStructureEditorTests
@@ -105,7 +103,7 @@ namespace FwAvaloniaDialogsTests
 				item.IsExpanded = true;
 		}
 
-		// ----- T1: tree renders from the feature system -----
+		// ----- Tree renders from the feature system -----
 
 		[AvaloniaTest]
 		public void Renders_FeatureSystem_AsTree()
@@ -180,7 +178,7 @@ namespace FwAvaloniaDialogsTests
 			Pump(window);
 			Assert.That(editor.Assignments.Count, Is.EqualTo(1));
 
-			// Re-selecting <None> clears the feature's assignment (B5/B9).
+			// Re-selecting <None> clears the feature's assignment.
 			editor.ClearFeature("f-tense");
 			Pump(window);
 			Assert.That(editor.Assignments, Is.Empty, "<None> means unspecified — no assignment emitted");
@@ -266,7 +264,7 @@ namespace FwAvaloniaDialogsTests
 				Is.EquivalentTo(new[] { "f-gender", "f-tense" }));
 		}
 
-		// ----- T1: create-requested hooks (deferred wiring) -----
+		// ----- Create-requested hooks -----
 
 		[AvaloniaTest]
 		public void CreateFeature_RaisesRequest()
@@ -337,7 +335,7 @@ namespace FwAvaloniaDialogsTests
 				Is.EqualTo("v-future"), "the new value becomes the feature's pick");
 		}
 
-		// ----- T1: keyboard + filter -----
+		// ----- Keyboard + filter -----
 
 		[AvaloniaTest]
 		public void Keyboard_SpaceTogglesValue()
@@ -376,7 +374,7 @@ namespace FwAvaloniaDialogsTests
 			Assert.That(editor.Tree.IsVisible, Is.True, "clearing the filter restores the tree");
 		}
 
-		// ----- T2: integration (composition, no cross-talk) -----
+		// ----- Integration (composition, no cross-talk) -----
 
 		[AvaloniaTest]
 		public void Integration_FeatureEditorWithPosChooser_Compose()
@@ -454,7 +452,7 @@ namespace FwAvaloniaDialogsTests
 			Assert.That(b.Assignments, Is.Empty, "and B's state is independent");
 		}
 
-		// ----- T3: edge cases -----
+		// ----- Edge cases -----
 
 		[AvaloniaTest]
 		public void EmptyFeatureSystem_RendersEmpty_NoCrash()
@@ -560,7 +558,7 @@ namespace FwAvaloniaDialogsTests
 			DialogLayoutAssert.AssertNoCrowding(editor);
 		}
 
-		// ----- T4: end-to-end workflow -----
+		// ----- End-to-end workflow -----
 
 		[AvaloniaTest]
 		public void Workflow_ExpandPickAddSecond_ReadBack()

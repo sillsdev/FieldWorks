@@ -450,7 +450,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		}
 
 		// Shared by the AddNewMsa and EditExistingMsa gates. NoInlining keeps the Avalonia assembly load out
-		// of the gated callers' JIT (Legacy loader isolation). §19b Stage 3 PARITY closure: round-trips the
+		// of the gated callers' JIT (Legacy loader isolation). PARITY closure: round-trips the
 		// box's chosen inflection features onto the resolved (find-or-created on the sense) MSA —
 		// SandboxGenericMSA carries none — in the SAME undo task as the assign.
 		[MethodImpl(MethodImplOptions.NoInlining)]

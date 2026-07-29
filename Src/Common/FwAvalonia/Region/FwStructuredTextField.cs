@@ -16,8 +16,7 @@ using SIL.FieldWorks.Common.FwAvalonia.Seams;
 namespace SIL.FieldWorks.Common.FwAvalonia.Region
 {
 	/// <summary>
-	/// §19a — FieldWorks-owned editable multi-paragraph structured-text (StText) field, the managed
-	/// replacement for the legacy <c>StTextSlice</c> RootSite rich editor. A vertical stack of one
+	/// FieldWorks-owned editable multi-paragraph structured-text (StText) field. A vertical stack of one
 	/// bordered, dense editor row per paragraph; each row carries a run-aware text editor (the SAME
 	/// staging the single-WS <see cref="FwMultiWsTextField"/> uses — TextChanged replays the untouched
 	/// runs around the edit and stages through <see cref="IStructuredTextEditing.TrySetParagraphText"/>),
@@ -29,7 +28,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 	/// (add/delete/style) commit immediately through the <paramref>gestureCompleted</paramref> callback
 	/// and the host re-shows — the paragraph list is a compose-time snapshot, so without an immediate
 	/// commit + re-show the change would not appear.</para>
-	/// <para>§19c.3 (out of scope here): an ORC-bearing / lossy paragraph (<see cref="RegionParagraph.CanEditText"/>
+	/// <para>An ORC-bearing / lossy paragraph (<see cref="RegionParagraph.CanEditText"/>
 	/// false) renders a READ-ONLY box with the embedded-object tooltip and is preserved losslessly — full
 	/// editing of such a paragraph stays in the classic view.</para>
 	/// </summary>
@@ -96,7 +95,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 			};
 			AutomationProperties.SetAutomationId(box, automationId + ".Para." + index);
 			AutomationProperties.SetName(box, FwAvaloniaStrings.StructuredTextParagraphName(field.Label ?? automationId, index + 1));
-			// §19c.3: an ORC/lossy paragraph stays read-only and says why (same tooltip as a lossy value).
+			// An ORC/lossy paragraph stays read-only and says why (same tooltip as a lossy value).
 			if (!paragraph.CanEditText)
 				ToolTip.SetTip(box, FwAvaloniaStrings.EmbeddedObjectReadOnly);
 
@@ -110,7 +109,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 			{
 				WireParagraphTextEditing(field, editContext, box, currentRich, index, rich => currentRich = rich);
 
-				// §19c: the SAME run-level character-style picker and writing-system retag picker
+				// The SAME run-level character-style picker and writing-system retag picker
 				// FwMultiWsTextField exposes, here acting on THIS paragraph's run-aware value and staging
 				// through the paragraph-text seam (ApplySpanNamedStyle / RetagSpanWritingSystem ->
 				// TrySetParagraphText). Built only on an editable, non-lossy paragraph carrying the
@@ -124,11 +123,10 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 
 				// Enter inserts a new empty paragraph after this one. Backspace at the START of an EMPTY
 				// paragraph deletes it (when more than one remains).
-				// PARITY (19i.10): legacy StTextSlice (RootSite/StVc) SPLITS at the caret on Enter and MERGES a
+				// PARITY: legacy StTextSlice (RootSite/StVc) SPLITS at the caret on Enter and MERGES a
 				// non-empty paragraph into the previous one on Backspace-at-start. This editor simplifies both to
-				// whole-paragraph insert/delete (paragraph granularity), documented in
-				// sttext-editable-design.md §B2/B3 and sttext-test-research.md. Mid-text split + non-empty merge
-				// are deferred; the plain text is never lost (the user can edit the two paragraphs directly).
+				// whole-paragraph insert/delete (paragraph granularity); the plain text is never lost (the user
+				// can edit the two paragraphs directly).
 				EventHandler<KeyEventArgs> structuralKeyDown = (s, e) =>
 				{
 					if (e.Key == Key.Enter)
@@ -192,7 +190,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 				}
 			}
 
-			// §19c per-run font display: when this paragraph's runs differ (more than one run, or a run
+			// Per-run font display: when this paragraph's runs differ (more than one run, or a run
 			// carrying its own style/font), build the read-along TextBlock with per-run fonts and swap it
 			// for the editable box on focus / back on blur. The only way to show TRUE per-run fonts in the
 			// unfocused state. A uniform single-run paragraph skips it (the plain box suffices).
@@ -212,7 +210,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 				DockPanel.SetDock(addAffordance, Dock.Right);
 				rowPanel.Children.Add(addAffordance);
 			}
-			// §19c: the run-level writing-system and character-style pickers trail (right), like the
+			// The run-level writing-system and character-style pickers trail (right), like the
 			// multi-WS field; the per-paragraph PARAGRAPH style button still leads (left).
 			if (wsAffordance != null)
 			{
@@ -301,7 +299,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 				Foreground = FwAvaloniaDensity.WsAbbrevBrush,
 				FontSize = FwAvaloniaDensity.WsAbbrevFontSize,
 				VerticalAlignment = VerticalAlignment.Top,
-				// 19i.2: keep focus on the editor — a focusable trigger blurs the TextBox, Avalonia collapses
+				// Keep focus on the editor — a focusable trigger blurs the TextBox, Avalonia collapses
 				// the selection to caret on LostFocus, and the style would apply to an empty span (no-op).
 				Focusable = false
 			};
@@ -344,7 +342,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 			return styleButton;
 		}
 
-		// §19c: the per-run font display + focus swap. When the paragraph's runs warrant a per-run font
+		// The per-run font display + focus swap. When the paragraph's runs warrant a per-run font
 		// display (differing runs), wrap the editable box and a read-along TextBlock in a Panel: the
 		// TextBlock shows (each run in its own ws/style font from the host map) while unfocused, and the
 		// box swaps in on focus. A uniform paragraph returns the bare box (no display layer).
@@ -400,7 +398,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 			return panel;
 		}
 
-		// §19c: the run-level CHARACTER-style picker for this paragraph (the FwMultiWsTextField pattern):
+		// The run-level CHARACTER-style picker for this paragraph (the FwMultiWsTextField pattern):
 		// a "Character Style" button opening the shared FwOptionPicker seeded with a leading "Default"
 		// clear entry plus the project's character styles, acting on the box's current selection and
 		// staging ApplySpanNamedStyle through the paragraph-text seam. Null when no character styles.
@@ -462,7 +460,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 				_teardown);
 		}
 
-		// §19c: the run-level WRITING-SYSTEM retag picker for this paragraph (the FwMultiWsTextField
+		// The run-level WRITING-SYSTEM retag picker for this paragraph (the FwMultiWsTextField
 		// pattern): a "Writing System" button opening the shared FwOptionPicker seeded with the project's
 		// writing systems (no clear entry), acting on the box's current selection and staging
 		// RetagSpanWritingSystem through the paragraph-text seam. Null when no writing systems.

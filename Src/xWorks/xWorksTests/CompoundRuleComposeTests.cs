@@ -16,12 +16,13 @@ namespace SIL.FieldWorks.XWorks
 	/// regardless of what the composer can already do — this file only proves the composer machinery, not that
 	/// the tool is live.
 	///
-	/// avalonia-rule-formula-editor (task 2.5) — the headed/non-headed compound rules (MoEndoCompound /
+	/// The headed/non-headed compound rules (MoEndoCompound /
 	/// MoExoCompound) are the category-based "Compound Rules" the user sees (Name/Description/Active +
 	/// Left/Right Member + Result categories) — NOT the MoAffixProcess formula grid. They compose from
-	/// STANDARD slices. After the multi-child-part importer fix (a part's `<if Disabled=true/false>` pair both
-	/// import; the active branch renders), the full detail composes editably: Name/Description as Text, Active
-	/// as a checkbox, and each member/result CATEGORY as an editable Chooser.
+	/// STANDARD slices. Both branches of a part's `<if Disabled=true/false>` pair import and the active
+	/// branch renders, so the detail composes Name/Description as editable Text and each member/result
+	/// CATEGORY as an editable Chooser; the Active boolean composes as a labeled Unsupported worklist row
+	/// (checkbox editing dropped).
 	/// </summary>
 	[TestFixture]
 	public class CompoundRuleComposeTests : MemoryOnlyBackendProviderTestBase
@@ -48,7 +49,7 @@ namespace SIL.FieldWorks.XWorks
 			var kinds = composed.Model.Fields.Select(f => f.Kind.ToString()).ToList();
 			TestContext.WriteLine("MoExoCompound composed field kinds: " + string.Join(", ", kinds));
 
-			// Post-fix: the full non-headed compound detail composes editably.
+			// The full non-headed compound detail composes editably.
 			Assert.That(composed.Model.Fields.Count(f => f.Kind == RegionFieldKind.Text), Is.GreaterThanOrEqualTo(2),
 				"Name and Description compose as editable text rows (the <if Disabled> active branch now imports)");
 			Assert.That(composed.Model.Fields.Any(f => f.Kind == RegionFieldKind.Unsupported),

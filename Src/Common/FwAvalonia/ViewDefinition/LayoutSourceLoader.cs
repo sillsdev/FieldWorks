@@ -112,7 +112,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 		}
 
 		/// <summary>
-		/// §20.1.4 (F-1): indexes layouts by (class, type, name) → ALL matching variants in file-then-document
+		/// Indexes layouts by (class, type, name) → ALL matching variants in file-then-document
 		/// order. Unlike <see cref="IndexLayouts"/> (3-key first-wins), this keeps every <c>choiceGuid</c>
 		/// variant so a caller with a record's layout-choice GUID can pick the right one. Legacy DataTree
 		/// distinguishes e.g. the 11 <c>RnGenericRec/detail/Normal</c> layouts only by <c>choiceGuid</c>; a
@@ -148,7 +148,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 		}
 
 		/// <summary>
-		/// §20.1.4 (F-1): from a (class,type,name) variant list (see <see cref="IndexLayoutsByChoice"/>),
+		/// From a (class,type,name) variant list (see <see cref="IndexLayoutsByChoice"/>),
 		/// pick the layout matching <paramref name="choiceGuid"/> (case-insensitive, mirroring legacy
 		/// <c>DataTree.GetTemplateForObjLayout</c>): an exact <c>choiceGuid</c> match wins; otherwise the
 		/// variant with NO <c>choiceGuid</c> attribute is the fallback; otherwise the first variant. A blank

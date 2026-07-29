@@ -16,8 +16,8 @@ using SIL.Reporting;
 namespace SIL.FieldWorks.XWorks
 {
 	/// <summary>
-	/// winforms-free-lexeme-editor.md — the native Avalonia Reversal Entries editor: claims the legacy
-	/// <c>SIL.FieldWorks.XWorks.LexEd.ReversalIndexEntrySlice</c> layout identity through the D1 plugin
+	/// The native Avalonia Reversal Entries editor: claims the legacy
+	/// <c>SIL.FieldWorks.XWorks.LexEd.ReversalIndexEntrySlice</c> layout identity through the plugin
 	/// contract and renders the sense's reversal-entry forms as an editable multi-writing-system text
 	/// field (<see cref="FwMultiWsTextField"/>) at the slice's real in-tree position, rather than an
 	/// "Unsupported" placeholder row.
@@ -30,9 +30,9 @@ namespace SIL.FieldWorks.XWorks
 	/// <para>DATA-SAFE SCOPE: this editor edits the form text of EXISTING reversal entries only.
 	/// Creating a new reversal index entry (typing a new form on an empty row) and deleting one
 	/// (clearing a form) are the legacy slice's risky parses-of-semicolon-separated-lists +
-	/// find-or-create path (ReversalIndexEntrySlice.ReplaceReversalIndexEntries) and are DEFERRED here:
+	/// find-or-create path (ReversalIndexEntrySlice.ReplaceReversalIndexEntries) and are not supported here:
 	/// a sense with no reversal entry for a given index simply shows no row for it, and clearing a
-	/// form to empty stores an empty form (it does not delete the entry). Phase 5 (ORC) is not needed.</para>
+	/// form to empty stores an empty form (it does not delete the entry).</para>
 	/// </summary>
 	public sealed class ReversalIndexEntryPlugin : IRegionEditorPlugin
 	{
@@ -54,7 +54,7 @@ namespace SIL.FieldWorks.XWorks
 				var node = context.Node;
 				var rows = BuildReversalRows(sense, cache, out var entryByWsKey);
 				if (rows.Count == 0)
-					return null; // no existing reversal entry: nothing editable (creation is deferred)
+					return null; // no existing reversal entry: nothing editable (creation is not supported)
 
 				var field = new LexicalEditRegionField(
 					stableId: "reversal/" + sense.Hvo,
