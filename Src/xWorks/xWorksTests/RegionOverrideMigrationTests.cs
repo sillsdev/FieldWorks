@@ -18,7 +18,7 @@ namespace SIL.FieldWorks.XWorks
 	/// thin XmlNode→XElement bridge over this same core, build-verified by the xWorks build).
 	/// </summary>
 	[TestFixture]
-	public class LexicalEditOverrideMigrationTests
+	public class RegionOverrideMigrationTests
 	{
 		private const string PartsXml = @"
 <PartInventory><bin>
@@ -64,7 +64,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			File.WriteAllText(_overrideFile, OverrideLayout);
 
-			var patch = LexicalEditOverrideMigration.MigrateProjectOverride(
+			var patch = RegionOverrideMigration.MigrateProjectOverride(
 				XElement.Parse(ShippedLayout), XElement.Parse(PartsXml), _overrideFile, _outputFile);
 
 			var op = patch.Operations.Single();
@@ -82,7 +82,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			File.WriteAllText(_overrideFile, ShippedLayout);
 
-			var patch = LexicalEditOverrideMigration.MigrateProjectOverride(
+			var patch = RegionOverrideMigration.MigrateProjectOverride(
 				XElement.Parse(ShippedLayout), XElement.Parse(PartsXml), _overrideFile, _outputFile);
 
 			Assert.That(patch.IsEmpty, Is.True);

@@ -10,7 +10,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Seams
 	/// refresh is now due. Re-entrant/nested suspension counting is intentionally simple (single gate),
 	/// matching the characterization tests that do not lock down nested behavior.
 	/// </summary>
-	public sealed class RefreshCoordinator : ILexicalRefreshCoordinator
+	public sealed class RefreshCoordinator : IRegionRefreshCoordinator
 	{
 		public bool IsSuspended { get; private set; }
 
