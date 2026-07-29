@@ -5,32 +5,32 @@
 using System.Collections.Generic;
 using SIL.FieldWorks.Common.FwAvalonia.ViewDefinition;
 
-namespace SIL.FieldWorks.Common.FwAvalonia.Region
+namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 {
 	/// <summary>
 	/// Projects a typed <see cref="ViewDefinitionModel"/> into a value-bound
-	/// <see cref="RegionModel"/>. It flattens the visible leaf field nodes,
-	/// classifies each into a <see cref="RegionFieldKind"/> from its editor, and asks the supplied
-	/// <see cref="IRegionValueProvider"/> for live values.
+	/// <see cref="DetailModel"/>. It flattens the visible leaf field nodes,
+	/// classifies each into a <see cref="DetailFieldKind"/> from its editor, and asks the supplied
+	/// <see cref="IDetailValueProvider"/> for live values.
 	/// </summary>
-	public static class RegionModelProjector
+	public static class DetailModelProjector
 	{
-		public static RegionModel FromViewDefinition(
+		public static DetailModel FromViewDefinition(
 			ViewDefinitionModel definition,
-			IRegionValueProvider values)
+			IDetailValueProvider values)
 		{
 			if (definition == null)
 				throw new System.ArgumentNullException(nameof(definition));
 			if (values == null)
 				throw new System.ArgumentNullException(nameof(values));
 
-			var fields = new List<RegionField>();
+			var fields = new List<DetailField>();
 			foreach (var root in definition.Roots)
 			{
 				CollectFields(root, values, fields, 0);
 			}
 
-			return new RegionModel(
+			return new DetailModel(
 				definition.ClassName,
 				definition.LayoutName,
 				fields,
@@ -39,8 +39,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 
 		private static void CollectFields(
 			ViewNode node,
-			IRegionValueProvider values,
-			List<RegionField> output,
+			IDetailValueProvider values,
+			List<DetailField> output,
 			int depth)
 		{
 			if (node.Visibility == ViewVisibility.Never)
@@ -58,10 +58,10 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 			{
 				// Section header row (legacy grouping slice); children indent one level under it. The
 				// header construction and indent rule are shared with the full composer.
-				output.Add(RegionStructureRules.BuildHeaderField(
+				output.Add(DetailStructureRules.BuildHeaderField(
 					node.StableId, node.Label, node.Field, node.WritingSystem, node.EditorClassification,
 					node.AutomationId, node.LocalizationKey, node.Routing, depth));
-				childDepth = RegionStructureRules.ChildIndent(node.Label, depth);
+				childDepth = DetailStructureRules.ChildIndent(node.Label, depth);
 			}
 
 			foreach (var child in node.Children)
@@ -70,20 +70,20 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 			}
 		}
 
-		private static RegionField BuildField(
+		private static DetailField BuildField(
 			ViewNode node,
-			IRegionValueProvider values,
+			IDetailValueProvider values,
 			int depth)
 		{
 			var kind = ClassifyKind(node);
-			IReadOnlyList<RegionWsValue> wsValues = null;
-			IReadOnlyList<RegionChoiceOption> options = null;
+			IReadOnlyList<DetailWsValue> wsValues = null;
+			IReadOnlyList<DetailChoiceOption> options = null;
 			string selected = null;
 			var isEditable = true;
 
 			switch (kind)
 			{
-				case RegionFieldKind.Text:
+				case DetailFieldKind.Text:
 					wsValues = values.GetValues(node);
 					if (wsValues != null)
 					{
@@ -97,13 +97,13 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 						}
 					}
 					break;
-				case RegionFieldKind.Chooser:
+				case DetailFieldKind.Chooser:
 					options = values.GetOptions(node);
 					selected = values.GetSelectedOptionKey(node);
 					break;
 			}
 
-			return new RegionField(
+			return new DetailField(
 				node.StableId,
 				node.Label,
 				node.Field,
@@ -124,21 +124,21 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		/// Maps a node's editor to a renderable kind. Obsolete editors are unsupported; the
 		/// chooser categories render as choosers; everything else is treated as text — the
 		/// deliberately small first-slice projection. The editor-string knowledge itself lives
-		/// ONCE, in <see cref="EditorKindMap.ClassifyRegionFieldKind"/> — this method keeps no
+		/// ONCE, in <see cref="EditorKindMap.ClassifyDetailFieldKind"/> — this method keeps no
 		/// heuristics of its own.
 		/// </summary>
-		private static RegionFieldKind ClassifyKind(ViewNode node)
+		private static DetailFieldKind ClassifyKind(ViewNode node)
 		{
 			if (node.EditorClassification == EditorClassification.Obsolete)
-				return RegionFieldKind.Unsupported;
+				return DetailFieldKind.Unsupported;
 
-			switch (EditorKindMap.ClassifyRegionFieldKind(node.RawEditor))
+			switch (EditorKindMap.ClassifyDetailFieldKind(node.RawEditor))
 			{
-				case RegionEditorCategory.MorphTypeChooser:
-				case RegionEditorCategory.AtomicReferenceChooser:
-					return RegionFieldKind.Chooser;
+				case DetailEditorCategory.MorphTypeChooser:
+				case DetailEditorCategory.AtomicReferenceChooser:
+					return DetailFieldKind.Chooser;
 				default:
-					return RegionFieldKind.Text;
+					return DetailFieldKind.Text;
 			}
 		}
 	}

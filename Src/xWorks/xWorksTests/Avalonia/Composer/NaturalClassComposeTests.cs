@@ -4,7 +4,7 @@
 
 using System.Linq;
 using NUnit.Framework;
-using SIL.FieldWorks.Common.FwAvalonia.Region;
+using SIL.FieldWorks.Common.FwAvalonia.Detail;
 using SIL.LCModel;
 using SIL.LCModel.Infrastructure;
 
@@ -48,7 +48,7 @@ namespace SIL.FieldWorks.XWorks
 			// The Segments phoneme collection composes as an editable ReferenceVector (the legacy phoneme
 			// chooser).
 			Assert.That(composed.Model.Fields, Is.Not.Empty, "the natural class composes its detail fields");
-			Assert.That(composed.Model.Fields.Any(f => f.Kind == RegionFieldKind.ReferenceVector),
+			Assert.That(composed.Model.Fields.Any(f => f.Kind == DetailFieldKind.ReferenceVector),
 				"the Segments phonemes compose as an editable reference-vector row");
 		}
 
@@ -71,9 +71,9 @@ namespace SIL.FieldWorks.XWorks
 			// The phonological-feature dialog-launcher slice is unclaimed, so the Features field composes
 			// as a labeled Unsupported worklist row (never a Custom/plugin row).
 			Assert.That(composed.Model.Fields, Is.Not.Empty, "the feature-based natural class composes");
-			Assert.That(composed.Model.Fields.Any(f => f.Kind == RegionFieldKind.Custom), Is.False,
+			Assert.That(composed.Model.Fields.Any(f => f.Kind == DetailFieldKind.Custom), Is.False,
 				"nothing claims the phonological-feature slice, so there is no Custom/plugin row");
-			Assert.That(composed.Model.Fields.Any(f => f.Kind == RegionFieldKind.Unsupported),
+			Assert.That(composed.Model.Fields.Any(f => f.Kind == DetailFieldKind.Unsupported),
 				"the phonological-feature slice composes as the labeled Unsupported worklist row");
 		}
 	}

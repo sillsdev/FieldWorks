@@ -3,7 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using CommunityToolkit.Mvvm.ComponentModel;
-using SIL.FieldWorks.Common.FwAvalonia.Region;
+using SIL.FieldWorks.Common.FwAvalonia.Detail;
 
 namespace FwAvaloniaDialogs
 {
@@ -30,10 +30,10 @@ namespace FwAvaloniaDialogs
 		{
 		}
 
-		public PicturePropertiesDialogViewModel(RegionPictureMetadata initial, bool isNew)
+		public PicturePropertiesDialogViewModel(DetailPictureMetadata initial, bool isNew)
 		{
 			_isNew = isNew;
-			var seed = initial ?? new RegionPictureMetadata();
+			var seed = initial ?? new DetailPictureMetadata();
 			_caption = seed.Caption ?? string.Empty;
 			_description = seed.Description ?? string.Empty;
 			_license = seed.License ?? string.Empty;
@@ -54,7 +54,7 @@ namespace FwAvaloniaDialogs
 			: ImageFile;
 
 		/// <summary>Snapshot written on OK; null until then. The launcher reads metadata + file from it.</summary>
-		public RegionPictureDialogResult Result { get; private set; }
+		public DetailPictureDialogResult Result { get; private set; }
 
 		/// <summary>
 		/// Sets the chosen image file (called by the view's "Choose image…" button after the host's file
@@ -76,12 +76,12 @@ namespace FwAvaloniaDialogs
 
 		protected override void ApplyChanges()
 		{
-			var metadata = new RegionPictureMetadata(
+			var metadata = new DetailPictureMetadata(
 				caption: Caption ?? string.Empty,
 				description: Description ?? string.Empty,
 				license: License ?? string.Empty,
 				creator: Creator ?? string.Empty);
-			Result = new RegionPictureDialogResult(metadata, ImageFile);
+			Result = new DetailPictureDialogResult(metadata, ImageFile);
 		}
 	}
 }

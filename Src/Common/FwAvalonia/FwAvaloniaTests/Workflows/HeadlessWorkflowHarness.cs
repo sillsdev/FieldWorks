@@ -10,7 +10,7 @@ using Avalonia.Controls;
 using Avalonia.Controls.Documents;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
-using SIL.FieldWorks.Common.FwAvalonia.Region;
+using SIL.FieldWorks.Common.FwAvalonia.Detail;
 
 namespace FwAvaloniaTests.Workflows
 {
@@ -66,23 +66,23 @@ namespace FwAvaloniaTests.Workflows
 	}
 
 	/// <summary>
-	/// Scenario driver for the lexical-edit (detail) surface (<see cref="RegionDataTree"/>):
+	/// Scenario driver for the lexical-edit (detail) surface (<see cref="DataTree"/>):
 	/// reading and typing field values. Field editors stamp the automation id
 	/// <c>{fieldAutomationId}.{ws}</c> (per writing system), so the driver locates a field's editor by
 	/// its automation-id prefix.
 	/// </summary>
 	public sealed class RegionEditorDriver
 	{
-		private readonly RegionDataTree _view;
+		private readonly DataTree _view;
 		private readonly HeadlessStage _stage;
 
-		public RegionEditorDriver(RegionDataTree view, HeadlessStage stage)
+		public RegionEditorDriver(DataTree view, HeadlessStage stage)
 		{
 			_view = view ?? throw new ArgumentNullException(nameof(view));
 			_stage = stage;
 		}
 
-		public RegionDataTree View => _view;
+		public DataTree View => _view;
 
 		private TextBox Editor(string fieldAutomationId) => _view.GetVisualDescendants().OfType<TextBox>()
 			.FirstOrDefault(b => (AutomationProperties.GetAutomationId(b) ?? string.Empty)

@@ -24,7 +24,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Seams
 	public sealed class FwClipboardText
 	{
 		public FwClipboardText(string plainText, string richXml = null,
-			Region.RegionRichTextValue richText = null)
+			Detail.DetailRichTextValue richText = null)
 		{
 			PlainText = plainText ?? string.Empty;
 			RichXml = richXml;
@@ -41,7 +41,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Seams
 		/// LCModel-free projection of the rich format for Avalonia controls. Null when the clipboard only
 		/// carries plain text or when the producer did not provide a neutral run model.
 		/// </summary>
-		public Region.RegionRichTextValue RichText { get; }
+		public Detail.DetailRichTextValue RichText { get; }
 	}
 
 	/// <summary>

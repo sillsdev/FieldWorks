@@ -5,7 +5,7 @@
 using System;
 using System.Collections.Generic;
 using SIL.FieldWorks.Common.FwAvalonia;
-using SIL.FieldWorks.Common.FwAvalonia.Region;
+using SIL.FieldWorks.Common.FwAvalonia.Detail;
 
 namespace FwAvaloniaDialogs
 {
@@ -13,9 +13,9 @@ namespace FwAvaloniaDialogs
 	/// The LCModel-free input to the reusable Avalonia Insert Entry dialog — the Avalonia analog of the
 	/// legacy <c>InsertEntryDlg</c> in New-UI mode. The product edge (the LexText launcher) builds this from the
 	/// live cache so the Avalonia layer never sees an <c>ICmObject</c>: the lexeme form / gloss fields are
-	/// projected as <see cref="RegionField"/>s (one writing-system row per current vernacular /
+	/// projected as <see cref="DetailField"/>s (one writing-system row per current vernacular /
 	/// analysis WS, seeded empty unless <see cref="LexemeForm"/>'s values carry an initial form), the morph
-	/// types are flat <see cref="RegionChoiceOption"/>s (key = morph-type guid string), and the live
+	/// types are flat <see cref="DetailChoiceOption"/>s (key = morph-type guid string), and the live
 	/// affix-marker → morph-type derivation rides the <see cref="DeriveMorphType"/> delegate (the launcher wraps
 	/// <c>MorphServices.GetTypeIfMatchesPrefix</c>/<c>FindMorphType</c>).
 	/// </summary>
@@ -26,13 +26,13 @@ namespace FwAvaloniaDialogs
 		/// values from an optional initial form (e.g. the word the user double-clicked in interlinear); rows are
 		/// otherwise empty. The owned <c>FwMultiWsTextField</c> edits these through the in-memory edit context.
 		/// </summary>
-		public RegionField LexemeForm { get; set; }
+		public DetailField LexemeForm { get; set; }
 
 		/// <summary>The gloss field (one row per current analysis writing system); rows start empty.</summary>
-		public RegionField Gloss { get; set; }
+		public DetailField Gloss { get; set; }
 
 		/// <summary>The selectable morph types (flat; key = morph-type guid string, name = display name).</summary>
-		public IReadOnlyList<RegionChoiceOption> MorphTypes { get; set; } = Array.Empty<RegionChoiceOption>();
+		public IReadOnlyList<DetailChoiceOption> MorphTypes { get; set; } = Array.Empty<DetailChoiceOption>();
 
 		/// <summary>The morph-type key (guid string) selected on open — the legacy default of "stem".</summary>
 		public string InitialMorphTypeKey { get; set; }
@@ -158,7 +158,7 @@ namespace FwAvaloniaDialogs
 		/// <c>LexDbOA.ComplexEntryTypesOA.ReallyReallyAllPossibilities</c>. Empty (the default) leaves the picker
 		/// with only the "&lt;Not Applicable&gt;" row, so existing consumers that never set it are unaffected.
 		/// </summary>
-		public IReadOnlyList<RegionChoiceOption> ComplexFormTypes { get; set; } = Array.Empty<RegionChoiceOption>();
+		public IReadOnlyList<DetailChoiceOption> ComplexFormTypes { get; set; } = Array.Empty<DetailChoiceOption>();
 
 		/// <summary>The complex-form type key (guid string) selected on open, or null for "&lt;Not Applicable&gt;".</summary>
 		public string InitialComplexFormTypeKey { get; set; }

@@ -6,7 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Avalonia.Controls;
-using SIL.FieldWorks.Common.FwAvalonia.Region;
+using SIL.FieldWorks.Common.FwAvalonia.Detail;
 using SIL.FieldWorks.Common.FwAvalonia.Seams;
 using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;
@@ -56,12 +56,12 @@ namespace SIL.FieldWorks.XWorks
 				if (rows.Count == 0)
 					return null; // no existing reversal entry: nothing editable (creation is not supported)
 
-				var field = new RegionField(
+				var field = new DetailField(
 					stableId: "reversal/" + sense.Hvo,
 					label: node?.Label ?? "Reversal Entries",
 					field: node?.Field ?? "ReferringReversalIndexEntries",
 					writingSystem: node?.WritingSystem,
-					kind: RegionFieldKind.Text,
+					kind: DetailFieldKind.Text,
 					editorClassification: node?.EditorClassification
 						?? SIL.FieldWorks.Common.FwAvalonia.ViewDefinition.EditorClassification.Known,
 					automationId: node?.AutomationId ?? "ReversalEntriesEditor",
@@ -90,10 +90,10 @@ namespace SIL.FieldWorks.XWorks
 		// One editable row per EXISTING reversal entry: the entry's ReversalForm in its index's writing
 		// system. The row's WsTag (and the wsKey edits route on) is the reversal index's writing-system
 		// tag, which is unique per index — a sense has at most one reversal entry per index.
-		private static IReadOnlyList<RegionWsValue> BuildReversalRows(ILexSense sense, LcmCache cache,
+		private static IReadOnlyList<DetailWsValue> BuildReversalRows(ILexSense sense, LcmCache cache,
 			out IReadOnlyDictionary<string, IReversalIndexEntry> entryByWsKey)
 		{
-			var values = new List<RegionWsValue>();
+			var values = new List<DetailWsValue>();
 			var map = new Dictionary<string, IReversalIndexEntry>(StringComparer.Ordinal);
 			var wsManager = cache.ServiceLocator.WritingSystemManager;
 			var factory = cache.WritingSystemFactory;
@@ -110,7 +110,7 @@ namespace SIL.FieldWorks.XWorks
 				var ws = wsManager.Get(wsHandle);
 				var tss = entry.ReversalForm.get_String(wsHandle);
 				var richText = RegionRichTextAdapter.FromTsString(tss, factory);
-				values.Add(new RegionWsValue(ws.Abbreviation, tss?.Text ?? string.Empty,
+				values.Add(new DetailWsValue(ws.Abbreviation, tss?.Text ?? string.Empty,
 					ws.DefaultFontName, 0, ws.RightToLeftScript, ws.Id, false, richText));
 				map[ws.Id] = entry;
 			}
@@ -127,13 +127,13 @@ namespace SIL.FieldWorks.XWorks
 	/// ONE step on the same undoable fence as every other row. Session lifecycle (IsOpen/Commit/Cancel) and
 	/// validation delegate to the host context, so the host view's Save/Cancel commit reversal edits too.
 	/// </summary>
-	internal sealed class ReversalRegionEditContext : IRegionEditContext
+	internal sealed class ReversalRegionEditContext : IDetailEditContext
 	{
 		private readonly LcmCache _cache;
-		private readonly IRegionEditContext _host;
+		private readonly IDetailEditContext _host;
 		private readonly IReadOnlyDictionary<string, IReversalIndexEntry> _entryByWsKey;
 
-		public ReversalRegionEditContext(LcmCache cache, IRegionEditContext host,
+		public ReversalRegionEditContext(LcmCache cache, IDetailEditContext host,
 			IReadOnlyDictionary<string, IReversalIndexEntry> entryByWsKey)
 		{
 			_cache = cache ?? throw new ArgumentNullException(nameof(cache));
@@ -143,7 +143,7 @@ namespace SIL.FieldWorks.XWorks
 
 		public bool IsOpen => _host != null && _host.IsOpen;
 
-		public bool TrySetText(RegionField field, string ws, string value)
+		public bool TrySetText(DetailField field, string ws, string value)
 		{
 			if (string.IsNullOrEmpty(ws) || !_entryByWsKey.TryGetValue(ws, out var entry))
 				return false;
@@ -158,7 +158,7 @@ namespace SIL.FieldWorks.XWorks
 			});
 		}
 
-		public bool TrySetRichText(RegionField field, string ws, RegionRichTextValue value)
+		public bool TrySetRichText(DetailField field, string ws, DetailRichTextValue value)
 		{
 			if (value == null || string.IsNullOrEmpty(ws) || !_entryByWsKey.TryGetValue(ws, out var entry))
 				return false;
@@ -191,11 +191,11 @@ namespace SIL.FieldWorks.XWorks
 
 		// Chooser / reference-vector / validation are not part of the reversal text editor; delegate
 		// the session boundary to the host so the view's Save/Cancel still drive commit/rollback.
-		public bool TrySetOption(RegionField field, string optionKey) => false;
+		public bool TrySetOption(DetailField field, string optionKey) => false;
 
-		public bool TryAddReferenceItem(RegionField field, string optionKey) => false;
+		public bool TryAddReferenceItem(DetailField field, string optionKey) => false;
 
-		public bool TryRemoveReferenceItem(RegionField field, string optionKey) => false;
+		public bool TryRemoveReferenceItem(DetailField field, string optionKey) => false;
 
 		// The Reversal Entries plugin edits multi-unicode reversal forms only; it implements neither
 		// IStructuredTextEditing (no StText rows are composed for it) nor picture editing.

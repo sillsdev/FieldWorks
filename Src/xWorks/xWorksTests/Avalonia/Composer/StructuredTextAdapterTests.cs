@@ -4,7 +4,7 @@
 
 using System.Linq;
 using NUnit.Framework;
-using SIL.FieldWorks.Common.FwAvalonia.Region;
+using SIL.FieldWorks.Common.FwAvalonia.Detail;
 using SIL.LCModel;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Infrastructure;
@@ -13,7 +13,7 @@ namespace SIL.FieldWorks.XWorks
 {
 	/// <summary>
 	/// The LCModel-aware StText edit-context adapter, exercised against a REAL in-memory cache.
-	/// An StText field becomes an editable <see cref="RegionFieldKind.StructuredText"/> row whose
+	/// An StText field becomes an editable <see cref="DetailFieldKind.StructuredText"/> row whose
 	/// paragraph CRUD (text / style / insert / delete) mutates the LCModel StText inside ONE fenced
 	/// <see cref="LcmRegionEditSession"/> — one step on the global undo stack legacy surfaces share, the
 	/// same undo-granularity rule the rest of the region follows. These tests build the composed
@@ -61,11 +61,11 @@ namespace SIL.FieldWorks.XWorks
 		// A StructuredText region field + a composed edit context whose paragraph setters mutate m_stText
 		// exactly as RegionComposer.AddStructuredText wires them. This is the production seam:
 		// ComposedRegionEditContext routes each gesture through the shared fenced Stage().
-		private (RegionField Field, ComposedRegionEditContext Context) Build()
+		private (DetailField Field, ComposedRegionEditContext Context) Build()
 		{
 			const string stableId = "LexEntry/Bibliography@" + "x";
-			var field = new RegionField(stableId, "Discussion", "Discussion", null,
-				RegionFieldKind.StructuredText,
+			var field = new DetailField(stableId, "Discussion", "Discussion", null,
+				DetailFieldKind.StructuredText,
 				SIL.FieldWorks.Common.FwAvalonia.ViewDefinition.EditorClassification.Known, null, null,
 				SIL.FieldWorks.Common.FwAvalonia.ViewDefinition.SurfaceRouting.Product, null, null, null,
 				isEditable: true);
@@ -114,9 +114,9 @@ namespace SIL.FieldWorks.XWorks
 			return (field, context);
 		}
 
-		private static RegionRichTextValue Rich(string text)
-			=> RegionRichTextEditAlgorithms.FromRuns(text,
-				new[] { new RegionTextRun(text) });
+		private static DetailRichTextValue Rich(string text)
+			=> DetailRichTextEditAlgorithms.FromRuns(text,
+				new[] { new DetailTextRun(text) });
 
 		[Test]
 		public void ParagraphTextEdit_RoundTripsToLcm_AsOneUndoStep()
@@ -213,7 +213,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			// FromTsString projection mirrors what AddStructuredText builds for the region model.
 			var paragraphs = m_stText.ParagraphsOS.OfType<IStTxtPara>()
-				.Select(p => new RegionParagraph(
+				.Select(p => new DetailParagraph(
 					RegionRichTextAdapter.FromTsString(p.Contents, Cache.WritingSystemFactory), p.StyleName))
 				.ToList();
 

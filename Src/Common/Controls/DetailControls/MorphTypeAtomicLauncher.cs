@@ -456,7 +456,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		}
 
 		// Review consolidation (morph-type GUID knowledge): the single source of truth for the
-		// stem/affix classification lives in MorphTypeSwapLogic (FwAvalonia.Region), as
+		// stem/affix classification lives in MorphTypeSwapLogic (FwAvalonia.Detail), as
 		// IsStemType(Guid) over its GUID -> MorphTypeKind table; the Avalonia composer consumes
 		// it there. This legacy WinForms copy cannot delegate yet because DetailControls does not
 		// reference FwAvalonia; MorphTypeGuidConsolidationTests (xWorksTests) pins this guid set

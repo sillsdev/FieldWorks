@@ -13,7 +13,7 @@ using Avalonia.Threading;
 using Avalonia.VisualTree;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwAvalonia;
-using SIL.FieldWorks.Common.FwAvalonia.Region;
+using SIL.FieldWorks.Common.FwAvalonia.Detail;
 using SIL.FieldWorks.Common.FwAvalonia.ViewDefinition;
 using SIL.LCModel;
 using SIL.LCModel.Core.Text;
@@ -23,7 +23,7 @@ using SIL.LCModel.Infrastructure;
 namespace SIL.FieldWorks.XWorks
 {
 	/// <summary>
-	/// INTEGRATION on ONE realized region surface: a single <see cref="RegionDataTree"/>
+	/// INTEGRATION on ONE realized region surface: a single <see cref="DataTree"/>
 	/// holding a sibling multistring (Citation Form) row AND an editable structured-text (StText) row,
 	/// driven through the REAL <see cref="ComposedRegionEditContext"/> over an in-memory LCModel (the same
 	/// fenced <see cref="LcmRegionEditSession"/> staging the production composer wires). These exercise
@@ -85,26 +85,26 @@ namespace SIL.FieldWorks.XWorks
 		// A region model with a sibling multistring (Citation Form) row + a StructuredText (Discussion)
 		// row, plus the composed edit context whose setters mutate the real LCModel exactly as
 		// RegionComposer wires them. This is the production seam, not a stand-in.
-		private (RegionModel Model, ComposedRegionEditContext Context) BuildSurface()
+		private (DetailModel Model, ComposedRegionEditContext Context) BuildSurface()
 		{
-			var citation = new RegionField(CitationStableId, "Citation Form", "CitationForm", null,
-				RegionFieldKind.Text, EditorClassification.Known, "CitationForm", null, SurfaceRouting.Product,
-				new List<RegionWsValue> { new RegionWsValue("vern", CitationText, wsTag: "vern") },
+			var citation = new DetailField(CitationStableId, "Citation Form", "CitationForm", null,
+				DetailFieldKind.Text, EditorClassification.Known, "CitationForm", null, SurfaceRouting.Product,
+				new List<DetailWsValue> { new DetailWsValue("vern", CitationText, wsTag: "vern") },
 				null, null, isEditable: true);
 
 			var paragraphs = m_stText.ParagraphsOS.OfType<IStTxtPara>()
-				.Select(p => new RegionParagraph(
+				.Select(p => new DetailParagraph(
 					RegionRichTextAdapter.FromTsString(p.Contents, Cache.WritingSystemFactory), p.StyleName))
 				.ToList();
-			var stTextField = new RegionField(StTextStableId, "Discussion", "Discussion", null,
-				RegionFieldKind.StructuredText, EditorClassification.Known, "Discussion", null,
+			var stTextField = new DetailField(StTextStableId, "Discussion", "Discussion", null,
+				DetailFieldKind.StructuredText, EditorClassification.Known, "Discussion", null,
 				SurfaceRouting.Product, null, null, null, isEditable: true, paragraphs: paragraphs)
 			{
 				AvailableParagraphStyles = new[] { "Block Quote", "Numbered List" }
 			};
 
-			var model = new RegionModel("LexEntry", "Normal",
-				new List<RegionField> { citation, stTextField }, new List<ViewDiagnostic>());
+			var model = new DetailModel("LexEntry", "Normal",
+				new List<DetailField> { citation, stTextField }, new List<ViewDiagnostic>());
 
 			var defaultWs = Cache.DefaultAnalWs;
 			var wsf = Cache.WritingSystemFactory;
@@ -164,7 +164,7 @@ namespace SIL.FieldWorks.XWorks
 		/// ONE realized region surface hosting BOTH field controls over the SAME composed edit context:
 		/// the sibling multistring (<see cref="FwMultiWsTextField"/>) and the StText
 		/// (<see cref="FwStructuredTextField"/>) in one StackPanel. We realize the field controls directly
-		/// (rather than the whole <see cref="RegionDataTree"/> surface, whose GridSplitter needs an
+		/// (rather than the whole <see cref="DataTree"/> surface, whose GridSplitter needs an
 		/// input/cursor platform the bare headless xWorksTests host does not register) and wire the SAME
 		/// commit semantics the view's autosave/gesture path uses:
 		///   * structural gestures (add/delete/style) commit immediately + raise the re-show, via the
@@ -179,7 +179,7 @@ namespace SIL.FieldWorks.XWorks
 			public ComposedRegionEditContext Context;
 			public int Rebuilds;
 
-			// Mirrors RegionDataTree.OnSave for a structural gesture: validation-gated commit of the
+			// Mirrors DataTree.OnSave for a structural gesture: validation-gated commit of the
 			// one open fenced session, then the re-show signal (the host rebuilds the rows from domain truth).
 			public void CompleteGesture()
 			{
@@ -196,7 +196,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		private Surface ShowSurface(RegionModel model, ComposedRegionEditContext context)
+		private Surface ShowSurface(DetailModel model, ComposedRegionEditContext context)
 		{
 			var surface = new Surface { Context = context };
 			var citationField = model.Fields[0];

@@ -12,7 +12,7 @@ using Avalonia.Interactivity;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
 using NUnit.Framework;
-using SIL.FieldWorks.Common.FwAvalonia.Region;
+using SIL.FieldWorks.Common.FwAvalonia.Detail;
 using SIL.FieldWorks.Common.FwAvalonia.ViewDefinition;
 
 namespace FwAvaloniaTests
@@ -70,16 +70,16 @@ namespace FwAvaloniaTests
 
 		// ---- FwReferenceVectorField.Dispose detaches every handler ----
 
-		private static RegionField VectorFieldWithItems() => new RegionField(
-			"v1", "Publish In", "PublishIn", null, RegionFieldKind.ReferenceVector,
+		private static DetailField VectorFieldWithItems() => new DetailField(
+			"v1", "Publish In", "PublishIn", null, DetailFieldKind.ReferenceVector,
 			EditorClassification.Known, "PublishIn", null, SurfaceRouting.Inherit, null,
-			new List<RegionChoiceOption>
+			new List<DetailChoiceOption>
 			{
-				new RegionChoiceOption("p1", "Main Dictionary"),
-				new RegionChoiceOption("p2", "Pocket")
+				new DetailChoiceOption("p1", "Main Dictionary"),
+				new DetailChoiceOption("p2", "Pocket")
 			},
 			null, isEditable: true,
-			items: new List<RegionChoiceOption> { new RegionChoiceOption("p1", "Main Dictionary") });
+			items: new List<DetailChoiceOption> { new DetailChoiceOption("p1", "Main Dictionary") });
 
 		[AvaloniaTest]
 		public void ReferenceVector_Dispose_DetachesEveryHandler()

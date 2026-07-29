@@ -13,7 +13,7 @@ using Avalonia.VisualTree;
 using FwAvaloniaDialogs;
 using FwAvaloniaTests.VisualChecks; // DialogSnapshot — the per-stage PNG harness (linked in via the csproj)
 using NUnit.Framework;
-using SIL.FieldWorks.Common.FwAvalonia.Region;
+using SIL.FieldWorks.Common.FwAvalonia.Detail;
 
 namespace FwAvaloniaDialogsTests
 {
@@ -30,16 +30,16 @@ namespace FwAvaloniaDialogsTests
 	{
 		// A representative slice of the GOLDEtic catalog in document order with depth: Adjective (flat),
 		// Adposition > {Preposition, Postposition}, Noun > {Common noun, Proper noun}, Verb (flat).
-		private static IReadOnlyList<RegionChoiceOption> CatalogCandidates() => new List<RegionChoiceOption>
+		private static IReadOnlyList<DetailChoiceOption> CatalogCandidates() => new List<DetailChoiceOption>
 		{
-			new RegionChoiceOption("Adjective", "Adjective", 0),
-			new RegionChoiceOption("Adposition", "Adposition", 0),
-			new RegionChoiceOption("Preposition", "Preposition", 1),
-			new RegionChoiceOption("Postposition", "Postposition", 1),
-			new RegionChoiceOption("Noun", "Noun", 0),
-			new RegionChoiceOption("CommonNoun", "Common noun", 1),
-			new RegionChoiceOption("ProperNoun", "Proper noun", 1),
-			new RegionChoiceOption("Verb", "Verb", 0)
+			new DetailChoiceOption("Adjective", "Adjective", 0),
+			new DetailChoiceOption("Adposition", "Adposition", 0),
+			new DetailChoiceOption("Preposition", "Preposition", 1),
+			new DetailChoiceOption("Postposition", "Postposition", 1),
+			new DetailChoiceOption("Noun", "Noun", 0),
+			new DetailChoiceOption("CommonNoun", "Common noun", 1),
+			new DetailChoiceOption("ProperNoun", "Proper noun", 1),
+			new DetailChoiceOption("Verb", "Verb", 0)
 		};
 
 		// Mirrors LcmCreatePartOfSpeechLauncher.BuildInput: hierarchical single-select, OK gated until a pick.

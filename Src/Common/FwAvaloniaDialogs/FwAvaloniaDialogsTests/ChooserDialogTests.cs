@@ -16,7 +16,7 @@ using FwAvaloniaDialogs;
 using FwAvaloniaTests.VisualChecks; // DialogSnapshot — the per-stage PNG harness (linked in via the csproj)
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwAvalonia;
-using SIL.FieldWorks.Common.FwAvalonia.Region;
+using SIL.FieldWorks.Common.FwAvalonia.Detail;
 
 namespace FwAvaloniaDialogsTests
 {
@@ -30,12 +30,12 @@ namespace FwAvaloniaDialogsTests
 	[TestFixture]
 	public class ChooserDialogTests
 	{
-		private static IReadOnlyList<RegionChoiceOption> Candidates() => new List<RegionChoiceOption>
+		private static IReadOnlyList<DetailChoiceOption> Candidates() => new List<DetailChoiceOption>
 		{
-			new RegionChoiceOption("g-noun", "Noun", 0),
-			new RegionChoiceOption("g-noun-proper", "Proper noun", 1),
-			new RegionChoiceOption("g-verb", "Verb", 0),
-			new RegionChoiceOption("g-adj", "Adjective", 0)
+			new DetailChoiceOption("g-noun", "Noun", 0),
+			new DetailChoiceOption("g-noun-proper", "Proper noun", 1),
+			new DetailChoiceOption("g-verb", "Verb", 0),
+			new DetailChoiceOption("g-adj", "Adjective", 0)
 		};
 
 		private static (ChooserDialogView view, ChooserDialogViewModel vm) Show(
@@ -234,10 +234,10 @@ namespace FwAvaloniaDialogsTests
 		public void Search_DelegateBacked_ForwardsTheQuery()
 		{
 			var queries = new List<string>();
-			var lexicon = new List<RegionChoiceOption>
+			var lexicon = new List<DetailChoiceOption>
 			{
-				new RegionChoiceOption("e-casa", "casa"),
-				new RegionChoiceOption("e-cantar", "cantar")
+				new DetailChoiceOption("e-casa", "casa"),
+				new DetailChoiceOption("e-cantar", "cantar")
 			};
 			var (_, vm) = Show(new ChooserDialogInput
 			{

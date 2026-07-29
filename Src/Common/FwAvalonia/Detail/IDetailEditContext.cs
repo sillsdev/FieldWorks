@@ -5,7 +5,7 @@
 using System.Collections.Generic;
 using SIL.FieldWorks.Common.FwAvalonia.Seams;
 
-namespace SIL.FieldWorks.Common.FwAvalonia.Region
+namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 {
 	/// <summary>
 	/// The editing seam for a region surface (tasks 6.8/6.10): staging writes, validation, and the
@@ -19,43 +19,43 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 	/// Extends <see cref="IEditSession"/> (the staging-neutral IsOpen/Commit/Cancel fence) so there
 	/// is one edit-session contract, not two parallel ones: any region context IS an edit session.
 	/// </summary>
-	public interface IRegionEditContext : IEditSession
+	public interface IDetailEditContext : IEditSession
 	{
 
 		/// <summary>
 		/// Stages a text value for a field (opening the session on the first edit). Returns false when
 		/// the field/writing system cannot accept the value (the view leaves the editor unchanged).
 		/// <paramref name="ws"/> is the writing system's unique IETF tag
-		/// (<see cref="RegionWsValue.WsTag"/>); implementations also accept an unambiguous
+		/// (<see cref="DetailWsValue.WsTag"/>); implementations also accept an unambiguous
 		/// abbreviation or legacy alias (e.g. "vern"/"anal") as a fallback for tag-less rows. The
 		/// user-editable abbreviation alone is never an identity: it can collide across writing
-		/// systems. Implementations key on <see cref="RegionField.Field"/> for fixed
-		/// slices or <see cref="RegionField.StableId"/> for composed full-layout regions,
+		/// systems. Implementations key on <see cref="DetailField.Field"/> for fixed
+		/// slices or <see cref="DetailField.StableId"/> for composed full-layout regions,
 		/// where the same field name (e.g. Gloss) occurs once per sense.
 		/// </summary>
-		bool TrySetText(RegionField field, string ws, string value);
+		bool TrySetText(DetailField field, string ws, string value);
 
 		/// <summary>
 		/// Stages a run-aware text value for a field. The supplied rich-text payload is LCModel-free and
 		/// preserves the run metadata needed to rebuild the product <c>ITsString</c> without flattening.
 		/// </summary>
-		bool TrySetRichText(RegionField field, string ws, RegionRichTextValue value);
+		bool TrySetRichText(DetailField field, string ws, DetailRichTextValue value);
 
 		/// <summary>Stages a chooser selection by option key (opening the session on the first edit).</summary>
-		bool TrySetOption(RegionField field, string optionKey);
+		bool TrySetOption(DetailField field, string optionKey);
 
 		/// <summary>
-		/// Stages adding an item (by option key) to a <see cref="RegionFieldKind.ReferenceVector"/>
+		/// Stages adding an item (by option key) to a <see cref="DetailFieldKind.ReferenceVector"/>
 		/// row (6.3). Returns false — WITHOUT opening the session — for keys outside the field's
 		/// possibility list, duplicates, or non-vector rows, like the legacy chooser.
 		/// </summary>
-		bool TryAddReferenceItem(RegionField field, string optionKey);
+		bool TryAddReferenceItem(DetailField field, string optionKey);
 
 		/// <summary>
-		/// Stages removing an item (by option key) from a <see cref="RegionFieldKind.ReferenceVector"/>
+		/// Stages removing an item (by option key) from a <see cref="DetailFieldKind.ReferenceVector"/>
 		/// row. Returns false — without opening the session — when the item is not in the vector.
 		/// </summary>
-		bool TryRemoveReferenceItem(RegionField field, string optionKey);
+		bool TryRemoveReferenceItem(DetailField field, string optionKey);
 
 		/// <summary>
 		/// Validates the staged state. Empty result means commit may proceed; messages are

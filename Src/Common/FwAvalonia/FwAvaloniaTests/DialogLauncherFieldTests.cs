@@ -10,7 +10,7 @@ using Avalonia.Threading;
 using Avalonia.VisualTree;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwAvalonia;
-using SIL.FieldWorks.Common.FwAvalonia.Region;
+using SIL.FieldWorks.Common.FwAvalonia.Detail;
 using FwAvaloniaTests.VisualChecks; // DialogSnapshot — the PNG harness
 using FwAvaloniaDialogsTests;        // DialogLayoutAssert — the shared geometry tripwire
 

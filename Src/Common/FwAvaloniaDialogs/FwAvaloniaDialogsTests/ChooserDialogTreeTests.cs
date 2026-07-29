@@ -13,7 +13,7 @@ using Avalonia.Threading;
 using Avalonia.VisualTree;
 using FwAvaloniaDialogs;
 using NUnit.Framework;
-using SIL.FieldWorks.Common.FwAvalonia.Region;
+using SIL.FieldWorks.Common.FwAvalonia.Detail;
 
 namespace FwAvaloniaDialogsTests
 {
@@ -28,13 +28,13 @@ namespace FwAvaloniaDialogsTests
 	public class ChooserDialogTreeTests
 	{
 		// A small hierarchy in document order with Depth: Noun > {Proper noun, Common noun}, Verb (flat), Adjective.
-		private static IReadOnlyList<RegionChoiceOption> TreeCandidates() => new List<RegionChoiceOption>
+		private static IReadOnlyList<DetailChoiceOption> TreeCandidates() => new List<DetailChoiceOption>
 		{
-			new RegionChoiceOption("g-noun", "Noun", 0),
-			new RegionChoiceOption("g-noun-proper", "Proper noun", 1),
-			new RegionChoiceOption("g-noun-common", "Common noun", 1),
-			new RegionChoiceOption("g-verb", "Verb", 0),
-			new RegionChoiceOption("g-adj", "Adjective", 0)
+			new DetailChoiceOption("g-noun", "Noun", 0),
+			new DetailChoiceOption("g-noun-proper", "Proper noun", 1),
+			new DetailChoiceOption("g-noun-common", "Common noun", 1),
+			new DetailChoiceOption("g-verb", "Verb", 0),
+			new DetailChoiceOption("g-adj", "Adjective", 0)
 		};
 
 		private static (ChooserDialogView view, ChooserDialogViewModel vm) Show(
@@ -72,13 +72,13 @@ namespace FwAvaloniaDialogsTests
 		[Test]
 		public void TreeBuilder_HandlesDeeperNesting()
 		{
-			var roots = ChooserTreeBuilder.Build(new List<RegionChoiceOption>
+			var roots = ChooserTreeBuilder.Build(new List<DetailChoiceOption>
 			{
-				new RegionChoiceOption("a", "A", 0),
-				new RegionChoiceOption("b", "B", 1),
-				new RegionChoiceOption("c", "C", 2),
-				new RegionChoiceOption("d", "D", 1),
-				new RegionChoiceOption("e", "E", 0)
+				new DetailChoiceOption("a", "A", 0),
+				new DetailChoiceOption("b", "B", 1),
+				new DetailChoiceOption("c", "C", 2),
+				new DetailChoiceOption("d", "D", 1),
+				new DetailChoiceOption("e", "E", 0)
 			});
 
 			Assert.That(roots.Select(r => r.Key), Is.EqualTo(new[] { "a", "e" }));
@@ -169,10 +169,10 @@ namespace FwAvaloniaDialogsTests
 		public void Search_DelegateBacked_ForwardsTheQuery_InHierarchicalMode()
 		{
 			var queries = new List<string>();
-			var lexicon = new List<RegionChoiceOption>
+			var lexicon = new List<DetailChoiceOption>
 			{
-				new RegionChoiceOption("e-casa", "casa"),
-				new RegionChoiceOption("e-cantar", "cantar")
+				new DetailChoiceOption("e-casa", "casa"),
+				new DetailChoiceOption("e-cantar", "cantar")
 			};
 			var (_, vm) = Show(new ChooserDialogInput
 			{
@@ -292,12 +292,12 @@ namespace FwAvaloniaDialogsTests
 			// A large list (100 parents x 100 children = ~10100 nodes) — far more than any window can show.
 			// Nodes start collapsed (legacy + virtualization), so the root level virtualizes; expanding ONE branch
 			// realizes only that branch's visible window, never the whole tree.
-			var big = new List<RegionChoiceOption>();
+			var big = new List<DetailChoiceOption>();
 			for (var p = 0; p < 100; p++)
 			{
-				big.Add(new RegionChoiceOption("p" + p, "Parent " + p, 0));
+				big.Add(new DetailChoiceOption("p" + p, "Parent " + p, 0));
 				for (var c = 0; c < 100; c++)
-					big.Add(new RegionChoiceOption($"p{p}c{c}", $"Child {p}.{c}", 1));
+					big.Add(new DetailChoiceOption($"p{p}c{c}", $"Child {p}.{c}", 1));
 			}
 
 			var (view, vm) = Show(new ChooserDialogInput { Candidates = big, Hierarchical = true });

@@ -5,7 +5,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace SIL.FieldWorks.Common.FwAvalonia.Region
+namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 {
 	/// <summary>
 	/// Morph type categories, named to match the <c>MoMorphTypeTags.kguidMorphType*</c> model GUIDs.

@@ -5,7 +5,7 @@
 using System;
 using System.Linq;
 using NUnit.Framework;
-using SIL.FieldWorks.Common.FwAvalonia.Region;
+using SIL.FieldWorks.Common.FwAvalonia.Detail;
 using SIL.LCModel;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Infrastructure;
@@ -48,7 +48,7 @@ namespace SIL.FieldWorks.XWorks
 		private ComposedRegion Compose(bool showHidden = false)
 			=> RegionComposer.Compose(m_entry, Cache, showHidden);
 
-		private static RegionField GhostRow(ComposedRegion composed, string label)
+		private static DetailField GhostRow(ComposedRegion composed, string label)
 			=> composed.Model.Fields.Single(f => f.Field == "EntryRefs" && f.Label == label);
 
 		[Test]
@@ -58,9 +58,9 @@ namespace SIL.FieldWorks.XWorks
 			var components = GhostRow(composed, "Components");
 			var variantOf = GhostRow(composed, "Variant of");
 
-			Assert.That(components.Kind, Is.EqualTo(RegionFieldKind.ReferenceVector),
+			Assert.That(components.Kind, Is.EqualTo(DetailFieldKind.ReferenceVector),
 				"an empty Components ghost row must compose as an editable reference vector");
-			Assert.That(variantOf.Kind, Is.EqualTo(RegionFieldKind.ReferenceVector),
+			Assert.That(variantOf.Kind, Is.EqualTo(DetailFieldKind.ReferenceVector),
 				"an empty Variant of ghost row must compose as an editable reference vector");
 			Assert.That(components.IsEditable, Is.True);
 			Assert.That(variantOf.IsEditable, Is.True);
@@ -71,7 +71,7 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(variantOf.Options, Is.Empty);
 			Assert.That(components.SearchOptions, Is.Not.Null);
 			Assert.That(variantOf.SearchOptions, Is.Not.Null);
-			Assert.That(composed.Model.Fields.Any(f => f.Kind == RegionFieldKind.Unsupported
+			Assert.That(composed.Model.Fields.Any(f => f.Kind == DetailFieldKind.Unsupported
 				&& (f.Label == "Components" || f.Label == "Variant of")), Is.False,
 				"the ghost relation rows must not degrade to ksUnsupportedEditor");
 

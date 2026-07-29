@@ -24,7 +24,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 	/// A lightweight, LCModel-FREE node in the Part-of-Speech hierarchy fed to <see cref="FwPosChooser"/>.
 	/// The host builds these from the project's parts-of-speech possibility list in DOCUMENT
 	/// ORDER, tagging each with its <see cref="Depth"/> (0 for a top-level POS, +1 per sub-POS nesting) —
-	/// the same depth-folding seam <c>RegionChoiceOption</c> uses, so the chooser can rebuild the tree
+	/// the same depth-folding seam <c>DetailChoiceOption</c> uses, so the chooser can rebuild the tree
 	/// without any model reference. <see cref="Id"/> is an opaque stable identifier (a guid string in the
 	/// product) the chooser round-trips verbatim; the chooser never interprets it.
 	/// </summary>
@@ -56,7 +56,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 	/// WinForms <c>TreeCombo</c> + <c>POSPopupTreeManager</c> pair (<c>MSAGroupBox</c>'s
 	/// <c>m_tcMainPOS</c>/<c>m_tcSecondaryPOS</c>). It is a COLLAPSED dropdown (a toggle button showing
 	/// the selected POS name, or a "not specified" prompt) that opens a hierarchical TREE popup ON TOP on
-	/// focus/click, exactly like the MorphType dropdown mode of <see cref="Region.FwOptionChooser"/>. The
+	/// focus/click, exactly like the MorphType dropdown mode of <see cref="Detail.FwOptionChooser"/>. The
 	/// popup offers, top to bottom:
 	///   * an optional "&lt;Not sure&gt;"/"&lt;Any&gt;" empty row (when <paramref name="allowEmpty"/>),
 	///   * a type-ahead filter box,

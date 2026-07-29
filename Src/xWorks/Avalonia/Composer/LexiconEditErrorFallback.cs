@@ -4,7 +4,7 @@
 
 using System;
 using System.Collections.Generic;
-using SIL.FieldWorks.Common.FwAvalonia.Region;
+using SIL.FieldWorks.Common.FwAvalonia.Detail;
 using SIL.FieldWorks.Common.FwAvalonia.ViewDefinition;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
@@ -16,11 +16,11 @@ namespace SIL.FieldWorks.XWorks
 	/// values. Structure comes from <see cref="LexiconFirstSlice"/>, which compiles
 	/// the shipped layout inventory through <c>ViewDefinitionCompiler</c>; the authored definition
 	/// remains only as an explicit, diagnosed fallback. This type supplies values via
-	/// <see cref="IRegionValueProvider"/>: text from the entry, and morph-type chooser options sourced
+	/// <see cref="IDetailValueProvider"/>: text from the entry, and morph-type chooser options sourced
 	/// from the project's LCModel morph-type possibility list (no hardcoded option set). Values are read
 	/// on the UI thread; write-back goes through the LCModel edit session, not this builder.
 	/// </summary>
-	public sealed class LexiconEditErrorFallback : IRegionValueProvider
+	public sealed class LexiconEditErrorFallback : IDetailValueProvider
 	{
 		// Field names as they appear in the compiled shipped layouts (MoForm AsLexemeForm slice,
 		// MoForm MorphTypeBasic slice, LexSense GlossAllA slice).
@@ -44,13 +44,13 @@ namespace SIL.FieldWorks.XWorks
 		/// Builds a region model for the current record, or null if it is not a <see cref="ILexEntry"/>
 		/// (the caller then shows an explicit unsupported state).
 		/// </summary>
-		public static RegionModel Build(ICmObject obj, LcmCache cache)
+		public static DetailModel Build(ICmObject obj, LcmCache cache)
 		{
 			if (!(obj is ILexEntry entry))
 				return null;
 
 			var provider = new LexiconEditErrorFallback(entry, cache);
-			return RegionModelProjector.FromViewDefinition(FirstSliceDefinition.Value, provider);
+			return DetailModelProjector.FromViewDefinition(FirstSliceDefinition.Value, provider);
 		}
 
 		/// <summary>
@@ -75,7 +75,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <inheritdoc />
-		public IReadOnlyList<RegionWsValue> GetValues(ViewNode fieldNode)
+		public IReadOnlyList<DetailWsValue> GetValues(ViewNode fieldNode)
 		{
 			switch (fieldNode.Field)
 			{
@@ -84,7 +84,7 @@ namespace SIL.FieldWorks.XWorks
 				case GlossField:
 					return GetGlossValues();
 				default:
-					return new List<RegionWsValue>();
+					return new List<DetailWsValue>();
 			}
 		}
 
@@ -93,7 +93,7 @@ namespace SIL.FieldWorks.XWorks
 		// with the project's per-WS default font so both surfaces show the same record consistently.
 		// The per-ws row projection is the shared RegionValueFactory recipe (the
 		// composer uses the same one); only the text reads live here.
-		private IReadOnlyList<RegionWsValue> GetLexemeFormValues()
+		private IReadOnlyList<DetailWsValue> GetLexemeFormValues()
 		{
 			return RegionValueFactory.BuildMultiWsValues(
 				_cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems, ws =>
@@ -105,10 +105,10 @@ namespace SIL.FieldWorks.XWorks
 				}, _cache.WritingSystemFactory);
 		}
 
-		private IReadOnlyList<RegionWsValue> GetGlossValues()
+		private IReadOnlyList<DetailWsValue> GetGlossValues()
 		{
 			if (_entry.SensesOS.Count == 0)
-				return new List<RegionWsValue>();
+				return new List<DetailWsValue>();
 
 			var gloss = _entry.SensesOS[0].Gloss;
 			return RegionValueFactory.BuildMultiWsValues(
@@ -117,17 +117,17 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <inheritdoc />
-		public IReadOnlyList<RegionChoiceOption> GetOptions(ViewNode fieldNode)
+		public IReadOnlyList<DetailChoiceOption> GetOptions(ViewNode fieldNode)
 		{
 			if (fieldNode.Field != MorphTypeField)
-				return new List<RegionChoiceOption>();
+				return new List<DetailChoiceOption>();
 
 			// Chooser options come from the project's morph-type possibility list, keyed by
 			// guid, so every project-defined morph type (phrase, clitic, infix, ...) is offered instead
 			// of a hardcoded subset.
 			var morphTypes = _cache.LangProject.LexDbOA?.MorphTypesOA;
 			if (morphTypes == null)
-				return new List<RegionChoiceOption>();
+				return new List<DetailChoiceOption>();
 
 			// The shared flattener (document order, hierarchy as Depth, and the
 			// composer's name-fallback rule — an analysis→vernacular fallback is

@@ -4,7 +4,7 @@
 
 using System.Linq;
 using NUnit.Framework;
-using SIL.FieldWorks.Common.FwAvalonia.Region;
+using SIL.FieldWorks.Common.FwAvalonia.Detail;
 using SIL.LCModel;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Infrastructure;
@@ -58,8 +58,8 @@ namespace SIL.FieldWorks.XWorks
 			return reference;
 		}
 
-		private static RegionField RelationRow(ComposedRegion composed, int relationHvo)
-			=> composed.Model.Fields.Single(f => f.Kind == RegionFieldKind.ReferenceVector && f.ObjectHvo == relationHvo);
+		private static DetailField RelationRow(ComposedRegion composed, int relationHvo)
+			=> composed.Model.Fields.Single(f => f.Kind == DetailFieldKind.ReferenceVector && f.ObjectHvo == relationHvo);
 
 		private const string LexReferenceMultiSliceClassName =
 			"SIL.FieldWorks.XWorks.LexEd.LexReferenceMultiSlice";
@@ -99,7 +99,7 @@ namespace SIL.FieldWorks.XWorks
 				Assert.That(reverseRow.MenuId, Is.EqualTo("mnuDataTree-DeleteReplaceLexReference"));
 			});
 
-			Assert.That(forwardRow.Kind, Is.EqualTo(RegionFieldKind.ReferenceVector),
+			Assert.That(forwardRow.Kind, Is.EqualTo(DetailFieldKind.ReferenceVector),
 				"the composed relation rows absorb the legacy multi-slice as native ReferenceVector rows rather than leaving an Unsupported placeholder");
 		}
 
@@ -122,7 +122,7 @@ namespace SIL.FieldWorks.XWorks
 			});
 
 			var composed = RegionComposer.Compose(entry, Cache);
-			var row = composed.Model.Fields.Single(f => f.Kind == RegionFieldKind.ReferenceVector
+			var row = composed.Model.Fields.Single(f => f.Kind == DetailFieldKind.ReferenceVector
 				&& f.ObjectHvo == relation.Hvo
 				&& f.Items.Any(i => i.Key == secondSense.Guid.ToString()));
 

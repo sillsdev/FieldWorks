@@ -5,7 +5,7 @@
 using System;
 using System.Collections.Generic;
 using SIL.FieldWorks.Common.FwAvalonia;
-using SIL.FieldWorks.Common.FwAvalonia.Region;
+using SIL.FieldWorks.Common.FwAvalonia.Detail;
 
 namespace FwAvaloniaDialogs
 {
@@ -13,7 +13,7 @@ namespace FwAvaloniaDialogs
 	/// The LCModel-free input to the reusable Avalonia Add New Sense dialog. The product edge (the LexText launcher) builds this from the
 	/// live cache so the Avalonia layer never sees an <c>ICmObject</c>: the read-only CITATION FORM is a plain
 	/// display string (the legacy <c>m_fwtbCitationForm</c>, never edited), the editable GLOSS is projected as a
-	/// per-analysis-WS <see cref="RegionField"/> (the legacy <c>m_fwtbGloss</c>), and the
+	/// per-analysis-WS <see cref="DetailField"/> (the legacy <c>m_fwtbGloss</c>), and the
 	/// grammatical-info section is fed exactly as the Insert Entry dialog feeds its <see cref="MSAGroupBox"/>
 	/// (the POS hierarchy, slot provider, and the initial MsaType the entry's morph type implies — the lift of the
 	/// legacy <c>MSAGroupBox.MorphTypePreference</c>).
@@ -32,7 +32,7 @@ namespace FwAvaloniaDialogs
 		/// The gloss field (one row per current analysis writing system); rows start empty. The owned
 		/// <c>FwMultiWsTextField</c> edits these through the in-memory edit context — the legacy <c>m_fwtbGloss</c>.
 		/// </summary>
-		public RegionField Gloss { get; set; }
+		public DetailField Gloss { get; set; }
 
 		/// <summary>The prompt shown above the fields (localized by the caller); null/empty hides it.</summary>
 		public string Prompt { get; set; }

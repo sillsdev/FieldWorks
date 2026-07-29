@@ -8,7 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Xml.Linq;
 using NUnit.Framework;
-using SIL.FieldWorks.Common.FwAvalonia.Region;
+using SIL.FieldWorks.Common.FwAvalonia.Detail;
 using SIL.LCModel;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Infrastructure;
@@ -199,7 +199,7 @@ namespace SIL.FieldWorks.XWorks
 	/// <summary>
 	/// The composer's resolution order for a custom slice is
 	/// plugin registry → Unsupported row. A plugin claiming a slice's legacy class composes it as a
-	/// RegionFieldKind.Custom row carrying the plugin's deferred control factory; an unclaimed custom
+	/// DetailFieldKind.Custom row carrying the plugin's deferred control factory; an unclaimed custom
 	/// slice composes as the labeled Unsupported worklist row.
 	/// </summary>
 	[TestFixture]
@@ -225,7 +225,7 @@ namespace SIL.FieldWorks.XWorks
 			public int BuildCalls;
 			public ICmObject LastObject;
 			public SIL.FieldWorks.Common.FwAvalonia.ViewDefinition.ViewNode LastNode;
-			public IRegionEditContext LastEditContext;
+			public IDetailEditContext LastEditContext;
 			public LcmCache LastCache;
 
 			public string LegacyClassName => MessageSliceClassName;
@@ -250,11 +250,11 @@ namespace SIL.FieldWorks.XWorks
 			var composed = RegionComposer.Compose(m_entry, Cache,
 				plugins: new RegionEditorPluginRegistry());
 
-			Assert.That(composed.Model.Fields.Any(f => f.Kind == RegionFieldKind.Custom), Is.False,
+			Assert.That(composed.Model.Fields.Any(f => f.Kind == DetailFieldKind.Custom), Is.False,
 				"an unclaimed custom slice is not a Custom row");
 			var messages = composed.Model.Fields.FirstOrDefault(f => f.Label == "Messages");
 			Assert.That(messages, Is.Not.Null, "the Messages slice still composes a row (not silently dropped)");
-			Assert.That(messages.Kind, Is.EqualTo(RegionFieldKind.Unsupported),
+			Assert.That(messages.Kind, Is.EqualTo(DetailFieldKind.Unsupported),
 				"the unclaimed Messages slice renders the labeled Unsupported worklist row");
 		}
 
@@ -267,7 +267,7 @@ namespace SIL.FieldWorks.XWorks
 
 			var composed = RegionComposer.Compose(m_entry, Cache, plugins: registry);
 
-			var customRows = composed.Model.Fields.Where(f => f.Kind == RegionFieldKind.Custom).ToList();
+			var customRows = composed.Model.Fields.Where(f => f.Kind == DetailFieldKind.Custom).ToList();
 			Assert.That(customRows.Count, Is.EqualTo(1),
 				"the claimed Messages node composes as exactly one Custom row");
 			var row = customRows[0];
@@ -288,7 +288,7 @@ namespace SIL.FieldWorks.XWorks
 			registry.Register(plugin);
 
 			var composed = RegionComposer.Compose(m_entry, Cache, plugins: registry);
-			var row = composed.Model.Fields.Single(f => f.Kind == RegionFieldKind.Custom);
+			var row = composed.Model.Fields.Single(f => f.Kind == DetailFieldKind.Custom);
 
 			row.ControlFactory();
 

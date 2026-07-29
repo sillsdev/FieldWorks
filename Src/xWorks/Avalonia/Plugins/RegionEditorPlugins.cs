@@ -5,7 +5,7 @@
 using System;
 using System.Collections.Generic;
 using Avalonia.Controls;
-using SIL.FieldWorks.Common.FwAvalonia.Region;
+using SIL.FieldWorks.Common.FwAvalonia.Detail;
 using SIL.FieldWorks.Common.FwAvalonia.ViewDefinition;
 using SIL.LCModel;
 
@@ -45,10 +45,10 @@ namespace SIL.FieldWorks.XWorks
 	/// </summary>
 	public sealed class RegionEditorBuildContext
 	{
-		private readonly Func<IRegionEditContext> _editContextAccessor;
+		private readonly Func<IDetailEditContext> _editContextAccessor;
 
 		public RegionEditorBuildContext(ICmObject target, ViewNode node,
-			Func<IRegionEditContext> editContextAccessor, LcmCache cache)
+			Func<IDetailEditContext> editContextAccessor, LcmCache cache)
 		{
 			Target = target;
 			Node = node;
@@ -63,7 +63,7 @@ namespace SIL.FieldWorks.XWorks
 		public ViewNode Node { get; }
 
 		/// <summary>The region's edit context, resolved on read (null until the region composed).</summary>
-		public IRegionEditContext EditContext => _editContextAccessor?.Invoke();
+		public IDetailEditContext EditContext => _editContextAccessor?.Invoke();
 
 		public LcmCache Cache { get; }
 	}

@@ -8,7 +8,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using SIL.FieldWorks.Common.FwAvalonia.Region;
+using SIL.FieldWorks.Common.FwAvalonia.Detail;
 
 namespace FwAvaloniaDialogs
 {
@@ -43,7 +43,7 @@ namespace FwAvaloniaDialogs
 		private readonly HashSet<string> _chosenSet = new HashSet<string>(StringComparer.Ordinal);
 		private readonly bool _multi;
 		private readonly bool _hierarchical;
-		private readonly Func<string, IReadOnlyList<RegionChoiceOption>> _searchCandidates;
+		private readonly Func<string, IReadOnlyList<DetailChoiceOption>> _searchCandidates;
 		// All tree nodes flattened (key -> node), so a flat-mode commit/check can mirror back onto the tree node
 		// and the multi-select snapshot can read the checked set straight off the tree.
 		private readonly List<ChooserTreeNode> _allNodes = new List<ChooserTreeNode>();
@@ -72,10 +72,10 @@ namespace FwAvaloniaDialogs
 			// Lead an "<Empty>" option for an atomic clear (AllowEmpty) — its key is EmptyKey (""), so the result
 			// reports a clear distinctly from "no choice made". The empty row stays a top-level (depth 0) node in
 			// hierarchical mode too.
-			var candidates = new List<RegionChoiceOption>();
+			var candidates = new List<DetailChoiceOption>();
 			if (_input.AllowEmpty)
-				candidates.Add(new RegionChoiceOption(ChooserDialogInput.EmptyKey, FwAvaloniaDialogsStrings.ChooserEmptyOption));
-			candidates.AddRange(_input.Candidates ?? Array.Empty<RegionChoiceOption>());
+				candidates.Add(new DetailChoiceOption(ChooserDialogInput.EmptyKey, FwAvaloniaDialogsStrings.ChooserEmptyOption));
+			candidates.AddRange(_input.Candidates ?? Array.Empty<DetailChoiceOption>());
 			Candidates = candidates;
 
 			if (_hierarchical)
@@ -106,7 +106,7 @@ namespace FwAvaloniaDialogs
 		}
 
 		/// <summary>The full candidate list actually shown (with a leading "&lt;Empty&gt;" row when AllowEmpty).</summary>
-		public IReadOnlyList<RegionChoiceOption> Candidates { get; }
+		public IReadOnlyList<DetailChoiceOption> Candidates { get; }
 
 		/// <summary>
 		/// The owned, code-behind list control the view hosts in FLAT mode (single- or multi-select per the input).
@@ -220,11 +220,11 @@ namespace FwAvaloniaDialogs
 			if (string.IsNullOrEmpty(query))
 				return;
 
-			IEnumerable<RegionChoiceOption> matches;
+			IEnumerable<DetailChoiceOption> matches;
 			if (_searchCandidates != null)
 			{
 				// Search-backed (lexicon-style) delegate path: forward the typed query verbatim.
-				matches = _searchCandidates(query) ?? Array.Empty<RegionChoiceOption>();
+				matches = _searchCandidates(query) ?? Array.Empty<DetailChoiceOption>();
 			}
 			else
 			{
@@ -239,7 +239,7 @@ namespace FwAvaloniaDialogs
 				// transient node for a delegate-search hit that is not in the tree.
 				var node = (option?.Key != null && _nodesByKey.TryGetValue(option.Key, out var existing))
 					? existing
-					: new ChooserTreeNode(option ?? new RegionChoiceOption(ChooserDialogInput.EmptyKey, string.Empty));
+					: new ChooserTreeNode(option ?? new DetailChoiceOption(ChooserDialogInput.EmptyKey, string.Empty));
 				FilteredResults.Add(node);
 			}
 		}
@@ -348,7 +348,7 @@ namespace FwAvaloniaDialogs
 
 		// ----- picker -> chosen-set mirroring (flat mode) -----
 
-		private void OnOptionCommitted(RegionChoiceOption option)
+		private void OnOptionCommitted(DetailChoiceOption option)
 		{
 			// Single-select: the committed item is THE choice (replaces any prior pick).
 			_chosenOrder.Clear();
@@ -357,10 +357,10 @@ namespace FwAvaloniaDialogs
 			RefreshCanOk();
 		}
 
-		private void OnOptionsCommitted(IReadOnlyList<RegionChoiceOption> batch)
+		private void OnOptionsCommitted(IReadOnlyList<DetailChoiceOption> batch)
 		{
 			// Multi-select: the Add button committed a checked batch; accumulate it into the chosen set.
-			foreach (var option in batch ?? Array.Empty<RegionChoiceOption>())
+			foreach (var option in batch ?? Array.Empty<DetailChoiceOption>())
 				AddChosen(option?.Key ?? ChooserDialogInput.EmptyKey);
 			RefreshCanOk();
 		}

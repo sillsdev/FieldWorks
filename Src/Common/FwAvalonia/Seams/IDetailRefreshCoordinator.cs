@@ -8,7 +8,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Seams
 	/// Refresh policy seam over the legacy DataTree <c>DoNotRefresh</c>/<c>RefreshListNeeded</c> gate
 	/// (LT-22414). Lets refresh coordination be tested without a WinForms control.
 	/// </summary>
-	public interface IRegionRefreshCoordinator
+	public interface IDetailRefreshCoordinator
 	{
 		/// <summary>Whether refreshes are currently suspended.</summary>
 		bool IsSuspended { get; }

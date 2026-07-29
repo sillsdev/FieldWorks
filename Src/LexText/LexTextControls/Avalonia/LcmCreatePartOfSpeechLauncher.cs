@@ -10,7 +10,7 @@ using System.Windows.Forms;
 using System.Xml;
 using FwAvaloniaDialogs;
 using SIL.FieldWorks.Common.FwAvalonia;
-using SIL.FieldWorks.Common.FwAvalonia.Region;
+using SIL.FieldWorks.Common.FwAvalonia.Detail;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Core.Text;
@@ -24,7 +24,7 @@ namespace SIL.FieldWorks.LexText.Controls
 	/// WinForms <see cref="MasterCategoryListDlg"/> that the legacy <c>POSPopupTreeManager</c> launches from the POS
 	/// tree's "More..." item. Rather than build a brand-new tree dialog, it reuses the existing
 	/// reusable Avalonia <see cref="ChooserDialogViewModel"/>/<c>ChooserDialogView</c> in HIERARCHICAL single-select
-	/// mode, fed the master-category (GOLDEtic) catalog as depth-tagged <see cref="RegionChoiceOption"/> candidates
+	/// mode, fed the master-category (GOLDEtic) catalog as depth-tagged <see cref="DetailChoiceOption"/> candidates
 	/// (key = the catalog id). On OK it mirrors <see cref="MasterCategoryListDlg"/>'s create-in-project logic exactly:
 	/// the chosen master category is added to <c>cache.LangProject.PartsOfSpeechOA</c> (or under its catalog parent)
 	/// via <see cref="MasterCategory.AddToDatabase"/> — which creates the <c>IPartOfSpeech</c> with the catalog's
@@ -131,8 +131,8 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// GOLDEtic "id" attribute), the name is the category's display term, and the depth carries the catalog
 		/// nesting so the reused chooser folds it into the same tree the WinForms TreeView showed. Internal for tests.
 		/// </summary>
-		internal static IReadOnlyList<RegionChoiceOption> BuildCandidates(IReadOnlyList<CatalogCategory> catalog)
-			=> catalog.Select(c => new RegionChoiceOption(c.Id, c.DisplayName, c.Depth)).ToList();
+		internal static IReadOnlyList<DetailChoiceOption> BuildCandidates(IReadOnlyList<CatalogCategory> catalog)
+			=> catalog.Select(c => new DetailChoiceOption(c.Id, c.DisplayName, c.Depth)).ToList();
 
 		protected override ChooserDialogViewModel CreateViewModel(ChooserDialogInput state)
 		{

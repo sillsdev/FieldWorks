@@ -15,7 +15,7 @@ using Avalonia.Media;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
 using NUnit.Framework;
-using SIL.FieldWorks.Common.FwAvalonia.Region;
+using SIL.FieldWorks.Common.FwAvalonia.Detail;
 using SIL.FieldWorks.Common.FwAvalonia.ViewDefinition;
 
 namespace FwAvaloniaTests
@@ -103,10 +103,10 @@ namespace FwAvaloniaTests
 		private const string ArabicHouse = "بيت"; // بيت
 		private const string ArabicBig = "كبير"; // كبير
 
-		private static RegionField RtlField() => new RegionField(
-			"LexEntry/x/#0", "Lexeme Form", "Form", "vernacular", RegionFieldKind.Text,
+		private static DetailField RtlField() => new DetailField(
+			"LexEntry/x/#0", "Lexeme Form", "Form", "vernacular", DetailFieldKind.Text,
 			EditorClassification.Known, "RtlEditor", null, SurfaceRouting.Product,
-			new List<RegionWsValue> { new RegionWsValue("ar", ArabicHouse, "Scheherazade New", 0, rightToLeft: true, wsTag: "ar") },
+			new List<DetailWsValue> { new DetailWsValue("ar", ArabicHouse, "Scheherazade New", 0, rightToLeft: true, wsTag: "ar") },
 			null, null);
 
 		[AvaloniaTest]
@@ -144,12 +144,12 @@ namespace FwAvaloniaTests
 		public void MixedDirectionValue_SelectionAndCaretStayLogicalWhileStagingEdits()
 		{
 			const string mixed = "abc \u05D0\u05D1\u05D2 123";
-			var field = new RegionField(
-				"LexEntry/x/#0", "Lexeme Form", "Form", "vernacular", RegionFieldKind.Text,
+			var field = new DetailField(
+				"LexEntry/x/#0", "Lexeme Form", "Form", "vernacular", DetailFieldKind.Text,
 				EditorClassification.Known, "MixedEditor", null, SurfaceRouting.Product,
-				new List<RegionWsValue>
+				new List<DetailWsValue>
 				{
-					new RegionWsValue("ar", mixed, "Scheherazade New", 0, rightToLeft: true, wsTag: "ar")
+					new DetailWsValue("ar", mixed, "Scheherazade New", 0, rightToLeft: true, wsTag: "ar")
 				},
 				null, null);
 
@@ -179,12 +179,12 @@ namespace FwAvaloniaTests
 		public void MixedDirectionArrowKeys_HonorActiveRunDirection_AndShiftSelection()
 		{
 			const string mixed = "abc \u05D0\u05D1\u05D2 xyz";
-			var field = new RegionField(
-				"LexEntry/x/#0", "Lexeme Form", "Form", "vernacular", RegionFieldKind.Text,
+			var field = new DetailField(
+				"LexEntry/x/#0", "Lexeme Form", "Form", "vernacular", DetailFieldKind.Text,
 				EditorClassification.Known, "MixedArrowEditor", null, SurfaceRouting.Product,
-				new List<RegionWsValue>
+				new List<DetailWsValue>
 				{
-					new RegionWsValue("ar", mixed, "Scheherazade New", 0, rightToLeft: true, wsTag: "ar")
+					new DetailWsValue("ar", mixed, "Scheherazade New", 0, rightToLeft: true, wsTag: "ar")
 				},
 				null, null);
 
@@ -213,12 +213,12 @@ namespace FwAvaloniaTests
 		public void MirroredPunctuationSelection_StaysStableInRtlValue()
 		{
 			const string value = "(\u05d0\u05d1\u05d2)";
-			var field = new RegionField(
-				"LexEntry/x/#0", "Lexeme Form", "Form", "vernacular", RegionFieldKind.Text,
+			var field = new DetailField(
+				"LexEntry/x/#0", "Lexeme Form", "Form", "vernacular", DetailFieldKind.Text,
 				EditorClassification.Known, "RtlParenEditor", null, SurfaceRouting.Product,
-				new List<RegionWsValue>
+				new List<DetailWsValue>
 				{
-					new RegionWsValue("ar", value, "Scheherazade New", 0, rightToLeft: true, wsTag: "ar")
+					new DetailWsValue("ar", value, "Scheherazade New", 0, rightToLeft: true, wsTag: "ar")
 				},
 				null, null);
 
@@ -238,12 +238,12 @@ namespace FwAvaloniaTests
 		{
 			const string value = "\u05d0\u05d1\u05d2 123";
 			var context = new FakeRegionEditContext();
-			var field = new RegionField(
-				"LexEntry/x/#0", "Lexeme Form", "Form", "vernacular", RegionFieldKind.Text,
+			var field = new DetailField(
+				"LexEntry/x/#0", "Lexeme Form", "Form", "vernacular", DetailFieldKind.Text,
 				EditorClassification.Known, "RtlNumbersEditor", null, SurfaceRouting.Product,
-				new List<RegionWsValue>
+				new List<DetailWsValue>
 				{
-					new RegionWsValue("ar", value, "Scheherazade New", 0, rightToLeft: true, wsTag: "ar")
+					new DetailWsValue("ar", value, "Scheherazade New", 0, rightToLeft: true, wsTag: "ar")
 				},
 				null, null);
 

@@ -11,7 +11,7 @@ using Avalonia.Threading;
 using Avalonia.VisualTree;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwAvalonia.Preview;
-using SIL.FieldWorks.Common.FwAvalonia.Region;
+using SIL.FieldWorks.Common.FwAvalonia.Detail;
 
 namespace FwAvaloniaTests
 {
@@ -42,7 +42,7 @@ namespace FwAvaloniaTests
 		public void Preview_RendersTheSharedRegionEditors()
 		{
 			var window = ShowPreview();
-			Assert.That(Find<RegionDataTree>(window, "RegionDataTree"), Is.Not.Null);
+			Assert.That(Find<DataTree>(window, "RegionDataTree"), Is.Not.Null);
 			Assert.That(Find<TextBox>(window, "LexemeFormEditor.seh"), Is.Not.Null);
 			Assert.That(Find<TextBox>(window, "LexemeFormEditor.en"), Is.Not.Null);
 			Assert.That(Find<FwChooserField>(window, "MorphTypeChooser"), Is.Not.Null);
@@ -86,7 +86,7 @@ namespace FwAvaloniaTests
 		public void Preview_UsesStableAutomationMetadata()
 		{
 			var window = ShowPreview();
-			Assert.That(AutomationProperties.GetAutomationId(Find<RegionDataTree>(window, "RegionDataTree")),
+			Assert.That(AutomationProperties.GetAutomationId(Find<DataTree>(window, "RegionDataTree")),
 				Is.EqualTo("RegionDataTree"));
 			Assert.That(AutomationProperties.GetAutomationId(Find<TextBox>(window, "LexemeFormEditor.seh")),
 				Is.EqualTo("LexemeFormEditor.seh"));

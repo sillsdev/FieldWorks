@@ -9,7 +9,7 @@ using System.Windows.Forms;
 using FwAvaloniaDialogs;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwAvalonia;
-using SIL.FieldWorks.Common.FwAvalonia.Region;
+using SIL.FieldWorks.Common.FwAvalonia.Detail;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;
@@ -27,7 +27,7 @@ namespace SIL.FieldWorks.LexText.Controls
 	/// <see cref="InsertEntryDlg"/> in New-UI mode. It is a concrete
 	/// <see cref="AvaloniaDialogLauncher{TState,TViewModel,TPayload}"/>: the Avalonia layer (FwAvaloniaDialogs)
 	/// stays LCModel-free by exchanging an <see cref="InsertEntryDlgInput"/> (lexeme-form / gloss fields built
-	/// for the cache's current writing systems, morph types as guid-keyed <see cref="RegionChoiceOption"/>s, and a
+	/// for the cache's current writing systems, morph types as guid-keyed <see cref="DetailChoiceOption"/>s, and a
 	/// plain <see cref="InsertEntryDlgInput.DeriveMorphType"/> delegate) and an <see cref="InsertEntryDlgPayload"/>
 	/// (per-WS form + gloss strings + the chosen morph-type key). This launcher builds that state from the live
 	/// cache and, on OK, creates the <c>ILexEntry</c> in ONE undoable step.
@@ -499,43 +499,43 @@ namespace SIL.FieldWorks.LexText.Controls
 		}
 
 		/// <summary>
-		/// Builds a per-writing-system text field: one <see cref="RegionWsValue"/> row per writing system, seeded
+		/// Builds a per-writing-system text field: one <see cref="DetailWsValue"/> row per writing system, seeded
 		/// empty unless <paramref name="initialForm"/> is supplied (then the first/default WS row carries it). The
 		/// row's WsTag (the IETF tag) is the key the in-memory edit context stages each alternative under — and the
 		/// key Apply reads back to build the per-WS LexEntryComponents alternatives.
 		/// </summary>
-		internal static RegionField BuildTextField(string field, string automationId,
+		internal static DetailField BuildTextField(string field, string automationId,
 			IEnumerable<CoreWritingSystemDefinition> writingSystems, string initialForm, string label)
 		{
-			var values = new List<RegionWsValue>();
+			var values = new List<DetailWsValue>();
 			var seeded = false;
 			foreach (var ws in writingSystems)
 			{
 				var seedThis = !seeded && !string.IsNullOrEmpty(initialForm);
-				values.Add(new RegionWsValue(ws.Abbreviation, seedThis ? initialForm : string.Empty,
+				values.Add(new DetailWsValue(ws.Abbreviation, seedThis ? initialForm : string.Empty,
 					ws.DefaultFontName, 0, ws.RightToLeftScript, ws.Id));
 				if (seedThis)
 					seeded = true;
 			}
 
-			return new RegionField(field, label, field, null, RegionFieldKind.Text,
+			return new DetailField(field, label, field, null, DetailFieldKind.Text,
 				default(SIL.FieldWorks.Common.FwAvalonia.ViewDefinition.EditorClassification), automationId, field,
 				default(SIL.FieldWorks.Common.FwAvalonia.ViewDefinition.SurfaceRouting), values,
-				new List<RegionChoiceOption>(), selectedOptionKey: null, isEditable: true);
+				new List<DetailChoiceOption>(), selectedOptionKey: null, isEditable: true);
 		}
 
 		/// <summary>
 		/// Builds the morph-type options (key = morph-type guid string, name = best-analysis display name) from
 		/// the project's morph types, in sorted display order — the legacy "Any" morph-type filter (every type).
 		/// </summary>
-		internal static IReadOnlyList<RegionChoiceOption> BuildMorphTypeOptions(LcmCache cache)
+		internal static IReadOnlyList<DetailChoiceOption> BuildMorphTypeOptions(LcmCache cache)
 		{
 			var types = cache.LanguageProject.LexDbOA.MorphTypesOA.ReallyReallyAllPossibilities
 				.Cast<IMoMorphType>()
 				.OrderBy(MorphTypeName, StringComparer.CurrentCulture)
 				.ToList();
 			return types
-				.Select(t => new RegionChoiceOption(t.Guid.ToString(), MorphTypeName(t)))
+				.Select(t => new DetailChoiceOption(t.Guid.ToString(), MorphTypeName(t)))
 				.ToList();
 		}
 
@@ -548,12 +548,12 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// lift of the WinForms <c>m_cbComplexFormType</c> fill (which sorts the possibilities and prepends the
 		/// "&lt;Not Applicable&gt;" item; the kit prepends that row itself). Internal so the feed is unit-testable.
 		/// </summary>
-		internal static IReadOnlyList<RegionChoiceOption> BuildComplexFormTypeOptions(LcmCache cache)
+		internal static IReadOnlyList<DetailChoiceOption> BuildComplexFormTypeOptions(LcmCache cache)
 		{
 			return cache.LangProject.LexDbOA.ComplexEntryTypesOA.ReallyReallyAllPossibilities
 				.OfType<ILexEntryType>()
 				.OrderBy(ComplexFormTypeName, StringComparer.CurrentCulture)
-				.Select(t => new RegionChoiceOption(t.Guid.ToString(), ComplexFormTypeName(t)))
+				.Select(t => new DetailChoiceOption(t.Guid.ToString(), ComplexFormTypeName(t)))
 				.ToList();
 		}
 
