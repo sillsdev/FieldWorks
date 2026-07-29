@@ -20,12 +20,12 @@ namespace FwAvaloniaTests
 	/// These keep the preview path honest without preserving a second detached slice/editor stack.
 	/// </summary>
 	[TestFixture]
-	public class LexicalEditPreviewTests
+	public class RegionPreviewTests
 	{
 		private static Window ShowPreview(string dataMode = "sample")
 		{
-			var provider = new LexicalEditPreviewDataProvider();
-			var window = new LexicalEditPreviewWindow
+			var provider = new RegionPreviewDataProvider();
+			var window = new RegionPreviewWindow
 			{
 				DataContext = provider.CreateDataContext(dataMode)
 			};

@@ -13,22 +13,22 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Preview
 {
 	/// <summary>
 	/// Preview-host window for the shared lexical-edit region renderer. The host sets the
-	/// <see cref="Window.DataContext"/> from <see cref="LexicalEditPreviewDataProvider"/>; this
+	/// <see cref="Window.DataContext"/> from <see cref="RegionPreviewDataProvider"/>; this
 	/// window responds by creating a fresh <see cref="RegionDataTree"/> for that scenario.
 	/// </summary>
-	public sealed class LexicalEditPreviewWindow : Window
+	public sealed class RegionPreviewWindow : Window
 	{
-		public LexicalEditPreviewWindow()
+		public RegionPreviewWindow()
 		{
 			Width = 900;
 			Height = 520;
-			AutomationProperties.SetAutomationId(this, "LexicalEditPreviewWindow");
+			AutomationProperties.SetAutomationId(this, "RegionPreviewWindow");
 		}
 
 		protected override void OnDataContextChanged(EventArgs e)
 		{
 			base.OnDataContextChanged(e);
-			if (DataContext is LexicalEditPreviewScenario scenario)
+			if (DataContext is RegionPreviewScenario scenario)
 				Content = new RegionDataTree(scenario.Model, scenario.EditContext);
 		}
 	}
@@ -38,12 +38,12 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Preview
 	/// host detached from LCModel by returning a region-model scenario plus a lightweight in-memory
 	/// edit context.
 	/// </summary>
-	public sealed class LexicalEditPreviewDataProvider : IFwPreviewDataProvider
+	public sealed class RegionPreviewDataProvider : IFwPreviewDataProvider
 	{
 		public object CreateDataContext(string dataMode)
 			=> CreateScenario(string.Equals(dataMode, "sample", StringComparison.OrdinalIgnoreCase));
 
-		internal static LexicalEditPreviewScenario CreateScenario(bool sample)
+		internal static RegionPreviewScenario CreateScenario(bool sample)
 		{
 			var formValues = new List<RegionWsValue>
 			{
@@ -108,7 +108,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Preview
 					null)
 			};
 
-			return new LexicalEditPreviewScenario(
+			return new RegionPreviewScenario(
 				new RegionModel("LexEntry", "preview", fields, Array.Empty<ViewDiagnostic>()),
 				new PreviewRegionEditContext());
 		}
@@ -118,9 +118,9 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Preview
 	/// Preview data at the region-model boundary: the shared renderer plus a lightweight edit seam,
 	/// not a separate DTO/slice/editor stack.
 	/// </summary>
-	public sealed class LexicalEditPreviewScenario
+	public sealed class RegionPreviewScenario
 	{
-		public LexicalEditPreviewScenario(RegionModel model, IRegionEditContext editContext)
+		public RegionPreviewScenario(RegionModel model, IRegionEditContext editContext)
 		{
 			Model = model;
 			EditContext = editContext;

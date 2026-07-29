@@ -7,7 +7,7 @@
 		Finding F / Group 1 item 1), NOT shipped product behavior. Split into its own assembly so it
 		compiles exactly once and is referenced (not file-linked) by its two consumers:
 		FwAvaloniaPreviewHost (the standalone dev preview tool, itself not part of the shipped installer)
-		and FwAvaloniaTests (LexicalEditPreviewTests.cs exercises it headlessly). FwAvalonia.csproj
+		and FwAvaloniaTests (RegionPreviewTests.cs exercises it headlessly). FwAvalonia.csproj
 		excludes this folder from its own compile, so none of this ever reaches the shipped FwAvalonia.dll.
 	-->
 	<PropertyGroup>
