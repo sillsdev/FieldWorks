@@ -14,20 +14,20 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 {
 	/// <summary>
 	/// The shared WinForms-density FONT baseline for the owned NON-dialog surfaces — the lexical-edit
-	/// detail/region view and the browse table. Applied to each surface's own control subtree (added to its
+	/// detail view and the browse table. Applied to each surface's own control subtree (added to its
 	/// <c>Styles</c>) by its view constructor, the proven per-control-tree mechanism: it renders the same in
 	/// the runtime host (<c>FwAvaloniaHost</c>/<c>FwAvaloniaApp</c>) and the headless Skia tests, INDEPENDENT
 	/// of application-level resource wiring (a prior agent confirmed app-level <c>Application.Styles</c> do not
 	/// apply in the headless test app, so this scoped path is the reliable one).
 	///
 	/// WHY ONLY THE FONT (not the boxing/padding the dialogs get): these surfaces are intentionally NOT boxed.
-	/// The region/detail view is FLAT with subtle 1px field separators like the WinForms DataTree, and the
+	/// The detail view is FLAT with subtle 1px field separators like the WinForms DataTree, and the
 	/// browse table draws its own grid lines (<see cref="FwAvaloniaDensity.BrowseGridLineBrush"/>) — both own
 	/// their structural look through <see cref="FwAvaloniaDensity"/> literals (concrete values that already
 	/// render headlessly). The one thing those literals do NOT override is the Fluent ~14px default font on a
 	/// plain <see cref="TextBlock"/>/<see cref="TextBox"/>; this drops it to the WinForms ~12px so the detail
 	/// and browse text reads at the same density as the dialogs. The dialog density lives in
-	/// <c>DialogTheme.axaml</c> / <see cref="CompactDialogStyles"/>; this is its region/browse counterpart, so
+	/// <c>DialogTheme.axaml</c> / <see cref="CompactDialogStyles"/>; this is its detail/browse counterpart, so
 	/// font density has ONE WinForms value (12) across every Avalonia surface.
 	/// </summary>
 	public static class FwSurfaceStyles
@@ -57,7 +57,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 
 		private static IEnumerable<IStyle> Build()
 		{
-			// TextBlock — the region labels/values and browse cells/headers. A per-control FontSize (e.g. the
+			// TextBlock — the detail view labels/values and browse cells/headers. A per-control FontSize (e.g. the
 			// smaller WS abbreviation, the bold browse header) is a LOCAL value that outranks this style setter,
 			// so those keep their explicit size; only the unset Fluent default is replaced.
 			yield return new Style(s => s.OfType<TextBlock>())

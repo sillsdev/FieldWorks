@@ -43,7 +43,7 @@ namespace FwAvaloniaTests
 			var semanticPath = Path.Combine(bundleDir, "semantic-snapshot.txt");
 			File.WriteAllText(semanticPath, definition.ToSnapshot());
 
-			// Avalonia visual evidence: a real Skia rendered frame of the region view.
+			// Avalonia visual evidence: a real Skia rendered frame of the detail view.
 			var model = DetailModelProjector.FromViewDefinition(definition, new FakeDetailValueProvider());
 			var window = new Window { Content = new DataTree(model), Width = 420, Height = 200 };
 			window.Show();

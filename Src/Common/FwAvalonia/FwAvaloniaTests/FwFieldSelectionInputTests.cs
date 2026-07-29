@@ -215,7 +215,7 @@ namespace FwAvaloniaTests
 		// the headless backend has no real text hit-testing, so the native drag-to-caret mapping never runs
 		// and the defect cannot be provoked or self-validated here. Per the repro-first rule the D2 code is
 		// left UNCHANGED. Reproducing it needs a real rendered window / the specific layout transform suspected
-		// in the region surface; this Ignored test records the limitation so the finding stays visible.
+		// in the detail surface; this Ignored test records the limitation so the finding stays visible.
 		[AvaloniaTest]
 		[Ignore("D2 (mouse-drag selection over-grow) is not reproducible headlessly: the headless backend does no text hit-testing, so a driven drag yields no selection. Left open; needs a real rendered window.")]
 		public void MouseDrag_SelectionOverGrow_NotHeadlesslyReproducible()

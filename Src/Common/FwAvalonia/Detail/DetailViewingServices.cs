@@ -8,7 +8,7 @@ using System.Collections.Generic;
 namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 {
 	/// <summary>
-	/// The native-Views/C++ viewing capabilities the lexical-edit region provides itself in
+	/// The native-Views/C++ viewing capabilities the lexical-edit detail view provides itself in
 	/// managed/Avalonia form. One entry per capability the legacy RootSite/Views pipeline owned.
 	/// </summary>
 	public enum DetailViewingCapability
@@ -37,7 +37,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 
 	/// <summary>
 	/// One viewing capability mapped to the FieldWorks-owned managed/Avalonia type that provides it
-	/// inside the region. It is the positive complement to the <c>EngineIsolationAuditTests</c> negative
+	/// inside the detail view. It is the positive complement to the <c>EngineIsolationAuditTests</c> negative
 	/// audit (which proves no native symbol is named). The exact native symbol each capability supersedes
 	/// is intentionally NOT named here, because the isolation audit forbids production source from naming
 	/// the native pipeline at all.
@@ -54,14 +54,14 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 
 		public DetailViewingCapability Capability { get; }
 
-		/// <summary>The FieldWorks-owned managed type that owns this capability in the region.</summary>
+		/// <summary>The FieldWorks-owned managed type that owns this capability in the detail view.</summary>
 		public Type ManagedOwner { get; }
 
 		public string Notes { get; }
 	}
 
 	/// <summary>
-	/// A viewing concern deliberately left out of the region's managed implementation, recorded
+	/// A viewing concern deliberately left out of the detail view's managed implementation, recorded
 	/// so the deferral is explicit (named with a reason, owning phase, and user-visible fallback)
 	/// rather than a silent gap.
 	/// </summary>
@@ -86,7 +86,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 	}
 
 	/// <summary>
-	/// The lexical-edit region's viewing-service contract: the map from each native-Views viewing
+	/// The lexical-edit detail view's viewing-service contract: the map from each native-Views viewing
 	/// capability to the managed/Avalonia type that owns it, plus the explicitly-deferred concerns.
 	/// It names what "replace the native viewing/render/editor seam" means in
 	/// checkable terms and is asserted by <c>DetailViewingServiceReplacementTests</c>.
@@ -94,7 +94,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 	public static class DetailViewingServices
 	{
 		/// <summary>
-		/// Every native viewing capability the region now provides managed, with its owner and the
+		/// Every native viewing capability the detail view now provides managed, with its owner and the
 		/// native symbol it supersedes. Owners all live in the FwAvalonia production assembly, which
 		/// (per <c>EngineIsolationAuditTests</c>) cannot load native Views — so by construction these
 		/// replacements use Avalonia's own Skia/HarfBuzz text stack, not the C++ engine.
@@ -135,7 +135,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			};
 
 		/// <summary>
-		/// Viewing concerns explicitly deferred out of the region's managed implementation. Each is named
+		/// Viewing concerns explicitly deferred out of the detail view's managed implementation. Each is named
 		/// with its reason, owning phase, and the user-visible fallback so "decommissioned" carries no
 		/// silent asterisk.
 		/// </summary>

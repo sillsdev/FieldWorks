@@ -12,19 +12,19 @@ using SIL.FieldWorks.Common.FwAvalonia.Seams;
 namespace SIL.FieldWorks.Common.FwAvalonia
 {
 	/// <summary>
-	/// Reusable WinForms host for an Avalonia region surface. Owns Avalonia bootstrap, the
+	/// Reusable WinForms host for an Avalonia detail surface. Owns Avalonia bootstrap, the
 	/// <see cref="WinFormsAvaloniaControlHost"/>, the companion-control strip, the WinForms/Avalonia
 	/// directional-key interop, focus-safe content swapping, context menus, and the message/clear
-	/// states. Region-specific projection (building the region view) belongs to the derived class
+	/// states. Detail-specific projection (building the detail view) belongs to the derived class
 	/// via <see cref="SetHostContent"/>.
 	/// </summary>
 	public abstract class AvaloniaHostControlBase : System.Windows.Forms.UserControl
 	{
-		/// <summary>The Avalonia content host. Protected so derived region hosts can set content directly.</summary>
+		/// <summary>The Avalonia content host. Protected so derived detail hosts can set content directly.</summary>
 		protected readonly WinFormsAvaloniaControlHost Host;
 		private readonly Panel _companionStrip;
 
-		/// <summary>Raised after a hosted region reports an edit completed (wired by the derived host).</summary>
+		/// <summary>Raised after a hosted detail view reports an edit completed (wired by the derived host).</summary>
 		public event EventHandler DetailEditCompleted;
 
 		protected AvaloniaHostControlBase()

@@ -9,7 +9,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 {
 	/// <summary>
 	/// The renderable category of a legacy editor string — the ONE home for the
-	/// editor-string → category knowledge that the region composer's dispatch switch and
+	/// editor-string → category knowledge that the detail composer's dispatch switch and
 	/// <c>DetailModelProjector</c>'s kind classification both consume — neither keeps a
 	/// copy of its own. Consumers may still refine a category by LCModel field type
 	/// (e.g. the composer's <c>CellarPropertyType</c> dispatch for <see cref="Other"/>); only the
@@ -65,7 +65,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 	/// grouping (null) editor, and everything else as unknown. This lets the typed importer raise
 	/// faithful diagnostics for dynamic/unknown/obsolete editors (tasks 3.8 and 4.4) without
 	/// constructing any WinForms control. Also the single home of the named editor-string
-	/// constants and the <see cref="ClassifyDetailFieldKind"/> category API the region surfaces
+	/// constants and the <see cref="ClassifyDetailFieldKind"/> category API the detail surfaces
 	/// dispatch on.
 	/// </summary>
 	public static class EditorKindMap

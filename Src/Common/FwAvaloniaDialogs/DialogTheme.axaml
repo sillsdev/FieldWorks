@@ -28,7 +28,7 @@
 		     cannot express (a strip docked below content; a prompt above content). -->
 		<Thickness x:Key="DialogControlGapAbove">0,6,0,0</Thickness>
 		<Thickness x:Key="DialogLabelFieldGapBelow">0,0,0,4</Thickness>
-		<!-- Horizontal gutter between two side-by-side regions (e.g. a list and its button column). -->
+		<!-- Horizontal gutter between two side-by-side panes (e.g. a list and its button column). -->
 		<Thickness x:Key="DialogColumnGutter">6,0</Thickness>
 		<!-- Small gap below a label sitting directly over its control (the label-field gap, top-only). -->
 		<Thickness x:Key="DialogLabelFieldGapAbove">0,2,0,0</Thickness>
@@ -95,7 +95,7 @@
 	<!-- CheckBox FONT only. The deterministic, font-proportional BOX SIZE is applied separately by
 	     DialogThemeBootstrap.Apply via the shared C# FwCheckBoxStyle (a ControlTheme that REPLACES the Fluent
 	     template — the hardcoded 20×20 box / 32px slot are local values a style setter cannot override). That
-	     same helper is the single authority the browse/region surfaces use, so checkboxes are one global size. -->
+	     same helper is the single authority the browse/detail surfaces use, so checkboxes are one global size. -->
 	<Style Selector="CheckBox">
 		<Setter Property="FontSize" Value="12"/>
 	</Style>

@@ -9,7 +9,7 @@ using SIL.FieldWorks.Common.FwAvalonia.ViewDefinition;
 namespace FwAvaloniaTests
 {
 	/// <summary>
-	/// The section-header construction and child-indent rule are shared by both region
+	/// The section-header construction and child-indent rule are shared by both detail
 	/// projectors (thin mapper + full composer) via <see cref="DetailStructureRules"/>. These lock
 	/// the shared rules directly; the mapper/composer snapshot tests prove neither path's output changed.
 	/// </summary>

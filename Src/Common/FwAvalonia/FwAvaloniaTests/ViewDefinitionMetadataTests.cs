@@ -13,7 +13,7 @@ namespace FwAvaloniaTests
 	/// <summary>
 	/// Localization/accessibility/routing metadata on typed view-definition nodes. Legacy XML carries
 	/// none of these, so imported legacy layouts keep their exact semantic snapshot; authored or
-	/// region-spec sources may set them and they then appear in the snapshot.
+	/// detail-spec sources may set them and they then appear in the snapshot.
 	/// </summary>
 	[TestFixture]
 	public class ViewDefinitionMetadataTests

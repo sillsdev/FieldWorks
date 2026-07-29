@@ -6,13 +6,13 @@ using System;
 
 namespace SIL.FieldWorks.Common.FwAvalonia.Seams
 {
-	/// <summary>Region lifetime/disposal seam.</summary>
+	/// <summary>Detail lifetime/disposal seam.</summary>
 	public interface IDetailLifetime : IDisposable
 	{
-		/// <summary>Whether the region has been disposed.</summary>
+		/// <summary>Whether the detail view has been disposed.</summary>
 		bool IsDisposed { get; }
 
-		/// <summary>Registers a disposable to be disposed once when the region is disposed.</summary>
+		/// <summary>Registers a disposable to be disposed once when the detail view is disposed.</summary>
 		void Register(IDisposable disposable);
 	}
 }

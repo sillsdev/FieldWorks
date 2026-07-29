@@ -13,7 +13,7 @@ namespace SIL.FieldWorks.XWorks
 	/// The cross-surface refresh propagation gate, Avalonia side only. Both surfaces
 	/// share one LCModel cache, so consistency stands on the <c>PropChanged</c> notification loop:
 	/// this controller subscribes to the real <see cref="ISilDataAccess"/> notification bus and asks
-	/// the host to re-resolve/re-show the Avalonia region whenever a change lands inside the entry
+	/// the host to re-resolve/re-show the Avalonia detail view whenever a change lands inside the entry
 	/// the surface is displaying — whether it came from a legacy surface, F5/RefreshAllViews-driven
 	/// reloads, or any other writer. While the surface's own edit session is open, refreshes are
 	/// gated through an <see cref="IDetailRefreshCoordinator"/> (suspend/pending, the LT-22414
@@ -21,7 +21,7 @@ namespace SIL.FieldWorks.XWorks
 	///
 	/// Delivery is coalesced through the host's <c>schedule</c> delegate: one
 	/// committed undo task or external bulk edit raises one PropChanged per changed property, and
-	/// recomposing the region synchronously per notification both froze the UI on bursts and
+	/// recomposing the detail view synchronously per notification both froze the UI on bursts and
 	/// reentrantly tore down the view while Commit/Cancel were still on the stack. With a scheduler
 	/// a burst becomes ONE queued refresh that runs after the current call stack unwinds; without
 	/// one (tests, simple hosts) delivery stays synchronous.
@@ -41,7 +41,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="cache">The shared LCModel cache whose notification bus is observed.</param>
 		/// <param name="currentRecord">The record the surface is displaying right now.</param>
 		/// <param name="isEditing">Whether the surface's own edit session is open.</param>
-		/// <param name="refresh">Re-resolves/re-shows the region from current domain state.</param>
+		/// <param name="refresh">Re-resolves/re-shows the detail view from current domain state.</param>
 		/// <param name="coordinator">The suspend/pending gate used while editing.</param>
 		/// <param name="schedule">Optional UI-thread deferral for coalesced delivery.</param>
 		/// <param name="isRelevant">
@@ -112,7 +112,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
-		/// Called by the host when it is about to re-show the region itself anyway: drops any held
+		/// Called by the host when it is about to re-show the detail view itself anyway: drops any held
 		/// delivery so completion does not double the recompose.
 		/// </summary>
 		public void DiscardHeldRefresh()

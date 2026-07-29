@@ -201,7 +201,7 @@ namespace SIL.FieldWorks.XWorks
 
 		/// <summary>
 		/// Subscribe the Avalonia surface to the real PropChanged bus so external edits to
-		/// the displayed entry (legacy surfaces, refresh-driven reloads) re-resolve the region.
+		/// the displayed entry (legacy surfaces, refresh-driven reloads) re-resolve the detail view.
 		/// Refreshes are held while this surface's own edit session is open and delivered on completion.
 		/// </summary>
 		private void EnsureAvaloniaRefreshController()
@@ -291,7 +291,7 @@ namespace SIL.FieldWorks.XWorks
 		private void ShowAvaloniaEntry(ICmObject obj)
 		{
 			// Auto-save: a session still open from the previous record/edit settles before
-			// the region is replaced (commit when valid, roll back when not) — the same policy
+			// the detail view is replaced (commit when valid, roll back when not) — the same policy
 			// every host path shares; Replace's cancel-on-displace stays the safety net.
 			SettleDetailEdits();
 
@@ -621,7 +621,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		// Loads-or-creates the (class, layout) override, folds the op in, saves it, and recomposes the
-		// Avalonia region so the change is visible immediately. The legacy DataTree/Inventory is untouched.
+		// Avalonia detail view so the change is visible immediately. The legacy DataTree/Inventory is untouched.
 		private void MutateOverrideAndRefresh(DetailField field, ViewOverrideOperation op)
 		{
 			try
@@ -826,7 +826,7 @@ namespace SIL.FieldWorks.XWorks
 			m_propertyTable.SetPropertyPersistence(key, true, PropertyTable.SettingsGroup.LocalSettings);
 		}
 
-		// Re-resolves and re-shows the region for the current record from current domain state
+		// Re-resolves and re-shows the detail view for the current record from current domain state
 		// (after an external edit or this surface's commit/cancel).
 		private void RefreshAvaloniaDetail()
 		{

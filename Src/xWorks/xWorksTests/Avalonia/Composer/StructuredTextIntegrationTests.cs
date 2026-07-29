@@ -23,7 +23,7 @@ using SIL.LCModel.Infrastructure;
 namespace SIL.FieldWorks.XWorks
 {
 	/// <summary>
-	/// INTEGRATION on ONE realized region surface: a single <see cref="DataTree"/>
+	/// INTEGRATION on ONE realized detail surface: a single <see cref="DataTree"/>
 	/// holding a sibling multistring (Citation Form) row AND an editable structured-text (StText) row,
 	/// driven through the REAL <see cref="ComposedDetailEditContext"/> over an in-memory LCModel (the same
 	/// fenced <see cref="LcmDetailEditSession"/> staging the production composer wires). These exercise
@@ -31,7 +31,7 @@ namespace SIL.FieldWorks.XWorks
 	/// (a) each change stages / commits correctly,
 	/// (b) undo grouping is correct across the combined gestures (text edits coalesce into one focus-loss
 	///     step; each structural gesture is its own immediate step; the right order), and
-	/// (c) the region refresh after add/delete paragraph (the host re-show) does not disturb the sibling
+	/// (c) the detail refresh after add/delete paragraph (the host re-show) does not disturb the sibling
 	///     field's state.
 	/// The view side runs headless (the assembly's AvaloniaHeadlessSetUpFixture forces the headless
 	/// platform), so flyouts/popups never become real on-screen windows.
@@ -82,7 +82,7 @@ namespace SIL.FieldWorks.XWorks
 		private const string CitationStableId = "LexEntry/CitationForm@e";
 		private const string StTextStableId = "LexEntry/Discussion@e";
 
-		// A region model with a sibling multistring (Citation Form) row + a StructuredText (Discussion)
+		// A detail model with a sibling multistring (Citation Form) row + a StructuredText (Discussion)
 		// row, plus the composed edit context whose setters mutate the real LCModel exactly as
 		// DetailComposer wires them. This is the production seam, not a stand-in.
 		private (DetailModel Model, ComposedDetailEditContext Context) BuildSurface()
@@ -161,7 +161,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
-		/// ONE realized region surface hosting BOTH field controls over the SAME composed edit context:
+		/// ONE realized detail surface hosting BOTH field controls over the SAME composed edit context:
 		/// the sibling multistring (<see cref="FwMultiWsTextField"/>) and the StText
 		/// (<see cref="FwStructuredTextField"/>) in one StackPanel. We realize the field controls directly
 		/// (rather than the whole <see cref="DataTree"/> surface, whose GridSplitter needs an

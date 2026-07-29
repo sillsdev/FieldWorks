@@ -8,7 +8,7 @@ using SIL.FieldWorks.Common.FwAvalonia.Seams;
 namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 {
 	/// <summary>
-	/// The editing seam for a region surface (tasks 6.8/6.10): staging writes, validation, and the
+	/// The editing seam for a detail surface (tasks 6.8/6.10): staging writes, validation, and the
 	/// fenced commit/cancel boundary. The product implementation (xWorks) opens one fenced LCModel
 	/// undo task lazily on the first staged edit, applies writes directly to the domain inside it,
 	/// and ends it on <see cref="Commit"/> (one step on the single global undo stack shared with
@@ -17,7 +17,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 	/// LCModel-free so the Avalonia view can drive editing without a domain dependency; tests use a
 	/// fake context.
 	/// Extends <see cref="IEditSession"/> (the staging-neutral IsOpen/Commit/Cancel fence) so there
-	/// is one edit-session contract, not two parallel ones: any region context IS an edit session.
+	/// is one edit-session contract, not two parallel ones: any detail context IS an edit session.
 	/// </summary>
 	public interface IDetailEditContext : IEditSession
 	{
@@ -30,7 +30,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		/// abbreviation or legacy alias (e.g. "vern"/"anal") as a fallback for tag-less rows. The
 		/// user-editable abbreviation alone is never an identity: it can collide across writing
 		/// systems. Implementations key on <see cref="DetailField.Field"/> for fixed
-		/// slices or <see cref="DetailField.StableId"/> for composed full-layout regions,
+		/// slices or <see cref="DetailField.StableId"/> for composed full-layout detail views,
 		/// where the same field name (e.g. Gloss) occurs once per sense.
 		/// </summary>
 		bool TrySetText(DetailField field, string ws, string value);

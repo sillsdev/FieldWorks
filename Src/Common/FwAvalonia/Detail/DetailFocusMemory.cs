@@ -11,8 +11,8 @@ using Avalonia.VisualTree;
 namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 {
 	/// <summary>
-	/// Keeps keyboard focus stable across region re-shows. The host re-resolves and REPLACES the
-	/// whole region view after every committed edit and every delivered external refresh; without
+	/// Keeps keyboard focus stable across detail-view re-shows. The host re-resolves and REPLACES the
+	/// whole detail view after every committed edit and every delivered external refresh; without
 	/// this, tabbing out of a field (which auto-commits, 14.4) would tear down the editor the user
 	/// just moved into and dump focus on the floor. Capture reads the focused editor's stable
 	/// automation id (and caret) from the outgoing view; restore finds the same id in the incoming
@@ -21,7 +21,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 	/// </summary>
 	public static class DetailFocusMemory
 	{
-		/// <summary>What to restore: the focused editor's automation id/caret and the region scroll offset.</summary>
+		/// <summary>What to restore: the focused editor's automation id/caret and the detail view scroll offset.</summary>
 		public sealed class Memento
 		{
 			public Memento(string automationId, int caretIndex, double verticalOffset = 0)
@@ -37,7 +37,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		}
 
 		/// <summary>
-		/// Captures the region's current scroll offset plus, when focus is inside <paramref name="root"/>,
+		/// Captures the detail view's current scroll offset plus, when focus is inside <paramref name="root"/>,
 		/// the focused editor's stable automation id and caret. Scroll continuity matters even when
 		/// focus lives in a transient popup/context menu (e.g. removing a vector item from its
 		/// flyout), so the memento remains useful even with no focused editor identity.
@@ -65,7 +65,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		}
 
 		/// <summary>
-		/// Restores the region's vertical scroll offset. Safe to call before the view is attached to a
+		/// Restores the detail view's vertical scroll offset. Safe to call before the view is attached to a
 		/// TopLevel; the ScrollViewer is part of the constructed control tree already.
 		/// </summary>
 		public static bool TryRestoreScroll(Control root, Memento memento)

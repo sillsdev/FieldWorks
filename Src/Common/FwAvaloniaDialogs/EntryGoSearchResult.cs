@@ -46,9 +46,9 @@ namespace FwAvaloniaDialogs
 
 		/// <summary>
 		/// Builds a result row that carries a RICH extended-description payload for the right-side description
-		/// region (the advanced entry view): <paramref name="descriptionContent"/> is an arbitrary content object —
+		/// pane (the advanced entry view): <paramref name="descriptionContent"/> is an arbitrary content object —
 		/// an Avalonia <c>Control</c> (formatted text, a picture, a composite preview) or any object the right
-		/// region's <c>ContentControl</c> can present — shown for the highlighted row INSTEAD of the plain
+		/// pane's <c>ContentControl</c> can present — shown for the highlighted row INSTEAD of the plain
 		/// <paramref name="description"/> string. <paramref name="description"/> is still supplied as the
 		/// plain-text fallback (and accessible name) so a consumer that later drops the rich payload, or a host
 		/// that cannot realize it, degrades gracefully to the one-line text. The entry-only and entry/sense
@@ -76,12 +76,12 @@ namespace FwAvaloniaDialogs
 		public string Description { get; }
 
 		/// <summary>
-		/// An optional RICH extended-description payload for the right-side description region — an Avalonia
+		/// An optional RICH extended-description payload for the right-side description pane — an Avalonia
 		/// <c>Control</c> (formatted text, a picture, a composite preview) or any object a <c>ContentControl</c> can
-		/// present. When non-null the right region shows this for the highlighted row; when null it falls back to the
+		/// present. When non-null the right pane shows this for the highlighted row; when null it falls back to the
 		/// plain <see cref="Description"/> string (see <see cref="HasDescriptionContent"/>). Kept as a loosely-typed
 		/// <c>object</c> so the kit stays UI-toolkit-light and LCModel-free: consumers that only have a headword +
-		/// plain gloss leave it null and the region degrades to text.
+		/// plain gloss leave it null and the pane degrades to text.
 		/// </summary>
 		public object DescriptionContent { get; }
 

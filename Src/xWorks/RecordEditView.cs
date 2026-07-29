@@ -272,7 +272,7 @@ namespace SIL.FieldWorks.XWorks
 			CheckDisposed();
 
 			// Viewing parity (11.x): the View → Show Hidden Fields toggle re-resolves the Avalonia
-			// region just like it rebuilds the legacy DataTree.
+			// detail view just like it rebuilds the legacy DataTree.
 			if (name != null && name.StartsWith("ShowHiddenFields-", StringComparison.Ordinal))
 			{
 				if (ShouldUseAvaloniaLexiconEdit)

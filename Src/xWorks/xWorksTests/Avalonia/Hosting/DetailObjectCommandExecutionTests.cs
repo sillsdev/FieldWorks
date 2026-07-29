@@ -25,7 +25,7 @@ namespace SIL.FieldWorks.XWorks
 	/// END-TO-END execution + refresh proof for the core
 	/// OBJECT commands the Avalonia surface reuses from the legacy xCore machinery. This fixture
 	/// proves on the REAL product host that these commands actually mutate the model and that the
-	/// composed region reflects the mutation.
+	/// composed detail view reflects the mutation.
 	///
 	/// Seam: a real <see cref="RecordEditView"/> is loaded through <see cref="MockFwXWindow"/> in the
 	/// New UI mode (the same bootstrap <c>RecordEditViewActiveHostContractTests</c> uses), so the
@@ -352,13 +352,13 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		// ----------------------------------------------------------------------------------------
-		// Helpers — refresh / region assertions
+		// Helpers — refresh / detail assertions
 		// ----------------------------------------------------------------------------------------
 
 		// Re-composes the displayed entry exactly as RecordEditView.ShowAvaloniaEntry does on refresh
 		// and counts the per-sense section headers (one per sense regardless of the sense's content —
 		// an empty new sense still gets a header, unlike its ifData Gloss row). This is the
-		// surface-visible proof that the recomposed region reflects the model mutation.
+		// surface-visible proof that the recomposed detail view reflects the model mutation.
 		private int ComposeSenseHeaderCount()
 		{
 			var composed = DetailComposer.Compose(m_entry, Cache);

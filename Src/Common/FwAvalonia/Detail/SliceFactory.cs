@@ -16,7 +16,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 	/// <summary>
 	/// The small bundle of (all-nullable) collaborators a <see cref="DetailFieldKind"/> editor needs,
 	/// passed to <see cref="SliceFactory.Build"/> so the SAME field→control dispatch serves
-	/// every hosting surface (today the detail-pane region view, <c>DataTree.BuildEditor</c>;
+	/// every hosting surface (today the detail-pane detail view, <c>DataTree.BuildEditor</c>;
 	/// any future in-cell editor passes only the collaborators it has). Every member is optional: a null
 	/// edit context yields read-only display; a null callback simply disables that affordance.
 	/// One switch, so new kinds live in one place.

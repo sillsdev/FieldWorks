@@ -17,7 +17,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 {
 	/// <summary>
 	/// A data-driven Avalonia view that renders a <see cref="DetailModel"/>.
-	/// It builds one row per region field from the typed view definition, so the same renderer scales
+	/// It builds one row per detail field from the typed view definition, so the same renderer scales
 	/// from preview scenarios to product-backed layouts. Each field's renderer is chosen from its
 	/// <see cref="DetailFieldKind"/>.
 	/// Stable, nonlocalized automation ids come from the field (falling back to the stable node id).
@@ -78,7 +78,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 
 			Name = "RegionDataTree";
 			AutomationProperties.SetAutomationId(this, "RegionDataTree");
-			AutomationProperties.SetName(this, FwAvaloniaStrings.RegionName);
+			AutomationProperties.SetName(this, FwAvaloniaStrings.DetailAreaName);
 
 			// WinForms-density font baseline (12px) for the detail surface, applied to this view's own control
 			// subtree so it renders in both the runtime host and the headless tests. The view stays FLAT with
@@ -136,7 +136,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 
 			WireCollapsibleHeaders(model.Fields);
 
-			// Viewing parity (11.x): the whole region scrolls, like legacy DataTree's AutoScroll panel.
+			// Viewing parity (11.x): the whole detail view scrolls, like legacy DataTree's AutoScroll panel.
 			// Equal row height read-only vs editable (layout parity): the field grid is ALWAYS wrapped in
 			// the same StackPanel, whether or not an edit context is present. A bare grid placed straight in
 			// the ScrollViewer is arranged against the full viewport extent, while a grid inside a StackPanel
@@ -192,12 +192,12 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			}
 		}
 
-		/// <summary>The region model this view renders.</summary>
+		/// <summary>The detail model this view renders.</summary>
 		public DetailModel Model { get; }
 
 		/// <summary>
 		/// Raised after a commit or cancel completed, so the host can re-resolve and re-show the
-		/// region from current domain state.
+		/// detail view from current domain state.
 		/// </summary>
 		public event EventHandler EditCompleted;
 
@@ -485,7 +485,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		//
 		// Nested-collapse fidelity: a row's effective visibility is the AND of the expanded state of
 		// EVERY collapsible header that owns it (its parent, grandparent, ...), not just the nearest.
-		// We therefore recompute visibility for the whole region from the current expanded states on
+		// We therefore recompute visibility for the whole detail view from the current expanded states on
 		// every toggle and on initial render, so re-expanding a parent does not force a still-collapsed
 		// child's rows back into view (the legacy SliceTreeNode behavior).
 		private void WireCollapsibleHeaders(IReadOnlyList<DetailField> fields)
@@ -564,7 +564,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		}
 
 		// Bookkeeping for one collapsible header: its toggle button, ownership range over _rowControls,
-		// and current expanded state. Used to recompute whole-region visibility (nested-collapse fidelity).
+		// and current expanded state. Used to recompute whole-view visibility (nested-collapse fidelity).
 		private sealed class CollapsibleHeader
 		{
 			public Button Button;

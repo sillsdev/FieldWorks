@@ -21,7 +21,7 @@ namespace FwAvaloniaDialogs
 		public string FontFamily { get; set; }
 
 		/// <summary>The font size in points; 0 (the default) keeps the kit's default size — the same
-		/// zero-means-default convention the region surface's per-ws value rows use.</summary>
+		/// zero-means-default convention the detail surface's per-ws value rows use.</summary>
 		public double FontSize { get; set; }
 
 		/// <summary>True renders the search box right-to-left (the writing system uses a right-to-left script).</summary>

@@ -24,7 +24,7 @@ using SIL.LCModel.Infrastructure;
 
 namespace SIL.FieldWorks.XWorks
 {
-	/// <summary>A composed full-entry region: the renderable model plus its LCModel-bound edit context.</summary>
+	/// <summary>A composed full-entry detail view: the renderable model plus its LCModel-bound edit context.</summary>
 	public sealed class ComposedDetail
 	{
 		public ComposedDetail(DetailModel model, IDetailEditContext editContext)
@@ -55,7 +55,7 @@ namespace SIL.FieldWorks.XWorks
 	/// bound to LCModel through metadata (class/field → flid) and editable through the fenced
 	/// session. Labels localize through the same <see cref="StringTable"/> lookup legacy slices use.
 	/// Unsupported constructs render an explicit unsupported row (visibility=always) or are skipped
-	/// (ifdata), never silently mis-rendered; compile diagnostics ride the region model.
+	/// (ifdata), never silently mis-rendered; compile diagnostics ride the detail model.
 	/// </summary>
 	public static class DetailComposer
 	{
@@ -112,7 +112,7 @@ namespace SIL.FieldWorks.XWorks
 			=> Compose((ICmObject)entry, cache, "Normal", showHiddenFields, plugins, overrides);
 
 		/// <summary>
-		/// Compose the structured region for ANY record root + starting layout — the lexicon's
+		/// Compose the structured detail view for ANY record root + starting layout — the lexicon's
 		/// LexEntry/Normal, a Notebook RnGenericRec, a Lists CmPossibility, a Grammar PartOfSpeech, etc. The
 		/// compile/walk engine is already class-general (<see cref="CompileForObject"/> keys on the object's
 		/// ClassID and compiles each descended object's own layout); this overload parameterizes the root
@@ -137,7 +137,7 @@ namespace SIL.FieldWorks.XWorks
 			if (root == null)
 				return null;
 
-			// Plugin rows close over the region's own edit
+			// Plugin rows close over the detail view's own edit
 			// context, which only exists after the walk has gathered every setter — a deferred
 			// accessor bridges the gap (plugin factories run at render time, never during compose).
 			IDetailEditContext composedContext = null;
@@ -958,7 +958,7 @@ namespace SIL.FieldWorks.XWorks
 						AddLiteralRow(node, obj, depth);
 						break;
 					case DetailEditorCategory.Picture:
-						// Picture/image editing is not part of the Avalonia region; the slice renders the
+						// Picture/image editing is not part of the Avalonia detail view; the slice renders the
 						// labeled Unsupported worklist row.
 						WalkUnsupported(node, obj, depth);
 						break;
@@ -975,12 +975,12 @@ namespace SIL.FieldWorks.XWorks
 						WalkEmbeddedView(node, obj, depth);
 						break;
 					case DetailEditorCategory.Command:
-						// Command slices (button rows) are not rendered in the Avalonia region; the slice
+						// Command slices (button rows) are not rendered in the Avalonia detail view; the slice
 						// renders the labeled Unsupported worklist row.
 						WalkUnsupported(node, obj, depth);
 						break;
 					case DetailEditorCategory.EnumCombo:
-						// Closed enum combos are not part of the Avalonia region; the slice renders the
+						// Closed enum combos are not part of the Avalonia detail view; the slice renders the
 						// labeled Unsupported worklist row.
 						WalkUnsupported(node, obj, depth);
 						break;
@@ -2573,7 +2573,7 @@ namespace SIL.FieldWorks.XWorks
 			// the renderer shows the message even when there is no separate label column.
 			private void AddLiteralRow(ViewNode node, ICmObject obj, int depth)
 			{
-				// The "lit" slice's label/message text IS the content (legacy MessageSlice). The region's
+				// The "lit" slice's label/message text IS the content (legacy MessageSlice). The detail view's
 				// label column is left empty and the message rides the value slot so it renders ONCE, as the
 				// static gray content the legacy slice shows — not duplicated in both columns.
 				var message = Localize(node.Label) ?? node.Field ?? string.Empty;
@@ -3288,7 +3288,7 @@ namespace SIL.FieldWorks.XWorks
 	}
 
 	/// <summary>
-	/// The composed region's edit context: staging keyed by composed stable id (unique per object
+	/// The composed detail view's edit context: staging keyed by composed stable id (unique per object
 	/// occurrence, so each sense's Gloss binds its own sense), writes applied through the registered
 	/// LCModel setters inside the fenced session owned by <see cref="DetailEditContextBase"/>
 	/// (finding C — one shared session lifecycle + required-lexeme validation).

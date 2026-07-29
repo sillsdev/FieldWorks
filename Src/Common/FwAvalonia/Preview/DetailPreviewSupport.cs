@@ -12,7 +12,7 @@ using SIL.FieldWorks.Common.FwAvalonia.ViewDefinition;
 namespace SIL.FieldWorks.Common.FwAvalonia.Preview
 {
 	/// <summary>
-	/// Preview-host window for the shared lexical-edit region renderer. The host sets the
+	/// Preview-host window for the shared lexical-edit detail renderer. The host sets the
 	/// <see cref="Window.DataContext"/> from <see cref="DetailPreviewDataProvider"/>; this
 	/// window responds by creating a fresh <see cref="DataTree"/> for that scenario.
 	/// </summary>
@@ -35,7 +35,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Preview
 
 	/// <summary>
 	/// Preview/sample data provider for the shared lexical-edit preview window. Keeps the preview
-	/// host detached from LCModel by returning a region-model scenario plus a lightweight in-memory
+	/// host detached from LCModel by returning a detail-model scenario plus a lightweight in-memory
 	/// edit context.
 	/// </summary>
 	public sealed class DetailPreviewDataProvider : IFwPreviewDataProvider
@@ -115,7 +115,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Preview
 	}
 
 	/// <summary>
-	/// Preview data at the region-model boundary: the shared renderer plus a lightweight edit seam,
+	/// Preview data at the detail-model boundary: the shared renderer plus a lightweight edit seam,
 	/// not a separate DTO/slice/editor stack.
 	/// </summary>
 	public sealed class DetailPreviewScenario

@@ -26,7 +26,7 @@ namespace SIL.FieldWorks.XWorks
 	/// under its owning reversal index's writing system. The editor renders one row per EXISTING
 	/// reversal entry — the entry's form in its index's writing system — reusing the same
 	/// plain-text-over-preserved-runs <c>TrySetRichText</c> staging every other text row uses, so the
-	/// edit rides the region's SAME fenced undo step.</para>
+	/// edit rides the detail view's SAME fenced undo step.</para>
 	/// <para>DATA-SAFE SCOPE: this editor edits the form text of EXISTING reversal entries only.
 	/// Creating a new reversal index entry (typing a new form on an empty row) and deleting one
 	/// (clearing a form) are the legacy slice's risky parses-of-semicolon-separated-lists +
@@ -123,7 +123,7 @@ namespace SIL.FieldWorks.XWorks
 	/// <summary>
 	/// The Reversal Entries plugin's edit context: routes <see cref="TrySetText"/>/<see cref="TrySetRichText"/>
 	/// to the matching reversal entry's <c>ReversalForm</c> (data-safe: edits existing forms only), staging
-	/// through the region's SHARED <see cref="DetailEditContextBase"/> session so a reversal edit lands as
+	/// through the detail view's SHARED <see cref="DetailEditContextBase"/> session so a reversal edit lands as
 	/// ONE step on the same undoable fence as every other row. Session lifecycle (IsOpen/Commit/Cancel) and
 	/// validation delegate to the host context, so the host view's Save/Cancel commit reversal edits too.
 	/// </summary>
@@ -177,7 +177,7 @@ namespace SIL.FieldWorks.XWorks
 			});
 		}
 
-		// Stage on the host's shared fenced session when present (the region's own context); fall back to
+		// Stage on the host's shared fenced session when present (the detail view's own context); fall back to
 		// a self-contained non-undoable write only when no host context exists (defensive — the composer
 		// always supplies one).
 		private bool StageOnHost(Func<bool> setter)
