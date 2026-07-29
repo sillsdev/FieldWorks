@@ -15,15 +15,15 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 {
 	/// <summary>
 	/// The small bundle of (all-nullable) collaborators a <see cref="RegionFieldKind"/> editor needs,
-	/// passed to <see cref="RegionSliceFactory.Build"/> so the SAME field→control dispatch serves
+	/// passed to <see cref="SliceFactory.Build"/> so the SAME field→control dispatch serves
 	/// every hosting surface (today the detail-pane region view, <c>RegionDataTree.BuildEditor</c>;
 	/// any future in-cell editor passes only the collaborators it has). Every member is optional: a null
 	/// edit context yields read-only display; a null callback simply disables that affordance.
 	/// One switch, so new kinds live in one place.
 	/// </summary>
-	public sealed class RegionSliceFactoryContext
+	public sealed class SliceFactoryContext
 	{
-		public RegionSliceFactoryContext(
+		public SliceFactoryContext(
 			IRegionEditContext editContext = null,
 			Action<string> writingSystemFocused = null,
 			Action<RegionMenuRequest> menuRequested = null,
@@ -76,15 +76,15 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 	/// (<c>EditableCellHost.Activate</c>, a 2-kind Chooser/Text subset) both route here rather than
 	/// hand-rolling their own dispatch, so adding a kind (or changing how a kind is built) happens once.
 	/// The factory is pure (static) — all per-surface variation arrives through the
-	/// <see cref="RegionSliceFactoryContext"/>.
+	/// <see cref="SliceFactoryContext"/>.
 	/// </summary>
-	public static class RegionSliceFactory
+	public static class SliceFactory
 	{
 		public static Control Build(RegionField field, string automationId,
-			RegionSliceFactoryContext context)
+			SliceFactoryContext context)
 		{
 			if (field == null) throw new ArgumentNullException(nameof(field));
-			context = context ?? new RegionSliceFactoryContext();
+			context = context ?? new SliceFactoryContext();
 
 			switch (field.Kind)
 			{

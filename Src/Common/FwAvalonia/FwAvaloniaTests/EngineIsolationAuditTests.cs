@@ -34,13 +34,17 @@ namespace FwAvaloniaTests
 		// Identifiers from the forbidden-symbol list that
 		// production source must not name (native Views render/editor pipeline, legacy DataTree/Slice
 		// editor surface, native render engines, browser/PDF engines).
+		// "SliceFactory" is deliberately absent: FwAvalonia.Region owns its own SliceFactory (a
+		// cross-namespace twin of the legacy DetailControls.SliceFactory), so the bare stem is now a
+		// legitimate first-party code symbol. Isolation from the native twin is still enforced by
+		// ProductionAssembly_ReferencesNoNativeRenderLegacyOrDomainAssemblies (DetailControls assembly).
 		private static readonly string[] ForbiddenSourceSymbols =
 		{
 			"IVwRootBox", "IVwEnv", "IVwGraphics", "VwRootBox", "ManagedVwWindow",
 			"IRenderEngine", "IRenderEngineFactory", "GraphiteEngineClass", "UniscribeEngineClass",
 			"FwGrEngine", "GraphiteSegment", "RootSiteControl",
 			"GeckoWebBrowser", "XWebBrowser", "GeckofxHtmlToPdf", "FieldWorksPdfMaker",
-			"DataTree", "Slice", "SliceFactory", "XmlView", "BrowseViewer"
+			"DataTree", "Slice", "XmlView", "BrowseViewer"
 		};
 
 		[Test]
@@ -79,7 +83,7 @@ namespace FwAvaloniaTests
 			foreach (var path in sources)
 			{
 				// Comments and string literals are stripped before matching. The DataTree/Slice/
-				// SliceFactory/BrowseViewer parity symbols are legitimately named throughout this
+				// BrowseViewer parity symbols are legitimately named throughout this
 				// codebase's XML-doc comments and diagnostic message text to document exactly which
 				// legacy behavior a migrated code path mirrors; that is
 				// documentation, not a dependency. What this audit must catch is the symbol being
