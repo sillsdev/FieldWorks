@@ -7,7 +7,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Threading;
 
-namespace SIL.FieldWorks.Common.FwAvalonia.Seams
+namespace SIL.FieldWorks.Common.FwAvalonia
 {
 	/// <summary>
 	/// Crash guard for hosting Avalonia inside WinForms. Avalonia's MicroCom COM proxies
