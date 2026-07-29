@@ -16,7 +16,7 @@ namespace SIL.FieldWorks.XWorks
 	/// <c>new FwLinkArgs(sTool, m_guidLink)</c>, with <c>m_guidLink == Guid.Empty</c> unless a
 	/// flidTextParam resolved a target). The mediator hop itself
 	/// (<c>m_mediator.PostMessage("FollowLink", …)</c>, ReallySimpleListChooser.cs:1657) is one
-	/// obsolete-API call inside <c>RecordEditView.OnRegionLinkRequested</c> and needs a live
+	/// obsolete-API call inside <c>RecordEditView.OnDetailLinkRequested</c> and needs a live
 	/// xCore mediator + FwXWindow to observe; it is exercised by the manual/UIA tests, so the unit
 	/// seam here is the translation the message carries.
 	/// </summary>

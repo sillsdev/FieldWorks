@@ -15,9 +15,9 @@ namespace SIL.FieldWorks.XWorks
 	/// Lifecycle hardening for the fenced edit session (the "Commit at wrong place" shutdown crash):
 	/// an LCModel undo task left open anywhere makes every later <c>IUndoStackManager.Save()</c> —
 	/// including the one FieldWorks runs at shutdown — throw. These tests pin down the failure
-	/// mechanism and prove the two seams that prevent it: <see cref="RegionEditContextHolder"/>
+	/// mechanism and prove the two seams that prevent it: <see cref="DetailEditContextHolder"/>
 	/// (the host never orphans an open context when re-showing a region) and the defensive
-	/// <see cref="LcmRegionEditSession"/> Commit/Cancel (safe even after the clerk force-ended the
+	/// <see cref="LcmDetailEditSession"/> Commit/Cancel (safe even after the clerk force-ended the
 	/// task through <c>RecordClerk.SaveOnChangeRecord</c>, the LT-16673 path).
 	/// </summary>
 	[TestFixture]
@@ -71,7 +71,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void ToolSwitchCommit_AfterSettlingTheOpenSession_DoesNotThrow()
 		{
-			var holder = new RegionEditContextHolder();
+			var holder = new DetailEditContextHolder();
 			var context = new LexiconFirstSliceEditContext(m_entry, Cache);
 			holder.Replace(context);
 			context.TrySetText(FormField, "vern", "perro");
@@ -89,7 +89,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void Settle_OnAToolSwitch_KeepsAValidStagedEditAsAnUndoableStep()
 		{
-			var holder = new RegionEditContextHolder();
+			var holder = new DetailEditContextHolder();
 			var context = new LexiconFirstSliceEditContext(m_entry, Cache);
 			holder.Replace(context);
 			context.TrySetText(FormField, "vern", "perro");
@@ -123,7 +123,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void Holder_ReplacingAContextMidEdit_CancelsTheOpenSession_SoShutdownSaveSucceeds()
 		{
-			var holder = new RegionEditContextHolder();
+			var holder = new DetailEditContextHolder();
 			var first = new LexiconFirstSliceEditContext(m_entry, Cache);
 			holder.Replace(first);
 			first.TrySetText(FormField, "vern", "half-typed");
@@ -142,7 +142,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void Holder_ClearMidEdit_CancelsTheOpenSession()
 		{
-			var holder = new RegionEditContextHolder();
+			var holder = new DetailEditContextHolder();
 			var context = new LexiconFirstSliceEditContext(m_entry, Cache);
 			holder.Replace(context);
 			context.TrySetText(FormField, "vern", "half-typed");
@@ -157,7 +157,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void Holder_ReplacingWithTheSameContext_DoesNotCancelIt()
 		{
-			var holder = new RegionEditContextHolder();
+			var holder = new DetailEditContextHolder();
 			var context = new LexiconFirstSliceEditContext(m_entry, Cache);
 			holder.Replace(context);
 			context.TrySetText(FormField, "vern", "still typing");

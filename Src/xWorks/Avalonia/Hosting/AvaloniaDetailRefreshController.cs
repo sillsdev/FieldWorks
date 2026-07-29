@@ -26,7 +26,7 @@ namespace SIL.FieldWorks.XWorks
 	/// a burst becomes ONE queued refresh that runs after the current call stack unwinds; without
 	/// one (tests, simple hosts) delivery stays synchronous.
 	/// </summary>
-	public sealed class AvaloniaRegionRefreshController : IVwNotifyChange, IDisposable
+	public sealed class AvaloniaDetailRefreshController : IVwNotifyChange, IDisposable
 	{
 		private readonly LcmCache _cache;
 		private readonly Func<ICmObject> _currentRecord;
@@ -50,7 +50,7 @@ namespace SIL.FieldWorks.XWorks
 		/// supplies the ILexEntry owner-walk (see RecordEditView.EnsureAvaloniaRefreshController);
 		/// when null, only changes to the displayed record itself trigger a refresh.
 		/// </param>
-		public AvaloniaRegionRefreshController(
+		public AvaloniaDetailRefreshController(
 			LcmCache cache,
 			Func<ICmObject> currentRecord,
 			Func<bool> isEditing,

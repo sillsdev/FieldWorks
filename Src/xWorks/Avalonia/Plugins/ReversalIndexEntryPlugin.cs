@@ -34,7 +34,7 @@ namespace SIL.FieldWorks.XWorks
 	/// a sense with no reversal entry for a given index simply shows no row for it, and clearing a
 	/// form to empty stores an empty form (it does not delete the entry).</para>
 	/// </summary>
-	public sealed class ReversalIndexEntryPlugin : IRegionEditorPlugin
+	public sealed class ReversalIndexEntryPlugin : ISlicePlugin
 	{
 		/// <summary>The legacy slice class this plugin claims (LexSenseParts.xml reversal entries slice).</summary>
 		public const string ReversalIndexEntrySliceClassName =
@@ -42,7 +42,7 @@ namespace SIL.FieldWorks.XWorks
 
 		public string LegacyClassName => ReversalIndexEntrySliceClassName;
 
-		public Control BuildControl(RegionEditorBuildContext context)
+		public Control BuildControl(SlicePluginBuildContext context)
 		{
 			var sense = context?.Target as ILexSense;
 			var cache = context?.Cache;
@@ -73,7 +73,7 @@ namespace SIL.FieldWorks.XWorks
 					isEditable: true,
 					objectHvo: sense.Hvo);
 
-				var reversalContext = new ReversalRegionEditContext(cache, context.EditContext, entryByWsKey);
+				var reversalContext = new ReversalDetailEditContext(cache, context.EditContext, entryByWsKey);
 				var automationId = node?.AutomationId ?? "ReversalEntriesEditor";
 				return new FwMultiWsTextField(field, automationId, reversalContext,
 					writingSystemFocused: wsTag => RegionKeyboard.ActivateForWritingSystem(cache, wsTag));
@@ -109,7 +109,7 @@ namespace SIL.FieldWorks.XWorks
 
 				var ws = wsManager.Get(wsHandle);
 				var tss = entry.ReversalForm.get_String(wsHandle);
-				var richText = RegionRichTextAdapter.FromTsString(tss, factory);
+				var richText = DetailRichTextAdapter.FromTsString(tss, factory);
 				values.Add(new DetailWsValue(ws.Abbreviation, tss?.Text ?? string.Empty,
 					ws.DefaultFontName, 0, ws.RightToLeftScript, ws.Id, false, richText));
 				map[ws.Id] = entry;
@@ -123,17 +123,17 @@ namespace SIL.FieldWorks.XWorks
 	/// <summary>
 	/// The Reversal Entries plugin's edit context: routes <see cref="TrySetText"/>/<see cref="TrySetRichText"/>
 	/// to the matching reversal entry's <c>ReversalForm</c> (data-safe: edits existing forms only), staging
-	/// through the region's SHARED <see cref="RegionEditContextBase"/> session so a reversal edit lands as
+	/// through the region's SHARED <see cref="DetailEditContextBase"/> session so a reversal edit lands as
 	/// ONE step on the same undoable fence as every other row. Session lifecycle (IsOpen/Commit/Cancel) and
 	/// validation delegate to the host context, so the host view's Save/Cancel commit reversal edits too.
 	/// </summary>
-	internal sealed class ReversalRegionEditContext : IDetailEditContext
+	internal sealed class ReversalDetailEditContext : IDetailEditContext
 	{
 		private readonly LcmCache _cache;
 		private readonly IDetailEditContext _host;
 		private readonly IReadOnlyDictionary<string, IReversalIndexEntry> _entryByWsKey;
 
-		public ReversalRegionEditContext(LcmCache cache, IDetailEditContext host,
+		public ReversalDetailEditContext(LcmCache cache, IDetailEditContext host,
 			IReadOnlyDictionary<string, IReversalIndexEntry> entryByWsKey)
 		{
 			_cache = cache ?? throw new ArgumentNullException(nameof(cache));
@@ -170,7 +170,7 @@ namespace SIL.FieldWorks.XWorks
 				// ReversalForm is multi-unicode (plain text): re-emit the run-replay as a plain string in
 				// the row's writing system. The per-run rich projection still drives display/formatting,
 				// but the stored property carries no run structure.
-				var tss = RegionRichTextAdapter.ToTsString(value, _cache.WritingSystemFactory, wsHandle);
+				var tss = DetailRichTextAdapter.ToTsString(value, _cache.WritingSystemFactory, wsHandle);
 				entry.ReversalForm.set_String(wsHandle,
 					TsStringUtils.MakeString(tss?.Text ?? string.Empty, wsHandle));
 				return true;
@@ -182,7 +182,7 @@ namespace SIL.FieldWorks.XWorks
 		// always supplies one).
 		private bool StageOnHost(Func<bool> setter)
 		{
-			if (_host is RegionEditContextBase fenced)
+			if (_host is DetailEditContextBase fenced)
 				return fenced.Stage(setter);
 			if (_host != null)
 				return setter(); // a non-fenced host (a test fake): apply directly

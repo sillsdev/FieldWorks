@@ -62,9 +62,9 @@ namespace SIL.FieldWorks.XWorks
 			return entry;
 		}
 
-		private ComposedRegion Compose() => RegionComposer.Compose(m_entry, Cache);
+		private ComposedDetail Compose() => DetailComposer.Compose(m_entry, Cache);
 
-		private static DetailField ComponentsField(ComposedRegion composed)
+		private static DetailField ComponentsField(ComposedDetail composed)
 			=> composed.Model.Fields.Single(f => f.Field == "ComponentLexemes"
 				&& f.Kind == DetailFieldKind.ReferenceVector);
 

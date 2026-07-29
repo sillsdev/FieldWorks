@@ -15,10 +15,10 @@ namespace SIL.FieldWorks.XWorks
 	/// The LCModel-aware StText edit-context adapter, exercised against a REAL in-memory cache.
 	/// An StText field becomes an editable <see cref="DetailFieldKind.StructuredText"/> row whose
 	/// paragraph CRUD (text / style / insert / delete) mutates the LCModel StText inside ONE fenced
-	/// <see cref="LcmRegionEditSession"/> — one step on the global undo stack legacy surfaces share, the
+	/// <see cref="LcmDetailEditSession"/> — one step on the global undo stack legacy surfaces share, the
 	/// same undo-granularity rule the rest of the region follows. These tests build the composed
-	/// edit-context the way <see cref="RegionComposer"/> does (the same
-	/// <see cref="ComposedRegionEditContext"/> + paragraph setters), so they cover the real production
+	/// edit-context the way <see cref="DetailComposer"/> does (the same
+	/// <see cref="ComposedDetailEditContext"/> + paragraph setters), so they cover the real production
 	/// write path, not a stand-in. An ORC/lossy paragraph stays read-only/preserved.
 	/// </summary>
 	[TestFixture]
@@ -59,9 +59,9 @@ namespace SIL.FieldWorks.XWorks
 		private int ParaCount => m_stText.ParagraphsOS.Count;
 
 		// A StructuredText region field + a composed edit context whose paragraph setters mutate m_stText
-		// exactly as RegionComposer.AddStructuredText wires them. This is the production seam:
-		// ComposedRegionEditContext routes each gesture through the shared fenced Stage().
-		private (DetailField Field, ComposedRegionEditContext Context) Build()
+		// exactly as DetailComposer.AddStructuredText wires them. This is the production seam:
+		// ComposedDetailEditContext routes each gesture through the shared fenced Stage().
+		private (DetailField Field, ComposedDetailEditContext Context) Build()
 		{
 			const string stableId = "LexEntry/Bibliography@" + "x";
 			var field = new DetailField(stableId, "Discussion", "Discussion", null,
@@ -82,7 +82,7 @@ namespace SIL.FieldWorks.XWorks
 					while (m_stText.ParagraphsOS.Count <= index)
 						m_stText.InsertNewTextPara(m_stText.ParagraphsOS.Count, null);
 					((IStTxtPara)m_stText.ParagraphsOS[index]).Contents =
-						RegionRichTextAdapter.ToTsString(value, wsf, defaultWs);
+						DetailRichTextAdapter.ToTsString(value, wsf, defaultWs);
 					return true;
 				},
 				ParagraphStyle = (index, style) =>
@@ -109,7 +109,7 @@ namespace SIL.FieldWorks.XWorks
 				}
 			};
 
-			var context = new ComposedRegionEditContext(Cache, m_entry,
+			var context = new ComposedDetailEditContext(Cache, m_entry,
 				new System.Collections.Generic.Dictionary<string, FieldEditHandler> { [stableId] = handler });
 			return (field, context);
 		}
@@ -214,7 +214,7 @@ namespace SIL.FieldWorks.XWorks
 			// FromTsString projection mirrors what AddStructuredText builds for the region model.
 			var paragraphs = m_stText.ParagraphsOS.OfType<IStTxtPara>()
 				.Select(p => new DetailParagraph(
-					RegionRichTextAdapter.FromTsString(p.Contents, Cache.WritingSystemFactory), p.StyleName))
+					DetailRichTextAdapter.FromTsString(p.Contents, Cache.WritingSystemFactory), p.StyleName))
 				.ToList();
 
 			Assert.That(paragraphs, Has.Count.EqualTo(2));

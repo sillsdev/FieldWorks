@@ -17,7 +17,7 @@ namespace SIL.FieldWorks.XWorks
 {
 	/// <summary>
 	/// The trimmed lexeme editor's custom-slice census. The region has exactly ONE native-conversion
-	/// route (the <see cref="IRegionEditorPlugin"/> contract with <see cref="ReversalIndexEntryPlugin"/>)
+	/// route (the <see cref="ISlicePlugin"/> contract with <see cref="ReversalIndexEntryPlugin"/>)
 	/// plus the composer's reference-vector absorption; every OTHER dynamically loaded custom slice
 	/// composes as the labeled Unsupported worklist row. This census pins that only ReversalIndexEntrySlice
 	/// is plugin-claimed, that the composer-absorbed classes compose as reference vectors, and that the
@@ -93,7 +93,7 @@ namespace SIL.FieldWorks.XWorks
 
 			foreach (var cls in census)
 			{
-				var pluginRouted = RegionEditorPluginRegistry.Default.Resolve(cls) != null;
+				var pluginRouted = SlicePluginRegistry.Default.Resolve(cls) != null;
 				var composerAbsorbed = ComposerAbsorbedClassNames.Contains(cls, StringComparer.Ordinal);
 
 				// A class is claimed by AT MOST one explicit route; everything else is the Unsupported
@@ -121,9 +121,9 @@ namespace SIL.FieldWorks.XWorks
 		{
 			// The single native-conversion route. Every other custom slice not absorbed by a composer
 			// route renders the Unsupported worklist row (no other native route exists).
-			Assert.That(RegionEditorPluginRegistry.Default.RegisteredClassNames,
+			Assert.That(SlicePluginRegistry.Default.RegisteredClassNames,
 				Is.EquivalentTo(new[] { ReversalIndexEntryPlugin.ReversalIndexEntrySliceClassName }));
-			Assert.That(RegionEditorPluginRegistry.Default.Resolve(ReversalIndexEntryPlugin.ReversalIndexEntrySliceClassName),
+			Assert.That(SlicePluginRegistry.Default.Resolve(ReversalIndexEntryPlugin.ReversalIndexEntrySliceClassName),
 				Is.InstanceOf<ReversalIndexEntryPlugin>());
 		}
 
@@ -139,7 +139,7 @@ namespace SIL.FieldWorks.XWorks
 				AudioVisualSliceClassName, MessageSliceClassName
 			})
 			{
-				Assert.That(RegionEditorPluginRegistry.Default.Resolve(cls), Is.Null,
+				Assert.That(SlicePluginRegistry.Default.Resolve(cls), Is.Null,
 					$"'{cls}' is a dropped editor: nothing claims it, so it renders the Unsupported worklist row");
 				Assert.That(ComposerAbsorbedClassNames, Has.None.EqualTo(cls),
 					$"'{cls}' is not one of the D3 composer-absorbed reference-vector routes");
@@ -153,11 +153,11 @@ namespace SIL.FieldWorks.XWorks
 			// are recognized by the composer's own routing (no plugin) and compose as native
 			// ReferenceVector rows, so the registry must NOT claim them.
 			foreach (var cls in ComposerAbsorbedClassNames)
-				Assert.That(RegionEditorPluginRegistry.Default.Resolve(cls), Is.Null,
+				Assert.That(SlicePluginRegistry.Default.Resolve(cls), Is.Null,
 					$"'{cls}' is composer-absorbed (D3), not plugin-routed");
 		}
 
-		private sealed class StubPlugin : IRegionEditorPlugin
+		private sealed class StubPlugin : ISlicePlugin
 		{
 			public StubPlugin(string legacyClassName)
 			{
@@ -166,13 +166,13 @@ namespace SIL.FieldWorks.XWorks
 
 			public string LegacyClassName { get; }
 
-			public Avalonia.Controls.Control BuildControl(RegionEditorBuildContext context) => null;
+			public Avalonia.Controls.Control BuildControl(SlicePluginBuildContext context) => null;
 		}
 
 		[Test]
 		public void Registry_RegisterAndResolve_RoundTrips_AndUnknownReturnsNull()
 		{
-			var registry = new RegionEditorPluginRegistry();
+			var registry = new SlicePluginRegistry();
 			Assert.That(registry.Resolve("No.Such.Class"), Is.Null, "an unclaimed class resolves null");
 			Assert.That(registry.Resolve(null), Is.Null);
 
@@ -185,7 +185,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void Registry_RejectsInvalidAndDuplicateRegistrations()
 		{
-			var registry = new RegionEditorPluginRegistry();
+			var registry = new SlicePluginRegistry();
 			Assert.That(() => registry.Register(null), Throws.ArgumentNullException);
 			Assert.That(() => registry.Register(new StubPlugin(null)), Throws.ArgumentException,
 				"a plugin without a legacy class identity cannot be resolved by the composer");
@@ -220,7 +220,7 @@ namespace SIL.FieldWorks.XWorks
 			});
 		}
 
-		private sealed class FakeMessagesPlugin : IRegionEditorPlugin
+		private sealed class FakeMessagesPlugin : ISlicePlugin
 		{
 			public int BuildCalls;
 			public ICmObject LastObject;
@@ -230,7 +230,7 @@ namespace SIL.FieldWorks.XWorks
 
 			public string LegacyClassName => MessageSliceClassName;
 
-			public Avalonia.Controls.Control BuildControl(RegionEditorBuildContext context)
+			public Avalonia.Controls.Control BuildControl(SlicePluginBuildContext context)
 			{
 				BuildCalls++;
 				LastObject = context.Target;
@@ -247,8 +247,8 @@ namespace SIL.FieldWorks.XWorks
 			// No plugin claims the Chorus notes bar (MessageSlice), so the node composes as the labeled
 			// Unsupported worklist row — never a Custom row,
 			// never silently omitted.
-			var composed = RegionComposer.Compose(m_entry, Cache,
-				plugins: new RegionEditorPluginRegistry());
+			var composed = DetailComposer.Compose(m_entry, Cache,
+				plugins: new SlicePluginRegistry());
 
 			Assert.That(composed.Model.Fields.Any(f => f.Kind == DetailFieldKind.Custom), Is.False,
 				"an unclaimed custom slice is not a Custom row");
@@ -261,11 +261,11 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void Compose_PluginClaim_ComposesTheClaimedNodeAsACustomRow()
 		{
-			var registry = new RegionEditorPluginRegistry();
+			var registry = new SlicePluginRegistry();
 			var plugin = new FakeMessagesPlugin();
 			registry.Register(plugin);
 
-			var composed = RegionComposer.Compose(m_entry, Cache, plugins: registry);
+			var composed = DetailComposer.Compose(m_entry, Cache, plugins: registry);
 
 			var customRows = composed.Model.Fields.Where(f => f.Kind == DetailFieldKind.Custom).ToList();
 			Assert.That(customRows.Count, Is.EqualTo(1),
@@ -283,11 +283,11 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void PluginRowFactory_ClosesOverObjectNodeCacheAndTheComposedEditContext()
 		{
-			var registry = new RegionEditorPluginRegistry();
+			var registry = new SlicePluginRegistry();
 			var plugin = new FakeMessagesPlugin();
 			registry.Register(plugin);
 
-			var composed = RegionComposer.Compose(m_entry, Cache, plugins: registry);
+			var composed = DetailComposer.Compose(m_entry, Cache, plugins: registry);
 			var row = composed.Model.Fields.Single(f => f.Kind == DetailFieldKind.Custom);
 
 			row.ControlFactory();

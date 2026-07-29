@@ -64,13 +64,13 @@ namespace SIL.FieldWorks.XWorks
 
 		private const string StableId = "LexEntry/Definition@w";
 
-		// The StructuredText field + composed edit context wired exactly as RegionComposer does:
+		// The StructuredText field + composed edit context wired exactly as DetailComposer does:
 		// each setter mutates m_definition inside the shared fenced Stage().
-		private (DetailField Field, ComposedRegionEditContext Context) Build()
+		private (DetailField Field, ComposedDetailEditContext Context) Build()
 		{
 			var paragraphs = m_definition.ParagraphsOS.OfType<IStTxtPara>()
 				.Select(p => new DetailParagraph(
-					RegionRichTextAdapter.FromTsString(p.Contents, Cache.WritingSystemFactory), p.StyleName))
+					DetailRichTextAdapter.FromTsString(p.Contents, Cache.WritingSystemFactory), p.StyleName))
 				.ToList();
 			var field = new DetailField(StableId, "Definition", "Definition", null,
 				DetailFieldKind.StructuredText,
@@ -93,7 +93,7 @@ namespace SIL.FieldWorks.XWorks
 					while (m_definition.ParagraphsOS.Count <= index)
 						m_definition.InsertNewTextPara(m_definition.ParagraphsOS.Count, null);
 					((IStTxtPara)m_definition.ParagraphsOS[index]).Contents =
-						RegionRichTextAdapter.ToTsString(value, wsf, defaultWs);
+						DetailRichTextAdapter.ToTsString(value, wsf, defaultWs);
 					return true;
 				},
 				ParagraphStyle = (index, style) =>
@@ -119,7 +119,7 @@ namespace SIL.FieldWorks.XWorks
 				}
 			};
 
-			var context = new ComposedRegionEditContext(Cache, m_entry,
+			var context = new ComposedDetailEditContext(Cache, m_entry,
 				new Dictionary<string, FieldEditHandler> { [StableId] = handler });
 			return (field, context);
 		}
@@ -132,7 +132,7 @@ namespace SIL.FieldWorks.XWorks
 		private List<DetailParagraph> ReProject()
 			=> m_definition.ParagraphsOS.OfType<IStTxtPara>()
 				.Select(p => new DetailParagraph(
-					RegionRichTextAdapter.FromTsString(p.Contents, Cache.WritingSystemFactory), p.StyleName))
+					DetailRichTextAdapter.FromTsString(p.Contents, Cache.WritingSystemFactory), p.StyleName))
 				.ToList();
 
 		// Edit Definition text -> add a 2nd paragraph -> apply a paragraph style to it -> commit ->

@@ -52,7 +52,7 @@ namespace SIL.FieldWorks.XWorks
 			var plain = dataObject.GetData(DataFormats.UnicodeText) as string;
 			if (wrapper == null && plain == null)
 				return null;
-			var richText = wrapper == null ? null : RegionRichTextAdapter.FromTsString(
+			var richText = wrapper == null ? null : DetailRichTextAdapter.FromTsString(
 				TsStringSerializer.DeserializeTsStringFromXml(wrapper.Xml, _writingSystemFactory),
 				_writingSystemFactory);
 
@@ -97,7 +97,7 @@ namespace SIL.FieldWorks.XWorks
 
 			var plain = (tsString.Text ?? string.Empty).Normalize(NormalizationForm.FormC);
 			return new FwClipboardText(plain, TsStringUtils.GetXmlRep(tsString, _writingSystemFactory, 0),
-				RegionRichTextAdapter.FromTsString(tsString, _writingSystemFactory));
+				DetailRichTextAdapter.FromTsString(tsString, _writingSystemFactory));
 		}
 
 		/// <summary>

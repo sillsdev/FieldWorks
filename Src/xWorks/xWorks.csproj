@@ -4,7 +4,7 @@
     <AssemblyName>xWorks</AssemblyName>
     <RootNamespace>SIL.FieldWorks.XWorks</RootNamespace>
     <TargetFramework>net48</TargetFramework>
-    <OutputType>Library</OutputType>    <!-- AVA2001: the compile-only Avalonia reference (IRegionEditorPlugin, winforms-free-lexeme-editor.md
+    <OutputType>Library</OutputType>    <!-- AVA2001: the compile-only Avalonia reference (ISlicePlugin, winforms-free-lexeme-editor.md
          D1) drags the Avalonia analyzer along; its WPF-style OnPropertyChanged rule does not apply to
          this legacy WinForms codebase. -->
     <NoWarn>168,169,219,414,649,1635,1702,1701,NU1903,AVA2001</NoWarn>
@@ -24,7 +24,7 @@
     <DebugType>portable</DebugType>
   </PropertyGroup>
   <ItemGroup>
-    <!-- Compile-only (PrivateAssets): the IRegionEditorPlugin contract
+    <!-- Compile-only (PrivateAssets): the ISlicePlugin contract
          (winforms-free-lexeme-editor.md D1) builds Avalonia controls for plugin-claimed custom
          slices; the Avalonia runtime assemblies ship with FwAvalonia in the shared output. -->
     <PackageReference Include="Avalonia" IncludeAssets="compile" PrivateAssets="all" />

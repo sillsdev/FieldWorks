@@ -19,7 +19,7 @@ namespace SIL.FieldWorks.XWorks
 	/// the <b>legacy layout identity</b> (<see cref="LegacyClassName"/>, the layout's `class=`
 	/// attribute already carried on the typed node) — zero layout edits per migration.
 	/// </summary>
-	public interface IRegionEditorPlugin
+	public interface ISlicePlugin
 	{
 		/// <summary>
 		/// The fully qualified legacy slice class this plugin claims (the layout `class=`
@@ -34,7 +34,7 @@ namespace SIL.FieldWorks.XWorks
 		/// optional host services. This is the ONE plugin contract — there is no separate
 		/// service-aware marker interface or overload.
 		/// </summary>
-		Control BuildControl(RegionEditorBuildContext context);
+		Control BuildControl(SlicePluginBuildContext context);
 	}
 
 	/// <summary>
@@ -43,11 +43,11 @@ namespace SIL.FieldWorks.XWorks
 	/// composer's deferred accessor — the context object is created during compose, BEFORE the
 	/// edit context exists; plugin factories run at render time, after), and the cache.
 	/// </summary>
-	public sealed class RegionEditorBuildContext
+	public sealed class SlicePluginBuildContext
 	{
 		private readonly Func<IDetailEditContext> _editContextAccessor;
 
-		public RegionEditorBuildContext(ICmObject target, ViewNode node,
+		public SlicePluginBuildContext(ICmObject target, ViewNode node,
 			Func<IDetailEditContext> editContextAccessor, LcmCache cache)
 		{
 			Target = target;
@@ -70,26 +70,26 @@ namespace SIL.FieldWorks.XWorks
 
 	/// <summary>
 	/// Maps legacy slice class names to their
-	/// <see cref="IRegionEditorPlugin"/>. The composer consults <see cref="Resolve"/> per node
+	/// <see cref="ISlicePlugin"/>. The composer consults <see cref="Resolve"/> per node
 	/// while walking, FIRST in the resolution order (plugin → unsupported row).
 	/// Thread-safe by immutable snapshot: registration copies under a lock, resolution reads the
 	/// current snapshot without one, so a compose mid-registration sees a coherent table.
 	/// </summary>
-	public sealed class RegionEditorPluginRegistry
+	public sealed class SlicePluginRegistry
 	{
 		private readonly object _sync = new object();
-		private volatile IReadOnlyDictionary<string, IRegionEditorPlugin> _snapshot
-			= new Dictionary<string, IRegionEditorPlugin>(StringComparer.Ordinal);
+		private volatile IReadOnlyDictionary<string, ISlicePlugin> _snapshot
+			= new Dictionary<string, ISlicePlugin>(StringComparer.Ordinal);
 
 		/// <summary>The process-wide registry the composer uses unless a caller supplies its own.</summary>
-		public static RegionEditorPluginRegistry Default { get; } = CreateDefault();
+		public static SlicePluginRegistry Default { get; } = CreateDefault();
 
 		/// <summary>
-		/// Registers a plugin for its <see cref="IRegionEditorPlugin.LegacyClassName"/>. A legacy
+		/// Registers a plugin for its <see cref="ISlicePlugin.LegacyClassName"/>. A legacy
 		/// class has exactly one owner: re-registering an already-claimed class throws, so two
 		/// migrations cannot silently fight over a slice.
 		/// </summary>
-		public void Register(IRegionEditorPlugin plugin)
+		public void Register(ISlicePlugin plugin)
 		{
 			if (plugin == null)
 				throw new ArgumentNullException(nameof(plugin));
@@ -101,7 +101,7 @@ namespace SIL.FieldWorks.XWorks
 				if (_snapshot.ContainsKey(plugin.LegacyClassName))
 					throw new ArgumentException(
 						$"'{plugin.LegacyClassName}' is already claimed by another plugin.", nameof(plugin));
-				var next = new Dictionary<string, IRegionEditorPlugin>((IDictionary<string, IRegionEditorPlugin>)_snapshot,
+				var next = new Dictionary<string, ISlicePlugin>((IDictionary<string, ISlicePlugin>)_snapshot,
 					StringComparer.Ordinal)
 				{
 					[plugin.LegacyClassName] = plugin
@@ -111,7 +111,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>The plugin claiming the legacy class, or null when the class is unclaimed.</summary>
-		public IRegionEditorPlugin Resolve(string legacyClassName)
+		public ISlicePlugin Resolve(string legacyClassName)
 		{
 			if (string.IsNullOrEmpty(legacyClassName))
 				return null;
@@ -128,9 +128,9 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		private static RegionEditorPluginRegistry CreateDefault()
+		private static SlicePluginRegistry CreateDefault()
 		{
-			var registry = new RegionEditorPluginRegistry();
+			var registry = new SlicePluginRegistry();
 			RegisterBuiltins(registry);
 			return registry;
 		}
@@ -139,7 +139,7 @@ namespace SIL.FieldWorks.XWorks
 		// (ReversalIndexEntrySlice) composes as a native Avalonia editable multi-WS text field through
 		// the plugin route. Every OTHER custom slice not absorbed by a composer route resolves to the
 		// labeled Unsupported worklist row.
-		internal static void RegisterBuiltins(RegionEditorPluginRegistry registry)
+		internal static void RegisterBuiltins(SlicePluginRegistry registry)
 		{
 			registry.Register(new ReversalIndexEntryPlugin());
 		}

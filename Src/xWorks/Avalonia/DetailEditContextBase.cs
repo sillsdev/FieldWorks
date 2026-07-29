@@ -13,16 +13,16 @@ namespace SIL.FieldWorks.XWorks
 {
 	/// <summary>
 	/// The ONE LCModel-backed <see cref="IDetailEditContext"/> session/validation
-	/// implementation: owns the lazily opened fenced <see cref="LcmRegionEditSession"/> (opened
+	/// implementation: owns the lazily opened fenced <see cref="LcmDetailEditSession"/> (opened
 	/// on the first staged edit, committed/cancelled as one global undo step) and the shared
 	/// required-lexeme validation rule, so the first-slice context and the full-entry composed
 	/// context cannot drift apart. Derived contexts supply only the field write routing.
 	/// </summary>
-	public abstract class RegionEditContextBase : IDetailEditContext
+	public abstract class DetailEditContextBase : IDetailEditContext
 	{
-		private LcmRegionEditSession _session;
+		private LcmDetailEditSession _session;
 
-		protected RegionEditContextBase(LcmCache cache, ICmObject root)
+		protected DetailEditContextBase(LcmCache cache, ICmObject root)
 		{
 			Cache = cache ?? throw new ArgumentNullException(nameof(cache));
 			RootObject = root ?? throw new ArgumentNullException(nameof(root));
@@ -43,22 +43,22 @@ namespace SIL.FieldWorks.XWorks
 		public bool IsOpen => _session != null && _session.IsOpen;
 
 		/// <inheritdoc />
-		public abstract bool TrySetText(DetailField regionField, string ws, string value);
+		public abstract bool TrySetText(DetailField detailField, string ws, string value);
 
 		/// <inheritdoc />
-		public virtual bool TrySetRichText(DetailField regionField, string ws,
+		public virtual bool TrySetRichText(DetailField detailField, string ws,
 			DetailRichTextValue value) => false;
 
 		/// <inheritdoc />
-		public abstract bool TrySetOption(DetailField regionField, string optionKey);
+		public abstract bool TrySetOption(DetailField detailField, string optionKey);
 
 		/// <inheritdoc />
 		/// <remarks>Reference-vector editing exists only on composed regions; the first-slice
 		/// fallback has no vector rows, so the base rejects.</remarks>
-		public virtual bool TryAddReferenceItem(DetailField regionField, string optionKey) => false;
+		public virtual bool TryAddReferenceItem(DetailField detailField, string optionKey) => false;
 
 		/// <inheritdoc />
-		public virtual bool TryRemoveReferenceItem(DetailField regionField, string optionKey) => false;
+		public virtual bool TryRemoveReferenceItem(DetailField detailField, string optionKey) => false;
 
 		/// <inheritdoc />
 		public virtual IReadOnlyList<string> Validate()
@@ -144,7 +144,7 @@ namespace SIL.FieldWorks.XWorks
 				redoLabel = string.Format(CultureInfo.CurrentCulture,
 					FwAvaloniaStrings.RedoChangeToFormat, fieldLabel);
 			}
-			_session = new LcmRegionEditSession(Cache, undoLabel, redoLabel);
+			_session = new LcmDetailEditSession(Cache, undoLabel, redoLabel);
 		}
 
 		/// <summary>

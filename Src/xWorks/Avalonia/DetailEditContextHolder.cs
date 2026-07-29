@@ -28,7 +28,7 @@ namespace SIL.FieldWorks.XWorks
 	/// already holds (LockRecursionException), so the guard settles the pending edit and cancels
 	/// that gesture — the next Ctrl+Z undoes the just-settled step normally.
 	/// </summary>
-	public sealed class RegionEditContextHolder
+	public sealed class DetailEditContextHolder
 	{
 		private IActionHandlerExtensions m_undoHook;
 		private Form m_deactivateForm;

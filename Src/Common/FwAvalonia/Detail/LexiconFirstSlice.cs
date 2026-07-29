@@ -58,7 +58,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 
 			try
 			{
-				// Finding D: the parts merge rides the ONE shared loader RegionComposer
+				// Finding D: the parts merge rides the ONE shared loader DetailComposer
 				// (xWorks) also uses, so the two compile paths cannot drift apart.
 				var partsXml = LayoutSourceLoader.LoadMergedPartsXml(partsDirectory);
 				if (partsXml == null)

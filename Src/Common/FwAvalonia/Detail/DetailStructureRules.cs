@@ -9,7 +9,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 	/// <summary>
 	/// The shared structural projection rules used by BOTH region projectors — the thin
 	/// <see cref="DetailModelProjector"/> (view-definition → region model, LCModel-free) and the full
-	/// xWorks <c>RegionComposer</c> (LCModel-backed). The section-header row
+	/// xWorks <c>DetailComposer</c> (LCModel-backed). The section-header row
 	/// construction and the child-indent rule live ONCE here so the two paths cannot drift. (The third
 	/// structural rule — editor → renderable kind — is
 	/// likewise shared, in <see cref="EditorKindMap.ClassifyDetailFieldKind"/>.)

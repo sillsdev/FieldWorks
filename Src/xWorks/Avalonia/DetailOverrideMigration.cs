@@ -21,7 +21,7 @@ namespace SIL.FieldWorks.XWorks
 	/// inventory vs. the project inventory whose overrides are already merged) belongs to the caller and
 	/// is the one piece needing a real-project smoke test before production use.
 	/// </summary>
-	public static class RegionOverrideMigration
+	public static class DetailOverrideMigration
 	{
 		/// <summary>
 		/// Framework-neutral core: shipped layout + parts inventory as XElements. Unit-testable with inline
