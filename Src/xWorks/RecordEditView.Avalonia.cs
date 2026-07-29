@@ -31,7 +31,7 @@ namespace SIL.FieldWorks.XWorks
 {
 	/// <summary>
 	/// The Avalonia half of <see cref="RecordEditView"/>: everything that only exists because a
-	/// record can be shown on the new <see cref="LexicalEditHostControl"/> surface instead of the
+	/// record can be shown on the new <see cref="RegionHostControl"/> surface instead of the
 	/// legacy <see cref="DataTree"/>. Kept in its own file (mirroring this codebase's
 	/// Form/Form.Designer.cs split) so the legacy-facing file stays small; nothing here
 	/// changes behavior when <c>UIMode</c> is Legacy.
@@ -41,7 +41,7 @@ namespace SIL.FieldWorks.XWorks
 		private EditSurface m_lexicalEditSurface;
 		private readonly EditSurfaceFactory m_lexicalEditSurfaceFactory;
 		private readonly EditSurfaceSelectionService m_surfaceSelectionService = new EditSurfaceSelectionService();
-		private LexicalEditHostControl m_avaloniaEntryForm;
+		private RegionHostControl m_avaloniaEntryForm;
 		private RecordClerkNavigationContext m_recordNavigationContext;
 		// Owns the fenced edit context; swapping/clearing through it cancels any open session so an
 		// open undo task is never orphaned (an orphan makes the shutdown Save throw "Commit at wrong place").
@@ -69,7 +69,7 @@ namespace SIL.FieldWorks.XWorks
 		// projects/windows for the app lifetime.
 		private readonly Dictionary<string, bool> m_expansionStates = new Dictionary<string, bool>();
 
-		private bool ShouldUseAvaloniaLexicalEdit
+		private bool ShouldUseAvaloniaLexiconEdit
 		{
 			get { return m_lexicalEditSurface == EditSurface.Avalonia; }
 		}
@@ -188,7 +188,7 @@ namespace SIL.FieldWorks.XWorks
 			if (m_avaloniaEntryForm != null)
 				return;
 
-			m_avaloniaEntryForm = (LexicalEditHostControl)m_lexicalEditSurfaceFactory.Create(EditSurface.Avalonia);
+			m_avaloniaEntryForm = (RegionHostControl)m_lexicalEditSurfaceFactory.Create(EditSurface.Avalonia);
 			m_avaloniaEntryForm.Dock = DockStyle.Fill;
 			m_avaloniaEntryForm.RegionEditCompleted += OnAvaloniaRegionEditCompleted;
 			if (!m_panel.Controls.Contains(m_avaloniaEntryForm))
@@ -357,8 +357,8 @@ namespace SIL.FieldWorks.XWorks
 					m_avaloniaEntryForm.ShowMessage(FwAvaloniaStrings.EntryTypeUnsupported);
 					return;
 				}
-				region = LexicalEditRegionBuilder.Build(lexEntry, Cache);
-				editContext = new LexicalEditRegionEditContext(lexEntry, Cache);
+				region = LexiconEditErrorFallback.Build(lexEntry, Cache);
+				editContext = new LexiconFirstSliceEditContext(lexEntry, Cache);
 			}
 
 			// Re-showing mid-edit (record navigation, refresh delivery, Show Hidden Fields, window
@@ -374,7 +374,7 @@ namespace SIL.FieldWorks.XWorks
 			if (!m_regionEditContext.IsDeactivateHookAttached)
 				m_regionEditContext.AttachDeactivateHook(FindForm());
 			m_avaloniaEntryForm.ShowRegion(region, editContext,
-				wsTag => LexicalEditRegionBuilder.ActivateKeyboardForWritingSystem(Cache, wsTag),
+				wsTag => RegionKeyboard.ActivateForWritingSystem(Cache, wsTag),
 				GetPersistedExpansionState, PersistExpansionState,
 				OnRegionMenuRequested, OnRegionLinkRequested,
 				new FwTsStringClipboard(Cache.WritingSystemFactory),
@@ -826,7 +826,7 @@ namespace SIL.FieldWorks.XWorks
 		// (after an external edit or this surface's commit/cancel).
 		private void RefreshAvaloniaRegion()
 		{
-			if (m_avaloniaEntryForm == null || !ShouldUseAvaloniaLexicalEdit)
+			if (m_avaloniaEntryForm == null || !ShouldUseAvaloniaLexiconEdit)
 				return;
 			var current = Clerk?.CurrentObject;
 			if (current == null)
@@ -861,12 +861,12 @@ namespace SIL.FieldWorks.XWorks
 
 		private void SyncActiveHostContract()
 		{
-			var kind = ShouldUseAvaloniaLexicalEdit
+			var kind = ShouldUseAvaloniaLexiconEdit
 				? EditSurfaceKind.Avalonia
 				: EditSurfaceKind.Legacy;
 			if (m_activeHostContract == null || m_activeHostContract.ActiveSurface != kind)
 			{
-				m_activeHostContract = ShouldUseAvaloniaLexicalEdit
+				m_activeHostContract = ShouldUseAvaloniaLexiconEdit
 					? ActiveHostContract.ForAvalonia(ApprovedBaselineAdapters)
 					: ActiveHostContract.ForLegacy();
 			}

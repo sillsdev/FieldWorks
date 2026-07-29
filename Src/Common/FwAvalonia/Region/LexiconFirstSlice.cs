@@ -28,7 +28,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 	/// remains only as an explicit fallback (with a diagnostic) for when the layout directory is
 	/// missing or a shipped layout changes shape.
 	/// </summary>
-	public static class LexicalEditFirstSlice
+	public static class LexiconFirstSlice
 	{
 		// One-line caller layout for the gloss slice; all slice semantics (label, editor, ws, menus)
 		// come from the real LexSense-Detail-GlossAllA part it references.

@@ -76,7 +76,7 @@ namespace SIL.FieldWorks.XWorks
 				var reversalContext = new ReversalRegionEditContext(cache, context.EditContext, entryByWsKey);
 				var automationId = node?.AutomationId ?? "ReversalEntriesEditor";
 				return new FwMultiWsTextField(field, automationId, reversalContext,
-					writingSystemFocused: wsTag => LexicalEditRegionBuilder.ActivateKeyboardForWritingSystem(cache, wsTag));
+					writingSystemFocused: wsTag => RegionKeyboard.ActivateForWritingSystem(cache, wsTag));
 			}
 			catch (Exception e)
 			{

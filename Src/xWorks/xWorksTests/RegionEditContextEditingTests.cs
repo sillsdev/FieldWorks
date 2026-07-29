@@ -66,7 +66,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void Commit_MultiFieldEdit_IsOneStepOnTheGlobalUndoStack()
 		{
-			var context = new LexicalEditRegionEditContext(m_entry, Cache);
+			var context = new LexiconFirstSliceEditContext(m_entry, Cache);
 
 			Assert.That(context.TrySetText(F("Form"), "vern", "perro"), Is.True);
 			Assert.That(context.TrySetText(F("Gloss"), "anal", "dog"), Is.True);
@@ -92,7 +92,7 @@ namespace SIL.FieldWorks.XWorks
 		public void Cancel_RollsBackEveryStagedEdit_AndLeavesNoUndoStep()
 		{
 			var canUndoBefore = Cache.ActionHandlerAccessor.CanUndo();
-			var context = new LexicalEditRegionEditContext(m_entry, Cache);
+			var context = new LexiconFirstSliceEditContext(m_entry, Cache);
 
 			context.TrySetText(F("Form"), "vern", "perro");
 			context.TrySetText(F("Gloss"), "anal", "dog");
@@ -115,7 +115,7 @@ namespace SIL.FieldWorks.XWorks
 			using (new AvaloniaRegionRefreshController(
 				Cache, () => m_entry, () => false, () => refreshes++, new RefreshCoordinator()))
 			{
-				var context = new LexicalEditRegionEditContext(m_entry, Cache);
+				var context = new LexiconFirstSliceEditContext(m_entry, Cache);
 				var rich = RegionRichTextEditAlgorithms.FromRuns("perro", new[]
 				{
 					new RegionTextRun("per", Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Id),
@@ -151,7 +151,7 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(morphTypes.Count, Is.GreaterThanOrEqualTo(2), "fixture project ships morph types");
 			var target = morphTypes.First(mt => mt != m_entry.LexemeFormOA.MorphTypeRA);
 
-			var context = new LexicalEditRegionEditContext(m_entry, Cache);
+			var context = new LexiconFirstSliceEditContext(m_entry, Cache);
 			Assert.That(context.TrySetOption(F("MorphType"), target.Guid.ToString()), Is.True);
 			context.Commit();
 
@@ -161,7 +161,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void TrySetOption_RejectsUnknownKeysAndFields_WithoutOpeningASession()
 		{
-			var context = new LexicalEditRegionEditContext(m_entry, Cache);
+			var context = new LexiconFirstSliceEditContext(m_entry, Cache);
 			Assert.That(context.TrySetOption(F("MorphType"), "not-a-guid"), Is.False);
 			Assert.That(context.TrySetOption(F("MorphType"), System.Guid.NewGuid().ToString()), Is.False,
 				"a guid that is not a morph type must not stage");
@@ -175,7 +175,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void TrySetText_Gloss_OpensSessionWithFieldSpecificUndoLabel()
 		{
-			var context = new LexicalEditRegionEditContext(m_entry, Cache);
+			var context = new LexiconFirstSliceEditContext(m_entry, Cache);
 			try
 			{
 				Assert.That(context.TrySetText(F("Gloss"), "anal", "dog"), Is.True);
@@ -203,7 +203,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void FirstStagedField_FixesTheUndoLabel_ForTheWholeSession()
 		{
-			var context = new LexicalEditRegionEditContext(m_entry, Cache);
+			var context = new LexiconFirstSliceEditContext(m_entry, Cache);
 			try
 			{
 				Assert.That(context.TrySetText(F("Form"), "vern", "perro"), Is.True);
@@ -227,7 +227,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void Stage_WithoutAFieldLabel_KeepsTheGenericUndoLabel()
 		{
-			var context = new LexicalEditRegionEditContext(m_entry, Cache);
+			var context = new LexiconFirstSliceEditContext(m_entry, Cache);
 			try
 			{
 				Assert.That(context.Stage(() =>
@@ -249,7 +249,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void Validate_RequiresLexemeOrCitationForm()
 		{
-			var context = new LexicalEditRegionEditContext(m_entry, Cache);
+			var context = new LexiconFirstSliceEditContext(m_entry, Cache);
 			Assert.That(context.Validate(), Is.Empty);
 
 			context.TrySetText(F("Form"), "vern", "");
@@ -279,7 +279,7 @@ namespace SIL.FieldWorks.XWorks
 			});
 			try
 			{
-				var context = new LexicalEditRegionEditContext(m_entry, Cache);
+				var context = new LexiconFirstSliceEditContext(m_entry, Cache);
 				Assert.That(context.TrySetText(F("Form"), second.Id, "kasa"), Is.True);
 				context.Commit();
 
@@ -306,7 +306,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void TrySetText_UnknownWsKey_IsRejectedWithoutOpeningASession()
 		{
-			var context = new LexicalEditRegionEditContext(m_entry, Cache);
+			var context = new LexiconFirstSliceEditContext(m_entry, Cache);
 
 			Assert.That(context.TrySetText(F("Form"), "no-such-ws", "perro"), Is.False,
 				"an unknown ws key must not write to the default alternative");
@@ -679,7 +679,7 @@ namespace SIL.FieldWorks.XWorks
 				m_entry.LexemeFormOA.Form.set_String(Cache.DefaultVernWs, bldr.GetString());
 			});
 
-			var model = LexicalEditRegionBuilder.Build(m_entry, Cache);
+			var model = LexiconEditErrorFallback.Build(m_entry, Cache);
 			var form = model.Fields.Single(f => f.Field == "Form");
 
 			Assert.That(form.IsEditable, Is.True,
@@ -689,7 +689,7 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(form.Values.Single().RichText.Runs[0].Text, Is.EqualTo("ផ្ទះ"));
 			Assert.That(form.Values.Single().RichText.Runs[1].NamedStyle, Is.EqualTo("Emphasis"));
 
-			var context = new LexicalEditRegionEditContext(m_entry, Cache);
+			var context = new LexiconFirstSliceEditContext(m_entry, Cache);
 			Assert.That(context.TrySetText(form, form.Values.Single().WsTag, "flattened"), Is.False,
 				"the plain-text setter must reject rich rows so it cannot flatten the TsString");
 
@@ -732,7 +732,7 @@ namespace SIL.FieldWorks.XWorks
 				m_entry.LexemeFormOA.Form.set_String(Cache.DefaultVernWs, bldr.GetString());
 			});
 
-			var model = LexicalEditRegionBuilder.Build(m_entry, Cache);
+			var model = LexiconEditErrorFallback.Build(m_entry, Cache);
 			var form = model.Fields.Single(f => f.Field == "Form");
 			Assert.That(form.IsEditable, Is.True,
 				"a link ORC is editable (§19c): no longer a blanket read-only block");
@@ -742,7 +742,7 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(value.RichText.Runs.Single().HyperlinkUrl,
 				Is.EqualTo("https://software.sil.org/fieldworks"));
 
-			var context = new LexicalEditRegionEditContext(m_entry, Cache);
+			var context = new LexiconFirstSliceEditContext(m_entry, Cache);
 			Assert.That(context.TrySetRichText(form, value.WsTag, value.RichText), Is.True,
 				"a link-bearing value writes back through the rich seam");
 			context.Commit();

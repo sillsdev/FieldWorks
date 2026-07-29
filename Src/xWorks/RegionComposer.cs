@@ -162,7 +162,7 @@ namespace SIL.FieldWorks.XWorks
 		/// "FlatList" guicontrol spec, e.g. PeopleFlatList) keeps the order but suppresses the
 		/// hierarchy, like the legacy flat chooser. The implementation lives in
 		/// the shared <see cref="RegionValueFactory"/> so this composer and
-		/// <see cref="LexicalEditRegionBuilder"/> cannot drift; this wrapper keeps the composer's
+		/// <see cref="LexiconEditErrorFallback"/> cannot drift; this wrapper keeps the composer's
 		/// established internal surface (and its tests).
 		/// </summary>
 		internal static IReadOnlyList<RegionChoiceOption> BuildPossibilityOptions(
@@ -1128,7 +1128,7 @@ namespace SIL.FieldWorks.XWorks
 				// The lexeme form's legacy bold/120% <properties> emphasis.
 				var fontSize = node.FontScalePercent > 0 ? 12.0 * node.FontScalePercent / 100.0 : 0;
 				// The per-ws value rows build through the shared factory
-				// (LexicalEditRegionBuilder uses the same one), this path only supplies the text.
+				// (LexiconEditErrorFallback uses the same one), this path only supplies the text.
 				IReadOnlyList<RegionWsValue> values;
 				if (type == CellarPropertyType.Unicode)
 				{
@@ -3236,7 +3236,7 @@ namespace SIL.FieldWorks.XWorks
 			try
 			{
 				// Finding D: the parts merge and layout glob live in the ONE shared loader
-				// (LayoutSourceLoader) that LexicalEditFirstSlice also uses.
+				// (LayoutSourceLoader) that LexiconFirstSlice also uses.
 				var partsDirectory = FwDirectoryFinder.GetCodeSubDirectory(@"Language Explorer\Configuration\Parts");
 				var partsXml = LayoutSourceLoader.LoadMergedPartsXml(partsDirectory);
 				if (partsXml == null)
