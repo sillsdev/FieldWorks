@@ -53,7 +53,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		private bool _disposed;
 
 		public FwMultiWsTextField(
-			LexicalEditRegionField field,
+			RegionField field,
 			string automationId,
 			IRegionEditContext editContext,
 			Action<string> writingSystemFocused,
@@ -75,7 +75,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		// editing/clipboard/menu wiring when the field is editable), and the two-column row layout. One
 		// call per WS alternative; the shared per-row editor state (currentRich/lastStaged) lives here so
 		// the value box's handlers and its context-menu Copy see the same mutations.
-		private void BuildValueRow(LexicalEditRegionField field, string automationId,
+		private void BuildValueRow(RegionField field, string automationId,
 			IRegionEditContext editContext, Action<string> writingSystemFocused,
 			Action<RegionMenuRequest> menuRequested, IFwClipboard clipboard,
 			bool showWritingSystemAbbreviation, RegionWsValue value)
@@ -739,7 +739,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 
 		// The flat value editor: a voice/audio or rich-content-lossy value is read-only and carries the
 		// explanatory tooltip; project WS font, size, bold, and RTL flow ride the value's own metadata.
-		private static TextBox BuildValueBox(LexicalEditRegionField field, RegionWsValue value, bool valueIsReadOnly)
+		private static TextBox BuildValueBox(RegionField field, RegionWsValue value, bool valueIsReadOnly)
 		{
 			var box = new TextBox
 			{
@@ -768,7 +768,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 			return box;
 		}
 
-		private void WireGhostPrompt(TextBox box, LexicalEditRegionField field)
+		private void WireGhostPrompt(TextBox box, RegionField field)
 		{
 			if (!string.IsNullOrEmpty(field.GhostPrompt))
 			{
@@ -792,7 +792,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		// path), routed through the host bridge. That host menu owns this field's commands, so it
 		// stays the single right-click surface for a bridged row; the relocated rich-text operations
 		// are offered on the LOCAL menu only for rows WITHOUT a bridge (built after the editor wiring).
-		private bool WireBridgeContextMenu(TextBox box, LexicalEditRegionField field,
+		private bool WireBridgeContextMenu(TextBox box, RegionField field,
 			Action<RegionMenuRequest> menuRequested)
 		{
 			var hasBridge = menuRequested != null && !string.IsNullOrEmpty(field.ContextMenuId);
@@ -874,7 +874,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		// value's runs warrant a per-run font display, wrap the editable box and a read-along TextBlock in a
 		// Panel: the TextBlock (each run in its own ws/style font from the host map) shows while unfocused;
 		// the box swaps in on focus / out on blur. A uniform value returns the bare box.
-		private Control BuildValueContentWithFontSwap(LexicalEditRegionField field, string automationId,
+		private Control BuildValueContentWithFontSwap(RegionField field, string automationId,
 			string wsKey, TextBox box, RegionRichTextValue currentRich, bool editable)
 		{
 			if (currentRich == null || !RegionRichTextChrome.ShouldRenderPerRunFontDisplay(currentRich))
@@ -993,7 +993,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		/// Builds the configure gear for a row, or null when no list-edit target resolves
 		/// (no links on the row, or no host callback to dispatch through).
 		/// </summary>
-		internal static Button CreateConfigureGear(LexicalEditRegionField field, string automationId,
+		internal static Button CreateConfigureGear(RegionField field, string automationId,
 			Action<RegionLinkRequest> linkRequested)
 		{
 			if (linkRequested == null || field.ChooserLinks.Count == 0)
@@ -1039,7 +1039,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		private bool _disposed;
 
 		public FwChooserField(
-			LexicalEditRegionField field,
+			RegionField field,
 			string automationId,
 			IRegionEditContext editContext,
 			Action<RegionLinkRequest> linkRequested = null)
@@ -1147,7 +1147,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		public IReadOnlyList<Control> HoverAffordances
 			=> _gear == null ? Array.Empty<Control>() : new Control[] { _gear };
 
-		private static string CurrentName(LexicalEditRegionField field)
+		private static string CurrentName(RegionField field)
 		{
 			var selected = field.Options.FirstOrDefault(o => o.Key == field.SelectedOptionKey);
 			return selected?.Name ?? string.Empty;
@@ -1188,7 +1188,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		/// Failed stages never fire it.
 		/// </summary>
 		public FwReferenceVectorField(
-			LexicalEditRegionField field,
+			RegionField field,
 			string automationId,
 			IRegionEditContext editContext,
 			Action gestureCompleted = null,

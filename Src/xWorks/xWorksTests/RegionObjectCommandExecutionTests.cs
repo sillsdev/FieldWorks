@@ -39,7 +39,7 @@ namespace SIL.FieldWorks.XWorks
 	///      carries an Execute action that dispatches the command through the mediator
 	///      (<c>ChoiceBase.OnClick</c> → hidden DataTree/DTMenuHandler colleagues → UOW mutation).
 	/// Invoking that Execute is the user clicking the item. We then assert (a) the model mutated and
-	/// (b) re-composing the entry (the same <see cref="FullEntryRegionComposer.Compose"/> call
+	/// (b) re-composing the entry (the same <see cref="RegionComposer.Compose"/> call
 	/// <c>RecordEditView.ShowAvaloniaEntry</c> makes on refresh) reflects it.
 	/// </summary>
 	[TestFixture]
@@ -361,7 +361,7 @@ namespace SIL.FieldWorks.XWorks
 		// surface-visible proof that the recomposed region reflects the model mutation.
 		private int ComposeSenseHeaderCount()
 		{
-			var composed = FullEntryRegionComposer.Compose(m_entry, Cache);
+			var composed = RegionComposer.Compose(m_entry, Cache);
 			Assert.That(composed, Is.Not.Null, "the entry must compose");
 			return composed.Model.Fields.Count(f => f.Kind == RegionFieldKind.Header && f.Field == "Senses");
 		}
@@ -375,7 +375,7 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(refresh, Is.Not.Null);
 			refresh.Invoke(m_view, null);
 			DrainMediatorAndIdleQueues();
-			return FullEntryRegionComposer.Compose(m_entry, Cache).Model.Fields.Count;
+			return RegionComposer.Compose(m_entry, Cache).Model.Fields.Count;
 		}
 
 		// ----------------------------------------------------------------------------------------

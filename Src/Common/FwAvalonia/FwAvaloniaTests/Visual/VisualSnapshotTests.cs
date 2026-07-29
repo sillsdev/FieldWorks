@@ -63,7 +63,7 @@ namespace FwAvaloniaTests.VisualChecks
 		{
 			// Read-only display stage: the detail view is FLAT with subtle field separators (the WinForms
 			// DataTree look) — labels + values at the WinForms density font, no boxing per value.
-			var model = LexicalEditRegionMapper.FromViewDefinition(RegionDefinition(), new TwoFieldProvider());
+			var model = RegionModelProjector.FromViewDefinition(RegionDefinition(), new TwoFieldProvider());
 			var view = new LexicalEditRegionView(model);
 
 			DialogSnapshot.Capture(view, "Region-01-initial", width: 420, height: 200);
@@ -75,7 +75,7 @@ namespace FwAvaloniaTests.VisualChecks
 		{
 			// Editable stage: an edit context is supplied so the value editors are live; the surface must still
 			// read flat/dense (no per-field box) the way the legacy editable DataTree does.
-			var model = LexicalEditRegionMapper.FromViewDefinition(RegionDefinition(), new TwoFieldProvider());
+			var model = RegionModelProjector.FromViewDefinition(RegionDefinition(), new TwoFieldProvider());
 			var view = new LexicalEditRegionView(model, new FakeRegionEditContext());
 
 			DialogSnapshot.Capture(view, "Region-02-editable", width: 420, height: 200);
@@ -115,14 +115,14 @@ namespace FwAvaloniaTests.VisualChecks
 			// A focused stage on a reference-vector row (the legacy possibility-vector slice with its current
 			// items + trailing add slot), editable — confirming the chip-like items and the add launcher render
 			// without crowding their neighbours.
-			var fields = new List<LexicalEditRegionField>
+			var fields = new List<RegionField>
 			{
 				ReferenceVectorField("d/#ref", "Publish In", "PublishIn",
 					new[] { ("p1", "Main Dictionary"), ("p2", "Pocket Dictionary") },
 					new[] { ("p1", "Main Dictionary"), ("p2", "Pocket Dictionary"), ("p3", "School Dictionary") })
 			};
 			var view = new LexicalEditRegionView(
-				new LexicalEditRegionModel("LexEntry", "detail", fields, new List<ViewDiagnostic>()),
+				new RegionModel("LexEntry", "detail", fields, new List<ViewDiagnostic>()),
 				new FakeRegionEditContext());
 
 			DialogSnapshot.Capture(view, "Region-06-reference", width: 520, height: 200);
@@ -155,9 +155,9 @@ namespace FwAvaloniaTests.VisualChecks
 		// ReferenceVector, Unsupported — are exercised; the mapper only classifies Text/Chooser/Unsupported) -----
 
 		// A realistic lexeme-entry detail: 10 fields of varied kinds, mirroring what the lexical edit pane shows.
-		private static LexicalEditRegionModel RealisticRegionModel()
+		private static RegionModel RealisticRegionModel()
 		{
-			var fields = new List<LexicalEditRegionField>
+			var fields = new List<RegionField>
 			{
 				// Multistring vernacular (two writing systems) — the headword.
 				TextField("d/#0", "Lexeme Form", "LexemeForm", "LexemeFormEditor",
@@ -187,35 +187,35 @@ namespace FwAvaloniaTests.VisualChecks
 				TextField("d/#9", "General Note", "GeneralNote", "GeneralNoteEditor",
 					new[] { ("en", "Borrowed from Portuguese; common across the region.", "en") })
 			};
-			return new LexicalEditRegionModel("LexEntry", "detail", fields, new List<ViewDiagnostic>());
+			return new RegionModel("LexEntry", "detail", fields, new List<ViewDiagnostic>());
 		}
 
-		private static LexicalEditRegionField TextField(string stableId, string label, string field,
+		private static RegionField TextField(string stableId, string label, string field,
 			string automationId, (string abbrev, string value, string tag)[] values)
 		{
 			var wsValues = new List<RegionWsValue>();
 			foreach (var v in values)
 				wsValues.Add(new RegionWsValue(v.abbrev, v.value, wsTag: v.tag));
-			return new LexicalEditRegionField(stableId, label, field, null, RegionFieldKind.Text,
+			return new RegionField(stableId, label, field, null, RegionFieldKind.Text,
 				EditorClassification.Known, automationId, null, SurfaceRouting.Product, wsValues, null, null);
 		}
 
-		private static LexicalEditRegionField ChooserField(string stableId, string label, string field,
+		private static RegionField ChooserField(string stableId, string label, string field,
 			string selectedKey, (string key, string name)[] options)
 		{
 			var opts = new List<RegionChoiceOption>();
 			foreach (var o in options)
 				opts.Add(new RegionChoiceOption(o.key, o.name));
-			return new LexicalEditRegionField(stableId, label, field, null, RegionFieldKind.Chooser,
+			return new RegionField(stableId, label, field, null, RegionFieldKind.Chooser,
 				EditorClassification.Known, field + "Chooser", null, SurfaceRouting.Product, null, opts, selectedKey);
 		}
 
-		private static LexicalEditRegionField UnsupportedField(string stableId, string label, string field)
-			=> new LexicalEditRegionField(stableId, label, field, null, RegionFieldKind.Unsupported,
+		private static RegionField UnsupportedField(string stableId, string label, string field)
+			=> new RegionField(stableId, label, field, null, RegionFieldKind.Unsupported,
 				EditorClassification.Known, field + "Editor", null, SurfaceRouting.Product, null, null, null,
 				isEditable: false);
 
-		private static LexicalEditRegionField ReferenceVectorField(string stableId, string label, string field,
+		private static RegionField ReferenceVectorField(string stableId, string label, string field,
 			(string key, string name)[] items, (string key, string name)[] options)
 		{
 			var itemList = new List<RegionChoiceOption>();
@@ -224,7 +224,7 @@ namespace FwAvaloniaTests.VisualChecks
 			var optList = new List<RegionChoiceOption>();
 			foreach (var o in options)
 				optList.Add(new RegionChoiceOption(o.key, o.name));
-			return new LexicalEditRegionField(stableId, label, field, null, RegionFieldKind.ReferenceVector,
+			return new RegionField(stableId, label, field, null, RegionFieldKind.ReferenceVector,
 				EditorClassification.Known, field, null, SurfaceRouting.Product, null, optList, null,
 				isEditable: true, items: itemList);
 		}

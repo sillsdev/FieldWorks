@@ -65,9 +65,9 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Preview
 				new RegionChoiceOption("suffix", "suffix")
 			};
 
-			var fields = new List<LexicalEditRegionField>
+			var fields = new List<RegionField>
 			{
-				new LexicalEditRegionField(
+				new RegionField(
 					"LexEntry/preview/#0",
 					FwAvaloniaStrings.LexemeFormLabel,
 					"Form",
@@ -80,7 +80,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Preview
 					formValues,
 					null,
 					null),
-				new LexicalEditRegionField(
+				new RegionField(
 					"LexEntry/preview/#1",
 					FwAvaloniaStrings.MorphTypeLabel,
 					"MorphType",
@@ -93,7 +93,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Preview
 					null,
 					options,
 					"stem"),
-				new LexicalEditRegionField(
+				new RegionField(
 					"LexEntry/preview/#2",
 					FwAvaloniaStrings.GlossLabel,
 					"Gloss",
@@ -109,7 +109,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Preview
 			};
 
 			return new LexicalEditPreviewScenario(
-				new LexicalEditRegionModel("LexEntry", "preview", fields, Array.Empty<ViewDiagnostic>()),
+				new RegionModel("LexEntry", "preview", fields, Array.Empty<ViewDiagnostic>()),
 				new PreviewRegionEditContext());
 		}
 	}
@@ -120,13 +120,13 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Preview
 	/// </summary>
 	public sealed class LexicalEditPreviewScenario
 	{
-		public LexicalEditPreviewScenario(LexicalEditRegionModel model, IRegionEditContext editContext)
+		public LexicalEditPreviewScenario(RegionModel model, IRegionEditContext editContext)
 		{
 			Model = model;
 			EditContext = editContext;
 		}
 
-		public LexicalEditRegionModel Model { get; }
+		public RegionModel Model { get; }
 		public IRegionEditContext EditContext { get; }
 	}
 
@@ -134,56 +134,56 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Preview
 	{
 		public bool IsOpen { get; private set; }
 
-		public bool TrySetText(LexicalEditRegionField field, string ws, string value)
+		public bool TrySetText(RegionField field, string ws, string value)
 		{
 			IsOpen = true;
 			return true;
 		}
 
-		public bool TrySetRichText(LexicalEditRegionField field, string ws, RegionRichTextValue value)
+		public bool TrySetRichText(RegionField field, string ws, RegionRichTextValue value)
 		{
 			IsOpen = true;
 			return true;
 		}
 
-		public bool TrySetOption(LexicalEditRegionField field, string optionKey)
+		public bool TrySetOption(RegionField field, string optionKey)
 		{
 			IsOpen = true;
 			return true;
 		}
 
-		public bool TryAddReferenceItem(LexicalEditRegionField field, string optionKey)
+		public bool TryAddReferenceItem(RegionField field, string optionKey)
 		{
 			IsOpen = true;
 			return true;
 		}
 
-		public bool TryRemoveReferenceItem(LexicalEditRegionField field, string optionKey)
+		public bool TryRemoveReferenceItem(RegionField field, string optionKey)
 		{
 			IsOpen = true;
 			return true;
 		}
 
 		// The preview context accepts every gesture so the preview shows editable StText affordances.
-		public bool TrySetParagraphText(LexicalEditRegionField field, int paragraphIndex, RegionRichTextValue value)
+		public bool TrySetParagraphText(RegionField field, int paragraphIndex, RegionRichTextValue value)
 		{
 			IsOpen = true;
 			return true;
 		}
 
-		public bool TrySetParagraphStyle(LexicalEditRegionField field, int paragraphIndex, string styleName)
+		public bool TrySetParagraphStyle(RegionField field, int paragraphIndex, string styleName)
 		{
 			IsOpen = true;
 			return true;
 		}
 
-		public bool TryInsertParagraph(LexicalEditRegionField field, int afterParagraphIndex)
+		public bool TryInsertParagraph(RegionField field, int afterParagraphIndex)
 		{
 			IsOpen = true;
 			return true;
 		}
 
-		public bool TryDeleteParagraph(LexicalEditRegionField field, int paragraphIndex)
+		public bool TryDeleteParagraph(RegionField field, int paragraphIndex)
 		{
 			IsOpen = true;
 			return true;

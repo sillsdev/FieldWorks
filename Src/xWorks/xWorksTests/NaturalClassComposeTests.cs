@@ -42,7 +42,7 @@ namespace SIL.FieldWorks.XWorks
 				nc.SegmentsRC.Add(p);
 			});
 
-			var composed = FullEntryRegionComposer.Compose(nc, Cache, layoutName: "Edit",
+			var composed = RegionComposer.Compose(nc, Cache, layoutName: "Edit",
 				plugins: RegionEditorPluginRegistry.Default);
 
 			// The Segments phoneme collection composes as an editable ReferenceVector (the legacy phoneme
@@ -65,7 +65,7 @@ namespace SIL.FieldWorks.XWorks
 				nc.FeaturesOA = Cache.ServiceLocator.GetInstance<IFsFeatStrucFactory>().Create();
 			});
 
-			var composed = FullEntryRegionComposer.Compose(nc, Cache, layoutName: "Edit",
+			var composed = RegionComposer.Compose(nc, Cache, layoutName: "Edit",
 				plugins: RegionEditorPluginRegistry.Default);
 
 			// The phonological-feature dialog-launcher slice is unclaimed, so the Features field composes

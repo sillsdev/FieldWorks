@@ -56,7 +56,7 @@ namespace SIL.FieldWorks.XWorks
 				if (rows.Count == 0)
 					return null; // no existing reversal entry: nothing editable (creation is not supported)
 
-				var field = new LexicalEditRegionField(
+				var field = new RegionField(
 					stableId: "reversal/" + sense.Hvo,
 					label: node?.Label ?? "Reversal Entries",
 					field: node?.Field ?? "ReferringReversalIndexEntries",
@@ -143,7 +143,7 @@ namespace SIL.FieldWorks.XWorks
 
 		public bool IsOpen => _host != null && _host.IsOpen;
 
-		public bool TrySetText(LexicalEditRegionField field, string ws, string value)
+		public bool TrySetText(RegionField field, string ws, string value)
 		{
 			if (string.IsNullOrEmpty(ws) || !_entryByWsKey.TryGetValue(ws, out var entry))
 				return false;
@@ -158,7 +158,7 @@ namespace SIL.FieldWorks.XWorks
 			});
 		}
 
-		public bool TrySetRichText(LexicalEditRegionField field, string ws, RegionRichTextValue value)
+		public bool TrySetRichText(RegionField field, string ws, RegionRichTextValue value)
 		{
 			if (value == null || string.IsNullOrEmpty(ws) || !_entryByWsKey.TryGetValue(ws, out var entry))
 				return false;
@@ -191,11 +191,11 @@ namespace SIL.FieldWorks.XWorks
 
 		// Chooser / reference-vector / validation are not part of the reversal text editor; delegate
 		// the session boundary to the host so the view's Save/Cancel still drive commit/rollback.
-		public bool TrySetOption(LexicalEditRegionField field, string optionKey) => false;
+		public bool TrySetOption(RegionField field, string optionKey) => false;
 
-		public bool TryAddReferenceItem(LexicalEditRegionField field, string optionKey) => false;
+		public bool TryAddReferenceItem(RegionField field, string optionKey) => false;
 
-		public bool TryRemoveReferenceItem(LexicalEditRegionField field, string optionKey) => false;
+		public bool TryRemoveReferenceItem(RegionField field, string optionKey) => false;
 
 		// The Reversal Entries plugin edits multi-unicode reversal forms only; it implements neither
 		// IStructuredTextEditing (no StText rows are composed for it) nor picture editing.

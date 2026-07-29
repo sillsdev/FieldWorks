@@ -44,13 +44,13 @@ namespace SIL.FieldWorks.XWorks
 		/// Builds a region model for the current record, or null if it is not a <see cref="ILexEntry"/>
 		/// (the caller then shows an explicit unsupported state).
 		/// </summary>
-		public static LexicalEditRegionModel Build(ICmObject obj, LcmCache cache)
+		public static RegionModel Build(ICmObject obj, LcmCache cache)
 		{
 			if (!(obj is ILexEntry entry))
 				return null;
 
 			var provider = new LexicalEditRegionBuilder(entry, cache);
-			return LexicalEditRegionMapper.FromViewDefinition(FirstSliceDefinition.Value, provider);
+			return RegionModelProjector.FromViewDefinition(FirstSliceDefinition.Value, provider);
 		}
 
 		/// <summary>

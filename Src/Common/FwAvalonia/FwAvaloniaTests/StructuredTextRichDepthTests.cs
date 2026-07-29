@@ -42,12 +42,12 @@ namespace FwAvaloniaTests
 					new RegionTextRun(" cat", "fr")
 				}));
 
-		private static LexicalEditRegionField Field(IReadOnlyList<RegionParagraph> paragraphs,
+		private static RegionField Field(IReadOnlyList<RegionParagraph> paragraphs,
 			IReadOnlyList<string> charStyles = null,
 			IReadOnlyList<RegionWritingSystemOption> writingSystems = null,
 			IReadOnlyDictionary<string, RegionRunFont> fontMap = null)
 		{
-			var field = new LexicalEditRegionField(
+			var field = new RegionField(
 				stableId: "LexEntry/Discussion@1", label: "Discussion", field: "Discussion",
 				writingSystem: null, kind: RegionFieldKind.StructuredText,
 				editorClassification: EditorClassification.Known, automationId: "Discussion",
@@ -62,7 +62,7 @@ namespace FwAvaloniaTests
 			return field;
 		}
 
-		private static (FwStructuredTextField Field, Window Window) Show(LexicalEditRegionField field,
+		private static (FwStructuredTextField Field, Window Window) Show(RegionField field,
 			IRegionEditContext editContext)
 		{
 			var control = new FwStructuredTextField(field, field.AutomationId, editContext, null, () => { });

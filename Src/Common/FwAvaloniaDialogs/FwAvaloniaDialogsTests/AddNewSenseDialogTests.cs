@@ -40,10 +40,10 @@ namespace FwAvaloniaDialogsTests
 			new FwInflectionSlot("s-number", "Number")
 		};
 
-		private static LexicalEditRegionField TextField(string name, string automationId, params string[] wsTags)
+		private static RegionField TextField(string name, string automationId, params string[] wsTags)
 		{
 			var values = wsTags.Select(tag => new RegionWsValue(tag, string.Empty, wsTag: tag)).ToList();
-			return new LexicalEditRegionField(name, name, name, null, RegionFieldKind.Text,
+			return new RegionField(name, name, name, null, RegionFieldKind.Text,
 				default(EditorClassification), automationId, name, default(SurfaceRouting),
 				values, new List<RegionChoiceOption>(), null, isEditable: true);
 		}

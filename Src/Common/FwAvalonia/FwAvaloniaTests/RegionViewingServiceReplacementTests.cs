@@ -119,7 +119,7 @@ namespace FwAvaloniaTests
 			var orcRich = new RegionRichTextValue("link",
 				new List<RegionTextRun> { new RegionTextRun("link", "qaa-x-orc", objectData: "obj-ref-guid") },
 				richXml: "<Str/>", requiresRichEditor: true, canEditRichText: false);
-			var field = new LexicalEditRegionField("LexEntry/x/#orc", "Cross Reference", "Form", null,
+			var field = new RegionField("LexEntry/x/#orc", "Cross Reference", "Form", null,
 				RegionFieldKind.Text, EditorClassification.Known, "OrcField", null, SurfaceRouting.Inherit,
 				new List<RegionWsValue>
 				{

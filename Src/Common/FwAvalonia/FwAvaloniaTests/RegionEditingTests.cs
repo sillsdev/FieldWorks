@@ -34,13 +34,13 @@ namespace FwAvaloniaTests
 		/// <summary>What the next reference add/remove stage reports (false = failed stage).</summary>
 		public bool ReferenceGestureResult = true;
 
-		public bool TryAddReferenceItem(LexicalEditRegionField field, string optionKey)
+		public bool TryAddReferenceItem(RegionField field, string optionKey)
 		{
 			ReferenceAdds.Add((field.Field, optionKey));
 			return ReferenceGestureResult;
 		}
 
-		public bool TryRemoveReferenceItem(LexicalEditRegionField field, string optionKey)
+		public bool TryRemoveReferenceItem(RegionField field, string optionKey)
 		{
 			ReferenceRemoves.Add((field.Field, optionKey));
 			return ReferenceGestureResult;
@@ -62,13 +62,13 @@ namespace FwAvaloniaTests
 		/// <summary>What the next text stage reports (false = rejected, e.g. a non-numeric integer).</summary>
 		public bool TextResult = true;
 
-		public bool TrySetText(LexicalEditRegionField field, string ws, string value)
+		public bool TrySetText(RegionField field, string ws, string value)
 		{
 			TextEdits.Add((field.Field, ws, value));
 			return TextResult;
 		}
 
-		public bool TrySetRichText(LexicalEditRegionField field, string ws, RegionRichTextValue value)
+		public bool TrySetRichText(RegionField field, string ws, RegionRichTextValue value)
 		{
 			RichTextEdits.Add((field.Field, ws, value));
 			return true;
@@ -77,7 +77,7 @@ namespace FwAvaloniaTests
 		/// <summary>What the next option stage reports (false = rejected, e.g. an unparseable date).</summary>
 		public bool OptionResult = true;
 
-		public bool TrySetOption(LexicalEditRegionField field, string optionKey)
+		public bool TrySetOption(RegionField field, string optionKey)
 		{
 			OptionEdits.Add((field.Field, optionKey));
 			return OptionResult;
@@ -95,25 +95,25 @@ namespace FwAvaloniaTests
 		/// <summary>What the next paragraph CRUD stage reports (false = rejected, e.g. delete-the-only-para).</summary>
 		public bool ParagraphGestureResult = true;
 
-		public bool TrySetParagraphText(LexicalEditRegionField field, int paragraphIndex, RegionRichTextValue value)
+		public bool TrySetParagraphText(RegionField field, int paragraphIndex, RegionRichTextValue value)
 		{
 			ParagraphTextEdits.Add((field.Field, paragraphIndex, value));
 			return ParagraphGestureResult;
 		}
 
-		public bool TrySetParagraphStyle(LexicalEditRegionField field, int paragraphIndex, string styleName)
+		public bool TrySetParagraphStyle(RegionField field, int paragraphIndex, string styleName)
 		{
 			ParagraphStyleEdits.Add((field.Field, paragraphIndex, styleName));
 			return ParagraphGestureResult;
 		}
 
-		public bool TryInsertParagraph(LexicalEditRegionField field, int afterParagraphIndex)
+		public bool TryInsertParagraph(RegionField field, int afterParagraphIndex)
 		{
 			ParagraphInserts.Add((field.Field, afterParagraphIndex));
 			return ParagraphGestureResult;
 		}
 
-		public bool TryDeleteParagraph(LexicalEditRegionField field, int paragraphIndex)
+		public bool TryDeleteParagraph(RegionField field, int paragraphIndex)
 		{
 			ParagraphDeletes.Add((field.Field, paragraphIndex));
 			return ParagraphGestureResult;
@@ -213,7 +213,7 @@ namespace FwAvaloniaTests
 
 		private static (LexicalEditRegionView view, FakeRegionEditContext context, Window window) ShowEditable()
 		{
-			var model = LexicalEditRegionMapper.FromViewDefinition(SampleDefinition(), new EditingValueProvider());
+			var model = RegionModelProjector.FromViewDefinition(SampleDefinition(), new EditingValueProvider());
 			var context = new FakeRegionEditContext();
 			var view = new LexicalEditRegionView(model, context);
 			var window = new Window { Content = view, Width = 500, Height = 260 };
@@ -225,7 +225,7 @@ namespace FwAvaloniaTests
 		private static (LexicalEditRegionView view, FakeRegionEditContext context, Window window,
 			InMemoryFwClipboard clipboard) ShowRichEditable()
 		{
-			var model = LexicalEditRegionMapper.FromViewDefinition(SampleDefinition(), new RichEditingValueProvider());
+			var model = RegionModelProjector.FromViewDefinition(SampleDefinition(), new RichEditingValueProvider());
 			var context = new FakeRegionEditContext();
 			var clipboard = new InMemoryFwClipboard();
 			var view = new LexicalEditRegionView(model, context, clipboard: clipboard);
@@ -290,7 +290,7 @@ namespace FwAvaloniaTests
 		[AvaloniaTest]
 		public void LossyValue_RendersReadOnly_WithTooltip()
 		{
-			var model = LexicalEditRegionMapper.FromViewDefinition(SampleDefinition(), new LossyEditingValueProvider());
+			var model = RegionModelProjector.FromViewDefinition(SampleDefinition(), new LossyEditingValueProvider());
 			var context = new FakeRegionEditContext();
 			var view = new LexicalEditRegionView(model, context);
 			var window = new Window { Content = view, Width = 500, Height = 260 };
@@ -451,7 +451,7 @@ namespace FwAvaloniaTests
 		[AvaloniaTest]
 		public void Chooser_DuplicateDisplayNames_StagesTheOptionAtTheSelectedIndex()
 		{
-			var field = new LexicalEditRegionField("LexEntry/x/#0", "Morph Type", "MorphType", null,
+			var field = new RegionField("LexEntry/x/#0", "Morph Type", "MorphType", null,
 				RegionFieldKind.Chooser, EditorClassification.Known, "DupChooser", null, SurfaceRouting.Inherit,
 				null,
 				new List<RegionChoiceOption>
@@ -487,7 +487,7 @@ namespace FwAvaloniaTests
 		[AvaloniaTest]
 		public void TextField_StagesEditsByWsTag_FallingBackToAbbrevWithoutOne()
 		{
-			var field = new LexicalEditRegionField("LexEntry/x/#1", "Form", "Form", null,
+			var field = new RegionField("LexEntry/x/#1", "Form", "Form", null,
 				RegionFieldKind.Text, EditorClassification.Known, "TagField", null, SurfaceRouting.Inherit,
 				new List<RegionWsValue>
 				{
@@ -527,7 +527,7 @@ namespace FwAvaloniaTests
 		[AvaloniaTest]
 		public void AudioValue_RendersReadOnlyText_WithNoPlayerAndNoStagedEdit()
 		{
-			var field = new LexicalEditRegionField("LexEntry/x/#audio", "Pronunciation", "Pronunciation",
+			var field = new RegionField("LexEntry/x/#audio", "Pronunciation", "Pronunciation",
 				null, RegionFieldKind.Text, EditorClassification.Known, "AudioField", null,
 				SurfaceRouting.Inherit,
 				new List<RegionWsValue>
@@ -555,13 +555,13 @@ namespace FwAvaloniaTests
 		[AvaloniaTest]
 		public void GhostRow_WatermarkClearsOnFocus_AndRestoresWhenLeftEmpty()
 		{
-			var ghost = new LexicalEditRegionField("LexEntry/Normal/#0/ghost", "Lexeme Form",
+			var ghost = new RegionField("LexEntry/Normal/#0/ghost", "Lexeme Form",
 				"LexemeForm", null, RegionFieldKind.Text, EditorClassification.Known, "GhostRow", null,
 				SurfaceRouting.Inherit,
 				new List<RegionWsValue> { new RegionWsValue("vern", "") }, null, null,
 				isEditable: true, indent: 0, ghostPrompt: "Click here to add Lexeme Form");
-			var model = new LexicalEditRegionModel("LexEntry", "Normal",
-				new List<LexicalEditRegionField> { ghost }, new List<ViewDiagnostic>());
+			var model = new RegionModel("LexEntry", "Normal",
+				new List<RegionField> { ghost }, new List<ViewDiagnostic>());
 			var view = new LexicalEditRegionView(model, new FakeRegionEditContext());
 			var window = new Window { Content = view, Width = 480, Height = 200 };
 			window.Show();
@@ -595,7 +595,7 @@ namespace FwAvaloniaTests
 				new RegionChoiceOption("e-cantar", "cantar"),
 				new RegionChoiceOption("e-perro", "perro")
 			};
-			var field = new LexicalEditRegionField("LexEntryRef/x/#0", "Components", "ComponentLexemes",
+			var field = new RegionField("LexEntryRef/x/#0", "Components", "ComponentLexemes",
 				null, RegionFieldKind.ReferenceVector, EditorClassification.Known, "Components", null,
 				SurfaceRouting.Inherit, null, null, null, isEditable: true, indent: 0,
 				items: new List<RegionChoiceOption> { new RegionChoiceOption("e-burro", "burro") },
@@ -651,7 +651,7 @@ namespace FwAvaloniaTests
 		[AvaloniaTest]
 		public void SearchBackedReferenceVector_ItemRemove_StillStagesThroughTheContext()
 		{
-			var field = new LexicalEditRegionField("LexEntryRef/x/#0", "Components", "ComponentLexemes",
+			var field = new RegionField("LexEntryRef/x/#0", "Components", "ComponentLexemes",
 				null, RegionFieldKind.ReferenceVector, EditorClassification.Known, "Components2", null,
 				SurfaceRouting.Inherit, null, null, null, isEditable: true, indent: 0,
 				items: new List<RegionChoiceOption> { new RegionChoiceOption("e-burro", "burro") },
@@ -672,7 +672,7 @@ namespace FwAvaloniaTests
 				"the remove behavior is unchanged for search-backed vectors");
 		}
 
-		private static LexicalEditRegionField PublishInField() => new LexicalEditRegionField(
+		private static RegionField PublishInField() => new RegionField(
 			"LexEntry/x/#9", "Publish Entry In", "PublishIn", null,
 			RegionFieldKind.ReferenceVector, EditorClassification.Known, "PublishIn", null,
 			SurfaceRouting.Inherit, null,
@@ -781,8 +781,8 @@ namespace FwAvaloniaTests
 		[AvaloniaTest]
 		public void ReferenceGesture_InTheView_CommitsImmediately_AndRaisesEditCompleted()
 		{
-			var model = new LexicalEditRegionModel("LexEntry", "test",
-				new List<LexicalEditRegionField> { PublishInField() }, new List<ViewDiagnostic>());
+			var model = new RegionModel("LexEntry", "test",
+				new List<RegionField> { PublishInField() }, new List<ViewDiagnostic>());
 			var context = new FakeRegionEditContext();
 			var view = new LexicalEditRegionView(model, context);
 			var window = new Window { Content = view, Width = 500, Height = 260 };
@@ -805,8 +805,8 @@ namespace FwAvaloniaTests
 		[AvaloniaTest]
 		public void ReferenceGesture_InTheView_WithValidationErrors_BlocksTheCommitVisibly()
 		{
-			var model = new LexicalEditRegionModel("LexEntry", "test",
-				new List<LexicalEditRegionField> { PublishInField() }, new List<ViewDiagnostic>());
+			var model = new RegionModel("LexEntry", "test",
+				new List<RegionField> { PublishInField() }, new List<ViewDiagnostic>());
 			var context = new FakeRegionEditContext
 			{
 				ValidateResult = new List<string> { "A Lexeme Form is required." }
@@ -829,7 +829,7 @@ namespace FwAvaloniaTests
 		[AvaloniaTest]
 		public void WithoutEditContext_ViewIsReadOnlyDisplay_WithNoFooter()
 		{
-			var model = LexicalEditRegionMapper.FromViewDefinition(SampleDefinition(), new EditingValueProvider());
+			var model = RegionModelProjector.FromViewDefinition(SampleDefinition(), new EditingValueProvider());
 			var view = new LexicalEditRegionView(model);
 			var window = new Window { Content = view, Width = 500, Height = 260 };
 			window.Show();
@@ -908,7 +908,7 @@ namespace FwAvaloniaTests
 		[AvaloniaTest]
 		public void CtrlB_OnLossyValue_DoesNotStageFormatting()
 		{
-			var model = LexicalEditRegionMapper.FromViewDefinition(SampleDefinition(), new LossyEditingValueProvider());
+			var model = RegionModelProjector.FromViewDefinition(SampleDefinition(), new LossyEditingValueProvider());
 			var context = new FakeRegionEditContext();
 			var view = new LexicalEditRegionView(model, context);
 			var window = new Window { Content = view, Width = 500, Height = 260 };
@@ -947,9 +947,9 @@ namespace FwAvaloniaTests
 
 		// A field carrying a rich value plus the project's available character styles, so the per-WS
 		// style picker affordance is built.
-		private static LexicalEditRegionField StyleableField(params string[] styles)
+		private static RegionField StyleableField(params string[] styles)
 		{
-			var field = new LexicalEditRegionField("LexEntry/x/#0", "Bibliography", "Bibliography", null,
+			var field = new RegionField("LexEntry/x/#0", "Bibliography", "Bibliography", null,
 				RegionFieldKind.Text, EditorClassification.Known, "BibEditor", null, SurfaceRouting.Inherit,
 				new List<RegionWsValue>
 				{
@@ -969,7 +969,7 @@ namespace FwAvaloniaTests
 		}
 
 		private static (FwMultiWsTextField control, FakeRegionEditContext context, Window window)
-			ShowStyleable(LexicalEditRegionField field)
+			ShowStyleable(RegionField field)
 		{
 			var context = new FakeRegionEditContext();
 			var control = new FwMultiWsTextField(field, "BibEditor", context, null);
@@ -1083,7 +1083,7 @@ namespace FwAvaloniaTests
 		[AvaloniaTest]
 		public void StyleAffordance_Absent_OnLossyReadOnlyValue()
 		{
-			var field = new LexicalEditRegionField("LexEntry/x/#0", "Bibliography", "Bibliography", null,
+			var field = new RegionField("LexEntry/x/#0", "Bibliography", "Bibliography", null,
 				RegionFieldKind.Text, EditorClassification.Known, "BibEditor", null, SurfaceRouting.Inherit,
 				new List<RegionWsValue>
 				{
@@ -1129,9 +1129,9 @@ namespace FwAvaloniaTests
 	{
 		// A field carrying a rich value plus the project's available writing systems, so the per-WS retag
 		// picker affordance is built. The field's own ws is "qaa-x-rich".
-		private static LexicalEditRegionField RetaggableField(params (string Tag, string Name)[] systems)
+		private static RegionField RetaggableField(params (string Tag, string Name)[] systems)
 		{
-			var field = new LexicalEditRegionField("LexEntry/x/#0", "Bibliography", "Bibliography", null,
+			var field = new RegionField("LexEntry/x/#0", "Bibliography", "Bibliography", null,
 				RegionFieldKind.Text, EditorClassification.Known, "BibEditor", null, SurfaceRouting.Inherit,
 				new List<RegionWsValue>
 				{
@@ -1290,7 +1290,7 @@ namespace FwAvaloniaTests
 	[TestFixture]
 	public class RegionConfigureGearTests
 	{
-		private static LexicalEditRegionField LinkedChooserField() => new LexicalEditRegionField(
+		private static RegionField LinkedChooserField() => new RegionField(
 			"MoForm/x/#0", "Morph Type", "MorphType", null,
 			RegionFieldKind.Chooser, EditorClassification.Known, "MorphTypeChooser", null,
 			SurfaceRouting.Inherit, null,
@@ -1346,7 +1346,7 @@ namespace FwAvaloniaTests
 		[AvaloniaTest]
 		public void VectorGear_Click_DispatchesTheJumpDirectly_AndTheAddFlyoutHasNoLinks()
 		{
-			var field = new LexicalEditRegionField("LexEntry/x/#1", "Publish Entry In", "PublishIn", null,
+			var field = new RegionField("LexEntry/x/#1", "Publish Entry In", "PublishIn", null,
 				RegionFieldKind.ReferenceVector, EditorClassification.Known, "PublishIn", null,
 				SurfaceRouting.Inherit, null,
 				new List<RegionChoiceOption> { new RegionChoiceOption("p1", "Main Dictionary") },
@@ -1385,7 +1385,7 @@ namespace FwAvaloniaTests
 		public void RowsWithoutAResolvableListEditor_HaveNoGear()
 		{
 			// No links: no gear, even with a host callback.
-			var noLinks = new LexicalEditRegionField("MoForm/x/#0", "Morph Type", "MorphType", null,
+			var noLinks = new RegionField("MoForm/x/#0", "Morph Type", "MorphType", null,
 				RegionFieldKind.Chooser, EditorClassification.Known, "PlainChooser", null,
 				SurfaceRouting.Inherit, null,
 				new List<RegionChoiceOption> { new RegionChoiceOption("g1", "stem") }, "g1");
@@ -1401,7 +1401,7 @@ namespace FwAvaloniaTests
 			Assert.That(noCallback.HoverAffordances, Is.Empty, "no host bridge, no gear");
 
 			// A vector without links: bars + "+" only — no Settings button at all.
-			var vectorField = new LexicalEditRegionField("LexEntry/x/#1", "Publish Entry In",
+			var vectorField = new RegionField("LexEntry/x/#1", "Publish Entry In",
 				"PublishIn", null, RegionFieldKind.ReferenceVector, EditorClassification.Known,
 				"PlainVector", null, SurfaceRouting.Inherit, null,
 				new List<RegionChoiceOption> { new RegionChoiceOption("p1", "Main Dictionary") },
@@ -1419,7 +1419,7 @@ namespace FwAvaloniaTests
 		[AvaloniaTest]
 		public void TextRows_NeverDrawAGear_TheSliceMenuStaysOnRightClickOnly()
 		{
-			var field = new LexicalEditRegionField("MoStemAllomorph/AsLexemeFormBasic/#0", "Lexeme Form",
+			var field = new RegionField("MoStemAllomorph/AsLexemeFormBasic/#0", "Lexeme Form",
 				"Form", null, RegionFieldKind.Text, EditorClassification.Known, "LexemeFormRow", null,
 				SurfaceRouting.Inherit,
 				new List<RegionWsValue>

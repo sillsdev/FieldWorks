@@ -247,7 +247,7 @@ namespace SIL.FieldWorks.XWorks
 			// No plugin claims the Chorus notes bar (MessageSlice), so the node composes as the labeled
 			// Unsupported worklist row — never a Custom row,
 			// never silently omitted.
-			var composed = FullEntryRegionComposer.Compose(m_entry, Cache,
+			var composed = RegionComposer.Compose(m_entry, Cache,
 				plugins: new RegionEditorPluginRegistry());
 
 			Assert.That(composed.Model.Fields.Any(f => f.Kind == RegionFieldKind.Custom), Is.False,
@@ -265,7 +265,7 @@ namespace SIL.FieldWorks.XWorks
 			var plugin = new FakeMessagesPlugin();
 			registry.Register(plugin);
 
-			var composed = FullEntryRegionComposer.Compose(m_entry, Cache, plugins: registry);
+			var composed = RegionComposer.Compose(m_entry, Cache, plugins: registry);
 
 			var customRows = composed.Model.Fields.Where(f => f.Kind == RegionFieldKind.Custom).ToList();
 			Assert.That(customRows.Count, Is.EqualTo(1),
@@ -287,7 +287,7 @@ namespace SIL.FieldWorks.XWorks
 			var plugin = new FakeMessagesPlugin();
 			registry.Register(plugin);
 
-			var composed = FullEntryRegionComposer.Compose(m_entry, Cache, plugins: registry);
+			var composed = RegionComposer.Compose(m_entry, Cache, plugins: registry);
 			var row = composed.Model.Fields.Single(f => f.Kind == RegionFieldKind.Custom);
 
 			row.ControlFactory();

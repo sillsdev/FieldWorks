@@ -319,18 +319,18 @@ namespace SIL.FieldWorks.XWorks
 			var showHidden = m_propertyTable.GetBoolProperty("ShowHiddenFields-" + toolName, false,
 				PropertyTable.SettingsGroup.LocalSettings);
 
-			LexicalEditRegionModel region = null;
+			RegionModel region = null;
 			IRegionEditContext editContext = null;
-			ComposedEntryRegion composed = null;
+			ComposedRegion composed = null;
 			try
 			{
 				composed = lexEntry != null
-					? FullEntryRegionComposer.Compose(lexEntry, Cache, showHidden,
+					? RegionComposer.Compose(lexEntry, Cache, showHidden,
 						overrides: ResolveViewOverride)
 					// Non-entry roots compose against the tool's configured layout
 					// (m_layoutName, default "Normal"); a type-selected layout (m_layoutChoiceField, e.g.
 					// Notebook RnGenericRec keyed on "Type") resolves to the right variant inside Compose.
-					: FullEntryRegionComposer.Compose(obj, Cache,
+					: RegionComposer.Compose(obj, Cache,
 						string.IsNullOrEmpty(m_layoutName) ? "Normal" : m_layoutName, showHidden,
 						overrides: ResolveViewOverride,
 						layoutChoiceField: m_layoutChoiceField);
@@ -523,7 +523,7 @@ namespace SIL.FieldWorks.XWorks
 		/// carries no (class, layout) context, e.g. the first-slice fallback rows; that keeps the legacy
 		/// behavior intact when the override layer cannot be addressed.
 		/// </summary>
-		private Func<ChoiceBase, RegionMenuItem> BuildOverrideCommandInterceptor(LexicalEditRegionField field)
+		private Func<ChoiceBase, RegionMenuItem> BuildOverrideCommandInterceptor(RegionField field)
 		{
 			if (field == null || string.IsNullOrEmpty(field.ClassName) || string.IsNullOrEmpty(field.LayoutName)
 				|| ViewOverrideStore == null)
@@ -539,7 +539,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				if (Cache.ServiceLocator.ObjectRepository.TryGetObject(field.ObjectHvo, out var fieldObj))
 				{
-					var model = FullEntryRegionComposer.CompileForObject(Cache, fieldObj, field.LayoutName,
+					var model = RegionComposer.CompileForObject(Cache, fieldObj, field.LayoutName,
 						ResolveViewOverride);
 					if (model != null)
 						location = ViewDefinitionOverrideEditor.LocateTarget(model, templateId);
@@ -577,7 +577,7 @@ namespace SIL.FieldWorks.XWorks
 
 		// A Field Visibility menu item: checked when it is the field's current visibility, executes the
 		// SetVisibility override mutation (idempotent — re-choosing the current value is a harmless write).
-		private RegionMenuItem VisibilityItem(ChoiceBase choice, LexicalEditRegionField field,
+		private RegionMenuItem VisibilityItem(ChoiceBase choice, RegionField field,
 			string templateId, ViewNodeLocation location, ViewVisibility target)
 		{
 			var label = XCoreMenuBridge.StripAccelerator(choice.GetDisplayProperties().Text);
@@ -587,7 +587,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		// A Move Field item: disabled at the first sibling (up) / last sibling (down) / when alone.
-		private RegionMenuItem MoveItem(ChoiceBase choice, LexicalEditRegionField field,
+		private RegionMenuItem MoveItem(ChoiceBase choice, RegionField field,
 			ViewNodeLocation location, bool up)
 		{
 			var label = XCoreMenuBridge.StripAccelerator(choice.GetDisplayProperties().Text);
@@ -597,7 +597,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		// Writes a SetVisibility op for the field's template id into the project override and recomposes.
-		private void ApplyFieldVisibility(LexicalEditRegionField field, string templateId, ViewVisibility target)
+		private void ApplyFieldVisibility(RegionField field, string templateId, ViewVisibility target)
 		{
 			var op = new ViewOverrideOperation(ViewOverrideOperationKind.SetVisibility, templateId,
 				visibility: target);
@@ -606,7 +606,7 @@ namespace SIL.FieldWorks.XWorks
 
 		// Writes a ReorderChildren op on the field's PARENT (the sibling order with this field swapped one
 		// position) into the project override and recomposes. A no-op when the move is not possible.
-		private void ApplyMoveField(LexicalEditRegionField field, ViewNodeLocation location, bool up)
+		private void ApplyMoveField(RegionField field, ViewNodeLocation location, bool up)
 		{
 			var moved = ViewDefinitionOverrideEditor.ComputeMovedOrder(location.SiblingOrder, location.Index, up);
 			if (moved == null || string.IsNullOrEmpty(location.ParentStableId))
@@ -618,7 +618,7 @@ namespace SIL.FieldWorks.XWorks
 
 		// Loads-or-creates the (class, layout) override, folds the op in, saves it, and recomposes the
 		// Avalonia region so the change is visible immediately. The legacy DataTree/Inventory is untouched.
-		private void MutateOverrideAndRefresh(LexicalEditRegionField field, ViewOverrideOperation op)
+		private void MutateOverrideAndRefresh(RegionField field, ViewOverrideOperation op)
 		{
 			try
 			{

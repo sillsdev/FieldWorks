@@ -61,7 +61,7 @@ namespace SIL.FieldWorks.XWorks
 			return entry;
 		}
 
-		private static LexicalEditRegionField Field(string field) => new LexicalEditRegionField(
+		private static RegionField Field(string field) => new RegionField(
 			"test/" + field, field, field, null, RegionFieldKind.Text, EditorClassification.Known,
 			null, null, SurfaceRouting.Product, null, null, null);
 

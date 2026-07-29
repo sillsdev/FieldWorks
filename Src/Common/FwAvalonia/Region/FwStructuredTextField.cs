@@ -41,7 +41,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		/// so the host commits the one undoable step and re-shows the row (like the reference vector). Null
 		/// on surfaces that drive their own commit; structural gestures then just stage.</param>
 		public FwStructuredTextField(
-			LexicalEditRegionField field,
+			RegionField field,
 			string automationId,
 			IRegionEditContext editContext,
 			Action<string> writingSystemFocused = null,
@@ -75,7 +75,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		}
 
 		private Control BuildParagraphRow(
-			LexicalEditRegionField field, string automationId, IStructuredTextEditing editContext,
+			RegionField field, string automationId, IStructuredTextEditing editContext,
 			Action<string> writingSystemFocused, Action gestureCompleted, IFwClipboard clipboard,
 			RegionParagraph paragraph, int index, int paragraphCount, bool fieldEditable)
 		{
@@ -243,7 +243,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		// a TextChanged stages a plain-text-over-preserved-runs edit through the paragraph seam. A
 		// last-staged guard keeps the template's initial set and no-op events from staging; the guard
 		// advances only on a successful stage so a failed write re-attempts.
-		private void WireParagraphTextEditing(LexicalEditRegionField field, IStructuredTextEditing editContext,
+		private void WireParagraphTextEditing(RegionField field, IStructuredTextEditing editContext,
 			TextBox box, RegionRichTextValue currentRich, int index, Action<RegionRichTextValue> onStaged)
 		{
 			var lastStaged = currentRich?.PlainText ?? string.Empty;
@@ -271,7 +271,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		// followed by the project's paragraph style names. Committing stages through the paragraph-style
 		// seam and completes the gesture (structural: commit immediately + re-show). Built only when the
 		// field carries available paragraph styles.
-		private Control BuildStyleAffordance(LexicalEditRegionField field, string automationId,
+		private Control BuildStyleAffordance(RegionField field, string automationId,
 			IStructuredTextEditing editContext, Action gestureCompleted, RegionParagraph paragraph, int index)
 		{
 			if (field.AvailableParagraphStyles == null || field.AvailableParagraphStyles.Count == 0)
@@ -346,7 +346,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		// display (differing runs), wrap the editable box and a read-along TextBlock in a Panel: the
 		// TextBlock shows (each run in its own ws/style font from the host map) while unfocused, and the
 		// box swaps in on focus. A uniform paragraph returns the bare box (no display layer).
-		private Control BuildValueContentWithFontSwap(LexicalEditRegionField field, string automationId,
+		private Control BuildValueContentWithFontSwap(RegionField field, string automationId,
 			int index, TextBox box, RegionRichTextValue currentRich, bool paraEditable)
 		{
 			if (currentRich == null || !RegionRichTextChrome.ShouldRenderPerRunFontDisplay(currentRich))
@@ -402,7 +402,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		// a "Character Style" button opening the shared FwOptionPicker seeded with a leading "Default"
 		// clear entry plus the project's character styles, acting on the box's current selection and
 		// staging ApplySpanNamedStyle through the paragraph-text seam. Null when no character styles.
-		private Control BuildCharStyleAffordance(LexicalEditRegionField field, string automationId,
+		private Control BuildCharStyleAffordance(RegionField field, string automationId,
 			IStructuredTextEditing editContext, Action gestureCompleted, TextBox box, int index,
 			Func<RegionRichTextValue> getRich, Action<RegionRichTextValue> setRich)
 		{
@@ -464,7 +464,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		// pattern): a "Writing System" button opening the shared FwOptionPicker seeded with the project's
 		// writing systems (no clear entry), acting on the box's current selection and staging
 		// RetagSpanWritingSystem through the paragraph-text seam. Null when no writing systems.
-		private Control BuildWsRetagAffordance(LexicalEditRegionField field, string automationId,
+		private Control BuildWsRetagAffordance(RegionField field, string automationId,
 			IStructuredTextEditing editContext, Action gestureCompleted, TextBox box, int index,
 			Func<RegionRichTextValue> getRich, Action<RegionRichTextValue> setRich)
 		{

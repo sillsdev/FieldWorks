@@ -17,7 +17,7 @@ namespace SIL.FieldWorks.XWorks
 	/// paragraph CRUD (text / style / insert / delete) mutates the LCModel StText inside ONE fenced
 	/// <see cref="LcmRegionEditSession"/> — one step on the global undo stack legacy surfaces share, the
 	/// same undo-granularity rule the rest of the region follows. These tests build the composed
-	/// edit-context the way <see cref="FullEntryRegionComposer"/> does (the same
+	/// edit-context the way <see cref="RegionComposer"/> does (the same
 	/// <see cref="ComposedRegionEditContext"/> + paragraph setters), so they cover the real production
 	/// write path, not a stand-in. An ORC/lossy paragraph stays read-only/preserved.
 	/// </summary>
@@ -59,12 +59,12 @@ namespace SIL.FieldWorks.XWorks
 		private int ParaCount => m_stText.ParagraphsOS.Count;
 
 		// A StructuredText region field + a composed edit context whose paragraph setters mutate m_stText
-		// exactly as FullEntryRegionComposer.AddStructuredText wires them. This is the production seam:
+		// exactly as RegionComposer.AddStructuredText wires them. This is the production seam:
 		// ComposedRegionEditContext routes each gesture through the shared fenced Stage().
-		private (LexicalEditRegionField Field, ComposedRegionEditContext Context) Build()
+		private (RegionField Field, ComposedRegionEditContext Context) Build()
 		{
 			const string stableId = "LexEntry/Bibliography@" + "x";
-			var field = new LexicalEditRegionField(stableId, "Discussion", "Discussion", null,
+			var field = new RegionField(stableId, "Discussion", "Discussion", null,
 				RegionFieldKind.StructuredText,
 				SIL.FieldWorks.Common.FwAvalonia.ViewDefinition.EditorClassification.Known, null, null,
 				SIL.FieldWorks.Common.FwAvalonia.ViewDefinition.SurfaceRouting.Product, null, null, null,

@@ -34,7 +34,7 @@ namespace FwAvaloniaTests
 	[TestFixture]
 	public class HoverRevealTests
 	{
-		private static LexicalEditRegionField ChooserField() => new LexicalEditRegionField(
+		private static RegionField ChooserField() => new RegionField(
 			"LexEntry/x/#0", "Morph Type", "MorphType", null,
 			RegionFieldKind.Chooser, EditorClassification.Known, "MorphTypeChooser", null,
 			SurfaceRouting.Inherit, null,
@@ -49,7 +49,7 @@ namespace FwAvaloniaTests
 				new RegionChooserLink("Edit the Morpheme Types list", "morphTypeEdit")
 			});
 
-		private static LexicalEditRegionField VectorField() => new LexicalEditRegionField(
+		private static RegionField VectorField() => new RegionField(
 			"LexEntry/x/#1", "Publish Entry In", "PublishIn", null,
 			RegionFieldKind.ReferenceVector, EditorClassification.Known, "PublishIn", null,
 			SurfaceRouting.Inherit, null,
@@ -68,8 +68,8 @@ namespace FwAvaloniaTests
 		private static (LexicalEditRegionView view, FakeRegionEditContext context, Window window,
 			List<RegionLinkRequest> linkRequests) Show()
 		{
-			var model = new LexicalEditRegionModel("LexEntry", "test",
-				new List<LexicalEditRegionField> { ChooserField(), VectorField() },
+			var model = new RegionModel("LexEntry", "test",
+				new List<RegionField> { ChooserField(), VectorField() },
 				new List<ViewDiagnostic>());
 			var context = new FakeRegionEditContext();
 			var linkRequests = new List<RegionLinkRequest>();

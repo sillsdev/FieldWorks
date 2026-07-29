@@ -80,7 +80,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 	/// </summary>
 	public static class RegionFieldControlFactory
 	{
-		public static Control Build(LexicalEditRegionField field, string automationId,
+		public static Control Build(RegionField field, string automationId,
 			RegionFieldControlContext context)
 		{
 			if (field == null) throw new ArgumentNullException(nameof(field));
@@ -123,7 +123,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 
 		// Literal / "lit" slice (legacy MessageSlice): static read-only label text in the value
 		// column (the label/message text IS the content). No edit affordance, no value binding.
-		private static Control BuildLiteral(LexicalEditRegionField field, string automationId)
+		private static Control BuildLiteral(RegionField field, string automationId)
 		{
 			var text = field.Values.Count > 0 && !string.IsNullOrEmpty(field.Values[0].Value)
 				? field.Values[0].Value
@@ -143,7 +143,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		// control in the value column, at the slice's real position. Null guard: a missing, null-returning,
 		// or throwing factory degrades to the explicit unsupported row — never a crash, never a silently
 		// blank row.
-		private static Control BuildCustom(LexicalEditRegionField field, string automationId)
+		private static Control BuildCustom(RegionField field, string automationId)
 		{
 			if (field.ControlFactory == null)
 			{
@@ -175,7 +175,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 			}
 		}
 
-		private static Control BuildUnsupported(LexicalEditRegionField field, string automationId)
+		private static Control BuildUnsupported(RegionField field, string automationId)
 		{
 			var block = new TextBlock
 			{

@@ -26,27 +26,27 @@ namespace FwAvaloniaTests.VisualChecks
 	[TestFixture]
 	public class FieldTypeVisualTests
 	{
-		private static LexicalEditRegionView Surface(IReadOnlyList<LexicalEditRegionField> fields,
+		private static LexicalEditRegionView Surface(IReadOnlyList<RegionField> fields,
 			out FakeRegionEditContext edit)
 		{
 			edit = new FakeRegionEditContext();
 			return new LexicalEditRegionView(
-				new LexicalEditRegionModel("LexEntry", "detail", new List<LexicalEditRegionField>(fields),
+				new RegionModel("LexEntry", "detail", new List<RegionField>(fields),
 					new List<ViewDiagnostic>()),
 				edit);
 		}
 
-		private static LexicalEditRegionField Literal(string text) => new LexicalEditRegionField(
+		private static RegionField Literal(string text) => new RegionField(
 			"f/#lit", string.Empty, "Self", null, RegionFieldKind.Literal,
 			EditorClassification.Known, "Lit", null, SurfaceRouting.Product,
 			new List<RegionWsValue> { new RegionWsValue("", text) }, null, null, isEditable: false);
 
-		private static LexicalEditRegionField Unsupported() => new LexicalEditRegionField(
+		private static RegionField Unsupported() => new RegionField(
 			"f/#uns", "Inflection Features", "InflectionFeatures", null, RegionFieldKind.Unsupported,
 			EditorClassification.Known, "Uns", null, SurfaceRouting.Product, null, null, null,
 			isEditable: false);
 
-		private static LexicalEditRegionField Vector() => new LexicalEditRegionField(
+		private static RegionField Vector() => new RegionField(
 			"f/#vec", "Semantic Domains", "DomainTypes", null, RegionFieldKind.ReferenceVector,
 			EditorClassification.Known, "Domains", null, SurfaceRouting.Product, null,
 			new List<RegionChoiceOption>

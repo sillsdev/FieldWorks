@@ -22,9 +22,9 @@ namespace FwAvaloniaTests
 	[TestFixture]
 	public class RegionFieldControlFactoryTests
 	{
-		private static LexicalEditRegionField Field(RegionFieldKind kind, string selectedOption = null,
+		private static RegionField Field(RegionFieldKind kind, string selectedOption = null,
 			System.Func<Control> controlFactory = null)
-			=> new LexicalEditRegionField(
+			=> new RegionField(
 				stableId: "f1", label: "Label", field: "Field", writingSystem: "en", kind: kind,
 				editorClassification: EditorClassification.Known, automationId: "Auto.Id",
 				localizationKey: null, routing: SurfaceRouting.Product,
@@ -56,7 +56,7 @@ namespace FwAvaloniaTests
 		[AvaloniaTest]
 		public void LiteralKind_BuildsStaticTextBlock_ShowingTheLabel()
 		{
-			var field = new LexicalEditRegionField(
+			var field = new RegionField(
 				stableId: "l1", label: "Read this carefully:", field: "Self", writingSystem: null,
 				kind: RegionFieldKind.Literal, editorClassification: EditorClassification.Known,
 				automationId: "Auto.Lit", localizationKey: null, routing: SurfaceRouting.Product,

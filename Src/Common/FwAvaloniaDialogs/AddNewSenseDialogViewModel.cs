@@ -203,7 +203,7 @@ namespace FwAvaloniaDialogs
 
 		// ----- OK gating: empty gloss blocks OK (legacy ksFillInGloss) -----
 
-		private void OnGlossStaged(LexicalEditRegionField field, string ws, string value) => RefreshCanOk();
+		private void OnGlossStaged(RegionField field, string ws, string value) => RefreshCanOk();
 
 		protected override IEnumerable<string> GetValidationErrors()
 		{
@@ -246,8 +246,8 @@ namespace FwAvaloniaDialogs
 		}
 
 		// A placeholder editable text field so the VM never NREs when the launcher omits the gloss field (tests).
-		private static LexicalEditRegionField EmptyField(string name)
-			=> new LexicalEditRegionField(name, name, name, null, RegionFieldKind.Text,
+		private static RegionField EmptyField(string name)
+			=> new RegionField(name, name, name, null, RegionFieldKind.Text,
 				default, name, name, default, new List<RegionWsValue>(), new List<RegionChoiceOption>(), null);
 	}
 }

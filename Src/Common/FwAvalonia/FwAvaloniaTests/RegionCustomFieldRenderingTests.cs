@@ -26,18 +26,18 @@ namespace FwAvaloniaTests
 	[TestFixture]
 	public class RegionCustomFieldRenderingTests
 	{
-		private static LexicalEditRegionModel Model(Func<Control> factory)
-			=> new LexicalEditRegionModel("LexEntry", "Normal",
-				new List<LexicalEditRegionField>
+		private static RegionModel Model(Func<Control> factory)
+			=> new RegionModel("LexEntry", "Normal",
+				new List<RegionField>
 				{
-					new LexicalEditRegionField("LexEntry/Normal/#0@1", "Messages", "Self", null,
+					new RegionField("LexEntry/Normal/#0@1", "Messages", "Self", null,
 						RegionFieldKind.Custom, EditorClassification.Dynamic, null, null,
 						SurfaceRouting.Product, null, null, null, isEditable: true, indent: 0,
 						controlFactory: factory)
 				},
 				new List<ViewDiagnostic>());
 
-		private static LexicalEditRegionView Show(LexicalEditRegionModel model)
+		private static LexicalEditRegionView Show(RegionModel model)
 		{
 			var view = new LexicalEditRegionView(model);
 			var window = new Window { Content = view, Width = 420, Height = 200 };

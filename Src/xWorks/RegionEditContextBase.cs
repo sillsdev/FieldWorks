@@ -43,22 +43,22 @@ namespace SIL.FieldWorks.XWorks
 		public bool IsOpen => _session != null && _session.IsOpen;
 
 		/// <inheritdoc />
-		public abstract bool TrySetText(LexicalEditRegionField regionField, string ws, string value);
+		public abstract bool TrySetText(RegionField regionField, string ws, string value);
 
 		/// <inheritdoc />
-		public virtual bool TrySetRichText(LexicalEditRegionField regionField, string ws,
+		public virtual bool TrySetRichText(RegionField regionField, string ws,
 			RegionRichTextValue value) => false;
 
 		/// <inheritdoc />
-		public abstract bool TrySetOption(LexicalEditRegionField regionField, string optionKey);
+		public abstract bool TrySetOption(RegionField regionField, string optionKey);
 
 		/// <inheritdoc />
 		/// <remarks>Reference-vector editing exists only on composed regions; the first-slice
 		/// fallback has no vector rows, so the base rejects.</remarks>
-		public virtual bool TryAddReferenceItem(LexicalEditRegionField regionField, string optionKey) => false;
+		public virtual bool TryAddReferenceItem(RegionField regionField, string optionKey) => false;
 
 		/// <inheritdoc />
-		public virtual bool TryRemoveReferenceItem(LexicalEditRegionField regionField, string optionKey) => false;
+		public virtual bool TryRemoveReferenceItem(RegionField regionField, string optionKey) => false;
 
 		/// <inheritdoc />
 		public virtual IReadOnlyList<string> Validate()

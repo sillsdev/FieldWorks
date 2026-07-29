@@ -16,7 +16,7 @@ namespace SIL.FieldWorks.XWorks
 	/// Entry-reference vectors: the legacy
 	/// <c>EntrySequenceReferenceSlice</c> fields (ComponentLexemes/PrimaryLexemes on LexEntryRef,
 	/// targeting ILexEntry OR ILexSense) compose as EDITABLE ReferenceVector rows whose items are
-	/// headwords and whose ADD is a type-ahead lexicon search (<see cref="LexicalEditRegionField.SearchOptions"/>)
+	/// headwords and whose ADD is a type-ahead lexicon search (<see cref="RegionField.SearchOptions"/>)
 	/// — possibility lists enumerate, lexicons search, so the whole lexicon is never materialized
 	/// as Options. Writes ride sda.Replace inside the fenced session, plus the legacy launcher's
 	/// ComponentLexemes coupling (first component becomes the primary lexeme; the complex form
@@ -62,9 +62,9 @@ namespace SIL.FieldWorks.XWorks
 			return entry;
 		}
 
-		private ComposedEntryRegion Compose() => FullEntryRegionComposer.Compose(m_entry, Cache);
+		private ComposedRegion Compose() => RegionComposer.Compose(m_entry, Cache);
 
-		private static LexicalEditRegionField ComponentsField(ComposedEntryRegion composed)
+		private static RegionField ComponentsField(ComposedRegion composed)
 			=> composed.Model.Fields.Single(f => f.Field == "ComponentLexemes"
 				&& f.Kind == RegionFieldKind.ReferenceVector);
 
