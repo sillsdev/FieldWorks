@@ -21,7 +21,7 @@ namespace SIL.FieldWorks.XWorks
 	/// task through <c>RecordClerk.SaveOnChangeRecord</c>, the LT-16673 path).
 	/// </summary>
 	[TestFixture]
-	public class RegionEditSessionLifecycleTests : MemoryOnlyBackendProviderTestBase
+	public class DetailEditSessionLifecycleTests : MemoryOnlyBackendProviderTestBase
 	{
 		private ILexEntry m_entry;
 
@@ -39,7 +39,7 @@ namespace SIL.FieldWorks.XWorks
 			});
 		}
 
-		private DetailField FormField => RegionEditContextEditingTests.F("Form");
+		private DetailField FormField => DetailEditContextEditingTests.F("Form");
 
 		private void ShutdownStyleSave()
 			=> Cache.ServiceLocator.GetInstance<IUndoStackManager>().Save();

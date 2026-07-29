@@ -21,7 +21,7 @@ namespace SIL.FieldWorks.XWorks
 	/// seam here is the translation the message carries.
 	/// </summary>
 	[TestFixture]
-	public class RegionEditLinkDispatchTests
+	public class DetailEditLinkDispatchTests
 	{
 		private static DetailLinkRequest Request(string tool, string targetGuid = null)
 			=> new DetailLinkRequest(

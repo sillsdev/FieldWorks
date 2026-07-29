@@ -159,7 +159,7 @@ namespace FwAvaloniaTests
 	}
 
 	[TestFixture]
-	public class RegionLifetimeAndSchedulerTests
+	public class DetailLifetimeAndSchedulerTests
 	{
 		private sealed class Spy : IDisposable
 		{
@@ -169,7 +169,7 @@ namespace FwAvaloniaTests
 		}
 
 		[Test]
-		public void RegionLifetime_DisposesRegistered_InReverseOrder_Once()
+		public void DetailLifetime_DisposesRegistered_InReverseOrder_Once()
 		{
 			var order = new System.Collections.Generic.List<int>();
 			var detail = new DetailLifetime();
@@ -184,7 +184,7 @@ namespace FwAvaloniaTests
 		}
 
 		[Test]
-		public void RegionLifetime_LateRegistration_DisposesImmediately()
+		public void DetailLifetime_LateRegistration_DisposesImmediately()
 		{
 			var disposed = false;
 			var detail = new DetailLifetime();

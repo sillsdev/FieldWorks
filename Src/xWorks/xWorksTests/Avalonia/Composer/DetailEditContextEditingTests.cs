@@ -30,7 +30,7 @@ namespace SIL.FieldWorks.XWorks
 	/// PropChanged bus, holding refreshes while this surface's own session is open.
 	/// </summary>
 	[TestFixture]
-	public class RegionEditContextEditingTests : MemoryOnlyBackendProviderTestBase
+	public class DetailEditContextEditingTests : MemoryOnlyBackendProviderTestBase
 	{
 		private ILexEntry m_entry;
 
@@ -400,7 +400,7 @@ namespace SIL.FieldWorks.XWorks
 	/// metadata, and edits commit through the fenced session as one global undo step.
 	/// </summary>
 	[TestFixture]
-	public class RegionComposerTests : MemoryOnlyBackendProviderTestBase
+	public class DetailComposerTests : MemoryOnlyBackendProviderTestBase
 	{
 		private ILexEntry m_entry;
 
@@ -849,7 +849,7 @@ namespace SIL.FieldWorks.XWorks
 				"the lossless RichXml round-trip preserves the colour for display");
 			// The matching headless test that the lossy value RENDERS a read-only editor with the
 			// not-editable-here tooltip lives in FwAvaloniaTests (the Avalonia rendering tests):
-			// RegionEditContextEditingTests.LossyValue_RendersReadOnly_WithTooltip.
+			// DetailEditContextEditingTests.LossyValue_RendersReadOnly_WithTooltip.
 		}
 
 		// DATA-SAFETY: a multi-run value carrying ONLY supported properties
@@ -1805,7 +1805,7 @@ namespace SIL.FieldWorks.XWorks
 	/// show even when empty, with or without "show hidden fields" (DataTree.cs:2435).
 	/// </summary>
 	[TestFixture]
-	public class FullEntryRegionComposerCustomFieldTests : MemoryOnlyBackendProviderTestBase
+	public class DetailComposerCustomFieldTests : MemoryOnlyBackendProviderTestBase
 	{
 		private ILexEntry m_entry;
 		private ILexExampleSentence m_example;

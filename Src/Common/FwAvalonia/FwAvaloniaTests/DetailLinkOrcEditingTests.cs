@@ -27,7 +27,7 @@ namespace FwAvaloniaTests
 	/// not a blanket read-only block. LCModel-free: a recording fake context.
 	/// </summary>
 	[TestFixture]
-	public class RegionLinkOrcEditingTests
+	public class DetailLinkOrcEditingTests
 	{
 		private const char ExternalLink = (char)4;
 		private const char Picture = (char)8;

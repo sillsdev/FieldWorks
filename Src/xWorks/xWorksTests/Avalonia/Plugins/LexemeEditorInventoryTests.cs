@@ -203,7 +203,7 @@ namespace SIL.FieldWorks.XWorks
 	/// slice composes as the labeled Unsupported worklist row.
 	/// </summary>
 	[TestFixture]
-	public class RegionEditorPluginResolutionOrderTests : MemoryOnlyBackendProviderTestBase
+	public class SlicePluginResolutionOrderTests : MemoryOnlyBackendProviderTestBase
 	{
 		private const string MessageSliceClassName = "SIL.FieldWorks.XWorks.LexEd.MessageSlice";
 		private ILexEntry m_entry;

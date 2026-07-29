@@ -143,7 +143,7 @@ namespace FwAvaloniaTests
 	/// text/option change, validation-gated Save, Cancel rollback — with stable automation ids.
 	/// </summary>
 	[TestFixture]
-	public class RegionEditingViewTests
+	public class DetailEditingViewTests
 	{
 		private static ViewDefinitionModel SampleDefinition() => new ViewDefinitionModel(
 			"LexEntry", "identity", "detail",
@@ -286,7 +286,7 @@ namespace FwAvaloniaTests
 		// TsString property the model does not round-trip) renders a READ-ONLY editor with the
 		// not-editable-here tooltip, even though an edit context is supplied — so a keystroke can
 		// never silently drop the property. The matching model/composer assertions live in xWorks's
-		// RegionEditContextEditingTests.Compose_RunWithUnsupportedProperty_ComposesReadOnly_*.
+		// DetailEditContextEditingTests.Compose_RunWithUnsupportedProperty_ComposesReadOnly_*.
 		[AvaloniaTest]
 		public void LossyValue_RendersReadOnly_WithTooltip()
 		{
@@ -1125,7 +1125,7 @@ namespace FwAvaloniaTests
 	/// writing system.
 	/// </summary>
 	[TestFixture]
-	public class RegionWritingSystemPickerTests
+	public class DetailWritingSystemPickerTests
 	{
 		// A field carrying a rich value plus the project's available writing systems, so the per-WS retag
 		// picker affordance is built. The field's own ws is "qaa-x-rich".
@@ -1288,7 +1288,7 @@ namespace FwAvaloniaTests
 	/// rows NEVER draw one (the Lexeme Form slice menu is right-click only).
 	/// </summary>
 	[TestFixture]
-	public class RegionConfigureGearTests
+	public class DetailConfigureGearTests
 	{
 		private static DetailField LinkedChooserField() => new DetailField(
 			"MoForm/x/#0", "Morph Type", "MorphType", null,
@@ -1415,7 +1415,7 @@ namespace FwAvaloniaTests
 
 		// Gears never open context menus: the Lexeme Form text row draws NO gear; its
 		// slice menu (menu="mnuDataTree-LexemeForm") stays on right-click only — the label path in
-		// the region view (RegionMenuTests) and the in-string path below are unchanged.
+		// the detail view (DetailMenuTests) and the in-string path below are unchanged.
 		[AvaloniaTest]
 		public void TextRows_NeverDrawAGear_TheSliceMenuStaysOnRightClickOnly()
 		{

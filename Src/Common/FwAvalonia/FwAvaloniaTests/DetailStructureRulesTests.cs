@@ -14,7 +14,7 @@ namespace FwAvaloniaTests
 	/// the shared rules directly; the mapper/composer snapshot tests prove neither path's output changed.
 	/// </summary>
 	[TestFixture]
-	public class RegionStructureRulesTests
+	public class DetailStructureRulesTests
 	{
 		[TestCase(null, 2, 2)]    // unlabeled passthrough group keeps depth
 		[TestCase("", 2, 2)]

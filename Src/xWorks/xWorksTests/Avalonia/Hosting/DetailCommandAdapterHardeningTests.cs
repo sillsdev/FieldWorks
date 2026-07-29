@@ -36,7 +36,7 @@ namespace SIL.FieldWorks.XWorks
 	/// </summary>
 	[TestFixture]
 	[Apartment(System.Threading.ApartmentState.STA)]
-	public class RegionCommandAdapterHardeningTests : XWorksAppTestBase
+	public class DetailCommandAdapterHardeningTests : XWorksAppTestBase
 	{
 		private PropertyTable m_propertyTable;
 		private List<ICmObject> m_createdObjects;

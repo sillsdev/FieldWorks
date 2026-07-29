@@ -10,7 +10,7 @@ using Avalonia.Headless.NUnit;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwAvalonia.Detail;
 using SIL.FieldWorks.Common.FwAvalonia.ViewDefinition;
-using FwAvaloniaTests; // FakeDetailEditContext — the LCModel-free editing seam fake (RegionEditingTests.cs)
+using FwAvaloniaTests; // FakeDetailEditContext — the LCModel-free editing seam fake (DetailEditingTests.cs)
 using FwAvaloniaDialogsTests; // DialogLayoutAssert — the shared layout tripwire (linked in via the csproj)
 
 namespace FwAvaloniaTests.VisualChecks
@@ -56,10 +56,10 @@ namespace FwAvaloniaTests.VisualChecks
 	/// so these tests just call AssertNoCrowding directly — no in-test splitter workaround.
 	/// </summary>
 	[TestFixture]
-	public class RegionSnapshotTests
+	public class DetailSnapshotTests
 	{
 		[AvaloniaTest]
-		public void RegionEditView_RendersCleanly()
+		public void DetailEditView_RendersCleanly()
 		{
 			// Read-only display stage: the detail view is FLAT with subtle field separators (the WinForms
 			// DataTree look) — labels + values at the WinForms density font, no boxing per value.
@@ -71,7 +71,7 @@ namespace FwAvaloniaTests.VisualChecks
 		}
 
 		[AvaloniaTest]
-		public void RegionEditView_Editable_RendersCleanly()
+		public void DetailEditView_Editable_RendersCleanly()
 		{
 			// Editable stage: an edit context is supplied so the value editors are live; the surface must still
 			// read flat/dense (no per-field box) the way the legacy editable DataTree does.
@@ -85,7 +85,7 @@ namespace FwAvaloniaTests.VisualChecks
 		// ----- realistic region detail fixture (10 fields of varied kinds, no LCModel) -----
 
 		[AvaloniaTest]
-		public void RegionEditView_RealisticMultiField_RendersCleanly()
+		public void DetailEditView_RealisticMultiField_RendersCleanly()
 		{
 			// Read-only display of a realistic, dense entry: multistring vernacular + analysis, a single-line
 			// citation, a part-of-speech chooser, a date, a generic-date, an enum/option chooser, a boolean,
@@ -98,7 +98,7 @@ namespace FwAvaloniaTests.VisualChecks
 		}
 
 		[AvaloniaTest]
-		public void RegionEditView_RealisticMultiField_Editable_RendersCleanly()
+		public void DetailEditView_RealisticMultiField_Editable_RendersCleanly()
 		{
 			// The same realistic field spread, now editable (an edit context makes the text/chooser editors
 			// live; dropped editors render Unsupported). The dense flat look must survive: live editors, no
@@ -110,7 +110,7 @@ namespace FwAvaloniaTests.VisualChecks
 		}
 
 		[AvaloniaTest]
-		public void RegionEditView_Reference_RendersCleanly()
+		public void DetailEditView_Reference_RendersCleanly()
 		{
 			// A focused stage on a reference-vector row (the legacy possibility-vector slice with its current
 			// items + trailing add slot), editable — confirming the chip-like items and the add launcher render

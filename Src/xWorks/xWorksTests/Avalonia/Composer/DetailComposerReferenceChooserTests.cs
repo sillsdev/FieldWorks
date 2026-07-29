@@ -24,7 +24,7 @@ namespace SIL.FieldWorks.XWorks
 	/// (B8: DetailChoiceOption.Depth) so the chooser can render the legacy indented tree.
 	/// </summary>
 	[TestFixture]
-	public class FullEntryRegionReferenceChooserTests : MemoryOnlyBackendProviderTestBase
+	public class DetailComposerReferenceChooserTests : MemoryOnlyBackendProviderTestBase
 	{
 		private ILexEntry m_entry;
 		private ILexSense m_sense;
