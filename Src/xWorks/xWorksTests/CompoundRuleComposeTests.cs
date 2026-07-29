@@ -39,7 +39,7 @@ namespace SIL.FieldWorks.XWorks
 				rule.Description.SetAnalysisDefaultWritingSystem("a fusion of ndi + a personal pronoun");
 			});
 
-			var composed = FullEntryRegionComposer.Compose(rule, Cache, layoutName: "Edit",
+			var composed = RegionComposer.Compose(rule, Cache, layoutName: "Edit",
 				plugins: RegionEditorPluginRegistry.Default);
 
 			Assert.That(composed.Model.Fields, Is.Not.Empty, "the non-headed compound rule composes its detail fields");

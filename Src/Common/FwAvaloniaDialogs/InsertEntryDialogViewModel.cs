@@ -581,14 +581,14 @@ namespace FwAvaloniaDialogs
 
 		// A gloss edit refreshes the duplicate-detection matches (legacy tbGloss_TextChanged → UpdateMatches). The
 		// gloss does not affect the form-derived morph type, so no derivation runs here.
-		private void OnGlossStaged(LexicalEditRegionField field, string ws, string value)
+		private void OnGlossStaged(RegionField field, string ws, string value)
 		{
 			if (_deriving)
 				return;
 			RefreshMatches();
 		}
 
-		private void OnLexemeFormStaged(LexicalEditRegionField field, string ws, string value)
+		private void OnLexemeFormStaged(RegionField field, string ws, string value)
 		{
 			if (_deriving)
 				return;
@@ -776,8 +776,8 @@ namespace FwAvaloniaDialogs
 		}
 
 		// A placeholder editable text field so the VM never NREs when the launcher omits a field (tests, etc.).
-		private static LexicalEditRegionField EmptyField(string name)
-			=> new LexicalEditRegionField(name, name, name, null, RegionFieldKind.Text,
+		private static RegionField EmptyField(string name)
+			=> new RegionField(name, name, name, null, RegionFieldKind.Text,
 				default, name, name, default, new List<RegionWsValue>(), new List<RegionChoiceOption>(), null);
 	}
 }

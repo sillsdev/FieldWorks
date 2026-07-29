@@ -98,7 +98,7 @@ namespace SIL.FieldWorks.XWorks
 	/// <summary>
 	/// Review consolidation (editor-kind knowledge): <see cref="EditorKindMap.ClassifyRegionFieldKind"/>
 	/// is the ONE editor-string → category table the composer's dispatch switch and
-	/// <c>LexicalEditRegionMapper.ClassifyKind</c> both consume. These cases pin the categories the
+	/// <c>RegionModelProjector.ClassifyKind</c> both consume. These cases pin the categories the
 	/// two consumers' behavior depends on.
 	/// </summary>
 	[TestFixture]

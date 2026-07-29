@@ -29,33 +29,33 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		/// (<see cref="RegionWsValue.WsTag"/>); implementations also accept an unambiguous
 		/// abbreviation or legacy alias (e.g. "vern"/"anal") as a fallback for tag-less rows. The
 		/// user-editable abbreviation alone is never an identity: it can collide across writing
-		/// systems. Implementations key on <see cref="LexicalEditRegionField.Field"/> for fixed
-		/// slices or <see cref="LexicalEditRegionField.StableId"/> for composed full-layout regions,
+		/// systems. Implementations key on <see cref="RegionField.Field"/> for fixed
+		/// slices or <see cref="RegionField.StableId"/> for composed full-layout regions,
 		/// where the same field name (e.g. Gloss) occurs once per sense.
 		/// </summary>
-		bool TrySetText(LexicalEditRegionField field, string ws, string value);
+		bool TrySetText(RegionField field, string ws, string value);
 
 		/// <summary>
 		/// Stages a run-aware text value for a field. The supplied rich-text payload is LCModel-free and
 		/// preserves the run metadata needed to rebuild the product <c>ITsString</c> without flattening.
 		/// </summary>
-		bool TrySetRichText(LexicalEditRegionField field, string ws, RegionRichTextValue value);
+		bool TrySetRichText(RegionField field, string ws, RegionRichTextValue value);
 
 		/// <summary>Stages a chooser selection by option key (opening the session on the first edit).</summary>
-		bool TrySetOption(LexicalEditRegionField field, string optionKey);
+		bool TrySetOption(RegionField field, string optionKey);
 
 		/// <summary>
 		/// Stages adding an item (by option key) to a <see cref="RegionFieldKind.ReferenceVector"/>
 		/// row (6.3). Returns false — WITHOUT opening the session — for keys outside the field's
 		/// possibility list, duplicates, or non-vector rows, like the legacy chooser.
 		/// </summary>
-		bool TryAddReferenceItem(LexicalEditRegionField field, string optionKey);
+		bool TryAddReferenceItem(RegionField field, string optionKey);
 
 		/// <summary>
 		/// Stages removing an item (by option key) from a <see cref="RegionFieldKind.ReferenceVector"/>
 		/// row. Returns false — without opening the session — when the item is not in the vector.
 		/// </summary>
-		bool TryRemoveReferenceItem(LexicalEditRegionField field, string optionKey);
+		bool TryRemoveReferenceItem(RegionField field, string optionKey);
 
 		/// <summary>
 		/// Validates the staged state. Empty result means commit may proceed; messages are

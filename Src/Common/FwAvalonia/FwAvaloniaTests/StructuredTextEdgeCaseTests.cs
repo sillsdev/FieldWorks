@@ -48,10 +48,10 @@ namespace FwAvaloniaTests
 			return new RegionParagraph(rich);
 		}
 
-		private static LexicalEditRegionField Field(IReadOnlyList<RegionParagraph> paragraphs,
+		private static RegionField Field(IReadOnlyList<RegionParagraph> paragraphs,
 			bool isEditable = true, IReadOnlyList<string> paragraphStyles = null)
 		{
-			var field = new LexicalEditRegionField(
+			var field = new RegionField(
 				stableId: "LexEntry/Discussion@1", label: "Discussion", field: "Discussion",
 				writingSystem: null, kind: RegionFieldKind.StructuredText,
 				editorClassification: EditorClassification.Known, automationId: "Discussion",
@@ -62,7 +62,7 @@ namespace FwAvaloniaTests
 			return field;
 		}
 
-		private static (FwStructuredTextField Field, Window Window) Show(LexicalEditRegionField field,
+		private static (FwStructuredTextField Field, Window Window) Show(RegionField field,
 			IRegionEditContext editContext = null, Action gestureCompleted = null)
 		{
 			var control = new FwStructuredTextField(field, field.AutomationId, editContext, null, gestureCompleted);

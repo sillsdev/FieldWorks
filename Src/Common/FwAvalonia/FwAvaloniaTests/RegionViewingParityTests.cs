@@ -23,21 +23,21 @@ namespace FwAvaloniaTests
 	[TestFixture]
 	public class RegionViewingParityTests
 	{
-		private static LexicalEditRegionField Header(string id, string label, int indent,
-			bool expanded = true) => new LexicalEditRegionField(
+		private static RegionField Header(string id, string label, int indent,
+			bool expanded = true) => new RegionField(
 			id, label, null, null, RegionFieldKind.Header, EditorClassification.GroupingNone,
 			null, null, SurfaceRouting.Inherit, null, null, null,
 			isEditable: false, indent: indent, isCollapsible: true, isInitiallyExpanded: expanded);
 
-		private static LexicalEditRegionField Text(string id, string label, int indent)
-			=> new LexicalEditRegionField(id, label, label, null, RegionFieldKind.Text,
+		private static RegionField Text(string id, string label, int indent)
+			=> new RegionField(id, label, label, null, RegionFieldKind.Text,
 				EditorClassification.Known, id, null, SurfaceRouting.Inherit,
 				new List<RegionWsValue> { new RegionWsValue("en", "value") }, null, null,
 				isEditable: true, indent: indent);
 
-		private static LexicalEditRegionView Show(params LexicalEditRegionField[] fields)
+		private static LexicalEditRegionView Show(params RegionField[] fields)
 		{
-			var model = new LexicalEditRegionModel("LexEntry", "Normal",
+			var model = new RegionModel("LexEntry", "Normal",
 				fields.ToList(), new List<ViewDiagnostic>());
 			var view = new LexicalEditRegionView(model);
 			var window = new Window { Content = view, Width = 480, Height = 300 };
@@ -174,8 +174,8 @@ namespace FwAvaloniaTests
 		{
 			// 11.8: toggles record into the store; a new view (re-show/record switch) applies them.
 			var store = new Dictionary<string, bool>();
-			var model = new LexicalEditRegionModel("LexEntry", "Normal",
-				new List<LexicalEditRegionField> { Header("h1", "Senses", 0), Text("g1", "Gloss", 1) },
+			var model = new RegionModel("LexEntry", "Normal",
+				new List<RegionField> { Header("h1", "Senses", 0), Text("g1", "Gloss", 1) },
 				new List<ViewDiagnostic>());
 
 			var first = new LexicalEditRegionView(model, null, null,
@@ -208,7 +208,7 @@ namespace FwAvaloniaTests
 		[AvaloniaTest]
 		public void LabelTooltips_Splitter_BoldEmphasis_AndCopyMenu_RenderLikeLegacy()
 		{
-			var bold = new LexicalEditRegionField("lf", "Lexeme Form", "Form", null, RegionFieldKind.Text,
+			var bold = new RegionField("lf", "Lexeme Form", "Form", null, RegionFieldKind.Text,
 				EditorClassification.Known, "LexemeRow", null, SurfaceRouting.Inherit,
 				new List<RegionWsValue> { new RegionWsValue("seh", "casa", null, 14.4, false, "seh", bold: true) },
 				null, null);
@@ -272,7 +272,7 @@ namespace FwAvaloniaTests
 				MultiWsText("d1", "Citation Form", ("seh", "casa")),
 				MultiWsText("d2", "Gloss", ("en", "house"), ("pt", "casa")),
 			};
-			var model = new LexicalEditRegionModel("LexEntry", "detail", fields.ToList(),
+			var model = new RegionModel("LexEntry", "detail", fields.ToList(),
 				new List<ViewDiagnostic>());
 
 			FwMultiWsTextField Editor(LexicalEditRegionView v, string id)
@@ -305,13 +305,13 @@ namespace FwAvaloniaTests
 			}
 		}
 
-		private static LexicalEditRegionField MultiWsText(string id, string label,
+		private static RegionField MultiWsText(string id, string label,
 			params (string abbrev, string value)[] values)
 		{
 			var wsValues = new List<RegionWsValue>();
 			foreach (var v in values)
 				wsValues.Add(new RegionWsValue(v.abbrev, v.value, wsTag: v.abbrev));
-			return new LexicalEditRegionField(id, label, label, null, RegionFieldKind.Text,
+			return new RegionField(id, label, label, null, RegionFieldKind.Text,
 				EditorClassification.Known, id, null, SurfaceRouting.Product, wsValues, null, null,
 				isEditable: true);
 		}

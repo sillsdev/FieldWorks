@@ -22,14 +22,14 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		/// the rich payload preserves run metadata so the product <c>ITsString</c> rebuilds without
 		/// flattening.
 		/// </summary>
-		bool TrySetParagraphText(LexicalEditRegionField field, int paragraphIndex, RegionRichTextValue value);
+		bool TrySetParagraphText(RegionField field, int paragraphIndex, RegionRichTextValue value);
 
 		/// <summary>
 		/// Stages setting (or clearing, when <paramref name="styleName"/> is null/empty) the named
 		/// paragraph style of ONE paragraph of a <see cref="RegionFieldKind.StructuredText"/> field.
 		/// Returns false — without opening the session — for a non-StText row or an out-of-range index.
 		/// </summary>
-		bool TrySetParagraphStyle(LexicalEditRegionField field, int paragraphIndex, string styleName);
+		bool TrySetParagraphStyle(RegionField field, int paragraphIndex, string styleName);
 
 		/// <summary>
 		/// Stages inserting a new empty paragraph AFTER <paramref name="afterParagraphIndex"/> in a
@@ -37,7 +37,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		/// Returns false — without opening the session — for a non-StText row. The structural gesture
 		/// commits immediately and the host re-shows (the model's paragraph list is a compose snapshot).
 		/// </summary>
-		bool TryInsertParagraph(LexicalEditRegionField field, int afterParagraphIndex);
+		bool TryInsertParagraph(RegionField field, int afterParagraphIndex);
 
 		/// <summary>
 		/// Stages deleting paragraph <paramref name="paragraphIndex"/> of a
@@ -45,6 +45,6 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		/// session — for a non-StText row, an out-of-range index, or when it would delete the only
 		/// paragraph (the StText always keeps at least one, like the legacy editor).
 		/// </summary>
-		bool TryDeleteParagraph(LexicalEditRegionField field, int paragraphIndex);
+		bool TryDeleteParagraph(RegionField field, int paragraphIndex);
 	}
 }

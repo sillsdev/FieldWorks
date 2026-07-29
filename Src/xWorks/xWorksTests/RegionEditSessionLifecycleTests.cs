@@ -39,7 +39,7 @@ namespace SIL.FieldWorks.XWorks
 			});
 		}
 
-		private LexicalEditRegionField FormField => LexicalEditRegionEditingTests.F("Form");
+		private RegionField FormField => LexicalEditRegionEditingTests.F("Form");
 
 		private void ShutdownStyleSave()
 			=> Cache.ServiceLocator.GetInstance<IUndoStackManager>().Save();

@@ -64,15 +64,15 @@ namespace SIL.FieldWorks.XWorks
 
 		private const string StableId = "LexEntry/Definition@w";
 
-		// The StructuredText field + composed edit context wired exactly as FullEntryRegionComposer does:
+		// The StructuredText field + composed edit context wired exactly as RegionComposer does:
 		// each setter mutates m_definition inside the shared fenced Stage().
-		private (LexicalEditRegionField Field, ComposedRegionEditContext Context) Build()
+		private (RegionField Field, ComposedRegionEditContext Context) Build()
 		{
 			var paragraphs = m_definition.ParagraphsOS.OfType<IStTxtPara>()
 				.Select(p => new RegionParagraph(
 					RegionRichTextAdapter.FromTsString(p.Contents, Cache.WritingSystemFactory), p.StyleName))
 				.ToList();
-			var field = new LexicalEditRegionField(StableId, "Definition", "Definition", null,
+			var field = new RegionField(StableId, "Definition", "Definition", null,
 				RegionFieldKind.StructuredText,
 				SIL.FieldWorks.Common.FwAvalonia.ViewDefinition.EditorClassification.Known, null, null,
 				SIL.FieldWorks.Common.FwAvalonia.ViewDefinition.SurfaceRouting.Product, null, null, null,

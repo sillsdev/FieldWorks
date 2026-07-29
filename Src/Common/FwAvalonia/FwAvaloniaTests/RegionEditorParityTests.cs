@@ -70,7 +70,7 @@ namespace FwAvaloniaTests
 
 		// ---- FwReferenceVectorField.Dispose detaches every handler ----
 
-		private static LexicalEditRegionField VectorFieldWithItems() => new LexicalEditRegionField(
+		private static RegionField VectorFieldWithItems() => new RegionField(
 			"v1", "Publish In", "PublishIn", null, RegionFieldKind.ReferenceVector,
 			EditorClassification.Known, "PublishIn", null, SurfaceRouting.Inherit, null,
 			new List<RegionChoiceOption>

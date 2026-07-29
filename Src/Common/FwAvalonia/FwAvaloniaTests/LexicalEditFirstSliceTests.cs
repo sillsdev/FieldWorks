@@ -76,7 +76,7 @@ namespace FwAvaloniaTests
 			var definition = LexicalEditFirstSlice.CompileFromLayoutDirectory(ShippedPartsDirectory());
 			Assert.That(definition, Is.Not.Null);
 
-			var region = LexicalEditRegionMapper.FromViewDefinition(definition, new FakeRegionValueProvider());
+			var region = RegionModelProjector.FromViewDefinition(definition, new FakeRegionValueProvider());
 
 			Assert.That(region.Fields, Has.Count.EqualTo(3));
 			Assert.That(region.Fields[0].Kind, Is.EqualTo(RegionFieldKind.Text));

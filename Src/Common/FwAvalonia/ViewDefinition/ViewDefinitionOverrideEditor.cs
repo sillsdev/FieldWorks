@@ -33,7 +33,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 	public static class ViewDefinitionOverrideEditor
 	{
 		/// <summary>
-		/// The runtime field StableId carries an "@{hvo}" object suffix (FullEntryRegionComposer's
+		/// The runtime field StableId carries an "@{hvo}" object suffix (RegionComposer's
 		/// StableId(node, obj)); the override targets the template id, so strip from the LAST '@'.
 		/// Suffixed forms like "{id}@{hvo}/item3" or "{id}@{hvo}/pic0" keep their trailing path segment
 		/// after the hvo is removed, matching the template id the importer assigned.

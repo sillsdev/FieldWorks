@@ -13,7 +13,7 @@ namespace FwAvaloniaDialogs
 	/// The LCModel-free input to the reusable Avalonia Insert Entry dialog — the Avalonia analog of the
 	/// legacy <c>InsertEntryDlg</c> in New-UI mode. The product edge (the LexText launcher) builds this from the
 	/// live cache so the Avalonia layer never sees an <c>ICmObject</c>: the lexeme form / gloss fields are
-	/// projected as <see cref="LexicalEditRegionField"/>s (one writing-system row per current vernacular /
+	/// projected as <see cref="RegionField"/>s (one writing-system row per current vernacular /
 	/// analysis WS, seeded empty unless <see cref="LexemeForm"/>'s values carry an initial form), the morph
 	/// types are flat <see cref="RegionChoiceOption"/>s (key = morph-type guid string), and the live
 	/// affix-marker → morph-type derivation rides the <see cref="DeriveMorphType"/> delegate (the launcher wraps
@@ -26,10 +26,10 @@ namespace FwAvaloniaDialogs
 		/// values from an optional initial form (e.g. the word the user double-clicked in interlinear); rows are
 		/// otherwise empty. The owned <c>FwMultiWsTextField</c> edits these through the in-memory edit context.
 		/// </summary>
-		public LexicalEditRegionField LexemeForm { get; set; }
+		public RegionField LexemeForm { get; set; }
 
 		/// <summary>The gloss field (one row per current analysis writing system); rows start empty.</summary>
-		public LexicalEditRegionField Gloss { get; set; }
+		public RegionField Gloss { get; set; }
 
 		/// <summary>The selectable morph types (flat; key = morph-type guid string, name = display name).</summary>
 		public IReadOnlyList<RegionChoiceOption> MorphTypes { get; set; } = Array.Empty<RegionChoiceOption>();

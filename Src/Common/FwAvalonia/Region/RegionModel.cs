@@ -41,7 +41,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 
 		/// <summary>
 		/// A plugin-claimed custom editor: the row carries a
-		/// <see cref="LexicalEditRegionField.ControlFactory"/> built by the composer from the
+		/// <see cref="RegionField.ControlFactory"/> built by the composer from the
 		/// claiming <c>IRegionEditorPlugin</c>; the view renders the factory's control in the value
 		/// column at the slice's real position, falling back to the unsupported rendering when the
 		/// factory is missing or fails.
@@ -51,7 +51,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		/// <summary>
 		/// An editable multi-paragraph structured-text (StText) field — the legacy
 		/// <c>StTextSlice</c>'s RootSite rich editor. The row carries an ordered
-		/// <see cref="LexicalEditRegionField.Paragraphs"/> list (each a run-aware
+		/// <see cref="RegionField.Paragraphs"/> list (each a run-aware
 		/// <see cref="RegionParagraph"/> with a per-paragraph named style); the owned
 		/// <c>FwStructuredTextField</c> edits paragraph text, adds/deletes paragraphs, and sets the
 		/// per-paragraph style, each as one undoable step through the edit context's paragraph CRUD
@@ -1427,7 +1427,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 	/// The font a writing system renders with (per-run font rendering), supplied LCModel-free by the
 	/// host (the composer reads it from the project's per-ws <c>DefaultFontName</c>). The per-run-font
 	/// display layer maps each run's <see cref="RegionTextRun.WritingSystemTag"/> through the field's
-	/// <see cref="LexicalEditRegionField.WritingSystemFonts"/> map to this descriptor; a run also overrides
+	/// <see cref="RegionField.WritingSystemFonts"/> map to this descriptor; a run also overrides
 	/// the family with its own <see cref="RegionTextRun.FontFamily"/> when set, and its
 	/// bold/italic/named-style toggles still apply on top.
 	/// </summary>
@@ -1503,13 +1503,13 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 	/// </summary>
 	public sealed class RegionLinkRequest
 	{
-		public RegionLinkRequest(LexicalEditRegionField field, RegionChooserLink link)
+		public RegionLinkRequest(RegionField field, RegionChooserLink link)
 		{
 			Field = field;
 			Link = link;
 		}
 
-		public LexicalEditRegionField Field { get; }
+		public RegionField Field { get; }
 
 		public RegionChooserLink Link { get; }
 	}
@@ -1520,9 +1520,9 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 	/// old detached preview DTO path: structure comes from the typed view definition, values from the
 	/// provider, so the region scales to arbitrary layouts instead of three fixed fields.
 	/// </summary>
-	public sealed class LexicalEditRegionField
+	public sealed class RegionField
 	{
-		public LexicalEditRegionField(
+		public RegionField(
 			string stableId,
 			string label,
 			string field,
@@ -1750,7 +1750,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 	/// </summary>
 	public sealed class RegionMenuRequest
 	{
-		public RegionMenuRequest(LexicalEditRegionField field, RegionMenuKind kind, int screenX, int screenY)
+		public RegionMenuRequest(RegionField field, RegionMenuKind kind, int screenX, int screenY)
 		{
 			Field = field;
 			Kind = kind;
@@ -1758,7 +1758,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 			ScreenY = screenY;
 		}
 
-		public LexicalEditRegionField Field { get; }
+		public RegionField Field { get; }
 		public RegionMenuKind Kind { get; }
 		public int ScreenX { get; }
 		public int ScreenY { get; }
@@ -1768,23 +1768,23 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 	/// A flattened, value-bound region projected from a typed <see cref="ViewDefinitionModel"/>. Carries
 	/// the source diagnostics so unsupported constructs are surfaced, not silently dropped.
 	/// </summary>
-	public sealed class LexicalEditRegionModel
+	public sealed class RegionModel
 	{
-		public LexicalEditRegionModel(
+		public RegionModel(
 			string className,
 			string layoutName,
-			IReadOnlyList<LexicalEditRegionField> fields,
+			IReadOnlyList<RegionField> fields,
 			IReadOnlyList<ViewDiagnostic> diagnostics)
 		{
 			ClassName = className;
 			LayoutName = layoutName;
-			Fields = fields ?? new List<LexicalEditRegionField>();
+			Fields = fields ?? new List<RegionField>();
 			Diagnostics = diagnostics ?? new List<ViewDiagnostic>();
 		}
 
 		public string ClassName { get; }
 		public string LayoutName { get; }
-		public IReadOnlyList<LexicalEditRegionField> Fields { get; }
+		public IReadOnlyList<RegionField> Fields { get; }
 		public IReadOnlyList<ViewDiagnostic> Diagnostics { get; }
 	}
 

@@ -48,7 +48,7 @@ namespace FwAvaloniaTests
 		}
 
 		private static LexicalEditRegionView NewView()
-			=> new LexicalEditRegionView(LexicalEditRegionMapper.FromViewDefinition(Definition(), new Provider()));
+			=> new LexicalEditRegionView(RegionModelProjector.FromViewDefinition(Definition(), new Provider()));
 
 		private static LexicalEditRegionView NewLongView()
 		{
@@ -62,7 +62,7 @@ namespace FwAvaloniaTests
 			}
 			var definition = new ViewDefinitionModel("LexEntry", "identity", "detail", roots,
 				new List<ViewDiagnostic>());
-			return new LexicalEditRegionView(LexicalEditRegionMapper.FromViewDefinition(definition, new Provider()));
+			return new LexicalEditRegionView(RegionModelProjector.FromViewDefinition(definition, new Provider()));
 		}
 
 		private static ScrollViewer FindScroller(Control root)
@@ -187,13 +187,13 @@ namespace FwAvaloniaTests
 		// test reproduce the ghost id ("…@ownerHvo/ghost.vern") and its real successor ("…@newHvo.vern").
 		private static LexicalEditRegionView ViewWithEditorId(string stableId)
 		{
-			var field = new LexicalEditRegionField(stableId, "Lexeme Form", "Form", "vernacular",
+			var field = new RegionField(stableId, "Lexeme Form", "Form", "vernacular",
 				RegionFieldKind.Text, EditorClassification.Known, /*automationId*/ null, null,
 				SurfaceRouting.Product,
 				new List<RegionWsValue> { new RegionWsValue("vern", "casa", wsTag: "vern") },
 				null, null);
-			var model = new LexicalEditRegionModel("LexEntry", "Normal",
-				new List<LexicalEditRegionField> { field }, new List<ViewDiagnostic>());
+			var model = new RegionModel("LexEntry", "Normal",
+				new List<RegionField> { field }, new List<ViewDiagnostic>());
 			return new LexicalEditRegionView(model);
 		}
 

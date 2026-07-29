@@ -45,10 +45,10 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 
-		private ComposedEntryRegion Compose(bool showHidden = false)
-			=> FullEntryRegionComposer.Compose(m_entry, Cache, showHidden);
+		private ComposedRegion Compose(bool showHidden = false)
+			=> RegionComposer.Compose(m_entry, Cache, showHidden);
 
-		private static LexicalEditRegionField GhostRow(ComposedEntryRegion composed, string label)
+		private static RegionField GhostRow(ComposedRegion composed, string label)
 			=> composed.Model.Fields.Single(f => f.Field == "EntryRefs" && f.Label == label);
 
 		[Test]

@@ -68,27 +68,27 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void PerFieldWs_LimitsDisplayedWritingSystems_OneVsMany()
 		{
-			var all = FullEntryRegionComposer.ResolveWritingSystems(Cache, "all analysis");
+			var all = RegionComposer.ResolveWritingSystems(Cache, "all analysis");
 			Assume.That(all.Count, Is.GreaterThan(0), "the project must expose at least one analysis ws");
 			var firstTag = all[0].Id;
 
 			// A single-ws override yields exactly that ws, in order.
-			var one = FullEntryRegionComposer.ApplyVisibleWritingSystems(all, new[] { firstTag });
+			var one = RegionComposer.ApplyVisibleWritingSystems(all, new[] { firstTag });
 			Assert.That(one.Select(w => w.Id), Is.EqualTo(new[] { firstTag }),
 				"a one-ws override shows exactly that writing system");
 
 			// No override keeps the full set; an all-unknown override degrades to the full set (never blank).
-			Assert.That(FullEntryRegionComposer.ApplyVisibleWritingSystems(all, null), Is.SameAs(all));
-			Assert.That(FullEntryRegionComposer.ApplyVisibleWritingSystems(all, new[] { "zz-not-a-ws" }),
+			Assert.That(RegionComposer.ApplyVisibleWritingSystems(all, null), Is.SameAs(all));
+			Assert.That(RegionComposer.ApplyVisibleWritingSystems(all, new[] { "zz-not-a-ws" }),
 				Is.SameAs(all), "a stale override that matches nothing keeps the full set, never blanks the field");
 		}
 
 		[Test]
 		public void ShowHidden_RevealsNeverFields_HideOmitsThem()
 		{
-			var hidden = FullEntryRegionComposer.Compose(m_entry, Cache, showHiddenFields: false)
+			var hidden = RegionComposer.Compose(m_entry, Cache, showHiddenFields: false)
 				.Model.Fields;
-			var shown = FullEntryRegionComposer.Compose(m_entry, Cache, showHiddenFields: true)
+			var shown = RegionComposer.Compose(m_entry, Cache, showHiddenFields: true)
 				.Model.Fields;
 
 			// DateCreated is a visibility=never field on the shipped LexEntry layout.

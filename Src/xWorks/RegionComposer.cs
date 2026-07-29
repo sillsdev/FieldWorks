@@ -26,15 +26,15 @@ using SIL.LCModel.Infrastructure;
 namespace SIL.FieldWorks.XWorks
 {
 	/// <summary>A composed full-entry region: the renderable model plus its LCModel-bound edit context.</summary>
-	public sealed class ComposedEntryRegion
+	public sealed class ComposedRegion
 	{
-		public ComposedEntryRegion(LexicalEditRegionModel model, IRegionEditContext editContext)
+		public ComposedRegion(RegionModel model, IRegionEditContext editContext)
 		{
 			Model = model;
 			EditContext = editContext;
 		}
 
-		public LexicalEditRegionModel Model { get; }
+		public RegionModel Model { get; }
 
 		public IRegionEditContext EditContext { get; }
 	}
@@ -58,7 +58,7 @@ namespace SIL.FieldWorks.XWorks
 	/// Unsupported constructs render an explicit unsupported row (visibility=always) or are skipped
 	/// (ifdata), never silently mis-rendered; compile diagnostics ride the region model.
 	/// </summary>
-	public static class FullEntryRegionComposer
+	public static class RegionComposer
 	{
 		// The visited (hvo, layout) guard is the real recursion stop. This depth cap is only a
 		// backstop for malformed layouts, so it must still allow the deepest shipped lexeme-edit
@@ -107,7 +107,7 @@ namespace SIL.FieldWorks.XWorks
 				= new ConcurrentDictionary<(int, string, string), ViewDefinitionModel>();
 		}
 
-		public static ComposedEntryRegion Compose(ILexEntry entry, LcmCache cache, bool showHiddenFields = false,
+		public static ComposedRegion Compose(ILexEntry entry, LcmCache cache, bool showHiddenFields = false,
 			RegionEditorPluginRegistry plugins = null,
 			ViewDefinitionOverrideResolver overrides = null)
 			=> Compose((ICmObject)entry, cache, "Normal", showHiddenFields, plugins, overrides);
@@ -120,7 +120,7 @@ namespace SIL.FieldWorks.XWorks
 		/// object and the starting layout instead of hardcoding LexEntry/"Normal", so wiring a new tool onto
 		/// the Avalonia surface needs only its registration + (when its layout uses one) a layoutChoiceField.
 		/// </summary>
-		public static ComposedEntryRegion Compose(ICmObject obj, LcmCache cache, string layoutName = "Normal",
+		public static ComposedRegion Compose(ICmObject obj, LcmCache cache, string layoutName = "Normal",
 			bool showHiddenFields = false, RegionEditorPluginRegistry plugins = null,
 			ViewDefinitionOverrideResolver overrides = null,
 			string layoutChoiceField = null)
@@ -151,8 +151,8 @@ namespace SIL.FieldWorks.XWorks
 
 			var context = new ComposedRegionEditContext(cache, obj, state.Handlers);
 			composedContext = context;
-			var model = new LexicalEditRegionModel(obj.ClassName, layoutName, state.Fields, root.Diagnostics);
-			return new ComposedEntryRegion(model, context);
+			var model = new RegionModel(obj.ClassName, layoutName, state.Fields, root.Diagnostics);
+			return new ComposedRegion(model, context);
 		}
 
 		/// <summary>
@@ -265,7 +265,7 @@ namespace SIL.FieldWorks.XWorks
 			private readonly IFwMetaDataCacheManaged _mdc;
 			private readonly HashSet<(int hvo, string layout)> _visited = new HashSet<(int, string)>();
 
-			public readonly List<LexicalEditRegionField> Fields = new List<LexicalEditRegionField>();
+			public readonly List<RegionField> Fields = new List<RegionField>();
 			// One edit handler per composed field, keyed by StableId. A field's text/rich-text/option/
 			// reference/paragraph write delegates live together on its handler (null where the field's kind
 			// does not support a gesture), replacing the former nine parallel setter dictionaries that had
@@ -304,17 +304,17 @@ namespace SIL.FieldWorks.XWorks
 			private List<RegionChoiceOption> _morphTypeOptions;
 			// The project's character-type style names, computed once
 			// per compose from Cache.LangProject.StylesOC and stamped onto every editable text row's
-			// LexicalEditRegionField.AvailableNamedStyles (the host seam the per-WS style picker reads).
+			// RegionField.AvailableNamedStyles (the host seam the per-WS style picker reads).
 			// Sorted by name for a stable picker order; empty when no stylesheet/styles are reachable.
 			private IReadOnlyList<string> _characterStyleNames;
 			// The project's PARAGRAPH-type style names, computed once per compose
 			// from Cache.LangProject.StylesOC and stamped onto every editable StText row's
-			// LexicalEditRegionField.AvailableParagraphStyles (the host seam the per-paragraph style picker
+			// RegionField.AvailableParagraphStyles (the host seam the per-paragraph style picker
 			// reads). Sorted by name for a stable picker order; empty when no stylesheet/styles are reachable.
 			private IReadOnlyList<string> _paragraphStyleNames;
 			// The project's writing systems (analysis + vernacular),
 			// computed once per compose from Cache and stamped onto every editable text row's
-			// LexicalEditRegionField.AvailableWritingSystems (the host seam the per-WS retag picker reads).
+			// RegionField.AvailableWritingSystems (the host seam the per-WS retag picker reads).
 			// Empty when no writing systems are reachable; the WS picker affordance is then suppressed.
 			private IReadOnlyList<RegionWritingSystemOption> _writingSystemOptions;
 			// A map from ws tag to that ws's default font (+ RTL), computed
@@ -355,7 +355,7 @@ namespace SIL.FieldWorks.XWorks
 					_modelContext.Pop();
 			}
 
-			private void AddField(LexicalEditRegionField field)
+			private void AddField(RegionField field)
 			{
 				if (_modelContext.Count > 0)
 				{
@@ -825,7 +825,7 @@ namespace SIL.FieldWorks.XWorks
 						// only on a debugger (the legacy "dialog"/"simple" kinds wait on the
 						// ChooserCommand paths).
 						SIL.Reporting.Logger.WriteEvent(
-							$"FullEntryRegionComposer: chooserLink type '{link.Type}' (tool '{link.Tool}') on {node.StableId} is not the goto kind the lexeme editor uses; skipped.");
+							$"RegionComposer: chooserLink type '{link.Type}' (tool '{link.Tool}') on {node.StableId} is not the goto kind the lexeme editor uses; skipped.");
 						continue;
 					}
 					(links ?? (links = new List<RegionChooserLink>()))
@@ -856,7 +856,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				// Header row construction is shared with the thin mapper — one construction
 				// site so the two projectors cannot drift. The composer passes its LCModel-enriched values.
-				AddField(RegionStructureProjector.BuildHeaderField(
+				AddField(RegionStructureRules.BuildHeaderField(
 					StableId(node, obj), label, node.Field, node.WritingSystem, node.EditorClassification,
 					node.AutomationId, node.LocalizationKey, node.Routing, depth,
 					isCollapsible: true, isInitiallyExpanded: node.Expansion != ViewExpansion.Collapsed,
@@ -877,7 +877,7 @@ namespace SIL.FieldWorks.XWorks
 				if (!string.IsNullOrEmpty(label))
 					AddHeader(node, obj, depth, label);
 
-				var childDepth = RegionStructureProjector.ChildIndent(label, depth);
+				var childDepth = RegionStructureRules.ChildIndent(label, depth);
 				foreach (var child in node.Children)
 					Walk(child, obj, childDepth);
 
@@ -1040,7 +1040,7 @@ namespace SIL.FieldWorks.XWorks
 				// view's IsAudio branch), but the row must be editable so its text setter is registered.
 				var editable = type != CellarPropertyType.Unicode
 					&& values.All(v => v.CanEditRichText || v.IsAudio);
-				var textField = new LexicalEditRegionField(stableId, Localize(node.Label) ?? node.Field, node.Field,
+				var textField = new RegionField(stableId, Localize(node.Label) ?? node.Field, node.Field,
 					node.WritingSystem, RegionFieldKind.Text, node.EditorClassification, node.AutomationId,
 					node.LocalizationKey, node.Routing, values, null, null, editable, depth,
 					menuId: node.MenuId, contextMenuId: node.ContextMenuId, hotlinksId: node.HotlinksId,
@@ -1299,7 +1299,7 @@ namespace SIL.FieldWorks.XWorks
 				var options = _morphTypeOptions;
 
 				var stableId = StableId(node, obj);
-				AddField(new LexicalEditRegionField(stableId, Localize(node.Label) ?? node.Field, node.Field,
+				AddField(new RegionField(stableId, Localize(node.Label) ?? node.Field, node.Field,
 					node.WritingSystem, RegionFieldKind.Chooser, node.EditorClassification, node.AutomationId,
 					node.LocalizationKey, node.Routing, null, options, form.MorphTypeRA?.Guid.ToString(),
 					isEditable: true, indent: depth,
@@ -1350,7 +1350,7 @@ namespace SIL.FieldWorks.XWorks
 				var selected = (sense.MorphoSyntaxAnalysisRA as IMoStemMsa)?.PartOfSpeechRA?.Guid.ToString();
 
 				var stableId = StableId(node, obj);
-				AddField(new LexicalEditRegionField(stableId, Localize(node.Label) ?? node.Field, node.Field,
+				AddField(new RegionField(stableId, Localize(node.Label) ?? node.Field, node.Field,
 					node.WritingSystem, RegionFieldKind.Chooser, node.EditorClassification, node.AutomationId,
 					node.LocalizationKey, node.Routing, null, options, selected, isEditable: true, indent: depth,
 					menuId: node.MenuId, contextMenuId: node.ContextMenuId, hotlinksId: node.HotlinksId,
@@ -1400,7 +1400,7 @@ namespace SIL.FieldWorks.XWorks
 					? null
 					: _cache.ServiceLocator.ObjectRepository.GetObject(targetHvo).Guid.ToString();
 				var stableId = StableId(node, obj);
-				AddField(new LexicalEditRegionField(stableId, Localize(node.Label) ?? node.Field, node.Field,
+				AddField(new RegionField(stableId, Localize(node.Label) ?? node.Field, node.Field,
 					node.WritingSystem, RegionFieldKind.Chooser, node.EditorClassification, node.AutomationId,
 					node.LocalizationKey, node.Routing, null, options, selected, isEditable: true, indent: depth,
 					menuId: node.MenuId, contextMenuId: node.ContextMenuId, hotlinksId: node.HotlinksId,
@@ -1448,7 +1448,7 @@ namespace SIL.FieldWorks.XWorks
 					? null
 					: _cache.ServiceLocator.ObjectRepository.GetObject(targetHvo).Guid.ToString();
 				var stableId = StableId(node, obj);
-				AddField(new LexicalEditRegionField(stableId, Localize(node.Label) ?? node.Field, node.Field,
+				AddField(new RegionField(stableId, Localize(node.Label) ?? node.Field, node.Field,
 					node.WritingSystem, RegionFieldKind.Chooser, node.EditorClassification, node.AutomationId,
 					node.LocalizationKey, node.Routing, null, options, selected, isEditable: true, indent: depth,
 					menuId: node.MenuId, contextMenuId: node.ContextMenuId, hotlinksId: node.HotlinksId,
@@ -1485,7 +1485,7 @@ namespace SIL.FieldWorks.XWorks
 
 				var options = BuildPossibilityOptions(list, flat: false); // FlatList not imported; see above
 				var stableId = StableId(node, obj);
-				AddField(new LexicalEditRegionField(stableId, Localize(node.Label) ?? node.Field, node.Field,
+				AddField(new RegionField(stableId, Localize(node.Label) ?? node.Field, node.Field,
 					node.WritingSystem, RegionFieldKind.ReferenceVector, node.EditorClassification,
 					node.AutomationId, node.LocalizationKey, node.Routing, null, options, null,
 					isEditable: true, indent: depth, menuId: node.MenuId, contextMenuId: node.ContextMenuId,
@@ -1553,7 +1553,7 @@ namespace SIL.FieldWorks.XWorks
 				}
 
 				var stableId = StableId(node, obj);
-				AddField(new LexicalEditRegionField(stableId, Localize(node.Label) ?? node.Field, node.Field,
+				AddField(new RegionField(stableId, Localize(node.Label) ?? node.Field, node.Field,
 					node.WritingSystem, RegionFieldKind.ReferenceVector, node.EditorClassification,
 					node.AutomationId, node.LocalizationKey, node.Routing, null, options, null,
 					isEditable: true, indent: depth, menuId: node.MenuId, contextMenuId: node.ContextMenuId,
@@ -1676,7 +1676,7 @@ namespace SIL.FieldWorks.XWorks
 					if (row.IsEditable)
 						searchOptions = query => SearchLexicalRelationTargets(query, obj, relation, row.MappingType);
 
-					AddField(new LexicalEditRegionField(stableId, row.Label, node.Field, node.WritingSystem,
+					AddField(new RegionField(stableId, row.Label, node.Field, node.WritingSystem,
 						RegionFieldKind.ReferenceVector, node.EditorClassification, node.AutomationId,
 						node.LocalizationKey, node.Routing, null, null, null,
 						isEditable: row.IsEditable, indent: depth, menuId: row.MenuId,
@@ -1929,7 +1929,7 @@ namespace SIL.FieldWorks.XWorks
 			private void AddGhostLexRefVector(ViewNode node, ILexEntry entry, int depth)
 			{
 				var stableId = StableId(node, entry);
-				AddField(new LexicalEditRegionField(stableId, Localize(node.Label) ?? node.Field, node.Field,
+				AddField(new RegionField(stableId, Localize(node.Label) ?? node.Field, node.Field,
 					node.WritingSystem, RegionFieldKind.ReferenceVector, node.EditorClassification,
 					node.AutomationId, node.LocalizationKey, node.Routing, null, null, null,
 					isEditable: true, indent: depth, menuId: node.MenuId, contextMenuId: node.ContextMenuId,
@@ -2049,7 +2049,7 @@ namespace SIL.FieldWorks.XWorks
 				// object when it IS an entry, else its owning entry (e.g. obj is the LexEntryRef).
 				var owningEntry = obj as ILexEntry ?? obj.OwnerOfClass<ILexEntry>();
 
-				AddField(new LexicalEditRegionField(stableId, Localize(node.Label) ?? node.Field, node.Field,
+				AddField(new RegionField(stableId, Localize(node.Label) ?? node.Field, node.Field,
 					node.WritingSystem, RegionFieldKind.ReferenceVector, node.EditorClassification,
 					node.AutomationId, node.LocalizationKey, node.Routing, null, null, null,
 					isEditable: true, indent: depth, menuId: node.MenuId, contextMenuId: node.ContextMenuId,
@@ -2184,7 +2184,7 @@ namespace SIL.FieldWorks.XWorks
 
 				var stableId = StableId(node, obj);
 
-				AddField(new LexicalEditRegionField(stableId, Localize(node.Label) ?? node.Field, node.Field,
+				AddField(new RegionField(stableId, Localize(node.Label) ?? node.Field, node.Field,
 					node.WritingSystem, RegionFieldKind.ReferenceVector, node.EditorClassification,
 					node.AutomationId, node.LocalizationKey, node.Routing, null, null, null,
 					isEditable: true, indent: depth, menuId: node.MenuId, contextMenuId: node.ContextMenuId,
@@ -2578,7 +2578,7 @@ namespace SIL.FieldWorks.XWorks
 				// label column is left empty and the message rides the value slot so it renders ONCE, as the
 				// static gray content the legacy slice shows — not duplicated in both columns.
 				var message = Localize(node.Label) ?? node.Field ?? string.Empty;
-				AddField(new LexicalEditRegionField(StableId(node, obj), string.Empty,
+				AddField(new RegionField(StableId(node, obj), string.Empty,
 					node.Field, node.WritingSystem, RegionFieldKind.Literal, node.EditorClassification,
 					node.AutomationId, node.LocalizationKey, node.Routing,
 					new List<RegionWsValue> { new RegionWsValue("", message) }, null, null,
@@ -2587,7 +2587,7 @@ namespace SIL.FieldWorks.XWorks
 
 			private void AddReadOnlyRow(ViewNode node, ICmObject obj, int depth, string display)
 			{
-				AddField(new LexicalEditRegionField(StableId(node, obj), Localize(node.Label) ?? node.Field,
+				AddField(new RegionField(StableId(node, obj), Localize(node.Label) ?? node.Field,
 					node.Field, node.WritingSystem, RegionFieldKind.Text, node.EditorClassification,
 					node.AutomationId, node.LocalizationKey, node.Routing,
 					new List<RegionWsValue> { new RegionWsValue("", display ?? string.Empty) }, null, null,
@@ -2615,7 +2615,7 @@ namespace SIL.FieldWorks.XWorks
 				// The field is editable when the field itself is not hidden and EVERY paragraph round-trips
 				// (no ORC/lossy paragraph). A lossy paragraph holds its own row read-only via CanEditText, but
 				// the row's structural affordances (add/delete) stay available, so the field stays editable.
-				var field = new LexicalEditRegionField(stableId, Localize(node.Label) ?? node.Field, node.Field,
+				var field = new RegionField(stableId, Localize(node.Label) ?? node.Field, node.Field,
 					node.WritingSystem, RegionFieldKind.StructuredText, node.EditorClassification,
 					node.AutomationId, node.LocalizationKey, node.Routing, null, null, null,
 					isEditable: true, indent: depth, menuId: node.MenuId, contextMenuId: node.ContextMenuId,
@@ -2702,7 +2702,7 @@ namespace SIL.FieldWorks.XWorks
 				// service-aware marker type test.
 				var context = new RegionEditorBuildContext(obj, node, _editContextAccessor, _cache);
 				Func<Avalonia.Controls.Control> factory = () => plugin.BuildControl(context);
-				AddField(new LexicalEditRegionField(StableId(node, obj), Localize(node.Label) ?? node.Field,
+				AddField(new RegionField(StableId(node, obj), Localize(node.Label) ?? node.Field,
 					node.Field, node.WritingSystem, RegionFieldKind.Custom, node.EditorClassification,
 					node.AutomationId, node.LocalizationKey, node.Routing, null, null, null,
 					isEditable: true, indent: depth,
@@ -2716,7 +2716,7 @@ namespace SIL.FieldWorks.XWorks
 				// The Unsupported worklist row still binds its object and slice menus so a right-click
 				// keeps the legacy per-object commands (Field Visibility / Move Field / Help), and so the
 				// row is addressable by its object (menu targeting, override editing) like any other row.
-				AddField(new LexicalEditRegionField(StableId(node, obj), Localize(node.Label) ?? node.Field,
+				AddField(new RegionField(StableId(node, obj), Localize(node.Label) ?? node.Field,
 					node.Field, node.WritingSystem, RegionFieldKind.Unsupported, node.EditorClassification,
 					node.AutomationId, node.LocalizationKey, node.Routing, null, null, null,
 					isEditable: false, indent: depth, menuId: node.MenuId, contextMenuId: node.ContextMenuId,
@@ -2738,7 +2738,7 @@ namespace SIL.FieldWorks.XWorks
 
 				var stableId = $"{StableId(node, obj)}/ghost";
 				var ghost = ResolveGhostCreation(node, obj);
-				AddField(new LexicalEditRegionField(stableId, label, node.Field,
+				AddField(new RegionField(stableId, label, node.Field,
 					node.WritingSystem, RegionFieldKind.Text, node.EditorClassification,
 					node.AutomationId, node.LocalizationKey, node.Routing,
 					new List<RegionWsValue> { new RegionWsValue(ghost?.WsAbbrev ?? "", string.Empty, wsTag: ghost?.WsTag) },
@@ -2933,7 +2933,7 @@ namespace SIL.FieldWorks.XWorks
 					// HeavySummary part ref binds mnuDataTree-Sense in LexSense.fwlayout) — the
 					// sequence node itself usually has none.
 					var itemBinding = ResolveItemMenuBinding(node, item);
-					AddField(new LexicalEditRegionField($"{StableId(node, obj)}/item{i}",
+					AddField(new RegionField($"{StableId(node, obj)}/item{i}",
 						itemLabel, node.Field, null, RegionFieldKind.Header,
 						EditorClassification.GroupingNone, null, null, SurfaceRouting.Inherit,
 						null, null, null, isEditable: false, indent: depth + 1,
@@ -3244,7 +3244,7 @@ namespace SIL.FieldWorks.XWorks
 					// Never a silent permanent failure — log, fall back to the
 					// 3-field first slice for THIS compose, and retry next time (GetSources).
 					SIL.Reporting.Logger.WriteEvent(
-						"FullEntryRegionComposer: no merged parts XML under '" + partsDirectory
+						"RegionComposer: no merged parts XML under '" + partsDirectory
 						+ "'; falling back to the first slice (will retry on the next compose).");
 					return null;
 				}
@@ -3261,7 +3261,7 @@ namespace SIL.FieldWorks.XWorks
 				// Never a silent permanent failure — log, fall back to the
 				// 3-field first slice for THIS compose, and retry next time (GetSources).
 				SIL.Reporting.Logger.WriteError(
-					"FullEntryRegionComposer: failed to load layout sources; "
+					"RegionComposer: failed to load layout sources; "
 					+ "falling back to the first slice for this compose.", e);
 				return null;
 			}
@@ -3312,10 +3312,10 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		// The field's handler, or null when the field is unknown or carries no delegate for this gesture.
-		private FieldEditHandler Handler(LexicalEditRegionField field)
+		private FieldEditHandler Handler(RegionField field)
 			=> field != null && _handlers.TryGetValue(field.StableId, out var handler) ? handler : null;
 
-		public override bool TrySetText(LexicalEditRegionField field, string ws, string value)
+		public override bool TrySetText(RegionField field, string ws, string value)
 		{
 			if (field != null && field.Values.Any(v => v.RequiresRichEditor))
 				return false;
@@ -3327,7 +3327,7 @@ namespace SIL.FieldWorks.XWorks
 			return Stage(() => setter(ws, value), FieldLabelFor(field));
 		}
 
-		public override bool TrySetRichText(LexicalEditRegionField field, string ws, RegionRichTextValue value)
+		public override bool TrySetRichText(RegionField field, string ws, RegionRichTextValue value)
 		{
 			if (field != null && field.Values.Any(v => !v.CanEditRichText))
 				return false;
@@ -3338,7 +3338,7 @@ namespace SIL.FieldWorks.XWorks
 			return Stage(() => setter(ws, value), FieldLabelFor(field));
 		}
 
-		public override bool TrySetOption(LexicalEditRegionField field, string optionKey)
+		public override bool TrySetOption(RegionField field, string optionKey)
 		{
 			var setter = Handler(field)?.Option;
 			if (setter == null)
@@ -3346,7 +3346,7 @@ namespace SIL.FieldWorks.XWorks
 			return Stage(() => setter(optionKey), FieldLabelFor(field));
 		}
 
-		public override bool TryAddReferenceItem(LexicalEditRegionField field, string optionKey)
+		public override bool TryAddReferenceItem(RegionField field, string optionKey)
 		{
 			var setter = Handler(field)?.ReferenceAdd;
 			if (setter == null)
@@ -3354,7 +3354,7 @@ namespace SIL.FieldWorks.XWorks
 			return Stage(() => setter(optionKey), FieldLabelFor(field));
 		}
 
-		public override bool TryRemoveReferenceItem(LexicalEditRegionField field, string optionKey)
+		public override bool TryRemoveReferenceItem(RegionField field, string optionKey)
 		{
 			var setter = Handler(field)?.ReferenceRemove;
 			if (setter == null)
@@ -3362,7 +3362,7 @@ namespace SIL.FieldWorks.XWorks
 			return Stage(() => setter(optionKey), FieldLabelFor(field));
 		}
 
-		public bool TrySetParagraphText(LexicalEditRegionField field, int paragraphIndex,
+		public bool TrySetParagraphText(RegionField field, int paragraphIndex,
 			RegionRichTextValue value)
 		{
 			var setter = Handler(field)?.ParagraphText;
@@ -3371,7 +3371,7 @@ namespace SIL.FieldWorks.XWorks
 			return Stage(() => setter(paragraphIndex, value), FieldLabelFor(field));
 		}
 
-		public bool TrySetParagraphStyle(LexicalEditRegionField field, int paragraphIndex,
+		public bool TrySetParagraphStyle(RegionField field, int paragraphIndex,
 			string styleName)
 		{
 			var setter = Handler(field)?.ParagraphStyle;
@@ -3380,7 +3380,7 @@ namespace SIL.FieldWorks.XWorks
 			return Stage(() => setter(paragraphIndex, styleName), FieldLabelFor(field));
 		}
 
-		public bool TryInsertParagraph(LexicalEditRegionField field, int afterParagraphIndex)
+		public bool TryInsertParagraph(RegionField field, int afterParagraphIndex)
 		{
 			var setter = Handler(field)?.ParagraphInsert;
 			if (setter == null)
@@ -3388,7 +3388,7 @@ namespace SIL.FieldWorks.XWorks
 			return Stage(() => setter(afterParagraphIndex), FieldLabelFor(field));
 		}
 
-		public bool TryDeleteParagraph(LexicalEditRegionField field, int paragraphIndex)
+		public bool TryDeleteParagraph(RegionField field, int paragraphIndex)
 		{
 			var setter = Handler(field)?.ParagraphDelete;
 			if (setter == null)
@@ -3398,7 +3398,7 @@ namespace SIL.FieldWorks.XWorks
 
 		// The human-readable field label that names the undo step, falling back to the
 		// field name (never empty so the generic label is reserved for the batch/bulk path).
-		private static string FieldLabelFor(LexicalEditRegionField field)
+		private static string FieldLabelFor(RegionField field)
 			=> string.IsNullOrEmpty(field?.Label) ? field?.Field : field.Label;
 
 		// The fenced-session staging helper (open-on-first-edit, close-empty-fence-on-reject) lives

@@ -41,7 +41,7 @@ namespace FwAvaloniaTests
 	}
 
 	[TestFixture]
-	public class LexicalEditRegionMapperTests
+	public class RegionModelProjectorTests
 	{
 		private static ViewDefinitionModel SampleDefinition()
 		{
@@ -63,7 +63,7 @@ namespace FwAvaloniaTests
 		[Test]
 		public void FromViewDefinition_ProjectsFields_FromTheTypedDefinition()
 		{
-			var model = LexicalEditRegionMapper.FromViewDefinition(SampleDefinition(), new FakeRegionValueProvider());
+			var model = RegionModelProjector.FromViewDefinition(SampleDefinition(), new FakeRegionValueProvider());
 
 			Assert.That(model.ClassName, Is.EqualTo("LexEntry"));
 			Assert.That(model.Fields.Select(f => f.Field), Is.EqualTo(new[] { "LexemeForm", "MorphType", "Gloss" }));
@@ -72,7 +72,7 @@ namespace FwAvaloniaTests
 		[Test]
 		public void TextFields_AreClassifiedAsText_AndBoundToValues()
 		{
-			var model = LexicalEditRegionMapper.FromViewDefinition(SampleDefinition(), new FakeRegionValueProvider());
+			var model = RegionModelProjector.FromViewDefinition(SampleDefinition(), new FakeRegionValueProvider());
 			var lexeme = model.Fields.Single(f => f.Field == "LexemeForm");
 
 			Assert.That(lexeme.Kind, Is.EqualTo(RegionFieldKind.Text));
@@ -125,7 +125,7 @@ namespace FwAvaloniaTests
 		[Test]
 		public void RichTextFields_AreProjectedEditable_WhenRichRowsCanRoundTrip()
 		{
-			var model = LexicalEditRegionMapper.FromViewDefinition(SampleDefinition(), new RichRegionValueProvider());
+			var model = RegionModelProjector.FromViewDefinition(SampleDefinition(), new RichRegionValueProvider());
 			var lexeme = model.Fields.Single(f => f.Field == "LexemeForm");
 
 			Assert.That(lexeme.IsEditable, Is.True,
@@ -138,7 +138,7 @@ namespace FwAvaloniaTests
 		[Test]
 		public void RichTextFields_WithUnsupportedObjectData_AreProjectedReadOnly()
 		{
-			var model = LexicalEditRegionMapper.FromViewDefinition(SampleDefinition(),
+			var model = RegionModelProjector.FromViewDefinition(SampleDefinition(),
 				new UnsupportedRichRegionValueProvider());
 			var lexeme = model.Fields.Single(f => f.Field == "LexemeForm");
 
@@ -164,7 +164,7 @@ namespace FwAvaloniaTests
 		[Test]
 		public void ChooserField_IsClassifiedAsChooser_WithOptionsAndSelection()
 		{
-			var model = LexicalEditRegionMapper.FromViewDefinition(SampleDefinition(), new FakeRegionValueProvider());
+			var model = RegionModelProjector.FromViewDefinition(SampleDefinition(), new FakeRegionValueProvider());
 			var morph = model.Fields.Single(f => f.Field == "MorphType");
 
 			Assert.That(morph.Kind, Is.EqualTo(RegionFieldKind.Chooser));
@@ -182,7 +182,7 @@ namespace FwAvaloniaTests
 			};
 			var def = new ViewDefinitionModel("LexEntry", "identity", "detail", roots, new List<ViewDiagnostic>());
 
-			var model = LexicalEditRegionMapper.FromViewDefinition(def, new FakeRegionValueProvider());
+			var model = RegionModelProjector.FromViewDefinition(def, new FakeRegionValueProvider());
 			Assert.That(model.Fields, Is.Empty);
 		}
 
@@ -196,7 +196,7 @@ namespace FwAvaloniaTests
 			};
 			var def = new ViewDefinitionModel("LexEntry", "identity", "detail", roots, new List<ViewDiagnostic>());
 
-			var model = LexicalEditRegionMapper.FromViewDefinition(def, new FakeRegionValueProvider());
+			var model = RegionModelProjector.FromViewDefinition(def, new FakeRegionValueProvider());
 			Assert.That(model.Fields.Single().Kind, Is.EqualTo(RegionFieldKind.Unsupported));
 		}
 
@@ -206,7 +206,7 @@ namespace FwAvaloniaTests
 			var diags = new List<ViewDiagnostic> { new ViewDiagnostic(ViewDiagnosticSeverity.Warning, "x", "m", "p") };
 			var def = new ViewDefinitionModel("LexEntry", "identity", "detail", new List<ViewNode>(), diags);
 
-			var model = LexicalEditRegionMapper.FromViewDefinition(def, new FakeRegionValueProvider());
+			var model = RegionModelProjector.FromViewDefinition(def, new FakeRegionValueProvider());
 			Assert.That(model.Diagnostics, Has.Count.EqualTo(1));
 		}
 
@@ -359,7 +359,7 @@ namespace FwAvaloniaTests
 		[AvaloniaTest]
 		public void RegionView_RendersFields_WithStableAutomationIds()
 		{
-			var model = LexicalEditRegionMapper.FromViewDefinition(SampleDefinition(), new FakeRegionValueProvider());
+			var model = RegionModelProjector.FromViewDefinition(SampleDefinition(), new FakeRegionValueProvider());
 			var view = new LexicalEditRegionView(model);
 			var window = new Window { Content = view, Width = 420, Height = 240 };
 			window.Show();

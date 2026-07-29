@@ -8,13 +8,13 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 {
 	/// <summary>
 	/// The shared structural projection rules used by BOTH region projectors — the thin
-	/// <see cref="LexicalEditRegionMapper"/> (view-definition → region model, LCModel-free) and the full
-	/// xWorks <c>FullEntryRegionComposer</c> (LCModel-backed). The section-header row
+	/// <see cref="RegionModelProjector"/> (view-definition → region model, LCModel-free) and the full
+	/// xWorks <c>RegionComposer</c> (LCModel-backed). The section-header row
 	/// construction and the child-indent rule live ONCE here so the two paths cannot drift. (The third
 	/// structural rule — editor → renderable kind — is
 	/// likewise shared, in <see cref="EditorKindMap.ClassifyRegionFieldKind"/>.)
 	/// </summary>
-	public static class RegionStructureProjector
+	public static class RegionStructureRules
 	{
 		/// <summary>
 		/// The indent depth a grouping node gives its children: a labeled group indents one level; an
@@ -30,7 +30,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		/// defaults (no collapse affordance, no menu/HVO); the composer passes its LCModel-enriched
 		/// values (collapsible state from expansion, slice menu/hotlinks, owning object HVO).
 		/// </summary>
-		public static LexicalEditRegionField BuildHeaderField(
+		public static RegionField BuildHeaderField(
 			string stableId,
 			string label,
 			string field,
@@ -46,7 +46,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 			string hotlinksId = null,
 			int objectHvo = 0)
 		{
-			return new LexicalEditRegionField(
+			return new RegionField(
 				stableId, label, field, writingSystem, RegionFieldKind.Header, editorClassification,
 				automationId, localizationKey, routing, null, null, null,
 				isEditable: false, indent: depth,

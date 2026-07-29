@@ -103,7 +103,7 @@ namespace FwAvaloniaTests
 		private const string ArabicHouse = "بيت"; // بيت
 		private const string ArabicBig = "كبير"; // كبير
 
-		private static LexicalEditRegionField RtlField() => new LexicalEditRegionField(
+		private static RegionField RtlField() => new RegionField(
 			"LexEntry/x/#0", "Lexeme Form", "Form", "vernacular", RegionFieldKind.Text,
 			EditorClassification.Known, "RtlEditor", null, SurfaceRouting.Product,
 			new List<RegionWsValue> { new RegionWsValue("ar", ArabicHouse, "Scheherazade New", 0, rightToLeft: true, wsTag: "ar") },
@@ -144,7 +144,7 @@ namespace FwAvaloniaTests
 		public void MixedDirectionValue_SelectionAndCaretStayLogicalWhileStagingEdits()
 		{
 			const string mixed = "abc \u05D0\u05D1\u05D2 123";
-			var field = new LexicalEditRegionField(
+			var field = new RegionField(
 				"LexEntry/x/#0", "Lexeme Form", "Form", "vernacular", RegionFieldKind.Text,
 				EditorClassification.Known, "MixedEditor", null, SurfaceRouting.Product,
 				new List<RegionWsValue>
@@ -179,7 +179,7 @@ namespace FwAvaloniaTests
 		public void MixedDirectionArrowKeys_HonorActiveRunDirection_AndShiftSelection()
 		{
 			const string mixed = "abc \u05D0\u05D1\u05D2 xyz";
-			var field = new LexicalEditRegionField(
+			var field = new RegionField(
 				"LexEntry/x/#0", "Lexeme Form", "Form", "vernacular", RegionFieldKind.Text,
 				EditorClassification.Known, "MixedArrowEditor", null, SurfaceRouting.Product,
 				new List<RegionWsValue>
@@ -213,7 +213,7 @@ namespace FwAvaloniaTests
 		public void MirroredPunctuationSelection_StaysStableInRtlValue()
 		{
 			const string value = "(\u05d0\u05d1\u05d2)";
-			var field = new LexicalEditRegionField(
+			var field = new RegionField(
 				"LexEntry/x/#0", "Lexeme Form", "Form", "vernacular", RegionFieldKind.Text,
 				EditorClassification.Known, "RtlParenEditor", null, SurfaceRouting.Product,
 				new List<RegionWsValue>
@@ -238,7 +238,7 @@ namespace FwAvaloniaTests
 		{
 			const string value = "\u05d0\u05d1\u05d2 123";
 			var context = new FakeRegionEditContext();
-			var field = new LexicalEditRegionField(
+			var field = new RegionField(
 				"LexEntry/x/#0", "Lexeme Form", "Form", "vernacular", RegionFieldKind.Text,
 				EditorClassification.Known, "RtlNumbersEditor", null, SurfaceRouting.Product,
 				new List<RegionWsValue>

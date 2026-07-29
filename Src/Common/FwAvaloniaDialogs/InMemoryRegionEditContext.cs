@@ -25,7 +25,7 @@ namespace FwAvaloniaDialogs
 			new Dictionary<string, Dictionary<string, string>>(StringComparer.Ordinal);
 
 		/// <summary>Raised after a successful text stage so the view-model can re-derive / re-gate OK.</summary>
-		public event Action<LexicalEditRegionField, string, string> TextStaged;
+		public event Action<RegionField, string, string> TextStaged;
 
 		/// <inheritdoc />
 		public bool IsOpen { get; private set; }
@@ -34,14 +34,14 @@ namespace FwAvaloniaDialogs
 		/// The staged per-writing-system text for a field (the field's <see cref="FieldKey"/>), or an empty map
 		/// when nothing was staged. Keyed by the writing-system key the editor used (the WS tag).
 		/// </summary>
-		public IReadOnlyDictionary<string, string> GetStaged(LexicalEditRegionField field)
+		public IReadOnlyDictionary<string, string> GetStaged(RegionField field)
 		{
 			return _staged.TryGetValue(FieldKey(field), out var byWs)
 				? byWs
 				: new Dictionary<string, string>();
 		}
 
-		public bool TrySetText(LexicalEditRegionField field, string ws, string value)
+		public bool TrySetText(RegionField field, string ws, string value)
 		{
 			if (field == null || string.IsNullOrEmpty(ws))
 				return false;
@@ -58,15 +58,15 @@ namespace FwAvaloniaDialogs
 		}
 
 		// Rich text is flattened to its plain text: the Insert Entry fields are plain strings.
-		public bool TrySetRichText(LexicalEditRegionField field, string ws, RegionRichTextValue value)
+		public bool TrySetRichText(RegionField field, string ws, RegionRichTextValue value)
 			=> TrySetText(field, ws, value?.PlainText ?? string.Empty);
 
 		// The morph-type picker is driven by the view-model, not through this context; reject option staging.
-		public bool TrySetOption(LexicalEditRegionField field, string optionKey) => false;
+		public bool TrySetOption(RegionField field, string optionKey) => false;
 
-		public bool TryAddReferenceItem(LexicalEditRegionField field, string optionKey) => false;
+		public bool TryAddReferenceItem(RegionField field, string optionKey) => false;
 
-		public bool TryRemoveReferenceItem(LexicalEditRegionField field, string optionKey) => false;
+		public bool TryRemoveReferenceItem(RegionField field, string optionKey) => false;
 
 		// The Insert Entry dialog edits plain lexeme-form/gloss strings only; it implements neither
 		// IStructuredTextEditing (no StText rows) nor picture editing.
@@ -78,7 +78,7 @@ namespace FwAvaloniaDialogs
 		public void Cancel() => IsOpen = false;
 
 		// A composed field keys on StableId; a fixed field keys on Field; fall back to the automation id.
-		private static string FieldKey(LexicalEditRegionField field)
+		private static string FieldKey(RegionField field)
 			=> field.StableId ?? field.Field ?? field.AutomationId ?? string.Empty;
 	}
 }

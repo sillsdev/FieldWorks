@@ -26,15 +26,15 @@ namespace FwAvaloniaTests
 	[TestFixture]
 	public class RegionOverrideRenderingTests
 	{
-		private static LexicalEditRegionField TextField(string id, string label)
-			=> new LexicalEditRegionField(id, label, label, null, RegionFieldKind.Text,
+		private static RegionField TextField(string id, string label)
+			=> new RegionField(id, label, label, null, RegionFieldKind.Text,
 				EditorClassification.Known, id, null, SurfaceRouting.Inherit,
 				new List<RegionWsValue> { new RegionWsValue("en", "value") },
 				null, null, isEditable: true, indent: 0, objectHvo: 1234);
 
-		private static LexicalEditRegionView Render(params LexicalEditRegionField[] fields)
+		private static LexicalEditRegionView Render(params RegionField[] fields)
 		{
-			var model = new LexicalEditRegionModel("LexEntry", "Normal", fields.ToList(),
+			var model = new RegionModel("LexEntry", "Normal", fields.ToList(),
 				new List<ViewDiagnostic>());
 			var view = new LexicalEditRegionView(model, null, null, null, null, null);
 			var window = new Window { Content = view, Width = 480, Height = 360 };

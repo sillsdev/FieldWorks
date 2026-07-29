@@ -33,14 +33,14 @@ namespace FwAvaloniaTests
 		private const char Picture = (char)8;
 		private const char FootnoteOwn = (char)5;
 
-		private static LexicalEditRegionField FieldWith(RegionRichTextValue rich, bool isEditable = true)
-			=> new LexicalEditRegionField("LexEntry/Bib@1", "Bibliography", "Bibliography", null,
+		private static RegionField FieldWith(RegionRichTextValue rich, bool isEditable = true)
+			=> new RegionField("LexEntry/Bib@1", "Bibliography", "Bibliography", null,
 				RegionFieldKind.Text, EditorClassification.Known, "BibEditor", null, SurfaceRouting.Product,
 				new List<RegionWsValue> { new RegionWsValue("anal", rich.PlainText, wsTag: "en", richText: rich) },
 				null, null, isEditable: isEditable);
 
 		private static (FwMultiWsTextField Control, FakeRegionEditContext Context, Window Window)
-			Show(LexicalEditRegionField field)
+			Show(RegionField field)
 		{
 			var context = new FakeRegionEditContext();
 			var control = new FwMultiWsTextField(field, "BibEditor", context, null);

@@ -9,13 +9,13 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 {
 	/// <summary>
 	/// Projects a typed <see cref="ViewDefinitionModel"/> into a value-bound
-	/// <see cref="LexicalEditRegionModel"/>. It flattens the visible leaf field nodes,
+	/// <see cref="RegionModel"/>. It flattens the visible leaf field nodes,
 	/// classifies each into a <see cref="RegionFieldKind"/> from its editor, and asks the supplied
 	/// <see cref="IRegionValueProvider"/> for live values.
 	/// </summary>
-	public static class LexicalEditRegionMapper
+	public static class RegionModelProjector
 	{
-		public static LexicalEditRegionModel FromViewDefinition(
+		public static RegionModel FromViewDefinition(
 			ViewDefinitionModel definition,
 			IRegionValueProvider values)
 		{
@@ -24,13 +24,13 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 			if (values == null)
 				throw new System.ArgumentNullException(nameof(values));
 
-			var fields = new List<LexicalEditRegionField>();
+			var fields = new List<RegionField>();
 			foreach (var root in definition.Roots)
 			{
 				CollectFields(root, values, fields, 0);
 			}
 
-			return new LexicalEditRegionModel(
+			return new RegionModel(
 				definition.ClassName,
 				definition.LayoutName,
 				fields,
@@ -40,7 +40,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		private static void CollectFields(
 			ViewNode node,
 			IRegionValueProvider values,
-			List<LexicalEditRegionField> output,
+			List<RegionField> output,
 			int depth)
 		{
 			if (node.Visibility == ViewVisibility.Never)
@@ -58,10 +58,10 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 			{
 				// Section header row (legacy grouping slice); children indent one level under it. The
 				// header construction and indent rule are shared with the full composer.
-				output.Add(RegionStructureProjector.BuildHeaderField(
+				output.Add(RegionStructureRules.BuildHeaderField(
 					node.StableId, node.Label, node.Field, node.WritingSystem, node.EditorClassification,
 					node.AutomationId, node.LocalizationKey, node.Routing, depth));
-				childDepth = RegionStructureProjector.ChildIndent(node.Label, depth);
+				childDepth = RegionStructureRules.ChildIndent(node.Label, depth);
 			}
 
 			foreach (var child in node.Children)
@@ -70,7 +70,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 			}
 		}
 
-		private static LexicalEditRegionField BuildField(
+		private static RegionField BuildField(
 			ViewNode node,
 			IRegionValueProvider values,
 			int depth)
@@ -103,7 +103,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 					break;
 			}
 
-			return new LexicalEditRegionField(
+			return new RegionField(
 				node.StableId,
 				node.Label,
 				node.Field,
