@@ -25,7 +25,7 @@ namespace FwAvaloniaDialogs
 	///   <see cref="EntryGoDialogInput.AuxiliaryOptions"/> the dialog becomes TWO-STAGE: picking a result is
 	///   stage 1 (populates <see cref="AuxiliaryOptions"/> without committing) and the inherited OK commits stage 2,
 	///   gated on both an entry and an auxiliary option. The right-side description region exists only when the
-	///   consumer supplies a label or rich per-row content (<see cref="HasDescriptionRegion"/>).
+	///   consumer supplies a label or rich per-row content (<see cref="HasDescriptionPane"/>).
 	/// </summary>
 	public partial class EntryGoDialogViewModel : DialogViewModelBase
 	{
@@ -86,7 +86,7 @@ namespace FwAvaloniaDialogs
 			// The right-side description region is opt-in: only a consumer that supplies a label (the pane's
 			// caption) or rich per-row content gets the pane; everyone else gives the matching list the full
 			// width (the legacy BaseGoDlg has no description pane at all).
-			HasDescriptionRegion = HasDescriptionLabel || Results.Any(r => r.HasDescriptionContent);
+			HasDescriptionPane = HasDescriptionLabel || Results.Any(r => r.HasDescriptionContent);
 		}
 
 		/// <summary>The dialog title (e.g. "Merge Entry").</summary>
@@ -112,7 +112,7 @@ namespace FwAvaloniaDialogs
 		/// <see cref="DescriptionLabel"/> or rows carrying rich description content. False removes the region
 		/// entirely so the persistent matching list takes the full dialog width.
 		/// </summary>
-		public bool HasDescriptionRegion { get; }
+		public bool HasDescriptionPane { get; }
 
 		/// <summary>
 		/// The matching list's ordered column presentation (header + result field + writing-system typography per

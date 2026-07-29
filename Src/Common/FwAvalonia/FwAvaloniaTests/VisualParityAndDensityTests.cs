@@ -77,11 +77,11 @@ namespace FwAvaloniaTests
 	[TestFixture]
 	public class RegionEditorShortcutTests
 	{
-		private static (DataTree view, FakeRegionEditContext context) ShowEditable()
+		private static (DataTree view, FakeDetailEditContext context) ShowEditable()
 		{
 			var model = new DetailModel("LexEntry", "identity",
 				new List<DetailField>(), new List<ViewDiagnostic>());
-			var context = new FakeRegionEditContext();
+			var context = new FakeDetailEditContext();
 			var view = new DataTree(model, context);
 			var window = new Window { Content = view, Width = 400, Height = 160 };
 			window.Show();

@@ -10,7 +10,7 @@ using Avalonia.Headless.NUnit;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwAvalonia.Detail;
 using SIL.FieldWorks.Common.FwAvalonia.ViewDefinition;
-using FwAvaloniaTests; // FakeRegionEditContext — the LCModel-free editing seam fake (RegionEditingTests.cs)
+using FwAvaloniaTests; // FakeDetailEditContext — the LCModel-free editing seam fake (RegionEditingTests.cs)
 using FwAvaloniaDialogsTests; // DialogLayoutAssert — the shared layout tripwire (linked in via the csproj)
 
 namespace FwAvaloniaTests.VisualChecks
@@ -63,7 +63,7 @@ namespace FwAvaloniaTests.VisualChecks
 		{
 			// Read-only display stage: the detail view is FLAT with subtle field separators (the WinForms
 			// DataTree look) — labels + values at the WinForms density font, no boxing per value.
-			var model = DetailModelProjector.FromViewDefinition(RegionDefinition(), new TwoFieldProvider());
+			var model = DetailModelProjector.FromViewDefinition(DetailDefinition(), new TwoFieldProvider());
 			var view = new DataTree(model);
 
 			DialogSnapshot.Capture(view, "Region-01-initial", width: 420, height: 200);
@@ -75,8 +75,8 @@ namespace FwAvaloniaTests.VisualChecks
 		{
 			// Editable stage: an edit context is supplied so the value editors are live; the surface must still
 			// read flat/dense (no per-field box) the way the legacy editable DataTree does.
-			var model = DetailModelProjector.FromViewDefinition(RegionDefinition(), new TwoFieldProvider());
-			var view = new DataTree(model, new FakeRegionEditContext());
+			var model = DetailModelProjector.FromViewDefinition(DetailDefinition(), new TwoFieldProvider());
+			var view = new DataTree(model, new FakeDetailEditContext());
 
 			DialogSnapshot.Capture(view, "Region-02-editable", width: 420, height: 200);
 			DialogLayoutAssert.AssertNoCrowding(view);
@@ -91,7 +91,7 @@ namespace FwAvaloniaTests.VisualChecks
 			// citation, a part-of-speech chooser, a date, a generic-date, an enum/option chooser, a boolean,
 			// a reference vector, and a multi-line note — the spread of kinds a real lexeme-entry detail shows.
 			// It must still read FLAT/dense (the WinForms DataTree look) with thin field separators, no boxing.
-			var view = new DataTree(RealisticRegionModel());
+			var view = new DataTree(RealisticDetailModel());
 
 			DialogSnapshot.Capture(view, "Region-03-multi-field", width: 520, height: 420);
 			DialogLayoutAssert.AssertNoCrowding(view);
@@ -103,7 +103,7 @@ namespace FwAvaloniaTests.VisualChecks
 			// The same realistic field spread, now editable (an edit context makes the text/chooser editors
 			// live; dropped editors render Unsupported). The dense flat look must survive: live editors, no
 			// per-field box, aligned columns.
-			var view = new DataTree(RealisticRegionModel(), new FakeRegionEditContext());
+			var view = new DataTree(RealisticDetailModel(), new FakeDetailEditContext());
 
 			DialogSnapshot.Capture(view, "Region-04-editable-multi", width: 520, height: 420);
 			DialogLayoutAssert.AssertNoCrowding(view);
@@ -123,7 +123,7 @@ namespace FwAvaloniaTests.VisualChecks
 			};
 			var view = new DataTree(
 				new DetailModel("LexEntry", "detail", fields, new List<ViewDiagnostic>()),
-				new FakeRegionEditContext());
+				new FakeDetailEditContext());
 
 			DialogSnapshot.Capture(view, "Region-06-reference", width: 520, height: 200);
 			DialogLayoutAssert.AssertNoCrowding(view);
@@ -132,7 +132,7 @@ namespace FwAvaloniaTests.VisualChecks
 
 		// ----- minimal surface fixtures (no LCModel) -----
 
-		private static ViewDefinitionModel RegionDefinition() => new ViewDefinitionModel(
+		private static ViewDefinitionModel DetailDefinition() => new ViewDefinitionModel(
 			"LexEntry", "detail", "detail", new List<ViewNode>
 			{
 				new ViewNode("d/#0", ViewNodeKind.Field, "Lexeme Form", null, "Form", "multistring",
@@ -155,7 +155,7 @@ namespace FwAvaloniaTests.VisualChecks
 		// ReferenceVector, Unsupported — are exercised; the mapper only classifies Text/Chooser/Unsupported) -----
 
 		// A realistic lexeme-entry detail: 10 fields of varied kinds, mirroring what the lexical edit pane shows.
-		private static DetailModel RealisticRegionModel()
+		private static DetailModel RealisticDetailModel()
 		{
 			var fields = new List<DetailField>
 			{

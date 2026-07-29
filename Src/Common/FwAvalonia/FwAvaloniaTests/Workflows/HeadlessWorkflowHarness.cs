@@ -21,7 +21,7 @@ namespace FwAvaloniaTests.Workflows
 	///
 	///  • <see cref="HeadlessStage"/> — hosts one or more Avalonia controls in a headless window and
 	///    pumps the dispatcher, so a test reads/acts on a realized visual tree exactly as a user would.
-	///  • <see cref="RegionEditorDriver"/> — a page-object "driver"
+	///  • <see cref="DetailEditorDriver"/> — a page-object "driver"
 	///    that expose intent-level verbs (filter, clear, select, read cell, type, commit) over a hosted
 	///    surface, so scenario tests read like a script and stay stable as the control internals change.
 	///
@@ -71,12 +71,12 @@ namespace FwAvaloniaTests.Workflows
 	/// <c>{fieldAutomationId}.{ws}</c> (per writing system), so the driver locates a field's editor by
 	/// its automation-id prefix.
 	/// </summary>
-	public sealed class RegionEditorDriver
+	public sealed class DetailEditorDriver
 	{
 		private readonly DataTree _view;
 		private readonly HeadlessStage _stage;
 
-		public RegionEditorDriver(DataTree view, HeadlessStage stage)
+		public DetailEditorDriver(DataTree view, HeadlessStage stage)
 		{
 			_view = view ?? throw new ArgumentNullException(nameof(view));
 			_stage = stage;

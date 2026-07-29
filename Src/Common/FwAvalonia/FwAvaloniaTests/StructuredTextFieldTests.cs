@@ -95,7 +95,7 @@ namespace FwAvaloniaTests
 		public void Editable_RendersEditableRows_AndStagesAParagraphTextEdit()
 		{
 			var field = Field(new List<DetailParagraph> { Para("First paragraph."), Para("Second paragraph.") });
-			var context = new FakeRegionEditContext();
+			var context = new FakeDetailEditContext();
 			var (control, window) = Show(field, context);
 
 			DialogSnapshot.Capture(window, "Region-StText-02-editable");
@@ -120,7 +120,7 @@ namespace FwAvaloniaTests
 			{
 				Para("Alpha."), Para("Beta."), Para("Gamma.")
 			});
-			var context = new FakeRegionEditContext();
+			var context = new FakeDetailEditContext();
 			var (control, window) = Show(field, context);
 
 			DialogSnapshot.Capture(window, "Region-StText-03-multi-paragraph");
@@ -133,7 +133,7 @@ namespace FwAvaloniaTests
 		public void EnterAtParagraph_StagesAnInsertAfterIt()
 		{
 			var field = Field(new List<DetailParagraph> { Para("Only paragraph.") });
-			var context = new FakeRegionEditContext();
+			var context = new FakeDetailEditContext();
 			var (control, _) = Show(field, context, gestureCompleted: () => { });
 
 			var box = Boxes(control)[0];
@@ -154,7 +154,7 @@ namespace FwAvaloniaTests
 		public void BackspaceInEmptyParagraph_StagesADelete_WhenMoreThanOneRemains()
 		{
 			var field = Field(new List<DetailParagraph> { Para("Keep this."), Para(string.Empty) });
-			var context = new FakeRegionEditContext();
+			var context = new FakeDetailEditContext();
 			var (control, _) = Show(field, context, gestureCompleted: () => { });
 
 			var emptyBox = Boxes(control)[1];
@@ -176,7 +176,7 @@ namespace FwAvaloniaTests
 		public void OnlyParagraph_HasNoDeleteAffordance_AndBackspaceDoesNotDelete()
 		{
 			var field = Field(new List<DetailParagraph> { Para(string.Empty) });
-			var context = new FakeRegionEditContext();
+			var context = new FakeDetailEditContext();
 			var (control, _) = Show(field, context, gestureCompleted: () => { });
 
 			// No delete button on the only paragraph (the StText always keeps one).
@@ -199,7 +199,7 @@ namespace FwAvaloniaTests
 		{
 			var field = Field(new List<DetailParagraph> { Para("Styled paragraph.") },
 				paragraphStyles: new[] { "Block Quote", "Numbered List" });
-			var context = new FakeRegionEditContext();
+			var context = new FakeDetailEditContext();
 			var (control, window) = Show(field, context, gestureCompleted: () => { });
 
 			DialogSnapshot.Capture(window, "Region-StText-04-paragraph-style");
@@ -230,7 +230,7 @@ namespace FwAvaloniaTests
 			// A lossy/ORC paragraph is held read-only and preserved; the editable paragraph next
 			// to it is still fully editable.
 			var field = Field(new List<DetailParagraph> { Para("Editable."), LossyPara("Has unsupported formatting.") });
-			var context = new FakeRegionEditContext();
+			var context = new FakeDetailEditContext();
 			var (control, _) = Show(field, context);
 
 			var boxes = Boxes(control);
@@ -250,7 +250,7 @@ namespace FwAvaloniaTests
 		{
 			var field = Field(new List<DetailParagraph> { Para("Alpha."), Para("Beta.") },
 				paragraphStyles: new[] { "Block Quote" });
-			var context = new FakeRegionEditContext();
+			var context = new FakeDetailEditContext();
 			var (control, _) = Show(field, context, gestureCompleted: () => { });
 
 			Assert.That(control.AttachedHandlerCount, Is.GreaterThan(0), "the editable rows wired handlers");
