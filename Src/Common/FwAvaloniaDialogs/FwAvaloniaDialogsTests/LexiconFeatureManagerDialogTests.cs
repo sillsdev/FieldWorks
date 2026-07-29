@@ -13,15 +13,15 @@ namespace FwAvaloniaDialogsTests
 {
 	/// <summary>
 	/// The Avalonia "Manage Individual Features" dialog (PR #964 review follow-up; replaces the WinForms
-	/// <c>LexicalEditFeatureManagerDlg</c>, whose absolute-positioned <see cref="System.Windows.Forms.FlowLayoutPanel"/>
+	/// <c>LexiconFeatureManagerDlg</c>, whose absolute-positioned <see cref="System.Windows.Forms.FlowLayoutPanel"/>
 	/// rows corrupted their own layout on a checkbox click — reported as "everything disappears" when clicking a
 	/// feature). Covers grouping, search filtering, per-group select/deselect-all (visible rows only), and that
 	/// edits land on the state's <see cref="FeatureOption"/> rows via their two-way checkbox binding.
 	/// </summary>
 	[TestFixture]
-	public class LexicalEditFeatureManagerDialogTests
+	public class LexiconFeatureManagerDialogTests
 	{
-		private static LexicalEditFeatureManagerState State(
+		private static LexiconFeatureManagerState State(
 			params (string tool, string name, string desc, string group, bool enabled)[] rows)
 		{
 			var groups = rows
@@ -29,20 +29,20 @@ namespace FwAvaloniaDialogsTests
 				.Select(g => new FeatureGroupOption(g.Key,
 					g.Select(r => new FeatureOption(r.tool, r.name, r.desc, r.enabled)).ToList()))
 				.ToList();
-			return new LexicalEditFeatureManagerState { Groups = groups };
+			return new LexiconFeatureManagerState { Groups = groups };
 		}
 
-		private static LexicalEditFeatureManagerState DefaultState() => State(
+		private static LexiconFeatureManagerState DefaultState() => State(
 			("lexiconEdit", "Lexicon Edit", "The main entry-editing surface.", "Dialogs (lexical entry)", true),
 			("lexiconEditPopup", "Lexicon Edit (popup)", "The popup variant of entry editing.", "Dialogs (lexical entry)", true),
 			("notebookEdit", "Notebook", "Notebook (RnGenericRec) entries.", "Other record types", true),
 			("posEdit", "Grammar / Part of Speech", "The Part of Speech editor.", "Other record types", false));
 
-		private static (LexicalEditFeatureManagerDialogView view, LexicalEditFeatureManagerDialogViewModel vm) Show(
-			LexicalEditFeatureManagerState state, string stageName = "FeatureManager-01-initial")
+		private static (LexiconFeatureManagerDialogView view, LexiconFeatureManagerDialogViewModel vm) Show(
+			LexiconFeatureManagerState state, string stageName = "FeatureManager-01-initial")
 		{
-			var vm = new LexicalEditFeatureManagerDialogViewModel(state);
-			var view = new LexicalEditFeatureManagerDialogView { DataContext = vm };
+			var vm = new LexiconFeatureManagerDialogViewModel(state);
+			var view = new LexiconFeatureManagerDialogView { DataContext = vm };
 			AvaloniaDialogTestHarness.Realize(view, 460, 440, stageName, forceRenderTick: true);
 			return (view, vm);
 		}
@@ -148,19 +148,19 @@ namespace FwAvaloniaDialogsTests
 
 		// --- BuildGroups / ExtractDisabledToolNames: the catalog<->CSV bridging Show() itself does, extracted
 		// so it is testable without a real modal window (mirrors AvaloniaDialogHost.ApplySizing/ResolveEffectiveOwner).
-		// Uses the REAL LexicalEditFeatureCatalog, unlike the tests above (which build a synthetic State() to
+		// Uses the REAL LexiconFeatureCatalog, unlike the tests above (which build a synthetic State() to
 		// isolate the ViewModel), so this is the one place Show()'s actual product wiring is exercised end-to-end. ---
 
 		[Test]
 		public void BuildGroups_NullFeatures_Throws()
 		{
-			Assert.Throws<ArgumentNullException>(() => LexicalEditFeatureManagerDialog.BuildGroups(null, null));
+			Assert.Throws<ArgumentNullException>(() => LexiconFeatureManagerDialog.BuildGroups(null, null));
 		}
 
 		[Test]
 		public void BuildGroups_NullDisabledNames_EverythingEnabled()
 		{
-			var groups = LexicalEditFeatureManagerDialog.BuildGroups(LexicalEditFeatureCatalog.Features, null);
+			var groups = LexiconFeatureManagerDialog.BuildGroups(LexiconFeatureCatalog.Features, null);
 
 			Assert.That(groups.SelectMany(g => g.Features).All(f => f.Enabled), Is.True,
 				"the master UIMode=New switch defaults every catalog tool on");
@@ -169,9 +169,9 @@ namespace FwAvaloniaDialogsTests
 		[Test]
 		public void BuildGroups_GroupsMatchTheCatalogsDeclaredGroupNames_InFirstSeenOrder()
 		{
-			var groups = LexicalEditFeatureManagerDialog.BuildGroups(LexicalEditFeatureCatalog.Features, null);
+			var groups = LexiconFeatureManagerDialog.BuildGroups(LexiconFeatureCatalog.Features, null);
 
-			var expectedGroupOrder = LexicalEditFeatureCatalog.Features
+			var expectedGroupOrder = LexiconFeatureCatalog.Features
 				.Select(f => f.GroupName)
 				.Distinct()
 				.ToArray();
@@ -179,14 +179,14 @@ namespace FwAvaloniaDialogsTests
 
 			// Every catalog tool must land in exactly one row, under its own declared group.
 			var allRows = groups.SelectMany(g => g.Features).ToList();
-			Assert.That(allRows.Select(f => f.ToolName), Is.EquivalentTo(LexicalEditFeatureCatalog.ToolNames));
+			Assert.That(allRows.Select(f => f.ToolName), Is.EquivalentTo(LexiconFeatureCatalog.ToolNames));
 		}
 
 		[Test]
 		public void BuildGroups_DisablesExactlyTheNamedTools_CaseInsensitively()
 		{
-			var groups = LexicalEditFeatureManagerDialog.BuildGroups(
-				LexicalEditFeatureCatalog.Features, new[] { "POSEDIT" }); // catalog declares it as "posEdit"
+			var groups = LexiconFeatureManagerDialog.BuildGroups(
+				LexiconFeatureCatalog.Features, new[] { "POSEDIT" }); // catalog declares it as "posEdit"
 
 			var rows = groups.SelectMany(g => g.Features).ToList();
 			Assert.That(rows.Single(f => f.ToolName == "posEdit").Enabled, Is.False);
@@ -198,28 +198,28 @@ namespace FwAvaloniaDialogsTests
 		{
 			// A stale/renamed/removed tool name in the persisted CSV must not create a row that doesn't
 			// correspond to any real catalog entry.
-			var groups = LexicalEditFeatureManagerDialog.BuildGroups(
-				LexicalEditFeatureCatalog.Features, new[] { "someRetiredToolFromAnOldVersion" });
+			var groups = LexiconFeatureManagerDialog.BuildGroups(
+				LexiconFeatureCatalog.Features, new[] { "someRetiredToolFromAnOldVersion" });
 
 			var rows = groups.SelectMany(g => g.Features).ToList();
-			Assert.That(rows.Select(f => f.ToolName), Is.EquivalentTo(LexicalEditFeatureCatalog.ToolNames));
+			Assert.That(rows.Select(f => f.ToolName), Is.EquivalentTo(LexiconFeatureCatalog.ToolNames));
 			Assert.That(rows.All(f => f.Enabled), Is.True, "the unknown name matched nothing, so nothing is disabled");
 		}
 
 		[Test]
 		public void ExtractDisabledToolNames_NullOrEmptyGroups_ReturnsEmpty()
 		{
-			Assert.That(LexicalEditFeatureManagerDialog.ExtractDisabledToolNames(null), Is.Empty);
-			Assert.That(LexicalEditFeatureManagerDialog.ExtractDisabledToolNames(Array.Empty<FeatureGroupOption>()), Is.Empty);
+			Assert.That(LexiconFeatureManagerDialog.ExtractDisabledToolNames(null), Is.Empty);
+			Assert.That(LexiconFeatureManagerDialog.ExtractDisabledToolNames(Array.Empty<FeatureGroupOption>()), Is.Empty);
 		}
 
 		[Test]
 		public void ExtractDisabledToolNames_ReturnsOnlyUncheckedRows_InGroupAndCatalogOrder()
 		{
-			var groups = LexicalEditFeatureManagerDialog.BuildGroups(
-				LexicalEditFeatureCatalog.Features, new[] { "posEdit", "lexiconEdit" });
+			var groups = LexiconFeatureManagerDialog.BuildGroups(
+				LexiconFeatureCatalog.Features, new[] { "posEdit", "lexiconEdit" });
 
-			var extracted = LexicalEditFeatureManagerDialog.ExtractDisabledToolNames(groups);
+			var extracted = LexiconFeatureManagerDialog.ExtractDisabledToolNames(groups);
 
 			// Catalog order is lexiconEdit, lexiconEditPopup, notebookEdit, posEdit -- so the two disabled
 			// names must come back in that order, not the order they were passed in to BuildGroups.
@@ -234,8 +234,8 @@ namespace FwAvaloniaDialogsTests
 			// guarantee for every catalog tool.
 			var originalDisabled = EditSurfaceResolver.ParseDisabledTools("lexiconEditPopup,notebookEdit");
 
-			var groups = LexicalEditFeatureManagerDialog.BuildGroups(LexicalEditFeatureCatalog.Features, originalDisabled);
-			var roundTripped = LexicalEditFeatureManagerDialog.ExtractDisabledToolNames(groups);
+			var groups = LexiconFeatureManagerDialog.BuildGroups(LexiconFeatureCatalog.Features, originalDisabled);
+			var roundTripped = LexiconFeatureManagerDialog.ExtractDisabledToolNames(groups);
 
 			Assert.That(roundTripped, Is.EquivalentTo(originalDisabled));
 		}

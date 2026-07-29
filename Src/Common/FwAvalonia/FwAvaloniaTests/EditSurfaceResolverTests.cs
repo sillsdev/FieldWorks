@@ -222,7 +222,7 @@ namespace FwAvaloniaTests
 			// ParseDisabledTools returns a HashSet, whose enumeration order is an implementation detail, not a
 			// contract -- so a direct Parse->Serialize round trip is NOT guaranteed to preserve order or exact
 			// text for arbitrary input (the Feature Manager dialog avoids this by re-deriving the CSV from its
-			// own ordered rows, not from the parsed set -- see LexicalEditFeatureManagerDialogTests). What IS
+			// own ordered rows, not from the parsed set -- see LexiconFeatureManagerDialogTests). What IS
 			// guaranteed, and what this pins, is that the round trip preserves the SET of names.
 			Assert.That(EditSurfaceResolver.ParseDisabledTools(roundTripped),
 				Is.EquivalentTo(EditSurfaceResolver.ParseDisabledTools(canonical)));
