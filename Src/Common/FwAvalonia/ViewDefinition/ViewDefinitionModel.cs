@@ -645,7 +645,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 			// NOTE: EnumStringList is deliberately NOT in the snapshot. The canonical
 			// JSON serializer does not persist it, so adding it here would break the lossless
 			// JSON round-trip parity test. The importer carrier is covered directly by
-			// RegionEditorParityTests instead.
+			// DetailEditorParityTests instead.
 			if (node.ForVariant)
 				sb.Append(" | forVariant=1");
 			return sb.ToString();

@@ -24,7 +24,7 @@ namespace FwAvaloniaTests
 	/// degrades to the explicit unsupported row — never a crash, never a silently blank row.
 	/// </summary>
 	[TestFixture]
-	public class RegionCustomFieldRenderingTests
+	public class DetailCustomFieldRenderingTests
 	{
 		private static DetailModel Model(Func<Control> factory)
 			=> new DetailModel("LexEntry", "Normal",

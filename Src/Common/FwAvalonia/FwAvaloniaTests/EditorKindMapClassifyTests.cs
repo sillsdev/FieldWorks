@@ -73,11 +73,11 @@ namespace FwAvaloniaTests
 		[TestCase("inflmsareference", DetailEditorCategory.MsaChooser)]
 		[TestCase("MULTISTRING", DetailEditorCategory.Text)] // case-insensitive
 		[TestCase("notreal", DetailEditorCategory.Other)]
-		public void ClassifyRegionFieldKind_MapsEditorToCategory(string editor, DetailEditorCategory expected)
+		public void ClassifyDetailFieldKind_MapsEditorToCategory(string editor, DetailEditorCategory expected)
 			=> Assert.That(EditorKindMap.ClassifyDetailFieldKind(editor), Is.EqualTo(expected));
 
 		[Test]
-		public void ClassifyRegionFieldKind_EnumCombo_IsClosedCombo_NotFreeFormText()
+		public void ClassifyDetailFieldKind_EnumCombo_IsClosedCombo_NotFreeFormText()
 		{
 			// Safety: a closed enum combo must NOT degrade to a free-form editor that could persist
 			// invalid enum values — this is the regression this dispatch arm guards against.

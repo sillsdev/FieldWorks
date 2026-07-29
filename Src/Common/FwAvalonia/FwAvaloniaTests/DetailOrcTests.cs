@@ -17,7 +17,7 @@ namespace FwAvaloniaTests
 	/// lossy-property guard for genuinely-unsupported run props STILL forces read-only.
 	/// </summary>
 	[TestFixture]
-	public class RegionOrcClassificationTests
+	public class DetailOrcClassificationTests
 	{
 		// The ObjData first-char tags, mirroring SIL.LCModel.Core.KernelInterfaces.FwObjDataTypes
 		// (the view layer is LCModel-free, so the test uses the same numeric constants the model does).
@@ -111,7 +111,7 @@ namespace FwAvaloniaTests
 	/// and the result drops RichXml so the adapter re-emits via run-replay.
 	/// </summary>
 	[TestFixture]
-	public class RegionLinkAndOrcEditTests
+	public class DetailLinkAndOrcEditTests
 	{
 		private const char ExternalLink = (char)4;
 		private const char Picture = (char)8;

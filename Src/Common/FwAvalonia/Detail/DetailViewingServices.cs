@@ -89,7 +89,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 	/// The lexical-edit region's viewing-service contract: the map from each native-Views viewing
 	/// capability to the managed/Avalonia type that owns it, plus the explicitly-deferred concerns.
 	/// It names what "replace the native viewing/render/editor seam" means in
-	/// checkable terms and is asserted by <c>RegionViewingServiceReplacementTests</c>.
+	/// checkable terms and is asserted by <c>DetailViewingServiceReplacementTests</c>.
 	/// </summary>
 	public static class DetailViewingServices
 	{

@@ -47,7 +47,7 @@ namespace FwAvaloniaTests
 		}
 
 		[AvaloniaTest]
-		public void RegionView_RendersARealFrame_SavedAsParityArtifact()
+		public void DetailView_RendersARealFrame_SavedAsParityArtifact()
 		{
 			var model = DetailModelProjector.FromViewDefinition(Definition(), new Provider());
 			var window = new Window { Content = new DataTree(model), Width = 420, Height = 160 };
@@ -75,7 +75,7 @@ namespace FwAvaloniaTests
 	/// Escape cancels.
 	/// </summary>
 	[TestFixture]
-	public class RegionEditorShortcutTests
+	public class DetailEditorShortcutTests
 	{
 		private static (DataTree view, FakeDetailEditContext context) ShowEditable()
 		{

@@ -25,7 +25,7 @@ namespace FwAvaloniaTests
 	/// read-only state — not a silent gap. Deferrals are asserted to be named, not assumed.
 	/// </summary>
 	[TestFixture]
-	public class RegionViewingServiceReplacementTests
+	public class DetailViewingServiceReplacementTests
 	{
 		// The native symbol each capability supersedes. This cross-reference lives in the TEST (which
 		// the isolation audit excludes from its source scan), NOT in production source — the audit
