@@ -9,6 +9,26 @@ Converts one WinForms dialog to Avalonia with the developer in the loop at
 every gate. The developer decides and confirms; this skill analyzes, drafts,
 builds, and never advances past a gate without their explicit go-ahead.
 
+## Two rules that override everything else
+
+**1. The developer's FieldWorks is untouchable.** They are exploring the
+dialog while you work. NEVER close, kill, restart, or drive their running
+FieldWorks, and never change the UI-mode registry setting under them. The
+live-app capture route (fieldworks-winapp) owns the app lifecycle
+(relaunch-per-tool, `CloseMainWindow`) -- it is FORBIDDEN while their
+instance is open. Do not run `build.ps1`/`test.ps1` without asking either: a
+build fails on binaries their running app holds locked, and killing their
+process to unblock a build is never acceptable. If a build or test fails on
+locked files, STOP and ask.
+
+**2. Every gate is a real stop.** A gate is an interactive question to the
+developer (use the question tool, which returns only when they answer) --
+never a sentence in a message you then continue past. At a gate: end your
+turn on the question and take no further action. Do NOT summarize or restate
+a report's contents in chat -- the document is the artifact, and a chat
+summary invites skipping the review the gate exists for. Point at the file
+and stop.
+
 Input: the WinForms dialog class name (e.g. `MergeEntryDlg`).
 Scope: PORT with low-cost improvements. If the developer's verdict is
 "redesign, not port", stop after the analysis phase -- redesign is out of
@@ -42,7 +62,12 @@ proceeding. Never silently redo a completed phase.
 The working documents remain in place after completion; what to keep,
 delete, or attach anywhere is the developer's call.
 
-## Phase 1 -- Analyze the dialog
+## Phase 1 -- Analyze the dialog (read-only; safe to run while they explore)
+
+Steps 1-6b are pure reading -- source, git history, Jira, layout XML. No
+build, no test run, no app automation. This is what makes the phase safe to
+run concurrently with the developer's own exploration of the live dialog.
+The "before" evidence (step 7) is NOT part of that concurrent work.
 
 1. Read the dialog source and every related file (designer, resx, helpers).
 2. Pull the file history and investigate related Jira issues (read-only
@@ -69,12 +94,21 @@ delete, or attach anywhere is the developer's call.
 6b. Inventory the dialog's localizable strings (resx usage) and note the
    project-data prerequisites needed to exercise each flow (these feed the
    test plan and the manual checkpoint).
-7. Capture the "before" evidence: add a `Cap`/`CapLoop` case for the dialog
-   to the legacy screenshot harness (`ScreenshotHarnessTests`) and run
-   `.\test.ps1 -SkipNative -TestProject LexTextControlsTests -TestFilter
-   "FullyQualifiedName~ScreenshotHarness"`; it emits `<name>-before.png`
-   unattended. Use the live-app capture route instead only when behavior
-   depends on app context the harness cannot fake.
+7. "Before" evidence -- NEVER while their FieldWorks is open. Ask which the
+   developer prefers, and wait for the answer:
+   - **They capture it** (default while they are exploring): they are
+     already looking at the dialog, so ask them to grab the screenshots and
+     say where they put them. Zero risk to their session.
+   - **The harness captures it** (unattended, repeatable): add a
+     `Cap`/`CapLoop` case to `ScreenshotHarnessTests` and run
+     `.\test.ps1 -SkipNative -TestProject LexTextControlsTests -TestFilter
+     "FullyQualifiedName~ScreenshotHarness"` -- but ONLY once they confirm
+     FieldWorks is closed (it is an in-process `DrawToBitmap` render that
+     never touches the desktop, yet the build it needs fails on binaries
+     their running app locks).
+   The live-app automation route is a last resort for behavior the harness
+   cannot fake, and only with their explicit go-ahead that the app is yours
+   to drive.
 
 Write `<DialogClass>-analysis.md` with exactly these sections:
 
@@ -90,22 +124,27 @@ Write `<DialogClass>-analysis.md` with exactly these sections:
 
 ## Phase 2 -- Align understanding (gate)
 
-When the analysis is complete, inform the developer and prompt before
-showing it: "I've finished my analysis -- are you ready to align our
-understanding?"
+When the analysis document is written, STOP. Ask -- via the question tool,
+then end your turn -- "I've finished my analysis. Are you ready to align our
+understanding?" Do not describe what you found. Do not summarize the
+document. Wait.
 
-Walk the report with them. Ask whether they see errors, gaps, or have
-questions; when they paste a section back with a correction, fix the
-document. Re-prompt with varied phrasings ("anything else that looks off?",
-"any interaction I've missed?") until you get a clear negative. The gate is
-the developer declaring the document an accurate description of the current
-dialog.
+When they say yes, point them at the file (path only) and ask whether they
+see errors, gaps, or have questions -- then stop again and wait. When they
+paste a section back with a correction, fix the document and ask again.
+Re-ask with varied phrasings ("anything else that looks off?", "any
+interaction I've missed?") until you get a clear negative. Each round is its
+own stop: one question, end of turn.
+
+The gate is the developer declaring the document an accurate description of
+the current dialog.
 
 ## Phase 3 -- Integration-test plan (gate)
 
-Ask the developer for guidance on integration-test creation, then design the
-test set for the dialog's capabilities WITH them -- use the grill-me skill
-(one question at a time, recommendations offered) until the set is defined.
+Ask the developer for guidance on integration-test creation -- one question,
+end of turn, wait -- then design the test set for the dialog's capabilities
+WITH them using the grill-me skill (one question at a time, each its own
+stop, recommendations offered) until the set is defined.
 Every test item must be expressible as: drive the scenario, assert the
 behavioral outcome, capture a labeled snapshot.
 
@@ -184,8 +223,9 @@ Produce the design report with these sections:
 4. The proposed Avalonia layout, with every deliberate difference from the
    WinForms version called out
 
-Ask the developer to review for errors, gaps, and suggestions; capture the
-agreed result as `<DialogClass>-design.md`. If a missing conversion or
+Point the developer at the report and ask them to review it for errors,
+gaps, and suggestions -- then stop and wait, without summarizing its
+contents. Capture the agreed result as `<DialogClass>-design.md`. If a missing conversion or
 capability surfaced, run grill-me with the developer to produce the fill
 plan (the exemplar-promotion path: the first implementation is built on the
 existing idiom rules and, on the developer's approval, a
@@ -194,7 +234,8 @@ draft the row and show it before committing).
 
 ## Phase 5 -- Scaffold or implement (developer's choice)
 
-Offer the choice explicitly: **generate scaffold** or **implement design**.
+Offer the choice explicitly -- as a question, then stop and wait:
+**generate scaffold** or **implement design**.
 
 **Merge policy: scaffold is branch-state only.** The scaffold/implement
 choice is about how much the AI builds first, not what ships -- nothing
@@ -247,9 +288,11 @@ Build conventions the result must satisfy (confirm each in the diff):
    `<DialogClass>-design.md` and report deviations).
 2. The Avalonia visual test emits the paired `<name>-after.png` (same data
    flavor as the `-before`).
-3. Ask the developer to manually test: walk the analysis document's
-   sections 2-3 line by line against the live dialog in New UI mode, and
-   compare against the `-before` captures.
+3. Ask the developer to manually test -- then stop and wait for their
+   findings: walk the analysis document's sections 2-3 line by line against
+   the live dialog in New UI mode, and compare against the `-before`
+   captures. They own the app for this; do not drive it or change its UI
+   mode for them.
 4. Legacy-mode smoke: with the toggle OFF, every launch site from the
    analysis document still opens the legacy dialog unchanged.
 5. Add any new exemplars created during this conversion to the exemplar map

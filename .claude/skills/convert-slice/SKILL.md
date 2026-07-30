@@ -9,6 +9,22 @@ The slice-type counterpart of convert-dialog: same phases, same gates, same
 working-document conventions -- with the deltas a slice demands. The
 developer decides and confirms; this skill analyzes, drafts, and builds.
 
+## Two rules that override everything else
+
+**1. The developer's FieldWorks is untouchable.** They are exploring the
+slice while you work. NEVER close, kill, restart, or drive their running
+FieldWorks, and never change the UI-mode setting under them. The live-app
+capture route owns the app lifecycle (relaunch-per-tool, `CloseMainWindow`)
+-- FORBIDDEN while their instance is open. Ask before any
+`build.ps1`/`test.ps1` run: a build fails on binaries their app holds
+locked, and killing their process to unblock it is never acceptable. On a
+locked-file failure, STOP and ask.
+
+**2. Every gate is a real stop.** A gate is an interactive question (use the
+question tool, which returns only when they answer), then END the turn. Do
+not summarize or restate a report in chat -- point at the file and stop; a
+chat summary invites skipping the review the gate exists for.
+
 Input: the legacy slice class name (e.g. `PhoneEnvReferenceSlice`) or the
 layout identity (`editor="..."` / `editor="Custom" class="..."`).
 Scope: PORT with low-cost improvements; a "redesign" verdict parks the
@@ -20,7 +36,11 @@ convert-dialog: `Docs/migration/working/<SliceClass>/` holding
 `<SliceClass>-design.md`; detect-and-resume on re-invocation; the documents
 remain after completion (retention is the developer's call).
 
-## Phase 1 -- Analyze the slice (deltas from convert-dialog)
+## Phase 1 -- Analyze the slice (read-only; safe while they explore)
+
+Source, history, Jira, and layout-XML reading only -- no build, no test run,
+no app automation -- so it runs concurrently with the developer's own
+exploration. The "before" evidence is NOT part of that concurrent work.
 
 Everything convert-dialog's phase 1 does (source + related files, file
 history + Jira chronology, logic and data-member analysis incl. LCM objects
@@ -37,9 +57,10 @@ and Units of Work, enabled/disabled cataloging), plus slice-specific work:
   keyboard, and how the slice behaves inside DataTree (indent, label,
   expansion).
 - "Before" evidence: the dialog screenshot harness does NOT apply (a slice
-  renders inside the DataTree); drive FieldWorks in Legacy mode to an
-  affected entry and capture (the fieldworks-winapp migration-doc-capture
-  route).
+  renders inside the DataTree), so the capture needs the live app -- which
+  means it is the DEVELOPER's to do while they explore (ask them to grab the
+  affected entry's rows and say where they put them). Only drive the app
+  yourself with their explicit go-ahead that it is closed and yours.
 
 The analysis document keeps the four-section shape; section 4 (layout)
 describes the row: label/value split, sizing, wrapping, and any multi-row
@@ -47,8 +68,11 @@ structure.
 
 ## Phase 2 -- Align understanding (gate)
 
-Identical to convert-dialog: announce, walk the report, correct until the
-developer gives a clear negative to "any errors, gaps, or questions?".
+Identical to convert-dialog: announce and STOP ("I've finished my analysis.
+Are you ready to align our understanding?"), then point at the file and
+correct round by round -- each round its own question and end of turn --
+until the developer gives a clear negative to "any errors, gaps, or
+questions?". Never summarize the document in chat.
 
 ## Phase 3 -- Integration-test plan (gate)
 
