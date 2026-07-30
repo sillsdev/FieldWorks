@@ -29,9 +29,20 @@ a report's contents in chat -- the document is the artifact, and a chat
 summary invites skipping the review the gate exists for. Point at the file
 and stop.
 
+## How to talk about where you are
+
+The stages below have names. USE THEM with the developer, in plain language
+about the work: "I've finished understanding the dialog", "we've agreed on
+how it works, so next is deciding what to prove", "the replacement plan is
+ready for your review". NEVER say "Phase 2", "phase 4 gate passed", or any
+numbered-stage shorthand -- it means nothing to someone who has not read
+this file. The stages, in order: **Understanding the dialog** -> **Agreeing
+on how it works** -> **Deciding what to prove** -> **Planning the
+replacement** -> **Building it** -> **Proving it works**.
+
 Input: the WinForms dialog class name (e.g. `MergeEntryDlg`).
 Scope: PORT with low-cost improvements. If the developer's verdict is
-"redesign, not port", stop after the analysis phase -- redesign is out of
+"redesign, not port", stop after Understanding the dialog -- redesign is out of
 scope; the dialog waits.
 
 ## Working documents
@@ -39,9 +50,9 @@ scope; the dialog waits.
 All working artifacts live in `Docs/migration/working/<DialogClass>/`
 (gitignored; create on first use):
 
-- `<DialogClass>-analysis.md` -- the dialog analysis (phase 1)
-- `<DialogClass>-integration-test-plan.md` -- the test plan (phase 3)
-- `<DialogClass>-design.md` -- the reviewed design (phase 4)
+- `<DialogClass>-analysis.md` -- from Understanding the dialog
+- `<DialogClass>-integration-test-plan.md` -- from Deciding what to prove
+- `<DialogClass>-design.md` -- from Planning the replacement
 - `<DialogClass>-state.md` -- one-page state: current phase, plus any OPEN
   GATE and what it waits on (e.g. `waiting-on: MSAGroupBox (control,
   Docs/migration/working/MSAGroupBox/)`); kept current at every gate and
@@ -49,7 +60,7 @@ All working artifacts live in `Docs/migration/working/<DialogClass>/`
 
 **Resume rule:** on invocation, read `<DialogClass>-state.md` first
 (falling back to artifact-presence inference when it is absent: analysis
-present -> resume at alignment; test plan -> mapping; design ->
+present -> resume at Agreeing on how it works; test plan -> Planning the replacement; design ->
 scaffold/implement choice). Then RE-EVALUATE every open gate against
 reality, not the note: if the exemplar map now carries the awaited
 control's row, or the awaited child dialog now has an Avalonia route, the
@@ -62,12 +73,12 @@ proceeding. Never silently redo a completed phase.
 The working documents remain in place after completion; what to keep,
 delete, or attach anywhere is the developer's call.
 
-## Phase 1 -- Analyze the dialog (read-only; safe to run while they explore)
+## Understanding the dialog (read-only; safe to run while they explore)
 
-Steps 1-6b are pure reading -- source, git history, Jira, layout XML. No
+The steps below are pure reading -- source, git history, Jira, layout XML. No
 build, no test run, no app automation. This is what makes the phase safe to
 run concurrently with the developer's own exploration of the live dialog.
-The "before" evidence (step 7) is NOT part of that concurrent work.
+The "before" evidence (the last step here) is NOT part of that concurrent work.
 
 1. Read the dialog source and every related file (designer, resx, helpers).
 2. Pull the file history and investigate related Jira issues (read-only
@@ -122,7 +133,7 @@ Write `<DialogClass>-analysis.md` with exactly these sections:
 4. **Layout strategy** -- current control layout, control sizes and minimum
    sizes, resizing behavior, and any persisted bounds/splitter state
 
-## Phase 2 -- Align understanding (gate)
+## Agreeing on how it works (gate)
 
 When the analysis document is written, STOP. Ask -- via the question tool,
 then end your turn -- "I've finished my analysis. Are you ready to align our
@@ -139,7 +150,7 @@ own stop: one question, end of turn.
 The gate is the developer declaring the document an accurate description of
 the current dialog.
 
-## Phase 3 -- Integration-test plan (gate)
+## Deciding what to prove (gate)
 
 Ask the developer for guidance on integration-test creation -- one question,
 end of turn, wait -- then design the test set for the dialog's capabilities
@@ -151,7 +162,7 @@ behavioral outcome, capture a labeled snapshot.
 Save the result as `<DialogClass>-integration-test-plan.md`. The
 create-integration-test skill consumes this file verbatim.
 
-## Phase 4 -- Map controls and design (gate)
+## Planning the replacement (gate)
 
 0. FIRST check kit membership: if the dialog belongs to a family an
    existing kit already covers (the EntryGo/BaseGoDlg family, the
@@ -232,14 +243,14 @@ existing idiom rules and, on the developer's approval, a
 control-exemplar-map row lands in the same PR naming it THE exemplar --
 draft the row and show it before committing).
 
-## Phase 5 -- Scaffold or implement (developer's choice)
+## Building it (developer's choice)
 
 Offer the choice explicitly -- as a question, then stop and wait:
 **generate scaffold** or **implement design**.
 
 **Merge policy: scaffold is branch-state only.** The scaffold/implement
 choice is about how much the AI builds first, not what ships -- nothing
-merges until phase 6 passes (implemented and verified), so preview users
+merges until Proving it works passes (implemented and verified), so preview users
 never meet an empty dialog.
 
 **Scaffold** means: create the Avalonia files following
@@ -280,7 +291,7 @@ Build conventions the result must satisfy (confirm each in the diff):
   tab order and mnemonics match the legacy dialog.
 - The repository comment standard applies to everything written.
 
-## Phase 6 -- Verify
+## Proving it works
 
 1. Run create-integration-test against the plan (TDD before implementation,
    or verification after; if the developer hand-implemented inside the
@@ -289,13 +300,13 @@ Build conventions the result must satisfy (confirm each in the diff):
 2. The Avalonia visual test emits the paired `<name>-after.png` (same data
    flavor as the `-before`).
 3. Ask the developer to manually test -- then stop and wait for their
-   findings: walk the analysis document's sections 2-3 line by line against
+   findings: walk the analysis document's the Data interaction and Control interactions sections line by line against
    the live dialog in New UI mode, and compare against the `-before`
    captures. They own the app for this; do not drive it or change its UI
    mode for them.
 4. Legacy-mode smoke: with the toggle OFF, every launch site from the
    analysis document still opens the legacy dialog unchanged.
 5. Add any new exemplars created during this conversion to the exemplar map
-   (the promotion row from phase 4, if not already landed).
+   (the promotion row from Planning the replacement, if not already landed).
 6. Land: comment audit against the repository standard, preflight the
    branch, and PR per the repo's conventions.

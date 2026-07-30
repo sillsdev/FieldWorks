@@ -16,6 +16,11 @@ yours to capture while you are in there.
 
 ## Workflow
 
+The skill talks about the work in named stages: **Understanding the slice**,
+**Agreeing on how it works**, **Deciding what to prove**, **Planning the
+replacement**, **Building it**, **Proving it works**. Your steps below run
+alongside them.
+
 1. Start `/convert-slice` and give it the slice class name (or the layout
    `editor=`/`class=` identity).
 2. While it analyzes: open an affected entry in Lexicon Edit (Legacy mode)
