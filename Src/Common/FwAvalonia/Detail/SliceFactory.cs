@@ -148,7 +148,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			if (field.ControlFactory == null)
 			{
 				System.Diagnostics.Debug.WriteLine(
-					$"Custom region field '{field.StableId}' has no control factory; rendering the unsupported row.");
+					$"Custom slice field '{field.StableId}' has no control factory; rendering the unsupported row.");
 				return BuildUnsupported(field, automationId);
 			}
 
@@ -158,7 +158,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				if (control == null)
 				{
 					System.Diagnostics.Debug.WriteLine(
-						$"Custom region field '{field.StableId}' factory returned null; rendering the unsupported row.");
+						$"Custom slice field '{field.StableId}' factory returned null; rendering the unsupported row.");
 					return BuildUnsupported(field, automationId);
 				}
 
@@ -170,7 +170,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			catch (Exception e)
 			{
 				System.Diagnostics.Debug.WriteLine(
-					$"Custom region field '{field.StableId}' factory threw; rendering the unsupported row: {e}");
+					$"Custom slice field '{field.StableId}' factory threw; rendering the unsupported row: {e}");
 				return BuildUnsupported(field, automationId);
 			}
 		}

@@ -248,7 +248,7 @@ namespace FwAvaloniaTests
 			ClickAt(window, gear);
 
 			Assert.That(linkRequests, Has.Count.EqualTo(1),
-				"the gear click raises RegionLinkRequest directly");
+				"the gear click raises DetailLinkRequest directly");
 			Assert.That(linkRequests[0].Link.Tool, Is.EqualTo("morphTypeEdit"),
 				"the resolved list-editor tool rides the request");
 			Assert.That(((Flyout)chooser.Flyout).IsOpen, Is.False,

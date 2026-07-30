@@ -431,13 +431,13 @@ namespace FwAvaloniaDialogsTests
 		[AvaloniaTest]
 		public void DescriptionPane_AbsentFromTree_WhenTheConsumerSuppliesNone()
 		{
-			var (view, vm) = Show(Input(descriptionLabel: null), "EntryGo-09-no-description-region");
+			var (view, vm) = Show(Input(descriptionLabel: null), "EntryGo-09-no-description-pane");
 			Assert.That(vm.HasDescriptionPane, Is.False,
-				"no label and no rich content: the consumer did not opt into the region");
+				"no label and no rich content: the consumer did not opt into the pane");
 
 			Assert.That(view.GetVisualDescendants()
-					.Any(c => c is Control ctrl && AutomationProperties.GetAutomationId(ctrl) == "EntryGo.DescriptionRegion"),
-				Is.False, "the description region is removed from the tree entirely");
+					.Any(c => c is Control ctrl && AutomationProperties.GetAutomationId(ctrl) == "EntryGo.DescriptionPane"),
+				Is.False, "the description pane is removed from the tree entirely");
 			Assert.That(view.GetVisualDescendants()
 					.Any(c => c is Control ctrl && AutomationProperties.GetAutomationId(ctrl) == "EntryGo.Description"),
 				Is.False, "no orphaned description text remains");
@@ -447,7 +447,7 @@ namespace FwAvaloniaDialogsTests
 			var list = ResultsList(view);
 			var body = view.GetVisualDescendants().OfType<Grid>().First(g => g.Name == "PART_BodyGrid");
 			Assert.That(list.Bounds.Width, Is.GreaterThan(body.Bounds.Width * 0.9),
-				"the matching list takes the full width when no description region is present");
+				"the matching list takes the full width when no description pane is present");
 			Assert.That(grid.IsVisible, Is.True);
 		}
 
@@ -501,7 +501,7 @@ namespace FwAvaloniaDialogsTests
 			vm.SelectedResult = vm.Results.First(r => r.Id == "11");
 			Capture(view, "EntryGo-04-rich-description");
 
-			Assert.That(vm.HasDescriptionPane, Is.True, "a consumer with a label/rich content keeps the region");
+			Assert.That(vm.HasDescriptionPane, Is.True, "a consumer with a label/rich content keeps the pane");
 			Assert.That(vm.HasDescriptionContent, Is.True, "the highlighted row carries a rich payload");
 			Assert.That(vm.SelectedDescriptionContent, Is.Not.Null);
 
@@ -509,7 +509,7 @@ namespace FwAvaloniaDialogsTests
 			var content = FindByAutomationId<ContentControl>(view, "EntryGo.DescriptionContent");
 			Assert.That(content.IsVisible, Is.True, "the rich-content host is visible for a rich row");
 			Assert.That(content.GetVisualDescendants().OfType<TextBlock>().Any(t => t.Text == "noun · house"),
-				Is.True, "the right region realizes the supplied formatted content");
+				Is.True, "the right pane realizes the supplied formatted content");
 			var plain = FindByAutomationId<TextBlock>(view, "EntryGo.Description");
 			Assert.That(plain.IsVisible, Is.False, "the plain-text fallback is hidden when rich content is present");
 		}

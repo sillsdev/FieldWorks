@@ -92,7 +92,7 @@ namespace FwAvaloniaTests
 			var context = new FakeDetailEditContext();
 			var (control, window) = Show(field, context, gestureCompleted: () => { });
 
-			DialogSnapshot.Capture(window, "Region-StText-05-empty-single-row");
+			DialogSnapshot.Capture(window, "Detail-StText-05-empty-single-row");
 			DialogLayoutAssert.AssertNoCrowding(control);
 
 			var boxes = Boxes(control);
@@ -156,7 +156,7 @@ namespace FwAvaloniaTests
 			var context = new FakeDetailEditContext();
 			var (control, window) = Show(field, context);
 
-			DialogSnapshot.Capture(window, "Region-StText-06-rtl-khmer");
+			DialogSnapshot.Capture(window, "Detail-StText-06-rtl-khmer");
 			DialogLayoutAssert.AssertNoCrowding(control);
 
 			var boxes = Boxes(control);
@@ -243,7 +243,7 @@ namespace FwAvaloniaTests
 			var context = new FakeDetailEditContext();
 			var (control, window) = Show(field, context);
 
-			DialogSnapshot.Capture(window, "Region-StText-07-orc-interleaved");
+			DialogSnapshot.Capture(window, "Detail-StText-07-orc-interleaved");
 			DialogLayoutAssert.AssertNoCrowding(control);
 
 			var boxes = Boxes(control);

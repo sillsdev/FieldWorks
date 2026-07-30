@@ -66,7 +66,7 @@ namespace FwAvaloniaTests.VisualChecks
 			var model = DetailModelProjector.FromViewDefinition(DetailDefinition(), new TwoFieldProvider());
 			var view = new DataTree(model);
 
-			DialogSnapshot.Capture(view, "Region-01-initial", width: 420, height: 200);
+			DialogSnapshot.Capture(view, "Detail-01-initial", width: 420, height: 200);
 			DialogLayoutAssert.AssertNoCrowding(view);
 		}
 
@@ -78,7 +78,7 @@ namespace FwAvaloniaTests.VisualChecks
 			var model = DetailModelProjector.FromViewDefinition(DetailDefinition(), new TwoFieldProvider());
 			var view = new DataTree(model, new FakeDetailEditContext());
 
-			DialogSnapshot.Capture(view, "Region-02-editable", width: 420, height: 200);
+			DialogSnapshot.Capture(view, "Detail-02-editable", width: 420, height: 200);
 			DialogLayoutAssert.AssertNoCrowding(view);
 		}
 
@@ -93,7 +93,7 @@ namespace FwAvaloniaTests.VisualChecks
 			// It must still read FLAT/dense (the WinForms DataTree look) with thin field separators, no boxing.
 			var view = new DataTree(RealisticDetailModel());
 
-			DialogSnapshot.Capture(view, "Region-03-multi-field", width: 520, height: 420);
+			DialogSnapshot.Capture(view, "Detail-03-multi-field", width: 520, height: 420);
 			DialogLayoutAssert.AssertNoCrowding(view);
 		}
 
@@ -105,7 +105,7 @@ namespace FwAvaloniaTests.VisualChecks
 			// per-field box, aligned columns.
 			var view = new DataTree(RealisticDetailModel(), new FakeDetailEditContext());
 
-			DialogSnapshot.Capture(view, "Region-04-editable-multi", width: 520, height: 420);
+			DialogSnapshot.Capture(view, "Detail-04-editable-multi", width: 520, height: 420);
 			DialogLayoutAssert.AssertNoCrowding(view);
 		}
 
@@ -125,7 +125,7 @@ namespace FwAvaloniaTests.VisualChecks
 				new DetailModel("LexEntry", "detail", fields, new List<ViewDiagnostic>()),
 				new FakeDetailEditContext());
 
-			DialogSnapshot.Capture(view, "Region-06-reference", width: 520, height: 200);
+			DialogSnapshot.Capture(view, "Detail-06-reference", width: 520, height: 200);
 			DialogLayoutAssert.AssertNoCrowding(view);
 		}
 

@@ -297,7 +297,7 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(plugin.LastNode?.CustomEditorClass, Is.EqualTo(MessageSliceClassName));
 			Assert.That(plugin.LastCache, Is.SameAs(Cache));
 			Assert.That(plugin.LastEditContext, Is.SameAs(composed.EditContext),
-				"the deferred accessor resolves to the region's own composed edit context");
+				"the deferred accessor resolves to the detail view's own composed edit context");
 		}
 	}
 }
