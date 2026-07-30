@@ -257,7 +257,7 @@ Build conventions the result must satisfy (confirm each in the diff):
   `FooDlgViewModel` / `FooDlgPayload`) in `Src/Common/FwAvaloniaDialogs/`;
   kits keep general names.
 - Boundaries: the Input carries everything LCModel-free the dialog needs;
-  the VM never touches LCModel; the launcher owns all LCModel work inside
+  the ViewModel never touches LCModel; the launcher owns all LCModel work inside
   one undo task with the legacy undo text.
 - Presentation, modal: `AvaloniaDialogHost.ShowModal` with the WinForms
   owner -- never an Avalonia-owned window during coexistence; owner icon or
@@ -274,7 +274,7 @@ Build conventions the result must satisfy (confirm each in the diff):
 - Watch-outs: `Flyout` over free `Popup`; arrow/Enter keys claimed at the
   host; WS-sensitive inputs are never plain TextBoxes (Go-family exemplar);
   match the legacy commit semantics (OK-gated vs commit-on-select) and say
-  which in the VM summary.
+  which in the ViewModel summary.
 - Accessibility and keyboard parity: stable automation ids per the owned
   control convention (pinned by `OwnedControlAutomationConventionTests`);
   tab order and mnemonics match the legacy dialog.

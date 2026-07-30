@@ -37,7 +37,7 @@ checkpoint.
 Derive the location from the SUT by the repository's test-mirroring rule
 (tests mirror their SUT's project and subfolder):
 
-- Dialog View/VM (`Src/Common/FwAvaloniaDialogs/`, flat) ->
+- Dialog View/ViewModel (`Src/Common/FwAvaloniaDialogs/`, flat) ->
   `FwAvaloniaDialogsTests/<Class>IntegrationTests.cs`
 - Owned control in `Src/Common/FwAvaloniaDialogs/Controls/` (dialog
   composite) -> `FwAvaloniaDialogsTests/Controls/`; owned control in
