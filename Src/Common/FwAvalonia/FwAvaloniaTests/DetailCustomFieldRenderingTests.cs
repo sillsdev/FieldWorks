@@ -61,7 +61,7 @@ namespace FwAvaloniaTests
 			var rendered = view.GetVisualDescendants().OfType<TextBlock>()
 				.FirstOrDefault(t => AutomationProperties.GetAutomationId(t) == "PluginNotesBar");
 			Assert.That(rendered, Is.SameAs(pluginControl),
-				"the factory's control renders inside the region view");
+				"the factory's control renders inside the detail view");
 			Assert.That(Grid.GetColumn(pluginControl), Is.EqualTo(2),
 				"the plugin control occupies the value column; the label stays in the gutter");
 			Assert.That(FindUnsupportedBlock(view), Is.Null,

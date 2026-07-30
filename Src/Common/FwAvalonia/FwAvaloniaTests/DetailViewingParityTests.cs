@@ -70,8 +70,8 @@ namespace FwAvaloniaTests
 			var view = Show(many);
 
 			var scroller = view.GetVisualDescendants().OfType<ScrollViewer>()
-				.FirstOrDefault(s => AutomationProperties.GetAutomationId(s) == "RegionDataTree.Scroll");
-			Assert.That(scroller, Is.Not.Null, "the region is wrapped in a scroll viewer");
+				.FirstOrDefault(s => AutomationProperties.GetAutomationId(s) == "DataTree.Scroll");
+			Assert.That(scroller, Is.Not.Null, "the detail view is wrapped in a scroll viewer");
 			Assert.That(scroller.Extent.Height, Is.GreaterThan(scroller.Viewport.Height),
 				"60 rows overflow the viewport so the scrollbar engages");
 		}
@@ -219,7 +219,7 @@ namespace FwAvaloniaTests
 			Assert.That(ToolTip.GetTip(label), Is.EqualTo("Lexeme Form"), "11.17: label tooltips");
 
 			Assert.That(view.GetVisualDescendants().OfType<GridSplitter>()
-				.Any(g => AutomationProperties.GetAutomationId(g) == "RegionDataTree.Splitter"),
+				.Any(g => AutomationProperties.GetAutomationId(g) == "DataTree.Splitter"),
 				Is.True, "11.15: label/value splitter");
 
 			var box = view.GetVisualDescendants().OfType<TextBox>().First();

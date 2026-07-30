@@ -109,19 +109,19 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 					+ "separate graphite-transition-support policy, not a native-engine dependency here."),
 				new DetailViewingServiceDescriptor(DetailViewingCapability.Measurement,
 					typeof(DataTree),
-					"Row/field measurement and layout are Avalonia layout passes over the region view's "
+					"Row/field measurement and layout are Avalonia layout passes over the detail view's "
 					+ "panels; no native box-layout pass is built."),
 				new DetailViewingServiceDescriptor(DetailViewingCapability.SelectionMetadata,
 					typeof(DetailBidirectionalTextNavigation),
 					"Selection range/anchor and mixed-direction caret semantics are computed by the managed "
-					+ "navigator over the run model (RegionSelectionRange), not a native selection object."),
+					+ "navigator over the run model (DetailSelectionRange), not a native selection object."),
 				new DetailViewingServiceDescriptor(DetailViewingCapability.HitTesting,
 					typeof(DetailTextGraphemeClusters),
 					"Point-to-caret resolution uses Avalonia's TextBox hit test, normalized to grapheme "
 					+ "clusters by the managed model; no native root-box hit-test call."),
 				new DetailViewingServiceDescriptor(DetailViewingCapability.Scrolling,
 					typeof(DataTree),
-					"The region scrolls through an Avalonia ScrollViewer (task 11.12), not a native RootSite "
+					"The detail view scrolls through an Avalonia ScrollViewer (task 11.12), not a native RootSite "
 					+ "auto-scroll host."),
 				new DetailViewingServiceDescriptor(DetailViewingCapability.Rendering,
 					typeof(DataTree),

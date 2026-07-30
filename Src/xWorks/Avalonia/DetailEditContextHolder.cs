@@ -98,7 +98,7 @@ namespace SIL.FieldWorks.XWorks
 				current.Cancel();
 				var reasons = errors as IReadOnlyList<string> ?? new List<string>(errors);
 				SIL.Reporting.Logger.WriteEvent(
-					"RegionEditContextHolder.Settle: pending edit rolled back because it failed validation: "
+					"DetailEditContextHolder.Settle: pending edit rolled back because it failed validation: "
 					+ string.Join("; ", reasons));
 				InvalidEditRolledBack?.Invoke(reasons);
 				return reasons;

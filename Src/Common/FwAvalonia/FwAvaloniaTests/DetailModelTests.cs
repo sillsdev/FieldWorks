@@ -365,7 +365,7 @@ namespace FwAvaloniaTests
 			window.Show();
 			Dispatcher.UIThread.RunJobs();
 
-			Assert.That(AutomationProperties.GetAutomationId(view), Is.EqualTo("RegionDataTree"));
+			Assert.That(AutomationProperties.GetAutomationId(view), Is.EqualTo("DataTree"));
 
 			var lexemeBox = view.GetVisualDescendants().OfType<TextBox>()
 				.FirstOrDefault(b => AutomationProperties.GetAutomationId(b) == "LexemeFormEditor.vern");

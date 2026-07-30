@@ -44,7 +44,7 @@ namespace FwAvaloniaTests
 			Assert.That(InputKeyClaimPolicy.ShouldClaimKey(Keys.Enter, hostContainsFocus: true, claimEnterKey: true),
 				Is.True, "a dialog host claims Enter so it reaches the hosted content");
 			Assert.That(InputKeyClaimPolicy.ShouldClaimKey(Keys.Enter, hostContainsFocus: true, claimEnterKey: false),
-				Is.False, "a region pane host leaves Enter to WinForms");
+				Is.False, "a detail pane host leaves Enter to WinForms");
 		}
 
 		[TestCase(Keys.Tab)]

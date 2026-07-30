@@ -128,7 +128,7 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(m_entry.SensesOS.Count, Is.EqualTo(sensesBefore + 1),
 				"Insert Sense must add a sense to the entry through the real command + UOW");
 			Assert.That(ComposeSenseHeaderCount(), Is.GreaterThan(senseHeadersBefore),
-				"the re-composed region (what RefreshAvaloniaRegion re-shows) gains a sense header for the new sense");
+				"the re-composed detail view (what RefreshAvaloniaDetail re-shows) gains a sense header for the new sense");
 		}
 
 		[Test]
@@ -144,7 +144,7 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(m_entry.SensesOS.Count, Is.EqualTo(sensesBefore + 1),
 				"Insert Sense via the hotlinks path mutates the model end-to-end through XCoreMenuBridge");
 			Assert.That(RefreshedDetailFieldCount(), Is.GreaterThan(0),
-				"the host can re-show the region after a hotlink-create");
+				"the host can re-show the detail view after a hotlink-create");
 		}
 
 		// ----------------------------------------------------------------------------------------
@@ -178,7 +178,7 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(Cache.ServiceLocator.ObjectRepository.IsValidObjectId(targetHvo), Is.False,
 				"the deleted sense object is really gone from the model");
 			Assert.That(ComposeSenseHeaderCount(), Is.LessThan(senseHeadersBefore),
-				"the re-composed region drops the deleted sense's header");
+				"the re-composed detail view drops the deleted sense's header");
 		}
 
 		// ----------------------------------------------------------------------------------------
@@ -208,7 +208,7 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(m_entry.SensesOS[1].Hvo, Is.EqualTo(secondHvo));
 
 			Assert.That(RefreshedDetailFieldCount(), Is.GreaterThan(0),
-				"the region still composes after the reorder sequence");
+				"the detail view still composes after the reorder sequence");
 		}
 
 		// ----------------------------------------------------------------------------------------

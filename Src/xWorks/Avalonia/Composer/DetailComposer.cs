@@ -824,7 +824,7 @@ namespace SIL.FieldWorks.XWorks
 						// only on a debugger (the legacy "dialog"/"simple" kinds wait on the
 						// ChooserCommand paths).
 						SIL.Reporting.Logger.WriteEvent(
-							$"RegionComposer: chooserLink type '{link.Type}' (tool '{link.Tool}') on {node.StableId} is not the goto kind the lexeme editor uses; skipped.");
+							$"DetailComposer: chooserLink type '{link.Type}' (tool '{link.Tool}') on {node.StableId} is not the goto kind the lexeme editor uses; skipped.");
 						continue;
 					}
 					(links ?? (links = new List<DetailChooserLink>()))
@@ -3243,7 +3243,7 @@ namespace SIL.FieldWorks.XWorks
 					// Never a silent permanent failure — log, fall back to the
 					// 3-field first slice for THIS compose, and retry next time (GetSources).
 					SIL.Reporting.Logger.WriteEvent(
-						"RegionComposer: no merged parts XML under '" + partsDirectory
+						"DetailComposer: no merged parts XML under '" + partsDirectory
 						+ "'; falling back to the first slice (will retry on the next compose).");
 					return null;
 				}
@@ -3260,7 +3260,7 @@ namespace SIL.FieldWorks.XWorks
 				// Never a silent permanent failure — log, fall back to the
 				// 3-field first slice for THIS compose, and retry next time (GetSources).
 				SIL.Reporting.Logger.WriteError(
-					"RegionComposer: failed to load layout sources; "
+					"DetailComposer: failed to load layout sources; "
 					+ "falling back to the first slice for this compose.", e);
 				return null;
 			}

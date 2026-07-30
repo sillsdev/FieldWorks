@@ -82,7 +82,7 @@ namespace FwAvaloniaTests
 			var field = Field(new List<DetailParagraph> { Para("First paragraph."), Para("Second paragraph.") });
 			var (control, window) = Show(field, editContext: null);
 
-			DialogSnapshot.Capture(window, "Region-StText-01-readonly-baseline");
+			DialogSnapshot.Capture(window, "Detail-StText-01-readonly-baseline");
 			DialogLayoutAssert.AssertNoCrowding(control);
 
 			var boxes = Boxes(control);
@@ -98,7 +98,7 @@ namespace FwAvaloniaTests
 			var context = new FakeDetailEditContext();
 			var (control, window) = Show(field, context);
 
-			DialogSnapshot.Capture(window, "Region-StText-02-editable");
+			DialogSnapshot.Capture(window, "Detail-StText-02-editable");
 			DialogLayoutAssert.AssertNoCrowding(control);
 
 			var boxes = Boxes(control);
@@ -123,7 +123,7 @@ namespace FwAvaloniaTests
 			var context = new FakeDetailEditContext();
 			var (control, window) = Show(field, context);
 
-			DialogSnapshot.Capture(window, "Region-StText-03-multi-paragraph");
+			DialogSnapshot.Capture(window, "Detail-StText-03-multi-paragraph");
 			DialogLayoutAssert.AssertNoCrowding(control);
 
 			Assert.That(Boxes(control), Has.Count.EqualTo(3), "three distinct paragraph rows");
@@ -202,7 +202,7 @@ namespace FwAvaloniaTests
 			var context = new FakeDetailEditContext();
 			var (control, window) = Show(field, context, gestureCompleted: () => { });
 
-			DialogSnapshot.Capture(window, "Region-StText-04-paragraph-style");
+			DialogSnapshot.Capture(window, "Detail-StText-04-paragraph-style");
 			DialogLayoutAssert.AssertNoCrowding(control);
 
 			var styleButton = control.GetVisualDescendants().OfType<Button>()
