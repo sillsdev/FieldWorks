@@ -307,6 +307,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 			Subscriber.Subscribe(EventConstants.JumpToPopupLexEntry, JumpToPopupLexEntry, this);
 			Subscriber.Subscribe(EventConstants.ConfigureCustomFields, ConfigureCustomFields, this);
+			Subscriber.Subscribe(EventConstants.MasterRefresh, OnMasterRefresh, this);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -435,6 +436,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				Subscriber.Unsubscribe(EventConstants.JumpToPopupLexEntry, JumpToPopupLexEntry);
 				Subscriber.Unsubscribe(EventConstants.ConfigureCustomFields, ConfigureCustomFields);
+				Subscriber.Unsubscribe(EventConstants.MasterRefresh, OnMasterRefresh);
 
 				if (m_viewHelper != null)
 					m_viewHelper.Dispose();
@@ -2014,9 +2016,7 @@ namespace SIL.FieldWorks.XWorks
 				var phonologyServices = new PhonologyServices(Cache);
 				phonologyServices.DeletePhonology();
 				phonologyServices.ImportPhonologyFromXml(filename);
-#pragma warning disable 618 // suppress obsolete warning
-				m_mediator.SendMessage("MasterRefresh", null);
-#pragma warning restore 618
+				Publisher.Publish(new PublisherParameterObject(EventConstants.MasterRefresh, null, this));
 			}
 			catch (Exception ex)
 			{
