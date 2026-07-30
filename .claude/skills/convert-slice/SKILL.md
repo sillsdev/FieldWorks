@@ -5,7 +5,7 @@ description: Drive the conversion of one legacy slice type to the Avalonia detai
 
 # Convert Slice
 
-The slice-type counterpart of convert-dialog: same phases, same gates, same
+The slice-type counterpart of convert-dialog: the same stages, gates, and
 working-document conventions -- with the deltas a slice demands. The
 developer decides and confirms; this skill analyzes, drafts, and builds.
 
@@ -25,6 +25,14 @@ question tool, which returns only when they answer), then END the turn. Do
 not summarize or restate a report in chat -- point at the file and stop; a
 chat summary invites skipping the review the gate exists for.
 
+## How to talk about where you are
+
+Use the stage names with the developer, in plain language about the work --
+never "Phase 2" or any numbered-stage shorthand. The stages, in order:
+**Understanding the slice** -> **Agreeing on how it works** -> **Deciding
+what to prove** -> **Planning the replacement** -> **Building it** ->
+**Proving it works**.
+
 Input: the legacy slice class name (e.g. `PhoneEnvReferenceSlice`) or the
 layout identity (`editor="..."` / `editor="Custom" class="..."`).
 Scope: PORT with low-cost improvements; a "redesign" verdict parks the
@@ -36,15 +44,16 @@ convert-dialog: `Docs/migration/working/<SliceClass>/` holding
 `<SliceClass>-design.md`; detect-and-resume on re-invocation; the documents
 remain after completion (retention is the developer's call).
 
-## Phase 1 -- Analyze the slice (read-only; safe while they explore)
+## Understanding the slice (read-only; safe while they explore)
 
 Source, history, Jira, and layout-XML reading only -- no build, no test run,
 no app automation -- so it runs concurrently with the developer's own
 exploration. The "before" evidence is NOT part of that concurrent work.
 
-Everything convert-dialog's phase 1 does (source + related files, file
-history + Jira chronology, logic and data-member analysis incl. LCM objects
-and Units of Work, enabled/disabled cataloging), plus slice-specific work:
+Everything convert-dialog does when understanding a dialog (source + related
+files, file history + Jira chronology, logic and data-member analysis incl.
+LCM objects and Units of Work, enabled/disabled cataloging), plus
+slice-specific work:
 
 - Resolve the layout identity: the `editor=`/`class=` attributes and every
   layout node that produces this slice.
@@ -53,8 +62,7 @@ and Units of Work, enabled/disabled cataloging), plus slice-specific work:
   worklist row names the unclaimed class).
 - Interaction picture is row-shaped: mouse and keyboard edit interactions,
   commit timing (focus-loss autosave vs immediate-commit actions), context
-  menus,
-  keyboard, and how the slice behaves inside DataTree (indent, label,
+  menus, and how the slice behaves inside DataTree (indent, label,
   expansion).
 - "Before" evidence: the dialog screenshot harness does NOT apply (a slice
   renders inside the DataTree), so the capture needs the live app -- which
@@ -66,7 +74,7 @@ The analysis document keeps the four-section shape; section 4 (layout)
 describes the row: label/value split, sizing, wrapping, and any multi-row
 structure.
 
-## Phase 2 -- Align understanding (gate)
+## Agreeing on how it works (gate)
 
 Identical to convert-dialog: announce and STOP ("I've finished my analysis.
 Are you ready to align our understanding?"), then point at the file and
@@ -74,14 +82,14 @@ correct round by round -- each round its own question and end of turn --
 until the developer gives a clear negative to "any errors, gaps, or
 questions?". Never summarize the document in chat.
 
-## Phase 3 -- Integration-test plan (gate)
+## Deciding what to prove (gate)
 
 Identical process (developer guidance -> grill-me -> saved plan). Slice
 plans must cover: compose (the field renders with correct values, not
 Unsupported), edit -> ONE undo step, validation blocking, re-show after
 external PropChanged, and cluster/bidi safety when the slice carries text.
 
-## Phase 4 -- Route, map, and design (gate)
+## Planning the replacement (gate)
 
 The route decision comes FIRST and is the developer's (present the tree
 with a recommendation):
@@ -94,9 +102,9 @@ with a recommendation):
    exact legacy `class=` string, registered in `SlicePlugins`; no layout
    edits.
 
-Then map controls/patterns against the exemplar map exactly as
-convert-dialog phase 4 does (including the no-exemplar catalog + package
-search + grill-me fill plan + human-gated promotion row), and produce the
+Then map controls/patterns against the exemplar map exactly as convert-dialog
+does when planning a replacement (including the no-exemplar catalog, package
+search, grill-me fill plan, and human-gated promotion row), and produce the
 same four-section design report, with section 4 describing the proposed row
 layout and every deliberate difference from the legacy slice.
 
@@ -111,7 +119,7 @@ choice applies: inform the developer and ask whether to convert the blocker
 now in-session (launching the right skill with the class from context) or
 pause.
 
-## Phase 5 -- Scaffold or implement (developer's choice)
+## Building it (developer's choice)
 
 **Scaffold** for a slice means: the editor string is classified (or the
 plugin registered), a placeholder control composes and renders at the
@@ -119,8 +127,8 @@ slice's REAL position in the New UI detail view, tests compose green, and
 legacy is untouched -- the row goes from "Unsupported" to "empty but
 present". There is no per-slice launcher gate; the detail surface's UIMode
 gate already covers it. Merge policy is the same as dialogs: scaffold is
-branch-state only; nothing merges until phase 6 passes (an empty row is
-worse than an honest Unsupported row for preview users).
+branch-state only; nothing merges until Proving it works passes (an empty row
+is worse than an honest Unsupported row for preview users).
 
 **Implement** builds the control out from the design + test plan:
 
@@ -142,7 +150,7 @@ worse than an honest Unsupported row for preview users).
 - Keep `FwAvalonia` LCModel-free (projection and write-back live in
   xWorks). The repository comment standard applies throughout.
 
-## Phase 6 -- Verify
+## Proving it works
 
 1. create-integration-test against the plan (tests land per the mirroring
    rule: control tests in `FwAvaloniaTests/Detail/`, composer tests in

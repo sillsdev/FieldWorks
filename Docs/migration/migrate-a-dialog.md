@@ -17,6 +17,11 @@ in there; hand it to the agent only when you have closed the app.
 
 ## Workflow
 
+The skill talks about the work in named stages: **Understanding the dialog**,
+**Agreeing on how it works**, **Deciding what to prove**, **Planning the
+replacement**, **Building it**, **Proving it works**. Your steps below run
+alongside them.
+
 1. Start `/convert-dialog` and give it the dialog class name.
 2. While it analyzes: open the dialog yourself (this may require certain
    project data to exist) and explore the controls and interactions.
