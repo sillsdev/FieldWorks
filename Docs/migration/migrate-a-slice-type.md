@@ -9,6 +9,11 @@ overview's "Detail pipeline" section; read it once before your first slice.
 Prerequisite: an up-to-date main that builds locally. Legacy stays untouched
 throughout -- the detail surface's UIMode gate covers the new work.
 
+Keep FieldWorks open and explore while the agent works: its analysis phase
+is read-only, so the two run in parallel. The agent will not touch your
+running app, and it asks before any build or test run. Slice screenshots are
+yours to capture while you are in there.
+
 ## Workflow
 
 1. Start `/convert-slice` and give it the slice class name (or the layout
