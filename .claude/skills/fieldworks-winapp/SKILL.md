@@ -30,6 +30,13 @@ can only see WinForms — the Avalonia (New) surface is captured by a SEPARATE
 headless skill, never through this MCP. ALWAYS run
 `scripts/Set-FieldWorksLegacyMode.ps1` before launching (see Setup First).
 
+**This skill OWNS the app lifecycle: never use it on a FieldWorks the
+developer is using.** It launches, forces the UI mode, relaunches per tool,
+and closes the main window -- which takes down a session someone is working
+in. Before any route here, confirm the developer has no FieldWorks open (or
+that the instance is yours to drive). When they are exploring, either wait or
+ask them to capture what you need.
+
 This skill is intentionally organized as a small index plus route-specific
 navigation files. Read only the route files needed for the task.
 

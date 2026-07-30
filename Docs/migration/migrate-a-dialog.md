@@ -9,6 +9,12 @@ Prerequisite: an up-to-date main that builds locally. The legacy dialog
 keeps working throughout -- launch sites gate on the UIMode setting and the
 legacy path stays untouched.
 
+Keep FieldWorks open and explore while the agent works: its analysis phase
+is read-only, so the two run in parallel. The agent will not touch your
+running app, and it asks before any build or test run (a build fails on
+binaries your app holds locked). Screenshot capture is yours while you are
+in there; hand it to the agent only when you have closed the app.
+
 ## Workflow
 
 1. Start `/convert-dialog` and give it the dialog class name.
@@ -19,10 +25,11 @@ legacy path stays untouched.
 4. Decide: is this dialog good enough to just port, or does it really need
    a redesign? **A redesign verdict parks the dialog** -- this workflow
    ports (with low-cost improvements); redesigns are a separate effort.
-5. When the skill announces its analysis is ready, read the report looking
-   for gaps and inaccuracies. Copy any section that needs changing or
-   clarifying into your reply. Keep working until the document reflects an
-   accurate understanding of the current dialog.
+5. The skill stops and asks when its analysis is ready. Read the report
+   looking for gaps and inaccuracies -- it will not summarize it for you, by
+   design. Copy any section that needs changing or clarifying into your
+   reply. Keep working until the document reflects an accurate understanding
+   of the current dialog.
 6. Work with the agent to identify the integration tests that prove the
    dialog's capabilities (it will grill you until the set is defined and
    saved as the test plan).
