@@ -52,7 +52,7 @@ and focus-return match legacy behavior.
 | Concern | Class |
 | --- | --- |
 | Modal presentation (owner, sizing, icon, focus save/restore) | `Src/Common/FwAvalonia/AvaloniaDialogHost.cs` |
-| VM base + validation gating | `Src/Common/FwAvaloniaDialogs/DialogViewModelBase.cs` |
+| ViewModel base + validation gating | `Src/Common/FwAvaloniaDialogs/DialogViewModelBase.cs` |
 | Theme/density (concrete brushes only -- DynamicResource fails headless) | `Src/Common/FwAvaloniaDialogs/DialogTheme.axaml`, `Src/Common/FwAvalonia/CompactDialogStyles.cs` |
 | Message boxes | `Src/Common/FwAvaloniaDialogs/FwMessageBox.cs` |
 | Launcher edges (legacy call sites -> Avalonia dialogs, LCModel in/out) | `Src/LexText/LexTextControls/Avalonia/Lcm*DialogLauncher.cs` |

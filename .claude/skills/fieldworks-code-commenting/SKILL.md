@@ -25,6 +25,10 @@ Apply it while authoring -- do not write loose comments and clean them later.
 6. **ASCII only.** No em-dashes, arrows, section signs, or smart quotes in
    comments or repo docs -- they render poorly in git tooling. Use "--",
    "->", plain quotes.
+7. **No ambiguous abbreviations.** Write "ViewModel", never "VM" (VM also
+   means virtual machine). Same for anything a reader could resolve two
+   ways: spell it out. This applies to comments, documents, commit
+   messages, and what you say to the developer.
 
 ## Banned content (mechanical -- no judgment needed)
 
@@ -81,7 +85,7 @@ Temporal legacy framing trimmed to parity:
 - After:  `/// the Avalonia analog of the legacy ReallySimpleListChooser`
 
 Over-long summary trimmed to purpose + non-obvious contracts:
-- A 37-line dialog VM summary enumerating implementation steps becomes ~10
+- A 37-line dialog ViewModel summary enumerating implementation steps becomes ~10
   lines: purpose, the LCModel-free rule, and the two non-obvious contracts
   (commit-on-select single-stage; opt-in two-stage auxiliary).
 
