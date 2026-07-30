@@ -32,6 +32,12 @@
 	If set, includes optional utility applications (e.g. MigrateSqlDbs, LCMBrowser, UnicodeCharEditor) in the build.
 	Default is false unless -BuildInstaller is specified, which enables it automatically.
 
+.PARAMETER Project
+	Path to the MSBuild project or solution to build. Default is FieldWorks.proj in the repo root.
+
+.PARAMETER Target
+	Specifies a *legacy* MSBuild target (from the .targets files in .\Build). Overrides -Project.
+
 .PARAMETER Verbosity
 	Specifies the amount of information to display in the build log.
 	Values: q[uiet], m[inimal], n[ormal], d[etailed], diag[nostic].
@@ -108,9 +114,6 @@
 	Path to the local liblcm repository. Defaults to ../liblcm relative to the FieldWorks repo root.
 	Only used when -UseLocalLcm is specified.
 
-.PARAMETER LogFile
-	Path to a file where the build output should be logged.
-
 .PARAMETER StartedBy
 	Optional actor label written to the worktree lock metadata (for example: user or agent).
 	Defaults to the FW_BUILD_STARTED_BY environment variable when set, otherwise 'unknown'.
@@ -118,11 +121,6 @@
 .PARAMETER SkipWorktreeLock
 	Internal switch used when build.ps1 is invoked from test.ps1 while the parent test workflow
 	already owns the same-worktree lock. Skips acquiring/releasing that lock again.
-
-.PARAMETER TailLines
-	If specified, only displays the last N lines of output after the build completes.
-	Useful for CI/agent scenarios where you want to see recent output without piping.
-	The full output is still written to LogFile if specified.
 
 .PARAMETER SkipDependencyCheck
 	If set, skips the dependency preflight check that verifies that required SDKs and tools are installed.
@@ -165,6 +163,7 @@ param(
 	[string]$TestFilter,
 	[switch]$BuildAdditionalApps,
 	[string]$Project = "FieldWorks.proj",
+	[string]$Target,
 	[string]$Verbosity = "minimal",
 	[ValidateSet('true', 'false', 'auto')]
 	[string]$NodeReuse = 'auto',
@@ -195,6 +194,7 @@ param(
 )
 
 $ErrorActionPreference = "Stop"
+$LegacyAndInstallerProject = "Build\InstallerBuild.proj"
 
 $runningOnWindows = [System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform([System.Runtime.InteropServices.OSPlatform]::Windows)
 if (-not $runningOnWindows) {
@@ -515,6 +515,9 @@ try {
 		# Stop conflicting processes before the build
 		Stop-ConflictingProcesses @cleanupArgs
 
+		if ($Target) {
+			$Project = $LegacyAndInstallerProject
+		}
 		$projectPath = $Project
 		$rootedProjectPath = Join-Path $PSScriptRoot $Project
 		if (-not (Test-Path $projectPath) -and (Test-Path $rootedProjectPath)) {
@@ -564,6 +567,11 @@ try {
 		# Construct MSBuild arguments
 		$finalMsBuildArgs = @()
 		$nodeReuseDecision = Resolve-NodeReuse -Mode $NodeReuse
+
+		# Legacy Target
+		if ($Target) {
+			$finalMsBuildArgs += "/t:$Target"
+		}
 
 		# Parallelism
 		if (-not $Serial) {
@@ -799,7 +807,7 @@ try {
 			}
 
 			Invoke-MSBuild `
-				-Arguments (@('Build/InstallerBuild.proj', "/t:Build$BaseOrPatch", '/p:config=release', "/p:InstallerToolset=$InstallerToolset", $installerCleanArg) + `
+				-Arguments (@($LegacyAndInstallerProject, "/t:Build$BaseOrPatch", '/p:config=release', "/p:InstallerToolset=$InstallerToolset", $installerCleanArg) + `
 					$InstallerMsBuildArgs) `
 				-Description "$BaseOrPatch Build" `
 				-LogPath $LogFile `
