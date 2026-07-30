@@ -19,13 +19,13 @@ description: "Review or change FieldWorks UI wiring — app-setting and Property
 The decided routing model is explicit per-host behavior — supported
 Avalonia, explicit legacy fallback, or blocked — never silent fallback:
 
-- Surface selection: `Src/Common/FwAvalonia/LexicalEditSurfaceSelectionService.cs`,
-  `LexicalEditSurfaceResolver.cs` (behavior enum + routing logic)
+- Surface selection: `Src/Common/FwAvalonia/EditSurfaceSelectionService.cs`,
+  `EditSurfaceResolver.cs` (behavior enum + routing logic)
 - Approved legacy adapters: `Src/Common/FwAvalonia/Seams/ActiveHostContract.cs`
 - Contract tests to imitate:
-  `Src/xWorks/xWorksTests/RecordEditViewActiveHostContractTests.cs`,
+  `Src/xWorks/xWorksTests/Avalonia/Hosting/RecordEditViewActiveHostContractTests.cs`,
   `Src/Common/FwAvalonia/FwAvaloniaTests/SurfaceAndHostContractTests.cs`,
-  `LexicalEditSurfaceResolverTests.cs`
+  `EditSurfaceResolverTests.cs`
 
 ## Required Checks
 

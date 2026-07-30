@@ -22,14 +22,14 @@ migration burden.
 | --- | --- | --- |
 | Button (374) / Label (315) / CheckBox (75) / RadioButton (51) | `Button` / `TextBlock` / `CheckBox` / `RadioButton` — 1:1; use the shared style tokens, never literals | any kit view, e.g. `Src/Common/FwAvaloniaDialogs/EntryGoDialogView.axaml` |
 | TextBox (116), plain string | `TextBox` | `Src/Common/FwAvaloniaDialogs/CreateFeatureDialogView.axaml` — but FIRST check whether the legacy box carries a writing system; if so it is NOT plain (see §2 "WS typography") |
-| ComboBox (47), FwOverrideComboBox (22 files), FwComboBox (14 files) | `FwOptionPicker` (kit rule: never ad-hoc ComboBox) | `Src/Common/FwAvalonia/Region/FwOptionPicker.cs`; consumed in `InsertEntryDialogView.axaml` |
+| ComboBox (47), FwOverrideComboBox (22 files), FwComboBox (14 files) | `FwOptionChooser` (kit rule: never ad-hoc ComboBox) | `Src/Common/FwAvalonia/Detail/FwOptionChooser.cs`; consumed in `InsertEntryDlgView.axaml` |
 | ListBox (17) / CheckedListBox (11) | `ListBox`; multi-select with per-node checkboxes | `Src/Common/FwAvaloniaDialogs/ChooserDialogView.axaml` (flat + multi-select modes) |
 | TreeView (4) + chooser dialogs | virtualizing `TreeView` + `TreeDataTemplate` | `ChooserDialogView.axaml` / `ChooserDialogViewModel.cs` (hierarchy, expand/collapse, filter-swaps-to-flat) |
-| TabControl (6) | `TabControl`, two-way `SelectedTabIndex` | `Src/Common/FwAvaloniaDialogs/OptionsDialogView.axaml` |
-| GroupBox (37) | headered composite control | `Src/Common/FwAvaloniaDialogs/FwMsaGroupBox.cs` |
+| TabControl (6) | `TabControl`, two-way `SelectedTabIndex` | `Src/Common/FwAvaloniaDialogs/LexOptionsDlgView.axaml` |
+| GroupBox (37) | headered composite control | `Src/Common/FwAvaloniaDialogs/MSAGroupBox.cs` |
 | TableLayoutPanel (33) / FlowLayoutPanel (20) / Panel (40) | `Grid` / `StackPanel` / `WrapPanel` — translate layout *semantics*, not widget-for-widget | any kit view; spacing rules in dialog-conversion.md §2a-bis |
 | ToolTip (12) | `ToolTip.Tip` attached property | kit views |
-| ContextMenuStrip built in code (22 files) | `MenuFlyout` populated from data | `Src/Common/FwAvalonia/Region/RegionMenuFlyout.cs` |
+| ContextMenuStrip built in code (22 files) | `MenuFlyout` populated from data | `Src/Common/FwAvalonia/Detail/DetailMenuFlyout.cs` |
 | PictureBox (21) | — (picture editing dropped from the region; a picture slice composes a labeled Unsupported worklist row until a native picture editor is added) | **conversion worklist** (see architecture-patterns.md §5) |
 | ProgressBar / ProgressDialogWithTask | — | **GAP §3.1** |
 | WizardDialog family | — | **GAP §3.2** |
@@ -37,14 +37,14 @@ migration burden.
 
 | FieldWorks custom control (files referencing) | Avalonia counterpart | Exemplar |
 | --- | --- | --- |
-| FwTextBox (41), LabeledMultiStringControl (5), MultiStringSlice (13) | `FwMultiWsTextField` — per-WS font, RTL, keyboard, abbreviation gutter, staged edits | `Src/Common/FwAvalonia/Region/FwFieldControls.cs`; dialog usage: `InsertEntryDialogView.axaml` (lexeme form + gloss) |
-| FwMultiParaTextBox (1) / StTextSlice | `FwStructuredTextField` (multi-paragraph StText) | `Src/Common/FwAvalonia/Region/FwStructuredTextField.cs` |
+| FwTextBox (41), LabeledMultiStringControl (5), MultiStringSlice (13) | `FwMultiWsTextField` — per-WS font, RTL, keyboard, abbreviation gutter, staged edits | `Src/Common/FwAvalonia/Detail/FwFieldControls.cs`; dialog usage: `InsertEntryDlgView.axaml` (lexeme form + gloss) |
+| FwMultiParaTextBox (1) / StTextSlice | `FwStructuredTextField` (multi-paragraph StText) | `Src/Common/FwAvalonia/Detail/FwStructuredTextField.cs` |
 | TreeCombo (27) + PopupTree/PopupTreeManager (36) | popup tree picker | `Src/Common/FwAvalonia/FwPosChooser.cs` |
-| FeatureStructureTreeView (3) + `MsaInflectionFeatureListDlg` / `PhonologicalFeatureChooserDlg` | `FwFeatureStructureEditor` — LCModel-free `FsFeatStruc` tree editor: complex features expand to nested features, closed features to symbolic-value radios (one per feature) + a "None of the above" unspecified radio, plus inline create-feature / add-value affordances | `Src/Common/FwAvaloniaDialogs/FwFeatureStructureEditor.cs`; composed in `FwMsaGroupBox.cs` and the feature chooser (`FeatureChooserDialog*`) |
+| FeatureStructureTreeView (3) + `MsaInflectionFeatureListDlg` / `PhonologicalFeatureChooserDlg` | `FwFeatureStructureEditor` — LCModel-free `FsFeatStruc` tree editor: complex features expand to nested features, closed features to symbolic-value radios (one per feature) + a "None of the above" unspecified radio, plus inline create-feature / add-value affordances | `Src/Common/FwAvaloniaDialogs/FwFeatureStructureEditor.cs`; composed in `MSAGroupBox.cs` and the feature chooser (`FeatureChooserDialog*`) |
 | SimpleListChooser (26) / ReallySimpleListChooser (22) | ChooserDialog kit (input/result DTOs, single- and multi-select) | `Src/Common/FwAvaloniaDialogs/ChooserDialog*` |
 | BaseGoDlg/EntryGoDlg family (Go, Merge, Link*, AddAllomorph); its embedded MatchingObjectsBrowser | EntryGo kit + per-consumer launcher; persistent multi-column matching list (column spec `EntryGoResultColumn`, arrow-key selection from the search box) | `Src/Common/FwAvaloniaDialogs/EntryGoDialog*`; matching list + dependent auxiliary picker: dialog-conversion.md §2c; WS-aware search box: §2d |
 | MessageBox / one-off confirmation Forms | `FwMessageBox` (owner-parented, Yes/No/OK/Cancel) | `Src/Common/FwAvaloniaDialogs/FwMessageBox.cs`; injectable-seam usage: `LcmAddAllomorphDialogLauncher.PerformAddAllomorph` |
-| DataTree + Slice subclasses (88/61) | region surface: composer → region model → owned field controls (Text / StructuredText / Chooser / ReferenceVector / Literal). Custom slices resolve plugin registry → labeled Unsupported row (the conversion worklist); the sole native plugin exemplar is `ReversalIndexEntryPlugin`. | `Src/xWorks/FullEntryRegionComposer.cs`, `Src/Common/FwAvalonia/Region/LexicalEditRegionView.cs`, `Src/xWorks/RegionEditorPlugins.cs`, `Src/xWorks/ReversalIndexEntryPlugin.cs` (architecture-patterns.md §2, §5) |
+| DataTree + Slice subclasses (88/61) | region surface: composer → region model → owned field controls (Text / StructuredText / Chooser / ReferenceVector / Literal). Custom slices resolve plugin registry → labeled Unsupported row (the conversion worklist); the sole native plugin exemplar is `ReversalIndexEntryPlugin`. | `Src/xWorks/Avalonia/Composer/DetailComposer.cs`, `Src/Common/FwAvalonia/Detail/DataTree.cs`, `Src/xWorks/Avalonia/Plugins/SlicePlugins.cs`, `Src/xWorks/Avalonia/Plugins/ReversalIndexEntryPlugin.cs` (architecture-patterns.md §2, §5) |
 | FwHelpButton (5) + per-dialog Help | VM `HelpRequested` event → launcher calls `ShowHelp.ShowHelpTopic` | `EntryGoDialogViewModel.cs` + any `Lcm*Launcher` `OnHelpRequested` |
 | TriStateTreeView (6) | — | **GAP §3.4** |
 | SimpleRootSite / RootSiteControl embedded views (72/26) | — | **DEFERRED §3.7** |
@@ -60,7 +60,7 @@ migration burden.
 | Dependent two-stage selection | dialog-conversion.md §2c (`EntryGoAuxiliaryOption`, LinkMSA/LinkAllomorph launchers) |
 | WS typography + keyboard switch on text input (255 files set WS on controls) | editing: `FwMultiWsTextField`; search/entry boxes: `EntryGoSearchFieldSpec` + `EntryGoLauncherShared.BuildVernacularSearchFieldSpec` (dialog-conversion.md §2d) |
 | RTL from writing system (99 files) | `FlowDirection` from `ws.RightToLeftScript` — `FwFieldControls.cs`, §2d spec |
-| Fenced LCModel edits / one undo step | region: `IRegionEditContext`/`LcmRegionEditSession`; launcher on-OK: `UndoableUnitOfWorkHelper.Do` in `LcmInsertEntryDialogLauncher.Apply` |
+| Fenced LCModel edits / one undo step | region: `IDetailEditContext`/`LcmDetailEditSession`; launcher on-OK: `UndoableUnitOfWorkHelper.Do` in `LcmInsertEntryDialogLauncher.Apply` |
 | Validation gating + inline error display | gating: `DialogViewModelBase.GetValidationErrors`; the inline-display exemplar is `CreateFeatureDialogView.axaml` (`!IsValid` → visible message) — copy it; do not invent a new error surface |
 | Confirmation prompt behind a testable seam | `LcmAddAllomorphDialogLauncher` (`Func<string,string,bool>` defaulting to `FwMessageBox`) |
 | Help button (130 call sites, ~1/dialog) | VM `HelpRequested` → launcher `ShowHelp.ShowHelpTopic(helpProvider, topic)` |
@@ -138,5 +138,5 @@ surface — that is what the fail-closed resolver is for.
 ### 3.7 RootSite-embedded views (deferred by design)
 - `SimpleRootSite`/`RootSiteControl` surfaces (interlinear, rule formula,
   print previews) stay Legacy; their tools are deliberately unregistered
-  (see `LexicalEditSurfaceRegistry`). The activation recipe lives in
+  (see `EditSurfaceRegistry`). The activation recipe lives in
   SKILL.md "Inert follow-up surfaces".

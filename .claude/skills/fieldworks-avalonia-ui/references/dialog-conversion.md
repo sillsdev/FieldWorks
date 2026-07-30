@@ -3,8 +3,8 @@
 The verified playbook for migrating a hand-authored WinForms dialog/wizard to Avalonia using the
 **XAML + CommunityToolkit.Mvvm + compiled bindings** kit. Proven by the **real** Tools→Options
 migration (`Src/Common/FwAvaloniaDialogs/`): four tabs wired to the live settings bus via an
-`OptionsState` DTO seam, launched New-mode-gated from `LexTextApp`/`WelcomeToFieldWorksDlg`
-(`Src/LexText/LexTextControls/AvaloniaOptionsDialogLauncher.cs`), headless tests green on net48
+`LexOptionsDlgState` DTO seam, launched New-mode-gated from `LexTextApp`/`WelcomeToFieldWorksDlg`
+(`Src/LexText/LexTextControls/Avalonia/AvaloniaOptionsDialogLauncher.cs`), headless tests green on net48
 through `build.ps1`. Decided 2026-06-15; the original rationale doc
 (`avalonia-migration-roadmap/complete-migration-program.md` §11.3) was relocated to the
 `phase1-docs` branch and is not present here — this file is the proven template that decision
@@ -93,7 +93,7 @@ namespace FwAvaloniaDialogs
   build time (the whole point: a wrong property name fails the *build*).
 - **Use a `UserControl`, not a `Window`** — see modality below.
 - Stamp a stable, nonlocalized `AutomationProperties.AutomationId` on every interactive control.
-- Reuse owned controls: `FwMultiWsTextField` for writing-system text, `FwOptionPicker` for "select from
+- Reuse owned controls: `FwMultiWsTextField` for writing-system text, `FwOptionChooser` for "select from
   a list". Use a raw `ComboBox` only for an always-visible inline settings combo.
 
 ### Tests — `FwAvaloniaDialogsTests/XyzDialogTests.cs`
@@ -163,7 +163,7 @@ both the runtime host path and the headless tests. Hard rules:
   root `Margin` literal. So content can never butt the dialog frame, even if a view forgets its own margin.
 - **No text-bearing or `PART_*Host` control with 0 padding.** Each injected native-control host border
   carries `Classes="fwFieldHost"` (the style gives it `DialogFieldBorderThickness` + `DialogFieldPadding`
-  + `DialogFieldBorderBrush`) so the embedded `FwMultiWsTextField`/`FwOptionPicker` gets a real frame and
+  + `DialogFieldBorderBrush`) so the embedded `FwMultiWsTextField`/`FwOptionChooser` gets a real frame and
   breathing room. Never leave a host border with no `BorderThickness`.
 - **OK/Cancel use the standard button strip gap.** The button strip is `Spacing="{StaticResource
   DialogButtonStripGap}" Margin="{StaticResource DialogControlGapAbove}"`.
@@ -183,11 +183,11 @@ both the runtime host path and the headless tests. Hard rules:
 ## 2b. Real settings via a DTO seam; live-apply over restart
 
 The VM stays LCModel/PropertyTable-free. Carry real settings across the boundary with a **plain DTO**
-(`OptionsState`): the product edge populates it from the live bus, the VM edits it, and a product-side
+(`LexOptionsDlgState`): the product edge populates it from the live bus, the VM edits it, and a product-side
 launcher applies it on OK — replicating the legacy dialog's exact apply order (the apply-order mirroring
 and the broader coexistence-sync rules — both implementations edited together, divergence register — are
 governed by the `dialog-update` skill). Canonical:
-`AvaloniaOptionsDialogLauncher` (builds `OptionsState`, calls `ShowModal`, applies Reporting/Update/
+`AvaloniaOptionsDialogLauncher` (builds `LexOptionsDlgState`, calls `ShowModal`, applies Reporting/Update/
 UI-mode/UI-language/plugins/Save). **Prefer live apply to "restart required":** for a setting that can
 take effect immediately, put an `Action` callback on the DTO and an `Apply` command on the VM (e.g. the
 Lexical Edit UI Mode — broadcasting the `PropertyTable` "UIMode" property re-resolves the open surfaces

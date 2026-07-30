@@ -26,7 +26,7 @@ Two hard rules that fall out of headless rendering:
 | Surface | WinForms analogue | Look | Where it's set |
 |---|---|---|---|
 | **Dialog text inputs** (`TextBox`/`ComboBox`, and the `PART_*Host` boxes wrapping owned multistring/option editors) | classic WinForms dialog inputs | **clearly boxed** — visible 1px gray border + tight padding | `DialogTheme.axaml` (`fwFieldHost` style + `TextBox`/`ComboBox` setters) |
-| **Detail / region view** (`LexicalEditRegionView`) | the DataTree | **flat** with subtle 1px field separators — do NOT box every value | flat structure via `FwAvaloniaDensity` literals; font via `FwSurfaceStyles` |
+| **Detail / region view** (`DataTree`) | the DataTree | **flat** with subtle 1px field separators — do NOT box every value | flat structure via `FwAvaloniaDensity` literals; font via `FwSurfaceStyles` |
 | **Browse table** (future PR) | XMLViews browse | **grid** — keep column/row lines + bold headers, just denser font | grid via `FwAvaloniaDensity`; font via `FwSurfaceStyles` |
 
 The key distinction: **dialog inputs get a box; detail values do not.** The detail view's owned editors are
@@ -155,7 +155,7 @@ values already in `DialogTheme.axaml`.
   the path the headless dialog tests use, so they render at the same density as runtime. At runtime
   `AvaloniaDialogHost.ShowModal` additionally calls `CompactDialogStyles.Apply` — a belt-and-suspenders C#
   duplicate of the same values (both idempotent; keep the two numerically identical).
-- **Region / browse** — `FwSurfaceStyles.Apply(this)` in the `LexicalEditRegionView`
+- **Region / browse** — `FwSurfaceStyles.Apply(this)` in the `DataTree`
   ctor adds the **font-only** baseline (TextBlock/TextBox → 12px). The flat-with-separators (region)
   structure comes from `FwAvaloniaDensity` literals, which are concrete and already render
   headlessly; `FwSurfaceStyles` exists only to drop the Fluent default font those literals don't touch.

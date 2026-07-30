@@ -1,6 +1,6 @@
 ---
 name: dialog-update
-description: "Keep a FieldWorks dialog's WinForms (old) and Avalonia (new) implementations in sync whenever either is changed. Use whenever you add, edit, or review a control, field, button, validation rule, apply-order step, or string in a dialog that exists in BOTH a WinForms form (e.g. LexOptionsDlg) and its Avalonia replacement (e.g. OptionsDialogView + AvaloniaOptionsDialogLauncher) — even for a one-line change. Also use before claiming a migrated dialog is at parity, and when deciding whether a difference between the two is an approved divergence."
+description: "Keep a FieldWorks dialog's WinForms (old) and Avalonia (new) implementations in sync whenever either is changed. Use whenever you add, edit, or review a control, field, button, validation rule, apply-order step, or string in a dialog that exists in BOTH a WinForms form (e.g. LexOptionsDlg) and its Avalonia replacement (e.g. LexOptionsDlgView + AvaloniaOptionsDialogLauncher) — even for a one-line change. Also use before claiming a migrated dialog is at parity, and when deciding whether a difference between the two is an approved divergence."
 ---
 
 # Dialog Update — Keep Old (WinForms) and New (Avalonia) In Sync
@@ -25,11 +25,11 @@ and "fixes" it, thrashing the code.
 
 | Concern | WinForms (old) | Avalonia (new) |
 |---|---|---|
-| Tools → Options | `Src/LexText/LexTextControls/LexOptionsDlg.cs` (+ `.Designer.cs`, `.resx`) | `Src/Common/FwAvaloniaDialogs/OptionsDialogView.axaml(.cs)` + `OptionsDialogViewModel.cs` + `OptionsState.cs`; edge: `Src/LexText/LexTextControls/AvaloniaOptionsDialogLauncher.cs` |
-| Manage Individual Features | (opened from `LexOptionsDlg.m_manageFeaturesButton_Click`) | `LexicalEditFeatureManagerDialog` (`Src/Common/FwAvaloniaDialogs/`) |
-| Insert Entry | `Src/LexText/LexTextControls/InsertEntryDlg.cs` | `Src/Common/FwAvaloniaDialogs/InsertEntryDialogView.axaml.cs` + `InsertEntryDialogViewModel.cs` |
-| Add New Sense | `Src/LexText/LexTextControls/AddNewSenseDlg.cs` | `Src/Common/FwAvaloniaDialogs/AddNewSenseDialogView.axaml.cs` + `AddNewSenseDialogViewModel.cs` |
-| MSA Creator | `Src/LexText/LexTextControls/MsaCreatorDlg.cs` | `Src/Common/FwAvaloniaDialogs/MsaCreatorDialogView.axaml.cs` + `MsaCreatorDialogViewModel.cs` |
+| Tools → Options | `Src/LexText/LexTextControls/LexOptionsDlg.cs` (+ `.Designer.cs`, `.resx`) | `Src/Common/FwAvaloniaDialogs/LexOptionsDlgView.axaml(.cs)` + `LexOptionsDlgViewModel.cs` + `LexOptionsDlgState.cs`; edge: `Src/LexText/LexTextControls/Avalonia/AvaloniaOptionsDialogLauncher.cs` |
+| Manage Individual Features | (opened from `LexOptionsDlg.m_manageFeaturesButton_Click`) | `LexiconFeatureManagerDialog` (`Src/Common/FwAvaloniaDialogs/`) |
+| Insert Entry | `Src/LexText/LexTextControls/InsertEntryDlg.cs` | `Src/Common/FwAvaloniaDialogs/InsertEntryDlgView.axaml.cs` + `InsertEntryDlgViewModel.cs` |
+| Add New Sense | `Src/LexText/LexTextControls/AddNewSenseDlg.cs` | `Src/Common/FwAvaloniaDialogs/AddNewSenseDlgView.axaml.cs` + `AddNewSenseDlgViewModel.cs` |
+| MSA Creator | `Src/LexText/LexTextControls/MsaCreatorDlg.cs` | `Src/Common/FwAvaloniaDialogs/MsaCreatorDlgView.axaml.cs` + `MsaCreatorDlgViewModel.cs` |
 | Picture Properties | `Src/FwCoreDlgs/PicturePropertiesDialog.cs` | `Src/Common/FwAvaloniaDialogs/PicturePropertiesDialogView.cs` + `PicturePropertiesDialogViewModel.cs` |
 | Phonological Feature Chooser | `Src/LexText/LexTextControls/PhonologicalFeatureChooserDlg.cs` | `Src/Common/FwAvaloniaDialogs/FeatureChooserDialogView.axaml.cs` + `FeatureChooserDialogViewModel.cs` |
 | Entry Go (jump to entry) | `Src/LexText/LexTextControls/EntryGoDlg.cs` | `Src/Common/FwAvaloniaDialogs/EntryGoDialogView.axaml.cs` + `EntryGoDialogViewModel.cs` |
@@ -76,7 +76,7 @@ paired dialog:
 6. **State DTO / persisted-key mismatch.** The DTO field, the settings property,
    and the `PropertyTable` broadcast key must all agree
    (e.g., in the Options pair: `UIModeDisabledTools` ↔
-   `LexicalEditSurfaceResolver.UIModeDisabledToolsPropertyName`).
+   `EditSurfaceResolver.UIModeDisabledToolsPropertyName`).
    A rename on one side leaves the other writing a dead key.
 7. **Test blind spot.** Headless Avalonia tests pass while the WinForms form (or
    the live modal-host input path) is broken, because the tests exercise
@@ -93,7 +93,7 @@ Do these, in order, on any paired-dialog change:
    other side is out of scope, stop and say so explicitly.
 2. **Share the source of truth, don't copy it.** Prefer one list/rule both
    consume over two hand-maintained copies:
-   - e.g., in the Options pair: `LexicalEditFeatureCatalog` is the single catalog
+   - e.g., in the Options pair: `LexiconFeatureCatalog` is the single catalog
      behind both the WinForms button and the Avalonia dialog — extend it, not
      two lists.
    - Apply/normalize/gate helpers should be shared or mirrored with a pointer

@@ -25,18 +25,18 @@ architecture; its `references/architecture-patterns.md` covers owned
 controls, writing-system text fields, dialogs/flyouts, validation, and
 lifetime. Canonical code to imitate:
 
-- Owned field controls: `Src/Common/FwAvalonia/Region/FwFieldControls.cs`,
-  `FwOptionPicker.cs`, `RegionMenuFlyout.cs`, `HoverReveal.cs`
-- Region view + focus memory: `LexicalEditRegionView.cs`,
-  `RegionFocusMemory.cs`
+- Owned field controls: `Src/Common/FwAvalonia/Detail/FwFieldControls.cs`,
+  `FwOptionChooser.cs`, `DetailMenuFlyout.cs`, `HoverReveal.cs`
+- Detail view + focus memory: `DataTree.cs`,
+  `DetailFocusMemory.cs`
 - Seams (scheduler, lifetime, clipboard, edit sessions):
-  `Src/Common/FwAvalonia/Seams/ISeams.cs`
+  `Src/Common/FwAvalonia/Seams/`
 - Headless test setup: `Src/Common/FwAvalonia/FwAvaloniaTests/TestAppBuilder.cs`;
-  examples in `RegionEditingTests.cs`, `VisualParityAndDensityTests.cs`
+  examples in `DetailEditingTests.cs`, `VisualParityAndDensityTests.cs`
 - Density constants: `Src/Common/FwAvalonia/FwAvaloniaDensity.cs`
 - **Dialog kit (XAML + CommunityToolkit.Mvvm + compiled bindings):**
-  `Src/Common/FwAvaloniaDialogs/` — `OptionsDialogView.axaml`/`.axaml.cs` +
-  `OptionsDialogViewModel.cs`; headless tests in `FwAvaloniaDialogsTests/`.
+  `Src/Common/FwAvaloniaDialogs/` — `LexOptionsDlgView.axaml`/`.axaml.cs` +
+  `LexOptionsDlgViewModel.cs`; headless tests in `FwAvaloniaDialogsTests/`.
   This is the verified template for hand-authored dialogs — see
   "Converting a WinForms dialog (MVVM kit)" below.
 
@@ -57,7 +57,7 @@ dialog:
    `Window` — see modality below), `x:DataType` set to the view-model,
    compiled `{Binding}`s, and a stable `AutomationProperties.AutomationId`
    on every interactive control. Reuse owned controls (`FwMultiWsTextField`,
-   `FwOptionPicker`) for writing-system fields and list pickers.
+   `FwOptionChooser`) for writing-system fields and list pickers.
 2. **View-model** `XyzDialogViewModel.cs`: `ObservableObject` with
    `[ObservableProperty]` state and `[RelayCommand]` actions; expose the
    result (e.g. `Accepted`). Keep it LCModel-free for the view; bind real
@@ -133,7 +133,7 @@ Rules specific to dialogs:
 - UI logic stays in bindings/view models where practical; avoid
   logic-heavy code-behind.
 - For any Avalonia "select from a list" surface, prefer the shared
-  `FwOptionPicker` pattern in `Src/Common/FwAvalonia/Region/FwOptionPicker.cs`
+  `FwOptionChooser` pattern in `Src/Common/FwAvalonia/Detail/FwOptionChooser.cs`
   (AutoCompleteBox-based, keyboard-safe, search-capable, compact density)
   over ad hoc `ListBox` popups or one-off editable selectors. Reach for a raw
   `ComboBox` only when the UX explicitly needs an always-visible inline combo
