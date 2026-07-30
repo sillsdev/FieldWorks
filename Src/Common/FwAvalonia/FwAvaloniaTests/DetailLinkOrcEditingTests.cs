@@ -95,7 +95,7 @@ namespace FwAvaloniaTests
 			// prompt flyout anchored at the box; raise it the same way a user click would.
 			linkItem.RaiseEvent(new Avalonia.Interactivity.RoutedEventArgs(MenuItem.ClickEvent));
 			Dispatcher.UIThread.RunJobs();
-			DialogSnapshot.Capture(window, "Region-LinkOrc-01-link-prompt");
+			DialogSnapshot.Capture(window, "Detail-LinkOrc-01-link-prompt");
 
 			var url = FindInFlyout<TextBox>(flyout, "BibEditor.en.Link.Url");
 			Assert.That(url, Is.Not.Null, "the link flyout prompts for a URL");
@@ -193,7 +193,7 @@ namespace FwAvaloniaTests
 			Assert.That(deleteOrc, Is.Not.Null, "a row offers the delete-embedded-object operation on its right-click menu");
 			deleteOrc.RaiseEvent(new Avalonia.Interactivity.RoutedEventArgs(MenuItem.ClickEvent));
 			Dispatcher.UIThread.RunJobs();
-			DialogSnapshot.Capture(window, "Region-LinkOrc-02-orc-selected-for-delete");
+			DialogSnapshot.Capture(window, "Detail-LinkOrc-02-orc-selected-for-delete");
 
 			Assert.That(context.RichTextEdits, Has.Count.EqualTo(1));
 			var staged = context.RichTextEdits[0].Value;

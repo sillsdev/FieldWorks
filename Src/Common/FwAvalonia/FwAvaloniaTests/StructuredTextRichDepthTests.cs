@@ -88,7 +88,7 @@ namespace FwAvaloniaTests
 			var context = new FakeDetailEditContext();
 			var (control, window) = Show(field, context);
 
-			DialogSnapshot.Capture(window, "Region-StTextDepth-01-charstyle");
+			DialogSnapshot.Capture(window, "Detail-StTextDepth-01-charstyle");
 			DialogLayoutAssert.AssertNoCrowding(control);
 
 			var box = Find<TextBox>(control, "Discussion.Para.0");
@@ -179,7 +179,7 @@ namespace FwAvaloniaTests
 			var context = new FakeDetailEditContext();
 			var (control, window) = Show(field, context);
 
-			DialogSnapshot.Capture(window, "Region-StTextDepth-02-wsretag");
+			DialogSnapshot.Capture(window, "Detail-StTextDepth-02-wsretag");
 			DialogLayoutAssert.AssertNoCrowding(control);
 
 			var box = Find<TextBox>(control, "Discussion.Para.0");
@@ -228,7 +228,7 @@ namespace FwAvaloniaTests
 			var context = new FakeDetailEditContext();
 			var (control, window) = Show(field, context);
 
-			DialogSnapshot.Capture(window, "Region-StTextDepth-03-perrun-font-display");
+			DialogSnapshot.Capture(window, "Detail-StTextDepth-03-perrun-font-display");
 			DialogLayoutAssert.AssertNoCrowding(control);
 
 			// A read-along display layer renders for the multi-run paragraph, with per-run Run inlines

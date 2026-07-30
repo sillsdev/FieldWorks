@@ -2179,7 +2179,7 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(rootAllomorphDate, Is.Not.Null,
 				"nested MoForm GenDate custom fields still compose a row in the lexeme-form layout");
 			Assert.That(rootAllomorphDate.Kind, Is.EqualTo(DetailFieldKind.Unsupported),
-				"the GenDate editor was dropped from the Avalonia region; it renders the labeled Unsupported worklist row");
+				"the GenDate editor was dropped from the Avalonia detail view; it renders the labeled Unsupported worklist row");
 			Assert.That(rootAllomorphCategory, Is.Not.Null,
 				"nested MoForm atomic custom references render as chooser rows");
 			Assert.That(rootAllomorphCategory.Kind, Is.EqualTo(DetailFieldKind.Chooser));
@@ -2197,7 +2197,7 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(exampleDate, Is.Not.Null,
 				"example custom GenDate fields still compose a row in the nested example layout");
 			Assert.That(exampleDate.Kind, Is.EqualTo(DetailFieldKind.Unsupported),
-				"the GenDate editor was dropped from the Avalonia region; it renders the labeled Unsupported worklist row");
+				"the GenDate editor was dropped from the Avalonia detail view; it renders the labeled Unsupported worklist row");
 			Assert.That(exampleCategory, Is.Not.Null,
 				"example custom atomic references render as chooser rows");
 			Assert.That(exampleCategory.Kind, Is.EqualTo(DetailFieldKind.Chooser));

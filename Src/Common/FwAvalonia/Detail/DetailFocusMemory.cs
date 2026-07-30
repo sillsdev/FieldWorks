@@ -184,14 +184,14 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		private static ScrollViewer FindScroller(Control root)
 		{
 			if (root is ScrollViewer selfScroller
-				&& AutomationProperties.GetAutomationId(selfScroller) == "RegionDataTree.Scroll")
+				&& AutomationProperties.GetAutomationId(selfScroller) == "DataTree.Scroll")
 			{
 				return selfScroller;
 			}
 
 			if (root is ContentControl contentControl
 				&& contentControl.Content is ScrollViewer directScroller
-				&& AutomationProperties.GetAutomationId(directScroller) == "RegionDataTree.Scroll")
+				&& AutomationProperties.GetAutomationId(directScroller) == "DataTree.Scroll")
 			{
 				return directScroller;
 			}
@@ -199,7 +199,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			foreach (var visual in root.GetVisualDescendants())
 			{
 				if (visual is ScrollViewer scroller
-					&& AutomationProperties.GetAutomationId(scroller) == "RegionDataTree.Scroll")
+					&& AutomationProperties.GetAutomationId(scroller) == "DataTree.Scroll")
 				{
 					return scroller;
 				}

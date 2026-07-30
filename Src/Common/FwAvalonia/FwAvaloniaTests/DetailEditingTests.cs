@@ -413,7 +413,7 @@ namespace FwAvaloniaTests
 			Dispatcher.UIThread.RunJobs();
 
 			Assert.That(context.CommitCount, Is.EqualTo(0), "validation errors must block the autosave");
-			var errors = Find<TextBlock>(view, "RegionEditor.ValidationErrors");
+			var errors = Find<TextBlock>(view, "DetailEditor.ValidationErrors");
 			Assert.That(errors.IsVisible, Is.True, "a blocked autosave is never silent");
 			Assert.That(errors.Text, Does.Contain("required"));
 		}
@@ -442,8 +442,8 @@ namespace FwAvaloniaTests
 		public void EditMode_HasNoSaveCancelButtons_BecauseItAutoSaves()
 		{
 			var (view, _, _) = ShowEditable();
-			Assert.That(Find<Button>(view, "RegionEditor.Save"), Is.Null, "14.4: legacy has no Save button");
-			Assert.That(Find<Button>(view, "RegionEditor.Cancel"), Is.Null);
+			Assert.That(Find<Button>(view, "DetailEditor.Save"), Is.Null, "14.4: legacy has no Save button");
+			Assert.That(Find<Button>(view, "DetailEditor.Cancel"), Is.Null);
 		}
 
 		// Chooser options can share a display name (e.g. identically named list items);
@@ -822,7 +822,7 @@ namespace FwAvaloniaTests
 			Dispatcher.UIThread.RunJobs();
 
 			Assert.That(context.CommitCount, Is.EqualTo(0), "the gesture commit stays validation-gated");
-			Assert.That(Find<TextBlock>(view, "RegionEditor.ValidationErrors").IsVisible, Is.True,
+			Assert.That(Find<TextBlock>(view, "DetailEditor.ValidationErrors").IsVisible, Is.True,
 				"a blocked gesture commit is never silent");
 		}
 
@@ -836,7 +836,7 @@ namespace FwAvaloniaTests
 			Dispatcher.UIThread.RunJobs();
 
 			Assert.That(Find<TextBox>(view, "LexemeFormEditor.vern").IsReadOnly, Is.True);
-			Assert.That(Find<Button>(view, "RegionEditor.Save"), Is.Null, "display mode has no Save/Cancel footer");
+			Assert.That(Find<Button>(view, "DetailEditor.Save"), Is.Null, "display mode has no Save/Cancel footer");
 		}
 
 		// ---- Character formatting (Ctrl+B/I/U) over a TextBox selection ----
@@ -1321,7 +1321,7 @@ namespace FwAvaloniaTests
 			gear.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
 			Dispatcher.UIThread.RunJobs();
 
-			Assert.That(requests, Has.Count.EqualTo(1), "the gear click raises RegionLinkRequest directly");
+			Assert.That(requests, Has.Count.EqualTo(1), "the gear click raises DetailLinkRequest directly");
 			Assert.That(requests[0].Field, Is.SameAs(field));
 			Assert.That(requests[0].Link.Tool, Is.EqualTo("morphTypeEdit"), "the FIRST goto link wins");
 			Assert.That(((Flyout)chooser.Flyout).IsOpen, Is.False, "no flyout opened from the gear");

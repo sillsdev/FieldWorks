@@ -76,8 +76,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			_labelColumnWidthChanged = labelColumnWidthChanged;
 			var labelColumnWidth = getLabelColumnWidth?.Invoke() ?? FwAvaloniaDensity.LabelColumnWidth;
 
-			Name = "RegionDataTree";
-			AutomationProperties.SetAutomationId(this, "RegionDataTree");
+			Name = "DataTree";
+			AutomationProperties.SetAutomationId(this, "DataTree");
 			AutomationProperties.SetName(this, FwAvaloniaStrings.DetailAreaName);
 
 			// WinForms-density font baseline (12px) for the detail surface, applied to this view's own control
@@ -103,7 +103,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				Background = Brushes.Transparent, // legacy splitter is window-colored/invisible (12.6)
 				Width = FwAvaloniaDensity.SplitterWidth
 			};
-			AutomationProperties.SetAutomationId(splitter, "RegionDataTree.Splitter");
+			AutomationProperties.SetAutomationId(splitter, "DataTree.Splitter");
 			Grid.SetColumn(splitter, 1);
 			Grid.SetRowSpan(splitter, Math.Max(1, model.Fields.Count * 2));
 			grid.Children.Add(splitter);
@@ -157,7 +157,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				HorizontalScrollBarVisibility = Avalonia.Controls.Primitives.ScrollBarVisibility.Disabled,
 				VerticalScrollBarVisibility = Avalonia.Controls.Primitives.ScrollBarVisibility.Auto
 			};
-			AutomationProperties.SetAutomationId(scroller, "RegionDataTree.Scroll");
+			AutomationProperties.SetAutomationId(scroller, "DataTree.Scroll");
 			Content = scroller;
 
 			// Screen-local command shortcuts:
@@ -212,7 +212,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				Margin = new Thickness(0, 4, 0, 2),
 				IsVisible = false
 			};
-			AutomationProperties.SetAutomationId(_validationBlock, "RegionEditor.ValidationErrors");
+			AutomationProperties.SetAutomationId(_validationBlock, "DetailEditor.ValidationErrors");
 
 			var footer = new StackPanel { Margin = FwAvaloniaDensity.SliceMargin };
 			footer.Children.Add(_validationBlock);

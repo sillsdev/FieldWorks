@@ -440,7 +440,7 @@ namespace SIL.FieldWorks.XWorks
 				}
 				catch (Exception adapterError)
 				{
-					Logger.WriteError("Region menu command adapter failed; menu items that need "
+					Logger.WriteError("Detail menu command adapter failed; menu items that need "
 						+ "the hidden colleague chain will be disabled.", adapterError);
 				}
 
@@ -492,7 +492,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 			catch (Exception e)
 			{
-				Logger.WriteError("Region context menu failed.", e);
+				Logger.WriteError("Detail context menu failed.", e);
 			}
 		}
 
@@ -662,7 +662,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 			catch (Exception e)
 			{
-				Logger.WriteError("Region chooser link jump failed.", e);
+				Logger.WriteError("Detail chooser link jump failed.", e);
 			}
 		}
 
@@ -730,7 +730,7 @@ namespace SIL.FieldWorks.XWorks
 			// degradation is diagnosable from the field rather than only in a debugger.
 			m_dataEntryForm.CurrentSlice = null;
 			Logger.WriteEvent(string.Format(
-				"Region menu command adapter found no DataTree slice for target hvo {0}; CurrentSlice was "
+				"Detail menu command adapter found no DataTree slice for target hvo {0}; CurrentSlice was "
 				+ "cleared so the command no-ops rather than mis-targeting another object.", targetHvo));
 		}
 
@@ -767,7 +767,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 			catch (Exception e)
 			{
-				Logger.WriteError("Realizing lazy DataTree slices for region command targeting failed.", e);
+				Logger.WriteError("Realizing lazy DataTree slices for detail command targeting failed.", e);
 				return false;
 			}
 

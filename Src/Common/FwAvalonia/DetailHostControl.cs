@@ -25,7 +25,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 
 		public DetailHostControl()
 		{
-			Name = "RegionHostControl";
+			Name = "DetailHostControl";
 			AccessibleName = "RecordEditView.AvaloniaHost";
 			AccessibleDescription = FwAvaloniaStrings.AvaloniaHostName;
 		}

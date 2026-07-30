@@ -13,9 +13,9 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Seams
 	///   puts on the OS clipboard inside the <c>"TsString"</c> data format. Preserves writing-system
 	///   runs, styles, and string properties.
 	///
-	/// Fidelity decision: the shared format IS the existing legacy <c>"TsString"</c>
-	/// clipboard contract, not a new one, so Avalonia and native-Views surfaces round-trip multi-WS
-	/// rich text bidirectionally during coexistence. What does NOT round-trip:
+	/// Fidelity decision: the shared format IS the existing <c>"TsString"</c> clipboard format —
+	/// the same one native-Views copy/paste uses, not a new one — so Avalonia and native-Views
+	/// surfaces round-trip multi-WS rich text bidirectionally during coexistence. What does NOT round-trip:
 	/// - embedded-object runs (ORCs: pictures, footnotes, object links) reference objects in the source
 	///   context; the text and properties survive but the object reference is not resolvable outside it;
 	/// - external (non-FieldWorks) consumers only see the plain-text format — WS/style metadata drops;

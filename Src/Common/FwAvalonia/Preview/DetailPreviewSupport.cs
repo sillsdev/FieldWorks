@@ -22,7 +22,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Preview
 		{
 			Width = 900;
 			Height = 520;
-			AutomationProperties.SetAutomationId(this, "RegionPreviewWindow");
+			AutomationProperties.SetAutomationId(this, "DetailPreviewWindow");
 		}
 
 		protected override void OnDataContextChanged(EventArgs e)

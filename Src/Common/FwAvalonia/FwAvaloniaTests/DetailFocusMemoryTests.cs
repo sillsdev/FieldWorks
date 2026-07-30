@@ -67,7 +67,7 @@ namespace FwAvaloniaTests
 
 		private static ScrollViewer FindScroller(Control root)
 			=> root.GetVisualDescendants().OfType<ScrollViewer>()
-				.FirstOrDefault(s => AutomationProperties.GetAutomationId(s) == "RegionDataTree.Scroll");
+				.FirstOrDefault(s => AutomationProperties.GetAutomationId(s) == "DataTree.Scroll");
 
 		private static TextBox FindEditor(Control root, string automationId)
 		{
@@ -134,7 +134,7 @@ namespace FwAvaloniaTests
 			var memento = DetailFocusMemory.Capture(view);
 			Assert.That(memento, Is.Not.Null);
 			Assert.That(memento.AutomationId, Is.Null,
-				"focus outside the region must not be restored into the view");
+				"focus outside the detail view must not be restored into the view");
 			Assert.That(memento.VerticalOffset, Is.EqualTo(42).Within(0.5),
 				"scroll continuity still matters when a context menu/popup owns focus");
 		}
@@ -179,7 +179,7 @@ namespace FwAvaloniaTests
 
 			var restoredScroller = FindScroller(second);
 			Assert.That(restoredScroller.Offset.Y, Is.EqualTo(120).Within(0.5),
-				"rebuilding the region should keep the user at the same scroll position instead of jumping back to the top");
+				"rebuilding the detail view should keep the user at the same scroll position instead of jumping back to the top");
 		}
 
 		// A single-text-field view whose editor's stable automation id is exactly <paramref name="stableId"/>

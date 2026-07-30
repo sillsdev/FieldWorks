@@ -61,7 +61,7 @@ namespace FwAvaloniaTests
 				Assert.That(frame.PixelSize.Height, Is.GreaterThan(0));
 
 				var artifact = Path.Combine(TestContext.CurrentContext.WorkDirectory,
-					"avalonia-region-first-slice.png");
+					"avalonia-detail-first-slice.png");
 				frame.Save(artifact);
 				Assert.That(new FileInfo(artifact).Length, Is.GreaterThan(0),
 					"the captured frame is the Avalonia visual-evidence artifact for Path 3 bundles");

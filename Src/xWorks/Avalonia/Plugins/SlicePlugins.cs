@@ -94,7 +94,7 @@ namespace SIL.FieldWorks.XWorks
 			if (plugin == null)
 				throw new ArgumentNullException(nameof(plugin));
 			if (string.IsNullOrEmpty(plugin.LegacyClassName))
-				throw new ArgumentException("A region editor plugin must claim a legacy class name (D1).",
+				throw new ArgumentException("A slice plugin must claim a legacy class name (D1).",
 					nameof(plugin));
 			lock (_sync)
 			{

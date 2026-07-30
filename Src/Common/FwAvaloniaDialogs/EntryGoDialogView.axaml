@@ -111,7 +111,7 @@
 				     even when empty. The header grid and the row template are built by the code-behind from the VM's
 				     Columns so the column count, headers, and per-column typography are launcher-driven. -->
 				<Border Classes="fwFieldHost" Margin="{StaticResource DialogControlGapAbove}"
-				        AutomationProperties.AutomationId="EntryGo.ResultsRegion">
+				        AutomationProperties.AutomationId="EntryGo.ResultsPane">
 					<DockPanel>
 						<Grid DockPanel.Dock="Top" Name="PART_ResultsHeader"
 						      AutomationProperties.AutomationId="EntryGo.ResultsHeader"/>
@@ -136,7 +136,7 @@
 				           Margin="{StaticResource DialogLabelFieldGapBelow}"
 				           AutomationProperties.AutomationId="EntryGo.DescriptionLabel"/>
 				<Border Classes="fwFieldHost"
-				        AutomationProperties.AutomationId="EntryGo.DescriptionRegion">
+				        AutomationProperties.AutomationId="EntryGo.DescriptionPane">
 					<ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
 						<Panel>
 							<!-- Rich content for the highlighted entry (formatted text / picture / arbitrary control). -->
