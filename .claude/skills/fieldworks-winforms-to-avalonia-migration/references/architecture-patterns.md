@@ -62,7 +62,7 @@ diagnostic node, not vanish.
   a Conditional that `WalkConditional` evaluates. This is shared infra — re-run full
   `./test.ps1` after touching it.
 
-## 2. Region model + composer (boundary above DataTree)
+## 2. Detail model + composer (boundary above DataTree)
 
 **Decision.** The migration boundary sits at the region-model layer above
 `DataTree`, not inside it. A composer walks the compiled IR the way legacy
@@ -71,23 +71,23 @@ IR StableId) plus an edit context. DataTree internals are never extracted —
 they are deleted at the end of coexistence, so extracting them is throwaway
 work.
 
-**Canonical code.** `Src/xWorks/FullEntryRegionComposer.cs` (walks IR,
-emits `ComposedEntryRegion`),
-`Src/Common/FwAvalonia/Region/LexicalEditRegionModel.cs`,
-`LexicalEditRegionMapper.cs`, `IRegionEditContext.cs`,
-`LexicalEditRegionView.cs`.
-Tests: `RegionModelTests.cs`, `RegionEditingTests.cs`,
-`RegionViewingParityTests.cs` in `Src/Common/FwAvalonia/FwAvaloniaTests/`.
+**Canonical code.** `Src/xWorks/Avalonia/Composer/DetailComposer.cs` (walks IR,
+emits `ComposedDetail`),
+`Src/Common/FwAvalonia/Detail/DetailModel.cs`,
+`DetailModelProjector.cs`, `IDetailEditContext.cs`,
+`DataTree.cs`.
+Tests: `DetailModelTests.cs`, `DetailEditingTests.cs`,
+`DetailViewingParityTests.cs` in `Src/Common/FwAvalonia/FwAvaloniaTests/`.
 
 **Gotchas.** The region model is presentation data, not LCModel objects —
-it is projected from `IRegionValueProvider` style seams so it can be built
+it is projected from `IDetailValueProvider` style seams so it can be built
 and tested off-thread without WinForms or a real project.
 
 - **The composer is class-general — compose any `ICmObject`, not just LexEntry.**
-  `Compose(ICmObject, layout, choiceGuid)` + `RegionEditContextBase`/
-  `ComposedRegionEditContext` on `ICmObject` let notebookEdit / posEdit / Lists / the
+  `Compose(ICmObject, layout, choiceGuid)` + `DetailEditContextBase`/
+  `ComposedDetailEditContext` on `ICmObject` let notebookEdit / posEdit / Lists / the
   Grammar rule tools all ride one composer. New surfaces opt in by registering their
-  tool in `LexicalEditSurfaceRegistry`, not by editing the composer.
+  tool in `EditSurfaceRegistry`, not by editing the composer.
 - **Generic reference editing mirrors legacy's metadata-driven model — keep it
   global, gate on `IsVirtual`.** Editable reference vectors/atomic choosers
   (`AddGenericReferenceVector`/`AddGenericAtomicChooser` via `ReferenceTargetCandidates`)
@@ -116,13 +116,13 @@ DataTree/menu/renderer infrastructure except through approved baseline
 adapters.
 
 **Canonical code.**
-`Src/Common/FwAvalonia/LexicalEditSurfaceSelectionService.cs`,
-`LexicalEditSurfaceResolver.cs`, `LexicalEditSurfaceFactory.cs`,
+`Src/Common/FwAvalonia/EditSurfaceSelectionService.cs`,
+`EditSurfaceResolver.cs`, `EditSurfaceFactory.cs`,
 `Src/Common/FwAvalonia/Seams/ActiveHostContract.cs` (approved-adapter
 whitelist).
-Tests: `LexicalEditSurfaceResolverTests.cs`,
+Tests: `EditSurfaceResolverTests.cs`,
 `SurfaceAndHostContractTests.cs`,
-`Src/xWorks/xWorksTests/RecordEditViewActiveHostContractTests.cs`.
+`Src/xWorks/xWorksTests/Avalonia/Hosting/RecordEditViewActiveHostContractTests.cs`.
 
 **Gotchas.** "Convenience" calls into legacy internals while Avalonia is
 visible (for example, to harvest metadata) defeat the boundary — the
@@ -152,10 +152,10 @@ row keeps the UI framework out of domain semantics. TreeDataGrid was
 rejected on licensing and editing/automation gaps (see pivot triggers in
 `seam-catalog.md` — revisit if those facts change).
 
-**Canonical code.** `Src/Common/FwAvalonia/Region/FwFieldControls.cs`
-(`RegionFieldKind`: Text, Chooser, Boolean, Image, Command,
-ReferenceVector, Custom), `FwOptionPicker.cs`, `RegionMenuFlyout.cs`,
-`HoverReveal.cs`, `RegionFocusMemory.cs`.
+**Canonical code.** `Src/Common/FwAvalonia/Detail/FwFieldControls.cs`
+(`DetailFieldKind`: Text, Chooser, Boolean, Image, Command,
+ReferenceVector, Custom), `FwOptionChooser.cs`, `DetailMenuFlyout.cs`,
+`HoverReveal.cs`, `DetailFocusMemory.cs`.
 
 ## 5. Plugin registry for custom slice classes
 
@@ -169,28 +169,28 @@ a labeled Unsupported row — and the visible set of Unsupported rows IS the con
 Keying by legacy class identity means zero layout edits and a measurable burn-down (census vs.
 registry coverage).
 
-**Canonical code.** `Src/xWorks/RegionEditorPlugins.cs` (`IRegionEditorPlugin`,
-`RegionEditorBuildContext`, `RegionEditorPluginRegistry`, `RegisterBuiltins`). The single
+**Canonical code.** `Src/xWorks/Avalonia/Plugins/SlicePlugins.cs` (`ISlicePlugin`,
+`SlicePluginBuildContext`, `SlicePluginRegistry`, `RegisterBuiltins`). The single
 registered plugin is `ReversalIndexEntryPlugin` — the native-conversion exemplar. A future PR
 converts another Unsupported slice by adding its plugin the same way.
-Tests: `Src/xWorks/xWorksTests/LexemeEditorBurnDownTests.cs` (census + resolution order).
+Tests: `Src/xWorks/xWorksTests/Avalonia/Plugins/LexemeEditorInventoryTests.cs` (census + resolution order).
 
 **Converting a custom slice to a native Avalonia editor (worked example —
 `ReversalIndexEntryPlugin`).** The forward path needs no layout edits:
 
-1. **Claim the legacy `class=` identity.** Implement `IRegionEditorPlugin.LegacyClassName` with the
+1. **Claim the legacy `class=` identity.** Implement `ISlicePlugin.LegacyClassName` with the
    layout's class attribute (e.g. `SIL.FieldWorks.XWorks.LexEd.ReversalIndexEntrySlice`) and register
    the plugin in `RegisterBuiltins`. The composer's plugin step now claims that node instead of
    dropping it to Unsupported.
-2. **Render in-tree.** `BuildControl(RegionEditorBuildContext)` builds an Avalonia control for
+2. **Render in-tree.** `BuildControl(SlicePluginBuildContext)` builds an Avalonia control for
    (target object, typed node, cache) and returns it; the view places it in the value column at the
    slice's real position. Reuse the owned controls where you can — the reversal editor projects the
-   sense's reversal forms into a `LexicalEditRegionField` and hands it to `FwMultiWsTextField`.
+   sense's reversal forms into a `DetailField` and hands it to `FwMultiWsTextField`.
 3. **Ride the fenced edit context.** Route the editor's writes through
-   `RegionEditorBuildContext.EditContext` (an `IRegionEditContext`) so plugin edits land as ONE
+   `SlicePluginBuildContext.EditContext` (an `IDetailEditContext`) so plugin edits land as ONE
    undoable step on the region's shared session, exactly like every other row. The reversal editor
-   wraps the host context in a small `IRegionEditContext` that routes `TrySetText`/`TrySetRichText`
-   to the matching reversal entry's `ReversalForm`, staging on the host's `RegionEditContextBase`.
+   wraps the host context in a small `IDetailEditContext` that routes `TrySetText`/`TrySetRichText`
+   to the matching reversal entry's `ReversalForm`, staging on the host's `DetailEditContextBase`.
 4. **Graduate the Unsupported row.** With the plugin registered, the slice that previously rendered
    an Unsupported worklist row now renders the native editor — the row leaves the worklist.
 
@@ -214,9 +214,9 @@ loaded on the Avalonia path — Graphite-dependent writing systems are
 classified and warned, not blocked.
 
 **Canonical code.** `FwMultiWsTextField` in
-`Src/Common/FwAvalonia/Region/FwFieldControls.cs`; `RegionWsValue`
+`Src/Common/FwAvalonia/Detail/FwFieldControls.cs`; `DetailWsValue`
 (WsAbbrev, FontFamily, FontSize, RightToLeft, WsTag) in
-`LexicalEditRegionModel.cs`.
+`DetailModel.cs`.
 Tests: `TreeSpikeAndRtlTests.cs`, `VisualParityAndDensityTests.cs`.
 
 **Gotchas.** Never assume one font, one direction, or one script per
@@ -252,18 +252,18 @@ action. Refresh coordination mirrors legacy
 `DoNotRefresh`/`RefreshListNeeded` semantics via the refresh-coordinator
 seam.
 
-**Canonical code.** `Src/Common/FwAvalonia/Seams/ISeams.cs`,
+**Canonical code.** `Src/Common/FwAvalonia/Seams/`,
 `SeamImplementations.cs`, `RefreshCoordinator.cs`.
-Tests: `SeamTests.cs`, `RegionEditingTests.cs`.
+Tests: `SeamTests.cs`, `DetailEditingTests.cs`.
 
 **As-built (2026-06-23, ARCH-02).** `IUndoRedoCoordinator` is NOT yet a named
-abstraction in `ISeams.cs`. For the shipped LexEntry path, global undo/redo is
-handled directly by `RegionEditContextHolder.AttachUndoGuard` /
-`OnDoingUndoOrRedo` (`RegionEditContextHolder.cs:121-179`), coupled to
+abstraction in `Src/Common/FwAvalonia/Seams/`. For the shipped LexEntry path, global undo/redo is
+handled directly by `DetailEditContextHolder.AttachUndoGuard` /
+`OnDoingUndoOrRedo` (`DetailEditContextHolder.cs:121-179`), coupled to
 `IActionHandlerExtensions` and `System.Windows.Forms.Form.Deactivate`: on a
 global undo/redo it settles + cancels the open fenced session to avoid LCModel
 UOW write-lock re-entrancy. The fenced `IEditSession` decision above is real
-(`RegionEditContextBase`/`RegionEditContextHolder`); only the *coordinator
+(`DetailEditContextBase`/`DetailEditContextHolder`); only the *coordinator
 abstraction* is deferred. Extract `IUndoRedoCoordinator` when a second host
 needs it (Phase 2).
 
@@ -281,9 +281,9 @@ accessibility text. Only severity=Error blocks save; warnings do not. Stale
 async results (from older snapshots) are discarded.
 
 **As-built (2026-06-23, ARCH-02).** `IValidationService` does NOT exist yet.
-The shipped validation is a `virtual RegionEditContextBase.Validate()`
+The shipped validation is a `virtual DetailEditContextBase.Validate()`
 returning `List<string>` over **live** LCModel
-(`RegionEditContextBase.cs:101-128`, e.g.
+(`DetailEditContextBase.cs:101-128`, e.g.
 `entry.LexemeFormOA?.Form?.VernacularDefaultWritingSystem?.Text`) — pluggable
 by subclass + per-rule (the CmPossibility Name/Abbreviation rule), but with no
 severity model (all messages are Error-equivalent), no node-id/flid metadata,
@@ -291,10 +291,10 @@ and no immutable-snapshot determinism. Treat the snapshot-based service above
 as the Phase-2 target, not current behavior. Do NOT claim deterministic
 snapshot validation until the service exists.
 
-**Canonical code (as-built).** `RegionEditContextBase.Validate()` (virtual) in
-`Src/xWorks/RegionEditContextBase.cs`; per-rule validation hooks wired by the
-composer in `Src/xWorks/FullEntryRegionComposer.cs`. The
-`IValidationService` seam in `Src/Common/FwAvalonia/Seams/ISeams.cs` is planned,
+**Canonical code (as-built).** `DetailEditContextBase.Validate()` (virtual) in
+`Src/xWorks/Avalonia/DetailEditContextBase.cs`; per-rule validation hooks wired by the
+composer in `Src/xWorks/Avalonia/Composer/DetailComposer.cs`. The
+`IValidationService` seam in `Src/Common/FwAvalonia/Seams/` is planned,
 not present.
 
 ## 10. Custom fields and ghost rows
@@ -307,8 +307,8 @@ placeholders) are runtime UI state managed by the composer/model, never
 stored layout structure.
 
 **Canonical code.** `ViewDefinitionModel.cs` (placeholder node kind),
-composer expansion in `FullEntryRegionComposer.cs`.
-Tests: `RegionCustomFieldRenderingTests.cs`.
+composer expansion in `DetailComposer.cs`.
+Tests: `DetailCustomFieldRenderingTests.cs`.
 
 ## 11. Localization strategies
 
@@ -390,7 +390,7 @@ filter extraction runs through `CollectorEnv : IVwEnv` (managed, SDA-only, no
 `RootBox`), so the cutover is seam re-sourcing, not a text-engine rewrite.
 
 **Canonical code.** `Src/Common/FwAvalonia/FwAvaloniaTests/Workflows/HeadlessWorkflowHarness.cs`
-(`HeadlessStage`, `BrowseTableDriver`, `LexicalEditorDriver`), exemplar
+(`HeadlessStage`, `BrowseTableDriver`, `DetailEditorDriver`), exemplar
 `FwAvaloniaTests/BrowseEditorIntegrationTests.cs`, real-domain
 `Src/xWorks/xWorksTests/ClerkRoutedFilterTests.cs`. Provenance + the per-phase
 expansion plan:

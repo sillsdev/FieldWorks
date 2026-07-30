@@ -51,7 +51,7 @@ cause is the XML import, slice filtering, editor registry, or rendering.
 - IR model and snapshot projection:
   `Src/Common/FwAvalonia/ViewDefinition/ViewDefinitionModel.cs`
 - Snapshot/parity tests:
-  `Src/Common/FwAvalonia/FwAvaloniaTests/RegionViewingParityTests.cs`,
+  `Src/Common/FwAvalonia/FwAvaloniaTests/DetailViewingParityTests.cs`,
   `ViewDefinitionTests.cs`, `CanonicalJsonTests.cs`,
   `Path3BundleTests.cs`
 - Import coverage tracking: `LayoutImportCoverageTests.cs` and

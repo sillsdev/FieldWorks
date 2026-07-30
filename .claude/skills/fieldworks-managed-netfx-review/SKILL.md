@@ -26,7 +26,7 @@ description: "Review or change FieldWorks managed C# code that crosses the .NET 
 - UI and async code marshals to the correct UI thread (via `IUiScheduler`
   in region code) and does not use sync-over-async.
 - Disposable WinForms/GDI/LCModel/test resources are owned and disposed
-  deterministically; region code follows the `IRegionLifetime` rules
+  deterministically; region code follows the `IDetailLifetime` rules
   (idempotent disposal, late-callback suppression, event unsubscribe).
 - Test discovery changes are validated across both net48 and net8 test
   assemblies.

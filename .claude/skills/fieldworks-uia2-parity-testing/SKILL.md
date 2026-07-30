@@ -29,11 +29,11 @@ report it alongside those artifacts for the same scenario id.
 
 - Headless app/test setup:
   `Src/Common/FwAvalonia/FwAvaloniaTests/TestAppBuilder.cs`; input and
-  focus patterns in `RegionEditingTests.cs`, `RegionFocusMemoryTests.cs`
+  focus patterns in `DetailEditingTests.cs`, `DetailFocusMemoryTests.cs`
 - Realized-window UIA smoke on the legacy product path:
-  `Src/xWorks/xWorksTests/WinFormsUiaSmokeTests.cs`
+  `Src/xWorks/xWorksTests/Avalonia/Hosting/WinFormsUiaSmokeTests.cs`
 - Preview-host UIA:
-  `Src/Common/FwAvalonia/FwAvaloniaPreviewHostTests/PreviewHostUiaTests.cs`
+  `Src/Common/FwAvaloniaPreviewHost/FwAvaloniaPreviewHostTests/PreviewHostUiaTests.cs`
 - Automation-id locking: `Src/Common/FwAvalonia/FwAvaloniaTests/OwnedControlAutomationConventionTests.cs`
 
 ## Automation Identity

@@ -112,7 +112,7 @@ skill files changed.
   `compoundRuleAdvancedEdit`, `naturalClassedit`, `phonemeEdit`, `AdhocCoprohibEdit`) — sectioned
   LCModel-free `RuleFormulaModel` DTO, projector in **xWorks** (`RuleFormulaProjector`, NOT
   Morphology — circular), read-only control + edit sink staging via the fenced
-  `RegionEditContextBase`; and the Words `Analyses` interlinear morph-bundle editor — NO
+  `DetailEditContextBase`; and the Words `Analyses` interlinear morph-bundle editor — NO
   Sandbox/LCModel in the FwAvalonia view (`InterlinearAnalysisModel`), all reads/writes +
   Sandbox-parity MSA-prune in the xWorks plugin (`InterlinearAnalysisProjector`/`WriteBack`).
 - Learned: (1) **Projectors/write-back live in xWorks, never in FwAvalonia** (xWorks has both
@@ -132,7 +132,7 @@ skill files changed.
 
 - Change: `openspec/changes/lexical-edit-avalonia-migration/` §20 + §19i fix sweep.
 - Generalized the entry composer to any `ICmObject` (`Compose(ICmObject, layout, choiceGuid)`;
-  `RegionEditContextBase`/`ComposedRegionEditContext` on `ICmObject`), unblocking notebookEdit /
+  `DetailEditContextBase`/`ComposedDetailEditContext` on `ICmObject`), unblocking notebookEdit /
   posEdit / Lists / the rule tools. Three regression-free composer fixes were the gating work:
 - Learned: (1) **Layout choice resolution is 4-key**, not 1 — `LayoutSourceLoader` had collapsed
   11 RnGenericRec variants to Analysis; thread `choiceGuid` + `ResolveLayoutChoiceGuid` and memo
@@ -157,15 +157,15 @@ skill files changed.
 ### 2026-06 — §19e remaining detail-editor field types to parity
 
 - Change: `openspec/changes/lexical-edit-avalonia-migration/field-types-test-research.md`.
-- Migrated: dedicated `RegionFieldKind` editors for enum closed-combo (closed
+- Migrated: dedicated `DetailFieldKind` editors for enum closed-combo (closed
   `ComboBox`, rejects free text), integer (numeric `TextBox` that rejects non-numeric
   keystrokes + reject-and-restore), GenDate qualifiers (new `FwGenDateField`: year +
   precision Before/On/About/After + era AD/BC, composing a `GenDate.TryParse` long-string)
   and exact-date calendar picker (`CalendarDatePicker` beside the parse-on-commit text box),
   literal/"lit" (static `TextBlock`), jtview nested-layout recursion (`WalkEmbeddedView`),
   and per-field WS visibility (`visibleWritingSystems`). Touched
-  `RegionFieldKind`/`RegionFieldControlFactory`/`EditorKindMap`(no change needed — already
-  classified)/`XmlLayoutImporter`/`ViewNode`/`FullEntryRegionComposer` + strings + tests.
+  `DetailFieldKind`/`SliceFactory`/`EditorKindMap`(no change needed — already
+  classified)/`XmlLayoutImporter`/`ViewNode`/`DetailComposer` + strings + tests.
 - Learned: (1) probe LCModel string grammars from the DLL before composing — `GenDate.ToLongString`
   emits "About AD 1985"/"After 500 BC"/"AD 1990" and `TryParse` rejects "circa"/"about 1990",
   so the structured editor must emit the canonical word order (precision word + AD-prefix /
@@ -179,7 +179,7 @@ skill files changed.
   functionally safe as Chooser/Text in the composer; the §19e value was a DEDICATED kind so
   the rejection is visible at the editor and the dispatch is explicit (no free-form regression).
 - Skill files changed: this ledger entry. Architecture/seam patterns unchanged (new kinds
-  ride the existing one-switch `RegionFieldControlFactory` dispatch; importer/composer seams
+  ride the existing one-switch `SliceFactory` dispatch; importer/composer seams
   extended, not restructured).
 
 ### 2026-06 — §19d audio (voice WS) + pictures (CmPicture) editable parity
@@ -188,7 +188,7 @@ skill files changed.
 - Migrated: pictures from read-only thumbnail to insert/replace/delete + caption/
   description/license/creator metadata, plus the picture ORC into rich text
   (closes §19c's deferral); audio (IsVoice) from a blanket read-only placeholder to
-  play/record/clear. New seam methods on `IRegionEditContext`
+  play/record/clear. New seam methods on `IDetailEditContext`
   (`TryInsertPicture`/`TryReplacePictureFile`/`TryDeletePicture`/`TrySetPictureMetadata`/
   `TryInsertPictureOrc`); a new LCModel-free media seam `IRegionMediaServices`
   (file pick / picture-properties dialog / audio play+record) implemented in xWorks
@@ -203,7 +203,7 @@ skill files changed.
   `SaveUpdatedMetadataIfItMakesSense`) live in `SIL.Windows.Forms.ImageToolbox` —
   caption/description are real `ICmPicture` LCModel multistrings (testable on an
   in-memory cache with no file); license/creator are file metadata (best-effort, real
-  file only). (3) Adding a method to `IRegionEditContext` breaks ~6 direct implementers
+  file only). (3) Adding a method to `IDetailEditContext` breaks ~6 direct implementers
   (incl. test fakes) — net48/C#7.3 has no default interface methods, so budget for
   touching every implementer. (4) Picture insert into rich text is cleanest via
   `ICmPicture.InsertORCAt(tss, ich)` (canonical guid/ORC encoding) then write the TsString
@@ -244,7 +244,7 @@ skill files changed.
 - Change: `openspec/changes/lexical-edit-avalonia-migration/` (plus
   `avalonia-migration-roadmap`, `lexical-edit-avalonia-poc-spike`).
 - Migrated: first Avalonia lexical-edit region — typed IR pipeline, region
-  composer, owned field controls (`FwMultiWsTextField`, `FwOptionPicker`,
+  composer, owned field controls (`FwMultiWsTextField`, `FwOptionChooser`,
   menus/flyouts), plugin registry, surface selection service, seam
   contracts, Path 3 parity harness.
 - Key lessons now encoded: boundary above DataTree (don't extract
@@ -274,7 +274,7 @@ skill files changed.
 - **Reuse over reinvent paid off twice:** header drag-reorder routed through
   the *existing* ApplyConfiguredColumns (the Configure-Columns path), and
   in-cell picture editing needed *no* new editor - the editable cell already
-  realizes whatever RegionFieldKind GetEditField returns, and the factory
+  realizes whatever DetailFieldKind GetEditField returns, and the factory
   already builds Image. Item collapsed to "return an Image-kind field".
 - **icu layering gotcha:** icu.net is referenced by **xWorks, not
   FwAvalonia**. So the diacritic/WS-collation matcher (Find/Replace P2) lives
