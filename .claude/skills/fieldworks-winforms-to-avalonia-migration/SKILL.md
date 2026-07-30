@@ -27,12 +27,12 @@ top) for the decision, the why, and the gotchas. Quick map:
 | Pattern | Canonical code | Details |
 | --- | --- | --- |
 | Typed view-definition IR compiled from XML layouts | `Src/Common/FwAvalonia/ViewDefinition/ViewDefinitionModel.cs`, `XmlLayoutImporter.cs`, `ViewDefinitionCompiler.cs` | architecture-patterns.md §1 |
-| Region model + composer (boundary sits *above* DataTree) | `Src/xWorks/FullEntryRegionComposer.cs`, `Src/Common/FwAvalonia/Region/LexicalEditRegionModel.cs`, `LexicalEditRegionMapper.cs` | §2 |
-| Explicit surface selection per host (`HostUiBehavior`) | `Src/Common/FwAvalonia/LexicalEditSurfaceSelectionService.cs` | §3 |
-| Owned dense controls, not stock property grids | `Src/Common/FwAvalonia/Region/FwFieldControls.cs`, `FwOptionPicker.cs`, `RegionMenuFlyout.cs` | §4 |
-| Plugin registry for custom/legacy slice classes | `Src/xWorks/RegionEditorPlugins.cs` | §5 |
-| Seam contracts (edit session, undo, validation, scheduler, lifetime, refresh) | `Src/Common/FwAvalonia/Seams/ISeams.cs` | `references/seam-catalog.md` |
-| Writing-system-aware text fields (font, RTL, keyboard per WS) | `Src/Common/FwAvalonia/Region/FwFieldControls.cs` (`FwMultiWsTextField`) | architecture-patterns.md §6 |
+| Detail model + composer (boundary sits *above* DataTree) | `Src/xWorks/Avalonia/Composer/DetailComposer.cs`, `Src/Common/FwAvalonia/Detail/DetailModel.cs`, `DetailModelProjector.cs` | §2 |
+| Explicit surface selection per host (`HostUiBehavior`) | `Src/Common/FwAvalonia/EditSurfaceSelectionService.cs` | §3 |
+| Owned dense controls, not stock property grids | `Src/Common/FwAvalonia/Detail/FwFieldControls.cs`, `FwOptionChooser.cs`, `DetailMenuFlyout.cs` | §4 |
+| Plugin registry for custom/legacy slice classes | `Src/xWorks/Avalonia/Plugins/SlicePlugins.cs` | §5 |
+| Seam contracts (edit session, undo, validation, scheduler, lifetime, refresh) | `Src/Common/FwAvalonia/Seams/` | `references/seam-catalog.md` |
+| Writing-system-aware text fields (font, RTL, keyboard per WS) | `Src/Common/FwAvalonia/Detail/FwFieldControls.cs` (`FwMultiWsTextField`) | architecture-patterns.md §6 |
 | Dialog ownership across the WinForms/Avalonia boundary | `openspec/changes/lexical-edit-avalonia-migration/dialog-ownership.md` | §7 |
 | Headless integration-test harness (scenario/workflow drivers + real-clerk layer) | `Src/Common/FwAvalonia/FwAvaloniaTests/Workflows/HeadlessWorkflowHarness.cs`, `Src/xWorks/xWorksTests/ClerkRoutedFilterTests.cs` | architecture-patterns.md §13 |
 
@@ -54,10 +54,10 @@ off — it is the per-region definition of done.
    tests (semantic baselines, timing baselines, UIA smoke) *before*
    extracting anything. Gates: every behavior is tested, consciously
    deferred with an owner, or blocked by a named seam. Examples:
-   `Src/xWorks/xWorksTests/WinFormsUiaSmokeTests.cs`,
+   `Src/xWorks/xWorksTests/Avalonia/Hosting/WinFormsUiaSmokeTests.cs`,
    `Src/Common/Controls/DetailControls/DetailControlsTests/`.
 3. **Extract seams.** Reuse the existing contracts in
-   `Src/Common/FwAvalonia/Seams/ISeams.cs`; only add a new seam when
+   `Src/Common/FwAvalonia/Seams/`; only add a new seam when
    `references/seam-catalog.md` has no fit, and record why there.
 4. **Select controls.** Look the control up in
    `references/control-exemplar-map.md` first; default to the
@@ -85,7 +85,7 @@ off — it is the per-region definition of done.
 9. **Retire and gate.** Run the symbol audit
    (`Src/Common/FwAvalonia/FwAvaloniaTests/EngineIsolationAuditTests.cs`),
    active-host contract tests
-   (`Src/xWorks/xWorksTests/RecordEditViewActiveHostContractTests.cs`),
+   (`Src/xWorks/xWorksTests/Avalonia/Hosting/RecordEditViewActiveHostContractTests.cs`),
    and the normal repo gates (`./build.ps1`, `./test.ps1`).
 10. **Retrospective.** Update these skills — see "Keep this skill set
     current" below. This step is part of the migration, not optional polish.
@@ -95,7 +95,7 @@ off — it is the per-region definition of done.
 The program runs in two phases. **Phase 1** = high-value feature/bugfix-grade
 migrations behind the `UIMode` flag (default `"Legacy"` —
 `Src/Common/FwUtils/Properties/Settings.Designer.cs`; every Avalonia surface gates on
-`UIMode=New` via `LexicalEditSurfaceRegistry` + `LexicalEditSurfaceResolver`, so default
+`UIMode=New` via `EditSurfaceRegistry` + `EditSurfaceResolver`, so default
 users see no change). **Phase 2** (`avalonia-end-game`) = net10 / multiplatform / shell
 conversion, gated until Phase-1 + tester burn-down complete.
 
@@ -106,9 +106,9 @@ branch reached ~864 files / +140k). Land it with this discipline:
    parity-evidenced *consumer* per primitive as the reference teammates copy — distinct from
    the reusable *control*, which you always keep. Current canonical map (the screens to copy):
    - composed **detail editor** (DataTree replacement) → Lexicon Edit entry pane
-     (`FullEntryRegionComposer`); the same composer also drives `notebookEdit`/`posEdit`
+     (`DetailComposer`); the same composer also drives `notebookEdit`/`posEdit`
    - **tree + multi-selector** → `ChooserDialog` (one screen covers both)
-   - **tabs** → `OptionsDialog`; **owned-control composite form** → `InsertEntryDialog`;
+   - **tabs** → `LexOptionsDlg`; **owned-control composite form** → `InsertEntryDlg`;
      **search+list** → `EntryGoDialog`
 2. **Document every deferred screen, then back it out.** For each WinForms screen not kept,
    write `Docs/migration/<screen>.md` (use `Docs/migration/_TEMPLATE.md`) with a legacy PNG
@@ -142,36 +142,36 @@ back to legacy WinForms even under `UIMode=New`. This is the safe way to land a 
 code in one PR and *activate* it in a small follow-up PR (the "flip"). Two distinct gates exist
 and an active surface needs BOTH open:
 
-- **Plugin registration** (does the slice *compose* on Avalonia): `RegionEditorPlugins.RegisterBuiltins`
-  must `registry.Register(new <Surface>Plugin())`. The `LexemeEditorBurnDownTests` census
+- **Plugin registration** (does the slice *compose* on Avalonia): `SlicePlugins.RegisterBuiltins`
+  must `registry.Register(new <Surface>Plugin())`. The `LexemeEditorInventoryTests` census
   asserts the registered set *exactly*, so it fails until the class name is added/removed in step.
 - **Surface/tool gate** (does the tool's surface *resolve* to Avalonia): the tool name must be
-  registered — for the **detail editor**, as an entry in `LexicalEditFeatureCatalog.Features`
-  (this drives `LexicalEditSurfaceRegistry.DefaultSupportedTools`, which is built from the catalog,
+  registered — for the **detail editor**, as an entry in `LexiconFeatureCatalog.Features`
+  (this drives `EditSurfaceRegistry.DefaultSupportedTools`, which is built from the catalog,
   *not* a hardcoded array — editing `DefaultSupportedTools` directly has no effect); for the
   **browse table**, still a hardcoded entry in
-  `LexicalEditSurfaceResolver.SupportedAvaloniaBrowseToolNames` — NOT in the parallel
+  `EditSurfaceResolver.SupportedAvaloniaBrowseToolNames` — NOT in the parallel
   `Phase1FollowUpSurfaceTools` / `Phase1FollowUpBrowseTools` arrays, which are exactly the **inert
   list**. To find every dormant surface, read those two `Phase1FollowUp*` arrays.
 
 **Activation recipe** (turning an inert surface on, e.g. picking up its follow-up ticket):
 1. If the view files were carved to a follow-up branch, restore them from the canonical branch
    (`git checkout <canonical> -- <owned files>`); if they shipped dormant in base, they are already present.
-2. Restore the plugin registration line(s) in `RegionEditorPlugins.RegisterBuiltins`.
-3. Restore the surface's class name(s) in the `LexemeEditorBurnDownTests` census array (+ any resolve assertion).
+2. Restore the plugin registration line(s) in `SlicePlugins.RegisterBuiltins`.
+3. Restore the surface's class name(s) in the `LexemeEditorInventoryTests` census array (+ any resolve assertion).
 4. **Flip** — detail editor: remove the tool name from `Phase1FollowUpSurfaceTools` and add a new
-   `LexicalEditFeatureDescriptor` for it to `LexicalEditFeatureCatalog.Features` (with matching
+   `LexiconFeatureDescriptor` for it to `LexiconFeatureCatalog.Features` (with matching
    display-name/description strings in `FwAvaloniaStrings.cs`, and a `FeatureGroup*` — reuse an
    existing group or add one). This also adds a row (and, for a new group, a heading) to the
    Tools→Options "Manage Individual Features" dialog — call that out in the PR description.
    Browse table: still a plain move, `Phase1FollowUpBrowseTools` → `SupportedAvaloniaBrowseToolNames`.
 5. Add/flip the corresponding `TestCase` rows: `RecordEditViewSwitchTests.RegisteredRecordEditTools_*`
    (edit) and the `ResolveBrowse_*_YieldsAvalonia` resolver tests (browse).
-6. Build + run the census, resolver, switch, catalog (`LexicalEditFeatureManagerDialogTests`), and
+6. Build + run the census, resolver, switch, catalog (`LexiconFeatureManagerDialogTests`), and
    the surface's own suites green.
 
 The **ground truth** of which tools were active before a split is the pre-split pinned commit's
-version of `LexicalEditSurfaceRegistry.cs` + `LexicalEditSurfaceResolver.cs` (e.g. a `phase1-pin`
+version of `EditSurfaceRegistry.cs` + `EditSurfaceResolver.cs` (e.g. a `phase1-pin`
 tag): `git show <pin>:<file>` shows the canonical active arrays to restore.
 
 ## Hard Rules

@@ -27,7 +27,7 @@ Use this when collapsing a large multi-surface derisk branch into a landable PR 
 - [ ] Legacy surface identified: entry points, layouts/parts, custom slice
       classes, dialogs, choosers, command/listener wiring
 - [ ] Custom slice class census taken and compared against the plugin
-      registry (`Src/xWorks/RegionEditorPlugins.cs`) — list of missing
+      registry (`Src/xWorks/Avalonia/Plugins/SlicePlugins.cs`) — list of missing
       plugins recorded
 - [ ] Coverage map drafted (behavior × test status: covered / deferred
       with owner / blocked by named seam)
@@ -46,7 +46,7 @@ Use this when collapsing a large multi-surface derisk branch into a landable PR 
 
 ## Phase 3 — Seams
 
-- [ ] Existing seams reused from `Src/Common/FwAvalonia/Seams/ISeams.cs`
+- [ ] Existing seams reused from `Src/Common/FwAvalonia/Seams/`
 - [ ] Any new seam added to `references/seam-catalog.md` with purpose,
       rules, and pivot trigger
 - [ ] No region code reaches directly into PropertyTable/mediator/LCModel
