@@ -6,25 +6,25 @@ of discovery to the exact place to record it, and (b) an append-only ledger
 of migration retrospectives so future agents can see how the skill set
 evolved and why.
 
-## Update protocol ? where each discovery goes
+## Update protocol — where each discovery goes
 
 Run this at the end of every migration (workflow step 10 in SKILL.md), and
 immediately whenever you hit a stale pointer mid-task. Make the edits in
 the same PR as the migration.
 
-| You discovered? | Update |
+| You discovered… | Update |
 | --- | --- |
-| A new architectural pattern, or a refinement of an existing one | `architecture-patterns.md` ? add/extend the numbered section (decision, why, canonical code, gotchas); add a row to the SKILL.md quick map if it is load-bearing |
-| A new seam contract | `seam-catalog.md` ?1/?2 plus its pivot trigger in ?3 |
-| A pivot trigger fired (decision re-evaluated) | Record the outcome inline in `seam-catalog.md` ?3 and summarize in the ledger below |
-| A new plugin for a custom slice class | `architecture-patterns.md` ?5 canonical-code list; keep the burn-down test list current |
-| A new gotcha / failure mode (interop, DPI, fonts, focus, threading, lifetime?) | The Gotchas paragraph of the matching `architecture-patterns.md` section; if it is a review smell, also add a red flag to the most relevant satellite skill |
-| A new forbidden legacy symbol | `EngineIsolationAuditTests.cs` (the enforcement) and `parity-evidence.md` ?4 (the documentation) ? both in the same PR |
+| A new architectural pattern, or a refinement of an existing one | `architecture-patterns.md` — add/extend the numbered section (decision, why, canonical code, gotchas); add a row to the SKILL.md quick map if it is load-bearing |
+| A new seam contract | `seam-catalog.md` §1/§2 plus its pivot trigger in §3 |
+| A pivot trigger fired (decision re-evaluated) | Record the outcome inline in `seam-catalog.md` §3 and summarize in the ledger below |
+| A new plugin for a custom slice class | `architecture-patterns.md` §5 canonical-code list; keep the burn-down test list current |
+| A new gotcha / failure mode (interop, DPI, fonts, focus, threading, lifetime…) | The Gotchas paragraph of the matching `architecture-patterns.md` section; if it is a review smell, also add a red flag to the most relevant satellite skill |
+| A new forbidden legacy symbol | `EngineIsolationAuditTests.cs` (the enforcement) and `parity-evidence.md` §4 (the documentation) — both in the same PR |
 | A new evidence type, artifact type, or evidence-language term | `parity-evidence.md` |
 | A new mandatory step in the per-region process | `migration-checklist.md` (and the workflow list in SKILL.md if it is a new phase) |
-| A trigger phrase that failed to invoke a skill when it should have | The `description` frontmatter of that skill ? add the missing vocabulary; keep descriptions quoted (YAML colons) and third-person |
+| A trigger phrase that failed to invoke a skill when it should have | The `description` frontmatter of that skill — add the missing vocabulary; keep descriptions quoted (YAML colons) and third-person |
 | A stale file pointer (file moved/renamed, openspec change archived) | Fix the pointer in whichever skill file holds it; prefer pointing at code and tests over change docs |
-| Updated performance baselines | `DataTreeTimingBaselines.json` stays the source of truth; update budget notes in `parity-evidence.md` ?5 only if the policy (not the numbers) changed |
+| Updated performance baselines | `DataTreeTimingBaselines.json` stays the source of truth; update budget notes in `parity-evidence.md` §5 only if the policy (not the numbers) changed |
 
 Rules of thumb:
 
@@ -36,7 +36,7 @@ Rules of thumb:
   region's openspec change, not here.
 - **Prune as you add.** If a section no longer pays for its tokens
   (pattern superseded, gotcha fixed at the framework level), delete or
-  collapse it. Skills are working memory, not an archive ? the archive is
+  collapse it. Skills are working memory, not an archive — the archive is
   git history and openspec.
 - **Keep SKILL.md bodies under ~150 lines** and references one level deep
   from SKILL.md. If a reference outgrows ~300 lines, split it by domain
@@ -48,26 +48,26 @@ Append one entry per completed migration (newest first). Keep entries to
 ~10 lines: link to the change, what was migrated, what was learned, which
 skill files changed.
 
-### 2026-06 ? Legacy truth-PNG capture toolkit (legacy-screenshot-capture)
+### 2026-06 — Legacy truth-PNG capture toolkit (legacy-screenshot-capture)
 
-- Change: `openspec/changes/legacy-screenshot-capture/` (relocated to the `phase1-docs` branch ? not
+- Change: `openspec/changes/legacy-screenshot-capture/` (relocated to the `phase1-docs` branch — not
   present on `phase1-base`, since it supports the `Docs/migration/` effort that also lives there).
   Produced the legacy WinForms screenshots that back the `Docs/migration/` docs, after UIA2
   (winforms-mcp) proved unable to navigate FLEx's custom-drawn surfaces.
 - Built two non-UIA capture routes (details + recipes folded into the `fieldworks-winapp` skill):
-  (1) **launch-per-tool** ? `FieldWorks.exe "silfw://?&tool=<toolId>"` (guid-less) +
+  (1) **launch-per-tool** — `FieldWorks.exe "silfw://…&tool=<toolId>"` (guid-less) +
   PrintWindow; `scripts/migration-capture/Capture-LegacyTools.ps1` (also on `phase1-docs`) captured
-  **67/67** tool/list screens. (2) **dialog harness** ? an `[Explicit]` NUnit fixture
+  **67/67** tool/list screens. (2) **dialog harness** — an `[Explicit]` NUnit fixture
   (`LexTextControlsTests/ScreenshotHarnessTests.cs`) on the in-memory-cache base, constructing the
   legacy dialog (ctor + `SetDlgInfo`) and `DrawToBitmap`-ing it; proven on the feature-chooser dialog.
 - Learned: (1) **UIA2 can't see SilSidePane/OutlookBar/tool-lists or Views content, and has no
-  coordinate-click** ? don't plan a capture campaign around UIA navigation; drive via the supported
-  link mechanism / direct construction instead. (2) An empty `guid=` crashes `FwLinkArgs`; omit it ?
+  coordinate-click** — don't plan a capture campaign around UIA navigation; drive via the supported
+  link mechanism / direct construction instead. (2) An empty `guid=` crashes `FwLinkArgs`; omit it —
   `LinkListener` switches tools regardless. (3) A standalone capture exe is the expensive path
   (reg-free COM manifest + cache + Mediator/PropertyTable/CmObjectUi); **piggybacking a test
   project's existing bootstrap** is far cheaper. (4) `System.Drawing.Bitmap` is unavailable in
-  pwsh 7 ? run capture scripts under Windows PowerShell 5.1. (5) Verify wiring/feasibility
-  empirically before scaling ? the first "winforms-mcp will do it" plan was wrong.
+  pwsh 7 — run capture scripts under Windows PowerShell 5.1. (5) Verify wiring/feasibility
+  empirically before scaling — the first "winforms-mcp will do it" plan was wrong.
   (6) The dialog harness renders simple tree/list/feature dialogs headless, but FwTextBox/app-context
   dialogs (InsertEntryDlg / AddNewSenseDlg / GoDlg family) assert/NRE without a real main window +
   stylesheet (the "LcmStyleSheet" PropertyTable fallback was not enough) - capture those live or on
@@ -79,7 +79,7 @@ skill files changed.
 - Skill files changed: `fieldworks-winapp/SKILL.md` (recipes + UIA limits + before/after + JIRA),
   `fieldworks-semantic-render-parity/SKILL.md` (the Avalonia "after" evidence role), this ledger.
 
-### 2026-06 ? Phase-1 PR landing strategy (canonical-per-primitive, document-then-back-out)
+### 2026-06 — Phase-1 PR landing strategy (canonical-per-primitive, document-then-back-out)
 
 - Change: scratchpad `phase1-pr-prep-manifest.md`; branch `010-advanced-entry-view-phase-1-2`.
 - Decided how to land a sprawling derisk branch (~864 files / +140k): keep ONE canonical
@@ -90,72 +90,72 @@ skill files changed.
   instead of backing out. Now encoded in SKILL.md "Phase-1 Landing Strategy" +
   migration-checklist.md "Phase 0" + `Docs/migration/{README,_TEMPLATE}.md`.
 - Learned: (1) **`UIMode` defaults `"Legacy"`** (Settings.Designer.cs) and every Avalonia
-  surface gates on it, so "not breaking anything" is structural ? back-out is for reviewability,
+  surface gates on it, so "not breaking anything" is structural — back-out is for reviewability,
   not safety; do it aggressively. (2) **Verify wiring from call sites, never from an Explore
-  summary** ? an Explore sweep falsely flagged FilterFor/DateRange/FindReplace/SpecialChar as
+  summary** — an Explore sweep falsely flagged FilterFor/DateRange/FindReplace/SpecialChar as
   "unwired spec-only" when three were instantiated in `RecordBrowseView.cs`; only SpecialChar +
   WritingSystemProperties were genuinely unwired. Quote `file:line`. This repeats the standing
-  lesson: Explore agents reading excerpts in isolation produce false negatives/positives ?
+  lesson: Explore agents reading excerpts in isolation produce false negatives/positives —
   ground-truth before deleting. (3) The reusable *control* and the canonical *screen* are
-  different layers ? keep all controls; keep one screen per primitive. (4) `ChooserDialog`
-  covers two named primitives (tree + multi-select) ? one screen can be canonical for several.
+  different layers — keep all controls; keep one screen per primitive. (4) `ChooserDialog`
+  covers two named primitives (tree + multi-select) — one screen can be canonical for several.
 - Skill files changed: `SKILL.md` (Phase-1 Landing Strategy), `migration-checklist.md` (Phase 0),
   `fieldworks-migration-scope-review` (Phase-1 split trigger), `fieldworks-winapp` (Docs/migration
   capture pointer), this ledger.
 
-### 2026-06 ? avalonia-rule-formula-editor + avalonia-interlinear-editor (two XL editors)
+### 2026-06 — avalonia-rule-formula-editor + avalonia-interlinear-editor (two XL editors)
 
-- Changes: `openspec/changes/avalonia-rule-formula-editor/`, `.../avalonia-interlinear-editor/` ?
+- Changes: `openspec/changes/avalonia-rule-formula-editor/`, `.../avalonia-interlinear-editor/` —
   these proposals ship with their respective `phase1-followup-rule`/`phase1-followup-interlinear`
   branches, not on `phase1-base`.
 - Migrated: all 6 Grammar rule tools (`PhonologicalRuleEdit`, `EnvironmentEdit`,
-  `compoundRuleAdvancedEdit`, `naturalClassedit`, `phonemeEdit`, `AdhocCoprohibEdit`) ? sectioned
+  `compoundRuleAdvancedEdit`, `naturalClassedit`, `phonemeEdit`, `AdhocCoprohibEdit`) — sectioned
   LCModel-free `RuleFormulaModel` DTO, projector in **xWorks** (`RuleFormulaProjector`, NOT
-  Morphology ? circular), read-only control + edit sink staging via the fenced
-  `DetailEditContextBase`; and the Words `Analyses` interlinear morph-bundle editor ? NO
+  Morphology — circular), read-only control + edit sink staging via the fenced
+  `DetailEditContextBase`; and the Words `Analyses` interlinear morph-bundle editor — NO
   Sandbox/LCModel in the FwAvalonia view (`InterlinearAnalysisModel`), all reads/writes +
   Sandbox-parity MSA-prune in the xWorks plugin (`InterlinearAnalysisProjector`/`WriteBack`).
 - Learned: (1) **Projectors/write-back live in xWorks, never in FwAvalonia** (xWorks has both
-  LCModel + FwAvalonia refs; Morphology?FwAvalonia would be circular). The view binds a
+  LCModel + FwAvalonia refs; Morphology→FwAvalonia would be circular). The view binds a
   projection DTO; the plugin owns every LCModel touch. (2) **`ToFormulaString()`/oracle strings
-  are the parity contract** ? encode the legacy rendering ("p ? [V] / [C] __ #") as a test
-  oracle, not free-form. (3) Context sections need the atomic?`PhSequenceContext` 0?1?2?1?0
+  are the parity contract** — encode the legacy rendering ("p → [V] / [C] __ #") as a test
+  oracle, not free-form. (3) Context sections need the atomic↔`PhSequenceContext` 0→1→2→1→0
   transition (legacy `CreateSeqCtxt`); own the context FIRST, then set `FeatureStructureRA`
   (else NRE). (4) MSA-prune parity: editable only for human-approved analyses (legacy
   `deParams editable="true"`); write-back + prune on the region's shared fenced UOW (one undo
   step). (5) Deferred with `// PARITY`: morph re-segmentation, MoAffixProcess affix-process
-  editing, metathesis middle/move, adhoc nested-group recursion ? leaf editing ships, recursion defers.
-- Skill files changed: this ledger. New plugins added to `architecture-patterns.md` ?5 list;
-  composer-generalization gotchas in ?2 (see next entry).
+  editing, metathesis middle/move, adhoc nested-group recursion — leaf editing ships, recursion defers.
+- Skill files changed: this ledger. New plugins added to `architecture-patterns.md` §5 list;
+  composer-generalization gotchas in §2 (see next entry).
 
-### 2026-06 ? ?20 class-general composer + the composer fixes that unblocked many tools
+### 2026-06 — §20 class-general composer + the composer fixes that unblocked many tools
 
 - Change: `lexical-edit-avalonia-migration` §20 + §19i fix sweep (change folder
   removed from the tree; record in git history).
 - Generalized the entry composer to any `ICmObject` (`Compose(ICmObject, layout, choiceGuid)`;
   `DetailEditContextBase`/`ComposedDetailEditContext` on `ICmObject`), unblocking notebookEdit /
   posEdit / Lists / the rule tools. Three regression-free composer fixes were the gating work:
-- Learned: (1) **Layout choice resolution is 4-key**, not 1 ? `LayoutSourceLoader` had collapsed
+- Learned: (1) **Layout choice resolution is 4-key**, not 1 — `LayoutSourceLoader` had collapsed
   11 RnGenericRec variants to Analysis; thread `choiceGuid` + `ResolveLayoutChoiceGuid` and memo
   by it (root blocker for Notebook/Lists edit). (2) **Multi-child `<if Disabled=true>`/`<if
-  Disabled=false>` pairs** were imported as only the first child ? `DictionaryPartResolver` must
-  return `part.Elements()` (all children); each `<if>`?Conditional node. This made
+  Disabled=false>` pairs** were imported as only the first child — `DictionaryPartResolver` must
+  return `part.Elements()` (all children); each `<if>`→Conditional node. This made
   MoExoCompound's Name/Description/Active/category-pickers compose. (3) **Generic editable
   reference vector + atomic chooser** (`AddGenericReferenceVector`/`AddGenericAtomicChooser` via
-  `ReferenceTargetCandidates`) live in the SHARED `WalkOtherField` fallthrough ? gate out
+  `ReferenceTargetCandidates`) live in the SHARED `WalkOtherField` fallthrough — gate out
   virtual/computed props (`if (flid==0 || _mdc.get_IsVirtual(flid)) return null;`), mirroring
   legacy `VectorReferenceView.cs:440` (`!get_IsVirtual`), so back-refs/derived collections stay
-  read-only (no blind `Replace` corruption). Decision: keep the generic global path ? legacy
+  read-only (no blind `Replace` corruption). Decision: keep the generic global path — legacy
   editing is itself fully metadata-driven (one `AtomicReferenceSlice`/`ReferenceVectorSlice` per
   field type, ZERO per-class allow-list), so narrowing to grammar classes would be an
-  anti-pattern. (4) ?19i data-loss: a GenDate composer that emitted `ToLongString()` corrupted
-  year-granular dates ? emit the canonical year-granular form. (5) Shared-composer changes are
-  high blast-radius ? MEASURE it (lexicon/notebook/back-ref suites, 192 tests) and run full
+  anti-pattern. (4) §19i data-loss: a GenDate composer that emitted `ToLongString()` corrupted
+  year-granular dates — emit the canonical year-granular form. (5) Shared-composer changes are
+  high blast-radius — MEASURE it (lexicon/notebook/back-ref suites, 192 tests) and run full
   `./test.ps1`; the only failures should be the known 38 environmental data-sentinel ones.
-- Skill files changed: `architecture-patterns.md` ?1/?2 (layout-choice 4-key + multi-child part
+- Skill files changed: `architecture-patterns.md` §1/§2 (layout-choice 4-key + multi-child part
   import + generic metadata-driven reference editing + virtual-prop gate), this ledger.
 
-### 2026-06 ? ?19e remaining detail-editor field types to parity
+### 2026-06 — §19e remaining detail-editor field types to parity
 
 **Reverted (partially).** The enum closed-combo, integer, and GenDate/exact-date editors
 described below were later backed out of `phase1-base`: `DetailFieldKind` today has no
@@ -174,25 +174,25 @@ entry cited (`field-types-test-research.md`) was removed from the tree with the 
   and exact-date calendar picker (`CalendarDatePicker` beside the parse-on-commit text box),
   literal/"lit" (static `TextBlock`), jtview nested-layout recursion (`WalkEmbeddedView`),
   and per-field WS visibility (`visibleWritingSystems`). Touched
-  `DetailFieldKind`/`SliceFactory`/`EditorKindMap`(no change needed ? already
+  `DetailFieldKind`/`SliceFactory`/`EditorKindMap`(no change needed — already
   classified)/`XmlLayoutImporter`/`ViewNode`/`DetailComposer` + strings + tests.
-- Learned: (1) probe LCModel string grammars from the DLL before composing ? `GenDate.ToLongString`
+- Learned: (1) probe LCModel string grammars from the DLL before composing — `GenDate.ToLongString`
   emits "About AD 1985"/"After 500 BC"/"AD 1990" and `TryParse` rejects "circa"/"about 1990",
   so the structured editor must emit the canonical word order (precision word + AD-prefix /
   year + BC-suffix), NOT free synonyms. (2) Avalonia `CalendarDatePicker.SelectedDate`
   raises `SelectedDateChanged` for the INITIAL programmatic seed (deferred, during headless
-  layout) ? guard with a remembered last-date value-compare, not a timing flag, so only a
-  genuine user pick stages. (3) Changing an editor's returned control shape (date text box ?
-  text+calendar panel; GenDate ? structured editor) breaks every test that cast
-  `Build(...)` straight to `TextBox` ? search `(TextBox)` / `InstanceOf<TextBox>` on the
+  layout) — guard with a remembered last-date value-compare, not a timing flag, so only a
+  genuine user pick stages. (3) Changing an editor's returned control shape (date text box →
+  text+calendar panel; GenDate → structured editor) breaks every test that cast
+  `Build(...)` straight to `TextBox` — search `(TextBox)` / `InstanceOf<TextBox>` on the
   affected kind first and extract via `GetVisualDescendants`. (4) Enum/integer were already
-  functionally safe as Chooser/Text in the composer; the ?19e value was a DEDICATED kind so
+  functionally safe as Chooser/Text in the composer; the §19e value was a DEDICATED kind so
   the rejection is visible at the editor and the dispatch is explicit (no free-form regression).
 - Skill files changed: this ledger entry. Architecture/seam patterns unchanged (new kinds
   ride the existing one-switch `SliceFactory` dispatch; importer/composer seams
   extended, not restructured).
 
-### 2026-06 ? ?19d audio (voice WS) + pictures (CmPicture) editable parity
+### 2026-06 — §19d audio (voice WS) + pictures (CmPicture) editable parity
 
 **Reverted.** This editable picture/audio work was later backed out of `phase1-base`: none of
 `IRegionMediaServices`, `LcmRegionMediaServices`, `RegionPictureEditor`, or the
@@ -204,7 +204,7 @@ doc this entry cited (`media-pictures-test-research.md`) was removed with the re
 `lexical-edit-avalonia-migration` working docs.
 - Migrated (at the time, later reverted as above): pictures from read-only thumbnail to insert/replace/delete + caption/
   description/license/creator metadata, plus the picture ORC into rich text
-  (closes ?19c's deferral); audio (IsVoice) from a blanket read-only placeholder to
+  (closes §19c's deferral); audio (IsVoice) from a blanket read-only placeholder to
   play/record/clear. New seam methods on `IDetailEditContext`
   (`TryInsertPicture`/`TryReplacePictureFile`/`TryDeletePicture`/`TrySetPictureMetadata`/
   `TryInsertPictureOrc`); a new LCModel-free media seam `IRegionMediaServices`
@@ -214,22 +214,22 @@ doc this entry cited (`media-pictures-test-research.md`) was removed with the re
   a multistring alt whose text is the filename).
 - Learned: (1) audio play/record uses libpalaso `SIL.Media.AudioFactory`/
   `ISimpleAudioSession` (the same device the legacy `ShortSoundFieldControl` uses;
-  NAudio underneath, Linux via Alsa) ? prefer it over hand-rolled NAudio; cross-platform
+  NAudio underneath, Linux via Alsa) — prefer it over hand-rolled NAudio; cross-platform
   record availability is reported by `ISimpleAudioSession.CanRecord`, gated in the UI.
   (2) `PalasoImage`/ClearShare `Metadata` (`Creator`/`CopyrightNotice`/
-  `SaveUpdatedMetadataIfItMakesSense`) live in `SIL.Windows.Forms.ImageToolbox` ?
+  `SaveUpdatedMetadataIfItMakesSense`) live in `SIL.Windows.Forms.ImageToolbox` —
   caption/description are real `ICmPicture` LCModel multistrings (testable on an
   in-memory cache with no file); license/creator are file metadata (best-effort, real
   file only). (3) Adding a method to `IDetailEditContext` breaks ~6 direct implementers
-  (incl. test fakes) ? net48/C#7.3 has no default interface methods, so budget for
+  (incl. test fakes) — net48/C#7.3 has no default interface methods, so budget for
   touching every implementer. (4) Picture insert into rich text is cleanest via
   `ICmPicture.InsertORCAt(tss, ich)` (canonical guid/ORC encoding) then write the TsString
-  back through the existing rich-text setter ? never hand-encode `ktptObjData`.
+  back through the existing rich-text setter — never hand-encode `ktptObjData`.
 - Skill files changed: this ledger entry. Architecture/seam patterns unchanged (the new
   picture/audio methods extend the existing edit-context seam; `IRegionMediaServices` is a
   host-side media seam analogous to the existing dialog-launcher service seam).
 
-### 2026-06 ? Entries browse-table rendering cutover + headless integration harness
+### 2026-06 — Entries browse-table rendering cutover + headless integration harness
 
 **Reverted.** This browse-table rewrite was later removed from `phase1-base` in review (see
 SKILL.md "Phase-1 Landing Strategy"); none of `BrowseCellRenderer`, `RegionRichTextAdapter`,
@@ -244,13 +244,13 @@ requirements it fed are synced to `openspec/specs/lexical-edit-parity-automation
 - Migrated (at the time, later reverted as above): the lexicon Entries table off the native C++ Views rendering for its
   surface — owned WS-aware cell renderer (`BrowseCellRenderer`), rich-cell value
   source via `RegionRichTextAdapter.FromTsString`, and clerk-routed sort/filter
-  (`BrowseViewer.MakeColumnSorter`/`MakeColumnFilter` ? `Clerk.OnSorterChanged`/
+  (`BrowseViewer.MakeColumnSorter`/`MakeColumnFilter` → `Clerk.OnSorterChanged`/
   `OnChangeFilter`) replacing the lossy string mirror and the client-side filter
   projection. Legacy `BrowseViewer` still constructed underneath (F1); its
   retirement is F2/Stage-13.
 - Key lessons now encoded: **headless integration scenario tests are the
-  front-and-center verification style** (new architecture-patterns.md ?13;
-  parity-evidence.md ?2a + the "live-verification-only" downgrade;
+  front-and-center verification style** (new architecture-patterns.md §13;
+  parity-evidence.md §2a + the "live-verification-only" downgrade;
   migration-checklist.md Phase 7 gate; SKILL.md workflow step 7 + quick map).
   A read-only grid needs **neither the C++ engine** (cell/sort/filter extraction
   runs through the managed `CollectorEnv : IVwEnv`, no `RootBox`) **nor live
@@ -260,11 +260,11 @@ requirements it fed are synced to `openspec/specs/lexical-edit-parity-automation
   `xWorksTests` (~1400 tests share the host); the restored test base holds the
   undoable task open (no nested `NonUndoableUnitOfWorkHelper`); `OnChangeFilter`
   takes an (added, removed) delta that `RecordList` composes into its `AndFilter`.
-- Skill files changed: `references/architecture-patterns.md` (?13),
-  `references/parity-evidence.md` (?2a, ?3), `references/migration-checklist.md`
+- Skill files changed: `references/architecture-patterns.md` (§13),
+  `references/parity-evidence.md` (§2a, §3), `references/migration-checklist.md`
   (Phase 7), `SKILL.md` (quick map + workflow step 7), this ledger.
 
-### 2026-06 ? Lexical Edit (full entry view), phases 1?2 (seed entry)
+### 2026-06 — Lexical Edit (full entry view), phases 1–2 (seed entry)
 
 - Change: `lexical-edit-avalonia-migration` (plus `avalonia-migration-roadmap`,
   `lexical-edit-avalonia-poc-spike`) — change folders removed from the tree; record
@@ -278,7 +278,7 @@ requirements it fed are synced to `openspec/specs/lexical-edit-parity-automation
   unsupported rows over silent fallback; one global undo stack; WinForms
   dialogs own all modality during coexistence; measured (not estimated)
   performance budgets; StringTable + `.resx` dual localization lanes
-  (terminology since revised: see architecture-patterns.md ?11 ?
+  (terminology since revised: see architecture-patterns.md §11 —
   localization strategies);
   `<RootNamespace>` required for Crowdin satellite builds.
 - Skill set restructured (this commit): skills moved from
@@ -328,7 +328,7 @@ Treat as historical design record.
 
 - **`TextBox.CaretIndex` setter CLEARS the selection.** When wiring custom
   caret movement (e.g. grapheme-cluster / bidi Shift+Arrow), set `CaretIndex`
-  FIRST, then `SelectionStart`/`SelectionEnd` (which do not move the caret) ?
+  FIRST, then `SelectionStart`/`SelectionEnd` (which do not move the caret) —
   otherwise the selection you just built is collapsed to the caret.
 - **Test the wired-up input seam, not just the pure functions.** Headless
   Avalonia CAN drive real keyboard input (`KeyPress` with modifiers), so
