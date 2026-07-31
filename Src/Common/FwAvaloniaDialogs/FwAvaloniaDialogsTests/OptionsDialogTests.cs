@@ -81,58 +81,6 @@ namespace FwAvaloniaDialogsTests
 			Assert.That(vm.SelectedUiLanguage.Code, Is.EqualTo("en"));
 			Assert.That(vm.SelectedUiMode.Code, Is.EqualTo("Legacy"));
 			Assert.That(vm.SelectedUpdateChannel.Code, Is.EqualTo("Stable"));
-			Assert.That(vm.ManageFeaturesVisible, Is.False, "the per-feature selector is hidden in Legacy mode");
-		}
-
-		[AvaloniaTest]
-		public void ManageFeatures_VisibleOnlyInNewMode()
-		{
-			var (view, vm) = Show();
-			var button = FindByAutomationId<Button>(view, "Options.General.ManageFeatures");
-
-			Assert.That(vm.ManageFeaturesVisible, Is.False);
-			Assert.That(button.IsVisible, Is.False, "hidden in Legacy (parity with LexOptionsDlg)");
-
-			vm.SelectedUiMode = vm.UiModes.First(o => o.Code == "New");
-			Dispatcher.UIThread.RunJobs();
-			Capture(view, "Options-03-manage-features-visible");
-			Assert.That(vm.ManageFeaturesVisible, Is.True);
-			Assert.That(button.IsVisible, Is.True, "shown once New is selected");
-		}
-
-		[AvaloniaTest]
-		public void ManageFeatures_InvokesCallback_AndKeepsResultPendingUntilOk()
-		{
-			var state = SampleState();
-			state.UIModeDisabledTools = "posEdit";
-			string seededWith = null;
-			// The product callback (normally the feature-manager dialog) echoes an edited disabled set.
-			state.ManageFeatures = csv => { seededWith = csv; return "posEdit,notebookEdit"; };
-			var (_, vm) = Show(state);
-
-			vm.SelectedUiMode = vm.UiModes.First(o => o.Code == "New");
-			vm.ManageFeaturesCommand.Execute(null);
-
-			Assert.That(seededWith, Is.EqualTo("posEdit"), "the dialog is seeded with the pending disabled set");
-			Assert.That(vm.UiModeDisabledTools, Is.EqualTo("posEdit,notebookEdit"), "the edited result is held pending");
-			Assert.That(state.UIModeDisabledTools, Is.EqualTo("posEdit"),
-				"the state is not mutated until OK (cancelling the whole dialog discards the edit)");
-
-			vm.OkCommand.Execute(null);
-			Assert.That(state.UIModeDisabledTools, Is.EqualTo("posEdit,notebookEdit"), "OK writes the pending set back");
-		}
-
-		[AvaloniaTest]
-		public void ManageFeatures_Cancelled_LeavesPendingUnchanged()
-		{
-			var state = SampleState();
-			state.UIModeDisabledTools = "posEdit";
-			state.ManageFeatures = csv => csv; // cancel = return the same value
-			var (_, vm) = Show(state);
-
-			vm.ManageFeaturesCommand.Execute(null);
-
-			Assert.That(vm.UiModeDisabledTools, Is.EqualTo("posEdit"), "cancel leaves the pending set unchanged");
 		}
 
 		[AvaloniaTest]
@@ -142,7 +90,6 @@ namespace FwAvaloniaDialogsTests
 			var (_, vm) = Show(state);
 
 			vm.SelectedUiMode = vm.UiModes.First(o => o.Code == "New");
-			Assert.That(vm.ManageFeaturesVisible, Is.True, "changing to New reveals the per-feature selector");
 			vm.AutoOpenLastProject = true;
 			vm.OkToPingBasicUsageData = true;
 			vm.SelectedUpdateChannel = vm.UpdateChannels.First(o => o.Code == "Beta");

@@ -173,7 +173,7 @@ namespace SIL.FieldWorks.XWorks
 				? m_propertyTable.GetStringProperty("currentContentControl", string.Empty)
 				: string.Empty;
 
-			// Per-tool opt-out from "Manage Individual Features" (the master UIMode=New switch defaults
+			// Per-tool opt-out from the UIModeDisabledTools setting (the master UIMode=New switch defaults
 			// every catalog tool on; this is the individual override a user can flip back off).
 			bool? overrideEnabled = null;
 			if (m_propertyTable != null)

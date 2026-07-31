@@ -29,8 +29,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 
 	/// <summary>
 	/// The single source of truth for which lexical-edit tool surfaces exist and how to describe them to
-	/// a user (the "Manage Individual Features" dialog's checkbox list). This is
-	/// also what <see cref="EditSurfaceRegistry.DefaultSupportedTools"/> is built from, so the
+	/// a user. <see cref="EditSurfaceRegistry.DefaultSupportedTools"/> is built from this list, so the
 	/// registry and the user-facing catalog can never drift out of sync — there is exactly one list of
 	/// "tools that ship with a working Avalonia surface today."
 	/// </summary>

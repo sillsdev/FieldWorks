@@ -160,7 +160,7 @@ namespace FwAvaloniaTests
 			Assert.That(EditSurfaceResolver.NormalizeUIMode(input), Is.EqualTo(expected));
 		}
 
-		// --- Disabled-tools CSV round-trip (the "Manage Individual Features" persistence format). ---
+		// --- Disabled-tools CSV round-trip (the UIModeDisabledTools persistence format). ---
 
 		[TestCase(null)]
 		[TestCase("")]
@@ -206,8 +206,8 @@ namespace FwAvaloniaTests
 		[Test]
 		public void SerializeDisabledTools_JoinsWithCommas_PreservingGivenOrder()
 		{
-			// SerializeDisabledTools does not sort -- callers (the Feature Manager dialog) are responsible for
-			// supplying a deterministic order. This pins that it is a plain join, not an implicit sort.
+			// SerializeDisabledTools does not sort -- the caller is responsible for supplying a deterministic
+			// order. This pins that it is a plain join, not an implicit sort.
 			var csv = EditSurfaceResolver.SerializeDisabledTools(new[] { "posEdit", "lexiconEdit" });
 			Assert.That(csv, Is.EqualTo("posEdit,lexiconEdit"));
 		}
@@ -221,9 +221,9 @@ namespace FwAvaloniaTests
 
 			// ParseDisabledTools returns a HashSet, whose enumeration order is an implementation detail, not a
 			// contract -- so a direct Parse->Serialize round trip is NOT guaranteed to preserve order or exact
-			// text for arbitrary input (the Feature Manager dialog avoids this by re-deriving the CSV from its
-			// own ordered rows, not from the parsed set -- see LexiconFeatureManagerDialogTests). What IS
-			// guaranteed, and what this pins, is that the round trip preserves the SET of names.
+			// text for arbitrary input. A caller that needs a stable CSV must re-derive it from its own ordered
+			// source, not from the parsed set. What IS guaranteed, and what this pins, is that the round trip
+			// preserves the SET of names.
 			Assert.That(EditSurfaceResolver.ParseDisabledTools(roundTripped),
 				Is.EquivalentTo(EditSurfaceResolver.ParseDisabledTools(canonical)));
 		}

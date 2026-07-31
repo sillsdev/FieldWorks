@@ -6,7 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
 using SIL.FieldWorks.Common.FwAvalonia;
 
 namespace FwAvaloniaDialogs
@@ -25,10 +24,10 @@ namespace FwAvaloniaDialogs
 
 		// General
 		[ObservableProperty] private NamedOption _selectedUiLanguage;
-		[ObservableProperty] [NotifyPropertyChangedFor(nameof(ManageFeaturesVisible))] private NamedOption _selectedUiMode;
+		[ObservableProperty] private NamedOption _selectedUiMode;
 		[ObservableProperty] private bool _autoOpenLastProject;
-		// Pending per-feature disable set (CSV of tool names), edited by "Manage Individual Features" and
-		// written back to the state on OK. Mirrors LexOptionsDlg.m_pendingUiModeDisabledTools.
+		// Per-feature disable set (CSV of tool names) carried from the state and written back on OK. The
+		// dialog exposes no editor for it. Mirrors LexOptionsDlg.m_pendingUiModeDisabledTools.
 		[ObservableProperty] private string _uiModeDisabledTools;
 		// Privacy
 		[ObservableProperty] private bool _okToPingBasicUsageData;
@@ -94,28 +93,6 @@ namespace FwAvaloniaDialogs
 
 		partial void OnSelectedUpdateChannelChanged(NamedOption value)
 			=> OnPropertyChanged(nameof(SelectedChannelDescription));
-
-		/// <summary>
-		/// The "Manage Individual Features..." button is only meaningful when the master switch is New — there
-		/// is nothing to manage while Legacy is selected, so it stays hidden. Mirrors the WinForms
-		/// <c>LexOptionsDlg.UpdateManageFeaturesButtonVisibility</c>.
-		/// </summary>
-		public bool ManageFeaturesVisible =>
-			SelectedUiMode != null && string.Equals(SelectedUiMode.Code, NewMode, StringComparison.Ordinal);
-
-		/// <summary>
-		/// Opens the "Manage Individual Features" dialog (via the product-supplied <see cref="LexOptionsDlgState.ManageFeatures"/>
-		/// callback) seeded with the pending disabled-tools set, and keeps the edited result pending until OK.
-		/// Mirrors the WinForms <c>LexOptionsDlg.m_manageFeaturesButton_Click</c>. A no-op with no callback
-		/// (bare-bones/test contexts).
-		/// </summary>
-		[RelayCommand]
-		private void ManageFeatures()
-		{
-			var edited = _state.ManageFeatures?.Invoke(UiModeDisabledTools ?? string.Empty);
-			if (edited != null)
-				UiModeDisabledTools = edited;
-		}
 
 		private static NamedOption Match(IEnumerable<NamedOption> options, string code) =>
 			options?.FirstOrDefault(o => string.Equals(o.Code, code, StringComparison.Ordinal));
