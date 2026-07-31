@@ -6,12 +6,12 @@ description: "Capture or review FieldWorks parity evidence: semantic snapshots, 
 # FieldWorks Semantic Render Parity
 
 Shared definitions (Path 3 bundle, evidence types, artifact naming) live in
-`fieldworks-winforms-to-avalonia-migration/references/parity-evidence.md`.
+`../fieldworks-winforms-to-avalonia-migration/references/parity-evidence.md`.
 This skill covers how to build and review the snapshots themselves.
 
 ## Role in the migration before/after pipeline
 This skill owns the **"after"** half of the migration-doc before/after pairs (see
-`fieldworks-winapp` and `Docs/migration/_TEMPLATE.md`; for where `Docs/migration/`
+`fieldworks-winapp`; for where `Docs/migration/`
 lives, see the hub skill's "Phase-1 Landing Strategy").
 The **before** is the legacy WinForms truth
 PNG (captured by the `fieldworks-winapp` launch-per-tool script / dialog harness); the **after** is
@@ -93,4 +93,4 @@ bundle is used, name each artifact and which evidence type it proves.
 When snapshot fields, normalization rules, or fixture patterns change, or
 a new artifact type joins the bundle, update this skill and
 parity-evidence.md together in the same PR; record durable lessons via
-`fieldworks-winforms-to-avalonia-migration/references/lessons-learned.md`.
+`../fieldworks-winforms-to-avalonia-migration/references/lessons-learned.md`.

@@ -1,7 +1,10 @@
 # font-feature-settings Specification
 
 ## Purpose
-TBD - created by archiving change add-opentype-font-features. Update Purpose after archive.
+
+Define OpenType font-feature support as a generic font capability independent of
+Graphite: renderer-neutral `tag=value` storage, discovery and validation, cache
+invalidation, inheritance, and DOCX export.
 ## Requirements
 ### Requirement: Font Features are independent from Graphite enablement
 FieldWorks SHALL expose Font Features as a generic font capability for Graphite and OpenType fonts, and SHALL NOT require `Enable Graphite` to be checked before OpenType font features can be viewed or selected.

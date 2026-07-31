@@ -21,9 +21,10 @@ description: "Build, review, or fix Avalonia UI code in FieldWorks: XAML, MVVM, 
 
 Do not design controls or seams from scratch. The migration hub skill
 (`fieldworks-winforms-to-avalonia-migration`) documents the decided
-architecture; its `references/architecture-patterns.md` covers owned
-controls, writing-system text fields, dialogs/flyouts, validation, and
-lifetime. Canonical code to imitate:
+architecture; its
+`../fieldworks-winforms-to-avalonia-migration/references/architecture-patterns.md`
+covers owned controls, writing-system text fields, dialogs/flyouts,
+validation, and lifetime. Canonical code to imitate:
 
 - Owned field controls: `Src/Common/FwAvalonia/Detail/FwFieldControls.cs`,
   `FwOptionChooser.cs`, `DetailMenuFlyout.cs`, `HoverReveal.cs`
@@ -169,7 +170,8 @@ Rules specific to dialogs:
 - Sleep-based or timing-sensitive UI tests.
 - Claims of accessibility, localization, IME, or keyboard parity without
   executable evidence (see the hub skill's
-  `references/parity-evidence.md` §"Evidence language").
+  `../fieldworks-winforms-to-avalonia-migration/references/parity-evidence.md`
+  §"Evidence language").
 
 ## Handoff
 
@@ -184,4 +186,4 @@ capture, and which automation identities were assigned.
 When a control pattern, headless-test technique, or Avalonia API gotcha
 proves out (or a pointer above goes stale), update this skill in the same
 PR — and route durable architecture lessons through the protocol in
-`fieldworks-winforms-to-avalonia-migration/references/lessons-learned.md`.
+`../fieldworks-winforms-to-avalonia-migration/references/lessons-learned.md`.

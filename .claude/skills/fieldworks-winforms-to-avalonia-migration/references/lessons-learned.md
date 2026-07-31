@@ -130,7 +130,8 @@ skill files changed.
 
 ### 2026-06 ? ?20 class-general composer + the composer fixes that unblocked many tools
 
-- Change: `openspec/changes/lexical-edit-avalonia-migration/` ?20 + ?19i fix sweep.
+- Change: `lexical-edit-avalonia-migration` §20 + §19i fix sweep (change folder
+  removed from the tree; record in git history).
 - Generalized the entry composer to any `ICmObject` (`Compose(ICmObject, layout, choiceGuid)`;
   `DetailEditContextBase`/`ComposedDetailEditContext` on `ICmObject`), unblocking notebookEdit /
   posEdit / Lists / the rule tools. Three regression-free composer fixes were the gating work:
@@ -156,8 +157,17 @@ skill files changed.
 
 ### 2026-06 ? ?19e remaining detail-editor field types to parity
 
-- Change: `openspec/changes/lexical-edit-avalonia-migration/field-types-test-research.md`.
-- Migrated: dedicated `DetailFieldKind` editors for enum closed-combo (closed
+**Reverted (partially).** The enum closed-combo, integer, and GenDate/exact-date editors
+described below were later backed out of `phase1-base`: `DetailFieldKind` today has no
+Enum/Integer/GenDate kind, and `DetailComposer`'s dispatch on `DetailEditorCategory.EnumCombo`
+routes to `WalkUnsupported` (verify with `git grep -n DetailEditorCategory.EnumCombo --
+Src/xWorks/Avalonia/Composer/DetailComposer.cs`); integer/GenDate fields fall through
+`WalkOtherField`'s `CellarPropertyType` switch (no case) to the same Unsupported row. The
+literal (`lit`) and jtview/embedded-view editors described below DID survive — see
+`DetailFieldKind.Literal` and `WalkEmbeddedView` in `DetailComposer.cs`. The research doc this
+entry cited (`field-types-test-research.md`) was removed from the tree with the rest of the
+`lexical-edit-avalonia-migration` working docs; no successor doc names these reverted editors.
+- Migrated (at the time, later reverted as above): dedicated `DetailFieldKind` editors for enum closed-combo (closed
   `ComboBox`, rejects free text), integer (numeric `TextBox` that rejects non-numeric
   keystrokes + reject-and-restore), GenDate qualifiers (new `FwGenDateField`: year +
   precision Before/On/About/After + era AD/BC, composing a `GenDate.TryParse` long-string)
@@ -184,8 +194,15 @@ skill files changed.
 
 ### 2026-06 ? ?19d audio (voice WS) + pictures (CmPicture) editable parity
 
-- Change: `openspec/changes/lexical-edit-avalonia-migration/media-pictures-test-research.md`.
-- Migrated: pictures from read-only thumbnail to insert/replace/delete + caption/
+**Reverted.** This editable picture/audio work was later backed out of `phase1-base`: none of
+`IRegionMediaServices`, `LcmRegionMediaServices`, `RegionPictureEditor`, or the
+`IDetailEditContext.TryInsertPicture`/`TryReplacePictureFile`/`TryDeletePicture`/
+`TrySetPictureMetadata`/`TryInsertPictureOrc` methods exist in the tree today (verified by
+`git grep`). Pictures compose as the read-only labeled Unsupported row again
+(control-exemplar-map.md's PictureBox row); audio has no dedicated editor either. The research
+doc this entry cited (`media-pictures-test-research.md`) was removed with the rest of the
+`lexical-edit-avalonia-migration` working docs.
+- Migrated (at the time, later reverted as above): pictures from read-only thumbnail to insert/replace/delete + caption/
   description/license/creator metadata, plus the picture ORC into rich text
   (closes ?19c's deferral); audio (IsVoice) from a blanket read-only placeholder to
   play/record/clear. New seam methods on `IDetailEditContext`
@@ -214,10 +231,18 @@ skill files changed.
 
 ### 2026-06 ? Entries browse-table rendering cutover + headless integration harness
 
-- Change: `openspec/changes/shared-editable-virtualized-table/`
-  (`rendering-cutover-design.md`, `headless-integration-harness.md`).
-- Migrated: the lexicon Entries table off the native C++ Views rendering for its
-  surface ? owned WS-aware cell renderer (`BrowseCellRenderer`), rich-cell value
+**Reverted.** This browse-table rewrite was later removed from `phase1-base` in review (see
+SKILL.md "Phase-1 Landing Strategy"); none of `BrowseCellRenderer`, `RegionRichTextAdapter`,
+`BrowseViewer.MakeColumnSorter`/`MakeColumnFilter` exist in the tree today. The legacy
+`BrowseViewer`/`RecordBrowseView` is the current surface for browse tools — there is no Avalonia
+browse gate on this branch (control-exemplar-map.md §3.6). Treat the architecture below as
+historical design record, not current behavior; the durable headless-integration-harness
+requirements it fed are synced to `openspec/specs/lexical-edit-parity-automation/spec.md`.
+- Change: `shared-editable-virtualized-table` (`rendering-cutover-design.md`,
+  `headless-integration-harness.md`) — change folder removed from the tree with the rest of the
+  branch's research/audit markdown; record in git history.
+- Migrated (at the time, later reverted as above): the lexicon Entries table off the native C++ Views rendering for its
+  surface — owned WS-aware cell renderer (`BrowseCellRenderer`), rich-cell value
   source via `RegionRichTextAdapter.FromTsString`, and clerk-routed sort/filter
   (`BrowseViewer.MakeColumnSorter`/`MakeColumnFilter` ? `Clerk.OnSorterChanged`/
   `OnChangeFilter`) replacing the lossy string mirror and the client-side filter
@@ -241,9 +266,10 @@ skill files changed.
 
 ### 2026-06 ? Lexical Edit (full entry view), phases 1?2 (seed entry)
 
-- Change: `openspec/changes/lexical-edit-avalonia-migration/` (plus
-  `avalonia-migration-roadmap`, `lexical-edit-avalonia-poc-spike`).
-- Migrated: first Avalonia lexical-edit region ? typed IR pipeline, region
+- Change: `lexical-edit-avalonia-migration` (plus `avalonia-migration-roadmap`,
+  `lexical-edit-avalonia-poc-spike`) — change folders removed from the tree; record
+  in git history.
+- Migrated: first Avalonia lexical-edit region — typed IR pipeline, region
   composer, owned field controls (`FwMultiWsTextField`, `FwOptionChooser`,
   menus/flyouts), plugin registry, surface selection service, seam
   contracts, Path 3 parity harness.
@@ -265,7 +291,10 @@ skill files changed.
 
 ### 2026-06 - Browse functional remainders (browse 19f)
 
-- Shipped the last browse-table parity items as **view events + a thin
+**Reverted.** Shipped on top of the browse-table rewrite above, and removed with it — none of
+`IBrowseRowMenuSource`, `IBrowseRdeSource`, or `ClerkBrowseRowSource` exist in the tree today.
+Treat as historical design record.
+- Shipped (at the time, later reverted) the last browse-table parity items as **view events + a thin
   capability seam on the row source + product-edge routing**, reusing the
   established pattern (view raises -> LexicalBrowseHostControl re-raises ->
   RecordBrowseView owns LCModel/dialogs/commands and routes back). New

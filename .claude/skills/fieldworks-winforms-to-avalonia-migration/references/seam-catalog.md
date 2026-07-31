@@ -3,18 +3,17 @@
 The seams that separate Avalonia UI from LCModel/xCore/WinForms. All
 contracts live in `Src/Common/FwAvalonia/Seams/` with
 implementations in `SeamImplementations.cs` and tests in
-`Src/Common/FwAvalonia/FwAvaloniaTests/SeamTests.cs`. Per-seam design docs
-(current state, alternatives considered, required tests) live in
-`openspec/changes/lexical-edit-avalonia-migration/` —
-`seam-recommendations.md`, `seam-domain-comparison.md`, and
-`region-manifest.md`.
+`Src/Common/FwAvalonia/FwAvaloniaTests/SeamTests.cs`. The early pre-implementation seam design
+drafts (`seam-recommendations.md`, `seam-domain-comparison.md`, `region-manifest.md`, dated
+2026-06-09) were archived with the `lexical-edit-avalonia-migration` change; their durable
+requirements synced to `openspec/specs/avalonia-edit-sessions/spec.md`,
+`openspec/specs/avalonia-undo-redo/spec.md`, and `openspec/specs/avalonia-validation/spec.md`.
 
-**Precedence note:** `openspec/changes/lexical-edit-avalonia-migration/seam-recommendations.md`
-and `region-manifest.md` are early pre-implementation drafts (2026-06-09). This file and
-`architecture-patterns.md` §8/§9 have since superseded them with the as-built architecture
-(including cases where the shipped design diverges from the original recommendation, annotated
-above as "As-built"). Treat the openspec docs as historical design record, not a co-authoritative
-source — this file and `architecture-patterns.md` §8/§9 are current.
+**Precedence note:** the archived pre-implementation drafts are historical design record only.
+This file and `architecture-patterns.md` §8/§9 describe the as-built architecture (including
+cases where the shipped design diverges from the original recommendation, annotated above as
+"As-built") — treat this file and `architecture-patterns.md` §8/§9 as current, not the archived
+drafts.
 
 Before inventing a new abstraction for a migration, check this table. If a
 seam fits, reuse it. If none fits, add the new seam here (name, purpose,

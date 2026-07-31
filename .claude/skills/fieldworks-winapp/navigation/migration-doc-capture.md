@@ -4,11 +4,14 @@ Use this route when capturing the legacy WinForms "truth" PNGs for the Phase-1 m
 (see the hub skill's "Phase-1 Landing Strategy"). It records the verified UIA2 capture limits
 on FLEx and the two non-UIA capture routes that make a bulk campaign feasible.
 
-**Where the docs live.** Navigate to the legacy screen in Legacy mode, capture into
-`Docs/migration/images/<screen>-NN.png`, and reference it from `Docs/migration/<screen>.md`
-(template at `Docs/migration/_TEMPLATE.md`). Note: `Docs/migration/` lives on the separate,
-never-merged `phase1-docs` branch, not in this checkout. Capture the important states
-(initial, filled, error, multi-select), not just the empty form.
+**Where captures land.** `Docs/migration/` now holds process playbooks only
+(`avalonia-migration-overview.md`, `migrate-a-dialog.md`,
+`migrate-a-slice-type.md`) -- there is no per-screen doc, no `images/`
+subfolder, and no `_TEMPLATE.md`. Route legacy "truth" PNGs through the
+evidence folders in `screenshot-evidence.md` (transient
+`Output/ManualEvidence/...`, or a committed OpenSpec parity bundle) instead.
+Capture the important states (initial, filled, error, multi-select), not
+just the empty form.
 
 **Capture limits observed with winforms-mcp (UIA2) on FLEx — read before a bulk campaign:**
 - **Main-window / dialog-window capture works** — `winforms_take_screenshot` via PrintWindow
@@ -31,18 +34,19 @@ never-merged `phase1-docs` branch, not in this checkout. Capture the important s
   at a tool via a guid-less silfw link, then PrintWindow the main window:
   `FieldWorks.exe "silfw://localhost/link?app=flex&database=<proj>&server=&tool=<toolId>"`
   (sole arg; **omit `guid`** — an empty `guid=` crashes `FwLinkArgs` parsing; `LinkListener`
-  switches tools regardless of guid). Script: `scripts/migration-capture/Capture-LegacyTools.ps1`
-  on the `phase1-docs` branch (this capture tooling lives there alongside the `Docs/migration/` docs
-  it produces, not on the migration code branches) (run under Windows PowerShell 5.1 —
+  switches tools regardless of guid). No committed script wraps this yet (the prior
+  `scripts/migration-capture/Capture-LegacyTools.ps1` is gone from the tree); run the launch
+  manually or write a task-scoped script (run under Windows PowerShell 5.1 --
   `System.Drawing` `Bitmap` isn't available in pwsh 7; relaunch per tool + graceful `CloseMainWindow`
-  to release the project lock). Captured 67/67 tool/list screens.
+  to release the project lock). A prior campaign captured 67/67 tool/list screens this way.
 
   **Dialogs — piggyback an in-memory-cache test fixture (no standalone exe).** A standalone capture
   exe needs its own reg-free COM manifest + cache bootstrap and per-dialog `Mediator`/`PropertyTable`/
   `CmObjectUi`. Instead add an `[Explicit]` NUnit fixture to a test project whose
   `MemoryOnlyBackendProviderRestoredForEachTestTestBase` already bootstraps reg-free COM + `LcmCache`:
   each capture is a `[Test]` that seeds objects, constructs the dialog (ctor + `SetDlgInfo`), and
-  renders with `Control.DrawToBitmap`. Example: `LexTextControlsTests/ScreenshotHarnessTests.cs`; run
+  renders with `Control.DrawToBitmap`. Example:
+  `Src/LexText/LexTextControls/LexTextControlsTests/Avalonia/ScreenshotHarnessTests.cs`; run
   `.\test.ps1 -SkipNative -TestProject <Proj> -TestFilter "FullyQualifiedName~ScreenshotHarness"`.
   Per-dialog wiring is bespoke (each `SetDlgInfo` differs), so grow it as each dialog's ticket is worked.
 
