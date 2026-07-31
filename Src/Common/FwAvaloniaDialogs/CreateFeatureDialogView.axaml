@@ -6,7 +6,7 @@
              x:DataType="vm:CreateFeatureDialogViewModel"
              Classes="fwDialogRoot"
              MinWidth="320" MinHeight="180">
-	<!-- The minimal "Create New Feature" / "Create New Feature Value" name-entry dialog (Phase-1 §19b Stage 3): a
+	<!-- The minimal "Create New Feature" / "Create New Feature Value" name-entry dialog: a
 	     name + optional abbreviation, over OK/Cancel. OK is gated on a non-empty name. The captions come from the VM
 	     (the same view serves the feature and value flows). Visible text is localized via FwAvaloniaDialogsStrings;
 	     AutomationIds stay stable + nonlocalized. -->

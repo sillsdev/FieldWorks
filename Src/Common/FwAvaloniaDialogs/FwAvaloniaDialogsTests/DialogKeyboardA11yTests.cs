@@ -20,12 +20,12 @@ using SIL.FieldWorks.Common.FwAvalonia.Detail;
 namespace FwAvaloniaDialogsTests
 {
 	/// <summary>
-	/// Keyboard-accessibility parity for the kept dialog spine (A11Y-02 tab order, A11Y-03 initial focus,
-	/// review 2026-06-23). Legacy WinForms dialogs opened with focus in the first field and tabbed
+	/// Keyboard-accessibility parity for the kept dialog spine: tab order and initial focus.
+	/// Legacy WinForms dialogs opened with focus in the first field and tabbed
 	/// fields-before-buttons; the Avalonia kit must match. These run on a realized headless surface and
 	/// assert the deterministic selection contract of <see cref="AvaloniaDialogHost.FocusInitialControl"/>
 	/// plus the per-view TabIndex that pushes the button strip last — independent of the WinForms-hosted
-	/// modal delivery path (that bridge is covered by the desktop UIA environment, A11Y-04).
+	/// modal delivery path, which the desktop UIA environment covers.
 	/// </summary>
 	[TestFixture]
 	public class DialogKeyboardA11yTests
@@ -51,7 +51,7 @@ namespace FwAvaloniaDialogsTests
 			=> root.GetVisualDescendants().OfType<Button>()
 				.First(b => AutomationProperties.GetAutomationId(b) == automationId);
 
-		// --- A11Y-03: FocusInitialControl contract (synthetic, no dialog coupling) ---
+		// --- FocusInitialControl contract (synthetic, no dialog coupling) ---
 
 		[AvaloniaTest]
 		public void FocusInitialControl_PrefersTextInput_OverCommandButton()
@@ -75,7 +75,7 @@ namespace FwAvaloniaDialogsTests
 			Assert.That(focused, Is.SameAs(field), "initial focus should land on the first text input, not the button");
 		}
 
-		// --- A11Y-03: picker-driven dialogs must NOT auto-focus OK ---
+		// --- Picker-driven dialogs must NOT auto-focus OK ---
 
 		[AvaloniaTest]
 		public void FocusInitialControl_PickerDialog_DoesNotFocusOkButton()
@@ -97,7 +97,7 @@ namespace FwAvaloniaDialogsTests
 			Assert.That(focused, Is.Not.InstanceOf<Button>(), "initial focus must never be a command button");
 		}
 
-		// --- A11Y-02: button strip sorts AFTER content in tab order ---
+		// --- Button strip sorts AFTER content in tab order ---
 
 		[AvaloniaTest]
 		public void ButtonStrip_SortsAfterContent_InTabOrder()
@@ -108,14 +108,14 @@ namespace FwAvaloniaDialogsTests
 			Pump(window, view);
 
 			// The bottom button strip is declared first (so DockPanel docks it to the bottom) but carries
-			// TabIndex=1 so it is visited AFTER the default-0 content in tab order (A11Y-02).
+			// TabIndex=1 so it is visited AFTER the default-0 content in tab order.
 			var ok = FindButton(view, "Chooser.Ok");
 			var strip = ok.GetVisualAncestors().OfType<StackPanel>().First();
 			Assert.That(strip.TabIndex, Is.EqualTo(1),
 				"the button strip must carry TabIndex=1 so the fields tab before the OK/Cancel strip");
 		}
 
-		// --- A11Y-02: NATIVE Avalonia Tab traversal actually honors the container TabIndex ---
+		// --- NATIVE Avalonia Tab traversal actually honors the container TabIndex ---
 		// (Asserting the attribute is set is not enough — this exercises KeyboardNavigationHandler, the
 		// real Tab engine, to prove the container-level TabIndex reorders traversal in Avalonia's model.)
 
@@ -148,11 +148,11 @@ namespace FwAvaloniaDialogsTests
 			// introduced or removable by this TabIndex change.
 		}
 
-		// --- A11Y-01: button mnemonics (Alt access keys) ---
+		// --- Button mnemonics (Alt access keys) ---
 		// The kept dialogs render OK/Cancel/Help via an explicit <AccessText> bound to a dialog-local
 		// mnemonic string (e.g. "_OK"), so the '_' is parsed into an Alt access key regardless of theme.
 		// This proves the mnemonic is REGISTERED; activation in the real WinForms-hosted dialog also depends
-		// on Alt routing through the embedded host (covered by the desktop UIA environment, A11Y-04).
+		// on Alt routing through the embedded host, which the desktop UIA environment covers.
 
 		[AvaloniaTest]
 		public void Mnemonics_OkAndCancel_ParseAltAccessKeys()

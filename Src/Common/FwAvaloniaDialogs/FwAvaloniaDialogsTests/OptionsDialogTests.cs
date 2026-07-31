@@ -241,8 +241,8 @@ namespace FwAvaloniaDialogsTests
 		{
 			var (view, _) = Show();
 			var ok = FindByAutomationId<Button>(view, "Options.Ok");
-			// A11Y-01: the OK button now renders via an <AccessText> bound to the mnemonic accessor (so Alt+O
-			// works); the text still comes from the localized resource accessor, not a literal.
+			// The OK button renders via an <AccessText> bound to the mnemonic accessor (so Alt+O
+			// works); the text comes from the localized resource accessor, not a literal.
 			var okAccess = ok.Content as AccessText;
 			Assert.That(okAccess, Is.Not.Null, "the OK button must render via AccessText for its Alt mnemonic");
 			Assert.That(okAccess.Text, Is.EqualTo(FwAvaloniaDialogsStrings.OkMnemonic),

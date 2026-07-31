@@ -594,7 +594,7 @@ namespace FwAvaloniaTests
 				"unresolved-part", "cross-object-deferred",
 				// editors
 				"dynamic-editor", "obsolete-editor", "unknown-editor",
-				// task 4.9 drop taxonomy
+				// drop taxonomy
 				"unhandled-attribute", "param-substitution", "generated-content-dropped",
 				"conditional-dropped", "sublayout-dropped", "caller-children-dropped",
 				"injected-child-dropped", "slice-content-dropped"

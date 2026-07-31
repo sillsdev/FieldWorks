@@ -73,9 +73,8 @@ namespace FwAvaloniaTests
 			// (Environment.UserInteractive) and lives in a separate net48 desktop-environment test project. It
 			// self-skips (Assert.Ignore) under a non-interactive host and cannot be invoked from this
 			// headless Avalonia unit test. The most this test can honestly do is confirm the suite still
-			// exists and still contains the coverage it claims; it cannot prove the run passed. See the
-			// fieldworks-uia2-parity-testing skill for the manual/desktop-environment run that actually proves
-			// this coverage.
+			// exists and still contains the coverage it claims; it cannot prove the run passed. Only a
+			// desktop-environment run proves that coverage.
 			var previewHostUiaTestsPath = Path.Combine(repoRoot, "Src", "Common", "FwAvaloniaPreviewHost",
 				"FwAvaloniaPreviewHostTests", "PreviewHostUiaTests.cs");
 			var workflowAccessibilitySuitePresent = File.Exists(previewHostUiaTestsPath)

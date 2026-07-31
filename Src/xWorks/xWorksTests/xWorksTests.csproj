@@ -24,8 +24,8 @@
   </PropertyGroup>
   <ItemGroup>
     <!-- Compile-only (PrivateAssets): fake ISlicePlugin implementations in
-         LexemeEditorInventoryTests name Avalonia.Controls.Control (winforms-free-lexeme-editor.md
-         D1); the runtime assemblies are already in the shared output via FwAvalonia. -->
+         LexemeEditorInventoryTests name Avalonia.Controls.Control; the runtime assemblies are
+         already in the shared output via FwAvalonia. -->
     <PackageReference Include="Avalonia" IncludeAssets="compile" PrivateAssets="all" />
     <!-- Avalonia's transitive analyzer carrier; IncludeAssets="none" keeps the AVA* analyzers out. -->
     <PackageReference Include="Avalonia.BuildServices" IncludeAssets="none" PrivateAssets="all" />
@@ -38,7 +38,7 @@
     <PackageReference Include="Avalonia.Headless" ExcludeAssets="analyzers" PrivateAssets="all" />
     <PackageReference Include="Avalonia.Skia" ExcludeAssets="analyzers" PrivateAssets="all" />
     <PackageReference Include="CommonServiceLocator" Exclude="Build,Analyzers" />
-    <!-- D2: ChorusNotesContractTests read notes back through real LibChorus repositories. -->
+    <!-- ChorusNotesContractTests read notes back through real LibChorus repositories. -->
     <PackageReference Include="SIL.Chorus.LibChorus" />
     <!-- TestLocalizationManagerBootstrap registers a minimal English LocalizationManager so the
          legacy lexicon DataTree's MessageSlice (Chorus NotesBar) can localize headlessly, the same

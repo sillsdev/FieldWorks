@@ -1378,7 +1378,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			_launch = launch;
 			Value = value ?? string.Empty;
 			LastChildFill = true;
-			// 14.2: a null background only hit-tests the glyphs — the WHOLE row must receive hover
+			// A null background only hit-tests the glyphs — the WHOLE row must receive hover
 			// so the gear reveal works over the gaps.
 			Background = Brushes.Transparent;
 			AutomationProperties.SetName(this, label ?? string.Empty);
@@ -1390,7 +1390,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			AutomationProperties.SetName(_button, FwAvaloniaStrings.LaunchDialog);
 			if (launch == null)
 			{
-				// D4 degradation: no host dialog service — the gear shows but cannot launch.
+				// Degraded mode: no host dialog service — the gear shows but cannot launch.
 				ToolTip.SetTip(_button, FwAvaloniaStrings.LauncherUnavailable);
 			}
 			_button.Click += (s, e) => Launch();
