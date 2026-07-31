@@ -18,7 +18,7 @@ description: "Design or review FieldWorks UI automation and accessibility tests:
 ## Role in the Parity Bundle
 
 In a Path 3 parity bundle (defined in
-`fieldworks-winforms-to-avalonia-migration/references/parity-evidence.md`),
+`../fieldworks-winforms-to-avalonia-migration/references/parity-evidence.md`),
 desktop automation contributes the workflow/accessibility evidence only:
 launcher/chooser reachability, focus movement and return, invoke/cancel/
 accept paths, native automation tree identity, and shell-level keyboard
@@ -83,4 +83,4 @@ realized window, and which claims still need another environment.
 
 When a new automation pattern, peer implementation, CI-placement constraint, or
 flakiness fix proves out, add it here in the same PR; route durable lessons
-through `fieldworks-winforms-to-avalonia-migration/references/lessons-learned.md`.
+through `../fieldworks-winforms-to-avalonia-migration/references/lessons-learned.md`.

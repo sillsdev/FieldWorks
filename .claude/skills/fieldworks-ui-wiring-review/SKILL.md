@@ -71,4 +71,4 @@ legacy dependencies.
 When a new host type, routing pattern, or wiring failure mode appears in a
 migration, add it here (and a red flag if it is a review smell) in the same
 PR. Durable lessons also go through
-`fieldworks-winforms-to-avalonia-migration/references/lessons-learned.md`.
+`../fieldworks-winforms-to-avalonia-migration/references/lessons-learned.md`.

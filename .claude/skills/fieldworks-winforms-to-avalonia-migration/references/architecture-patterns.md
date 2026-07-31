@@ -1,9 +1,10 @@
 # Established Migration Architecture Patterns
 
 Decisions already made by the lexical-edit migration. Each section gives the
-decision, why it was made, the canonical code, and gotchas. Provenance for
-every decision lives in `openspec/changes/lexical-edit-avalonia-migration/`
-(if that change has been archived, look under `openspec/changes/archive/`).
+decision, why it was made, the canonical code, and gotchas. The durable
+contracts are synced to `openspec/specs/`; the full decision record lives in
+git history (the `lexical-edit-avalonia-migration` change folder, removed from
+the tree) and in PR #964's provenance comment.
 
 Contents:
 
@@ -152,10 +153,16 @@ row keeps the UI framework out of domain semantics. TreeDataGrid was
 rejected on licensing and editing/automation gaps (see pivot triggers in
 `seam-catalog.md` — revisit if those facts change).
 
-**Canonical code.** `Src/Common/FwAvalonia/Detail/FwFieldControls.cs`
-(`DetailFieldKind`: Text, Chooser, Boolean, Image, Command,
-ReferenceVector, Custom), `FwOptionChooser.cs`, `DetailMenuFlyout.cs`,
-`HoverReveal.cs`, `DetailFocusMemory.cs`.
+**Canonical code.** `Src/Common/FwAvalonia/Detail/DetailModel.cs`
+(`DetailFieldKind`: Text, Chooser, Unsupported, Header, ReferenceVector,
+Custom, StructuredText, Literal); field controls in
+`Src/Common/FwAvalonia/Detail/FwFieldControls.cs` (`FwMultiWsTextField`,
+`FwChooserField`, `FwReferenceVectorField`, `FwDialogLauncherField`),
+`FwOptionChooser.cs`, `DetailMenuFlyout.cs`, `HoverReveal.cs`,
+`DetailFocusMemory.cs`. Picture, command, and closed-enum-combo editors have
+no dedicated `DetailFieldKind` today — the composer routes them to the
+labeled Unsupported row (`DetailComposer.WalkUnsupported`, dispatched from
+`EditorKindMap.ClassifyDetailFieldKind`).
 
 ## 5. Plugin registry for custom slice classes
 
@@ -217,7 +224,7 @@ classified and warned, not blocked.
 `Src/Common/FwAvalonia/Detail/FwFieldControls.cs`; `DetailWsValue`
 (WsAbbrev, FontFamily, FontSize, RightToLeft, WsTag) in
 `DetailModel.cs`.
-Tests: `TreeSpikeAndRtlTests.cs`, `VisualParityAndDensityTests.cs`.
+Tests: `TreeNodeTemplateAndRtlTests.cs`, `VisualParityAndDensityTests.cs`.
 
 **Gotchas.** Never assume one font, one direction, or one script per
 field. Test mixed-script content at 100% and 150% DPI with real fonts.
@@ -225,8 +232,8 @@ field. Test mixed-script content at 100% and 150% DPI with real fonts.
 ## 7. Dialog ownership and modality across the interop boundary
 
 **Decision.** During coexistence there is one UI thread and one message
-loop. Rules (provenance:
-`openspec/changes/lexical-edit-avalonia-migration/dialog-ownership.md`):
+loop. Rules (durable contract synced to `openspec/specs/avalonia-lifetime/spec.md`;
+implementation: `Src/Common/FwAvalonia/AvaloniaDialogHost.cs`):
 
 - Anything modal is a WinForms dialog, owned by the hosting WinForms
   top-level form (`Control.FindForm()` of the host) — never `null`, never
@@ -390,11 +397,14 @@ filter extraction runs through `CollectorEnv : IVwEnv` (managed, SDA-only, no
 `RootBox`), so the cutover is seam re-sourcing, not a text-engine rewrite.
 
 **Canonical code.** `Src/Common/FwAvalonia/FwAvaloniaTests/Workflows/HeadlessWorkflowHarness.cs`
-(`HeadlessStage`, `BrowseTableDriver`, `DetailEditorDriver`), exemplar
-`FwAvaloniaTests/BrowseEditorIntegrationTests.cs`, real-domain
-`Src/xWorks/xWorksTests/ClerkRoutedFilterTests.cs`. Provenance + the per-phase
-expansion plan:
-`openspec/changes/shared-editable-virtualized-table/headless-integration-harness.md`.
+(`HeadlessStage`, `DetailEditorDriver`). An earlier revision also carried a browse-table driver
+(`BrowseTableDriver`) with its surface-workflow exemplar
+(`FwAvaloniaTests/BrowseEditorIntegrationTests.cs`) and a real-domain exemplar
+(`Src/xWorks/xWorksTests/ClerkRoutedFilterTests.cs`); both were removed with the browse-table
+surface (control-exemplar-map.md §3.6) — do not cite them as present. `DetailEditorDriver` itself
+currently has no consuming exemplar test; the next surface that adopts this harness becomes the
+exemplar. The requirements this harness satisfies are synced to
+`openspec/specs/lexical-edit-parity-automation/spec.md`.
 
 **Gotchas.** Never add `[assembly: AvaloniaTestApplication]` to `xWorksTests`
 (it changes the host for ~1400 tests) — Avalonia hosting lives only in dedicated

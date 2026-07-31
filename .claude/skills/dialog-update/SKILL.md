@@ -25,8 +25,8 @@ and "fixes" it, thrashing the code.
 
 | Concern | WinForms (old) | Avalonia (new) |
 |---|---|---|
-| Tools ? Options | `Src/LexText/LexTextControls/LexOptionsDlg.cs` (+ `.Designer.cs`, `.resx`) | `Src/Common/FwAvaloniaDialogs/LexOptionsDlgView.axaml(.cs)` + `LexOptionsDlgViewModel.cs` + `LexOptionsDlgState.cs`; edge: `Src/LexText/LexTextControls/Avalonia/AvaloniaOptionsDialogLauncher.cs` |
-| Manage Individual Features | (opened from `LexOptionsDlg.m_manageFeaturesButton_Click`) | `LexiconFeatureManagerDialog` (`Src/Common/FwAvaloniaDialogs/`) |
+| Tools → Options | `Src/LexText/LexTextControls/LexOptionsDlg.cs` (+ `.Designer.cs`, `.resx`) | `Src/Common/FwAvaloniaDialogs/LexOptionsDlgView.axaml(.cs)` + `LexOptionsDlgViewModel.cs` + `LexOptionsDlgState.cs`; edge: `Src/LexText/LexTextControls/Avalonia/AvaloniaOptionsDialogLauncher.cs` |
+| Manage Individual Features | none — Avalonia-only, no WinForms precedent (see the carve-out comment in `LexOptionsDlg.cs` near its UI-mode group construction) | `LexiconFeatureManagerDialog` (`Src/Common/FwAvaloniaDialogs/`) |
 | Insert Entry | `Src/LexText/LexTextControls/InsertEntryDlg.cs` | `Src/Common/FwAvaloniaDialogs/InsertEntryDlgView.axaml.cs` + `InsertEntryDlgViewModel.cs` |
 | Add New Sense | `Src/LexText/LexTextControls/AddNewSenseDlg.cs` | `Src/Common/FwAvaloniaDialogs/AddNewSenseDlgView.axaml.cs` + `AddNewSenseDlgViewModel.cs` |
 | MSA Creator | `Src/LexText/LexTextControls/MsaCreatorDlg.cs` | `Src/Common/FwAvaloniaDialogs/MsaCreatorDlgView.axaml.cs` + `MsaCreatorDlgViewModel.cs` |
@@ -34,7 +34,7 @@ and "fixes" it, thrashing the code.
 | Phonological Feature Chooser | `Src/LexText/LexTextControls/PhonologicalFeatureChooserDlg.cs` | `Src/Common/FwAvaloniaDialogs/FeatureChooserDialogView.axaml.cs` + `FeatureChooserDialogViewModel.cs` |
 | Entry Go (jump to entry) | `Src/LexText/LexTextControls/EntryGoDlg.cs` | `Src/Common/FwAvaloniaDialogs/EntryGoDialogView.axaml.cs` + `EntryGoDialogViewModel.cs` |
 | Possibility/list chooser (FilterBar "choose") | `Src/Common/Controls/XMLViews/ReallySimpleListChooser.cs` (+ `Src/Common/Controls/DetailControls/SimpleListChooser.cs`) | `Src/Common/FwAvaloniaDialogs/ChooserDialogView.axaml.cs` + `ChooserDialogViewModel.cs`; edge: a product launcher lands with the ReallySimpleListChooser migration |
-| Create feature / add feature value | `Src/LexText/LexTextControls/MasterInflectionFeatureListDlg.cs` / `MasterPhonologicalFeatureListDlg.cs` | `Src/Common/FwAvaloniaDialogs/CreateFeatureDialogView.axaml.cs` + `CreateFeatureDialogViewModel.cs`; edge: `Src/LexText/LexTextControls/LcmCreateFeatureLauncher.cs` |
+| Create feature / add feature value | `Src/LexText/LexTextControls/MasterInflectionFeatureListDlg.cs` / `MasterPhonologicalFeatureListDlg.cs` | `Src/Common/FwAvaloniaDialogs/CreateFeatureDialogView.axaml.cs` + `CreateFeatureDialogViewModel.cs`; edge: `Src/LexText/LexTextControls/Avalonia/LcmCreateFeatureLauncher.cs` |
 
 Symbols in the rules below use Tools ? Options as the worked example.
 
@@ -61,15 +61,17 @@ paired dialog:
    OK, nothing persists. (This is exactly the "checked everything, X'd out,
    still Legacy" class of bug.)
 2. **Control missing entirely.** A button/checkbox added to one view and not the
-   other ? e.g. the "Manage Individual Features" selector existed only in
-   WinForms. The New-mode user simply can't reach the feature.
+   other — the user on the missing side simply can't reach the feature. When
+   the absence is deliberate (e.g. the "Manage Individual Features" selector,
+   which is Avalonia-only with no WinForms precedent), it must be an explicit,
+   recorded divergence, not silence.
 3. **Behavioral divergence.** One applies live, the other prompts a restart; one
    validates, the other doesn't; different apply order ? different side effects
    (e.g. writing-system change before vs after plugin install).
-4. **Visibility/enable drift.** WinForms shows the button only in New mode; the
-   Avalonia copy shows it always (or never). Mirror the gate
-   (e.g., in the Options pair: `UpdateManageFeaturesButtonVisibility` ?
-   `ManageFeaturesVisible`).
+4. **Visibility/enable drift.** One side gates a control's visibility or enabled
+   state on a condition (UI mode, platform, settings state) that the other side
+   doesn't mirror. Check that both sides gate on the same condition, not just
+   that both sides have a similarly named control.
 5. **String/localization drift.** Wording, mnemonics, or the `.resx`/XLIFF key
    updated on one side only ? inconsistent UI and broken translation memory.
    Both sides must carry the same seed English (see `fieldworks-localization-review`).
@@ -94,8 +96,8 @@ Do these, in order, on any paired-dialog change:
 2. **Share the source of truth, don't copy it.** Prefer one list/rule both
    consume over two hand-maintained copies:
    - e.g., in the Options pair: `LexiconFeatureCatalog` is the single catalog
-     behind both the WinForms button and the Avalonia dialog ? extend it, not
-     two lists.
+     behind the Avalonia `LexiconFeatureManagerDialog` (an Avalonia-only
+     feature, no legacy WinForms equivalent) — extend it, not a second list.
    - Apply/normalize/gate helpers should be shared or mirrored with a pointer
      comment (e.g., in the Options pair: `NormalizeUiMode`,
      `ParseDisabledTools`/`SerializeDisabledTools`).
@@ -104,8 +106,8 @@ Do these, in order, on any paired-dialog change:
    example: the Options launcher's `Apply()` is explicitly written to follow
    `LexOptionsDlg.m_btnOK_Click`'s order.
 4. **Cross-reference in comments.** Each side names its counterpart
-   (e.g. `// parity with LexOptionsDlg.m_manageFeaturesButton`). A grep for the
-   partner symbol should always find the other side.
+   (e.g. `// parity with WinForms LexOptionsDlg m_uiModeBetaWarning`). A grep
+   for the partner symbol should always find the other side.
 5. **Parity tests, not just binding tests.** Assert the *behavior* both dialogs
    promise: field persists on OK, control hidden in Legacy/shown in New,
    validation blocks OK, disabled-tools round-trips. Put the DTO/launcher apply

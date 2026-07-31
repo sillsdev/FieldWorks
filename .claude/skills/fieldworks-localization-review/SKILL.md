@@ -102,4 +102,4 @@ whether localized behavior has executable evidence or is still pending.
 When a new localization strategy, Crowdin constraint, or resource convention
 appears (or a gap like the `<RootNamespace>` one is found), record it here
 in the same PR; route durable lessons through
-`fieldworks-winforms-to-avalonia-migration/references/lessons-learned.md`.
+`../fieldworks-winforms-to-avalonia-migration/references/lessons-learned.md`.

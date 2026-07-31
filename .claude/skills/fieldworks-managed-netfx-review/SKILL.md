@@ -54,4 +54,4 @@ commands/results, and any remaining compatibility risks.
 When a new cross-target pitfall, project-file gotcha, or runtime
 difference bites a migration, add it here in the same PR; route durable
 lessons through
-`fieldworks-winforms-to-avalonia-migration/references/lessons-learned.md`.
+`../fieldworks-winforms-to-avalonia-migration/references/lessons-learned.md`.

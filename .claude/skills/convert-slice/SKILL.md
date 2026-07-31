@@ -84,7 +84,7 @@ questions?". Never summarize the document in chat.
 
 ## Deciding what to prove (gate)
 
-Identical process (developer guidance -> grill-me -> saved plan). Slice
+Identical process (developer guidance -> `grill-with-docs` -> saved plan). Slice
 plans must cover: compose (the field renders with correct values, not
 Unsupported), edit -> ONE undo step, validation blocking, re-show after
 external PropChanged, and cluster/bidi safety when the slice carries text.
@@ -99,12 +99,12 @@ with a recommendation):
 2. A genuinely new interaction shape -> new `DetailFieldKind` + a new owned
    `Fw*Field` control + a `SliceFactory` case.
 3. A custom slice (`editor="Custom"`) -> an `ISlicePlugin` keyed by the
-   exact legacy `class=` string, registered in `SlicePlugins`; no layout
+   exact legacy `class=` string, registered in `SlicePluginRegistry`; no layout
    edits.
 
 Then map controls/patterns against the exemplar map exactly as convert-dialog
 does when planning a replacement (including the no-exemplar catalog, package
-search, grill-me fill plan, and human-gated promotion row), and produce the
+search, `grill-with-docs` fill plan, and human-gated promotion row), and produce the
 same four-section design report, with section 4 describing the proposed row
 layout and every deliberate difference from the legacy slice.
 

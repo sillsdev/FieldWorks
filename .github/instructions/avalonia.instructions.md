@@ -26,7 +26,7 @@ description: "Guidance for FieldWorks Avalonia modules and the shared Preview Ho
 
 ### Project locations & naming
 - A new, self-contained feature module should live under `Src/<Area>/<Feature>.Avalonia/`.
-- Shared Avalonia utilities live under `Src/Common/FwAvalonia/` (region/composer framework, seams,
+- Shared Avalonia utilities live under `Src/Common/FwAvalonia/` (detail/composer framework, seams,
   view-definition IR) and `Src/Common/FwAvaloniaDialogs/` (the MVVM dialog kit).
 - Preview tooling lives under `Src/Common/FwAvaloniaPreviewHost/`.
 
@@ -68,7 +68,7 @@ To preview UI without launching the full FieldWorks app, use the shared Preview 
 
 - Shared utilities/contracts:
   - `Src/Common/FwAvalonia/`
-    - `Region/` (composer, region model, field editors)
+    - `Detail/` (composer, detail model, field editors)
     - `ViewDefinition/` (typed IR compiled from legacy XML layouts)
     - `Seams/` (framework-neutral interfaces)
     - `Preview/` (module registration + data provider contracts, e.g. `AssemblyPreviewModules.cs`

@@ -73,8 +73,9 @@ Use sorted, descriptive names:
 
 - single capture: `<target>-<state>.png`
 - before/after: `01-before-<state>.png`, `02-after-<state>.png`
-- parity bundles: use the canonical names from the migration skill's
-  `references/parity-evidence.md` §6 (`visual.legacy.png`, `visual.avalonia.png`,
+- parity bundles: use the canonical names from
+  `../fieldworks-winforms-to-avalonia-migration/references/parity-evidence.md` §6
+  (`visual.legacy.png`, `visual.avalonia.png`,
   `visual.diff.png`, ...) under
   `openspec/changes/<change-id>/evidence/parity/{scenarioId}/{bundleId}/`;
   manual captures use a `bundleId` like `manual-YYYYMMDD`
@@ -129,7 +130,7 @@ Use multiple captures when one image cannot tell the story:
 
 For migration parity bundles, keep framing, DPI, zoom, and window size matched across WinForms and Avalonia captures whenever density, wrapping, or spacing is under review.
 
-For a parity bundle, pair the visual captures with the matching semantic snapshot and workflow/accessibility evidence for the same `scenarioId` (folder layout and file names per the migration skill's `references/parity-evidence.md` §6); a screenshot pair alone is not a full parity claim.
+For a parity bundle, pair the visual captures with the matching semantic snapshot and workflow/accessibility evidence for the same `scenarioId` (folder layout and file names per `../fieldworks-winforms-to-avalonia-migration/references/parity-evidence.md` §6); a screenshot pair alone is not a full parity claim.
 
 For sequences, keep the same target, window size, and framing across captures
 unless the task is specifically about responsive or layout behavior.

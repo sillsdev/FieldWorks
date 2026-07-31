@@ -34,8 +34,9 @@ scenario id, produce:
   type failed with diagnostics; do not hand reviewers a raw image diff
 
 Canonical harness: `Src/Common/FwAvalonia/FwAvaloniaTests/Path3BundleTests.cs`;
-bundle contract provenance:
-`openspec/changes/lexical-edit-avalonia-migration/coverage-map.md` §9.
+bundle-contract requirements synced to
+`openspec/specs/lexical-edit-parity-automation/spec.md` ("Path 3 parity uses
+triangulated bundles").
 
 ## 2. Evidence types and what each can prove
 
@@ -65,8 +66,8 @@ integration tests that script real user scenarios** — not deferred to manual
   LCModel cache, asserting the real list narrows/reorders/restores — the
   domain-fidelity claim that used to require running FLEx.
 
-Harness + how it scales across phases: architecture-patterns.md §13 and
-`openspec/changes/shared-editable-virtualized-table/headless-integration-harness.md`.
+Harness + how it scales across phases: architecture-patterns.md §13; requirements synced to
+`openspec/specs/lexical-edit-parity-automation/spec.md`.
 A surface is not "ready for manual testing" until its key workflows have headless
 scenario coverage; manual/UIA2 desktop runs then confirm pixel/native-tree axes
 the headless environment cannot.
