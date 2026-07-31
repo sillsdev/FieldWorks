@@ -46,8 +46,8 @@ state.
 > `DataTree` is frozen on the legacy side and deleted wholesale at end of the coexistence phase.
 > (`datatree-model-view-separation` was research-only, never implemented, and its change folder was
 > removed 2026-07-02.) The scenario below is retained for historical traceability but no longer
-> reflects the as-built architecture. The rationale for the divergence is recorded in the provenance
-> comment on PR #964 rather than in the tree.
+> reflects the as-built architecture. The rationale for the divergence is recorded in PR #964's
+> description, under "Paths not taken", rather than in the tree.
 
 #### Scenario (historical, superseded): SliceSpec and IDataTreeView align to the program seams
 - **WHEN** the DataTree region is implemented

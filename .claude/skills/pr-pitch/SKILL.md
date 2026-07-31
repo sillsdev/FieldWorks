@@ -1,6 +1,6 @@
 ---
 name: pr-pitch
-description: Compose a PR body as a pitch that answers the unknowns a reviewer arrives with, and roll the branch's research, provenance, and paths-not-taken into collapsed PR comments while evicting those files from the repo. Use when writing or refreshing a PR description, when a branch carries working markdown that should not merge, or when pr-preflight reaches its PR step.
+description: Compose a PR body as a pitch that answers the unknowns a reviewer arrives with, with the branch's decisions, provenance, and paths-not-taken folded into collapsed accordions below it, while evicting those files from the repo. Use when writing or refreshing a PR description, when a branch carries working markdown that should not merge, or when pr-preflight reaches its PR step.
 argument-hint: "Optional PR number (defaults to the PR for the current branch)"
 ---
 
@@ -16,33 +16,41 @@ a large migration branch and the pitch must justify its scope).
 
 ## What this produces
 
-Three artifacts, always together, never one without the others:
+Two artifacts, always together, never one without the other:
 
-1. **The PR body** -- a pitch, 200-400 words. Not a changelog, not an audit.
-2. **One sticky PR comment** -- evidence and provenance in collapsed
-   `<details>`, edited in place on every re-run so its permalink never rots.
-3. **A commit** that deletes the provenance sources from the branch, so
+1. **The PR body**, in two zones:
+   - **The pitch** -- 200-400 words, above the fold, uncollapsed.
+   - **The accordions** -- collapsed `<details>` sections below it, holding
+     the decisions, evidence, and paths not taken.
+2. **A commit** that deletes the provenance sources from the branch, so
    research and working notes inform the reviewer without merging.
 
-If you produce the comment but skip the deletion, the branch merges its own
-scaffolding. If you delete without the comment, the reasoning is lost. Do
+**Everything goes in the body -- never a separate comment.** The PR
+description is the one place a reader always looks, it is inherently sticky
+(editing it is always in place, the URL never changes), and it is the only
+part of the PR that survives being read a year later without scrolling a
+thread. A second comment splits the record for no gain: nothing here needs a
+comment's affordances, and no CI job posts alongside it.
+
+If you write the accordions but skip the deletion, the branch merges its own
+scaffolding. If you delete without the accordions, the reasoning is lost. Do
 both or do neither.
 
 ## The rule that drives everything
 
 A reviewer arrives at the PR with the **same unknowns the author started
 with**, and no time to rediscover them. The pitch closes that gap; the
-provenance comment holds what a future maintainer -- not a reviewer -- will
-want when they ask "why is it like this?" a year from now.
+accordions hold what a future maintainer -- not a reviewer -- will want when
+they ask "why is it like this?" a year from now.
 
 So the test for every sentence:
 
-- A reviewer needs it to say yes or no today -> **pitch**.
+- A reviewer needs it to say yes or no today -> **the pitch**.
 - A reviewer would want it only to *check* a claim the pitch makes ->
-  **provenance comment, evidence section**. Summarize the claim in the body,
-  link to the proof. This is where most over-long bodies go wrong: the proof
-  is real and interesting and belongs on the PR, just not in the body.
-- Nobody needs it today, but someone will in a year -> **provenance comment**.
+  **an accordion**. State the claim above the fold, put the proof below it.
+  This is where most over-long bodies go wrong: the proof is real and
+  interesting and belongs on the PR, just not above the fold.
+- Nobody needs it today, but someone will in a year -> **an accordion**.
 - Neither -> **delete it**.
 
 ## Phase 1 -- Triage every markdown file on the branch
@@ -100,7 +108,7 @@ Counts rot silently. Recount from the tree and correct.
 Do not rewrite prose that is still accurate. This phase is a correction
 pass, not a rewrite.
 
-## Phase 3 -- Write the pitch
+## Phase 3 -- Write the pitch (the top zone)
 
 **Budget: 200-400 words, and it must fit on one screen without scrolling.**
 That is the binding constraint, not a target. Reviewers skim the description
@@ -112,17 +120,22 @@ Scale by risk, not by diff size. An 82,000-line branch whose whole story is
 "one flag, defaulted off" gets a *shorter* body than a 200-line change to a
 payment path, because there is less a reviewer must hold in their head.
 
+The budget applies to the top zone only. The accordions below it are as long
+as the branch's reasoning deserves -- a closed `<details>` costs a reader
+nothing. There is no tension between "short" and "complete" here; there is
+only the question of which zone a sentence belongs in.
+
 A reviewer arrives with two kinds of gap. **Known unknowns** -- the questions
 they already know they have on opening this diff -- and **unknown unknowns**,
-the things only you can see because you built it. The body answers those two
-and nothing else. Everything you happen to know that answers neither is
-cruft: it goes in the provenance comment, or nowhere.
+the things only you can see because you built it. The top zone answers those
+two and nothing else. Everything you happen to know that answers neither goes
+below the fold, or nowhere.
 
 The overflow rule: when a section will not fit the budget, that section was
-provenance-comment material. Move it and leave one line plus a link. Never
-compress by deleting the qualifiers that make a claim honest.
+accordion material. Move it down and leave one line up top. Never compress by
+deleting the qualifiers that make a claim honest.
 
-The body, in this order.
+The top zone, in this order.
 
 ### 1. Lead with what it does (2-3 sentences)
 
@@ -144,18 +157,17 @@ anticipate, ordered by what would sink the PR -- not by what was hardest to
 build. One line each: the risk, and the thing that pins it -- the gate, the
 test, the invariant.
 
-The evidence for each line goes in the provenance comment, under one
-`<details>` section, and this section ends with a link to it. A reviewer who
-wants to check rather than trust follows the link; one who trusts the summary
-never pays for it. Do not inline the proof here -- that is what blew the
-budget on every over-long body this skill exists to prevent.
+The evidence for each line goes in an accordion below. A reviewer who wants
+to check rather than trust opens it; one who trusts the summary never pays
+for it. Do not inline the proof here -- that is what blew the budget on every
+over-long body this skill exists to prevent.
 
 ### 4. What is deliberately not here (one list, one line each)
 
 Deferrals, parity gaps, known-narrower paths. A reviewer who finds an
 unlisted gap stops trusting the whole pitch, so listing them buys more than
 it costs. Name the in-code marker or the follow-up PR, not the reasoning --
-reasoning is provenance.
+reasoning goes in an accordion.
 
 ### 5. Stack and verification (a few lines)
 
@@ -169,82 +181,78 @@ Pitch rules:
 - No process narration. "We then discovered...", "after several
   iterations..." -- cut. The reviewer is approving a result, not a journey.
 - No apology, no hedging, no "should be fine".
-- No section that exists only to demonstrate rigor. Depth belongs in the
-  provenance comment, where it costs the reviewer nothing.
+- No section that exists only to demonstrate rigor. Depth belongs below the
+  fold, where it costs the reviewer nothing.
 - Every claim with a name in it must be true of the current tree. Re-verify
   claims carried over from an earlier version of the body; long-lived PRs
   accumulate stale ones.
 - Word-count the result before publishing. Over 400, cut -- do not rationalize.
 
-## Phase 4 -- Write the provenance comments
+## Phase 4 -- Write the accordions (the bottom zone)
 
-**Synthesize; do not paste.** Dumping the specs into a comment is the
-failure mode this skill exists to prevent. The comment carries what someone
-will care about later, in your words, with the reasoning intact and the
-scaffolding gone.
+**Synthesize; do not paste.** Dumping the specs into `<details>` blocks is
+the failure mode this skill exists to prevent. The accordions carry what
+someone will care about later, in your words, with the reasoning intact and
+the scaffolding gone.
 
-**One sticky comment.** There is exactly one provenance comment per PR, and
-every re-run edits that same comment in place -- same ID, same permalink, so
-the link in the body never rots and the thread never fills with superseded
-copies. Marker-matched edit, never a fresh post. Phase 5 has the mechanics.
-Prefer a second sticky comment only when a single one nears GitHub's 65,536
-character cap; give it its own slug.
-
-Structure: a preamble, then collapsed sections. The first section holds the
-evidence behind the body's "Where to look" bullets -- that is the one part a
-reviewer may actually open, so it goes first and the preamble says so.
-Everything after it is for the future maintainer.
+They go directly below the pitch in the same PR body, after a `---` rule.
+Open with a short orienting accordion that says what this record is and why
+it exists outside the tree -- a reader a year out needs to know the working
+documents were deliberately deleted, not lost.
 
 ```markdown
-<!-- pr-pitch:provenance:start:<slug> -->
-The long form behind the PR description. The first section is the evidence
-for the claims the description makes -- open it if you want to check them
-rather than take them. Everything after it is background for whoever asks
-"why is it like this?" later, and is not needed to review the change.
+---
 
 <details>
-<summary><b>Decisions and why</b></summary>
+<summary><b>Reading this a year from now</b> -- start here</summary>
 
-...
+What this record is, and why the reasoning lives here instead of in the
+tree.
 
 </details>
 
 <details>
-<summary><b>Paths not taken</b></summary>
+<summary><b>Decisions, and why</b></summary>
 
 ...
 
 </details>
-<!-- pr-pitch:provenance:end:<slug> -->
 ```
 
 Sections worth writing, when the branch has them:
 
-- **Evidence** -- the proof behind each "Where to look" bullet in the body:
-  the predicate quoted, the call-site count, the equivalence argument, the
-  test that pins it. First section, because it is the only one written for a
-  reviewer rather than a future maintainer.
-- **Decisions and why** -- the choice, the alternatives, what tipped it.
+- **Reading this a year from now** -- the orienting preamble. First.
+- **The layer cake** -- for a branch that introduces an architecture, the
+  path from input to output with the real type at each hop. This is the
+  single most useful thing for someone arriving cold.
+- **Decisions, and why** -- the choice, the alternatives, what tipped it.
+  Prefer decisions where the code looks arbitrary until you know the reason.
 - **Paths not taken** -- what was tried or seriously considered and
-  rejected, and the reason. This is the single most valuable section; it is
-  what stops the next person re-proposing a dead end.
+  rejected, and the reason. The single most valuable section; it is what
+  stops the next person re-proposing a dead end.
+- **Reversals** -- things built and then removed, with why. Note which ones
+  are invisible in `git log` because they happened inside a squash.
 - **Surprising findings** -- what the investigation turned up that
   contradicted the initial assumption.
-- **Reversals** -- things built and then removed, with why. Future
-  archaeology on the commit history lands here.
-- **Deferred with rationale** -- what was scoped out and what would need to
-  be true to pick it up.
+- **What this does NOT authorize** -- for a foundational branch, the limits.
+  A later reader will otherwise cite the branch as precedent for more than
+  it decided.
+- **Deferred, and what would unblock it** -- what was scoped out and what
+  would need to be true to pick it up.
+- **Evidence** -- the proof behind the pitch's "Where to look" bullets: the
+  predicate quoted, the call-site count, the equivalence argument, the test
+  that pins it. Written for a reviewer rather than a maintainer, so it can
+  sit last; the pitch already carries the claim.
 
 Rules:
 
 - Each section stands alone. Nobody reads these top to bottom.
 - Attribute nothing to a person; describe the decision, not the deciders.
-- GitHub caps a comment at 65,536 characters. Split by theme, not by
-  arbitrary cut -- and if you are near the cap, you are pasting, not
-  synthesizing. Cut harder.
-- Always carry the start/end markers. They are what makes the comment
-  sticky -- without them a re-run cannot find its own previous comment and
-  posts a duplicate.
+- GitHub caps a PR body at 65,536 characters. If you are near it, you are
+  pasting, not synthesizing. Cut harder.
+- Reasoning recoverable *only* from git history -- because the branch
+  deleted the document that argued it -- is the highest-value content here.
+  Prefer it over anything a reader could derive by reading the tree.
 
 ## Phase 5 -- Apply
 
@@ -255,53 +263,56 @@ In this order:
 2. Commit the Phase 2 alignment edits and the deletions together, with a
    message saying the reasoning moved to the PR.
 3. Push.
-4. Update the PR body with the pitch.
-5. Update the sticky provenance comment.
+4. Update the PR body -- pitch and accordions, one write.
 
-Write both to files first -- never pass a body inline. Then:
-
-```powershell
-# 4. Body. gh pr edit is fine when the token has the scope; when it does not
-#    (it wants org:read), go straight to REST.
-gh pr edit <n> --body-file pitch.md
-gh api -X PATCH repos/<owner>/<repo>/pulls/<n> -F body=@pitch.md --jq '.body|length'
-```
+Write the body to a file first -- never pass it inline. Then:
 
 ```powershell
-# 5. Sticky comment: find by marker, edit in place, create only if absent.
-$id = gh api --paginate repos/<owner>/<repo>/issues/<n>/comments `
-        --jq '[.[] | select(.body | contains("<!-- pr-pitch:provenance:start:<slug> -->")) | .id] | last'
-
-if ($id) {
-    gh api -X PATCH repos/<owner>/<repo>/issues/comments/$id -F body=@provenance.md --jq '.html_url'
-} else {
-    gh api -X POST repos/<owner>/<repo>/issues/<n>/comments -F body=@provenance.md --jq '.html_url'
-}
+# gh pr edit is fine when the token has the scope; when it does not
+# (it wants org:read), go straight to REST.
+gh pr edit <n> --body-file body.md
+gh api -X PATCH repos/<owner>/<repo>/pulls/<n> -F body=@body.md --jq '.body|length'
 ```
 
-Match on the marker, not on author and not on "the last comment I posted" --
-`gh pr comment --edit-last` picks the most recent comment by the current
-user, which on a live PR is as likely to be an unrelated reply. `| last`
-handles the case where a pre-sticky run already left duplicates: it edits the
-newest and you delete the older ones by hand.
+The body is inherently sticky: editing it is always in place and the PR URL
+never changes, so nothing needs marker-matching or an existence check. That
+is the main reason the record lives here rather than in a comment.
 
-The permalink is `<pr-url>#issuecomment-<id>`. It is stable across edits, so
-the body may link to it -- and must, once the "Where to look" evidence lives
-there. On the first run, post the comment before writing that link into the
-body.
+If an earlier run of this skill left a separate provenance comment, fold its
+content into the accordions and delete it, so there is exactly one record:
+
+```powershell
+gh api -X DELETE repos/<owner>/<repo>/issues/comments/<id>
+```
+
+Deleting is destructive and public -- confirm with the developer first, and
+only after its content is verifiably in the published body.
+
+Anything in the tree that pointed at that comment now dangles. Check before
+you delete, and repoint at the PR description:
+
+```
+git grep -n "provenance comment\|issuecomment" -- openspec/ Docs/ Src/
+```
+
+Note that a wrapped line will defeat a naive grep for a two-word phrase --
+search for each word.
 
 Before finishing, confirm:
 
-- [ ] The body is 200-400 words and fits one screen. Count, do not estimate.
-- [ ] The body links to the provenance comment, and the link resolves.
-- [ ] The sticky comment kept its ID -- the response URL matches the one the
-      body links to. A new ID means the marker did not match; find and delete
-      the duplicate.
-- [ ] No deleted file's content was lost -- each is represented in a
-      provenance section or was deliberately dropped as STALE.
-- [ ] Every name in the pitch resolves in the current tree.
-- [ ] Every count in the pitch was recounted.
-- [ ] The body does not duplicate the provenance comments.
+- [ ] The pitch zone is 200-400 words and fits one screen. Count, do not
+      estimate.
+- [ ] Every `<details>` is closed -- count `<details>` against `</details>`.
+- [ ] The whole body is under 65,536 characters.
+- [ ] No content lives in a PR comment; the description is the only record.
+- [ ] Nothing in the tree references a comment that was deleted.
+- [ ] No deleted file's content was lost -- each is represented in an
+      accordion or was deliberately dropped as STALE.
+- [ ] Every name in the body resolves in the current tree -- accordions rot
+      the same way the pitch does, and a rename sweep late in a branch will
+      have stranded names the earlier reasoning used.
+- [ ] Every count was recounted.
+- [ ] The pitch does not repeat what an accordion already says.
 - [ ] Working notes are gitignored (`Docs/migration/working/`), not merged.
 
 Do not mark this complete on unverified claims. If a claim could not be
