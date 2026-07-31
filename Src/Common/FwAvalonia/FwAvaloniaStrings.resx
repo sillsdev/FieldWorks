@@ -184,12 +184,6 @@
   <data name="FwAvalonia.DeleteEmbeddedObject" xml:space="preserve">
     <value>Delete embedded object</value>
   </data>
-  <data name="FwAvalonia.Picture.Insert" xml:space="preserve">
-    <value>Add a picture...</value>
-  </data>
-  <data name="FwAvalonia.Picture.Delete" xml:space="preserve">
-    <value>Delete picture</value>
-  </data>
   <data name="FwAvalonia.Audio.Play" xml:space="preserve">
     <value>Play</value>
   </data>

@@ -229,15 +229,6 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 		/// </summary>
 		public static string DeleteEmbeddedObject => Text("FwAvalonia.DeleteEmbeddedObject");
 
-		// ----- Pictures (CmPicture editable parity). APPEND-ONLY. Seed text mirrors the legacy
-		// picture insert/properties/delete affordances (DTMenuHandler.OnInsertPicture / PictureSlice). -----
-
-		/// <summary>Insert-a-picture affordance on an empty picture field / "insert another" on a picture row (legacy Insert Picture).</summary>
-		public static string PictureInsert => Text("FwAvalonia.Picture.Insert");
-
-		/// <summary>Delete-picture affordance on a picture row.</summary>
-		public static string PictureDelete => Text("FwAvalonia.Picture.Delete");
-
 		// ----- Audio (voice writing systems: play + record). APPEND-ONLY. Seed text mirrors the
 		// legacy voice-WS audio control (LabeledMultiStringView ShortSoundFieldControl play/record/delete). -----
 
