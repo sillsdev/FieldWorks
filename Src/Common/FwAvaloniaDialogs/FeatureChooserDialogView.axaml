@@ -6,7 +6,7 @@
              x:DataType="vm:FeatureChooserDialogViewModel"
              Classes="fwDialogRoot"
              MinWidth="320" MinHeight="260">
-	<!-- The standalone feature-structure chooser dialog (Phase-1 §19b Stage 3): an optional instruction prompt, then
+	<!-- The standalone feature-structure chooser dialog: an optional instruction prompt, then
 	     the shared FwFeatureStructureEditor tree, over OK/Cancel/Help. The editor is an owned native control injected
 	     as a code-behind child (set on DataContextChanged like MsaCreatorDlgView). Visible text is localized via
 	     FwAvaloniaDialogsStrings; AutomationIds stay stable + nonlocalized. There is no OK gate (an empty pick is the

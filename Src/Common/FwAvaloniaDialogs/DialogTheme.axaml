@@ -52,7 +52,7 @@
 		     SfmToTextsAndWordsMappingBaseDlg), which is tighter than a reasonable desktop pointer-target
 		     accessibility floor (~24px, the commonly-cited Fluent/Windows desktop minimum interactive control
 		     height). 24 is used here instead of raw WinForms-matching so it never regresses below that floor,
-		     while staying far below the Fluent ~32px default. See style-system.md for the full note. -->
+		     while staying far below the Fluent ~32px default. -->
 		<x:Double x:Key="DialogMinControlHeight">24</x:Double>
 		<!-- Border thickness for a host/field frame. -->
 		<Thickness x:Key="DialogFieldBorderThickness">1</Thickness>

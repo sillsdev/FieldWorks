@@ -12,10 +12,10 @@ using SIL.FieldWorks.Common.FwAvalonia;
 namespace FwAvaloniaDialogsTests
 {
 	/// <summary>
-	/// The Avalonia "Manage Individual Features" dialog (PR #964 review follow-up; replaces the WinForms
+	/// The Avalonia "Manage Individual Features" dialog, the analog of the WinForms
 	/// <c>LexiconFeatureManagerDlg</c>, whose absolute-positioned <see cref="System.Windows.Forms.FlowLayoutPanel"/>
 	/// rows corrupted their own layout on a checkbox click — reported as "everything disappears" when clicking a
-	/// feature). Covers grouping, search filtering, per-group select/deselect-all (visible rows only), and that
+	/// feature. Covers grouping, search filtering, per-group select/deselect-all (visible rows only), and that
 	/// edits land on the state's <see cref="FeatureOption"/> rows via their two-way checkbox binding.
 	/// </summary>
 	[TestFixture]

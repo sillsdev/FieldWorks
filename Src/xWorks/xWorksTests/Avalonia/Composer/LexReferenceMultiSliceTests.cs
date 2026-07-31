@@ -12,7 +12,7 @@ using SIL.LCModel.Infrastructure;
 namespace SIL.FieldWorks.XWorks
 {
 	/// <summary>
-	/// D3 follow-up — `LexReferenceMultiSlice` should compose as native Avalonia rows rather than
+	/// `LexReferenceMultiSlice` composes as native Avalonia rows rather than
 	/// a deferred custom-slice placeholder. These tests pin the relation-type walk semantics the
 	/// legacy slice generated dynamically: forward vs reverse labels and which targets show on each
 	/// side of the relation.

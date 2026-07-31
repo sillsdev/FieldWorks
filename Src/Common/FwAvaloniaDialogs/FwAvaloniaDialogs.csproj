@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
 	<!--
-		FwAvaloniaDialogs (Stage 1.2 dialog-MVVM kit; decision 2026-06-15)
+		FwAvaloniaDialogs
 
 		The dedicated XAML-enabled project for hand-authored Avalonia dialogs/wizards. Kept SEPARATE
 		from the pure-C# foundation (Src/Common/FwAvalonia) so the foundation keeps its documented
@@ -15,10 +15,9 @@
 	-->
 	<PropertyGroup>
 		<TargetFramework>net48</TargetFramework>
-		<!-- Explicit RootNamespace so Crowdin/satellite-assembly localization builds work
-		     (see `fieldworks-localization-review` skill). -->
+		<!-- Explicit RootNamespace so Crowdin/satellite-assembly localization builds work. -->
 		<RootNamespace>FwAvaloniaDialogs</RootNamespace>
-		<!-- net48 BCL constraint applies (see FwAvalonia.csproj, NETFX-01): no records/init/Index/Range/DIM/IAsyncEnumerable. -->
+		<!-- net48 BCL constraint applies: no records/init/Index/Range/DIM/IAsyncEnumerable. -->
 		<LangVersion>latest</LangVersion>
 		<Nullable>disable</Nullable>
 		<IsPackable>false</IsPackable>
@@ -39,7 +38,7 @@
 
 	<!-- WinForms framework assembly: the generic dialog launcher scaffold takes an IWin32Window owner and
 	     calls AvaloniaDialogHost.ShowModal (FwAvalonia) which is owned by a WinForms modal Form during
-	     coexistence (dialog-ownership.md). net48 SDK-style projects need this referenced explicitly. -->
+	     coexistence. net48 SDK-style projects need this referenced explicitly. -->
 	<ItemGroup>
 		<Reference Include="System.Windows.Forms" />
 	</ItemGroup>

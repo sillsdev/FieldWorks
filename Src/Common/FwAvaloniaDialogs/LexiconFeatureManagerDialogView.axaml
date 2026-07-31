@@ -6,8 +6,8 @@
              x:DataType="vm:LexiconFeatureManagerDialogViewModel"
              Classes="fwDialogRoot"
              MinWidth="380" MinHeight="360">
-	<!-- "Manage Individual Features" (PR #964 review follow-up; replaces the WinForms LexiconFeatureManagerDlg
-	     whose absolute-positioned FlowLayoutPanel rows corrupted their own layout on a checkbox click): a search box
+	<!-- "Manage Individual Features", the Avalonia analog of the WinForms LexiconFeatureManagerDlg
+	     whose absolute-positioned FlowLayoutPanel rows corrupted their own layout on a checkbox click: a search box
 	     over grouped, checkable feature rows (name + description), each group offering Select All/Deselect All over
 	     its currently-visible rows. Rows use the same CheckBox+description StackPanel shape as the Options Plugins
 	     tab (standard, ordinary controls — no custom-drawn rows). Visible text is localized via

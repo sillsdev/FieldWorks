@@ -63,7 +63,7 @@ namespace FwAvaloniaTests
 		private static (int start, int end) Span(TextBox box)
 			=> (Math.Min(box.SelectionStart, box.SelectionEnd), Math.Max(box.SelectionStart, box.SelectionEnd));
 
-		// ---- D1: Shift+Arrow must EXTEND the selection through the wired-up box ----
+		// ---- Shift+Arrow must EXTEND the selection through the wired-up box ----
 
 		[AvaloniaTest]
 		public void ShiftRight_FromStart_ExtendsSelectionByOneGrapheme()
@@ -207,14 +207,14 @@ namespace FwAvaloniaTests
 				$"the ZWJ-joined emoji is one cluster; the first extend takes all 5 units, never a partial join. Span [{start}..{end}]");
 		}
 
-		// ---- D2 (mouse-drag over-grow): NOT headlessly reproducible — documented, left OPEN ----
+		// ---- Mouse-drag over-grow: NOT headlessly reproducible — documented, left OPEN ----
 		//
 		// The reported defect is that a mouse DRAG grows the selection beyond the pointer. Drag-select is
 		// Avalonia-native (our only pointer handler is the release-time cluster snap). Driving a headless
 		// MouseDown/Move/Up over the value box produces NO selection at all (SelectionStart==SelectionEnd==0):
 		// the headless backend has no real text hit-testing, so the native drag-to-caret mapping never runs
-		// and the defect cannot be provoked or self-validated here. Per the repro-first rule the D2 code is
-		// left UNCHANGED. Reproducing it needs a real rendered window / the specific layout transform suspected
+		// and the defect cannot be provoked or self-validated here. Per the repro-first rule the drag-select
+		// code is left UNCHANGED. Reproducing it needs a real rendered window / the layout transform suspected
 		// in the detail surface; this Ignored test records the limitation so the finding stays visible.
 		[AvaloniaTest]
 		[Ignore("D2 (mouse-drag selection over-grow) is not reproducible headlessly: the headless backend does no text hit-testing, so a driven drag yields no selection. Left open; needs a real rendered window.")]

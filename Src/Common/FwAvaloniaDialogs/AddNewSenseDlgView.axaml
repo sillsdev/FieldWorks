@@ -6,7 +6,7 @@
              x:DataType="vm:AddNewSenseDlgViewModel"
              Classes="fwDialogRoot"
              MinWidth="360" MinHeight="240">
-	<!-- The reusable Add New Sense dialog (MSA-port Stage 5): a read-only citation form, an editable gloss field,
+	<!-- The reusable Add New Sense dialog: a read-only citation form, an editable gloss field,
 	     and the grammatical-info group box, over Create/Cancel/Help. The gloss field + MSA box are owned native
 	     controls injected as code-behind children (set on DataContextChanged like InsertEntryDlgView). Visible
 	     text is localized via FwAvaloniaDialogsStrings; AutomationIds stay stable + nonlocalized. -->

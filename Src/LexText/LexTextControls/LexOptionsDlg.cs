@@ -485,7 +485,7 @@ namespace SIL.FieldWorks.LexText.Controls
 
 			// Managing individual features (per-tool disable within New mode) is Avalonia-only — see the
 			// "Manage Individual Features..." button on the Avalonia Options dialog. This is a New-mode-only
-			// feature with no WinForms precedent, so it isn't duplicated here (dialog-update skill carve-out).
+			// feature with no WinForms precedent, so it isn't duplicated here.
 			m_uiModeGroup.Controls.Add(m_uiModeLabel);
 			m_uiModeGroup.Controls.Add(m_uiModeChooser);
 			m_uiModeGroup.Controls.Add(m_uiModeBetaWarning);

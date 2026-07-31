@@ -11,7 +11,7 @@ using SIL.FieldWorks.Common.FwUtils;
 namespace SIL.FieldWorks.XWorks
 {
 	/// <summary>
-	/// GAP 1 / B7 — the host's link dispatch: a chooser jump link translates to EXACTLY the legacy
+	/// The host's link dispatch: a chooser jump link translates to EXACTLY the legacy
 	/// chooser's <c>FwLinkArgs</c> (<c>ReallySimpleListChooser.cs:900</c>:
 	/// <c>new FwLinkArgs(sTool, m_guidLink)</c>, with <c>m_guidLink == Guid.Empty</c> unless a
 	/// flidTextParam resolved a target). The mediator hop itself

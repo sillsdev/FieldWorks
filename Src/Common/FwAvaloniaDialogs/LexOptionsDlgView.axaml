@@ -10,7 +10,7 @@
 	     product LexOptionsDlgState. Visible text is localized via FwAvaloniaDialogsStrings (.resx); AutomationIds
 	     stay stable + nonlocalized. Combo item *values* are settings codes (language/channel/mode), not UI. -->
 	<DockPanel>
-		<!-- TabIndex=1 pushes the button strip AFTER the content in tab order (A11Y-02); it is declared
+		<!-- TabIndex=1 pushes the button strip AFTER the content in tab order; it is declared
 		     first only so DockPanel docks it to the bottom. Content stays at the default TabIndex 0. -->
 		<StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" TabIndex="1"
 		            HorizontalAlignment="Right" Spacing="{StaticResource DialogButtonStripGap}"

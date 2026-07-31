@@ -12,7 +12,7 @@ using SIL.FieldWorks.Common.FwAvalonia.ViewDefinition;
 namespace SIL.FieldWorks.XWorks
 {
 	/// <summary>
-	/// Task 9.2 (project-file side): the xWorks override-migration adapter composes the live inventory's
+	/// The xWorks override-migration adapter composes the live inventory's
 	/// parts + a shipped layout into the tested migration core. This exercises the framework-neutral
 	/// XElement overload with inline XML + a temp override file (the live-<c>Inventory</c> overload is a
 	/// thin XmlNode→XElement bridge over this same core, build-verified by the xWorks build).

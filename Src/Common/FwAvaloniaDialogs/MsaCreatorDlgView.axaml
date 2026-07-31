@@ -6,7 +6,7 @@
              x:DataType="vm:MsaCreatorDlgViewModel"
              Classes="fwDialogRoot"
              MinWidth="360" MinHeight="220">
-	<!-- The reusable "Create New Grammatical Info." dialog (MSA-port Stage 5): a read-only lexical entry + read-only
+	<!-- The reusable "Create New Grammatical Info." dialog: a read-only lexical entry + read-only
 	     senses summary, then the grammatical-info group box, over OK/Cancel/Help. The MSA box is an owned native
 	     control injected as a code-behind child (set on DataContextChanged like InsertEntryDlgView). Visible text
 	     is localized via FwAvaloniaDialogsStrings; AutomationIds stay stable + nonlocalized. -->

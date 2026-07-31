@@ -57,7 +57,7 @@ namespace FwAvaloniaDialogs
 		public static string Cancel => Text("FwAvaloniaDialogs.Cancel");
 		public static string Help => Text("FwAvaloniaDialogs.Help");
 
-		// Button mnemonics (A11Y-01): dialog-local strings carrying the Avalonia '_' access-key marker, kept
+		// Button mnemonics: dialog-local strings carrying the Avalonia '_' access-key marker, kept
 		// SEPARATE from the shared Common.OK/Cancel/Help ids above (which the WinForms UI consumes with '&').
 		// The mnemonic letter is part of the localizable string, so translators control it; '__' renders a
 		// literal underscore. Consumed via an explicit <AccessText> in the button so the access key is parsed
@@ -80,7 +80,7 @@ namespace FwAvaloniaDialogs
 		// Reusable Insert Entry dialog.
 		public static string InsertEntryTitle => Text("FwAvaloniaDialogs.InsertEntryTitle");
 		public static string InsertEntryCreate => Text("FwAvaloniaDialogs.InsertEntryCreate");
-		// A11Y-01 mnemonic variant ('_' access-key marker) for the Insert Entry primary button.
+		// Mnemonic variant ('_' access-key marker) for the Insert Entry primary button.
 		public static string InsertEntryCreateMnemonic => Text("FwAvaloniaDialogs.InsertEntryCreateMnemonic");
 		public static string InsertEntryLexemeFormLabel => Text("FwAvaloniaDialogs.InsertEntryLexemeFormLabel");
 		public static string InsertEntryMorphTypeLabel => Text("FwAvaloniaDialogs.InsertEntryMorphTypeLabel");

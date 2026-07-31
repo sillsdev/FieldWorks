@@ -56,10 +56,10 @@ namespace FwAvaloniaDialogs
 	}
 
 	/// <summary>
-	/// View-model for the "Manage Individual Features" dialog (PR #964 review follow-up; replaces the
+	/// View-model for the "Manage Individual Features" dialog, the Avalonia analog of the
 	/// WinForms <c>LexiconFeatureManagerDlg</c>, whose hand-rolled <see cref="System.Windows.Forms.FlowLayoutPanel"/>
 	/// + absolute-positioned child <see cref="System.Windows.Forms.Panel"/> rows corrupted their own layout
-	/// on a checkbox click). Lets a user opt individual New-UI tool surfaces back out (the master
+	/// on a checkbox click. Lets a user opt individual New-UI tool surfaces back out (the master
 	/// UIMode=New switch defaults every catalog tool on), grouped and searchable by name/description.
 	/// Edits a product-supplied <see cref="LexiconFeatureManagerState"/> so the Avalonia layer stays
 	/// LCModel-free; each row's <see cref="FeatureOption.Enabled"/> is written through its two-way

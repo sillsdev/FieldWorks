@@ -2,9 +2,9 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 //
-// Renders legacy WinForms dialogs to "before" PNGs for the WinForms->Avalonia migration docs
-// (Docs/migration/**). THROWAWAY evidence tooling that captures a faithful visual baseline to
-// build and verify the Avalonia surfaces against. NO desktop/mouse interaction (pure in-process
+// Renders legacy WinForms dialogs to "before" PNGs. THROWAWAY evidence tooling that captures a
+// faithful visual baseline to build and verify the Avalonia surfaces against, for the
+// WinForms->Avalonia conversion. NO desktop/mouse interaction (pure in-process
 // construct + DrawToBitmap), so it runs unattended without grabbing the cursor.
 //
 // Two capture modes:

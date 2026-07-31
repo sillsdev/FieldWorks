@@ -12,7 +12,7 @@ using SIL.LCModel.Infrastructure;
 namespace SIL.FieldWorks.XWorks
 {
 	/// <summary>
-	/// 6.3 / B7 / B8 (xml-retirement-blockers) — reference chooser write-back: possibility-list
+	/// Reference chooser write-back: possibility-list
 	/// reference fields compose as EDITABLE rows instead of read-only joined text. Atomic refs
 	/// (possAtomicReference, e.g. Status) become Chooser rows whose options come from the field's
 	/// possibility list (legacy <c>obj.ReferenceTargetOwner(flid)</c>, the same path
@@ -21,7 +21,7 @@ namespace SIL.FieldWorks.XWorks
 	/// ReferenceVector rows carrying the current items plus the list's options, edited through
 	/// Add/Remove on the fenced session (sda Replace on the vector flid, the legacy
 	/// VectorReferenceView update). Deep lists (semantic domains) carry hierarchy on the options
-	/// (B8: DetailChoiceOption.Depth) so the chooser can render the legacy indented tree.
+	/// (<c>DetailChoiceOption.Depth</c>) so the chooser can render the legacy indented tree.
 	/// </summary>
 	[TestFixture]
 	public class DetailComposerReferenceChooserTests : MemoryOnlyBackendProviderTestBase
@@ -52,7 +52,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		// The memory-only fixture ships no list content; build the minimal real lists the senses
-		// reference — a HIERARCHICAL semantic domain list (B8) and a flat status list.
+		// reference — a HIERARCHICAL semantic domain list and a flat status list.
 		private void EnsureLists()
 		{
 			var listFactory = Cache.ServiceLocator.GetInstance<ICmPossibilityListFactory>();
@@ -116,7 +116,7 @@ namespace SIL.FieldWorks.XWorks
 				anthro.Name.SetAnalysisDefaultWritingSystem("Kinship");
 			}
 
-			// B7: the Publications list behind Publish In / Show As Headword In — the field whose
+			// The Publications list behind Publish In / Show As Headword In — the field whose
 			// legacy chooser carries the "Edit the Publications list" jump link.
 			if (Cache.LangProject.LexDbOA.PublicationTypesOA == null)
 				Cache.LangProject.LexDbOA.PublicationTypesOA = listFactory.Create();
@@ -150,7 +150,7 @@ namespace SIL.FieldWorks.XWorks
 				"the current items ride the row in vector order");
 			Assert.That(field.Items.Single().Name, Does.Contain("Universe"));
 
-			// B8: the option list is the WHOLE possibility tree, hierarchy carried as Depth, in the
+			// The option list is the WHOLE possibility tree, hierarchy carried as Depth, in the
 			// list's own (tree) order — exactly what the legacy chooser tree shows.
 			Assert.That(field.Options.Select(o => o.Key), Is.EqualTo(new[]
 				{
@@ -364,7 +364,7 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(m_sense.StatusRA, Is.EqualTo(m_statusConfirmed));
 		}
 
-		// GAP 1 / B7: the layout's chooserLink metadata composes onto the row — LexEntryParts.xml:48-53
+		// The layout's chooserLink metadata composes onto the row — LexEntryParts.xml:48-53
 		// gives Publish In <chooserLink type="goto" label="Edit the Publications list"
 		// tool="publicationsEdit"/>, the legacy chooser dialog's jump LinkLabel
 		// (ReallySimpleListChooser.cs:887-900: AddLink(label, kGotoLink, new FwLinkArgs(tool,
@@ -472,7 +472,7 @@ namespace SIL.FieldWorks.XWorks
 				"the authored (localizable) label is kept, not the derived format");
 		}
 
-		// B7: a chooserInfo guicontrol "...FlatList" spec means the legacy chooser presents the list
+		// A chooserInfo guicontrol "...FlatList" spec means the legacy chooser presents the list
 		// FLAT (e.g. PeopleFlatList, EnvironmentFlatList); the option builder honors it by emitting
 		// depth-0 options while keeping document order.
 		[Test]
