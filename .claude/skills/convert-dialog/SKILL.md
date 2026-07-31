@@ -80,6 +80,11 @@ build, no test run, no app automation. This is what makes the phase safe to
 run concurrently with the developer's own exploration of the live dialog.
 The "before" evidence (the last step here) is NOT part of that concurrent work.
 
+Before source analysis, read `Docs/lessons/avalonia-migration/README.md` and
+any card matching the dialog's capabilities. Carry applicable constraints and
+rejected assumptions into the analysis only after verifying them against the
+current tree and legacy behavior; a card never authorizes an old design.
+
 1. Read the dialog source and every related file (designer, resx, helpers).
 2. Pull the file history and investigate related Jira issues (read-only
    Atlassian tooling); document them chronologically as framing context for
