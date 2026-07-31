@@ -26,7 +26,6 @@ and "fixes" it, thrashing the code.
 | Concern | WinForms (old) | Avalonia (new) |
 |---|---|---|
 | Tools → Options | `Src/LexText/LexTextControls/LexOptionsDlg.cs` (+ `.Designer.cs`, `.resx`) | `Src/Common/FwAvaloniaDialogs/LexOptionsDlgView.axaml(.cs)` + `LexOptionsDlgViewModel.cs` + `LexOptionsDlgState.cs`; edge: `Src/LexText/LexTextControls/Avalonia/AvaloniaOptionsDialogLauncher.cs` |
-| Manage Individual Features | none — Avalonia-only, no WinForms precedent (see the carve-out comment in `LexOptionsDlg.cs` near its UI-mode group construction) | `LexiconFeatureManagerDialog` (`Src/Common/FwAvaloniaDialogs/`) |
 | Insert Entry | `Src/LexText/LexTextControls/InsertEntryDlg.cs` | `Src/Common/FwAvaloniaDialogs/InsertEntryDlgView.axaml.cs` + `InsertEntryDlgViewModel.cs` |
 | Add New Sense | `Src/LexText/LexTextControls/AddNewSenseDlg.cs` | `Src/Common/FwAvaloniaDialogs/AddNewSenseDlgView.axaml.cs` + `AddNewSenseDlgViewModel.cs` |
 | MSA Creator | `Src/LexText/LexTextControls/MsaCreatorDlg.cs` | `Src/Common/FwAvaloniaDialogs/MsaCreatorDlgView.axaml.cs` + `MsaCreatorDlgViewModel.cs` |
@@ -61,9 +60,8 @@ paired dialog:
    still Legacy" class of bug.)
 2. **Control missing entirely.** A button/checkbox added to one view and not the
    other — the user on the missing side simply can't reach the feature. When
-   the absence is deliberate (e.g. the "Manage Individual Features" selector,
-   which is Avalonia-only with no WinForms precedent), it must be an explicit,
-   recorded divergence, not silence.
+   the absence is deliberate, it must be an explicit, recorded divergence, not
+   silence.
 3. **Behavioral divergence.** One applies live, the other prompts a restart; one
    validates, the other doesn't; different apply order → different side effects
    (e.g. writing-system change before vs after plugin install).
@@ -95,8 +93,8 @@ Do these, in order, on any paired-dialog change:
 2. **Share the source of truth, don't copy it.** Prefer one list/rule both
    consume over two hand-maintained copies:
    - e.g., in the Options pair: `LexiconFeatureCatalog` is the single catalog
-     behind the Avalonia `LexiconFeatureManagerDialog` (an Avalonia-only
-     feature, no legacy WinForms equivalent) — extend it, not a second list.
+     that `EditSurfaceRegistry.DefaultSupportedTools` is built from — extend
+     it, not a second list.
    - Apply/normalize/gate helpers should be shared or mirrored with a pointer
      comment (e.g., in the Options pair: `NormalizeUiMode`,
      `ParseDisabledTools`/`SerializeDisabledTools`).

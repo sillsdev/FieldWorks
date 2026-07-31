@@ -40,16 +40,10 @@
 
 					<TextBlock Text="{x:Static res:FwAvaloniaDialogsStrings.NewUiPreviewLabel}"
 					           Margin="{StaticResource DialogLabelGroupGapAbove}"/>
-					<StackPanel Orientation="Horizontal" Spacing="{StaticResource DialogButtonStripGap}">
-						<ComboBox ItemsSource="{Binding UiModes}" SelectedItem="{Binding SelectedUiMode}"
-						          MinWidth="160"
-						          AutomationProperties.AutomationId="Options.General.UiMode"/>
-						<!-- Parity with WinForms LexOptionsDlg: the per-feature selector shows only when New is
-						     selected; the chosen mode + disabled-tools apply on OK (no live "Apply" button). -->
-						<Button Content="{x:Static res:FwAvaloniaDialogsStrings.ManageIndividualFeatures}"
-						        Command="{Binding ManageFeaturesCommand}" IsVisible="{Binding ManageFeaturesVisible}"
-						        AutomationProperties.AutomationId="Options.General.ManageFeatures"/>
-					</StackPanel>
+					<!-- Parity with WinForms LexOptionsDlg: the chosen mode applies on OK (no live "Apply" button). -->
+					<ComboBox ItemsSource="{Binding UiModes}" SelectedItem="{Binding SelectedUiMode}"
+					          MinWidth="160" HorizontalAlignment="Left"
+					          AutomationProperties.AutomationId="Options.General.UiMode"/>
 					<!-- Parity with WinForms LexOptionsDlg m_uiModeBetaWarning. -->
 					<TextBlock Text="{x:Static res:FwAvaloniaDialogsStrings.UiModeBetaWarning}"
 					           TextWrapping="Wrap" Opacity="0.8"

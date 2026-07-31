@@ -265,13 +265,13 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 		public static string StructuredTextParagraphName(string fieldLabel, int paragraphNumber)
 			=> string.Format(Text("FwAvalonia.StructuredText.ParagraphName"), fieldLabel, paragraphNumber);
 
-		// ----- Per-tool feature catalog (LexiconFeatureCatalog): display metadata for the
-		// "Manage Individual Features" dialog's checkbox list. APPEND-ONLY. -----
+		// ----- Per-tool feature catalog (LexiconFeatureCatalog): user-facing display metadata for each
+		// tool surface that ships with an Avalonia editor. APPEND-ONLY. -----
 
-		/// <summary>Group heading for the entry-editing tool surfaces in the feature-manager dialog.</summary>
+		/// <summary>Group heading for the entry-editing tool surfaces in the catalog.</summary>
 		public static string FeatureGroupLexicalEntryDialogs => Text("FwAvalonia.FeatureGroup.LexicalEntryDialogs");
 
-		/// <summary>Group heading for the non-entry record-type tool surfaces in the feature-manager dialog.</summary>
+		/// <summary>Group heading for the non-entry record-type tool surfaces in the catalog.</summary>
 		public static string FeatureGroupOtherRecordTypes => Text("FwAvalonia.FeatureGroup.OtherRecordTypes");
 
 		public static string FeatureLexiconEditName => Text("FwAvalonia.Feature.LexiconEditName");

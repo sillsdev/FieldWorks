@@ -2,7 +2,6 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System;
 using System.Collections.Generic;
 
 namespace FwAvaloniaDialogs
@@ -25,19 +24,12 @@ namespace FwAvaloniaDialogs
 		public string UiMode { get; set; } = "Legacy";
 
 		/// <summary>
-		/// The per-feature disable set (a CSV of tool names) edited by the "Manage Individual Features"
-		/// dialog and applied on OK — mirrors <c>FwApplicationSettings.UIModeDisabledTools</c> and the
-		/// WinForms <c>LexOptionsDlg.m_pendingUiModeDisabledTools</c>. Only meaningful in New mode.
+		/// The per-feature disable set (a CSV of tool names) carried through the dialog and re-applied on
+		/// OK — mirrors <c>FwApplicationSettings.UIModeDisabledTools</c> and the WinForms
+		/// <c>LexOptionsDlg.m_pendingUiModeDisabledTools</c>. Only meaningful in New mode; the dialog has no
+		/// editor for it, so a round trip leaves the persisted value untouched.
 		/// </summary>
 		public string UIModeDisabledTools { get; set; } = string.Empty;
-
-		/// <summary>
-		/// Optional product callback that opens the "Manage Individual Features" dialog seeded with the
-		/// given disabled-tools CSV and returns the edited CSV (or the same value if the user cancelled).
-		/// Set by the product launcher (which owns the owner window + the feature catalog), so the Avalonia
-		/// layer stays LCModel-free and never shows the nested dialog itself. Null in bare-bones/test contexts.
-		/// </summary>
-		public Func<string, string> ManageFeatures { get; set; }
 
 		// --- General: auto-open last project ---
 		public bool AutoOpenLastProject { get; set; }

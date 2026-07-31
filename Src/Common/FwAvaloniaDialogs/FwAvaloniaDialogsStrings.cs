@@ -35,11 +35,6 @@ namespace FwAvaloniaDialogs
 		public static string UiModeNew => Text("FwAvaloniaDialogs.UiModeNew");
 		// Beta warning under the UI-mode chooser — parity with WinForms LexOptionsDlg m_uiModeBetaWarning.
 		public static string UiModeBetaWarning => Text("FwAvaloniaDialogs.UiModeBetaWarning");
-		// The "Manage Individual Features..." button shown in the Lexical Edit UI section when New is
-		// selected — parity with the WinForms LexOptionsDlg m_manageFeaturesButton. Opens the
-		// LexiconFeatureManagerDialog. (There is deliberately no live "Apply" button — parity with
-		// LexOptionsDlg: the mode applies on OK.)
-		public static string ManageIndividualFeatures => Text("FwAvaloniaDialogs.ManageIndividualFeatures");
 		public static string AutoOpenLastProject => Text("FwAvaloniaDialogs.AutoOpenLastProject");
 
 		// Plugins tab.
@@ -70,12 +65,6 @@ namespace FwAvaloniaDialogs
 		public static string ChooserEmptyOption => Text("FwAvaloniaDialogs.ChooserEmptyOption");
 		public static string ChooserMustSelect => Text("FwAvaloniaDialogs.ChooserMustSelect");
 		public static string ChooserSearchPrompt => Text("FwAvaloniaDialogs.ChooserSearchPrompt");
-
-		// Manage Individual Features dialog (opened from Options' Lexical Edit UI section when New is selected).
-		public static string FeatureManagerTitle => Text("FwAvaloniaDialogs.FeatureManagerTitle");
-		public static string FeatureManagerSearchWatermark => Text("FwAvaloniaDialogs.FeatureManagerSearchWatermark");
-		public static string FeatureManagerSelectAll => Text("FwAvaloniaDialogs.FeatureManagerSelectAll");
-		public static string FeatureManagerDeselectAll => Text("FwAvaloniaDialogs.FeatureManagerDeselectAll");
 
 		// Reusable Insert Entry dialog.
 		public static string InsertEntryTitle => Text("FwAvaloniaDialogs.InsertEntryTitle");

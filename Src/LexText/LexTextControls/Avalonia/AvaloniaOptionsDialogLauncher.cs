@@ -48,13 +48,6 @@ namespace SIL.FieldWorks.LexText.Controls
 	/// has no Avalonia equivalent — it reflects over a WinForms Form's designer-generated per-control resx keys,
 	/// and re-languages only that one closing dialog, which is cosmetic and not reproducible here). Both paths
 	/// still prompt for restart afterward — this was never a full live language switch in WinForms either.
-	///
-	/// APPROVED CARVE-OUT: the "Manage Individual Features..." button is Avalonia-only — it is NOT duplicated
-	/// on <see cref="LexOptionsDlg"/>. Per-tool disabling only has meaning in New mode, and the feature has no
-	/// WinForms precedent (it was introduced alongside this Avalonia dialog, not migrated from it), so the
-	/// parity rule doesn't apply: there is nothing on the WinForms side to stay in sync with. Cost accepted:
-	/// a user switching Legacy → New from the WinForms dialog cannot also configure per-tool disables in that
-	/// same session; they reopen Options afterward (now Avalonia, since UIMode is New) to do so.
 	/// </summary>
 	public sealed class AvaloniaOptionsDialogLauncher
 		: AvaloniaDialogLauncher<LexOptionsDlgState, LexOptionsDlgViewModel, AvaloniaOptionsDialogLauncher.OptionsPayload>
@@ -135,25 +128,11 @@ namespace SIL.FieldWorks.LexText.Controls
 		protected override LexOptionsDlgState BuildState()
 		{
 			var state = BuildState(_cache, _mediator, _settings, _app, _userWs, _pluginDocs);
-			// Per-feature disable set (New mode), seeded from settings and edited by the "Manage Individual
-			// Features" dialog — parity with LexOptionsDlg.m_pendingUiModeDisabledTools. The product edge owns
-			// the owner window + feature catalog, so it supplies the callback that shows the nested dialog.
+			// Per-feature disable set (New mode), carried through the state so OK re-applies whatever is
+			// persisted — parity with LexOptionsDlg.m_pendingUiModeDisabledTools. There is no in-dialog editor
+			// for it; EditSurfaceResolver reads the same setting to gate each tool's surface.
 			state.UIModeDisabledTools = _settings.UIModeDisabledTools ?? string.Empty;
-			state.ManageFeatures = ShowManageFeaturesDialog;
 			return state;
-		}
-
-		/// <summary>
-		/// Opens the "Manage Individual Features" dialog seeded with <paramref name="disabledCsv"/> and returns
-		/// the edited CSV (or the same value on cancel). The Avalonia layer calls this through
-		/// <see cref="LexOptionsDlgState.ManageFeatures"/> so it never references the feature catalog or an owner
-		/// window itself. Mirrors <c>LexOptionsDlg.m_manageFeaturesButton_Click</c>.
-		/// </summary>
-		private string ShowManageFeaturesDialog(string disabledCsv)
-		{
-			var disabledNow = EditSurfaceResolver.ParseDisabledTools(disabledCsv);
-			var edited = LexiconFeatureManagerDialog.Show(_owner, LexiconFeatureCatalog.Features, disabledNow);
-			return edited == null ? disabledCsv : EditSurfaceResolver.SerializeDisabledTools(edited);
 		}
 
 		protected override LexOptionsDlgViewModel CreateViewModel(LexOptionsDlgState state) =>

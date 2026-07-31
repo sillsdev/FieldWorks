@@ -483,9 +483,8 @@ namespace SIL.FieldWorks.LexText.Controls
 				"Beta: the New mode is incomplete; some features are not yet available.");
 			m_uiModeBetaWarning.Name = "m_uiModeBetaWarning";
 
-			// Managing individual features (per-tool disable within New mode) is Avalonia-only — see the
-			// "Manage Individual Features..." button on the Avalonia Options dialog. This is a New-mode-only
-			// feature with no WinForms precedent, so it isn't duplicated here.
+			// Per-tool disabling within New mode (EditSurfaceResolver's UIModeDisabledTools setting) has no
+			// editor in either Options dialog, so there is nothing to mirror here.
 			m_uiModeGroup.Controls.Add(m_uiModeLabel);
 			m_uiModeGroup.Controls.Add(m_uiModeChooser);
 			m_uiModeGroup.Controls.Add(m_uiModeBetaWarning);
