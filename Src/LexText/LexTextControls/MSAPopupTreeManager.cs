@@ -226,6 +226,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				if (match == null)
 					match = empty;
 				AddMoreItem(popupTree);
+				popupTree.Nodes.Add(new HvoTreeNode(TsStringUtils.MakeString(m_sSpecifyGramFunc, Cache.WritingSystemFactory.UserWs), kCreate));
 			}
 			else
 			{

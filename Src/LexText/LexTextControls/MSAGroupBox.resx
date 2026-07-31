@@ -284,6 +284,48 @@
   <data name="&gt;&gt;m_tcSecondaryPOS.ZOrder" xml:space="preserve">
 	<value>6</value>
   </data>
+    <data name="m_lFS.Location" type="System.Drawing.Point, System.Drawing">
+	<value>182, 14</value>
+  </data>
+  <data name="m_lFS.Size" type="System.Drawing.Size, System.Drawing">
+	<value>170, 23</value>
+  </data>
+  <data name="m_lFS.TabIndex" type="System.Int32, mscorlib">
+	<value>9</value>
+  </data>
+  <data name="m_lFS.Text" xml:space="preserve">
+	<value>Inflection Features:</value>
+  </data>
+  <data name="m_lFS.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+	<value>MiddleLeft</value>
+  </data>
+  <data name="&gt;&gt;m_lFS.Name" xml:space="preserve">
+	<value>m_lFS</value>
+  </data>
+  <data name="&gt;&gt;m_lFS.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+<data name="m_tcMainFS.Location" type="System.Drawing.Point, System.Drawing">
+	<value>240, 50</value>
+  </data>
+  <data name="m_tcMainFS.Size" type="System.Drawing.Size, System.Drawing">
+	<value>170, 21</value>
+  </data>
+  <data name="m_tcMainFS.TabIndex" type="System.Int32, mscorlib">
+	<value>10</value>
+  </data>
+  <data name="&gt;&gt;m_tcMainFS.Name" xml:space="preserve">
+	<value>m_tcMainFS</value>
+  </data>
+  <data name="&gt;&gt;m_tcMainFS.Type" xml:space="preserve">
+	<value>SIL.FieldWorks.Common.Widgets.TreeCombo, Widgets, Version=5.5.0.14617, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;m_tcMainFS.Parent" xml:space="preserve">
+	<value>m_groupBox</value>
+  </data>
+  <data name="&gt;&gt;m_tcMainFS.ZOrder" xml:space="preserve">
+	<value>7</value>
+  </data>
   <data name="m_groupBox.Location" type="System.Drawing.Point, System.Drawing">
 	<value>1, 1</value>
   </data>

@@ -2,18 +2,19 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System;
-using System.Drawing;
-using System.Windows.Forms;
-using System.Diagnostics;
-using System.Collections.Generic;
+using SIL.FieldWorks.Common.Widgets;
+using SIL.LCModel;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.WritingSystems;
-using SIL.LCModel.Core.KernelInterfaces;
-using SIL.LCModel;
 using SIL.LCModel.DomainServices;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Drawing;
+using System.Windows.Forms;
 using XCore;
-using SIL.FieldWorks.Common.Widgets;
+using static Sfm2Xml.Converter;
 
 namespace SIL.FieldWorks.LexText.Controls
 {
@@ -31,6 +32,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		private Control m_ctrlAssistant;
 		private POSPopupTreeManager m_mainPOSPopupTreeManager;
 		private POSPopupTreeManager m_secPOSPopupTreeManager;
+		private InflectionFeaturePopupTreeManager m_InflectionFeatureTreeManager;
 		private MsaType m_msaType = MsaType.kNotSet;
 		private IPartOfSpeech m_selectedMainPOS = null;
 		private IPartOfSpeech m_selectedSecondaryPOS = null;
@@ -45,6 +47,8 @@ namespace SIL.FieldWorks.LexText.Controls
 		private System.Windows.Forms.Label m_lSLots;
 		private SIL.FieldWorks.Common.Widgets.FwComboBox m_fwcbSlots;
 		private SIL.FieldWorks.Common.Widgets.TreeCombo m_tcMainPOS;
+		private SIL.FieldWorks.Common.Widgets.TreeCombo m_tcFS;
+		private System.Windows.Forms.Label m_lFS;
 		private System.Windows.Forms.Label m_lMainCat;
 		private System.Windows.Forms.Label m_lAfxType;
 		private SIL.FieldWorks.Common.Widgets.FwComboBox m_fwcbAffixTypes;
@@ -52,6 +56,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		private System.Windows.Forms.Panel m_afxTypePanel;
 		private System.Windows.Forms.Panel m_mainCatPanel;
 		private System.Windows.Forms.Panel m_slotsPanel;
+		private System.Windows.Forms.Panel m_FSPanel;
 		/// <summary>
 		/// Required designer variable.
 		/// </summary>
@@ -230,9 +235,13 @@ namespace SIL.FieldWorks.LexText.Controls
 							// Hide the panels we don't need, show the ones we do.
 							m_afxTypePanel.Visible = false;
 							m_slotsPanel.Visible = false;
+							m_FSPanel.Visible = true;
 
 							m_lMainCat.TabIndex = 0;
 							m_tcMainPOS.TabIndex = 1;
+							m_lFS.TabIndex = 2;
+							m_tcFS.TabIndex = 3;
+
 							m_mainPOSPopupTreeManager.SetEmptyLabel(LexTextControls.ks_NotSure_);
 							m_flowLayout.ResumeLayout();
 							break;
@@ -244,6 +253,7 @@ namespace SIL.FieldWorks.LexText.Controls
 							// Hide the panels we don't need, show the ones we do.
 							m_afxTypePanel.Visible = true;
 							m_slotsPanel.Visible = false;
+							m_FSPanel.Visible = false;
 
 							m_lAfxType.TabIndex = 0;
 							m_fwcbAffixTypes.TabIndex = 1;
@@ -264,6 +274,7 @@ namespace SIL.FieldWorks.LexText.Controls
 							m_slotsPanel.Visible = true;
 							m_fwcbSlots.Visible = true;
 							m_tcSecondaryPOS.Visible = false;
+							m_FSPanel.Visible = false;
 
 							m_lAfxType.TabIndex = 0;
 							m_fwcbAffixTypes.TabIndex = 1;
@@ -287,6 +298,7 @@ namespace SIL.FieldWorks.LexText.Controls
 							// Show all panels; within slots panel, show secondary POS, hide slots combo.
 							m_afxTypePanel.Visible = true;
 							m_slotsPanel.Visible = true;
+							m_FSPanel.Visible = false;
 							m_fwcbSlots.Visible = false;
 							m_tcSecondaryPOS.Visible = true;
 
@@ -487,6 +499,12 @@ namespace SIL.FieldWorks.LexText.Controls
 			m_tcSecondaryPOS.StyleSheet = stylesheet;
 			m_tcSecondaryPOS.AdjustStringHeight = false;
 
+			m_tcFS.Font = new Font(defAnalWsFont, 10);
+			m_tcFS.WritingSystemFactory = m_cache.WritingSystemFactory;
+			m_tcFS.WritingSystemCode = defAnalWs.Handle;
+			m_tcFS.StyleSheet = stylesheet;
+			m_tcFS.AdjustStringHeight = false;
+
 			m_selectedMainPOS = sandboxMSA.MainPOS;
 			m_fwcbAffixTypes.SelectedIndex = 0;
 			m_fwcbAffixTypes.SelectedIndexChanged += HandleComboMSATypesChange;
@@ -513,6 +531,10 @@ namespace SIL.FieldWorks.LexText.Controls
 				ResetSlotCombo();
 			}
 			MSAType = sandboxMSA.MsaType;
+			m_InflectionFeatureTreeManager = new InflectionFeaturePopupTreeManager(m_tcFS,
+				m_cache, false, mediator, m_propertyTable,
+				m_parentForm, defAnalWs.Handle);
+			m_InflectionFeatureTreeManager.LoadPopupTree(0);
 		}
 
 		#endregion Construction, initialization, and disposal
@@ -530,6 +552,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			this.m_afxTypePanel = new System.Windows.Forms.Panel();
 			this.m_mainCatPanel = new System.Windows.Forms.Panel();
 			this.m_slotsPanel = new System.Windows.Forms.Panel();
+			this.m_FSPanel = new System.Windows.Forms.Panel();
 			this.m_lAfxType = new System.Windows.Forms.Label();
 			this.m_fwcbAffixTypes = new SIL.FieldWorks.Common.Widgets.FwComboBox();
 			this.m_lMainCat = new System.Windows.Forms.Label();
@@ -537,11 +560,14 @@ namespace SIL.FieldWorks.LexText.Controls
 			this.m_lSLots = new System.Windows.Forms.Label();
 			this.m_fwcbSlots = new SIL.FieldWorks.Common.Widgets.FwComboBox();
 			this.m_tcSecondaryPOS = new SIL.FieldWorks.Common.Widgets.TreeCombo();
+			this.m_lFS = new System.Windows.Forms.Label();
+			this.m_tcFS = new SIL.FieldWorks.Common.Widgets.TreeCombo();
 			this.m_groupBox.SuspendLayout();
 			this.m_flowLayout.SuspendLayout();
 			this.m_afxTypePanel.SuspendLayout();
 			this.m_mainCatPanel.SuspendLayout();
 			this.m_slotsPanel.SuspendLayout();
+			this.m_FSPanel.SuspendLayout();
 			this.SuspendLayout();
 			//
 			// m_lAfxType
@@ -640,6 +666,33 @@ namespace SIL.FieldWorks.LexText.Controls
 			this.m_slotsPanel.Margin = new System.Windows.Forms.Padding(3, 0, 3, 0);
 			this.m_slotsPanel.Name = "m_slotsPanel";
 			//
+			// m_lFS
+			//
+			resources.ApplyResources(this.m_lFS, "m_lFS");
+			this.m_lFS.Name = "m_lFS";
+			this.m_lFS.Location = new System.Drawing.Point(0, 0);
+			this.m_lFS.Size = new System.Drawing.Size(170, 23);
+			//
+			// m_tcFS
+			//
+			this.m_tcFS.AdjustStringHeight = true;
+			// Setting width to match the default width used by popuptree
+			this.m_tcFS.DropDownWidth = 300;
+			this.m_tcFS.DroppedDown = false;
+			this.m_tcFS.Name = "m_tcFS";
+			this.m_tcFS.SelectedNode = null;
+			this.m_tcFS.StyleSheet = null;
+			this.m_tcFS.Location = new System.Drawing.Point(0, 23);
+			this.m_tcFS.Size = new System.Drawing.Size(170, 21);
+			//
+			// m_FSPanel
+			//
+			this.m_FSPanel.Controls.Add(this.m_tcFS);
+			this.m_FSPanel.Controls.Add(this.m_lFS);
+			this.m_FSPanel.Size = new System.Drawing.Size(170, 48);
+			this.m_FSPanel.Margin = new System.Windows.Forms.Padding(3, 0, 3, 0);
+			this.m_FSPanel.Name = "m_FSPanel";
+			//
 			// m_flowLayout
 			//
 			this.m_flowLayout.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -650,6 +703,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			this.m_flowLayout.Controls.Add(this.m_afxTypePanel);
 			this.m_flowLayout.Controls.Add(this.m_mainCatPanel);
 			this.m_flowLayout.Controls.Add(this.m_slotsPanel);
+			this.m_flowLayout.Controls.Add(this.m_FSPanel);
 			//
 			// m_groupBox
 			//
@@ -664,6 +718,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			this.Controls.Add(this.m_groupBox);
 			this.Name = "MSAGroupBox";
 			resources.ApplyResources(this, "$this");
+			this.m_FSPanel.ResumeLayout(false);
 			this.m_slotsPanel.ResumeLayout(false);
 			this.m_mainCatPanel.ResumeLayout(false);
 			this.m_afxTypePanel.ResumeLayout(false);
@@ -783,6 +838,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				m_afxTypePanel.Height += maxDelta;
 				m_mainCatPanel.Height += maxDelta;
 				m_slotsPanel.Height += maxDelta;
+				m_FSPanel.Height += maxDelta;
 				this.Height += maxDelta;
 			}
 		}
