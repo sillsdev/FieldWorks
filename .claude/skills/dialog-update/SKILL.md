@@ -30,7 +30,6 @@ and "fixes" it, thrashing the code.
 | Insert Entry | `Src/LexText/LexTextControls/InsertEntryDlg.cs` | `Src/Common/FwAvaloniaDialogs/InsertEntryDlgView.axaml.cs` + `InsertEntryDlgViewModel.cs` |
 | Add New Sense | `Src/LexText/LexTextControls/AddNewSenseDlg.cs` | `Src/Common/FwAvaloniaDialogs/AddNewSenseDlgView.axaml.cs` + `AddNewSenseDlgViewModel.cs` |
 | MSA Creator | `Src/LexText/LexTextControls/MsaCreatorDlg.cs` | `Src/Common/FwAvaloniaDialogs/MsaCreatorDlgView.axaml.cs` + `MsaCreatorDlgViewModel.cs` |
-| Picture Properties | `Src/FwCoreDlgs/PicturePropertiesDialog.cs` | `Src/Common/FwAvaloniaDialogs/PicturePropertiesDialogView.cs` + `PicturePropertiesDialogViewModel.cs` |
 | Phonological Feature Chooser | `Src/LexText/LexTextControls/PhonologicalFeatureChooserDlg.cs` | `Src/Common/FwAvaloniaDialogs/FeatureChooserDialogView.axaml.cs` + `FeatureChooserDialogViewModel.cs` |
 | Entry Go (jump to entry) | `Src/LexText/LexTextControls/EntryGoDlg.cs` | `Src/Common/FwAvaloniaDialogs/EntryGoDialogView.axaml.cs` + `EntryGoDialogViewModel.cs` |
 | Possibility/list chooser (FilterBar "choose") | `Src/Common/Controls/XMLViews/ReallySimpleListChooser.cs` (+ `Src/Common/Controls/DetailControls/SimpleListChooser.cs`) | `Src/Common/FwAvaloniaDialogs/ChooserDialogView.axaml.cs` + `ChooserDialogViewModel.cs`; edge: a product launcher lands with the ReallySimpleListChooser migration |

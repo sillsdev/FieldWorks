@@ -187,9 +187,6 @@
   <data name="FwAvalonia.Picture.Insert" xml:space="preserve">
     <value>Add a picture...</value>
   </data>
-  <data name="FwAvalonia.Picture.Properties" xml:space="preserve">
-    <value>Picture properties...</value>
-  </data>
   <data name="FwAvalonia.Picture.Delete" xml:space="preserve">
     <value>Delete picture</value>
   </data>
