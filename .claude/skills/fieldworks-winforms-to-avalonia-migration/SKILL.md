@@ -10,6 +10,12 @@ architecture already exists (do not reinvent it), what order to work in,
 which companion skill to apply at each step, and how to keep this skill
 set current as more surfaces are migrated.
 
+Before planning or reviewing a surface, read
+`Docs/lessons/avalonia-migration/README.md` and the cards matching its
+capabilities. Cards preserve constraints and failed assumptions, not an old
+implementation or authorization to restore it. Revalidate every observation
+against the current tree and legacy product behavior.
+
 ## Core Rule
 
 Migrate by proving behavior first, extracting seams second, and introducing
@@ -134,12 +140,13 @@ Re-implementers picking up a JIRA ticket: start from the named canonical screen 
 primitive, read its doc's parity checklist + gotchas, recover the backed-out stub from git
 history as a starting point, then run the normal per-region Workflow above.
 
-### Inert follow-up surfaces — how to find them and turn them on
+### Inert follow-up surfaces — historical caution and current gate
 
-A Phase-1 surface can ship **inert**: its view code is present and compiled but the tool is
+A Phase-1 surface can be **inert**: its view code is present and compiled but the tool is
 deliberately *not registered*, so the resolver returns "not supported" and the surface falls
-back to legacy WinForms even under `UIMode=New`. This is the safe way to land a large surface's
-code in one PR and *activate* it in a small follow-up PR (the "flip"). This applies to
+back to legacy WinForms even under `UIMode=New`. Inert code is not proof that activation is
+small or safe; the retired follow-up PRs demonstrate why current reachability and evidence must
+be established afresh. This gate applies to
 **detail-editor tools only** — the browse table has no Avalonia surface or gate on this branch at
 all (it was built and then removed; cite the legacy `BrowseViewer`, see
 control-exemplar-map.md §3.6). Two distinct gates exist and an active surface needs BOTH open:
@@ -154,23 +161,12 @@ control-exemplar-map.md §3.6). Two distinct gates exist and an active surface n
   in the catalog stay listed in `EditSurfaceRegistry.Phase1FollowUpSurfaceTools` — the **inert
   list**. Read that array to find every dormant surface.
 
-**Activation recipe** (turning an inert surface on, e.g. picking up its follow-up ticket):
-1. If the view files were carved to a follow-up branch, restore them from the canonical branch
-   (`git checkout <canonical> -- <owned files>`); if they shipped dormant in base, they are already present.
-2. Restore the plugin registration line(s) in `SlicePlugins.RegisterBuiltins`.
-3. Restore the surface's class name(s) in the `LexemeEditorInventoryTests` census array (+ any resolve assertion).
-4. **Flip.** Remove the tool name from `Phase1FollowUpSurfaceTools` and add a new
-   `LexiconFeatureDescriptor` for it to `LexiconFeatureCatalog.Features` (with matching
-   display-name/description strings in `FwAvaloniaStrings.cs`, and a `FeatureGroup*` — reuse an
-   existing group or add one). This also adds a row (and, for a new group, a heading) to the
-   Tools→Options "Manage Individual Features" dialog — call that out in the PR description.
-5. Add/flip the corresponding `TestCase` row: `RecordEditViewSwitchTests.RegisteredRecordEditTools_*`.
-6. Build + run the census, resolver, switch, catalog (`LexiconFeatureManagerDialogTests`), and
-   the surface's own suites green.
-
-The **ground truth** of which tools were active before a split is the pre-split pinned commit's
-version of `EditSurfaceRegistry.cs` + `EditSurfaceResolver.cs` (e.g. a `phase1-pin`
-tag): `git show <pin>:<file>` shows the canonical active arrays to restore.
+Activation is never a restoration recipe. Read the matching lesson card first,
+then characterize the current legacy route and design against the current tree.
+Historical branches and pinned commits are archaeological evidence only. Before
+activation, prove that the current view, plugin, census, resolver, catalog,
+localization, lifecycle, accessibility, product workflow, and legacy fallback
+all agree. Review catalog changes for user-visible Options rows or groups.
 
 ## Hard Rules
 
@@ -220,7 +216,8 @@ migration teaches something; if it stays in your head or in a PR thread it
 is lost. The retrospective step (workflow step 10) is how the skills stay
 ahead of the codebase instead of trailing it:
 
-1. Read `references/lessons-learned.md` and follow its update protocol —
+1. Read `Docs/lessons/README.md`, the Avalonia topic index, and
+   `references/lessons-learned.md`, then follow the update protocol —
    it maps each kind of discovery (new pattern, new gotcha, fired pivot
    trigger, new canonical example, stale pointer) to the exact file and
    section to update.
@@ -229,3 +226,6 @@ ahead of the codebase instead of trailing it:
 3. If a file pointer in any of these skills is stale (file moved, openspec
    change archived), fix the pointer immediately — do not work around it
    silently.
+4. Run the same retrospective when work is rejected, closed, or substantially
+   backed out. Promote a durable rule only after human review; otherwise record
+   it as a hypothesis, rejected path, or obsolete lesson card.

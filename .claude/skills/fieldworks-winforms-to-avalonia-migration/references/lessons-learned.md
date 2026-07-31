@@ -103,30 +103,18 @@ skill files changed.
   `fieldworks-migration-scope-review` (Phase-1 split trigger), `fieldworks-winapp` (Docs/migration
   capture pointer), this ledger.
 
-### 2026-06 — avalonia-rule-formula-editor + avalonia-interlinear-editor (two XL editors)
+### 2026-06 — retired rule-formula and interlinear experiments
 
-- Changes: `openspec/changes/avalonia-rule-formula-editor/`, `.../avalonia-interlinear-editor/` —
-  these proposals ship with their respective `phase1-followup-rule`/`phase1-followup-interlinear`
-  branches, not on `phase1-base`.
-- Migrated: all 6 Grammar rule tools (`PhonologicalRuleEdit`, `EnvironmentEdit`,
-  `compoundRuleAdvancedEdit`, `naturalClassedit`, `phonemeEdit`, `AdhocCoprohibEdit`) — sectioned
-  LCModel-free `RuleFormulaModel` DTO, projector in **xWorks** (`RuleFormulaProjector`, NOT
-  Morphology — circular), read-only control + edit sink staging via the fenced
-  `DetailEditContextBase`; and the Words `Analyses` interlinear morph-bundle editor — NO
-  Sandbox/LCModel in the FwAvalonia view (`InterlinearAnalysisModel`), all reads/writes +
-  Sandbox-parity MSA-prune in the xWorks plugin (`InterlinearAnalysisProjector`/`WriteBack`).
-- Learned: (1) **Projectors/write-back live in xWorks, never in FwAvalonia** (xWorks has both
-  LCModel + FwAvalonia refs; Morphology→FwAvalonia would be circular). The view binds a
-  projection DTO; the plugin owns every LCModel touch. (2) **`ToFormulaString()`/oracle strings
-  are the parity contract** — encode the legacy rendering ("p → [V] / [C] __ #") as a test
-  oracle, not free-form. (3) Context sections need the atomic↔`PhSequenceContext` 0→1→2→1→0
-  transition (legacy `CreateSeqCtxt`); own the context FIRST, then set `FeatureStructureRA`
-  (else NRE). (4) MSA-prune parity: editable only for human-approved analyses (legacy
-  `deParams editable="true"`); write-back + prune on the region's shared fenced UOW (one undo
-  step). (5) Deferred with `// PARITY`: morph re-segmentation, MoAffixProcess affix-process
-  editing, metathesis middle/move, adhoc nested-group recursion — leaf editing ships, recursion defers.
-- Skill files changed: this ledger. New plugins added to `architecture-patterns.md` §5 list;
-  composer-generalization gotchas in §2 (see next entry).
+The implementations and completion claims formerly summarized here were removed
+from `phase1-base`; PRs #965 and #966 are historical research, not migrations to
+restore. Human-reviewed observations, unresolved hypotheses, evidence needs,
+and decision boundaries now live in:
+
+- `Docs/lessons/avalonia-migration/rule-formula-editors.md`
+- `Docs/lessons/avalonia-migration/interlinear-analysis.md`
+
+Use the cards for discovery, then revalidate them against the current tree and
+legacy product. Commit SHAs remain in the cards for archaeology only.
 
 ### 2026-06 — §20 class-general composer + the composer fixes that unblocked many tools
 

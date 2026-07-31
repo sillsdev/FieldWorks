@@ -8,14 +8,15 @@ The immediate sources are PRs #965, #966, and #967, the removal and retirement w
 
 ## Repository artifacts
 
-Create `Docs/migration/lessons/` with:
+Create a repository-wide lesson library under `Docs/lessons/`:
 
-- `README.md`: a capability-oriented discovery index.
-- `TEMPLATE.md`: the required structure and human-review fields.
-- `interlinear-analysis.md`: lessons from retired PR #965.
-- `rule-formula-editors.md`: lessons from retired PR #966.
-- `browse-table-activation.md`: lessons from retired PR #967 and the later removal of the dormant browse implementation.
-- `avalonia-migration-pivot.md`: cross-cutting lessons from PR #964's scope correction and retirement work.
+- `README.md`: the repository-wide index of lesson areas.
+- `TEMPLATE.md`: the shared structure and human-review fields for every lesson area.
+- `avalonia-migration/README.md`: a capability-oriented index for this migration.
+- `avalonia-migration/interlinear-analysis.md`: lessons from retired PR #965.
+- `avalonia-migration/rule-formula-editors.md`: lessons from retired PR #966.
+- `avalonia-migration/browse-table-activation.md`: lessons from retired PR #967 and the later removal of the dormant browse implementation.
+- `avalonia-migration/migration-pivot.md`: cross-cutting lessons from PR #964's scope correction and retirement work.
 
 Each card records status, sources, human ownership, the question tested, observations, retired approaches, no more than five durable lessons, evidence required next time, its decision boundary, and explicit conclusions that must not be inferred.
 
@@ -27,21 +28,21 @@ Future humans and agents must be able to find the cards without knowing an old P
 
 Discovery paths are:
 
-1. `Docs/migration/lessons/README.md`, indexed by problem and capability vocabulary.
-2. A prominent link from `Docs/migration/README.md`.
-3. Guidance in `Src/AGENTS.md` requiring consultation before Avalonia migration planning.
-4. A link from the FieldWorks WinForms-to-Avalonia migration skill, framed as historical constraints rather than implementation authority.
+1. `Docs/lessons/README.md`, which lets future lesson areas sit alongside Avalonia migration rather than treating one migration as the permanent top-level category.
+2. `Docs/lessons/avalonia-migration/README.md`, indexed by problem and capability vocabulary.
+3. One general link from the root `AGENTS.md` to `Docs/lessons/README.md`; repository guidance must not encode topic-specific lesson routing.
+4. Avalonia migration skills linking directly to the Avalonia lesson index, framed as historical constraints rather than implementation authority.
 5. A concise link from PR #964's main description, with expanded context in its existing sticky provenance comment.
 
 ## Git and pull-request workflow
 
-The work lives on `document-retired-avalonia-lessons`, created from the current `phase1-base`, and becomes a focused documentation PR targeting `phase1-base`.
+The lesson framework and migration-skill references land directly on `phase1-base` as part of PR #964. This keeps the new skills and the lessons they depend on in one review and one merge boundary. The temporary `document-retired-avalonia-lessons` branch is not published as a separate PR.
 
-After the documentation PR is pushed and has a stable URL:
+After the lesson commits are pushed to PR #964:
 
 1. Update PR #964's main description with a short lesson-index reference.
 2. Update its existing sticky provenance comment in place; do not create another provenance comment.
-3. Close PRs #965, #966, and #967 as superseded, linking the new documentation PR and the relevant lesson cards.
+3. Close PRs #965, #966, and #967 as superseded, linking PR #964 and the relevant lesson cards.
 4. Leave the three remote branches intact as temporary archaeological references.
 
 No product code, old tests, archived task lists, or branch commits are copied into this branch.

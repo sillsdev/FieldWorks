@@ -18,6 +18,8 @@ Minimal, high-signal guidance for coding agents in this repository.
 ## Context model
 
 - Keep shared repo guidance in this file plus the nearest nested `AGENTS.md`.
+- Consult `Docs/lessons/README.md` for indexed, human-reviewed lessons from
+	completed, rejected, or retired work before planning in a covered area.
 - GitHub Copilot custom instructions still require `.github/copilot-instructions.md`
 	and `.github/instructions/*.instructions.md`.
 - Claude Code reads `CLAUDE.md`, which imports this file; keep Claude-only

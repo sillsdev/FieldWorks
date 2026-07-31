@@ -4,7 +4,8 @@ Decisions already made by the lexical-edit migration. Each section gives the
 decision, why it was made, the canonical code, and gotchas. The durable
 contracts are synced to `openspec/specs/`; the full decision record lives in
 git history (the `lexical-edit-avalonia-migration` change folder, removed from
-the tree) and in PR #964's provenance comment.
+the tree), PR #964's description, and the indexed records under
+`Docs/lessons/avalonia-migration/`.
 
 Contents:
 

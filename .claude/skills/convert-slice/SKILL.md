@@ -55,6 +55,11 @@ files, file history + Jira chronology, logic and data-member analysis incl.
 LCM objects and Units of Work, enabled/disabled cataloging), plus
 slice-specific work:
 
+- Read `Docs/lessons/avalonia-migration/README.md` and any card matching the
+  slice's capabilities. Record applicable constraints and rejected assumptions
+  in the analysis, then verify them against current code and legacy behavior;
+  never use a card as an implementation recipe.
+
 - Resolve the layout identity: the `editor=`/`class=` attributes and every
   layout node that produces this slice.
 - Inventory where it appears: which fields, which tools, roughly how many
