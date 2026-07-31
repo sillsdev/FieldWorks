@@ -377,31 +377,4 @@ resulting in one entry.</value>
   <data name="FwAvaloniaDialogs.CreateValue.NameRequired" xml:space="preserve">
     <value>Enter a name for the value.</value>
   </data>
-  <data name="FwAvaloniaDialogs.PictureProperties.Title" xml:space="preserve">
-    <value>Picture Properties</value>
-  </data>
-  <data name="FwAvaloniaDialogs.PictureProperties.CaptionLabel" xml:space="preserve">
-    <value>Caption</value>
-  </data>
-  <data name="FwAvaloniaDialogs.PictureProperties.DescriptionLabel" xml:space="preserve">
-    <value>Description</value>
-  </data>
-  <data name="FwAvaloniaDialogs.PictureProperties.LicenseLabel" xml:space="preserve">
-    <value>License</value>
-  </data>
-  <data name="FwAvaloniaDialogs.PictureProperties.CreatorLabel" xml:space="preserve">
-    <value>Creator</value>
-  </data>
-  <data name="FwAvaloniaDialogs.PictureProperties.ImageLabel" xml:space="preserve">
-    <value>Image file</value>
-  </data>
-  <data name="FwAvaloniaDialogs.PictureProperties.ChooseImage" xml:space="preserve">
-    <value>Choose image...</value>
-  </data>
-  <data name="FwAvaloniaDialogs.PictureProperties.NoFile" xml:space="preserve">
-    <value>(no file chosen)</value>
-  </data>
-  <data name="FwAvaloniaDialogs.PictureProperties.Insert" xml:space="preserve">
-    <value>Insert</value>
-  </data>
 </root>

@@ -301,18 +301,5 @@ namespace FwAvaloniaDialogs
 		public static string CreateValueNameLabel => Text("FwAvaloniaDialogs.CreateValue.NameLabel");
 		public static string CreateValueAbbrLabel => Text("FwAvaloniaDialogs.CreateValue.AbbrLabel");
 		public static string CreateValueNameRequired => Text("FwAvaloniaDialogs.CreateValue.NameRequired");
-
-		// Picture-properties dialog — the Avalonia analog of the WinForms PicturePropertiesDialog
-		// (file pick + caption/description/license/creator). Seed text mirrors the canonical legacy picture
-		// metadata labels. APPEND-ONLY.
-		public static string PicturePropertiesTitle => Text("FwAvaloniaDialogs.PictureProperties.Title");
-		public static string PicturePropertiesCaptionLabel => Text("FwAvaloniaDialogs.PictureProperties.CaptionLabel");
-		public static string PicturePropertiesDescriptionLabel => Text("FwAvaloniaDialogs.PictureProperties.DescriptionLabel");
-		public static string PicturePropertiesLicenseLabel => Text("FwAvaloniaDialogs.PictureProperties.LicenseLabel");
-		public static string PicturePropertiesCreatorLabel => Text("FwAvaloniaDialogs.PictureProperties.CreatorLabel");
-		public static string PicturePropertiesImageLabel => Text("FwAvaloniaDialogs.PictureProperties.ImageLabel");
-		public static string PicturePropertiesChooseImage => Text("FwAvaloniaDialogs.PictureProperties.ChooseImage");
-		public static string PicturePropertiesNoFile => Text("FwAvaloniaDialogs.PictureProperties.NoFile");
-		public static string PicturePropertiesInsert => Text("FwAvaloniaDialogs.PictureProperties.Insert");
 	}
 }

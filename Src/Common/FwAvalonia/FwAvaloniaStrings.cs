@@ -235,9 +235,6 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 		/// <summary>Insert-a-picture affordance on an empty picture field / "insert another" on a picture row (legacy Insert Picture).</summary>
 		public static string PictureInsert => Text("FwAvalonia.Picture.Insert");
 
-		/// <summary>Edit-picture-properties affordance (caption / license / creator + replace file) — legacy PicturePropertiesDialog.</summary>
-		public static string PictureProperties => Text("FwAvalonia.Picture.Properties");
-
 		/// <summary>Delete-picture affordance on a picture row.</summary>
 		public static string PictureDelete => Text("FwAvalonia.Picture.Delete");
 

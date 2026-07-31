@@ -1319,59 +1319,6 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 	}
 
 	/// <summary>
-	/// The editable metadata of a picture (an <c>ICmPicture</c>), projected LCModel-free so the
-	/// picture-properties dialog and the edit-context seam exchange it without a domain dependency. Caption
-	/// and Description are real <c>ICmPicture</c> multistring properties (the adapter always writes them);
-	/// License and Creator live in the image file's Palaso metadata and the adapter applies them only when
-	/// the file is present/writable. Every field is optional — a null/empty value clears the property.
-	/// </summary>
-	public sealed class DetailPictureMetadata
-	{
-		public DetailPictureMetadata(string caption = null, string description = null,
-			string license = null, string creator = null)
-		{
-			Caption = caption;
-			Description = description;
-			License = license;
-			Creator = creator;
-		}
-
-		/// <summary>The picture caption (<c>ICmPicture.Caption</c>, best analysis alternative).</summary>
-		public string Caption { get; }
-
-		/// <summary>The picture description (<c>ICmPicture.Description</c>, best analysis alternative).</summary>
-		public string Description { get; }
-
-		/// <summary>The image's license (file Palaso metadata; applied when the file is writable).</summary>
-		public string License { get; }
-
-		/// <summary>The image's creator/artist (file Palaso metadata; applied when the file is writable).</summary>
-		public string Creator { get; }
-	}
-
-	/// <summary>
-	/// The result of the picture-properties dialog (LCModel-free): the edited metadata plus the chosen
-	/// image file. Consumed by the FwAvaloniaDialogs picture-properties dialog view-model.
-	/// </summary>
-	public sealed class DetailPictureDialogResult
-	{
-		public DetailPictureDialogResult(DetailPictureMetadata metadata, string sourceFile)
-		{
-			Metadata = metadata ?? new DetailPictureMetadata();
-			SourceFile = sourceFile;
-		}
-
-		/// <summary>The edited caption/description/license/creator.</summary>
-		public DetailPictureMetadata Metadata { get; }
-
-		/// <summary>
-		/// The chosen image file (absolute path) — non-null for a new picture or when the user replaced the
-		/// file of an existing one; null when only metadata changed on an existing picture.
-		/// </summary>
-		public string SourceFile { get; }
-	}
-
-	/// <summary>
 	/// One paragraph of an editable multi-paragraph structured-text (StText) field, projected
 	/// LCModel-free. The paragraph's text is the SAME run-aware <see cref="DetailRichTextValue"/> the
 	/// rest of the text path edits (so the lossless RichXml round-trip and the
