@@ -48,21 +48,23 @@ from Fluent's ~32px).
 
 **Checkboxes (the ONE global, deterministic rule):** checkboxes are **font-proportional** and **never add row
 height**. `FwAvaloniaDensity.CheckboxBoxSize = 14` (a fixed function of the 12px surface font) is the glyph-box
-size on *every* surface — dialogs, browse table, chooser flat list + tree, configure-columns, options,
-find/replace, insert-entry, region. The size is **deterministic** (a concrete px size applied to the template,
+size on *every* surface — dialogs (chooser, options, feature manager), the chooser's flat list + tree, and the
+detail view's `FwOptionChooser` field. The size is **deterministic** (a concrete px size applied to the template,
 identical regardless of content) — **not** a `RenderTransform`/`ScaleTransform` (a scale shrinks the paint but
 leaves the tall layout slot, which still inflates the row — the rejected hack, now removed). The single builder
-`FwCheckBoxStyle.Build()` restyles the Fluent 11.3 `CheckBox` template: it (a) sets `MinHeight=0`/`MinWidth=0`/
-`Padding=4,0,0,0`/`VerticalAlignment=Center` on the `CheckBox`, (b) pins the box `Border#NormalRectangle` to
-`14×14`, and (c) collapses the inner template `Grid` (the Fluent `Height=32` slot, reached via
-`CheckBox /template/ Grid#RootGrid > Grid`) to `14` — so the layout footprint, not just the paint, is the box.
-The `CheckGlyph` rides a `Viewbox` inside that grid and auto-scales to the new box. Net: a row with a checkbox
-is no taller than a text row (`BrowseRowMinHeight = 18`). This is **global — applied in both render
-paths: the runtime host and the headless test renderer**: `FwSurfaceStyles`
-(region/browse) and `CompactDialogStyles` (dialog runtime) both call `FwCheckBoxStyle.Build()`, and
-`DialogTheme.axaml` mirrors the SAME selectors as XAML for the headless dialog tests — the `14` in the XAML must
-stay equal to `CheckboxBoxSize`. Part names verified against `Avalonia.Themes.Fluent 11.3.6`
-(`Controls/CheckBox.xaml`: `RootGrid`, the inner `Grid Height=32`, `NormalRectangle`, `CheckGlyph`).
+`FwCheckBoxStyle.Build()` REPLACES the Fluent 11.3 `CheckBox` template outright (the same move `FwRadioButtonStyle`
+makes for radios, below) with a compact `ControlTheme`: `MinHeight=0`/`MinWidth=0`/`VerticalAlignment=Center` on
+the `CheckBox`, an outer `Border#FwCheckBox_Box` pinned to `14×14`, and `Path#FwCheckBox_CheckGlyph`/
+`FwCheckBox_IndeterminateGlyph` riding a `Viewbox` inside it that auto-scales to the box — so the layout
+footprint, not just the paint, is the box. Net: a row with a checkbox is no taller than a text row
+(`BrowseRowMinHeight = 18`). This is **global — applied in both render paths: the runtime host and the headless
+test renderer**: `FwSurfaceStyles.Build()` (region/detail) calls `FwCheckBoxStyle.Build()` directly; the dialog
+path gets it once via `DialogThemeBootstrap.Apply` (deliberately NOT `CompactDialogStyles`, which skips it to
+avoid a double-add — see the note in `CompactDialogStyles.cs`), and `DialogTheme.axaml` mirrors the SAME `14` as
+an XAML token for the headless dialog tests — the `14` there must stay equal to `CheckboxBoxSize`. The Fluent
+11.3 template being replaced hardcoded the box as a 20×20 `Border` (`NormalRectangle`) inside an unnamed inner
+`Grid` pinned to `Height=32` — both LOCAL values a style selector cannot override, which is why a full template
+replace (not a selector tweak) was required (`Avalonia.Themes.Fluent 11.3.6`, `Controls/CheckBox.xaml`).
 
 **Radio buttons (the checkbox's counterpart — same global, deterministic rule):** radios are
 **font-proportional** and **never add row height**, exactly like checkboxes. `FwAvaloniaDensity.RadioBoxSize`
@@ -76,10 +78,11 @@ with a compact `ControlTheme`: an outer `Ellipse#FwRadio_Box` pinned to `14×14`
 `DynamicResource`s (hard rule 1). **Global in both render paths**, wired in the SAME two places as the checkbox:
 `FwSurfaceStyles.Build()` (region/browse/bulk-bar) and `DialogThemeBootstrap.Apply` (dialogs — runtime host AND
 headless tests). It is NOT in `DialogTheme.axaml` (the template replace must be a C# `ControlTheme`) and NOT in
-`CompactDialogStyles` (the bootstrap already covers both dialog paths). The headless no-inflation test mirrors
-the checkbox's: `RadioButton_OnStyledSurface_IsFontProportional_AndDoesNotExceedTheTextRowHeight` in
-`LexicalBrowseDensityTests.cs` asserts the ring is exactly `RadioBoxSize`, the control is ≤ `BrowseRowMinHeight`,
-and the dot opacity goes 0 → 1 on `:checked`.
+`CompactDialogStyles` (the bootstrap already covers both dialog paths). The dedicated headless no-inflation test
+for this (`RadioButton_OnStyledSurface_IsFontProportional_AndDoesNotExceedTheTextRowHeight`, asserting the ring is
+exactly `RadioBoxSize`, the control is ≤ `BrowseRowMinHeight`, and the dot opacity goes 0 → 1 on `:checked`) lived
+in `LexicalBrowseDensityTests.cs`, deleted along with the rest of the browse surface (commit `bd7d3a5e5`); no test
+currently covers this invariant for radios — add one before a new surface ships them.
 
 **Group separation:** adjacent logical control GROUPS (e.g. a radio group followed by a checkbox group)
 get a little visual distance so they read as distinct rather than butting together:
@@ -127,13 +130,13 @@ replaces gives the genuine WinForms baseline:
 | `Src/LexText/LexTextControls/LexOptionsDlg.resx` | `m_btnOK`/`m_btnCancel`/`m_btnHelp` (Button) | 23px |
 | `Src/LexText/LexTextControls/LexOptionsDlg.resx` | `m_cbUpdateChannel`/`m_userInterfaceChooser` (ComboBox) | 21px |
 | `Src/FwCoreDlgs/BackupRestore/OverwriteExistingProject.resx` | `m_btnYes`/`m_btnNo`/`m_btnHelp` (Button) | 23px |
-| `Src/LexText/LexTextControls/SfmToTextsAndWordsMappingBaseDlg.resx` | `m_writingSystemCombo`/`m_converterCombo` (ComboBox) | 21px |
-| `Src/LexText/LexTextControls/SfmToTextsAndWordsMappingBaseDlg.resx` | `m_okButton`/`m_cancelButton`/`m_helpButton` (Button) | 23px |
+| `Src/LexText/LexTextControls/SfmToTextsAndWordsMappingDlg.resx` | `m_writingSystemCombo`/`m_converterCombo` (ComboBox) | 21px |
+| `Src/LexText/LexTextControls/SfmToTextsAndWordsMappingDlg.resx` | `m_okButton`/`m_cancelButton`/`m_helpButton` (Button) | 23px |
 
 Button height (the most common line control) is a strikingly consistent **23px** across every dialog
 sampled; combo boxes run 21px, plain text boxes 20px. The same `.resx` files also give the other
 tokens real support: label-to-field gap is a consistent **3px** (e.g. `label1`→`m_writingSystemCombo`,
-`label2`→`m_converterCombo` in `SfmToTextsAndWordsMappingBaseDlg.resx`), and outer window padding runs
+`label2`→`m_converterCombo` in `SfmToTextsAndWordsMappingDlg.resx`), and outer window padding runs
 8-16px (median ~12-13px) — both close to this file's `DialogLabelFieldGap` (4) and `DialogWindowPadding`
 (10).
 

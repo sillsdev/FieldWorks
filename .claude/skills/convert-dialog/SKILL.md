@@ -91,7 +91,8 @@ The "before" evidence (the last step here) is NOT part of that concurrent work.
    pattern), menu/toolbar command XML, DetailControls slice launchers (the
    `ReferenceLauncher` "..." family), popup-tree manager items ("More..."/
    "Create..." -- `MSAPopupTreeManager` and kin), other dialogs that chain
-   into this one, context menus, and direct static `RunDlg`-style helpers.
+   into this one, context menus, and direct static `RunDialog`-style helpers
+   (e.g. `ValidCharactersDlg.RunDialog`).
 4. Analyze the dialog's logic and its interaction with data, internal and
    external: static calls, LCM objects, and any LCM Units of Work --
    including the undo/redo task labels it uses.
@@ -154,7 +155,7 @@ the current dialog.
 
 Ask the developer for guidance on integration-test creation -- one question,
 end of turn, wait -- then design the test set for the dialog's capabilities
-WITH them using the grill-me skill (one question at a time, each its own
+WITH them using the `grill-with-docs` skill (one question at a time, each its own
 stop, recommendations offered) until the set is defined.
 Every test item must be expressible as: drive the scenario, assert the
 behavioral outcome, capture a labeled snapshot.
@@ -237,7 +238,7 @@ Produce the design report with these sections:
 Point the developer at the report and ask them to review it for errors,
 gaps, and suggestions -- then stop and wait, without summarizing its
 contents. Capture the agreed result as `<DialogClass>-design.md`. If a missing conversion or
-capability surfaced, run grill-me with the developer to produce the fill
+capability surfaced, run `grill-with-docs` with the developer to produce the fill
 plan (the exemplar-promotion path: the first implementation is built on the
 existing idiom rules and, on the developer's approval, a
 control-exemplar-map row lands in the same PR naming it THE exemplar --
@@ -275,7 +276,7 @@ Build conventions the result must satisfy (confirm each in the diff):
   none; focus returns to the invoking control.
 - Presentation, modeless: no exemplar exists yet -- the FIRST modeless
   conversion designs the hosting pattern through the exemplar-gap path
-  (grill-me), with the constraint that WinForms owns the window during
+  (`grill-with-docs`), with the constraint that WinForms owns the window during
   coexistence (an Avalonia surface hosted in a modeless WinForms Form via
   the host control), and promotes it as the modeless exemplar.
 - Strings in `.resx` (accessors appended in order); no L10NSharp; no

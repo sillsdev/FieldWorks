@@ -5,9 +5,8 @@ The verified playbook for migrating a hand-authored WinForms dialog/wizard to Av
 migration (`Src/Common/FwAvaloniaDialogs/`): four tabs wired to the live settings bus via an
 `LexOptionsDlgState` DTO seam, launched New-mode-gated from `LexTextApp`/`WelcomeToFieldWorksDlg`
 (`Src/LexText/LexTextControls/Avalonia/AvaloniaOptionsDialogLauncher.cs`), headless tests green on net48
-through `build.ps1`. Decided 2026-06-15; the original rationale doc
-(`avalonia-migration-roadmap/complete-migration-program.md` ?11.3) was relocated to the
-`phase1-docs` branch and is not present here ? this file is the proven template that decision
+through `build.ps1`. Decided 2026-06-15; the original rationale doc was relocated to the
+`phase1-docs` branch and is not present here — this file is the proven template that decision
 produced.
 
 > Use this for **hand-authored** dialogs/wizards. Do NOT use the region/IR/composer pattern ? that is
@@ -101,8 +100,8 @@ Headless `[AvaloniaTest]`: create the view with a ViewModel as `DataContext`, `w
 `Dispatcher.UIThread.RunJobs()`, then assert (a) compiled binding propagates **both** directions and
 (b) the generated commands fire. That is half the per-dialog definition of done; the per-stage PNG
 captures and subjective-quality checks (`visual-snapshot-testing.md`) are the other half. See
-`FwAvaloniaDialogsTests/OptionsDialogTests.cs` for the exact pattern (find controls by AutomationId via
-`GetVisualDescendants`).
+`Src/Common/FwAvaloniaDialogs/FwAvaloniaDialogsTests/OptionsDialogTests.cs` for the exact pattern (find
+controls by AutomationId via `GetVisualDescendants`).
 
 ## 2. Modality during coexistence ? use `AvaloniaDialogHost` (built)
 
@@ -117,9 +116,9 @@ if (accepted == true) { /* apply ViewModel state */ }
 ```
 
 `AvaloniaDialogHost.ShowModal` (in `Src/Common/FwAvalonia/AvaloniaDialogHost.cs`) shows the dialog
-`UserControl` inside a **WinForms-owned modal `Form`** (per the hub's `dialog-ownership.md`: owner-relative,
-restores focus on close), and the view-model closes it by raising `CloseRequested` ? **no windowing code in
-the view-model**. The view-model implements **`IDialogViewModel`** (`Src/Common/FwAvalonia/IDialogViewModel.cs`):
+`UserControl` inside a **WinForms-owned modal `Form`** (owner-relative, restores focus on close), and the
+view-model closes it by raising `CloseRequested` — **no windowing code in the view-model**. The view-model
+implements **`IDialogViewModel`** (`Src/Common/FwAvalonia/IDialogViewModel.cs`):
 ```csharp
 public partial class XyzDialogViewModel : ObservableObject, IDialogViewModel
 {

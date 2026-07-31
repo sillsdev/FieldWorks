@@ -25,7 +25,7 @@ validation boundary.
 - Verify checked tasks match evidence language; downgrade claims when
   evidence says substitute, placeholder, skipped, future, partial, or
   live-verification-only — the taxonomy is defined in
-  `fieldworks-winforms-to-avalonia-migration/references/parity-evidence.md`
+  `../fieldworks-winforms-to-avalonia-migration/references/parity-evidence.md`
   §"Evidence language". A behavior/workflow claim with no headless integration
   scenario (parity-evidence.md §2a) when one is feasible is a downgrade.
 - Confirm validation gates are explicit: OpenSpec validation
@@ -72,4 +72,4 @@ branch-only scope problems.
 When a new split trigger, evidence-language term, or scope failure mode
 shows up in a real review, add it here in the same PR; route durable
 lessons through
-`fieldworks-winforms-to-avalonia-migration/references/lessons-learned.md`.
+`../fieldworks-winforms-to-avalonia-migration/references/lessons-learned.md`.

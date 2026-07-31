@@ -32,9 +32,9 @@ top) for the decision, the why, and the gotchas. Quick map:
 | Owned dense controls, not stock property grids | `Src/Common/FwAvalonia/Detail/FwFieldControls.cs`, `FwOptionChooser.cs`, `DetailMenuFlyout.cs` | ?4 |
 | Plugin registry for custom/legacy slice classes | `Src/xWorks/Avalonia/Plugins/SlicePlugins.cs` | ?5 |
 | Seam contracts (edit session, undo, validation, scheduler, lifetime, refresh) | `Src/Common/FwAvalonia/Seams/` | `references/seam-catalog.md` |
-| Writing-system-aware text fields (font, RTL, keyboard per WS) | `Src/Common/FwAvalonia/Detail/FwFieldControls.cs` (`FwMultiWsTextField`) | architecture-patterns.md ?6 |
-| Dialog ownership across the WinForms/Avalonia boundary | `openspec/changes/lexical-edit-avalonia-migration/dialog-ownership.md` | ?7 |
-| Headless integration-test harness (scenario/workflow drivers + real-clerk layer) | `Src/Common/FwAvalonia/FwAvaloniaTests/Workflows/HeadlessWorkflowHarness.cs`, `Src/xWorks/xWorksTests/ClerkRoutedFilterTests.cs` | architecture-patterns.md ?13 |
+| Writing-system-aware text fields (font, RTL, keyboard per WS) | `Src/Common/FwAvalonia/Detail/FwFieldControls.cs` (`FwMultiWsTextField`) | architecture-patterns.md §6 |
+| Dialog ownership across the WinForms/Avalonia boundary | `Src/Common/FwAvalonia/AvaloniaDialogHost.cs` | §7 |
+| Headless integration-test harness (scenario/workflow drivers) | `Src/Common/FwAvalonia/FwAvaloniaTests/Workflows/HeadlessWorkflowHarness.cs` | architecture-patterns.md §13 |
 
 ## Workflow
 
@@ -139,34 +139,32 @@ history as a starting point, then run the normal per-region Workflow above.
 A Phase-1 surface can ship **inert**: its view code is present and compiled but the tool is
 deliberately *not registered*, so the resolver returns "not supported" and the surface falls
 back to legacy WinForms even under `UIMode=New`. This is the safe way to land a large surface's
-code in one PR and *activate* it in a small follow-up PR (the "flip"). Two distinct gates exist
-and an active surface needs BOTH open:
+code in one PR and *activate* it in a small follow-up PR (the "flip"). This applies to
+**detail-editor tools only** — the browse table has no Avalonia surface or gate on this branch at
+all (it was built and then removed; cite the legacy `BrowseViewer`, see
+control-exemplar-map.md §3.6). Two distinct gates exist and an active surface needs BOTH open:
 
 - **Plugin registration** (does the slice *compose* on Avalonia): `SlicePlugins.RegisterBuiltins`
   must `registry.Register(new <Surface>Plugin())`. The `LexemeEditorInventoryTests` census
   asserts the registered set *exactly*, so it fails until the class name is added/removed in step.
 - **Surface/tool gate** (does the tool's surface *resolve* to Avalonia): the tool name must be
-  registered ? for the **detail editor**, as an entry in `LexiconFeatureCatalog.Features`
+  registered as an entry in `LexiconFeatureCatalog.Features`
   (this drives `EditSurfaceRegistry.DefaultSupportedTools`, which is built from the catalog,
-  *not* a hardcoded array ? editing `DefaultSupportedTools` directly has no effect); for the
-  **browse table**, still a hardcoded entry in
-  `EditSurfaceResolver.SupportedAvaloniaBrowseToolNames` ? NOT in the parallel
-  `Phase1FollowUpSurfaceTools` / `Phase1FollowUpBrowseTools` arrays, which are exactly the **inert
-  list**. To find every dormant surface, read those two `Phase1FollowUp*` arrays.
+  *not* a hardcoded array — editing `DefaultSupportedTools` directly has no effect). Tools not yet
+  in the catalog stay listed in `EditSurfaceRegistry.Phase1FollowUpSurfaceTools` — the **inert
+  list**. Read that array to find every dormant surface.
 
 **Activation recipe** (turning an inert surface on, e.g. picking up its follow-up ticket):
 1. If the view files were carved to a follow-up branch, restore them from the canonical branch
    (`git checkout <canonical> -- <owned files>`); if they shipped dormant in base, they are already present.
 2. Restore the plugin registration line(s) in `SlicePlugins.RegisterBuiltins`.
 3. Restore the surface's class name(s) in the `LexemeEditorInventoryTests` census array (+ any resolve assertion).
-4. **Flip** ? detail editor: remove the tool name from `Phase1FollowUpSurfaceTools` and add a new
+4. **Flip.** Remove the tool name from `Phase1FollowUpSurfaceTools` and add a new
    `LexiconFeatureDescriptor` for it to `LexiconFeatureCatalog.Features` (with matching
    display-name/description strings in `FwAvaloniaStrings.cs`, and a `FeatureGroup*` ? reuse an
    existing group or add one). This also adds a row (and, for a new group, a heading) to the
-   Tools?Options "Manage Individual Features" dialog ? call that out in the PR description.
-   Browse table: still a plain move, `Phase1FollowUpBrowseTools` ? `SupportedAvaloniaBrowseToolNames`.
-5. Add/flip the corresponding `TestCase` rows: `RecordEditViewSwitchTests.RegisteredRecordEditTools_*`
-   (edit) and the `ResolveBrowse_*_YieldsAvalonia` resolver tests (browse).
+   Tools→Options "Manage Individual Features" dialog — call that out in the PR description.
+5. Add/flip the corresponding `TestCase` row: `RecordEditViewSwitchTests.RegisteredRecordEditTools_*`.
 6. Build + run the census, resolver, switch, catalog (`LexiconFeatureManagerDialogTests`), and
    the surface's own suites green.
 

@@ -32,8 +32,9 @@ When you need Avalonia API details, patterns, or examples, you MUST use Context7
 The migration playbook and decided architecture live in skills under
 `.claude/skills/` (picked up by Copilot and Claude Code alike):
 - `fieldworks-winforms-to-avalonia-migration` — hub playbook; its
-  `references/architecture-patterns.md` and `references/seam-catalog.md`
-  document the decided patterns (typed IR, region composer, owned controls,
+  `.claude/skills/fieldworks-winforms-to-avalonia-migration/references/architecture-patterns.md`
+  and `.claude/skills/fieldworks-winforms-to-avalonia-migration/references/seam-catalog.md`
+  document the decided patterns (typed IR, detail composer, owned controls,
   seams). Do not reinvent abstractions those files already settle.
 - `fieldworks-avalonia-ui` — control/XAML/headless-test conventions and
   canonical code to imitate.

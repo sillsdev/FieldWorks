@@ -218,7 +218,7 @@ The familiar names survive on the halves they still fit.
   framework renders a tool's surface.
 - **"Lexicon"** only for genuinely Lexicon-Editor-area types
   (`LexiconFirstSlice`, `LexiconEditErrorFallback`, `LexiconFeature*`).
-  Domain terms (`LexicalRelation`, `LexicalEntry`, `LexicalReference`, ...)
+  Domain terms (`LexicalRelation`, `LexicalEntry`, `LexReference`, ...)
   are LCModel / linguistics concepts and keep their names.
 - **Dialogs**: 1:1 conversions take the legacy stem + role suffix
   (`InsertEntryDlg*`, `AddNewSenseDlg*`, `MsaCreatorDlg*`, `LexOptionsDlg*`,
