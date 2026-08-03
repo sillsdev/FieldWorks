@@ -49,3 +49,4 @@ alongside them.
 - Process detail: the `convert-slice` skill. Test generation: the
   `create-integration-test` skill. Idiom rules:
   `.claude/skills/fieldworks-avalonia-ui/references/style-system.md`.
+- Hand-tuning the visual result: [Adjust a Converted Layout by Hand](adjust-the-layout.md).

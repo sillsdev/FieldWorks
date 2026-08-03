@@ -54,7 +54,10 @@ alongside them.
    from the design and test plan). Hand-implementing inside the scaffold is
    fine -- the skill will evaluate your implementation against the design.
    Either way, nothing merges until step 9 passes: the scaffold is
-   branch-state, never a shipped state.
+   branch-state, never a shipped state. To tune the generated layout by hand,
+   work from [Adjust a Converted Layout by Hand](adjust-the-layout.md): it
+   covers which file holds which visual property, how to see your change, and
+   the gotchas that waste an afternoon.
 9. Verify with `create-integration-test` (TDD or post-implementation), then
    manually test the live dialog in New UI mode against the analysis
    document and the `-before` captures -- and smoke Legacy mode (toggle
@@ -68,3 +71,4 @@ alongside them.
 - Process detail: the `convert-dialog` skill. Test generation: the
   `create-integration-test` skill. Build mechanics:
   `.claude/skills/fieldworks-avalonia-ui/references/dialog-conversion.md`.
+- Hand-tuning the visual result: [Adjust a Converted Layout by Hand](adjust-the-layout.md).
