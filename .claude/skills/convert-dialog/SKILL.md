@@ -73,6 +73,26 @@ proceeding. Never silently redo a completed phase.
 The working documents remain in place after completion; what to keep,
 delete, or attach anywhere is the developer's call.
 
+### Citing other documents and sections
+
+Every reference -- to another document OR to a section of the document you
+are writing -- is a markdown link whose VISIBLE TEXT is the target's name.
+Never write a bare section number: a number from another document collides
+with the local numbering and resolves to nothing.
+
+- Cross-document citations also carry the target's stable id when it has
+  one, e.g. `[per-control F1 help (GAP-F1-HELP)](../../../../.claude/skills/fieldworks-winforms-to-avalonia-migration/references/control-exemplar-map.md#gap-f1-help)`.
+- Verify the anchor exists by READING the target's heading before writing
+  the link -- do not guess. GitHub's slug rule: lowercase, spaces to
+  hyphens, punctuation dropped.
+- Compute the relative path from the document being written. Working
+  documents sit at `Docs/migration/working/<DialogClass>/`, four levels
+  below the repo root.
+- Keep the headings you generate short and ASCII so their auto-anchors stay
+  predictable.
+- Numbers may stay in headings for structure; they never appear as a
+  citation.
+
 ## Understanding the dialog (read-only; safe to run while they explore)
 
 The steps below are pure reading -- source, git history, Jira, layout XML. No
@@ -239,6 +259,10 @@ Produce the design report with these sections:
    explicit "none found"
 4. The proposed Avalonia layout, with every deliberate difference from the
    WinForms version called out
+
+Every reference the report makes -- to the exemplar map, to a conversion
+document, or to one of its own sections -- follows
+[Citing other documents and sections](#citing-other-documents-and-sections).
 
 Point the developer at the report and ask them to review it for errors,
 gaps, and suggestions -- then stop and wait, without summarizing its

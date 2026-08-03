@@ -31,9 +31,9 @@ migration burden.
 | ToolTip (12) | `ToolTip.Tip` attached property | kit views |
 | ContextMenuStrip built in code (22 files) | `MenuFlyout` populated from data | `Src/Common/FwAvalonia/Detail/DetailMenuFlyout.cs` |
 | PictureBox (21) | — (picture editing dropped from the region; a picture slice composes a labeled Unsupported worklist row until a native picture editor is added) | **conversion worklist** (see architecture-patterns.md §5) |
-| ProgressBar / ProgressDialogWithTask | — | **GAP §3.1** |
-| WizardDialog family | — | **GAP §3.2** |
-| DataGridView (3) / BrowseViewer (28 files) / RecordBrowseView (19 files) | — | **DEFERRED §3.6** |
+| ProgressBar / ProgressDialogWithTask | — | **GAP:** [async / threaded progress (GAP-PROGRESS)](#gap-progress) |
+| WizardDialog family | — | **GAP:** [wizard lifecycle (GAP-WIZARD)](#gap-wizard) |
+| DataGridView (3) / BrowseViewer (28 files) / RecordBrowseView (19 files) | — | **DEFERRED:** [browse/table grid + bulk edit (GAP-BROWSE-GRID)](#gap-browse-grid) |
 
 | FieldWorks custom control (files referencing) | Avalonia counterpart | Exemplar |
 | --- | --- | --- |
@@ -46,8 +46,8 @@ migration burden.
 | MessageBox / one-off confirmation Forms | `FwMessageBox` (owner-parented, Yes/No/OK/Cancel) | `Src/Common/FwAvaloniaDialogs/FwMessageBox.cs`; injectable-seam usage: `LcmAddAllomorphDialogLauncher.PerformAddAllomorph` |
 | DataTree + Slice subclasses (88/61) | region surface: composer → region model → owned field controls (Text / StructuredText / Chooser / ReferenceVector / Literal). Custom slices resolve plugin registry → labeled Unsupported row (the conversion worklist); the sole native plugin exemplar is `ReversalIndexEntryPlugin`. | `Src/xWorks/Avalonia/Composer/DetailComposer.cs`, `Src/Common/FwAvalonia/Detail/DataTree.cs`, `Src/xWorks/Avalonia/Plugins/SlicePlugins.cs`, `Src/xWorks/Avalonia/Plugins/ReversalIndexEntryPlugin.cs` (architecture-patterns.md §2, §5) |
 | FwHelpButton (5) + per-dialog Help | ViewModel `HelpRequested` event → launcher calls `ShowHelp.ShowHelpTopic` | `EntryGoDialogViewModel.cs` + any `Lcm*Launcher` `OnHelpRequested` |
-| TriStateTreeView (6) | — | **GAP §3.4** |
-| SimpleRootSite / RootSiteControl embedded views (72/26) | — | **DEFERRED §3.7** |
+| TriStateTreeView (6) | — | **GAP:** [tri-state checkbox tree (GAP-TRISTATE)](#gap-tristate) |
+| SimpleRootSite / RootSiteControl embedded views (72/26) | — | **DEFERRED:** [RootSite-embedded views (GAP-ROOTSITE-VIEWS)](#gap-rootsite-views) |
 
 ## 2. Behavior map
 
@@ -86,7 +86,8 @@ headless tests), and then PROMOTES it:
 Until a gap's exemplar exists, surfaces that need it stay on the Legacy
 surface — that is what the fail-closed resolver is for.
 
-### 3.1 Async / threaded progress (highest exposure)
+<a id="gap-progress"></a>
+### GAP-PROGRESS: Async / threaded progress (highest exposure)
 - **Evidence:** `ProgressDialogWithTask`/`IThreadedProgress` in ~74 files;
   every import/export/backup flow.
 - **First implementation must cover:** a cancellable background task with
@@ -97,7 +98,8 @@ surface — that is what the fail-closed resolver is for.
 - **Likely first consumer:** an export dialog (`Src/xWorks/ExportDialog.cs`
   is the heaviest legacy user).
 
-### 3.2 Wizard lifecycle
+<a id="gap-wizard"></a>
+### GAP-WIZARD: Wizard lifecycle
 - **Evidence:** 3 `WizardDialog` subclasses (`LexImportWizard`,
   `NotebookImportWiz`, `InterlinearSfmImportWizard`); NotebookImportWiz
   alone has 17 buttons / 31 labels.
@@ -107,7 +109,8 @@ surface — that is what the fail-closed resolver is for.
   per-wizard copies — three known consumers justify it.
 - **Likely first consumer:** the smallest wizard, not NotebookImportWiz.
 
-### 3.3 Writing-system selector on search fields
+<a id="gap-ws-selector"></a>
+### GAP-WS-SELECTOR: Writing-system selector on search fields
 - **Evidence:** legacy `BaseGoDlg.m_cbWritingSystems` lets the user choose
   which WS to search; the §2d spec carries only the default vernacular WS
   (PARITY note in `EntryGoLauncherShared`).
@@ -115,27 +118,31 @@ surface — that is what the fail-closed resolver is for.
   with a WS option list + selection callback that re-runs the search and
   re-derives typography/keyboard.
 
-### 3.4 Tri-state checkbox tree
+<a id="gap-tristate"></a>
+### GAP-TRISTATE: Tri-state checkbox tree
 - **Evidence:** `TriStateTreeView` in 6 files (export/filter dialogs).
 - **First implementation must cover:** parent/child check propagation and
   the indeterminate state on `ChooserTreeNode`-style rows; extend the
   ChooserDialog kit rather than building a parallel tree.
 
-### 3.5 Per-control F1 help strings
+<a id="gap-f1-help"></a>
+### GAP-F1-HELP: Per-control F1 help strings
 - **Evidence:** `HelpProvider.SetHelpString` is high-volume in Designer
   files; distinct from the (covered) per-dialog Help button.
 - **First implementation must cover:** decide the Avalonia F1 story
   (tooltip vs help pane) once a migrated dialog actually loses per-control
   help a user depends on; do not pre-build.
 
-### 3.6 Browse/table grid + bulk edit (deferred by design)
+<a id="gap-browse-grid"></a>
+### GAP-BROWSE-GRID: Browse/table grid + bulk edit (deferred by design)
 - The browse surface (BrowseViewer/RecordBrowseView/XMLViews grid, filter
   bar, bulk edit) is intentionally absent; browse tools stay Legacy via
   the fail-closed resolver. Do not hand-roll ad-hoc `DataGrid` usage — a
   grid exemplar must come with virtualization, clerk integration, and
   parity evidence in its own migration.
 
-### 3.7 RootSite-embedded views (deferred by design)
+<a id="gap-rootsite-views"></a>
+### GAP-ROOTSITE-VIEWS: RootSite-embedded views (deferred by design)
 - `SimpleRootSite`/`RootSiteControl` surfaces (interlinear, rule formula,
   print previews) stay Legacy; their tools are deliberately unregistered
   (see `EditSurfaceRegistry`). The activation recipe lives in

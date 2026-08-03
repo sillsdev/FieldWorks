@@ -44,6 +44,26 @@ convert-dialog: `Docs/migration/working/<SliceClass>/` holding
 `<SliceClass>-design.md`; detect-and-resume on re-invocation; the documents
 remain after completion (retention is the developer's call).
 
+### Citing other documents and sections
+
+Every reference -- to another document OR to a section of the document you
+are writing -- is a markdown link whose VISIBLE TEXT is the target's name.
+Never write a bare section number: a number from another document collides
+with the local numbering and resolves to nothing.
+
+- Cross-document citations also carry the target's stable id when it has
+  one, e.g. `[per-control F1 help (GAP-F1-HELP)](../../../../.claude/skills/fieldworks-winforms-to-avalonia-migration/references/control-exemplar-map.md#gap-f1-help)`.
+- Verify the anchor exists by READING the target's heading before writing
+  the link -- do not guess. GitHub's slug rule: lowercase, spaces to
+  hyphens, punctuation dropped.
+- Compute the relative path from the document being written. Working
+  documents sit at `Docs/migration/working/<SliceClass>/`, four levels below
+  the repo root.
+- Keep the headings you generate short and ASCII so their auto-anchors stay
+  predictable.
+- Numbers may stay in headings for structure; they never appear as a
+  citation.
+
 ## Understanding the slice (read-only; safe while they explore)
 
 Source, history, Jira, and layout-XML reading only -- no build, no test run,
@@ -75,7 +95,7 @@ slice-specific work:
   affected entry's rows and say where they put them). Only drive the app
   yourself with their explicit go-ahead that it is closed and yours.
 
-The analysis document keeps the four-section shape; section 4 (layout)
+The analysis document keeps the four-section shape; its layout section
 describes the row: label/value split, sizing, wrapping, and any multi-row
 structure.
 
@@ -110,8 +130,10 @@ with a recommendation):
 Then map controls/patterns against the exemplar map exactly as convert-dialog
 does when planning a replacement (including the no-exemplar catalog, package
 search, `grill-with-docs` fill plan, and human-gated promotion row), and produce the
-same four-section design report, with section 4 describing the proposed row
-layout and every deliberate difference from the legacy slice.
+same four-section design report, with its layout section describing the
+proposed row layout and every deliberate difference from the legacy slice.
+Every reference the report makes follows
+[Citing other documents and sections](#citing-other-documents-and-sections).
 
 The children-convert-first dependency gate applies here too: any dialog the
 slice opens (choosers, create dialogs) must already have an Avalonia route
