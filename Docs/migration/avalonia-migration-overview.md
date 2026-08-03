@@ -59,7 +59,7 @@ and focus-return match legacy behavior.
 
 Converted dialogs reuse the **legacy class stem + role suffix**
 (`InsertEntryDlgViewModel` <-> legacy `InsertEntryDlg`); reusable kits keep
-general names (`ChooserDialog*`, `EntryGo*`). See section 5 Terminology.
+general names (`ChooserDialog*`, `EntryGo*`). See [Terminology](#5-terminology).
 
 Process: `migrate-a-dialog.md` (the playbook). Mechanics:
 `.claude/skills/fieldworks-avalonia-ui/references/dialog-conversion.md`.
@@ -96,7 +96,8 @@ Fallback: if full composition throws, the Lexicon tool degrades to the fixed
 three-field first slice (`LexiconEditErrorFallback`, `LexiconFirstSlice`) and
 logs the failure.
 
-Process: `migrate-a-slice-type.md` (the playbook). Deep rationale: section 4 below.
+Process: `migrate-a-slice-type.md` (the playbook). Deep rationale:
+[DataTree and Slice: what changed from legacy](#4-datatree-and-slice-what-changed-from-legacy).
 
 ### 2c. Edit sessions -- replaces direct Views/RootSite editing
 
@@ -229,7 +230,8 @@ The familiar names survive on the halves they still fit.
   `SliceFactory`, `DataTree` exist in both a legacy namespace and the
   Avalonia set): disambiguate at the consumer with a `using` alias or full
   qualification; never rename the type to dodge the collision.
-- **seam** -- a substitution point at the coexistence boundary (section 2d).
+- **seam** -- a substitution point at the coexistence boundary
+  (see [Seams -- the coexistence boundary](#2d-seams----the-coexistence-boundary)).
 - **fenced edit session** -- a bracketed LCModel undo task: opened on the first
   staged edit, committed/cancelled as one undoable step.
 - **worklist row** -- a labeled Unsupported row in the detail view: visible,
