@@ -30,6 +30,12 @@
 		     product behavior); it lives in its own FwAvalonia.Preview assembly instead, referenced (not
 		     file-linked) by this host and by FwAvaloniaTests. -->
 		<ProjectReference Include="..\FwAvalonia\Preview\FwAvalonia.Preview.csproj" />
+		<!-- The dialog kit, so converted dialogs can be previewed here (DialogPreviews.cs). This host writes
+		     to its own bin\ rather than the shared Output\, and the module catalog scans its own folder, so
+		     the reference is what puts FwAvaloniaDialogs.dll where the catalog can load it. It also makes
+		     this Avalonia-capable exe a candidate host for the Visual Studio XAML previewer, which needs a
+		     BuildAvaloniaApp entry point that FieldWorks.exe does not have. -->
+		<ProjectReference Include="..\FwAvaloniaDialogs\FwAvaloniaDialogs.csproj" />
 		<Compile Include="..\..\CommonAssemblyInfo.cs" Link="Properties\CommonAssemblyInfo.cs" />
 	</ItemGroup>
 
