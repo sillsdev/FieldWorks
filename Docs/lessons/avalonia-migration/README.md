@@ -13,6 +13,8 @@ tree and the live legacy behavior.
 | Words > Analyses detail; interlinear projection; approval state; sense and MSA changes; pruning; atomic undo; mixed writing systems | [Interlinear analysis](interlinear-analysis.md) |
 | Phonological rules; environments; compound rules; natural classes; phonemes; formula parity; context transitions; plugin activation | [Rule-formula editors](rule-formula-editors.md) |
 | Browse virtualization; stable selection; clerk sorting/filtering; bulk edit; RDE; accessibility; activation breadth | [Browse-table activation](browse-table-activation.md) |
+| Picture editing; properties dialog; dormant view-models; localization pair removal; exchange DTO lifetime | [Avalonia picture editing](avalonia-picture-editing.md) |
+| Options-only utilities; features with no WinForms counterpart; parity divergence cost; entry-point unwinding | [Lexicon feature manager](lexicon-feature-manager.md) |
 
 ## How to use these records
 
