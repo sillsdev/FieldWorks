@@ -235,8 +235,15 @@ is not yet migrated — the search box carries the default vernacular ws only.
 ## 3. Build wiring for a NEW dialog *project* (only when adding one; usually you just add files)
 
 `FwAvaloniaDialogs` already exists. If you ever add another XAML dialog project, replicate:
-- Add it (and its `*Tests`) to **`FieldWorks.sln`** (`dotnet sln FieldWorks.sln add <csproj>`) — restore
-  is solution-scoped, and the sln is what Visual Studio loads.
+- Add it (and its `*Tests`) to **`FieldWorks.sln`** — restore is solution-scoped, and the sln is what
+  Visual Studio loads. Pass **`--in-root`**:
+  `dotnet sln FieldWorks.sln add --in-root <csproj>`. Without it `dotnet sln add` manufactures solution
+  folders mirroring the directory hierarchy (`Src` → `Common` → the project), and this solution keeps
+  its ~140 projects FLAT at the top level, so a nested one is the odd one out in Solution Explorer.
+  The reason is consistency with what is already there, not that solution folders are wrong in general —
+  if the solution is ever reorganized into folders deliberately, revisit this. The drift is invisible in
+  review (a `.sln` diff is unreadable at that size), so it is worth getting right at the point of the
+  command.
 - No `build.ps1` or `FieldWorks.proj` edits: Avalonia projects — including XAML-compiled ones — are
   first-class members of the **`FieldWorks.proj`** traversal (picked up by the `Src\**\*.csproj` glob,
   tests by the `*Tests` include) and build in parallel in dependency order; `build.ps1` has no separate
