@@ -16,6 +16,7 @@ using SIL.LCModel.Core.WritingSystems;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Controls.FileDialog;
 using SIL.FieldWorks.Common.FwUtils;
+using static SIL.FieldWorks.Common.FwUtils.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.LCModel;
 using SIL.LCModel.Infrastructure;
@@ -586,9 +587,7 @@ namespace SIL.FieldWorks.IText
 					Close();
 				}
 			}
-#pragma warning disable 618 // suppress obsolete warning
-			m_mediator.SendMessage("MasterRefresh", ActiveForm);
-#pragma warning restore 618
+			Publisher.Publish(new PublisherParameterObject(EventConstants.MasterRefresh, null, m_propertyTable.GetWindow()));
 			if (m_firstNewText != null)
 			{
 				// try to select it.
