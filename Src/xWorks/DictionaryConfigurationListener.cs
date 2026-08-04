@@ -10,6 +10,7 @@ using System.Windows.Forms;
 using System.Xml;
 using SIL.Extensions;
 using SIL.FieldWorks.Common.FwUtils;
+using static SIL.FieldWorks.Common.FwUtils.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.LCModel;
@@ -216,7 +217,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <returns></returns>
 		public bool OnConfigureDictionary(object commandObject)
 		{
-			bool refreshNeeded;
+			DictionaryConfigurationController.RefreshLevel refreshRequired;
 			using (var dlg = new DictionaryConfigurationDlg(m_propertyTable))
 			{
 				var clerk = m_propertyTable.GetValue<RecordClerk>("ActiveClerk", null);
@@ -224,13 +225,18 @@ namespace SIL.FieldWorks.XWorks
 				dlg.Text = String.Format(xWorksStrings.ConfigureTitle, GetDictionaryConfigurationType(m_propertyTable));
 				dlg.HelpTopic = GetConfigDialogHelpTopic(m_propertyTable);
 				dlg.ShowDialog(m_propertyTable.GetValue<IWin32Window>("window"));
-				refreshNeeded = controller.MasterRefreshRequired;
+				refreshRequired = controller.RefreshRequired;
 			}
-			if (refreshNeeded)
+			switch (refreshRequired)
 			{
-#pragma warning disable 618 // suppress obsolete warning
-				m_mediator.SendMessage("MasterRefresh", null);
-#pragma warning restore 618
+				case DictionaryConfigurationController.RefreshLevel.Master:
+					// Styles or the global homograph configuration changed; those are rendered
+					// outside the generated dictionary content, so run the full refresh.
+					Publisher.Publish(new PublisherParameterObject(EventConstants.MasterRefresh, null, m_propertyTable.GetWindow()));
+					break;
+				case DictionaryConfigurationController.RefreshLevel.DictionaryContent:
+					Publisher.Publish(new PublisherParameterObject(EventConstants.DictionaryConfigured, null, m_propertyTable.GetWindow()));
+					break;
 			}
 			return true; // message handled
 		}

@@ -81,6 +81,20 @@ namespace SIL.FieldWorks.XWorks
 					browser.DomMouseScroll += OnMouseWheel;
 				}
 			}
+			Subscriber.Subscribe(EventConstants.DictionaryConfigured, RefreshAllContent, m_propertyTable.GetWindow());
+		}
+
+		protected override void Dispose(bool disposing)
+		{
+			// Must not be run more than once.
+			if (IsDisposed)
+				return;
+
+			if (disposing)
+			{
+				Subscriber.Unsubscribe(EventConstants.DictionaryConfigured, RefreshAllContent);
+			}
+			base.Dispose(disposing);
 		}
 
 		private void OnMouseWheel(object sender, DomMouseEventArgs domMouseEventArgs)
@@ -626,7 +640,7 @@ namespace SIL.FieldWorks.XWorks
 			var mediator = tagObjects[1] as Mediator;
 			var nodeId = tagObjects[2] as string;
 			var guid = (Guid)tagObjects[3];
-			bool refreshNeeded;
+			DictionaryConfigurationController.RefreshLevel refreshRequired;
 			using (var dlg = new DictionaryConfigurationDlg(propertyTable))
 			{
 				var cache = propertyTable.GetValue<LcmCache>("cache");
@@ -641,13 +655,18 @@ namespace SIL.FieldWorks.XWorks
 				dlg.Text = String.Format(xWorksStrings.ConfigureTitle, DictionaryConfigurationListener.GetDictionaryConfigurationType(propertyTable));
 				dlg.HelpTopic = DictionaryConfigurationListener.GetConfigDialogHelpTopic(propertyTable);
 				dlg.ShowDialog(propertyTable.GetValue<IWin32Window>("window"));
-				refreshNeeded = controller.MasterRefreshRequired;
+				refreshRequired = controller.RefreshRequired;
 			}
-			if (refreshNeeded)
+			switch (refreshRequired)
 			{
-#pragma warning disable 618 // suppress obsolete warning
-				mediator.SendMessage("MasterRefresh", null);
-#pragma warning restore 618
+				case DictionaryConfigurationController.RefreshLevel.Master:
+					// Styles or the global homograph configuration changed; those are rendered
+					// outside the generated dictionary content, so run the full refresh.
+					Publisher.Publish(new PublisherParameterObject(EventConstants.MasterRefresh, null, propertyTable.GetWindow()));
+					break;
+				case DictionaryConfigurationController.RefreshLevel.DictionaryContent:
+					Publisher.Publish(new PublisherParameterObject(EventConstants.DictionaryConfigured, null, propertyTable.GetWindow()));
+					break;
 			}
 		}
 
@@ -1133,7 +1152,7 @@ namespace SIL.FieldWorks.XWorks
 					break;
 				case "ShowFailingItems-lexiconClassifiedDictionary":
 					// When this property changes, we just need to refresh the current page.
-					OnMasterRefresh(this);
+					RefreshAllContent(null);
 					break;
 				default:
 					// Not sure what other properties might change, but I'm not doing anything.
@@ -1153,7 +1172,7 @@ namespace SIL.FieldWorks.XWorks
 			var currentPageRange = new Tuple<int, int>(int.Parse(currentPage.Attributes["startIndex"].NodeValue), int.Parse(currentPage.Attributes["endIndex"].NodeValue));
 			if (currentObjectIndex < currentPageRange.Item1 || currentObjectIndex > currentPageRange.Item2)
 			{
-				OnMasterRefresh(this); // Reload the page
+				RefreshAllContent(null); // Reload the page
 			}
 		}
 
@@ -1293,7 +1312,22 @@ namespace SIL.FieldWorks.XWorks
 
 		#endregion
 
+		/// <summary>
+		/// Mediator handler for the user Refresh command (F5/CmdRefresh) and for the deferred
+		/// MasterRefresh broadcasts not yet converted to Pub/Sub. This view is a High-priority
+		/// colleague, so for stop-when-handled sends it intercepts MasterRefresh and regenerates
+		/// only its own content instead of running the window's full refresh (LT-16365).
+		/// </summary>
 		public void OnMasterRefresh(object sender)
+		{
+			RefreshAllContent(null);
+		}
+
+		/// <summary>
+		/// Regenerate this view's XHTML content, ensuring the selected publication is valid for
+		/// the current configuration. Subscribed to the Pub/Sub DictionaryConfigured event.
+		/// </summary>
+		private void RefreshAllContent(object _)
 		{
 			var currentConfig = GetCurrentConfiguration(false);
 			var currentPublication = GetCurrentPublication();
@@ -1309,7 +1343,7 @@ namespace SIL.FieldWorks.XWorks
 
 		public bool RefreshDisplay()
 		{
-			OnMasterRefresh(this);
+			RefreshAllContent(null);
 			return true;
 		}
 

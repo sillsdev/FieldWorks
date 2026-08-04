@@ -84,10 +84,55 @@ namespace SIL.FieldWorks.XWorks
 		private bool _isHighlighted;
 
 		/// <summary>
-		/// Whether any changes have been saved, including changes to the Configs, which Config is the current Config, changes to Styles, etc.,
-		/// that require the preview to be updated.
+		/// The strongest refresh required by the changes saved so far (including changes to
+		/// the Configs, which Config is the current Config, changes to Styles, etc.).
 		/// </summary>
-		public bool MasterRefreshRequired { get; private set; }
+		public RefreshLevel RefreshRequired { get; private set; }
+
+		/// <summary>What the caller must refresh when the dialog closes.</summary>
+		public enum RefreshLevel
+		{
+			/// <summary>Nothing changed.</summary>
+			None,
+			/// <summary>Regenerate the generated dictionary content (the DictionaryConfigured event).</summary>
+			DictionaryContent,
+			/// <summary>Run the full master refresh (the MasterRefresh event); required when
+			/// settings rendered outside the generated dictionary content changed - styles,
+			/// or the global homograph configuration.</summary>
+			Master
+		}
+
+		/// <summary>Escalate the required refresh; a stronger requirement is never downgraded.</summary>
+		private void RequireRefresh(RefreshLevel level)
+		{
+			if (level > RefreshRequired)
+				RefreshRequired = level;
+		}
+
+		/// <summary>
+		/// The Styles dialog changed styles; they are rendered outside the generated
+		/// dictionary content, so regenerating that content is not enough. The full master
+		/// refresh is currently the only mechanism that reaches the other views; a narrower
+		/// invalidation could replace RefreshLevel.Master here if one is ever added.
+		/// </summary>
+		internal void HandleStylesDialogMadeChanges()
+		{
+			EnsureValidStylesInModel(_model, Cache); // in case the change was a rename or deletion
+			RefreshPreview(false);
+		}
+
+		/// <summary>
+		/// The Headword Numbers dialog updated the global homograph configuration singleton
+		/// (this happens even if the Configure dialog is later cancelled), which affects
+		/// headword rendering in views (e.g. the Browse Headword column) that a
+		/// dictionary-content regeneration does not reach. The full master refresh is
+		/// currently the only mechanism that reaches those views; a narrower invalidation
+		/// could replace RefreshLevel.Master here if one is ever added.
+		/// </summary>
+		internal void HandleHomographConfigurationChanged()
+		{
+			RequireRefresh(RefreshLevel.Master);
+		}
 
 		public enum ExclusionReasonCode
 		{
@@ -221,7 +266,7 @@ namespace SIL.FieldWorks.XWorks
 			if (isChangeInDictionaryModel)
 				m_isDirty = true;
 			else
-				MasterRefreshRequired = true;
+				RequireRefresh(RefreshLevel.Master);
 			//_propertyTable should be null only for unit tests which don't need styles
 			if (_propertyTable == null || _previewEntry == null || !_previewEntry.IsValidObject)
 				return;
@@ -372,7 +417,7 @@ namespace SIL.FieldWorks.XWorks
 					configurationManagerController.ConfigurationViewImported += () =>
 					{
 						SaveModel();
-						MasterRefreshRequired = false; // We're reloading the whole app, that's refresh enough
+						RefreshRequired = RefreshLevel.None; // We're reloading the whole app, that's refresh enough
 						View.Close();
 						Publisher.Publish(new PublisherParameterObject(EventConstants.ReloadAreaTools, "lists", _propertyTable.GetWindow()));
 					};
@@ -497,7 +542,8 @@ namespace SIL.FieldWorks.XWorks
 				RefreshView();
 			};
 			SelectCurrentConfigurationAndRefresh();
-			MasterRefreshRequired = m_isDirty = false;
+			RefreshRequired = RefreshLevel.None;
+			m_isDirty = false;
 		}
 
 		/// <summary>
@@ -630,7 +676,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 			// This property must be set *after* saving, because the initial save changes the FilePath
 			DictionaryConfigurationListener.SetCurrentConfiguration(_propertyTable, _model.FilePath, false);
-			MasterRefreshRequired = true;
+			RequireRefresh(RefreshLevel.DictionaryContent);
 			m_isDirty = false;
 		}
 
@@ -654,11 +700,8 @@ namespace SIL.FieldWorks.XWorks
 			{
 				DetailsController = new DictionaryDetailsController(new DetailsView(), _propertyTable);
 				DetailsController.DetailsModelChanged += (sender, e) => RefreshPreview();
-				DetailsController.StylesDialogMadeChanges += (sender, e) =>
-				{
-					EnsureValidStylesInModel(_model, Cache); // in case the change was a rename or deletion
-					RefreshPreview(false);
-				};
+				DetailsController.StylesDialogMadeChanges += (sender, e) => HandleStylesDialogMadeChanges();
+				DetailsController.HomographConfigurationChanged += (sender, e) => HandleHomographConfigurationChanged();
 				DetailsController.SelectedNodeChanged += (sender, e) =>
 				{
 					var nodeToSelect = sender as ConfigurableDictionaryNode;
