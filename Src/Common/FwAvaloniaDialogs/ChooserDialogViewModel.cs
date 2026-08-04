@@ -27,7 +27,7 @@ namespace FwAvaloniaDialogs
 	/// filtered-tree-expansion virtualization problem is sidestepped); clearing the term returns to the tree. The
 	/// existing <see cref="ChooserDialogInput.SearchCandidates"/> delegate path is honored in both modes.
 	///
-	/// In both modes OK is gated through the kit's <c>GetValidationErrors</c> (one error when
+	/// In both modes OK is gated through the shared base's <c>GetValidationErrors</c> (one error when
 	/// <see cref="ChooserDialogInput.ForbidEmptySelection"/> and nothing is chosen), and <c>ApplyChanges</c>
 	/// snapshots the final <see cref="ChosenKeys"/> so the launcher reads a stable set on OK.
 	///
@@ -144,7 +144,7 @@ namespace FwAvaloniaDialogs
 
 		/// <summary>
 		/// The live chosen keys (guid strings; empty string == the "&lt;Empty&gt;" clear row), in choose order.
-		/// For single-select this is 0 or 1 key; for multi-select it is the accumulated checked set. The kit's
+		/// For single-select this is 0 or 1 key; for multi-select it is the accumulated checked set. The shared
 		/// <see cref="ApplyChanges"/> re-snapshots this from the picker/tree on OK so the launcher reads the final set.
 		/// </summary>
 		public IReadOnlyList<string> ChosenKeys => _chosenOrder;
@@ -372,7 +372,7 @@ namespace FwAvaloniaDialogs
 				_chosenOrder.Add(key);
 		}
 
-		// ----- OK gating (kit convention) -----
+		// ----- OK gating (dialog convention) -----
 
 		/// <summary>
 		/// One validation error when nothing is chosen and the input forbids an empty selection (the legacy

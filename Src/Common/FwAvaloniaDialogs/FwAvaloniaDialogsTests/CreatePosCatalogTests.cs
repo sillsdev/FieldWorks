@@ -21,7 +21,7 @@ namespace FwAvaloniaDialogsTests
 	/// The "Create a new Part of Speech" CATALOG chooser. Rather than a brand-new tree dialog, the
 	/// master-category (GOLDEtic) catalog is surfaced through the EXISTING reusable <see cref="ChooserDialogViewModel"/>
 	/// in hierarchical single-select mode — exactly what the LCModel-aware <c>LcmCreatePartOfSpeechLauncher.BuildInput</c>
-	/// produces (this kit layer has no LCModel reference, so it is fed a synthetic depth-tagged catalog identical in
+	/// produces (this dialog layer has no LCModel reference, so it is fed a synthetic depth-tagged catalog identical in
 	/// shape). The catalog renders as a dense, collapsible tree with no clipping; a pick returns the chosen catalog id
 	/// (which the launcher maps to a created IPartOfSpeech). A PNG of the catalog is captured for subjective review.
 	/// </summary>

@@ -45,7 +45,7 @@ namespace FwAvaloniaDialogs
 	/// <summary>
 	/// Generic scaffold for a "launch one Avalonia dialog and apply the result to the live settings"
 	/// product launcher. Captures the shape every dialog-edge shares — the part OUTSIDE the view-model that
-	/// the dialog-kit (DialogViewModelBase / AvaloniaDialogHost.ShowModal) does not cover:
+	/// the dialog stack (DialogViewModelBase / AvaloniaDialogHost.ShowModal) does not cover:
 	///
 	///   1. populate a product-supplied state DTO from the live settings (<see cref="BuildState"/>),
 	///   2. build the view-model + view from that state (<see cref="CreateViewModel"/> / <see cref="CreateView"/>),
@@ -55,12 +55,12 @@ namespace FwAvaloniaDialogs
 	///      without applying.
 	///
 	/// A second dialog becomes "implement BuildState + CreateViewModel + CreateView + Apply", not "copy the
-	/// launch/host/dispose/return plumbing". The scaffold lives in FwAvaloniaDialogs (the dialog-kit layer)
-	/// because it depends only on the kit + <see cref="AvaloniaDialogHost"/> and has no LCModel/PropertyTable
+	/// launch/host/dispose/return plumbing". The scaffold lives in FwAvaloniaDialogs (the dialog assembly)
+	/// because it depends only on FwAvaloniaDialogs + <see cref="AvaloniaDialogHost"/> and has no LCModel/PropertyTable
 	/// dependency; the LCModel-aware concrete launcher lives in the product layer (LexText).
 	/// </summary>
 	/// <typeparam name="TState">The product-supplied state DTO the view-model edits (e.g. LexOptionsDlgState).</typeparam>
-	/// <typeparam name="TViewModel">The dialog view-model (carries the host-close contract via the kit base).</typeparam>
+	/// <typeparam name="TViewModel">The dialog view-model (carries the host-close contract via the shared base).</typeparam>
 	/// <typeparam name="TPayload">The dialog-specific follow-up signals returned on OK.</typeparam>
 	public abstract class AvaloniaDialogLauncher<TState, TViewModel, TPayload>
 		where TViewModel : class, IDialogViewModel
@@ -115,7 +115,7 @@ namespace FwAvaloniaDialogs
 		/// <summary>
 		/// Applies the edited <paramref name="state"/> back to the live settings (only called on OK) and
 		/// returns the dialog-specific follow-up signals. Runs after the view-model has written its edits into
-		/// the state via the kit's ApplyChanges convention.
+		/// the state via the shared ApplyChanges convention.
 		/// </summary>
 		protected abstract TPayload Apply(TState state);
 

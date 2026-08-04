@@ -81,7 +81,7 @@ Two things must be true or the previewer cannot start:
   ```
 
   Fix: set **`FwAvaloniaPreviewHost` as the startup project**. It is a
-  `WinExe`, it has `BuildAvaloniaApp()`, and it references the dialog kit.
+  `WinExe`, it has `BuildAvaloniaApp()`, and it references `FwAvaloniaDialogs`.
 
 **Status: unverified on this repo.** The AppBuilder cause above is understood
 and fixed, but whether the previewer process itself works against this
@@ -132,7 +132,7 @@ How it finds your surface: the host's `ModuleCatalog` reflects over
 assembly-level `FwPreviewModule` attributes across every assembly in its own
 output folder. No host code changes per surface -- registration is the
 attribute. That folder is the host's own `bin\`, not the shared `Output\`,
-which is why the host project references the dialog kit.
+which is why the host project references `FwAvaloniaDialogs`.
 
 ### 3. Snapshot PNGs -- always available
 
@@ -148,7 +148,7 @@ the launcher, so this shows your layout but not the shipped dialog size.
 ## Why a converted surface is previewable at all
 
 Worth knowing, because it doubles as a smell test. The preview needs no cache,
-no WinForms, and no project data because the kit's boundaries hold:
+no WinForms, and no project data because the dialog boundaries hold:
 
 - the view is a `UserControl`, not a `Window`, so any host can wrap it;
 - the view-model is LCModel-free and takes a plain input DTO, so sample data
@@ -174,7 +174,7 @@ host. Treat difficulty here as a design signal, not a tooling problem.
   button belong to the modal host form. You cannot style them from the
   `.axaml`, and neither loop above shows them.
 - **Converted dialogs render on the Fluent background, not WinForms grey**, and
-  use the Fluent font family. That is kit-wide, not something your dialog did.
+  use the Fluent font family. That is stack-wide, not something your dialog did.
   Changing it means editing `DialogTheme.axaml`'s `fwDialogRoot` style, which
   restyles **every** converted dialog -- treat it as its own change, with dark
   mode considered.

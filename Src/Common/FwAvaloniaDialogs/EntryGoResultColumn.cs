@@ -44,7 +44,7 @@ namespace FwAvaloniaDialogs
 		/// <summary>
 		/// Optional writing-system typography for this column's cells (font family/size, right-to-left),
 		/// reusing the search-box spec shape; the <see cref="EntryGoSearchFieldSpec.Focused"/> callback is
-		/// ignored for columns. Null keeps the kit's default text rendering.
+		/// ignored for columns. Null keeps the shared default text rendering.
 		/// </summary>
 		public EntryGoSearchFieldSpec Typography { get; set; }
 
@@ -52,10 +52,10 @@ namespace FwAvaloniaDialogs
 		public double Width { get; set; } = 1;
 
 		/// <summary>
-		/// The kit's fallback column set when a consumer supplies none: Headword + Glosses with default
+		/// The shared fallback column set when a consumer supplies none: Headword + Glosses with default
 		/// typography — the legacy matchingEntries browser's default-visible columns
 		/// (areaConfiguration.xml: "Headword" ws=best vernoranal and "Glosses" ws=best analorvern are the only
-		/// columns without visibility="menu"). Headers come from the kit's localized strings.
+		/// columns without visibility="menu"). Headers come from the shared localized strings.
 		/// </summary>
 		public static IReadOnlyList<EntryGoResultColumn> DefaultColumns() => new[]
 		{

@@ -18,7 +18,7 @@ namespace FwAvaloniaDialogs
 	/// (the POS hierarchy, slot provider, and the initial MsaType the entry's morph type implies — the lift of the
 	/// legacy <c>MSAGroupBox.MorphTypePreference</c>).
 	///
-	/// Mirrors <see cref="InsertEntryDlgInput"/>'s shape for the gloss + MSA fields so the kit stays LCModel-free.
+	/// Mirrors <see cref="InsertEntryDlgInput"/>'s shape for the gloss + MSA fields so the shared dialog stays LCModel-free.
 	/// </summary>
 	public sealed class AddNewSenseDlgInput
 	{

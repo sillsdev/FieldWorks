@@ -65,9 +65,9 @@ namespace FwAvaloniaDialogs
 	}
 
 	/// <summary>
-	/// Avalonia analog of <see cref="System.Windows.Forms.MessageBox"/> for the FieldWorks dialog kit. Call sites
+	/// Avalonia analog of <see cref="System.Windows.Forms.MessageBox"/> for the FieldWorks dialog stack. Call sites
 	/// read like the legacy <c>MessageBox.Show(owner, message, title, buttons, icon)</c> but the dialog renders in
-	/// Avalonia (the kit's <see cref="MessageBoxView"/> + <see cref="MessageBoxViewModel"/>) hosted in a
+	/// Avalonia (the shared <see cref="MessageBoxView"/> + <see cref="MessageBoxViewModel"/>) hosted in a
 	/// WinForms-owned modal window via <see cref="AvaloniaDialogHost.ShowModal"/> during coexistence.
 	/// Button labels are localized (<see cref="FwAvaloniaDialogsStrings"/>), the default
 	/// button takes focus, and compact density is applied by the host. Replaces raw <c>MessageBox.Show</c> in the

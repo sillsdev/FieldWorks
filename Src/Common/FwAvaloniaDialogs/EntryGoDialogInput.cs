@@ -8,7 +8,7 @@ using System.Collections.Generic;
 namespace FwAvaloniaDialogs
 {
 	/// <summary>
-	/// The LCModel-free input to the reusable Avalonia entry-search ("go") dialog — the kit's analog of the
+	/// The LCModel-free input to the reusable Avalonia entry-search ("go") dialog — the Avalonia analog of the
 	/// legacy <c>EntryGoDlg</c> FAMILY (one concrete consumer is Merge Entry; the same dialog re-skins
 	/// for AddAllomorph / LinkEntryOrSense / LinkAllomorph / LinkMSA with only title/button/prompt/filter
 	/// differences). The product edge (the LexText launcher) builds this from the live entry repository so the
@@ -50,7 +50,7 @@ namespace FwAvaloniaDialogs
 
 		/// <summary>
 		/// The opt-in writing-system presentation for the search box (font / right-to-left / keyboard-on-focus —
-		/// the legacy BaseGoDlg vernacular FwTextBox behavior). Null (the default) keeps the plain kit search box.
+		/// the legacy BaseGoDlg vernacular FwTextBox behavior). Null (the default) keeps the plain search box.
 		/// </summary>
 		public EntryGoSearchFieldSpec SearchField { get; set; }
 

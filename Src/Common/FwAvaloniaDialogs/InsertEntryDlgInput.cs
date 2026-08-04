@@ -105,7 +105,7 @@ namespace FwAvaloniaDialogs
 		/// <summary>
 		/// The morph-type → grammatical-info class map (key = morph-type guid string, value = <see cref="FwMsaType"/>),
 		/// mirroring the WinForms <c>MSAGroupBox.MorphTypePreference</c> switch. The dialog uses it to drive the MSA
-		/// box's <see cref="MSAGroupBox.MsaType"/> LIVE as the user's morph-type selection changes, so the kit stays
+		/// box's <see cref="MSAGroupBox.MsaType"/> LIVE as the user's morph-type selection changes, so the shared dialog stays
 		/// LCModel-free. A morph type absent from the map (or a null map) falls back to <see cref="InitialMsaType"/>.
 		/// </summary>
 		public IReadOnlyDictionary<string, FwMsaType> MorphTypeToMsaType { get; set; }
@@ -154,7 +154,7 @@ namespace FwAvaloniaDialogs
 		/// <summary>
 		/// The selectable complex-form types (flat; key = complex-entry-type guid string, name = display name),
 		/// in sorted display order — the legacy <c>m_cbComplexFormType</c> items after its leading "&lt;Not
-		/// Applicable&gt;" entry (the kit prepends that itself). The launcher builds this from
+		/// Applicable&gt;" entry (the dialog prepends that itself). The launcher builds this from
 		/// <c>LexDbOA.ComplexEntryTypesOA.ReallyReallyAllPossibilities</c>. Empty (the default) leaves the picker
 		/// with only the "&lt;Not Applicable&gt;" row, so existing consumers that never set it are unaffected.
 		/// </summary>
@@ -165,7 +165,7 @@ namespace FwAvaloniaDialogs
 
 		/// <summary>
 		/// The morph-type-guid → <see cref="ComplexFormGating"/> map — the data lift of the WinForms
-		/// <c>EnableComplexFormTypeCombo</c> switch, supplied so the kit stays LCModel-free. As the user's
+		/// <c>EnableComplexFormTypeCombo</c> switch, supplied so the shared dialog stays LCModel-free. As the user's
 		/// morph-type selection changes the dialog reads this to set the complex-form picker's enabled state and,
 		/// for the bound-root/root case, force the selection back to "&lt;Not Applicable&gt;". A morph type absent
 		/// from the map (or a null map) defaults to <see cref="ComplexFormGating.EnabledNotApplicable"/> (the
@@ -177,7 +177,7 @@ namespace FwAvaloniaDialogs
 	/// <summary>
 	/// How the morph-type selection gates the Insert Entry dialog's Complex Form Type picker — the data lift of the
 	/// WinForms <c>InsertEntryDlg.EnableComplexFormTypeCombo</c> switch (LT-21666). The launcher supplies one of
-	/// these per morph type so the LCModel-free kit can drive the picker without referencing morph-type guids.
+	/// these per morph type so the LCModel-free dialog can drive the picker without referencing morph-type guids.
 	/// </summary>
 	public enum ComplexFormGating
 	{

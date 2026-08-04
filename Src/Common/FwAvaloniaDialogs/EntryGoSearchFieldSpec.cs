@@ -12,15 +12,15 @@ namespace FwAvaloniaDialogs
 	/// in the writing system's default font, honors its right-to-left script, and switches to its keyboard on focus
 	/// (the legacy <c>EditingHelper.SetKeyboardForWs</c> behavior). The launcher derives the values from the live
 	/// writing system and the Avalonia layer applies them without ever seeing LCModel. A null spec on
-	/// <see cref="EntryGoDialogInput.SearchField"/> leaves the search box entirely at kit defaults.
+	/// <see cref="EntryGoDialogInput.SearchField"/> leaves the search box entirely at the shared defaults.
 	/// </summary>
 	public sealed class EntryGoSearchFieldSpec
 	{
 		/// <summary>The font family the query renders in (the writing system's default font); null/empty keeps the
-		/// kit's default font.</summary>
+		/// shared default font.</summary>
 		public string FontFamily { get; set; }
 
-		/// <summary>The font size in points; 0 (the default) keeps the kit's default size — the same
+		/// <summary>The font size in points; 0 (the default) keeps the shared default size — the same
 		/// zero-means-default convention the detail surface's per-ws value rows use.</summary>
 		public double FontSize { get; set; }
 

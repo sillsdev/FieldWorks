@@ -17,7 +17,7 @@ namespace SIL.FieldWorks.LexText.Controls
 	/// replacement for the legacy plain <see cref="EntryGoDlg"/> (no starting entry, no link/merge side effect):
 	/// the "Go to Lexical Entry" command (<see cref="GoLinkEntryDlgListener.OnGotoLexEntry"/>). The user searches
 	/// for an entry and the dialog returns the chosen <c>ILexEntry</c>; the caller navigates to it. It REUSES the
-	/// existing <see cref="EntryGoDialogViewModel"/>/<see cref="EntryGoDialogView"/> kit exactly like
+	/// existing <see cref="EntryGoDialogViewModel"/>/<see cref="EntryGoDialogView"/> exactly like
 	/// <see cref="LcmMergeEntryDialogLauncher"/>/<see cref="LcmAddAllomorphDialogLauncher"/>; there is no starting
 	/// entry to exclude (parity with the legacy <c>dlg.SetDlgInfo(cache, null, mediator, propertyTable)</c> call)
 	/// and no model mutation — this launcher only resolves the chosen entry.

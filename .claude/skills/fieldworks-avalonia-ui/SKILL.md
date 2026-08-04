@@ -35,18 +35,18 @@ validation, and lifetime. Canonical code to imitate:
 - Headless test setup: `Src/Common/FwAvalonia/FwAvaloniaTests/TestAppBuilder.cs`;
   examples in `DetailEditingTests.cs`, `VisualParityAndDensityTests.cs`
 - Density constants: `Src/Common/FwAvalonia/FwAvaloniaDensity.cs`
-- **Dialog kit (XAML + CommunityToolkit.Mvvm + compiled bindings):**
+- **Dialog stack (XAML + CommunityToolkit.Mvvm + compiled bindings):**
   `Src/Common/FwAvaloniaDialogs/` — `LexOptionsDlgView.axaml`/`.axaml.cs` +
   `LexOptionsDlgViewModel.cs`; headless tests in `FwAvaloniaDialogsTests/`.
   This is the verified template for hand-authored dialogs — see
-  "Converting a WinForms dialog (MVVM kit)" below.
+  "Converting a WinForms dialog (MVVM dialog stack)" below.
 
 **Re-implementing a Phase-1 deferred screen (JIRA tickets).** The full recipe (per-screen
 `Docs/migration/<screen>.md` on the never-merged `phase1-docs` branch, stub recovery from git
 history, which canonical screen to copy, `UIMode=New` re-wiring) is canonical in the migration
 hub skill — `.claude/skills/fieldworks-winforms-to-avalonia-migration/SKILL.md`; start there.
 
-## Converting a WinForms dialog (MVVM kit)
+## Converting a WinForms dialog (MVVM dialog stack)
 
 Hand-authored dialogs/wizards use **XAML + CommunityToolkit.Mvvm + compiled
 bindings** — NOT the region/IR pattern (that is only for XML-view-definition
@@ -117,7 +117,7 @@ Rules specific to dialogs:
   register, and paired-edit rules live in the `dialog-update` skill.
 - **Scope:** simple/confirmation/settings dialogs are good junior+AI work;
   Views-engine-coupled dialogs (Find/Replace, Styles host `IVwRootSite`)
-  belong with the document engine (Stage 9), NOT this kit.
+  belong with the document engine (Stage 9), NOT this stack.
 
 ## Required Checks
 

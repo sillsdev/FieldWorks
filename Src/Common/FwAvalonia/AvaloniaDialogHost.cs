@@ -13,7 +13,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 {
 	/// <summary>
 	/// Reusable host that shows an Avalonia dialog body (a <c>UserControl</c>) inside a WinForms-owned
-	/// modal <see cref="Form"/> during coexistence — the turn-key piece for the MVVM dialog kit. Because
+	/// modal <see cref="Form"/> during coexistence — the turn-key piece for the MVVM dialog stack. Because
 	/// Avalonia modal windows are not supported while WinForms owns the message loop,
 	/// the dialog body is hosted in a WinForms modal window owned by the caller's form; the view-model
 	/// closes it by raising <see cref="IDialogViewModel.CloseRequested"/> (no windowing in the VM).
@@ -64,7 +64,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 
 			FwAvaloniaRuntime.EnsureInitialized();
 
-			// Compact density so every kit dialog matches the legacy WinForms dialog density, not the
+			// Compact density so every hosted dialog matches the legacy WinForms dialog density, not the
 			// roomy Fluent defaults. Applied here (the single dialog chokepoint) so new dialogs inherit it.
 			CompactDialogStyles.Apply(dialogBody);
 
@@ -113,7 +113,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 					{
 						// Nested-modal fix (confirmed live): a caller can pass a stale owner (e.g. the main
 						// window captured once at launcher-construction time) even when a DIFFERENT modal
-						// dialog from this same kit is the form actually on screen right now (a dialog opening
+						// dialog from this same stack is the form actually on screen right now (a dialog opening
 						// another dialog, like Feature Manager from Options). Windows ties activation/
 						// input-focus eligibility to the owner chain, so showing modally over a stale owner
 						// left the real topmost dialog holding input focus while this one painted on top but
@@ -269,7 +269,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 			}
 
 			// The first focusable INPUT in tab order — never a command button. If a picker-driven dialog
-			// exposes no focusable field (the kit's owned FwOptionChooser is deliberately Focusable=false and
+			// exposes no focusable field (the owned FwOptionChooser is deliberately Focusable=false and
 			// handles keys directly), focus nothing rather than landing on OK, where Enter would accept the
 			// dialog. So this is a no-op for picker dialogs (no regression) and focuses the first text field
 			// for text-first dialogs (InsertEntry/EntryGo).

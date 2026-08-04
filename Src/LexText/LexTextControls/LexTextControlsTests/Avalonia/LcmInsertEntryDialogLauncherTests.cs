@@ -368,7 +368,7 @@ namespace LexTextControlsTests
 			var input = LcmInsertEntryDialogLauncher.BuildInput(Cache, tssForm: null);
 			Assert.That(input.PosNodes, Is.Not.Empty, "the project POS hierarchy is fed to the MSA box");
 			Assert.That(input.MorphTypeToMsaType, Is.Not.Null.And.Not.Empty,
-				"the morph-type → MsaType map is supplied so the kit reconfigures live without LCModel");
+				"the morph-type → MsaType map is supplied so the shared dialog reconfigures live without LCModel");
 			Assert.That(input.SlotsForPos, Is.Not.Null, "the per-POS slot provider is wired");
 			Assert.That(input.InitialMsaType, Is.EqualTo(FwMsaType.Stem), "the box opens stem (the default morph type)");
 		}

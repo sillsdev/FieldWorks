@@ -22,7 +22,7 @@ namespace SIL.FieldWorks.LexText.Controls
 	/// The LCModel-aware launcher for the reusable Avalonia entry-search ("go") dialog re-skinned as the New-UI
 	/// replacement for the legacy <see cref="AddAllomorphDlg"/> (an <c>EntryGoDlg</c> child): the user searches for
 	/// an entry, and on OK the typed form is added as an allomorph to the chosen entry. It REUSES the existing
-	/// <see cref="EntryGoDialogViewModel"/>/<see cref="EntryGoDialogView"/> kit exactly like
+	/// <see cref="EntryGoDialogViewModel"/>/<see cref="EntryGoDialogView"/> exactly like
 	/// <see cref="LcmMergeEntryDialogLauncher"/>; only the title/OK/prompt text, the search filter, and the on-OK
 	/// operation differ. Unlike the Link* launchers (whose on-OK action is performed by the caller), this launcher
 	/// performs its OWN model mutation — adding the allomorph in one undoable step.

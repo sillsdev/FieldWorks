@@ -101,7 +101,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				string helpTopic = "khtpChooseLexicalEntryOrSense-" + ShowHelp.RemoveSpaces(this.Slice.Label);
 
 				// New-UI gate (mirrors the Merge / Insert Entry / Options dialog gates): in New mode launch the
-				// Avalonia Choose-Lexical-Entry-or-Sense dialog (the reusable entry-search/"go" kit dialog); Legacy
+				// Avalonia Choose-Lexical-Entry-or-Sense dialog (the reusable entry-search/"go" dialog); Legacy
 				// mode keeps the WinForms LinkEntryOrSenseDlg. Both paths AddItem the chosen object the same way.
 				var uiMode = m_propertyTable.GetStringProperty("UIMode", null);
 				if (UIModeGates.ShouldUseAvaloniaUI(uiMode))

@@ -184,7 +184,7 @@ namespace FwAvaloniaDialogsTests
 		[AvaloniaTest]
 		public void HeaderRow_ShowsTheDefaultLocalizedColumnHeaders()
 		{
-			// No ResultColumns on the input → the kit default: Headword + Glosses (the legacy matchingEntries
+			// No ResultColumns on the input → the shared default: Headword + Glosses (the legacy matchingEntries
 			// browser's default-visible columns), headers from the localized strings.
 			var (view, vm) = Show(Input());
 			Assert.That(vm.Columns.Select(c => c.Field),
@@ -890,7 +890,7 @@ namespace FwAvaloniaDialogsTests
 
 		// ===== Opt-in writing-system-aware search box (the legacy BaseGoDlg vernacular FwTextBox): the spec drives
 		// the box's font family/size and flow direction, and its Focused callback fires on each focus gain (the
-		// legacy keyboard switch). A null spec keeps the plain kit search box untouched. =====
+		// legacy keyboard switch). A null spec keeps the plain search box untouched. =====
 
 		private static TextBox SearchBox(Control view)
 			=> FindByAutomationId<TextBox>(view, "EntryGo.Search");
@@ -945,9 +945,9 @@ namespace FwAvaloniaDialogsTests
 
 			var box = SearchBox(view);
 			Assert.That(box.IsSet(TextBox.FontFamilyProperty), Is.False, "no local font family is applied");
-			// The kit theme (DialogTheme density) styles dialog TextBoxes at 12px; a null spec must leave that
+			// The shared dialog theme (DialogTheme density) styles dialog TextBoxes at 12px; a null spec must leave that
 			// styled value in charge rather than planting a local size on the box.
-			Assert.That(box.FontSize, Is.EqualTo(12), "the kit's density font size stays in charge");
+			Assert.That(box.FontSize, Is.EqualTo(12), "the shared density font size stays in charge");
 			Assert.That(box.FlowDirection, Is.EqualTo(FlowDirection.LeftToRight), "the flow stays left-to-right");
 			Assert.That(() => FocusSearch(view), Throws.Nothing, "focusing without a spec is a no-op");
 		}

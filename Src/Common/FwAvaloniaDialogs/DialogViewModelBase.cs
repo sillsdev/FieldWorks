@@ -12,7 +12,7 @@ using SIL.FieldWorks.Common.FwAvalonia;
 namespace FwAvaloniaDialogs
 {
 	/// <summary>
-	/// Shared base for the MVVM dialog kit's view-models so a new dialog is "view + VM + ShowModal", not a
+	/// Shared base for the MVVM dialog stack's view-models so a new dialog is "view + VM + ShowModal", not a
 	/// copy of the Options dialog's close/OK/Cancel plumbing. It owns the host-close contract
 	/// (<see cref="IDialogViewModel.CloseRequested"/>), the generated <c>OkCommand</c>/<c>CancelCommand</c>,
 	/// and the <see cref="Accepted"/> result. On OK it runs the <see cref="ApplyChanges"/> convention

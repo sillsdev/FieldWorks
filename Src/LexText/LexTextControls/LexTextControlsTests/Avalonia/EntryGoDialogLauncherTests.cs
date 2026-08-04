@@ -16,7 +16,7 @@ namespace LexTextControlsTests
 {
 	/// <summary>
 	/// The LCModel-aware side of the remaining EntryGoDlg children wired as Avalonia consumers of the reusable
-	/// entry-search ("go") kit dialog: Add Allomorph (<see cref="LcmAddAllomorphDialogLauncher"/>), Link Entry or
+	/// entry-search ("go") dialog: Add Allomorph (<see cref="LcmAddAllomorphDialogLauncher"/>), Link Entry or
 	/// Sense (<see cref="LcmLinkEntryOrSenseDialogLauncher"/>), Link Allomorph
 	/// (<see cref="LcmLinkAllomorphDialogLauncher"/>), and Link MSA (<see cref="LcmLinkMsaDialogLauncher"/>). Each
 	/// reuses the SAME EntryGoSearchEngine matching as Merge; the modal loop is desktop-only and is covered by the

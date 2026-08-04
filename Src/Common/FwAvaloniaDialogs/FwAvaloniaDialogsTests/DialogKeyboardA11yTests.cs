@@ -22,7 +22,7 @@ namespace FwAvaloniaDialogsTests
 	/// <summary>
 	/// Keyboard-accessibility parity for the kept dialog spine: tab order and initial focus.
 	/// Legacy WinForms dialogs opened with focus in the first field and tabbed
-	/// fields-before-buttons; the Avalonia kit must match. These run on a realized headless surface and
+	/// fields-before-buttons; the Avalonia dialogs must match. These run on a realized headless surface and
 	/// assert the deterministic selection contract of <see cref="AvaloniaDialogHost.FocusInitialControl"/>
 	/// plus the per-view TabIndex that pushes the button strip last — independent of the WinForms-hosted
 	/// modal delivery path, which the desktop UIA environment covers.
@@ -56,7 +56,7 @@ namespace FwAvaloniaDialogsTests
 		[AvaloniaTest]
 		public void FocusInitialControl_PrefersTextInput_OverCommandButton()
 		{
-			// Mirrors the kit layout: a bottom button strip (declared first, TabIndex=1) over content with a
+			// Mirrors the shared dialog layout: a bottom button strip (declared first, TabIndex=1) over content with a
 			// text field. Initial focus must land in the field, never on the command button.
 			var field = new TextBox();
 			var okButton = new Button { TabIndex = 1 };
@@ -122,7 +122,7 @@ namespace FwAvaloniaDialogsTests
 		[AvaloniaTest]
 		public void NativeTabTraversal_FirstStop_IsContentNotButtonStrip()
 		{
-			// Mirrors the kit layout: a button strip declared FIRST but TabIndex=1, over content with a field.
+			// Mirrors the shared dialog layout: a button strip declared FIRST but TabIndex=1, over content with a field.
 			var field = new TextBox();
 			var okButton = new Button { TabIndex = 1 };
 			var strip = new StackPanel { TabIndex = 1 };

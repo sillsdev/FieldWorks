@@ -120,8 +120,8 @@ Fluent `DynamicResource` (see hard rule 1).
 
 **Why `DialogMinControlHeight` is 24, not 22 (or raw WinForms):** the two prior drafts of this token
 disagreed (12/8/6/24/4 vs the recalibrated 10/6/4/22/3) without either being checked against real WinForms
-pixel geometry. Measuring actual `.resx`-authored control sizes across several legacy dialogs this kit
-replaces gives the genuine WinForms baseline:
+pixel geometry. Measuring actual `.resx`-authored control sizes across several legacy dialogs these
+converted dialogs replace gives the genuine WinForms baseline:
 
 | Dialog (`.resx`) | Control | Height |
 |---|---|---|

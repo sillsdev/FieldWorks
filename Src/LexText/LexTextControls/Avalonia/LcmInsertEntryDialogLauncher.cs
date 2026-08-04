@@ -262,7 +262,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			=> pos.Name.BestAnalysisAlternative?.Text ?? pos.ShortName ?? pos.Guid.ToString();
 
 		/// <summary>
-		/// Builds the morph-type guid string → <see cref="FwMsaType"/> map — the data the kit uses to drive the MSA
+		/// Builds the morph-type guid string → <see cref="FwMsaType"/> map — the data the shared dialog uses to drive the MSA
 		/// box's layout live without LCModel. It mirrors the WinForms <c>MSAGroupBox.MorphTypePreference</c> switch:
 		/// stem/bound-stem/phrase → Stem; clitic/root family → Root; the affix family → Unclassified (the box then
 		/// lets the user refine to Inflectional/Derivational via the affix-type combo). Built over the project's
@@ -546,7 +546,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// Builds the complex-form type options (key = complex-entry-type guid string, name = best-analysis display
 		/// name) from <c>LexDbOA.ComplexEntryTypesOA.ReallyReallyAllPossibilities</c>, in sorted display order — the
 		/// lift of the WinForms <c>m_cbComplexFormType</c> fill (which sorts the possibilities and prepends the
-		/// "&lt;Not Applicable&gt;" item; the kit prepends that row itself). Internal so the feed is unit-testable.
+		/// "&lt;Not Applicable&gt;" item; the dialog prepends that row itself). Internal so the feed is unit-testable.
 		/// </summary>
 		internal static IReadOnlyList<DetailChoiceOption> BuildComplexFormTypeOptions(LcmCache cache)
 		{
@@ -1013,7 +1013,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			return msa;
 		}
 
-		// Maps the kit FwMsaType to the LCModel MsaType. FwMsaType.NotSet falls back to the morph-type default.
+		// Maps the shared FwMsaType to the LCModel MsaType. FwMsaType.NotSet falls back to the morph-type default.
 		private static MsaType ToLcmMsaType(FwMsaType type, IMoMorphType morphType)
 		{
 			switch (type)

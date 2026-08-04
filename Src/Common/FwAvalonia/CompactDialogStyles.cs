@@ -15,7 +15,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 	/// Compact density for Avalonia dialogs — the design baseline so migrated dialogs match the legacy
 	/// WinForms dialog density (small font, tight padding, no Fluent min-height floors) rather than the
 	/// roomy Fluent defaults. Applied once by <see cref="AvaloniaDialogHost"/> to every hosted dialog
-	/// body, so EVERY dialog shown through the kit inherits it automatically — new dialogs need no
+	/// body, so EVERY dialog shown through the host inherits it automatically — new dialogs need no
 	/// per-dialog density work. Scoped to the dialog's control subtree (added to its <c>Styles</c>), so
 	/// it never affects the detail/table surfaces, which own their own density (<see cref="FwAvaloniaDensity"/>).
 	///

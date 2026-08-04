@@ -7,7 +7,7 @@ using Avalonia.Controls;
 namespace FwAvaloniaDialogs
 {
 	/// <summary>
-	/// Body of the kit's reusable message / confirmation dialog (the Avalonia analog of WinForms MessageBox).
+	/// Body of the reusable message / confirmation dialog (the Avalonia analog of WinForms MessageBox).
 	/// XAML-authored UserControl bound to <see cref="MessageBoxViewModel"/> with compiled bindings, hosted inside
 	/// a WinForms-owned modal Form during coexistence via
 	/// <see cref="SIL.FieldWorks.Common.FwAvalonia.AvaloniaDialogHost.ShowModal"/>. Shown through the

@@ -17,7 +17,7 @@ namespace SIL.FieldWorks.LexText.Controls
 {
 	/// <summary>
 	/// The LCModel-aware launcher for the reusable Avalonia entry-search ("go") dialog, wired as a concrete
-	/// consumer of that kit dialog: Merge Entry (the New-UI replacement for the legacy <see cref="MergeEntryDlg"/>,
+	/// consumer of that shared dialog: Merge Entry (the New-UI replacement for the legacy <see cref="MergeEntryDlg"/>,
 	/// itself an <c>EntryGoDlg</c> child). It is a concrete
 	/// <see cref="AvaloniaDialogLauncher{TState,TViewModel,TPayload}"/>: the Avalonia layer (FwAvaloniaDialogs)
 	/// stays LCModel-free by exchanging an <see cref="EntryGoDialogInput"/> (configurable title/OK/prompt text + a
