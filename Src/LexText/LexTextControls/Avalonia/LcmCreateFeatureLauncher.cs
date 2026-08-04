@@ -50,12 +50,6 @@ namespace SIL.FieldWorks.LexText.Controls
 	///     — exactly <c>MasterPhonologicalFeatureListDlg.linkLabel1_LinkClicked</c>.
 	///   * Add value: create an <c>IFsSymFeatVal</c> under the closed feature's <c>ValuesOC</c>, named from the dialog.
 	///
-	/// PARITY: the MGA-catalog IMPORT path (pick a feature from EticGlossList.xml /
-	/// PhonFeatsEticGlossList.xml via <c>AddFeatureFromXml</c>) is NOT ported here — it needs the MGA assembly + the
-	/// WinForms GlossList tree parser, outside this launcher's clean reach. The blank-create primitive (the common
-	/// "I need a feature that doesn't exist yet" case) is fully wired + tested; the catalog import remains the legacy
-	/// MasterInflectionFeatureListDlg / MasterPhonologicalFeatureListDlg flow.
-	///
 	/// Layering mirrors <see cref="LcmCreatePartOfSpeechLauncher"/>: the create cores
 	/// (<see cref="CreateClosedFeature"/> / <see cref="CreateValue"/>) are internal static so the
 	/// name → new-feature/value + node round-trip is unit-testable against a real cache (via InternalsVisibleTo)

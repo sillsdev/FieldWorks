@@ -20,7 +20,7 @@ namespace FwAvaloniaDialogsTests
 {
 	/// <summary>
 	/// The reusable entry-search ("go") dialog (the Avalonia replacement for the legacy EntryGoDlg/BaseGoDlg
-	/// family). PARITY (MatchingObjectsBrowser): the matching entries fill the dialog body as a PERSISTENT,
+	/// family). The matching entries fill the dialog body as a PERSISTENT,
 	/// multi-column list under the search box, live-updating as the user types — a header row plus per-row column
 	/// cells built from the launcher's column spec (headword in the vernacular font, glosses in the analysis
 	/// font), never a focus-gated overlay. Up/Down in the search box move the list selection while the caret
@@ -149,9 +149,8 @@ namespace FwAvaloniaDialogsTests
 			Assert.That(vm.Results.Select(r => r.Id), Is.EqualTo(new[] { "11" }), "a longer query narrows further");
 		}
 
-		// ===== The persistent multi-column matching list (PARITY: MatchingObjectsBrowser — the legacy browse
-		// view fills the dialog body, always visible, live-updating; the default columns are the legacy
-		// matchingEntries browser's default-visible set: Headword + Glosses). =====
+		// ===== The persistent multi-column matching list: fills the dialog body, always visible,
+		// live-updating; the default columns are Headword + Glosses. =====
 
 		[AvaloniaTest]
 		public void ResultsList_IsPersistent_AndRendersRowsWithoutFocus()
@@ -259,8 +258,8 @@ namespace FwAvaloniaDialogsTests
 				"an analysis column's cells render in the analysis font");
 		}
 
-		// ===== Arrow-key navigation from the search box (PARITY: BaseGoDlg.m_tbForm_KeyDown — Up/Down in the
-		// find box move the matching-browser selection while the caret stays in the box). =====
+		// ===== Arrow-key navigation from the search box: Up/Down move the matching-list selection while
+		// the caret stays in the box. =====
 
 		[AvaloniaTest]
 		public void DownArrowInSearchBox_MovesSelectionDownTheList()
