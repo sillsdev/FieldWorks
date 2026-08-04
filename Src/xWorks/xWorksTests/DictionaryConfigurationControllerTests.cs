@@ -1679,7 +1679,8 @@ namespace SIL.FieldWorks.XWorks
 				//SUT
 				dcc.View.TreeControl.Tree.TopNode.Checked = false;
 				((TestConfigurableDictionaryView)dcc.View).DoSaveModel();
-				Assert.That(dcc.MasterRefreshRequired, Is.True, "Should have saved changes and required a Master Refresh");
+				Assert.That(dcc.RefreshRequired, Is.EqualTo(DictionaryConfigurationController.RefreshLevel.DictionaryContent),
+					"Should have saved changes and required a refresh of the dictionary content");
 				DeleteConfigurationTestModelFiles(dcc);
 			}
 		}
@@ -1701,7 +1702,8 @@ namespace SIL.FieldWorks.XWorks
 				var dcc = new DictionaryConfigurationController(testView, m_propertyTable, null, entryWithHeadword);
 				//SUT
 				dcc.View.TreeControl.Tree.TopNode.Checked = false;
-				Assert.That(dcc.MasterRefreshRequired, Is.False, "Should not have saved changes--user did not click OK or Apply");
+				Assert.That(dcc.RefreshRequired, Is.EqualTo(DictionaryConfigurationController.RefreshLevel.None),
+					"Should not have saved changes--user did not click OK or Apply");
 				DeleteConfigurationTestModelFiles(dcc);
 			}
 		}
@@ -1723,7 +1725,87 @@ namespace SIL.FieldWorks.XWorks
 				var dcc = new DictionaryConfigurationController(testView, m_propertyTable, null, entryWithHeadword);
 				//SUT
 				((TestConfigurableDictionaryView)dcc.View).DoSaveModel();
-				Assert.That(dcc.MasterRefreshRequired, Is.False, "Should not have saved changes--none to save");
+				Assert.That(dcc.RefreshRequired, Is.EqualTo(DictionaryConfigurationController.RefreshLevel.None),
+					"Should not have saved changes--none to save");
+				DeleteConfigurationTestModelFiles(dcc);
+			}
+		}
+
+		[Test]
+		public void StylesDialogChangesRequireMasterRefresh()
+		{
+			var headwordNode = new ConfigurableDictionaryNode();
+			var entryNode = new ConfigurableDictionaryNode { Children = new List<ConfigurableDictionaryNode> { headwordNode } };
+			m_model.Parts = new List<ConfigurableDictionaryNode> { entryNode };
+			CssGeneratorTests.PopulateFieldsForTesting(m_model);
+			using (var testView = new TestConfigurableDictionaryView())
+			{
+				var entryWithHeadword = CreateLexEntryWithHeadword();
+
+				m_propertyTable.SetProperty("currentContentControl", "lexiconDictionary", false);
+				Cache.ProjectId.Path = Path.Combine(FwDirectoryFinder.SourceDirectory, "xWorks/xWorksTests/TestData/");
+
+				var dcc = new DictionaryConfigurationController(testView, m_propertyTable, null, entryWithHeadword);
+				//SUT
+				dcc.HandleStylesDialogMadeChanges();
+				// Styles are rendered outside the generated dictionary content, so this must never
+				// weaken to DictionaryContent/None. Master is currently the only stronger level; if a
+				// narrower invalidation that still reaches the other views is ever added, it is fine
+				// to update this assertion deliberately.
+				Assert.That(dcc.RefreshRequired, Is.EqualTo(DictionaryConfigurationController.RefreshLevel.Master),
+					"Styles changes must refresh more than the generated dictionary content");
+				DeleteConfigurationTestModelFiles(dcc);
+			}
+		}
+
+		[Test]
+		public void HomographConfigurationChangesRequireMasterRefresh()
+		{
+			var headwordNode = new ConfigurableDictionaryNode();
+			var entryNode = new ConfigurableDictionaryNode { Children = new List<ConfigurableDictionaryNode> { headwordNode } };
+			m_model.Parts = new List<ConfigurableDictionaryNode> { entryNode };
+			CssGeneratorTests.PopulateFieldsForTesting(m_model);
+			using (var testView = new TestConfigurableDictionaryView())
+			{
+				var entryWithHeadword = CreateLexEntryWithHeadword();
+
+				m_propertyTable.SetProperty("currentContentControl", "lexiconDictionary", false);
+				Cache.ProjectId.Path = Path.Combine(FwDirectoryFinder.SourceDirectory, "xWorks/xWorksTests/TestData/");
+
+				var dcc = new DictionaryConfigurationController(testView, m_propertyTable, null, entryWithHeadword);
+				//SUT
+				dcc.HandleHomographConfigurationChanged();
+				// Homograph numbers are rendered outside the generated dictionary content (e.g. the
+				// Browse Headword column), so this must never weaken to DictionaryContent/None. Master
+				// is currently the only stronger level; if a narrower invalidation that still reaches
+				// those views is ever added, it is fine to update this assertion deliberately.
+				Assert.That(dcc.RefreshRequired, Is.EqualTo(DictionaryConfigurationController.RefreshLevel.Master),
+					"Homograph configuration changes must refresh more than the generated dictionary content");
+				DeleteConfigurationTestModelFiles(dcc);
+			}
+		}
+
+		[Test]
+		public void SavingAfterHomographConfigurationChangeDoesNotDowngradeRefreshLevel()
+		{
+			var headwordNode = new ConfigurableDictionaryNode();
+			var entryNode = new ConfigurableDictionaryNode { Children = new List<ConfigurableDictionaryNode> { headwordNode } };
+			m_model.Parts = new List<ConfigurableDictionaryNode> { entryNode };
+			CssGeneratorTests.PopulateFieldsForTesting(m_model);
+			using (var testView = new TestConfigurableDictionaryView())
+			{
+				var entryWithHeadword = CreateLexEntryWithHeadword();
+
+				m_propertyTable.SetProperty("currentContentControl", "lexiconDictionary", false);
+				Cache.ProjectId.Path = Path.Combine(FwDirectoryFinder.SourceDirectory, "xWorks/xWorksTests/TestData/");
+
+				var dcc = new DictionaryConfigurationController(testView, m_propertyTable, null, entryWithHeadword);
+				//SUT
+				dcc.HandleHomographConfigurationChanged();
+				dcc.View.TreeControl.Tree.TopNode.Checked = false;
+				((TestConfigurableDictionaryView)dcc.View).DoSaveModel();
+				Assert.That(dcc.RefreshRequired, Is.EqualTo(DictionaryConfigurationController.RefreshLevel.Master),
+					"Saving the configuration afterwards must not downgrade the required refresh to a weaker level");
 				DeleteConfigurationTestModelFiles(dcc);
 			}
 		}

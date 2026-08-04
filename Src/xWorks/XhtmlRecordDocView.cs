@@ -4,6 +4,7 @@
 
 using Gecko;
 using SIL.FieldWorks.Common.FwUtils;
+using static SIL.FieldWorks.Common.FwUtils.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.Utils;
@@ -75,6 +76,29 @@ namespace SIL.FieldWorks.XWorks
 			m_fullyInitialized = true;
 			// Add ourselves as a listener for changes to the item we are displaying
 			Clerk.VirtualListPublisher.AddNotification(this);
+			Subscriber.Subscribe(EventConstants.DictionaryConfigured, RefreshPreviewContent, m_propertyTable.GetWindow());
+		}
+
+		protected override void Dispose(bool disposing)
+		{
+			// Must not be run more than once.
+			if (IsDisposed)
+				return;
+
+			if (disposing)
+			{
+				Subscriber.Unsubscribe(EventConstants.DictionaryConfigured, RefreshPreviewContent);
+			}
+			base.Dispose(disposing);
+		}
+
+		/// <summary>
+		/// Regenerate the preview for the current record. Subscribed to the Pub/Sub
+		/// DictionaryConfigured event so the preview reflects configuration changes.
+		/// </summary>
+		private void RefreshPreviewContent(object _)
+		{
+			ShowRecord();
 		}
 
 		/// <summary>

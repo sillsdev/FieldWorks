@@ -54,6 +54,9 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>Fired whenever the Styles dialog makes changes that require the dictionary preview to be refreshed</summary>
 		public event EventHandler StylesDialogMadeChanges;
 
+		/// <summary>Fired when the Headword Numbers dialog changes the global homograph configuration</summary>
+		public event EventHandler HomographConfigurationChanged;
+
 		/// <summary>Fired whenever the selected node is changed, so that the node tree can be refreshed</summary>
 		public event EventHandler SelectedNodeChanged;
 
@@ -878,6 +881,10 @@ namespace SIL.FieldWorks.XWorks
 				if (dlg.ShowDialog(View.TopLevelControl) != DialogResult.OK)
 					return;
 				controller.Save();
+				// Save() exports the settings to the global HomographConfiguration singleton,
+				// which affects headword rendering outside the generated dictionary content.
+				if (HomographConfigurationChanged != null)
+					HomographConfigurationChanged(m_node, new EventArgs());
 				RefreshPreview();
 			}
 		}
