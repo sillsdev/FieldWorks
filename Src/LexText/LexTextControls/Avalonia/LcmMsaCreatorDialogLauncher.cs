@@ -227,7 +227,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			return FwFeatureStructureAdapter.ReadAssignments(fs);
 		}
 
-		// Map the LCModel MsaType to the kit FwMsaType for seeding the box.
+		// Map the LCModel MsaType to the shared FwMsaType for seeding the box.
 		private static FwMsaType ToFwMsaType(MsaType type)
 		{
 			switch (type)

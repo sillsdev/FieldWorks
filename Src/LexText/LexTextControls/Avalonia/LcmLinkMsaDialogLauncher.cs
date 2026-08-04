@@ -23,7 +23,7 @@ namespace SIL.FieldWorks.LexText.Controls
 	/// replacement for the legacy <see cref="LinkMSADlg"/> (an <c>EntryGoDlg</c> child): the user searches for an
 	/// entry and the dialog returns one of that entry's grammatical-info / MSA objects (an
 	/// <c>IMoMorphSynAnalysis</c>). It REUSES the existing <see cref="EntryGoDialogViewModel"/>/
-	/// <see cref="EntryGoDialogView"/> kit exactly like <see cref="LcmMergeEntryDialogLauncher"/>; only the
+	/// <see cref="EntryGoDialogView"/> exactly like <see cref="LcmMergeEntryDialogLauncher"/>; only the
 	/// title/OK/prompt text, the search filter, and the on-OK resolution differ.
 	///
 	/// The on-OK action of the legacy dialog (adding the chosen MSA to the ad-hoc co-prohibition) is performed by
@@ -31,7 +31,7 @@ namespace SIL.FieldWorks.LexText.Controls
 	/// entry to an <c>IMoMorphSynAnalysis</c> (exposed via <see cref="SelectedObject"/>); it performs no model
 	/// mutation of its own.
 	///
-	/// PARITY: like the legacy dialog's combo of ALL of the chosen entry's MSAs, this launcher supplies the kit's
+	/// PARITY: like the legacy dialog's combo of ALL of the chosen entry's MSAs, this launcher supplies the shared
 	/// dependent auxiliary picker (<see cref="EntryGoDialogInput.AuxiliaryOptions"/>) with one option per MSA in
 	/// legacy order (each displayed by its <c>InterlinearName</c>, keyed by its Guid) and resolves the CHOSEN MSA
 	/// on OK — see <see cref="ResolveSelectedMsa"/>.

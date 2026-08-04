@@ -190,14 +190,14 @@ create-integration-test skill consumes this file verbatim.
 
 ## Planning the replacement (gate)
 
-0. FIRST check kit membership: if the dialog belongs to a family an
-   existing kit already covers (the EntryGo/BaseGoDlg family, the
-   ChooserDialog family), the conversion is a new kit consumer + launcher,
+0. FIRST check whether an existing shared dialog already covers it: if the
+   dialog belongs to a family one serves (the EntryGo/BaseGoDlg family, the
+   ChooserDialog family), the conversion is a new consumer + launcher,
    not a new dialog -- present that finding and shrink the remaining phases
    accordingly.
 0b. DEPENDENCY GATE -- children convert first: every child dialog the
    target opens must already have an Avalonia route (converted, covered by
-   a kit, or a plain message box via `FwMessageBox`). If any child lacks
+   a shared dialog, or a plain message box via `FwMessageBox`). If any child lacks
    one, present the dependency tree with a recommended conversion order,
    record the open gate and its waiting-on list in
    `<DialogClass>-state.md`, and ASK the developer whether to start
@@ -296,7 +296,7 @@ Build conventions the result must satisfy (confirm each in the diff):
 
 - Naming: legacy stem + role suffix (`FooDlgInput` / `FooDlgView.axaml` /
   `FooDlgViewModel` / `FooDlgPayload`) in `Src/Common/FwAvaloniaDialogs/`;
-  kits keep general names.
+  shared dialogs keep general names.
 - Boundaries: the Input carries everything LCModel-free the dialog needs;
   the ViewModel never touches LCModel; the launcher owns all LCModel work inside
   one undo task with the legacy undo text.

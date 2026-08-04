@@ -18,7 +18,7 @@ namespace SIL.FieldWorks.LexText.Controls
 	/// The LCModel-aware launcher for the reusable Avalonia entry-search ("go") dialog re-skinned as the New-UI
 	/// replacement for the legacy <see cref="LinkAllomorphDlg"/> (an <c>EntryGoDlg</c> child): the user searches for
 	/// an entry and the dialog returns one of that entry's allomorphs (an <c>IMoForm</c>). It REUSES the existing
-	/// <see cref="EntryGoDialogViewModel"/>/<see cref="EntryGoDialogView"/> kit exactly like
+	/// <see cref="EntryGoDialogViewModel"/>/<see cref="EntryGoDialogView"/> exactly like
 	/// <see cref="LcmMergeEntryDialogLauncher"/>; only the title/OK/prompt text, the search filter, and the on-OK
 	/// resolution differ.
 	///
@@ -30,7 +30,7 @@ namespace SIL.FieldWorks.LexText.Controls
 	/// abstract, since an abstract-only entry has no concrete allomorph to choose).
 	///
 	/// PARITY: like the legacy dialog's combo of the chosen entry's NON-ABSTRACT forms (lexeme form first, then
-	/// alternates), this launcher supplies the kit's dependent auxiliary picker
+	/// alternates), this launcher supplies the shared dependent auxiliary picker
 	/// (<see cref="EntryGoDialogInput.AuxiliaryOptions"/>) with one option per non-abstract form in that order
 	/// (keyed by the form's Guid) and resolves the CHOSEN form on OK — see <see cref="ResolveSelectedAllomorph"/>.
 	/// </summary>

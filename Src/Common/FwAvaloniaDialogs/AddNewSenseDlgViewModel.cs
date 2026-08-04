@@ -19,7 +19,7 @@ namespace FwAvaloniaDialogs
 	///   * the LCModel-free <see cref="MSAGroupBox"/> grammatical-info editor, seeded from the entry's morph type
 	///     and refined by the user (the legacy <c>m_msaGroupBox</c>).
 	///
-	/// OK is gated through the kit's <c>GetValidationErrors</c>: one error when the gloss is empty — the legacy
+	/// OK is gated through the shared base's <c>GetValidationErrors</c>: one error when the gloss is empty — the legacy
 	/// <c>AddNewSenseDlg_Closing</c> rule (an empty <c>m_fwtbGloss</c> shows <c>ksFillInGloss</c> and cancels OK).
 	/// <c>ApplyChanges</c> snapshots the per-WS gloss values + the box's <see cref="FwSandboxMsa"/> into
 	/// <see cref="Result"/>; the launcher reads it to create the new sense in one undoable step.
@@ -29,7 +29,7 @@ namespace FwAvaloniaDialogs
 		private readonly AddNewSenseDlgInput _input;
 		private readonly InMemoryDetailEditContext _glossContext = new InMemoryDetailEditContext();
 		// The launcher-supplied slot provider (main-POS id -> slot options), re-run when the MSA box's main POS
-		// changes while inflectional; null leaves the slot list empty (the kit stays LCModel-free).
+		// changes while inflectional; null leaves the slot list empty (the shared dialog stays LCModel-free).
 		private readonly Func<string, IReadOnlyList<FwInflectionSlot>> _slotsForPos;
 		private readonly Func<string, IReadOnlyList<FwInflectionClass>> _inflClassesForPos;
 		private readonly Func<string, IReadOnlyList<FwFeatureNode>> _inflFeaturesForPos;

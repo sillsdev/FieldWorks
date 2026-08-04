@@ -33,7 +33,7 @@ namespace SIL.FieldWorks.LexText.Controls
 	/// only when <c>UIMode == New</c>; Legacy keeps the WinForms dialog.
 	///
 	/// This is a concrete subclass of the generic <see cref="AvaloniaDialogLauncher{TState,TViewModel,TPayload}"/>
-	/// dialog-kit scaffold: it implements the LCModel-aware <c>BuildState</c>/<c>CreateViewModel</c>/
+	/// dialog-launcher scaffold: it implements the LCModel-aware <c>BuildState</c>/<c>CreateViewModel</c>/
 	/// <c>CreateView</c>/<c>Apply</c> steps; the scaffold owns the build-VM → ShowModal → dispose → return
 	/// loop. The public static <see cref="Show"/> entry point (kept for the existing callers in LexTextApp and
 	/// WelcomeToFieldWorksDlg) constructs an instance and runs it. A second dialog reuses the scaffold rather
@@ -381,7 +381,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				app.RegistrySettings.AutoOpenLastEditedProject = state.AutoOpenLastProject;
 
 			if (restartRequired)
-				// Avalonia message box (kit) instead of raw WinForms MessageBox — same OK-only prompt text,
+				// Avalonia message box instead of raw WinForms MessageBox — same OK-only prompt text,
 				// hosted in a WinForms-owned modal window via AvaloniaDialogHost so the confirmation matches
 				// the rest of the New-mode surface.
 				FwMessageBox.Show(owner, LexTextControls.RestartToForSettingsToTakeEffect_Content,

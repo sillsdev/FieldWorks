@@ -49,7 +49,7 @@ namespace FwAvaloniaDialogs
 			}
 
 			// Commit-on-select gestures on the matching list itself: a double-click of a row, or Enter on the
-			// highlighted row, commits the selection + closes accepted (the kit's CommitCommand).
+			// highlighted row, commits the selection + closes accepted (the shared CommitCommand).
 			var results = this.FindControl<ListBox>("PART_Results");
 			if (results != null)
 			{
@@ -69,13 +69,13 @@ namespace FwAvaloniaDialogs
 			DataContextChanged += OnDataContextChangedBuildResultColumns;
 
 			// The search box's writing-system presentation (font / RTL) comes from the opt-in spec on the VM, so
-			// apply it once the VM arrives; a null spec touches nothing (the plain kit search box).
+			// apply it once the VM arrives; a null spec touches nothing (the plain search box).
 			DataContextChanged += OnDataContextChangedApplySearchFieldSpec;
 		}
 
 		// Applies the opt-in search-field spec to the realized search box: the writing system's font family/size and
 		// right-to-left flow (the same value-application rules the detail surface uses for its per-ws rows — empty
-		// family / zero size keep the kit defaults). The keyboard-switch callback fires from OnSearchBoxGotFocus.
+		// family / zero size keep the shared defaults). The keyboard-switch callback fires from OnSearchBoxGotFocus.
 		private void OnDataContextChangedApplySearchFieldSpec(object sender, System.EventArgs e)
 		{
 			var spec = ViewModel?.SearchField;
@@ -93,7 +93,7 @@ namespace FwAvaloniaDialogs
 		}
 
 		// The writing-system typography application for a matching-list cell: font family / point size (zero
-		// keeps the kit default) and right-to-left flow, from the column's LCModel-free spec (the same
+		// keeps the shared default) and right-to-left flow, from the column's LCModel-free spec (the same
 		// value-application rules the search box uses; the spec's Focused callback is ignored for columns).
 		private static void ApplyColumnTypography(TextBlock cell, EntryGoSearchFieldSpec spec)
 		{

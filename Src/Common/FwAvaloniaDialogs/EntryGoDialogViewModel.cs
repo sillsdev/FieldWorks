@@ -12,7 +12,7 @@ using CommunityToolkit.Mvvm.Input;
 namespace FwAvaloniaDialogs
 {
 	/// <summary>
-	/// View-model for the reusable Avalonia entry-search ("go") dialog — the kit's analog of the legacy
+	/// View-model for the reusable Avalonia entry-search ("go") dialog — the Avalonia analog of the legacy
 	/// <c>EntryGoDlg</c>/<c>BaseGoDlg</c> family (writing-system-aware search box + persistent matching list). It is
 	/// LCModel-free: the launcher supplies an <see cref="EntryGoDialogInput"/> with a search delegate and the
 	/// configurable title/prompt/filter text, and reads <see cref="ChosenId"/> back when the user commits.
@@ -72,7 +72,7 @@ namespace FwAvaloniaDialogs
 			// The field initializer sets _isSenseMode so OnIsSenseModeChanged does not fire during construction.
 			_isSenseMode = _input.SensesOnly;
 
-			// The matching list's column presentation: the consumer's ordered spec, or the kit default
+			// The matching list's column presentation: the consumer's ordered spec, or the shared default
 			// (headword + glosses — the legacy matchingEntries browser's default-visible columns).
 			Columns = _input.ResultColumns != null && _input.ResultColumns.Count > 0
 				? _input.ResultColumns
@@ -116,7 +116,7 @@ namespace FwAvaloniaDialogs
 
 		/// <summary>
 		/// The matching list's ordered column presentation (header + result field + writing-system typography per
-		/// column) — the consumer's <see cref="EntryGoDialogInput.ResultColumns"/>, or the kit default of headword +
+		/// column) — the consumer's <see cref="EntryGoDialogInput.ResultColumns"/>, or the shared default of headword +
 		/// glosses (the legacy matchingEntries browser's default-visible columns).
 		/// </summary>
 		public IReadOnlyList<EntryGoResultColumn> Columns { get; }
@@ -129,7 +129,7 @@ namespace FwAvaloniaDialogs
 
 		/// <summary>
 		/// The opt-in writing-system presentation for the search box (font / right-to-left / keyboard-on-focus).
-		/// The view applies it to the realized search TextBox; null keeps the plain kit search box.
+		/// The view applies it to the realized search TextBox; null keeps the plain search box.
 		/// </summary>
 		public EntryGoSearchFieldSpec SearchField { get; }
 
@@ -282,7 +282,7 @@ namespace FwAvaloniaDialogs
 
 		/// <summary>
 		/// True when there is a row to commit (a selection exists). Gates <see cref="CommitCommand"/> so a
-		/// double-click / Enter on nothing is a no-op. Shares the validation rule with the kit's
+		/// double-click / Enter on nothing is a no-op. Shares the validation rule with the shared
 		/// <see cref="GetValidationErrors"/> (a selection is required).
 		/// </summary>
 		private bool CanCommit => SelectedResult != null;
@@ -390,7 +390,7 @@ namespace FwAvaloniaDialogs
 				: Results.FirstOrDefault(r => string.Equals(r.Id, previouslyChosen, StringComparison.Ordinal));
 		}
 
-		// ----- commit gating (kit convention): a row must be selected to commit (legacy m_btnOK.Enabled =
+		// ----- commit gating (dialog convention): a row must be selected to commit (legacy m_btnOK.Enabled =
 		// m_selObject != null, now the gate on the commit-on-select path) -----
 
 		protected override IEnumerable<string> GetValidationErrors()

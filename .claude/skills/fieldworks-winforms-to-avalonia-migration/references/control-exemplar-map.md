@@ -20,15 +20,15 @@ migration burden.
 
 | WinForms control (usage signal) | Avalonia counterpart | Exemplar |
 | --- | --- | --- |
-| Button (374) / Label (315) / CheckBox (75) / RadioButton (51) | `Button` / `TextBlock` / `CheckBox` / `RadioButton` — 1:1; use the shared style tokens, never literals | any kit view, e.g. `Src/Common/FwAvaloniaDialogs/EntryGoDialogView.axaml` |
+| Button (374) / Label (315) / CheckBox (75) / RadioButton (51) | `Button` / `TextBlock` / `CheckBox` / `RadioButton` — 1:1; use the shared style tokens, never literals | any converted dialog view, e.g. `Src/Common/FwAvaloniaDialogs/EntryGoDialogView.axaml` |
 | TextBox (116), plain string | `TextBox` | `Src/Common/FwAvaloniaDialogs/CreateFeatureDialogView.axaml` — but FIRST check whether the legacy box carries a writing system; if so it is NOT plain (see §2 "WS typography") |
-| ComboBox (47), FwOverrideComboBox (22 files), FwComboBox (14 files) | `FwOptionChooser` (kit rule: never ad-hoc ComboBox) | `Src/Common/FwAvalonia/Detail/FwOptionChooser.cs`; consumed in `InsertEntryDlgView.axaml` |
+| ComboBox (47), FwOverrideComboBox (22 files), FwComboBox (14 files) | `FwOptionChooser` (dialog rule: never ad-hoc ComboBox) | `Src/Common/FwAvalonia/Detail/FwOptionChooser.cs`; consumed in `InsertEntryDlgView.axaml` |
 | ListBox (17) / CheckedListBox (11) | `ListBox`; multi-select with per-node checkboxes | `Src/Common/FwAvaloniaDialogs/ChooserDialogView.axaml` (flat + multi-select modes) |
 | TreeView (4) + chooser dialogs | virtualizing `TreeView` + `TreeDataTemplate` | `ChooserDialogView.axaml` / `ChooserDialogViewModel.cs` (hierarchy, expand/collapse, filter-swaps-to-flat) |
 | TabControl (6) | `TabControl`, two-way `SelectedTabIndex` | `Src/Common/FwAvaloniaDialogs/LexOptionsDlgView.axaml` |
 | GroupBox (37) | headered composite control | `Src/Common/FwAvaloniaDialogs/MSAGroupBox.cs` |
-| TableLayoutPanel (33) / FlowLayoutPanel (20) / Panel (40) | `Grid` / `StackPanel` / `WrapPanel` — translate layout *semantics*, not widget-for-widget | any kit view; spacing rules in dialog-conversion.md §2a-bis |
-| ToolTip (12) | `ToolTip.Tip` attached property | kit views |
+| TableLayoutPanel (33) / FlowLayoutPanel (20) / Panel (40) | `Grid` / `StackPanel` / `WrapPanel` — translate layout *semantics*, not widget-for-widget | any converted dialog view; spacing rules in dialog-conversion.md §2a-bis |
+| ToolTip (12) | `ToolTip.Tip` attached property | converted dialog views |
 | ContextMenuStrip built in code (22 files) | `MenuFlyout` populated from data | `Src/Common/FwAvalonia/Detail/DetailMenuFlyout.cs` |
 | PictureBox (21) | — (picture editing dropped from the region; a picture slice composes a labeled Unsupported worklist row until a native picture editor is added) | **conversion worklist** (see architecture-patterns.md §5) |
 | ProgressBar / ProgressDialogWithTask | — | **GAP:** [async / threaded progress (GAP-PROGRESS)](#gap-progress) |
@@ -41,8 +41,8 @@ migration burden.
 | FwMultiParaTextBox (1) / StTextSlice | `FwStructuredTextField` (multi-paragraph StText) | `Src/Common/FwAvalonia/Detail/FwStructuredTextField.cs` |
 | TreeCombo (27) + PopupTree/PopupTreeManager (36) | popup tree picker | `Src/Common/FwAvalonia/FwPosChooser.cs` |
 | FeatureStructureTreeView (3) + `MsaInflectionFeatureListDlg` / `PhonologicalFeatureChooserDlg` | `FwFeatureStructureEditor` — LCModel-free `FsFeatStruc` tree editor: complex features expand to nested features, closed features to symbolic-value radios (one per feature) + a "None of the above" unspecified radio, plus inline create-feature / add-value affordances | `Src/Common/FwAvaloniaDialogs/FwFeatureStructureEditor.cs`; composed in `MSAGroupBox.cs` and the feature chooser (`FeatureChooserDialog*`) |
-| SimpleListChooser (26) / ReallySimpleListChooser (22) | ChooserDialog kit (input/result DTOs, single- and multi-select) | `Src/Common/FwAvaloniaDialogs/ChooserDialog*` |
-| BaseGoDlg/EntryGoDlg family (Go, Merge, Link*, AddAllomorph); its embedded MatchingObjectsBrowser | EntryGo kit + per-consumer launcher; persistent multi-column matching list (column spec `EntryGoResultColumn`, arrow-key selection from the search box) | `Src/Common/FwAvaloniaDialogs/EntryGoDialog*`; matching list + dependent auxiliary picker: dialog-conversion.md §2c; WS-aware search box: §2d |
+| SimpleListChooser (26) / ReallySimpleListChooser (22) | `ChooserDialogView`/`ViewModel` (input/result DTOs, single- and multi-select) | `Src/Common/FwAvaloniaDialogs/ChooserDialog*` |
+| BaseGoDlg/EntryGoDlg family (Go, Merge, Link*, AddAllomorph); its embedded MatchingObjectsBrowser | `EntryGoDialogView`/`ViewModel` + per-consumer launcher; persistent multi-column matching list (column spec `EntryGoResultColumn`, arrow-key selection from the search box) | `Src/Common/FwAvaloniaDialogs/EntryGoDialog*`; matching list + dependent auxiliary picker: dialog-conversion.md §2c; WS-aware search box: §2d |
 | MessageBox / one-off confirmation Forms | `FwMessageBox` (owner-parented, Yes/No/OK/Cancel) | `Src/Common/FwAvaloniaDialogs/FwMessageBox.cs`; injectable-seam usage: `LcmAddAllomorphDialogLauncher.PerformAddAllomorph` |
 | DataTree + Slice subclasses (88/61) | region surface: composer → region model → owned field controls (Text / StructuredText / Chooser / ReferenceVector / Literal). Custom slices resolve plugin registry → labeled Unsupported row (the conversion worklist); the sole native plugin exemplar is `ReversalIndexEntryPlugin`. | `Src/xWorks/Avalonia/Composer/DetailComposer.cs`, `Src/Common/FwAvalonia/Detail/DataTree.cs`, `Src/xWorks/Avalonia/Plugins/SlicePlugins.cs`, `Src/xWorks/Avalonia/Plugins/ReversalIndexEntryPlugin.cs` (architecture-patterns.md §2, §5) |
 | FwHelpButton (5) + per-dialog Help | ViewModel `HelpRequested` event → launcher calls `ShowHelp.ShowHelpTopic` | `EntryGoDialogViewModel.cs` + any `Lcm*Launcher` `OnHelpRequested` |
@@ -55,7 +55,7 @@ migration burden.
 | --- | --- |
 | Modal lifecycle: ShowDialog/DialogResult/owner parenting (170/334/73 files) | `Src/Common/FwAvalonia/AvaloniaDialogHost.cs` (`ShowModal`, `ResolveEffectiveOwner`, result mapping) |
 | Window geometry persistence (44 files) | `AvaloniaDialogHost.ApplySizing` + size get/set hooks |
-| Accept/Cancel + Enter/Escape (122 files) | `IsDefault`/`IsCancel` buttons in every kit view |
+| Accept/Cancel + Enter/Escape (122 files) | `IsDefault`/`IsCancel` buttons in every converted dialog view |
 | Commit-on-select vs explicit OK | EntryGo single-stage (no OK button) vs two-stage (dialog-conversion.md §2c); Chooser single-select |
 | Dependent two-stage selection | dialog-conversion.md §2c (`EntryGoAuxiliaryOption`, LinkMSA/LinkAllomorph launchers) |
 | WS typography + keyboard switch on text input (255 files set WS on controls) | editing: `FwMultiWsTextField`; search/entry boxes: `EntryGoSearchFieldSpec` + `EntryGoLauncherShared.BuildVernacularSearchFieldSpec` (dialog-conversion.md §2d) |
@@ -72,14 +72,14 @@ migration burden.
 
 These have **no exemplar**. Do not improvise a local pattern and do not
 copy a WinForms design literally: the first migration that needs one of
-these BUILDS it as the exemplar, kit-shaped (LCModel-free ViewModel/spec in
+these BUILDS it as the exemplar, shaped like the other converted dialogs (LCModel-free ViewModel/spec in
 FwAvaloniaDialogs or FwAvalonia, launcher edge in the consuming assembly,
 headless tests), and then PROMOTES it:
 
 1. Move its row out of this register into the §1/§2 tables with file
    citations.
 2. Add a numbered subsection to dialog-conversion.md (the §2c/§2d shape:
-   what the legacy behavior was, the kit design, the test names).
+   what the legacy behavior was, the shared design, the test names).
 3. Record any surprise in `references/lessons-learned.md` per its update
    protocol.
 
@@ -105,7 +105,7 @@ surface — that is what the fail-closed resolver is for.
   alone has 17 buttons / 31 labels.
 - **First implementation must cover:** Next/Back/Finish state machine,
   per-page validation gating Next, page-visited state, Cancel-with-dirty
-  confirmation. Prefer a small kit base (`WizardViewModelBase`) over
+  confirmation. Prefer a small shared base (`WizardViewModelBase`) over
   per-wizard copies — three known consumers justify it.
 - **Likely first consumer:** the smallest wizard, not NotebookImportWiz.
 
@@ -123,7 +123,7 @@ surface — that is what the fail-closed resolver is for.
 - **Evidence:** `TriStateTreeView` in 6 files (export/filter dialogs).
 - **First implementation must cover:** parent/child check propagation and
   the indeterminate state on `ChooserTreeNode`-style rows; extend the
-  ChooserDialog kit rather than building a parallel tree.
+  `ChooserDialogView`/`ViewModel` rather than building a parallel tree.
 
 <a id="gap-f1-help"></a>
 ### GAP-F1-HELP: Per-control F1 help strings

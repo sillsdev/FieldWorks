@@ -1,7 +1,7 @@
-# Converting a WinForms dialog to Avalonia (MVVM kit)
+# Converting a WinForms dialog to Avalonia (MVVM dialog stack)
 
 The verified playbook for migrating a hand-authored WinForms dialog/wizard to Avalonia using the
-**XAML + CommunityToolkit.Mvvm + compiled bindings** kit. Proven by the **real** Tools→Options
+**XAML + CommunityToolkit.Mvvm + compiled bindings** stack. Proven by the **real** Tools→Options
 migration (`Src/Common/FwAvaloniaDialogs/`): four tabs wired to the live settings bus via an
 `LexOptionsDlgState` DTO seam, launched New-mode-gated from `LexTextApp`/`WelcomeToFieldWorksDlg`
 (`Src/LexText/LexTextControls/Avalonia/AvaloniaOptionsDialogLauncher.cs`), headless tests green on net48
@@ -14,7 +14,7 @@ produced.
 > XML layout to compile.
 >
 > Do NOT convert Views-engine-coupled dialogs here (e.g. `FwFindReplaceDlg`, `FwStylesDlg` host
-> `IVwRootSite`/`SimpleRootSite`) — those go with the document engine (Stage 9), not this kit.
+> `IVwRootSite`/`SimpleRootSite`) — those go with the document engine (Stage 9), not this stack.
 
 ## 0. Where dialogs live
 
@@ -219,9 +219,9 @@ applies the CHOSEN form).
 ## 2d. Writing-system-aware text input (Go-family search box)
 
 The exemplar for giving an Avalonia input the legacy `FwTextBox` writing-system behavior (vernacular
-font, RTL, keyboard switch on focus). The kit side is an LCModel-free spec —
+font, RTL, keyboard switch on focus). The shared side is an LCModel-free spec —
 `EntryGoSearchFieldSpec` (`Src/Common/FwAvaloniaDialogs/EntryGoSearchFieldSpec.cs`: font family,
-point size with 0 = kit default, `RightToLeft`, and a `Focused` callback) — carried as the opt-in
+point size with 0 = the shared default, `RightToLeft`, and a `Focused` callback) — carried as the opt-in
 `EntryGoDialogInput.SearchField` and applied by `EntryGoDialogView.axaml.cs` when the ViewModel arrives
 (FontFamily / FontSize / FlowDirection on `PART_SearchBox`; `Focused` fires on each GotFocus). Null
 spec → the box is untouched (pinned by test). The product side derives the values in
@@ -262,7 +262,7 @@ binding/command behavior is proven by the headless tests.
 ## 5. Localization (don't ship hardcoded strings)
 
 Dialog text is **FieldWorks-owned UI text → the project `.resx`** (apply
-`fieldworks-localization-review`). The dialog kit exposes the static accessor
+`fieldworks-localization-review`). `FwAvaloniaDialogs` exposes the static accessor
 **`FwAvaloniaDialogsStrings`**, which resolves via `ResourceManager` over
 `FwAvaloniaDialogsStrings.resx`; translations ship as Crowdin-built satellite assemblies. To add a
 dialog's strings:
@@ -282,14 +282,14 @@ that a control's `Content` equals the accessor value (proves the `x:Static` bind
 `OptionsDialogTests`. If legacy Avalonia `.resx` files still exist in the repo, treat them as cleanup debt,
 not as the active source of truth.
 
-## 6. Gotchas from building this dialog kit
+## 6. Gotchas from building these dialogs
 
 - **Nested test files leak into the library** unless excluded — the SDK glob compiles
   `FwAvaloniaDialogsTests/**/*.cs` into `FwAvaloniaDialogs` (which lacks NUnit/Headless refs) → CS0246.
   Fix: the `<Compile Remove="…Tests/**/*.cs"/>` in §3 (mirrors `FwAvalonia.csproj`).
 - **Restore is solution-scoped** (`dotnet restore FieldWorks.sln`) but the managed build globs
   `Src\**`. A project not in the `.sln` builds in the traversal without `project.assets.json`
-  (`NETSDK1004`). Every glob-traversed project must therefore also be in the sln (this kit is).
+  (`NETSDK1004`). Every glob-traversed project must therefore also be in the sln (`FwAvaloniaDialogs` is).
 - **Compiled bindings need `x:DataType`** on the view root, or `{Binding}` falls back / fails to compile.
 - The Avalonia XAML compiler composes fine with the customized net48 build: it runs after
   `ResolveAssemblyReferences` and is unaffected by the repo's customized targets, so the XAML projects

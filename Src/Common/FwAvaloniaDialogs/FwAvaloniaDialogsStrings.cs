@@ -145,13 +145,13 @@ namespace FwAvaloniaDialogs
 		// Link Allomorph consumer of the entry-search dialog (legacy LinkAllomorphDlg wording).
 		public static string LinkAllomorphTitle => Text("FwAvaloniaDialogs.LinkAllomorph.Title");
 		// The auxiliary-picker label (legacy LinkAllomorphDlg.resx label3 "&Allomorph:", ampersand mnemonic and
-		// trailing colon dropped per the kit's label conventions) so the translation memory carries over.
+		// trailing colon dropped per the shared label conventions) so the translation memory carries over.
 		public static string LinkAllomorphAllomorphLabel => Text("FwAvaloniaDialogs.LinkAllomorph.AllomorphLabel");
 
 		// Link MSA consumer of the entry-search dialog (legacy LinkMSADlg wording).
 		public static string LinkMsaTitle => Text("FwAvaloniaDialogs.LinkMsa.Title");
 		// The auxiliary-picker label (legacy LinkMSADlg.resx label3 "&Grammatical Info.:", ampersand mnemonic and
-		// trailing colon dropped per the kit's label conventions) so the translation memory carries over.
+		// trailing colon dropped per the shared label conventions) so the translation memory carries over.
 		public static string LinkMsaGrammaticalInfoLabel => Text("FwAvaloniaDialogs.LinkMsa.GrammaticalInfoLabel");
 
 		// Link Entry or Sense entry/sense toggle (the legacy LinkEntryOrSenseDlg m_rbEntry / m_rbSense radios). Seed

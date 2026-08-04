@@ -18,7 +18,7 @@ namespace SIL.FieldWorks.LexText.Controls
 	/// The LCModel-aware launcher for the reusable Avalonia entry-search ("go") dialog re-skinned as the New-UI
 	/// replacement for the legacy <see cref="LinkEntryOrSenseDlg"/> (an <c>EntryGoDlg</c> child): the user searches
 	/// for an entry and the dialog returns the chosen <c>ILexEntry</c>. It REUSES the existing
-	/// <see cref="EntryGoDialogViewModel"/>/<see cref="EntryGoDialogView"/> kit exactly like
+	/// <see cref="EntryGoDialogViewModel"/>/<see cref="EntryGoDialogView"/> exactly like
 	/// <see cref="LcmMergeEntryDialogLauncher"/>; only the title/prompt text, the search filter, and the on-OK
 	/// resolution differ.
 	///
@@ -26,7 +26,7 @@ namespace SIL.FieldWorks.LexText.Controls
 	/// reference launcher / chooser-command), so this launcher only resolves the chosen entry (exposed via
 	/// <see cref="SelectedObject"/>); it performs no model mutation of its own.
 	///
-	/// The legacy dialog's Entry-vs-Sense radio toggle is now implemented additively on the kit: a call site that
+	/// The legacy dialog's Entry-vs-Sense radio toggle is now implemented additively on the shared dialog: a call site that
 	/// wants senses opts in (<paramref name="allowSenses"/> shows the toggle; <paramref name="sensesOnly"/> locks
 	/// it to senses, the legacy <c>SelectSensesOnly</c>). In sense mode the search lists each matching entry's
 	/// senses (the legacy m_fwcbSenses) and OK returns the chosen <c>ILexSense</c>; in entry mode (the default,

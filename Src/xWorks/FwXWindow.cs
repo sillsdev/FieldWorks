@@ -1577,7 +1577,7 @@ namespace SIL.FieldWorks.XWorks
 			// FwWritingSystemSetupModel — the WS-list manager with SLDR sharing, encoding converters, merge, the
 			// advanced script/region/variant editor, keyboards, and the numbering/character-inventory tabs) stays
 			// on the legacy WinForms path: it is far larger than a bounded slice. The bounded managed
-			// name/abbr/font/direction/sort PROPERTIES core IS migrated to the Avalonia kit
+			// name/abbr/font/direction/sort PROPERTIES core IS migrated to the Avalonia stack
 			// (WritingSystemPropertiesDialogView/ViewModel in FwAvaloniaDialogs, headless-tested); this
 			// list-management call site is not gated onto it.
 			var model = new FwWritingSystemSetupModel(Cache.LangProject, type, Cache.ServiceLocator.WritingSystemManager, Cache);

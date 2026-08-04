@@ -163,7 +163,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// Builds the matching list's default column spec — the legacy matchingEntries browser's default-visible
 		/// columns (areaConfiguration.xml: "Headword" ws=best vernoranal and "Glosses" ws=best analorvern; the
 		/// other columns are visibility="menu"): a Headword column in the default vernacular ws's typography and a
-		/// Glosses column in the default analysis ws's typography, headers from the kit's localized strings.
+		/// Glosses column in the default analysis ws's typography, headers from the shared localized strings.
 		/// Internal so the derivation is unit-testable against a real cache.
 		/// </summary>
 		internal static IReadOnlyList<EntryGoResultColumn> BuildDefaultResultColumns(LcmCache cache)

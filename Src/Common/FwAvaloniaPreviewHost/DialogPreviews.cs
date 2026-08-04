@@ -10,7 +10,7 @@ using SIL.FieldWorks.Common.FwAvalonia.Preview;
 using SIL.FieldWorks.Common.FwAvalonia.PreviewHost;
 
 // Previewable converted dialogs: one entry per surface a developer needs to look at while tuning its
-// layout, selected with `--module <id>`. Registered here rather than in the dialog kit so no product
+// layout, selected with `--module <id>`. Registered here rather than in FwAvaloniaDialogs so no product
 // assembly references preview-only code. Adding a surface is one window class plus one attribute; see
 // Docs/migration/adjust-the-layout.md.
 [assembly: FwPreviewModule(
@@ -61,7 +61,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.PreviewHost
 
 	/// <summary>
 	/// The reusable message/confirmation dialog, shown with a Yes/No warning — the shape most confirmation
-	/// call sites use. Size matches what the kit's own headless tests realize it at.
+	/// call sites use. Size matches what its own headless tests realize it at.
 	/// </summary>
 	public sealed class MessageBoxPreviewWindow : DialogPreviewWindow
 	{

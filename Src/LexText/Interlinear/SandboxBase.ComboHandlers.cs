@@ -2284,7 +2284,7 @@ namespace SIL.FieldWorks.IText
 				GetMorphInfo(out tssForm, out tssFullForm, out morphType);
 
 				// New-UI gate (mirrors the Merge / Insert Entry / Options dialog gates): in New mode launch the
-				// Avalonia Find-Entry-to-Add-Allomorph dialog (the reusable entry-search/"go" kit dialog), which adds
+				// Avalonia Find-Entry-to-Add-Allomorph dialog (the reusable entry-search/"go" dialog), which adds
 				// the typed form as an allomorph to the chosen entry in one undoable step, including the legacy
 				// type-mismatch confirmation + MSA-ensure flow (see LcmAddAllomorphDialogLauncher's PARITY note);
 				// Legacy mode keeps the WinForms AddAllomorphDlg.

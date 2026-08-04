@@ -43,7 +43,7 @@ is no IPC and no second process.
 Each subsystem below names what it replaces, its key classes, and the deeper
 reference that owns the detail.
 
-### 2a. Dialog kit -- replaces WinForms modal dialogs
+### 2a. Dialog stack -- replaces WinForms modal dialogs
 
 An Avalonia dialog is an MVVM set (`*Input` / `*View.axaml` / `*ViewModel` /
 `*Payload`/`*Result`), shown as a WinForms-owned modal so z-order, centering,
@@ -58,7 +58,7 @@ and focus-return match legacy behavior.
 | Launcher edges (legacy call sites -> Avalonia dialogs, LCModel in/out) | `Src/LexText/LexTextControls/Avalonia/Lcm*DialogLauncher.cs` |
 
 Converted dialogs reuse the **legacy class stem + role suffix**
-(`InsertEntryDlgViewModel` <-> legacy `InsertEntryDlg`); reusable kits keep
+(`InsertEntryDlgViewModel` <-> legacy `InsertEntryDlg`); reusable shared dialogs keep
 general names (`ChooserDialog*`, `EntryGo*`). See [Terminology](#5-terminology).
 
 Process: `migrate-a-dialog.md` (the playbook). Mechanics:
@@ -189,7 +189,7 @@ not a fallback.
 | direct Views/RootSite edits | `IDetailEditContext` over one fenced undo task |
 | `DataTree` the view control | `DataTree` |
 | `DataTree.PrepareToGoAway()` | `IPrepareToGoAway` (cannot veto -- always settles) |
-| WinForms modal dialogs | dialog kit, WinForms-owned via `AvaloniaDialogHost` |
+| WinForms modal dialogs | the dialog stack, WinForms-owned via `AvaloniaDialogHost` |
 
 ## 4. DataTree and Slice: what changed from legacy
 
@@ -223,7 +223,7 @@ The familiar names survive on the halves they still fit.
   are LCModel / linguistics concepts and keep their names.
 - **Dialogs**: 1:1 conversions take the legacy stem + role suffix
   (`InsertEntryDlg*`, `AddNewSenseDlg*`, `MsaCreatorDlg*`, `LexOptionsDlg*`,
-  `MSAGroupBox`); kits keep general names (`ChooserDialog*` <->
+  `MSAGroupBox`); shared dialogs keep general names (`ChooserDialog*` <->
   SimpleListChooser family, `EntryGo*` <-> BaseGoDlg family,
   `FwFeatureStructureEditor`, `FwMultiWsTextField`, `FwPosChooser`).
 - **Cross-namespace twins** are deliberate (`InsertEntryDlg`, `MSAGroupBox`,

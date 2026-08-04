@@ -7,7 +7,7 @@ using CommunityToolkit.Mvvm.Input;
 namespace FwAvaloniaDialogs
 {
 	/// <summary>
-	/// View-model for the kit's reusable message/confirmation dialog (<see cref="MessageBoxView"/>), the Avalonia
+	/// View-model for the reusable message/confirmation dialog (<see cref="MessageBoxView"/>), the Avalonia
 	/// analog of <see cref="System.Windows.Forms.MessageBox"/>. Carries the message body, the severity icon, and
 	/// the button set; exposes which buttons are visible and the localized labels (from
 	/// <see cref="FwAvaloniaDialogsStrings"/>), and records the precise <see cref="FwMessageBoxResult"/> the user

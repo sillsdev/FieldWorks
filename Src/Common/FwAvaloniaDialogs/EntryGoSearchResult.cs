@@ -6,7 +6,7 @@ namespace FwAvaloniaDialogs
 {
 	/// <summary>
 	/// A single lightweight, LCModel-free result row for the reusable Avalonia entry-search ("go") dialog — the
-	/// kit's analog of one row of the legacy <c>EntryGoDlg</c>/<c>BaseGoDlg</c> matching-entries browser
+	/// the Avalonia analog of one row of the legacy <c>EntryGoDlg</c>/<c>BaseGoDlg</c> matching-entries browser
 	/// (<c>MatchingObjectsBrowser</c>). The product edge (the LexText launcher) maps a matched <c>ILexEntry</c>
 	/// into this row, so the Avalonia layer never sees an <c>ICmObject</c>: <see cref="Id"/> is the entry's stable
 	/// identity (hvo string, the legacy <c>FwObjectSelectionEventArgs.Hvo</c>), <see cref="Text"/> is the headword,

@@ -137,7 +137,7 @@ Every reference the report makes follows
 
 The children-convert-first dependency gate applies here too: any dialog the
 slice opens (choosers, create dialogs) must already have an Avalonia route
-(converted, kit-covered, or FwMessageBox) before this slice proceeds. So
+(converted, covered by a shared dialog, or FwMessageBox) before this slice proceeds. So
 does the custom-control discipline: designing a new `Fw*Field` follows the
 capability-comparison table with the stock/composed bias (convert-dialog's
 custom-control sub-cycle), and the state-manifest + gate re-evaluation

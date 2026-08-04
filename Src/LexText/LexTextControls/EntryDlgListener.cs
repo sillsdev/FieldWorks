@@ -200,7 +200,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				return false;
 
 			// New-UI gate (mirrors the Insert Entry / Options dialog gates): in New mode launch the Avalonia Merge
-			// Entry dialog (the reusable entry-search/"go" kit dialog); Legacy mode keeps the WinForms MergeEntryDlg.
+			// Entry dialog (the reusable entry-search/"go" dialog); Legacy mode keeps the WinForms MergeEntryDlg.
 			// Both paths merge the current entry INTO the chosen survivor in one undoable step, then JumpToRecord.
 			var uiMode = m_propertyTable.GetStringProperty("UIMode", null);
 			if (UIModeGates.ShouldUseAvaloniaUI(uiMode))
@@ -325,7 +325,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			Debug.Assert(cache != null);
 
 			// New-UI gate (mirrors the Insert Entry / Merge Entry gates): in New mode launch the Avalonia
-			// Go-to-Entry dialog (the reusable entry-search/"go" kit dialog, no starting entry to exclude); Legacy
+			// Go-to-Entry dialog (the reusable entry-search/"go" dialog, no starting entry to exclude); Legacy
 			// mode keeps the WinForms EntryGoDlg. Both paths just navigate to the chosen entry (no side effects).
 			var uiMode = m_propertyTable.GetStringProperty("UIMode", null);
 			if (UIModeGates.ShouldUseAvaloniaUI(uiMode))

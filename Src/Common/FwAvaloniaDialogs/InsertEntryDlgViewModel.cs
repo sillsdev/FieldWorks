@@ -23,7 +23,7 @@ namespace FwAvaloniaDialogs
 	/// cache), so the VM stays LCModel-free and can read the staged values back on OK. On a lexeme-form edit the
 	/// VM runs the launcher-supplied <see cref="InsertEntryDlgInput.DeriveMorphType"/> (the live affix-marker →
 	/// morph-type derivation): it reselects the morph-type picker, records the marker-adjusted form, and re-gates
-	/// OK. OK is gated through the kit's <c>GetValidationErrors</c> (one error when the best lexeme form is empty —
+	/// OK. OK is gated through the shared base's <c>GetValidationErrors</c> (one error when the best lexeme form is empty —
 	/// the legacy <c>LexFormNotEmpty</c> parity); <c>ApplyChanges</c> snapshots the per-WS form + gloss values +
 	/// chosen morph-type key into <see cref="Result"/>.
 	///
@@ -56,11 +56,11 @@ namespace FwAvaloniaDialogs
 		// Set true when OK runs because the user chose to use an existing matched entry (legacy DialogResult.Yes),
 		// so ApplyChanges snapshots the chosen existing-entry id instead of a create payload.
 		private bool _useExisting;
-		// The morph-type → MsaType map (the launcher-supplied data the kit uses to drive the MSA box live without
+		// The morph-type → MsaType map (the launcher-supplied data the shared dialog uses to drive the MSA box live without
 		// LCModel — the lift of MSAGroupBox.MorphTypePreference); null disables the morph-type-driven reconfigure.
 		private readonly IReadOnlyDictionary<string, FwMsaType> _morphTypeToMsaType;
 		// The launcher-supplied slot provider (main-POS id -> slot options), re-run when the MSA box's main POS
-		// changes while inflectional; null leaves the slot list empty (the kit stays LCModel-free).
+		// changes while inflectional; null leaves the slot list empty (the shared dialog stays LCModel-free).
 		private readonly Func<string, IReadOnlyList<FwInflectionSlot>> _slotsForPos;
 		// The launcher-supplied inflection-class provider (main-POS id -> inflection-class options), re-run when the
 		// MSA box's main POS changes (stem/root); null leaves the picker with only the "<None>" row.
@@ -133,7 +133,7 @@ namespace FwAvaloniaDialogs
 
 			// The grammatical-info (MSA) section: the LCModel-free MSAGroupBox, fed the project POS
 			// hierarchy + slot options + initial MsaType/POS by the launcher. The dialog's morph-type selection drives
-			// the box's MsaType LIVE (the launcher supplies the morph-type → MsaType map as data, so the kit stays
+			// the box's MsaType LIVE (the launcher supplies the morph-type → MsaType map as data, so the shared dialog stays
 			// LCModel-free), mirroring how WinForms InsertEntryDlg wires MSAGroupBox.MorphTypePreference.
 			_morphTypeToMsaType = _input.MorphTypeToMsaType;
 			_slotsForPos = _input.SlotsForPos;
@@ -282,7 +282,7 @@ namespace FwAvaloniaDialogs
 			if (SelectedMatch == null)
 				return;
 			// Use-existing is its own accept path (it does not go through the Create OK gate, which requires a
-			// non-empty form — that always holds here since a match implies a typed form). Mirror the kit OK body:
+			// non-empty form — that always holds here since a match implies a typed form). Mirror the shared OK body:
 			// snapshot the chosen existing id (via _useExisting) then close accepting.
 			_useExisting = true;
 			ApplyChanges();
@@ -674,7 +674,7 @@ namespace FwAvaloniaDialogs
 			return string.Empty;
 		}
 
-		// ----- OK gating (kit convention): empty best lexeme form + morphology block OK, surfaced inline -----
+		// ----- OK gating (dialog convention): empty best lexeme form + morphology block OK, surfaced inline -----
 
 		protected override IEnumerable<string> GetValidationErrors()
 		{

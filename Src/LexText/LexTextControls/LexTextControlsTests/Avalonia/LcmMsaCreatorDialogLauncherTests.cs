@@ -110,7 +110,7 @@ namespace LexTextControlsTests
 		public void BuildSandboxMsa_ResolvesAChosenStemMsa()
 		{
 			// The launcher's Apply uses the shared LcmInsertEntryDialogLauncher.BuildSandboxMsa; verify the
-			// round-trip resolves the kit payload's POS ids back to the live objects.
+			// round-trip resolves the shared payload's POS ids back to the live objects.
 			var chosen = new FwSandboxMsa(FwMsaType.Stem, mainPosId: _noun.Guid.ToString());
 			var morphType = Cache.ServiceLocator.GetInstance<IMoMorphTypeRepository>()
 				.GetObject(MoMorphTypeTags.kguidMorphStem);

@@ -124,7 +124,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 		/// <summary>The text color for the owned pickers, paired with the concrete <see cref="PickerBackgroundBrush"/>
 		/// surface. A single named token (rather than an ad-hoc <c>Brushes.Black</c> at each row/item template) so
 		/// every owned picker shares one foreground and reads legibly dark-on-light — matching the concrete-brush
-		/// convention the rest of the kit paints its WinForms-density surfaces with, so it renders the same in the
+		/// convention the rest of the dialog stack paints its WinForms-density surfaces with, so it renders the same in the
 		/// runtime host and the headless tests regardless of the OS theme variant.</summary>
 		public static readonly Avalonia.Media.IBrush PickerForegroundBrush =
 			new Avalonia.Media.SolidColorBrush(Avalonia.Media.Color.FromRgb(0x1A, 0x1A, 0x1A));
