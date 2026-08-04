@@ -14,6 +14,8 @@ Minimal, high-signal guidance for coding agents in this repository.
 - Native C++ must build before managed projects (enforced by `FieldWorks.proj` + `build.ps1`).
 - FieldWorks uses registration-free COM; do not register COM globally and do not add registry hacks.
 - Keep localization in `.resx`; do not hardcode translatable UI strings.
+- Follow the code-comment standard in
+	`.claude/skills/fieldworks-code-commenting/SKILL.md`.
 
 ## Context model
 

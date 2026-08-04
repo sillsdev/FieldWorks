@@ -319,7 +319,8 @@ Build conventions the result must satisfy (confirm each in the diff):
 - Accessibility and keyboard parity: stable automation ids per the owned
   control convention (pinned by `OwnedControlAutomationConventionTests`);
   tab order and mnemonics match the legacy dialog.
-- The repository comment standard applies to everything written.
+- The repository comment standard applies to everything written: see
+  `.claude/skills/fieldworks-code-commenting/SKILL.md`.
 
 ## Proving it works
 

@@ -1,6 +1,6 @@
 ---
 name: fieldworks-code-commenting
-description: The FieldWorks code-comment standard. Use whenever writing or editing code comments in this repository -- new code, refactors, or comment audits. Covers doc-comment contracts, banned content categories, legacy references, and XML-doc placement.
+description: The FieldWorks code-comment standard for C#. Use whenever writing or editing code comments in this repository -- new code, refactors, or comment audits. Covers doc-comment contracts, banned content categories, legacy references, XML doc tags, and XML-doc placement.
 ---
 
 # FieldWorks Code Commenting
@@ -8,24 +8,34 @@ description: The FieldWorks code-comment standard. Use whenever writing or editi
 The standard for every comment an agent writes or audits in this repository.
 Apply it while authoring -- do not write loose comments and clean them later.
 
+The audience is the next reader of the code -- never the reviewer of the
+current diff, never a coverage gate.
+
 ## The standard
 
 1. **Accuracy first, then brevity.** A comment that misstates behavior is
    worse than none. Target 3-4 sentences (max ~6 lines); the ticket reference
    carries the background.
-2. **Doc comments state WHAT and WHY, never HOW.** The code is the how. A
-   member's summary states only its OWN contract -- never narrate what
+2. **Doc comments state WHAT and WHY, never HOW.** The how-test: would the
+   sentence survive an equivalent reimplementation? If not it is a how, and a
+   "so that..." clause does not redeem it -- keep the purpose, drop the
+   mechanism.
+3. **A member's summary states only its OWN contract.** Never narrate what
    callers do with it.
-3. **Every comment must stand alone.** No reader has this conversation, the
-   PR, or any design document open.
-4. **Public/exported members require a summary.** Private members get a
-   comment only when genuinely non-obvious.
-5. **Delete restatements.** A comment that repeats what the code plainly says
-   is noise. When a comment does not clearly earn its place, delete it.
-6. **ASCII only.** No em-dashes, arrows, section signs, or smart quotes in
+4. **Every comment must stand alone.** No reader has this conversation, the
+   PR, or any design document open. A doc comment must serve someone hovering
+   the symbol who will never read the body.
+5. **Public members require a summary.** Private members get one only when
+   genuinely non-obvious. Skip trivial properties, thin wrappers, and
+   self-evident helpers.
+6. **Delete restatements.** A comment repeating what the code plainly says is
+   noise. State what the code does only when that is not obvious from the
+   content closely following the comment. When a comment does not clearly
+   earn its place, delete it.
+7. **ASCII only.** No em-dashes, arrows, section signs, or smart quotes in
    comments or repo docs -- they render poorly in git tooling. Use "--",
    "->", plain quotes.
-7. **No ambiguous abbreviations.** Write "ViewModel", never "VM" (VM also
+8. **No ambiguous abbreviations.** Write "ViewModel", never "VM" (VM also
    means virtual machine). Same for anything a reader could resolve two
    ways: spell it out. This applies to comments, documents, commit
    messages, and what you say to the developer.
@@ -46,6 +56,16 @@ Apply it while authoring -- do not write loose comments and clean them later.
    State positively what IS there; the absence needs no narration.
    (A legitimate null-input or current-behavior contract is not absence
    narration -- keep those.)
+4. **Pointers to a comment in another file**: never "see X's note", "as
+   documented on Y". No tooling checks a comment-to-comment link, so the
+   target can be reworded or deleted with nothing flagging the break, and the
+   reader must leave their current file to learn whether anything is there.
+   Cite the code symbol that carries the behavior, or state the point here.
+   Same-file pointers are fine.
+5. **Consumers and provenance**: no "shared by X and Y", "the only caller
+   is...", "internal so both create paths can use it", "extracted from Z".
+   Callers change silently and provenance is not a contract. State what the
+   member guarantees; callers stay anonymous.
 
 ## Legacy references
 
@@ -56,12 +76,80 @@ not "until we build Y", not the history of how the code got here. Pointers to
 real legacy source (`DataTree.cs:2455`) are acceptable parity evidence but
 prefer symbol names over line numbers -- lines rot.
 
+## References to other code
+
+Reference another symbol only when the reader needs it to understand THIS
+one -- never for completeness or navigation. In doc comments write
+`<see cref="SomeType"/>`; in `//` comments, where tooling does not resolve
+it, write the bare symbol path.
+
+**Link the contract, not the collaborator.** Naming the helper a member
+delegates to ("resolves via the shared `BuildSandboxMsa`", "forwards to
+`PerformAddAllomorph`") documents HOW it works. State what the delegation
+guarantees and leave the callee unnamed. Rewrite rather than delete -- the
+guarantee is the useful half.
+
+Never reference another member's locals, another type's private internals, or
+a test -- describe the behavior instead.
+
+## XML doc tags
+
+Omit `<param>`/`<returns>` that only restate the name and type. Keep ones
+carrying what the declaration cannot: units, what null means, ownership, side
+effects, constraints. Never `<param name="cache">The cache.</param>`.
+
+**All-or-nothing (overrides the omit rule):** never document only some
+parameters. When one deserves a note, either document every parameter -- when
+each has something real to say, never padding -- or fold the note into the
+summary prose and drop the tags. Folding edits the summary: rewrite it to
+carry the note.
+
+Which way to go: what the method DOES with an argument ("matched against the
+candidate morphemes", "used in the thrown message") folds into prose. What
+qualifies the VALUE -- units, meaning of absence, a constraint the type cannot
+express -- stays a tag.
+
+**No double documentation.** A fact lives in the summary or in a tag, never
+both.
+
+**No mirrored member docs.** When a parameter's type documents its own members
+-- a state or options class -- do not restate them as `<param>`. The member
+docs are the single source of truth.
+
+`<exception>` for every error condition the caller must handle; omit it when
+the member does not throw.
+
+## Types and enums
+
+Interfaces, classes, structs, records, and enums follow the same rules.
+Document each member whose purpose is not self-evident from its name and type,
+individually rather than in the type-level summary.
+
+## File and section comments
+
+No decorative file-header banners beyond the license header. No section
+dividers that merely restate the adjacent member name -- a divider must carry
+information of its own.
+
+## Inline comments
+
+Sparingly: only when the reasoning is not clear from the code, or a bugfix is
+non-obvious. Keep them short and located above the level of nesting that the code being described spans.
+
+In tests, two extra tells of noise: restating what the test method name
+already says, and justifying a test to the coverage gate ("covers the false
+branch of..."). Why a dependency is faked, or why fixture data is shaped a
+particular way, stays fine -- that is reasoning the code cannot show.
+
 ## XML-doc placement gotchas
 
 - One `<summary>` per member; two consecutive doc blocks both attach to the
   NEXT declaration -- the first lands on the wrong member. Verify each
   summary sits directly above its own declaration.
 - Public constructors with `<param>` docs also get a one-line `<summary>`.
+- `<see cref>` resolves only inside `///` doc comments. In a `//` comment it
+  renders as literal text -- use the bare symbol path there.
+- Escape `<` and `>` in doc text as `&lt;`/`&gt;`.
 - String literals are not comments: never edit assertion messages,
   automation ids, or resx values during a comment pass.
 - resx accessor files may carry APPEND-ONLY section rules -- respect them.
