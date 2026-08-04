@@ -30,11 +30,6 @@ namespace SIL.FieldWorks.LexText.Controls
 	/// the CALLER (the reference launcher's <c>AddItem</c>), so this launcher's job is only to resolve the chosen
 	/// entry to an <c>IMoMorphSynAnalysis</c> (exposed via <see cref="SelectedObject"/>); it performs no model
 	/// mutation of its own.
-	///
-	/// PARITY: like the legacy dialog's combo of ALL of the chosen entry's MSAs, this launcher supplies the shared
-	/// dependent auxiliary picker (<see cref="EntryGoDialogInput.AuxiliaryOptions"/>) with one option per MSA in
-	/// legacy order (each displayed by its <c>InterlinearName</c>, keyed by its Guid) and resolves the CHOSEN MSA
-	/// on OK — see <see cref="ResolveSelectedMsa"/>.
 	/// </summary>
 	public sealed class LcmLinkMsaDialogLauncher
 		: AvaloniaDialogLauncher<EntryGoDialogInput, EntryGoDialogViewModel, LcmLinkMsaDialogLauncher.LinkMsaPayload>
@@ -168,11 +163,8 @@ namespace SIL.FieldWorks.LexText.Controls
 		}
 
 		/// <summary>
-		/// Resolves the chosen entry's id + the auxiliary pick to a grammatical-info / MSA object. PARITY: like the
-		/// legacy LinkMSADlg combo of ALL of the entry's <c>MorphoSyntaxAnalysesOC</c>, the MSA whose Guid matches
-		/// <paramref name="msaKey"/> (the chosen auxiliary option) is returned; a missing/unresolved key falls back
-		/// to the first MSA (the legacy combo's default selection). Internal so it is unit-testable against a real
-		/// cache.
+		/// Resolves the chosen entry's id + the auxiliary pick to a grammatical-info / MSA object; a missing or
+		/// unresolved key falls back to the entry's first MSA. Internal so it is unit-testable against a real cache.
 		/// </summary>
 		internal static IMoMorphSynAnalysis ResolveSelectedMsa(LcmCache cache, string entryId, string msaKey = null)
 		{

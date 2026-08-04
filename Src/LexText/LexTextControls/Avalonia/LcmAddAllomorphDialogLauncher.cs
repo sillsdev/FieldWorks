@@ -31,12 +31,6 @@ namespace SIL.FieldWorks.LexText.Controls
 	/// <c>SandboxBase.RunAddNewAllomorphDlg</c> tail: if the entry already has an allomorph matching the typed form
 	/// it is reused (<c>MorphServices.FindMatchingAllomorph</c>); otherwise a new <c>IMoForm</c> is created on the
 	/// entry from the typed full form (<c>MorphServices.MakeMorph</c>), in ONE undoable step.
-	///
-	/// PARITY: like the legacy flow's <c>CreateAllomorphTypeMismatchDlg</c>, when the morpheme type deduced from the
-	/// typed form's punctuation disagrees with the chosen entry's existing forms the launcher asks the user first
-	/// (an injectable confirmation seam defaulting to an <see cref="FwMessageBox"/> Yes/No warning with the legacy
-	/// wording): No adds nothing, Yes ensures an appropriate stem/unclassified-affix MSA exists and then creates
-	/// the allomorph. See <see cref="PerformAddAllomorph"/>.
 	/// </summary>
 	public sealed class LcmAddAllomorphDialogLauncher
 		: AvaloniaDialogLauncher<EntryGoDialogInput, EntryGoDialogViewModel, LcmAddAllomorphDialogLauncher.AddAllomorphPayload>

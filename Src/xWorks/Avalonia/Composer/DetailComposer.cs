@@ -969,9 +969,6 @@ namespace SIL.FieldWorks.XWorks
 						// CompileForObjectWithOverrides/EnterModel/Walk descent (the visited-set guards
 						// cycles); when the nested layout cannot be resolved it degrades to the
 						// read-only ShortName row rather than vanishing.
-						// PARITY: arbitrarily deep / hand-authored jtview nests are not exhaustively
-						// reproduced — the visited-set caps recursion at one pass per (object, layout), the
-						// common single-level embed.
 						WalkEmbeddedView(node, obj, depth);
 						break;
 					case DetailEditorCategory.Command:
