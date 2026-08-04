@@ -200,9 +200,9 @@ namespace FwAvaloniaDialogs
 		/// </summary>
 		public bool HasDescriptionContent => SelectedResult?.HasDescriptionContent ?? false;
 
-		// ----- arrow-key selection moves from the search box. PARITY (BaseGoDlg.m_tbForm_KeyDown): Up/Down in
-		// the legacy find box move the MatchingObjectsBrowser selection (SelectPrevious/SelectNext) while the
-		// caret stays in the box; the view forwards the search box's Up/Down keys here. -----
+		// ----- arrow-key selection moves from the search box: Up/Down move the matching-list selection
+		// (SelectPrevious/SelectNext) while the caret stays in the box; the view forwards the search box's
+		// Up/Down keys here. -----
 
 		/// <summary>
 		/// Moves the matching-list selection to the next row (the legacy Down-arrow-in-the-search-box move,

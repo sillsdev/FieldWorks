@@ -650,10 +650,6 @@ namespace SIL.FieldWorks.IText
 					max = nodes[0].Maximum;
 					paren = !nodes[0].IsLeaf;
 				}
-				// PARITY: the occurrence min/max picker (OccurrenceDlg) is an
-				// inline configuration dialog used only inside the interlinear complex-concordance and morphology
-				// rule-formula editors — not on the lexical-edit/browse path — and is low
-				// frequency. Kept on the legacy WinForms path.
 				using (var dlg = new OccurrenceDlg(m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), min, max, paren))
 				{
 					dlg.SetHelpTopic("khtpCtxtOccurComplexConcordance");

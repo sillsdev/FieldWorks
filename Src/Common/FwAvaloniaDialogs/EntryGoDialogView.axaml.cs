@@ -221,10 +221,9 @@ namespace FwAvaloniaDialogs
 				e.Handled = true;
 		}
 
-		// Keyboard handling in the search box. PARITY (BaseGoDlg.m_tbForm_KeyDown): Up/Down move the matching-list
-		// selection (SelectPrevious/SelectNext) while the caret stays in the box; Enter commits the highlighted row
-		// (the legacy AcceptButton). In two-stage auxiliary mode Enter is stage-1 only (CommitCommand no-ops) and
-		// the OK button commits.
+		// Keyboard handling in the search box: Up/Down move the matching-list selection
+		// (SelectPrevious/SelectNext) while the caret stays in the box; Enter commits the highlighted row.
+		// In two-stage auxiliary mode Enter is stage-1 only (CommitCommand no-ops) and the OK button commits.
 		private void OnSearchBoxKeyDown(object sender, KeyEventArgs e)
 		{
 			var vm = ViewModel;

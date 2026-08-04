@@ -27,11 +27,6 @@ namespace SIL.FieldWorks.LexText.Controls
 	/// leaves an emptied FS as-is). The inline create-feature affordance is wired to <see cref="LcmCreateFeatureLauncher"/>
 	/// targeting the phonological feature system (a new closed feature + its default +/- values, the
 	/// MasterPhonologicalFeatureListDlg parity).
-	///
-	/// PARITY: the legacy dialog can also drive phonological-RULE feature CONSTRAINTS (agree/disagree
-	/// polarity over <c>IPhFeatureConstraint</c>), used only from the rule-formula control. That polarity surface is
-	/// NOT ported here (the New-UI gate covers the slice's plain feature-assignment case); the rule-formula call site
-	/// keeps the legacy dialog. The plain value-assignment case (the phoneme / NC-features slice) is fully wired.
 	/// </summary>
 	public sealed class LcmPhonologicalFeatureChooserLauncher
 		: AvaloniaDialogLauncher<FeatureChooserDialogInput, FeatureChooserDialogViewModel, FeatureChooserPayload>

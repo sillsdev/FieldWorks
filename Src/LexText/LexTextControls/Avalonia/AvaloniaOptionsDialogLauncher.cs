@@ -39,15 +39,8 @@ namespace SIL.FieldWorks.LexText.Controls
 	/// WelcomeToFieldWorksDlg) constructs an instance and runs it. A second dialog reuses the scaffold rather
 	/// than copying this launch plumbing.
 	///
-	/// PARITY POLICY: this dialog must not diverge from <see cref="LexOptionsDlg"/> without explicit product
-	/// approval. Lexical Edit UI mode applies LIVE on OK in both (broadcasting
-	/// the PropertyTable "UIMode" property re-resolves the open lexical surfaces — no restart). The UI-language
-	/// thread-culture switch is now mirrored too: like WinForms, <c>Apply</c> calls
-	/// <c>FormLanguageSwitchSingleton.Instance.ChangeCurrentThreadUICulture</c> so subsequent resource lookups
-	/// in the process use the new culture immediately (WinForms's companion <c>ChangeLanguage(this)</c> call
-	/// has no Avalonia equivalent — it reflects over a WinForms Form's designer-generated per-control resx keys,
-	/// and re-languages only that one closing dialog, which is cosmetic and not reproducible here). Both paths
-	/// still prompt for restart afterward — this was never a full live language switch in WinForms either.
+	/// Review: changing the UI language may not be as fully featured in Avalonia - it may be an engineering
+	/// decision to make an attempt or just require a restart.
 	/// </summary>
 	public sealed class AvaloniaOptionsDialogLauncher
 		: AvaloniaDialogLauncher<LexOptionsDlgState, LexOptionsDlgViewModel, AvaloniaOptionsDialogLauncher.OptionsPayload>

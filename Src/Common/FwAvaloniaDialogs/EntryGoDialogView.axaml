@@ -7,10 +7,9 @@
              Classes="fwDialogRoot"
              MinWidth="440" MinHeight="340">
 	<!-- The reusable entry-search ("go") dialog body: the Avalonia replacement for the legacy
-	     EntryGoDlg/BaseGoDlg family. PARITY (MatchingObjectsBrowser): the matching entries fill the dialog body as
-	     a PERSISTENT, multi-column list under the search box — the shape of the legacy BaseGoDlg's embedded
-	     MatchingObjectsBrowser — live-updating as the user types (an empty search shows an empty bordered area,
-	     never a focus-gated overlay). A header row + per-row column cells are built by the code-behind from the
+	     EntryGoDlg/BaseGoDlg family. The matching entries fill the dialog body as a PERSISTENT,
+	     multi-column list under the search box, live-updating as the user types (an empty search shows an
+	     empty bordered area, never a focus-gated overlay). A header row + per-row column cells are built by the code-behind from the
 	     view-model's Columns (header text, result field, per-column writing-system typography), so a vernacular
 	     column renders in the vernacular font and a gloss column in the analysis font. Up/Down in the search box
 	     move the list selection without leaving the box (the legacy m_tbForm_KeyDown behavior). The optional
@@ -106,7 +105,7 @@
 					</Border>
 				</StackPanel>
 
-				<!-- The PERSISTENT matching list (PARITY: MatchingObjectsBrowser). A bordered header row + rows with
+				<!-- The PERSISTENT matching list. A bordered header row + rows with
 				     aligned proportional columns, filling the dialog body under the search box; it stays in the tree
 				     even when empty. The header grid and the row template are built by the code-behind from the VM's
 				     Columns so the column count, headers, and per-column typography are launcher-driven. -->

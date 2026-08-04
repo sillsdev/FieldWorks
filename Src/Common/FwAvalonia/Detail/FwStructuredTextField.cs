@@ -123,7 +123,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 
 				// Enter inserts a new empty paragraph after this one. Backspace at the START of an EMPTY
 				// paragraph deletes it (when more than one remains).
-				// PARITY: legacy StTextSlice (RootSite/StVc) SPLITS at the caret on Enter and MERGES a
+				// Review: legacy StTextSlice (RootSite/StVc) SPLITS at the caret on Enter and MERGES a
 				// non-empty paragraph into the previous one on Backspace-at-start. This editor simplifies both to
 				// whole-paragraph insert/delete (paragraph granularity); the plain text is never lost (the user
 				// can edit the two paragraphs directly).

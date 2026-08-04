@@ -136,8 +136,6 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// use), its right-to-left script flag, and a focus callback that activates the ws's keyboard (the legacy
 		/// <c>EditingHelper.SetKeyboardForWs</c> behavior). Internal so the derivation is unit-testable against a
 		/// real cache.
-		/// PARITY: the search box carries the default vernacular ws only; the legacy writing-system SELECTOR combo
-		/// (<c>BaseGoDlg.m_cbWritingSystems</c>, letting the user pick which ws to search) is not yet migrated.
 		/// </summary>
 		internal static EntryGoSearchFieldSpec BuildVernacularSearchFieldSpec(LcmCache cache)
 		{

@@ -113,7 +113,7 @@ surface — that is what the fail-closed resolver is for.
 ### GAP-WS-SELECTOR: Writing-system selector on search fields
 - **Evidence:** legacy `BaseGoDlg.m_cbWritingSystems` lets the user choose
   which WS to search; the §2d spec carries only the default vernacular WS
-  (PARITY note in `EntryGoLauncherShared`).
+  (`EntryGoLauncherShared.BuildVernacularSearchFieldSpec`).
 - **First implementation must cover:** extending `EntryGoSearchFieldSpec`
   with a WS option list + selection callback that re-runs the search and
   re-derives typography/keyboard.
