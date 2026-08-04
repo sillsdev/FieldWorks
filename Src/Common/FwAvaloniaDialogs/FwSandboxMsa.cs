@@ -71,24 +71,27 @@ namespace FwAvaloniaDialogs
 		public string SlotId { get; }
 
 		/// <summary>
-		/// Opaque id of the inflection class (the WinForms <c>InsertEntryDlg.InflectionClass</c> →
-		/// <c>IMoStemMsa.InflectionClassRA</c>), or null for "&lt;None&gt;". Only meaningful for the STEM/ROOT MSA
-		/// (the common case). PARITY: derivational from/to inflection classes (<c>IMoDerivAffMsa.FromInflectionClassRA</c>
-		/// / <c>ToInflectionClassRA</c>) are NOT carried here — the box scopes the inflection-class picker to the stem
-		/// MSA, matching how the legacy <c>InsertEntryDlg</c> exposes a single inflection class on the stem/deriv-step MSA.
+		/// Opaque id of the inflection class (→ <c>IMoStemMsa.InflectionClassRA</c> /
+		/// <c>IMoDerivStepMsa.InflectionClassRA</c>), or null for "&lt;None&gt;". Review: legacy
+		/// <c>InsertEntryDlg</c> has NO inflection-class picker — the property is written only by
+		/// <c>SetMsa</c> (the interlinear seed, cleared when POS changes) and read back by
+		/// <c>SetEntryMsa</c>, so this picker is an ADDITION whose legacy analog is the detail
+		/// slice / bulk editor. Derivational from/to classes are not carried; legacy ignores them here too.
 		/// </summary>
 		public string InflectionClassId { get; }
 
 		/// <summary>
 		/// The chosen inflection-feature assignments — the LCModel-free flat
 		/// <c>(closedFeatureId, valueId)</c> set the hosted <see cref="FwFeatureStructureEditor"/> emitted, carried only
-		/// for the INFLECTIONAL / DERIVATIONAL MSA (where the WinForms box opens <c>MsaInflectionFeatureListDlg</c> over
-		/// <c>IMoInflAffMsa.InflFeatsOA</c> / <c>IMoDerivAffMsa.FromMsFeaturesOA</c>). Empty when no feature was chosen
+		/// for the INFLECTIONAL / DERIVATIONAL MSA (<c>IMoInflAffMsa.InflFeatsOA</c> /
+		/// <c>IMoDerivAffMsa.FromMsFeaturesOA</c>). Empty when no feature was chosen
 		/// (the legacy "delete the FS" / unspecified case). The launcher rebuilds the nested <c>IFsFeatStruc</c> from
 		/// this flat set via recursive-ascent <c>GetOrCreateValue</c> on commit, in the SAME UOW as the MSA
-		/// find-or-create. PARITY: stem/root MSAs (<c>IMoStemMsa.MsFeaturesOA</c>) and the derivational TO
-		/// features are not carried — the box scopes the inflection-feature editor to the infl/deriv-FROM surface, the
-		/// common case the legacy create/insert flow exposes. Never null.
+		/// find-or-create. Review: stem/root MSAs (<c>IMoStemMsa.MsFeaturesOA</c>) and the derivational TO features
+		/// are not carried. Legacy <c>InsertEntryDlg</c> does carry stem/deriv-step <c>MsFeaturesOA</c> through on
+		/// entry creation, but only when seeded from <c>SandboxBase.ComboHandlers.cs:2133</c> (the interlinear
+		/// novel-root-guess path), which is not yet gated to Avalonia — so the omission is unreachable today and
+		/// becomes a live regression when <c>CreateNewEntry</c> there gets its Avalonia branch. Never null.
 		/// </summary>
 		public IReadOnlyList<FwFeatureValueAssignment> InflectionFeatures { get; }
 	}

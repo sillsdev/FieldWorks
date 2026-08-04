@@ -44,9 +44,8 @@ namespace FwAvaloniaDialogs
 	/// </summary>
 	public sealed class MSAGroupBox : Border
 	{
-		// The column panels (label-over-widget), mirroring the WinForms m_afxTypePanel / m_mainCatPanel /
-		// m_slotsPanel. Each is shown/hidden per MsaType. The inflection-class panel is the Avalonia parity
-		// of the legacy InsertEntryDlg inflection-class affordance, shown alongside the main POS for stem/root.
+		// Each column panel (label-over-widget) is shown/hidden per MsaType. The inflection-class panel is an
+		// addition: the legacy four-widget MSAGroupBox had no inflection-class control.
 		private readonly StackPanel _affixTypePanel;
 		private readonly StackPanel _mainCatPanel;
 		private readonly StackPanel _slotsPanel;
@@ -165,7 +164,7 @@ namespace FwAvaloniaDialogs
 				ItemTemplate = new Avalonia.Controls.Templates.FuncDataTemplate<FwInflectionClass>(
 					(cls, _) => new TextBlock
 					{
-						// Indent nested subclasses two spaces per depth so the hierarchy reads (the WinForms tree indents).
+						// A flat combo cannot show nesting, so encode subclass depth as leading spaces.
 						Text = (cls == null ? string.Empty : new string(' ', cls.Depth * 2) + cls.Name),
 						VerticalAlignment = VerticalAlignment.Center,
 						Foreground = FwAvaloniaDensity.PickerForegroundBrush
@@ -179,11 +178,8 @@ namespace FwAvaloniaDialogs
 					OnSelectionChanged();
 			};
 
-			// The inflection-feature editor: the LCModel-free FwFeatureStructureEditor, the
-			// parity of the WinForms box's "Inflection Features" affordance. Shown only for infl/deriv affixes (where
-			// the legacy box opens MsaInflectionFeatureListDlg). The host feeds it the POS's inflectable-feature
-			// system; a value pick raises MsaChanged so the dialog's payload tracks the live assignment set. The
-			// create-feature / create-value affordances forward to the box's events, which the host wires to its dialogs.
+			// Shown only for infl/deriv affixes. The host feeds it the POS's inflectable-feature system, and the
+			// create-feature / create-value affordances forward to the box's events.
 			_inflFeaturesEditor = new FwFeatureStructureEditor("MsaGroupBox.InflFeatures");
 			_inflFeaturesEditor.AssignmentsChanged += _ =>
 			{
@@ -325,7 +321,7 @@ namespace FwAvaloniaDialogs
 		/// <summary>
 		/// The current grammatical-info class, mirroring <c>MSAGroupBox.MSAType</c>. Setting it reconfigures
 		/// which widgets are visible (show/hide + relayout) and re-titles the field labels — exactly as the
-		/// WinForms box does. The setter does NOT raise <see cref="MsaChanged"/> (the host uses it to seed).
+		/// WinForms box does. The setter does NOT raise <see cref="MsaChanged"/>.
 		/// </summary>
 		public FwMsaType MsaType
 		{
@@ -417,10 +413,9 @@ namespace FwAvaloniaDialogs
 
 		/// <summary>
 		/// The current selection as the LCModel-free payload (the mirror of <c>MSAGroupBox.SandboxMSA</c>):
-		/// only the fields relevant to the current <see cref="MsaType"/> are populated. The inflection class is
-		/// carried only for the STEM/ROOT MSA (the WinForms InsertEntryDlg sets it on the stem/deriv-step MSA); the
-		/// inflection features are carried only for the INFLECTIONAL/DERIVATIONAL MSA (the WinForms box edits them
-		/// via MsaInflectionFeatureListDlg over InflFeatsOA / FromMsFeaturesOA).
+		/// only the fields relevant to the current <see cref="MsaType"/> are populated: the inflection class only
+		/// for the STEM/ROOT MSA, the inflection features only for the INFLECTIONAL/DERIVATIONAL MSA
+		/// (<c>InflFeatsOA</c> / <c>FromMsFeaturesOA</c>).
 		/// </summary>
 		public FwSandboxMsa SandboxMsa
 		{
@@ -449,10 +444,9 @@ namespace FwAvaloniaDialogs
 		public event Action<FwSandboxMsa> MsaChanged;
 
 		/// <summary>
-		/// Raised when the MAIN POS selection changes, carrying the new main-POS id (null for "&lt;Any&gt;"). The host
-		/// re-supplies the inflection-class options (and slot options) for the new POS — the parity of the WinForms
-		/// POS-change path that resets the inflection-class tree (InsertEntryDlg.POS setter). Fired before
-		/// <see cref="MsaChanged"/>.
+		/// Raised when the MAIN POS selection changes, carrying the new main-POS id (null for "&lt;Any&gt;"). The
+		/// legacy <c>InsertEntryDlg.POS</c> setter likewise clears the inflection class when the POS changes, and
+		/// <c>MSAGroupBox.ResetSlotCombo</c> repopulates the slots. Fired before <see cref="MsaChanged"/>.
 		/// </summary>
 		public event Action<string> MainPosChanged;
 
@@ -528,10 +522,6 @@ namespace FwAvaloniaDialogs
 				{
 					case FwMsaType.Root:
 					case FwMsaType.Stem:
-						// Main POS + Inflection Class, label "Category"; affix-type and slots hidden. The inflection
-						// class is the stem/root MSA's class (the legacy InsertEntryDlg inflection-class affordance).
-						// PARITY: the inflection-FEATURE editor is scoped to infl/deriv affixes (where the legacy
-						// box's "Inflection Features" affordance lives), so it stays hidden for stem/root.
 						_mainCatLabel.Text = FwAvaloniaDialogsStrings.MsaCategoryLabel;
 						_affixTypePanel.IsVisible = false;
 						_slotsPanel.IsVisible = false;
@@ -540,8 +530,6 @@ namespace FwAvaloniaDialogs
 						break;
 
 					case FwMsaType.Unclassified:
-						// Affix-Type (= Not sure) + Main POS ("Attaches to Category"); slots + inflection class/features
-						// hidden (an unclassified affix carries no inflection features in the legacy box).
 						_mainCatLabel.Text = FwAvaloniaDialogsStrings.MsaAttachesToCategoryLabel;
 						_affixTypePanel.IsVisible = true;
 						_slotsPanel.IsVisible = false;
@@ -551,9 +539,6 @@ namespace FwAvaloniaDialogs
 						break;
 
 					case FwMsaType.Inflectional:
-						// Affix-Type + Main POS + Slot ("Fills Slot") + Inflection Features; secondary POS + inflection
-						// class hidden. The inflection-feature editor is the parity of the WinForms box editing
-						// IMoInflAffMsa.InflFeatsOA via MsaInflectionFeatureListDlg.
 						_mainCatLabel.Text = FwAvaloniaDialogsStrings.MsaAttachesToCategoryLabel;
 						_slotsLabel.Text = FwAvaloniaDialogsStrings.MsaFillsSlotLabel;
 						_affixTypePanel.IsVisible = true;
@@ -566,12 +551,6 @@ namespace FwAvaloniaDialogs
 						break;
 
 					case FwMsaType.Derivational:
-						// Affix-Type + Main POS + Secondary POS ("Changes to Category") + Inflection Features; slot combo
-						// + inflection class hidden. The inflection-feature editor edits the derivational FROM features
-						// (IMoDerivAffMsa.FromMsFeaturesOA) — the surface PopulateTreeFromPosInEntry/legacy box exposes.
-						// PARITY: the legacy derivational MSA carries from/to inflection classes AND from/to features;
-						// this box scopes the inflection-class picker to stem/root and the feature editor to the FROM
-						// features, the common create/insert case.
 						_mainCatLabel.Text = FwAvaloniaDialogsStrings.MsaAttachesToCategoryLabel;
 						_slotsLabel.Text = FwAvaloniaDialogsStrings.MsaChangesToCategoryLabel;
 						_affixTypePanel.IsVisible = true;
@@ -583,7 +562,7 @@ namespace FwAvaloniaDialogs
 						_affixTypeCombo.SelectedIndex = 2; // Derivational
 						break;
 
-					default: // NotSet — show only Main POS so the box is never empty; inflection class/features hidden.
+					default: // NotSet — show only Main POS so the box is never empty.
 						_mainCatLabel.Text = FwAvaloniaDialogsStrings.MsaCategoryLabel;
 						_affixTypePanel.IsVisible = false;
 						_slotsPanel.IsVisible = false;
@@ -620,9 +599,8 @@ namespace FwAvaloniaDialogs
 			OnSelectionChanged();
 		}
 
-		// A Main POS selection change: raise MainPosChanged FIRST (so the host re-feeds the inflection-class / slot
-		// options for the new POS via SetInflectionClasses / SetSlots) BEFORE MsaChanged snapshots the box. Mirrors the
-		// WinForms POS-change path that resets the inflection-class tree (InsertEntryDlg.POS setter).
+		// A Main POS selection change: raise MainPosChanged FIRST (so the host can re-feed the inflection-class /
+		// slot options for the new POS) BEFORE MsaChanged snapshots the box.
 		private void OnMainPosSelectionChanged()
 		{
 			if (_suppressEvents)

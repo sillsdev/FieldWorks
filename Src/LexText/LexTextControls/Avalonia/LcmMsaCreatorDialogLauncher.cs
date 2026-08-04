@@ -27,12 +27,11 @@ namespace SIL.FieldWorks.LexText.Controls
 	/// <c>SandboxGenericMSA</c> (via the shared <see cref="LcmInsertEntryDialogLauncher.BuildSandboxMsa"/>), exposed
 	/// as <see cref="ChosenSandboxMsa"/>.
 	///
-	/// PARITY: the legacy dialog has two consumers with DIFFERENT apply branches — <c>MSAPopupTreeManager</c> does
-	/// <c>m_sense.SandboxMSA = dlg.SandboxMSA</c> (find-or-create on a sense) and <c>MSADlgLauncher</c> does
-	/// <c>originalMsa.UpdateOrReplace(dlg.SandboxMSA)</c> (modify an existing MSA). To keep ONE undoable step at the
-	/// call site exactly as before, this launcher does NOT itself mutate the model: it produces the resolved
-	/// <c>SandboxGenericMSA</c> and the caller applies it inside its own UOW (the same assign/update it already ran).
-	/// The Show overload returns null on cancel so the caller skips its UOW, mirroring the legacy <c>DialogResult</c>.
+	/// Two consumers apply the result differently — <c>MSAPopupTreeManager</c> assigns <c>m_sense.SandboxMSA</c>
+	/// (find-or-create on a sense) and <c>MSADlgLauncher</c> calls <c>originalMsa.UpdateOrReplace</c> (modify an
+	/// existing MSA). To keep ONE undoable step at each call site, this launcher does NOT mutate the model: it
+	/// produces the resolved <c>SandboxGenericMSA</c> and the caller applies it inside its own UOW. The Show
+	/// overload returns null on cancel so the caller skips its UOW.
 	/// </summary>
 	public sealed class LcmMsaCreatorDialogLauncher
 		: AvaloniaDialogLauncher<MsaCreatorDlgInput, MsaCreatorDlgViewModel, MsaCreatorDlgPayload>
@@ -268,10 +267,9 @@ namespace SIL.FieldWorks.LexText.Controls
 			new MsaCreatorDlgView { DataContext = viewModel };
 
 		/// <summary>
-		/// Resolves the chosen grammatical info into a real <c>SandboxGenericMSA</c> (the legacy
-		/// <c>MsaCreatorDlg.SandboxMSA</c>) via the shared <see cref="LcmInsertEntryDialogLauncher.BuildSandboxMsa"/>;
-		/// the caller applies it. Does NOT itself mutate the model — see the PARITY note on the class. Internal so the
-		/// resolution is unit-testable against a real cache.
+		/// Resolves the chosen grammatical info into a real <c>SandboxGenericMSA</c> via the shared
+		/// <see cref="LcmInsertEntryDialogLauncher.BuildSandboxMsa"/>; the caller applies it. Does NOT mutate
+		/// the model.
 		/// </summary>
 		protected override MsaCreatorDlgPayload Apply(MsaCreatorDlgInput state)
 		{
@@ -287,20 +285,16 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 			ChosenSandboxMsa = LcmInsertEntryDialogLauncher.BuildSandboxMsa(_cache, payload.Msa, morphType);
 			ChosenBoxMsa = payload.Msa;
-			// The chosen inflection-feature set rides back to the caller via ChosenBoxMsa, so a caller
-			// that assigns the resolved SandboxGenericMSA to a definite MSA (MSAPopupTreeManager's
-			// m_sense.SandboxMSA = ...) can round-trip the features onto that MSA in its own UOW (via the Show out-param
-			// overload + LcmInsertEntryDialogLauncher.ApplyInflectionFeatures). PARITY: the MSADlgLauncher
-			// UpdateOrReplace path is NOT round-tripped — UpdateOrReplace may REPLACE the MSA with a different instance,
-			// so the post-apply feature target is ambiguous. The Insert
-			// Entry and Add New Sense launchers (which own their created MSA) rebuild the inflection features fully.
-			// PARITY (inflection class): this launcher produces a SandboxGenericMSA for the CALLER to apply
-			// (m_sense.SandboxMSA = ... / UpdateOrReplace) and does NOT itself mutate the model (see the class PARITY
-			// note). SandboxGenericMSA carries no inflection-class field, so the chosen inflection class is SHOWN +
-			// seeded + refreshed in the box here but is not round-tripped through the MsaCreator caller's apply. Fully
-			// wiring it would require setting IMoStemMsa.InflectionClassRA on the resolved MSA at the call sites
-			// (MSAPopupTreeManager / MSADlgLauncher), which are outside this launcher's file ownership. The Insert Entry
-			// and Add New Sense launchers (which own their created MSA) DO set the inflection class fully.
+			// The chosen inflection-feature set rides back via ChosenBoxMsa so a caller that assigns the resolved
+			// SandboxGenericMSA to a definite MSA (MSAPopupTreeManager) can round-trip the features onto it in its
+			// own UOW, via the Show out-param overload + LcmInsertEntryDialogLauncher.ApplyInflectionFeatures.
+			// TODO: two round-trips are missing here. MSADlgLauncher's UpdateOrReplace path does not round-trip the
+			// features, because UpdateOrReplace may replace the MSA with a different instance and the post-apply
+			// target is then ambiguous. The inflection class is not round-tripped at all: SandboxGenericMSA carries
+			// no inflection-class field, so the class is shown, seeded and refreshed in the box but never applied.
+			// Wiring it needs IMoStemMsa.InflectionClassRA set on the resolved MSA at the call sites
+			// (MSAPopupTreeManager / MSADlgLauncher). Insert Entry and Add New Sense own their created MSA and
+			// already set both fully.
 			return payload;
 		}
 

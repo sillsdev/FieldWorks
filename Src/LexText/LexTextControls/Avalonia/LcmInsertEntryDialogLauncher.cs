@@ -892,11 +892,8 @@ namespace SIL.FieldWorks.LexText.Controls
 		}
 
 		/// <summary>
-		/// Sets the chosen inflection class (the box's <see cref="FwSandboxMsa.InflectionClassId"/>) on the entry's
-		/// first sense's STEM MSA — the lift of <c>InsertEntryDlg.SetEntryMsa</c> (set
-		/// <c>IMoStemMsa.InflectionClassRA</c> after the sense/MSA are created). PARITY: only the stem/root MSA is
-		/// covered (derivational from/to inflection classes are out of scope). A null/unresolvable id leaves
-		/// the class null (the "&lt;None&gt;" pick). Internal static so the set is unit-testable inside a UOW.
+		/// Sets the chosen inflection class on the entry's first sense, if it has one.
+		/// Internal static so the set is unit-testable inside a UOW.
 		/// </summary>
 		internal static void ApplyInflectionClass(LcmCache cache, ILexEntry entry, FwSandboxMsa chosen)
 		{
