@@ -30,7 +30,7 @@ migration burden.
 | TableLayoutPanel (33) / FlowLayoutPanel (20) / Panel (40) | `Grid` / `StackPanel` / `WrapPanel` — translate layout *semantics*, not widget-for-widget | any converted dialog view; spacing rules in dialog-conversion.md §2a-bis |
 | ToolTip (12) | `ToolTip.Tip` attached property | converted dialog views |
 | ContextMenuStrip built in code (22 files) | `MenuFlyout` populated from data | `Src/Common/FwAvalonia/Detail/DetailMenuFlyout.cs` |
-| PictureBox (21) | — (picture editing dropped from the region; a picture slice composes a labeled Unsupported worklist row until a native picture editor is added) | **conversion worklist** (see architecture-patterns.md §5) |
+| PictureBox (21) | — (picture editing dropped from the region; a picture slice composes a labeled Unsupported row until a native picture editor is added) | **conversion worklist** (see architecture-patterns.md §5) |
 | ProgressBar / ProgressDialogWithTask | — | **GAP:** [async / threaded progress (GAP-PROGRESS)](#gap-progress) |
 | WizardDialog family | — | **GAP:** [wizard lifecycle (GAP-WIZARD)](#gap-wizard) |
 | DataGridView (3) / BrowseViewer (28 files) / RecordBrowseView (19 files) | — | **DEFERRED:** [browse/table grid + bulk edit (GAP-BROWSE-GRID)](#gap-browse-grid) |

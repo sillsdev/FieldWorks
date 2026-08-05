@@ -90,7 +90,7 @@ skill files changed.
   instead of backing out. Now encoded in SKILL.md "Phase-1 Landing Strategy" +
   migration-checklist.md "Phase 0" + `Docs/migration/{README,_TEMPLATE}.md`.
 - Learned: (1) **`UIMode` defaults `"Legacy"`** (Settings.Designer.cs) and every Avalonia
-  view gates on it, so "not breaking anything" is structural — back-out is for reviewability,
+  view branches on it, so "not breaking anything" is structural — back-out is for reviewability,
   not safety; do it aggressively. (2) **Verify wiring from call sites, never from an Explore
   summary** — an Explore sweep falsely flagged FilterFor/DateRange/FindReplace/SpecialChar as
   "unwired spec-only" when three were instantiated in `RecordBrowseView.cs`; only SpecialChar +

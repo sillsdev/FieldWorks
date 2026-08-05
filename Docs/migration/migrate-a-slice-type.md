@@ -1,7 +1,7 @@
 # Playbook: Migrate a Slice Type
 
 The developer's workflow for converting one legacy slice type -- usually one
-showing today as a labeled "Unsupported" worklist row in the detail view --
+showing today as a labeled "Unsupported" row in the detail view --
 driven through the `/convert-slice` skill. You decide and confirm at every
 gate; the skill analyzes, drafts, and builds. Design background is the
 overview's "Detail pipeline" section; read it once before your first slice.

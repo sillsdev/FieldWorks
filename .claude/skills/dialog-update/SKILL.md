@@ -67,7 +67,7 @@ paired dialog:
    (e.g. writing-system change before vs after plugin install).
 4. **Visibility/enable drift.** One side gates a control's visibility or enabled
    state on a condition (UI mode, platform, settings state) that the other side
-   doesn't mirror. Check that both sides gate on the same condition, not just
+   doesn't mirror. Check that both sides branch on the same condition, not just
    that both sides have a similarly named control.
 5. **String/localization drift.** Wording, mnemonics, or the `.resx`/XLIFF key
    updated on one side only → inconsistent UI and broken translation memory.

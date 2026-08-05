@@ -6,7 +6,7 @@ gate; the skill analyzes, drafts, and builds. Design background is the
 overview document; the skill carries the process detail.
 
 Prerequisite: an up-to-date main that builds locally. The legacy dialog
-keeps working throughout -- launch sites gate on the UIMode setting and the
+keeps working throughout -- launch sites branch on the UIMode setting and the
 legacy path stays untouched.
 
 Keep FieldWorks open and explore while the agent works: its analysis phase
@@ -41,20 +41,20 @@ alongside them.
 7. Review the control/pattern mapping report: which WinForms controls have
    existing exemplar ports, where the gaps are, and the proposed Avalonia
    layout. Verify and adjust; the agreed result becomes the design
-   document. If the analysis surfaced unconverted CHILD dialogs, children
+   document. If the analysis surfaced unconverted child dialogs, children
    convert first: the skill shows the recommended order and asks whether to
-   start the blocker now in this session or pause. If it surfaced a CUSTOM
+   start the blocker now in this session or pause. If it surfaced a custom
    WinForms control with no exemplar, you get a capability table for the
    convert-vs-replace verdict; an owned conversion gets the same choice --
    convert the control now, or pause. Paused conversions resume exactly
    where they left off, even mid-control: restart /convert-dialog with the
    dialog name and the skill re-checks its gates against reality.
 8. Choose: **generate scaffold** (compiling, launching-empty dialog with
-   every launch site gated) or **implement design** (scaffold + full build
-   from the design and test plan). Hand-implementing inside the scaffold is
-   fine -- the skill will evaluate your implementation against the design.
-   Either way, nothing merges until step 9 passes: the scaffold is
-   branch-state, never a shipped state. To tune the generated layout by hand,
+   the UIMode branch added at every launch site) or **implement design**
+   (scaffold + full build from the design and test plan). Hand-implementing
+   inside the scaffold is fine -- the skill will evaluate your implementation
+   against the design. Either way, nothing merges until step 9 passes: the
+   scaffold is branch-state, never a shipped state. To tune the layout by hand,
    work from [Adjust a Converted Layout by Hand](adjust-the-layout.md): it
    covers which file holds which visual property, how to see your change, and
    the gotchas that waste an afternoon.

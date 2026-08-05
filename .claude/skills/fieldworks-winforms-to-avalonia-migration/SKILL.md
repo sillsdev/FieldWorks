@@ -100,7 +100,7 @@ off — it is the per-region definition of done.
 
 The program runs in two phases. **Phase 1** = high-value feature/bugfix-grade
 migrations behind the `UIMode` flag (default `"Legacy"` —
-`Src/Common/FwUtils/Properties/Settings.Designer.cs`; every Avalonia view gates on
+`Src/Common/FwUtils/Properties/Settings.Designer.cs`; every Avalonia view branches on
 `UIMode=New` via `UIFrameworkRegistry` + `UIFrameworkResolver`, so default
 users see no change). **Phase 2** (`avalonia-end-game`) = net10 / multiplatform / shell
 conversion, gated until Phase-1 + tester burn-down complete.

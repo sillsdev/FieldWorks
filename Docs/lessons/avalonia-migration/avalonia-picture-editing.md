@@ -34,7 +34,7 @@ the first slice set?
 Picture editing was cut from the Avalonia detail view, which left the dialog
 with no consumer on the new path. The dialog, its test, its exchange types, its
 localization rows, and the picture-only host affordances were removed. A picture
-field in the detail view now composes a labelled Unsupported worklist row until
+field in the detail view now composes a labelled Unsupported row until
 a native picture editor exists.
 
 ## Durable lessons
@@ -73,7 +73,7 @@ carries, and what a native editor must do.
 - Do not restore the removed dialog, its exchange types, or the host accessor
   from history.
 - Do not assume the WinForms picture path changed; it did not.
-- Do not treat the Unsupported worklist row as a permanent product decision.
+- Do not treat the Unsupported row as a permanent product decision.
 - Do not infer that a compiled, tested view-model indicates a shipped feature.
 - Do not infer that the removal authorizes a replacement design; no picture
   editor has been specified.

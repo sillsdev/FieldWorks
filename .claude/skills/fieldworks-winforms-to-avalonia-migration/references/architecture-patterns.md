@@ -91,7 +91,7 @@ and tested off-thread without WinForms or a real project.
   Grammar rule tools all ride one composer. New tools opt in by registering their
   tool in `UIFrameworkRegistry`, not by editing the composer.
 - **Generic reference editing mirrors legacy's metadata-driven model — keep it
-  global, gate on `IsVirtual`.** Editable reference vectors/atomic choosers
+  global, branch on `IsVirtual`.** Editable reference vectors/atomic choosers
   (`AddGenericReferenceVector`/`AddGenericAtomicChooser` via `ReferenceTargetCandidates`)
   live in the shared `WalkOtherField` fallthrough. Legacy editing is itself fully
   metadata-driven — `SliceFactory` reuses ONE `AtomicReferenceSlice`/`ReferenceVectorSlice`
@@ -200,7 +200,7 @@ Tests: `Src/xWorks/xWorksTests/Avalonia/Plugins/LexemeEditorInventoryTests.cs` (
    wraps the host context in a small `IDetailEditContext` that routes `TrySetText`/`TrySetRichText`
    to the matching reversal entry's `ReversalForm`, staging on the host's `DetailEditContextBase`.
 4. **Graduate the Unsupported row.** With the plugin registered, the slice that previously rendered
-   an Unsupported worklist row now renders the native editor — the row leaves the worklist.
+   an Unsupported row now renders the native editor.
 
 **Projectors and write-back belong in xWorks, not FwAvalonia or the domain assembly.**
 A plugin's view stays LCModel-free and binds an LCModel-free projection; the projector that reads

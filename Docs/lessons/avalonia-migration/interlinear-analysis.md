@@ -45,8 +45,8 @@ infrastructure.
    prune rules from legacy and liblcm before designing edits.
 4. Preserve writing-system runs, direction, shaping, caret behavior, and fonts;
    a single default string/font representation is insufficient.
-5. Gate the exact detail route being proven. Do not activate a whole tool,
-   browse table, or Options row as an accidental side effect.
+5. Limit activation to the exact detail route being proven. Do not activate a
+   whole tool, browse table, or Options row as an accidental side effect.
 
 ## Evidence needed next time
 

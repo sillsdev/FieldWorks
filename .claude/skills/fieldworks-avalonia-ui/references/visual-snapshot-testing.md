@@ -1,6 +1,6 @@
 # Visual snapshot testing (PNG artifacts + layout tripwire)
 
-How to *see* what a headless Avalonia view actually renders, and how to gate it. This is the
+How to *see* what a headless Avalonia view actually renders, and how to assert on it. This is the
 subjective check that complements the deterministic spacing/border standard
 (`DialogTheme.axaml` tokens) and the `DialogLayoutAssert.AssertNoCrowding` tripwire documented in
 `SKILL.md` and `dialog-conversion.md`. Use it for **every** view you build or change — dialogs,

@@ -142,7 +142,8 @@ A legacy custom slice (`editor="Custom" class=...` in layout XML) renders via
 an `ISlicePlugin` keyed by that **legacy class name** -- zero layout
 edits per migration (`Src/xWorks/Avalonia/Plugins/`).
 Resolution is two steps: plugin -> labeled **Unsupported** row. The visible
-Unsupported rows are the conversion worklist; nothing silently mis-renders.
+Unsupported rows are the remaining conversion work; nothing silently
+mis-renders.
 `ReversalIndexEntryPlugin.cs` is the exemplar.
 
 ### 2f. Hosting into xWorks -- replaces RecordEditView's DataTree hosting
@@ -201,9 +202,9 @@ DetailControls, these are the assumptions to update:
 | --- | --- |
 | `DataTree` walks layout XML at runtime and builds live `Slice` controls on demand | Composition is a separate, testable step: `DetailComposer` (or the thin `DetailModelProjector`) produces a `DetailModel` snapshot; the view only renders it |
 | A slice is a stateful control; new behavior means a new `Slice` subclass | A row is data (`DetailField` + `DetailFieldKind`) rendered by a factory-built `Fw*Field` control; new behavior means classifying to an existing kind, adding a kind + `SliceFactory` case, or writing a plugin -- never subclassing a row control (`migrate-a-slice-type.md`) |
-| Slices write into LCModel as you type, via Views/RootSite | Rows STAGE edits through `IDetailEditContext`; a fenced session commits them as ONE undo step on focus loss, and validation gates the commit |
+| Slices write into LCModel as you type, via Views/RootSite | Rows STAGE edits through `IDetailEditContext`; a fenced session commits them as ONE undo step on focus loss, and validation must pass before the commit |
 | Rows update in place when the data changes | Rows are a compose-time snapshot; changes arrive by re-compose/re-show through the refresh coordinator, which suspends while an edit session is open |
-| A custom slice is a dynamically loaded class named in the layout's `class=` | The same `class=` key resolves to a plugin (`ISlicePlugin`); an unclaimed custom slice renders a labeled Unsupported worklist row -- never silently wrong |
+| A custom slice is a dynamically loaded class named in the layout's `class=` | The same `class=` key resolves to a plugin (`ISlicePlugin`); an unclaimed custom slice renders a labeled Unsupported row -- never silently wrong |
 
 The one-line version: state was pulled out of the rows, composition was
 pulled out of the tree, and writes were pulled out of the keystroke path.
@@ -234,8 +235,6 @@ The familiar names survive on the halves they still fit.
   (see [Seams -- the coexistence boundary](#2d-seams----the-coexistence-boundary)).
 - **fenced edit session** -- a bracketed LCModel undo task: opened on the first
   staged edit, committed/cancelled as one undoable step.
-- **worklist row** -- a labeled Unsupported row in the detail view: visible,
-  honest, and the unit of remaining conversion work.
 - **chooser** -- the FieldWorks word for pick-from-list/tree controls
   (`FwOptionChooser`, `FwPosChooser`, `ChooserDialog`); "picker" is not used.
 

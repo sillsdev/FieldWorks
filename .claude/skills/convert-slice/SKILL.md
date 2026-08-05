@@ -83,8 +83,8 @@ slice-specific work:
 - Resolve the layout identity: the `editor=`/`class=` attributes and every
   layout node that produces this slice.
 - Inventory where it appears: which fields, which tools, roughly how many
-  instances (compose an affected record in the New UI -- the Unsupported
-  worklist row names the unclaimed class).
+  instances (compose an affected record in the New UI -- the Unsupported row
+  names the unclaimed class).
 - Interaction picture is row-shaped: mouse and keyboard edit interactions,
   commit timing (focus-loss autosave vs immediate-commit actions), context
   menus, and how the slice behaves inside DataTree (indent, label,
