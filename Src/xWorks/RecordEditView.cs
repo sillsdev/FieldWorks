@@ -69,7 +69,7 @@ namespace SIL.FieldWorks.XWorks
 		private string m_titleField;
 		private string m_titleStr;
 		private string m_printLayout;
-		private bool m_legacySurfaceInitialized;
+		private bool m_dataTreeInitialized;
 
 		//// <summary>
 		//// used to associate menu commands with the slice that sent them
@@ -90,9 +90,9 @@ namespace SIL.FieldWorks.XWorks
 		protected RecordEditView(DataTree dataEntryForm)
 		{
 			// This must be called before InitializeComponent()
-			SetEditSurface(EditSurface.WinForms);
+			SetUIFramework(UIFramework.Legacy);
 			m_dataEntryForm = dataEntryForm;
-			m_lexicalEditSurfaceFactory = new EditSurfaceFactory(
+			m_lexicalEditControlFactory = new EditControlFactory(
 				() => m_dataEntryForm,
 				() => new DetailHostControl());
 			m_dataEntryForm.CurrentSliceChanged += m_dataEntryForm_CurrentSliceChanged;
@@ -137,7 +137,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 
 			// If possible make it use the style sheet appropriate for its main window.
-			SetEditSurface(ResolveConfiguredEditSurface());
+			SetUIFramework(ResolveConfiguredUIFramework());
 			if (!ShouldUseAvaloniaLexiconEdit)
 				m_dataEntryForm.StyleSheet = FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable);
 			m_fullyInitialized = true;
@@ -172,7 +172,7 @@ namespace SIL.FieldWorks.XWorks
 					// Always Dispose, even pre-init (skipping would leak it): Control.Dispose() is safe unshown.
 					m_dataEntryForm.Dispose();
 				}
-				TearDownAvaloniaSurface();
+				TearDownAvaloniaEntryForm();
 				m_menuHandler?.Dispose();
 				if (!string.IsNullOrEmpty(m_titleField))
 					Cache.DomainDataByFlid.RemoveNotification(this);
@@ -214,7 +214,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 
 			// Selection bridge: the real mediator broadcast delivered a record navigation
-			// for this host's clerk, so let bridge subscribers (the Avalonia surface) follow it.
+			// for this host's clerk, so let bridge subscribers (the Avalonia view) follow it.
 			m_recordNavigationContext?.NotifyCurrentRecordChanged();
 			return true;	//we handled this.
 		}
@@ -246,7 +246,7 @@ namespace SIL.FieldWorks.XWorks
 
 			// Auto-save (14.4): leaving the tool/area settles any open fenced session the same way
 			// legacy slices save as the user moves on. Unconditional (the helper no-ops when no
-			// session is open), so a session that survived a surface flip still settles safely.
+			// session is open), so a session that survived a framework flip still settles safely.
 			SettleDetailEdits();
 			if (!ShouldUseAvaloniaLexiconEdit && m_dataEntryForm != null)
 			{
@@ -280,25 +280,25 @@ namespace SIL.FieldWorks.XWorks
 				return;
 			}
 
-			if (name != EditSurfaceResolver.UIModePropertyName
-				&& name != EditSurfaceResolver.UIModeDisabledToolsPropertyName)
+			if (name != UIFrameworkResolver.UIModePropertyName
+				&& name != UIFrameworkResolver.UIModeDisabledToolsPropertyName)
 				return;
 
-			var newSurface = ResolveConfiguredEditSurface();
-			var oldSurface = m_lexicalEditSurface;
-			if (newSurface == oldSurface)
+			var newFramework = ResolveConfiguredUIFramework();
+			var oldFramework = m_activeUIFramework;
+			if (newFramework == oldFramework)
 				return;
 
-			// Settle any open fenced session BEFORE flipping the surface — without this, flipping
+			// Settle any open fenced session BEFORE flipping frameworks — without this, flipping
 			// UIMode mid-edit would let Clerk.SaveOnChangeRecord force-commit invalid staged state.
 			SettleDetailEdits();
-			SetEditSurface(newSurface);
-			// Flipping AWAY from the Avalonia surface tears down its PropChanged/undo/deactivate
+			SetUIFramework(newFramework);
+			// Flipping AWAY from Avalonia tears down its PropChanged/undo/deactivate
 			// listeners and host NOW (symmetric with RecordBrowseView), not deferred to Dispose — so the
 			// refresh controller does not keep walking the notification bus for the view's remaining life.
-			// TearDownAvaloniaSurface nulls the host + controller, so a later flip back to New rebuilds them.
-			if (oldSurface == EditSurface.Avalonia && newSurface != EditSurface.Avalonia)
-				TearDownAvaloniaSurface();
+			// TearDownAvaloniaEntryForm nulls the host + controller, so a later flip back to New rebuilds them.
+			if (oldFramework == UIFramework.Avalonia && newFramework != UIFramework.Avalonia)
+				TearDownAvaloniaEntryForm();
 			ShowRecord(new RecordNavigationInfo(Clerk, Clerk.SuppressSaveOnChangeRecord, false, true));
 		}
 
@@ -389,12 +389,12 @@ namespace SIL.FieldWorks.XWorks
 					// Active-host contract: do not touch the legacy DataTree while Avalonia is active.
 					// The record may be gone (deleted elsewhere); cancel rather than orphan the session.
 					m_detailEditContext.Clear();
-					EnsureAvaloniaSurfaceActive();
+					EnsureAvaloniaEntryFormActive();
 					m_avaloniaEntryForm.Clear();
 				}
 				else
 				{
-					EnsureLegacySurfaceVisible();
+					EnsureDataTreeVisible();
 					m_dataEntryForm.Hide();
 					m_dataEntryForm.Reset();	// in case user deleted the object it was based upon.
 				}
@@ -402,16 +402,16 @@ namespace SIL.FieldWorks.XWorks
 			}
 			try
 			{
-				// Active-host contract: when the Avalonia surface is active we do NOT initialize
-				// or drive the legacy DataTree. Only the active surface is created and shown.
+				// Active-host contract: when Avalonia is active we do NOT initialize
+				// or drive the legacy DataTree. Only the active framework's UI is created and shown.
 				if (ShouldUseAvaloniaLexiconEdit)
 				{
-					EnsureAvaloniaSurfaceActive();
+					EnsureAvaloniaEntryFormActive();
 				}
 				else
 				{
-					EnsureLegacySurfaceInitialized();
-					EnsureLegacySurfaceVisible();
+					EnsureDataTreeInitialized();
+					EnsureDataTreeVisible();
 				}
 
 				// Enhance: Maybe do something here to allow changing the templates without the starting the application.
@@ -475,9 +475,9 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		private void EnsureLegacySurfaceInitialized()
+		private void EnsureDataTreeInitialized()
 		{
-			if (m_legacySurfaceInitialized)
+			if (m_dataTreeInitialized)
 				return;
 
 			m_dataEntryForm.PersistenceProvder = new PersistenceProvider(m_mediator, m_propertyTable, DataTreePersistContext);
@@ -501,22 +501,22 @@ namespace SIL.FieldWorks.XWorks
 			m_menuHandler.Init(m_mediator, m_propertyTable, m_configurationParameters);
 			m_dataEntryForm.SetContextMenuHandler(m_menuHandler.ShowSliceContextMenu);
 
-			AttachLegacySurfaceToPanel();
+			AttachDataTreeToPanel();
 
-			m_legacySurfaceInitialized = true;
+			m_dataTreeInitialized = true;
 		}
 
-		private void EnsureLegacySurfaceVisible()
+		private void EnsureDataTreeVisible()
 		{
 			SyncActiveHostContract();
 
-			AttachLegacySurfaceToPanel();
+			AttachDataTreeToPanel();
 			m_avaloniaEntryForm?.Hide();
 			m_dataEntryForm.Show();
 			m_dataEntryForm.BringToFront();
 		}
 
-		private void AttachLegacySurfaceToPanel()
+		private void AttachDataTreeToPanel()
 		{
 			if (m_dataEntryForm == null || m_panel == null)
 				return;
@@ -525,7 +525,7 @@ namespace SIL.FieldWorks.XWorks
 				m_panel.Controls.Add(m_dataEntryForm);
 		}
 
-		private void DetachLegacySurfaceFromPanel()
+		private void DetachDataTreeFromPanel()
 		{
 			if (m_dataEntryForm == null || m_panel == null)
 				return;
@@ -569,26 +569,26 @@ namespace SIL.FieldWorks.XWorks
 
 			base.SetupDataContext();
 
-			// InitBase() calls SetupDataContext() before RecordEditView.Init() resolves the surface, so
-			// resolve it here too — otherwise the first surface initialization would use the ctor default
+			// InitBase() calls SetupDataContext() before RecordEditView.Init() resolves the framework, so
+			// resolve it here too — otherwise the first initialization would use the ctor default
 			// (WinForms) and the active-host contract would be violated for an Avalonia start.
-			SetEditSurface(ResolveConfiguredEditSurface());
+			SetUIFramework(ResolveConfiguredUIFramework());
 
-			// Surface-agnostic: the record list bar must update regardless of which detail surface is active.
+			// The record list bar must update regardless of which framework is active.
 			Clerk.UpdateRecordTreeBarIfNeeded();
 
-			// Active-host contract: initialize only the active surface; the inactive surface is
-			// not instantiated or driven. The legacy DataTree is initialized here only when legacy is active;
-			// the Avalonia surface is created lazily in ShowRecordOnIdle so its construction stays on the
+			// Active-host contract: initialize only the active framework's UI; the inactive one is
+			// not instantiated or driven. The legacy DataTree is initialized here only when Legacy is active;
+			// the Avalonia entry form is created lazily in ShowRecordOnIdle so its construction stays on the
 			// idle path (the inactive legacy DataTree is never built).
 			if (!ShouldUseAvaloniaLexiconEdit)
 			{
-				EnsureLegacySurfaceInitialized();
-				EnsureLegacySurfaceVisible();
+				EnsureDataTreeInitialized();
+				EnsureDataTreeVisible();
 			}
 			else
 			{
-				DetachLegacySurfaceFromPanel();
+				DetachDataTreeFromPanel();
 			}
 		}
 
@@ -658,10 +658,10 @@ namespace SIL.FieldWorks.XWorks
 			// Legacy mode: the DataTree + menu handler are the normal targets. Avalonia mode: they
 			// participate ONLY once the lazy "command-menu-routing" baseline adapter exists (13.4),
 			// so the legacy command handlers can resolve and execute the context-menu commands.
-			if (m_legacySurfaceInitialized && m_dataEntryForm != null)
+			if (m_dataTreeInitialized && m_dataEntryForm != null)
 				collector.Add(m_dataEntryForm);
 
-			if (m_legacySurfaceInitialized && m_menuHandler != null)
+			if (m_dataTreeInitialized && m_menuHandler != null)
 				collector.Add(m_menuHandler);
 		}
 

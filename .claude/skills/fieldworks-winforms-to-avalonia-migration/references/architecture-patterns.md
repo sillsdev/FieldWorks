@@ -11,7 +11,7 @@ Contents:
 
 1. Typed view-definition IR (the long-term contract)
 2. Region model + composer (boundary above DataTree)
-3. Explicit surface selection per host
+3. Explicit framework selection per host
 4. Owned dense controls (control-selection decisions)
 5. Plugin registry for custom slice classes
 6. Writing-system behavior (font, RTL, keyboard, multi-WS)
@@ -88,8 +88,8 @@ and tested off-thread without WinForms or a real project.
 - **The composer is class-general — compose any `ICmObject`, not just LexEntry.**
   `Compose(ICmObject, layout, choiceGuid)` + `DetailEditContextBase`/
   `ComposedDetailEditContext` on `ICmObject` let notebookEdit / posEdit / Lists / the
-  Grammar rule tools all ride one composer. New surfaces opt in by registering their
-  tool in `EditSurfaceRegistry`, not by editing the composer.
+  Grammar rule tools all ride one composer. New tools opt in by registering their
+  tool in `UIFrameworkRegistry`, not by editing the composer.
 - **Generic reference editing mirrors legacy's metadata-driven model — keep it
   global, gate on `IsVirtual`.** Editable reference vectors/atomic choosers
   (`AddGenericReferenceVector`/`AddGenericAtomicChooser` via `ReferenceTargetCandidates`)
@@ -109,7 +109,7 @@ and tested off-thread without WinForms or a real project.
   (§19i data-loss). Emit the canonical granular form the model's `TryParse` accepts, not a
   display string. Verify against the actual LCModel API, not assumptions.
 
-## 3. Explicit surface selection per host
+## 3. Explicit framework selection per host
 
 **Decision.** Every host that can show legacy or Avalonia UI resolves an
 explicit `HostUiBehavior`: supported Avalonia, explicit legacy fallback, or
@@ -118,12 +118,12 @@ DataTree/menu/renderer infrastructure except through approved baseline
 adapters.
 
 **Canonical code.**
-`Src/Common/FwAvalonia/EditSurfaceSelectionService.cs`,
-`EditSurfaceResolver.cs`, `EditSurfaceFactory.cs`,
+`Src/Common/FwAvalonia/UIFrameworkSelectionService.cs`,
+`UIFrameworkResolver.cs`, `EditControlFactory.cs`,
 `Src/Common/FwAvalonia/Seams/ActiveHostContract.cs` (approved-adapter
 whitelist).
-Tests: `EditSurfaceResolverTests.cs`,
-`SurfaceAndHostContractTests.cs`,
+Tests: `UIFrameworkResolverTests.cs`,
+`UIFrameworkAndHostContractTests.cs`,
 `Src/xWorks/xWorksTests/Avalonia/Hosting/RecordEditViewActiveHostContractTests.cs`.
 
 **Gotchas.** "Convenience" calls into legacy internals while Avalonia is
@@ -207,7 +207,7 @@ A plugin's view stays LCModel-free and binds an LCModel-free projection; the pro
 LCModel and the write-back that mutates it live in xWorks (which references both LCModel and
 FwAvalonia). Putting a projector in `Morphology` would be circular.
 
-**When migrating a new surface:** census its custom slice classes first,
+**When migrating a new view:** census its custom slice classes first,
 check the registry for existing plugins, and add plugins (with tests) for
 the rest. Everything unclaimed renders Unsupported until its plugin lands — that is the burn-down.
 
@@ -242,11 +242,11 @@ implementation: `Src/Common/FwAvalonia/AvaloniaDialogHost.cs`):
   the 11.x coexistence path).
 - Record the focused Avalonia control before `ShowDialog` and restore focus
   explicitly after close.
-- Use Avalonia flyouts inside the hosted surface, not free popup windows
+- Use Avalonia flyouts inside the hosted control, not free popup windows
   (mixed-DPI positioning).
 - No cross-boundary Tab order between WinForms siblings and the Avalonia
-  surface; own focus inside the surface.
-- No WinForms modeless tool windows owned by an Avalonia surface.
+  control; own focus inside it.
+- No WinForms modeless tool windows owned by an Avalonia view.
 
 ## 8. Undo/redo, edit sessions, and refresh
 
@@ -366,7 +366,7 @@ delta in the region manifest).
 > *styling* (colors, control templates, focus visuals, corner radii) may
 > intentionally diverge. The visual-parity evidence type therefore checks
 > density/layout, not pixel-for-pixel appearance. The density tokens and
-> per-surface border/font rules that this parity is measured against live in
+> per-view border/font rules that this parity is measured against live in
 > `fieldworks-avalonia-ui/references/style-system.md`, even where styling
 > intentionally diverges.
 
@@ -387,7 +387,7 @@ detail, 10k-row browse) before committing a control choice. Include the
 scenarios/workflows are the front-and-center verification style** — preferred
 over deferring to "live verification" or unit tests that poke handlers. Build in
 **two fidelities** (hosting Avalonia vs. standing up the real domain differ in
-cost/risk): a **surface-workflow** layer in an Avalonia-headless assembly
+cost/risk): a **UI-workflow** layer in an Avalonia-headless assembly
 (`FwAvaloniaTests`) — co-host the owned control(s) and drive them through
 page-object drivers (filter/clear/select/type/commit), asserting observable
 state and round-trips like select→detail and edit→refresh; and a **real-domain**
@@ -399,11 +399,11 @@ filter extraction runs through `CollectorEnv : IVwEnv` (managed, SDA-only, no
 
 **Canonical code.** `Src/Common/FwAvalonia/FwAvaloniaTests/Workflows/HeadlessWorkflowHarness.cs`
 (`HeadlessStage`, `DetailEditorDriver`). An earlier revision also carried a browse-table driver
-(`BrowseTableDriver`) with its surface-workflow exemplar
+(`BrowseTableDriver`) with its UI-workflow exemplar
 (`FwAvaloniaTests/BrowseEditorIntegrationTests.cs`) and a real-domain exemplar
 (`Src/xWorks/xWorksTests/ClerkRoutedFilterTests.cs`); both were removed with the browse-table
-surface (control-exemplar-map.md §3.6) — do not cite them as present. `DetailEditorDriver` itself
-currently has no consuming exemplar test; the next surface that adopts this harness becomes the
+table (control-exemplar-map.md ~3.6) -- do not cite them as present. `DetailEditorDriver` itself
+currently has no consuming exemplar test; the next view that adopts this harness becomes the
 exemplar. The requirements this harness satisfies are synced to
 `openspec/specs/lexical-edit-parity-automation/spec.md`.
 

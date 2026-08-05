@@ -9,14 +9,14 @@ using SIL.FieldWorks.Common.FwAvalonia;
 
 // An assembly-level [SetUpFixture] in the GLOBAL namespace runs its OneTimeSetUp once for the whole
 // assembly, BEFORE any test in any namespace. We use that to force the headless Avalonia platform
-// before the first product surface (RecordEditView/RecordBrowseView) constructs an Avalonia host.
+// before the first product host (RecordEditView/RecordBrowseView) constructs an Avalonia control.
 
 [SetUpFixture]
 public sealed class AvaloniaHeadlessSetUpFixture
 {
 	/// <summary>
 	/// Forces FieldWorks' in-process Avalonia runtime onto the HEADLESS windowing platform for the whole
-	/// xWorksTests run. Several integration tests drive the real product surface
+	/// xWorksTests run. Several integration tests drive the real product hosts
 	/// (RecordEditView/RecordBrowseView, the detail/browse hosts, AvaloniaDialogHost), which funnel
 	/// through <see cref="FwAvaloniaRuntime.EnsureInitialized"/>. In production that builds the REAL Win32
 	/// Avalonia platform, so any detail-view flyout, dialog, or popup raised during a test becomes a real

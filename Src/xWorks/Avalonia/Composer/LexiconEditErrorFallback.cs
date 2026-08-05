@@ -90,7 +90,7 @@ namespace SIL.FieldWorks.XWorks
 
 		// Multi-WS read path: one row per *current* writing system — the same
 		// "all vernacular"/"all analysis" semantics the compiled slice definitions carry — rendered
-		// with the project's per-WS default font so both surfaces show the same record consistently.
+		// with the project's per-WS default font so both views show the same record consistently.
 		// The per-ws row projection is the shared DetailValueFactory recipe (the
 		// composer uses the same one); only the text reads live here.
 		private IReadOnlyList<DetailWsValue> GetLexemeFormValues()

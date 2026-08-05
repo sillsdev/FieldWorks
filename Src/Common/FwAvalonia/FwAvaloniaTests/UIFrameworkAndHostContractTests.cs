@@ -9,26 +9,26 @@ using SIL.FieldWorks.Common.FwAvalonia.Seams;
 namespace FwAvaloniaTests
 {
 	[TestFixture]
-	public class EditSurfaceSelectionServiceTests
+	public class UIFrameworkSelectionServiceTests
 	{
-		private readonly EditSurfaceSelectionService _service = new EditSurfaceSelectionService();
+		private readonly UIFrameworkSelectionService _service = new UIFrameworkSelectionService();
 
 		[Test]
 		public void NewMode_SupportedTool_IsSupportedAvalonia()
 		{
 			var decision = _service.Decide("New", "lexiconEdit");
-			Assert.That(decision.Surface, Is.EqualTo(EditSurface.Avalonia));
+			Assert.That(decision.Framework, Is.EqualTo(UIFramework.Avalonia));
 			Assert.That(decision.Behavior, Is.EqualTo(HostUiBehavior.SupportedAvalonia));
 		}
 
 		[Test]
 		public void NewMode_UnmigratedTool_IsExplicitLegacyFallback()
 		{
-			// domainTypeEdit (a Lists CmPossibility tool) is not yet registered for the Avalonia edit surface,
+			// domainTypeEdit (a Lists CmPossibility tool) is not yet registered for Avalonia,
 			// so New mode is an explicit legacy fallback. (posEdit/notebookEdit are now registered and resolve
 			// to Avalonia; covered by RecordEditViewSwitchTests.)
 			var decision = _service.Decide("New", "domainTypeEdit");
-			Assert.That(decision.Surface, Is.EqualTo(EditSurface.WinForms));
+			Assert.That(decision.Framework, Is.EqualTo(UIFramework.Legacy));
 			Assert.That(decision.Behavior, Is.EqualTo(HostUiBehavior.ExplicitLegacyFallback));
 		}
 
@@ -36,7 +36,7 @@ namespace FwAvaloniaTests
 		public void LegacyMode_SupportedTool_IsLegacyActive()
 		{
 			var decision = _service.Decide("Legacy", "lexiconEdit");
-			Assert.That(decision.Surface, Is.EqualTo(EditSurface.WinForms));
+			Assert.That(decision.Framework, Is.EqualTo(UIFramework.Legacy));
 			Assert.That(decision.Behavior, Is.EqualTo(HostUiBehavior.LegacyActive));
 		}
 
@@ -44,7 +44,7 @@ namespace FwAvaloniaTests
 		public void Override_ForcesAvalonia_ForSupportedTool()
 		{
 			var decision = _service.Decide("Legacy", "lexiconEdit", overrideEnabled: true);
-			Assert.That(decision.Surface, Is.EqualTo(EditSurface.Avalonia));
+			Assert.That(decision.Framework, Is.EqualTo(UIFramework.Avalonia));
 			Assert.That(decision.Behavior, Is.EqualTo(HostUiBehavior.SupportedAvalonia));
 		}
 
@@ -88,7 +88,7 @@ namespace FwAvaloniaTests
 
 		// "command-menu-routing" is the approved adapter under which RecordEditView lazily initializes
 		// the HIDDEN legacy DataTree + DTMenuHandler purely as the command-target colleague chain for
-		// context menus — never shown, never the active surface.
+		// context menus — never shown, never active.
 		[Test]
 		public void Avalonia_CommandMenuRouting_IsAnApprovableAdapter_ForContextMenuCommands()
 		{

@@ -26,12 +26,12 @@ namespace FwAvaloniaTests
 		private static DetailField Header(string id, string label, int indent,
 			bool expanded = true) => new DetailField(
 			id, label, null, null, DetailFieldKind.Header, EditorClassification.GroupingNone,
-			null, null, SurfaceRouting.Inherit, null, null, null,
+			null, null, HostRouting.Inherit, null, null, null,
 			isEditable: false, indent: indent, isCollapsible: true, isInitiallyExpanded: expanded);
 
 		private static DetailField Text(string id, string label, int indent)
 			=> new DetailField(id, label, label, null, DetailFieldKind.Text,
-				EditorClassification.Known, id, null, SurfaceRouting.Inherit,
+				EditorClassification.Known, id, null, HostRouting.Inherit,
 				new List<DetailWsValue> { new DetailWsValue("en", "value") }, null, null,
 				isEditable: true, indent: indent);
 
@@ -209,7 +209,7 @@ namespace FwAvaloniaTests
 		public void LabelTooltips_Splitter_BoldEmphasis_AndCopyMenu_RenderLikeLegacy()
 		{
 			var bold = new DetailField("lf", "Lexeme Form", "Form", null, DetailFieldKind.Text,
-				EditorClassification.Known, "LexemeRow", null, SurfaceRouting.Inherit,
+				EditorClassification.Known, "LexemeRow", null, HostRouting.Inherit,
 				new List<DetailWsValue> { new DetailWsValue("seh", "casa", null, 14.4, false, "seh", bold: true) },
 				null, null);
 			var view = Show(bold);
@@ -312,7 +312,7 @@ namespace FwAvaloniaTests
 			foreach (var v in values)
 				wsValues.Add(new DetailWsValue(v.abbrev, v.value, wsTag: v.abbrev));
 			return new DetailField(id, label, label, null, DetailFieldKind.Text,
-				EditorClassification.Known, id, null, SurfaceRouting.Product, wsValues, null, null,
+				EditorClassification.Known, id, null, HostRouting.Product, wsValues, null, null,
 				isEditable: true);
 		}
 	}

@@ -22,11 +22,11 @@ using SIL.FieldWorks.Common.FwAvalonia;
 namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 {
 	/// <summary>
-	/// The ONE compact, filterable select-from-list control every Avalonia option surface uses:
+	/// The ONE compact, filterable select-from-list control every Avalonia option picker uses:
 	/// the chooser's single-select flyout, the reference vector's "+" add flyout, and preview
 	/// morph-type chooser. It is a small NATIVE composite — a <see cref="TextBox"/> filter box
 	/// stacked over a <see cref="ListBox"/> of options — shown INLINE inside the host flyout. The
-	/// host flyout is therefore the only popup; there is no second floating dropdown surface (an
+	/// host flyout is therefore the only popup; there is no second floating dropdown (an
 	/// AutoCompleteBox would spawn a separate grey-chromed <c>PART_SuggestionsContainer</c>
 	/// popup — the source of a heavy grey border and focus/arrow-key flakiness).
 	///
@@ -99,7 +99,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		// existing filter+list panel is hosted in a focus-gated Flyout anchored to the toggle button —
 		// the very Flyout the inline consumers already open through CreateOptionFlyout — that opens on
 		// click and closes on pick, reusing the same filtering + keyboard behavior. A flyout positions
-		// itself in the trigger's own surface, so it stays correct under fractional display scaling; only
+		// itself in the trigger's own window, so it stays correct under fractional display scaling; only
 		// the single-select path supports dropdown mode (the MorphType picker is single-select).
 		private readonly bool _dropdown;
 		private readonly ToggleButton _dropdownButton;
@@ -261,7 +261,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 					RoutingStrategies.Bubble, handledEventsToo: true);
 
 				// Reuse the inline consumers' flyout path: a chromeless, focus-posting Flyout anchored to
-				// the toggle button. Unlike a free popup, a flyout positions in the trigger's own surface,
+				// the toggle button. Unlike a free popup, a flyout positions in the trigger's own window,
 				// so the dropdown stays correctly placed under fractional display scaling.
 				_dropdownFlyout = BuildOptionFlyout(popupPanel, this, PlacementMode.Bottom);
 				_dropdownFlyout.Opened += OnDropdownFlyoutOpened;
@@ -398,7 +398,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		/// Builds the host flyout for an option picker with the Fluent <c>FlyoutPresenter</c>'s heavy
 		/// grey decorations (its padding, border, and grey background) stripped to nothing — so the
 		/// picker's own thin border is the ONLY boundary the user sees, instead of the default thick
-		/// grey box wrapping it. Every option surface (chooser, "+" vector add, preview chooser)
+		/// grey box wrapping it. Every option picker (chooser, "+" vector add, preview chooser)
 		/// opens through here so the styling stays consistent.
 		/// </summary>
 		public static Flyout CreateOptionFlyout(FwOptionChooser picker, PlacementMode placement)

@@ -20,27 +20,27 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Seams
 	{
 		private readonly HashSet<string> _allowedBaselineAdapters;
 
-		public ActiveHostContract(EditSurfaceKind activeSurface, IEnumerable<string> allowedBaselineAdapters = null)
+		public ActiveHostContract(UIFramework activeFramework, IEnumerable<string> allowedBaselineAdapters = null)
 		{
-			ActiveSurface = activeSurface;
+			ActiveUIFramework = activeFramework;
 			_allowedBaselineAdapters = new HashSet<string>(
 				allowedBaselineAdapters ?? Enumerable.Empty<string>(), StringComparer.Ordinal);
 		}
 
-		/// <summary>The surface that is currently visible/active.</summary>
-		public EditSurfaceKind ActiveSurface { get; }
+		/// <summary>The UI framework that is currently visible/active.</summary>
+		public UIFramework ActiveUIFramework { get; }
 
 		/// <summary>Baseline-only adapter ids that are permitted to touch legacy infrastructure even when Avalonia is active.</summary>
 		public IReadOnlyCollection<string> AllowedBaselineAdapters => _allowedBaselineAdapters;
 
 		/// <summary>
 		/// Whether legacy <c>DataTree</c> initialization/driving is permitted in the current state. Always
-		/// true when the legacy surface is active; when Avalonia is active it is permitted only for an
+		/// true when the Legacy framework is active; when Avalonia is active it is permitted only for an
 		/// approved baseline adapter id.
 		/// </summary>
 		public bool PermitsLegacyDataTreeDrive(string adapterId = null)
 		{
-			if (ActiveSurface == EditSurfaceKind.Legacy)
+			if (ActiveUIFramework == UIFramework.Legacy)
 				return true;
 
 			return adapterId != null && _allowedBaselineAdapters.Contains(adapterId);
@@ -52,16 +52,16 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Seams
 			if (!PermitsLegacyDataTreeDrive(adapterId))
 			{
 				throw new InvalidOperationException(
-					$"Active-host contract violation: the Avalonia surface is active and may not drive the legacy " +
+					$"Active-host contract violation: the Avalonia framework is active and may not drive the legacy " +
 					$"DataTree (adapter id '{adapterId ?? "<none>"}' is not an approved baseline adapter).");
 			}
 		}
 
 		/// <summary>A contract for a legacy-active host (everything permitted).</summary>
-		public static ActiveHostContract ForLegacy() => new ActiveHostContract(EditSurfaceKind.Legacy);
+		public static ActiveHostContract ForLegacy() => new ActiveHostContract(UIFramework.Legacy);
 
 		/// <summary>A contract for an Avalonia-active host with the given approved baseline adapters (none by default).</summary>
 		public static ActiveHostContract ForAvalonia(params string[] allowedBaselineAdapters)
-			=> new ActiveHostContract(EditSurfaceKind.Avalonia, allowedBaselineAdapters);
+			=> new ActiveHostContract(UIFramework.Avalonia, allowedBaselineAdapters);
 	}
 }

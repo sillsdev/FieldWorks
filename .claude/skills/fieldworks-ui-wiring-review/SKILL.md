@@ -19,13 +19,13 @@ description: "Review or change FieldWorks UI wiring — app-setting and Property
 The decided routing model is explicit per-host behavior — supported
 Avalonia, explicit legacy fallback, or blocked — never silent fallback:
 
-- Surface selection: `Src/Common/FwAvalonia/EditSurfaceSelectionService.cs`,
-  `EditSurfaceResolver.cs` (behavior enum + routing logic)
+- Framework selection: `Src/Common/FwAvalonia/UIFrameworkSelectionService.cs`,
+  `UIFrameworkResolver.cs` (behavior enum + routing logic)
 - Approved legacy adapters: `Src/Common/FwAvalonia/Seams/ActiveHostContract.cs`
 - Contract tests to imitate:
   `Src/xWorks/xWorksTests/Avalonia/Hosting/RecordEditViewActiveHostContractTests.cs`,
-  `Src/Common/FwAvalonia/FwAvaloniaTests/SurfaceAndHostContractTests.cs`,
-  `EditSurfaceResolverTests.cs`
+  `Src/Common/FwAvalonia/FwAvaloniaTests/UIFrameworkAndHostContractTests.cs`,
+  `UIFrameworkResolverTests.cs`
 
 ## Required Checks
 
@@ -36,7 +36,7 @@ Avalonia, explicit legacy fallback, or blocked — never silent fallback:
   registration, host reload path, focus or command target routing, save or
   `PrepareToGoAway()` path, and fallback or blocked state.
 - For global switches, verify each current consumer has an explicit
-  contract: supported Avalonia surface, explicit legacy fallback, or
+  contract: supported Avalonia view, explicit legacy fallback, or
   resource-backed unsupported state.
 - The active Avalonia route must not instantiate or drive hidden legacy
   rendering or menu infrastructure except through `ActiveHostContract`

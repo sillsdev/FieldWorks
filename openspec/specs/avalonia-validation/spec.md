@@ -3,7 +3,7 @@
 ## Purpose
 
 Define the FieldWorks-owned validation seam for durable rules, how Avalonia
-presents validation through its native binding surfaces, and the subordinate
+presents validation through its native binding mechanisms, and the subordinate
 role of any third-party validator package.
 ## Requirements
 ### Requirement: Durable validation rules live behind a FieldWorks-owned validation seam
@@ -14,9 +14,9 @@ Durable lexical validation rules SHALL live behind a FieldWorks-owned validation
 - **WHEN** a migrated lexical region validates staged data
 - **THEN** validation SHALL be able to evaluate required rules, cross-field rules, and commit gates without forcing live editor or control materialization
 
-### Requirement: Avalonia presents validation through native binding surfaces
+### Requirement: Avalonia presents validation through native binding mechanisms
 
-Avalonia editors SHALL present validation state through native Avalonia binding and validation surfaces such as `INotifyDataErrorInfo`, `DataValidationErrors`, or equivalent UI adapters.
+Avalonia editors SHALL present validation state through native Avalonia binding and validation mechanisms such as `INotifyDataErrorInfo`, `DataValidationErrors`, or equivalent UI adapters.
 
 #### Scenario: Field issue appears in Avalonia editor
 - **WHEN** the validation seam reports a field-scoped issue for visible staged data

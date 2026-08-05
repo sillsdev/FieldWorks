@@ -19,7 +19,7 @@ namespace FwAvaloniaDialogsTests
 	/// LCModel-free collector behind the inline create affordances of the feature editor (the Avalonia replacement for
 	/// the MasterInflectionFeatureListDlg / MasterPhonologicalFeatureListDlg blank-create link). OK is gated on a
 	/// non-empty name; the same VM serves the feature + value flows via its labels. Runtime proof on a realized
-	/// headless surface, with a per-stage PNG.
+	/// headless view, with a per-stage PNG.
 	/// </summary>
 	[TestFixture]
 	public class CreateFeatureDialogTests

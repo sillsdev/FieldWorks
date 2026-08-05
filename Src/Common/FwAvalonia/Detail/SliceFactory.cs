@@ -16,7 +16,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 	/// <summary>
 	/// The small bundle of (all-nullable) collaborators a <see cref="DetailFieldKind"/> editor needs,
 	/// passed to <see cref="SliceFactory.Build"/> so the SAME field→control dispatch serves
-	/// every hosting surface (today the detail-pane detail view, <c>DataTree.BuildEditor</c>;
+	/// every host (today the detail-pane detail view, <c>DataTree.BuildEditor</c>;
 	/// any future in-cell editor passes only the collaborators it has). Every member is optional: a null
 	/// edit context yields read-only display; a null callback simply disables that affordance.
 	/// One switch, so new kinds live in one place.
@@ -47,7 +47,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		/// <summary>Per-WS keyboard activation callback for text fields (null → no keyboard switch).</summary>
 		public Action<string> WritingSystemFocused { get; }
 
-		/// <summary>Right-click slice/section menu callback (null on surfaces without a slice menu).</summary>
+		/// <summary>Right-click slice/section menu callback (null on hosts without a slice menu).</summary>
 		public Action<DetailMenuRequest> MenuRequested { get; }
 
 		/// <summary>Hyperlink follow callback for choosers/vectors (null → no link affordance).</summary>
@@ -58,7 +58,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 
 		/// <summary>
 		/// Validation-gated commit invoked when a reference-vector add/remove gesture completes (the detail
-		/// pane's autosave). Null on surfaces that drive commit themselves (an in-cell editor commits on
+		/// pane's autosave). Null on hosts that drive commit themselves (an in-cell editor commits on
 		/// Enter/Tab through its own active-cell session), in which case the vector field just stages.
 		/// </summary>
 		public Action Save { get; }
@@ -75,7 +75,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 	/// pane (<c>DataTree.BuildEditor</c>, all 7 kinds) and the browse in-cell editor
 	/// (<c>EditableCellHost.Activate</c>, a 2-kind Chooser/Text subset) both route here rather than
 	/// hand-rolling their own dispatch, so adding a kind (or changing how a kind is built) happens once.
-	/// The factory is pure (static) — all per-surface variation arrives through the
+	/// The factory is pure (static) — all per-host variation arrives through the
 	/// <see cref="SliceFactoryContext"/>.
 	/// </summary>
 	public static class SliceFactory
@@ -95,7 +95,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 					// staged session would otherwise sit open — LCModel broadcasts PropChanged only at
 					// EndUndoTask and the row's Items are a compose-time snapshot, so the user would see no
 					// change. The gesture-completed callback runs the SAME validation-gated save the
-					// focus-loss autosave uses, whose re-show rebuilds the row from domain truth. A surface
+					// focus-loss autosave uses, whose re-show rebuilds the row from domain truth. A host
 					// that owns its own commit (an in-cell editor) passes a null Save and just stages.
 					return new FwReferenceVectorField(field, automationId, context.EditContext,
 						context.EditContext == null ? null : context.Save, context.LinkRequested);
@@ -104,7 +104,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 					// ride the focus-loss autosave; structural gestures (add/delete/style) commit
 					// immediately through the SAME validation-gated Save the reference vector uses, whose
 					// re-show rebuilds the paragraph rows from domain truth (the Paragraphs list is a
-					// compose-time snapshot). A surface owning its own commit passes a null Save.
+					// compose-time snapshot). A host owning its own commit passes a null Save.
 					return new FwStructuredTextField(field, automationId, context.EditContext,
 						context.WritingSystemFocused,
 						context.EditContext == null ? null : context.Save, context.Clipboard);

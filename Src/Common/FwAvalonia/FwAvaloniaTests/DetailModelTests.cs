@@ -49,13 +49,13 @@ namespace FwAvaloniaTests
 			{
 				new ViewNode("LexEntry/identity/#0", ViewNodeKind.Field, "Lexeme Form", null, "LexemeForm", "multistring",
 					EditorClassification.Known, "vernacular", ViewVisibility.Always, ViewExpansion.NotApplicable, false, null, null,
-					automationId: "LexemeFormEditor", routing: SurfaceRouting.Product),
+					automationId: "LexemeFormEditor", routing: HostRouting.Product),
 				new ViewNode("LexEntry/identity/#1", ViewNodeKind.Field, "Morph Type", null, "MorphType", "morphtypeatomicreference",
 					EditorClassification.Known, null, ViewVisibility.Always, ViewExpansion.NotApplicable, false, null, null,
-					automationId: "MorphTypeChooser", routing: SurfaceRouting.Product),
+					automationId: "MorphTypeChooser", routing: HostRouting.Product),
 				new ViewNode("LexEntry/identity/#2", ViewNodeKind.Field, "Gloss", null, "Gloss", "multistring",
 					EditorClassification.Known, "analysis", ViewVisibility.Always, ViewExpansion.NotApplicable, false, null, null,
-					automationId: "SenseGlossEditor", routing: SurfaceRouting.Product)
+					automationId: "SenseGlossEditor", routing: HostRouting.Product)
 			};
 			return new ViewDefinitionModel("LexEntry", "identity", "detail", roots, new List<ViewDiagnostic>());
 		}
@@ -349,10 +349,10 @@ namespace FwAvaloniaTests
 			{
 				new ViewNode("LexEntry/identity/#0", ViewNodeKind.Field, "Lexeme Form", null, "LexemeForm", "multistring",
 					EditorClassification.Known, "vernacular", ViewVisibility.Always, ViewExpansion.NotApplicable, false, null, null,
-					automationId: "LexemeFormEditor", routing: SurfaceRouting.Product),
+					automationId: "LexemeFormEditor", routing: HostRouting.Product),
 				new ViewNode("LexEntry/identity/#1", ViewNodeKind.Field, "Morph Type", null, "MorphType", "morphtypeatomicreference",
 					EditorClassification.Known, null, ViewVisibility.Always, ViewExpansion.NotApplicable, false, null, null,
-					automationId: "MorphTypeChooser", routing: SurfaceRouting.Product)
+					automationId: "MorphTypeChooser", routing: HostRouting.Product)
 			},
 			new List<ViewDiagnostic>());
 

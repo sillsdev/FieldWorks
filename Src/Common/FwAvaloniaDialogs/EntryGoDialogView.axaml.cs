@@ -58,7 +58,7 @@ namespace FwAvaloniaDialogs
 			}
 
 			// The OK button exists only for two-stage auxiliary consumers; single-stage (commit-on-select) consumers
-			// keep their exact OK-less surface, so remove it from the tree (not merely hide it) once the VM arrives.
+			// keep their exact OK-less UI, so remove it from the tree (not merely hide it) once the VM arrives.
 			DataContextChanged += OnDataContextChangedRemoveOkIfSingleStage;
 
 			// The description pane is opt-in; consumers that supply no label or rich content lose the entire
@@ -74,7 +74,7 @@ namespace FwAvaloniaDialogs
 		}
 
 		// Applies the opt-in search-field spec to the realized search box: the writing system's font family/size and
-		// right-to-left flow (the same value-application rules the detail surface uses for its per-ws rows — empty
+		// right-to-left flow (the same value-application rules the detail view uses for its per-ws rows — empty
 		// family / zero size keep the shared defaults). The keyboard-switch callback fires from OnSearchBoxGotFocus.
 		private void OnDataContextChangedApplySearchFieldSpec(object sender, System.EventArgs e)
 		{
@@ -118,7 +118,7 @@ namespace FwAvaloniaDialogs
 
 		// Removes the opt-in description pane (and its gutter) from the tree when the consumer supplied neither
 		// a description label nor rich row content, zeroing their grid columns so the persistent matching list
-		// takes the full dialog width (the legacy BaseGoDlg surface, which has no description pane).
+		// takes the full dialog width (the legacy BaseGoDlg layout, which has no description pane).
 		private void OnDataContextChangedRemoveDescriptionPaneIfUnused(object sender, System.EventArgs e)
 		{
 			var vm = ViewModel;

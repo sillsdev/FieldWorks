@@ -72,7 +72,7 @@ namespace FwAvaloniaTests
 
 		private static DetailField VectorFieldWithItems() => new DetailField(
 			"v1", "Publish In", "PublishIn", null, DetailFieldKind.ReferenceVector,
-			EditorClassification.Known, "PublishIn", null, SurfaceRouting.Inherit, null,
+			EditorClassification.Known, "PublishIn", null, HostRouting.Inherit, null,
 			new List<DetailChoiceOption>
 			{
 				new DetailChoiceOption("p1", "Main Dictionary"),

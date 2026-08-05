@@ -26,7 +26,7 @@ namespace FwAvaloniaDialogsTests
 	/// <summary>
 	/// The LCModel-free <see cref="FwFeatureStructureEditor"/> (the FsFeatStruc tree editor), parity of
 	/// the WinForms <c>FeatureStructureTreeView</c> / <c>MsaInflectionFeatureListDlg</c> /
-	/// <c>PhonologicalFeatureChooserDlg</c>. Proven on a realized headless surface.
+	/// <c>PhonologicalFeatureChooserDlg</c>. Proven on a realized headless view.
 	/// </summary>
 	[TestFixture]
 	public class FwFeatureStructureEditorTests
@@ -65,7 +65,7 @@ namespace FwAvaloniaDialogsTests
 			return (editor, window);
 		}
 
-		private static void Pump(Control surface) => AvaloniaDialogTestHarness.Pump(surface);
+		private static void Pump(Control control) => AvaloniaDialogTestHarness.Pump(control);
 
 		// Resolve the tree-node model object for a feature/value id without reflecting the private node type:
 		// the editor exposes its TreeView, so we walk its realized containers' DataContexts by matching the
@@ -148,7 +148,7 @@ namespace FwAvaloniaDialogsTests
 			Assert.That(editor.Assignments[0].ClosedFeatureId, Is.EqualTo("f-tense"));
 			Assert.That(editor.Assignments[0].ValueId, Is.EqualTo("v-past"));
 
-			// Capture the realized surface with the value visible for the per-stage PNG.
+			// Capture the realized view with the value visible for the per-stage PNG.
 			Expand(editor, "Tense");
 			Pump(window);
 			DialogSnapshot.Capture(window, "FwFeatureStructureEditor-03-value-picked");

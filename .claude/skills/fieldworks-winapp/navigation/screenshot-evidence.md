@@ -25,7 +25,7 @@ alongside this route.
 5. Capture the fixed state from the current build.
 6. Inspect each saved image and retake if it is blank, wrong-window, covered,
   unreadable, or missing the intended state.
-7. Capture related canonical surfaces when the issue spans more than one UI
+7. Capture related canonical windows when the issue spans more than one UI
    path.
 8. Use an image sequence or GIF when the issue involves timing, redraw, focus,
    modal transitions, or steps that a single screenshot cannot communicate.
@@ -71,7 +71,7 @@ When the task is migration parity, capture matched WinForms and Avalonia framing
   order does not matter — but FieldWorks must be on the visible desktop:
   `PrintWindow` on a hidden desktop yields a blank FieldWorks window, which is
   why `HEADLESS=false` is required (see `../references/headless-rendering.md`).
-- If `mcp_winapp_take_screenshot` captures the wrong surface, use the launch
+- If `mcp_winapp_take_screenshot` captures the wrong window, use the launch
   route's `ALT+ESCAPE` foregrounding workaround and capture again.
 - If a true before-state is not available in the current worktree, document why
   and describe how to capture it from an unfixed build.

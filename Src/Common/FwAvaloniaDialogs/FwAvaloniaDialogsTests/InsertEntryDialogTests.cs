@@ -23,7 +23,7 @@ namespace FwAvaloniaDialogsTests
 	/// New-UI mode. The view-model hosts a lexeme-form FwMultiWsTextField, a single-select morph-type
 	/// FwOptionChooser, and a gloss FwMultiWsTextField, staging the text fields into an in-memory edit context;
 	/// it gates OK on a non-empty best lexeme form, re-derives the morph type as the form changes, and snapshots
-	/// the per-WS form/gloss + morph-type key on OK. Runtime proof on a realized headless surface.
+	/// the per-WS form/gloss + morph-type key on OK. Runtime proof on a realized headless view.
 	/// </summary>
 	[TestFixture]
 	public class InsertEntryDialogTests
@@ -39,7 +39,7 @@ namespace FwAvaloniaDialogsTests
 		{
 			var values = wsTags.Select(tag => new DetailWsValue(tag, string.Empty, wsTag: tag)).ToList();
 			return new DetailField(name, name, name, null, DetailFieldKind.Text,
-				default(EditorClassification), automationId, name, default(SurfaceRouting),
+				default(EditorClassification), automationId, name, default(HostRouting),
 				values, new List<DetailChoiceOption>(), null, isEditable: true);
 		}
 
@@ -137,7 +137,7 @@ namespace FwAvaloniaDialogsTests
 			return (view, vm);
 		}
 
-		// Re-pump the realized surface and snapshot a later interaction stage (post-typing, validation, etc.).
+		// Re-pump the realized view and snapshot a later interaction stage (post-typing, validation, etc.).
 		// Snapshots the view's hosting window (the view already has a visual parent).
 		private static void Capture(Control view, string stageName)
 		{
@@ -374,7 +374,7 @@ namespace FwAvaloniaDialogsTests
 			Assert.That(vm.IsValid, Is.False);
 			Assert.That(vm.ValidationMessage, Is.EqualTo(FwAvaloniaDialogsStrings.InsertEntryLexFormNotEmpty),
 				"the empty-form gate shows its message inline");
-			Assert.That(ValidationBlock(view).IsVisible, Is.True, "the inline validation surface is shown when invalid");
+			Assert.That(ValidationBlock(view).IsVisible, Is.True, "the inline validation block is shown when invalid");
 		}
 
 		[AvaloniaTest]
@@ -424,7 +424,7 @@ namespace FwAvaloniaDialogsTests
 
 			Assert.That(vm.IsValid, Is.True);
 			Assert.That(vm.ValidationMessage, Is.Empty);
-			Assert.That(ValidationBlock(view).IsVisible, Is.False, "the inline surface hides when the dialog is valid");
+			Assert.That(ValidationBlock(view).IsVisible, Is.False, "the inline error block hides when the dialog is valid");
 		}
 
 		// ----- explicit morph-type pick re-marks the lexeme form (FormWithMarkers parity) -----

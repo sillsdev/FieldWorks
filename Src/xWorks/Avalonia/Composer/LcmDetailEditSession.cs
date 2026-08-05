@@ -11,7 +11,7 @@ namespace SIL.FieldWorks.XWorks
 	/// <summary>
 	/// The product fenced edit session: one LCModel undo task spanning the user's edit, applied
 	/// directly to the domain. <see cref="Commit"/> ends the task — every staged field edit becomes
-	/// ONE step on the single global LCModel action-handler stack legacy surfaces share, so Ctrl+Z
+	/// ONE step on the single global LCModel action-handler stack legacy views share, so Ctrl+Z
 	/// works across frameworks in both directions by construction. <see cref="Cancel"/> rolls the
 	/// whole task back to the depth captured at open (the same pattern legacy composition editing
 	/// uses, IbusRootSiteEventHandler). Idempotent: a second Commit/Cancel is a no-op.

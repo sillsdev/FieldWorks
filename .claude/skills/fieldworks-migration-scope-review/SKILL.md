@@ -42,9 +42,9 @@ validation boundary.
   without an explicit decision.
 - Test-runner/build graph changes are mixed with UI migration work.
 - Unrelated behavior changes require their own review context.
-- A multi-surface derisk branch carries more than one canonical screen per UI primitive,
+- A multi-view derisk branch carries more than one canonical screen per UI primitive,
   or ships work that should be documented-and-backed-out (see the hub skill's "Phase-1
-  Landing Strategy"). XL surfaces that have their own OpenSpec change belong in their own
+  Landing Strategy"). XL migrations that have their own OpenSpec change belong in their own
   follow-up PR, not folded into the spine PR.
 
 ## Review Red Flags

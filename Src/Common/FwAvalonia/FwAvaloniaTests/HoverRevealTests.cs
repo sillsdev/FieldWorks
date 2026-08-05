@@ -37,7 +37,7 @@ namespace FwAvaloniaTests
 		private static DetailField ChooserField() => new DetailField(
 			"LexEntry/x/#0", "Morph Type", "MorphType", null,
 			DetailFieldKind.Chooser, EditorClassification.Known, "MorphTypeChooser", null,
-			SurfaceRouting.Inherit, null,
+			HostRouting.Inherit, null,
 			new List<DetailChoiceOption>
 			{
 				new DetailChoiceOption("g1", "stem"),
@@ -52,7 +52,7 @@ namespace FwAvaloniaTests
 		private static DetailField VectorField() => new DetailField(
 			"LexEntry/x/#1", "Publish Entry In", "PublishIn", null,
 			DetailFieldKind.ReferenceVector, EditorClassification.Known, "PublishIn", null,
-			SurfaceRouting.Inherit, null,
+			HostRouting.Inherit, null,
 			new List<DetailChoiceOption>
 			{
 				new DetailChoiceOption("p1", "Main Dictionary"),

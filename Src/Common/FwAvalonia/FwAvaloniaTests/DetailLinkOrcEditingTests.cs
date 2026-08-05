@@ -35,7 +35,7 @@ namespace FwAvaloniaTests
 
 		private static DetailField FieldWith(DetailRichTextValue rich, bool isEditable = true)
 			=> new DetailField("LexEntry/Bib@1", "Bibliography", "Bibliography", null,
-				DetailFieldKind.Text, EditorClassification.Known, "BibEditor", null, SurfaceRouting.Product,
+				DetailFieldKind.Text, EditorClassification.Known, "BibEditor", null, HostRouting.Product,
 				new List<DetailWsValue> { new DetailWsValue("anal", rich.PlainText, wsTag: "en", richText: rich) },
 				null, null, isEditable: isEditable);
 

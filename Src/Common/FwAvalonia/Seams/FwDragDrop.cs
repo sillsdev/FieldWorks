@@ -7,13 +7,13 @@ using System;
 namespace SIL.FieldWorks.Common.FwAvalonia.Seams
 {
 	/// <summary>
-	/// The cross-surface drag-and-drop payload contract. Both WinForms and Avalonia
-	/// surfaces drag from and drop onto each other through the OS DnD pipeline using the same shared
+	/// The cross-framework drag-and-drop payload contract. Both WinForms and Avalonia
+	/// views drag from and drop onto each other through the OS DnD pipeline using the same shared
 	/// formats the clipboard seam established:
 	/// - text drags: the legacy <c>"TsString"</c> OS format (rich) + <c>UnicodeText</c> (plain) — the dual-format pair;
 	/// - object moves: the <see cref="RecordKeyFormat"/> string payload defined here (a guid-based
 	///   record key), framework-neutral and resolvable on either side via the LCModel object repository.
-	/// In-surface reorder semantics stay surface-local. This layer stays LCModel-free.
+	/// Reorder semantics within one view stay local to that view. This layer stays LCModel-free.
 	/// </summary>
 	public static class FwDragDropFormats
 	{
@@ -23,7 +23,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Seams
 
 	/// <summary>
 	/// A framework-neutral record identity for object drags: serialized as
-	/// <c>fwrecord:{guid}</c> so any surface (or a future external consumer) can parse it without
+	/// <c>fwrecord:{guid}</c> so any view (or a future external consumer) can parse it without
 	/// binary serialization.
 	/// </summary>
 	public sealed class FwRecordKeyPayload
@@ -36,7 +36,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Seams
 			ObjectGuid = objectGuid;
 		}
 
-		/// <summary>The dragged object's CmObject guid (stable across surfaces and sessions).</summary>
+		/// <summary>The dragged object's CmObject guid (stable across views and sessions).</summary>
 		public Guid ObjectGuid { get; }
 
 		/// <summary>Serializes to the wire form carried in <see cref="FwDragDropFormats.RecordKeyFormat"/>.</summary>

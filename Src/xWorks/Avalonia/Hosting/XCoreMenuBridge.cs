@@ -11,7 +11,7 @@ namespace SIL.FieldWorks.XWorks
 {
 	/// <summary>
 	/// Section 15.1: converts an xCore context-menu <see cref="ChoiceGroup"/> into the neutral
-	/// <see cref="DetailMenuItem"/> model the Avalonia surface renders as a native MenuFlyout.
+	/// <see cref="DetailMenuItem"/> model the Avalonia detail view renders as a native MenuFlyout.
 	/// Labels, enablement, checkmarks, submenus, and execution all run through the SAME xCore
 	/// machinery the WinForms adapter uses (GetDisplayProperties → mediator Display* round-trip;
 	/// OnClick → mediator command dispatch) — only the rendering changes. Because this consumes the
@@ -30,7 +30,7 @@ namespace SIL.FieldWorks.XWorks
 
 		/// <summary>
 		/// As <see cref="BuildMenuItems(XWindow, string[])"/>, but lets the host RETARGET specific leaf
-		/// commands for the Avalonia surface (advanced-entry-view). For each command leaf, the
+		/// commands for the Avalonia detail view (advanced-entry-view). For each command leaf, the
 		/// <paramref name="interceptor"/> is offered the leaf <see cref="ChoiceBase"/> (so the host can
 		/// read the localized label and command id from it); if it returns a non-null
 		/// <see cref="DetailMenuItem"/>, that item (its label/checked/enabled/execute) is used INSTEAD of

@@ -38,7 +38,7 @@ Contents:
 | `IDetailRefreshCoordinator` | Mirrors legacy `DoNotRefresh`/`RefreshListNeeded` gating (LT-22414) | Defer PropChanged fan-out during multi-field edits until commit/cancel; characterize legacy behavior before extending (`RefreshCoordinator.cs`) |
 | `IRecordNavigationContext` | Bidirectional selection bridge with the xCore "current record" bus | Follow external navigation and publish selection back; never reach into PropertyTable directly from a region |
 | `IFwClipboard` | Clipboard access without WinForms dependency | See `FwClipboardSeamTests.cs` |
-| `IHostSurface` (focus API) ⚠ *planned, not extracted (ARCH-02)* | Host-side focus save/restore around WinForms dialogs | Pairs with the dialog-ownership rules (architecture-patterns.md §7). **As-built:** focus save/restore is handled directly in the holder/host and `AvaloniaDialogHost`, not via a named seam |
+| `IHostFocus` (focus API) -- *planned, not extracted (ARCH-02)* | Host-side focus save/restore around WinForms dialogs | Pairs with the dialog-ownership rules (architecture-patterns.md §7). **As-built:** focus save/restore is handled directly in the holder/host and `AvaloniaDialogHost`, not via a named seam |
 
 ## 2. Supporting seams
 
@@ -68,7 +68,7 @@ record the re-evaluation outcome here and in the lessons ledger.
   dialogs with no LCModel/cross-object semantics.
 - **UI scheduler / lifetime:** collapse wrappers that demonstrably provide
   no test or architecture value.
-- **TreeDataGrid:** re-evaluate for browse surfaces if it is relicensed
+- **TreeDataGrid:** re-evaluate for browse tables if it is relicensed
   permissively (or SIL accepts a commercial license) AND upstream closes
   the editing/automation gaps.
 - **VirtualizingStackPanel:** escalate to a fully owned realization-window

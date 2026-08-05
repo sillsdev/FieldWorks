@@ -59,7 +59,7 @@ namespace SIL.FieldWorks.XWorks
 		// The legacy MorphTypeAtomicLauncher.IsStemType guid list (bound root/stem, enclitic,
 		// particle, proclitic, root, stem, clitic, phrase, discontiguous phrase) — the launcher
 		// cannot delegate to the seam yet (DetailControls has no FwAvalonia reference), so this
-		// pins the two sets to each other until the launcher retires with its surface.
+		// pins the two sets to each other until the launcher retires.
 		[Test]
 		public void IsStemType_ByGuid_MatchesTheLegacyLauncherSet()
 		{

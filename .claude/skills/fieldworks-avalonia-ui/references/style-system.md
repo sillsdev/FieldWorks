@@ -1,8 +1,8 @@
-# FieldWorks Avalonia style system (density + borders, per surface)
+# FieldWorks Avalonia style system (density + borders, per view)
 
 The single source of truth for **font/density tokens** and the **field-border rule** across every
-FieldWorks Avalonia surface. The goal is WinForms density (tight, Segoe-UI-9pt-ish) — NOT the roomy
-Fluent defaults — with each surface matching its *own* WinForms predecessor rather than one uniform look.
+FieldWorks Avalonia view. The goal is WinForms density (tight, Segoe-UI-9pt-ish) — NOT the roomy
+Fluent defaults — with each view matching its *own* WinForms predecessor rather than one uniform look.
 Density/layout is what must match WinForms; styling (colors and control *look*) is chartered to diverge
 toward the Fluent theme per the migration hub's `architecture-patterns.md` §12.
 
@@ -10,7 +10,7 @@ toward the Fluent theme per the migration hub's `architecture-patterns.md` §12.
 
 `FwAvaloniaApp` adds `new FluentTheme()`, which ships ~14px fonts and ~32px control floors app-wide.
 Density/borders must be layered ON TOP of Fluent. The reliable mechanism — proven by a prior agent —
-is **per-control-tree `.Styles`**, added to each surface's own `Styles` collection by its view ctor.
+is **per-control-tree `.Styles`**, added to each view's own `Styles` collection by its view ctor.
 App-level `Application.Styles` did **not** apply in the headless test app, so that path is rejected.
 
 Two hard rules that fall out of headless rendering:
@@ -18,12 +18,12 @@ Two hard rules that fall out of headless rendering:
 1. **Concrete values, not Fluent `DynamicResource`s, for anything that must render headlessly.** The old
    `BorderBrush="{DynamicResource ControlStrokeColorDefault}"` resolved to nothing in the headless app, so
    the field-host borders were invisible there (and too faint at runtime). Use a concrete color.
-2. **One source per surface family.** Dialog density/borders live in `DialogTheme.axaml`; region/browse
+2. **One source per view family.** Dialog density/borders live in `DialogTheme.axaml`; region/browse
    font lives in `FwSurfaceStyles`. Don't scatter font/padding literals across views.
 
-## Per-surface intent (do NOT make them uniform)
+## Per-view intent (do NOT make them uniform)
 
-| Surface | WinForms analogue | Look | Where it's set |
+| View | WinForms analogue | Look | Where it's set |
 |---|---|---|---|
 | **Dialog text inputs** (`TextBox`/`ComboBox`, and the `PART_*Host` boxes wrapping owned multistring/option editors) | classic WinForms dialog inputs | **clearly boxed** — visible 1px gray border + tight padding | `DialogTheme.axaml` (`fwFieldHost` style + `TextBox`/`ComboBox` setters) |
 | **Detail / region view** (`DataTree`) | the DataTree | **flat** with subtle 1px field separators — do NOT box every value | flat structure via `FwAvaloniaDensity` literals; font via `FwSurfaceStyles` |
@@ -35,7 +35,7 @@ sit inside a `Border.fwFieldHost` that supplies the box.
 
 ## The tokens / values (the calibrated numbers)
 
-**Font:** `12` px app-wide on the Avalonia surfaces (down from Fluent's ~14). One value: `DialogFontSize`
+**Font:** `12` px app-wide on the Avalonia views (down from Fluent's ~14). One value: `DialogFontSize`
 in `DialogTheme.axaml`, `FwSurfaceStyles.SurfaceFontSize`, and `CompactDialogStyles.DialogFontSize` are all 12
 and must stay equal.
 
@@ -48,7 +48,7 @@ from Fluent's ~32px).
 
 **Checkboxes (the ONE global, deterministic rule):** checkboxes are **font-proportional** and **never add row
 height**. `FwAvaloniaDensity.CheckboxBoxSize = 14` (a fixed function of the 12px surface font) is the glyph-box
-size on *every* surface — dialogs (chooser, options, feature manager), the chooser's flat list + tree, and the
+size on *every* view — dialogs (chooser, options, feature manager), the chooser's flat list + tree, and the
 detail view's `FwOptionChooser` field. The size is **deterministic** (a concrete px size applied to the template,
 identical regardless of content) — **not** a `RenderTransform`/`ScaleTransform` (a scale shrinks the paint but
 leaves the tall layout slot, which still inflates the row — the rejected hack, now removed). The single builder
@@ -68,7 +68,7 @@ replace (not a selector tweak) was required (`Avalonia.Themes.Fluent 11.3.6`, `C
 
 **Radio buttons (the checkbox's counterpart — same global, deterministic rule):** radios are
 **font-proportional** and **never add row height**, exactly like checkboxes. `FwAvaloniaDensity.RadioBoxSize`
-(= `CheckboxBoxSize` = 14) is the outer-circle size on *every* surface (dialogs, region, bulk-edit bar). The
+(= `CheckboxBoxSize` = 14) is the outer-circle size on *every* view (dialogs, detail, bulk-edit bar). The
 single builder `FwRadioButtonStyle.Build()` REPLACES the Fluent 11.3 `RadioButton` template (whose ~20px ellipse
 on a tall ~32px slot are LOCAL values a style selector cannot override — same precedence trap as the checkbox)
 with a compact `ControlTheme`: an outer `Ellipse#FwRadio_Box` pinned to `14×14` + an inner filled
@@ -81,8 +81,8 @@ headless tests). It is NOT in `DialogTheme.axaml` (the template replace must be 
 `CompactDialogStyles` (the bootstrap already covers both dialog paths). The dedicated headless no-inflation test
 for this (`RadioButton_OnStyledSurface_IsFontProportional_AndDoesNotExceedTheTextRowHeight`, asserting the ring is
 exactly `RadioBoxSize`, the control is ≤ `BrowseRowMinHeight`, and the dot opacity goes 0 → 1 on `:checked`) lived
-in `LexicalBrowseDensityTests.cs`, deleted along with the rest of the browse surface (commit `bd7d3a5e5`); no test
-currently covers this invariant for radios — add one before a new surface ships them.
+in `LexicalBrowseDensityTests.cs`, deleted along with the rest of the browse table (commit `bd7d3a5e5`); no test
+currently covers this invariant for radios — add one before a new view ships them.
 
 **Group separation:** adjacent logical control GROUPS (e.g. a radio group followed by a checkbox group)
 get a little visual distance so they read as distinct rather than butting together:
@@ -167,5 +167,5 @@ values already in `DialogTheme.axaml`.
 
 Change the number in **`DialogTheme.axaml`** (and the mirrored constant in `CompactDialogStyles` /
 `FwSurfaceStyles` if it's the font or min-height), rebuild the dialog + visual test projects, re-capture, and
-**Read the PNGs** (`Output/Snapshots/` — one flat folder) to confirm the surfaces still read dense + properly bordered.
+**Read the PNGs** (`Output/Snapshots/` — one flat folder) to confirm the views still read dense + properly bordered.
 Never tune density by editing a single view — that breaks the single-source rule.

@@ -151,10 +151,10 @@ namespace FwAvaloniaTests
 			{
 				new ViewNode("LexEntry/identity/#0", ViewNodeKind.Field, "Lexeme Form", null, "Form", "multistring",
 					EditorClassification.Known, "vernacular", ViewVisibility.Always, ViewExpansion.NotApplicable, false, null, null,
-					automationId: "LexemeFormEditor", routing: SurfaceRouting.Product),
+					automationId: "LexemeFormEditor", routing: HostRouting.Product),
 				new ViewNode("LexEntry/identity/#1", ViewNodeKind.Field, "Morph Type", null, "MorphType", "morphtypeatomicreference",
 					EditorClassification.Known, null, ViewVisibility.Always, ViewExpansion.NotApplicable, false, null, null,
-					automationId: "MorphTypeChooser", routing: SurfaceRouting.Product)
+					automationId: "MorphTypeChooser", routing: HostRouting.Product)
 			},
 			new List<ViewDiagnostic>());
 
@@ -452,7 +452,7 @@ namespace FwAvaloniaTests
 		public void Chooser_DuplicateDisplayNames_StagesTheOptionAtTheSelectedIndex()
 		{
 			var field = new DetailField("LexEntry/x/#0", "Morph Type", "MorphType", null,
-				DetailFieldKind.Chooser, EditorClassification.Known, "DupChooser", null, SurfaceRouting.Inherit,
+				DetailFieldKind.Chooser, EditorClassification.Known, "DupChooser", null, HostRouting.Inherit,
 				null,
 				new List<DetailChoiceOption>
 				{
@@ -488,7 +488,7 @@ namespace FwAvaloniaTests
 		public void TextField_StagesEditsByWsTag_FallingBackToAbbrevWithoutOne()
 		{
 			var field = new DetailField("LexEntry/x/#1", "Form", "Form", null,
-				DetailFieldKind.Text, EditorClassification.Known, "TagField", null, SurfaceRouting.Inherit,
+				DetailFieldKind.Text, EditorClassification.Known, "TagField", null, HostRouting.Inherit,
 				new List<DetailWsValue>
 				{
 					new DetailWsValue("du", "uno", wsTag: "qaa-x-one"),
@@ -529,7 +529,7 @@ namespace FwAvaloniaTests
 		{
 			var field = new DetailField("LexEntry/x/#audio", "Pronunciation", "Pronunciation",
 				null, DetailFieldKind.Text, EditorClassification.Known, "AudioField", null,
-				SurfaceRouting.Inherit,
+				HostRouting.Inherit,
 				new List<DetailWsValue>
 				{
 					new DetailWsValue("aud", "casa.wav", wsTag: "qaa-Zxxx-x-audio", isAudio: true)
@@ -557,7 +557,7 @@ namespace FwAvaloniaTests
 		{
 			var ghost = new DetailField("LexEntry/Normal/#0/ghost", "Lexeme Form",
 				"LexemeForm", null, DetailFieldKind.Text, EditorClassification.Known, "GhostRow", null,
-				SurfaceRouting.Inherit,
+				HostRouting.Inherit,
 				new List<DetailWsValue> { new DetailWsValue("vern", "") }, null, null,
 				isEditable: true, indent: 0, ghostPrompt: "Click here to add Lexeme Form");
 			var model = new DetailModel("LexEntry", "Normal",
@@ -597,7 +597,7 @@ namespace FwAvaloniaTests
 			};
 			var field = new DetailField("LexEntryRef/x/#0", "Components", "ComponentLexemes",
 				null, DetailFieldKind.ReferenceVector, EditorClassification.Known, "Components", null,
-				SurfaceRouting.Inherit, null, null, null, isEditable: true, indent: 0,
+				HostRouting.Inherit, null, null, null, isEditable: true, indent: 0,
 				items: new List<DetailChoiceOption> { new DetailChoiceOption("e-burro", "burro") },
 				searchOptions: query =>
 				{
@@ -653,7 +653,7 @@ namespace FwAvaloniaTests
 		{
 			var field = new DetailField("LexEntryRef/x/#0", "Components", "ComponentLexemes",
 				null, DetailFieldKind.ReferenceVector, EditorClassification.Known, "Components2", null,
-				SurfaceRouting.Inherit, null, null, null, isEditable: true, indent: 0,
+				HostRouting.Inherit, null, null, null, isEditable: true, indent: 0,
 				items: new List<DetailChoiceOption> { new DetailChoiceOption("e-burro", "burro") },
 				searchOptions: query => new List<DetailChoiceOption>());
 			var context = new FakeDetailEditContext();
@@ -675,7 +675,7 @@ namespace FwAvaloniaTests
 		private static DetailField PublishInField() => new DetailField(
 			"LexEntry/x/#9", "Publish Entry In", "PublishIn", null,
 			DetailFieldKind.ReferenceVector, EditorClassification.Known, "PublishIn", null,
-			SurfaceRouting.Inherit, null,
+			HostRouting.Inherit, null,
 			new List<DetailChoiceOption>
 			{
 				new DetailChoiceOption("p1", "Main Dictionary"),
@@ -950,7 +950,7 @@ namespace FwAvaloniaTests
 		private static DetailField StyleableField(params string[] styles)
 		{
 			var field = new DetailField("LexEntry/x/#0", "Bibliography", "Bibliography", null,
-				DetailFieldKind.Text, EditorClassification.Known, "BibEditor", null, SurfaceRouting.Inherit,
+				DetailFieldKind.Text, EditorClassification.Known, "BibEditor", null, HostRouting.Inherit,
 				new List<DetailWsValue>
 				{
 					new DetailWsValue("anal", "dog", wsTag: "qaa-x-rich",
@@ -1084,7 +1084,7 @@ namespace FwAvaloniaTests
 		public void StyleAffordance_Absent_OnLossyReadOnlyValue()
 		{
 			var field = new DetailField("LexEntry/x/#0", "Bibliography", "Bibliography", null,
-				DetailFieldKind.Text, EditorClassification.Known, "BibEditor", null, SurfaceRouting.Inherit,
+				DetailFieldKind.Text, EditorClassification.Known, "BibEditor", null, HostRouting.Inherit,
 				new List<DetailWsValue>
 				{
 					new DetailWsValue("anal", "coloured", wsTag: "qaa-x-rich",
@@ -1132,7 +1132,7 @@ namespace FwAvaloniaTests
 		private static DetailField RetaggableField(params (string Tag, string Name)[] systems)
 		{
 			var field = new DetailField("LexEntry/x/#0", "Bibliography", "Bibliography", null,
-				DetailFieldKind.Text, EditorClassification.Known, "BibEditor", null, SurfaceRouting.Inherit,
+				DetailFieldKind.Text, EditorClassification.Known, "BibEditor", null, HostRouting.Inherit,
 				new List<DetailWsValue>
 				{
 					new DetailWsValue("anal", "dog", wsTag: "qaa-x-rich",
@@ -1293,7 +1293,7 @@ namespace FwAvaloniaTests
 		private static DetailField LinkedChooserField() => new DetailField(
 			"MoForm/x/#0", "Morph Type", "MorphType", null,
 			DetailFieldKind.Chooser, EditorClassification.Known, "MorphTypeChooser", null,
-			SurfaceRouting.Inherit, null,
+			HostRouting.Inherit, null,
 			new List<DetailChoiceOption> { new DetailChoiceOption("g1", "stem") }, "g1",
 			chooserLinks: new List<DetailChooserLink>
 			{
@@ -1348,7 +1348,7 @@ namespace FwAvaloniaTests
 		{
 			var field = new DetailField("LexEntry/x/#1", "Publish Entry In", "PublishIn", null,
 				DetailFieldKind.ReferenceVector, EditorClassification.Known, "PublishIn", null,
-				SurfaceRouting.Inherit, null,
+				HostRouting.Inherit, null,
 				new List<DetailChoiceOption> { new DetailChoiceOption("p1", "Main Dictionary") },
 				null, isEditable: true, indent: 0,
 				items: new List<DetailChoiceOption>(),
@@ -1387,7 +1387,7 @@ namespace FwAvaloniaTests
 			// No links: no gear, even with a host callback.
 			var noLinks = new DetailField("MoForm/x/#0", "Morph Type", "MorphType", null,
 				DetailFieldKind.Chooser, EditorClassification.Known, "PlainChooser", null,
-				SurfaceRouting.Inherit, null,
+				HostRouting.Inherit, null,
 				new List<DetailChoiceOption> { new DetailChoiceOption("g1", "stem") }, "g1");
 			var chooser = new FwChooserField(noLinks, "PlainChooser", new FakeDetailEditContext(),
 				request => { });
@@ -1403,7 +1403,7 @@ namespace FwAvaloniaTests
 			// A vector without links: bars + "+" only — no Settings button at all.
 			var vectorField = new DetailField("LexEntry/x/#1", "Publish Entry In",
 				"PublishIn", null, DetailFieldKind.ReferenceVector, EditorClassification.Known,
-				"PlainVector", null, SurfaceRouting.Inherit, null,
+				"PlainVector", null, HostRouting.Inherit, null,
 				new List<DetailChoiceOption> { new DetailChoiceOption("p1", "Main Dictionary") },
 				null, isEditable: true, indent: 0, items: new List<DetailChoiceOption>());
 			var vector = new FwReferenceVectorField(vectorField, "PlainVector",
@@ -1421,7 +1421,7 @@ namespace FwAvaloniaTests
 		{
 			var field = new DetailField("MoStemAllomorph/AsLexemeFormBasic/#0", "Lexeme Form",
 				"Form", null, DetailFieldKind.Text, EditorClassification.Known, "LexemeFormRow", null,
-				SurfaceRouting.Inherit,
+				HostRouting.Inherit,
 				new List<DetailWsValue>
 				{
 					new DetailWsValue("vern", "casa"),

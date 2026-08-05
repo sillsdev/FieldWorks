@@ -24,7 +24,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 	///   hierarchy and then silently omits it (DataTree.ProcessPartRefNode), so the part inventory, not
 	///   that layout, is the live source for the gloss slice's semantics.
 	/// Stable ids therefore derive from the real layout/part paths. Product metadata (automation ids,
-	/// <see cref="SurfaceRouting.Product"/>) is stamped on the selected nodes. The authored definition
+	/// <see cref="HostRouting.Product"/>) is stamped on the selected nodes. The authored definition
 	/// remains only as an explicit fallback (with a diagnostic) for when the layout directory is
 	/// missing or a shipped layout changes shape.
 	/// </summary>
@@ -177,11 +177,11 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			=> new ViewNode(source.StableId, ViewNodeKind.Field, labelOverride ?? source.Label, source.Abbreviation,
 				source.Field, source.RawEditor, source.EditorClassification, source.WritingSystem, source.Visibility,
 				source.Expansion, source.Indented, source.TargetLayout, null,
-				source.LocalizationKey, automationId, SurfaceRouting.Product);
+				source.LocalizationKey, automationId, HostRouting.Product);
 
 		private static ViewNode Leaf(string stableId, string label, string field, string editor, string ws, string automationId)
 			=> new ViewNode(stableId, ViewNodeKind.Field, label, null, field, editor,
 				EditorClassification.Known, ws, ViewVisibility.Always, ViewExpansion.NotApplicable, false, null, null,
-				localizationKey: null, automationId: automationId, routing: SurfaceRouting.Product);
+				localizationKey: null, automationId: automationId, routing: HostRouting.Product);
 	}
 }

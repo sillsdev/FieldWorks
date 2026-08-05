@@ -58,7 +58,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 
 		// The ONE GUID → kind table. The seam is
 		// the cleaner home because it already owns MorphTypeKind and the stem/affix decision, and
-		// both the xWorks composer and any future surface can consume it without dragging WinForms
+		// both the xWorks composer and any future view can consume it without dragging WinForms
 		// along. This project is deliberately LCModel-free, so the fixed MoMorphTypeTags model GUIDs
 		// are mirrored as System.Guid literals; MorphTypeGuidConsolidationTests (xWorksTests, which
 		// references both assemblies) pins every literal to its MoMorphTypeTags constant so the

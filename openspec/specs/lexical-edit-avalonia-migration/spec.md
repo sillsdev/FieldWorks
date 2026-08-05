@@ -2,16 +2,16 @@
 
 ## Purpose
 
-Define how the Lexical Edit surface migrates from WinForms to Avalonia: the
+Define how the record-edit UI hosted by RecordEditView migrates from WinForms to Avalonia: the
 risk-ordered phasing, the app-wide UI-mode switch, the parity and density bar,
-the platform seams, and the dependencies a migrated region may not take.
+the platform seams, and the dependencies a migrated view may not take.
 ## Requirements
 ### Requirement: Migration is phased by risk and control complexity
 
 The Lexical Edit migration SHALL proceed in phases: baseline test coverage, refactoring seams, simple Avalonia controls and popup hovers, table/browse views, slices, and then full Lexical Edit views.
 
 #### Scenario: Refactor gates precede Avalonia replacement
-- **WHEN** a migration task replaces a Lexical Edit surface with Avalonia
+- **WHEN** a migration task replaces a record-edit view with Avalonia
 - **THEN** the affected legacy behavior SHALL already have unit/integration coverage or an explicit baseline plan in `lexical-edit-parity-automation`
 - **AND** required service seams SHALL be identified before UI replacement begins
 
@@ -31,11 +31,11 @@ The lexical-edit UI mode SHALL be an app-wide product setting, but each current 
 
 #### Scenario: Legacy UI remains selectable
 - **WHEN** the app-wide lexical-edit UI mode is set to the legacy option
-- **THEN** the existing WinForms lexical-edit surface SHALL remain selectable as the supported legacy product path
+- **THEN** the existing WinForms record-edit UI (the DataTree detail path) SHALL remain selectable as the supported legacy product path
 
 #### Scenario: Unsupported host is explicit
 - **WHEN** a host is not yet migrated for the Avalonia mode
-- **THEN** it SHALL either fall back to the declared legacy surface or show a deliberate resource-backed unsupported-state message
+- **THEN** it SHALL either fall back to the declared legacy view or show a deliberate resource-backed unsupported-state message
 - **AND** that behavior SHALL be covered by tests and the migrated-region manifest
 
 ### Requirement: User interaction and density are preserved

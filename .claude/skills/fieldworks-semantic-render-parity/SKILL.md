@@ -1,6 +1,6 @@
 ---
 name: fieldworks-semantic-render-parity
-description: "Capture or review FieldWorks parity evidence: semantic snapshots, render/visual baselines, layout parity, failure artifacts, XML view definitions, and the Avalonia presentation IR. Use whenever a task creates or evaluates snapshot tests, screenshot baselines, view-definition compilation output, or any claim that an Avalonia surface matches its WinForms predecessor."
+description: "Capture or review FieldWorks parity evidence: semantic snapshots, render/visual baselines, layout parity, failure artifacts, XML view definitions, and the Avalonia presentation IR. Use whenever a task creates or evaluates snapshot tests, screenshot baselines, view-definition compilation output, or any claim that an Avalonia view matches its WinForms predecessor."
 ---
 
 # FieldWorks Semantic Render Parity
@@ -15,10 +15,10 @@ This skill owns the **"after"** half of the migration-doc before/after pairs (se
 lives, see the hub skill's "Phase-1 Landing Strategy").
 The **before** is the legacy WinForms truth
 PNG (captured by the `fieldworks-winapp` launch-per-tool script / dialog harness); the **after** is
-the Avalonia surface rendered **from the same seeded data** by its visual test in
+the Avalonia view rendered **from the same seeded data** by its visual test in
 `FwAvaloniaDialogsTests`/`FwAvaloniaTests`, saved as `<name>-after.png` in the doc's `images/`. Use
 the same render/visual evidence type defined here (not a one-off screenshot) so the "after" doubles as the
-parity baseline, and both PNGs attach to the surface's JIRA ticket. When the surfaces should match,
+parity baseline, and both PNGs attach to the conversion's JIRA ticket. When the two should match,
 the semantic snapshot — not the side-by-side image — is the authoritative parity check; the images
 are the human-facing summary.
 

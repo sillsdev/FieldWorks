@@ -304,7 +304,7 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		/// <summary>
 		/// Applies the chosen assignment set to a standalone feature structure that lives on an owner object+flid (the
-		/// surface the WinForms <c>MsaInflectionFeatureListDlg</c> / <c>PhonologicalFeatureChooserDlg</c> edit): the
+		/// target the WinForms <c>MsaInflectionFeatureListDlg</c> / <c>PhonologicalFeatureChooserDlg</c> edit): the
 		/// existing <paramref name="fs"/> may be null (none yet) in which case one is created on
 		/// <paramref name="owner"/>.<paramref name="owningFlid"/> when there are assignments. Rebuilds the FS specs from
 		/// the assignment set via <see cref="WriteFeatures"/>; when <paramref name="deleteWhenEmpty"/> is true and the
@@ -358,7 +358,7 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		/// <summary>
 		/// Reads the existing inflection-feature structure off a morpheme MSA: an
-		/// <c>IMoInflAffMsa</c>'s <c>InflFeatsOA</c>, or an <c>IMoDerivAffMsa</c>'s <c>FromMsFeaturesOA</c> (the surface
+		/// <c>IMoInflAffMsa</c>'s <c>InflFeatsOA</c>, or an <c>IMoDerivAffMsa</c>'s <c>FromMsFeaturesOA</c> (the field
 		/// the legacy <c>PopulateTreeFromPosInEntry</c> edits). Null for any other MSA flavour or when none exists.
 		/// </summary>
 		public static IFsFeatStruc GetInflectionFeatures(IMoMorphSynAnalysis msa)
@@ -414,7 +414,7 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		/// <summary>
 		/// Returns the part of speech whose inflectable features apply to a morpheme MSA — the lift of
-		/// <c>MsaInflectionFeatureListDlg.GetPosFromCmObjectAndFlid</c> for the infl/deriv-FROM surface: an
+		/// <c>MsaInflectionFeatureListDlg.GetPosFromCmObjectAndFlid</c> for the infl/deriv-FROM fields: an
 		/// <c>IMoInflAffMsa</c>'s <c>PartOfSpeechRA</c>, or an <c>IMoDerivAffMsa</c>'s <c>FromPartOfSpeechRA</c>.
 		/// </summary>
 		public static IPartOfSpeech GetInflectionFeaturePos(IMoMorphSynAnalysis msa)

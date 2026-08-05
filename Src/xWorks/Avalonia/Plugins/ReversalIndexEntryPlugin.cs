@@ -66,7 +66,7 @@ namespace SIL.FieldWorks.XWorks
 						?? SIL.FieldWorks.Common.FwAvalonia.ViewDefinition.EditorClassification.Known,
 					automationId: node?.AutomationId ?? "ReversalEntriesEditor",
 					localizationKey: node?.LocalizationKey,
-					routing: node?.Routing ?? SIL.FieldWorks.Common.FwAvalonia.ViewDefinition.SurfaceRouting.Product,
+					routing: node?.Routing ?? SIL.FieldWorks.Common.FwAvalonia.ViewDefinition.HostRouting.Product,
 					values: rows,
 					options: null,
 					selectedOptionKey: null,

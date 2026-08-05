@@ -47,7 +47,7 @@ namespace FwAvaloniaTests
 
 			Assert.That(node.LocalizationKey, Is.Null);
 			Assert.That(node.AutomationId, Is.Null);
-			Assert.That(node.Routing, Is.EqualTo(SurfaceRouting.Inherit));
+			Assert.That(node.Routing, Is.EqualTo(HostRouting.Inherit));
 		}
 
 		[Test]
@@ -65,19 +65,19 @@ namespace FwAvaloniaTests
 		public void Importer_ReadsMetadataAttributes_WhenPresent()
 		{
 			var model = Import(
-				"<slice editor='multistring' field='CitationForm' localizationKey='ksCitationForm' automationId='CitationFormEditor' surface='product' />");
+				"<slice editor='multistring' field='CitationForm' localizationKey='ksCitationForm' automationId='CitationFormEditor' routing='product' />");
 			var node = model.Roots.Single();
 
 			Assert.That(node.LocalizationKey, Is.EqualTo("ksCitationForm"));
 			Assert.That(node.AutomationId, Is.EqualTo("CitationFormEditor"));
-			Assert.That(node.Routing, Is.EqualTo(SurfaceRouting.Product));
+			Assert.That(node.Routing, Is.EqualTo(HostRouting.Product));
 		}
 
 		[Test]
 		public void Snapshot_IncludesMetadata_WhenPresent()
 		{
 			var model = Import(
-				"<slice editor='multistring' field='CitationForm' automationId='CitationFormEditor' surface='preview' />");
+				"<slice editor='multistring' field='CitationForm' automationId='CitationFormEditor' routing='preview' />");
 			var snapshot = model.ToSnapshot();
 
 			Assert.That(snapshot, Does.Contain("autoId=CitationFormEditor"));

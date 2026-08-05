@@ -39,7 +39,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 	/// delete embedded object) are NOT always-visible inline controls: like the legacy detail slice, which
 	/// shows only the abbreviation + value with such operations reached off-row, they are offered as items
 	/// on the value box's right-click menu. A row with a bridged xCore ContextMenuId keeps that host menu as
-	/// its single right-click surface (it owns the field commands and Avalonia items cannot merge into it),
+	/// its single right-click menu (it owns the field commands and Avalonia items cannot merge into it),
 	/// so the rich-text items are added only on rows WITHOUT a bridge. The abbreviation sits in its own
 	/// fixed-width gutter so a bold value can never crowd or overlap it.
 	/// </summary>
@@ -790,7 +790,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		// Section 13: a row with a legacy `contextMenu=` binding shows the SAME xCore-defined
 		// menu the legacy string view shows (MultiStringSlice.HandleRightMouseClickedEvent
 		// path), routed through the host bridge. That host menu owns this field's commands, so it
-		// stays the single right-click surface for a bridged row; the relocated rich-text operations
+		// stays the single right-click menu for a bridged row; the relocated rich-text operations
 		// are offered on the LOCAL menu only for rows WITHOUT a bridge (built after the editor wiring).
 		private bool WireBridgeContextMenu(TextBox box, DetailField field,
 			Action<DetailMenuRequest> menuRequested)

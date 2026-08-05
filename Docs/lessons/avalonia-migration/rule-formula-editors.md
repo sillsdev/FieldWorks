@@ -14,7 +14,7 @@ environment, natural-class, phoneme, and co-occurrence editing?
 ## Observations
 
 - The six tool routes were grouped for delivery but do not necessarily form one
-  indivisible product surface.
+  indivisible product feature.
 - Formula-string oracles captured domain structure more precisely than visual
   similarity alone.
 - Atomic-to-sequence context changes had ordering and ownership invariants;

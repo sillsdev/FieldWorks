@@ -68,9 +68,9 @@ namespace FwAvaloniaPreviewHostTests
 		}
 
 		/// <summary>
-		/// The realized Avalonia surface exposes the same field labels the legacy DataTree slices carry,
+		/// The realized Avalonia view exposes the same field labels the legacy DataTree slices carry,
 		/// as UIA Names, in the legacy top-to-bottom order — so a screen reader announces the same
-		/// vocabulary on both surfaces.
+		/// vocabulary in both frameworks.
 		/// </summary>
 		[Test]
 		public void PreviewHost_UiaTree_ExposesLegacyFieldLabels_InLegacyOrder()
@@ -92,7 +92,7 @@ namespace FwAvaloniaPreviewHostTests
 				.Select(label => names.FindIndex(n => n.StartsWith(label, StringComparison.Ordinal)))
 				.ToList();
 			Assert.That(positions, Is.All.GreaterThanOrEqualTo(0),
-				"every legacy slice label must be announced by the Avalonia surface: "
+				"every legacy slice label must be announced by the Avalonia view: "
 				+ string.Join(" | ", names.Take(40)));
 			Assert.That(positions, Is.Ordered, "labels appear in the legacy top-to-bottom order");
 		}

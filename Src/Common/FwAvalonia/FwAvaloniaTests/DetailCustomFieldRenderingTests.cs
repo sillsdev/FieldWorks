@@ -32,7 +32,7 @@ namespace FwAvaloniaTests
 				{
 					new DetailField("LexEntry/Normal/#0@1", "Messages", "Self", null,
 						DetailFieldKind.Custom, EditorClassification.Dynamic, null, null,
-						SurfaceRouting.Product, null, null, null, isEditable: true, indent: 0,
+						HostRouting.Product, null, null, null, isEditable: true, indent: 0,
 						controlFactory: factory)
 				},
 				new List<ViewDiagnostic>());

@@ -8,7 +8,7 @@ using Avalonia.Themes.Fluent;
 namespace SIL.FieldWorks.Common.FwAvalonia
 {
 	/// <summary>
-	/// Minimal Avalonia <see cref="Application"/> for shared FieldWorks Avalonia surfaces. Adds the
+	/// Minimal Avalonia <see cref="Application"/> for the shared FieldWorks Avalonia controls. Adds the
 	/// Fluent theme so the pure-C# controls receive templates both in the Preview Host and in
 	/// headless tests.
 	/// </summary>

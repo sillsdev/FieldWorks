@@ -11,8 +11,8 @@ visible desktop diagnostics or fallback.
 
 ## ALWAYS force Legacy (WinForms) UI mode first
 
-This skill scrapes the **legacy WinForms** surface for truth screenshots, workflows, and behaviour. The
-Avalonia (New) surface is captured by a SEPARATE headless skill — never through this MCP. The WinForms
+This skill scrapes the **legacy WinForms** UI for truth screenshots, workflows, and behaviour. The
+Avalonia (New) UI is captured by a SEPARATE headless skill — never through this MCP. The WinForms
 UIA2 MCP can only see WinForms: if FieldWorks comes up in New (Avalonia) mode, `winforms_get_element_tree`
 returns empty and `winforms_take_screenshot` is blank even though the process is healthy.
 
@@ -89,7 +89,7 @@ See the script headers and `../references/mcp-setup.md`.
   mode; see `../references/headless-rendering.md`.)
 - `mcp_winapp_wait_for_input_idle` may return `not implemented` for
   FieldWorks. Use snapshots and desktop-window order instead.
-- `mcp_winapp_take_screenshot` captures the foreground surface. Bring
+- `mcp_winapp_take_screenshot` captures the foreground window. Bring
   FieldWorks forward before relying on screenshots.
 - **Blank window + empty UIA tree, process healthy and responding:** first cause
   is New (Avalonia) UI mode — run `scripts/Set-FieldWorksLegacyMode.ps1` and

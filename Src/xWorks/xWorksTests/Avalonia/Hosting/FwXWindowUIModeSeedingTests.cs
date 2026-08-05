@@ -10,9 +10,9 @@ namespace SIL.FieldWorks.XWorks
 {
 	/// <summary>
 	/// The UI-mode properties must be in the PropertyTable BEFORE LoadUI creates
-	/// the content views — RecordEditView resolves its surface during window construction, so a
+	/// the content views — RecordEditView resolves its framework during window construction, so a
 	/// window created with a persisted UIMode=New must see "New" at that moment or it comes up on
-	/// the Legacy surface. FwXWindow.InitMediatorValues seeds via this helper; these tests pin the
+	/// Legacy. FwXWindow.InitMediatorValues seeds via this helper; these tests pin the
 	/// helper's normalization and no-broadcast contract.
 	/// </summary>
 	[TestFixture]
@@ -46,7 +46,7 @@ namespace SIL.FieldWorks.XWorks
 			FwXWindow.SeedUIModeProperties(m_propertyTable, persisted, null);
 
 			Assert.That(m_propertyTable.GetStringProperty(
-				EditSurfaceResolver.UIModePropertyName, null), Is.EqualTo(expected));
+				UIFrameworkResolver.UIModePropertyName, null), Is.EqualTo(expected));
 		}
 
 		[Test]
@@ -54,12 +54,12 @@ namespace SIL.FieldWorks.XWorks
 		{
 			FwXWindow.SeedUIModeProperties(m_propertyTable, "New", "lexiconEdit,posEdit");
 			Assert.That(m_propertyTable.GetStringProperty(
-				EditSurfaceResolver.UIModeDisabledToolsPropertyName, null),
+				UIFrameworkResolver.UIModeDisabledToolsPropertyName, null),
 				Is.EqualTo("lexiconEdit,posEdit"));
 
 			FwXWindow.SeedUIModeProperties(m_propertyTable, "New", null);
 			Assert.That(m_propertyTable.GetStringProperty(
-				EditSurfaceResolver.UIModeDisabledToolsPropertyName, null), Is.EqualTo(""));
+				UIFrameworkResolver.UIModeDisabledToolsPropertyName, null), Is.EqualTo(""));
 		}
 	}
 }

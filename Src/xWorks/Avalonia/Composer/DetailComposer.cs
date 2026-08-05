@@ -117,7 +117,7 @@ namespace SIL.FieldWorks.XWorks
 		/// compile/walk engine is already class-general (<see cref="CompileForObject"/> keys on the object's
 		/// ClassID and compiles each descended object's own layout); this overload parameterizes the root
 		/// object and the starting layout instead of hardcoding LexEntry/"Normal", so wiring a new tool onto
-		/// the Avalonia surface needs only its registration + (when its layout uses one) a layoutChoiceField.
+		/// the Avalonia side needs only its registration + (when its layout uses one) a layoutChoiceField.
 		/// </summary>
 		public static ComposedDetail Compose(ICmObject obj, LcmCache cache, string layoutName = "Normal",
 			bool showHiddenFields = false, SlicePluginRegistry plugins = null,
@@ -162,7 +162,7 @@ namespace SIL.FieldWorks.XWorks
 		/// hierarchy, like the legacy flat chooser. The implementation lives in
 		/// the shared <see cref="DetailValueFactory"/> so this composer and
 		/// <see cref="LexiconEditErrorFallback"/> cannot drift; this wrapper keeps the composer's
-		/// established internal surface (and its tests).
+		/// established internal API (and its tests).
 		/// </summary>
 		internal static IReadOnlyList<DetailChoiceOption> BuildPossibilityOptions(
 			ICmPossibilityList list, bool flat)
@@ -2917,7 +2917,7 @@ namespace SIL.FieldWorks.XWorks
 						// Legacy sense numbering: 1, 2, ... and 1.1 for subsenses, with the sense's
 						// summary text (ShortName = gloss) in the header line. Finding B: the number
 						// is the domain's own LexSenseOutline (the dictionary/bulk-edit outline), so
-						// the entry pane cannot diverge from the other surfaces.
+						// the entry pane cannot diverge from the other views.
 						itemLabel = ($"{sense.LexSenseOutline.Text}  {item.ShortName}").TrimEnd();
 					}
 					else
@@ -2931,7 +2931,7 @@ namespace SIL.FieldWorks.XWorks
 					var itemBinding = ResolveItemMenuBinding(node, item);
 					AddField(new DetailField($"{StableId(node, obj)}/item{i}",
 						itemLabel, node.Field, null, DetailFieldKind.Header,
-						EditorClassification.GroupingNone, null, null, SurfaceRouting.Inherit,
+						EditorClassification.GroupingNone, null, null, HostRouting.Inherit,
 						null, null, null, isEditable: false, indent: depth + 1,
 						isCollapsible: true, isInitiallyExpanded: expanded,
 						menuId: itemBinding.MenuId ?? node.MenuId,

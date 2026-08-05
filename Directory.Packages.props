@@ -195,7 +195,7 @@
 		netstandard2.0 (net8+ only) and cannot host in-process on net48.
 		avalonia.win32.interoperability provides WinFormsAvaloniaControlHost
 		(targets net461) for the in-process embedding used by the migration's
-		Phase-1 surfaces.
+		Phase-1 views.
 		These are referenced by Src/Common/FwAvalonia and Src/Common/FwAvaloniaDialogs.
 		Exception: xWorks and xWorksTests reference the base Avalonia package with
 		IncludeAssets="compile" PrivateAssets="all". IRegionEditorPlugin.BuildControl

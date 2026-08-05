@@ -11,7 +11,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 {
 	/// <summary>
 	/// The per-project home of the sparse <see cref="ViewDefinitionOverride"/> patches that drive the
-	/// Avalonia lexical-edit surface's per-field "Field Visibility"/"Move Field" commands: sparse JSON
+	/// Avalonia detail view's per-field "Field Visibility"/"Move Field" commands: sparse JSON
 	/// patch documents keyed by StableId, stored as files in the project ConfigurationSettings folder.
 	/// One file per (class, layout); the override layer — not the legacy Inventory store — is what Compose
 	/// actually reads.

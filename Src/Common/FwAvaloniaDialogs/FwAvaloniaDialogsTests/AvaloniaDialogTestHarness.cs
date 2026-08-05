@@ -63,9 +63,9 @@ namespace FwAvaloniaDialogsTests
 		/// Pumps a realized surface to a settled layout without snapshotting or asserting — for fixtures
 		/// (e.g. plain-control tests) that capture/assert explicitly at each call site instead of inside Show().
 		/// </summary>
-		public static void Pump(Control surface)
+		public static void Pump(Control control)
 		{
-			surface.UpdateLayout();
+			control.UpdateLayout();
 			Dispatcher.UIThread.RunJobs();
 			AvaloniaHeadlessPlatform.ForceRenderTimerTick();
 			Dispatcher.UIThread.RunJobs();

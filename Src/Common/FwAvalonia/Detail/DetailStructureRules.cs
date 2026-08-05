@@ -38,7 +38,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			EditorClassification editorClassification,
 			string automationId,
 			string localizationKey,
-			SurfaceRouting routing,
+			HostRouting routing,
 			int depth,
 			bool isCollapsible = false,
 			bool isInitiallyExpanded = true,

@@ -27,5 +27,5 @@ Migrated screens SHALL be allowed to use direct Avalonia `ICommand`, `KeyBinding
 The shell command model SHALL keep stable command identity, visibility, checked state, enabled state, gestures, and diagnostics separate from the execution mechanism.
 
 #### Scenario: Menu and toolbar share command descriptor
-- **WHEN** a command appears in more than one shell surface
-- **THEN** those surfaces SHALL be driven from a shared command descriptor rather than duplicating per-surface state logic
+- **WHEN** a command appears in more than one shell view
+- **THEN** those views SHALL be driven from a shared command descriptor rather than duplicating per-view state logic

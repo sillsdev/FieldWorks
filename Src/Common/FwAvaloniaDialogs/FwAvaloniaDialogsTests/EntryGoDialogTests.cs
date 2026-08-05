@@ -27,7 +27,7 @@ namespace FwAvaloniaDialogsTests
 	/// stays in the box (the legacy m_tbForm_KeyDown behavior). It is a COMMIT-ON-SELECT picker with no OK
 	/// button: picking a row (double-click, or Enter in the box / on the list) closes accepted with the chosen
 	/// id; Cancel/Escape closes with no result. The excluded id never appears, and the right-side description
-	/// pane exists only when a consumer opts in. Runtime proof on a realized headless surface (compiled XAML
+	/// pane exists only when a consumer opts in. Runtime proof on a realized headless view (compiled XAML
 	/// on net48 + source-generated commands).
 	/// </summary>
 	[TestFixture]
@@ -610,7 +610,7 @@ namespace FwAvaloniaDialogsTests
 			Assert.That(FwAvaloniaDialogsStrings.EntryGoGlossesColumnHeader, Is.EqualTo("Glosses"));
 		}
 
-		// ===== Opt-in entry/sense capability (the Link-Entry-or-Sense surface): the toggle shows senses, selecting
+		// ===== Opt-in entry/sense capability (the Link-Entry-or-Sense consumers): the toggle shows senses, selecting
 		// a sense returns its id and flags it as a sense, and entry mode still returns an entry. =====
 
 		// Sample entries (id 11/12) each carry two senses (ids 1101/1102, 1201). The mode-aware search returns
@@ -741,7 +741,7 @@ namespace FwAvaloniaDialogsTests
 			Assert.That(FwAvaloniaDialogsStrings.LinkEntryOrSenseSenseRadio, Is.EqualTo("Specific Sense"));
 		}
 
-		// ===== Opt-in dependent auxiliary selection (the LinkMSA/LinkAllomorph surface): with a resolver supplied
+		// ===== Opt-in dependent auxiliary selection (the LinkMSA/LinkAllomorph consumce): with a resolver supplied
 		// the dialog is two-stage — picking an entry populates the auxiliary options (shown UNDER the matching
 		// list, the legacy combo position), Enter/double-click is stage-1 select (not commit), and OK commits only
 		// once both an entry and an option are chosen. Without the spec the commit-on-select behavior above is
@@ -779,7 +779,7 @@ namespace FwAvaloniaDialogsTests
 		[AvaloniaTest]
 		public void Auxiliary_SpecAbsent_SectionHiddenAndNoOkButton()
 		{
-			// The single-stage picker keeps its exact surface: no auxiliary section showing, no OK in the tree.
+			// The single-stage picker keeps its exact layout: no auxiliary section showing, no OK in the tree.
 			var (view, vm) = Show(Input());
 			Assert.That(vm.HasAuxiliarySelection, Is.False, "a null spec means the feature is off");
 			Assert.That(vm.ShowAuxiliaryOptions, Is.False);

@@ -73,7 +73,7 @@ namespace SIL.FieldWorks.XWorks
 			// Read exactly the way legacy EditingHelper.GetTsStringFromClipboard does.
 			var dataObject = ClipboardUtils.GetDataObject();
 			var wrapper = dataObject.GetData(TsStringWrapper.TsStringFormat) as TsStringWrapper;
-			Assert.That(wrapper, Is.Not.Null, "legacy surfaces must find the TsString format the bridge wrote");
+			Assert.That(wrapper, Is.Not.Null, "legacy views must find the TsString format the bridge wrote");
 			Assert.That(wrapper.GetTsString(Cache.WritingSystemFactory).Text, Is.EqualTo("casa house"));
 			Assert.That(dataObject.GetData(DataFormats.UnicodeText), Is.EqualTo("casa house"),
 				"the plain-text format is present for external consumers");

@@ -11,10 +11,10 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 	/// </summary>
 	public enum HostUiBehavior
 	{
-		/// <summary>Legacy UI mode is selected; this host renders the legacy surface.</summary>
+		/// <summary>Legacy UI mode is selected; this host renders with the Legacy framework.</summary>
 		LegacyActive,
 
-		/// <summary>New UI mode and this host has a migrated Avalonia surface.</summary>
+		/// <summary>New UI mode and this host has a migrated Avalonia implementation.</summary>
 		SupportedAvalonia,
 
 		/// <summary>New UI mode but this host is not migrated, so it explicitly falls back to legacy.</summary>
@@ -24,20 +24,20 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 		Blocked
 	}
 
-	/// <summary>The resolved routing decision for a host: the concrete surface plus why it was chosen.</summary>
-	public sealed class SurfaceDecision
+	/// <summary>The resolved routing decision for a host: the concrete UI framework plus why it was chosen.</summary>
+	public sealed class UIFrameworkDecision
 	{
-		public SurfaceDecision(EditSurface surface, HostUiBehavior behavior, string reason)
+		public UIFrameworkDecision(UIFramework framework, HostUiBehavior behavior, string reason)
 		{
-			Surface = surface;
+			Framework = framework;
 			Behavior = behavior;
 			Reason = reason;
 		}
 
-		/// <summary>The concrete surface to render.</summary>
-		public EditSurface Surface { get; }
+		/// <summary>The concrete UI framework to render with.</summary>
+		public UIFramework Framework { get; }
 
-		/// <summary>The deliberate behavior classification behind the surface choice.</summary>
+		/// <summary>The deliberate behavior classification behind the framework choice.</summary>
 		public HostUiBehavior Behavior { get; }
 
 		/// <summary>Human-readable reason (for diagnostics/manifest evidence, not for control flow).</summary>
@@ -47,40 +47,40 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 	/// <summary>
 	/// Explicit, central mapping from the app-wide UI mode to per-host behavior. Hosts such as
 	/// <c>RecordEditView</c> consume this instead of inferring product routing ad hoc from settings and
-	/// <c>PropertyTable</c> state. Pure logic over <see cref="EditSurfaceResolver"/>, with no
+	/// <c>PropertyTable</c> state. Pure logic over <see cref="UIFrameworkResolver"/>, with no
 	/// Avalonia dependency, so it is unit-testable without a UI runtime.
 	/// </summary>
-	public sealed class EditSurfaceSelectionService
+	public sealed class UIFrameworkSelectionService
 	{
 		/// <summary>
-		/// Resolves the surface decision for a host from the persisted UI mode and the current tool.
+		/// Resolves the framework decision for a host from the persisted UI mode and the current tool.
 		/// </summary>
 		/// <param name="uiMode">Persisted user preference (<c>Legacy</c> or <c>New</c>).</param>
 		/// <param name="toolName">The current content-control/tool name.</param>
 		/// <param name="overrideEnabled">Optional strong override (PropertyTable/registry).</param>
-		public SurfaceDecision Decide(string uiMode, string toolName, bool? overrideEnabled = null)
+		public UIFrameworkDecision Decide(string uiMode, string toolName, bool? overrideEnabled = null)
 		{
-			var supportsAvalonia = EditSurfaceResolver.SupportsAvaloniaForTool(toolName);
-			var surface = EditSurfaceResolver.Resolve(overrideEnabled, uiMode, toolName);
+			var supportsAvalonia = UIFrameworkResolver.SupportsAvaloniaForTool(toolName);
+			var framework = UIFrameworkResolver.Resolve(overrideEnabled, uiMode, toolName);
 
-			if (surface == EditSurface.Avalonia)
+			if (framework == UIFramework.Avalonia)
 			{
-				return new SurfaceDecision(EditSurface.Avalonia, HostUiBehavior.SupportedAvalonia,
+				return new UIFrameworkDecision(UIFramework.Avalonia, HostUiBehavior.SupportedAvalonia,
 					$"Avalonia is supported for tool '{toolName}' and the UI mode selects it.");
 			}
 
-			// Surface resolved to WinForms. Distinguish "legacy mode" from "new mode, tool not migrated".
+			// The framework resolved to Legacy. Distinguish "legacy mode" from "new mode, tool not migrated".
 			var isNewMode = overrideEnabled == true
-				|| (!overrideEnabled.HasValue && string.Equals(uiMode, EditSurfaceResolver.NewUIMode,
+				|| (!overrideEnabled.HasValue && string.Equals(uiMode, UIFrameworkResolver.NewUIMode,
 					System.StringComparison.OrdinalIgnoreCase));
 
 			if (isNewMode && !supportsAvalonia)
 			{
-				return new SurfaceDecision(EditSurface.WinForms, HostUiBehavior.ExplicitLegacyFallback,
+				return new UIFrameworkDecision(UIFramework.Legacy, HostUiBehavior.ExplicitLegacyFallback,
 					$"Tool '{toolName}' is not migrated; it explicitly falls back to legacy under the New UI mode.");
 			}
 
-			return new SurfaceDecision(EditSurface.WinForms, HostUiBehavior.LegacyActive,
+			return new UIFrameworkDecision(UIFramework.Legacy, HostUiBehavior.LegacyActive,
 				"Legacy UI mode is selected.");
 		}
 	}

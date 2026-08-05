@@ -44,7 +44,7 @@ migration burden.
 | SimpleListChooser (26) / ReallySimpleListChooser (22) | `ChooserDialogView`/`ViewModel` (input/result DTOs, single- and multi-select) | `Src/Common/FwAvaloniaDialogs/ChooserDialog*` |
 | BaseGoDlg/EntryGoDlg family (Go, Merge, Link*, AddAllomorph); its embedded MatchingObjectsBrowser | `EntryGoDialogView`/`ViewModel` + per-consumer launcher; persistent multi-column matching list (column spec `EntryGoResultColumn`, arrow-key selection from the search box) | `Src/Common/FwAvaloniaDialogs/EntryGoDialog*`; matching list + dependent auxiliary picker: dialog-conversion.md §2c; WS-aware search box: §2d |
 | MessageBox / one-off confirmation Forms | `FwMessageBox` (owner-parented, Yes/No/OK/Cancel) | `Src/Common/FwAvaloniaDialogs/FwMessageBox.cs`; injectable-seam usage: `LcmAddAllomorphDialogLauncher.PerformAddAllomorph` |
-| DataTree + Slice subclasses (88/61) | region surface: composer → region model → owned field controls (Text / StructuredText / Chooser / ReferenceVector / Literal). Custom slices resolve plugin registry → labeled Unsupported row (the conversion worklist); the sole native plugin exemplar is `ReversalIndexEntryPlugin`. | `Src/xWorks/Avalonia/Composer/DetailComposer.cs`, `Src/Common/FwAvalonia/Detail/DataTree.cs`, `Src/xWorks/Avalonia/Plugins/SlicePlugins.cs`, `Src/xWorks/Avalonia/Plugins/ReversalIndexEntryPlugin.cs` (architecture-patterns.md §2, §5) |
+| DataTree + Slice subclasses (88/61) | detail view: composer → region model → owned field controls (Text / StructuredText / Chooser / ReferenceVector / Literal). Custom slices resolve plugin registry → labeled Unsupported row (the conversion worklist); the sole native plugin exemplar is `ReversalIndexEntryPlugin`. | `Src/xWorks/Avalonia/Composer/DetailComposer.cs`, `Src/Common/FwAvalonia/Detail/DataTree.cs`, `Src/xWorks/Avalonia/Plugins/SlicePlugins.cs`, `Src/xWorks/Avalonia/Plugins/ReversalIndexEntryPlugin.cs` (architecture-patterns.md §2, §5) |
 | FwHelpButton (5) + per-dialog Help | ViewModel `HelpRequested` event → launcher calls `ShowHelp.ShowHelpTopic` | `EntryGoDialogViewModel.cs` + any `Lcm*Launcher` `OnHelpRequested` |
 | TriStateTreeView (6) | — | **GAP:** [tri-state checkbox tree (GAP-TRISTATE)](#gap-tristate) |
 | SimpleRootSite / RootSiteControl embedded views (72/26) | — | **DEFERRED:** [RootSite-embedded views (GAP-ROOTSITE-VIEWS)](#gap-rootsite-views) |
@@ -83,8 +83,8 @@ headless tests), and then PROMOTES it:
 3. Record any surprise in `references/lessons-learned.md` per its update
    protocol.
 
-Until a gap's exemplar exists, surfaces that need it stay on the Legacy
-surface — that is what the fail-closed resolver is for.
+Until a gap's exemplar exists, conversions that need it stay on the Legacy
+view -- that is what the fail-closed resolver is for.
 
 <a id="gap-progress"></a>
 ### GAP-PROGRESS: Async / threaded progress (highest exposure)
@@ -135,7 +135,7 @@ surface — that is what the fail-closed resolver is for.
 
 <a id="gap-browse-grid"></a>
 ### GAP-BROWSE-GRID: Browse/table grid + bulk edit (deferred by design)
-- The browse surface (BrowseViewer/RecordBrowseView/XMLViews grid, filter
+- The browse table (BrowseViewer/RecordBrowseView/XMLViews grid, filter
   bar, bulk edit) is intentionally absent; browse tools stay Legacy via
   the fail-closed resolver. Do not hand-roll ad-hoc `DataGrid` usage — a
   grid exemplar must come with virtualization, clerk integration, and
@@ -143,7 +143,7 @@ surface — that is what the fail-closed resolver is for.
 
 <a id="gap-rootsite-views"></a>
 ### GAP-ROOTSITE-VIEWS: RootSite-embedded views (deferred by design)
-- `SimpleRootSite`/`RootSiteControl` surfaces (interlinear, rule formula,
+- `SimpleRootSite`/`RootSiteControl` views (interlinear, rule formula,
   print previews) stay Legacy; their tools are deliberately unregistered
-  (see `EditSurfaceRegistry`). The activation recipe lives in
-  SKILL.md "Inert follow-up surfaces".
+  (see `UIFrameworkRegistry`). The activation recipe lives in
+  SKILL.md "Inert follow-up tools".

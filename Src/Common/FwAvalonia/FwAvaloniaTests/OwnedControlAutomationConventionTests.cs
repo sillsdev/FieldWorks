@@ -30,7 +30,7 @@ namespace FwAvaloniaTests
 		private static DetailField MakeTextField(string stableId, string label, string automationId)
 		{
 			return new DetailField(stableId, label, "Form", null,
-				DetailFieldKind.Text, EditorClassification.Known, automationId, null, SurfaceRouting.Inherit,
+				DetailFieldKind.Text, EditorClassification.Known, automationId, null, HostRouting.Inherit,
 				new List<DetailWsValue>
 				{
 					new DetailWsValue("fr", "bonjour", wsTag: "fr")

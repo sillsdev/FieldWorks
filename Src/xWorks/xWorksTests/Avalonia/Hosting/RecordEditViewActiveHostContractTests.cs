@@ -20,10 +20,10 @@ using XCore;
 namespace SIL.FieldWorks.XWorks
 {
 	/// <summary>
-	/// When the Avalonia surface is active, <c>RecordEditView</c> must not instantiate or
+	/// When Avalonia is active, <c>RecordEditView</c> must not instantiate or
 	/// drive the hidden legacy <c>DataTree</c>. This proves the active-host contract on the real product
-	/// host by loading the lexicon edit tool fresh in the New UI mode and asserting the legacy surface was
-	/// never initialized, while the Avalonia surface was.
+	/// host by loading the lexicon edit tool fresh in the New UI mode and asserting the legacy DataTree was
+	/// never initialized, while the Avalonia entry form was.
 	/// </summary>
 	[TestFixture]
 	[Apartment(System.Threading.ApartmentState.STA)]
@@ -77,26 +77,26 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(control, Is.Not.Null);
 			EnsureCurrentRecord(control);
 
-			Assert.That(GetPrivateFieldValue(control, "m_lexicalEditSurface"), Is.EqualTo(EditSurface.Avalonia),
-				"Precondition: the lexicon edit tool should resolve to the Avalonia surface under the New UI mode.");
+			Assert.That(GetPrivateFieldValue(control, "m_activeUIFramework"), Is.EqualTo(UIFramework.Avalonia),
+				"Precondition: the lexicon edit tool should resolve to Avalonia under the New UI mode.");
 
 			// Active-host contract: the legacy DataTree must not have been initialized or driven
-			// while Avalonia is the active surface. This is the audited invariant.
-			Assert.That(GetPrivateFieldValue(control, "m_legacySurfaceInitialized"), Is.EqualTo(false),
+			// while Avalonia is active. This is the audited invariant.
+			Assert.That(GetPrivateFieldValue(control, "m_dataTreeInitialized"), Is.EqualTo(false),
 				"The active Avalonia path must not instantiate or drive the hidden legacy DataTree (task 3.10).");
 
 			var panel = (Panel)GetPrivateFieldValue(control, "m_panel");
 			var legacyDataTree = (DataTree)GetPrivateFieldValue(control, "m_dataEntryForm");
 			Assert.That(panel.Controls.Contains(legacyDataTree), Is.False,
-				"The dormant legacy DataTree must not remain parented in the panel while Avalonia is the active surface.");
+				"The dormant legacy DataTree must not remain parented in the panel while Avalonia is active.");
 
 			// The host's contract instance is built from the approved baseline-adapter set when the
-			// Avalonia surface activates — NOT constructed ad hoc at an assert site from the very
+			// Avalonia activates -- NOT constructed ad hoc at an assert site from the very
 			// adapter id it then asserts (which could never fail). An unlisted id must trip it.
 			var contract = (ActiveHostContract)GetPrivateFieldValue(control, "m_activeHostContract");
 			Assert.That(contract, Is.Not.Null,
-				"Activating the Avalonia surface must build the host's active-host contract.");
-			Assert.That(contract.ActiveSurface, Is.EqualTo(EditSurfaceKind.Avalonia));
+				"Activating Avalonia must build the host's active-host contract.");
+			Assert.That(contract.ActiveUIFramework, Is.EqualTo(UIFramework.Avalonia));
 			Assert.That(() => contract.AssertLegacyDataTreeDriveAllowed(RecordEditView.CommandMenuRoutingAdapterId),
 				Throws.Nothing, "The approved command-menu-routing baseline adapter stays permitted.");
 			Assert.That(() => contract.AssertLegacyDataTreeDriveAllowed("unlisted-adapter"),
@@ -105,7 +105,7 @@ namespace SIL.FieldWorks.XWorks
 
 			// Note: realizing the Avalonia WinForms-interop host requires a real UI context, which this
 			// headless xWorks harness does not provide, so we do not assert the host was created here. The
-			// FwAvaloniaTests headless suite covers Avalonia surface construction/rendering directly.
+			// FwAvaloniaTests headless suite covers Avalonia entry-form construction/rendering directly.
 		}
 
 		private void LoadRecordEditView(string toolValue)

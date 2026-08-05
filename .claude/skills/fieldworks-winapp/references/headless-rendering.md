@@ -5,7 +5,7 @@
 > 2. **winforms-mcp `HEADLESS=true`** hidden desktop — does NOT render FieldWorks; do not use (abandoned; history below).
 > 3. **Invisible capture generally** — see the RDP option at the end of this doc.
 
-Empirically established 2026-06-22 on this machine. FieldWorks' main editing surface is drawn by the
+Empirically established 2026-06-22 on this machine. FieldWorks main editing views are drawn by the
 native **Views (C++/COM, GDI)** engine, which requires a **display-bound desktop** to complete its first
 layout/paint. Plain WinForms apps don't need this; FieldWorks does. This shapes every "invisible" option.
 

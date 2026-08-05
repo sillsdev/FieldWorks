@@ -19,7 +19,7 @@ namespace FwAvaloniaDialogsTests
 	/// The reusable message / confirmation dialog (the Avalonia analog of WinForms MessageBox): each button set
 	/// surfaces the right buttons and returns the right <see cref="FwMessageBoxResult"/>, the default-button and
 	/// dismiss handling matches WinForms, the VM honors the <see cref="IDialogViewModel"/> close contract, the
-	/// button labels are localized, and the message/title render on a realized headless surface.
+	/// button labels are localized, and the message/title render on a realized headless view.
 	/// </summary>
 	[TestFixture]
 	public class MessageBoxTests
@@ -42,7 +42,7 @@ namespace FwAvaloniaDialogsTests
 		private static Button Button(Control root, string id) => FindByAutomationId<Button>(root, id);
 
 		// --- Initial realized stage (the documented 01-initial PNG): the OK-only message box on a realized
-		// headless surface. Mirrors the other MessageBox capture calls (Show captures BEFORE asserting). ---
+		// headless view. Mirrors the other MessageBox capture calls (Show captures BEFORE asserting). ---
 
 		[AvaloniaTest]
 		public void OkOnly_InitialStage_RendersTheMessageAndOkButton()

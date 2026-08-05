@@ -12,7 +12,7 @@ using SIL.FieldWorks.Common.FwAvalonia.Seams;
 namespace SIL.FieldWorks.Common.FwAvalonia
 {
 	/// <summary>
-	/// Reusable WinForms host for an Avalonia detail surface. Owns Avalonia bootstrap, the
+	/// Reusable WinForms host for an Avalonia detail view. Owns Avalonia bootstrap, the
 	/// <see cref="WinFormsAvaloniaControlHost"/>, the companion-control strip, the WinForms/Avalonia
 	/// directional-key interop, focus-safe content swapping, context menus, and the message/clear
 	/// states. Detail-specific projection (building the detail view) belongs to the derived class
@@ -34,7 +34,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 			Dock = DockStyle.Fill;
 			TabStop = true;
 
-			// The host claims the arrow keys for the Avalonia surface so WinForms does not consume them as
+			// The host claims the arrow keys for the hosted Avalonia control so WinForms does not consume them as
 			// control navigation before the hosted content sees them (Enter stays with WinForms in a pane).
 			Host = new InputKeyClaimingAvaloniaHost
 			{

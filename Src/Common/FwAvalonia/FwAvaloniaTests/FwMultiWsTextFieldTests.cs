@@ -33,7 +33,7 @@ namespace FwAvaloniaTests
 			=> new DetailField(
 				stableId: "LexEntry/Form", label: label, field: "Form", writingSystem: null,
 				kind: DetailFieldKind.Text, editorClassification: EditorClassification.Known,
-				automationId: automationId, localizationKey: null, routing: SurfaceRouting.Product,
+				automationId: automationId, localizationKey: null, routing: HostRouting.Product,
 				values: values, options: null, selectedOptionKey: null, isEditable: isEditable);
 
 		private static (FwMultiWsTextField Field, Window Window) Show(DetailField field,

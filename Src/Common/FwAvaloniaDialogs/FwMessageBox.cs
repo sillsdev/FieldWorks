@@ -71,7 +71,7 @@ namespace FwAvaloniaDialogs
 	/// WinForms-owned modal window via <see cref="AvaloniaDialogHost.ShowModal"/> during coexistence.
 	/// Button labels are localized (<see cref="FwAvaloniaDialogsStrings"/>), the default
 	/// button takes focus, and compact density is applied by the host. Replaces raw <c>MessageBox.Show</c> in the
-	/// migrated lexical-edit/options/browse surfaces so confirmations match the rest of the Avalonia UI.
+	/// migrated detail/options/browse views so confirmations match the rest of the Avalonia UI.
 	/// </summary>
 	public static class FwMessageBox
 	{

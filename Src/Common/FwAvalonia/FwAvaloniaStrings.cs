@@ -5,7 +5,7 @@
 namespace SIL.FieldWorks.Common.FwAvalonia
 {
 	/// <summary>
-	/// Localized product-facing strings for the Avalonia lexical-edit surfaces. Strings
+	/// Localized product-facing strings for the FwAvalonia module. Strings
 	/// resolve through ResourceManager over FwAvaloniaStrings.resx — the neutral resx is the English
 	/// source of truth and translations ship as satellite assemblies (the FieldWorks .resx
 	/// localization strategy). Automation ids remain nonlocalized constants in code, never resource
@@ -257,12 +257,12 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 			=> string.Format(Text("FwAvalonia.StructuredText.ParagraphName"), fieldLabel, paragraphNumber);
 
 		// ----- Per-tool feature catalog (LexiconFeatureCatalog): user-facing display metadata for each
-		// tool surface that ships with an Avalonia editor. APPEND-ONLY. -----
+		// tool that ships with an Avalonia editor. APPEND-ONLY. -----
 
-		/// <summary>Group heading for the entry-editing tool surfaces in the catalog.</summary>
+		/// <summary>Group heading for the entry-editing tools in the catalog.</summary>
 		public static string FeatureGroupLexicalEntryDialogs => Text("FwAvalonia.FeatureGroup.LexicalEntryDialogs");
 
-		/// <summary>Group heading for the non-entry record-type tool surfaces in the catalog.</summary>
+		/// <summary>Group heading for the non-entry record-type tools in the catalog.</summary>
 		public static string FeatureGroupOtherRecordTypes => Text("FwAvalonia.FeatureGroup.OtherRecordTypes");
 
 		public static string FeatureLexiconEditName => Text("FwAvalonia.Feature.LexiconEditName");

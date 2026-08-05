@@ -11,7 +11,7 @@ using SIL.FieldWorks.Common.FwAvalonia.PreviewHost;
 
 // Previewable converted dialogs: one entry per surface a developer needs to look at while tuning its
 // layout, selected with `--module <id>`. Registered here rather than in FwAvaloniaDialogs so no product
-// assembly references preview-only code. Adding a surface is one window class plus one attribute; see
+// assembly references preview-only code. Adding a preview is one window class plus one attribute; see
 // Docs/migration/adjust-the-layout.md.
 [assembly: FwPreviewModule(
 	"create-feature",

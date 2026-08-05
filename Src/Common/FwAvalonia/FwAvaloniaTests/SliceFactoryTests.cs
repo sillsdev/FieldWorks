@@ -15,9 +15,9 @@ namespace FwAvaloniaTests
 	/// The shared <see cref="DetailFieldKind"/>→control dispatch both the detail-pane detail view
 	/// and the browse in-cell editor route through. These pin that one switch produces the right control
 	/// per surviving kind (Text / Chooser / ReferenceVector / Literal / Custom / Unsupported), and that
-	/// the all-nullable <see cref="SliceFactoryContext"/> serves both surfaces — the browse cell
+	/// the all-nullable <see cref="SliceFactoryContext"/> serves both hosts — the browse cell
 	/// passes null menu/link callbacks and suppresses the WS-abbreviation gutter while the detail pane
-	/// passes the full set — without either surface hand-rolling its own dispatch.
+	/// passes the full set — without either host hand-rolling its own dispatch.
 	/// </summary>
 	[TestFixture]
 	public class SliceFactoryTests
@@ -27,7 +27,7 @@ namespace FwAvaloniaTests
 			=> new DetailField(
 				stableId: "f1", label: "Label", field: "Field", writingSystem: "en", kind: kind,
 				editorClassification: EditorClassification.Known, automationId: "Auto.Id",
-				localizationKey: null, routing: SurfaceRouting.Product,
+				localizationKey: null, routing: HostRouting.Product,
 				values: new List<DetailWsValue> { new DetailWsValue("en", "v", wsTag: "en") },
 				options: null, selectedOptionKey: selectedOption, isEditable: true, controlFactory: controlFactory);
 
@@ -59,7 +59,7 @@ namespace FwAvaloniaTests
 			var field = new DetailField(
 				stableId: "l1", label: "Read this carefully:", field: "Self", writingSystem: null,
 				kind: DetailFieldKind.Literal, editorClassification: EditorClassification.Known,
-				automationId: "Auto.Lit", localizationKey: null, routing: SurfaceRouting.Product,
+				automationId: "Auto.Lit", localizationKey: null, routing: HostRouting.Product,
 				values: new List<DetailWsValue> { new DetailWsValue("", "Read this carefully:") },
 				options: null, selectedOptionKey: null, isEditable: false);
 			var control = SliceFactory.Build(field, "Auto.Lit", null);

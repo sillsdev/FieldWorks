@@ -19,14 +19,14 @@ namespace FwAvaloniaTests.VisualChecks
 	/// Visual stages for the surviving detail-editor field kinds: a static literal row, an editable
 	/// reference-vector row, and the labeled Unsupported worklist row (the conversion worklist). Each is
 	/// captured as a Skia PNG for subjective review and run through the shared
-	/// <see cref="DialogLayoutAssert"/> crowding tripwire, plus ONE realized detail surface holding them
+	/// <see cref="DialogLayoutAssert"/> crowding tripwire, plus ONE realized detail view holding them
 	/// together. All LCModel-free: the model fields are built directly and a
 	/// <see cref="FakeDetailEditContext"/> records the staged edits.
 	/// </summary>
 	[TestFixture]
 	public class FieldTypeVisualTests
 	{
-		private static DataTree Surface(IReadOnlyList<DetailField> fields,
+		private static DataTree DetailView(IReadOnlyList<DetailField> fields,
 			out FakeDetailEditContext edit)
 		{
 			edit = new FakeDetailEditContext();
@@ -38,17 +38,17 @@ namespace FwAvaloniaTests.VisualChecks
 
 		private static DetailField Literal(string text) => new DetailField(
 			"f/#lit", string.Empty, "Self", null, DetailFieldKind.Literal,
-			EditorClassification.Known, "Lit", null, SurfaceRouting.Product,
+			EditorClassification.Known, "Lit", null, HostRouting.Product,
 			new List<DetailWsValue> { new DetailWsValue("", text) }, null, null, isEditable: false);
 
 		private static DetailField Unsupported() => new DetailField(
 			"f/#uns", "Inflection Features", "InflectionFeatures", null, DetailFieldKind.Unsupported,
-			EditorClassification.Known, "Uns", null, SurfaceRouting.Product, null, null, null,
+			EditorClassification.Known, "Uns", null, HostRouting.Product, null, null, null,
 			isEditable: false);
 
 		private static DetailField Vector() => new DetailField(
 			"f/#vec", "Semantic Domains", "DomainTypes", null, DetailFieldKind.ReferenceVector,
-			EditorClassification.Known, "Domains", null, SurfaceRouting.Product, null,
+			EditorClassification.Known, "Domains", null, HostRouting.Product, null,
 			new List<DetailChoiceOption>
 			{
 				new DetailChoiceOption("d1", "Universe, creation", 0),
@@ -62,7 +62,7 @@ namespace FwAvaloniaTests.VisualChecks
 		[AvaloniaTest]
 		public void Literal_RendersCleanly()
 		{
-			var view = Surface(new[] { Literal("This entry is provisional; verify before publishing.") }, out _);
+			var view = DetailView(new[] { Literal("This entry is provisional; verify before publishing.") }, out _);
 			DialogSnapshot.Capture(view, "FieldType-01-literal", width: 520, height: 140);
 			DialogLayoutAssert.AssertNoCrowding(view);
 		}
@@ -70,7 +70,7 @@ namespace FwAvaloniaTests.VisualChecks
 		[AvaloniaTest]
 		public void Unsupported_RendersCleanly()
 		{
-			var view = Surface(new[] { Unsupported() }, out _);
+			var view = DetailView(new[] { Unsupported() }, out _);
 			DialogSnapshot.Capture(view, "FieldType-02-unsupported", width: 520, height: 140);
 			DialogLayoutAssert.AssertNoCrowding(view);
 		}
@@ -78,17 +78,17 @@ namespace FwAvaloniaTests.VisualChecks
 		[AvaloniaTest]
 		public void Vector_RendersCleanly()
 		{
-			var view = Surface(new[] { Vector() }, out _);
+			var view = DetailView(new[] { Vector() }, out _);
 			DialogSnapshot.Capture(view, "FieldType-03-vector", width: 520, height: 200);
 			DialogLayoutAssert.AssertNoCrowding(view);
 		}
 
-		// ----- Integration: the surviving field kinds on ONE realized surface -----
+		// ----- Integration: the surviving field kinds on ONE realized detail view -----
 
 		[AvaloniaTest]
-		public void IntegrationSurface_SurvivingFieldTypesCompose()
+		public void IntegrationDetailView_SurvivingFieldTypesCompose()
 		{
-			var view = Surface(new[] { Literal("Note:"), Vector(), Unsupported() }, out _);
+			var view = DetailView(new[] { Literal("Note:"), Vector(), Unsupported() }, out _);
 
 			DialogSnapshot.Capture(view, "FieldType-04-integration", width: 560, height: 360);
 			DialogLayoutAssert.AssertNoCrowding(view);

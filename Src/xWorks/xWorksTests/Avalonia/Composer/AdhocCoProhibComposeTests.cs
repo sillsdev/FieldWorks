@@ -11,12 +11,12 @@ using SIL.LCModel.Infrastructure;
 namespace SIL.FieldWorks.XWorks
 {
 	/// <summary>
-	/// Groundwork for the rule-formula editor (a follow-up surface). The tool-level flip
-	/// (AdhocCoprohibEdit) stays gated off via EditSurfaceRegistry.Phase1FollowUpSurfaceTools
+	/// Groundwork for the rule-formula editor (a follow-up tool). The tool-level flip
+	/// (AdhocCoprohibEdit) stays gated off via UIFrameworkRegistry.Phase1FollowUpTools
 	/// regardless of what the composer can already do — this file only proves the composer machinery, not that
 	/// the tool is live.
 	///
-	/// Pins how the ad-hoc co-prohibition records compose on the Avalonia surface, to scope the remaining
+	/// Pins how the ad-hoc co-prohibition records compose on the Avalonia detail view, to scope the remaining
 	/// work for the `AdhocCoprohibEdit` tool. Its Key/Others rows are custom slices; with the lexical-edit
 	/// detail view limited to string, list-choice, and the one native plugin, an unclaimed custom slice composes
 	/// as a labeled Unsupported worklist row.

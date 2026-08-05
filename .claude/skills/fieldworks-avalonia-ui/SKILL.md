@@ -50,7 +50,7 @@ hub skill — `.claude/skills/fieldworks-winforms-to-avalonia-migration/SKILL.md
 
 Hand-authored dialogs/wizards use **XAML + CommunityToolkit.Mvvm + compiled
 bindings** — NOT the region/IR pattern (that is only for XML-view-definition
-surfaces). Full step-by-step, the working template, and the decision
+views). Full step-by-step, the working template, and the decision
 history/rationale pointer: `references/dialog-conversion.md`. The shape, per
 dialog:
 
@@ -68,11 +68,11 @@ dialog:
    the per-stage PNG captures and subjective checks under "Dialog spacing"
    below — together, the per-dialog definition of done.
 
-### Style system (density + borders, per surface)
+### Style system (density + borders, per view)
 
 The font/density tokens and the field-border rule are a GLOBAL system, calibrated to WinForms density —
 not the roomy Fluent defaults — and applied per-control-tree (the only mechanism that renders in BOTH the
-runtime host and the headless tests). Full detail, the calibrated numbers, and the per-surface intent:
+runtime host and the headless tests). Full detail, the calibrated numbers, and the per-view intent:
 **`references/style-system.md`**. Headlines: **dialog inputs are BOXED** (`Border.fwFieldHost`),
 **detail/region values are FLAT** with subtle separators, **browse keeps its grid lines** — just denser
 font everywhere; one source of truth per family (`DialogTheme.axaml` for dialogs, `FwSurfaceStyles` for
@@ -94,10 +94,10 @@ copy the numbers here too. Headlines (full rules + rationale:
 - Never hardcode a margin/spacing literal — use a token; add new tokens to `DialogTheme.axaml`.
 - The headless `DialogLayoutAssert.AssertNoCrowding(view)` tripwire gates this in every dialog's
   realized-view test.
-- **Capture a PNG at EACH interaction stage via `DialogSnapshot.Capture(view, "<Surface>-<NN>-<stage>")`
-  (→ flat gitignored folder `Output/Snapshots/<Surface>-<NN>-<stage>.png`), then Read each PNG and answer
+- **Capture a PNG at EACH interaction stage via `DialogSnapshot.Capture(view, "<Prefix>-<NN>-<stage>")`
+  (→ flat gitignored folder `Output/Snapshots/<Prefix>-<NN>-<stage>.png`), then Read each PNG and answer
   the six subjective-quality questions — a hard rule and part of the per-dialog definition of done,
-  for region/browse surfaces too.** The canonical checklist, the six questions, and the
+  for detail/browse views too.** The canonical checklist, the six questions, and the
   capture → run → Read → judge → fix → re-capture loop: `references/visual-snapshot-testing.md`.
 
 Rules specific to dialogs:
@@ -133,7 +133,7 @@ Rules specific to dialogs:
   `AutomationProperties.Name` on user-facing controls.
 - UI logic stays in bindings/view models where practical; avoid
   logic-heavy code-behind.
-- For any Avalonia "select from a list" surface, prefer the shared
+- For any Avalonia "select from a list" control, prefer the shared
   `FwOptionChooser` pattern in `Src/Common/FwAvalonia/Detail/FwOptionChooser.cs`
   (AutoCompleteBox-based, keyboard-safe, search-capable, compact density)
   over ad hoc `ListBox` popups or one-off editable selectors. Reach for a raw

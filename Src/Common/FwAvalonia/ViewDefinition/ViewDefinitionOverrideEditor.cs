@@ -9,7 +9,7 @@ using System.Linq;
 namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 {
 	/// <summary>
-	/// The runtime "where the per-field gear-menu command lands" helper for the Avalonia surface
+	/// The runtime "where the per-field gear-menu command lands" helper for the Avalonia detail view
 	/// (advanced-entry-view). Two pure jobs over the immutable IR + override model, both unit-testable
 	/// without any XCore/Inventory/LCModel dependency:
 	///
