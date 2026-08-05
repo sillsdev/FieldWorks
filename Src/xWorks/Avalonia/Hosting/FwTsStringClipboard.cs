@@ -1,4 +1,4 @@
-// Copyright (c) 2026 SIL International
+﻿// Copyright (c) 2026 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -68,8 +68,8 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Builds the dual-format OS data object for a payload — the same entries legacy
 		/// <c>EditingHelper.SetTsStringOnClipboard</c> writes, so legacy views consume the rich
-		/// format exactly as if another native-Views view had produced it. Shared by the clipboard seam
-		/// and the drag-and-drop bridge, which carry identical text payloads.
+		/// format exactly as if another native-Views view had produced it. The clipboard and
+		/// drag-and-drop payloads are identical.
 		/// </summary>
 		public static DataObject CreateDataObject(FwClipboardText payload)
 		{

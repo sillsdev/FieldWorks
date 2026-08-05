@@ -1,4 +1,4 @@
-// Copyright (c) 2026 SIL International
+﻿// Copyright (c) 2026 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -276,5 +276,9 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 
 		public static string FeaturePosEditName => Text("FwAvalonia.Feature.PosEditName");
 		public static string FeaturePosEditDescription => Text("FwAvalonia.Feature.PosEditDescription");
+
+		/// <summary>The empty-choice label a list chooser leads with when the field allows no value.
+		/// English must match the legacy launchers' <c>ksNullLabel</c> so both frameworks show the same word.</summary>
+		public static string ChooserEmptyItemLabel => Text("FwAvalonia.Chooser.EmptyItemLabel");
 	}
 }

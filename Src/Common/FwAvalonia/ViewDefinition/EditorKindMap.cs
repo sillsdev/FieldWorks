@@ -1,4 +1,4 @@
-// Copyright (c) 2026 SIL International
+﻿// Copyright (c) 2026 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -109,28 +109,28 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 		// parts is the known "morphtypeatomicreference" editor.
 		private static readonly HashSet<string> KnownEditors = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
 		{
-			"multistring",
+			MultiStringEditor,
 			"defaultvectorreference",
 			"defaultvectorreferencedisabled",
 			"possvectorreference",
 			"semdomvectorreference",
-			"string",
-			"jtview",
-			"summary",
-			"enumcombobox",
+			StringEditor,
+			JtViewEditor,
+			SummaryEditor,
+			EnumComboBoxEditor,
 			"referencecombobox",
 			"typeaheadrefatomic",
 			"msareferencecombobox",
-			"lit",
-			"picture",
-			"image",
+			LiteralEditor,
+			PictureEditor,
+			ImageEditor,
 			"checkbox",
 			"checkboxwithrefresh",
 			"time",
 			"int",
 			"integer",
 			"gendate",
-			"morphtypeatomicreference",
+			MorphTypeAtomicReferenceEditor,
 			"atomicreferencepos",
 			"possatomicreference",
 			"atomicreferenceposdisabled",
@@ -141,7 +141,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 			"phoneenvreference",
 			"sttext",
 			"ghostvector",
-			"command"
+			CommandEditor
 		};
 
 		private static readonly HashSet<string> DynamicEditors = new HashSet<string>(StringComparer.OrdinalIgnoreCase)

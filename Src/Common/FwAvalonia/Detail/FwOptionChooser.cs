@@ -1,4 +1,4 @@
-// Copyright (c) 2026 SIL International
+﻿// Copyright (c) 2026 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -263,7 +263,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				// Reuse the inline consumers' flyout path: a chromeless, focus-posting Flyout anchored to
 				// the toggle button. Unlike a free popup, a flyout positions in the trigger's own window,
 				// so the dropdown stays correctly placed under fractional display scaling.
-				_dropdownFlyout = BuildOptionFlyout(popupPanel, this, PlacementMode.Bottom);
+				_dropdownFlyout = CreateOptionFlyout(popupPanel, this, PlacementMode.Bottom);
 				_dropdownFlyout.Opened += OnDropdownFlyoutOpened;
 				_dropdownFlyout.Closed += OnDropdownFlyoutClosed;
 
@@ -356,7 +356,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		private void OnDropdownFlyoutOpened(object sender, EventArgs e)
 		{
 			// Restart the filter clean on each open, so typing filters immediately (the same reset the
-			// inline flyout does on open). The filter box is (re)focused by BuildOptionFlyout's own
+			// inline flyout does on open). The filter box is (re)focused by CreateOptionFlyout's own
 			// Opened handler, the shared reliable-focus path every option flyout uses.
 			_dropdownOpen = true;
 			if (!string.IsNullOrEmpty(_filterBox.Text))
@@ -402,7 +402,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		/// opens through here so the styling stays consistent.
 		/// </summary>
 		public static Flyout CreateOptionFlyout(FwOptionChooser picker, PlacementMode placement)
-			=> BuildOptionFlyout(picker, picker, placement);
+			=> CreateOptionFlyout(picker, picker, placement);
 
 		/// <summary>
 		/// The single option-flyout construction path: a chromeless <see cref="Flyout"/> that re-requests
@@ -414,7 +414,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		/// is open, posted at Input priority so it runs AFTER layout/render — otherwise focus stays on the
 		/// launching button and the arrow keys never reach the picker.
 		/// </summary>
-		private static Flyout BuildOptionFlyout(object content, FwOptionChooser picker, PlacementMode placement)
+		private static Flyout CreateOptionFlyout(object content, FwOptionChooser picker, PlacementMode placement)
 		{
 			var flyout = new Flyout
 			{

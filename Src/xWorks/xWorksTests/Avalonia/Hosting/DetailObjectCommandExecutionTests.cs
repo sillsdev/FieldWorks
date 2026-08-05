@@ -1,4 +1,4 @@
-// Copyright (c) 2026 SIL International
+﻿// Copyright (c) 2026 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -34,7 +34,7 @@ namespace SIL.FieldWorks.XWorks
 	///   1. <c>EnsureMenuCommandAdapter(targetHvo)</c> — builds/syncs the hidden adapter tree and points
 	///      its CurrentSlice at the slice bound to the clicked row's object (exactly what
 	///      <c>OnDetailMenuRequested</c> calls first).
-	///   2. <see cref="XCoreMenuBridge.BuildMenuItems(XWindow, string[])"/> — the same native-menu
+	///   2. <see cref="XCoreMenuBridge.CreateMenuItems(XWindow, string[])"/> — the same native-menu
 	///      materialization <c>OnDetailMenuRequested</c> performs; the resulting <see cref="DetailMenuItem"/>
 	///      carries an Execute action that dispatches the command through the mediator
 	///      (<c>ChoiceBase.OnClick</c> → hidden DataTree/DTMenuHandler colleagues → UOW mutation).
@@ -322,7 +322,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var window = m_propertyTable.GetValue<XWindow>("window");
 			Assert.That(window, Is.Not.Null);
-			return XCoreMenuBridge.BuildMenuItems(window, menuIds);
+			return XCoreMenuBridge.CreateMenuItems(window, menuIds);
 		}
 
 		private void InvokeItem(IReadOnlyList<DetailMenuItem> items, string label)

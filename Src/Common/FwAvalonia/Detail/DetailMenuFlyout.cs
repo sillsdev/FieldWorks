@@ -1,4 +1,4 @@
-// Copyright (c) 2026 SIL International
+﻿// Copyright (c) 2026 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -57,7 +57,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		public static MenuFlyout Build(IReadOnlyList<DetailMenuItem> items)
 		{
 			var flyout = new MenuFlyout();
-			foreach (var control in BuildControls(items))
+			foreach (var control in CreateControls(items))
 				flyout.Items.Add(control);
 			return flyout;
 		}
@@ -70,7 +70,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			Build(items).ShowAt(target, showAtPointer: true);
 		}
 
-		private static IEnumerable<Control> BuildControls(IReadOnlyList<DetailMenuItem> items)
+		private static IEnumerable<Control> CreateControls(IReadOnlyList<DetailMenuItem> items)
 		{
 			foreach (var item in items)
 			{
@@ -94,7 +94,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 
 				if (item.Children.Count > 0)
 				{
-					foreach (var child in BuildControls(item.Children))
+					foreach (var child in CreateControls(item.Children))
 						menuItem.Items.Add(child);
 				}
 				else if (item.Execute != null)

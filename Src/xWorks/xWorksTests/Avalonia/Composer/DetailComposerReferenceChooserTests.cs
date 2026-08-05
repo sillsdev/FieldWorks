@@ -1,4 +1,4 @@
-// Copyright (c) 2026 SIL International
+﻿// Copyright (c) 2026 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -478,11 +478,11 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void BuildPossibilityOptions_FlatSpec_FlattensTheHierarchy()
 		{
-			var hierarchical = DetailComposer.BuildPossibilityOptions(
+			var hierarchical = DetailComposer.CreatePossibilityOptions(
 				Cache.LangProject.SemanticDomainListOA, flat: false);
 			Assert.That(hierarchical.Select(o => o.Depth), Is.EqualTo(new[] { 0, 1, 1 }));
 
-			var flat = DetailComposer.BuildPossibilityOptions(
+			var flat = DetailComposer.CreatePossibilityOptions(
 				Cache.LangProject.SemanticDomainListOA, flat: true);
 			Assert.That(flat.Select(o => o.Key), Is.EqualTo(hierarchical.Select(o => o.Key)),
 				"flattening keeps the document order");

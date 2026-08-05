@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2017 SIL International
+﻿// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -479,21 +479,5 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				return true;
 			return false;
 		}
-	}
-
-	/// <summary>
-	/// Exposes the legacy launchers' localized strings to the Avalonia detail composer so the
-	/// migrated choosers reuse the SAME translated resources instead of minting duplicate resx
-	/// entries (<c>DetailControlsStrings</c> itself is internal to this assembly). Parked in this
-	/// file only because it is the launcher file the migration already touches; move it to its
-	/// own file with the next DetailControls sweep.
-	/// </summary>
-	public static class DetailControlsResourceAccess
-	{
-		/// <summary>
-		/// The empty-choice label of the atomic reference launchers ("&lt;Empty&gt;",
-		/// <c>ksNullLabel</c> — AtomicReferenceLauncher.cs:81, ReferenceComboBoxSlice.cs:77).
-		/// </summary>
-		public static string NullItemLabel => DetailControlsStrings.ksNullLabel;
 	}
 }

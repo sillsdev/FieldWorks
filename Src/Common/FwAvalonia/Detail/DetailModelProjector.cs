@@ -1,4 +1,4 @@
-// Copyright (c) 2026 SIL International
+﻿// Copyright (c) 2026 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -49,7 +49,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			var childDepth = depth;
 			if (node.Kind == ViewNodeKind.Field)
 			{
-				output.Add(BuildField(node, values, depth));
+				output.Add(CreateField(node, values, depth));
 			}
 			else if (
 				node.Kind == ViewNodeKind.Group
@@ -58,7 +58,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			{
 				// Section header row (legacy grouping slice); children indent one level under it. The
 				// header construction and indent rule are shared with the full composer.
-				output.Add(DetailStructureRules.BuildHeaderField(
+				output.Add(DetailStructureRules.CreateHeaderField(
 					node.StableId, node.Label, node.Field, node.WritingSystem, node.EditorClassification,
 					node.AutomationId, node.LocalizationKey, node.Routing, depth));
 				childDepth = DetailStructureRules.ChildIndent(node.Label, depth);
@@ -70,7 +70,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			}
 		}
 
-		private static DetailField BuildField(
+		private static DetailField CreateField(
 			ViewNode node,
 			IDetailValueProvider values,
 			int depth)

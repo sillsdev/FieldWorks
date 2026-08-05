@@ -1,4 +1,4 @@
-// Copyright (c) 2026 SIL International
+﻿// Copyright (c) 2026 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -67,7 +67,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			AutomationProperties.SetName(this, field.Label ?? field.Field ?? automationId);
 
 			foreach (var value in field.Values)
-				BuildValueRow(field, automationId, editContext, writingSystemFocused,
+				AddValueRow(field, automationId, editContext, writingSystemFocused,
 					menuRequested, clipboard, showWritingSystemAbbreviation, value);
 		}
 
@@ -75,13 +75,13 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		// editing/clipboard/menu wiring when the field is editable), and the two-column row layout. One
 		// call per WS alternative; the shared per-row editor state (currentRich/lastStaged) lives here so
 		// the value box's handlers and its context-menu Copy see the same mutations.
-		private void BuildValueRow(DetailField field, string automationId,
+		private void AddValueRow(DetailField field, string automationId,
 			IDetailEditContext editContext, Action<string> writingSystemFocused,
 			Action<DetailMenuRequest> menuRequested, IFwClipboard clipboard,
 			bool showWritingSystemAbbreviation, DetailWsValue value)
 		{
 				var currentRich = value.RichText;
-				var abbrev = BuildWsAbbrev(value);
+				var abbrev = CreateWsAbbrev(value);
 
 				// Legacy look (12.2): values render flat like RootSite views — no box, no fill.
 				// Local values outrank the theme's pointer-over/focus setters, so the editor stays flat.
@@ -96,7 +96,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				// there is no in-pane player. Full audio editing stays in the classic view.
 				var valueIsReadOnly = editContext == null || !field.IsEditable || !value.CanEditRichText
 					|| value.IsAudio;
-				var box = BuildValueBox(field, value, valueIsReadOnly);
+				var box = CreateValueBox(field, value, valueIsReadOnly);
 
 				WireGhostPrompt(box, field);
 
@@ -712,10 +712,10 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 
 				// Per-run font display: differing runs render a read-along per-run-font TextBlock
 				// swapping to the editable box on focus; a uniform value renders the bare box.
-				var valueContent = BuildValueContentWithFontSwap(field, automationId, wsKey, box,
+				var valueContent = CreateValueContentWithFontSwap(field, automationId, wsKey, box,
 					currentRich, !valueIsReadOnly);
 
-				var rowPanel = BuildRowPanel(abbrev, valueContent, showWritingSystemAbbreviation);
+				var rowPanel = CreateRowPanel(abbrev, valueContent, showWritingSystemAbbreviation);
 				Children.Add(rowPanel);
 		}
 
@@ -723,7 +723,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		// own fixed gutter column (see the row Grid below) so a bold vernacular value can never crowd
 		// or overlap it. ClipToBounds keeps an unusually long abbreviation inside the gutter width
 		// rather than bleeding into the value column.
-		private static TextBlock BuildWsAbbrev(DetailWsValue value)
+		private static TextBlock CreateWsAbbrev(DetailWsValue value)
 		{
 			return new TextBlock
 			{
@@ -739,7 +739,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 
 		// The flat value editor: a voice/audio or rich-content-lossy value is read-only and carries the
 		// explanatory tooltip; project WS font, size, bold, and RTL flow ride the value's own metadata.
-		private static TextBox BuildValueBox(DetailField field, DetailWsValue value, bool valueIsReadOnly)
+		private static TextBox CreateValueBox(DetailField field, DetailWsValue value, bool valueIsReadOnly)
 		{
 			var box = new TextBox
 			{
@@ -843,7 +843,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		// is single-writing-system per column, so the gutter is suppressed there (it would otherwise
 		// show "vern"/"anal" in front of every cell, which the WinForms browse never does) and the
 		// value spans the whole row.
-		private static Grid BuildRowPanel(TextBlock abbrev, Control valueContent, bool showWritingSystemAbbreviation)
+		private static Grid CreateRowPanel(TextBlock abbrev, Control valueContent, bool showWritingSystemAbbreviation)
 		{
 			var rowPanel = new Grid
 			{
@@ -874,14 +874,14 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		// value's runs warrant a per-run font display, wrap the editable box and a read-along TextBlock in a
 		// Panel: the TextBlock (each run in its own ws/style font from the host map) shows while unfocused;
 		// the box swaps in on focus / out on blur. A uniform value returns the bare box.
-		private Control BuildValueContentWithFontSwap(DetailField field, string automationId,
+		private Control CreateValueContentWithFontSwap(DetailField field, string automationId,
 			string wsKey, TextBox box, DetailRichTextValue currentRich, bool editable)
 		{
 			if (currentRich == null || !DetailRichTextChrome.ShouldRenderPerRunFontDisplay(currentRich))
 				return box;
 
 			var rtl = box.FlowDirection == FlowDirection.RightToLeft;
-			var display = DetailRichTextChrome.BuildPerRunFontDisplay(currentRich, field.WritingSystemFonts,
+			var display = DetailRichTextChrome.CreatePerRunFontDisplay(currentRich, field.WritingSystemFonts,
 				automationId + "." + wsKey + ".Display", rtl);
 
 			// Exactly ONE of {display, box} occupies the row at a time (IsVisible collapses the other out

@@ -1,18 +1,17 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
 		<TargetFramework>net48</TargetFramework>
 		<!-- net48 BCL constraint applies: no records/init/Index/Range/DIM/IAsyncEnumerable. -->
 		<LangVersion>latest</LangVersion>
-		<Nullable>disable</Nullable>
 		<IsTestProject>true</IsTestProject>
 		<IsPackable>false</IsPackable>
-		<TreatWarningsAsErrors>false</TreatWarningsAsErrors>
 		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
 		<NoWarn>$(NoWarn);CS1591;NU1701</NoWarn>
-		<OutputPath>$(MSBuildThisFileDirectory)bin\$(Configuration)\net48\</OutputPath>
+		<!-- Built to a local folder, never the shared Output: the preview host is a developer tool
+		     that must not ship. -->
+		<OutputPath>$(MSBuildThisFileDirectory)bin\$(Configuration)\$(TargetFramework)\</OutputPath>
 		<OutDir>$(OutputPath)</OutDir>
-		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
 	</PropertyGroup>
 
 	<ItemGroup>

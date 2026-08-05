@@ -1,4 +1,4 @@
-// Copyright (c) 2026 SIL International
+﻿// Copyright (c) 2026 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -19,7 +19,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 	/// The ONE DETERMINISTIC, GLOBAL CheckBox style: every Avalonia view (dialogs, browse table,
 	/// chooser flat list + tree, configure-columns, options, find/replace, insert-entry, detail view) renders
 	/// checkboxes at a FIXED size derived from <see cref="FwAvaloniaDensity.CheckboxBoxSize"/> (a function of
-	/// the 12px surface font), so a checkbox NEVER inflates a table/list/tree row past the text-row height.
+	/// the surface font), so a checkbox NEVER inflates a table/list/tree row past the text-row height.
 	///
 	/// WHY A WHOLE TEMPLATE (not a selector tweak or a RenderTransform): the Fluent 11.3 CheckBox template
 	/// hardcodes the box as a 20×20 <c>Border</c> (<c>NormalRectangle</c>) inside an unnamed inner <c>Grid</c>
@@ -65,7 +65,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 			{
 				Setters =
 				{
-					new Setter(StyledElement.ThemeProperty, BuildTheme()),
+					new Setter(StyledElement.ThemeProperty, CreateTheme()),
 					new Setter(Layoutable.MinHeightProperty, 0d),
 					new Setter(Layoutable.MinWidthProperty, 0d),
 					new Setter(Layoutable.VerticalAlignmentProperty, VerticalAlignment.Center)
@@ -77,7 +77,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 		// the control's footprint is the font-proportional box (never the Fluent 32px slot). The glyph rides a
 		// Viewbox so it auto-fits the box. Nested pseudo-class styles drive the checked/indeterminate/disabled
 		// visuals (the part of the Fluent theme we still need, reproduced concretely so it renders headlessly).
-		private static ControlTheme BuildTheme()
+		private static ControlTheme CreateTheme()
 		{
 			var box = FwAvaloniaDensity.CheckboxBoxSize;
 
@@ -86,13 +86,13 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 				Setters =
 				{
 					new Setter(TemplatedControl.BackgroundProperty, Brushes.Transparent),
-					// No box→label gap here: the gap is the StackPanel Spacing in BuildTemplate (deterministic,
+					// No box→label gap here: the gap is the StackPanel Spacing in CreateTemplate (deterministic,
 					// CheckboxLabelGap). Padding stays 0 so a content-less select checkbox adds no width either.
 					new Setter(TemplatedControl.PaddingProperty, new Thickness(0)),
 					new Setter(Layoutable.MinHeightProperty, 0d),
 					new Setter(Layoutable.MinWidthProperty, 0d),
 					new Setter(Layoutable.VerticalAlignmentProperty, VerticalAlignment.Center),
-					new Setter(TemplatedControl.TemplateProperty, new FuncControlTemplate<CheckBox>((_, __) => BuildTemplate(box)))
+					new Setter(TemplatedControl.TemplateProperty, new FuncControlTemplate<CheckBox>((_, __) => CreateTemplate(box)))
 				}
 			};
 
@@ -150,11 +150,11 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 		// The compact template: a box Border + the check/indeterminate glyphs in a Viewbox, then the content
 		// presenter for any label. Box and the surrounding StackPanel are sized to `box`, so the layout
 		// footprint is the font-proportional box, not the Fluent 32px slot.
-		private static Control BuildTemplate(double box)
+		private static Control CreateTemplate(double box)
 		{
 			// NOTE: do NOT set Opacity locally here — a local value outranks a Style setter (Avalonia
 			// precedence LocalValue > Style), so the :checked state style could not reveal it. The glyphs are
-			// hidden by the theme's base nested style and revealed by the state styles (see BuildTheme).
+			// hidden by the theme's base nested style and revealed by the state styles (see CreateTheme).
 			var checkGlyph = new Path
 			{
 				Name = "FwCheckBox_CheckGlyph",
@@ -178,7 +178,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 
 			// NOTE: Background/BorderBrush are NOT set locally — a local value would outrank the :checked /
 			// :disabled state Style setters (LocalValue > Style). The unchecked fill/stroke come from the
-			// theme's base nested style; the states recolor through styles (see BuildTheme).
+			// theme's base nested style; the states recolor through styles (see CreateTheme).
 			var boxBorder = new Border
 			{
 				Name = "FwCheckBox_Box",

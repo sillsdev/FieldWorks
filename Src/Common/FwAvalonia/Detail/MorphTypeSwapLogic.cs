@@ -1,4 +1,4 @@
-// Copyright (c) 2026 SIL International
+﻿// Copyright (c) 2026 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -34,7 +34,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 	}
 
 	/// <summary>
-	/// Pure humble object extracted from <c>MorphTypeAtomicLauncher</c>: the stem/affix
+	/// Pure humble object for the stem/affix
 	/// classification and swap data-loss decision, with no WinForms dependency. The stem-type set
 	/// mirrors <c>MorphTypeAtomicLauncher.IsStemType</c> exactly (bound root/stem, enclitic, particle,
 	/// proclitic, root, stem, clitic, phrase, discontiguous phrase). Swapping across the stem/affix

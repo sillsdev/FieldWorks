@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<!--
 		FwAvaloniaDialogsTests
@@ -10,11 +10,10 @@
 	<PropertyGroup>
 		<TargetFramework>net48</TargetFramework>
 		<!-- net48 BCL constraint applies: no records/init/Index/Range/DIM/IAsyncEnumerable. -->
+		<!-- Overrides the repo-wide C# 8.0: the view models and their tests use init-only setters. -->
 		<LangVersion>latest</LangVersion>
-		<Nullable>disable</Nullable>
 		<IsTestProject>true</IsTestProject>
 		<IsPackable>false</IsPackable>
-		<TreatWarningsAsErrors>false</TreatWarningsAsErrors>
 		<NoWarn>$(NoWarn);CS1591;NU1701</NoWarn>
 	</PropertyGroup>
 

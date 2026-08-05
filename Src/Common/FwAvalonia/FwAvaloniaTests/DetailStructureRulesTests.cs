@@ -1,4 +1,4 @@
-// Copyright (c) 2026 SIL International
+﻿// Copyright (c) 2026 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -28,7 +28,7 @@ namespace FwAvaloniaTests
 		[Test]
 		public void BuildHeaderField_Defaults_MatchTheThinMapperHeader()
 		{
-			var header = DetailStructureRules.BuildHeaderField(
+			var header = DetailStructureRules.CreateHeaderField(
 				"g", "Group", "Field", "vern", EditorClassification.GroupingNone,
 				"autoId", "loc.key", HostRouting.Inherit, depth: 2);
 
@@ -49,7 +49,7 @@ namespace FwAvaloniaTests
 		[Test]
 		public void BuildHeaderField_RichArgs_MatchTheComposerHeader()
 		{
-			var header = DetailStructureRules.BuildHeaderField(
+			var header = DetailStructureRules.CreateHeaderField(
 				"g", "Group", "Field", "vern", EditorClassification.GroupingNone,
 				"autoId", "loc.key", HostRouting.Inherit, depth: 1,
 				isCollapsible: true, isInitiallyExpanded: false,

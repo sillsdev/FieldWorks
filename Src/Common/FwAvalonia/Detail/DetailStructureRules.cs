@@ -1,4 +1,4 @@
-// Copyright (c) 2026 SIL International
+﻿// Copyright (c) 2026 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -30,7 +30,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		/// defaults (no collapse affordance, no menu/HVO); the composer passes its LCModel-enriched
 		/// values (collapsible state from expansion, slice menu/hotlinks, owning object HVO).
 		/// </summary>
-		public static DetailField BuildHeaderField(
+		public static DetailField CreateHeaderField(
 			string stableId,
 			string label,
 			string field,

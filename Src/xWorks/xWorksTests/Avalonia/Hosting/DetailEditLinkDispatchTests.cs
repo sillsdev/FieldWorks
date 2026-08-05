@@ -1,4 +1,4 @@
-// Copyright (c) 2026 SIL International
+﻿// Copyright (c) 2026 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -33,7 +33,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void BuildFollowLinkArgs_PlainToolJump_UsesGuidEmpty_LikeTheLegacyChooser()
 		{
-			var args = RecordEditView.BuildFollowLinkArgs(Request("publicationsEdit"));
+			var args = RecordEditView.CreateFollowLinkArgs(Request("publicationsEdit"));
 
 			Assert.That(args.ToolName, Is.EqualTo("publicationsEdit"));
 			Assert.That(args.TargetGuid, Is.EqualTo(Guid.Empty),
@@ -44,7 +44,7 @@ namespace SIL.FieldWorks.XWorks
 		public void BuildFollowLinkArgs_WithATargetGuid_ParsesIt()
 		{
 			var guid = Guid.NewGuid();
-			var args = RecordEditView.BuildFollowLinkArgs(Request("posEdit", guid.ToString()));
+			var args = RecordEditView.CreateFollowLinkArgs(Request("posEdit", guid.ToString()));
 
 			Assert.That(args.ToolName, Is.EqualTo("posEdit"));
 			Assert.That(args.TargetGuid, Is.EqualTo(guid));
@@ -53,7 +53,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void BuildFollowLinkArgs_GarbageTarget_FallsBackToGuidEmpty()
 		{
-			var args = RecordEditView.BuildFollowLinkArgs(Request("publicationsEdit", "not-a-guid"));
+			var args = RecordEditView.CreateFollowLinkArgs(Request("publicationsEdit", "not-a-guid"));
 
 			Assert.That(args.TargetGuid, Is.EqualTo(Guid.Empty));
 		}

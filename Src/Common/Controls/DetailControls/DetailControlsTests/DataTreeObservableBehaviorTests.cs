@@ -20,7 +20,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 	/// focus order) so they remain robust rather than pinning private internals.
 	/// </summary>
 	[TestFixture]
-	public class DataTreeDisposalCharacterizationTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
+	public class DataTreeObservableBehaviorTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
 	{
 		private Inventory m_parts;
 		private Inventory m_layouts;

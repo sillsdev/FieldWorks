@@ -1,4 +1,4 @@
-// Copyright (c) 2026 SIL International
+﻿// Copyright (c) 2026 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -95,7 +95,7 @@ namespace SIL.FieldWorks.XWorks
 		// composer uses the same one); only the text reads live here.
 		private IReadOnlyList<DetailWsValue> GetLexemeFormValues()
 		{
-			return DetailValueFactory.BuildMultiWsValues(
+			return DetailValueFactory.CreateMultiWsValues(
 				_cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems, ws =>
 				{
 					var text = _entry.LexemeFormOA?.Form?.get_String(ws.Handle);
@@ -111,7 +111,7 @@ namespace SIL.FieldWorks.XWorks
 				return new List<DetailWsValue>();
 
 			var gloss = _entry.SensesOS[0].Gloss;
-			return DetailValueFactory.BuildMultiWsValues(
+			return DetailValueFactory.CreateMultiWsValues(
 				_cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems,
 				ws => gloss.get_String(ws.Handle), _cache.WritingSystemFactory);
 		}
@@ -132,7 +132,7 @@ namespace SIL.FieldWorks.XWorks
 			// The shared flattener (document order, hierarchy as Depth, and the
 			// composer's name-fallback rule — an analysis→vernacular fallback is
 			// subsumed by ShortName's own legacy resolution; see DetailValueFactory).
-			return DetailValueFactory.BuildPossibilityOptions(morphTypes, flat: false);
+			return DetailValueFactory.CreatePossibilityOptions(morphTypes, flat: false);
 		}
 
 		/// <inheritdoc />

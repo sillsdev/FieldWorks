@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2017 SIL International
+﻿// Copyright (c) 2003-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -474,7 +474,7 @@ namespace SIL.FieldWorks.XWorks
 					// to the project override layer for the Avalonia detail view; every other command (Help,
 					// inserts, writing-system menu, ...) keeps its normal mediator dispatch.
 					var interceptor = BuildOverrideCommandInterceptor(request.Field);
-					var items = XCoreMenuBridge.BuildMenuItems(window, idArray, interceptor);
+					var items = XCoreMenuBridge.CreateMenuItems(window, idArray, interceptor);
 					if (items.Count > 0)
 					{
 						m_avaloniaEntryForm.ShowContextMenu(items);
@@ -657,7 +657,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				SettleDetailEdits();
 #pragma warning disable 618 // legacy parity: ReallySimpleListChooser.HandleAnyJump posts the same way
-				m_mediator.PostMessage("FollowLink", BuildFollowLinkArgs(request));
+				m_mediator.PostMessage("FollowLink", CreateFollowLinkArgs(request));
 #pragma warning restore 618
 			}
 			catch (Exception e)
@@ -670,9 +670,9 @@ namespace SIL.FieldWorks.XWorks
 		/// The legacy translation: <c>new FwLinkArgs(sTool, m_guidLink)</c> — the tool from the
 		/// layout's chooserLink, the target guid empty unless the link resolved one (none of the
 		/// lexeme-editor chooserInfos set <c>flidTextParam</c>, so empty mirrors legacy exactly).
-		/// Internal so the mapping is unit-testable without a mediator.
+		/// The mapping is unit-testable without a mediator.
 		/// </summary>
-		internal static FwLinkArgs BuildFollowLinkArgs(DetailLinkRequest request)
+		internal static FwLinkArgs CreateFollowLinkArgs(DetailLinkRequest request)
 		{
 			var target = Guid.Empty;
 			if (!string.IsNullOrEmpty(request.Link.TargetGuid))

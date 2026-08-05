@@ -4,6 +4,7 @@
 
 using System;
 using SIL.LCModel;
+using SIL.Reporting;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -34,9 +35,10 @@ namespace SIL.FieldWorks.XWorks
 
 				SIL.Keyboarding.Keyboard.Controller.ActivateDefaultKeyboard();
 			}
-			catch (Exception)
+			catch (Exception e)
 			{
 				// Keyboard switching must never take down editing; legacy swallows comparable failures.
+				Logger.WriteError("Activating the writing system keyboard failed.", e);
 			}
 		}
 	}

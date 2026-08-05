@@ -1,4 +1,4 @@
-// Copyright (c) 2026 SIL International
+﻿// Copyright (c) 2026 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -15,6 +15,7 @@ using Avalonia.VisualTree;
 using FwAvaloniaDialogs;
 using FwAvaloniaTests.VisualChecks; // DialogSnapshot — the per-stage PNG harness (linked in via the csproj)
 using NUnit.Framework;
+using SIL.FieldWorks.Common.FwAvalonia;
 
 namespace FwAvaloniaDialogsTests
 {
@@ -944,9 +945,10 @@ namespace FwAvaloniaDialogsTests
 
 			var box = SearchBox(view);
 			Assert.That(box.IsSet(TextBox.FontFamilyProperty), Is.False, "no local font family is applied");
-			// The shared dialog theme (DialogTheme density) styles dialog TextBoxes at 12px; a null spec must leave that
-			// styled value in charge rather than planting a local size on the box.
-			Assert.That(box.FontSize, Is.EqualTo(12), "the shared density font size stays in charge");
+			// A null spec must leave the shared dialog theme's styled font size in charge rather than planting a
+			// local size on the box.
+			Assert.That(box.FontSize, Is.EqualTo(CompactDialogStyles.DialogFontSize),
+				"the shared density font size stays in charge");
 			Assert.That(box.FlowDirection, Is.EqualTo(FlowDirection.LeftToRight), "the flow stays left-to-right");
 			Assert.That(() => FocusSearch(view), Throws.Nothing, "focusing without a spec is a no-op");
 		}

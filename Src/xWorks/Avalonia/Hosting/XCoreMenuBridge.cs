@@ -1,4 +1,4 @@
-// Copyright (c) 2026 SIL International
+﻿// Copyright (c) 2026 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -25,11 +25,11 @@ namespace SIL.FieldWorks.XWorks
 		/// XWindow.ShowContextMenu performs) as a renderable item tree. Empty when nothing
 		/// resolves — callers fall back to the legacy adapter menu.
 		/// </summary>
-		public static IReadOnlyList<DetailMenuItem> BuildMenuItems(XWindow window, string[] menuIds)
-			=> BuildMenuItems(window, menuIds, null);
+		public static IReadOnlyList<DetailMenuItem> CreateMenuItems(XWindow window, string[] menuIds)
+			=> CreateMenuItems(window, menuIds, null);
 
 		/// <summary>
-		/// As <see cref="BuildMenuItems(XWindow, string[])"/>, but lets the host RETARGET specific leaf
+		/// As <see cref="CreateMenuItems(XWindow, string[])"/>, but lets the host RETARGET specific leaf
 		/// commands for the Avalonia detail view (advanced-entry-view). For each command leaf, the
 		/// <paramref name="interceptor"/> is offered the leaf <see cref="ChoiceBase"/> (so the host can
 		/// read the localized label and command id from it); if it returns a non-null
@@ -39,7 +39,7 @@ namespace SIL.FieldWorks.XWorks
 		/// override layer while Help and every other item keep working unchanged. The interceptor only
 		/// sees leaf commands (submenus pass through).
 		/// </summary>
-		public static IReadOnlyList<DetailMenuItem> BuildMenuItems(XWindow window, string[] menuIds,
+		public static IReadOnlyList<DetailMenuItem> CreateMenuItems(XWindow window, string[] menuIds,
 			Func<ChoiceBase, DetailMenuItem> interceptor)
 		{
 			var group = window?.GetContextMenuChoiceGroup(menuIds);

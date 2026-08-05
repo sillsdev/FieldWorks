@@ -1,4 +1,4 @@
-// Copyright (c) 2026 SIL International
+﻿// Copyright (c) 2026 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -148,7 +148,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			// Run executes Apply on the OK path only, AFTER the VM snapshotted ChosenKeys (the picked catalog id).
 			var chosenId = _viewModel?.ChosenKeys?.FirstOrDefault();
 			var pos = CreatePosFromCatalog(_cache, _catalog, chosenId);
-			return new CreatePosPayload { Pos = pos, Node = BuildNode(pos) };
+			return new CreatePosPayload { Pos = pos, Node = CreateNode(pos) };
 		}
 
 		// ----- create-in-project (mirrors MasterCategoryListDlg_Closing's OK branch) -----
@@ -181,7 +181,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		}
 
 		/// <summary>Builds the LCModel-free <see cref="FwPosNode"/> for a freshly created/resolved POS (guid id + name + abbr).</summary>
-		internal static FwPosNode BuildNode(IPartOfSpeech pos)
+		internal static FwPosNode CreateNode(IPartOfSpeech pos)
 		{
 			if (pos == null)
 				return null;

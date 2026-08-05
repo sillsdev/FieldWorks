@@ -1,4 +1,4 @@
-// Copyright (c) 2026 SIL International
+﻿// Copyright (c) 2026 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -19,17 +19,17 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 	/// per-dialog density work. Scoped to the dialog's control subtree (added to its <c>Styles</c>), so
 	/// it never affects the detail/table views, which own their own density (<see cref="FwAvaloniaDensity"/>).
 	///
-	/// AUTHORITATIVE SOURCE: the same density setters now also live in <c>DialogTheme.axaml</c> (applied by
-	/// <c>DialogThemeBootstrap.Apply</c> in every dialog view ctor), so the density renders in the headless
-	/// dialog tests too — which apply only the theme, never this runtime chokepoint. The values here are kept
-	/// numerically identical to the theme's so the runtime and headless paths can never diverge; change BOTH
-	/// together. This runtime apply is a belt-and-suspenders duplicate of the theme's (both are idempotent).
+	/// The same density also lives in <c>DialogTheme.axaml</c>, which the headless dialog tests apply instead
+	/// of this runtime chokepoint, so both paths must carry the same numbers: CHANGE BOTH TOGETHER. The
+	/// duplication cannot be removed by referencing these constants from the theme -- Avalonia's compiled
+	/// XAML rejects <c>x:Static</c> as a resource declaration, and it drops the whole file silently rather
+	/// than failing the build.
 	/// </summary>
 	public static class CompactDialogStyles
 	{
-		/// <summary>Dialog body font (≈ the legacy Segoe UI 9pt WinForms dialog font, vs the ~14px Fluent
-		/// default). Mirrors <c>DialogFontSize</c> in DialogTheme.axaml.</summary>
-		public const double DialogFontSize = 12.0;
+		/// <summary>Dialog body font, tuned against the legacy WinForms dialogs (Segoe UI 9pt) and well
+		/// below the ~14px Fluent default. Mirrors <c>DialogFontSize</c> in DialogTheme.axaml.</summary>
+		public const double DialogFontSize = 11.0;
 
 		/// <summary>Min height for compact line controls (buttons/combos/text boxes), vs the Fluent ~32px floor.
 		/// Genuine WinForms line controls run 20-23px, but that falls below the ~24px desktop pointer-target

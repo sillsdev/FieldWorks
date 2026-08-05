@@ -1,4 +1,4 @@
-// Copyright (c) 2026 SIL International
+﻿// Copyright (c) 2026 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -28,12 +28,12 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 	/// plain <see cref="TextBlock"/>/<see cref="TextBox"/>; this drops it to the WinForms ~12px so the detail
 	/// and browse text reads at the same density as the dialogs. The dialog density lives in
 	/// <c>DialogTheme.axaml</c> / <see cref="CompactDialogStyles"/>; this is its detail/browse counterpart, so
-	/// font density has ONE WinForms value (12) across every Avalonia surface.
+	/// font density has ONE value across every Avalonia view and dialog.
 	/// </summary>
 	public static class FwSurfaceStyles
 	{
-		/// <summary>The WinForms surface font (Segoe UI 9pt ≈ 12px), matching the dialog density font.</summary>
-		public const double SurfaceFontSize = 12.0;
+		/// <summary>The surface font, kept equal to the dialog density font so text is one size app-wide.</summary>
+		public const double SurfaceFontSize = 11.0;
 
 		/// <summary>
 		/// Marks a surface whose subtree already carries the styles, so a second call is a genuine no-op

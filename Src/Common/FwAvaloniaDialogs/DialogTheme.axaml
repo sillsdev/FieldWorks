@@ -1,4 +1,4 @@
-<!--
+﻿<!--
 	DialogTheme — the shared spacing/border system for every FwAvaloniaDialogs dialog body.
 
 	A single source of truth so dialogs cannot regress to "no border / text crowding the edges":
@@ -58,9 +58,9 @@
 		<Thickness x:Key="DialogFieldBorderThickness">1</Thickness>
 		<!-- Inner padding for a host/field frame (breathing room around the embedded control). -->
 		<Thickness x:Key="DialogFieldPadding">3</Thickness>
-		<!-- Base dialog body font (≈ the legacy Segoe UI 9pt WinForms dialog font, vs the ~14px Fluent
-		     default). One value drives every TextBox/ComboBox/Button/TextBlock setter below. -->
-		<x:Double x:Key="DialogFontSize">12</x:Double>
+		<!-- Base dialog body font, tuned against the legacy WinForms dialogs (Segoe UI 9pt) and well below
+		     the ~14px Fluent default. This one value drives every FontSize setter below. -->
+		<x:Double x:Key="DialogFontSize">11</x:Double>
 		<!-- Frame color: a CONCRETE mid-gray that reads as a real input border at the snapshot DPI. A
 		     hardcoded value, NOT a Fluent DynamicResource (ControlStrokeColorDefault), because that theme
 		     resource does not resolve in the headless test app, so the frame rendered invisible there. -->
@@ -72,23 +72,23 @@
 	     Setters live HERE (not only in the C# CompactDialogStyles) so the SAME density renders in the
 	     headless dialog tests — which apply ONLY this theme via DialogThemeBootstrap.Apply — as at runtime.
 	     Values are kept identical to CompactDialogStyles (the runtime chokepoint) so the two never diverge:
-	     12px font, 24px min height (the accessibility floor — see DialogMinControlHeight above), tight
+	     11px font, 24px min height (the accessibility floor — see DialogMinControlHeight above), tight
 	     WinForms-style paddings, no Fluent min-height floors. -->
 	<Style Selector="TextBlock">
-		<Setter Property="FontSize" Value="12"/>
+		<Setter Property="FontSize" Value="{StaticResource DialogFontSize}"/>
 	</Style>
 	<Style Selector="TextBox">
-		<Setter Property="FontSize" Value="12"/>
+		<Setter Property="FontSize" Value="{StaticResource DialogFontSize}"/>
 		<Setter Property="MinHeight" Value="24"/>
 		<Setter Property="Padding" Value="4,2"/>
 	</Style>
 	<Style Selector="ComboBox">
-		<Setter Property="FontSize" Value="12"/>
+		<Setter Property="FontSize" Value="{StaticResource DialogFontSize}"/>
 		<Setter Property="MinHeight" Value="24"/>
 		<Setter Property="Padding" Value="6,1"/>
 	</Style>
 	<Style Selector="Button">
-		<Setter Property="FontSize" Value="12"/>
+		<Setter Property="FontSize" Value="{StaticResource DialogFontSize}"/>
 		<Setter Property="MinHeight" Value="24"/>
 		<Setter Property="Padding" Value="8,2"/>
 	</Style>
@@ -97,10 +97,10 @@
 	     template — the hardcoded 20×20 box / 32px slot are local values a style setter cannot override). That
 	     same helper is the single authority the browse/detail views use, so checkboxes are one global size. -->
 	<Style Selector="CheckBox">
-		<Setter Property="FontSize" Value="12"/>
+		<Setter Property="FontSize" Value="{StaticResource DialogFontSize}"/>
 	</Style>
 	<Style Selector="TabItem">
-		<Setter Property="FontSize" Value="12"/>
+		<Setter Property="FontSize" Value="{StaticResource DialogFontSize}"/>
 		<Setter Property="MinHeight" Value="0"/>
 		<Setter Property="Padding" Value="8,3"/>
 	</Style>

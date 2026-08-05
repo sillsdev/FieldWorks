@@ -1,4 +1,4 @@
-// Copyright (c) 2026 SIL International
+﻿// Copyright (c) 2026 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -80,7 +80,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			AutomationProperties.SetAutomationId(this, "DataTree");
 			AutomationProperties.SetName(this, FwAvaloniaStrings.DetailAreaName);
 
-			// WinForms-density font baseline (12px) for the detail view, applied to this view's own control
+			// WinForms-density font baseline for the detail view, applied to this view's own control
 			// subtree so it renders in both the runtime host and the headless tests. The view stays FLAT with
 			// subtle field separators (FwAvaloniaDensity) — this only drops the Fluent ~14px default font.
 			FwSurfaceStyles.Apply(this);
@@ -148,7 +148,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			var panel = new StackPanel();
 			panel.Children.Add(grid);
 			if (_editContext != null)
-				panel.Children.Add(BuildEditFooter());
+				panel.Children.Add(CreateEditFooter());
 			Control body = panel;
 
 			var scroller = new ScrollViewer
@@ -203,7 +203,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 
 		// 14.4: no Save/Cancel buttons — the legacy view saves as you go. The footer carries only the
 		// inline validation messages (a failed autosave is never silent).
-		private Control BuildEditFooter()
+		private Control CreateEditFooter()
 		{
 			_validationBlock = new TextBlock
 			{
@@ -292,7 +292,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				// header — the kebab alone is a hover-gated discoverability regression. The strip raises
 				// the SAME hotlinks request the kebab does (DetailMenuKind.Hotlinks), so it dispatches
 				// through the existing host bridge identically.
-				var hotlinkStrip = BuildHotlinkStrip(field, automationId, indent);
+				var hotlinkStrip = CreateHotlinkStrip(field, automationId, indent);
 
 				// Viewing parity (11.15): top-level sections get the legacy heavy-weight separator rule.
 				// The header cell and its inline hotlink strip always travel together (the strip is part of
@@ -357,7 +357,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			grid.Children.Add(labelCell);
 			_rowControls[row].Add(labelCell);
 
-			var editor = BuildEditor(field, automationId);
+			var editor = CreateEditor(field, automationId);
 			editor.Margin = new Thickness(0, 0, 0, FwAvaloniaDensity.FieldSpacing);
 			Grid.SetRow(editor, row * 2);
 			Grid.SetColumn(editor, 2);
@@ -445,7 +445,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		// hotlinks or no host bridge is wired (previews/tests with no menu callback), so those hosts
 		// are unchanged. The strip is NOT hover-gated — it stays fully visible and clickable at rest,
 		// which is the whole point versus the kebab.
-		private Control BuildHotlinkStrip(DetailField field, string automationId, Thickness indent)
+		private Control CreateHotlinkStrip(DetailField field, string automationId, Thickness indent)
 		{
 			if (_menuRequested == null || string.IsNullOrEmpty(field.HotlinksId))
 				return null;
@@ -579,7 +579,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		// SliceFactory. The detail pane passes its full callback set (per-WS keyboard, slice
 		// menu, link, clipboard) and routes reference-vector gesture completion to its validation-gated
 		// OnSave (the autosave). New DetailFieldKinds are added once, in the factory.
-		private Control BuildEditor(DetailField field, string automationId)
+		private Control CreateEditor(DetailField field, string automationId)
 			=> SliceFactory.Build(field, automationId, new SliceFactoryContext(
 				editContext: _editContext,
 				writingSystemFocused: _writingSystemFocused,

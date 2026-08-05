@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<!--
 		FwAvalonia.Preview
@@ -13,10 +13,9 @@
 	<PropertyGroup>
 		<TargetFramework>net48</TargetFramework>
 		<RootNamespace>SIL.FieldWorks.Common.FwAvalonia.Preview</RootNamespace>
+		<!-- Overrides the repo-wide C# 8.0: the view models and their tests use init-only setters. -->
 		<LangVersion>latest</LangVersion>
-		<Nullable>disable</Nullable>
 		<IsPackable>false</IsPackable>
-		<TreatWarningsAsErrors>false</TreatWarningsAsErrors>
 		<GenerateDocumentationFile>false</GenerateDocumentationFile>
 		<NoWarn>$(NoWarn);CS1591;NU1701</NoWarn>
 	</PropertyGroup>

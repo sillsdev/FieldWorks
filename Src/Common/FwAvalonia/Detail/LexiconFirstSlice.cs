@@ -1,4 +1,4 @@
-// Copyright (c) 2026 SIL International
+﻿// Copyright (c) 2026 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -58,7 +58,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 
 			try
 			{
-				// Finding D: the parts merge rides the ONE shared loader DetailComposer
+				// The parts merge rides the ONE shared loader DetailComposer
 				// (xWorks) also uses, so the two compile paths cannot drift apart.
 				var partsXml = LayoutSourceLoader.LoadMergedPartsXml(partsDirectory);
 				if (partsXml == null)
@@ -140,7 +140,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				return null;
 			}
 
-			// Finding D: layout lookup rides the shared loader's first-wins matcher.
+			// Layout lookup rides the shared loader's first-wins matcher.
 			var layout = LayoutSourceLoader.FindLayout(
 				new[] { XElement.Load(layoutPath) }, className, layoutName);
 			if (layout == null)

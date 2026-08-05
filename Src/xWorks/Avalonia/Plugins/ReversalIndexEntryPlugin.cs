@@ -1,4 +1,4 @@
-// Copyright (c) 2026 SIL International
+﻿// Copyright (c) 2026 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -52,7 +52,7 @@ namespace SIL.FieldWorks.XWorks
 			try
 			{
 				var node = context.Node;
-				var rows = BuildReversalRows(sense, cache, out var entryByWsKey);
+				var rows = CreateReversalRows(sense, cache, out var entryByWsKey);
 				if (rows.Count == 0)
 					return null; // no existing reversal entry: nothing editable (creation is not supported)
 
@@ -90,7 +90,7 @@ namespace SIL.FieldWorks.XWorks
 		// One editable row per EXISTING reversal entry: the entry's ReversalForm in its index's writing
 		// system. The row's WsTag (and the wsKey edits route on) is the reversal index's writing-system
 		// tag, which is unique per index — a sense has at most one reversal entry per index.
-		private static IReadOnlyList<DetailWsValue> BuildReversalRows(ILexSense sense, LcmCache cache,
+		private static IReadOnlyList<DetailWsValue> CreateReversalRows(ILexSense sense, LcmCache cache,
 			out IReadOnlyDictionary<string, IReversalIndexEntry> entryByWsKey)
 		{
 			var values = new List<DetailWsValue>();

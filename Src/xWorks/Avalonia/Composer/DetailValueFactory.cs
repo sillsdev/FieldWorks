@@ -1,4 +1,4 @@
-// Copyright (c) 2026 SIL International
+﻿// Copyright (c) 2026 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -18,7 +18,7 @@ namespace SIL.FieldWorks.XWorks
 	/// consume: the per-writing-system value rows and the possibility-list option
 	/// flattening. Sharing them here is what keeps the two hosts from drifting
 	/// (e.g. an option-name fallback walking analysis → vernacular on one host and
-	/// analysis → ShortName on the other; see <see cref="BuildPossibilityOptions"/> for the
+	/// analysis → ShortName on the other; see <see cref="CreatePossibilityOptions"/> for the
 	/// deliberate resolution).
 	/// </summary>
 	internal static class DetailValueFactory
@@ -28,7 +28,7 @@ namespace SIL.FieldWorks.XWorks
 		/// project's per-ws display metadata (abbreviation, default font, RTL, IETF tag);
 		/// <paramref name="readText"/> supplies each alternative's text (null reads as empty).
 		/// </summary>
-		internal static IReadOnlyList<DetailWsValue> BuildMultiWsValues(
+		internal static IReadOnlyList<DetailWsValue> CreateMultiWsValues(
 			IEnumerable<CoreWritingSystemDefinition> systems,
 			Func<CoreWritingSystemDefinition, string> readText,
 			double fontSize = 0, bool boldEmphasis = false)
@@ -47,7 +47,7 @@ namespace SIL.FieldWorks.XWorks
 		/// preserving the source rich-text runs in a neutral Avalonia-facing shape while keeping the
 		/// common project free of any LCModel dependency.
 		/// </summary>
-		internal static IReadOnlyList<DetailWsValue> BuildMultiWsValues(
+		internal static IReadOnlyList<DetailWsValue> CreateMultiWsValues(
 			IEnumerable<CoreWritingSystemDefinition> systems,
 			Func<CoreWritingSystemDefinition, ITsString> readText,
 			ILgWritingSystemFactory writingSystemFactory,
@@ -74,7 +74,7 @@ namespace SIL.FieldWorks.XWorks
 		/// already performs the best-analysis-then-vernacular resolution itself
 		/// (ShortNameTSS), so the vernacular fallback is covered.
 		/// </summary>
-		internal static IReadOnlyList<DetailChoiceOption> BuildPossibilityOptions(
+		internal static IReadOnlyList<DetailChoiceOption> CreatePossibilityOptions(
 			ICmPossibilityList list, bool flat)
 		{
 			var options = new List<DetailChoiceOption>();

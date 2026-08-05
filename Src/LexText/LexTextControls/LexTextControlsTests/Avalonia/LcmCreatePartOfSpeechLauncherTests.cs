@@ -1,4 +1,4 @@
-// Copyright (c) 2026 SIL International
+﻿// Copyright (c) 2026 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -129,7 +129,7 @@ namespace LexTextControlsTests
 			m_actionHandler.EndUndoTask();
 			var pos = LcmCreatePartOfSpeechLauncher.CreatePosFromCatalog(Cache, Catalog(), "Adjective");
 
-			var node = LcmCreatePartOfSpeechLauncher.BuildNode(pos);
+			var node = LcmCreatePartOfSpeechLauncher.CreateNode(pos);
 
 			Assert.That(node, Is.Not.Null);
 			Assert.That(node.Id, Is.EqualTo(pos.Guid.ToString()), "the node id is the new POS guid string");

@@ -1,4 +1,4 @@
-// Copyright (c) 2026 SIL International
+﻿// Copyright (c) 2026 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -128,7 +128,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 					case "ifnot":
 					case "choice":
 					{
-						var conditional = BuildNode(el, el, parts, className, layoutType,
+						var conditional = CreateNode(el, el, parts, className, layoutType,
 							$"{parentPath}/#{output.Count}", indented, diagnostics);
 						if (conditional != null)
 							output.Add(conditional);
@@ -229,7 +229,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 			{
 				// Each sibling after the first needs its own stable id so they don't collide.
 				var childStableId = i == 0 ? stableId : $"{parentPath}/#{output.Count}";
-				var node = BuildNode(contents[i], callerEl, parts, className, layoutType, childStableId,
+				var node = CreateNode(contents[i], callerEl, parts, className, layoutType, childStableId,
 					indented, diagnostics);
 				if (node != null)
 				{
@@ -238,7 +238,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 			}
 		}
 
-		private ViewNode BuildNode(
+		private ViewNode CreateNode(
 			XElement contentEl,
 			XElement callerEl,
 			IPartResolver parts,
@@ -340,7 +340,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 					}
 
 					var children = new List<ViewNode>();
-					BuildInlineChildren(childElements, parts, className, layoutType, stableId, children, diagnostics);
+					AddInlineChildren(childElements, parts, className, layoutType, stableId, children, diagnostics);
 
 					// A jtview slice (editor="jtview") names the nested layout to compose for this
 					// object in its caller's param (legacy SliceFactory jtview: param ?? node layout attr).
@@ -420,7 +420,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 					ReportUnhandledAttributes(contentEl, HandledObjSeqAttributes, contentEl.Name.LocalName, stableId, diagnostics);
 					ReportSubstitutionValues(contentEl, HandledObjSeqAttributes, stableId, diagnostics);
 					var children = new List<ViewNode>();
-					BuildInjectedChildren(callerEl, parts, layoutType, stableId, children, diagnostics);
+					AddInjectedChildren(callerEl, parts, layoutType, stableId, children, diagnostics);
 					// The legacy ghost bindings ride the typed node so empty fields can offer
 					// the create-on-edit add-prompt line (DataTree ghost slices).
 					return new ViewNode(stableId, kind, label, abbreviation, field, null,
@@ -448,7 +448,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 						return null; // unsupported condition form; diagnostic already raised
 
 					var children = new List<ViewNode>();
-					BuildConditionalChildren(contentEl, parts, className, layoutType, stableId, indented,
+					AddConditionalChildren(contentEl, parts, className, layoutType, stableId, indented,
 						children, diagnostics);
 					return new ViewNode(stableId, ViewNodeKind.Conditional, label, abbreviation,
 						Attr(contentEl, "field"), null, EditorClassification.GroupingNone, null,
@@ -485,7 +485,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 						}
 
 						var branchChildren = new List<ViewNode>();
-						BuildConditionalChildren(clause, parts, className, layoutType, branchId, indented,
+						AddConditionalChildren(clause, parts, className, layoutType, branchId, indented,
 							branchChildren, diagnostics);
 						branches.Add(new ViewNode(branchId, ViewNodeKind.Conditional, null, null,
 							Attr(clause, "field"), null, EditorClassification.GroupingNone, null,
@@ -580,7 +580,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 		// A conditional wrapper's children are part content (<slice>/<seq>/<obj>, possibly nested
 		// conditionals) inside part definitions, or <part>/<indent> refs at layout level — exactly the
 		// child kinds DataTree.ProcessPartChildren dispatches.
-		private void BuildConditionalChildren(
+		private void AddConditionalChildren(
 			XElement container,
 			IPartResolver parts,
 			string className,
@@ -601,7 +601,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 						break;
 					default:
 					{
-						var node = BuildNode(child, child, parts, className, layoutType,
+						var node = CreateNode(child, child, parts, className, layoutType,
 							$"{parentPath}/#{output.Count}", indented, diagnostics);
 						if (node != null)
 							output.Add(node);
@@ -662,7 +662,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 				: (int?)null;
 
 		// Inline children are concrete <slice>/<seq>/<obj> elements nested directly inside a grouping slice.
-		private void BuildInlineChildren(
+		private void AddInlineChildren(
 			IEnumerable<XElement> childElements,
 			IPartResolver parts,
 			string className,
@@ -674,7 +674,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 			foreach (var child in childElements)
 			{
 				var stableId = $"{parentPath}/#{output.Count}";
-				var node = BuildNode(child, child, parts, className, layoutType, stableId, false, diagnostics);
+				var node = CreateNode(child, child, parts, className, layoutType, stableId, false, diagnostics);
 				if (node != null)
 				{
 					output.Add(node);
@@ -684,7 +684,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 
 		// Caller-injected children are <part ref=..> elements nested under a layout's object/sequence part.
 		// Their destination class is not known from XML alone, so they are resolved by ref name.
-		private void BuildInjectedChildren(
+		private void AddInjectedChildren(
 			XElement callerEl,
 			IPartResolver parts,
 			string layoutType,
@@ -720,7 +720,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 					continue;
 				}
 
-				var node = BuildNode(content, child, parts, "", layoutType, stableId, false, diagnostics);
+				var node = CreateNode(content, child, parts, "", layoutType, stableId, false, diagnostics);
 				if (node != null)
 				{
 					output.Add(node);

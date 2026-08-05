@@ -1,4 +1,4 @@
-// Copyright (c) 2026 SIL International
+﻿// Copyright (c) 2026 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -124,7 +124,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 					foreach (var addOp in added)
 					{
 						_seenIds.Add(addOp.StableId);
-						var addedNode = BuildAddedNode(addOp);
+						var addedNode = CreateAddedNode(addOp);
 							if (addedNode != null)
 								result.Insert(ClampIndex(addOp.Index, result.Count), addedNode);
 					}
@@ -136,7 +136,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 					foreach (var dupOp in duplicates)
 					{
 						_seenIds.Add(dupOp.StableId);
-						var node = BuildDuplicateNode(dupOp);
+						var node = CreateDuplicateNode(dupOp);
 						if (node != null)
 							result.Insert(ClampIndex(dupOp.Index, result.Count), node);
 					}
@@ -157,7 +157,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 				return CloneWith(node, visibility, label, children);
 			}
 
-			private ViewNode BuildAddedNode(ViewOverrideOperation addOp)
+			private ViewNode CreateAddedNode(ViewOverrideOperation addOp)
 			{
 				if (_baseById.ContainsKey(addOp.StableId))
 					{
@@ -179,7 +179,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 
 			// Returns the duplicated node, or null (with a diagnostic) when the source is missing or has
 			// children (subtree duplication is not supported; never a silent wrong copy).
-			private ViewNode BuildDuplicateNode(ViewOverrideOperation dupOp)
+			private ViewNode CreateDuplicateNode(ViewOverrideOperation dupOp)
 			{
 				if (string.IsNullOrEmpty(dupOp.SourceStableId) ||
 					!_baseById.TryGetValue(dupOp.SourceStableId, out var source))

@@ -1,4 +1,4 @@
-// Copyright (c) 2026 SIL International
+﻿// Copyright (c) 2026 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -52,9 +52,9 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 		};
 
 		/// <summary>The bare tool-name ids, in catalog order — what <see cref="UIFrameworkRegistry"/> registers by default.</summary>
-		public static readonly IReadOnlyList<string> ToolNames = BuildToolNames();
+		public static readonly IReadOnlyList<string> ToolNames = CreateToolNames();
 
-		private static IReadOnlyList<string> BuildToolNames()
+		private static IReadOnlyList<string> CreateToolNames()
 		{
 			var names = new string[Features.Count];
 			for (var i = 0; i < Features.Count; i++)

@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<!--
 		FwAvalonia
@@ -26,10 +26,9 @@
 		     default interface members, IAsyncEnumerable async-streams, nint/nuint. Pure-syntax C# 8
 		     (switch expressions, 'using var', '??=', static local functions) is fine on net48. build.ps1
 		     is the gate; keep this constraint in mind when adding code to this project. -->
+		<!-- Overrides the repo-wide C# 8.0: the view models and their tests use init-only setters. -->
 		<LangVersion>latest</LangVersion>
-		<Nullable>disable</Nullable>
 		<IsPackable>false</IsPackable>
-		<TreatWarningsAsErrors>false</TreatWarningsAsErrors>
 		<GenerateDocumentationFile>false</GenerateDocumentationFile>
 		<NoWarn>$(NoWarn);CS1591;NU1701</NoWarn>
 	</PropertyGroup>

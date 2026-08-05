@@ -1,4 +1,4 @@
-// Copyright (c) 2026 SIL International
+﻿// Copyright (c) 2026 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -581,7 +581,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			if (lo >= hi)
 				return value;
 
-			var spans = BuildRunSpans(value.Runs ?? Array.Empty<DetailTextRun>());
+			var spans = CreateRunSpans(value.Runs ?? Array.Empty<DetailTextRun>());
 			if (spans.Count == 0)
 				return value;
 
@@ -644,7 +644,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			if (lo >= hi)
 				return value;
 
-			var spans = BuildRunSpans(value.Runs ?? Array.Empty<DetailTextRun>());
+			var spans = CreateRunSpans(value.Runs ?? Array.Empty<DetailTextRun>());
 			if (spans.Count == 0)
 				return value;
 
@@ -714,7 +714,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			if (lo >= hi)
 				return value;
 
-			var spans = BuildRunSpans(value.Runs ?? Array.Empty<DetailTextRun>());
+			var spans = CreateRunSpans(value.Runs ?? Array.Empty<DetailTextRun>());
 			if (spans.Count == 0)
 				return value;
 
@@ -788,7 +788,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			if (!value.CanEditRichText || string.IsNullOrEmpty(url))
 				return value;
 
-			var spans = BuildRunSpans(value.Runs ?? Array.Empty<DetailTextRun>());
+			var spans = CreateRunSpans(value.Runs ?? Array.Empty<DetailTextRun>());
 			var objData = DetailTextRun.ObjDataExternalLink + url;
 			var changed = false;
 			var newRuns = new List<DetailTextRun>();
@@ -825,7 +825,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			if (value == null)
 				return null;
 
-			var spans = BuildRunSpans(value.Runs ?? Array.Empty<DetailTextRun>());
+			var spans = CreateRunSpans(value.Runs ?? Array.Empty<DetailTextRun>());
 			var target = spans.FirstOrDefault(s => s.Run.IsOrc && s.Start == orcStart);
 			if (target == null)
 				return value; // no ORC run starts here
@@ -847,7 +847,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				return -1;
 			var lo = Math.Min(start, end);
 			var hi = Math.Max(start, end);
-			foreach (var span in BuildRunSpans(value.Runs ?? Array.Empty<DetailTextRun>()))
+			foreach (var span in CreateRunSpans(value.Runs ?? Array.Empty<DetailTextRun>()))
 			{
 				if (!span.Run.IsOrc)
 					continue;
@@ -865,7 +865,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		private static DetailRichTextValue WithSpanObjectData(DetailRichTextValue value, int lo, int hi,
 			string objData)
 		{
-			var spans = BuildRunSpans(value.Runs ?? Array.Empty<DetailTextRun>());
+			var spans = CreateRunSpans(value.Runs ?? Array.Empty<DetailTextRun>());
 			if (spans.Count == 0)
 				return value;
 
@@ -917,7 +917,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			if (lo >= hi)
 				return null;
 
-			var spans = BuildRunSpans(value.Runs ?? Array.Empty<DetailTextRun>());
+			var spans = CreateRunSpans(value.Runs ?? Array.Empty<DetailTextRun>());
 			string common = null;
 			var sawAny = false;
 			foreach (var span in spans)
@@ -963,7 +963,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			if (lo >= hi)
 				return null;
 
-			var spans = BuildRunSpans(value.Runs ?? Array.Empty<DetailTextRun>());
+			var spans = CreateRunSpans(value.Runs ?? Array.Empty<DetailTextRun>());
 			string common = null;
 			var sawAny = false;
 			foreach (var span in spans)
@@ -1008,7 +1008,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			if (lo >= hi)
 				return false;
 
-			var spans = BuildRunSpans(value.Runs ?? Array.Empty<DetailTextRun>());
+			var spans = CreateRunSpans(value.Runs ?? Array.Empty<DetailTextRun>());
 			foreach (var span in spans)
 			{
 				if (span.End <= lo || span.Start >= hi)
@@ -1119,7 +1119,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 
 			var originalEditEnd = original.Length - suffix;
 			var replacement = updatedPlainText.Substring(prefix, updatedPlainText.Length - prefix - suffix);
-			var spans = BuildRunSpans(current.Runs);
+			var spans = CreateRunSpans(current.Runs);
 
 			if (spans.Count == 0)
 			{
@@ -1231,7 +1231,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			return 0;
 		}
 
-		private static List<RunSpan> BuildRunSpans(IReadOnlyList<DetailTextRun> runs)
+		private static List<RunSpan> CreateRunSpans(IReadOnlyList<DetailTextRun> runs)
 		{
 			var spans = new List<RunSpan>();
 			var start = 0;

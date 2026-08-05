@@ -1,4 +1,4 @@
-// Copyright (c) 2026 SIL International
+﻿// Copyright (c) 2026 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -9,6 +9,7 @@ using System.Globalization;
 using System.Linq;
 using System.Threading;
 using System.Xml.Linq;
+using SIL.FieldWorks.Common.FwAvalonia;
 using SIL.FieldWorks.Common.FwAvalonia.Detail;
 using SIL.FieldWorks.Common.FwAvalonia.ViewDefinition;
 using SIL.FieldWorks.Common.FwUtils;
@@ -21,6 +22,7 @@ using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
+using SIL.Reporting;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -164,9 +166,9 @@ namespace SIL.FieldWorks.XWorks
 		/// <see cref="LexiconEditErrorFallback"/> cannot drift; this wrapper keeps the composer's
 		/// established internal API (and its tests).
 		/// </summary>
-		internal static IReadOnlyList<DetailChoiceOption> BuildPossibilityOptions(
+		internal static IReadOnlyList<DetailChoiceOption> CreatePossibilityOptions(
 			ICmPossibilityList list, bool flat)
-			=> DetailValueFactory.BuildPossibilityOptions(list, flat);
+			=> DetailValueFactory.CreatePossibilityOptions(list, flat);
 
 		// The legacy generic possibility-list → lists-area-tool derivation, mirrored statically.
 		// Research (gear = configure): when a legacy jump's target object is owned by a
@@ -386,8 +388,9 @@ namespace SIL.FieldWorks.XWorks
 							.OrderBy(name => name, StringComparer.Ordinal)
 							.ToList();
 				}
-				catch (Exception)
+				catch (Exception e)
 				{
+					Logger.WriteError("Reading the project's character styles failed; the style picker will be empty.", e);
 					_characterStyleNames = Array.Empty<string>();
 				}
 				return _characterStyleNames;
@@ -412,8 +415,9 @@ namespace SIL.FieldWorks.XWorks
 							.OrderBy(name => name, StringComparer.Ordinal)
 							.ToList();
 				}
-				catch (Exception)
+				catch (Exception e)
 				{
+					Logger.WriteError("Reading the project's paragraph styles failed; the style picker will be empty.", e);
 					_paragraphStyleNames = Array.Empty<string>();
 				}
 				return _paragraphStyleNames;
@@ -454,8 +458,9 @@ namespace SIL.FieldWorks.XWorks
 					AddAll(langProject?.CurrentVernacularWritingSystems);
 					_writingSystemOptions = options;
 				}
-				catch (Exception)
+				catch (Exception e)
 				{
+					Logger.WriteError("Reading the project's writing systems failed; per-writing-system options will be empty.", e);
 					_writingSystemOptions = Array.Empty<DetailWritingSystemOption>();
 				}
 				return _writingSystemOptions;
@@ -488,8 +493,9 @@ namespace SIL.FieldWorks.XWorks
 					AddAll(langProject?.CurrentVernacularWritingSystems);
 					_writingSystemFonts = map;
 				}
-				catch (Exception)
+				catch (Exception e)
 				{
+					Logger.WriteError("Reading the project's writing-system fonts failed; rows will render in the default font.", e);
 					_writingSystemFonts = new Dictionary<string, DetailRunFont>();
 				}
 				return _writingSystemFonts;
@@ -811,7 +817,7 @@ namespace SIL.FieldWorks.XWorks
 			// the tool derives from the list the same way the legacy jump path does (see
 			// ResolveListEditorTool); a list with no resolvable editor tool yields no link — and
 			// therefore NO gear on that row.
-			private IReadOnlyList<DetailChooserLink> BuildChooserLinks(ViewNode node,
+			private IReadOnlyList<DetailChooserLink> CreateChooserLinks(ViewNode node,
 				ICmPossibilityList list = null)
 			{
 				List<DetailChooserLink> links = null;
@@ -855,7 +861,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				// Header row construction is shared with the thin mapper — one construction
 				// site so the two projectors cannot drift. The composer passes its LCModel-enriched values.
-				AddField(DetailStructureRules.BuildHeaderField(
+				AddField(DetailStructureRules.CreateHeaderField(
 					StableId(node, obj), label, node.Field, node.WritingSystem, node.EditorClassification,
 					node.AutomationId, node.LocalizationKey, node.Routing, depth,
 					isCollapsible: true, isInitiallyExpanded: node.Expansion != ViewExpansion.Collapsed,
@@ -1016,7 +1022,7 @@ namespace SIL.FieldWorks.XWorks
 
 				var hvo = obj.Hvo;
 				var systems = ResolveTextRowWritingSystems(hvo, flid, type, node);
-				var values = BuildTextRowValues(hvo, flid, type, systems, node, out var anyData, out var anyAudio);
+				var values = CreateTextRowValues(hvo, flid, type, systems, node, out var anyData, out var anyAudio);
 
 				if (!anyData && !anyAudio && HideWhenEmpty(node))
 					return;
@@ -1117,7 +1123,7 @@ namespace SIL.FieldWorks.XWorks
 			// The per-writing-system display values of a text row, with any voice alternative swapped for
 			// its audio-flagged form. Reports whether any text/audio data was present so
 			// WalkTextField can honor HideWhenEmpty.
-			private IReadOnlyList<DetailWsValue> BuildTextRowValues(int hvo, int flid, CellarPropertyType type,
+			private IReadOnlyList<DetailWsValue> CreateTextRowValues(int hvo, int flid, CellarPropertyType type,
 				IReadOnlyList<CoreWritingSystemDefinition> systems, ViewNode node, out bool anyData, out bool anyAudio)
 			{
 				var dataSeen = false;
@@ -1128,7 +1134,7 @@ namespace SIL.FieldWorks.XWorks
 				IReadOnlyList<DetailWsValue> values;
 				if (type == CellarPropertyType.Unicode)
 				{
-					values = DetailValueFactory.BuildMultiWsValues(systems, ws =>
+					values = DetailValueFactory.CreateMultiWsValues(systems, ws =>
 					{
 						var text = _sda.get_UnicodeProp(hvo, flid);
 						dataSeen |= !string.IsNullOrEmpty(text);
@@ -1137,7 +1143,7 @@ namespace SIL.FieldWorks.XWorks
 				}
 				else
 				{
-					values = DetailValueFactory.BuildMultiWsValues(systems, ws =>
+					values = DetailValueFactory.CreateMultiWsValues(systems, ws =>
 					{
 						var tss = ReadTextProp(hvo, flid, ws.Handle, type);
 						dataSeen |= !string.IsNullOrEmpty(tss?.Text);
@@ -1300,7 +1306,7 @@ namespace SIL.FieldWorks.XWorks
 					node.LocalizationKey, node.Routing, null, options, form.MorphTypeRA?.Guid.ToString(),
 					isEditable: true, indent: depth,
 					menuId: node.MenuId, contextMenuId: node.ContextMenuId, objectHvo: obj.Hvo,
-					chooserLinks: BuildChooserLinks(node, morphTypes)));
+					chooserLinks: CreateChooserLinks(node, morphTypes)));
 
 				HandlerFor(stableId).Option = optionKey =>
 				{
@@ -1342,7 +1348,7 @@ namespace SIL.FieldWorks.XWorks
 					return;
 				}
 
-				var options = BuildPossibilityOptions(posList, flat: false);
+				var options = CreatePossibilityOptions(posList, flat: false);
 				var selected = (sense.MorphoSyntaxAnalysisRA as IMoStemMsa)?.PartOfSpeechRA?.Guid.ToString();
 
 				var stableId = StableId(node, obj);
@@ -1350,7 +1356,7 @@ namespace SIL.FieldWorks.XWorks
 					node.WritingSystem, DetailFieldKind.Chooser, node.EditorClassification, node.AutomationId,
 					node.LocalizationKey, node.Routing, null, options, selected, isEditable: true, indent: depth,
 					menuId: node.MenuId, contextMenuId: node.ContextMenuId, hotlinksId: node.HotlinksId,
-					objectHvo: obj.Hvo, chooserLinks: BuildChooserLinks(node, posList)));
+					objectHvo: obj.Hvo, chooserLinks: CreateChooserLinks(node, posList)));
 
 				HandlerFor(stableId).Option = key =>
 				{
@@ -1381,17 +1387,16 @@ namespace SIL.FieldWorks.XWorks
 				// reference (PossibilityAtomicReferenceLauncher.OnLeave -> AddItem(null) when the
 				// box is emptied; only a layout-authored nullLabel="" forbids it, which no
 				// lexeme-editor part does), so the chooser leads with an explicit empty choice —
-				// labeled with the SAME localized "<Empty>" the WinForms launchers use
-				// (DetailControlsStrings.ksNullLabel). The morph-type chooser deliberately offers
+				// labeled with the same localized "<Empty>" the WinForms launchers show. The morph-type chooser deliberately offers
 				// no empty option (MorphTypeAtomicLauncher.AllowEmptyItem == false).
 				var options = new List<DetailChoiceOption>
 				{
 					new DetailChoiceOption(string.Empty,
-						SIL.FieldWorks.Common.Framework.DetailControls.DetailControlsResourceAccess.NullItemLabel)
+						FwAvaloniaStrings.ChooserEmptyItemLabel)
 				};
 				// chooserInfo FlatList specs are not imported onto the node;
 				// so the chooser renders the list's own hierarchy.
-				options.AddRange(BuildPossibilityOptions(list, flat: false));
+				options.AddRange(CreatePossibilityOptions(list, flat: false));
 				var selected = targetHvo == 0
 					? null
 					: _cache.ServiceLocator.ObjectRepository.GetObject(targetHvo).Guid.ToString();
@@ -1400,7 +1405,7 @@ namespace SIL.FieldWorks.XWorks
 					node.WritingSystem, DetailFieldKind.Chooser, node.EditorClassification, node.AutomationId,
 					node.LocalizationKey, node.Routing, null, options, selected, isEditable: true, indent: depth,
 					menuId: node.MenuId, contextMenuId: node.ContextMenuId, hotlinksId: node.HotlinksId,
-					objectHvo: obj.Hvo, chooserLinks: BuildChooserLinks(node, list)));
+					objectHvo: obj.Hvo, chooserLinks: CreateChooserLinks(node, list)));
 
 				var hvo = obj.Hvo;
 				HandlerFor(stableId).Option = key =>
@@ -1431,7 +1436,7 @@ namespace SIL.FieldWorks.XWorks
 				var options = new List<DetailChoiceOption>
 				{
 					new DetailChoiceOption(string.Empty,
-						SIL.FieldWorks.Common.Framework.DetailControls.DetailControlsResourceAccess.NullItemLabel)
+						FwAvaloniaStrings.ChooserEmptyItemLabel)
 				};
 				foreach (var cand in candidates)
 				{
@@ -1479,14 +1484,14 @@ namespace SIL.FieldWorks.XWorks
 					items.Add(new DetailChoiceOption(item.Guid.ToString(), ResolveShortName(itemHvo)));
 				}
 
-				var options = BuildPossibilityOptions(list, flat: false); // FlatList not imported; see above
+				var options = CreatePossibilityOptions(list, flat: false); // FlatList not imported; see above
 				var stableId = StableId(node, obj);
 				AddField(new DetailField(stableId, Localize(node.Label) ?? node.Field, node.Field,
 					node.WritingSystem, DetailFieldKind.ReferenceVector, node.EditorClassification,
 					node.AutomationId, node.LocalizationKey, node.Routing, null, options, null,
 					isEditable: true, indent: depth, menuId: node.MenuId, contextMenuId: node.ContextMenuId,
 					hotlinksId: node.HotlinksId, objectHvo: obj.Hvo, items: items,
-					chooserLinks: BuildChooserLinks(node, list)));
+					chooserLinks: CreateChooserLinks(node, list)));
 
 				var hvo = obj.Hvo;
 				HandlerFor(stableId).ReferenceAdd = key =>
@@ -2051,7 +2056,7 @@ namespace SIL.FieldWorks.XWorks
 					isEditable: true, indent: depth, menuId: node.MenuId, contextMenuId: node.ContextMenuId,
 					hotlinksId: node.HotlinksId, objectHvo: obj.Hvo, items: items,
 					searchOptions: query => SearchLexicon(query, hvo, flid, owningEntry),
-					chooserLinks: BuildChooserLinks(node)));
+					chooserLinks: CreateChooserLinks(node)));
 
 				HandlerFor(stableId).ReferenceAdd = key =>
 				{
@@ -2186,7 +2191,7 @@ namespace SIL.FieldWorks.XWorks
 					isEditable: true, indent: depth, menuId: node.MenuId, contextMenuId: node.ContextMenuId,
 					hotlinksId: node.HotlinksId, objectHvo: obj.Hvo, items: items,
 					searchOptions: query => SearchBackRefCandidates(query, obj),
-					chooserLinks: BuildChooserLinks(node)));
+					chooserLinks: CreateChooserLinks(node)));
 
 				HandlerFor(stableId).ReferenceAdd = key => TryAddBackRef(obj, kind, key);
 				HandlerFor(stableId).ReferenceRemove = key => TryRemoveBackRef(obj, flid, kind, key);
@@ -2915,7 +2920,7 @@ namespace SIL.FieldWorks.XWorks
 					if (isSenses && item is ILexSense sense)
 					{
 						// Legacy sense numbering: 1, 2, ... and 1.1 for subsenses, with the sense's
-						// summary text (ShortName = gloss) in the header line. Finding B: the number
+						// summary text (ShortName = gloss) in the header line. The number
 						// is the domain's own LexSenseOutline (the dictionary/bulk-edit outline), so
 						// the entry pane cannot diverge from the other views.
 						itemLabel = ($"{sense.LexSenseOutline.Text}  {item.ShortName}").TrimEnd();
@@ -2943,7 +2948,7 @@ namespace SIL.FieldWorks.XWorks
 
 			// First root-level menu/hotlinks binding of the item's compiled layout (compile
 			// results are memoized per (class, layout), and the binding itself is memoized per
-			// compose state — finding A).
+			// compose state).
 			private (string MenuId, string HotlinksId) ResolveItemMenuBinding(ViewNode node, ICmObject item)
 			{
 				var layoutName = string.IsNullOrEmpty(node.TargetLayout) ? "Normal" : node.TargetLayout;
@@ -3231,7 +3236,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			try
 			{
-				// Finding D: the parts merge and layout glob live in the ONE shared loader
+				// The parts merge and layout glob live in the ONE shared loader
 				// (LayoutSourceLoader) that LexiconFirstSlice also uses.
 				var partsDirectory = FwDirectoryFinder.GetCodeSubDirectory(@"Language Explorer\Configuration\Parts");
 				var partsXml = LayoutSourceLoader.LoadMergedPartsXml(partsDirectory);
@@ -3262,143 +3267,5 @@ namespace SIL.FieldWorks.XWorks
 				return null;
 			}
 		}
-	}
-
-	/// <summary>
-	/// The edit operations of ONE composed field, keyed by StableId. Each delegate is null when the
-	/// field's kind does not support that gesture (a text row carries no paragraph delegates; an StText
-	/// row carries no option delegate), so <see cref="ComposedDetailEditContext"/> rejects an unsupported
-	/// gesture by finding a null slot. Gathers a field's write behavior into one object in place of the
-	/// nine parallel setter dictionaries that previously had to agree on the same stable id.
-	/// </summary>
-	public sealed class FieldEditHandler
-	{
-		public Func<string, string, bool> Text;
-		public Func<string, DetailRichTextValue, bool> RichText;
-		public Func<string, bool> Option;
-		public Func<string, bool> ReferenceAdd;
-		public Func<string, bool> ReferenceRemove;
-		public Func<int, DetailRichTextValue, bool> ParagraphText;
-		public Func<int, string, bool> ParagraphStyle;
-		public Func<int, bool> ParagraphInsert;
-		public Func<int, bool> ParagraphDelete;
-	}
-
-	/// <summary>
-	/// The composed detail view's edit context: staging keyed by composed stable id (unique per object
-	/// occurrence, so each sense's Gloss binds its own sense), writes applied through the registered
-	/// LCModel setters inside the fenced session owned by <see cref="DetailEditContextBase"/>
-	/// (finding C — one shared session lifecycle + required-lexeme validation).
-	/// </summary>
-	public sealed class ComposedDetailEditContext : DetailEditContextBase, IStructuredTextEditing
-	{
-		// One handler per composed field, keyed by StableId; a null delegate slot means the field's kind
-		// does not support that gesture (rejected like an unknown field). Replaces the former nine parallel
-		// setter dictionaries — a field's edit behavior now lives in one object rather than being spread
-		// across nine maps kept in sync by matching stable id.
-		private readonly IReadOnlyDictionary<string, FieldEditHandler> _handlers;
-
-		public ComposedDetailEditContext(
-			LcmCache cache,
-			ICmObject root, // any record root (LexEntry today)
-			IReadOnlyDictionary<string, FieldEditHandler> handlers)
-			: base(cache, root)
-		{
-			_handlers = handlers ?? new Dictionary<string, FieldEditHandler>();
-		}
-
-		// The field's handler, or null when the field is unknown or carries no delegate for this gesture.
-		private FieldEditHandler Handler(DetailField field)
-			=> field != null && _handlers.TryGetValue(field.StableId, out var handler) ? handler : null;
-
-		public override bool TrySetText(DetailField field, string ws, string value)
-		{
-			if (field != null && field.Values.Any(v => v.RequiresRichEditor))
-				return false;
-
-			var setter = Handler(field)?.Text;
-			if (setter == null)
-				return false;
-			// A single field's edit names the undo label (e.g. "Undo change to Gloss").
-			return Stage(() => setter(ws, value), FieldLabelFor(field));
-		}
-
-		public override bool TrySetRichText(DetailField field, string ws, DetailRichTextValue value)
-		{
-			if (field != null && field.Values.Any(v => !v.CanEditRichText))
-				return false;
-
-			var setter = Handler(field)?.RichText;
-			if (setter == null)
-				return false;
-			return Stage(() => setter(ws, value), FieldLabelFor(field));
-		}
-
-		public override bool TrySetOption(DetailField field, string optionKey)
-		{
-			var setter = Handler(field)?.Option;
-			if (setter == null)
-				return false;
-			return Stage(() => setter(optionKey), FieldLabelFor(field));
-		}
-
-		public override bool TryAddReferenceItem(DetailField field, string optionKey)
-		{
-			var setter = Handler(field)?.ReferenceAdd;
-			if (setter == null)
-				return false;
-			return Stage(() => setter(optionKey), FieldLabelFor(field));
-		}
-
-		public override bool TryRemoveReferenceItem(DetailField field, string optionKey)
-		{
-			var setter = Handler(field)?.ReferenceRemove;
-			if (setter == null)
-				return false;
-			return Stage(() => setter(optionKey), FieldLabelFor(field));
-		}
-
-		public bool TrySetParagraphText(DetailField field, int paragraphIndex,
-			DetailRichTextValue value)
-		{
-			var setter = Handler(field)?.ParagraphText;
-			if (setter == null)
-				return false;
-			return Stage(() => setter(paragraphIndex, value), FieldLabelFor(field));
-		}
-
-		public bool TrySetParagraphStyle(DetailField field, int paragraphIndex,
-			string styleName)
-		{
-			var setter = Handler(field)?.ParagraphStyle;
-			if (setter == null)
-				return false;
-			return Stage(() => setter(paragraphIndex, styleName), FieldLabelFor(field));
-		}
-
-		public bool TryInsertParagraph(DetailField field, int afterParagraphIndex)
-		{
-			var setter = Handler(field)?.ParagraphInsert;
-			if (setter == null)
-				return false;
-			return Stage(() => setter(afterParagraphIndex), FieldLabelFor(field));
-		}
-
-		public bool TryDeleteParagraph(DetailField field, int paragraphIndex)
-		{
-			var setter = Handler(field)?.ParagraphDelete;
-			if (setter == null)
-				return false;
-			return Stage(() => setter(paragraphIndex), FieldLabelFor(field));
-		}
-
-		// The human-readable field label that names the undo step, falling back to the
-		// field name (never empty so the generic label is reserved for the batch/bulk path).
-		private static string FieldLabelFor(DetailField field)
-			=> string.IsNullOrEmpty(field?.Label) ? field?.Field : field.Label;
-
-		// The fenced-session staging helper (open-on-first-edit, close-empty-fence-on-reject) lives
-		// on DetailEditContextBase.Stage so a plugin editor's own writes (the Reversal Entries plugin)
-		// can ride the SAME undoable step through the shared context.
 	}
 }

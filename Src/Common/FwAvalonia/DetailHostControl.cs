@@ -9,10 +9,9 @@ using SIL.FieldWorks.Common.FwAvalonia.Seams;
 namespace SIL.FieldWorks.Common.FwAvalonia
 {
 	/// <summary>
-	/// WinForms wrapper that hosts the Avalonia lexical-edit detail view inside the product app. The in-process
-	/// net48 host plumbing (Avalonia bootstrap, companion strip, keyboard interop, context menus, message
-	/// states) lives in the reusable <see cref="AvaloniaHostControlBase"/> base; this class
-	/// adds only the lexical-edit detail view projection and its per-host splitter memory.
+	/// WinForms wrapper that hosts the Avalonia detail view inside the product app, adding the detail-view
+	/// projection and per-host splitter memory over the in-process host plumbing
+	/// <see cref="AvaloniaHostControlBase"/> supplies.
 	/// </summary>
 	public sealed class DetailHostControl : AvaloniaHostControlBase
 	{

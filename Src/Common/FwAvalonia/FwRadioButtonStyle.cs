@@ -1,4 +1,4 @@
-// Copyright (c) 2026 SIL International
+﻿// Copyright (c) 2026 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -19,7 +19,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 	/// The radio-button counterpart of <see cref="FwCheckBoxStyle"/>: the ONE DETERMINISTIC, GLOBAL
 	/// RadioButton style, so every Avalonia view (dialogs, detail view, bulk-edit bar) renders radios at a FIXED
 	/// size derived from <see cref="FwAvaloniaDensity.RadioBoxSize"/> (the same 14px the checkbox uses, a
-	/// function of the 12px surface font), so a radio NEVER inflates a row past the text line.
+	/// function of the surface font), so a radio NEVER inflates a row past the text line.
 	///
 	/// WHY A WHOLE TEMPLATE (not a selector tweak or a RenderTransform): same reason as the checkbox — the
 	/// Fluent 11.3 RadioButton template hardcodes its ~20px ellipse (<c>OuterEllipse</c>/<c>CheckOuterEllipse</c>)
@@ -57,7 +57,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 			{
 				Setters =
 				{
-					new Setter(StyledElement.ThemeProperty, BuildTheme()),
+					new Setter(StyledElement.ThemeProperty, CreateTheme()),
 					new Setter(Layoutable.MinHeightProperty, 0d),
 					new Setter(Layoutable.MinWidthProperty, 0d),
 					new Setter(Layoutable.VerticalAlignmentProperty, VerticalAlignment.Center)
@@ -69,7 +69,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 		// RadioBoxSize, so the control's footprint is the font-proportional circle (never the Fluent tall slot).
 		// Nested pseudo-class styles drive the checked/disabled visuals (reproduced concretely so they render
 		// headlessly).
-		private static ControlTheme BuildTheme()
+		private static ControlTheme CreateTheme()
 		{
 			var box = FwAvaloniaDensity.RadioBoxSize;
 
@@ -78,13 +78,13 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 				Setters =
 				{
 					new Setter(TemplatedControl.BackgroundProperty, Brushes.Transparent),
-					// No box→label gap here: the gap is the StackPanel Spacing in BuildTemplate (deterministic,
+					// No box→label gap here: the gap is the StackPanel Spacing in CreateTemplate (deterministic,
 					// CheckboxLabelGap — the same gap the checkbox uses, so radios and checkboxes line up).
 					new Setter(TemplatedControl.PaddingProperty, new Thickness(0)),
 					new Setter(Layoutable.MinHeightProperty, 0d),
 					new Setter(Layoutable.MinWidthProperty, 0d),
 					new Setter(Layoutable.VerticalAlignmentProperty, VerticalAlignment.Center),
-					new Setter(TemplatedControl.TemplateProperty, new FuncControlTemplate<RadioButton>((_, __) => BuildTemplate(box)))
+					new Setter(TemplatedControl.TemplateProperty, new FuncControlTemplate<RadioButton>((_, __) => CreateTemplate(box)))
 				}
 			};
 
@@ -135,13 +135,13 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 		// The compact template: an outer ellipse (the ring) with an inner filled dot, then the content presenter
 		// for any label. The ring and the surrounding StackPanel are sized to `box`, so the layout footprint is
 		// the font-proportional circle, not the Fluent tall slot. The dot is ~40% of the box, centered.
-		private static Control BuildTemplate(double box)
+		private static Control CreateTemplate(double box)
 		{
 			var dotSize = box * 0.45;
 
 			// NOTE: Fill/Stroke are NOT set locally — a local value would outrank the :checked / :disabled state
 			// Style setters (LocalValue > Style). The unchecked fill/stroke come from the theme's base nested
-			// style; the states recolor through styles (see BuildTheme).
+			// style; the states recolor through styles (see CreateTheme).
 			var ring = new Ellipse
 			{
 				Name = "FwRadio_Box",
@@ -153,7 +153,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 
 			// NOTE: do NOT set Opacity locally here — a local value outranks a Style setter, so the :checked
 			// state style could not reveal it. The dot is hidden by the theme's base nested style and revealed
-			// by the :checked state style (see BuildTheme).
+			// by the :checked state style (see CreateTheme).
 			var dot = new Ellipse
 			{
 				Name = "FwRadio_Dot",

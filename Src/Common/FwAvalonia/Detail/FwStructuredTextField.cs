@@ -1,4 +1,4 @@
-// Copyright (c) 2026 SIL International
+﻿// Copyright (c) 2026 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -60,7 +60,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			var paragraphs = field.Paragraphs;
 			for (var i = 0; i < paragraphs.Count; i++)
 			{
-				Children.Add(BuildParagraphRow(field, automationId, structuredText, writingSystemFocused,
+				Children.Add(CreateParagraphRow(field, automationId, structuredText, writingSystemFocused,
 					gestureCompleted, clipboard, paragraphs[i], i, paragraphs.Count, editable));
 			}
 
@@ -69,12 +69,12 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			// — the first keystroke materializes the StText through the edit-context setter (index 0).
 			if (paragraphs.Count == 0)
 			{
-				Children.Add(BuildParagraphRow(field, automationId, structuredText, writingSystemFocused,
+				Children.Add(CreateParagraphRow(field, automationId, structuredText, writingSystemFocused,
 					gestureCompleted, clipboard, new DetailParagraph(null), 0, 1, editable));
 			}
 		}
 
-		private Control BuildParagraphRow(
+		private Control CreateParagraphRow(
 			DetailField field, string automationId, IStructuredTextEditing editContext,
 			Action<string> writingSystemFocused, Action gestureCompleted, IFwClipboard clipboard,
 			DetailParagraph paragraph, int index, int paragraphCount, bool fieldEditable)
@@ -116,9 +116,9 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				// host-supplied styles / writing systems (else suppressed). The pickers read the LIVE
 				// currentRich (updated by WireParagraphTextEditing's onStaged), so a style applied after a
 				// typed edit still splits the latest runs.
-				charStyleAffordance = BuildCharStyleAffordance(field, automationId, editContext,
+				charStyleAffordance = CreateCharStyleAffordance(field, automationId, editContext,
 					gestureCompleted, box, index, () => currentRich, rich => currentRich = rich);
-				wsAffordance = BuildWsRetagAffordance(field, automationId, editContext,
+				wsAffordance = CreateWsRetagAffordance(field, automationId, editContext,
 					gestureCompleted, box, index, () => currentRich, rich => currentRich = rich);
 
 				// Enter inserts a new empty paragraph after this one. Backspace at the START of an EMPTY
@@ -154,10 +154,10 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				box.AddHandler(InputElement.KeyDownEvent, structuralKeyDown, Avalonia.Interactivity.RoutingStrategies.Tunnel);
 				_teardown.Add(() => box.RemoveHandler(InputElement.KeyDownEvent, structuralKeyDown));
 
-				styleAffordance = BuildStyleAffordance(field, automationId, editContext, gestureCompleted,
+				styleAffordance = CreateStyleAffordance(field, automationId, editContext, gestureCompleted,
 					paragraph, index);
 
-				addAffordance = BuildIconButton(automationId + ".Para." + index + ".Add", "+",
+				addAffordance = CreateIconButton(automationId + ".Para." + index + ".Add", "+",
 					FwAvaloniaStrings.AddParagraph, () =>
 					{
 						if (editContext != null && editContext.TryInsertParagraph(field, index))
@@ -168,7 +168,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				// edit-context guard; the affordance is simply omitted there.
 				if (paragraphCount > 1)
 				{
-					deleteAffordance = BuildIconButton(automationId + ".Para." + index + ".Delete", "×",
+					deleteAffordance = CreateIconButton(automationId + ".Para." + index + ".Delete", "×",
 						FwAvaloniaStrings.DeleteParagraph, () =>
 						{
 							if (editContext != null && editContext.TryDeleteParagraph(field, index))
@@ -194,7 +194,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			// carrying its own style/font), build the read-along TextBlock with per-run fonts and swap it
 			// for the editable box on focus / back on blur. The only way to show TRUE per-run fonts in the
 			// unfocused state. A uniform single-run paragraph skips it (the plain box suffices).
-			var valueContent = BuildValueContentWithFontSwap(field, automationId, index, box, currentRich,
+			var valueContent = CreateValueContentWithFontSwap(field, automationId, index, box, currentRich,
 				paraEditable);
 
 			// Dense bordered paragraph row: a thin left rule marks the paragraph boundary (the legacy
@@ -271,7 +271,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		// followed by the project's paragraph style names. Committing stages through the paragraph-style
 		// seam and completes the gesture (structural: commit immediately + re-show). Built only when the
 		// field carries available paragraph styles.
-		private Control BuildStyleAffordance(DetailField field, string automationId,
+		private Control CreateStyleAffordance(DetailField field, string automationId,
 			IStructuredTextEditing editContext, Action gestureCompleted, DetailParagraph paragraph, int index)
 		{
 			if (field.AvailableParagraphStyles == null || field.AvailableParagraphStyles.Count == 0)
@@ -346,7 +346,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		// display (differing runs), wrap the editable box and a read-along TextBlock in a Panel: the
 		// TextBlock shows (each run in its own ws/style font from the host map) while unfocused, and the
 		// box swaps in on focus. A uniform paragraph returns the bare box (no display layer).
-		private Control BuildValueContentWithFontSwap(DetailField field, string automationId,
+		private Control CreateValueContentWithFontSwap(DetailField field, string automationId,
 			int index, TextBox box, DetailRichTextValue currentRich, bool paraEditable)
 		{
 			if (currentRich == null || !DetailRichTextChrome.ShouldRenderPerRunFontDisplay(currentRich))
@@ -358,7 +358,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				&& field.WritingSystemFonts.TryGetValue(currentRich.Runs[0].WritingSystemTag, out var firstFont)
 				&& firstFont != null && firstFont.RightToLeft;
 
-			var display = DetailRichTextChrome.BuildPerRunFontDisplay(currentRich, field.WritingSystemFonts,
+			var display = DetailRichTextChrome.CreatePerRunFontDisplay(currentRich, field.WritingSystemFonts,
 				automationId + ".Para." + index + ".Display", rtl);
 
 			// Exactly ONE of {display, box} occupies the row at a time (IsVisible collapses the other out of
@@ -402,7 +402,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		// a "Character Style" button opening the shared FwOptionChooser seeded with a leading "Default"
 		// clear entry plus the project's character styles, acting on the box's current selection and
 		// staging ApplySpanNamedStyle through the paragraph-text seam. Null when no character styles.
-		private Control BuildCharStyleAffordance(DetailField field, string automationId,
+		private Control CreateCharStyleAffordance(DetailField field, string automationId,
 			IStructuredTextEditing editContext, Action gestureCompleted, TextBox box, int index,
 			Func<DetailRichTextValue> getRich, Action<DetailRichTextValue> setRich)
 		{
@@ -421,7 +421,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 
 			var spanStart = 0;
 			var spanEnd = 0;
-			return DetailRichTextChrome.BuildSpanPicker(options, FwAvaloniaStrings.CharacterStyle,
+			return DetailRichTextChrome.CreateSpanPicker(options, FwAvaloniaStrings.CharacterStyle,
 				FwAvaloniaStrings.CharacterStyle, automationId + ".Para." + index + ".CharStyle",
 				picker =>
 				{
@@ -464,7 +464,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		// pattern): a "Writing System" button opening the shared FwOptionChooser seeded with the project's
 		// writing systems (no clear entry), acting on the box's current selection and staging
 		// RetagSpanWritingSystem through the paragraph-text seam. Null when no writing systems.
-		private Control BuildWsRetagAffordance(DetailField field, string automationId,
+		private Control CreateWsRetagAffordance(DetailField field, string automationId,
 			IStructuredTextEditing editContext, Action gestureCompleted, TextBox box, int index,
 			Func<DetailRichTextValue> getRich, Action<DetailRichTextValue> setRich)
 		{
@@ -483,7 +483,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 
 			var spanStart = 0;
 			var spanEnd = 0;
-			return DetailRichTextChrome.BuildSpanPicker(options, FwAvaloniaStrings.WritingSystem,
+			return DetailRichTextChrome.CreateSpanPicker(options, FwAvaloniaStrings.WritingSystem,
 				FwAvaloniaStrings.WritingSystem, automationId + ".Para." + index + ".WritingSystem",
 				picker =>
 				{
@@ -521,7 +521,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				_teardown);
 		}
 
-		private Button BuildIconButton(string automationId, string glyph, string accessibleName, Action onClick)
+		private Button CreateIconButton(string automationId, string glyph, string accessibleName, Action onClick)
 		{
 			var button = new Button
 			{

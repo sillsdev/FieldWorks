@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
   <resheader name="resmimetype">
     <value>text/microsoft-resx</value>
@@ -231,5 +231,8 @@
   </data>
   <data name="FwAvalonia.Feature.PosEditDescription" xml:space="preserve">
     <value>The Part of Speech editor.</value>
+  </data>
+  <data name="FwAvalonia.Chooser.EmptyItemLabel" xml:space="preserve">
+    <value>&lt;Empty&gt;</value>
   </data>
 </root>

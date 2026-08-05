@@ -1,4 +1,4 @@
-// Copyright (c) 2026 SIL International
+﻿// Copyright (c) 2026 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -39,7 +39,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 
 		/// <summary>
 		/// The DETERMINISTIC, GLOBAL checkbox glyph-box size (px), a fixed function of the surface font
-		/// (<see cref="FwSurfaceStyles.SurfaceFontSize"/> = 12): the box reads about as tall as a capital
+		/// (<see cref="FwSurfaceStyles.SurfaceFontSize"/>): the box reads about as tall as a capital
 		/// letter, not the Fluent ~20px box on a 32px-tall layout slot. The single <see cref="FwCheckBoxStyle"/>
 		/// restyles the CheckBox TEMPLATE so the LAYOUT footprint (not just the paint) is this size — so a
 		/// checkbox never inflates a browse/list/tree/table row past the text-row height
@@ -49,7 +49,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 
 		/// <summary>The gap between a checkbox box and its label text, so the words never butt against the box
 		/// (the deterministic CheckBox template uses this as the box→label spacing). ~6px reads as a clear gap
-		/// at the 12px surface font, matching the breathing room a radio button has.</summary>
+		/// at the surface font size, matching the breathing room a radio button has.</summary>
 		public const double CheckboxLabelGap = 6d;
 
 		/// <summary>The DETERMINISTIC, GLOBAL radio-button outer-circle size (px), the radio counterpart of

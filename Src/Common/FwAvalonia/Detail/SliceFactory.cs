@@ -1,4 +1,4 @@
-// Copyright (c) 2026 SIL International
+﻿// Copyright (c) 2026 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -16,7 +16,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 	/// <summary>
 	/// The small bundle of (all-nullable) collaborators a <see cref="DetailFieldKind"/> editor needs,
 	/// passed to <see cref="SliceFactory.Build"/> so the SAME field→control dispatch serves
-	/// every host (today the detail-pane detail view, <c>DataTree.BuildEditor</c>;
+	/// every host (today the detail-pane detail view, <c>DataTree.CreateEditor</c>;
 	/// any future in-cell editor passes only the collaborators it has). Every member is optional: a null
 	/// edit context yields read-only display; a null callback simply disables that affordance.
 	/// One switch, so new kinds live in one place.
@@ -72,7 +72,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 
 	/// <summary>
 	/// The single <see cref="DetailFieldKind"/>→Avalonia-control dispatch. The detail
-	/// pane (<c>DataTree.BuildEditor</c>, all 7 kinds) and the browse in-cell editor
+	/// pane (<c>DataTree.CreateEditor</c>, all 7 kinds) and the browse in-cell editor
 	/// (<c>EditableCellHost.Activate</c>, a 2-kind Chooser/Text subset) both route here rather than
 	/// hand-rolling their own dispatch, so adding a kind (or changing how a kind is built) happens once.
 	/// The factory is pure (static) — all per-host variation arrives through the
@@ -89,7 +89,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			switch (field.Kind)
 			{
 				case DetailFieldKind.Custom:
-					return BuildCustom(field, automationId);
+					return CreateCustom(field, automationId);
 				case DetailFieldKind.ReferenceVector:
 					// Reference add/remove gestures commit immediately (legacy chooser-dialog behavior): the
 					// staged session would otherwise sit open — LCModel broadcasts PropChanged only at
@@ -111,9 +111,9 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				case DetailFieldKind.Chooser:
 					return new FwChooserField(field, automationId, context.EditContext, context.LinkRequested);
 				case DetailFieldKind.Literal:
-					return BuildLiteral(field, automationId);
+					return CreateLiteral(field, automationId);
 				case DetailFieldKind.Unsupported:
-					return BuildUnsupported(field, automationId);
+					return CreateUnsupported(field, automationId);
 				default:
 					return new FwMultiWsTextField(field, automationId, context.EditContext,
 						context.WritingSystemFocused, context.MenuRequested, context.Clipboard,
@@ -123,7 +123,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 
 		// Literal / "lit" slice (legacy MessageSlice): static read-only label text in the value
 		// column (the label/message text IS the content). No edit affordance, no value binding.
-		private static Control BuildLiteral(DetailField field, string automationId)
+		private static Control CreateLiteral(DetailField field, string automationId)
 		{
 			var text = field.Values.Count > 0 && !string.IsNullOrEmpty(field.Values[0].Value)
 				? field.Values[0].Value
@@ -143,13 +143,13 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		// control in the value column, at the slice's real position. Null guard: a missing, null-returning,
 		// or throwing factory degrades to the explicit unsupported row — never a crash, never a silently
 		// blank row.
-		private static Control BuildCustom(DetailField field, string automationId)
+		private static Control CreateCustom(DetailField field, string automationId)
 		{
 			if (field.ControlFactory == null)
 			{
 				System.Diagnostics.Debug.WriteLine(
 					$"Custom slice field '{field.StableId}' has no control factory; rendering the unsupported row.");
-				return BuildUnsupported(field, automationId);
+				return CreateUnsupported(field, automationId);
 			}
 
 			try
@@ -159,7 +159,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				{
 					System.Diagnostics.Debug.WriteLine(
 						$"Custom slice field '{field.StableId}' factory returned null; rendering the unsupported row.");
-					return BuildUnsupported(field, automationId);
+					return CreateUnsupported(field, automationId);
 				}
 
 				// Plugins may carry their own automation identity; only fill in the row's when absent.
@@ -171,11 +171,11 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			{
 				System.Diagnostics.Debug.WriteLine(
 					$"Custom slice field '{field.StableId}' factory threw; rendering the unsupported row: {e}");
-				return BuildUnsupported(field, automationId);
+				return CreateUnsupported(field, automationId);
 			}
 		}
 
-		private static Control BuildUnsupported(DetailField field, string automationId)
+		private static Control CreateUnsupported(DetailField field, string automationId)
 		{
 			var block = new TextBlock
 			{

@@ -1,4 +1,4 @@
-// Copyright (c) 2026 SIL International
+﻿// Copyright (c) 2026 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -47,7 +47,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		/// <c>FontWeight</c> (bold). This is the only way to show TRUE per-run fonts in the unfocused state;
 		/// the editable TextBox swaps in on focus. Carries the supplied automation id.
 		/// </summary>
-		internal static TextBlock BuildPerRunFontDisplay(DetailRichTextValue rich,
+		internal static TextBlock CreatePerRunFontDisplay(DetailRichTextValue rich,
 			IReadOnlyDictionary<string, DetailRunFont> fontMap, string automationId, bool rightToLeft)
 		{
 			var display = new TextBlock
@@ -89,7 +89,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		/// option; on commit, <paramref name="onCommitted"/> applies the gesture. The caller owns the
 		/// selection snapshot and the stage. Teardown actions are appended to <paramref name="teardown"/>.
 		/// </summary>
-		internal static Button BuildSpanPicker(IReadOnlyList<DetailChoiceOption> options, string content,
+		internal static Button CreateSpanPicker(IReadOnlyList<DetailChoiceOption> options, string content,
 			string accessibleName, string automationId, Action<FwOptionChooser> onOpen,
 			Action<DetailChoiceOption> onCommitted, List<Action> teardown)
 		{

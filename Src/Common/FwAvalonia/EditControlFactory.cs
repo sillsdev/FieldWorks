@@ -7,20 +7,16 @@ using System;
 namespace SIL.FieldWorks.Common.FwAvalonia
 {
 	/// <summary>
-	/// Constructs the lexical-edit control for a host, proving the key dual-run property:
-	/// when the flag is off, the Avalonia control (and therefore the Avalonia runtime) is
-	/// never constructed. The Avalonia builder is supplied as a delegate so this factory
-	/// itself carries no Avalonia dependency and can be tested in isolation.
+	/// Constructs the record-edit control for the resolved <see cref="UIFramework"/>, invoking only that
+	/// framework's builder: under Legacy the Avalonia control, and therefore the Avalonia runtime, is never
+	/// constructed. Both builders arrive as delegates, so this type carries no Avalonia dependency.
 	/// </summary>
 	public sealed class EditControlFactory
 	{
 		private readonly Func<object> _winFormsControlBuilder;
 		private readonly Func<object> _avaloniaControlBuilder;
 
-		/// <summary>
-		/// Number of times the Avalonia builder has been invoked. Tests assert this stays 0
-		/// when the resolved framework is Legacy.
-		/// </summary>
+		/// <summary>Number of times the Avalonia builder has been invoked; zero until Avalonia resolves.</summary>
 		public int AvaloniaConstructionCount { get; private set; }
 
 		public EditControlFactory(
@@ -33,10 +29,6 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 				?? throw new ArgumentNullException(nameof(avaloniaControlBuilder));
 		}
 
-		/// <summary>
-		/// Builds the control for the resolved framework. The Avalonia builder is invoked only
-		/// when <paramref name="framework"/> is <see cref="UIFramework.Avalonia"/>.
-		/// </summary>
 		public object Create(UIFramework framework)
 		{
 			if (framework == UIFramework.Avalonia)

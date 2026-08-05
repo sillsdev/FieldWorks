@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<!--
 		FwAvaloniaDialogs
@@ -18,10 +18,9 @@
 		<!-- Explicit RootNamespace so Crowdin/satellite-assembly localization builds work. -->
 		<RootNamespace>FwAvaloniaDialogs</RootNamespace>
 		<!-- net48 BCL constraint applies: no records/init/Index/Range/DIM/IAsyncEnumerable. -->
+		<!-- Overrides the repo-wide C# 8.0: the view models and their tests use init-only setters. -->
 		<LangVersion>latest</LangVersion>
-		<Nullable>disable</Nullable>
 		<IsPackable>false</IsPackable>
-		<TreatWarningsAsErrors>false</TreatWarningsAsErrors>
 		<GenerateDocumentationFile>false</GenerateDocumentationFile>
 		<!-- Auto-include *.axaml as AvaloniaXaml items and compile XAML at build time. -->
 		<EnableDefaultAvaloniaItems>true</EnableDefaultAvaloniaItems>
