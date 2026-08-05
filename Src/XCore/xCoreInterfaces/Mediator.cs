@@ -929,40 +929,6 @@ namespace XCore
 			}
 		}
 
-		/// <summary>
-		/// This method is a cross of the broadcast and sendmessage types.  It will send
-		/// the message to everyone right now with out stoping when it's handled.  This is
-		/// provided for places where the previous broadcast functionality is needed, or
-		/// when it's not clear and is desired as a first step.
-		/// </summary>
-		/// <param name="messageName"></param>
-		/// <param name="parameter"></param>
-		/// <returns>true if one or more colleagues handled the message, else false</returns>
-		[Obsolete("Use the the FwUtils Publisher and Subscriber classes instead.", false)]
-		[System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-		public bool SendMessageToAllNow(string messageName, object parameter)
-		{
-			CheckDisposed();
-
-			if (!ProcessMessages)
-				return true;
-
-			bool result = false;
-			try
-			{
-				/// Have seen a stack situation that the Mediator has been disposed of after returning from this call...
-				///
-				result = InvokeOnColleagues("On" + messageName, new Type[] { typeof(object) },
-					new Object[] { parameter }, false, false);
-			}
-			catch (DisposedInAnotherFrameException)
-			{
-				Debug.WriteLine("EXCEPTION: Caught case where the Mediator was disposed of while processing...");
-				result = true;	// don't process any more
-			}
-			return result;
-		}
-
 #if TESTING_PCDEFERED
 		/// <summary>
 		///
