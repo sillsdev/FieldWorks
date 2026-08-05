@@ -72,7 +72,7 @@
 	<!-- Update localizable files in Crowdin -->
 	<Target
 		Name="uploadUpdatesForTranslation"
-		DependsOnTargets="CopyLcmResxFiles;InstallOvercrowdin"
+		DependsOnTargets="Initialize;CopyLcmResxFiles;InstallOvercrowdin"
 	>
 		<ItemGroup>
 			<OldXliffs Include="$(ListsDirectory)/*.xlf" />
