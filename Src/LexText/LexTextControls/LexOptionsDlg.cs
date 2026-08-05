@@ -453,31 +453,19 @@ namespace SIL.FieldWorks.LexText.Controls
 			m_uiModeBetaWarning = new Label();
 
 			m_uiModeGroup.Text = GetOptionString("UiModeGroupTitle", "New UI (preview):");
-			m_uiModeGroup.Left = groupBox1.Left;
-			m_uiModeGroup.Top = groupBox1.Bottom + 6;
-			m_uiModeGroup.Width = groupBox1.Width;
-			m_uiModeGroup.Height = 100;
 			m_uiModeGroup.Name = "m_uiModeGroup";
 
 			m_uiModeLabel.AutoSize = true;
-			m_uiModeLabel.Left = 6;
-			m_uiModeLabel.Top = 22;
 			m_uiModeLabel.Text = GetOptionString("UiModeLabel", "Mode:");
 			m_uiModeLabel.Name = "m_uiModeLabel";
 
 			m_uiModeChooser.DropDownStyle = ComboBoxStyle.DropDownList;
-			m_uiModeChooser.Left = 6;
-			m_uiModeChooser.Top = 38;
-			m_uiModeChooser.Width = m_uiModeGroup.Width - 18;
 			m_uiModeChooser.Name = "m_uiModeChooser";
 			m_uiModeChooser.Items.Add(new UiModeMenuItem(LegacyUIMode, GetOptionString("UiModeLegacy", "Legacy")));
 			m_uiModeChooser.Items.Add(new UiModeMenuItem(NewUIMode, GetOptionString("UiModeNew", "New")));
 
 			// Parity with the Avalonia LexOptionsDlgView's UiModeBetaWarning note.
-			m_uiModeBetaWarning.Left = 6;
-			m_uiModeBetaWarning.Top = 64;
-			m_uiModeBetaWarning.Width = m_uiModeGroup.Width - 18;
-			m_uiModeBetaWarning.Height = 30;
+			m_uiModeBetaWarning.AutoSize = true;
 			m_uiModeBetaWarning.ForeColor = System.Drawing.SystemColors.GrayText;
 			m_uiModeBetaWarning.Text = GetOptionString("UiModeBetaWarning",
 				"Beta: the New mode is incomplete; some features are not yet available.");
@@ -490,14 +478,30 @@ namespace SIL.FieldWorks.LexText.Controls
 			m_uiModeGroup.Controls.Add(m_uiModeBetaWarning);
 			m_tabInterface.Controls.Add(m_uiModeGroup);
 
-			var delta = m_uiModeGroup.Bottom + 8 - label4.Top;
+			// Every offset below derives from the inherited font or a measured edge, never a literal:
+			// this group is built after InitializeComponent, so AutoScaleMode.Font never scales it, and
+			// fixed coordinates drop the label onto the combo as soon as the font grows.
+			var pad = m_uiModeGroup.Font.Height / 2;
+			m_uiModeGroup.Left = groupBox1.Left;
+			m_uiModeGroup.Top = groupBox1.Bottom + pad;
+			m_uiModeGroup.Width = groupBox1.Width;
+
+			m_uiModeLabel.Location = new System.Drawing.Point(pad, m_uiModeGroup.Font.Height + pad);
+			m_uiModeChooser.Width = m_uiModeGroup.Width - 3 * pad;
+			m_uiModeChooser.Location = new System.Drawing.Point(pad, m_uiModeLabel.Bottom + pad / 2);
+			// Wraps within the combo's width and grows to fit, so a longer translation is never clipped.
+			m_uiModeBetaWarning.MaximumSize = new System.Drawing.Size(m_uiModeChooser.Width, 0);
+			m_uiModeBetaWarning.Location = new System.Drawing.Point(pad, m_uiModeChooser.Bottom + pad);
+			m_uiModeGroup.Height = m_uiModeBetaWarning.Bottom + pad;
+
+			var delta = m_uiModeGroup.Bottom + pad - label4.Top;
 			if (delta > 0)
 			{
 				// label4 and m_autoOpenCheckBox sit on the Interface tab page and are top-anchored, so
 				// push them down manually to clear the injected UI-mode group. tabControl1 (Top+Bottom-
 				// anchored) and the OK/Cancel/Help buttons (Bottom-anchored) live on the form and are
 				// resized/repositioned automatically when the form grows, so they must NOT be moved by
-				// hand — doing both shifts them by 2*delta and drops the buttons off the bottom edge.
+				// hand -- doing both shifts them by 2*delta and drops the buttons off the bottom edge.
 				label4.Top += delta;
 				m_autoOpenCheckBox.Top += delta;
 				Height += delta;
