@@ -404,7 +404,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 
 			// Migrated Options dialog: in New (Avalonia) UI mode, show the owned Avalonia Options dialog
 			// instead of the WinForms LexOptionsDlg. Legacy mode keeps the WinForms dialog, so a New-mode
-			// issue can never affect the default surface. Mirrors the SaveSettings trigger below.
+			// issue can never affect the Legacy default. Mirrors the SaveSettings trigger below.
 			if (((classInfo as System.Xml.XmlElement)?.Attributes["class"]?.Value ?? "").Contains("LexOptionsDlg")
 				&& wndActive != null
 				&& UIModeGates.ShouldUseAvaloniaUI(wndActive.PropTable.GetStringProperty("UIMode", "Legacy")))

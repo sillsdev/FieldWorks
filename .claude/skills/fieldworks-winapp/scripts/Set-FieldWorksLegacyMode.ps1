@@ -3,8 +3,8 @@
 	Forces FieldWorks to launch in LEGACY (WinForms) UI mode. Run this BEFORE winforms_launch_app.
 
 .DESCRIPTION
-	This skill scrapes the legacy WinForms surface for "truth" screenshots, workflows, and behaviour
-	(the Avalonia surface is captured separately, headless). The WinForms UIA2 MCP can ONLY see WinForms:
+	This skill scrapes the legacy WinForms UI for "truth" screenshots, workflows, and behaviour
+	(the Avalonia UI is captured separately, headless). The WinForms UIA2 MCP can ONLY see WinForms:
 	if FieldWorks comes up in New (Avalonia) UI mode, the element tree is empty and PrintWindow renders a
 	blank window — the process looks healthy but nothing is visible to the MCP.
 
@@ -17,7 +17,7 @@
 
 	Idempotent and safe to run every time. SIDE EFFECT: this also flips the developer's own persisted
 	UI mode to Legacy — re-select New in Tools ▸ Options (or re-run with -RestoreNew) when you want the
-	Avalonia surface back interactively.
+	Avalonia UI back interactively.
 
 .PARAMETER Configuration
 	Debug or Release — used only to locate the exe and read its version. Default Debug.

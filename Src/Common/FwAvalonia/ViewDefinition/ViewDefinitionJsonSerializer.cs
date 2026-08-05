@@ -15,7 +15,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 	/// Canonical JSON serialization of the typed view definition: deterministic property order, defaults
 	/// omitted, and a `formatVersion` header so per-project overrides can be validated. This is the migration
 	/// tooling core — shipped XML compiles to the typed IR (existing importer), the IR serializes to
-	/// canonical JSON, and a gated surface can load JSON with the XML importer retained as fallback.
+	/// canonical JSON, and a gated layout can load JSON with the XML importer retained as fallback.
 	/// </summary>
 	public static class ViewDefinitionJsonSerializer
 	{
@@ -79,7 +79,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 			AddIfPresent(o, "targetLayout", node.TargetLayout);
 			AddIfPresent(o, "localizationKey", node.LocalizationKey);
 			AddIfPresent(o, "automationId", node.AutomationId);
-			if (node.Routing != SurfaceRouting.Inherit)
+			if (node.Routing != HostRouting.Inherit)
 				o["routing"] = node.Routing.ToString();
 			if (node.BoldEmphasis)
 				o["bold"] = true;
@@ -197,7 +197,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 				children,
 				(string)o["localizationKey"],
 				(string)o["automationId"],
-				ParseEnum(o, "routing", SurfaceRouting.Inherit),
+				ParseEnum(o, "routing", HostRouting.Inherit),
 				(bool?)o["bold"] ?? false,
 				(int?)o["fontScalePercent"] ?? 0,
 				(string)o["menu"],

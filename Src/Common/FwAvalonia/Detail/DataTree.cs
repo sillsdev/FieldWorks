@@ -80,7 +80,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			AutomationProperties.SetAutomationId(this, "DataTree");
 			AutomationProperties.SetName(this, FwAvaloniaStrings.DetailAreaName);
 
-			// WinForms-density font baseline (12px) for the detail surface, applied to this view's own control
+			// WinForms-density font baseline (12px) for the detail view, applied to this view's own control
 			// subtree so it renders in both the runtime host and the headless tests. The view stays FLAT with
 			// subtle field separators (FwAvaloniaDensity) — this only drops the Fluent ~14px default font.
 			FwSurfaceStyles.Apply(this);
@@ -442,7 +442,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		// command link (not per-command links) that raises the SAME DetailMenuRequest(kind=Hotlinks) the
 		// kebab raises — it dispatches through the existing host bridge identically, and the host's
 		// hotlinks handler then surfaces the individual commands. Returns null when the header has no
-		// hotlinks or no host bridge is wired (previews/tests with no menu callback), so those surfaces
+		// hotlinks or no host bridge is wired (previews/tests with no menu callback), so those hosts
 		// are unchanged. The strip is NOT hover-gated — it stays fully visible and clickable at rest,
 		// which is the whole point versus the kebab.
 		private Control BuildHotlinkStrip(DetailField field, string automationId, Thickness indent)

@@ -460,7 +460,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		// IsStemType(Guid) over its GUID -> MorphTypeKind table; the Avalonia composer consumes
 		// it there. This legacy WinForms copy cannot delegate yet because DetailControls does not
 		// reference FwAvalonia; MorphTypeGuidConsolidationTests (xWorksTests) pins this guid set
-		// to that table so the two cannot drift until this launcher retires with its surface.
+		// to that table so the two cannot drift until this launcher retires.
 		internal bool IsStemType(IMoMorphType type)
 		{
 			if (type == null)

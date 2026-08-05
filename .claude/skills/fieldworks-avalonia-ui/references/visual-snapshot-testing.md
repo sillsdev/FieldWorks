@@ -1,9 +1,9 @@
 # Visual snapshot testing (PNG artifacts + layout tripwire)
 
-How to *see* what a headless Avalonia surface actually renders, and how to gate it. This is the
+How to *see* what a headless Avalonia view actually renders, and how to gate it. This is the
 subjective check that complements the deterministic spacing/border standard
 (`DialogTheme.axaml` tokens) and the `DialogLayoutAssert.AssertNoCrowding` tripwire documented in
-`SKILL.md` and `dialog-conversion.md`. Use it for **every** surface you build or change — dialogs,
+`SKILL.md` and `dialog-conversion.md`. Use it for **every** view you build or change — dialogs,
 region (detail) views, and the browse table — not just dialogs.
 
 ## Why both checks
@@ -21,7 +21,7 @@ Run **both**. They catch different defect classes.
 ## The harness
 
 `DialogSnapshot` (in `Src/Common/FwAvalonia/FwAvaloniaTests/Visual/DialogSnapshot.cs`, namespace
-`FwAvaloniaTests.VisualChecks`) renders a surface with the Skia-backed headless backend
+`FwAvaloniaTests.VisualChecks`) renders a view with the Skia-backed headless backend
 (`TestAppBuilder` sets `UseHeadlessDrawing=false`) and saves a PNG:
 
 ```csharp
@@ -31,7 +31,7 @@ using FwAvaloniaDialogsTests;            // DialogLayoutAssert (shared tripwire;
 [AvaloniaTest]
 public void MyDialog_DrivesItsStages()
 {
-    var view = /* build + show the real surface (dialog body, region view, browse view) */;
+    var view = /* build + show the real view (dialog body, detail view, browse view) */;
 
     // 1. Capture the INITIAL stage first, so the artifact exists for review even when the assert below fails.
     DialogSnapshot.Capture(view, "MyDialog-01-initial");
@@ -49,12 +49,12 @@ public void MyDialog_DrivesItsStages()
 ```
 
 **Capture at EACH stage** (hard rule — part of the per-dialog definition of done). A dialog test that drives
-distinct UI states emits one PNG per state with a consistent `"<Surface>-<NN>-<stage>"` name (e.g.
+distinct UI states emits one PNG per state with a consistent `"<Prefix>-<NN>-<stage>"` name (e.g.
 `InsertEntry-01-initial`, `InsertEntry-02-populated`, `InsertEntry-03-invalid`, `InsertEntry-05-morphtype-chosen`)
 so the artifacts sort in interaction order. The harness writes each capture into ONE FLAT folder with a
-surface-prefixed file name — `Output/Snapshots/InsertEntry-01-initial.png`,
-`Output/Snapshots/Region-02-editable.png`, `Output/Snapshots/Browse-01-initial.png` — so a surface's stages
-sort together by name for easy review (pass `surfaceOverride:` to add the prefix for a name without a `-`). Every dialog ends
+prefixed file name — `Output/Snapshots/InsertEntry-01-initial.png`,
+`Output/Snapshots/Detail-02-editable.png`, `Output/Snapshots/Browse-01-initial.png` — so a surface's stages
+sort together by name for easy review (pass `prefixOverride:` to add the prefix for a name without a `-`). Every dialog ends
 up with PNGs covering at least its empty, populated, and (where applicable) error/disabled states; the region
 view captures its read-only AND editable stages; the browse table its grid stage. A single-static-assertion
 test captures at least its one realized state. Capture is **additive** — never weaken or remove the behavior
@@ -65,12 +65,12 @@ assertions to add it.
 > an already-parented control in a second window throws "already has a visual parent". From a later stage,
 > `DialogSnapshot.Capture((Window)view.GetVisualRoot(), name)` resolves it.
 
-- Output: `Output/Snapshots/<Surface>-<NN>-<stage>.png` — ONE flat folder under the repo's **gitignored**
+- Output: `Output/Snapshots/<Prefix>-<NN>-<stage>.png` — ONE flat folder under the repo's **gitignored**
   `Output/` folder (ephemeral; never committed). The file name is the snapshot name verbatim (its leading
-  segment, before the first `-`, is the surface prefix). `DialogSnapshot.Folder` returns the `Output/Snapshots` root.
-- `Capture(surface, name, width, height, surfaceOverride)` hosts a non-`Window` surface in a window of the
+  segment, before the first `-`, is the prefix). `DialogSnapshot.Folder` returns the `Output/Snapshots` root.
+- `Capture(control, name, width, height, prefixOverride)` hosts a non-`Window` surface in a window of the
   given size (default 420×320) before capturing; a `Window` is captured at its own size. `surfaceOverride`
-  prepends the surface prefix when the name does not already carry one.
+  prepends the prefix when the name does not already carry one.
 - **Order matters:** capture BEFORE asserting. The PNG is the evidence you inspect when the assert
   fails (it tells you whether the assert is right or the layout is right — see the splitter note).
 
@@ -101,10 +101,10 @@ classes, so passing tests alone do not satisfy the review step.
 
 ## Region / browse coverage and the splitter exception
 
-The same gate applies to non-dialog owned surfaces (`DataTree`).
+The same gate applies to non-dialog owned views (`DataTree`).
 Example: `Src/Common/FwAvalonia/FwAvaloniaTests/Visual/VisualSnapshotTests.cs`.
 
-`DialogLayoutAssert` was authored against dialog layouts; on grid-based region/browse surfaces a
+`DialogLayoutAssert` was authored against dialog layouts; on grid-based detail/browse surfaces a
 `GridSplitter` (region label/value column) and the browse column-splitter `Border` are drag handles that
 by design sit on a column boundary and overlap their neighbors — that is splitter behavior by design,
 not the content-overlap defect.
@@ -122,7 +122,7 @@ not the content-overlap defect.
   (already true for `FwAvaloniaTests` / `FwAvaloniaDialogsTests`). Without Skia, `CaptureRenderedFrame`
   returns null and `DialogSnapshot.Capture` throws with that diagnostic.
 - Realize before capturing: `Capture` does `Show()` + `Dispatcher.UIThread.RunJobs()` for you when it hosts a
-  non-`Window` surface. If you pass a surface that is **already** hosted/shown in a `Window`, pass that
+  non-`Window` control. If you pass a control that is **already** hosted/shown in a `Window`, pass that
   `Window` (see the already-hosted note above) so `Capture` does not try to re-parent the live control.
 - To use `DialogSnapshot` / `DialogLayoutAssert` from a test project that doesn't own them, add a
   `<Compile Include="..\…\X.cs" Link="Visual\X.cs"/>` link (read-only reuse — one shared standard,

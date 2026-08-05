@@ -537,9 +537,9 @@ namespace SIL.FieldWorks.XWorks
 			m_propertyTable.UserSettingDirectory = path;
 			Mediator.PathVariables["{DISTFILES}"] = FwDirectoryFinder.CodeDirectory;
 			// Seed the UI-mode properties BEFORE LoadUI creates the content views —
-			// RecordEditView resolves its surface during window construction, so seeding any later
+			// RecordEditView resolves its framework during window construction, so seeding any later
 			// (or relying on the app to do it after NewMainAppWnd returns) leaves a persisted
-			// UIMode=New coming up on the Legacy surface until the setting is toggled again.
+			// UIMode=New coming up on Legacy until the setting is toggled again.
 			var settings = new FwApplicationSettings();
 			SeedUIModeProperties(m_propertyTable, settings.UIMode, settings.UIModeDisabledTools);
 		}
@@ -552,12 +552,12 @@ namespace SIL.FieldWorks.XWorks
 		internal static void SeedUIModeProperties(PropertyTable propertyTable, string settingsUiMode,
 			string settingsDisabledTools)
 		{
-			propertyTable.SetProperty(EditSurfaceResolver.UIModePropertyName,
-				EditSurfaceResolver.NormalizeUIMode(settingsUiMode), false);
-			propertyTable.SetPropertyPersistence(EditSurfaceResolver.UIModePropertyName, false);
-			propertyTable.SetProperty(EditSurfaceResolver.UIModeDisabledToolsPropertyName,
+			propertyTable.SetProperty(UIFrameworkResolver.UIModePropertyName,
+				UIFrameworkResolver.NormalizeUIMode(settingsUiMode), false);
+			propertyTable.SetPropertyPersistence(UIFrameworkResolver.UIModePropertyName, false);
+			propertyTable.SetProperty(UIFrameworkResolver.UIModeDisabledToolsPropertyName,
 				settingsDisabledTools ?? string.Empty, false);
-			propertyTable.SetPropertyPersistence(EditSurfaceResolver.UIModeDisabledToolsPropertyName, false);
+			propertyTable.SetPropertyPersistence(UIFrameworkResolver.UIModeDisabledToolsPropertyName, false);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -2333,11 +2333,11 @@ namespace SIL.FieldWorks.XWorks
 			// Fixes (LT-4650)
 			if (name == "currentContentControl")
 			{
-				// The outgoing surface may still hold an open fenced region-edit undo task (the user was
+				// The outgoing view may still hold an open fenced detail-edit undo task (the user was
 				// mid-edit when they switched). Settle it — committing a valid staged edit as its own undo
 				// step, rolling an invalid one back — BEFORE the save-on-tool-switch commit below: an open
 				// task makes that commit throw "Commit at wrong place." This is the same auto-save the
-				// surface performs on record navigation and go-away, applied to the tool/area switch too.
+				// view performs on record navigation and go-away, applied to the tool/area switch too.
 				SettlePendingContentEdits(CurrentContentControl);
 				Cache.DomainDataByFlid.GetActionHandler().Commit();
 				// If we change tools, the FindReplaceDlg is no longer valid, as its rootsite
@@ -2349,9 +2349,9 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
-		/// Settles any open fenced region-edit session held by the outgoing content surface — or by a
-		/// surface nested inside it — so the save-on-tool-switch commit does not fault on an open undo
-		/// task. The detail surface is usually nested inside a record-list/detail container, so the whole
+		/// Settles any open fenced detail-edit session held by the outgoing content control — or by a
+		/// view nested inside it — so the save-on-tool-switch commit does not fault on an open undo
+		/// task. The detail view is usually nested inside a record-list/detail container, so the whole
 		/// subtree is walked rather than only the top-level control.
 		/// </summary>
 		private static void SettlePendingContentEdits(Control root)

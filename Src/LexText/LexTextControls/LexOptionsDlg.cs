@@ -139,9 +139,9 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 
 			// UIMode (and its per-tool overrides) flips live — RecordEditView settles any open edit and
-			// re-resolves the surface on the spot, so unlike the settings below, this never needs a restart.
+			// re-resolves the framework on the spot, so unlike the settings below, this never needs a restart.
 			// Compare against the PropertyTable's LIVE value (falling back to settings): if the table and
-			// the persisted setting ever disagree, OK re-broadcasts and heals the running surfaces.
+			// the persisted setting ever disagree, OK re-broadcasts and heals the running views.
 			var oldUiMode = NormalizeUIMode(m_propertyTable == null
 				? m_settings.UIMode
 				: m_propertyTable.GetStringProperty(UIModePropertyName, m_settings.UIMode));
@@ -483,7 +483,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				"Beta: the New mode is incomplete; some features are not yet available.");
 			m_uiModeBetaWarning.Name = "m_uiModeBetaWarning";
 
-			// Per-tool disabling within New mode (EditSurfaceResolver's UIModeDisabledTools setting) has no
+			// Per-tool disabling within New mode (UIFrameworkResolver's UIModeDisabledTools setting) has no
 			// editor in either Options dialog, so there is nothing to mirror here.
 			m_uiModeGroup.Controls.Add(m_uiModeLabel);
 			m_uiModeGroup.Controls.Add(m_uiModeChooser);
@@ -529,7 +529,7 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		private static string NormalizeUIMode(string mode)
 		{
-			return SIL.FieldWorks.Common.FwAvalonia.EditSurfaceResolver.NormalizeUIMode(mode);
+			return SIL.FieldWorks.Common.FwAvalonia.UIFrameworkResolver.NormalizeUIMode(mode);
 		}
 
 		private static string GetOptionString(string resourceName, string fallback)

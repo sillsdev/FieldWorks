@@ -25,7 +25,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			m_application = new MockFwXApp(new MockFwManager { Cache = Cache }, null, null);
 			m_configFilePath = Path.Combine(FwDirectoryFinder.CodeDirectory, m_application.DefaultConfigurationPathname);
-			// The legacy DataTree's ShowObject (driven by EnsureLegacySurfaceInitialized) needs the
+			// The legacy DataTree's ShowObject (driven by EnsureDataTreeInitialized) needs the
 			// legacy layout/parts Inventory loaded; that Inventory is keyed by the project path, so
 			// give the in-memory test project a writable temp path before the inventory bootstrap.
 			Cache.ProjectId.Path = Path.Combine(Path.GetTempPath(), Cache.ProjectId.Name,
@@ -41,7 +41,7 @@ namespace SIL.FieldWorks.XWorks
 			m_propertyTable.RemoveLocalAndGlobalSettings();
 			m_window.LoadUI(m_configFilePath);
 			// Bootstrap the legacy layout/parts Inventory the production RecordEditView loads via
-			// EnsureLegacySurfaceInitialized (LayoutCache loads the real lexicon .fwlayout/Parts).
+			// EnsureDataTreeInitialized (LayoutCache loads the real lexicon .fwlayout/Parts).
 			// Without it, DataTree.GetTemplateForObjLayout finds a null layout inventory and ShowObject
 			// throws an NRE once the idle-queued show actually runs.
 			LayoutCache.InitializePartInventories(Cache.ProjectId.Name, m_application, Cache.ProjectId.Path);
@@ -77,11 +77,11 @@ namespace SIL.FieldWorks.XWorks
 			EnsureCurrentRecord(control);
 			Assert.That(control.DatTree, Is.Not.Null);
 			Assert.That(GetPrivateFieldValue(control, "m_avaloniaEntryForm"), Is.Null);
-			Assert.That(GetPrivateFieldValue(control, "m_lexicalEditSurface"), Is.EqualTo(EditSurface.WinForms));
+			Assert.That(GetPrivateFieldValue(control, "m_activeUIFramework"), Is.EqualTo(UIFramework.Legacy));
 		}
 
 		[Test]
-		public void LexiconEditTool_SwitchesSurfaceStateToAvalonia_WhenUIModePropertyBroadcasts()
+		public void LexiconEditTool_SwitchesUIFrameworkToAvalonia_WhenUIModePropertyBroadcasts()
 		{
 			m_propertyTable.SetProperty("UIMode", "Legacy", true);
 			m_propertyTable.SetPropertyPersistence("UIMode", false);
@@ -99,15 +99,15 @@ namespace SIL.FieldWorks.XWorks
 			var sameControl = m_propertyTable.GetValue<object>("currentContentControlObject", null) as RecordEditView;
 			Assert.That(sameControl, Is.SameAs(control), "Changing the UI mode should update the live content control rather than requiring a tool reload in the test harness.");
 			Assert.That(control.Clerk.CurrentObject, Is.Not.Null);
-			Assert.That(GetPrivateFieldValue(control, "m_lexicalEditSurface"), Is.EqualTo(EditSurface.Avalonia));
+			Assert.That(GetPrivateFieldValue(control, "m_activeUIFramework"), Is.EqualTo(UIFramework.Avalonia));
 		}
 
 		// LT-22582: flipping New->Legacy must tear down the Avalonia refresh controller + host NOW
-		// (not defer to Dispose), and a subsequent flip back to New must rebuild a fresh surface rather than
-		// re-show a disposed one (the bug pinned here: TearDownAvaloniaSurface disposing without nulling the
-		// host lets EnsureAvaloniaSurfaceActive's `== null` guard skip recreation and .Show() a disposed control).
+		// (not defer to Dispose), and a subsequent flip back to New must rebuild a fresh entry form rather than
+		// re-show a disposed one (the bug pinned here: TearDownAvaloniaEntryForm disposing without nulling the
+		// host lets EnsureAvaloniaEntryFormActive's `== null` guard skip recreation and .Show() a disposed control).
 		[Test]
-		public void LexiconEditTool_FlipNewLegacyNew_TearsDownThenRebuildsAvaloniaSurface()
+		public void LexiconEditTool_FlipNewLegacyNew_TearsDownThenRebuildsAvaloniaEntryForm()
 		{
 			m_propertyTable.SetProperty("UIMode", "New", true);
 			m_propertyTable.SetPropertyPersistence("UIMode", false);
@@ -118,14 +118,14 @@ namespace SIL.FieldWorks.XWorks
 			var control = m_propertyTable.GetValue<object>("currentContentControlObject", null) as RecordEditView;
 			Assert.That(control, Is.Not.Null);
 			EnsureCurrentRecord(control);
-			Assert.That(GetPrivateFieldValue(control, "m_lexicalEditSurface"), Is.EqualTo(EditSurface.Avalonia));
+			Assert.That(GetPrivateFieldValue(control, "m_activeUIFramework"), Is.EqualTo(UIFramework.Avalonia));
 			Assert.That(GetPrivateFieldValue(control, "m_avaloniaRefreshController"), Is.Not.Null,
-				"the Avalonia surface should own a refresh controller while active");
+				"the Avalonia view should own a refresh controller while active");
 
 			// Flip to Legacy: the host + refresh controller are disposed AND nulled now.
 			m_propertyTable.SetProperty("UIMode", "Legacy", true);
 			DrainMediatorAndIdleQueues();
-			Assert.That(GetPrivateFieldValue(control, "m_lexicalEditSurface"), Is.EqualTo(EditSurface.WinForms));
+			Assert.That(GetPrivateFieldValue(control, "m_activeUIFramework"), Is.EqualTo(UIFramework.Legacy));
 			Assert.That(GetPrivateFieldValue(control, "m_avaloniaRefreshController"), Is.Null,
 				"flipping to Legacy must dispose+null the refresh controller, not leave it on the PropChanged bus");
 			Assert.That(GetPrivateFieldValue(control, "m_avaloniaEntryForm"), Is.Null,
@@ -137,15 +137,15 @@ namespace SIL.FieldWorks.XWorks
 				m_propertyTable.SetProperty("UIMode", "New", true);
 				DrainMediatorAndIdleQueues();
 				EnsureCurrentRecord(control);
-			}, "flip back to New must rebuild the Avalonia surface, not re-show a disposed host");
-			Assert.That(GetPrivateFieldValue(control, "m_lexicalEditSurface"), Is.EqualTo(EditSurface.Avalonia));
+			}, "flip back to New must rebuild the Avalonia entry form, not re-show a disposed host");
+			Assert.That(GetPrivateFieldValue(control, "m_activeUIFramework"), Is.EqualTo(UIFramework.Avalonia));
 			Assert.That(GetPrivateFieldValue(control, "m_avaloniaRefreshController"), Is.Not.Null,
 				"flipping back to New must rebuild the refresh controller");
 		}
 
-		// Tools whose record-edit surface is not registered fall back to legacy under
+		// Tools not registered for Avalonia fall back to legacy under
 		// New mode. (domainTypeEdit = a Lists CmPossibility tool.) Analyses rides
-		// the interlinear editor's Avalonia surface — see
+		// the interlinear editor's Avalonia work -- see
 		// RegisteredRecordEditTools_ResolveToAvalonia below.
 		[TestCase("domainTypeEdit")]
 		public void NonMigratedRecordEditTools_FallBackToLegacy_WhenUIModeIsNew(string toolValue)
@@ -159,16 +159,16 @@ namespace SIL.FieldWorks.XWorks
 			var control = m_propertyTable.GetValue<object>("currentContentControlObject", null) as RecordEditView;
 			Assert.That(control, Is.Not.Null, "Expected RecordEditView for tool '{0}'.", toolValue);
 			Assert.That(
-				GetPrivateFieldValue(control, "m_lexicalEditSurface"),
-				Is.EqualTo(EditSurface.WinForms),
+				GetPrivateFieldValue(control, "m_activeUIFramework"),
+				Is.EqualTo(UIFramework.Legacy),
 				"Tool '{0}' should explicitly fall back to legacy while Avalonia support is not yet implemented.",
 				toolValue);
 		}
 
-		// The detail-editor tools registered for the Avalonia surface. They
+		// The detail-editor tools registered for Avalonia. They
 		// resolve to Avalonia under New mode. The interlinear (Analyses) and rule-formula tools (PhonologicalRuleEdit,
 		// EnvironmentEdit, compoundRuleAdvancedEdit, naturalClassedit, phonemeEdit, AdhocCoprohibEdit) are
-		// INERT (see EditSurfaceRegistry.Phase1FollowUpSurfaceTools); activating one registers it and
+		// INERT (see UIFrameworkRegistry.Phase1FollowUpTools); activating one registers it and
 		// adds the corresponding TestCase row here.
 		[TestCase("notebookEdit")]
 		[TestCase("posEdit")]
@@ -183,9 +183,9 @@ namespace SIL.FieldWorks.XWorks
 			var control = m_propertyTable.GetValue<object>("currentContentControlObject", null) as RecordEditView;
 			Assert.That(control, Is.Not.Null, "Expected RecordEditView for tool '{0}'.", toolValue);
 			Assert.That(
-				GetPrivateFieldValue(control, "m_lexicalEditSurface"),
-				Is.EqualTo(EditSurface.Avalonia),
-				"Tool '{0}' is registered for the Avalonia edit surface (§20.3), so New mode resolves to Avalonia.",
+				GetPrivateFieldValue(control, "m_activeUIFramework"),
+				Is.EqualTo(UIFramework.Avalonia),
+				"Tool '{0}' is registered for the Avalonia edit framework (§20.3), so New mode resolves to Avalonia.",
 				toolValue);
 		}
 
@@ -250,8 +250,8 @@ namespace SIL.FieldWorks.XWorks
 			// Force a fresh record navigation rather than early-returning when the clerk already has a
 			// CurrentObject. When a tool loads directly into an Avalonia UIMode, the clerk's list load
 			// can populate CurrentObject WITHOUT routing through RecordEditView.ShowRecord/ShowAvaloniaEntry
-			// (the code path that realizes the Avalonia surface and wires its refresh controller). An early
-			// return on CurrentObject != null therefore left the surface unrealized, so the refresh-controller
+			// (the code path that realizes the Avalonia entry form and wires its refresh controller). An early
+			// return on CurrentObject != null therefore left the entry form unrealized, so the refresh-controller
 			// assertion saw null even though the production show path is correct. JumpToIndex re-broadcasts
 			// RecordNavigation even when the index is unchanged (see RecordClerk.JumpToIndex, the LT-11401
 			// handling), so this exercises the real ShowRecord -> ShowAvaloniaEntry -> EnsureAvaloniaRefreshController

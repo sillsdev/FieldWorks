@@ -16,7 +16,7 @@ using Avalonia.Styling;
 namespace SIL.FieldWorks.Common.FwAvalonia
 {
 	/// <summary>
-	/// The ONE DETERMINISTIC, GLOBAL CheckBox style: every Avalonia surface (dialogs, browse table,
+	/// The ONE DETERMINISTIC, GLOBAL CheckBox style: every Avalonia view (dialogs, browse table,
 	/// chooser flat list + tree, configure-columns, options, find/replace, insert-entry, detail view) renders
 	/// checkboxes at a FIXED size derived from <see cref="FwAvaloniaDensity.CheckboxBoxSize"/> (a function of
 	/// the 12px surface font), so a checkbox NEVER inflates a table/list/tree row past the text-row height.
@@ -30,7 +30,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 	/// template with a compact one whose box and layout footprint ARE <see cref="FwAvaloniaDensity.CheckboxBoxSize"/>.
 	/// This is a <see cref="ControlTheme"/> (applied via a <c>Theme</c> setter) carrying that template plus the
 	/// checked/indeterminate/disabled state styles — a self-contained, content-independent definition, so the
-	/// rendered size is identical on every surface.
+	/// rendered size is identical on every view.
 	///
 	/// AUTHORITATIVE SOURCE: this C# builder is the single definition. <see cref="FwSurfaceStyles"/> (browse /
 	/// detail / bulk-bar path) adds it; the dialog path adds it via <c>DialogThemeBootstrap.Apply</c> (called by
@@ -56,7 +56,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 		private static readonly IBrush DisabledStroke = new SolidColorBrush(Color.FromRgb(0xC0, 0xC0, 0xC0));
 
 		/// <summary>
-		/// The deterministic CheckBox styles, ready to add to a surface's <see cref="StyledElement.Styles"/>.
+		/// The deterministic CheckBox styles, ready to add to a control's <see cref="StyledElement.Styles"/>.
 		/// One style that points every CheckBox at the compact <see cref="ControlTheme"/>.
 		/// </summary>
 		public static IEnumerable<IStyle> Build()

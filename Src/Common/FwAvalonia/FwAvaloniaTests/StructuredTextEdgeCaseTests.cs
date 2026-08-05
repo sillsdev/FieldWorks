@@ -55,7 +55,7 @@ namespace FwAvaloniaTests
 				stableId: "LexEntry/Discussion@1", label: "Discussion", field: "Discussion",
 				writingSystem: null, kind: DetailFieldKind.StructuredText,
 				editorClassification: EditorClassification.Known, automationId: "Discussion",
-				localizationKey: null, routing: SurfaceRouting.Product, values: null, options: null,
+				localizationKey: null, routing: HostRouting.Product, values: null, options: null,
 				selectedOptionKey: null, isEditable: isEditable, paragraphs: paragraphs);
 			if (paragraphStyles != null)
 				field.AvailableParagraphStyles = paragraphStyles;
@@ -195,7 +195,7 @@ namespace FwAvaloniaTests
 				.First(b => AutomationProperties.GetAutomationId(b) == "Discussion.Para." + i + ".Add");
 
 			// Insert after 0, delete 2, insert after 1, delete 1 — fired back to back with no re-show
-			// between (the snapshot list is unchanged in this headless surface; we assert seam traffic).
+			// between (the snapshot list is unchanged in this headless view; we assert seam traffic).
 			AddButton(0).RaiseEvent(new Avalonia.Interactivity.RoutedEventArgs(Button.ClickEvent));
 			DeleteButton(control, 2).RaiseEvent(new Avalonia.Interactivity.RoutedEventArgs(Button.ClickEvent));
 			AddButton(1).RaiseEvent(new Avalonia.Interactivity.RoutedEventArgs(Button.ClickEvent));

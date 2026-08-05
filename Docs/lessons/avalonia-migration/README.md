@@ -25,7 +25,7 @@ tree and the live legacy behavior.
 4. Create Jira work only after a human approves a product outcome or bounded
    discovery question. A lesson card is context, not backlog authorization.
 5. Start approved implementation from the current base. Do not rebase,
-   cherry-pick, or copy retired surface code merely because a card cites it.
+   cherry-pick, or copy retired UI code merely because a card cites it.
 
 Historical branches for PRs #965-#967 remain archaeological sources. Their
 stacking reflects delivery history, not a dependency between interlinear,

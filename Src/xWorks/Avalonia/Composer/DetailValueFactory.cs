@@ -16,8 +16,8 @@ namespace SIL.FieldWorks.XWorks
 	/// The ONE home for the two value-projection recipes that
 	/// <see cref="DetailComposer"/> and <see cref="LexiconEditErrorFallback"/> both
 	/// consume: the per-writing-system value rows and the possibility-list option
-	/// flattening. Sharing them here is what keeps the two surfaces from drifting
-	/// (e.g. an option-name fallback walking analysis → vernacular on one surface and
+	/// flattening. Sharing them here is what keeps the two hosts from drifting
+	/// (e.g. an option-name fallback walking analysis → vernacular on one host and
 	/// analysis → ShortName on the other; see <see cref="BuildPossibilityOptions"/> for the
 	/// deliberate resolution).
 	/// </summary>

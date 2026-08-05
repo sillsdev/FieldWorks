@@ -65,7 +65,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 	/// grouping (null) editor, and everything else as unknown. This lets the typed importer raise
 	/// faithful diagnostics for dynamic/unknown/obsolete editors (tasks 3.8 and 4.4) without
 	/// constructing any WinForms control. Also the single home of the named editor-string
-	/// constants and the <see cref="ClassifyDetailFieldKind"/> category API the detail surfaces
+	/// constants and the <see cref="ClassifyDetailFieldKind"/> category API the detail views
 	/// dispatch on.
 	/// </summary>
 	public static class EditorKindMap

@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Define the ordered, gated sequence by which FieldWorks surfaces move from
+Define the ordered, gated sequence by which FieldWorks UI moves from
 WinForms to Avalonia, and the evidence each gate requires before the next
 phase may start.
 
@@ -59,7 +59,7 @@ state.
 - **WHEN** the first migrated region is implemented
 - **THEN** `ViewDefinitionModel` SHALL be the typed IR compiled from XML layouts
 - **AND** `DetailModel` (via `IDetailValueProvider`) SHALL be the value-bound Avalonia detail view built from that IR
-- **AND** `RecordEditView` SHALL route between the legacy and Avalonia surfaces without driving hidden `DataTree` infrastructure when Avalonia is active
+- **AND** `RecordEditView` SHALL route between the legacy and Avalonia views without driving hidden `DataTree` infrastructure when Avalonia is active
 
 ### Requirement: Functional fidelity and density are the parity target
 

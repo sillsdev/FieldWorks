@@ -8,18 +8,18 @@ using System.Collections.Generic;
 namespace SIL.FieldWorks.Common.FwAvalonia
 {
 	/// <summary>
-	/// App-wide registry of which tools support the Avalonia lexical-edit surface (the
-	/// single supported-tool list — new tools opt into the Avalonia surface by
-	/// registration rather than by editing <see cref="EditSurfaceResolver"/>).
+	/// App-wide registry of which tools have Avalonia support (the
+	/// single supported-tool list — new tools opt in by registration rather than
+	/// by editing <see cref="UIFrameworkResolver"/>).
 	///
 	/// Contract (matching the resolver's safety property): a null/blank tool name means "no tool context",
 	/// which is NOT a tool gate — it defers to the UIMode/override preference. An **unregistered** tool
 	/// never advertises Avalonia support, so an unknown tool can never silently resolve to Avalonia.
 	/// </summary>
-	public sealed class EditSurfaceRegistry
+	public sealed class UIFrameworkRegistry
 	{
-		// The tools that shipped supporting the Avalonia surface. Tools whose record EDIT/detail
-		// surface is approved for the Avalonia composer. The class-general composer + 4-key layout
+		// The tools that shipped with Avalonia support. Tools whose record edit/detail
+		// view is approved for the Avalonia composer. The class-general composer + 4-key layout
 		// resolution make these compose; per-tool editor gaps (e.g. Notebook participants/
 		// subrecords) degrade to read-only/unsupported rows, never a crash, and
 		// are tracked separately. All gated behind UIMode=New (off by default). The many Lists CmPossibility
@@ -27,7 +27,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 		// The composed detail-editor tools ship ON — all still
 		// gated behind UIMode=New (off by default), so no visible change to existing users.
 		// Sourced from LexiconFeatureCatalog — the single list of "tools with a working Avalonia
-		// surface today," which also carries each tool's user-facing display metadata.
+		// support today," which also carries each tool's user-facing display metadata.
 		private static readonly string[] DefaultSupportedTools = ToArray(LexiconFeatureCatalog.ToolNames);
 
 		private static string[] ToArray(IReadOnlyList<string> source)
@@ -38,15 +38,15 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 			return result;
 		}
 
-		// FOLLOW-UP surfaces — currently INERT. The view-layer code for these ships (it lives in the
+		// FOLLOW-UP tools -- currently INERT. The view-layer code for these ships (it lives in the
 		// same FwAvalonia/xWorks assemblies) but the tools are deliberately NOT registered, so the resolver returns
-		// "not supported" and they fall back to the legacy WinForms surface even under UIMode=New. Activating a
-		// surface means moving its tool name(s) from this list into DefaultSupportedTools above (the one-line
-		// "flip"). Verified by InertFollowUpSurfacesFallBackToLegacy in the resolver tests.
+		// "not supported" and they fall back to legacy WinForms even under UIMode=New. Activating a
+		// tool means moving its tool name(s) from this list into DefaultSupportedTools above (the one-line
+		// "flip"). Verified by InertFollowUpToolsFallBackToLegacy in the resolver tests.
 		//   avalonia-interlinear-editor : "Analyses"
 		//   avalonia-rule-formula-editor: "PhonologicalRuleEdit","EnvironmentEdit","compoundRuleAdvancedEdit",
 		//                                 "naturalClassedit","phonemeEdit","AdhocCoprohibEdit"
-		public static readonly string[] Phase1FollowUpSurfaceTools =
+		public static readonly string[] Phase1FollowUpTools =
 		{
 			"Analyses",
 			"PhonologicalRuleEdit", "EnvironmentEdit", "compoundRuleAdvancedEdit",
@@ -56,15 +56,15 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 		private readonly HashSet<string> _supported = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
 		/// <summary>A registry seeded with the tools that ship with Avalonia support.</summary>
-		public static EditSurfaceRegistry CreateDefault()
+		public static UIFrameworkRegistry CreateDefault()
 		{
-			var registry = new EditSurfaceRegistry();
+			var registry = new UIFrameworkRegistry();
 			foreach (var tool in DefaultSupportedTools)
 				registry._supported.Add(tool);
 			return registry;
 		}
 
-		/// <summary>Opt a tool into the Avalonia surface.</summary>
+		/// <summary>Opt a tool into Avalonia support.</summary>
 		public void RegisterSupportedTool(string toolName)
 		{
 			if (string.IsNullOrWhiteSpace(toolName))
@@ -73,7 +73,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 		}
 
 		/// <summary>
-		/// True when the tool may use the Avalonia surface. Null/blank defers to the preference (not a gate);
+		/// True when the tool may render in Avalonia. Null/blank defers to the preference (not a gate);
 		/// an unregistered tool returns false so it can never silently resolve to Avalonia.
 		/// </summary>
 		public bool SupportsAvalonia(string currentToolName)

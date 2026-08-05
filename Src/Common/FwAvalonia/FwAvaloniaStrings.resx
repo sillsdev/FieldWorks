@@ -212,7 +212,7 @@
     <value>Lexicon Edit</value>
   </data>
   <data name="FwAvalonia.Feature.LexiconEditDescription" xml:space="preserve">
-    <value>The main entry-editing surface.</value>
+    <value>The main entry-editing view.</value>
   </data>
   <data name="FwAvalonia.Feature.LexiconEditPopupName" xml:space="preserve">
     <value>Lexicon Edit (popup)</value>

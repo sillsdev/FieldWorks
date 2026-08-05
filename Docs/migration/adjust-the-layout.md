@@ -13,7 +13,7 @@ and have the tool write the markup back. No IDE, extension, or third-party
 tool provides that today.
 
 What you get instead is a **live previewer**: the markup on one side, the
-rendered surface on the other, re-rendering as you type. You see it live and
+rendered view on the other, re-rendering as you type. You see it live and
 you edit by typing. That covers most of what the designer gave you; what is
 missing is direct manipulation.
 
@@ -92,7 +92,7 @@ nothing is wasted, because option 2 needs the same startup project.
 ### 2. Preview host -- verified working, edit/run/look
 
 `FwAvaloniaPreviewHost` is a small Avalonia app that opens one converted
-surface at its real client size with the same compact density the runtime
+view at its real client size with the same compact density the runtime
 applies. Not live, but seconds per cycle and no FLEx launch.
 
 ```bash
@@ -101,12 +101,12 @@ Src\Common\FwAvaloniaPreviewHost\bin\Debug\net48\FwAvaloniaPreviewHost.exe --mod
 
 The id is a **separate argument** -- `--module <id>`, not `--module=<id>`. The
 parser ignores the `=` form silently and falls back to the first registered
-surface, so getting a surface you did not ask for means the flag was not
+view, so getting a view you did not ask for means the flag was not
 recognized. The window title is `<DisplayName> (Preview)`, which tells you
 which module actually loaded. Omit `--module` entirely to get the first
-surface on purpose.
+view on purpose.
 
-**Adding your converted surface** -- one small window class plus one assembly
+**Adding your converted dialog or view** -- one small window class plus one assembly
 attribute in `Src/Common/FwAvaloniaPreviewHost/DialogPreviews.cs`:
 
 ```csharp
@@ -128,15 +128,15 @@ so what you see is what ships. `DialogPreviewWindow` applies
 Fluent defaults and misleads. The window needs a public parameterless
 constructor: the host creates it with `Activator.CreateInstance`.
 
-How it finds your surface: the host's `ModuleCatalog` reflects over
+How it finds your preview: the host's `ModuleCatalog` reflects over
 assembly-level `FwPreviewModule` attributes across every assembly in its own
-output folder. No host code changes per surface -- registration is the
+output folder. No host code changes per preview -- registration is the
 attribute. That folder is the host's own `bin\`, not the shared `Output\`,
 which is why the host project references `FwAvaloniaDialogs`.
 
 ### 3. Snapshot PNGs -- always available
 
-Run the surface's visual test and look at the PNGs in `Output/Snapshots/`:
+Run the conversion's visual test and look at the PNGs in `Output/Snapshots/`:
 
 ```bash
 ./test.ps1 -SkipNative -TestProject FwAvaloniaDialogsTests -TestFilter "FullyQualifiedName~OptionsDialogTests"
@@ -145,7 +145,7 @@ Run the surface's visual test and look at the PNGs in `Output/Snapshots/`:
 About a minute per cycle. Note the window size comes from the **test**, not
 the launcher, so this shows your layout but not the shipped dialog size.
 
-## Why a converted surface is previewable at all
+## Why a converted dialog or view is previewable at all
 
 Worth knowing, because it doubles as a smell test. The preview needs no cache,
 no WinForms, and no project data because the dialog boundaries hold:
@@ -155,7 +155,7 @@ no WinForms, and no project data because the dialog boundaries hold:
   is a few assignments;
 - the launcher owns the LCModel work, window ownership, and help.
 
-**A surface that cannot be previewed in a few lines has usually broken one of
+**A view that cannot be previewed in a few lines has usually broken one of
 those rules** -- reached for LCModel in the view-model, or assumed a modal
 host. Treat difficulty here as a design signal, not a tooling problem.
 
@@ -184,9 +184,9 @@ host. Treat difficulty here as a design signal, not a tooling problem.
 
 1. `./build.ps1 -SkipNative` -- compiled bindings mean a mistyped binding is a
    build error, which is your first safety net.
-2. Run the surface's tests. `DialogLayoutAssert.AssertNoCrowding` runs inside
+2. Run the conversion's tests. `DialogLayoutAssert.AssertNoCrowding` runs inside
    every realized-view test and fails on zero-area text, overlapping siblings,
    an unframed field host, or a root with no padding.
-3. Compare against the `-before` captures for the surface.
-4. Check both UI modes: the converted surface in New mode, and the legacy
-   surface still untouched with the toggle off.
+3. Compare against the `-before` captures for the conversion.
+4. Check both UI modes: the converted view in New mode, and the legacy
+   UI still untouched with the toggle off.

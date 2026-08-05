@@ -22,7 +22,7 @@ namespace FwAvaloniaDialogsTests
 	/// sequence into a collapsible, virtualizing TreeView; an active search term switches to a flat filtered
 	/// results list and clearing it returns to the tree; single-select returns the clicked node's key; multi-select
 	/// returns the checked set (independent per-node checks, legacy default). Runtime proof on a realized headless
-	/// surface (compiled XAML on net48 + the virtualizing tree).
+	/// view (compiled XAML on net48 + the virtualizing tree).
 	/// </summary>
 	[TestFixture]
 	public class ChooserDialogTreeTests
@@ -46,7 +46,7 @@ namespace FwAvaloniaDialogsTests
 			return (view, vm);
 		}
 
-		// Re-pump the realized surface and snapshot a later interaction stage (expanded, searched, etc.).
+		// Re-pump the realized view and snapshot a later interaction stage (expanded, searched, etc.).
 		private static void Capture(Control view, string stageName) =>
 			AvaloniaDialogTestHarness.Recapture(view, stageName);
 

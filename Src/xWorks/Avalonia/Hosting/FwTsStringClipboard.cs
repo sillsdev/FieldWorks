@@ -15,7 +15,7 @@ namespace SIL.FieldWorks.XWorks
 	/// <summary>
 	/// The product cross-framework clipboard bridge: implements the LCModel-free
 	/// <see cref="IFwClipboard"/> seam over the legacy OS clipboard contract that native-Views
-	/// surfaces already speak (<c>EditingHelper.SetTsStringOnClipboard</c>/<c>GetTsStringFromClipboard</c>):
+	/// views already speak (<c>EditingHelper.SetTsStringOnClipboard</c>/<c>GetTsStringFromClipboard</c>):
 	/// the <see cref="TsStringWrapper.TsStringFormat"/> data format carrying a serialized
 	/// <see cref="TsStringWrapper"/> (TsString XML rep) plus an NFC-normalized <c>UnicodeText</c>
 	/// plain-text format. Because both frameworks read and write the same formats, copy/paste
@@ -67,8 +67,8 @@ namespace SIL.FieldWorks.XWorks
 
 		/// <summary>
 		/// Builds the dual-format OS data object for a payload — the same entries legacy
-		/// <c>EditingHelper.SetTsStringOnClipboard</c> writes, so legacy surfaces consume the rich
-		/// format exactly as if another Views surface had produced it. Shared by the clipboard seam
+		/// <c>EditingHelper.SetTsStringOnClipboard</c> writes, so legacy views consume the rich
+		/// format exactly as if another native-Views view had produced it. Shared by the clipboard seam
 		/// and the drag-and-drop bridge, which carry identical text payloads.
 		/// </summary>
 		public static DataObject CreateDataObject(FwClipboardText payload)

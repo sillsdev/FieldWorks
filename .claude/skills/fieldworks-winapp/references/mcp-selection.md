@@ -11,7 +11,7 @@ Use WinForms MCP when:
 - launching FieldWorks yourself for verification or screenshot evidence;
 - the target is a WinForms menu, dialog, button, tab, text box, combo box, or
   standard control;
-- you need `render_form` to preview a `.Designer.cs` surface;
+- you need `render_form` to preview a `.Designer.cs` form;
 - foreground-window stealing would disrupt the developer (`PrintWindow` capture
   and UIA pattern operations do not require foregrounding).
 
@@ -37,7 +37,7 @@ Use WinApp MCP when:
 - WinForms MCP is not configured in the current agent client;
 - the task is about foreground, focus, taskbar, window ordering, or another
   visible desktop behavior;
-- a control, popup, or non-WinForms surface is missing or unreliable through
+- a control, popup, or non-WinForms window is missing or unreliable through
   WinForms MCP;
 - you need UIA3 behavior for comparison or troubleshooting.
 

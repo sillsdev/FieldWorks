@@ -40,7 +40,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 
 	/// <summary>
 	/// A <see cref="WinFormsAvaloniaControlHost"/> that claims the keyboard-navigation keys the hosted
-	/// Avalonia surface needs, so the WinForms parent (a detail pane, or a modal dialog form) does not
+	/// Avalonia control needs, so the WinForms parent (a detail pane, or a modal dialog form) does not
 	/// consume Up/Down/Left/Right — and, when asked, Enter — as its own control-navigation / default-button
 	/// handling before the Avalonia content sees them. Without this, WinForms eats the presses and hosted
 	/// list/keyboard navigation does nothing. Keys are claimed only while this host holds focus, so they

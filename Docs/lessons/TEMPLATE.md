@@ -1,4 +1,4 @@
-# <surface or experiment>: lesson record
+# <feature or experiment>: lesson record
 
 Status: current principle | hypothesis | rejected path | obsolete
 Sources: <PRs, commits, removed artifact names>

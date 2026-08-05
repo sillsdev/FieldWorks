@@ -10,13 +10,13 @@ using SIL.LCModel;
 namespace SIL.FieldWorks.XWorks
 {
 	/// <summary>
-	/// The product side of the cross-surface drag-and-drop bridge: builds and reads the
+	/// The product side of the cross-framework drag-and-drop bridge: builds and reads the
 	/// shared OS data objects both WinForms (`DoDragDrop`/`AllowDrop`) and Avalonia (`DragDrop`)
-	/// surfaces exchange. Text drags reuse the clipboard seam's dual-format payload
+	/// views exchange. Text drags reuse the clipboard seam's dual-format payload
 	/// (<see cref="FwTsStringClipboard.CreateDataObject"/>: legacy `"TsString"` rich format +
 	/// `UnicodeText`); object moves carry the framework-neutral
 	/// <see cref="FwRecordKeyPayload"/> guid key plus a plain-text label for external drops.
-	/// Legacy in-surface reorder DnD (`SliceTreeNode`, `RecordBarTreeHandler`) stays surface-local.
+	/// Reorder DnD within a legacy view (`SliceTreeNode`, `RecordBarTreeHandler`) stays local to that view.
 	/// </summary>
 	public static class FwDragDropData
 	{

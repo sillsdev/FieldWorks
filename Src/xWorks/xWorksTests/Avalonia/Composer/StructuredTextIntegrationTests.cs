@@ -23,7 +23,7 @@ using SIL.LCModel.Infrastructure;
 namespace SIL.FieldWorks.XWorks
 {
 	/// <summary>
-	/// INTEGRATION on ONE realized detail surface: a single <see cref="DataTree"/>
+	/// INTEGRATION on ONE realized detail view: a single <see cref="DataTree"/>
 	/// holding a sibling multistring (Citation Form) row AND an editable structured-text (StText) row,
 	/// driven through the REAL <see cref="ComposedDetailEditContext"/> over an in-memory LCModel (the same
 	/// fenced <see cref="LcmDetailEditSession"/> staging the production composer wires). These exercise
@@ -47,7 +47,7 @@ namespace SIL.FieldWorks.XWorks
 			base.TestSetup();
 			// Build the headless Avalonia platform (the assembly SetUpFixture installed the headless
 			// AppBuilder override) so the realized field controls + their host Window have a windowing
-			// platform off-screen — the same init the product surface hosts trigger. Idempotent.
+			// platform off-screen — the same init the product hosts trigger. Idempotent.
 			FwAvaloniaRuntime.EnsureInitialized();
 			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
 			{
@@ -85,10 +85,10 @@ namespace SIL.FieldWorks.XWorks
 		// A detail model with a sibling multistring (Citation Form) row + a StructuredText (Discussion)
 		// row, plus the composed edit context whose setters mutate the real LCModel exactly as
 		// DetailComposer wires them. This is the production seam, not a stand-in.
-		private (DetailModel Model, ComposedDetailEditContext Context) BuildSurface()
+		private (DetailModel Model, ComposedDetailEditContext Context) BuildDetail()
 		{
 			var citation = new DetailField(CitationStableId, "Citation Form", "CitationForm", null,
-				DetailFieldKind.Text, EditorClassification.Known, "CitationForm", null, SurfaceRouting.Product,
+				DetailFieldKind.Text, EditorClassification.Known, "CitationForm", null, HostRouting.Product,
 				new List<DetailWsValue> { new DetailWsValue("vern", CitationText, wsTag: "vern") },
 				null, null, isEditable: true);
 
@@ -98,7 +98,7 @@ namespace SIL.FieldWorks.XWorks
 				.ToList();
 			var stTextField = new DetailField(StTextStableId, "Discussion", "Discussion", null,
 				DetailFieldKind.StructuredText, EditorClassification.Known, "Discussion", null,
-				SurfaceRouting.Product, null, null, null, isEditable: true, paragraphs: paragraphs)
+				HostRouting.Product, null, null, null, isEditable: true, paragraphs: paragraphs)
 			{
 				AvailableParagraphStyles = new[] { "Block Quote", "Numbered List" }
 			};
@@ -161,10 +161,10 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
-		/// ONE realized detail surface hosting BOTH field controls over the SAME composed edit context:
+		/// ONE realized detail view hosting BOTH field controls over the SAME composed edit context:
 		/// the sibling multistring (<see cref="FwMultiWsTextField"/>) and the StText
 		/// (<see cref="FwStructuredTextField"/>) in one StackPanel. We realize the field controls directly
-		/// (rather than the whole <see cref="DataTree"/> surface, whose GridSplitter needs an
+		/// (rather than the whole <see cref="DataTree"/>, whose GridSplitter needs an
 		/// input/cursor platform the bare headless xWorksTests host does not register) and wire the SAME
 		/// commit semantics the view's autosave/gesture path uses:
 		///   * structural gestures (add/delete/style) commit immediately + raise the re-show, via the
@@ -172,7 +172,7 @@ namespace SIL.FieldWorks.XWorks
 		///   * per-paragraph / sibling text edits stage and ride <see cref="CommitOpenSession"/> (the
 		///     view's focus-loss autosave commits the one open fenced session).
 		/// </summary>
-		private sealed class Surface
+		private sealed class RealizedDetail
 		{
 			public Window Window;
 			public Control Root;
@@ -196,15 +196,15 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		private Surface ShowSurface(DetailModel model, ComposedDetailEditContext context)
+		private RealizedDetail ShowDetail(DetailModel model, ComposedDetailEditContext context)
 		{
-			var surface = new Surface { Context = context };
+			var detail = new RealizedDetail { Context = context };
 			var citationField = model.Fields[0];
 			var stTextField = model.Fields[1];
 
 			var citationControl = new FwMultiWsTextField(citationField, citationField.AutomationId, context, null);
 			var stTextControl = new FwStructuredTextField(stTextField, stTextField.AutomationId, context, null,
-				surface.CompleteGesture);
+				detail.CompleteGesture);
 
 			var panel = new StackPanel();
 			panel.Children.Add(citationControl);
@@ -217,9 +217,9 @@ namespace SIL.FieldWorks.XWorks
 			panel.UpdateLayout();
 			Dispatcher.UIThread.RunJobs();
 
-			surface.Window = window;
-			surface.Root = panel;
-			return surface;
+			detail.Window = window;
+			detail.Root = panel;
+			return detail;
 		}
 
 		private static T Find<T>(Control root, string automationId) where T : Control
@@ -232,11 +232,11 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void EditCitation_AndParagraphText_CommitTogether_AsOneUndoStep_OnFocusLoss()
 		{
-			var (model, context) = BuildSurface();
-			var surface = ShowSurface(model, context);
+			var (model, context) = BuildDetail();
+			var detail = ShowDetail(model, context);
 
-			var citationBox = Find<TextBox>(surface.Root, "CitationForm.vern");
-			var para0 = Find<TextBox>(surface.Root, "Discussion.Para.0");
+			var citationBox = Find<TextBox>(detail.Root, "CitationForm.vern");
+			var para0 = Find<TextBox>(detail.Root, "Discussion.Para.0");
 			Assert.That(citationBox, Is.Not.Null, "the sibling multistring row realized");
 			Assert.That(para0, Is.Not.Null, "the StText paragraph row realized");
 
@@ -245,8 +245,8 @@ namespace SIL.FieldWorks.XWorks
 			Dispatcher.UIThread.RunJobs();
 			Assert.That(context.IsOpen, Is.True, "both staged into the one open fenced session");
 
-			// Focus loss on the surface triggers the autosave commit (one step covering both fields).
-			surface.CommitOpenSession();
+			// Focus loss on the view triggers the autosave commit (one step covering both fields).
+			detail.CommitOpenSession();
 			Dispatcher.UIThread.RunJobs();
 			Assert.That(context.IsOpen, Is.False, "the autosave committed the open session");
 
@@ -266,21 +266,21 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void AddParagraph_IsItsOwnImmediateUndoStep_AndReShowKeepsSiblingState()
 		{
-			var (model, context) = BuildSurface();
-			var surface = ShowSurface(model, context);
+			var (model, context) = BuildDetail();
+			var detail = ShowDetail(model, context);
 
 			// First: edit + commit the sibling Citation Form (its own step) by focus loss.
-			var citationBox = Find<TextBox>(surface.Root, "CitationForm.vern");
+			var citationBox = Find<TextBox>(detail.Root, "CitationForm.vern");
 			citationBox.Text = "casa-first";
 			Dispatcher.UIThread.RunJobs();
-			surface.CommitOpenSession();
+			detail.CommitOpenSession();
 			Dispatcher.UIThread.RunJobs();
 			Assert.That(CitationText, Is.EqualTo("casa-first"));
 			var undoDepthAfterCitation = UndoDepth();
 
 			// Now add a paragraph after index 0 via the per-row "+" affordance. The gesture commits
 			// immediately (its own step) and raises the re-show signal.
-			Find<Button>(surface.Root, "Discussion.Para.0.Add")
+			Find<Button>(detail.Root, "Discussion.Para.0.Add")
 				.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
 			Dispatcher.UIThread.RunJobs();
 
@@ -289,7 +289,7 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(string.IsNullOrEmpty(ParaText(1)), Is.True, "the inserted paragraph is empty");
 			Assert.That(ParaText(2), Is.EqualTo("Second paragraph."));
 			Assert.That(context.IsOpen, Is.False, "the structural gesture closed its own session");
-			Assert.That(surface.Rebuilds, Is.GreaterThanOrEqualTo(1), "the gesture raised the host re-show signal");
+			Assert.That(detail.Rebuilds, Is.GreaterThanOrEqualTo(1), "the gesture raised the host re-show signal");
 			Assert.That(UndoDepth(), Is.EqualTo(undoDepthAfterCitation + 1),
 				"the add is a SEPARATE single undo step, not folded into the earlier citation edit");
 
@@ -311,26 +311,26 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void CombinedGestures_TextEdit_Add_Style_ProduceOrderedDistinctUndoSteps()
 		{
-			var (model, context) = BuildSurface();
-			var surface = ShowSurface(model, context);
+			var (model, context) = BuildDetail();
+			var detail = ShowDetail(model, context);
 			var baseDepth = UndoDepth();
 
 			// 1) text edit on paragraph 1 + focus loss = one step.
-			var para1 = Find<TextBox>(surface.Root, "Discussion.Para.1");
+			var para1 = Find<TextBox>(detail.Root, "Discussion.Para.1");
 			para1.Text = "Second paragraph, edited.";
 			Dispatcher.UIThread.RunJobs();
-			surface.CommitOpenSession();
+			detail.CommitOpenSession();
 			Dispatcher.UIThread.RunJobs();
 			Assert.That(UndoDepth(), Is.EqualTo(baseDepth + 1), "the text edit is one step");
 
 			// 2) add a paragraph after 1 = a second step (immediate).
-			Find<Button>(surface.Root, "Discussion.Para.1.Add").RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+			Find<Button>(detail.Root, "Discussion.Para.1.Add").RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
 			Dispatcher.UIThread.RunJobs();
 			Assert.That(ParaCount, Is.EqualTo(3));
 			Assert.That(UndoDepth(), Is.EqualTo(baseDepth + 2), "the add is a second, separate step");
 
 			// 3) apply a paragraph style to paragraph 0 via the picker = a third step (immediate).
-			var styleButton = Find<Button>(surface.Root, "Discussion.Para.0.Style");
+			var styleButton = Find<Button>(detail.Root, "Discussion.Para.0.Style");
 			var flyout = (Flyout)styleButton.Flyout;
 			flyout.ShowAt(styleButton);
 			Dispatcher.UIThread.RunJobs();

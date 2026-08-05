@@ -13,7 +13,7 @@ namespace SIL.FieldWorks.XWorks
 	/// <summary>
 	/// <c>DTMenuHandler.OnDataTreeMove</c> (message="DataTreeMove") adds a
 	/// <c>TreeCombo</c> to <c>CurrentSlice.Control</c> and drops a popup tree on it. On the Avalonia
-	/// surface the command target is the HIDDEN, detached, off-screen adapter DataTree, so that combo
+	/// the command target is the HIDDEN, detached, off-screen adapter DataTree, so that combo
 	/// would never appear and the move could not complete.
 	///
 	/// DECISION: no suppression code is added because the command is NOT REACHABLE from the lexical
@@ -46,7 +46,7 @@ namespace SIL.FieldWorks.XWorks
 
 			Assert.That(offenders, Is.Empty,
 				"No Lexicon command may use message=\"DataTreeMove\": that handler (DTMenuHandler.OnDataTreeMove) "
-				+ "adds a TreeCombo to CurrentSlice.Control, which cannot work against the Avalonia surface's "
+				+ "adds a TreeCombo to CurrentSlice.Control, which cannot work against Avalonia's "
 				+ "hidden, detached adapter DataTree. If a Move command is genuinely needed here, route it "
 				+ "through a real chooser or suppress it on the Avalonia menu — do not add the TreeCombo path. "
 				+ "Offenders: " + string.Join(", ", offenders));
@@ -57,7 +57,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			// Sanity-anchor the conclusion: the only DataTreeMove declarations in the shipped configuration
 			// are the two Grammar affix-slot/template commands. If this set changes, the triage above must
-			// be revisited (a new surface might now reach the TreeCombo path).
+			// be revisited (a new consumer might now reach the TreeCombo path).
 			var configRoot = FwDirectoryFinder.GetCodeSubDirectory(@"Language Explorer\Configuration");
 			var ids = Directory.GetFiles(configRoot, "*.xml", SearchOption.AllDirectories)
 				.SelectMany(LoadCommands)
@@ -71,7 +71,7 @@ namespace SIL.FieldWorks.XWorks
 				"CmdDataTree-Move-POS-AffixSlot",
 				"CmdDataTree-Move-POS-AffixTemplate"
 			}), "DataTreeMove must remain confined to the Grammar affix commands; a new declaration means a "
-				+ "new surface might reach the unsupported TreeCombo path and the C1 triage must be redone.");
+				+ "new consumer might reach the unsupported TreeCombo path and the C1 triage must be redone.");
 		}
 
 		private static System.Collections.Generic.IEnumerable<XElement> LoadCommands(string path)

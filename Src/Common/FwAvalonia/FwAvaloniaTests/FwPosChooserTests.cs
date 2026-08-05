@@ -176,7 +176,7 @@ namespace FwAvaloniaTests
 			// Parity/guidance guard: the tree dropdown must ride on a Flyout anchored to the toggle
 			// button, never a free Popup living in the chooser's own tree. A free popup opens its own
 			// top-level and misplaces itself under fractional display scaling; a flyout positions itself
-			// in the trigger's surface. Assert the chooser owns NO Popup element, collapsed AND while the
+			// in the trigger's window. Assert the chooser owns NO Popup element, collapsed AND while the
 			// dropdown is open (the flyout's overlay is not a logical child of the chooser).
 			var (chooser, window, _, _) = Show();
 			window.UpdateLayout();

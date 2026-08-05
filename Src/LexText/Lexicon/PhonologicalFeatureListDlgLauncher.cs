@@ -44,7 +44,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		{
 			// New-UI gate: in New mode launch the Avalonia phonological-feature chooser (the
 			// LCModel-free FwFeatureStructureEditor hosted over OK/Cancel); Legacy mode keeps the WinForms
-			// PhonologicalFeatureChooserDlg (incl. its rule-constraint polarity surface, used from the rule editor).
+			// PhonologicalFeatureChooserDlg (incl. its rule-constraint polarity UI, used from the rule editor).
 			var uiMode = m_propertyTable.GetStringProperty("UIMode", null);
 			if (SIL.FieldWorks.Common.FwUtils.UIModeGates.ShouldUseAvaloniaUI(uiMode))
 			{

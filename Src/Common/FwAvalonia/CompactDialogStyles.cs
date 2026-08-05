@@ -17,7 +17,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 	/// roomy Fluent defaults. Applied once by <see cref="AvaloniaDialogHost"/> to every hosted dialog
 	/// body, so EVERY dialog shown through the host inherits it automatically — new dialogs need no
 	/// per-dialog density work. Scoped to the dialog's control subtree (added to its <c>Styles</c>), so
-	/// it never affects the detail/table surfaces, which own their own density (<see cref="FwAvaloniaDensity"/>).
+	/// it never affects the detail/table views, which own their own density (<see cref="FwAvaloniaDensity"/>).
 	///
 	/// AUTHORITATIVE SOURCE: the same density setters now also live in <c>DialogTheme.axaml</c> (applied by
 	/// <c>DialogThemeBootstrap.Apply</c> in every dialog view ctor), so the density renders in the headless

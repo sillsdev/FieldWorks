@@ -24,7 +24,7 @@
 		     via IsCancel) plus the optional Help, so the strip never reads as an empty placeholder.
 		     EXCEPT in two-stage auxiliary mode (HasAuxiliarySelection): picking a result is stage 1, and PART_OkButton
 		     below commits stage 2 (gated on both selections). For single-stage consumers the code-behind REMOVES
-		     PART_OkButton from the tree entirely so the commit-on-select surface stays byte-identical. -->
+		     PART_OkButton from the tree entirely so the commit-on-select UI stays byte-identical. -->
 		<!-- TabIndex=1 pushes the button strip AFTER the content in tab order; it is declared
 		     first only so DockPanel docks it to the bottom. Content stays at the default TabIndex 0. -->
 		<StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" TabIndex="1"

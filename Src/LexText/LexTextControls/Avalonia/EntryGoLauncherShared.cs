@@ -132,7 +132,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <summary>
 		/// Builds the writing-system presentation spec for the search box from the DEFAULT VERNACULAR writing
 		/// system — the parity contract for the legacy <c>BaseGoDlg</c>'s vernacular <c>FwTextBox</c>: the ws's
-		/// default font (<c>DefaultFontName</c>, the same per-ws font derivation the detail surface's value rows
+		/// default font (<c>DefaultFontName</c>, the same per-ws font derivation the detail view's value rows
 		/// use), its right-to-left script flag, and a focus callback that activates the ws's keyboard (the legacy
 		/// <c>EditingHelper.SetKeyboardForWs</c> behavior). Internal so the derivation is unit-testable against a
 		/// real cache.
@@ -147,7 +147,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		}
 
 		// The per-ws typography spec (font family + right-to-left) shared by the search box and the matching
-		// list's column specs — the same DefaultFontName derivation the detail surface's value rows use.
+		// list's column specs — the same DefaultFontName derivation the detail view's value rows use.
 		private static EntryGoSearchFieldSpec FieldSpecFor(CoreWritingSystemDefinition ws)
 		{
 			return new EntryGoSearchFieldSpec

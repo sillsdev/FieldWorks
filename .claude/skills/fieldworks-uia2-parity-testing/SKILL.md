@@ -1,6 +1,6 @@
 ---
 name: fieldworks-uia2-parity-testing
-description: "Design or review FieldWorks UI automation and accessibility tests: UIA2, FlaUI, Appium, WinAppDriver, Avalonia.Headless, keyboard, focus, IME, and automation-id strategy. Use whenever a task adds, changes, or evaluates automated UI tests or accessibility/workflow parity claims for WinForms or Avalonia surfaces — including deciding whether a test belongs in the headless or desktop environment."
+description: "Design or review FieldWorks UI automation and accessibility tests: UIA2, FlaUI, Appium, WinAppDriver, Avalonia.Headless, keyboard, focus, IME, and automation-id strategy. Use whenever a task adds, changes, or evaluates automated UI tests or accessibility/workflow parity claims for WinForms or Avalonia views — including deciding whether a test belongs in the headless or desktop environment."
 ---
 
 # FieldWorks UIA2 Parity Testing
@@ -66,7 +66,7 @@ when stock peers do not expose the required patterns.
   accessibility behavior.
 - Automation selectors rely on localized labels when stable IDs are
   available or required.
-- IME coverage claimed without a real text editor/control surface and
+- IME coverage claimed without a real text-editor control and
   input-method evidence. (IME composition/commit is a known open gap for
   rich-text scope — do not let a checkbox claim it implicitly.)
 - Sleep-based waits instead of event-driven synchronization.

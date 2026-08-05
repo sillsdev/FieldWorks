@@ -374,7 +374,7 @@ namespace SIL.FieldWorks.XWorks
 				NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
 					m_entry.CitationForm.set_String(Cache.DefaultVernWs,
 						TsStringUtils.MakeString("raced", Cache.DefaultVernWs)));
-				Assert.That(refreshes, Is.EqualTo(0), "held while the surface's own session is open");
+				Assert.That(refreshes, Is.EqualTo(0), "held while the view's own session is open");
 				Assert.That(queued, Is.Empty, "a held refresh is pending, not scheduled");
 
 				editing = false;
@@ -404,7 +404,7 @@ namespace SIL.FieldWorks.XWorks
 						TsStringUtils.MakeString("sense-level", Cache.DefaultAnalWs)));
 
 				Assert.That(refreshes, Is.GreaterThanOrEqualTo(1),
-					"a change to an object OWNED by the displayed entry reaches the surface through the host's predicate");
+					"a change to an object OWNED by the displayed entry reaches the view through the host's predicate");
 			}
 		}
 

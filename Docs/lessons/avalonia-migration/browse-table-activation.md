@@ -29,10 +29,10 @@ wiring in the base?
 ## What failed or was retired
 
 The dormant browse view, host, renderer, row/column adapters, bulk-edit bar,
-configuration and dialog surfaces, clerk adapters, product wiring, and their
-tests were removed. The two-file activation commit no longer has a surface to
+configuration and dialog code, clerk adapters, product wiring, and their
+tests were removed. The two-file activation commit no longer has a view to
 activate and directly conflicts with the accepted current-base decision that a
-future browse surface return as a reachable whole.
+future browse table return as a reachable whole.
 
 ## Durable lessons
 

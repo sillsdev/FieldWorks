@@ -15,7 +15,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Seams
 	///
 	/// Fidelity decision: the shared format IS the existing <c>"TsString"</c> clipboard format —
 	/// the same one native-Views copy/paste uses, not a new one — so Avalonia and native-Views
-	/// surfaces round-trip multi-WS rich text bidirectionally during coexistence. What does NOT round-trip:
+	/// views round-trip multi-WS rich text bidirectionally during coexistence. What does NOT round-trip:
 	/// - embedded-object runs (ORCs: pictures, footnotes, object links) reference objects in the source
 	///   context; the text and properties survive but the object reference is not resolvable outside it;
 	/// - external (non-FieldWorks) consumers only see the plain-text format — WS/style metadata drops;
@@ -47,7 +47,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Seams
 	/// <summary>
 	/// The shared clipboard seam. The product implementation (<c>FwTsStringClipboard</c> in
 	/// xWorks) speaks the legacy <c>"TsString"</c> + <c>UnicodeText</c> OS clipboard formats so legacy
-	/// native-Views surfaces and Avalonia surfaces read each other's copies; this layer stays
+	/// the native-Views and Avalonia UIs read each other's copies; this layer stays
 	/// LCModel-free so Avalonia controls can consume it directly.
 	/// </summary>
 	public interface IFwClipboard

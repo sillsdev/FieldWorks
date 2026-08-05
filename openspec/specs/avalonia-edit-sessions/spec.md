@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Define the edit-session boundary for editable Avalonia surfaces: when edits are
+Define the edit-session boundary for editable Avalonia views: when edits are
 fenced into an LCModel unit of work, who owns the authoritative contract, and
 where lighter draft state is acceptable instead.
 ## Requirements
@@ -25,8 +25,8 @@ The authoritative edit-session contract for migrated lexical editing SHALL remai
 
 ### Requirement: Simple non-persistent dialogs may use lighter draft state
 
-Simple non-persistent dialogs or preview-only surfaces SHALL be allowed to use lighter screen-local draft state when they do not commit directly to LCModel and do not participate in migrated lexical edit-session guarantees.
+Simple non-persistent dialogs or preview-only views SHALL be allowed to use lighter screen-local draft state when they do not commit directly to LCModel and do not participate in migrated lexical edit-session guarantees.
 
 #### Scenario: Preview host avoids live edit session
-- **WHEN** a preview host or sample-data surface renders an editor without a live project cache
+- **WHEN** a preview host or sample-data view renders an editor without a live project cache
 - **THEN** it MAY use staged or sample draft state without opening a live LCModel edit session

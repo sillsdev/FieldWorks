@@ -11,7 +11,7 @@ lesson against the current tree and current product behavior.
 
 | Area | Use when working on |
 | --- | --- |
-| [Avalonia migration](avalonia-migration/README.md) | WinForms-to-Avalonia migration, coexistence, detail surfaces, rule editors, interlinear editing, browse tables, activation, parity, and retirement |
+| [Avalonia migration](avalonia-migration/README.md) | WinForms-to-Avalonia migration, coexistence, detail views, rule editors, interlinear editing, browse tables, activation, parity, and retirement |
 
 ## Adding lessons
 

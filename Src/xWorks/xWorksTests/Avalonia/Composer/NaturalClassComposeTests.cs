@@ -11,9 +11,9 @@ using SIL.LCModel.Infrastructure;
 namespace SIL.FieldWorks.XWorks
 {
 	/// <summary>
-	/// Groundwork for the rule-formula editor (a follow-up surface). Despite the composer
+	/// Groundwork for the rule-formula editor (a follow-up tool). Despite the composer
 	/// machinery proven here, the tool-level flip (naturalClassedit) stays gated off via
-	/// EditSurfaceRegistry.Phase1FollowUpSurfaceTools — this file describes what is actually
+	/// UIFrameworkRegistry.Phase1FollowUpTools — this file describes what is actually
 	/// proven, not the tool's live state.
 	///
 	/// The natural-class editor (tool `naturalClassedit`). A PhNCFeatures's Features slice is unclaimed

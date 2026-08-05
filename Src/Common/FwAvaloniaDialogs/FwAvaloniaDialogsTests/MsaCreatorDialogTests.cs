@@ -21,7 +21,7 @@ namespace FwAvaloniaDialogsTests
 	/// legacy MsaCreatorDlg in New-UI mode. The dialog is essentially the LCModel-free MSAGroupBox hosted over the
 	/// entry's read-only context (lexical entry + senses); it seeds the box from the existing MSA / morph type, has
 	/// NO OK gate (like the legacy dialog), and snapshots the box's FwSandboxMsa on OK. Runtime proof on a realized
-	/// headless surface, with per-stage PNGs for subjective visual review.
+	/// headless view, with per-stage PNGs for subjective visual review.
 	/// </summary>
 	[TestFixture]
 	public class MsaCreatorDialogTests

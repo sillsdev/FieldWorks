@@ -24,10 +24,10 @@ namespace SIL.FieldWorks.XWorks
 {
 	/// <summary>
 	/// The first editable slice runs through real LCModel seams: a fenced edit
-	/// session whose commit is ONE step on the single global undo stack legacy surfaces share
+	/// session whose commit is ONE step on the single global undo stack legacy views share
 	/// (cross-framework Ctrl+Z by construction), cancel rolls everything back, and the validation
 	/// seam gates empty lexeme forms. The refresh controller follows the real
-	/// PropChanged bus, holding refreshes while this surface's own session is open.
+	/// PropChanged bus, holding refreshes while this view's own session is open.
 	/// </summary>
 	[TestFixture]
 	public class DetailEditContextEditingTests : MemoryOnlyBackendProviderTestBase
@@ -60,7 +60,7 @@ namespace SIL.FieldWorks.XWorks
 				"test/" + field, field, field, null,
 				SIL.FieldWorks.Common.FwAvalonia.Detail.DetailFieldKind.Text,
 				SIL.FieldWorks.Common.FwAvalonia.ViewDefinition.EditorClassification.Known,
-				null, null, SIL.FieldWorks.Common.FwAvalonia.ViewDefinition.SurfaceRouting.Product,
+				null, null, SIL.FieldWorks.Common.FwAvalonia.ViewDefinition.HostRouting.Product,
 				null, null, null);
 
 		[Test]
@@ -77,7 +77,7 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(LexemeText, Is.EqualTo("perro"));
 			Assert.That(GlossText, Is.EqualTo("dog"));
 
-			// One global undo step covers both fields, on the same action handler legacy surfaces use.
+			// One global undo step covers both fields, on the same action handler legacy views use.
 			Assert.That(Cache.ActionHandlerAccessor.CanUndo(), Is.True);
 			Cache.ActionHandlerAccessor.Undo(); // one undo = the whole detail view edit
 			Assert.That(LexemeText, Is.EqualTo("casa"), "one undo reverts every field of the session");
@@ -136,7 +136,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 
 			Assert.That(Cache.ActionHandlerAccessor.CanUndo(), Is.True,
-				"the rich commit lands on the same global undo stack legacy surfaces use");
+				"the rich commit lands on the same global undo stack legacy views use");
 			Cache.ActionHandlerAccessor.Undo();
 			Assert.That(LexemeText, Is.EqualTo("casa"),
 				"one undo reverts the whole rich commit in one shared step");
@@ -332,7 +332,7 @@ namespace SIL.FieldWorks.XWorks
 						TsStringUtils.MakeString("edited elsewhere", Cache.DefaultVernWs)));
 
 				Assert.That(refreshes, Is.GreaterThanOrEqualTo(1),
-					"a legacy-side edit to the displayed entry must reach the Avalonia surface through the real PropChanged bus");
+					"a legacy-side edit to the displayed entry must reach the Avalonia view through the real PropChanged bus");
 			}
 		}
 
@@ -366,7 +366,7 @@ namespace SIL.FieldWorks.XWorks
 				NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
 					m_entry.CitationForm.set_String(Cache.DefaultVernWs,
 						TsStringUtils.MakeString("raced", Cache.DefaultVernWs)));
-				Assert.That(refreshes, Is.EqualTo(0), "refreshes are held while the surface's own session is open");
+				Assert.That(refreshes, Is.EqualTo(0), "refreshes are held while the view's own session is open");
 
 				// The production completion path (RecordEditView.OnAvaloniaDetailEditCompleted):
 				// drop the held delivery and request ONE coalesced refresh covering both the
@@ -1146,7 +1146,7 @@ namespace SIL.FieldWorks.XWorks
 				SIL.FieldWorks.Common.FwAvalonia.Detail.DetailFieldKind.Text,
 				SIL.FieldWorks.Common.FwAvalonia.ViewDefinition.EditorClassification.Known,
 				"ReversalEntriesEditor", null,
-				SIL.FieldWorks.Common.FwAvalonia.ViewDefinition.SurfaceRouting.Product, null, null, null);
+				SIL.FieldWorks.Common.FwAvalonia.ViewDefinition.HostRouting.Product, null, null, null);
 			var analTag = Cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Id;
 			var entryByWsKey = new Dictionary<string, IReversalIndexEntry> { [analTag] = riEntry };
 			var reversalContext = new ReversalDetailEditContext(Cache, composed.EditContext, entryByWsKey);
@@ -2401,7 +2401,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 	}
 
-	/// <summary>The cross-surface DnD payloads round-trip through OS data objects.</summary>
+	/// <summary>The cross-framework DnD payloads round-trip through OS data objects.</summary>
 	[TestFixture]
 	public class FwDragDropDataTests : MemoryOnlyBackendProviderTestBase
 	{

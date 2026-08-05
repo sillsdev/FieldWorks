@@ -63,7 +63,7 @@ namespace SIL.FieldWorks.XWorks
 
 		private static DetailField Field(string field) => new DetailField(
 			"test/" + field, field, field, null, DetailFieldKind.Text, EditorClassification.Known,
-			null, null, SurfaceRouting.Product, null, null, null);
+			null, null, HostRouting.Product, null, null, null);
 
 		[Test]
 		public void TrySetText_Gloss_WhenNoSense_IsRejected()

@@ -105,7 +105,7 @@ namespace FwAvaloniaTests
 
 		private static DetailField RtlField() => new DetailField(
 			"LexEntry/x/#0", "Lexeme Form", "Form", "vernacular", DetailFieldKind.Text,
-			EditorClassification.Known, "RtlEditor", null, SurfaceRouting.Product,
+			EditorClassification.Known, "RtlEditor", null, HostRouting.Product,
 			new List<DetailWsValue> { new DetailWsValue("ar", ArabicHouse, "Scheherazade New", 0, rightToLeft: true, wsTag: "ar") },
 			null, null);
 
@@ -146,7 +146,7 @@ namespace FwAvaloniaTests
 			const string mixed = "abc \u05D0\u05D1\u05D2 123";
 			var field = new DetailField(
 				"LexEntry/x/#0", "Lexeme Form", "Form", "vernacular", DetailFieldKind.Text,
-				EditorClassification.Known, "MixedEditor", null, SurfaceRouting.Product,
+				EditorClassification.Known, "MixedEditor", null, HostRouting.Product,
 				new List<DetailWsValue>
 				{
 					new DetailWsValue("ar", mixed, "Scheherazade New", 0, rightToLeft: true, wsTag: "ar")
@@ -181,7 +181,7 @@ namespace FwAvaloniaTests
 			const string mixed = "abc \u05D0\u05D1\u05D2 xyz";
 			var field = new DetailField(
 				"LexEntry/x/#0", "Lexeme Form", "Form", "vernacular", DetailFieldKind.Text,
-				EditorClassification.Known, "MixedArrowEditor", null, SurfaceRouting.Product,
+				EditorClassification.Known, "MixedArrowEditor", null, HostRouting.Product,
 				new List<DetailWsValue>
 				{
 					new DetailWsValue("ar", mixed, "Scheherazade New", 0, rightToLeft: true, wsTag: "ar")
@@ -215,7 +215,7 @@ namespace FwAvaloniaTests
 			const string value = "(\u05d0\u05d1\u05d2)";
 			var field = new DetailField(
 				"LexEntry/x/#0", "Lexeme Form", "Form", "vernacular", DetailFieldKind.Text,
-				EditorClassification.Known, "RtlParenEditor", null, SurfaceRouting.Product,
+				EditorClassification.Known, "RtlParenEditor", null, HostRouting.Product,
 				new List<DetailWsValue>
 				{
 					new DetailWsValue("ar", value, "Scheherazade New", 0, rightToLeft: true, wsTag: "ar")
@@ -240,7 +240,7 @@ namespace FwAvaloniaTests
 			var context = new FakeDetailEditContext();
 			var field = new DetailField(
 				"LexEntry/x/#0", "Lexeme Form", "Form", "vernacular", DetailFieldKind.Text,
-				EditorClassification.Known, "RtlNumbersEditor", null, SurfaceRouting.Product,
+				EditorClassification.Known, "RtlNumbersEditor", null, HostRouting.Product,
 				new List<DetailWsValue>
 				{
 					new DetailWsValue("ar", value, "Scheherazade New", 0, rightToLeft: true, wsTag: "ar")

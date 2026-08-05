@@ -53,7 +53,7 @@ skill files changed.
 - Change: `openspec/changes/legacy-screenshot-capture/` (relocated to the `phase1-docs` branch — not
   present on `phase1-base`, since it supports the `Docs/migration/` effort that also lives there).
   Produced the legacy WinForms screenshots that back the `Docs/migration/` docs, after UIA2
-  (winforms-mcp) proved unable to navigate FLEx's custom-drawn surfaces.
+  (winforms-mcp) proved unable to navigate FLEx's custom-drawn views.
 - Built two non-UIA capture routes (details + recipes folded into the `fieldworks-winapp` skill):
   (1) **launch-per-tool** — `FieldWorks.exe "silfw://…&tool=<toolId>"` (guid-less) +
   PrintWindow; `scripts/migration-capture/Capture-LegacyTools.ps1` (also on `phase1-docs`) captured
@@ -74,7 +74,7 @@ skill files changed.
   JIRA pickup. (7) The restored test base already holds an undoable task open - make model writes
   directly, never inside a nested NonUndoableUnitOfWorkHelper ("Nested tasks are not supported").
 - Before/after pipeline: each migration doc shows legacy "before" + Avalonia "after" of the SAME
-  seeded data; "before" from this harness/script, "after" from the surface's
+  seeded data; "before" from this harness/script, "after" from the conversion's
   fieldworks-semantic-render-parity visual test; both attach to the JIRA ticket (Docs/migration/_TEMPLATE.md).
 - Skill files changed: `fieldworks-winapp/SKILL.md` (recipes + UIA limits + before/after + JIRA),
   `fieldworks-semantic-render-parity/SKILL.md` (the Avalonia "after" evidence role), this ledger.
@@ -86,11 +86,11 @@ skill files changed.
   screen per UI primitive (table/detail-editor/tree+multi-select/tabs/owned-form/search-list),
   document every other deferred WinForms screen under `Docs/migration/` (md + live-FLEx PNG +
   parity checklist + gotchas) and file a JIRA, then back the screen out (remove View/ViewModel/tests +
-  unwire its call site). XL surfaces in their own openspec changes split to follow-up PRs
+  unwire its call site). XL migrations in their own openspec changes split to follow-up PRs
   instead of backing out. Now encoded in SKILL.md "Phase-1 Landing Strategy" +
   migration-checklist.md "Phase 0" + `Docs/migration/{README,_TEMPLATE}.md`.
 - Learned: (1) **`UIMode` defaults `"Legacy"`** (Settings.Designer.cs) and every Avalonia
-  surface gates on it, so "not breaking anything" is structural — back-out is for reviewability,
+  view gates on it, so "not breaking anything" is structural — back-out is for reviewability,
   not safety; do it aggressively. (2) **Verify wiring from call sites, never from an Explore
   summary** — an Explore sweep falsely flagged FilterFor/DateRange/FindReplace/SpecialChar as
   "unwired spec-only" when three were instantiated in `RecordBrowseView.cs`; only SpecialChar +
@@ -222,7 +222,7 @@ doc this entry cited (`media-pictures-test-research.md`) was removed with the re
 **Reverted.** This browse-table rewrite was later removed from `phase1-base` in review (see
 SKILL.md "Phase-1 Landing Strategy"); none of `BrowseCellRenderer`, `RegionRichTextAdapter`,
 `BrowseViewer.MakeColumnSorter`/`MakeColumnFilter` exist in the tree today. The legacy
-`BrowseViewer`/`RecordBrowseView` is the current surface for browse tools — there is no Avalonia
+`BrowseViewer`/`RecordBrowseView` is the current UI for browse tools — there is no Avalonia
 browse gate on this branch (control-exemplar-map.md §3.6). Treat the architecture below as
 historical design record, not current behavior; the durable headless-integration-harness
 requirements it fed are synced to `openspec/specs/lexical-edit-parity-automation/spec.md`.
@@ -230,7 +230,7 @@ requirements it fed are synced to `openspec/specs/lexical-edit-parity-automation
   `headless-integration-harness.md`) — change folder removed from the tree with the rest of the
   branch's research/audit markdown; record in git history.
 - Migrated (at the time, later reverted as above): the lexicon Entries table off the native C++ Views rendering for its
-  surface — owned WS-aware cell renderer (`BrowseCellRenderer`), rich-cell value
+  table -- owned WS-aware cell renderer (`BrowseCellRenderer`), rich-cell value
   source via `RegionRichTextAdapter.FromTsString`, and clerk-routed sort/filter
   (`BrowseViewer.MakeColumnSorter`/`MakeColumnFilter` → `Clerk.OnSorterChanged`/
   `OnChangeFilter`) replacing the lossy string mirror and the client-side filter
@@ -243,7 +243,7 @@ requirements it fed are synced to `openspec/specs/lexical-edit-parity-automation
   A read-only grid needs **neither the C++ engine** (cell/sort/filter extraction
   runs through the managed `CollectorEnv : IVwEnv`, no `RootBox`) **nor live
   verification** (real `RecordClerk` narrowing is provable headlessly). Two-layer
-  harness: surface-workflow drivers in an Avalonia-headless assembly + real-clerk
+  harness: UI-workflow drivers in an Avalonia-headless assembly + real-clerk
   layer in `xWorksTests`. Gotchas: never put `[AvaloniaTestApplication]` in
   `xWorksTests` (~1400 tests share the host); the restored test base holds the
   undoable task open (no nested `NonUndoableUnitOfWorkHelper`); `OnChangeFilter`
@@ -259,7 +259,7 @@ requirements it fed are synced to `openspec/specs/lexical-edit-parity-automation
   in git history.
 - Migrated: first Avalonia lexical-edit region — typed IR pipeline, region
   composer, owned field controls (`FwMultiWsTextField`, `FwOptionChooser`,
-  menus/flyouts), plugin registry, surface selection service, seam
+  menus/flyouts), plugin registry, framework selection service, seam
   contracts, Path 3 parity harness.
 - Key lessons now encoded: boundary above DataTree (don't extract
   internals); owned dense controls over stock grids; explicit

@@ -109,17 +109,17 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 	}
 
 	/// <summary>
-	/// Product-vs-preview routing for a node that can appear on a globally switchable surface.
+	/// Product-vs-preview routing for a node that can appear under either UI framework.
 	/// <c>Inherit</c> defers to the detail-view/host decision; <c>Product</c> is wired through real
 	/// LCModel-backed contracts; <c>Preview</c> is preview-host/sample only; <c>Unsupported</c> renders a
 	/// resource-backed unsupported state instead of pretending to be a product editor.
 	/// </summary>
-	public enum SurfaceRouting
+	public enum HostRouting
 	{
 		/// <summary>Defer to the enclosing detail-view/host routing decision (default).</summary>
 		Inherit,
 
-		/// <summary>Product surface: must use real edit-session/domain contracts.</summary>
+		/// <summary>Product host: must use real edit-session/domain contracts.</summary>
 		Product,
 
 		/// <summary>Preview/sample only: detached DTO models are allowed.</summary>
@@ -365,7 +365,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 			IReadOnlyList<ViewNode> children,
 			string localizationKey = null,
 			string automationId = null,
-			SurfaceRouting routing = SurfaceRouting.Inherit,
+			HostRouting routing = HostRouting.Inherit,
 			bool boldEmphasis = false,
 			int fontScalePercent = 0,
 			string menuId = null,
@@ -463,7 +463,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 		/// <summary>
 		/// Optional localization/resource key for this node's user-facing text. Null when the
 		/// source carries no key; the label is then treated as a literal. Carried so a globally switchable
-		/// surface can resolve localized strings without re-deriving them from incidental layout text.
+		/// view can resolve localized strings without re-deriving them from incidental layout text.
 		/// </summary>
 		public string LocalizationKey { get; }
 
@@ -473,8 +473,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 		/// </summary>
 		public string AutomationId { get; }
 
-		/// <summary>Product-vs-preview routing for this node. Defaults to <see cref="SurfaceRouting.Inherit"/>.</summary>
-		public SurfaceRouting Routing { get; }
+		/// <summary>Product-vs-preview routing for this node. Defaults to <see cref="HostRouting.Inherit"/>.</summary>
+		public HostRouting Routing { get; }
 
 		/// <summary>Bold emphasis from the part's &lt;properties&gt;&lt;bold value='on'/&gt; (e.g. the lexeme form).</summary>
 		public bool BoldEmphasis { get; }
@@ -633,7 +633,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 				sb.Append($" | loc={node.LocalizationKey}");
 			if (!string.IsNullOrEmpty(node.AutomationId))
 				sb.Append($" | autoId={node.AutomationId}");
-			if (node.Routing != SurfaceRouting.Inherit)
+			if (node.Routing != HostRouting.Inherit)
 				sb.Append($" | routing={node.Routing}");
 			// Conditional nodes are new (never in pre-existing baselines), so the condition summary
 			// rides the snapshot — JSON round-trip equality fails if condition metadata is dropped.

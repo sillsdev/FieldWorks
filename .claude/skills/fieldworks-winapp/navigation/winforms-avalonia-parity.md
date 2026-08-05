@@ -1,8 +1,8 @@
 # WinForms ↔ Avalonia parity capture
 
-Use this route to establish **functional and visual parity** between a legacy WinForms surface and its
+Use this route to establish **functional and visual parity** between a legacy WinForms UIrface and its
 Avalonia replacement: drive the live WinForms app through winforms-mcp for the "before", and render the
-Avalonia surface headless for the "after", into one folder for side-by-side review.
+Avalonia UI headless for the "after", into one folder for side-by-side review.
 
 ## When to use
 
@@ -23,7 +23,7 @@ a dialog, a browse table. The WinForms side needs the live app (this skill); the
 
 ### Before — WinForms (live, via MCP)
 1. `winforms_launch_app` → `path = <repo>\Output\Debug\FieldWorks.exe`; keep the `pid`.
-2. Open the project (`project-loading.md`) and navigate to the surface (e.g. Words area → Analyses tool →
+2. Open the project (`project-loading.md`) and navigate to the target UI (e.g. Words area → Analyses tool →
    select a wordform that HAS an analysis). `winforms_get_element_tree` first to confirm the target.
 3. `winforms_take_screenshot` (pass the `pid` so the right window is captured via `PrintWindow`) →
    save as the legacy baseline (`visual.legacy.png` in the parity bundle; see `screenshot-evidence.md`).
@@ -32,9 +32,9 @@ a dialog, a browse table. The WinForms side needs the live app (this skill); the
    "MCP Selection").
 
 ### After — Avalonia (headless, no app)
-The Avalonia surfaces render through the Skia headless harness in tests, **not** through this MCP:
+The Avalonia views render through the Skia headless harness in tests, **not** through this MCP:
 - Reuse / add a `[AvaloniaTest]` that builds the control and calls
-  `DialogSnapshot.Capture(surface, "<Surface>-<NN>-<stage>")`
+  `DialogSnapshot.Capture(view, "<Prefix>-<NN>-<stage>")`
   (`Src/Common/FwAvalonia/FwAvaloniaTests/Visual/DialogSnapshot.cs`) → `Output/Snapshots/<name>.png`,
   paired with `DialogLayoutAssert.AssertNoCrowding(root)`.
 - Run it scoped: `./test.ps1 -SkipNative -TestProject Src/Common/FwAvalonia/FwAvaloniaTests -TestFilter "FullyQualifiedName~<YourVisualTest>"`.
@@ -42,7 +42,7 @@ The Avalonia surfaces render through the Skia headless harness in tests, **not**
 
 ## Judging parity (record both, separately)
 
-- **Functional**: does the Avalonia surface support the same gestures and write the same data? This is the
+- **Functional**: does the Avalonia view support the same gestures and write the same data? This is the
   strong, code-verifiable claim (headless workflow tests + the WinForms walk above).
 - **Visual**: does it *look* similar? Only the live WinForms capture is the reference — a code
   reconstruction is not evidence. Note matches and divergences (labels, line set, colors, RTL policy)

@@ -8,7 +8,7 @@ Human review: PR #964
 
 ## Question tested
 
-How can FieldWorks replace native Views and WinForms surfaces incrementally
+How can FieldWorks replace native Views and WinForms UI incrementally
 without landing a broad, dormant, weakly evidenced alternate application?
 
 ## Observations
@@ -16,16 +16,16 @@ without landing a broad, dormant, weakly evidenced alternate application?
 - Extracting DataTree internals did not produce a clean migration boundary.
   The useful boundary sits above DataTree in typed view definitions, projected
   detail values, explicit edit contexts, and host selection.
-- A large derisk branch accumulated plans, infrastructure, product surfaces,
+- A large derisk branch accumulated plans, infrastructure, product views,
   and dormant code faster than reviewers could establish which paths were
   real, reachable, and parity-complete.
-- Call-site inspection disproved several summaries about whether surfaces were
+- Call-site inspection disproved several summaries about whether views were
   wired. Names, comments, task checkboxes, and agent reports were not reliable
   substitutes for following the product route.
 - Headless control tests proved useful mechanics but sometimes bypassed the
   real gesture, host, clerk, focus, or dialog route being claimed.
 - Current base retained reusable infrastructure and a small set of canonical
-  consumers, while deliberately removing unreachable or over-broad surfaces.
+  consumers, while deliberately removing unreachable or over-broad views.
 
 ## What failed or was retired
 
@@ -58,7 +58,7 @@ tasks and class layouts do not describe current product capability.
 ## Decision boundary
 
 These lessons constrain sequencing, evidence, reachability, and scope control.
-A human still chooses the product outcome, surface boundary, UX, controls,
+A human still chooses the product outcome, feature boundary, UX, controls,
 implementation architecture, and acceptable deferrals.
 
 ## Do not infer

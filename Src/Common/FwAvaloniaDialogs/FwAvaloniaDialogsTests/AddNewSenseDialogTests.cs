@@ -23,7 +23,7 @@ namespace FwAvaloniaDialogsTests
 	/// in New-UI mode. The view-model hosts a read-only citation form, an editable gloss FwMultiWsTextField (staged
 	/// into an in-memory edit context), and the LCModel-free MSAGroupBox; it gates OK on a non-empty gloss
 	/// (ksFillInGloss parity) and snapshots the per-WS gloss + the box's FwSandboxMsa on OK. Runtime proof on a
-	/// realized headless surface, with per-stage PNGs for subjective visual review.
+	/// realized headless view, with per-stage PNGs for subjective visual review.
 	/// </summary>
 	[TestFixture]
 	public class AddNewSenseDialogTests
@@ -44,7 +44,7 @@ namespace FwAvaloniaDialogsTests
 		{
 			var values = wsTags.Select(tag => new DetailWsValue(tag, string.Empty, wsTag: tag)).ToList();
 			return new DetailField(name, name, name, null, DetailFieldKind.Text,
-				default(EditorClassification), automationId, name, default(SurfaceRouting),
+				default(EditorClassification), automationId, name, default(HostRouting),
 				values, new List<DetailChoiceOption>(), null, isEditable: true);
 		}
 

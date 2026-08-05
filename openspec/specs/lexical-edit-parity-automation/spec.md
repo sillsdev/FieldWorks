@@ -8,7 +8,7 @@ render capture, triangulated bundles, and actionable failure artifacts.
 ## Requirements
 ### Requirement: Legacy WinForms behavior has layered baselines
 
-Before refactoring or replacing a Lexical Edit surface, the system SHALL have unit, integration, render, semantic, or UIA2 baseline coverage appropriate to the surface risk.
+Before refactoring or replacing a record-edit view, the system SHALL have unit, integration, render, semantic, or UIA2 baseline coverage appropriate to the risk.
 
 #### Scenario: Baseline plan exists before refactor
 - **WHEN** a refactor touches DataTree, SliceFactory, Slice, launchers, XMLViews table views, popup choosers, or RecordEditView hosting
@@ -62,12 +62,12 @@ Semantic snapshots SHALL normalize volatile values and key comparisons around st
 
 ### Requirement: Path 3 parity uses triangulated bundles
 
-Scenarios that judge visual fidelity for migrated Avalonia surfaces SHALL use a triangulated parity bundle rather than a single artifact lane.
+Scenarios that judge visual fidelity for migrated Avalonia views SHALL use a triangulated parity bundle rather than a single artifact lane.
 
 Each bundle SHALL contain:
 
 - a semantic snapshot keyed on stable node identity and binding,
-- visual evidence for the legacy WinForms surface and the Avalonia surface,
+- visual evidence for the legacy WinForms view and the Avalonia view,
 - an image diff or equivalent visual-variance artifact,
 - accessibility/workflow evidence for focus, invoke, popup reachability, and automation identity,
 - a failure summary classifying the mismatch by lane.

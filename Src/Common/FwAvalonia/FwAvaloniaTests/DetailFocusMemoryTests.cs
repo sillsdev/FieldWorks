@@ -30,10 +30,10 @@ namespace FwAvaloniaTests
 			{
 				new ViewNode("LexEntry/identity/#0", ViewNodeKind.Field, "Lexeme Form", null, "Form", "multistring",
 					EditorClassification.Known, "vernacular", ViewVisibility.Always, ViewExpansion.NotApplicable, false, null, null,
-					automationId: "LexemeFormEditor", routing: SurfaceRouting.Product),
+					automationId: "LexemeFormEditor", routing: HostRouting.Product),
 				new ViewNode("LexEntry/identity/#1", ViewNodeKind.Field, "Gloss", null, "Gloss", "multistring",
 					EditorClassification.Known, "analysis", ViewVisibility.Always, ViewExpansion.NotApplicable, false, null, null,
-					automationId: "GlossEditor", routing: SurfaceRouting.Product)
+					automationId: "GlossEditor", routing: HostRouting.Product)
 			},
 			new List<ViewDiagnostic>());
 
@@ -58,7 +58,7 @@ namespace FwAvaloniaTests
 				roots.Add(new ViewNode("LexEntry/identity/#" + i, ViewNodeKind.Field, "Field " + i, null,
 					"Form", "multistring", EditorClassification.Known, "vernacular",
 					ViewVisibility.Always, ViewExpansion.NotApplicable, false, null, null,
-					automationId: "Field" + i, routing: SurfaceRouting.Product));
+					automationId: "Field" + i, routing: HostRouting.Product));
 			}
 			var definition = new ViewDefinitionModel("LexEntry", "identity", "detail", roots,
 				new List<ViewDiagnostic>());
@@ -189,7 +189,7 @@ namespace FwAvaloniaTests
 		{
 			var field = new DetailField(stableId, "Lexeme Form", "Form", "vernacular",
 				DetailFieldKind.Text, EditorClassification.Known, /*automationId*/ null, null,
-				SurfaceRouting.Product,
+				HostRouting.Product,
 				new List<DetailWsValue> { new DetailWsValue("vern", "casa", wsTag: "vern") },
 				null, null);
 			var model = new DetailModel("LexEntry", "Normal",

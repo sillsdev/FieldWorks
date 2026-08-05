@@ -1,6 +1,6 @@
 ---
 name: fieldworks-winforms-to-avalonia-migration
-description: "End-to-end playbook for migrating any FieldWorks WinForms surface (DataTree slices, XMLViews browse/table, dialogs, choosers, launchers, shell panes) to Avalonia using the established region/seam architecture. Use whenever planning, implementing, or reviewing WinForms-to-Avalonia work — including seam extraction, region composition, owned controls, plugin editors, parity evidence, or retiring legacy surfaces — even if the request only says port, modernize, replace WinForms, or new Avalonia view. Also use after finishing a migration to run the retrospective step that folds new lessons back into these skills."
+description: "End-to-end playbook for migrating any FieldWorks WinForms UI (DataTree slices, XMLViews browse/table, dialogs, choosers, launchers, shell panes) to Avalonia using the established detail/seam architecture. Use whenever planning, implementing, or reviewing WinForms-to-Avalonia work — including seam extraction, region composition, owned controls, plugin editors, parity evidence, or retiring legacy UI — even if the request only says port, modernize, replace WinForms, or new Avalonia view. Also use after finishing a migration to run the retrospective step that folds new lessons back into these skills."
 ---
 
 # FieldWorks WinForms To Avalonia Migration
@@ -8,9 +8,9 @@ description: "End-to-end playbook for migrating any FieldWorks WinForms surface 
 This is the hub skill for the migration program. It tells you what
 architecture already exists (do not reinvent it), what order to work in,
 which companion skill to apply at each step, and how to keep this skill
-set current as more surfaces are migrated.
+set current as more of the UI is migrated.
 
-Before planning or reviewing a surface, read
+Before planning or reviewing a migration, read
 `Docs/lessons/avalonia-migration/README.md` and the cards matching its
 capabilities. Cards preserve constraints and failed assumptions, not an old
 implementation or authorization to restore it. Revalidate every observation
@@ -34,7 +34,7 @@ top) for the decision, the why, and the gotchas. Quick map:
 | --- | --- | --- |
 | Typed view-definition IR compiled from XML layouts | `Src/Common/FwAvalonia/ViewDefinition/ViewDefinitionModel.cs`, `XmlLayoutImporter.cs`, `ViewDefinitionCompiler.cs` | architecture-patterns.md §1 |
 | Detail model + composer (boundary sits *above* DataTree) | `Src/xWorks/Avalonia/Composer/DetailComposer.cs`, `Src/Common/FwAvalonia/Detail/DetailModel.cs`, `DetailModelProjector.cs` | §2 |
-| Explicit surface selection per host (`HostUiBehavior`) | `Src/Common/FwAvalonia/EditSurfaceSelectionService.cs` | §3 |
+| Explicit framework selection per host (`HostUiBehavior`) | `Src/Common/FwAvalonia/UIFrameworkSelectionService.cs` | §3 |
 | Owned dense controls, not stock property grids | `Src/Common/FwAvalonia/Detail/FwFieldControls.cs`, `FwOptionChooser.cs`, `DetailMenuFlyout.cs` | §4 |
 | Plugin registry for custom/legacy slice classes | `Src/xWorks/Avalonia/Plugins/SlicePlugins.cs` | §5 |
 | Seam contracts (edit session, undo, validation, scheduler, lifetime, refresh) | `Src/Common/FwAvalonia/Seams/` | `references/seam-catalog.md` |
@@ -48,9 +48,9 @@ Work through the phases in order. Copy
 `references/migration-checklist.md` into your task notes and check items
 off — it is the per-region definition of done.
 
-1. **Inventory and scope.** Identify the legacy surface, its entry points,
+1. **Inventory and scope.** Identify the legacy UI, its entry points,
    layouts/parts, custom slice classes, dialogs, and command wiring.
-   Produce a coverage map (surface × behavior × test status): map every
+   Produce a coverage map (UI x behavior x test status): map every
    control and dialog behavior through
    `references/control-exemplar-map.md` — it names the exemplar to copy
    for each, and its §3 gap register governs anything with no exemplar
@@ -80,9 +80,9 @@ off — it is the per-region definition of done.
    `references/parity-evidence.md` (semantic + visual + workflow evidence
    types). Apply `fieldworks-semantic-render-parity` and
    `fieldworks-uia2-parity-testing`. **Front-and-center: write headless
-   integration tests that walk the surface's real scenarios/workflows**
+   integration tests that walk the real scenarios/workflows**
    (filter → clear, select → detail follows, edit → refresh, navigate) via the
-   harness (architecture-patterns.md §13) — at the surface layer
+   harness (architecture-patterns.md §13) — at the view layer
    (`FwAvaloniaTests`) and, for domain claims like real list narrowing/undo, the
    real-clerk layer (`xWorksTests`). These replace deferred "live verification."
 8. **Localize.** Apply `fieldworks-localization-review`; field labels stay
@@ -100,8 +100,8 @@ off — it is the per-region definition of done.
 
 The program runs in two phases. **Phase 1** = high-value feature/bugfix-grade
 migrations behind the `UIMode` flag (default `"Legacy"` —
-`Src/Common/FwUtils/Properties/Settings.Designer.cs`; every Avalonia surface gates on
-`UIMode=New` via `EditSurfaceRegistry` + `EditSurfaceResolver`, so default
+`Src/Common/FwUtils/Properties/Settings.Designer.cs`; every Avalonia view gates on
+`UIMode=New` via `UIFrameworkRegistry` + `UIFrameworkResolver`, so default
 users see no change). **Phase 2** (`avalonia-end-game`) = net10 / multiplatform / shell
 conversion, gated until Phase-1 + tester burn-down complete.
 
@@ -126,7 +126,7 @@ branch reached ~864 files / +140k). Land it with this discipline:
    **`Docs/migration/` (including `_TEMPLATE.md`) lives on the separate, never-merged
    `phase1-docs` branch, not in the spine PR's checkout** — create it fresh there (or pull
    `_TEMPLATE.md` from that branch) rather than assuming it already exists in your working tree.
-3. **Split XL surfaces into their own follow-up PRs** rather than backing them out, when they
+3. **Split XL migrations into their own follow-up PRs** rather than backing them out, when they
    already live in isolated openspec changes/worktrees (e.g. `avalonia-rule-formula-editor`,
    `avalonia-interlinear-editor`). Keep shared composer infra in the spine PR.
 4. **Verify wiring from call sites, never from a summary.** Whether a dialog is wired (and
@@ -140,26 +140,26 @@ Re-implementers picking up a JIRA ticket: start from the named canonical screen 
 primitive, read its doc's parity checklist + gotchas, recover the backed-out stub from git
 history as a starting point, then run the normal per-region Workflow above.
 
-### Inert follow-up surfaces — historical caution and current gate
+### Inert follow-up tools -- historical caution and current gate
 
-A Phase-1 surface can be **inert**: its view code is present and compiled but the tool is
-deliberately *not registered*, so the resolver returns "not supported" and the surface falls
+A Phase-1 tool can be **inert**: its view code is present and compiled but the tool is
+deliberately *not registered*, so the resolver returns "not supported" and the tool falls
 back to legacy WinForms even under `UIMode=New`. Inert code is not proof that activation is
 small or safe; the retired follow-up PRs demonstrate why current reachability and evidence must
 be established afresh. This gate applies to
-**detail-editor tools only** — the browse table has no Avalonia surface or gate on this branch at
+**detail-editor tools only** — the browse table has no Avalonia implementation or gate on this branch at
 all (it was built and then removed; cite the legacy `BrowseViewer`, see
-control-exemplar-map.md §3.6). Two distinct gates exist and an active surface needs BOTH open:
+control-exemplar-map.md §3.6). Two distinct gates exist and a live tool needs BOTH open:
 
 - **Plugin registration** (does the slice *compose* on Avalonia): `SlicePlugins.RegisterBuiltins`
-  must `registry.Register(new <Surface>Plugin())`. The `LexemeEditorInventoryTests` census
+  must `registry.Register(new <Name>Plugin())`. The `LexemeEditorInventoryTests` census
   asserts the registered set *exactly*, so it fails until the class name is added/removed in step.
-- **Surface/tool gate** (does the tool's surface *resolve* to Avalonia): the tool name must be
+- **Tool gate** (does the tool *resolve* to Avalonia): the tool name must be
   registered as an entry in `LexiconFeatureCatalog.Features`
-  (this drives `EditSurfaceRegistry.DefaultSupportedTools`, which is built from the catalog,
+  (this drives `UIFrameworkRegistry.DefaultSupportedTools`, which is built from the catalog,
   *not* a hardcoded array — editing `DefaultSupportedTools` directly has no effect). Tools not yet
-  in the catalog stay listed in `EditSurfaceRegistry.Phase1FollowUpSurfaceTools` — the **inert
-  list**. Read that array to find every dormant surface.
+  in the catalog stay listed in `UIFrameworkRegistry.Phase1FollowUpTools` — the **inert
+  list**. Read that array to find every dormant tool.
 
 Activation is never a restoration recipe. Read the matching lesson card first,
 then characterize the current legacy route and design against the current tree.
@@ -205,7 +205,7 @@ all agree. Review catalog changes for user-visible Options rows or groups.
 ## Handoff
 
 State what is legacy baseline, what is extracted seam, what is Avalonia
-product surface, what each affected host does under the global switch, what
+product UI, what each affected host does under the global switch, what
 remains outside parity, and what you changed in this skill set during the
 retrospective.
 

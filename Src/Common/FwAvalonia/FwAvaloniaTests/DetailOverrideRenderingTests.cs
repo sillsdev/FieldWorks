@@ -17,10 +17,10 @@ namespace FwAvaloniaTests
 {
 	/// <summary>
 	/// advanced-entry-view (view layer): the per-field gear-menu commands work by changing the composed
-	/// model the surface renders — hiding a Never row, showing a non-empty IfData row, and reordering
+	/// model the detail view renders — hiding a Never row, showing a non-empty IfData row, and reordering
 	/// siblings. These headless tests prove the <see cref="DataTree"/> renders EXACTLY the
 	/// rows the (patched) model carries, in model order. The composer's filtering/reorder semantics are
-	/// covered in xWorksTests; here we prove the visible surface follows the model so the round trip is
+	/// covered in xWorksTests; here we prove the visible detail view follows the model so the round trip is
 	/// closed at the rendering edge.
 	/// </summary>
 	[TestFixture]
@@ -28,7 +28,7 @@ namespace FwAvaloniaTests
 	{
 		private static DetailField TextField(string id, string label)
 			=> new DetailField(id, label, label, null, DetailFieldKind.Text,
-				EditorClassification.Known, id, null, SurfaceRouting.Inherit,
+				EditorClassification.Known, id, null, HostRouting.Inherit,
 				new List<DetailWsValue> { new DetailWsValue("en", "value") },
 				null, null, isEditable: true, indent: 0, objectHvo: 1234);
 
@@ -50,7 +50,7 @@ namespace FwAvaloniaTests
 				.ToList();
 
 		[AvaloniaTest]
-		public void Surface_RendersOnlyTheRowsInTheModel()
+		public void DetailView_RendersOnlyTheRowsInTheModel()
 		{
 			// A model with "B" hidden (as a Never visibility override would drop it from compose) shows
 			// only A and C.
@@ -64,20 +64,20 @@ namespace FwAvaloniaTests
 		}
 
 		[AvaloniaTest]
-		public void Surface_RendersRowsInModelOrder_SoAReorderIsVisible()
+		public void DetailView_RendersRowsInModelOrder_SoAReorderIsVisible()
 		{
-			// The reorder override produces a model whose fields are in the new order; the surface must
+			// The reorder override produces a model whose fields are in the new order; the view must
 			// follow that order top-to-bottom.
 			var view = Render(TextField("c", "Gamma"), TextField("a", "Alpha"), TextField("b", "Beta"));
 
 			var order = RenderedLabelIds(view);
 			Assert.That(order.IndexOf("c.Label"), Is.LessThan(order.IndexOf("a.Label")));
 			Assert.That(order.IndexOf("a.Label"), Is.LessThan(order.IndexOf("b.Label")),
-				"rows render in model order, so a reordered model reorders the surface");
+				"rows render in model order, so a reordered model reorders the view");
 		}
 
 		// The applier (Layer 2 → Layer 3) is what the composer runs at CompileForObject: prove the
-		// patched IR the surface is built from carries the visibility/order the menu wrote, end to end
+		// patched IR the view is built from carries the visibility/order the menu wrote, end to end
 		// from the override operations to the model the composer would walk.
 		[Test]
 		public void Applier_AppliesVisibilityAndReorder_ToTheCompiledIR()

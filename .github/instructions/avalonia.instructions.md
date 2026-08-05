@@ -8,7 +8,7 @@ description: "Guidance for FieldWorks Avalonia modules and the shared Preview Ho
 
 ## Purpose & Scope
 - Provide a consistent way to **create, build, test, and preview** Avalonia UI modules in FieldWorks.
-- Applies to FieldWorks' Avalonia modules (the `FwAvalonia`/`FwAvaloniaDialogs` lexical-edit surfaces and their Preview Host) and future Avalonia work.
+- Applies to FieldWorks' Avalonia modules (`FwAvalonia`, `FwAvaloniaDialogs`, and their Preview Host) and future Avalonia work.
 - This file covers mechanics (build, layout, logging, preview). The
   migration playbook, decided architecture patterns, and parity/evidence
   rules live in the skills under `.claude/skills/` — start with

@@ -32,7 +32,7 @@ namespace FwAvaloniaTests
 			{
 				new ViewNode("LexEntry/identity/#0", ViewNodeKind.Field, "Lexeme Form", null, "Form", "multistring",
 					EditorClassification.Known, "vernacular", ViewVisibility.Always, ViewExpansion.NotApplicable, false, null, null,
-					automationId: "LexemeFormEditor", routing: SurfaceRouting.Product)
+					automationId: "LexemeFormEditor", routing: HostRouting.Product)
 			},
 			new List<ViewDiagnostic>());
 

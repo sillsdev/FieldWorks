@@ -1478,7 +1478,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			EditorClassification editorClassification,
 			string automationId,
 			string localizationKey,
-			SurfaceRouting routing,
+			HostRouting routing,
 			IReadOnlyList<DetailWsValue> values,
 			IReadOnlyList<DetailChoiceOption> options,
 			string selectedOptionKey,
@@ -1539,7 +1539,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		public EditorClassification EditorClassification { get; }
 		public string AutomationId { get; }
 		public string LocalizationKey { get; }
-		public SurfaceRouting Routing { get; }
+		public HostRouting Routing { get; }
 		public IReadOnlyList<DetailWsValue> Values { get; }
 		public IReadOnlyList<DetailChoiceOption> Options { get; }
 		public string SelectedOptionKey { get; }

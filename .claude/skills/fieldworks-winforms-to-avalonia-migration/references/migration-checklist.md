@@ -6,7 +6,7 @@ definition of done. Items map to the workflow phases in SKILL.md.
 
 ## Phase 0 — Phase-1 PR landing (only when reducing a derisk branch for merge)
 
-Use this when collapsing a large multi-surface derisk branch into a landable PR (see SKILL.md
+Use this when collapsing a large multi-view derisk branch into a landable PR (see SKILL.md
 "Phase-1 Landing Strategy"). Skip for an ordinary single-region migration.
 
 - [ ] Canonical screen chosen per primitive (table / detail-editor / tree+multi-select / tabs
@@ -18,13 +18,13 @@ Use this when collapsing a large multi-surface derisk branch into a landable PR 
 - [ ] Each backed-out screen's wiring verified from the product call site (`file:line`) — NOT
       from class names / comments / an Explore summary (those have given false "unwired" results)
 - [ ] Backed-out screens: View/ViewModel/tests removed AND call site reverted to the legacy path
-- [ ] XL surfaces with their own openspec change split to a follow-up PR (not backed out);
+- [ ] XL migrations with their own openspec change split to a follow-up PR (not backed out);
       shared composer infra stays in the spine PR
 - [ ] PR body is a manifest: canonical screens + why, deferred screens + doc/JIRA, split-out PRs
 
 ## Phase 1 — Inventory and scope
 
-- [ ] Legacy surface identified: entry points, layouts/parts, custom slice
+- [ ] Legacy UI identified: entry points, layouts/parts, custom slice
       classes, dialogs, choosers, command/listener wiring
 - [ ] Custom slice class census taken and compared against the plugin
       registry (`Src/xWorks/Avalonia/Plugins/SlicePlugins.cs`) — list of missing
@@ -36,7 +36,7 @@ Use this when collapsing a large multi-surface derisk branch into a landable PR 
 
 ## Phase 2 — Characterize before refactor
 
-- [ ] Semantic baseline captured for the legacy surface (bindings, labels,
+- [ ] Semantic baseline captured for the legacy view (bindings, labels,
       editor kinds, visibility, ghost state, focus order, WS metadata,
       accessibility identity)
 - [ ] Legacy timing baseline measured and committed
@@ -82,10 +82,10 @@ Use this when collapsing a large multi-surface derisk branch into a landable PR 
 
 ## Phase 7 — Parity evidence
 
-- [ ] **Headless integration scenarios cover the surface's key workflows**
+- [ ] **Headless integration scenarios cover the key workflows**
       (filter → clear, select → detail follows, edit → commit → refresh,
       navigate), driven via the harness (architecture-patterns.md §13) on
-      `./test.ps1` — surface layer in an Avalonia-headless assembly, plus the
+      `./test.ps1` -- view layer in an Avalonia-headless assembly, plus the
       real-clerk layer (`xWorksTests`) for domain claims like list narrowing/
       sort/undo. No behavior/workflow claim left to "live verification" that a
       headless scenario could prove (parity-evidence.md §2a / §3)

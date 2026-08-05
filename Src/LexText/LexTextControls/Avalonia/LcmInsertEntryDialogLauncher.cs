@@ -520,7 +520,7 @@ namespace SIL.FieldWorks.LexText.Controls
 
 			return new DetailField(field, label, field, null, DetailFieldKind.Text,
 				default(SIL.FieldWorks.Common.FwAvalonia.ViewDefinition.EditorClassification), automationId, field,
-				default(SIL.FieldWorks.Common.FwAvalonia.ViewDefinition.SurfaceRouting), values,
+				default(SIL.FieldWorks.Common.FwAvalonia.ViewDefinition.HostRouting), values,
 				new List<DetailChoiceOption>(), selectedOptionKey: null, isEditable: true);
 		}
 

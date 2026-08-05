@@ -21,7 +21,7 @@ namespace FwAvaloniaDialogsTests
 	/// The Tools → Options dialog: the four real tabs bind to an <see cref="LexOptionsDlgState"/> (the product
 	/// settings bus) via compiled bindings, edits write back into the state on OK, the generated
 	/// commands close via <see cref="IDialogViewModel"/>, and the Updates tab hides off-Windows. Runtime
-	/// proof on a realized headless surface (compiled XAML on net48 + source-generated commands).
+	/// proof on a realized headless view (compiled XAML on net48 + source-generated commands).
 	/// </summary>
 	[TestFixture]
 	public class OptionsDialogTests

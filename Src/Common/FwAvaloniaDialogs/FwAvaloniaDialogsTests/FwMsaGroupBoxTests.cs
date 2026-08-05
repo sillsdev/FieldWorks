@@ -16,7 +16,7 @@ namespace FwAvaloniaDialogsTests
 {
 	/// <summary>
 	/// The LCModel-free <see cref="MSAGroupBox"/> composite (the grammatical-info editor), the parity of the
-	/// WinForms <c>MSAGroupBox</c>. Proven on a realized headless surface: for EACH <see cref="FwMsaType"/> the
+	/// WinForms <c>MSAGroupBox</c>. Proven on a realized headless view: for EACH <see cref="FwMsaType"/> the
 	/// right widgets are visible and the others hidden; switching the type reconfigures live; the emitted
 	/// <see cref="FwSandboxMsa"/> payload reflects the picks per type; and the create-POS request forwards.
 	/// Per-config PNGs are captured for subjective visual review.
@@ -67,7 +67,7 @@ namespace FwAvaloniaDialogsTests
 			return (box, window);
 		}
 
-		private static void Pump(Control surface) => AvaloniaDialogTestHarness.Pump(surface);
+		private static void Pump(Control control) => AvaloniaDialogTestHarness.Pump(control);
 
 		// ----- MsaType -> visible widgets (mirrors MSAGroupBox exactly) -----
 

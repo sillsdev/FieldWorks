@@ -8,7 +8,7 @@ description: "Review or change FieldWorks user-facing strings: LocalizationManag
 ## Use This For
 
 - Product-facing text in WinForms, Avalonia, settings UI, dialogs,
-  validation messages, fallback or unsupported-surface text, and promoted
+  validation messages, fallback or unsupported-state text, and promoted
   preview paths.
 - `.resx` additions or changes, localization key flow, and Crowdin-sensitive
   resource updates.
@@ -73,7 +73,7 @@ namespaces.
   intentional English fallback.
 - If localization parity is claimed, tests or evidence cover the localized
   path and confirm selectors do not depend on localized text. English on
-  the Avalonia surface where legacy shows translations is a parity
+  the Avalonia view where legacy shows translations is a parity
   failure, not cosmetics.
 
 ## Review Red Flags

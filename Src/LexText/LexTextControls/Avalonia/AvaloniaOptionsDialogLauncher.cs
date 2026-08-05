@@ -123,7 +123,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			var state = BuildState(_cache, _mediator, _settings, _app, _userWs, _pluginDocs);
 			// Per-feature disable set (New mode), carried through the state so OK re-applies whatever is
 			// persisted — parity with LexOptionsDlg.m_pendingUiModeDisabledTools. There is no in-dialog editor
-			// for it; EditSurfaceResolver reads the same setting to gate each tool's surface.
+			// for it; UIFrameworkResolver reads the same setting to gate each tool's framework.
 			state.UIModeDisabledTools = _settings.UIModeDisabledTools ?? string.Empty;
 			return state;
 		}
@@ -321,7 +321,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 
 			// Lexical Edit UI mode: applied LIVE (no restart) — broadcasting the PropertyTable "UIMode"
-			// property re-resolves the open lexical surfaces (matches LexOptionsDlg.m_btnOK_Click).
+			// property re-resolves the open record-edit views (matches LexOptionsDlg.m_btnOK_Click).
 			// Compared against the PropertyTable's LIVE value (falling back to settings) so a
 			// table/settings disagreement is healed by OK rather than skipped as "no change".
 			var newUiMode = NormalizeUiMode(state.UiMode);
@@ -331,7 +331,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			if (currentUiMode != newUiMode)
 				ApplyUiModeLive(propertyTable, settings, newUiMode);
 
-			// Per-feature disable set (New mode): persist + broadcast so open surfaces re-resolve, mirroring
+			// Per-feature disable set (New mode): persist + broadcast so open views re-resolve, mirroring
 			// LexOptionsDlg's m_pendingUiModeDisabledTools apply. Live like the mode itself — no restart.
 			var newDisabledTools = state.UIModeDisabledTools ?? string.Empty;
 			if ((settings.UIModeDisabledTools ?? string.Empty) != newDisabledTools)
@@ -339,8 +339,8 @@ namespace SIL.FieldWorks.LexText.Controls
 				settings.UIModeDisabledTools = newDisabledTools;
 				if (propertyTable != null)
 				{
-					propertyTable.SetProperty(EditSurfaceResolver.UIModeDisabledToolsPropertyName, newDisabledTools, true);
-					propertyTable.SetPropertyPersistence(EditSurfaceResolver.UIModeDisabledToolsPropertyName, false);
+					propertyTable.SetProperty(UIFrameworkResolver.UIModeDisabledToolsPropertyName, newDisabledTools, true);
+					propertyTable.SetPropertyPersistence(UIFrameworkResolver.UIModeDisabledToolsPropertyName, false);
 				}
 			}
 
@@ -376,7 +376,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			if (restartRequired)
 				// Avalonia message box instead of raw WinForms MessageBox — same OK-only prompt text,
 				// hosted in a WinForms-owned modal window via AvaloniaDialogHost so the confirmation matches
-				// the rest of the New-mode surface.
+				// the rest of the New-mode UI.
 				FwMessageBox.Show(owner, LexTextControls.RestartToForSettingsToTakeEffect_Content,
 					LexTextControls.RestartToForSettingsToTakeEffect_Title, FwMessageBoxButtons.Ok);
 
@@ -492,7 +492,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		}
 
 		// Applies a UI-mode change live: persist into settings + mirror+broadcast through the PropertyTable
-		// so the open lexical surfaces (RecordBrowseView/RecordEditView) re-resolve without a restart.
+		// so the open views (RecordBrowseView/RecordEditView) re-resolve without a restart.
 		private static void ApplyUiModeLive(PropertyTable propertyTable, FwApplicationSettingsBase settings, string mode)
 		{
 			var norm = NormalizeUiMode(mode);
@@ -505,7 +505,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		}
 
 		internal static string NormalizeUiMode(string mode) =>
-			EditSurfaceResolver.NormalizeUIMode(mode);
+			UIFrameworkResolver.NormalizeUIMode(mode);
 
 		internal static string NormalizeWs(string ws) => ws == "en-US" ? "en" : ws;
 

@@ -25,7 +25,7 @@ namespace FwAvaloniaTests
 {
 	/// <summary>
 	/// The ONE compact filterable option picker (FwOptionChooser) behind every Avalonia select-from-
-	/// list surface: an AutoCompleteBox-based selector whose embedded search box auto-focuses on
+	/// list control: an AutoCompleteBox-based selector whose embedded search box auto-focuses on
 	/// open, whose popup list stays virtualized/capped at the density token height, and whose item
 	/// spacing stays pinned to the compact legacy values (never the Fluent defaults) while preserving
 	/// possibility-list hierarchy by Depth indent. Static options filter by contains; search-backed
@@ -603,7 +603,7 @@ namespace FwAvaloniaTests
 			// Parity/guidance guard: dropdown mode must open its filter+list on a Flyout anchored to the
 			// toggle button (the same CreateOptionFlyout path the inline consumers use), never a free
 			// Popup living in the picker's own tree. A free popup opens its own top-level and misplaces
-			// itself under fractional display scaling; a flyout positions itself in the trigger's surface.
+			// itself under fractional display scaling; a flyout positions itself in the trigger's window.
 			// Assert the picker owns NO Popup element, collapsed AND while the dropdown is open.
 			var (picker, window, _) = ShowDropdown();
 			window.UpdateLayout();

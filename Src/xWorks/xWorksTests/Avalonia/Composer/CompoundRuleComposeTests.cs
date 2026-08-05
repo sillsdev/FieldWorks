@@ -11,8 +11,8 @@ using SIL.LCModel.Infrastructure;
 namespace SIL.FieldWorks.XWorks
 {
 	/// <summary>
-	/// Groundwork for the rule-formula editor (a follow-up surface). The tool-level flip
-	/// (compoundRuleAdvancedEdit) stays gated off via EditSurfaceRegistry.Phase1FollowUpSurfaceTools
+	/// Groundwork for the rule-formula editor (a follow-up tool). The tool-level flip
+	/// (compoundRuleAdvancedEdit) stays gated off via UIFrameworkRegistry.Phase1FollowUpTools
 	/// regardless of what the composer can already do — this file only proves the composer machinery, not that
 	/// the tool is live.
 	///

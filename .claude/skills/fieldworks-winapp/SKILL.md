@@ -24,9 +24,9 @@ Keep the workflow grounded in the live UI tree: inspect first, interact second,
 capture evidence after the target state is visible.
 
 **Scope: legacy WinForms only.** This skill always runs FieldWorks in **Legacy
-(WinForms) UI mode** to scrape the legacy surface for "truth" screenshots,
+(WinForms) UI mode** to scrape the legacy UI for "truth" screenshots,
 workflows, and behaviour (the migration parity baseline). The WinForms UIA2 MCP
-can only see WinForms — the Avalonia (New) surface is captured by a SEPARATE
+can only see WinForms — the Avalonia (New) UI is captured by a SEPARATE
 headless skill, never through this MCP. ALWAYS run
 `scripts/Set-FieldWorksLegacyMode.ps1` before launching (see Setup First).
 
@@ -72,7 +72,7 @@ verifies that launch will succeed.
   `references/headless-rendering.md`).
 - Use WinApp MCP UIA3 tools when WinForms MCP is unavailable, when a task needs
   desktop/window diagnostics (focus, foreground, window order), or when UIA2
-  cannot see the target surface.
+  cannot see the target window.
 - Prefer UI Automation IDs and names over coordinates. Use coordinates only
   after snapshots and element searches fail.
 - Always inspect the current tree with `winforms_get_element_tree`,

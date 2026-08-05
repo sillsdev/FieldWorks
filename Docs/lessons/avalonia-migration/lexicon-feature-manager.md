@@ -9,7 +9,7 @@ Human review: PR #964
 ## Question tested
 
 Should a New-mode-only utility with no WinForms counterpart -- a checkbox list
-for disabling individual Avalonia surfaces, reached from Tools > Options --
+for disabling individual Avalonia tools, reached from Tools > Options --
 ship alongside a coexisting dialog pair?
 
 ## Observations
@@ -22,13 +22,13 @@ ship alongside a coexisting dialog pair?
   describing it, purely so the asymmetry did not read as an oversight. That
   documentation burden was ongoing, not one-off.
 - The catalog itself is genuinely shared and stayed:
-  `EditSurfaceRegistry.DefaultSupportedTools` is built from
+  `UIFrameworkRegistry.DefaultSupportedTools` is built from
   `LexiconFeatureCatalog.ToolNames`, so it remains the single list of tools
-  that ship with a working Avalonia surface. Only the checkbox-list rendering
+  that ship with working Avalonia support. Only the checkbox-list rendering
   was removed.
 - The setting the dialog edited also stayed. `UIModeDisabledTools` is the
-  per-tool opt-out `EditSurfaceResolver` still honours, seeded into the
-  PropertyTable by the shell and read when a surface is resolved. The Options
+  per-tool opt-out `UIFrameworkResolver` still honours, seeded into the
+  PropertyTable by the shell and read when a tool's framework is resolved. The Options
   dialog now carries it through untouched instead of offering an editor for it.
 - Unwinding the entry point took five coordinated edits: the button in the view,
   the view-model's command and its visibility gate, the state object's callback,
@@ -51,7 +51,7 @@ all remain; the setting has no user-facing editor.
    dialog's removal precisely because neither depended on it.
 3. Unwind an entry point end to end -- control, command, visibility gate, state
    callback, launcher method -- or the removal leaves a dead affordance.
-4. A utility unrelated to the surface being migrated does not belong in that
+4. A utility unrelated to the UI being migrated does not belong in that
    migration, however convenient the host dialog is.
 5. Retarget comments that point at deleted code at the surviving concept, or the
    next reader chases a name that no longer exists.

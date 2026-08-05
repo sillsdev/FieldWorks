@@ -8,8 +8,8 @@ OpenType/HarfBuzz, and classification of the remaining native dependencies.
 ## Requirements
 ### Requirement: The Avalonia path never loads the native Graphite engine
 
-Avalonia surfaces SHALL NOT load or call `GraphiteEngineClass`, `FwGrEngine`, `GraphiteSegment`, or
-native Views render-engine selection. Graphite *support* during the transition (legacy-surface
+Avalonia views SHALL NOT load or call `GraphiteEngineClass`, `FwGrEngine`, `GraphiteSegment`, or
+native Views render-engine selection. Graphite *support* during the transition (legacy-view
 rendering, Avalonia warnings, sunset milestones) is governed by `graphite-transition-support`; this
 requirement governs only engine isolation, which holds under every transition path.
 
@@ -18,14 +18,14 @@ requirement governs only engine isolation, which holds under every transition pa
 - **THEN** it SHALL find no reference to native Graphite engine or native Views shaping symbols
 
 #### Scenario: Graphite presence does not block an Avalonia default
-- **WHEN** Avalonia is proposed as a default surface while Graphite-enabled writing systems exist
+- **WHEN** Avalonia is proposed as a default while Graphite-enabled writing systems exist
 - **THEN** the decision SHALL be governed by `graphite-transition-support` warning/classification coverage, not by Graphite retirement
 
 ### Requirement: Graphite code, settings, and assets are inventoried
 
 The migration SHALL inventory Graphite across native code, managed render selection, writing-system settings, UI, tests, docs, assets, browser rendering, print, PDF, and build/package files.
 
-#### Scenario: Inventory covers known Graphite surfaces
+#### Scenario: Inventory covers known Graphite consumers
 - **WHEN** Graphite decommissioning inventory runs
 - **THEN** it SHALL cover at least `Lib/src/graphite2`, `Src/views/lib/GraphiteEngine.*`, `RenderEngineFactory`, `GraphiteFontFeatures`, `FontFeaturesButton`, `DefaultFontsControl`, `FwWritingSystemSetupModel`, `IsGraphiteEnabled`, `DefaultFontFeatures`, `FontEngines.Graphite`, Graphite-specific tests, `DistFiles/Graphite`, `Build/Windows.targets`, Gecko Graphite preferences, `XWebBrowser` preview consumers, and `GeckofxHtmlToPdf`/`FieldWorksPdfMaker` assumptions
 

@@ -860,7 +860,7 @@ namespace SIL.FieldWorks.XWorks
 
 			int index = -1;
 			// 15.4: the hidden command-routing adapter tree counts as active — the user-visible
-			// surface (Avalonia) is elsewhere, and the insert itself never needs visibility.
+			// UI (Avalonia) is elsewhere, and the insert itself never needs visibility.
 			if (command != null && slice != null && !slice.IsDisposed &&
 				(m_dataEntryForm.Visible || m_dataEntryForm.IsExternalCommandAdapter) &&
 				this.CanInsert(command, slice, out index))

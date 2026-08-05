@@ -21,7 +21,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 		/// <summary>
 		/// Test-only hook that lets a test assembly substitute the <see cref="AppBuilder"/> used by
 		/// <see cref="EnsureInitialized"/> — without this production DLL referencing Avalonia.Headless.
-		/// xWorks integration tests that drive the product surface (RecordEditView/RecordBrowseView/…)
+		/// xWorks integration tests that drive the product UI (RecordEditView/RecordBrowseView/…)
 		/// otherwise initialize the REAL Win32 Avalonia platform process-wide, so any flyout/dialog/popup
 		/// becomes a real on-screen OS window that flashes and can steal keypresses. A test
 		/// <c>[SetUpFixture]</c> sets this to a headless builder before any test runs; production leaves it

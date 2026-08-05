@@ -27,7 +27,7 @@ namespace SIL.FieldWorks.XWorks
 			=> new DetailLinkRequest(
 				new DetailField("LexEntry/Normal/#0@1", "Publish Entry In", "PublishIn",
 					null, DetailFieldKind.ReferenceVector, EditorClassification.Known, "PublishIn",
-					null, SurfaceRouting.Inherit, null, null, null),
+					null, HostRouting.Inherit, null, null, null),
 				new DetailChooserLink("Edit the Publications list", tool, targetGuid));
 
 		[Test]

@@ -17,7 +17,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 {
 	/// <summary>
 	/// The radio-button counterpart of <see cref="FwCheckBoxStyle"/>: the ONE DETERMINISTIC, GLOBAL
-	/// RadioButton style, so every Avalonia surface (dialogs, detail view, bulk-edit bar) renders radios at a FIXED
+	/// RadioButton style, so every Avalonia view (dialogs, detail view, bulk-edit bar) renders radios at a FIXED
 	/// size derived from <see cref="FwAvaloniaDensity.RadioBoxSize"/> (the same 14px the checkbox uses, a
 	/// function of the 12px surface font), so a radio NEVER inflates a row past the text line.
 	///
@@ -48,7 +48,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 		private static readonly IBrush DisabledStroke = new SolidColorBrush(Color.FromRgb(0xC0, 0xC0, 0xC0));
 
 		/// <summary>
-		/// The deterministic RadioButton styles, ready to add to a surface's <see cref="StyledElement.Styles"/>.
+		/// The deterministic RadioButton styles, ready to add to a control's <see cref="StyledElement.Styles"/>.
 		/// One style that points every RadioButton at the compact <see cref="ControlTheme"/>.
 		/// </summary>
 		public static IEnumerable<IStyle> Build()

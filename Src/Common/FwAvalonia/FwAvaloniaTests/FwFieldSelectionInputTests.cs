@@ -32,14 +32,14 @@ namespace FwAvaloniaTests
 		private static DetailField LtrField(string text)
 			=> new DetailField(
 				"LexEntry/x/#0", "Lexeme Form", "Form", "vernacular", DetailFieldKind.Text,
-				EditorClassification.Known, "SelEditor", null, SurfaceRouting.Product,
+				EditorClassification.Known, "SelEditor", null, HostRouting.Product,
 				new List<DetailWsValue> { new DetailWsValue("en", text, wsTag: "en") },
 				null, null);
 
 		private static DetailField RtlField(string text)
 			=> new DetailField(
 				"LexEntry/x/#0", "Lexeme Form", "Form", "vernacular", DetailFieldKind.Text,
-				EditorClassification.Known, "SelEditor", null, SurfaceRouting.Product,
+				EditorClassification.Known, "SelEditor", null, HostRouting.Product,
 				new List<DetailWsValue>
 				{
 					new DetailWsValue("ar", text, "Scheherazade New", 0, rightToLeft: true, wsTag: "ar")
@@ -215,7 +215,7 @@ namespace FwAvaloniaTests
 		// the headless backend has no real text hit-testing, so the native drag-to-caret mapping never runs
 		// and the defect cannot be provoked or self-validated here. Per the repro-first rule the drag-select
 		// code is left UNCHANGED. Reproducing it needs a real rendered window / the layout transform suspected
-		// in the detail surface; this Ignored test records the limitation so the finding stays visible.
+		// in the detail view; this Ignored test records the limitation so the finding stays visible.
 		[AvaloniaTest]
 		[Ignore("D2 (mouse-drag selection over-grow) is not reproducible headlessly: the headless backend does no text hit-testing, so a driven drag yields no selection. Left open; needs a real rendered window.")]
 		public void MouseDrag_SelectionOverGrow_NotHeadlesslyReproducible()

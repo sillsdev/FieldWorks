@@ -54,7 +54,7 @@ namespace FwAvaloniaTests
 				stableId: "LexEntry/Discussion@1", label: "Discussion", field: "Discussion",
 				writingSystem: null, kind: DetailFieldKind.StructuredText,
 				editorClassification: EditorClassification.Known, automationId: "Discussion",
-				localizationKey: null, routing: SurfaceRouting.Product, values: null, options: null,
+				localizationKey: null, routing: HostRouting.Product, values: null, options: null,
 				selectedOptionKey: null, isEditable: isEditable, paragraphs: paragraphs);
 			if (paragraphStyles != null)
 				field.AvailableParagraphStyles = paragraphStyles;

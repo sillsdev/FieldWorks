@@ -39,7 +39,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 
 		/// <param name="gestureCompleted">Invoked after a SUCCESSFUL structural gesture (add/delete/style)
 		/// so the host commits the one undoable step and re-shows the row (like the reference vector). Null
-		/// on surfaces that drive their own commit; structural gestures then just stage.</param>
+		/// on hosts that drive their own commit; structural gestures then just stage.</param>
 		public FwStructuredTextField(
 			DetailField field,
 			string automationId,

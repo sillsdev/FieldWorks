@@ -3,7 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 //
 // Renders legacy WinForms dialogs to "before" PNGs. THROWAWAY evidence tooling that captures a
-// faithful visual baseline to build and verify the Avalonia surfaces against, for the
+// faithful visual baseline to build and verify the Avalonia dialogs against, for the
 // WinForms->Avalonia conversion. NO desktop/mouse interaction (pure in-process
 // construct + DrawToBitmap), so it runs unattended without grabbing the cursor.
 //
@@ -16,7 +16,7 @@
 //
 // DATA FLAVORS (CaptureContext): "sena3" = read-only temp COPY of Sena 3 (real stylesheet + data);
 // "minimal" = in-memory base cache. BEFORE/AFTER: this emits "<name>-before.png"; the Avalonia
-// "<name>-after.png" comes from the surface's FwAvaloniaDialogs(Tests) visual test (same flavor);
+// "<name>-after.png" comes from the dialog's FwAvaloniaDialogs(Tests) visual test (same flavor);
 // both attach to the JIRA ticket.
 //
 // Run: .\test.ps1 -SkipNative -TestProject LexTextControlsTests -TestFilter "FullyQualifiedName~ScreenshotHarness"

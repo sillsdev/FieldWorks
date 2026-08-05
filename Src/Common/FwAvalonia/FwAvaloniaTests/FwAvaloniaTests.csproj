@@ -40,7 +40,7 @@
 	</ItemGroup>
 
 	<!-- Reuse the dialog visual-layout tripwire (DialogLayoutAssert) as the ONE shared layout standard, so
-	     detail/browse surfaces get the same hard-fail overlap/zero-area/crowding checks the dialogs do —
+	     detail/browse views get the same hard-fail overlap/zero-area/crowding checks the dialogs do —
 	     read-only link (owned by FwAvaloniaDialogsTests), no second competing guardrail. -->
 	<ItemGroup>
 		<Compile Include="..\..\FwAvaloniaDialogs\FwAvaloniaDialogsTests\DialogLayoutAssert.cs"

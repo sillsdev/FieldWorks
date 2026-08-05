@@ -27,7 +27,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 			new HashSet<string>(System.StringComparer.Ordinal)
 			{
 				"ref", "label", "abbr", "visibility", "expansion", "param", "customFields",
-				"localizationKey", "labelId", "automationId", "surface", "menu", "hotlinks",
+				"localizationKey", "labelId", "automationId", "routing", "menu", "hotlinks",
 				"visibleWritingSystems"
 			};
 
@@ -35,7 +35,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 			new HashSet<string>(System.StringComparer.Ordinal)
 			{
 				"label", "abbr", "field", "ws", "editor", "visibility", "expansion",
-				"localizationKey", "labelId", "automationId", "surface", "menu", "contextMenu", "hotlinks",
+				"localizationKey", "labelId", "automationId", "routing", "menu", "contextMenu", "hotlinks",
 				"forVariant", "visibleWritingSystems"
 			};
 
@@ -43,7 +43,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 			new HashSet<string>(System.StringComparer.Ordinal)
 			{
 				"field", "layout", "label", "abbr", "ws", "visibility", "expansion",
-				"localizationKey", "labelId", "automationId", "surface", "menu", "hotlinks",
+				"localizationKey", "labelId", "automationId", "routing", "menu", "hotlinks",
 				"ghost", "ghostWs", "ghostClass", "ghostLabel", "ghostInitMethod"
 			};
 
@@ -276,7 +276,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 			var contextMenuId = Attr(contentEl, "contextMenu");
 			var hotlinksId = Attr(callerEl, "hotlinks") ?? Attr(contentEl, "hotlinks");
 			var automationId = Attr(callerEl, "automationId") ?? Attr(contentEl, "automationId");
-			var routing = ParseRouting(Attr(callerEl, "surface") ?? Attr(contentEl, "surface"));
+			var routing = ParseRouting(Attr(callerEl, "routing") ?? Attr(contentEl, "routing"));
 
 			switch (contentEl.Name.LocalName)
 			{
@@ -752,7 +752,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 			string stableId, ViewNodeKind kind, string label, string abbreviation, string field, string editor,
 			EditorClassification classification, string ws, ViewVisibility visibility, ViewExpansion expansion,
 			bool indented, string targetLayout,
-			string localizationKey = null, string automationId = null, SurfaceRouting routing = SurfaceRouting.Inherit)
+			string localizationKey = null, string automationId = null, HostRouting routing = HostRouting.Inherit)
 			=> new ViewNode(stableId, kind, label, abbreviation, field, editor, classification, ws, visibility,
 				expansion, indented, targetLayout, System.Array.Empty<ViewNode>(), localizationKey, automationId, routing);
 
@@ -815,14 +815,14 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 			}
 		}
 
-		private static SurfaceRouting ParseRouting(string value)
+		private static HostRouting ParseRouting(string value)
 		{
 			switch (value)
 			{
-				case "product": return SurfaceRouting.Product;
-				case "preview": return SurfaceRouting.Preview;
-				case "unsupported": return SurfaceRouting.Unsupported;
-				default: return SurfaceRouting.Inherit;
+				case "product": return HostRouting.Product;
+				case "preview": return HostRouting.Preview;
+				case "unsupported": return HostRouting.Unsupported;
+				default: return HostRouting.Inherit;
 			}
 		}
 

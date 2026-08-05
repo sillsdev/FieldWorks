@@ -120,7 +120,7 @@ namespace FwAvaloniaTests
 				new List<DetailTextRun> { new DetailTextRun("link", "qaa-x-orc", objectData: "obj-ref-guid") },
 				richXml: "<Str/>", requiresRichEditor: true, canEditRichText: false);
 			var field = new DetailField("LexEntry/x/#orc", "Cross Reference", "Form", null,
-				DetailFieldKind.Text, EditorClassification.Known, "OrcField", null, SurfaceRouting.Inherit,
+				DetailFieldKind.Text, EditorClassification.Known, "OrcField", null, HostRouting.Inherit,
 				new List<DetailWsValue>
 				{
 					new DetailWsValue("vern", "link", wsTag: "qaa-x-orc", richText: orcRich)

@@ -30,7 +30,7 @@ namespace FwAvaloniaTests
 		{
 			var header = DetailStructureRules.BuildHeaderField(
 				"g", "Group", "Field", "vern", EditorClassification.GroupingNone,
-				"autoId", "loc.key", SurfaceRouting.Inherit, depth: 2);
+				"autoId", "loc.key", HostRouting.Inherit, depth: 2);
 
 			Assert.That(header.Kind, Is.EqualTo(DetailFieldKind.Header));
 			Assert.That(header.StableId, Is.EqualTo("g"));
@@ -51,7 +51,7 @@ namespace FwAvaloniaTests
 		{
 			var header = DetailStructureRules.BuildHeaderField(
 				"g", "Group", "Field", "vern", EditorClassification.GroupingNone,
-				"autoId", "loc.key", SurfaceRouting.Inherit, depth: 1,
+				"autoId", "loc.key", HostRouting.Inherit, depth: 1,
 				isCollapsible: true, isInitiallyExpanded: false,
 				menuId: "mnuSec", hotlinksId: "hot", objectHvo: 42);
 

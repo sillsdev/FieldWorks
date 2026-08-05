@@ -15,7 +15,7 @@ using SIL.FieldWorks.Common.FwAvalonia.Detail;
 namespace FwAvaloniaTests.Workflows
 {
 	/// <summary>
-	/// Reusable headless-integration scaffolding for driving migrated Avalonia surfaces through real
+	/// Reusable headless-integration scaffolding for driving migrated Avalonia controls through real
 	/// USER SCENARIOS and WORKFLOWS — the front-and-center test style for the whole WinForms→Avalonia
 	/// program (all 13 phases). The pieces:
 	///
@@ -23,9 +23,9 @@ namespace FwAvaloniaTests.Workflows
 	///    pumps the dispatcher, so a test reads/acts on a realized visual tree exactly as a user would.
 	///  • <see cref="DetailEditorDriver"/> — a page-object "driver"
 	///    that expose intent-level verbs (filter, clear, select, read cell, type, commit) over a hosted
-	///    surface, so scenario tests read like a script and stay stable as the control internals change.
+	///    control, so scenario tests read like a script and stay stable as the control internals change.
 	///
-	/// New surfaces (grid/tree, choosers, interlinear, dialogs) add a driver here and reuse the stage.
+	/// New controls (grid/tree, choosers, interlinear, dialogs) add a driver here and reuse the stage.
 	/// Tests that need the REAL domain (LCModel clerk narrowing/sort/undo) use the parallel domain
 	/// harness in xWorksTests; these drivers work over whichever row source / model they are handed
 	/// (a real production adapter or an in-memory scenario store), so the same scenario script can run
@@ -42,10 +42,10 @@ namespace FwAvaloniaTests.Workflows
 			Pump();
 		}
 
-		/// <summary>Hosts a single surface and returns the stage.</summary>
-		public static HeadlessStage Show(Control surface) => new HeadlessStage(surface);
+		/// <summary>Hosts a single control and returns the stage.</summary>
+		public static HeadlessStage Show(Control control) => new HeadlessStage(control);
 
-		/// <summary>Hosts two surfaces side by side (e.g. a list and its detail editor) in one window.</summary>
+		/// <summary>Hosts two controls side by side (e.g. a list and its detail editor) in one window.</summary>
 		public static HeadlessStage ShowSideBySide(Control left, Control right)
 		{
 			var grid = new Grid { ColumnDefinitions = new ColumnDefinitions("*,*") };
@@ -66,7 +66,7 @@ namespace FwAvaloniaTests.Workflows
 	}
 
 	/// <summary>
-	/// Scenario driver for the lexical-edit (detail) surface (<see cref="DataTree"/>):
+	/// Scenario driver for the detail view (<see cref="DataTree"/>):
 	/// reading and typing field values. Field editors stamp the automation id
 	/// <c>{fieldAutomationId}.{ws}</c> (per writing system), so the driver locates a field's editor by
 	/// its automation-id prefix.

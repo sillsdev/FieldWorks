@@ -244,7 +244,7 @@ gets a capability-first treatment -- what it does, never how it is painted:
    - used by dialogs only -> `Src/Common/FwAvaloniaDialogs/Controls/` (the
      dialog-composite subfolder; dialogs themselves stay at the project
      root);
-   - shared with the detail view or other non-dialog surfaces ->
+   - shared with the detail view or other non-dialog views ->
      `Src/Common/FwAvalonia/` (in `Detail/` when detail-specific, the root
      when general);
    - tests mirror the SUT's folder either way.
@@ -306,7 +306,7 @@ Build conventions the result must satisfy (confirm each in the diff):
 - Presentation, modeless: no exemplar exists yet -- the FIRST modeless
   conversion designs the hosting pattern through the exemplar-gap path
   (`grill-with-docs`), with the constraint that WinForms owns the window during
-  coexistence (an Avalonia surface hosted in a modeless WinForms Form via
+  coexistence (an Avalonia control hosted in a modeless WinForms Form via
   the host control), and promotes it as the modeless exemplar.
 - Strings in `.resx` (accessors appended in order); no L10NSharp; no
   hardcoded UI text. Concrete brushes only. Validation through

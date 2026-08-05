@@ -81,7 +81,7 @@ namespace FwAvaloniaTests
 				children: new List<ViewNode> { child },
 				localizationKey: "ksSenses",
 				automationId: "Entry.Senses",
-				routing: SurfaceRouting.Product,
+				routing: HostRouting.Product,
 				boldEmphasis: true,
 				fontScalePercent: 120,
 				menuId: "mnuDataTree-Sense",
@@ -136,7 +136,7 @@ namespace FwAvaloniaTests
 				Assert.That(r.Children[0].StableId, Is.EqualTo("n/#0/#0"), "child StableId");
 				Assert.That(r.LocalizationKey, Is.EqualTo("ksSenses"), nameof(r.LocalizationKey));
 				Assert.That(r.AutomationId, Is.EqualTo("Entry.Senses"), nameof(r.AutomationId));
-				Assert.That(r.Routing, Is.EqualTo(SurfaceRouting.Product), nameof(r.Routing));
+				Assert.That(r.Routing, Is.EqualTo(HostRouting.Product), nameof(r.Routing));
 				Assert.That(r.BoldEmphasis, Is.True, nameof(r.BoldEmphasis));
 				Assert.That(r.FontScalePercent, Is.EqualTo(120), nameof(r.FontScalePercent));
 				Assert.That(r.MenuId, Is.EqualTo("mnuDataTree-Sense"), nameof(r.MenuId));

@@ -22,7 +22,7 @@ namespace FwAvaloniaDialogsTests
 	/// FwFeatureStructureEditor over OK/Cancel/Help; it seeds the feature system + current assignments, has NO OK gate
 	/// (an empty pick is the valid "unspecified / delete the FS" outcome), snapshots the chosen assignment set on OK,
 	/// and forwards the editor's inline create-feature / add-value affordances. Runtime proof on a realized headless
-	/// surface, with per-stage PNGs for subjective visual review.
+	/// view, with per-stage PNGs for subjective visual review.
 	/// </summary>
 	[TestFixture]
 	public class FeatureChooserDialogTests
@@ -62,12 +62,12 @@ namespace FwAvaloniaDialogsTests
 			return (view, vm);
 		}
 
-		private static void Pump(Control surface)
+		private static void Pump(Control control)
 		{
 			Dispatcher.UIThread.RunJobs();
 			AvaloniaHeadlessPlatform.ForceRenderTimerTick();
 			Dispatcher.UIThread.RunJobs();
-			surface.UpdateLayout();
+			control.UpdateLayout();
 			Dispatcher.UIThread.RunJobs();
 		}
 

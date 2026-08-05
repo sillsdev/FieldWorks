@@ -9,7 +9,7 @@ using SIL.FieldWorks.Common.FwAvalonia.ViewDefinition;
 namespace FwAvaloniaTests
 {
 	/// <summary>
-	/// A gated (migrated) surface loads the committed canonical JSON instead of runtime XML, with the
+	/// A gated (migrated) layout loads the committed canonical JSON instead of runtime XML, with the
 	/// XML import retained as the audit/fallback path and every fallback recorded as a diagnostic.
 	/// Pure logic over the real compiler + serializer.
 	/// </summary>

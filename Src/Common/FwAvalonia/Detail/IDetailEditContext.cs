@@ -8,11 +8,11 @@ using SIL.FieldWorks.Common.FwAvalonia.Seams;
 namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 {
 	/// <summary>
-	/// The editing seam for a detail surface (tasks 6.8/6.10): staging writes, validation, and the
+	/// The editing seam for a detail view (tasks 6.8/6.10): staging writes, validation, and the
 	/// fenced commit/cancel boundary. The product implementation (xWorks) opens one fenced LCModel
 	/// undo task lazily on the first staged edit, applies writes directly to the domain inside it,
 	/// and ends it on <see cref="Commit"/> (one step on the single global undo stack shared with
-	/// legacy surfaces) or rolls it back on <see cref="Cancel"/> — the model the
+	/// the legacy UI) or rolls it back on <see cref="Cancel"/> — the model the
 	/// `avalonia-edit-sessions` and `avalonia-undo-redo` seam specs require. This layer stays
 	/// LCModel-free so the Avalonia view can drive editing without a domain dependency; tests use a
 	/// fake context.

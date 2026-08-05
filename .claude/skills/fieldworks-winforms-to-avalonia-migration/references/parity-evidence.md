@@ -58,7 +58,7 @@ integration tests that script real user scenarios** — not deferred to manual
 "live verification," and not a unit test that pokes a handler. Two fidelities
 (pick by what the claim needs), both on `./test.ps1`:
 
-- **Surface-workflow** (`FwAvaloniaTests`): co-host the owned control(s) in a
+- **UI-workflow** (`FwAvaloniaTests`): co-host the owned control(s) in a
   headless window and drive them through page-object drivers (filter, clear,
   select, type, commit), asserting observable state. Proves control + seam
   round-trips (e.g. select-row→detail-follows, edit→cell-refresh).
@@ -68,7 +68,7 @@ integration tests that script real user scenarios** — not deferred to manual
 
 Harness + how it scales across phases: architecture-patterns.md §13; requirements synced to
 `openspec/specs/lexical-edit-parity-automation/spec.md`.
-A surface is not "ready for manual testing" until its key workflows have headless
+A migration is not "ready for manual testing" until its key workflows have headless
 scenario coverage; manual/UIA2 desktop runs then confirm pixel/native-tree axes
 the headless environment cannot.
 
@@ -107,7 +107,7 @@ Enforced by `Src/Common/FwAvalonia/FwAvaloniaTests/EngineIsolationAuditTests.cs`
 When a migration discovers a new legacy symbol that must not leak, add it
 to the audit test AND this list in the same PR. Custom linguistic services
 (XAmple, spelling, parsers, ICU, encoding converters) may remain behind
-explicit service seams when they do not own the render/editor surface.
+explicit service seams when they do not own the render/editor path.
 
 ## 5. Performance budgets
 

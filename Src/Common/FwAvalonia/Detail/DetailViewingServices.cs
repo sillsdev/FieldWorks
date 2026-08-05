@@ -25,7 +25,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		/// <summary>Point-to-caret/cluster hit testing (legacy native root-box hit test).</summary>
 		HitTesting,
 
-		/// <summary>Scrolling of the detail surface (legacy native RootSite auto-scroll host).</summary>
+		/// <summary>Scrolling of the detail view (legacy native RootSite auto-scroll host).</summary>
 		Scrolling,
 
 		/// <summary>On-screen drawing of view content (legacy native buffered draw path).</summary>

@@ -68,10 +68,10 @@ Runtime XML dependency SHALL be retired only after typed view-definition authori
 
 #### Scenario: XML retirement is blocked by uncovered behavior
 - **WHEN** a covered production layout behavior cannot be represented in the typed view-definition model
-- **THEN** runtime XML retirement SHALL remain blocked for that surface
+- **THEN** runtime XML retirement SHALL remain blocked for that view
 
 #### Scenario: Canonical view definition replaces XML at runtime
-- **WHEN** a Lexical Edit surface has passed migration gates
+- **WHEN** a record-edit view has passed migration gates
 - **THEN** the runtime UI SHALL load the canonical typed definition directly while retaining XML import only for migration/audit scenarios
 
 ### Requirement: Typed view definitions replace native render contracts for completed regions

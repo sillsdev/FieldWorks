@@ -18,7 +18,7 @@ namespace FwAvaloniaTests.VisualChecks
 	/// <summary>
 	/// Self-test for the <see cref="DialogSnapshot"/> PNG harness: every visual headless test can emit a
 	/// real Skia-rendered frame to the gitignored ephemeral folder so the agent (via Read) and the user can
-	/// eyeball whether the surface looks right — the subjective check that complements the deterministic
+	/// eyeball whether the capture looks right — the subjective check that complements the deterministic
 	/// <see cref="DialogLayoutAssert"/> tripwire. The PNG is ALWAYS produced, even when sanity is clean.
 	/// </summary>
 	[TestFixture]
@@ -41,15 +41,15 @@ namespace FwAvaloniaTests.VisualChecks
 			Assert.That(File.Exists(path), Is.True, $"the snapshot should be written to {path}");
 			Assert.That(new FileInfo(path).Length, Is.GreaterThan(0), "the PNG must contain pixels");
 			Assert.That(path.Replace('\\', '/'), Does.Contain("Output/Snapshots/HarnessSelfTest-01-initial.png"),
-				"snapshots go to ONE flat folder with a surface-prefixed file name");
+				"snapshots go to ONE flat folder with a prefixed file name");
 		}
 	}
 
 	/// <summary>
-	/// Detail visual coverage: the owned non-dialog surface (the lexical-edit detail view)
+	/// Detail visual coverage: the owned non-dialog control (the detail view)
 	/// gets the SAME treatment as dialogs — a real PNG snapshot for subjective review AND the
 	/// shared <see cref="DialogLayoutAssert"/> hard-fail tripwire (overlap / zero-area text / crowding) —
-	/// so the visual standard is one standard across every Avalonia surface, not dialogs only.
+	/// so the visual standard is one standard across the Avalonia UI, not dialogs only.
 	/// Capture happens BEFORE the assertion so the artifact exists for review even when the assertion fails.
 	/// The crowding tripwire itself now skips SPLITTER CONTROLS (a GridSplitter / any "Splitter"-named control
 	/// straddles a column boundary by design); that splitter-aware exception lives inside DialogLayoutAssert,
@@ -73,7 +73,7 @@ namespace FwAvaloniaTests.VisualChecks
 		[AvaloniaTest]
 		public void DetailEditView_Editable_RendersCleanly()
 		{
-			// Editable stage: an edit context is supplied so the value editors are live; the surface must still
+			// Editable stage: an edit context is supplied so the value editors are live; the view must still
 			// read flat/dense (no per-field box) the way the legacy editable DataTree does.
 			var model = DetailModelProjector.FromViewDefinition(DetailDefinition(), new TwoFieldProvider());
 			var view = new DataTree(model, new FakeDetailEditContext());
@@ -130,17 +130,17 @@ namespace FwAvaloniaTests.VisualChecks
 		}
 
 
-		// ----- minimal surface fixtures (no LCModel) -----
+		// ----- minimal fixtures (no LCModel) -----
 
 		private static ViewDefinitionModel DetailDefinition() => new ViewDefinitionModel(
 			"LexEntry", "detail", "detail", new List<ViewNode>
 			{
 				new ViewNode("d/#0", ViewNodeKind.Field, "Lexeme Form", null, "Form", "multistring",
 					EditorClassification.Known, "vernacular", ViewVisibility.Always, ViewExpansion.NotApplicable, false, null, null,
-					automationId: "LexemeFormEditor", routing: SurfaceRouting.Product),
+					automationId: "LexemeFormEditor", routing: HostRouting.Product),
 				new ViewNode("d/#1", ViewNodeKind.Field, "Gloss", null, "Gloss", "multistring",
 					EditorClassification.Known, "analysis", ViewVisibility.Always, ViewExpansion.NotApplicable, false, null, null,
-					automationId: "GlossEditor", routing: SurfaceRouting.Product)
+					automationId: "GlossEditor", routing: HostRouting.Product)
 			}, new List<ViewDiagnostic>());
 
 		private sealed class TwoFieldProvider : IDetailValueProvider
@@ -197,7 +197,7 @@ namespace FwAvaloniaTests.VisualChecks
 			foreach (var v in values)
 				wsValues.Add(new DetailWsValue(v.abbrev, v.value, wsTag: v.tag));
 			return new DetailField(stableId, label, field, null, DetailFieldKind.Text,
-				EditorClassification.Known, automationId, null, SurfaceRouting.Product, wsValues, null, null);
+				EditorClassification.Known, automationId, null, HostRouting.Product, wsValues, null, null);
 		}
 
 		private static DetailField ChooserField(string stableId, string label, string field,
@@ -207,12 +207,12 @@ namespace FwAvaloniaTests.VisualChecks
 			foreach (var o in options)
 				opts.Add(new DetailChoiceOption(o.key, o.name));
 			return new DetailField(stableId, label, field, null, DetailFieldKind.Chooser,
-				EditorClassification.Known, field + "Chooser", null, SurfaceRouting.Product, null, opts, selectedKey);
+				EditorClassification.Known, field + "Chooser", null, HostRouting.Product, null, opts, selectedKey);
 		}
 
 		private static DetailField UnsupportedField(string stableId, string label, string field)
 			=> new DetailField(stableId, label, field, null, DetailFieldKind.Unsupported,
-				EditorClassification.Known, field + "Editor", null, SurfaceRouting.Product, null, null, null,
+				EditorClassification.Known, field + "Editor", null, HostRouting.Product, null, null, null,
 				isEditable: false);
 
 		private static DetailField ReferenceVectorField(string stableId, string label, string field,
@@ -225,7 +225,7 @@ namespace FwAvaloniaTests.VisualChecks
 			foreach (var o in options)
 				optList.Add(new DetailChoiceOption(o.key, o.name));
 			return new DetailField(stableId, label, field, null, DetailFieldKind.ReferenceVector,
-				EditorClassification.Known, field, null, SurfaceRouting.Product, null, optList, null,
+				EditorClassification.Known, field, null, HostRouting.Product, null, optList, null,
 				isEditable: true, items: itemList);
 		}
 

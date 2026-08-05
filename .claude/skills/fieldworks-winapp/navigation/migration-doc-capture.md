@@ -77,9 +77,9 @@ just the empty form.
 
   **Before/after pairing (the deliverable shape).** Each migration doc shows the legacy "before"
   and the Avalonia "after" of the SAME seeded data, side by side, and **both PNGs attach to the
-  surface's JIRA ticket**. This route owns only the legacy half — the legacy baseline
+  conversion's JIRA ticket**. This route owns only the legacy half — the legacy baseline
   (`visual.legacy.png`). The Avalonia capture (`visual.avalonia.png`) and the rest of the
   before/after pipeline (semantic snapshots, visual diffs, workflow evidence) are owned by
   `../../fieldworks-semantic-render-parity/SKILL.md`; the Avalonia side is added when the
-  Avalonia surface exists (during the ticket's implementation). To attach PNGs to JIRA, use the
+  Avalonia view exists (during the ticket's implementation). To attach PNGs to JIRA, use the
   `atlassian-skills` scripts.

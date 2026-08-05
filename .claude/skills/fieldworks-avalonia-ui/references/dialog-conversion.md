@@ -10,7 +10,7 @@ through `build.ps1`. Decided 2026-06-15; the original rationale doc was relocate
 produced.
 
 > Use this for **hand-authored** dialogs/wizards. Do NOT use the region/IR/composer pattern — that is
-> only for surfaces driven by FieldWorks XML view-definitions (entry/detail/browse). Dialogs have no
+> only for views driven by FieldWorks XML view-definitions (entry/detail/browse). Dialogs have no
 > XML layout to compile.
 >
 > Do NOT convert Views-engine-coupled dialogs here (e.g. `FwFindReplaceDlg`, `FwStylesDlg` host
@@ -144,7 +144,7 @@ hosted dialog body automatically (font 12, line-control min-height `DialogMinCon
 `style-system.md` for the current value and why it sits slightly above raw WinForms sizes, tight padding,
 no Fluent min-height floors), so new dialogs inherit compact density with **zero per-dialog work**; don't
 re-define density per dialog and don't reach for `FwAvaloniaDensity` (that owns the region/table, a
-different surface). In the view: take every margin/spacing from the shared `DialogTheme.axaml` tokens —
+different view). In the view: take every margin/spacing from the shared `DialogTheme.axaml` tokens —
 never literals — per §2a-bis, and let `ShowModal`'s compact size defaults (420×320) fit the content —
 don't pass large explicit sizes. If a control type still looks roomy, add its compact setter to
 `CompactDialogStyles` (one place, all dialogs).
@@ -189,7 +189,7 @@ governed by the `dialog-update` skill). Canonical:
 `AvaloniaOptionsDialogLauncher` (builds `LexOptionsDlgState`, calls `ShowModal`, applies Reporting/Update/
 UI-mode/UI-language/plugins/Save). **Prefer live apply to "restart required":** for a setting that can
 take effect immediately, put an `Action` callback on the DTO and an `Apply` command on the ViewModel (e.g. the
-Lexical Edit UI Mode — broadcasting the `PropertyTable` "UIMode" property re-resolves the open surfaces
+Lexical Edit UI Mode — broadcasting the `PropertyTable` "UIMode" property re-resolves the open views
 live, so the button says **"Apply"**, not "Restart to apply"). Only keep a restart prompt for settings
 that genuinely cannot apply mid-session (e.g. UI-language).
 

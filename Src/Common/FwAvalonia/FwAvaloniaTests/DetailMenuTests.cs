@@ -23,7 +23,7 @@ namespace FwAvaloniaTests
 	/// <summary>
 	/// The importer captures the legacy menu bindings (`menu=`, `contextMenu=`,
 	/// `hotlinks=`) into the typed IR, from both the caller part ref and the slice/seq content,
-	/// so the Avalonia surface can show the SAME xCore-defined menus legacy DTMenuHandler shows.
+	/// so the Avalonia detail view can show the SAME xCore-defined menus legacy DTMenuHandler shows.
 	/// </summary>
 	[TestFixture]
 	public class XmlLayoutImporterMenuBindingTests
@@ -99,7 +99,7 @@ namespace FwAvaloniaTests
 	}
 
 	/// <summary>
-	/// Right-click on the Avalonia surface raises a <see cref="DetailMenuRequest"/>
+	/// Right-click on the Avalonia detail view raises a <see cref="DetailMenuRequest"/>
 	/// through the host bridge with the legacy menu binding and screen coordinates: labels/headers
 	/// raise the slice menu (or hotlinks when only those exist), value boxes with a `contextMenu=`
 	/// binding raise the in-string context menu, and unbound rows raise nothing (they keep the
@@ -112,7 +112,7 @@ namespace FwAvaloniaTests
 			string menuId = null, string contextMenuId = null, string hotlinksId = null,
 			bool collapsible = false)
 			=> new DetailField(id, id, id, null, kind,
-				EditorClassification.Known, id, null, SurfaceRouting.Inherit,
+				EditorClassification.Known, id, null, HostRouting.Inherit,
 				kind == DetailFieldKind.Text
 					? new List<DetailWsValue> { new DetailWsValue("en", "value") }
 					: null,

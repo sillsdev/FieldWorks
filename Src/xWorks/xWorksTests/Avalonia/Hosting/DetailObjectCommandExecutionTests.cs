@@ -23,13 +23,13 @@ namespace SIL.FieldWorks.XWorks
 {
 	/// <summary>
 	/// END-TO-END execution + refresh proof for the core
-	/// OBJECT commands the Avalonia surface reuses from the legacy xCore machinery. This fixture
+	/// OBJECT commands the Avalonia detail view reuses from the legacy xCore machinery. This fixture
 	/// proves on the REAL product host that these commands actually mutate the model and that the
 	/// composed detail view reflects the mutation.
 	///
 	/// Seam: a real <see cref="RecordEditView"/> is loaded through <see cref="MockFwXWindow"/> in the
 	/// New UI mode (the same bootstrap <c>RecordEditViewActiveHostContractTests</c> uses), so the
-	/// Avalonia surface is the active host and the hidden legacy DataTree exists only as the approved
+	/// Avalonia is the active host and the hidden legacy DataTree exists only as the approved
 	/// "command-menu-routing" baseline adapter. Each test drives a command through the PRODUCTION path:
 	///   1. <c>EnsureMenuCommandAdapter(targetHvo)</c> — builds/syncs the hidden adapter tree and points
 	///      its CurrentSlice at the slice bound to the clicked row's object (exactly what
@@ -78,7 +78,7 @@ namespace SIL.FieldWorks.XWorks
 			// stub so the legacy Help command can be queried while materializing the menu.
 			TestLocalizationManagerBootstrap.EnsureHelpTopicProvider(m_propertyTable);
 			// Bootstrap the legacy layout/parts Inventory the production RecordEditView loads via
-			// EnsureLegacySurfaceInitialized (LayoutCache loads the real lexicon .fwlayout/Parts).
+			// EnsureDataTreeInitialized (LayoutCache loads the real lexicon .fwlayout/Parts).
 			// Without it, DataTree.GetTemplateForObjLayout finds a null layout inventory and ShowObject
 			// throws an NRE. This is the same bootstrap the DictionaryConfigurationMigrator tests use.
 			LayoutCache.InitializePartInventories(Cache.ProjectId.Name, m_application, Cache.ProjectId.Path);
@@ -93,8 +93,8 @@ namespace SIL.FieldWorks.XWorks
 			m_view = m_propertyTable.GetValue<object>("currentContentControlObject", null) as RecordEditView;
 			Assert.That(m_view, Is.Not.Null, "expected the lexicon edit RecordEditView to load");
 			EnsureCurrentRecord(m_view);
-			Assert.That(GetField(m_view, "m_lexicalEditSurface"), Is.EqualTo(EditSurface.Avalonia),
-				"precondition: lexiconEdit resolves to the Avalonia surface under the New UI mode");
+			Assert.That(GetField(m_view, "m_activeUIFramework"), Is.EqualTo(UIFramework.Avalonia),
+				"precondition: lexiconEdit resolves to Avalonia under the New UI mode");
 		}
 
 		[TearDown]
@@ -155,7 +155,7 @@ namespace SIL.FieldWorks.XWorks
 		// commands only materialize+enable when their xCore display handlers can compute live
 		// slice-sequence context (position in the owning sequence, owner relationships). That context
 		// comes from a laid-out, VISIBLE legacy DataTree; the command-routing adapter tree is hidden +
-		// detached while the Avalonia surface is active, so headlessly the items never reach the
+		// detached while Avalonia is active, so headlessly the items never reach the
 		// enabled state and the menu does not surface them. Hosting/laying out the detached tree in the
 		// test was tried and did not surface them — the gap is the full menu-display path, not just
 		// slice layout. Runnable in the desktop environment where the legacy tree is shown. The InsertSense
@@ -358,7 +358,7 @@ namespace SIL.FieldWorks.XWorks
 		// Re-composes the displayed entry exactly as RecordEditView.ShowAvaloniaEntry does on refresh
 		// and counts the per-sense section headers (one per sense regardless of the sense's content —
 		// an empty new sense still gets a header, unlike its ifData Gloss row). This is the
-		// surface-visible proof that the recomposed detail view reflects the model mutation.
+		// user-visible proof that the recomposed detail view reflects the model mutation.
 		private int ComposeSenseHeaderCount()
 		{
 			var composed = DetailComposer.Compose(m_entry, Cache);

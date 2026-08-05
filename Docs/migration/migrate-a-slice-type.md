@@ -7,7 +7,7 @@ gate; the skill analyzes, drafts, and builds. Design background is the
 overview's "Detail pipeline" section; read it once before your first slice.
 
 Prerequisite: an up-to-date main that builds locally. Legacy stays untouched
-throughout -- the detail surface's UIMode gate covers the new work.
+throughout -- the detail view's UIMode gate covers the new work.
 
 Keep FieldWorks open and explore while the agent works: its analysis phase
 is read-only, so the two run in parallel. The agent will not touch your
@@ -39,7 +39,7 @@ alongside them.
    empty-but-present at its real position, composing green) or **implement
    design**. Hand-implementing inside the scaffold is fine.
 8. Verify with `create-integration-test`, then manually test in live
-   FieldWorks: edit interactions, single Ctrl+Z per save, cross-surface
+   FieldWorks: edit interactions, single Ctrl+Z per save, cross-framework
    refresh, clean tool-switch mid-edit.
 9. Approve the exemplar-map row for anything new.
 

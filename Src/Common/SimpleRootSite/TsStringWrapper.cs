@@ -20,7 +20,7 @@ namespace SIL.FieldWorks.Common.RootSites
 	/// <summary>
 	/// Wraps a ITsString object so that it can be serialized to/from the clipboard.
 	/// This type (with the <see cref="TsStringFormat"/> OS clipboard format) is the cross-framework
-	/// rich-text clipboard contract: legacy native-Views surfaces write/read it in
+	/// rich-text clipboard contract: legacy native-Views views write/read it in
 	/// <c>EditingHelper</c>, and the Avalonia coexistence bridge (<c>FwTsStringClipboard</c> in
 	/// xWorks) speaks the same format so copy/paste round-trips between frameworks.
 	/// </summary>

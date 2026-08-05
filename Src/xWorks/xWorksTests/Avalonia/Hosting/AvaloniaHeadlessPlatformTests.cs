@@ -15,7 +15,7 @@ namespace SIL.FieldWorks.XWorks
 	/// The programmatic proxy for "no real Avalonia window flashes during the test run". The
 	/// assembly-level <see cref="AvaloniaHeadlessSetUpFixture"/> sets
 	/// <see cref="FwAvaloniaRuntime.AppBuilderOverride"/> to a HEADLESS builder before any test runs, and
-	/// the product surface hosts (RecordEditView/RecordBrowseView) funnel through
+	/// the product hosts (RecordEditView/RecordBrowseView) funnel through
 	/// <see cref="FwAvaloniaRuntime.EnsureInitialized"/>. So after initialization the active Avalonia
 	/// windowing platform must be the headless implementation, not the real Win32 one — any window,
 	/// flyout, or popup the product code raises is therefore off-screen. We can't visually confirm "no

@@ -75,7 +75,7 @@ namespace SIL.FieldWorks.XWorks
 			var field = new DetailField(StableId, "Definition", "Definition", null,
 				DetailFieldKind.StructuredText,
 				SIL.FieldWorks.Common.FwAvalonia.ViewDefinition.EditorClassification.Known, null, null,
-				SIL.FieldWorks.Common.FwAvalonia.ViewDefinition.SurfaceRouting.Product, null, null, null,
+				SIL.FieldWorks.Common.FwAvalonia.ViewDefinition.HostRouting.Product, null, null, null,
 				isEditable: true, paragraphs: paragraphs)
 			{
 				AvailableParagraphStyles = new[] { "Block Quote", "Numbered List" }

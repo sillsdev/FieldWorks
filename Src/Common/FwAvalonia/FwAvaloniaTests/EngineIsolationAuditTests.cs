@@ -24,7 +24,7 @@ namespace FwAvaloniaTests
 	{
 		// Assembly names the production FwAvalonia assembly must never reference.
 		// System.Windows.Forms is the single approved adapter exception: WinFormsAvaloniaControlHost
-		// (in-process hosting) requires it; it hosts the surface and owns no rendering of user text.
+		// (in-process hosting) requires it; it hosts the Avalonia UI and owns no rendering of user text.
 		private static readonly string[] ForbiddenAssemblyFragments =
 		{
 			"Graphite", "ViewsInterfaces", "RootSite", "SimpleRootSite", "Gecko", "Geckofx",
@@ -33,7 +33,7 @@ namespace FwAvaloniaTests
 
 		// Identifiers from the forbidden-symbol list that
 		// production source must not name (native Views render/editor pipeline, legacy Slice
-		// editor surface, native render engines, browser/PDF engines).
+		// editors, native render engines, browser/PDF engines).
 		// "SliceFactory" and "DataTree" are deliberately absent: FwAvalonia.Detail owns its own
 		// SliceFactory and DataTree (cross-namespace twins of the legacy DetailControls types), so
 		// those bare stems are now legitimate first-party code symbols. Isolation from the native

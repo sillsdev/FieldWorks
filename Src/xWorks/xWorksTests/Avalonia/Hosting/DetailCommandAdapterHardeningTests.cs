@@ -70,7 +70,7 @@ namespace SIL.FieldWorks.XWorks
 			// stub so the legacy Help command can be queried while materializing the menu.
 			TestLocalizationManagerBootstrap.EnsureHelpTopicProvider(m_propertyTable);
 			// Bootstrap the legacy layout/parts Inventory the production RecordEditView loads via
-			// EnsureLegacySurfaceInitialized (LayoutCache loads the real lexicon .fwlayout/Parts).
+			// EnsureDataTreeInitialized (LayoutCache loads the real lexicon .fwlayout/Parts).
 			// Without it, DataTree.GetTemplateForObjLayout finds a null layout inventory and ShowObject
 			// throws an NRE. This is the same bootstrap the DictionaryConfigurationMigrator tests use.
 			LayoutCache.InitializePartInventories(Cache.ProjectId.Name, m_application, Cache.ProjectId.Path);
@@ -110,7 +110,7 @@ namespace SIL.FieldWorks.XWorks
 		// Skipped (desktop environment only): realizing lazy DummyObjectSlices and pointing CurrentSlice at a deep
 		// target runs through DataTree.FieldAt/MakeSliceRealAt, which depend on a laid-out, VISIBLE
 		// tree (ClientRectangle width, AutoScrollPosition, MakeSliceVisible). The command-routing
-		// adapter tree is hidden + detached while the Avalonia surface is active, so headlessly the
+		// adapter tree is hidden + detached while Avalonia is active, so headlessly the
 		// lazy slices do not realize and CurrentSlice cannot be resolved. Runnable in the desktop environment
 		// where the legacy tree is shown. (The DataTreeMove reachability tests cover the targeting/
 		// reachability logic that CAN be exercised without a live tree.)

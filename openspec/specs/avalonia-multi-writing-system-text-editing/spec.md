@@ -33,7 +33,7 @@ The Avalonia text editor SHALL model IME composition as a distinct editing state
 #### Scenario: Composition stays local until commit
 - **WHEN** a user enters text through an IME and the composition has not yet been committed
 - **THEN** the pending composition SHALL remain an editor-local state
-- **AND** LCModel, undo grouping, and cross-surface refresh SHALL remain unchanged until the composition is committed or canceled.
+- **AND** LCModel, undo grouping, and cross-framework refresh SHALL remain unchanged until the composition is committed or canceled.
 
 #### Scenario: Backspace within composition does not delete committed text
 - **WHEN** a user presses Backspace while an IME composition is active
@@ -61,7 +61,7 @@ Ghost text rows that currently depend on legacy string slices SHALL materialize 
 - **THEN** the required LCModel object SHALL be created through the existing creation logic for that field
 - **AND** the committed text SHALL be stored as an `ITsString` through the same edit-session and undo path as non-ghost text edits.
 
-### Requirement: Cross-surface interchange and refresh preserve TsString fidelity
+### Requirement: Cross-framework interchange and refresh preserve TsString fidelity
 The Avalonia text editor SHALL reuse the existing `TsStringWrapper` clipboard and drag/drop contract and SHALL integrate with the existing edit-session, undo or redo, and refresh seams so that rich-text edits interoperate with legacy surfaces during coexistence.
 
 #### Scenario: Clipboard round-trip preserves supported runs
@@ -69,9 +69,9 @@ The Avalonia text editor SHALL reuse the existing `TsStringWrapper` clipboard an
 - **THEN** the value SHALL round-trip through the existing `"TsString"` OS clipboard format and plain-text fallback as defined by the shared seam
 - **AND** supported writing-system and style runs SHALL be preserved.
 
-#### Scenario: Avalonia commit repaints the legacy surface
-- **WHEN** an Avalonia text edit is committed for a record that is also shown on a legacy surface
-- **THEN** the normal LCModel notification path SHALL refresh the legacy surface without a manual refresh command
+#### Scenario: Avalonia commit repaints the legacy view
+- **WHEN** an Avalonia text edit is committed for a record that is also shown on a legacy view
+- **THEN** the normal LCModel notification path SHALL refresh the legacy view without a manual refresh command
 - **AND** the shared undo stack SHALL treat the commit as one undoable action.
 
 ### Requirement: Parity claims require automated, manual, and performance evidence

@@ -21,7 +21,7 @@ namespace SIL.FieldWorks.XWorks
 	/// <summary>
 	/// The bidirectional selection bridge. Proves on the real product host that
 	/// <c>RecordClerkNavigationContext</c> follows the clerk's actual mediator broadcast (no manual
-	/// handler calls) and publishes a surface-originated selection back through the same bus.
+	/// handler calls) and publishes a view-originated selection back through the same bus.
 	/// </summary>
 	[TestFixture]
 	[Apartment(System.Threading.ApartmentState.STA)]
@@ -34,7 +34,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			m_application = new MockFwXApp(new MockFwManager { Cache = Cache }, null, null);
 			m_configFilePath = Path.Combine(FwDirectoryFinder.CodeDirectory, m_application.DefaultConfigurationPathname);
-			// The legacy DataTree's ShowObject (driven by EnsureLegacySurfaceInitialized) needs the
+			// The legacy DataTree's ShowObject (driven by EnsureDataTreeInitialized) needs the
 			// legacy layout/parts Inventory loaded; that Inventory is keyed by the project path, so
 			// give the in-memory test project a writable temp path before the inventory bootstrap.
 			Cache.ProjectId.Path = Path.Combine(Path.GetTempPath(), Cache.ProjectId.Name,
@@ -50,7 +50,7 @@ namespace SIL.FieldWorks.XWorks
 			m_propertyTable.RemoveLocalAndGlobalSettings();
 			m_window.LoadUI(m_configFilePath);
 			// Bootstrap the legacy layout/parts Inventory the production RecordEditView loads via
-			// EnsureLegacySurfaceInitialized (LayoutCache loads the real lexicon .fwlayout/Parts).
+			// EnsureDataTreeInitialized (LayoutCache loads the real lexicon .fwlayout/Parts).
 			// Without it, DataTree.GetTemplateForObjLayout finds a null layout inventory and ShowObject
 			// throws an NRE once the idle-queued show actually runs.
 			LayoutCache.InitializePartInventories(Cache.ProjectId.Name, m_application, Cache.ProjectId.Path);
@@ -105,7 +105,7 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(changed, Is.GreaterThan(changedBeforeMove),
 				"the bridge must observe the broadcast (follow direction)");
 
-			// Publish direction: a surface-originated selection (by record object) must route through
+			// Publish direction: a view-originated selection (by record object) must route through
 			// the clerk's real OnJumpToRecord and broadcast back to the host.
 			var changedBeforePublish = changed;
 			Assert.That(bridge.PublishSelection(first), Is.True);
@@ -113,9 +113,9 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(((ICmObject)bridge.CurrentRecord).Hvo, Is.EqualTo(first.Hvo),
 				"PublishSelection must move the bus selection (publish direction)");
 			Assert.That(control.Clerk.CurrentObject.Hvo, Is.EqualTo(first.Hvo),
-				"the legacy clerk must see the surface-published selection");
+				"the legacy clerk must see the view-published selection");
 			Assert.That(changed, Is.GreaterThan(changedBeforePublish),
-				"the publishing surface also follows its own published change via the bus");
+				"the publishing view also follows its own published change via the bus");
 		}
 
 		[Test]

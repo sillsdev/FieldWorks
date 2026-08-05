@@ -63,7 +63,7 @@ namespace FwAvaloniaTests
 
 			foreach (var node in definition.Roots)
 			{
-				Assert.That(node.Routing, Is.EqualTo(SurfaceRouting.Product));
+				Assert.That(node.Routing, Is.EqualTo(HostRouting.Product));
 				Assert.That(node.AutomationId, Is.Not.Null.And.Not.Empty);
 				Assert.That(node.StableId, Does.Not.StartWith("LexEntry/identity"),
 					"stable ids must derive from the real compiled layout paths, not the authored ones");

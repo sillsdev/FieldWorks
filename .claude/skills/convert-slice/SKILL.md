@@ -152,7 +152,7 @@ pause.
 plugin registered), a placeholder control composes and renders at the
 slice's REAL position in the New UI detail view, tests compose green, and
 legacy is untouched -- the row goes from "Unsupported" to "empty but
-present". There is no per-slice launcher gate; the detail surface's UIMode
+present". There is no per-slice launcher gate; the detail view's UIMode
 gate already covers it. Merge policy is the same as dialogs: scaffold is
 branch-state only; nothing merges until Proving it works passes (an empty row
 is worse than an honest Unsupported row for preview users).
@@ -184,6 +184,6 @@ is worse than an honest Unsupported row for preview users).
    `xWorksTests/Avalonia/Composer/`).
 2. Developer manual test in live FieldWorks, New UI on: the field at its
    real position, edit interactions per the analysis document, focus-loss
-   autosave, single Ctrl+Z per save, cross-surface PropChanged refresh both
+   autosave, single Ctrl+Z per save, cross-framework PropChanged refresh both
    directions, tool-switch mid-edit settles cleanly.
 3. Land the exemplar-promotion row for anything new (human-gated, same PR).

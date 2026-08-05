@@ -75,7 +75,7 @@ paired dialog:
 6. **State DTO / persisted-key mismatch.** The DTO field, the settings property,
    and the `PropertyTable` broadcast key must all agree
    (e.g., in the Options pair: `UIModeDisabledTools` ↔
-   `EditSurfaceResolver.UIModeDisabledToolsPropertyName`).
+   `UIFrameworkResolver.UIModeDisabledToolsPropertyName`).
    A rename on one side leaves the other writing a dead key.
 7. **Test blind spot.** Headless Avalonia tests pass while the WinForms form (or
    the live modal-host input path) is broken, because the tests exercise
@@ -93,7 +93,7 @@ Do these, in order, on any paired-dialog change:
 2. **Share the source of truth, don't copy it.** Prefer one list/rule both
    consume over two hand-maintained copies:
    - e.g., in the Options pair: `LexiconFeatureCatalog` is the single catalog
-     that `EditSurfaceRegistry.DefaultSupportedTools` is built from — extend
+     that `UIFrameworkRegistry.DefaultSupportedTools` is built from — extend
      it, not a second list.
    - Apply/normalize/gate helpers should be shared or mirrored with a pointer
      comment (e.g., in the Options pair: `NormalizeUiMode`,
@@ -132,7 +132,7 @@ Do these, in order, on any paired-dialog change:
 
 ## Related skills
 
-- `fieldworks-winforms-to-avalonia-migration` — the full surface-migration playbook.
+- `fieldworks-winforms-to-avalonia-migration` — the full migration playbook.
 - `fieldworks-ui-wiring-review` — which host is active / how a setting reaches a screen.
 - `fieldworks-localization-review` — string + `.resx`/XLIFF parity.
 - `fieldworks-avalonia-ui` — the Avalonia View/ViewModel/host patterns themselves.

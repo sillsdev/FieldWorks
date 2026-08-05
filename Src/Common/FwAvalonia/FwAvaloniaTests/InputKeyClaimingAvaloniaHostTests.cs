@@ -10,7 +10,7 @@ namespace FwAvaloniaTests
 {
 	/// <summary>
 	/// The host's input-key claiming decision: the arrow keys are always claimed for the hosted Avalonia
-	/// surface, Enter only when the host opted in (the dialog case), and nothing is claimed unless the host
+	/// control, Enter only when the host opted in (the dialog case), and nothing is claimed unless the host
 	/// holds focus. Covers the pure decision (<see cref="InputKeyClaimPolicy.ShouldClaimKey"/>);
 	/// the actual WinForms key routing it drives is confirmed manually in the running app.
 	/// </summary>

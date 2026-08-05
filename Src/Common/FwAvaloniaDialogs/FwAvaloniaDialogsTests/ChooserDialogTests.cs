@@ -24,7 +24,7 @@ namespace FwAvaloniaDialogsTests
 	/// The reusable chooser dialog (flat list): the Avalonia replacement for the legacy
 	/// ReallySimpleListChooser/SimpleListChooser. The view-model builds and drives a shared FwOptionChooser
 	/// (single or multi mode), mirrors the picker's commits into ChosenKeys, gates OK when a selection is
-	/// required, and snapshots the chosen set on OK. Runtime proof on a realized headless surface (compiled XAML
+	/// required, and snapshots the chosen set on OK. Runtime proof on a realized headless view (compiled XAML
 	/// on net48 + source-generated commands + the owned native picker).
 	/// </summary>
 	[TestFixture]

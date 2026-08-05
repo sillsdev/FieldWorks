@@ -10,8 +10,8 @@ namespace SIL.FieldWorks.XWorks
 {
 	/// <summary>
 	/// The product selection bridge: implements <see cref="IRecordNavigationContext"/> over
-	/// a real xCore <see cref="RecordClerk"/> so an Avalonia surface follows and publishes the same
-	/// "current record" bus the legacy surfaces use.
+	/// a real xCore <see cref="RecordClerk"/> so an Avalonia view follows and publishes the same
+	/// "current record" bus the legacy views use.
 	///
 	/// Follow direction: <see cref="RecordClerk"/> broadcasts record changes through the mediator as
 	/// <c>RecordNavigation</c> messages, which only reach colleagues through a sponsoring content
@@ -21,8 +21,8 @@ namespace SIL.FieldWorks.XWorks
 	///
 	/// Publish direction: <see cref="PublishSelection"/> routes through the clerk's real
 	/// <c>OnJumpToRecord</c> handler, and the movement methods through <c>OnNextRecord</c>/
-	/// <c>OnPreviousRecord</c>, so a selection made on an Avalonia surface broadcasts to every legacy
-	/// surface exactly as a legacy navigation would.
+	/// <c>OnPreviousRecord</c>, so a selection made on an Avalonia view broadcasts to every legacy
+	/// gacy view exactly as a legacy navigation would.
 	/// </summary>
 	public sealed class RecordClerkNavigationContext : IRecordNavigationContext
 	{

@@ -41,7 +41,7 @@ a native picture editor exists.
 
 1. A view plus view-model with no launcher is not a feature -- it is dormant
    code that reads as finished. Judge completeness by whether a product route
-   reaches the surface, never by whether it compiles and has tests.
+   reaches the view, never by whether it compiles and has tests.
 2. Remove a localization accessor and its neutral resx row in the same commit;
    the localization test reflects over accessors and fails on a split.
 3. LCModel-free exchange DTOs have no independent value. When their only
@@ -52,7 +52,7 @@ a native picture editor exists.
 
 ## Evidence needed next time
 
-- A product route -- launcher or slice -- reaching the surface before any
+- A product route -- launcher or slice -- reaching the view before any
   further capability is added to it.
 - What a native picture editor must cover: file choice, crop, licence and
   creator metadata, and the LinkedFiles move/copy/leave decision.
@@ -64,7 +64,7 @@ a native picture editor exists.
 ## Decision boundary
 
 This record constrains how completeness is judged and the order in which a
-picture surface earns capability. A human decides whether picture editing
+picture view earns capability. A human decides whether picture editing
 returns to the Avalonia detail view, which capabilities the first version
 carries, and what a native editor must do.
 

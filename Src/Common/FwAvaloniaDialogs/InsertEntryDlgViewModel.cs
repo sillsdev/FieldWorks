@@ -709,7 +709,7 @@ namespace FwAvaloniaDialogs
 
 		/// <summary>
 		/// The current inline validation message (the first validation error), or empty when the dialog is valid — the
-		/// text the view shows in its inline error surface (the CreateFeature pattern). Empty-form, morph-type mismatch,
+		/// text the view shows in its inline error block (the CreateFeature pattern). Empty-form, morph-type mismatch,
 		/// incomplete circumfix, and invalid-form all flow through here.
 		/// </summary>
 		public string ValidationMessage => ValidationErrors.FirstOrDefault() ?? string.Empty;

@@ -18,7 +18,7 @@ is no IPC and no second process.
 - **Hosting**: Avalonia controls render inside WinForms via
   `Avalonia.Win32.Interoperability.WinFormsAvaloniaControlHost`. Our reusable
   host base is `Src/Common/FwAvalonia/AvaloniaHostControlBase.cs` (the
-  generic in-process plumbing); the concrete detail-surface host is
+  generic in-process plumbing); the concrete detail-view host is
   `Src/Common/FwAvalonia/DetailHostControl.cs`.
   Keyboard-navigation keys that WinForms would swallow are claimed by
   `Src/Common/FwAvalonia/InputKeyClaimingAvaloniaHost.cs`.
@@ -32,10 +32,10 @@ is no IPC and no second process.
   process. Its assumptions are pinned by tests (`SeamTests`).
 - **Opt-in gate**: the new UI is **fail-closed**. `Src/Common/FwUtils/UIModeGates.cs`
   (no Avalonia type in it) decides whether the New UI ("New UI (preview)" in
-  Tools -> Options) is active; the `EditSurface*` family  -
-  `EditSurfaceResolver`, `EditSurfaceRegistry`, `EditSurfaceSelectionService`,
-  `EditSurfaceKind` (all under `Src/Common/FwAvalonia/`) -- resolves per tool
-  whether the Avalonia surface or the legacy surface renders. Unregistered
+  Tools -> Options) is active; the `UIFramework*` family  -
+  `UIFrameworkResolver`, `UIFrameworkRegistry`, `UIFrameworkSelectionService`,
+  `UIFramework` (all under `Src/Common/FwAvalonia/`) -- resolves per tool
+  whether Avalonia or legacy WinForms renders the tool. Unregistered
   tools always get Legacy.
 
 ## 2. Subsystem map
@@ -109,7 +109,7 @@ task per save, on the same global action-handler stack legacy uses -- so Ctrl+Z
 works across frameworks by construction. Specialized edit operations live on
 **sub-capability interfaces** (e.g. `IStructuredTextEditing`), not by widening
 the core interface. Before the window's save-on-tool-switch commit, the
-outgoing surface settles its open session via `IPrepareToGoAway`
+outgoing view settles its open session via `IPrepareToGoAway`
 (`Src/xWorks/Avalonia/`) -- named for the legacy idiom, but unlike legacy it
 cannot veto; it always settles.
 
@@ -127,12 +127,12 @@ implementations, the boundary data contracts (`IFwClipboard`/`FwClipboardText`,
 `ActiveHostContract` ("may I drive the legacy DataTree right now?",
 audit-tested).
 
-Clipboard and drag-and-drop interchange between the two surfaces uses the
+Clipboard and drag-and-drop interchange between the two frameworks uses the
 Windows clipboard data format registered as `"TsString"`, carrying the
 TsString XML representation (`TsStringUtils.GetXmlRep`) -- the same format
 native-Views copy/paste uses, so multi-WS rich text round-trips in both
-directions. `TsString` remains the rich-text data model on both surfaces;
-the migration replaces rendering and editing surfaces, not the data model.
+directions. `TsString` remains the rich-text data model in both frameworks;
+the migration replaces rendering and editing UI, not the data model.
 
 Catalog: `.claude/skills/fieldworks-winforms-to-avalonia-migration/references/seam-catalog.md`.
 
@@ -148,21 +148,21 @@ Unsupported rows are the conversion worklist; nothing silently mis-renders.
 ### 2f. Hosting into xWorks -- replaces RecordEditView's DataTree hosting
 
 `Src/xWorks/Avalonia/Hosting/RecordEditView.Avalonia.cs` (a partial of the
-legacy `RecordEditView`) shows the detail view on the Avalonia surface;
-`AvaloniaDetailRefreshController` propagates cross-surface `PropChanged`
+legacy `RecordEditView`) shows the Avalonia detail view;
+`AvaloniaDetailRefreshController` propagates cross-framework `PropChanged`
 refreshes (suspend/pending while an edit session is open);
 `XCoreMenuBridge` and `RecordClerkNavigationContext` bridge xCore commands and
 record navigation.
 
 ### 2g. Preview host + testing -- how migrated UI is verified
 
-Three verification surfaces, in the order a migrator reaches for them:
+Three verification paths, in the order a migrator reaches for them:
 
 - **Headless tests** (`[AvaloniaTest]` in FwAvaloniaTests /
   FwAvaloniaDialogsTests) are the inner loop: prove field wiring, keyboard
   flows, validation, and edit/commit behavior without launching anything.
   Every playbook build step lands its evidence here first.
-- **The preview host** (`Src/Common/FwAvaloniaPreviewHost/`) runs a surface
+- **The preview host** (`Src/Common/FwAvaloniaPreviewHost/`) runs a view or dialog
   standalone, outside FieldWorks: iterate on look and interaction without
   opening a project, and use it to isolate defects -- a bug that reproduces
   in the preview host is in our code, not in the WinForms hosting or
@@ -215,8 +215,8 @@ The familiar names survive on the halves they still fit.
   `type="detail"`, home of the legacy DetailControls). The new stack names
   its pieces from that word: `Detail*` for the projected data and its
   services, `DataTree` for the view, `Slice*` for the row factory and
-  plugins. Adjacent but app-wide: `EditSurface*` names the choice of which
-  framework renders a tool's surface.
+  plugins. Adjacent but app-wide: `UIFramework*` names the choice of which
+  framework renders a tool.
 - **"Lexicon"** only for genuinely Lexicon-Editor-area types
   (`LexiconFirstSlice`, `LexiconEditErrorFallback`, `LexiconFeature*`).
   Domain terms (`LexicalRelation`, `LexicalEntry`, `LexReference`, ...)
@@ -249,7 +249,7 @@ The familiar names survive on the halves they still fit.
   at the assembly boundary**: `FwAvalonia` is the controls layer,
   `FwAvaloniaDialogs` the dialogs layer. A new owned control lands in
   `FwAvaloniaDialogs/Controls/` when only dialogs use it, and sinks to
-  `FwAvalonia` when the detail view or another surface needs it.
+  `FwAvalonia` when the detail view or another view needs it.
 - **Avalonia injected into a legacy project is corralled under `Avalonia/`**:
   crosscutting files at that folder's root, a few coarse functional groups
   beneath -- `Src/xWorks/Avalonia/{Composer,Plugins,Hosting}`,

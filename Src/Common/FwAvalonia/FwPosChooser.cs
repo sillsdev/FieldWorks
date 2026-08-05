@@ -247,7 +247,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 				RoutingStrategies.Bubble, handledEventsToo: true);
 
 			// Host the tree on a Flyout anchored to the toggle button, not a free popup: a flyout
-			// positions itself in the trigger's own surface, so the dropdown stays correctly placed under
+			// positions itself in the trigger's own window, so the dropdown stays correctly placed under
 			// fractional display scaling. The Fluent presenter chrome is stripped so the panel's own thin
 			// border is the only boundary the user sees.
 			_flyout = new Flyout

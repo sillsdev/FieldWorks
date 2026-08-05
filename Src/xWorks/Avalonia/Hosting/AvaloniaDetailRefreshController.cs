@@ -10,12 +10,12 @@ using SIL.LCModel.Core.KernelInterfaces;
 namespace SIL.FieldWorks.XWorks
 {
 	/// <summary>
-	/// The cross-surface refresh propagation gate, Avalonia side only. Both surfaces
+	/// The cross-framework refresh propagation gate, Avalonia side only. Both views
 	/// share one LCModel cache, so consistency stands on the <c>PropChanged</c> notification loop:
 	/// this controller subscribes to the real <see cref="ISilDataAccess"/> notification bus and asks
 	/// the host to re-resolve/re-show the Avalonia detail view whenever a change lands inside the entry
-	/// the surface is displaying — whether it came from a legacy surface, F5/RefreshAllViews-driven
-	/// reloads, or any other writer. While the surface's own edit session is open, refreshes are
+	/// the view is displaying -- whether it came from a legacy view, F5/RefreshAllViews-driven
+	/// reloads, or any other writer. While the view's own edit session is open, refreshes are
 	/// gated through an <see cref="IDetailRefreshCoordinator"/> (suspend/pending, the LT-22414
 	/// model) and delivered once on edit completion, so a half-typed edit is never stomped.
 	///
@@ -39,8 +39,8 @@ namespace SIL.FieldWorks.XWorks
 		private bool _disposed;
 
 		/// <param name="cache">The shared LCModel cache whose notification bus is observed.</param>
-		/// <param name="currentRecord">The record the surface is displaying right now.</param>
-		/// <param name="isEditing">Whether the surface's own edit session is open.</param>
+		/// <param name="currentRecord">The record the view is displaying right now.</param>
+		/// <param name="isEditing">Whether the view's own edit session is open.</param>
 		/// <param name="refresh">Re-resolves/re-shows the detail view from current domain state.</param>
 		/// <param name="coordinator">The suspend/pending gate used while editing.</param>
 		/// <param name="schedule">Optional UI-thread deferral for coalesced delivery.</param>
@@ -79,7 +79,7 @@ namespace SIL.FieldWorks.XWorks
 
 			if (_isEditing())
 			{
-				// The surface's own session is writing (or an external edit raced it): hold the
+				// The view's own session is writing (or an external edit raced it): hold the
 				// refresh until the edit completes rather than stomping in-progress input.
 				if (!_coordinator.IsSuspended)
 					_coordinator.BeginSuspend();

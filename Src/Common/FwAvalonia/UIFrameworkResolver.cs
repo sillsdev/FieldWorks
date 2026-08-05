@@ -9,31 +9,18 @@ using System.Linq;
 namespace SIL.FieldWorks.Common.FwAvalonia
 {
 	/// <summary>
-	/// Which implementation renders the Lexical Edit surface. WinForms is the safe default;
-	/// Avalonia is the proof-of-concept path selected only when the feature flag is enabled.
-	/// </summary>
-	public enum EditSurface
-	{
-		/// <summary>The existing WinForms DataTree/Slice surface (default).</summary>
-		WinForms,
-
-		/// <summary>The Avalonia surface (flag-gated).</summary>
-		Avalonia
-	}
-
-	/// <summary>
-	/// Pure-logic resolver for the two-adapter feature flag that selects the active lexical-edit
-	/// surface. Default is WinForms; Avalonia is selected by a persisted `UIMode = New` preference
-	/// or by an explicit override used in tests.
+	/// Pure-logic resolver for the two-adapter feature flag that selects which
+	/// <see cref="UIFramework"/> renders the current tool. Default is Legacy; Avalonia is selected
+	/// by a persisted `UIMode = New` preference or by an explicit override used in tests.
 	/// This type has no Avalonia dependency so it can be unit tested without a UI runtime.
 	/// </summary>
-	public static class EditSurfaceResolver
+	public static class UIFrameworkResolver
 	{
 		// Tool support now comes from an app-wide registry rather than a hardcoded array. The
 		// default registry is seeded with the tools that ship with Avalonia support, so the static
 		// convenience methods below keep their exact original behavior.
-		private static readonly EditSurfaceRegistry DefaultRegistry =
-			EditSurfaceRegistry.CreateDefault();
+		private static readonly UIFrameworkRegistry DefaultRegistry =
+			UIFrameworkRegistry.CreateDefault();
 
 		/// <summary>Property/app-setting key storing the preferred lexical-edit UI mode.</summary>
 		public const string UIModePropertyName = "UIMode";
@@ -81,12 +68,12 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 			=> !string.IsNullOrWhiteSpace(toolName) && ParseDisabledTools(disabledToolsCsv).Contains(toolName);
 
 		/// <summary>
-		/// Resolves the surface to use. Resolution order: an explicit <paramref name="overrideEnabled"/>
+		/// Resolves the UI framework to use. Resolution order: an explicit <paramref name="overrideEnabled"/>
 		/// wins; otherwise the persisted <paramref name="uiMode"/> user preference is used.
 		/// </summary>
 		/// <param name="overrideEnabled">Optional strong override (PropertyTable/registry).</param>
 		/// <param name="uiMode">Persisted user preference (`Legacy` or `New`).</param>
-		public static EditSurface Resolve(
+		public static UIFramework Resolve(
 			bool? overrideEnabled = null,
 			string uiMode = null,
 			string currentToolName = null)
@@ -98,8 +85,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 		/// registry uses the shipped default. Same precedence as the static overload: tool gate first, then
 		/// explicit override, then the persisted UI-mode preference.
 		/// </summary>
-		public static EditSurface Resolve(
-			EditSurfaceRegistry registry,
+		public static UIFramework Resolve(
+			UIFrameworkRegistry registry,
 			bool? overrideEnabled = null,
 			string uiMode = null,
 			string currentToolName = null)
@@ -108,24 +95,24 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 			return ResolveFromPreference(registry.SupportsAvalonia(currentToolName), overrideEnabled, uiMode);
 		}
 
-		// The single surface-precedence implementation behind the edit gate: a closed tool gate is
-		// always WinForms; otherwise an explicit override wins; otherwise the persisted UI-mode
+		// The single framework-precedence implementation behind the edit gate: a closed tool gate is
+		// always Legacy; otherwise an explicit override wins; otherwise the persisted UI-mode
 		// preference decides.
-		private static EditSurface ResolveFromPreference(bool toolGateOpen, bool? overrideEnabled, string uiMode)
+		private static UIFramework ResolveFromPreference(bool toolGateOpen, bool? overrideEnabled, string uiMode)
 		{
 			if (!toolGateOpen)
-				return EditSurface.WinForms;
+				return UIFramework.Legacy;
 
 			if (overrideEnabled.HasValue)
-				return overrideEnabled.Value ? EditSurface.Avalonia : EditSurface.WinForms;
+				return overrideEnabled.Value ? UIFramework.Avalonia : UIFramework.Legacy;
 
 			return string.Equals(uiMode, NewUIMode, StringComparison.OrdinalIgnoreCase)
-				? EditSurface.Avalonia
-				: EditSurface.WinForms;
+				? UIFramework.Avalonia
+				: UIFramework.Legacy;
 		}
 
-		public static string ToUIModeValue(EditSurface surface)
-			=> surface == EditSurface.Avalonia ? NewUIMode : LegacyUIMode;
+		public static string ToUIModeValue(UIFramework framework)
+			=> framework == UIFramework.Avalonia ? NewUIMode : LegacyUIMode;
 
 		public static bool SupportsAvaloniaForTool(string currentToolName)
 			=> DefaultRegistry.SupportsAvalonia(currentToolName);
