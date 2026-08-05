@@ -2281,6 +2281,27 @@ namespace SIL.FieldWorks.Common.Controls
 		}
 		#endregion
 
+		/// <summary>
+		/// Hide the chooser before running <paramref name="cmd"/>. When the command opts in via
+		/// KeepOwnerActiveWhenHiding (its Execute() opens another modal dialog), re-enable and then
+		/// re-activate our owner around the hide. While the chooser is modal the OS has disabled the
+		/// owner, so hiding alone would hand the foreground to another application (the next window
+		/// by z-order) instead of back to the FLEx main window, causing a brief flash. Re-enabling is
+		/// not enough on its own; the Activate() is what pulls FLEx forward, and it is not blocked by
+		/// the foreground lock because we are still the foreground process here (LT-22578).
+		/// </summary>
+		private void HideForCommand(ChooserCommand cmd)
+		{
+			if (cmd != null && cmd.KeepOwnerActiveWhenHiding && Owner != null)
+			{
+				Owner.Enabled = true;
+				Visible = false;
+				Owner.Activate();
+				return;
+			}
+			Visible = false;
+		}
+
 		private void HandleCommmandChoice(ChooserCommandNode node)
 		{
 			if (node != null)
@@ -2289,7 +2310,7 @@ namespace SIL.FieldWorks.Common.Controls
 				if (cmd != null)
 				{
 					if (cmd.ShouldCloseBeforeExecuting)
-						Visible = false;
+						HideForCommand(cmd);
 					m_chosenLabel = cmd.Execute();
 				}
 			}
@@ -2300,7 +2321,7 @@ namespace SIL.FieldWorks.Common.Controls
 			Persist();
 			if (m_linkCmd != null)
 			{
-				Visible = false;
+				HideForCommand(m_linkCmd);
 				m_chosenLabel = m_linkCmd.Execute();
 				m_fLinkExecuted = true;
 			}
