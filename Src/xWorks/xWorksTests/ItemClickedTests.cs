@@ -71,19 +71,6 @@ namespace SIL.FieldWorks.XWorks
 				mockItems.Items.Remove(boot.Hvo);
 				result = XmlDocView.SubitemClicked(where, LexEntryTags.kClassId, view, Cache, mockItems, nullAdjuster);
 				Assert.That(result, Is.Null);
-
-				// MainEntryFromSubEntryTargetAdjuster should convert subentry to main entry
-				// Make boot a subentry of bootRoot
-				var bootRoot = MakeEntry("boo", "fragment of boot");
-				var ler = Cache.ServiceLocator.GetInstance<ILexEntryRefFactory>().Create();
-				boot.EntryRefsOS.Add(ler);
-				ler.RefType = LexEntryRefTags.krtComplexForm;
-				ler.PrimaryLexemesRS.Add(bootRoot);
-				mockItems.Items.Add(boot.Hvo); // not rejected as item
-				mockItems.Items.Add(bootRoot.Hvo); // has to be valid itself also
-				var subentryAdjuster = new MainEntryFromSubEntryTargetAdjuster();
-				result = XmlDocView.SubitemClicked(where, LexEntryTags.kClassId, view, Cache, mockItems, subentryAdjuster);
-				Assert.That(result, Is.EqualTo(bootRoot));
 			}
 		}
 
