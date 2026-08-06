@@ -54,7 +54,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  debug_build_and_test:
+  upload_strings_build_and_test:
     permissions:
       contents: read
     env:
@@ -63,7 +63,7 @@ jobs:
       FILESTOSIGNLATER: ./signExternally
       GH_TOKEN: ${{ github.token }}
       BASE_BUILD_NUMBER: ${{ inputs.base_build_number || '1452' }}
-    name: Build Debug and run Tests
+    name: Upload strings for l10n, Build, and run Tests
     runs-on: windows-2022
     steps:
       - name: Compute build number for archival
@@ -219,6 +219,13 @@ jobs:
               }
               New-ItemProperty -Path $path -Name $valueName -Value $expectedValue -Type String -Force
           }
+
+      - name: Upload strings for translation
+        id: upload
+        if: github.event_name == 'push'
+        shell: powershell
+        run: |
+          .\build.ps1 -Target uploadUpdatesForTranslation | Tee-Object -FilePath uploadStrings.log
 
       - name: Build
         id: build
