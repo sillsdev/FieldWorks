@@ -1,0 +1,18 @@
+// Copyright (c) 2026 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
+using System;
+
+namespace SIL.FieldWorks.Common.FwAvalonia.Seams
+{
+	/// <summary>Detail lifetime/disposal seam.</summary>
+	public interface IDetailLifetime : IDisposable
+	{
+		/// <summary>Whether the detail view has been disposed.</summary>
+		bool IsDisposed { get; }
+
+		/// <summary>Registers a disposable to be disposed once when the detail view is disposed.</summary>
+		void Register(IDisposable disposable);
+	}
+}

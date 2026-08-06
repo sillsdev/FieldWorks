@@ -543,6 +543,7 @@ namespace SIL.FieldWorks.XWorks
 		public virtual void FixtureInit()
 		{
 			EnsureIcuDataIsConfiguredForTests();
+			TestLocalizationManagerBootstrap.EnsureInitialized();
 
 			FwRegistrySettings.Init();
 			SetupEverythingButBase();
@@ -689,6 +690,48 @@ namespace SIL.FieldWorks.XWorks
 			//use the Tool menu to select the requested tool
 			//(and don't specify anything about the view, so we will get the default)
 			Menu.ClickItem("Tools", toolValueName);
+		}
+
+		/// <summary>
+		/// Pumps the mediator's pending items and idle queue so that idle-queued work (e.g.
+		/// RecordEditView.ShowRecord, which defers to ShowRecordOnIdle via IdleQueue.Add) actually
+		/// runs during a test.
+		///
+		/// Deliberately does NOT call IdleQueue's private Application_Idle via reflection (the
+		/// previous approach used by several test files here, before this was centralized). That
+		/// method's ShouldAbort() guard peeks the real Win32 message queue and skips its entire run
+		/// if anything is pending there -- which is unconditionally true in this test process (there
+		/// is no real message loop backing it), so every queued task was left stuck forever. Draining
+		/// via IdleQueue's public ICollection surface instead reproduces Application_Idle's per-call
+		/// behavior (run each task once, re-queue any that report themselves incomplete) without that
+		/// guard.
+		/// </summary>
+		protected void DrainMediatorAndIdleQueues()
+		{
+			var idleQueue = m_window.Mediator.IdleQueue;
+
+			for (var iteration = 0; iteration < 8; iteration++)
+			{
+				((MockFwXWindow)m_window).ProcessPendingItems();
+				if (idleQueue.Count == 0 && m_window.Mediator.JobItems == 0)
+					break;
+
+				if (idleQueue.Count > 0)
+					RunIdleQueueTasksDirectly(idleQueue);
+			}
+
+			Application.DoEvents();
+		}
+
+		private static void RunIdleQueueTasksDirectly(IdleQueue idleQueue)
+		{
+			var tasks = idleQueue.ToList();
+			idleQueue.Clear();
+			foreach (var task in tasks)
+			{
+				if (!task.Delegate(task.Parameter))
+					idleQueue.Add(task.Priority, task.Delegate, task.Parameter);
+			}
 		}
 
 		protected void DoCommandRepeatedly(string commandName, int times)

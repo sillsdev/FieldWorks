@@ -4,7 +4,10 @@
 
 using System;
 using System.IO;
+using System.Linq;
+using System.Reflection;
 using NUnit.Framework;
+using SIL.FieldWorks.Common.FwAvalonia;
 using SIL.LCModel;
 using SIL.LCModel.Utils;
 

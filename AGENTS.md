@@ -14,10 +14,14 @@ Minimal, high-signal guidance for coding agents in this repository.
 - Native C++ must build before managed projects (enforced by `FieldWorks.proj` + `build.ps1`).
 - FieldWorks uses registration-free COM; do not register COM globally and do not add registry hacks.
 - Keep localization in `.resx`; do not hardcode translatable UI strings.
+- Follow the code-comment standard in
+	`.claude/skills/fieldworks-code-commenting/SKILL.md`.
 
 ## Context model
 
 - Keep shared repo guidance in this file plus the nearest nested `AGENTS.md`.
+- Consult `Docs/lessons/README.md` for indexed, human-reviewed lessons from
+	completed, rejected, or retired work before planning in a covered area.
 - GitHub Copilot custom instructions still require `.github/copilot-instructions.md`
 	and `.github/instructions/*.instructions.md`.
 - Claude Code reads `CLAUDE.md`, which imports this file; keep Claude-only
@@ -32,6 +36,12 @@ FieldWorks is built upon the `liblcm` (Language & Culture Model) repository, whi
 ## Serena navigation
 
 - Prefer Serena symbolic tools for code discovery/navigation before broad file reads.
+
+## MCP servers
+
+- `.mcp.json` registers the winforms-mcp server (strict JSON — no comments);
+	setup and rationale live in
+	`.claude/skills/fieldworks-winapp/references/mcp-setup.md`.
 
 ## Issue tracking and Jira
 

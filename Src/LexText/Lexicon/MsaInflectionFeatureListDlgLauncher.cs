@@ -3,6 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Runtime.CompilerServices;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.Framework.DetailControls;
 using SIL.FieldWorks.Common.FwUtils;
@@ -51,6 +52,13 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// </summary>
 		protected override void HandleChooser()
 		{
+			var uiMode = m_propertyTable.GetStringProperty("UIMode", null);
+			if (UIModeGates.ShouldUseAvaloniaUI(uiMode))
+			{
+				HandleChooserAvalonia();
+				return;
+			}
+
 			VectorReferenceLauncher vrl = null;
 			using (MsaInflectionFeatureListDlg dlg = new MsaInflectionFeatureListDlg())
 			{
@@ -147,6 +155,38 @@ namespace SIL.FieldWorks.XWorks.LexEd
 					}
 				}
 			}
+		}
+
+		/// <summary>
+		/// Handle launching of the MSA editor in New mode.
+		/// </summary>
+		// NoInlining keeps the Avalonia assembly load out of the gated caller's JIT (Legacy loader isolation).
+		[MethodImpl(MethodImplOptions.NoInlining)]
+		private void HandleChooserAvalonia()
+		{
+			Slice parentSlice = Slice;
+			IFsFeatStruc originalFs = m_obj as IFsFeatStruc;
+			int owningFlid = (parentSlice as MsaInflectionFeatureListDlgLauncherSlice).Flid;
+			ICmObject owner = originalFs == null ? parentSlice.Object : originalFs.Owner;
+			var helpProvider = m_propertyTable.GetValue<SIL.FieldWorks.Common.FwUtils.IHelpTopicProvider>(
+				"HelpTopicProvider", null);
+
+			var resultFs = LcmInflectionFeatureChooserLauncher.ShowForOwner(m_cache, m_mediator, m_propertyTable,
+				originalFs, owner, owningFlid, parentSlice.FindForm(), helpProvider, out var accepted);
+			if (!accepted)
+				return;
+			// Note that this may set m_obj to null. resultFs will be null if all inflection features have been
+			// removed. That is a valid state for this slice; m_obj deleted is not.
+			m_obj = resultFs;
+			// If we have been disposed we do not need to crash while trying to re-init the launcher view
+			if (!IsDisposed)
+				m_msaInflectionFeatureListDlgLauncherView.Init(m_cache, resultFs);
+			// TODO: The legacy "Add features to <POS>" link (MsaInflectionFeatureListDlg.linkLabel1_LinkClicked) is
+			// not implemented: neither swapping to the sibling Inflection Features slice's chooser in the same tool
+			// (LT-5913) nor jumping to the POS editor when no such slice exists (LT-7167). The jump already has both
+			// pieces — RecordEditView posts FollowLink with FwLinkArgs, and FwFeatureStructureAdapter.BuildNodes walks
+			// the POS owner chain that yields legacy's m_highestPOS — so it needs only surfacing and a trigger. The
+			// same-tool swap has no analog: it relies on the WinForms DataTree/VectorReferenceLauncher control walk.
 		}
 
 		protected override void OnClick(Object sender, EventArgs arguments)
