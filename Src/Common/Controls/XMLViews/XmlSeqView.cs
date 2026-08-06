@@ -359,20 +359,6 @@ namespace SIL.FieldWorks.Common.Controls
 		}
 
 		/// <summary>
-		/// Receives the broadcast message "JumpToRecord" before RecordClerk
-		/// (because this is the active Control?), so we can see if we
-		/// need to display a failure message.
-		/// </summary>
-		public bool OnJumpToRecord(object argument)
-		{
-			CheckDisposed();
-#pragma warning disable 618 // suppress obsolete warning
-			Mediator.BroadcastMessage("CheckJump", argument);
-#pragma warning restore 618
-			return false; // I don't want to be seen as handling this!
-		}
-
-		/// <summary>
 		/// Receives the broadcast message "PropertyChanged"
 		/// </summary>
 		public override void OnPropertyChanged(string name)

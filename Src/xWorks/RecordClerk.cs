@@ -113,19 +113,6 @@ namespace SIL.FieldWorks.XWorks
 		private string m_relatedClerk;
 
 		/// <summary>
-		/// When m_relatedClerk is not null, and this is also not null, it controls how we find the
-		/// related object which we should switch to when a view using this is activated.
-		/// owned: try to find one of our own objects which is or is owned by the object selected in the
-		/// related clerk (e.g., Base Records clerk should try to find an object that is or owns the record
-		/// selected in the records clerk).
-		/// ownee: if the other clerk's object is or owns the object already selected in this, don't change.
-		/// otherwise try to select the object owned in the other clerk. (e.g., Records Clerk should not
-		/// switch to a higher-level record if it is in one that corresponds to part of the selection in
-		/// the base record clerk).
-		/// </summary>
-		private string m_relationToRelatedClerk;
-
-		/// <summary>
 		/// this is an object which gives us the list of filters which we should offer to the user from the UI.
 		/// this does not include the filters they can get that by using the FilterBar.
 		/// </summary>
@@ -344,7 +331,6 @@ namespace SIL.FieldWorks.XWorks
 			m_list = RecordList.Create(cache, mediator, propertyTable, clerkConfiguration.SelectSingleNode("recordList"));
 			m_list.Clerk = this;
 			m_relatedClerk = XmlUtils.GetOptionalAttributeValue(clerkConfiguration, "relatedClerk");
-			m_relationToRelatedClerk = XmlUtils.GetOptionalAttributeValue(clerkConfiguration, "relationToRelatedClerk");
 
 			TryRestoreSorter(clerkConfiguration, cache);
 			TryRestoreFilter(clerkConfiguration, cache, updateAndNotify);
@@ -1858,15 +1844,6 @@ namespace SIL.FieldWorks.XWorks
 			ResetStatusBarMessageForCurrentObject();
 		}
 
-		/// <summary>
-		/// Overridden in SubitemRecordClerk, this records the subitem.
-		/// </summary>
-		/// <param name="subitem"></param>
-		internal virtual void SetSubitem(ICmObject subitem)
-		{
-
-		}
-
 		internal virtual bool SetCurrentFromRelatedClerk()
 		{
 			if (!String.IsNullOrEmpty(m_relatedClerk))
@@ -1874,51 +1851,7 @@ namespace SIL.FieldWorks.XWorks
 				var relatedClerk = FindClerk(m_propertyTable, m_relatedClerk);
 				if (relatedClerk != null && Cache.ServiceLocator.IsValidObjectId(relatedClerk.CurrentObjectHvo))
 				{
-					var target = relatedClerk.CurrentObject;
-					if (m_relationToRelatedClerk != null && m_relationToRelatedClerk.StartsWith("root:"))
-					{
-						// The object to look for in our list is a 'root' of the one in the other list:
-						// that is, the object in the other list itself or one of its owners, the highest one in the
-						// hierarchy of a specified class. For example, the other list may contain subrecords,
-						// we want to select an owning top-level record.
-						var className = m_relationToRelatedClerk.Substring("root:".Length).Trim();
-						var mdc = Cache.MetaDataCacheAccessor;
-						var classId = mdc.GetClassId(className);
-						var targetObj = target;
-						for(;targetObj != null; targetObj = targetObj.Owner)
-						{
-							if (targetObj.ClassID == classId)
-								target = targetObj; // it ends up with the highest thing of that class in the owner list (possibly the original target)
-						}
-						if (target != relatedClerk.CurrentObject)
-							SetSubitem(relatedClerk.CurrentObject);
-						else
-							SetSubitem(null); // same object, no need for special subitem behavior.
-					}
-					else if (m_relationToRelatedClerk != null && m_relationToRelatedClerk == "part")
-					{
-						if (relatedClerk is SubitemRecordClerk)
-						{
-							// It should keep track of precisely which object we want.
-							var subitemClerk = relatedClerk as SubitemRecordClerk;
-							if (subitemClerk.UsedToSyncRelatedClerk)
-							{
-								// We've synchronized this clerk from the related one ONCE. In case we initialize
-								// another view from this Clerk, we don't want to do it again...for example, if we
-								// switch from doc to Edit, then change records, then switch to Browse, we want
-								// to stay on the same record, not switch again to the document view one.
-								// Of course this would be a problem if more than one Clerk had the same
-								// related clerk, but that hasn't happened yet.
-								return false;
-							}
-							if (subitemClerk.Subitem != null)
-							{
-								target = subitemClerk.Subitem;
-								subitemClerk.UsedToSyncRelatedClerk = true;
-							}
-						}
-					}
-					JumpToRecord(target.Hvo);
+					JumpToRecord(relatedClerk.CurrentObjectHvo);
 					return true;
 				}
 			}
@@ -2293,7 +2226,6 @@ namespace SIL.FieldWorks.XWorks
 		bool m_fReloadingDueToMissingObject = false;
 		private void BroadcastChange(bool suppressFocusChange)
 		{
-			ClearInvalidSubitem();
 			if (CurrentObjectHvo != 0 && !m_list.CurrentObjectIsValid)
 			{
 				MessageBox.Show(xWorksStrings.SelectedObjectHasBeenDeleted,
@@ -2321,13 +2253,6 @@ namespace SIL.FieldWorks.XWorks
 				return; // typically leads to another call to this.
 			}
 			SelectedRecordChanged(suppressFocusChange);
-		}
-
-		/// <summary>
-		/// A hook to allow a subclass to remove an invalid subitem.
-		/// </summary>
-		protected virtual void ClearInvalidSubitem()
-		{
 		}
 
 		private int FindClosestValidIndex(int idx, int cobj)
