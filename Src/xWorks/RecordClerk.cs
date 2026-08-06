@@ -1533,9 +1533,14 @@ namespace SIL.FieldWorks.XWorks
 							}
 						}
 					}
-#pragma warning disable 618 // suppress obsolete warning
-					m_mediator.SendMessage("MasterRefresh", null);
-#pragma warning restore 618
+					// Two-stage refresh: if the active content control can satisfy the request by
+					// regenerating its own content (the XHTML document views), skip the full refresh.
+					var refreshRequest = new ReturnObject(null);
+					Publisher.Publish(new PublisherParameterObject(EventConstants.RefreshCurrentView, refreshRequest, m_propertyTable.GetWindow()));
+					if (!refreshRequest.ReturnValue)
+					{
+						Publisher.Publish(new PublisherParameterObject(EventConstants.MasterRefresh, null, m_propertyTable.GetWindow()));
+					}
 				}
 			}
 		}

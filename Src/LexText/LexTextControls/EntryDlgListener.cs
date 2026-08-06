@@ -96,8 +96,15 @@ namespace SIL.FieldWorks.LexText.Controls
 					bool newby;
 					dlg.GetDialogInfo(out entry, out newby);
 					// No need for a PropChanged here because InsertEntryDlg takes care of that. (LT-3608)
+					// Two-stage refresh: if the active content control can satisfy the request by
+					// regenerating its own content (the XHTML document views), skip the full refresh.
+					var refreshRequest = new ReturnObject(null);
+					Publisher.Publish(new PublisherParameterObject(EventConstants.RefreshCurrentView, refreshRequest, m_propertyTable.GetWindow()));
+					if (!refreshRequest.ReturnValue)
+					{
+						Publisher.Publish(new PublisherParameterObject(EventConstants.MasterRefresh, null, m_propertyTable.GetWindow()));
+					}
 #pragma warning disable 618 // suppress obsolete warning
-					m_mediator.SendMessage("MasterRefresh", null);
 					m_mediator.SendMessage("JumpToRecord", entry.Hvo);
 #pragma warning restore 618
 				}

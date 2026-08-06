@@ -82,6 +82,7 @@ namespace SIL.FieldWorks.XWorks
 				}
 			}
 			Subscriber.Subscribe(EventConstants.DictionaryConfigured, RefreshAllContent, m_propertyTable.GetWindow());
+			Subscriber.Subscribe(EventConstants.RefreshCurrentView, RefreshCurrentView, m_propertyTable.GetWindow());
 		}
 
 		protected override void Dispose(bool disposing)
@@ -93,6 +94,7 @@ namespace SIL.FieldWorks.XWorks
 			if (disposing)
 			{
 				Subscriber.Unsubscribe(EventConstants.DictionaryConfigured, RefreshAllContent);
+				Subscriber.Unsubscribe(EventConstants.RefreshCurrentView, RefreshCurrentView);
 			}
 			base.Dispose(disposing);
 		}
@@ -1321,6 +1323,27 @@ namespace SIL.FieldWorks.XWorks
 		public void OnMasterRefresh(object sender)
 		{
 			RefreshAllContent(null);
+		}
+
+		/// <summary>
+		/// First stage of a sender's two-stage refresh request: while this view is the active
+		/// content control it claims the request and satisfies it by regenerating its own
+		/// content, so the sender skips the full master refresh.
+		/// </summary>
+		private void RefreshCurrentView(object obj)
+		{
+			if (!(obj is ReturnObject retObj))
+			{
+				Debug.Assert(false, "Received unexpected object type.");
+				return;
+			}
+			// Return if already handled by another Subscriber.
+			if (retObj.ReturnValue)
+			{
+				return;
+			}
+			RefreshAllContent(null);
+			retObj.ReturnValue = true;
 		}
 
 		/// <summary>
