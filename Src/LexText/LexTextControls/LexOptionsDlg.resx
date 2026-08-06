@@ -535,16 +535,16 @@ These anonymous statistics will help with future development.</value>
   <data name="&gt;&gt;m_autoOpenCheckBox.ZOrder" xml:space="preserve">
     <value>0</value>
   </data>
-  <data name="&gt;&gt;label4.Name" xml:space="preserve">
-    <value>label4</value>
+  <data name="&gt;&gt;m_labelAdvanced.Name" xml:space="preserve">
+    <value>m_labelAdvanced</value>
   </data>
-  <data name="&gt;&gt;label4.Type" xml:space="preserve">
+  <data name="&gt;&gt;m_labelAdvanced.Type" xml:space="preserve">
     <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;label4.Parent" xml:space="preserve">
+  <data name="&gt;&gt;m_labelAdvanced.Parent" xml:space="preserve">
     <value>m_tabInterface</value>
   </data>
-  <data name="&gt;&gt;label4.ZOrder" xml:space="preserve">
+  <data name="&gt;&gt;m_labelAdvanced.ZOrder" xml:space="preserve">
     <value>1</value>
   </data>
   <data name="&gt;&gt;groupBox1.Name" xml:space="preserve">
@@ -617,34 +617,34 @@ always open the last edited project automatically</value>
   <data name="&gt;&gt;m_autoOpenCheckBox.ZOrder" xml:space="preserve">
     <value>0</value>
   </data>
-  <data name="label4.AutoSize" type="System.Boolean, mscorlib">
+  <data name="m_labelAdvanced.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
-  <data name="label4.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+  <data name="m_labelAdvanced.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
     <value>NoControl</value>
   </data>
-  <data name="label4.Location" type="System.Drawing.Point, System.Drawing">
+  <data name="m_labelAdvanced.Location" type="System.Drawing.Point, System.Drawing">
     <value>3, 116</value>
   </data>
-  <data name="label4.Size" type="System.Drawing.Size, System.Drawing">
+  <data name="m_labelAdvanced.Size" type="System.Drawing.Size, System.Drawing">
     <value>59, 13</value>
   </data>
-  <data name="label4.TabIndex" type="System.Int32, mscorlib">
+  <data name="m_labelAdvanced.TabIndex" type="System.Int32, mscorlib">
     <value>13</value>
   </data>
-  <data name="label4.Text" xml:space="preserve">
+  <data name="m_labelAdvanced.Text" xml:space="preserve">
     <value>Advanced:</value>
   </data>
-  <data name="&gt;&gt;label4.Name" xml:space="preserve">
-    <value>label4</value>
+  <data name="&gt;&gt;m_labelAdvanced.Name" xml:space="preserve">
+    <value>m_labelAdvanced</value>
   </data>
-  <data name="&gt;&gt;label4.Type" xml:space="preserve">
+  <data name="&gt;&gt;m_labelAdvanced.Type" xml:space="preserve">
     <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;label4.Parent" xml:space="preserve">
+  <data name="&gt;&gt;m_labelAdvanced.Parent" xml:space="preserve">
     <value>m_tabInterface</value>
   </data>
-  <data name="&gt;&gt;label4.ZOrder" xml:space="preserve">
+  <data name="&gt;&gt;m_labelAdvanced.ZOrder" xml:space="preserve">
     <value>1</value>
   </data>
   <data name="&gt;&gt;m_userInterfaceChooser.Name" xml:space="preserve">

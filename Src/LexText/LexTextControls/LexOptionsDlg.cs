@@ -494,15 +494,15 @@ namespace SIL.FieldWorks.LexText.Controls
 			m_uiModeBetaWarning.Location = new System.Drawing.Point(pad, m_uiModeChooser.Bottom + pad);
 			m_uiModeGroup.Height = m_uiModeBetaWarning.Bottom + pad;
 
-			var delta = m_uiModeGroup.Bottom + pad - label4.Top;
+			var delta = m_uiModeGroup.Bottom + pad - m_labelAdvanced.Top;
 			if (delta > 0)
 			{
-				// label4 and m_autoOpenCheckBox sit on the Interface tab page and are top-anchored, so
-				// push them down manually to clear the injected UI-mode group. tabControl1 (Top+Bottom-
+				// m_labelAdvanced and m_autoOpenCheckBox sit on the Interface tab page and are top-anchored,
+				// so push them down manually to clear the injected UI-mode group. tabControl1 (Top+Bottom-
 				// anchored) and the OK/Cancel/Help buttons (Bottom-anchored) live on the form and are
 				// resized/repositioned automatically when the form grows, so they must NOT be moved by
 				// hand -- doing both shifts them by 2*delta and drops the buttons off the bottom edge.
-				label4.Top += delta;
+				m_labelAdvanced.Top += delta;
 				m_autoOpenCheckBox.Top += delta;
 				Height += delta;
 			}
