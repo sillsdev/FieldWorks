@@ -33,6 +33,15 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			m_slot = slot;
 		}
 
+		/// <summary>
+		/// This command opens the modal New Entry dialog, so have the chooser keep the main window
+		/// active as it hides, to avoid another application flashing in front first.
+		/// </summary>
+		public override bool KeepOwnerActiveWhenHiding
+		{
+			get { return true; }
+		}
+
 		//methods
 
 		public override ObjectLabel Execute()

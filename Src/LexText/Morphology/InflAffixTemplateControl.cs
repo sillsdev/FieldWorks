@@ -412,7 +412,8 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 			using (var chooser = MakeChooserWithExtantMsas(m_slot, cmd as XCore.Command))
 			{
-				chooser.ShowDialog(this);
+				// Own the chooser to the top-level main window, not `this` child control.
+				chooser.ShowDialog(m_propertyTable.GetValue<Form>("window"));
 				if (chooser.DialogResult == DialogResult.OK)
 				{
 					if (chooser.ChosenObjects != null && chooser.ChosenObjects.Count() > 0)

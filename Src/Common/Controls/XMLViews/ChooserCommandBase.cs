@@ -97,6 +97,20 @@ namespace SIL.FieldWorks.Common.Controls
 				m_fShouldCloseBeforeExecuting = value;
 			}
 		}
+
+		/// <summary>
+		/// When true, the chooser re-enables its owner window just before hiding itself to run this
+		/// command. Execute() for such a command opens another modal dialog, which re-disables the
+		/// owner; re-enabling it first makes the OS return activation to the FLEx main window when
+		/// the chooser hides, instead of momentarily revealing an unrelated application's window.
+		/// Defaults to false so behavior is unchanged for every command that does not opt in. See
+		/// the "Create new inflectional affix" flow (LT-22578).
+		/// </summary>
+		public virtual bool KeepOwnerActiveWhenHiding
+		{
+			get { return false; }
+		}
+
 		/// <summary>
 		/// The entire text of the label that will appear in the chooser
 		/// </summary>

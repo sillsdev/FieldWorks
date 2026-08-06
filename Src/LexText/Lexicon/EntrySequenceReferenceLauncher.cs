@@ -126,7 +126,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 					chooser.InitializeExtras(null, Mediator, m_propertyTable);
 					chooser.AddLink(LexEdStrings.ksAddAComponent, ReallySimpleListChooser.LinkType.kDialogLink,
 						new AddPrimaryLexemeChooserCommand(m_cache, false, null, m_mediator, m_propertyTable, m_obj, FindForm()));
-					DialogResult res = chooser.ShowDialog();
+					DialogResult res = chooser.ShowDialog(FindForm());
 					if (DialogResult.Cancel == res)
 						return;
 					if (chooser.ChosenObjects != null)
@@ -204,7 +204,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				// Step 3 of LT-11155:
 				chooser.AddLink(LexEdStrings.ksAddAComplexForm, ReallySimpleListChooser.LinkType.kDialogLink,
 					new AddComplexFormChooserCommand(m_cache, false, null, m_mediator, m_propertyTable, m_obj, FindForm()));
-				DialogResult res = chooser.ShowDialog();
+				DialogResult res = chooser.ShowDialog(FindForm());
 				if (DialogResult.Cancel == res)
 					return;
 				var chosenObjects = chooser.ChosenObjects;
@@ -353,6 +353,15 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			m_parentWindow = parentWindow;
 		}
 
+		/// <summary>
+		/// This command opens the modal LinkEntryOrSenseDlg, so have the chooser keep the main
+		/// window active as it hides, to avoid another application flashing in front first.
+		/// </summary>
+		public override bool KeepOwnerActiveWhenHiding
+		{
+			get { return true; }
+		}
+
 		public override ObjectLabel Execute()
 		{
 			ObjectLabel result = null;
@@ -424,6 +433,15 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 			}
 			m_parentWindow = parentWindow;
+		}
+
+		/// <summary>
+		/// This command opens the modal EntryGoDlg, so have the chooser keep the main window
+		/// active as it hides, to avoid another application flashing in front first.
+		/// </summary>
+		public override bool KeepOwnerActiveWhenHiding
+		{
+			get { return true; }
 		}
 
 		public override ObjectLabel Execute()
