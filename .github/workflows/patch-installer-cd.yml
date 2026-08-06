@@ -222,7 +222,7 @@ jobs:
 
       - name: Upload strings for translation
         id: upload
-        if: github.event_name == 'push'
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         shell: powershell
         run: |
           .\build.ps1 -Target uploadUpdatesForTranslation -Configuration Release *>&1 | Tee-Object -FilePath uploadStrings.log
