@@ -225,7 +225,7 @@ jobs:
         if: github.event_name == 'push'
         shell: powershell
         run: |
-          .\build.ps1 -Target uploadUpdatesForTranslation | Tee-Object -FilePath uploadStrings.log
+          .\build.ps1 -Target uploadUpdatesForTranslation -Configuration Release *>&1 | Tee-Object -FilePath uploadStrings.log
 
       - name: Build
         id: build
