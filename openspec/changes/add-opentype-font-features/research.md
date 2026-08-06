@@ -265,9 +265,12 @@ Implementation follow-up:
 
 - Removing the `StyleInfo` loader was attempted during implementation and failed
 	`SaveToDB_DefaultFontFeatures_RoundTripsThroughRules`, while restoring it made
-	the style/font-tab slice pass. The loader therefore remains as a minimal
-	compatibility adapter until the active LCM dependency path consumes
-	`ktptFontVariations` defaults through `BaseStyleInfo.ProcessStyleRules`.
+	the style/font-tab slice pass. The loader remained as a minimal compatibility
+	adapter until the active LCM dependency path consumed `ktptFontVariations`
+	defaults through `BaseStyleInfo.ProcessStyleRules`. That happened under
+	LT-22351: liblcm gained the `ktptFontVariations` case in `ProcessStyleRules`
+	(sillsdev/liblcm#388), the round-trip test passed through the authoritative
+	path, and the `StyleInfo.LoadDefaultFontFeatures` adapter was removed.
 
 ### Recommended Additional Tests Beyond The Original Plan
 

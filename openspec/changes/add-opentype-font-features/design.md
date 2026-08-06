@@ -17,7 +17,7 @@ The longer product phases are: add OpenType features now, remove Graphite later 
 - Keep persisted feature strings renderer-neutral and compatible with future Avalonia/HarfBuzz-style consumption.
 - Accept any syntactically valid OpenType tag and reject malformed tags safely with trace logging.
 - Add trace logging for discovery, validation, native shaping, and fallback decisions.
-- Keep style/default font-feature loading on the existing inheritance path, with only the minimal compatibility adapter still required by the current build graph.
+- Keep style/default font-feature loading on the existing inheritance path (the interim `StyleInfo` compatibility adapter was later removed under LT-22351; see Decision 11).
 - Fix truncation and malformed-input robustness gaps in legacy feature-string handling.
 - Add tests for UI control behavior and visual rendering differences caused by feature toggles.
 - Add test-only HarfBuzzSharp + SkiaSharp comparison tooling for future visual-fidelity confidence.
@@ -119,11 +119,13 @@ The longer product phases are: add OpenType features now, remove Graphite later 
 
 ### 11. Existing inheritance paths remain authoritative
 
-**Decision:** `FontInfo.m_features`, `FwTextPropType.ktptFontVariations`, and style rule round-tripping remain the authoritative inheritance/data-flow path for default and explicit font features. `StyleInfo` retains a minimal compatibility adapter that reads default `ktptFontVariations` from `IStStyle.Rules` because focused validation showed that removing it loses persisted default font features in the current build graph.
+**Decision:** `FontInfo.m_features`, `FwTextPropType.ktptFontVariations`, and style rule round-tripping remain the authoritative inheritance/data-flow path for default and explicit font features. `StyleInfo` originally retained a minimal compatibility adapter that read default `ktptFontVariations` from `IStStyle.Rules` because focused validation showed that removing it lost persisted default font features in the then-current build graph.
 
-**Rationale:** The local LCM source contains `BaseStyleInfo.ProcessStyleRules` support for `ktptFontVariations`, but the active FieldWorks build/test path still requires the `StyleInfo` adapter to reload persisted defaults. The adapter is therefore a compatibility boundary, not a second policy path.
+**Rationale:** At the time of this decision, the active FieldWorks build/test path still required the `StyleInfo` adapter to reload persisted defaults even though the local LCM source contained `BaseStyleInfo.ProcessStyleRules` support for `ktptFontVariations`. The adapter was a compatibility boundary, not a second policy path.
 
-**Alternatives considered:** Remove the `StyleInfo` adapter immediately. Rejected for this change because `SaveToDB_DefaultFontFeatures_RoundTripsThroughRules` failed after removal. Broader LCM dependency alignment can retire the adapter later with the same round-trip tests as the gate.
+**Alternatives considered:** Remove the `StyleInfo` adapter immediately. Rejected for this change because `SaveToDB_DefaultFontFeatures_RoundTripsThroughRules` failed after removal. Broader LCM dependency alignment could retire the adapter later with the same round-trip tests as the gate.
+
+**Status update (LT-22351):** The gating condition has been satisfied. liblcm's `BaseStyleInfo.ProcessStyleRules` now loads default `ktptFontVariations` (sillsdev/liblcm#388), `SaveToDB_DefaultFontFeatures_RoundTripsThroughRules` passes through the authoritative `BaseStyleInfo` path, and the `StyleInfo.LoadDefaultFontFeatures` adapter was removed under LT-22351.
 
 ### 12. Overlong and malformed feature strings fail safe
 

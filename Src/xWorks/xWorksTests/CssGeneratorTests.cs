@@ -2414,6 +2414,63 @@ namespace SIL.FieldWorks.XWorks
 				Does.Contain("font-feature-settings:\"!abc\" 2,\"a\\\"b\\\\\" 1"));
 		}
 
+		/// <summary>
+		/// LT-22351: liblcm's BaseStyleInfo.ProcessStyleRules previously dropped a style's
+		/// default ktptFontVariations (font features) when loading a style from its persisted
+		/// Rules. FieldWorks had a Styles-dialog-only adapter (StyleInfo.LoadDefaultFontFeatures)
+		/// that compensated for this, but the Dictionary Preview CSS generation path
+		/// (GenerateCssStyleFromLcmStyleSheet/AddFontInfoCss) reads plain BaseStyleInfo objects
+		/// straight out of LcmStyleSheet and had no such adapter, so default font features never
+		/// reached the preview CSS. This test builds the style the same way LcmStyleSheet does in
+		/// production - a real IStStyle with persisted Rules wrapped directly in a BaseStyleInfo,
+		/// not a TestStyle double with ExplicitValue set in memory - to prove the fix in liblcm
+		/// (sillsdev/liblcm#388) makes it all the way to the generated CSS.
+		/// </summary>
+		[Test]
+		public void GenerateCssForConfiguration_DefaultFontFeaturesFromPersistedStyleRules_ReachPreviewCss()
+		{
+			ConfiguredLcmGenerator.AssemblyFile = "xWorksTests";
+			const string styleName = "DefaultFontFeaturesStyle";
+			var styleFactory = Cache.ServiceLocator.GetInstance<IStStyleFactory>();
+			var realStyle = styleFactory.Create();
+			Cache.LanguageProject.StylesOC.Add(realStyle);
+			realStyle.Name = styleName;
+			realStyle.Context = ContextValues.Internal;
+			realStyle.Function = FunctionValues.Prose;
+			realStyle.Structure = StructureValues.Undefined;
+			realStyle.Type = StyleType.kstCharacter;
+
+			var propsBldr = TsStringUtils.MakePropsBldr();
+			propsBldr.SetStrPropValue((int)FwTextPropType.ktptFontVariations, "smcp=1");
+			realStyle.Rules = propsBldr.GetTextProps();
+
+			// Build the style the way LcmStyleSheet.LoadStyles does in production: a BaseStyleInfo
+			// wrapping the real, persisted IStStyle -- no TestStyle, no in-memory ExplicitValue.
+			var persistedStyle = new BaseStyleInfo(realStyle);
+			SafelyAddStyleToSheetAndTable(styleName, persistedStyle);
+			try
+			{
+				var headwordNode = new ConfigurableDictionaryNode
+				{
+					FieldDescription = "SIL.FieldWorks.XWorks.TestRootClass",
+					Label = "Headword",
+					DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] { "fr" }),
+					Style = styleName,
+					IsEnabled = true
+				};
+
+				var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { headwordNode } };
+				var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
+
+				Assert.That(cssResult, Does.Contain("font-feature-settings:\"smcp\" 1"));
+			}
+			finally
+			{
+				// The real IStStyle is undone after this test; do not leave a stale entry behind.
+				SafelyRemoveStyleFromSheetAndTable(styleName);
+			}
+		}
+
 		[Test]
 		public void GenerateCssForConfiguration_ReversalSenseNumberWorks()
 		{
@@ -3148,6 +3205,69 @@ namespace SIL.FieldWorks.XWorks
 			var cssResult = Regex.Replace(CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable), @"\t|\n|\r", "");
 
 			Assert.That(cssResult, Contains.Substring("span[lang='" + vernWs.LanguageTag + "']{font-family:'Charis SIL',serif;font-feature-settings:\"ss11\" 1,\"ss12\" 1;"));
+		}
+
+		/// <summary>
+		/// LT-22351: now that liblcm loads a style's default ktptFontVariations from its persisted
+		/// Rules (sillsdev/liblcm#388), a Normal style with its OWN font features must win over the
+		/// writing system's DefaultFontFeatures fallback in AddFontInfoCss. The sibling test above
+		/// covers only a Normal style WITHOUT its own features (fallback branch).
+		/// </summary>
+		[Test]
+		public void GenerateCssForConfiguration_NormalStyleOwnFontFeatures_BeatWritingSystemDefaultFontFeatures()
+		{
+			const string styleName = "Normal";
+			var vernWs = Cache.ServiceLocator.WritingSystemManager.Get(Cache.DefaultVernWs);
+			vernWs.DefaultFont = new FontDefinition("Charis SIL") { Features = "ss11=1,ss12=1" };
+
+			// A real IStStyle whose persisted Rules carry the style's own default font features.
+			var realStyle = Cache.ServiceLocator.GetInstance<IStStyleFactory>().Create();
+			Cache.LanguageProject.StylesOC.Add(realStyle);
+			realStyle.Name = styleName;
+			realStyle.Context = ContextValues.Internal;
+			realStyle.Function = FunctionValues.Prose;
+			realStyle.Structure = StructureValues.Undefined;
+			realStyle.Type = StyleType.kstParagraph;
+			var propsBldr = TsStringUtils.MakePropsBldr();
+			propsBldr.SetStrPropValue((int)FwTextPropType.ktptFontVariations, "smcp=1");
+			realStyle.Rules = propsBldr.GetTextProps();
+
+			SafelyAddStyleToSheetAndTable(styleName, new BaseStyleInfo(realStyle));
+			try
+			{
+				var glossNode = new ConfigurableDictionaryNode
+				{
+					FieldDescription = "Gloss",
+					DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] { vernWs.LanguageTag })
+				};
+				var testSensesNode = new ConfigurableDictionaryNode
+				{
+					FieldDescription = "Senses",
+					Children = new List<ConfigurableDictionaryNode> { glossNode }
+				};
+				var testEntryNode = new ConfigurableDictionaryNode
+				{
+					FieldDescription = "LexEntry",
+					Children = new List<ConfigurableDictionaryNode> { testSensesNode }
+				};
+				var model = new DictionaryConfigurationModel
+				{
+					Parts = new List<ConfigurableDictionaryNode> { testEntryNode }
+				};
+				PopulateFieldsForTesting(testEntryNode);
+
+				var cssResult = Regex.Replace(CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable), @"\t|\n|\r", "");
+
+				// The style's own features win; the font family still falls back to the WS default font.
+				Assert.That(cssResult, Contains.Substring("span[lang='" + vernWs.LanguageTag + "']{font-family:'Charis SIL',serif;font-feature-settings:\"smcp\" 1;"));
+				// The WS DefaultFontFeatures fallback must not leak through.
+				Assert.That(cssResult, Does.Not.Contain("ss11"));
+			}
+			finally
+			{
+				// The real IStStyle is undone after this test; do not leave a stale entry behind.
+				SafelyRemoveStyleFromSheetAndTable(styleName);
+			}
 		}
 
 		[Test]
@@ -4126,7 +4246,7 @@ namespace SIL.FieldWorks.XWorks
 			return new TestStyle(fontInfo, cache) { Name = name, IsParagraphStyle = isParagraphStyle };
 		}
 
-		private void SafelyAddStyleToSheetAndTable(string name, TestStyle style)
+		private void SafelyAddStyleToSheetAndTable(string name, BaseStyleInfo style)
 		{
 			if (m_styleSheet.Styles.Contains(name))
 				m_styleSheet.Styles.Remove(name);
@@ -4134,6 +4254,20 @@ namespace SIL.FieldWorks.XWorks
 			if (m_owningTable.ContainsKey(name))
 				m_owningTable.Remove(name);
 			m_owningTable.Add(name, style);
+		}
+
+		/// <summary>
+		/// Removes a style added by SafelyAddStyleToSheetAndTable. Tests that add a BaseStyleInfo
+		/// wrapping a real IStStyle MUST call this in a finally block: m_styleSheet is created once
+		/// per fixture, but the base class undoes all data changes after each test, which would
+		/// leave a stale entry whose RealStyle is invalid and crash later tests order-dependently.
+		/// </summary>
+		private void SafelyRemoveStyleFromSheetAndTable(string name)
+		{
+			if (m_styleSheet.Styles.Contains(name))
+				m_styleSheet.Styles.Remove(name);
+			if (m_owningTable.ContainsKey(name))
+				m_owningTable.Remove(name);
 		}
 
 		private void GenerateBulletStyle(string name)
