@@ -35,7 +35,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Needed to get the HelpTopicProvider and to save project specific settings
 		/// </summary>
-		protected PropertyTable PropertyTable { get; set; }
+		private PropertyTable m_propertyTable;
 
 		public UploadToWebonaryDlg()
 		{
@@ -51,6 +51,7 @@ namespace SIL.FieldWorks.XWorks
 				MinimumSize = new Size(MinimumSize.Width, MinimumSize.Height + m_additionalMinimumHeightForMono);
 
 			m_controller = controller;
+			m_propertyTable = propertyTable;
 			Model = model;
 			LoadFromModel();
 
@@ -64,10 +65,10 @@ namespace SIL.FieldWorks.XWorks
 			};
 
 			// Restore the location and size from last time we called this dialog.
-			if (PropertyTable != null)
+			if (m_propertyTable != null)
 			{
-				object locWnd = PropertyTable.GetValue<object>("UploadToWebonaryDlg_Location");
-				object szWnd = PropertyTable.GetValue<object>("UploadToWebonaryDlg_Size");
+				object locWnd = m_propertyTable.GetValue<object>("UploadToWebonaryDlg_Location");
+				object szWnd = m_propertyTable.GetValue<object>("UploadToWebonaryDlg_Size");
 				if (locWnd != null && szWnd != null)
 				{
 					Rectangle rect = new Rectangle((Point) locWnd, (Size) szWnd);
@@ -340,12 +341,12 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		protected override void OnClosing(CancelEventArgs e)
 		{
-			if (PropertyTable != null)
+			if (m_propertyTable != null)
 			{
-				PropertyTable.SetProperty("UploadToWebonaryDlg_Location", Location, false);
-				PropertyTable.SetPropertyPersistence("UploadToWebonaryDlg_Location", true);
-				PropertyTable.SetProperty("UploadToWebonaryDlg_Size", Size, false);
-				PropertyTable.SetPropertyPersistence("UploadToWebonaryDlg_Size", true);
+				m_propertyTable.SetProperty("UploadToWebonaryDlg_Location", Location, false);
+				m_propertyTable.SetPropertyPersistence("UploadToWebonaryDlg_Location", true);
+				m_propertyTable.SetProperty("UploadToWebonaryDlg_Size", Size, false);
+				m_propertyTable.SetPropertyPersistence("UploadToWebonaryDlg_Size", true);
 			}
 			base.OnClosing(e);
 		}
