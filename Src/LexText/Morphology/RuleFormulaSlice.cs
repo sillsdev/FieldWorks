@@ -144,7 +144,19 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		public bool OnDisplayContextSetFeatures(object commandObject, ref UIItemDisplayProperties display)
 		{
 			CheckDisposed();
-			bool enable = RuleFormulaControl.IsFeatsNCContextCurrent;
+			// Natural Classes are either user-defined or auto-generated based on set phonological features.
+			// We only want to allow setting features if:
+			// 1. The Natural Class is a feature type and not a segment type.
+			// and
+			// 2. The Natural Class is either not linked to any named natural class or it is linked to an auto-generated natural class;
+			// in other words, the Natural Class is NOT linked to an explicitly user-defined natural class.
+			bool enable = false;
+			if (RuleFormulaControl.IsFeatsNCContextCurrent)
+			{
+				bool isUserDefinedNC = RuleFormulaControl.IsFeatureBasedNCNameUserDefined();
+				enable = !isUserDefinedNC; //enable is true iff IsFeatsNCContextCurrent is true and IsNCNameUserDefined is false
+			}
+
 			display.Enabled = enable;
 			display.Visible = enable;
 			return true;
