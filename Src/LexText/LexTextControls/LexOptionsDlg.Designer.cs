@@ -52,7 +52,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			this.m_chDescription = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
 			this.m_tabInterface = new System.Windows.Forms.TabPage();
 			this.m_autoOpenCheckBox = new System.Windows.Forms.CheckBox();
-			this.label4 = new System.Windows.Forms.Label();
+			this.m_labelAdvanced = new System.Windows.Forms.Label();
 			this.groupBox1 = new System.Windows.Forms.GroupBox();
 			this.m_userInterfaceChooser = new SIL.FieldWorks.Common.Widgets.UserInterfaceChooser();
 			this.label3 = new System.Windows.Forms.Label();
@@ -170,7 +170,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			// 
 			resources.ApplyResources(this.m_tabInterface, "m_tabInterface");
 			this.m_tabInterface.Controls.Add(this.m_autoOpenCheckBox);
-			this.m_tabInterface.Controls.Add(this.label4);
+			this.m_tabInterface.Controls.Add(this.m_labelAdvanced);
 			this.m_tabInterface.Controls.Add(this.groupBox1);
 			this.m_tabInterface.Name = "m_tabInterface";
 			this.m_tabInterface.UseVisualStyleBackColor = true;
@@ -181,10 +181,10 @@ namespace SIL.FieldWorks.LexText.Controls
 			this.m_autoOpenCheckBox.Name = "m_autoOpenCheckBox";
 			this.m_autoOpenCheckBox.UseVisualStyleBackColor = true;
 			// 
-			// label4
+			// m_labelAdvanced
 			// 
-			resources.ApplyResources(this.label4, "label4");
-			this.label4.Name = "label4";
+			resources.ApplyResources(this.m_labelAdvanced, "m_labelAdvanced");
+			this.m_labelAdvanced.Name = "m_labelAdvanced";
 			// 
 			// groupBox1
 			// 
@@ -303,7 +303,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		private System.Windows.Forms.ColumnHeader m_chDescription;
 		private System.Windows.Forms.TabPage m_tabInterface;
 		private System.Windows.Forms.CheckBox m_autoOpenCheckBox;
-		private System.Windows.Forms.Label label4;
+		private System.Windows.Forms.Label m_labelAdvanced;
 		private System.Windows.Forms.GroupBox groupBox1;
 		private Common.Widgets.UserInterfaceChooser m_userInterfaceChooser;
 		private System.Windows.Forms.Label label3;

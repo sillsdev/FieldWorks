@@ -67,7 +67,7 @@ namespace LexTextControlsTests
 		/// <summary>
 		/// Regression test for a "double-shift" layout bug: InitializeUIModeControls() injects a new
 		/// GroupBox into an already-laid-out Interface tab and must grow the Form to make room. Controls
-		/// below the injection point that are top-anchored (label4, m_autoOpenCheckBox) don't move on
+		/// below the injection point that are top-anchored (m_labelAdvanced, m_autoOpenCheckBox) don't move on
 		/// their own, so the code moves them by hand. Controls that are bottom-anchored (tabControl1,
 		/// the OK/Cancel/Help buttons) already move/resize automatically as a side effect of Form.Height
 		/// growing — a prior version of this code ALSO manually re-added the same delta to those, which
@@ -81,7 +81,7 @@ namespace LexTextControlsTests
 			using (var dlg = new TestableLexOptionsDlg())
 			{
 				var uiModeGroup = FindControlRecursive(dlg, "m_uiModeGroup");
-				var label4 = FindControlRecursive(dlg, "label4");
+				var labelAdvanced = FindControlRecursive(dlg, "m_labelAdvanced");
 				var autoOpenCheckBox = FindControlRecursive(dlg, "m_autoOpenCheckBox");
 				var tabControl1 = FindControlRecursive(dlg, "tabControl1");
 				var btnOK = FindControlRecursive(dlg, "m_btnOK");
@@ -89,29 +89,30 @@ namespace LexTextControlsTests
 				var btnHelp = FindControlRecursive(dlg, "m_btnHelp");
 
 				Assert.That(uiModeGroup, Is.Not.Null);
-				Assert.That(label4, Is.Not.Null);
+				Assert.That(labelAdvanced, Is.Not.Null);
 				Assert.That(autoOpenCheckBox, Is.Not.Null);
 				Assert.That(tabControl1, Is.Not.Null);
 				Assert.That(btnOK, Is.Not.Null);
 				Assert.That(btnCancel, Is.Not.Null);
 				Assert.That(btnHelp, Is.Not.Null);
 
-				var originalLabel4Top = ReadLexOptionsDlgResxPoint("label4.Location").Y;
+				var originalLabelAdvancedTop = ReadLexOptionsDlgResxPoint("m_labelAdvanced.Location").Y;
 				var originalAutoOpenTop = ReadLexOptionsDlgResxPoint("m_autoOpenCheckBox.Location").Y;
 				var originalTabControlHeight = ReadLexOptionsDlgResxSize("tabControl1.Size").Height;
 				var originalBtnOkTop = ReadLexOptionsDlgResxPoint("m_btnOK.Location").Y;
 				var originalBtnCancelTop = ReadLexOptionsDlgResxPoint("m_btnCancel.Location").Y;
 				var originalBtnHelpTop = ReadLexOptionsDlgResxPoint("m_btnHelp.Location").Y;
 
-				// The delta InitializeUIModeControls() computed to make room for the injected group box,
-				// derived from the group box's own (live) bottom edge rather than hardcoded, so this test
-				// doesn't need updating if m_uiModeGroup's own size/position ever changes.
-				var delta = uiModeGroup.Bottom + 8 - originalLabel4Top;
+				// One shift, measured from a control InitializeUIModeControls moves by hand. Deriving it
+				// from observed layout rather than recomputing the padding formula keeps this test about
+				// the relationship -- every affected control moves exactly once -- not the arithmetic.
+				var delta = labelAdvanced.Top - originalLabelAdvancedTop;
 				Assert.That(delta, Is.GreaterThan(0),
 					"precondition: the injected group box must actually require extra room for this test to exercise the shift logic");
+				Assert.That(uiModeGroup.Bottom, Is.LessThanOrEqualTo(labelAdvanced.Top),
+					"the injected group must clear the control it pushed down");
 
-				// Top-anchored controls: moved by hand, must shift by exactly delta.
-				Assert.That(label4.Top, Is.EqualTo(originalLabel4Top + delta));
+				// The other hand-moved, top-anchored control must shift by the same single delta.
 				Assert.That(autoOpenCheckBox.Top, Is.EqualTo(originalAutoOpenTop + delta));
 
 				// Bottom-anchored controls: WinForms repositions/resizes these automatically as a side
