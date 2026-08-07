@@ -6,7 +6,8 @@
 	Two modes of operation:
 
 	Pack mode (one or more source paths provided):
-	  Packs local checkouts of liblcm, libpalaso, chorus, and/or machine into the
+	  Packs local checkouts of liblcm, libpalaso, chorus, machine, L10NSharp,
+	  and/or DesktopAnalytics.net into the
 	  local NuGet feed using each library's own version. Detects the version
 	  from produced packages, updates SilVersions.props to match, copies
 	  PDBs, and clears stale cached packages.
@@ -58,9 +59,17 @@
 	Path to a local L10NSharp checkout. Overrides L10NSHARP_PATH env var.
 	Only used when -L10nSharp is specified.
 
+.PARAMETER DesktopAnalytics
+	Switch: include DesktopAnalytics.net (SIL.DesktopAnalytics) in the pack
+	operation.
+
+.PARAMETER DesktopAnalyticsPath
+	Path to a local DesktopAnalytics.net checkout. Overrides
+	DESKTOPANALYTICS_PATH env var. Only used when -DesktopAnalytics is specified.
+
 .PARAMETER Library
 	Which library to set a version for (SetVersion mode only):
-	lcm, palaso, chorus, machine, or l10nsharp.
+	lcm, palaso, chorus, machine, l10nsharp, or desktopanalytics.
 
 .PARAMETER Version
 	Sets the version in SilVersions.props (SetVersion mode). Use to revert
@@ -95,7 +104,10 @@ param(
 	[switch]$L10nSharp,
 	[string]$L10nSharpPath,
 
-	[ValidateSet('palaso', 'lcm', 'chorus', 'machine', 'l10nsharp')]
+	[switch]$DesktopAnalytics,
+	[string]$DesktopAnalyticsPath,
+
+	[ValidateSet('palaso', 'lcm', 'chorus', 'machine', 'l10nsharp', 'desktopanalytics')]
 	[string]$Library,
 
 	[string]$Version
@@ -147,10 +159,18 @@ $LibraryConfig = @{
 		CachePrefixes   = @('l10nsharp')
 		EnvVar          = 'L10NSHARP_PATH'
 	}
+	desktopanalytics = @{
+		VersionProperty = 'SilDesktopAnalyticsVersion'
+		PdbRelativeDir  = 'src/DesktopAnalytics/bin/Debug/net462'
+		CachePrefixes   = @('sil.desktopanalytics')
+		EnvVar          = 'DESKTOPANALYTICS_PATH'
+		# Pack only the library (repo also contains sample apps and tests)
+		PackProjects    = @('src/DesktopAnalytics/DesktopAnalytics.csproj')
+	}
 }
 
 # Pack order: libpalaso first (other libraries may depend on it)
-$PackOrder = @('palaso', 'l10nsharp', 'lcm', 'chorus', 'machine')
+$PackOrder = @('palaso', 'l10nsharp', 'lcm', 'chorus', 'machine', 'desktopanalytics')
 
 # ---------------------------------------------------------------------------
 # Read SilVersions.props
@@ -364,6 +384,7 @@ $switchMap = @{
 	chorus    = @{ Enabled = [bool]$Chorus;   ExplicitPath = $ChorusPath }
 	machine   = @{ Enabled = [bool]$Machine;  ExplicitPath = $MachinePath }
 	l10nsharp = @{ Enabled = [bool]$L10nSharp; ExplicitPath = $L10nSharpPath }
+	desktopanalytics = @{ Enabled = [bool]$DesktopAnalytics; ExplicitPath = $DesktopAnalyticsPath }
 }
 
 # Resolve source paths: explicit path > env var (only when switch is set)
@@ -450,5 +471,5 @@ elseif ($Library -and $Version) {
 	Write-Host "Run .\build.ps1 to restore and build with the new version." -ForegroundColor Cyan
 }
 else {
-	throw "Nothing to do. Use -Palaso/-Lcm/-Chorus/-Machine/-L10nSharp switches to pack, or -Library and -Version to set a version.`nExamples:`n  .\Build\Manage-LocalLibraries.ps1 -Palaso -PalasoPath C:\Repos\libpalaso`n  .\Build\Manage-LocalLibraries.ps1 -Palaso -Chorus`n  .\Build\Manage-LocalLibraries.ps1 -Machine -MachinePath C:\Repos\machine`n  .\Build\Manage-LocalLibraries.ps1 -Library l10nsharp -Version 10.0.0`n  .\Build\Manage-LocalLibraries.ps1 -Library palaso -Version 17.0.0"
+	throw "Nothing to do. Use -Palaso/-Lcm/-Chorus/-Machine/-L10nSharp/-DesktopAnalytics switches to pack, or -Library and -Version to set a version.`nExamples:`n  .\Build\Manage-LocalLibraries.ps1 -Palaso -PalasoPath C:\Repos\libpalaso`n  .\Build\Manage-LocalLibraries.ps1 -Palaso -Chorus`n  .\Build\Manage-LocalLibraries.ps1 -Machine -MachinePath C:\Repos\machine`n  .\Build\Manage-LocalLibraries.ps1 -DesktopAnalytics -DesktopAnalyticsPath C:\Repos\DesktopAnalytics.net`n  .\Build\Manage-LocalLibraries.ps1 -Library l10nsharp -Version 10.0.0`n  .\Build\Manage-LocalLibraries.ps1 -Library palaso -Version 17.0.0"
 }

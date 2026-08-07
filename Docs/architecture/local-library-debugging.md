@@ -1,6 +1,6 @@
 # Local Library Debugging
 
-This document describes how to debug locally-modified versions of **liblcm**, **libpalaso**, **chorus**, or **machine** (SIL.Machine) in FieldWorks using a local NuGet feed.
+This document describes how to debug locally-modified versions of **liblcm**, **libpalaso**, **chorus**, **machine** (SIL.Machine), or **DesktopAnalytics.net** (SIL.DesktopAnalytics) in FieldWorks using a local NuGet feed.
 
 ## Overview
 
@@ -45,6 +45,7 @@ git clone https://github.com/sillsdev/liblcm.git
 git clone https://github.com/sillsdev/libpalaso.git
 git clone https://github.com/sillsdev/chorus.git
 git clone https://github.com/sillsdev/machine.git
+git clone https://github.com/sillsdev/DesktopAnalytics.net.git
 ```
 
 ## Pack a local library
@@ -60,10 +61,11 @@ git clone https://github.com/sillsdev/machine.git
 Or set environment variables so you can omit the paths:
 
 ```powershell
-$env:LIBPALASO_PATH  = "C:\Repos\libpalaso"
-$env:LIBLCM_PATH     = "C:\Repos\liblcm"
-$env:LIBCHORUS_PATH  = "C:\Repos\chorus"
-$env:SILMACHINE_PATH = "C:\Repos\machine"
+$env:LIBPALASO_PATH        = "C:\Repos\libpalaso"
+$env:LIBLCM_PATH           = "C:\Repos\liblcm"
+$env:LIBCHORUS_PATH        = "C:\Repos\chorus"
+$env:SILMACHINE_PATH       = "C:\Repos\machine"
+$env:DESKTOPANALYTICS_PATH = "C:\Repos\DesktopAnalytics.net"
 
 # Switches still required — env vars only provide the path
 .\Build\Manage-LocalLibraries.ps1 -Palaso -Chorus
@@ -142,6 +144,33 @@ dotnet nuget remove source local
 | libpalaso | `-Palaso` | `-PalasoPath` | `SilLibPalasoVersion` | `LIBPALASO_PATH` |
 | chorus | `-Chorus` | `-ChorusPath` | `SilChorusVersion` | `LIBCHORUS_PATH` |
 | machine | `-Machine` | `-MachinePath` | `SilMachineVersion` | `SILMACHINE_PATH` |
+| DesktopAnalytics.net | `-DesktopAnalytics` | `-DesktopAnalyticsPath` | `SilDesktopAnalyticsVersion` | `DESKTOPANALYTICS_PATH` |
+
+## Smoke-testing offline durability (DesktopAnalytics.net)
+
+Two scripts validate a local DesktopAnalytics.net build's offline/online
+behavior directly (via its `SampleApp`), without needing a full FieldWorks
+launch. Both are per-process or guest-scoped and never touch the host
+machine's own network:
+
+- `scripts/Test-AnalyticsOfflineDrain.ps1` — blocks `SampleApp.exe`'s
+  outbound traffic with a scoped Windows Firewall rule (requires an elevated
+  shell), confirms events accumulate undelivered in the on-disk spool, then
+  removes the block and confirms they drain. This is the accumulate-then-
+  reconnect transition test.
+- `scripts/Test-AnalyticsOfflineSandbox.ps1` — runs `SampleApp` inside a
+  disposable Windows Sandbox guest with `<Networking>Disable</Networking>`
+  (no virtual NIC at all), confirming events are submitted but never
+  falsely reported delivered when there is truly no route out. This is a
+  "born offline" defense-in-depth check, complementary to the drain test
+  above (see script header for why a sandbox can't test the transition).
+
+Neither needs a separately-provisioned token: both read FieldWorks' own
+DEBUG-build Mixpanel key directly out of `FieldWorks.cs` (`analyticsKey`
+under `#if DEBUG`) at run time if `-ApiSecret` isn't supplied — the
+separate dev/test project every Debug FieldWorks build already reports to.
+Override with `-ApiSecret` or `$env:DESKTOPANALYTICS_TEST_API_SECRET` to
+point elsewhere; never pass the `#else` (RELEASE) key.
 
 ## See Also
 
