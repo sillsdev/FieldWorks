@@ -47,6 +47,10 @@
 		<Reference Include="System.Windows.Forms" />
 	</ItemGroup>
 
+	<ItemGroup>
+		<Compile Include="..\..\CommonAssemblyInfo.cs" Link="Properties\CommonAssemblyInfo.cs" />
+	</ItemGroup>
+
 	<!-- The test project lives in the nested FwAvaloniaTests/ folder. Exclude it from this
 	     library's default SDK globbing so production and test trees do not mix. -->
 	<ItemGroup>
