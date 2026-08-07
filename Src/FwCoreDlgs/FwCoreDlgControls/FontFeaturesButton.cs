@@ -865,7 +865,7 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 			OnFontFeatureSelected(new EventArgs());
 		}
 
-		private interface IFontFeatureProvider
+		internal interface IFontFeatureProvider
 		{
 			string ProviderName { get; }
 			bool HasFeatures { get; }
@@ -943,44 +943,37 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 			}
 		}
 
-		private sealed class OpenTypeFontFeatureProvider : IFontFeatureProvider
+		internal sealed class OpenTypeFontFeatureProvider : IFontFeatureProvider
 		{
-			private static readonly Dictionary<string, string> s_featureLabelResourceIds = new Dictionary<string, string>
-			{
-				{ "aalt", "kstidOpenTypeFeature_aalt" },
-				{ "c2sc", "kstidOpenTypeFeature_c2sc" },
-				{ "calt", "kstidOpenTypeFeature_calt" },
-				{ "case", "kstidOpenTypeFeature_case" },
-				{ "ccmp", "kstidOpenTypeFeature_ccmp" },
-				{ "clig", "kstidOpenTypeFeature_clig" },
-				{ "dlig", "kstidOpenTypeFeature_dlig" },
-				{ "frac", "kstidOpenTypeFeature_frac" },
-				{ "kern", "kstidOpenTypeFeature_kern" },
-				{ "liga", "kstidOpenTypeFeature_liga" },
-				{ "lnum", "kstidOpenTypeFeature_lnum" },
-				{ "onum", "kstidOpenTypeFeature_onum" },
-				{ "pnum", "kstidOpenTypeFeature_pnum" },
-				{ "salt", "kstidOpenTypeFeature_salt" },
-				{ "smcp", "kstidOpenTypeFeature_smcp" },
-				{ "ss01", "kstidOpenTypeFeature_ss01" },
-				{ "ss02", "kstidOpenTypeFeature_ss02" },
-				{ "ss03", "kstidOpenTypeFeature_ss03" },
-				{ "ss04", "kstidOpenTypeFeature_ss04" },
-				{ "ss05", "kstidOpenTypeFeature_ss05" },
-				{ "tnum", "kstidOpenTypeFeature_tnum" },
-			};
-
 			private readonly int[] m_featureIds;
+			private readonly Dictionary<int, OpenTypeFontFeatureInfo> m_infoById;
 
-			private OpenTypeFontFeatureProvider(IEnumerable<string> tags)
+			private OpenTypeFontFeatureProvider(IEnumerable<OpenTypeFontFeatureInfo> infos)
 			{
-				m_featureIds = tags.Select(ConvertFontFeatureCodeToId).Distinct().OrderBy(featureId => GetFeatureTag(featureId), StringComparer.Ordinal).ToArray();
+				m_infoById = new Dictionary<int, OpenTypeFontFeatureInfo>();
+				foreach (var info in infos)
+				{
+					// Hidden features (shaping-required or otherwise not user-configurable) are omitted.
+					if (OpenTypeFeatureCatalog.IsHidden(info.Tag))
+						continue;
+					var id = ConvertFontFeatureCodeToId(info.Tag);
+					if (!m_infoById.ContainsKey(id))
+						m_infoById[id] = info;
+				}
+				m_featureIds = m_infoById.Keys
+					.OrderBy(featureId => GetFeatureTag(featureId), StringComparer.Ordinal).ToArray();
 			}
 
 			public static OpenTypeFontFeatureProvider Create(IntPtr hdc)
 			{
-				var tags = OpenTypeFontFeatureReader.GetFeatureTags(hdc);
-				return tags.Count == 0 ? null : new OpenTypeFontFeatureProvider(tags);
+				var infos = OpenTypeFontFeatureReader.GetFeatureInfos(hdc);
+				return infos.Count == 0 ? null : new OpenTypeFontFeatureProvider(infos);
+			}
+
+			/// <summary>Builds a provider directly from feature records for unit testing.</summary>
+			internal static OpenTypeFontFeatureProvider CreateForTests(IEnumerable<OpenTypeFontFeatureInfo> infos)
+			{
+				return new OpenTypeFontFeatureProvider(infos);
 			}
 
 			public bool HasFeatures
@@ -1006,28 +999,93 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 			public string GetFeatureLabel(int featureId, int languageId)
 			{
 				var tag = GetFeatureTag(featureId);
-				string resourceId;
-				if (s_featureLabelResourceIds.TryGetValue(tag, out resourceId))
-				{
-					var label = FwCoreDlgControls.ResourceManager.GetString(resourceId, CultureInfo.CurrentUICulture);
-					if (!string.IsNullOrEmpty(label))
-						return label;
-				}
-				return tag;
+				OpenTypeFontFeatureInfo info;
+				m_infoById.TryGetValue(featureId, out info);
+
+				// Label priority: the font's own name, a localized resx name, the catalog's English
+				// name, a generated "Stylistic Set N" / "Character Variant N" fallback, or empty
+				// when the tag has no known name.
+				if (info != null && !string.IsNullOrEmpty(info.FontSuppliedLabel))
+					return info.FontSuppliedLabel;
+				var resxName = ResourceString("kstidOpenTypeFeature_" + tag);
+				if (!string.IsNullOrEmpty(resxName))
+					return resxName;
+				var catalogName = OpenTypeFeatureCatalog.GetEnglishName(tag);
+				if (!string.IsNullOrEmpty(catalogName))
+					return catalogName;
+				return NumberedFallbackLabel(tag) ?? string.Empty;
 			}
 
 			public int[] GetFeatureValues(int featureId, int maxValues, out int valueCount, out int defaultValue)
 			{
-				defaultValue = 0;
+				var tag = GetFeatureTag(featureId);
+				OpenTypeFontFeatureInfo info;
+				m_infoById.TryGetValue(featureId, out info);
+
+				if (info != null && info.Options.Count > 0)
+				{
+					// value 0 = "None", value i = the i-th named character-variant option.
+					var optionCount = Math.Min(info.Options.Count, Math.Max(0, maxValues - 1));
+					var values = new int[optionCount + 1];
+					for (var i = 0; i <= optionCount; i++)
+						values[i] = i;
+					valueCount = values.Length;
+					defaultValue = 0;
+					return values;
+				}
+
 				valueCount = 2;
+				defaultValue = OpenTypeFeatureCatalog.IsDefaultOn(tag) ? 1 : 0;
 				return new[] { 0, 1 };
 			}
 
 			public string GetFeatureValueLabel(int featureId, int valueId, int languageId)
 			{
-				return valueId == 0
-					? FwCoreDlgControls.ResourceManager.GetString("kstidOpenTypeFeatureValueOff", CultureInfo.CurrentUICulture)
-					: FwCoreDlgControls.ResourceManager.GetString("kstidOpenTypeFeatureValueOn", CultureInfo.CurrentUICulture);
+				OpenTypeFontFeatureInfo info;
+				m_infoById.TryGetValue(featureId, out info);
+				if (info != null && info.Options.Count > 0)
+				{
+					if (valueId == 0)
+						return ResourceString("kstidOpenTypeFeatureValueNone") ?? "None";
+					var index = valueId - 1;
+					return index >= 0 && index < info.Options.Count ? info.Options[index] : string.Empty;
+				}
+				// Binary features report invariant "Off"/"On". These values only classify the
+				// feature and are never displayed, so they must not be localized.
+				return valueId == 0 ? "Off" : "On";
+			}
+
+			private static string NumberedFallbackLabel(string tag)
+			{
+				int number;
+				if (TryGetSetNumber(tag, 's', 's', out number))
+					return FormatResource("kstidOpenTypeFeatureStylisticSet", number);
+				if (TryGetSetNumber(tag, 'c', 'v', out number))
+					return FormatResource("kstidOpenTypeFeatureCharacterVariant", number);
+				return null;
+			}
+
+			private static bool TryGetSetNumber(string tag, char c0, char c1, out int number)
+			{
+				number = 0;
+				if (tag == null || tag.Length != 4 || tag[0] != c0 || tag[1] != c1 ||
+					tag[2] < '0' || tag[2] > '9' || tag[3] < '0' || tag[3] > '9')
+					return false;
+				number = (tag[2] - '0') * 10 + (tag[3] - '0');
+				return true;
+			}
+
+			private static string FormatResource(string key, int number)
+			{
+				var format = ResourceString(key);
+				return string.IsNullOrEmpty(format)
+					? null
+					: string.Format(CultureInfo.CurrentUICulture, format, number);
+			}
+
+			private static string ResourceString(string key)
+			{
+				return FwCoreDlgControls.ResourceManager.GetString(key, CultureInfo.CurrentUICulture);
 			}
 		}
 
@@ -1051,18 +1109,9 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 			private const uint GdiError = 0xFFFFFFFF;
 			private const int MaxCacheEntries = 32;
 			private const int ObjFont = 6;
-			private static readonly HashSet<string> s_nonUserConfigurableTags =
-				new HashSet<string>(StringComparer.Ordinal)
-				{
-					"abvf", "abvm", "abvs", "akhn", "blwf", "blwm", "blws", "ccmp",
-					"cjct", "curs", "dist", "fina", "haln", "half", "init", "isol",
-					"ljmo", "locl", "mark", "medi", "mkmk", "nukt", "pref", "pres",
-					"pstf", "psts", "rclt", "rkrf", "rlig", "tjmo", "vjmo"
-				};
-			private static readonly uint[] s_layoutTables = { MakeTableTag("GSUB"), MakeTableTag("GPOS") };
 			private static readonly object s_cacheLock = new object();
-			private static readonly Dictionary<FontFeatureCacheKey, string[]> s_featureTagCache =
-				new Dictionary<FontFeatureCacheKey, string[]>();
+			private static readonly Dictionary<FontFeatureCacheKey, OpenTypeFontFeatureInfo[]> s_featureCache =
+				new Dictionary<FontFeatureCacheKey, OpenTypeFontFeatureInfo[]>();
 			private static readonly Queue<FontFeatureCacheKey> s_cacheOrder = new Queue<FontFeatureCacheKey>();
 			private static Func<IntPtr, uint, byte[]> s_tableReader = ReadTable;
 
@@ -1075,35 +1124,29 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 			[DllImport("gdi32.dll", CharSet = CharSet.Unicode)]
 			private static extern int GetObject(IntPtr hObject, int size, ref LogFont logFont);
 
-			public static IReadOnlyList<string> GetFeatureTags(IntPtr hdc)
+			public static IReadOnlyList<OpenTypeFontFeatureInfo> GetFeatureInfos(IntPtr hdc)
 			{
 				var cacheKey = FontFeatureCacheKey.FromHdc(hdc);
 				lock (s_cacheLock)
 				{
-					string[] cachedTags;
-					if (s_featureTagCache.TryGetValue(cacheKey, out cachedTags))
-						return cachedTags.ToArray();
+					OpenTypeFontFeatureInfo[] cached;
+					if (s_featureCache.TryGetValue(cacheKey, out cached))
+						return cached;
 				}
 
-				var tags = new SortedSet<string>(StringComparer.Ordinal);
-				foreach (var table in s_layoutTables)
-				{
-					var tableData = s_tableReader(hdc, table);
-					if (tableData != null)
-						ReadFeatureList(tableData, tags);
-				}
-				var discoveredTags = tags.ToArray();
+				var discovered = OpenTypeFontFeatureInfoReader
+					.Read(tag => s_tableReader(hdc, MakeTableTag(tag))).ToArray();
 				lock (s_cacheLock)
 				{
-					if (!s_featureTagCache.ContainsKey(cacheKey))
+					if (!s_featureCache.ContainsKey(cacheKey))
 					{
 						if (s_cacheOrder.Count >= MaxCacheEntries)
-							s_featureTagCache.Remove(s_cacheOrder.Dequeue());
-						s_featureTagCache[cacheKey] = discoveredTags;
+							s_featureCache.Remove(s_cacheOrder.Dequeue());
+						s_featureCache[cacheKey] = discovered;
 						s_cacheOrder.Enqueue(cacheKey);
 					}
 				}
-				return discoveredTags.ToArray();
+				return discovered;
 			}
 
 			internal static void ClearCacheForTests()
@@ -1134,7 +1177,7 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 
 			private static void ClearCache()
 			{
-				s_featureTagCache.Clear();
+				s_featureCache.Clear();
 				s_cacheOrder.Clear();
 			}
 
@@ -1147,47 +1190,6 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 				var data = new byte[size];
 				var bytesRead = GetFontData(hdc, table, 0, data, size);
 				return bytesRead == GdiError ? null : data;
-			}
-
-			private static void ReadFeatureList(byte[] tableData, ISet<string> tags)
-			{
-				if (tableData.Length < 8)
-					return;
-
-				var featureListOffset = ReadUInt16(tableData, 6);
-				if (featureListOffset <= 0 || featureListOffset + 2 > tableData.Length)
-					return;
-
-				var featureCount = ReadUInt16(tableData, featureListOffset);
-				var featureRecordOffset = featureListOffset + 2;
-				for (var featureIndex = 0; featureIndex < featureCount; featureIndex++)
-				{
-					var recordOffset = featureRecordOffset + featureIndex * 6;
-					if (recordOffset + 6 > tableData.Length)
-						return;
-
-					var tag = System.Text.Encoding.ASCII.GetString(tableData, recordOffset, 4);
-					if (FontFeatureSettings.IsValidOpenTypeTag(tag) && IsUserConfigurableTag(tag))
-						tags.Add(tag);
-				}
-			}
-
-			private static bool IsUserConfigurableTag(string tag)
-			{
-				if (!s_nonUserConfigurableTags.Contains(tag))
-					return true;
-
-				Trace.WriteLineIf(s_openTypeTraceSwitch.TraceInfo,
-					string.Format(CultureInfo.InvariantCulture,
-						"FontFeaturesButton filtered non-user OpenType feature '{0}'.",
-						tag),
-					s_openTypeTraceSwitch.DisplayName);
-				return false;
-			}
-
-			private static ushort ReadUInt16(byte[] data, int offset)
-			{
-				return (ushort)((data[offset] << 8) | data[offset + 1]);
 			}
 
 			private static uint MakeTableTag(string tag)
