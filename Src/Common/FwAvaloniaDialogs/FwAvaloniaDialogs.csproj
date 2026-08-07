@@ -33,6 +33,7 @@
 		<PackageReference Include="Avalonia" ExcludeAssets="analyzers" />
 		<PackageReference Include="Avalonia.Themes.Fluent" ExcludeAssets="analyzers" />
 		<PackageReference Include="CommunityToolkit.Mvvm" />
+		<Compile Include="..\..\CommonAssemblyInfo.cs" Link="Properties\CommonAssemblyInfo.cs" />
 	</ItemGroup>
 
 	<!-- WinForms framework assembly: the generic dialog launcher scaffold takes an IWin32Window owner and
