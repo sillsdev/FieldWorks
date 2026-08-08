@@ -45,10 +45,13 @@
 	Skips acquiring/releasing the same-worktree lock because the parent build already owns it.
 
 .PARAMETER Coverage
-	Collect code coverage by wrapping vstest.console.exe with the dotnet-coverage tool. Its dynamic,
-	in-memory instrumentation leaves the shared Output/<Configuration> assemblies untouched, so
-	parallel testhosts stay safe. Writes coverage.cobertura.xml under Output/<Configuration>/TestResults,
-	then renders a summary + HTML report via ReportGenerator. If coverage can't be collected, the run fails.
+	Collect code coverage for both test kinds. Managed: wraps vstest.console.exe with the
+	dotnet-coverage tool, whose dynamic, in-memory instrumentation leaves the shared
+	Output/<Configuration> assemblies untouched, so parallel testhosts stay safe; writes
+	coverage.cobertura.xml under Output/<Configuration>/TestResults, then renders a summary +
+	HTML report via ReportGenerator. Native: runs the Unit++ executables under OpenCppCoverage
+	(when installed; otherwise they run bare with a warning), writing
+	native.<exe>.cobertura.xml to the same TestResults folder.
 
 .EXAMPLE
 	.\test.ps1
@@ -132,24 +135,6 @@ function Test-EnvironmentSwitchEnabled {
 	}
 
 	return @('1', 'true', 'yes', 'on') -contains $value.Trim().ToLowerInvariant()
-}
-
-function Set-TestAssertDialogEnvironment {
-	param(
-		[bool]$AllowDialogs
-	)
-
-	if ($AllowDialogs) {
-		$env:AssertUiEnabled = 'true'
-		$env:AssertExceptionEnabled = 'false'
-		$env:FW_TEST_MODE = '0'
-		$env:FW_TEST_ALLOW_ASSERT_DIALOGS = '1'
-		return
-	}
-
-	$env:AssertUiEnabled = 'false'
-	$env:AssertExceptionEnabled = 'true'
-	$env:FW_TEST_MODE = '1'
 }
 
 function New-TestRunSettingsForAssertDialogMode {
@@ -383,6 +368,9 @@ try {
 				}
 				if ($allowAssertDialogsForRun) {
 					$cppTestArgs.AllowAssertDialogs = $true
+				}
+				if ($Coverage -and -not $ListTests) {
+					$cppTestArgs.Coverage = $true
 				}
 				& $cppScript @cppTestArgs
 				if ($LASTEXITCODE -ne 0) {
