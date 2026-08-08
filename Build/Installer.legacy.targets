@@ -202,6 +202,8 @@
 			<!-- versification files from some unit tests -->
 			<DevTestArtifacts Include="$(OutputDirForConfig)\Castle.Core.dll" />
 			<DevTestArtifacts Include="$(OutputDirForConfig)\Moq.dll" />
+			<!-- Dev-iteration sample code for the Avalonia preview host, not product behavior -->
+			<DevTestArtifacts Include="$(OutputDirForConfig)\FwAvalonia.Preview.*" />
 
 			<FontFiles Include="$(fwrt)\DistFiles\Fonts\Raw\Quivira.otf" />
 			<FontFiles Include="$(DownloadsDir)\Fonts\**\*.ttf" />
