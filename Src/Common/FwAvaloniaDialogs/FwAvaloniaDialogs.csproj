@@ -22,6 +22,7 @@
 		<LangVersion>latest</LangVersion>
 		<IsPackable>false</IsPackable>
 		<GenerateDocumentationFile>false</GenerateDocumentationFile>
+		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
 		<!-- Auto-include *.axaml as AvaloniaXaml items and compile XAML at build time. -->
 		<EnableDefaultAvaloniaItems>true</EnableDefaultAvaloniaItems>
 		<!-- Bindings are statically checked at build time (the key payoff of the MVVM decision). -->
@@ -33,6 +34,9 @@
 		<PackageReference Include="Avalonia" ExcludeAssets="analyzers" />
 		<PackageReference Include="Avalonia.Themes.Fluent" ExcludeAssets="analyzers" />
 		<PackageReference Include="CommunityToolkit.Mvvm" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<Compile Include="..\..\CommonAssemblyInfo.cs" Link="Properties\CommonAssemblyInfo.cs" />
 	</ItemGroup>
 
