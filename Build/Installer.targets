@@ -137,6 +137,8 @@
 	  <DevTestArtifacts Include="$(OutputDirForConfig)\*Tests.*" />
 	  <DevTestArtifacts Include="$(OutputDirForConfig)\test*" />
 	  <DevTestArtifacts Include="$(OutputDirForConfig)\*.vrs" />
+	  <!-- Dev-iteration sample code for the Avalonia preview host, not product behavior -->
+	  <DevTestArtifacts Include="$(OutputDirForConfig)\FwAvalonia.Preview.*" />
 	  <BinFiles Remove="@(DevTestArtifacts)" />
 	</ItemGroup>
 
