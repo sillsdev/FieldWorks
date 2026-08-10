@@ -14,6 +14,7 @@
 		<LangVersion>latest</LangVersion>
 		<IsTestProject>true</IsTestProject>
 		<IsPackable>false</IsPackable>
+		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
 		<NoWarn>$(NoWarn);CS1591;NU1701</NoWarn>
 	</PropertyGroup>
 
@@ -45,6 +46,10 @@
 	<ItemGroup>
 		<Compile Remove="$(FwRoot)Src\AssemblyInfoForTests.cs" />
 		<Compile Remove="$(FwRoot)Src\AssemblyInfoForUiIndependentTests.cs" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Compile Include="..\..\..\CommonAssemblyInfo.cs" Link="Properties\CommonAssemblyInfo.cs" />
 	</ItemGroup>
 
 </Project>
