@@ -1,13 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Project>
+	<!--
+		Repo-controlled toolchain policy. Scripts discover installations dynamically,
+		but only within this supported Visual Studio / MSVC configuration.
+
+		The numbered properties (FwPlatformToolset17, ...) map each supported Visual
+		Studio major version to its MSVC toolset, VC targets folder, and .NET Framework
+		SDK version. They are plain data so consumers that cannot evaluate MSBuild
+		conditions (Build/Agent/FwBuildEnvironment.psm1 and FwBuildTasks BuildUtils)
+		can read them from this file directly. Add a new numbered trio to support a
+		new Visual Studio major; widen FwVisualStudioVersionRange to match.
+	-->
 	<PropertyGroup Label="FieldWorks Toolchain Policy">
-		<!--
-			Repo-controlled toolchain policy. Scripts discover installations dynamically,
-			but only within this supported Visual Studio / MSVC configuration.
-		-->
-		<FwVisualStudioMajor Condition="'$(FwVisualStudioMajor)' == ''">17</FwVisualStudioMajor>
-		<FwVisualStudioVersionRange Condition="'$(FwVisualStudioVersionRange)' == ''">[17.0,18.0)</FwVisualStudioVersionRange>
-		<FwVCTargetsVersion Condition="'$(FwVCTargetsVersion)' == ''">v170</FwVCTargetsVersion>
-		<FwPlatformToolset Condition="'$(FwPlatformToolset)' == ''">v143</FwPlatformToolset>
-		<FwDotNetFrameworkSdkVisualStudioVersion Condition="'$(FwDotNetFrameworkSdkVisualStudioVersion)' == ''">17.0</FwDotNetFrameworkSdkVisualStudioVersion>
+		<FwVisualStudioVersionRange Condition="'$(FwVisualStudioVersionRange)' == ''">[17.0,19.0)</FwVisualStudioVersionRange>
+
+		<!-- Visual Studio 2022 -->
+		<FwVCTargetsVersion17>v170</FwVCTargetsVersion17>
+		<FwPlatformToolset17>v143</FwPlatformToolset17>
+		<FwDotNetFrameworkSdkVisualStudioVersion17>17.0</FwDotNetFrameworkSdkVisualStudioVersion17>
+
+		<!-- Visual Studio 2026 -->
+		<FwVCTargetsVersion18>v180</FwVCTargetsVersion18>
+		<FwPlatformToolset18>v145</FwPlatformToolset18>
+		<FwDotNetFrameworkSdkVisualStudioVersion18>18.0</FwDotNetFrameworkSdkVisualStudioVersion18>
+	</PropertyGroup>
+
+	<!--
+		Effective toolchain for MSBuild consumers, selected by the Visual Studio that
+		is running the build ($(VisualStudioVersion) is 17.0 under VS 2022 MSBuild and
+		18.0 under VS 2026 MSBuild). The empty-value guards keep environment variables
+		and /p: overrides authoritative.
+
+		Scope: these properties govern vcxproj-based builds (the IDE and the native
+		test projects). The nmake-driven product natives (Make task over *.mak in
+		Build/mkall.targets) compile with the selected Visual Studio's activated
+		developer-environment toolset, whose default family matches this mapping
+		for the supported majors.
+	-->
+	<PropertyGroup Label="Effective Toolchain">
+		<FwVCTargetsVersion Condition="'$(FwVCTargetsVersion)' == '' And '$(VisualStudioVersion)' == '18.0'">$(FwVCTargetsVersion18)</FwVCTargetsVersion>
+		<FwPlatformToolset Condition="'$(FwPlatformToolset)' == '' And '$(VisualStudioVersion)' == '18.0'">$(FwPlatformToolset18)</FwPlatformToolset>
+		<FwDotNetFrameworkSdkVisualStudioVersion Condition="'$(FwDotNetFrameworkSdkVisualStudioVersion)' == '' And '$(VisualStudioVersion)' == '18.0'">$(FwDotNetFrameworkSdkVisualStudioVersion18)</FwDotNetFrameworkSdkVisualStudioVersion>
+
+		<FwVCTargetsVersion Condition="'$(FwVCTargetsVersion)' == ''">$(FwVCTargetsVersion17)</FwVCTargetsVersion>
+		<FwPlatformToolset Condition="'$(FwPlatformToolset)' == ''">$(FwPlatformToolset17)</FwPlatformToolset>
+		<FwDotNetFrameworkSdkVisualStudioVersion Condition="'$(FwDotNetFrameworkSdkVisualStudioVersion)' == ''">$(FwDotNetFrameworkSdkVisualStudioVersion17)</FwDotNetFrameworkSdkVisualStudioVersion>
 	</PropertyGroup>
 </Project>

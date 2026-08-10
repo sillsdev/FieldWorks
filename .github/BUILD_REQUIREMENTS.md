@@ -48,7 +48,7 @@ From `.github/workflows/CI.yml`:
 
 **Solution:**
 1. Close your current terminal
-2. Open "Developer Command Prompt for VS 2022" or "Developer PowerShell for VS 2022" from the Start Menu
+2. Open the "Developer Command Prompt" or "Developer PowerShell" for your installed Visual Studio (2026 or 2022) from the Start Menu
 3. Navigate to the repository
 4. Run the build script again
 
@@ -72,8 +72,9 @@ msbuild Build/Src/FwBuildTasks/FwBuildTasks.csproj /t:Restore;Build /p:Configura
 
 ## Visual Studio Requirements
 
-- **Visual Studio 2022** (Community, Professional, or Enterprise)
+- **Visual Studio 2026 or 2022** (Community, Professional, or Enterprise); when both are installed the build uses the newest (see `Build/FieldWorks.Toolchain.props`)
 - **Required Workloads:**
   - .NET desktop development
   - Desktop development with C++
+  - (the repo-root `.vsconfig` lists the exact workloads and components)
 - **Optional:** WiX Toolset 3.14.1 (only for installer builds)

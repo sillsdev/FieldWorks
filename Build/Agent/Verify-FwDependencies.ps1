@@ -9,9 +9,9 @@
 	Use -PassThru when a caller needs structured results returned on the pipeline.
 
 	Expected dependencies (typically pre-installed on windows-latest):
-	- Visual Studio 2022 with Desktop & C++ workloads
+	- Visual Studio 2022 or 2026 (newest installed wins) with Desktop & C++ workloads
 	- MSBuild
-	- .NET Framework 4.8.1 SDK & Targeting Pack
+	- .NET Framework 4.8+ SDK & Targeting Pack
 	- Windows SDK
 	- WiX Toolset v6 (installer builds restore via NuGet)
 	- .NET SDK 8.x+
@@ -166,7 +166,7 @@ $results += Test-Dependency -Name "Windows SDK" -Check {
 }
 
 # Visual Studio / MSBuild
-$results += Test-Dependency -Name "Visual Studio 2022" -Check {
+$results += Test-Dependency -Name "Visual Studio (2022/2026)" -Check {
 	$vsInfo = Get-VsInstallationInfo -Requires @('Microsoft.Component.MSBuild', 'Microsoft.VisualStudio.Component.VC.Tools.x86.x64')
 	if (-not $vsInfo) {
 		$vsWhere = Get-VsWherePath

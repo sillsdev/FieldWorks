@@ -430,6 +430,7 @@ function Test-FwBuildTasksBootstrapRequired {
 		(Join-Path $RepoRoot "Directory.Packages.props"),
 		(Join-Path $RepoRoot "Directory.Build.props"),
 		(Join-Path $RepoRoot "Directory.Build.targets"),
+		(Join-Path $RepoRoot "Build/FieldWorks.Toolchain.props"),
 		(Join-Path $RepoRoot "Build/SilVersions.props"),
 		(Join-Path $RepoRoot "Build/Src/Directory.Packages.props"),
 		(Join-Path $RepoRoot "Build/Src/FwBuildTasks/Directory.Build.props")
@@ -496,6 +497,13 @@ try {
 		# Initialize Visual Studio Developer environment
 		Initialize-VsDevEnvironment
 		Test-CvtresCompatibility
+
+		if ($BuildInstaller -or $BuildPatch) {
+			$installerToolchain = Get-VsToolchainInfo
+			if ($installerToolchain -and $installerToolchain.PlatformToolset -ne 'v143') {
+				Write-Host "[WARN] Installer build with PlatformToolset $($installerToolchain.PlatformToolset): the bundled VC++ redistributables predate this toolset. Official installers are produced from v143 (Visual Studio 2022) builds until the FLExInstaller redistributables are updated." -ForegroundColor Yellow
+			}
+		}
 
 		if (-not $SkipDependencyCheck) {
 			$verifyScript = Join-Path $PSScriptRoot "Build/Agent/Verify-FwDependencies.ps1"

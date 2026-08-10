@@ -7,7 +7,7 @@ This document describes additional setup steps for core FieldWorks developers. U
 ## Prerequisites
 
 Complete all steps in [CONTRIBUTING.md](CONTRIBUTING.md) first:
-1. Install required software (Git, Visual Studio 2022)
+1. Install required software (Git, Visual Studio 2026 or 2022)
 2. Clone the repository
 3. Verify you can build successfully
 
@@ -15,13 +15,14 @@ Complete all steps in [CONTRIBUTING.md](CONTRIBUTING.md) first:
 
 The following tools are required for FieldWorks development:
 
-### Visual Studio 2022
+### Visual Studio 2026 or 2022
 
+FieldWorks builds with either; when both are installed the build uses the newest.
 Install with these workloads:
 - **.NET desktop development**
 - **Desktop development with C++** (including ATL/MFC components)
 
-See [Visual Studio Setup](visual-studio-setup.md) for detailed component list.
+See [Visual Studio Setup](visual-studio-setup.md) for the detailed component list, or import the repo-root `.vsconfig` in the Visual Studio Installer.
 
 ### WiX Toolset (v6 via NuGet restore)
 
@@ -135,7 +136,7 @@ Recommended VS Code extensions for daily development:
 - **C/C++** (`ms-vscode.cpptools`) for native editing/debugging
 - **PowerShell** (`ms-vscode.powershell`) for build/test scripts
 
-Use **Visual Studio 2022** when working on:
+Use **Visual Studio** (2026 or 2022) when working on:
 - WinForms designer changes
 - Mixed managed/native debugging across interop boundaries
 - Complex legacy .NET Framework project-system issues

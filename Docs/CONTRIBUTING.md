@@ -27,9 +27,9 @@ During installation:
 - On "Adjusting your PATH environment": Select any option you want - "Use Git Bash only" is sufficient unless you want to run git commands from the Windows command prompt.
 - On "Configuring the line ending conversions": Select **"Checkout Windows-style, commit Unix-style line endings"**.
 
-#### Visual Studio 2022
+#### Visual Studio 2026 or 2022
 
-Download and install Visual Studio 2022 Community Edition or higher. See [Visual Studio Setup](visual-studio-setup.md) for detailed configuration.
+Download and install Visual Studio Community Edition or higher (2026 preferred; when both are installed the build uses the newest). See [Visual Studio Setup](visual-studio-setup.md) for detailed configuration, or import the repo-root `.vsconfig` in the Visual Studio Installer.
 
 Required workloads:
 - .NET desktop development
@@ -147,7 +147,7 @@ Default recommendation:
 
 If you are a core developer using GitHub Copilot or Claude Code, follow [AI-Assisted PR Workflow](workflows/ai-pr-workflow.md) for the Jira-to-PR path: create a dedicated worktree, validate with repo tasks/scripts, run `pr-preflight`, and then work review comments through the repo review-response workflow.
 
-Switch to **Visual Studio 2022** when you need:
+Switch to **Visual Studio** (2026 or 2022) when you need:
 - WinForms designer workflows
 - Mixed managed/native debugging across interop boundaries
 - Complex legacy .NET Framework project-system scenarios where VS Code is unreliable

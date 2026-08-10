@@ -136,7 +136,7 @@ $vsDevEnvActive = Test-VsDevEnvironmentActive
 
 if ($toolchain) {
 	$vsVersion = if ([string]::IsNullOrWhiteSpace($toolchain.DisplayVersion)) { 'unknown version' } else { $toolchain.DisplayVersion }
-		Write-Host "[OK] Visual Studio 2022: $vsVersion" -ForegroundColor Green
+		Write-Host "[OK] Visual Studio: $vsVersion" -ForegroundColor Green
 
 	if ($toolchain.MSBuildPath) {
 		Write-Host "[OK] MSBuild found: $($toolchain.MSBuildPath)" -ForegroundColor Green
@@ -162,7 +162,7 @@ if ($toolchain) {
 	}
 } else {
 	if (Get-VsWherePath) {
-		$issues += "Visual Studio 2022 with MSBuild and C++ tools not installed"
+		$issues += "Visual Studio (2022/2026) with MSBuild and C++ tools not installed"
 	} else {
 	$issues += "Visual Studio Installer not found"
 	}

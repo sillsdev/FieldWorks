@@ -20,11 +20,11 @@ Use the installer setup script to validate your environment:
 
 ### Required Software
 
-1. **Visual Studio 2022** with Desktop workloads (C++ and .NET)
+1. **Visual Studio 2026 or 2022** with Desktop workloads (C++ and .NET). Official installers are produced from Visual Studio 2022 (v143) builds; a v145 build gets a warning because the bundled VC++ redistributables predate that toolset.
 2. **WiX Toolset v3.x** for the legacy WiX 3 build (default), plus the **Visual Studio WiX Toolset v3 extension** so `Wix.CA.targets` is available under MSBuild
 3. **WiX Toolset v6** via `WixToolset.Sdk` for the opt-in WiX 6 build (restored via NuGet as part of the build)
-4. **MSBuild** (included with VS 2022)
-5. **.NET Framework 4.8.1 SDK** (included with VS 2022)
+4. **MSBuild** (included with Visual Studio)
+5. **.NET Framework 4.8 SDK** (included with Visual Studio)
 
 ### One-Time Setup
 
