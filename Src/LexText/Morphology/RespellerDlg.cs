@@ -69,6 +69,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		public RespellerDlg()
 		{
 			InitializeComponent();
+			StartPosition = FormStartPosition.CenterParent;
 			// Handle localization here since the dialog isn't localized, it can't be edited in the
 			// designer to make it localized.
 			m_cbUpdateLexicon.Text = MEStrings.ksUpdateMonoMorphemicLexicalEntries;

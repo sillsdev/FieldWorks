@@ -23,6 +23,8 @@ namespace SIL.FieldWorks.FdoUi.Dialogs
 		{
 			m_helpTopicProvider = helpTopicProvider;
 			InitializeComponent();
+			// Shown without an owner, possibly before any main window exists.
+			StartPosition = FormStartPosition.CenterScreen;
 		}
 
 		/// <summary>

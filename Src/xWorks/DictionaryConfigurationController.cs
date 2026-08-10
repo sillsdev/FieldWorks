@@ -464,7 +464,7 @@ namespace SIL.FieldWorks.XWorks
 					renameDialog.NewSuffix = dictionaryNode.LabelSuffix;
 
 					// Unchanged?
-					if (renameDialog.ShowDialog() != DialogResult.OK || renameDialog.NewSuffix == dictionaryNode.LabelSuffix)
+					if (renameDialog.ShowDialog(View as Form) != DialogResult.OK || renameDialog.NewSuffix == dictionaryNode.LabelSuffix)
 						return;
 
 					if (!dictionaryNode.ChangeSuffix(renameDialog.NewSuffix, siblings))

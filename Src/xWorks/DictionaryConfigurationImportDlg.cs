@@ -21,6 +21,7 @@ namespace SIL.FieldWorks.XWorks
 		public DictionaryConfigurationImportDlg(IHelpTopicProvider helpProvider)
 		{
 			InitializeComponent();
+			StartPosition = FormStartPosition.CenterParent;
 			m_helpTopicProvider = helpProvider;
 			// Clear away example text
 			explanationLabel.Text = string.Empty;

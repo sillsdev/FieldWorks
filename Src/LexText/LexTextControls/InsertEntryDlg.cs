@@ -1837,7 +1837,7 @@ namespace SIL.FieldWorks.LexText.Controls
 
 				using (dlg)
 				{
-					if (dlg.ShowDialog() == DialogResult.OK)
+					if (dlg.ShowDialog(this) == DialogResult.OK)
 					{
 						Gloss = dlg.Result;
 						m_MGAGlossListBoxItems = dlg.Items;

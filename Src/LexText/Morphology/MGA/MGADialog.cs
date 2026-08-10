@@ -123,6 +123,7 @@ namespace  SIL.FieldWorks.LexText.Controls.MGA
 			// Required for Windows Form Designer support
 			//
 			InitializeComponent();
+			StartPosition = FormStartPosition.CenterParent;
 
 			SuspendLayout();
 
