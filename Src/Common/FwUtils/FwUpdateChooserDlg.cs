@@ -14,6 +14,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public FwUpdateChooserDlg()
 		{
 			InitializeComponent();
+			StartPosition = FormStartPosition.CenterScreen;
 		}
 
 		public FwUpdateChooserDlg(FwUpdate current, IEnumerable<FwUpdate> available) : this()

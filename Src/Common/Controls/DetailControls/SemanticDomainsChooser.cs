@@ -47,6 +47,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		public SemanticDomainsChooser()
 		{
 			InitializeComponent();
+			StartPosition = FormStartPosition.CenterParent;
 			btnCancelSearch.Init();
 			editDomainsLinkPic.Image = DetailControlsStrings.gotoLinkPic;
 		}

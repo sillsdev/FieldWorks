@@ -318,7 +318,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			using(var dlg = new WebonaryLogViewer(Model.LastUploadReport))
 			{
-				dlg.ShowDialog();
+				dlg.ShowDialog(this);
 			}
 		}
 
