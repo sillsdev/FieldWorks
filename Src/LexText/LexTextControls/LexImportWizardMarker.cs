@@ -396,6 +396,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			// Required for Windows Form Designer support
 			//
 			InitializeComponent();
+			StartPosition = FormStartPosition.CenterParent;
 			AccessibleName = GetType().Name;
 
 			InitBottomPanel();

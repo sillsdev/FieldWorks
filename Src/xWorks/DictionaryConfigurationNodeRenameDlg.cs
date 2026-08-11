@@ -31,6 +31,7 @@ namespace SIL.FieldWorks.XWorks
 		public DictionaryConfigurationNodeRenameDlg()
 		{
 			InitializeComponent();
+			StartPosition = FormStartPosition.CenterParent;
 		}
 	}
 }

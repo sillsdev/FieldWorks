@@ -8,6 +8,7 @@ using System.Linq;
 using System.Windows.Forms;
 using SIL.Linq;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.Windows.Forms;
 using XCore;
 
 namespace SIL.FieldWorks.XWorks
@@ -23,6 +24,8 @@ namespace SIL.FieldWorks.XWorks
 		public DictionaryConfigurationManagerDlg(IHelpTopicProvider helpTopicProvider)
 		{
 			InitializeComponent();
+			// Open centered on the owner so the dialog appears on the same monitor as the main window.
+			StartPosition = FormStartPosition.CenterParent;
 
 			m_toolTip = new ToolTip();
 			m_toolTip.SetToolTip(copyButton, xWorksStrings.DuplicateViewToolTip);
@@ -43,6 +46,18 @@ namespace SIL.FieldWorks.XWorks
 			m_helpProvider.SetHelpKeyword(this, m_helpTopicProvider.GetHelpString(HelpTopic));
 			m_helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);
 			m_helpProvider.SetShowHelp(this, true);
+		}
+
+		/// <summary>
+		/// Make sure the dialog is not displayed off-screen on multi-monitor setups.
+		/// </summary>
+		protected override void OnShown(EventArgs e)
+		{
+			base.OnShown(e);
+			var rect = DesktopBounds;
+			ScreenHelper.EnsureVisibleRect(ref rect);
+			if (rect != DesktopBounds)
+				DesktopBounds = rect;
 		}
 
 		private void OnGotFocus(object sender, EventArgs eventArgs)

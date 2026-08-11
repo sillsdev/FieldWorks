@@ -39,6 +39,7 @@ namespace SIL.FieldWorks.XWorks
 		public WebonaryLogViewer(string filePath)
 		{
 			InitializeComponent();
+			StartPosition = FormStartPosition.CenterParent;
 			_resourceManager = new ResourceManager("SIL.FieldWorks.XWorks.WebonaryLogViewer", typeof(WebonaryLogViewer).Assembly);
 
 			// Set localized text for UI elements

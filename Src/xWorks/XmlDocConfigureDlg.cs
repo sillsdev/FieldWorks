@@ -4363,7 +4363,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				dlg.Text = String.Format(dlg.Text, m_configObjectName);
 				var presenter = dlg.Presenter;
-				if (dlg.ShowDialog() == DialogResult.OK)
+				if (dlg.ShowDialog(this) == DialogResult.OK)
 					ProcessXMLConfigChanges(presenter as IDictConfigManager);
 			}
 		}

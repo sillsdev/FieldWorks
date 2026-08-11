@@ -1230,7 +1230,8 @@ namespace SIL.FieldWorks.XWorks
 			using (var controller = new UploadToWebonaryController(cache, propertyTable, mediator))
 			using (var dialog = new UploadToWebonaryDlg(controller, model, propertyTable))
 			{
-				dialog.ShowDialog();
+				// Pass the main window as owner so the dialog opens on the same monitor.
+				dialog.ShowDialog(propertyTable.GetValue<IWin32Window>("window"));
 			}
 		}
 
