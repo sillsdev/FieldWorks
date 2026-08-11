@@ -337,6 +337,23 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
+		/// A remembered position may be on a monitor the main window has since left; recenter
+		/// on the owner's screen so a modal dialog is never stranded where the user isn't looking.
+		/// </summary>
+		protected override void OnShown(EventArgs e)
+		{
+			base.OnShown(e);
+			if (Owner == null || StartPosition != FormStartPosition.Manual)
+				return;
+			var ownerScreen = System.Windows.Forms.Screen.FromControl(Owner);
+			if (ownerScreen.Equals(System.Windows.Forms.Screen.FromRectangle(DesktopBounds)))
+				return;
+			var workingArea = ownerScreen.WorkingArea;
+			Location = new Point(workingArea.Left + Math.Max(0, (workingArea.Width - Width) / 2),
+				workingArea.Top + Math.Max(0, (workingArea.Height - Height) / 2));
+		}
+
+		/// <summary>
 		/// Save the location and size for next time.
 		/// </summary>
 		protected override void OnClosing(CancelEventArgs e)
