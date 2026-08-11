@@ -108,9 +108,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				if (dlg.ShowDialog(Form.ActiveForm) == DialogResult.OK)
 				{
 					IRnGenericRec newRec = dlg.NewRecord;
-#pragma warning disable 618 // suppress obsolete warning
-					m_mediator.SendMessage("JumpToRecord", newRec.Hvo);
-#pragma warning restore 618
+					Publisher.Publish(new PublisherParameterObject(EventConstants.JumpToRecord, newRec.Hvo, m_propertyTable.GetWindow()));
 				}
 			}
 			retObj.ReturnValue = true; // We "handled" the message, regardless of what happened.

@@ -6,6 +6,8 @@ using System.Diagnostics;
 using System.Windows.Forms;
 using SIL.LCModel;
 using XCore;
+using SIL.FieldWorks.Common.FwUtils;
+using static SIL.FieldWorks.Common.FwUtils.FwUtils;
 using SIL.FieldWorks.LexText.Controls;
 
 namespace SIL.FieldWorks.FdoUi
@@ -52,9 +54,7 @@ namespace SIL.FieldWorks.FdoUi
 					case DialogResult.OK: // Fall through.
 					case DialogResult.Yes:
 						posUi = new PartOfSpeechUi(dlg.SelectedPOS);
-#pragma warning disable 618 // suppress obsolete warning
-						mediator.SendMessage("JumpToRecord", dlg.SelectedPOS.Hvo);
-#pragma warning restore 618
+						Publisher.Publish(new PublisherParameterObject(EventConstants.JumpToRecord, dlg.SelectedPOS.Hvo, propertyTable.GetWindow()));
 						break;
 				}
 			}

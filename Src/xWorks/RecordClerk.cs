@@ -1039,6 +1039,23 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
+		/// Pub/Sub subscriber for JumpToRecord.
+		/// More than one clerk can be subscribed at a time, so every implementation,
+		/// including overrides, MUST return without doing anything unless IsActiveClerk.
+		/// Subclasses can override this to route the jump elsewhere first (the concordance
+		/// clerk lets its ConcordanceControl try the jump before falling back to this base
+		/// implementation).
+		/// Note: Mediator broadcasts of "JumpToRecord" still arrive via OnJumpToRecord
+		/// until those senders are also converted to Pub/Sub.
+		/// </summary>
+		protected virtual void JumpToRecordViaPublisher(object argument)
+		{
+			if (!IsActiveClerk)
+				return;
+			JumpToRecord(argument);
+		}
+
+		/// <summary>
 		/// display the given record
 		/// </summary>
 		/// <param name="argument">the hvo of the record</param>
@@ -1941,6 +1958,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			Subscriber.Unsubscribe(EventConstants.FilterListChanged, FilterListChanged);
 			Subscriber.Unsubscribe(EventConstants.DeleteRecord, DeleteRecord);
+			Subscriber.Unsubscribe(EventConstants.JumpToRecord, JumpToRecordViaPublisher);
 
 			// We need the list to get the cache.
 			if (m_list == null || m_list.IsDisposed || Cache == null || Cache.IsDisposed || Cache.DomainDataByFlid == null)
@@ -2042,6 +2060,7 @@ namespace SIL.FieldWorks.XWorks
 			// RecordClerk only needs to handle changes if RecordClerk is being used in GUI
 			Subscriber.Subscribe(EventConstants.FilterListChanged, FilterListChanged, m_propertyTable.GetWindow());
 			Subscriber.Subscribe(EventConstants.DeleteRecord, DeleteRecord, m_propertyTable.GetWindow());
+			Subscriber.Subscribe(EventConstants.JumpToRecord, JumpToRecordViaPublisher, m_propertyTable.GetWindow());
 
 			m_fIsActiveInGui = true;
 			CheckDisposed();

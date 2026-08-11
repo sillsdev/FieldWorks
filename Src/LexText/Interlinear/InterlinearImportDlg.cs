@@ -10,6 +10,7 @@ using System.Windows.Forms;
 using DesktopAnalytics;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
+using static SIL.FieldWorks.Common.FwUtils.FwUtils;
 using SIL.LCModel;
 using SIL.FieldWorks.LexText.Controls;
 using SIL.FieldWorks.Resources;
@@ -23,6 +24,7 @@ namespace SIL.FieldWorks.IText
 	{
 		private LcmCache m_cache;
 		private Mediator m_mediator;
+		private PropertyTable m_propertyTable;
 
 		private readonly StringBuilder m_messages = new StringBuilder();
 
@@ -77,11 +79,9 @@ namespace SIL.FieldWorks.IText
 						{
 							DialogResult = DialogResult.OK; // only 'OK' if not exception
 							var firstNewText = import.FirstNewText;
-							if (firstNewText != null && m_mediator != null)
+							if (firstNewText != null && m_propertyTable != null)
 							{
-#pragma warning disable 618 // suppress obsolete warning
-								m_mediator.SendMessage("JumpToRecord", firstNewText.Hvo);
-#pragma warning restore 618
+								Publisher.Publish(new PublisherParameterObject(EventConstants.JumpToRecord, firstNewText.Hvo, m_propertyTable.GetWindow()));
 							}
 						}
 						else
@@ -129,6 +129,7 @@ namespace SIL.FieldWorks.IText
 		{
 			m_cache = cache;
 			m_mediator = mediator;
+			m_propertyTable = propertyTable;
 			if (m_mediator != null)
 			{
 				m_helpTopicProvider = propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider");
