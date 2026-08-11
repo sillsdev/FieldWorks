@@ -410,8 +410,6 @@ namespace SIL.FieldWorks.FdoUi
 						return CmPossibilityUi.CreateNewUiObject(propertyTable, classId, hvoOwner, flid, insertionPosition);
 					case PartOfSpeechTags.kClassId:
 						return PartOfSpeechUi.CreateNewUiObject(mediator, propertyTable, classId, hvoOwner, flid, insertionPosition);
-					case FsFeatDefnTags.kClassId:
-						return FsFeatDefnUi.CreateNewUiObject(mediator, propertyTable, classId, hvoOwner, flid, insertionPosition);
 					case LexSenseTags.kClassId:
 						return LexSenseUi.CreateNewUiObject(propertyTable, classId, hvoOwner, flid, insertionPosition);
 					case LexPronunciationTags.kClassId:

@@ -126,9 +126,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 				{
 					case DialogResult.OK: // Fall through.
 					case DialogResult.Yes:
-						//m_mediator.SendMessage("JumpToRecord", dlg.SelectedFeatDefn.Hvo);
-						// This is the equivalent functionality, but is deferred processing.
-						// This is done so that the JumpToRecord can be processed last.
+						// Deferred processing, so that the JumpToRecord can be processed last.
 						if (dlg.SelectedFeatDefn != null)
 						{
 #pragma warning disable 618 // suppress obsolete warning
