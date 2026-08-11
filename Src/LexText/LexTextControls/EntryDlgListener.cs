@@ -117,9 +117,7 @@ namespace SIL.FieldWorks.LexText.Controls
 					{
 						Publisher.Publish(new PublisherParameterObject(EventConstants.MasterRefresh, null, m_propertyTable.GetWindow()));
 					}
-#pragma warning disable 618 // suppress obsolete warning
-					m_mediator.SendMessage("JumpToRecord", entry.Hvo);
-#pragma warning restore 618
+					Publisher.Publish(new PublisherParameterObject(EventConstants.JumpToRecord, entry.Hvo, m_propertyTable.GetWindow()));
 				}
 			}
 			retObj.ReturnValue = true; // We "handled" the message, regardless of what happened.
@@ -134,14 +132,21 @@ namespace SIL.FieldWorks.LexText.Controls
 				Form.ActiveForm, tssForm: null, helpProvider: helpProvider);
 			// Jump to the resulting entry whether it was newly created OR an existing entry the user chose from
 			// the matching-entries pane (the legacy "Go to similar entry" outcome, newby == false). The legacy
-			// WinForms path likewise JumpToRecord's for both. A MasterRefresh is only needed for a new entry.
+			// WinForms path likewise jumps for both. A refresh is only needed for a new entry.
 			if (entry != null)
 			{
-#pragma warning disable 618 // suppress obsolete warning
 				if (newby)
-					m_mediator.SendMessage("MasterRefresh", null);
-				m_mediator.SendMessage("JumpToRecord", entry.Hvo);
-#pragma warning restore 618
+				{
+					// Two-stage refresh: if the active content control can satisfy the request by
+					// regenerating its own content (the XHTML document views), skip the full refresh.
+					var refreshRequest = new ReturnObject(null);
+					Publisher.Publish(new PublisherParameterObject(EventConstants.RefreshCurrentView, refreshRequest, m_propertyTable.GetWindow()));
+					if (!refreshRequest.ReturnValue)
+					{
+						Publisher.Publish(new PublisherParameterObject(EventConstants.MasterRefresh, null, m_propertyTable.GetWindow()));
+					}
+				}
+				Publisher.Publish(new PublisherParameterObject(EventConstants.JumpToRecord, entry.Hvo, m_propertyTable.GetWindow()));
 			}
 		}
 
@@ -228,9 +233,7 @@ namespace SIL.FieldWorks.LexText.Controls
 						LexTextControls.ksEntriesHaveBeenMerged,
 						LexTextControls.ksMergeReport,
 						MessageBoxButtons.OK, MessageBoxIcon.Information);
-#pragma warning disable 618 // suppress obsolete warning
-					m_mediator.SendMessage("JumpToRecord", survivor.Hvo);
-#pragma warning restore 618
+					Publisher.Publish(new PublisherParameterObject(EventConstants.JumpToRecord, survivor.Hvo, m_propertyTable.GetWindow()));
 				}
 			}
 			return true;
@@ -280,9 +283,7 @@ namespace SIL.FieldWorks.LexText.Controls
 					LexTextControls.ksEntriesHaveBeenMerged,
 					LexTextControls.ksMergeReport,
 					MessageBoxButtons.OK, MessageBoxIcon.Information);
-#pragma warning disable 618 // suppress obsolete warning
-				m_mediator.SendMessage("JumpToRecord", survivor.Hvo);
-#pragma warning restore 618
+				Publisher.Publish(new PublisherParameterObject(EventConstants.JumpToRecord, survivor.Hvo, m_propertyTable.GetWindow()));
 			}
 		}
 		#endregion XCORE Message Handlers

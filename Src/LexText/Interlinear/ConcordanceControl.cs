@@ -1789,6 +1789,21 @@ namespace SIL.FieldWorks.IText
 		{
 			return "";
 		}
+
+		/// <summary>
+		/// The concordance tool's ConcordanceControl gets the first chance to handle a
+		/// published jump. The base implementation only runs the jump if the control declines.
+		/// (The complexConcordance tool shares this clerk class, but its control has no
+		/// jump handling, so it always falls through to the base implementation.)
+		/// </summary>
+		protected override void JumpToRecordViaPublisher(object argument)
+		{
+			if (!IsActiveClerk)
+				return;
+			if (ConcordanceControl is ConcordanceControl concordanceControl && concordanceControl.OnJumpToRecord(argument))
+				return;
+			base.JumpToRecordViaPublisher(argument);
+		}
 	}
 
 	/// <summary>
