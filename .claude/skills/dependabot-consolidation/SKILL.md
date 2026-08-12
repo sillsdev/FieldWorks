@@ -251,6 +251,47 @@ that way exits non-zero and silently reports nothing wrong. Prefer
 `grep -q "$(printf '\t')"`, and confirm each check actually ran before reporting
 the result.
 
+### Check for deliberate pins - do this before anything else
+
+Dependabot cannot tell a dependency from a pin. `Directory.Packages.props` has a
+`Transitive Pins` block whose entries exist specifically to hold a version, each
+documented by a comment above it, and Dependabot will happily bump them and
+leave the comment behind saying the opposite.
+
+This is not hypothetical. PR #1000 held `Microsoft.Extensions.DependencyModel`
+at 9.0.16 after reproducing a `TypeInitializationException` on
+`Icu.NativeMethods` in the .NET Framework test host, and wrote the reason into
+the file. The next monthly batch proposed bumping it again.
+
+For every changed `PackageVersion` / `PackageReference` / version property line,
+read the comment block immediately above it:
+
+```bash
+git -C <wt> diff -U6 origin/<base>..HEAD -- Directory.Packages.props Build/Src/Directory.Packages.props Build/SilVersions.props
+```
+
+Stop and ask if a nearby comment does any of these:
+
+- names a specific version (`Pin to 9.0.17`, `stays at 9.0.16`)
+- uses the words pin, pinned, stays, hold, do not bump, intentionally
+- cites a PR or issue explaining why the current version was chosen
+- gives a retest procedure
+
+Two distinct outcomes, and do not conflate them:
+
+- **The comment forbids the bump.** Drop that single line from the pick, keeping
+  the rest of the batch, and say so in the plan and the PR body. Do not restore
+  it silently and do not argue from a green CI - the pin's own retest procedure
+  may require a full `test.ps1`, while CI runs with
+  `TestCategory!=LongRunning&TestCategory!=ByHand&TestCategory!=SmokeTest&TestCategory!=DesktopRequired`.
+  A green CI does not clear a pin whose repro lives outside that filter.
+- **The comment merely names the old version.** The bump is fine, but the
+  comment is now false. Update the comment in the same commit.
+
+A recurring pin belongs in the `ignore:` block of `.github/dependabot.yml` so it
+stops being proposed every month. That is a config change outside this skill -
+recommend it, do not make it.
+
 ### Build, only when the batch touches packages
 
 If any picked commit touches `*.props`, `*.json`, or another package manifest,
