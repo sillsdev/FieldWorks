@@ -28,6 +28,7 @@ namespace SIL.FieldWorks.Common.RootSites.RootSiteTests
 		private static readonly string ProjectMutexName =
 			@"Local\FieldWorks.RealDataTests." + ReusableProjectName;
 		private const string TestProjectSentinelFileName = ".fieldworks-real-data-test-project";
+		private const string ProjectDataFileExtension = ".fwdata";
 
 		private static string WorktreeSuffix()
 		{
@@ -298,6 +299,28 @@ namespace SIL.FieldWorks.Common.RootSites.RootSiteTests
 			return projectDirectory;
 		}
 
+		/// <summary>
+		/// Reports whether a directory holds no FieldWorks project data other than the file this
+		/// fixture generates for its own reusable project name.
+		/// </summary>
+		private static bool HoldsOnlyGeneratedProjectData(string projectDirectory)
+		{
+			var generatedDataFileName = ReusableProjectName + ProjectDataFileExtension;
+			foreach (var dataFile in Directory.GetFiles(
+				projectDirectory, "*" + ProjectDataFileExtension))
+			{
+				if (!string.Equals(
+					Path.GetFileName(dataFile),
+					generatedDataFileName,
+					StringComparison.OrdinalIgnoreCase))
+				{
+					return false;
+				}
+			}
+
+			return true;
+		}
+
 		private static void WriteTestProjectSentinel(string projectDirectory)
 		{
 			EnsureSafeProjectDirectory(projectDirectory);
@@ -317,13 +340,28 @@ namespace SIL.FieldWorks.Common.RootSites.RootSiteTests
 
 			if (!File.Exists(GetSentinelFilePath(safeProjectDirectory)))
 			{
-				throw new InvalidOperationException(
-					string.Format(
-						"Refusing to delete '{0}' because the test sentinel file '{1}' is missing.",
-						safeProjectDirectory,
-						TestProjectSentinelFileName
-					)
+				// Project creation makes this directory before the sentinel can be written, so a run
+				// interrupted during CreateNewLangProj leaves the directory without one. The directory
+				// still identifies itself as generated test data: EnsureSafeProjectDirectory has
+				// matched its worktree-hashed name, and it holds no project data beyond this
+				// fixture's own. Restoring the sentinel keeps that state from blocking every later run.
+				if (!HoldsOnlyGeneratedProjectData(safeProjectDirectory))
+				{
+					throw new InvalidOperationException(
+						string.Format(
+							"Refusing to delete '{0}' because the test sentinel file '{1}' is missing " +
+							"and it holds project data this fixture did not generate.",
+							safeProjectDirectory,
+							TestProjectSentinelFileName
+						)
+					);
+				}
+
+				TestContext.Progress.WriteLine(
+					"Restoring the missing test sentinel in '{0}' before deleting it.",
+					safeProjectDirectory
 				);
+				WriteTestProjectSentinel(safeProjectDirectory);
 			}
 
 			if (!RobustIO.DeleteDirectoryAndContents(safeProjectDirectory))
