@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
-using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using System.Xml;
 using SIL.LCModel.Application;
@@ -48,13 +47,6 @@ namespace SIL.FieldWorks.XWorks
 		protected XmlSeqView m_mainView;
 		protected string m_configObjectName;
 		private string m_titleStr; // Helps avoid running through SetInfoBarText 4x!
-		private string m_currentPublication;
-		private string m_currentConfigView; // used when this is a Dictionary view to store which view is active.
-
-		/// <summary>
-		/// Required designer variable.
-		/// </summary>
-		private System.ComponentModel.Container components = null;
 
 		#region Consruction and disposal
 		/// -----------------------------------------------------------------------------------
@@ -71,180 +63,6 @@ namespace SIL.FieldWorks.XWorks
 
 
 			base.AccNameDefault = "XmlDocView";		// default accessibility name
-		}
-
-		#region TitleBar Layout Menu
-
-		/// <summary>
-		/// Populate the list of layout views for the second dictionary titlebar menu.
-		/// </summary>
-		/// <param name="parameter">The parameter.</param>
-		/// <param name="display">The display.</param>
-		/// <returns></returns>
-		public bool OnDisplayLayouts(object parameter, ref UIListDisplayProperties display)
-		{
-			var layoutList = GatherBuiltInAndUserLayouts();
-			foreach (var view in layoutList)
-			{
-				display.List.Add(view.Item1, view.Item2, null, null, true);
-			}
-			return true;
-		}
-
-		private IEnumerable<Tuple<string, string>> GatherBuiltInAndUserLayouts()
-		{
-			var layoutList = new List<Tuple<string, string>>();
-			layoutList.AddRange(GetBuiltInLayouts(m_propertyTable.GetValue<XmlNode>("currentContentControlParameters", null)));
-			var builtInLayoutList = new List<string>();
-			builtInLayoutList.AddRange(from layout in layoutList select layout.Item2);
-			var userLayouts = m_mainView.Vc.LayoutCache.LayoutInventory.GetLayoutTypes();
-			layoutList.AddRange(GetUserDefinedDictLayouts(builtInLayoutList, userLayouts));
-			return layoutList;
-		}
-
-		private static IEnumerable<Tuple<string, string>> GetBuiltInLayouts(XmlNode configNode)
-		{
-			var configLayouts = XmlUtils.FindNode(configNode, "configureLayouts");
-			// The configureLayouts node doesn't always exist!
-			if (configLayouts != null)
-			{
-				var layouts = configLayouts.ChildNodes;
-				return ExtractLayoutsFromLayoutTypeList(layouts.Cast<XmlNode>());
-			}
-				return new List<Tuple<string, string>>();
-		}
-
-		private static IEnumerable<Tuple<string, string>> ExtractLayoutsFromLayoutTypeList(IEnumerable<XmlNode> layouts)
-		{
-			return from XmlNode layout in layouts
-				   select new Tuple<string, string>(XmlUtils.GetAttributeValue(layout, "label"),
-													XmlUtils.GetAttributeValue(layout, "layout"));
-		}
-
-		private static IEnumerable<Tuple<string, string>> GetUserDefinedDictLayouts(
-			IEnumerable<string> builtInLayouts,
-			IEnumerable<XmlNode> layouts)
-		{
-			var allUserLayoutTypes = ExtractLayoutsFromLayoutTypeList(layouts);
-			var result = new List<Tuple<string, string>>();
-			// This part prevents getting Reversal Index layouts or Notebook layouts in our (Dictionary) menu.
-			result.AddRange(from layout in allUserLayoutTypes
-							where builtInLayouts.Any(builtIn => builtIn == BaseLayoutName(layout.Item2))
-							select layout);
-			return result;
-		}
-
-		private static string BaseLayoutName(string name)
-		{
-			if (String.IsNullOrEmpty(name))
-				return String.Empty;
-			// Find out if this layout name has a hashmark (#) in it. Return the part before it.
-			var parts = name.Split(Inventory.kcMarkLayoutCopy);
-			var result = parts.Length > 1 ? parts[0] : name;
-			return result;
-		}
-
-		#endregion
-
-		/// <summary>
-		/// Receives the broadcast message "PropertyChanged"
-		/// </summary>
-		public void OnPropertyChanged(string name)
-		{
-			switch (name)
-			{
-				case "SelectedPublication":
-					var pubDecorator = GetPubDecorator();
-					if (pubDecorator != null)
-					{
-						var pubName = GetSelectedPublication();
-						if (xWorksStrings.AllEntriesPublication == pubName)
-						{   // A null publication means show everything
-							pubDecorator.Publication = null;
-							m_mainView.RefreshDisplay();
-						}
-						else
-						{   // look up the publication object
-							var pub = (from item in Cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS
-									   where item.Name.UserDefaultWritingSystem.Text == pubName
-									   select item).FirstOrDefault();
-							if (pub != null && pub != pubDecorator.Publication)
-							{   // change the publication if it is different from the current one
-								pubDecorator.Publication = pub;
-								m_mainView.RefreshDisplay();
-							}
-						}
-					}
-					break;
-				case "DictionaryPublicationLayout":
-					var layout = GetSelectedConfigView();
-					m_mainView.Vc.ResetTables(layout);
-					m_mainView.RefreshDisplay();
-					break;
-				default:
-					// Not sure what other properties might change, but I'm not doing anything.
-					break;
-			}
-			return;
-		}
-
-
-		public DictionaryPublicationDecorator GetPubDecorator()
-		{
-			var sda = m_mainView.DataAccess;
-			while (sda != null && !(sda is DictionaryPublicationDecorator) && sda is DomainDataByFlidDecoratorBase)
-				sda = ((DomainDataByFlidDecoratorBase) sda).BaseSda;
-			return sda as DictionaryPublicationDecorator;
-		}
-
-		// Return CmPossibility if any alternative matches SelectedPublication.
-		// If we don't have any record of what publication is selected (typically, first-time startup),
-		// pick the first one as a default.
-		// If the selected one is not found (typically it is $$all_entries$$), or there are none (pathological), return null.
-		ICmPossibility Publication
-		{
-			get
-			{
-				// We don't want to use GetSelectedPublication here because it supplies a default,
-				// and we want to treat that case specially.
-				var pubName = m_propertyTable.GetStringProperty("SelectedPublication", null);
-				if (pubName == null)
-				{
-					if (Cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS.Count > 0)
-						return Cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS[0];
-					else
-						return null;
-				}
-				var pub = (from item in Cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS
-					where IsDesiredPublication(item, pubName)
-						   select item).FirstOrDefault();
-				return pub;
-			}
-		}
-
-		private bool IsDesiredPublication(ICmPossibility item, string name)
-		{
-			foreach (var ws in item.Name.AvailableWritingSystemIds)
-			{
-				if (item.Name.get_String(ws).Text == name)
-					return true;
-			}
-			return false;
-		}
-
-		private string GetSelectedConfigView()
-		{
-			string sLayoutType = m_propertyTable.GetStringProperty("DictionaryPublicationLayout", String.Empty);
-			if (String.IsNullOrEmpty(sLayoutType))
-				sLayoutType = "publishStem";
-			return sLayoutType;
-		}
-
-		private string GetSelectedPublication()
-		{
-			// Sometimes we just want the string value which might be '$$all_entries$$'
-			return m_propertyTable.GetStringProperty("SelectedPublication",
-				xWorksStrings.AllEntriesPublication);
 		}
 
 		/// -----------------------------------------------------------------------------------
@@ -266,8 +84,6 @@ namespace SIL.FieldWorks.XWorks
 			{
 				Subscriber.Unsubscribe(EventConstants.ClerkOwningObjChanged, ClerkOwningObjChanged);
 				DisposeTooltip();
-				if(components != null)
-					components.Dispose();
 			}
 			m_currentObject = null;
 
@@ -283,90 +99,19 @@ namespace SIL.FieldWorks.XWorks
 			if (m_informationBar == null)
 				return;
 
-			var context = XmlUtils.GetOptionalAttributeValue(m_configurationParameters, "persistContext", "");
 			// SetInfoBarText() was getting run about 4 times just creating one XmlDocView!
-			// To prevent that, add the following guards:
-			if (m_titleStr != null && NoReasonToChangeTitle(context))
+			// To prevent that, add the following guard:
+			if (m_titleStr != null)
 				return;
 			var titleStr = GetBaseTitleStringFromConfig();
 
-			bool fBaseCalled = false;
 			if (titleStr == string.Empty)
 			{
 				base.SetInfoBarText();
-				fBaseCalled = true;
-				//				titleStr = ((IPaneBar)m_informationBar).Text;	// can't get to work.
-				// (EricP) For some reason I can't provide an IPaneBar get-accessor to return
-				// the new Text value. If it's desirable to allow TitleFormat to apply to
-				// Clerk.CurrentObject, then we either have to duplicate what the
-				// base.SetInfoBarText() does here, or get the string set by the base.
-				// for now, let's just return.
-				if (titleStr == null || titleStr == string.Empty)
-					return;
+				return;
 			}
-			if (context == "Dict")
-			{
-				m_currentPublication = GetSelectedPublication();
-				m_currentConfigView = GetSelectedConfigView();
-				titleStr = MakePublicationTitlePart(titleStr);
-				SetConfigViewTitle();
-			}
-
-			// If we have a format attribute, format the title accordingly.
-			string sFmt = XmlUtils.GetAttributeValue(m_configurationParameters,
-				"TitleFormat");
-			if (sFmt != null)
-			{
-				titleStr = String.Format(sFmt, titleStr);
-			}
-
-			// If we find that the title is something like ClassifiedDictionary ({SelectedPublication})
-			// replace the {} with the name of the selected publication.
-			// Enhance: by removing the Debug.Fail, this could be made to insert the value of any
-			// property in the mediator's property table.
-			var propertyFinder = new Regex(@"\{([^\}]+)\}");
-			var match = propertyFinder.Match(titleStr);
-			if (match.Success)
-			{
-				string replacement;
-				if (match.Groups[1].Value == "SelectedPublication")
-				{
-					replacement = GetSelectedPublication();
-					if (replacement == xWorksStrings.AllEntriesPublication)
-						replacement = xWorksStrings.ksAllEntries;
-				}
-				else
-				{
-					Debug.Fail(@"Unexpected <> value in title string: " + match.Groups[0].Value);
-					// This might be useful one day?
-					replacement = m_propertyTable.GetStringProperty(match.Groups[0].Value, null);
-				}
-				if (replacement != null)
-					titleStr = propertyFinder.Replace(titleStr, replacement);
-			}
-
-			// if we haven't already set the text through the base,
-			// or if we had some formatting to do, then set the infoBar text.
-			if (!fBaseCalled || sFmt != null)
-				((IPaneBar)m_informationBar).Text = titleStr;
+			((IPaneBar)m_informationBar).Text = titleStr;
 			m_titleStr = titleStr;
-		}
-
-		#region Dictionary View TitleBar stuff
-
-		private const int kSpaceForMenuButton = 26;
-
-		private void SetConfigViewTitle()
-		{
-			if (!String.IsNullOrEmpty(m_currentConfigView))
-			{
-				var maxLayoutViewWidth = Width/2 - kSpaceForMenuButton;
-				var result = GatherBuiltInAndUserLayouts();
-				var curViewName = FindViewNameInList(result);
-				// Limit length of View title to remaining available width
-				curViewName = TrimToMaxPixelWidth(Math.Max(2, maxLayoutViewWidth), curViewName);
-				ResetSpacer(maxLayoutViewWidth, curViewName);
-			}
 		}
 
 		protected override void OnSizeChanged(EventArgs e)
@@ -375,97 +120,6 @@ namespace SIL.FieldWorks.XWorks
 			m_titleStr = null;
 			SetInfoBarText();
 		}
-
-		private string FindViewNameInList(IEnumerable<Tuple<string, string>> layoutList)
-		{
-			var result = "";
-			foreach (var tuple in layoutList.Where(tuple => tuple.Item2 == m_currentConfigView))
-			{
-				result = tuple.Item1;
-				break;
-			}
-			return result;
-		}
-
-		private string MakePublicationTitlePart(string titleStr)
-		{
-			// titleStr to start is localized equivalent of 'Entries'
-			// Limit length of Publication title to half of available width
-			var maxPublicationTitleWidth = Math.Max(2, Width/2 - kSpaceForMenuButton);
-			if (String.IsNullOrEmpty(m_currentPublication) ||
-				m_currentPublication == xWorksStrings.AllEntriesPublication)
-			{
-				m_currentPublication = xWorksStrings.AllEntriesPublication;
-				titleStr = xWorksStrings.ksAllEntries;
-				// Limit length of Publication title to half of available width
-				titleStr = TrimToMaxPixelWidth(maxPublicationTitleWidth, titleStr);
-			}
-			else
-			{
-				titleStr = String.Format(xWorksStrings.ksPublicationEntries,
-					GetPublicationName(), titleStr);
-				titleStr = TrimToMaxPixelWidth(maxPublicationTitleWidth, titleStr);
-			}
-			return titleStr;
-		}
-
-		private string GetPublicationName()
-		{
-			if (Publication == null || Publication.Name == null || Publication.Name.BestAnalysisAlternative == null)
-				return "***"; // what we show in the menu for a pub with no name in any language.
-			return Publication.Name.BestAnalysisAlternative.Text;
-		}
-
-		private bool NoReasonToChangeTitle(string context)
-		{
-			switch (context)
-			{
-				case "Reversal":
-					return !IsCurrentReversalWsChanged();
-				case "Dict":
-					return !IsCurrentPublicationChanged() && !IsCurrentConfigViewChanged();
-				default:
-					// No need to change anything; dump out!
-					return true;
-			}
-		}
-
-		private bool IsCurrentReversalWsChanged()
-		{
-			if (m_currentObject == null)
-				return true;
-			var wsName = GetSafeWsName();
-			return m_currentPublication == null || m_currentPublication != wsName;
-		}
-
-		private string GetSafeWsName()
-		{
-			if (m_currentObject == null || !m_currentObject.IsValidObject)
-			{
-				if (m_hvoOwner < 1)
-					return String.Empty;
-				return WritingSystemServices.GetReversalIndexWritingSystems(
-					Cache, m_hvoOwner, false)[0].LanguageName;
-			}
-			return WritingSystemServices.GetReversalIndexEntryWritingSystem(
-				Cache,
-				m_currentObject.Hvo,
-				Cache.LangProject.CurrentAnalysisWritingSystems[0]).LanguageName;
-		}
-
-		private bool IsCurrentPublicationChanged()
-		{
-			var newPub = GetSelectedPublication();
-			return newPub != m_currentPublication;
-		}
-
-		private bool IsCurrentConfigViewChanged()
-		{
-			var newView = GetSelectedConfigView();
-			return newView != m_currentConfigView;
-		}
-
-		#endregion
 
 		/// <summary>
 		/// Read in the parameters to determine which sequence/collection we are editing.
@@ -600,10 +254,7 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		internal ICmObject SubitemClicked(Point where, int clsid)
 		{
-			var adjuster = (m_currentConfigView != null && m_currentConfigView.StartsWith("publishRoot")) ?
-				(IPreferedTargetAdjuster)new MainEntryFromSubEntryTargetAdjuster() :
-				new NullTargetAdjuster();
-			return SubitemClicked(where, clsid, m_mainView, Cache, Clerk.SortItemProvider, adjuster);
+			return SubitemClicked(where, clsid, m_mainView, Cache, Clerk.SortItemProvider, new NullTargetAdjuster());
 		}
 
 		private ToolTip m_tooltip;
@@ -805,125 +456,6 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
-		/// Used to verify current content control so that Find Lexical Entry behaves differently
-		/// in Dictionary View.
-		/// </summary>
-		private const string ksLexDictionary = "lexiconDictionary";
-
-		/// <summary>
-		/// Check to see if the user needs to be alerted that JumpToRecord is not possible.
-		/// </summary>
-		/// <param name="argument">the hvo of the record</param>
-		/// <returns></returns>
-		public bool OnCheckJump(object argument)
-		{
-			var hvoTarget = (int)argument;
-			var currControl = m_propertyTable.GetStringProperty("currentContentControl", "");
-			// Currently this (LT-11447) only applies to Dictionary view
-			if (hvoTarget > 0 && currControl == ksLexDictionary)
-			{
-				DictionaryConfigurationController.ExclusionReasonCode xrc;
-				// Make sure we explain to the user in case hvoTarget is not visible due to
-				// the current Publication layout or Configuration view.
-				if (!IsObjectVisible(hvoTarget, out xrc))
-				{
-					// Tell the user why we aren't jumping to his record
-					GiveSimpleWarning(xrc);
-				}
-			}
-			return true;
-		}
-
-		private void GiveSimpleWarning(DictionaryConfigurationController.ExclusionReasonCode xrc)
-		{
-			// Tell the user why we aren't jumping to his record
-			var msg = xWorksStrings.ksSelectedEntryNotInDict;
-			string caption;
-			string reason;
-			string shlpTopic;
-			switch (xrc)
-			{
-				case DictionaryConfigurationController.ExclusionReasonCode.NotInPublication:
-					caption = xWorksStrings.ksEntryNotPublished;
-					reason = xWorksStrings.ksEntryNotPublishedReason;
-					shlpTopic = "User_Interface/Menus/Edit/Find_a_lexical_entry.htm";		//khtpEntryNotPublished
-					break;
-				case DictionaryConfigurationController.ExclusionReasonCode.ExcludedHeadword:
-					caption = xWorksStrings.ksMainNotShown;
-					reason = xWorksStrings.ksMainNotShownReason;
-					shlpTopic = "khtpMainEntryNotShown";
-					break;
-				case DictionaryConfigurationController.ExclusionReasonCode.ExcludedMinorEntry:
-					caption = xWorksStrings.ksMinorNotShown;
-					reason = xWorksStrings.ksMinorNotShownReason;
-					shlpTopic = "khtpMinorEntryNotShown";
-					break;
-				default:
-					throw new ArgumentException("Unknown ExclusionReasonCode");
-			}
-			msg = String.Format(msg, reason);
-			// TODO-Linux: Help is not implemented on Mono
-			MessageBox.Show(FindForm(), msg, caption, MessageBoxButtons.OK,
-							MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1, 0,
-							m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider").HelpFile,
-							HelpNavigator.Topic, shlpTopic);
-		}
-
-		private bool IsObjectVisible(int hvoTarget, out DictionaryConfigurationController.ExclusionReasonCode xrc)
-		{
-			xrc = DictionaryConfigurationController.ExclusionReasonCode.NotExcluded;
-			var objRepo = Cache.ServiceLocator.GetInstance<ICmObjectRepository>();
-			Debug.Assert(objRepo.IsValidObjectId(hvoTarget), "Invalid hvoTarget!");
-			if (!objRepo.IsValidObjectId(hvoTarget))
-				throw new ArgumentException("Unknown object.");
-			var entry = objRepo.GetObject(hvoTarget) as ILexEntry;
-			Debug.Assert(entry != null, "HvoTarget is not a LexEntry!");
-			if (entry == null)
-				throw new ArgumentException("Target is not a LexEntry.");
-
-			// Now we have our LexEntry
-			// First deal with whether the active Publication excludes it.
-			if (m_currentPublication != xWorksStrings.AllEntriesPublication)
-			{
-				var currentPubPoss = Publication;
-				if (!entry.PublishIn.Contains(currentPubPoss))
-				{
-					xrc = DictionaryConfigurationController.ExclusionReasonCode.NotInPublication;
-					return false;
-				}
-				// Second deal with whether the entry shouldn't be shown as a headword
-				if (!entry.ShowMainEntryIn.Contains(currentPubPoss))
-				{
-					xrc = DictionaryConfigurationController.ExclusionReasonCode.ExcludedHeadword;
-					return false;
-				}
-			}
-			// Third deal with whether the entry shouldn't be shown as a minor entry.
-			// commented out until conditions are clarified (LT-11447)
-			if (entry.EntryRefsOS.Count > 0 && !entry.PublishAsMinorEntry && IsRootBasedView)
-			{
-				xrc = DictionaryConfigurationController.ExclusionReasonCode.ExcludedMinorEntry;
-				return false;
-			}
-			// If we get here, we should be able to display it.
-			return true;
-		}
-
-		private const string ksRootBasedPrefix = "publishRoot";
-
-		protected bool IsRootBasedView
-		{
-			get
-			{
-				if (String.IsNullOrEmpty(m_currentConfigView))
-					return false;
-
-				return m_currentConfigView.Split(
-					new[] {"#"}, StringSplitOptions.None)[0] == ksRootBasedPrefix;
-			}
-		}
-
-		/// <summary>
 		/// Ensure that we have the current record selected and visible in the window.  See LT-9109.
 		/// </summary>
 		/// <param name="e"></param>
@@ -955,21 +487,6 @@ namespace SIL.FieldWorks.XWorks
 				RecordClerk clerk = Clerk;
 				int levelFlid = 0;
 				var indexes = new List<int>();
-				if (Clerk is SubitemRecordClerk)
-				{
-					var subitemClerk = Clerk as SubitemRecordClerk;
-					levelFlid = subitemClerk.SubitemFlid;
-					if (subitemClerk.Subitem != null)
-					{
-						// There's a subitem. See if we can select it.
-						var item = subitemClerk.Subitem;
-						while (item.OwningFlid == levelFlid)
-						{
-							indexes.Add(item.OwnOrd);
-							item = item.Owner;
-						}
-					}
-				}
 				var currentIndex = AdjustedClerkIndex();
 				indexes.Add(currentIndex);
 				// Suppose it is the fifth subrecord of the second subrecord of the ninth main record.
@@ -1083,8 +600,10 @@ namespace SIL.FieldWorks.XWorks
 
 				// Review JohnT: should it be m_configurationParameters or .FirstChild?
 				IApp app = m_propertyTable.GetValue<IApp>("App");
+				// Pass null for the publication argument since it is only used when the configuration has a
+				// <decoratorClass> node; no configuration that instantiates XmlDocView has one.
 				m_mainView = new XmlSeqView(Cache, m_hvoOwner, m_fakeFlid, m_configurationParameters, Clerk.VirtualListPublisher, app,
-					Publication);
+					null);
 				m_mainView.Init(m_mediator, m_propertyTable, m_configurationParameters); // Required call to xCore.Colleague.
 				m_mainView.Dock = DockStyle.Fill;
 				m_mainView.Cache = Cache;
@@ -1374,29 +893,6 @@ namespace SIL.FieldWorks.XWorks
 	public interface IPreferedTargetAdjuster
 	{
 		ICmObject AdjustTarget(ICmObject target);
-	}
-
-	/// <summary>
-	/// If the initial target is a subentry replace it with the appropriate top-level entry.
-	/// </summary>
-	internal class MainEntryFromSubEntryTargetAdjuster : IPreferedTargetAdjuster
-	{
-		public ICmObject AdjustTarget(ICmObject firstMatch)
-		{
-			if (firstMatch is ILexEntry)
-			{
-				var subentry = (ILexEntry)firstMatch;
-				var componentsEntryRef =
-					subentry.EntryRefsOS.Where(se => se.RefType == LexEntryRefTags.krtComplexForm).FirstOrDefault();
-				if (componentsEntryRef != null)
-				{
-					var root = componentsEntryRef.PrimaryEntryRoots.FirstOrDefault();
-					if (root != null)
-						return root;
-				}
-			}
-			return firstMatch; // by default change nothing.
-		}
 	}
 
 	public class NullTargetAdjuster : IPreferedTargetAdjuster

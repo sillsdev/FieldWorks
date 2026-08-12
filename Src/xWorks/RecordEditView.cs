@@ -6,10 +6,18 @@ using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing.Printing;
+using System.Linq;
 using System.Windows.Forms;
 using System.Xml;
+using SIL.FieldWorks.Common.FwAvalonia;
+using SIL.FieldWorks.Common.FwAvalonia.Detail;
+using SIL.FieldWorks.Common.FwAvalonia.Seams;
+using SIL.FieldWorks.Common.FwAvalonia.ViewDefinition;
 using SIL.FieldWorks.Common.Framework.DetailControls;
+// Bare DataTree in this file means the legacy WinForms tree; the Avalonia twin stays qualified.
+using DataTree = SIL.FieldWorks.Common.Framework.DetailControls.DataTree;
 using SIL.LCModel;
+using SIL.LCModel.Utils;
 using XCore;
 using System.Collections.Generic;
 using SIL.FieldWorks.Common.Widgets;
@@ -18,6 +26,7 @@ using static SIL.FieldWorks.Common.FwUtils.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.PlatformUtilities;
+using SIL.Reporting;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.XWorks
@@ -32,7 +41,7 @@ namespace SIL.FieldWorks.XWorks
 	/// This version uses the DetailControls version of DataTree, and will eventually replace the
 	/// original.
 	/// </summary>
-	public class RecordEditView : RecordView, IVwNotifyChange, IFocusablePanePortion
+	public partial class RecordEditView : RecordView, IVwNotifyChange, IFocusablePanePortion, IPrepareToGoAway
 	{
 		#region Data members
 
@@ -60,6 +69,7 @@ namespace SIL.FieldWorks.XWorks
 		private string m_titleField;
 		private string m_titleStr;
 		private string m_printLayout;
+		private bool m_dataTreeInitialized;
 
 		//// <summary>
 		//// used to associate menu commands with the slice that sent them
@@ -80,7 +90,11 @@ namespace SIL.FieldWorks.XWorks
 		protected RecordEditView(DataTree dataEntryForm)
 		{
 			// This must be called before InitializeComponent()
+			SetUIFramework(UIFramework.Legacy);
 			m_dataEntryForm = dataEntryForm;
+			m_lexicalEditControlFactory = new EditControlFactory(
+				() => m_dataEntryForm,
+				() => new DetailHostControl());
 			m_dataEntryForm.CurrentSliceChanged += m_dataEntryForm_CurrentSliceChanged;
 
 			// This call is required by the Windows.Forms Form Designer.
@@ -123,7 +137,9 @@ namespace SIL.FieldWorks.XWorks
 			}
 
 			// If possible make it use the style sheet appropriate for its main window.
-			m_dataEntryForm.StyleSheet = FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable);
+			SetUIFramework(ResolveConfiguredUIFramework());
+			if (!ShouldUseAvaloniaLexiconEdit)
+				m_dataEntryForm.StyleSheet = FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable);
 			m_fullyInitialized = true;
 
 			Subscriber.Subscribe(EventConstants.ConsideringClosing, ConsideringClosing, m_propertyTable.GetWindow());
@@ -153,13 +169,17 @@ namespace SIL.FieldWorks.XWorks
 				if (m_dataEntryForm != null)
 				{
 					m_dataEntryForm.CurrentSliceChanged -= m_dataEntryForm_CurrentSliceChanged;
+					// Always Dispose, even pre-init (skipping would leak it): Control.Dispose() is safe unshown.
 					m_dataEntryForm.Dispose();
 				}
+				TearDownAvaloniaEntryForm();
 				m_menuHandler?.Dispose();
 				if (!string.IsNullOrEmpty(m_titleField))
 					Cache.DomainDataByFlid.RemoveNotification(this);
 			}
 			m_dataEntryForm = null;
+			m_avaloniaEntryForm = null;
+			m_avaloniaRefreshController = null;
 
 			base.Dispose(disposing);
 		}
@@ -192,6 +212,10 @@ namespace SIL.FieldWorks.XWorks
 			{
 				window.ResumeIdleProcessing();
 			}
+
+			// Selection bridge: the real mediator broadcast delivered a record navigation
+			// for this host's clerk, so let bridge subscribers (the Avalonia view) follow it.
+			m_recordNavigationContext?.NotifyCurrentRecordChanged();
 			return true;	//we handled this.
 		}
 
@@ -220,8 +244,14 @@ namespace SIL.FieldWorks.XWorks
 		{
 			CheckDisposed();
 
-			if (m_dataEntryForm != null)
+			// Auto-save (14.4): leaving the tool/area settles any open fenced session the same way
+			// legacy slices save as the user moves on. Unconditional (the helper no-ops when no
+			// session is open), so a session that survived a framework flip still settles safely.
+			SettleDetailEdits();
+			if (!ShouldUseAvaloniaLexiconEdit && m_dataEntryForm != null)
+			{
 				m_dataEntryForm.PrepareToGoAway();
+			}
 			return base.PrepareToGoAway();
 		}
 
@@ -235,6 +265,41 @@ namespace SIL.FieldWorks.XWorks
 				// selected record (we want to keep the browse view in sync), but do not change the
 				// focus
 				Clerk.JumpToRecord(m_dataEntryForm.Descendant.Hvo, true);
+		}
+
+		public void OnPropertyChanged(string name)
+		{
+			CheckDisposed();
+
+			// Viewing parity (11.x): the View → Show Hidden Fields toggle re-resolves the Avalonia
+			// detail view just like it rebuilds the legacy DataTree.
+			if (name != null && name.StartsWith("ShowHiddenFields-", StringComparison.Ordinal))
+			{
+				if (ShouldUseAvaloniaLexiconEdit)
+					RefreshAvaloniaDetail();
+				return;
+			}
+
+			if (name != UIFrameworkResolver.UIModePropertyName
+				&& name != UIFrameworkResolver.UIModeDisabledToolsPropertyName)
+				return;
+
+			var newFramework = ResolveConfiguredUIFramework();
+			var oldFramework = m_activeUIFramework;
+			if (newFramework == oldFramework)
+				return;
+
+			// Settle any open fenced session BEFORE flipping frameworks — without this, flipping
+			// UIMode mid-edit would let Clerk.SaveOnChangeRecord force-commit invalid staged state.
+			SettleDetailEdits();
+			SetUIFramework(newFramework);
+			// Flipping AWAY from Avalonia tears down its PropChanged/undo/deactivate
+			// listeners and host NOW (symmetric with RecordBrowseView), not deferred to Dispose — so the
+			// refresh controller does not keep walking the notification bus for the view's remaining life.
+			// TearDownAvaloniaEntryForm nulls the host + controller, so a later flip back to New rebuilds them.
+			if (oldFramework == UIFramework.Avalonia && newFramework != UIFramework.Avalonia)
+				TearDownAvaloniaEntryForm();
+			ShowRecord(new RecordNavigationInfo(Clerk, Clerk.SuppressSaveOnChangeRecord, false, true));
 		}
 
 		#endregion // Message Handlers
@@ -307,6 +372,11 @@ namespace SIL.FieldWorks.XWorks
 			Debug.Assert(m_dataEntryForm != null);
 
 			var rni = (RecordNavigationInfo) parameter;
+			// Auto-save (14.4) must run BEFORE the clerk's save-on-change-record:
+			// RecordClerk.SaveOnChangeRecord force-EndUndoTasks any open undo task wholesale
+			// (LT-16673), which would commit invalid staged state past the validation gate.
+			// Unconditional: a no-op while legacy is active (no fenced session can be open).
+			SettleDetailEdits();
 			bool oldSuppressSaveOnChangeRecord = Clerk.SuppressSaveOnChangeRecord;
 			Clerk.SuppressSaveOnChangeRecord = rni.SuppressSaveOnChangeRecord;
 			PrepCacheForNewRecord();
@@ -314,13 +384,36 @@ namespace SIL.FieldWorks.XWorks
 
 			if (Clerk.CurrentObject == null || Clerk.SuspendLoadingRecordUntilOnJumpToRecord)
 			{
-				m_dataEntryForm.Hide();
-				m_dataEntryForm.Reset();	// in case user deleted the object it was based upon.
+				if (ShouldUseAvaloniaLexiconEdit)
+				{
+					// Active-host contract: do not touch the legacy DataTree while Avalonia is active.
+					// The record may be gone (deleted elsewhere); cancel rather than orphan the session.
+					m_detailEditContext.Clear();
+					EnsureAvaloniaEntryFormActive();
+					m_avaloniaEntryForm.Clear();
+				}
+				else
+				{
+					EnsureDataTreeVisible();
+					m_dataEntryForm.Hide();
+					m_dataEntryForm.Reset();	// in case user deleted the object it was based upon.
+				}
 				return true;
 			}
 			try
 			{
-				m_dataEntryForm.Show();
+				// Active-host contract: when Avalonia is active we do NOT initialize
+				// or drive the legacy DataTree. Only the active framework's UI is created and shown.
+				if (ShouldUseAvaloniaLexiconEdit)
+				{
+					EnsureAvaloniaEntryFormActive();
+				}
+				else
+				{
+					EnsureDataTreeInitialized();
+					EnsureDataTreeVisible();
+				}
+
 				// Enhance: Maybe do something here to allow changing the templates without the starting the application.
 				ICmObject obj = Clerk.CurrentObject;
 
@@ -331,7 +424,18 @@ namespace SIL.FieldWorks.XWorks
 						obj = obj.Owner;
 				}
 
-				m_dataEntryForm.ShowObject(obj, m_layoutName, m_layoutChoiceField, Clerk.CurrentObject, ShouldSuppressFocusChange(rni));
+				if (ShouldUseAvaloniaLexiconEdit && m_avaloniaEntryForm != null)
+				{
+					// Sections 6/7: the product route composes the COMPLETE entry view from the live
+					// compiled layouts (full cross-object walk, headers, ifdata) and falls back to the
+					// fixed first slice only if composition fails; both are editable through the fenced
+					// LCModel session (6.8/6.10) with refresh propagation (3.15).
+					ShowAvaloniaEntry(obj);
+				}
+				else
+				{
+					m_dataEntryForm.ShowObject(obj, m_layoutName, m_layoutChoiceField, Clerk.CurrentObject, ShouldSuppressFocusChange(rni));
+				}
 			}
 			catch (Exception error)
 			{
@@ -354,6 +458,81 @@ namespace SIL.FieldWorks.XWorks
 		private bool ShouldSuppressFocusChange(RecordNavigationInfo rni)
 		{
 			return !IsFocusedPane || rni.SuppressFocusChange;
+		}
+
+		// This plus the name of the vector gives a unique context for the DataTree control
+		// parameters (e.g. "lexicon.basicEdit.DataTree"). The null-attribute shape
+		// ("<vector>..DataTree", double dot) is deliberate: these strings key users' persisted
+		// DataTree state, so changing the shape silently resets their layout.
+		private string DataTreePersistContext
+		{
+			get
+			{
+				var persistContext = XmlUtils.GetOptionalAttributeValue(m_configurationParameters, "persistContext");
+				return persistContext != ""
+					? m_vectorName + "." + persistContext + ".DataTree"
+					: m_vectorName + ".DataTree";
+			}
+		}
+
+		private void EnsureDataTreeInitialized()
+		{
+			if (m_dataTreeInitialized)
+				return;
+
+			m_dataEntryForm.PersistenceProvder = new PersistenceProvider(m_mediator, m_propertyTable, DataTreePersistContext);
+
+			// In Avalonia mode Init skips the stylesheet (the legacy tree is inactive); the lazy
+			// command-routing adapter still needs it before ShowObject builds slices.
+			if (m_dataEntryForm.StyleSheet == null)
+				m_dataEntryForm.StyleSheet = FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable);
+
+			SetupSliceFilter();
+			m_dataEntryForm.Dock = DockStyle.Fill;
+			m_dataEntryForm.SmallImages = m_propertyTable.GetValue<ImageCollection>("smallImages");
+			string sDatabase = Cache.ProjectId.Name;
+			m_dataEntryForm.Initialize(Cache, true, Inventory.GetInventory("layouts", sDatabase),
+				Inventory.GetInventory("parts", sDatabase));
+			m_dataEntryForm.Init(m_mediator, m_propertyTable, m_configurationParameters);
+			if (m_dataEntryForm.AccessibilityObject != null)
+				m_dataEntryForm.AccessibilityObject.Name = "RecordEditView.DataTree";
+
+			m_menuHandler = DTMenuHandler.Create(m_dataEntryForm, m_configurationParameters);
+			m_menuHandler.Init(m_mediator, m_propertyTable, m_configurationParameters);
+			m_dataEntryForm.SetContextMenuHandler(m_menuHandler.ShowSliceContextMenu);
+
+			AttachDataTreeToPanel();
+
+			m_dataTreeInitialized = true;
+		}
+
+		private void EnsureDataTreeVisible()
+		{
+			SyncActiveHostContract();
+
+			AttachDataTreeToPanel();
+			m_avaloniaEntryForm?.Hide();
+			m_dataEntryForm.Show();
+			m_dataEntryForm.BringToFront();
+		}
+
+		private void AttachDataTreeToPanel()
+		{
+			if (m_dataEntryForm == null || m_panel == null)
+				return;
+
+			if (!m_panel.Controls.Contains(m_dataEntryForm))
+				m_panel.Controls.Add(m_dataEntryForm);
+		}
+
+		private void DetachDataTreeFromPanel()
+		{
+			if (m_dataEntryForm == null || m_panel == null)
+				return;
+
+			m_dataEntryForm.Hide();
+			if (m_panel.Controls.Contains(m_dataEntryForm))
+				m_panel.Controls.Remove(m_dataEntryForm);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -390,38 +569,27 @@ namespace SIL.FieldWorks.XWorks
 
 			base.SetupDataContext();
 
-			//this will normally be the same name as the view, e.g. "basicEdit". This plus the name of the vector
-			//should give us a unique context for the dataTree control parameters.
+			// InitBase() calls SetupDataContext() before RecordEditView.Init() resolves the framework, so
+			// resolve it here too — otherwise the first initialization would use the ctor default
+			// (WinForms) and the active-host contract would be violated for an Avalonia start.
+			SetUIFramework(ResolveConfiguredUIFramework());
 
-			string persistContext = XmlUtils.GetOptionalAttributeValue(m_configurationParameters, "persistContext");
-
-			if (persistContext !="")
-				persistContext=m_vectorName+"."+persistContext+".DataTree";
-			else
-				persistContext=m_vectorName+".DataTree";
-
-			m_dataEntryForm.PersistenceProvder = new PersistenceProvider(m_mediator, m_propertyTable, persistContext);
-
+			// The record list bar must update regardless of which framework is active.
 			Clerk.UpdateRecordTreeBarIfNeeded();
-			SetupSliceFilter();
-			m_dataEntryForm.Dock = DockStyle.Fill;
-			m_dataEntryForm.SmallImages = m_propertyTable.GetValue<ImageCollection>("smallImages");
-			string sDatabase = Cache.ProjectId.Name;
-			m_dataEntryForm.Initialize(Cache, true, Inventory.GetInventory("layouts", sDatabase),
-				Inventory.GetInventory("parts", sDatabase));
-			m_dataEntryForm.Init(m_mediator, m_propertyTable, m_configurationParameters);
-			if (m_dataEntryForm.AccessibilityObject != null)
-				m_dataEntryForm.AccessibilityObject.Name = "RecordEditView.DataTree";
-			//set up the context menu, overriding the automatic menu creator/handler
 
-			m_menuHandler = DTMenuHandler.Create(m_dataEntryForm, m_configurationParameters);
-			m_menuHandler.Init(m_mediator, m_propertyTable, m_configurationParameters);
-
-//			m_dataEntryForm.SetContextMenuHandler(new SliceMenuRequestHandler((m_menuHandler.GetSliceContextMenu));
-			m_dataEntryForm.SetContextMenuHandler(m_menuHandler.ShowSliceContextMenu);
-
-			Controls.Add(m_dataEntryForm);
-			m_dataEntryForm.BringToFront();
+			// Active-host contract: initialize only the active framework's UI; the inactive one is
+			// not instantiated or driven. The legacy DataTree is initialized here only when Legacy is active;
+			// the Avalonia entry form is created lazily in ShowRecordOnIdle so its construction stays on the
+			// idle path (the inactive legacy DataTree is never built).
+			if (!ShouldUseAvaloniaLexiconEdit)
+			{
+				EnsureDataTreeInitialized();
+				EnsureDataTreeVisible();
+			}
+			else
+			{
+				DetachDataTreeFromPanel();
+			}
 		}
 
 		/// <summary>
@@ -458,7 +626,8 @@ namespace SIL.FieldWorks.XWorks
 			}
 			catch (Exception e)
 			{
-				throw new ConfigurationException ("Could not load the filter.", m_configurationParameters, e);
+				// SIL.Utils-qualified: the SIL.Reporting using (Logger) also exports a ConfigurationException.
+				throw new SIL.Utils.ConfigurationException ("Could not load the filter.", m_configurationParameters, e);
 			}
 		}
 
@@ -486,10 +655,14 @@ namespace SIL.FieldWorks.XWorks
 			if(!m_fullyInitialized)
 				return;
 
-			if (m_dataEntryForm != null) // Unlikely it is null, but I have observed it..JohnT.
+			// Legacy mode: the DataTree + menu handler are the normal targets. Avalonia mode: they
+			// participate ONLY once the lazy "command-menu-routing" baseline adapter exists (13.4),
+			// so the legacy command handlers can resolve and execute the context-menu commands.
+			if (m_dataTreeInitialized && m_dataEntryForm != null)
 				collector.Add(m_dataEntryForm);
 
-			collector.Add(m_menuHandler);
+			if (m_dataTreeInitialized && m_menuHandler != null)
+				collector.Add(m_menuHandler);
 		}
 
 		#region IxCoreCtrlTabProvider implementation
@@ -498,6 +671,12 @@ namespace SIL.FieldWorks.XWorks
 		{
 			if (targetCandidates == null)
 				throw new ArgumentNullException("targetCandidates");
+
+			if (ShouldUseAvaloniaLexiconEdit && m_avaloniaEntryForm != null)
+			{
+				targetCandidates.Add(m_avaloniaEntryForm);
+				return m_avaloniaEntryForm.ContainsFocus ? m_avaloniaEntryForm : null;
+			}
 
 			// when switching panes, we want to give the focus to the CurrentSlice(if any)
 			if (m_dataEntryForm != null && m_dataEntryForm.CurrentSlice != null)

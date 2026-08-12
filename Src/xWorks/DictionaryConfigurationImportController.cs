@@ -353,7 +353,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Connect to and show a view for the user to perform an import.
 		/// </summary>
-		public void DisplayView(DictionaryConfigurationImportDlg dialog)
+		public void DisplayView(DictionaryConfigurationImportDlg dialog, Form owner)
 		{
 			_view = dialog;
 			_view.browseButton.Click += (a, b) => OnBrowse();
@@ -369,7 +369,7 @@ namespace SIL.FieldWorks.XWorks
 			};
 			_view.overwriteGroupBox.Visible = false;
 			_view.importButton.Enabled = false;
-			_view.ShowDialog();
+			_view.ShowDialog(owner);
 		}
 
 		/// <summary>

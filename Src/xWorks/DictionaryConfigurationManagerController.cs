@@ -634,7 +634,7 @@ namespace SIL.FieldWorks.XWorks
 			var importController = new DictionaryConfigurationImportController(_cache, _propertyTable, _projectConfigDir, _configurations);
 			using (var importDialog = new DictionaryConfigurationImportDlg(_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider")) { HelpTopic = _view.HelpTopic })
 			{
-				importController.DisplayView(importDialog);
+				importController.DisplayView(importDialog, _view);
 			}
 
 			if (importController.StyleImportHappened)

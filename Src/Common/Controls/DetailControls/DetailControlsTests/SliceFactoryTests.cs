@@ -49,6 +49,28 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			AssertThatXmlIn.String(configurationNode.OuterXml).HasSpecifiedNumberOfMatchesForXpath("/slice/deParams[@displayProperty]", 1);
 		}
 
+		[Test]
+		public void Create_UnknownEditor_ReturnsMessageSliceWithEditorAccessibleName()
+		{
+			XmlNode configurationNode = DetailControls.SliceTests.CreateXmlElementFromOuterXmlOf("<slice editor=\"unknown-phase3-editor\" />");
+			ICmObject cmObject = new CmObjectStub();
+
+			Slice slice = SliceFactory.Create(
+				Cache,
+				"unknown-phase3-editor",
+				0,
+				configurationNode,
+				cmObject,
+				null,
+				null,
+				null,
+				configurationNode,
+				new ObjSeqHashMap());
+
+			Assert.That(slice, Is.TypeOf<MessageSlice>());
+			Assert.That(slice.AccessibleName, Is.EqualTo("unknown-phase3-editor"));
+		}
+
 		class FdoServiceLocatorStub : ILcmServiceLocator
 		{
 			ICmPossibility m_returnObject;

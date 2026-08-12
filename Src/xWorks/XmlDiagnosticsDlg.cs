@@ -13,6 +13,7 @@ namespace SIL.FieldWorks.XWorks
 		public XmlDiagnosticsDlg(GeckoElement element, Guid guid)
 		{
 			InitializeComponent();
+			StartPosition = FormStartPosition.CenterParent;
 
 			m_tb_guid.Text = guid.ToString();
 			var htmlElement = element as GeckoHtmlElement;

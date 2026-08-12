@@ -15,8 +15,6 @@
   - Minimizes changes to Views.vcxproj (which remains a Makefile wrapper)
   - Maintains parity with existing makefile behavior
 
-  See specs/007-test-modernization-vstest/cpp-build-modernization.md for full rationale.
-
   Original Makefile wrapper backed up as TestViews.vcxproj.makefile.bak
 -->
 <Project DefaultTargets="Build" ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">

@@ -19,6 +19,8 @@ namespace SIL.FieldWorks.FdoUi.Dialogs
 		public ConflictingSaveDlg()
 		{
 			InitializeComponent();
+			// Shown without an owner, possibly before any main window exists.
+			StartPosition = FormStartPosition.CenterScreen;
 			pictureBox1.BackgroundImage = SystemIcons.Warning.ToBitmap();
 			pictureBox1.Size = SystemIcons.Warning.Size;
 		}

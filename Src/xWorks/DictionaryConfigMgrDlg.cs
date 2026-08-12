@@ -43,6 +43,7 @@ namespace SIL.FieldWorks.XWorks
 		public DictionaryConfigMgrDlg(Mediator mediator, PropertyTable propertyTable, string objType, List<XmlNode> configViews, XmlNode current)
 		{
 			InitializeComponent();
+			StartPosition = FormStartPosition.CenterParent;
 
 			m_mediator = mediator;
 			m_propertyTable = propertyTable;

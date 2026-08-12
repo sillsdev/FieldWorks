@@ -63,7 +63,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			var labels = ObjectLabel.CreateObjectLabels(m_cache, m_obj.ReferenceTargetCandidates(m_flid),
 				m_displayNameProperty, displayWs);
 			chooser.Initialize(labels, sense.SemanticDomainsRC, m_propertyTable);
-			var result = chooser.ShowDialog();
+			var result = chooser.ShowDialog(FindForm());
 			if(result == DialogResult.OK)
 			{
 				UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(Resources.DetailControlsStrings.ksUndoSet,

@@ -96,6 +96,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			// Required for Windows Form Designer support
 			//
 			InitializeComponent();
+			StartPosition = FormStartPosition.CenterParent;
 			AccessibleName = GetType().Name;
 
 			helpProvider = new FlexHelpProvider();

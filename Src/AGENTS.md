@@ -11,6 +11,7 @@ Minimal guidance for source-tree work.
 
 - Preserve native-first build order.
 - Keep managed code compatible with .NET Framework 4.8, the repo default C# 8.0 language policy, and nullable reference types disabled unless a project explicitly opts in.
+- Compile Include `CommonAssemblyInfo.cs` in production projects and `AssemblyInfoForTests.cs` in test projects.
 - Keep interop boundaries explicit; do not introduce COM registration side-effects.
 - Keep user-visible strings in resources.
 

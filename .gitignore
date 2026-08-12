@@ -211,3 +211,9 @@ FLExInstaller/wix6/cabcache/*
 *.received.json
 *.diff.json
 DataTreeTimingBaselines.json
+# Scratch / agent working files (must never be committed)
+/findings_*.md
+*scratchpad*
+*[Ss]cratchPad*
+
+Docs/migration/working/

@@ -35,7 +35,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Needed to get the HelpTopicProvider and to save project specific settings
 		/// </summary>
-		protected PropertyTable PropertyTable { get; set; }
+		private PropertyTable m_propertyTable;
 
 		public UploadToWebonaryDlg()
 		{
@@ -51,6 +51,7 @@ namespace SIL.FieldWorks.XWorks
 				MinimumSize = new Size(MinimumSize.Width, MinimumSize.Height + m_additionalMinimumHeightForMono);
 
 			m_controller = controller;
+			m_propertyTable = propertyTable;
 			Model = model;
 			LoadFromModel();
 
@@ -64,10 +65,10 @@ namespace SIL.FieldWorks.XWorks
 			};
 
 			// Restore the location and size from last time we called this dialog.
-			if (PropertyTable != null)
+			if (m_propertyTable != null)
 			{
-				object locWnd = PropertyTable.GetValue<object>("UploadToWebonaryDlg_Location");
-				object szWnd = PropertyTable.GetValue<object>("UploadToWebonaryDlg_Size");
+				object locWnd = m_propertyTable.GetValue<object>("UploadToWebonaryDlg_Location");
+				object szWnd = m_propertyTable.GetValue<object>("UploadToWebonaryDlg_Size");
 				if (locWnd != null && szWnd != null)
 				{
 					Rectangle rect = new Rectangle((Point) locWnd, (Size) szWnd);
@@ -317,7 +318,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			using(var dlg = new WebonaryLogViewer(Model.LastUploadReport))
 			{
-				dlg.ShowDialog();
+				dlg.ShowDialog(this);
 			}
 		}
 
@@ -336,16 +337,33 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
+		/// A remembered position may be on a monitor the main window has since left; recenter
+		/// on the owner's screen so a modal dialog is never stranded where the user isn't looking.
+		/// </summary>
+		protected override void OnShown(EventArgs e)
+		{
+			base.OnShown(e);
+			if (Owner == null || StartPosition != FormStartPosition.Manual)
+				return;
+			var ownerScreen = System.Windows.Forms.Screen.FromControl(Owner);
+			if (ownerScreen.Equals(System.Windows.Forms.Screen.FromRectangle(DesktopBounds)))
+				return;
+			var workingArea = ownerScreen.WorkingArea;
+			Location = new Point(workingArea.Left + Math.Max(0, (workingArea.Width - Width) / 2),
+				workingArea.Top + Math.Max(0, (workingArea.Height - Height) / 2));
+		}
+
+		/// <summary>
 		/// Save the location and size for next time.
 		/// </summary>
 		protected override void OnClosing(CancelEventArgs e)
 		{
-			if (PropertyTable != null)
+			if (m_propertyTable != null)
 			{
-				PropertyTable.SetProperty("UploadToWebonaryDlg_Location", Location, false);
-				PropertyTable.SetPropertyPersistence("UploadToWebonaryDlg_Location", true);
-				PropertyTable.SetProperty("UploadToWebonaryDlg_Size", Size, false);
-				PropertyTable.SetPropertyPersistence("UploadToWebonaryDlg_Size", true);
+				m_propertyTable.SetProperty("UploadToWebonaryDlg_Location", Location, false);
+				m_propertyTable.SetPropertyPersistence("UploadToWebonaryDlg_Location", true);
+				m_propertyTable.SetProperty("UploadToWebonaryDlg_Size", Size, false);
+				m_propertyTable.SetPropertyPersistence("UploadToWebonaryDlg_Size", true);
 			}
 			base.OnClosing(e);
 		}

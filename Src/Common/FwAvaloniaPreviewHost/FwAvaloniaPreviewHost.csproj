@@ -1,0 +1,45 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<AssemblyName>FwAvaloniaPreviewHost</AssemblyName>
+		<RootNamespace>SIL.FieldWorks.Common.FwAvalonia.PreviewHost</RootNamespace>
+		<TargetFramework>net48</TargetFramework>
+		<!-- net48 BCL constraint applies: no records/init/Index/Range/DIM/IAsyncEnumerable. -->
+		<LangVersion>latest</LangVersion>
+		<OutputType>WinExe</OutputType>
+		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+		<Prefer32Bit>false</Prefer32Bit>
+		<IsPackable>false</IsPackable>
+		<NoWarn>$(NoWarn);CS1591;NU1701</NoWarn>
+		<!-- Built to a local folder, never the shared Output: the preview host is a developer tool
+		     that must not ship. -->
+		<OutputPath>$(MSBuildThisFileDirectory)bin\$(Configuration)\$(TargetFramework)\</OutputPath>
+		<OutDir>$(OutputPath)</OutDir>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Avalonia" ExcludeAssets="analyzers" />
+		<PackageReference Include="Avalonia.Desktop" ExcludeAssets="analyzers" />
+		<PackageReference Include="Avalonia.Themes.Fluent" ExcludeAssets="analyzers" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\FwAvalonia\FwAvalonia.csproj" />
+		<!-- FwAvalonia.csproj excludes Preview/** from its own compile (it's sample code, not shipped
+		     product behavior); it lives in its own FwAvalonia.Preview assembly instead, referenced (not
+		     file-linked) by this host and by FwAvaloniaTests. -->
+		<ProjectReference Include="..\FwAvalonia\Preview\FwAvalonia.Preview.csproj" />
+		<!-- The dialog kit, so converted dialogs can be previewed here (DialogPreviews.cs). This host writes
+		     to its own bin\ rather than the shared Output\, and the module catalog scans its own folder, so
+		     the reference is what puts FwAvaloniaDialogs.dll where the catalog can load it. It also makes
+		     this Avalonia-capable exe a candidate host for the Visual Studio XAML previewer, which needs a
+		     BuildAvaloniaApp entry point that FieldWorks.exe does not have. -->
+		<ProjectReference Include="..\FwAvaloniaDialogs\FwAvaloniaDialogs.csproj" />
+		<Compile Include="..\..\CommonAssemblyInfo.cs" Link="Properties\CommonAssemblyInfo.cs" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Compile Remove="FwAvaloniaPreviewHostTests/**/*.cs" />
+	</ItemGroup>
+
+</Project>

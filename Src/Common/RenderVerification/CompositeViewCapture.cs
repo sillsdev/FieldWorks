@@ -21,7 +21,7 @@ namespace SIL.FieldWorks.Common.RenderVerification
 	/// inside <see cref="ViewSlice"/> controls. The fix is a two-pass approach:
 	/// <list type="number">
 	/// <item>Capture each slice locally via <c>DrawToBitmap</c> and composite it into the
-	///   full bitmap (gets per-slice WinForms chrome without relying on giant control coordinates)</item>
+	///   full bitmap (gets per-slice WinForms decorations without relying on giant control coordinates)</item>
 	/// <item>Repaint DataTree-owned separator rules directly onto the bitmap, since those
 	///   thin gray lines are drawn by the parent control rather than by each slice</item>
 	/// <item>For each <see cref="ViewSlice"/>, render its <c>RootBox</c> via
@@ -31,7 +31,7 @@ namespace SIL.FieldWorks.Common.RenderVerification
 	public static class CompositeViewCapture
 	{
 		/// <summary>
-		/// Captures a composite bitmap of the DataTree, including both WinForms chrome
+		/// Captures a composite bitmap of the DataTree, including both the WinForms decorations
 		/// and Views engine rendered text.
 		/// </summary>
 		/// <param name="dataTree">The populated DataTree to capture.</param>
@@ -85,7 +85,7 @@ namespace SIL.FieldWorks.Common.RenderVerification
 				dataTree.ClientSize = new Size(width, totalHeight);
 				dataTree.PerformLayout();
 
-				// Pass 1: Capture WinForms chrome slice-by-slice.
+				// Pass 1: Capture the WinForms decorations slice-by-slice.
 				// A single DrawToBitmap over a very tall DataTree can drop left-side
 				// labels and separator lines for slices near the bottom of the image.
 				// Compositing each slice locally avoids that large-coordinate WinForms
@@ -207,7 +207,7 @@ namespace SIL.FieldWorks.Common.RenderVerification
 		}
 
 		/// <summary>
-		/// Captures WinForms chrome one slice at a time and composites the result into the
+		/// Captures the WinForms decorations one slice at a time and composites the result into the
 		/// final bitmap. This avoids whole-control <c>DrawToBitmap</c> failures when slice
 		/// coordinates become very large in tall DataTree captures.
 		/// </summary>
@@ -232,7 +232,7 @@ namespace SIL.FieldWorks.Common.RenderVerification
 					catch (Exception ex)
 					{
 						Trace.TraceWarning(
-							$"[CompositeViewCapture] Failed to capture slice chrome '{slice.Label}': {ex.Message}");
+							$"[CompositeViewCapture] Failed to capture slice decorations '{slice.Label}': {ex.Message}");
 					}
 				}
 			}

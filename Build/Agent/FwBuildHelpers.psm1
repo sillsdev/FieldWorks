@@ -601,6 +601,146 @@ function Test-ViewsNativeArtifactsStale {
     return $latestSource -gt $oldestArtifact
 }
 
+function Set-TestAssertDialogEnvironment {
+	<#!
+	.SYNOPSIS
+		Sets the DebugProcs.dll assertion environment variables for a test run.
+	.DESCRIPTION
+		By default puts asserts into unattended mode (converted to exceptions, no MessageBox)
+		so an assert cannot block a headless run. Pass -AllowDialogs $true to get interactive
+		Abort/Retry/Ignore dialogs for local debugger attachment.
+	#>
+	param(
+		[bool]$AllowDialogs
+	)
+
+	if ($AllowDialogs) {
+		$env:AssertUiEnabled = 'true'
+		$env:AssertExceptionEnabled = 'false'
+		$env:FW_TEST_MODE = '0'
+		$env:FW_TEST_ALLOW_ASSERT_DIALOGS = '1'
+		return
+	}
+
+	$env:AssertUiEnabled = 'false'
+	$env:AssertExceptionEnabled = 'true'
+	# Unconditional test-mode override: bypasses the registry AssertMessageBox key in DebugProcs.dll.
+	$env:FW_TEST_MODE = '1'
+}
+
+function Disable-CrashDialog {
+	<#!
+	.SYNOPSIS
+		Suppresses Windows Error Reporting and crash/critical-error dialogs for this process
+		and its children.
+	#>
+	# SEM_FAILCRITICALERRORS (0x1) | SEM_NOGPFAULTERRORBOX (0x2) | SEM_NOOPENFILEERRORBOX (0x8000)
+	if (-not ('FwBuildHelpers.NativeMethods' -as [type])) {
+		Add-Type -MemberDefinition '[DllImport("kernel32.dll")] public static extern uint SetErrorMode(uint uMode);' `
+			-Name 'NativeMethods' -Namespace 'FwBuildHelpers'
+	}
+	[void][FwBuildHelpers.NativeMethods]::SetErrorMode(0x8003)
+}
+
+function Get-UnitppSummary {
+	<#!
+	.SYNOPSIS
+		Parses the last Unit++ "Tests [Ok-Fail-Error]: [n-n-n]" summary line from test output.
+	.DESCRIPTION
+		Returns an object with Ok/Fail/Error counts and the matched Text, or $null when the
+		output contains no summary line (crash before completion, empty log).
+	#>
+	param(
+		[string[]]$LogContent
+	)
+
+	$summaryLine = $LogContent |
+		Select-String -Pattern 'Tests \[Ok-Fail-Error\]: \[(\d+)-(\d+)-(\d+)\]' |
+		Select-Object -Last 1
+	if (-not $summaryLine) {
+		return $null
+	}
+
+	$match = [regex]::Match($summaryLine.Line, 'Tests \[Ok-Fail-Error\]: \[(\d+)-(\d+)-(\d+)\]')
+	return [pscustomobject]@{
+		Ok    = [int]$match.Groups[1].Value
+		Fail  = [int]$match.Groups[2].Value
+		Error = [int]$match.Groups[3].Value
+		Text  = $match.Value
+	}
+}
+
+function Find-OpenCppCoverage {
+	<#!
+	.SYNOPSIS
+		Returns the full path to OpenCppCoverage.exe, or $null when it is not installed.
+	.DESCRIPTION
+		Checks the OpenCppCoveragePath environment variable (for portable installs), then PATH,
+		then the default install location (C:\Program Files\OpenCppCoverage).
+	#>
+	if ($env:OpenCppCoveragePath -and (Test-Path $env:OpenCppCoveragePath)) {
+		return $env:OpenCppCoveragePath
+	}
+
+	$command = Get-Command 'OpenCppCoverage.exe' -ErrorAction SilentlyContinue
+	if ($command) {
+		return $command.Source
+	}
+
+	$defaultPath = 'C:\Program Files\OpenCppCoverage\OpenCppCoverage.exe'
+	if (Test-Path $defaultPath) {
+		return $defaultPath
+	}
+
+	return $null
+}
+
+function Convert-CoberturaPathsToRepoRelative {
+	<#!
+	.SYNOPSIS
+		Rewrites an OpenCppCoverage Cobertura export to repo-relative class filenames with
+		<source> pointing at the repo root.
+	.DESCRIPTION
+		OpenCppCoverage exports absolute paths, whose prefix differs per checkout location.
+		Repo-relative filenames let Codecov match files against the repository tree on any
+		machine, while the absolute <source> keeps local ReportGenerator runs resolving sources.
+	#>
+	param(
+		[Parameter(Mandatory)][string]$CoberturaFile,
+		[Parameter(Mandatory)][string]$RepoRoot
+	)
+
+	# OpenCppCoverage splits an absolute path into <source>C:</source> plus a driveless filename.
+	$repoRootNoDrive = ($RepoRoot -replace '^[A-Za-z]:', '').TrimStart('\') + '\'
+
+	$xml = [xml](Get-Content -Path $CoberturaFile -Raw)
+	$unmatched = 0
+	foreach ($class in $xml.SelectNodes('//class')) {
+		$fileName = $class.GetAttribute('filename')
+		if ($fileName.StartsWith($repoRootNoDrive, [System.StringComparison]::OrdinalIgnoreCase)) {
+			$class.SetAttribute('filename', $fileName.Substring($repoRootNoDrive.Length))
+		}
+		else {
+			$unmatched++
+		}
+	}
+	if ($unmatched -gt 0) {
+		Write-Host "[WARN] $unmatched class filename(s) in $CoberturaFile were not under the repo root and were left absolute." -ForegroundColor Yellow
+	}
+
+	$sourcesNode = $xml.SelectSingleNode('/coverage/sources')
+	if ($sourcesNode) {
+		while ($sourcesNode.HasChildNodes) {
+			[void]$sourcesNode.RemoveChild($sourcesNode.FirstChild)
+		}
+		$sourceNode = $xml.CreateElement('source')
+		$sourceNode.InnerText = $RepoRoot
+		[void]$sourcesNode.AppendChild($sourceNode)
+	}
+
+	$xml.Save($CoberturaFile)
+}
+
 # =============================================================================
 # Module Exports
 # =============================================================================
@@ -623,5 +763,10 @@ Export-ModuleMember -Function @(
 	'Invoke-WithFileLockRetry',
 	'Get-NewestWriteTimeUtc',
 	'Get-OldestWriteTimeUtc',
-	'Test-ViewsNativeArtifactsStale'
+	'Test-ViewsNativeArtifactsStale',
+	'Set-TestAssertDialogEnvironment',
+	'Disable-CrashDialog',
+	'Get-UnitppSummary',
+	'Find-OpenCppCoverage',
+	'Convert-CoberturaPathsToRepoRelative'
 )
