@@ -29,8 +29,6 @@ DEFINE_THIS_FILE
 //:>********************************************************************************************
 //:>	   Forward declarations
 //:>********************************************************************************************
-static void BuildNfcOffsetMaps(const StrUni & stuOrig, Vector<int> & vichOrigToNfc,
-	Vector<int> & vichNfcToOrig);
 static void ApplyShapeRunCacheEntry(ShapeRunEntry & entry, UniscribeRunInfo & uri);
 
 //:>********************************************************************************************
@@ -1702,30 +1700,6 @@ int UniscribeSegment::OffsetToOrig(int ich, int ichBase, IVwTextSource * pts, bo
 	return OffsetToOrig(ich, ichBase, pts, fTextIsNfc);
 }
 
-static void BuildNfcOffsetMaps(const StrUni & stuOrig, Vector<int> & vichOrigToNfc,
-	Vector<int> & vichNfcToOrig)
-{
-	int cchOrig = stuOrig.Length();
-	vichOrigToNfc.Resize(cchOrig + 1);
-	vichOrigToNfc[0] = 0;
-	for (int ich = 1; ich <= cchOrig; ++ich)
-	{
-		StrUni stuPrefix(stuOrig.Chars(), ich);
-		StrUtil::NormalizeStrUni(stuPrefix, UNORM_NFC);
-		vichOrigToNfc[ich] = stuPrefix.Length();
-	}
-
-	int cchNfc = vichOrigToNfc[cchOrig];
-	vichNfcToOrig.Resize(cchNfc + 1);
-	int ichOrig = 0;
-	for (int ichNfc = 0; ichNfc <= cchNfc; ++ichNfc)
-	{
-		while (ichOrig + 1 <= cchOrig && vichOrigToNfc[ichOrig + 1] <= ichNfc)
-			++ichOrig;
-		vichNfcToOrig[ichNfc] = ichOrig;
-	}
-}
-
 static void ApplyShapeRunCacheEntry(ShapeRunEntry & entry, UniscribeRunInfo & uri)
 {
 	if (uri.CGlyphMax() < entry.m_cglyph)
@@ -3135,6 +3109,8 @@ int UniscribeSegment::CallScriptItemize(OLECHAR * prgchDefBuf, int cchBuf,
 
 	Vector<int> vichOrigToNfc;
 	Vector<int> vichNfcToOrig;
+	// Only text that normalization leaves unchanged is eligible for the analysis cache.
+	bool fTextEligibleForCache = true;
 
 #ifdef UNISCRIBE_NFC
 	if (cch)
@@ -3154,8 +3130,7 @@ int UniscribeSegment::CallScriptItemize(OLECHAR * prgchDefBuf, int cchBuf,
 		bool fComputedTextIsNfc = (stu == stuOrig);
 		if (pfTextIsNfc)
 			*pfTextIsNfc = fComputedTextIsNfc;
-		if (!fComputedTextIsNfc && pLayoutPassCache)
-			BuildNfcOffsetMaps(stuOrig, vichOrigToNfc, vichNfcToOrig);
+		fTextEligibleForCache = fComputedTextIsNfc;
 		if (cch > cchBuf)
 		{
 			cchBuf = cch;
@@ -3317,10 +3292,14 @@ typedef struct tag_SCRIPT_STATE {
 	if (pLayoutPassCache)
 	{
 		pLayoutPassCache->AnalysisCache().AddComputeMs(::GetTickCount() - dwStartMs);
-		TextAnalysisEntry * pStoredAnalysis = pLayoutPassCache->AnalysisCache().Store(pts, ichMin,
-			cchOrig, ws, fWsRtl, *pprgchBuf, cch, pfTextIsNfc ? *pfTextIsNfc : true,
-			g_vscri.Begin(), citem, vichOrigToNfc.Size() ? &vichOrigToNfc : NULL,
-			vichNfcToOrig.Size() ? &vichNfcToOrig : NULL);
+		TextAnalysisEntry * pStoredAnalysis = NULL;
+		if (fTextEligibleForCache)
+		{
+			pStoredAnalysis = pLayoutPassCache->AnalysisCache().Store(pts, ichMin,
+				cchOrig, ws, fWsRtl, *pprgchBuf, cch, true,
+				g_vscri.Begin(), citem, vichOrigToNfc.Size() ? &vichOrigToNfc : NULL,
+				vichNfcToOrig.Size() ? &vichNfcToOrig : NULL);
+		}
 		if (ppAnalysis)
 			*ppAnalysis = pStoredAnalysis;
 	}
