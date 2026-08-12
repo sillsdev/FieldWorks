@@ -353,15 +353,6 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			m_parentWindow = parentWindow;
 		}
 
-		/// <summary>
-		/// This command opens the modal LinkEntryOrSenseDlg, so have the chooser keep the main
-		/// window active as it hides, to avoid another application flashing in front first.
-		/// </summary>
-		public override bool KeepOwnerActiveWhenHiding
-		{
-			get { return true; }
-		}
-
 		public override ObjectLabel Execute()
 		{
 			ObjectLabel result = null;
@@ -433,15 +424,6 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 			}
 			m_parentWindow = parentWindow;
-		}
-
-		/// <summary>
-		/// This command opens the modal EntryGoDlg, so have the chooser keep the main window
-		/// active as it hides, to avoid another application flashing in front first.
-		/// </summary>
-		public override bool KeepOwnerActiveWhenHiding
-		{
-			get { return true; }
 		}
 
 		public override ObjectLabel Execute()
