@@ -206,7 +206,7 @@ jobs:
 
           Invoke-ShallowClone -RepoUrl 'https://github.com/sillsdev/FwHelps.git' -Destination 'DistFiles/Helps'
           Invoke-ShallowClone -RepoUrl 'https://github.com/sillsdev/FwLocalizations.git' -Destination 'Localizations'
-          Invoke-ShallowClone -RepoUrl 'https://github.com/sillsdev/liblcm.git' -Destination 'Localizations/LCM'
+          Invoke-ShallowClone -RepoUrl 'https://github.com/sillsdev/liblcm.git' -Destination 'Localizations/LCMRepo'
 
       # ================================================================
       # SERENA MCP SETUP - for agent code intelligence

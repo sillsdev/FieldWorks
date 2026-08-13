@@ -203,7 +203,7 @@ if ($InstallerDeps) {
 	}
 
 	# Special case: liblcm goes inside Localizations
-	$lcmTarget = Join-Path $scriptDir "Localizations/LCM"
+	$lcmTarget = Join-Path $scriptDir "Localizations/LCMRepo"
 	$localizationsPath = Join-Path $scriptDir "Localizations"
 	if ((Test-Path $localizationsPath) -and -not (Test-Path $lcmTarget)) {
 		if ($isWorktree) {
@@ -215,9 +215,9 @@ if ($InstallerDeps) {
 				}
 			}
 			if (Test-Path $sharedLcm) {
-				if ($PSCmdlet.ShouldProcess("Localizations/LCM", "Create junction to $sharedLcm")) {
+				if ($PSCmdlet.ShouldProcess("Localizations/LCMRepo", "Create junction to $sharedLcm")) {
 					New-Item -ItemType Junction -Path $lcmTarget -Target $sharedLcm -Force | Out-Null
-					Write-Host "[OK] Created junction: Localizations/LCM -> $sharedLcm" -ForegroundColor Green
+					Write-Host "[OK] Created junction: Localizations/LCMRepo -> $sharedLcm" -ForegroundColor Green
 				}
 			}
 		} else {

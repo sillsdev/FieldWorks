@@ -50,7 +50,7 @@ cd fieldworks
 # Clone required helper repositories
 git clone https://github.com/sillsdev/FwHelps.git DistFiles/Helps
 git clone https://github.com/sillsdev/FwLocalizations.git Localizations
-git clone https://github.com/sillsdev/liblcm.git Localizations/LCM
+git clone https://github.com/sillsdev/liblcm.git Localizations/LCMRepo
 ```
 
 ## Building a Base Installer

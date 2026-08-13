@@ -176,7 +176,7 @@ Write-Host "`n--- Checking Helper Repositories ---" -ForegroundColor Yellow
 $helperRepos = @(
 	@{ Name = "FwHelps"; Path = "DistFiles/Helps"; Required = $true },
 	@{ Name = "FwLocalizations"; Path = "Localizations"; Required = $true },
-	@{ Name = "liblcm"; Path = "Localizations/LCM"; Required = $true }
+	@{ Name = "liblcm"; Path = "Localizations/LCMRepo"; Required = $true }
 )
 
 $missingRepos = @()
