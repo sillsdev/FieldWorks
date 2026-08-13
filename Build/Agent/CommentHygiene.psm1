@@ -4,8 +4,8 @@
 
 .DESCRIPTION
 	Implements the mechanical (regex-detectable) banned-content categories
-	from the fieldworks-code-commenting skill, the ASCII-only rule, and a
-	one-line cap on implementation comments. Judgment-based rules
+	from the fieldworks-code-commenting skill, the ASCII-punctuation-only rule,
+	and a 200-character budget on implementation comments. Judgment-based rules
 	(accuracy, WHAT-not-HOW, standalone clarity) are not checked here.
 
 	Scans .cs (//, ///) and .ps1 (#, block-comment) files. Only whole-line
@@ -165,8 +165,8 @@ function Repair-CommentLine {
 function Get-CommentLineClassification {
 	<#
 	.SYNOPSIS
-		Classifies every line of a file as an implementation comment (capped
-		at one line), an exempt doc/help comment, or neither.
+		Classifies every line of a file as an implementation comment (subject
+		to the 200-character budget), an exempt doc/help comment, or neither.
 
 	.PARAMETER Lines
 		The file's lines.
