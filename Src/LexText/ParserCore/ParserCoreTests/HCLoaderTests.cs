@@ -1120,6 +1120,42 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		}
 
 		[Test]
+		public void UnicodeEnvironment_MultiElementRewriteRulesLoad()
+		{
+			IPhRegularRule mergeRule = Cache.ServiceLocator.GetInstance<IPhRegularRuleFactory>().Create();
+			Cache.LanguageProject.PhonologicalDataOA.PhonRulesOS.Add(mergeRule);
+			mergeRule.Name.SetAnalysisDefaultWritingSystem("mergeRule");
+			mergeRule.Direction = 2;
+			mergeRule.StrucDescOS.Add(AddSegContext("a"));
+			mergeRule.StrucDescOS.Add(AddSegContext("i"));
+			mergeRule.RightHandSidesOS[0].StrucChangeOS.Add(AddSegContext("u"));
+
+			IPhRegularRule splitRule = Cache.ServiceLocator.GetInstance<IPhRegularRuleFactory>().Create();
+			Cache.LanguageProject.PhonologicalDataOA.PhonRulesOS.Add(splitRule);
+			splitRule.Name.SetAnalysisDefaultWritingSystem("splitRule");
+			splitRule.Direction = 2;
+			splitRule.StrucDescOS.Add(AddSegContext("a"));
+			splitRule.RightHandSidesOS[0].StrucChangeOS.Add(AddSegContext("i"));
+			splitRule.RightHandSidesOS[0].StrucChangeOS.Add(AddSegContext("u"));
+			LoadLanguage();
+
+			Assert.That(m_lang.Strata[0].PhonologicalRules.Count, Is.EqualTo(2));
+			var hcMergeRule = (RewriteRule)m_lang.Strata[0].PhonologicalRules[0];
+			var hcSplitRule = (RewriteRule)m_lang.Strata[0].PhonologicalRules[1];
+			string a = m_lang.Strata[0].CharacterDefinitionTable["a"].FeatureStruct.ToString();
+			string i = m_lang.Strata[0].CharacterDefinitionTable["i"].FeatureStruct.ToString();
+			string u = m_lang.Strata[0].CharacterDefinitionTable["u"].FeatureStruct.ToString();
+
+			Assert.That(hcMergeRule.Lhs.ToString(), Is.EqualTo(a + i));
+			Assert.That(hcMergeRule.Subrules.Count, Is.EqualTo(1));
+			Assert.That(hcMergeRule.Subrules[0].Rhs.ToString(), Is.EqualTo(u));
+			Assert.That(hcSplitRule.Lhs.ToString(), Is.EqualTo(a));
+			Assert.That(hcSplitRule.Subrules.Count, Is.EqualTo(1));
+			Assert.That(hcSplitRule.Subrules[0].Rhs.ToString(), Is.EqualTo(i + u));
+			Assert.That(m_loadErrors, Is.Empty);
+		}
+
+		[Test]
 		public void MetathesisRule()
 		{
 			IPhMetathesisRule prule = Cache.ServiceLocator.GetInstance<IPhMetathesisRuleFactory>().Create();
@@ -1438,6 +1474,53 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 			Assert.That(m_lang.Strata[0].Entries.Count, Is.EqualTo(1));
 			Assert.That(m_lang.Strata[0].MorphologicalRules.Count, Is.EqualTo(1));
+		}
+
+		[Test]
+		public void UnicodeEnvironment_BaseAndCombiningMarkLoadsAsOneSegment()
+		{
+			Cache.LanguageProject.MorphologicalDataOA.ParserParameters = "<ParserParameters><ActiveParser>HC</ActiveParser><HC><NoDefaultCompounding>true</NoDefaultCompounding><AcceptUnspecifiedGraphemes>true</AcceptUnspecifiedGraphemes></HC></ParserParameters>";
+			AddEntry(MoMorphTypeTags.kguidMorphBoundStem, "a\u0307", "gloss", new SandboxGenericMSA {MsaType = MsaType.kStem, MainPOS = m_verb});
+			LoadLanguage();
+
+			Assert.That(m_lang.Strata[0].CharacterDefinitionTable.Contains("a\u0307"), Is.True);
+			Assert.That(m_lang.Strata[0].Entries.Count, Is.EqualTo(1));
+			var hcEntry = m_lang.Strata[0].Entries.Single();
+			Assert.That(hcEntry.PrimaryAllomorph.Segments.Shape.Count(), Is.EqualTo(1));
+			Assert.That(hcEntry.PrimaryAllomorph.Segments.ToString(), Is.EqualTo("a\u0307"));
+			Assert.That(m_loadErrors, Is.Empty);
+		}
+
+		[Test]
+		public void UnicodeEnvironment_DottedCircleIsRemovedBeforeSegmentation()
+		{
+			Cache.LanguageProject.MorphologicalDataOA.ParserParameters = "<ParserParameters><ActiveParser>HC</ActiveParser><HC><NoDefaultCompounding>true</NoDefaultCompounding><AcceptUnspecifiedGraphemes>true</AcceptUnspecifiedGraphemes></HC></ParserParameters>";
+			AddEntry(MoMorphTypeTags.kguidMorphBoundStem, "\u25CCa\u0307", "gloss", new SandboxGenericMSA {MsaType = MsaType.kStem, MainPOS = m_verb});
+			LoadLanguage();
+
+			Assert.That(m_lang.Strata[0].CharacterDefinitionTable.Contains("a\u0307"), Is.True);
+			Assert.That(m_lang.Strata[0].CharacterDefinitionTable.Contains("\u25CCa\u0307"), Is.False);
+			Assert.That(m_lang.Strata[0].Entries.Count, Is.EqualTo(1));
+			Assert.That(m_lang.Strata[0].Entries.Single().PrimaryAllomorph.Segments.ToString(), Is.EqualTo("a\u0307"));
+			Assert.That(m_loadErrors, Is.Empty);
+		}
+
+		[Test]
+		public void UnicodeEnvironment_OptionalCombiningSegmentLoads()
+		{
+			AddPhoneme("a\u0307", new FS {{"cons", "-"}, {"voc", "+"}});
+			ILexEntry entry = AddEntry(MoMorphTypeTags.kguidMorphBoundStem, "a", "gloss", new SandboxGenericMSA {MsaType = MsaType.kStem, MainPOS = m_verb});
+			var allo = (IMoStemAllomorph) entry.LexemeFormOA;
+			allo.PhoneEnvRC.Add(AddEnvironment("/ _ (a\u0307)"));
+			LoadLanguage();
+
+			Assert.That(m_lang.Strata[0].Entries.Count, Is.EqualTo(1));
+			var hcAllo = m_lang.Strata[0].Entries.Single().PrimaryAllomorph;
+			Assert.That(hcAllo.Environments.Select(e => e.ToEnvString()), Is.EquivalentTo(new[]
+			{
+				"/ _ (([cons:-, Type:segment, voc:+]))?"
+			}));
+			Assert.That(m_loadErrors, Is.Empty);
 		}
 
 		[Test]
