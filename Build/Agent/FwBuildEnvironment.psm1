@@ -227,18 +227,28 @@ function Get-VsDevEnvironmentVariables {
         throw 'Failed to initialize Visual Studio environment'
     }
 
-    $variables = [ordered]@{}
-    foreach ($line in $envOutput) {
-        $parts = $line -split '=', 2
-        if ($parts.Length -eq 2 -and $parts[0]) {
-            $variables[$parts[0]] = $parts[1]
-        }
-    }
+    $variables = ConvertFrom-EnvironmentVariableLines -Lines $envOutput
 
     return [pscustomobject]@{
         Toolchain = $toolchain
         Variables = [pscustomobject]$variables
     }
+}
+
+function ConvertFrom-EnvironmentVariableLines {
+    param(
+        [string[]]$Lines
+    )
+
+    $variables = [ordered]@{}
+    foreach ($line in $Lines) {
+        $parts = $line -split '=', 2
+        if ($parts.Length -eq 2 -and $parts[0] -and -not $variables.Contains($parts[0])) {
+            $variables.Add($parts[0], $parts[1])
+        }
+    }
+
+    return [pscustomobject]$variables
 }
 
 function Get-ActiveVcToolBinPath {
