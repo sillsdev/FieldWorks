@@ -277,6 +277,50 @@ Stop and ask if a nearby comment does any of these:
 - cites a PR or issue explaining why the current version was chosen
 - gives a retest procedure
 
+#### Verify the claim instead of trusting the comment
+
+A comment naming an external dependency ("ParatextData 9.5.x requires >= 9.0.9")
+is checkable, and checking it usually clears the bump. The depending package's
+own manifest states the range:
+
+```bash
+ls -d packages/<DependingPackage>/*/ | head -1        # resolve the cached version
+grep -oE '<dependency id="<PinnedPackage>"[^/]*/>' packages/<DependingPackage>/<ver>/*.nuspec
+```
+
+Read the result by NuGet's rules:
+
+- `version="9.0.9"` is a **floor** - any version at or above it satisfies the
+  dependant. Bumping up cannot violate it.
+- `version="[4.6.3]"` or `version="[9.0.0,10.0.0)"` is **exact or capped** - a
+  bump can violate it. These are rare; exactly one exists across this
+  repository's whole package cache.
+
+With `CentralPackageTransitivePinningEnabled`, the pin forces one version on
+every project, so it must sit at or above every floor. The failure mode is
+pinning too *low*, which is `NU1109` - the `HarfBuzzSharp` comment documents
+exactly that. So a bump above a floor is safe by construction, and a comment
+citing a floor is not a reason to revert.
+
+This distinction matters, because it splits pins into two kinds:
+
+- **Constraint-driven** - the comment cites a range. Verifiable from the
+  `.nuspec`, and almost always satisfied by the bump. Take the bump; refresh the
+  comment if it names a stale number.
+- **Empirically-driven** - the pin exists because a higher version was observed
+  to break something. No manifest expresses this, so no amount of graph analysis
+  finds it. `Microsoft.Extensions.DependencyModel` is held at 9.0.16 for exactly
+  this reason while every declared range would permit 9.0.18.
+
+Only the empirical kind needs an `ignore:` entry in `.github/dependabot.yml`,
+and it needs one precisely because the package graph will never block it.
+
+Watch for the second-order case: the external package can itself be bumped in
+the same batch. `ParatextData` is in the manifest and in Dependabot's scope, so
+its floors - and every comment quoting them - can move. When a batch bumps both
+a pinned package and something that depends on it, re-derive the range from the
+new version's `.nuspec` rather than from the comment.
+
 Two distinct outcomes, and do not conflate them:
 
 - **The comment forbids the bump.** Drop that single line from the pick, keeping
