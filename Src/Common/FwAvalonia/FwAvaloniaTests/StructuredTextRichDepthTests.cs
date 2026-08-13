@@ -120,7 +120,7 @@ namespace FwAvaloniaTests
 		// Regression guard: the span-applying trigger buttons MUST be non-focusable. If a trigger
 		// takes focus, clicking it blurs the editor TextBox, Avalonia collapses the selection to the caret on
 		// LostFocus, and the gesture (style / WS retag / paragraph style) snapshots an EMPTY span and stages
-		// nothing — the bug the prior tests masked by setting SelectionStart/End and calling the flyout
+		// nothing -- the bug the prior tests masked by setting SelectionStart/End and calling the flyout
 		// directly (never a real focus-stealing click). Asserting Focusable==false is the invariant that
 		// can't be routed around.
 		[AvaloniaTest]

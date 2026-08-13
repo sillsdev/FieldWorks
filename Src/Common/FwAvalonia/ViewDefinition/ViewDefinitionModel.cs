@@ -162,7 +162,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 	/// <c>&lt;where&gt;</c> elements. Attribute semantics mirror
 	/// <c>XmlVc.ConditionPasses</c> exactly as <c>DataTree.ProcessSubpartNode</c> invokes it: every test
 	/// present must pass (conjunction); <c>&lt;ifnot&gt;</c> sets <see cref="Negated"/>. Only the condition
-	/// vocabulary the shipped DETAIL layouts actually use is represented — <c>target</c>, <c>is</c>,
+	/// vocabulary the shipped DETAIL layouts actually use is represented -- <c>target</c>, <c>is</c>,
 	/// <c>excludesubclasses</c>, <c>field</c>, <c>boolequals</c>, <c>intequals</c>, <c>intlessthan</c>,
 	/// <c>intgreaterthan</c>, <c>intmemberof</c>, <c>lengthatleast</c>, <c>lengthatmost</c>,
 	/// <c>guidequals</c>. The publishing-only forms (<c>stringequals</c>, <c>stringaltequals</c>,
@@ -204,7 +204,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 		/// <summary>True for <c>&lt;ifnot&gt;</c>: the content shows when the condition FAILS.</summary>
 		public bool Negated { get; }
 
-		/// <summary>Legacy <c>target=</c>: which object the tests read — null/"this" (default), "owner", or an atomic field name (<c>XmlVc.GetActualTarget</c>).</summary>
+		/// <summary>Legacy <c>target=</c>: which object the tests read -- null/"this" (default), "owner", or an atomic field name (<c>XmlVc.GetActualTarget</c>).</summary>
 		public string Target { get; }
 
 		/// <summary>Legacy <c>is=</c>: the object must be this class (or a subclass unless <see cref="ExcludeSubclasses"/>).</summary>
@@ -283,7 +283,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 
 	/// <summary>
 	/// A chooser jump link imported from the legacy <c>&lt;chooserInfo&gt;&lt;chooserLink&gt;</c>
-	/// element: the cross-tool "Edit the … list" link the legacy
+	/// element: the cross-tool "Edit the ... list" link the legacy
 	/// chooser dialog shows (<c>ReallySimpleListChooser.InitializeExtras</c>,
 	/// ReallySimpleListChooser.cs:887-926). Attributes are preserved verbatim: <see cref="Type"/>
 	/// defaults to "goto" like the legacy reader; <see cref="Target"/> carries the rare
@@ -549,7 +549,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 		public ViewStringList EnumStringList { get; }
 
 		/// <summary>
-		/// Legacy <c>toggleValue="true"</c> on a boolean slice — the displayed checkbox shows
+		/// Legacy <c>toggleValue="true"</c> on a boolean slice -- the displayed checkbox shows
 		/// the LOGICAL INVERSE of the stored property (BasicTypeSlices.cs:181-203 inverts on both read and
 		/// write). The composer's Boolean case inverts read display + write commit when this is set so e.g. a
 		/// PartOfSpeech "Final" / inflection-class flag round-trips with the same sense the WinForms slice shows.
@@ -590,7 +590,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 		/// <summary>
 		/// Produces a deterministic, normalized snapshot of the typed tree for parity/regression tests.
 		/// One indented line per node keyed on stable identity, kind, binding, editor classification,
-		/// writing system, visibility, and expansion — incidental layout noise is intentionally excluded.
+		/// writing system, visibility, and expansion -- incidental layout noise is intentionally excluded.
 		/// </summary>
 		public string ToSnapshot()
 		{
@@ -636,7 +636,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 			if (node.Routing != HostRouting.Inherit)
 				sb.Append($" | routing={node.Routing}");
 			// Conditional nodes are new (never in pre-existing baselines), so the condition summary
-			// rides the snapshot — JSON round-trip equality fails if condition metadata is dropped.
+			// rides the snapshot -- JSON round-trip equality fails if condition metadata is dropped.
 			if (node.Condition != null)
 				sb.Append($" | cond=[{node.Condition}]");
 			// Chooser links likewise ride the snapshot so a lossy round trip fails loudly.

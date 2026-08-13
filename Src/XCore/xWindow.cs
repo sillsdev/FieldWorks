@@ -970,7 +970,7 @@ namespace XCore
 
 		/// <summary>
 		/// Materializes the same merged ChoiceGroup that ShowContextMenu(string[]) shows, WITHOUT
-		/// creating any WinForms UI — for hosts that render the menu themselves (e.g. the Avalonia
+		/// creating any WinForms UI -- for hosts that render the menu themselves (e.g. the Avalonia
 		/// detail view) while keeping xCore display/dispatch semantics. Returns null when
 		/// none of the ids resolve. Callers should PopulateNow() before iterating.
 		/// </summary>

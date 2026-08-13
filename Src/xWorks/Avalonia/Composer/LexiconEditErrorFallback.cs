@@ -88,11 +88,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		// Multi-WS read path: one row per *current* writing system — the same
-		// "all vernacular"/"all analysis" semantics the compiled slice definitions carry — rendered
-		// with the project's per-WS default font so both views show the same record consistently.
-		// The per-ws row projection is the shared DetailValueFactory recipe (the
-		// composer uses the same one); only the text reads live here.
+		// One row per current writing system, using the shared DetailValueFactory per-ws row recipe (same as the composer), so both views render consistently; only the text reads live here.
 		private IReadOnlyList<DetailWsValue> GetLexemeFormValues()
 		{
 			return DetailValueFactory.CreateMultiWsValues(
@@ -129,9 +125,9 @@ namespace SIL.FieldWorks.XWorks
 			if (morphTypes == null)
 				return new List<DetailChoiceOption>();
 
-			// The shared flattener (document order, hierarchy as Depth, and the
-			// composer's name-fallback rule — an analysis→vernacular fallback is
-			// subsumed by ShortName's own legacy resolution; see DetailValueFactory).
+			// The shared flattener gives document order, hierarchy as Depth, and the
+			// composer's name-fallback rule -- an analysis->vernacular fallback is
+			// subsumed by ShortName's own legacy resolution.
 			return DetailValueFactory.CreatePossibilityOptions(morphTypes, flat: false);
 		}
 

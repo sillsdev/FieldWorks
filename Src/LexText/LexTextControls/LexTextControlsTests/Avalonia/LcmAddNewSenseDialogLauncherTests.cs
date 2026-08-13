@@ -175,7 +175,7 @@ namespace LexTextControlsTests
 		{
 			var classes = LcmInsertEntryDialogLauncher.BuildInflectionClasses(Cache, _noun.Guid.ToString());
 
-			// Strong (depth 0), Irregular (depth 1, nested under Strong), Weak (depth 0) — document order.
+			// Strong (depth 0), Irregular (depth 1, nested under Strong), Weak (depth 0) -- document order.
 			Assert.That(classes.Select(c => c.Name), Is.EqualTo(new[] { "Strong", "Irregular", "Weak" }),
 				"the POS's classes are returned in document order, nested subclasses inline");
 			Assert.That(classes.Select(c => c.Depth), Is.EqualTo(new[] { 0, 1, 0 }),
@@ -303,7 +303,7 @@ namespace LexTextControlsTests
 		public void BuildInput_FeedsTheSlotProvider()
 		{
 			// InflectionClassesForPos and InflectionFeaturesForPos are both exercised by name elsewhere, but
-			// SlotsForPos itself was never actually called — only ever asserted non-null via the MSA-section shape.
+			// SlotsForPos itself was never actually called -- only ever asserted non-null via the MSA-section shape.
 			// A regression here (e.g. passing the wrong morph-type guid through the closure) would silently leave
 			// the affix "Fills Slot" column empty for a real verb, with no test failing.
 			var input = LcmAddNewSenseDialogLauncher.BuildInput(Cache, _casa, tssCitationForm: null);
@@ -355,9 +355,9 @@ namespace LexTextControlsTests
 		[Test]
 		public void CreateSense_UnresolvableWritingSystemTag_FallsBackToTheDefaultAnalysisWs()
 		{
-			// If the payload's ws tag doesn't resolve to a live writing system (ws == 0 — e.g. a stale/garbled tag),
-			// the create must still land the gloss somewhere sane (the default analysis WS) rather than silently
-			// dropping the user's typed gloss text.
+			// If the payload's ws tag doesn't resolve to a live writing system
+			// (ws == 0), the create must still land the gloss somewhere sane
+			// (default analysis WS), not silently drop the user's typed text.
 			var payload = new AddNewSenseDlgPayload(
 				new Dictionary<string, string> { ["zzz-bogus-ws-tag"] = "home" },
 				new FwSandboxMsa(FwMsaType.Stem, mainPosId: _noun.Guid.ToString()));

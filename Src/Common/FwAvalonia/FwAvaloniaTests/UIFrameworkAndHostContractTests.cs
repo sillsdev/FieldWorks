@@ -86,9 +86,9 @@ namespace FwAvaloniaTests
 			Assert.That(contract.PermitsLegacyDataTreeDrive(), Is.False);
 		}
 
-		// "command-menu-routing" is the approved adapter under which RecordEditView lazily initializes
-		// the HIDDEN legacy DataTree + DTMenuHandler purely as the command-target colleague chain for
-		// context menus — never shown, never active.
+		// "command-menu-routing" is the approved adapter under which RecordEditView
+		// initializes the HIDDEN DataTree + DTMenuHandler as the command-target
+		// chain for context menus -- never shown, never active.
 		[Test]
 		public void Avalonia_CommandMenuRouting_IsAnApprovableAdapter_ForContextMenuCommands()
 		{

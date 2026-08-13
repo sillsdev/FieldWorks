@@ -7,24 +7,24 @@ using System.Collections.Generic;
 namespace FwAvaloniaDialogs
 {
 	/// <summary>
-	/// The result fields a matching-list column can display — the per-column values carried on
+	/// The result fields a matching-list column can display -- the per-column values carried on
 	/// <see cref="EntryGoSearchResult"/>. Mirrors the legacy matchingEntries browser's default-visible column
 	/// content (areaConfiguration.xml "matchingEntries": Headword + Glosses visible, Lexeme Form on the menu).
 	/// </summary>
 	public enum EntryGoResultField
 	{
-		/// <summary>The entry's headword (<see cref="EntryGoSearchResult.Text"/>) — a vernacular value.</summary>
+		/// <summary>The entry's headword (<see cref="EntryGoSearchResult.Text"/>) -- a vernacular value.</summary>
 		Headword,
 
-		/// <summary>The entry's lexeme form (<see cref="EntryGoSearchResult.LexemeForm"/>) — a vernacular value.</summary>
+		/// <summary>The entry's lexeme form (<see cref="EntryGoSearchResult.LexemeForm"/>) -- a vernacular value.</summary>
 		LexemeForm,
 
-		/// <summary>The gloss(es) (<see cref="EntryGoSearchResult.Gloss"/>) — an analysis value.</summary>
+		/// <summary>The gloss(es) (<see cref="EntryGoSearchResult.Gloss"/>) -- an analysis value.</summary>
 		Gloss
 	}
 
 	/// <summary>
-	/// One column of the entry-search ("go") dialog's persistent matching list — the LCModel-free presentation
+	/// One column of the entry-search ("go") dialog's persistent matching list -- the LCModel-free presentation
 	/// spec for a column of the legacy <c>MatchingObjectsBrowser</c> (the multi-column browse view
 	/// <c>BaseGoDlg</c> embeds). The launcher supplies an ordered list of these on
 	/// <see cref="EntryGoDialogInput.ResultColumns"/>: a localized <see cref="Header"/>, the
@@ -53,7 +53,7 @@ namespace FwAvaloniaDialogs
 
 		/// <summary>
 		/// The shared fallback column set when a consumer supplies none: Headword + Glosses with default
-		/// typography — the legacy matchingEntries browser's default-visible columns
+		/// typography -- the legacy matchingEntries browser's default-visible columns
 		/// (areaConfiguration.xml: "Headword" ws=best vernoranal and "Glosses" ws=best analorvern are the only
 		/// columns without visibility="menu"). Headers come from the shared localized strings.
 		/// </summary>

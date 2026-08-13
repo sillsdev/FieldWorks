@@ -1,6 +1,6 @@
 ---
 name: fieldworks-code-commenting
-description: The FieldWorks code-comment standard for C#. Use whenever writing or editing code comments in this repository -- new code, refactors, or comment audits. Covers doc-comment contracts, banned content categories, legacy references, XML doc tags, and XML-doc placement.
+description: The FieldWorks code-comment standard for C# and PowerShell. Use whenever writing or editing a comment anywhere in this repository -- new code, refactors, or comment audits, in .cs or .ps1 alike. Covers doc-comment contracts, banned content categories, the 200-character cap on implementation comments, legacy references, XML doc tags, and XML-doc placement.
 ---
 
 # FieldWorks Code Commenting
@@ -10,6 +10,16 @@ Apply it while authoring -- do not write loose comments and clean them later.
 
 The audience is the next reader of the code -- never the reviewer of the
 current diff, never a coverage gate.
+
+## Scope
+
+Every comment in this repository, in any language: `//`/`///` in C#, `#`/
+`<# #>` in PowerShell. The mechanical subset of this standard (banned content,
+ASCII-only, the 200-character implementation-comment budget) is enforced by
+`Build/Agent/comment-hygiene.ps1` against `.cs` and `.ps1` files alike; the
+judgment-based rules (accuracy, WHAT-not-HOW, standalone clarity) are not
+mechanically checked in either language and still require applying this
+standard while authoring.
 
 ## The standard
 
@@ -134,7 +144,15 @@ information of its own.
 ## Inline comments
 
 Sparingly: only when the reasoning is not clear from the code, or a bugfix is
-non-obvious. Keep them short and located above the level of nesting that the code being described spans.
+non-obvious. **200 characters, across as many lines as that takes to respect
+the line-length limit.** If the WHY needs more than that, either it belongs
+as a doc comment on a named symbol (which may run long-form), or the comment
+is trying to explain too much at once -- cut it to the single sentence that
+would confuse a reader most if it were missing, and drop the rest, even if
+that loses nuance the original draft had. `Build/Agent/comment-hygiene.ps1`
+enforces this mechanically (category `comment-too-long`) for `//` and `#`
+alike -- see "Scope" above.
+Located above the level of nesting that the code being described spans.
 
 In tests, two extra tells of noise: restating what the test method name
 already says, and justifying a test to the coverage gate ("covers the false

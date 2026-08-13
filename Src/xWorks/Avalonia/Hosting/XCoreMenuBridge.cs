@@ -10,11 +10,11 @@ using XCore;
 namespace SIL.FieldWorks.XWorks
 {
 	/// <summary>
-	/// Section 15.1: converts an xCore context-menu <see cref="ChoiceGroup"/> into the neutral
+	/// Converts an xCore context-menu <see cref="ChoiceGroup"/> into the neutral
 	/// <see cref="DetailMenuItem"/> model the Avalonia detail view renders as a native MenuFlyout.
 	/// Labels, enablement, checkmarks, submenus, and execution all run through the SAME xCore
-	/// machinery the WinForms adapter uses (GetDisplayProperties → mediator Display* round-trip;
-	/// OnClick → mediator command dispatch) — only the rendering changes. Because this consumes the
+	/// machinery the WinForms adapter uses (GetDisplayProperties -> mediator Display* round-trip;
+	/// OnClick -> mediator command dispatch) -- only the rendering changes. Because this consumes the
 	/// shared engine, it serves every DTMenuHandler-hosting tool (Grammar, Notebook, Lists,
 	/// Words), not just the Lexicon.
 	/// </summary>
@@ -23,7 +23,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Materializes the merged context menu for the given menu ids (the same merge
 		/// XWindow.ShowContextMenu performs) as a renderable item tree. Empty when nothing
-		/// resolves — callers fall back to the legacy adapter menu.
+		/// resolves -- callers fall back to the legacy adapter menu.
 		/// </summary>
 		public static IReadOnlyList<DetailMenuItem> CreateMenuItems(XWindow window, string[] menuIds)
 			=> CreateMenuItems(window, menuIds, null);
@@ -99,7 +99,7 @@ namespace SIL.FieldWorks.XWorks
 
 		// xCore labels mark the accelerator with a single '_' before the mnemonic character (the
 		// WinForms adapters translate it: label.Replace("_", "&")); Avalonia headers show the text
-		// raw, so strip only that first marker — any later underscore is literal label content
+		// raw, so strip only that first marker -- any later underscore is literal label content
 		// (e.g. a user-defined item name) and must survive.
 		public static string StripAccelerator(string text)
 		{

@@ -21,7 +21,7 @@ namespace FwAvaloniaDialogs
 		NotSet,
 		/// <summary>Stem (legacy kStem): Main POS only, label "Category".</summary>
 		Stem,
-		/// <summary>Root (legacy kRoot): identical layout to <see cref="Stem"/> — Main POS only.</summary>
+		/// <summary>Root (legacy kRoot): identical layout to <see cref="Stem"/> -- Main POS only.</summary>
 		Root,
 		/// <summary>Inflectional affix (legacy kInfl): Affix-Type + Main POS + Slot.</summary>
 		Inflectional,
@@ -32,14 +32,14 @@ namespace FwAvaloniaDialogs
 	}
 
 	/// <summary>
-	/// The lightweight, LCModel-FREE payload <see cref="MSAGroupBox"/> emits — the mirror of the WinForms
+	/// The lightweight, LCModel-FREE payload <see cref="MSAGroupBox"/> emits -- the mirror of the WinForms
 	/// <c>SandboxGenericMSA</c> (MsaType + MainPOS + SecondaryPOS + Slot), but carrying opaque id STRINGS
 	/// instead of LCModel <c>IPartOfSpeech</c>/<c>IMoInflAffixSlot</c> objects. The launcher maps this back to a
 	/// real MSA (find-or-create) by resolving the ids through the project cache. Like the WinForms property,
 	/// only the fields RELEVANT to the current <see cref="MsaType"/> are populated:
-	///   * Stem / Root / Unclassified → <see cref="MainPosId"/> only.
-	///   * Inflectional → <see cref="MainPosId"/> + <see cref="SlotId"/> (slot only when valid for the POS).
-	///   * Derivational → <see cref="MainPosId"/> + <see cref="SecondaryPosId"/>.
+	///   * Stem / Root / Unclassified -> <see cref="MainPosId"/> only.
+	///   * Inflectional -> <see cref="MainPosId"/> + <see cref="SlotId"/> (slot only when valid for the POS).
+	///   * Derivational -> <see cref="MainPosId"/> + <see cref="SecondaryPosId"/>.
 	/// </summary>
 	public sealed class FwSandboxMsa
 	{
@@ -64,16 +64,16 @@ namespace FwAvaloniaDialogs
 		/// <summary>Opaque id of the main part of speech, or null when "not specified" (the &lt;Any&gt; row).</summary>
 		public string MainPosId { get; }
 
-		/// <summary>Opaque id of the secondary ("changes to") POS — only for <see cref="FwMsaType.Derivational"/>.</summary>
+		/// <summary>Opaque id of the secondary ("changes to") POS -- only for <see cref="FwMsaType.Derivational"/>.</summary>
 		public string SecondaryPosId { get; }
 
-		/// <summary>Opaque id of the inflectional-affix slot — only for <see cref="FwMsaType.Inflectional"/>.</summary>
+		/// <summary>Opaque id of the inflectional-affix slot -- only for <see cref="FwMsaType.Inflectional"/>.</summary>
 		public string SlotId { get; }
 
 		/// <summary>
-		/// Opaque id of the inflection class (→ <c>IMoStemMsa.InflectionClassRA</c> /
+		/// Opaque id of the inflection class (-> <c>IMoStemMsa.InflectionClassRA</c> /
 		/// <c>IMoDerivStepMsa.InflectionClassRA</c>), or null for "&lt;None&gt;". Review: legacy
-		/// <c>InsertEntryDlg</c> has NO inflection-class picker — the property is written only by
+		/// <c>InsertEntryDlg</c> has NO inflection-class picker -- the property is written only by
 		/// <c>SetMsa</c> (the interlinear seed, cleared when POS changes) and read back by
 		/// <c>SetEntryMsa</c>, so this picker is an ADDITION whose legacy analog is the detail
 		/// slice / bulk editor. Derivational from/to classes are not carried; legacy ignores them here too.
@@ -81,7 +81,7 @@ namespace FwAvaloniaDialogs
 		public string InflectionClassId { get; }
 
 		/// <summary>
-		/// The chosen inflection-feature assignments — the LCModel-free flat
+		/// The chosen inflection-feature assignments -- the LCModel-free flat
 		/// <c>(closedFeatureId, valueId)</c> set the hosted <see cref="FwFeatureStructureEditor"/> emitted, carried only
 		/// for the INFLECTIONAL / DERIVATIONAL MSA (<c>IMoInflAffMsa.InflFeatsOA</c> /
 		/// <c>IMoDerivAffMsa.FromMsFeaturesOA</c>). Empty when no feature was chosen
@@ -90,14 +90,14 @@ namespace FwAvaloniaDialogs
 		/// find-or-create. Review: stem/root MSAs (<c>IMoStemMsa.MsFeaturesOA</c>) and the derivational TO features
 		/// are not carried. Legacy <c>InsertEntryDlg</c> does carry stem/deriv-step <c>MsFeaturesOA</c> through on
 		/// entry creation, but only when seeded from <c>SandboxBase.ComboHandlers.cs:2133</c> (the interlinear
-		/// novel-root-guess path), which is not yet gated to Avalonia — so the omission is unreachable today and
+		/// novel-root-guess path), which is not yet gated to Avalonia -- so the omission is unreachable today and
 		/// becomes a live regression when <c>CreateNewEntry</c> there gets its Avalonia branch. Never null.
 		/// </summary>
 		public IReadOnlyList<FwFeatureValueAssignment> InflectionFeatures { get; }
 	}
 
 	/// <summary>
-	/// Which POS chooser inside <see cref="MSAGroupBox"/> raised a "Create a new Part of Speech..." request — the
+	/// Which POS chooser inside <see cref="MSAGroupBox"/> raised a "Create a new Part of Speech..." request -- the
 	/// MAIN POS chooser (the "Category"/"Attaches to Category" field, present for every MsaType) or the SECONDARY
 	/// POS chooser (the derivational "Changes to Category" field). The host uses it to route the created node back to
 	/// the right chooser via <c>AcceptCreatedMainPos</c> / <c>AcceptCreatedSecondaryPos</c>. The merged create event
@@ -136,7 +136,7 @@ namespace FwAvaloniaDialogs
 	/// A lightweight, LCModel-FREE inflection-class option fed to <see cref="MSAGroupBox"/>'s inflection-class
 	/// picker (the mirror of an <c>IMoInflClass</c> in the selected main POS's <c>InflectionClassesOC</c>, including
 	/// nested <c>SubclassesOC</c>). The host builds these from the currently-selected main POS and re-feeds
-	/// them when the main POS changes — exactly how the slot list follows the POS. <see cref="Id"/> is round-tripped
+	/// them when the main POS changes -- exactly how the slot list follows the POS. <see cref="Id"/> is round-tripped
 	/// verbatim; <see cref="Depth"/> carries the nesting level so the picker can indent subclasses like the WinForms
 	/// <c>InflectionClassPopupTreeManager</c> tree.
 	/// </summary>

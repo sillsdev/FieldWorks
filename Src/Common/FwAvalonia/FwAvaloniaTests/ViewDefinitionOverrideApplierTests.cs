@@ -83,7 +83,7 @@ namespace FwAvaloniaTests
 		public void Apply_DuplicateNode_SourceWithChildren_ReportsDiagnostic_AndDoesNotInsert()
 		{
 			var shipped = Model(GroupNode("g", "Group", FieldNode("g/a", "A")));
-			// Try to duplicate the group 'g' (which has a child) under the root — not yet supported.
+			// Try to duplicate the group 'g' (which has a child) under the root -- not yet supported.
 			var patch = new ViewDefinitionOverride("LexEntry", "detail", "jtview",
 				new[]
 				{
@@ -117,7 +117,7 @@ namespace FwAvaloniaTests
 		{
 			var shipped = Model(GroupNode("g", "Group",
 				FieldNode("g/a", "A"), FieldNode("g/b", "B"), FieldNode("g/c", "C")));
-			// Customer: relabel + hide one + change visibility — all representable, all fully captured.
+			// Customer: relabel + hide one + change visibility -- all representable, all fully captured.
 			var customized = Model(GroupNode("g", "Group",
 				FieldNode("g/a", "Headword", ViewVisibility.Never), FieldNode("g/c", "C")));
 

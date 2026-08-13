@@ -91,7 +91,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		protected bool m_widthHasBeenSetByDataTree = false;
 		protected IPersistenceProvider m_persistenceProvider;
 
-		// Cached XML configuration attributes — parsed once from ConfigurationNode on first access.
+		// Cached XML configuration attributes -- parsed once from ConfigurationNode on first access.
 		// Invalidated when ConfigurationNode is re-set (rare).
 		private bool? m_cachedIsHeader;
 		private bool? m_cachedSkipSpacerLine;

@@ -18,7 +18,7 @@ using AvControl = Avalonia.Controls.Control;
 namespace SIL.FieldWorks.LexText.Controls
 {
 	/// <summary>
-	/// Which feature system a create-feature flow targets — the inflection (morphosyntactic) feature system
+	/// Which feature system a create-feature flow targets -- the inflection (morphosyntactic) feature system
 	/// (<c>MsFeatureSystemOA</c>) or the phonological feature system (<c>PhFeatureSystemOA</c>). The two differ in
 	/// where the new feature is added and what default values it gets (see <see cref="LcmCreateFeatureLauncher"/>).
 	/// </summary>
@@ -32,27 +32,27 @@ namespace SIL.FieldWorks.LexText.Controls
 	}
 
 	/// <summary>
-	/// The LCModel-aware launcher for the "Create a new feature" / "Add a value to a feature" flows — the New-UI
+	/// The LCModel-aware launcher for the "Create a new feature" / "Add a value to a feature" flows -- the New-UI
 	/// replacement for the WinForms <c>MasterInflectionFeatureListDlg</c> /
 	/// <c>MasterPhonologicalFeatureListDlg</c> BLANK-CREATE affordance (the "create a brand-new feature" link) and the
 	/// feature-system add-value flow. It is the feature-structure analogue of
 	/// <see cref="LcmCreatePartOfSpeechLauncher"/>: it opens a small Avalonia name-entry dialog
 	/// (<see cref="CreateFeatureDialogViewModel"/>), and on OK creates the feature/value in the feature system in ONE
 	/// undoable step, returning a fresh LCModel-free <see cref="FwFeatureNode"/> (+ value children) the editor adds +
-	/// selects. The created model object never crosses the Avalonia seam — only the node does.
+	/// selects. The created model object never crosses the Avalonia seam -- only the node does.
 	///
 	/// Create logic mirrors the WinForms blank-create verbatim:
 	///   * Inflection feature: create an <c>IFsClosedFeature</c>, add it to <c>MsFeatureSystemOA.FeaturesOC</c>,
 	///     ensure an "Infl" <c>IFsFeatStrucType</c> exists (labelled across the analysis writing systems), and add the
-	///     feature to that type's <c>FeaturesRS</c> — exactly <c>MasterInflectionFeatureListDlg.linkLabel1_LinkClicked</c>.
+	///     feature to that type's <c>FeaturesRS</c> -- exactly <c>MasterInflectionFeatureListDlg.linkLabel1_LinkClicked</c>.
 	///   * Phonological feature: create an <c>IFsClosedFeature</c>, add it to <c>PhFeatureSystemOA.FeaturesOC</c>, and
 	///     create the two default symbolic values <c>SimpleInit("+","positive")</c> / <c>SimpleInit("-","negative")</c>
-	///     — exactly <c>MasterPhonologicalFeatureListDlg.linkLabel1_LinkClicked</c>.
+	///     -- exactly <c>MasterPhonologicalFeatureListDlg.linkLabel1_LinkClicked</c>.
 	///   * Add value: create an <c>IFsSymFeatVal</c> under the closed feature's <c>ValuesOC</c>, named from the dialog.
 	///
 	/// Layering mirrors <see cref="LcmCreatePartOfSpeechLauncher"/>: the create cores
 	/// (<see cref="CreateClosedFeature"/> / <see cref="CreateValue"/>) are internal static so the
-	/// name → new-feature/value + node round-trip is unit-testable against a real cache (via InternalsVisibleTo)
+	/// name -> new-feature/value + node round-trip is unit-testable against a real cache (via InternalsVisibleTo)
 	/// without running the modal.
 	/// </summary>
 	public sealed class LcmCreateFeatureLauncher

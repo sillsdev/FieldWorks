@@ -99,8 +99,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// DoNotRefresh window. Callers (like SwapValues) must explicitly set
 		/// RefreshListNeeded=true before releasing DoNotRefresh.
 		///
-		/// RED phase:  comment out RefreshListNeeded=true → test FAILS (stale slices).
-		/// GREEN phase: RefreshListNeeded=true present → test PASSES.
+		/// Without that RefreshListNeeded=true call, the bibliography slice
+		/// stays stale after the DoNotRefresh window closes.
 		/// </summary>
 		[Test]
 		public void DoNotRefresh_SlicesMustReflectChanges_AfterRelease_LT22414()
@@ -128,7 +128,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 			m_dtree.DoNotRefresh = false;
 
-			// Assert: after refresh, bibliography slice should be gone (no data → ifdata hides it)
+			// Assert: after refresh, bibliography slice should be gone (no data -> ifdata hides it)
 			Assert.That(m_dtree.Controls.Count, Is.EqualTo(1),
 				"LT-22414: After DoNotRefresh=false, slices should reflect data changes. " +
 				"Bibliography has no data so ifdata should hide it. " +
@@ -158,7 +158,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			// Intentionally NOT setting RefreshListNeeded (simulates buggy SwapValues)
 			m_dtree.DoNotRefresh = false;
 
-			// Assert: slices are STALE — bibliography still visible despite no data
+			// Assert: slices are STALE -- bibliography still visible despite no data
 			Assert.That(m_dtree.Controls.Count, Is.EqualTo(2),
 				"Without RefreshListNeeded, DoNotRefresh=false does not trigger refresh; " +
 				"slices remain stale (bibliography still visible despite no data).");

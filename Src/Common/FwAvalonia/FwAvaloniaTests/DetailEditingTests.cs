@@ -50,7 +50,7 @@ namespace FwAvaloniaTests
 		public int CancelCount;
 
 		/// <summary>The text edits actually CAPTURED by a Commit (those staged since the last commit/cancel
-		/// boundary) — models "commit captures staged, cancel discards" so tests can assert WHICH value was
+		/// boundary) -- models "commit captures staged, cancel discards" so tests can assert WHICH value was
 		/// committed, not merely that a commit happened.</summary>
 		public readonly List<(string Field, string Ws, string Value)> CommittedTextEdits
 			= new List<(string, string, string)>();
@@ -123,7 +123,7 @@ namespace FwAvaloniaTests
 
 		public void Commit()
 		{
-			// Capture everything staged since the last boundary — that is what this commit "writes".
+			// Capture everything staged since the last boundary -- that is what this commit "writes".
 			for (var i = _stagedBoundary; i < TextEdits.Count; i++)
 				CommittedTextEdits.Add(TextEdits[i]);
 			_stagedBoundary = TextEdits.Count;
@@ -132,15 +132,15 @@ namespace FwAvaloniaTests
 
 		public void Cancel()
 		{
-			// Discard everything staged since the last boundary — a cancelled session writes nothing.
+			// Discard everything staged since the last boundary -- a cancelled session writes nothing.
 			_stagedBoundary = TextEdits.Count;
 			CancelCount++;
 		}
 	}
 
 	/// <summary>
-	/// The detail view drives editing through the edit-context seam — staging on
-	/// text/option change, validation-gated Save, Cancel rollback — with stable automation ids.
+	/// The detail view drives editing through the edit-context seam -- staging on
+	/// text/option change, validation-gated Save, Cancel rollback -- with stable automation ids.
 	/// </summary>
 	[TestFixture]
 	public class DetailEditingViewTests
@@ -284,7 +284,7 @@ namespace FwAvaloniaTests
 
 		// DATA-SAFETY: a value flagged lossy (a run carries a
 		// TsString property the model does not round-trip) renders a READ-ONLY editor with the
-		// not-editable-here tooltip, even though an edit context is supplied — so a keystroke can
+		// not-editable-here tooltip, even though an edit context is supplied -- so a keystroke can
 		// never silently drop the property. The matching model/composer assertions live in xWorks's
 		// DetailEditContextEditingTests.Compose_RunWithUnsupportedProperty_ComposesReadOnly_*.
 		[AvaloniaTest]
@@ -318,7 +318,7 @@ namespace FwAvaloniaTests
 
 			var flyout = box.ContextFlyout as MenuFlyout;
 			// The menu also carries the rich-text operations (Link / delete embedded object),
-			// so Copy is not the sole item — pick it out by header.
+			// so Copy is not the sole item -- pick it out by header.
 			var copyItem = flyout?.Items.OfType<MenuItem>()
 				.FirstOrDefault(i => (string)i.Header == FwAvaloniaStrings.Copy);
 			Assert.That(copyItem, Is.Not.Null);
@@ -513,17 +513,16 @@ namespace FwAvaloniaTests
 				"tag-less rows keep the abbreviation alias");
 
 			// The per-row automation id (DetailFocusMemory's focus-restore key) must
-			// be unique too, so it uses the same tag-preferred key as edits — abbreviations collide.
+			// be unique too, so it uses the same tag-preferred key as edits -- abbreviations collide.
 			Assert.That(AutomationProperties.GetAutomationId(boxes[0]), Is.EqualTo("TagField.qaa-x-one"),
 				"a tagged row's automation id keys on the unique IETF tag, not the collidable abbreviation");
 			Assert.That(AutomationProperties.GetAutomationId(boxes[1]), Is.EqualTo("TagField.du"),
 				"tag-less rows keep the abbreviation-suffixed id");
 		}
 
-		// Voice/sound writing systems: a voice/audio alternative renders as READ-ONLY text (the audio
-		// filename) with no in-pane player. There are no play/record
-		// affordances, so the recording can never be corrupted by an edit — full audio editing stays
-		// in the classic view.
+		// Voice/sound writing systems: a voice/audio alternative renders as READ-ONLY
+		// text with no in-pane player, so recording can never be corrupted by an edit
+		// -- full audio editing stays in the classic view.
 		[AvaloniaTest]
 		public void AudioValue_RendersReadOnlyText_WithNoPlayerAndNoStagedEdit()
 		{
@@ -708,7 +707,7 @@ namespace FwAvaloniaTests
 		}
 
 		// Bug "removing Publish In items not working": a successful remove stage completes the
-		// gesture — the callback (which the view wires to its commit/re-show) fires exactly once.
+		// gesture -- the callback (which the view wires to its commit/re-show) fires exactly once.
 		[AvaloniaTest]
 		public void ReferenceRemove_Success_StagesAndFiresTheGestureCallbackOnce()
 		{
@@ -1282,7 +1281,7 @@ namespace FwAvaloniaTests
 	/// <summary>
 	/// GEAR = CONFIGURE: a chooser or reference-vector row whose supporting list
 	/// resolved a list-editor target (a goto <see cref="DetailChooserLink"/>) draws the gear, and
-	/// clicking it DIRECTLY raises the host's <see cref="DetailLinkRequest"/> — no flyout, no
+	/// clicking it DIRECTLY raises the host's <see cref="DetailLinkRequest"/> -- no flyout, no
 	/// context menu. Option flyouts (single-select chooser click, vector "+") are OPTIONS ONLY:
 	/// they contain zero link items. Rows without a resolvable list editor draw no gear; text
 	/// rows NEVER draw one (the Lexeme Form slice menu is right-click only).
@@ -1400,7 +1399,7 @@ namespace FwAvaloniaTests
 				new FakeDetailEditContext());
 			Assert.That(noCallback.HoverAffordances, Is.Empty, "no host bridge, no gear");
 
-			// A vector without links: bars + "+" only — no Settings button at all.
+			// A vector without links: bars + "+" only -- no Settings button at all.
 			var vectorField = new DetailField("LexEntry/x/#1", "Publish Entry In",
 				"PublishIn", null, DetailFieldKind.ReferenceVector, EditorClassification.Known,
 				"PlainVector", null, HostRouting.Inherit, null,
@@ -1414,8 +1413,8 @@ namespace FwAvaloniaTests
 		}
 
 		// Gears never open context menus: the Lexeme Form text row draws NO gear; its
-		// slice menu (menu="mnuDataTree-LexemeForm") stays on right-click only — the label path in
-		// the detail view (DetailMenuTests) and the in-string path below are unchanged.
+		// slice menu (menu="mnuDataTree-LexemeForm") stays on right-click only -- the
+		// label and in-string paths below are unchanged.
 		[AvaloniaTest]
 		public void TextRows_NeverDrawAGear_TheSliceMenuStaysOnRightClickOnly()
 		{

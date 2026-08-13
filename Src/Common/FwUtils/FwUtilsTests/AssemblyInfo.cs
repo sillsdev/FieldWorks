@@ -14,6 +14,6 @@ using System.Runtime.CompilerServices;
 // [assembly: AssemblyTitle("Unit tests for FwUtils")] // Sanitized by convert_generate_assembly_info
 // [assembly: AssemblyCompany("SIL")] // Sanitized by convert_generate_assembly_info
 // [assembly: AssemblyProduct("SIL FieldWorks")] // Sanitized by convert_generate_assembly_info
-// [assembly: AssemblyCopyright("© 2003, SIL International")] // Sanitized by convert_generate_assembly_info
+// [assembly: AssemblyCopyright("(c) 2003, SIL International")] // Sanitized by convert_generate_assembly_info
 
 // [assembly: System.Runtime.InteropServices.ComVisible(false)] // Sanitized by convert_generate_assembly_info

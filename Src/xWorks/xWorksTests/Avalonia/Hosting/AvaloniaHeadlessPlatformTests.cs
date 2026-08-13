@@ -17,13 +17,13 @@ namespace SIL.FieldWorks.XWorks
 	/// <see cref="FwAvaloniaRuntime.AppBuilderOverride"/> to a HEADLESS builder before any test runs, and
 	/// the product hosts (RecordEditView/RecordBrowseView) funnel through
 	/// <see cref="FwAvaloniaRuntime.EnsureInitialized"/>. So after initialization the active Avalonia
-	/// windowing platform must be the headless implementation, not the real Win32 one — any window,
+	/// windowing platform must be the headless implementation, not the real Win32 one -- any window,
 	/// flyout, or popup the product code raises is therefore off-screen. We can't visually confirm "no
 	/// flash"; this type assertion is the evidence.
 	///
 	/// <c>IWindowingPlatform</c> and <c>AvaloniaLocator.Current</c> are internal in Avalonia 11.3, so the
 	/// active platform is resolved through reflection rather than the (compile-time-inaccessible) locator
-	/// API — the assertion is on the resolved implementation's assembly, which is the load-bearing fact.
+	/// API -- the assertion is on the resolved implementation's assembly, which is the load-bearing fact.
 	/// </summary>
 	[TestFixture]
 	public class AvaloniaHeadlessPlatformTests

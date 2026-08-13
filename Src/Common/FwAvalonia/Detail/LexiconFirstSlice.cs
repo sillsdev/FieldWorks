@@ -20,7 +20,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 	/// - gloss: the <c>LexSense-Detail-GlossAllA</c> part slice (<c>Gloss</c>, multistring) compiled
 	///   from the real parts inventory through a one-line caller layout. The shipped
 	///   <c>LexSense/Normal</c> layout reaches Gloss only through its <c>HeavySummary</c> part ref,
-	///   which has no part definition in the shipped inventory — legacy <c>DataTree</c> walks the class
+	///   which has no part definition in the shipped inventory -- legacy <c>DataTree</c> walks the class
 	///   hierarchy and then silently omits it (DataTree.ProcessPartRefNode), so the part inventory, not
 	///   that layout, is the live source for the gloss slice's semantics.
 	/// Stable ids therefore derive from the real layout/part paths. Product metadata (automation ids,
@@ -35,7 +35,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		private const string GlossCallerLayout =
 			"<layout class='LexSense' type='detail' name='FirstSliceGloss'><part ref='GlossAllA'/></layout>";
 
-		/// <summary>Subclass → base class chain for part-ref resolution, mirroring the LCModel hierarchy.</summary>
+		/// <summary>Subclass -> base class chain for part-ref resolution, mirroring the LCModel hierarchy.</summary>
 		private static readonly Dictionary<string, string> MoFormBaseClassMap = new Dictionary<string, string>(StringComparer.Ordinal)
 		{
 			{ "MoStemAllomorph", "MoForm" },

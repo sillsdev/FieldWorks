@@ -17,7 +17,7 @@ namespace FwAvaloniaTests
 {
 	/// <summary>
 	/// advanced-entry-view (view layer): the per-field gear-menu commands work by changing the composed
-	/// model the detail view renders — hiding a Never row, showing a non-empty IfData row, and reordering
+	/// model the detail view renders -- hiding a Never row, showing a non-empty IfData row, and reordering
 	/// siblings. These headless tests prove the <see cref="DataTree"/> renders EXACTLY the
 	/// rows the (patched) model carries, in model order. The composer's filtering/reorder semantics are
 	/// covered in xWorksTests; here we prove the visible detail view follows the model so the round trip is
@@ -76,9 +76,9 @@ namespace FwAvaloniaTests
 				"rows render in model order, so a reordered model reorders the view");
 		}
 
-		// The applier (Layer 2 → Layer 3) is what the composer runs at CompileForObject: prove the
-		// patched IR the view is built from carries the visibility/order the menu wrote, end to end
-		// from the override operations to the model the composer would walk.
+		// The applier (Layer 2 -> Layer 3) is what the composer runs at CompileForObject:
+		// prove the patched IR the view is built from carries the visibility/order
+		// the menu wrote, end to end.
 		[Test]
 		public void Applier_AppliesVisibilityAndReorder_ToTheCompiledIR()
 		{

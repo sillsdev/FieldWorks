@@ -15,7 +15,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 {
 	/// <summary>
 	/// The small bundle of (all-nullable) collaborators a <see cref="DetailFieldKind"/> editor needs,
-	/// passed to <see cref="SliceFactory.Build"/> so the SAME field→control dispatch serves
+	/// passed to <see cref="SliceFactory.Build"/> so the SAME field->control dispatch serves
 	/// every host (today the detail-pane detail view, <c>DataTree.CreateEditor</c>;
 	/// any future in-cell editor passes only the collaborators it has). Every member is optional: a null
 	/// edit context yields read-only display; a null callback simply disables that affordance.
@@ -41,19 +41,19 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			ShowWritingSystemAbbreviation = showWritingSystemAbbreviation;
 		}
 
-		/// <summary>The shared edit-session/staging context; null → read-only display.</summary>
+		/// <summary>The shared edit-session/staging context; null -> read-only display.</summary>
 		public IDetailEditContext EditContext { get; }
 
-		/// <summary>Per-WS keyboard activation callback for text fields (null → no keyboard switch).</summary>
+		/// <summary>Per-WS keyboard activation callback for text fields (null -> no keyboard switch).</summary>
 		public Action<string> WritingSystemFocused { get; }
 
 		/// <summary>Right-click slice/section menu callback (null on hosts without a slice menu).</summary>
 		public Action<DetailMenuRequest> MenuRequested { get; }
 
-		/// <summary>Hyperlink follow callback for choosers/vectors (null → no link affordance).</summary>
+		/// <summary>Hyperlink follow callback for choosers/vectors (null -> no link affordance).</summary>
 		public Action<DetailLinkRequest> LinkRequested { get; }
 
-		/// <summary>Clipboard seam for text fields (null → framework default).</summary>
+		/// <summary>Clipboard seam for text fields (null -> framework default).</summary>
 		public IFwClipboard Clipboard { get; }
 
 		/// <summary>
@@ -71,11 +71,11 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 	}
 
 	/// <summary>
-	/// The single <see cref="DetailFieldKind"/>→Avalonia-control dispatch. The detail
+	/// The single <see cref="DetailFieldKind"/>->Avalonia-control dispatch. The detail
 	/// pane (<c>DataTree.CreateEditor</c>, all 7 kinds) and the browse in-cell editor
 	/// (<c>EditableCellHost.Activate</c>, a 2-kind Chooser/Text subset) both route here rather than
 	/// hand-rolling their own dispatch, so adding a kind (or changing how a kind is built) happens once.
-	/// The factory is pure (static) — all per-host variation arrives through the
+	/// The factory is pure (static) -- all per-host variation arrives through the
 	/// <see cref="SliceFactoryContext"/>.
 	/// </summary>
 	public static class SliceFactory
@@ -92,7 +92,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 					return CreateCustom(field, automationId);
 				case DetailFieldKind.ReferenceVector:
 					// Reference add/remove gestures commit immediately (legacy chooser-dialog behavior): the
-					// staged session would otherwise sit open — LCModel broadcasts PropChanged only at
+					// staged session would otherwise sit open -- LCModel broadcasts PropChanged only at
 					// EndUndoTask and the row's Items are a compose-time snapshot, so the user would see no
 					// change. The gesture-completed callback runs the SAME validation-gated save the
 					// focus-loss autosave uses, whose re-show rebuilds the row from domain truth. A host
@@ -139,10 +139,10 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			return block;
 		}
 
-		// A plugin-claimed custom slice renders its plugin's own Avalonia
-		// control in the value column, at the slice's real position. Null guard: a missing, null-returning,
-		// or throwing factory degrades to the explicit unsupported row — never a crash, never a silently
-		// blank row.
+		// A plugin-claimed slice renders its plugin's Avalonia control in
+		// the value column. A missing, null-returning, or throwing factory
+		// degrades to the unsupported row -- never a crash, never silently
+		// blank.
 		private static Control CreateCustom(DetailField field, string automationId)
 		{
 			if (field.ControlFactory == null)

@@ -66,7 +66,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
-		/// Builds the dual-format OS data object for a payload — the same entries legacy
+		/// Builds the dual-format OS data object for a payload -- the same entries legacy
 		/// <c>EditingHelper.SetTsStringOnClipboard</c> writes, so legacy views consume the rich
 		/// format exactly as if another native-Views view had produced it. The clipboard and
 		/// drag-and-drop payloads are identical.

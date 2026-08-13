@@ -17,7 +17,7 @@ namespace FwAvaloniaDialogs
 	/// <c>EntryGoDlg</c>/<c>BaseGoDlg</c> family. Hosted as Avalonia content inside a WinForms-owned modal Form
 	/// during coexistence via <c>AvaloniaDialogHost.ShowModal</c>.
 	///
-	/// Selection and search are MVVM; the code-behind only bridges to the view-model — building the column
+	/// Selection and search are MVVM; the code-behind only bridges to the view-model -- building the column
 	/// header/row cells from the column spec, translating double-click / Enter / arrow-key gestures into VM calls,
 	/// pruning the opt-in OK button and description pane from the tree when a consumer doesn't use them, and
 	/// applying the opt-in <see cref="EntryGoSearchFieldSpec"/> (font, flow direction, keyboard-switch callback)
@@ -41,9 +41,9 @@ namespace FwAvaloniaDialogs
 				// The opt-in spec's focus callback: the launcher activates the writing system's keyboard here
 				// (the legacy vernacular FwTextBox switched keyboards on focus). Null spec/callback means no-op.
 				searchBox.GotFocus += OnSearchBoxGotFocus;
-				// Up/Down move the matching-list selection without leaving the box; Enter commits (see handler).
-				// Bubble + handledEventsToo so the handler still runs when the TextBox marks a navigation key
-				// handled — the same routing the owned keyboard-nav controls use (FwPosChooser, FwOptionChooser).
+				// Up/Down move the match-list selection without leaving the box; Enter
+				// commits. Bubble + handledEventsToo so the handler runs when TextBox
+				// marks a key handled, like FwPosChooser/FwOptionChooser do.
 				searchBox.AddHandler(KeyDownEvent, OnSearchBoxKeyDown,
 					Avalonia.Interactivity.RoutingStrategies.Bubble, handledEventsToo: true);
 			}
@@ -74,7 +74,7 @@ namespace FwAvaloniaDialogs
 		}
 
 		// Applies the opt-in search-field spec to the realized search box: the writing system's font family/size and
-		// right-to-left flow (the same value-application rules the detail view uses for its per-ws rows — empty
+		// right-to-left flow (the same value-application rules the detail view uses for its per-ws rows -- empty
 		// family / zero size keep the shared defaults). The keyboard-switch callback fires from OnSearchBoxGotFocus.
 		private void OnDataContextChangedApplySearchFieldSpec(object sender, System.EventArgs e)
 		{

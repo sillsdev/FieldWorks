@@ -16,7 +16,7 @@ namespace SIL.FieldWorks.XWorks
 	/// <summary>
 	/// Hardening of the fenced edit session against the rest of the app:
 	/// (1) global Undo/Redo while a session is open would throw LockRecursionException
-	/// (UndoStack.Undo re-enters the non-recursive UOW write lock the open task already holds) —
+	/// (UndoStack.Undo re-enters the non-recursive UOW write lock the open task already holds) --
 	/// the holder's undo guard settles the session and converts the gesture into "close the
 	/// pending edit"; (2) Settle is the one auto-save policy (commit when valid, cancel when not)
 	/// shared by every host path (navigation, go-away, undo, dispose); (3) the refresh controller
@@ -232,9 +232,9 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		// Review round 2: a rebuild can itself raise PropChanged (a settle-commit inside it). Those
-		// changes are already covered — the recompose reads current domain state — so they must
-		// coalesce into the running delivery, not queue a second identical recompose.
+		// Review round 2: a rebuild can raise PropChanged (settle-commit inside);
+		// already covered since recompose reads current domain state -- so it
+		// must coalesce into the running delivery, not re-queue.
 		[Test]
 		public void RefreshController_ChangeRaisedDuringTheRebuild_CoalescesIntoIt()
 		{
@@ -348,7 +348,7 @@ namespace SIL.FieldWorks.XWorks
 					"the host discards the held delivery when it is about to re-show anyway");
 
 				// The completion pair the host actually runs (OnAvaloniaDetailEditCompleted):
-				// discard + ONE explicit request — one recompose, not the held one plus its own.
+				// discard + ONE explicit request -- one recompose, not the held one plus its own.
 				controller.RequestRefresh();
 				Assert.That(refreshes, Is.EqualTo(1),
 					"after the discard exactly the one requested re-show runs (nothing was left pending)");
@@ -359,7 +359,7 @@ namespace SIL.FieldWorks.XWorks
 		// relevant notification delivers the refresh that was held during the edit (the host's
 		// explicit completion path is the DiscardHeldRefresh + RequestRefresh pair, above).
 		// A UOW raises one PropChanged per changed property, so the single-delivery guarantee
-		// stands on the coalescing scheduler the production host supplies — model it here with a
+		// stands on the coalescing scheduler the production host supplies -- model it here with a
 		// queue that runs after the notification burst, exactly like the host's BeginInvoke.
 		[Test]
 		public void RefreshController_HeldRefresh_DeliversOnTheNextNotificationAfterEditingEnds()

@@ -5,9 +5,9 @@
 namespace FwAvaloniaDialogs
 {
 	/// <summary>
-	/// The LCModel-free snapshot the "Create New Grammatical Info." view-model writes on OK — the chosen grammatical
+	/// The LCModel-free snapshot the "Create New Grammatical Info." view-model writes on OK -- the chosen grammatical
 	/// info (the <see cref="FwSandboxMsa"/> the hosted <see cref="MSAGroupBox"/> emitted). The LCModel-aware
-	/// launcher reads this back to find-or-create (or update) the matching MSA — the lift of <c>MsaCreatorDlg</c>'s
+	/// launcher reads this back to find-or-create (or update) the matching MSA -- the lift of <c>MsaCreatorDlg</c>'s
 	/// <c>SandboxMSA</c> property + its consumers (<c>m_sense.SandboxMSA = dlg.SandboxMSA</c> /
 	/// <c>originalMsa.UpdateOrReplace(dlg.SandboxMSA)</c>).
 	/// </summary>
@@ -19,7 +19,7 @@ namespace FwAvaloniaDialogs
 		}
 
 		/// <summary>
-		/// The chosen grammatical info (MSA) — the LCModel-free <see cref="FwSandboxMsa"/> (MsaType + main/secondary
+		/// The chosen grammatical info (MSA) -- the LCModel-free <see cref="FwSandboxMsa"/> (MsaType + main/secondary
 		/// POS ids + slot id). The launcher resolves the ids back to LCModel objects and builds a real
 		/// <c>SandboxGenericMSA</c> to find-or-create / update the MSA. Null when the box was unconfigured.
 		/// </summary>

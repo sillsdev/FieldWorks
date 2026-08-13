@@ -381,7 +381,7 @@ namespace FwAvaloniaTests
 	/// <summary>
 	/// Pure: <see cref="DetailRichTextEditAlgorithms.ApplySpanFormatting"/> splits runs at the
 	/// selection boundaries and sets the chosen attribute only on covered runs, leaving the rest of the
-	/// value's run metadata untouched — across run boundaries, partial runs, grapheme clusters, and the
+	/// value's run metadata untouched -- across run boundaries, partial runs, grapheme clusters, and the
 	/// lossy read-only guard.
 	/// </summary>
 	[TestFixture]
@@ -535,7 +535,7 @@ namespace FwAvaloniaTests
 	[TestFixture]
 	public class DetailSpanNamedStyleTests
 	{
-		// "do" (plain) + "g" (Emphasis) — a run boundary at index 2.
+		// "do" (plain) + "g" (Emphasis) -- a run boundary at index 2.
 		private static DetailRichTextValue TwoRunDog() => DetailRichTextEditAlgorithms.FromRuns("dog", new[]
 		{
 			new DetailTextRun("do", "qaa-x-one"),
@@ -660,7 +660,7 @@ namespace FwAvaloniaTests
 	[TestFixture]
 	public class DetailSpanWritingSystemTests
 	{
-		// "do" (qaa-x-one) + "g" (qaa-x-two) — a run boundary at index 2.
+		// "do" (qaa-x-one) + "g" (qaa-x-two) -- a run boundary at index 2.
 		private static DetailRichTextValue TwoRunDog() => DetailRichTextEditAlgorithms.FromRuns("dog", new[]
 		{
 			new DetailTextRun("do", "qaa-x-one", namedStyle: "Emphasis"),

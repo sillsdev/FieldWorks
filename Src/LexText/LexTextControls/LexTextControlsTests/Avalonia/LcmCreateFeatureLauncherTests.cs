@@ -14,7 +14,7 @@ namespace LexTextControlsTests
 	/// <summary>
 	/// The LCModel-aware side of the create-feature / add-value flow
 	/// (<see cref="LcmCreateFeatureLauncher"/>): creating a closed feature in the inflection / phonological feature
-	/// system and adding a symbolic value to a closed feature, over a real LcmCache (via InternalsVisibleTo) — the
+	/// system and adding a symbolic value to a closed feature, over a real LcmCache (via InternalsVisibleTo) -- the
 	/// unit-testable core that mirrors MasterInflectionFeatureListDlg / MasterPhonologicalFeatureListDlg's blank-create
 	/// + the feature-system add-value flow. The modal loop itself is desktop-only (exercised by the headless
 	/// CreateFeatureDialogTests); here we cover the create cores + the round-trip through the feature system. The base

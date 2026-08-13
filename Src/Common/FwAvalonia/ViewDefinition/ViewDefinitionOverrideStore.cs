@@ -13,7 +13,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 	/// The per-project home of the sparse <see cref="ViewDefinitionOverride"/> patches that drive the
 	/// Avalonia detail view's per-field "Field Visibility"/"Move Field" commands: sparse JSON
 	/// patch documents keyed by StableId, stored as files in the project ConfigurationSettings folder.
-	/// One file per (class, layout); the override layer — not the legacy Inventory store — is what Compose
+	/// One file per (class, layout); the override layer -- not the legacy Inventory store -- is what Compose
 	/// actually reads.
 	///
 	/// Pure FwAvalonia: the caller (the xWorks host) resolves the project ConfigurationSettings folder
@@ -42,7 +42,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 		/// The patch for (<paramref name="className"/>, <paramref name="layoutName"/>), or null when the
 		/// project never customized that layout. Loads from disk on first access and caches; a corrupt or
 		/// version-mismatched file is treated as "no override" (load failure is reported to
-		/// <paramref name="onLoadError"/> rather than crashing compose — the legacy Inventory drops stale
+		/// <paramref name="onLoadError"/> rather than crashing compose -- the legacy Inventory drops stale
 		/// overrides too).
 		/// </summary>
 		public ViewDefinitionOverride TryGet(string className, string layoutName,
@@ -86,7 +86,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 		/// <summary>
 		/// Persists <paramref name="patch"/> for its (ClassName, LayoutName) and refreshes the cache. An
 		/// empty patch deletes the file (the project no longer customizes that layout), so an undo-to-base
-		/// leaves no stale override behind — the same "no file = shipped definition" contract the loader
+		/// leaves no stale override behind -- the same "no file = shipped definition" contract the loader
 		/// relies on.
 		/// </summary>
 		public void Save(ViewDefinitionOverride patch)
@@ -117,7 +117,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 		public string PathFor(string className, string layoutName)
 			=> Path.Combine(_directory, MakeFileName(className, layoutName));
 
-		// "{Class}.{Layout}.viewoverride.json" — sanitized so an exotic layout name can never escape the
+		// "{Class}.{Layout}.viewoverride.json" -- sanitized so an exotic layout name can never escape the
 		// folder or collide with a path separator (layout names are inventory tokens, but be defensive).
 		internal static string MakeFileName(string className, string layoutName)
 		{

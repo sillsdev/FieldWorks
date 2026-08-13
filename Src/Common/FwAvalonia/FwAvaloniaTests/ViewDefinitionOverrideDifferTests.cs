@@ -12,7 +12,7 @@ namespace FwAvaloniaTests
 	/// <summary>
 	/// Diffing a shipped definition against a project-customized copy yields a sparse, stable-id-keyed
 	/// override; non-representable customizations surface as diagnostics, never silent drops. Pure
-	/// logic — no Avalonia runtime.
+	/// logic -- no Avalonia runtime.
 	/// </summary>
 	[TestFixture]
 	public class ViewDefinitionOverrideDifferTests

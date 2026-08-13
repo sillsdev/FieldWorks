@@ -14,7 +14,7 @@ namespace FwAvaloniaDialogs
 	/// against a live LCModel cache, so the dialog view-model stays LCModel-free and can read the staged text
 	/// back on OK. There is no real undo fence: <see cref="Commit"/>/<see cref="Cancel"/> only flip
 	/// <see cref="IsOpen"/> (the launcher does the one real undoable create on OK). Rich-text staging is
-	/// flattened to plain text — the Insert Entry fields are plain lexeme-form / gloss strings, not styled runs.
+	/// flattened to plain text -- the Insert Entry fields are plain lexeme-form / gloss strings, not styled runs.
 	/// Chooser/reference staging is rejected: the morph-type picker is driven by the view-model directly, not
 	/// through this context.
 	/// </summary>

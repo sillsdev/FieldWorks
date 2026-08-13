@@ -30,7 +30,7 @@ namespace SIL.FieldWorks.XWorks
 
 		protected LcmCache Cache { get; }
 
-		/// <summary>The record this context edits — a LexEntry for the lexicon tool, but typed as any
+		/// <summary>The record this context edits -- a LexEntry for the lexicon tool, but typed as any
 		/// <see cref="ICmObject"/>. Derived contexts route writes against it.</summary>
 		protected ICmObject RootObject { get; }
 
@@ -64,7 +64,7 @@ namespace SIL.FieldWorks.XWorks
 		public virtual IReadOnlyList<string> Validate()
 		{
 			// Validation seam (minimal rule set, deterministic order). The lexeme/citation-form rule
-			// applies ONLY when the root is a LexEntry; other record classes (RnGenericRec, CmPossibility, …)
+			// applies ONLY when the root is a LexEntry; other record classes (RnGenericRec, CmPossibility, ...)
 			// have no shared required-field rule here and may override this for their own (e.g. CmPossibility
 			// Name/Abbreviation). A non-entry root therefore validates clean by default rather than NRE-ing on
 			// Entry.LexemeFormOA.
@@ -80,7 +80,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 			else if (RootObject is ICmPossibility poss)
 			{
-				// A list item must keep some Name or Abbreviation text — the
+				// A list item must keep some Name or Abbreviation text -- the
 				// parity of the legacy Lists editor's required-field guard.
 				var name = poss.Name?.BestAnalysisAlternative?.Text;
 				var abbr = poss.Abbreviation?.BestAnalysisAlternative?.Text;
@@ -104,7 +104,7 @@ namespace SIL.FieldWorks.XWorks
 
 		/// <summary>
 		/// Opens the fenced session on the first staged edit; later calls are no-ops. The generic
-		/// "Undo/Redo Edit Entry" label is used — the batch/bulk path that stages several fields with no
+		/// "Undo/Redo Edit Entry" label is used -- the batch/bulk path that stages several fields with no
 		/// single field to name. Single-field edits go through <see cref="EnsureOpen(string)"/> so the
 		/// undo label names the field, mirroring the legacy per-slice "Undo change to {field}" labels.
 		/// </summary>
@@ -149,8 +149,8 @@ namespace SIL.FieldWorks.XWorks
 
 		/// <summary>
 		/// Stages an arbitrary domain write inside THIS context's fenced session (opening it on the first
-		/// edit), so a write routed from outside the registered setter dictionaries — e.g. a plugin
-		/// editor's own field (the Reversal Entries plugin) — still rides the SAME undoable step as every
+		/// edit), so a write routed from outside the registered setter dictionaries -- e.g. a plugin
+		/// editor's own field (the Reversal Entries plugin) -- still rides the SAME undoable step as every
 		/// other row in the detail view. A rejected write that opened the session here closes it again so an
 		/// empty fence never strands the UOW write lock. A throwing setter rolls back a session this call
 		/// opened, then rethrows.

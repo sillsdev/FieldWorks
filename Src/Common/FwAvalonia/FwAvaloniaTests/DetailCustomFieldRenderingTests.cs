@@ -21,7 +21,7 @@ namespace FwAvaloniaTests
 	/// A <see cref="DetailFieldKind.Custom"/> row
 	/// renders its plugin control factory's Avalonia control in-tree in the value column, at the
 	/// slice's real position. The path is guarded: a missing, null-returning, or throwing factory
-	/// degrades to the explicit unsupported row — never a crash, never a silently blank row.
+	/// degrades to the explicit unsupported row -- never a crash, never a silently blank row.
 	/// </summary>
 	[TestFixture]
 	public class DetailCustomFieldRenderingTests

@@ -13,16 +13,16 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 	/// Crash guard for hosting Avalonia inside WinForms. Avalonia's MicroCom COM proxies
 	/// capture the ambient <see cref="SynchronizationContext"/> at creation
 	/// (MicroComProxyBase._synchronizationContext) and their FINALIZERS post the native Release
-	/// back through it. When that post lands after the WinForms marshaling window is gone —
-	/// project switch, window teardown, shutdown, or simply an idle-time GC afterwards —
+	/// back through it. When that post lands after the WinForms marshaling window is gone --
+	/// project switch, window teardown, shutdown, or simply an idle-time GC afterwards --
 	/// <c>WindowsFormsSynchronizationContext.Post</c> throws <see cref="InvalidOperationException"/>
 	/// on the FINALIZER thread, which terminates the whole process:
-	///   InvalidOperationException → Control.MarshaledInvoke → BeginInvoke
-	///   → WindowsFormsSynchronizationContext.Post → MicroCom.Runtime.MicroComProxyBase.Finalize().
+	///   InvalidOperationException -> Control.MarshaledInvoke -> BeginInvoke
+	///   -> WindowsFormsSynchronizationContext.Post -> MicroCom.Runtime.MicroComProxyBase.Finalize().
 	/// Installed as the UI thread's ambient context BEFORE Avalonia initializes, this wrapper is
 	/// what every proxy captures; it delegates to the real context but swallows POST marshal
 	/// failures whose only victim would be a moot native Release (synchronous Send failures still
-	/// surface — the caller is waiting on the result). WinForms will not displace it —
+	/// surface -- the caller is waiting on the result). WinForms will not displace it --
 	/// InstallIfNeeded only replaces null/base-type contexts, never custom ones.
 	/// </summary>
 	public sealed class FinalizerSafeSynchronizationContext : SynchronizationContext
@@ -56,7 +56,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 			}
 			catch (InvalidOperationException e)
 			{
-				// Marshaling window gone (ObjectDisposedException is a subtype) — for a MicroCom
+				// Marshaling window gone (ObjectDisposedException is a subtype) -- for a MicroCom
 				// finalizer's native Release the posted work is moot; anything else was collateral.
 				ReportSwallowedPost(d, e);
 			}
@@ -69,7 +69,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 
 		/// <summary>
 		/// True when the callback is a MicroCom finalizer post (the crash class this wrapper exists
-		/// for) — identified by the callback's declaring type living in the MicroCom runtime. A pin
+		/// for) -- identified by the callback's declaring type living in the MicroCom runtime. A pin
 		/// test guards this namespace assumption so an Avalonia bump that relocates it fails loudly
 		/// instead of silently reclassifying every finalizer Release as a dropped post.
 		/// </summary>
@@ -103,7 +103,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 
 		// Send is NOT swallowed: the finalizer rationale above only covers Post (MicroCom proxy
 		// finalizers post their native Release). Send is a synchronous call whose caller is
-		// waiting on the result — silently skipping the callback would corrupt that caller's
+		// waiting on the result -- silently skipping the callback would corrupt that caller's
 		// state, so marshal failures surface to it.
 		public override void Send(SendOrPostCallback d, object state) => _inner.Send(d, state);
 

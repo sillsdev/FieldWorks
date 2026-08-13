@@ -244,7 +244,7 @@ namespace LexTextControlsTests
 		public void LoadPluginManagerDoc_WithDtd_IsRejected_NotResolved()
 		{
 			// DtdProcessing.Prohibit / XmlResolver=null: a DTD must not be processed (XXE guard). Either it
-			// throws XmlException internally (returned as null) — never resolves an external entity.
+			// throws XmlException internally (returned as null) -- never resolves an external entity.
 			var path = WriteTemp(
 				"<?xml version='1.0'?><!DOCTYPE manager [<!ENTITY x 'y'>]><manager name='X' description='d'><configfiles targetdir='t'/></manager>");
 			try
