@@ -12,7 +12,7 @@ Status: working evidence, not a normative product contract.
 | Find and Replace | `FwFindReplaceDlg` over `IVwPattern` | Regex mode disables diacritics, whole word, and writing-system options; replacement preserves formatted text runs | `Src/FwCoreDlgs/FwCoreDlgsTests/FwFindReplaceDlgTests.cs` |
 | Bulk Edit replace | `ReplaceWithMethod` over `IVwPattern` | Preview and apply use the native search engine; replacement iteration and normalization affect data safety and ranges | `Src/xWorks/xWorksTests/BulkEditBarTests.cs`; additional committed characterization assets are pinned in the test strategy |
 | Concordance | `RegExpMatcher` or literal matchers with a database candidate prefilter | Regex bypasses the accent-aware literal prefilter; the final matcher remains authoritative | `Src/LexText/Interlinear/ITextDllTests/ConcordanceControlTests.cs` |
-| Indexed Find and Go | LCModel `StringSearcher<T>` | Prefix or full-text discovery over indexed visible fields; not an `IVwPattern` or regex contract | `Src/Common/Controls/XMLViews/XMLViewsTests/SearchEngineTests.cs` |
+| Indexed Find and Go | LCModel `StringSearcher<T>` | Prefix or full-text discovery over indexed visible fields; the characterized default prefix search returns NFC, NFD, unaccented, and differently accented forms for NFC, NFD, or unaccented queries; not an `IVwPattern` or regex contract | `Src/Common/Controls/XMLViews/XMLViewsTests/SearchEngineTests.cs` |
 | AlloVarGen matching | Managed `RegExpMatcher` over native `IVwPattern` | Delegates to the native ICU engine | Matcher tests are currently disabled |
 | AlloVarGen replacement | .NET `Regex.Replace` | Different engine, syntax, replacement rules, error handling, and resource policy from native matching | AlloGen service tests and XML fixtures |
 | Phonological environments | `PhonEnvRecognizer` and HermitCrab pattern nodes | Domain grammar rather than regex; shares Unicode and malformed-input concerns | `Src/LexText/ParserCore/ParserCoreTests/HCLoaderTests.cs` |
@@ -38,6 +38,11 @@ while the regex source buffer is copied directly
 (`Src/views/VwPattern.cpp:1487-1502`). This is an observed implementation fact;
 tests must determine its visible consequences before any correction is
 proposed.
+
+Characterization confirms the visible regex asymmetry: an NFC pattern matches
+an equivalent NFD source range but not the equivalent NFC source. Concordance
+inherits the same final-matcher behavior. This is a compatibility finding, not
+an approved product contract.
 
 ## Option ownership
 

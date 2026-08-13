@@ -306,7 +306,7 @@ observe the expected assertion failure, and restore it.
   -TestFilter "FullyQualifiedName~RegexOptions" -Verbosity minimal `
   -StartedBy agent
 .\test.ps1 -TestProject "Src/Common/Controls/XMLViews/XMLViewsTests" `
-  -TestFilter "FullyQualifiedName~SearchCanonicalForms" -Verbosity minimal `
+  -TestFilter "FullyQualifiedName~IndexedPrefixSearchIgnoresAccentDifferences" -Verbosity minimal `
   -StartedBy agent
 .\test.ps1 -TestProject "Src/LexText/Interlinear/ITextDllTests" `
   -TestFilter "FullyQualifiedName~ConcordanceRegex" -Verbosity minimal `

@@ -66,6 +66,14 @@ Indexed and fuzzy search may differ from exact Find, but each difference must
 be deliberate, named, and tested. Phonological environments remain a separate
 domain grammar with shared Unicode and malformed-input concerns.
 
+The architectural direction is a shared request, result, capability, Unicode,
+and transformation layer over specialized engines. ICU collation, ICU regex,
+indexed discovery, .NET replacement, and phonology must not be collapsed into
+an interface that implies semantic interchangeability. Reuse normalization
+policy, UTF-16 ranges, captures, writing-system-aware rebuilding, progress
+guards, cancellation, resource limits, diagnostics, and preview/apply
+orchestration. Let declared capabilities drive user-interface option state.
+
 ## Test architecture
 
 Shared input and expected-result records drive small surface-specific adapters.

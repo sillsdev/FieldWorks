@@ -17,6 +17,34 @@ A behavior change requires one of these authorities:
   evidence;
 - an approved removal of an unsupported or misleading capability.
 
+## Recommended module boundary
+
+Consolidate the request, result, capability, Unicode, and transformation
+infrastructure, but do not force every surface through one semantic engine.
+The shared contract should make these items explicit:
+
+- search intent and engine kind;
+- supported, ignored, and rejected options;
+- normalization and UTF-16 range policy;
+- captures and the named replacement dialect;
+- writing-system and text-property constraints;
+- cancellation, resource limits, and diagnostics.
+
+Keep specialized adapters for ICU collation, ICU regex, indexed discovery,
+and phonology. Indexed discovery may reuse normalization and capability
+vocabulary but remains candidate discovery rather than final matching.
+Phonology may reuse Unicode segmentation and diagnostics but retains typed
+grammar input and HermitCrab output. AlloVarGen initially retains an explicitly
+named .NET replacement dialect rather than presenting it as ICU-compatible.
+
+The first reusable deep module should surround `VwPattern` and `ITsString`:
+range iteration, zero-width progress, capture results, writing-system-aware
+slicing and rebuilding, preview/apply transformation, cancellation, and
+resource bounds. Find and Replace, Bulk Edit, filters, and concordance can use
+that infrastructure while their surface-specific defaults remain explicit.
+User-interface option state should be driven by declared engine capabilities,
+not scattered checks for regex mode.
+
 ## Contracts by user intent
 
 ### Exact find, replace, and filter
