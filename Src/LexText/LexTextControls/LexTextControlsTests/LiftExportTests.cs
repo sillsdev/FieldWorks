@@ -493,6 +493,8 @@ namespace LexTextControlsTests
 			m_mapPartsOfSpeech.Clear();
 			m_mapAcademicDomains.Clear();
 			m_mapPublications.Clear();
+			// NUnit shares one fixture instance across the tests, so this outlives the cache it indexes.
+			m_customListsGuids.Clear();
 			var mockProjectName = "xxyyzProjectFolderForLIFTTest";
 			MockProjectFolder = Path.Combine(Path.GetTempPath(), mockProjectName);
 			var mockProjectPath = Path.Combine(MockProjectFolder, mockProjectName + ".fwdata");
@@ -1137,10 +1139,8 @@ namespace LexTextControlsTests
 
 		///--------------------------------------------------------------------------------------
 		/// <summary>
-		/// A custom list name reaches the ranges file as a range id, where it needs the escaping
-		/// rules for an attribute. It used to be escaped once as element content on the way into
-		/// the exporter's map and never again, so a name holding a quotation mark left the ranges
-		/// document unparseable.
+		/// A custom list name reaches the ranges file as a range id, which is an attribute, so a name
+		/// holding a quotation mark has to be escaped by the attribute rules for the document to parse.
 		/// </summary>
 		///--------------------------------------------------------------------------------------
 		[Test]
@@ -1159,9 +1159,8 @@ namespace LexTextControlsTests
 
 		///--------------------------------------------------------------------------------------
 		/// <summary>
-		/// The same name is written into the .lift header and into the ranges file, so the two must
-		/// agree. Escaping once on the way in and again at the header write site turned an ampersand
-		/// into &amp;amp; there while the ranges file kept a single escape.
+		/// A custom list name is written as a range id in both the .lift header and the ranges file,
+		/// escaped once in each, so that the two files name the range the same way.
 		/// </summary>
 		///--------------------------------------------------------------------------------------
 		[Test]

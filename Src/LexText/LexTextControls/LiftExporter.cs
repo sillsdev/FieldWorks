@@ -56,14 +56,14 @@ namespace SIL.FieldWorks.LexText.Controls
 		private readonly int m_wsBestVernAnal;
 		/// <summary>
 		/// This contains the possibility lists that are custom or that are referenced by a custom field.
+		/// Range names are held unescaped, so that each is escaped by the rules of the context it is
+		/// written into.
 		/// </summary>
-		/// <remarks>
-		/// Range names are held unescaped. Each write site escapes for the context it writes into, as
-		/// everything else in this exporter does; escaping on the way in instead escaped a second time
-		/// at the write site, and picked the element rules for a value only ever written as an attribute.
-		/// </remarks>
 		private Dictionary<Guid, string> m_CmPossListsReferencedOrCustom = new Dictionary<Guid, string>();
-		/// <remarks>Range names are held unescaped, as for <see cref="m_CmPossListsReferencedOrCustom"/>.</remarks>
+		/// <summary>
+		/// Maps a possibility list to the name of its LIFT range. Range names are held unescaped, so
+		/// that each is escaped by the rules of the context it is written into.
+		/// </summary>
 		private Dictionary<Guid, string> m_ListsGuidToRangeName = new Dictionary<Guid, string>();
 		private readonly ICmPossibilityListRepository m_repoCmPossibilityLists;
 		private readonly ISilDataAccessManaged m_sda;
