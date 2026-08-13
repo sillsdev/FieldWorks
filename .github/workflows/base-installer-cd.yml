@@ -47,7 +47,7 @@ jobs:
   debug_build_and_test:
     env:
       CROWDIN_API_KEY: ${{ secrets.FLEX_CROWDIN_API }}
-      LcmRootDir: ${{ github.workspace }}/Localizations/LCM
+      LcmRootDir: ${{ github.workspace }}/Localizations/LCMRepo
       FILESTOSIGNLATER: ./signExternally
     name: Build Debug and run Tests
     runs-on: windows-2022
@@ -101,7 +101,7 @@ jobs:
           repository: 'sillsdev/liblcm'
           ref: ${{ github.event.inputs.installer_ref || 'master' }}
           fetch-depth: 0
-          path: 'Localizations/LCM'
+          path: 'Localizations/LCMRepo'
 
       - name: Ensure .NET Framework 4.8 targeting pack
         shell: pwsh
