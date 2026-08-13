@@ -45,9 +45,9 @@ namespace SIL.FieldWorks.XWorks
 		public override void TestSetup()
 		{
 			base.TestSetup();
-			// Build the headless Avalonia platform (the assembly SetUpFixture installed the headless
-			// AppBuilder override) so the realized field controls + their host Window have a windowing
-			// platform off-screen — the same init the product hosts trigger. Idempotent.
+			// Build the headless Avalonia platform (installed by the assembly
+			// SetUpFixture's AppBuilder override), so controls and their host Window
+			// get an off-screen platform, like product hosts. Idempotent.
 			FwAvaloniaRuntime.EnsureInitialized();
 			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
 			{
@@ -58,7 +58,7 @@ namespace SIL.FieldWorks.XWorks
 				m_entry.CitationForm.set_String(Cache.DefaultVernWs,
 					TsStringUtils.MakeString("casa-cit", Cache.DefaultVernWs));
 
-				// An owned StText (under a notebook record's Discussion) with two paragraphs — the same
+				// An owned StText (under a notebook record's Discussion) with two paragraphs -- the same
 				// real, persisted OwningAtomic-StText shape StructuredTextAdapterTests uses.
 				if (Cache.LangProject.ResearchNotebookOA == null)
 					Cache.LangProject.ResearchNotebookOA =
@@ -226,9 +226,9 @@ namespace SIL.FieldWorks.XWorks
 			=> root.GetVisualDescendants().OfType<T>()
 				.FirstOrDefault(c => AutomationProperties.GetAutomationId(c) == automationId);
 
-		// (a)+(b): editing the sibling Citation Form AND a paragraph in the SAME session, then losing
-		// focus, commits BOTH as ONE undo step (the legacy per-slice "edit as you go" autosave), and one
-		// undo reverts both — the combined-text-edit grouping.
+		// (a)+(b): editing the sibling Citation Form AND a paragraph in the SAME
+		// session, then losing focus, commits BOTH as ONE undo step (legacy
+		// per-slice "edit as you go" autosave); one undo reverts both.
 		[Test]
 		public void EditCitation_AndParagraphText_CommitTogether_AsOneUndoStep_OnFocusLoss()
 		{
@@ -298,7 +298,7 @@ namespace SIL.FieldWorks.XWorks
 				"the paragraph add + re-show did not disturb the already-committed sibling field");
 
 			// Undo grouping order: one undo removes the inserted paragraph; a SECOND undo reverts the
-			// earlier citation edit — they are distinct steps in the right order.
+			// earlier citation edit -- they are distinct steps in the right order.
 			Cache.ActionHandlerAccessor.Undo();
 			Assert.That(ParaCount, Is.EqualTo(2), "first undo removes the inserted paragraph");
 			Assert.That(CitationText, Is.EqualTo("casa-first"), "the citation edit is a separate, earlier step");

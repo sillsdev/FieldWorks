@@ -52,7 +52,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		// The memory-only fixture ships no list content; build the minimal real lists the senses
-		// reference — a HIERARCHICAL semantic domain list and a flat status list.
+		// reference -- a HIERARCHICAL semantic domain list and a flat status list.
 		private void EnsureLists()
 		{
 			var listFactory = Cache.ServiceLocator.GetInstance<ICmPossibilityListFactory>();
@@ -116,7 +116,7 @@ namespace SIL.FieldWorks.XWorks
 				anthro.Name.SetAnalysisDefaultWritingSystem("Kinship");
 			}
 
-			// The Publications list behind Publish In / Show As Headword In — the field whose
+			// The Publications list behind Publish In / Show As Headword In -- the field whose
 			// legacy chooser carries the "Edit the Publications list" jump link.
 			if (Cache.LangProject.LexDbOA.PublicationTypesOA == null)
 				Cache.LangProject.LexDbOA.PublicationTypesOA = listFactory.Create();
@@ -151,7 +151,7 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(field.Items.Single().Name, Does.Contain("Universe"));
 
 			// The option list is the WHOLE possibility tree, hierarchy carried as Depth, in the
-			// list's own (tree) order — exactly what the legacy chooser tree shows.
+			// list's own (tree) order -- exactly what the legacy chooser tree shows.
 			Assert.That(field.Options.Select(o => o.Key), Is.EqualTo(new[]
 				{
 					m_domainUniverse.Guid.ToString(), m_domainSky.Guid.ToString(), m_domainWeather.Guid.ToString()
@@ -218,7 +218,7 @@ namespace SIL.FieldWorks.XWorks
 		public void Compose_EmptyAlwaysVisibleVector_StillOffersTheAddSlotOptions()
 		{
 			// SemanticDomains is visibility="always" in LexSense/Normal: with no items the row still
-			// composes, editable, with the full option list — the legacy empty slice with the
+			// composes, editable, with the full option list -- the legacy empty slice with the
 			// type-ahead add slot.
 			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor,
 				() => m_sense.SemanticDomainsRC.Clear());
@@ -289,9 +289,9 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(m_sense.StatusRA, Is.EqualTo(m_statusConfirmed));
 		}
 
-		// Legacy PossibilityAtomicReferenceLauncher.OnLeave commits an emptied box
-		// as AddItem(null) — i.e. the reference CLEARS. The composed chooser's empty option does
-		// the same through the fenced session (SetObjProp(hvo, flid, 0)).
+		// PossibilityAtomicReferenceLauncher.OnLeave commits an emptied box as
+		// AddItem(null) -- the reference CLEARS. The composed chooser's empty option
+		// does likewise (fenced session: SetObjProp(hvo, flid, 0)).
 		[Test]
 		public void Edit_AtomicChooser_EmptyOption_ClearsTheReference()
 		{
@@ -364,11 +364,7 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(m_sense.StatusRA, Is.EqualTo(m_statusConfirmed));
 		}
 
-		// The layout's chooserLink metadata composes onto the row — LexEntryParts.xml:48-53
-		// gives Publish In <chooserLink type="goto" label="Edit the Publications list"
-		// tool="publicationsEdit"/>, the legacy chooser dialog's jump LinkLabel
-		// (ReallySimpleListChooser.cs:887-900: AddLink(label, kGotoLink, new FwLinkArgs(tool,
-		// m_guidLink)) with m_guidLink = Guid.Empty — no flidTextParam on this part).
+		// LexEntryParts.xml's Publish In chooserLink (tool="publicationsEdit", empty guid target) must compose onto the row, mirroring the legacy ReallySimpleListChooser jump LinkLabel.
 		[Test]
 		public void Compose_PublishIn_CarriesThePublicationsJumpLink_WithEmptyTarget()
 		{
@@ -387,7 +383,7 @@ namespace SIL.FieldWorks.XWorks
 
 		// Gear = configure: a chooser whose layout authored NO chooserLink (MorphologyParts.xml's
 		// MorphTypeBasic chooserInfo is title-only) still resolves its list-editor jump by
-		// DERIVATION from the row's possibility list — LexDb.MorphTypes maps to the lists-area
+		// DERIVATION from the row's possibility list -- LexDb.MorphTypes maps to the lists-area
 		// morphTypeEdit tool, exactly the legacy AreaListener.GetToolForList clerk-table walk
 		// (AreaListener.cs:388-418 over Lists/areaConfiguration.xml's MorphTypeList clerk +
 		// Lists/Edit/toolConfiguration.xml's morphTypeEdit tool).
@@ -407,7 +403,7 @@ namespace SIL.FieldWorks.XWorks
 		// The derived link never overrides an authored link, and the derivation itself mirrors
 		// the legacy clerk table: shipped lists by (owner class, owning field); ownerless custom
 		// lists by the dynamically generated Name-without-spaces + "Edit" tool
-		// (AreaListener.GetCustomListToolName); anything unmapped resolves to NO tool → no gear.
+		// (AreaListener.GetCustomListToolName); anything unmapped resolves to NO tool -> no gear.
 		[Test]
 		public void ResolveListEditorTool_MirrorsTheLegacyListsAreaMapping()
 		{
@@ -434,7 +430,7 @@ namespace SIL.FieldWorks.XWorks
 					.CreateUnowned("Bird Species", Cache.DefaultAnalWs);
 			});
 
-			// Legacy AreaListener.GetCustomListToolName: Name without whitespace + "Edit" — the
+			// Legacy AreaListener.GetCustomListToolName: Name without whitespace + "Edit" -- the
 			// tool name the lists area generates for the custom list's dynamic tool node.
 			Assert.That(DetailComposer.ResolveListEditorTool(custom),
 				Is.EqualTo("BirdSpeciesEdit"));
@@ -444,7 +440,7 @@ namespace SIL.FieldWorks.XWorks
 		public void ResolveListEditorTool_OwnedListOutsideTheListsArea_ResolvesNoTool()
 		{
 			// LangProject.CheckLists is a possibility-list home with NO lists-area tool (it is
-			// excluded even from translated-list export): no tool → the composer adds no link →
+			// excluded even from translated-list export): no tool -> the composer adds no link ->
 			// the row draws no gear.
 			ICmPossibilityList checkList = null;
 			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>

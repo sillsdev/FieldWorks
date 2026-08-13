@@ -295,9 +295,9 @@ namespace FwAvaloniaDialogsTests
 			string requestedFor = null;
 			editor.CreateNewValueRequested += id => requestedFor = id;
 
-			// The per-closed-feature "add a value" affordance is a real, focusable Button (exposing the Invoke
-			// automation pattern) rather than a bare glyph label. Find it on the top-level "Tense" closed feature
-			// by its stable automation id and invoke it — the same commit path a real click drives.
+			// The "add a value" affordance is a real, focusable Button (Invoke
+			// automation pattern), not a glyph label. Find it on the "Tense"
+			// feature by automation id; invoking it matches a real click.
 			var addButton = editor.Tree.GetVisualDescendants().OfType<Button>()
 				.FirstOrDefault(b => AutomationProperties.GetAutomationId(b) == "InflFeatures.CreateValue");
 			Assert.That(addButton, Is.Not.Null, "the closed feature exposes its add-value affordance as a Button");

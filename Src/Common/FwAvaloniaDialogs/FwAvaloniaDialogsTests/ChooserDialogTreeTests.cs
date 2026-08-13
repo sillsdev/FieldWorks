@@ -289,9 +289,9 @@ namespace FwAvaloniaDialogsTests
 		[AvaloniaTest]
 		public void LargeTree_DoesNotRealizeEveryNode()
 		{
-			// A large list (100 parents x 100 children = ~10100 nodes) — far more than any window can show.
-			// Nodes start collapsed (legacy + virtualization), so the root level virtualizes; expanding ONE branch
-			// realizes only that branch's visible window, never the whole tree.
+			// A large list (100 parents x 100 children = ~10100 nodes) -- more than
+			// a window can show. Nodes start collapsed, so it virtualizes; expanding
+			// ONE branch realizes only its window, never the whole tree.
 			var big = new List<DetailChoiceOption>();
 			for (var p = 0; p < 100; p++)
 			{
@@ -364,7 +364,7 @@ namespace FwAvaloniaDialogsTests
 			=> RowFor(root, node).GetVisualDescendants().OfType<CheckBox>().First();
 
 		// Raise a left-button PointerReleased from a specific control (a row Border, or the box inside it), with the
-		// Shift modifier on/off — exactly the gesture the whole-row handler keys off.
+		// Shift modifier on/off -- exactly the gesture the whole-row handler keys off.
 		private static void ClickRelease(Control source, bool shift = false)
 		{
 			var modifiers = shift ? KeyModifiers.Shift : KeyModifiers.None;
@@ -402,7 +402,7 @@ namespace FwAvaloniaDialogsTests
 			var verbRow = RowFor(view, verb);
 			Assert.That(verb.IsChecked, Is.False, "starts unchecked");
 
-			// Click the ROW (the label area, not the box) — toggles the item on.
+			// Click the ROW (the label area, not the box) -- toggles the item on.
 			ClickRelease(verbRow);
 			Capture(view, "ChooserTree-04-row-click-toggled");
 			Assert.That(verb.IsChecked, Is.True, "a whole-row click toggles the item, like clicking the box");
@@ -556,7 +556,7 @@ namespace FwAvaloniaDialogsTests
 			var tree = FindByAutomationId<TreeView>(view, "Chooser.Tree");
 
 			// Single-select picks via TreeView selection (unchanged). A row pointer release must NOT toggle checks
-			// (there are none) or range — the VM toggle no-ops outside multi-select.
+			// (there are none) or range -- the VM toggle no-ops outside multi-select.
 			tree.SelectedItem = vm.NodeForKey("g-verb");
 			Dispatcher.UIThread.RunJobs();
 			Assert.That(vm.ChosenKeys, Is.EqualTo(new[] { "g-verb" }), "single-select still returns the selected node");

@@ -204,6 +204,18 @@ if (-not $runningOnWindows) {
 	exit 1
 }
 
+$commentHygienePath = Join-Path $PSScriptRoot "Build/Agent/comment-hygiene.ps1"
+& $commentHygienePath
+if ($LASTEXITCODE -ne 0) {
+	exit $LASTEXITCODE
+}
+
+$powershellCompatPath = Join-Path $PSScriptRoot "Build/Agent/powershell-compat.ps1"
+& $powershellCompatPath
+if ($LASTEXITCODE -ne 0) {
+	exit $LASTEXITCODE
+}
+
 if (-not $PSBoundParameters.ContainsKey('StartedBy') -and -not [string]::IsNullOrWhiteSpace($env:FW_BUILD_STARTED_BY)) {
 	$startedByFromEnv = $env:FW_BUILD_STARTED_BY.ToLowerInvariant()
 	if ($startedByFromEnv -in @('user', 'agent', 'unknown')) {

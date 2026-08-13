@@ -37,7 +37,7 @@ namespace LexTextControlsTests
 				Assert.That(settings.UIMode, Is.EqualTo("New"));
 				Assert.That(settings.SaveCalls, Is.EqualTo(1));
 				Assert.That(propertyTable.GetStringProperty("UIMode", "Legacy"), Is.EqualTo("New"));
-				// UIMode flips live (RecordEditView settles and re-resolves on the spot) — no restart needed.
+				// UIMode flips live (RecordEditView settles and re-resolves on the spot) -- no restart needed.
 				Assert.That(dlg.RestartPromptCount, Is.EqualTo(0));
 			}
 		}
@@ -70,7 +70,7 @@ namespace LexTextControlsTests
 		/// below the injection point that are top-anchored (m_labelAdvanced, m_autoOpenCheckBox) don't move on
 		/// their own, so the code moves them by hand. Controls that are bottom-anchored (tabControl1,
 		/// the OK/Cancel/Help buttons) already move/resize automatically as a side effect of Form.Height
-		/// growing — a prior version of this code ALSO manually re-added the same delta to those, which
+		/// growing -- a prior version of this code ALSO manually re-added the same delta to those, which
 		/// shifts them by 2x delta and can push the buttons below the visible (non-scrollable) client
 		/// area. This pins the "exactly once" invariant against the dialog's own designer-time positions
 		/// (read from LexOptionsDlg.resx), so re-introducing the double shift fails this test.

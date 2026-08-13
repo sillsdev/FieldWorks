@@ -154,7 +154,7 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		/// <summary>
 		/// Applies the OK result: resolves the chosen entry + the auxiliary pick to the CHOSEN MSA and exposes it
-		/// via <see cref="SelectedObject"/>. No model mutation here — the caller performs the on-OK action.
+		/// via <see cref="SelectedObject"/>. No model mutation here -- the caller performs the on-OK action.
 		/// </summary>
 		protected override LinkMsaPayload Apply(EntryGoDialogInput state)
 		{

@@ -14,13 +14,13 @@ namespace FwAvaloniaTests.VisualChecks
 	/// Headless PNG snapshot harness: renders ANY Avalonia control (dialog body, detail view, or browse
 	/// table) with the Skia-backed headless backend (<c>UseHeadlessDrawing=false</c> in <c>TestAppBuilder</c>)
 	/// and saves a real frame to a gitignored ephemeral folder. Captures land in ONE FLAT folder with a
-	/// prefixed file name — <c>Output/Snapshots/&lt;Prefix&gt;-&lt;NN&gt;-&lt;stage&gt;.png</c> (e.g.
-	/// <c>Output/Snapshots/InsertEntry-01-initial.png</c>, <c>Output/Snapshots/Browse-05-selected.png</c>) — so
+	/// prefixed file name -- <c>Output/Snapshots/&lt;Prefix&gt;-&lt;NN&gt;-&lt;stage&gt;.png</c> (e.g.
+	/// <c>Output/Snapshots/InsertEntry-01-initial.png</c>, <c>Output/Snapshots/Browse-05-selected.png</c>) -- so
 	/// every dialog or view's stages sort together by name in one directory. The prefix is the snapshot name's
 	/// leading segment (the text before the first '-') unless an explicit <c>prefixOverride</c> is passed.
 	///
 	/// The PNG is ALWAYS produced so the agent (via the Read tool) and the user can subjectively judge whether
-	/// the capture looks right — overlap, clipping, stray strikethrough, lost highlight, alignment, density —
+	/// the capture looks right -- overlap, clipping, stray strikethrough, lost highlight, alignment, density --
 	/// beyond what the DialogLayoutAssert crowding guardrail can assert. Pair the two: capture the PNG, then
 	/// assert layout sanity.
 	/// </summary>
@@ -32,7 +32,7 @@ namespace FwAvaloniaTests.VisualChecks
 		/// <summary>
 		/// Renders <paramref name="control"/> to <c>Output/Snapshots/&lt;name&gt;.png</c> and returns the full
 		/// path. Captures are kept in ONE FLAT folder with a prefixed file name (e.g.
-		/// <c>"InsertEntry-01-initial"</c> → <c>Output/Snapshots/InsertEntry-01-initial.png</c>) so a person can
+		/// <c>"InsertEntry-01-initial"</c> -> <c>Output/Snapshots/InsertEntry-01-initial.png</c>) so a person can
 		/// browse every dialog or view's stages together, sorted by name. <paramref name="prefixOverride"/>, when
 		/// given, is prepended for a name that doesn't already carry a prefix. If the control is already
 		/// a <see cref="Window"/> it is captured at its own size; otherwise it is hosted in a window sized

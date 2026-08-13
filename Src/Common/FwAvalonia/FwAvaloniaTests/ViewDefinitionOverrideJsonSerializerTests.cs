@@ -12,7 +12,7 @@ namespace FwAvaloniaTests
 {
 	/// <summary>
 	/// The per-project override patch serializes to deterministic canonical JSON and round-trips
-	/// losslessly, including its audit diagnostics. Pure logic — no Avalonia runtime.
+	/// losslessly, including its audit diagnostics. Pure logic -- no Avalonia runtime.
 	/// </summary>
 	[TestFixture]
 	public class ViewDefinitionOverrideJsonSerializerTests

@@ -14,7 +14,7 @@ namespace FwAvaloniaDialogsTests
 {
 	/// <summary>
 	/// Shared realize/pump/capture idiom for headless dialog tests. Per-dialog VM/View construction
-	/// stays in each fixture's own Show() — only the realize/pump/snapshot/assert sequence and the
+	/// stays in each fixture's own Show() -- only the realize/pump/snapshot/assert sequence and the
 	/// automation-id lookup are shared here.
 	/// </summary>
 	internal static class AvaloniaDialogTestHarness
@@ -60,7 +60,7 @@ namespace FwAvaloniaDialogsTests
 				.First(c => AutomationProperties.GetAutomationId(c) == id);
 
 		/// <summary>
-		/// Pumps a realized surface to a settled layout without snapshotting or asserting — for fixtures
+		/// Pumps a realized surface to a settled layout without snapshotting or asserting -- for fixtures
 		/// (e.g. plain-control tests) that capture/assert explicitly at each call site instead of inside Show().
 		/// </summary>
 		public static void Pump(Control control)

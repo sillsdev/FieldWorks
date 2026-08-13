@@ -9,25 +9,16 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 {
 	/// <summary>
 	/// App-wide registry of which tools have Avalonia support (the
-	/// single supported-tool list — new tools opt in by registration rather than
+	/// single supported-tool list -- new tools opt in by registration rather than
 	/// by editing <see cref="UIFrameworkResolver"/>).
 	///
 	/// Contract (matching the resolver's safety property): a null/blank tool name means "no tool context",
-	/// which is NOT a tool gate — it defers to the UIMode/override preference. An **unregistered** tool
+	/// which is NOT a tool gate -- it defers to the UIMode/override preference. An **unregistered** tool
 	/// never advertises Avalonia support, so an unknown tool can never silently resolve to Avalonia.
 	/// </summary>
 	public sealed class UIFrameworkRegistry
 	{
-		// The tools that shipped with Avalonia support. Tools whose record edit/detail
-		// view is approved for the Avalonia composer. The class-general composer + 4-key layout
-		// resolution make these compose; per-tool editor gaps (e.g. Notebook participants/
-		// subrecords) degrade to read-only/unsupported rows, never a crash, and
-		// are tracked separately. All gated behind UIMode=New (off by default). The many Lists CmPossibility
-		// editors register via an area/persistContext predicate, not enumerated here.
-		// The composed detail-editor tools ship ON — all still
-		// gated behind UIMode=New (off by default), so no visible change to existing users.
-		// Sourced from LexiconFeatureCatalog — the single list of "tools with a working Avalonia
-		// support today," which also carries each tool's user-facing display metadata.
+		// Sourced from LexiconFeatureCatalog.ToolNames, the single list of tools with working Avalonia support today; all gated behind UIMode=New (off by default), so this list has no effect on existing users.
 		private static readonly string[] DefaultSupportedTools = ToArray(LexiconFeatureCatalog.ToolNames);
 
 		private static string[] ToArray(IReadOnlyList<string> source)

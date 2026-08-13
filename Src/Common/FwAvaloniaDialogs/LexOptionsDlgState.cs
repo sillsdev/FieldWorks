@@ -7,10 +7,10 @@ using System.Collections.Generic;
 namespace FwAvaloniaDialogs
 {
 	/// <summary>
-	/// The real Tools → Options settings, carried across the FwAvaloniaDialogs (Avalonia, LCModel-free)
-	/// ↔ product (LexText) boundary. The product edge populates this from the live settings bus
+	/// The real Tools -> Options settings, carried across the FwAvaloniaDialogs (Avalonia, LCModel-free)
+	/// <-> product (LexText) boundary. The product edge populates this from the live settings bus
 	/// (PropertyTable / FwApplicationSettings / registry / writing-system manager / plugin manager),
-	/// the dialog view-model edits it, and the product edge applies it on OK — so the Avalonia layer
+	/// the dialog view-model edits it, and the product edge applies it on OK -- so the Avalonia layer
 	/// never references LCModel or the PropertyTable. Mirrors the four tabs of the legacy
 	/// <c>LexOptionsDlg</c>: General, Plugins, Privacy, Updates.
 	/// </summary>
@@ -25,7 +25,7 @@ namespace FwAvaloniaDialogs
 
 		/// <summary>
 		/// The per-feature disable set (a CSV of tool names) carried through the dialog and re-applied on
-		/// OK — mirrors <c>FwApplicationSettings.UIModeDisabledTools</c> and the WinForms
+		/// OK -- mirrors <c>FwApplicationSettings.UIModeDisabledTools</c> and the WinForms
 		/// <c>LexOptionsDlg.m_pendingUiModeDisabledTools</c>. Only meaningful in New mode; the dialog has no
 		/// editor for it, so a round trip leaves the persisted value untouched.
 		/// </summary>

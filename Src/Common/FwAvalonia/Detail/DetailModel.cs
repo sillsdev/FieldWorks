@@ -34,7 +34,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		/// <summary>
 		/// An editable reference vector: current items plus the possibility list's options
 		/// (hierarchy on <see cref="DetailChoiceOption.Depth"/>), edited through
-		/// <see cref="IDetailEditContext.TryAddReferenceItem"/>/<see cref="IDetailEditContext.TryRemoveReferenceItem"/> —
+		/// <see cref="IDetailEditContext.TryAddReferenceItem"/>/<see cref="IDetailEditContext.TryRemoveReferenceItem"/> --
 		/// the legacy possibility-vector slice with its trailing type-ahead add slot.
 		/// </summary>
 		ReferenceVector,
@@ -49,7 +49,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		Custom,
 
 		/// <summary>
-		/// An editable multi-paragraph structured-text (StText) field — the legacy
+		/// An editable multi-paragraph structured-text (StText) field -- the legacy
 		/// <c>StTextSlice</c>'s RootSite rich editor. The row carries an ordered
 		/// <see cref="DetailField.Paragraphs"/> list (each a run-aware
 		/// <see cref="DetailParagraph"/> with a per-paragraph named style); the owned
@@ -61,7 +61,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		StructuredText,
 
 		/// <summary>
-		/// A literal / "lit" slice (legacy <c>MessageSlice</c>) — static label text rendered
+		/// A literal / "lit" slice (legacy <c>MessageSlice</c>) -- static label text rendered
 		/// read-only in the value column (the label/message text IS the content). Carries no editable
 		/// value and no setter.
 		/// </summary>
@@ -72,7 +72,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 	/// The kind of an embedded object (ORC) a run carries, classified LCModel-free from the
 	/// FIRST character of <see cref="DetailTextRun.ObjectData"/> (the value the xWorks adapter projects
 	/// from the TsString's <c>ktptObjData</c>). The numeric tags mirror
-	/// <c>SIL.LCModel.Core.KernelInterfaces.FwObjDataTypes</c> — the view layer is LCModel-free, so it
+	/// <c>SIL.LCModel.Core.KernelInterfaces.FwObjDataTypes</c> -- the view layer is LCModel-free, so it
 	/// reads the opaque <c>ObjectData</c> string the adapter produced rather than the enum itself.
 	/// </summary>
 	public enum DetailOrcKind
@@ -133,7 +133,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		internal const char ObjDataFootnoteOwn = (char)5;
 		internal const char ObjDataFootnoteName = (char)3;
 
-		/// <summary>Whether this run carries an embedded object (ORC) — any non-empty ObjectData.</summary>
+		/// <summary>Whether this run carries an embedded object (ORC) -- any non-empty ObjectData.</summary>
 		public bool IsOrc => !string.IsNullOrEmpty(ObjectData);
 
 		/// <summary>
@@ -181,13 +181,9 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			RichXml = richXml;
 			RequiresRichEditor = requiresRichEditor;
 			LossyProperties = lossyProperties;
-			// An embedded object (ORC) does not force the value read-only — a link ORC is fully
-			// editable (insert/edit/delete) and ANY ORC run is deletable, so the run-replay path rebuilds
-			// the value with its ObjectData preserved. A value is held read-only ONLY when an edit would
-			// SILENTLY DROP data: a run carrying a TsString property the DetailTextRun model does not
-			// round-trip (colour, offset, superscript — flagged lossyProperties) since the first plain-text
-			// edit skips the lossless RichXml fast-path. The explicit canEditRichText flag still lets a
-			// caller force read-only for a reason unrelated to runs (e.g. a voice/audio alternative).
+			// A value goes read-only only when an edit would silently drop data -- a run
+			// with a non-round-trippable TsString property (lossyProperties), not for
+			// carrying an ORC, fully editable via run-replay.
 			CanEditRichText = canEditRichText && !lossyProperties;
 			GraphemeClusterStarts = DetailTextGraphemeClusters.GetClusterStarts(PlainText);
 		}
@@ -201,7 +197,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		/// <summary>
 		/// Whether at least one run carries a TsString text property the <see cref="DetailTextRun"/>
 		/// model does NOT round-trip (e.g. foreground/background colour, character offset,
-		/// super/subscript — anything beyond ws/named-style/font-family/font-size/bold/italic/underline/
+		/// super/subscript -- anything beyond ws/named-style/font-family/font-size/bold/italic/underline/
 		/// object-data). The neutral run-replay in <c>DetailRichTextAdapter.ToTsString</c> re-emits only
 		/// the supported set, so a first edit (which skips the lossless RichXml fast-path) would silently
 		/// drop the extra property. Such a value is shown read-only with the embedded-object tooltip
@@ -551,7 +547,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		/// to <paramref name="on"/> while runs outside the span keep their metadata untouched.
 		/// <para>The selection is snapped OUTWARD to Unicode grapheme-cluster boundaries (the same
 		/// boundaries the bidi navigation uses) so a combining cluster is never split mid-character.</para>
-		/// <para>A zero-length (collapsed) selection — after clamping/snapping — is a no-op (the original
+		/// <para>A zero-length (collapsed) selection -- after clamping/snapping -- is a no-op (the original
 		/// value is returned); there is no pending caret format.</para>
 		/// <para>The result intentionally carries NO <c>RichXml</c>: the lossless XML fast-path in
 		/// <c>DetailRichTextAdapter.ToTsString</c> would otherwise re-emit the ORIGINAL runs (the plain
@@ -617,7 +613,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		/// covered runs revert to the default/no-style paragraph style), matching the picker's
 		/// "Default/None" entry.</para>
 		/// <para>The span is snapped OUTWARD to Unicode grapheme-cluster boundaries so a combining cluster
-		/// is never split mid-character. A zero-length (collapsed) selection — after clamping/snapping — is
+		/// is never split mid-character. A zero-length (collapsed) selection -- after clamping/snapping -- is
 		/// a no-op (the original value is returned). Lossy / read-only values are returned unchanged.</para>
 		/// <para>The result carries NO <c>RichXml</c> (same reason as <see cref="ApplySpanFormatting"/>):
 		/// the lossless XML fast-path would otherwise re-emit the ORIGINAL runs (plain text is unchanged),
@@ -685,7 +681,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		/// <para>A null/empty <paramref name="wsTag"/> is a no-op (a run must always carry a writing system;
 		/// the picker only offers real project writing systems, never a "clear").</para>
 		/// <para>The span is snapped OUTWARD to Unicode grapheme-cluster boundaries so a combining cluster
-		/// is never split mid-character. A zero-length (collapsed) selection — after clamping/snapping — is
+		/// is never split mid-character. A zero-length (collapsed) selection -- after clamping/snapping -- is
 		/// a no-op (the original value is returned). Lossy / read-only values are returned unchanged.</para>
 		/// <para>The result carries NO <c>RichXml</c> (same reason as <see cref="ApplySpanFormatting"/>):
 		/// the lossless XML fast-path would otherwise re-emit the ORIGINAL runs (plain text is unchanged),
@@ -743,7 +739,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		/// <summary>
 		/// Applies an EXTERNAL-LINK ORC (a hyperlink) over the half-open span <c>[start, end)</c>,
 		/// returning a NEW <see cref="DetailRichTextValue"/> with the same plain text whose covered runs
-		/// carry the link's <c>ObjectData</c> (the <c>kodtExternalPathName</c> tag char + the URL) — the
+		/// carry the link's <c>ObjectData</c> (the <c>kodtExternalPathName</c> tag char + the URL) -- the
 		/// model side of <c>FwEditingHelper.AddHyperlink</c>. Reuses the same run-split + cluster-snap
 		/// machinery as the style/ws helpers. A collapsed selection or a null/empty URL is a no-op (the
 		/// original value is returned). Lossy / read-only values are returned unchanged. The result drops
@@ -815,7 +811,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 
 		/// <summary>
 		/// Deletes the ORC run that STARTS at plain-text position <paramref name="orcStart"/>
-		/// (removing its text — typically the single object-replacement char), returning a NEW value.
+		/// (removing its text -- typically the single object-replacement char), returning a NEW value.
 		/// Generic delete: ANY ORC kind (link, picture, footnote, other) is removable. A position that is
 		/// not the start of an ORC run is a no-op. The result drops <c>RichXml</c> so the adapter re-emits
 		/// via run-replay.
@@ -988,7 +984,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		/// <summary>
 		/// Toggle probe: true when EVERY run overlapping the (cluster-snapped, half-open) span
 		/// <c>[start, end)</c> already carries <paramref name="which"/>. The UI uses this to decide a
-		/// Ctrl+B/I/U gesture's direction — an all-on selection toggles off, otherwise it turns on.
+		/// Ctrl+B/I/U gesture's direction -- an all-on selection toggles off, otherwise it turns on.
 		/// An empty / collapsed span returns false (nothing to toggle off).
 		/// </summary>
 		public static bool SpanFullyHasFormat(DetailRichTextValue value, int start, int end, DetailRunFormat which)
@@ -1131,7 +1127,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			}
 
 			// A pure insertion (nothing removed) defers to legacy TsString behavior: the inserted text
-			// inherits the PRECEDING run's properties — it attaches to the run that ends at the
+			// inherits the PRECEDING run's properties -- it attaches to the run that ends at the
 			// insertion point, not the following run. (Position 0 falls to the first run, since
 			// nothing precedes it.) Replacements/deletions keep the containing-run logic below.
 			var startRun = originalEditEnd == prefix
@@ -1301,7 +1297,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		/// <summary>
 		/// ITEM 3: whether this alternative belongs to a voice/audio (IsVoice) writing system. The new
 		/// view cannot yet play or record audio, so such a row is composed READ-ONLY with an audio
-		/// placeholder — the recording stays visible/diagnosable instead of presenting a blank editable
+		/// placeholder -- the recording stays visible/diagnosable instead of presenting a blank editable
 		/// box whose first keystroke would corrupt the stored recording. Editing stays in the classic view.
 		/// </summary>
 		public bool IsAudio { get; }
@@ -1325,7 +1321,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 	/// <see cref="DetailRichTextValue.CanEditRichText"/> read-only safety carry over verbatim); the
 	/// per-paragraph named style is the legacy <c>StPara.StyleName</c>. An ORC-bearing / lossy paragraph
 	/// is held read-only (<see cref="CanEditText"/> false) and preserved, exactly as a lossy single-WS
-	/// value is — full editing of such a paragraph stays in the classic view.
+	/// value is -- full editing of such a paragraph stays in the classic view.
 	/// </summary>
 	public sealed class DetailParagraph
 	{
@@ -1408,7 +1404,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 
 		/// <summary>
 		/// Hierarchy level for deep possibility lists: 0 for top-level items, +1 per
-		/// sub-possibility nesting, in the list's own document order — drives the legacy indented
+		/// sub-possibility nesting, in the list's own document order -- drives the legacy indented
 		/// chooser tree. Flat lists (and chooserInfo FlatList specs) stay 0 throughout.
 		/// </summary>
 		public int Depth { get; }
@@ -1416,7 +1412,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 
 	/// <summary>
 	/// A list-editor jump link on a chooser/reference-vector row: the legacy chooser dialog's
-	/// "Edit the … list" LinkLabel (<c>ReallySimpleListChooser.AddLink</c> with
+	/// "Edit the ... list" LinkLabel (<c>ReallySimpleListChooser.AddLink</c> with
 	/// <c>LinkType.kGotoLink</c>), composed from the layout's <c>chooserLink type="goto"</c>
 	/// metadata. Clicking it asks the host to jump to the tool that edits the underlying list.
 	/// </summary>
@@ -1436,7 +1432,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		public string Tool { get; }
 
 		/// <summary>
-		/// The jump's target object guid string, or null for a plain tool jump — the legacy chooser
+		/// The jump's target object guid string, or null for a plain tool jump -- the legacy chooser
 		/// passes <c>Guid.Empty</c> (<c>m_guidLink</c>) unless a <c>flidTextParam</c> resolved one,
 		/// and none of the lexeme-editor parts carry that.
 		/// </summary>
@@ -1445,7 +1441,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 
 	/// <summary>
 	/// A request to follow a chooser jump link: the host dispatches it the way the legacy
-	/// chooser does on link click — mediator <c>FollowLink</c> with <c>FwLinkArgs(tool, target)</c>
+	/// chooser does on link click -- mediator <c>FollowLink</c> with <c>FwLinkArgs(tool, target)</c>
 	/// (<c>ReallySimpleListChooser.HandleAnyJump</c>).
 	/// </summary>
 	public sealed class DetailLinkRequest
@@ -1572,7 +1568,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		public string HotlinksId { get; }
 
 		/// <summary>
-		/// True when this row is a multi-writing-system text row — the legacy <c>multistring</c> editor
+		/// True when this row is a multi-writing-system text row -- the legacy <c>multistring</c> editor
 		/// (<c>MultiStringSlice</c>), as opposed to a single-ws <c>string</c> editor. It mirrors the
 		/// legacy <c>slice is MultiStringSlice</c> test so the in-string context menu can add the shared
 		/// <c>mnuDataTree-MultiStringSlice</c> group (with the Writing Systems submenu) for exactly those
@@ -1602,7 +1598,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		/// <summary>
 		/// The project's available CHARACTER-type style names
 		/// the per-WS editor offers when restyling a selection (sourced by the composer from the project's
-		/// styles — <c>Cache.LangProject.StylesOC</c> filtered to character styles). Empty when no
+		/// styles -- <c>Cache.LangProject.StylesOC</c> filtered to character styles). Empty when no
 		/// stylesheet is reachable or the field is not a styleable text row; the style picker affordance is
 		/// then suppressed. The host seam: a settable list the composer populates at compose time (like
 		/// <see cref="ClassName"/>/<see cref="LayoutName"/>), keeping this FwAvalonia layer LCModel-free.
@@ -1612,7 +1608,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 
 		/// <summary>
 		/// The project's available writing systems
-		/// (stable IETF tag + display name) the per-WS editor offers when retagging a selection — sourced
+		/// (stable IETF tag + display name) the per-WS editor offers when retagging a selection -- sourced
 		/// by the composer from <c>Cache</c> (analysis + vernacular writing systems). Empty when no
 		/// writing-system list is reachable or the field is not a retaggable text row; the WS picker
 		/// affordance is then suppressed. The host seam: a settable list the composer populates at compose
@@ -1643,7 +1639,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		/// <summary>
 		/// The project's available PARAGRAPH-type style names the structured-text editor offers in
 		/// its per-paragraph style picker (the host seam the composer populates from
-		/// <c>Cache.LangProject.StylesOC</c> filtered to paragraph styles — like
+		/// <c>Cache.LangProject.StylesOC</c> filtered to paragraph styles -- like
 		/// <see cref="AvailableNamedStyles"/> for character styles). Empty when no styles are reachable;
 		/// the per-paragraph style picker affordance is then suppressed. A test can supply its own list.
 		/// </summary>
@@ -1670,14 +1666,14 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 
 		/// <summary>
 		/// The list-editor jump links of a chooser/reference-vector row: composed from the
-		/// layout's <c>chooserLink type="goto"</c> metadata (e.g. "Edit the Publications list" →
+		/// layout's <c>chooserLink type="goto"</c> metadata (e.g. "Edit the Publications list" ->
 		/// publicationsEdit). The gear flyout surfaces them below the options; clicking raises the
 		/// host's <c>DetailLinkRequest</c> callback. Empty for rows without chooser metadata.
 		/// </summary>
 		public IReadOnlyList<DetailChooserLink> ChooserLinks { get; }
 	}
 
-	/// <summary>Which legacy menu a right-click maps to (section 13).</summary>
+	/// <summary>Which legacy menu a right-click maps to.</summary>
 	public enum DetailMenuKind
 	{
 		/// <summary>The slice menu (layout `menu=`), legacy right-click on the tree node/label.</summary>
@@ -1691,7 +1687,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 	}
 
 	/// <summary>
-	/// A request to show a legacy-defined context menu for a detail row (section 13): the host
+	/// A request to show a legacy-defined context menu for a detail row: the host
 	/// resolves the menu id against the xCore window configuration and shows the same menu the
 	/// legacy slice shows, at the given screen point, with the row's bound object as command target.
 	/// </summary>

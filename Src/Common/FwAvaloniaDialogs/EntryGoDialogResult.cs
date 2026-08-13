@@ -9,7 +9,7 @@ namespace FwAvaloniaDialogs
 	/// only when the user committed a pick (the commit-on-select path: double-click / Enter on a result); it is false
 	/// on Cancel / Escape / window close. <see cref="ChosenId"/> carries the <see cref="EntryGoSearchResult.Id"/> of
 	/// the picked row (null when cancelled). The product edge (the launcher) maps the chosen id back to the real
-	/// <c>ILexEntry</c> and performs the consumer action (the merge, the link, …).
+	/// <c>ILexEntry</c> and performs the consumer action (the merge, the link, ...).
 	/// </summary>
 	public sealed class EntryGoDialogResult
 	{

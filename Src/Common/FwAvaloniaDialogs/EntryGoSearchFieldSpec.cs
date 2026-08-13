@@ -7,7 +7,7 @@ using System;
 namespace FwAvaloniaDialogs
 {
 	/// <summary>
-	/// The LCModel-free writing-system presentation spec for the entry-search ("go") dialog's search box — the
+	/// The LCModel-free writing-system presentation spec for the entry-search ("go") dialog's search box -- the
 	/// parity contract for the legacy <c>BaseGoDlg</c>'s vernacular <c>FwTextBox</c>, which renders the typed query
 	/// in the writing system's default font, honors its right-to-left script, and switches to its keyboard on focus
 	/// (the legacy <c>EditingHelper.SetKeyboardForWs</c> behavior). The launcher derives the values from the live
@@ -20,7 +20,7 @@ namespace FwAvaloniaDialogs
 		/// shared default font.</summary>
 		public string FontFamily { get; set; }
 
-		/// <summary>The font size in points; 0 (the default) keeps the shared default size — the same
+		/// <summary>The font size in points; 0 (the default) keeps the shared default size -- the same
 		/// zero-means-default convention the detail view's per-ws value rows use.</summary>
 		public double FontSize { get; set; }
 

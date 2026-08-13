@@ -21,7 +21,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 	/// size derived from <see cref="FwAvaloniaDensity.RadioBoxSize"/> (the same 14px the checkbox uses, a
 	/// function of the surface font), so a radio NEVER inflates a row past the text line.
 	///
-	/// WHY A WHOLE TEMPLATE (not a selector tweak or a RenderTransform): same reason as the checkbox — the
+	/// WHY A WHOLE TEMPLATE (not a selector tweak or a RenderTransform): same reason as the checkbox -- the
 	/// Fluent 11.3 RadioButton template hardcodes its ~20px ellipse (<c>OuterEllipse</c>/<c>CheckOuterEllipse</c>)
 	/// on a tall (~32px) layout slot as LOCAL VALUES in the template, which OUTRANK any style setter (Avalonia
 	/// precedence: LocalValue &gt; Style), so a selector cannot shrink them, and a ScaleTransform shrinks only the
@@ -37,9 +37,9 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 	/// </summary>
 	public static class FwRadioButtonStyle
 	{
-		// Concrete brushes (NOT Fluent DynamicResources, which do not resolve in the headless test app — the
-		// established "hard rule 1"): a WinForms-ish radio. White circle, mid-gray border, blue accent dot when
-		// checked, gray when disabled. The same palette as FwCheckBoxStyle so radios and checkboxes match.
+		// Concrete brushes, not Fluent DynamicResources, since those do not
+		// resolve in the headless test app -- a WinForms-ish radio look, using
+		// the same palette as FwCheckBoxStyle so radios and checkboxes match.
 		private static readonly IBrush BoxFill = Brushes.White;
 		private static readonly IBrush BoxStroke = new SolidColorBrush(Color.FromRgb(0x7A, 0x7A, 0x7A));
 		private static readonly IBrush CheckedStroke = new SolidColorBrush(Color.FromRgb(0x00, 0x5F, 0xB8));
@@ -78,8 +78,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 				Setters =
 				{
 					new Setter(TemplatedControl.BackgroundProperty, Brushes.Transparent),
-					// No box→label gap here: the gap is the StackPanel Spacing in CreateTemplate (deterministic,
-					// CheckboxLabelGap — the same gap the checkbox uses, so radios and checkboxes line up).
+					// No box->label gap here: the gap is CheckboxLabelGap via StackPanel Spacing in CreateTemplate, the same gap the checkbox uses, so radios and checkboxes line up.
 					new Setter(TemplatedControl.PaddingProperty, new Thickness(0)),
 					new Setter(Layoutable.MinHeightProperty, 0d),
 					new Setter(Layoutable.MinWidthProperty, 0d),
@@ -88,7 +87,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 				}
 			};
 
-			// Base (unchecked) visuals — set via STYLES, not local template values, so the state styles below
+			// Base (unchecked) visuals -- set via STYLES, not local template values, so the state styles below
 			// can override them (a local value would outrank a style setter). The circle reads white with a gray
 			// border; the dot starts hidden. These must precede the state styles so a later matching state style
 			// wins by ordering.
@@ -105,7 +104,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 				Setters = { new Setter(Visual.OpacityProperty, 0d) }
 			});
 
-			// :checked — accent the ring and reveal the filled dot.
+			// :checked -- accent the ring and reveal the filled dot.
 			theme.Add(new Style(s => s.Nesting().Class(":checked").Template().OfType<Ellipse>().Name("FwRadio_Box"))
 			{
 				Setters =
@@ -119,7 +118,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 				Setters = { new Setter(Visual.OpacityProperty, 1d) }
 			});
 
-			// :disabled — gray the ring so a disabled radio reads inert.
+			// :disabled -- gray the ring so a disabled radio reads inert.
 			theme.Add(new Style(s => s.Nesting().Class(":disabled").Template().OfType<Ellipse>().Name("FwRadio_Box"))
 			{
 				Setters =
@@ -139,9 +138,10 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 		{
 			var dotSize = box * 0.45;
 
-			// NOTE: Fill/Stroke are NOT set locally — a local value would outrank the :checked / :disabled state
-			// Style setters (LocalValue > Style). The unchecked fill/stroke come from the theme's base nested
-			// style; the states recolor through styles (see CreateTheme).
+			// NOTE: Fill/Stroke are NOT set locally -- a local value beats
+			// :checked/:disabled Style setters (LocalValue > Style). Unchecked
+			// fill/stroke come from the theme's base style; states recolor via
+			// CreateTheme.
 			var ring = new Ellipse
 			{
 				Name = "FwRadio_Box",
@@ -151,9 +151,9 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 				VerticalAlignment = VerticalAlignment.Center
 			};
 
-			// NOTE: do NOT set Opacity locally here — a local value outranks a Style setter, so the :checked
-			// state style could not reveal it. The dot is hidden by the theme's base nested style and revealed
-			// by the :checked state style (see CreateTheme).
+			// NOTE: do NOT set Opacity locally -- a local value outranks a Style
+			// setter, so :checked could not reveal it. The dot is hidden by the
+			// theme's base style, revealed by :checked (see CreateTheme).
 			var dot = new Ellipse
 			{
 				Name = "FwRadio_Dot",
@@ -188,7 +188,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 			{
 				Orientation = Orientation.Horizontal,
 				VerticalAlignment = VerticalAlignment.Center,
-				// Deterministic ring→label gap so the words never butt against the circle. The same gap the
+				// Deterministic ring->label gap so the words never butt against the circle. The same gap the
 				// checkbox uses (CheckboxLabelGap), so a radio group and a checkbox group line up.
 				Spacing = FwAvaloniaDensity.CheckboxLabelGap,
 				Children = { boxPanel, content }

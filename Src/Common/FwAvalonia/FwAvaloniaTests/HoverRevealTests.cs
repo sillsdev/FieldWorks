@@ -26,9 +26,9 @@ namespace FwAvaloniaTests
 	/// Hover-reveal affordances (UI polish): the chooser's configure gear and the reference vector's
 	/// separator bars + "+" launcher start hidden (opacity 0, not hit-testable, but still in
 	/// layout and in the UIA tree), fade in while the pointer is over the row (label or editor),
-	/// and fade out when it leaves — driven here by REAL headless mouse input. Gear semantics:
+	/// and fade out when it leaves -- driven here by REAL headless mouse input. Gear semantics:
 	/// the gear renders only because these rows RESOLVE a list-editor target (chooserLinks), and
-	/// clicking it dispatches the jump directly — no flyout. The "+"/value click opens the
+	/// clicking it dispatches the jump directly -- no flyout. The "+"/value click opens the
 	/// options picker, and staging still fires from it.
 	/// </summary>
 	[TestFixture]
@@ -155,7 +155,7 @@ namespace FwAvaloniaTests
 				Assert.That(affordance.IsVisible, Is.True);
 			}
 
-			// The vector's item text is always visible — only the affordances hide.
+			// The vector's item text is always visible -- only the affordances hide.
 			var item = Find<TextBlock>(view, "PublishIn.Item.p1");
 			Assert.That(item.Opacity, Is.EqualTo(1d));
 		}
@@ -234,7 +234,7 @@ namespace FwAvaloniaTests
 		}
 
 		// GEAR = CONFIGURE: clicking the revealed gear DIRECTLY dispatches the list-editor jump
-		// (DetailLinkRequest with the row's resolved tool) — no flyout, no menu, no staging.
+		// (DetailLinkRequest with the row's resolved tool) -- no flyout, no menu, no staging.
 		[AvaloniaTest]
 		public void ClickingTheGearAfterReveal_DispatchesTheListEditorJump_NoFlyoutOpens()
 		{
@@ -341,7 +341,7 @@ namespace FwAvaloniaTests
 		}
 
 		// Bug "gear icons not showing" (b): the dialog-launcher row's always-visible "..." became
-		// the same hover-revealed gear — same click path into the injected launcher callback.
+		// the same hover-revealed gear -- same click path into the injected launcher callback.
 		[AvaloniaTest]
 		public void LauncherGear_HiddenUntilRowHover_AndClickInvokesTheInjectedLauncher()
 		{

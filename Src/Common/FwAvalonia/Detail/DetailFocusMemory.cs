@@ -16,7 +16,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 	/// this, tabbing out of a field (which auto-commits, 14.4) would tear down the editor the user
 	/// just moved into and dump focus on the floor. Capture reads the focused editor's stable
 	/// automation id (and caret) from the outgoing view; restore finds the same id in the incoming
-	/// view and gives it focus — automation ids are stable per field/writing system by design, so
+	/// view and gives it focus -- automation ids are stable per field/writing system by design, so
 	/// they are the right cross-rebuild identity.
 	/// </summary>
 	public static class DetailFocusMemory
@@ -82,7 +82,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 
 		/// <summary>
 		/// Focuses the control with the memento's automation id inside <paramref name="root"/>
-		/// (which must already be attached to a TopLevel). Returns false when no match exists —
+		/// (which must already be attached to a TopLevel). Returns false when no match exists --
 		/// e.g. the field disappeared in the re-show, or the memento had scroll-only state.
 		/// </summary>
 		public static bool TryRestoreFocus(Control root, Memento memento)
@@ -90,7 +90,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			if (root == null || string.IsNullOrEmpty(memento?.AutomationId))
 				return false;
 
-			// First pass: the exact stable id (the common case — the same field survived the re-show).
+			// First pass: the exact stable id (the common case -- the same field survived the re-show).
 			foreach (var visual in root.GetVisualDescendants())
 			{
 				if (!(visual is Control control)
@@ -104,7 +104,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			}
 
 			// Post-ghost-commit continuity (legacy RestoreSelection): when a ghost add-prompt commits,
-			// the host recomposes and the new REAL editor's id differs from the "/ghost" id — the ghost
+			// the host recomposes and the new REAL editor's id differs from the "/ghost" id -- the ghost
 			// id carries the OWNER's hvo and the "/ghost" marker, the successor carries the newly created
 			// object's hvo and no marker. So the exact match above misses and focus would land on the
 			// floor. When the captured id is a ghost id, fall back to its successor matcher so focus
@@ -135,7 +135,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 
 		// Maps a "/ghost" editor automation id to a predicate that recognizes the real successor editor
 		// the ghost commit produced. The ghost id has the shape "{node}@{ownerHvo}/ghost.{wsKey}" (the
-		// owner hvo because the object did not exist yet); the successor has "{node}@{newHvo}.{wsKey}" —
+		// owner hvo because the object did not exist yet); the successor has "{node}@{newHvo}.{wsKey}" --
 		// same node-stable prefix and same writing-system suffix, only the owned object's hvo (and the
 		// "/ghost" marker) change. We therefore match on the prefix up to and including "@" plus the WS
 		// suffix after "/ghost", tolerating the hvo difference. Returns null when the id is not a ghost id

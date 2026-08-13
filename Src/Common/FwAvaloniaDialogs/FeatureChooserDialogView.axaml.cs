@@ -10,7 +10,7 @@ namespace FwAvaloniaDialogs
 	/// The standalone feature-structure chooser dialog body: a XAML-authored UserControl bound
 	/// to <see cref="FeatureChooserDialogViewModel"/> with compiled bindings for the prompt + OK/Cancel/Help, plus the
 	/// owned <see cref="FwFeatureStructureEditor"/> hosted as a code-behind child (it is a native control, not an
-	/// MVVM-bindable one — the same pattern <see cref="MsaCreatorDlgView"/> uses for the MSA box). Hosted as
+	/// MVVM-bindable one -- the same pattern <see cref="MsaCreatorDlgView"/> uses for the MSA box). Hosted as
 	/// Avalonia content inside a WinForms-owned modal Form during coexistence via <c>AvaloniaDialogHost.ShowModal</c>.
 	/// </summary>
 	public partial class FeatureChooserDialogView : UserControl

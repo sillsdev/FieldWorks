@@ -9,14 +9,14 @@ using CommunityToolkit.Mvvm.Input;
 namespace FwAvaloniaDialogs
 {
 	/// <summary>
-	/// View-model for the standalone feature-structure chooser dialog — the Avalonia
+	/// View-model for the standalone feature-structure chooser dialog -- the Avalonia
 	/// analog of the WinForms <c>MsaInflectionFeatureListDlg</c> (assign inflection feature values to an MSA's
 	/// <c>IFsFeatStruc</c>) and <c>PhonologicalFeatureChooserDlg</c> (the phonological feature system). The dialog is
 	/// essentially the shared LCModel-free <see cref="FwFeatureStructureEditor"/> hosted over OK/Cancel/Help: the
 	/// host feeds the feature system + current assignments, the user picks values, and on OK
 	/// <see cref="ApplyChanges"/> snapshots the chosen assignment set into <see cref="Result"/>.
 	///
-	/// Like the legacy dialogs there is NO OK gate (an empty assignment set — every feature "&lt;None&gt;" — is the
+	/// Like the legacy dialogs there is NO OK gate (an empty assignment set -- every feature "&lt;None&gt;" -- is the
 	/// valid "delete the FS / unspecified" outcome). The dialog forwards the editor's inline
 	/// <see cref="CreateNewFeatureRequested"/> / <see cref="CreateNewValueRequested"/> affordances to the host
 	/// (the launcher opens the create flow and calls <see cref="AcceptCreatedFeature"/> /
@@ -41,7 +41,7 @@ namespace FwAvaloniaDialogs
 			HasHelp = !string.IsNullOrEmpty(_input.HelpTopic);
 
 			// The owned feature editor: feed the feature system, then seed the current assignments silently (the
-			// host's initial-load path — SetAssignments does not raise the change event).
+			// host's initial-load path -- SetAssignments does not raise the change event).
 			Editor = new FwFeatureStructureEditor(string.IsNullOrEmpty(_input.AutomationId) ? "Features" : _input.AutomationId);
 			Editor.SetNodes(_input.Nodes ?? Array.Empty<FwFeatureNode>());
 			Editor.SetAssignments(_input.InitialAssignments ?? Array.Empty<FwFeatureValueAssignment>());

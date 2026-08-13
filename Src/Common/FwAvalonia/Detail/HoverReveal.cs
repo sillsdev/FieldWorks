@@ -17,7 +17,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 	/// <summary>
 	/// A field editor whose row decorations include hover-revealed affordances (the chooser's settings
 	/// gear, the reference vector's separator bars and "+" launcher). The detail view reads this
-	/// to widen the hover surface to the WHOLE row (label + editor) — presentation only, no behavior.
+	/// to widen the hover surface to the WHOLE row (label + editor) -- presentation only, no behavior.
 	/// </summary>
 	public interface IHoverAffordanceProvider
 	{
@@ -27,11 +27,11 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 
 	/// <summary>
 	/// Modern hover-reveal presentation for secondary affordances: the affordances start hidden by
-	/// OPACITY (they stay in layout — rows never reflow — and stay in the UIA tree, focusable),
+	/// OPACITY (they stay in layout -- rows never reflow -- and stay in the UIA tree, focusable),
 	/// fade in (~120ms) while the pointer is over any hover source or any affordance (entering
 	/// the gear itself must not flicker it away), and fade out when the pointer leaves them all.
 	/// Keyboard access: an affordance gaining focus (Tab) also reveals; losing focus hides again
-	/// unless the pointer is over. Pure presentation — no flyout, staging, or automation-id changes.
+	/// unless the pointer is over. Pure presentation -- no flyout, staging, or automation-id changes.
 	/// </summary>
 	public static class HoverReveal
 	{
@@ -40,7 +40,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 
 		// The reveal registration of an affordance: stamped the first time the affordance is
 		// attached, looked up (and merged into) by every later Attach. The property is the
-		// idempotence anchor — without it each Attach call would stack an independent handler
+		// idempotence anchor -- without it each Attach call would stack an independent handler
 		// set with its own watched list, and the groups would fight over the opacity.
 		private static readonly AttachedProperty<RevealGroup> RevealGroupProperty =
 			AvaloniaProperty.RegisterAttached<Control, RevealGroup>("HoverRevealGroup", typeof(HoverReveal));
@@ -49,8 +49,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		/// Wires <paramref name="affordances"/> to reveal while the pointer is over any of
 		/// <paramref name="hoverSources"/> (or over an affordance itself) and hide otherwise.
 		/// Idempotent per affordance: attaching again (the view widening the hover surface to the
-		/// row after the control wired itself) merges into the existing registration — one handler
-		/// set, one watched list — instead of stacking a second independent one.
+		/// row after the control wired itself) merges into the existing registration -- one handler
+		/// set, one watched list -- instead of stacking a second independent one.
 		/// </summary>
 		public static void Attach(IReadOnlyList<Control> hoverSources, IReadOnlyList<Control> affordances)
 		{
@@ -59,9 +59,9 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				return;
 			var sources = (hoverSources ?? Array.Empty<Control>()).Where(s => s != null).Distinct().ToList();
 
-			// Resolve the registration this call lands in: the first already-registered target's
-			// group wins; targets registered in OTHER groups merge into it (an Attach spanning
-			// previously separate registrations unifies them — they reveal together from then on).
+			// Resolve the registration this call lands in: the first registered
+			// target's group wins; targets in OTHER groups merge into it (an Attach
+			// spanning registrations unifies them -- they reveal together).
 			RevealGroup group = null;
 			foreach (var affordance in targets)
 			{
@@ -199,12 +199,12 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		// glyph: 8 teeth on a 24-unit canvas rendered at ~14px in the muted ws-abbreviation hue.
 		private static readonly Geometry GearGeometry = CreateGearGeometry();
 
-		// A vertical ellipsis ("⋮", the "kebab" field-menu glyph): three stacked dots on the same
-		// 24-unit canvas, drawn as model EllipseGeometry (no stream context) so it renders in the
-		// headless unit tests that build these controls with no Avalonia platform loaded.
+		// A vertical ellipsis ("...", the "kebab" field-menu glyph): three
+		// stacked dots on the same 24-unit canvas, drawn as model EllipseGeometry
+		// so it renders in headless tests with no Avalonia platform loaded.
 		private static readonly Geometry KebabGeometry = CreateKebabGeometry();
 
-		/// <summary>The "⋮" field-options glyph, in the muted affordance hue.</summary>
+		/// <summary>The "..." field-options glyph, in the muted affordance hue.</summary>
 		internal static Control CreateKebabIcon()
 			=> new Avalonia.Controls.Shapes.Path
 			{
@@ -216,7 +216,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				VerticalAlignment = VerticalAlignment.Center
 			};
 
-		/// <summary>A flat (transparent, borderless) button carrying the "⋮" glyph as its face.</summary>
+		/// <summary>A flat (transparent, borderless) button carrying the "..." glyph as its face.</summary>
 		internal static Button CreateKebabButton()
 			=> new Button
 			{
@@ -265,7 +265,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 
 		// Built from MODEL segments (PathGeometry/ArcSegment/LineSegment), NOT StreamGeometry.Open:
 		// opening a stream context demands the IPlatformRenderInterface, and xWorks hosts construct
-		// these controls in plain unit tests with no Avalonia platform loaded — model geometry only
+		// these controls in plain unit tests with no Avalonia platform loaded -- model geometry only
 		// touches the platform when actually rendered.
 		private static Geometry CreateGearGeometry()
 		{

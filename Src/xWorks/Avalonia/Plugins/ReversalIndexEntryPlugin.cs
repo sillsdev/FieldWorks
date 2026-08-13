@@ -24,7 +24,7 @@ namespace SIL.FieldWorks.XWorks
 	/// <para>A sense's reversal entries (<c>ILexSense.ReferringReversalIndexEntries</c>) are a set of
 	/// <c>IReversalIndexEntry</c>, each storing its form (<c>ReversalForm</c>, a multi-unicode string)
 	/// under its owning reversal index's writing system. The editor renders one row per EXISTING
-	/// reversal entry — the entry's form in its index's writing system — reusing the same
+	/// reversal entry -- the entry's form in its index's writing system -- reusing the same
 	/// plain-text-over-preserved-runs <c>TrySetRichText</c> staging every other text row uses, so the
 	/// edit rides the detail view's SAME fenced undo step.</para>
 	/// <para>DATA-SAFE SCOPE: this editor edits the form text of EXISTING reversal entries only.
@@ -87,9 +87,9 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		// One editable row per EXISTING reversal entry: the entry's ReversalForm in its index's writing
-		// system. The row's WsTag (and the wsKey edits route on) is the reversal index's writing-system
-		// tag, which is unique per index — a sense has at most one reversal entry per index.
+		// One editable row per EXISTING reversal entry: ReversalForm in its index's
+		// writing system. WsTag (what wsKey routes on) is the index's ws tag --
+		// unique since a sense has at most one entry per index.
 		private static IReadOnlyList<DetailWsValue> CreateReversalRows(ILexSense sense, LcmCache cache,
 			out IReadOnlyDictionary<string, IReversalIndexEntry> entryByWsKey)
 		{
@@ -177,9 +177,9 @@ namespace SIL.FieldWorks.XWorks
 			});
 		}
 
-		// Stage on the host's shared fenced session when present (the detail view's own context); fall back to
-		// a self-contained non-undoable write only when no host context exists (defensive — the composer
-		// always supplies one).
+		// Stage on the host's shared fenced session when present (the detail
+		// view's own context); fall back to a self-contained non-undoable write
+		// only when no host context exists.
 		private bool StageOnHost(Func<bool> setter)
 		{
 			if (_host is DetailEditContextBase fenced)

@@ -177,8 +177,8 @@ namespace FwAvaloniaTests
 	}
 
 	/// <summary>
-	/// User-override-shaped layout XML — label/visibility overrides
-	/// and a hidden part — imports with the overrides surfaced in the typed IR.
+	/// User-override-shaped layout XML -- label/visibility overrides
+	/// and a hidden part -- imports with the overrides surfaced in the typed IR.
 	/// </summary>
 	[TestFixture]
 	public class OverrideFixtureImportTests

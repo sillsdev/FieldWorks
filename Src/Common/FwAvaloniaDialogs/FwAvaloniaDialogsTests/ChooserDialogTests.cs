@@ -296,9 +296,10 @@ namespace FwAvaloniaDialogsTests
 
 			string requested = null;
 			vm.HelpRequested += t => requested = t;
-			// The Help button is Command-bound; in Avalonia raising ClickEvent does not execute a bound
-			// Command (only code-behind Click handlers respond to a raised event), so invoke the wired
-			// command directly — this still verifies the button is bound to the VM's HelpCommand.
+			// The Help button is Command-bound; raising ClickEvent in Avalonia
+			// doesn't execute it (only code-behind handlers respond), so invoke
+			// the wired command directly -- still verifying it's bound to
+			// HelpCommand.
 			help.Command.Execute(null);
 			Dispatcher.UIThread.RunJobs();
 			Assert.That(requested, Is.EqualTo("khtpChooseCategory"), "Help raises HelpRequested with the topic");

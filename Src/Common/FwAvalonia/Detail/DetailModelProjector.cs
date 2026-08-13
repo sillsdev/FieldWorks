@@ -122,9 +122,9 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 
 		/// <summary>
 		/// Maps a node's editor to a renderable kind. Obsolete editors are unsupported; the
-		/// chooser categories render as choosers; everything else is treated as text — the
+		/// chooser categories render as choosers; everything else is treated as text -- the
 		/// deliberately small first-slice projection. The editor-string knowledge itself lives
-		/// ONCE, in <see cref="EditorKindMap.ClassifyDetailFieldKind"/> — this method keeps no
+		/// ONCE, in <see cref="EditorKindMap.ClassifyDetailFieldKind"/> -- this method keeps no
 		/// heuristics of its own.
 		/// </summary>
 		private static DetailFieldKind ClassifyKind(ViewNode node)

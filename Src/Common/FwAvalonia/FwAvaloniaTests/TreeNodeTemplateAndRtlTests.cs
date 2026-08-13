@@ -91,7 +91,7 @@ namespace FwAvaloniaTests
 	}
 
 	/// <summary>
-	/// RTL coverage — headless evidence that the owned multi-WS field edits right-to-left
+	/// RTL coverage -- headless evidence that the owned multi-WS field edits right-to-left
 	/// script text: the editor takes RTL flow direction from the writing system, Arabic text
 	/// round-trips through editing, and caret/selection indices operate on the logical string
 	/// (Avalonia's TextLayout handles visual bidi reordering). IME composition and on-device

@@ -13,7 +13,7 @@ namespace SIL.FieldWorks.XWorks
 	/// <summary>
 	/// Groundwork for the rule-formula editor (a follow-up tool). The tool-level flip
 	/// (AdhocCoprohibEdit) stays gated off via UIFrameworkRegistry.Phase1FollowUpTools
-	/// regardless of what the composer can already do — this file only proves the composer machinery, not that
+	/// regardless of what the composer can already do -- this file only proves the composer machinery, not that
 	/// the tool is live.
 	///
 	/// Pins how the ad-hoc co-prohibition records compose on the Avalonia detail view, to scope the remaining
@@ -123,7 +123,7 @@ namespace SIL.FieldWorks.XWorks
 			foreach (var field in new[] { "FirstMorpheme", "Adjacency", "RestOfMorphs", "Disabled" })
 				Assert.That(memberRows.Any(f => f.Field == field), $"the member's {field} part composes");
 			// Key/Others/Adjacency are custom slices, so the member's parts compose as labeled Unsupported
-			// worklist rows rather than editors — the structure composes, the editors do not.
+			// worklist rows rather than editors -- the structure composes, the editors do not.
 			Assert.That(memberRows.Any(f => f.Kind != DetailFieldKind.Header
 				&& f.Kind != DetailFieldKind.Unsupported), Is.False,
 				"the member's parts compose as Unsupported worklist rows");

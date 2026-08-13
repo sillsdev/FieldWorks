@@ -28,7 +28,7 @@ using System.Runtime.CompilerServices;
 // [assembly: AssemblyConfiguration("")] // Sanitized by convert_generate_assembly_info
 // [assembly: AssemblyCompany("SIL")] // Sanitized by convert_generate_assembly_info
 // [assembly: AssemblyProduct("SIL FieldWorks")] // Sanitized by convert_generate_assembly_info
-// [assembly: AssemblyCopyright("© 2003, SIL International")] // Sanitized by convert_generate_assembly_info
+// [assembly: AssemblyCopyright("(c) 2003, SIL International")] // Sanitized by convert_generate_assembly_info
 // [assembly: AssemblyTrademark("")] // Sanitized by convert_generate_assembly_info
 // [assembly: AssemblyCulture("")] // Sanitized by convert_generate_assembly_info
 

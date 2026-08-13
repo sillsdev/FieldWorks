@@ -69,7 +69,7 @@ namespace FwAvaloniaPreviewHostTests
 
 		/// <summary>
 		/// The realized Avalonia view exposes the same field labels the legacy DataTree slices carry,
-		/// as UIA Names, in the legacy top-to-bottom order — so a screen reader announces the same
+		/// as UIA Names, in the legacy top-to-bottom order -- so a screen reader announces the same
 		/// vocabulary in both frameworks.
 		/// </summary>
 		[Test]

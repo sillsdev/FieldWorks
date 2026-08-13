@@ -5,10 +5,10 @@
 namespace FwAvaloniaDialogs
 {
 	/// <summary>
-	/// One LCModel-free option row for the entry-search ("go") dialog's dependent auxiliary picker — the Avalonia
+	/// One LCModel-free option row for the entry-search ("go") dialog's dependent auxiliary picker -- the Avalonia
 	/// analog of one item of the legacy per-entry combo an EntryGoDlg child showed under the matching list
 	/// (LinkMSADlg's grammatical-info combo, LinkAllomorphDlg's allomorph combo). <see cref="Key"/> is the option's
-	/// stable identity (the launcher's choice — e.g. a Guid string) returned on OK; <see cref="Text"/> is the display
+	/// stable identity (the launcher's choice -- e.g. a Guid string) returned on OK; <see cref="Text"/> is the display
 	/// the picker shows.
 	/// </summary>
 	public sealed class EntryGoAuxiliaryOption

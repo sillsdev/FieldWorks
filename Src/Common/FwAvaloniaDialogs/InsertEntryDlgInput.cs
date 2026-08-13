@@ -10,13 +10,13 @@ using SIL.FieldWorks.Common.FwAvalonia.Detail;
 namespace FwAvaloniaDialogs
 {
 	/// <summary>
-	/// The LCModel-free input to the reusable Avalonia Insert Entry dialog — the Avalonia analog of the
+	/// The LCModel-free input to the reusable Avalonia Insert Entry dialog -- the Avalonia analog of the
 	/// legacy <c>InsertEntryDlg</c> in New-UI mode. The product edge (the LexText launcher) builds this from the
 	/// live cache so the Avalonia layer never sees an <c>ICmObject</c>: the lexeme form / gloss fields are
 	/// projected as <see cref="DetailField"/>s (one writing-system row per current vernacular /
 	/// analysis WS, seeded empty unless <see cref="LexemeForm"/>'s values carry an initial form), the morph
 	/// types are flat <see cref="DetailChoiceOption"/>s (key = morph-type guid string), and the live
-	/// affix-marker → morph-type derivation rides the <see cref="DeriveMorphType"/> delegate (the launcher wraps
+	/// affix-marker -> morph-type derivation rides the <see cref="DeriveMorphType"/> delegate (the launcher wraps
 	/// <c>MorphServices.GetTypeIfMatchesPrefix</c>/<c>FindMorphType</c>).
 	/// </summary>
 	public sealed class InsertEntryDlgInput
@@ -34,11 +34,11 @@ namespace FwAvaloniaDialogs
 		/// <summary>The selectable morph types (flat; key = morph-type guid string, name = display name).</summary>
 		public IReadOnlyList<DetailChoiceOption> MorphTypes { get; set; } = Array.Empty<DetailChoiceOption>();
 
-		/// <summary>The morph-type key (guid string) selected on open — the legacy default of "stem".</summary>
+		/// <summary>The morph-type key (guid string) selected on open -- the legacy default of "stem".</summary>
 		public string InitialMorphTypeKey { get; set; }
 
 		/// <summary>
-		/// The live affix-marker → morph-type derivation: given the current best lexeme form it returns the
+		/// The live affix-marker -> morph-type derivation: given the current best lexeme form it returns the
 		/// derived morph-type key (guid string) plus the marker-adjusted form (e.g. typing "-ed" derives the
 		/// suffix morph type and keeps the "-ed" marker). The launcher supplies this by wrapping
 		/// <c>MorphServices.GetTypeIfMatchesPrefix</c>/<c>FindMorphType</c>; a null typeKey means "leave the
@@ -53,21 +53,21 @@ namespace FwAvaloniaDialogs
 		public string HelpTopic { get; set; }
 
 		/// <summary>
-		/// The duplicate-detection ("matching entries") search delegate — the lift of the legacy
+		/// The duplicate-detection ("matching entries") search delegate -- the lift of the legacy
 		/// <c>InsertEntryDlg.UpdateMatches</c> / <c>MatchingObjectsBrowser</c>. Given the current best lexeme form AND
 		/// the current best gloss it returns the EXISTING entries whose lexeme/citation/alternate form OR gloss matches
 		/// (each a lightweight <see cref="EntryGoSearchResult"/>: id = entry hvo string, text = headword,
 		/// subText/description = gloss), so the user can pick an existing entry rather than create a duplicate. The
 		/// launcher supplies this by wrapping the SAME matching the legacy dialog uses (the
 		/// <c>InsertEntrySearchEngine</c>, which searches the vernacular citation/lexeme/alternate forms AND the
-		/// analysis gloss — legacy <c>GetFields</c>) over the live entry repository. Re-run as the lexeme form OR the
+		/// analysis gloss -- legacy <c>GetFields</c>) over the live entry repository. Re-run as the lexeme form OR the
 		/// gloss changes; both empty clears the list. Null disables the matches pane entirely (it is hidden), so
 		/// existing consumers that never set it are unaffected.
 		/// </summary>
 		public Func<string, string, IReadOnlyList<EntryGoSearchResult>> SearchMatches { get; set; }
 
 		/// <summary>
-		/// The launcher-supplied morphology validation — the LCModel-aware lift of the legacy
+		/// The launcher-supplied morphology validation -- the LCModel-aware lift of the legacy
 		/// <c>InsertEntryDlg.CheckMorphType</c> (:1439) + <c>CircumfixProblem</c> (:1494) + the <c>ksInvalidForm</c>
 		/// parse (:1681) run on OK. Given the staged per-writing-system lexeme forms (keyed by WS tag) and the chosen
 		/// morph-type key it returns which morphology problem (if any) the form/type combination has, so the dialog can
@@ -77,7 +77,7 @@ namespace FwAvaloniaDialogs
 		public Func<IReadOnlyDictionary<string, string>, string, InsertEntryMorphValidation> ValidateMorphology { get; set; }
 
 		/// <summary>
-		/// The launcher-supplied "re-mark the lexeme form with the morph type's markers" delegate — the LCModel-aware
+		/// The launcher-supplied "re-mark the lexeme form with the morph type's markers" delegate -- the LCModel-aware
 		/// lift of the legacy <c>cbMorphType_SelectedIndexChanged</c> (:1706) <c>BestForm = m_morphType.FormWithMarkers(BestForm)</c>.
 		/// Given the chosen morph-type key and the current best lexeme form it returns the form re-marked with that
 		/// type's affix markers (e.g. picking "suffix" turns "ed" into "-ed"); a circumfix returns the form unchanged
@@ -98,12 +98,12 @@ namespace FwAvaloniaDialogs
 		/// The project's parts-of-speech hierarchy as a flat, document-order, depth-tagged <see cref="FwPosNode"/>
 		/// list (the launcher builds it from <c>cache.LangProject.PartsOfSpeechOA</c>). Fed to BOTH POS choosers
 		/// inside the hosted <see cref="MSAGroupBox"/>. Empty (the default) leaves the MSA section's POS choosers
-		/// with only the "&lt;Any&gt;" row — so existing consumers that never set it are unaffected.
+		/// with only the "&lt;Any&gt;" row -- so existing consumers that never set it are unaffected.
 		/// </summary>
 		public IReadOnlyList<FwPosNode> PosNodes { get; set; } = Array.Empty<FwPosNode>();
 
 		/// <summary>
-		/// The morph-type → grammatical-info class map (key = morph-type guid string, value = <see cref="FwMsaType"/>),
+		/// The morph-type -> grammatical-info class map (key = morph-type guid string, value = <see cref="FwMsaType"/>),
 		/// mirroring the WinForms <c>MSAGroupBox.MorphTypePreference</c> switch. The dialog uses it to drive the MSA
 		/// box's <see cref="MSAGroupBox.MsaType"/> LIVE as the user's morph-type selection changes, so the shared dialog stays
 		/// LCModel-free. A morph type absent from the map (or a null map) falls back to <see cref="InitialMsaType"/>.
@@ -118,7 +118,7 @@ namespace FwAvaloniaDialogs
 
 		/// <summary>
 		/// Builds the inflectional-affix slot options (the legacy <c>MSAGroupBox.ResetSlotCombo</c>/<c>GetSlots</c>)
-		/// for a given main-POS id (guid string) — the launcher wraps the domain slot services
+		/// for a given main-POS id (guid string) -- the launcher wraps the domain slot services
 		/// (<c>pos.AllAffixSlots</c> filtered by the prefixal/suffixal morph type). The dialog re-runs it whenever the
 		/// MSA box's main POS changes while the box is inflectional, refeeding <see cref="MSAGroupBox.SetSlots"/>.
 		/// Null leaves the slot list empty.
@@ -126,7 +126,7 @@ namespace FwAvaloniaDialogs
 		public Func<string, IReadOnlyList<FwInflectionSlot>> SlotsForPos { get; set; }
 
 		/// <summary>
-		/// Builds the inflection-class options for a given main-POS id (guid string) — the launcher wraps
+		/// Builds the inflection-class options for a given main-POS id (guid string) -- the launcher wraps
 		/// <c>IPartOfSpeech.InflectionClassesOC</c> (incl. nested <c>SubclassesOC</c>, depth-tagged). The dialog re-runs
 		/// it whenever the MSA box's MAIN POS changes (the parity of the WinForms POS-change path that resets the
 		/// inflection-class tree), refeeding <see cref="MSAGroupBox.SetInflectionClasses"/>. Null leaves the list
@@ -139,7 +139,7 @@ namespace FwAvaloniaDialogs
 
 		/// <summary>
 		/// Builds the inflection-feature SYSTEM (a flat, document-order, depth-tagged <see cref="FwFeatureNode"/> list)
-		/// for a given main-POS id (guid string) — the launcher wraps the POS's <c>InflectableFeatsRC</c> (incl. its
+		/// for a given main-POS id (guid string) -- the launcher wraps the POS's <c>InflectableFeatsRC</c> (incl. its
 		/// parent POSes', the lift of <c>MsaInflectionFeatureListDlg.PopulateTreeFromPos</c>). The dialog re-runs it
 		/// whenever the MSA box's MAIN POS changes (infl/deriv), refeeding
 		/// <see cref="MSAGroupBox.SetInflectionFeatureNodes"/>. Null leaves the editor empty.
@@ -153,7 +153,7 @@ namespace FwAvaloniaDialogs
 
 		/// <summary>
 		/// The selectable complex-form types (flat; key = complex-entry-type guid string, name = display name),
-		/// in sorted display order — the legacy <c>m_cbComplexFormType</c> items after its leading "&lt;Not
+		/// in sorted display order -- the legacy <c>m_cbComplexFormType</c> items after its leading "&lt;Not
 		/// Applicable&gt;" entry (the dialog prepends that itself). The launcher builds this from
 		/// <c>LexDbOA.ComplexEntryTypesOA.ReallyReallyAllPossibilities</c>. Empty (the default) leaves the picker
 		/// with only the "&lt;Not Applicable&gt;" row, so existing consumers that never set it are unaffected.
@@ -164,7 +164,7 @@ namespace FwAvaloniaDialogs
 		public string InitialComplexFormTypeKey { get; set; }
 
 		/// <summary>
-		/// The morph-type-guid → <see cref="ComplexFormGating"/> map — the data lift of the WinForms
+		/// The morph-type-guid -> <see cref="ComplexFormGating"/> map -- the data lift of the WinForms
 		/// <c>EnableComplexFormTypeCombo</c> switch, supplied so the shared dialog stays LCModel-free. As the user's
 		/// morph-type selection changes the dialog reads this to set the complex-form picker's enabled state and,
 		/// for the bound-root/root case, force the selection back to "&lt;Not Applicable&gt;". A morph type absent
@@ -175,7 +175,7 @@ namespace FwAvaloniaDialogs
 	}
 
 	/// <summary>
-	/// How the morph-type selection gates the Insert Entry dialog's Complex Form Type picker — the data lift of the
+	/// How the morph-type selection gates the Insert Entry dialog's Complex Form Type picker -- the data lift of the
 	/// WinForms <c>InsertEntryDlg.EnableComplexFormTypeCombo</c> switch (LT-21666). The launcher supplies one of
 	/// these per morph type so the LCModel-free dialog can drive the picker without referencing morph-type guids.
 	/// </summary>
@@ -189,7 +189,7 @@ namespace FwAvaloniaDialogs
 
 		/// <summary>
 		/// Phrase / discontiguous-phrase: enable the picker but LEAVE the current selection (do not reset to
-		/// Not-Applicable — LT-21666). The WinForms phrase branch.
+		/// Not-Applicable -- LT-21666). The WinForms phrase branch.
 		/// </summary>
 		EnabledKeepSelection,
 
@@ -202,7 +202,7 @@ namespace FwAvaloniaDialogs
 
 	/// <summary>
 	/// The morphology-validation verdict the launcher-supplied <see cref="InsertEntryDlgInput.ValidateMorphology"/>
-	/// returns for the current lexeme form + morph-type combination — the data lift of the legacy
+	/// returns for the current lexeme form + morph-type combination -- the data lift of the legacy
 	/// <c>InsertEntryDlg</c> OK-time checks. Each non-<see cref="Valid"/> verdict maps to a localized inline message
 	/// that also gates OK.
 	/// </summary>

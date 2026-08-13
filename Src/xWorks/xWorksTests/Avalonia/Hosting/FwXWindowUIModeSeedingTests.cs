@@ -10,7 +10,7 @@ namespace SIL.FieldWorks.XWorks
 {
 	/// <summary>
 	/// The UI-mode properties must be in the PropertyTable BEFORE LoadUI creates
-	/// the content views — RecordEditView resolves its framework during window construction, so a
+	/// the content views -- RecordEditView resolves its framework during window construction, so a
 	/// window created with a persisted UIMode=New must see "New" at that moment or it comes up on
 	/// Legacy. FwXWindow.InitMediatorValues seeds via this helper; these tests pin the
 	/// helper's normalization and no-broadcast contract.

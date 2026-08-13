@@ -60,7 +60,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// The lexeme editor's custom-slice census: every dynamically loaded editor class in
 		/// LexEntryParts.xml + LexSenseParts.xml. The DynamicLoader signature is the class= +
-		/// assemblyPath= attribute pair — a plain class= attribute is a model-class bin/part declaration,
+		/// assemblyPath= attribute pair -- a plain class= attribute is a model-class bin/part declaration,
 		/// not an editor. Non-UI handlers (anything ending ChangeHandler) have no editor to migrate and
 		/// are excluded.
 		/// </summary>
@@ -106,9 +106,9 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void Census_FindsTheMeasuredProblemClasses()
 		{
-			// The census parser must keep seeing these known classes — if the
-			// attribute shapes in the part files ever change, the census must change with them rather
-			// than silently going empty (which would make every class "classified").
+			// The census parser must keep seeing these known classes; if attribute
+			// shapes in the part files change, the census must change too, not
+			// silently go empty (making every class "classified").
 			var census = LexemeEditorCustomSliceCensus();
 			Assert.That(census, Does.Contain(MessageSliceClassName));
 			Assert.That(census, Does.Contain(EntrySequenceSliceClassName));
@@ -198,7 +198,7 @@ namespace SIL.FieldWorks.XWorks
 
 	/// <summary>
 	/// The composer's resolution order for a custom slice is
-	/// plugin registry → Unsupported row. A plugin claiming a slice's legacy class composes it as a
+	/// plugin registry -> Unsupported row. A plugin claiming a slice's legacy class composes it as a
 	/// DetailFieldKind.Custom row carrying the plugin's deferred control factory; an unclaimed custom
 	/// slice composes as the labeled Unsupported worklist row.
 	/// </summary>
@@ -245,7 +245,7 @@ namespace SIL.FieldWorks.XWorks
 		public void Compose_UnclaimedCustomSlice_ComposesAsUnsupportedWorklistRow()
 		{
 			// No plugin claims the Chorus notes bar (MessageSlice), so the node composes as the labeled
-			// Unsupported worklist row — never a Custom row,
+			// Unsupported worklist row -- never a Custom row,
 			// never silently omitted.
 			var composed = DetailComposer.Compose(m_entry, Cache,
 				plugins: new SlicePluginRegistry());

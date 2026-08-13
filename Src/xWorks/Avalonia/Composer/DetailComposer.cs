@@ -50,11 +50,11 @@ namespace SIL.FieldWorks.XWorks
 
 	/// <summary>
 	/// Composes the COMPLETE Lexical Edit view for an entry (sections 6/7): walks the compiled
-	/// `LexEntry/Normal` typed definition the same way legacy DataTree walks layouts — expanding
+	/// `LexEntry/Normal` typed definition the same way legacy DataTree walks layouts -- expanding
 	/// object/sequence nodes across objects by compiling each target's own layout (with the legacy
 	/// base-class walk), emitting section headers, indentation, per-writing-system editable text
-	/// fields, the morph-type chooser, read-only reference rows, and `ifdata` hiding — every field
-	/// bound to LCModel through metadata (class/field → flid) and editable through the fenced
+	/// fields, the morph-type chooser, read-only reference rows, and `ifdata` hiding -- every field
+	/// bound to LCModel through metadata (class/field -> flid) and editable through the fenced
 	/// session. Labels localize through the same <see cref="StringTable"/> lookup legacy slices use.
 	/// Unsupported constructs render an explicit unsupported row (visibility=always) or are skipped
 	/// (ifdata), never silently mis-rendered; compile diagnostics ride the detail model.
@@ -67,7 +67,7 @@ namespace SIL.FieldWorks.XWorks
 		private const int MaxDepth = 12;
 		private static readonly ViewDefinitionCompiler Compiler = new ViewDefinitionCompiler();
 
-		// Deliberately NOT a Lazy — a failed load must not be cached as null for
+		// Deliberately NOT a Lazy -- a failed load must not be cached as null for
 		// the process lifetime (one transient IO hiccup would silently demote every
 		// future compose to the 3-field first slice). A successful load is immutable and cached
 		// forever; a failure logs (see LoadSources) and is retried on the next compose.
@@ -93,7 +93,7 @@ namespace SIL.FieldWorks.XWorks
 
 		// The loaded sources are immutable for the process lifetime, so the layout
 		// lookup is indexed once and compiled definitions are memoized per (starting class, layout)
-		// — repeat composes (and the per-item menu peeks below) never rebuild/re-fingerprint the
+		// -- repeat composes (and the per-item menu peeks below) never rebuild/re-fingerprint the
 		// ~300KB parts snapshot. Class ids and the class hierarchy are fixed LCModel metadata, so
 		// the memo is safe across caches.
 		private sealed class CompilerSources
@@ -102,7 +102,7 @@ namespace SIL.FieldWorks.XWorks
 			// The layout index keeps ALL (class,type,name) variants so a choiceGuid can pick
 			// the right one (legacy distinguishes e.g. 11 RnGenericRec/Normal layouts only by choiceGuid).
 			public Dictionary<(string ClassName, string Type, string Name), List<XElement>> LayoutIndex;
-			// Memoized per (starting class, layout, choiceGuid) — choiceGuid is part of the identity so two
+			// Memoized per (starting class, layout, choiceGuid) -- choiceGuid is part of the identity so two
 			// record Types on the same class compile to two distinct models (never a cache collision).
 			public readonly ConcurrentDictionary<(int ClassId, string LayoutName, string ChoiceGuid), ViewDefinitionModel> CompiledModels
 				= new ConcurrentDictionary<(int, string, string), ViewDefinitionModel>();
@@ -114,7 +114,7 @@ namespace SIL.FieldWorks.XWorks
 			=> Compose((ICmObject)entry, cache, "Normal", showHiddenFields, plugins, overrides);
 
 		/// <summary>
-		/// Compose the structured detail view for ANY record root + starting layout — the lexicon's
+		/// Compose the structured detail view for ANY record root + starting layout -- the lexicon's
 		/// LexEntry/Normal, a Notebook RnGenericRec, a Lists CmPossibility, a Grammar PartOfSpeech, etc. The
 		/// compile/walk engine is already class-general (<see cref="CompileForObject"/> keys on the object's
 		/// ClassID and compiles each descended object's own layout); this overload parameterizes the root
@@ -139,9 +139,9 @@ namespace SIL.FieldWorks.XWorks
 			if (root == null)
 				return null;
 
-			// Plugin rows close over the detail view's own edit
-			// context, which only exists after the walk has gathered every setter — a deferred
-			// accessor bridges the gap (plugin factories run at render time, never during compose).
+			// Plugin rows close over the detail view's own edit context, which
+			// only exists once the walk gathers every setter -- a deferred accessor
+			// bridges the gap (plugin factories run at render time, not compose).
 			IDetailEditContext composedContext = null;
 			var state = new ComposeState(cache, showHiddenFields,
 				plugins ?? SlicePluginRegistry.Default, () => composedContext, overrides);
@@ -158,7 +158,7 @@ namespace SIL.FieldWorks.XWorks
 
 		/// <summary>
 		/// Walks a possibility list's tree in document order (parent before children) into
-		/// chooser options, hierarchy carried as <see cref="DetailChoiceOption.Depth"/> — exactly
+		/// chooser options, hierarchy carried as <see cref="DetailChoiceOption.Depth"/> -- exactly
 		/// the indented tree the legacy chooser shows. <paramref name="flat"/> (a chooserInfo
 		/// "FlatList" guicontrol spec, e.g. PeopleFlatList) keeps the order but suppresses the
 		/// hierarchy, like the legacy flat chooser. The implementation lives in
@@ -170,21 +170,7 @@ namespace SIL.FieldWorks.XWorks
 			ICmPossibilityList list, bool flat)
 			=> DetailValueFactory.CreatePossibilityOptions(list, flat);
 
-		// The legacy generic possibility-list → lists-area-tool derivation, mirrored statically.
-		// Research (gear = configure): when a legacy jump's target object is owned by a
-		// CmPossibilityList, LinkListener.FollowActiveLink (Src/xWorks/LinkListener.cs:507-517)
-		// publishes "GetToolForList", handled by AreaListener.GetToolForList
-		// (Src/LexText/LexTextDll/AreaListener.cs:388-418): it walks the lists-area tools in the
-		// window configuration, resolves each tool's clerk recordList (owner=/property=) to the
-		// actual list through the SDA, and returns the first tool whose clerk edits that list;
-		// unmatched (ownerless = user custom) lists derive Name-without-spaces + "Edit"
-		// (AreaListener.GetCustomListToolName, AreaListener.cs:832-835 — the tool name the lists
-		// area generates dynamically per custom list, AreaListener.CreateCustomToolNode).
-		// The composer runs without a window configuration, so the clerk table itself
-		// (DistFiles/Language Explorer/Configuration/Lists/areaConfiguration.xml clerks ↔
-		// Lists/Edit/toolConfiguration.xml tools) is mirrored here, keyed (owner class, owning
-		// field name). Owned lists missing from the table have no lists-area editor → null → no
-		// gear on rows backed by them.
+		// No runtime window config for a list editor tool; the legacy table is mirrored here.
 		private static readonly IReadOnlyDictionary<(string Owner, string Field), string> ListEditorToolByOwnerField =
 			new Dictionary<(string, string), string>
 			{
@@ -222,7 +208,7 @@ namespace SIL.FieldWorks.XWorks
 			};
 
 		/// <summary>
-		/// Resolves the lists-area tool that edits <paramref name="list"/> — the configure gear's
+		/// Resolves the lists-area tool that edits <paramref name="list"/> -- the configure gear's
 		/// jump target when the layout authored no explicit chooserLink. Mirrors legacy
 		/// <c>AreaListener.GetToolForList</c>: shipped lists match the lists-area clerk table by
 		/// (owner class, owning field); ownerless lists are user custom lists, whose dynamically
@@ -300,7 +286,7 @@ namespace SIL.FieldWorks.XWorks
 			// receive (resolved when the factory runs, after Compose has built the context).
 			private readonly SlicePluginRegistry _plugins;
 			private readonly Func<IDetailEditContext> _editContextAccessor;
-			// Per-compose memos — the morph-type option list is identical for every
+			// Per-compose memos -- the morph-type option list is identical for every
 			// IMoForm, and an item layout's menu/hotlinks binding is identical per (class, layout).
 			private List<DetailChoiceOption> _morphTypeOptions;
 			// The project's character-type style names, computed once
@@ -370,7 +356,7 @@ namespace SIL.FieldWorks.XWorks
 
 			// The project's character-type style names, sourced from
 			// Cache.LangProject.StylesOC (the LcmStyleSheet's backing store) and filtered to
-			// StyleType.kstCharacter — the same set the legacy character-style combo offers. Computed once
+			// StyleType.kstCharacter -- the same set the legacy character-style combo offers. Computed once
 			// per compose and memoized; any failure reaching the styles (a bare/partial cache in a test)
 			// yields an empty list, which simply suppresses the picker affordance. This is the host seam:
 			// the composer is the LCModel-aware edge that supplies the names the FwAvalonia layer renders.
@@ -397,7 +383,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 
 			// The project's paragraph-type style names, sourced from
-			// Cache.LangProject.StylesOC filtered to StyleType.kstParagraph — the set the legacy StText
+			// Cache.LangProject.StylesOC filtered to StyleType.kstParagraph -- the set the legacy StText
 			// paragraph-style combo offers. Computed once per compose and memoized; any failure reaching the
 			// styles (a bare/partial cache in a test) yields an empty list, which suppresses the per-paragraph
 			// style picker. The host seam: the composer is the LCModel-aware edge that supplies the names.
@@ -537,18 +523,18 @@ namespace SIL.FieldWorks.XWorks
 						WalkCustomFields(node, obj, depth);
 						break;
 					case ViewNodeKind.Conditional:
-						// Legacy <if>/<ifnot> — content composes only when the per-object condition
+						// Legacy <if>/<ifnot> -- content composes only when the per-object condition
 						// passes (DataTree.ProcessSubpartNode cases "if"/"ifnot").
 						WalkConditional(node, obj, depth);
 						break;
 					case ViewNodeKind.ChoiceGroup:
-						// Legacy <choice> — first passing <where> (or the <otherwise>) only.
+						// Legacy <choice> -- first passing <where> (or the <otherwise>) only.
 						WalkChoiceGroup(node, obj, depth);
 						break;
 				}
 			}
 
-			// The <if>/<ifnot> wrapper — evaluate and pass through; failing branches drop entirely.
+			// The <if>/<ifnot> wrapper -- evaluate and pass through; failing branches drop entirely.
 			private void WalkConditional(ViewNode node, ICmObject obj, int depth)
 			{
 				if (node.Condition != null && !ConditionPasses(node.Condition, obj))
@@ -635,7 +621,7 @@ namespace SIL.FieldWorks.XWorks
 				}
 
 				// intequals/intlessthan/intgreaterthan/intmemberof (XmlVc.GetValueFromCache reads 0
-				// for a missing field — "rather arbitrary", but legacy-faithful).
+				// for a missing field -- "rather arbitrary", but legacy-faithful).
 				if (condition.IntEquals.HasValue && GetIntValue(target, condition.Field) != condition.IntEquals.Value)
 					return false;
 				if (condition.IntLessThan.HasValue && GetIntValue(target, condition.Field) >= condition.IntLessThan.Value)
@@ -734,13 +720,13 @@ namespace SIL.FieldWorks.XWorks
 				return false;
 			}
 
-			// A layout can reach the same object through two placeholders (e.g. a persisted
-			// user override duplicating the marker); legacy dedups generated parts by sibling
-			// scan (DataTree.CheckCustomFieldsSibling) — here a (hvo, flid) set does the same.
+			// A layout can reach the same object through two placeholders (e.g. a
+			// persisted user override); legacy dedupes by sibling scan
+			// (DataTree.CheckCustomFieldsSibling) -- a (hvo, flid) set does the same.
 			private readonly HashSet<(int Hvo, int Flid)> _emittedCustomFields = new HashSet<(int, int)>();
 
 			// Expand the placeholder the way legacy DataTree.EnsureCustomFields +
-			// SliceFactory.MakeAutoCustomSlice do — enumerate the MDC's custom fields whose class
+			// SliceFactory.MakeAutoCustomSlice do -- enumerate the MDC's custom fields whose class
 			// is the object's class or a base class (legacy walks FieldDescription.FieldDescriptors,
 			// i.e. the MDC field list; sorted by flid here for determinism = creation order per
 			// class), synthesize a typed field node per custom field, and dispatch it through the
@@ -773,7 +759,7 @@ namespace SIL.FieldWorks.XWorks
 			// WsSelector, resolved through the same legacy magic-ws pair WalkTextField uses);
 			// Integer stays an editable int row, GenDate a read-only formatted row, references
 			// read-only joined names (chooser write-back rides the reference-vector path), and OwningAtomic StText
-			// read-only paragraphs — all via WalkOtherField's type dispatch. The label is the
+			// read-only paragraphs -- all via WalkOtherField's type dispatch. The label is the
 			// field's Userlabel (mdc.GetFieldLabel), the menu the autoCustom slice's
 			// mnuDataTree-Help (StandardParts.xml CmObject-Detail-Custom).
 			private ViewNode MakeCustomFieldNode(ViewNode placeholder, int flid)
@@ -804,19 +790,7 @@ namespace SIL.FieldWorks.XWorks
 					null, null, menuId: "mnuDataTree-Help");
 			}
 
-			// Project the row's list-editor jump (the configure gear's direct dispatch target).
-			// The node's imported chooserLink metadata wins — the legacy chooser dialog's "Edit
-			// the … list" jump links (ReallySimpleListChooser.InitializeExtras,
-			// ReallySimpleListChooser.cs:887-926). Only the "goto" kind is implemented: it is the
-			// ONLY kind the lexeme-editor layouts use (all 95 shipped chooserLinks are
-			// type="goto"); legacy "dialog"/"simple" links need ChooserCommand paths and are
-			// logged + skipped, never half-dispatched. The target guid stays empty like legacy
-			// m_guidLink (no lexeme-editor chooserInfo sets flidTextParam); labels localize
-			// through the same StringTable lookup as XmlUtils.GetLocalizedAttributeValue.
-			// When the layout authored NO goto link but the row IS backed by a possibility list,
-			// the tool derives from the list the same way the legacy jump path does (see
-			// ResolveListEditorTool); a list with no resolvable editor tool yields no link — and
-			// therefore NO gear on that row.
+			// The node's chooserLink wins; else the row derives its tool like the legacy path.
 			private IReadOnlyList<DetailChooserLink> CreateChooserLinks(ViewNode node,
 				ICmPossibilityList list = null)
 			{
@@ -859,7 +833,7 @@ namespace SIL.FieldWorks.XWorks
 			// banner) build the identical collapsible header row; one helper keeps them from drifting.
 			private void AddHeader(ViewNode node, ICmObject obj, int depth, string label)
 			{
-				// Header row construction is shared with the thin mapper — one construction
+				// Header row construction is shared with the thin mapper -- one construction
 				// site so the two projectors cannot drift. The composer passes its LCModel-enriched values.
 				AddField(DetailStructureRules.CreateHeaderField(
 					StableId(node, obj), label, node.Field, node.WritingSystem, node.EditorClassification,
@@ -908,7 +882,7 @@ namespace SIL.FieldWorks.XWorks
 					return;
 				}
 
-				// A custom slice resolves plugin registry →
+				// A custom slice resolves plugin registry ->
 				// Unsupported row, in that order and never the other way. The registry is consulted FIRST
 				// so a migrated class composes as a real in-tree Avalonia editor (a DetailFieldKind.Custom
 				// row carrying the plugin's control factory). The reference-vector slices are recognized
@@ -937,12 +911,7 @@ namespace SIL.FieldWorks.XWorks
 					}
 				}
 
-				// The editor-string → category knowledge lives ONCE, in
-				// EditorKindMap (the same FwAvalonia home the importer's classification and the
-				// mapper's kind projection use); this switch only routes categories. Categories
-				// without a dedicated case here (AtomicReferenceChooser, Grouping, Other) refine
-				// by CellarPropertyType in WalkOtherField — that LCModel knowledge stays in the
-				// composer.
+				// Category classification lives in EditorKindMap; this switch routes to walkers.
 				switch (EditorKindMap.ClassifyDetailFieldKind(node.RawEditor))
 				{
 					case DetailEditorCategory.Text:
@@ -959,7 +928,7 @@ namespace SIL.FieldWorks.XWorks
 						AddHeader(node, obj, depth, Localize(node.Label) ?? node.Field);
 						break;
 					case DetailEditorCategory.Literal:
-						// A literal/"lit" slice (legacy MessageSlice) — static label text rendered as
+						// A literal/"lit" slice (legacy MessageSlice) -- static label text rendered as
 						// the row content by the dedicated Literal renderer (the label IS the content).
 						AddLiteralRow(node, obj, depth);
 						break;
@@ -970,7 +939,7 @@ namespace SIL.FieldWorks.XWorks
 						break;
 					case DetailEditorCategory.EmbeddedView:
 						// An embedded formatted view (legacy jtview / ViewSlice + XmlView) composes the
-						// nested layout's fields INLINE for this same object, at depth+1 — the recursive
+						// nested layout's fields INLINE for this same object, at depth+1 -- the recursive
 						// sub-view the legacy XmlView renders. WalkEmbeddedView reuses the
 						// CompileForObjectWithOverrides/EnterModel/Walk descent (the visited-set guards
 						// cycles); when the nested layout cannot be resolved it degrades to the
@@ -1028,18 +997,9 @@ namespace SIL.FieldWorks.XWorks
 					return;
 
 				var stableId = StableId(node, obj);
-				// Multi-run/styled content IS editable: a keystroke replays the untouched runs around
-				// the edit (DetailRichTextEditAlgorithms) and the rich setter rebuilds the TsString.
-				// A row composes READ-ONLY only when that replay would corrupt the value — a run
-				// carrying an embedded object (ORC) the runs cannot rebuild, or a run carrying a
-				// TsString property the DetailTextRun model does not round-trip (colour, offset,
-				// superscript, …). Both feed CanEditRichText; the lossless original is preserved for
-				// display and stays fully editable in the classic view. Unicode props (no run
-				// structure) keep the plain-text setter.
-				// An audio (voice WS) row IS editable — the owned audio field plays/records/clears
-				// the filename value through the SAME text setter (a voice alternative is a multistring alt
-				// whose text is the filename). It stays out of the rich-text/style pickers (handled by the
-				// view's IsAudio branch), but the row must be editable so its text setter is registered.
+				// A row goes read-only when a keystroke's run-replay would corrupt it
+				// (ORC or non-round-trippable TsString, via CanEditRichText); audio
+				// rows stay editable via the same plain text setter as the filename.
 				var editable = type != CellarPropertyType.Unicode
 					&& values.All(v => v.CanEditRichText || v.IsAudio);
 				var textField = new DetailField(stableId, Localize(node.Label) ?? node.Field, node.Field,
@@ -1083,7 +1043,7 @@ namespace SIL.FieldWorks.XWorks
 				// A per-field writing-system visibility override (legacy visibleWritingSystems) restricts
 				// the resolved set to the authored subset (in the override's order), intersected with the
 				// field's valid writing systems. An empty intersection keeps the full set rather than hiding
-				// the field entirely (defensive — a stale override must never blank a real field).
+				// the field entirely (defensive -- a stale override must never blank a real field).
 				systems = ApplyVisibleWritingSystems(systems, node.VisibleWritingSystems);
 				if ((type == CellarPropertyType.String || type == CellarPropertyType.Unicode)
 					&& systems.Count > 0)
@@ -1320,7 +1280,7 @@ namespace SIL.FieldWorks.XWorks
 					// blindly would create a model-invalid combination (e.g. a stem allomorph with an
 					// affix morph type), so a boundary-crossing assignment is rejected until a
 					// class-conversion path exists. The GUID -> kind classification
-					// is the seam's single table — this file keeps no mirror dictionary
+					// is the seam's single table -- this file keeps no mirror dictionary
 					// (MorphTypeGuidConsolidationTests pins the seam's table to
 					// the MoMorphTypeTags constants).
 					if (MorphTypeSwapLogic.TryClassify(guid, out var toKind)
@@ -1333,12 +1293,9 @@ namespace SIL.FieldWorks.XWorks
 				};
 			}
 
-			// The sense grammatical-info (MSA) chooser — the editable path for editor="msaReferenceComboBox"
-			// (legacy MSAReferenceComboBoxSlice). Offers the project's Parts of Speech; selecting one
-			// find-or-creates the matching MSA on the OWNING ENTRY and assigns it to THIS sense via the
-			// liblcm SandboxMSA setter (which owns the stem/affix find-or-create + old-MSA cleanup), inside
-			// the fenced session. Only the Part-of-Speech level is offered here; feature-structure "Details"
-			// (the legacy "Specify…" dialog) rides the later dialog-launcher work.
+			// Selecting a POS find-or-creates the matching MSA on the owning entry
+			// via the liblcm SandboxMSA setter (cleanup included); only the POS
+			// level is offered -- feature-structure "Details" comes later.
 			private void WalkMsaChooser(ViewNode node, ICmObject obj, int depth)
 			{
 				var posList = _cache.LangProject.PartsOfSpeechOA;
@@ -1386,7 +1343,7 @@ namespace SIL.FieldWorks.XWorks
 				// The legacy atomic possibility launcher lets the user CLEAR the
 				// reference (PossibilityAtomicReferenceLauncher.OnLeave -> AddItem(null) when the
 				// box is emptied; only a layout-authored nullLabel="" forbids it, which no
-				// lexeme-editor part does), so the chooser leads with an explicit empty choice —
+				// lexeme-editor part does), so the chooser leads with an explicit empty choice --
 				// labeled with the same localized "<Empty>" the WinForms launchers show. The morph-type chooser deliberately offers
 				// no empty option (MorphTypeAtomicLauncher.AllowEmptyItem == false).
 				var options = new List<DetailChoiceOption>
@@ -1410,8 +1367,7 @@ namespace SIL.FieldWorks.XWorks
 				var hvo = obj.Hvo;
 				HandlerFor(stableId).Option = key =>
 				{
-					// The empty option clears the reference — legacy AddItem(null), i.e.
-					// SetObjProp(hvo, flid, 0) — inside the same fenced session.
+					// The empty option clears the reference via SetObjProp(hvo, flid, 0), matching legacy AddItem(null).
 					if (string.IsNullOrEmpty(key))
 					{
 						_sda.SetObjProp(hvo, flid, 0);
@@ -1425,7 +1381,7 @@ namespace SIL.FieldWorks.XWorks
 				};
 			}
 
-			// The atomic analog of AddGenericReferenceVector — an atomic
+			// The atomic analog of AddGenericReferenceVector -- an atomic
 			// reference whose target is NOT a possibility list (e.g. the ad-hoc co-prohibition Key
 			// FirstMorpheme/FirstAllomorph) composes as an editable chooser over the field's
 			// ReferenceTargetCandidates, with a leading empty option to clear (legacy launcher parity).
@@ -1470,9 +1426,9 @@ namespace SIL.FieldWorks.XWorks
 				};
 			}
 
-			// An editable possibility-vector row — current items in vector order plus the
-			// whole list as hierarchical options; add/remove stage through sda.Replace on the flid
-			// (the legacy VectorReferenceView update), one undo step per settled session.
+			// An editable possibility-vector row -- current items in vector order
+			// plus the whole list as hierarchical options; add/remove stage through
+			// sda.Replace on the flid, one undo step per settled session.
 			private void AddReferenceVector(ViewNode node, ICmObject obj, int depth, int flid,
 				ICmPossibilityList list, int count)
 			{
@@ -1525,12 +1481,9 @@ namespace SIL.FieldWorks.XWorks
 				};
 			}
 
-			// A reference vector whose targets are NOT a possibility list
-			// (e.g. PhNCSegments.Segments → phonemes, the ad-hoc RestOfAllos/RestOfMorphs → allomorphs/
-			// morphemes) — editable via the field's own ReferenceTargetCandidates (the canonical valid-target
-			// set the legacy choosers use). Options are the candidates' ShortNames; add validates the option
-			// guid against the candidate set (no invalid/cross-field writes, duplicates rejected) and remove
-			// resolves the guid via the repository — both Replace the vector, like the possibility-list path.
+			// Editable via the field's ReferenceTargetCandidates (canonical
+			// valid-target set legacy choosers use); add validates the guid,
+			// remove uses the repository -- both Replace the vector, the same way.
 			private void AddGenericReferenceVector(ViewNode node, ICmObject obj, int depth, int flid,
 				int count, IReadOnlyList<ICmObject> candidates)
 			{
@@ -1589,9 +1542,7 @@ namespace SIL.FieldWorks.XWorks
 				};
 			}
 
-			// The field's valid reference targets (capped so a huge candidate set — entries/senses are
-			// already handled by the type-ahead path above — falls back to a read-only row rather than
-			// eagerly materializing thousands of options). Null on any failure or when out of range.
+			// Capped so a huge candidate set (entries/senses are already handled by the type-ahead path above) falls back to a read-only row instead of eagerly materializing thousands of options.
 			private IReadOnlyList<ICmObject> SafeReferenceTargetCandidates(ICmObject obj, int flid)
 			{
 				// Only REAL stored reference properties are safely editable by a blind sda.Replace/SetObjProp.
@@ -1622,7 +1573,7 @@ namespace SIL.FieldWorks.XWorks
 
 			private const int MaxEditableVectorCandidates = 500;
 
-			// Resolves an option key to a possibility belonging to THIS field's list — garbage,
+			// Resolves an option key to a possibility belonging to THIS field's list -- garbage,
 			// unknown guids, and possibilities from OTHER lists all reject (no cross-list writes).
 			private ICmPossibility ResolvePossibilityInList(ICmPossibilityList list, string key)
 			{
@@ -2005,7 +1956,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 
 			// This path's gate: a NON-virtual reference vector whose destination signature is
-			// LexEntry/LexSense — or CmObject when the layout identity is the legacy
+			// LexEntry/LexSense -- or CmObject when the layout identity is the legacy
 			// EntrySequenceReferenceSlice (ComponentLexemes/PrimaryLexemes sign ILexEntryOrLexSense
 			// as plain CmObject). Virtual back-ref vectors (ComplexFormEntries, Subentries,
 			// VisibleComplexFormBackRefs, VariantFormEntries) stay read-only on this path: their writes
@@ -2030,7 +1981,7 @@ namespace SIL.FieldWorks.XWorks
 					&& string.Equals(node.CustomEditorClass, EntrySequenceSliceClassName, StringComparison.Ordinal);
 			}
 
-			// The editable entry/sense-reference vector — current refs as headword items, remove
+			// The editable entry/sense-reference vector -- current refs as headword items, remove
 			// in-pane, add via type-ahead headword-prefix search over the entry repository (never the
 			// whole lexicon as options). Writes ride sda.Replace on the flid inside the fenced
 			// session, like the possibility path, plus the legacy ComponentLexemes coupling below.
@@ -2046,7 +1997,7 @@ namespace SIL.FieldWorks.XWorks
 
 				var stableId = StableId(node, obj);
 				var hvo = obj.Hvo;
-				// "Self" for the circular-reference guard: the entry whose pane this is — the row's
+				// "Self" for the circular-reference guard: the entry whose pane this is -- the row's
 				// object when it IS an entry, else its owning entry (e.g. obj is the LexEntryRef).
 				var owningEntry = obj as ILexEntry ?? obj.OwnerOfClass<ILexEntry>();
 
@@ -2109,7 +2060,7 @@ namespace SIL.FieldWorks.XWorks
 			// coupling, which LCModel does NOT apply as a side effect (verified by test): a component
 			// added when PrimaryLexemes is empty becomes the primary lexeme, and (unless the ref is
 			// typed as a derivative) the complex form shows under the new component
-			// (ShowComplexFormsIn) — LT-12285 guards the duplicate. Removal needs no twin here:
+			// (ShowComplexFormsIn) -- LT-12285 guards the duplicate. Removal needs no twin here:
 			// LCModel's RemoveObjectSideEffects already clears PrimaryLexemes/ShowComplexFormsIn when
 			// a component leaves (verified by test).
 			private void ApplyComponentLexemesAddCoupling(ICmObject obj, int flid, ICmObject added)
@@ -2128,7 +2079,7 @@ namespace SIL.FieldWorks.XWorks
 				}
 			}
 
-			// Resolves a search/option key to an entry or sense — exactly the targets
+			// Resolves a search/option key to an entry or sense -- exactly the targets
 			// EntrySequenceReferenceSlice references (ILexEntryOrLexSense); everything else rejects.
 			private enum BackRefVectorKind
 			{
@@ -2206,9 +2157,10 @@ namespace SIL.FieldWorks.XWorks
 					?? item.OwnerOfClass<ILexEntry>();
 			}
 
-			// The chooser candidates for the back-ref vectors: the complex-form entries of m_obj —
-			// the same source the legacy HandleChooserForBackRefs uses (m_obj.ComplexFormEntries).
-			// Type-ahead headword-prefix search, excluding entries already in the vector.
+			// The chooser candidates for back-ref vectors: m_obj's complex-form
+			// entries -- same source legacy HandleChooserForBackRefs uses.
+			// Type-ahead headword-prefix search, excluding entries already in the
+			// vector.
 			private IReadOnlyList<DetailChoiceOption> SearchBackRefCandidates(string query, ICmObject obj)
 			{
 				if (string.IsNullOrWhiteSpace(query))
@@ -2347,9 +2299,9 @@ namespace SIL.FieldWorks.XWorks
 				return target is ILexEntry || target is ILexSense ? target : null;
 			}
 
-			// Item display: the headword (HeadWord for entries — homograph number and all — and the
-			// owner-outline headword+sense-number for senses), the same display the legacy slice's
-			// deParams displayProperty="HeadWord" yields; ShortName is the fallback.
+			// Item display: the headword (HeadWord for entries, owner-outline
+			// headword+sense-number for senses) -- the same display legacy deParams
+			// displayProperty="HeadWord" yields; ShortName is the fallback.
 			private string ResolveEntryOrSenseName(ICmObject target)
 			{
 				switch (target)
@@ -2477,10 +2429,9 @@ namespace SIL.FieldWorks.XWorks
 					return;
 				}
 
-				// Structured text is an EDITABLE multi-paragraph row (the legacy
-				// StTextSlice rich editor) — paragraph text, add/delete paragraphs, and
-				// per-paragraph named style, each one undoable step. ORC-bearing paragraphs
-				// stay read-only/preserved.
+				// Structured text is an EDITABLE multi-paragraph row (legacy
+				// StTextSlice rich editor): paragraph text, add/delete, and named
+				// style, each undoable. ORC-bearing paragraphs stay read-only.
 				if (_cache.ServiceLocator.ObjectRepository.GetObject(targetHvo) is IStText stText)
 				{
 					var anyText = stText.ParagraphsOS.OfType<IStTxtPara>()
@@ -2502,10 +2453,9 @@ namespace SIL.FieldWorks.XWorks
 			{
 				var count = _sda.get_VecSize(obj.Hvo, flid);
 
-				// A vector whose targets live in a possibility list becomes an
-				// editable ReferenceVector row (the legacy possibility-vector slice with
-				// its trailing type-ahead add slot) — even when empty, so an always-visible
-				// field still offers the add affordance.
+				// A vector whose targets live in a possibility list becomes an editable
+				// ReferenceVector row (legacy slice, trailing type-ahead add slot), even
+				// when empty, so the field always offers the add affordance.
 				if (obj.ReferenceTargetOwner(flid) is ICmPossibilityList list)
 				{
 					if (count == 0 && HideWhenEmpty(node))
@@ -2515,7 +2465,7 @@ namespace SIL.FieldWorks.XWorks
 				}
 
 				// A vector whose targets are
-				// entries/senses (the EntrySequenceReferenceSlice fields —
+				// entries/senses (the EntrySequenceReferenceSlice fields --
 				// ComponentLexemes, PrimaryLexemes, ... on LexEntryRef) composes as an
 				// editable ReferenceVector whose ADD is a type-ahead lexicon search
 				// (lexicons search, possibility lists enumerate).
@@ -2533,7 +2483,7 @@ namespace SIL.FieldWorks.XWorks
 				// EntrySequenceReferenceLauncher.AddNewObjectsToProperty /
 				// RemoveFromPropertyAt overrides. VariantFormEntryBackRefs stays read-only
 				// (its legacy add is "insert a NEW variant entry", not a chooser-add of an
-				// existing ref — out of scope for this safe increment).
+				// existing ref -- out of scope for this safe increment).
 				var backRefKind = ResolveEditableBackRefKind(node, flid, obj);
 				if (backRefKind != BackRefVectorKind.None)
 				{
@@ -2544,7 +2494,7 @@ namespace SIL.FieldWorks.XWorks
 				}
 
 				// Any remaining reference vector whose valid targets
-				// can be enumerated (e.g. natural-class Segments → phonemes, ad-hoc Others →
+				// can be enumerated (e.g. natural-class Segments -> phonemes, ad-hoc Others ->
 				// allomorphs/morphemes) composes as an editable chooser-backed ReferenceVector,
 				// matching the legacy reference-vector slice. Entry/sense (huge) vectors were
 				// handled above; the candidate cap guards any other large set into read-only.
@@ -2569,15 +2519,15 @@ namespace SIL.FieldWorks.XWorks
 				AddReadOnlyRow(node, obj, depth, string.Join("; ", names));
 			}
 
-			// A literal/"lit" slice (legacy MessageSlice) — the slice's label/message text is the
+			// A literal/"lit" slice (legacy MessageSlice) -- the slice's label/message text is the
 			// static content. Routed to DetailFieldKind.Literal so the view renders it as static text in the
 			// value column rather than an (empty) editable row. The content is carried in the value slot so
 			// the renderer shows the message even when there is no separate label column.
 			private void AddLiteralRow(ViewNode node, ICmObject obj, int depth)
 			{
-				// The "lit" slice's label/message text IS the content (legacy MessageSlice). The detail view's
-				// label column is left empty and the message rides the value slot so it renders ONCE, as the
-				// static gray content the legacy slice shows — not duplicated in both columns.
+				// The "lit" slice's label/message text IS the content (legacy
+				// MessageSlice). Label column stays empty; message rides the value
+				// slot so it renders ONCE, as static gray content -- not duplicated.
 				var message = Localize(node.Label) ?? node.Field ?? string.Empty;
 				AddField(new DetailField(StableId(node, obj), string.Empty,
 					node.Field, node.WritingSystem, DetailFieldKind.Literal, node.EditorClassification,
@@ -2600,7 +2550,7 @@ namespace SIL.FieldWorks.XWorks
 			// Builds one DetailParagraph per StTxtPara (run-aware text +
 			// per-paragraph named style; an ORC/lossy paragraph stays read-only/preserved) and
 			// registers the four paragraph-CRUD setters that mutate the LCModel StText inside the open
-			// fenced session — text/style writes are one undo step (focus-loss autosave), add/delete one
+			// fenced session -- text/style writes are one undo step (focus-loss autosave), add/delete one
 			// undo step (immediate commit + host re-show). The closures verify the StText/paragraph still
 			// exists on each call (a Cancel can roll an insert/StText creation back under a still-shown view).
 			private void AddStructuredText(ViewNode node, ICmObject obj, int depth, int flid, IStText stText)
@@ -2692,13 +2642,13 @@ namespace SIL.FieldWorks.XWorks
 				};
 			}
 
-			// The plugin-claimed row — DetailFieldKind.Custom
+			// The plugin-claimed row -- DetailFieldKind.Custom
 			// with the normal label/indent/menu metadata, carrying a factory that closes over
 			// (object, node, deferred edit context, cache). The factory runs in the view at render
 			// time, so composing stays side-effect free and the edit context exists by then.
 			private void AddPluginRow(ViewNode node, ICmObject obj, int depth, ISlicePlugin plugin)
 			{
-				// ONE plugin contract — the build context bundles everything a
+				// ONE plugin contract -- the build context bundles everything a
 				// plugin can need (object, node, deferred edit-context accessor, cache); there is no
 				// service-aware marker type test.
 				var context = new SlicePluginBuildContext(obj, node, _editContextAccessor, _cache);
@@ -2725,7 +2675,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 
 			// Viewing parity: empty always-visible object/sequence fields show the
-			// legacy ghost add-prompt as a WATERMARK on an editable row — clicking in clears the
+			// legacy ghost add-prompt as a WATERMARK on an editable row -- clicking in clears the
 			// prompt, and typing creates the missing object inside the fenced session (the legacy
 			// ghost-slice create-on-edit path), routing the text into the layout's ghost field
 			// (ghost=/ghostWs=, e.g. the new allomorph's Form).
@@ -2761,7 +2711,7 @@ namespace SIL.FieldWorks.XWorks
 			// The create-on-edit half of the ghost path: resolve the owning field's destination class
 			// (the layout's ghostClass when the model class is abstract; MoStemAllomorph for MoForm,
 			// matching legacy CreateAllomorph; Gloss-on-LexSense when no ghost field is authored) and
-			// build a setter that creates the object inside the open session — cancel rolls the
+			// build a setter that creates the object inside the open session -- cancel rolls the
 			// creation back together with the text.
 			private GhostCreation ResolveGhostCreation(ViewNode node, ICmObject obj)
 			{
@@ -2825,9 +2775,9 @@ namespace SIL.FieldWorks.XWorks
 					WsTag = ws.Id,
 					Setter = (wsKey, value) =>
 					{
-						// The closure outlives the edit session: a Cancel rolls MakeNewObject back,
-						// so a later edit through the same still-visible view must not write to the
-						// deleted hvo — verify it still exists and re-create when it does not.
+						// The closure outlives the edit session: a Cancel rolls MakeNewObject
+						// back, so a later edit via the same still-visible view must not write
+						// to the deleted hvo -- verify it exists, re-create if not.
 						if (createdHvo != 0
 							&& !_cache.ServiceLocator.ObjectRepository.TryGetObject(createdHvo, out _))
 						{
@@ -2846,7 +2796,7 @@ namespace SIL.FieldWorks.XWorks
 								(CellarPropertyType)_mdc.GetFieldType(ghostFlid), value);
 						}
 						// Invoke the layout's ghostInitMethod by reflection on the newly created
-						// object, after the typed text lands — exactly GhostStringSliceView.
+						// object, after the typed text lands -- exactly GhostStringSliceView.
 						// MakeRealObject's order (GhostStringSlice.cs:305-328); e.g. SetMorphTypeToRoot
 						// on a new lexeme-form allomorph, SetTypeToFreeTrans on a new translation.
 						if (created && !string.IsNullOrEmpty(ghostInitMethod))
@@ -2931,7 +2881,7 @@ namespace SIL.FieldWorks.XWorks
 					}
 
 					// The item's own layout carries the slice menu (e.g. the sense's
-					// HeavySummary part ref binds mnuDataTree-Sense in LexSense.fwlayout) — the
+					// HeavySummary part ref binds mnuDataTree-Sense in LexSense.fwlayout) -- the
 					// sequence node itself usually has none.
 					var itemBinding = ResolveItemMenuBinding(node, item);
 					AddField(new DetailField($"{StableId(node, obj)}/item{i}",
@@ -2989,7 +2939,7 @@ namespace SIL.FieldWorks.XWorks
 
 				if (!_visited.Add((obj.Hvo, layoutName)))
 				{
-					// Already composing this (object, layout) higher in the stack — a cyclic jtview nest.
+					// Already composing this (object, layout) higher in the stack -- a cyclic jtview nest.
 					AddReadOnlyRow(node, obj, depth, obj.ShortName ?? string.Empty);
 					return;
 				}
@@ -3069,20 +3019,7 @@ namespace SIL.FieldWorks.XWorks
 				=> string.IsNullOrEmpty(label) ? label : StringTable.Table.LocalizeAttributeValue(label);
 		}
 
-		// Layout ws= spec resolution (the composer's read AND write writing-system lists): the
-		// legacy pair — WritingSystemServices.GetMagicWsIdFromName then GetWritingSystemList —
-		// exactly as SliceFactory's multistring path resolves it, so list membership and ordering
-		// ("analysis vernacular" vs "vernacular analysis") match legacy slices. Pronunciation
-		// specs ride the project's pronunciation list (kwsPronunciations; GetWritingSystemList has
-		// no kwsPronunciation branch), initialized on demand the same way legacy
-		// DefaultPronunciationWritingSystem initializes it. Empty/unknown specs take
-		// GetWritingSystemList's own analysis default — the legacy default for unmarked fields.
-		// Filter the resolved writing systems to a per-field visibleWritingSystems override (in the
-		// override's order), matching each spec against the ws Id (IETF tag). No override (null/empty) keeps
-		// the full set; an override that matches nothing also keeps the full set, so a stale override can
-		// never blank a real field (legacy degrades the same way — StringSliceUtils intersects with valid
-		// definitions and falls back to the configured default). Exposed (internal) so the per-field WS
-		// filter has a focused unit test independent of a live layout carrying the attribute.
+		// Mirrors legacy's GetMagicWsIdFromName/GetWritingSystemList; override falls back to all.
 		internal static IReadOnlyList<CoreWritingSystemDefinition> ApplyVisibleWritingSystems(
 			IReadOnlyList<CoreWritingSystemDefinition> systems, IReadOnlyList<string> visible)
 		{
@@ -3118,14 +3055,14 @@ namespace SIL.FieldWorks.XWorks
 
 		/// <summary>
 		/// Compiles the layout for an object's class, walking base classes the way legacy DataTree
-		/// does (e.g. MoStemAllomorph → MoForm) for both layout lookup and part resolution.
+		/// does (e.g. MoStemAllomorph -> MoForm) for both layout lookup and part resolution.
 		/// Memoized per (starting class, layout) for the lifetime of the loaded sources.
 		/// </summary>
 		/// <summary>
 		/// Resolve the layout-choice GUID for a record whose detail layout is type-selected via
 		/// a <c>layoutChoiceField</c> (e.g. RnGenericRec/Normal keyed on the record's <c>Type</c> possibility).
 		/// Returns the chosen possibility's GUID string, or null when there is no choice field / no value /
-		/// the field is not an atomic object reference — mirroring legacy DataTree, which then falls back to
+		/// the field is not an atomic object reference -- mirroring legacy DataTree, which then falls back to
 		/// the choiceGuid-less layout variant.
 		/// </summary>
 		internal static string ResolveLayoutChoiceGuid(LcmCache cache, ICmObject obj, string layoutChoiceField)
@@ -3145,7 +3082,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 			catch (Exception)
 			{
-				// A non-atomic field (or any metadata mismatch) just means "no choice" → choiceGuid-less layout.
+				// A non-atomic field (or any metadata mismatch) just means "no choice" -> choiceGuid-less layout.
 				return null;
 			}
 		}
@@ -3161,7 +3098,7 @@ namespace SIL.FieldWorks.XWorks
 		/// Compiles (with the legacy base-class walk) and, when <paramref name="overrides"/> supplies a
 		/// per-project patch for the resulting (class, layout), returns the patched model
 		/// CRITICAL: the cache (<see cref="CompilerSources.CompiledModels"/>) holds
-		/// the SHIPPED model only — the override is applied on the way OUT to a fresh copy
+		/// the SHIPPED model only -- the override is applied on the way OUT to a fresh copy
 		/// (<see cref="ViewDefinitionOverrideApplier.Apply"/> is pure), so a patched project never poisons
 		/// the process-wide cache that other projects/classes read.
 		/// </summary>
@@ -3242,7 +3179,7 @@ namespace SIL.FieldWorks.XWorks
 				var partsXml = LayoutSourceLoader.LoadMergedPartsXml(partsDirectory);
 				if (partsXml == null)
 				{
-					// Never a silent permanent failure — log, fall back to the
+					// Never a silent permanent failure -- log, fall back to the
 					// 3-field first slice for THIS compose, and retry next time (GetSources).
 					SIL.Reporting.Logger.WriteEvent(
 						"DetailComposer: no merged parts XML under '" + partsDirectory
@@ -3259,7 +3196,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 			catch (Exception e)
 			{
-				// Never a silent permanent failure — log, fall back to the
+				// Never a silent permanent failure -- log, fall back to the
 				// 3-field first slice for THIS compose, and retry next time (GetSources).
 				SIL.Reporting.Logger.WriteError(
 					"DetailComposer: failed to load layout sources; "

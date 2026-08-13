@@ -73,7 +73,7 @@ namespace SIL.FieldWorks.XWorks
 		public void PropChanged(int hvo, int tag, int ivMin, int cvIns, int cvDel)
 		{
 			// A queued refresh recomposes from CURRENT domain state, so further notifications are
-			// already covered — skip even the relevance walk (PropChanged fires app-wide).
+			// already covered -- skip even the relevance walk (PropChanged fires app-wide).
 			if (_disposed || _refreshQueued || !IsRelevant(hvo))
 				return;
 
@@ -123,9 +123,10 @@ namespace SIL.FieldWorks.XWorks
 				_coordinator.EndSuspend();
 		}
 
-		// Coalesce: one queued delivery covers the whole burst. The runner re-checks state because
-		// the world can change between queueing and running (host disposed; user started typing —
-		// then the refresh converts back into a held delivery instead of stomping the edit).
+		// Coalesce: one queued delivery covers the whole burst. Runner
+		// re-checks state since it can change meanwhile -- if the user started
+		// typing, refresh reverts to a held delivery instead of stomping the
+		// edit.
 		private void ScheduleRefresh()
 		{
 			if (_refreshQueued)
@@ -135,7 +136,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				// _refreshQueued stays true UNTIL the refresh completes: a rebuild can itself raise
 				// PropChanged (e.g. a settle-commit inside it), and those notifications are already
-				// covered — the recompose reads current domain state — so they must coalesce into
+				// covered -- the recompose reads current domain state -- so they must coalesce into
 				// this delivery instead of queueing a second identical one.
 				try
 				{
@@ -176,9 +177,10 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		// A change to the displayed record itself is always relevant; anything else is the host's
-		// call (the lexical host walks OwnerOfClass<ILexEntry> — injected, not hard-coded here, so
-		// non-lexical hosts can reuse the controller with their own containment rule).
+		// A change to the displayed record is always relevant; anything else is
+		// the host's call. The lexical host walks OwnerOfClass<ILexEntry>
+		// (injected), so other hosts reuse the controller with their own
+		// rule.
 		private bool IsRelevant(int hvo)
 		{
 			var current = _currentRecord();

@@ -17,7 +17,7 @@ namespace SIL.FieldWorks.XWorks
 	/// <summary>
 	/// Voice/sound writing systems: the composer resolves WS rows, and a voice/audio (IsVoice)
 	/// writing system stores a recording (its filename) rather than text. The alternative is flagged
-	/// IsAudio and composes its REAL filename on an EDITABLE row — the owned audio field renders
+	/// IsAudio and composes its REAL filename on an EDITABLE row -- the owned audio field renders
 	/// play/record/clear affordances and writes/clears the filename through the text setter. It is not
 	/// a blanket read-only placeholder.
 	/// </summary>

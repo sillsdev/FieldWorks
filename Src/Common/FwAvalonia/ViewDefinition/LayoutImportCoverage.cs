@@ -44,7 +44,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 			};
 
 		// chooserLink imports as typed metadata; chooserInfo is handled as the link container
-		// (its OTHER attributes — title/text/guicontrol/… — stay measured as unhandled below).
+		// (its OTHER attributes -- title/text/guicontrol/... -- stay measured as unhandled below).
 		private static readonly HashSet<string> HandledPartsFileElements =
 			new HashSet<string>(StringComparer.Ordinal)
 			{
@@ -55,7 +55,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 
 		/// <summary>
 		/// Runs the census and the import pass and returns the aggregated result. The optional
-		/// <paramref name="baseClassMap"/> (subclass → base class, see <see cref="BuildBaseClassMap"/>)
+		/// <paramref name="baseClassMap"/> (subclass -> base class, see <see cref="BuildBaseClassMap"/>)
 		/// mirrors the metadata-driven class-hierarchy walk the production compile path threads in from
 		/// the MDC (<c>DetailComposer.CompileForClass</c>), so the measured unresolved-part
 		/// count reflects what production resolution actually drops.
@@ -106,7 +106,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 		}
 
 		/// <summary>
-		/// Builds the subclass → base class map from the LCModel master model XML
+		/// Builds the subclass -> base class map from the LCModel master model XML
 		/// (<c>&lt;EntireModel&gt;&lt;CellarModule&gt;&lt;class id=... base=...&gt;</c>). This is the same
 		/// hierarchy the legacy detail view walks via <c>IFwMetaDataCache.GetBaseClsId</c>
 		/// (<c>DataTree.cs:2444-2461</c>), derived from metadata instead of a hand-maintained list.

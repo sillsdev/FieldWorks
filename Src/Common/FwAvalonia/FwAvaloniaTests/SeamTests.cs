@@ -17,7 +17,7 @@ namespace FwAvaloniaTests
 	/// native Release through the captured SynchronizationContext; when the WinForms marshaling
 	/// window is gone that post throws on the FINALIZER thread and terminates the process. The
 	/// wrapper swallows exactly those marshal failures on POST (the finalizer path) and passes
-	/// everything else through — synchronous Send failures still surface to the waiting caller.
+	/// everything else through -- synchronous Send failures still surface to the waiting caller.
 	/// </summary>
 	[TestFixture]
 	public class FinalizerSafeSynchronizationContextTests
@@ -266,7 +266,7 @@ namespace FwAvaloniaTests
 	/// FwAvaloniaPlatform.IsHeadless resolves Avalonia internals BY STRING NAME (AvaloniaLocator in
 	/// Avalonia.Base; IWindowingPlatform in Avalonia.Controls; AvaloniaLocator.Current + its GetService).
 	/// Unlike a public API, a version bump can relocate these without a compile break, which would leave
-	/// the reflection returning null forever — silently reporting "not headless" and disabling the
+	/// the reflection returning null forever -- silently reporting "not headless" and disabling the
 	/// headless-embed no-op for the WHOLE suite. This pins each target against the referenced Avalonia,
 	/// failing loudly (mirroring the MicroCom pin above) so a bump forces an FwAvaloniaPlatform update.
 	/// </summary>

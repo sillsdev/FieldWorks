@@ -12,7 +12,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 	/// Applies a sparse <see cref="ViewDefinitionOverride"/> to a shipped <see cref="ViewDefinitionModel"/>
 	/// to produce the project-customized model. The inverse of <see cref="ViewDefinitionOverrideDiffer"/>:
 	/// for representable customizations, <c>Apply(base, Diff(base, custom))</c> reproduces <c>custom</c>. Pure logic over the
-	/// immutable IR — no XCore/Inventory or live cache.
+	/// immutable IR -- no XCore/Inventory or live cache.
 	///
 	/// Patches that reference a StableId no longer present in the shipped base are reported as diagnostics on
 	/// the result rather than throwing (stale patches are quarantined per-operation, not fatal).

@@ -16,10 +16,10 @@ using AvControl = Avalonia.Controls.Control;
 namespace SIL.FieldWorks.LexText.Controls
 {
 	/// <summary>
-	/// The LCModel-aware launcher for the standalone PHONOLOGICAL-feature chooser dialog — the
+	/// The LCModel-aware launcher for the standalone PHONOLOGICAL-feature chooser dialog -- the
 	/// New-UI replacement for the WinForms <see cref="PhonologicalFeatureChooserDlg"/> the phonological-features slice
-	/// opens. It bridges LCModel ↔ the LCModel-free <see cref="FeatureChooserDialogViewModel"/>: it builds the
-	/// PHONOLOGICAL feature system (every closed feature in <c>PhFeatureSystemOA</c> + its values, the flat case —
+	/// opens. It bridges LCModel <-> the LCModel-free <see cref="FeatureChooserDialogViewModel"/>: it builds the
+	/// PHONOLOGICAL feature system (every closed feature in <c>PhFeatureSystemOA</c> + its values, the flat case --
 	/// <see cref="FwFeatureStructureAdapter.BuildPhonologicalNodes"/>) + the current assignment set, shows the chooser,
 	/// and on OK rebuilds the <c>IFsFeatStruc</c> from the chosen assignments in ONE undoable step.
 	///
@@ -136,7 +136,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			new FeatureChooserDialogView { DataContext = viewModel };
 
 		/// <summary>
-		/// Rebuilds the phonological <c>IFsFeatStruc</c> from the chosen assignment set in ONE undoable step — the
+		/// Rebuilds the phonological <c>IFsFeatStruc</c> from the chosen assignment set in ONE undoable step -- the
 		/// parity of <c>PhonologicalFeatureChooserDlg_Closing</c>'s OK branch. Creates the FS on the owner when needed;
 		/// clears + rebuilds it. NO empty-FS delete (the legacy phonological dialog leaves an emptied FS as-is).
 		/// </summary>

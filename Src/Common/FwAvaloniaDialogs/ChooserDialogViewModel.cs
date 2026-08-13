@@ -13,12 +13,12 @@ using SIL.FieldWorks.Common.FwAvalonia.Detail;
 namespace FwAvaloniaDialogs
 {
 	/// <summary>
-	/// View-model for the reusable Avalonia chooser dialog — the analog of the legacy
+	/// View-model for the reusable Avalonia chooser dialog -- the analog of the legacy
 	/// <c>ReallySimpleListChooser</c>/<c>SimpleListChooser</c>.
 	///
 	/// FLAT mode (the default when <see cref="ChooserDialogInput.Hierarchical"/> is false): it builds and
-	/// DRIVES the shared <see cref="FwOptionChooser"/> (single- or multi-select) — the picker is the owned native
-	/// list control the view hosts — and mirrors the picker's commits into <see cref="ChosenKeys"/>.
+	/// DRIVES the shared <see cref="FwOptionChooser"/> (single- or multi-select) -- the picker is the owned native
+	/// list control the view hosts -- and mirrors the picker's commits into <see cref="ChosenKeys"/>.
 	///
 	/// HIERARCHICAL mode (when <see cref="ChooserDialogInput.Hierarchical"/> is true): the candidates are
 	/// folded (by <see cref="ChooserTreeBuilder"/>) from their Depth sequence into a COLLAPSIBLE tree
@@ -47,9 +47,9 @@ namespace FwAvaloniaDialogs
 		// All tree nodes flattened (key -> node), so a flat-mode commit/check can mirror back onto the tree node
 		// and the multi-select snapshot can read the checked set straight off the tree.
 		private readonly List<ChooserTreeNode> _allNodes = new List<ChooserTreeNode>();
-		// The last node a plain (non-shift) click/keyboard toggle landed on — the anchor a subsequent shift+click
-		// ranges from. Null until the first toggle. Tracked only for the multi-select tree/list (range select is a
-		// multi-check gesture); single-select never ranges.
+		// The last node a plain (non-shift) click/keyboard toggle landed on, null
+		// until the first toggle -- the anchor a shift+click ranges from. Tracked
+		// only for multi-select; single-select never ranges.
 		private string _anchorKey;
 
 		public ChooserDialogViewModel() : this(new ChooserDialogInput())
@@ -69,9 +69,9 @@ namespace FwAvaloniaDialogs
 			HasHelp = !string.IsNullOrEmpty(_input.HelpTopic);
 			HasPrompt = !string.IsNullOrEmpty(Prompt);
 
-			// Lead an "<Empty>" option for an atomic clear (AllowEmpty) — its key is EmptyKey (""), so the result
-			// reports a clear distinctly from "no choice made". The empty row stays a top-level (depth 0) node in
-			// hierarchical mode too.
+			// Lead an "<Empty>" option for an atomic clear (AllowEmpty) -- its key is
+			// EmptyKey (""), so a clear reports distinctly from "no choice made".
+			// Stays a top-level (depth 0) node in hierarchical mode too.
 			var candidates = new List<DetailChoiceOption>();
 			if (_input.AllowEmpty)
 				candidates.Add(new DetailChoiceOption(ChooserDialogInput.EmptyKey, FwAvaloniaDialogsStrings.ChooserEmptyOption));
@@ -258,7 +258,7 @@ namespace FwAvaloniaDialogs
 		}
 
 		/// <summary>
-		/// Multi-select: toggle a node's check (independent per node — no parent/child cascade, matching the legacy
+		/// Multi-select: toggle a node's check (independent per node -- no parent/child cascade, matching the legacy
 		/// chooser default). Keeps the tree node and any matching flat-search row in sync via the shared node object.
 		/// This is a PLAIN toggle: it also (re)establishes the range anchor on the toggled node, so a following
 		/// shift+click ranges from here.
@@ -274,9 +274,9 @@ namespace FwAvaloniaDialogs
 		/// move the anchor here.</item>
 		/// <item>Shift-range (<paramref name="rangeFromAnchor"/> true with a live anchor that, like the target, is in
 		/// the current VISIBLE order): set EVERY node from the anchor to the target (inclusive) to the target's NEW
-		/// state — the standard range multi-select. The anchor stays put so further shift+clicks re-range from it.</item>
+		/// state -- the standard range multi-select. The anchor stays put so further shift+clicks re-range from it.</item>
 		/// </list>
-		/// No-op outside multi-select (single-select never ranges or row-toggles). Independent per node — no
+		/// No-op outside multi-select (single-select never ranges or row-toggles). Independent per node -- no
 		/// parent/child cascade, matching the legacy chooser default.
 		/// </summary>
 		public void ToggleChecked(string key, bool rangeFromAnchor)

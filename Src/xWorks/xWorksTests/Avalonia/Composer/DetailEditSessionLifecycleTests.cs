@@ -13,8 +13,8 @@ namespace SIL.FieldWorks.XWorks
 {
 	/// <summary>
 	/// Lifecycle hardening for the fenced edit session (the "Commit at wrong place" shutdown crash):
-	/// an LCModel undo task left open anywhere makes every later <c>IUndoStackManager.Save()</c> —
-	/// including the one FieldWorks runs at shutdown — throw. These tests pin down the failure
+	/// an LCModel undo task left open anywhere makes every later <c>IUndoStackManager.Save()</c> --
+	/// including the one FieldWorks runs at shutdown -- throw. These tests pin down the failure
 	/// mechanism and prove the two seams that prevent it: <see cref="DetailEditContextHolder"/>
 	/// (the host never orphans an open context when re-showing a detail view) and the defensive
 	/// <see cref="LcmDetailEditSession"/> Commit/Cancel (safe even after the clerk force-ended the
@@ -129,7 +129,7 @@ namespace SIL.FieldWorks.XWorks
 			first.TrySetText(FormField, "vern", "half-typed");
 			Assert.That(first.IsOpen, Is.True);
 
-			// Re-showing the detail view (navigation, refresh, ShowHiddenFields, …) swaps the context.
+			// Re-showing the detail view (navigation, refresh, ShowHiddenFields, ...) swaps the context.
 			var second = new LexiconFirstSliceEditContext(m_entry, Cache);
 			holder.Replace(second);
 
@@ -204,7 +204,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		// A depth check alone cannot distinguish "our task is still open" from "our task was
-		// force-ended and someone ELSE has since opened a new one" — a stale Commit/Cancel would
+		// force-ended and someone ELSE has since opened a new one" -- a stale Commit/Cancel would
 		// end or roll back the interloper's task. The session pins task identity with the
 		// undoable-sequence count, so the stale closers must no-op and leave the new task intact.
 		[Test]

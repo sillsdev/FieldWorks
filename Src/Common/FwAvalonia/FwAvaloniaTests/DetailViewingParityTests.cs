@@ -17,7 +17,7 @@ using SIL.FieldWorks.Common.FwAvalonia.ViewDefinition;
 namespace FwAvaloniaTests
 {
 	/// <summary>
-	/// Section 11 (viewing parity): scrolling, collapsible sections like the legacy +/- tree boxes
+	/// Viewing parity: scrolling, collapsible sections like the legacy +/- tree boxes
 	/// (including initial collapsed state from the layout), and checkbox rendering for booleans.
 	/// </summary>
 	[TestFixture]
@@ -46,7 +46,7 @@ namespace FwAvaloniaTests
 			return view;
 		}
 
-		// 14.3/14.5 — the 1px rule underlines only the value side (the label panel stays clean,
+		// 14.3/14.5 -- the 1px rule underlines only the value side (the label panel stays clean,
 		// like legacy lines between entries), and long values wrap so the row grows vertically.
 		[AvaloniaTest]
 		public void Rules_UnderlineOnlyTheValueColumn_AndValuesWrap()
@@ -234,12 +234,12 @@ namespace FwAvaloniaTests
 		{
 			var view = Show(Text("f1", "Lexeme Form", 0), Text("f2", "Citation Form", 0));
 
-			// 12.2: values are flat like RootSite views — no box.
+			// 12.2: values are flat like RootSite views -- no box.
 			var box = view.GetVisualDescendants().OfType<TextBox>().First();
 			Assert.That(box.BorderThickness, Is.EqualTo(new Avalonia.Thickness(0)));
 			Assert.That(box.Background, Is.EqualTo(Avalonia.Media.Brushes.Transparent));
 
-			// 12.1: a 1px LightGray rule under the slice row (and none inside multistring rows —
+			// 12.1: a 1px LightGray rule under the slice row (and none inside multistring rows --
 			// FwMultiWsTextField stacks rows with no rule elements at all).
 			var rule = view.GetVisualDescendants().OfType<Border>()
 				.FirstOrDefault(b => AutomationProperties.GetAutomationId(b) == "SliceRule.0");
@@ -255,14 +255,9 @@ namespace FwAvaloniaTests
 			Assert.That(label.Foreground, Is.EqualTo(SIL.FieldWorks.Common.FwAvalonia.FwAvaloniaDensity.LabelBrush));
 		}
 
-		// Layout parity (row-height-edit-parity): a field renders at the SAME row height whether the view
-		// is read-only display or editable. The per-WS editor boxes always measure identically, but a
-		// bare grid straight in the ScrollViewer and a grid wrapped in a StackPanel are two arrange
-		// contexts that round the grid's Auto rows to whole-pixel heights 1px differently — wrapping
-		// only one of the two states shifts every row's height and offset on the edit toggle
-		// (editable and read-only rows get a different vertical rhythm). The view wraps the
-		// grid identically in both states, so realizing the same model read-only and editable yields
-		// pixel-identical row heights AND row offsets for every field — toggling edit never moves the layout.
+		// The view wraps the grid identically in read-only and editable -- an
+		// unwrapped vs StackPanel-wrapped grid rounds Auto row heights 1px
+		// differently, shifting every row's height/offset on the edit toggle.
 		[AvaloniaTest]
 		public void RowHeights_AreIdentical_ReadOnlyAndEditable()
 		{

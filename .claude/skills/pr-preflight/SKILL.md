@@ -1,6 +1,6 @@
 ---
 name: pr-preflight
-description: "Use when preparing a FieldWorks branch or pull request for review: pre-PR review, branch readiness, author interview, review summary generation, validation evidence, or PR description preparation."
+description: "The required entrypoint whenever asked to write, make, open, create, update, or ship a PR for this repo -- do not post a PR body without running this first. Also use for pre-PR review, branch readiness, author interview, review summary generation, or validation evidence."
 argument-hint: "Optional branch purpose or PR goal"
 user-invocable: true
 ---
@@ -236,7 +236,7 @@ After writing the summary, tell the author:
 >
 > Please review it, make changes where appropriate, and run `/pr-preflight` again until you are ready to post the PR.
 >
-> If you do not want to make any changes and are ready for review, would you like me to commit any uncommitted changes, push, and post the PR? I will check whether one already exists for this branch and update it, or create a new one if not. The write-up runs through `pr-pitch`, which will also triage any research or working markdown on the branch into collapsed PR comments and out of the tree -- you approve that triage before anything is deleted."
+> If you do not want to make any changes and are ready for review, would you like me to commit any uncommitted changes, push, and post the PR? I will check whether one already exists for this branch and update it, or create a new one if not. The write-up runs through `pr-pitch`, which will also triage any research or working markdown on the branch into collapsed sections in the PR body and out of the tree -- you approve that triage before anything is deleted."
 
 Only create or update a PR after the author confirms.
 
@@ -244,9 +244,10 @@ Only create or update a PR after the author confirms.
 
 This skill is the single entrypoint for making a PR, but it does not compose
 the description itself. Once the author confirms readiness, invoke the
-`pr-pitch` skill and let it own the write-up. It produces three artifacts
-together: the PR body as a pitch, provenance in collapsed PR comments, and a
-commit evicting the branch's research and working markdown from the tree.
+`pr-pitch` skill and let it own the write-up. It produces two artifacts
+together: the PR body (a pitch above the fold, provenance in collapsed
+accordions below it) and a commit evicting the branch's research and working
+markdown from the tree.
 
 Hand `pr-pitch` the branch purpose, the findings, and `.review/summary.md`.
 

@@ -276,7 +276,7 @@ namespace SIL.FieldWorks.Common.RootSites.RenderBenchmark
 								{
 									var clientRect = new Rect(0, 0, width, height);
 									const uint whiteColor = 0x00FFFFFF;
-									// fDrawSel: false — exclude the insertion point from the snapshot.
+									// fDrawSel: false -- exclude the insertion point from the snapshot.
 									// MakeRoot installs an insertion-point selection whose caret blinks
 									// on a 500ms timer (FlashInsertionPoint), so drawing the selection
 									// here captures the caret non-deterministically and produces flaky

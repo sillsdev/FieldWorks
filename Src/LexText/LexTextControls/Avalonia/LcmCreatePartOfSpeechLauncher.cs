@@ -20,18 +20,18 @@ using AvControl = Avalonia.Controls.Control;
 namespace SIL.FieldWorks.LexText.Controls
 {
 	/// <summary>
-	/// The LCModel-aware launcher for the "Create a new Part of Speech" flow — the New-UI replacement for the
+	/// The LCModel-aware launcher for the "Create a new Part of Speech" flow -- the New-UI replacement for the
 	/// WinForms <see cref="MasterCategoryListDlg"/> that the legacy <c>POSPopupTreeManager</c> launches from the POS
 	/// tree's "More..." item. Rather than build a brand-new tree dialog, it reuses the existing
 	/// reusable Avalonia <see cref="ChooserDialogViewModel"/>/<c>ChooserDialogView</c> in HIERARCHICAL single-select
 	/// mode, fed the master-category (GOLDEtic) catalog as depth-tagged <see cref="DetailChoiceOption"/> candidates
 	/// (key = the catalog id). On OK it mirrors <see cref="MasterCategoryListDlg"/>'s create-in-project logic exactly:
 	/// the chosen master category is added to <c>cache.LangProject.PartsOfSpeechOA</c> (or under its catalog parent)
-	/// via <see cref="MasterCategory.AddToDatabase"/> — which creates the <c>IPartOfSpeech</c> with the catalog's
-	/// fixed guid + name/abbr/description + CatalogSourceId, in ONE undoable step — and returns a fresh
+	/// via <see cref="MasterCategory.AddToDatabase"/> -- which creates the <c>IPartOfSpeech</c> with the catalog's
+	/// fixed guid + name/abbr/description + CatalogSourceId, in ONE undoable step -- and returns a fresh
 	/// <see cref="FwPosNode"/> for it (guid id + name + abbr) for the requesting chooser to add + select.
 	///
-	/// Layering mirrors <see cref="LcmChooserDialogLauncher"/>: BuildState / Apply are internal so the chosen-id →
+	/// Layering mirrors <see cref="LcmChooserDialogLauncher"/>: BuildState / Apply are internal so the chosen-id ->
 	/// new-IPartOfSpeech + FwPosNode round-trip is unit-testable against a real cache (via InternalsVisibleTo) without
 	/// running the modal. The only runtime-only aspect is loading GOLDEtic.xml off disk (the
 	/// <see cref="FwDirectoryFinder.TemplateDirectory"/> the WinForms dialog uses); tests feed an in-memory catalog
@@ -107,7 +107,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// Builds the LCModel-free <see cref="ChooserDialogInput"/> from the loaded catalog: each category becomes a
 		/// hierarchical single-select candidate (key = catalog id, depth = catalog nesting), the chooser opens as a
 		/// collapsible tree (the same reuse the possibility-list chooser uses), and OK is gated until the user picks a
-		/// category (a create flow must choose something). Internal so the catalog → candidates mapping is testable.
+		/// category (a create flow must choose something). Internal so the catalog -> candidates mapping is testable.
 		/// </summary>
 		internal static ChooserDialogInput BuildInput(IReadOnlyList<CatalogCategory> catalog)
 		{
@@ -157,10 +157,10 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// Creates (or resolves) the <c>IPartOfSpeech</c> for the chosen catalog id, mirroring
 		/// <see cref="MasterCategoryListDlg"/>'s OK logic: the chosen <see cref="MasterCategory"/> is added to the
 		/// project's parts-of-speech list (under its catalog parent when the parent is itself a category) via
-		/// <see cref="MasterCategory.AddToDatabase"/> — which creates the POS with the catalog's fixed guid, populates
+		/// <see cref="MasterCategory.AddToDatabase"/> -- which creates the POS with the catalog's fixed guid, populates
 		/// name/abbr/description for every writing system from the catalog node, and sets <c>CatalogSourceId</c>, all
 		/// in ONE undoable step. A category already present in the project resolves to its existing POS (AddToDatabase
-		/// no-ops). Returns null for a missing/unparsable chosen id. Internal so the chosen-id → IPartOfSpeech
+		/// no-ops). Returns null for a missing/unparsable chosen id. Internal so the chosen-id -> IPartOfSpeech
 		/// round-trip is unit-testable against a real cache without running the modal.
 		/// </summary>
 		internal static IPartOfSpeech CreatePosFromCatalog(LcmCache cache, IReadOnlyList<CatalogCategory> catalog,
@@ -218,14 +218,14 @@ namespace SIL.FieldWorks.LexText.Controls
 		internal static IReadOnlyList<CatalogCategory> BuildCatalog(LcmCache cache, XmlNode root)
 		{
 			// The set of POSes already in the project, so MasterCategory.Create can mark each catalog entry that is
-			// already installed (and resolve it to its existing POS) — exactly as the WinForms dialog seeds it.
+			// already installed (and resolve it to its existing POS) -- exactly as the WinForms dialog seeds it.
 			var posSet = new HashSet<IPartOfSpeech>(
 				cache.LangProject.PartsOfSpeechOA.ReallyReallyAllPossibilities.OfType<IPartOfSpeech>());
 
 			var catalog = new List<CatalogCategory>();
 			void AddNode(XmlNode node, CatalogCategory parent, int depth)
 			{
-				// The top-level grouping node is not a real category — descend through it (legacy AddNode behavior).
+				// The top-level grouping node is not a real category -- descend through it (legacy AddNode behavior).
 				if (node.Attributes?["id"]?.InnerText == "PartOfSpeechValue")
 				{
 					foreach (XmlNode child in node.SelectNodes("item"))

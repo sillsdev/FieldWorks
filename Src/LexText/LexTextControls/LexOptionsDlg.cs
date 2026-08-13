@@ -138,7 +138,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				}
 			}
 
-			// UIMode (and its per-tool overrides) flips live — RecordEditView settles any open edit and
+			// UIMode (and its per-tool overrides) flips live -- RecordEditView settles any open edit and
 			// re-resolves the framework on the spot, so unlike the settings below, this never needs a restart.
 			// Compare against the PropertyTable's LIVE value (falling back to settings): if the table and
 			// the persisted setting ever disagree, OK re-broadcasts and heals the running views.

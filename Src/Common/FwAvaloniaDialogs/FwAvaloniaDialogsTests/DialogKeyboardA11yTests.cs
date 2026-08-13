@@ -24,7 +24,7 @@ namespace FwAvaloniaDialogsTests
 	/// Legacy WinForms dialogs opened with focus in the first field and tabbed
 	/// fields-before-buttons; the Avalonia dialogs must match. These run on a realized headless view and
 	/// assert the deterministic selection contract of <see cref="AvaloniaDialogHost.FocusInitialControl"/>
-	/// plus the per-view TabIndex that pushes the button strip last — independent of the WinForms-hosted
+	/// plus the per-view TabIndex that pushes the button strip last -- independent of the WinForms-hosted
 	/// modal delivery path, which the desktop UIA environment covers.
 	/// </summary>
 	[TestFixture]
@@ -80,8 +80,8 @@ namespace FwAvaloniaDialogsTests
 		[AvaloniaTest]
 		public void FocusInitialControl_PickerDialog_DoesNotFocusOkButton()
 		{
-			// The flat Chooser's FwOptionChooser is intentionally Focusable=false (handles keys directly).
-			// Whatever FocusInitialControl picks, it must NEVER be a command button (OK/Cancel) — otherwise
+			// FwOptionChooser is intentionally Focusable=false (handles keys directly).
+			// Whatever FocusInitialControl picks must NEVER be a command button -- else
 			// Enter would accept the dialog the instant it opened.
 			var vm = new ChooserDialogViewModel(new ChooserDialogInput { Candidates = Candidates() });
 			var view = new ChooserDialogView { DataContext = vm };
@@ -116,8 +116,8 @@ namespace FwAvaloniaDialogsTests
 		}
 
 		// --- NATIVE Avalonia Tab traversal actually honors the container TabIndex ---
-		// (Asserting the attribute is set is not enough — this exercises KeyboardNavigationHandler, the
-		// real Tab engine, to prove the container-level TabIndex reorders traversal in Avalonia's model.)
+		// Asserting the attribute is set is not enough; this exercises
+		// KeyboardNavigationHandler, the real Tab engine.
 
 		[AvaloniaTest]
 		public void NativeTabTraversal_FirstStop_IsContentNotButtonStrip()
@@ -140,12 +140,9 @@ namespace FwAvaloniaDialogsTests
 			Assert.That(first, Is.SameAs(field),
 				"native Tab traversal must reach the content field before the TabIndex=1 button strip");
 
-			// NOTE (verified 2026-06-23): this proves container-level TabIndex reorders Avalonia's NATIVE Tab
-			// engine when the content has a tab stop — so InsertEntry/EntryGo (text fields) tab fields-first.
-			// Picker-driven dialogs (Chooser/Options) are a separate case: their FwOptionChooser is
-			// Focusable=false (handles keys directly), so they have NO tabbable content and Tab necessarily
-			// begins on the button strip — inherent to the picker design and pre-existing, not a regression
-			// introduced or removable by this TabIndex change.
+			// Container-level TabIndex only reorders Tab traversal when content has
+			// a tab stop. Picker dialogs have none (FwOptionChooser Focusable=false),
+			// so starting on the button strip is pre-existing.
 		}
 
 		// --- Button mnemonics (Alt access keys) ---

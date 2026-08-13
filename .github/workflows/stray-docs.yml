@@ -1,0 +1,31 @@
+name: stray-docs
+
+on:
+    pull_request:
+        types: [opened, synchronize]
+
+concurrency:
+    group: ${{ github.workflow }}-${{ github.ref }}
+    cancel-in-progress: true
+
+jobs:
+    stray-docs:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v7
+              with:
+                  fetch-depth: 0
+
+            - name: Check for stray planning/spec docs
+              shell: bash
+              run: |
+                  BASE_SHA="${{ github.event.pull_request.base.sha }}"
+                  ADDED=$(git diff --name-only --diff-filter=A "${BASE_SHA}...HEAD" -- 'Docs/superpowers/plans/*.md' 'Docs/superpowers/specs/*.md')
+                  if [[ -n "$ADDED" ]]; then
+                      echo "Stray working docs found in this PR's diff:"
+                      echo "$ADDED"
+                      echo ""
+                      echo "These are brainstorming/planning artifacts that should be evicted before merge (see the pr-pitch skill)."
+                      exit 1
+                  fi
+                  echo "No stray working docs found."

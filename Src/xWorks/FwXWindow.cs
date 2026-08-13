@@ -536,7 +536,7 @@ namespace SIL.FieldWorks.XWorks
 			Directory.CreateDirectory(path);
 			m_propertyTable.UserSettingDirectory = path;
 			Mediator.PathVariables["{DISTFILES}"] = FwDirectoryFinder.CodeDirectory;
-			// Seed the UI-mode properties BEFORE LoadUI creates the content views —
+			// Seed the UI-mode properties BEFORE LoadUI creates the content views --
 			// RecordEditView resolves its framework during window construction, so seeding any later
 			// (or relying on the app to do it after NewMainAppWnd returns) leaves a persisted
 			// UIMode=New coming up on Legacy until the setting is toggled again.
@@ -967,11 +967,9 @@ namespace SIL.FieldWorks.XWorks
 		{
 			CheckDisposed();
 
-			// This menu command shells out to the OS character map (charmap.exe / gucharmap) — there is
-			// no FieldWorks character-picker dialog to migrate here. The "special-char insert" work instead
-			// ships a NET-NEW in-app Avalonia Unicode picker (SpecialCharacterDialogView/ViewModel in
-			// FwAvaloniaDialogs, headless-tested: filterable curated list → ChosenCharacter) for the New-UI
-			// insert-into-field affordance; this legacy OS-charmap shellout is preserved unchanged.
+			// This OS-charmap shellout has no FieldWorks dialog to migrate: the
+			// "special-char insert" work ships a separate Avalonia Unicode picker
+			// (SpecialCharacterDialogView) instead, so this path stays unchanged.
 			var program = "charmap.exe";
 			Action<Exception> errorHandler = null;
 			if (Platform.IsUnix)
@@ -2334,11 +2332,7 @@ namespace SIL.FieldWorks.XWorks
 			// Fixes (LT-4650)
 			if (name == "currentContentControl")
 			{
-				// The outgoing view may still hold an open fenced detail-edit undo task (the user was
-				// mid-edit when they switched). Settle it — committing a valid staged edit as its own undo
-				// step, rolling an invalid one back — BEFORE the save-on-tool-switch commit below: an open
-				// task makes that commit throw "Commit at wrong place." This is the same auto-save the
-				// view performs on record navigation and go-away, applied to the tool/area switch too.
+				// Must settle any open fenced detail-edit undo task before the save-on-tool-switch commit below, or that commit throws "Commit at wrong place" (same auto-save the view does on navigation/go-away).
 				SettlePendingContentEdits(CurrentContentControl);
 				Cache.DomainDataByFlid.GetActionHandler().Commit();
 				// If we change tools, the FindReplaceDlg is no longer valid, as its rootsite
@@ -2350,8 +2344,8 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
-		/// Settles any open fenced detail-edit session held by the outgoing content control — or by a
-		/// view nested inside it — so the save-on-tool-switch commit does not fault on an open undo
+		/// Settles any open fenced detail-edit session held by the outgoing content control -- or by a
+		/// view nested inside it -- so the save-on-tool-switch commit does not fault on an open undo
 		/// task. The detail view is usually nested inside a record-list/detail container, so the whole
 		/// subtree is walked rather than only the top-level control.
 		/// </summary>

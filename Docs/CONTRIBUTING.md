@@ -55,6 +55,8 @@ FieldWorks builds can be significantly slowed by Windows Defender real-time scan
 
 This adds exclusions for build outputs, NuGet caches and development tools. Use `-DryRun` to preview changes without applying them.
 
+If you also work in sibling repos in the same parent folder (e.g. PanGloss, motif, foma-rs), run `..\Setup-DefenderExclusions.ps1` instead (one level up) — it covers this repo plus the Rust toolchain (`.cargo`/`.rustup`) and CMake/Rust process exclusions the FieldWorks-only script doesn't need.
+
 ### 2. Clone the Repository
 
 Clone the FieldWorks repository using HTTPS or SSH:

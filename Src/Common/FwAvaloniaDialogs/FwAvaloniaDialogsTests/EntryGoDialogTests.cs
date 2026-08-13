@@ -22,7 +22,7 @@ namespace FwAvaloniaDialogsTests
 	/// <summary>
 	/// The reusable entry-search ("go") dialog (the Avalonia replacement for the legacy EntryGoDlg/BaseGoDlg
 	/// family). The matching entries fill the dialog body as a PERSISTENT,
-	/// multi-column list under the search box, live-updating as the user types — a header row plus per-row column
+	/// multi-column list under the search box, live-updating as the user types -- a header row plus per-row column
 	/// cells built from the launcher's column spec (headword in the vernacular font, glosses in the analysis
 	/// font), never a focus-gated overlay. Up/Down in the search box move the list selection while the caret
 	/// stays in the box (the legacy m_tbForm_KeyDown behavior). It is a COMMIT-ON-SELECT picker with no OK
@@ -43,7 +43,7 @@ namespace FwAvaloniaDialogsTests
 		};
 
 		// A simple in-memory "contains" search over the sample rows, honoring the excluded id (so the provider
-		// itself never returns the current entry — mirrors the launcher's FilterResults wrapper).
+		// itself never returns the current entry -- mirrors the launcher's FilterResults wrapper).
 		private static EntryGoDialogInput Input(string excludedId = null, string initialQuery = null,
 			string title = null, string okText = null, string descriptionLabel = "Description")
 		{
@@ -159,7 +159,7 @@ namespace FwAvaloniaDialogsTests
 			var (view, vm) = Show(Input());
 			var list = ResultsList(view);
 
-			// The list is in the tree and showing its rows with NO focus anywhere near the search box —
+			// The list is in the tree and showing its rows with NO focus anywhere near the search box --
 			// the legacy embedded-browser shape, not a focus-gated overlay.
 			Assert.That(list.IsVisible, Is.True, "the matching list is always visible");
 			Assert.That(vm.Results.Count, Is.GreaterThan(0), "the list is primed from the (empty) initial query");
@@ -184,7 +184,7 @@ namespace FwAvaloniaDialogsTests
 		[AvaloniaTest]
 		public void HeaderRow_ShowsTheDefaultLocalizedColumnHeaders()
 		{
-			// No ResultColumns on the input → the shared default: Headword + Glosses (the legacy matchingEntries
+			// No ResultColumns on the input -> the shared default: Headword + Glosses (the legacy matchingEntries
 			// browser's default-visible columns), headers from the localized strings.
 			var (view, vm) = Show(Input());
 			Assert.That(vm.Columns.Select(c => c.Field),
@@ -465,8 +465,9 @@ namespace FwAvaloniaDialogsTests
 			Assert.That(pane.Text, Is.EqualTo("casa : house"), "the bound description pane shows the selected row's description");
 		}
 
-		// An entry-search input where one row carries a RICH description payload (an arbitrary Avalonia control — a
-		// formatted, multi-line preview) and the others carry only plain text, so we exercise both pane paths.
+		// An entry-search input where one row carries a RICH description payload (an
+		// Avalonia control -- a formatted, multi-line preview) and the others carry
+		// only plain text, so we exercise both pane paths.
 		private static EntryGoDialogInput RichDescriptionInput()
 		{
 			var richPreview = new StackPanel
@@ -743,7 +744,7 @@ namespace FwAvaloniaDialogsTests
 		}
 
 		// ===== Opt-in dependent auxiliary selection (the LinkMSA/LinkAllomorph consumce): with a resolver supplied
-		// the dialog is two-stage — picking an entry populates the auxiliary options (shown UNDER the matching
+		// the dialog is two-stage -- picking an entry populates the auxiliary options (shown UNDER the matching
 		// list, the legacy combo position), Enter/double-click is stage-1 select (not commit), and OK commits only
 		// once both an entry and an option are chosen. Without the spec the commit-on-select behavior above is
 		// unchanged (those tests all run against a null spec). =====

@@ -15,7 +15,7 @@ namespace SIL.FieldWorks.XWorks
 	/// The LCModel-aware StText edit-context adapter, exercised against a REAL in-memory cache.
 	/// An StText field becomes an editable <see cref="DetailFieldKind.StructuredText"/> row whose
 	/// paragraph CRUD (text / style / insert / delete) mutates the LCModel StText inside ONE fenced
-	/// <see cref="LcmDetailEditSession"/> — one step on the global undo stack legacy views share, the
+	/// <see cref="LcmDetailEditSession"/> -- one step on the global undo stack legacy views share, the
 	/// same undo-granularity rule the rest of the detail view follows. These tests build the composed
 	/// edit-context the way <see cref="DetailComposer"/> does (the same
 	/// <see cref="ComposedDetailEditContext"/> + paragraph setters), so they cover the real production
@@ -37,9 +37,9 @@ namespace SIL.FieldWorks.XWorks
 				m_entry.LexemeFormOA = morph;
 				morph.Form.set_String(Cache.DefaultVernWs, TsStringUtils.MakeString("casa", Cache.DefaultVernWs));
 
-				// An OWNED StText with two paragraphs — the structured-text the StTextSlice edits. Owned
-				// under a notebook record's Discussion (a real OwningAtomic-StText field) so the StText is a
-				// valid, persisted object with the same lifetime an lexeme StText custom field would have.
+				// An OWNED StText with two paragraphs (what StTextSlice edits), owned
+				// under a notebook record's Discussion (a real OwningAtomic-StText
+				// field), matching a lexeme StText custom field's lifetime.
 				if (Cache.LangProject.ResearchNotebookOA == null)
 					Cache.LangProject.ResearchNotebookOA =
 						Cache.ServiceLocator.GetInstance<IRnResearchNbkFactory>().Create();

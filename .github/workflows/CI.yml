@@ -23,6 +23,32 @@ jobs:
       - name: Checkout Files
         uses: actions/checkout@v7
         id: checkout
+        with:
+          # comment-hygiene.ps1 diffs against origin/<default-branch>; a
+          # shallow, single-branch checkout leaves that ref unresolvable
+          # and the gate fails every build with "bad revision".
+          fetch-depth: 0
+
+      # Real-runtime check: this repo is authored on PowerShell 7 but
+      # build.ps1/test.ps1 run under Windows PowerShell 5.1 below. A script
+      # can parse identically on both and still resolve differently at
+      # runtime (see comment-hygiene's ASCII-replacement map, which used to
+      # do exactly that). windows-2022 ships both engines, so run the
+      # comment-hygiene fixture suite under each rather than assuming one
+      # implies the other.
+      - name: Comment hygiene fixture tests (PowerShell 7)
+        id: comment-hygiene-tests-pwsh
+        shell: pwsh
+        run: |
+          Build/Agent/CommentHygiene.Tests.ps1
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+      - name: Comment hygiene fixture tests (Windows PowerShell 5.1)
+        id: comment-hygiene-tests-winps
+        shell: powershell
+        run: |
+          Build\Agent\CommentHygiene.Tests.ps1
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
       - name: Build with tests
         id: build

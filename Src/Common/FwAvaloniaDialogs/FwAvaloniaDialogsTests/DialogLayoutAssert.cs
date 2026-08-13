@@ -71,7 +71,7 @@ namespace FwAvaloniaDialogsTests
 				// template) arranging children we wrote. A control's templated internals (e.g. a TextBox's
 				// PART_BorderElement over its background Border) legitimately stack, so skip any panel or child
 				// that belongs to a control template (TemplatedParent != null). This keeps the check focused on
-				// the dialog's own layout — where the crowding defect actually appears.
+				// the dialog's own layout -- where the crowding defect actually appears.
 				if (IsTemplateGenerated(parent))
 					continue;
 				var kids = parent.GetVisualChildren().OfType<Control>()
@@ -85,7 +85,7 @@ namespace FwAvaloniaDialogsTests
 					{
 						// Skip a pair where either side is a SPLITTER. A GridSplitter (or a Border/control
 						// whose Name/AutomationId contains "Splitter", e.g. the browse column-splitter) is a drag
-						// handle that by design sits ON a column boundary and overlaps its neighbors — that is
+						// handle that by design sits ON a column boundary and overlaps its neighbors -- that is
 						// expected splitter behavior, not the content-overlap defect this tripwire hunts for.
 						if (IsSplitterChrome(kids[i]) || IsSplitterChrome(kids[j]))
 							continue;
@@ -117,7 +117,7 @@ namespace FwAvaloniaDialogsTests
 
 		// ----- (4) a Border's child is inset by the Border's padding (its embedded control gets breathing
 		// room). Restricted to Decorator (Border) parents because there the Child's Bounds are directly in the
-		// Border's content space, so the padding inset is geometrically observable — unlike a templated
+		// Border's content space, so the padding inset is geometrically observable -- unlike a templated
 		// ContentControl whose padding is consumed by an internal presenter. -----
 
 		private static void AssertChildrenAreInsetFromPaddedBorders(IEnumerable<Control> all)

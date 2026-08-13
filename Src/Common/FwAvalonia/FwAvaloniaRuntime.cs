@@ -20,13 +20,13 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 
 		/// <summary>
 		/// Test-only hook that lets a test assembly substitute the <see cref="AppBuilder"/> used by
-		/// <see cref="EnsureInitialized"/> — without this production DLL referencing Avalonia.Headless.
-		/// xWorks integration tests that drive the product UI (RecordEditView/RecordBrowseView/…)
+		/// <see cref="EnsureInitialized"/> -- without this production DLL referencing Avalonia.Headless.
+		/// xWorks integration tests that drive the product UI (RecordEditView/RecordBrowseView/...)
 		/// otherwise initialize the REAL Win32 Avalonia platform process-wide, so any flyout/dialog/popup
 		/// becomes a real on-screen OS window that flashes and can steal keypresses. A test
 		/// <c>[SetUpFixture]</c> sets this to a headless builder before any test runs; production leaves it
 		/// null and behavior is identical to calling <see cref="FwAvaloniaHost.BuildAvaloniaApp"/> directly.
-		/// Only honored on the first (winning) <see cref="EnsureInitialized"/> call — once the runtime is
+		/// Only honored on the first (winning) <see cref="EnsureInitialized"/> call -- once the runtime is
 		/// set up it cannot be re-platformed, so this must be set before the first host is constructed.
 		/// </summary>
 		public static Func<AppBuilder> AppBuilderOverride { get; set; }
@@ -39,7 +39,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 		/// already-live <see cref="Application.Current"/> as "initialized": some test hosts (the
 		/// <c>Avalonia.Headless.NUnit</c> <c>[AvaloniaTestApplication]</c> attribute, e.g.
 		/// <c>FwAvaloniaDialogsTests</c>/<c>FwAvaloniaTests</c>) set up the Avalonia platform themselves,
-		/// per test session, without ever calling this method — calling <c>SetupWithoutStarting</c> again
+		/// per test session, without ever calling this method -- calling <c>SetupWithoutStarting</c> again
 		/// on top of that would throw (Avalonia only allows one <c>Setup</c> per process).
 		/// </summary>
 		public static void EnsureInitialized()
