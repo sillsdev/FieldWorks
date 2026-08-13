@@ -80,6 +80,114 @@ namespace SIL.AlloGenServiceTests
 			compareResult(input, "yusulpaa", writingSystems[4]);
 		}
 
+		[Test]
+		public void RegexReplacement_UsesDotNetCaptureReferences()
+		{
+			Replacer directReplacer = CreateRegexReplacer("(a)(b)", "$2$1");
+
+			Assert.That(directReplacer.ApplyReplaceOpToOneWS("ab", "en"), Is.EqualTo("ba"));
+		}
+
+		[Test]
+		public void RegexReplacement_DoubleDollarProducesLiteralDollar()
+		{
+			Replacer directReplacer = CreateRegexReplacer("a", "$$");
+
+			Assert.That(directReplacer.ApplyReplaceOpToOneWS("a", "en"), Is.EqualTo("$"));
+		}
+
+		[Test]
+		public void RegexReplacement_BackslashIsLiteral()
+		{
+			Replacer directReplacer = CreateRegexReplacer("(a)", @"\1");
+
+			Assert.That(directReplacer.ApplyReplaceOpToOneWS("a", "en"), Is.EqualTo(@"\1"));
+		}
+
+		[Test]
+		public void RegexReplacement_MissingOptionalCaptureProducesEmptyCapture()
+		{
+			Replacer directReplacer = CreateRegexReplacer("(a)(b)?", "$2X");
+
+			Assert.That(directReplacer.ApplyReplaceOpToOneWS("a", "en"), Is.EqualTo("X"));
+		}
+
+		[Test]
+		public void RegexReplacement_NfcPatternMatchesNfcButNotNfdInput()
+		{
+			Replacer directReplacer = CreateRegexReplacer("\u00e9", "E");
+
+			Assert.That(directReplacer.ApplyReplaceOpToOneWS("\u00e9", "en"), Is.EqualTo("E"));
+			Assert.That(directReplacer.ApplyReplaceOpToOneWS("e\u0301", "en"),
+				Is.EqualTo("e\u0301"));
+		}
+
+		[Test]
+		public void RegexReplacement_InvalidPatternReturnsUnmodifiedValue()
+		{
+			Replacer directReplacer = CreateRegexReplacer("[", "x");
+
+			Assert.That(directReplacer.ApplyReplaceOpToOneWS("abc", "en"), Is.EqualTo("abc"));
+		}
+
+		[Test]
+		public void RegexReplacement_InvalidLaterOperationReturnsEarlierResult()
+		{
+			var directReplacer = new Replacer(new List<Replace>
+			{
+				CreateRegexOperation("a", "b"),
+				CreateRegexOperation("[", "x")
+			});
+
+			Assert.That(directReplacer.ApplyReplaceOpToOneWS("a", "en"), Is.EqualTo("b"));
+		}
+
+		[Test]
+		public void RegexReplacement_EmptyFinalResultUsesNonBreakingSpace()
+		{
+			Replacer directReplacer = CreateRegexReplacer("a", "");
+
+			Assert.That(directReplacer.ApplyReplaceOpToOneWS("a", "en"), Is.EqualTo("\u00a0"));
+		}
+
+		[Test]
+		public void RegexReplacement_SkipsInactiveOperations()
+		{
+			Replacer directReplacer = CreateRegexReplacer("a", "inactive", "en", false);
+
+			Assert.That(directReplacer.ApplyReplaceOpToOneWS("a", "en"), Is.EqualTo("a"));
+		}
+
+		[Test]
+		public void RegexReplacement_SkipsWrongWritingSystemOperations()
+		{
+			Replacer directReplacer = CreateRegexReplacer("a", "wrong writing system", "fr");
+
+			Assert.That(directReplacer.ApplyReplaceOpToOneWS("a", "en"), Is.EqualTo("a"));
+		}
+
+		private static Replacer CreateRegexReplacer(string from, string to,
+			string writingSystem = "en", bool active = true)
+		{
+			return new Replacer(new List<Replace>
+			{
+				CreateRegexOperation(from, to, writingSystem, active)
+			});
+		}
+
+		private static Replace CreateRegexOperation(string from, string to,
+			string writingSystem = "en", bool active = true)
+		{
+			return new Replace
+			{
+				Active = active,
+				Mode = true,
+				From = from,
+				To = to,
+				WritingSystemRefs = new List<string> { writingSystem }
+			};
+		}
+
 		private void compareResult(string input, string expected, WritingSystem ws)
 		{
 			string result = replacer.ApplyReplaceOpToOneWS(input, ws.Name);
