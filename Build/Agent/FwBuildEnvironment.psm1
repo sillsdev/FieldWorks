@@ -251,6 +251,36 @@ function ConvertFrom-EnvironmentVariableLines {
     return [pscustomobject]$variables
 }
 
+function Set-ProcessEnvironmentVariables {
+    param(
+        [pscustomobject]$Variables
+    )
+
+    $existingVariables = [System.Environment]::GetEnvironmentVariables('Process')
+    foreach ($variable in $Variables.PSObject.Properties) {
+        $namesToRemove = Get-EnvironmentVariableNamesToRemove `
+            -ExistingNames $existingVariables.Keys -IncomingName $variable.Name
+        foreach ($existingName in $namesToRemove) {
+            Remove-Item -Path "Env:$existingName"
+        }
+
+        Set-Item -Path "Env:$($variable.Name)" -Value $variable.Value
+    }
+}
+
+function Get-EnvironmentVariableNamesToRemove {
+    param(
+        [string[]]$ExistingNames,
+        [string]$IncomingName
+    )
+
+    foreach ($existingName in $ExistingNames) {
+        if ([string]::Equals($existingName, $IncomingName, [System.StringComparison]::OrdinalIgnoreCase)) {
+            $existingName
+        }
+    }
+}
+
 function Get-ActiveVcToolBinPath {
     <#
     .SYNOPSIS
@@ -380,9 +410,7 @@ function Initialize-VsDevEnvironment {
     Write-Host "   Setting up environment for $arch..." -ForegroundColor Gray
 
     $vsEnvironment = Get-VsDevEnvironmentVariables -Architecture $arch -HostArchitecture $arch
-    foreach ($variable in $vsEnvironment.Variables.PSObject.Properties) {
-        Set-Item -Path "Env:$($variable.Name)" -Value $variable.Value
-    }
+    Set-ProcessEnvironmentVariables -Variables $vsEnvironment.Variables
 
     if (-not (Test-VsDevEnvironmentActive)) {
         throw 'Visual Studio C++ environment not configured'
