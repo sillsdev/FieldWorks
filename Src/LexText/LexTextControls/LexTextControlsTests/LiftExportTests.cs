@@ -1135,6 +1135,84 @@ namespace LexTextControlsTests
 			VerifyExportRanges(xdocRangeFile);
 		}
 
+		///--------------------------------------------------------------------------------------
+		/// <summary>
+		/// A custom list name reaches the ranges file as a range id, where it needs the escaping
+		/// rules for an attribute. It used to be escaped once as element content on the way into
+		/// the exporter's map and never again, so a name holding a quotation mark left the ranges
+		/// document unparseable.
+		/// </summary>
+		///--------------------------------------------------------------------------------------
+		[Test]
+		public void LiftExportRanges_CustomListRangeIdWithQuoteIsEscapedForAnAttribute()
+		{
+			const string ksListName = "So-called \"words\"";
+			XmlDocument xdocLift;
+			XmlDocument xdocRangeFile;
+			var customList = ExportWithCustomList(ksListName, out xdocLift, out xdocRangeFile);
+
+			var range = xdocRangeFile.SelectSingleNode(string.Format("//range[@guid='{0}']", customList.Guid));
+			Assert.That(range, Is.Not.Null, "the custom list must be written as a range");
+			Assert.That(range.Attributes["id"].Value, Is.EqualTo(ksListName),
+				"the range id must read back as the name stored");
+		}
+
+		///--------------------------------------------------------------------------------------
+		/// <summary>
+		/// The same name is written into the .lift header and into the ranges file, so the two must
+		/// agree. Escaping once on the way in and again at the header write site turned an ampersand
+		/// into &amp;amp; there while the ranges file kept a single escape.
+		/// </summary>
+		///--------------------------------------------------------------------------------------
+		[Test]
+		public void LiftExportRanges_CustomListRangeIdWithAmpersandIsEscapedExactlyOnce()
+		{
+			const string ksListName = "Birds & Beasts";
+			XmlDocument xdocLift;
+			XmlDocument xdocRangeFile;
+			var customList = ExportWithCustomList(ksListName, out xdocLift, out xdocRangeFile);
+
+			var rangesRange = xdocRangeFile.SelectSingleNode(string.Format("//range[@guid='{0}']", customList.Guid));
+			Assert.That(rangesRange, Is.Not.Null);
+			Assert.That(rangesRange.Attributes["id"].Value, Is.EqualTo(ksListName),
+				"one level of escaping, undone by the parser, must give back the name stored");
+			var headerIds = xdocLift.SelectNodes("//header/ranges/range/@id");
+			Assert.That(headerIds, Is.Not.Null);
+			Assert.That(headerIds.Cast<XmlNode>().Any(id => id.Value == ksListName),
+				"the .lift header must name the range the same way the ranges file does");
+		}
+
+		/// <summary>
+		/// Exports both files from one exporter, so that the custom list is discovered by the .lift
+		/// pass and is therefore written by the ranges pass.
+		/// </summary>
+		private ICmPossibilityList ExportWithCustomList(string listName, out XmlDocument xdocLift, out XmlDocument xdocRangeFile)
+		{
+			ICmPossibilityList customList = null;
+			NonUndoableUnitOfWorkHelper.Do(m_cache.ActionHandlerAccessor, () =>
+			{
+				customList = AddCustomList(listName);
+				MakeCustomField("CustomFieldForCustomList", LexEntryTags.kClassId,
+					WritingSystemServices.kwsAnal, CustomFieldType.ListRefAtomic, customList.Guid);
+			});
+			var exporter = new LiftExporter(m_cache);
+			xdocLift = new XmlDocument();
+			using (var w = new StringWriter())
+			{
+				// SUT: the .lift pass populates the map the ranges pass writes from.
+				exporter.ExportLift(w, LiftFolder);
+				xdocLift.LoadXml(w.ToString());
+			}
+			xdocRangeFile = new XmlDocument();
+			using (var w = new StringWriter())
+			{
+				// SUT
+				exporter.ExportLiftRanges(w);
+				xdocRangeFile.LoadXml(w.ToString());
+			}
+			return customList;
+		}
+
 		/// <summary>
 		/// LT-15467 documents a Flex to WeSay S/R which had pronunciation audio files multiplying like bunny rabbits.
 		/// Make sure the export doesn't make new files when two different references point to the same file.

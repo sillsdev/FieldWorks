@@ -57,7 +57,13 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <summary>
 		/// This contains the possibility lists that are custom or that are referenced by a custom field.
 		/// </summary>
+		/// <remarks>
+		/// Range names are held unescaped. Each write site escapes for the context it writes into, as
+		/// everything else in this exporter does; escaping on the way in instead escaped a second time
+		/// at the write site, and picked the element rules for a value only ever written as an attribute.
+		/// </remarks>
 		private Dictionary<Guid, string> m_CmPossListsReferencedOrCustom = new Dictionary<Guid, string>();
+		/// <remarks>Range names are held unescaped, as for <see cref="m_CmPossListsReferencedOrCustom"/>.</remarks>
 		private Dictionary<Guid, string> m_ListsGuidToRangeName = new Dictionary<Guid, string>();
 		private readonly ICmPossibilityListRepository m_repoCmPossibilityLists;
 		private readonly ISilDataAccessManaged m_sda;
@@ -1979,10 +1985,11 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			if (list.PossibilitiesOS.Count == 0)
 				return;
+			var sRangeId = MakeSafeAndNormalizedAttribute(rangeId);
 			if (String.IsNullOrEmpty(guid))					//only output the guid for custom lists
-				w.WriteLine("<range id=\"{0}\">", rangeId);
+				w.WriteLine("<range id=\"{0}\">", sRangeId);
 			else
-				w.WriteLine("<range id=\"{0}\" guid=\"{1}\">", rangeId, MakeSafeAndNormalizedAttribute(guid));
+				w.WriteLine("<range id=\"{0}\" guid=\"{1}\">", sRangeId, MakeSafeAndNormalizedAttribute(guid));
 			foreach (var poss in list.ReallyReallyAllPossibilities)
 			{
 				var liftId = poss.Name.BestAnalysisVernacularAlternative.Text;
@@ -2348,7 +2355,7 @@ namespace SIL.FieldWorks.LexText.Controls
 						{
 							var rangeName = RangeNames.GetRangeNameForLiftExport(m_mdc, possList);
 							if (!listsToBeExported.ContainsKey(possList.Guid))
-								listsToBeExported.Add(possList.Guid, MakeSafeAndNormalizedXml(rangeName));
+								listsToBeExported.Add(possList.Guid, rangeName);
 						}
 						break;
 					default:
@@ -2367,7 +2374,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				if (list.Owner == null && !listsToBeExported.ContainsKey(list.Guid))
 				{
 					var rangeName = RangeNames.GetRangeNameForLiftExport(m_mdc, list);
-					listsToBeExported[list.Guid] = MakeSafeAndNormalizedXml(rangeName);
+					listsToBeExported[list.Guid] = rangeName;
 				}
 			}
 		}
@@ -2440,7 +2447,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				var rangeName = RangeNames.GetRangeNameForLiftExport(m_mdc, possList);
 				if (!cmPossibilityListsReferencedByFields.ContainsKey(possListGuid))
 				{
-					cmPossibilityListsReferencedByFields.Add(possListGuid, MakeSafeAndNormalizedXml(rangeName));
+					cmPossibilityListsReferencedByFields.Add(possListGuid, rangeName);
 				}
 			}
 		}
@@ -2463,7 +2470,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			//by a custom field and which are not already included yet.
 			foreach (var list in cmPossibilityListsReferencedByFields)
 			{
-				m_ListsGuidToRangeName.Add(list.Key, MakeSafeAndNormalizedXml(list.Value));
+				m_ListsGuidToRangeName.Add(list.Key, list.Value);
 			}
 		}
 
