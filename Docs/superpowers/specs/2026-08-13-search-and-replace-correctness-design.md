@@ -67,11 +67,13 @@ be deliberate, named, and tested. Phonological environments remain a separate
 domain grammar with shared Unicode and malformed-input concerns.
 
 The architectural direction is a shared request, result, capability, Unicode,
-and transformation layer over specialized engines. ICU collation, ICU regex,
-indexed discovery, .NET replacement, and phonology must not be collapsed into
-an interface that implies semantic interchangeability. Reuse normalization
-policy, UTF-16 ranges, captures, writing-system-aware rebuilding, progress
-guards, cancellation, resource limits, diagnostics, and preview/apply
+and transformation layer over specialized engines. ICU is the intended
+long-term text search and replacement backend. The .NET AlloVarGen path is a
+temporary compatibility adapter with an explicit retirement objective and a
+differential-test migration gate. Indexed discovery and phonology must not be
+collapsed into an interface that implies semantic interchangeability. Reuse
+normalization policy, UTF-16 ranges, captures, writing-system-aware rebuilding,
+progress guards, cancellation, resource limits, diagnostics, and preview/apply
 orchestration. Let declared capabilities drive user-interface option state.
 
 ## Test architecture

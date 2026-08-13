@@ -34,8 +34,16 @@ Keep specialized adapters for ICU collation, ICU regex, indexed discovery,
 and phonology. Indexed discovery may reuse normalization and capability
 vocabulary but remains candidate discovery rather than final matching.
 Phonology may reuse Unicode segmentation and diagnostics but retains typed
-grammar input and HermitCrab output. AlloVarGen initially retains an explicitly
-named .NET replacement dialect rather than presenting it as ICU-compatible.
+grammar input and HermitCrab output.
+
+ICU is the intended long-term FieldWorks text search and replacement backend.
+The .NET AlloVarGen replacement path is a temporary compatibility adapter to
+retire, preferably early. Before removal, inventory saved AlloVarGen rules,
+run them through an ICU/.NET differential harness, translate the compatible
+subset, and report incompatible expressions with actionable diagnostics. New
+rules should use the ICU dialect once that adapter exists; the common contract
+must identify the replacement dialect during migration rather than imply
+parity.
 
 The first reusable deep module should surround `VwPattern` and `ITsString`:
 range iteration, zero-width progress, capture results, writing-system-aware
@@ -127,8 +135,8 @@ not scattered checks for regex mode.
 2. Whether regex should eventually offer canonical-equivalence or diacritic
    options, and how those options affect regex character classes and captures.
 3. Which work or time bound applies to ICU and .NET regex execution.
-4. Whether AlloVarGen should adopt ICU replacement, retain .NET replacement,
-   or document a common subset.
+4. Which compatibility and migration policy is required to retire .NET
+   AlloVarGen replacement in favor of ICU, and how soon new rules can switch.
 5. Which indexed-search differences are intentional for each Find or Go
    surface.
 6. Which component owns the final cross-surface contract and approves future
