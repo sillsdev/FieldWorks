@@ -3,6 +3,8 @@
 Status: research workflow and test-first execution design approved. Product
 recommendations remain subject to product and domain-owner feedback.
 
+Tracking issue: [LT-22696](https://jira.sil.org/browse/LT-22696).
+
 ## Goal
 
 Make FieldWorks search, regular expression, and replacement behavior explicit,
@@ -41,10 +43,14 @@ characterization and owner approval before change. Fuzzy discovery, including
 Find Similar Entries, ignores diacritics by default. Each approved surface sets
 its default explicitly.
 
-ICU remains authoritative for native literal search. Product searches derive
-locale and tailoring from the relevant writing system, while tests pin locale.
-User-facing literal search treats canonically equivalent text consistently and
-returns valid UTF-16 ranges without splitting surrogate pairs.
+ICU is authoritative for all user-facing linguistic text matching,
+normalization, ordering, segmentation, and transformation. Product searches
+derive locale and tailoring from the relevant writing system, while tests pin
+locale. User-facing literal search treats canonically equivalent text
+consistently and returns valid UTF-16 ranges without splitting surrogate
+pairs. .NET remains available for nonlinguistic plumbing such as paths,
+process output, configuration keys, and machine-owned tokens, but .NET regex
+is not a supported engine for project language data.
 
 Regex is a distinct contract. Initially preserve its supported option set and
 make unsupported combinations clear. Match Case remains supported;
@@ -63,13 +69,22 @@ zero-width advancement and wrap semantics require characterization and owner
 approval before acceptance tests.
 
 Indexed and fuzzy search may differ from exact Find, but each difference must
-be deliberate, named, and tested. Phonological environments remain a separate
-domain grammar with shared Unicode and malformed-input concerns.
+be deliberate, named, tested, and authoritatively confirmed through the ICU
+linguistic policy when it affects user-visible results. Phonological
+environments remain a separate domain grammar with shared ICU-backed Unicode
+and malformed-input concerns.
+
+Phonology browse-table filtering is not part of that domain grammar. The
+Phonemes, Phonological Features, Bulk Edit Phoneme Features, and Natural
+Classes tables use the generic `LayoutFinder`, `FilterBarCellFilter`, managed
+matcher, and native `VwPattern` path. They require end-to-end literal and ICU
+regex tests for `+`, `-`, `<ipa>`, and `Labial`; matcher-only tests cannot prove
+that complex configured cells expose the visible text correctly.
 
 The architectural direction is a shared request, result, capability, Unicode,
-and transformation layer over specialized engines. ICU is the intended
-long-term text search and replacement backend. The .NET AlloVarGen path is a
-temporary compatibility adapter with an explicit retirement objective and a
+and transformation layer over specialized adapters. ICU is the required
+linguistic text backend. The .NET AlloVarGen path is a temporary compatibility
+adapter with an explicit early retirement objective and a
 differential-test migration gate. Indexed discovery and phonology must not be
 collapsed into an interface that implies semantic interchangeability. Reuse
 normalization policy, UTF-16 ranges, captures, writing-system-aware rebuilding,

@@ -9,6 +9,7 @@ Status: working evidence, not a normative product contract.
 | Native literal search | ICU `StringSearch`, `BreakIterator`, and `Collator` in `VwPattern` | Case, diacritics, whole word, writing system, style, tags, locale, custom collation, and canonical matching | `Src/views/Test/TestVwPattern.h` |
 | Native regular expression search | ICU `RegexMatcher` in `VwPattern` | Case-insensitive is the only option translated to an ICU regex flag; pattern text is converted to NFD | `Src/views/Test/TestVwPattern.h` |
 | Managed matchers and filters | `RegExpMatcher` and `SimpleStringMatcher` over `IVwPattern` | Persist case and diacritic options; derive locale and collation rules from the pattern writing system | `Src/Common/Filters/RecordFilter.cs` and filter tests |
+| Phonology browse-table filters | Generic `FilterBar` -> `LayoutFinder` -> `FilterBarCellFilter` -> `SimpleStringMatcher` -> native `VwPattern` | Phonemes, Phonological Features, Bulk Edit Phoneme Features, and Natural Classes use the generic literal or ICU-regex filter path; they do not use the phonological-rule parser | `Src/Common/Filters/FiltersTests/FilterStringMatcherCharacterizationTests.cs`; configured-table integration coverage remains open |
 | Find and Replace | `FwFindReplaceDlg` over `IVwPattern` | Regex mode disables diacritics, whole word, and writing-system options; replacement preserves formatted text runs | `Src/FwCoreDlgs/FwCoreDlgsTests/FwFindReplaceDlgTests.cs` |
 | Bulk Edit replace | `ReplaceWithMethod` over `IVwPattern` | Preview and apply use the native search engine; replacement iteration and normalization affect data safety and ranges | `Src/xWorks/xWorksTests/BulkEditBarTests.cs`; additional committed characterization assets are pinned in the test strategy |
 | Concordance | `RegExpMatcher` or literal matchers with a database candidate prefilter | Regex bypasses the accent-aware literal prefilter; the final matcher remains authoritative | `Src/LexText/Interlinear/ITextDllTests/ConcordanceControlTests.cs` |
@@ -72,6 +73,28 @@ The option values are not centrally owned:
 These differences must be classified as intent-specific defaults,
 compatibility constraints, or defects. They must not be unified merely because
 they share an interface.
+
+## Phonology browse-table filtering
+
+The Phonemes, Phonological Features, Bulk Edit Phoneme Features, and Natural
+Classes configurations enable the ordinary browse-view filter bar
+(`DistFiles/Language Explorer/Configuration/Grammar/Edit/toolConfiguration.xml`).
+The selected column is rendered by `LayoutFinder` into an `ITsString`, and a
+normal or regular-expression `SimpleStringMatcher` applies the native
+`VwPattern` engine. `PhonEnvRecognizer` and HermitCrab are not involved.
+
+At the matcher boundary, normal Anywhere filtering treats `+`, `-`, `<ipa>`,
+and `Labial` as literal text. ICU regex treats bare `+` as an invalid quantifier;
+the literal plus expression is `\+`. Bare `-`, `<ipa>`, and `Labial` are valid
+literal regex text outside a character class. With Match Case off, `Labial`
+matches `labial` in both modes.
+
+This does not clear the reported table defect. No current test proves that
+`LayoutFinder` extracts the expected visible text from generated phonological
+feature columns or composite feature-structure cells, or that installing the
+resulting `FilterBarCellFilter` retains the correct phoneme and natural-class
+objects. That end-to-end gap is a defect hypothesis requiring configured-table
+tests for `+`, `-`, `<ipa>`, and `Labial` before a production fix is selected.
 
 ## Replacement boundary
 

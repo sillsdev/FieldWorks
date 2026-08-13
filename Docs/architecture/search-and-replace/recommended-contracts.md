@@ -36,9 +36,27 @@ vocabulary but remains candidate discovery rather than final matching.
 Phonology may reuse Unicode segmentation and diagnostics but retains typed
 grammar input and HermitCrab output.
 
-ICU is the intended long-term FieldWorks text search and replacement backend.
+## Engine policy
+
+ICU is the required backend for every user-facing operation that interprets,
+matches, orders, segments, normalizes, or transforms linguistic text. This
+includes Find, Replace, Bulk Edit, concordance, browse-table filtering
+(including phonology tables), AlloVarGen language rules, and authoritative
+confirmation of indexed candidates. Typed phonological rules remain typed
+domain grammar, but their Unicode operations must use the same ICU-backed
+Unicode policy.
+
+.NET remains appropriate for nonlinguistic application plumbing such as file
+paths, build paths, process output, configuration keys, protocol tokens, and
+similar machine-owned strings. `System.Text.RegularExpressions` is not an
+approved backend for project language data. Existing linguistic .NET regex
+usage is migration debt, not a second supported product dialect.
+
+AlloVarGen's current .NET replacement implementation is legacy migration debt,
+not an approved exception to this forward-facing engine policy.
+
 The .NET AlloVarGen replacement path is a temporary compatibility adapter to
-retire, preferably early. Before removal, inventory saved AlloVarGen rules,
+retire early. Before removal, inventory saved AlloVarGen rules,
 run them through an ICU/.NET differential harness, translate the compatible
 subset, and report incompatible expressions with actionable diagnostics. New
 rules should use the ICU dialect once that adapter exists; the common contract
@@ -144,6 +162,9 @@ not scattered checks for regex mode.
 7. Whether the literal failure to match precomposed `U+1E09` against its
    canonically equivalent noncanonically ordered source is an ICU integration
    defect or an intentionally unsupported canonical-order case.
+8. Which configured-cell extraction or filter-application defect causes the
+   reported phonology table failures after matcher-level `+`, `-`, `<ipa>`,
+   and `Labial` behavior is separated from ordinary ICU regex syntax.
 
 The final approved contract will be published as
 `Docs/architecture/search-and-replace.md`. This working recommendation does not

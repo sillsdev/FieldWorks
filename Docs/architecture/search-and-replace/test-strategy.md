@@ -53,6 +53,7 @@ Every applicable surface records:
 | Locale | `root`, a named language locale, custom tailoring, shifted punctuation, and other-language rules |
 | Ranges | Empty source, nonzero start, range ending before a mark, supplementary-plane text, forward and reverse restart |
 | Regex | Anchors, alternation, captures, empty match, invalid groups and classes, Unicode properties, long nested quantifiers |
+| Phonology table filters | Normal and regex modes over `+`, `-`, `<ipa>`, and `Labial`; invalid bare `+` versus escaped `\+`; exact configured-cell text and retained phoneme, feature, and natural-class identities |
 | Replacement | Capture references, literal dollar and backslash, missing groups, empty replacement, growing and shrinking text, mixed writing-system runs |
 | Safety | Replace All data preservation, deterministic termination, cancellation, stale indexed results, and actionable errors |
 
@@ -90,7 +91,11 @@ expectations are desired behavior.
    add .NET replacement behavior cases either way.
 7. Add phonology characterization for combining-mark segments, malformed
    references, and merge or split rules without sharing regex assertions.
-8. Add resource-policy acceptance tests only after an owner approves a bound.
+8. Characterize phonology browse-table filters at both the matcher boundary
+   and the configured `LayoutFinder`/`FilterBarCellFilter` consumer boundary.
+9. Add ICU 70-versus-upgrade-candidate differential tests before changing
+   the native ABI, data, wrapper, or installer packages.
+10. Add resource-policy acceptance tests only after an owner approves a bound.
 
 ## Verification
 
@@ -103,6 +108,7 @@ Use repository scripts only:
 .\test.ps1 -TestProject Src/FwCoreDlgs/FwCoreDlgsTests
 .\test.ps1 -TestProject Src/Common/Controls/XMLViews/XMLViewsTests
 .\test.ps1 -TestProject Src/LexText/Interlinear/ITextDllTests
+.\test.ps1 -SkipNative -TestProject Src/Common/Filters/FiltersTests
 ```
 
 The exact test project selector must be verified with `test.ps1 -ListTests`

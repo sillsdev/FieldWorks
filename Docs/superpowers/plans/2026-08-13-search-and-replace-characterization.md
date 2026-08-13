@@ -1,5 +1,7 @@
 # Search and Replace Characterization Implementation Plan
 
+Tracking issue: [LT-22696](https://jira.sil.org/browse/LT-22696).
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use
 > superpowers:subagent-driven-development (recommended) or
 > superpowers:executing-plans to implement this plan task-by-task. Steps use
@@ -501,3 +503,137 @@ the initial source-based hypothesis. Keep unresolved product choices open.
 
 If no hypothesis changed, record that fact in the handoff and do not create an
 empty documentation commit.
+
+### Task 8: Characterize phonology browse-table filtering
+
+**Files:**
+
+- Create:
+  `Src/Common/Filters/FiltersTests/FilterStringMatcherCharacterizationTests.cs`
+- Modify:
+  `Docs/architecture/search-and-replace/capability-inventory.md`
+- Modify:
+  `Docs/architecture/search-and-replace/phonology-boundary.md`
+- Modify:
+  `Docs/architecture/search-and-replace/test-strategy.md`
+- Evidence:
+  `Src/Common/Controls/XMLViews/FilterBar.cs:1010-1075,2686-2750`
+- Evidence:
+  `Src/Common/Controls/XMLViews/SimpleMatchDlg.cs:143-204`
+- Evidence:
+  `Src/Common/Filters/RecordFilter.cs:662-1278,2387-2452`
+- Configuration:
+  `DistFiles/Language Explorer/Configuration/Grammar/Edit/toolConfiguration.xml:74-210`
+
+- [x] **Step 1: Separate table filtering from phonological-rule parsing**
+
+Record that the Phonemes, Phonological Features, and Natural Classes browse
+tables use the generic filter-bar pipeline. Their normal and regular-expression
+searches are not parsed by `PhonEnvRecognizer` or HermitCrab.
+
+- [x] **Step 2: Characterize the reported search tokens**
+
+At the managed filter-matcher boundary, record normal Anywhere matching and
+regular-expression matching for `+`, `-`, `<ipa>`, and `Labial`:
+
+```text
+normal Anywhere "+" against "+" -> match
+normal Anywhere "-" against "-" -> match
+normal Anywhere "<ipa>" against "<ipa>" -> match
+normal Anywhere "Labial" against "labial", MatchCase=false -> match
+regex "+" -> invalid expression with an actionable error
+regex "\+" against "+" -> match
+regex "-" against "-" -> match
+regex "<ipa>" against "<ipa>" -> match
+regex "Labial" against "labial", MatchCase=false -> match
+```
+
+These cases distinguish standard regex syntax from a table extraction or
+filter-application defect. They do not establish that `LayoutFinder` extracts
+the displayed value correctly for every generated phonological-feature
+column.
+
+- [x] **Step 3: Prove fixture sensitivity and run it**
+
+Invert one expected match, observe the assertion failure, restore it, and run:
+
+```powershell
+.\test.ps1 -SkipNative -TestProject "Src/Common/Filters/FiltersTests" `
+  -TestFilter "FullyQualifiedName~FilterStringMatcherCharacterizationTests" `
+  -Verbosity minimal -StartedBy agent
+```
+
+Verification on 2026-08-13 used the separately reviewed VS environment
+normalization from PR 1062 because this branch intentionally does not include
+that workspace fix. The deliberate wrong expectation produced one failure in
+`RegExpMatcher_BarePlusIsInvalid`; after restoration the focused fixture passed
+9/9, the full FiltersTests project passed 35/35, and the repository build
+reported zero warnings and zero errors.
+
+- [x] **Step 4: Record the remaining end-to-end gap**
+
+Add planned consumer tests that build real phoneme, feature, and natural-class
+rows, extract each configured cell through `LayoutFinder`, apply the installed
+`FilterBarCellFilter`, and assert the exact retained objects. Cover generated
+`+` and `-` feature-value columns, IPA symbols including literal angle
+brackets, and `Labial` in names, values, descriptions, and feature summaries.
+Keep this gap open until those tests run through the real browse configuration.
+
+- [ ] **Step 5: Commit the characterization and evidence**
+
+```text
+test: characterize phonology table filter syntax
+
+Record literal and ICU regular-expression behavior for reported phonology
+filter tokens and identify the remaining configured-table integration gap.
+```
+
+### Task 9: Prepare the ICU 78 migration decision
+
+**Files:**
+
+- Research:
+  `Docs/architecture/search-and-replace/icu-70-to-78-research.md`
+- Modify:
+  `Docs/architecture/search-and-replace/recommended-contracts.md`
+- Modify:
+  `Docs/architecture/search-and-replace/test-strategy.md`
+
+- [x] **Step 1: Trace the current version graph and history**
+
+Record the SIL native packages, `IcuVersion`, versioned C++ namespace, custom
+normalization data, `icu.net`, initialization, installer, registry, and test
+paths that bind FieldWorks to ICU 70. Identify the 2022 ICU 54 -> 70 migration
+and later commits that retained the pin without treating inertia as product
+intent.
+
+- [x] **Step 2: Review upstream ICU 71 through 78**
+
+Use official ICU, Unicode, and CLDR sources to record changes in Unicode data,
+collation, segmentation, regex properties, locale handling, security data,
+native ABI, and the C++17 toolchain requirement.
+
+- [x] **Step 3: Classify impact on current findings**
+
+Record explicitly that ICU 78 does not implement regex canonical equivalence
+and will not repair FieldWorks' pattern-only normalization. Treat collation,
+whole-word segmentation, locale data, and Unicode properties as likely
+differential results. Treat UTF-16 zero-width advancement as primarily owned
+by FieldWorks.
+
+- [ ] **Step 4: Build an ICU 70-versus-78 differential gate**
+
+Before changing package versions, run the same pinned corpus against ICU 70
+and a candidate ICU 78 SIL package. Include literal and regex search,
+normalization, custom collation, segmentation, properties, resource bounds,
+deployment, and both phonology browse-table filters and typed grammar tests.
+Classify every changed result before accepting it.
+
+- [ ] **Step 5: Migrate the complete deployment unit**
+
+After the differential gate and owner review, update matching SIL native
+libraries, headers, import libraries, `icu.net` compatibility, ICU data,
+FieldWorks custom `.nrm` resources, namespace/version constants, installer and
+registry paths, test startup, and x86/x64 deployment. Build native C++ before
+managed projects and keep the complete ICU 70 rollback unit until release
+validation passes.

@@ -32,6 +32,9 @@ the behavior remains desirable.
 | Commits `a5a380e85`, `d5e73f6fe`, `9dc07d8d8`, `60ecfe2d6` on `table-speedup` | Characterization and superseded experiment | Preserve the characterization matrix. ICU remains authoritative after an ASCII shortcut was shown to risk collation behavior. Tests pin locale to `root`. |
 | Jira [LT-18767](https://jira.sil.org/browse/LT-18767) and [PR 381](https://github.com/sillsdev/FieldWorks/pull/381) | Explicit parser robustness decision | Invalid indexed reduplication references are reported without a yellow-box crash. |
 | Jira [LT-21585](https://jira.sil.org/browse/LT-21585), [PR 161](https://github.com/sillsdev/FieldWorks/pull/161), Jira [LT-22353](https://jira.sil.org/browse/LT-22353), and [PR 646](https://github.com/sillsdev/FieldWorks/pull/646) | Superseded phonology restriction | A crash-prevention restriction on multi-item rewrite rules was later removed when HermitCrab added merge and split support. |
+| Commit `2552cc590` / Jira [LT-19489](https://jira.sil.org/browse/LT-19489) | Implementation history, not search intent | The Phonemes tool and IPA-symbol editor were repaired in 2019, but the change does not define normal or regex filter semantics. |
+| [`MorphologyParts.xml`](../../../DistFiles/Language%20Explorer/Configuration/Parts/MorphologyParts.xml#L2719) comment for Jira [LT-22171](https://jira.sil.org/browse/LT-22171) | Configuration workaround | The Natural Classes Phonemes/Features column is kept visible through a class/layout workaround. This raises configured-cell extraction risk but does not itself prove the reported filter failure. |
+| Commit `7f52d9cdb` | Dependency migration | FieldWorks moved from checked-in ICU 54 headers to SIL ICU 70 native packages in 2022. Later version-centralization work retained ICU 70; no later product decision requiring that major was found. |
 
 ## Evidence warning
 
@@ -59,3 +62,6 @@ behavioral evidence.
 - No single historical rule covers indexed discovery, exact find, filtering,
   concordance, and fuzzy entry discovery. Jira evidence instead supports
   intent-specific contracts.
+- No historical evidence defines what text generated phonological feature
+  columns must expose to normal or regex table filtering. That contract must be
+  established with configured-table tests and owner feedback.

@@ -2,7 +2,9 @@
 
 Status: working recommendation requiring owner feedback.
 
-## Boundary
+## Two different phonology boundaries
+
+### Phonological rule and environment grammar
 
 FieldWorks phonological environments are not regular expressions. The
 external `PhonEnvRecognizer` validates a domain grammar, and `HCLoader`
@@ -13,6 +15,29 @@ quantifier, and feature-constraint nodes
 Regex correctness changes must not silently alter this grammar. The shared
 concerns are Unicode segmentation, diacritics, malformed-input diagnostics,
 bounded execution, and tests that preserve linguistic intent.
+
+### Phonology browse-table search
+
+Searching the Phonemes, Phonological Features, Bulk Edit Phoneme Features, or
+Natural Classes tables is not domain-grammar parsing. Those tables use the
+generic browse filter pipeline:
+
+```text
+configured column
+  -> LayoutFinder renders cell text
+  -> SimpleMatchDlg selects normal or regular expression
+  -> FilterBarCellFilter
+  -> Anywhere/Exact/Begin/End/RegExpMatcher
+  -> native VwPattern
+  -> ICU collation or ICU regex
+```
+
+This path belongs in the shared search architecture. Its user-visible
+linguistic matching must use ICU. It needs separate configured-table tests for
+literal and regular-expression filtering on `+`, `-`, `<ipa>`, and `Labial`.
+The first characterization establishes matcher syntax only: bare `+` is
+invalid regex and literal plus is `\+`; the other reported tokens are literal
+in normal mode and valid literal regex text outside a character class.
 
 ## Recommended contract
 
@@ -38,7 +63,7 @@ bounded execution, and tests that preserve linguistic intent.
   that merge and split rules with multiple elements are valid after the
   HermitCrab update. The earlier restriction is superseded.
 
-## Test boundary
+## Test boundaries
 
 Keep phonology cases in parser tests rather than a shared regex suite. Reuse
 Unicode input vectors where useful:
@@ -54,3 +79,10 @@ The implementation of `PhonEnvRecognizer` is supplied by an external
 dependency. If its grammar or normalization behavior becomes the subject of a
 change, inspect the corresponding dependency source and tests before changing
 FieldWorks adapters.
+
+Keep browse-table filtering in the shared search tests, not the parser suite.
+The required consumer fixture must create real phoneme, feature, and
+natural-class objects; render the configured columns through `LayoutFinder`;
+install the selected matcher through `FilterBarCellFilter`; and assert exact
+retained object identities. It must distinguish invalid regex feedback from a
+failure to extract or match displayed cell text.

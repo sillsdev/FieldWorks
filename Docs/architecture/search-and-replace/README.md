@@ -2,6 +2,10 @@
 
 Status: working evidence, not a normative product contract.
 
+Tracking issue: [LT-22696](https://jira.sil.org/browse/LT-22696). The issue
+summarizes current behavior and owns the product and architecture decisions
+that must be made before this package becomes a normative contract.
+
 This package records the evidence and recommendations needed to make
 FieldWorks search and replacement behavior explicit. It separates current
 architecture, historical intent, recommended contracts, and test planning so
@@ -24,6 +28,7 @@ decide what FieldWorks should do.
 - [Recommended contracts](recommended-contracts.md)
 - [Test strategy](test-strategy.md)
 - [Phonology boundary](phonology-boundary.md)
+- [ICU 70 to 78 upgrade research](icu-70-to-78-research.md)
 - [Approved research and execution design](../../superpowers/specs/2026-08-13-search-and-replace-correctness-design.md)
 
 ## Review lifecycle
