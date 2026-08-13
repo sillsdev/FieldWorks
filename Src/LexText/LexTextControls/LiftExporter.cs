@@ -1735,13 +1735,13 @@ namespace SIL.FieldWorks.LexText.Controls
 			{
 				var liftIdOwner = ((IPartOfSpeech)(pos.Owner)).Name.BestAnalysisVernacularAlternative.Text;
 				w.WriteLine("<range-element id=\"{0}\" guid=\"{1}\" parent=\"{2}\">",
-					XmlUtils.MakeSafeXmlAttribute(liftId), pos.Guid,
+					MakeSafeAndNormalizedAttribute(liftId), pos.Guid,
 					MakeSafeAndNormalizedAttribute(liftIdOwner));
 			}
 			else
 			{
 				w.WriteLine("<range-element id=\"{0}\" guid=\"{1}\">",
-					XmlUtils.MakeSafeXmlAttribute(liftId), pos.Guid);
+					MakeSafeAndNormalizedAttribute(liftId), pos.Guid);
 			}
 			WriteAllForms(w, "label", null, "form", pos.Name);
 			WriteAllForms(w, "abbrev", null, "form", pos.Abbreviation);
@@ -1772,13 +1772,13 @@ namespace SIL.FieldWorks.LexText.Controls
 			{
 				var liftIdOwner = ((ILexRefType)refer.Owner).Name.BestAnalysisVernacularAlternative.Text;
 				w.WriteLine("<range-element id=\"{0}\" guid=\"{1}\" parent=\"{2}\">",
-					XmlUtils.MakeSafeXmlAttribute(liftId), refer.Guid,
+					MakeSafeAndNormalizedAttribute(liftId), refer.Guid,
 					MakeSafeAndNormalizedAttribute(liftIdOwner));
 			}
 			else
 			{
 				w.WriteLine("<range-element id=\"{0}\" guid=\"{1}\">",
-					XmlUtils.MakeSafeXmlAttribute(liftId), refer.Guid);
+					MakeSafeAndNormalizedAttribute(liftId), refer.Guid);
 			}
 			WriteAllForms(w, "label", null, "form", refer.Name);
 			WriteAllForms(w, "abbrev", null, "form", refer.Abbreviation);
@@ -2170,19 +2170,19 @@ namespace SIL.FieldWorks.LexText.Controls
 				var liftId = type.Name.get_String(m_wsEn).Text;
 				if (String.IsNullOrEmpty(liftId))
 					liftId = type.Name.BestAnalysisVernacularAlternative.Text;
-				w.WriteLine("<range-element id=\"{0}\" guid=\"{1}\">", liftId, type.Guid);
+				w.WriteLine("<range-element id=\"{0}\" guid=\"{1}\">", MakeSafeAndNormalizedAttribute(liftId), type.Guid);
 				WriteAllForms(w, "label", null, "form", type.Name);
 				WriteAllForms(w, "abbrev", null, "form", type.Abbreviation);
 				WriteAllForms(w, "description", null, "form", type.Description);
 				if (type.Prefix != null)
 				{
 					w.WriteLine("<trait name=\"leading-symbol\" value=\"{0}\"/>",
-						XmlUtils.MakeSafeXmlAttribute(type.Prefix));
+						MakeSafeAndNormalizedAttribute(type.Prefix));
 				}
 				if (type.Postfix != null)
 				{
 					w.WriteLine("<trait name=\"trailing-symbol\" value=\"{0}\"/>",
-						XmlUtils.MakeSafeXmlAttribute(type.Postfix));
+						MakeSafeAndNormalizedAttribute(type.Postfix));
 				}
 				w.WriteLine("</range-element>");
 			}
@@ -2291,7 +2291,7 @@ namespace SIL.FieldWorks.LexText.Controls
 					foreach (var region in stem.RegionsOC)
 					{
 						w.WriteLine("<trait name=\"feature-set\" value=\"{0}\"/>",
-							XmlUtils.MakeSafeXmlAttribute(region.LiftName));
+							MakeSafeAndNormalizedAttribute(region.LiftName));
 					}
 					w.WriteLine("</range-element>");
 				}
