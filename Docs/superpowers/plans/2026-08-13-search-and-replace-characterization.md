@@ -410,8 +410,9 @@ UnicodeEnvironment_OptionalCombiningSegmentLoads:
   load error
 ```
 
-Keep the existing unmatched-index and multi-element rewrite-rule tests in the
-focused verification filter so Jira LT-18767 and LT-22353 remain represented.
+Keep the existing unmatched-index test and add a multi-element rewrite-rule
+test to the focused verification filter so Jira LT-18767 and LT-22353 remain
+represented.
 Assert HermitCrab pattern or environment output and logger category. Do not
 reuse regex assertions or terminology.
 
@@ -422,7 +423,8 @@ fixture, observe the assertion failure, and restore it.
 
 ```powershell
 .\test.ps1 -TestProject "Src/LexText/ParserCore/ParserCoreTests" `
-  -TestFilter "FullyQualifiedName~UnicodeEnvironment" -Verbosity minimal `
+  -TestFilter "FullyQualifiedName~UnicodeEnvironment|FullyQualifiedName~InvalidPartialReduplicationEnvironment" `
+  -Verbosity minimal `
   -StartedBy agent
 ```
 
