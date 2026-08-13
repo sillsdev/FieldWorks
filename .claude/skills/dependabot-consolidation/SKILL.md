@@ -325,10 +325,11 @@ Two distinct outcomes, and do not conflate them:
 
 - **The comment forbids the bump.** Drop that single line from the pick, keeping
   the rest of the batch, and say so in the plan and the PR body. Do not restore
-  it silently and do not argue from a green CI - the pin's own retest procedure
-  may require a full `test.ps1`, while CI runs with
-  `TestCategory!=LongRunning&TestCategory!=ByHand&TestCategory!=SmokeTest&TestCategory!=DesktopRequired`.
-  A green CI does not clear a pin whose repro lives outside that filter.
+  it silently, and never argue from a green CI. PR #984 proposed
+  `Microsoft.Extensions.DependencyModel` 9.0.17 - the version documented as
+  breaking ICU initialization - and its `Build Debug and run tests` job passed.
+  CI cannot see this class of failure at all, so a green run is not evidence
+  either way. Only the pin's own retest procedure settles it.
 - **The comment merely names the old version.** The bump is fine, but the
   comment is now false. Update the comment in the same commit.
 
