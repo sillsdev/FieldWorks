@@ -315,6 +315,20 @@ This distinction matters, because it splits pins into two kinds:
 Only the empirical kind needs an `ignore:` entry in `.github/dependabot.yml`,
 and it needs one precisely because the package graph will never block it.
 
+A retest procedure written into a comment is not self-validating. Before
+concluding that a new version clears an empirical pin, run the same procedure
+against the version the comment says is broken. If the known-bad version also
+passes, the procedure has no demonstrated sensitivity here and proves nothing
+about the new one - report that, and leave the pin alone. This is not
+hypothetical: `Microsoft.Extensions.DependencyModel` 9.0.17 produces zero
+`Icu.NativeMethods` hits on a current checkout, so the documented grep cannot
+currently distinguish a good version from the one it was written to catch.
+
+Beware flaky failures masquerading as a signal. A control run here showed two
+`FwNewLangProjectModelTests` failures over shared writing-system repository
+state that passed on retry. Re-run a suspected failure before attributing it to
+a bump.
+
 Watch for the second-order case: the external package can itself be bumped in
 the same batch. `ParatextData` is in the manifest and in Dependabot's scope, so
 its floors - and every comment quoting them - can move. When a batch bumps both
