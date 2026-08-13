@@ -261,7 +261,9 @@ function Set-ProcessEnvironmentVariables {
         $namesToRemove = Get-EnvironmentVariableNamesToRemove `
             -ExistingNames $existingVariables.Keys -IncomingName $variable.Name
         foreach ($existingName in $namesToRemove) {
-            Remove-Item -Path "Env:$existingName"
+            # A case-duplicate group can list the same underlying Windows
+            # variable more than once; removing the first already clears it.
+            [System.Environment]::SetEnvironmentVariable($existingName, $null)
         }
 
         Set-Item -Path "Env:$($variable.Name)" -Value $variable.Value
