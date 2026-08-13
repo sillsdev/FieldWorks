@@ -321,8 +321,13 @@ against the version the comment says is broken. If the known-bad version also
 passes, the procedure has no demonstrated sensitivity here and proves nothing
 about the new one - report that, and leave the pin alone. This is not
 hypothetical: `Microsoft.Extensions.DependencyModel` 9.0.17 produces zero
-`Icu.NativeMethods` hits on a current checkout, so the documented grep cannot
-currently distinguish a good version from the one it was written to catch.
+`Icu.NativeMethods` hits both on a current checkout and on the PR #1000 tree it
+was recorded against, with that PR's own SIL.LCModel and LibPalaso versions
+restored. The documented grep cannot distinguish a good version from the one it
+was written to catch, so nothing it reports can move that pin either way.
+
+The general rule: an unreproducible justification is a reason to keep a pin and
+stop proposing bumps against it, not a reason to declare the bump safe.
 
 Beware flaky failures masquerading as a signal. A control run here showed two
 `FwNewLangProjectModelTests` failures over shared writing-system repository
