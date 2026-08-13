@@ -32,6 +32,17 @@ checks. The source records that diacritic and property filtering are not
 practical after a regex candidate is returned
 (`Src/views/VwPattern.cpp:1465-1565`).
 
+Literal option characterization confirms that case and diacritic sensitivity
+are independent: a case-insensitive, diacritic-sensitive search skips accented
+text but accepts an uppercase unaccented occurrence before a later lowercase
+one.
+
+Literal canonical matching also has an unresolved defect candidate. A
+precomposed `U+1E09` pattern does not match the canonically equivalent source
+`c + U+0301 + U+0327` when diacritics are significant, even though canonical
+ordering would place the cedilla before the acute. This is not an approved
+exception to the canonical-equivalence recommendation.
+
 Compilation also has an important asymmetry. The pattern is converted to NFD
 before compiling either search engine (`Src/views/VwPattern.cpp:1955-2015`),
 while the regex source buffer is copied directly

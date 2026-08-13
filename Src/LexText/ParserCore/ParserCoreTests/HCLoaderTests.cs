@@ -1120,7 +1120,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		}
 
 		[Test]
-		public void UnicodeEnvironment_MultiElementRewriteRulesLoad()
+		public void MultiElementRewriteRules_MergeAndSplitLoad()
 		{
 			IPhRegularRule mergeRule = Cache.ServiceLocator.GetInstance<IPhRegularRuleFactory>().Create();
 			Cache.LanguageProject.PhonologicalDataOA.PhonRulesOS.Add(mergeRule);

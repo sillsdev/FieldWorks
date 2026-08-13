@@ -141,6 +141,9 @@ not scattered checks for regex mode.
    surface.
 6. Which component owns the final cross-surface contract and approves future
    semantic changes.
+7. Whether the literal failure to match precomposed `U+1E09` against its
+   canonically equivalent noncanonically ordered source is an ICU integration
+   defect or an intentionally unsupported canonical-order case.
 
 The final approved contract will be published as
 `Docs/architecture/search-and-replace.md`. This working recommendation does not

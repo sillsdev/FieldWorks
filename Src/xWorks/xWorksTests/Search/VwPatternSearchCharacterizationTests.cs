@@ -21,9 +21,9 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
-		public void CanonicallyOrderedCombiningMarksDoNotMatchPrecomposedCharacter()
+		public void CanonicallyOrderedTwoMarkSequenceMatchesPrecomposedCharacter()
 		{
-			Assert.That(Find("\u1e17", "e\u0302\u0301", matchDiacritics: true), Is.EqualTo((-1, -1)));
+			Assert.That(Find("\u1ebf", "e\u0302\u0301", matchDiacritics: true), Is.EqualTo((0, 3)));
 		}
 
 		[Test]

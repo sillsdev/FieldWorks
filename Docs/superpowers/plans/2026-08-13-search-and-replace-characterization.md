@@ -57,7 +57,7 @@ No production file changes in this plan.
 - Historical fixture:
   `a5a380e85:Src/xWorks/xWorksTests/Avalonia/Performance/VwPatternSearchCharacterisationTests.cs`
 
-- [ ] **Step 1: Add a locale-pinned fixture over the real engine**
+- [x] **Step 1: Add a locale-pinned fixture over the real engine**
 
 Create a fixture deriving from `MemoryOnlyBackendProviderTestBase`. Its pattern
 factory must set all relevant options explicitly and set `IcuLocale = "root"`:
@@ -79,17 +79,17 @@ private IVwPattern MakePattern(string text, bool matchCase = false,
 Use `VwStringTextSourceClass.Create()` for sources and a `Find` helper that
 returns `(int Start, int Limit)`.
 
-- [ ] **Step 2: Add the literal behavior matrix**
+- [x] **Step 2: Add the literal behavior matrix**
 
 Add focused tests asserting these observed results:
 
 ```text
 NFC "caf\u00e9" pattern vs NFD "cafe\u0301" text -> (0, 5)
 NFD pattern vs NFC text -> (0, 4)
-"\u1e17" pattern vs "e\u0302\u0301" -> no match
+"\u1ebf" pattern vs "e\u0302\u0301" -> (0, 3)
 "\u1e09" pattern vs "c\u0301\u0327" -> no match
 case=false, diacritics=false over "caf\u00e9 CAFE cafe" -> (0, 4)
-case=false, diacritics=true -> (10, 14)
+case=false, diacritics=true -> (5, 9)
 case=true, diacritics=false -> (10, 14)
 whole-word=false over "cafeteria cafe" -> (0, 4)
 whole-word=true -> (10, 14)
@@ -100,7 +100,7 @@ reverse search over "cafe x cafe" -> (7, 11)
 restart at offset 1 over "cafe cafe" -> (5, 9)
 ```
 
-- [ ] **Step 3: Prove fixture sensitivity**
+- [x] **Step 3: Prove fixture sensitivity**
 
 Temporarily change the first expected limit from `5` to `4` and run:
 
@@ -113,11 +113,11 @@ Temporarily change the first expected limit from `5` to `4` and run:
 Expected: one assertion failure reporting actual limit `5`. Restore `5` before
 continuing. Do not commit the deliberately wrong expectation.
 
-- [ ] **Step 4: Run the literal fixture with observed expectations**
+- [x] **Step 4: Run the literal fixture with observed expectations**
 
 Run the same command. Expected: all literal characterization tests pass.
 
-- [ ] **Step 5: Commit the literal fixture**
+- [x] **Step 5: Commit the literal fixture**
 
 ```text
 test: characterize native literal search behavior
@@ -135,7 +135,7 @@ offsets through the real IVwPattern engine without changing production code.
 - Evidence:
   `Src/views/VwPattern.cpp:1465-1565,1955-2031`
 
-- [ ] **Step 1: Add a regex factory and result helper**
+- [x] **Step 1: Add a regex factory and result helper**
 
 The factory must set every option explicitly so the fixture does not inherit
 constructor defaults:
@@ -151,7 +151,7 @@ private IVwPattern MakeRegex(string text, bool matchCase = true,
 }
 ```
 
-- [ ] **Step 2: Add the regex behavior matrix**
+- [x] **Step 2: Add the regex behavior matrix**
 
 Record current outcomes for:
 
@@ -174,7 +174,7 @@ If a probe contradicts an expected row, record the observed current result in
 the test and update the working capability inventory in the same commit. Do not
 change production code.
 
-- [ ] **Step 3: Prove regex fixture sensitivity**
+- [x] **Step 3: Prove regex fixture sensitivity**
 
 Invert the expected result of the NFC-against-NFC case for one run. Use:
 
@@ -186,11 +186,11 @@ Invert the expected result of the NFC-against-NFC case for one run. Use:
 
 Expected: the inverted assertion fails. Restore the observed expectation.
 
-- [ ] **Step 4: Run the regex fixture**
+- [x] **Step 4: Run the regex fixture**
 
 Run the same command. Expected: all regex characterization tests pass.
 
-- [ ] **Step 5: Commit the regex fixture**
+- [x] **Step 5: Commit the regex fixture**
 
 ```text
 test: characterize native regular expression behavior
@@ -209,7 +209,7 @@ behavior at the ICU regex boundary without approving semantic changes.
   `Src/Common/Controls/XMLViews/BulkEditBar.cs:5065-5165`
 - Historical fixtures: commits `5555730e9` and `a5a380e85`
 
-- [ ] **Step 1: Build the fixture on the existing Bulk Edit test base**
+- [x] **Step 1: Build the fixture on the existing Bulk Edit test base**
 
 Derive from `BulkEditBarTestsBase`. Build a `FieldReadWriter` for
 `LexEntry.CitationForm`, an explicitly configured `IVwPattern`, and a real
@@ -217,7 +217,7 @@ Derive from `BulkEditBarTestsBase`. Build a `FieldReadWriter` for
 `XMLViewsDataCache.ktagAlternateValue`, and `Doit` to read the applied citation
 form.
 
-- [ ] **Step 2: Add preview and apply cases**
+- [x] **Step 2: Add preview and apply cases**
 
 Characterize:
 
@@ -236,7 +236,7 @@ an unmatched row is disabled and has no preview replacement
 Assert the text and writing system of the result. Do not add timing
 assertions.
 
-- [ ] **Step 3: Prove Bulk Edit fixture sensitivity**
+- [x] **Step 3: Prove Bulk Edit fixture sensitivity**
 
 Change one preview expectation to an incorrect string for one filtered run:
 
@@ -248,11 +248,11 @@ Change one preview expectation to an incorrect string for one filtered run:
 
 Expected: one text assertion fails. Restore the observed result.
 
-- [ ] **Step 4: Run the Bulk Edit fixture**
+- [x] **Step 4: Run the Bulk Edit fixture**
 
 Run the same command. Expected: all Bulk Edit characterization tests pass.
 
-- [ ] **Step 5: Commit the Bulk Edit fixture**
+- [x] **Step 5: Commit the Bulk Edit fixture**
 
 ```text
 test: characterize bulk edit replacement behavior
@@ -272,7 +272,7 @@ length-changing, and zero-width replacements without changing product code.
 - Modify:
   `Src/LexText/Interlinear/ITextDllTests/ConcordanceControlTests.cs`
 
-- [ ] **Step 1: Expose only option state needed by dialog tests**
+- [x] **Step 1: Expose only option state needed by dialog tests**
 
 Add read-only test accessors for `Enabled` on Match Diacritics, Match Whole
 Word, and Match Writing System to `DummyFwFindReplaceDlg`. Add one test that
@@ -281,7 +281,7 @@ unchecked and disabled while Match Case remains available. Disable regex and
 record that the controls become enabled without restoring their old checked
 values.
 
-- [ ] **Step 2: Add indexed-search normalization cases**
+- [x] **Step 2: Add indexed-search normalization cases**
 
 In `SearchEngineTests`, create entries whose lexeme forms are NFC, NFD,
 unaccented, and differently accented. Search with both NFC and NFD prefixes in
@@ -289,14 +289,14 @@ the default vernacular writing system and record the exact HVO result sets.
 Keep the assertions local to `StringSearcher<T>` behavior; do not claim parity
 with `VwPattern`.
 
-- [ ] **Step 3: Add concordance regex cases**
+- [x] **Step 3: Add concordance regex cases**
 
 Refactor the existing custom-field setup into a small helper, then record final
 occurrences for a case-insensitive regex, NFC pattern against NFC and NFD
 field values, and a pattern containing a capture. Assert segment identity, not
 database candidate ordering.
 
-- [ ] **Step 4: Prove one fixture in each project is sensitive**
+- [x] **Step 4: Prove one fixture in each project is sensitive**
 
 For each project, invert one expected boolean or count, run its filtered test,
 observe the expected assertion failure, and restore it.
@@ -313,11 +313,11 @@ observe the expected assertion failure, and restore it.
   -StartedBy agent
 ```
 
-- [ ] **Step 5: Run all three focused fixtures with observed expectations**
+- [x] **Step 5: Run all three focused fixtures with observed expectations**
 
 Expected: all selected tests pass.
 
-- [ ] **Step 6: Commit consumer wiring characterization**
+- [x] **Step 6: Commit consumer wiring characterization**
 
 ```text
 test: characterize search consumer option wiring
@@ -335,13 +335,13 @@ matching without asserting that the three surfaces share one contract.
 - Evidence:
   `Src/Utilities/AlloVarGen/AlloGenService/Replacer.cs:25-59`
 
-- [ ] **Step 1: Add a direct operation builder**
+- [x] **Step 1: Add a direct operation builder**
 
 Create a private helper that returns a `Replacer` with one active regex
 operation for writing system `en`. Use the existing AlloGen model types rather
 than XML fixtures so each behavior is isolated.
 
-- [ ] **Step 2: Add .NET replacement cases**
+- [x] **Step 2: Add .NET replacement cases**
 
 Record these outputs:
 
@@ -357,7 +357,7 @@ empty final result becomes U+00A0
 inactive and wrong-writing-system operations are skipped
 ```
 
-- [ ] **Step 3: Prove and restore fixture sensitivity**
+- [x] **Step 3: Prove and restore fixture sensitivity**
 
 Invert the capture-swap expectation, run the fixture, observe an assertion
 failure, and restore it.
@@ -369,7 +369,7 @@ failure, and restore it.
   -StartedBy agent
 ```
 
-- [ ] **Step 4: Run and commit**
+- [x] **Step 4: Run and commit**
 
 Expected: all selected replacement tests pass.
 
@@ -389,7 +389,7 @@ writing-system behavior without claiming parity with native ICU matching.
 - Evidence:
   `Src/LexText/ParserCore/HCLoader.cs:2313-2457,2532-2561,2669-2743`
 
-- [ ] **Step 1: Add domain-grammar cases**
+- [x] **Step 1: Add domain-grammar cases**
 
 Using the existing `AddEntry`, `AddEnvironment`, `LoadLanguage`, and
 `m_loadErrors` helpers, add these focused cases:
@@ -416,19 +416,19 @@ represented.
 Assert HermitCrab pattern or environment output and logger category. Do not
 reuse regex assertions or terminology.
 
-- [ ] **Step 2: Prove fixture sensitivity**
+- [x] **Step 2: Prove fixture sensitivity**
 
 Change one expected environment string or error category, run the focused
 fixture, observe the assertion failure, and restore it.
 
 ```powershell
 .\test.ps1 -TestProject "Src/LexText/ParserCore/ParserCoreTests" `
-  -TestFilter "FullyQualifiedName~UnicodeEnvironment|FullyQualifiedName~InvalidPartialReduplicationEnvironment" `
+  -TestFilter "FullyQualifiedName~UnicodeEnvironment|FullyQualifiedName~InvalidPartialReduplicationEnvironment|FullyQualifiedName~MultiElementRewriteRules" `
   -Verbosity minimal `
   -StartedBy agent
 ```
 
-- [ ] **Step 3: Run and commit**
+- [x] **Step 3: Run and commit**
 
 Expected: all selected phonology characterization tests pass.
 
@@ -445,7 +445,7 @@ rule loading at the HermitCrab adapter without treating the grammar as regex.
 
 - Verify all files changed by Tasks 1 through 6.
 
-- [ ] **Step 1: Confirm production code is untouched**
+- [x] **Step 1: Confirm production code is untouched**
 
 Run:
 
@@ -456,7 +456,7 @@ git diff --name-only main...HEAD
 Expected: only `Docs/**` and the named test files appear. No production source
 file appears.
 
-- [ ] **Step 2: Run the relevant repository build**
+- [x] **Step 2: Run the relevant repository build**
 
 Run:
 
@@ -466,12 +466,12 @@ Run:
 
 Expected: exit 0.
 
-- [ ] **Step 3: Run the affected test projects through the repository script**
+- [x] **Step 3: Run the affected test projects through the repository script**
 
 Run each project command from Tasks 1 through 6 without the narrow test filter.
 Expected: zero failures in every affected project.
 
-- [ ] **Step 4: Validate commits and workspace**
+- [x] **Step 4: Validate commits and workspace**
 
 Run:
 
@@ -484,13 +484,13 @@ git status --short --branch
 Expected: commit validation and whitespace validation exit 0; the worktree is
 clean on `regex-correctness`.
 
-- [ ] **Step 5: Update the working evidence with observed surprises**
+- [x] **Step 5: Update the working evidence with observed surprises**
 
 If any probe contradicted the planned result, update only the working
 inventory and recommendation decision list. Do not convert the surprise into
 an approved contract or production fix.
 
-- [ ] **Step 6: Commit any evidence corrections**
+- [x] **Step 6: Commit any evidence corrections**
 
 ```text
 docs: record observed search characterization results
