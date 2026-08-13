@@ -35,23 +35,28 @@
 			 in .NET Framework SDK-style projects. -->
 		<PackageVersion Include="System.Resources.Extensions" Version="9.0.18" />
 		<!-- DependencyModel: other current-line pins in this block move to 9.0.18,
-			 but this stays at 9.0.16. icu.net and SIL.LCModel.Core (liblcm) both float
-			 a 2.0.4 floor, ParatextData wants >= 9.0.9, and 9.0.17 throws
+			 but this stays at 9.0.16. Nothing in the package graph holds it there -
+			 every dependant declares only a floor (icu.net and SIL.LCModel.Core
+			 (liblcm) >= 2.0.4, ParatextData >= 9.0.9), all of which 9.0.18 clears.
+			 The pin is an observed runtime break: 9.0.17 throws
 			 TypeInitializationException on Icu.NativeMethods in the .NET Framework
 			 test host (reproduced and investigated in PR #1000). 9.0.18 has not been
-			 retested and is not known to fix it. To retest: bump, run a full
-			 test.ps1, and grep the .trx for "Icu.NativeMethods" - zero hits
-			 means safe. -->
+			 retested and is not known to fix it. Because no declared range blocks
+			 the bump, it is also listed under ignore: in .github/dependabot.yml.
+			 To retest: bump, run a full test.ps1, and grep the .trx for
+			 "Icu.NativeMethods" - zero hits means safe. -->
 		<PackageVersion Include="Microsoft.Extensions.DependencyModel" Version="9.0.16" />
-		<!-- System.Memory: ParatextData requires 4.6.3; other packages want 4.5.0–4.6.0. -->
+		<!-- System.Memory: ParatextData declares >= 4.6.3 (a floor, not an exact
+			 version); other packages want 4.5.0–4.6.0. Pinned up to clear the floor. -->
 		<PackageVersion Include="System.Memory" Version="4.6.3" />
 		<!-- Microsoft.Bcl.HashCode: System.Resources.Extensions requires HashCode. -->
 		<PackageVersion Include="Microsoft.Bcl.HashCode" Version="6.0.0" />
 		<!-- System.Security.Permissions (LT-22394): ProDotNetZip needs >= 8.0.0,
 			 System.Security.AccessControl needs >= 6.0.0. Pin to 9.0.18. -->
 		<PackageVersion Include="System.Security.Permissions" Version="9.0.18" />
-		<!-- System.Text.Encoding.CodePages: SIL.Machine requires 10.0.x,
-			 other chains resolve to 9.0.9. Pin to 10.0.3 to match the plugin project. -->
+		<!-- System.Text.Encoding.CodePages: SIL.Machine declares >= 10.0.3 and
+			 ProDotNetZip >= 8.0.0, both floors; other chains resolve to 9.0.9.
+			 Pin to 10.0.3 to clear both and match the plugin project. -->
 		<PackageVersion Include="System.Text.Encoding.CodePages" Version="10.0.3" />
 	</ItemGroup>
 
