@@ -4827,9 +4827,10 @@ namespace SIL.FieldWorks.Common.Controls
 					state.PercentDone = i * 100 / itemsToChange.Count();
 					state.Breath();
 				}
-				bool fEnable = OkToChange(hvo);
+				ITsString newValue;
+				bool fEnable = TryGetNewValue(hvo, out newValue);
 				if (fEnable)
-					m_sda.SetString(hvo, tagFakeFlid, NewValue(hvo));
+					m_sda.SetString(hvo, tagFakeFlid, newValue);
 				m_sda.SetInt(hvo, tagEnable, (fEnable ? 1 : 0));
 			}
 		}
@@ -4861,10 +4862,9 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="hvo"></param>
 		public virtual void Doit(int hvo)
 		{
-			if (OkToChange(hvo))
-			{
-				SetNewValue(hvo, NewValue(hvo));
-			}
+			ITsString newValue;
+			if (TryGetNewValue(hvo, out newValue))
+				SetNewValue(hvo, newValue);
 		}
 
 		/// <summary>
@@ -4901,6 +4901,18 @@ namespace SIL.FieldWorks.Common.Controls
 				}
 			}
 			return true;
+		}
+
+		/// <summary>
+		/// Gets the new value when the item can change.
+		/// </summary>
+		protected virtual bool TryGetNewValue(int hvo, out ITsString newValue)
+		{
+			newValue = null;
+			if (!OkToChange(hvo))
+				return false;
+			newValue = NewValue(hvo);
+			return newValue != null;
 		}
 
 		protected abstract ITsString NewValue(int hvo);
@@ -5065,35 +5077,19 @@ namespace SIL.FieldWorks.Common.Controls
 	internal class ReplaceWithMethod : DoItMethod
 	{
 
-		IVwPattern m_pattern;
-		ITsString m_replacement;
-		IVwTxtSrcInit m_textSourceInit;
-		IVwTextSource m_ts;
+		private readonly IVwPattern m_pattern;
+		private readonly IVwPattern2 m_bulkPattern;
+		private readonly IVwTxtSrcInit m_textSourceInit;
+		private readonly IVwTextSource m_ts;
 
 		public ReplaceWithMethod(LcmCache cache, ISilDataAccessManaged sda, FieldReadWriter accessor, XmlNode spec, IVwPattern pattern, ITsString replacement)
 			: base(cache, sda, accessor, spec)
 		{
 			m_pattern = pattern;
-			m_replacement = replacement;
-			m_pattern.ReplaceWith = m_replacement;
+			m_pattern.ReplaceWith = replacement;
+			m_bulkPattern = m_pattern as IVwPattern2;
 			m_textSourceInit = VwStringTextSourceClass.Create();
-			m_ts = m_textSourceInit as IVwTextSource;
-		}
-
-		/// <summary>
-		/// We can do a replace if the pattern matches.
-		/// </summary>
-		/// <param name="hvo"></param>
-		/// <returns></returns>
-		protected override bool OkToChange(int hvo)
-		{
-			if (!base.OkToChange(hvo))
-				return false;
-			ITsString tss = OldValue(hvo) ?? TsStringUtils.EmptyString(m_accessor.WritingSystem);
-			m_textSourceInit.SetString(tss);
-			int ichMin, ichLim;
-			m_pattern.FindIn(m_ts, 0, tss.Length, true, out ichMin, out ichLim, null);
-			return ichMin >= 0;
+			m_ts = (IVwTextSource)m_textSourceInit;
 		}
 
 		/// <summary>
@@ -5104,6 +5100,13 @@ namespace SIL.FieldWorks.Common.Controls
 		protected override ITsString NewValue(int hvo)
 		{
 			ITsString tss = OldValue(hvo) ?? TsStringUtils.EmptyString(m_accessor.WritingSystem);
+			ITsString bulkResult;
+			int matchCount;
+			if (TryReplaceAllIn(tss, out bulkResult, out matchCount))
+			{
+				return matchCount == 0 ? null : NormalizeResult(bulkResult);
+			}
+
 			m_textSourceInit.SetString(tss);
 			int ichStartSearch = 0;
 			ITsStrBldr tsb = null;
@@ -5124,7 +5127,7 @@ namespace SIL.FieldWorks.Common.Controls
 			for ( ; ichStartSearch <= cch; )
 			{
 				int ichMin, ichLim;
-				m_pattern.FindIn(m_ts, ichStartSearch, cch, true, out ichMin, out ichLim, null);
+				FindIn(ichStartSearch, cch, out ichMin, out ichLim);
 				if (ichMin < 0)
 					break;
 				if (ichLim == ichLimLastMatch)
@@ -5142,23 +5145,40 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 			if (tsb == null)
 				return null;
-			return tsb.GetString().get_NormalizedForm(FwNormalizationMode.knmNFD);
+			return NormalizeResult(tsb.GetString());
+		}
+
+		private static ITsString NormalizeResult(ITsString tssResult)
+		{
+			string text = tssResult.Text;
+			if (!string.IsNullOrEmpty(text) &&
+				CustomIcu.GetIcuNormalizer(FwNormalizationMode.knmNFD).IsNormalized(text))
+			{
+				return tssResult;
+			}
+			return tssResult.get_NormalizedForm(FwNormalizationMode.knmNFD);
 		}
 
 		/// <summary>
-		/// This is very like the base Doit, but we can save a duplicate pattern search
-		/// by calling the BASE version of OkToChange rather than our own version, which
-		/// tests for at least one match. We DO need to call the base version, e.g., so
-		/// we don't change wordforms which shouldn't change because they are in use.
+		/// Attempts bulk replacement when supported.
 		/// </summary>
-		/// <param name="hvo"></param>
-		public override void Doit(int hvo)
+		protected virtual bool TryReplaceAllIn(ITsString source, out ITsString result,
+			out int matchCount)
 		{
-			if (!base.OkToChange(hvo))
-				return;
-			ITsString tss = NewValue(hvo);
-			if (tss != null)
-				SetNewValue(hvo, tss);
+			if (m_bulkPattern == null)
+			{
+				result = null;
+				matchCount = 0;
+				return false;
+			}
+
+			result = m_bulkPattern.ReplaceAllIn(source, 0, source.Length, out matchCount);
+			return true;
+		}
+
+		protected virtual void FindIn(int ichStart, int ichEnd, out int ichMin, out int ichLim)
+		{
+			m_pattern.FindIn(m_ts, ichStart, ichEnd, true, out ichMin, out ichLim, null);
 		}
 	}
 	/// <summary>

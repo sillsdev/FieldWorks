@@ -10,6 +10,7 @@ using System.Linq;
 using System.Windows.Forms;
 using System.Xml;
 using NUnit.Framework;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Core.Text;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.Controls;
@@ -616,7 +617,52 @@ namespace SIL.FieldWorks.XWorks
 	[TestFixture]
 	public class BulkEditBarTests : BulkEditBarTestsBase
 	{
+		public enum ChangePath { Preview, Direct }
+
 		#region BulkEditEntries tests
+		[TestCase(ChangePath.Preview, true, true, TestName = "FakeDoit_ComputesAndCachesAnEnabledResultOnce")]
+		[TestCase(ChangePath.Preview, false, true, TestName = "FakeDoit_DisablesRowsThatCannotChange")]
+		[TestCase(ChangePath.Preview, true, false, TestName = "FakeDoit_DisablesRowsWithoutAValue")]
+		[TestCase(ChangePath.Direct, true, true, TestName = "Doit_AppliesAnEnabledResultOnce")]
+		[TestCase(ChangePath.Direct, false, true, TestName = "Doit_LeavesTheDestinationUnchangedWhenDisabled")]
+		[TestCase(ChangePath.Direct, true, false, TestName = "Doit_LeavesTheDestinationUnchangedWithoutAValue")]
+		public void Doit_ComputesEachResultOnce(ChangePath path, bool canChange, bool hasValue)
+		{
+			var hvo = Cache.LangProject.LexDbOA.Entries.First().Hvo;
+			var value = hasValue
+				? TsStringUtils.MakeString("changed", Cache.DefaultVernWs)
+				: null;
+			CountingFieldReadWriter accessor;
+			var method = CreateCountingDoItMethod(path, canChange, value, out accessor);
+			var before = accessor.CurrentValue(hvo).Text;
+
+			if (path == ChangePath.Preview)
+			{
+				var sentinel = TsStringUtils.MakeString("previous preview", Cache.DefaultVernWs);
+				m_bv.SpecialCache.SetString(hvo, XMLViewsDataCache.ktagAlternateValue, sentinel);
+				method.FakeDoit(new[] { hvo }, XMLViewsDataCache.ktagAlternateValue,
+					XMLViewsDataCache.ktagItemEnabled, new NullProgressState());
+
+				var expected = canChange && hasValue ? value : sentinel;
+				Assert.That(m_bv.SpecialCache.get_StringProp(hvo,
+					XMLViewsDataCache.ktagAlternateValue), Is.SameAs(expected));
+				Assert.That(m_bv.SpecialCache.get_IntProp(hvo,
+					XMLViewsDataCache.ktagItemEnabled), Is.EqualTo(canChange && hasValue ? 1 : 0));
+			}
+			else
+			{
+				DoWithUndoTask(() => method.Doit(hvo));
+				Assert.That(accessor.SetNewValueCount,
+					Is.EqualTo(canChange && hasValue ? 1 : 0));
+				Assert.That(accessor.CurrentValue(hvo).Text,
+					Is.EqualTo(canChange && hasValue ? value.Text : before));
+			}
+
+			Assert.That(method.TryGetNewValueCount, Is.EqualTo(1));
+			Assert.That(method.OkToChangeCount, Is.EqualTo(1));
+			Assert.That(method.NewValueCount, Is.EqualTo(canChange ? 1 : 0));
+		}
+
 		[Test]
 		public void FilterBar_HeaderAndFilterControlsExposeReachableBaseline()
 		{
@@ -1621,6 +1667,97 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		#endregion BulkEditEntries tests
+
+		private CountingDoItMethod CreateCountingDoItMethod(ChangePath path, bool canChange,
+			ITsString value, out CountingFieldReadWriter accessor)
+		{
+			var document = new XmlDocument();
+			document.LoadXml("<column transduce=\"LexEntry.CitationForm\" ws=\"$ws=vernacular\" />");
+			accessor = new CountingFieldReadWriter(FieldReadWriter.Create(document.DocumentElement, Cache));
+			var dataAccess = path == ChangePath.Preview
+				? m_bv.SpecialCache
+				: (ISilDataAccessManaged)Cache.DomainDataByFlid;
+			return new CountingDoItMethod(Cache, dataAccess,
+				accessor, document.DocumentElement, canChange, value);
+		}
+
+		private void DoWithUndoTask(Action action)
+		{
+			Cache.DomainDataByFlid.BeginUndoTask("test", "test");
+			try
+			{
+				action();
+			}
+			finally
+			{
+				Cache.DomainDataByFlid.EndUndoTask();
+			}
+		}
+
+		private sealed class CountingDoItMethod : DoItMethod
+		{
+			private readonly bool m_canChange;
+			private readonly ITsString m_value;
+
+			internal CountingDoItMethod(LcmCache cache, ISilDataAccessManaged sda,
+				FieldReadWriter accessor, XmlNode spec, bool canChange, ITsString value)
+				: base(cache, sda, accessor, spec)
+			{
+				m_canChange = canChange;
+				m_value = value;
+			}
+
+			internal int TryGetNewValueCount { get; private set; }
+			internal int OkToChangeCount { get; private set; }
+			internal int NewValueCount { get; private set; }
+
+			protected override bool TryGetNewValue(int hvo, out ITsString newValue)
+			{
+				TryGetNewValueCount++;
+				return base.TryGetNewValue(hvo, out newValue);
+			}
+
+			protected override bool OkToChange(int hvo)
+			{
+				OkToChangeCount++;
+				return m_canChange;
+			}
+
+			protected override ITsString NewValue(int hvo)
+			{
+				NewValueCount++;
+				return m_value;
+			}
+		}
+
+		private sealed class CountingFieldReadWriter : FieldReadWriter
+		{
+			private readonly FieldReadWriter m_inner;
+
+			internal CountingFieldReadWriter(FieldReadWriter inner)
+				: base(inner.DataAccess)
+			{
+				m_inner = inner;
+			}
+
+			internal int SetNewValueCount { get; private set; }
+
+			public override ITsString CurrentValue(int hvo)
+			{
+				return m_inner.CurrentValue(hvo);
+			}
+
+			public override void SetNewValue(int hvo, ITsString tss)
+			{
+				SetNewValueCount++;
+				m_inner.SetNewValue(hvo, tss);
+			}
+
+			public override int WritingSystem
+			{
+				get { return m_inner.WritingSystem; }
+			}
+		}
 	}
 
 	/// <summary>

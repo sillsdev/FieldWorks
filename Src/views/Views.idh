@@ -4252,14 +4252,27 @@ Last reviewed:
 		[propget] HRESULT Group(
 			[in] int iGroup,
 			[out, retval] ITsString ** pptssGroup);
-
 		//:> We may want to add a method for returning the text of the paragraph,
 		//:> to help display concordances.
+	};
+	// Provides synchronous bulk replacement for rich strings.
+	DeclareInterface(VwPattern2, VwPattern, FC825E0A-CEFB-461F-AFFB-E5E0E063CB74)
+	{
+		// Replaces non-overlapping forward matches in the UTF-16 range.
+		// No matches returns the source.
+		// Success leaves the pattern in a terminal no-match state.
+		HRESULT ReplaceAllIn(
+			[in] ITsString * ptss,
+			[in] int ichStart,
+			[in] int ichEnd,
+			[out] int * pcMatches,
+			[out, retval] ITsString ** pptssResult);
 	};
 	#ifndef NO_COCLASSES
 	DeclareCoClass(VwPattern, 6C659C76-3991-48dd-93F7-DA65847D4863)
 	{
 		interface IVwPattern;
+		interface IVwPattern2;
 	};
 	#endif // !NO_COCLASSES
 
