@@ -292,6 +292,38 @@ A recurring pin belongs in the `ignore:` block of `.github/dependabot.yml` so it
 stops being proposed every month. That is a config change outside this skill -
 recommend it, do not make it.
 
+### Two more package-manifest checks
+
+Central package management here has structure Dependabot does not model. Both
+of these are cheap, and both fail silently.
+
+**A version property must not become a literal.** Around a third of the root
+entries read `Version="$(SilLcmVersion)"` or `Version="$(SilLibPalasoVersion)"`
+rather than a number, with the real value in `Build/SilVersions.props`. The
+correct bump edits the property. A diff that rewrites one of these into a
+literal has broken the single source of truth for every package sharing it:
+
+```bash
+git -C <wt> diff origin/<base>..HEAD -- Directory.Packages.props Build/Src/Directory.Packages.props | grep -E '^[-+].*Version="\$\('
+```
+
+Any hit needs a look. No hits means no property reference was disturbed.
+
+**The Build/Src layering invariant must survive.** `Build/Src/Directory.Packages.props`
+imports the root file and layers deltas: `Include` for build-only packages
+absent from the root, `Update` to override a root pin. A package can therefore
+be declared twice with different versions on purpose - today
+`Microsoft.Extensions.DependencyModel` is 9.0.16 at the root and 2.1.0 in
+Build/Src. Bumping one site and not the other widens a deliberate split, so
+when a changed package appears in both files, say which sites moved.
+
+Note also that `Build/Src/NativeBuild/NativeBuild.csproj` sets
+`ManagePackageVersionsCentrally=false` and carries its own
+`PackageReference ... Version=` entries. They are property-driven, so
+`SilVersions.props` edits reach them. It is the only project in the repository
+that opts out; a literal version appearing in any other `.csproj` is a
+central-package-management violation, not a bump to pass along.
+
 ### Build, only when the batch touches packages
 
 If any picked commit touches `*.props`, `*.json`, or another package manifest,
