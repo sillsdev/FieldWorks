@@ -45,6 +45,34 @@ namespace XMLViewsTests
 		}
 
 		[Test]
+		public void IndexedPrefixSearchIgnoresAccentDifferences()
+		{
+			using (var searchEngine = new LexEntrySearchEngine(Cache))
+			{
+				var entryFactory = Cache.ServiceLocator.GetInstance<ILexEntryFactory>();
+				IMoMorphType stem = Cache.ServiceLocator.GetInstance<IMoMorphTypeRepository>().GetObject(MoMorphTypeTags.kguidMorphStem);
+				ILexEntry nfc = entryFactory.Create(stem, TsStringUtils.MakeString("caf\u00e9", Cache.DefaultVernWs), "nfc", new SandboxGenericMSA());
+				ILexEntry nfd = entryFactory.Create(stem, TsStringUtils.MakeString("cafe\u0301", Cache.DefaultVernWs), "nfd", new SandboxGenericMSA());
+				ILexEntry unaccented = entryFactory.Create(stem, TsStringUtils.MakeString("cafe", Cache.DefaultVernWs), "unaccented", new SandboxGenericMSA());
+				ILexEntry differentlyAccented = entryFactory.Create(stem, TsStringUtils.MakeString("caf\u00e8", Cache.DefaultVernWs), "differently accented", new SandboxGenericMSA());
+
+				m_actionHandler.EndUndoTask();
+
+				Assert.That(searchEngine.Search(new[] { new SearchField(LexEntryTags.kflidLexemeForm,
+					TsStringUtils.MakeString("caf\u00e9", Cache.DefaultVernWs)) }),
+					Is.EquivalentTo(new[] { nfc.Hvo, nfd.Hvo, unaccented.Hvo,
+						differentlyAccented.Hvo }));
+				Assert.That(searchEngine.Search(new[] { new SearchField(LexEntryTags.kflidLexemeForm,
+					TsStringUtils.MakeString("cafe\u0301", Cache.DefaultVernWs)) }),
+					Is.EquivalentTo(new[] { nfc.Hvo, nfd.Hvo, unaccented.Hvo,
+						differentlyAccented.Hvo }));
+				Assert.That(searchEngine.Search(new[] { new SearchField(LexEntryTags.kflidLexemeForm,
+					TsStringUtils.MakeString("cafe", Cache.DefaultVernWs)) }),
+					Is.EquivalentTo(new[] { nfc.Hvo, nfd.Hvo, unaccented.Hvo, differentlyAccented.Hvo }));
+			}
+		}
+
+		[Test]
 		public void SearchFiltersResults()
 		{
 			using(var searchEngine = new LexEntrySearchEngine(Cache))

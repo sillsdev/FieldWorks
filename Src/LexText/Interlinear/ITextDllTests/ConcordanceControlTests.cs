@@ -22,50 +22,98 @@ namespace SIL.FieldWorks.IText
 		[Test]
 		public void UpdateConcordanceForCustomField_FindsMatches()
 		{
-			// build pre-existing data
-			var sl = Cache.ServiceLocator;
-			var wsf = Cache.WritingSystemFactory;
-			var mdc = Cache.ServiceLocator.GetInstance<IFwMetaDataCacheManaged>();
+			var data = CreateCustomFieldData("the big bad wolf", "the nice big dog",
+				"the small furry cat");
+			var vwPattern = VwPatternClass.Create();
+			vwPattern.Pattern = TsStringUtils.MakeString("big", Cache.DefaultAnalWs);
+			var matcher = new RegExpMatcher(vwPattern);
+			var result = ConcordanceControl.GetOccurrencesInCustomField(data.FieldId,
+				data.Paragraphs, Cache.MainCacheAccessor, matcher);
+			Assert.That(result, Has.Count.EqualTo(2));
+			Assert.That(result.Any(pf => pf.Segment == data.Segments[0]));
+			Assert.That(result.Any(pf => pf.Segment == data.Segments[1]));
+		}
 
-			IWfiWordform word = null;
-			ITsString para1_1Contents = null;
-			Guid segGuid = new Guid();
+		[Test]
+		public void ConcordanceRegex_IsCaseInsensitive()
+		{
+			var data = CreateCustomFieldData("the big bad wolf", "the nice BIG dog",
+				"the small furry cat");
+			var vwPattern = VwPatternClass.Create();
+			vwPattern.Pattern = TsStringUtils.MakeString("BIG", Cache.DefaultAnalWs);
+			vwPattern.MatchCase = false;
+			var matcher = new RegExpMatcher(vwPattern);
+			var result = ConcordanceControl.GetOccurrencesInCustomField(data.FieldId, data.Paragraphs,
+				Cache.MainCacheAccessor, matcher);
+			Assert.That(result, Has.Count.EqualTo(2));
+			Assert.That(result.Select(pf => pf.Segment), Is.EquivalentTo(new[]
+				{ data.Segments[0], data.Segments[1] }));
+		}
+
+		[Test]
+		public void ConcordanceRegex_NfcPatternMatchesNfdFieldValueNotNfc()
+		{
+			var data = CreateCustomFieldData("caf\u00e9", "cafe\u0301", "cafe");
+			var vwPattern = VwPatternClass.Create();
+			vwPattern.Pattern = TsStringUtils.MakeString("\u00e9", Cache.DefaultAnalWs);
+			var matcher = new RegExpMatcher(vwPattern);
+			var result = ConcordanceControl.GetOccurrencesInCustomField(data.FieldId,
+				data.Paragraphs, Cache.MainCacheAccessor, matcher);
+			Assert.That(result.Select(pf => pf.Segment), Is.EquivalentTo(new[]
+				{ data.Segments[1] }));
+		}
+
+		[Test]
+		public void ConcordanceRegex_CaptureMatchesExpectedSegments()
+		{
+			var data = CreateCustomFieldData("the big bad wolf", "the nice big dog",
+				"the small furry cat");
+			var vwPattern = VwPatternClass.Create();
+			vwPattern.Pattern = TsStringUtils.MakeString("(big)", Cache.DefaultAnalWs);
+			var matcher = new RegExpMatcher(vwPattern);
+			var result = ConcordanceControl.GetOccurrencesInCustomField(data.FieldId,
+				data.Paragraphs, Cache.MainCacheAccessor, matcher);
+			Assert.That(result.Select(pf => pf.Segment), Is.EquivalentTo(new[]
+				{ data.Segments[0], data.Segments[1] }));
+		}
+
+		private sealed class CustomFieldData
+		{
+			public int FieldId { get; set; }
+			public HashSet<IStTxtPara> Paragraphs { get; set; }
+			public IList<ISegment> Segments { get; set; }
+		}
+
+		private CustomFieldData CreateCustomFieldData(params string[] values)
+		{
+			CustomFieldData data = null;
 			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
 			{
+				var mdc = Cache.ServiceLocator.GetInstance<IFwMetaDataCacheManaged>();
 				mdc.AddCustomField("Segment", "test1", CellarPropertyType.String, 0,
 					"just testing", Cache.DefaultAnalWs, Guid.Empty);
 				var text1 = MakeText("AAAAAAAA-AAAA-AAAA-AAAA-AAAAAAAAAAAA",
 					"Sentence one. Sentence 2.");
-				var sttext1 = text1.ContentsOA;
-				var para1_1 = sttext1.ParagraphsOS[0] as IStTxtPara;
-				var segment1_1_1 = para1_1.SegmentsOS[0];
-				var testFlid = mdc.GetFieldId("Segment", "test1", false);
-				Cache.MainCacheAccessor.SetString(segment1_1_1.Hvo, testFlid,
-					TsStringUtils.MakeString("the big bad wolf", Cache.DefaultAnalWs));
-
+				var para1 = text1.ContentsOA.ParagraphsOS[0] as IStTxtPara;
 				var text2 = MakeText("AAAAAAAA-AAAA-AAAA-AAAA-AAAAAAAAAAAB",
 					"Another Sentence one. Another Sentence 2.");
-				var sttext2 = text2.ContentsOA;
-				var para2_1 = sttext2.ParagraphsOS[0] as IStTxtPara;
-				var segment2_1_2 = para2_1.SegmentsOS[1];
-				Cache.MainCacheAccessor.SetString(segment2_1_2.Hvo, testFlid,
-					TsStringUtils.MakeString("the nice big dog", Cache.DefaultAnalWs));
-				var segment2_1_1 = para2_1.SegmentsOS[0];
-				Cache.MainCacheAccessor.SetString(segment2_1_1.Hvo, testFlid,
-					TsStringUtils.MakeString("the small furry cat", Cache.DefaultAnalWs));
-
-				var paragraphs = new HashSet<IStTxtPara>();
-				paragraphs.Add(para1_1);
-				paragraphs.Add(para2_1);
-				var vwPattern = VwPatternClass.Create();
-				vwPattern.Pattern = TsStringUtils.MakeString("big", Cache.DefaultAnalWs);
-				var matcher = new RegExpMatcher(vwPattern);
-				var result = ConcordanceControl.GetOccurrencesInCustomField(testFlid, paragraphs,
-					Cache.MainCacheAccessor, matcher);
-				Assert.That(result, Has.Count.EqualTo(2));
-				Assert.That(result.Any(pf => pf.Segment == segment1_1_1));
-				Assert.That(result.Any(pf => pf.Segment == segment2_1_2));
+				var para2 = text2.ContentsOA.ParagraphsOS[0] as IStTxtPara;
+				var segments = new List<ISegment>
+				{
+					para1.SegmentsOS[0], para2.SegmentsOS[1], para2.SegmentsOS[0]
+				};
+				var testFlid = mdc.GetFieldId("Segment", "test1", false);
+				for (var i = 0; i < values.Length; i++)
+					Cache.MainCacheAccessor.SetString(segments[i].Hvo, testFlid,
+						TsStringUtils.MakeString(values[i], Cache.DefaultAnalWs));
+				data = new CustomFieldData
+				{
+					FieldId = testFlid,
+					Paragraphs = new HashSet<IStTxtPara> { para1, para2 },
+					Segments = segments
+				};
 			});
+			return data;
 		}
 
 		private LCModel.IText MakeText(string guid, string para1Content)

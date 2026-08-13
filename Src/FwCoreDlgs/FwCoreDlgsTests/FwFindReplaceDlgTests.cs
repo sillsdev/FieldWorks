@@ -204,6 +204,16 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			}
 		}
 
+		/// <summary>Gets whether the "Match Diacritics" checkbox is enabled.</summary>
+		public bool MatchDiacriticsCheckboxEnabled
+		{
+			get
+			{
+				CheckDisposed();
+				return chkMatchDiacritics.Enabled;
+			}
+		}
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets whether or not the "Match Writing System" checkbox on the Find/Replace dialog
@@ -221,6 +231,16 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			{
 				CheckDisposed();
 				chkMatchWS.Checked = value;
+			}
+		}
+
+		/// <summary>Gets whether the "Match Writing System" checkbox is enabled.</summary>
+		public bool MatchWsCheckboxEnabled
+		{
+			get
+			{
+				CheckDisposed();
+				return chkMatchWS.Enabled;
 			}
 		}
 
@@ -251,6 +271,26 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			{
 				CheckDisposed();
 				return chkMatchWholeWord.Checked;
+			}
+		}
+
+		/// <summary>Gets whether the "Match Case" checkbox is enabled.</summary>
+		public bool MatchCaseCheckboxEnabled
+		{
+			get
+			{
+				CheckDisposed();
+				return chkMatchCase.Enabled;
+			}
+		}
+
+		/// <summary>Gets whether the "Match Whole Word" checkbox is enabled.</summary>
+		public bool MatchWholeWordCheckboxEnabled
+		{
+			get
+			{
+				CheckDisposed();
+				return chkMatchWholeWord.Enabled;
 			}
 		}
 
@@ -1264,6 +1304,37 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			Assert.That(m_dlg.m_fInvalidRegExDisplayed, Is.False);
 			Assert.That(m_dlg.FindEnvironment.FoundMatch, Is.True);
 			m_dlg.VerifySelection(0, 0, 0, 0, 6);
+		}
+
+		[Test]
+		public void RegexOptions_DisableNonCaseOptions()
+		{
+			m_vwPattern.MatchDiacritics = true;
+			m_vwPattern.MatchWholeWord = true;
+			m_vwPattern.MatchOldWritingSystem = true;
+			m_vwPattern.MatchCase = true;
+			m_dlg.SetDialogValues(Cache, m_vwPattern, m_vwRootsite, false, false,
+				null, null, null);
+
+			m_dlg.UseRegExCheckboxChecked = true;
+			Assert.That(m_dlg.MatchDiacriticsCheckboxChecked, Is.False);
+			Assert.That(m_dlg.MatchDiacriticsCheckboxEnabled, Is.False);
+			Assert.That(m_dlg.MatchWholeWordCheckboxChecked, Is.False);
+			Assert.That(m_dlg.MatchWholeWordCheckboxEnabled, Is.False);
+			Assert.That(m_dlg.MatchWsCheckboxChecked, Is.False);
+			Assert.That(m_dlg.MatchWsCheckboxEnabled, Is.False);
+			Assert.That(m_dlg.MatchCaseCheckboxChecked, Is.True);
+			Assert.That(m_dlg.MatchCaseCheckboxEnabled, Is.True);
+
+			m_dlg.UseRegExCheckboxChecked = false;
+			Assert.That(m_dlg.MatchDiacriticsCheckboxChecked, Is.False);
+			Assert.That(m_dlg.MatchDiacriticsCheckboxEnabled, Is.True);
+			Assert.That(m_dlg.MatchWholeWordCheckboxChecked, Is.False);
+			Assert.That(m_dlg.MatchWholeWordCheckboxEnabled, Is.True);
+			Assert.That(m_dlg.MatchWsCheckboxChecked, Is.False);
+			Assert.That(m_dlg.MatchWsCheckboxEnabled, Is.True);
+			Assert.That(m_dlg.MatchCaseCheckboxChecked, Is.True);
+			Assert.That(m_dlg.MatchCaseCheckboxEnabled, Is.True);
 		}
 
 		/// ------------------------------------------------------------------------------------
