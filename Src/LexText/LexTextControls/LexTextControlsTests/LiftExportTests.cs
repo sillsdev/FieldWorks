@@ -1983,6 +1983,86 @@ namespace LexTextControlsTests
 			AssertThatXmlIn.Dom(xdocRangeFile).HasAtLeastOneMatchForXpath("//range[@id='grammatical-info']/range-element/trait[@name='catalog-source-id']");
 		}
 
+		///--------------------------------------------------------------------------------------
+		/// <summary>
+		/// LT-22697: FLEx holds names decomposed and normalizes them on export. A
+		/// range-element id must be normalized like the parent attribute naming it and like
+		/// its own label, or a consumer comparing raw strings cannot resolve the reference.
+		/// </summary>
+		///--------------------------------------------------------------------------------------
+		[Test]
+		public void LiftExportRanges_PartOfSpeechIdIsNormalizedLikeItsParentAndLabel()
+		{
+			const string ksDecomposed = "Comple\u0301ments";	// e + U+0301
+			const string ksComposed = "Compl\u00e9ments";	// U+00E9
+			IPartOfSpeech parentPos = null;
+			IPartOfSpeech childPos = null;
+			NonUndoableUnitOfWorkHelper.Do(m_cache.ActionHandlerAccessor, () =>
+			{
+				var posFactory = m_cache.ServiceLocator.GetInstance<IPartOfSpeechFactory>();
+				parentPos = posFactory.Create();
+				m_cache.LangProject.PartsOfSpeechOA.PossibilitiesOS.Add(parentPos);
+				parentPos.Name.set_String(m_cache.DefaultAnalWs, ksDecomposed);
+				childPos = posFactory.Create();
+				parentPos.SubPossibilitiesOS.Add(childPos);
+				childPos.Name.set_String(m_cache.DefaultAnalWs, "Comple\u0301ment du lieu");
+			});
+			var xdocRangeFile = new XmlDocument();
+			using (var w = new StringWriter())
+			{
+				// SUT
+				new LiftExporter(m_cache).ExportLiftRanges(w);
+				xdocRangeFile.LoadXml(w.ToString());
+			}
+
+			var parentElement = xdocRangeFile.SelectSingleNode(string.Format(
+				"//range[@id='grammatical-info']/range-element[@guid='{0}']", parentPos.Guid));
+			var childElement = xdocRangeFile.SelectSingleNode(string.Format(
+				"//range[@id='grammatical-info']/range-element[@guid='{0}']", childPos.Guid));
+			Assert.That(parentElement, Is.Not.Null);
+			Assert.That(childElement, Is.Not.Null);
+			var sId = parentElement.Attributes["id"].Value;
+			Assert.That(sId, Is.EqualTo(ksComposed),
+				"the id must be normalized, not the decomposed form held in memory");
+			Assert.That(childElement.Attributes["parent"].Value, Is.EqualTo(sId),
+				"the parent attribute must match the id it names");
+			Assert.That(parentElement.SelectSingleNode("label/form/text").InnerText, Is.EqualTo(sId),
+				"the label must match the id of its own element");
+		}
+
+		///--------------------------------------------------------------------------------------
+		/// <summary>
+		/// LT-22697: the morph-type id was written raw, so a name holding a markup character
+		/// left the whole ranges document unparseable.
+		/// </summary>
+		///--------------------------------------------------------------------------------------
+		[Test]
+		public void LiftExportRanges_MorphTypeIdWithMarkupCharacterIsEscaped()
+		{
+			const string ksName = "prefix & suffix";
+			IMoMorphType morphType = null;
+			NonUndoableUnitOfWorkHelper.Do(m_cache.ActionHandlerAccessor, () =>
+			{
+				morphType = m_cache.ServiceLocator.GetInstance<IMoMorphTypeFactory>().Create();
+				m_cache.LangProject.LexDbOA.MorphTypesOA.PossibilitiesOS.Add(morphType);
+				morphType.Name.set_String(m_cache.DefaultAnalWs, ksName);
+			});
+			var xdocRangeFile = new XmlDocument();
+			using (var w = new StringWriter())
+			{
+				// SUT
+				new LiftExporter(m_cache).ExportLiftRanges(w);
+				Assert.That(() => xdocRangeFile.LoadXml(w.ToString()), Throws.Nothing,
+					"an unescaped id leaves the whole ranges document unparseable");
+			}
+
+			var element = xdocRangeFile.SelectSingleNode(string.Format(
+				"//range[@id='morph-type']/range-element[@guid='{0}']", morphType.Guid));
+			Assert.That(element, Is.Not.Null);
+			Assert.That(element.Attributes["id"].Value, Is.EqualTo(ksName),
+				"the parsed id must be the name as stored, escaping undone");
+		}
+
 		private int m_flidLongText;
 
 		private void AddStTextCustomFieldAndData()
