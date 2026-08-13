@@ -99,7 +99,7 @@ jobs:
         id: liblcm-checkout
         with:
           repository: 'sillsdev/liblcm'
-          ref: ${{ github.event.inputs.installer_ref || 'master' }}
+          ref: ${{ github.event.inputs.lcm_ref || 'master' }}
           fetch-depth: 0
           path: 'Localizations/LCMRepo'
 
