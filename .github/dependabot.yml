@@ -32,14 +32,8 @@ updates:
     ignore:
       - dependency-name: "*"
         update-types: ["version-update:semver-major"]
-      # Microsoft.Extensions.DependencyModel is held at 9.0.16 by an observed
-      # runtime break, not by any declared dependency range: 9.0.17 throws
-      # TypeInitializationException on Icu.NativeMethods in the .NET Framework
-      # test host (PR #1000). Every package that depends on it asks only for a
-      # floor (ParatextData >= 9.0.9, icu.net and SIL.LCModel.Core >= 2.0.4), so
-      # nothing in the package graph prevents a bump and Dependabot re-proposed
-      # it in #1037 after #1000 reverted it. See the retest procedure in the
-      # comment above the pin in Directory.Packages.props before removing this.
+      # Pinned at 9.0.16 due to TypeInitializationException on Icu.NativeMethods
+      # in the net48 test host (PR #1000). Retest procedure: Directory.Packages.props.
       - dependency-name: "Microsoft.Extensions.DependencyModel"
     groups:
       nuget-minor:
