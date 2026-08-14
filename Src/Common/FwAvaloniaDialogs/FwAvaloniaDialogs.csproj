@@ -10,7 +10,7 @@
 		FieldWorks.proj traversal (in parallel, after its FwAvalonia dependency); restored via
 		FieldWorks.sln.
 
-		Targets net48 (Avalonia 11.3.x is the last line shipping netstandard2.0 — see
+		Targets net48 (Avalonia 11.3.x is the last line shipping netstandard2.0 - see
 		Directory.Packages.props). The first real consumer is the Tools->Options dialog.
 	-->
 	<PropertyGroup>
@@ -40,9 +40,9 @@
 		<Compile Include="..\..\CommonAssemblyInfo.cs" Link="Properties\CommonAssemblyInfo.cs" />
 	</ItemGroup>
 
-	<!-- WinForms framework assembly: the generic dialog launcher scaffold takes an IWin32Window owner and
-	     calls AvaloniaDialogHost.ShowModal (FwAvalonia) which is owned by a WinForms modal Form during
-	     coexistence. net48 SDK-style projects need this referenced explicitly. -->
+	<!-- WinForms reference: the dialog launcher scaffold takes an IWin32Window owner for
+	     AvaloniaDialogHost.ShowModal during WinForms/Avalonia coexistence; net48 SDK-style
+	     projects need it explicit. -->
 	<ItemGroup>
 		<Reference Include="System.Windows.Forms" />
 	</ItemGroup>
@@ -52,9 +52,8 @@
 		<ProjectReference Include="..\FwAvalonia\FwAvalonia.csproj" />
 	</ItemGroup>
 
-	<!-- The test project lives in the nested FwAvaloniaDialogsTests/ folder. Exclude it from this
-	     library's default SDK globbing so the library doesn't try to compile NUnit/Headless test code
-	     (mirrors FwAvalonia.csproj's exclusion of FwAvaloniaTests). -->
+	<!-- The nested FwAvaloniaDialogsTests/ folder is excluded from this library's default SDK
+	     globbing so it doesn't try to compile NUnit/Headless test code. -->
 	<ItemGroup>
 		<Compile Remove="FwAvaloniaDialogsTests/**/*.cs" />
 		<AvaloniaXaml Remove="FwAvaloniaDialogsTests/**/*.axaml" />

@@ -5,7 +5,7 @@
 
 		Headless Avalonia test suite for FwAvalonia: seams, typed view-definition IR, detail view
 		model, and first-slice control behavior (render, popup focus return, commit/cancel)
-		with no native Views or Graphite dependency. Part of the normal repo test path —
+		with no native Views or Graphite dependency. Part of the normal repo test path -
 		included in the FieldWorks.proj traversal (BuildTests=true) and FieldWorks.sln;
 		test.ps1 discovers the built FwAvaloniaTests.dll from the shared Output directory.
 
@@ -39,17 +39,17 @@
 		<ProjectReference Include="..\FwAvalonia.csproj" />
 	</ItemGroup>
 
-	<!-- Reuse the dialog visual-layout tripwire (DialogLayoutAssert) as the ONE shared layout standard, so
-	     detail/browse views get the same hard-fail overlap/zero-area/crowding checks the dialogs do —
-	     read-only link (owned by FwAvaloniaDialogsTests), no second competing guardrail. -->
+	<!-- Reuse DialogLayoutAssert (owned by FwAvaloniaDialogsTests) as the ONE shared layout
+	     tripwire, so detail/browse views get the same overlap/zero-area/crowding checks as the
+	     dialogs. -->
 	<ItemGroup>
 		<Compile Include="..\..\FwAvaloniaDialogs\FwAvaloniaDialogsTests\DialogLayoutAssert.cs"
 		         Link="Visual\DialogLayoutAssert.cs" />
 	</ItemGroup>
 
-	<!-- FwAvalonia.csproj excludes Preview/** from its own compile (it's sample code, not shipped
-	     product behavior); DetailPreviewTests.cs exercises it headlessly, referencing it here
-	     (not file-linking a duplicate compiled copy). -->
+	<!-- FwAvalonia.csproj excludes Preview/** from its own compile (it is sample code, not
+	     shipped product behavior); DetailPreviewTests.cs exercises it headlessly via this
+	     reference. -->
 	<ItemGroup>
 		<ProjectReference Include="..\Preview\FwAvalonia.Preview.csproj" />
 	</ItemGroup>
@@ -60,10 +60,8 @@
 		<Reference Include="System.Windows.Forms" />
 	</ItemGroup>
 
-	<!-- This isolated test project does not use FieldWorks' shared test bootstrap
-	     (SLDR/ICU/registry redirect and the RequiresSTAOnWindows/SetMessageBoxAdapter test
-	     attributes). The headless Avalonia tests do not touch LCModel, ICU, or the registry,
-	     so exclude the auto-injected shared AssemblyInfo files. -->
+	<!-- This isolated test project skips FieldWorks' shared test bootstrap (SLDR/ICU/registry
+	     redirect): the headless Avalonia tests touch none of LCModel, ICU, or the registry. -->
 	<ItemGroup>
 		<Compile Remove="$(FwRoot)Src\AssemblyInfoForTests.cs" />
 		<Compile Remove="$(FwRoot)Src\AssemblyInfoForUiIndependentTests.cs" />

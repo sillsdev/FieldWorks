@@ -437,11 +437,9 @@
           WorkingDirectory="$(ProjectDir)" />
   </Target>
 
-  <!-- Charis SIL test font: downloaded (not committed) by Build/PackageRestore.targets into
-       Downloads/CharisSIL; copied beside TestViews.exe so the shaping tests can load it privately.
-       Tied to the exact pinned version (keep CharisSilTestFontVersion in sync with CharisSilVersion
-       in Build/PackageRestore.targets) so the copied test font is deterministic, even if Downloads/
-       holds more than one extracted version. -->
+  <!-- Charis SIL test font: Build/PackageRestore.targets downloads it (not committed); copied
+       beside TestViews.exe for the shaping tests. Keep this version synced with
+       CharisSilVersion there. -->
   <PropertyGroup>
     <CharisSilTestFontVersion>6.200</CharisSilTestFontVersion>
     <CharisSilTestFontPath>$(FwRoot)\Downloads\CharisSIL\CharisSIL-$(CharisSilTestFontVersion)\CharisSIL-Regular.ttf</CharisSilTestFontPath>
