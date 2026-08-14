@@ -42,6 +42,51 @@ namespace SIL.FieldWorks.LexText.Controls
 		}
 
 		/// <summary>
+		/// The default engine: full-text (word-prefix) matching. Cached in the property table.
+		/// </summary>
+		private SearchEngine FullTextSearchEngine
+		{
+			get
+			{
+				return SearchEngine.Get(m_mediator, m_propertyTable, "EntryGoSearchEngine",
+					() => new EntryGoSearchEngine(m_cache, SearchType.FullText));
+			}
+		}
+
+		/// <summary>
+		/// The substring (match-anywhere) engine. Built lazily the first time a query is long enough
+		/// to use substring matching (see <see cref="SubstringSearchPolicy"/>).
+		/// </summary>
+		private SearchEngine SubstringSearchEngine
+		{
+			get
+			{
+				return SearchEngine.Get(m_mediator, m_propertyTable, "EntryGoSubstringSearchEngine",
+					() => new EntryGoSearchEngine(m_cache, SearchType.Substring));
+			}
+		}
+
+		/// <summary>
+		/// True when this query should use substring matching. The decision (minimum query length)
+		/// lives in <see cref="SubstringSearchPolicy"/>. (Kept separate from <see cref="SearchEngineFor"/>
+		/// so callers can test the mode without instantiating the substring engine.)
+		/// </summary>
+		private bool UseSubstringFor(string searchKey)
+		{
+			return SubstringSearchPolicy.UseSubstring(searchKey);
+		}
+
+		/// <summary>
+		/// Choose the engine for a given search key: the substring engine only when
+		/// <see cref="UseSubstringFor"/> is true; otherwise the default full-text engine
+		/// (which still returns its normal results for short keys).
+		/// </summary>
+		private SearchEngine SearchEngineFor(string searchKey)
+		{
+			return UseSubstringFor(searchKey) ? SubstringSearchEngine : FullTextSearchEngine;
+		}
+
+		/// <summary>
 		/// Get/Set the starting entry object.  This will not be displayed in the list of
 		/// matching entries.
 		/// </summary>
@@ -85,10 +130,8 @@ namespace SIL.FieldWorks.LexText.Controls
 			var xnWindow = m_propertyTable.GetValue<XmlNode>("WindowConfiguration");
 			XmlNode configNode = xnWindow.SelectSingleNode("controls/parameters/guicontrol[@id=\"matchingEntries\"]/parameters");
 
-			SearchEngine searchEngine = SearchEngine.Get(m_mediator, m_propertyTable, "EntryGoSearchEngine", () => new EntryGoSearchEngine(cache));
-
 			m_matchingObjectsBrowser.Initialize(cache, FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable), m_mediator, m_propertyTable, configNode,
-				searchEngine);
+				SearchEngineFor(string.Empty));
 
 			m_matchingObjectsBrowser.ColumnsChanged += m_matchingObjectsBrowser_ColumnsChanged;
 
@@ -97,6 +140,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			if (selectedWs != null)
 				m_matchingObjectsBrowser.SearchAsync(GetFields(string.Empty, selectedWs.Handle));
 		}
+
 		#endregion Construction and Destruction
 
 		#region	Other methods
@@ -158,6 +202,9 @@ namespace SIL.FieldWorks.LexText.Controls
 			m_oldSearchKey = searchKey;
 			m_oldSearchWs = wsSelHvo;
 
+			// Select the engine for this query: substring once the key is long enough (>= MinQueryLength);
+			// otherwise the default full-text engine, so short keys behave like the original search.
+			m_matchingObjectsBrowser.SetSearchEngine(SearchEngineFor(searchKey));
 			m_matchingObjectsBrowser.SearchAsync(GetFields(searchKey, wsSelHvo));
 		}
 
