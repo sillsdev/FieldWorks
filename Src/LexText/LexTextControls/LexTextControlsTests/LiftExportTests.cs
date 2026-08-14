@@ -493,7 +493,11 @@ namespace LexTextControlsTests
 			m_mapPartsOfSpeech.Clear();
 			m_mapAcademicDomains.Clear();
 			m_mapPublications.Clear();
-			// NUnit shares one fixture instance across the tests, so this outlives the cache it indexes.
+			// NUnit shares one fixture instance across the tests, so these outlive the cache they index.
+			m_customFieldEntryIds.Clear();
+			m_customFieldSenseIds.Clear();
+			m_customFieldAllomorphsIds.Clear();
+			m_customFieldExampleSentencesIds.Clear();
 			m_customListsGuids.Clear();
 			var mockProjectName = "xxyyzProjectFolderForLIFTTest";
 			MockProjectFolder = Path.Combine(Path.GetTempPath(), mockProjectName);
