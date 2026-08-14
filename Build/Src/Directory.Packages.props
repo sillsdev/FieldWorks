@@ -18,6 +18,9 @@
 	<!-- Use Update for root-pinned packages and Include for build-only packages absent from the root CPM file. -->
 	<ItemGroup Label="Build Tool Package Versions">
 		<PackageVersion Include="Microsoft.Build.Utilities.Core" Version="18.8.2" />
+		<!-- Microsoft.Build.Utilities.Core's System.Text.Json chain requires >= 10.0.4;
+			 the root pins 9.0.16 for the copy internalized into the Paratext plugin. -->
+		<PackageVersion Update="Microsoft.Bcl.AsyncInterfaces" Version="10.0.4" />
 		<PackageVersion Update="Microsoft.Extensions.DependencyModel" Version="2.1.0" />
 		<PackageVersion Update="NUnit3TestAdapter" Version="5.2.0" />
 		<PackageVersion Include="SIL.BuildTasks" Version="3.2.0" />

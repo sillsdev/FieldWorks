@@ -46,6 +46,17 @@
 			 To retest: bump, run a full test.ps1, and grep the .trx for
 			 "Icu.NativeMethods" - zero hits means safe. -->
 		<PackageVersion Include="Microsoft.Extensions.DependencyModel" Version="9.0.16" />
+		<!-- Microsoft.Extensions.DependencyInjection(.Abstractions) and
+			 Microsoft.Bcl.AsyncInterfaces: SIL.LCModel's IoC container since
+			 11.0.0-beta0176 (liblcm #393 replaced StructureMap) plus its shim dependency.
+			 Pinned so all three copies that ILRepack internalizes into
+			 FwParatextLexiconPlugin.dll are deterministic. Paratext loads that plugin in
+			 its own process where no FieldWorks binding redirect applies, so bumps here
+			 change what gets baked into the plugin - keep them in step with the versions
+			 SIL.LCModel compiles against (see liblcm SIL.LCModel.csproj). -->
+		<PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="8.0.1" />
+		<PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.2" />
+		<PackageVersion Include="Microsoft.Bcl.AsyncInterfaces" Version="9.0.16" />
 		<!-- System.Memory: ParatextData declares >= 4.6.3 (a floor, not an exact
 			 version); other packages want 4.5.0–4.6.0. Pinned up to clear the floor. -->
 		<PackageVersion Include="System.Memory" Version="4.6.3" />
