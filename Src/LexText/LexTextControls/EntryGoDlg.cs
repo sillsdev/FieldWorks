@@ -54,7 +54,8 @@ namespace SIL.FieldWorks.LexText.Controls
 		}
 
 		/// <summary>
-		/// The substring (match-anywhere) engine. Built lazily the first time the user ticks the box.
+		/// The substring (match-anywhere) engine. Built lazily the first time a query is long enough
+		/// to use substring matching (see <see cref="SubstringSearchPolicy"/>).
 		/// </summary>
 		private SearchEngine SubstringSearchEngine
 		{
