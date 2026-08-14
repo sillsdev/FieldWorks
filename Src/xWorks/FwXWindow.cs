@@ -536,7 +536,7 @@ namespace SIL.FieldWorks.XWorks
 			Directory.CreateDirectory(path);
 			m_propertyTable.UserSettingDirectory = path;
 			Mediator.PathVariables["{DISTFILES}"] = FwDirectoryFinder.CodeDirectory;
-			// Seed the UI-mode properties BEFORE LoadUI creates the content views —
+			// Seed the UI-mode properties BEFORE LoadUI creates the content views --
 			// RecordEditView resolves its framework during window construction, so seeding any later
 			// (or relying on the app to do it after NewMainAppWnd returns) leaves a persisted
 			// UIMode=New coming up on Legacy until the setting is toggled again.
@@ -546,14 +546,17 @@ namespace SIL.FieldWorks.XWorks
 
 		/// <summary>
 		/// Seeds the UI-mode selection properties from their persisted app-setting values, normalized
-		/// fail-closed (anything but "New" means Legacy). No broadcast: this runs before the content
-		/// views exist; later changes go through the Options dialogs, which broadcast.
+		/// fail-closed (anything but "New" means Legacy, and New additionally requires the FW_AVALONIA
+		/// opt-in). No broadcast: this runs before the content views exist; later changes go through the
+		/// Options dialogs, which broadcast.
 		/// </summary>
 		internal static void SeedUIModeProperties(PropertyTable propertyTable, string settingsUiMode,
 			string settingsDisabledTools)
 		{
 			propertyTable.SetProperty(UIFrameworkResolver.UIModePropertyName,
-				UIFrameworkResolver.NormalizeUIMode(settingsUiMode), false);
+				UIModeGates.ShouldUseAvaloniaUIFromSettings(settingsUiMode)
+					? UIFrameworkResolver.NewUIMode
+					: UIFrameworkResolver.LegacyUIMode, false);
 			propertyTable.SetPropertyPersistence(UIFrameworkResolver.UIModePropertyName, false);
 			propertyTable.SetProperty(UIFrameworkResolver.UIModeDisabledToolsPropertyName,
 				settingsDisabledTools ?? string.Empty, false);
@@ -967,10 +970,10 @@ namespace SIL.FieldWorks.XWorks
 		{
 			CheckDisposed();
 
-			// This menu command shells out to the OS character map (charmap.exe / gucharmap) — there is
+			// This menu command shells out to the OS character map (charmap.exe / gucharmap) -- there is
 			// no FieldWorks character-picker dialog to migrate here. The "special-char insert" work instead
 			// ships a NET-NEW in-app Avalonia Unicode picker (SpecialCharacterDialogView/ViewModel in
-			// FwAvaloniaDialogs, headless-tested: filterable curated list → ChosenCharacter) for the New-UI
+			// FwAvaloniaDialogs, headless-tested: filterable curated list -> ChosenCharacter) for the New-UI
 			// insert-into-field affordance; this legacy OS-charmap shellout is preserved unchanged.
 			var program = "charmap.exe";
 			Action<Exception> errorHandler = null;
@@ -2335,8 +2338,8 @@ namespace SIL.FieldWorks.XWorks
 			if (name == "currentContentControl")
 			{
 				// The outgoing view may still hold an open fenced detail-edit undo task (the user was
-				// mid-edit when they switched). Settle it — committing a valid staged edit as its own undo
-				// step, rolling an invalid one back — BEFORE the save-on-tool-switch commit below: an open
+				// mid-edit when they switched). Settle it -- committing a valid staged edit as its own undo
+				// step, rolling an invalid one back -- BEFORE the save-on-tool-switch commit below: an open
 				// task makes that commit throw "Commit at wrong place." This is the same auto-save the
 				// view performs on record navigation and go-away, applied to the tool/area switch too.
 				SettlePendingContentEdits(CurrentContentControl);
@@ -2350,8 +2353,8 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
-		/// Settles any open fenced detail-edit session held by the outgoing content control — or by a
-		/// view nested inside it — so the save-on-tool-switch commit does not fault on an open undo
+		/// Settles any open fenced detail-edit session held by the outgoing content control -- or by a
+		/// view nested inside it -- so the save-on-tool-switch commit does not fault on an open undo
 		/// task. The detail view is usually nested inside a record-list/detail container, so the whole
 		/// subtree is walked rather than only the top-level control.
 		/// </summary>

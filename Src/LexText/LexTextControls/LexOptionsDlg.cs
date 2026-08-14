@@ -138,21 +138,25 @@ namespace SIL.FieldWorks.LexText.Controls
 				}
 			}
 
-			// UIMode (and its per-tool overrides) flips live — RecordEditView settles any open edit and
-			// re-resolves the framework on the spot, so unlike the settings below, this never needs a restart.
-			// Compare against the PropertyTable's LIVE value (falling back to settings): if the table and
-			// the persisted setting ever disagree, OK re-broadcasts and heals the running views.
-			var oldUiMode = NormalizeUIMode(m_propertyTable == null
-				? m_settings.UIMode
-				: m_propertyTable.GetStringProperty(UIModePropertyName, m_settings.UIMode));
-			var newUiMode = SelectedUIMode;
-			if (oldUiMode != newUiMode)
+			// The UI mode applies immediately, so it never sets restartRequired. Broadcasting the
+			// property makes the open views re-resolve which framework draws them. The old value comes
+			// from the PropertyTable rather than the persisted setting because that is the one those
+			// views are using. A null chooser means no FW_AVALONIA opt-in, and the persisted mode is
+			// then left untouched.
+			if (m_uiModeChooser != null)
 			{
-				m_settings.UIMode = newUiMode;
-				if (m_propertyTable != null)
+				var oldUiMode = NormalizeUIMode(m_propertyTable == null
+					? m_settings.UIMode
+					: m_propertyTable.GetStringProperty(UIModePropertyName, m_settings.UIMode));
+				var newUiMode = SelectedUIMode;
+				if (oldUiMode != newUiMode)
 				{
-					m_propertyTable.SetProperty(UIModePropertyName, newUiMode, true);
-					m_propertyTable.SetPropertyPersistence(UIModePropertyName, false);
+					m_settings.UIMode = newUiMode;
+					if (m_propertyTable != null)
+					{
+						m_propertyTable.SetProperty(UIModePropertyName, newUiMode, true);
+						m_propertyTable.SetPropertyPersistence(UIModePropertyName, false);
+					}
 				}
 			}
 
@@ -447,6 +451,12 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		private void InitializeUIModeControls()
 		{
+			// Opting out leaves the group unbuilt rather than hidden: the layout below grows the form and
+			// pushes the controls under it down, so building an invisible group would leave a blank band
+			// on the Interface tab for every user who has not set FW_AVALONIA.
+			if (!UIModeGates.IsSwitchingEnabled())
+				return;
+
 			m_uiModeGroup = new GroupBox();
 			m_uiModeLabel = new Label();
 			m_uiModeChooser = new ComboBox();
@@ -512,13 +522,16 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			get
 			{
-				var item = m_uiModeChooser.SelectedItem as UiModeMenuItem;
+				var item = m_uiModeChooser?.SelectedItem as UiModeMenuItem;
 				return item != null ? item.Mode : LegacyUIMode;
 			}
 		}
 
 		private void SelectUIMode(string mode)
 		{
+			if (m_uiModeChooser == null)
+				return;
+
 			var desired = NormalizeUIMode(mode);
 			foreach (var item in m_uiModeChooser.Items)
 			{
