@@ -25,6 +25,48 @@ namespace LexTextControlsTests
 	[TestFixture]
 	public class AvaloniaOptionsDialogLauncherTests
 	{
+		[TearDown]
+		public void TearDown()
+		{
+			ErrorReport.Properties.Remove("AvaloniaUIMode");
+			ErrorReport.Properties.Remove("AvaloniaDisabledTools");
+		}
+
+		// ----- ApplyUiModeLive / ApplyDisabledToolsLive (the crash-report mirror behind Apply) -----
+
+		[Test]
+		public void ApplyUiModeLive_PersistsBroadcastsAndRecordsForCrashReports()
+		{
+			var settings = new TestFwApplicationSettings { UIMode = "Legacy" };
+			using (var mediator = new Mediator())
+			using (var propertyTable = new PropertyTable(mediator))
+			{
+				SIL.FieldWorks.LexText.Controls.AvaloniaOptionsDialogLauncher.ApplyUiModeLive(
+					propertyTable, settings, "new");
+
+				Assert.That(settings.UIMode, Is.EqualTo("New"));
+				Assert.That(propertyTable.GetStringProperty("UIMode", "Legacy"), Is.EqualTo("New"));
+				Assert.That(ErrorReport.Properties["AvaloniaUIMode"], Is.EqualTo("New"));
+			}
+		}
+
+		[Test]
+		public void ApplyDisabledToolsLive_PersistsBroadcastsAndRecordsForCrashReports()
+		{
+			var settings = new TestFwApplicationSettings { UIMode = "New" };
+			using (var mediator = new Mediator())
+			using (var propertyTable = new PropertyTable(mediator))
+			{
+				SIL.FieldWorks.LexText.Controls.AvaloniaOptionsDialogLauncher.ApplyDisabledToolsLive(
+					propertyTable, settings, "lexiconEdit,posEdit");
+
+				Assert.That(settings.UIModeDisabledTools, Is.EqualTo("lexiconEdit,posEdit"));
+				Assert.That(propertyTable.GetStringProperty("UIModeDisabledTools", null),
+					Is.EqualTo("lexiconEdit,posEdit"));
+				Assert.That(ErrorReport.Properties["AvaloniaDisabledTools"], Is.EqualTo("lexiconEdit,posEdit"));
+			}
+		}
+
 		// ----- UIModeGates.ShouldUseAvaloniaUI (the shared New-mode gate, hoisted to FwUtils so checking
 		// it never loads the Avalonia assemblies) -----
 

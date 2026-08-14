@@ -14,6 +14,12 @@ namespace LexTextControlsTests
 	[Apartment(System.Threading.ApartmentState.STA)]
 	public class LexOptionsDlgTests
 	{
+		[TearDown]
+		public void TearDown()
+		{
+			ErrorReport.Properties.Remove("AvaloniaUIMode");
+		}
+
 		[Test]
 		public void OkClick_SavesUIModeAndMirrorsItIntoPropertyTable()
 		{
@@ -39,6 +45,8 @@ namespace LexTextControlsTests
 				Assert.That(propertyTable.GetStringProperty("UIMode", "Legacy"), Is.EqualTo("New"));
 				// UIMode flips live (RecordEditView settles and re-resolves on the spot) — no restart needed.
 				Assert.That(dlg.RestartPromptCount, Is.EqualTo(0));
+				Assert.That(ErrorReport.Properties["AvaloniaUIMode"], Is.EqualTo("New"),
+					"a live toggle must update the crash-report value, not just the startup seed");
 			}
 		}
 
@@ -61,6 +69,8 @@ namespace LexTextControlsTests
 				Assert.That(settings.SaveCalls, Is.EqualTo(1));
 				Assert.That(propertyTable.GetStringProperty("UIMode", "Legacy"), Is.EqualTo("Legacy"));
 				Assert.That(dlg.RestartPromptCount, Is.EqualTo(0));
+				Assert.That(ErrorReport.Properties.ContainsKey("AvaloniaUIMode"), Is.False,
+					"an unchanged selection must not touch the crash-report value");
 			}
 		}
 
