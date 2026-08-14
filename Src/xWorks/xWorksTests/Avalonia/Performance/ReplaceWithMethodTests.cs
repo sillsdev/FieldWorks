@@ -267,6 +267,71 @@ namespace SIL.FieldWorks.XWorks.Performance
 		}
 
 		[Test]
+		public void FakeDoit_NormalizesNonLatinScriptReplacementResultToNfd()
+		{
+			// U+AC00 (Hangul syllable "GA") has a real canonical decomposition to two
+			// Jamo characters under NFD, unlike the single-diacritic Latin case above.
+			// This hardens the NormalizeResult skip-check for a non-Latin script.
+			var entry = CreateEntries(1, 1, "old \uac00", "old \uac00").Single();
+			var document = BuildColumnSpec();
+			var accessor = FieldReadWriter.Create(document.DocumentElement, Cache);
+			var pattern = BuildPattern("old", "new \uac00");
+			var method = new CountingReplaceWithMethod(Cache, m_bv.SpecialCache, accessor,
+				document.DocumentElement, pattern, pattern.ReplaceWith);
+
+			method.FakeDoit(new[] { entry.Hvo }, XMLViewsDataCache.ktagAlternateValue,
+				XMLViewsDataCache.ktagItemEnabled, new NullProgressState());
+
+			var preview = m_bv.SpecialCache.get_StringProp(entry.Hvo,
+				XMLViewsDataCache.ktagAlternateValue);
+			Assert.That(method.ReplaceAllInCount, Is.EqualTo(1));
+			Assert.That(preview.Text, Is.EqualTo("new \uac00 \uac00".Normalize(NormalizationForm.FormD)));
+			Assert.That(preview.Text.IsNormalized(NormalizationForm.FormD), Is.True);
+		}
+
+		[Test]
+		public void FakeDoit_PreservesRichRunPropertiesWhenNormalizingNonLatinReplacementResult()
+		{
+			ILexEntry entry = null;
+			ILexSense sense = null;
+			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
+			{
+				entry = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create();
+				sense = Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create(entry, null, string.Empty);
+				m_createdObjectList.Add(entry);
+			});
+			var document = BuildColumnSpec();
+			var accessor = new OwnMlPropReadWriter(Cache, LexSenseTags.kflidDefinition, Cache.DefaultAnalWs);
+			// U+AC01 ("GAG") canonically decomposes to THREE Jamo characters under NFD,
+			// so this run must grow during normalization while keeping its style intact.
+			var sourceBuilder = TsStringUtils.MakeString("old \uac01", Cache.DefaultAnalWs).GetBldr();
+			sourceBuilder.SetIntPropValues(4, 5, (int)FwTextPropType.ktptWs,
+				(int)FwTextPropVar.ktpvDefault, Cache.DefaultVernWs);
+			sourceBuilder.SetStrPropValue(4, 5, (int)FwTextPropType.ktptNamedStyle, "Emphasis");
+			var source = sourceBuilder.GetString();
+			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor,
+				() => accessor.SetNewValue(sense.Hvo, source));
+			Assert.That(accessor.CurrentValue(sense.Hvo).RunCount, Is.EqualTo(2));
+
+			// Replacement text is itself a precomposed Hangul syllable, so the result
+			// needs real NFD decomposition work, not the already-normalized skip path.
+			var pattern = BuildPattern("old", "new \uac00");
+			var method = new CountingReplaceWithMethod(Cache, m_bv.SpecialCache, accessor,
+				document.DocumentElement, pattern, pattern.ReplaceWith);
+			method.FakeDoit(new[] { sense.Hvo }, XMLViewsDataCache.ktagAlternateValue,
+				XMLViewsDataCache.ktagItemEnabled, new NullProgressState());
+			var preview = m_bv.SpecialCache.get_StringProp(sense.Hvo, XMLViewsDataCache.ktagAlternateValue);
+
+			Assert.That(method.ReplaceAllInCount, Is.EqualTo(1));
+			Assert.That(preview.Text, Is.EqualTo("new \uac00 \uac01".Normalize(NormalizationForm.FormD)));
+			Assert.That(preview.Text.IsNormalized(NormalizationForm.FormD), Is.True);
+
+			var styledRun = Enumerable.Range(0, preview.RunCount)
+				.Single(i => preview.get_Properties(i).GetStrPropValue((int)FwTextPropType.ktptNamedStyle) == "Emphasis");
+			Assert.That(TsStringUtils.GetWsOfRun(preview, styledRun), Is.EqualTo(Cache.DefaultVernWs));
+		}
+
+		[Test]
 		public void FakeDoit_BaseGateRejectionDoesNotSearchOrChangePreview()
 		{
 			var entry = CreateEntries(1, 1, "old", "old").Single();

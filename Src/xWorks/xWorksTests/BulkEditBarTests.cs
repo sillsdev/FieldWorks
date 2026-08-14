@@ -664,6 +664,39 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
+		public void Doit_OuterLoop_EndsUndoTaskWhenAnItemThrows()
+		{
+			var hvo = Cache.LangProject.LexDbOA.Entries.First().Hvo;
+			var document = new XmlDocument();
+			document.LoadXml("<column transduce=\"LexEntry.CitationForm\" ws=\"$ws=vernacular\" />");
+			var accessor = FieldReadWriter.Create(document.DocumentElement, Cache);
+			var method = new ThrowingDoItMethod(Cache, (ISilDataAccessManaged)Cache.DomainDataByFlid,
+				accessor, document.DocumentElement);
+
+			Assert.That(Cache.ActionHandlerAccessor.CurrentDepth, Is.EqualTo(0));
+
+			Assert.Throws<InvalidOperationException>(() =>
+				method.Doit(new[] { hvo }, new NullProgressState()));
+
+			Assert.That(Cache.ActionHandlerAccessor.CurrentDepth, Is.EqualTo(0),
+				"the outer bulk-edit undo task must be ended even when applying one item throws");
+		}
+
+		private sealed class ThrowingDoItMethod : DoItMethod
+		{
+			internal ThrowingDoItMethod(LcmCache cache, ISilDataAccessManaged sda,
+				FieldReadWriter accessor, XmlNode spec)
+				: base(cache, sda, accessor, spec)
+			{
+			}
+
+			protected override ITsString NewValue(int hvo)
+			{
+				throw new InvalidOperationException("simulated failure applying one bulk-edit item");
+			}
+		}
+
+		[Test]
 		public void FilterBar_HeaderAndFilterControlsExposeReachableBaseline()
 		{
 			var baseline = m_bv.GetFilterReachabilityBaseline();
@@ -1730,6 +1763,37 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
+		[Test]
+		public void BulkCopy_ComputesSourceValueOnce()
+		{
+			var hvo = Cache.LangProject.LexDbOA.Entries.First().Hvo;
+
+			var srcDoc = new XmlDocument();
+			srcDoc.LoadXml("<column transduce=\"LexEntry.Comment\" ws=\"$ws=analysis\" />");
+			var srcAccessor = new CountingFieldReadWriter(FieldReadWriter.Create(srcDoc.DocumentElement, Cache));
+
+			var dstDoc = new XmlDocument();
+			dstDoc.LoadXml("<column transduce=\"LexEntry.CitationForm\" ws=\"$ws=vernacular\" />");
+			var dstAccessor = FieldReadWriter.Create(dstDoc.DocumentElement, Cache);
+
+			DoWithUndoTask(() =>
+			{
+				srcAccessor.SetNewValue(hvo, TsStringUtils.MakeString("source note", Cache.DefaultAnalWs));
+				dstAccessor.SetNewValue(hvo, TsStringUtils.MakeString("existing citation form", Cache.DefaultVernWs));
+			});
+			srcAccessor.ResetCounts();
+
+			var method = new BulkCopyMethod(Cache, m_bv.SpecialCache, dstAccessor, dstDoc.DocumentElement,
+				srcAccessor, null, NonEmptyTargetOptions.Overwrite);
+
+			method.FakeDoit(new[] { hvo }, XMLViewsDataCache.ktagAlternateValue,
+				XMLViewsDataCache.ktagItemEnabled, new NullProgressState());
+
+			Assert.That(m_bv.SpecialCache.get_IntProp(hvo, XMLViewsDataCache.ktagItemEnabled), Is.EqualTo(1));
+			Assert.That(srcAccessor.CurrentValueCount, Is.EqualTo(1),
+				"OkToChange and NewValue must share one computed source value per item instead of reading it twice");
+		}
+
 		private sealed class CountingFieldReadWriter : FieldReadWriter
 		{
 			private readonly FieldReadWriter m_inner;
@@ -1741,9 +1805,17 @@ namespace SIL.FieldWorks.XWorks
 			}
 
 			internal int SetNewValueCount { get; private set; }
+			internal int CurrentValueCount { get; private set; }
+
+			internal void ResetCounts()
+			{
+				SetNewValueCount = 0;
+				CurrentValueCount = 0;
+			}
 
 			public override ITsString CurrentValue(int hvo)
 			{
+				CurrentValueCount++;
 				return m_inner.CurrentValue(hvo);
 			}
 

@@ -4838,22 +4838,28 @@ namespace SIL.FieldWorks.Common.Controls
 		public void Doit(IEnumerable<int> itemsToChange, ProgressState state)
 		{
 			m_sda.BeginUndoTask(XMLViewsStrings.ksUndoBulkEdit, XMLViewsStrings.ksRedoBulkEdit);
-			string commitChanges = XmlUtils.GetOptionalAttributeValue(m_nodeSpec, "commitChanges");
-			int i = 0;
-			// Report progress 50 times or every 100 items, whichever is more (but no more than once per item!)
-			int interval = Math.Min(100, Math.Max(itemsToChange.Count() / 50, 1));
-			foreach (int hvo in itemsToChange)
+			try
 			{
-				i++;
-				if (i % interval == 0)
+				string commitChanges = XmlUtils.GetOptionalAttributeValue(m_nodeSpec, "commitChanges");
+				int i = 0;
+				// Report progress 50 times or every 100 items, whichever is more (but no more than once per item!)
+				int interval = Math.Min(100, Math.Max(itemsToChange.Count() / 50, 1));
+				foreach (int hvo in itemsToChange)
 				{
-					state.PercentDone = i * 100 / itemsToChange.Count();
-					state.Breath();
+					i++;
+					if (i % interval == 0)
+					{
+						state.PercentDone = i * 100 / itemsToChange.Count();
+						state.Breath();
+					}
+					Doit(hvo);
+					BulkEditBar.CommitChanges(hvo, commitChanges, m_cache, m_accessor.WritingSystem);
 				}
-				Doit(hvo);
-				BulkEditBar.CommitChanges(hvo, commitChanges, m_cache, m_accessor.WritingSystem);
 			}
-			m_sda.EndUndoTask();
+			finally
+			{
+				m_sda.EndUndoTask();
+			}
 		}
 
 		/// <summary>
@@ -4910,9 +4916,39 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			newValue = null;
 			if (!OkToChange(hvo))
+			{
+				ClearNewValueCache();
 				return false;
-			newValue = NewValue(hvo);
+			}
+			newValue = NewValueCached(hvo);
+			ClearNewValueCache();
 			return newValue != null;
+		}
+
+		private int? m_hvoCachedNewValue;
+		private ITsString m_cachedNewValue;
+
+		/// <summary>
+		/// Returns NewValue(hvo), reusing a value an OkToChange override already computed
+		/// for the same hvo within this same TryGetNewValue call (to decide whether a change
+		/// would occur) instead of recomputing it. The cache is cleared at the end of every
+		/// TryGetNewValue call: a later call for the same hvo (e.g. preview, then apply) must
+		/// still recompute, since the underlying data or pattern state may have changed.
+		/// </summary>
+		protected ITsString NewValueCached(int hvo)
+		{
+			if (m_hvoCachedNewValue != hvo)
+			{
+				m_cachedNewValue = NewValue(hvo);
+				m_hvoCachedNewValue = hvo;
+			}
+			return m_cachedNewValue;
+		}
+
+		private void ClearNewValueCache()
+		{
+			m_hvoCachedNewValue = null;
+			m_cachedNewValue = null;
 		}
 
 		protected abstract ITsString NewValue(int hvo);
@@ -4961,7 +4997,7 @@ namespace SIL.FieldWorks.Common.Controls
 			string sOld = null;
 			if (tssOld != null)
 				sOld = tssOld.Text;
-			ITsString tssNew = NewValue(hvo);
+			ITsString tssNew = NewValueCached(hvo);
 			string sNew = null;
 			if (tssNew != null)
 				sNew = tssNew.Text;
@@ -5032,7 +5068,7 @@ namespace SIL.FieldWorks.Common.Controls
 					return false;
 			}
 			ITsString tssSrc = m_srcAccessor.CurrentValue(hvo);
-			return tssSrc != null && !m_srcAccessor.CurrentValue(hvo).Equals(NewValue(hvo));
+			return tssSrc != null && !m_srcAccessor.CurrentValue(hvo).Equals(NewValueCached(hvo));
 		}
 
 
