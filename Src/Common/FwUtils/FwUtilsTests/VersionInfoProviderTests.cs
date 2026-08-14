@@ -13,7 +13,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 	/// How versions and copyrights are read out of the generated version attributes
 	/// (CommonAssemblyInfo.cs, generated from CommonAssemblyInfoTemplate.cs + MasterVersionInfo.txt).
 	/// This test assembly links the generated file, so these tests run against the real attribute
-	/// shapes the product ships — including the empty-FWBETAVERSION informational version
+	/// shapes the product ships -- including the empty-FWBETAVERSION informational version
 	/// ("9.x.y.NNNNN NNNNN " with a trailing space).
 	/// </summary>
 	[TestFixture]
