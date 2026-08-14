@@ -55,11 +55,9 @@ function Diff-Sets {
 }
 
 function Get-DisplayNameList {
-	# Safely extract DisplayName values from a snapshot's UninstallEntries.
-	# Robust to $null, to a single unwrapped object, and to the empty object ({})
-	# that ConvertTo-Json can emit for an empty list (Collect-InstallerSnapshot serializes
-	# an empty List as {} in Windows PowerShell). Under Set-StrictMode, blindly reading
-	# $entry.DisplayName on such an object throws PropertyNotFoundException.
+	# Tolerates $null, an unwrapped object, and the empty {} object Windows
+	# PowerShell emits for an empty list -- direct property access on those
+	# shapes throws under Set-StrictMode.
 	param([Parameter(Mandatory = $false)]$Entries)
 
 	$names = New-Object System.Collections.Generic.List[string]
