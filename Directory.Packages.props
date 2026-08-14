@@ -23,51 +23,37 @@
 		=============================================================
 	-->
 	<ItemGroup Label="Transitive Pins">
-		<!-- Current-line refresh in this block: System.Drawing.Common,
-			 System.Resources.Extensions, and System.Security.Permissions move to 9.0.18.
-			 Microsoft.Extensions.DependencyModel intentionally stays at 9.0.16 because
-			 9.0.17 breaks ICU initialization in the .NET Framework test host. -->
-		<!-- System.Drawing.Common: SIL.LCModel.Core pulls 6.0.0 transitively,
-			 but ParatextData 9.5.x requires >= 9.0.9. Pin to 9.0.18. -->
+		<!-- System.Drawing.Common: ParatextData requires >= 9.0.9; SIL.LCModel.Core
+			 pulls 6.0.0 transitively. -->
 		<PackageVersion Include="System.Drawing.Common" Version="9.0.18" />
 		<PackageVersion Include="System.Reflection.Metadata" Version="10.0.10" />
 		<!-- System.Resources.Extensions: required for non-string resources (images, icons)
 			 in .NET Framework SDK-style projects. -->
 		<PackageVersion Include="System.Resources.Extensions" Version="9.0.18" />
-		<!-- DependencyModel: other current-line pins in this block move to 9.0.18,
-			 but this stays at 9.0.16. Nothing in the package graph holds it there -
-			 every dependant declares only a floor (icu.net and SIL.LCModel.Core
-			 (liblcm) >= 2.0.4, ParatextData >= 9.0.9), all of which 9.0.18 clears.
-			 The pin is an observed runtime break: 9.0.17 throws
-			 TypeInitializationException on Icu.NativeMethods in the .NET Framework
-			 test host (reproduced and investigated in PR #1000). 9.0.18 has not been
-			 retested and is not known to fix it. Because no declared range blocks
-			 the bump, it is also listed under ignore: in .github/dependabot.yml.
-			 To retest: bump, run a full test.ps1, and grep the .trx for
-			 "Icu.NativeMethods" - zero hits means safe. -->
+		<!-- DependencyModel: held at 9.0.16 because 9.0.17 throws
+			 TypeInitializationException on Icu.NativeMethods in the net48 test host
+			 (PR #1000). Dependants declare floors only, so the graph cannot guard this
+			 pin; it is also ignored in .github/dependabot.yml. To retest a newer
+			 version: bump, run a full test.ps1, grep the .trx for "Icu.NativeMethods" -
+			 zero hits means safe. -->
 		<PackageVersion Include="Microsoft.Extensions.DependencyModel" Version="9.0.16" />
-		<!-- Microsoft.Extensions.DependencyInjection(.Abstractions) and
-			 Microsoft.Bcl.AsyncInterfaces: SIL.LCModel's IoC container since
-			 11.0.0-beta0176 (liblcm #393 replaced StructureMap) plus its shim dependency.
-			 Pinned so all three copies that ILRepack internalizes into
-			 FwParatextLexiconPlugin.dll are deterministic. Paratext loads that plugin in
-			 its own process where no FieldWorks binding redirect applies, so bumps here
-			 change what gets baked into the plugin - keep them in step with the versions
-			 SIL.LCModel compiles against (see liblcm SIL.LCModel.csproj). -->
+		<!-- SIL.LCModel's IoC container (since 11.0.0-beta0176) and its shim dependency.
+			 All three are ILRepack-internalized into FwParatextLexiconPlugin.dll, which
+			 Paratext loads in its own process without FieldWorks' binding redirects.
+			 Keep in step with the versions SIL.LCModel compiles against. -->
 		<PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="8.0.1" />
 		<PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.2" />
 		<PackageVersion Include="Microsoft.Bcl.AsyncInterfaces" Version="9.0.16" />
-		<!-- System.Memory: ParatextData declares >= 4.6.3 (a floor, not an exact
-			 version); other packages want 4.5.0–4.6.0. Pinned up to clear the floor. -->
+		<!-- System.Memory: ParatextData requires >= 4.6.3; other packages want
+			 4.5.0–4.6.0. -->
 		<PackageVersion Include="System.Memory" Version="4.6.3" />
 		<!-- Microsoft.Bcl.HashCode: System.Resources.Extensions requires HashCode. -->
 		<PackageVersion Include="Microsoft.Bcl.HashCode" Version="6.0.0" />
-		<!-- System.Security.Permissions (LT-22394): ProDotNetZip needs >= 8.0.0,
-			 System.Security.AccessControl needs >= 6.0.0. Pin to 9.0.18. -->
+		<!-- System.Security.Permissions (LT-22394): ProDotNetZip requires >= 8.0.0,
+			 System.Security.AccessControl >= 6.0.0. -->
 		<PackageVersion Include="System.Security.Permissions" Version="9.0.18" />
-		<!-- System.Text.Encoding.CodePages: SIL.Machine declares >= 10.0.3 and
-			 ProDotNetZip >= 8.0.0, both floors; other chains resolve to 9.0.9.
-			 Pin to 10.0.3 to clear both and match the plugin project. -->
+		<!-- System.Text.Encoding.CodePages: SIL.Machine requires >= 10.0.3,
+			 ProDotNetZip >= 8.0.0; must match the plugin project. -->
 		<PackageVersion Include="System.Text.Encoding.CodePages" Version="10.0.3" />
 	</ItemGroup>
 
