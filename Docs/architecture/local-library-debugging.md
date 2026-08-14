@@ -40,7 +40,7 @@ The script automatically registers this folder as a NuGet source in your user-le
 
 ### 3. Clone the library you need
 
-```bash
+```powershell
 git clone https://github.com/sillsdev/liblcm.git
 git clone https://github.com/sillsdev/libpalaso.git
 git clone https://github.com/sillsdev/chorus.git

@@ -3,7 +3,7 @@ name: powershell
 description: >
   PowerShell best practices for scripts used in FieldWorks (dev scripts & CI helpers).
   Use when writing or modifying PowerShell scripts in scripts/ or Build/Agent/.
-allowed-tools: "Read,Bash(pwsh:*)"
+allowed-tools: "Read,PowerShell"
 version: "1.0.0"
 ---
 
