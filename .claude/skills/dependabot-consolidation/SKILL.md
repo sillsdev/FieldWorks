@@ -7,26 +7,10 @@ argument-hint: "Optional PR numbers to combine, e.g. 1035 1036 1037"
 # Dependabot Consolidation
 
 Turn several open Dependabot pull requests into one reviewable pull request, so
-the repository pays for one CI cycle instead of one per bump.
-
-Every command below is `git` or `gh` except the optional build step, which is
-Windows only because it uses `robocopy` and `build.ps1`.
-
-## When this is the wrong tool
-
-If the complaint is that Dependabot opens too many PRs *every month*, the fix is
-the `groups:` blocks in `.github/dependabot.yml`, not this skill. Today those
-blocks put `github-actions` and `nuget` in separate groups and leave
-`github-actions` major bumps ungrouped, so a quiet month still produces three
-PRs. Say so, and offer that as separate work.
-
-This skill only combines pull requests that already exist.
-
-## Scope
-
-- In scope: open pull requests authored by `app/dependabot` against one base.
-- Out of scope: human-authored dependency PRs, even when named explicitly.
-- Out of scope: editing `.github/dependabot.yml`.
+the repository pays for one CI cycle instead of one per bump. In scope: open
+PRs authored by `app/dependabot` against one base. Out of scope: human-authored
+dependency PRs and edits to `.github/dependabot.yml` (recommend those, do not
+make them).
 
 ## Three gates
 
@@ -45,39 +29,22 @@ improvising: a dropped PR, a different base, a conflict, a red CI.
 gh pr list --author "app/dependabot" --state open --limit 100 --json number,title,baseRefName,headRefName
 ```
 
-Then:
-
-- If zero or one PR comes back, there is nothing to combine. Report and stop.
-- If the PRs target more than one base, stop and ask which base to use. Do not
-  pick one silently.
-
-Fetch once, so every later inspection is local and free. Dependabot branches
-live in this repository (it never forks), so a plain fetch is enough - no
-`refs/pull/N/head` plumbing:
+Zero or one PR: nothing to combine, report and stop. More than one base:
+stop and ask. Then fetch once - Dependabot branches live in this repository,
+so no `refs/pull/N/head` plumbing is needed:
 
 ```bash
 git fetch origin --prune
 ```
 
-Flag major bumps. They are visible in the commit trailer, not the title. Read
-the whole range, not `-1` - a PR Dependabot has force-pushed can carry more than
-one commit, and `-1` would silently miss the others' trailers:
-
-```bash
-git log --format=%B origin/<base>..origin/<headRefName>
-```
-
-A body line reading `update-type: version-update:semver-major` marks a major.
-`.github/dependabot.yml` ignores nuget majors but lets `github-actions` majors
-through, so a major in the batch is normal, not an error - it just needs to be
-visible in the plan.
-
-Count the dependencies by counting `dependency-name:` lines across all the
-trailers in that same range. That count goes in the PR title.
+Read every commit body in each PR's range (`git log --format=%B
+origin/<base>..origin/<headRefName>` - never `-1`; a force-pushed PR can carry
+several commits). From the `updated-dependencies:` trailers: count
+`dependency-name:` lines for the PR title, and flag any
+`update-type: version-update:semver-major` in the plan. A major in
+`github-actions` is normal - the config only ignores nuget majors.
 
 ## Step 2 - Gate 1: the plan
-
-Present the plan and get approval before creating anything:
 
 ```text
 Plan:
@@ -96,141 +63,65 @@ Plan:
 Proceed?
 ```
 
-Do not describe two PRs touching the same file as a conflict. File overlap is
-not conflict - two bumps in the same workflow file 150 lines apart apply
-cleanly. Conflicts are discovered by attempting the cherry-picks, in step 3.
-
-Branch name defaults to `chore/dependabot-combined-<yyyyMMdd>`. The `chore/`
-prefix is in live use on the remote but is missing from the table in
-`Docs/workflows/pull-request-workflow.md`; it matches the `Chore:` commit prefix
-that `.github/dependabot.yml` already sets.
+Do not present file overlap as conflict - overlapping files usually apply
+cleanly, and real conflicts are discovered by the cherry-picks themselves.
+Branch name: `chore/dependabot-combined-<yyyyMMdd>` (`chore/` is in live use
+on the remote even though `Docs/workflows/pull-request-workflow.md` omits it).
 
 ## Step 3 - Construct the branch
 
-Work in a dedicated worktree. `.gitignore` reserves `.claude/worktrees/*` for
-exactly this. The user's checkout is never touched, HEAD never moves under them,
-and the build lock is per-worktree so a build running elsewhere is unaffected.
+Work in a dedicated worktree; `.gitignore` reserves `.claude/worktrees/*`.
+Use a flat directory name (the branch name contains a slash) and an absolute
+path under the main repository root:
 
 ```bash
 git worktree add --no-track <mainRepo>/.claude/worktrees/dependabot-combined-<yyyyMMdd> -b <branch> origin/<base>
 ```
 
-`--no-track` matters: without it the new branch tracks `origin/<base>`, so
-`git status` reports it as ahead of main and a stray `git pull` would rebase it.
+`--no-track` prevents the branch tracking `origin/<base>` (else `git status`
+reads "ahead of main" and a stray `git pull` rebases it). Branching off current
+`origin/<base>` makes Dependabot-branch staleness a non-issue.
 
-Use a flat directory name, not the branch name - the branch contains a slash,
-which would nest the worktree under `.claude/worktrees/chore/` and leave an
-empty directory behind on removal. Give the absolute path under the main
-repository root, since the command may be run from inside another worktree.
+For each PR in ascending order, for each of its commits in order:
+`git cherry-pick <sha>`, then `git commit --amend -F <msgfile>` when the
+message needs rewriting. `--amend` preserves the original author and date.
+Write `<msgfile>` with the Write tool, never a shell heredoc (PowerShell 5.1
+mangles the backticks and quotes these bodies contain).
 
-Branching off current `origin/<base>` is what makes staleness a non-issue -
-Dependabot PRs are often weeks old and their existing CI results are worthless.
-
-For each PR in ascending number order, for each of its commits in order:
-
-```bash
-git -C <wt> log --reverse --format=%H origin/<base>..origin/<headRefName>
-```
-```bash
-git -C <wt> log -1 --format=%B <sha>
-```
-```bash
-git -C <wt> cherry-pick <sha>
-```
-```bash
-git -C <wt> commit --amend -F <msgfile>
-```
-
-`--amend` preserves the original author and author date, so Dependabot stays the
-author with no `--author` or `--date` juggling. Write `<msgfile>` with the Write
-tool rather than a shell heredoc - these bodies contain backticks and quotes
-that break under PowerShell 5.1 quoting.
+**On conflict, abort the whole run**: `cherry-pick --abort`, remove the
+worktree, delete the branch, and report the conflicting PR, the paths, and the
+exact retry command with that PR excluded.
 
 ### Rewriting the message
 
-Dependabot bodies fail the CI commit-message check on B1, body line length 80,
-and the violation is narrowly the markdown link lines.
+Dependabot bodies fail gitlint's B1 (body line <= 80) on their markdown link
+lines, and Dependabot writes at least three body formats - read the actual
+body, never pattern-match on one form:
 
-Dependabot writes at least three different body formats, so do not pattern-match
-on one of them. Read the actual body first:
+- **nuget group**: `Bumps <name> from A to B` prose lines, no links. Already
+  compliant - do not amend at all.
+- **actions group**: a `Bumps the <group> with N updates: [a](url)...` summary,
+  ``Updates `name` from A to B`` lines, and link bullets.
+- **single dependency**: one `Bumps [name](url) from A to B.` line plus link
+  bullets - the only prose naming the dependency.
 
-- **nuget group** - `Bumps <name> from A to B` prose lines, no links. Already
-  compliant. Change nothing and skip the amend entirely.
-- **actions group** - a `Bumps the <group> with N updates: [a](url) and [b](url).`
-  summary followed by ``Updates `name` from A to B`` lines and link bullets.
-- **single dependency** - one `Bumps [name](url) from A to B.` line plus link
-  bullets, and that line is the only prose naming the dependency.
-
-Apply these in order, and never delete a line whose information is not preserved
-somewhere else in the message:
+Apply in order, never deleting a line whose information survives nowhere else:
 
 1. Delete every `- [Release notes](url)` / `- [Changelog](url)` /
-   `- [Commits](url)` bullet. Pure noise, always long.
-2. In the surviving lines, strip markdown link syntax: `[text](url)` becomes
-   `text`. This alone brings the single-dependency form under 80 and normalizes
-   it to the same shape nuget already uses.
-3. Delete a line that is still over 80 only when it is a group summary whose
-   contents are restated by the per-dependency lines below it. If a still-long
-   line is the only place a dependency is named, stop and ask rather than
-   dropping it.
-4. Keep every ``Updates `name` from A to B`` and `Bumps <name> from A to B` line.
-5. Keep the `---` separator, the whole `updated-dependencies:` trailer, the
-   closing `...`, and the `Signed-off-by:` line. All are under 80, and the
-   trailer is machine-readable metadata worth preserving.
-6. Collapse runs of blank lines to one.
+   `- [Commits](url)` bullet.
+2. Strip markdown links in surviving lines: `[text](url)` becomes `text`.
+3. Delete a still-long line only if it is a group summary restated by the
+   per-dependency lines below; if it is the only place a dependency is named,
+   stop and ask.
+4. Keep every `Updates ...` / `Bumps ...` dependency line, the `---`
+   separator, the whole `updated-dependencies:` trailer with its closing
+   `...`, and `Signed-off-by:`.
+5. Collapse blank-line runs to one.
 
-If a body already satisfies every rule, leave it byte-identical and do not amend
-that commit. Rewriting a compliant message is churn with a chance of loss.
-
-Then assert, before committing: subject is 72 characters or fewer, no trailing
-punctuation, second line blank, every body line 80 characters or fewer, no hard
-tabs, no trailing whitespace. If an assertion fails, stop - do not push
-something the commit-message check will reject.
-
-Result for #1035, verbatim. The trailing `...` is Dependabot's YAML terminator,
-not an elision - keep it:
-
-```text
-Chore: Bump the actions-minor group with 2 updates
-
-Updates `softprops/action-gh-release` from 3.0.1 to 3.0.2
-Updates `lycheeverse/lychee-action` from 2.8.0 to 2.9.0
-
----
-updated-dependencies:
-- dependency-name: softprops/action-gh-release
-  dependency-version: 3.0.2
-  dependency-type: direct:production
-  update-type: version-update:semver-patch
-  dependency-group: actions-minor
-- dependency-name: lycheeverse/lychee-action
-  dependency-version: 2.9.0
-  dependency-type: direct:production
-  update-type: version-update:semver-minor
-  dependency-group: actions-minor
-...
-
-Signed-off-by: dependabot[bot] <support@github.com>
-```
-
-### On conflict
-
-Any conflict aborts the whole run:
-
-```bash
-git -C <wt> cherry-pick --abort
-```
-```bash
-git worktree remove --force <wt> && git branch -D <branch>
-```
-
-Report the PR that conflicted, the conflicting paths, and the exact retry
-command with that PR excluded, so the retry is one command rather than a
-re-diagnosis.
+Before committing, assert: subject <= 72, no trailing punctuation, blank
+second line, body lines <= 80, no hard tabs, no trailing whitespace.
 
 ## Step 4 - Verify locally
-
-Always, in the worktree:
 
 ```bash
 git -C <wt> log --check --pretty=format:"---% h% s" origin/<base>..
@@ -239,219 +130,131 @@ git -C <wt> log --check --pretty=format:"---% h% s" origin/<base>..
 gitlint --ignore body-is-missing --commits origin/<base>..
 ```
 
-`gitlint` is the exact tool CI runs, so there are no rules to reimplement and
-drift. If it is not on PATH, report that, point at the documented install in
-`.github/commit-guidelines.md`, and fall back to reading
-`git log --format=%B origin/<base>..` and checking T1, T3, B1, B4, hard tabs,
-and trailing whitespace directly. Do not pip install anything without asking.
+`gitlint` is the exact tool CI runs. If absent, point at the install in
+`.github/commit-guidelines.md` and check the rules directly (do not pip
+install without asking). When checking directly, **a check that cannot execute
+is a failure, not a pass** - e.g. `grep -P` dies outside UTF-8 locales in Git
+Bash and reports nothing; prefer `grep -q "$(printf '\t')"` and confirm each
+check ran.
 
-When falling back, a check that cannot execute is a failure, not a pass. Git
-Bash on Windows rejects `grep -P` outside UTF-8 locales, so a tab check written
-that way exits non-zero and silently reports nothing wrong. Prefer
-`grep -q "$(printf '\t')"`, and confirm each check actually ran before reporting
-the result.
+### Check for deliberate pins before accepting any package bump
 
-### Check for deliberate pins - do this before anything else
+Dependabot cannot tell a dependency from a pin. Read the comment block above
+every changed `PackageVersion`/version-property line
+(`git diff -U6 origin/<base>..HEAD -- Directory.Packages.props
+Build/Src/Directory.Packages.props Build/SilVersions.props`). Stop on any
+comment that names a version, says pin/stays/do-not-bump, cites a PR or issue,
+or gives a retest procedure. Then classify:
 
-Dependabot cannot tell a dependency from a pin. `Directory.Packages.props` has a
-`Transitive Pins` block whose entries exist specifically to hold a version, each
-documented by a comment above it, and Dependabot will happily bump them and
-leave the comment behind saying the opposite.
+- **Constraint-driven** (comment cites a range): verify from the depending
+  package's `.nuspec` under `packages/`. Unbracketed `version="X"` is a floor -
+  bumping above it is always safe (pinning too LOW is what causes NU1109);
+  bracketed `[X]`/`[X,Y)` ranges are the only blocking kind and are rare.
+  Take a floor-cleared bump; refresh a comment that names a stale number.
+- **Empirically-driven** (pinned because a version was observed to break
+  something, e.g. `Microsoft.Extensions.DependencyModel` at 9.0.16 from
+  PR #1000): no manifest expresses this, so the graph will never block it -
+  these belong in dependabot's `ignore:` list. Never clear one on a green CI:
+  PR #984 was green at the documented-broken version, so CI is not evidence
+  either way. Only the pin's own retest procedure counts, and the procedure
+  must first be validated against the known-bad version (a positive control);
+  if the known-bad version also passes, the repro is lost - keep the pin,
+  report that, and never declare the bump safe. Re-run any suspected failure
+  before attributing it to a bump; flaky tests mimic signal.
 
-This is not hypothetical. PR #1000 held `Microsoft.Extensions.DependencyModel`
-at 9.0.16 after reproducing a `TypeInitializationException` on
-`Icu.NativeMethods` in the .NET Framework test host, and wrote the reason into
-the file. The next monthly batch proposed bumping it again.
+Two more structural checks, both silent when violated:
 
-For every changed `PackageVersion` / `PackageReference` / version property line,
-read the comment block immediately above it:
+- **No property-to-literal rewrites**: ~a third of root entries read
+  `Version="$(SilLcmVersion)"` etc. with the value in `Build/SilVersions.props`.
+  `git diff ... | grep -E '^[-+].*Version="\$\('` - any hit needs a look.
+- **Build/Src layering**: `Build/Src/Directory.Packages.props` imports the root
+  and layers `Include` (build-only packages) / `Update` (overrides a root pin),
+  so one package can be deliberately at two versions (DependencyModel 9.0.16
+  root / 2.1.0 Build/Src; Microsoft.Bcl.AsyncInterfaces 9.0.16 root / 10.0.4
+  Build/Src). When a changed package appears in both files, say which sites
+  moved. `Build/Src/NativeBuild/NativeBuild.csproj` is the only CPM opt-out; a
+  literal version in any other csproj is a violation, not a bump.
 
-```bash
-git -C <wt> diff -U6 origin/<base>..HEAD -- Directory.Packages.props Build/Src/Directory.Packages.props Build/SilVersions.props
-```
+Second-order: a batch can bump a pinned package AND the package whose comment
+justifies the pin (ParatextData is in Dependabot's scope). Re-derive ranges
+from the new `.nuspec`, not the comment.
 
-Stop and ask if a nearby comment does any of these:
+### Anticipate Paratext integration impact
 
-- names a specific version (`Pin to 9.0.17`, `stays at 9.0.16`)
-- uses the words pin, pinned, stays, hold, do not bump, intentionally
-- cites a PR or issue explaining why the current version was chosen
-- gives a retest procedure
+Paratext loads the ILRepack-merged `FwParatextLexiconPlugin.dll` into its own
+net48 process, where FieldWorks' binding redirects do not apply and the
+plugin's config carries only dllmaps. External references resolve there at
+exact strong-name versions or through a version-ignoring fallback over
+Paratext's own directory - so a bump can break or silently downgrade the
+plugin inside Paratext while every FieldWorks build and test stays green.
+Nothing in CI covers this; the merged plugin first executes inside a real
+Paratext.
 
-#### Verify the claim instead of trusting the comment
+This skill does not fix Paratext-contract breaks; it anticipates them. Treat a
+batch as Paratext-sensitive when it touches any of: `SIL.LCModel*`, `SIL.Core*`
+or the other SIL packages internalized by
+`Src/FwParatextLexiconPlugin/ILRepack.targets`, `ParatextData`, `SIL.Machine*`,
+`icu.net`, `CommonServiceLocator`, or the packages pinned "so the copies
+ILRepack internalizes are deterministic"
+(`Microsoft.Extensions.DependencyInjection*`, `Microsoft.Bcl.AsyncInterfaces`).
+Then:
 
-A comment naming an external dependency ("ParatextData 9.5.x requires >= 9.0.9")
-is checkable, and checking it usually clears the bump. The depending package's
-own manifest states the range:
+1. Say in the plan (gate 1) that the batch is Paratext-sensitive and why.
+2. After the local build, diff the merged plugin's external references between
+   the base build and the branch build - run this against each and compare:
 
-```bash
-ls -d packages/<DependingPackage>/*/ | head -1        # resolve the cached version
-grep -oE '<dependency id="<PinnedPackage>"[^/]*/>' packages/<DependingPackage>/<ver>/*.nuspec
-```
+   ```bash
+   powershell -Command "[System.Reflection.Assembly]::ReflectionOnlyLoadFrom('<dir>\Output\Debug\FwParatextLexiconPlugin.dll').GetReferencedAssemblies() | Sort-Object Name | ForEach-Object { \"$($_.Name) $($_.Version)\" }"
+   ```
 
-Read the result by NuGet's rules:
-
-- `version="9.0.9"` is a **floor** - any version at or above it satisfies the
-  dependant. Bumping up cannot violate it.
-- `version="[4.6.3]"` or `version="[9.0.0,10.0.0)"` is **exact or capped** - a
-  bump can violate it. These are rare; exactly one exists across this
-  repository's whole package cache.
-
-With `CentralPackageTransitivePinningEnabled`, the pin forces one version on
-every project, so it must sit at or above every floor. The failure mode is
-pinning too *low*, which is `NU1109` - the `HarfBuzzSharp` comment documents
-exactly that. So a bump above a floor is safe by construction, and a comment
-citing a floor is not a reason to revert.
-
-This distinction matters, because it splits pins into two kinds:
-
-- **Constraint-driven** - the comment cites a range. Verifiable from the
-  `.nuspec`, and almost always satisfied by the bump. Take the bump; refresh the
-  comment if it names a stale number.
-- **Empirically-driven** - the pin exists because a higher version was observed
-  to break something. No manifest expresses this, so no amount of graph analysis
-  finds it. `Microsoft.Extensions.DependencyModel` is held at 9.0.16 for exactly
-  this reason while every declared range would permit 9.0.18.
-
-Only the empirical kind needs an `ignore:` entry in `.github/dependabot.yml`,
-and it needs one precisely because the package graph will never block it.
-
-A retest procedure written into a comment is not self-validating. Before
-concluding that a new version clears an empirical pin, run the same procedure
-against the version the comment says is broken. If the known-bad version also
-passes, the procedure has no demonstrated sensitivity here and proves nothing
-about the new one - report that, and leave the pin alone. This is not
-hypothetical: `Microsoft.Extensions.DependencyModel` 9.0.17 produces zero
-`Icu.NativeMethods` hits both on a current checkout and on the PR #1000 tree it
-was recorded against, with that PR's own SIL.LCModel and LibPalaso versions
-restored. The documented grep cannot distinguish a good version from the one it
-was written to catch, so nothing it reports can move that pin either way.
-
-The general rule: an unreproducible justification is a reason to keep a pin and
-stop proposing bumps against it, not a reason to declare the bump safe.
-
-Beware flaky failures masquerading as a signal. A control run here showed two
-`FwNewLangProjectModelTests` failures over shared writing-system repository
-state that passed on retry. Re-run a suspected failure before attributing it to
-a bump.
-
-Watch for the second-order case: the external package can itself be bumped in
-the same batch. `ParatextData` is in the manifest and in Dependabot's scope, so
-its floors - and every comment quoting them - can move. When a batch bumps both
-a pinned package and something that depends on it, re-derive the range from the
-new version's `.nuspec` rather than from the comment.
-
-Two distinct outcomes, and do not conflate them:
-
-- **The comment forbids the bump.** Drop that single line from the pick, keeping
-  the rest of the batch, and say so in the plan and the PR body. Do not restore
-  it silently, and never argue from a green CI. PR #984 proposed
-  `Microsoft.Extensions.DependencyModel` 9.0.17 - the version documented as
-  breaking ICU initialization - and its `Build Debug and run tests` job passed.
-  CI cannot see this class of failure at all, so a green run is not evidence
-  either way. Only the pin's own retest procedure settles it.
-- **The comment merely names the old version.** The bump is fine, but the
-  comment is now false. Update the comment in the same commit.
-
-A recurring pin belongs in the `ignore:` block of `.github/dependabot.yml` so it
-stops being proposed every month. That is a config change outside this skill -
-recommend it, do not make it.
-
-### Two more package-manifest checks
-
-Central package management here has structure Dependabot does not model. Both
-of these are cheap, and both fail silently.
-
-**A version property must not become a literal.** Around a third of the root
-entries read `Version="$(SilLcmVersion)"` or `Version="$(SilLibPalasoVersion)"`
-rather than a number, with the real value in `Build/SilVersions.props`. The
-correct bump edits the property. A diff that rewrites one of these into a
-literal has broken the single source of truth for every package sharing it:
-
-```bash
-git -C <wt> diff origin/<base>..HEAD -- Directory.Packages.props Build/Src/Directory.Packages.props | grep -E '^[-+].*Version="\$\('
-```
-
-Any hit needs a look. No hits means no property reference was disturbed.
-
-**The Build/Src layering invariant must survive.** `Build/Src/Directory.Packages.props`
-imports the root file and layers deltas: `Include` for build-only packages
-absent from the root, `Update` to override a root pin. A package can therefore
-be declared twice with different versions on purpose - today
-`Microsoft.Extensions.DependencyModel` is 9.0.16 at the root and 2.1.0 in
-Build/Src. Bumping one site and not the other widens a deliberate split, so
-when a changed package appears in both files, say which sites moved.
-
-Note also that `Build/Src/NativeBuild/NativeBuild.csproj` sets
-`ManagePackageVersionsCentrally=false` and carries its own
-`PackageReference ... Version=` entries. They are property-driven, so
-`SilVersions.props` edits reach them. It is the only project in the repository
-that opts out; a literal version appearing in any other `.csproj` is a
-central-package-management violation, not a bump to pass along.
+3. Report any difference to the user and stop there: an added or
+   version-shifted strong-named reference is a change to what Paratext's
+   process must resolve. New externals usually mean a package swapped its
+   internals (as liblcm's StructureMap-to-DI swap did); the fix - extending
+   the ILRepack list or adjusting pins - is deliberate follow-up work with its
+   own verification, not part of this run.
+4. `ParatextData` bumps deserve a release-notes read even when green:
+   `ParatextDataIntegrationTests` self-skips without an installed Paratext,
+   so CI coverage of that package is partial.
+5. When a batch changed what gets internalized into the plugin, recommend a
+   manual smoke of the lexicon plugin inside a real Paratext before release -
+   there is no automated coverage of the merged assembly anywhere.
 
 ### Build, only when the batch touches packages
 
 If any picked commit touches `*.props`, `*.json`, or another package manifest,
-build. A `nuget-minor` group matches `patterns: ["*"]`, so it can carry
-`Microsoft.Build.Utilities.Core`, which `FwBuildTasks` itself compiles against,
-or a test-only package like NUnit that a product-only build would miss.
-
-A fresh worktree has no `Output/`, so seed it first. A nuget bump cannot
-invalidate native binaries - it only touches managed-side manifests - so native
-output copied from any recent build of the same configuration stays valid:
+build - the nuget group matches `*`, so it can carry build-critical
+(`Microsoft.Build.Utilities.Core` backs FwBuildTasks) or test-only packages.
+Seed native artifacts first (a nuget bump cannot invalidate them), noting
+robocopy's exit codes 0-7 all mean success:
 
 ```bash
 robocopy <mainRepo>\Output\<Config> <wt>\Output\<Config> /E /NFL /NDL /NJH /NJS /R:1 /W:1
 ```
 
-`robocopy` returns 1 when it successfully copies files. Treat 0 through 7 as
-success and only 8 or higher as failure, or a working seed will be reported as
-a broken one.
-
-`build.ps1` needs `vswhere.exe` on PATH, and it is not there by default in a
-worktree. Prepend the installer directory in the same invocation, since shell
-state does not persist between calls:
+`build.ps1` needs `vswhere.exe`; prepend its directory in the same invocation:
 
 ```bash
 $env:PATH = "$env:PATH;C:\Program Files (x86)\Microsoft Visual Studio\Installer"
 ```
-
-Then, from the worktree:
-
 ```bash
 .\build.ps1 -BuildTests -SkipNative -StartedBy agent
 ```
 
-`-BuildTests` compiles test projects without running them. Running the suite
-duplicates what CI will do on the PR. If the main checkout has no built output
-to seed from, run `.\build.ps1 -BuildTests` and accept the native build.
-
-With the seed in place this is cheap - about 90 seconds for product plus test
-projects. Do not talk the user out of it on cost grounds; the expensive path is
-only the unseeded native build.
-
-For an actions-only batch, skip this entirely. A local build says nothing about
-a change to workflow YAML.
-
-The local build is a smoke test, not a stand-in for CI. If it prints
-`Local library packages detected in ...`, a developer package folder is
-shadowing upstream NuGet packages during restore, so what resolved locally may
-not be what CI resolves. This bites hardest on the SIL packages, which are the
-most likely to have local overrides and are routinely in the nuget group.
-
-Do not just warn about it - check. Confirm the bumped versions are the ones that
-actually restored:
+With the seed this is ~90 seconds, so never skip it on cost grounds; only the
+unseeded native fallback is expensive. Afterward confirm the bumped versions
+actually restored rather than being shadowed by `LocalDevPackages`:
 
 ```bash
 find <wt> -name project.assets.json | xargs grep -ohE '"SIL\.(Core|LCModel)/[0-9][^"]*"' | sort -u
 ```
 
-Compare against the versions in the picked commits. If they disagree, a local
-package shadowed the bump, the build proved nothing about it, and the report
-must say so.
+If resolved versions disagree with the picked commits, the build proved
+nothing about the bump - say so. For an actions-only batch skip the build
+entirely; it says nothing about workflow YAML. Either way the local build is a
+smoke test, not a stand-in for CI.
 
 ## Step 5 - Gate 2: push and open
-
-After approval:
 
 ```bash
 git -C <wt> push -u origin <branch>
@@ -460,35 +263,16 @@ git -C <wt> push -u origin <branch>
 gh pr create --base <base> --head <branch> --title "..." --body-file <file> --label dependencies
 ```
 
-Open it ready, not draft - the `pull_request` trigger has no `types:` filter, so
-a draft runs CI anyway and buys only an extra step.
-
-Write a purpose-built body rather than `.github/pull_request_template.md`, with
-`--body-file` so quoting is never an issue. Five sections, in this order:
-
-1. **Opening** - what it combines and the reason: one CI cycle instead of N.
-2. **How it was built** - original Dependabot commits cherry-picked onto current
-   `main`, author and date preserved; which bodies were trimmed and why, and
-   which were already compliant and left byte-identical.
-3. **Includes table** - one row per source PR, with the actual old -> new
-   versions, not just a count.
-4. **Major callout** - name any major bump in prose as the one change worth a
-   close look. Do not leave it as a parenthetical in a table cell.
-5. **Validation** - what was verified locally, itemized and specific, and what
-   was not. Do not claim a local build that did not run. If the batch included
-   packages, state that the resolved versions were confirmed against
-   `project.assets.json` rather than shadowed by local dev packages.
-
-Then a reviewer note explaining why the source PRs look red, because a reviewer
-who checks them will otherwise assume the bumps are broken:
-
-```markdown
-Note for reviewers: the three source PRs all show a red `Build Debug and run
-tests`, but the failing step is `Verify Codecov upload succeeded` - Dependabot
-PRs do not receive `secrets.CODECOV_TOKEN`, so they cannot go green regardless
-of the bumps. Their tests passed. This PR runs from a repository-owned branch
-and should not hit that.
-```
+Open ready, not draft (drafts run CI anyway). Write a purpose-built body with
+`--body-file`, not the PR template: what it combines and why (one CI cycle
+instead of N); how it was built (original commits cherry-picked onto current
+main, authors preserved, which bodies were trimmed and which left
+byte-identical); a table of actual old -> new versions per source PR; any
+major bump called out in prose; and an itemized what-was-verified /
+what-was-not section - never claim a build that did not run. Add the reviewer
+note that Dependabot PRs show red `Build Debug and run tests` because they
+cannot read `secrets.CODECOV_TOKEN`, while this PR runs from a repo-owned
+branch.
 
 ## Step 6 - Wait for CI
 
@@ -496,21 +280,12 @@ and should not hit that.
 gh pr checks <new> --watch --interval 30
 ```
 
-Run it in the background so the turn is not blocked and the user can interject.
-It exits non-zero when any check fails, which is a verdict, not a tool error -
-read the output, not just the exit code. A full cycle here is roughly 13 minutes.
+Run it in the background; it exits non-zero on any failed check - that is a
+verdict, not a tool error. A full cycle is roughly 13 minutes.
 
-**If CI is red:** report and stop. Name the failing job, step, and log URL, and
-say whether it reads as a dependency failure or as infrastructure. Leave the
-combined PR and every original open and untouched. Do not close anything, do not
-guess which of the bumps caused it, do not re-run.
-
-Note for triage: a Dependabot PR in this repository can never go green on its
-own. `CI.yml` passes `secrets.CODECOV_TOKEN` to the coverage upload, Dependabot
-PRs do not receive repository secrets, and `Verify Codecov upload succeeded`
-fails even when every test passes. The combined PR is pushed from a
-repository-owned branch, so that specific failure should not appear on it - if
-it does, it is infrastructure, not a bump.
+**If CI is red**: report the failing job, step, and log URL, say whether it
+reads as a dependency failure or infrastructure, leave everything open, and
+stop. Do not guess which bump caused it and do not re-run.
 
 ## Step 7 - Gate 3: close the superseded PRs
 
@@ -520,19 +295,11 @@ Only after CI is green, and only after asking:
 gh pr close <N> --comment "Superseded by #<new>."
 ```
 
-One call per original. Closing before green would be closing on a promise;
-closing after green loses nothing, and `gh pr reopen <N>` remains available.
-
-Then remove the worktree:
-
-```bash
-git worktree remove <wt>
-```
+Then `git worktree remove <wt>`.
 
 ## Final report
 
-- The combined PR number and URL.
-- Which PRs went in, and any that were excluded and why.
-- What was verified locally and what was left to CI.
-- The CI verdict.
+- Combined PR number and URL; which PRs went in, which were excluded and why.
+- What was verified locally and what was left to CI; CI verdict.
+- Paratext-sensitivity assessment and contract-test verdict, when applicable.
 - Which originals were closed.
