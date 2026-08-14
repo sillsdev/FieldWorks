@@ -519,9 +519,11 @@ STDMETHODIMP LgLineBreaker::put_LineBreakText(OLECHAR * prgchIn, int cch)
 	SetupBreakIterator(); //make sure we have one.
 
 	m_cchBrkMax = cch;
-	// The break iterator retains a reference to m_usBrkIt, and prgchIn is a transient,
-	// unterminated buffer, so copy it by explicit length (cch), never alias it or
-	// scan for a terminator.
+	// The break iterator retains a reference to m_usBrkIt, and prgchIn is a transient
+	// buffer with no NUL terminator, so store a length-bounded copy, never an alias.
+	// The copy must take its length from cch rather than a terminator scan; the
+	// (text, textLength) constructor is ICU's only copying wchar_t overload that
+	// takes an explicit length.
 	m_usBrkIt = UnicodeString(prgchIn, cch);
 	m_pBrkit->setText(m_usBrkIt);
 

@@ -194,7 +194,7 @@ namespace XMLViewsTests
 			bool hasHiddenTracking = hiddenNodes.Count > 0;
 			Assert.That(hasHiddenTracking, Is.True, "Sentinel <hidden/> should enable hidden tracking");
 
-			// Collect hidden labels -- sentinel has no label, so hiddenLabels should be empty
+			// Collect hidden labels — sentinel has no label, so hiddenLabels should be empty
 			var hiddenLabels = new HashSet<string>();
 			foreach (XmlNode hidden in hiddenNodes)
 			{

@@ -325,7 +325,7 @@ namespace XCore
 
 		/// <summary>
 		/// The main window owning this property table (each main window registers itself under
-		/// "window" in its own table), or null when unavailable -- a private or test property
+		/// "window" in its own table), or null when unavailable — a private or test property
 		/// table, or early window construction. Being an IxWindow, the result also serves as the
 		/// Pub/Sub delivery scope; a null scope means process-wide delivery, so "unavailable"
 		/// can only widen delivery, never lose a message.

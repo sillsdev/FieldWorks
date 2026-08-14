@@ -921,7 +921,7 @@ namespace SIL.FieldWorks.XWorks
 		public void BetweenContentOnceForMultipleVariantTypesGroups()
 		{
 			// LT-22517: When an entry has variants of two different types, the Between text on the
-			// VariantEntryTypesRS node should appear exactly once -- between the two type groups --
+			// VariantEntryTypesRS node should appear exactly once — between the two type groups —
 			// and not before the first group.
 			const string betweenText = "BETWEEN_VARIANT_TYPES";
 			const string secondVariantType = "Spelling Variant";
@@ -930,7 +930,7 @@ namespace SIL.FieldWorks.XWorks
 			var mainEntry = ConfiguredXHTMLGeneratorTests.CreateInterestingLexEntry(Cache);
 			var variantForm1 = ConfiguredXHTMLGeneratorTests.CreateInterestingLexEntry(Cache);
 			var variantForm2 = ConfiguredXHTMLGeneratorTests.CreateInterestingLexEntry(Cache);
-			// Two variants of different types -> two type groups in the output.
+			// Two variants of different types → two type groups in the output.
 			ConfiguredXHTMLGeneratorTests.CreateVariantForm(Cache, mainEntry, variantForm1); // "Crazy Variant" (TestVariantName)
 			ConfiguredXHTMLGeneratorTests.CreateVariantForm(Cache, mainEntry, variantForm2, secondVariantType);
 
@@ -978,7 +978,7 @@ namespace SIL.FieldWorks.XWorks
 			var result = ConfiguredLcmGenerator.GenerateContentForEntry(mainEntry, mainEntryNode, null, DefaultSettings, 0) as DocFragment;
 			var outXml = result.DocBody.OuterXml;
 
-			// Between text should appear exactly once -- between the two groups, not before the first.
+			// Between text should appear exactly once — between the two groups, not before the first.
 			Assert.That(Regex.Matches(outXml, betweenText).Count, Is.EqualTo(1),
 				"Between text should appear exactly once, between the two variant type groups");
 		}
@@ -1100,10 +1100,10 @@ namespace SIL.FieldWorks.XWorks
 			var result = ConfiguredLcmGenerator.GenerateContentForEntry(mainEntry, mainEntryNode, null, DefaultSettings, 0) as DocFragment;
 			var outXml = result.DocBody.OuterXml;
 
-			// Before text should appear exactly once -- only before the first group.
+			// Before text should appear exactly once — only before the first group.
 			Assert.That(Regex.Matches(outXml, beforeText).Count, Is.EqualTo(1),
 				"Before text should appear exactly once, only before the first variant type group");
-			// Between text should appear exactly once -- between the two groups.
+			// Between text should appear exactly once — between the two groups.
 			Assert.That(Regex.Matches(outXml, betweenText).Count, Is.EqualTo(1),
 				"Between text should appear exactly once, between the two variant type groups");
 			// Before text must appear earlier in the output than Between text:

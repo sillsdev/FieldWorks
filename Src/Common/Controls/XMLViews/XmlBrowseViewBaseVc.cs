@@ -249,7 +249,7 @@ namespace SIL.FieldWorks.Common.Controls
 					if (!hasHiddenTracking)
 					{
 						// Bootstrap: no hidden tracking yet (pre-upgrade save).
-						// Don't auto-add anything -- all missing columns are presumed
+						// Don't auto-add anything — all missing columns are presumed
 						// deliberately removed. They'll be properly tracked on next save.
 						continue;
 					}
