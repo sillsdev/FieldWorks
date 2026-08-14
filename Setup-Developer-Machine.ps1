@@ -9,9 +9,10 @@
 #   .\Setup-Developer-Machine.ps1 -WhatIf            # Show what would be installed
 #
 # Prerequisites (must be installed manually):
-#   - Visual Studio 2022 with:
+#   - Visual Studio 2026 (preferred) or 2022 with:
 #	 - .NET desktop development workload
 #	 - Desktop development with C++ workload (including ATL/MFC)
+#	 (the repo-root .vsconfig lists the exact workloads/components)
 #   - Git for Windows
 #
 # Note: Serena MCP language servers (Microsoft's Roslyn C# server and clangd for C++)
@@ -57,20 +58,21 @@ if ($git) {
 	exit 1
 }
 
-# Check Visual Studio 2022
+# Check Visual Studio (newest installed within the supported range wins)
 if (-not $SkipVSCheck) {
 	$vsToolchain = Get-VsToolchainInfo -Requires @('Microsoft.Component.MSBuild', 'Microsoft.VisualStudio.Component.VC.Tools.x86.x64')
 	if ($vsToolchain) {
-		$vsVersion = if ([string]::IsNullOrWhiteSpace($vsToolchain.DisplayVersion)) { 'unknown version' } else { $vsToolchain.DisplayVersion }
-		Write-Host "[OK] Visual Studio 2022: $vsVersion" -ForegroundColor Green
+		Write-Host "[OK] $($vsToolchain.DisplayLabel)" -ForegroundColor Green
 		Write-Host "     Location: $($vsToolchain.InstallationPath)" -ForegroundColor Gray
+		Write-Host "     PlatformToolset: $($vsToolchain.PlatformToolset)" -ForegroundColor Gray
 	} elseif (Get-VsWherePath) {
-		Write-Host "[MISSING] Visual Studio 2022 - Please install with:" -ForegroundColor Red
+		Write-Host "[MISSING] Visual Studio 2026 (preferred) or 2022 - Please install with:" -ForegroundColor Red
 		Write-Host "         - .NET desktop development workload" -ForegroundColor Red
 		Write-Host "         - Desktop development with C++ workload" -ForegroundColor Red
+		Write-Host "         (open the repo-root .vsconfig in the Visual Studio Installer to select everything)" -ForegroundColor Red
 		exit 1
 	} else {
-		Write-Host "[MISSING] Visual Studio 2022 - Please install from https://visualstudio.microsoft.com/" -ForegroundColor Red
+		Write-Host "[MISSING] Visual Studio 2026 (preferred) or 2022 - Please install from https://visualstudio.microsoft.com/" -ForegroundColor Red
 		exit 1
 	}
 }
@@ -240,7 +242,7 @@ Write-Host "`n--- Configuring PATH ---" -ForegroundColor Yellow
 
 $pathsToAdd = @()
 
-# VSTest (Visual Studio 2022)
+# VSTest (from the selected Visual Studio)
 if (-not $vsToolchain -and -not $SkipVSCheck) {
 	$vsToolchain = Get-VsToolchainInfo -Requires @('Microsoft.Component.MSBuild', 'Microsoft.VisualStudio.Component.VC.Tools.x86.x64')
 }

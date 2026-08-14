@@ -1,25 +1,34 @@
 # Set Up Visual Studio for FieldWorks Development on Windows
 
-This guide covers the Visual Studio 2022 setup required for FieldWorks development.
+This guide covers the Visual Studio setup required for FieldWorks development.
+FieldWorks builds with Visual Studio 2026 or 2022. When both are installed, the build
+uses the newest; `Build/FieldWorks.Toolchain.props` defines the supported version range
+and the MSVC toolset each Visual Studio uses (v145 under 2026, v143 under 2022).
 
 > `$FWROOT` in this document refers to the root directory of the FieldWorks source tree (where you cloned the repository).
 
-## Install Visual Studio 2022
+## Install Visual Studio
 
-1. **Download Visual Studio 2022 Community Edition** (or Professional/Enterprise):
-   - Go to [https://aka.ms/vs/17/release/vs_community.exe](https://aka.ms/vs/17/release/vs_community.exe)
-   - Download and run the installer
+1. **Download Visual Studio Community Edition** (or Professional/Enterprise):
+   - Visual Studio 2026 (preferred): [https://visualstudio.microsoft.com/downloads/](https://visualstudio.microsoft.com/downloads/)
+   - Visual Studio 2022: [https://aka.ms/vs/17/release/vs_community.exe](https://aka.ms/vs/17/release/vs_community.exe)
 
-2. **Select the following Workloads:**
-   - ✅ **.NET desktop development**
-   - ✅ **Desktop development with C++**
+2. **Select workloads and components.** The simplest way is to import the repo's
+   `.vsconfig`: in the Visual Studio Installer choose **More -> Import configuration**
+   and select `$FWROOT\.vsconfig`. (Opening the solution in Visual Studio also prompts
+   to install anything missing.) The equivalent manual selections:
 
-3. **Select the following Individual Components:**
-   - ✅ C++ ATL for latest v143 build tools (x86 & x64)
-   - ✅ C++ MFC for latest v143 build tools (x86 & x64)
-   - ✅ Windows 11 SDK (10.0.22621.0)
-   - ✅ .NET Framework 4.8.1 SDK
-   - ✅ .NET Framework 4.8.1 targeting pack
+   Workloads:
+   - **.NET desktop development**
+   - **Desktop development with C++**
+
+   Individual components:
+   - MSVC C++ x64/x86 build tools (latest for your Visual Studio: v145 in 2026, v143 in 2022)
+   - C++ ATL for the latest build tools (x86 & x64)
+   - C++ MFC for the latest build tools (x86 & x64)
+   - Windows 11 SDK (10.0.22621.0 or newer)
+   - .NET Framework 4.8 SDK
+   - .NET Framework 4.8 targeting pack
 
 ## Configure Visual Studio Settings
 

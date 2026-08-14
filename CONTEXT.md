@@ -46,6 +46,9 @@ It is intentionally not a full architecture manual. It should stay biased toward
 - **FwKernel** and **Views**: Native rendering and view infrastructure.
 - **ViewsInterfaces**: The managed interface layer generated from native IDL and used across the managed/native boundary.
 - **Traversal build**: The ordered build driven by `FieldWorks.proj` and invoked via `build.ps1`.
+- **Toolchain policy**: `Build/FieldWorks.Toolchain.props` — the single repo-controlled source for which Visual Studio majors are supported and which MSVC toolset/VCTargets each major uses. Consumed by MSBuild (imported from `Directory.Build.props`), by PowerShell (`Build/Agent/FwBuildEnvironment.psm1`), and by FwBuildTasks (`BuildUtils`). Toolset identifiers (`v143`, `v145`, `v170`, `v180`) belong only in this file.
+- **Per-major toolset mapping**: The toolchain policy maps VS 17 (2022) → PlatformToolset `v143` / VCTargets `v170` and VS 18 (2026) → `v145` / `v180`. Which mapping applies is decided by the Visual Studio actually running the build, so native binaries depend on the building VS; official/release builds define the shipped toolset. Two mechanisms produce the same outcome: vcxproj-based builds (IDE, native test projects) consume `FwPlatformToolset`, while the nmake-driven product natives (`Make` task over `*.mak` in `Build/mkall.targets`) compile with the selected Visual Studio's activated developer-environment toolset, whose default family matches this mapping for supported majors.
+- **VS selection**: `build.ps1`/`test.ps1` select the newest stable Visual Studio inside the policy's version range. If that newest instance is missing required workloads/components, the build fails with install instructions — it never silently falls back to an older VS.
 - **LcmCache**: Root entry point to LCModel (`SIL.LCModel`); called "the cache" in code and comments. Not a simple data cache — the name is historical. Exposes the language project, writing system factory, action handler, and `ServiceLocator`.
 - **Service locator**: `LcmCache.ServiceLocator` (`ILcmServiceLocator`). IoC container for LCModel — the primary way to retrieve repositories, factories, and services.
 - **Unit of work**: Groups data-model changes under `IActionHandler`. All LCModel writes must occur inside one. `UndoableUnitOfWorkHelper` (undoable) and `NonUndoableUnitOfWorkHelper` (non-undoable) are in `SIL.LCModel.Infrastructure`; use as a `using` block or via their static `.Do(...)` helpers.
@@ -81,6 +84,7 @@ It is intentionally not a full architecture manual. It should stay biased toward
 - Installer work lives under `FLExInstaller/`.
 - Integration tests often depend on deterministic sample data such as `TestLangProj/`.
 - Worktree-aware scripts are preferred because concurrent work across git worktrees is supported.
+- Visual Studio and MSVC toolset versions are policy-driven from `Build/FieldWorks.Toolchain.props`; never hardcode them in projects, scripts, or docs.
 - FLEx/Language Explorer is built with architectural boundaries, new dependencies between existing projects must be justified.
 ## Key Relationships
 - FieldWorks the repository contains the FLEx application, supporting tools, shared libraries, installer authoring, and docs.
@@ -111,3 +115,5 @@ It is intentionally not a full architecture manual. It should stay biased toward
 ## ADR Candidates
 - No repository-wide ADR location is established yet.
 - If a terminology decision becomes hard to reverse or affects naming across many files, record it here first and promote it to a formal ADR only if the repo adopts a dedicated ADR convention.
+- **2026-08: Per-major toolset mapping for VS 2026 support.** When VS 2026 (18.x) builds the repo, native projects compile with MSVC `v145`/VCTargets `v180`; VS 2022 keeps `v143`/`v170`. Chosen over pinning `v143` under both so that 2026 support is real (its own compiler) and a later repo-wide toolset flip is a data edit in the toolchain policy. Consequence: dev binaries built on 2026-only machines use a newer toolset than v143 release/CI binaries until official builds move; the FLExInstaller VC-redist set must be revisited before release builds adopt `v145`.
+- **2026-08: Prefer-newest VS selection hard-fails on an underequipped newest instance.** If the newest in-range VS lacks required components, the build errors with install instructions instead of silently using an older VS. Chosen so a machine's effective toolchain is deterministic and half-installed upgrades are surfaced, at the cost of blocking builds until the install is fixed.
