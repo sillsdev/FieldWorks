@@ -2,11 +2,9 @@
 	<PropertyGroup>
 		<ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
 		<!--
-			Transitive Pinning: When a package is declared here but only consumed
-			transitively (not directly referenced by a project), NuGet still pins it
-			to the version below. This prevents the "last writer wins" problem in our
-			shared Output/ directory, which is the root cause of assembly-version
-			mismatch crashes like System.Drawing.Common 9.0 vs 6.0 (LT-22382 class).
+			Transitive pinning forces one version of a transitively-consumed package
+			across every project sharing Output/, preventing last-writer-wins
+			assembly-version crashes (LT-22382 class).
 		-->
 		<CentralPackageTransitivePinningEnabled>true</CentralPackageTransitivePinningEnabled>
 	</PropertyGroup>
@@ -15,12 +13,10 @@
 	<Import Project="Build/SilVersions.props" />
 
 	<!--
-		=============================================================
 		TRANSITIVE PINS
 		Packages not directly referenced by any project, but whose
 		transitive versions must be forced to a single value across
 		all projects sharing Output/{Configuration}/.
-		=============================================================
 	-->
 	<ItemGroup Label="Transitive Pins">
 		<!-- System.Drawing.Common: ParatextData requires >= 9.0.9; SIL.LCModel.Core
@@ -30,17 +26,13 @@
 		<!-- System.Resources.Extensions: required for non-string resources (images, icons)
 			 in .NET Framework SDK-style projects. -->
 		<PackageVersion Include="System.Resources.Extensions" Version="9.0.18" />
-		<!-- DependencyModel: held at 9.0.16 because 9.0.17 throws
-			 TypeInitializationException on Icu.NativeMethods in the net48 test host
-			 (PR #1000). Dependants declare floors only, so the graph cannot guard this
-			 pin; it is also ignored in .github/dependabot.yml. To retest a newer
-			 version: bump, run a full test.ps1, grep the .trx for "Icu.NativeMethods" -
-			 zero hits means safe. -->
+		<!-- Held at 9.0.16: 9.0.17 throws TypeInitializationException on
+			 Icu.NativeMethods in the net48 test host (PR #1000). Retest: bump, full
+			 test.ps1, grep .trx for "Icu.NativeMethods" - zero hits is safe. -->
 		<PackageVersion Include="Microsoft.Extensions.DependencyModel" Version="9.0.16" />
-		<!-- SIL.LCModel's IoC container (since 11.0.0-beta0176) and its shim dependency.
-			 All three are ILRepack-internalized into FwParatextLexiconPlugin.dll, which
-			 Paratext loads in its own process without FieldWorks' binding redirects.
-			 Keep in step with the versions SIL.LCModel compiles against. -->
+		<!-- SIL.LCModel's IoC container, ILRepack-internalized into
+			 FwParatextLexiconPlugin.dll which Paratext loads without our binding
+			 redirects. Keep in step with SIL.LCModel. -->
 		<PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="8.0.1" />
 		<PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.2" />
 		<PackageVersion Include="Microsoft.Bcl.AsyncInterfaces" Version="9.0.16" />
@@ -103,10 +95,9 @@
 	-->
 	<ItemGroup Label="SIL Localization">
 		<PackageVersion Include="L10NSharp" Version="$(L10NSharpVersion)" />
-		<!-- L10NSharp v10 split the WinForms-specific types (LocalizationManagerWinforms) into a
-		     separate package. No project references it directly (it flows transitively from the
-		     Palaso stack); with CentralPackageTransitivePinningEnabled this pin keeps the
-		     transitive version aligned with the shared L10NSharp version. -->
+		<!-- L10NSharp v10 split the WinForms types into this package. Referenced only
+			 transitively via Palaso; pinned to keep it aligned with the shared
+			 L10NSharp version. -->
 		<PackageVersion Include="L10NSharp.Windows.Forms" Version="$(L10NSharpVersion)" />
 		<PackageVersion Include="SIL.Chorus.L10ns" Version="3.0.1" />
 		<PackageVersion Include="SIL.LibPalaso.L10ns" Version="$(SilLibPalasoL10nsVersion)" />
@@ -176,9 +167,9 @@
 		-->
 		<PackageVersion Include="HarfBuzzSharp" Version="8.3.1.1" />
 		<PackageVersion Include="HarfBuzzSharp.NativeAssets.Win32" Version="8.3.1.1" />
-		<!-- Pinned because multiple test projects copy this into the shared Output folder; without a
-		     single version the last-built project's copy breaks the others' binding redirects
-		     (observed: FwAvaloniaTests redirecting to 8.0.0.1 vs a 9.x dll from another graph). -->
+		<!-- Multiple test projects copy this into shared Output; without one version the
+			 last build breaks the others' binding redirects (seen: FwAvaloniaTests
+			 8.0.0.1 vs a 9.x dll). -->
 		<PackageVersion Include="System.Diagnostics.DiagnosticSource" Version="9.0.2" />
 		<PackageVersion Include="Moq" Version="4.20.70" />
 		<PackageVersion Include="NUnit" Version="3.14.0" />
@@ -210,10 +201,9 @@
 	-->
 	<ItemGroup Label="Avalonia">
 		<PackageVersion Include="Avalonia" Version="11.3.17" />
-		<!-- Transitive analyzer carrier (Avalonia -> Avalonia.BuildServices). Pinned so xWorks can
-		     reference it with IncludeAssets="none": its AVA* analyzers must not run over the large
-		     legacy xWorks codebase where warnings are errors (the compile-only Avalonia reference
-		     there exists only for the ISlicePlugin contract). -->
+		<!-- Analyzer carrier for Avalonia. Pinned so xWorks can reference it with
+			 IncludeAssets="none": its AVA* analyzers must not run over legacy xWorks,
+			 where warnings are errors. -->
 		<PackageVersion Include="Avalonia.BuildServices" Version="11.3.2" />
 		<PackageVersion Include="Avalonia.Desktop" Version="11.3.17" />
 		<PackageVersion Include="Avalonia.Themes.Fluent" Version="11.3.17" />
@@ -223,9 +213,9 @@
 		<!-- Skia-enabled headless rendering for visual parity frame capture.
 		     The HarfBuzzSharp 8.3.1.1 pin above was aligned for exactly this package. -->
 		<PackageVersion Include="Avalonia.Skia" Version="11.3.17" />
-		<!-- MVVM for hand-authored Avalonia dialogs. 8.x ships
-		     netstandard2.0 source generators, so it works on net48; used only by the dedicated
-		     XAML-enabled FwAvaloniaDialogs project, not the pure-C# FwAvalonia foundation. -->
+		<!-- MVVM for hand-authored Avalonia dialogs. 8.x ships netstandard2.0 source
+			 generators so it works on net48; used only by FwAvaloniaDialogs, not
+			 FwAvalonia. -->
 		<PackageVersion Include="CommunityToolkit.Mvvm" Version="8.2.2" />
 	</ItemGroup>
 </Project>
