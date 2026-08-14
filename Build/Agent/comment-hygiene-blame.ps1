@@ -65,7 +65,12 @@ function Get-BlameInfo {
 	}
 }
 
-$files = git ls-files '*.cs' '*.ps1' '*.psm1' | ForEach-Object { ConvertTo-RepoPath $_ } | Where-Object { -not (Test-ExcludedPath $_) }
+$scopedGlobs = @(
+	'*.cs', '*.ps1', '*.psm1',
+	'*.cpp', '*.cxx', '*.cc', '*.c', '*.h', '*.hpp', '*.idl',
+	'*.csproj', '*.vcxproj', '*.vcproj', '*.props', '*.targets', '*.proj', '*.axaml', '*.xaml'
+)
+$files = git ls-files $scopedGlobs | ForEach-Object { ConvertTo-RepoPath $_ } | Where-Object { -not (Test-ExcludedPath $_) }
 Write-Host "comment-hygiene-blame: scanning $($files.Count) file(s)..."
 
 $violations = Get-CommentHygieneViolations -Files $files

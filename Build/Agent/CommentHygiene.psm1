@@ -1,6 +1,6 @@
 <#
 .SYNOPSIS
-	Shared comment-hygiene scanning engine for FieldWorks C# and PowerShell files.
+	Shared comment-hygiene scanning engine for FieldWorks source and project files.
 
 .DESCRIPTION
 	Implements the mechanical (regex-detectable) banned-content categories
@@ -8,11 +8,17 @@
 	and a 200-character budget on implementation comments. Judgment-based rules
 	(accuracy, WHAT-not-HOW, standalone clarity) are not checked here.
 
-	Scans .cs (//, ///) and .ps1 (#, block-comment) files. Only whole-line
-	comments are scanned; a trailing same-line comment is not. A doc comment
-	or a PowerShell help block is exempt from the length cap. (This help
-	block cannot spell out that block-comment syntax literally -- PowerShell
-	does not nest it, and the first close token would end this block early.)
+	Scans .cs/.cpp/.h/.hpp/.cc/.cxx/.c/.idl (//, ///), .ps1/.psm1 (#,
+	block-comment), and .csproj/.vcxproj/.vcproj/.props/.targets/.proj/
+	.axaml/.xaml (<!-- -->) files. Only whole-line comments are scanned; a
+	trailing same-line comment is not, and a C-style /* */ block comment is
+	not (unlike its XML <!-- --> counterpart, which this module does parse).
+	A doc comment, a PowerShell help block, or a file's first Xml <!-- -->
+	block is exempt from the length cap -- the last one plays the same
+	file/type-summary role as /// or a help block, since Xml has no separate
+	doc-comment syntax to mark it by. (This help block cannot spell out that
+	block-comment syntax literally -- PowerShell does not nest it, and the
+	first close token would end this block early.)
 
 .NOTES
 	Import this module from comment-hygiene.ps1, comment-hygiene-repair.ps1,
@@ -52,13 +58,34 @@ function Get-NonAsciiPunctuationPattern {
 function Get-CommentBody {
 	<#
 	.SYNOPSIS
-		Returns the text after // or ///, or $null if the line is not a whole-line C# comment.
+		Returns the text after // or ///, or $null if the line is not a whole-line C-family comment.
+
+	.DESCRIPTION
+		Shared by every C-family language this module scans (C#, C/C++, IDL):
+		all four use identical // and /// line-comment syntax.
 	#>
 	param([Parameter(Mandatory)][AllowEmptyString()][string] $Line)
 
 	$trimmed = $Line.Trim()
 	if ($trimmed.StartsWith('///')) { return $trimmed.Substring(3) }
 	if ($trimmed.StartsWith('//')) { return $trimmed.Substring(2) }
+	return $null
+}
+
+function Get-CommentHygieneLanguage {
+	<#
+	.SYNOPSIS
+		Classifies a file path into a comment syntax family by extension.
+
+	.OUTPUTS
+		'PowerShell', 'CLike' (C#/C/C++/IDL), 'Xml' (project files and
+		Avalonia views), or $null for an unrecognized extension.
+	#>
+	param([Parameter(Mandatory)][string] $Path)
+
+	if ($Path -match '\.(ps1|psm1)$') { return 'PowerShell' }
+	if ($Path -match '\.(cs|cpp|cxx|cc|c|h|hpp|idl)$') { return 'CLike' }
+	if ($Path -match '\.(csproj|vcxproj|vcproj|props|targets|proj|axaml|xaml)$') { return 'Xml' }
 	return $null
 }
 
@@ -171,28 +198,36 @@ function Get-CommentLineClassification {
 	.PARAMETER Lines
 		The file's lines.
 
-	.PARAMETER IsPowerShell
-		Whether to use PowerShell (#, block-comment) or C# (//, ///) comment
-		syntax. A bare # is never treated as a comment for a C# file, so a
-		preprocessor directive (#region, #if) is never misread as one.
+	.PARAMETER Language
+		'PowerShell' (#, block-comment), 'CLike' (//, /// -- C#/C/C++/IDL),
+		or 'Xml' (<!-- -->  -- project files, Avalonia views). A bare # is
+		never treated as a comment for a CLike file, so a preprocessor
+		directive (#region, #if) is never misread as one.
 
 	.OUTPUTS
 		A hashtable with parallel arrays Kinds ('impl', 'exempt', or $null
-		per line) and Bodies (comment text per line, or $null).
+		per line) and Bodies (comment text per line, or $null). Xml's first
+		<!-- --> block in the file is 'exempt' -- the same role a C# /// or
+		PowerShell help block plays, since XML has no separate doc-comment
+		syntax to mark a file/type-level summary. Every later Xml comment is
+		'impl', subject to the length budget.
 	#>
 	param(
 		[Parameter(Mandatory)][AllowEmptyCollection()][AllowEmptyString()][string[]] $Lines,
-		[Parameter(Mandatory)][bool] $IsPowerShell
+		[Parameter(Mandatory)][ValidateSet('PowerShell', 'CLike', 'Xml')][string] $Language
 	)
 
 	$kinds = New-Object 'object[]' $Lines.Count
 	$bodies = New-Object 'object[]' $Lines.Count
 	$inHelpBlock = $false
+	$inXmlComment = $false
+	$xmlCommentBlockCount = 0
+	$currentXmlCommentKind = $null
 
 	for ($i = 0; $i -lt $Lines.Count; $i++) {
 		$trimmed = $Lines[$i].Trim()
 
-		if ($IsPowerShell) {
+		if ($Language -eq 'PowerShell') {
 			if ($inHelpBlock) {
 				$kinds[$i] = 'exempt'
 				$bodies[$i] = $trimmed
@@ -211,11 +246,47 @@ function Get-CommentLineClassification {
 				continue
 			}
 		}
+		elseif ($Language -eq 'Xml') {
+			if ($inXmlComment) {
+				$kinds[$i] = $currentXmlCommentKind
+				$endIndex = $trimmed.IndexOf('-->')
+				if ($endIndex -ge 0) {
+					$bodies[$i] = $trimmed.Substring(0, $endIndex)
+					$inXmlComment = $false
+				}
+				else {
+					$bodies[$i] = $trimmed
+				}
+				continue
+			}
+			if ($trimmed.StartsWith('<!--')) {
+				$currentXmlCommentKind = if ($xmlCommentBlockCount -eq 0) { 'exempt' } else { 'impl' }
+				$xmlCommentBlockCount++
+				$kinds[$i] = $currentXmlCommentKind
+				$rest = $trimmed.Substring(4)
+				$endIndex = $rest.IndexOf('-->')
+				if ($endIndex -ge 0) {
+					$bodies[$i] = $rest.Substring(0, $endIndex)
+				}
+				else {
+					$bodies[$i] = $rest
+					$inXmlComment = $true
+				}
+				continue
+			}
+		}
 		else {
-			$body = Get-CommentBody -Line $Lines[$i]
-			if ($null -ne $body) {
-				$kinds[$i] = if ($trimmed.StartsWith('///')) { 'exempt' } else { 'impl' }
-				$bodies[$i] = $body
+			# Inlined from Get-CommentBody: this loop runs every line of every diffed file on
+			# every build, where a per-line function call plus its own redundant Trim measurably
+			# slows the gate down.
+			if ($trimmed.StartsWith('///')) {
+				$kinds[$i] = 'exempt'
+				$bodies[$i] = $trimmed.Substring(3)
+				continue
+			}
+			if ($trimmed.StartsWith('//')) {
+				$kinds[$i] = 'impl'
+				$bodies[$i] = $trimmed.Substring(2)
 				continue
 			}
 		}
@@ -233,7 +304,8 @@ function Get-CommentHygieneViolations {
 		Scans the given files for mechanical comment-hygiene violations.
 
 	.PARAMETER Files
-		Absolute paths to .cs or .ps1 files to scan.
+		Absolute paths to files to scan. Files whose extension
+		Get-CommentHygieneLanguage does not recognize are skipped.
 
 	.PARAMETER LineFilter
 		Optional hashtable mapping an absolute file path to a
@@ -259,15 +331,19 @@ function Get-CommentHygieneViolations {
 	foreach ($file in $Files) {
 		if (-not (Test-Path -LiteralPath $file)) { continue }
 
+		$language = Get-CommentHygieneLanguage -Path $file
+		if ($null -eq $language) { continue }
+
 		$allowedLines = $null
 		if ($LineFilter -and $LineFilter.ContainsKey($file)) {
 			$allowedLines = $LineFilter[$file]
 		}
 
-		# Explicit UTF8: Windows PowerShell 5.1's Get-Content default for a BOM-less file is the system codepage, not UTF-8.
-		$lines = @(Get-Content -LiteralPath $file -Encoding UTF8)
-		$isPowerShell = ($file -like '*.ps1') -or ($file -like '*.psm1')
-		$classification = Get-CommentLineClassification -Lines $lines -IsPowerShell $isPowerShell
+		# File.ReadAllLines, not Get-Content: ~50x faster on a large file, and this gate runs
+		# every build. Still BOM-safe: StreamReader sniffs a real BOM even given an explicit
+		# encoding.
+		$lines = [System.IO.File]::ReadAllLines($file, [System.Text.Encoding]::UTF8)
+		$classification = Get-CommentLineClassification -Lines $lines -Language $language
 		$kinds = $classification.Kinds
 		$bodies = $classification.Bodies
 
@@ -285,6 +361,17 @@ function Get-CommentHygieneViolations {
 						Text     = $bodies[$i].Trim()
 					})
 				}
+			}
+
+			# Xml-only: XML forbids a literal "--" anywhere in comment content, not just next to
+			# "-->", so the usual em-dash-to-"--" fix is invalid here; use a single "-" instead.
+			if ($language -eq 'Xml' -and $bodies[$i] -match '--') {
+				[void]$violations.Add([PSCustomObject]@{
+					File     = $file
+					Line     = $lineNumber
+					Category = 'xml-illegal-double-hyphen'
+					Text     = $bodies[$i].Trim()
+				})
 			}
 		}
 
@@ -333,6 +420,7 @@ function Get-CommentHygieneViolations {
 Export-ModuleMember -Function @(
 	'Get-CommentHygieneCategories',
 	'Get-CommentBody',
+	'Get-CommentHygieneLanguage',
 	'Get-CommentLineClassification',
 	'Get-CommentHygieneViolations',
 	'Get-NonAsciiReplacementMap',

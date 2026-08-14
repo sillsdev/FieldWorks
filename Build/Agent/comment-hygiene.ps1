@@ -1,12 +1,13 @@
 <#
 .SYNOPSIS
-	Diff-scoped comment-hygiene gate for FieldWorks C# and PowerShell comments.
+	Diff-scoped comment-hygiene gate for FieldWorks source and project comments.
 
 .DESCRIPTION
 	Enforces the mechanical banned-content categories, plus a one-line cap on
 	implementation comments, against lines a diff ADDS, not the whole
 	repository. Legacy comments are never flagged unless their line is
-	touched again.
+	touched again. Covers C#/C/C++/IDL, PowerShell, and the XML comments in
+	project files and Avalonia views -- see Get-CommentHygieneLanguage.
 
 .PARAMETER BaseRef
 	Git ref to diff against. Defaults to the PR base in CI
@@ -14,7 +15,7 @@
 	local merge-base with the origin default branch.
 
 .PARAMETER Full
-	Report-only mode: scans every tracked .cs/.ps1 file at HEAD instead of
+	Report-only mode: scans every tracked file in scope at HEAD instead of
 	the diff, and never exits non-zero.
 
 .PARAMETER List
@@ -41,6 +42,13 @@ $ErrorActionPreference = 'Stop'
 $repoRoot = (Resolve-Path (Join-Path $PSScriptRoot '../..')).Path
 Import-Module (Join-Path $PSScriptRoot 'CommentHygiene.psm1') -Force
 
+# Kept in sync with Get-CommentHygieneLanguage's recognized extensions.
+$scopedGlobs = @(
+	'*.cs', '*.ps1', '*.psm1',
+	'*.cpp', '*.cxx', '*.cc', '*.c', '*.h', '*.hpp', '*.idl',
+	'*.csproj', '*.vcxproj', '*.vcproj', '*.props', '*.targets', '*.proj', '*.axaml', '*.xaml'
+)
+
 function Test-ExcludedPath {
 	param([string] $Path)
 	return ($Path -match '\.g\.cs$') -or ($Path -match 'Designer\.cs$')
@@ -64,20 +72,17 @@ function Resolve-BaseRef {
 	if (-not [string]::IsNullOrWhiteSpace($env:GITHUB_EVENT_PULL_REQUEST_BASE_SHA)) { return $env:GITHUB_EVENT_PULL_REQUEST_BASE_SHA }
 	if (-not [string]::IsNullOrWhiteSpace($env:GITHUB_BASE_REF)) { return "origin/$env:GITHUB_BASE_REF" }
 
-	$defaultBranch = 'main'
-	foreach ($remoteLine in (git remote show origin 2>$null)) {
-		if ($remoteLine -match 'HEAD branch:\s*(\S+)') {
-			$defaultBranch = $Matches[1]
-			break
-		}
-	}
-	return "origin/$defaultBranch"
+	# git rev-parse against the local origin/HEAD ref, not `git remote show origin`: the
+	# latter contacts the remote (a real network round-trip) on every local gate run.
+	$originHead = git rev-parse --abbrev-ref origin/HEAD 2>$null
+	if ($LASTEXITCODE -eq 0 -and -not [string]::IsNullOrWhiteSpace($originHead)) { return $originHead.Trim() }
+	return 'origin/main'
 }
 
 function Get-AddedLineFilter {
 	param([string] $Base)
 
-	$diff = git diff --unified=0 "$Base...HEAD" -- '*.cs' '*.ps1' '*.psm1' 2>$null
+	$diff = git diff --unified=0 "$Base...HEAD" -- $scopedGlobs 2>$null
 	if ($LASTEXITCODE -ne 0) {
 		throw "git diff against '$Base' failed. Is the base ref fetched? (CI needs fetch-depth: 0.)"
 	}
@@ -117,7 +122,7 @@ function Write-Violation {
 }
 
 if ($Full) {
-	$files = git ls-files '*.cs' '*.ps1' '*.psm1' | ForEach-Object { ConvertTo-RepoPath $_ } | Where-Object { -not (Test-ExcludedPath $_) }
+	$files = git ls-files $scopedGlobs | ForEach-Object { ConvertTo-RepoPath $_ } | Where-Object { -not (Test-ExcludedPath $_) }
 	$violations = Get-CommentHygieneViolations -Files $files
 
 	Write-Host "comment-hygiene -Full: $($violations.Count) violation(s) across $($files.Count) file(s)"
@@ -130,7 +135,7 @@ Write-Host "comment-hygiene: scanning lines added since $base"
 
 $lineFilter = Get-AddedLineFilter -Base $base
 if ($lineFilter.Count -eq 0) {
-	Write-Host 'comment-hygiene: no added .cs/.ps1/.psm1 lines to check.'
+	Write-Host 'comment-hygiene: no added lines in scope to check.'
 	exit 0
 }
 

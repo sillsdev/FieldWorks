@@ -1,16 +1,16 @@
 ﻿<!--
-	DialogTheme — the shared spacing/border system for every FwAvaloniaDialogs dialog body.
+	DialogTheme - the shared spacing/border system for every FwAvaloniaDialogs dialog body.
 
 	A single source of truth so dialogs cannot regress to "no border / text crowding the edges":
 	  * the named spacing TOKENS (below) replace the per-view hardcoded Margin/Spacing literals, and
 	  * the STYLES give the injected native-control host borders (the `fwFieldHost` class on the
 	    PART_*Host borders) a real default border + padding, and the dialog root (`fwDialogRoot`)
-	    a default window padding — applied structurally so a view that omits its own margin still
+	    a default window padding - applied structurally so a view that omits its own margin still
 	    gets breathing room.
 
 	Added to each dialog body's own Styles by DialogThemeBootstrap.Apply(this) (called from every dialog
 	view constructor): that both applies these styles to the dialog's control tree and puts the tokens in
-	scope so the views' {StaticResource ...} references resolve — in both the runtime host path and the
+	scope so the views' {StaticResource ...} references resolve - in both the runtime host path and the
 	headless tests, independent of any application-level resource wiring.
 -->
 <Styles xmlns="https://github.com/avaloniaui"
@@ -40,19 +40,15 @@
 		<Thickness x:Key="DialogSubItemIndent">24,0,0,4</Thickness>
 		<!-- Horizontal gap to the right of a leading icon/glyph (message box). -->
 		<Thickness x:Key="DialogIconGap">0,0,12,0</Thickness>
-		<!-- Visual distance ABOVE a control group that follows another group (e.g. the regex/Match-case
-		     checkbox group after the match-style radio group), so distinct groups read as separate rather than
-		     butting together. ~8px of extra top whitespace, mirrors FwAvaloniaDensity.GroupSeparation. -->
+		<!-- Extra top whitespace so a control group reads as separate from the group before it
+		     (mirrors FwAvaloniaDensity.GroupSeparation). -->
 		<Thickness x:Key="DialogGroupSeparation">0,8,0,0</Thickness>
 		<!-- A thin grey 1px hairline drawn BETWEEN two logical groups, for the clearest cases. The brush is a
 		     concrete LightGray (not a Fluent DynamicResource) so it renders headlessly. -->
 		<SolidColorBrush x:Key="DialogGroupSeparatorBrush" Color="LightGray"/>
-		<!-- Minimum height for a compact line control. Genuine WinForms line controls run 20-23px (TextBox 20,
-		     ComboBox 21, Button 23 — measured from real dialog .resx layouts, e.g. BasicFindDialog, LexOptionsDlg,
-		     SfmToTextsAndWordsMappingBaseDlg), which is tighter than a reasonable desktop pointer-target
-		     accessibility floor (~24px, the commonly-cited Fluent/Windows desktop minimum interactive control
-		     height). 24 is used here instead of raw WinForms-matching so it never regresses below that floor,
-		     while staying far below the Fluent ~32px default. -->
+		<!-- 24, not the tighter 20-23px legacy WinForms line controls measured, so height never
+		     regresses below the desktop pointer-target accessibility floor; still well under
+		     Fluent's ~32px default. -->
 		<x:Double x:Key="DialogMinControlHeight">24</x:Double>
 		<!-- Border thickness for a host/field frame. -->
 		<Thickness x:Key="DialogFieldBorderThickness">1</Thickness>
@@ -61,19 +57,14 @@
 		<!-- Base dialog body font, tuned against the legacy WinForms dialogs (Segoe UI 9pt) and well below
 		     the ~14px Fluent default. This one value drives every FontSize setter below. -->
 		<x:Double x:Key="DialogFontSize">11</x:Double>
-		<!-- Frame color: a CONCRETE mid-gray that reads as a real input border at the snapshot DPI. A
-		     hardcoded value, NOT a Fluent DynamicResource (ControlStrokeColorDefault), because that theme
-		     resource does not resolve in the headless test app, so the frame rendered invisible there. -->
+		<!-- A concrete color, not the Fluent DynamicResource ControlStrokeColorDefault: that theme
+		     resource does not resolve in the headless test app, rendering the frame invisible there. -->
 		<Color x:Key="DialogFieldBorderColor">#FF7A7A7A</Color>
 		<SolidColorBrush x:Key="DialogFieldBorderBrush" Color="#FF7A7A7A"/>
 	</Styles.Resources>
 
-	<!-- ============================ DENSITY (font + control height) ============================
-	     Setters live HERE (not only in the C# CompactDialogStyles) so the SAME density renders in the
-	     headless dialog tests — which apply ONLY this theme via DialogThemeBootstrap.Apply — as at runtime.
-	     Values are kept identical to CompactDialogStyles (the runtime chokepoint) so the two never diverge:
-	     11px font, 24px min height (the accessibility floor — see DialogMinControlHeight above), tight
-	     WinForms-style paddings, no Fluent min-height floors. -->
+	<!-- Density setters live here too, not only in the C# CompactDialogStyles, so a headless
+	     dialog test (which applies only this theme) renders the same density as the runtime path. -->
 	<Style Selector="TextBlock">
 		<Setter Property="FontSize" Value="{StaticResource DialogFontSize}"/>
 	</Style>
@@ -92,10 +83,8 @@
 		<Setter Property="MinHeight" Value="24"/>
 		<Setter Property="Padding" Value="8,2"/>
 	</Style>
-	<!-- CheckBox FONT only. The deterministic, font-proportional BOX SIZE is applied separately by
-	     DialogThemeBootstrap.Apply via the shared C# FwCheckBoxStyle (a ControlTheme that REPLACES the Fluent
-	     template — the hardcoded 20×20 box / 32px slot are local values a style setter cannot override). That
-	     same helper is the single authority the browse/detail views use, so checkboxes are one global size. -->
+	<!-- Font only: the box size is a ControlTheme applied separately (FwCheckBoxStyle), since its
+	     hardcoded 20x20 box / 32px slot are local values a style setter here cannot override. -->
 	<Style Selector="CheckBox">
 		<Setter Property="FontSize" Value="{StaticResource DialogFontSize}"/>
 	</Style>
@@ -109,20 +98,14 @@
 		<Setter Property="Padding" Value="4,1"/>
 	</Style>
 
-	<!-- The dialog root: a default window padding so content never butts against the chrome, even if a
-	     view forgets its own margin. The setter value is kept numerically equal to DialogWindowPadding; it
-	     is written as a literal (not StaticResource) because a Setter's StaticResource is resolved against
-	     the styled element's resource scope, not the enclosing Styles.Resources, so a literal is the reliable
-	     way to apply the structural fix. The tokens remain the single source the views bind to. -->
+	<!-- A literal, not StaticResource: a Setter's StaticResource resolves against the styled
+	     element's own scope, not this file's Styles.Resources. -->
 	<Style Selector="UserControl.fwDialogRoot">
 		<Setter Property="Padding" Value="10"/>
 	</Style>
 
-	<!-- The injected native-control host frame: a real, visible 1px border + inner padding, so the embedded
-	     owned control (FwMultiWsTextField / FwOptionChooser) — whose inner TextBox is borderless/transparent —
-	     gets a visible WinForms-style input box and breathing room. Structural: any host border carrying the
-	     `fwFieldHost` class can't regress to no border. The brush is the CONCRETE gray above (not a Fluent
-	     DynamicResource) so the frame renders in the headless tests, not just at runtime. -->
+	<!-- A visible border for a host frame, since the embedded owned control's own inner TextBox is
+	     borderless. Uses the concrete gray brush above so the frame renders headlessly too. -->
 	<Style Selector="Border.fwFieldHost">
 		<Setter Property="BorderThickness" Value="1"/>
 		<Setter Property="BorderBrush" Value="#FF7A7A7A"/>

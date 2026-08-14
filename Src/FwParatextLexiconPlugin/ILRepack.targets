@@ -8,9 +8,8 @@ This software is licensed under the LGPL, version 2.1 or later
 	<PropertyGroup>
 		<ILRepackBin>&quot;$(PkgILRepack)\tools\ILRepack.exe&quot;</ILRepackBin>
 		<PrimaryAssembly>$(OutputPath)/FwParatextLexiconPlugin.dll</PrimaryAssembly>
-		<!-- Pre-merge copy: used as ILRepack input AND referenced by the test project
-		     so tests compile and run against the un-merged assembly (avoiding type
-		     ambiguity between ILRepack-internalized types and NuGet originals). -->
+		<!-- ILRepack input; the test project also references this un-merged copy, avoiding
+		     type ambiguity between ILRepack-internalized types and NuGet originals. -->
 		<PreMergeAssembly>$(OutputPath)/FwParatextLexiconPlugin.PreMerge.dll</PreMergeAssembly>
 	</PropertyGroup>
 	<ItemGroup>

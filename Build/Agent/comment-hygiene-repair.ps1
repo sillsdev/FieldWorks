@@ -15,7 +15,8 @@
 	(e.g. from a comment-hygiene-blame.ps1 triage report).
 
 .PARAMETER Files
-	Paths (absolute or relative to the current directory) to .cs files to sweep.
+	Paths (absolute or relative to the current directory) to sweep. Any
+	extension Get-CommentHygieneLanguage recognizes is supported.
 
 .EXAMPLE
 	Build/Agent/comment-hygiene-repair.ps1 -Files (Get-Content scoped-files.txt)

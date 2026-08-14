@@ -1,6 +1,6 @@
 ---
 name: fieldworks-code-commenting
-description: The FieldWorks code-comment standard for C# and PowerShell. Use whenever writing or editing a comment anywhere in this repository -- new code, refactors, or comment audits, in .cs or .ps1 alike. Covers doc-comment contracts, banned content categories, the 200-character cap on implementation comments, legacy references, XML doc tags, and XML-doc placement.
+description: The FieldWorks code-comment standard for C#, C/C++, IDL, PowerShell, and project-file/Avalonia-view XML comments. Use whenever writing or editing a comment anywhere in this repository -- new code, refactors, or comment audits, in .cs, .cpp/.h, .idl, .ps1, .csproj/.vcxproj/.props/.targets, or .axaml alike. Covers doc-comment contracts, banned content categories, the 200-character cap on implementation comments, legacy references, XML doc tags, and XML-doc placement.
 ---
 
 # FieldWorks Code Commenting
@@ -11,12 +11,16 @@ reader of the code -- never the current reviewer, never a coverage gate.
 
 ## Scope
 
-Every comment, any language: `//`/`///` in C#, `#`/`<# #>` in PowerShell.
-`Build/Agent/comment-hygiene.ps1` mechanically enforces banned content,
-ASCII-punctuation-only, and the 200-character implementation-comment budget
-against `.cs` and `.ps1`. Judgment-based rules (accuracy, WHAT-not-HOW,
-standalone clarity) are not mechanically checked and still apply while
-authoring.
+Every comment, any language: `//`/`///` in C#, C/C++, and IDL; `#`/`<# #>`
+in PowerShell; `<!-- -->` in project files (`.csproj`/`.vcxproj`/`.props`/
+`.targets`/`.proj`) and Avalonia views (`.axaml`). `Build/Agent/comment-
+hygiene.ps1` mechanically enforces banned content, ASCII-punctuation-only,
+and the 200-character implementation-comment budget against all of the
+above (see `Get-CommentHygieneLanguage` for the exact extension list).
+A C-style `/* */` block comment is not scanned -- only whole-line
+`//`/`///`/`#` comments and `<!-- -->` XML comments are. Judgment-based
+rules (accuracy, WHAT-not-HOW, standalone clarity) are not mechanically
+checked and still apply while authoring.
 
 ## The standard
 
@@ -35,7 +39,10 @@ authoring.
 6. **Delete restatements.** If the code already says it plainly, the
    comment is noise.
 7. **ASCII punctuation only.** No em-dashes, arrows, section signs, smart
-   quotes -- use "--", "->", plain quotes.
+   quotes -- use "--", "->", plain quotes. **Exception: inside an XML
+   `<!-- -->` comment, use a single "-", never "--"** -- the XML spec
+   forbids a literal `--` anywhere in comment content (not just adjacent to
+   `-->`), so the usual em-dash replacement produces invalid XML there.
 8. **No ambiguous abbreviations.** Write "ViewModel", not "VM". Spell out
    anything a reader could resolve two ways -- in comments, docs, commits,
    and conversation.
@@ -55,6 +62,8 @@ authoring.
 5. **Consumers/provenance**: no "shared by X and Y", "the only caller",
    "extracted from Z". Callers change silently -- state the guarantee, and
    leave the callers anonymous.
+6. **Xml comments only**: no literal `--` in an `<!-- -->` comment's content
+   -- invalid XML, not just a style violation. Use a single `-`.
 
 ## Legacy references
 
@@ -103,6 +112,14 @@ may run long-form), or is trying to explain too much -- cut to the single
 sentence that would confuse a reader most if missing, even if that loses
 nuance. Mechanically enforced (`comment-too-long`) for `//` and `#` alike.
 Place above the nesting level the code spans.
+
+**Exemptions from the length cap:** a C#/C/C++/IDL `///` doc comment; a
+PowerShell comment-based help block (`<# ... #>`); and, in a project file or
+Avalonia view, the file's FIRST `<!-- -->` block, wherever it falls (before
+the root element, or as its first child) -- XML has no separate doc-comment
+syntax, so that first block is this format's equivalent of a `///` summary
+and may run long-form. Every `<!-- -->` block after the first one is an
+ordinary implementation comment, budgeted like any other.
 
 In tests, two extra tells of noise: restating what the test method name
 already says, and justifying a test to the coverage gate. Why a dependency

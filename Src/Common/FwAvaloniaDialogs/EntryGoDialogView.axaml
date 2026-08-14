@@ -14,17 +14,13 @@
 	     column renders in the vernacular font and a gloss column in the analysis font. Up/Down in the search box
 	     move the list selection without leaving the box (the legacy m_tbForm_KeyDown behavior). The optional
 	     auxiliary picker sits UNDER the matching list (its legacy position), and the right-side description pane
-	     exists only when the consumer opts in (HasDescriptionPane) — otherwise the list takes the full width.
+	     exists only when the consumer opts in (HasDescriptionPane) - otherwise the list takes the full width.
 	     The OK button text + title + prompts come from the launcher so each EntryGoDlg child re-skins the same
 	     dialog. Visible text is localized via FwAvaloniaDialogsStrings; AutomationIds stay stable + nonlocalized. -->
 	<DockPanel>
-		<!-- Commit-on-select: there is NO OK button. Picking a result (double-click a row, or Enter in the search
-		     box / on the highlighted row) commits + closes accepted (wired in code-behind to the CommitCommand).
-		     The button strip keeps only a single Cancel affordance (Escape / the window close button also cancel,
-		     via IsCancel) plus the optional Help, so the strip never reads as an empty placeholder.
-		     EXCEPT in two-stage auxiliary mode (HasAuxiliarySelection): picking a result is stage 1, and PART_OkButton
-		     below commits stage 2 (gated on both selections). For single-stage consumers the code-behind REMOVES
-		     PART_OkButton from the tree entirely so the commit-on-select UI stays byte-identical. -->
+		<!-- Commit-on-select: no OK button normally; double-click or Enter commits and closes. In
+		     two-stage auxiliary mode, PART_OkButton is shown for stage 2; the code-behind removes it otherwise. -->
+
 		<!-- TabIndex=1 pushes the button strip AFTER the content in tab order; it is declared
 		     first only so DockPanel docks it to the bottom. Content stays at the default TabIndex 0. -->
 		<StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" TabIndex="1"
@@ -44,10 +40,8 @@
 			</Button>
 		</StackPanel>
 
-		<!-- The search column (always present) and the OPT-IN description pane on the right, separated by the
-		     shared column-gutter token. When the consumer supplies no description label/content the code-behind
-		     removes the gutter + pane from the tree and zeroes their grid columns, so the matching list takes
-		     the full dialog width. -->
+		<!-- The search column is always present; the description pane on the right is opt-in. With no
+		     description content, the code-behind removes the gutter and pane so the list takes the full width. -->
 		<Grid Name="PART_BodyGrid" ColumnDefinitions="1.4*,Auto,*">
 			<!-- ===== LEFT: the search column (toggle + prompt + search box + the persistent matching list, with
 			     the optional auxiliary picker under the list). ===== -->
@@ -79,10 +73,8 @@
 				         Watermark="{x:Static res:FwAvaloniaDialogsStrings.EntryGoSearchWatermark}"
 				         AutomationProperties.AutomationId="EntryGo.Search"/>
 
-				<!-- Dependent auxiliary picker (two-stage mode only), UNDER the matching list — its legacy position
-				     (the per-entry combo LinkMSADlg/LinkAllomorphDlg showed below the browser). Hidden until the
-				     consumer supplies an auxiliary spec AND an entry is selected (ShowAuxiliaryOptions); a lone
-				     option auto-selects in the VM, and OK stays gated until an option is chosen. -->
+				<!-- Dependent auxiliary picker (two-stage mode only), under the matching list. Hidden until the
+				     consumer supplies an auxiliary spec and an entry is selected; a lone option auto-selects. -->
 				<StackPanel DockPanel.Dock="Bottom"
 				            IsVisible="{Binding ShowAuxiliaryOptions}"
 				            Margin="{StaticResource DialogControlGapAbove}"
@@ -105,10 +97,8 @@
 					</Border>
 				</StackPanel>
 
-				<!-- The PERSISTENT matching list. A bordered header row + rows with
-				     aligned proportional columns, filling the dialog body under the search box; it stays in the tree
-				     even when empty. The header grid and the row template are built by the code-behind from the VM's
-				     Columns so the column count, headers, and per-column typography are launcher-driven. -->
+				<!-- The PERSISTENT matching list: a bordered header row plus aligned columns, staying in the
+				     tree even when empty. Header and row templates come from the view-model's Columns. -->
 				<Border Classes="fwFieldHost" Margin="{StaticResource DialogControlGapAbove}"
 				        AutomationProperties.AutomationId="EntryGo.ResultsPane">
 					<DockPanel>
@@ -125,10 +115,8 @@
 			<!-- The column gutter between the search column and the (opt-in) description pane. -->
 			<Border Grid.Column="1" Name="PART_DescriptionGutter" Margin="{StaticResource DialogColumnGutter}"/>
 
-			<!-- ===== RIGHT (opt-in): the description pane — rich content for the highlighted entry, with the
-			     plain description string as the graceful fallback. Present ONLY when the consumer supplies a
-			     description label or rich row content (HasDescriptionPane); the code-behind removes it (and its
-			     grid column) otherwise so the matching list takes the full width. ===== -->
+			<!-- RIGHT (opt-in): the description pane, with the plain description string as a fallback. Present
+			     only when the consumer supplies a description; removed otherwise so the list takes the full width. -->
 			<DockPanel Grid.Column="2" Name="PART_DescriptionColumn">
 				<TextBlock DockPanel.Dock="Top" Text="{Binding DescriptionLabel}"
 				           IsVisible="{Binding HasDescriptionLabel}"

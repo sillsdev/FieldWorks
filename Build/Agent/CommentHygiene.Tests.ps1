@@ -197,6 +197,46 @@ Assert-CleanLines 'help-block-long-ps' @(
 	'#>'
 ) '.ps1'
 
+# CLike (C/C++/IDL) shares C#'s // and /// syntax and categories -- one worked example per extension.
+Assert-Category 'cpp-phase-framing' '// Phase 3 test: picking a style applies it to the selection' 'process-framing' '.cpp'
+Assert-Category 'h-non-ascii-punctuation' ("// Uses an em dash {0} inline." -f (Get-Codepoint 0x2014)) 'non-ascii-punctuation' '.h'
+Assert-Category 'idl-absence-narration' '// An ORC run no longer forces the whole value read-only.' 'absence-narration' '.idl'
+Assert-Clean    'cpp-clean' '// Applies the selected style to the current selection' '.cpp'
+
+# Xml uses <!-- -->; banned categories fire regardless of exempt/impl kind, even on the first comment.
+Assert-Category 'csproj-single-line' '<!-- This property no longer affects the build output. -->' 'absence-narration' '.csproj'
+Assert-Clean    'csproj-single-line-clean' '<!-- This property controls the build output. -->' '.csproj'
+Assert-CategoryLines 'axaml-multi-line' @(
+	'<!--',
+	'    This binding no longer updates on focus loss.',
+	'-->'
+) 'absence-narration' '.axaml'
+
+# Xml's FIRST <!-- --> block in a file is exempt from the length budget (its /// equivalent);
+# every later block is an ordinary budgeted implementation comment.
+Assert-CleanLines 'xml-first-comment-exempt-long' @(
+	'<!-- This is the file-level summary comment, and it is allowed to run long-form the same way a C# /// doc comment or a PowerShell comment-based help block can, because Xml has no other syntax to mark one. -->',
+	'<Project Sdk="Microsoft.NET.Sdk">',
+	'</Project>'
+) '.csproj'
+Assert-CategoryLines 'xml-second-comment-too-long' @(
+	'<!-- Short file-level summary. -->',
+	'<Project Sdk="Microsoft.NET.Sdk">',
+	'<!-- This explains the first reason the approach was chosen over the alternative approach taken for this case. -->',
+	'<!-- This explains a second reason that would not fit on the first line at all today either, more detail here. -->',
+	'</Project>'
+) 'comment-too-long' '.vcxproj'
+Assert-CleanLines 'targets-clean-multiline' @(
+	'<!--',
+	'    Restores the shared build properties for every project in the solution.',
+	'-->'
+) '.targets'
+
+# Xml comment content may never contain a literal "--" (XML spec, not just adjacent to "-->");
+# a single "-" is the safe ASCII substitute there instead of the usual "--".
+Assert-Category 'xml-double-hyphen' '<!-- Uses a real dash -- here, which is illegal inside an XML comment. -->' 'xml-illegal-double-hyphen' '.csproj'
+Assert-Clean    'xml-single-hyphen-clean' '<!-- Uses a real dash - here, which is legal inside an XML comment. -->' '.csproj'
+
 Remove-Item -LiteralPath $tempDir -Recurse -Force
 
 if ($failures.Count -gt 0) {
