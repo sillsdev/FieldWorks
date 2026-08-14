@@ -19,6 +19,7 @@ using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel.Utils;
 using SIL.LCModel;
 using SIL.PlatformUtilities;
+using SIL.Reporting;
 using SIL.Settings;
 using SIL.Utils;
 using XCore;
@@ -158,6 +159,8 @@ namespace SIL.FieldWorks.LexText.Controls
 						m_propertyTable.SetPropertyPersistence(UIModePropertyName, false);
 					}
 				}
+				// Keep the crash-report value in step with a live toggle, not just the startup seed.
+				ErrorReporter.AddProperty("AvaloniaUIMode", newUiMode);
 			}
 
 			m_sNewUserWs = m_userInterfaceChooser.NewUserWs;
