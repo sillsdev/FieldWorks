@@ -48,11 +48,11 @@ To identify dependencies:
 - Use the following approaches:
   - **Visual Studio** → `Dependencies` in Solution Explorer.  
   - **dotnet CLI** → run:
-    ```bash
+    ```powershell
     dotnet list <ProjectName>.csproj reference
     ```
   - **Dependency Graph Generator**:
-    ```bash
+    ```powershell
     dotnet msbuild <SolutionName>.sln /t:GenerateRestoreGraphFile /p:RestoreGraphOutputPath=graph.json
     ```
     Inspect `graph.json` to see the dependency order.
@@ -79,16 +79,16 @@ For each project:
    - `TargetFramework` → Change to the desired version (e.g., `net8.0`).
    - `PackageReference` → Verify if each NuGet package supports the new framework.  
      - Run:
-       ```bash
+       ```powershell
        dotnet list package --outdated
        ```
        Update packages:
-       ```bash
+       ```powershell
        dotnet add package <PackageName> --version <LatestVersion>
        ```
 
 3. If `packages.config` is used (legacy), migrate to `PackageReference`:
-   ```bash
+   ```powershell
    dotnet migrate <ProjectPath>
    ```
 
@@ -131,11 +131,11 @@ BlobServiceClient client = new BlobServiceClient(connectionString);
 2. Update NuGet packages to versions compatible with the target framework.
 3. After upgrading and restoring the latest DLLs, review code for any required changes.
 4. Rebuild the project:
-   ```bash
+   ```powershell
    dotnet build <ProjectName>.csproj
    ```
 5. Run unit tests if any:
-   ```bash
+   ```powershell
    dotnet test
    ```
 6. Fix build or runtime issues before proceeding.
@@ -168,7 +168,7 @@ After all projects are upgraded:
 
 ## 7. Tools & Automation
 - **.NET Upgrade Assistant**(Optional):
-  ```bash
+  ```powershell
   dotnet tool install -g upgrade-assistant
   upgrade-assistant upgrade <SolutionName>.sln```
 

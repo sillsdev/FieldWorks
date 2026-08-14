@@ -62,13 +62,13 @@ If you also work in sibling repos in the same parent folder (e.g. PanGloss, moti
 Clone the FieldWorks repository using HTTPS or SSH:
 
 **HTTPS:**
-```bash
+```powershell
 git clone https://github.com/sillsdev/FieldWorks.git
 cd FieldWorks
 ```
 
 **SSH:**
-```bash
+```powershell
 git clone git@github.com:sillsdev/FieldWorks.git
 cd FieldWorks
 ```
@@ -77,7 +77,7 @@ cd FieldWorks
 
 If you're working on translations:
 
-```bash
+```powershell
 git clone https://github.com/sillsdev/FwLocalizations.git Localizations
 ```
 
@@ -160,7 +160,7 @@ See [VS Code Stability Profile](vscode-stability-profile.md) for current workspa
 
 It is helpful to increase the rename limits for Git to properly detect renames in large commits:
 
-```bash
+```powershell
 git config diff.renameLimit 10000
 git config merge.renameLimit 10000
 ```
@@ -182,7 +182,7 @@ We welcome any contribution! To get started:
 1. **Fork** the FieldWorks repository on GitHub
 2. **Clone** your fork locally
 3. **Create a branch** for your changes:
-   ```bash
+   ```powershell
    git checkout -b feature/my-feature-name
    ```
 4. **Make your changes** and commit them with clear messages

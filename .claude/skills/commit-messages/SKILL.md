@@ -44,18 +44,24 @@ gitlint --ignore body-is-missing --commits main..HEAD
 ```
 
 (Substitute the actual base branch if not `main`.) A clean run prints
-nothing and exits 0. `Build/Agent/commit-messages.ps1` (or `.sh`) wraps this
-with the same base-ref auto-detection CI uses, if you want the base
-resolved for you instead of naming it.
+nothing and exits 0. `Build/Agent/commit-messages.ps1` wraps this with the
+same base-ref auto-detection CI uses, if you want the base resolved for
+you instead of naming it.
 
 ## Fixing a violation after the fact
 
 If a commit already landed non-compliant and hasn't been pushed to a shared
 branch, reword it without a full interactive rebase:
 
-```bash
-git rebase <target>^ --exec "if [ \"\$(git rev-parse HEAD)\" = \"<target-full-sha>\" ]; then git commit --amend -F <message-file>; fi"
+```powershell
+git rebase <target>^ --exec 'if [ "$(git rev-parse HEAD)" = "<target-full-sha>" ]; then git commit --amend -F <message-file>; fi'
 ```
+
+Git's `--exec` always runs the quoted command through its own bundled `sh`,
+even on Windows, so that inner string stays POSIX syntax regardless of
+which shell you type this from -- only the outer PowerShell single-quotes
+(passed through verbatim, unlike bash's backslash-escaped double-quotes)
+change here.
 
 This replays history non-interactively (no editor, no `-i` prompt) and
 amends only the one commit whose SHA matches, at the point in the replay

@@ -95,7 +95,7 @@ nothing is wasted, because option 2 needs the same startup project.
 view at its real client size with the same compact density the runtime
 applies. Not live, but seconds per cycle and no FLEx launch.
 
-```bash
+```powershell
 Src\Common\FwAvaloniaPreviewHost\bin\Debug\net48\FwAvaloniaPreviewHost.exe --module create-feature
 ```
 
@@ -138,7 +138,7 @@ which is why the host project references `FwAvaloniaDialogs`.
 
 Run the conversion's visual test and look at the PNGs in `Output/Snapshots/`:
 
-```bash
+```powershell
 ./test.ps1 -SkipNative -TestProject FwAvaloniaDialogsTests -TestFilter "FullyQualifiedName~OptionsDialogTests"
 ```
 
