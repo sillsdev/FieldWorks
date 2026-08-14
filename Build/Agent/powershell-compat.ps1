@@ -78,7 +78,7 @@ foreach ($file in $regexScanFiles) {
 	$lines = @(Get-Content -LiteralPath $file -Encoding UTF8)
 	# Comment lines are excluded: this tooling's own doc comments describe the
 	# gotcha patterns in prose, which would otherwise self-match as a violation.
-	$classification = Get-CommentLineClassification -Lines $lines -IsPowerShell $true
+	$classification = Get-CommentLineClassification -Lines $lines -Language 'PowerShell'
 	for ($i = 0; $i -lt $lines.Count; $i++) {
 		if ($null -ne $classification.Kinds[$i]) { continue }
 		foreach ($gotchaName in $gotchaPatterns.Keys) {

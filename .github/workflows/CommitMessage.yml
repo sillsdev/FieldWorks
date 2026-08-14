@@ -19,6 +19,9 @@ jobs:
       shell: pwsh
       # run the linter and tee the output to a file, this will make the check fail but allow us to use the results in summary
       run: |
+        # Pre-create the file: Tee-Object never creates (or even truncates) its target when the
+        # piped command emits zero objects, which is exactly what a clean gitlint run does.
+        New-Item -ItemType File -Path check_results.log -Force | Out-Null
         gitlint --ignore body-is-missing --commits "origin/$env:GITHUB_BASE_REF.." 2>&1 | Tee-Object -FilePath check_results.log
         exit $LASTEXITCODE
     - name: Propegate Error Summary
