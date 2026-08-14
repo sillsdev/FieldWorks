@@ -6,24 +6,28 @@
 	This skill scrapes the legacy WinForms UI for "truth" screenshots, workflows, and behaviour
 	(the Avalonia UI is captured separately, headless). The WinForms UIA2 MCP can ONLY see WinForms:
 	if FieldWorks comes up in New (Avalonia) UI mode, the element tree is empty and PrintWindow renders a
-	blank window — the process looks healthy but nothing is visible to the MCP.
+	blank window - the process looks healthy but nothing is visible to the MCP.
 
 	UI mode is the `UIMode` application setting (default "Legacy"), persisted by libpalaso's
 	CrossPlatformSettingsProvider at:
 	    %LOCALAPPDATA%\SIL\SIL FieldWorks\<version>\user.config
-	(NOT the per-exe `FieldWorks.exe_Url_*` files, which hold other settings). When that value is "New",
-	FieldWorks launches Avalonia. This script sets it to "Legacy" in every existing FieldWorks settings
-	store (and, if the exe's own version store is missing, creates it), so the next launch is WinForms.
+	(NOT the per-exe `FieldWorks.exe_Url_*` files, which hold other settings). FieldWorks launches
+	Avalonia only when that value is "New" AND the launching process has the FW_AVALONIA environment
+	variable set to anything other than 0/false/off. Without FW_AVALONIA the Tools > Options mode
+	chooser is not built at all. This script sets UIMode to "Legacy" in every existing FieldWorks
+	settings store (and, if the exe's own version store is missing, creates it), so the next launch is
+	WinForms whatever FW_AVALONIA says.
 
 	Idempotent and safe to run every time. SIDE EFFECT: this also flips the developer's own persisted
-	UI mode to Legacy — re-select New in Tools ▸ Options (or re-run with -RestoreNew) when you want the
-	Avalonia UI back interactively.
+	UI mode to Legacy - re-run with -RestoreNew (or re-select New in Tools > Options, which requires
+	FW_AVALONIA) when you want the Avalonia UI back interactively.
 
 .PARAMETER Configuration
-	Debug or Release — used only to locate the exe and read its version. Default Debug.
+	Debug or Release - used only to locate the exe and read its version. Default Debug.
 
 .PARAMETER RestoreNew
-	Instead of forcing Legacy, set UIMode back to New (developer convenience).
+	Instead of forcing Legacy, set UIMode back to New (developer convenience). Refuses to run unless
+	FW_AVALONIA is set in this session, since UIMode=New alone does not produce an Avalonia launch.
 
 .EXAMPLE
 	.\.claude\skills\fieldworks-winapp\scripts\Set-FieldWorksLegacyMode.ps1
@@ -36,6 +40,15 @@ param(
 )
 
 $ErrorActionPreference = 'Stop'
+
+# Checked before any write, so a refused -RestoreNew leaves UIMode untouched.
+if ($RestoreNew) {
+	$optIn = $env:FW_AVALONIA
+	if ([string]::IsNullOrWhiteSpace($optIn) -or $optIn.Trim() -in @('0', 'false', 'off')) {
+		throw "FW_AVALONIA is not set in this session, so UIMode=New would still launch WinForms. Run `$env:FW_AVALONIA = '1' first (and set it wherever FieldWorks is launched from), then re-run with -RestoreNew."
+	}
+}
+
 $target = if ($RestoreNew) { 'New' } else { 'Legacy' }
 $repoRoot = (Resolve-Path (Join-Path $PSScriptRoot '..\..\..\..')).Path
 $storeRoot = Join-Path $env:LOCALAPPDATA 'SIL\SIL FieldWorks'
@@ -105,7 +118,7 @@ if (Test-Path $exe) {
 }
 
 if ($changed.Count -eq 0) {
-	Write-Host "[OK] No FieldWorks settings store found; default UI mode is Legacy — nothing to do." -ForegroundColor Green
+	Write-Host "[OK] No FieldWorks settings store found; default UI mode is Legacy - nothing to do." -ForegroundColor Green
 }
 else {
 	Write-Host "[OK] UIMode set to '$target' in:" -ForegroundColor Green
