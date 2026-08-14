@@ -62,8 +62,7 @@ if ($git) {
 if (-not $SkipVSCheck) {
 	$vsToolchain = Get-VsToolchainInfo -Requires @('Microsoft.Component.MSBuild', 'Microsoft.VisualStudio.Component.VC.Tools.x86.x64')
 	if ($vsToolchain) {
-		$vsVersion = if ([string]::IsNullOrWhiteSpace($vsToolchain.DisplayVersion)) { 'unknown version' } else { $vsToolchain.DisplayVersion }
-		Write-Host "[OK] Visual Studio: $vsVersion" -ForegroundColor Green
+		Write-Host "[OK] $($vsToolchain.DisplayLabel)" -ForegroundColor Green
 		Write-Host "     Location: $($vsToolchain.InstallationPath)" -ForegroundColor Gray
 		Write-Host "     PlatformToolset: $($vsToolchain.PlatformToolset)" -ForegroundColor Gray
 	} elseif (Get-VsWherePath) {

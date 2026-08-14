@@ -135,8 +135,7 @@ $toolchain = Get-VsToolchainInfo -Requires @('Microsoft.Component.MSBuild', 'Mic
 $vsDevEnvActive = Test-VsDevEnvironmentActive
 
 if ($toolchain) {
-	$vsVersion = if ([string]::IsNullOrWhiteSpace($toolchain.DisplayVersion)) { 'unknown version' } else { $toolchain.DisplayVersion }
-		Write-Host "[OK] Visual Studio: $vsVersion" -ForegroundColor Green
+		Write-Host "[OK] $($toolchain.DisplayLabel)" -ForegroundColor Green
 
 	if ($toolchain.MSBuildPath) {
 		Write-Host "[OK] MSBuild found: $($toolchain.MSBuildPath)" -ForegroundColor Green

@@ -38,6 +38,50 @@ function Get-VsWherePath {
     return $null
 }
 
+function Get-VsDisplayLabel {
+    <#
+    .SYNOPSIS
+        Formats a Visual Studio instance for build output.
+    .DESCRIPTION
+        Leads with the installer's product name because it carries the release year
+        ('Visual Studio Community 2026'), which the version numbers do not. The
+        version is reduced to its product version; a trailing servicing date is
+        dropped because VS 2022 reports display versions such as
+        '17.14.37 (July 2026)', where the parenthesized year invites the reader to
+        mistake a 2022 build for a 2026 one. Falls back to the version alone when
+        an instance reports no product name.
+    #>
+    param(
+        [string]$DisplayName,
+        [string]$DisplayVersion,
+        [string]$InstallationVersion
+    )
+
+    $name = "$DisplayName".Trim()
+
+    $version = "$DisplayVersion".Trim()
+    if ([string]::IsNullOrWhiteSpace($version)) {
+        $version = "$InstallationVersion".Trim()
+    }
+    if ($version -match '^(?<product>.+?)\s*\([^)]*\)$') {
+        $version = $Matches['product'].Trim()
+    }
+
+    if (-not [string]::IsNullOrWhiteSpace($name)) {
+        if ([string]::IsNullOrWhiteSpace($version)) {
+            return $name
+        }
+
+        return "$name ($version)"
+    }
+
+    if ([string]::IsNullOrWhiteSpace($version)) {
+        return 'Visual Studio (unknown version)'
+    }
+
+    return "Visual Studio $version"
+}
+
 function Get-FwToolchainPolicy {
     <#
     .SYNOPSIS
@@ -176,6 +220,7 @@ function Get-VsInstallationInfo {
     }
 
     $displayVersion = & $vsWhere @baseArgs -property catalog_productDisplayVersion
+    $displayName = & $vsWhere @baseArgs -property displayName
 
     $visualStudioMajor = $null
     if ("$installationVersion" -match '^(\d+)\.') {
@@ -187,7 +232,9 @@ function Get-VsInstallationInfo {
         InstallationPath = $installationPath
         InstallationVersion = $installationVersion
         VisualStudioMajor = $visualStudioMajor
+        DisplayName = $displayName
         DisplayVersion = $displayVersion
+        DisplayLabel = Get-VsDisplayLabel -DisplayName "$displayName" -DisplayVersion "$displayVersion" -InstallationVersion "$installationVersion"
     }
 }
 
@@ -256,7 +303,9 @@ function Get-VsToolchainInfo {
         InstallationPath = $installationPath
         InstallationVersion = $vsInfo.InstallationVersion
         VisualStudioMajor = $visualStudioMajor
+        DisplayName = $vsInfo.DisplayName
         DisplayVersion = $vsInfo.DisplayVersion
+        DisplayLabel = $vsInfo.DisplayLabel
         VisualStudioVersionRange = $toolchainPolicy.VisualStudioVersionRange
         VsDevCmdPath = $vsDevCmdPath
         MSBuildPath = $msbuildPath
@@ -428,13 +477,7 @@ function Initialize-VsDevEnvironment {
     # x64-only build
     $arch = 'amd64'
     $vsInstallPath = $vsToolchain.InstallationPath
-    $vsVersion = if ([string]::IsNullOrWhiteSpace($vsToolchain.DisplayVersion)) {
-        Split-Path (Split-Path (Split-Path (Split-Path $vsInstallPath))) -Leaf
-    }
-    else {
-        $vsToolchain.DisplayVersion
-    }
-    Write-Host "   Found Visual Studio $vsVersion at: $vsInstallPath" -ForegroundColor Gray
+    Write-Host "   Found $($vsToolchain.DisplayLabel) at: $vsInstallPath" -ForegroundColor Gray
     Write-Host "   Setting up environment for $arch..." -ForegroundColor Gray
 
     $vsEnvironment = Get-VsDevEnvironmentVariables -Architecture $arch -HostArchitecture $arch
@@ -450,6 +493,7 @@ function Initialize-VsDevEnvironment {
 
     Write-Host '[OK] Visual Studio environment initialized successfully' -ForegroundColor Green
     Write-Host "   VCINSTALLDIR: $env:VCINSTALLDIR" -ForegroundColor Gray
+    Write-Host "   PlatformToolset: $($vsToolchain.PlatformToolset)" -ForegroundColor Gray
 }
 
 function Get-CvtresDiagnostics {

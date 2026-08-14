@@ -174,7 +174,7 @@ $results += Test-Dependency -Name "Visual Studio (2022/2026)" -Check {
 		throw "No VS installation with MSBuild and C++ tools found"
 	}
 
-	return "Version $($vsInfo.DisplayVersion) at $($vsInfo.InstallationPath)"
+	return "$($vsInfo.DisplayLabel) at $($vsInfo.InstallationPath)"
 }
 
 # MSBuild
