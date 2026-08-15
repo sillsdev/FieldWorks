@@ -1,0 +1,658 @@
+2026 Parser Workshop
+Foundations for Building a Parsing Project
+Lizzie Poole
+Ok, so earlier Kevin gave us an introduction to why we might want to set an automatic parser, and the two options we have in FLEx – Xample and Hermit Crab.
+
+You don’t need have memorised everything by the end of each lecture, that’s why we have plenty of time for you to try things out yourselves and meet with your consultant to help you think through the specific details for your project.
+
+And feel free to interrupt with questions and I can try and explain more clearly.
+
+Outline
+High-level strategy
+Starting project
+Workflow for modeling a language
+Preview of constraints
+Running the parser
+Linguistic terms from a FLEx perspective
+Details of some key concepts
+In this session we’re going to look at the general strategy for parsing, from the very first step of starting a project, to running the parser and testing that it works.
+
+We’re going to look at constraints – we’re not going to go into much detail, just an introduction, and more detail will be given in later lectures.
+
+Then we’ll see how to actually run the parser, and finally we’ll look at some terminology, and particularly clarify the ways certain terms are used in FLEx.
+
+High-level Strategy
+Ok, so let’s start with an overview of how to go about setting up one of the parsers.
+
+Start with existing FLEx project, or new one?
+Toy project
+More freedom to experiment, make mistakes
+Only the data needed—not distracting
+Can intentionally choose what to add next
+Can easily see progress
+Existing project
+Already has all your morphemes/roots in it
+Won’t have to transfer setup later
+The first question to ask is whether you want to use an existing project or set up a what we’re calling a toy project, a brand new project.
+
+We would lean towards recommending you start a toy project, and here are some reasons why:
+more freedom to experiment and make mistakes without messing up data already in a project
+you add only the data you need when you need it, so you’re not distracted by all the other data you have
+once you’ve got the parser working for one particular paradigm you can intentionally choose what data to add next to for your next paradigm – so maybe you started with two nouns and two affixes, those are working so you choose to add one more noun and one more affix. It’s all very contained, whereas if you have your whole lexicon you have a lot to work with
+you can easily see and keep track of the progress you are making
+
+The advantages of an existing project are that it already has morphemes and roots in it, and you won’t have to transfer things later from your toy project to the ‘real’ project. Some things we have tools that can help export and import, but other things need to be done manually. Depending on how far you’ve got with your real project, another option would be to export your lexicon and texts from your real project and import into the toy project so your toy project becomes your real project.
+
+The decision about which to do needs to be made on a project-by-project basis, but often starting a new project is a good recommendation because that simplifies a lot of things. And if you started a new project already to record your paradigms as you were preparing, then you don’t need to start another new project. If you’re unsure, show your consultant what you’ve got and discuss it with them.
+
+Any questions on that?
+
+Workflow for the whole endeavor
+Make a rough list of what you want to cover
+Word classes, paradigms, phonological phenomena
+Start a toy FLEx project (or prep existing project)
+Pick one paradigm from one word class
+Once that is working, move to another
+Iterate until you have good coverage
+Start with short texts
+So how does the whole workflow go?
+
+It’s a good idea to start off with a rough list of what you want to cover. You’re unlikely to get everything finished in this two weeks, but with the list you can then choose what to prioritise – probably pick something simpler to start with and while you get familiar with it what to do. Once you know how to do the basics, you could then leave other easy stuff that you know you can do by yourself, and move on to more complex stuff while here where there are people who can help.
+what word classes? i.e. nouns, verbs, adjectives etc
+what are the paradigms for each of these classes? You’ve been working on these in preparation for the workshop, but if you haven’t already got a straightforward list of your paradigms it’s probably a good idea to make one
+what phonological phenomena do you need to cover? For example, assimilation, insertion, deletion, coalescence, metathesis etc. If you’ll be using Hermit Crab, then writing these down in the form of linear rules as far as possible will be a helpful head start
+
+Then, you’ll need to either start the new toy project to work in, or if using an existing project you’ll need to prepare it. In particular you’ll need to set up your phonemes, and Kevin will talk more about that tomorrow morning.
+
+Then choose one paradigm from one word class to work on. Choose something simpler initially – perhaps a word category where there’s only one type of inflection happening. This might be nouns, and choose one particular noun class or paradigm for singulars and plurals, or perhaps possessive forms, rather than verbs where you may have a lot more inflectional morphology such as person, number, gender, tense/aspect/mood, polarity etc. Again if you’re not sure, show your paradigms to your consultant and they can help you choose an appropriate place to start.
+
+The process of getting a paradigm to work correctly will be described on the next few slides, but in terms of the big picture of your workflow, once that paradigm is working correctly move to another, and so on, until you’ve covered a good selection of categories, paradigms and phonological phenomena from your original lists.
+
+At that point, you can start with short texts, perhaps just a sentence or even a clause, and as you add these you will probably come across more categories, paradigms and phonological phenomena that you need to address. But start slowly and build up. Don’t go wild and put a whole bible chapter in because that’s a sure way to get overwhelmed and frustrated!
+
+How do you “start with a paradigm”?
+To model and test a given paradigm, you need:
+Text with wordforms for the paradigm
+Lexical entries: roots/stems, affixes
+Category with template(s)
+
+Phonological constraints
+Other constraints
+Let’s look at what we mean by starting with a paradigm.
+
+In order to model and test a paradigm, you need to make sure your project includes all the relevant data, all the pieces.
+
+So firstly, you need a Text in Texts and Words which contains the wordforms of the paradigm.
+You need to make sure that all relevant morphemes – roots/stems and affixes – are in the Lexicon.
+You don’t actually need a template to get started right at the beginning, the parser will work without templates, but it is helpful to start thinking about them early on, so we’ll look at that tomorrow.
+
+The you need to think about the phonological issues – so if you have a root that starts with a vowel, does that make the prefixes change? Or maybe nasals do something different to non-nasals. So you want to put examples of different phonological environments that you know have an impact on how your affixes surface.
+
+There are other constraints as well, but we’ll leave those until next week. The ones mentioned so far are certainly enough for you to be starting with.
+
+Process: Text
+Choose starting paradigm
+In the Texts area, type or paste in the forms
+Use Analysis Writing System for contrast (optional)
+
+So choose your starting paradigm, and in Texts and Words type or paste in the wordforms required.
+
+So here is an example from Mbugwe, a Bantu language in Tanzania. So I’ve started with just six words. I have chosen one verb stem, and one TAM form. And then with the six words I’ve just changed the subject, so we have 1sg, 2sg, 3sg, 1pl, 2pl and 3pl subjects.
+
+In the example here, the black text is the language I’m working on, and it uses a vernacular writing system. And then the labels for each paradigm are in blue and use an analysis writing system. Your consultant can help you font colours etc in your writing systems if you find that helpful. One other benefit of different writing systems if you include these kinds of labels in you Text, is that the parser won’t try to parse anything in an analysis writing system.
+
+So I have my text set up.
+
+Process: Lexicon
+In Lexicon Edit, add the morphemes
+Roots/stems for that paradigm
+All affixes needed for that paradigm
+
+Next I need to make sure all the relevant morphemes are in the Lexicon. It’s best to do this in the Lexicon Edit area.
+
+Firstly I need the root/stem, shown on the left, and then also all the affixes used in paradigm, as you can see on the right. All the pieces need to be in the Lexicon so the parser can find them.
+
+Process: Lexicon
+In Lexicon Edit, add the morphemes
+Roots/stems for that paradigm
+All affixes needed for that paradigm
+Eventually add needed constraints
+(Allomorphs, Environments, Inflection Classes, etc.)
+Derivation
+Does the form you are testing involve derivational affixes?
+As you learn what constraints are needed, you’ll be able to add some of these in Lexicon Edit too, and others will be added elsewhere.
+If the form you are testing involves derivational affixes you will need to include those as well, but typically you should start with inflectional paradigms.
+
+We’ll be talking much more about constraints and derivation vs inflection over the next few days.
+
+Process: Template
+Grammar > Category Edit
+Go to category, create a template
+Add affixes to it
+You will also need to create a template for the word category in the Grammar area.
+
+So you got to Grammar > Category Edit. You choose the relevant Category, add a template and then add affixes to the template. So this is what it might look like.
+
+You have a stem here and then you right-click to add a column before or after the stem, depending on whether you’re adding a prefix or a suffix. You’d give the column a name, so subject or TAM, for example. Then you can add affixes to the slot by right-clicking and choosing an affix from the list that comes up. Those are the steps, but Sara will talk more about templates tomorrow.
+
+Process: Testing
+In Texts area, try parsing your paradigm
+Parser > Parse Words in Text
+In the Analyse tab of the Texts and Words area you then try parsing your paradigm.
+
+There is also another option, instead of Parse Words in Text you can also use the Run Tests facility. Kevin will talk about that more in another session.
+
+Process: Testing
+You’ll hopefully get something that looks like this, meaning that the parser has found a possible analysis for your words. The tan background is important, it tells you that these analyses have been done by the parser. So tan is generally a good sign, if you wanted those words to parse!
+
+
+Iterate
+Debug until current paradigm parses completely
+Move to next paradigm
+Add forms to a Text
+Build template
+Add roots/affixes
+Add or adjust constraints
+Parse, debug, parse, until it works
+Move to next phenomenon
+If it doesn’t work, then you’ll need to debug, figure out what’s wrong, maybe something is missing in the Lexicon, maybe you haven’t accounted for phonological changes etc. So you’d make the corrections, and try again until it does parse..
+
+Once it does work, you can move to the next paradigm. It’s an iterative process of adding wordforms, adding or expanding templates, entering morphemes into the Lexicon. The steps in the box don’t need to be done in any particular order, but all three need to be done before you can test whether the new wordforms parse or not.
+
+After the items in the box, you may find you need to add or adjust your constraints, and then try parsing, debug and try again until it works.
+
+After doing a set of related paradigms and confirming they all parse, you can move on to a different phenomenon.
+
+Working through patterns
+Categories: Noun, Verb, Adj, Quant
+Paradigm classes: AR verbs, ER verbs, IR verbs
+Phonological variation: C-initial vs V-initial stems
+Irregular patterns
+You’ll need to work your way through all the patterns you’ve discovered as you’ve been preparing your paradigms.
+
+So you’ll need to work on different Categories, that is nouns, verbs, adjectives etc.
+You may have different classes of paradigms. Here the term ‘class’ refers to sets within one category which may inflect differently. In Spanish for example, the person and tense affixes are different depending on whether the verb ends in ar, er or ir. We would call these the ar-class, the er-class and the ir-class.
+
+And you’d need to work with all the phonological variation possible with each paradigm
+
+And you may find you have some paradigms that don’t seem to fit with any others, using an irregular pattern, and you’ll need to account for those separately as well. These you would probably leave until last.
+
+There are many different ways you can go about this.
+
+Noun
+First you want to model one paradigm for Nouns.
+
+Noun
+Verb
+Adj
+Then you might do one for Verbs, and one for Adjectives.
+
+Noun
+Verb
+Adj
+ N2
+Then you decide to model a second pattern for Nouns.
+
+Noun
+Verb
+Adj
+ N2
+ N3
+ N4
+Then maybe you do more nouns, until you’ve covered all the possible noun patterns you’ve found so far.
+
+Noun
+Verb
+Adj
+Adv
+ N2
+ N3
+ N4
+Then you decide to move on to Adverbs,
+
+Noun
+Verb
+Adj
+Adv
+ N2
+ Adv2
+ N3
+ N4
+and you model two different patterns for them.
+
+Noun
+Verb
+Adj
+Adv
+ N2
+ V-con
+  Adj2
+ Adv2
+ N3
+ V-a
+  cons
+ N4
+ V-i
+  a+
+ V-u
+  u+
+ V-irr1
+ V-irr2
+Then you might decide to go really deep into Verbs and finish out all those patterns, and the same for Adjectives, including all the phonological variations.
+
+Noun
+Verb
+Adj
+Adv
+Quant
+Prep
+Det
+ N2
+ V-con
+  Adj2
+ Adv2
+  Qnt2
+ N3
+ V-a
+  cons
+ N4
+ V-i
+  a+
+ V-u
+  u+
+ V-irr1
+ V-irr2
+Then maybe you decide to add a few more parts of speech.
+
+It doesn’t really matter what order you go in, but it helps to be systematic, and to keep track.
+
+Working through patterns
+Categories: Noun, Verb, Adj, Quant
+Paradigm classes: AR verbs, ER verbs, IR verbs
+Phonological variation: cons-final stems vs vowel-final
+Irregular patterns
+
+Pick a sequence that makes sense to you
+It may help to have a checklist or table
+As I said, you’ll need to work your way through all the categories, paradigms for each category, accounting for phonological variation and irregular forms.
+
+But it may help to have a checklist of all the phenomena you hope to model, or perhaps a table like we have just been looking at. You can then tick off the things that you’ve done, and keep track of what you still need to work on.
+
+Preview of parser constraints
+We’re going to take a brief look at some of the ways you can constrain the parser, but more detail on each method/topic will be presented in lectures during the rest of the week.
+
+Process: Constraints
+Detailed ways to describe the linguistic processes
+Lexical constraints
+Morphological constraints
+Phonological constraints
+Setting up these constraints in FLEx also documents how the language works
+
+
+
+Constraining the parser essentially means giving it the information it needs to know when it can and cannot use different morphemes or forms of morphemes.
+
+We can divide these into lexical constraints, morphological constraints and phonological constraints, and I’ll give examples of each of these in a moment. Setting up these constraints also documents how the language works, and it’s possible to print out a Grammar description containing all these constraints and maybe that’s the start of a paper, or you can share it with colleagues.
+
+Preview of Parser constraints
+In the Lexicon
+Morpheme type (affix vs root/stem vs clitic)
+Affix type (derivational vs inflectional)
+Category
+Variants (fused forms)
+Morphological constraints
+Inflection template
+Inflection class
+Inflection features
+
+
+Let’s start with Lexical constraints.
+
+You need to define the morpheme type – there are three broad categories – so is it an affix, a root/stem or clitic? And then within each of these there are subtypes.
+If it’s an affix, is it derivational or inflectional?
+What Category does the morpheme belong to or attach to? Category = part of speech / grammatical category
+Next Monday we’ll also look at Variant forms
+
+Then Morphological constraints.
+
+You can use inflection templates to dictate the order of affixes in a word, inflection classes help you deal with situations where the same Category has different sets of words which make use of different forms of inflectional affixes, inflection features allow you to control which affixes can apply to which roots/stems, so perhaps nouns have a gender, and you want to make sure that only the masculine suffix can attach to the masculine nouns.
+
+Preview of Parser constraints (cont.)
+Phonological constraints
+Allomorphs and environments
+Phonological rules (HC only)
+Affix process rules (HC only)
+Miscellaneous constraints
+Parser parameters
+Ad hoc rules
+Compounds
+Then Phonological constraints.
+
+Phonological constraints can tell the parser about allomorphs and their environments. This applies to both XAmple and Hermit Crab.
+
+Then specifically for the Hermit Crab parser, you can also use phonological rules and affix process rules to govern the processes that take place to turn the underlying morphemes into their surface representations.
+
+And final there are few other miscellaneous constraints such as the parameters set for the parser itself, ad hoc rules (ad hoc means ‘one-off’ in this context, these are rules you set up that are specific to particular morphemes or allomorphs). You can also set compounding rules. We’ll look at these next week.
+
+So those are broad categories of constraints, and we’ll look at them ni more detail over the next few days.
+
+Details about running the parser
+We’ll now turn to looking at how to actually run the parser, and what different results look like.
+
+Navigate to your text
+You need to be in Texts and Words, Interlinear Texts, choose the Text you’re working on and within that you need to be in the Analyse tab.
+
+Setting the parser to use
+You need to choose which parser you will run, XAmple or Hermit Crab.
+
+You’d go to the Parser menu > Choose Parser. You can talk with your consultant about which one you will use.
+
+Interlinear text: in parsing development mode
+During this workshop you want to use the Parser Development mode. Once the parser has been set up to correctly parse every word in the language, you can switch to Text Glossing for automatic interlinearisation.
+
+Running the parser
+And then usually you’ll want to ‘Parse Words in Text’, especially at the beginning. If you’ve had a word fail to parse, have made a change that you hope will fix it and want to test just that word again you can choose to ‘Parse Current Word’, which runs the parser just on the word where the cursor is. That might be helpful as well as your Texts get longer, you may not want to wait for the whole text to parse. You also have the options of parsing or reparsing all words – that is every single wordform in every single text. That might end up taking a very long time so probably best to avoid that until you know you’ve got things set up correctly!
+
+Interlinear text: in parsing development mode
+White background, tan outline:
+This specific occurrence is user-approved and parses
+White background, blue outline:
+This specific occurrence is user-approved and may not parse
+Boxed: Currently activated word.
+In parsing development mode, the different coloured outlines and backgrounds that appear when a word is parsed give you information about the parser results.
+
+White background means this specific word in this specific text has been approved by the user. When there’s a tan outline, it means the parser is able to parse the word, or it did parse it at some point. If you’ve changed things and haven’t re-run the parser on the word then it will still have the tan outline, so you need to re-run the parser on previously successful words to check that they still parse after any changes you’ve made.
+
+White background with blue outline – the white background again is that this specific occurrence of this word has been approved by the user at some point but it may not parse – maybe the parser has never been run on it, or that it fails when parsing. So the user approved it, thinking it’s fine, but the parser doesn’t like it.
+
+The grey background with black outline is the currently activated word – so if you run the parser on ‘current word’ this is the one it will try.
+
+
+Parser mechanics in FLEx: Interlinear text
+Just stars, white background:
+No analysis available
+Blue background:
+There was some approved analysis, somewhere, sometime and may not parse
+Tan background:
+This word has a parse done by the parser
+Yellow baseline: More than one analysis (possibly none of them correct)
+Yellow top line: More than one analysis (need to choose)
+Just stars means there’s no analysis available, maybe it couldn’t parse, or if it’s monomorphemic then FLEx can’t find it in the Lexicon. Or it might mean it’s a new wordform and the parser hasn’t tried it yet, an the user hasn’t said anything about it yet.
+
+Blue background means this specific occurrence has not been approved, like the blue outline one, but it was approved somewhere else, perhaps elsewhere in the Text or even in a different Text altogether. So you approved it elsewhere and FLEx says, ‘ok you liked this before so you probably want it again and here’s blue to say it’s been approved previously’, but it may not parse because if it was parsing it would have a tan background. Tan overrides blue.
+
+Then ordinary tan – this word was done by the parser. It hasn’t been approved by the user yet, or it would have a white background, but it does parse.
+
+And then finally if the wordform has a yellow background it means more than one analysis is possible. You don’t know if those are by the parser or by the user, you just know that there’s more than one. So it means you need to investigate further – click on the down arrow to see what the possible analyses are.
+
+
+Parser mechanics in FLEx: Interlinear text
+And when you click on it, you’ll get something like this. So here there are two possible analyses to choose from the top is masc pl, the bottom is fem pl. And the check marks tell you whether it’s user-approved or parser-approved or both. Again blue means user-approved, and tan means the parser can parse it. So no check mark in the blue means the user hasn’t yet approved it; no check mark in the tan means the parser can’t or hasn’t yet tried to parse it.
+
+Does that make sense? Any questions on how that works?
+
+Basic color meanings
+Tan = parser suggestion
+Blue ≈ user
+
+Again tan means a parser suggestion, and blue almost always means the user.
+
+Blue can also mean that the wordform exists exactly as it is in the Lexicon, so that would work for monomorphemic words, but while we’re setting up the parser we’re going to be dealing with multimorphemic words, so generally you can think of tan as ‘parser’ and blue as ‘user’.
+
+Linguistic terms as used in FLEx
+Finally we need to look at some linguistic terminology in the context of FLEx.
+
+FLEx and Linguistics
+FLEx was created with linguistic principles in mind.
+Sometimes we have to balance linguistic reality with the practical needs of parsing.
+Hopefully they are not TOO far apart.
+Sometimes the linguistic principles present two ways to go. In that case, we can decide what’s practical.
+So FLEx was created by SIL with the cooperation of linguists and programmers, and was designed with linguistic principles in mind.
+
+But sometimes we have to balance the ideal linguistic way of doing something with what’s practical to get things parsing in FLEx. Hopefully those two things re not too far apart!
+
+Sometimes there a multiple ways of analysing something linguistically, and if you have that situation and one is better to model in the parser than the other, then you might want to go with the one that works better in the parser.
+
+Occasionally you might need to compromise a bit to get something working well in the parser. If you run into an issue where you feel like the compromise needed is crossing the line, then that might be a situation where you want to start a conversation on the FLEx parsing mailing list and see if others have encountered similar issues and found other ways to deal with it, and if it seems like it’s something that really needs to change or be added, then you might want to request that from the developers and they’ll take it into consideration for future versions of FLEx.
+
+Morpheme Types
+root, stem, bound root, bound stem
+prefix, suffix, infix, circumfix, etc.
+clitic, proclitic, enclitic
+Every morpheme has ONE of these specific values
+Ok, so now onto the terminology. Firstly, morpheme types.
+
+When you add a word to the lexicon, by default it is labelled a ‘stem’ but you can choose from a long list of other morpheme types.
+
+There are three broad groupings, so along with stem there’s the option to select root, bound root or bound stem.
+For affixes, you can have prefix, suffix, infix, circumfix etc.
+And then there are clitics, proclitics and enclitics.
+
+Every morpheme must have one of these. So as I said it defaults to stem, and it you don’t want stem you need to pick on one of the other options. There’s no option to leave the morpheme type undefined.
+
+Morpheme Types
+Fundamental constraint
+Morpheme Type affects:
+Information you can enter
+Morphological processes
+Display in interlinear texts (via token - = * )
+Sorting
+
+
+And the morpheme type acts as a fundamental constraint both for the parser and in FLEx more generally. Morpheme type affects what other information you can enter, it affects morphological processes.
+
+Morpheme type also affects how the form is displayed, in the dictionary, so affixes have a hyphen, clitics have an =, and bound roots and stems have an asterisk.
+
+It also has some effect on sorting.
+
+Morpheme Type and Homographs in FLEx
+Homographs are calculated separately for each Morpheme Type (more or less)
+
+
+
+And here’s an example of that.
+
+Here are 8 different ‘en’ forms, but they aren’t numbered 1-8. Two are ‘stem-like’ things, so they are numbered 1 and 2. Bound root and bound stem are then counted separately so restart at 1 and 2, and then similarly for prefixes and suffixes, they’re again each counted separately.
+
+Morpheme Types occur in “groups”
+Specific Morpheme Types are clustered into three groups
+Stem-type
+Affix-type
+Clitic-type
+Each GROUP has certain properties and behaviors that apply to the whole group
+If you change a morpheme’s type in FLEx, the information you can specify for it may change
+These groupings are important in the FLEx data model.  Anyone programming for FLExTools needs to understand this.  But these labels are not exposed in the FLEx UI, though you can see the effects of them.
+
+Morpheme Types in the “stem-type” group
+Root: most basic form
+Stem: plus derivational affix
+Treated the same in FLEx
+Bound root/stem
+Requires affixation
+So linguistically the root is the most basic form, the stem is a root plus any derivational affixes. There could be no derivational affixes added though, and in that case the root ad stem look identical.
+
+Stems and roots are treated the same in FLEx, that is, FLEx doesn’t know the difference linguistically. So it’s up to you how you like to see it labelled, you can make the distinction or not and it makes no difference to the parser.
+
+On the other hand a bound root or bound stem requires affixation, so a bound root or bound stem will not successfully parse if there is no affix.
+
+
+Notes about the stem-type Morpheme Types
+Most projects: using stem is fine
+If really needed: root, bound stem/root
+Stems are fine in most projects. If you really need the distinction you can use them, but if you don’t feel like you need to then don’t go out of your way to make the distinction because it’s just extra work.
+
+If you do, be clear on how you are differentiating them, and think through what you gain – for example does it only affect the display or does it also affect the parser?
+
+Four different uses of the label “stem”
+Linguistic definition: stem is “a root plus zero or more derivational affixes”
+Morpheme Type: stem is one specific morpheme type
+Short for ‘stem-type’, which covers stems, roots, bound stems and bound roots
+Templates: stem base you build on with affix slots
+any ‘stem-type’ morpheme can fill the stem slot of a template
+So there are various ways in which the word ‘stem’ is used.
+
+Linguistically, a stem is a root plus zero or more derivational affixes.
+
+A stem is also one specific morpheme type, different to a bound root, a prefix, a clitic etc.
+
+‘stem’ is also sometimes a shorthand for ‘stem-type’, used as a cover term for stem, root, bound stem and bound root
+
+In templates, the stem is what you build on with affix slots – anything that is a ‘stem-type’ morpheme can fill the ‘stem’ slot in a template
+
+Clitics and parsing behavior in FLEx
+Clitic (morpheme type in FLEx)
+Is written as a separate word, orthographically
+Proclitic/Enclitic (in FLEx)            pro=      =en
+Attached to a word (like a prefix/suffix)
+Attach outside of inflection
+Can’t be in a template
+
+These are now FLEx-specific definitions.
+
+A clitic in FLEx is written as a separate orthographic word. Proclitics and enclitics in FLEx are written attached, like a prefix or suffix, but they attach outside of inflection and can’t appear in a template.
+
+
+Affixes
+Morpheme Types for affixes
+prefix, suffix, circumfix, infix, and more
+Affix type
+Inflectional
+Derivational
+Unspecified (avoid)
+There are lots of different morpheme types for affixes, so not all of them are listed on the slide, but these are probable the most common.
+
+And then affixes can be either inflectional or derivational. You can leave the affix type unspecified, but this isn’t recommended. The parser has so many different options when an affix is unspecified that it comes up with all sorts of crazy analyses and it mean the parser takes much longer to run. So picking one of the two and then finding you want to change the type is better than leaving it unspecified.
+
+Which terms go together?
+Morpheme Type
+Stem, bound root, prefix, circumfix, clitic, enclitic, ….
+Affix Type
+Inflectional vs Derivational
+Category
+Noun, Verb, Preposition, Particle, etc
+So which terms go together?
+
+Category
+Use linguistics to determine categories
+Don’t have to use FLEx labels
+For FLEx, ask, “Does it make a difference for parsing?”
+For the parser, fewer categories is better.
+Just because FLEx has a certain Category doesn’t mean you have to use it. And on the other hand, if FLEx doesn’t have one you need you can create your own.
+
+You don’t usually want to make them too fine-grained, for example having separate Categories or sub-Categories for masculine nouns, feminine nouns, masculine plural nouns etc. That’s too much dividing usually because it doesn’t really help you, and often actually makes things more difficult. Sometimes there are good reasons to have different categories. For example if in your language transitive and intransitive verbs have different morphological templates, then a different Category might be helpful. But if you don’t need that distinction, if transitive and intransitive verbs can make use of the same template, then creating the distinction just makes it more complicated. You can mark something like transitivity with inflection features instead. And so if you want finer distinctions in a dictionary there are other ways of doing it.
+
+The basic rule for parsing is to keep your Categories as few as possible.
+
+Category in FLEx related to Morpheme Types
+Stems
+Have a category via the sense
+Affixes
+Have a category they ATTACH TO
+Clitics
+Like stems, have a category
+Like affixes, have a category they ATTACH TO
+
+So how do Categories relate to the different morpheme types?
+
+For a stem-type morpheme (ie stem, root, bound stem and bound root) the Category is defined via the sense. So a word could have two categories if it has two senses.
+Affixes have categories that they attach to – does this affix attach to ouns or verbs etc? This is an automatic constraint to the parser – it stops verbal affixes attaching to nouns etc.
+Clitics are in-between – they have their own category, like stems, but they also have a category they attach to, like affixes
+
+Inflection vs derivation
+Not always clear cut!
+Some view it as a continuum
+In-between cases, we get to decide
+Let’s think about inflection and derivation.
+
+This isn’t always clear-cut, and some would say that there’s a continuum. In FLEx however it’s a binary option and you have to decide which is most appropriate. If you need to make that decision, you might decide to go with whichever works best for the parser.
+
+Inflection
+Usually part of a set of affixes
+Applies to most roots of a category
+Restrictive order of morphemes
+Transparent meaning change
+Typically a grammatical meaning, not semantic
+
+Examples
+Person/number
+Tense/aspect/mood
+
+Here are some general characteristics of inflection, and then we’ll look at the characteristics of derivation, and these can help you decide which you’re dealing with.
+
+Transparent meaning change – for example it’s pretty obvious that the plural affix means you’re talking about multiple things.
+
+Derivation
+Less predictable
+Applies to only some roots of a category
+More significant meaning change
+Often changes grammatical category or valence
+Variation in where morphemes occur
+
+Examples
+Nominalization/verbalization
+Passive/causative/antipassive
+
+Derivation is generally less predictable, and you’ll see that this list is almost the opposite of the list for inflection.
+
+More significant meaning change – that’s deliberately quite a vague statement
+
+Inflection or Derivation?
+-ly ADVLZR in English
+Changes category
+Applies to most adjectives
+Predictable meaning change
+Comparative
+Bantu extensions (causative, passive, applicative)
+Let’s look at some examples.
+
+Firstly the English adverbializer -ly, for example slow becomes slowly and bad becomes badly.
+It changes the word’s category, and for most linguists, that is sufficient to call it derivational. However, since it applies ot most adjectives and has a transparent meaning change, some might say it has some characteristics of inflection. I think most would agree it’s derivational though, and I’m not disputing that, I just want to show that the lists we’ve just seen don’t always point in the same direction.
+
+The comparative –er is similar, for example big to bigger. It also has characteristics that make it seem sort of inflectional, especially that it doesn’t change the word category. But again most would consider it to be derivational.
+
+I think Bantuists often think of Bantu verb extensions as being inflectional, because we often include them in the verb template along with subject marking, TAM, and object marking etc, and that makes us think of them in the same way we think of those other inflectional affixes. They can also be added to most verbs. Before really thinking about it I definitely assumed they were inflectional. However, they are often valency-changing and the meaning change can be unpredictable, and having to think about which to use when parsing I’ve so far found that treating them as derivational is simpler. However, there’s a caveat to that which I’ll mention later.
+
+So you’ll need to decide which way to go, but again, your consultant can help you think it through and explain the impact each choice will have on the parser.
+
+How is it modeled in FLEx?
+Inflection: affix template
+“slots” for different sets of affixes
+e.g., Person, Gender, Number
+Slot order constrains morpheme order
+Hard to define affixes (reduplication, infix) need a slot
+So how are they modelled in FLEx?
+
+Inflection is modelled via an affix template, with slots for different affixes. So we saw the Mbugwe example earlier where I had a slot for subject, a slot for TAM, etc.
+The order of the slots constrains the order of the morphemes.
+
+Even complicated affixes like reduplication, infixes and circumfixes get a slot and your consultant can help you figure out where to put the slot so the parser knows about it, and then if necessary other processes can move them to the right place.
+
+How is it modeled in FLEx?
+Derivation
+Category it attaches to?
+Category it becomes?
+No position restriction
+Happens “before” or “inside” inflection
+Once derived, template applies
+For derivation, you need to define which Category the affix attaches to, and that constrains it quite a lot, and then you can define which Category it becomes. And these two can be the same, derivational affixes that don’t change Category are permitted.
+
+There is no way to restrict the position of a derivational affix, except that derivation always applies before inflection, so in your template a stem with a derivational affix uses the ‘stem’ slot, and inflectional affixes are then added outside of that.
+
+The Bantu extensions I mentioned do occur in a fixed order, so when there’s more than one it would be good to constrain the order, but this is something I only just of while preparing this lecture so I haven’t got an answer yet. I’ll be giving it some thought this week, and if some of you have similar phenomena, even if you’re not working on a Bantu language, then maybe later in the workshop I’ll have a more helpful suggestion!
+
+Deciding Inflectional vs Derivational (for affix)
+Does it belong to a set of affixes, where one of the set is used?
+Can I state clearly its position relative to other affixes?
+Does it occur “outside” the less constrained affixes?
+Is its meaning grammatical (not semantic or category change)?
+If yes, then Inflectional.
+If no, then Derivational.
+So here are some questions you can ask when trying to decide between the two.
+
+Conclusion
+The more you are reflecting linguistic reality, the easier it is supposed to be to model in FLEx.
+But sometimes we have to make practical compromises.
+Learn behaviors of different methods and use that to decide border cases.
+So, to conclude...
+
+So start with the best linguistic approach that you can, and then see how it works in FLEx. As you go, you’ll learn the behaviours of different methods, and you can use that knowledge to help with the borderline cases.

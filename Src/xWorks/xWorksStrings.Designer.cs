@@ -746,6 +746,33 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Text.
+        /// </summary>
+        internal static string ksAIExportColumnText {
+            get {
+                return ResourceManager.GetString("ksAIExportColumnText", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Words.
+        /// </summary>
+        internal static string ksAIExportColumnWords {
+            get {
+                return ResourceManager.GetString("ksAIExportColumnWords", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Analyses.
+        /// </summary>
+        internal static string ksAIExportColumnAnalyses {
+            get {
+                return ResourceManager.GetString("ksAIExportColumnAnalyses", resourceCulture);
+            }
+        }
+
+        /// <summary>
         ///   Looks up a localized string similar to Abbreviation.
         /// </summary>
         internal static string ksAbbreviation {
@@ -870,7 +897,16 @@ namespace SIL.FieldWorks.XWorks {
                 return ResourceManager.GetString("ksCanBeConfiguredInMoreDetail", resourceCulture);
             }
         }
-        
+
+        /// <summary>
+        ///   Looks up a localized string similar to Cancel.
+        /// </summary>
+        internal static string ksCancel {
+            get {
+                return ResourceManager.GetString("ksCancel", resourceCulture);
+            }
+        }
+
         /// <summary>
         ///   Looks up a localized string similar to Click Cancel to stop loading the Dictionary layout and move to Lexicon Edit..
         /// </summary>
@@ -987,7 +1023,25 @@ namespace SIL.FieldWorks.XWorks {
                 return ResourceManager.GetString("ksChooseAnthroCatStartingList", resourceCulture);
             }
         }
-        
+
+        /// <summary>
+        ///   Looks up a localized string similar to Choose or create a folder for FLEx to put the HC grammar file and one .flextext file per selected text into..
+        /// </summary>
+        internal static string ksChooseGrammarTextsAIExportFolder {
+            get {
+                return ResourceManager.GetString("ksChooseGrammarTextsAIExportFolder", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Choose where to save the grammar and texts for AI analysis.
+        /// </summary>
+        internal static string ksChooseGrammarTextsAIExportFolderTitle {
+            get {
+                return ResourceManager.GetString("ksChooseGrammarTextsAIExportFolderTitle", resourceCulture);
+            }
+        }
+
         /// <summary>
         ///   Looks up a localized string similar to Choose or create a folder (with your project name) for FLEx to put all the files into for this LIFT export.  Any LIFT data in an existing folder will be overwritten..
         /// </summary>
@@ -1491,7 +1545,16 @@ namespace SIL.FieldWorks.XWorks {
                 return ResourceManager.GetString("ksGeneratingStyleInfo", resourceCulture);
             }
         }
-        
+
+        /// <summary>
+        ///   Looks up a localized string similar to The export finished, but with some issues:{0}{0}{1}.
+        /// </summary>
+        internal static string ksGrammarTextsAIExportSummary {
+            get {
+                return ResourceManager.GetString("ksGrammarTextsAIExportSummary", resourceCulture);
+            }
+        }
+
         /// <summary>
         ///   Looks up a localized string similar to Hide subsense grammatical info if same as parent.
         /// </summary>
@@ -1744,7 +1807,16 @@ namespace SIL.FieldWorks.XWorks {
                 return ResourceManager.GetString("ksNoExtendedNoteType", resourceCulture);
             }
         }
-        
+
+        /// <summary>
+        ///   Looks up a localized string similar to Select at least one text to export, or click Cancel..
+        /// </summary>
+        internal static string ksNoTextsSelectedForAIExport {
+            get {
+                return ResourceManager.GetString("ksNoTextsSelectedForAIExport", resourceCulture);
+            }
+        }
+
         /// <summary>
         ///   Looks up a localized string similar to No List Name.
         /// </summary>
@@ -1817,6 +1889,15 @@ namespace SIL.FieldWorks.XWorks {
             }
         }
         
+        /// <summary>
+        ///   Looks up a localized string similar to OK.
+        /// </summary>
+        internal static string ksOK {
+            get {
+                return ResourceManager.GetString("ksOK", resourceCulture);
+            }
+        }
+
         /// <summary>
         ///   Looks up a localized string similar to Obtaining the list of entries to display.
         /// </summary>
@@ -2115,7 +2196,16 @@ namespace SIL.FieldWorks.XWorks {
                 return ResourceManager.GetString("ksSelectedEntryNotInDict", resourceCulture);
             }
         }
-        
+
+        /// <summary>
+        ///   Looks up a localized string similar to Select Texts to Export.
+        /// </summary>
+        internal static string ksSelectTextsForAIExportTitle {
+            get {
+                return ResourceManager.GetString("ksSelectTextsForAIExportTitle", resourceCulture);
+            }
+        }
+
         /// <summary>
         ///   Looks up a localized string similar to Single-line Text.
         /// </summary>

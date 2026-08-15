@@ -921,6 +921,9 @@ I (RandyR) brought them into this file, just to keep track of them for the time 
 			populates the "tools" list appropriately. -->
 		<listener assemblyPath="LexTextDll.dll" class="SIL.FieldWorks.XWorks.LexText.AreaListener"/>
 		<listener assemblyPath="LexEdDll.dll" class="SIL.FieldWorks.XWorks.LexEd.FLExBridgeListener"/>
+		<!-- answers the grammar+texts-for-AI export's request to write FLExText files,
+			since InterlinVc/InterlinearExporter are only reachable from ITextDll.dll -->
+		<listener assemblyPath="ITextDll.dll" class="SIL.FieldWorks.IText.FlexTextAIExportListener"/>
 		<!-- take care of the writing system combo box -->
 		<listener assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.WritingSystemListHandler"/>
 		<listener assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.CombinedStylesListHandler"/>

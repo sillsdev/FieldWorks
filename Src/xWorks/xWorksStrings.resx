@@ -518,6 +518,36 @@ Are you SURE you want to delete the field {2}?</value>
   <data name="ksLIFTFolderNotEmpty" xml:space="preserve">
     <value>The selected folder is not empty, but does not contain a lexicon.  Do you want to continue?</value>
   </data>
+  <data name="ksChooseGrammarTextsAIExportFolder" xml:space="preserve">
+    <value>Choose or create a folder for FLEx to put the HC grammar file and one .flextext file per selected text into.</value>
+  </data>
+  <data name="ksChooseGrammarTextsAIExportFolderTitle" xml:space="preserve">
+    <value>Choose where to save the grammar and texts for AI analysis</value>
+  </data>
+  <data name="ksGrammarTextsAIExportSummary" xml:space="preserve">
+    <value>The export finished, but with some issues:{0}{0}{1}</value>
+  </data>
+  <data name="ksNoTextsSelectedForAIExport" xml:space="preserve">
+    <value>Select at least one text to export, or click Cancel.</value>
+  </data>
+  <data name="ksSelectTextsForAIExportTitle" xml:space="preserve">
+    <value>Select Texts to Export</value>
+  </data>
+  <data name="ksAIExportColumnText" xml:space="preserve">
+    <value>Text</value>
+  </data>
+  <data name="ksAIExportColumnWords" xml:space="preserve">
+    <value>Words</value>
+  </data>
+  <data name="ksAIExportColumnAnalyses" xml:space="preserve">
+    <value>Analyses</value>
+  </data>
+  <data name="ksOK" xml:space="preserve">
+    <value>OK</value>
+  </data>
+  <data name="ksCancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
   <data name="ksCantDemoteTagList" xml:space="preserve">
     <value>You cannot demote a list of Text Markup Tags into another list.</value>
   </data>

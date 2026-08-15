@@ -17,6 +17,8 @@ using System.Xml;
 using System.Xml.Xsl;
 using Microsoft.Win32;
 using SIL.Extensions;
+using SIL.Machine.Morphology.HermitCrab;
+using SIL.FieldWorks.WordWorks.Parser;
 using SIL.LCModel.Core.Text;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Controls.FileDialog;
@@ -89,7 +91,8 @@ namespace SIL.FieldWorks.XWorks
 			kftWebonary,
 			kftWordOpenXml,
 			kftWordClassifiedDict,
-			kftPhonology
+			kftPhonology,
+			kftGrammarTextsAI
 		}
 		// ReSharper restore InconsistentNaming
 		protected internal struct FxtType
@@ -534,6 +537,7 @@ namespace SIL.FieldWorks.XWorks
 		private List<int> m_translationWritingSystems;
 		private List<ICmPossibilityList> m_translatedLists;
 		private bool m_allQuestions; // For semantic domains, export missing translations as English?
+		private List<IStText> m_selectedTextsForAIExport;
 
 		private void btnExport_Click(object sender, EventArgs e)
 		{
@@ -548,6 +552,8 @@ namespace SIL.FieldWorks.XWorks
 				if (!PrepareForExport())
 					return;
 				bool fLiftExport = m_exportItems[0].SubItems[2].Text == "lift";
+				bool fGrammarTextsAIExport = m_rgFxtTypes.Count > 0
+					&& m_rgFxtTypes[FxtIndex((string)m_exportItems[0].Tag)].m_ft == FxtTypes.kftGrammarTextsAI;
 				string sFileName;
 				string sDirectory;
 				if (fLiftExport)
@@ -591,6 +597,34 @@ namespace SIL.FieldWorks.XWorks
 								return;
 						}
 					}
+				}
+				else if (fGrammarTextsAIExport)
+				{
+					var textList = InterestingTextsDecorator.GetInterestingTextList(m_mediator, m_propertyTable, m_cache.ServiceLocator).InterestingTexts;
+					using (var textDlg = new GrammarAndTextsAIExportSelectionDlg(m_cache, textList))
+					{
+						var previousSelection = m_propertyTable.GetStringProperty("GrammarTextsAIExportSelection", null);
+						if (previousSelection != null)
+							textDlg.ApplyPreviousSelection(new HashSet<string>(previousSelection.Split(',')));
+						if (textDlg.ShowDialog(this) != DialogResult.OK)
+							return;
+						m_selectedTextsForAIExport = textDlg.SelectedTexts.ToList();
+						m_propertyTable.SetProperty("GrammarTextsAIExportSelection",
+							string.Join(",", m_selectedTextsForAIExport.Select(t => t.Guid.ToString())), true);
+						m_propertyTable.SetPropertyPersistence("GrammarTextsAIExportSelection", true);
+					}
+					using (var dlg = new FolderBrowserDialogAdapter())
+					{
+						dlg.Description = xWorksStrings.ksChooseGrammarTextsAIExportFolder;
+						dlg.ShowNewFolderButton = true;
+						dlg.RootFolder = Environment.SpecialFolder.Desktop;
+						dlg.SelectedPath = m_propertyTable.GetStringProperty("ExportDir",
+							Environment.GetFolderPath(Environment.SpecialFolder.Personal));
+						if (dlg.ShowDialog(this) != DialogResult.OK)
+							return;
+						sDirectory = dlg.SelectedPath;
+					}
+					sFileName = Path.Combine(sDirectory, "HCGrammar.xml");
 				}
 				else
 				{
@@ -749,6 +783,12 @@ namespace SIL.FieldWorks.XWorks
 			return true;
 		}
 
+		/// <summary>Sets the texts to include in a grammar+texts-for-AI export.</summary>
+		internal void SetSelectedTextsForAIExport(List<IStText> texts)
+		{
+			m_selectedTextsForAIExport = texts;
+		}
+
 		/// <summary>
 		/// This version is overridden by (currently) Interlinear and Discourse Chart exports.
 		/// </summary>
@@ -843,6 +883,19 @@ namespace SIL.FieldWorks.XWorks
 								progressDlg.Restartable = true;
 								progressDlg.RunTask(true, ExportPhonology, outPath, ft.m_sDataType, ft.m_sXsltFiles);
 								break;
+							case FxtTypes.kftGrammarTextsAI:
+							{
+								progressDlg.Minimum = 0;
+								progressDlg.Maximum = m_selectedTextsForAIExport.Count + 1;
+								progressDlg.AllowCancel = true;
+								var aiExportMessages = (List<string>)progressDlg.RunTask(true, ExportGrammarAndTextsForAI, outPath);
+								if (aiExportMessages.Count > 0)
+								{
+									MessageBox.Show(this, string.Format(xWorksStrings.ksGrammarTextsAIExportSummary,
+										Environment.NewLine, string.Join(Environment.NewLine, aiExportMessages)));
+								}
+								break;
+							}
 							case FxtTypes.kftWordOpenXml:
 							case FxtTypes.kftWordClassifiedDict:
 								progressDlg.Minimum = 0;
@@ -1091,6 +1144,35 @@ namespace SIL.FieldWorks.XWorks
 			phonologyServices.ExportPhonologyAsXml(outPath);
 			m_progressDlg.Step(1000);
 			return null;
+		}
+
+		/// <summary>
+		/// Writes the HC grammar (HCGrammar.xml, at outPath) and one .flextext file per
+		/// selected text into the same folder. HCLoader already catches per-item
+		/// linguistic problems internally, so an exception escaping here aborts the
+		/// whole export; a per-text export failure only skips that one text. Runs on
+		/// the background task thread, so it returns the combined warning/failure list
+		/// rather than showing it -- the UI thread shows it once this returns.
+		/// </summary>
+		internal object ExportGrammarAndTextsForAI(IThreadedProgress progress, object[] args)
+		{
+			var outPath = (string)args[0];
+			var outFolder = Path.GetDirectoryName(outPath);
+			var loadMessages = new List<string>();
+			var logger = new GrammarExportLoadLogger(loadMessages);
+			var language = HCLoader.Load(m_cache, logger);
+			XmlLanguageWriter.Save(language, outPath);
+			progress.Step(1);
+
+			var texts = m_selectedTextsForAIExport ?? new List<IStText>();
+			var request = new ExportTextsAsFlexTextRequest(texts, outFolder);
+			Publisher.Publish(new PublisherParameterObject(EventConstants.ExportTextsAsFlexText, request, m_propertyTable.GetWindow()));
+			if (!request.Handled)
+				request.Failures.Add("FLExText export service was not available.");
+			foreach (var text in texts)
+				progress.Step(1);
+
+			return loadMessages.Concat(request.Failures).ToList();
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1471,6 +1553,9 @@ namespace SIL.FieldWorks.XWorks
 				case "phonology":
 					ft.m_ft = FxtTypes.kftPhonology;
 					break;
+				case "grammarTextsAI":
+					ft.m_ft = FxtTypes.kftGrammarTextsAI;
+					break;
 				default:
 					Debug.Fail("Invalid type attribute value for the template element");
 					ft.m_ft = FxtTypes.kftFxt;
@@ -1618,6 +1703,12 @@ namespace SIL.FieldWorks.XWorks
 		internal void SetCache(LcmCache cache)
 		{
 			m_cache = cache;
+		}
+
+		/// <summary>Sets the property table this dialog uses.</summary>
+		internal void SetPropertyTable(PropertyTable propertyTable)
+		{
+			m_propertyTable = propertyTable;
 		}
 
 		/// <summary>

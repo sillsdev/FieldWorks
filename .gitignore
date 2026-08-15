@@ -215,5 +215,6 @@ DataTreeTimingBaselines.json
 /findings_*.md
 *scratchpad*
 *[Ss]cratchPad*
+/.review/
 
 Docs/migration/working/
