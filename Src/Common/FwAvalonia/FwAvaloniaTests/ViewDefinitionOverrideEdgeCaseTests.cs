@@ -160,7 +160,8 @@ namespace FwAvaloniaTests
 		[Test]
 		public void Reparent_IsReportedAsDiagnostic_NotSilentlyDropped()
 		{
-			// Moving a node to a different parent is not representable as a sparse patch -- but it must be
+			// Moving a node to a different parent is not representable as a sparse patch -- but
+			// it must be
 			// reported, never silently lost.
 			var shipped = Model(GroupNode("g1", "G1", FieldNode("a", "A")), GroupNode("g2", "G2"));
 			var customized = Model(GroupNode("g1", "G1"), GroupNode("g2", "G2", FieldNode("a", "A")));

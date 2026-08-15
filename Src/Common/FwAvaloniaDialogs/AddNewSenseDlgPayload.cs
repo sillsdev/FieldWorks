@@ -7,10 +7,13 @@ using System.Collections.Generic;
 namespace FwAvaloniaDialogs
 {
 	/// <summary>
-	/// The LCModel-free snapshot the Add New Sense view-model writes on OK -- the per-analysis-WS gloss values
+	/// The LCModel-free snapshot the Add New Sense view-model writes on OK -- the per-analysis-WS
+	/// gloss values
 	/// (keyed by writing-system tag) plus the chosen grammatical info (the <see cref="FwSandboxMsa"/> the hosted
-	/// <see cref="MSAGroupBox"/> emitted). The LCModel-aware launcher reads this back to create the new
-	/// <c>ILexSense</c> (gloss + find-or-created MSA) in one undoable step -- the lift of <c>AddNewSenseDlg</c>'s OK
+	/// <see cref="MSAGroupBox"/> emitted). The LCModel-aware launcher reads this back to create
+	/// the new
+	/// <c>ILexSense</c> (gloss + find-or-created MSA) in one undoable step -- the lift of
+	/// <c>AddNewSenseDlg</c>'s OK
 	/// branch (set the gloss; <c>lsNew.SandboxMSA = m_msaGroupBox.SandboxMSA</c>).
 	/// </summary>
 	public sealed class AddNewSenseDlgPayload
@@ -25,7 +28,8 @@ namespace FwAvaloniaDialogs
 		public IReadOnlyDictionary<string, string> GlossByWs { get; }
 
 		/// <summary>
-		/// The chosen grammatical info (MSA) -- the LCModel-free <see cref="FwSandboxMsa"/> (MsaType + main/secondary
+		/// The chosen grammatical info (MSA) -- the LCModel-free <see cref="FwSandboxMsa"/>
+		/// (MsaType + main/secondary
 		/// POS ids + slot id). The launcher resolves the ids back to LCModel objects and find-or-creates the MSA on
 		/// the new sense (exactly as <c>AddNewSenseDlg</c> assigns <c>lsNew.SandboxMSA</c>). Null when no MSA section.
 		/// </summary>

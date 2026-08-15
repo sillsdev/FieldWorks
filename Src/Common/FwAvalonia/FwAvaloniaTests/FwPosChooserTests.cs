@@ -85,7 +85,8 @@ namespace FwAvaloniaTests
 			=> chooser.Tree.GetVisualDescendants().OfType<TreeViewItem>().ToList();
 
 		// A Popup renders in its own top-level, which the host window's CaptureRenderedFrame does not
-		// include -- so a snapshot of the chooser shows only the collapsed box. To capture the ACTUAL
+		// include -- so a snapshot of the chooser shows only the collapsed box. To capture the
+		// ACTUAL
 		// on-top content (the tree / filtered list the user sees), build a THROWAWAY chooser in the same
 		// state, detach its popup-content panel, and host it in its own capture window.
 		private static void CaptureOpenPopupContent(string name, bool filtered)

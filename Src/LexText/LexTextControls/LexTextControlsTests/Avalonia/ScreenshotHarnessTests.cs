@@ -67,7 +67,8 @@ namespace SIL.FieldWorks.LexText.Controls
 			public string GetHelpString(string id) => string.Empty;
 			public string HelpFile => string.Empty;
 		}
-		/// <summary>Minimal IApp -- the matching-entries browser's XmlVc/LayoutCache asserts app != null
+		/// <summary>Minimal IApp -- the matching-entries browser's XmlVc/LayoutCache asserts app
+		/// != null
 		/// and uses app.ApplicationName for the layout inventory.</summary>
 		private sealed class StubApp : IApp
 		{
@@ -232,8 +233,10 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <summary>
 		/// Construct the dialog and render it on its OWN timed STA thread running a REAL message loop
 		/// (Application.Run + a timer that captures-then-closes once it's painted). The pumping loop lets
-		/// dialogs that initialize asynchronously finish (Show()+DoEvents alone leaves them half-built);
-		/// a synchronous hang (matching-entries) just blocks the thread -> the Join timeout abandons it
+		/// dialogs that initialize asynchronously finish (Show()+DoEvents alone leaves them
+		/// half-built);
+		/// a synchronous hang (matching-entries) just blocks the thread -> the Join timeout
+		/// abandons it
 		/// without killing the batch. Trace listeners are cleared by the test, so asserts never pop a modal.
 		/// </summary>
 		private void Cap(string name, string docRelDir, Func<Form> factory, int timeoutSec = 18)
@@ -361,7 +364,8 @@ namespace SIL.FieldWorks.LexText.Controls
 			if (typeof(IPartOfSpeech).IsAssignableFrom(pt)) return ctx.FirstPos;
 			if (typeof(ILexEntry).IsAssignableFrom(pt)) return ctx.FirstEntry;
 			if (typeof(ICmObject).IsAssignableFrom(pt)) return pt.IsInstanceOfType(ctx.FirstEntry) ? (object)ctx.FirstEntry : null;
-			// CmObjectUi (FdoUi) -- make one for the seeded entry via its static factory (reflected).
+			// CmObjectUi (FdoUi) -- make one for the seeded entry via its static factory
+			// (reflected).
 			if (pt.Name == "CmObjectUi")
 			{
 				var mk = pt.GetMethod("MakeUi", new[] { typeof(LcmCache), typeof(int) });
@@ -373,7 +377,8 @@ namespace SIL.FieldWorks.LexText.Controls
 				foreach (var f in pt.GetFields()) if (f.FieldType == typeof(string)) f.SetValue(wp, "Sample");
 				return wp;
 			}
-			// NOTE: arrays/collections left null -- supplying an empty array regressed ~11 dialogs that
+			// NOTE: arrays/collections left null -- supplying an empty array regressed ~11
+			// dialogs that
 			// treat null as "no selection / default" but break on an empty collection.
 			if (pt == typeof(string)) return string.Empty;
 			if (pt == typeof(int)) return 0; // hvo-guessing regressed more than it fixed; keep 0
@@ -425,13 +430,16 @@ namespace SIL.FieldWorks.LexText.Controls
 				if (skip.Contains(name)) continue;
 				if (!ctorOnly)
 				{
-					// Full pass: skip the matching-entries family -- its SetDlgInfo builds a BrowseViewer
-					// synchronously and blocks. (The ctor-only pass below captures their shell instead.)
+					// Full pass: skip the matching-entries family -- its SetDlgInfo builds a
+					// BrowseViewer
+					// synchronously and blocks. (The ctor-only pass below captures their shell
+					// instead.)
 					bool goFamily = false;
 					for (var b = t; b != null; b = b.BaseType) if (b.Name == "BaseGoDlg") { goFamily = true; break; }
 					if (goFamily || t.Name == "InsertEntryDlg" || t.Name == "AddNewSenseDlg") continue;
 				}
-				// Shell (ctor-only) renders fast or hangs -- short timeout; full pass allows a bit longer.
+				// Shell (ctor-only) renders fast or hangs -- short timeout; full pass allows a
+				// bit longer.
 				Cap(name, docRelDir, () => ReflectBuild(t, ctx, ctorOnly), timeoutSec: ctorOnly ? 6 : 10);
 			}
 		}
@@ -440,9 +448,9 @@ namespace SIL.FieldWorks.LexText.Controls
 		[Timeout(1200000)] // full reflection sweep across dialog assemblies; override any default per-test timeout
 		public void ScreenshotHarness_CaptureLegacyDialogs()
 		{
-			// Clear trace listeners for the duration: stops Debug.Assert MODAL POPUPS (the assert dialogs
-			// that were appearing on screen) and makes asserts no-op so dialogs proceed past benign ones;
-			// any real failure then surfaces as a catchable exception we log as a trace (never a popup).
+			// Clear trace listeners for the duration: Debug.Assert stops raising modal
+			// popups and asserts no-op, so dialogs proceed past benign ones. A real
+			// failure still surfaces as a catchable exception.
 			var savedListeners = new System.Diagnostics.TraceListener[System.Diagnostics.Trace.Listeners.Count];
 			System.Diagnostics.Trace.Listeners.CopyTo(savedListeners, 0);
 			System.Diagnostics.Trace.Listeners.Clear();
@@ -488,12 +496,13 @@ namespace SIL.FieldWorks.LexText.Controls
 						return d;
 					});
 
-					// BREADTH: reflect over every dialog assembly and auto-capture each constructable Form
-					// (matching-entries/search-browse family auto-skipped -> live-capture). Resilient: each
-					// runs on its own timed thread, so a failure/hang is logged and the sweep continues.
+					// BREADTH: reflect over every dialog assembly and auto-capture each
+					// constructable Form, except the matching-entries/search-browse
+					// family. Each runs on a timed thread, so a hang cannot stall it.
 					var dlls = new[] { "LexTextControls.dll", "FwCoreDlgs.dll", "FdoUi.dll", "xWorks.dll" };
 					var done = new HashSet<string> { "feature-chooser", "msa-inflection-feature-list", "msa-creator" };
-					// Pass A -- full SetDlgInfo (populated data); matching-entries family skipped (hangs).
+					// Pass A -- full SetDlgInfo (populated data); matching-entries family skipped
+					// (hangs).
 					foreach (var dll in dlls) ReflectSweep(dll, "dialogs", sena, done, ctorOnly: false);
 					// Lock in pass-A successes so the shell pass does not overwrite a populated shot.
 					foreach (var line in m_log.ToArray())
@@ -503,7 +512,8 @@ namespace SIL.FieldWorks.LexText.Controls
 					// capture layout only -- a structurally accurate "before".
 					foreach (var dll in dlls) ReflectSweep(dll, "dialogs", sena, done, ctorOnly: true);
 
-					// LIVE-CAPTURE / on-pickup -- the matching-entries search-browse family (InsertEntryDlg,
+					// LIVE-CAPTURE / on-pickup -- the matching-entries search-browse family
+					// (InsertEntryDlg,
 					// EntryGoDlg, MergeEntryDlg, LinkMSADlg). Even with WindowConfiguration + a message loop +
 					// IApp, MatchingObjectsBrowser builds a full BrowseViewer SYNCHRONOUSLY in SetDlgInfo and
 					// blocks (the loop never pumps, so the watchdog can't rescue it). It needs the real app

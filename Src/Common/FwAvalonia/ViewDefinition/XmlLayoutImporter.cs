@@ -53,7 +53,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 		public static readonly HashSet<string> HandledChooserLinkAttributes =
 			new HashSet<string>(System.StringComparer.Ordinal) { "type", "label", "tool", "target" };
 
-		// The condition vocabulary the importer parses into ViewCondition -- exactly the forms the
+		// The condition vocabulary the importer parses into ViewCondition -- exactly the forms
+		// the
 		// shipped DETAIL layouts use (audited 2026-06-11 over DistFiles .../Parts: boolequals 44,
 		// intequals 9, lengthatleast/-most 8, intmemberof 2, intlessthan 5, guidequals 2, is/target on
 		// where clauses). Publishing-only forms (stringequals, stringaltequals, hvoequals,
@@ -188,8 +189,10 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 					$"Could not resolve part ref '{refName}' for class '{className}'.", stableId));
 
 				// Recover the caller's structural children so an unresolved *section* part (e.g.
-				// LexSense/Normal's HeavySummary, which has no shipped part definition) does not drop
-				// its real fields: <part ref='HeavySummary'><indent><part ref='GlossAllA'/>...</indent></part>.
+				// LexSense/Normal's HeavySummary, which has no shipped part definition) does not
+				// drop
+				// its real fields: <part ref='HeavySummary'><indent><part
+				// ref='GlossAllA'/>...</indent></part>.
 				// Legacy DataTree omits the whole subtree here; recovering the children is strictly
 				// more faithful to what users see and keeps the diagnostic for the audit trail.
 				var recoverable = new List<XElement>();
@@ -351,7 +354,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 						sliceTargetLayout = Attr(callerEl, "param") ?? Attr(contentEl, "layout");
 
 					// A per-field writing-system visibility override (legacy visibleWritingSystems on a
-					// multistring slice or its persisted partRef property -- a space/comma list of ws specs).
+					// multistring slice or its persisted partRef property -- a space/comma list
+					// of ws specs).
 					// Carry the ordered specs onto the node; the composer intersects them with the resolved
 					// ws= set so the field shows exactly that subset. Caller (partRef) wins over content,
 					// matching where the legacy editor persists the user's choice.

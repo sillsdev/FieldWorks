@@ -88,7 +88,9 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		// One row per current writing system, using the shared DetailValueFactory per-ws row recipe (same as the composer), so both views render consistently; only the text reads live here.
+		// One row per current writing system, using the shared DetailValueFactory per-ws row
+		// recipe (same as the composer), so both views render consistently; only the text reads
+		// live here.
 		private IReadOnlyList<DetailWsValue> GetLexemeFormValues()
 		{
 			return DetailValueFactory.CreateMultiWsValues(

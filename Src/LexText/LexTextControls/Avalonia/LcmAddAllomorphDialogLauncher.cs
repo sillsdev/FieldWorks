@@ -99,7 +99,8 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// Builds the LCModel-free <see cref="EntryGoDialogInput"/> for the Add-Allomorph consumer: the legacy title /
 		/// "Add Allomorph..." OK / "Lexical Entries" prompt, the typed form as the initial query (the legacy dialog
 		/// launches primed with the form being added), and a search over the shared <see cref="EntryGoSearchEngine"/>
-		/// (no entry is excluded -- any entry may receive the allomorph). Internal so the input + search are
+		/// (no entry is excluded -- any entry may receive the allomorph). Internal so the input +
+		/// search are
 		/// unit-testable against a real cache without running the modal.
 		/// </summary>
 		internal static EntryGoDialogInput BuildInput(LcmCache cache, Mediator mediator, PropertyTable propertyTable,
@@ -255,8 +256,10 @@ namespace SIL.FieldWorks.LexText.Controls
 		}
 
 		/// <summary>
-		/// Ensures <paramref name="entry"/> carries an MSA appropriate for <paramref name="morphType"/> before an
-		/// allomorph of that type is added -- the legacy Yes-path tail: stem-like morph types (root/stem/clitic/
+		/// Ensures <paramref name="entry"/> carries an MSA appropriate for <paramref
+		/// name="morphType"/> before an
+		/// allomorph of that type is added -- the legacy Yes-path tail: stem-like morph types
+		/// (root/stem/clitic/
 		/// particle/phrase) get a <c>IMoStemMsa</c> when none exists; every other type gets a
 		/// <c>IMoUnclassifiedAffixMsa</c> when none exists. Must run inside an open unit of work. Internal so it is
 		/// unit-testable against a real cache.

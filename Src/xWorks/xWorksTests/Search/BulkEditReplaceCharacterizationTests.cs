@@ -64,7 +64,8 @@ namespace SIL.FieldWorks.XWorks.Search
 		};
 
 		/// <summary>
-		/// Applies every replacement case through preview and apply and requires identical result text.
+		/// Applies every replacement case through preview and apply and requires identical result
+		/// text.
 		/// </summary>
 		[Test]
 		public void PreviewAndApply_ProduceTheSameTextAndWritingSystem()

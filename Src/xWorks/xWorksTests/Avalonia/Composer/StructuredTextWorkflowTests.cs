@@ -19,7 +19,8 @@ namespace SIL.FieldWorks.XWorks
 	/// an editable StText, driven through the REAL composed paragraph CRUD seam over an in-memory LCModel
 	/// and then RE-PROJECTED from domain truth (the host re-show), so the assertions prove the data
 	/// genuinely round-tripped, not merely that a setter returned true:
-	///   edit a Definition paragraph-> add a 2nd paragraph -> apply a paragraph style to it -> commit
+	/// edit a Definition paragraph-> add a 2nd paragraph -> apply a paragraph style to it ->
+	/// commit
 	///        -> re-project the StText -> verify the two paragraphs + the style round-tripped.
 	///   delete a paragraph-> undo restores it (text + order intact).
 	/// The StText is a Sense.Definition -- the canonical StText the legacy StTextSlice edits.

@@ -17,7 +17,8 @@ namespace SIL.FieldWorks.XWorks
 	/// <c>EntrySequenceReferenceSlice</c> fields (ComponentLexemes/PrimaryLexemes on LexEntryRef,
 	/// targeting ILexEntry OR ILexSense) compose as EDITABLE ReferenceVector rows whose items are
 	/// headwords and whose ADD is a type-ahead lexicon search (<see cref="DetailField.SearchOptions"/>)
-	/// -- possibility lists enumerate, lexicons search, so the whole lexicon is never materialized
+	/// -- possibility lists enumerate, lexicons search, so the whole lexicon is never
+	/// materialized
 	/// as Options. Writes ride sda.Replace inside the fenced session, plus the legacy launcher's
 	/// ComponentLexemes coupling (first component becomes the primary lexeme; the complex form
 	/// shows under new components) which LCModel does NOT apply on add (pinned below).

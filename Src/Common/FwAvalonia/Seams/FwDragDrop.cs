@@ -10,7 +10,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Seams
 	/// The cross-framework drag-and-drop payload contract. Both WinForms and Avalonia
 	/// views drag from and drop onto each other through the OS DnD pipeline using the same shared
 	/// formats the clipboard seam established:
-	/// - text drags: the legacy <c>"TsString"</c> OS format (rich) + <c>UnicodeText</c> (plain) -- the dual-format pair;
+	/// - text drags: the legacy <c>"TsString"</c> OS format (rich) + <c>UnicodeText</c> (plain)
+	/// -- the dual-format pair;
 	/// - object moves: the <see cref="RecordKeyFormat"/> string payload defined here (a guid-based
 	///   record key), framework-neutral and resolvable on either side via the LCModel object repository.
 	/// Reorder semantics within one view stay local to that view. This layer stays LCModel-free.

@@ -17,7 +17,8 @@ namespace LexTextControlsTests
 	/// <summary>
 	/// The LCModel-aware side of the reusable Avalonia Insert Entry dialog launcher
 	/// (<see cref="LcmInsertEntryDialogLauncher"/>): building the per-WS lexeme-form / gloss fields and the
-	/// morph-type options from a real cache, the live affix-marker -> morph-type derivation, and the ONE undoable
+	/// morph-type options from a real cache, the live affix-marker -> morph-type derivation, and
+	/// the ONE undoable
 	/// create that turns the dialog payload into an ILexEntry (with the LT-11950 per-alternative ws fix-up). The
 	/// modal loop itself is desktop-only (it needs an Avalonia app + a WinForms-owned modal Form), so it is
 	/// exercised by the headless InsertEntryDialogTests in FwAvaloniaDialogsTests; here we cover the pure LCModel
@@ -548,7 +549,8 @@ namespace LexTextControlsTests
 				"the chosen inflection feature value round-trips into the IFsFeatStruc");
 		}
 
-		// Reopen reads the FS back the way the MsaCreator edit path would, to verify the IFsFeatStruc actually round-trips end-to-end.
+		// Reopen reads the FS back the way the MsaCreator edit path would, to verify the
+		// IFsFeatStruc actually round-trips end-to-end.
 		[Test]
 		public void Workflow_CreateInflAffix_AssignFeature_Commit_Reopen_RoundTrips()
 		{
@@ -583,7 +585,8 @@ namespace LexTextControlsTests
 		public void CreateNewEntry_StemMsa_WritesNoInflectionFeatures()
 		{
 			var vernTag = Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Id;
-			// A stem MSA carrying (incorrectly) some inflection features -- the adapter must no-op (scope is infl/deriv).
+			// A stem MSA carrying (incorrectly) some inflection features -- the adapter must
+			// no-op (scope is infl/deriv).
 			var msa = new FwSandboxMsa(FwMsaType.Stem, mainPosId: _noun.Guid.ToString());
 			var payload = new InsertEntryDlgPayload(
 				new System.Collections.Generic.Dictionary<string, string> { [vernTag] = "perro" },

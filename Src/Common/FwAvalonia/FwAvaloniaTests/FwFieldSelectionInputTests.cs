@@ -126,7 +126,8 @@ namespace FwAvaloniaTests
 		public void ShiftLeft_RtlRun_ExtendsSelectionByOneCluster()
 		{
 			// A single Hebrew run (aleph-bet-gimel) flows RTL; the Left arrow moves logically forward inside
-			// it, and Shift must extend rather than collapse -- the same wiring seam, in the RTL direction.
+			// it, and Shift must extend rather than collapse -- the same wiring seam, in the RTL
+			// direction.
 			var (box, window) = ShowFocused(RtlField("אבג"));
 			box.CaretIndex = 0;
 			box.SelectionStart = 0;

@@ -21,7 +21,8 @@ namespace SIL.FieldWorks.LexText.Controls
 	/// (<see cref="LcmLinkMsaDialogLauncher"/>, <see cref="LcmLinkAllomorphDialogLauncher"/>,
 	/// <see cref="LcmLinkEntryOrSenseDialogLauncher"/>, <see cref="LcmAddAllomorphDialogLauncher"/>). It factors the
 	/// common search wiring (the shared <see cref="EntryGoSearchEngine"/> with the starting entry excluded, the
-	/// legacy <c>EntryGoDlg.GetFields</c> vernacular field set, and the entry->row mapping) so each launcher only
+	/// legacy <c>EntryGoDlg.GetFields</c> vernacular field set, and the entry->row mapping) so
+	/// each launcher only
 	/// supplies its own title/OK/prompt text, an optional extra result filter, and its on-OK resolution. Mirrors the
 	/// search semantics already established by <see cref="LcmMergeEntryDialogLauncher"/>. Internal so the shared
 	/// search is unit-testable against a real cache via InternalsVisibleTo("LexTextControlsTests").
@@ -32,8 +33,10 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// Builds the search delegate the dialog drives: it reuses the shared <see cref="EntryGoSearchEngine"/> (the
 		/// SAME matching the legacy EntryGoDlg uses, cached on the property table when one is supplied) wrapped to
 		/// EXCLUDE <paramref name="excludedEntryHvo"/> (the legacy starting entry that cannot be a match) and an
-		/// optional caller <paramref name="filter"/> (e.g. LinkAllomorph's "drop entries whose forms are all
-		/// abstract"). Each surviving hvo is mapped to a row carrying the matching list's per-column values --
+		/// optional caller <paramref name="filter"/> (e.g. LinkAllomorph's "drop entries whose
+		/// forms are all
+		/// abstract"). Each surviving hvo is mapped to a row carrying the matching list's
+		/// per-column values --
 		/// headword, lexeme form, and gloss(es), sourced the way the legacy matchingEntries browser columns are.
 		/// </summary>
 		internal static Func<string, IReadOnlyList<EntryGoSearchResult>> BuildEntrySearch(LcmCache cache,
@@ -65,7 +68,8 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		/// <summary>
 		/// The legacy <see cref="EntryGoDlg.GetFields"/> vernacular field set (citation / lexeme / alternate forms)
-		/// for the current vernacular default WS -- the same fields the EntryGoDlg children prime with.
+		/// for the current vernacular default WS -- the same fields the EntryGoDlg children prime
+		/// with.
 		/// </summary>
 		internal static IEnumerable<SearchField> GetSearchFields(string str, int ws)
 		{
@@ -131,7 +135,8 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		/// <summary>
 		/// Builds the writing-system presentation spec for the search box from the DEFAULT VERNACULAR writing
-		/// system -- the parity contract for the legacy <c>BaseGoDlg</c>'s vernacular <c>FwTextBox</c>: the ws's
+		/// system -- the parity contract for the legacy <c>BaseGoDlg</c>'s vernacular
+		/// <c>FwTextBox</c>: the ws's
 		/// default font (<c>DefaultFontName</c>, the same per-ws font derivation the detail view's value rows
 		/// use), its right-to-left script flag, and a focus callback that activates the ws's keyboard (the legacy
 		/// <c>EditingHelper.SetKeyboardForWs</c> behavior). Internal so the derivation is unit-testable against a
@@ -147,7 +152,8 @@ namespace SIL.FieldWorks.LexText.Controls
 		}
 
 		// The per-ws typography spec (font family + right-to-left) shared by the search box and the matching
-		// list's column specs -- the same DefaultFontName derivation the detail view's value rows use.
+		// list's column specs -- the same DefaultFontName derivation the detail view's value rows
+		// use.
 		private static EntryGoSearchFieldSpec FieldSpecFor(CoreWritingSystemDefinition ws)
 		{
 			return new EntryGoSearchFieldSpec
@@ -158,7 +164,8 @@ namespace SIL.FieldWorks.LexText.Controls
 		}
 
 		/// <summary>
-		/// Builds the matching list's default column spec -- the legacy matchingEntries browser's default-visible
+		/// Builds the matching list's default column spec -- the legacy matchingEntries browser's
+		/// default-visible
 		/// columns (areaConfiguration.xml: "Headword" ws=best vernoranal and "Glosses" ws=best analorvern; the
 		/// other columns are visibility="menu"): a Headword column in the default vernacular ws's typography and a
 		/// Glosses column in the default analysis ws's typography, headers from the shared localized strings.
@@ -187,7 +194,8 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		/// <summary>
 		/// Activates the writing system's configured keyboard (Keyman/Windows IME) when the search box gains
-		/// focus -- the behavior the legacy vernacular FwTextBox gets from <c>EditingHelper.SetKeyboardForWs</c>.
+		/// focus -- the behavior the legacy vernacular FwTextBox gets from
+		/// <c>EditingHelper.SetKeyboardForWs</c>.
 		/// Unknown tags fall back to the default keyboard, and every failure is swallowed: keyboard switching must
 		/// never take down the dialog.
 		/// </summary>

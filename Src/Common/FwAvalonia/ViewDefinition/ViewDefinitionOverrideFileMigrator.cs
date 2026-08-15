@@ -10,12 +10,15 @@ using System.Xml.Linq;
 namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 {
 	/// <summary>
-	/// File-level driver for the legacy-override -> sparse-patch migration. Reads a project's whole-copy
+	/// File-level driver for the legacy-override -> sparse-patch migration. Reads a project's
+	/// whole-copy
 	/// <c>.fwlayout</c> override from disk, diffs it against the shipped layout via
 	/// <see cref="ViewDefinitionOverrideMigrator"/>, and writes the canonical JSON patch file.
 	///
-	/// The only piece left to the XCore caller is providing the <em>shipped</em> layout element (resolved
-	/// from <c>Inventory</c>) and the part resolver -- those are passed in, so this whole orchestration is
+	/// The only piece left to the XCore caller is providing the <em>shipped</em> layout element
+	/// (resolved
+	/// from <c>Inventory</c>) and the part resolver -- those are passed in, so this whole
+	/// orchestration is
 	/// unit-testable with temp files and inline XML, with no XCore/Inventory dependency.
 	/// </summary>
 	public static class ViewDefinitionOverrideFileMigrator

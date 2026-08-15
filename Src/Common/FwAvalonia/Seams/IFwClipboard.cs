@@ -18,7 +18,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Seams
 	/// views round-trip multi-WS rich text bidirectionally during coexistence. What does NOT round-trip:
 	/// - embedded-object runs (ORCs: pictures, footnotes, object links) reference objects in the source
 	///   context; the text and properties survive but the object reference is not resolvable outside it;
-	/// - external (non-FieldWorks) consumers only see the plain-text format -- WS/style metadata drops;
+	/// - external (non-FieldWorks) consumers only see the plain-text format -- WS/style metadata
+	/// drops;
 	/// - paragraph-level structure beyond a single TsString is out of scope for this seam.
 	/// </summary>
 	public sealed class FwClipboardText

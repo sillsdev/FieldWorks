@@ -17,14 +17,16 @@ namespace SIL.FieldWorks.XWorks
 	/// (<see cref="ViewDefinitionOverrideFileMigrator"/> + <see cref="DictionaryPartResolver"/>).
 	///
 	/// The caller supplies the <em>pristine shipped</em> layout (resolved from the appropriate
-	/// non-overridden source); this adapter does not decide the baseline -- that choice (e.g. a base
+	/// non-overridden source); this adapter does not decide the baseline -- that choice (e.g. a
+	/// base
 	/// inventory vs. the project inventory whose overrides are already merged) belongs to the caller and
 	/// is the one piece needing a real-project smoke test before production use.
 	/// </summary>
 	public static class DetailOverrideMigration
 	{
 		/// <summary>
-		/// Framework-neutral core: shipped layout + parts inventory as XElements. Unit-testable with inline
+		/// Framework-neutral core: shipped layout + parts inventory as XElements. Unit-testable
+		/// with inline
 		/// XML -- it composes the tested <see cref="DictionaryPartResolver"/> and
 		/// <see cref="ViewDefinitionOverrideFileMigrator"/>.
 		/// </summary>

@@ -46,14 +46,17 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 
 		/// <summary>
 		/// Stages adding an item (by option key) to a <see cref="DetailFieldKind.ReferenceVector"/>
-		/// row (6.3). Returns false -- WITHOUT opening the session -- for keys outside the field's
+		/// row (6.3). Returns false -- WITHOUT opening the session -- for keys outside the
+		/// field's
 		/// possibility list, duplicates, or non-vector rows, like the legacy chooser.
 		/// </summary>
 		bool TryAddReferenceItem(DetailField field, string optionKey);
 
 		/// <summary>
-		/// Stages removing an item (by option key) from a <see cref="DetailFieldKind.ReferenceVector"/>
-		/// row. Returns false -- without opening the session -- when the item is not in the vector.
+		/// Stages removing an item (by option key) from a <see
+		/// cref="DetailFieldKind.ReferenceVector"/>
+		/// row. Returns false -- without opening the session -- when the item is not in the
+		/// vector.
 		/// </summary>
 		bool TryRemoveReferenceItem(DetailField field, string optionKey);
 

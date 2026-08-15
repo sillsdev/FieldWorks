@@ -13,7 +13,8 @@ namespace FwAvaloniaTests
 {
 	/// <summary>
 	/// Project-file side: reads a whole-copy <c>.fwlayout</c> override from disk, diffs it against the
-	/// shipped layout, and writes the canonical JSON patch -- verified with temp files and inline XML
+	/// shipped layout, and writes the canonical JSON patch -- verified with temp files and inline
+	/// XML
 	/// (no XCore/Inventory).
 	/// </summary>
 	[TestFixture]

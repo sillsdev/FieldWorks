@@ -8,7 +8,8 @@ using System.Collections.Generic;
 namespace FwAvaloniaDialogs
 {
 	/// <summary>
-	/// The LCModel-free input to the reusable Avalonia entry-search ("go") dialog -- the Avalonia analog of the
+	/// The LCModel-free input to the reusable Avalonia entry-search ("go") dialog -- the Avalonia
+	/// analog of the
 	/// legacy <c>EntryGoDlg</c> FAMILY (one concrete consumer is Merge Entry; the same dialog re-skins
 	/// for AddAllomorph / LinkEntryOrSense / LinkAllomorph / LinkMSA with only title/button/prompt/filter
 	/// differences). The product edge (the LexText launcher) builds this from the live entry repository so the
@@ -49,7 +50,8 @@ namespace FwAvaloniaDialogs
 		public string HelpTopic { get; set; }
 
 		/// <summary>
-		/// The opt-in writing-system presentation for the search box (font / right-to-left / keyboard-on-focus --
+		/// The opt-in writing-system presentation for the search box (font / right-to-left /
+		/// keyboard-on-focus --
 		/// the legacy BaseGoDlg vernacular FwTextBox behavior). Null (the default) keeps the plain search box.
 		/// </summary>
 		public EntryGoSearchFieldSpec SearchField { get; set; }
@@ -74,7 +76,8 @@ namespace FwAvaloniaDialogs
 
 		/// <summary>
 		/// When true the dialog starts (and, when <see cref="ShowEntrySenseToggle"/> is false, stays) in SENSE
-		/// mode -- the legacy <c>SelectSensesOnly</c> where the toggle is forced to "Specific Sense" and disabled.
+		/// mode -- the legacy <c>SelectSensesOnly</c> where the toggle is forced to "Specific
+		/// Sense" and disabled.
 		/// Combine with <see cref="ShowEntrySenseToggle"/> = false to lock the dialog to senses only.
 		/// </summary>
 		public bool SensesOnly { get; set; }
@@ -93,7 +96,8 @@ namespace FwAvaloniaDialogs
 		/// <summary>
 		/// The resolver for the dependent auxiliary picker: given the selected search result it returns the (key,
 		/// display) options for that entry (e.g. its MSAs or its non-abstract forms, in legacy combo order). When
-		/// non-null the dialog becomes TWO-STAGE -- picking a result populates the auxiliary options and OK commits
+		/// non-null the dialog becomes TWO-STAGE -- picking a result populates the auxiliary
+		/// options and OK commits
 		/// only once both are chosen. Null (the default) keeps the single-stage commit-on-select behavior.
 		/// </summary>
 		public Func<EntryGoSearchResult, IReadOnlyList<EntryGoAuxiliaryOption>> AuxiliaryOptions { get; set; }

@@ -13,7 +13,8 @@ namespace FwAvaloniaDialogs
 	/// The reusable Insert Entry dialog body: a XAML-authored UserControl bound to
 	/// <see cref="InsertEntryDlgViewModel"/> with compiled bindings for the prompt + Create/Cancel/Help, plus
 	/// the owned lexeme-form field, morph-type picker, and gloss field hosted as code-behind children (each is a
-	/// native composite, not an MVVM-bindable control, so it cannot be set through a compiled binding -- the same
+	/// native composite, not an MVVM-bindable control, so it cannot be set through a compiled
+	/// binding -- the same
 	/// pattern ChooserDialogView uses). Hosted as Avalonia content inside a WinForms-owned modal Form during
 	/// coexistence via <c>AvaloniaDialogHost.ShowModal</c>.
 	/// </summary>

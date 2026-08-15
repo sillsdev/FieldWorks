@@ -13,7 +13,8 @@ namespace LexTextControlsTests
 	/// MSA Creator) hook up to <c>MSAGroupBox.CreateNewFeatureRequested</c>/<c>CreateNewValueRequested</c>. Both
 	/// entry points ultimately run a modal (<see cref="LcmCreateFeatureLauncher.CreateFeature"/>/<c>AddValue</c>) and
 	/// then call back onto a live <c>MSAGroupBox</c> (an Avalonia control that needs a headless app session to
-	/// construct -- see FwAvaloniaDialogsTests/FwMsaGroupBoxTests, which is exercised in that project's own headless
+	/// construct -- see FwAvaloniaDialogsTests/FwMsaGroupBoxTests, which is exercised in that
+	/// project's own headless
 	/// context), so the desktop-only success path is out of reach here (mirrors every other Run()-based launcher in
 	/// this project: only the pre-modal pure logic is unit-tested). What IS unit-testable without a cache, an owner
 	/// window, or a real box is the no-op guard: both methods must do nothing (in particular, must NOT touch the
@@ -26,7 +27,8 @@ namespace LexTextControlsTests
 		[Test]
 		public void CreateFeature_NullCache_IsANoOp()
 		{
-			// A null cache alone must short-circuit before touching box -- passing a null box too proves it never
+			// A null cache alone must short-circuit before touching box -- passing a null box too
+			// proves it never
 			// dereferences box.
 			Assert.DoesNotThrow(() => LcmInflectionFeatureCreateWiring.CreateFeature(null, null, null));
 		}

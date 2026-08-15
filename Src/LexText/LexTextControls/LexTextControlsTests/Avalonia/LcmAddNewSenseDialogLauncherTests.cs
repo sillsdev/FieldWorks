@@ -175,7 +175,8 @@ namespace LexTextControlsTests
 		{
 			var classes = LcmInsertEntryDialogLauncher.BuildInflectionClasses(Cache, _noun.Guid.ToString());
 
-			// Strong (depth 0), Irregular (depth 1, nested under Strong), Weak (depth 0) -- document order.
+			// Strong (depth 0), Irregular (depth 1, nested under Strong), Weak (depth 0) --
+			// document order.
 			Assert.That(classes.Select(c => c.Name), Is.EqualTo(new[] { "Strong", "Irregular", "Weak" }),
 				"the POS's classes are returned in document order, nested subclasses inline");
 			Assert.That(classes.Select(c => c.Depth), Is.EqualTo(new[] { 0, 1, 0 }),
@@ -302,8 +303,10 @@ namespace LexTextControlsTests
 		[Test]
 		public void BuildInput_FeedsTheSlotProvider()
 		{
-			// InflectionClassesForPos and InflectionFeaturesForPos are both exercised by name elsewhere, but
-			// SlotsForPos itself was never actually called -- only ever asserted non-null via the MSA-section shape.
+			// InflectionClassesForPos and InflectionFeaturesForPos are both exercised by name
+			// elsewhere, but
+			// SlotsForPos itself was never actually called -- only ever asserted non-null via the
+			// MSA-section shape.
 			// A regression here (e.g. passing the wrong morph-type guid through the closure) would silently leave
 			// the affix "Fills Slot" column empty for a real verb, with no test failing.
 			var input = LcmAddNewSenseDialogLauncher.BuildInput(Cache, _casa, tssCitationForm: null);

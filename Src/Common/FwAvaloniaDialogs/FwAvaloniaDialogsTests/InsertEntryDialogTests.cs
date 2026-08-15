@@ -43,7 +43,8 @@ namespace FwAvaloniaDialogsTests
 				values, new List<DetailChoiceOption>(), null, isEditable: true);
 		}
 
-		// guid-suffix maps to Unclassified because the MSA box opens an affix unclassified until the user refines it.
+		// guid-suffix maps to Unclassified because the MSA box opens an affix unclassified until
+		// the user refines it.
 		private static readonly IReadOnlyList<FwPosNode> PosNodes = new List<FwPosNode>
 		{
 			new FwPosNode("g-noun", "Noun", 0),
@@ -341,7 +342,8 @@ namespace FwAvaloniaDialogsTests
 		[AvaloniaTest]
 		public void GlossEdit_RefreshesTheMatches()
 		{
-			// A gloss edit re-runs the duplicate-detection search (legacy tbGloss_TextChanged -> UpdateMatches). The
+			// A gloss edit re-runs the duplicate-detection search (legacy tbGloss_TextChanged ->
+			// UpdateMatches). The
 			// sample search matches "house" on the gloss subtext, surfacing casa even with an empty form.
 			var (view, vm) = Show(BasicInput(searchMatches: SampleSearch));
 			Assert.That(vm.Matches, Is.Empty, "no form + no gloss surfaces nothing");
@@ -612,7 +614,8 @@ namespace FwAvaloniaDialogsTests
 			var (_, vm) = Show(BasicInput(withMsa: true));
 			FormBox(vm, "fr").Text = "casa";
 			// Pump so the form-text change recomputes CanOk before we execute OK (else OkCommand no-ops and
-			// Result stays null -- a timing/order dependency the sibling MSA tests avoid by pumping too).
+			// Result stays null -- a timing/order dependency the sibling MSA tests avoid by
+			// pumping too).
 			Dispatcher.UIThread.RunJobs();
 
 			// Seed a main POS (the host-seed path; equivalent outcome to a user pick for the snapshot).

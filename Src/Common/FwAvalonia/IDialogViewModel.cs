@@ -9,7 +9,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 	/// <summary>
 	/// Contract a dialog view-model implements so <see cref="AvaloniaDialogHost"/> can close the hosting
 	/// WinForms modal window when the dialog's own OK/Cancel logic decides to. The view-model never
-	/// references WinForms or Avalonia windowing -- it just raises <see cref="CloseRequested"/> with the
+	/// references WinForms or Avalonia windowing -- it just raises <see cref="CloseRequested"/>
+	/// with the
 	/// outcome (true = accepted/OK, false = cancelled). This keeps modality out of the view-model and on
 	/// the host, matching the dialog-ownership rule (the host owns the modal window during coexistence).
 	///

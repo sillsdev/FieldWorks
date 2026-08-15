@@ -94,8 +94,12 @@ foreach ($file in $regexScanFiles) {
 }
 
 # Layer 2: PSScriptAnalyzer's PSUseCompatibleSyntax, best-effort. $Global:
-# persists across repeated calls in one terminal session, so a failed
-# install costs one timeout, not one per build.
+# persists across a session, so a failed install costs one timeout, not one
+# per build. Seeded first: StrictMode throws on unset.
+if (-not (Test-Path Variable:Global:FwPowerShellCompatAnalyzerUnavailable)) {
+	$Global:FwPowerShellCompatAnalyzerUnavailable = $false
+}
+
 if ((-not (Get-Module -ListAvailable -Name PSScriptAnalyzer)) -and -not $Global:FwPowerShellCompatAnalyzerUnavailable) {
 	try {
 		Write-Host 'powershell-compat: installing PSScriptAnalyzer (first run only)...'

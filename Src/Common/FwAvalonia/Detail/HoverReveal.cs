@@ -17,7 +17,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 	/// <summary>
 	/// A field editor whose row decorations include hover-revealed affordances (the chooser's settings
 	/// gear, the reference vector's separator bars and "+" launcher). The detail view reads this
-	/// to widen the hover surface to the WHOLE row (label + editor) -- presentation only, no behavior.
+	/// to widen the hover surface to the WHOLE row (label + editor) -- presentation only, no
+	/// behavior.
 	/// </summary>
 	public interface IHoverAffordanceProvider
 	{
@@ -26,12 +27,14 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 	}
 
 	/// <summary>
-	/// Modern hover-reveal presentation for secondary affordances: the affordances start hidden by
+	/// Modern hover-reveal presentation for secondary affordances: the affordances start hidden
+	/// by
 	/// OPACITY (they stay in layout -- rows never reflow -- and stay in the UIA tree, focusable),
 	/// fade in (~120ms) while the pointer is over any hover source or any affordance (entering
 	/// the gear itself must not flicker it away), and fade out when the pointer leaves them all.
 	/// Keyboard access: an affordance gaining focus (Tab) also reveals; losing focus hides again
-	/// unless the pointer is over. Pure presentation -- no flyout, staging, or automation-id changes.
+	/// unless the pointer is over. Pure presentation -- no flyout, staging, or automation-id
+	/// changes.
 	/// </summary>
 	public static class HoverReveal
 	{
@@ -49,7 +52,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		/// Wires <paramref name="affordances"/> to reveal while the pointer is over any of
 		/// <paramref name="hoverSources"/> (or over an affordance itself) and hide otherwise.
 		/// Idempotent per affordance: attaching again (the view widening the hover surface to the
-		/// row after the control wired itself) merges into the existing registration -- one handler
+		/// row after the control wired itself) merges into the existing registration -- one
+		/// handler
 		/// set, one watched list -- instead of stacking a second independent one.
 		/// </summary>
 		public static void Attach(IReadOnlyList<Control> hoverSources, IReadOnlyList<Control> affordances)
@@ -195,7 +199,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 	/// </summary>
 	internal static class DetailChrome
 	{
-		// A real cog drawn as geometry (circle + teeth + hub hole, even-odd fill), not a text/emoji
+		// A real cog drawn as geometry (circle + teeth + hub hole, even-odd fill), not a
+		// text/emoji
 		// glyph: 8 teeth on a 24-unit canvas rendered at ~14px in the muted ws-abbreviation hue.
 		private static readonly Geometry GearGeometry = CreateGearGeometry();
 
@@ -216,7 +221,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				VerticalAlignment = VerticalAlignment.Center
 			};
 
-		/// <summary>A flat (transparent, borderless) button carrying the "..." glyph as its face.</summary>
+		/// <summary>A flat (transparent, borderless) button carrying the "..." glyph as its
+		/// face.</summary>
 		internal static Button CreateKebabButton()
 			=> new Button
 			{
@@ -265,7 +271,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 
 		// Built from MODEL segments (PathGeometry/ArcSegment/LineSegment), NOT StreamGeometry.Open:
 		// opening a stream context demands the IPlatformRenderInterface, and xWorks hosts construct
-		// these controls in plain unit tests with no Avalonia platform loaded -- model geometry only
+		// these controls in plain unit tests with no Avalonia platform loaded -- model geometry
+		// only
 		// touches the platform when actually rendered.
 		private static Geometry CreateGearGeometry()
 		{

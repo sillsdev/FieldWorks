@@ -14,7 +14,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 	/// <summary>
 	/// Canonical JSON serialization of the typed view definition: deterministic property order, defaults
 	/// omitted, and a `formatVersion` header so per-project overrides can be validated. This is the migration
-	/// tooling core -- shipped XML compiles to the typed IR (existing importer), the IR serializes to
+	/// tooling core -- shipped XML compiles to the typed IR (existing importer), the IR
+	/// serializes to
 	/// canonical JSON, and a gated layout can load JSON with the XML importer retained as fallback.
 	/// </summary>
 	public static class ViewDefinitionJsonSerializer
@@ -97,7 +98,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 			AddIfPresent(o, "ghostInitMethod", node.GhostInitMethod);
 			if (node.Condition != null)
 				o["condition"] = WriteCondition(node.Condition);
-			// The chooser jump-link block -- label/tool/type/target exactly as the legacy chooserLink carries.
+			// The chooser jump-link block -- label/tool/type/target exactly as the legacy
+			// chooserLink carries.
 			if (node.ChooserLinks.Count > 0)
 				o["chooserLinks"] = new JArray(node.ChooserLinks.Select(WriteChooserLink));
 			if (node.Children.Count > 0)

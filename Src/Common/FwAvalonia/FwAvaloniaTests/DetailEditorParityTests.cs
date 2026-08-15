@@ -103,7 +103,8 @@ namespace FwAvaloniaTests
 		[AvaloniaTest]
 		public void ReferenceVector_ReadOnly_HasNothingToDetach()
 		{
-			// A read-only vector (no edit context) wires no edit handlers, so its teardown is empty --
+			// A read-only vector (no edit context) wires no edit handlers, so its teardown is
+			// empty --
 			// Dispose is a safe no-op.
 			var vector = new FwReferenceVectorField(VectorFieldWithItems(), "PublishIn", editContext: null);
 			Assert.That(vector.AttachedHandlerCount, Is.EqualTo(0));

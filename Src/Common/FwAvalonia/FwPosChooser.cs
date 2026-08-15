@@ -23,7 +23,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 	/// <summary>
 	/// A lightweight, LCModel-FREE node in the Part-of-Speech hierarchy fed to <see cref="FwPosChooser"/>.
 	/// The host builds these from the project's parts-of-speech possibility list in DOCUMENT
-	/// ORDER, tagging each with its <see cref="Depth"/> (0 for a top-level POS, +1 per sub-POS nesting) --
+	/// ORDER, tagging each with its <see cref="Depth"/> (0 for a top-level POS, +1 per sub-POS
+	/// nesting) --
 	/// the same depth-folding seam <c>DetailChoiceOption</c> uses, so the chooser can rebuild the tree
 	/// without any model reference. <see cref="Id"/> is an opaque stable identifier (a guid string in the
 	/// product) the chooser round-trips verbatim; the chooser never interprets it.
@@ -52,7 +53,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 	}
 
 	/// <summary>
-	/// A reusable, LCModel-FREE hierarchical Part-of-Speech chooser -- the Avalonia counterpart of the
+	/// A reusable, LCModel-FREE hierarchical Part-of-Speech chooser -- the Avalonia counterpart
+	/// of the
 	/// WinForms <c>TreeCombo</c> + <c>POSPopupTreeManager</c> pair (<c>MSAGroupBox</c>'s
 	/// <c>m_tcMainPOS</c>/<c>m_tcSecondaryPOS</c>). It is a COLLAPSED dropdown (a toggle button showing
 	/// the selected POS name, or a "not specified" prompt) that opens a hierarchical TREE popup ON TOP on
@@ -64,9 +66,11 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 	///   * an inline "Create a new Part of Speech..." row that raises <see cref="CreateNewPosRequested"/>.
 	///
 	/// The seam is deliberately tiny: the host feeds a flat, depth-tagged <see cref="FwPosNode"/> list
-	/// (the chooser folds it into the tree), the current <see cref="SelectedPosId"/>, and the allow-empty
+	/// (the chooser folds it into the tree), the current <see cref="SelectedPosId"/>, and the
+	/// allow-empty
 	/// option. Picking a node commits + collapses + updates <see cref="SelectedPosId"/> and raises
-	/// <see cref="SelectionChanged"/>. The chooser holds NO model reference and performs NO create -- it
+	/// <see cref="SelectionChanged"/>. The chooser holds NO model reference and performs NO
+	/// create -- it
 	/// just raises <see cref="CreateNewPosRequested"/> and accepts a returned new node. Built in pure
 	/// C# (no XAML) to match the rest of FwAvalonia.
 	/// </summary>
@@ -194,7 +198,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 			_filterList.AddHandler(InputElement.PointerReleasedEvent, OnFilterListPointerReleased,
 				RoutingStrategies.Bubble, handledEventsToo: true);
 
-			// The inline "Create a new Part of Speech..." affordance -- the legacy "More..." item, pinned to
+			// The inline "Create a new Part of Speech..." affordance -- the legacy "More..."
+			// item, pinned to
 			// the bottom of the popup so it is always reachable regardless of filter/scroll.
 			var createLabel = new TextBlock
 			{
@@ -317,8 +322,10 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 		public ListBox FilteredList => _filterList;
 
 		/// <summary>
-		/// Detaches and returns the on-top flyout CONTENT panel (filter + tree/filter-list + create row)
-		/// for headless PNG capture only: a flyout renders in its own top-level, which the host window's
+		/// Detaches and returns the on-top flyout CONTENT panel (filter + tree/filter-list +
+		/// create row)
+		/// for headless PNG capture only: a flyout renders in its own top-level, which the host
+		/// window's
 		/// CaptureRenderedFrame does not include, so a snapshot of the chooser shows only the collapsed
 		/// box. Hosting THIS panel in a capture window renders the actual on-top tree the user sees. The
 		/// chooser is left non-functional afterward (the flyout is emptied), so call it on a throwaway

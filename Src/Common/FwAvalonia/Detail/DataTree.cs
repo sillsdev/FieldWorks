@@ -24,7 +24,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 	///
 	/// Editing: when an <see cref="IDetailEditContext"/> is supplied,
 	/// field editors stage writes through it (which opens the fenced LCModel session on the first
-	/// edit) and the session auto-commits on focus loss -- the legacy save-as-you-go behavior, one
+	/// edit) and the session auto-commits on focus loss -- the legacy save-as-you-go behavior,
+	/// one
 	/// undo step per field, no Save/Cancel buttons. Validation failures show inline and block the
 	/// commit; Escape rolls the session back. Without a context the view is read-only display.
 	/// </summary>
@@ -141,7 +142,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			// the same StackPanel, whether or not an edit context is present. A bare grid placed straight in
 			// the ScrollViewer is arranged against the full viewport extent, while a grid inside a StackPanel
 			// is arranged against its own desired height; those two arrange contexts round the grid's Auto
-			// content rows to whole-pixel heights 1px differently, so wrapping only in the editable state
+			// content rows to whole-pixel heights 1px differently, so wrapping only in the
+			// editable state
 			// would shift every row by 1px on the edit toggle -- a visible rhythm mismatch.
 			// Wrapping identically in both states keeps the rows pixel-for-pixel stable across the toggle; the
 			// validation footer is the only edit-only child added.
@@ -161,12 +163,14 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			Content = scroller;
 
 			// Screen-local command shortcuts:
-			// Enter commits (validation-gated), Escape cancels -- handled at the view so they work
+			// Enter commits (validation-gated), Escape cancels -- handled at the view so they
+			// work
 			// from any field editor.
 			AddHandler(Avalonia.Input.InputElement.KeyDownEvent, OnViewKeyDown,
 				Avalonia.Interactivity.RoutingStrategies.Bubble);
 
-			// Auto-save (14.4): legacy slices commit as the user moves on -- any editor losing focus
+			// Auto-save (14.4): legacy slices commit as the user moves on -- any editor losing
+			// focus
 			// while a session is open commits it (validation-gated; one undo step per field).
 			AddHandler(Avalonia.Input.InputElement.LostFocusEvent, (s, e) =>
 			{
@@ -201,7 +205,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		/// </summary>
 		public event EventHandler EditCompleted;
 
-		// 14.4: no Save/Cancel buttons -- the legacy view saves as you go. The footer carries only the
+		// 14.4: no Save/Cancel buttons -- the legacy view saves as you go. The footer carries
+		// only the
 		// inline validation messages (a failed autosave is never silent).
 		private Control CreateEditFooter()
 		{
@@ -283,13 +288,15 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 
 				AutomationProperties.SetAutomationId(header, automationId);
 				AutomationProperties.SetName(header, field.Label ?? string.Empty);
-				// 13.3/13.5: the section menu/hotlinks open from the hover "..." field-menu button (which
+				// 13.3/13.5: the section menu/hotlinks open from the hover "..." field-menu
+				// button (which
 				// replaced right-click), in a thin gutter to the left of the header.
 				var headerCell = WrapWithFieldMenu(header, field, automationId, out var headerKebab);
 
 				// Discoverability parity (legacy SummaryCommandControl): a section header with hotlinks
 				// shows its commands as an ALWAYS-VISIBLE inline command-link strip directly beneath the
-				// header -- the kebab alone is a hover-gated discoverability regression. The strip raises
+				// header -- the kebab alone is a hover-gated discoverability regression. The
+				// strip raises
 				// the SAME hotlinks request the kebab does (DetailMenuKind.Hotlinks), so it dispatches
 				// through the existing host bridge identically.
 				var hotlinkStrip = CreateHotlinkStrip(field, automationId, indent);
@@ -342,14 +349,16 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				TextAlignment = TextAlignment.Left, // legacy labels are left-aligned in the label panel
 				Foreground = FwAvaloniaDensity.LabelBrush,
 				FontSize = FwAvaloniaDensity.LabelFontSize,
-				// 14.2: a null background only hit-tests the glyphs; the whole label area must take
+				// 14.2: a null background only hit-tests the glyphs; the whole label area must
+				// take
 				// the right-click for the slice menu.
 				Background = Brushes.Transparent
 			};
 			AutomationProperties.SetAutomationId(labelBlock, automationId + ".Label");
 			AutomationProperties.SetName(labelBlock, field.Label ?? field.Field ?? string.Empty);
 			ToolTip.SetTip(labelBlock, field.Label ?? field.Field); // 11.17: legacy label tooltips
-			// 13.3: the field's slice menu opens from the hover "..." button in the left gutter (which
+			// 13.3: the field's slice menu opens from the hover "..." button in the left gutter
+			// (which
 			// replaced right-click on the label).
 			var labelCell = WrapWithFieldMenu(labelBlock, field, automationId, out var labelKebab);
 			Grid.SetRow(labelCell, row * 2);
@@ -374,7 +383,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				HoverReveal.Attach(hoverSources, provider.HoverAffordances);
 		}
 
-		// The width of the left gutter that holds the per-row field-options "..." button. Reserved on
+		// The width of the left gutter that holds the per-row field-options "..." button.
+		// Reserved on
 		// every row (when a host bridge is present) so labels align whether or not a row has a menu.
 		private const double FieldMenuGutterWidth = 18;
 
@@ -411,7 +421,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				// affordance is fully keyboard-operable once Tab focus reveals it.
 				button.Click += (s, e) =>
 				{
-					// Anchor the menu to the icon (drop from its bottom-left) -- the screen-coordinate
+					// Anchor the menu to the icon (drop from its bottom-left) -- the
+					// screen-coordinate
 					// contract the host's DetailMenuRequest handler positions the xCore menu by.
 					var screen = button.PointToScreen(new Point(0, button.Bounds.Height));
 					_menuRequested(new DetailMenuRequest(field, kind, screen.X, screen.Y));
@@ -552,8 +563,9 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			RecomputeVisibility();
 		}
 
-		// Bookkeeping for one collapsible header: its toggle button, ownership range over _rowControls,
-		// and current expanded state. Used to recompute whole-view visibility (nested-collapse fidelity).
+		// Bookkeeping for one collapsible header: its toggle button, ownership range
+		// over _rowControls, and current expanded state, which together recompute
+		// whole-view visibility (nested-collapse fidelity).
 		private sealed class CollapsibleHeader
 		{
 			public Button Button;

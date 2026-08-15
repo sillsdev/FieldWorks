@@ -9,7 +9,8 @@ namespace FwAvaloniaDialogs
 {
 	/// <summary>
 	/// The LCModel-free result of the reusable Avalonia chooser dialog. <see cref="Accepted"/> is true only when
-	/// the user closed via OK; <see cref="ChosenKeys"/> carries the guid-string keys of the picked options -- 0 or 1
+	/// the user closed via OK; <see cref="ChosenKeys"/> carries the guid-string keys of the
+	/// picked options -- 0 or 1
 	/// for <see cref="ChooserSelectionMode.Single"/>, N for <see cref="ChooserSelectionMode.Multi"/>. An empty-string
 	/// key (<see cref="ChooserDialogInput.EmptyKey"/>) means the "&lt;Empty&gt;" row, i.e. an atomic clear; the
 	/// product edge maps the keys back to <c>ICmObject</c>s (empty key =&gt; none).

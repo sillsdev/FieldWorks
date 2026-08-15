@@ -13,12 +13,15 @@ namespace SIL.FieldWorks.XWorks
 	/// <summary>
 	/// Groundwork for the rule-formula editor (a follow-up tool). The tool-level flip
 	/// (compoundRuleAdvancedEdit) stays gated off via UIFrameworkRegistry.Phase1FollowUpTools
-	/// regardless of what the composer can already do -- this file only proves the composer machinery, not that
+	/// regardless of what the composer can already do -- this file only proves the composer
+	/// machinery, not that
 	/// the tool is live.
 	///
 	/// The headed/non-headed compound rules (MoEndoCompound /
-	/// MoExoCompound) are the category-based "Compound Rules" the user sees (Name/Description/Active +
-	/// Left/Right Member + Result categories) -- NOT the MoAffixProcess formula grid. They compose from
+	/// MoExoCompound) are the category-based "Compound Rules" the user sees
+	/// (Name/Description/Active +
+	/// Left/Right Member + Result categories) -- NOT the MoAffixProcess formula grid. They
+	/// compose from
 	/// STANDARD slices. Both branches of a part's `<if Disabled=true/false>` pair import and the active
 	/// branch renders, so the detail composes Name/Description as editable Text and each member/result
 	/// CATEGORY as an editable Chooser; the Active boolean composes as a labeled Unsupported worklist row

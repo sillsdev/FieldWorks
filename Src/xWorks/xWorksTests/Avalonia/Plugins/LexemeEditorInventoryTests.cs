@@ -60,7 +60,8 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// The lexeme editor's custom-slice census: every dynamically loaded editor class in
 		/// LexEntryParts.xml + LexSenseParts.xml. The DynamicLoader signature is the class= +
-		/// assemblyPath= attribute pair -- a plain class= attribute is a model-class bin/part declaration,
+		/// assemblyPath= attribute pair -- a plain class= attribute is a model-class bin/part
+		/// declaration,
 		/// not an editor. Non-UI handlers (anything ending ChangeHandler) have no editor to migrate and
 		/// are excluded.
 		/// </summary>
@@ -198,7 +199,8 @@ namespace SIL.FieldWorks.XWorks
 
 	/// <summary>
 	/// The composer's resolution order for a custom slice is
-	/// plugin registry -> Unsupported row. A plugin claiming a slice's legacy class composes it as a
+	/// plugin registry -> Unsupported row. A plugin claiming a slice's legacy class composes it
+	/// as a
 	/// DetailFieldKind.Custom row carrying the plugin's deferred control factory; an unclaimed custom
 	/// slice composes as the labeled Unsupported worklist row.
 	/// </summary>

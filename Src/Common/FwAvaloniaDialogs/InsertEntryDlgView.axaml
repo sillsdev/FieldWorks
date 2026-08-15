@@ -30,7 +30,9 @@
 			</Button>
 		</StackPanel>
 
-		<!-- Inline validation message: shows the current OK-gate reason in red when the dialog is invalid
+		<!--
+			Inline validation message: shows the current OK-gate reason in red when the dialog is
+			invalid
 		     (empty or mismatched lexeme form, incomplete circumfix, unparseable form). -->
 		<TextBlock DockPanel.Dock="Bottom" Text="{Binding ValidationMessage}"
 		           Foreground="Red" TextWrapping="Wrap" IsVisible="{Binding !IsValid}"
@@ -58,7 +60,9 @@
 			        AutomationProperties.AutomationId="InsertEntry.MorphTypeHost"/>
 
 			<!-- Complex Form Type picker (WinForms m_cbComplexFormType parity, LT-21666): a collapsed
-			     FwOptionChooser next to Morph Type; the morph-type selection gates its enabled state. -->
+				FwOptionChooser next to Morph Type; the morph-type selection gates its enabled
+				state.
+				-->
 			<TextBlock Text="{x:Static res:FwAvaloniaDialogsStrings.InsertEntryComplexFormTypeLabel}"
 			           AutomationProperties.AutomationId="InsertEntry.ComplexFormTypeLabel"/>
 			<Border Name="PART_ComplexFormTypeHost" Classes="fwFieldHost"
@@ -70,16 +74,24 @@
 			<Border Name="PART_GlossHost" Classes="fwFieldHost"
 			        AutomationProperties.AutomationId="InsertEntry.GlossHost"/>
 
-			<!-- Grammatical-info (MSA) section: the owned MSAGroupBox supplies its own frame, so this host
-			     carries only the caption above it; the box reconfigures live with the morph-type selection. -->
+			<!--
+				Grammatical-info (MSA) section: the owned MSAGroupBox supplies its own frame, so
+				this host
+				carries only the caption above it; the box reconfigures live with the morph-type
+				selection.
+				-->
 			<TextBlock Text="{x:Static res:FwAvaloniaDialogsStrings.InsertEntryGrammaticalInfoLabel}"
 			           AutomationProperties.AutomationId="InsertEntry.GrammaticalInfoLabel"/>
-			<!-- This host intentionally carries no frame (not fwFieldHost): the MSAGroupBox already supplies
+			<!--
+				This host intentionally carries no frame (not fwFieldHost): the MSAGroupBox
+				already supplies
 			     its own border, so a second frame here would double-border it. -->
 			<Border Name="PART_MsaSection"
 			        AutomationProperties.AutomationId="InsertEntry.MsaSection"/>
 
-			<!-- Glossing Assistant (MGA): deferred but visible. Rather than omit it, a disabled affordance
+			<!--
+				Glossing Assistant (MGA): deferred but visible. Rather than omit it, a disabled
+				affordance
 			     renders under the same condition as the legacy link; a tooltip explains. -->
 			<TextBlock Text="{Binding GlossingAssistantDeferredLabel}"
 			           IsVisible="{Binding ShowGlossingAssistantDeferred}"
@@ -88,8 +100,12 @@
 			           AutomationProperties.AutomationId="InsertEntry.GlossingAssistantDeferred"
 			           AutomationProperties.HelpText="{Binding GlossingAssistantDeferredTooltip}"/>
 
-			<!-- Duplicate-detection "matching entries" pane: entries whose form matches what the user typed,
-			     so they can pick an existing entry instead of creating a duplicate. Shown only with a match search. -->
+			<!--
+				Duplicate-detection "matching entries" pane: entries whose form matches what the
+				user typed,
+				so they can pick an existing entry instead of creating a duplicate. Shown only
+				with a match search.
+				-->
 			<StackPanel IsVisible="{Binding HasMatchSearch}" Spacing="{StaticResource DialogLabelFieldGap}">
 				<TextBlock Text="{Binding MatchingEntriesLabel}"
 				           Margin="{StaticResource DialogLabelGroupGapAbove}"

@@ -8,7 +8,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 {
 	/// <summary>
 	/// Display metadata (name, description, group) for one tool in
-	/// <see cref="LexiconFeatureCatalog"/>. Purely descriptive -- <see cref="ToolName"/> is the same
+	/// <see cref="LexiconFeatureCatalog"/>. Purely descriptive -- <see cref="ToolName"/> is the
+	/// same
 	/// id <see cref="UIFrameworkRegistry"/> and <see cref="UIFrameworkResolver"/> key on.
 	/// </summary>
 	public sealed class LexiconFeatureDescriptor
@@ -29,8 +30,10 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 
 	/// <summary>
 	/// The single source of truth for which tools ship an Avalonia detail view and how to describe them to
-	/// a user. <see cref="UIFrameworkRegistry.DefaultSupportedTools"/> is built from this list, so the
-	/// registry and the user-facing catalog can never drift out of sync -- there is exactly one list of
+	/// a user. <see cref="UIFrameworkRegistry.DefaultSupportedTools"/> is built from this list,
+	/// so the
+	/// registry and the user-facing catalog can never drift out of sync -- there is exactly one
+	/// list of
 	/// "tools that ship with working Avalonia support today."
 	/// </summary>
 	public static class LexiconFeatureCatalog
@@ -51,7 +54,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 				FwAvaloniaStrings.FeatureGroupOtherRecordTypes)
 		};
 
-		/// <summary>The bare tool-name ids, in catalog order -- what <see cref="UIFrameworkRegistry"/> registers by default.</summary>
+		/// <summary>The bare tool-name ids, in catalog order -- what <see
+		/// cref="UIFrameworkRegistry"/> registers by default.</summary>
 		public static readonly IReadOnlyList<string> ToolNames = CreateToolNames();
 
 		private static IReadOnlyList<string> CreateToolNames()

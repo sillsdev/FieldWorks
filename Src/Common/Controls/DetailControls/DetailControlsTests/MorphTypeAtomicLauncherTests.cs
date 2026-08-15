@@ -128,7 +128,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 			m_dtree.DoNotRefresh = false;
 
-			// Assert: after refresh, bibliography slice should be gone (no data -> ifdata hides it)
+			// Assert: after refresh, bibliography slice should be gone (no data -> ifdata hides
+			// it)
 			Assert.That(m_dtree.Controls.Count, Is.EqualTo(1),
 				"LT-22414: After DoNotRefresh=false, slices should reflect data changes. " +
 				"Bibliography has no data so ifdata should hide it. " +

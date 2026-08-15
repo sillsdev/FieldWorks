@@ -25,7 +25,10 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\FwAvalonia\FwAvalonia.csproj" />
-		<!-- Preview/**'s sample code lives in its own FwAvalonia.Preview assembly, referenced here and by FwAvaloniaTests. -->
+		<!--
+			Preview/**'s sample code lives in its own FwAvalonia.Preview assembly, referenced here
+			and by FwAvaloniaTests.
+		-->
 		<ProjectReference Include="..\FwAvalonia\Preview\FwAvalonia.Preview.csproj" />
 		<!-- Puts FwAvaloniaDialogs.dll beside this host's own bin\, not shared Output\, so its
 		     module catalog finds it. The BuildAvaloniaApp entry point also lets Visual Studio's

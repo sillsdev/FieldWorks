@@ -18,7 +18,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 	/// <c>WindowsFormsSynchronizationContext.Post</c> throws <see cref="InvalidOperationException"/>
 	/// on the FINALIZER thread, which terminates the whole process:
 	///   InvalidOperationException -> Control.MarshaledInvoke -> BeginInvoke
-	///   -> WindowsFormsSynchronizationContext.Post -> MicroCom.Runtime.MicroComProxyBase.Finalize().
+	/// -> WindowsFormsSynchronizationContext.Post ->
+	/// MicroCom.Runtime.MicroComProxyBase.Finalize().
 	/// Installed as the UI thread's ambient context BEFORE Avalonia initializes, this wrapper is
 	/// what every proxy captures; it delegates to the real context but swallows POST marshal
 	/// failures whose only victim would be a moot native Release (synchronous Send failures still
@@ -68,8 +69,10 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 		}
 
 		/// <summary>
-		/// True when the callback is a MicroCom finalizer post (the crash class this wrapper exists
-		/// for) -- identified by the callback's declaring type living in the MicroCom runtime. A pin
+		/// True when the callback is a MicroCom finalizer post (the crash class this wrapper
+		/// exists
+		/// for) -- identified by the callback's declaring type living in the MicroCom runtime. A
+		/// pin
 		/// test guards this namespace assumption so an Avalonia bump that relocates it fails loudly
 		/// instead of silently reclassifying every finalizer Release as a dropped post.
 		/// </summary>

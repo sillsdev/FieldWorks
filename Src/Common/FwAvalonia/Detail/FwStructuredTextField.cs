@@ -18,18 +18,22 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 	/// <summary>
 	/// FieldWorks-owned editable multi-paragraph structured-text (StText) field. A vertical stack of one
 	/// bordered, dense editor row per paragraph; each row carries a run-aware text editor (the SAME
-	/// staging the single-WS <see cref="FwMultiWsTextField"/> uses -- TextChanged replays the untouched
+	/// staging the single-WS <see cref="FwMultiWsTextField"/> uses -- TextChanged replays the
+	/// untouched
 	/// runs around the edit and stages through <see cref="IStructuredTextEditing.TrySetParagraphText"/>),
 	/// a per-paragraph named-style picker (the shared <see cref="FwOptionChooser"/>), and add/delete
 	/// paragraph affordances. Enter at a paragraph's end inserts a paragraph after it; Backspace in an
 	/// empty paragraph (when more than one remains) deletes it.
 	/// <para>Commit timing mirrors the reference-vector rule: per-paragraph TEXT edits stage and ride the
 	/// detail view's focus-loss autosave (one undo step per field edit), while STRUCTURAL gestures
-	/// (add/delete/style) commit immediately through the <paramref>gestureCompleted</paramref> callback
-	/// and the host re-shows -- the paragraph list is a compose-time snapshot, so without an immediate
+	/// (add/delete/style) commit immediately through the <paramref>gestureCompleted</paramref>
+	/// callback
+	/// and the host re-shows -- the paragraph list is a compose-time snapshot, so without an
+	/// immediate
 	/// commit + re-show the change would not appear.</para>
 	/// <para>An ORC-bearing / lossy paragraph (<see cref="DetailParagraph.CanEditText"/>
-	/// false) renders a READ-ONLY box with the embedded-object tooltip and is preserved losslessly -- full
+	/// false) renders a READ-ONLY box with the embedded-object tooltip and is preserved
+	/// losslessly -- full
 	/// editing of such a paragraph stays in the classic view.</para>
 	/// </summary>
 	public sealed class FwStructuredTextField : StackPanel, IDisposable
@@ -299,7 +303,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				Foreground = FwAvaloniaDensity.WsAbbrevBrush,
 				FontSize = FwAvaloniaDensity.WsAbbrevFontSize,
 				VerticalAlignment = VerticalAlignment.Top,
-				// Keep focus on the editor -- a focusable trigger blurs the TextBox, Avalonia collapses
+				// Keep focus on the editor -- a focusable trigger blurs the TextBox, Avalonia
+				// collapses
 				// the selection to caret on LostFocus, and the style would apply to an empty span (no-op).
 				Focusable = false
 			};
@@ -555,7 +560,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			return null;
 		}
 
-		/// <summary>The count of still-attached handler teardowns -- zero after <see cref="Dispose"/>.</summary>
+		/// <summary>The count of still-attached handler teardowns -- zero after <see
+		/// cref="Dispose"/>.</summary>
 		public int AttachedHandlerCount => _teardown.Count;
 
 		/// <summary>

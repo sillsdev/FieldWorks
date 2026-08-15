@@ -16,7 +16,8 @@ namespace LexTextControlsTests
 	/// <summary>
 	/// The dependent auxiliary selection of the Link-MSA consumer (<see cref="LcmLinkMsaDialogLauncher"/>): like the
 	/// legacy LinkMSADlg combo, a multi-MSA entry offers ALL its MSAs (in <c>MorphoSyntaxAnalysesOC</c> order, keyed
-	/// by Guid, displayed by <c>InterlinearName</c>) and the CHOSEN one -- not the first -- is applied. Driven through
+	/// by Guid, displayed by <c>InterlinearName</c>) and the CHOSEN one -- not the first -- is
+	/// applied. Driven through
 	/// the launcher's internal Build/Resolve seams over a real LcmCache (InternalsVisibleTo), like
 	/// <see cref="EntryGoDialogLauncherTests"/>; the modal loop is covered by the headless FwAvaloniaDialogsTests.
 	/// </summary>

@@ -7,10 +7,13 @@ using System.Collections.Generic;
 namespace FwAvaloniaDialogs
 {
 	/// <summary>
-	/// The real Tools -> Options settings, carried across the FwAvaloniaDialogs (Avalonia, LCModel-free)
+	/// The real Tools -> Options settings, carried across the FwAvaloniaDialogs (Avalonia,
+	/// LCModel-free)
 	/// <-> product (LexText) boundary. The product edge populates this from the live settings bus
-	/// (PropertyTable / FwApplicationSettings / registry / writing-system manager / plugin manager),
-	/// the dialog view-model edits it, and the product edge applies it on OK -- so the Avalonia layer
+	/// (PropertyTable / FwApplicationSettings / registry / writing-system manager / plugin
+	/// manager),
+	/// the dialog view-model edits it, and the product edge applies it on OK -- so the Avalonia
+	/// layer
 	/// never references LCModel or the PropertyTable. Mirrors the four tabs of the legacy
 	/// <c>LexOptionsDlg</c>: General, Plugins, Privacy, Updates.
 	/// </summary>

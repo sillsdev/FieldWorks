@@ -20,7 +20,8 @@ using AvControl = Avalonia.Controls.Control;
 namespace SIL.FieldWorks.LexText.Controls
 {
 	/// <summary>
-	/// The LCModel-aware launcher for the reusable Avalonia Add New Sense dialog -- the replacement for the legacy
+	/// The LCModel-aware launcher for the reusable Avalonia Add New Sense dialog -- the
+	/// replacement for the legacy
 	/// <see cref="AddNewSenseDlg"/> in New-UI mode. It is a concrete
 	/// <see cref="AvaloniaDialogLauncher{TState,TViewModel,TPayload}"/>: the Avalonia layer (FwAvaloniaDialogs) stays
 	/// LCModel-free by exchanging an <see cref="AddNewSenseDlgInput"/> (the read-only citation form, a per-WS gloss
@@ -179,7 +180,8 @@ namespace SIL.FieldWorks.LexText.Controls
 			new AddNewSenseDlgView { DataContext = viewModel };
 
 		/// <summary>
-		/// Applies the OK result: creates the new <c>ILexSense</c> on the entry in ONE undoable step from the
+		/// Applies the OK result: creates the new <c>ILexSense</c> on the entry in ONE undoable
+		/// step from the
 		/// view-model's snapshot (per-WS gloss alternatives + the chosen MSA) -- the lift of
 		/// <c>AddNewSenseDlg_Closing</c>'s OK branch (create the sense, set its gloss alternatives, assign
 		/// <c>SandboxMSA</c> so the factory find-or-creates the matching MSA). Internal so the create is unit-testable
@@ -200,7 +202,8 @@ namespace SIL.FieldWorks.LexText.Controls
 		}
 
 		/// <summary>
-		/// Creates the sense on the entry and applies the gloss + MSA from the payload -- the lift of
+		/// Creates the sense on the entry and applies the gloss + MSA from the payload -- the
+		/// lift of
 		/// <c>AddNewSenseDlg_Closing</c>: add a new sense to the entry, set each non-empty gloss alternative (with the
 		/// alternative's OWN writing-system handle, the LT-11950 fix-up), and assign <c>SandboxMSA</c> from the chosen
 		/// grammatical info so the model find-or-creates the matching MSA. Internal for unit testing inside a UOW.
@@ -209,7 +212,8 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		/// <summary>
 		/// Creates the sense on <paramref name="entry"/> and applies the gloss + MSA from <paramref name="payload"/>
-		/// -- the lift of <c>AddNewSenseDlg_Closing</c> (add a new sense; set each non-empty gloss alternative with its
+		/// -- the lift of <c>AddNewSenseDlg_Closing</c> (add a new sense; set each non-empty
+		/// gloss alternative with its
 		/// own writing-system handle, the LT-11950 fix-up; assign <c>SandboxMSA</c> so the model find-or-creates the
 		/// matching MSA). Internal static so the create is unit-testable against a real cache inside a UOW without the
 		/// modal. The morph type (the entry's first allomorph) drives the default MSA flavor when no explicit MSA was

@@ -17,8 +17,10 @@ namespace FwAvaloniaDialogs
 	/// <c>ReallySimpleListChooser</c>/<c>SimpleListChooser</c>.
 	///
 	/// FLAT mode (the default when <see cref="ChooserDialogInput.Hierarchical"/> is false): it builds and
-	/// DRIVES the shared <see cref="FwOptionChooser"/> (single- or multi-select) -- the picker is the owned native
-	/// list control the view hosts -- and mirrors the picker's commits into <see cref="ChosenKeys"/>.
+	/// DRIVES the shared <see cref="FwOptionChooser"/> (single- or multi-select) -- the picker is
+	/// the owned native
+	/// list control the view hosts -- and mirrors the picker's commits into <see
+	/// cref="ChosenKeys"/>.
 	///
 	/// HIERARCHICAL mode (when <see cref="ChooserDialogInput.Hierarchical"/> is true): the candidates are
 	/// folded (by <see cref="ChooserTreeBuilder"/>) from their Depth sequence into a COLLAPSIBLE tree
@@ -258,7 +260,8 @@ namespace FwAvaloniaDialogs
 		}
 
 		/// <summary>
-		/// Multi-select: toggle a node's check (independent per node -- no parent/child cascade, matching the legacy
+		/// Multi-select: toggle a node's check (independent per node -- no parent/child cascade,
+		/// matching the legacy
 		/// chooser default). Keeps the tree node and any matching flat-search row in sync via the shared node object.
 		/// This is a PLAIN toggle: it also (re)establishes the range anchor on the toggled node, so a following
 		/// shift+click ranges from here.
@@ -273,10 +276,13 @@ namespace FwAvaloniaDialogs
 		/// <item>Plain toggle (<paramref name="rangeFromAnchor"/> false, or no usable anchor): flip just this node and
 		/// move the anchor here.</item>
 		/// <item>Shift-range (<paramref name="rangeFromAnchor"/> true with a live anchor that, like the target, is in
-		/// the current VISIBLE order): set EVERY node from the anchor to the target (inclusive) to the target's NEW
-		/// state -- the standard range multi-select. The anchor stays put so further shift+clicks re-range from it.</item>
+		/// the current VISIBLE order): set EVERY node from the anchor to the target (inclusive)
+		/// to the target's NEW
+		/// state -- the standard range multi-select. The anchor stays put so further shift+clicks
+		/// re-range from it.</item>
 		/// </list>
-		/// No-op outside multi-select (single-select never ranges or row-toggles). Independent per node -- no
+		/// No-op outside multi-select (single-select never ranges or row-toggles). Independent
+		/// per node -- no
 		/// parent/child cascade, matching the legacy chooser default.
 		/// </summary>
 		public void ToggleChecked(string key, bool rangeFromAnchor)

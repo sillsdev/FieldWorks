@@ -494,7 +494,8 @@ namespace SIL.FieldWorks.XWorks
 				"the sense's grammatical info now points at the chosen part of speech");
 		}
 
-		// The Lexeme Form row's hover gear must show the legacy menu="mnuDataTree-LexemeForm" tree-node menu (data-driven, not hardcoded), not a chooser launcher.
+		// The Lexeme Form row's hover gear must show the legacy menu="mnuDataTree-LexemeForm"
+		// tree-node menu (data-driven, not hardcoded), not a chooser launcher.
 		[Test]
 		public void Compose_LexemeFormRow_CarriesItsLegacySliceMenuBinding()
 		{
@@ -750,7 +751,8 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(objData.Substring(1), Is.EqualTo("https://software.sil.org/fieldworks"));
 		}
 
-		// Verifies that style, ws-retag, and hyperlink edits all round-trip through the adapter as ONE undoable step on the global stack.
+		// Verifies that style, ws-retag, and hyperlink edits all round-trip through the adapter
+		// as ONE undoable step on the global stack.
 		[Test]
 		public void Workflow_StyleSpan_RetagSpan_InsertLink_RoundTripsThroughTheComposedContext()
 		{
@@ -1104,7 +1106,8 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		// Editing a reversal form stages/commits through the edit
-		// context -- the reversal entry's ReversalForm is updated, on the same fenced session as the detail view.
+		// context -- the reversal entry's ReversalForm is updated, on the same fenced session as
+		// the detail view.
 		[Test]
 		public void ReversalPlugin_EditingAForm_StagesAndCommitsThroughTheEditContext()
 		{
@@ -1222,7 +1225,9 @@ namespace SIL.FieldWorks.XWorks
 				"empty ifdata fields appear under show-hidden");
 		}
 
-		// The layout ws= spec resolves via WritingSystemServices.GetMagicWsIdFromName + GetWritingSystemList, not substring heuristics, so ordering and membership match legacy slices.
+		// The layout ws= spec resolves via WritingSystemServices.GetMagicWsIdFromName +
+		// GetWritingSystemList, not substring heuristics, so ordering and membership match legacy
+		// slices.
 		[TestCase("all analysis")]
 		[TestCase("all vernacular")]
 		[TestCase("analysis vernacular")]
@@ -1337,7 +1342,8 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void Compose_BooleanFields_RenderAsUnsupportedWorklistRow()
 		{
-			// The Avalonia detail view does not compose the checkbox editor, so a boolean slice composes as the labeled Unsupported worklist row instead.
+			// The Avalonia detail view does not compose the checkbox editor, so a boolean slice
+			// composes as the labeled Unsupported worklist row instead.
 			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
 				m_entry.AlternateFormsOS.Add(
 					Cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>().Create()));
@@ -1491,7 +1497,8 @@ namespace SIL.FieldWorks.XWorks
 		// (LexEntryParts.xml LexEntry-Detail-LexemeForm) carries an explicit ghostClass
 		// ("MoStemAllomorph", differing from the abstract MoForm field signature) AND
 		// ghostInitMethod="SetMorphTypeToRoot". The composer must create the configured class and
-		// invoke the init hook by reflection after the typed text lands, inside the same session --
+		// invoke the init hook by reflection after the typed text lands, inside the same session
+		// --
 		// exactly GhostStringSliceView.MakeRealObject (GhostStringSlice.cs:279-329).
 		[Test]
 		public void Compose_GhostLexemeForm_HonorsGhostClass_AndRunsGhostInitMethod()
@@ -2302,7 +2309,9 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(sda.get_VecSize(m_example.Hvo, m_flidExampleListVector), Is.EqualTo(2));
 		}
 
-		// A plain String prop reads the whole string, so the row's ws must come from the string's own first run (matching legacy StringSlice), not the layout's ws= spec, which only seeds an empty string.
+		// A plain String prop reads the whole string, so the row's ws must come from the string's
+		// own first run (matching legacy StringSlice), not the layout's ws= spec, which only
+		// seeds an empty string.
 		[Test]
 		public void Compose_StringProp_DerivesTheRowWsFromTheStoredString_AndWritesBackSymmetrically()
 		{

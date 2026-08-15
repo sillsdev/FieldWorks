@@ -381,7 +381,8 @@ namespace FwAvaloniaTests
 	/// <summary>
 	/// Pure: <see cref="DetailRichTextEditAlgorithms.ApplySpanFormatting"/> splits runs at the
 	/// selection boundaries and sets the chosen attribute only on covered runs, leaving the rest of the
-	/// value's run metadata untouched -- across run boundaries, partial runs, grapheme clusters, and the
+	/// value's run metadata untouched -- across run boundaries, partial runs, grapheme clusters,
+	/// and the
 	/// lossy read-only guard.
 	/// </summary>
 	[TestFixture]

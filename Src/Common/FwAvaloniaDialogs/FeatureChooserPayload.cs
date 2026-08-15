@@ -23,10 +23,12 @@ namespace FwAvaloniaDialogs
 				: assignments.Where(a => a != null).ToList();
 		}
 
-		/// <summary>The chosen feature->value assignment set (one entry per closed feature with a real value). Never null.</summary>
+		/// <summary>The chosen feature->value assignment set (one entry per closed feature with a
+		/// real value). Never null.</summary>
 		public IReadOnlyList<FwFeatureValueAssignment> Assignments { get; }
 
-		/// <summary>An empty payload (no features chosen -- the unspecified / delete-the-FS case).</summary>
+		/// <summary>An empty payload (no features chosen -- the unspecified / delete-the-FS
+		/// case).</summary>
 		public static FeatureChooserPayload Empty { get; } = new FeatureChooserPayload(null);
 	}
 }

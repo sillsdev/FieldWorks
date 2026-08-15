@@ -18,7 +18,8 @@ namespace FwAvaloniaTests.VisualChecks
 	/// <summary>
 	/// Self-test for the <see cref="DialogSnapshot"/> PNG harness: every visual headless test can emit a
 	/// real Skia-rendered frame to the gitignored ephemeral folder so the agent (via Read) and the user can
-	/// eyeball whether the capture looks right -- the subjective check that complements the deterministic
+	/// eyeball whether the capture looks right -- the subjective check that complements the
+	/// deterministic
 	/// <see cref="DialogLayoutAssert"/> tripwire. The PNG is ALWAYS produced, even when sanity is clean.
 	/// </summary>
 	[TestFixture]
@@ -48,10 +49,12 @@ namespace FwAvaloniaTests.VisualChecks
 	/// <summary>
 	/// Detail visual coverage: the owned non-dialog control (the detail view)
 	/// gets the SAME treatment as dialogs -- a real PNG snapshot for subjective review AND the
-	/// shared <see cref="DialogLayoutAssert"/> hard-fail tripwire (overlap / zero-area text / crowding) --
+	/// shared <see cref="DialogLayoutAssert"/> hard-fail tripwire (overlap / zero-area text /
+	/// crowding) --
 	/// so the visual standard is one standard across the Avalonia UI, not dialogs only.
 	/// Capture happens BEFORE the assertion so the artifact exists for review even when the assertion fails.
-	/// The crowding tripwire itself now skips SPLITTER CONTROLS (a GridSplitter / any "Splitter"-named control
+	/// The crowding tripwire itself now skips SPLITTER CONTROLS (a GridSplitter / any
+	/// "Splitter"-named control
 	/// straddles a column boundary by design); that splitter-aware exception lives inside DialogLayoutAssert,
 	/// so these tests just call AssertNoCrowding directly -- no in-test splitter workaround.
 	/// </summary>
@@ -62,7 +65,8 @@ namespace FwAvaloniaTests.VisualChecks
 		public void DetailEditView_RendersCleanly()
 		{
 			// Read-only display stage: the detail view is FLAT with subtle field separators (the WinForms
-			// DataTree look) -- labels + values at the WinForms density font, no boxing per value.
+			// DataTree look) -- labels + values at the WinForms density font, no boxing per
+			// value.
 			var model = DetailModelProjector.FromViewDefinition(DetailDefinition(), new TwoFieldProvider());
 			var view = new DataTree(model);
 
@@ -89,7 +93,8 @@ namespace FwAvaloniaTests.VisualChecks
 		{
 			// Read-only display of a realistic, dense entry: multistring vernacular + analysis, a single-line
 			// citation, a part-of-speech chooser, a date, a generic-date, an enum/option chooser, a boolean,
-			// a reference vector, and a multi-line note -- the spread of kinds a real lexeme-entry detail shows.
+			// a reference vector, and a multi-line note -- the spread of kinds a real
+			// lexeme-entry detail shows.
 			// It must still read FLAT/dense (the WinForms DataTree look) with thin field separators, no boxing.
 			var view = new DataTree(RealisticDetailModel());
 
@@ -151,7 +156,9 @@ namespace FwAvaloniaTests.VisualChecks
 			public string GetSelectedOptionKey(ViewNode fieldNode) => null;
 		}
 
-		// ----- realistic detail fixture builders: fields are built directly (not via the mapper) so kinds beyond Text/Chooser/Unsupported, which the mapper doesn't classify, get exercised too -----
+		// ----- realistic detail fixture builders: fields are built directly (not via the mapper)
+		// so kinds beyond Text/Chooser/Unsupported, which the mapper doesn't classify, get
+		// exercised too -----
 
 		// A realistic lexeme-entry detail: 10 fields of varied kinds, mirroring what the lexical edit pane shows.
 		private static DetailModel RealisticDetailModel()

@@ -16,10 +16,13 @@ namespace LexTextControlsTests
 {
 	/// <summary>
 	/// The LCModel-aware side of the reusable Avalonia entry-search ("go") dialog launcher, wired as its first
-	/// consumer -- Merge Entry (<see cref="LcmMergeEntryDialogLauncher"/>): the search delegate that reuses the
+	/// consumer -- Merge Entry (<see cref="LcmMergeEntryDialogLauncher"/>): the search delegate
+	/// that reuses the
 	/// legacy EntryGoSearchEngine matching (excluding the current entry, you cannot merge an entry with itself) and
-	/// maps matches to lightweight result rows, plus the merge itself (survivor absorbs the current entry in one
-	/// undoable step -- the exact legacy MergeObject). The modal loop is desktop-only (it needs an Avalonia app + a
+	/// maps matches to lightweight result rows, plus the merge itself (survivor absorbs the
+	/// current entry in one
+	/// undoable step -- the exact legacy MergeObject). The modal loop is desktop-only (it needs
+	/// an Avalonia app + a
 	/// WinForms-owned modal Form), so it is exercised by the headless EntryGoDialogTests in FwAvaloniaDialogsTests;
 	/// here we cover the pure LCModel search + merge over a real LcmCache, visible via InternalsVisibleTo.
 	/// </summary>

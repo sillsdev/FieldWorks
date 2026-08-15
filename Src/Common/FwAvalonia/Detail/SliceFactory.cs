@@ -44,13 +44,15 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		/// <summary>The shared edit-session/staging context; null -> read-only display.</summary>
 		public IDetailEditContext EditContext { get; }
 
-		/// <summary>Per-WS keyboard activation callback for text fields (null -> no keyboard switch).</summary>
+		/// <summary>Per-WS keyboard activation callback for text fields (null -> no keyboard
+		/// switch).</summary>
 		public Action<string> WritingSystemFocused { get; }
 
 		/// <summary>Right-click slice/section menu callback (null on hosts without a slice menu).</summary>
 		public Action<DetailMenuRequest> MenuRequested { get; }
 
-		/// <summary>Hyperlink follow callback for choosers/vectors (null -> no link affordance).</summary>
+		/// <summary>Hyperlink follow callback for choosers/vectors (null -> no link
+		/// affordance).</summary>
 		public Action<DetailLinkRequest> LinkRequested { get; }
 
 		/// <summary>Clipboard seam for text fields (null -> framework default).</summary>
@@ -73,7 +75,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 	/// <summary>
 	/// The single <see cref="DetailFieldKind"/>->Avalonia-control dispatch. The detail
 	/// pane (<c>DataTree.CreateEditor</c>, all 7 kinds) and the browse in-cell editor
-	/// (<c>EditableCellHost.Activate</c>, a 2-kind Chooser/Text subset) both route here rather than
+	/// (<c>EditableCellHost.Activate</c>, a 2-kind Chooser/Text subset) both route here rather
+	/// than
 	/// hand-rolling their own dispatch, so adding a kind (or changing how a kind is built) happens once.
 	/// The factory is pure (static) -- all per-host variation arrives through the
 	/// <see cref="SliceFactoryContext"/>.
@@ -92,7 +95,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 					return CreateCustom(field, automationId);
 				case DetailFieldKind.ReferenceVector:
 					// Reference add/remove gestures commit immediately (legacy chooser-dialog behavior): the
-					// staged session would otherwise sit open -- LCModel broadcasts PropChanged only at
+					// staged session would otherwise sit open -- LCModel broadcasts PropChanged
+					// only at
 					// EndUndoTask and the row's Items are a compose-time snapshot, so the user would see no
 					// change. The gesture-completed callback runs the SAME validation-gated save the
 					// focus-loss autosave uses, whose re-show rebuilds the row from domain truth. A host

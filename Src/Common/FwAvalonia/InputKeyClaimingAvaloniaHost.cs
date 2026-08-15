@@ -10,7 +10,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 {
 	/// <summary>
 	/// The pure input-key-claiming decision, split out from <see cref="InputKeyClaimingAvaloniaHost"/> so
-	/// it is unit-testable without a realized window -- and without a test assembly needing to load the
+	/// it is unit-testable without a realized window -- and without a test assembly needing to
+	/// load the
 	/// Avalonia interop base type the host derives from.
 	/// </summary>
 	public static class InputKeyClaimPolicy
@@ -40,8 +41,10 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 
 	/// <summary>
 	/// A <see cref="WinFormsAvaloniaControlHost"/> that claims the keyboard-navigation keys the hosted
-	/// Avalonia control needs, so the WinForms parent (a detail pane, or a modal dialog form) does not
-	/// consume Up/Down/Left/Right -- and, when asked, Enter -- as its own control-navigation / default-button
+	/// Avalonia control needs, so the WinForms parent (a detail pane, or a modal dialog form)
+	/// does not
+	/// consume Up/Down/Left/Right -- and, when asked, Enter -- as its own control-navigation /
+	/// default-button
 	/// handling before the Avalonia content sees them. Without this, WinForms eats the presses and hosted
 	/// list/keyboard navigation does nothing. Keys are claimed only while this host holds focus, so they
 	/// route normally when focus is elsewhere in the parent.

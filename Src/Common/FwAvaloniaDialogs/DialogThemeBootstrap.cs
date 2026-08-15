@@ -12,18 +12,22 @@ using Avalonia.Styling;
 namespace FwAvaloniaDialogs
 {
 	/// <summary>
-	/// Applies the shared dialog theme (<c>DialogTheme.axaml</c> -- the spacing tokens + the host-border /
+	/// Applies the shared dialog theme (<c>DialogTheme.axaml</c> -- the spacing tokens + the
+	/// host-border /
 	/// dialog-root base styles) to a dialog body. Every dialog view constructor calls <see cref="Apply"/> on
 	/// itself, so the theme is present whether the dialog is shown through the runtime host
-	/// (<c>AvaloniaDialogHost.ShowModal</c>) or realized directly in a headless test -- no separate app-builder
+	/// (<c>AvaloniaDialogHost.ShowModal</c>) or realized directly in a headless test -- no
+	/// separate app-builder
 	/// wiring is needed, and a new dialog inherits the tokens + the structural border/padding fix just by being
 	/// a dialog.
 	///
 	/// The theme is added to the dialog body's own <see cref="StyledElement.Styles"/> (the proven pattern used
 	/// by <c>CompactDialogStyles</c>): that both (a) applies the <c>fwDialogRoot</c> / <c>fwFieldHost</c> styles
-	/// AND the density (font/min-height/padding) setters to the dialog's control tree and (b) puts the token
+	/// AND the density (font/min-height/padding) setters to the dialog's control tree and (b)
+	/// puts the token
 	/// resources in scope so the view's <c>{StaticResource DialogControlGap}</c> (etc.) references resolve from
-	/// inside the dialog subtree -- independent of any application-level resource wiring. Because the density
+	/// inside the dialog subtree -- independent of any application-level resource wiring. Because
+	/// the density
 	/// setters live in the theme XAML, the headless dialog tests (which call ONLY this bootstrap, not the
 	/// runtime <c>AvaloniaDialogHost</c> chokepoint) render at the same WinForms density as the live dialogs.
 	/// </summary>
@@ -58,17 +62,22 @@ namespace FwAvaloniaDialogs
 				Source = new Uri(ThemeUri, UriKind.Absolute)
 			});
 
-			// FwCheckBoxStyle must be added in code (not DialogTheme.axaml) because it replaces the Fluent CheckBox's hardcoded 20x20 box/32px slot local values, which a style selector cannot override.
+			// FwCheckBoxStyle must be added in code (not DialogTheme.axaml) because it replaces
+			// the Fluent CheckBox's hardcoded 20x20 box/32px slot local values, which a style
+			// selector cannot override.
 			foreach (var checkBoxStyle in SIL.FieldWorks.Common.FwAvalonia.FwCheckBoxStyle.Build())
 				dialogBody.Styles.Add(checkBoxStyle);
 
-			// FwRadioButtonStyle is added in code for the same reason as the checkbox: it replaces the Fluent RadioButton's hardcoded ellipse/slot local values, which a style selector cannot override.
+			// FwRadioButtonStyle is added in code for the same reason as the checkbox: it
+			// replaces the Fluent RadioButton's hardcoded ellipse/slot local values, which a
+			// style selector cannot override.
 			foreach (var radioStyle in SIL.FieldWorks.Common.FwAvalonia.FwRadioButtonStyle.Build())
 				dialogBody.Styles.Add(radioStyle);
 
 			// A control's own Styles target its DESCENDANTS, not itself, so the `fwDialogRoot` window-padding
 			// style cannot reach the dialog body from here. Apply that one structurally in code: every dialog
-			// body IS the root, so it must carry DialogWindowPadding -- even a view that omits its own padding.
+			// body IS the root, so it must carry DialogWindowPadding -- even a view that omits
+			// its own padding.
 			// (The `fwFieldHost` border style DOES reach the descendant host borders through the include above.)
 			if (dialogBody is TemplatedControl templated && templated.Padding == default(Thickness)
 				&& dialogBody.TryGetResource("DialogWindowPadding", null, out var pad) && pad is Thickness window)

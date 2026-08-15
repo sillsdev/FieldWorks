@@ -264,9 +264,11 @@ namespace FwAvaloniaTests
 
 	/// <summary>
 	/// Legacy <c>&lt;if&gt;</c>/<c>&lt;ifnot&gt;</c>/<c>&lt;choice&gt;</c>
-	/// import as typed Conditional/ChoiceGroup nodes carrying structured ViewCondition metadata --
+	/// import as typed Conditional/ChoiceGroup nodes carrying structured ViewCondition metadata
+	/// --
 	/// the condition forms the shipped detail layouts use (boolequals/intequals/intlessthan/
-	/// intmemberof/lengthatleast/lengthatmost/guidequals/is/target) -- and round-trip canonical JSON.
+	/// intmemberof/lengthatleast/lengthatmost/guidequals/is/target) -- and round-trip canonical
+	/// JSON.
 	/// Unsupported (publishing-only) forms keep the conditional-dropped diagnostic.
 	/// </summary>
 	[TestFixture]
@@ -529,7 +531,8 @@ namespace FwAvaloniaTests
 		}
 
 		/// <summary>
-		/// Loads the subclass -> base class map from the pinned LCModel package's master model, the same
+		/// Loads the subclass -> base class map from the pinned LCModel package's master model,
+		/// the same
 		/// hierarchy production resolution walks via the MDC (metadata-driven, not hand-maintained).
 		/// </summary>
 		private static IReadOnlyDictionary<string, string> LoadBaseClassMap(string repoRoot)
@@ -569,7 +572,8 @@ namespace FwAvaloniaTests
 			Assert.That(report.NodesProduced, Is.GreaterThan(0), "import produced no typed nodes");
 
 			// The gap must be visible. If these start failing because the
-			// numbers hit zero, the importer has reached full vocabulary coverage -- celebrate, then
+			// numbers hit zero, the importer has reached full vocabulary coverage -- celebrate,
+			// then
 			// tighten the assertions.
 			TestContext.WriteLine(
 				$"element coverage {report.ElementCoveragePercent:F1}%, attribute coverage {report.AttributeCoveragePercent:F1}%, " +
@@ -680,7 +684,8 @@ namespace FwAvaloniaTests
 
 		/// <summary>
 		/// The real CmAnthroItem 'default' layout has all its refs on the CmPossibility
-		/// base class -- without base-class metadata resolution it raises 9 unresolved-part Errors.
+		/// base class -- without base-class metadata resolution it raises 9 unresolved-part
+		/// Errors.
 		/// With the metadata map the whole layout imports clean except the constructs other blockers own.
 		/// </summary>
 		[Test]
@@ -719,7 +724,8 @@ namespace FwAvaloniaTests
 		}
 
 		/// <summary>
-		/// The metadata-driven hierarchy subsumes the first-slice path's hand-maintained MoForm map --
+		/// The metadata-driven hierarchy subsumes the first-slice path's hand-maintained MoForm
+		/// map --
 		/// MoStemAllomorph's 'AsLexemeFormBasic' resolves with no hand map.
 		/// </summary>
 		[Test]
@@ -735,7 +741,8 @@ namespace FwAvaloniaTests
 
 		/// <summary>
 		/// A documented member of the remaining set. CmAnthroItem 'nested' refs 'Summary'
-		/// and no Summary detail part exists on CmAnthroItem/CmPossibility/CmObject -- legacy DataTree
+		/// and no Summary detail part exists on CmAnthroItem/CmPossibility/CmObject -- legacy
+		/// DataTree
 		/// omits the slice the same way (DataTree.cs:2455-2457).
 		/// </summary>
 		[Test]
@@ -752,7 +759,8 @@ namespace FwAvaloniaTests
 
 		/// <summary>
 		/// The real shipped variant/complex-form divergence. LexEntryRef/Normal's
-		/// VariantEntryTypes and ComplexEntryTypes parts are <c>&lt;if field="RefType" intequals=...&gt;</c>
+		/// VariantEntryTypes and ComplexEntryTypes parts are <c>&lt;if field="RefType"
+		/// intequals=...&gt;</c>
 		/// twins -- they must import as Conditional nodes with the structured condition, so the
 		/// composer can show exactly one per record.
 		/// </summary>
@@ -777,7 +785,8 @@ namespace FwAvaloniaTests
 
 		/// <summary>
 		/// The shipped lexeme-form ghost configuration must arrive complete on the typed
-		/// node -- ghost/ghostWs/ghostLabel, the explicit ghostClass (MoStemAllomorph, differing from
+		/// node -- ghost/ghostWs/ghostLabel, the explicit ghostClass (MoStemAllomorph, differing
+		/// from
 		/// the abstract MoForm field signature) AND the ghostInitMethod hook (SetMorphTypeToRoot).
 		/// </summary>
 		[Test]

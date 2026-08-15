@@ -19,7 +19,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 	///
 	/// Detection is by reflection on the active <c>IWindowingPlatform</c>'s assembly (it is
 	/// <c>Avalonia.Headless</c> under the headless platform). This keeps the production FwAvalonia DLL
-	/// free of any compile-time dependency on Avalonia.Headless -- production never loads that assembly,
+	/// free of any compile-time dependency on Avalonia.Headless -- production never loads that
+	/// assembly,
 	/// so the probe simply returns false and the real Win32 embed path is unchanged.
 	/// </summary>
 	internal static class FwAvaloniaPlatform
@@ -28,8 +29,10 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 
 		/// <summary>
 		/// True when the active Avalonia windowing platform is the headless one. False on the real Win32
-		/// platform (production) and false if the runtime is not yet initialized or the platform cannot be
-		/// resolved -- i.e. it never claims headless unless it can prove it, so production behavior is safe.
+		/// platform (production) and false if the runtime is not yet initialized or the platform
+		/// cannot be
+		/// resolved -- i.e. it never claims headless unless it can prove it, so production
+		/// behavior is safe.
 		/// </summary>
 		internal static bool IsHeadless
 		{
@@ -53,7 +56,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 		/// <summary>
 		/// Makes the WinForms/Avalonia embed (the Win32 HWND reparent in
 		/// <c>WinFormsAvaloniaControlHost.OnHandleCreated</c>) a deliberate no-op when the active platform
-		/// is HEADLESS, by marking <paramref name="host"/> as design-mode -- the control's own escape hatch:
+		/// is HEADLESS, by marking <paramref name="host"/> as design-mode -- the control's own
+		/// escape hatch:
 		/// its handle-created path skips creating the embeddable root, getting the (nonexistent) Win32 top
 		/// level handle, and calling <c>SetParent</c>/<c>AddMessageFilter</c> when <c>DesignMode</c> is true.
 		/// The Avalonia content still constructs and lays out when shown (tests assert logic, not pixels).

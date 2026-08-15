@@ -15,7 +15,8 @@ namespace FwAvaloniaTests
 	/// <summary>
 	/// The engine-isolation audit. The
 	/// Avalonia path must carry no dependency on native Views rendering, native render
-	/// engines (Graphite/Uniscribe), Gecko/browser engines, or legacy view stacks -- at the assembly
+	/// engines (Graphite/Uniscribe), Gecko/browser engines, or legacy view stacks -- at the
+	/// assembly
 	/// level (what the production assembly can even load) and at the source level (what production
 	/// code names). A failure of either test blocks Avalonia default readiness by construction.
 	/// </summary>

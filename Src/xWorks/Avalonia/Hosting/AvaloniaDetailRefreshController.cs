@@ -136,7 +136,8 @@ namespace SIL.FieldWorks.XWorks
 			{
 				// _refreshQueued stays true UNTIL the refresh completes: a rebuild can itself raise
 				// PropChanged (e.g. a settle-commit inside it), and those notifications are already
-				// covered -- the recompose reads current domain state -- so they must coalesce into
+				// covered -- the recompose reads current domain state -- so they must coalesce
+				// into
 				// this delivery instead of queueing a second identical one.
 				try
 				{

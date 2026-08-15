@@ -58,7 +58,8 @@ namespace SIL.FieldWorks.XWorks
 				m_entry.CitationForm.set_String(Cache.DefaultVernWs,
 					TsStringUtils.MakeString("casa-cit", Cache.DefaultVernWs));
 
-				// An owned StText (under a notebook record's Discussion) with two paragraphs -- the same
+				// An owned StText (under a notebook record's Discussion) with two paragraphs --
+				// the same
 				// real, persisted OwningAtomic-StText shape StructuredTextAdapterTests uses.
 				if (Cache.LangProject.ResearchNotebookOA == null)
 					Cache.LangProject.ResearchNotebookOA =
@@ -297,7 +298,8 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(CitationText, Is.EqualTo("casa-first"),
 				"the paragraph add + re-show did not disturb the already-committed sibling field");
 
-			// Undo grouping order: one undo removes the inserted paragraph; a SECOND undo reverts the
+			// Undo grouping order: one undo removes the inserted paragraph; a SECOND undo reverts
+			// the
 			// earlier citation edit -- they are distinct steps in the right order.
 			Cache.ActionHandlerAccessor.Undo();
 			Assert.That(ParaCount, Is.EqualTo(2), "first undo removes the inserted paragraph");

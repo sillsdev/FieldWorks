@@ -13,7 +13,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 {
 	/// <summary>
 	/// Reusable host that shows an Avalonia dialog body (a <c>UserControl</c>) inside a WinForms-owned
-	/// modal <see cref="Form"/> during coexistence -- the turn-key piece for the MVVM dialog stack. Because
+	/// modal <see cref="Form"/> during coexistence -- the turn-key piece for the MVVM dialog
+	/// stack. Because
 	/// Avalonia modal windows are not supported while WinForms owns the message loop,
 	/// the dialog body is hosted in a WinForms modal window owned by the caller's form; the view-model
 	/// closes it by raising <see cref="IDialogViewModel.CloseRequested"/> (no windowing in the VM).
@@ -26,12 +27,16 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 		/// Shows <paramref name="dialogBody"/> modally over <paramref name="owner"/>. Returns the accepted
 		/// result (true = OK, false = Cancel), or null if the window was closed without an OK/Cancel.
 		///
-		/// The optional parameters extend the fixed-size default WITHOUT changing it for existing callers:
-		///  * <paramref name="resizable"/> -- when true the modal gets a sizable border and a minimum size
-		///    (defaulting to the initial <paramref name="width"/>/<paramref name="height"/> unless
-		///    <paramref name="minWidth"/>/<paramref name="minHeight"/> are supplied). Default false keeps the
+		/// The optional parameters extend the fixed-size default WITHOUT changing it for existing
+		/// callers:
+		/// * <paramref name="resizable"/> -- when true the modal gets a sizable border and a
+		/// minimum size
+		/// (defaulting to the initial <paramref name="width"/>/<paramref name="height"/> unless
+		/// <paramref name="minWidth"/>/<paramref name="minHeight"/> are supplied). Default false
+		/// keeps the
 		///    legacy <see cref="FormBorderStyle.FixedDialog"/> behavior.
-		///  * <paramref name="getRememberedSize"/>/<paramref name="rememberedSizeChanged"/> -- an optional
+		/// * <paramref name="getRememberedSize"/>/<paramref name="rememberedSizeChanged"/> -- an
+		/// optional
 		///    size-persistence hook (mirrors the label-column-width persistence pattern: the caller owns the
 		///    remembered value, keyed by dialog identity, so a resized dialog reopens at its last size). The
 		///    get-hook (when it returns a value) seeds the initial client size in place of
@@ -82,7 +87,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 					ShowInTaskbar = false
 				})
 				{
-					// Border / min-size / initial (possibly remembered) size -- extracted so it is unit-testable
+					// Border / min-size / initial (possibly remembered) size -- extracted so it
+					// is unit-testable
 					// without spinning a real modal window.
 					ApplySizing(form, width, height, resizable, minWidth, minHeight, getRememberedSize);
 
@@ -145,7 +151,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 
 		/// <summary>
 		/// Picks the owner to show a modal dialog over: <paramref name="activeForm"/> (the form truly
-		/// topmost/focused right now -- <see cref="Form.ActiveForm"/>) when there is one, else the caller-
+		/// topmost/focused right now -- <see cref="Form.ActiveForm"/>) when there is one, else
+		/// the caller-
 		/// supplied <paramref name="owner"/>. Factored out of <see cref="ShowModal"/> so the nested-modal
 		/// owner-chain decision is unit-testable without spinning a real modal window; see the call site for
 		/// why a stale <paramref name="owner"/> breaks pointer input on a dialog opened from another dialog.
@@ -183,12 +190,15 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 		}
 
 		/// <summary>
-		/// Applies the border style, minimum size and initial (possibly remembered) client size to the hosting
+		/// Applies the border style, minimum size and initial (possibly remembered) client size
+		/// to the hosting
 		/// modal <paramref name="form"/>. Factored out of <see cref="ShowModal"/> so the sizing/persistence
 		/// contract is unit-testable without spinning a real modal window:
-		///  * <paramref name="resizable"/> false -> <see cref="FormBorderStyle.FixedDialog"/> and no min-size
+		/// * <paramref name="resizable"/> false -> <see cref="FormBorderStyle.FixedDialog"/> and
+		/// no min-size
 		///    (the legacy default; <paramref name="minWidth"/>/<paramref name="minHeight"/>/get-hook ignored);
-		///  * <paramref name="resizable"/> true -> <see cref="FormBorderStyle.Sizable"/> with a min client size
+		/// * <paramref name="resizable"/> true -> <see cref="FormBorderStyle.Sizable"/> with a
+		/// min client size
 		///    (<paramref name="minWidth"/>/<paramref name="minHeight"/>, defaulting to the initial
 		///    <paramref name="width"/>/<paramref name="height"/>), and the get-hook (when it returns a value)
 		///    seeds the initial client size in place of <paramref name="width"/>/<paramref name="height"/>.
@@ -229,7 +239,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 			var initialH = Math.Max(initial.Height, minH);
 			form.ClientSize = new System.Drawing.Size(initialW, initialH);
 
-			// Derive the window-frame delta from the realized form so MinimumSize (an outer size) corresponds to the
+			// Derive the window-frame delta from the realized form so MinimumSize (an outer size)
+			// corresponds to the
 			// requested CLIENT minimum. Falls back to the client minimum if the handle is not yet realized.
 			var chromeW = form.Width - form.ClientSize.Width;
 			var chromeH = form.Height - form.ClientSize.Height;
@@ -239,7 +250,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 		/// <summary>
 		/// Focuses the first keyboard-focusable INPUT inside <paramref name="dialogBody"/> so a dialog opens
 		/// with the caret in its first field (legacy WinForms parity). Buttons (OK/Cancel/Help) are
-		/// never the initial focus -- initial focus belongs to an input, and Enter/Escape already activate the
+		/// never the initial focus -- initial focus belongs to an input, and Enter/Escape already
+		/// activate the
 		/// default/cancel buttons. Returns the control it focused, or null if none qualifies. Factored out
 		/// (like <see cref="ApplySizing"/> / <see cref="WireClose"/>) so the selection contract is unit-testable
 		/// headlessly without spinning a real WinForms-hosted modal window; <see cref="ShowModal"/> invokes it
@@ -268,7 +280,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 				return max;
 			}
 
-			// The first focusable INPUT in tab order -- never a command button. If a picker-driven dialog
+			// The first focusable INPUT in tab order -- never a command button. If a
+			// picker-driven dialog
 			// exposes no focusable field (the owned FwOptionChooser is deliberately Focusable=false and
 			// handles keys directly), focus nothing rather than landing on OK, where Enter would accept the
 			// dialog. So this is a no-op for picker dialogs (no regression) and focuses the first text field

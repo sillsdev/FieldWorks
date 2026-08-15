@@ -13,18 +13,22 @@ namespace FwAvaloniaDialogs
 	/// </summary>
 	public enum EntryGoResultField
 	{
-		/// <summary>The entry's headword (<see cref="EntryGoSearchResult.Text"/>) -- a vernacular value.</summary>
+		/// <summary>The entry's headword (<see cref="EntryGoSearchResult.Text"/>) -- a vernacular
+		/// value.</summary>
 		Headword,
 
-		/// <summary>The entry's lexeme form (<see cref="EntryGoSearchResult.LexemeForm"/>) -- a vernacular value.</summary>
+		/// <summary>The entry's lexeme form (<see cref="EntryGoSearchResult.LexemeForm"/>) -- a
+		/// vernacular value.</summary>
 		LexemeForm,
 
-		/// <summary>The gloss(es) (<see cref="EntryGoSearchResult.Gloss"/>) -- an analysis value.</summary>
+		/// <summary>The gloss(es) (<see cref="EntryGoSearchResult.Gloss"/>) -- an analysis
+		/// value.</summary>
 		Gloss
 	}
 
 	/// <summary>
-	/// One column of the entry-search ("go") dialog's persistent matching list -- the LCModel-free presentation
+	/// One column of the entry-search ("go") dialog's persistent matching list -- the
+	/// LCModel-free presentation
 	/// spec for a column of the legacy <c>MatchingObjectsBrowser</c> (the multi-column browse view
 	/// <c>BaseGoDlg</c> embeds). The launcher supplies an ordered list of these on
 	/// <see cref="EntryGoDialogInput.ResultColumns"/>: a localized <see cref="Header"/>, the

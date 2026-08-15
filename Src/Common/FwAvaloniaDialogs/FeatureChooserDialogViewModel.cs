@@ -16,7 +16,8 @@ namespace FwAvaloniaDialogs
 	/// host feeds the feature system + current assignments, the user picks values, and on OK
 	/// <see cref="ApplyChanges"/> snapshots the chosen assignment set into <see cref="Result"/>.
 	///
-	/// Like the legacy dialogs there is NO OK gate (an empty assignment set -- every feature "&lt;None&gt;" -- is the
+	/// Like the legacy dialogs there is NO OK gate (an empty assignment set -- every feature
+	/// "&lt;None&gt;" -- is the
 	/// valid "delete the FS / unspecified" outcome). The dialog forwards the editor's inline
 	/// <see cref="CreateNewFeatureRequested"/> / <see cref="CreateNewValueRequested"/> affordances to the host
 	/// (the launcher opens the create flow and calls <see cref="AcceptCreatedFeature"/> /
@@ -40,7 +41,8 @@ namespace FwAvaloniaDialogs
 			HelpTopic = _input.HelpTopic;
 			HasHelp = !string.IsNullOrEmpty(_input.HelpTopic);
 
-			// The owned feature editor: feed the feature system, then seed the current assignments silently (the
+			// The owned feature editor: feed the feature system, then seed the current
+			// assignments silently (the
 			// host's initial-load path -- SetAssignments does not raise the change event).
 			Editor = new FwFeatureStructureEditor(string.IsNullOrEmpty(_input.AutomationId) ? "Features" : _input.AutomationId);
 			Editor.SetNodes(_input.Nodes ?? Array.Empty<FwFeatureNode>());

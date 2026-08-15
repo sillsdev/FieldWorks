@@ -19,15 +19,18 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 {
 	/// <summary>
 	/// FieldWorks-owned multi-writing-system text field over an IR-projected detail field
-	/// (tasks 6.1/6.2): one compact row per writing-system alternative -- abbreviation gutter plus a
+	/// (tasks 6.1/6.2): one compact row per writing-system alternative -- abbreviation gutter
+	/// plus a
 	/// text editor carrying the project WS font, right-to-left flow direction for RTL scripts, and
 	/// per-WS keyboard activation on focus through the supplied callback (the same behavior legacy
 	/// slices get from <c>EditingHelper.SetKeyboardForWs</c>). Write-through staging goes to the
 	/// edit context when one is supplied; otherwise the field is read-only display.
 	/// Multi-run/styled content IS editable here as plain-text-over-preserved-runs: the original
 	/// TsString runs are projected into <see cref="DetailRichTextValue"/>, a keystroke replays the
-	/// untouched runs around the edit, and the edit context rebuilds the TsString. A value is held
-	/// read-only ONLY when that replay would corrupt it -- an embedded object the runs cannot rebuild,
+	/// untouched runs around the edit, and the edit context rebuilds the TsString. A value is
+	/// held
+	/// read-only ONLY when that replay would corrupt it -- an embedded object the runs cannot
+	/// rebuild,
 	/// or a run carrying a TsString property the model does not round-trip
 	/// (<see cref="DetailRichTextValue.CanEditRichText"/>); such a value shows the explanatory tooltip
 	/// and stays full-fidelity in the classic view.
@@ -47,7 +50,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 	{
 		// Teardown registered as each handler/subscription is wired, so a recycled or
 		// active-cell-deactivated field can detach EVERY handler (several capture closures over box,
-		// currentRich, clipboard) and release its flyouts -- preventing the handler-closure leak on the
+		// currentRich, clipboard) and release its flyouts -- preventing the handler-closure leak
+		// on the
 		// editor path when VirtualizingStackPanel discards the container.
 		private readonly CompositeDisposable _teardown = new CompositeDisposable();
 		private bool _disposed;
@@ -157,11 +161,14 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 									? currentCaret
 									: box.SelectionStart;
 
-							// The moving edge (nextCaret) already lands on a whole grapheme-cluster boundary
-							// (MoveCaret steps by clusters) and the anchor is a cluster-aligned caret/selection
+							// The moving edge (nextCaret) already lands on a whole
+							// grapheme-cluster boundary
+							// (MoveCaret steps by clusters) and the anchor is a cluster-aligned
+							// caret/selection
 							// edge, so the span [anchor..nextCaret] never splits a cluster. Set the caret FIRST:
 							// Avalonia's CaretIndex setter clears the selection, so assigning SelectionStart/
-							// SelectionEnd AFTER leaves the caret on the moving edge without re-collapsing -- the
+							// SelectionEnd AFTER leaves the caret on the moving edge without
+							// re-collapsing -- the
 							// original order (selection then CaretIndex) collapsed the span to an empty caret,
 							// which is why Shift+Arrow moved the caret with nothing selected.
 							box.CaretIndex = nextCaret;
@@ -236,11 +243,13 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 					_teardown.Add(() => box.TextChanged -= textChanged);
 
 					// Character formatting over a selection. Ctrl+B/I/U toggle bold/italic/
-					// underline on the TextBox's current selection. We chose keyboard shortcuts over a
+					// underline on the TextBox's current selection. We chose keyboard shortcuts
+					// over a
 					// floating toolbar: they match the legacy Views editor (FwEditingHelper's
 					// Ctrl+B/I/U), need no extra decorations in the dense detail rows, and act on the same
 					// SelectionStart..SelectionEnd the bidi/clipboard handlers already use. The gesture
-					// only stages when the selection is non-empty (a collapsed caret is a no-op --
+					// only stages when the selection is non-empty (a collapsed caret is a no-op
+					// --
 					// there is no pending format for the next insert) and only on an editable,
 					// non-lossy value (this whole block is gated on value.CanEditRichText already).
 					EventHandler<KeyEventArgs> formatKeyDown = (s, e) =>
@@ -291,7 +300,9 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 					box.AddHandler(InputElement.KeyDownEvent, formatKeyDown, Avalonia.Interactivity.RoutingStrategies.Tunnel);
 					_teardown.Add(() => box.RemoveHandler(InputElement.KeyDownEvent, formatKeyDown));
 
-					// Committing routes through ApplySpanNamedStyle + TrySetRichText -- the same rich-text seam Ctrl+B/I/U uses -- and is only built off a bridged row when the field actually has available styles.
+					// Committing routes through ApplySpanNamedStyle + TrySetRichText -- the same
+					// rich-text seam Ctrl+B/I/U uses -- and is only built off a bridged row when
+					// the field actually has available styles.
 					if (!hasBridge && field.AvailableNamedStyles != null && field.AvailableNamedStyles.Count > 0)
 					{
 						// The picker's option set: a clear-style entry (empty key) plus one option per
@@ -393,7 +404,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 					// System" button opening the shared FwOptionChooser (single-select) seeded with the
 					// project's available writing systems (tag = key, display name = caption). It acts on the
 					// TextBox's current SelectionStart..SelectionEnd; committing calls RetagSpanWritingSystem
-					// and stages through TrySetRichText -- the same rich-text seam Ctrl+B/I/U and the style
+					// and stages through TrySetRichText -- the same rich-text seam Ctrl+B/I/U and
+					// the style
 					// picker use. Built only when the field carries available writing systems; the whole block
 					// is already gated on the editable, non-lossy value. There is no "clear" entry: a run must
 					// always carry a writing system, so the picker offers only real project writing systems.
@@ -490,7 +502,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 						}
 					}
 
-						// External-link insert / edit prompt. A right-click menu item "Insert/edit link..."
+						// External-link insert / edit prompt. A right-click menu item
+						// "Insert/edit link..."
 						// opens a flyout with a URL TextBox + Apply (the dialog-light prompt the decision calls
 						// for). On open it snapshots the selection and, when that selection sits on an existing
 						// link run, pre-fills the URL for editing. Apply over a real selection inserts/edits the
@@ -665,7 +678,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				WireWritingSystemKeyboard(box, value, writingSystemFocused);
 
 				// The value box's right-click menu (legacy MultiStringSlice parity: operations live OFF the
-				// row, not as always-visible inline controls). A non-bridged row carries a local menu -- Copy
+				// row, not as always-visible inline controls). A non-bridged row carries a local
+				// menu -- Copy
 				// plus whatever rich-text operations its gate built (character style / writing-system retag /
 				// insert-or-edit link / delete embedded object). A bridged row's host xCore menu is
 				// authoritative and already wired above, so it gets no local menu here.
@@ -756,7 +770,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		{
 			if (!string.IsNullOrEmpty(field.GhostPrompt))
 			{
-				// 14.1: the legacy ghost add-prompt is a watermark -- it disappears the moment the
+				// 14.1: the legacy ghost add-prompt is a watermark -- it disappears the moment
+				// the
 				// user clicks in (focus), and reappears only if they leave without typing.
 				box.Watermark = field.GhostPrompt;
 				EventHandler<GotFocusEventArgs> ghostGot = (s2, e2) => box.Watermark = string.Empty;
@@ -922,7 +937,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		public IReadOnlyList<Control> HoverAffordances => Array.Empty<Control>();
 
 		/// <summary>
-		/// The count of still-attached handler/subscription teardowns -- zero after <see cref="Dispose"/>.
+		/// The count of still-attached handler/subscription teardowns -- zero after <see
+		/// cref="Dispose"/>.
 		/// Exposed so a recycling test can assert the editor released every handler it wired.
 		/// </summary>
 		public int AttachedHandlerCount => _teardown.Count;
@@ -1001,10 +1017,12 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 	/// <summary>
 	/// FieldWorks-owned chooser field: a button opening a flyout of service-backed options
 	/// (the options come from the LCModel-sourced detail model, not the control). The flyout is the
-	/// shared compact <see cref="FwOptionChooser"/> -- an AutoCompleteBox-based OPTIONS ONLY selector,
+	/// shared compact <see cref="FwOptionChooser"/> -- an AutoCompleteBox-based OPTIONS ONLY
+	/// selector,
 	/// no link items. Committing an
 	/// option stages it through the edit context, closes the flyout, and returns focus to the button
-	/// -- the popup-focus-return behavior the seam specs require. Without an edit context the chooser
+	/// -- the popup-focus-return behavior the seam specs require. Without an edit context the
+	/// chooser
 	/// is a read-only display of the current selection.
 	/// Styling: the button is transparent/borderless -- the value text reads flat like the legacy
 	/// combo. When the row's supporting list resolved a list-editor target (a composed goto
@@ -1052,7 +1070,9 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			if (_gear != null)
 				content.Children.Add(_gear);
 			Content = content;
-			// Read-only rows stay ENABLED because disabling the button would kill hover-reveal and disable the nested configure gear, which is navigation, not editing; only the value-editing flyout is withheld.
+			// Read-only rows stay ENABLED because disabling the button would kill hover-reveal
+			// and disable the nested configure gear, which is navigation, not editing; only the
+			// value-editing flyout is withheld.
 			AutomationProperties.SetAutomationId(this, automationId);
 			AutomationProperties.SetName(this, field.Label ?? field.Field ?? automationId);
 
@@ -1096,7 +1116,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			});
 		}
 
-		/// <summary>The count of still-attached subscriptions -- zero after <see cref="Dispose"/>.</summary>
+		/// <summary>The count of still-attached subscriptions -- zero after <see
+		/// cref="Dispose"/>.</summary>
 		public int AttachedHandlerCount => _teardown.Count;
 
 		/// <summary>
@@ -1113,7 +1134,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			_teardown.Clear();
 		}
 
-		// Restyled appearance only -- the control keeps the Button theme (template, flyout-on-click,
+		// Restyled appearance only -- the control keeps the Button theme (template,
+		// flyout-on-click,
 		// focus, automation peer), not a lookup by this derived type's key.
 		protected override Type StyleKeyOverride => typeof(Button);
 
@@ -1123,7 +1145,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		/// <summary>The display text of the current selection (what the value TextBlock shows).</summary>
 		public string ValueText => _valueText.Text;
 
-		/// <summary>The configure gear (only when a list-edit target resolved); empty otherwise.</summary>
+		/// <summary>The configure gear (only when a list-edit target resolved); empty
+		/// otherwise.</summary>
 		public IReadOnlyList<Control> HoverAffordances
 			=> _gear == null ? Array.Empty<Control>() : new Control[] { _gear };
 
@@ -1137,7 +1160,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 	/// <summary>
 	/// FieldWorks-owned editable reference-vector field: the current items rendered
 	/// inline, each followed by the thin grey separator bar legacy reference slices draw
-	/// (VwSeparatorBox), with the TRAILING bar fronting the add slot -- a "+" launcher whose flyout
+	/// (VwSeparatorBox), with the TRAILING bar fronting the add slot -- a "+" launcher whose
+	/// flyout
 	/// is the shared compact <see cref="FwOptionChooser"/> (AutoCompleteBox-based OPTIONS ONLY,
 	/// zero link items): the
 	/// possibility tree indented by <see cref="DetailChoiceOption.Depth"/> for enumerated lists,
@@ -1153,7 +1177,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 	{
 		private readonly List<Control> _affordances = new List<Control>();
 		// Teardown for the per-item Remove handlers, the add picker's OptionCommitted/Dismissed
-		// subscriptions, the gear click, and the option flyout -- so a recycled vector cell releases
+		// subscriptions, the gear click, and the option flyout -- so a recycled vector cell
+		// releases
 		// every closure it wired and drops its flyout, mirroring FwChooserField/FwMultiWsTextField
 		// (wiring these with NO teardown leaks the editor path
 		// when VirtualizingStackPanel discards the container). Empty for read-only rows.
@@ -1175,7 +1200,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			Action<DetailLinkRequest> linkRequested = null)
 		{
 			Orientation = Orientation.Horizontal;
-			// 14.2-style hit-testing rule: a null background only hit-tests the glyphs -- the WHOLE
+			// 14.2-style hit-testing rule: a null background only hit-tests the glyphs -- the
+			// WHOLE
 			// row must receive hover so the reveal affordances work over the gaps between items.
 			Background = Brushes.Transparent;
 			AutomationProperties.SetAutomationId(this, automationId);
@@ -1189,7 +1215,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 					Text = item.Name,
 					VerticalAlignment = VerticalAlignment.Center,
 					Margin = new Thickness(0, 0, 4, 0),
-					// 14.2: a null background only hit-tests the glyphs -- the whole item must take
+					// 14.2: a null background only hit-tests the glyphs -- the whole item must
+					// take
 					// the right-click or the Remove flyout only opens over ink.
 					Background = Brushes.Transparent
 				};
@@ -1303,7 +1330,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		public IReadOnlyList<Control> HoverAffordances => _affordances;
 
 		/// <summary>
-		/// The count of still-attached subscriptions/handlers -- zero after <see cref="Dispose"/>.
+		/// The count of still-attached subscriptions/handlers -- zero after <see
+		/// cref="Dispose"/>.
 		/// Exposed so a recycling test can assert the editor released every handler it wired.
 		/// </summary>
 		public int AttachedHandlerCount => _teardown.Count;
@@ -1346,7 +1374,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 	/// trailing launcher button, drawn as the SAME hover-revealed settings gear the chooser and
 	/// reference vector draw. The button invokes a host-injected callback (a plain delegate; this
 	/// layer stays LCModel-free). Without a callback the gear renders DISABLED with an explanatory
-	/// tooltip -- the value still shows, the affordance is visibly unavailable once hover reveals it.
+	/// tooltip -- the value still shows, the affordance is visibly unavailable once hover reveals
+	/// it.
 	/// </summary>
 	public sealed class FwDialogLauncherField : DockPanel, IHoverAffordanceProvider
 	{
@@ -1363,7 +1392,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			Background = Brushes.Transparent;
 			AutomationProperties.SetName(this, label ?? string.Empty);
 
-			// The legacy ButtonLauncher launch affordance, docked at the row's end like m_panel --
+			// The legacy ButtonLauncher launch affordance, docked at the row's end like m_panel
+			// --
 			// drawn as the shared settings gear, hover-revealed like the chooser/vector ones.
 			_button = DetailChrome.CreateGearButton();
 			_button.IsEnabled = launch != null;

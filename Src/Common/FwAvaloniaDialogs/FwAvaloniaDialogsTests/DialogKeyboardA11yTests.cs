@@ -24,7 +24,8 @@ namespace FwAvaloniaDialogsTests
 	/// Legacy WinForms dialogs opened with focus in the first field and tabbed
 	/// fields-before-buttons; the Avalonia dialogs must match. These run on a realized headless view and
 	/// assert the deterministic selection contract of <see cref="AvaloniaDialogHost.FocusInitialControl"/>
-	/// plus the per-view TabIndex that pushes the button strip last -- independent of the WinForms-hosted
+	/// plus the per-view TabIndex that pushes the button strip last -- independent of the
+	/// WinForms-hosted
 	/// modal delivery path, which the desktop UIA environment covers.
 	/// </summary>
 	[TestFixture]

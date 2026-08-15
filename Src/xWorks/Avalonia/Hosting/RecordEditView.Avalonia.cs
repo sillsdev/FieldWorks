@@ -52,7 +52,8 @@ namespace SIL.FieldWorks.XWorks
 		// The per-project home of the sparse view-definition override patches that
 		// drive the Avalonia detail view's per-field Field Visibility / Move Field commands. Lazily built from
 		// the project ConfigurationSettings folder; the detail view reads it at Compose and the gear
-		// menu writes it. The legacy WinForms DataTree path NEVER touches this -- it keeps its Inventory
+		// menu writes it. The legacy WinForms DataTree path NEVER touches this -- it keeps its
+		// Inventory
 		// store untouched.
 		private ViewDefinitionOverrideStore m_viewOverrideStore;
 		// The approved baseline-adapter ids -- the ONLY routes allowed to drive hidden legacy
@@ -230,7 +231,8 @@ namespace SIL.FieldWorks.XWorks
 			// away), tell the user WHY rather than discarding it silently. The rollback still happens
 			// (the safe close that keeps the open undo task from stranding); we only surface the reason.
 			m_detailEditContext.InvalidEditRolledBack = ShowInvalidEditRolledBackWarning;
-			// The guard only hooks THIS window's undo stack -- it cannot reach other windows' stacks,
+			// The guard only hooks THIS window's undo stack -- it cannot reach other windows'
+			// stacks,
 			// so Ctrl+Z in another window while this one holds an open session would still re-enter
 			// the write lock. Mitigate by settling whenever this view's top-level window deactivates
 			// (the user must focus another window before they can undo there).
@@ -247,7 +249,9 @@ namespace SIL.FieldWorks.XWorks
 		{
 			if (changed == null || current == null)
 				return false;
-			// Walking the owner chain (rather than checking only the root) keeps this correct for any record class, not just entries, so nested edits also trigger the coalesced refresh.
+			// Walking the owner chain (rather than checking only the root) keeps this correct for
+			// any record class, not just entries, so nested edits also trigger the coalesced
+			// refresh.
 			for (var o = changed; o != null; o = o.Owner)
 				if (o.Hvo == current.Hvo)
 					return true;
@@ -293,7 +297,8 @@ namespace SIL.FieldWorks.XWorks
 			SettleDetailEdits();
 
 			// Adapter hygiene: the hidden command-routing DataTree must never answer mediator
-			// commands for a PREVIOUS record -- reset it whenever the shown record changes; the next
+			// commands for a PREVIOUS record -- reset it whenever the shown record changes; the
+			// next
 			// right-click re-syncs it (EnsureMenuCommandAdapter). Without this, Insert Sense from
 			// the main menu could silently target the entry that was last right-clicked.
 			if (m_dataTreeInitialized && m_dataEntryForm?.Root != null && obj != null
@@ -386,7 +391,8 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Shows the SAME xCore-defined context menu the legacy slice shows, over the
 		/// Avalonia detail view -- the menu ids come from the layout (imported into the typed IR), the menu
-		/// is materialized from the window configuration and dispatched through the mediator, exactly
+		/// is materialized from the window configuration and dispatched through the mediator,
+		/// exactly
 		/// the legacy `DTMenuHandler.MakeSliceContextMenu` recipe (menu + mnuDataTree-Object; in-string
 		/// menus add mnuDataTree-MultiStringSlice). Command targeting uses the approved baseline
 		/// adapter "command-menu-routing": the legacy DataTree + DTMenuHandler are initialized lazily and
@@ -511,7 +517,8 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		// The resolver the composer calls for each compiled (class, layout); null result = shipped
-		// definition. A load failure is logged, not fatal -- compose then uses the shipped definition.
+		// definition. A load failure is logged, not fatal -- compose then uses the shipped
+		// definition.
 		private ViewDefinitionOverride ResolveViewOverride(string className, string layoutName)
 			=> ViewOverrideStore?.TryGet(className, layoutName,
 				(path, error) => Logger.WriteError("Failed to load view-definition override '" + path
@@ -520,7 +527,8 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Builds the interceptor that retargets the per-field Field Visibility and
 		/// Move Field commands to the project override layer for the Avalonia detail view. Returns null
-		/// (intercept nothing -- every command keeps its normal mediator dispatch) when the clicked row
+		/// (intercept nothing -- every command keeps its normal mediator dispatch) when the
+		/// clicked row
 		/// carries no (class, layout) context, e.g. the first-slice fallback rows; that keeps the legacy
 		/// behavior intact when the override layer cannot be addressed.
 		/// </summary>
@@ -577,7 +585,8 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		// A Field Visibility menu item: checked when it is the field's current visibility, executes the
-		// SetVisibility override mutation (idempotent -- re-choosing the current value is a harmless write).
+		// SetVisibility override mutation (idempotent -- re-choosing the current value is a
+		// harmless write).
 		private DetailMenuItem VisibilityItem(ChoiceBase choice, DetailField field,
 			string templateId, ViewNodeLocation location, ViewVisibility target)
 		{
@@ -712,7 +721,8 @@ namespace SIL.FieldWorks.XWorks
 			// pass over the already-realized slices handles the common case (small sequences build their
 			// slices instantly). When the target lives inside an UNREALIZED DummyObjectSlice (a sequence with
 			// >= DataTree.kInstantSliceMax items builds lazy placeholders whose Object is the OWNER, not the
-			// target), no real slice carries the target hvo yet -- realize the lazy slices and retry rather
+			// target), no real slice carries the target hvo yet -- realize the lazy slices and
+			// retry rather
 			// than silently leaving the wrong (or stale) CurrentSlice pointed, which would make the command
 			// mutate the wrong object or, for Merge's class guard, silently fail.
 			if (TrySetCurrentSliceForHvo(targetHvo))
@@ -875,7 +885,8 @@ namespace SIL.FieldWorks.XWorks
 
 		private void EnsureAvaloniaEntryFormActive()
 		{
-			// Re-sync the contract BEFORE realizing the entry form so it reflects the activation even
+			// Re-sync the contract BEFORE realizing the entry form so it reflects the activation
+			// even
 			// if its construction fails part-way.
 			SyncActiveHostContract();
 
@@ -885,7 +896,8 @@ namespace SIL.FieldWorks.XWorks
 			// The refresh controller must exist for the whole time the view is active,
 			// not only once a record has actually been composed via ShowAvaloniaEntry. A tool that
 			// loads directly with UIMode=New (the ordinary case for a user who already has the setting
-			// on) shows the entry form here on the first idle -- and when the clerk has not yet selected a
+			// on) shows the entry form here on the first idle -- and when the clerk has not yet
+			// selected a
 			// record that first show takes the CurrentObject==null branch, which never reaches
 			// ShowAvaloniaEntry. Without wiring the controller here, PropChanged-driven external-edit
 			// refresh would silently not work until the user manually navigated to another record once.

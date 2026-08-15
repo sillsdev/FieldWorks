@@ -17,7 +17,8 @@ using AvControl = Avalonia.Controls.Control;
 namespace SIL.FieldWorks.LexText.Controls
 {
 	/// <summary>
-	/// The LCModel-aware launcher for the reusable Avalonia "Create New Grammatical Info." dialog -- the
+	/// The LCModel-aware launcher for the reusable Avalonia "Create New Grammatical Info." dialog
+	/// -- the
 	/// replacement for the legacy <see cref="MsaCreatorDlg"/> in New-UI mode. It is a concrete
 	/// <see cref="AvaloniaDialogLauncher{TState,TViewModel,TPayload}"/>: the Avalonia layer stays LCModel-free by
 	/// exchanging a <see cref="MsaCreatorDlgInput"/> (the read-only lexical entry + senses summary, the POS nodes /
@@ -27,7 +28,8 @@ namespace SIL.FieldWorks.LexText.Controls
 	/// <c>SandboxGenericMSA</c> (via the shared <see cref="LcmInsertEntryDialogLauncher.BuildSandboxMsa"/>), exposed
 	/// as <see cref="ChosenSandboxMsa"/>.
 	///
-	/// Two consumers apply the result differently -- <c>MSAPopupTreeManager</c> assigns <c>m_sense.SandboxMSA</c>
+	/// Two consumers apply the result differently -- <c>MSAPopupTreeManager</c> assigns
+	/// <c>m_sense.SandboxMSA</c>
 	/// (find-or-create on a sense) and <c>MSADlgLauncher</c> calls <c>originalMsa.UpdateOrReplace</c> (modify an
 	/// existing MSA). To keep ONE undoable step at each call site, this launcher does NOT mutate the model: it
 	/// produces the resolved <c>SandboxGenericMSA</c> and the caller applies it inside its own UOW. The Show
@@ -64,9 +66,11 @@ namespace SIL.FieldWorks.LexText.Controls
 		}
 
 		/// <summary>
-		/// Shows the "Create New Grammatical Info." dialog modally over <paramref name="owner"/>, seeded from
+		/// Shows the "Create New Grammatical Info." dialog modally over <paramref name="owner"/>,
+		/// seeded from
 		/// <paramref name="seedMsa"/> (the legacy <c>sandboxMsa</c>). Returns the chosen <c>SandboxGenericMSA</c> on
-		/// OK (the caller applies it -- assign to a sense, or UpdateOrReplace an existing MSA -- in its own UOW), or
+		/// OK (the caller applies it -- assign to a sense, or UpdateOrReplace an existing MSA --
+		/// in its own UOW), or
 		/// null on cancel. Mirrors <see cref="MsaCreatorDlg.SetDlgInfo"/>'s parameters.
 		/// </summary>
 		public static SandboxGenericMSA Show(LcmCache cache, Mediator mediator, PropertyTable propertyTable,
@@ -130,7 +134,8 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <summary>
 		/// Builds the LCModel-free <see cref="MsaCreatorDlgInput"/> from the live cache: the read-only lexical
 		/// entry headword (the legacy <c>m_fwtbCitationForm</c>), the read-only senses summary (the senses whose
-		/// MorphoSyntaxAnalysisRA is the original MSA -- the legacy <c>m_fwtbSenses</c> loop, only on the edit path),
+		/// MorphoSyntaxAnalysisRA is the original MSA -- the legacy <c>m_fwtbSenses</c> loop,
+		/// only on the edit path),
 		/// the project POS hierarchy + per-POS slot provider (shared with the Insert Entry launcher), and the box
 		/// seeded from <paramref name="seedMsa"/> (MsaType + POS/slot ids). Internal so the mapping is unit-testable.
 		/// </summary>
@@ -209,7 +214,8 @@ namespace SIL.FieldWorks.LexText.Controls
 		}
 
 		/// <summary>
-		/// Reads the existing MSA's inflection-feature assignments to seed the editor (the edit path) -- the
+		/// Reads the existing MSA's inflection-feature assignments to seed the editor (the edit
+		/// path) -- the
 		/// flat <c>(closedFeatureId, valueId)</c> set from an <c>IMoInflAffMsa.InflFeatsOA</c> /
 		/// <c>IMoDerivAffMsa.FromMsFeaturesOA</c>, via <see cref="FwFeatureStructureAdapter.ReadAssignments"/>. Empty on
 		/// the create path / non-infl-deriv MSA. Internal so the read is unit-testable against a real cache.

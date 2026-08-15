@@ -4298,7 +4298,9 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		protected override void WndProc(ref Message m)
 		{
 			base.WndProc(ref m);
-			// Without this, Windows bitblts stale separator-line pixels from the old scroll position; Invalidate(false)+Update() forces a synchronous repaint of just the inter-slice gaps before WM_PAINT coalesces.
+			// Without this, Windows bitblts stale separator-line pixels from the old scroll
+			// position; Invalidate(false)+Update() forces a synchronous repaint of just the
+			// inter-slice gaps before WM_PAINT coalesces.
 			const int WM_VSCROLL = 0x0115;
 			const int WM_HSCROLL = 0x0114;
 			const int WM_MOUSEWHEEL = 0x020A;

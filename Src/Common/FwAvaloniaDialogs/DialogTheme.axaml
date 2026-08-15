@@ -10,7 +10,8 @@
 
 	Added to each dialog body's own Styles by DialogThemeBootstrap.Apply(this) (called from every dialog
 	view constructor): that both applies these styles to the dialog's control tree and puts the tokens in
-	scope so the views' {StaticResource ...} references resolve - in both the runtime host path and the
+	scope so the views' {StaticResource ...} references resolve - in both the runtime host path
+	and the
 	headless tests, independent of any application-level resource wiring.
 -->
 <Styles xmlns="https://github.com/avaloniaui"
@@ -57,14 +58,18 @@
 		<!-- Base dialog body font, tuned against the legacy WinForms dialogs (Segoe UI 9pt) and well below
 		     the ~14px Fluent default. This one value drives every FontSize setter below. -->
 		<x:Double x:Key="DialogFontSize">11</x:Double>
-		<!-- A concrete color, not the Fluent DynamicResource ControlStrokeColorDefault: that theme
-		     resource does not resolve in the headless test app, rendering the frame invisible there. -->
+		<!--
+			A concrete color, not the Fluent DynamicResource ControlStrokeColorDefault: that theme
+			resource does not resolve in the headless test app, rendering the frame invisible
+			there.
+			-->
 		<Color x:Key="DialogFieldBorderColor">#FF7A7A7A</Color>
 		<SolidColorBrush x:Key="DialogFieldBorderBrush" Color="#FF7A7A7A"/>
 	</Styles.Resources>
 
 	<!-- Density setters live here too, not only in the C# CompactDialogStyles, so a headless
-	     dialog test (which applies only this theme) renders the same density as the runtime path. -->
+		dialog test (which applies only this theme) renders the same density as the runtime path.
+		-->
 	<Style Selector="TextBlock">
 		<Setter Property="FontSize" Value="{StaticResource DialogFontSize}"/>
 	</Style>
@@ -104,7 +109,8 @@
 		<Setter Property="Padding" Value="10"/>
 	</Style>
 
-	<!-- A visible border for a host frame, since the embedded owned control's own inner TextBox is
+	<!--
+		A visible border for a host frame, since the embedded owned control's own inner TextBox is
 	     borderless. Uses the concrete gray brush above so the frame renders headlessly too. -->
 	<Style Selector="Border.fwFieldHost">
 		<Setter Property="BorderThickness" Value="1"/>

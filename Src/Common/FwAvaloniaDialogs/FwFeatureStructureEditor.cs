@@ -40,7 +40,8 @@ namespace FwAvaloniaDialogs
 	/// <summary>
 	/// A lightweight, LCModel-FREE node in the feature system fed to <see cref="FwFeatureStructureEditor"/>.
 	/// The host builds these from the live feature system in DOCUMENT ORDER, tagging each with
-	/// its <see cref="Depth"/> (0 for a top-level feature, +1 per nesting) and its <see cref="Kind"/> -- the same
+	/// its <see cref="Depth"/> (0 for a top-level feature, +1 per nesting) and its <see
+	/// cref="Kind"/> -- the same
 	/// depth-folding seam <c>FwPosNode</c>/<c>DetailChoiceOption</c> use, so the editor can rebuild the tree
 	/// without any model reference. A <see cref="Kind"/>=<see cref="FwFeatureNodeKind.Value"/> node attaches
 	/// under the nearest shallower <see cref="FwFeatureNodeKind.Closed"/> node (its feature); a Closed/Complex
@@ -71,10 +72,13 @@ namespace FwAvaloniaDialogs
 	}
 
 	/// <summary>
-	/// One feature->value assignment: a closed feature and the symbolic value chosen for it. The nesting under
-	/// complex features is IMPLICIT in the tree (the host reconstructs the <c>IFsFeatStruc</c> nesting from the
+	/// One feature->value assignment: a closed feature and the symbolic value chosen for it. The
+	/// nesting under
+	/// complex features is IMPLICIT in the tree (the host reconstructs the <c>IFsFeatStruc</c>
+	/// nesting from the
 	/// feature system, exactly as the WinForms <c>BuildFeatureStructure</c> recursive-ascent does), so the
-	/// assignment set itself is flat -- one entry per closed feature that has a (non-<c>&lt;None&gt;</c>) value.
+	/// assignment set itself is flat -- one entry per closed feature that has a
+	/// (non-<c>&lt;None&gt;</c>) value.
 	/// An unspecified feature simply has no entry.
 	/// </summary>
 	public sealed class FwFeatureValueAssignment
@@ -93,7 +97,8 @@ namespace FwAvaloniaDialogs
 	}
 
 	/// <summary>
-	/// A reusable, LCModel-FREE feature-structure (<c>FsFeatStruc</c>) tree editor -- the Avalonia analog of
+	/// A reusable, LCModel-FREE feature-structure (<c>FsFeatStruc</c>) tree editor -- the
+	/// Avalonia analog of
 	/// the WinForms <c>FeatureStructureTreeView</c> (and the dialogs that host it:
 	/// <c>MsaInflectionFeatureListDlg</c>, <c>PhonologicalFeatureChooserDlg</c>). It renders the feature system
 	/// as a TREE: complex features expand to reveal their nested features; closed features expand to reveal their
@@ -106,7 +111,8 @@ namespace FwAvaloniaDialogs
 	/// The seam is deliberately tiny: the host feeds a flat, depth-tagged <see cref="FwFeatureNode"/> list (the
 	/// editor folds it into the tree, auto-appending the "&lt;None&gt;" radio to each closed feature), seeds the
 	/// current <see cref="SetAssignments">assignments</see>, and reads the chosen set back from
-	/// <see cref="Assignments"/>. The editor holds NO model reference and performs NO create -- it just raises
+	/// <see cref="Assignments"/>. The editor holds NO model reference and performs NO create --
+	/// it just raises
 	/// <see cref="CreateNewFeatureRequested"/> / <see cref="CreateNewValueRequested"/> and accepts a returned new
 	/// node (the host wires the actual create flows). Built in pure C# (no XAML) to match the rest of the
 	/// FwAvalonia foundation (<see cref="FwPosChooser"/>, <c>MSAGroupBox</c>).
@@ -274,20 +280,25 @@ namespace FwAvaloniaDialogs
 			}
 		}
 
-		/// <summary>Raised when the user PICKS a value (or "&lt;None&gt;"). Carries the new assignment set. Not
-		/// raised by <see cref="SetAssignments"/> / <see cref="SetNodes"/> (those are the host's seed paths).</summary>
+		/// <summary>Raised when the user PICKS a value (or "&lt;None&gt;"). Carries the new
+		/// assignment set. Not
+		/// raised by <see cref="SetAssignments"/> / <see cref="SetNodes"/> (those are the host's
+		/// seed paths).</summary>
 		public event Action<IReadOnlyList<FwFeatureValueAssignment>> AssignmentsChanged;
 
 		/// <summary>
 		/// Raised when the user clicks the inline "Create a new feature..." row. The host opens its create-feature
-		/// flow and, on success, calls <see cref="AcceptCreatedFeature"/>. The editor performs NO create -- it holds
+		/// flow and, on success, calls <see cref="AcceptCreatedFeature"/>. The editor performs NO
+		/// create -- it holds
 		/// no model reference and only raises this request.
 		/// </summary>
 		public event Action CreateNewFeatureRequested;
 
 		/// <summary>
-		/// Raised when the user invokes a closed feature's "Add a value..." affordance. Carries the closed
-		/// feature's id; the host opens its add-value flow and calls <see cref="AcceptCreatedValue"/> on success.
+		/// Raised when the user invokes a closed feature's "Add a value..." affordance. Carries
+		/// the closed
+		/// feature's id; the host opens its add-value flow and calls <see
+		/// cref="AcceptCreatedValue"/> on success.
 		/// The editor performs NO create -- it only raises this request.
 		/// </summary>
 		public event Action<string> CreateNewValueRequested;
@@ -310,7 +321,8 @@ namespace FwAvaloniaDialogs
 		/// <summary>
 		/// Host callback after a successful add-value flow: appends the new value under its closed feature,
 		/// rebuilds, and SELECTS it (raising <see cref="AssignmentsChanged"/>) so the just-created value becomes
-		/// the feature's pick -- matching the WinForms flow where creating a value lets the user assign it.
+		/// the feature's pick -- matching the WinForms flow where creating a value lets the user
+		/// assign it.
 		/// </summary>
 		public void AcceptCreatedValue(string closedFeatureId, FwFeatureNode createdValue)
 		{
@@ -441,7 +453,9 @@ namespace FwAvaloniaDialogs
 					lastAtDepth[d] = null;
 			}
 
-			// The "<None>" radio auto-seeded as chosen marks an unspecified closed feature purely via FeatureTreeNode.IsNone, so it needs no id and the model stays free of any in-band "none" string sentinel.
+			// The "<None>" radio auto-seeded as chosen marks an unspecified closed feature purely
+			// via FeatureTreeNode.IsNone, so it needs no id and the model stays free of any
+			// in-band "none" string sentinel.
 			foreach (var closed in EnumerateNodes(_roots).Where(n => n.Source.Kind == FwFeatureNodeKind.Closed).ToList())
 			{
 				var none = new FeatureTreeNode(
@@ -452,7 +466,9 @@ namespace FwAvaloniaDialogs
 				none.IsChosen = true;
 			}
 
-			// IsChosen is the single source of truth (the radio is just its view), so both a real click and a programmatic pick route through this same handler to enforce per-feature radio exclusion.
+			// IsChosen is the single source of truth (the radio is just its view), so both a real
+			// click and a programmatic pick route through this same handler to enforce
+			// per-feature radio exclusion.
 			foreach (var value in EnumerateNodes(_roots).Where(n => n.Source.Kind == FwFeatureNodeKind.Value))
 				value.Chosen += OnValueChosen;
 		}
@@ -636,7 +652,8 @@ namespace FwAvaloniaDialogs
 		{
 			if (node.Source.Kind == FwFeatureNodeKind.Value)
 			{
-				// A value row is a radio button; its IsChecked is two-way bound to the node's IsChosen -- the single
+				// A value row is a radio button; its IsChecked is two-way bound to the node's
+				// IsChosen -- the single
 				// source of truth. A real click (or a programmatic IsChecked = true) flips IsChosen, whose false->
 				// true transition raises the node's Chosen event, which the editor handles to enforce the group's
 				// radio exclusion and raise AssignmentsChanged. No separate pointer handler needed (it would
@@ -661,7 +678,8 @@ namespace FwAvaloniaDialogs
 				return radio;
 			}
 
-			// A feature row (complex or closed): the name; closed features also expose an "Add a value..." gear.
+			// A feature row (complex or closed): the name; closed features also expose an "Add a
+			// value..." gear.
 			var label = new TextBlock
 			{
 				Text = node.Source.Name,
@@ -678,7 +696,8 @@ namespace FwAvaloniaDialogs
 			var row = new DockPanel { LastChildFill = true };
 			// The per-feature "add a value" affordance: a real Button (focusable, keyboard-invokable, exposing the
 			// Invoke automation pattern) rather than a bare glyph label with a pointer handler. Styled flat and
-			// compact -- transparent, borderless, no min-size floor -- so the "+" sits inside the tree row without
+			// compact -- transparent, borderless, no min-size floor -- so the "+" sits inside the
+			// tree row without
 			// inflating it (the same restrained glyph affordance the choosers use for their chevron). Its accessible
 			// name carries the target feature so a screen reader announces which feature the value is added to.
 			var addValue = new Button
@@ -734,9 +753,11 @@ namespace FwAvaloniaDialogs
 		}
 
 		/// <summary>
-		/// A tree node bound by the editor's TreeView. Carries the expansion state and (for value nodes) the
+		/// A tree node bound by the editor's TreeView. Carries the expansion state and (for value
+		/// nodes) the
 		/// chosen flag (both two-way bound to the container/radio), its parent (for radio grouping + ancestor
-		/// expansion), and the children, mirroring FwPosChooser's PosTreeNode but feature-specific.
+		/// expansion), and the children, mirroring FwPosChooser's PosTreeNode but
+		/// feature-specific.
 		/// </summary>
 		private sealed class FeatureTreeNode : AvaloniaObject
 		{
@@ -751,7 +772,8 @@ namespace FwAvaloniaDialogs
 			private bool _isExpanded;
 			private bool _isChosen;
 
-			/// <summary>Raised when this value node transitions to chosen (its radio checked) -- the single pick
+			/// <summary>Raised when this value node transitions to chosen (its radio checked) --
+			/// the single pick
 			/// signal regardless of whether the radio was clicked or set programmatically.</summary>
 			public event System.Action<FeatureTreeNode> Chosen;
 

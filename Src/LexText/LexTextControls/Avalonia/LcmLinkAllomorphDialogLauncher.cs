@@ -111,8 +111,10 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		/// <summary>
 		/// The auxiliary options for a selected entry row: one option per NON-abstract form in the legacy combo's
-		/// order -- the lexeme form first (if not abstract), then the non-abstract alternates (the order
-		/// LinkAllomorphDlg's <c>HandleMatchingSelectionChanged</c> added them) -- displayed by the form's best
+		/// order -- the lexeme form first (if not abstract), then the non-abstract alternates
+		/// (the order
+		/// LinkAllomorphDlg's <c>HandleMatchingSelectionChanged</c> added them) -- displayed by
+		/// the form's best
 		/// vernacular text and keyed by the form's Guid. Internal so it is unit-testable against a real cache.
 		/// </summary>
 		internal static IReadOnlyList<EntryGoAuxiliaryOption> GetAllomorphOptions(LcmCache cache, string entryId)
@@ -145,7 +147,8 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		/// <summary>
 		/// The search delegate: the shared <see cref="EntryGoLauncherShared.BuildEntrySearch"/> with the legacy
-		/// <c>LinkAllomorphDlg.FilterLexEntry</c> rule applied -- entries whose forms are ALL abstract are dropped
+		/// <c>LinkAllomorphDlg.FilterLexEntry</c> rule applied -- entries whose forms are ALL
+		/// abstract are dropped
 		/// (they have no concrete allomorph to choose). Internal so it is unit-testable against a real cache.
 		/// </summary>
 		internal static Func<string, IReadOnlyList<EntryGoSearchResult>> BuildSearch(LcmCache cache,
@@ -181,7 +184,8 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		/// <summary>
 		/// Applies the OK result: resolves the chosen entry + the auxiliary pick to the CHOSEN allomorph and exposes
-		/// it via <see cref="SelectedObject"/>. No model mutation here -- the caller performs the on-OK action.
+		/// it via <see cref="SelectedObject"/>. No model mutation here -- the caller performs the
+		/// on-OK action.
 		/// </summary>
 		protected override LinkAllomorphPayload Apply(EntryGoDialogInput state)
 		{

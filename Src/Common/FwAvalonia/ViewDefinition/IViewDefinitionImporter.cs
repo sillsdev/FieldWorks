@@ -22,7 +22,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 		XElement ResolvePart(string className, string layoutType, string refName);
 
 		/// <summary>
-		/// Returns ALL content child elements of the resolved part (a part may carry several -- e.g. the
+		/// Returns ALL content child elements of the resolved part (a part may carry several --
+		/// e.g. the
 		/// <c>&lt;if Disabled=true&gt;</c>/<c>&lt;if Disabled=false&gt;</c> enable/disable pair the grammar
 		/// detail layouts use). Empty when the part cannot be resolved. The importer builds a node per child,
 		/// matching legacy DataTree (which processes every child of a part).

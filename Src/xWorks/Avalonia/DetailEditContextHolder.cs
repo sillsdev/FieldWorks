@@ -16,7 +16,8 @@ namespace SIL.FieldWorks.XWorks
 	/// Owns the host's current <see cref="IDetailEditContext"/> and enforces the lifecycle rules
 	/// that keep the fenced edit session (an open LCModel undo task) safe against the rest of the
 	/// app:
-	/// (1) a context with an open session is NEVER orphaned -- re-showing the detail view swaps in a
+	/// (1) a context with an open session is NEVER orphaned -- re-showing the detail view swaps
+	/// in a
 	/// fresh context and the displaced one is cancelled first (an orphaned open undo task makes
 	/// every later <c>IUndoStackManager.Save()</c> throw "Commit at wrong place.", which is fatal
 	/// at shutdown);
@@ -73,8 +74,10 @@ namespace SIL.FieldWorks.XWorks
 		/// rolling back otherwise (an invalid state is never silently persisted). No-op when
 		/// nothing is open.
 		/// ITEM 2: when the close is a rollback FORCED BY a validation failure, the validation
-		/// reasons are returned (and <see cref="InvalidEditRolledBack"/> is fired) so the host can tell
-		/// the user why their edit was discarded -- the data is rolled back safely, but never silently.
+		/// reasons are returned (and <see cref="InvalidEditRolledBack"/> is fired) so the host
+		/// can tell
+		/// the user why their edit was discarded -- the data is rolled back safely, but never
+		/// silently.
 		/// </summary>
 		/// <returns>
 		/// The validation reasons that forced a rollback, or an empty list when the session committed
@@ -173,7 +176,8 @@ namespace SIL.FieldWorks.XWorks
 			if (Current?.IsOpen != true)
 				return;
 			// Settling closes the task and releases the write lock; cancelling the gesture keeps
-			// its meaning predictable -- this press closed the pending edit, the next one undoes it.
+			// its meaning predictable -- this press closed the pending edit, the next one undoes
+			// it.
 			Settle();
 			e.Cancel = true;
 		}

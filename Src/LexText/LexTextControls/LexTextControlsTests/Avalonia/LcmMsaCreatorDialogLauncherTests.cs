@@ -166,7 +166,8 @@ namespace LexTextControlsTests
 		[Test]
 		public void InflectionClassIdFromExistingMsa_StemMsa_ReturnsItsInflectionClassGuid()
 		{
-			// The switch's IMoStemMsa branch -- currently only exercised indirectly via BuildInput; this pins the
+			// The switch's IMoStemMsa branch -- currently only exercised indirectly via
+			// BuildInput; this pins the
 			// resolver function's own real (non-null-guard) behavior directly.
 			var inflClass = Cache.ServiceLocator.GetInstance<IMoInflClassFactory>().Create();
 			_noun.InflectionClassesOC.Add(inflClass);

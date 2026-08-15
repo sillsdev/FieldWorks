@@ -21,7 +21,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 	/// size derived from <see cref="FwAvaloniaDensity.RadioBoxSize"/> (the same 14px the checkbox uses, a
 	/// function of the surface font), so a radio NEVER inflates a row past the text line.
 	///
-	/// WHY A WHOLE TEMPLATE (not a selector tweak or a RenderTransform): same reason as the checkbox -- the
+	/// WHY A WHOLE TEMPLATE (not a selector tweak or a RenderTransform): same reason as the
+	/// checkbox -- the
 	/// Fluent 11.3 RadioButton template hardcodes its ~20px ellipse (<c>OuterEllipse</c>/<c>CheckOuterEllipse</c>)
 	/// on a tall (~32px) layout slot as LOCAL VALUES in the template, which OUTRANK any style setter (Avalonia
 	/// precedence: LocalValue &gt; Style), so a selector cannot shrink them, and a ScaleTransform shrinks only the
@@ -78,7 +79,9 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 				Setters =
 				{
 					new Setter(TemplatedControl.BackgroundProperty, Brushes.Transparent),
-					// No box->label gap here: the gap is CheckboxLabelGap via StackPanel Spacing in CreateTemplate, the same gap the checkbox uses, so radios and checkboxes line up.
+					// No box->label gap here: the gap is CheckboxLabelGap via StackPanel Spacing
+					// in CreateTemplate, the same gap the checkbox uses, so radios and checkboxes
+					// line up.
 					new Setter(TemplatedControl.PaddingProperty, new Thickness(0)),
 					new Setter(Layoutable.MinHeightProperty, 0d),
 					new Setter(Layoutable.MinWidthProperty, 0d),
@@ -87,7 +90,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 				}
 			};
 
-			// Base (unchecked) visuals -- set via STYLES, not local template values, so the state styles below
+			// Base (unchecked) visuals -- set via STYLES, not local template values, so the state
+			// styles below
 			// can override them (a local value would outrank a style setter). The circle reads white with a gray
 			// border; the dot starts hidden. These must precede the state styles so a later matching state style
 			// wins by ordering.
@@ -188,7 +192,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 			{
 				Orientation = Orientation.Horizontal,
 				VerticalAlignment = VerticalAlignment.Center,
-				// Deterministic ring->label gap so the words never butt against the circle. The same gap the
+				// Deterministic ring->label gap so the words never butt against the circle. The
+				// same gap the
 				// checkbox uses (CheckboxLabelGap), so a radio group and a checkbox group line up.
 				Spacing = FwAvaloniaDensity.CheckboxLabelGap,
 				Children = { boxPanel, content }

@@ -19,7 +19,8 @@ namespace FwAvaloniaDialogs
 	/// HIERARCHICAL mode: a XAML-authored search box over a virtualizing <see cref="TreeView"/> (the
 	/// candidates folded from their Depth sequence) plus a flat filtered results <see cref="ListBox"/> shown while a
 	/// search term is active. Single-select commits the clicked node/row's key (via TreeView/ListBox selection);
-	/// multi-select toggles per-node checkboxes (two-way bound to the node, independent per node -- legacy default),
+	/// multi-select toggles per-node checkboxes (two-way bound to the node, independent per node
+	/// -- legacy default),
 	/// with Space toggling the focused node's check for keyboard parity.
 	///
 	/// Hosted as Avalonia content inside a WinForms-owned modal Form during coexistence via

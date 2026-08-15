@@ -18,11 +18,14 @@ namespace SIL.FieldWorks.LexText.Controls
 	/// <summary>
 	/// The LCModel-aware launcher for the standalone INFLECTION-feature chooser dialog -- the
 	/// New-UI replacement for the WinForms <see cref="MsaInflectionFeatureListDlg"/> the inflection-features slice
-	/// opens. It is a concrete <see cref="AvaloniaDialogLauncher{TState,TViewModel,TPayload}"/> that bridges LCModel <->
+	/// opens. It is a concrete <see cref="AvaloniaDialogLauncher{TState,TViewModel,TPayload}"/>
+	/// that bridges LCModel <->
 	/// the LCModel-free <see cref="FeatureChooserDialogViewModel"/>: it builds the POS's inflectable-feature system
 	/// (<see cref="FwFeatureStructureAdapter.BuildNodes"/>, the lift of <c>PopulateTreeFromPos</c>) + the current
-	/// assignment set (read from the existing <c>IFsFeatStruc</c>), shows the chooser, and on OK rebuilds the
-	/// <c>IFsFeatStruc</c> from the chosen assignments in ONE undoable step -- including the LT-13596 empty-FS delete
+	/// assignment set (read from the existing <c>IFsFeatStruc</c>), shows the chooser, and on OK
+	/// rebuilds the
+	/// <c>IFsFeatStruc</c> from the chosen assignments in ONE undoable step -- including the
+	/// LT-13596 empty-FS delete
 	/// when nothing is chosen. The inline create-feature / add-value affordances are wired to
 	/// <see cref="LcmCreateFeatureLauncher"/> (the New-UI parity of the WinForms MasterInflectionFeatureListDlg link),
 	/// each running its own undoable step then feeding the new node back to the editor.
@@ -60,10 +63,13 @@ namespace SIL.FieldWorks.LexText.Controls
 		}
 
 		/// <summary>
-		/// Shows the inflection-feature chooser modally over <paramref name="ownerWindow"/> for a part of speech's
-		/// inflectable features, editing <paramref name="fs"/> (an existing <c>IFsFeatStruc</c>, or null to create one
+		/// Shows the inflection-feature chooser modally over <paramref name="ownerWindow"/> for a
+		/// part of speech's
+		/// inflectable features, editing <paramref name="fs"/> (an existing <c>IFsFeatStruc</c>,
+		/// or null to create one
 		/// on <paramref name="owner"/>.<paramref name="owningFlid"/>). On OK rebuilds the FS in one undoable step and
-		/// returns it (null when the user emptied it -- LT-13596). Returns null on cancel (the caller leaves the FS
+		/// returns it (null when the user emptied it -- LT-13596). Returns null on cancel (the
+		/// caller leaves the FS
 		/// unchanged). Mirrors <see cref="MsaInflectionFeatureListDlg.SetDlgInfo"/>'s POS/owner parameters.
 		/// </summary>
 		public static IFsFeatStruc Show(LcmCache cache, Mediator mediator, PropertyTable propertyTable,
@@ -83,7 +89,8 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// Convenience overload for the standalone inflection-feature slice (the WinForms
 		/// <c>MsaInflectionFeatureListDlgLauncher</c> path): derives the POS from the owning object + flid (the lift of
 		/// <c>GetPosFromCmObjectAndFlid</c>) and edits the FS owned at <paramref name="owner"/>.<paramref name="owningFlid"/>
-		/// (or an existing <paramref name="fs"/>). Returns the resulting FS (null when emptied -- LT-13596) on OK, or the
+		/// (or an existing <paramref name="fs"/>). Returns the resulting FS (null when emptied --
+		/// LT-13596) on OK, or the
 		/// pre-existing FS on cancel.
 		/// </summary>
 		public static IFsFeatStruc ShowForOwner(LcmCache cache, Mediator mediator, PropertyTable propertyTable,
@@ -161,7 +168,8 @@ namespace SIL.FieldWorks.LexText.Controls
 			new FeatureChooserDialogView { DataContext = viewModel };
 
 		/// <summary>
-		/// Rebuilds the inflection <c>IFsFeatStruc</c> from the chosen assignment set in ONE undoable step -- the
+		/// Rebuilds the inflection <c>IFsFeatStruc</c> from the chosen assignment set in ONE
+		/// undoable step -- the
 		/// create-side parity of <c>MsaInflectionFeatureListDlg_Closing</c>. Creates the FS on the owner when there are
 		/// assignments and none exists; clears + rebuilds it; deletes it (LT-13596) when the set is empty. The node
 		/// system the editor used (captured in BuildInput) recovers the complex-feature ancestry.

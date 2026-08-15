@@ -25,7 +25,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 	/// The ONE compact, filterable select-from-list control every Avalonia option picker uses:
 	/// the chooser's single-select flyout, the reference vector's "+" add flyout, and preview
 	/// morph-type chooser. It is a small NATIVE composite -- a <see cref="TextBox"/> filter box
-	/// stacked over a <see cref="ListBox"/> of options -- shown INLINE inside the host flyout. The
+	/// stacked over a <see cref="ListBox"/> of options -- shown INLINE inside the host flyout.
+	/// The
 	/// host flyout is therefore the only popup; there is no second floating dropdown (an
 	/// AutoCompleteBox would spawn a separate grey-chromed <c>PART_SuggestionsContainer</c>
 	/// popup -- the source of a heavy grey border and focus/arrow-key flakiness).
@@ -41,13 +42,16 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 	/// from committing the highlighted item.
 	///
 	/// Committing/dismissing is still the HOST field's signal to stage (TrySetOption /
-	/// TryAddReferenceItem) and hide its flyout -- the picker itself never stages. The picker keeps
+	/// TryAddReferenceItem) and hide its flyout -- the picker itself never stages. The picker
+	/// keeps
 	/// the typed search text visible while arrowing through results; it does not overwrite the query
 	/// with the highlighted row's display text.
 	/// </summary>
 	public sealed class FwOptionChooser : Border
 	{
-		// OFF by default; besides the "FwOptionPicker" config switch, set FW_OPTIONPICKER_TRACE (e.g. to 3) since the Avalonia Preview Host's generated .config has no switches section.
+		// OFF by default; besides the "FwOptionPicker" config switch, set FW_OPTIONPICKER_TRACE
+		// (e.g. to 3) since the Avalonia Preview Host's generated .config has no switches
+		// section.
 		private static readonly TraceSwitch s_trace = CreateTraceSwitch();
 
 		private static TraceSwitch CreateTraceSwitch()
@@ -82,7 +86,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		// result set) still resolves to its full DetailChoiceOption for the batch.
 		private readonly Dictionary<string, DetailChoiceOption> _seenByKey =
 			new Dictionary<string, DetailChoiceOption>(StringComparer.Ordinal);
-		// The last plainly-toggled row, the anchor for shift+click range selection (multi-select only).
+		// The last plainly-toggled row, the anchor for shift+click range selection (multi-select
+		// only).
 		private string _anchorKey;
 		private readonly Button _addButton;
 
@@ -280,7 +285,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 
 			if (_dropdown)
 			{
-				// Keep the collapsed label in sync with the list selection -- both the up-front default and
+				// Keep the collapsed label in sync with the list selection -- both the up-front
+				// default and
 				// any later external move (the VM's derive-on-type SelectedIndex reselection).
 				_list.SelectionChanged += (s, e) => SyncDropdownLabel();
 				SyncDropdownLabel();
@@ -288,7 +294,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			else
 			{
 				// Inline mode auto-focuses the filter on open (flyout). Dropdown mode is collapsed on
-				// attach, so it must NOT grab focus -- focus moves to the filter only when the user opens it.
+				// attach, so it must NOT grab focus -- focus moves to the filter only when the
+				// user opens it.
 				AttachedToVisualTree += (s, e) =>
 				{
 					Log("AttachedToVisualTree; posting focus (Loaded).");
@@ -307,7 +314,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		/// <summary>
 		/// Focuses the filter box. Called on attach AND from the host flyout's Opened event, because
 		/// a windowed desktop popup does not synchronously lay out its content, so the flyout's own
-		/// auto-focus can no-op (GetNext returns null before the template is applied) -- leaving focus
+		/// auto-focus can no-op (GetNext returns null before the template is applied) -- leaving
+		/// focus
 		/// on the launching button, where arrow keys never reach the picker.
 		/// </summary>
 		public void FocusFilter()
@@ -384,7 +392,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 
 		/// <summary>
 		/// Builds the host flyout for an option picker with the Fluent <c>FlyoutPresenter</c>'s heavy
-		/// grey decorations (its padding, border, and grey background) stripped to nothing -- so the
+		/// grey decorations (its padding, border, and grey background) stripped to nothing -- so
+		/// the
 		/// picker's own thin border is the ONLY boundary the user sees, instead of the default thick
 		/// grey box wrapping it. Every option picker (chooser, "+" vector add, preview chooser)
 		/// opens through here so the styling stays consistent.
@@ -395,11 +404,13 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		/// <summary>
 		/// The single option-flyout construction path: a chromeless <see cref="Flyout"/> that re-requests
 		/// filter focus once open. The inline consumers pass the picker itself as content; dropdown mode
-		/// passes its filter+list panel and the same picker for focus -- so both open through one flyout
+		/// passes its filter+list panel and the same picker for focus -- so both open through one
+		/// flyout
 		/// implementation instead of a hand-placed popup.
 		/// A windowed desktop popup is shown non-activated (Win32 ShowNoActivate) and the flyout's own
 		/// auto-focus can no-op before the presenter template is applied. Re-request focus once the popup
-		/// is open, posted at Input priority so it runs AFTER layout/render -- otherwise focus stays on the
+		/// is open, posted at Input priority so it runs AFTER layout/render -- otherwise focus
+		/// stays on the
 		/// launching button and the arrow keys never reach the picker.
 		/// </summary>
 		private static Flyout CreateOptionFlyout(object content, FwOptionChooser picker, PlacementMode placement)
@@ -454,7 +465,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		public event Action<DetailChoiceOption> OptionCommitted;
 
 		/// <summary>
-		/// Raised when the user commits the CHECKED SET (the "Add" button) in multi-select mode -- the
+		/// Raised when the user commits the CHECKED SET (the "Add" button) in multi-select mode
+		/// -- the
 		/// whole batch in one signal so the host stages it as one undoable step. Never raised in
 		/// single-select mode. Empty checked set does not raise it (the Add button is disabled).
 		/// </summary>
@@ -665,7 +677,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		/// Handles navigation at the picker ROOT (the AutoCompleteBox pattern): a single-line
 		/// TextBox does not mark Up/Down as handled, so they bubble from the filter box up to here
 		/// regardless of where exactly focus sits inside the picker. Registered with
-		/// handledEventsToo so it still fires if some inner control already marked the key handled --
+		/// handledEventsToo so it still fires if some inner control already marked the key
+		/// handled --
 		/// far more reliable than a tunnel handler pinned to the TextBox, which only fires when focus
 		/// is exactly on the TextBox.
 		/// </summary>
@@ -775,7 +788,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				// Multi-select: a leading checkbox tracking the persisted checked set. The checkbox is
 				// display-only (not hit-test-visible, not focusable) so a single row pointer-release or
 				// Enter toggles it exactly ONCE through ToggleChecked (the row, not the box, owns the
-				// gesture) -- matching the legacy multi-check chooser's row-toggle behavior and keeping
+				// gesture) -- matching the legacy multi-check chooser's row-toggle behavior and
+				// keeping
 				// focus in the filter box.
 				var check = new CheckBox
 				{

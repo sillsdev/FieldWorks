@@ -39,7 +39,8 @@ function Test-Utf8Bom {
 
 $resolvedFiles = $Files | ForEach-Object { (Resolve-Path -LiteralPath $_).Path }
 
-# Assign before piping -- Get-CommentHygieneViolations's comma-return makes a direct pipe into Where-Object deliver one bundled array instead of filtering per-element.
+# Assign before piping -- Get-CommentHygieneViolations's comma-return makes a direct pipe into
+# Where-Object deliver one bundled array instead of filtering per-element.
 $allViolations = Get-CommentHygieneViolations -Files $resolvedFiles
 $violations = $allViolations | Where-Object { $_.Category -eq 'non-ascii-punctuation' }
 

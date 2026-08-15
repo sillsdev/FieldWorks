@@ -211,7 +211,8 @@ namespace FwAvaloniaTests
 			var (view, requests) = Show(Field("Senses", DetailFieldKind.Header,
 				hotlinksId: "mnuDataTree-Sense-Hotlinks", collapsible: true));
 
-			// The header's "..." button raises the hotlinks request; the collapsible toggle (id "Senses")
+			// The header's "..." button raises the hotlinks request; the collapsible toggle (id
+			// "Senses")
 			// is a SEPARATE button that still toggles the section.
 			ClickKebab(Find<Button>(view, "Senses.FieldMenu"));
 
@@ -220,8 +221,10 @@ namespace FwAvaloniaTests
 			Assert.That(requests[0].Field.HotlinksId, Is.EqualTo("mnuDataTree-Sense-Hotlinks"));
 		}
 
-		// Discoverability parity (legacy SummaryCommandControl): a hotlink-bearing section header shows
-		// an ALWAYS-VISIBLE inline command-link strip beneath it, not just the hover-gated "..." kebab.
+		// Discoverability parity (legacy SummaryCommandControl): a hotlink-bearing section header
+		// shows
+		// an ALWAYS-VISIBLE inline command-link strip beneath it, not just the hover-gated "..."
+		// kebab.
 		[AvaloniaTest]
 		public void HotlinksStrip_AppearsForHotlinkHeader_IsAlwaysVisible_AndKeepsTheKebab()
 		{
@@ -230,7 +233,8 @@ namespace FwAvaloniaTests
 
 			var strip = FindOrNull<Button>(view, "Senses.Hotlinks");
 			Assert.That(strip, Is.Not.Null, "a header with a HotlinksId renders the inline command strip");
-			// Always visible -- NOT hover-gated like the kebab (Opacity 0 / not hit-testable at rest).
+			// Always visible -- NOT hover-gated like the kebab (Opacity 0 / not hit-testable at
+			// rest).
 			Assert.That(strip.IsVisible, Is.True, "the strip stays in the tree");
 			Assert.That(strip.Opacity, Is.EqualTo(1d), "the strip is fully visible at rest, not hover-gated");
 			Assert.That(strip.IsHitTestVisible, Is.True, "the strip is clickable at rest");
@@ -313,7 +317,8 @@ namespace FwAvaloniaTests
 			Assert.That(kebab.Focusable, Is.True, "Tab can reach the field-options button");
 
 			// Focusing it (the keyboard path) reveals it synchronously (hit-testable); the opacity then
-			// fades in over the transition -- the same mechanism HoverRevealTests covers in detail.
+			// fades in over the transition -- the same mechanism HoverRevealTests covers in
+			// detail.
 			kebab.Focus();
 			Dispatcher.UIThread.RunJobs();
 			Assert.That(kebab.IsFocused, Is.True, "the opacity-hidden button is keyboard-focusable");

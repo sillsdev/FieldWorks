@@ -26,7 +26,8 @@ namespace SIL.FieldWorks.XWorks
 	/// <c>EnsureMenuCommandAdapter</c> targeting: when the target hvo's slice is a lazy,
 	/// unrealized <c>DummyObjectSlice</c> (a sequence with &gt;= <c>DataTree.kInstantSliceMax</c> items
 	/// builds lazy placeholders whose <c>Object</c> is the OWNER, not the target), a naive walk finds no
-	/// matching slice and leaves CurrentSlice pointed wherever the previous interaction left it -- the
+	/// matching slice and leaves CurrentSlice pointed wherever the previous interaction left it
+	/// -- the
 	/// command mis-targets or (for Merge's class guard) silently fails. The adapter realizes the
 	/// lazy slices and retries, and fails LOUD (clears CurrentSlice + logs) when no slice can be produced.
 	///

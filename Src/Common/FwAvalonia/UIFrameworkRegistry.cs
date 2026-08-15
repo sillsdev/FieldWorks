@@ -13,12 +13,15 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 	/// by editing <see cref="UIFrameworkResolver"/>).
 	///
 	/// Contract (matching the resolver's safety property): a null/blank tool name means "no tool context",
-	/// which is NOT a tool gate -- it defers to the UIMode/override preference. An **unregistered** tool
+	/// which is NOT a tool gate -- it defers to the UIMode/override preference. An
+	/// **unregistered** tool
 	/// never advertises Avalonia support, so an unknown tool can never silently resolve to Avalonia.
 	/// </summary>
 	public sealed class UIFrameworkRegistry
 	{
-		// Sourced from LexiconFeatureCatalog.ToolNames, the single list of tools with working Avalonia support today; all gated behind UIMode=New (off by default), so this list has no effect on existing users.
+		// Sourced from LexiconFeatureCatalog.ToolNames, the single list of tools with working
+		// Avalonia support today; all gated behind UIMode=New (off by default), so this list has
+		// no effect on existing users.
 		private static readonly string[] DefaultSupportedTools = ToArray(LexiconFeatureCatalog.ToolNames);
 
 		private static string[] ToArray(IReadOnlyList<string> source)

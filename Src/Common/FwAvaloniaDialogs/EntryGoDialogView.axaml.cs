@@ -17,7 +17,8 @@ namespace FwAvaloniaDialogs
 	/// <c>EntryGoDlg</c>/<c>BaseGoDlg</c> family. Hosted as Avalonia content inside a WinForms-owned modal Form
 	/// during coexistence via <c>AvaloniaDialogHost.ShowModal</c>.
 	///
-	/// Selection and search are MVVM; the code-behind only bridges to the view-model -- building the column
+	/// Selection and search are MVVM; the code-behind only bridges to the view-model -- building
+	/// the column
 	/// header/row cells from the column spec, translating double-click / Enter / arrow-key gestures into VM calls,
 	/// pruning the opt-in OK button and description pane from the tree when a consumer doesn't use them, and
 	/// applying the opt-in <see cref="EntryGoSearchFieldSpec"/> (font, flow direction, keyboard-switch callback)
@@ -73,8 +74,10 @@ namespace FwAvaloniaDialogs
 			DataContextChanged += OnDataContextChangedApplySearchFieldSpec;
 		}
 
-		// Applies the opt-in search-field spec to the realized search box: the writing system's font family/size and
-		// right-to-left flow (the same value-application rules the detail view uses for its per-ws rows -- empty
+		// Applies the opt-in search-field spec to the realized search box: the writing system's
+		// font family/size and
+		// right-to-left flow (the same value-application rules the detail view uses for its
+		// per-ws rows -- empty
 		// family / zero size keep the shared defaults). The keyboard-switch callback fires from OnSearchBoxGotFocus.
 		private void OnDataContextChangedApplySearchFieldSpec(object sender, System.EventArgs e)
 		{

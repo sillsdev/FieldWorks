@@ -13,7 +13,8 @@ using Avalonia.Styling;
 namespace SIL.FieldWorks.Common.FwAvalonia
 {
 	/// <summary>
-	/// The shared WinForms-density FONT baseline for the owned NON-dialog surfaces -- the lexical-edit
+	/// The shared WinForms-density FONT baseline for the owned NON-dialog surfaces -- the
+	/// lexical-edit
 	/// detail view and the browse table. Applied to each surface's own control subtree (added to its
 	/// <c>Styles</c>) by its view constructor, the proven per-control-tree mechanism: it renders the same in
 	/// the runtime host (<c>FwAvaloniaHost</c>/<c>FwAvaloniaApp</c>) and the headless Skia tests, INDEPENDENT
@@ -21,8 +22,10 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 	/// apply in the headless test app, so this scoped path is the reliable one).
 	///
 	/// WHY ONLY THE FONT (not the boxing/padding the dialogs get): these surfaces are intentionally NOT boxed.
-	/// The detail view is FLAT with subtle 1px field separators like the WinForms DataTree, and the
-	/// browse table draws its own grid lines (<see cref="FwAvaloniaDensity.BrowseGridLineBrush"/>) -- both own
+	/// The detail view is FLAT with subtle 1px field separators like the WinForms DataTree, and
+	/// the
+	/// browse table draws its own grid lines (<see
+	/// cref="FwAvaloniaDensity.BrowseGridLineBrush"/>) -- both own
 	/// their structural look through <see cref="FwAvaloniaDensity"/> literals (concrete values that already
 	/// render headlessly). The one thing those literals do NOT override is the Fluent ~14px default font on a
 	/// plain <see cref="TextBlock"/>/<see cref="TextBox"/>; this drops it to the WinForms ~12px so the detail
@@ -71,7 +74,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 			{
 				Setters = { new Setter(TemplatedControl.FontSizeProperty, SurfaceFontSize) }
 			};
-			// TabItem -- the bulk-edit bar's mode tabs. Fluent's default tab headers are large (~16px semibold
+			// TabItem -- the bulk-edit bar's mode tabs. Fluent's default tab headers are large
+			// (~16px semibold
 			// with tall padding); with several tabs on a narrow bar they WRAP to a second row, eating the bar
 			// height and pushing the tab CONTENT (the Target/Apply row) off the bottom. Drop them to the surface
 			// font with compact padding and no tall min-height floor so the modes sit in ONE compact row, like

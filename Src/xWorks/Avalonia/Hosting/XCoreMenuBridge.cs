@@ -14,7 +14,8 @@ namespace SIL.FieldWorks.XWorks
 	/// <see cref="DetailMenuItem"/> model the Avalonia detail view renders as a native MenuFlyout.
 	/// Labels, enablement, checkmarks, submenus, and execution all run through the SAME xCore
 	/// machinery the WinForms adapter uses (GetDisplayProperties -> mediator Display* round-trip;
-	/// OnClick -> mediator command dispatch) -- only the rendering changes. Because this consumes the
+	/// OnClick -> mediator command dispatch) -- only the rendering changes. Because this consumes
+	/// the
 	/// shared engine, it serves every DTMenuHandler-hosting tool (Grammar, Notebook, Lists,
 	/// Words), not just the Lexicon.
 	/// </summary>
@@ -98,7 +99,8 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		// xCore labels mark the accelerator with a single '_' before the mnemonic character (the
-		// WinForms adapters translate it: label.Replace("_", "&")); Avalonia headers show the text
+		// WinForms adapters translate it: label.Replace("_", "&")); Avalonia headers show the
+		// text
 		// raw, so strip only that first marker -- any later underscore is literal label content
 		// (e.g. a user-defined item name) and must survive.
 		public static string StripAccelerator(string text)

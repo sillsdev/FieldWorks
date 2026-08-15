@@ -41,7 +41,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 		{
 			if (detail == null) throw new ArgumentNullException(nameof(detail));
 			// Splitter position persists per-HOST across re-shows: this long-lived host owns
-			// the in-process remembered width, so each window/preview keeps its own -- no process-global
+			// the in-process remembered width, so each window/preview keeps its own -- no
+			// process-global
 			// field. When the product host supplies persistence hooks, the read/write chains
 			// through them too, so a width dragged in one session is restored in the next; otherwise it
 			// falls back to the process-only field (e.g. the preview host / headless tests).

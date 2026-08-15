@@ -15,8 +15,10 @@ namespace LexTextControlsTests
 	/// <summary>
 	/// The type-mismatch confirmation of the Add-Allomorph consumer (<see cref="LcmAddAllomorphDialogLauncher"/>):
 	/// like the legacy <c>CreateAllomorphTypeMismatchDlg</c> flow, when the morpheme type deduced from the typed
-	/// form's punctuation disagrees with the chosen entry's existing forms the user is asked first -- No adds
-	/// nothing, Yes ensures an appropriate MSA and creates the allomorph -- and no prompt appears when the types
+	/// form's punctuation disagrees with the chosen entry's existing forms the user is asked
+	/// first -- No adds
+	/// nothing, Yes ensures an appropriate MSA and creates the allomorph -- and no prompt appears
+	/// when the types
 	/// match. Driven through the launcher's internal seams (a stub confirmation delegate) over a real LcmCache
 	/// (InternalsVisibleTo), without any modal.
 	/// </summary>

@@ -55,7 +55,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				TextWrapping = TextWrapping.Wrap,
 				VerticalAlignment = VerticalAlignment.Top,
 				// Flat like the editors it stands in for (the box collapses out of layout while the display
-				// shows, so no overlay is needed -- a pointer press swaps the editable box back in).
+				// shows, so no overlay is needed -- a pointer press swaps the editable box back
+				// in).
 				Background = Brushes.Transparent,
 				FlowDirection = rightToLeft ? FlowDirection.RightToLeft : FlowDirection.LeftToRight
 			};

@@ -11,7 +11,8 @@ namespace FwAvaloniaDialogsTests
 {
 	/// <summary>
 	/// The shared <see cref="DialogViewModelBase"/>: a new dialog inherits the close contract, the generated
-	/// Ok/Cancel commands, <c>Accepted</c>, and the <c>ApplyChanges</c> ("ApplyTo(state)") convention -- so a
+	/// Ok/Cancel commands, <c>Accepted</c>, and the <c>ApplyChanges</c> ("ApplyTo(state)")
+	/// convention -- so a
 	/// dialog is "view + VM + ShowModal", not a copy of the Options plumbing.
 	/// </summary>
 	[TestFixture]

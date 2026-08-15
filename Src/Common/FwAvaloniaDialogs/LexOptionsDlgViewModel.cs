@@ -11,7 +11,8 @@ using SIL.FieldWorks.Common.FwAvalonia;
 namespace FwAvaloniaDialogs
 {
 	/// <summary>
-	/// View-model for the Tools -> Options dialog. Edits a product-supplied <see cref="LexOptionsDlgState"/>
+	/// View-model for the Tools -> Options dialog. Edits a product-supplied <see
+	/// cref="LexOptionsDlgState"/>
 	/// (the real settings bus, populated/applied at the LexText edge) so the Avalonia layer stays
 	/// LCModel-free. Covers the four legacy tabs -- General (UI language, Lexical Edit UI mode,
 	/// auto-open), Plugins, Privacy, Updates. CommunityToolkit.Mvvm generates the observable properties

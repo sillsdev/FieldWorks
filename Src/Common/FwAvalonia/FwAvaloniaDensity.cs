@@ -41,19 +41,23 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 		/// The DETERMINISTIC, GLOBAL checkbox glyph-box size (px), a fixed function of the surface font
 		/// (<see cref="FwSurfaceStyles.SurfaceFontSize"/>): the box reads about as tall as a capital
 		/// letter, not the Fluent ~20px box on a 32px-tall layout slot. The single <see cref="FwCheckBoxStyle"/>
-		/// restyles the CheckBox TEMPLATE so the LAYOUT footprint (not just the paint) is this size -- so a
+		/// restyles the CheckBox TEMPLATE so the LAYOUT footprint (not just the paint) is this
+		/// size -- so a
 		/// checkbox never inflates a browse/list/tree/table row past the text-row height
 		/// (<see cref="BrowseRowMinHeight"/> = 18). NOT a RenderTransform scale (that leaves the layout box
 		/// tall, the inflation the user rejected); a concrete size applied to the box + the inner template grid.</summary>
 		public const double CheckboxBoxSize = 14d;
 
-		/// <summary>The gap between a checkbox box and its label text, so the words never butt against the box
-		/// (the deterministic CheckBox template uses this as the box->label spacing). ~6px reads as a clear gap
+		/// <summary>The gap between a checkbox box and its label text, so the words never butt
+		/// against the box
+		/// (the deterministic CheckBox template uses this as the box->label spacing). ~6px reads
+		/// as a clear gap
 		/// at the surface font size, matching the breathing room a radio button has.</summary>
 		public const double CheckboxLabelGap = 6d;
 
 		/// <summary>The DETERMINISTIC, GLOBAL radio-button outer-circle size (px), the radio counterpart of
-		/// <see cref="CheckboxBoxSize"/> -- the same 14px so a radio and a checkbox read at the same density and
+		/// <see cref="CheckboxBoxSize"/> -- the same 14px so a radio and a checkbox read at the
+		/// same density and
 		/// neither inflates a row past the text line. The single <see cref="FwRadioButtonStyle"/> restyles the
 		/// RadioButton TEMPLATE so the LAYOUT footprint (not just the paint) is this size, exactly as
 		/// <see cref="FwCheckBoxStyle"/> does for the checkbox box.</summary>
@@ -61,11 +65,13 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 
 		/// <summary>A small amount of visual distance between adjacent logical control GROUPS (e.g. a radio
 		/// group and the checkbox group that follows it in FilterForDialogView), so the groups read as distinct
-		/// rather than butting together. ~8px of extra top whitespace, optionally paired with a thin grey 1px
+		/// rather than butting together. ~8px of extra top whitespace, optionally paired with a
+		/// thin grey 1px
 		/// separator (<see cref="SliceRuleBrush"/>) for the clearest cases.</summary>
 		public const double GroupSeparation = 8d;
 
-		/// <summary>The selected browse/table row fill -- the legacy pale blue (XmlBrowseViewBaseVc
+		/// <summary>The selected browse/table row fill -- the legacy pale blue
+		/// (XmlBrowseViewBaseVc
 		/// kclrBackgroundSelRow 0xFFE6D7 = RGB 215,230,255) rather than the Fluent accent, so the whole
 		/// selected row (including the first column) reads as highlighted like the WinForms browse.</summary>
 		public static readonly Avalonia.Media.IBrush SelectedRowBrush =
@@ -91,12 +97,15 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 		/// <summary>The 1px rule between slices (DataTree.PaintLinesBetweenSlices, Color.LightGray).</summary>
 		public static readonly Avalonia.Media.IBrush SliceRuleBrush = Avalonia.Media.Brushes.LightGray;
 
-		/// <summary>The thin grid line between browse rows and columns (the legacy XMLViews table draws
-		/// faint cell separators); a touch lighter than LightGray so the grid reads as structure, not decoration.</summary>
+		/// <summary>The thin grid line between browse rows and columns (the legacy XMLViews table
+		/// draws
+		/// faint cell separators); a touch lighter than LightGray so the grid reads as structure,
+		/// not decoration.</summary>
 		public static readonly Avalonia.Media.IBrush BrowseGridLineBrush =
 			new Avalonia.Media.SolidColorBrush(Avalonia.Media.Color.FromRgb(0xDC, 0xDC, 0xDC));
 
-		/// <summary>The browse table surface fill -- plain white like the legacy XMLViews browse, rather
+		/// <summary>The browse table surface fill -- plain white like the legacy XMLViews browse,
+		/// rather
 		/// than the Fluent panel tint.</summary>
 		public static readonly Avalonia.Media.IBrush BrowseBackgroundBrush = Avalonia.Media.Brushes.White;
 
@@ -123,7 +132,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 
 		/// <summary>The text color for the owned pickers, paired with the concrete <see cref="PickerBackgroundBrush"/>
 		/// surface. A single named token (rather than an ad-hoc <c>Brushes.Black</c> at each row/item template) so
-		/// every owned picker shares one foreground and reads legibly dark-on-light -- matching the concrete-brush
+		/// every owned picker shares one foreground and reads legibly dark-on-light -- matching
+		/// the concrete-brush
 		/// convention the rest of the dialog stack paints its WinForms-density surfaces with, so it renders the same in the
 		/// runtime host and the headless tests regardless of the OS theme variant.</summary>
 		public static readonly Avalonia.Media.IBrush PickerForegroundBrush =
@@ -136,7 +146,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 		public static readonly Avalonia.Media.IBrush SectionRuleBrush = Avalonia.Media.Brushes.LightGray;
 
 		/// <summary>The horizontal indent applied per hierarchy level in an indented possibility list / POS
-		/// tree row (the legacy chooser tree's per-depth inset). One source of truth so the tree picker and
+		/// tree row (the legacy chooser tree's per-depth inset). One source of truth so the tree
+		/// picker and
 		/// the option picker's depth-indented rows indent identically.</summary>
 		public const double TreeIndentPerLevel = 14d;
 

@@ -14,11 +14,13 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 	/// without any XCore/Inventory/LCModel dependency:
 	///
 	/// <list type="number">
-	/// <item><see cref="LocateTarget"/> -- given a compiled <see cref="ViewDefinitionModel"/> and a
+	/// <item><see cref="LocateTarget"/> -- given a compiled <see cref="ViewDefinitionModel"/> and
+	/// a
 	/// node's <em>template</em> <see cref="ViewNode.StableId"/>, returns the node's current visibility,
 	/// its parent StableId (null at the root), the parent's ordered child StableIds, and the node's
 	/// index among them. This is what "Move Field"/"Field Visibility" need to build a
-	/// <see cref="ViewOverrideOperation"/> -- the parent + sibling order the legacy code read from the
+	/// <see cref="ViewOverrideOperation"/> -- the parent + sibling order the legacy code read
+	/// from the
 	/// live DataTree, here read from the composed definition instead.</item>
 	/// <item><see cref="MergeOperation"/> -- folds one new operation into an existing
 	/// <see cref="ViewDefinitionOverride"/>, replacing any prior op of the same kind+target (the gear
@@ -54,7 +56,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 
 		/// <summary>
 		/// Locates <paramref name="templateStableId"/> in <paramref name="model"/>. Returns null when the
-		/// id is not present (a stale/unknown target -- the caller treats that as a no-op, not a crash).
+		/// id is not present (a stale/unknown target -- the caller treats that as a no-op, not a
+		/// crash).
 		/// </summary>
 		public static ViewNodeLocation LocateTarget(ViewDefinitionModel model, string templateStableId)
 		{

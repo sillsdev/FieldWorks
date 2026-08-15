@@ -16,7 +16,9 @@
 	-->
 	<PropertyGroup>
 		<TargetFramework>net48</TargetFramework>
-		<!-- Explicit (same as the SDK default): the build localizer (ProjectLocalizer.GetResourceInfo)
+		<!--
+			Explicit (same as the SDK default): the build localizer
+			(ProjectLocalizer.GetResourceInfo)
 		     needs it to produce FwAvalonia.resources.dll for FwAvaloniaStrings.resx. -->
 		<RootNamespace>FwAvalonia</RootNamespace>
 		<!-- net48 TFM: net8-only BCL features (Index/Range, IAsyncEnumerable, nint/nuint) fail at

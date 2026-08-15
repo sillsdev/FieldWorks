@@ -90,7 +90,8 @@ namespace FwAvaloniaDialogs
 		/// <summary>True when there is a non-empty <see cref="Senses"/> summary to show.</summary>
 		public bool HasSenses { get; }
 
-		/// <summary>The owned grammatical-info (MSA) editor the view mounts -- the LCModel-free <see cref="MSAGroupBox"/>.</summary>
+		/// <summary>The owned grammatical-info (MSA) editor the view mounts -- the LCModel-free
+		/// <see cref="MSAGroupBox"/>.</summary>
 		public MSAGroupBox MsaGroupBox { get; }
 
 		/// <summary>The help topic id carried for the Help button.</summary>

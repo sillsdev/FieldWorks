@@ -271,7 +271,8 @@ namespace SIL.FieldWorks.XWorks
 		{
 			CheckDisposed();
 
-			// Viewing parity (11.x): the View -> Show Hidden Fields toggle re-resolves the Avalonia
+			// Viewing parity (11.x): the View -> Show Hidden Fields toggle re-resolves the
+			// Avalonia
 			// detail view just like it rebuilds the legacy DataTree.
 			if (name != null && name.StartsWith("ShowHiddenFields-", StringComparison.Ordinal))
 			{
@@ -294,7 +295,8 @@ namespace SIL.FieldWorks.XWorks
 			SettleDetailEdits();
 			SetUIFramework(newFramework);
 			// Flipping AWAY from Avalonia tears down its PropChanged/undo/deactivate
-			// listeners and host NOW (symmetric with RecordBrowseView), not deferred to Dispose -- so the
+			// listeners and host NOW (symmetric with RecordBrowseView), not deferred to Dispose
+			// -- so the
 			// refresh controller does not keep walking the notification bus for the view's remaining life.
 			// TearDownAvaloniaEntryForm nulls the host + controller, so a later flip back to New rebuilds them.
 			if (oldFramework == UIFramework.Avalonia && newFramework != UIFramework.Avalonia)

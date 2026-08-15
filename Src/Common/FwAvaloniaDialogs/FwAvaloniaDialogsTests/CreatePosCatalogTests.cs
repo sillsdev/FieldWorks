@@ -20,7 +20,8 @@ namespace FwAvaloniaDialogsTests
 	/// <summary>
 	/// The "Create a new Part of Speech" CATALOG chooser. Rather than a brand-new tree dialog, the
 	/// master-category (GOLDEtic) catalog is surfaced through the EXISTING reusable <see cref="ChooserDialogViewModel"/>
-	/// in hierarchical single-select mode -- exactly what the LCModel-aware <c>LcmCreatePartOfSpeechLauncher.BuildInput</c>
+	/// in hierarchical single-select mode -- exactly what the LCModel-aware
+	/// <c>LcmCreatePartOfSpeechLauncher.BuildInput</c>
 	/// produces (this dialog layer has no LCModel reference, so it is fed a synthetic depth-tagged catalog identical in
 	/// shape). The catalog renders as a dense, collapsible tree with no clipping; a pick returns the chosen catalog id
 	/// (which the launcher maps to a created IPartOfSpeech). A PNG of the catalog is captured for subjective review.
@@ -89,7 +90,8 @@ namespace FwAvaloniaDialogsTests
 			var (view, vm) = Show("CreatePos-02-picked");
 			var tree = FindByAutomationId<TreeView>(view, "Chooser.Tree");
 
-			// Pick a nested category (Preposition) -- single-select returns exactly that node's key (the catalog id).
+			// Pick a nested category (Preposition) -- single-select returns exactly that node's
+			// key (the catalog id).
 			tree.SelectedItem = vm.TreeRoots.Single(r => r.Key == "Adposition").Children[0];
 			Dispatcher.UIThread.RunJobs();
 

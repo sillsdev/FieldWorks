@@ -147,31 +147,71 @@ $isCI = ($env:GITHUB_ACTIONS -eq 'true') -or ($env:CI -eq 'true')
 $remainingViolations = New-Object System.Collections.ArrayList
 $fixedFiles = @{}
 $fixedCount = 0
+$wrappedCount = 0
 
+$autoFixable = @('non-ascii-punctuation', 'comment-line-too-long')
+$pending = New-Object System.Collections.ArrayList
 foreach ($v in $violations) {
-	if ($isCI -or $v.Category -ne 'non-ascii-punctuation') {
+	if ($isCI -or ($autoFixable -notcontains $v.Category)) {
 		[void]$remainingViolations.Add($v)
 		continue
 	}
+	[void]$pending.Add($v)
+}
 
-	$hadBom = Test-Utf8Bom -Path $v.File
-	$fileLines = @(Get-Content -LiteralPath $v.File -Encoding UTF8)
-	$fixedLine = Repair-CommentLine -Line $fileLines[$v.Line - 1]
-	if ($null -eq $fixedLine) {
-		[void]$remainingViolations.Add($v)
-		continue
+$editorConfig = Get-CommentHygieneEditorConfig -RepoRoot $repoRoot
+
+# Per file, bottom-up: re-wrapping adds lines and shifts every line number below
+# it. Within one line the punctuation fix runs first, since it changes the width
+# that decides whether a wrap is still needed.
+$sortOrder = @(
+	@{ Expression = 'Line'; Descending = $true },
+	@{ Expression = { if ($_.Category -eq 'non-ascii-punctuation') { 0 } else { 1 } }; Descending = $false }
+)
+
+foreach ($group in ($pending | Group-Object File)) {
+	$path = $group.Name
+	$language = Get-CommentHygieneLanguage -Path $path
+	$hadBom = Test-Utf8Bom -Path $path
+	$fileLines = New-Object 'System.Collections.Generic.List[string]'
+	$fileLines.AddRange([string[]][System.IO.File]::ReadAllLines($path, [System.Text.Encoding]::UTF8))
+	$changed = $false
+
+	foreach ($v in ($group.Group | Sort-Object $sortOrder)) {
+		$index = $v.Line - 1
+
+		if ($v.Category -eq 'non-ascii-punctuation') {
+			$fixedLine = Repair-CommentLine -Line $fileLines[$index]
+			if ($null -eq $fixedLine) { [void]$remainingViolations.Add($v); continue }
+			$fileLines[$index] = $fixedLine
+			$changed = $true
+			$fixedCount++
+			continue
+		}
+
+		$width = Get-CommentDisplayWidth -Line $fileLines[$index] -TabWidth $editorConfig.TabWidth
+		if ($width -le $editorConfig.MaxLineLength) { continue }
+
+		$wrapped = Format-CommentLineWrap -Line $fileLines[$index] -Language $language `
+			-MaxWidth $editorConfig.MaxLineLength -TabWidth $editorConfig.TabWidth
+		if ($null -eq $wrapped) { [void]$remainingViolations.Add($v); continue }
+
+		$fileLines.RemoveAt($index)
+		$fileLines.InsertRange($index, [string[]]$wrapped)
+		$changed = $true
+		$wrappedCount++
 	}
 
-	$fileLines[$v.Line - 1] = $fixedLine
-	Set-CommentHygieneFileContent -Path $v.File -Lines $fileLines -Utf8Bom $hadBom
-	$fixedFiles[$v.File] = $true
-	$fixedCount++
+	if ($changed) {
+		Set-CommentHygieneFileContent -Path $path -Lines $fileLines.ToArray() -Utf8Bom $hadBom
+		$fixedFiles[$path] = $true
+	}
 }
 
 $violations = $remainingViolations.ToArray()
 
-if ($fixedCount -gt 0) {
-	Write-Host "comment-hygiene: auto-fixed $fixedCount non-ascii-punctuation comment line(s) in $($fixedFiles.Keys.Count) file(s) (review and include in your commit)." -ForegroundColor Yellow
+if ($fixedCount -gt 0 -or $wrappedCount -gt 0) {
+	Write-Host ("comment-hygiene: auto-fixed {0} punctuation and re-wrapped {1} over-long comment line(s) in {2} file(s) (review and include in your commit)." -f $fixedCount, $wrappedCount, $fixedFiles.Keys.Count) -ForegroundColor Yellow
 }
 
 if ($violations.Count -eq 0) {

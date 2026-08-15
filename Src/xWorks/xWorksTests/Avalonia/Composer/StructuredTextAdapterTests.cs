@@ -15,7 +15,8 @@ namespace SIL.FieldWorks.XWorks
 	/// The LCModel-aware StText edit-context adapter, exercised against a REAL in-memory cache.
 	/// An StText field becomes an editable <see cref="DetailFieldKind.StructuredText"/> row whose
 	/// paragraph CRUD (text / style / insert / delete) mutates the LCModel StText inside ONE fenced
-	/// <see cref="LcmDetailEditSession"/> -- one step on the global undo stack legacy views share, the
+	/// <see cref="LcmDetailEditSession"/> -- one step on the global undo stack legacy views
+	/// share, the
 	/// same undo-granularity rule the rest of the detail view follows. These tests build the composed
 	/// edit-context the way <see cref="DetailComposer"/> does (the same
 	/// <see cref="ComposedDetailEditContext"/> + paragraph setters), so they cover the real production

@@ -1220,7 +1220,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 				var dt = harness.DataTree;
 
-				// Record positions after full layout (set by OnLayout -> HandleLayout1(fFull=true))
+				// Record positions after full layout (set by OnLayout ->
+				// HandleLayout1(fFull=true))
 				var fullLayoutPositions = new int[dt.Slices.Count];
 				var fullLayoutHeights = new int[dt.Slices.Count];
 				for (int i = 0; i < dt.Slices.Count; i++)

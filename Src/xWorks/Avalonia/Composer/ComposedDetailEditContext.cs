@@ -41,7 +41,8 @@ namespace SIL.FieldWorks.XWorks
 	{
 		// One handler per composed field, keyed by StableId; a null delegate slot means the field's kind
 		// does not support that gesture (rejected like an unknown field). Replaces the former nine parallel
-		// setter dictionaries -- a field's edit behavior now lives in one object rather than being spread
+		// setter dictionaries -- a field's edit behavior now lives in one object rather than
+		// being spread
 		// across nine maps kept in sync by matching stable id.
 		private readonly IReadOnlyDictionary<string, FieldEditHandler> _handlers;
 

@@ -91,7 +91,9 @@ namespace FwAvaloniaTests
 		[AvaloniaTest]
 		public void OptionsRenderInline_InsideThePickerItself_NoSecondFloatingDropdown()
 		{
-			// The thick grey border and flaky arrow keys came from AutoCompleteBox opening a second nested popup, so the picker must render its filter box and options list inline rather than via a second popup.
+			// The thick grey border and flaky arrow keys came from AutoCompleteBox opening a
+			// second nested popup, so the picker must render its filter box and options list
+			// inline rather than via a second popup.
 			var (picker, _, _, _) = ShowStatic();
 			picker.UpdateLayout();
 			Dispatcher.UIThread.RunJobs();

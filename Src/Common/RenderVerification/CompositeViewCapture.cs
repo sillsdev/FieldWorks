@@ -62,7 +62,9 @@ namespace SIL.FieldWorks.Common.RenderVerification
 				dataTree.ClientSize = new Size(width, totalHeight);
 				dataTree.PerformLayout();
 
-				// Without this, ViewSlices that never got a paint-path MakeSliceVisible call would have null RootBoxes, which VwDrawRootBuffered silently skips in Pass 2, leaving blank field areas in the bitmap.
+				// Without this, ViewSlices that never got a paint-path MakeSliceVisible call
+				// would have null RootBoxes, which VwDrawRootBuffered silently skips in Pass 2,
+				// leaving blank field areas in the bitmap.
 				EnsureAllSlicesInitialized(dataTree);
 
 				// Recompute height after initialization -- slices may have changed

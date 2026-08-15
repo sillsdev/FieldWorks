@@ -50,7 +50,8 @@ namespace FwAvaloniaTests
 		public int CancelCount;
 
 		/// <summary>The text edits actually CAPTURED by a Commit (those staged since the last commit/cancel
-		/// boundary) -- models "commit captures staged, cancel discards" so tests can assert WHICH value was
+		/// boundary) -- models "commit captures staged, cancel discards" so tests can assert
+		/// WHICH value was
 		/// committed, not merely that a commit happened.</summary>
 		public readonly List<(string Field, string Ws, string Value)> CommittedTextEdits
 			= new List<(string, string, string)>();
@@ -123,7 +124,8 @@ namespace FwAvaloniaTests
 
 		public void Commit()
 		{
-			// Capture everything staged since the last boundary -- that is what this commit "writes".
+			// Capture everything staged since the last boundary -- that is what this commit
+			// "writes".
 			for (var i = _stagedBoundary; i < TextEdits.Count; i++)
 				CommittedTextEdits.Add(TextEdits[i]);
 			_stagedBoundary = TextEdits.Count;
@@ -132,7 +134,8 @@ namespace FwAvaloniaTests
 
 		public void Cancel()
 		{
-			// Discard everything staged since the last boundary -- a cancelled session writes nothing.
+			// Discard everything staged since the last boundary -- a cancelled session writes
+			// nothing.
 			_stagedBoundary = TextEdits.Count;
 			CancelCount++;
 		}
@@ -284,7 +287,8 @@ namespace FwAvaloniaTests
 
 		// DATA-SAFETY: a value flagged lossy (a run carries a
 		// TsString property the model does not round-trip) renders a READ-ONLY editor with the
-		// not-editable-here tooltip, even though an edit context is supplied -- so a keystroke can
+		// not-editable-here tooltip, even though an edit context is supplied -- so a keystroke
+		// can
 		// never silently drop the property. The matching model/composer assertions live in xWorks's
 		// DetailEditContextEditingTests.Compose_RunWithUnsupportedProperty_ComposesReadOnly_*.
 		[AvaloniaTest]
@@ -513,7 +517,8 @@ namespace FwAvaloniaTests
 				"tag-less rows keep the abbreviation alias");
 
 			// The per-row automation id (DetailFocusMemory's focus-restore key) must
-			// be unique too, so it uses the same tag-preferred key as edits -- abbreviations collide.
+			// be unique too, so it uses the same tag-preferred key as edits -- abbreviations
+			// collide.
 			Assert.That(AutomationProperties.GetAutomationId(boxes[0]), Is.EqualTo("TagField.qaa-x-one"),
 				"a tagged row's automation id keys on the unique IETF tag, not the collidable abbreviation");
 			Assert.That(AutomationProperties.GetAutomationId(boxes[1]), Is.EqualTo("TagField.du"),
@@ -707,7 +712,8 @@ namespace FwAvaloniaTests
 		}
 
 		// Bug "removing Publish In items not working": a successful remove stage completes the
-		// gesture -- the callback (which the view wires to its commit/re-show) fires exactly once.
+		// gesture -- the callback (which the view wires to its commit/re-show) fires exactly
+		// once.
 		[AvaloniaTest]
 		public void ReferenceRemove_Success_StagesAndFiresTheGestureCallbackOnce()
 		{

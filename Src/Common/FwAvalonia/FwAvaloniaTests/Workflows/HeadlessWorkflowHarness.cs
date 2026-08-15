@@ -16,10 +16,12 @@ namespace FwAvaloniaTests.Workflows
 {
 	/// <summary>
 	/// Reusable headless-integration scaffolding for driving migrated Avalonia controls through real
-	/// USER SCENARIOS and WORKFLOWS -- the front-and-center test style for the whole WinForms->Avalonia
+	/// USER SCENARIOS and WORKFLOWS -- the front-and-center test style for the whole
+	/// WinForms->Avalonia
 	/// program (all 13 phases). The pieces:
 	///
-	///  - <see cref="HeadlessStage"/> -- hosts one or more Avalonia controls in a headless window and
+	/// - <see cref="HeadlessStage"/> -- hosts one or more Avalonia controls in a headless window
+	/// and
 	///    pumps the dispatcher, so a test reads/acts on a realized visual tree exactly as a user would.
 	///  - <see cref="DetailEditorDriver"/> -- a page-object "driver"
 	///    that expose intent-level verbs (filter, clear, select, read cell, type, commit) over a hosted
@@ -56,7 +58,8 @@ namespace FwAvaloniaTests.Workflows
 			return new HeadlessStage(grid);
 		}
 
-		/// <summary>Runs all queued UI-thread work -- call after any action that schedules layout/handlers.</summary>
+		/// <summary>Runs all queued UI-thread work -- call after any action that schedules
+		/// layout/handlers.</summary>
 		public void Pump() => Dispatcher.UIThread.RunJobs();
 
 		internal static string ReadText(TextBlock block)

@@ -105,7 +105,8 @@ function Assert-Unrepairable {
 Assert-Category 'phase-framing' '// Phase 3 test (b): picking a style applies it to the selection' 'process-framing'
 Assert-Clean    'phase-clean'   '// Applies the selected style to the current selection'
 
-# process-framing must not fire on "stage"/"commit" here: this codebase has a real two-step stage-then-commit UI pattern, distinct from migration-phase framing.
+# process-framing must not fire on "stage"/"commit" here: this codebase has a real two-step
+# stage-then-commit UI pattern, distinct from migration-phase framing.
 Assert-Clean    'stage-domain-term' '// STAGE 1 -- the pick already populated the auxiliary picker.'
 Assert-Clean    'commit-domain-term' '// Capture everything staged since the last boundary -- that is what this commit "writes".'
 
@@ -113,10 +114,12 @@ Assert-Clean    'commit-domain-term' '// Capture everything staged since the las
 Assert-Category 'doc-pointer-md' '// winforms-free-lexeme-editor.md D1: a plugin-claimed custom slice renders its plugin''s own control' 'doc-pointer'
 Assert-Clean    'doc-pointer-clean' '// LT-22351: a plugin-claimed custom slice renders its plugin''s own control'
 
-# doc-pointer finding-code must stay case-sensitive: "m3" is a real LCM field name (IMoStemMsa), not a design-doc finding code, despite the (?i) flag earlier in the pattern.
+# doc-pointer finding-code must stay case-sensitive: "m3" is a real LCM field name (IMoStemMsa),
+# not a design-doc finding code, despite the (?i) flag earlier in the pattern.
 Assert-Clean    'doc-pointer-lowercase-field' '// Seed text matches the canonical field label (the m3 InflectionClass field label).'
 
-# doc-pointer finding-code must not fire on function keys or generic type-parameter names, which share the letter-plus-digit shape but are ordinary code vocabulary, not design-doc codes.
+# doc-pointer finding-code must not fire on function keys or generic type-parameter names, which
+# share the letter-plus-digit shape but are ordinary code vocabulary, not design-doc codes.
 Assert-Clean    'doc-pointer-function-key' '// Whether it came from a legacy view, F5/RefreshAllViews-driven, or something else.'
 Assert-Clean    'doc-pointer-generic-param' '// Factored to a Func<T1,T2,TResult> seam so the caller can inject either path.'
 
@@ -157,7 +160,8 @@ Assert-Repair 'repair-noop-cjk' $cjkLine $cjkLine
 # Repair-CommentLine -- not a whole-line comment at all
 Assert-Unrepairable 'repair-not-a-comment' ("int x = 1; // trailing {0} comment" -f (Get-Codepoint 0x2014))
 
-# PowerShell (#) gets the same categories as C# (//) -- the gap that let this tooling's own comments ship unscanned.
+# PowerShell (#) gets the same categories as C# (//) -- the gap that let this tooling's own
+# comments ship unscanned.
 Assert-Category 'ps-phase-framing' '# Phase 3 test: picking a style applies it to the selection' 'process-framing' '.ps1'
 Assert-Category 'ps-non-ascii-punctuation' ("# Uses an em dash {0} inline." -f (Get-Codepoint 0x2014)) 'non-ascii-punctuation' '.ps1'
 Assert-Repair 'repair-ps-em-dash' ("# Uses an em dash {0} inline." -f (Get-Codepoint 0x2014)) '# Uses an em dash -- inline.'
@@ -197,13 +201,15 @@ Assert-CleanLines 'help-block-long-ps' @(
 	'#>'
 ) '.ps1'
 
-# CLike (C/C++/IDL) shares C#'s // and /// syntax and categories -- one worked example per extension.
+# CLike (C/C++/IDL) shares C#'s // and /// syntax and categories -- one worked example per
+# extension.
 Assert-Category 'cpp-phase-framing' '// Phase 3 test: picking a style applies it to the selection' 'process-framing' '.cpp'
 Assert-Category 'h-non-ascii-punctuation' ("// Uses an em dash {0} inline." -f (Get-Codepoint 0x2014)) 'non-ascii-punctuation' '.h'
 Assert-Category 'idl-absence-narration' '// An ORC run no longer forces the whole value read-only.' 'absence-narration' '.idl'
 Assert-Clean    'cpp-clean' '// Applies the selected style to the current selection' '.cpp'
 
-# Xml uses <!-- -->; banned categories fire regardless of exempt/impl kind, even on the first comment.
+# Xml uses <!-- -->; banned categories fire regardless of exempt/impl kind, even on the first
+# comment.
 Assert-Category 'csproj-single-line' '<!-- This property no longer affects the build output. -->' 'absence-narration' '.csproj'
 Assert-Clean    'csproj-single-line-clean' '<!-- This property controls the build output. -->' '.csproj'
 Assert-CategoryLines 'axaml-multi-line' @(
@@ -212,10 +218,15 @@ Assert-CategoryLines 'axaml-multi-line' @(
 	'-->'
 ) 'absence-narration' '.axaml'
 
-# Xml's FIRST <!-- --> block in a file is exempt from the length budget (its /// equivalent);
-# every later block is an ordinary budgeted implementation comment.
+# Xml's FIRST block is exempt from the budget; later blocks are not. Over 200
+# chars total, but each physical line fits the width limit: the rules are
+# independent.
 Assert-CleanLines 'xml-first-comment-exempt-long' @(
-	'<!-- This is the file-level summary comment, and it is allowed to run long-form the same way a C# /// doc comment or a PowerShell comment-based help block can, because Xml has no other syntax to mark one. -->',
+	'<!--',
+	'	This is the file-level summary comment, and it is allowed to run long-form the',
+	'	same way a C# /// doc comment or a PowerShell comment-based help block can,',
+	'	because Xml has no other syntax to mark a file or type level summary.',
+	'-->',
 	'<Project Sdk="Microsoft.NET.Sdk">',
 	'</Project>'
 ) '.csproj'
@@ -236,6 +247,104 @@ Assert-CleanLines 'targets-clean-multiline' @(
 # a single "-" is the safe ASCII substitute there instead of the usual "--".
 Assert-Category 'xml-double-hyphen' '<!-- Uses a real dash -- here, which is illegal inside an XML comment. -->' 'xml-illegal-double-hyphen' '.csproj'
 Assert-Clean    'xml-single-hyphen-clean' '<!-- Uses a real dash - here, which is legal inside an XML comment. -->' '.csproj'
+
+
+# ---- per-line width, taken from .editorconfig's max_line_length ----
+
+$cfg = Get-CommentHygieneEditorConfig -RepoRoot (Resolve-Path (Join-Path $PSScriptRoot '../..')).Path
+if ($cfg.MaxLineLength -ne 98 -or $cfg.TabWidth -ne 4) {
+	[void]$failures.Add("FAIL [editorconfig-read]: expected 98/4, got $($cfg.MaxLineLength)/$($cfg.TabWidth)")
+}
+
+$widthPad = '/' * 100
+Assert-Category 'comment-line-too-long' "// $widthPad" 'comment-line-too-long'
+Assert-Clean    'comment-line-at-limit' ('// ' + ('x' * 94))
+
+# A tab counts as four display columns, not one: 24 tabs plus a short comment is
+# already past the limit even though the string is well under 98 characters.
+$tabbed = ("`t" * 24) + '// short'
+Assert-Category 'comment-line-tabs-count-as-columns' $tabbed 'comment-line-too-long'
+
+if ((Get-CommentDisplayWidth -Line "`tab" -TabWidth 4) -ne 6) {
+	[void]$failures.Add('FAIL [display-width-tab-stop]: expected a leading tab to advance to column 4')
+}
+
+# Doc comments are exempt from the content budget but not from the width rule.
+Assert-Category 'doc-comment-too-wide' "/// $widthPad" 'comment-line-too-long'
+
+$wrapSource = "`t// " + ('the quick brown fox jumps over the lazy dog and keeps running ' * 3)
+$wrapped = Format-CommentLineWrap -Line $wrapSource -Language 'CLike' -MaxWidth 98 -TabWidth 4
+if ($null -eq $wrapped -or $wrapped.Count -lt 2) {
+	[void]$failures.Add('FAIL [wrap-splits]: expected an over-long comment to wrap onto multiple lines')
+}
+else {
+	foreach ($line in $wrapped) {
+		if (-not $line.TrimStart().StartsWith('//')) {
+			[void]$failures.Add("FAIL [wrap-prefix]: continuation line lost its comment prefix: $line")
+		}
+	}
+	if ((Get-CommentDisplayWidth -Line $wrapped[0] -TabWidth 4) -gt 98) {
+		[void]$failures.Add('FAIL [wrap-width]: wrapped line still exceeds the limit')
+	}
+}
+
+if ($null -ne (Format-CommentLineWrap -Line '// short' -Language 'CLike' -MaxWidth 98 -TabWidth 4)) {
+	[void]$failures.Add('FAIL [wrap-noop]: a line that already fits must not be rewrapped')
+}
+
+# A single-line Xml comment expands into the delimiters-on-their-own-lines form.
+$xmlSource = '<!-- ' + ('the quick brown fox jumps over the lazy dog and keeps running ' * 3) + '-->'
+$xmlWrapped = Format-CommentLineWrap -Line $xmlSource -Language 'Xml' -MaxWidth 98 -TabWidth 4
+if ($null -eq $xmlWrapped -or $xmlWrapped.Count -lt 3) {
+	[void]$failures.Add('FAIL [wrap-xml-expands]: expected an over-long Xml comment to expand to multiple lines')
+}
+else {
+	if ($xmlWrapped[0].Trim() -ne '<!--' -or $xmlWrapped[-1].Trim() -ne '-->') {
+		[void]$failures.Add('FAIL [wrap-xml-delimiters]: expected the delimiters to move onto their own lines')
+	}
+	foreach ($line in $xmlWrapped) {
+		if ((Get-CommentDisplayWidth -Line $line -TabWidth 4) -gt 98) {
+			[void]$failures.Add("FAIL [wrap-xml-width]: wrapped Xml line still exceeds the limit: $line")
+		}
+	}
+}
+
+# ---- complexity raises the content budget, but only in dense branching code ----
+
+# Wrapped inside the width limit so these fixtures exercise the content budget
+# alone; an over-wide single line would trip comment-line-too-long instead.
+$longComment = @(
+	'// The invariant this restores is subtle and needs spelling out for the',
+	'// next reader, because the branching below depends on it holding at each',
+	'// step and nothing in the code itself says so. Without this note the next',
+	'// person reads the guard as redundant and deletes it.'
+)
+
+function New-BranchyFixture {
+	param([string[]] $Comment)
+	$out = New-Object System.Collections.ArrayList
+	foreach ($line in $Comment) { [void]$out.Add($line) }
+	[void]$out.Add('void M(int n) {')
+	for ($k = 0; $k -lt 12; $k++) { [void]$out.Add("    if (n == $k && n > 0) { DoWork($k); }") }
+	[void]$out.Add('}')
+	return ,$out.ToArray()
+}
+
+$simpleCode = @($longComment) + @('void M() {', '    DoWork();', '}')
+Assert-CategoryLines 'long-comment-simple-code-flagged' $simpleCode 'comment-too-long'
+Assert-CleanLines 'long-comment-complex-code-allowed' (New-BranchyFixture -Comment $longComment)
+
+# The extended budget is a higher ceiling, not the removal of one.
+$hugeComment = $longComment + $longComment + $longComment
+Assert-CategoryLines 'extended-budget-still-capped' (New-BranchyFixture -Comment $hugeComment) 'comment-too-long'
+
+$cxSimple = Measure-CodeComplexity -Lines @('void M() {', '    DoWork();', '}') -StartIndex 0 -Language 'CLike'
+if ($cxSimple -ge 10) {
+	[void]$failures.Add("FAIL [complexity-simple]: straight-line code scored $cxSimple")
+}
+if ((Measure-CodeComplexity -Lines @('<Project>') -StartIndex 0 -Language 'Xml') -ne 0) {
+	[void]$failures.Add('FAIL [complexity-xml]: Xml has no control flow and must score zero')
+}
 
 Remove-Item -LiteralPath $tempDir -Recurse -Force
 

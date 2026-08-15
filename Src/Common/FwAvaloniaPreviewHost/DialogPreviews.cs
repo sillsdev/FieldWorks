@@ -27,7 +27,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.PreviewHost
 	/// <summary>
 	/// Base window for previewing one converted dialog body at the client size its launcher gives it, with
 	/// the same compact density the runtime applies. <c>AvaloniaDialogHost.ShowModal</c> normally applies
-	/// that density and owns the window; there is no modal host here, so it is applied directly -- without
+	/// that density and owns the window; there is no modal host here, so it is applied directly
+	/// -- without
 	/// it the preview renders at roomy Fluent defaults and misleads.
 	///
 	/// The title bar, icon, and close button belong to the WinForms host form at runtime and are therefore
@@ -60,7 +61,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.PreviewHost
 	}
 
 	/// <summary>
-	/// The reusable message/confirmation dialog, shown with a Yes/No warning -- the shape most confirmation
+	/// The reusable message/confirmation dialog, shown with a Yes/No warning -- the shape most
+	/// confirmation
 	/// call sites use. Size matches what its own headless tests realize it at.
 	/// </summary>
 	public sealed class MessageBoxPreviewWindow : DialogPreviewWindow

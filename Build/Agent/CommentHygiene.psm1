@@ -5,8 +5,13 @@
 .DESCRIPTION
 	Implements the mechanical (regex-detectable) banned-content categories
 	from the fieldworks-code-commenting skill, the ASCII-punctuation-only rule,
-	and a 200-character budget on implementation comments. Judgment-based rules
-	(accuracy, WHAT-not-HOW, standalone clarity) are not checked here.
+	a 200-character budget on implementation comments, and a per-line width
+	limit read from .editorconfig. Judgment-based rules (accuracy,
+	WHAT-not-HOW, standalone clarity) are not checked here.
+
+	The content budget rises to 600 characters where Measure-CodeComplexity
+	scores the code the comment introduces at 10 decision points or more; the
+	width limit has no such exemption and applies to doc comments too.
 
 	Scans .cs/.cpp/.h/.hpp/.cc/.cxx/.c/.idl (//, ///), .ps1/.psm1 (#,
 	block-comment), and .csproj/.vcxproj/.vcproj/.props/.targets/.proj/
@@ -28,20 +33,27 @@
 
 Set-StrictMode -Version Latest
 
+# Declared at module scope: under Set-StrictMode, a script-scoped variable read
+# before its first assignment throws rather than returning $null.
+$script:editorConfigCache = @{}
+
 function Get-CommentHygieneCategories {
 	<#
 	.SYNOPSIS
 		Returns the ordered category-name to regex-pattern map.
 	#>
 	return [ordered]@{
-		# "Stage N"/"this commit" excluded: this codebase's own "stage-1/2" and Commit() are domain terms, not migration framing.
+		# "Stage N"/"this commit" excluded: this codebase's own "stage-1/2" and Commit() are
+		# domain terms, not migration framing.
 		'process-framing'    = '(?i)\bPhase[\s-]?\d+\b|\blater we\x27ll\b|\bwe\x27ll (?:later|eventually)\b'
-		# (?-i:...) forces case-sensitivity despite the earlier (?i); F-keys and T-generics are excluded as letter-plus-digit look-alikes.
+		# (?-i:...) forces case-sensitivity despite the earlier (?i); F-keys and T-generics are
+		# excluded as letter-plus-digit look-alikes.
 		'doc-pointer'        = '\b[\w./-]+\.md\b|(?i)\bsection\s+\d+[a-z]?\b|(?-i:(?<![A-Za-z0-9_+#/-])(?!F(?:1[0-2]|[1-9])\b)(?!T[1-9]\b)[A-Z]\d{1,2}(?![A-Za-z0-9.+#-]))'
 		'absence-narration'  = '(?i)\bno longer\b|\bused to\b|\bpreviously (?:read|worked|did)\b|\bwas removed\b|\bwas stale\b|\brenamed from\b|\bfirst shipped\b'
 		'cross-file-pointer' = "(?i)\bsee [A-Za-z]+\x27s note\b|\bas documented (?:on|in) [A-Za-z]+\b"
 		'provenance'         = '(?i)\bshared by \w+ and \w+\b|\bthe only caller\b|\bthe sole caller\b|\bextracted from\b'
-		# Targets only LLM-style punctuation, not all non-ASCII -- FieldWorks comments legitimately quote real script/IPA content.
+		# Targets only LLM-style punctuation, not all non-ASCII -- FieldWorks comments
+		# legitimately quote real script/IPA content.
 		'non-ascii-punctuation' = Get-NonAsciiPunctuationPattern
 	}
 }
@@ -55,10 +67,73 @@ function Get-NonAsciiPunctuationPattern {
 	return '(?:' + ($escaped -join '|') + ')'
 }
 
+function Get-CommentHygieneEditorConfig {
+	<#
+	.SYNOPSIS
+		Reads max_line_length and tab_width from the repo's .editorconfig [*] section.
+
+	.DESCRIPTION
+		The comment width limit is not a second opinion about formatting: it is
+		whatever .editorconfig already declares for every file, so the two can
+		never drift apart. Only the [*] section is read, since that is where
+		this repo declares both values. Results are cached per root -- this runs
+		once per gate invocation, not once per file.
+
+	.OUTPUTS
+		A hashtable with MaxLineLength and TabWidth. Falls back to 98 and 4 when
+		.editorconfig is missing or declares neither.
+	#>
+	param([Parameter(Mandatory)][string] $RepoRoot)
+
+	if ($script:editorConfigCache.ContainsKey($RepoRoot)) { return $script:editorConfigCache[$RepoRoot] }
+
+	$settings = @{ MaxLineLength = 98; TabWidth = 4 }
+	$path = Join-Path $RepoRoot '.editorconfig'
+	if (Test-Path -LiteralPath $path) {
+		$inStarSection = $false
+		foreach ($raw in [System.IO.File]::ReadAllLines($path, [System.Text.Encoding]::UTF8)) {
+			$line = $raw.Trim()
+			if ($line.StartsWith('#') -or $line.Length -eq 0) { continue }
+			if ($line.StartsWith('[')) { $inStarSection = ($line -eq '[*]'); continue }
+			if (-not $inStarSection) { continue }
+			if ($line -match '^max_line_length\s*=\s*(\d+)$') { $settings.MaxLineLength = [int]$Matches[1] }
+			if ($line -match '^tab_width\s*=\s*(\d+)$') { $settings.TabWidth = [int]$Matches[1] }
+		}
+	}
+
+	$script:editorConfigCache[$RepoRoot] = $settings
+	return $settings
+}
+
+function Get-CommentDisplayWidth {
+	<#
+	.SYNOPSIS
+		Returns a line's width in display columns, expanding tabs to the next tab stop.
+
+	.DESCRIPTION
+		String.Length counts a tab as one character; .editorconfig's
+		max_line_length counts display columns. This repo indents with tabs, so
+		a comment four levels deep differs by twelve columns between the two
+		measures -- enough to decide a violation either way.
+	#>
+	param(
+		[Parameter(Mandatory)][AllowEmptyString()][string] $Line,
+		[Parameter(Mandatory)][int] $TabWidth
+	)
+
+	$width = 0
+	foreach ($char in $Line.ToCharArray()) {
+		if ($char -eq "`t") { $width += $TabWidth - ($width % $TabWidth) }
+		else { $width++ }
+	}
+	return $width
+}
+
 function Get-CommentBody {
 	<#
 	.SYNOPSIS
-		Returns the text after // or ///, or $null if the line is not a whole-line C-family comment.
+		Returns the text after // or ///, or $null if the line is not a whole-line C-family
+		comment.
 
 	.DESCRIPTION
 		Shared by every C-family language this module scans (C#, C/C++, IDL):
@@ -134,7 +209,7 @@ function Set-CommentHygieneFileContent {
 	#>
 	param(
 		[Parameter(Mandatory)][string] $Path,
-		[Parameter(Mandatory)][AllowEmptyCollection()][string[]] $Lines,
+		[Parameter(Mandatory)][AllowEmptyCollection()][AllowEmptyString()][string[]] $Lines,
 		[Parameter(Mandatory)][bool] $Utf8Bom
 	)
 
@@ -187,6 +262,213 @@ function Repair-CommentLine {
 	if ($fixedBody -match (Get-NonAsciiPunctuationPattern)) { return $null }
 
 	return "$leadingWhitespace$prefix$fixedBody"
+}
+
+function ConvertTo-TabIndent {
+	<#
+	.SYNOPSIS
+		Rewrites a tab-indented line's leading whitespace as tabs alone.
+
+	.DESCRIPTION
+		Continuation lines in this repo often align under an opening delimiter
+		with a tab followed by spaces. Copying that onto a newly written line
+		trips git's indent-with-non-tab check, so the run is re-expressed as
+		whole tabs of the same approximate depth. An indent with no tab in it
+		belongs to a space-indented file and is returned unchanged.
+	#>
+	param(
+		[Parameter(Mandatory)][AllowEmptyString()][string] $Indent,
+		[Parameter(Mandatory)][int] $TabWidth
+	)
+
+	if (-not $Indent.Contains("`t")) { return $Indent }
+	$width = Get-CommentDisplayWidth -Line $Indent -TabWidth $TabWidth
+	return "`t" * [Math]::Max(1, [int][Math]::Floor($width / $TabWidth))
+}
+
+function Split-CommentWords {
+	<#
+	.SYNOPSIS
+		Greedy word wrap for comment text, given the width its prefix consumes.
+
+	.OUTPUTS
+		One string per output line, prefix excluded; empty when Body has no
+		words. A word too long to fit gets a line to itself and stays over the
+		limit rather than being broken mid-token.
+	#>
+	param(
+		[Parameter(Mandatory)][AllowEmptyString()][string] $Body,
+		[Parameter(Mandatory)][AllowEmptyString()][string] $Head,
+		[Parameter(Mandatory)][int] $MaxWidth,
+		[Parameter(Mandatory)][int] $TabWidth
+	)
+
+	$words = @($Body.Trim() -split '\s+' | Where-Object { $_.Length -gt 0 })
+	if ($words.Count -eq 0) { return ,@() }
+
+	$headWidth = Get-CommentDisplayWidth -Line $Head -TabWidth $TabWidth
+	$lines = New-Object System.Collections.ArrayList
+	$current = $null
+
+	foreach ($word in $words) {
+		if ($null -eq $current) { $current = $word; continue }
+		if (($headWidth + $current.Length + 1 + $word.Length) -le $MaxWidth) { $current = "$current $word"; continue }
+		[void]$lines.Add($current)
+		$current = $word
+	}
+	[void]$lines.Add($current)
+
+	# Unary comma: a one-element array would otherwise unroll to a bare string.
+	return ,$lines.ToArray()
+}
+
+function Format-CommentLineWrap {
+	<#
+	.SYNOPSIS
+		Re-wraps an over-long whole-line comment to fit a display-column limit.
+
+	.DESCRIPTION
+		Greedy word wrap that reuses the line's own indentation and comment
+		prefix for every continuation line, so the result is indistinguishable
+		from hand-wrapped prose. A single word longer than the available width
+		is never broken; it gets a line of its own and stays over the limit.
+
+		An Xml comment that carries its own delimiters is expanded into the
+		multi-line form this repo already uses elsewhere: the delimiters move to
+		lines of their own and the content is wrapped and indented between them.
+		The comment's extent is unchanged.
+
+	.OUTPUTS
+		The wrapped lines, or $null when the line is not a whole-line comment or
+		already fits.
+	#>
+	param(
+		[Parameter(Mandatory)][AllowEmptyString()][string] $Line,
+		[Parameter(Mandatory)][ValidateSet('PowerShell', 'CLike', 'Xml')][string] $Language,
+		[Parameter(Mandatory)][int] $MaxWidth,
+		[Parameter(Mandatory)][int] $TabWidth
+	)
+
+	if ((Get-CommentDisplayWidth -Line $Line -TabWidth $TabWidth) -le $MaxWidth) { return $null }
+
+	$trimmed = $Line.Trim()
+	$leadingWhitespace = ConvertTo-TabIndent -Indent $Line.Substring(0, $Line.Length - $Line.TrimStart().Length) -TabWidth $TabWidth
+
+	if ($Language -eq 'Xml') {
+		$opens = $trimmed.StartsWith('<!--')
+		$closes = $trimmed.EndsWith('-->')
+		$content = $trimmed
+		if ($opens) { $content = $content.Substring(4) }
+		if ($closes) { $content = $content.Substring(0, $content.Length - 3) }
+		$content = $content.Trim()
+		if ($content.Length -eq 0) { return $null }
+
+		$contentIndent = $leadingWhitespace
+		if ($opens) { $contentIndent = "$leadingWhitespace`t" }
+
+		$out = New-Object System.Collections.ArrayList
+		if ($opens) { [void]$out.Add("$leadingWhitespace<!--") }
+		foreach ($piece in (Split-CommentWords -Body $content -Head $contentIndent -MaxWidth $MaxWidth -TabWidth $TabWidth)) {
+			[void]$out.Add("$contentIndent$piece")
+		}
+		if ($closes) { [void]$out.Add("$leadingWhitespace-->") }
+
+		if ($out.Count -eq 0) { return $null }
+		if ($out.Count -eq 1 -and $out[0] -eq $Line) { return $null }
+		return $out.ToArray()
+	}
+
+	$prefix = $null
+	$body = $null
+	if ($Language -eq 'PowerShell') {
+		# A help block's delimiters are left alone; its content lines carry no
+		# prefix of their own, so they wrap on indentation like Xml content.
+		if ($trimmed.StartsWith('<#') -or $trimmed.StartsWith('#>')) { return $null }
+		if ($trimmed.StartsWith('#')) { $prefix = '#'; $body = $trimmed.Substring(1) }
+		else { $prefix = ''; $body = $trimmed }
+	}
+	else {
+		if ($trimmed.StartsWith('///')) { $prefix = '///'; $body = $trimmed.Substring(3) }
+		elseif ($trimmed.StartsWith('//')) { $prefix = '//'; $body = $trimmed.Substring(2) }
+		else { return $null }
+	}
+
+	$separator = ''
+	if ($body.StartsWith(' ')) { $separator = ' ' }
+	$head = "$leadingWhitespace$prefix$separator"
+
+	$wrapped = New-Object System.Collections.ArrayList
+	foreach ($piece in (Split-CommentWords -Body $body -Head $head -MaxWidth $MaxWidth -TabWidth $TabWidth)) {
+		[void]$wrapped.Add("$head$piece")
+	}
+
+	# A single line is still progress when the run of interior whitespace it
+	# collapses is what pushed the line over; only an unchanged line is refused.
+	if ($wrapped.Count -eq 0) { return $null }
+	if ($wrapped.Count -eq 1 -and $wrapped[0] -eq $Line) { return $null }
+	return $wrapped.ToArray()
+}
+
+function Measure-CodeComplexity {
+	<#
+	.SYNOPSIS
+		Counts decision points in the code a comment block introduces.
+
+	.DESCRIPTION
+		A keyword and operator count, not a parsed control-flow graph: enough to
+		tell a dense branching region from ordinary straight-line code, with no
+		AST or language service. Scanning starts at the first line after the
+		comment and stops at the end of the enclosing block (brace depth for
+		C-family and PowerShell) or after MaxWindow lines, whichever comes
+		first, so the score describes the code the comment actually introduces.
+
+		Xml scores zero: a project file or view has no control flow to be
+		complex.
+
+	.OUTPUTS
+		The decision-point count. McCabe complexity is this plus one.
+	#>
+	param(
+		[Parameter(Mandatory)][AllowEmptyCollection()][AllowEmptyString()][string[]] $Lines,
+		[Parameter(Mandatory)][int] $StartIndex,
+		[Parameter(Mandatory)][ValidateSet('PowerShell', 'CLike', 'Xml')][string] $Language,
+		[int] $MaxWindow = 40
+	)
+
+	if ($Language -eq 'Xml') { return 0 }
+
+	$patterns = if ($Language -eq 'PowerShell') {
+		@('(?i)\bif\s*\(', '(?i)\belseif\s*\(', '(?i)\bfor\s*\(', '(?i)\bforeach\s*\(',
+			'(?i)\bwhile\s*\(', '(?i)\bswitch\s*[\(-]', '(?i)\bcatch\b', '(?i)\btrap\b',
+			'(?i)\bwhere-object\b', '\s-and\s', '\s-or\s')
+	}
+	else {
+		@('\bif\s*\(', '\bfor\s*\(', '\bforeach\s*\(', '\bwhile\s*\(', '\bcase\b',
+			'\bcatch\s*\(', '&&', '\|\|', '\?\?', '(?<![\?\w])\?(?![\?\.\w])')
+	}
+
+	$score = 0
+	$depth = 0
+	$seenBody = $false
+	$limit = [Math]::Min($Lines.Count, $StartIndex + $MaxWindow)
+
+	for ($i = $StartIndex; $i -lt $limit; $i++) {
+		$text = $Lines[$i]
+		$bare = $text.Trim()
+		if ($bare.StartsWith('//') -or $bare.StartsWith('#')) { continue }
+
+		foreach ($pattern in $patterns) {
+			$score += ([regex]::Matches($text, $pattern)).Count
+		}
+
+		$opens = ([regex]::Matches($text, '\{')).Count
+		$closes = ([regex]::Matches($text, '\}')).Count
+		$depth += $opens - $closes
+		if ($opens -gt 0) { $seenBody = $true }
+		if ($seenBody -and $depth -le 0) { break }
+	}
+
+	return $score
 }
 
 function Get-CommentLineClassification {
@@ -321,12 +603,24 @@ function Get-CommentHygieneViolations {
 	#>
 	param(
 		[Parameter(Mandatory)][string[]] $Files,
-		[hashtable] $LineFilter
+		[hashtable] $LineFilter,
+		[string] $RepoRoot
 	)
+
+	if ([string]::IsNullOrWhiteSpace($RepoRoot)) {
+		$RepoRoot = (Resolve-Path (Join-Path $PSScriptRoot '../..')).Path
+	}
+	$editorConfig = Get-CommentHygieneEditorConfig -RepoRoot $RepoRoot
 
 	$categories = Get-CommentHygieneCategories
 	$violations = New-Object System.Collections.ArrayList
 	$maxImplCommentChars = 200
+
+	# Raised budget for a comment introducing a dense branching region, where the
+	# reader needs the invariants spelled out and 200 characters buys two
+	# sentences. Measure-CodeComplexity decides; nothing opts in by hand.
+	$extendedImplCommentChars = 600
+	$complexityThreshold = 10
 
 	foreach ($file in $Files) {
 		if (-not (Test-Path -LiteralPath $file)) { continue }
@@ -363,6 +657,19 @@ function Get-CommentHygieneViolations {
 				}
 			}
 
+			# Physical width, from .editorconfig's max_line_length, applied to every comment
+			# line including doc comments: a doc comment is exempt from the content budget
+			# because of what it says, not because it may run off the screen.
+			$displayWidth = Get-CommentDisplayWidth -Line $lines[$i] -TabWidth $editorConfig.TabWidth
+			if ($displayWidth -gt $editorConfig.MaxLineLength) {
+				[void]$violations.Add([PSCustomObject]@{
+					File     = $file
+					Line     = $lineNumber
+					Category = 'comment-line-too-long'
+					Text     = ("{0} columns (max {1}): {2}" -f $displayWidth, $editorConfig.MaxLineLength, $bodies[$i].Trim())
+				})
+			}
+
 			# Xml-only: XML forbids a literal "--" anywhere in comment content, not just next to
 			# "-->", so the usual em-dash-to-"--" fix is invalid here; use a single "-" instead.
 			if ($language -eq 'Xml' -and $bodies[$i] -match '--') {
@@ -388,7 +695,14 @@ function Get-CommentHygieneViolations {
 			if ($blockLength -gt 0) {
 				$blockIndexes = $blockStart..($blockStart + $blockLength - 1)
 				$totalChars = [int]($blockIndexes | ForEach-Object { $bodies[$_].Trim().Length } | Measure-Object -Sum).Sum
-				if ($totalChars -gt $maxImplCommentChars) {
+
+				$budget = $maxImplCommentChars
+				if ($totalChars -gt $budget) {
+					$complexity = Measure-CodeComplexity -Lines $lines -StartIndex ($blockStart + $blockLength) -Language $language
+					if ($complexity -ge $complexityThreshold) { $budget = $extendedImplCommentChars }
+				}
+
+				if ($totalChars -gt $budget) {
 					# Blame only this diff's contribution: skip if the untouched lines alone already exceeded budget.
 					$untouchedChars = 0
 					if ($allowedLines) {
@@ -397,12 +711,12 @@ function Get-CommentHygieneViolations {
 							$untouchedChars = [int]($untouchedIndexes | ForEach-Object { $bodies[$_].Trim().Length } | Measure-Object -Sum).Sum
 						}
 					}
-					if ($untouchedChars -le $maxImplCommentChars) {
+					if ($untouchedChars -le $budget) {
 						[void]$violations.Add([PSCustomObject]@{
 							File     = $file
 							Line     = $blockStart + 1
 							Category = 'comment-too-long'
-							Text     = ("{0} chars: {1}" -f $totalChars, $bodies[$blockStart].Trim())
+							Text     = ("{0} chars (budget {1}): {2}" -f $totalChars, $budget, $bodies[$blockStart].Trim())
 						})
 					}
 				}
@@ -420,11 +734,15 @@ function Get-CommentHygieneViolations {
 Export-ModuleMember -Function @(
 	'Get-CommentHygieneCategories',
 	'Get-CommentBody',
+	'Get-CommentDisplayWidth',
+	'Get-CommentHygieneEditorConfig',
 	'Get-CommentHygieneLanguage',
 	'Get-CommentLineClassification',
 	'Get-CommentHygieneViolations',
 	'Get-NonAsciiReplacementMap',
 	'Get-NonAsciiPunctuationPattern',
+	'Format-CommentLineWrap',
+	'Measure-CodeComplexity',
 	'Repair-CommentLine',
 	'Set-CommentHygieneFileContent'
 )

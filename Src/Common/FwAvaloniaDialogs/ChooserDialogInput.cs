@@ -22,7 +22,8 @@ namespace FwAvaloniaDialogs
 	/// The LCModel-free input to the reusable Avalonia chooser dialog. The product edge (the LexText launcher)
 	/// builds this from a possibility list / reference target set so the Avalonia layer never sees an
 	/// <c>ICmObject</c>: candidates are plain <see cref="DetailChoiceOption"/>s (key = guid string, name = display
-	/// text, optional <see cref="DetailChoiceOption.Depth"/> rendered as a FLAT indented list -- NOT a tree),
+	/// text, optional <see cref="DetailChoiceOption.Depth"/> rendered as a FLAT indented list --
+	/// NOT a tree),
 	/// and the current selection / result are exchanged as guid-string keys.
 	/// </summary>
 	public sealed class ChooserDialogInput
@@ -52,7 +53,8 @@ namespace FwAvaloniaDialogs
 
 		/// <summary>
 		/// When true the candidates are presented as a COLLAPSIBLE TREE built from the
-		/// <see cref="DetailChoiceOption.Depth"/> sequence -- a candidate's children are the following candidates with
+		/// <see cref="DetailChoiceOption.Depth"/> sequence -- a candidate's children are the
+		/// following candidates with
 		/// Depth+1 until Depth drops back (possibility lists arrive in document order with Depth, which fully
 		/// determines the tree). When false (the default) the candidates render as the FLAT indented list
 		/// (the shared <c>FwOptionChooser</c>). When a search term is active the hierarchical view falls

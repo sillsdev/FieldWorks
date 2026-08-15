@@ -12,7 +12,8 @@
 	     HIERARCHICAL mode: a search box over a VIRTUALIZING TreeView of the candidates (folded from their
 	     Depth sequence); while a search term is active the tree is hidden and a FLAT filtered results list is shown
 	     instead (so filtered-tree expansion virtualization is sidestepped). Single-select returns the clicked
-	     node's key; multi-select shows per-node checkboxes (independent checks - legacy default). Visible text is
+		node's key; multi-select shows per-node checkboxes (independent checks - legacy default).
+		Visible text is
 	     localized via FwAvaloniaDialogsStrings; AutomationIds stay stable + nonlocalized. -->
 	<DockPanel>
 		<!-- TabIndex=1 pushes the button strip AFTER the content in tab order; it is declared
@@ -64,8 +65,12 @@
 				</TreeView.Styles>
 				<TreeView.ItemTemplate>
 					<TreeDataTemplate ItemsSource="{Binding Children}" x:DataType="vm:ChooserTreeNode">
-						<!-- Whole-row toggle: a transparent row owns the click so clicking anywhere (not just the box)
-						     toggles the item. The CheckBox is display-only so it never double-toggles. -->
+						<!--
+							Whole-row toggle: a transparent row owns the click so clicking
+							anywhere (not just the box)
+							toggles the item. The CheckBox is display-only so it never
+							double-toggles.
+							-->
 						<Border Background="Transparent" PointerReleased="OnRowPointerReleased">
 							<StackPanel Orientation="Horizontal">
 								<CheckBox IsChecked="{Binding IsChecked, Mode=TwoWay}"

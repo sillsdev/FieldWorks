@@ -454,7 +454,8 @@ namespace SIL.FieldWorks.Common.RootSites.RenderBenchmark
 		}
 
 		/// <summary>
-		/// Stress: 50 sections, each with a single verse -- forces massive paragraph layout overhead.
+		/// Stress: 50 sections, each with a single verse -- forces massive paragraph layout
+		/// overhead.
 		/// </summary>
 		private void CreateManyParagraphsScenario()
 		{

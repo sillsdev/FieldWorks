@@ -364,7 +364,8 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(m_sense.StatusRA, Is.EqualTo(m_statusConfirmed));
 		}
 
-		// LexEntryParts.xml's Publish In chooserLink (tool="publicationsEdit", empty guid target) must compose onto the row, mirroring the legacy ReallySimpleListChooser jump LinkLabel.
+		// LexEntryParts.xml's Publish In chooserLink (tool="publicationsEdit", empty guid target)
+		// must compose onto the row, mirroring the legacy ReallySimpleListChooser jump LinkLabel.
 		[Test]
 		public void Compose_PublishIn_CarriesThePublicationsJumpLink_WithEmptyTarget()
 		{

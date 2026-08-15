@@ -117,7 +117,9 @@ namespace SIL.FieldWorks.Common.RenderVerification
 			m_dataTree = new DataTree();
 			m_dataTree.Init(m_mediator, m_propertyTable, null);
 
-			// The form is shown offscreen (Opacity=0) after ShowObject because only the OnPaint -> HandleLayout1(fFull=false) -> MakeSliceVisible path creates handles and RootBoxes.
+			// The form is shown offscreen (Opacity=0) after ShowObject because only the OnPaint
+			// -> HandleLayout1(fFull=false) -> MakeSliceVisible path creates handles and
+			// RootBoxes.
 			m_hostForm = new Form
 			{
 				FormBorderStyle = FormBorderStyle.None,

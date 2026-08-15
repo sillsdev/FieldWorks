@@ -32,7 +32,9 @@
 		<ProjectReference Include="..\..\FwAvalonia\FwAvalonia.csproj" />
 	</ItemGroup>
 
-	<!-- Reuse the PNG snapshot harness (DialogSnapshot, owned by FwAvaloniaTests): a read-only link,
+	<!--
+		Reuse the PNG snapshot harness (DialogSnapshot, owned by FwAvaloniaTests): a read-only
+		link,
 	     no second copy, capturing a real Skia-rendered frame at each interaction stage for visual
 	     review. -->
 	<ItemGroup>
