@@ -36,10 +36,14 @@ jobs:
         Set-Content -Path check_results.log -Value $log -NoNewline
         # Put the results into the job summary
         Add-Content -Path $env:GITHUB_STEP_SUMMARY -Value $log
-        # Put the results into a multi-line environment variable to use in the next step
-        Add-Content -Path $env:GITHUB_ENV -Value 'check_results<<###LINT_DELIMITER###'
+        # Put the results into a multi-line environment variable to use in the next step.
+        # $log echoes the PR's own commit messages, so a static heredoc marker could be
+        # reproduced in a commit to close the block early and inject arbitrary variables.
+        # A random per-run delimiter cannot be known in advance, so the content is inert.
+        $delimiter = "LINT_EOF_$([guid]::NewGuid().ToString('N'))"
+        Add-Content -Path $env:GITHUB_ENV -Value "check_results<<$delimiter"
         Add-Content -Path $env:GITHUB_ENV -Value $log
-        Add-Content -Path $env:GITHUB_ENV -Value '###LINT_DELIMITER###'
+        Add-Content -Path $env:GITHUB_ENV -Value $delimiter
     # add a comment on the PR if the commit message linting failed
     - name: Comment on PR
       if: failure()
