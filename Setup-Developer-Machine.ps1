@@ -230,7 +230,7 @@ if ($InstallerDeps) {
 			}
 		}
 	} elseif (Test-Path $lcmTarget) {
-		Write-Host "[OK] Localizations/LCM already exists" -ForegroundColor Green
+		Write-Host "[OK] Localizations/LCMRepo already exists" -ForegroundColor Green
 	}
 }
 
