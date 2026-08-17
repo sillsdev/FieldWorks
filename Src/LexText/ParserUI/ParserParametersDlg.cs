@@ -43,6 +43,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		private const string MaxInfixes = "MaxInfixes";
 		private const string MaxInterfixes = "MaxInterfixes";
 		private const string MaxRoots = "MaxRoots";
+		private const string MaxAlternatives = "MaxAlternatives";
 		private const string MaxAnalysesToReturn = "MaxAnalysesToReturn";
 
 		#region Data members
@@ -280,7 +281,8 @@ namespace SIL.FieldWorks.LexText.Controls
 			m_dataGrid2.TableStyles[0].GridColumnStyles[2].Width = 130;
 			m_dataGrid2.TableStyles[0].GridColumnStyles[4].Width = 160;
 			m_dataGrid2.TableStyles[0].GridColumnStyles[6].Width = 90;
-			m_dataGrid2.TableStyles[0].GridColumnStyles[7].Width = 400;
+			m_dataGrid2.TableStyles[0].GridColumnStyles[7].Width = 100;
+			m_dataGrid2.TableStyles[0].GridColumnStyles[8].Width = 400;
 
 			m_compoundRules = compoundRules;
 			if (m_compoundRules?.Count > 0)
@@ -305,6 +307,8 @@ namespace SIL.FieldWorks.LexText.Controls
 				hcElem.Add(new XElement(NoDefaultCompounding, false));
 			if (hcElem.Element(MaxRoots) == null)
 				hcElem.Add(new XElement(MaxRoots, 2));
+			if (hcElem.Element(MaxAlternatives) == null)
+				hcElem.Add(new XElement(MaxAlternatives, 0));
 			if (hcElem.Element(NotOnClitics) == null)
 				hcElem.Add(new XElement(NotOnClitics, true));
 			if (hcElem.Element(AcceptUnspecifiedGraphemes) == null)
@@ -367,6 +371,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			tblHC.Columns.Add(AcceptUnspecifiedGraphemes, typeof(bool));
 			tblHC.Columns.Add(GuessRoots, typeof(bool));
 			tblHC.Columns.Add(MergeAnalyses, typeof(bool));
+			tblHC.Columns.Add(MaxAlternatives, typeof(int));
 			tblHC.Columns.Add(Strata, typeof(string));
 			return tblHC;
 		}
