@@ -496,6 +496,10 @@ try {
 
 		# Initialize Visual Studio Developer environment
 		Initialize-VsDevEnvironment
+
+		# Initialize-VsDevEnvironment can drop our previously imported modules. Re-import them.
+		Import-Module $helpersPath -Force
+
 		Test-CvtresCompatibility
 
 		if ($BuildInstaller -or $BuildPatch) {
