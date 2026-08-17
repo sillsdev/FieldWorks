@@ -1466,6 +1466,9 @@ namespace SIL.FieldWorks.XWorks
 				{
 					continue;
 				}
+				// The AI-analysis export is opt-in, so it stays out of the list entirely when unset.
+				if (IsAiExportTemplate(document) && !AiExportGate.IsEnabled())
+					continue;
 				XmlNode node = document.SelectSingleNode("//FxtDocumentDescription");
 				if (node == null)
 					continue;
@@ -1496,6 +1499,19 @@ namespace SIL.FieldWorks.XWorks
 				}
 			}
 
+		}
+
+		/// <summary>Value of the export template's type attribute that selects the AI-analysis export.</summary>
+		private const string ksAiExportTemplateType = "grammarTextsAI";
+
+		/// <summary>
+		/// True when the export template describes exporting a grammar and texts for AI analysis.
+		/// </summary>
+		internal static bool IsAiExportTemplate(XmlDocument document)
+		{
+			var templateRootNode = document.SelectSingleNode("//template");
+			return templateRootNode != null
+				&& XmlUtils.GetOptionalAttributeValue(templateRootNode, "type", "fxt") == ksAiExportTemplateType;
 		}
 
 		/// <summary>
@@ -1553,7 +1569,7 @@ namespace SIL.FieldWorks.XWorks
 				case "phonology":
 					ft.m_ft = FxtTypes.kftPhonology;
 					break;
-				case "grammarTextsAI":
+				case ksAiExportTemplateType:
 					ft.m_ft = FxtTypes.kftGrammarTextsAI;
 					break;
 				default:

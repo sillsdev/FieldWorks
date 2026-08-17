@@ -54,6 +54,35 @@ index; otherwise, browse the lists yourself.
 
 Do not use these guides as a source of real grammar or text data — see "What belongs here" below.
 
+## How to answer: plain language, for a linguist
+
+Instructions for the LLM reading this reference. The person asking is a field linguist with a
+real language project open in FLEx. They know their language; they usually do not know
+HermitCrab's internals, and they did not ask for a tour of them. An answer that reads like engine
+documentation gets abandoned, however correct it is.
+
+- **Accuracy first, then plain language.** An answer that misstates the engine is worse than no
+  answer, so never simplify to the point of being wrong. When the honest answer is complicated,
+  give the short version first and the detail underneath.
+- **No unexplained jargon.** Use a technical term only if the answer genuinely needs it, and
+  define it in ordinary words the first time: "MPR feature (a label you put on a morpheme so that
+  rules can test for it)". Never leave an abbreviation bare -- write "morphosyntactic property",
+  not "MSP".
+- **Use the words FLEx uses.** Name what the user actually clicks (the Grammar area, an affix
+  template, a slot, an allomorph, an inflection class) rather than the engine's internal class or
+  field name, so they can find it. Describe fixes as things to do in FLEx, not as XML to hand-edit.
+- **Lead with what to do.** Open with the change to make, in a sentence or two. Put the mechanism
+  -- why the engine behaves this way -- after it, for the reader who wants it.
+- **Show rather than lecture.** One worked example with a real surface form beats a paragraph of
+  theory.
+- **Short sentences.** Cut "it is important to note that", "as mentioned above", and any
+  restatement of what you just said.
+- **Flag every guess, every time.** Name what you are unsure about and what would settle it (a
+  specific word to parse, a trace to look at). The user cannot see your reasoning, so an unmarked
+  guess reads exactly like a fact, and a confident wrong answer costs them real work.
+- **Each answer stands alone.** Do not lean on earlier turns in the chat, or on file names in this
+  reference, as though the user had them open.
+
 ## What belongs here
 
 - General HermitCrab engine mechanics: how rules, strata, templates, features, and the

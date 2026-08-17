@@ -43,6 +43,26 @@ typically under `Documents\My FieldWorks\<project name>\`)
 
 This produces the second file, `YourProject-hc.xml` — that's your grammar.
 
+### Or export from inside FLEx, which also gets your texts
+
+Newer FieldWorks builds can do this without the command line, and can include your interlinear
+texts alongside the grammar: **File > Export**, then choose *Export Grammar and Texts for AI
+Analysis*. You pick which texts to include (the picker lists a word count and an analysis count
+for each one) and a folder; FLEx writes `HCGrammar.xml` plus one `.flextext` file per selected
+text into that folder.
+
+This export is off by default. To turn it on, set the environment variable `FLEX_AI_EXPORT` to `1`
+**before** starting FieldWorks — it only sees the environment it was launched with, so setting the
+variable while FLEx is running changes nothing. To set it for your Windows account permanently,
+paste this into PowerShell:
+
+```powershell
+[Environment]::SetEnvironmentVariable('FLEX_AI_EXPORT', '1', 'User')
+```
+
+Then start FieldWorks again. If the option still isn't in the Export list, your FieldWorks version
+predates it — use the `GenerateHCConfig.exe` steps above instead.
+
 ## Step 2 — Copy the XML into ChatGPT or Claude
 
 Open the exported XML file, copy its contents, and paste them into your chat with ChatGPT
@@ -76,6 +96,16 @@ Some examples of what to ask, once both your grammar and the reference URL are i
 - "How should I model a class of nouns whose plural is irregular, given HermitCrab's
   mechanisms?"
 - "Walk through how stratum `<name>` would apply to the stem `<form>`."
+
+The reference asks the LLM to answer in plain language, to define any technical term it uses, and
+to say plainly when it is guessing. If an answer still reads like engine documentation, ask for it
+again: "explain that without the technical terms, and tell me what to change in FLEx."
+
+## A note on trusting the answers
+
+This is AI. It can be very wrong, and it can be wrong while sounding certain. Everything it says
+about your grammar is a hypothesis to test, not a finding: understand the change it proposes,
+re-parse the words you care about, and confirm the result yourself before you keep it.
 
 ## A note on privacy
 

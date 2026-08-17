@@ -3,6 +3,8 @@
 	<FxtDocumentDescription dataLabel="Grammar and Texts" formatLabel="XML for AI Analysis"
 		defaultExtension="" filter="">Export Grammar and Texts for AI Analysis
 
+WARNING: this is AI. It can be very wrong, and it can be wrong while sounding certain. Treat anything it tells you about your grammar or your texts as a suggestion to check against your own data, never as a finding. Understand a change, and confirm it yourself, before you apply it to your project.
+
 Writes this project's HermitCrab grammar (HCGrammar.xml) and one .flextext file per selected text into a folder you choose, ready to hand to an LLM (ChatGPT, Claude, etc.) for linguistic analysis.
 
 Grammars and interlinear texts have real gotchas an LLM will not know about on its own -- have it read the AI Parser Help reference first by pasting this raw URL into your chat: https://raw.githubusercontent.com/sillsdev/FieldWorks/main/Docs/ai-parser-help/README.md
