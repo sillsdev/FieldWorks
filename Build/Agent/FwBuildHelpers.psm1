@@ -749,6 +749,7 @@ function Convert-CoberturaPathsToRepoRelative {
 Export-ModuleMember -Function @(
 	# From FwBuildEnvironment.psm1
 	'Initialize-VsDevEnvironment',
+	'Get-VsToolchainInfo',
 	'Get-MSBuildPath',
 	'Invoke-MSBuild',
 	'Get-VSTestPath',

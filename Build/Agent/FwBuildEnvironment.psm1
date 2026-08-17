@@ -724,6 +724,7 @@ Export-ModuleMember -Function @(
     'Test-VsDevEnvironmentActive',
     'Initialize-VsDevEnvironment',
 	'Test-CvtresCompatibility',
+	'Get-CvtresDiagnostics',
     'Get-MSBuildPath',
     'Invoke-MSBuild',
     'Get-VSTestPath'
