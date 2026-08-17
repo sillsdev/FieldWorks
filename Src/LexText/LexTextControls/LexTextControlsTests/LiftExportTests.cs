@@ -489,11 +489,11 @@ namespace LexTextControlsTests
 		[SetUp]
 		public void CreateMockCache()
 		{
+			// NUnit shares one fixture instance across the tests, so these all outlive the cache that filled them.
 			m_mapSemanticDomains.Clear();
 			m_mapPartsOfSpeech.Clear();
 			m_mapAcademicDomains.Clear();
 			m_mapPublications.Clear();
-			// NUnit shares one fixture instance across the tests, so these outlive the cache they index.
 			m_customFieldEntryIds.Clear();
 			m_customFieldSenseIds.Clear();
 			m_customFieldAllomorphsIds.Clear();

@@ -61,8 +61,8 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// </summary>
 		private Dictionary<Guid, string> m_CmPossListsReferencedOrCustom = new Dictionary<Guid, string>();
 		/// <summary>
-		/// Maps a possibility list to the name of its LIFT range. Range names are held unescaped, so
-		/// that each is escaped by the rules of the context it is written into.
+		/// Range names are held unescaped, so that each is escaped by the rules of the context it is
+		/// written into.
 		/// </summary>
 		private Dictionary<Guid, string> m_ListsGuidToRangeName = new Dictionary<Guid, string>();
 		private readonly ICmPossibilityListRepository m_repoCmPossibilityLists;
