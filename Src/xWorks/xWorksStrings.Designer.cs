@@ -773,6 +773,15 @@ namespace SIL.FieldWorks.XWorks {
         }
 
         /// <summary>
+        ///   Looks up a localized string similar to The instructions file was not found, so export-instructions.md was not written to the export folder: {0}.
+        /// </summary>
+        internal static string ksAIExportInstructionsMissing {
+            get {
+                return ResourceManager.GetString("ksAIExportInstructionsMissing", resourceCulture);
+            }
+        }
+
+        /// <summary>
         ///   Looks up a localized string similar to Abbreviation.
         /// </summary>
         internal static string ksAbbreviation {

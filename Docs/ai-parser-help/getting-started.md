@@ -48,8 +48,13 @@ This produces the second file, `YourProject-hc.xml` — that's your grammar.
 Newer FieldWorks builds can do this without the command line, and can include your interlinear
 texts alongside the grammar: **File > Export**, then choose *Export Grammar and Texts for AI
 Analysis*. You pick which texts to include (the picker lists a word count and an analysis count
-for each one) and a folder; FLEx writes `HCGrammar.xml` plus one `.flextext` file per selected
-text into that folder.
+for each one) and a folder; FLEx writes `HCGrammar.xml`, one `.flextext` file per selected text,
+and an `export-instructions.md` into that folder.
+
+That last file is why this route is the easy one: it carries the reference links, the answering
+instructions, and the warning about trusting AI answers, so **you can drag and drop all the files
+in the folder into ChatGPT (or Claude) at once and go straight to Step 4 below**.
+Steps 2 and 3 below exist for the command-line route, which produces the grammar file alone.
 
 This export is off by default. To turn it on, set the environment variable `FLEX_AI_EXPORT` to `1`
 **before** starting FieldWorks — it only sees the environment it was launched with, so setting the

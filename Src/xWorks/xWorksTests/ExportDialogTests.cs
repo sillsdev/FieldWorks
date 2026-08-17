@@ -1373,12 +1373,13 @@ namespace SIL.FieldWorks.XWorks
 			code.Representation.set_String(m_cache.DefaultAnalWs, tss);
 		}
 
-		[Test]
-		public void ExportGrammarAndTextsForAI_NoFlexTextListenerRegistered_RecordsFailureAndStillWritesGrammar()
+		/// <summary>
+		/// Gives HCLoader the minimum it needs: ParserParameters as a valid XML fragment and a
+		/// phoneme set carrying morph and word boundary markers, none of which
+		/// CreateCacheWithNewBlankLangProj provides.
+		/// </summary>
+		private void SeedMinimalHCGrammarData()
 		{
-			// HCLoader requires MorphologicalDataOA.ParserParameters to be a valid XML
-			// fragment and a phoneme set with morph/word boundary markers;
-			// CreateCacheWithNewBlankLangProj leaves all of that empty.
 			UndoableUnitOfWorkHelper.Do("Undo", "Redo", m_cache.ActionHandlerAccessor, () =>
 			{
 				m_cache.LanguageProject.MorphologicalDataOA.ParserParameters =
@@ -1388,6 +1389,12 @@ namespace SIL.FieldWorks.XWorks
 				AddBoundaryMarker(LangProjectTags.kguidPhRuleMorphBdry, "+", phonemeSet);
 				AddBoundaryMarker(LangProjectTags.kguidPhRuleWordBdry, "#", phonemeSet);
 			});
+		}
+
+		[Test]
+		public void ExportGrammarAndTextsForAI_NoFlexTextListenerRegistered_RecordsFailureAndStillWritesGrammar()
+		{
+			SeedMinimalHCGrammarData();
 			var tempFolder = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
 			Directory.CreateDirectory(tempFolder);
 			using (var mediator = new Mediator())
@@ -1440,6 +1447,38 @@ namespace SIL.FieldWorks.XWorks
 								new object[] { Path.Combine(tempFolder, "HCGrammar.xml") }));
 
 						Assert.That(File.Exists(Path.Combine(tempFolder, "HCGrammar.xml")), Is.False);
+					}
+				}
+				finally
+				{
+					Directory.Delete(tempFolder, true);
+				}
+			}
+		}
+
+		[Test]
+		public void ExportGrammarAndTextsForAI_CopiesTheShippedInstructionsIntoTheFolder()
+		{
+			SeedMinimalHCGrammarData();
+			var tempFolder = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
+			Directory.CreateDirectory(tempFolder);
+			using (var mediator = new Mediator())
+			using (var propertyTable = new PropertyTable(mediator))
+			{
+				try
+				{
+					using (var exportDlg = new ExportDialog())
+					{
+						exportDlg.SetCache(m_cache);
+						exportDlg.SetPropertyTable(propertyTable);
+						exportDlg.SetSelectedTextsForAIExport(new List<IStText>());
+
+						exportDlg.ExportGrammarAndTextsForAI(new DummyProgressDlg(),
+							new object[] { Path.Combine(tempFolder, "HCGrammar.xml") });
+
+						var instructions = Path.Combine(tempFolder, ExportDialog.ksAiExportInstructionsFileName);
+						Assert.That(File.Exists(instructions), Is.True);
+						Assert.That(File.ReadAllText(instructions), Does.Contain("HCGrammar.xml"));
 					}
 				}
 				finally

@@ -1147,8 +1147,9 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
-		/// Writes the HC grammar (HCGrammar.xml, at outPath) and one .flextext file per
-		/// selected text into the same folder. HCLoader already catches per-item
+		/// Writes the HC grammar (HCGrammar.xml, at outPath), one .flextext file per
+		/// selected text, and the instructions file that tells an LLM how to read them,
+		/// all into the same folder. HCLoader already catches per-item
 		/// linguistic problems internally, so an exception escaping here aborts the
 		/// whole export; a per-text export failure only skips that one text. Runs on
 		/// the background task thread, so it returns the combined warning/failure list
@@ -1162,6 +1163,7 @@ namespace SIL.FieldWorks.XWorks
 			var logger = new GrammarExportLoadLogger(loadMessages);
 			var language = HCLoader.Load(m_cache, logger);
 			XmlLanguageWriter.Save(language, outPath);
+			CopyAiExportInstructions(outFolder, loadMessages);
 			progress.Step(1);
 
 			var texts = m_selectedTextsForAIExport ?? new List<IStText>();
@@ -1173,6 +1175,27 @@ namespace SIL.FieldWorks.XWorks
 				progress.Step(1);
 
 			return loadMessages.Concat(request.Failures).ToList();
+		}
+
+		/// <summary>Name the exported instructions file gets in the export folder.</summary>
+		internal const string ksAiExportInstructionsFileName = "export-instructions.md";
+
+		/// <summary>
+		/// Copies the shipped AI-analysis instructions into <paramref name="outFolder"/>, so that
+		/// dropping the whole folder into a chat carries the reading instructions and reference links
+		/// with it. A missing shipped file is reported in <paramref name="messages"/> instead of
+		/// aborting, since the exported grammar and texts are still usable without it.
+		/// </summary>
+		private static void CopyAiExportInstructions(string outFolder, List<string> messages)
+		{
+			var shippedFile = Path.Combine(FwDirectoryFinder.CodeDirectory, "Language Explorer",
+				"Export Templates", "AIExportInstructions.md");
+			if (!File.Exists(shippedFile))
+			{
+				messages.Add(string.Format(xWorksStrings.ksAIExportInstructionsMissing, shippedFile));
+				return;
+			}
+			File.Copy(shippedFile, Path.Combine(outFolder, ksAiExportInstructionsFileName), true);
 		}
 
 		/// ------------------------------------------------------------------------------------
