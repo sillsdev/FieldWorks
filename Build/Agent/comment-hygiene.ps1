@@ -171,6 +171,21 @@ if ($Full) {
 	exit 0
 }
 
+# The build and test CI steps both invoke this gate over the same tree, which would
+# annotate every violation twice. The first run marks the job so the rest skip.
+if ($env:GITHUB_ACTIONS -eq 'true') {
+	if ($env:FW_COMMENT_HYGIENE_REPORTED -eq '1') {
+		Write-Host 'comment-hygiene: already reported earlier in this job.'
+		exit 0
+	}
+	if (-not [string]::IsNullOrWhiteSpace($env:GITHUB_ENV)) {
+		# UTF8Encoding($false): appending a BOM mid-file would corrupt the
+		# environment file the runner parses when the step ends.
+		[System.IO.File]::AppendAllText($env:GITHUB_ENV, "FW_COMMENT_HYGIENE_REPORTED=1`n",
+			(New-Object System.Text.UTF8Encoding($false)))
+	}
+}
+
 $base = Resolve-BaseRef -Explicit $BaseRef
 Write-Host "comment-hygiene: scanning lines added since $base"
 
