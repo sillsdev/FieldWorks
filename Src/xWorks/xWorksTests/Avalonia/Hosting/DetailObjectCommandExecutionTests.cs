@@ -40,7 +40,7 @@ namespace SIL.FieldWorks.XWorks
 	/// materialization <c>OnDetailMenuRequested</c> performs; the resulting <see
 	/// cref="DetailMenuItem"/>
 	///      carries an Execute action that dispatches the command through the mediator
-	///      (<c>ChoiceBase.OnClick</c> -> hidden DataTree/DTMenuHandler colleagues -> UOW mutation).
+	/// (<c>ChoiceBase.OnClick</c> -> hidden DataTree/DTMenuHandler colleagues -> UOW mutation).
 	/// Invoking that Execute is the user clicking the item. We then assert (a) the model mutated and
 	/// (b) re-composing the entry (the same <see cref="DetailComposer.Compose"/> call
 	/// <c>RecordEditView.ShowAvaloniaEntry</c> makes on refresh) reflects it.

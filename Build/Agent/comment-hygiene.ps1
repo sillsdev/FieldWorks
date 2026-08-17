@@ -82,7 +82,15 @@ function Resolve-BaseRef {
 function Get-AddedLineFilter {
 	param([string] $Base)
 
-	$diff = git diff --unified=0 "$Base...HEAD" -- $scopedGlobs 2>$null
+	# Diff the merge base against the WORKING TREE, not HEAD: the scan reads files
+	# from disk, so a committed filter points at stale lines once an auto-fix
+	# rewrites one. CI's tree matches HEAD either way.
+	$mergeBase = git merge-base $Base HEAD 2>$null
+	if ($LASTEXITCODE -ne 0 -or [string]::IsNullOrWhiteSpace($mergeBase)) {
+		throw "git merge-base against '$Base' failed. Is the base ref fetched? (CI needs fetch-depth: 0.)"
+	}
+
+	$diff = git diff --unified=0 $mergeBase.Trim() -- $scopedGlobs 2>$null
 	if ($LASTEXITCODE -ne 0) {
 		throw "git diff against '$Base' failed. Is the base ref fetched? (CI needs fetch-depth: 0.)"
 	}

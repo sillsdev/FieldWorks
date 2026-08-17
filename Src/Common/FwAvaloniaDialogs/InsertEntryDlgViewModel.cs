@@ -74,10 +74,8 @@ namespace FwAvaloniaDialogs
 		private readonly Func<string, IReadOnlyList<FwFeatureNode>> _inflFeaturesForPos;
 		// Guards re-entrancy while the VM seeds the MSA box's main POS during a slot refeed.
 		private string _lastSlotPosId;
-		// The complex-form type options the picker shows (the launcher-supplied types with a
-		// leading "<Not
-		// Applicable>" row whose key is the empty string). The live chosen key is the empty
-		// string for Not-Applicable.
+		// The complex-form type options the picker shows: the launcher-supplied types with a
+		// leading "<Not Applicable>" row keyed by ComplexFormNotApplicableKey.
 		private readonly IReadOnlyList<DetailChoiceOption> _complexFormTypes;
 		private string _complexFormTypeKey;
 		// The morph-type -> complex-form gating map (the data lift of
@@ -132,11 +130,8 @@ namespace FwAvaloniaDialogs
 			MorphTypePicker.OptionCommitted += OnMorphTypeCommitted;
 			SelectMorphTypeInPicker(_morphTypeKey);
 
-			// The duplicate-detection ("matching entries") search. When the launcher supplies it
-			// the matches
-			// pane is shown and re-run as the form changes; otherwise it stays hidden
-			// (HasMatchSearch false). Prime
-			// it from any seeded initial form so a pre-filled lexeme form already lists its duplicates on open.
+			// Prime the matches from any seeded initial form, so a pre-filled lexeme form
+			// already lists its duplicates when the dialog opens.
 			_searchMatches = _input.SearchMatches;
 			HasMatchSearch = _searchMatches != null;
 			if (HasMatchSearch)
@@ -365,9 +360,9 @@ namespace FwAvaloniaDialogs
 		{
 			_morphTypeKey = option?.Key;
 			OnPropertyChanged(nameof(MorphTypeKey));
-			// Re-mark the lexeme form with the chosen type's affix markers (the legacy
-			// cbMorphType_SelectedIndexChanged
-			// BestForm = m_morphType.FormWithMarkers(BestForm)); a circumfix is left untouched by the delegate.
+			// Applies the chosen type's affix markers (legacy
+			// cbMorphType_SelectedIndexChanged: BestForm = FormWithMarkers(BestForm));
+			// a circumfix is left untouched.
 			RemarkFormForMorphType();
 			// Drive the MSA box's grammatical-info class from the chosen morph type (the legacy
 			// InsertEntryDlg -> MSAGroupBox.MorphTypePreference wiring), reconfiguring its
@@ -717,9 +712,9 @@ namespace FwAvaloniaDialogs
 
 		protected override IEnumerable<string> GetValidationErrors()
 		{
-			// The empty-form gate first (legacy LexFormNotEmpty / ksFillInLexForm), and
-			// short-circuit: the morphology
-			// checks are only meaningful for a non-empty form (the legacy runs LexFormNotEmpty before CheckMorphType).
+			// Short-circuit rather than fall through: the morphology checks below are
+			// meaningless on an empty form, which is the legacy order too (LexFormNotEmpty
+			// / ksFillInLexForm before CheckMorphType).
 			if (string.IsNullOrEmpty(BestStagedForm()))
 			{
 				yield return FwAvaloniaDialogsStrings.InsertEntryLexFormNotEmpty;
@@ -729,10 +724,8 @@ namespace FwAvaloniaDialogs
 			if (_validateMorphology == null)
 				yield break;
 
-			// The launcher-supplied CheckMorphType + CircumfixProblem + invalid-form parse
-			// (LCModel-aware). Map each
-			// verdict to its localized inline message (seeded from the legacy ksInvalidLexForm / ksCompleteCircumfix /
-			// ksInvalidForm wording) so the three morphology states surface inline AND gate OK.
+			// _validateMorphology is launcher-supplied because these checks are LCModel-aware
+			// (legacy CheckMorphType / CircumfixProblem); this view-model stays LCModel-free.
 			var forms = _formContext.GetStaged(_input.LexemeForm ?? EmptyField("LexemeForm"));
 			switch (_validateMorphology(forms, _morphTypeKey))
 			{

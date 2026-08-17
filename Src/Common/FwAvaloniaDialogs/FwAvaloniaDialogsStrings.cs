@@ -198,13 +198,9 @@ namespace FwAvaloniaDialogs
 		public static string MsaFillsSlotLabel => Text("FwAvaloniaDialogs.Msa.FillsSlotLabel");
 		public static string MsaChangesToCategoryLabel => Text("FwAvaloniaDialogs.Msa.ChangesToCategoryLabel");
 
-		// Create-a-new-Part-of-Speech catalog chooser -- the inline "Create a new Part of
-		// Speech..." affordance opens the master-category (GOLDEtic) catalog as a hierarchical single-select
-		// ChooserDialog. Seed text matches the canonical legacy MasterCategoryListDlg.resx
-		// wording ($this.Text
-		// "Add from Catalog" and the label1 instruction prompt) so the English fallback is
-		// identical and the
-		// translation memory carries over. APPEND-ONLY.
+		// Create-a-new-POS catalog chooser: opens the GOLDEtic catalog as a
+		// hierarchical single-select ChooserDialog. Seed text matches
+		// MasterCategoryListDlg.resx so translation memory carries over. APPEND-ONLY.
 		public static string CreatePosTitle => Text("FwAvaloniaDialogs.CreatePos.Title");
 		public static string CreatePosPrompt => Text("FwAvaloniaDialogs.CreatePos.Prompt");
 
@@ -229,11 +225,9 @@ namespace FwAvaloniaDialogs
 		public static string MsaCreatorGrammaticalInfoLabel => Text("FwAvaloniaDialogs.MsaCreator.GrammaticalInfoLabel");
 		public static string MsaCreatorCreate => Text("FwAvaloniaDialogs.MsaCreator.Create");
 
-		// The inflection-class picker label shown for the stem/root MSA -- the inflection class
-		// of the selected main POS (the legacy InsertEntryDlg inflection-class affordance, IMoStemMsa.InflectionClassRA,
-		// driven by InflectionClassPopupTreeManager). Seed text matches the canonical field label
-		// "Inflection Class"
-		// (the m3 InflectionClass field label / DataTree "Inflection Class" slice). APPEND-ONLY.
+		// Inflection-class picker label for the stem/root MSA: the class of the selected
+		// main POS (legacy InsertEntryDlg, IMoStemMsa.InflectionClassRA, driven by
+		// InflectionClassPopupTreeManager). APPEND-ONLY.
 		public static string MsaInflectionClassLabel => Text("FwAvaloniaDialogs.Msa.InflectionClassLabel");
 		// The "<None>" row in the inflection-class picker (empty selection is valid). Seeded from the shared
 		// "<None>" / not-sure wording the WinForms inflection-class tree uses (AddNotSureItem).
@@ -270,11 +264,9 @@ namespace FwAvaloniaDialogs
 		/// <summary>Accessible name of the feature-structure editor control.</summary>
 		public static string FeatureEditorName => Text("FwAvaloniaDialogs.FeatureEditor.Name");
 
-		// MSA inflection-feature editor -- the inflection-feature column the MSAGroupBox
-		// shows for inflectional/derivational MSAs (where the WinForms box's "Inflection Features" affordance opens
-		// MsaInflectionFeatureListDlg over IMoInflAffMsa.InflFeatsOA /
-		// IMoDerivAffMsa.FromMsFeaturesOA). Seed text
-		// matches the canonical legacy field caption ("Inflection Features"). APPEND-ONLY.
+		// The inflection-feature column MSAGroupBox shows for inflectional/derivational
+		// MSAs, over IMoInflAffMsa.InflFeatsOA / IMoDerivAffMsa.FromMsFeaturesOA.
+		// APPEND-ONLY.
 		public static string MsaInflectionFeaturesLabel => Text("FwAvaloniaDialogs.Msa.InflectionFeaturesLabel");
 
 		// Standalone feature-structure chooser dialogs -- the Avalonia analogs of the

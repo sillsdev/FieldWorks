@@ -26,7 +26,7 @@ namespace FwAvaloniaDialogs
 	/// * Secondary POS -- a second <see cref="FwPosChooser"/> ("SecondaryPos") for
 	/// <c>m_tcSecondaryPOS</c>,
 	///     shown ONLY for derivational affixes.
-	///   * Affix Type -- a combo ("&lt;Not sure&gt;" / Inflectional / Derivational), the analog of
+	/// * Affix Type -- a combo ("&lt;Not sure&gt;" / Inflectional / Derivational), the analog of
 	///     <c>m_fwcbAffixTypes</c>, shown ONLY for affix morph types. Changing it reconfigures the box (it
 	///     re-derives the <see cref="MsaType"/>), exactly like <c>HandleComboMSATypesChange</c>.
 	/// * Slot -- a combo of inflectional-affix slots, the analog of <c>m_fwcbSlots</c>, shown

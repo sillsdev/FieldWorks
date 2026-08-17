@@ -92,12 +92,13 @@ namespace SIL.FieldWorks.XWorks
 
 		internal static int SnapshotCompileCount => s_snapshotCompileCount;
 
-		// The loaded sources are immutable for the process lifetime, so the layout
-		// lookup is indexed once and compiled definitions are memoized per (starting class,
-		// layout)
-		// -- repeat composes (and the per-item menu peeks below) never rebuild/re-fingerprint the
-		// ~300KB parts snapshot. Class ids and the class hierarchy are fixed LCModel metadata, so
-		// the memo is safe across caches.
+		/// <summary>
+		/// The loaded sources, immutable for the process lifetime: the layout lookup is
+		/// indexed once and compiled definitions are memoized per (starting class, layout),
+		/// so repeat composes and the per-item menu peeks never rebuild or re-fingerprint
+		/// the ~300KB parts snapshot. Class ids and the class hierarchy are fixed LCModel
+		/// metadata, so the memo is safe across caches.
+		/// </summary>
 		private sealed class CompilerSources
 		{
 			public string PartsXml;
@@ -2303,10 +2304,15 @@ namespace SIL.FieldWorks.XWorks
 				}
 			}
 
-			// The complex-form LexEntryRef on a complex-form entry whose components include the
-			// pane object (legacy ChangeItemsInLexEntryRefs: "the LER which has item as a
-			// component"). Null when no such ref exists (the entry is not a complex form of
-			// m_obj).
+			/// <summary>
+			/// Finds the complex-form ref on <paramref name="complexFormEntry"/> whose
+			/// components include <paramref name="component"/> -- the one ref that links them.
+			/// Mirrors legacy ChangeItemsInLexEntryRefs ("the LER which has item as a
+			/// component").
+			/// </summary>
+			/// <returns>
+			/// The matching ref, or null when the entry is not a complex form of the component.
+			/// </returns>
 			private ILexEntryRef FindComplexFormRef(ILexEntry complexFormEntry, ICmObject component)
 			{
 				return complexFormEntry.EntryRefsOS.FirstOrDefault(ler =>
@@ -2469,11 +2475,11 @@ namespace SIL.FieldWorks.XWorks
 				AddReadOnlyRow(node, obj, depth, ResolveShortName(targetHvo));
 			}
 
-			// The reference-sequence/collection dispatch of WalkOtherField: the vector
-			// composes as an editable chooser-backed ReferenceVector where its targets can be
-			// enumerated
-			// (possibility list, entry/sense search, editable back-ref, or generic candidates), else a
-			// read-only joined short-name row.
+			/// <summary>
+			/// Composes a reference-sequence or reference-collection field: an editable
+			/// chooser-backed ReferenceVector when the targets can be enumerated, otherwise a
+			/// read-only row of joined short names.
+			/// </summary>
 			private void WalkReferenceVectorField(ViewNode node, ICmObject obj, int depth, int flid)
 			{
 				var count = _sda.get_VecSize(obj.Hvo, flid);

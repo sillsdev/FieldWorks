@@ -657,9 +657,9 @@ function Get-CommentHygieneViolations {
 				}
 			}
 
-			# Physical width, from .editorconfig's max_line_length, applied to every comment
-			# line including doc comments: a doc comment is exempt from the content budget
-			# because of what it says, not because it may run off the screen.
+			# Physical width from .editorconfig's max_line_length, applied to every
+			# comment line including doc comments: those are budget-exempt for what
+			# they say, not for how wide they run.
 			$displayWidth = Get-CommentDisplayWidth -Line $lines[$i] -TabWidth $editorConfig.TabWidth
 			if ($displayWidth -gt $editorConfig.MaxLineLength) {
 				[void]$violations.Add([PSCustomObject]@{
@@ -703,7 +703,8 @@ function Get-CommentHygieneViolations {
 				}
 
 				if ($totalChars -gt $budget) {
-					# Blame only this diff's contribution: skip if the untouched lines alone already exceeded budget.
+					# Blame only this diff's contribution: skip if the untouched lines alone
+					# already exceeded budget.
 					$untouchedChars = 0
 					if ($allowedLines) {
 						$untouchedIndexes = $blockIndexes | Where-Object { -not $allowedLines.Contains($_ + 1) }

@@ -242,16 +242,15 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 					box.TextChanged += textChanged;
 					_teardown.Add(() => box.TextChanged -= textChanged);
 
-					// Character formatting over a selection. Ctrl+B/I/U toggle bold/italic/
-					// underline on the TextBox's current selection. We chose keyboard shortcuts
-					// over a
-					// floating toolbar: they match the legacy Views editor (FwEditingHelper's
-					// Ctrl+B/I/U), need no extra decorations in the dense detail rows, and act on the same
-					// SelectionStart..SelectionEnd the bidi/clipboard handlers already use. The gesture
-					// only stages when the selection is non-empty (a collapsed caret is a no-op
-					// --
-					// there is no pending format for the next insert) and only on an editable,
-					// non-lossy value (this whole block is gated on value.CanEditRichText already).
+					// Character formatting over a selection: Ctrl+B/I/U toggle bold, italic,
+					// and underline on the TextBox's current selection. Keyboard shortcuts
+					// rather than a floating toolbar: they match the legacy Views editor
+					// (FwEditingHelper's Ctrl+B/I/U), need no decorations in the dense detail
+					// rows, and act on the same SelectionStart..SelectionEnd the bidi and
+					// clipboard handlers already use. An edit is staged only for a non-empty
+					// selection -- a collapsed caret does nothing, since there is no pending
+					// format for the next insert -- and only for an editable, non-lossy
+					// value (value.CanEditRichText).
 					EventHandler<KeyEventArgs> formatKeyDown = (s, e) =>
 					{
 						if ((e.KeyModifiers & KeyModifiers.Control) == 0)

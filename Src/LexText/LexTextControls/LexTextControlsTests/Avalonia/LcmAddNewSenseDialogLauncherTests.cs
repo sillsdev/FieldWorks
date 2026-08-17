@@ -298,17 +298,11 @@ namespace LexTextControlsTests
 				"the first allomorph's own morph type wins over the entry's lexeme-form (stem) morph type");
 		}
 
-		// ----- BuildInput: the slot provider (only ever wired, never invoked, before this test) -----
-
 		[Test]
 		public void BuildInput_FeedsTheSlotProvider()
 		{
-			// InflectionClassesForPos and InflectionFeaturesForPos are both exercised by name
-			// elsewhere, but
-			// SlotsForPos itself was never actually called -- only ever asserted non-null via the
-			// MSA-section shape.
-			// A regression here (e.g. passing the wrong morph-type guid through the closure) would silently leave
-			// the affix "Fills Slot" column empty for a real verb, with no test failing.
+			// A wrong morph-type guid reaching the slot provider silently empties the
+			// affix "Fills Slot" column for a real verb.
 			var input = LcmAddNewSenseDialogLauncher.BuildInput(Cache, _casa, tssCitationForm: null);
 
 			var slots = input.SlotsForPos(_verb.Guid.ToString());

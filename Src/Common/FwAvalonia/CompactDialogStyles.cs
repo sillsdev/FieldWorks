@@ -70,12 +70,9 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 			// Tabs size to content (drop the Fluent min-height floor) for compact rows.
 			yield return Templated<TabItem>(new Thickness(8, 3), 0);
 
-			// NOTE: the deterministic CheckBox style (FwCheckBoxStyle) is NOT added here. It is
-			// applied once,
-			// to every dialog body, by DialogThemeBootstrap.Apply (called from each dialog ctor
-			// in BOTH the
-			// runtime host and the headless dialog tests), so it reaches the headless path that never runs this
-			// runtime chokepoint -- and stays a single application rather than a double one.
+			// CheckBox and RadioButton are deliberately absent: DialogThemeBootstrap adds
+			// FwCheckBoxStyle / FwRadioButtonStyle per dialog body, and adding them here
+			// too would apply each twice.
 
 			yield return new Style(s => s.OfType<TextBlock>())
 			{

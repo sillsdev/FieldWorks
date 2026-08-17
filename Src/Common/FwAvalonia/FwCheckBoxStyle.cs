@@ -158,10 +158,12 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 				Setters = { new Setter(Visual.OpacityProperty, 1d) }
 			};
 
-		// The compact template: a box Border + the check/indeterminate glyphs in a Viewbox, then
-		// the content
-		// presenter for any label. Box and the surrounding StackPanel are sized to `box`, so the layout
-		// footprint is the font-proportional box, not the Fluent 32px slot.
+		/// <summary>
+		/// The compact template: a box Border with the check and indeterminate glyphs in a
+		/// Viewbox, then the content presenter for any label. The box and the surrounding
+		/// StackPanel are sized to <paramref name="box"/>, so the layout footprint is the
+		/// font-proportional box rather than the Fluent 32px slot.
+		/// </summary>
 		private static Control CreateTemplate(double box)
 		{
 			// NOTE: do NOT set Opacity locally -- a local value outranks a Style setter, so

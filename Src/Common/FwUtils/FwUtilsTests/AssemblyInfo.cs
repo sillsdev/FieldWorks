@@ -17,4 +17,5 @@ using System.Runtime.CompilerServices;
 // [assembly: AssemblyCopyright("(c) 2003, SIL International")] // Sanitized by
 // convert_generate_assembly_info
 
-// [assembly: System.Runtime.InteropServices.ComVisible(false)] // Sanitized by convert_generate_assembly_info
+// [assembly: System.Runtime.InteropServices.ComVisible(false)] // Sanitized by
+// convert_generate_assembly_info

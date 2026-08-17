@@ -74,11 +74,9 @@ namespace FwAvaloniaDialogs
 			DataContextChanged += OnDataContextChangedApplySearchFieldSpec;
 		}
 
-		// Applies the opt-in search-field spec to the realized search box: the writing system's
-		// font family/size and
-		// right-to-left flow (the same value-application rules the detail view uses for its
-		// per-ws rows -- empty
-		// family / zero size keep the shared defaults). The keyboard-switch callback fires from OnSearchBoxGotFocus.
+		// Applies the search-field spec to the search box: the writing system's font
+		// family/size and RTL flow (empty family or zero size keeps defaults). The
+		// keyboard switch fires from OnSearchBoxGotFocus.
 		private void OnDataContextChangedApplySearchFieldSpec(object sender, System.EventArgs e)
 		{
 			var spec = ViewModel?.SearchField;

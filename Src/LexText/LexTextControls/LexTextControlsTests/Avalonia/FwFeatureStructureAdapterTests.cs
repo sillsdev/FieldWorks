@@ -267,12 +267,9 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		// ----- helpers -----
 
-		// The base (MemoryOnlyBackendProviderRestoredForEachTestTestBase) opens an undoable UOW in TestSetup, so all
-		// creation/writes run directly here with NO UOW wrapper (a nested task would throw
-		// "Nested tasks are not
-		// supported"). The adapter's WriteFeatures runs inside the same open task -- exactly as
-		// the launcher's create
-		// runs inside its own single UOW at runtime.
+		// The base opens an undoable UOW in TestSetup, so helpers write directly with no
+		// wrapper: a nested task would throw "Nested tasks are not supported".
+		// WriteFeatures runs in that same task, as at runtime.
 		private IFsFeatStruc MakeFeatureStructure()
 		{
 			_verb.DefaultFeaturesOA = Cache.ServiceLocator.GetInstance<IFsFeatStrucFactory>().Create();
