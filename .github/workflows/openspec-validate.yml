@@ -6,6 +6,9 @@ on:
       - 'openspec/**'
       - '**/AGENTS.md'
 
+permissions:
+  contents: read
+
 jobs:
   validate-refs:
     runs-on: windows-2022

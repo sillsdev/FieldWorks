@@ -43,6 +43,11 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 
+permissions:
+  # contents: write is required to tag the repo and publish the GitHub Release
+  # (softprops/action-gh-release); no other GITHUB_TOKEN write is needed here.
+  contents: write
+
 jobs:
   debug_build_and_test:
     env:
