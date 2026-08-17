@@ -2,7 +2,6 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-// TEMPORARY comment-hygiene probe, to be reverted: this single line is deliberately far past both the 98-column width limit and the 200-character content budget, so that CI has something real to annotate and we can confirm the advisory path emits warnings without failing the build.
 using System.Collections.Generic;
 using System.Xml;
 using NUnit.Framework;
