@@ -32,7 +32,7 @@ Include the issue number when applicable (e.g., `bugfix/LT-12345-description`).
 
 ### Step 1: Create a Feature Branch
 
-```bash
+```powershell
 # Ensure you're on the latest default branch
 git checkout release/9.3
 git pull origin release/9.3
@@ -50,7 +50,7 @@ git checkout -b feature/my-feature-name
 
 ### Step 3: Push and Create the PR
 
-```bash
+```powershell
 # Push your branch to GitHub
 git push -u origin feature/my-feature-name
 ```
@@ -105,7 +105,7 @@ Before a PR can be merged:
 
 If your branch has conflicts or is behind:
 
-```bash
+```powershell
 # Fetch latest changes
 git fetch origin
 
@@ -140,7 +140,7 @@ Once all requirements are met:
 2. Update any related issues
 3. Verify the changes in the target branch
 
-```bash
+```powershell
 # Delete local branch
 git branch -d feature/my-feature-name
 
@@ -175,7 +175,7 @@ For large features, consider breaking into smaller PRs:
 
 If a merged PR causes issues:
 
-```bash
+```powershell
 # Create a revert PR
 git checkout release/9.3
 git pull

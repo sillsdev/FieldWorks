@@ -8,7 +8,7 @@ using SIL.FieldWorks.Common.FwAvalonia.ViewDefinition;
 namespace FwAvaloniaTests
 {
 	/// <summary>
-	/// Coverage for <see cref="EditorKindMap.Classify"/>: the editor-string →
+	/// Coverage for <see cref="EditorKindMap.Classify"/>: the editor-string ->
 	/// classification mapping that drives the importer's diagnostics for dynamic/obsolete/unknown editors
 	/// and the grouping-node decision. Pins null/empty, the known/dynamic/obsolete sets, case-insensitivity,
 	/// and the whitespace/unknown boundary.
@@ -80,7 +80,7 @@ namespace FwAvaloniaTests
 		public void ClassifyDetailFieldKind_EnumCombo_IsClosedCombo_NotFreeFormText()
 		{
 			// Safety: a closed enum combo must NOT degrade to a free-form editor that could persist
-			// invalid enum values — this is the regression this dispatch arm guards against.
+			// invalid enum values -- this is the regression this dispatch arm guards against.
 			Assert.That(EditorKindMap.ClassifyDetailFieldKind("enumcombobox"),
 				Is.EqualTo(DetailEditorCategory.EnumCombo));
 		}

@@ -25,9 +25,12 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 
 		/// <summary>
 		/// Builds a resolver from a <c>&lt;PartInventory&gt;</c> (or its inner <c>&lt;bin&gt;</c>) element.
-		/// The optional <paramref name="baseClassMap"/> (subclass → base class) mirrors the legacy
-		/// Inventory's class-hierarchy fallback: a ref unresolved on the subclass is retried on its base
-		/// class chain (e.g. <c>MoStemAllomorph-Detail-AsLexemeForm</c> → <c>MoForm-Detail-AsLexemeForm</c>).
+		/// The optional <paramref name="baseClassMap"/> (subclass -> base class) mirrors the
+		/// legacy
+		/// Inventory's class-hierarchy fallback: a ref unresolved on the subclass is retried on
+		/// its base
+		/// class chain (e.g. <c>MoStemAllomorph-Detail-AsLexemeForm</c> ->
+		/// <c>MoForm-Detail-AsLexemeForm</c>).
 		/// </summary>
 		public DictionaryPartResolver(XElement partInventory, IReadOnlyDictionary<string, string> baseClassMap = null)
 		{
@@ -67,7 +70,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 				if (_partsById.TryGetValue($"{currentClass}-{type}-{refName}", out var part)
 					|| _partsById.TryGetValue($"{currentClass}-Detail-{refName}", out part))
 				{
-					// ALL child elements of the part — a part may hold several (e.g. the
+					// ALL child elements of the part -- a part may hold several (e.g. the
 					// <if Disabled=true>/<if Disabled=false> enable/disable pair the grammar detail
 					// layouts use); legacy DataTree processes every child, so importing only the first
 					// dropped the active-state variant (LT: compound-rule Name/Description vanished).

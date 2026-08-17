@@ -56,7 +56,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			MorphTypeKind.DiscontiguousPhrase
 		};
 
-		// The ONE GUID → kind table. The seam is
+		// The ONE GUID -> kind table. The seam is
 		// the cleaner home because it already owns MorphTypeKind and the stem/affix decision, and
 		// both the xWorks composer and any future view can consume it without dragging WinForms
 		// along. This project is deliberately LCModel-free, so the fixed MoMorphTypeTags model GUIDs
@@ -100,7 +100,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		public static bool IsStemType(MorphTypeKind type) => StemTypes.Contains(type);
 
 		/// <summary>
-		/// True if the morph-type GUID classifies as a stem-type — the guid-level twin of the
+		/// True if the morph-type GUID classifies as a stem-type -- the guid-level twin of the
 		/// legacy <c>MorphTypeAtomicLauncher.IsStemType</c> (an unknown guid is not a stem type,
 		/// exactly like the legacy null/guard behavior).
 		/// </summary>

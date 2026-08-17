@@ -91,10 +91,9 @@ namespace FwAvaloniaTests
 		[AvaloniaTest]
 		public void OptionsRenderInline_InsideThePickerItself_NoSecondFloatingDropdown()
 		{
-			// The thick grey border + flaky arrow keys came from AutoCompleteBox opening a SECOND
-			// popup (PART_SuggestionsContainer) nested inside the host flyout. The picker must show
-			// its filter box AND its options list inside its OWN visual tree — the host flyout is
-			// the only popup — so there is no separate grey-chromed dropdown surface to fight.
+			// The thick grey border and flaky arrow keys came from AutoCompleteBox opening a
+			// second nested popup, so the picker must render its filter box and options list
+			// inline rather than via a second popup.
 			var (picker, _, _, _) = ShowStatic();
 			picker.UpdateLayout();
 			Dispatcher.UIThread.RunJobs();
@@ -456,7 +455,7 @@ namespace FwAvaloniaTests
 			window.UpdateLayout();
 			Dispatcher.UIThread.RunJobs();
 
-			// Plain-toggle row 1 ("Sky") — this becomes the range anchor.
+			// Plain-toggle row 1 ("Sky") -- this becomes the range anchor.
 			picker.OptionsList.SelectedIndex = 1;
 			RaiseKey(picker.FilterBox, Key.Enter);
 			var anchorKey = picker.CheckedKeys.Single();

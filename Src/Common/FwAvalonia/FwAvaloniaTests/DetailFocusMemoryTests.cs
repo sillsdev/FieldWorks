@@ -18,7 +18,7 @@ namespace FwAvaloniaTests
 	/// <summary>
 	/// Focus continuity across detail-view re-shows (14.4 usability): the host replaces the entire view
 	/// after every committed edit, so the focused editor (identified by its stable automation id)
-	/// and caret must carry over to the rebuilt view — otherwise tabbing out of a field would
+	/// and caret must carry over to the rebuilt view -- otherwise tabbing out of a field would
 	/// destroy the editor the user just moved into.
 	/// </summary>
 	[TestFixture]
@@ -182,9 +182,9 @@ namespace FwAvaloniaTests
 				"rebuilding the detail view should keep the user at the same scroll position instead of jumping back to the top");
 		}
 
-		// A single-text-field view whose editor's stable automation id is exactly <paramref name="stableId"/>
-		// + ".vern" (null AutomationId falls back to StableId; the WS suffix is the WsTag). This lets the
-		// test reproduce the ghost id ("…@ownerHvo/ghost.vern") and its real successor ("…@newHvo.vern").
+		// A single-text-field view's editor automation id is exactly
+		// <paramref name="stableId"/> + ".vern", reproducing the ghost id
+		// ("...@ownerHvo/ghost.vern") and real successor ("...@newHvo.vern").
 		private static DataTree ViewWithEditorId(string stableId)
 		{
 			var field = new DetailField(stableId, "Lexeme Form", "Form", "vernacular",

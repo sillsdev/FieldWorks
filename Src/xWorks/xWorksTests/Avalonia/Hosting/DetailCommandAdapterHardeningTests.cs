@@ -26,7 +26,8 @@ namespace SIL.FieldWorks.XWorks
 	/// <c>EnsureMenuCommandAdapter</c> targeting: when the target hvo's slice is a lazy,
 	/// unrealized <c>DummyObjectSlice</c> (a sequence with &gt;= <c>DataTree.kInstantSliceMax</c> items
 	/// builds lazy placeholders whose <c>Object</c> is the OWNER, not the target), a naive walk finds no
-	/// matching slice and leaves CurrentSlice pointed wherever the previous interaction left it — the
+	/// matching slice and leaves CurrentSlice pointed wherever the previous interaction left it
+	/// -- the
 	/// command mis-targets or (for Merge's class guard) silently fails. The adapter realizes the
 	/// lazy slices and retries, and fails LOUD (clears CurrentSlice + logs) when no slice can be produced.
 	///
@@ -118,9 +119,9 @@ namespace SIL.FieldWorks.XWorks
 		[Explicit("Requires the live (laid-out, visible) legacy DataTree to realize lazy slices and resolve CurrentSlice; see note above. Runs in the desktop environment.")]
 		public void EnsureMenuCommandAdapter_TargetInLazySliceRange_RealizesAndTargetsTheRightObject()
 		{
-			// The entry has well over DataTree.kInstantSliceMax (20) senses, so the Senses sequence builds
-			// lazy DummyObjectSlices. Target a sense deep in the lazy range — its slice does not exist yet,
-			// so the old single-pass match would have failed and left CurrentSlice mis-pointed.
+			// The entry has well over DataTree.kInstantSliceMax (20) senses, so Senses
+			// builds lazy DummyObjectSlices; a deep target's slice does not exist yet,
+			// so a single-pass match leaves CurrentSlice mis-pointed.
 			Assert.That(m_entry.SensesOS.Count, Is.GreaterThan(20),
 				"precondition: enough senses to force lazy DummyObjectSlices");
 			var deepSenseHvo = m_entry.SensesOS[m_entry.SensesOS.Count - 1].Hvo;

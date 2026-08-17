@@ -114,8 +114,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 		/// <summary>
 		/// Creates a lex entry with triple-nested senses (depth 3, breadth 2).
-		/// 2 senses × 2 subsenses × 2 sub-sub-senses = 14 total senses (2+4+8).
-		/// This is the "slow" scenario — realistic deeply nested entry.
+		/// 2 senses x 2 subsenses x 2 sub-sub-senses = 14 total senses (2+4+8).
+		/// This is the "slow" scenario -- realistic deeply nested entry.
 		/// </summary>
 		private void CreateDeepEntry()
 		{
@@ -255,7 +255,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 		/// <summary>
 		/// Creates a minimal lex entry with a single sense and no optional fields.
-		/// Exercises the "collapsed" view — bare minimum rendering path.
+		/// Exercises the "collapsed" view -- bare minimum rendering path.
 		/// </summary>
 		private void CreateCollapsedEntry()
 		{
@@ -271,7 +271,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			m_entry.CitationForm.VernacularDefaultWritingSystem = MakeRenderString(
 				$"CitationForm - {testName}", Cache.DefaultVernWs);
 
-			// Single sense — minimal entry, no enrichment
+			// Single sense -- minimal entry, no enrichment
 			var senseFactory = Cache.ServiceLocator.GetInstance<ILexSenseFactory>();
 			var sense = senseFactory.Create();
 			m_entry.SensesOS.Add(sense);
@@ -281,7 +281,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// <summary>
 		/// Creates a fully enriched lex entry with all available optional fields populated.
 		/// 4 senses with all sense-level fields, plus full entry enrichment.
-		/// Exercises the "expanded" view — maximum slice count for fields we can safely render.
+		/// Exercises the "expanded" view -- maximum slice count for fields we can safely render.
 		/// </summary>
 		private void CreateExpandedEntry()
 		{
@@ -462,7 +462,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 		/// <summary>
 		/// Verifies the full DataTree rendering for a triple-nested lex entry.
-		/// 2 senses × 2 subsenses × 2 sub-sub-senses = 14 total senses.
+		/// 2 senses x 2 subsenses x 2 sub-sub-senses = 14 total senses.
 		/// This is the "slow" scenario for realistic deep nesting.
 		/// </summary>
 		[Test]
@@ -661,7 +661,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 		/// <summary>
 		/// Verifies the DataTree rendering for a minimal entry with a single sense.
-		/// Exercises the bare minimum rendering path — collapsed view.
+		/// Exercises the bare minimum rendering path -- collapsed view.
 		/// </summary>
 		[Test]
 		public async Task DataTreeRender_Collapsed()
@@ -802,7 +802,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 		/// <summary>
 		/// Measures paint/capture time for the extreme scenario.
-		/// Exercises the full OnPaint → HandlePaintLinesBetweenSlices pipeline
+		/// Exercises the full OnPaint -> HandlePaintLinesBetweenSlices pipeline
 		/// via DrawToBitmap. This provides a baseline for paint optimizations
 		/// (clip-rect culling, double-buffering).
 		/// </summary>
@@ -821,7 +821,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				Assert.That(warmup, Is.Not.Null, "Warm-up capture should succeed");
 				warmup.Dispose();
 
-				// Timed capture: DrawToBitmap → OnPaint → HandlePaintLinesBetweenSlices
+				// Timed capture: DrawToBitmap -> OnPaint -> HandlePaintLinesBetweenSlices
 				var sw = System.Diagnostics.Stopwatch.StartNew();
 				var bitmap = harness.CaptureCompositeBitmap();
 				sw.Stop();
@@ -886,7 +886,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				for (int i = 0; i < dt.Slices.Count; i++)
 					initialWidths[i] = ((Slice)dt.Slices[i]).Width;
 
-				// Force a second paint/layout pass — widths should remain identical
+				// Force a second paint/layout pass -- widths should remain identical
 				var bitmap = harness.CaptureCompositeBitmap();
 				Assert.That(bitmap, Is.Not.Null, "Second paint should succeed");
 				bitmap.Dispose();
@@ -1100,7 +1100,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				Assert.That(capture2.Height, Is.EqualTo(capture1.Height),
 					"Bitmap heights should match");
 
-				// Compare pixel-by-pixel — paint must be deterministic
+				// Compare pixel-by-pixel -- paint must be deterministic
 				int mismatchCount = 0;
 				for (int y = 0; y < capture1.Height; y++)
 				{
@@ -1220,7 +1220,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 				var dt = harness.DataTree;
 
-				// Record positions after full layout (set by OnLayout → HandleLayout1(fFull=true))
+				// Record positions after full layout (set by OnLayout ->
+				// HandleLayout1(fFull=true))
 				var fullLayoutPositions = new int[dt.Slices.Count];
 				var fullLayoutHeights = new int[dt.Slices.Count];
 				for (int i = 0; i < dt.Slices.Count; i++)
@@ -1253,7 +1254,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// <summary>
 		/// Verifies that AutoScrollPosition does not drift across multiple paint passes.
 		/// The paint path adjusts scroll position when slices above the viewport change
-		/// height (e.g., DummyObjectSlice → real slice). After initial convergence,
+		/// height (e.g., DummyObjectSlice -> real slice). After initial convergence,
 		/// scroll position must be stable.
 		/// Failure mode: binary search skips the desiredScrollPosition adjustment for
 		/// above-viewport slices, causing scroll jumps.
@@ -1270,7 +1271,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 				var dt = harness.DataTree;
 
-				// Warm up — first paint triggers layout convergence
+				// Warm up -- first paint triggers layout convergence
 				var warmup = harness.CaptureCompositeBitmap();
 				Assert.That(warmup, Is.Not.Null);
 				warmup.Dispose();
@@ -1458,7 +1459,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// Verifies that slice heights are stable after layout convergence.
 		/// A binary search for the first visible slice depends on accumulated
 		/// heights being deterministic: if heights change between paint calls
-		/// (e.g., because DummyObjectSlice→real changes weren't finalized),
+		/// (e.g., because DummyObjectSlice->real changes weren't finalized),
 		/// the binary search would compute wrong yTop offsets and skip or
 		/// double-show slices.
 		/// After the initial full-layout pass, heights should never change
@@ -1475,7 +1476,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				harness.PopulateSlices(1024, 800, false);
 				Assert.That(harness.SliceCount, Is.GreaterThan(0), "Should have slices");
 
-				// Force full convergence — first paint makes everything real
+				// Force full convergence -- first paint makes everything real
 				var warmup = harness.CaptureCompositeBitmap();
 				Assert.That(warmup, Is.Not.Null);
 				warmup.Dispose();

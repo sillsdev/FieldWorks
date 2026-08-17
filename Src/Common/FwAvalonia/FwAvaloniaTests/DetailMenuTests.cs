@@ -155,9 +155,9 @@ namespace FwAvaloniaTests
 			=> view.GetVisualDescendants().OfType<T>()
 				.FirstOrDefault(c => AutomationProperties.GetAutomationId(c) == automationId);
 
-		// The field-options "⋮" affordance opens the menu on a click OR keyboard activation; both arrive
-		// as Button.Click, so raising it exercises the same path the icon does (no hit-test dependence on
-		// the hover-reveal opacity state).
+		// The field-options "..." affordance opens the menu on a click OR
+		// keyboard activation; both arrive as Button.Click, so raising it exercises
+		// the icon's own path, without depending on hover-reveal opacity.
 		private static void ClickKebab(Button kebab)
 		{
 			kebab.RaiseEvent(new RoutedEventArgs { RoutedEvent = Button.ClickEvent });
@@ -169,7 +169,7 @@ namespace FwAvaloniaTests
 		{
 			var (view, requests) = Show(Field("Gloss", DetailFieldKind.Text, menuId: "mnuDataTree-Help"));
 
-			// The "⋮" field-options button (which replaced right-click) opens the slice menu.
+			// The "..." field-options button (which replaced right-click) opens the slice menu.
 			ClickKebab(Find<Button>(view, "Gloss.FieldMenu"));
 
 			Assert.That(requests, Has.Count.EqualTo(1));
@@ -184,7 +184,7 @@ namespace FwAvaloniaTests
 		{
 			var (view, requests) = Show(Field("Gloss", DetailFieldKind.Text, menuId: "mnuDataTree-Help"));
 
-			// The label does not open the menu; the "⋮" field-options button does.
+			// The label does not open the menu; the "..." field-options button does.
 			RightClick(Find<TextBlock>(view, "Gloss.Label"));
 
 			Assert.That(requests, Is.Empty, "the slice menu now opens only from the field-options button");
@@ -211,7 +211,8 @@ namespace FwAvaloniaTests
 			var (view, requests) = Show(Field("Senses", DetailFieldKind.Header,
 				hotlinksId: "mnuDataTree-Sense-Hotlinks", collapsible: true));
 
-			// The header's "⋮" button raises the hotlinks request; the collapsible toggle (id "Senses")
+			// The header's "..." button raises the hotlinks request; the collapsible toggle (id
+			// "Senses")
 			// is a SEPARATE button that still toggles the section.
 			ClickKebab(Find<Button>(view, "Senses.FieldMenu"));
 
@@ -220,8 +221,10 @@ namespace FwAvaloniaTests
 			Assert.That(requests[0].Field.HotlinksId, Is.EqualTo("mnuDataTree-Sense-Hotlinks"));
 		}
 
-		// Discoverability parity (legacy SummaryCommandControl): a hotlink-bearing section header shows
-		// an ALWAYS-VISIBLE inline command-link strip beneath it, not just the hover-gated "⋮" kebab.
+		// Discoverability parity (legacy SummaryCommandControl): a hotlink-bearing section header
+		// shows
+		// an ALWAYS-VISIBLE inline command-link strip beneath it, not just the hover-gated "..."
+		// kebab.
 		[AvaloniaTest]
 		public void HotlinksStrip_AppearsForHotlinkHeader_IsAlwaysVisible_AndKeepsTheKebab()
 		{
@@ -230,7 +233,8 @@ namespace FwAvaloniaTests
 
 			var strip = FindOrNull<Button>(view, "Senses.Hotlinks");
 			Assert.That(strip, Is.Not.Null, "a header with a HotlinksId renders the inline command strip");
-			// Always visible — NOT hover-gated like the kebab (Opacity 0 / not hit-testable at rest).
+			// Always visible -- NOT hover-gated like the kebab (Opacity 0 / not hit-testable at
+			// rest).
 			Assert.That(strip.IsVisible, Is.True, "the strip stays in the tree");
 			Assert.That(strip.Opacity, Is.EqualTo(1d), "the strip is fully visible at rest, not hover-gated");
 			Assert.That(strip.IsHitTestVisible, Is.True, "the strip is clickable at rest");
@@ -313,7 +317,8 @@ namespace FwAvaloniaTests
 			Assert.That(kebab.Focusable, Is.True, "Tab can reach the field-options button");
 
 			// Focusing it (the keyboard path) reveals it synchronously (hit-testable); the opacity then
-			// fades in over the transition — the same mechanism HoverRevealTests covers in detail.
+			// fades in over the transition -- the same mechanism HoverRevealTests covers in
+			// detail.
 			kebab.Focus();
 			Dispatcher.UIThread.RunJobs();
 			Assert.That(kebab.IsFocused, Is.True, "the opacity-hidden button is keyboard-focusable");
@@ -358,9 +363,9 @@ namespace FwAvaloniaTests
 			Assert.That(executed, Is.EqualTo(1), "picking an item dispatches the host execute action");
 		}
 
-		// Context-menu density: every item pins the explicit compact padding/height of the legacy
-		// WinForms menus (FwAvaloniaDensity tokens), never the (much taller) Fluent theme defaults —
-		// nested submenu items included.
+		// Context-menu density: every item pins the explicit compact
+		// padding/height of legacy WinForms menus (FwAvaloniaDensity tokens),
+		// never the taller Fluent defaults -- nested submenu items included.
 		[AvaloniaTest]
 		public void DetailMenuFlyout_ItemDensity_IsPinnedCompact_IncludingSubmenus()
 		{

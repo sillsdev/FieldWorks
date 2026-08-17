@@ -65,9 +65,9 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			String str = ShowHelp.RemoveSpaces(this.Slice.Label);
 			string helpTopic = "khtpChooseLexicalEntryOrSense-" + str;
 
-			// New-UI gate (mirrors the EntrySequence gate): in New mode launch the Avalonia
-			// Choose-Lexical-Entry-or-Sense dialog (entry path — this ghost component/variant slice selects an
-			// entry); Legacy mode keeps the WinForms LinkEntryOrSenseDlg. Both AddItem the chosen object the same.
+			// New-UI gate (mirrors the EntrySequence gate): New mode launches the Avalonia
+			// Choose-Lexical-Entry-or-Sense dialog (entry path); Legacy mode keeps
+			// LinkEntryOrSenseDlg. Both AddItem the chosen object.
 			var uiMode = m_propertyTable.GetStringProperty("UIMode", null);
 			if (UIModeGates.ShouldUseAvaloniaUI(uiMode))
 			{

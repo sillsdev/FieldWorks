@@ -11,7 +11,8 @@ namespace FwAvaloniaTests
 {
 	/// <summary>
 	/// A legacy whole-copy <c>.fwlayout</c> override imports + diffs into a sparse patch capturing
-	/// exactly the customer's edits. Reuses the real <see cref="XmlLayoutImporter"/> over inline XML —
+	/// exactly the customer's edits. Reuses the real <see cref="XmlLayoutImporter"/> over inline
+	/// XML --
 	/// no XCore/file I/O.
 	/// </summary>
 	[TestFixture]

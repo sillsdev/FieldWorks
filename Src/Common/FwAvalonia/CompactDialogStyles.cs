@@ -12,10 +12,13 @@ using Avalonia.Styling;
 namespace SIL.FieldWorks.Common.FwAvalonia
 {
 	/// <summary>
-	/// Compact density for Avalonia dialogs — the design baseline so migrated dialogs match the legacy
+	/// Compact density for Avalonia dialogs -- the design baseline so migrated dialogs match the
+	/// legacy
 	/// WinForms dialog density (small font, tight padding, no Fluent min-height floors) rather than the
-	/// roomy Fluent defaults. Applied once by <see cref="AvaloniaDialogHost"/> to every hosted dialog
-	/// body, so EVERY dialog shown through the host inherits it automatically — new dialogs need no
+	/// roomy Fluent defaults. Applied once by <see cref="AvaloniaDialogHost"/> to every hosted
+	/// dialog
+	/// body, so EVERY dialog shown through the host inherits it automatically -- new dialogs need
+	/// no
 	/// per-dialog density work. Scoped to the dialog's control subtree (added to its <c>Styles</c>), so
 	/// it never affects the detail/table views, which own their own density (<see cref="FwAvaloniaDensity"/>).
 	///
@@ -67,10 +70,9 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 			// Tabs size to content (drop the Fluent min-height floor) for compact rows.
 			yield return Templated<TabItem>(new Thickness(8, 3), 0);
 
-			// NOTE: the deterministic CheckBox style (FwCheckBoxStyle) is NOT added here. It is applied once,
-			// to every dialog body, by DialogThemeBootstrap.Apply (called from each dialog ctor in BOTH the
-			// runtime host and the headless dialog tests), so it reaches the headless path that never runs this
-			// runtime chokepoint — and stays a single application rather than a double one.
+			// CheckBox and RadioButton are deliberately absent: DialogThemeBootstrap adds
+			// FwCheckBoxStyle / FwRadioButtonStyle per dialog body, and adding them here
+			// too would apply each twice.
 
 			yield return new Style(s => s.OfType<TextBlock>())
 			{

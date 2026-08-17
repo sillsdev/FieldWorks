@@ -50,7 +50,6 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 
 				// Windows SxS requires clrClass to be a direct child of assembly, not nested under file.
 				// Nesting under file causes "side-by-side configuration is incorrect" errors at runtime.
-				// See: specs/003-convergence-regfree-com-coverage/REGFREE_BEST_PRACTICES.md
 				var nestedClrClass = fileNode.SelectSingleNode("asmv1:clrClass", ns);
 				Assert.That(nestedClrClass, Is.Null, "clrClass must NOT be nested under file element (causes SxS errors).");
 

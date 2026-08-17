@@ -16,10 +16,13 @@ namespace LexTextControlsTests
 {
 	/// <summary>
 	/// The LCModel-aware side of the reusable Avalonia entry-search ("go") dialog launcher, wired as its first
-	/// consumer — Merge Entry (<see cref="LcmMergeEntryDialogLauncher"/>): the search delegate that reuses the
+	/// consumer -- Merge Entry (<see cref="LcmMergeEntryDialogLauncher"/>): the search delegate
+	/// that reuses the
 	/// legacy EntryGoSearchEngine matching (excluding the current entry, you cannot merge an entry with itself) and
-	/// maps matches to lightweight result rows, plus the merge itself (survivor absorbs the current entry in one
-	/// undoable step — the exact legacy MergeObject). The modal loop is desktop-only (it needs an Avalonia app + a
+	/// maps matches to lightweight result rows, plus the merge itself (survivor absorbs the
+	/// current entry in one
+	/// undoable step -- the exact legacy MergeObject). The modal loop is desktop-only (it needs
+	/// an Avalonia app + a
 	/// WinForms-owned modal Form), so it is exercised by the headless EntryGoDialogTests in FwAvaloniaDialogsTests;
 	/// here we cover the pure LCModel search + merge over a real LcmCache, visible via InternalsVisibleTo.
 	/// </summary>
@@ -121,9 +124,9 @@ namespace LexTextControlsTests
 			var entriesBefore = Cache.ServiceLocator.GetInstance<ILexEntryRepository>().Count;
 			var survivorHvo = _cantar.Hvo;
 
-			// Merge 'casa' (current) INTO 'cantar' (survivor) — the legacy MergeObject direction. The base test
-			// already has an open UOW (TestSetup), so call MergeObject directly here; the launcher's PerformMerge
-			// opens its OWN UndoableUnitOfWorkHelper.Do at runtime (wrapping it here would throw "Nested tasks").
+			// Merge 'casa' INTO 'cantar' (survivor) -- the legacy MergeObject direction.
+			// The test has an open UOW, so call MergeObject directly;
+			// PerformMerge opens its own UOW (wrapping here throws "Nested tasks").
 			_cantar.MergeObject(_casa, true);
 			_cantar.DateModified = System.DateTime.Now;
 

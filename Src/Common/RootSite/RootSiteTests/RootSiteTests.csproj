@@ -57,12 +57,9 @@
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
   </ItemGroup>
-  <!-- Deterministic Arabic font for the render-snapshot tests. Downloaded (not committed) by
-       Build/PackageRestore.targets into Downloads/ScheherazadeNew; copied into the test output so
-       RenderTestAssemblySetup can load it privately. Tied to the exact pinned version (keep
-       ScheherazadeNewTestFontVersion in sync with ScheherazadeNewVersion in
-       Build/PackageRestore.targets) so the copied test font is deterministic, even if Downloads/
-       holds more than one extracted version. -->
+  <!-- Arabic font for render-snapshot tests: Build/PackageRestore.targets downloads it (not
+       committed); copied into test output. Keep this version synced with
+       ScheherazadeNewVersion there. -->
   <PropertyGroup>
     <ScheherazadeNewTestFontVersion>4.500</ScheherazadeNewTestFontVersion>
     <ScheherazadeNewTestFontPath>$(OutDir)..\..\Downloads\ScheherazadeNew\ScheherazadeNew-$(ScheherazadeNewTestFontVersion)\ScheherazadeNew-Regular.ttf</ScheherazadeNewTestFontPath>

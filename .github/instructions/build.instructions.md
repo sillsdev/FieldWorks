@@ -13,14 +13,19 @@ FieldWorks is **Windows-first** and **x64-only**. Use the repo scripts so build 
 ## Quick start (PowerShell)
 ```powershell
 # Full traversal build (Debug/x64 defaults)
-.\build.ps1
+.\build.ps1 -CommentHygiene
 
 # Release build
-.\build.ps1 -Configuration Release
+.\build.ps1 -CommentHygiene -Configuration Release
 ```
 
 ## Non-negotiable rules
 - Use `.\build.ps1` for builds and `.\test.ps1` for tests.
+- Pass `-CommentHygiene` on every build and test run. It fails the run on any
+	comment-hygiene violation in the lines your branch adds, so you fix your own
+	comments before review. Humans omit it and never see the gate; CI reports
+	violations as warning annotations without failing. Never drop the flag to get
+	a run to pass.
 - Avoid ad-hoc `msbuild`/`dotnet build` invocations unless you are explicitly debugging build infrastructure.
 - Do not change COM/registry behavior without an explicit plan and tests.
 

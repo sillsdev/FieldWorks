@@ -18,8 +18,10 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 	/// The filter-box-over-list machinery the detail pickers share: a case-insensitive contains
 	/// filter that swaps a tree out for a flat result list, keyboard highlight movement, the
 	/// pointer-release-over-own-item guard, and the compact/chromeless themes. Three controls draw
-	/// on it — <c>FwOptionChooser</c> (flat list, optional flyout), <c>FwPosChooser</c> (tree + flyout),
-	/// and <c>FwFeatureStructureEditor</c> (inline tree) — so the parts they truly hold in common live
+	/// on it -- <c>FwOptionChooser</c> (flat list, optional flyout), <c>FwPosChooser</c> (tree +
+	/// flyout),
+	/// and <c>FwFeatureStructureEditor</c> (inline tree) -- so the parts they truly hold in
+	/// common live
 	/// here once rather than in each. A static helper rather than a base class: the three differ in
 	/// their content shape, popup hosting, and selection model, so shared state is passed in per call.
 	/// </summary>

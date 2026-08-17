@@ -271,7 +271,8 @@ namespace SIL.FieldWorks.XWorks
 		{
 			CheckDisposed();
 
-			// Viewing parity (11.x): the View → Show Hidden Fields toggle re-resolves the Avalonia
+			// Viewing parity (11.x): the View -> Show Hidden Fields toggle re-resolves the
+			// Avalonia
 			// detail view just like it rebuilds the legacy DataTree.
 			if (name != null && name.StartsWith("ShowHiddenFields-", StringComparison.Ordinal))
 			{
@@ -289,12 +290,13 @@ namespace SIL.FieldWorks.XWorks
 			if (newFramework == oldFramework)
 				return;
 
-			// Settle any open fenced session BEFORE flipping frameworks — without this, flipping
+			// Settle any open fenced session BEFORE flipping frameworks -- without this, flipping
 			// UIMode mid-edit would let Clerk.SaveOnChangeRecord force-commit invalid staged state.
 			SettleDetailEdits();
 			SetUIFramework(newFramework);
 			// Flipping AWAY from Avalonia tears down its PropChanged/undo/deactivate
-			// listeners and host NOW (symmetric with RecordBrowseView), not deferred to Dispose — so the
+			// listeners and host NOW (symmetric with RecordBrowseView), not deferred to Dispose
+			// -- so the
 			// refresh controller does not keep walking the notification bus for the view's remaining life.
 			// TearDownAvaloniaEntryForm nulls the host + controller, so a later flip back to New rebuilds them.
 			if (oldFramework == UIFramework.Avalonia && newFramework != UIFramework.Avalonia)
@@ -569,9 +571,9 @@ namespace SIL.FieldWorks.XWorks
 
 			base.SetupDataContext();
 
-			// InitBase() calls SetupDataContext() before RecordEditView.Init() resolves the framework, so
-			// resolve it here too — otherwise the first initialization would use the ctor default
-			// (WinForms) and the active-host contract would be violated for an Avalonia start.
+			// InitBase() calls SetupDataContext() before RecordEditView.Init() resolves
+			// the framework, so resolve it too, or init falls back to the ctor default
+			// (WinForms), violating the host contract for Avalonia.
 			SetUIFramework(ResolveConfiguredUIFramework());
 
 			// The record list bar must update regardless of which framework is active.

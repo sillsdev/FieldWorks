@@ -30,10 +30,10 @@
 			</Button>
 		</StackPanel>
 
-		<!-- Inline validation message (the CreateFeature pattern): shows the current OK-gate reason in red when the
-		     dialog is invalid — empty lexeme form (ksFillInLexForm), a lexeme form that does not match the morph type
-		     (ksInvalidLexForm), an incomplete circumfix (ksCompleteCircumfix), or an unparseable form (ksInvalidForm).
-		     Docked above the button strip so it reads next to Create. -->
+		<!--
+			Inline validation message: shows the current OK-gate reason in red when the dialog is
+			invalid
+		     (empty or mismatched lexeme form, incomplete circumfix, unparseable form). -->
 		<TextBlock DockPanel.Dock="Bottom" Text="{Binding ValidationMessage}"
 		           Foreground="Red" TextWrapping="Wrap" IsVisible="{Binding !IsValid}"
 		           Margin="{StaticResource DialogControlGapAbove}"
@@ -60,8 +60,9 @@
 			        AutomationProperties.AutomationId="InsertEntry.MorphTypeHost"/>
 
 			<!-- Complex Form Type picker (WinForms m_cbComplexFormType parity, LT-21666): a collapsed
-			     FwOptionChooser dropdown placed next to the Morph Type, since the morph-type selection gates its
-			     enabled state. The owned picker is injected here in code-behind. -->
+				FwOptionChooser next to Morph Type; the morph-type selection gates its enabled
+				state.
+				-->
 			<TextBlock Text="{x:Static res:FwAvaloniaDialogsStrings.InsertEntryComplexFormTypeLabel}"
 			           AutomationProperties.AutomationId="InsertEntry.ComplexFormTypeLabel"/>
 			<Border Name="PART_ComplexFormTypeHost" Classes="fwFieldHost"
@@ -73,22 +74,25 @@
 			<Border Name="PART_GlossHost" Classes="fwFieldHost"
 			        AutomationProperties.AutomationId="InsertEntry.GlossHost"/>
 
-			<!-- Grammatical-info (MSA) section: the owned MSAGroupBox is injected here in code-behind. It
-			     is itself a dense, bordered group box (it supplies its own frame), so the host carries only the
-			     section caption above it; the box reconfigures live with the morph-type selection. -->
+			<!--
+				Grammatical-info (MSA) section: the owned MSAGroupBox supplies its own frame, so
+				this host
+				carries only the caption above it; the box reconfigures live with the morph-type
+				selection.
+				-->
 			<TextBlock Text="{x:Static res:FwAvaloniaDialogsStrings.InsertEntryGrammaticalInfoLabel}"
 			           AutomationProperties.AutomationId="InsertEntry.GrammaticalInfoLabel"/>
-			<!-- The MSAGroupBox supplies its own dense border, so this host carries no frame of its own (it is
-			     intentionally NOT a PART_*Host fwFieldHost — a second frame around the group box would double-border
-			     it). -->
+			<!--
+				This host intentionally carries no frame (not fwFieldHost): the MSAGroupBox
+				already supplies
+			     its own border, so a second frame here would double-border it. -->
 			<Border Name="PART_MsaSection"
 			        AutomationProperties.AutomationId="InsertEntry.MsaSection"/>
 
-			<!-- Glossing Assistant (MGA) affordance — DEFERRED but VISIBLE. The legacy dialog shows an
-			     "Inflectional Affix Gloss Builder" link (m_lnkAssistant) enabled only for an inflectional-affix MSA;
-			     the MGA HTML dialog + GlossFeatures write path are not yet migrated. Rather than silently omit it, we
-			     render a clearly-labeled DISABLED affordance under the SAME condition so the user SEES the feature is
-			     deferred (the "unsupported = visible worklist" ethos). IsEnabled is hard-false; a tooltip explains. -->
+			<!--
+				Glossing Assistant (MGA): deferred but visible. Rather than omit it, a disabled
+				affordance
+			     renders under the same condition as the legacy link; a tooltip explains. -->
 			<TextBlock Text="{Binding GlossingAssistantDeferredLabel}"
 			           IsVisible="{Binding ShowGlossingAssistantDeferred}"
 			           IsEnabled="False" Opacity="0.6" TextWrapping="Wrap"
@@ -96,11 +100,12 @@
 			           AutomationProperties.AutomationId="InsertEntry.GlossingAssistantDeferred"
 			           AutomationProperties.HelpText="{Binding GlossingAssistantDeferredTooltip}"/>
 
-			<!-- Duplicate-detection "matching entries" pane (P2): the existing entries whose form matches what the
-			     user typed, so they can pick an existing entry rather than create a duplicate (the legacy
-			     m_matchingObjectsBrowser + "Go to similar entry" link). Shown only when the launcher supplied a
-			     match search (HasMatchSearch). The list is a boxed, dense ListBox (fwFieldHost frame) per the
-			     dialog style system; rows show the headword over a quieter gloss line. -->
+			<!--
+				Duplicate-detection "matching entries" pane: entries whose form matches what the
+				user typed,
+				so they can pick an existing entry instead of creating a duplicate. Shown only
+				with a match search.
+				-->
 			<StackPanel IsVisible="{Binding HasMatchSearch}" Spacing="{StaticResource DialogLabelFieldGap}">
 				<TextBlock Text="{Binding MatchingEntriesLabel}"
 				           Margin="{StaticResource DialogLabelGroupGapAbove}"

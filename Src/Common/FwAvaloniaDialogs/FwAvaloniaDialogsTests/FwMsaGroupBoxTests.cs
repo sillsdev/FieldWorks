@@ -308,7 +308,8 @@ namespace FwAvaloniaDialogsTests
 			Pump(window);
 			Assert.That(box.InflectionClassCombo.ItemCount, Is.EqualTo(4), "Noun: <None> + 3 classes");
 
-			// Subscribe to MainPosChanged and re-feed (the host's POS-change wiring) — Verb has a smaller class set.
+			// Subscribe to MainPosChanged and re-feed (the host's POS-change wiring) -- Verb has
+			// a smaller class set.
 			box.MainPosChanged += posId =>
 			{
 				box.SetInflectionClasses(posId == "g-verb" ? VerbInflClasses() : NounInflClasses());

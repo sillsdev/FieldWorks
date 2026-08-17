@@ -19,7 +19,8 @@ namespace SIL.FieldWorks.XWorks
 	/// DECISION: no suppression code is added because the command is NOT REACHABLE from the lexical
 	/// entry view. <c>message="DataTreeMove"</c> is declared only by the two Grammar-area commands
 	/// <c>CmdDataTree-Move-POS-AffixSlot</c> and <c>CmdDataTree-Move-POS-AffixTemplate</c>
-	/// (Configuration/Grammar/DataTreeInclude.xml), and those commands appear only in Grammar menus —
+	/// (Configuration/Grammar/DataTreeInclude.xml), and those commands appear only in Grammar
+	/// menus --
 	/// never in the Lexicon configuration the entry view composes its right-click menus from. (The
 	/// lexicon "Move" commands route through <c>MoveUpObjectInSequence</c>/<c>MoveDownObjectInSequence</c>
 	/// and the per-field override layer, neither of which is the TreeCombo path.)

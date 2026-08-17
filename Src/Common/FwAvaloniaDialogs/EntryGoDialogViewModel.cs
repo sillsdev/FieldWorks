@@ -12,13 +12,14 @@ using CommunityToolkit.Mvvm.Input;
 namespace FwAvaloniaDialogs
 {
 	/// <summary>
-	/// View-model for the reusable Avalonia entry-search ("go") dialog — the Avalonia analog of the legacy
+	/// View-model for the reusable Avalonia entry-search ("go") dialog -- the Avalonia analog of
+	/// the legacy
 	/// <c>EntryGoDlg</c>/<c>BaseGoDlg</c> family (writing-system-aware search box + persistent matching list). It is
 	/// LCModel-free: the launcher supplies an <see cref="EntryGoDialogInput"/> with a search delegate and the
 	/// configurable title/prompt/filter text, and reads <see cref="ChosenId"/> back when the user commits.
 	///
 	/// Two non-obvious contracts:
-	/// - COMMIT-ON-SELECT (single-stage): there is no OK button. Picking a row IS accepting it —
+	/// - COMMIT-ON-SELECT (single-stage): there is no OK button. Picking a row IS accepting it --
 	///   <see cref="CommitCommand"/> snapshots the selection into <see cref="ChosenId"/> and closes accepted;
 	///   Cancel/Escape cancels.
 	/// - Auxiliary and description panes are OPT-IN. When the consumer supplies
@@ -72,8 +73,10 @@ namespace FwAvaloniaDialogs
 			// The field initializer sets _isSenseMode so OnIsSenseModeChanged does not fire during construction.
 			_isSenseMode = _input.SensesOnly;
 
-			// The matching list's column presentation: the consumer's ordered spec, or the shared default
-			// (headword + glosses — the legacy matchingEntries browser's default-visible columns).
+			// The matching list's column presentation: the consumer's ordered spec, or the shared
+			// default
+			// (headword + glosses -- the legacy matchingEntries browser's default-visible
+			// columns).
 			Columns = _input.ResultColumns != null && _input.ResultColumns.Count > 0
 				? _input.ResultColumns
 				: EntryGoResultColumn.DefaultColumns();
@@ -108,7 +111,7 @@ namespace FwAvaloniaDialogs
 		public bool HasDescriptionLabel { get; }
 
 		/// <summary>
-		/// True when the consumer opted into the right-side description pane — by supplying a
+		/// True when the consumer opted into the right-side description pane -- by supplying a
 		/// <see cref="DescriptionLabel"/> or rows carrying rich description content. False removes the pane
 		/// entirely so the persistent matching list takes the full dialog width.
 		/// </summary>
@@ -116,7 +119,8 @@ namespace FwAvaloniaDialogs
 
 		/// <summary>
 		/// The matching list's ordered column presentation (header + result field + writing-system typography per
-		/// column) — the consumer's <see cref="EntryGoDialogInput.ResultColumns"/>, or the shared default of headword +
+		/// column) -- the consumer's <see cref="EntryGoDialogInput.ResultColumns"/>, or the
+		/// shared default of headword +
 		/// glosses (the legacy matchingEntries browser's default-visible columns).
 		/// </summary>
 		public IReadOnlyList<EntryGoResultColumn> Columns { get; }
@@ -186,10 +190,12 @@ namespace FwAvaloniaDialogs
 		public string Description => SelectedResult?.Description ?? string.Empty;
 
 		/// <summary>
-		/// The RICH extended-description payload of the selected row (the advanced entry view): an Avalonia control
+		/// The RICH extended-description payload of the selected row (the advanced entry view):
+		/// an Avalonia control
 		/// or any content object the right-side pane's <c>ContentControl</c> can present (formatted text, a
 		/// picture, a composite preview). Null when the selected row carries only plain text (or nothing is
-		/// selected), in which case the right pane falls back to the <see cref="Description"/> string — see
+		/// selected), in which case the right pane falls back to the <see cref="Description"/>
+		/// string -- see
 		/// <see cref="HasDescriptionContent"/>.
 		/// </summary>
 		public object SelectedDescriptionContent => SelectedResult?.DescriptionContent;
@@ -200,13 +206,14 @@ namespace FwAvaloniaDialogs
 		/// </summary>
 		public bool HasDescriptionContent => SelectedResult?.HasDescriptionContent ?? false;
 
-		// ----- arrow-key selection moves from the search box: Up/Down move the matching-list selection
-		// (SelectPrevious/SelectNext) while the caret stays in the box; the view forwards the search box's
-		// Up/Down keys here. -----
+		// ----- arrow-key selection moves from the search box: Up/Down move the
+		// matching-list selection (SelectPrevious/SelectNext) while the caret stays
+		// in the box; the view forwards those keys here. -----
 
 		/// <summary>
 		/// Moves the matching-list selection to the next row (the legacy Down-arrow-in-the-search-box move,
-		/// MatchingObjectsBrowser.SelectNext). With nothing selected it selects the first row — the state the
+		/// MatchingObjectsBrowser.SelectNext). With nothing selected it selects the first row --
+		/// the state the
 		/// legacy browser reached by auto-selecting the first result of every search.
 		/// </summary>
 		public void SelectNextResult()
@@ -290,9 +297,11 @@ namespace FwAvaloniaDialogs
 		/// <summary>
 		/// The commit-on-select path: snapshots the selected row into <see cref="ChosenId"/> (via
 		/// <see cref="ApplyChanges"/>) and closes the dialog ACCEPTED, exactly as a legacy OK would have. The view
-		/// raises this on a double-click of a result row or Enter — in the search box or on the highlighted row
+		/// raises this on a double-click of a result row or Enter -- in the search box or on the
+		/// highlighted row
 		/// (there is no OK button). In two-stage mode (<see cref="HasAuxiliarySelection"/>) the same gesture is only
-		/// STAGE 1 — the pick already populated the auxiliary picker (see OnSelectedResultChanged) and the inherited
+		/// STAGE 1 -- the pick already populated the auxiliary picker (see
+		/// OnSelectedResultChanged) and the inherited
 		/// OK commits instead. Gated on <see cref="CanCommit"/> so it is a no-op when nothing is selected; the
 		/// defensive re-check makes a direct Execute call honor the gate too.
 		/// </summary>
@@ -397,14 +406,16 @@ namespace FwAvaloniaDialogs
 		{
 			if (SelectedResult == null)
 				yield return FwAvaloniaDialogsStrings.EntryGoMustSelect;
-			// Two-stage mode also needs an auxiliary option (legacy: OK disabled while the combo is empty).
+			// Two-stage mode also needs an auxiliary option (legacy: OK disabled while the combo
+			// is empty).
 			if (HasAuxiliarySelection && SelectedAuxiliaryOption == null)
 				yield return FwAvaloniaDialogsStrings.EntryGoMustSelectOption;
 		}
 
 		/// <summary>
 		/// Snapshots the selected row's id into <see cref="ChosenId"/> when the user commits (whether it was a
-		/// sense into <see cref="ChosenIsSense"/>, and — in two-stage mode — the chosen option's key into
+		/// sense into <see cref="ChosenIsSense"/>, and -- in two-stage mode -- the chosen
+		/// option's key into
 		/// <see cref="ChosenAuxiliaryKey"/>) so the launcher resolves it as the right kind.
 		/// </summary>
 		protected override void ApplyChanges()

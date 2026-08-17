@@ -10,7 +10,7 @@ This document describes the release workflow for FieldWorks. It covers creating 
 
 When it's time to prepare a new release, create a new release branch named after the upcoming version.
 
-```bash
+```powershell
 # Create and checkout release branch from the develop branch
 git checkout develop
 git pull origin develop
@@ -26,7 +26,7 @@ git push -u origin release/9.3
 
 If someone else has already started a release branch:
 
-```bash
+```powershell
 # Fetch all branches
 git fetch --all
 
@@ -38,7 +38,7 @@ git checkout release/9.3
 
 #### Starting a Bugfix
 
-```bash
+```powershell
 # Ensure you're on the release branch
 git checkout release/9.3
 git pull
@@ -51,14 +51,14 @@ git checkout -b bugfix/LT-12345-fix-description
 
 1. Make your changes and commit them
 2. Push your branch:
-   ```bash
+   ```powershell
    git push -u origin bugfix/LT-12345-fix-description
    ```
 3. Create a Pull Request targeting the release branch
 
 #### After the PR is Merged
 
-```bash
+```powershell
 # Clean up local branch
 git checkout release/9.3
 git pull
@@ -71,7 +71,7 @@ When the release is ready:
 
 1. Ensure all pending PRs for the release branch are merged
 2. Create a release tag:
-   ```bash
+   ```powershell
    git checkout release/9.3
    git pull
    git tag -a v9.3.0 -m "Release 9.3.0"
@@ -86,7 +86,7 @@ Hotfixes are for critical bugs in released versions that can't wait for the next
 
 ### Creating a Hotfix Branch
 
-```bash
+```powershell
 # Create hotfix from the release tag
 git checkout v9.2.0
 git checkout -b hotfix/9.2.1
@@ -99,7 +99,7 @@ git push -u origin hotfix/9.2.1
 
 Same process as release branch bugfixes:
 
-```bash
+```powershell
 git checkout hotfix/9.2.1
 git checkout -b bugfix/LT-12345-critical-fix
 # Make changes, commit, push, create PR
@@ -109,7 +109,7 @@ git checkout -b bugfix/LT-12345-critical-fix
 
 1. Complete all fixes on the hotfix branch
 2. Create the hotfix release tag:
-   ```bash
+   ```powershell
    git checkout hotfix/9.2.1
    git tag -a v9.2.1 -m "Hotfix release 9.2.1"
    git push origin v9.2.1
@@ -123,7 +123,7 @@ For maintaining older versions (e.g., fixing bugs in version 9.0 when 9.2 is cur
 
 ### Creating a Support Branch
 
-```bash
+```powershell
 # Create support branch from the old release tag
 git checkout v9.0.0
 git checkout -b support/9.0
@@ -134,7 +134,7 @@ git push -u origin support/9.0
 
 Process is similar to hotfixes, but hotfix branches are based on the support branch:
 
-```bash
+```powershell
 git checkout support/9.0
 git checkout -b hotfix/9.0.1
 ```
@@ -147,7 +147,7 @@ If you get merge failures when releasing:
 2. Commit the resolution
 3. Push and continue with the release
 
-```bash
+```powershell
 # After resolving conflicts
 git add .
 git commit -m "Resolve merge conflicts for release"

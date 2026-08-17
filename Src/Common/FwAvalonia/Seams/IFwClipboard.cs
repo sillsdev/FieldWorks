@@ -8,17 +8,18 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Seams
 	/// The cross-framework clipboard payload. Two formats, written/read together:
 	/// - <see cref="PlainText"/>: the plain-text fallback every external consumer gets
 	///   (legacy writes it NFC-normalized to the OS <c>UnicodeText</c> format).
-	/// - <see cref="RichXml"/>: the FieldWorks rich format — the TsString XML representation
+	/// - <see cref="RichXml"/>: the FieldWorks rich format -- the TsString XML representation
 	///   (<c>TsStringUtils.GetXmlRep</c>), which is exactly what legacy native-Views copy/paste already
 	///   puts on the OS clipboard inside the <c>"TsString"</c> data format. Preserves writing-system
 	///   runs, styles, and string properties.
 	///
-	/// Fidelity decision: the shared format IS the existing <c>"TsString"</c> clipboard format —
-	/// the same one native-Views copy/paste uses, not a new one — so Avalonia and native-Views
+	/// Fidelity decision: the shared format IS the existing <c>"TsString"</c> clipboard format --
+	/// the same one native-Views copy/paste uses, not a new one -- so Avalonia and native-Views
 	/// views round-trip multi-WS rich text bidirectionally during coexistence. What does NOT round-trip:
 	/// - embedded-object runs (ORCs: pictures, footnotes, object links) reference objects in the source
 	///   context; the text and properties survive but the object reference is not resolvable outside it;
-	/// - external (non-FieldWorks) consumers only see the plain-text format — WS/style metadata drops;
+	/// - external (non-FieldWorks) consumers only see the plain-text format -- WS/style metadata
+	/// drops;
 	/// - paragraph-level structure beyond a single TsString is out of scope for this seam.
 	/// </summary>
 	public sealed class FwClipboardText

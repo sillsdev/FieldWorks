@@ -54,7 +54,7 @@ namespace SIL.FieldWorks.XWorks
 		private string GlossText => m_entry.SensesOS[0].Gloss.get_String(Cache.DefaultAnalWs).Text;
 
 		// The edit-context seam keys fixed slices by Field name; tests address fields the same way
-		// the view does — through a detail field object.
+		// the view does -- through a detail field object.
 		internal static SIL.FieldWorks.Common.FwAvalonia.Detail.DetailField F(string field)
 			=> new SIL.FieldWorks.Common.FwAvalonia.Detail.DetailField(
 				"test/" + field, field, field, null,
@@ -262,7 +262,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		// Writing-system identity is the unique IETF tag (ws.Id), never only the
-		// user-editable Abbreviation — an unmatched abbreviation must not silently write to the
+		// user-editable Abbreviation -- an unmatched abbreviation must not silently write to the
 		// default writing system.
 		[Test]
 		public void TrySetText_AddressesTheWritingSystemByIetfTag()
@@ -301,8 +301,8 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		// An entirely unknown ws key must be rejected (no session, no write) instead
-		// of silently landing on the DEFAULT alternative — matching ComposedDetailEditContext. Only
-		// real ids/abbreviations and the legacy "vern"/"anal" first-slice aliases resolve.
+		// of landing on the DEFAULT alternative. Only real ids/abbreviations and
+		// legacy "vern"/"anal" first-slice aliases resolve.
 		[Test]
 		public void TrySetText_UnknownWsKey_IsRejectedWithoutOpeningASession()
 		{
@@ -395,7 +395,7 @@ namespace SIL.FieldWorks.XWorks
 
 	/// <summary>
 	/// The COMPLETE lexical edit view: `DetailComposer` walks the live
-	/// compiled `LexEntry/Normal` layout across objects (entry → lexeme form → senses), emits
+	/// compiled `LexEntry/Normal` layout across objects (entry -> lexeme form -> senses), emits
 	/// headers/indentation, hides empty ifdata fields, binds every editable field to LCModel by
 	/// metadata, and edits commit through the fenced session as one global undo step.
 	/// </summary>
@@ -494,12 +494,8 @@ namespace SIL.FieldWorks.XWorks
 				"the sense's grammatical info now points at the chosen part of speech");
 		}
 
-		// The legacy Lexeme Form slice's button is its slice TREE-NODE MENU — MoForm-Detail-
-		// AsLexemeForm (MorphologyParts.xml:219-221) binds menu="mnuDataTree-LexemeForm"
-		// (DataTreeInclude.xml:336-341: Show in Concordance / Swap with Allomorph / Convert to
-		// Affix Process/Allomorph), not a chooser launcher. The composed Lexeme Form text row must
-		// carry that binding so the view can draw its hover gear and the host can show the SAME
-		// xCore menu — data-driven from `menu=`, not hardcoded to "LexemeForm".
+		// The Lexeme Form row's hover gear must show the legacy menu="mnuDataTree-LexemeForm"
+		// tree-node menu (data-driven, not hardcoded), not a chooser launcher.
 		[Test]
 		public void Compose_LexemeFormRow_CarriesItsLegacySliceMenuBinding()
 		{
@@ -556,9 +552,9 @@ namespace SIL.FieldWorks.XWorks
 				"Khmer fixture declares the Khmer script for automation/manual scenario setup");
 		}
 
-		// Compiled definitions are memoized per (class, layout) for the lifetime
-		// of the loaded sources — a repeat compose serves every layout from the memo instead of
-		// rebuilding and re-fingerprinting the ~300KB parts snapshot per object per compose.
+		// Compiled definitions are memoized per (class, layout) while sources stay
+		// loaded, so a repeat compose reuses every layout instead of rebuilding and
+		// re-fingerprinting the ~300KB parts snapshot.
 		[Test]
 		public void Compose_RepeatCompose_ServesCompiledLayoutsFromTheMemo()
 		{
@@ -717,9 +713,9 @@ namespace SIL.FieldWorks.XWorks
 				.GetStrPropValue((int)FwTextPropType.ktptNamedStyle), Is.EqualTo("Emphasis"));
 		}
 
-		// An external-link ORC is not a blanket read-only block — it composes EDITABLE (the
-		// link is insert/edit/delete here, the ORC is deletable), and a rich write-back round-trips the
-		// link's ObjData losslessly through the adapter.
+		// An external-link ORC is not a blanket read-only block -- it composes EDITABLE
+		// (link insert/edit/delete, ORC deletable), and a rich write-back round-trips
+		// the link's ObjData through the adapter.
 		[Test]
 		public void Build_RichLexemeForm_WithLinkObjData_ComposesEditable_AndRichWriteBackRoundTripsTheLink()
 		{
@@ -755,17 +751,14 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(objData.Substring(1), Is.EqualTo("https://software.sil.org/fieldworks"));
 		}
 
-		// Real-cache workflow: edit a run-bearing field → apply a named character style over a
-		// span → retag another span's writing system → insert a hyperlink → commit → recompose → verify the
-		// run props (ktptNamedStyle, ktptWs) and the link ObjData all round-tripped through the adapter, as
-		// ONE undoable step on the global stack.
+		// Verifies that style, ws-retag, and hyperlink edits all round-trip through the adapter
+		// as ONE undoable step on the global stack.
 		[Test]
 		public void Workflow_StyleSpan_RetagSpan_InsertLink_RoundTripsThroughTheComposedContext()
 		{
-			// 'fr' must EXIST as a known writing system (so the per-run retag target resolves), but it must
-			// NOT be added to the current ANALYSIS writing systems — doing so would give the Bibliography
-			// multistring a second value row and break the single-value assertions below. A run's writing
-			// system is independent of the field's displayed-WS list, so GetOrSet alone is the right target.
+			// 'fr' must exist as a known ws (so retag resolves) but must NOT be added to
+			// current analysis writing systems, or the Bibliography multistring gets a
+			// second value row and breaks the assertions below.
 			string frTag = null;
 			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
 			{
@@ -910,9 +903,9 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(TsStringUtils.GetWsOfRun(stored, 1), Is.EqualTo(Cache.DefaultVernWs));
 		}
 
-		// Applying bold over a selected span, then committing through the edit
-		// context, stores a TsString whose covered span is bold while the rest stays plain — i.e.
-		// ApplySpanFormatting's new bold run round-trips through ToTsString into the domain.
+		// Applying bold over a selected span and committing stores a TsString whose
+		// covered span is bold while the rest stays plain -- ApplySpanFormatting's
+		// bold run round-trips via ToTsString into the domain.
 		[Test]
 		public void Edit_ApplySpanFormatting_BoldOverSpan_RoundTripsThroughToTsString()
 		{
@@ -1083,7 +1076,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		// A sense with a reversal entry composes an EDITABLE reversal
-		// row through the ReversalIndexEntryPlugin — not the lone Unsupported row.
+		// row through the ReversalIndexEntryPlugin -- not the lone Unsupported row.
 		[Test]
 		public void Compose_SenseWithReversalEntry_ComposesEditableReversalRow_NotUnsupported()
 		{
@@ -1113,7 +1106,8 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		// Editing a reversal form stages/commits through the edit
-		// context — the reversal entry's ReversalForm is updated, on the same fenced session as the detail view.
+		// context -- the reversal entry's ReversalForm is updated, on the same fenced session as
+		// the detail view.
 		[Test]
 		public void ReversalPlugin_EditingAForm_StagesAndCommitsThroughTheEditContext()
 		{
@@ -1231,9 +1225,9 @@ namespace SIL.FieldWorks.XWorks
 				"empty ifdata fields appear under show-hidden");
 		}
 
-		// The layout ws= spec resolves through the legacy pair —
-		// WritingSystemServices.GetMagicWsIdFromName then GetWritingSystemList — not substring
-		// heuristics, so ordering ("analysis vernacular") and list membership match legacy slices.
+		// The layout ws= spec resolves via WritingSystemServices.GetMagicWsIdFromName +
+		// GetWritingSystemList, not substring heuristics, so ordering and membership match legacy
+		// slices.
 		[TestCase("all analysis")]
 		[TestCase("all vernacular")]
 		[TestCase("analysis vernacular")]
@@ -1256,7 +1250,7 @@ namespace SIL.FieldWorks.XWorks
 		public void ResolveWritingSystems_Pronunciation_UsesTheProjectPronunciationList()
 		{
 			// Point the project pronunciation list at an IPA writing system so it differs from the
-			// vernacular default — a vernacular-side heuristic cannot pass by coincidence.
+			// vernacular default -- a vernacular-side heuristic cannot pass by coincidence.
 			var container = Cache.ServiceLocator.WritingSystems;
 			var saved = container.CurrentPronunciationWritingSystems.ToList();
 			CoreWritingSystemDefinition ipa = null;
@@ -1348,9 +1342,8 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void Compose_BooleanFields_RenderAsUnsupportedWorklistRow()
 		{
-			// The Avalonia detail view does not compose the checkbox editor. A boolean slice — e.g. an alternate
-			// form's "Is Abstract Form" (MoStemAllomorph/Normal, editor="Checkbox", visibility=never -> shows
-			// under show-hidden) — now composes as the labeled Unsupported worklist row rather than a checkbox.
+			// The Avalonia detail view does not compose the checkbox editor, so a boolean slice
+			// composes as the labeled Unsupported worklist row instead.
 			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
 				m_entry.AlternateFormsOS.Add(
 					Cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>().Create()));
@@ -1448,9 +1441,9 @@ namespace SIL.FieldWorks.XWorks
 				"the typed text landed in the ghost field (Form, ghostWs=vernacular)");
 		}
 
-		// The ghost setter's closure caches the created object's hvo, but a Cancel
-		// rolls the MakeNewObject back — a later edit through the SAME still-visible view must
-		// re-create the object instead of writing to the deleted hvo (which throws).
+		// The ghost setter's closure caches the created hvo, but Cancel rolls
+		// MakeNewObject back. A later edit through the SAME still-visible view
+		// must re-create the object instead of writing to the deleted hvo.
 		[Test]
 		public void Compose_GhostEdit_AfterCancel_ReCreatesInsteadOfWritingToTheDeletedObject()
 		{
@@ -1504,7 +1497,8 @@ namespace SIL.FieldWorks.XWorks
 		// (LexEntryParts.xml LexEntry-Detail-LexemeForm) carries an explicit ghostClass
 		// ("MoStemAllomorph", differing from the abstract MoForm field signature) AND
 		// ghostInitMethod="SetMorphTypeToRoot". The composer must create the configured class and
-		// invoke the init hook by reflection after the typed text lands, inside the same session —
+		// invoke the init hook by reflection after the typed text lands, inside the same session
+		// --
 		// exactly GhostStringSliceView.MakeRealObject (GhostStringSlice.cs:279-329).
 		[Test]
 		public void Compose_GhostLexemeForm_HonorsGhostClass_AndRunsGhostInitMethod()
@@ -1566,7 +1560,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		// A ghost prompt whose layout authors NO ghost field (and no init method)
-		// must compose NON-editable — an editable one would call MakeNewObject on typing and
+		// must compose NON-editable -- an editable one would call MakeNewObject on typing and
 		// silently DISCARD the typed text (nothing exists to receive the string). The shipped
 		// AlternateForms seq (LexEntryParts.xml:119, no ghost= attribute) is exactly that case.
 		[Test]
@@ -1620,7 +1614,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		// lengthatleast: LexEntry-Detail-ShowMinorEntry wraps the PublishAsMinorEntry checkbox
-		// in <if field="EntryRefs" lengthatleast="1"> — main entries (no refs) must not show it.
+		// in <if field="EntryRefs" lengthatleast="1"> -- main entries (no refs) must not show it.
 		[Test]
 		public void Compose_ShowMinorEntry_OnlyWhenTheEntryHasEntryRefs()
 		{
@@ -1673,9 +1667,9 @@ namespace SIL.FieldWorks.XWorks
 				"no where clause passes for a prefix, and the shipped choice has no otherwise");
 		}
 
-		// target="owner" + lengthatleast: MoAffixAllomorph-Detail-MsEnvFeaturesForLexemeForm is
-		// <if target="owner" field="MorphoSyntaxAnalyses" lengthatleast="1"> — the test reads the
-		// ENTRY's MSA count from the allomorph's row, so data on the allomorph alone must not show it.
+		// target="owner" + lengthatleast on MoAffixAllomorph-Detail-MsEnvFeaturesForLexemeForm
+		// reads the ENTRY's MSA count, so allomorph-only data must not satisfy
+		// lengthatleast=1 on MorphoSyntaxAnalyses.
 		[Test]
 		public void Compose_MsEnvFeatures_TargetOwnerCondition_ReadsTheOwningEntry()
 		{
@@ -1689,7 +1683,7 @@ namespace SIL.FieldWorks.XWorks
 					TsStringUtils.MakeString("supfix", Cache.DefaultVernWs));
 				allomorph.MorphTypeRA = Cache.ServiceLocator.GetInstance<IMoMorphTypeRepository>()
 					.GetObject(MoMorphTypeTags.kguidMorphSuffix);
-				// Data in the conditioned field itself — visible only when the CONDITION passes.
+				// Data in the conditioned field itself -- visible only when the CONDITION passes.
 				allomorph.MsEnvFeaturesOA = Cache.ServiceLocator.GetInstance<IFsFeatStrucFactory>().Create();
 			});
 
@@ -1801,7 +1795,7 @@ namespace SIL.FieldWorks.XWorks
 	/// way legacy DataTree.EnsureCustomFields injects a generated `&lt;part ref="Custom"/&gt;` per
 	/// custom field of the object's class (and base classes) and SliceFactory.MakeAutoCustomSlice
 	/// realizes the editor by CellarPropertyType with the field's Userlabel. The generated part
-	/// carries no visibility attribute, so custom fields are visibility=always in legacy — they
+	/// carries no visibility attribute, so custom fields are visibility=always in legacy -- they
 	/// show even when empty, with or without "show hidden fields" (DataTree.cs:2435).
 	/// </summary>
 	[TestFixture]
@@ -1968,9 +1962,9 @@ namespace SIL.FieldWorks.XWorks
 			});
 		}
 
-		// The fixture cache is shared across tests (MemoryOnlyBackendProviderTestBase), so the
-		// custom fields are created once — re-running UpdateCustomField per test would mint
-		// duplicate fields. Created exactly the way AddCustomFieldDlg/legacy tests do.
+		// The fixture cache is shared across tests, so the custom fields are created
+		// once -- re-running UpdateCustomField per test would mint duplicates.
+		// Created the way AddCustomFieldDlg/legacy tests do.
 		private void EnsureCustomFields()
 		{
 			if (m_fieldsCreated)
@@ -2084,7 +2078,7 @@ namespace SIL.FieldWorks.XWorks
 				"the GenDate editor was dropped; it renders the labeled Unsupported worklist row");
 
 			// Possibility-list reference: the 6.3 chooser path makes custom reference rows
-			// editable too — options from the field's own list, current selection carried.
+			// editable too -- options from the field's own list, current selection carried.
 			var listRef = fields.FirstOrDefault(f => f.Label == "Field Category");
 			Assert.That(listRef, Is.Not.Null);
 			Assert.That(listRef.IsEditable, Is.True, "custom possibility references take the 6.3 chooser path");
@@ -2315,11 +2309,9 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(sda.get_VecSize(m_example.Hvo, m_flidExampleListVector), Is.EqualTo(2));
 		}
 
-		// A plain String prop reads the WHOLE string (get_StringProp), so the
-		// row's writing system must come from the STRING's own first run when there is content —
-		// not from the layout's ws= spec — and write-back must use that same ws (legacy
-		// StringSlice renders the string's own run properties). The layout ws only seeds an
-		// empty string.
+		// A plain String prop reads the whole string, so the row's ws must come from the string's
+		// own first run (matching legacy StringSlice), not the layout's ws= spec, which only
+		// seeds an empty string.
 		[Test]
 		public void Compose_StringProp_DerivesTheRowWsFromTheStoredString_AndWritesBackSymmetrically()
 		{

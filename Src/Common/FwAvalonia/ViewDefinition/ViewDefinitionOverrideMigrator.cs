@@ -13,7 +13,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 	/// project's customized copy to the typed IR (reusing <see cref="XmlLayoutImporter"/>), then diffs them
 	/// by <see cref="ViewNode.StableId"/>. Because a legacy override copies the shipped <c>&lt;layout&gt;</c>
 	/// under the same name, the imported StableIds align by position, so the diff is exactly the customer's
-	/// edits — replacing the lossy whole-tree <c>LayoutMerger</c> with per-node operations.
+	/// edits -- replacing the lossy whole-tree <c>LayoutMerger</c> with per-node operations.
 	///
 	/// This is the framework-neutral migration core: it takes XML in and produces the patch. The thin
 	/// remaining wrapper (read the shipped layout from <c>Inventory</c> and the override file from the

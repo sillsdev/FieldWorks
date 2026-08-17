@@ -15,7 +15,8 @@ namespace FwAvaloniaTests
 	/// <summary>
 	/// The engine-isolation audit. The
 	/// Avalonia path must carry no dependency on native Views rendering, native render
-	/// engines (Graphite/Uniscribe), Gecko/browser engines, or legacy view stacks — at the assembly
+	/// engines (Graphite/Uniscribe), Gecko/browser engines, or legacy view stacks -- at the
+	/// assembly
 	/// level (what the production assembly can even load) and at the source level (what production
 	/// code names). A failure of either test blocks Avalonia default readiness by construction.
 	/// </summary>
@@ -83,13 +84,9 @@ namespace FwAvaloniaTests
 			var violations = new List<string>();
 			foreach (var path in sources)
 			{
-				// Comments and string literals are stripped before matching. The DataTree/Slice/
-				// BrowseViewer parity symbols are legitimately named throughout this
-				// codebase's XML-doc comments and diagnostic message text to document exactly which
-				// legacy behavior a migrated code path mirrors; that is
-				// documentation, not a dependency. What this audit must catch is the symbol being
-				// named as actual code — a using directive, type reference, base type, cast, member
-				// access, or the like — which would mean production code really depends on it.
+				// Comments and strings are stripped first: parity symbols may legitimately
+				// appear in docs/messages. Only an actual code reference (using, type,
+				// cast, member access) means production code depends on it.
 				var code = StripCommentsAndStrings(File.ReadAllText(path));
 				foreach (var symbol in ForbiddenSourceSymbols)
 				{

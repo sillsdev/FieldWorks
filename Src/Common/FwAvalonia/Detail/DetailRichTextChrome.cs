@@ -55,7 +55,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				TextWrapping = TextWrapping.Wrap,
 				VerticalAlignment = VerticalAlignment.Top,
 				// Flat like the editors it stands in for (the box collapses out of layout while the display
-				// shows, so no overlay is needed — a pointer press swaps the editable box back in).
+				// shows, so no overlay is needed -- a pointer press swaps the editable box back
+				// in).
 				Background = Brushes.Transparent,
 				FlowDirection = rightToLeft ? FlowDirection.RightToLeft : FlowDirection.LeftToRight
 			};
@@ -104,9 +105,9 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				Foreground = FwAvaloniaDensity.WsAbbrevBrush,
 				FontSize = FwAvaloniaDensity.WsAbbrevFontSize,
 				VerticalAlignment = VerticalAlignment.Top,
-				// The trigger must NOT take focus — clicking it would blur the editor, and Avalonia
-				// collapses the TextBox selection to the caret on LostFocus, so onOpen would snapshot an EMPTY
-				// selection and the gesture would stage nothing. Keeping focus on the editor preserves the span.
+				// The trigger must NOT take focus: clicking it blurs the editor and
+				// collapses the selection to the caret on LostFocus. onOpen would then
+				// snapshot EMPTY and stage nothing; keeping focus preserves the span.
 				Focusable = false
 			};
 			AutomationProperties.SetAutomationId(button, automationId);

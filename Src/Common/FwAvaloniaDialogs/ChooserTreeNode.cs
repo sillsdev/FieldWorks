@@ -13,7 +13,8 @@ namespace FwAvaloniaDialogs
 	/// <summary>
 	/// One node in the chooser's collapsible tree: a <see cref="DetailChoiceOption"/> (key = guid string,
 	/// name = display text) plus its child nodes, built from the candidates' <see cref="DetailChoiceOption.Depth"/>
-	/// sequence by <see cref="ChooserTreeBuilder"/>. <see cref="IsChecked"/> backs the multi-select checkbox — checks
+	/// sequence by <see cref="ChooserTreeBuilder"/>. <see cref="IsChecked"/> backs the
+	/// multi-select checkbox -- checks
 	/// are INDEPENDENT per node (checking a parent does NOT cascade to children), matching the legacy
 	/// <c>ReallySimpleListChooser</c> default (its only cascade is the Ctrl-modifier path, which this chooser omits).
 	/// An <see cref="ObservableObject"/> so the tree view's compiled bindings (Name, IsChecked, IsExpanded) update
@@ -49,7 +50,8 @@ namespace FwAvaloniaDialogs
 		[ObservableProperty]
 		private bool _isExpanded;
 
-		// Multi-select checkbox state, INDEPENDENT per node (no parent/child cascade — legacy default).
+		// Multi-select checkbox state, INDEPENDENT per node (no parent/child cascade -- legacy
+		// default).
 		[ObservableProperty]
 		private bool _isChecked;
 	}

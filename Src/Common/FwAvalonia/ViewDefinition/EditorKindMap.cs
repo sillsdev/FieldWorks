@@ -8,9 +8,9 @@ using System.Collections.Generic;
 namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 {
 	/// <summary>
-	/// The renderable category of a legacy editor string — the ONE home for the
-	/// editor-string → category knowledge that the detail composer's dispatch switch and
-	/// <c>DetailModelProjector</c>'s kind classification both consume — neither keeps a
+	/// The renderable category of a legacy editor string -- the ONE home for the
+	/// editor-string -> category knowledge that the detail composer's dispatch switch and
+	/// <c>DetailModelProjector</c>'s kind classification both consume -- neither keeps a
 	/// copy of its own. Consumers may still refine a category by LCModel field type
 	/// (e.g. the composer's <c>CellarPropertyType</c> dispatch for <see cref="Other"/>); only the
 	/// editor-string knowledge itself lives here.
@@ -183,7 +183,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 		}
 
 		/// <summary>
-		/// Maps a legacy editor string onto its renderable <see cref="DetailEditorCategory"/> —
+		/// Maps a legacy editor string onto its renderable <see cref="DetailEditorCategory"/> --
 		/// the one editor-string dispatch table the composer's field switch and the mapper's kind
 		/// classification share. Case-insensitive like the legacy DataTree dispatch
 		/// (<c>editor.ToLower()</c>). Editors not named here are <see cref="DetailEditorCategory.Other"/>:

@@ -8,7 +8,8 @@ using System.Collections.Generic;
 namespace FwAvaloniaDialogs
 {
 	/// <summary>
-	/// The LCModel-free snapshot the Insert Entry view-model writes on OK — the per-writing-system lexeme-form
+	/// The LCModel-free snapshot the Insert Entry view-model writes on OK -- the
+	/// per-writing-system lexeme-form
 	/// and gloss values (keyed by writing-system tag) plus the chosen morph-type key (guid string). The
 	/// LCModel-aware launcher reads this back to build the <c>LexEntryComponents</c> and create the entry in one
 	/// undoable step.
@@ -37,7 +38,8 @@ namespace FwAvaloniaDialogs
 		public string MorphTypeKey { get; }
 
 		/// <summary>
-		/// The id (entry hvo string) of an EXISTING entry the user chose from the matching-entries pane — the legacy
+		/// The id (entry hvo string) of an EXISTING entry the user chose from the
+		/// matching-entries pane -- the legacy
 		/// "use similar entry" outcome (<c>InsertEntryDlg</c> returning <c>m_fNewlyCreated = false</c> with the
 		/// selected <c>ILexEntry</c>). Non-null means the launcher must JUMP TO that existing entry instead of creating
 		/// a duplicate; null means create a new entry from the form/gloss/morph-type values above.
@@ -45,7 +47,8 @@ namespace FwAvaloniaDialogs
 		public string ChosenExistingEntryId { get; }
 
 		/// <summary>
-		/// The chosen grammatical info (MSA) — the LCModel-free <see cref="FwSandboxMsa"/> the hosted
+		/// The chosen grammatical info (MSA) -- the LCModel-free <see cref="FwSandboxMsa"/> the
+		/// hosted
 		/// <see cref="MSAGroupBox"/> emitted (MsaType + main/secondary POS ids + slot id). The launcher resolves
 		/// the ids back to LCModel objects, builds a real <c>SandboxGenericMSA</c>, and find-or-creates the MSA on the
 		/// new entry's first sense (exactly as the WinForms <c>InsertEntryDlg</c> does). Null when the dialog had no
@@ -54,7 +57,8 @@ namespace FwAvaloniaDialogs
 		public FwSandboxMsa Msa { get; }
 
 		/// <summary>
-		/// The chosen complex-form type key (complex-entry-type guid string) — the WinForms <c>m_complexType</c>
+		/// The chosen complex-form type key (complex-entry-type guid string) -- the WinForms
+		/// <c>m_complexType</c>
 		/// parity (LT-21666). Null/empty when the user left the picker at "&lt;Not Applicable&gt;": the launcher then
 		/// adds NO <c>ILexEntryRef</c>. When non-null the launcher creates a complex-form <c>ILexEntryRef</c> on the
 		/// new entry (<c>RefType = krtComplexForm</c>) and adds the resolved <c>ILexEntryType</c> to its

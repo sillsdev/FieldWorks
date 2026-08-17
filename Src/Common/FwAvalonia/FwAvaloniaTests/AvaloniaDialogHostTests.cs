@@ -94,14 +94,16 @@ namespace FwAvaloniaTests
 		/// <summary>
 		/// The UI-thread guard (the one cheaply-testable slice of the otherwise desktop-only modal path):
 		/// <see cref="AvaloniaDialogHost.ShowModal"/> must fail fast with <see cref="InvalidOperationException"/>
-		/// when the owner is a WinForms <see cref="WinFormsControl"/> whose <c>InvokeRequired</c> is true — i.e.
+		/// when the owner is a WinForms <see cref="WinFormsControl"/> whose <c>InvokeRequired</c>
+		/// is true -- i.e.
 		/// the call is on the wrong thread for the owner's message loop. Modal hosting + Avalonia share the
 		/// single WinForms UI thread during coexistence; touching them off that thread is a re-entrancy /
 		/// cross-thread bug, so the guard runs before any windowing.
 		///
 		/// To make <c>InvokeRequired</c> true deterministically, the owner control's window handle is created
-		/// on a dedicated worker thread (kept alive for the duration), then ShowModal is invoked from this test
-		/// thread — a different thread than the one that owns the handle.
+		/// on a dedicated worker thread (kept alive for the duration), then ShowModal is invoked
+		/// from this test
+		/// thread -- a different thread than the one that owns the handle.
 		/// </summary>
 		[Test]
 		public void ShowModal_OwnerOnAnotherThread_ThrowsInvalidOperation()
@@ -143,9 +145,11 @@ namespace FwAvaloniaTests
 
 		// --- Sizing / min-size / size-persistence. ShowModal itself spins a real
 		// modal loop (not headless-runnable), so these cover the extracted ApplySizing helper that ShowModal
-		// delegates to: border style, min-size, and the get-hook that seeds the initial (remembered) size.
+		// delegates to: border style, min-size, and the get-hook that seeds the initial
+		// (remembered) size.
 		// SANCTIONED EXCEPTION to the no-WinForms-Forms-in-tests rule: these are bare
-		// `new Form()` property bags — no designer tree, never shown, no message loop — and the subject
+		// `new Form()` property bags -- no designer tree, never shown, no message loop -- and the
+		// subject
 		// under test IS Form property manipulation (frame delta, FixedDialog min-size semantics), which a
 		// fake would untest. App dialogs/designer Forms remain banned; test presenters for those. ---
 

@@ -29,21 +29,17 @@
     <PackageReference Include="Avalonia" IncludeAssets="compile" PrivateAssets="all" />
     <!-- Avalonia's transitive analyzer carrier; IncludeAssets="none" keeps the AVA* analyzers out. -->
     <PackageReference Include="Avalonia.BuildServices" IncludeAssets="none" PrivateAssets="all" />
-    <!-- Headless Avalonia platform for the assembly-level SetUpFixture (AvaloniaHeadlessSetUpFixture):
-         integration tests that drive the product hosts (RecordEditView/RecordBrowseView host the
-         Avalonia detail/browse views) otherwise initialize the REAL Win32 Avalonia platform
-         process-wide, so any flyout/dialog/popup becomes a real on-screen window that flashes and can
-         steal keypresses. The fixture installs a headless builder (matching FwAvaloniaTests) before any
-         test runs. Headless is test-only here; the production FwAvalonia DLL stays Headless-free. -->
+    <!-- Headless Avalonia platform for AvaloniaHeadlessSetUpFixture: without it, integration
+         tests initialize the real Win32 platform, so a popup steals keypresses as an
+         on-screen window. -->
     <PackageReference Include="Avalonia.Headless" ExcludeAssets="analyzers" PrivateAssets="all" />
     <PackageReference Include="Avalonia.Skia" ExcludeAssets="analyzers" PrivateAssets="all" />
     <PackageReference Include="CommonServiceLocator" Exclude="Build,Analyzers" />
     <!-- ChorusNotesContractTests read notes back through real LibChorus repositories. -->
     <PackageReference Include="SIL.Chorus.LibChorus" />
-    <!-- TestLocalizationManagerBootstrap registers a minimal English LocalizationManager so the
-         legacy lexicon DataTree's MessageSlice (Chorus NotesBar) can localize headlessly, the same
-         way FieldWorks.InitializeLocalizationManager does at app startup. The L10NSharp package
-         ships both L10NSharp.dll and L10NSharp.Windows.Forms.dll. -->
+    <!-- TestLocalizationManagerBootstrap registers a minimal LocalizationManager so the legacy
+         DataTree's MessageSlice can localize headlessly, matching
+         InitializeLocalizationManager at startup. -->
     <PackageReference Include="L10NSharp" />
     <PackageReference Include="DocumentFormat.OpenXml" />
     <PackageReference Include="ProDotNetZip" />

@@ -40,7 +40,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 		/// <summary>The <c>&lt;PartInventory&gt;</c> (or <c>&lt;bin&gt;</c>) source.</summary>
 		public string PartsXml { get; }
 
-		/// <summary>Optional subclass → base class chain used for part-ref resolution fallback.</summary>
+		/// <summary>Optional subclass -> base class chain used for part-ref resolution
+		/// fallback.</summary>
 		public IReadOnlyDictionary<string, string> BaseClassMap { get; }
 
 		/// <summary>The layout name parsed from <see cref="LayoutXml"/>.</summary>

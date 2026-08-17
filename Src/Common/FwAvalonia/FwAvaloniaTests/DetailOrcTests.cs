@@ -96,7 +96,8 @@ namespace FwAvaloniaTests
 		[Test]
 		public void Value_WithAGenuinelyLossyRun_StaysReadOnly()
 		{
-			// The lossy-property guard (colour/offset/superscript …) is data-safety, NOT ORC, and stays.
+			// The lossy-property guard (colour/offset/superscript ...) is data-safety, NOT ORC,
+			// and stays.
 			var value = new DetailRichTextValue("coloured",
 				new[] { new DetailTextRun("coloured", "en") },
 				richXml: "<Str/>", requiresRichEditor: true, canEditRichText: true, lossyProperties: true);

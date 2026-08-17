@@ -22,31 +22,39 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 	/// the surface font), so a checkbox NEVER inflates a table/list/tree row past the text-row height.
 	///
 	/// WHY A WHOLE TEMPLATE (not a selector tweak or a RenderTransform): the Fluent 11.3 CheckBox template
-	/// hardcodes the box as a 20×20 <c>Border</c> (<c>NormalRectangle</c>) inside an unnamed inner <c>Grid</c>
-	/// pinned to <c>Height="32"</c> — both as LOCAL VALUES in the template, which OUTRANK any style setter
-	/// (Avalonia precedence: LocalValue &gt; Style), so a <c>CheckBox /template/ Border#NormalRectangle</c>
+	/// hardcodes the box as a 20x20 <c>Border</c> (<c>NormalRectangle</c>) inside an unnamed
+	/// inner <c>Grid</c>
+	/// pinned to <c>Height="32"</c> -- both as LOCAL VALUES in the template, which OUTRANK any
+	/// style setter
+	/// (Avalonia precedence: LocalValue &gt; Style), so a <c>CheckBox /template/
+	/// Border#NormalRectangle</c>
 	/// selector cannot shrink them. A <c>ScaleTransform</c> shrinks only the PAINT and leaves the 32px layout
-	/// slot — the row-inflation the requirement rejects. The robust deterministic fix is to REPLACE the
+	/// slot -- the row-inflation the requirement rejects. The robust deterministic fix is to
+	/// REPLACE the
 	/// template with a compact one whose box and layout footprint ARE <see cref="FwAvaloniaDensity.CheckboxBoxSize"/>.
 	/// This is a <see cref="ControlTheme"/> (applied via a <c>Theme</c> setter) carrying that template plus the
-	/// checked/indeterminate/disabled state styles — a self-contained, content-independent definition, so the
+	/// checked/indeterminate/disabled state styles -- a self-contained, content-independent
+	/// definition, so the
 	/// rendered size is identical on every view.
 	///
 	/// AUTHORITATIVE SOURCE: this C# builder is the single definition. <see cref="FwSurfaceStyles"/> (browse /
 	/// detail / bulk-bar path) adds it; the dialog path adds it via <c>DialogThemeBootstrap.Apply</c> (called by
-	/// every dialog ctor, in BOTH the runtime host and the headless dialog tests). One helper, both paths.
+	/// every dialog ctor, in BOTH the runtime host and the headless dialog tests). One helper,
+	/// both paths.
 	/// </summary>
 	public static class FwCheckBoxStyle
 	{
-		// The legacy Fluent checkmark geometry (Controls/CheckBox.xaml), drawn in a Viewbox so it scales to
-		// whatever box size we choose — keeping the deterministic box font-proportional without redrawing.
+		// The legacy Fluent checkmark geometry (Controls/CheckBox.xaml), drawn in a Viewbox so it
+		// scales to
+		// whatever box size we choose -- keeping the deterministic box font-proportional without
+		// redrawing.
 		private const string CheckGeometry =
 			"M5.5 10.586 1.707 6.793A1 1 0 0 0 .293 8.207l4.5 4.5a 1 1 0 0 0 1.414 0l11-11A1 1 0 0 0 15.793.293L5.5 10.586Z";
 		private const string IndeterminateGeometry = "M1536 1536v-1024h-1024v1024h1024z";
 
-		// Concrete brushes (NOT Fluent DynamicResources, which do not resolve in the headless test app — the
-		// established "hard rule 1"): a WinForms-ish checkbox. White box, mid-gray border, blue accent when
-		// checked, gray when disabled.
+		// Concrete brushes, not Fluent DynamicResources -- those do not resolve in the
+		// headless test app. A WinForms-ish checkbox: white box, mid-gray border, blue
+		// accent when checked, gray when disabled.
 		private static readonly IBrush BoxFill = Brushes.White;
 		private static readonly IBrush BoxStroke = new SolidColorBrush(Color.FromRgb(0x7A, 0x7A, 0x7A));
 		private static readonly IBrush CheckedFill = new SolidColorBrush(Color.FromRgb(0x00, 0x5F, 0xB8));
@@ -86,8 +94,10 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 				Setters =
 				{
 					new Setter(TemplatedControl.BackgroundProperty, Brushes.Transparent),
-					// No box→label gap here: the gap is the StackPanel Spacing in CreateTemplate (deterministic,
-					// CheckboxLabelGap). Padding stays 0 so a content-less select checkbox adds no width either.
+					// No box->label gap here: the gap is the StackPanel Spacing in CreateTemplate
+					// (deterministic,
+					// CheckboxLabelGap). Padding stays 0 so a content-less select checkbox adds
+					// no width either.
 					new Setter(TemplatedControl.PaddingProperty, new Thickness(0)),
 					new Setter(Layoutable.MinHeightProperty, 0d),
 					new Setter(Layoutable.MinWidthProperty, 0d),
@@ -96,7 +106,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 				}
 			};
 
-			// Base (unchecked) visuals — set via STYLES, not local template values, so the state styles below
+			// Base (unchecked) visuals -- set via STYLES, not local template values, so the state
+			// styles below
 			// can override them (a local value would outrank a style setter). The box reads white with a gray
 			// border; both glyphs start hidden. These must precede the state styles so a later matching state
 			// style wins by ordering.
@@ -117,15 +128,15 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 				Setters = { new Setter(Visual.OpacityProperty, 0d) }
 			});
 
-			// :checked — accent-fill the box and reveal the checkmark glyph.
+			// :checked -- accent-fill the box and reveal the checkmark glyph.
 			theme.Add(BoxFillStyle(":checked", CheckedFill, CheckedStroke));
 			theme.Add(GlyphOpacityStyle(":checked", "FwCheckBox_CheckGlyph"));
 
-			// :indeterminate — accent-fill the box and reveal the square indeterminate glyph.
+			// :indeterminate -- accent-fill the box and reveal the square indeterminate glyph.
 			theme.Add(BoxFillStyle(":indeterminate", CheckedFill, CheckedStroke));
 			theme.Add(GlyphOpacityStyle(":indeterminate", "FwCheckBox_IndeterminateGlyph"));
 
-			// :disabled — gray the box so a disabled checkbox reads inert.
+			// :disabled -- gray the box so a disabled checkbox reads inert.
 			theme.Add(BoxFillStyle(":disabled", DisabledFill, DisabledStroke));
 
 			return theme;
@@ -147,14 +158,17 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 				Setters = { new Setter(Visual.OpacityProperty, 1d) }
 			};
 
-		// The compact template: a box Border + the check/indeterminate glyphs in a Viewbox, then the content
-		// presenter for any label. Box and the surrounding StackPanel are sized to `box`, so the layout
-		// footprint is the font-proportional box, not the Fluent 32px slot.
+		/// <summary>
+		/// The compact template: a box Border with the check and indeterminate glyphs in a
+		/// Viewbox, then the content presenter for any label. The box and the surrounding
+		/// StackPanel are sized to <paramref name="box"/>, so the layout footprint is the
+		/// font-proportional box rather than the Fluent 32px slot.
+		/// </summary>
 		private static Control CreateTemplate(double box)
 		{
-			// NOTE: do NOT set Opacity locally here — a local value outranks a Style setter (Avalonia
-			// precedence LocalValue > Style), so the :checked state style could not reveal it. The glyphs are
-			// hidden by the theme's base nested style and revealed by the state styles (see CreateTheme).
+			// NOTE: do NOT set Opacity locally -- a local value outranks a Style setter, so
+			// the :checked state style could not reveal it. The theme's nested style hides
+			// the glyphs; state styles reveal them.
 			var checkGlyph = new Path
 			{
 				Name = "FwCheckBox_CheckGlyph",
@@ -176,9 +190,9 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 				Child = new Panel { Children = { checkGlyph, indeterminateGlyph } }
 			};
 
-			// NOTE: Background/BorderBrush are NOT set locally — a local value would outrank the :checked /
-			// :disabled state Style setters (LocalValue > Style). The unchecked fill/stroke come from the
-			// theme's base nested style; the states recolor through styles (see CreateTheme).
+			// NOTE: Background/BorderBrush are NOT set locally -- a local value outranks
+			// the :checked / :disabled Style setters. Unchecked fill/stroke come from
+			// the theme's nested style; states recolor via style.
 			var boxBorder = new Border
 			{
 				Name = "FwCheckBox_Box",
@@ -206,9 +220,9 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 			{
 				Orientation = Orientation.Horizontal,
 				VerticalAlignment = VerticalAlignment.Center,
-				// Deterministic box→label gap so the words never butt against the box (e.g. FilterFor's
-				// "Match case"). A content-less select checkbox (browse/list/tree) gets only this small trailing
-				// gap, which sits inside the fixed checkbox column, so it still adds no row height.
+				// Deterministic box->label gap so words never butt against the box (e.g.
+				// FilterFor's "Match case"). A content-less checkbox gets only this small
+				// gap inside the checkbox column, adding no row height.
 				Spacing = FwAvaloniaDensity.CheckboxLabelGap,
 				Children = { boxBorder, content }
 			};

@@ -181,12 +181,9 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			// If we have been disposed we do not need to crash while trying to re-init the launcher view
 			if (!IsDisposed)
 				m_msaInflectionFeatureListDlgLauncherView.Init(m_cache, resultFs);
-			// TODO: The legacy "Add features to <POS>" link (MsaInflectionFeatureListDlg.linkLabel1_LinkClicked) is
-			// not implemented: neither swapping to the sibling Inflection Features slice's chooser in the same tool
-			// (LT-5913) nor jumping to the POS editor when no such slice exists (LT-7167). The jump already has both
-			// pieces — RecordEditView posts FollowLink with FwLinkArgs, and FwFeatureStructureAdapter.BuildNodes walks
-			// the POS owner chain that yields legacy's m_highestPOS — so it needs only surfacing and a trigger. The
-			// same-tool swap has no analog: it relies on the WinForms DataTree/VectorReferenceLauncher control walk.
+			// TODO: the POS-editor jump (LT-7167) has both pieces already wired --
+			// just needs surfacing/a trigger. The same-tool slice swap (LT-5913) has
+			// no analog, since legacy relies on a WinForms control walk.
 		}
 
 		protected override void OnClick(Object sender, EventArgs arguments)

@@ -62,20 +62,12 @@ namespace SIL.FieldWorks.Common.RenderVerification
 				dataTree.ClientSize = new Size(width, totalHeight);
 				dataTree.PerformLayout();
 
-				// Force all slices to create handles and RootBoxes.
-				// PerformLayout calls HandleLayout1(fFull=true) which positions slices
-				// but does NOT call MakeSliceVisible (because fSliceIsVisible is always
-				// false on the full-layout path). Without explicit initialization here,
-				// ViewSlices that never received a paint-path MakeSliceVisible call would
-				// have null RootBoxes, and the VwDrawRootBuffered overlay in Pass 2 would
-				// silently skip them, leaving blank/empty field areas in the bitmap.
-				//
-				// We use the same sequence as HandleLayout1's fSliceIsVisible block:
-				// FieldAt(i) to convert dummies → force Handle creation on slice and its
-				// Control (which triggers MakeRoot via OnHandleCreated) → set Visible.
+				// Without this, ViewSlices that never got a paint-path MakeSliceVisible call
+				// would have null RootBoxes, which VwDrawRootBuffered silently skips in Pass 2,
+				// leaving blank field areas in the bitmap.
 				EnsureAllSlicesInitialized(dataTree);
 
-				// Recompute height after initialization — slices may have changed
+				// Recompute height after initialization -- slices may have changed
 				// height during BecomeRealInPlace (VwRootBox construction adjusts
 				// slice heights to match content). Use the content-tight height
 				// so the bitmap fits exactly around the rendered content without
@@ -139,8 +131,8 @@ namespace SIL.FieldWorks.Common.RenderVerification
 		/// are fully laid out and available for the <see cref="OverlayViewSliceContent"/> pass.
 		///
 		/// Uses the production <see cref="ViewSlice.BecomeRealInPlace"/> path which:
-		/// 1. Forces Handle creation (triggers OnHandleCreated → MakeRoot → VwRootBox)
-		/// 2. Sets AllowLayout = true (triggers PerformLayout → DoLayout → rootBox.Layout)
+		/// 1. Forces Handle creation (triggers OnHandleCreated -> MakeRoot -> VwRootBox)
+		/// 2. Sets AllowLayout = true (triggers PerformLayout -> DoLayout -> rootBox.Layout)
 		/// 3. Adjusts slice height to match content
 		///
 		/// Without BecomeRealInPlace, AllowLayout remains false (set in ViewSlice.Control setter),
@@ -156,7 +148,7 @@ namespace SIL.FieldWorks.Common.RenderVerification
 				Slice slice;
 				try
 				{
-					// FieldAt converts dummy slices → real slices (may change Slices.Count).
+					// FieldAt converts dummy slices -> real slices (may change Slices.Count).
 					slice = dataTree.FieldAt(i);
 				}
 				catch (Exception ex)
@@ -323,7 +315,7 @@ namespace SIL.FieldWorks.Common.RenderVerification
 		/// coordinate transform rectangles (rcSrc/rcDst). GetCoordRects returns rcDst in
 		/// rootSite-local coordinates (origin at (HorizMargin, 0)). If we pass a clientRect
 		/// with the rootSite's position in the *DataTree* (e.g. X=175), VwDrawRootBuffered
-		/// offsets rcDst by (-175, -y), placing content at negative X — clipping it.
+		/// offsets rcDst by (-175, -y), placing content at negative X -- clipping it.
 		///
 		/// Fix: render into a temporary bitmap using rootSite-local coordinates (0,0,w,h),
 		/// then composite the result into the main bitmap at the correct DataTree-relative position.
@@ -362,10 +354,9 @@ namespace SIL.FieldWorks.Common.RenderVerification
 						{
 							var localRect = new Rect(0, 0, rootSiteRect.Width, rootSiteRect.Height);
 							const uint whiteColor = 0x00FFFFFF;
-							// fDrawSel: false — exclude the insertion point from the snapshot.
-								// Its caret blinks on a 500ms timer (FlashInsertionPoint), so drawing
-								// the selection captures the caret non-deterministically and produces
-								// flaky pixel diffs. This snapshot verifies content, not selection.
+							// fDrawSel: false -- exclude the insertion point from the snapshot.
+								// The caret blinks (FlashInsertionPoint), so drawing it would be
+								// non-deterministic; snapshot verifies content, not selection.
 								vdrb.DrawTheRoot(rootBox, tempHdc, localRect, whiteColor, false, rootSite);
 						}
 					}

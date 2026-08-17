@@ -17,7 +17,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		/// <summary>
 		/// Stages a run-aware text edit to ONE paragraph of a
 		/// <see cref="DetailFieldKind.StructuredText"/> (StText) field, opening the session on the first
-		/// edit. Returns false — WITHOUT opening the session — for a non-StText row, an out-of-range
+		/// edit. Returns false -- WITHOUT opening the session -- for a non-StText row, an
+		/// out-of-range
 		/// paragraph index, or an ORC/lossy (read-only) paragraph. Like the run-aware single-WS path,
 		/// the rich payload preserves run metadata so the product <c>ITsString</c> rebuilds without
 		/// flattening.
@@ -26,23 +27,29 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 
 		/// <summary>
 		/// Stages setting (or clearing, when <paramref name="styleName"/> is null/empty) the named
-		/// paragraph style of ONE paragraph of a <see cref="DetailFieldKind.StructuredText"/> field.
-		/// Returns false — without opening the session — for a non-StText row or an out-of-range index.
+		/// paragraph style of ONE paragraph of a <see cref="DetailFieldKind.StructuredText"/>
+		/// field.
+		/// Returns false -- without opening the session -- for a non-StText row or an
+		/// out-of-range index.
 		/// </summary>
 		bool TrySetParagraphStyle(DetailField field, int paragraphIndex, string styleName);
 
 		/// <summary>
-		/// Stages inserting a new empty paragraph AFTER <paramref name="afterParagraphIndex"/> in a
+		/// Stages inserting a new empty paragraph AFTER <paramref name="afterParagraphIndex"/> in
+		/// a
 		/// <see cref="DetailFieldKind.StructuredText"/> field (a negative index inserts at the start).
-		/// Returns false — without opening the session — for a non-StText row. The structural gesture
+		/// Returns false -- without opening the session -- for a non-StText row. The structural
+		/// gesture
 		/// commits immediately and the host re-shows (the model's paragraph list is a compose snapshot).
 		/// </summary>
 		bool TryInsertParagraph(DetailField field, int afterParagraphIndex);
 
 		/// <summary>
 		/// Stages deleting paragraph <paramref name="paragraphIndex"/> of a
-		/// <see cref="DetailFieldKind.StructuredText"/> field. Returns false — without opening the
-		/// session — for a non-StText row, an out-of-range index, or when it would delete the only
+		/// <see cref="DetailFieldKind.StructuredText"/> field. Returns false -- without opening
+		/// the
+		/// session -- for a non-StText row, an out-of-range index, or when it would delete the
+		/// only
 		/// paragraph (the StText always keeps at least one, like the legacy editor).
 		/// </summary>
 		bool TryDeleteParagraph(DetailField field, int paragraphIndex);

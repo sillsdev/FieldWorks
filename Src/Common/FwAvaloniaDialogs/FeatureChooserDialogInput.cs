@@ -9,10 +9,10 @@ namespace FwAvaloniaDialogs
 {
 	/// <summary>
 	/// The LCModel-FREE input DTO for the standalone feature-structure chooser dialog
-	/// (<see cref="FeatureChooserDialogViewModel"/>) — the Avalonia analog of the
+	/// (<see cref="FeatureChooserDialogViewModel"/>) -- the Avalonia analog of the
 	/// WinForms <c>MsaInflectionFeatureListDlg</c> (inflection-feature variant) and
 	/// <c>PhonologicalFeatureChooserDlg</c> (phonological variant). The LCModel-aware launcher builds this from the
-	/// live feature system (the depth-tagged <see cref="FwFeatureNode"/> list — the lift of
+	/// live feature system (the depth-tagged <see cref="FwFeatureNode"/> list -- the lift of
 	/// <c>FeatureStructureTreeView.AddNode</c> / <c>PopulateTreeFromPos</c>) and the current assignment set (read from
 	/// an existing <c>IFsFeatStruc</c>); on OK the launcher rebuilds the <c>IFsFeatStruc</c> from the chosen
 	/// <see cref="FeatureChooserPayload.Assignments"/>. The dialog itself holds NO model reference.

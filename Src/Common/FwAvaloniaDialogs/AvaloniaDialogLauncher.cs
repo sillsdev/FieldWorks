@@ -44,7 +44,8 @@ namespace FwAvaloniaDialogs
 
 	/// <summary>
 	/// Generic scaffold for a "launch one Avalonia dialog and apply the result to the live settings"
-	/// product launcher. Captures the shape every dialog-edge shares — the part OUTSIDE the view-model that
+	/// product launcher. Captures the shape every dialog-edge shares -- the part OUTSIDE the
+	/// view-model that
 	/// the dialog stack (DialogViewModelBase / AvaloniaDialogHost.ShowModal) does not cover:
 	///
 	///   1. populate a product-supplied state DTO from the live settings (<see cref="BuildState"/>),
@@ -120,7 +121,8 @@ namespace FwAvaloniaDialogs
 		protected abstract TPayload Apply(TState state);
 
 		/// <summary>
-		/// The sealed run loop shared by every dialog: build state → VM → view, show modally over
+		/// The sealed run loop shared by every dialog: build state -> VM -> view, show modally
+		/// over
 		/// <paramref name="owner"/>, and on OK apply + return the typed payload. The host
 		/// (<see cref="AvaloniaDialogHost.ShowModal"/>) owns and disposes the view + view-model after close,
 		/// so this method does not dispose them. Returns <see cref="DialogOutcome{TPayload}.Cancelled"/> when

@@ -18,8 +18,8 @@ namespace SIL.FieldWorks.XWorks
 	/// inner provider; the test <c>MockFwXApp</c> is built with a null inner provider, so its
 	/// <c>GetHelpString</c> throws an NRE the moment the legacy DataTree's Help command queries it
 	/// (DTMenuHandler.OnDisplayDataTreeHelp) while building the menu. Returning null here makes the
-	/// Help item simply invisible/disabled — the same as the product when a slice has no help
-	/// topic — instead of crashing menu materialization.
+	/// Help item simply invisible/disabled -- the same as the product when a slice has no help
+	/// topic -- instead of crashing menu materialization.
 	/// </summary>
 	internal sealed class TestNullHelpTopicProvider : IHelpTopicProvider
 	{

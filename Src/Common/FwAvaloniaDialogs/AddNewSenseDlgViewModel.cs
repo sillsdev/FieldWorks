@@ -14,12 +14,14 @@ namespace FwAvaloniaDialogs
 	/// View-model for the reusable Avalonia Add New Sense dialog (the New-UI-mode analog of the legacy
 	/// <c>AddNewSenseDlg</c>). It hosts the owned controls the view mounts:
 	///   * a read-only CITATION FORM display string (the legacy <c>m_fwtbCitationForm</c>, never edited),
-	///   * a <see cref="FwMultiWsTextField"/> for the editable GLOSS (one row per analysis WS — <c>m_fwtbGloss</c>),
+	/// * a <see cref="FwMultiWsTextField"/> for the editable GLOSS (one row per analysis WS --
+	/// <c>m_fwtbGloss</c>),
 	///     staged into an in-memory <see cref="InMemoryDetailEditContext"/> so the VM stays LCModel-free, and
 	///   * the LCModel-free <see cref="MSAGroupBox"/> grammatical-info editor, seeded from the entry's morph type
 	///     and refined by the user (the legacy <c>m_msaGroupBox</c>).
 	///
-	/// OK is gated through the shared base's <c>GetValidationErrors</c>: one error when the gloss is empty — the legacy
+	/// OK is gated through the shared base's <c>GetValidationErrors</c>: one error when the gloss
+	/// is empty -- the legacy
 	/// <c>AddNewSenseDlg_Closing</c> rule (an empty <c>m_fwtbGloss</c> shows <c>ksFillInGloss</c> and cancels OK).
 	/// <c>ApplyChanges</c> snapshots the per-WS gloss values + the box's <see cref="FwSandboxMsa"/> into
 	/// <see cref="Result"/>; the launcher reads it to create the new sense in one undoable step.
@@ -56,9 +58,11 @@ namespace FwAvaloniaDialogs
 				"AddNewSense.Gloss", _glossContext, writingSystemFocused: null);
 			_glossContext.TextStaged += OnGlossStaged;
 
-			// The grammatical-info (MSA) section: the LCModel-free MSAGroupBox, fed the project POS hierarchy +
+			// The grammatical-info (MSA) section: the LCModel-free MSAGroupBox, fed the project
+			// POS hierarchy +
 			// slot options + the initial MsaType the entry's morph type implies (the launcher computed the latter via
-			// the lift of MSAGroupBox.MorphTypePreference). The user refines the affix type inside the box itself —
+			// the lift of MSAGroupBox.MorphTypePreference). The user refines the affix type
+			// inside the box itself --
 			// the Add New Sense dialog has no morph-type picker (the morph type is fixed by the entry, unlike Insert
 			// Entry where typing the lexeme form derives it).
 			_slotsForPos = _input.SlotsForPos;
@@ -97,11 +101,13 @@ namespace FwAvaloniaDialogs
 		/// <summary>True when there is a non-empty <see cref="CitationForm"/> to show.</summary>
 		public bool HasCitationForm { get; }
 
-		/// <summary>The owned per-analysis-WS gloss editor the view mounts (the legacy m_fwtbGloss).</summary>
+		/// <summary>The owned per-analysis-WS gloss editor the view mounts (the legacy
+		/// m_fwtbGloss).</summary>
 		public FwMultiWsTextField GlossField { get; }
 
 		/// <summary>
-		/// The owned grammatical-info (MSA) editor the view mounts — the LCModel-free <see cref="MSAGroupBox"/>.
+		/// The owned grammatical-info (MSA) editor the view mounts -- the LCModel-free <see
+		/// cref="MSAGroupBox"/>.
 		/// Its <see cref="FwSandboxMsa"/> is snapshotted on OK.
 		/// </summary>
 		public MSAGroupBox MsaGroupBox { get; }

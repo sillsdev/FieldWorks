@@ -31,10 +31,12 @@
 			        AutomationProperties.AutomationId="MessageBox.Cancel"/>
 		</StackPanel>
 
-		<!-- Standard message-box body: the severity icon on the LEFT, vertically centered against the message
-		     text block (the conventional Windows MessageBox / WinForms arrangement), a fixed ~12px gap
-		     (DialogIconGap) between icon and text, and the message wrapping in the remaining width. The icon
-		     column is Auto (collapses to nothing when there is no icon); the text column takes the rest. -->
+		<!--
+			Standard message-box body: the severity icon on the left, vertically centered against
+			the message
+			text, with a fixed gap between them. The icon column collapses to nothing when there
+			is no icon.
+			-->
 		<Grid ColumnDefinitions="Auto,*" VerticalAlignment="Center">
 			<TextBlock Grid.Column="0" Text="{Binding IconGlyph}" IsVisible="{Binding ShowIcon}"
 			           FontSize="28" LineHeight="28" Margin="{StaticResource DialogIconGap}"

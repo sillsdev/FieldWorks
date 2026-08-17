@@ -74,7 +74,7 @@ namespace SIL.FieldWorks.Common.ViewsInterfaces
 
 	/// <summary>
 	/// Historical/experimental test that depended on Mono-specific COM interfaces.
-	/// The referenced ILgWritingSystemFactoryBuilder interface no longer exists.
+	/// ILgWritingSystemFactoryBuilder is not part of the current interface surface.
 	/// </summary>
 	[TestFixture]
 	[Ignore("Obsolete: ILgWritingSystemFactoryBuilder interface no longer exists (historical Mono-specific experiment).")]

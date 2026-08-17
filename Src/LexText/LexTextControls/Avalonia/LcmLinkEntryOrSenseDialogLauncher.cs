@@ -172,7 +172,7 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		/// <summary>
 		/// Applies the OK result: resolves the chosen entry and exposes it via <see cref="SelectedObject"/>. No model
-		/// mutation here — the caller performs the on-OK action.
+		/// mutation here -- the caller performs the on-OK action.
 		/// </summary>
 		protected override LinkPayload Apply(EntryGoDialogInput state)
 		{
