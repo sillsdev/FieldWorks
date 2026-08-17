@@ -37,9 +37,8 @@
 	Equivalent environment variable: FW_TEST_ALLOW_ASSERT_DIALOGS=1.
 
 .PARAMETER CommentHygiene
-	Enforce the comment-hygiene gate, failing the run on any violation in the lines this
-	branch adds. Required of coding agents; a developer run leaves it off and never runs
-	the gate.
+	Enforce the comment-hygiene check, failing the run on any violation in the lines this
+	branch adds.
 
 .PARAMETER StartedBy
 	Optional actor label written to worktree lock metadata (for example: user or agent).

@@ -1,6 +1,6 @@
 <#
 .SYNOPSIS
-	Diff-scoped comment-hygiene gate for FieldWorks source and project comments.
+	Diff-scoped comment-hygiene check for FieldWorks source and project comments.
 
 .DESCRIPTION
 	Enforces the mechanical banned-content categories, plus a one-line cap on
@@ -27,6 +27,12 @@
 	request's diff without breaking the build. build.ps1 and test.ps1 pass this
 	whenever -CommentHygiene was not requested.
 
+.PARAMETER ReportPath
+	Write the scan result to this path as JSON: the base ref, the advisory
+	flag, and one record per violation carrying a repo-relative path, line,
+	category, and comment text. A run that skips its scan writes nothing, so
+	the file is present only when a scan produced it.
+
 .EXAMPLE
 	Build/Agent/comment-hygiene.ps1
 	Gate the current diff against the local merge-base with the default branch.
@@ -40,7 +46,8 @@ param(
 	[string] $BaseRef,
 	[switch] $Full,
 	[switch] $List,
-	[switch] $Advisory
+	[switch] $Advisory,
+	[string] $ReportPath
 )
 
 Set-StrictMode -Version Latest
@@ -79,9 +86,10 @@ function Resolve-BaseRef {
 	if (-not [string]::IsNullOrWhiteSpace($env:GITHUB_EVENT_PULL_REQUEST_BASE_SHA)) { return $env:GITHUB_EVENT_PULL_REQUEST_BASE_SHA }
 	if (-not [string]::IsNullOrWhiteSpace($env:GITHUB_BASE_REF)) { return "origin/$env:GITHUB_BASE_REF" }
 
-	# git rev-parse against the local origin/HEAD ref, not `git remote show origin`: the
-	# latter contacts the remote (a real network round-trip) on every local gate run.
-	$originHead = git rev-parse --abbrev-ref origin/HEAD 2>$null
+	# Reads local origin/HEAD, not `git remote show origin`, which hits the network
+	# every run. --quiet keeps git's stderr out of PowerShell's error stream, where
+	# it terminates instead of falling through.
+	$originHead = git rev-parse --verify --quiet --abbrev-ref origin/HEAD
 	if ($LASTEXITCODE -eq 0 -and -not [string]::IsNullOrWhiteSpace($originHead)) { return $originHead.Trim() }
 	return 'origin/main'
 }
@@ -162,20 +170,74 @@ function Write-Violation {
 	}
 }
 
+function Write-ScanReport {
+	<#
+	.SYNOPSIS
+		Writes the scan result to -ReportPath as JSON. Does nothing when the
+		caller asked for no report.
+
+	.PARAMETER Base
+		The ref the scan diffed against, recorded verbatim in the report.
+	#>
+	param(
+		[object[]] $Violations,
+		[string] $Base
+	)
+
+	if ([string]::IsNullOrWhiteSpace($ReportPath)) { return }
+
+	# PowerShell's current location and .NET's working directory can differ; New-Item
+	# reads the first and WriteAllText the second, so anchor a relative path once.
+	$path = $ReportPath
+	if (-not [System.IO.Path]::IsPathRooted($path)) {
+		$path = Join-Path (Get-Location).Path $path
+	}
+
+	$directory = Split-Path -Path $path -Parent
+	if (-not [string]::IsNullOrWhiteSpace($directory) -and -not (Test-Path -LiteralPath $directory)) {
+		New-Item -ItemType Directory -Path $directory -Force | Out-Null
+	}
+
+	$records = New-Object System.Collections.ArrayList
+	foreach ($v in $Violations) {
+		[void]$records.Add([ordered]@{
+			file     = ($v.File.Substring($repoRoot.Length + 1) -replace '\\', '/')
+			line     = $v.Line
+			category = $v.Category
+			text     = $v.Text
+		})
+	}
+
+	$report = [ordered]@{
+		base           = $Base
+		advisory       = [bool]$Advisory
+		violationCount = $records.Count
+		violations     = @($records.ToArray())
+	}
+
+	# UTF8Encoding($false): a byte-order mark ahead of the opening brace makes the file
+	# unparsable to a plain JSON reader.
+	[System.IO.File]::WriteAllText($path, ($report | ConvertTo-Json -Depth 5),
+		(New-Object System.Text.UTF8Encoding($false)))
+	Write-Host "comment-hygiene: wrote $($records.Count) violation record(s) to $path"
+}
+
 if ($Full) {
 	$files = git ls-files $scopedGlobs | ForEach-Object { ConvertTo-RepoPath $_ } | Where-Object { -not (Test-ExcludedPath $_) }
 	$violations = Get-CommentHygieneViolations -Files $files
 
 	Write-Host "comment-hygiene -Full: $($violations.Count) violation(s) across $($files.Count) file(s)"
 	foreach ($v in $violations) { Write-Violation $v }
+	Write-ScanReport -Violations $violations -Base 'HEAD'
 	exit 0
 }
 
-# The build and test CI steps both invoke this gate over the same tree, which would
-# annotate every violation twice. The first run marks the job so the rest skip.
+# Several steps invoke this script over one tree, which would annotate every violation
+# once per step. The first run marks the job, and presetting the marker suppresses
+# reporting for a whole job.
 if ($env:GITHUB_ACTIONS -eq 'true') {
 	if ($env:FW_COMMENT_HYGIENE_REPORTED -eq '1') {
-		Write-Host 'comment-hygiene: already reported earlier in this job.'
+		Write-Host 'comment-hygiene: reporting suppressed for this job.'
 		exit 0
 	}
 	if (-not [string]::IsNullOrWhiteSpace($env:GITHUB_ENV)) {
@@ -192,6 +254,7 @@ Write-Host "comment-hygiene: scanning lines added since $base"
 $lineFilter = Get-AddedLineFilter -Base $base
 if ($lineFilter.Count -eq 0) {
 	Write-Host 'comment-hygiene: no added lines in scope to check.'
+	Write-ScanReport -Violations @() -Base $base
 	exit 0
 }
 
@@ -265,6 +328,7 @@ foreach ($group in ($pending | Group-Object File)) {
 }
 
 $violations = $remainingViolations.ToArray()
+Write-ScanReport -Violations $violations -Base $base
 
 if ($fixedCount -gt 0 -or $wrappedCount -gt 0) {
 	Write-Host ("comment-hygiene: auto-fixed {0} punctuation and re-wrapped {1} over-long comment line(s) in {2} file(s) (review and include in your commit)." -f $fixedCount, $wrappedCount, $fixedFiles.Keys.Count) -ForegroundColor Yellow

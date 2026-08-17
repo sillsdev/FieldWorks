@@ -9,9 +9,8 @@ Minimal, high-signal guidance for coding agents in this repository.
 - Test with `.\test.ps1 -CommentHygiene`.
 - `-CommentHygiene` is required of agents and not of humans: it fails the run on
 	any comment-hygiene violation in the lines your branch adds, so you fix your
-	own comments before they reach review. A developer build omits it and never
-	runs the gate; CI reports violations as warning annotations without failing.
-	Do not drop the flag to get a build through.
+	own comments before they reach review. Do not drop the flag to get a build
+	through.
 - Do not bypass repository scripts for normal build/test work.
 - Commit messages must pass `gitlint` (CI: `.github/workflows/CommitMessage.yml`):
 	title <=72 characters, body lines <=80 characters, blank line between

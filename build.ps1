@@ -119,9 +119,8 @@
 	Defaults to the FW_BUILD_STARTED_BY environment variable when set, otherwise 'unknown'.
 
 .PARAMETER CommentHygiene
-	Enforce the comment-hygiene gate, failing the build on any violation in the lines this
-	branch adds. Required of coding agents; a developer build leaves it off and never runs
-	the gate. CI reports violations as warning annotations either way.
+	Enforce the comment-hygiene check, failing the build on any violation in the lines this
+	branch adds.
 
 .PARAMETER SkipWorktreeLock
 	Internal switch used when build.ps1 is invoked from test.ps1 while the parent test workflow

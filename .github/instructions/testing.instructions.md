@@ -17,7 +17,6 @@ Guidance for writing and running deterministic unit and integration tests for Fi
 
 Use `.\test.ps1` for all managed (C#) tests. Always pass `-CommentHygiene`: it
 fails the run on any comment-hygiene violation in the lines your branch adds.
-Humans omit it and never see the gate; CI annotates without failing.
 
 ```powershell
 # Run all tests (builds first)

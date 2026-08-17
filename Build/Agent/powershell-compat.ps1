@@ -1,10 +1,11 @@
 <#
 .SYNOPSIS
-	Static PowerShell-version-compatibility gate for the comment-hygiene tooling.
+	Static compatibility check for PowerShell that must run under both 5.1 and 7.
 
 .DESCRIPTION
-	Two independent static layers, neither of which requires more than one
-	PowerShell engine to actually be installed:
+	Applies to any script this repo ships to developers or CI. Two independent
+	static layers, neither of which requires more than one PowerShell engine to
+	actually be installed:
 
 	1. A dependency-free regex scan for known gotchas where 5.1 and 7 both
 	   parse the same text successfully but disagree on its meaning, so no
@@ -47,14 +48,11 @@ $ErrorActionPreference = 'Stop'
 Import-Module (Join-Path $PSScriptRoot 'CommentHygiene.psm1') -Force
 
 $repoRoot = (Resolve-Path (Join-Path $PSScriptRoot '../..')).Path
-$targetFiles = @(
-	'Build/Agent/CommentHygiene.psm1',
-	'Build/Agent/CommentHygiene.Tests.ps1',
-	'Build/Agent/comment-hygiene.ps1',
-	'Build/Agent/comment-hygiene-repair.ps1',
-	'Build/Agent/comment-hygiene-blame.ps1',
-	'Build/Agent/powershell-compat.ps1'
-) | ForEach-Object { Join-Path $repoRoot $_ } | Where-Object { Test-Path -LiteralPath $_ }
+# Every PowerShell file under Build/Agent, so a new script is covered the day it
+# lands rather than when someone remembers to name it here.
+$targetFiles = @(Get-ChildItem -LiteralPath $PSScriptRoot -Recurse -File |
+	Where-Object { $_.Extension -eq '.ps1' -or $_.Extension -eq '.psm1' } |
+	ForEach-Object { $_.FullName } | Sort-Object)
 
 $violations = New-Object System.Collections.ArrayList
 

@@ -77,7 +77,7 @@ function Get-CommentHygieneEditorConfig {
 		whatever .editorconfig already declares for every file, so the two can
 		never drift apart. Only the [*] section is read, since that is where
 		this repo declares both values. Results are cached per root -- this runs
-		once per gate invocation, not once per file.
+		once per scan, not once per file.
 
 	.OUTPUTS
 		A hashtable with MaxLineLength and TabWidth. Falls back to 98 and 4 when
@@ -560,7 +560,7 @@ function Get-CommentLineClassification {
 		else {
 			# Inlined from Get-CommentBody: this loop runs every line of every diffed file on
 			# every build, where a per-line function call plus its own redundant Trim measurably
-			# slows the gate down.
+			# slows the scan down.
 			if ($trimmed.StartsWith('///')) {
 				$kinds[$i] = 'exempt'
 				$bodies[$i] = $trimmed.Substring(3)
@@ -633,7 +633,7 @@ function Get-CommentHygieneViolations {
 			$allowedLines = $LineFilter[$file]
 		}
 
-		# File.ReadAllLines, not Get-Content: ~50x faster on a large file, and this gate runs
+		# File.ReadAllLines, not Get-Content: ~50x faster on a large file, and this scan runs
 		# every build. Still BOM-safe: StreamReader sniffs a real BOM even given an explicit
 		# encoding.
 		$lines = [System.IO.File]::ReadAllLines($file, [System.Text.Encoding]::UTF8)
