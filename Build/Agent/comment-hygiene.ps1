@@ -21,6 +21,12 @@
 .PARAMETER List
 	Show every violation. Implied by -Full.
 
+.PARAMETER Advisory
+	Report violations and exit 0 instead of failing. Under GitHub Actions each
+	violation is also emitted as a warning annotation, so it lands on the pull
+	request's diff without breaking the build. build.ps1 and test.ps1 pass this
+	whenever -CommentHygiene was not requested.
+
 .EXAMPLE
 	Build/Agent/comment-hygiene.ps1
 	Gate the current diff against the local merge-base with the default branch.
@@ -33,7 +39,8 @@
 param(
 	[string] $BaseRef,
 	[switch] $Full,
-	[switch] $List
+	[switch] $List,
+	[switch] $Advisory
 )
 
 Set-StrictMode -Version Latest
@@ -120,6 +127,24 @@ function Get-AddedLineFilter {
 		}
 	}
 
+	# git diff reports tracked files only, so a new file an agent has not staged yet
+	# would go unscanned. Every line of an untracked in-scope file counts as added.
+	$untracked = git ls-files --others --exclude-standard -- $scopedGlobs 2>$null
+	if ($LASTEXITCODE -eq 0) {
+		foreach ($relative in $untracked) {
+			if ([string]::IsNullOrWhiteSpace($relative)) { continue }
+			$path = ConvertTo-RepoPath $relative
+			if ((Test-ExcludedPath $path) -or -not (Test-Path -LiteralPath $path)) { continue }
+
+			$lineCount = ([System.IO.File]::ReadAllLines($path, [System.Text.Encoding]::UTF8)).Count
+			if ($lineCount -eq 0) { continue }
+			if (-not $filter.ContainsKey($path)) {
+				$filter[$path] = [System.Collections.Generic.HashSet[int]]::new()
+			}
+			for ($i = 1; $i -le $lineCount; $i++) { [void]$filter[$path].Add($i) }
+		}
+	}
+
 	return $filter
 }
 
@@ -127,6 +152,14 @@ function Write-Violation {
 	param($Violation)
 	$relative = $Violation.File.Substring($repoRoot.Length + 1)
 	Write-Host ("  {0}:{1} [{2}] {3}" -f $relative, $Violation.Line, $Violation.Category, $Violation.Text)
+
+	# An annotation puts the violation on the pull request's diff, where a
+	# reviewer sees it without the job failing. Forward slashes: GitHub matches
+	# annotation paths against the repository's own separator.
+	if ($Advisory -and $env:GITHUB_ACTIONS -eq 'true') {
+		Write-Host ("::warning file={0},line={1},title=comment-hygiene ({2})::{3}" -f `
+			($relative -replace '\\', '/'), $Violation.Line, $Violation.Category, $Violation.Text)
+	}
 }
 
 if ($Full) {
@@ -228,6 +261,15 @@ if ($violations.Count -eq 0) {
 }
 
 Write-Host ''
+
+if ($Advisory) {
+	Write-Host "comment-hygiene: $($violations.Count) advisory violation(s) in added lines" -ForegroundColor Yellow
+	foreach ($v in $violations) { Write-Violation $v }
+	Write-Host ''
+	Write-Host 'Advisory only. Pass -CommentHygiene to build.ps1 or test.ps1 to enforce these.' -ForegroundColor Yellow
+	exit 0
+}
+
 Write-Host "comment-hygiene: $($violations.Count) violation(s) in added lines" -ForegroundColor Red
 foreach ($v in $violations) { Write-Violation $v }
 Write-Host ''
