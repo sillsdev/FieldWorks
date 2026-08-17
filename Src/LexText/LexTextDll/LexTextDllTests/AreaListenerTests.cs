@@ -8,6 +8,7 @@
 // <remarks>
 // </remarks>
 using System.Collections.Generic;
+using System.Linq;
 using System.Xml;
 using NUnit.Framework;
 using SIL.LCModel;
@@ -28,6 +29,11 @@ namespace LexTextDllTests
 	public class AreaListenerTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
 	{
 		#region Member Data
+
+		private const string ClerkXPath = "//item[@value='lists']/parameters/clerks/clerk";
+		private const string CommandXPath = "//commands/command";
+		private const string ContextMenuXPath = "//contextMenus/menu";
+		private const string ToolXPath = "//item[@value='lists']/parameters/tools/tool";
 
 		/// <summary>
 		/// For testing.
@@ -146,6 +152,29 @@ namespace LexTextDllTests
 			return fakeWindowConfig.DocumentElement;
 		}
 
+		private void UseTestWindowConfiguration()
+		{
+			m_propertyTable.SetProperty("WindowConfiguration", m_testWindowConfig, true);
+			m_propertyTable.SetPropertyPersistence("WindowConfiguration", false);
+		}
+
+		private ICmPossibilityList CreateUnownedList(string name)
+		{
+			return Cache.ServiceLocator.GetInstance<ICmPossibilityListFactory>()
+				.CreateUnowned(name, WritingSystemServices.kwsAnals);
+		}
+
+		/// <summary>
+		/// Refreshes the Lists area sidebar the way xCore does and returns the tool name of every
+		/// entry the refresh left in the display, in display order.
+		/// </summary>
+		private List<string> RefreshListsToolsDisplay()
+		{
+			var display = new UIListDisplayProperties(new XCore.List(null));
+			m_listener.OnDisplayListsToolsList(null, ref display);
+			return display.List.Cast<ListItem>().Select(item => item.value).ToList();
+		}
+
 		#endregion
 
 		///--------------------------------------------------------------------------------------
@@ -158,24 +187,18 @@ namespace LexTextDllTests
 		{
 			// Setup
 			var node = m_testWindowConfig;
-			const string clerkXPath = "//item[@value='lists']/parameters/clerks/clerk";
-			const string commandXPath = "//commands/command";
-			const string contextXPath = "//contextMenus/menu";
-			const string toolXPath = "//item[@value='lists']/parameters/tools/tool";
-			//var fakeUIDisplay = new UIListDisplayProperties(new XCore.List(node.SelectSingleNode(toolXPath), null));
+			//var fakeUIDisplay = new UIListDisplayProperties(new XCore.List(node.SelectSingleNode(ToolXPath), null));
 			//var cdispNodesBefore = fakeUIDisplay.List.Count;
-			var contextNodes = node.SelectNodes(contextXPath);
+			var contextNodes = node.SelectNodes(ContextMenuXPath);
 			var ccontextNodesBefore = contextNodes == null ? 0 : contextNodes.Count;
-			var commandNodes = node.SelectNodes(commandXPath);
+			var commandNodes = node.SelectNodes(CommandXPath);
 			var ccommandNodesBefore = commandNodes == null ? 0 : commandNodes.Count;
-			var clerkNodes = node.SelectNodes(clerkXPath);
+			var clerkNodes = node.SelectNodes(ClerkXPath);
 			var cclerkNodesBefore = clerkNodes == null ? 0 : clerkNodes.Count;
-			var toolNodes = node.SelectNodes(toolXPath);
+			var toolNodes = node.SelectNodes(ToolXPath);
 			var ctoolNodesBefore = toolNodes == null ? 0 : toolNodes.Count;
 
-			const string listName = "testList1";
-			var ws = WritingSystemServices.kwsAnals;
-			var testList = Cache.ServiceLocator.GetInstance<ICmPossibilityListFactory>().CreateUnowned(listName, ws);
+			var testList = CreateUnownedList("testList1");
 
 			// SUT
 			m_listener.AddListsToWindowConfig(new List<ICmPossibilityList> { testList }, node);
@@ -183,14 +206,99 @@ namespace LexTextDllTests
 			// Verify
 			// The above routine no longer handles display nodes
 			//Assert.That(fakeUIDisplay.List.Count, Is.EqualTo(cdispNodesBefore + 1), "Didn't add a display node.");
-			var ctoolNodesAfter = node.SelectNodes(toolXPath).Count;
+			var ctoolNodesAfter = node.SelectNodes(ToolXPath).Count;
 			Assert.That(ctoolNodesAfter, Is.EqualTo(ctoolNodesBefore + 1), "Didn't add a tool node.");
-			var cclerkNodesAfter = node.SelectNodes(clerkXPath).Count;
+			var cclerkNodesAfter = node.SelectNodes(ClerkXPath).Count;
 			Assert.That(cclerkNodesAfter, Is.EqualTo(cclerkNodesBefore + 1), "Didn't add a clerk node.");
-			var ccommandNodesAfter = node.SelectNodes(commandXPath).Count;
+			var ccommandNodesAfter = node.SelectNodes(CommandXPath).Count;
 			Assert.That(ccommandNodesAfter, Is.EqualTo(ccommandNodesBefore + 1), "Didn't add a command node.");
-			var ccontextNodesAfter = node.SelectNodes(contextXPath).Count;
+			var ccontextNodesAfter = node.SelectNodes(ContextMenuXPath).Count;
 			Assert.That(ccontextNodesAfter, Is.EqualTo(ccontextNodesBefore + 1), "Didn't add a context menu node.");
+		}
+
+		///--------------------------------------------------------------------------------------
+		/// <summary>
+		/// Every ownerless list created since the previous refresh must reach the Lists area, not
+		/// just one of them; a single session can create several.
+		/// </summary>
+		///--------------------------------------------------------------------------------------
+		[Test]
+		public void FillListAreaList_AddsEveryListCreatedSinceLastRefresh()
+		{
+			UseTestWindowConfiguration();
+			CreateUnownedList("Original List");
+			var afterFirstRefresh = RefreshListsToolsDisplay();
+			Assert.That(afterFirstRefresh, Does.Contain("OriginalListEdit"));
+
+			CreateUnownedList("Second List");
+			CreateUnownedList("Third List");
+
+			// SUT
+			var afterSecondRefresh = RefreshListsToolsDisplay();
+
+			Assert.That(afterSecondRefresh.Except(afterFirstRefresh),
+				Is.EquivalentTo(new[] { "SecondListEdit", "ThirdListEdit" }), "Missed a new list.");
+			Assert.That(afterSecondRefresh, Is.Unique, "Showed a list more than once.");
+		}
+
+		///--------------------------------------------------------------------------------------
+		/// <summary>
+		/// A refresh that finds no new ownerless list must leave the window configuration and the
+		/// mediator command set alone. Adding a list a second time appends duplicate tool, clerk
+		/// and context menu nodes, and throws on its already registered command id.
+		/// </summary>
+		///--------------------------------------------------------------------------------------
+		[Test]
+		public void FillListAreaList_RepeatedRefresh_DoesNotDuplicateConfigNodes()
+		{
+			UseTestWindowConfiguration();
+			CreateUnownedList("Original List");
+			RefreshListsToolsDisplay();
+			CreateUnownedList("Second List");
+			CreateUnownedList("Third List");
+			var afterListsAdded = RefreshListsToolsDisplay();
+			var ctoolNodes = m_testWindowConfig.SelectNodes(ToolXPath).Count;
+			var cclerkNodes = m_testWindowConfig.SelectNodes(ClerkXPath).Count;
+			var ccommandNodes = m_testWindowConfig.SelectNodes(CommandXPath).Count;
+			var ccontextNodes = m_testWindowConfig.SelectNodes(ContextMenuXPath).Count;
+
+			// SUT: a refresh with nothing new to pick up
+			var afterIdleRefresh = RefreshListsToolsDisplay();
+
+			Assert.That(afterIdleRefresh, Is.EquivalentTo(afterListsAdded));
+			Assert.That(m_testWindowConfig.SelectNodes(ToolXPath).Count,
+				Is.EqualTo(ctoolNodes), "Duplicated a tool node.");
+			Assert.That(m_testWindowConfig.SelectNodes(ClerkXPath).Count,
+				Is.EqualTo(cclerkNodes), "Duplicated a clerk node.");
+			Assert.That(m_testWindowConfig.SelectNodes(CommandXPath).Count,
+				Is.EqualTo(ccommandNodes), "Duplicated a command node.");
+			Assert.That(m_testWindowConfig.SelectNodes(ContextMenuXPath).Count,
+				Is.EqualTo(ccontextNodes), "Duplicated a context menu node.");
+		}
+
+		///--------------------------------------------------------------------------------------
+		/// <summary>
+		/// Deleting a Custom list rebuilds only the window it was deleted in, so any other main
+		/// window keeps a tool whose list is gone. Refreshing there must drop that tool rather
+		/// than fail to resolve its guid.
+		/// </summary>
+		///--------------------------------------------------------------------------------------
+		[Test]
+		public void FillListAreaList_ListDeletedInAnotherWindow_DropsItsTool()
+		{
+			UseTestWindowConfiguration();
+			var doomedList = CreateUnownedList("Doomed List");
+			CreateUnownedList("Surviving List");
+			var afterFirstRefresh = RefreshListsToolsDisplay();
+			Assert.That(afterFirstRefresh, Does.Contain("DoomedListEdit"));
+
+			doomedList.Delete();
+
+			// SUT
+			var afterDeletion = RefreshListsToolsDisplay();
+
+			Assert.That(afterDeletion, Does.Not.Contain("DoomedListEdit"));
+			Assert.That(afterDeletion, Does.Contain("SurvivingListEdit"), "Dropped the wrong tool.");
 		}
 
 		///--------------------------------------------------------------------------------------
