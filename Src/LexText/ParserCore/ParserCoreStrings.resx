@@ -189,4 +189,7 @@
   <data name="ksParsingX" xml:space="preserve">
     <value>Parsing {0}</value>
   </data>
+  <data name="ksMaxAlternativesExceeded" xml:space="preserve">
+    <value>MaxAlternatives exceeded</value>
+  </data>
 </root>

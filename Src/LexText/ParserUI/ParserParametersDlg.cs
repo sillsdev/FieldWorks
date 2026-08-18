@@ -234,6 +234,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			// For Hermit Crab, the maximum number of roots/stems allowed is between one and ten.
 			// The default is two in order to allow for compounding (which requires there be at least two roots/stems).
 			EnforceValidValue(elem, HC, MaxRoots, 1, 10, false);
+			EnforceValidValue(elem, HC, MaxAlternatives, 0, 1000000000, false);
 		}
 
 		private void EnforceValidValue(XElement elem, string parser, string item, int min, int max, bool useMinIfZero)

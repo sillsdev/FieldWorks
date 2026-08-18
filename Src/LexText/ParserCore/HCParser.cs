@@ -172,7 +172,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 					m_mergeAnalyses = (bool) mergeAnalysesElem;
 				if (maxRootsElem != null)
 					maxStemCount = int.Parse(maxRootsElem.Value);
-				if (maxRootsElem != null)
+				if (maxAlternativesElem != null)
 					maxAlternatives = int.Parse(maxAlternativesElem.Value);
 			}
 			m_morpher = new Morpher(m_traceManager, m_language) { DeletionReapplications = delReapps };
@@ -585,7 +585,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			}
 			if (e is MaxAlternativesExceededException)
 			{
-				return e.Message;
+				return ParserCoreStrings.ksMaxAlternativesExceeded;
 			}
 
 			return String.Format(ParserCoreStrings.ksHCDefaultErrorMsg, e.Message);
