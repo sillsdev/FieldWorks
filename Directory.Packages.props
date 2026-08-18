@@ -2,11 +2,9 @@
 	<PropertyGroup>
 		<ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
 		<!--
-			Transitive Pinning: When a package is declared here but only consumed
-			transitively (not directly referenced by a project), NuGet still pins it
-			to the version below. This prevents the "last writer wins" problem in our
-			shared Output/ directory, which is the root cause of assembly-version
-			mismatch crashes like System.Drawing.Common 9.0 vs 6.0 (LT-22382 class).
+			Transitive pinning forces one version of a transitively-consumed package
+			across every project sharing Output/, preventing last-writer-wins
+			assembly-version crashes (LT-22382 class).
 		-->
 		<CentralPackageTransitivePinningEnabled>true</CentralPackageTransitivePinningEnabled>
 	</PropertyGroup>
@@ -15,42 +13,39 @@
 	<Import Project="Build/SilVersions.props" />
 
 	<!--
-		=============================================================
 		TRANSITIVE PINS
 		Packages not directly referenced by any project, but whose
 		transitive versions must be forced to a single value across
 		all projects sharing Output/{Configuration}/.
-		=============================================================
 	-->
 	<ItemGroup Label="Transitive Pins">
-		<!-- Current-line refresh in this block: System.Drawing.Common,
-			 System.Resources.Extensions, and System.Security.Permissions move to 9.0.17.
-			 Microsoft.Extensions.DependencyModel intentionally stays at 9.0.16 because
-			 9.0.17 breaks ICU initialization in the .NET Framework test host. -->
-		<!-- System.Drawing.Common: SIL.LCModel.Core pulls 6.0.0 transitively,
-			 but ParatextData 9.5.x requires >= 9.0.9. Pin to 9.0.17. -->
-		<PackageVersion Include="System.Drawing.Common" Version="9.0.17" />
-		<PackageVersion Include="System.Reflection.Metadata" Version="10.0.9" />
+		<!-- System.Drawing.Common: ParatextData requires >= 9.0.9; SIL.LCModel.Core
+			 pulls 6.0.0 transitively. -->
+		<PackageVersion Include="System.Drawing.Common" Version="9.0.18" />
+		<PackageVersion Include="System.Reflection.Metadata" Version="10.0.10" />
 		<!-- System.Resources.Extensions: required for non-string resources (images, icons)
 			 in .NET Framework SDK-style projects. -->
-		<PackageVersion Include="System.Resources.Extensions" Version="9.0.17" />
-		<!-- DependencyModel: other current-line pins in this block move to 9.0.17,
-			 but this stays at 9.0.16. icu.net and SIL.LCModel.Core (liblcm) both float
-			 a 2.0.4 floor, ParatextData wants >= 9.0.9, and 9.0.17 throws
-			 TypeInitializationException on Icu.NativeMethods in the .NET Framework
-			 test host (reproduced and investigated in PR #1000). To retest: bump, run
-			 a full test.ps1, and grep the .trx for "Icu.NativeMethods" - zero hits
-			 means safe. -->
+		<PackageVersion Include="System.Resources.Extensions" Version="9.0.18" />
+		<!-- Held at 9.0.16: 9.0.17 throws TypeInitializationException on
+			 Icu.NativeMethods in the net48 test host (PR #1000). Retest: bump, full
+			 test.ps1, grep .trx for "Icu.NativeMethods" - zero hits is safe. -->
 		<PackageVersion Include="Microsoft.Extensions.DependencyModel" Version="9.0.16" />
-		<!-- System.Memory: ParatextData requires 4.6.3; other packages want 4.5.0–4.6.0. -->
+		<!-- SIL.LCModel's IoC container, ILRepack-internalized into
+			 FwParatextLexiconPlugin.dll which Paratext loads without our binding
+			 redirects. Keep in step with SIL.LCModel. -->
+		<PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="8.0.1" />
+		<PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.2" />
+		<PackageVersion Include="Microsoft.Bcl.AsyncInterfaces" Version="9.0.16" />
+		<!-- System.Memory: ParatextData requires >= 4.6.3; other packages want
+			 4.5.0–4.6.0. -->
 		<PackageVersion Include="System.Memory" Version="4.6.3" />
 		<!-- Microsoft.Bcl.HashCode: System.Resources.Extensions requires HashCode. -->
 		<PackageVersion Include="Microsoft.Bcl.HashCode" Version="6.0.0" />
-		<!-- System.Security.Permissions (LT-22394): ProDotNetZip needs >= 8.0.0,
-			 System.Security.AccessControl needs >= 6.0.0. Pin to 9.0.17. -->
-		<PackageVersion Include="System.Security.Permissions" Version="9.0.17" />
-		<!-- System.Text.Encoding.CodePages: SIL.Machine requires 10.0.x,
-			 other chains resolve to 9.0.9. Pin to 10.0.3 to match the plugin project. -->
+		<!-- System.Security.Permissions (LT-22394): ProDotNetZip requires >= 8.0.0,
+			 System.Security.AccessControl >= 6.0.0. -->
+		<PackageVersion Include="System.Security.Permissions" Version="9.0.18" />
+		<!-- System.Text.Encoding.CodePages: SIL.Machine requires >= 10.0.3,
+			 ProDotNetZip >= 8.0.0; must match the plugin project. -->
 		<PackageVersion Include="System.Text.Encoding.CodePages" Version="10.0.3" />
 	</ItemGroup>
 

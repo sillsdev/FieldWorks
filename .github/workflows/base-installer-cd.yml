@@ -139,7 +139,7 @@ jobs:
           }
 
       - name: Setup dotnet
-        uses: actions/setup-dotnet@v5
+        uses: actions/setup-dotnet@v6
         with:
           dotnet-version: | 
             3.1.x
@@ -289,7 +289,7 @@ jobs:
 
       - name: Tag, Create Release, and Upload artifacts
         if: ${{ inputs.make_release == 'true' }}
-        uses: softprops/action-gh-release@718ea10b132b3b2eba29c1007bb80653f286566b
+        uses: softprops/action-gh-release@3d0d9888cb7fd7b750713d6e236d1fcb99157228
         with:
             target_commitish: ${{ github.event.inputs.fw_ref || github.ref }}
             tag_name: build-${{ env.FW_BUILD_NUMBER }}

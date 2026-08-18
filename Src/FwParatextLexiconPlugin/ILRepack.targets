@@ -25,6 +25,19 @@ This software is licensed under the LGPL, version 2.1 or later
 		<RepackAssemblies Include="$(OutputPath)/SIL.Lexicon.dll"/>
 		<RepackAssemblies Include="$(OutputPath)/ParserCore.dll"/>
 		<RepackAssemblies Include="$(OutputPath)/FwUtils.dll"/>
+		<!-- SIL.LCModel's IoC container (liblcm #393 replaced StructureMap with these in
+			 11.0.0-beta0176). Internalized because Paratext ships no copy and provides no
+			 binding redirects, so as external references they would have to resolve from
+			 the FieldWorks directory at their exact recorded versions - any version drift
+			 broke the plugin only inside Paratext. liblcm exposes no DI type on its public
+			 API and bootstraps the container without reflection-by-name, so internalizing
+			 is type-safe. Merging an assembly promotes ITS references to new externals of
+			 the plugin; check the merged output's AssemblyRefs after changing this list. -->
+		<RepackAssemblies Include="$(OutputPath)/Microsoft.Extensions.DependencyInjection.dll"/>
+		<RepackAssemblies Include="$(OutputPath)/Microsoft.Extensions.DependencyInjection.Abstractions.dll"/>
+		<!-- Dependency of the internalized DI assemblies. Left external it would reference
+			 8.0.0.0 while FieldWorks ships 9.x, a gap nothing bridges inside Paratext. -->
+		<RepackAssemblies Include="$(OutputPath)/Microsoft.Bcl.AsyncInterfaces.dll"/>
 	</ItemGroup>
 	<ItemGroup>
 		<LibDirs Include="$(OutputPath)"/>

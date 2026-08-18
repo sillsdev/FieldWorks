@@ -32,6 +32,9 @@ updates:
     ignore:
       - dependency-name: "*"
         update-types: ["version-update:semver-major"]
+      # Pinned at 9.0.16 due to TypeInitializationException on Icu.NativeMethods
+      # in the net48 test host (PR #1000). Retest procedure: Directory.Packages.props.
+      - dependency-name: "Microsoft.Extensions.DependencyModel"
     groups:
       nuget-minor:
         patterns:
