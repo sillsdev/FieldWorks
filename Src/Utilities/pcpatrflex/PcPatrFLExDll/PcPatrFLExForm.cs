@@ -1,25 +1,23 @@
+// Copyright (c) 2018-2026 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
 using Microsoft.Win32;
 using SIL.DisambiguateInFLExDB;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
-using SIL.LCModel.Core.Text;
-using SIL.LCModel.Core.WritingSystems;
-using SIL.LCModel.DomainServices;
 using SIL.PcPatrBrowser;
 using SIL.PrepFLExDB;
-using SIL.WritingSystems;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
+using XCore;
 
 namespace SIL.PcPatrFLEx
 {
@@ -69,6 +67,7 @@ namespace SIL.PcPatrFLEx
 		public int MaxAmbiguities { get; set; }
 		public int TimeLimit { get; set; }
 		public bool RunIndividually { get; set; }
+		public PropertyTable PropTable { get; set; }
 
 		private RegistryKey regkey;
 
@@ -220,8 +219,10 @@ namespace SIL.PcPatrFLEx
 		private void EnsureDatabaseHasBeenPrepped()
 		{
 			var preparer = new Preparer(Cache, false);
+			preparer.PropTable = PropTable;
 			preparer.AddPCPATRList();
 			preparer.AddPCPATRSenseCustomField();
+			FwUtils.Publisher.Publish(new PublisherParameterObject(EventConstants.MasterRefresh, null, PropTable.GetWindow()));
 		}
 
 		public void PrepareForm()

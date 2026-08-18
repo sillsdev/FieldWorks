@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2019 SIL International
+// Copyright (c) 2018-2026 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -8,16 +8,13 @@ using SIL.FieldWorks;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Core.Cellar;
-using SIL.LCModel.Core.Text;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Utils;
 using SIL.PrepFLExDB;
-using SIL.WritingSystems;
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Reflection;
+using XCore;
 
 namespace SIL.PrepFLExDBTests
 {
@@ -31,6 +28,7 @@ namespace SIL.PrepFLExDBTests
 		LcmCache MyCache { get; set; }
 		public ProjectId ProjId { get; set; }
 		private List<FieldDescription> customFields;
+		Preparer Preparer { get; set; }
 
 		public override void FixtureSetup()
 		{
@@ -49,6 +47,9 @@ namespace SIL.PrepFLExDBTests
 			var settings = new LcmSettings { DisableDataMigration = true };
 			var progress = new DisambiguateInFLExDBTests.NullThreadedProgress(synchronizeInvoke);
 			MyCache = LcmCache.CreateCacheFromExistingData(ProjId, "en", logger, dirs, settings, progress);
+			Preparer = new Preparer(MyCache, false);
+			Preparer.PropTable = new XCore.PropertyTable(new XCore.Mediator());
+
 		}
 
 		/// <summary></summary>
@@ -69,28 +70,27 @@ namespace SIL.PrepFLExDBTests
 			Assert.IsNotNull(MyCache);
 			Assert.AreEqual(5, MyCache.LangProject.AllPartsOfSpeech.Count);
 			Assert.AreEqual(0, MyCache.LangProject.LexDbOA.Entries.Count());
-			var preparer = new Preparer(MyCache, false);
 
 			// If we try to create the custom field before the master possibility list, the field is not created.
-			customFields = preparer.GetListOfCustomFields();
+			customFields = Preparer.GetListOfCustomFields();
 			Assert.AreEqual(0, customFields.Count);
-			preparer.AddPCPATRSenseCustomField();
-			customFields = preparer.GetListOfCustomFields();
+			Preparer.AddPCPATRSenseCustomField();
+			customFields = Preparer.GetListOfCustomFields();
 			Assert.AreEqual(0, customFields.Count);
 
 			var possListRepository = MyCache.ServiceLocator.GetInstance<ICmPossibilityListRepository>();
 			Assert.AreEqual(34, possListRepository.AllInstances().Count());
-			preparer.AddPCPATRList();
+			Preparer.AddPCPATRList();
 			CheckPossibilityList(possListRepository);
 			// Invoke it again.  Only one copy should exist.
-			preparer.AddPCPATRList();
+			Preparer.AddPCPATRList();
 			CheckPossibilityList(possListRepository);
 
 			// Add custom field
-			customFields = preparer.GetListOfCustomFields();
+			customFields = Preparer.GetListOfCustomFields();
 			Assert.AreEqual(0, customFields.Count);
-			preparer.AddPCPATRSenseCustomField();
-			customFields = preparer.GetListOfCustomFields();
+			Preparer.AddPCPATRSenseCustomField();
+			customFields = Preparer.GetListOfCustomFields();
 			Assert.AreEqual(1, customFields.Count);
 			var cf = customFields.Find(fd => fd.Name == PcPatrConstants.PcPatrFeatureDescriptorCustomField);
 			Assert.IsNotNull(cf);
@@ -102,8 +102,8 @@ namespace SIL.PrepFLExDBTests
 			Assert.AreEqual(CmCustomItemTags.kClassId, cf.DstCls);
 			Assert.AreEqual(WritingSystemServices.kwsAnal, cf.WsSelector);
 			// Invoke it again.  Only one should exist.
-			preparer.AddPCPATRSenseCustomField();
-			customFields = preparer.GetListOfCustomFields();
+			Preparer.AddPCPATRSenseCustomField();
+			customFields = Preparer.GetListOfCustomFields();
 			Assert.AreEqual(1, customFields.Count);
 			FixtureTeardown();
 		}
@@ -135,31 +135,31 @@ namespace SIL.PrepFLExDBTests
 			Assert.IsNotNull(MyCache);
 			Assert.AreEqual(5, MyCache.LangProject.AllPartsOfSpeech.Count);
 			Assert.AreEqual(0, MyCache.LangProject.LexDbOA.Entries.Count());
-			var preparer = new Preparer(MyCache, false);
+			Preparer.PropTable = new XCore.PropertyTable(new XCore.Mediator());
 
 			// If we try to create the custom field before the master possibility list, the field is not created.
-			customFields = preparer.GetListOfCustomFields();
+			customFields = Preparer.GetListOfCustomFields();
 			Assert.AreEqual(0, customFields.Count);
-			preparer.AddToneParsSenseCustomField();
-			customFields = preparer.GetListOfCustomFields();
+			Preparer.AddToneParsSenseCustomField();
+			customFields = Preparer.GetListOfCustomFields();
 			Assert.AreEqual(0, customFields.Count);
-			preparer.AddToneParsFormCustomField();
-			customFields = preparer.GetListOfCustomFields();
+			Preparer.AddToneParsFormCustomField();
+			customFields = Preparer.GetListOfCustomFields();
 			Assert.AreEqual(0, customFields.Count);
 
 			var possListRepository = MyCache.ServiceLocator.GetInstance<ICmPossibilityListRepository>();
 			Assert.AreEqual(34, possListRepository.AllInstances().Count());
-			preparer.AddToneParsList();
+			Preparer.AddToneParsList();
 			ToneParsCheckPossibilityList(possListRepository);
 			// Invoke it again.  Only one copy should exist.
-			preparer.AddToneParsList();
+			Preparer.AddToneParsList();
 			ToneParsCheckPossibilityList(possListRepository);
 
 			// Add sense custom field
-			customFields = preparer.GetListOfCustomFields();
+			customFields = Preparer.GetListOfCustomFields();
 			Assert.AreEqual(0, customFields.Count);
-			preparer.AddToneParsSenseCustomField();
-			customFields = preparer.GetListOfCustomFields();
+			Preparer.AddToneParsSenseCustomField();
+			customFields = Preparer.GetListOfCustomFields();
 			Assert.AreEqual(1, customFields.Count);
 			var cf = customFields.Find(fd => fd.Name == ToneParsConstants.ToneParsPropertiesSenseCustomField);
 			Assert.IsNotNull(cf);
@@ -171,15 +171,15 @@ namespace SIL.PrepFLExDBTests
 			Assert.AreEqual(CmCustomItemTags.kClassId, cf.DstCls);
 			Assert.AreEqual(WritingSystemServices.kwsAnal, cf.WsSelector);
 			// Invoke it again.  Only one should exist.
-			preparer.AddToneParsSenseCustomField();
-			customFields = preparer.GetListOfCustomFields();
+			Preparer.AddToneParsSenseCustomField();
+			customFields = Preparer.GetListOfCustomFields();
 			Assert.AreEqual(1, customFields.Count);
 
 			// Add form custom field
-			customFields = preparer.GetListOfCustomFields();
+			customFields = Preparer.GetListOfCustomFields();
 			Assert.AreEqual(1, customFields.Count);
-			preparer.AddToneParsFormCustomField();
-			customFields = preparer.GetListOfCustomFields();
+			Preparer.AddToneParsFormCustomField();
+			customFields = Preparer.GetListOfCustomFields();
 			Assert.AreEqual(2, customFields.Count);
 			cf = customFields.Find(fd => fd.Name == ToneParsConstants.ToneParsPropertiesFormCustomField);
 			Assert.IsNotNull(cf);
@@ -191,8 +191,8 @@ namespace SIL.PrepFLExDBTests
 			Assert.AreEqual(CmCustomItemTags.kClassId, cf.DstCls);
 			Assert.AreEqual(WritingSystemServices.kwsAnal, cf.WsSelector);
 			// Invoke it again.  Only two should still exist.
-			preparer.AddToneParsFormCustomField();
-			customFields = preparer.GetListOfCustomFields();
+			Preparer.AddToneParsFormCustomField();
+			customFields = Preparer.GetListOfCustomFields();
 			Assert.AreEqual(2, customFields.Count);
 
 			FixtureTeardown();

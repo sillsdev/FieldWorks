@@ -1,12 +1,7 @@
-// Copyright (c) 2019 SIL International
+// Copyright (c) 2019-2026 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using SIL.FieldWorks.FwCoreDlgs;
 using SIL.LCModel;
 
@@ -53,6 +48,7 @@ namespace SIL.ToneParsFLEx
 		{
 			var toneParsFlexForm = new ToneParsFLExForm();
 			toneParsFlexForm.Cache = m_dlg.PropTable.GetValue<LcmCache>("cache");
+			toneParsFlexForm.PropTable = m_dlg.PropTable;
 			toneParsFlexForm.PrepareForm();
 			//pcpatrFlexForm.FillTextsListBox();
 			toneParsFlexForm.Show();
