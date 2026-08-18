@@ -277,6 +277,9 @@ if ($PSCmdlet.ShouldProcess("$pathScope PATH", "Save changes")) {
 	$env:PATH = "$env:PATH;$($pathsToAdd -join ';')"
 }
 
+# Refresh PATH for this session
+$env:PATH = [Environment]::GetEnvironmentVariable('PATH', 'Machine') + ';' + [Environment]::GetEnvironmentVariable('PATH', 'User')
+
 #endregion
 
 #region Environment Variables
@@ -286,18 +289,10 @@ Write-Host "`n--- Configuring Environment Variables ---" -ForegroundColor Yellow
 if ($PSCmdlet.ShouldProcess('LcmRootDir', 'Set LcmRootDir')) {
 	[Environment]::SetEnvironmentVariable('LcmRootDir', $env:LcmRootDir, 'User')
 }
+
 if ($PSCmdlet.ShouldProcess('FEEDBACK', 'Turn off production analytics for SIL software')) {
 	[Environment]::SetEnvironmentVariable('FEEDBACK', 'off', $pathScope)
 }
-
-#endregion
-
-#region Verification
-
-Write-Host "`n--- Verification ---" -ForegroundColor Yellow
-
-# Refresh PATH for this session
-$env:PATH = [Environment]::GetEnvironmentVariable('PATH', 'Machine') + ';' + [Environment]::GetEnvironmentVariable('PATH', 'User')
 
 #endregion
 
