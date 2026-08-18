@@ -15,7 +15,8 @@ namespace LexTextControlsTests
 	/// The LCModel-aware side of the "Create a new Part of Speech" flow (<see cref="LcmCreatePartOfSpeechLauncher"/>):
 	/// building the master-category catalog from an eticPOSList document (the same parse the WinForms
 	/// <see cref="MasterCategoryListDlg"/> uses), projecting it into hierarchical chooser candidates, and the
-	/// chosen-catalog-id → new <c>IPartOfSpeech</c> + <see cref="FwPosNode"/> round-trip — the unit-testable core that
+	/// chosen-catalog-id -> new <c>IPartOfSpeech</c> + <see cref="FwPosNode"/> round-trip -- the
+	/// unit-testable core that
 	/// mirrors <see cref="MasterCategoryListDlg"/>'s create-in-project logic (fixed guid + name/abbr + CatalogSourceId)
 	/// in one undoable step. The modal loop itself is desktop-only, so it is exercised by the headless dialog tests in
 	/// FwAvaloniaDialogsTests; here we cover the create core over a real LcmCache, visible via InternalsVisibleTo.
@@ -54,7 +55,7 @@ namespace LexTextControlsTests
 			return LcmCreatePartOfSpeechLauncher.BuildCatalog(Cache, doc.DocumentElement);
 		}
 
-		// ----- catalog → candidates: hierarchical, depth-tagged, keyed by catalog id -----
+		// ----- catalog -> candidates: hierarchical, depth-tagged, keyed by catalog id -----
 
 		[Test]
 		public void BuildCatalog_ProjectsItemsInDocumentOrderWithDepth()
@@ -155,8 +156,10 @@ namespace LexTextControlsTests
 			var first = LcmCreatePartOfSpeechLauncher.CreatePosFromCatalog(Cache, Catalog(), "Adjective");
 			var count = posList.ReallyReallyAllPossibilities.Count;
 
-			// Choosing the SAME catalog category again (rebuilt catalog now sees it installed) resolves to the
-			// existing POS without creating a duplicate — MasterCategory.AddToDatabase no-ops when InDatabase.
+			// Choosing the SAME catalog category again (rebuilt catalog now sees it installed)
+			// resolves to the
+			// existing POS without creating a duplicate -- MasterCategory.AddToDatabase no-ops
+			// when InDatabase.
 			var again = LcmCreatePartOfSpeechLauncher.CreatePosFromCatalog(Cache, Catalog(), "Adjective");
 			Assert.That(again, Is.SameAs(first), "an already-installed catalog category resolves to its existing POS");
 			Assert.That(posList.ReallyReallyAllPossibilities.Count, Is.EqualTo(count), "no duplicate POS is created");

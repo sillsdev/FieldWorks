@@ -54,16 +54,16 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  debug_build_and_test:
+  upload_strings_build_and_test:
     permissions:
       contents: read
     env:
       CROWDIN_API_KEY: ${{ secrets.FLEX_CROWDIN_API }}
-      LcmRootDir: ${{ github.workspace }}/Localizations/LCM
+      LcmRootDir: ${{ github.workspace }}/Localizations/LCMRepo
       FILESTOSIGNLATER: ./signExternally
       GH_TOKEN: ${{ github.token }}
       BASE_BUILD_NUMBER: ${{ inputs.base_build_number || '1452' }}
-    name: Build Debug and run Tests
+    name: Upload strings for l10n, Build, and run Tests
     runs-on: windows-2022
     steps:
       - name: Compute build number for archival
@@ -116,7 +116,7 @@ jobs:
           repository: 'sillsdev/liblcm'
           ref: ${{ github.event.inputs.lcm_ref || 'master' }}
           fetch-depth: 0
-          path: 'Localizations/LCM'
+          path: 'Localizations/LCMRepo'
 
       - name: Ensure .NET Framework 4.8 targeting pack
         shell: pwsh
@@ -218,6 +218,17 @@ jobs:
                 New-Item -Path $path -Force | Out-Null
               }
               New-ItemProperty -Path $path -Name $valueName -Value $expectedValue -Type String -Force
+          }
+
+      - name: Upload strings for translation
+        id: upload
+        continue-on-error: true
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        shell: powershell
+        run: |
+          .\build.ps1 -Target uploadUpdatesForTranslation -Configuration Release *>&1 | Tee-Object -FilePath uploadStrings.log
+          if ($LASTEXITCODE -ne 0) {
+              echo "::warning::Upload strings failed with exit code $LASTEXITCODE. See log for details."
           }
 
       - name: Build

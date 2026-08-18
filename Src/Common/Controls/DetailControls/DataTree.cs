@@ -426,7 +426,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		protected override void OnSizeChanged(EventArgs e)
 		{
 			base.OnSizeChanged(e);
-			// Skip O(N) splitter adjustment during bulk slice construction —
+			// Skip O(N) splitter adjustment during bulk slice construction --
 			// HandleLayout1 will set correct widths + positions after construction.
 			if (ConstructingSlices)
 				return;
@@ -3698,13 +3698,13 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				int sliceBottom = slice.Top + slice.Height;
 				if (sliceBottom <= clipTop)
 				{
-					// Slice ends at or before the clip top — entirely above viewport.
+					// Slice ends at or before the clip top -- entirely above viewport.
 					result = mid + 1;
 					lo = mid + 1;
 				}
 				else
 				{
-					// Slice extends below clip top — could be visible.
+					// Slice extends below clip top -- could be visible.
 					hi = mid - 1;
 				}
 			}
@@ -4298,14 +4298,9 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		protected override void WndProc(ref Message m)
 		{
 			base.WndProc(ref m);
-			// After any scroll input (scrollbar drag, mouse wheel, horizontal wheel),
-			// force the parent background to repaint so separator lines are redrawn at
-			// correct positions. Without this, Windows bitblts stale line pixels
-			// from the old scroll position and only repaints the newly-exposed strip.
-			// Invalidate(false) skips child invalidation — slice HWNDs repaint
-			// themselves — so only the gap areas between slices are redrawn.
-			// Update() forces synchronous processing so stale lines don't accumulate
-			// across multiple scroll events before the low-priority WM_PAINT fires.
+			// Without this, Windows bitblts stale separator-line pixels from the old scroll
+			// position; Invalidate(false)+Update() forces a synchronous repaint of just the
+			// inter-slice gaps before WM_PAINT coalesces.
 			const int WM_VSCROLL = 0x0115;
 			const int WM_HSCROLL = 0x0114;
 			const int WM_MOUSEWHEEL = 0x020A;

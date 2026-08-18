@@ -96,7 +96,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		/// <summary>
 		/// Every native viewing capability the detail view now provides managed, with its owner and the
 		/// native symbol it supersedes. Owners all live in the FwAvalonia production assembly, which
-		/// (per <c>EngineIsolationAuditTests</c>) cannot load native Views — so by construction these
+		/// (per <c>EngineIsolationAuditTests</c>) cannot load native Views -- so by construction
+		/// these
 		/// replacements use Avalonia's own Skia/HarfBuzz text stack, not the C++ engine.
 		/// </summary>
 		public static IReadOnlyList<DetailViewingServiceDescriptor> Replacements { get; } =

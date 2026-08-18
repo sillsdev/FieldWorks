@@ -6,7 +6,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 {
 	/// <summary>
 	/// Localized product-facing strings for the FwAvalonia module. Strings
-	/// resolve through ResourceManager over FwAvaloniaStrings.resx — the neutral resx is the English
+	/// resolve through ResourceManager over FwAvaloniaStrings.resx -- the neutral resx is the
+	/// English
 	/// source of truth and translations ship as satellite assemblies (the FieldWorks .resx
 	/// localization strategy). Automation ids remain nonlocalized constants in code, never resource
 	/// lookups.
@@ -62,13 +63,15 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 		public static string RedoEditEntry => Text("FwAvalonia.RedoEditEntry");
 
 		/// <summary>
-		/// "Undo change to {0}" — field-specific undo label for the fenced lexical-edit session when a
+		/// "Undo change to {0}" -- field-specific undo label for the fenced lexical-edit session
+		/// when a
 		/// single field's edit opened it ({0} = the field label). Falls back to <see cref="UndoEditEntry"/>
 		/// for the batch/bulk path where no single field applies.
 		/// </summary>
 		public static string UndoChangeToFormat => Text("FwAvalonia.UndoChangeToFormat");
 
-		/// <summary>"Redo change to {0}" — the redo counterpart of <see cref="UndoChangeToFormat"/>.</summary>
+		/// <summary>"Redo change to {0}" -- the redo counterpart of <see
+		/// cref="UndoChangeToFormat"/>.</summary>
 		public static string RedoChangeToFormat => Text("FwAvalonia.RedoChangeToFormat");
 
 		public static string LexemeFormRequired => Text("FwAvalonia.LexemeFormRequired");
@@ -78,7 +81,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 
 		/// <summary>
 		/// Warning shown when a pending lexical edit is rolled back on navigate/close because it fails
-		/// validation (the edit is not silently lost — the user is told why). {0} is the validation reason(s).
+		/// validation (the edit is not silently lost -- the user is told why). {0} is the
+		/// validation reason(s).
 		/// </summary>
 		public static string EditDiscardedInvalidFormat => Text("FwAvalonia.EditDiscardedInvalid");
 
@@ -100,16 +104,18 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 
 		public static string Copy => Text("FwAvalonia.Copy");
 
-		/// <summary>"Remove" — reference-vector item context command.</summary>
+		/// <summary>"Remove" -- reference-vector item context command.</summary>
 		public static string Remove => Text("FwAvalonia.Remove");
 
-		/// <summary>"Add item" — reference-vector add-slot launcher name.</summary>
+		/// <summary>"Add item" -- reference-vector add-slot launcher name.</summary>
 		public static string AddItem => Text("FwAvalonia.AddItem");
 
-		/// <summary>"Type to search" — the search-backed add slot's type-ahead watermark.</summary>
+		/// <summary>"Type to search" -- the search-backed add slot's type-ahead
+		/// watermark.</summary>
 		public static string SearchPrompt => Text("FwAvalonia.SearchPrompt");
 
-		/// <summary>"Add" — confirm button of the multi-select reference-vector add picker; commits the checked set in one undoable step.</summary>
+		/// <summary>"Add" -- confirm button of the multi-select reference-vector add picker;
+		/// commits the checked set in one undoable step.</summary>
 		public static string AddSelected => Text("FwAvalonia.AddSelected");
 
 		/// <summary>Accessible name of the "..." dialog-launcher button.</summary>
@@ -118,27 +124,31 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 		/// <summary>Tooltip of a disabled launcher button: no host dialog service.</summary>
 		public static string LauncherUnavailable => Text("FwAvalonia.LauncherUnavailable");
 
-		/// <summary>"{0} settings" — accessible name of a chooser's hover-revealed settings gear.</summary>
+		/// <summary>"{0} settings" -- accessible name of a chooser's hover-revealed settings
+		/// gear.</summary>
 		public static string FieldSettingsFormat => Text("FwAvalonia.FieldSettings");
 
 		/// <summary>
-		/// "Edit the {0} list" — label/tooltip of a configure-gear jump derived from the row's
-		/// possibility list (the legacy chooser dialog's "Edit the … list" link text).
+		/// "Edit the {0} list" -- label/tooltip of a configure-gear jump derived from the row's
+		/// possibility list (the legacy chooser dialog's "Edit the ... list" link text).
 		/// </summary>
 		public static string EditListFormat => Text("FwAvalonia.EditListFormat");
 
-		/// <summary>"Lexeme Form" — first-slice row label (compiled override and authored fallback).</summary>
+		/// <summary>"Lexeme Form" -- first-slice row label (compiled override and authored
+		/// fallback).</summary>
 		public static string LexemeFormLabel => Text("FwAvalonia.LexemeFormLabel");
 
-		/// <summary>"Morph Type" — first-slice row label (authored fallback).</summary>
+		/// <summary>"Morph Type" -- first-slice row label (authored fallback).</summary>
 		public static string MorphTypeLabel => Text("FwAvalonia.MorphTypeLabel");
 
-		/// <summary>"Gloss" — first-slice row label (authored fallback).</summary>
+		/// <summary>"Gloss" -- first-slice row label (authored fallback).</summary>
 		public static string GlossLabel => Text("FwAvalonia.GlossLabel");
 
 		/// <summary>
-		/// Accessible name / tooltip of the hover-revealed "⋮" field-options button on each field row
-		/// (opens the Field Visibility / Move Field / Help menu — the affordance that replaced right-click).
+		/// Accessible name / tooltip of the hover-revealed "..." field-options button on each
+		/// field row
+		/// (opens the Field Visibility / Move Field / Help menu -- the affordance that replaced
+		/// right-click).
 		/// </summary>
 		public static string FieldOptionsMenu => Text("FwAvalonia.FieldOptionsMenu");
 
@@ -162,23 +172,30 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 
 		// ----- Delete tab (destructive Delete Rows mode of the legacy Delete tab) -----
 		// Seed text matches the canonical legacy wording in XMLViewsStrings (ksDeleteRows label uses
-		// "{0} (Rows)"; ksDelete; ksConfirmDeleteMulti/ksConfirmDeleteMultiMsg) and BulkEditBar's dual-mode
+		// "{0} (Rows)"; ksDelete; ksConfirmDeleteMulti/ksConfirmDeleteMultiMsg) and BulkEditBar's
+		// dual-mode
 		// "Delete what?" combo, so the English fallback is identical to the classic bulk-edit Delete tab and
 		// translation memory carries over. APPEND-ONLY: new accessors at the end of the section.
 
 		// ----- Part-of-Speech chooser (FwPosChooser) -----
-		// Seed text mirrors the legacy WinForms POS picker (POSPopupTreeManager / PopupTreeManager): the
-		// empty node shows "<Not sure>" by default (or "<Any>" when the host opts in via the empty-label
+		// Seed text mirrors the legacy WinForms POS picker (POSPopupTreeManager /
+		// PopupTreeManager): the
+		// empty node shows "<Not sure>" by default (or "<Any>" when the host opts in via the
+		// empty-label
 		// override, as MSAGroupBox does), and the inline create affordance is the tree's "More..." item,
 		// reworded to the clearer "Create a new Part of Speech..." for the new view. APPEND-ONLY.
 
-		/// <summary>"&lt;Not sure&gt;" — the default empty / unspecified Part-of-Speech entry (legacy PopupTreeManager "&lt;Not sure&gt;").</summary>
+		/// <summary>"&lt;Not sure&gt;" -- the default empty / unspecified Part-of-Speech entry
+		/// (legacy PopupTreeManager "&lt;Not sure&gt;").</summary>
 		public static string PosNotSure => Text("FwAvalonia.Pos.NotSure");
 
-		/// <summary>"&lt;Any&gt;" — the unspecified Part-of-Speech entry when the host treats unspecified as "any" (legacy MSAGroupBox NotSureIsAny).</summary>
+		/// <summary>"&lt;Any&gt;" -- the unspecified Part-of-Speech entry when the host treats
+		/// unspecified as "any" (legacy MSAGroupBox NotSureIsAny).</summary>
 		public static string PosAny => Text("FwAvalonia.Pos.Any");
 
-		/// <summary>"Create a new Part of Speech..." — the inline create affordance at the bottom of the POS tree (legacy "More..." item that launched MasterCategoryListDlg).</summary>
+		/// <summary>"Create a new Part of Speech..." -- the inline create affordance at the
+		/// bottom of the POS tree (legacy "More..." item that launched
+		/// MasterCategoryListDlg).</summary>
 		public static string PosCreateNew => Text("FwAvalonia.Pos.CreateNew");
 
 		/// <summary>Accessible name of the collapsed Part-of-Speech chooser dropdown.</summary>
@@ -224,7 +241,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 
 		/// <summary>
 		/// Accessible name / tooltip of the delete-embedded-object affordance that removes the embedded
-		/// object (link, picture, footnote, …) under the selection. Any ORC kind is deletable here even
+		/// object (link, picture, footnote, ...) under the selection. Any ORC kind is deletable
+		/// here even
 		/// when its insert/edit path lives elsewhere.
 		/// </summary>
 		public static string DeleteEmbeddedObject => Text("FwAvalonia.DeleteEmbeddedObject");

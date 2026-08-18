@@ -20,7 +20,7 @@ namespace SIL.FieldWorks.LexText.Controls
 	/// existing <see cref="EntryGoDialogViewModel"/>/<see cref="EntryGoDialogView"/> exactly like
 	/// <see cref="LcmMergeEntryDialogLauncher"/>/<see cref="LcmAddAllomorphDialogLauncher"/>; there is no starting
 	/// entry to exclude (parity with the legacy <c>dlg.SetDlgInfo(cache, null, mediator, propertyTable)</c> call)
-	/// and no model mutation — this launcher only resolves the chosen entry.
+	/// and no model mutation -- this launcher only resolves the chosen entry.
 	/// </summary>
 	public sealed class LcmGoToEntryDialogLauncher
 		: AvaloniaDialogLauncher<EntryGoDialogInput, EntryGoDialogViewModel, LcmGoToEntryDialogLauncher.GoToEntryPayload>
@@ -119,7 +119,7 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		/// <summary>
 		/// Applies the OK result: resolves the chosen entry and exposes it via <see cref="SelectedEntry"/>. No
-		/// model mutation here — the caller navigates to the resolved entry.
+		/// model mutation here -- the caller navigates to the resolved entry.
 		/// </summary>
 		protected override GoToEntryPayload Apply(EntryGoDialogInput state)
 		{

@@ -14,8 +14,10 @@ namespace FwAvaloniaDialogsTests
 {
 	/// <summary>
 	/// Proves the <see cref="DialogLayoutAssert.AssertNoCrowding"/> tripwire actually FAILS on the defect it
-	/// guards (a host border with no frame, and overlapping siblings) — so a future dialog that regresses the
-	/// no-border / text-crowding defect is caught — and PASSES on a correctly framed/spaced layout.
+	/// guards (a host border with no frame, and overlapping siblings) -- so a future dialog that
+	/// regresses the
+	/// no-border / text-crowding defect is caught -- and PASSES on a correctly framed/spaced
+	/// layout.
 	/// </summary>
 	[TestFixture]
 	public class DialogLayoutAssertTests
@@ -33,7 +35,7 @@ namespace FwAvaloniaDialogsTests
 		[AvaloniaTest]
 		public void Catches_HostBorderWithNoFrame()
 		{
-			// A PART_*Host border with NO BorderThickness — exactly the original defect.
+			// A PART_*Host border with NO BorderThickness -- exactly the original defect.
 			var bad = new StackPanel
 			{
 				Children =
@@ -55,7 +57,8 @@ namespace FwAvaloniaDialogsTests
 		[AvaloniaTest]
 		public void Catches_OverlappingSiblings()
 		{
-			// A Canvas lets us position two text blocks so their bounds intersect — the crowding defect.
+			// A Canvas lets us position two text blocks so their bounds intersect -- the crowding
+			// defect.
 			var canvas = new Canvas { Width = 200, Height = 100 };
 			var a = new TextBlock { Text = "first", Width = 100, Height = 30 };
 			var b = new TextBlock { Text = "second", Width = 100, Height = 30 };
@@ -72,7 +75,8 @@ namespace FwAvaloniaDialogsTests
 		[AvaloniaTest]
 		public void Passes_OnAFramedSpacedLayout()
 		{
-			// A host border WITH a frame + padding, stacked text that does not overlap — the fixed shape.
+			// A host border WITH a frame + padding, stacked text that does not overlap -- the
+			// fixed shape.
 			var good = new StackPanel
 			{
 				Spacing = 8,

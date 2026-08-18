@@ -7,7 +7,7 @@ This document describes additional setup steps for core FieldWorks developers. U
 ## Prerequisites
 
 Complete all steps in [CONTRIBUTING.md](CONTRIBUTING.md) first:
-1. Install required software (Git, Visual Studio 2022)
+1. Install required software (Git, Visual Studio 2026 or 2022)
 2. Clone the repository
 3. Verify you can build successfully
 
@@ -15,13 +15,14 @@ Complete all steps in [CONTRIBUTING.md](CONTRIBUTING.md) first:
 
 The following tools are required for FieldWorks development:
 
-### Visual Studio 2022
+### Visual Studio 2026 or 2022
 
+FieldWorks builds with either; when both are installed the build uses the newest.
 Install with these workloads:
 - **.NET desktop development**
 - **Desktop development with C++** (including ATL/MFC components)
 
-See [Visual Studio Setup](visual-studio-setup.md) for detailed component list.
+See [Visual Studio Setup](visual-studio-setup.md) for the detailed component list, or import the repo-root `.vsconfig` in the Visual Studio Installer.
 
 ### WiX Toolset (v6 via NuGet restore)
 
@@ -79,7 +80,7 @@ Contact the team lead to request permissions if needed.
 For streamlined pushing and pulling, set up an SSH key:
 
 1. Generate an SSH key if you don't have one:
-   ```bash
+   ```powershell
    ssh-keygen -t ed25519 -C "your_email@example.com"
    ```
 
@@ -88,12 +89,12 @@ For streamlined pushing and pulling, set up an SSH key:
    - Paste your public key (`~/.ssh/id_ed25519.pub`)
 
 3. Test the connection:
-   ```bash
+   ```powershell
    ssh -T git@github.com
    ```
 
 4. Update your remote to use SSH:
-   ```bash
+   ```powershell
    git remote set-url origin git@github.com:sillsdev/FieldWorks.git
    ```
 
@@ -101,14 +102,14 @@ For streamlined pushing and pulling, set up an SSH key:
 
 #### Set Identity
 
-```bash
+```powershell
 git config user.name "Your Name"
 git config user.email "your.email@example.com"
 ```
 
 #### Increase Rename Limits
 
-```bash
+```powershell
 git config diff.renameLimit 10000
 git config merge.renameLimit 10000
 ```
@@ -117,7 +118,7 @@ git config merge.renameLimit 10000
 
 Set up tracking for release branches you'll be working on:
 
-```bash
+```powershell
 # Fetch all branches
 git fetch --all
 
@@ -135,7 +136,7 @@ Recommended VS Code extensions for daily development:
 - **C/C++** (`ms-vscode.cpptools`) for native editing/debugging
 - **PowerShell** (`ms-vscode.powershell`) for build/test scripts
 
-Use **Visual Studio 2022** when working on:
+Use **Visual Studio** (2026 or 2022) when working on:
 - WinForms designer changes
 - Mixed managed/native debugging across interop boundaries
 - Complex legacy .NET Framework project-system issues
@@ -175,7 +176,7 @@ If you use Claude Code, create the worktree with the repo task first, then launc
 
 #### Creating Feature Branches
 
-```bash
+```powershell
 # Create a new feature branch from the default branch
 git checkout release/9.3
 git pull
@@ -185,7 +186,7 @@ git checkout -b feature/my-feature-name
 #### Submitting Changes
 
 1. Push your branch to origin:
-   ```bash
+   ```powershell
    git push -u origin feature/my-feature-name
    ```
 
@@ -208,7 +209,7 @@ If you are a release manager, additional setup may be required. Contact Jason Na
 
 ### Recommended Global Settings
 
-```bash
+```powershell
 # Use rebase by default when pulling
 git config --global pull.rebase true
 
@@ -226,7 +227,7 @@ git config --global color.ui auto
 
 These are set in the FieldWorks repository:
 
-```bash
+```powershell
 # Increase rename detection limits
 git config diff.renameLimit 10000
 git config merge.renameLimit 10000
@@ -244,7 +245,7 @@ If you get "Permission denied" when pushing:
 ### Branch Not Found
 
 If a branch you're looking for isn't available:
-```bash
+```powershell
 git fetch --all
 git branch -a  # List all branches including remote
 ```

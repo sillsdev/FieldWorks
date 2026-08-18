@@ -8,21 +8,18 @@ using SIL.FieldWorks.XWorks.LexEd;
 namespace LexEdDllTests
 {
 	/// <summary>
-	/// Guards the KeepOwnerActiveWhenHiding opt-in contract for the Lexicon "Add a Component" and
-	/// "Add a Complex Form" chooser commands (LT-22578). Both are launched from a chooser that
-	/// hides itself and then open a modal dialog (LinkEntryOrSenseDlg / EntryGoDlg), so both must
-	/// opt in to keep an unrelated application from flashing in front while the dialog loads. See
-	/// ChooserCommandKeepOwnerActiveWhenHidingTests (DetailControls) for the affix equivalents and
-	/// the rationale for why only the opt-in flag is unit-tested.
+	/// Verifies the Lexicon "Add a Component" and "Add a Complex Form" chooser commands keep the
+	/// FLEx main window active when the chooser hides to run them (KeepOwnerActiveWhenHiding is
+	/// true by default). Both open a modal dialog (LinkEntryOrSenseDlg / EntryGoDlg). See LT-22578.
 	/// </summary>
 	[TestFixture]
 	public class EntrySequenceChooserCommandKeepOwnerActiveWhenHidingTests
 	{
 		/// <summary>
-		/// "Add a Component" opens the modal LinkEntryOrSenseDlg, so it must opt in.
+		/// "Add a Component" opens the modal LinkEntryOrSenseDlg.
 		/// </summary>
 		[Test]
-		public void AddPrimaryLexemeChooserCommand_OptsIn()
+		public void AddPrimaryLexemeChooserCommand_KeepsOwnerActive()
 		{
 			var command = new AddPrimaryLexemeChooserCommand(
 				null, false, "label", null, null, null, null);
@@ -30,10 +27,10 @@ namespace LexEdDllTests
 		}
 
 		/// <summary>
-		/// "Add a Complex Form" opens the modal EntryGoDlg, so it must opt in.
+		/// "Add a Complex Form" opens the modal EntryGoDlg.
 		/// </summary>
 		[Test]
-		public void AddComplexFormChooserCommand_OptsIn()
+		public void AddComplexFormChooserCommand_KeepsOwnerActive()
 		{
 			var command = new AddComplexFormChooserCommand(
 				null, false, "label", null, null, null, null);

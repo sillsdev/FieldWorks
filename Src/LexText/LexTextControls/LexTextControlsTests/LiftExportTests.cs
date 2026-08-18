@@ -489,10 +489,16 @@ namespace LexTextControlsTests
 		[SetUp]
 		public void CreateMockCache()
 		{
+			// NUnit shares one fixture instance across the tests, so these all outlive the cache that filled them.
 			m_mapSemanticDomains.Clear();
 			m_mapPartsOfSpeech.Clear();
 			m_mapAcademicDomains.Clear();
 			m_mapPublications.Clear();
+			m_customFieldEntryIds.Clear();
+			m_customFieldSenseIds.Clear();
+			m_customFieldAllomorphsIds.Clear();
+			m_customFieldExampleSentencesIds.Clear();
+			m_customListsGuids.Clear();
 			var mockProjectName = "xxyyzProjectFolderForLIFTTest";
 			MockProjectFolder = Path.Combine(Path.GetTempPath(), mockProjectName);
 			var mockProjectPath = Path.Combine(MockProjectFolder, mockProjectName + ".fwdata");
@@ -1133,6 +1139,81 @@ namespace LexTextControlsTests
 				xdocRangeFile.LoadXml(w.ToString());
 			}
 			VerifyExportRanges(xdocRangeFile);
+		}
+
+		///--------------------------------------------------------------------------------------
+		/// <summary>
+		/// A custom list name reaches the ranges file as a range id, which is an attribute, so a name
+		/// holding a quotation mark has to be escaped by the attribute rules for the document to parse.
+		/// </summary>
+		///--------------------------------------------------------------------------------------
+		[Test]
+		public void LiftExportRanges_CustomListRangeIdWithQuoteIsEscapedForAnAttribute()
+		{
+			const string ksListName = "So-called \"words\"";
+			XmlDocument xdocLift;
+			XmlDocument xdocRangeFile;
+			var customList = ExportWithCustomList(ksListName, out xdocLift, out xdocRangeFile);
+
+			var range = xdocRangeFile.SelectSingleNode(string.Format("//range[@guid='{0}']", customList.Guid));
+			Assert.That(range, Is.Not.Null, "the custom list must be written as a range");
+			Assert.That(range.Attributes["id"].Value, Is.EqualTo(ksListName),
+				"the range id must read back as the name stored");
+		}
+
+		///--------------------------------------------------------------------------------------
+		/// <summary>
+		/// A custom list name is written as a range id in both the .lift header and the ranges file,
+		/// escaped once in each, so that the two files name the range the same way.
+		/// </summary>
+		///--------------------------------------------------------------------------------------
+		[Test]
+		public void LiftExportRanges_CustomListRangeIdWithAmpersandIsEscapedExactlyOnce()
+		{
+			const string ksListName = "Birds & Beasts";
+			XmlDocument xdocLift;
+			XmlDocument xdocRangeFile;
+			var customList = ExportWithCustomList(ksListName, out xdocLift, out xdocRangeFile);
+
+			var rangesRange = xdocRangeFile.SelectSingleNode(string.Format("//range[@guid='{0}']", customList.Guid));
+			Assert.That(rangesRange, Is.Not.Null);
+			Assert.That(rangesRange.Attributes["id"].Value, Is.EqualTo(ksListName),
+				"one level of escaping, undone by the parser, must give back the name stored");
+			var headerIds = xdocLift.SelectNodes("//header/ranges/range/@id");
+			Assert.That(headerIds, Is.Not.Null);
+			Assert.That(headerIds.Cast<XmlNode>().Any(id => id.Value == ksListName),
+				"the .lift header must name the range the same way the ranges file does");
+		}
+
+		/// <summary>
+		/// Exports both files from one exporter, so that the custom list is discovered by the .lift
+		/// pass and is therefore written by the ranges pass.
+		/// </summary>
+		private ICmPossibilityList ExportWithCustomList(string listName, out XmlDocument xdocLift, out XmlDocument xdocRangeFile)
+		{
+			ICmPossibilityList customList = null;
+			NonUndoableUnitOfWorkHelper.Do(m_cache.ActionHandlerAccessor, () =>
+			{
+				customList = AddCustomList(listName);
+				MakeCustomField("CustomFieldForCustomList", LexEntryTags.kClassId,
+					WritingSystemServices.kwsAnal, CustomFieldType.ListRefAtomic, customList.Guid);
+			});
+			var exporter = new LiftExporter(m_cache);
+			xdocLift = new XmlDocument();
+			using (var w = new StringWriter())
+			{
+				// SUT: the .lift pass populates the map the ranges pass writes from.
+				exporter.ExportLift(w, LiftFolder);
+				xdocLift.LoadXml(w.ToString());
+			}
+			xdocRangeFile = new XmlDocument();
+			using (var w = new StringWriter())
+			{
+				// SUT
+				exporter.ExportLiftRanges(w);
+				xdocRangeFile.LoadXml(w.ToString());
+			}
+			return customList;
 		}
 
 		/// <summary>

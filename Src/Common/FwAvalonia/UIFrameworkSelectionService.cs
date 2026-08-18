@@ -6,7 +6,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 {
 	/// <summary>
 	/// The deliberate product behavior of a host under the app-wide UI mode. Every host must resolve
-	/// to one of these — there is no ambiguous
+	/// to one of these -- there is no ambiguous
 	/// "best effort" routing.
 	/// </summary>
 	public enum HostUiBehavior

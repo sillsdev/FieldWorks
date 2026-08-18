@@ -40,7 +40,8 @@ namespace FwAvaloniaTests
 		[AvaloniaTest]
 		public void EmptyRow_WithLauncher_RendersTheGearButton_NoValueText()
 		{
-			// Initial stage: a launchable field whose value is not set yet — the read-only value area is empty
+			// Initial stage: a launchable field whose value is not set yet -- the read-only value
+			// area is empty
 			// but the (hover-revealed) gear launcher is present and enabled.
 			var (row, window) = Show(new FwDialogLauncherField(string.Empty, "Inflection Features", () => { }));
 

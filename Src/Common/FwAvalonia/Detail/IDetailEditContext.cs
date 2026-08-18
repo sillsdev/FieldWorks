@@ -12,7 +12,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 	/// fenced commit/cancel boundary. The product implementation (xWorks) opens one fenced LCModel
 	/// undo task lazily on the first staged edit, applies writes directly to the domain inside it,
 	/// and ends it on <see cref="Commit"/> (one step on the single global undo stack shared with
-	/// the legacy UI) or rolls it back on <see cref="Cancel"/> — the model the
+	/// the legacy UI) or rolls it back on <see cref="Cancel"/> -- the model the
 	/// `avalonia-edit-sessions` and `avalonia-undo-redo` seam specs require. This layer stays
 	/// LCModel-free so the Avalonia view can drive editing without a domain dependency; tests use a
 	/// fake context.
@@ -46,14 +46,17 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 
 		/// <summary>
 		/// Stages adding an item (by option key) to a <see cref="DetailFieldKind.ReferenceVector"/>
-		/// row (6.3). Returns false — WITHOUT opening the session — for keys outside the field's
+		/// row (6.3). Returns false -- WITHOUT opening the session -- for keys outside the
+		/// field's
 		/// possibility list, duplicates, or non-vector rows, like the legacy chooser.
 		/// </summary>
 		bool TryAddReferenceItem(DetailField field, string optionKey);
 
 		/// <summary>
-		/// Stages removing an item (by option key) from a <see cref="DetailFieldKind.ReferenceVector"/>
-		/// row. Returns false — without opening the session — when the item is not in the vector.
+		/// Stages removing an item (by option key) from a <see
+		/// cref="DetailFieldKind.ReferenceVector"/>
+		/// row. Returns false -- without opening the session -- when the item is not in the
+		/// vector.
 		/// </summary>
 		bool TryRemoveReferenceItem(DetailField field, string optionKey);
 

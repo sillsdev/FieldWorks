@@ -9,6 +9,9 @@ concurrency:
     group: ${{ github.workflow }}-${{ github.ref }}
     cancel-in-progress: true
 
+permissions:
+    contents: read
+
 jobs:
     check-whitespace:
         runs-on: ubuntu-latest
@@ -18,5 +21,5 @@ jobs:
                   fetch-depth: 0
 
             - name: Run whitespace check script
-              shell: bash
-              run: bash ./Build/Agent/check-whitespace.sh
+              shell: pwsh
+              run: ./Build/Agent/check-whitespace.ps1

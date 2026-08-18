@@ -43,6 +43,8 @@
 # EXPECTED FROM windows-2022 (DO NOT RE-INSTALL):
 # ============================================================================
 # - Visual Studio 2022 Enterprise (with Desktop & C++ workloads)
+#   (FieldWorks also supports VS 2026 and builds with the newest installed;
+#   see Build/FieldWorks.Toolchain.props if this runner image changes)
 # - MSBuild (via VS 2022)
 # - .NET Framework 4.8.1 SDK & Targeting Pack
 # - Windows SDK (10.0.17763+, 19041, 22621, 26100)
@@ -204,7 +206,7 @@ jobs:
 
           Invoke-ShallowClone -RepoUrl 'https://github.com/sillsdev/FwHelps.git' -Destination 'DistFiles/Helps'
           Invoke-ShallowClone -RepoUrl 'https://github.com/sillsdev/FwLocalizations.git' -Destination 'Localizations'
-          Invoke-ShallowClone -RepoUrl 'https://github.com/sillsdev/liblcm.git' -Destination 'Localizations/LCM'
+          Invoke-ShallowClone -RepoUrl 'https://github.com/sillsdev/liblcm.git' -Destination 'Localizations/LCMRepo'
 
       # ================================================================
       # SERENA MCP SETUP - for agent code intelligence

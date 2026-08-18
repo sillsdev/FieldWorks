@@ -1,0 +1,360 @@
+<#
+.SYNOPSIS
+	Fixture-based tests for CommentHygiene.psm1.
+
+.DESCRIPTION
+	One true-positive and one near-miss per category. Run directly:
+	pwsh -File Build/Agent/CommentHygiene.Tests.ps1
+#>
+
+Set-StrictMode -Version Latest
+$ErrorActionPreference = 'Stop'
+
+Import-Module (Join-Path $PSScriptRoot 'CommentHygiene.psm1') -Force
+
+function Get-Codepoint {
+	<#
+	.SYNOPSIS
+		Builds a real Unicode character from a code point, portable across
+		PowerShell 7 and Windows PowerShell 5.1.
+
+	.DESCRIPTION
+		Fixture strings must not use the backtick-u{} escape: it is
+		PowerShell 6+ only, and under 5.1 it silently degrades to the
+		literal text "u{2014}" instead of throwing -- exactly the bug this
+		suite exists to catch in the module, so the fixtures cannot carry
+		it themselves.
+	#>
+	param([int] $Codepoint)
+	if ($Codepoint -gt 0xFFFF) { return [char]::ConvertFromUtf32($Codepoint) }
+	return [string][char]$Codepoint
+}
+
+$tempDir = Join-Path ([System.IO.Path]::GetTempPath()) ("CommentHygieneTests_" + [System.Guid]::NewGuid().ToString('N'))
+New-Item -ItemType Directory -Path $tempDir | Out-Null
+
+$failures = New-Object System.Collections.ArrayList
+
+function Assert-Category {
+	param([string] $Name, [string] $Line, [string] $ExpectedCategory, [string] $Extension = '.cs')
+
+	$file = Join-Path $tempDir "$Name$Extension"
+	Set-Content -LiteralPath $file -Value $Line -Encoding UTF8
+	$violations = Get-CommentHygieneViolations -Files @($file)
+	$hit = $violations | Where-Object { $_.Category -eq $ExpectedCategory }
+	if (-not $hit) {
+		[void]$script:failures.Add("FAIL [$Name]: expected category '$ExpectedCategory' for line: $Line")
+	}
+}
+
+function Assert-Clean {
+	param([string] $Name, [string] $Line, [string] $Extension = '.cs')
+
+	$file = Join-Path $tempDir "$Name$Extension"
+	Set-Content -LiteralPath $file -Value $Line -Encoding UTF8
+	$violations = Get-CommentHygieneViolations -Files @($file)
+	if ($violations.Count -gt 0) {
+		$hitCategories = ($violations | ForEach-Object { $_.Category }) -join ','
+		[void]$script:failures.Add("FAIL [$Name]: expected no violations for line: $Line -- got $hitCategories")
+	}
+}
+
+function Assert-CategoryLines {
+	param([string] $Name, [string[]] $Lines, [string] $ExpectedCategory, [string] $Extension = '.cs')
+
+	$file = Join-Path $tempDir "$Name$Extension"
+	Set-Content -LiteralPath $file -Value $Lines -Encoding UTF8
+	$violations = Get-CommentHygieneViolations -Files @($file)
+	$hit = $violations | Where-Object { $_.Category -eq $ExpectedCategory }
+	if (-not $hit) {
+		[void]$script:failures.Add("FAIL [$Name]: expected category '$ExpectedCategory' for lines: $($Lines -join ' / ')")
+	}
+}
+
+function Assert-CleanLines {
+	param([string] $Name, [string[]] $Lines, [string] $Extension = '.cs')
+
+	$file = Join-Path $tempDir "$Name$Extension"
+	Set-Content -LiteralPath $file -Value $Lines -Encoding UTF8
+	$violations = Get-CommentHygieneViolations -Files @($file)
+	if ($violations.Count -gt 0) {
+		$hitCategories = ($violations | ForEach-Object { $_.Category }) -join ','
+		[void]$script:failures.Add("FAIL [$Name]: expected no violations for lines: $($Lines -join ' / ') -- got $hitCategories")
+	}
+}
+
+function Assert-Repair {
+	param([string] $Name, [string] $Line, [string] $ExpectedFixedLine)
+
+	$actual = Repair-CommentLine -Line $Line
+	if ($actual -ne $ExpectedFixedLine) {
+		[void]$script:failures.Add("FAIL [$Name]: expected repaired line '$ExpectedFixedLine', got '$actual' for input: $Line")
+	}
+}
+
+function Assert-Unrepairable {
+	param([string] $Name, [string] $Line)
+
+	$actual = Repair-CommentLine -Line $Line
+	if ($null -ne $actual) {
+		[void]$script:failures.Add("FAIL [$Name]: expected `$null (unrepairable) for line: $Line -- got '$actual'")
+	}
+}
+
+# process-framing -- skill worked example
+Assert-Category 'phase-framing' '// Phase 3 test (b): picking a style applies it to the selection' 'process-framing'
+Assert-Clean    'phase-clean'   '// Applies the selected style to the current selection'
+
+# process-framing must not fire on "stage"/"commit" here: this codebase has a real two-step
+# stage-then-commit UI pattern, distinct from migration-phase framing.
+Assert-Clean    'stage-domain-term' '// STAGE 1 -- the pick already populated the auxiliary picker.'
+Assert-Clean    'commit-domain-term' '// Capture everything staged since the last boundary -- that is what this commit "writes".'
+
+# doc-pointer -- skill worked example
+Assert-Category 'doc-pointer-md' '// winforms-free-lexeme-editor.md D1: a plugin-claimed custom slice renders its plugin''s own control' 'doc-pointer'
+Assert-Clean    'doc-pointer-clean' '// LT-22351: a plugin-claimed custom slice renders its plugin''s own control'
+
+# doc-pointer finding-code must stay case-sensitive: "m3" is a real LCM field name (IMoStemMsa),
+# not a design-doc finding code, despite the (?i) flag earlier in the pattern.
+Assert-Clean    'doc-pointer-lowercase-field' '// Seed text matches the canonical field label (the m3 InflectionClass field label).'
+
+# doc-pointer finding-code must not fire on function keys or generic type-parameter names, which
+# share the letter-plus-digit shape but are ordinary code vocabulary, not design-doc codes.
+Assert-Clean    'doc-pointer-function-key' '// Whether it came from a legacy view, F5/RefreshAllViews-driven, or something else.'
+Assert-Clean    'doc-pointer-generic-param' '// Factored to a Func<T1,T2,TResult> seam so the caller can inject either path.'
+
+# absence-narration -- skill worked example
+Assert-Category 'absence-no-longer' '// An ORC run no longer forces the whole value read-only.' 'absence-narration'
+Assert-Clean    'absence-clean' '// An ORC run does not force the whole value read-only.'
+
+# cross-file-pointer
+Assert-Category 'cross-file' "// See BulkEditBar's note about ownership checks." 'cross-file-pointer'
+Assert-Clean    'cross-file-clean' '// Ownership checks run before every write in this method.'
+
+# provenance
+Assert-Category 'provenance' '// This helper is shared by BulkEditBar and RecordClerk.' 'provenance'
+Assert-Clean    'provenance-clean' '// Applies the pending edit to every selected row.'
+
+# non-ascii-punctuation
+Assert-Category 'non-ascii-punctuation' ("// Uses an em dash {0} inline." -f (Get-Codepoint 0x2014)) 'non-ascii-punctuation'
+Assert-Clean    'non-ascii-punctuation-clean' '// Uses a double hyphen -- inline.'
+
+# non-ascii-punctuation targets only Western-typography punctuation, not non-ASCII in general --
+# real non-English script or IPA/emoji content must not fire.
+Assert-Clean    'non-ascii-punctuation-cyrillic' ("// Folds the Cyrillic letter {0} into the wrong letter group." -f (Get-Codepoint 0x0493))
+Assert-Clean    'non-ascii-punctuation-emoji'    ('// The input string is "x{0}y" (a surrogate pair).' -f (Get-Codepoint 0x1F600))
+
+# Repair-CommentLine -- mapped characters produce a fixed ASCII line
+Assert-Repair 'repair-em-dash'   ("// Uses an em dash {0} inline." -f (Get-Codepoint 0x2014))   '// Uses an em dash -- inline.'
+Assert-Repair 'repair-arrow'     ("// Flows left {0} right." -f (Get-Codepoint 0x2192))          '// Flows left -> right.'
+Assert-Repair 'repair-ellipsis'  ("// And so on {0}" -f (Get-Codepoint 0x2026))                  '// And so on ...'
+Assert-Repair 'repair-bullet'    ("// {0} first item" -f (Get-Codepoint 0x2022))                 '// - first item'
+Assert-Repair 'repair-multiply'  ("// A {0} B grid" -f (Get-Codepoint 0x00d7))                   '// A x B grid'
+Assert-Repair 'repair-doc-slash' ("/// Uses an em dash {0} inline." -f (Get-Codepoint 0x2014))   '/// Uses an em dash -- inline.'
+
+# Detection and repair share one character set by construction (the pattern is built from
+# the replacement map's keys), so there is no "detected but unmapped" character to fail on.
+$cjkLine = "// Some text with {0} inline." -f (Get-Codepoint 0x4e2d)
+Assert-Repair 'repair-noop-cjk' $cjkLine $cjkLine
+
+# Repair-CommentLine -- not a whole-line comment at all
+Assert-Unrepairable 'repair-not-a-comment' ("int x = 1; // trailing {0} comment" -f (Get-Codepoint 0x2014))
+
+# PowerShell (#) gets the same categories as C# (//) -- the gap that let this tooling's own
+# comments ship unscanned.
+Assert-Category 'ps-phase-framing' '# Phase 3 test: picking a style applies it to the selection' 'process-framing' '.ps1'
+Assert-Category 'ps-non-ascii-punctuation' ("# Uses an em dash {0} inline." -f (Get-Codepoint 0x2014)) 'non-ascii-punctuation' '.ps1'
+Assert-Repair 'repair-ps-em-dash' ("# Uses an em dash {0} inline." -f (Get-Codepoint 0x2014)) '# Uses an em dash -- inline.'
+
+# Guards against a regression back to the PS7-only backtick-u{} escape.
+$emDash = Get-Codepoint 0x2014
+if (-not (Get-NonAsciiReplacementMap).Contains($emDash)) {
+	[void]$script:failures.Add("FAIL [non-ascii-map-real-codepoint]: Get-NonAsciiReplacementMap does not key on the real em dash character (PSVersion $($PSVersionTable.PSVersion))")
+}
+
+# comment-too-long fires on a 200-char budget across the whole block, not a line count -- a
+# doc comment or PowerShell help block is exempt and may run long-form regardless of length.
+Assert-CategoryLines 'too-long-cs' @(
+	'// This explains the first reason the approach was chosen over the alternative approach taken here for this specific case.',
+	'// This explains a second reason that would not fit on the first line at all today either, adding more detail.'
+) 'comment-too-long'
+Assert-CategoryLines 'too-long-single-line-cs' @(
+	'// This one very long line explains the reasoning all by itself without wrapping and keeps going for quite a while past what used to be the one-line cap until it is clearly over the two hundred character budget on its own.'
+) 'comment-too-long'
+Assert-CleanLines 'one-line-cs' @('// A single reason, on a single line, is exactly the budget.')
+Assert-CleanLines 'under-budget-multiline-cs' @(
+	'// A short first reason for the approach, stated plainly.',
+	'// A short second reason that rounds out the explanation.'
+)
+Assert-CleanLines 'doc-comment-long-cs' @(
+	'/// A public API doc comment may run several lines when the contract genuinely needs it,',
+	'/// because a reader hovering the symbol has nowhere else to find this.'
+)
+Assert-CategoryLines 'too-long-ps' @(
+	'# This explains the first reason the approach was chosen over the alternative approach taken here for this specific case.',
+	'# This explains a second reason that would not fit on the first line at all today either, adding more detail.'
+) 'comment-too-long' '.ps1'
+Assert-CleanLines 'help-block-long-ps' @(
+	'<#',
+	'.SYNOPSIS',
+	'    Comment-based help is allowed to run long-form, the PowerShell equivalent of a doc comment.',
+	'#>'
+) '.ps1'
+
+# CLike (C/C++/IDL) shares C#'s // and /// syntax and categories -- one worked example per
+# extension.
+Assert-Category 'cpp-phase-framing' '// Phase 3 test: picking a style applies it to the selection' 'process-framing' '.cpp'
+Assert-Category 'h-non-ascii-punctuation' ("// Uses an em dash {0} inline." -f (Get-Codepoint 0x2014)) 'non-ascii-punctuation' '.h'
+Assert-Category 'idl-absence-narration' '// An ORC run no longer forces the whole value read-only.' 'absence-narration' '.idl'
+Assert-Clean    'cpp-clean' '// Applies the selected style to the current selection' '.cpp'
+
+# Xml uses <!-- -->; banned categories fire regardless of exempt/impl kind, even on the first
+# comment.
+Assert-Category 'csproj-single-line' '<!-- This property no longer affects the build output. -->' 'absence-narration' '.csproj'
+Assert-Clean    'csproj-single-line-clean' '<!-- This property controls the build output. -->' '.csproj'
+Assert-CategoryLines 'axaml-multi-line' @(
+	'<!--',
+	'    This binding no longer updates on focus loss.',
+	'-->'
+) 'absence-narration' '.axaml'
+
+# Xml's FIRST block is exempt from the budget; later blocks are not. Over 200
+# chars total, but each physical line fits the width limit: the rules are
+# independent.
+Assert-CleanLines 'xml-first-comment-exempt-long' @(
+	'<!--',
+	'	This is the file-level summary comment, and it is allowed to run long-form the',
+	'	same way a C# /// doc comment or a PowerShell comment-based help block can,',
+	'	because Xml has no other syntax to mark a file or type level summary.',
+	'-->',
+	'<Project Sdk="Microsoft.NET.Sdk">',
+	'</Project>'
+) '.csproj'
+Assert-CategoryLines 'xml-second-comment-too-long' @(
+	'<!-- Short file-level summary. -->',
+	'<Project Sdk="Microsoft.NET.Sdk">',
+	'<!-- This explains the first reason the approach was chosen over the alternative approach taken for this case. -->',
+	'<!-- This explains a second reason that would not fit on the first line at all today either, more detail here. -->',
+	'</Project>'
+) 'comment-too-long' '.vcxproj'
+Assert-CleanLines 'targets-clean-multiline' @(
+	'<!--',
+	'    Restores the shared build properties for every project in the solution.',
+	'-->'
+) '.targets'
+
+# Xml comment content may never contain a literal "--" (XML spec, not just adjacent to "-->");
+# a single "-" is the safe ASCII substitute there instead of the usual "--".
+Assert-Category 'xml-double-hyphen' '<!-- Uses a real dash -- here, which is illegal inside an XML comment. -->' 'xml-illegal-double-hyphen' '.csproj'
+Assert-Clean    'xml-single-hyphen-clean' '<!-- Uses a real dash - here, which is legal inside an XML comment. -->' '.csproj'
+
+
+# ---- per-line width, taken from .editorconfig's max_line_length ----
+
+$cfg = Get-CommentHygieneEditorConfig -RepoRoot (Resolve-Path (Join-Path $PSScriptRoot '../..')).Path
+if ($cfg.MaxLineLength -ne 98 -or $cfg.TabWidth -ne 4) {
+	[void]$failures.Add("FAIL [editorconfig-read]: expected 98/4, got $($cfg.MaxLineLength)/$($cfg.TabWidth)")
+}
+
+$widthPad = '/' * 100
+Assert-Category 'comment-line-too-long' "// $widthPad" 'comment-line-too-long'
+Assert-Clean    'comment-line-at-limit' ('// ' + ('x' * 94))
+
+# A tab counts as four display columns, not one: 24 tabs plus a short comment is
+# already past the limit even though the string is well under 98 characters.
+$tabbed = ("`t" * 24) + '// short'
+Assert-Category 'comment-line-tabs-count-as-columns' $tabbed 'comment-line-too-long'
+
+if ((Get-CommentDisplayWidth -Line "`tab" -TabWidth 4) -ne 6) {
+	[void]$failures.Add('FAIL [display-width-tab-stop]: expected a leading tab to advance to column 4')
+}
+
+# Doc comments are exempt from the content budget but not from the width rule.
+Assert-Category 'doc-comment-too-wide' "/// $widthPad" 'comment-line-too-long'
+
+$wrapSource = "`t// " + ('the quick brown fox jumps over the lazy dog and keeps running ' * 3)
+$wrapped = Format-CommentLineWrap -Line $wrapSource -Language 'CLike' -MaxWidth 98 -TabWidth 4
+if ($null -eq $wrapped -or $wrapped.Count -lt 2) {
+	[void]$failures.Add('FAIL [wrap-splits]: expected an over-long comment to wrap onto multiple lines')
+}
+else {
+	foreach ($line in $wrapped) {
+		if (-not $line.TrimStart().StartsWith('//')) {
+			[void]$failures.Add("FAIL [wrap-prefix]: continuation line lost its comment prefix: $line")
+		}
+	}
+	if ((Get-CommentDisplayWidth -Line $wrapped[0] -TabWidth 4) -gt 98) {
+		[void]$failures.Add('FAIL [wrap-width]: wrapped line still exceeds the limit')
+	}
+}
+
+if ($null -ne (Format-CommentLineWrap -Line '// short' -Language 'CLike' -MaxWidth 98 -TabWidth 4)) {
+	[void]$failures.Add('FAIL [wrap-noop]: a line that already fits must not be rewrapped')
+}
+
+# A single-line Xml comment expands into the delimiters-on-their-own-lines form.
+$xmlSource = '<!-- ' + ('the quick brown fox jumps over the lazy dog and keeps running ' * 3) + '-->'
+$xmlWrapped = Format-CommentLineWrap -Line $xmlSource -Language 'Xml' -MaxWidth 98 -TabWidth 4
+if ($null -eq $xmlWrapped -or $xmlWrapped.Count -lt 3) {
+	[void]$failures.Add('FAIL [wrap-xml-expands]: expected an over-long Xml comment to expand to multiple lines')
+}
+else {
+	if ($xmlWrapped[0].Trim() -ne '<!--' -or $xmlWrapped[-1].Trim() -ne '-->') {
+		[void]$failures.Add('FAIL [wrap-xml-delimiters]: expected the delimiters to move onto their own lines')
+	}
+	foreach ($line in $xmlWrapped) {
+		if ((Get-CommentDisplayWidth -Line $line -TabWidth 4) -gt 98) {
+			[void]$failures.Add("FAIL [wrap-xml-width]: wrapped Xml line still exceeds the limit: $line")
+		}
+	}
+}
+
+# ---- complexity raises the content budget, but only in dense branching code ----
+
+# Wrapped inside the width limit so these fixtures exercise the content budget
+# alone; an over-wide single line would trip comment-line-too-long instead.
+$longComment = @(
+	'// The invariant this restores is subtle and needs spelling out for the',
+	'// next reader, because the branching below depends on it holding at each',
+	'// step and nothing in the code itself says so. Without this note the next',
+	'// person reads the guard as redundant and deletes it.'
+)
+
+function New-BranchyFixture {
+	param([string[]] $Comment)
+	$out = New-Object System.Collections.ArrayList
+	foreach ($line in $Comment) { [void]$out.Add($line) }
+	[void]$out.Add('void M(int n) {')
+	for ($k = 0; $k -lt 12; $k++) { [void]$out.Add("    if (n == $k && n > 0) { DoWork($k); }") }
+	[void]$out.Add('}')
+	return ,$out.ToArray()
+}
+
+$simpleCode = @($longComment) + @('void M() {', '    DoWork();', '}')
+Assert-CategoryLines 'long-comment-simple-code-flagged' $simpleCode 'comment-too-long'
+Assert-CleanLines 'long-comment-complex-code-allowed' (New-BranchyFixture -Comment $longComment)
+
+# The extended budget is a higher ceiling, not the removal of one.
+$hugeComment = $longComment + $longComment + $longComment
+Assert-CategoryLines 'extended-budget-still-capped' (New-BranchyFixture -Comment $hugeComment) 'comment-too-long'
+
+$cxSimple = Measure-CodeComplexity -Lines @('void M() {', '    DoWork();', '}') -StartIndex 0 -Language 'CLike'
+if ($cxSimple -ge 10) {
+	[void]$failures.Add("FAIL [complexity-simple]: straight-line code scored $cxSimple")
+}
+if ((Measure-CodeComplexity -Lines @('<Project>') -StartIndex 0 -Language 'Xml') -ne 0) {
+	[void]$failures.Add('FAIL [complexity-xml]: Xml has no control flow and must score zero')
+}
+
+Remove-Item -LiteralPath $tempDir -Recurse -Force
+
+if ($failures.Count -gt 0) {
+	Write-Host ''
+	foreach ($f in $failures) { Write-Host $f -ForegroundColor Red }
+	Write-Host ''
+	Write-Host "$($failures.Count) test(s) failed." -ForegroundColor Red
+	exit 1
+}
+
+Write-Host 'All CommentHygiene tests passed.' -ForegroundColor Green
+exit 0

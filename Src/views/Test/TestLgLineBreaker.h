@@ -65,6 +65,30 @@ namespace TestViews
 			}
 		}
 
+		void testPutLineBreakTextUsesLength()
+		{
+			unitpp::assert_true("m_qlb", m_qlb.Ptr());
+			// The text sits inside a larger buffer with no NUL terminator; the characters
+			// after cch must not become part of the break text, and the copy must not
+			// scan past cch looking for a terminator.
+			OLECHAR rgch[] = { 'o','n','e',' ','t','w','o',' ','s','i','x','X','X','X','X','X' };
+			const int cch = 11; // "one two six"
+			CheckHr(m_qlb->put_LineBreakText(rgch, cch));
+
+			OLECHAR rgchOut[32];
+			int cchOut = 0;
+			CheckHr(m_qlb->GetLineBreakText(32, rgchOut, &cchOut));
+			unitpp::assert_eq("break text length", cch, cchOut);
+			unitpp::assert_true("break text content",
+				memcmp(rgch, rgchOut, cch * isizeof(OLECHAR)) == 0);
+
+			// Word boundaries inside the text must be found.
+			int ichBreak = -1;
+			LgLineBreak lbWeight;
+			CheckHr(m_qlb->LineBreakBefore(10, &ichBreak, &lbWeight));
+			unitpp::assert_eq("line break before 'six'", 8, ichBreak);
+		}
+
 	public:
 		TestLgLineBreaker();
 		virtual void SuiteSetup()

@@ -412,7 +412,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 			using (var chooser = MakeChooserWithExtantMsas(m_slot, cmd as XCore.Command))
 			{
-				// Own the chooser to the top-level main window, not `this` child control.
+				// Own the chooser to the top-level main window.
 				chooser.ShowDialog(m_propertyTable.GetValue<Form>("window"));
 				if (chooser.DialogResult == DialogResult.OK)
 				{
@@ -600,7 +600,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			bool fIsPrefixSlot = GetIsPrefixSlot(fBefore);
 			using (SimpleListChooser chooser = MakeChooserWithExtantSlots(fIsPrefixSlot))
 			{
-				chooser.ShowDialog(this);
+				chooser.ShowDialog(m_propertyTable.GetValue<Form>("window"));
 				if (chooser.ChosenOne != null)
 				{
 					var chosenSlot = chooser.ChosenOne.Object as IMoInflAffixSlot;

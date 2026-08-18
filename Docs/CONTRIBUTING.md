@@ -27,9 +27,9 @@ During installation:
 - On "Adjusting your PATH environment": Select any option you want - "Use Git Bash only" is sufficient unless you want to run git commands from the Windows command prompt.
 - On "Configuring the line ending conversions": Select **"Checkout Windows-style, commit Unix-style line endings"**.
 
-#### Visual Studio 2022
+#### Visual Studio 2026 or 2022
 
-Download and install Visual Studio 2022 Community Edition or higher. See [Visual Studio Setup](visual-studio-setup.md) for detailed configuration.
+Download and install Visual Studio Community Edition or higher (2026 preferred; when both are installed the build uses the newest). See [Visual Studio Setup](visual-studio-setup.md) for detailed configuration, or import the repo-root `.vsconfig` in the Visual Studio Installer.
 
 Required workloads:
 - .NET desktop development
@@ -55,18 +55,20 @@ FieldWorks builds can be significantly slowed by Windows Defender real-time scan
 
 This adds exclusions for build outputs, NuGet caches and development tools. Use `-DryRun` to preview changes without applying them.
 
+If you also work in sibling repos in the same parent folder (e.g. PanGloss, motif, foma-rs), run `..\Setup-DefenderExclusions.ps1` instead (one level up) — it covers this repo plus the Rust toolchain (`.cargo`/`.rustup`) and CMake/Rust process exclusions the FieldWorks-only script doesn't need.
+
 ### 2. Clone the Repository
 
 Clone the FieldWorks repository using HTTPS or SSH:
 
 **HTTPS:**
-```bash
+```powershell
 git clone https://github.com/sillsdev/FieldWorks.git
 cd FieldWorks
 ```
 
 **SSH:**
-```bash
+```powershell
 git clone git@github.com:sillsdev/FieldWorks.git
 cd FieldWorks
 ```
@@ -75,7 +77,7 @@ cd FieldWorks
 
 If you're working on translations:
 
-```bash
+```powershell
 git clone https://github.com/sillsdev/FwLocalizations.git Localizations
 ```
 
@@ -147,7 +149,7 @@ Default recommendation:
 
 If you are a core developer using GitHub Copilot or Claude Code, follow [AI-Assisted PR Workflow](workflows/ai-pr-workflow.md) for the Jira-to-PR path: create a dedicated worktree, validate with repo tasks/scripts, run `pr-preflight`, and then work review comments through the repo review-response workflow.
 
-Switch to **Visual Studio 2022** when you need:
+Switch to **Visual Studio** (2026 or 2022) when you need:
 - WinForms designer workflows
 - Mixed managed/native debugging across interop boundaries
 - Complex legacy .NET Framework project-system scenarios where VS Code is unreliable
@@ -158,7 +160,7 @@ See [VS Code Stability Profile](vscode-stability-profile.md) for current workspa
 
 It is helpful to increase the rename limits for Git to properly detect renames in large commits:
 
-```bash
+```powershell
 git config diff.renameLimit 10000
 git config merge.renameLimit 10000
 ```
@@ -180,7 +182,7 @@ We welcome any contribution! To get started:
 1. **Fork** the FieldWorks repository on GitHub
 2. **Clone** your fork locally
 3. **Create a branch** for your changes:
-   ```bash
+   ```powershell
    git checkout -b feature/my-feature-name
    ```
 4. **Make your changes** and commit them with clear messages

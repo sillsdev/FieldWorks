@@ -9,15 +9,26 @@ setlocal
 set CONFIG=%~1
 if "%CONFIG%"=="" set CONFIG=Debug
 
-REM Find vcvarsall.bat - try VS 2022 Community, then BuildTools
-if exist "C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvarsall.bat" (
-    call "C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvarsall.bat" x64
-) else if exist "C:\BuildTools\VC\Auxiliary\Build\vcvarsall.bat" (
-    call "C:\BuildTools\VC\Auxiliary\Build\vcvarsall.bat" x64
-) else (
-    echo ERROR: Cannot find vcvarsall.bat
+REM Locate the newest supported Visual Studio via vswhere.
+REM The version range mirrors FwVisualStudioVersionRange in Build\FieldWorks.Toolchain.props.
+REM The result goes through a temp file because cmd's for /f parsing cannot safely
+REM carry both the "(x86)" path parenthesis and the version-range parenthesis.
+set "VSWHERE=%ProgramFiles(x86)%\Microsoft Visual Studio\Installer\vswhere.exe"
+if not exist "%VSWHERE%" set "VSWHERE=%ProgramFiles%\Microsoft Visual Studio\Installer\vswhere.exe"
+if not exist "%VSWHERE%" (
+    echo ERROR: Cannot find vswhere.exe - install Visual Studio 2026 or 2022
     exit /b 1
 )
+set "VSROOT="
+set "VSROOT_FILE=%TEMP%\fw_vsroot_%RANDOM%.txt"
+"%VSWHERE%" -latest -products * -version "[17.0,19.0)" -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath > "%VSROOT_FILE%"
+set /p VSROOT=<"%VSROOT_FILE%"
+del "%VSROOT_FILE%" >nul 2>&1
+if not defined VSROOT (
+    echo ERROR: No Visual Studio 2026/2022 installation with C++ build tools was found
+    exit /b 1
+)
+call "%VSROOT%\VC\Auxiliary\Build\vcvarsall.bat" x64
 
 REM Navigate to configuration-specific output directory
 cd /d "%~dp0Output\%CONFIG%\Common"

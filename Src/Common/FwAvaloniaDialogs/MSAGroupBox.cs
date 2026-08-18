@@ -15,27 +15,32 @@ using SIL.FieldWorks.Common.FwAvalonia;
 namespace FwAvaloniaDialogs
 {
 	/// <summary>
-	/// A reusable, LCModel-FREE grammatical-info editor — the Avalonia analog of the WinForms
+	/// A reusable, LCModel-FREE grammatical-info editor -- the Avalonia analog of the WinForms
 	/// <c>MSAGroupBox</c> (the "grammatical info" group inside the Insert Entry dialog). It mirrors that box's
 	/// ADAPTIVE layout: which widgets are visible is driven entirely by the current <see cref="MsaType"/> (which
 	/// the host sets from the entry's morph type), reconfiguring live when the type changes, exactly as the
 	/// WinForms box does when the affix-type or morph type changes.
 	///
 	/// The widgets, mirroring the WinForms members:
-	///   * Main POS — an <see cref="FwPosChooser"/> ("MainPos"), the analog of <c>m_tcMainPOS</c>.
-	///   * Secondary POS — a second <see cref="FwPosChooser"/> ("SecondaryPos") for <c>m_tcSecondaryPOS</c>,
+	/// * Main POS -- an <see cref="FwPosChooser"/> ("MainPos"), the analog of <c>m_tcMainPOS</c>.
+	/// * Secondary POS -- a second <see cref="FwPosChooser"/> ("SecondaryPos") for
+	/// <c>m_tcSecondaryPOS</c>,
 	///     shown ONLY for derivational affixes.
-	///   * Affix Type — a combo ("&lt;Not sure&gt;" / Inflectional / Derivational), the analog of
+	/// * Affix Type -- a combo ("&lt;Not sure&gt;" / Inflectional / Derivational), the analog of
 	///     <c>m_fwcbAffixTypes</c>, shown ONLY for affix morph types. Changing it reconfigures the box (it
 	///     re-derives the <see cref="MsaType"/>), exactly like <c>HandleComboMSATypesChange</c>.
-	///   * Slot — a combo of inflectional-affix slots, the analog of <c>m_fwcbSlots</c>, shown ONLY for
+	/// * Slot -- a combo of inflectional-affix slots, the analog of <c>m_fwcbSlots</c>, shown
+	/// ONLY for
 	///     inflectional affixes.
 	///
-	/// MsaType → visible widgets (mirrors MSAGroupBox's switch exactly):
-	///   * <see cref="FwMsaType.Stem"/> / <see cref="FwMsaType.Root"/> → Main POS only (label "Category").
-	///   * <see cref="FwMsaType.Unclassified"/> → Affix-Type (= Not sure) + Main POS ("Attaches to Category").
-	///   * <see cref="FwMsaType.Inflectional"/> → Affix-Type + Main POS + Slot ("Fills Slot").
-	///   * <see cref="FwMsaType.Derivational"/> → Affix-Type + Main POS + Secondary POS ("Changes to Category").
+	/// MsaType -> visible widgets (mirrors MSAGroupBox's switch exactly):
+	/// * <see cref="FwMsaType.Stem"/> / <see cref="FwMsaType.Root"/> -> Main POS only (label
+	/// "Category").
+	/// * <see cref="FwMsaType.Unclassified"/> -> Affix-Type (= Not sure) + Main POS ("Attaches to
+	/// Category").
+	///   * <see cref="FwMsaType.Inflectional"/> -> Affix-Type + Main POS + Slot ("Fills Slot").
+	/// * <see cref="FwMsaType.Derivational"/> -> Affix-Type + Main POS + Secondary POS ("Changes
+	/// to Category").
 	///
 	/// The seam is LCModel-FREE: the host feeds the POS node list (for both choosers), the slot options, and the
 	/// current values; the control exposes the selection as a <see cref="FwSandboxMsa"/> payload + a change event,
@@ -51,7 +56,8 @@ namespace FwAvaloniaDialogs
 		private readonly StackPanel _slotsPanel;
 		private readonly StackPanel _inflClassPanel;
 		// The inflection-feature column. NOTE: the legacy four-widget MSAGroupBox did
-		// NOT edit inflection features inline — that was the separate MsaInflectionFeatureListDlg slice. This column
+		// NOT edit inflection features inline -- that was the separate
+		// MsaInflectionFeatureListDlg slice. This column
 		// surfaces that dialog's capability INLINE (net-new convenience, functionally equivalent), over
 		// IMoInflAffMsa.InflFeatsOA / IMoDerivAffMsa.FromMsFeaturesOA, shown alongside the POS for infl/deriv affixes.
 		private readonly StackPanel _inflFeaturesPanel;
@@ -226,7 +232,8 @@ namespace FwAvaloniaDialogs
 		// ----- public seam (LCModel-free) -----
 
 		/// <summary>
-		/// Feeds the POS hierarchy (a flat, document-order, depth-tagged node list) to BOTH choosers — the
+		/// Feeds the POS hierarchy (a flat, document-order, depth-tagged node list) to BOTH
+		/// choosers -- the
 		/// host's project parts-of-speech list, identical to what <see cref="FwPosChooser.SetNodes"/> expects.
 		/// </summary>
 		public void SetPosNodes(IReadOnlyList<FwPosNode> nodes)
@@ -258,7 +265,8 @@ namespace FwAvaloniaDialogs
 		}
 
 		/// <summary>
-		/// Feeds the inflection-class options shown in the inflection-class picker — the host builds these
+		/// Feeds the inflection-class options shown in the inflection-class picker -- the host
+		/// builds these
 		/// from the currently-selected main POS's <c>InflectionClassesOC</c> (incl. nested subclasses, depth-tagged).
 		/// A leading "&lt;None&gt;" sentinel row (a null id) is always prepended so the empty pick stays selectable.
 		/// Re-applies the current <see cref="InflectionClassId"/> if it is still present (otherwise falls back to
@@ -287,11 +295,13 @@ namespace FwAvaloniaDialogs
 		}
 
 		/// <summary>
-		/// Feeds the inflection-feature system shown in the inflection-feature editor — the
+		/// Feeds the inflection-feature system shown in the inflection-feature editor -- the
 		/// host builds these <see cref="FwFeatureNode"/>s from the currently-selected main POS's
-		/// <c>InflectableFeatsRC</c> (incl. its parent POSes', depth-tagged, document order — the lift of
+		/// <c>InflectableFeatsRC</c> (incl. its parent POSes', depth-tagged, document order --
+		/// the lift of
 		/// <c>MsaInflectionFeatureListDlg.PopulateTreeFromPos</c>). Re-fed when the main POS changes, exactly how the
-		/// slot list follows the POS. The editor shows them only for infl/deriv affixes. Re-applies the current
+		/// slot list follows the POS. The editor shows them only for infl/deriv affixes.
+		/// Re-applies the current
 		/// <see cref="InflectionFeatures"/> if still present (dropped otherwise).
 		/// </summary>
 		public void SetInflectionFeatureNodes(IReadOnlyList<FwFeatureNode> nodes)
@@ -300,7 +310,7 @@ namespace FwAvaloniaDialogs
 		}
 
 		/// <summary>
-		/// Seeds the inflection-feature assignments shown in the editor — the launcher builds
+		/// Seeds the inflection-feature assignments shown in the editor -- the launcher builds
 		/// these from the MSA's existing <c>IFsFeatStruc</c> (the lift of
 		/// <c>FeatureStructureTreeView.PopulateTreeFromFeatureStructure</c>). Does NOT raise <see cref="MsaChanged"/>
 		/// (the host's seed path).
@@ -310,7 +320,8 @@ namespace FwAvaloniaDialogs
 			_inflFeaturesEditor.SetAssignments(assignments ?? Array.Empty<FwFeatureValueAssignment>());
 		}
 
-		/// <summary>Host callback after a successful create-feature flow: see <see cref="FwFeatureStructureEditor.AcceptCreatedFeature"/>.</summary>
+		/// <summary>Host callback after a successful create-feature flow: see <see
+		/// cref="FwFeatureStructureEditor.AcceptCreatedFeature"/>.</summary>
 		public void AcceptCreatedInflectionFeature(FwFeatureNode created, IReadOnlyList<FwFeatureNode> valueChildren = null)
 			=> _inflFeaturesEditor.AcceptCreatedFeature(created, valueChildren);
 
@@ -320,7 +331,8 @@ namespace FwAvaloniaDialogs
 
 		/// <summary>
 		/// The current grammatical-info class, mirroring <c>MSAGroupBox.MSAType</c>. Setting it reconfigures
-		/// which widgets are visible (show/hide + relayout) and re-titles the field labels — exactly as the
+		/// which widgets are visible (show/hide + relayout) and re-titles the field labels --
+		/// exactly as the
 		/// WinForms box does. The setter does NOT raise <see cref="MsaChanged"/>.
 		/// </summary>
 		public FwMsaType MsaType

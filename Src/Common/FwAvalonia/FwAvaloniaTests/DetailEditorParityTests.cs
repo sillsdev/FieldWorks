@@ -21,7 +21,7 @@ namespace FwAvaloniaTests
 	/// Editor-type parity for the lexical detail view:
 	/// the importer carries an enumComboBox's stringList ids/group onto the node (the metadata
 	/// survives even though the detail view does not render a closed enum combo);
-	/// FwReferenceVectorField.Dispose detaches every handler it wired (count >0 → 0).
+	/// FwReferenceVectorField.Dispose detaches every handler it wired (count >0 -> 0).
 	/// </summary>
 	[TestFixture]
 	public class DetailEditorParityTests
@@ -103,7 +103,8 @@ namespace FwAvaloniaTests
 		[AvaloniaTest]
 		public void ReferenceVector_ReadOnly_HasNothingToDetach()
 		{
-			// A read-only vector (no edit context) wires no edit handlers, so its teardown is empty —
+			// A read-only vector (no edit context) wires no edit handlers, so its teardown is
+			// empty --
 			// Dispose is a safe no-op.
 			var vector = new FwReferenceVectorField(VectorFieldWithItems(), "PublishIn", editContext: null);
 			Assert.That(vector.AttachedHandlerCount, Is.EqualTo(0));

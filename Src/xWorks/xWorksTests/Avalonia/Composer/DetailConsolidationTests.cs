@@ -12,9 +12,9 @@ namespace SIL.FieldWorks.XWorks
 {
 	/// <summary>
 	/// Review consolidation (morph-type GUID knowledge): <see cref="MorphTypeSwapLogic"/> is the
-	/// single GUID → kind table, but it lives in the deliberately LCModel-free FwAvalonia seam
+	/// single GUID -> kind table, but it lives in the deliberately LCModel-free FwAvalonia seam
 	/// project, so it mirrors the fixed <c>MoMorphTypeTags</c> model GUIDs as literals. This
-	/// fixture — in xWorksTests, which references BOTH assemblies — pins every literal to its
+	/// fixture -- in xWorksTests, which references BOTH assemblies -- pins every literal to its
 	/// MoMorphTypeTags constant and pins the stem set to the legacy
 	/// <c>MorphTypeAtomicLauncher.IsStemType</c> guid list, so neither mirror can drift.
 	/// </summary>
@@ -57,7 +57,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		// The legacy MorphTypeAtomicLauncher.IsStemType guid list (bound root/stem, enclitic,
-		// particle, proclitic, root, stem, clitic, phrase, discontiguous phrase) — the launcher
+		// particle, proclitic, root, stem, clitic, phrase, discontiguous phrase) -- the launcher
 		// cannot delegate to the seam yet (DetailControls has no FwAvalonia reference), so this
 		// pins the two sets to each other until the launcher retires.
 		[Test]
@@ -97,7 +97,7 @@ namespace SIL.FieldWorks.XWorks
 
 	/// <summary>
 	/// Review consolidation (editor-kind knowledge): <see cref="EditorKindMap.ClassifyDetailFieldKind"/>
-	/// is the ONE editor-string → category table the composer's dispatch switch and
+	/// is the ONE editor-string -> category table the composer's dispatch switch and
 	/// <c>DetailModelProjector.ClassifyKind</c> both consume. These cases pin the categories the
 	/// two consumers' behavior depends on.
 	/// </summary>

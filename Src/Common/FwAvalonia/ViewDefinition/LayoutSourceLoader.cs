@@ -62,7 +62,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 
 		/// <summary>
 		/// Finds the first <c>&lt;layout class=... type=... name=...&gt;</c> match across the given
-		/// files, in file order then document order — the legacy first-wins merge.
+		/// files, in file order then document order -- the legacy first-wins merge.
 		/// </summary>
 		public static XElement FindLayout(IEnumerable<XElement> layoutFiles, string className,
 			string layoutName, string layoutType = "detail")
@@ -112,7 +112,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 		}
 
 		/// <summary>
-		/// Indexes layouts by (class, type, name) → ALL matching variants in file-then-document
+		/// Indexes layouts by (class, type, name) -> ALL matching variants in file-then-document
 		/// order. Unlike <see cref="IndexLayouts"/> (3-key first-wins), this keeps every <c>choiceGuid</c>
 		/// variant so a caller with a record's layout-choice GUID can pick the right one. Legacy DataTree
 		/// distinguishes e.g. the 11 <c>RnGenericRec/detail/Normal</c> layouts only by <c>choiceGuid</c>; a

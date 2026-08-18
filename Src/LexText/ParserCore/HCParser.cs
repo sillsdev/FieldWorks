@@ -15,6 +15,7 @@ using SIL.LCModel.Infrastructure;
 using SIL.Machine.Annotations;
 using SIL.Machine.Morphology.HermitCrab;
 using SIL.Machine.Morphology.HermitCrab.MorphologicalRules;
+using SIL.Machine.Rules;
 using SIL.ObjectModel;
 
 namespace SIL.FieldWorks.WordWorks.Parser
@@ -149,6 +150,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			// For Hermit Crab, the maximum number of roots/stems allowed is between one and ten.
 			// The default is two in order to allow for compounding (which requires there be at least two roots/stems).
 			int maxStemCount = 2;
+			int maxAlternatives = 0;
 			string loadErrorsFile = Path.Combine(m_outputDirectory, m_cache.ProjectId.Name + "HCLoadErrors.xml");
 			using (XmlWriter writer = XmlWriter.Create(loadErrorsFile))
 			using (new WorkerThreadReadHelper(m_cache.ServiceLocator.GetInstance<IWorkerThreadReadHandler>()))
@@ -161,6 +163,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				XElement guessRootsElem = parserParamsElem.Elements("HC").Elements("GuessRoots").FirstOrDefault();
 				XElement mergeAnalysesElem = parserParamsElem.Elements("HC").Elements("MergeAnalyses").FirstOrDefault();
 				XElement maxRootsElem = parserParamsElem.Elements("HC").Elements("MaxRoots").FirstOrDefault();
+				XElement maxAlternativesElem = parserParamsElem.Elements("HC").Elements("MaxAlternatives").FirstOrDefault();
 				if (delReappsElem != null)
 					delReapps = (int) delReappsElem;
 				if (guessRootsElem != null)
@@ -169,10 +172,13 @@ namespace SIL.FieldWorks.WordWorks.Parser
 					m_mergeAnalyses = (bool) mergeAnalysesElem;
 				if (maxRootsElem != null)
 					maxStemCount = int.Parse(maxRootsElem.Value);
+				if (maxAlternativesElem != null)
+					maxAlternatives = int.Parse(maxAlternativesElem.Value);
 			}
 			m_morpher = new Morpher(m_traceManager, m_language) { DeletionReapplications = delReapps };
 			m_morpher.MaxStemCount = maxStemCount;
 			m_morpher.MergeEquivalentAnalyses = m_mergeAnalyses;
+			m_morpher.MaxAlternatives = maxAlternatives;
 		}
 
 		private XDocument ParseToXml(string form, bool tracing, IEnumerable<int> selectTraceMorphs)
@@ -576,6 +582,10 @@ namespace SIL.FieldWorks.WordWorks.Parser
 					rest = " " + rest;
 				}
 				return string.Format(ParserCoreStrings.ksHCInvalidWordform, ise.String, ise.Position + 1, rest, phonemesFoundSoFar);
+			}
+			if (e is MaxAlternativesExceededException)
+			{
+				return ParserCoreStrings.ksMaxAlternativesExceeded;
 			}
 
 			return String.Format(ParserCoreStrings.ksHCDefaultErrorMsg, e.Message);

@@ -95,9 +95,9 @@
 	-->
 	<ItemGroup Label="SIL Localization">
 		<PackageVersion Include="L10NSharp" Version="$(L10NSharpVersion)" />
-		<!-- L10NSharp v10 split the WinForms types into this package. Referenced only
-			 transitively via Palaso; pinned to keep it aligned with the shared
-			 L10NSharp version. -->
+		<!-- L10NSharp v10 split LocalizationManagerWinforms into a separate package; no project
+		     references it directly. This pin keeps its transitive version aligned with
+		     L10NSharp. -->
 		<PackageVersion Include="L10NSharp.Windows.Forms" Version="$(L10NSharpVersion)" />
 		<PackageVersion Include="SIL.Chorus.L10ns" Version="3.0.1" />
 		<PackageVersion Include="SIL.LibPalaso.L10ns" Version="$(SilLibPalasoL10nsVersion)" />
@@ -167,9 +167,8 @@
 		-->
 		<PackageVersion Include="HarfBuzzSharp" Version="8.3.1.1" />
 		<PackageVersion Include="HarfBuzzSharp.NativeAssets.Win32" Version="8.3.1.1" />
-		<!-- Multiple test projects copy this into shared Output; without one version the
-			 last build breaks the others' binding redirects (seen: FwAvaloniaTests
-			 8.0.0.1 vs a 9.x dll). -->
+		<!-- Pinned: multiple test projects copy this into the shared Output folder, and without
+		     one version the last-built project's copy breaks the others' binding redirects. -->
 		<PackageVersion Include="System.Diagnostics.DiagnosticSource" Version="9.0.2" />
 		<PackageVersion Include="Moq" Version="4.20.70" />
 		<PackageVersion Include="NUnit" Version="3.14.0" />
@@ -181,29 +180,13 @@
 		<PackageVersion Include="SkiaSharp.NativeAssets.Win32" Version="2.88.9" />
 	</ItemGroup>
 
-	<!--
-		=============================================================
-		Avalonia
-		Pinned to 11.3.x because it still ships netstandard2.0 assemblies and
-		can therefore load on .NET Framework 4.8. Avalonia 12.x dropped
-		netstandard2.0 (net8+ only) and cannot host in-process on net48.
-		avalonia.win32.interoperability provides WinFormsAvaloniaControlHost
-		(targets net461) for the in-process embedding used by the migration's
-		Phase-1 views.
-		These are referenced by Src/Common/FwAvalonia and Src/Common/FwAvaloniaDialogs.
-		Exception: xWorks and xWorksTests reference the base Avalonia package with
-		IncludeAssets="compile" PrivateAssets="all". IRegionEditorPlugin.BuildControl
-		returns Avalonia.Controls.Control, so compiling xWorks needs Avalonia's
-		reference assemblies; the reference contributes nothing at runtime and is
-		not visible to dependent projects — Avalonia's runtime assemblies reach
-		Output via FwAvalonia's normal PackageReference.
-		=============================================================
-	-->
+	<!-- Avalonia is pinned to 11.3.x: it still ships netstandard2.0 assemblies, so it can load
+	     in-process on net48. Avalonia 12.x drops netstandard2.0 (net8+ only) and cannot. -->
 	<ItemGroup Label="Avalonia">
 		<PackageVersion Include="Avalonia" Version="11.3.17" />
-		<!-- Analyzer carrier for Avalonia. Pinned so xWorks can reference it with
-			 IncludeAssets="none": its AVA* analyzers must not run over legacy xWorks,
-			 where warnings are errors. -->
+		<!-- Transitive analyzer carrier (Avalonia -> Avalonia.BuildServices). Pinned so xWorks
+		     can reference it with IncludeAssets="none": its analyzers must not run where
+		     warnings are errors. -->
 		<PackageVersion Include="Avalonia.BuildServices" Version="11.3.2" />
 		<PackageVersion Include="Avalonia.Desktop" Version="11.3.17" />
 		<PackageVersion Include="Avalonia.Themes.Fluent" Version="11.3.17" />
@@ -214,8 +197,7 @@
 		     The HarfBuzzSharp 8.3.1.1 pin above was aligned for exactly this package. -->
 		<PackageVersion Include="Avalonia.Skia" Version="11.3.17" />
 		<!-- MVVM for hand-authored Avalonia dialogs. 8.x ships netstandard2.0 source
-			 generators so it works on net48; used only by FwAvaloniaDialogs, not
-			 FwAvalonia. -->
+		     generators, so it works on net48. -->
 		<PackageVersion Include="CommunityToolkit.Mvvm" Version="8.2.2" />
 	</ItemGroup>
 </Project>

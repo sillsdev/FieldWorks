@@ -75,7 +75,7 @@ $runSettings = Join-Path $repoRoot "Test.runsettings"
 $vsTestPath = Get-VSTestPath
 
 if (-not (Test-Path $vsTestPath)) {
-	Write-Error "vstest.console.exe not found. Install Visual Studio 2022 or Build Tools."
+	Write-Error "vstest.console.exe not found. Install Visual Studio 2026 or 2022 (or Build Tools) with its testing tools."
 	exit 1
 }
 

@@ -5,7 +5,8 @@
 namespace FwAvaloniaDialogs
 {
 	/// <summary>
-	/// A single lightweight, LCModel-free result row for the reusable Avalonia entry-search ("go") dialog — the
+	/// A single lightweight, LCModel-free result row for the reusable Avalonia entry-search
+	/// ("go") dialog -- the
 	/// the Avalonia analog of one row of the legacy <c>EntryGoDlg</c>/<c>BaseGoDlg</c> matching-entries browser
 	/// (<c>MatchingObjectsBrowser</c>). The product edge (the LexText launcher) maps a matched <c>ILexEntry</c>
 	/// into this row, so the Avalonia layer never sees an <c>ICmObject</c>: <see cref="Id"/> is the entry's stable
@@ -45,10 +46,13 @@ namespace FwAvaloniaDialogs
 		}
 
 		/// <summary>
-		/// Builds a result row that carries a RICH extended-description payload for the right-side description
-		/// pane (the advanced entry view): <paramref name="descriptionContent"/> is an arbitrary content object —
+		/// Builds a result row that carries a RICH extended-description payload for the
+		/// right-side description
+		/// pane (the advanced entry view): <paramref name="descriptionContent"/> is an arbitrary
+		/// content object --
 		/// an Avalonia <c>Control</c> (formatted text, a picture, a composite preview) or any object the right
-		/// pane's <c>ContentControl</c> can present — shown for the highlighted row INSTEAD of the plain
+		/// pane's <c>ContentControl</c> can present -- shown for the highlighted row INSTEAD of
+		/// the plain
 		/// <paramref name="description"/> string. <paramref name="description"/> is still supplied as the
 		/// plain-text fallback (and accessible name) so a consumer that later drops the rich payload, or a host
 		/// that cannot realize it, degrades gracefully to the one-line text. The entry-only and entry/sense
@@ -72,11 +76,13 @@ namespace FwAvaloniaDialogs
 		/// <summary>The display text shown in the results list (the entry's headword).</summary>
 		public string Text { get; }
 
-		/// <summary>The longer description shown in the description/preview pane when this row is selected.</summary>
+		/// <summary>The longer description shown in the description/preview pane when this row is
+		/// selected.</summary>
 		public string Description { get; }
 
 		/// <summary>
-		/// An optional RICH extended-description payload for the right-side description pane — an Avalonia
+		/// An optional RICH extended-description payload for the right-side description pane --
+		/// an Avalonia
 		/// <c>Control</c> (formatted text, a picture, a composite preview) or any object a <c>ContentControl</c> can
 		/// present. When non-null the right pane shows this for the highlighted row; when null it falls back to the
 		/// plain <see cref="Description"/> string (see <see cref="HasDescriptionContent"/>). Kept as a loosely-typed
@@ -124,7 +130,8 @@ namespace FwAvaloniaDialogs
 			set => _gloss = value;
 		}
 
-		/// <summary>The display value of <paramref name="field"/> for this row — the matching list's cell text.</summary>
+		/// <summary>The display value of <paramref name="field"/> for this row -- the matching
+		/// list's cell text.</summary>
 		public string ValueFor(EntryGoResultField field)
 		{
 			switch (field)

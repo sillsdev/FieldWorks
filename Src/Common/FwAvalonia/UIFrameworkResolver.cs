@@ -38,7 +38,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 
 		/// <summary>
 		/// Property/app-setting key storing the user's per-tool opt-outs from the New UI mode. Value is a
-		/// comma-separated tool-name list; empty/blank means every catalog tool is enabled — the master
+		/// comma-separated tool-name list; empty/blank means every catalog tool is enabled -- the
+		/// master
 		/// UIMode=New switch's "everything on" default. No dialog edits it; it is set out of band.
 		/// </summary>
 		public const string UIModeDisabledToolsPropertyName = "UIModeDisabledTools";

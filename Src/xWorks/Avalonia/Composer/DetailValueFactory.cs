@@ -17,8 +17,8 @@ namespace SIL.FieldWorks.XWorks
 	/// <see cref="DetailComposer"/> and <see cref="LexiconEditErrorFallback"/> both
 	/// consume: the per-writing-system value rows and the possibility-list option
 	/// flattening. Sharing them here is what keeps the two hosts from drifting
-	/// (e.g. an option-name fallback walking analysis → vernacular on one host and
-	/// analysis → ShortName on the other; see <see cref="CreatePossibilityOptions"/> for the
+	/// (e.g. an option-name fallback walking analysis -> vernacular on one host and
+	/// analysis -> ShortName on the other; see <see cref="CreatePossibilityOptions"/> for the
 	/// deliberate resolution).
 	/// </summary>
 	internal static class DetailValueFactory
@@ -66,11 +66,13 @@ namespace SIL.FieldWorks.XWorks
 
 		/// <summary>
 		/// Walks a possibility list's tree in document order (parent before children) into
-		/// chooser options, hierarchy carried as <see cref="DetailChoiceOption.Depth"/> — exactly
+		/// chooser options, hierarchy carried as <see cref="DetailChoiceOption.Depth"/> --
+		/// exactly
 		/// the indented tree the legacy chooser shows. <paramref name="flat"/> (a chooserInfo
 		/// "FlatList" guicontrol spec, e.g. PeopleFlatList) keeps the order but suppresses the
 		/// hierarchy, like the legacy flat chooser. Option names use the composer's fallback rule
-		/// — Name.BestAnalysisAlternative, then <c>ShortName</c>, then the guid. <c>CmPossibility.ShortName</c>
+		/// -- Name.BestAnalysisAlternative, then <c>ShortName</c>, then the guid.
+		/// <c>CmPossibility.ShortName</c>
 		/// already performs the best-analysis-then-vernacular resolution itself
 		/// (ShortNameTSS), so the vernacular fallback is covered.
 		/// </summary>
@@ -126,7 +128,8 @@ namespace SIL.FieldWorks.XWorks
 				runs,
 				TsStringUtils.GetXmlRep(tss, writingSystemFactory, 0),
 				RequiresRichEditor(tss),
-				// An embedded object (ORC) does not force read-only — a link is fully editable and
+				// An embedded object (ORC) does not force read-only -- a link is fully editable
+				// and
 				// any ORC is deletable, both of which the run-replay path rebuilds with ObjectData
 				// preserved. Only a genuinely-unsupported run property (lossyProperties) still blocks
 				// editing, because that data WOULD be silently dropped on the first plain-text edit.
@@ -158,7 +161,8 @@ namespace SIL.FieldWorks.XWorks
 
 		/// <summary>
 		/// Enumerates a run's int and string TsString text properties (<see cref="ITsTextProps"/>) and
-		/// returns true when ANY of them is outside the set the adapter both reads and replays — i.e. a
+		/// returns true when ANY of them is outside the set the adapter both reads and replays --
+		/// i.e. a
 		/// property the run-replay path would drop on the first edit (e.g. ktptForeColor, ktptBackColor,
 		/// ktptOffset, ktptSuperscript). The lossless RichXml still preserves it for full-fidelity display.
 		/// </summary>

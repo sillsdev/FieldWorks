@@ -23,7 +23,8 @@ using AvControl = Avalonia.Controls.Control;
 namespace SIL.FieldWorks.LexText.Controls
 {
 	/// <summary>
-	/// The LCModel-aware launcher for the reusable Avalonia Insert Entry dialog — the replacement for the legacy
+	/// The LCModel-aware launcher for the reusable Avalonia Insert Entry dialog -- the
+	/// replacement for the legacy
 	/// <see cref="InsertEntryDlg"/> in New-UI mode. It is a concrete
 	/// <see cref="AvaloniaDialogLauncher{TState,TViewModel,TPayload}"/>: the Avalonia layer (FwAvaloniaDialogs)
 	/// stays LCModel-free by exchanging an <see cref="InsertEntryDlgInput"/> (lexeme-form / gloss fields built
@@ -45,7 +46,8 @@ namespace SIL.FieldWorks.LexText.Controls
 		private readonly IHelpTopicProvider _helpProvider;
 		private readonly ITsString _tssForm;
 		private InsertEntryDlgViewModel _viewModel;
-		// The WinForms host the Insert Entry modal is owned by — captured so the nested create-POS modal (raised from
+		// The WinForms host the Insert Entry modal is owned by -- captured so the nested
+		// create-POS modal (raised from
 		// the MSA box's "Create a new Part of Speech..." affordance) can open over it.
 		private IWin32Window _owner;
 
@@ -83,7 +85,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			if (!outcome.Accepted || outcome.Payload == null)
 				return (null, false);
 			// newlyCreated is false for the "Go to similar entry" outcome (an existing entry was chosen), true for a
-			// Create — mirroring the legacy InsertEntryDlg.GetDialogInfo out-params.
+			// Create -- mirroring the legacy InsertEntryDlg.GetDialogInfo out-params.
 			return (launcher.CreatedEntry, launcher.WasNewlyCreated);
 		}
 
@@ -106,12 +108,14 @@ namespace SIL.FieldWorks.LexText.Controls
 		protected override bool Resizable => true;
 		protected override int DialogWidth => 420;
 		// Tall enough for the three fields + morph-type picker AND the duplicate-detection "matching entries" pane
-		// below them — the legacy InsertEntryDlg is similarly tall to fit its similar-entries browser.
+		// below them -- the legacy InsertEntryDlg is similarly tall to fit its similar-entries
+		// browser.
 		protected override int DialogHeight => 460;
 
 		/// <summary>
 		/// Reads the remembered client size from the SAME registry location + value names the legacy InsertEntryDlg
-		/// persisted (<c>FieldWorksRegistryKey\LingCmnDlgs</c> InsertWidth/InsertHeight — :1603-1618), so a
+		/// persisted (<c>FieldWorksRegistryKey\LingCmnDlgs</c> InsertWidth/InsertHeight --
+		/// :1603-1618), so a
 		/// user's remembered size carries across the New/Legacy dialogs. Null (no stored value) uses the defaults.
 		/// </summary>
 		protected override System.Drawing.Size? GetRememberedSize()
@@ -157,7 +161,8 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// Builds the LCModel-free <see cref="InsertEntryDlgInput"/> from the live cache: a per-vernacular-WS
 		/// lexeme-form field (seeded from <paramref name="tssForm"/> when it is a vernacular string), a
 		/// per-analysis-WS gloss field, the morph-type options, the default (stem) morph-type selection, and the
-		/// live affix-marker → morph-type derivation. Internal so the full state mapping is unit-testable against a
+		/// live affix-marker -> morph-type derivation. Internal so the full state mapping is
+		/// unit-testable against a
 		/// real cache without running the modal (mirrors LcmChooserDialogLauncher.BuildInput).
 		/// </summary>
 		internal static InsertEntryDlgInput BuildInput(LcmCache cache, ITsString tssForm,
@@ -209,7 +214,8 @@ namespace SIL.FieldWorks.LexText.Controls
 				// (FormWithMarkers parity).
 				ApplyMorphTypeMarkers = (morphTypeKey, form) => ApplyMorphTypeMarkers(cache, morphTypeKey, form),
 				SearchMatches = BuildMatchSearch(cache, mediator, propertyTable),
-				// Grammatical-info (MSA) section: the project POS hierarchy + the morph-type → MsaType map +
+				// Grammatical-info (MSA) section: the project POS hierarchy + the morph-type ->
+				// MsaType map +
 				// the per-POS slot provider, so the LCModel-free MSAGroupBox can drive its layout live.
 				PosNodes = BuildPosNodes(cache),
 				MorphTypeToMsaType = BuildMorphTypeToMsaTypeMap(cache),
@@ -219,13 +225,14 @@ namespace SIL.FieldWorks.LexText.Controls
 				// Inflection-class picker: the selected main POS's classes, re-fed when the main POS changes.
 				InflectionClassesForPos = posId => BuildInflectionClasses(cache, posId),
 				InitialInflectionClassId = null,
-				// Inflection-feature editor: the selected main POS's inflectable-feature system, re-fed
+				// Inflection-feature editor: the selected main POS's inflectable-feature system,
+				// re-fed
 				// when the main POS changes (infl/deriv). No initial features on the create path.
 				InflectionFeaturesForPos = posId => BuildInflectionFeatures(cache, posId),
 				InitialInflectionFeatures = null,
-				// Complex Form Type picker (WinForms m_cbComplexFormType parity, LT-21666): the project's complex-form
-				// types + the morph-type → gating map (the data lift of EnableComplexFormTypeCombo). The dialog opens at
-				// "<Not Applicable>" (the legacy SelectedIndex 0), so no initial complex-form type.
+				// Complex Form Type picker (WinForms m_cbComplexFormType, LT-21666): the
+				// project's complex-form types plus morph-type gating map. Opens at
+				// "<Not Applicable>" (legacy SelectedIndex 0): no initial type.
 				ComplexFormTypes = BuildComplexFormTypeOptions(cache),
 				InitialComplexFormTypeKey = null,
 				ComplexFormGatingByMorphType = BuildComplexFormGatingMap(cache),
@@ -262,9 +269,11 @@ namespace SIL.FieldWorks.LexText.Controls
 			=> pos.Name.BestAnalysisAlternative?.Text ?? pos.ShortName ?? pos.Guid.ToString();
 
 		/// <summary>
-		/// Builds the morph-type guid string → <see cref="FwMsaType"/> map — the data the shared dialog uses to drive the MSA
+		/// Builds the morph-type guid string -> <see cref="FwMsaType"/> map -- the data the
+		/// shared dialog uses to drive the MSA
 		/// box's layout live without LCModel. It mirrors the WinForms <c>MSAGroupBox.MorphTypePreference</c> switch:
-		/// stem/bound-stem/phrase → Stem; clitic/root family → Root; the affix family → Unclassified (the box then
+		/// stem/bound-stem/phrase -> Stem; clitic/root family -> Root; the affix family ->
+		/// Unclassified (the box then
 		/// lets the user refine to Inflectional/Derivational via the affix-type combo). Built over the project's
 		/// actual morph types so every option in the picker has a mapping. Internal for unit testing.
 		/// </summary>
@@ -280,13 +289,15 @@ namespace SIL.FieldWorks.LexText.Controls
 		}
 
 		/// <summary>
-		/// The morph-type-guid → <see cref="FwMsaType"/> rule (the lift of MSAGroupBox.MorphTypePreference's switch),
+		/// The morph-type-guid -> <see cref="FwMsaType"/> rule (the lift of
+		/// MSAGroupBox.MorphTypePreference's switch),
 		/// exposed so the sibling MSA-section launchers (Add New Sense, MSA Creator) seed the box's initial class from
 		/// an entry's morph type the same way. Internal for reuse + unit testing.
 		/// </summary>
 		internal static FwMsaType MorphTypeGuidToMsaType(string morphTypeGuid) => MorphTypeToMsaType(morphTypeGuid);
 
-		// The morph-type-guid → FwMsaType rule, lifted verbatim from MSAGroupBox.MorphTypePreference's switch.
+		// The morph-type-guid -> FwMsaType rule, lifted verbatim from
+		// MSAGroupBox.MorphTypePreference's switch.
 		private static FwMsaType MorphTypeToMsaType(string morphTypeGuid)
 		{
 			switch (morphTypeGuid)
@@ -311,7 +322,8 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		/// <summary>
 		/// Builds the inflectional-affix slot options for a main POS (guid string), filtered by the morph type's
-		/// prefixal/suffixal nature — the lift of <c>MSAGroupBox.GetSlots</c>/<c>ResetSlotCombo</c>. A prefixal-and-
+		/// prefixal/suffixal nature -- the lift of
+		/// <c>MSAGroupBox.GetSlots</c>/<c>ResetSlotCombo</c>. A prefixal-and-
 		/// suffixal (or unknown) morph type yields every affix slot; otherwise the matching subset. Each slot's id is
 		/// its guid string (round-tripped back on commit). Internal so the slot feed is unit-testable.
 		/// </summary>
@@ -357,7 +369,8 @@ namespace SIL.FieldWorks.LexText.Controls
 		}
 
 		/// <summary>
-		/// Builds the inflection-class options for a main POS (guid string) — the lift of the WinForms
+		/// Builds the inflection-class options for a main POS (guid string) -- the lift of the
+		/// WinForms
 		/// <c>InflectionClassPopupTreeManager</c> tree, but scoped to the SINGLE selected POS (the box's inflection
 		/// class is the selected main POS's class). Walks <c>IPartOfSpeech.InflectionClassesOC</c> and the nested
 		/// <c>IMoInflClass.SubclassesOC</c> in document order, tagging each with its nesting depth so the picker can
@@ -395,9 +408,11 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		/// <summary>
 		/// Builds the inflection-feature SYSTEM for a main POS (guid string) as a flat, document-order, depth-tagged
-		/// <see cref="FwFeatureNode"/> list — the lift of
-		/// <c>MsaInflectionFeatureListDlg.PopulateTreeFromPos</c> via <see cref="FwFeatureStructureAdapter.BuildNodes"/>:
-		/// the POS's (and its parent POSes') <c>InflectableFeatsRC</c>, closed features expanded to their values, complex
+		/// <see cref="FwFeatureNode"/> list -- the lift of
+		/// <c>MsaInflectionFeatureListDlg.PopulateTreeFromPos</c> via <see
+		/// cref="FwFeatureStructureAdapter.BuildNodes"/>:
+		/// the POS's (and its parent POSes') <c>InflectableFeatsRC</c>, closed features expanded
+		/// to their values, complex
 		/// features expanded to their nested features. An empty/unknown POS yields no nodes. Shared by all three MSA-section
 		/// launchers + unit-testable against a real cache.
 		/// </summary>
@@ -409,7 +424,8 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		/// <summary>
 		/// Rebuilds the inflection <c>IFsFeatStruc</c> on a sense's morpheme MSA from the chosen inflection-feature
-		/// assignment set — the create-side parity of <c>MsaInflectionFeatureListDlg_Closing</c>.
+		/// assignment set -- the create-side parity of
+		/// <c>MsaInflectionFeatureListDlg_Closing</c>.
 		/// Scoped to <c>IMoInflAffMsa.InflFeatsOA</c> / <c>IMoDerivAffMsa.FromMsFeaturesOA</c> (the surface the box edits);
 		/// other MSA flavours are a no-op. Resolves the feature-system nodes from the MSA's own POS (deterministic, so the
 		/// commit need not carry the live node list), then writes/clears the FS in the caller's UOW. Internal static so
@@ -424,7 +440,8 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		/// <summary>
 		/// Rebuilds the inflection <c>IFsFeatStruc</c> on a morpheme MSA from the chosen assignment set (see the sense
-		/// overload). Used directly by the MSA Creator caller path. Internal static for reuse + unit testing.
+		/// overload). Used directly by the MSA Creator caller path. Internal static for reuse +
+		/// unit testing.
 		/// </summary>
 		internal static void ApplyInflectionFeatures(LcmCache cache, IMoMorphSynAnalysis msa, FwSandboxMsa chosen)
 		{
@@ -437,10 +454,12 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		/// <summary>
 		/// Builds the duplicate-detection ("matching entries") search delegate the dialog drives as the user types
-		/// the lexeme form or gloss — the lift of <c>InsertEntryDlg.UpdateMatches</c> + <c>GetFields</c>. It uses the
+		/// the lexeme form or gloss -- the lift of <c>InsertEntryDlg.UpdateMatches</c> +
+		/// <c>GetFields</c>. It uses the
 		/// SAME engine the legacy dialog uses (<see cref="InsertEntrySearchEngine"/> over the live entry repository),
 		/// keyed on the legacy field set: the vernacular citation/lexeme/alternate FORMS (the "do not create a second
-		/// 'casa'" case) AND the analysis GLOSS (legacy <c>:1030-1031</c> — typing a gloss surfaces same-gloss entries).
+		/// 'casa'" case) AND the analysis GLOSS (legacy <c>:1030-1031</c> -- typing a gloss
+		/// surfaces same-gloss entries).
 		/// A create flow has no "current" entry to exclude, so every match is a reuse candidate. Each match maps to a
 		/// lightweight headword + gloss row. Internal so the match semantics are unit-testable against a real cache.
 		/// </summary>
@@ -486,9 +505,9 @@ namespace SIL.FieldWorks.LexText.Controls
 			};
 		}
 
-		// Gets (creating + caching on the property table, like the legacy dialog) the InsertEntrySearchEngine — the
-		// same engine the legacy InsertEntryDlg uses, which searches the vernacular forms AND the analysis gloss. When
-		// no property table is supplied (tests) a fresh engine is built.
+		// Gets the InsertEntrySearchEngine, same engine legacy InsertEntryDlg
+		// uses to search vernacular forms and analysis gloss -- cached on the
+		// property table; no property table (tests) builds a fresh one.
 		private static InsertEntrySearchEngine GetMatchSearchEngine(LcmCache cache, Mediator mediator,
 			PropertyTable propertyTable)
 		{
@@ -501,7 +520,8 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <summary>
 		/// Builds a per-writing-system text field: one <see cref="DetailWsValue"/> row per writing system, seeded
 		/// empty unless <paramref name="initialForm"/> is supplied (then the first/default WS row carries it). The
-		/// row's WsTag (the IETF tag) is the key the in-memory edit context stages each alternative under — and the
+		/// row's WsTag (the IETF tag) is the key the in-memory edit context stages each
+		/// alternative under -- and the
 		/// key Apply reads back to build the per-WS LexEntryComponents alternatives.
 		/// </summary>
 		internal static DetailField BuildTextField(string field, string automationId,
@@ -525,8 +545,10 @@ namespace SIL.FieldWorks.LexText.Controls
 		}
 
 		/// <summary>
-		/// Builds the morph-type options (key = morph-type guid string, name = best-analysis display name) from
-		/// the project's morph types, in sorted display order — the legacy "Any" morph-type filter (every type).
+		/// Builds the morph-type options (key = morph-type guid string, name = best-analysis
+		/// display name) from
+		/// the project's morph types, in sorted display order -- the legacy "Any" morph-type
+		/// filter (every type).
 		/// </summary>
 		internal static IReadOnlyList<DetailChoiceOption> BuildMorphTypeOptions(LcmCache cache)
 		{
@@ -544,7 +566,8 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		/// <summary>
 		/// Builds the complex-form type options (key = complex-entry-type guid string, name = best-analysis display
-		/// name) from <c>LexDbOA.ComplexEntryTypesOA.ReallyReallyAllPossibilities</c>, in sorted display order — the
+		/// name) from <c>LexDbOA.ComplexEntryTypesOA.ReallyReallyAllPossibilities</c>, in sorted
+		/// display order -- the
 		/// lift of the WinForms <c>m_cbComplexFormType</c> fill (which sorts the possibilities and prepends the
 		/// "&lt;Not Applicable&gt;" item; the dialog prepends that row itself). Internal so the feed is unit-testable.
 		/// </summary>
@@ -561,7 +584,8 @@ namespace SIL.FieldWorks.LexText.Controls
 			=> type.Name.BestAnalysisAlternative?.Text ?? type.ShortName ?? type.Guid.ToString();
 
 		/// <summary>
-		/// Builds the morph-type-guid → <see cref="ComplexFormGating"/> map — the data lift of the WinForms
+		/// Builds the morph-type-guid -> <see cref="ComplexFormGating"/> map -- the data lift of
+		/// the WinForms
 		/// <c>InsertEntryDlg.EnableComplexFormTypeCombo</c> switch (LT-21666). Bound-root/root disable the picker and
 		/// force "&lt;Not Applicable&gt;"; phrase/discontiguous-phrase enable it but keep the selection; every other
 		/// morph type enables it and resets to "&lt;Not Applicable&gt;". Built over the project's actual morph types
@@ -578,7 +602,8 @@ namespace SIL.FieldWorks.LexText.Controls
 			return map;
 		}
 
-		// The morph-type-guid → ComplexFormGating rule, lifted verbatim from EnableComplexFormTypeCombo's switch.
+		// The morph-type-guid -> ComplexFormGating rule, lifted verbatim from
+		// EnableComplexFormTypeCombo's switch.
 		private static ComplexFormGating ComplexFormGatingForMorphType(string morphTypeGuid)
 		{
 			switch (morphTypeGuid)
@@ -595,7 +620,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		}
 
 		/// <summary>
-		/// The live affix-marker → morph-type derivation, lifted from the legacy
+		/// The live affix-marker -> morph-type derivation, lifted from the legacy
 		/// <c>InsertEntryDlg.tbLexicalForm_TextChanged</c>: given the current best lexeme form it returns the
 		/// derived morph-type guid string + the marker-adjusted form. Empty form keeps the default stem; a leading
 		/// affix marker (GetTypeIfMatchesPrefix) derives prefix/suffix/etc and may adjust the form; a single
@@ -640,7 +665,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		}
 
 		/// <summary>
-		/// The LCModel-aware OK-time morphology validation — the lift of <c>InsertEntryDlg</c>'s
+		/// The LCModel-aware OK-time morphology validation -- the lift of <c>InsertEntryDlg</c>'s
 		/// <c>CheckMorphType</c> (:1439) + <c>CircumfixProblem</c> (:1494) + the <c>ksInvalidForm</c> parse guard
 		/// (:1681). Given the staged per-writing-system lexeme forms (keyed by WS tag) and the chosen morph-type key it
 		/// returns which morphology problem the form/type combination has (if any). The empty-form case is handled by
@@ -749,7 +774,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		}
 
 		/// <summary>
-		/// The LCModel-aware "re-mark the form with the morph type's markers" — the lift of
+		/// The LCModel-aware "re-mark the form with the morph type's markers" -- the lift of
 		/// <c>cbMorphType_SelectedIndexChanged</c>'s <c>BestForm = m_morphType.FormWithMarkers(BestForm)</c> (:1709).
 		/// A circumfix is returned unchanged (as the legacy leaves it, since a circumfix mixes prefix/infix/suffix
 		/// markers). An unresolvable key returns the form unchanged. Static so it is unit-testable against a real cache.
@@ -763,7 +788,8 @@ namespace SIL.FieldWorks.LexText.Controls
 			return mt.FormWithMarkers(form);
 		}
 
-		// The best (first non-empty, trimmed) staged form across the alternatives — the launcher-side mirror of the
+		// The best (first non-empty, trimmed) staged form across the alternatives -- the
+		// launcher-side mirror of the
 		// VM's BestStagedForm (used by the validation delegate, which receives the whole per-WS bag).
 		private static string BestFormOf(IReadOnlyDictionary<string, string> formsByWs)
 		{
@@ -782,11 +808,12 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			_viewModel = new InsertEntryDlgViewModel(state);
 			_viewModel.HelpRequested += OnHelpRequested;
-			// Wire the inline "Create a new Part of Speech..." affordance. The
-			// VM raises CreateNewPosRequested with which chooser fired (main vs secondary); on it we run the
-			// create-POS flow and, on success, refresh BOTH choosers + select the new POS in the requesting one.
+			// Wire the inline "Create a new Part of Speech..." affordance. The event
+			// carries which chooser fired (main or secondary); on success both
+			// choosers refresh and the requesting one selects the new POS.
 			_viewModel.CreateNewPosRequested += OnCreateNewPosRequested;
-			// Wire the inline create-feature / add-value affordances to the shared LcmCreateFeatureLauncher; on
+			// Wire the inline create-feature / add-value affordances to the shared
+			// LcmCreateFeatureLauncher; on
 			// success feed the new node back to the box's editor.
 			_viewModel.CreateNewFeatureRequested += () =>
 				LcmInflectionFeatureCreateWiring.CreateFeature(_cache, _owner, _viewModel.MsaGroupBox);
@@ -800,7 +827,8 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// Opens the master-category catalog as a nested modal over
 		/// the Insert Entry dialog (<see cref="LcmCreatePartOfSpeechLauncher"/>); on a created/chosen POS it re-feeds
 		/// the freshly rebuilt project POS hierarchy to BOTH choosers (so the new category appears in each) and then
-		/// hands the new node to the REQUESTING chooser (<see cref="FwPosTarget"/>) so it adds + selects it — the
+		/// hands the new node to the REQUESTING chooser (<see cref="FwPosTarget"/>) so it adds +
+		/// selects it -- the
 		/// New-UI parity of POSPopupTreeManager re-loading the tree and selecting the new POS after MasterCategoryListDlg.
 		/// </summary>
 		private void OnCreateNewPosRequested(FwPosTarget target)
@@ -810,9 +838,9 @@ namespace SIL.FieldWorks.LexText.Controls
 			if (node == null)
 				return; // user cancelled the catalog chooser
 
-			// Re-feed the rebuilt project POS hierarchy (now including the new POS at its real depth) to BOTH choosers
-			// and select it in the chooser that requested the create — the New-UI parity of POSPopupTreeManager
-			// re-loading the tree + selecting the new POS after MasterCategoryListDlg returns.
+			// Re-feed the rebuilt POS hierarchy (including the new POS at its real
+			// depth) to BOTH choosers, selecting it in the requesting chooser --
+			// mirrors POSPopupTreeManager after MasterCategoryListDlg returns.
 			_viewModel.AcceptCreatedPos(target, node, BuildPosNodes(_cache));
 		}
 
@@ -863,12 +891,14 @@ namespace SIL.FieldWorks.LexText.Controls
 		}
 
 		/// <summary>
-		/// Builds a <c>LexEntryComponents</c> from the dialog payload and creates the entry — the lift of
+		/// Builds a <c>LexEntryComponents</c> from the dialog payload and creates the entry --
+		/// the lift of
 		/// InsertEntryDlg's BuildEntryComponentsDTO + CreateNewEntryInternal (~1548-1601). The morph type comes from
 		/// the chosen key; the lexeme-form and gloss alternatives are rebuilt per writing system from the payload's
 		/// per-WS strings. LT-11950: each alternative's TsString is rebuilt with the alternative's OWN writing
 		/// system handle (TsStringUtils.MakeString(text, ws)) rather than trusting a possibly-mismatched ws carried
-		/// on copied text — the same fix-up the legacy CollectValuesFromMultiStringControl applies. Internal so the
+		/// on copied text -- the same fix-up the legacy CollectValuesFromMultiStringControl
+		/// applies. Internal so the
 		/// create is unit-testable against a real cache inside a UOW.
 		/// </summary>
 		internal ILexEntry CreateNewEntry(InsertEntryDlgPayload payload)
@@ -884,9 +914,9 @@ namespace SIL.FieldWorks.LexText.Controls
 			// (or no features) is a no-op.
 			if (payload.Msa != null && entry.SensesOS.Count > 0)
 				ApplyInflectionFeatures(_cache, entry.SensesOS[0], payload.Msa);
-			// Complex Form Type (WinForms m_cbComplexFormType parity, LT-21666): when the user chose a real
-			// complex-form type, add a complex-form ILexEntryRef carrying it — the lift of CreateNewEntryInternal's
-			// m_fComplexForm branch. Same UOW as the create. "<Not Applicable>" (a null/empty key) adds nothing.
+			// Complex Form Type (WinForms m_cbComplexFormType, LT-21666): a real chosen
+			// type adds a complex-form ILexEntryRef carrying it, same UOW as the create.
+			// "<Not Applicable>" (null/empty key) adds nothing.
 			ApplyComplexFormType(_cache, entry, payload.ComplexFormTypeKey);
 			return entry;
 		}
@@ -923,7 +953,8 @@ namespace SIL.FieldWorks.LexText.Controls
 		}
 
 		/// <summary>
-		/// Adds a complex-form <c>ILexEntryRef</c> to the new entry carrying the chosen complex-form type — the lift
+		/// Adds a complex-form <c>ILexEntryRef</c> to the new entry carrying the chosen
+		/// complex-form type -- the lift
 		/// of <c>InsertEntryDlg.CreateNewEntryInternal</c>'s <c>m_fComplexForm</c> branch (LT-21666): create the ref,
 		/// add it to <c>EntryRefsOS</c>, add the resolved <c>ILexEntryType</c> to <c>ComplexEntryTypesRS</c>, and set
 		/// <c>RefType = krtComplexForm</c>. No components are added (the WinForms dialog adds none). A null/empty or
@@ -977,7 +1008,8 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		/// <summary>
 		/// Resolves the dialog's LCModel-free <see cref="FwSandboxMsa"/> (MsaType + POS/slot ids) into a real
-		/// <c>SandboxGenericMSA</c> the factory uses to find-or-create the sense's MSA — the parity of
+		/// <c>SandboxGenericMSA</c> the factory uses to find-or-create the sense's MSA -- the
+		/// parity of
 		/// <c>MSAGroupBox.SandboxMSA</c>: only the fields relevant to the MsaType are populated, the POS/slot ids are
 		/// resolved back through the repositories by guid, and an unresolvable id is simply dropped (the &lt;Any&gt;
 		/// pick). A null descriptor falls back to the morph-type's default MSA flavor. Internal for unit testing.

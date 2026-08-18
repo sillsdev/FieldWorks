@@ -184,7 +184,8 @@ namespace SIL.FieldWorks.LexText.Controls
 			var femId = NodeId(nodes, FwFeatureNodeKind.Value, "feminine gender");
 			var mascId = NodeId(nodes, FwFeatureNodeKind.Value, "masculine gender");
 
-			// First write feminine, then overwrite with masculine — the second write must clear the first.
+			// First write feminine, then overwrite with masculine -- the second write must clear
+			// the first.
 			FwFeatureStructureAdapter.WriteFeatures(Cache, fs, nodes,
 				new[] { new FwFeatureValueAssignment(genderId, femId) });
 			FwFeatureStructureAdapter.WriteFeatures(Cache, fs, nodes,
@@ -266,10 +267,9 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		// ----- helpers -----
 
-		// The base (MemoryOnlyBackendProviderRestoredForEachTestTestBase) opens an undoable UOW in TestSetup, so all
-		// creation/writes run directly here with NO UOW wrapper (a nested task would throw "Nested tasks are not
-		// supported"). The adapter's WriteFeatures runs inside the same open task — exactly as the launcher's create
-		// runs inside its own single UOW at runtime.
+		// The base opens an undoable UOW in TestSetup, so helpers write directly with no
+		// wrapper: a nested task would throw "Nested tasks are not supported".
+		// WriteFeatures runs in that same task, as at runtime.
 		private IFsFeatStruc MakeFeatureStructure()
 		{
 			_verb.DefaultFeaturesOA = Cache.ServiceLocator.GetInstance<IFsFeatStrucFactory>().Create();

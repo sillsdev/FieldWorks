@@ -18,7 +18,8 @@ namespace LexTextControlsTests
 	/// The LCModel-aware side of the reusable Avalonia entry-search ("go") dialog launcher, wired as the New-UI
 	/// replacement for the plain "Go to Lexical Entry" command (<see cref="LcmGoToEntryDialogLauncher"/>, the
 	/// New-mode path of <c>GoLinkEntryDlgListener.OnGotoLexEntry</c>): the search delegate that reuses the legacy
-	/// EntryGoSearchEngine matching (with NO excluded entry — unlike Merge/Link, a plain "go" has no starting
+	/// EntryGoSearchEngine matching (with NO excluded entry -- unlike Merge/Link, a plain "go"
+	/// has no starting
 	/// entry) and resolves the chosen id back to the live entry, with no model mutation. The modal loop is
 	/// desktop-only (it needs an Avalonia app + a WinForms-owned modal Form), so it is exercised by the headless
 	/// EntryGoDialogTests in FwAvaloniaDialogsTests; here we cover the pure LCModel search + resolve over a real

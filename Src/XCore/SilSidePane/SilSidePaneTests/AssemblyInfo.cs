@@ -9,6 +9,8 @@ using System.Runtime.CompilerServices;
 // [assembly: AssemblyTitle("Unit tests for SilSidePane")] // Sanitized by convert_generate_assembly_info
 // [assembly: AssemblyCompany("SIL")] // Sanitized by convert_generate_assembly_info
 // [assembly: AssemblyProduct("SilSidePaneTests")] // Sanitized by convert_generate_assembly_info
-// [assembly: AssemblyCopyright("© 2010 SIL International")] // Sanitized by convert_generate_assembly_info
+// [assembly: AssemblyCopyright("(c) 2010 SIL International")] // Sanitized by
+// convert_generate_assembly_info
 
-// [assembly: System.Runtime.InteropServices.ComVisible(false)] // Sanitized by convert_generate_assembly_info
+// [assembly: System.Runtime.InteropServices.ComVisible(false)] // Sanitized by
+// convert_generate_assembly_info

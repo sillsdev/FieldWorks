@@ -43,8 +43,8 @@ namespace FwAvaloniaDialogsTests
 				values, new List<DetailChoiceOption>(), null, isEditable: true);
 		}
 
-		// A small POS hierarchy + slots + a morph-type → MsaType map for the MSA section tests. guid-stem → Stem,
-		// guid-suffix → Unclassified (an affix the box opens unclassified, then the user refines).
+		// guid-suffix maps to Unclassified because the MSA box opens an affix unclassified until
+		// the user refines it.
 		private static readonly IReadOnlyList<FwPosNode> PosNodes = new List<FwPosNode>
 		{
 			new FwPosNode("g-noun", "Noun", 0),
@@ -65,9 +65,9 @@ namespace FwAvaloniaDialogsTests
 				["guid-suffix"] = FwMsaType.Unclassified
 			};
 
-		// The complex-form types + the morph-type → gating map for the complex-form picker tests (LT-21666).
-		// guid-root disables + forces Not-Applicable; guid-phrase enables + keeps the selection; guid-stem/-prefix/
-		// -suffix take the default (enabled, reset to Not-Applicable).
+		// The complex-form types + morph-type -> gating map for the picker tests.
+		// guid-root disables + forces Not-Applicable; guid-phrase enables + keeps
+		// selection; others default to enabled, Not-Applicable.
 		private static readonly IReadOnlyList<DetailChoiceOption> ComplexFormTypes = new List<DetailChoiceOption>
 		{
 			new DetailChoiceOption("cft-compound", "Compound"),
@@ -255,7 +255,7 @@ namespace FwAvaloniaDialogsTests
 			Assert.That(vm.Result.GlossByWs, Is.Empty);
 		}
 
-		// ----- duplicate-detection "matching entries" pane (P2) -----
+		// ----- duplicate-detection "matching entries" pane -----
 
 		[AvaloniaTest]
 		public void EmptyForm_ShowsNoMatches()
@@ -342,7 +342,8 @@ namespace FwAvaloniaDialogsTests
 		[AvaloniaTest]
 		public void GlossEdit_RefreshesTheMatches()
 		{
-			// A gloss edit re-runs the duplicate-detection search (legacy tbGloss_TextChanged → UpdateMatches). The
+			// A gloss edit re-runs the duplicate-detection search (legacy tbGloss_TextChanged ->
+			// UpdateMatches). The
 			// sample search matches "house" on the gloss subtext, surfacing casa even with an empty form.
 			var (view, vm) = Show(BasicInput(searchMatches: SampleSearch));
 			Assert.That(vm.Matches, Is.Empty, "no form + no gloss surfaces nothing");
@@ -582,8 +583,9 @@ namespace FwAvaloniaDialogsTests
 			var (view, vm) = Show(BasicInput(withMsa: true));
 			Assert.That(vm.MsaGroupBox.MsaType, Is.EqualTo(FwMsaType.Stem));
 
-			// Pick an affix morph type (suffix) -> the map drives the MSA box to Unclassified, showing the affix-type
-			// picker. This is the live morph-type → MsaType wiring (the lift of MSAGroupBox.MorphTypePreference).
+			// Pick an affix morph type (suffix) -> the map drives the MSA box to Unclassified,
+			// showing the affix-type picker: the live morph-type -> MsaType wiring (the lift
+			// of MSAGroupBox.MorphTypePreference).
 			vm.MorphTypePicker.OptionsList.SelectedIndex = 2; // suffix
 			vm.MorphTypePicker.CommitHighlighted();
 			Dispatcher.UIThread.RunJobs();
@@ -612,7 +614,8 @@ namespace FwAvaloniaDialogsTests
 			var (_, vm) = Show(BasicInput(withMsa: true));
 			FormBox(vm, "fr").Text = "casa";
 			// Pump so the form-text change recomputes CanOk before we execute OK (else OkCommand no-ops and
-			// Result stays null — a timing/order dependency the sibling MSA tests avoid by pumping too).
+			// Result stays null -- a timing/order dependency the sibling MSA tests avoid by
+			// pumping too).
 			Dispatcher.UIThread.RunJobs();
 
 			// Seed a main POS (the host-seed path; equivalent outcome to a user pick for the snapshot).
@@ -710,9 +713,9 @@ namespace FwAvaloniaDialogsTests
 		[AvaloniaTest]
 		public void Msa_AcceptCreatedPos_RefreshesBothChoosers_AndSelectsInTheRequestingChooser()
 		{
-			// The host's create flow produced a new POS "g-adj"; it re-feeds the rebuilt project hierarchy (which now
-			// includes it) and selects it in the requesting (main) chooser. Both choosers must show the new POS; only
-			// the requesting one selects it — and there must be NO duplicate row.
+			// The host's create flow adds POS "g-adj" and re-feeds the hierarchy, selecting it in
+			// the requesting (main) chooser. Both choosers show it; only the requester selects
+			// it, no duplicate row.
 			var (_, vm) = Show(BasicInput(withMsa: true));
 			var created = new FwPosNode("g-adj", "Adjective", 0);
 			var refreshed = new List<FwPosNode>(PosNodes) { created };
@@ -832,7 +835,7 @@ namespace FwAvaloniaDialogsTests
 			var (_, vm) = Show(ComplexFormInput());
 
 			// Pick a complex-form type, then switch to a phrase morph type: the picker stays enabled and KEEPS the
-			// selection (the EnableComplexFormTypeCombo phrase branch — LT-21666).
+			// selection (the EnableComplexFormTypeCombo phrase branch -- LT-21666).
 			vm.ComplexFormTypePicker.OptionsList.SelectedIndex = 1; // Compound
 			vm.ComplexFormTypePicker.CommitHighlighted();
 

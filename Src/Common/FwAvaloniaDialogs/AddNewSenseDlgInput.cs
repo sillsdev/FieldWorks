@@ -15,7 +15,8 @@ namespace FwAvaloniaDialogs
 	/// display string (the legacy <c>m_fwtbCitationForm</c>, never edited), the editable GLOSS is projected as a
 	/// per-analysis-WS <see cref="DetailField"/> (the legacy <c>m_fwtbGloss</c>), and the
 	/// grammatical-info section is fed exactly as the Insert Entry dialog feeds its <see cref="MSAGroupBox"/>
-	/// (the POS hierarchy, slot provider, and the initial MsaType the entry's morph type implies — the lift of the
+	/// (the POS hierarchy, slot provider, and the initial MsaType the entry's morph type implies
+	/// -- the lift of the
 	/// legacy <c>MSAGroupBox.MorphTypePreference</c>).
 	///
 	/// Mirrors <see cref="InsertEntryDlgInput"/>'s shape for the gloss + MSA fields so the shared dialog stays LCModel-free.
@@ -29,8 +30,10 @@ namespace FwAvaloniaDialogs
 		public string CitationForm { get; set; }
 
 		/// <summary>
-		/// The gloss field (one row per current analysis writing system); rows start empty. The owned
-		/// <c>FwMultiWsTextField</c> edits these through the in-memory edit context — the legacy <c>m_fwtbGloss</c>.
+		/// The gloss field (one row per current analysis writing system); rows start empty. The
+		/// owned
+		/// <c>FwMultiWsTextField</c> edits these through the in-memory edit context -- the legacy
+		/// <c>m_fwtbGloss</c>.
 		/// </summary>
 		public DetailField Gloss { get; set; }
 
@@ -63,7 +66,8 @@ namespace FwAvaloniaDialogs
 		public Func<string, IReadOnlyList<FwInflectionSlot>> SlotsForPos { get; set; }
 
 		/// <summary>
-		/// Builds the inflection-class options for a given main-POS id (guid string) — the launcher wraps
+		/// Builds the inflection-class options for a given main-POS id (guid string) -- the
+		/// launcher wraps
 		/// <c>IPartOfSpeech.InflectionClassesOC</c> (incl. nested subclasses, depth-tagged). Re-run whenever the MSA
 		/// box's MAIN POS changes, refeeding <see cref="MSAGroupBox.SetInflectionClasses"/>. Null leaves the list
 		/// empty (only the "&lt;None&gt;" row).
@@ -75,7 +79,8 @@ namespace FwAvaloniaDialogs
 
 		/// <summary>
 		/// Builds the inflection-feature SYSTEM (a flat, document-order, depth-tagged <see cref="FwFeatureNode"/> list)
-		/// for a given main-POS id (guid string) — the launcher wraps the POS's <c>InflectableFeatsRC</c> (the lift of
+		/// for a given main-POS id (guid string) -- the launcher wraps the POS's
+		/// <c>InflectableFeatsRC</c> (the lift of
 		/// <c>MsaInflectionFeatureListDlg.PopulateTreeFromPos</c>). Re-run when the MSA box's MAIN POS changes
 		/// (infl/deriv), refeeding <see cref="MSAGroupBox.SetInflectionFeatureNodes"/>. Null leaves the editor empty.
 		/// </summary>

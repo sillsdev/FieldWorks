@@ -16,17 +16,18 @@ namespace SIL.FieldWorks.XWorks
 	/// Owns the host's current <see cref="IDetailEditContext"/> and enforces the lifecycle rules
 	/// that keep the fenced edit session (an open LCModel undo task) safe against the rest of the
 	/// app:
-	/// (1) a context with an open session is NEVER orphaned — re-showing the detail view swaps in a
+	/// (1) a context with an open session is NEVER orphaned -- re-showing the detail view swaps
+	/// in a
 	/// fresh context and the displaced one is cancelled first (an orphaned open undo task makes
 	/// every later <c>IUndoStackManager.Save()</c> throw "Commit at wrong place.", which is fatal
 	/// at shutdown);
 	/// (2) <see cref="Settle"/> is the single auto-save policy (14.4) every host path shares:
-	/// commit when validation is clean, roll back otherwise — navigation, go-away, undo and
+	/// commit when validation is clean, roll back otherwise -- navigation, go-away, undo and
 	/// dispose all settle the same way;
 	/// (3) the undo guard intercepts global Undo/Redo while a session is open: LCModel's
 	/// <c>UndoStack.Undo()</c> re-enters the non-recursive UOW write lock the open task's thread
 	/// already holds (LockRecursionException), so the guard settles the pending edit and cancels
-	/// that gesture — the next Ctrl+Z undoes the just-settled step normally.
+	/// that gesture -- the next Ctrl+Z undoes the just-settled step normally.
 	/// </summary>
 	public sealed class DetailEditContextHolder
 	{
@@ -69,12 +70,14 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
-		/// Auto-save (14.4): closes any open session — committing when validation is clean,
+		/// Auto-save (14.4): closes any open session -- committing when validation is clean,
 		/// rolling back otherwise (an invalid state is never silently persisted). No-op when
 		/// nothing is open.
 		/// ITEM 2: when the close is a rollback FORCED BY a validation failure, the validation
-		/// reasons are returned (and <see cref="InvalidEditRolledBack"/> is fired) so the host can tell
-		/// the user why their edit was discarded — the data is rolled back safely, but never silently.
+		/// reasons are returned (and <see cref="InvalidEditRolledBack"/> is fired) so the host
+		/// can tell
+		/// the user why their edit was discarded -- the data is rolled back safely, but never
+		/// silently.
 		/// </summary>
 		/// <returns>
 		/// The validation reasons that forced a rollback, or an empty list when the session committed
@@ -173,7 +176,8 @@ namespace SIL.FieldWorks.XWorks
 			if (Current?.IsOpen != true)
 				return;
 			// Settling closes the task and releases the write lock; cancelling the gesture keeps
-			// its meaning predictable — this press closed the pending edit, the next one undoes it.
+			// its meaning predictable -- this press closed the pending edit, the next one undoes
+			// it.
 			Settle();
 			e.Cancel = true;
 		}

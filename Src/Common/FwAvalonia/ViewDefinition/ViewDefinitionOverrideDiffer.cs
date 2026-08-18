@@ -168,7 +168,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 	/// Computes a sparse <see cref="ViewDefinitionOverride"/> from a shipped definition and the same
 	/// layout as customized by a project. Both inputs are the typed IR the importer already produces, so
 	/// the diff keys on <see cref="ViewNode.StableId"/>
-	/// — the identity scheme the semantic baselines already use — instead of a second one.
+	/// -- the identity scheme the semantic baselines already use -- instead of a second one.
 	///
 	/// Representable edits (visibility, label, child reorder, node hidden) become operations; everything
 	/// else (added nodes, changed binding/editor/kind) becomes an explicit diagnostic. Output is

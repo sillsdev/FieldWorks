@@ -17,7 +17,8 @@ namespace SIL.FieldWorks.XWorks
 	/// <c>EntrySequenceReferenceSlice</c> fields (ComponentLexemes/PrimaryLexemes on LexEntryRef,
 	/// targeting ILexEntry OR ILexSense) compose as EDITABLE ReferenceVector rows whose items are
 	/// headwords and whose ADD is a type-ahead lexicon search (<see cref="DetailField.SearchOptions"/>)
-	/// — possibility lists enumerate, lexicons search, so the whole lexicon is never materialized
+	/// -- possibility lists enumerate, lexicons search, so the whole lexicon is never
+	/// materialized
 	/// as Options. Writes ride sda.Replace inside the fenced session, plus the legacy launcher's
 	/// ComponentLexemes coupling (first component becomes the primary lexeme; the complex form
 	/// shows under new components) which LCModel does NOT apply on add (pinned below).
@@ -91,7 +92,7 @@ namespace SIL.FieldWorks.XWorks
 		public void Search_MatchesHeadwordPrefix_CaseInsensitive_ExcludingSelfAndPresentItems()
 		{
 			// NB: the memory-only fixture's cache persists across the fixture's tests, so the
-			// lexicon may hold look-alike entries from other tests' setups — the assertions are
+			// lexicon may hold look-alike entries from other setups -- assertions are
 			// containment-based against THIS test's objects.
 			var composed = Compose();
 			var field = ComponentsField(composed);
@@ -117,10 +118,9 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void Add_EntryBySearchKey_CommitsAsOneUndoStep_AndAppliesLegacyComponentCoupling()
 		{
-			// Legacy-coupling baseline: a plain ComponentLexemesRS.Add in setup did NOT
-			// populate PrimaryLexemes/ShowComplexFormsIn — LCModel has no ADD side effect, so the
-			// composer's setter must carry EntrySequenceReferenceLauncher.AddNewObjectsToProperty's
-			// coupling explicitly.
+			// Legacy-coupling baseline: a plain ComponentLexemesRS.Add does not populate
+			// PrimaryLexemes/ShowComplexFormsIn (no ADD side effect in LCModel), so the
+			// setter must carry AddNewObjectsToProperty's coupling.
 			Assert.That(m_ref.PrimaryLexemesRS, Is.Empty,
 				"baseline: LCModel does not couple ComponentLexemes adds by itself");
 
@@ -182,7 +182,7 @@ namespace SIL.FieldWorks.XWorks
 			// Legacy-coupling finding, pinned empirically: unlike ADD, the
 			// PrimaryLexemes REMOVE coupling IS an LCModel side effect, so the composer's plain
 			// sda.Replace removal needs no twin there. ShowComplexFormsIn is NOT cleared by
-			// LCModel — and the legacy slice's non-virtual remove path (VectorReferenceView →
+			// LCModel -- and the legacy slice's non-virtual remove path (VectorReferenceView ->
 			// plain vector removal) adds no explicit coupling either, so retaining it is
 			// legacy-faithful.
 			Assert.That(m_ref.PrimaryLexemesRS, Is.Empty,

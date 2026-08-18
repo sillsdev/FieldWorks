@@ -29,7 +29,7 @@ namespace FwAvaloniaDialogs
 	}
 
 	/// <summary>
-	/// Which buttons an <see cref="FwMessageBox"/> shows — the FieldWorks-relevant subset of
+	/// Which buttons an <see cref="FwMessageBox"/> shows -- the FieldWorks-relevant subset of
 	/// <see cref="System.Windows.Forms.MessageBoxButtons"/>. The default (affirmative) button is the first
 	/// listed; the cancel button is the last (Cancel/No), used for Esc/close handling.
 	/// </summary>

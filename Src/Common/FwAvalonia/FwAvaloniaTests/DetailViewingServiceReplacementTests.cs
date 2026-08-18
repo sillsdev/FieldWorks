@@ -22,14 +22,14 @@ namespace FwAvaloniaTests
 	/// and exercised here. Where <c>EngineIsolationAuditTests</c> proves the detail view names NO native
 	/// symbol, this proves the managed replacement is present, located in the isolated production
 	/// assembly, and (for the deferred embedded-object case) degrades to an explicit, lossless
-	/// read-only state — not a silent gap. Deferrals are asserted to be named, not assumed.
+	/// read-only state -- not a silent gap. Deferrals are asserted to be named, not assumed.
 	/// </summary>
 	[TestFixture]
 	public class DetailViewingServiceReplacementTests
 	{
-		// The native symbol each capability supersedes. This cross-reference lives in the TEST (which
-		// the isolation audit excludes from its source scan), NOT in production source — the audit
-		// forbids production code from naming the native pipeline even in strings.
+		// The native symbol each capability supersedes lives in the TEST (excluded
+		// from the isolation audit's source scan), NOT in production source --
+		// the audit forbids naming the native pipeline in strings.
 		private static readonly Dictionary<DetailViewingCapability, string> SupersededNativeSymbol =
 			new Dictionary<DetailViewingCapability, string>
 			{
@@ -110,9 +110,9 @@ namespace FwAvaloniaTests
 				"the hidden-DataTree command-routing adapter stays a named, contract-gated deferral");
 		}
 
-		// A text value carrying an embedded object (ORC) the managed editor cannot rebuild renders
-		// READ-ONLY with an explicit tooltip and stages nothing — rather than a silently-editable box
-		// whose edits the edit context would reject.
+		// A text value carrying an embedded object (ORC) the managed editor cannot
+		// rebuild renders READ-ONLY with an explicit tooltip, staging nothing --
+		// not a silently-editable box the edit context would reject.
 		[AvaloniaTest]
 		public void EmbeddedObjectValue_RendersReadOnly_WithExplicitAffordance_AndNeverStages()
 		{

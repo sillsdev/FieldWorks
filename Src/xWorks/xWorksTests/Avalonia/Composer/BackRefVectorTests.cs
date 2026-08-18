@@ -19,7 +19,7 @@ namespace SIL.FieldWorks.XWorks
 	/// RemoveFromPropertyAt): Subentries writes the chosen complex-form entry's
 	/// LexEntryRef.PrimaryLexemes; VisibleComplexFormBackRefs writes its ShowComplexFormsIn. The pane
 	/// entry's own flid is never written. VariantFormEntryBackRefs stays READ-ONLY (its legacy add
-	/// inserts a NEW variant entry, not a chooser-add of an existing ref) — asserted below.
+	/// inserts a NEW variant entry, not a chooser-add of an existing ref) -- asserted below.
 	/// </summary>
 	[TestFixture]
 	public class BackRefVectorTests : MemoryOnlyBackendProviderTestBase

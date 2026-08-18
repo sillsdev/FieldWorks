@@ -16,7 +16,8 @@ namespace SIL.FieldWorks.XWorks
 	/// Follow direction: <see cref="RecordClerk"/> broadcasts record changes through the mediator as
 	/// <c>RecordNavigation</c> messages, which only reach colleagues through a sponsoring content
 	/// control. The owning host (<see cref="RecordEditView"/>) therefore feeds this bridge from its
-	/// <c>OnRecordNavigation</c> handler via <see cref="NotifyCurrentRecordChanged"/> — the event is
+	/// <c>OnRecordNavigation</c> handler via <see cref="NotifyCurrentRecordChanged"/> -- the
+	/// event is
 	/// driven by the real broadcast path, not by polling or a parallel channel.
 	///
 	/// Publish direction: <see cref="PublishSelection"/> routes through the clerk's real

@@ -166,7 +166,8 @@ namespace LexTextControlsTests
 		[Test]
 		public void InflectionClassIdFromExistingMsa_StemMsa_ReturnsItsInflectionClassGuid()
 		{
-			// The switch's IMoStemMsa branch — currently only exercised indirectly via BuildInput; this pins the
+			// The switch's IMoStemMsa branch -- currently only exercised indirectly via
+			// BuildInput; this pins the
 			// resolver function's own real (non-null-guard) behavior directly.
 			var inflClass = Cache.ServiceLocator.GetInstance<IMoInflClassFactory>().Create();
 			_noun.InflectionClassesOC.Add(inflClass);
@@ -185,9 +186,9 @@ namespace LexTextControlsTests
 		[Test]
 		public void InflectionClassIdFromExistingMsa_DerivStepMsa_ReturnsItsInflectionClassGuid()
 		{
-			// The switch's IMoDerivStepMsa branch has no existing coverage at all (BuildInput's own tests only ever
-			// seed a stem or infl MSA) — a derivational-step edit would silently seed no inflection class if this
-			// branch regressed.
+			// The switch's IMoDerivStepMsa branch has no coverage (BuildInput's own
+			// tests only seed a stem or infl MSA) -- a derivational-step edit would
+			// silently seed no inflection class if this branch regressed.
 			var inflClass = Cache.ServiceLocator.GetInstance<IMoInflClassFactory>().Create();
 			_verb.InflectionClassesOC.Add(inflClass);
 			inflClass.Name.set_String(Cache.DefaultAnalWs, "Strong");
@@ -249,8 +250,9 @@ namespace LexTextControlsTests
 		[Test]
 		public void InflectionFeaturesFromExistingMsa_ExistingInflMsa_ReturnsRealAssignments()
 		{
-			// The resolver function's own real (non-null-guard) read path — only exercised indirectly via BuildInput
-			// until now, so a regression in the read (as opposed to the seed/feed wiring) would not have been caught.
+			// The resolver's own real (non-null-guard) read path -- only exercised
+			// indirectly via BuildInput until now, so a regression in the read (vs.
+			// the seed/feed wiring) would not have been caught.
 			var msa = Cache.ServiceLocator.GetInstance<IMoInflAffMsaFactory>().Create();
 			_cantar.MorphoSyntaxAnalysesOC.Add(msa);
 			msa.PartOfSpeechRA = _verb;

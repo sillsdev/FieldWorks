@@ -597,7 +597,7 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 			CreateResX(m_FdoFolder, badFilenameBase, "some text");
 			var badFile = CreateLocalizedResXFor(m_FdoFolder, badFilenameBase, LocaleGe, "just fine", dataName2: extraDataName, textValue2: "not fine");
 
-			// ProjectLocalizer.CheckResXForErrors no longer fails builds on added/missing keys.
+			// ProjectLocalizer.CheckResXForErrors treats added/missing keys as non-fatal.
 			Assert.That(m_sut.Execute(), Is.True, m_sut.ErrorMessages);
 			Assert.That(m_sut.ErrorMessages, Does.Not.Contain(badFile));
 			Assert.That(m_sut.ErrorMessages, Does.Not.Contain(extraDataName));
@@ -612,7 +612,7 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 			CreateResX(m_FdoFolder, badFilenameBase, "some text", dataName2: extraDataName, textValue2: "you can't find me!");
 			var badFile = CreateLocalizedResXFor(m_FdoFolder, badFilenameBase, LocaleGe, "only one");
 
-			// ProjectLocalizer.CheckResXForErrors no longer fails builds on added/missing keys.
+			// ProjectLocalizer.CheckResXForErrors treats added/missing keys as non-fatal.
 			Assert.That(m_sut.Execute(), Is.True, m_sut.ErrorMessages);
 			Assert.That(m_sut.ErrorMessages, Does.Not.Contain(badFile));
 			Assert.That(m_sut.ErrorMessages, Does.Not.Contain(extraDataName));

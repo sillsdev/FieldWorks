@@ -15,20 +15,22 @@ Guidance for writing and running deterministic unit and integration tests for Fi
 
 ## Running Tests (Managed)
 
-Use `.\test.ps1` for all managed (C#) tests.
+Use `.\test.ps1` for all managed (C#) tests. Always pass `-CommentHygiene`: it
+fails the run on any comment-hygiene violation in the lines your branch adds.
+Humans omit it and never see the gate; CI annotates without failing.
 
 ```powershell
 # Run all tests (builds first)
-.\test.ps1
+.\test.ps1 -CommentHygiene
 
 # Run specific project
-.\test.ps1 -TestProject "Src/Common/FwUtils/FwUtilsTests"
+.\test.ps1 -CommentHygiene -TestProject "Src/Common/FwUtils/FwUtilsTests"
 
 # Run with filter
-.\test.ps1 -TestFilter "TestCategory!=Slow"
+.\test.ps1 -CommentHygiene -TestFilter "TestCategory!=Slow"
 
 # Run without rebuilding (faster iteration)
-.\test.ps1 -NoBuild -TestProject "FwUtilsTests"
+.\test.ps1 -CommentHygiene -NoBuild -TestProject "FwUtilsTests"
 ```
 
 ## Running Tests (Native C++)

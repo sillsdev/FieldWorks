@@ -17,7 +17,8 @@ namespace LexTextControlsTests
 	/// The dependent auxiliary selection of the Link-Allomorph consumer
 	/// (<see cref="LcmLinkAllomorphDialogLauncher"/>): like the legacy LinkAllomorphDlg combo, a multi-form entry
 	/// offers its NON-abstract forms (lexeme form first, then alternates in order, keyed by Guid) and the CHOSEN one
-	/// — not the first — is applied. Driven through the launcher's internal Build/Resolve seams over a real LcmCache
+	/// -- not the first -- is applied. Driven through the launcher's internal Build/Resolve seams
+	/// over a real LcmCache
 	/// (InternalsVisibleTo), like <see cref="EntryGoDialogLauncherTests"/>.
 	/// </summary>
 	[TestFixture]

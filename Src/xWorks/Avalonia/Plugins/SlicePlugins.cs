@@ -17,7 +17,7 @@ namespace SIL.FieldWorks.XWorks
 	/// loaded slice (<c>editor="Custom" class=...</c>) can render in-tree at the slice's real
 	/// position instead of an unsupported row. Plugins are keyed by
 	/// the <b>legacy layout identity</b> (<see cref="LegacyClassName"/>, the layout's `class=`
-	/// attribute already carried on the typed node) — zero layout edits per migration.
+	/// attribute already carried on the typed node) -- zero layout edits per migration.
 	/// </summary>
 	public interface ISlicePlugin
 	{
@@ -31,7 +31,7 @@ namespace SIL.FieldWorks.XWorks
 		/// Builds the Avalonia control that replaces the legacy slice for one composed row. Invoked
 		/// lazily by the view (never during compose); the context carries the detail view's own edit
 		/// context so plugin edits ride the same fenced session as every other row, plus the
-		/// optional host services. This is the ONE plugin contract — there is no separate
+		/// optional host services. This is the ONE plugin contract -- there is no separate
 		/// service-aware marker interface or overload.
 		/// </summary>
 		Control BuildControl(SlicePluginBuildContext context);
@@ -40,7 +40,7 @@ namespace SIL.FieldWorks.XWorks
 	/// <summary>
 	/// Everything the composer hands a plugin factory, bundled into one contract:
 	/// the row's object and typed node, the detail view's edit context (resolved lazily through the
-	/// composer's deferred accessor — the context object is created during compose, BEFORE the
+	/// composer's deferred accessor -- the context object is created during compose, BEFORE the
 	/// edit context exists; plugin factories run at render time, after), and the cache.
 	/// </summary>
 	public sealed class SlicePluginBuildContext
@@ -71,7 +71,7 @@ namespace SIL.FieldWorks.XWorks
 	/// <summary>
 	/// Maps legacy slice class names to their
 	/// <see cref="ISlicePlugin"/>. The composer consults <see cref="Resolve"/> per node
-	/// while walking, FIRST in the resolution order (plugin → unsupported row).
+	/// while walking, FIRST in the resolution order (plugin -> unsupported row).
 	/// Thread-safe by immutable snapshot: registration copies under a lock, resolution reads the
 	/// current snapshot without one, so a compose mid-registration sees a coherent table.
 	/// </summary>

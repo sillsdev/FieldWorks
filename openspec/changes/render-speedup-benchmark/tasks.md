@@ -85,6 +85,6 @@
 - [x] PATH-L1-VERIFY Run full benchmark suite and compare before/after timing evidence. Result: **99.99% warm render reduction** (153.00ms → 0.01ms). All 15 scenarios pass with 0% pixel variance. Cold render unaffected (62.33ms → 62.95ms).
 
 **Deferred** (future iterations):
-- [x] PATH-L5 Skip Reconstruct when data unchanged — gate `SimpleRootSite.RefreshDisplay()` on `VwRootBox.NeedsReconstruct` and cover it with focused tests.
+- [x] ~~PATH-L5 Skip Reconstruct when data unchanged — gate `SimpleRootSite.RefreshDisplay()` on `VwRootBox.NeedsReconstruct` and cover it with focused tests.~~ **Reverted 2026-07-10 (LT-22610, PR #1006):** the gate missed managed-only view-constructor state, causing stale views. `RefreshDisplay()` now always reconstructs.
 - [ ] PATH-L3 Per-paragraph layout caching — dirty-flag line-breaking in `VwParagraphBox::DoLayout()`.
 - [ ] PATH-L2 Deferred layout in Reconstruct — remove internal `Layout()` call from `Reconstruct()` (blocked: `RootBoxSizeChanged` callback needs dimensions immediately).

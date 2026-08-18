@@ -31,13 +31,16 @@ namespace SIL.FieldWorks.XWorks
 	/// New UI mode (the same bootstrap <c>RecordEditViewActiveHostContractTests</c> uses), so the
 	/// Avalonia is the active host and the hidden legacy DataTree exists only as the approved
 	/// "command-menu-routing" baseline adapter. Each test drives a command through the PRODUCTION path:
-	///   1. <c>EnsureMenuCommandAdapter(targetHvo)</c> — builds/syncs the hidden adapter tree and points
+	/// 1. <c>EnsureMenuCommandAdapter(targetHvo)</c> -- builds/syncs the hidden adapter tree and
+	/// points
 	///      its CurrentSlice at the slice bound to the clicked row's object (exactly what
 	///      <c>OnDetailMenuRequested</c> calls first).
-	///   2. <see cref="XCoreMenuBridge.CreateMenuItems(XWindow, string[])"/> — the same native-menu
-	///      materialization <c>OnDetailMenuRequested</c> performs; the resulting <see cref="DetailMenuItem"/>
+	/// 2. <see cref="XCoreMenuBridge.CreateMenuItems(XWindow, string[])"/> -- the same
+	/// native-menu
+	/// materialization <c>OnDetailMenuRequested</c> performs; the resulting <see
+	/// cref="DetailMenuItem"/>
 	///      carries an Execute action that dispatches the command through the mediator
-	///      (<c>ChoiceBase.OnClick</c> → hidden DataTree/DTMenuHandler colleagues → UOW mutation).
+	/// (<c>ChoiceBase.OnClick</c> -> hidden DataTree/DTMenuHandler colleagues -> UOW mutation).
 	/// Invoking that Execute is the user clicking the item. We then assert (a) the model mutated and
 	/// (b) re-composing the entry (the same <see cref="DetailComposer.Compose"/> call
 	/// <c>RecordEditView.ShowAvaloniaEntry</c> makes on refresh) reflects it.
@@ -154,10 +157,12 @@ namespace SIL.FieldWorks.XWorks
 		// Skipped (desktop environment only): unlike Insert (always enabled), the Delete/Move/Demote/Merge sense
 		// commands only materialize+enable when their xCore display handlers can compute live
 		// slice-sequence context (position in the owning sequence, owner relationships). That context
-		// comes from a laid-out, VISIBLE legacy DataTree; the command-routing adapter tree is hidden +
+		// comes from a laid-out, VISIBLE legacy DataTree; the command-routing adapter tree is
+		// hidden +
 		// detached while Avalonia is active, so headlessly the items never reach the
 		// enabled state and the menu does not surface them. Hosting/laying out the detached tree in the
-		// test was tried and did not surface them — the gap is the full menu-display path, not just
+		// test was tried and did not surface them -- the gap is the full menu-display path, not
+		// just
 		// slice layout. Runnable in the desktop environment where the legacy tree is shown. The InsertSense
 		// tests above exercise the same end-to-end adapter -> XCoreMenuBridge -> mediator -> UOW path
 		// headlessly, so the core execution+refresh seam is still covered.
@@ -201,7 +206,8 @@ namespace SIL.FieldWorks.XWorks
 				"Move Down advances the targeted sense past its successor");
 			Assert.That(m_entry.SensesOS[1].Hvo, Is.EqualTo(firstHvo));
 
-			// Move it back UP: the original order is restored — a sequence proving both directions.
+			// Move it back UP: the original order is restored -- a sequence proving both
+			// directions.
 			InvokeSliceMenuCommand(firstHvo, "mnuDataTree-Sense", "Move Sense Up");
 			Assert.That(m_entry.SensesOS[0].Hvo, Is.EqualTo(firstHvo),
 				"Move Up returns the sense to the front, restoring the original order");
@@ -254,7 +260,8 @@ namespace SIL.FieldWorks.XWorks
 			// OnDataTreeMerge's class guard (LT-22352) returns false when the merge command's declared
 			// className (LexSense) does not match the current slice's object class. Targeting a NON-sense
 			// row (the entry/citation row, a LexEntry) with the sense-merge command must be a guarded
-			// no-op — the model is untouched and nothing is mis-merged. This proves the adapter targeting
+			// no-op -- the model is untouched and nothing is mis-merged. This proves the adapter
+			// targeting
 			// reaches the merge handler and that its guard fires on the real object class.
 			var sensesBefore = m_entry.SensesOS.Count;
 			var citationHvo = m_entry.Hvo;
@@ -269,9 +276,9 @@ namespace SIL.FieldWorks.XWorks
 				"no sense was merged away by the guarded command");
 		}
 
-		// ----------------------------------------------------------------------------------------
-		// Helpers — production-path command drivers
-		// ----------------------------------------------------------------------------------------
+		// -----------------------------------------------------------------
+		// Helpers -- production-path command drivers
+		// -----------------------------------------------------------------
 
 		// Drives a SLICE-menu command exactly as OnDetailMenuRequested(Kind=SliceMenu) does: ensure the
 		// adapter targets the object, materialize the menu (menuId + the host-appended mnuDataTree-Object)
@@ -351,12 +358,13 @@ namespace SIL.FieldWorks.XWorks
 			return null;
 		}
 
-		// ----------------------------------------------------------------------------------------
-		// Helpers — refresh / detail assertions
-		// ----------------------------------------------------------------------------------------
+		// -----------------------------------------------------------------
+		// Helpers -- refresh / detail assertions
+		// -----------------------------------------------------------------
 
 		// Re-composes the displayed entry exactly as RecordEditView.ShowAvaloniaEntry does on refresh
-		// and counts the per-sense section headers (one per sense regardless of the sense's content —
+		// and counts the per-sense section headers (one per sense regardless of the sense's
+		// content --
 		// an empty new sense still gets a header, unlike its ifData Gloss row). This is the
 		// user-visible proof that the recomposed detail view reflects the model mutation.
 		private int ComposeSenseHeaderCount()

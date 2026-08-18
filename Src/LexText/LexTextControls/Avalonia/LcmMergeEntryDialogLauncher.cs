@@ -24,12 +24,15 @@ namespace SIL.FieldWorks.LexText.Controls
 	/// plain <see cref="EntryGoDialogInput.Search"/> delegate returning lightweight <see cref="EntryGoSearchResult"/>
 	/// rows) and an <see cref="EntryGoDialogResult"/> (the chosen hvo string).
 	///
-	/// The search delegate reuses the SAME matching the legacy dialog uses — the shared
+	/// The search delegate reuses the SAME matching the legacy dialog uses -- the shared
 	/// <see cref="EntryGoSearchEngine"/> over the live <c>ILexEntryRepository</c> with the legacy
-	/// <see cref="EntryGoDlg.GetFields"/> field set — wrapped to EXCLUDE the current entry (parity with the legacy
+	/// <see cref="EntryGoDlg.GetFields"/> field set -- wrapped to EXCLUDE the current entry
+	/// (parity with the legacy
 	/// <c>MergeEntryDlg.MergeEntrySearchEngine.FilterResults</c>: you cannot merge an entry with itself). On OK it
-	/// resolves the chosen hvo back to an <c>ILexEntry</c> and performs the merge exactly as the legacy
-	/// <c>MergeEntryDlgListener</c> did — <c>survivor.MergeObject(currentEntry, fLoseNoTextData)</c> in ONE undoable
+	/// resolves the chosen hvo back to an <c>ILexEntry</c> and performs the merge exactly as the
+	/// legacy
+	/// <c>MergeEntryDlgListener</c> did -- <c>survivor.MergeObject(currentEntry,
+	/// fLoseNoTextData)</c> in ONE undoable
 	/// step.
 	///
 	/// Layering mirrors <see cref="LcmInsertEntryDialogLauncher"/>/<see cref="LcmChooserDialogLauncher"/>: BuildInput
@@ -70,7 +73,8 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		/// <summary>
 		/// Shows the Merge Entry dialog modally over <paramref name="owner"/> and, on OK, merges
-		/// <paramref name="currentEntry"/> INTO the chosen entry (the survivor) in ONE undoable step — exactly the
+		/// <paramref name="currentEntry"/> INTO the chosen entry (the survivor) in ONE undoable
+		/// step -- exactly the
 		/// legacy <c>MergeObject</c> semantics. Returns the survivor (null when cancelled). The caller refreshes /
 		/// jumps to the survivor (the legacy listener's JumpToRecord).
 		/// </summary>
@@ -133,7 +137,8 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <summary>
 		/// Builds the search delegate the dialog drives: the shared
 		/// <see cref="EntryGoLauncherShared.BuildEntrySearch"/> (the SAME matching the legacy EntryGoDlg uses, with
-		/// the per-column row values) wrapped to EXCLUDE the current entry's hvo — the merge invariant (you cannot
+		/// the per-column row values) wrapped to EXCLUDE the current entry's hvo -- the merge
+		/// invariant (you cannot
 		/// merge an entry with itself). Internal so it is unit-testable against a real cache.
 		/// </summary>
 		internal static Func<string, IReadOnlyList<EntryGoSearchResult>> BuildSearch(LcmCache cache,
@@ -154,8 +159,10 @@ namespace SIL.FieldWorks.LexText.Controls
 			new EntryGoDialogView { DataContext = viewModel };
 
 		/// <summary>
-		/// Applies the commit-on-select result: resolves the chosen hvo to the survivor entry and — because the merge
-		/// is semi-destructive (it merges the current entry INTO the chosen one and cannot be undone past this UOW) —
+		/// Applies the commit-on-select result: resolves the chosen hvo to the survivor entry and
+		/// -- because the merge
+		/// is semi-destructive (it merges the current entry INTO the chosen one and cannot be
+		/// undone past this UOW) --
 		/// CONFIRMS before acting. Only on confirmation does it merge the current entry into the survivor in ONE
 		/// undoable step (the exact legacy <c>MergeObject</c> operation; see
 		/// <c>MergeEntryDlgListener.RunMergeEntryDialog</c>); Cancel aborts with no merge. The survivor is exposed via

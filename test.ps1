@@ -36,6 +36,11 @@
 	Allow FieldWorks Abort/Retry/Ignore assertion dialogs during this local test run.
 	Equivalent environment variable: FW_TEST_ALLOW_ASSERT_DIALOGS=1.
 
+.PARAMETER CommentHygiene
+	Enforce the comment-hygiene gate, failing the run on any violation in the lines this
+	branch adds. Required of coding agents; a developer run leaves it off and never runs
+	the gate.
+
 .PARAMETER StartedBy
 	Optional actor label written to worktree lock metadata (for example: user or agent).
 	Defaults to FW_BUILD_STARTED_BY if set; otherwise 'unknown'.
@@ -101,10 +106,28 @@ param(
 	[switch]$SkipWorktreeLock,
 	[switch]$Coverage,
 	[ValidateSet('user', 'agent', 'unknown')]
-	[string]$StartedBy = 'unknown'
+	[string]$StartedBy = 'unknown',
+	[switch]$CommentHygiene
 )
 
 $ErrorActionPreference = 'Stop'
+
+# Comment hygiene is opt-in: with -CommentHygiene it blocks the run, in CI it
+# only annotates the pull request, and an ordinary developer run is silent.
+$commentHygieneInCI = ($env:GITHUB_ACTIONS -eq 'true') -or ($env:CI -eq 'true')
+if ($CommentHygiene -or $commentHygieneInCI) {
+	$commentHygienePath = Join-Path $PSScriptRoot "Build/Agent/comment-hygiene.ps1"
+	& $commentHygienePath -Advisory:(-not $CommentHygiene)
+	if ($CommentHygiene -and $LASTEXITCODE -ne 0) {
+		exit $LASTEXITCODE
+	}
+}
+
+$powershellCompatPath = Join-Path $PSScriptRoot "Build/Agent/powershell-compat.ps1"
+& $powershellCompatPath
+if ($LASTEXITCODE -ne 0) {
+	exit $LASTEXITCODE
+}
 
 if (-not $PSBoundParameters.ContainsKey('StartedBy') -and -not [string]::IsNullOrWhiteSpace($env:FW_BUILD_STARTED_BY)) {
 	$startedByFromEnv = $env:FW_BUILD_STARTED_BY.ToLowerInvariant()

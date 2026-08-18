@@ -117,10 +117,9 @@ namespace SIL.FieldWorks.Common.RenderVerification
 			m_dataTree = new DataTree();
 			m_dataTree.Init(m_mediator, m_propertyTable, null);
 
-			// Host in a form for proper layout context. The form is shown offscreen
-			// (Opacity=0) after ShowObject to trigger the full slice lifecycle:
-			// OnPaint → HandleLayout1(fFull=false) → MakeSliceVisible → handle
-			// creation → MakeRoot → VwRootBox creation.
+			// The form is shown offscreen (Opacity=0) after ShowObject because only the OnPaint
+			// -> HandleLayout1(fFull=false) -> MakeSliceVisible path creates handles and
+			// RootBoxes.
 			m_hostForm = new Form
 			{
 				FormBorderStyle = FormBorderStyle.None,
@@ -185,13 +184,9 @@ namespace SIL.FieldWorks.Common.RenderVerification
 			}
 			populateStopwatch.Stop();
 
-			// Show the form to trigger the full WinForms lifecycle:
-			// OnLayout → HandleLayout1 positions slices but does NOT make them visible
-			// (fFull=true path). Only OnPaint → HandleLayout1(fFull=false) makes slices
-			// visible. So we need to:
-			// 1. Show the form (with Opacity=0 to avoid flicker)
-			// 2. Make the DataTree visible (CreateSlices called Hide() on it)
-			// 3. Pump paint messages so OnPaint fires
+			// Only OnPaint -> HandleLayout1(fFull=false) makes slices visible; OnLayout's
+			// fFull=true path does not. So the form must show (Opacity=0), the DataTree
+			// be visible, and paint messages pumped to trigger it.
 			m_hostForm.Opacity = 0;
 			m_hostForm.Show();
 			m_dataTree.Visible = true;
@@ -330,12 +325,12 @@ namespace SIL.FieldWorks.Common.RenderVerification
 		/// </summary>
 		/// <remarks>
 		/// Known problematic parts:
-		/// - "Etymologies" → SummarySlice → SummaryXmlView → native COM VwRootBox creation
+		/// - "Etymologies" -> SummarySlice -> SummaryXmlView -> native COM VwRootBox creation
 		///   that crashes the test host with unrecoverable native exceptions.
-		/// - "Messages" → MessageSlice (LexEdDll.dll) → ChorusSystem → L10NSharp.
+		/// - "Messages" -> MessageSlice (LexEdDll.dll) -> ChorusSystem -> L10NSharp.
 		///   Throws managed ApplicationException.
 		/// - "Senses", Section parts (VariantFormsSection, AlternateFormsSection,
-		///   GrammaticalFunctionsSection, PublicationSection) → Create complex slice
+		///   GrammaticalFunctionsSection, PublicationSection) -> Create complex slice
 		///   hierarchies with DynamicLoader, native COM Views, and expanding sections.
 		///   These crash the test host with unhandled native exceptions in test context
 		///   because the full FLEx COM infrastructure isn't initialized.
@@ -420,7 +415,7 @@ namespace SIL.FieldWorks.Common.RenderVerification
 
 		private void LoadTestInventories()
 		{
-			// Same pattern as DataTreeTests — load from DetailControlsTests test XML
+			// Same pattern as DataTreeTests -- load from DetailControlsTests test XML
 			string partDirectory = Path.Combine(FwDirectoryFinder.SourceDirectory,
 				@"Common/Controls/DetailControls/DetailControlsTests");
 

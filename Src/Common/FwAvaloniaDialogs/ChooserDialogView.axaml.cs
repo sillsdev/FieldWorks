@@ -19,7 +19,8 @@ namespace FwAvaloniaDialogs
 	/// HIERARCHICAL mode: a XAML-authored search box over a virtualizing <see cref="TreeView"/> (the
 	/// candidates folded from their Depth sequence) plus a flat filtered results <see cref="ListBox"/> shown while a
 	/// search term is active. Single-select commits the clicked node/row's key (via TreeView/ListBox selection);
-	/// multi-select toggles per-node checkboxes (two-way bound to the node, independent per node — legacy default),
+	/// multi-select toggles per-node checkboxes (two-way bound to the node, independent per node
+	/// -- legacy default),
 	/// with Space toggling the focused node's check for keyboard parity.
 	///
 	/// Hosted as Avalonia content inside a WinForms-owned modal Form during coexistence via
@@ -75,8 +76,9 @@ namespace FwAvaloniaDialogs
 				return;
 			if (!(DataContext is ChooserDialogViewModel vm) || !vm.IsMultiSelect)
 				return;
-			// Toggle the check of the focused tree node / search-result row. Route through the VM (a plain toggle)
-			// so it (re)establishes the range anchor exactly like a plain click — keeping keyboard + mouse in step.
+			// Toggle the check of the focused tree node / search-result row. Route through
+			// the VM so it (re)establishes the range anchor exactly like a plain click --
+			// keeping keyboard + mouse in step.
 			if (e.Source is Control c && c.DataContext is ChooserTreeNode node)
 			{
 				vm.ToggleChecked(node.Key);

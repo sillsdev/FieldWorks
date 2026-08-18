@@ -324,10 +324,9 @@ namespace TestViews
 			unitpp::assert_true("Charis SIL test font should load", font.Loaded());
 			SetDefaultFontForTest(L"Charis SIL");
 
-			// Small caps replace lowercase letters with glyphs of different advance widths, so the
-			// measured segment width changes. (The liga feature was previously used here, but in
-			// Charis SIL 6.x the fi/ffi ligatures keep the component advance widths, so liga changes
-			// the rendered glyphs without changing segment metrics.)
+			// Small caps replace lowercase letters with different-width glyphs, changing the
+			// measured segment width; liga does not, since Charis SIL's fi/ffi ligatures keep
+			// their component widths.
 			int dxWithoutSmallCaps = MeasureTextWithFeatures(L"small caps verify", L"smcp=0");
 			int dxWithSmallCaps = MeasureTextWithFeatures(L"small caps verify", L"smcp=1");
 

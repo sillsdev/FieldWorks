@@ -5,9 +5,18 @@ Minimal, high-signal guidance for coding agents in this repository.
 ## Non-negotiable defaults
 
 - Platform is Windows/x64.
-- Build with `.\build.ps1`.
-- Test with `.\test.ps1`.
+- Build with `.\build.ps1 -CommentHygiene`.
+- Test with `.\test.ps1 -CommentHygiene`.
+- `-CommentHygiene` is required of agents and not of humans: it fails the run on
+	any comment-hygiene violation in the lines your branch adds, so you fix your
+	own comments before they reach review. A developer build omits it and never
+	runs the gate; CI reports violations as warning annotations without failing.
+	Do not drop the flag to get a build through.
 - Do not bypass repository scripts for normal build/test work.
+- Commit messages must pass `gitlint` (CI: `.github/workflows/CommitMessage.yml`):
+	title <=72 characters, body lines <=80 characters, blank line between
+	them. A heredoc reproduces your line breaks exactly -- wrap body prose
+	by hand. See `.claude/skills/commit-messages/SKILL.md`.
 
 ## Critical constraints
 
@@ -16,6 +25,8 @@ Minimal, high-signal guidance for coding agents in this repository.
 - Keep localization in `.resx`; do not hardcode translatable UI strings.
 - Follow the code-comment standard in
 	`.claude/skills/fieldworks-code-commenting/SKILL.md`.
+- Follow the commit-message rules in
+	`.claude/skills/commit-messages/SKILL.md` for every commit.
 
 ## Context model
 

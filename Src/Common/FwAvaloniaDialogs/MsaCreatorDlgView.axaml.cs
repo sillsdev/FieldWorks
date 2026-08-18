@@ -10,7 +10,8 @@ namespace FwAvaloniaDialogs
 	/// The reusable "Create New Grammatical Info." dialog body: a XAML-authored UserControl bound
 	/// to <see cref="MsaCreatorDlgViewModel"/> with compiled bindings for the read-only lexical entry / senses +
 	/// OK/Cancel/Help, plus the owned grammatical-info group box hosted as a code-behind child (it is a native
-	/// composite, not an MVVM-bindable control — the same pattern InsertEntryDlgView uses). Hosted as Avalonia
+	/// composite, not an MVVM-bindable control -- the same pattern InsertEntryDlgView uses).
+	/// Hosted as Avalonia
 	/// content inside a WinForms-owned modal Form during coexistence via <c>AvaloniaDialogHost.ShowModal</c>.
 	/// </summary>
 	public partial class MsaCreatorDlgView : UserControl

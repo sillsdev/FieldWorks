@@ -14,7 +14,7 @@ namespace SIL.FieldWorks.Common.RootSites.RenderBenchmark
 	/// A benchmark view that renders lexical entries with nested senses for timing tests.
 	/// The <see cref="LexEntryVc"/> exercises the same recursive nested-field pattern
 	/// that causes exponential rendering overhead in the production XmlVc
-	/// (<c>visibility="ifdata"</c> double-render at each level of <c>LexSense → Senses</c>).
+	/// (<c>visibility="ifdata"</c> double-render at each level of <c>LexSense -> Senses</c>).
 	/// </summary>
 	public class GenericLexEntryView : DummyBasicView
 	{
@@ -31,7 +31,7 @@ namespace SIL.FieldWorks.Common.RootSites.RenderBenchmark
 		/// Gets or sets whether to simulate the XmlVc ifdata double-render pattern.
 		/// When true, each sense level renders its children twice (once as a visibility
 		/// test, once for real output), modelling the <c>O(N · 2^d)</c> growth.
-		/// When false, renders once per level — the target after optimization.
+		/// When false, renders once per level -- the target after optimization.
 		/// </summary>
 		public bool SimulateIfDataDoubleRender
 		{
@@ -82,7 +82,7 @@ namespace SIL.FieldWorks.Common.RootSites.RenderBenchmark
 	/// <remarks>
 	/// <para>
 	/// When <see cref="SimulateIfDataDoubleRender"/> is true, each sense's subsense vector
-	/// is processed twice — once via a <see cref="TestCollectorEnv"/> pass (testing whether
+	/// is processed twice -- once via a <see cref="TestCollectorEnv"/> pass (testing whether
 	/// data exists), then again for real rendering. This models the production XmlVc behaviour
 	/// where <c>visibility="ifdata"</c> parts call <c>ProcessChildren</c> into a throw-away
 	/// environment before re-rendering into the real <see cref="IVwEnv"/>.
@@ -122,7 +122,7 @@ namespace SIL.FieldWorks.Common.RootSites.RenderBenchmark
 		}
 
 		/// <summary>
-		/// Main display method — dispatches on fragment ID.
+		/// Main display method -- dispatches on fragment ID.
 		/// </summary>
 		public override void Display(IVwEnv vwenv, int hvo, int frag)
 		{
@@ -164,7 +164,7 @@ namespace SIL.FieldWorks.Common.RootSites.RenderBenchmark
 			vwenv.set_IntProperty((int)FwTextPropType.ktptFontSize,
 				(int)FwTextPropVar.ktpvMilliPoint, 14000);
 
-			// Display LexemeForm → MoForm
+			// Display LexemeForm -> MoForm
 			vwenv.AddObjProp(LexEntryTags.kflidLexemeForm, this, kFragMoForm);
 			vwenv.CloseParagraph();
 
@@ -205,14 +205,14 @@ namespace SIL.FieldWorks.Common.RootSites.RenderBenchmark
 			if (SimulateIfDataDoubleRender)
 			{
 				// SIMULATION of XmlVc visibility="ifdata":
-				// First pass — iterate subsenses to "test" whether data exists.
+				// First pass -- iterate subsenses to "test" whether data exists.
 				// XmlVc does this via TestCollectorEnv which is a full ProcessChildren traversal.
 				// We simulate by doing AddObjVecItems into a discarded context.
 				// The Views engine still walks the vector and calls Display for each item.
 				vwenv.AddObjVecItems(LexSenseTags.kflidSenses, this, kFragSense);
 			}
 
-			// Real render pass — always done
+			// Real render pass -- always done
 			vwenv.AddObjVecItems(LexSenseTags.kflidSenses, this, kFragSense);
 
 			vwenv.CloseDiv();

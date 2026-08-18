@@ -313,9 +313,41 @@ namespace FwBuildTasks
 			}
 		}
 
+		/// <summary>
+		/// Returns the major version of the MSBuild release executing this task, or null when it
+		/// cannot be determined. MSBuild assemblies pin their assembly version for compatibility,
+		/// so the product file version is what identifies the actual release.
+		/// </summary>
+		private static string GetRunningMSBuildMajorVersion()
+		{
+			try
+			{
+				var location = typeof(ToolLocationHelper).Assembly.Location;
+				if (String.IsNullOrEmpty(location))
+					return null;
+				var versionInfo = FileVersionInfo.GetVersionInfo(location);
+				return versionInfo.ProductMajorPart > 0 ? versionInfo.ProductMajorPart.ToString() : null;
+			}
+			catch
+			{
+				return null;
+			}
+		}
+
 		private static VisualStudioVersion? GetConfiguredDotNetFrameworkSdkVisualStudioVersion()
 		{
-			switch (GetToolchainPolicyProperty("FwDotNetFrameworkSdkVisualStudioVersion"))
+			// The toolchain policy maps each Visual Studio major to its .NET Framework SDK
+			// version through numbered properties (FwDotNetFrameworkSdkVisualStudioVersion17,
+			// ...18); the running MSBuild's major version selects the entry. A policy file
+			// that carries a literal value in the unnumbered property is honored as fallback.
+			string configuredValue = null;
+			var msbuildMajor = GetRunningMSBuildMajorVersion();
+			if (!String.IsNullOrEmpty(msbuildMajor))
+				configuredValue = GetToolchainPolicyProperty("FwDotNetFrameworkSdkVisualStudioVersion" + msbuildMajor);
+			if (String.IsNullOrEmpty(configuredValue))
+				configuredValue = GetToolchainPolicyProperty("FwDotNetFrameworkSdkVisualStudioVersion");
+
+			switch (configuredValue)
 			{
 				case "10.0":
 					return VisualStudioVersion.Version100;

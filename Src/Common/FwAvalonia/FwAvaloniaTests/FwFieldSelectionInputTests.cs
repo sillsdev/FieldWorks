@@ -126,7 +126,8 @@ namespace FwAvaloniaTests
 		public void ShiftLeft_RtlRun_ExtendsSelectionByOneCluster()
 		{
 			// A single Hebrew run (aleph-bet-gimel) flows RTL; the Left arrow moves logically forward inside
-			// it, and Shift must extend rather than collapse — the same wiring seam, in the RTL direction.
+			// it, and Shift must extend rather than collapse -- the same wiring seam, in the RTL
+			// direction.
 			var (box, window) = ShowFocused(RtlField("אבג"));
 			box.CaretIndex = 0;
 			box.SelectionStart = 0;
@@ -169,7 +170,7 @@ namespace FwAvaloniaTests
 		[AvaloniaTest]
 		public void ShiftRight_AcrossSurrogatePairEmoji_TakesTheClusterWhole()
 		{
-			// "x" + U+1F600 grinning face (surrogate pair 😀, indices 1..3) + "y".
+			// "x" + U+1F600 grinning face (surrogate pair, indices 1..3) + "y".
 			var (box, window) = ShowFocused(LtrField("x😀y"));
 			box.CaretIndex = 0;
 			box.SelectionStart = 0;
@@ -207,7 +208,7 @@ namespace FwAvaloniaTests
 				$"the ZWJ-joined emoji is one cluster; the first extend takes all 5 units, never a partial join. Span [{start}..{end}]");
 		}
 
-		// ---- Mouse-drag over-grow: NOT headlessly reproducible — documented, left OPEN ----
+		// ---- Mouse-drag over-grow: NOT headlessly reproducible -- documented, left OPEN ----
 		//
 		// The reported defect is that a mouse DRAG grows the selection beyond the pointer. Drag-select is
 		// Avalonia-native (our only pointer handler is the release-time cluster snap). Driving a headless

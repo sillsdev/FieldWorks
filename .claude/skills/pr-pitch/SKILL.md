@@ -1,6 +1,6 @@
 ---
 name: pr-pitch
-description: Compose a PR body as a pitch that answers the unknowns a reviewer arrives with, with the branch's decisions, provenance, and paths-not-taken folded into collapsed accordions below it, while evicting those files from the repo. Use when writing or refreshing a PR description, when a branch carries working markdown that should not merge, or when pr-preflight reaches its PR step.
+description: "NOT an entrypoint -- pr-preflight calls this for the write-up step; use pr-preflight for a fresh 'write/make/open a PR' request. Invoke this directly only to redo the write-up on a PR that already exists. Composes a PR body as a pitch that answers the unknowns a reviewer arrives with, with the branch's decisions, provenance, and paths-not-taken folded into collapsed accordions below it, while evicting those files from the repo."
 argument-hint: "Optional PR number (defaults to the PR for the current branch)"
 ---
 

@@ -118,6 +118,11 @@
 	Optional actor label written to the worktree lock metadata (for example: user or agent).
 	Defaults to the FW_BUILD_STARTED_BY environment variable when set, otherwise 'unknown'.
 
+.PARAMETER CommentHygiene
+	Enforce the comment-hygiene gate, failing the build on any violation in the lines this
+	branch adds. Required of coding agents; a developer build leaves it off and never runs
+	the gate. CI reports violations as warning annotations either way.
+
 .PARAMETER SkipWorktreeLock
 	Internal switch used when build.ps1 is invoked from test.ps1 while the parent test workflow
 	already owns the same-worktree lock. Skips acquiring/releasing that lock again.
@@ -190,7 +195,8 @@ param(
 	[ValidateSet('user', 'agent', 'unknown')]
 	[string]$StartedBy = 'unknown',
 	[switch]$SkipWorktreeLock,
-	[switch]$SkipDependencyCheck
+	[switch]$SkipDependencyCheck,
+	[switch]$CommentHygiene
 )
 
 $ErrorActionPreference = "Stop"
@@ -202,6 +208,23 @@ if (-not $runningOnWindows) {
 	Write-Host "Linux and macOS are supported for editing, code search, specs, and documentation only." -ForegroundColor Yellow
 	Write-Host "Run build.ps1 on Windows if you need build output." -ForegroundColor Yellow
 	exit 1
+}
+
+# Comment hygiene is opt-in: with -CommentHygiene it blocks the build, in CI it
+# only annotates the pull request, and an ordinary developer build is silent.
+$commentHygieneInCI = ($env:GITHUB_ACTIONS -eq 'true') -or ($env:CI -eq 'true')
+if ($CommentHygiene -or $commentHygieneInCI) {
+	$commentHygienePath = Join-Path $PSScriptRoot "Build/Agent/comment-hygiene.ps1"
+	& $commentHygienePath -Advisory:(-not $CommentHygiene)
+	if ($CommentHygiene -and $LASTEXITCODE -ne 0) {
+		exit $LASTEXITCODE
+	}
+}
+
+$powershellCompatPath = Join-Path $PSScriptRoot "Build/Agent/powershell-compat.ps1"
+& $powershellCompatPath
+if ($LASTEXITCODE -ne 0) {
+	exit $LASTEXITCODE
 }
 
 if (-not $PSBoundParameters.ContainsKey('StartedBy') -and -not [string]::IsNullOrWhiteSpace($env:FW_BUILD_STARTED_BY)) {
@@ -430,6 +453,7 @@ function Test-FwBuildTasksBootstrapRequired {
 		(Join-Path $RepoRoot "Directory.Packages.props"),
 		(Join-Path $RepoRoot "Directory.Build.props"),
 		(Join-Path $RepoRoot "Directory.Build.targets"),
+		(Join-Path $RepoRoot "Build/FieldWorks.Toolchain.props"),
 		(Join-Path $RepoRoot "Build/SilVersions.props"),
 		(Join-Path $RepoRoot "Build/Src/Directory.Packages.props"),
 		(Join-Path $RepoRoot "Build/Src/FwBuildTasks/Directory.Build.props")
@@ -496,6 +520,13 @@ try {
 		# Initialize Visual Studio Developer environment
 		Initialize-VsDevEnvironment
 		Test-CvtresCompatibility
+
+		if ($BuildInstaller -or $BuildPatch) {
+			$installerToolchain = Get-VsToolchainInfo
+			if ($installerToolchain -and $installerToolchain.PlatformToolset -ne 'v143') {
+				Write-Host "[WARN] Installer build with PlatformToolset $($installerToolchain.PlatformToolset): the bundled VC++ redistributables predate this toolset. Official installers are produced from v143 (Visual Studio 2022) builds until the FLExInstaller redistributables are updated." -ForegroundColor Yellow
+			}
+		}
 
 		if (-not $SkipDependencyCheck) {
 			$verifyScript = Join-Path $PSScriptRoot "Build/Agent/Verify-FwDependencies.ps1"

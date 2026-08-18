@@ -15,7 +15,8 @@ using SIL.LCModel.Core.Text;
 namespace SIL.FieldWorks.Common.Framework.DetailControls
 {
 	/// <summary>
-	/// Measures the legacy DataTree's re-show cost — a second <c>ShowObject</c> on the live tree after
+	/// Measures the legacy DataTree's re-show cost -- a second <c>ShowObject</c> on the live tree
+	/// after
 	/// a model edit, which exercises the slice-reuse (ObjSeqHashMap) refresh path RecordEditView drives
 	/// on record navigation and refresh. Numbers accumulate into the same
 	/// <c>Output/RenderBenchmarks/datatree-timings.json</c> artifact the entry-open baselines use.

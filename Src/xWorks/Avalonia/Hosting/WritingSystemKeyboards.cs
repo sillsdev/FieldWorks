@@ -17,7 +17,7 @@ namespace SIL.FieldWorks.XWorks
 	{
 		/// <summary>
 		/// Activates the writing system's configured keyboard (Keyman/Windows IME) when its editor
-		/// row gains focus on the Avalonia detail view — the behavior legacy slices get from
+		/// row gains focus on the Avalonia detail view -- the behavior legacy slices get from
 		/// <c>EditingHelper.SetKeyboardForWs</c>. Unknown tags fall back to the default keyboard.
 		/// </summary>
 		public static void Activate(LcmCache cache, string wsTag)

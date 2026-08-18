@@ -12,12 +12,15 @@ using SIL.FieldWorks.Common.FwAvalonia.ViewDefinition;
 namespace FwAvaloniaTests
 {
 	/// <summary>
-	/// The shared <see cref="DetailFieldKind"/>→control dispatch both the detail-pane detail view
+	/// The shared <see cref="DetailFieldKind"/>->control dispatch both the detail-pane detail
+	/// view
 	/// and the browse in-cell editor route through. These pin that one switch produces the right control
-	/// per surviving kind (Text / Chooser / ReferenceVector / Literal / Custom / Unsupported), and that
-	/// the all-nullable <see cref="SliceFactoryContext"/> serves both hosts — the browse cell
-	/// passes null menu/link callbacks and suppresses the WS-abbreviation gutter while the detail pane
-	/// passes the full set — without either host hand-rolling its own dispatch.
+	/// per surviving kind (Text / Chooser / ReferenceVector / Literal / Custom / Unsupported),
+	/// and that
+	/// the all-nullable <see cref="SliceFactoryContext"/> serves both hosts -- the browse cell
+	/// passes null menu/link callbacks and suppresses the WS-abbreviation gutter while the detail
+	/// pane
+	/// passes the full set -- without either host hand-rolling its own dispatch.
 	/// </summary>
 	[TestFixture]
 	public class SliceFactoryTests
@@ -51,7 +54,7 @@ namespace FwAvaloniaTests
 			=> Assert.That(SliceFactory.Build(Field(DetailFieldKind.Unsupported), "Auto.Id", null),
 				Is.InstanceOf<TextBlock>());
 
-		// Literal: a static text renderer (legacy MessageSlice) — the label/message text is the
+		// Literal: a static text renderer (legacy MessageSlice) -- the label/message text is the
 		// content, no editable value column.
 		[AvaloniaTest]
 		public void LiteralKind_BuildsStaticTextBlock_ShowingTheLabel()
@@ -84,8 +87,10 @@ namespace FwAvaloniaTests
 		[AvaloniaTest]
 		public void BrowseStyleContext_TextField_SuppressesWritingSystemAbbreviation()
 		{
-			// The dense browse cell context (null callbacks, no abbreviation gutter) must still build a
-			// usable text field — the same control the detail pane gets, just configured for the cell.
+			// The dense browse cell context (null callbacks, no abbreviation gutter) must still
+			// build a
+			// usable text field -- the same control the detail pane gets, just configured for the
+			// cell.
 			var browseContext = new SliceFactoryContext(
 				editContext: null, writingSystemFocused: _ => { }, showWritingSystemAbbreviation: false);
 			Assert.That(SliceFactory.Build(Field(DetailFieldKind.Text), "Auto.Id", browseContext),

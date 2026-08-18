@@ -53,7 +53,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 		public static readonly HashSet<string> HandledChooserLinkAttributes =
 			new HashSet<string>(System.StringComparer.Ordinal) { "type", "label", "tool", "target" };
 
-		// The condition vocabulary the importer parses into ViewCondition — exactly the forms the
+		// The condition vocabulary the importer parses into ViewCondition -- exactly the forms
+		// the
 		// shipped DETAIL layouts use (audited 2026-06-11 over DistFiles .../Parts: boolequals 44,
 		// intequals 9, lengthatleast/-most 8, intmemberof 2, intlessthan 5, guidequals 2, is/target on
 		// where clauses). Publishing-only forms (stringequals, stringaltequals, hvoequals,
@@ -188,8 +189,10 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 					$"Could not resolve part ref '{refName}' for class '{className}'.", stableId));
 
 				// Recover the caller's structural children so an unresolved *section* part (e.g.
-				// LexSense/Normal's HeavySummary, which has no shipped part definition) does not drop
-				// its real fields: <part ref='HeavySummary'><indent><part ref='GlossAllA'/>…</indent></part>.
+				// LexSense/Normal's HeavySummary, which has no shipped part definition) does not
+				// drop
+				// its real fields: <part ref='HeavySummary'><indent><part
+				// ref='GlossAllA'/>...</indent></part>.
 				// Legacy DataTree omits the whole subtree here; recovering the children is strictly
 				// more faithful to what users see and keeps the diagnostic for the audit trail.
 				var recoverable = new List<XElement>();
@@ -201,9 +204,9 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 
 				if (recoverable.Count > 0)
 				{
-					// The recovered children ride a group node that keeps the CALLER's bindings —
-					// HeavySummary's menu="mnuDataTree-Sense"/hotlinks survive here so the composed
-					// per-sense headers can offer the legacy sense menu (Insert Sense etc.).
+					// Recovered children ride a group node that keeps CALLER's bindings --
+					// HeavySummary's menu="mnuDataTree-Sense" hotlinks survive, so composed
+					// per-sense headers offer the legacy sense menu (Insert Sense).
 					var recoveredChildren = new List<ViewNode>();
 					ProcessContainer(recoverable, parts, className, layoutType, stableId, indented,
 						recoveredChildren, diagnostics);
@@ -270,7 +273,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 			var localizationKey = Attr(callerEl, "localizationKey") ?? Attr(contentEl, "localizationKey")
 				?? Attr(callerEl, "labelId") ?? Attr(contentEl, "labelId");
 
-			// Legacy menu bindings — slice menu from the caller (layout part) first, like
+			// Legacy menu bindings -- slice menu from the caller (layout part) first, like
 			// DTMenuHandler.ShowContextMenu2Id; in-string contextMenu lives on the slice content.
 			var menuId = Attr(callerEl, "menu") ?? Attr(contentEl, "menu");
 			var contextMenuId = Attr(contentEl, "contextMenu");
@@ -315,10 +318,9 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 						}
 						else if (child.Name.LocalName == "chooserInfo")
 						{
-							// The chooser jump links import as typed metadata (the legacy
-							// "Edit the … list" links, ReallySimpleListChooser.InitializeExtras);
-							// chooserInfo's other facets (title/text/guicontrol/textparam) are still
-							// reported, not silently dropped.
+							// The chooser jump links import as typed metadata (legacy "Edit
+							// the ... list" links, ReallySimpleListChooser.InitializeExtras);
+							// other chooserInfo facets are still reported, not silently dropped.
 							ImportChooserInfo(child, stableId, chooserLinks, diagnostics);
 						}
 						else if (child.Name.LocalName == "deParams")
@@ -352,7 +354,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 						sliceTargetLayout = Attr(callerEl, "param") ?? Attr(contentEl, "layout");
 
 					// A per-field writing-system visibility override (legacy visibleWritingSystems on a
-					// multistring slice or its persisted partRef property — a space/comma list of ws specs).
+					// multistring slice or its persisted partRef property -- a space/comma list
+					// of ws specs).
 					// Carry the ordered specs onto the node; the composer intersects them with the resolved
 					// ws= set so the field shows exactly that subset. Caller (partRef) wins over content,
 					// matching where the legacy editor persists the user's choice.
@@ -435,10 +438,9 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 						// setter can invoke it the way GhostStringSliceView.MakeRealObject does.
 						ghostInitMethod: Attr(contentEl, "ghostInitMethod") ?? Attr(callerEl, "ghostInitMethod"));
 				}
-				// Conditional display. <if>/<ifnot> wrap content shown only when the condition
-				// passes (fails, for ifnot) — DataTree.ProcessSubpartNode cases "if"/"ifnot" over
-				// XmlVc.ConditionPasses. The condition is preserved as structured metadata; the
-				// composer evaluates it per object.
+				// Conditional display: <if>/<ifnot> shows content only when the condition
+				// passes (fails, for ifnot), evaluated via XmlVc.ConditionPasses. Preserved
+				// as metadata; composer evaluates it per object.
 				case "if":
 				case "ifnot":
 				{
@@ -458,7 +460,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 				}
 
 				// <choice> holds <where> branches (first passing one renders) and an optional
-				// trailing <otherwise> — DataTree.ProcessSubpartNode case "choice".
+				// trailing <otherwise> -- DataTree.ProcessSubpartNode case "choice".
 				case "choice":
 				{
 					var branches = new List<ViewNode>();
@@ -506,7 +508,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 			}
 		}
 
-		// Import a slice's <chooserInfo> — the chooserLink jump links become typed metadata in
+		// Import a slice's <chooserInfo> -- the chooserLink jump links become typed metadata in
 		// document order, mirroring the legacy reader's attribute set exactly
 		// (ReallySimpleListChooser.cs:887-926: type defaults to "goto", label/tool/target verbatim).
 		// chooserInfo's OTHER facets (title/text/textparam/flidTextParam/guicontrol/helpBrowser) are
@@ -577,9 +579,9 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 			return new ViewStringList(idList, Attr(stringListEl, "group"));
 		}
 
-		// A conditional wrapper's children are part content (<slice>/<seq>/<obj>, possibly nested
-		// conditionals) inside part definitions, or <part>/<indent> refs at layout level — exactly the
-		// child kinds DataTree.ProcessPartChildren dispatches.
+		// A conditional wrapper's children are part content (<slice>/<seq>/<obj>)
+		// inside part definitions, or <part>/<indent> refs at layout level,
+		// matching DataTree.ProcessPartChildren's dispatch.
 		private void AddConditionalChildren(
 			XElement container,
 			IPartResolver parts,
@@ -611,9 +613,9 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 			}
 		}
 
-		// Parse an <if>/<ifnot>/<where> element's condition attributes into the typed
-		// ViewCondition, or report conditional-dropped and return null when the element uses a
-		// condition form outside the supported detail-view vocabulary — never half-evaluate.
+		// Parse an <if>/<ifnot>/<where> element's condition attributes into a
+		// typed ViewCondition, or report conditional-dropped and return null for
+		// an unsupported condition form -- never half-evaluate.
 		private static ViewCondition TryParseCondition(
 			XElement el, bool negated, string stableId, List<ViewDiagnostic> diagnostics)
 		{

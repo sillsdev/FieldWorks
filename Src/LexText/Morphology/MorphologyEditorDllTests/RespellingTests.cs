@@ -703,7 +703,6 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 				(int)FwTextToggleVal.kttvForceOn, "bold should be set at start of preview");
 			AssertTextProp(m_para2Occurrences[1], tagPreview, 4, (int)FwTextPropType.ktptBold,
 				-1, "bold should not be set except on changed word");
-			// no longer action responsibility. Assert.That(Cache.GetIntProperty(m_para2Occurrences[1], tagEnabled) != 0, Is.True);
 
 			Assert.That(Cache.GetTsStringProperty(m_para2Occurrences[2], tagPrecedingContext).Text, Is.EqualTo("axx sentencexx ayyy havingxx axx"), "Second occurrence should have more of para 2 with first occurrence corrected");
 			Assert.That(Cache.GetIntProperty(m_para2Occurrences[2], tagAdjustedBegin), Is.EqualTo(ich3rdOcc + 1), "Second occurrence in para has begin adjustment");
@@ -748,7 +747,6 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 				RespellUndoAction.SecondaryTextVal, "after select at start prop should be set on changed occurrence in Preview");
 			AssertTextProp(m_para2Occurrences[1], tagPreview, "ayyy havingxx ".Length - 1, RespellUndoAction.SecondaryTextProp,
 				-1, "after select at start prop should not be set on other text in Preview");
-			// no longer action responsibilty. Assert.That(Cache.GetIntProperty(m_para2Occurrences[1], tagEnabled) != 0, Is.True);
 			Assert.That(Cache.GetIntProperty(m_para2Occurrences[2], tagAdjustedBegin), Is.EqualTo(ich3rdOcc + 2), "After one change occ(2) should have appropriate begin adjustment");
 			Assert.That(Cache.GetIntProperty(m_para2Occurrences[2], tagAdjustedEnd), Is.EqualTo(ich3rdOcc + 2 + 3), "After one change occ(2) should have appropriate end adjustment");
 

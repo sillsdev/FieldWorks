@@ -16,7 +16,7 @@ namespace SIL.FieldWorks.XWorks
 	/// Boundary coverage for the LCModel-backed edit context's write routing and validation: the
 	/// citation-form fallback when there is no lexeme form, the no-sense gloss guard, blank/unknown
 	/// writing-system and field handling (no silent write to a default), whitespace-only validation,
-	/// and commit/cancel idempotency — plus the browse ws-spec normalizer.
+	/// and commit/cancel idempotency -- plus the browse ws-spec normalizer.
 	/// </summary>
 	[TestFixture]
 	public class LexiconFirstSliceEditContextEdgeCaseTests : MemoryOnlyBackendProviderTestBase

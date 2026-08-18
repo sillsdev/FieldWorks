@@ -25,16 +25,21 @@ using XCore;
 namespace SIL.FieldWorks.LexText.Controls
 {
 	/// <summary>
-	/// Launches the Avalonia Tools → Options dialog (the replacement for <see cref="LexOptionsDlg"/>)
+	/// Launches the Avalonia Tools -> Options dialog (the replacement for <see
+	/// cref="LexOptionsDlg"/>)
 	/// and applies the result to the real settings bus. The Avalonia layer (FwAvaloniaDialogs) stays
 	/// LCModel-free by editing an <see cref="LexOptionsDlgState"/> DTO; this product-side launcher populates that
-	/// state from the live settings and, on OK, applies it in roughly <c>LexOptionsDlg</c>'s apply order
-	/// (Privacy → Updates → UI mode → UI language → Plugins → Save → auto-open → restart prompt). It is shown
+	/// state from the live settings and, on OK, applies it in roughly <c>LexOptionsDlg</c>'s
+	/// apply order
+	/// (Privacy -> Updates -> UI mode -> UI language -> Plugins -> Save -> auto-open -> restart
+	/// prompt). It is shown
 	/// only when <c>UIMode == New</c>; Legacy keeps the WinForms dialog.
 	///
-	/// This is a concrete subclass of the generic <see cref="AvaloniaDialogLauncher{TState,TViewModel,TPayload}"/>
+	/// This is a concrete subclass of the generic <see
+	/// cref="AvaloniaDialogLauncher{TState,TViewModel,TPayload}"/>
 	/// dialog-launcher scaffold: it implements the LCModel-aware <c>BuildState</c>/<c>CreateViewModel</c>/
-	/// <c>CreateView</c>/<c>Apply</c> steps; the scaffold owns the build-VM → ShowModal → dispose → return
+	/// <c>CreateView</c>/<c>Apply</c> steps; the scaffold owns the build-VM -> ShowModal ->
+	/// dispose -> return
 	/// loop. The public static <see cref="Show"/> entry point (kept for the existing callers in LexTextApp and
 	/// WelcomeToFieldWorksDlg) constructs an instance and runs it. A second dialog reuses the scaffold rather
 	/// than copying this launch plumbing.
@@ -121,9 +126,9 @@ namespace SIL.FieldWorks.LexText.Controls
 		protected override LexOptionsDlgState BuildState()
 		{
 			var state = BuildState(_cache, _mediator, _settings, _app, _userWs, _pluginDocs);
-			// Per-feature disable set (New mode), carried through the state so OK re-applies whatever is
-			// persisted — parity with LexOptionsDlg.m_pendingUiModeDisabledTools. There is no in-dialog editor
-			// for it; UIFrameworkResolver reads the same setting to gate each tool's framework.
+			// Per-feature disable set (New mode); OK re-applies whatever is
+			// persisted -- parity with LexOptionsDlg.m_pendingUiModeDisabledTools. No
+			// editor; UIFrameworkResolver reads it to gate each tool's framework.
 			state.UIModeDisabledTools = _settings.UIModeDisabledTools ?? string.Empty;
 			return state;
 		}
@@ -251,7 +256,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <summary>
 		/// Loads an <c>ExtensionManager.xml</c> with a non-resolving reader (XmlResolver=null, no DTD
 		/// processing) to avoid XXE, returning null if the file is missing/malformed rather than throwing
-		/// mid-apply. Shared by build and install/uninstall so all plugin XML I/O is guarded the same way.
+		/// mid-apply.
 		/// </summary>
 		internal static XmlDocument LoadPluginManagerDoc(string managerPath)
 		{
@@ -271,7 +276,8 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 			catch (XmlException e)
 			{
-				// Skip rather than crash mid-apply — but leave a breadcrumb so a corrupt manifest (which
+				// Skip rather than crash mid-apply -- but leave a breadcrumb so a corrupt
+				// manifest (which
 				// now silently vanishes from the Options plugin list) is still diagnosable.
 				Logger.WriteEvent($"Skipping plugin manifest '{managerPath}': malformed XML — {e.Message}");
 				return null;
@@ -320,7 +326,8 @@ namespace SIL.FieldWorks.LexText.Controls
 					restartRequired = true;
 			}
 
-			// Lexical Edit UI mode: applied LIVE (no restart) — broadcasting the PropertyTable "UIMode"
+			// Lexical Edit UI mode: applied LIVE (no restart) -- broadcasting the PropertyTable
+			// "UIMode"
 			// property re-resolves the open record-edit views (matches LexOptionsDlg.m_btnOK_Click).
 			// Compared against the PropertyTable's LIVE value (falling back to settings) so a
 			// table/settings disagreement is healed by OK rather than skipped as "no change".
@@ -332,7 +339,8 @@ namespace SIL.FieldWorks.LexText.Controls
 				ApplyUiModeLive(propertyTable, settings, newUiMode);
 
 			// Per-feature disable set (New mode): persist + broadcast so open views re-resolve, mirroring
-			// LexOptionsDlg's m_pendingUiModeDisabledTools apply. Live like the mode itself — no restart.
+			// LexOptionsDlg's m_pendingUiModeDisabledTools apply. Live like the mode itself -- no
+			// restart.
 			var newDisabledTools = state.UIModeDisabledTools ?? string.Empty;
 			if ((settings.UIModeDisabledTools ?? string.Empty) != newDisabledTools)
 			{
@@ -374,9 +382,9 @@ namespace SIL.FieldWorks.LexText.Controls
 				app.RegistrySettings.AutoOpenLastEditedProject = state.AutoOpenLastProject;
 
 			if (restartRequired)
-				// Avalonia message box instead of raw WinForms MessageBox — same OK-only prompt text,
-				// hosted in a WinForms-owned modal window via AvaloniaDialogHost so the confirmation matches
-				// the rest of the New-mode UI.
+				// Avalonia message box instead of raw WinForms MessageBox -- same
+				// OK-only prompt text, hosted in a WinForms-owned modal window via
+				// AvaloniaDialogHost so it matches the rest of the New-mode UI.
 				FwMessageBox.Show(owner, LexTextControls.RestartToForSettingsToTakeEffect_Content,
 					LexTextControls.RestartToForSettingsToTakeEffect_Title, FwMessageBoxButtons.Ok);
 

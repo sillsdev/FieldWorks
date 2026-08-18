@@ -454,7 +454,8 @@ namespace SIL.FieldWorks.Common.RootSites.RenderBenchmark
 		}
 
 		/// <summary>
-		/// Stress: 50 sections, each with a single verse — forces massive paragraph layout overhead.
+		/// Stress: 50 sections, each with a single verse -- forces massive paragraph layout
+		/// overhead.
 		/// </summary>
 		private void CreateManyParagraphsScenario()
 		{
@@ -486,7 +487,7 @@ namespace SIL.FieldWorks.Common.RootSites.RenderBenchmark
 		}
 
 		/// <summary>
-		/// Stress: 4 sections, each with a single paragraph containing 80 verses — very long
+		/// Stress: 4 sections, each with a single paragraph containing 80 verses -- very long
 		/// unbroken paragraph that forces extensive line-breaking and layout computation.
 		/// </summary>
 		private void CreateLongProseScenario()
@@ -915,7 +916,7 @@ namespace SIL.FieldWorks.Common.RootSites.RenderBenchmark
 
 					int idx = (s * versesPerSection + v);
 
-					// Rotate: English → Arabic → French within each verse
+					// Rotate: English -> Arabic -> French within each verse
 					paraBldr.AppendRun(englishProse[idx % englishProse.Length],
 						StyleUtils.CharStyleTextProps(null, m_wsEng));
 					paraBldr.AppendRun(arabicProse[idx % arabicProse.Length], ArabicRunProps());

@@ -42,7 +42,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		///   XPath requires string literals to be quoted; <c>[@id=entries]</c> treats "entries"
 		///   as a node name, not a string value.
 		/// - <c>MakeSafeXmlAttribute</c> adds &amp;quot; / &amp;apos; escaping, but XPath 1.0
-		///   does NOT understand XML entities — <c>&amp;apos;</c> is literal text, not a quote.
+		///   does NOT understand XML entities -- <c>&amp;apos;</c> is literal text, not a quote.
 		/// - This method wraps values in the correct XPath quote style (<c>'...'</c>, <c>"..."</c>,
 		///   or <c>concat()</c> for values containing both).
 		/// </remarks>

@@ -24,7 +24,8 @@ namespace FwAvaloniaTests
 	/// Edge cases for the owned multi-paragraph structured-text (StText) editor
 	/// (<see cref="FwStructuredTextField"/>): an empty StText (zero / one paragraph), the
 	/// only-paragraph-cannot-delete invariant, RTL + complex-script (Khmer) content round-tripping,
-	/// rapid interleaved insert/delete, ORC/lossy interleaving, and clear-style → Normal mapping.
+	/// rapid interleaved insert/delete, ORC/lossy interleaving, and clear-style -> Normal
+	/// mapping.
 	/// These pin the corners the happy-path unit tests don't reach. The view side stays LCModel-free
 	/// (a recording fake context); the matching real-LCModel round-trip assertions live in
 	/// StructuredTextAdapterTests / StructuredTextWorkflowTests.
@@ -108,7 +109,8 @@ namespace FwAvaloniaTests
 			var context = new FakeDetailEditContext();
 			var (control, _) = Show(field, context, gestureCompleted: () => { });
 
-			// Typing into the lone empty row stages a text edit against paragraph index 0 — the seam the
+			// Typing into the lone empty row stages a text edit against paragraph index 0 -- the
+			// seam the
 			// composer's text setter turns into "create paragraphs up to the index" against a null StText.
 			Boxes(control)[0].Text = "first words";
 			Dispatcher.UIThread.RunJobs();
@@ -183,9 +185,10 @@ namespace FwAvaloniaTests
 		[AvaloniaTest]
 		public void RapidInterleavedInsertDelete_DoNotCrashOrOrphanUndo()
 		{
-			// Each structural gesture completes immediately (the gestureCompleted callback the host wires
-			// to its one validation-gated commit + re-show). Interleaving them rapidly must remain
-			// one-completed-gesture-per-action — no missed or doubled completion (which would orphan undo).
+			// Each structural gesture completes via gestureCompleted (its
+			// validation-gated commit + re-show). Interleaving must stay
+			// one-completed-gesture-per-action -- missing or doubled completion
+			// orphans undo.
 			var field = Field(new List<DetailParagraph> { Para("Alpha."), Para("Beta."), Para("Gamma.") });
 			var context = new FakeDetailEditContext();
 			var gestures = 0;
@@ -194,7 +197,8 @@ namespace FwAvaloniaTests
 			Button AddButton(int i) => control.GetVisualDescendants().OfType<Button>()
 				.First(b => AutomationProperties.GetAutomationId(b) == "Discussion.Para." + i + ".Add");
 
-			// Insert after 0, delete 2, insert after 1, delete 1 — fired back to back with no re-show
+			// Insert after 0, delete 2, insert after 1, delete 1 -- fired back to back with no
+			// re-show
 			// between (the snapshot list is unchanged in this headless view; we assert seam traffic).
 			AddButton(0).RaiseEvent(new Avalonia.Interactivity.RoutedEventArgs(Button.ClickEvent));
 			DeleteButton(control, 2).RaiseEvent(new Avalonia.Interactivity.RoutedEventArgs(Button.ClickEvent));
@@ -254,7 +258,8 @@ namespace FwAvaloniaTests
 				"the ORC paragraph surfaces the not-editable-here tooltip");
 			Assert.That(boxes[2].IsReadOnly, Is.False, "tail paragraph editable");
 
-			// Edit both editable paragraphs — each stages against its own index; the ORC one never stages.
+			// Edit both editable paragraphs -- each stages against its own index; the ORC one
+			// never stages.
 			boxes[0].Text = "Editable head, changed.";
 			boxes[2].Text = "Editable tail, changed.";
 			Dispatcher.UIThread.RunJobs();
@@ -268,7 +273,8 @@ namespace FwAvaloniaTests
 		[AvaloniaTest]
 		public void ClearStyle_PicksDefaultEntry_StagesNullStyle()
 		{
-			// The picker leads with a "Default" entry (index 0) that CLEARS the style — staging a null
+			// The picker leads with a "Default" entry (index 0) that CLEARS the style -- staging
+			// a null
 			// style name. The composer's setter maps that null to StyleServices.NormalStyleName (asserted
 			// in StructuredTextAdapterTests.ParagraphStyle_AppliedAndCleared_OneUndoStep); here we pin that
 			// the view stages the CLEAR (null) when Default is chosen on a currently-styled paragraph.

@@ -26,7 +26,7 @@
     {
       "name": "microsoft/visualstudio",
       "description": "Visual Studio IDE and development tools documentation",
-      "reason": "FieldWorks uses Visual Studio 2022 for development. Useful for IDE configuration and debugging.",
+      "reason": "FieldWorks uses Visual Studio 2026 or 2022 for development. Useful for IDE configuration and debugging.",
       "autoApprove": true
     },
     {
