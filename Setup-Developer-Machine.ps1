@@ -210,32 +210,36 @@ if ($InstallerDeps) {
 	} elseif (Test-Path $lcmTarget) {
 		$env:LcmRootDir = $lcmTarget
 		Write-Host "[OK] Localizations/LCMRepo already exists" -ForegroundColor Green
-	} elseif ((Test-Path $localizationsPath)) {
-		if ($isWorktree) {
-			$sharedLcm = Join-Path $repoRoot "liblcm"
-			if ((Test-Path $sharedLcm)) {
-				$env:LcmRootDir = $sharedLcm
-				Write-Host "[OK] liblcm already exists at $sharedLcm" -ForegroundColor Green
-			} else {
-				if ($PSCmdlet.ShouldProcess($sharedLcm, "Clone to $sharedLcm")) {
-					Write-Host "Cloning liblcm to shared location..." -ForegroundColor Cyan
-					git clone https://github.com/sillsdev/liblcm.git $sharedLcm 2>&1 | Out-Null
-					if ($LASTEXITCODE -eq 0) {
-						$env:LcmRootDir = $sharedLcm
-						Write-Host "[OK] Cloned liblcm to $sharedLcm" -ForegroundColor Green
-					}
-				}
-			}
+	} elseif ($isWorktree) {
+		$sharedLcm = Join-Path $repoRoot "liblcm"
+		if ((Test-Path $sharedLcm)) {
+			$env:LcmRootDir = $sharedLcm
+			Write-Host "[OK] liblcm already exists at $sharedLcm" -ForegroundColor Green
 		} else {
-			if ($PSCmdlet.ShouldProcess("liblcm", "Clone to $lcmTarget")) {
-				Write-Host "Cloning liblcm..." -ForegroundColor Cyan
-				git clone https://github.com/sillsdev/liblcm.git $lcmTarget 2>&1 | Out-Null
+			if ($PSCmdlet.ShouldProcess("liblcm", "Clone to $sharedLcm")) {
+				Write-Host "Cloning liblcm to shared location..." -ForegroundColor Cyan
+				git clone https://github.com/sillsdev/liblcm.git $sharedLcm 2>&1 | Out-Null
 				if ($LASTEXITCODE -eq 0) {
-					$env:LcmRootDir = $lcmTarget
-					Write-Host "[OK] Cloned liblcm to $lcmTarget" -ForegroundColor Green
+					$env:LcmRootDir = $sharedLcm
+					Write-Host "[OK] Cloned liblcm to $sharedLcm" -ForegroundColor Green
+				} else {
+					Write-Host "[ERROR] Failed to clone liblcm" -ForegroundColor Red
 				}
 			}
 		}
+	} elseif ((Test-Path $localizationsPath)) {
+		if ($PSCmdlet.ShouldProcess("LCMRepo", "Clone to $lcmTarget")) {
+			Write-Host "Cloning liblcm..." -ForegroundColor Cyan
+			git clone https://github.com/sillsdev/liblcm.git $lcmTarget 2>&1 | Out-Null
+			if ($LASTEXITCODE -eq 0) {
+				$env:LcmRootDir = $lcmTarget
+				Write-Host "[OK] Cloned liblcm to $lcmTarget" -ForegroundColor Green
+			} else {
+				Write-Host "[ERROR] Failed to clone liblcm" -ForegroundColor Red
+			}
+		}
+	} else {
+		Write-Host "[ERROR] Failed to clone liblcm because Localizations does not exist" -ForegroundColor Red
 	}
 }
 
@@ -286,7 +290,8 @@ $env:PATH = [Environment]::GetEnvironmentVariable('PATH', 'Machine') + ';' + [En
 
 Write-Host "`n--- Configuring Environment Variables ---" -ForegroundColor Yellow
 
-if ($PSCmdlet.ShouldProcess('LcmRootDir', 'Set LcmRootDir')) {
+if ($env:LcmRootDir -and (Test-Path $env:LcmRootDir) -and
+		$PSCmdlet.ShouldProcess('LcmRootDir', 'Set LcmRootDir for the current user')) {
 	[Environment]::SetEnvironmentVariable('LcmRootDir', $env:LcmRootDir, 'User')
 }
 

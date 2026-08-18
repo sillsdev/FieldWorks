@@ -174,24 +174,39 @@ if ($toolchain) {
 Write-Host "`n--- Checking Helper Repositories ---" -ForegroundColor Yellow
 
 $helperRepos = @(
-	@{ Name = "FwHelps"; Path = "DistFiles/Helps"; Required = $true },
-	@{ Name = "FwLocalizations"; Path = "Localizations"; Required = $true },
-	@{ Name = "liblcm"; Path = "Localizations/LCMRepo"; Required = $true }
+	@{ Name = "FwHelps"; Path = "DistFiles/Helps" },
+	@{ Name = "FwLocalizations"; Path = "Localizations" },
+	@{ Name = "liblcm"; Path = "Localizations/LCMRepo" }
 )
 
 $missingRepos = @()
 foreach ($repo in $helperRepos) {
-	$fullPath = Join-Path $repoRoot $repo.Path
+	if ($repo.Name -eq 'liblcm') {
+		if (-not $env:LcmRootDir) {
+			Write-Host '[MISSING] environment variable $LcmRootDir' -ForegroundColor Red
+			$missingRepos += $repo
+			$issues += "Missing helper repository: $($repo.Name) (expected at LcmRootDir, which is not set)"
+			continue
+		}
+		$fullPath = $env:LcmRootDir
+		$displayPath = $fullPath
+	} else {
+		$fullPath = Join-Path $repoRoot $repo.Path
+		$displayPath = $repo.Path
+	}
+
 	$gitPath = Join-Path $fullPath ".git"
 	$isJunction = (Test-Path $fullPath) -and ((Get-Item $fullPath -Force -ErrorAction SilentlyContinue).Attributes -band [IO.FileAttributes]::ReparsePoint)
 
 	if ((Test-Path $gitPath) -or $isJunction) {
 		$status = if ($isJunction) { "junction" } else { "git repo" }
-		Write-Host "[OK] $($repo.Name): $($repo.Path) ($status)" -ForegroundColor Green
+		Write-Host "[OK] $($repo.Name): $displayPath ($status)" -ForegroundColor Green
 	} else {
-		Write-Host "[MISSING] $($repo.Name): $($repo.Path)" -ForegroundColor Red
+		Write-Host "[MISSING] $($repo.Name): $displayPath" -ForegroundColor Red
 		$missingRepos += $repo
-		if ($repo.Required) {
+		if ($repo.Name -eq 'liblcm') {
+			$issues += "Missing helper repository: $($repo.Name) (expected at LcmRootDir=$env:LcmRootDir)"
+		} else {
 			$issues += "Missing helper repository: $($repo.Name)"
 		}
 	}
