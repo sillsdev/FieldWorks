@@ -290,7 +290,7 @@ $env:PATH = [Environment]::GetEnvironmentVariable('PATH', 'Machine') + ';' + [En
 
 Write-Host "`n--- Configuring Environment Variables ---" -ForegroundColor Yellow
 
-if ($env:LcmRootDir -and (Test-Path $env:LcmRootDir) -and
+if ($env:LcmRootDir -and (Test-Path Join-Path $env:LcmRootDir ".git") -and
 		$PSCmdlet.ShouldProcess('LcmRootDir', 'Set LcmRootDir for the current user')) {
 	[Environment]::SetEnvironmentVariable('LcmRootDir', $env:LcmRootDir, 'User')
 }
