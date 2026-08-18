@@ -393,6 +393,10 @@ namespace SIL.FieldWorks.XWorks
 					m_detailEditContext.Clear();
 					EnsureAvaloniaEntryFormActive();
 					m_avaloniaEntryForm.Clear();
+					// Adapter hygiene: drop slices over a possibly deleted record,
+					// or menu-enablement polls touch a deleted object.
+					if (m_dataTreeInitialized && m_dataEntryForm != null)
+						m_dataEntryForm.Reset();
 				}
 				else
 				{
@@ -511,6 +515,10 @@ namespace SIL.FieldWorks.XWorks
 		private void EnsureDataTreeVisible()
 		{
 			SyncActiveHostContract();
+
+			// A New-to-Legacy flip reuses the adapter tree; the visible legacy tree must
+			// not keep the adapter's widened message targeting.
+			m_dataEntryForm.IsExternalCommandAdapter = false;
 
 			AttachDataTreeToPanel();
 			m_avaloniaEntryForm?.Hide();
