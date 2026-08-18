@@ -50,7 +50,7 @@ cd fieldworks
 # Clone required helper repositories
 git clone https://github.com/sillsdev/FwHelps.git DistFiles/Helps
 git clone https://github.com/sillsdev/FwLocalizations.git Localizations
-git clone https://github.com/sillsdev/liblcm.git Localizations/LCM
+git clone https://github.com/sillsdev/liblcm.git Localizations/LCMRepo
 ```
 
 ## Building a Base Installer
@@ -129,12 +129,13 @@ The automated build process is defined in two GitHub Actions workflows:
 ### Patch Installer Workflow (`.github/workflows/patch-installer-cd.yml`)
 
 **Triggers:**
-- Push to `release/9.3` branch
+- Push to certain branches
 - Scheduled: Every Monday at 03:30 UTC
 - Manual: `workflow_dispatch` with parameters
 
 **Key Steps:**
 1. Checkout repos (same as base installer)
+1. Upload updated strings for translation
 2. Download base build artifacts from GitHub Release
 3. Set registry key for WiX temp file handling
 4. Build patch using `msbuild Build/InstallerBuild.proj /t:BuildPatchInstaller`

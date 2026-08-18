@@ -49,12 +49,12 @@ permissions:
   contents: write
 
 jobs:
-  debug_build_and_test:
+  build_and_test:
     env:
       CROWDIN_API_KEY: ${{ secrets.FLEX_CROWDIN_API }}
-      LcmRootDir: ${{ github.workspace }}/Localizations/LCM
+      LcmRootDir: ${{ github.workspace }}/Localizations/LCMRepo
       FILESTOSIGNLATER: ./signExternally
-    name: Build Debug and run Tests
+    name: Build installer and run tests
     runs-on: windows-2022
     steps:
       - name: Compute build number
@@ -104,9 +104,9 @@ jobs:
         id: liblcm-checkout
         with:
           repository: 'sillsdev/liblcm'
-          ref: ${{ github.event.inputs.installer_ref || 'master' }}
+          ref: ${{ github.event.inputs.lcm_ref || 'master' }}
           fetch-depth: 0
-          path: 'Localizations/LCM'
+          path: 'Localizations/LCMRepo'
 
       - name: Ensure .NET Framework 4.8 targeting pack
         shell: pwsh
