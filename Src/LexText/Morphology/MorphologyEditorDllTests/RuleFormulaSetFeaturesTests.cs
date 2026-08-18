@@ -23,7 +23,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		/// Resolves the selection to a fixed object, the extension point concrete rule controls
 		/// implement, so the classification runs without a laid-out Views root box.
 		/// </summary>
-		private sealed class StubRuleFormulaControl : RuleFormulaControl
+		private sealed class TestRuleFormulaControl : RuleFormulaControl
 		{
 			internal ICmObject ObjectUnderCursor { get; set; }
 
@@ -33,13 +33,13 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			}
 		}
 
-		private StubRuleFormulaControl m_ruleFormulaControl;
+		private TestRuleFormulaControl m_ruleFormulaControl;
 		private RuleFormulaSlice m_slice;
 
 		public override void TestSetup()
 		{
 			base.TestSetup();
-			m_ruleFormulaControl = new StubRuleFormulaControl();
+			m_ruleFormulaControl = new TestRuleFormulaControl();
 			m_slice = new RuleFormulaSlice { Control = m_ruleFormulaControl };
 		}
 
