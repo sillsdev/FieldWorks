@@ -24,8 +24,7 @@
 .PARAMETER Advisory
 	Report violations and exit 0 instead of failing. Under GitHub Actions each
 	violation is also emitted as a warning annotation, so it lands on the pull
-	request's diff without breaking the build. build.ps1 and test.ps1 pass this
-	whenever -CommentHygiene was not requested.
+	request's diff without breaking the build.
 
 .PARAMETER ReportPath
 	Write the scan result to this path as JSON: the base ref, the advisory
@@ -230,22 +229,6 @@ if ($Full) {
 	foreach ($v in $violations) { Write-Violation $v }
 	Write-ScanReport -Violations $violations -Base 'HEAD'
 	exit 0
-}
-
-# Several steps invoke this script over one tree, which would annotate every violation
-# once per step. The first run marks the job, and presetting the marker suppresses
-# reporting for a whole job.
-if ($env:GITHUB_ACTIONS -eq 'true') {
-	if ($env:FW_COMMENT_HYGIENE_REPORTED -eq '1') {
-		Write-Host 'comment-hygiene: reporting suppressed for this job.'
-		exit 0
-	}
-	if (-not [string]::IsNullOrWhiteSpace($env:GITHUB_ENV)) {
-		# UTF8Encoding($false): appending a BOM mid-file would corrupt the
-		# environment file the runner parses when the step ends.
-		[System.IO.File]::AppendAllText($env:GITHUB_ENV, "FW_COMMENT_HYGIENE_REPORTED=1`n",
-			(New-Object System.Text.UTF8Encoding($false)))
-	}
 }
 
 $base = Resolve-BaseRef -Explicit $BaseRef

@@ -209,13 +209,10 @@ if (-not $runningOnWindows) {
 	exit 1
 }
 
-# Comment hygiene is opt-in: with -CommentHygiene it blocks the build, in CI it
-# only annotates the pull request, and an ordinary developer build is silent.
-$commentHygieneInCI = ($env:GITHUB_ACTIONS -eq 'true') -or ($env:CI -eq 'true')
-if ($CommentHygiene -or $commentHygieneInCI) {
+if ($CommentHygiene) {
 	$commentHygienePath = Join-Path $PSScriptRoot "Build/Agent/comment-hygiene.ps1"
-	& $commentHygienePath -Advisory:(-not $CommentHygiene)
-	if ($CommentHygiene -and $LASTEXITCODE -ne 0) {
+	& $commentHygienePath
+	if ($LASTEXITCODE -ne 0) {
 		exit $LASTEXITCODE
 	}
 }

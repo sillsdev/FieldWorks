@@ -19,14 +19,6 @@ jobs:
   debug_build_and_test:
     name: Build Debug and run tests
     runs-on: windows-2022
-    env:
-      # CommentHygiene.yml owns comment-hygiene reporting, so the build and test steps
-      # below stay quiet rather than annotating every violation a second time. Clearing
-      # this makes comment-hygiene.ps1 diff against origin/<default-branch> again, which
-      # needs fetch-depth: 0 on the checkout below or it fails with "bad revision". Set
-      # unconditionally: a job-level value overrides one a step writes to GITHUB_ENV, so
-      # anything conditional here would also clobber that in-job marker.
-      FW_COMMENT_HYGIENE_REPORTED: 1
     steps:
       - name: Checkout Files
         uses: actions/checkout@v7
