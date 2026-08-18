@@ -205,7 +205,7 @@ if ($InstallerDeps) {
 	# Special case: liblcm is found via the LcmRootDir environment variable
 	$localizationsPath = Join-Path $scriptDir "Localizations"
 	$lcmTarget = Join-Path $localizationsPath "LCMRepo"
-	if ($env:LcmRootDir -and (Test-Path $env:LcmRootDir)) {
+	if ($env:LcmRootDir -and (Test-Path Join-Path $env:LcmRootDir ".git")) {
 		Write-Host "[OK] liblcm already exists at $env:LcmRootDir" -ForegroundColor Green
 	} elseif (Test-Path $lcmTarget) {
 		$env:LcmRootDir = $lcmTarget

@@ -181,13 +181,7 @@ $helperRepos = @(
 
 $missingRepos = @()
 foreach ($repo in $helperRepos) {
-	if ($repo.Name -eq 'liblcm') {
-		if (-not $env:LcmRootDir) {
-			Write-Host '[MISSING] environment variable $LcmRootDir' -ForegroundColor Red
-			$missingRepos += $repo
-			$issues += "Missing helper repository: $($repo.Name) (expected at LcmRootDir, which is not set)"
-			continue
-		}
+	if ($repo.Name -eq 'liblcm' -and $env:LcmRootDir) {
 		$fullPath = $env:LcmRootDir
 		$displayPath = $fullPath
 	} else {
