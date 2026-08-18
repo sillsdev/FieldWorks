@@ -4,15 +4,10 @@
 ## CI-ready checklist
 
 - [ ] Commit messages follow `.github/commit-guidelines.md` (subject ≤ 72 chars, no trailing punctuation; if body present, blank line then ≤ 80-char lines).
-- [ ] No whitespace warnings locally:
-  ```powershell
-  git fetch origin
-  git log --check --pretty=format:"---% h% s" origin/<base>..
-  git diff --check --cached
-  ```
 - [ ] Builds/tests pass locally (or I've run the CI-style build via `build.ps1`/`test.ps1` or MSBuild).
 - [ ] If this is core-developer AI-assisted work, I followed `Docs/workflows/ai-pr-workflow.md` and ran `pr-preflight` or the equivalent branch-readiness review before requesting review.
 - [ ] For any `Src/**` folders touched, corresponding `AGENTS.md` files are updated or explicitly confirmed still accurate.
+- [ ] All comments from an AI code reviewer have been considered (such as Devin: https://app.devin.ai/review/sillsdev/FieldWorks/pull/####)
 
 ## Notes for reviewers (optional)
 <!-- Risks, roll-out, docs/tests touched, special validation steps, etc. -->
