@@ -176,6 +176,7 @@ Write-Host "`n--- Checking Helper Repositories ---" -ForegroundColor Yellow
 $helperRepos = @(
 	@{ Name = "FwHelps"; Path = "DistFiles/Helps" },
 	@{ Name = "FwLocalizations"; Path = "Localizations" },
+	@{ Name = "genericinstaller"; Path = "PatchableInstaller" },
 	@{ Name = "liblcm"; Path = "Localizations/LCMRepo" }
 )
 
@@ -198,7 +199,7 @@ foreach ($repo in $helperRepos) {
 	} else {
 		Write-Host "[MISSING] $($repo.Name): $displayPath" -ForegroundColor Red
 		$missingRepos += $repo
-		if ($repo.Name -eq 'liblcm') {
+		if ($repo.Name -eq 'liblcm' -and $env:LcmRootDir) {
 			$issues += "Missing helper repository: $($repo.Name) (expected at LcmRootDir=$env:LcmRootDir)"
 		} else {
 			$issues += "Missing helper repository: $($repo.Name)"

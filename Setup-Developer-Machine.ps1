@@ -205,7 +205,7 @@ if ($InstallerDeps) {
 	# Special case: liblcm is found via the LcmRootDir environment variable
 	$localizationsPath = Join-Path $scriptDir "Localizations"
 	$lcmTarget = Join-Path $localizationsPath "LCMRepo"
-	if ($env:LcmRootDir -and (Test-Path Join-Path $env:LcmRootDir ".git")) {
+	if ($env:LcmRootDir -and (Test-Path (Join-Path $env:LcmRootDir ".git"))) {
 		Write-Host "[OK] liblcm already exists at $env:LcmRootDir" -ForegroundColor Green
 	} elseif (Test-Path $lcmTarget) {
 		$env:LcmRootDir = $lcmTarget
@@ -290,7 +290,7 @@ $env:PATH = [Environment]::GetEnvironmentVariable('PATH', 'Machine') + ';' + [En
 
 Write-Host "`n--- Configuring Environment Variables ---" -ForegroundColor Yellow
 
-if ($env:LcmRootDir -and (Test-Path Join-Path $env:LcmRootDir ".git") -and
+if ($env:LcmRootDir -and (Test-Path (Join-Path $env:LcmRootDir ".git")) -and
 		$PSCmdlet.ShouldProcess('LcmRootDir', 'Set LcmRootDir for the current user')) {
 	[Environment]::SetEnvironmentVariable('LcmRootDir', $env:LcmRootDir, 'User')
 }
