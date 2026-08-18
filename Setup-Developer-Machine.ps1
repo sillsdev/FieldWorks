@@ -202,7 +202,7 @@ if ($InstallerDeps) {
 		}
 	}
 
-	# Special case: liblcm goes inside Localizations
+	# Special case: liblcm is found via the LcmRootDir environment variable
 	$localizationsPath = Join-Path $scriptDir "Localizations"
 	$lcmTarget = Join-Path $localizationsPath "LCMRepo"
 	if ($env:LcmRootDir -and (Test-Path $env:LcmRootDir)) {
@@ -283,24 +283,17 @@ Write-Host "`n--- Verification ---" -ForegroundColor Yellow
 # Refresh PATH for this session
 $env:PATH = [Environment]::GetEnvironmentVariable('PATH', 'Machine') + ';' + [Environment]::GetEnvironmentVariable('PATH', 'User')
 
-$allGood = $true
-
-# WiX (v6) is acquired via NuGet restore; no PATH verification needed.
-Write-Host "[OK] WiX v6: acquired via NuGet restore during build" -ForegroundColor Green
-
 #endregion
 
 Write-Host "`n========================================" -ForegroundColor Cyan
-if ($allGood) {
-	Write-Host " Setup Complete!" -ForegroundColor Green
-} else {
-	Write-Host " Setup Complete (restart terminal for PATH changes)" -ForegroundColor Yellow
-}
+Write-Host " Setup Complete!" -ForegroundColor Green
 Write-Host "========================================" -ForegroundColor Cyan
 Write-Host ""
 Write-Host "Next steps:" -ForegroundColor White
-Write-Host "  1. Restart VS Code (or your terminal) for PATH changes to take effect"
+Write-Host "  1. Restart your IDE and your terminal (not necessary for this terminal) for PATH and environment changes to take effect"
 Write-Host "  2. Build: .\build.ps1"
 Write-Host ""
-Write-Host "Before building installers, run: .\Setup-Developer-Machine.ps1 -InstallerDeps" -ForegroundColor Gray
+if (-not $InstallerDeps) {
+	Write-Host "Before building installers, run: .\Setup-Developer-Machine.ps1 -InstallerDeps" -ForegroundColor Gray
+}
 Write-Host "For Serena MCP support, see Docs/mcp.md" -ForegroundColor Gray
