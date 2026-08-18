@@ -199,10 +199,10 @@ foreach ($repo in $helperRepos) {
 	} else {
 		Write-Host "[MISSING] $($repo.Name): $displayPath" -ForegroundColor Red
 		$missingRepos += $repo
-		if ($repo.Name -eq 'liblcm' -and $env:LcmRootDir) {
-			$issues += "Missing helper repository: $($repo.Name) (expected at LcmRootDir=$env:LcmRootDir)"
+		if ($repo.Name -eq 'liblcm') {
+			$issues += "Missing helper repository: $($repo.Name) (expected at LcmRootDir='$env:LcmRootDir' or $($repo.Path))"
 		} else {
-			$issues += "Missing helper repository: $($repo.Name)"
+			$issues += "Missing helper repository: $($repo.Name) (expected at $($repo.Path))"
 		}
 	}
 }
