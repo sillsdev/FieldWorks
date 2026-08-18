@@ -37,9 +37,8 @@
 	Equivalent environment variable: FW_TEST_ALLOW_ASSERT_DIALOGS=1.
 
 .PARAMETER CommentHygiene
-	Enforce the comment-hygiene gate, failing the run on any violation in the lines this
-	branch adds. Required of coding agents; a developer run leaves it off and never runs
-	the gate.
+	Enforce the comment-hygiene check, failing the run on any violation in the lines this
+	branch adds.
 
 .PARAMETER StartedBy
 	Optional actor label written to worktree lock metadata (for example: user or agent).
@@ -112,13 +111,10 @@ param(
 
 $ErrorActionPreference = 'Stop'
 
-# Comment hygiene is opt-in: with -CommentHygiene it blocks the run, in CI it
-# only annotates the pull request, and an ordinary developer run is silent.
-$commentHygieneInCI = ($env:GITHUB_ACTIONS -eq 'true') -or ($env:CI -eq 'true')
-if ($CommentHygiene -or $commentHygieneInCI) {
+if ($CommentHygiene) {
 	$commentHygienePath = Join-Path $PSScriptRoot "Build/Agent/comment-hygiene.ps1"
-	& $commentHygienePath -Advisory:(-not $CommentHygiene)
-	if ($CommentHygiene -and $LASTEXITCODE -ne 0) {
+	& $commentHygienePath
+	if ($LASTEXITCODE -ne 0) {
 		exit $LASTEXITCODE
 	}
 }

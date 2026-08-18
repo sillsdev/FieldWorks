@@ -1,0 +1,69 @@
+name: Comment hygiene check
+on:
+  pull_request:
+
+permissions:
+  contents: read
+  # pull-requests: write lets the sticky-comment steps post and clear the
+  # comment-hygiene comment on the PR.
+  pull-requests: write
+
+# Avoid unnecessary runs
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # Separate from the build so the report lands on the pull request in about a
+  # minute instead of waiting on Debug plus tests, and still arrives when the
+  # build fails or is superseded.
+  comment_hygiene:
+    name: Report comment hygiene
+    runs-on: windows-2022
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+        with:
+          # comment-hygiene.ps1 diffs against origin/<base branch>; a shallow,
+          # single-branch checkout leaves that ref unresolvable.
+          fetch-depth: 0
+
+      # Windows PowerShell 5.1 on windows-2022: the engine and platform the
+      # comment-hygiene scripts are exercised under everywhere else in CI.
+      - name: Scan the lines this pull request adds
+        shell: powershell
+        continue-on-error: true
+        run: |
+          .\Build\Agent\comment-hygiene.ps1 -Advisory -ReportPath .\Output\CommentHygiene\report.json
+
+      - name: Compose the pull request comment
+        id: comment
+        shell: powershell
+        continue-on-error: true
+        env:
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          .\Build\Agent\Build-CommentHygieneComment.ps1 -ReportPath .\Output\CommentHygiene\report.json
+
+      # Advisory to the end: a comment this workflow cannot post -- a pull request
+      # from a fork gets a read-only token -- must not read as a failed check.
+      - name: Post the comment-hygiene summary
+        if: ${{ steps.comment.outputs.has_violations == 'true' }}
+        continue-on-error: true
+        uses: marocchino/sticky-pull-request-comment@0ea0beb66eb9baf113663a64ec522f60e49231c0 # v3.0.4
+        with:
+          header: fieldworks-comment-hygiene
+          path: ${{ steps.comment.outputs.comment_path }}
+          skip_unchanged: true
+
+      # only_update: a clean pull request has nothing to say, so this replaces an
+      # earlier summary where one exists and posts nothing where none does.
+      - name: Clear the comment-hygiene summary
+        if: ${{ steps.comment.outputs.has_violations == 'false' }}
+        continue-on-error: true
+        uses: marocchino/sticky-pull-request-comment@0ea0beb66eb9baf113663a64ec522f60e49231c0 # v3.0.4
+        with:
+          header: fieldworks-comment-hygiene
+          only_update: true
+          path: ${{ steps.comment.outputs.comment_path }}
+          skip_unchanged: true

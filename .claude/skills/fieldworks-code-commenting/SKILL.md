@@ -22,6 +22,12 @@ A C-style `/* */` block comment is not scanned -- only whole-line
 rules (accuracy, WHAT-not-HOW, standalone clarity) are not mechanically
 checked and still apply while authoring.
 
+In CI a violation fails nothing. Each one lands as a warning annotation on
+the diff, and the whole set as a single pull request comment that updates
+in place on every push. `build.ps1 -CommentHygiene` and
+`test.ps1 -CommentHygiene` are what make the same violations blocking, and
+an agent passes one of them on every run.
+
 ## The standard
 
 1. **Accuracy first, then brevity.** A wrong comment is worse than none.
@@ -115,9 +121,9 @@ Place above the nesting level the code spans.
 
 **Line width is separate, and applies to every comment line**, doc comments
 included: no comment line may exceed `.editorconfig`'s `max_line_length`
-(98 columns today), counting a tab as `tab_width` columns. The gate reads
-those two values from `.editorconfig` itself, so the limit can never drift
-from the one the rest of the repo follows. Enforced as
+(98 columns today), counting a tab as `tab_width` columns.
+`comment-hygiene` reads those two values from `.editorconfig` itself, so the
+limit can never drift from the one the rest of the repo follows. Enforced as
 `comment-line-too-long`; a local run re-wraps the line for you, CI only
 reports it.
 
@@ -125,12 +131,11 @@ reports it.
 introducing a region whose decision-point count reaches 10 (McCabe
 complexity 11 -- the classic "high" threshold) gets the larger budget
 automatically, because a reader there needs the invariants spelled out and
-200 characters buys about two sentences. Nothing opts in by hand: the gate
-measures the code the comment introduces, stopping at the end of the
-enclosing block or 40 lines. This fires on roughly 2% of the comments
-already over 200 characters, and is meant to stay that rare -- if a comment
-in ordinary straight-line code will not fit, shorten it rather than looking
-for a way to qualify.
+200 characters buys about two sentences. `comment-hygiene` measures the code
+the comment introduces, stopping at the end of the enclosing block or 40
+lines. This fires on roughly 2% of the comments already over 200 characters,
+and is meant to stay that rare -- if a comment in ordinary straight-line code
+will not fit, shorten it rather than looking for a way to qualify.
 
 **Exemptions from the length cap:** a C#/C/C++/IDL `///` doc comment; a
 PowerShell comment-based help block (`<# ... #>`); and, in a project file or

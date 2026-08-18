@@ -23,11 +23,6 @@ jobs:
       - name: Checkout Files
         uses: actions/checkout@v7
         id: checkout
-        with:
-          # comment-hygiene.ps1 diffs against origin/<default-branch>; a
-          # shallow, single-branch checkout leaves that ref unresolvable
-          # and the gate fails every build with "bad revision".
-          fetch-depth: 0
 
       # Real-runtime check: this repo is authored on PowerShell 7 but
       # build.ps1/test.ps1 run under Windows PowerShell 5.1 below. A script
@@ -42,12 +37,16 @@ jobs:
         run: |
           Build/Agent/CommentHygiene.Tests.ps1
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          Build/Agent/Test-BuildCommentHygieneComment.ps1
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
       - name: Comment hygiene fixture tests (Windows PowerShell 5.1)
         id: comment-hygiene-tests-winps
         shell: powershell
         run: |
           Build\Agent\CommentHygiene.Tests.ps1
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          Build\Agent\Test-BuildCommentHygieneComment.ps1
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
       - name: Build with tests
