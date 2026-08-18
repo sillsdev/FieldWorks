@@ -206,14 +206,17 @@ if ($InstallerDeps) {
 	$localizationsPath = Join-Path $scriptDir "Localizations"
 	$lcmTarget = Join-Path $localizationsPath "LCMRepo"
 	if ($env:LcmRootDir -and (Test-Path $env:LcmRootDir)) {
-		Write-Host "[OK] LCMRepo already exists at $env:LcmRootDir" -ForegroundColor Green
+		Write-Host "[OK] liblcm already exists at $env:LcmRootDir" -ForegroundColor Green
 	} elseif (Test-Path $lcmTarget) {
 		$env:LcmRootDir = $lcmTarget
 		Write-Host "[OK] Localizations/LCMRepo already exists" -ForegroundColor Green
 	} elseif ((Test-Path $localizationsPath)) {
 		if ($isWorktree) {
 			$sharedLcm = Join-Path $repoRoot "liblcm"
-			if (-not (Test-Path $sharedLcm)) {
+			if ((Test-Path $sharedLcm)) {
+				$env:LcmRootDir = $sharedLcm
+				Write-Host "[OK] liblcm already exists at $sharedLcm" -ForegroundColor Green
+			} else {
 				if ($PSCmdlet.ShouldProcess($sharedLcm, "Clone to $sharedLcm")) {
 					Write-Host "Cloning liblcm to shared location..." -ForegroundColor Cyan
 					git clone https://github.com/sillsdev/liblcm.git $sharedLcm 2>&1 | Out-Null
@@ -272,6 +275,19 @@ if ($PSCmdlet.ShouldProcess("$pathScope PATH", "Save changes")) {
 	[Environment]::SetEnvironmentVariable('PATH', $currentPath, $pathScope)
 	# Also update current session
 	$env:PATH = "$env:PATH;$($pathsToAdd -join ';')"
+}
+
+#endregion
+
+#region Environment Variables
+
+Write-Host "`n--- Configuring Environment Variables ---" -ForegroundColor Yellow
+
+if ($PSCmdlet.ShouldProcess('LcmRootDir', 'Set LcmRootDir')) {
+	[Environment]::SetEnvironmentVariable('LcmRootDir', $env:LcmRootDir, 'User')
+}
+if ($PSCmdlet.ShouldProcess('FEEDBACK', 'Turn off production analytics for SIL software')) {
+	[Environment]::SetEnvironmentVariable('FEEDBACK', 'off', $pathScope)
 }
 
 #endregion
