@@ -5319,6 +5319,45 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
+		public void GenerateLetterHeaderIfNeeded_ShoeboxSortRules_GeneratesHeadingWithBothCases()
+		{
+			var ws = Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
+			var originalCollation = ws.DefaultCollation;
+			// Shoebox simple rules name the uppercase form first, so it is the uppercase
+			// form that reaches the heading builder as the primary character. LT-22651
+			ws.DefaultCollation = new SimpleRulesCollationDefinition("standard")
+			{
+				SimpleRules = "A a" + Environment.NewLine + "B b" + Environment.NewLine + "Ch ch"
+			};
+			try
+			{
+				var plainEntry = CreateInterestingLexEntry(Cache, "air");
+				var digraphEntry = CreateInterestingLexEntry(Cache, "chico");
+				using (var col = new CollatorForTest(ws.Id))
+				using (var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
+				{
+					// SUT
+					string last = null;
+					XHTMLWriter.WriteStartElement("TestElement");
+					LcmXhtmlGenerator.GenerateLetterHeaderIfNeeded(plainEntry, ref last, XHTMLWriter, col, DefaultSettings, m_Clerk);
+					LcmXhtmlGenerator.GenerateLetterHeaderIfNeeded(digraphEntry, ref last, XHTMLWriter, col, DefaultSettings, m_Clerk);
+					XHTMLWriter.WriteEndElement();
+					XHTMLWriter.Flush();
+					var plainHeadingXpath = string.Format(
+						"//div[@class='letHead']/span[@class='letter' and @lang='{0}' and text()='A a']", ws.Id);
+					AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(plainHeadingXpath, 1);
+					var digraphHeadingXpath = string.Format(
+						"//div[@class='letHead']/span[@class='letter' and @lang='{0}' and text()='Ch ch']", ws.Id);
+					AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(digraphHeadingXpath, 1);
+				}
+			}
+			finally
+			{
+				ws.DefaultCollation = originalCollation;
+			}
+		}
+
+		[Test]
 		public void GenerateLetterHeaderIfNeeded_GeneratesHeaderLexemeFormSorting()
 		{
 			var entry = CreateInterestingLexEntry(Cache);
