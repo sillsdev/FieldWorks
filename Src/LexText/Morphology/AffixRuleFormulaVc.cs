@@ -140,6 +140,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 					VwLength tableLen;
 					tableLen.nVal = 10000;
 					tableLen.unit = VwUnit.kunPercent100;
+					MarkFormulaNotEditable(vwenv);
 					vwenv.OpenTable(3, tableLen, 0, VwAlignment.kvaLeft, VwFramePosition.kvfpVoid, VwRule.kvrlNone, 0, 0, false);
 
 					VwLength inputLen;

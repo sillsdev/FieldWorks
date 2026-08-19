@@ -60,6 +60,29 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		}
 
 		/// <summary>
+		/// Marks everything a rule formula draws as not editable. Call immediately before the
+		/// formula's outermost OpenTable, so that ktptEditable inherits down the whole box tree.
+		/// </summary>
+		/// <remarks>
+		/// Every string in a formula is either a referenced object's own field -- a phoneme's
+		/// Name, a natural class's Abbreviation -- or a value computed for display. Typing into
+		/// any of them renames the referenced object for every rule that uses it, which is
+		/// LT-22710. Nothing here is free text: PatternView.OnKeyPress discards every character
+		/// except Backspace and Delete (LT-21888).
+		///
+		/// Marking the table rather than each fragment also covers the bracket glyphs, the fake
+		/// tag spans and the zero-width-space boundaries, none of which a per-fragment marking
+		/// reaches. CloseSingleLinePile and OpenSingleLinePile put ktptIsEditable back on just
+		/// the boundary spans, which is where the cursor has to be able to land; see
+		/// PatternVcBase.
+		/// </remarks>
+		protected static void MarkFormulaNotEditable(IVwEnv vwenv)
+		{
+			vwenv.set_IntProperty((int)FwTextPropType.ktptEditable, (int)FwTextPropVar.ktpvEnum,
+				(int)TptEditable.ktptNotEditable);
+		}
+
+		/// <summary>
 		/// Gets the maximum number of lines for context cells.
 		/// </summary>
 		/// <value>The max number of lines.</value>
@@ -335,7 +358,9 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 		public override ITsString DisplayVariant(IVwEnv vwenv, int tag, int frag)
 		{
-			// we use display variant to display literal strings that are editable
+			// we use display variant to display literal strings that are not backed by a model
+			// property; the formula marks the whole table not editable, so none of them accept
+			// typing
 			ITsString tss;
 			switch (frag)
 			{
