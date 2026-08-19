@@ -79,6 +79,7 @@ namespace SIL.FieldWorks.IText
 					{
 						OpenSingleLinePile(vwenv, GetMaxNumLines(vwenv), false);
 						vwenv.Props = m_bracketProps;
+						SetNotEditable(vwenv);
 						vwenv.AddProp(ComplexConcPatternSda.ktagChildren, this, kfragEmpty);
 						CloseSingleLinePile(vwenv, false);
 					}
@@ -100,12 +101,14 @@ namespace SIL.FieldWorks.IText
 					if (node is ComplexConcOrNode)
 					{
 						OpenSingleLinePile(vwenv, maxNumLines);
+						SetNotEditable(vwenv);
 						vwenv.AddProp(ktagInnerNonBoundary, this, kfragOR);
 						CloseSingleLinePile(vwenv, false);
 					}
 					else if (node is ComplexConcWordBdryNode)
 					{
 						OpenSingleLinePile(vwenv, maxNumLines);
+						SetNotEditable(vwenv);
 						vwenv.AddProp(ktagInnerNonBoundary, this, kfragHash);
 						CloseSingleLinePile(vwenv);
 					}
@@ -117,10 +120,12 @@ namespace SIL.FieldWorks.IText
 						{
 							OpenSingleLinePile(vwenv, maxNumLines, false);
 							// use normal parentheses for a single line group
+							SetNotEditable(vwenv);
 							vwenv.AddProp(ktagLeftBoundary, this, kfragLeftParen);
 
 							vwenv.AddObjVecItems(ComplexConcPatternSda.ktagChildren, this, kfragNode);
 
+							SetNotEditable(vwenv);
 							vwenv.AddProp(hasMinMax ? ktagInnerNonBoundary : ktagRightBoundary, this, kfragRightParen);
 							if (hasMinMax)
 								DisplayMinMax(numLines, vwenv);
@@ -130,6 +135,7 @@ namespace SIL.FieldWorks.IText
 						{
 							vwenv.Props = m_bracketProps;
 							vwenv.set_IntProperty((int) FwTextPropType.ktptMarginLeading, (int) FwTextPropVar.ktpvMilliPoint, PileMargin);
+							SetNotEditable(vwenv);
 							vwenv.OpenInnerPile();
 							AddExtraLines(maxNumLines - numLines, ktagLeftNonBoundary, vwenv);
 							vwenv.AddProp(ktagLeftNonBoundary, this, kfragLeftParenUpHook);
@@ -142,6 +148,7 @@ namespace SIL.FieldWorks.IText
 
 							vwenv.Props = m_bracketProps;
 							vwenv.set_IntProperty((int) FwTextPropType.ktptMarginTrailing, (int) FwTextPropVar.ktpvMilliPoint, PileMargin);
+							SetNotEditable(vwenv);
 							vwenv.OpenInnerPile();
 							AddExtraLines(maxNumLines - numLines, hasMinMax ? ktagInnerNonBoundary : ktagRightNonBoundary, vwenv);
 							vwenv.AddProp(hasMinMax ? ktagInnerNonBoundary : ktagRightNonBoundary, this, kfragRightParenUpHook);
@@ -161,10 +168,12 @@ namespace SIL.FieldWorks.IText
 						{
 							OpenSingleLinePile(vwenv, maxNumLines, false);
 							// use normal brackets for a single line constraint
+							SetNotEditable(vwenv);
 							vwenv.AddProp(ktagLeftBoundary, this, kfragLeftBracket);
 
 							DisplayFeatures(vwenv, node);
 
+							SetNotEditable(vwenv);
 							vwenv.AddProp(hasMinMax ? ktagInnerNonBoundary : ktagRightBoundary, this, kfragRightBracket);
 							if (hasMinMax)
 								DisplayMinMax(numLines, vwenv);
@@ -175,6 +184,7 @@ namespace SIL.FieldWorks.IText
 							// left bracket pile
 							vwenv.Props = m_bracketProps;
 							vwenv.set_IntProperty((int) FwTextPropType.ktptMarginLeading, (int) FwTextPropVar.ktpvMilliPoint, PileMargin);
+							SetNotEditable(vwenv);
 							vwenv.OpenInnerPile();
 							AddExtraLines(maxNumLines - numLines, ktagLeftNonBoundary, vwenv);
 							vwenv.AddProp(ktagLeftNonBoundary, this, kfragLeftBracketUpHook);
@@ -193,6 +203,7 @@ namespace SIL.FieldWorks.IText
 							// right bracket pile
 							vwenv.Props = m_bracketProps;
 							vwenv.set_IntProperty((int) FwTextPropType.ktptMarginTrailing, (int) FwTextPropVar.ktpvMilliPoint, PileMargin);
+							SetNotEditable(vwenv);
 							vwenv.OpenInnerPile();
 							AddExtraLines(maxNumLines - numLines, hasMinMax ? ktagInnerNonBoundary : ktagRightNonBoundary, vwenv);
 							vwenv.AddProp(hasMinMax ? ktagInnerNonBoundary : ktagRightNonBoundary, this, kfragRightBracketUpHook);
@@ -206,6 +217,17 @@ namespace SIL.FieldWorks.IText
 					}
 					break;
 			}
+		}
+
+		/// <summary>
+		/// Every fragment ComplexConcPatternVc renders -- feature lines, quantifiers, OR/word-
+		/// boundary literals, and the bracket/paren glyphs -- is a computed display, never free
+		/// text (see UpdateProp). Mark the current run explicitly non-editable so an edit attempt
+		/// is rejected at the selection layer instead of silently reaching UpdateProp.
+		/// </summary>
+		private static void SetNotEditable(IVwEnv vwenv)
+		{
+			vwenv.set_IntProperty((int) FwTextPropType.ktptEditable, (int) FwTextPropVar.ktpvEnum, (int) TptEditable.ktptNotEditable);
 		}
 
 		private void DisplayMinMax(int numLines, IVwEnv vwenv)
@@ -230,11 +252,13 @@ namespace SIL.FieldWorks.IText
 			if (numLines == 1)
 				vwenv.set_IntProperty((int) FwTextPropType.ktptOffset, (int) FwTextPropVar.ktpvMilliPoint, superOffset);
 			vwenv.OpenParagraph();
+			SetNotEditable(vwenv);
 			vwenv.AddProp(ktagRightNonBoundary, this, kfragNodeMax);
 			vwenv.CloseParagraph();
 			AddExtraLines(numLines - 2, ktagRightNonBoundary, vwenv);
 			vwenv.set_IntProperty((int) FwTextPropType.ktptOffset, (int) FwTextPropVar.ktpvMilliPoint, 0);
 			vwenv.OpenParagraph();
+			SetNotEditable(vwenv);
 			vwenv.AddProp(ktagRightBoundary, this, kfragNodeMin);
 			vwenv.CloseParagraph();
 			vwenv.CloseInnerPile();
@@ -382,6 +406,9 @@ namespace SIL.FieldWorks.IText
 
 		private void DisplayFeatures(IVwEnv vwenv, ComplexConcPatternNode node)
 		{
+			// Every line here (Type, Form, Entry, Category, Gloss, Infl Features) is a computed
+			// summary of the synthetic pattern node, not free text; see UpdateProp and SetNotEditable.
+			SetNotEditable(vwenv);
 			vwenv.AddProp(ktagType, this, kfragFeatureLine);
 			var morphNode = node as ComplexConcMorphNode;
 			if (morphNode != null)
@@ -437,6 +464,7 @@ namespace SIL.FieldWorks.IText
 		{
 			IDictionary<IFsFeatDefn, object> lastInflFeatures = m_curInflFeatures;
 			m_curInflFeatures = inflFeatures;
+			SetNotEditable(vwenv);
 			foreach (KeyValuePair<IFsFeatDefn, object> kvp in inflFeatures)
 			{
 				if (kvp.Key is IFsComplexFeature)
@@ -462,10 +490,12 @@ namespace SIL.FieldWorks.IText
 			if (numLines == 1)
 			{
 				// use normal brackets for a single line constraint
+				SetNotEditable(vwenv);
 				vwenv.AddProp(ktagInnerNonBoundary, this, kfragLeftBracket);
 
 				DisplayInflFeatureLines(vwenv, inflFeatures, false);
 
+				SetNotEditable(vwenv);
 				vwenv.AddProp(ktagInnerNonBoundary, this, kfragRightBracket);
 			}
 			else
@@ -473,6 +503,7 @@ namespace SIL.FieldWorks.IText
 				// left bracket pile
 				vwenv.Props = m_bracketProps;
 				vwenv.set_IntProperty((int) FwTextPropType.ktptMarginLeading, (int) FwTextPropVar.ktpvMilliPoint, PileMargin);
+				SetNotEditable(vwenv);
 				vwenv.OpenInnerPile();
 				vwenv.AddProp(ktagLeftNonBoundary, this, kfragLeftBracketUpHook);
 				for (int i = 1; i < numLines - 1; i++)
@@ -489,6 +520,7 @@ namespace SIL.FieldWorks.IText
 				// right bracket pile
 				vwenv.Props = m_bracketProps;
 				vwenv.set_IntProperty((int) FwTextPropType.ktptMarginTrailing, (int) FwTextPropVar.ktpvMilliPoint, PileMargin);
+				SetNotEditable(vwenv);
 				vwenv.OpenInnerPile();
 				vwenv.AddProp(ktagInnerNonBoundary, this, kfragRightBracketUpHook);
 				for (int i = 1; i < numLines - 1; i++)
@@ -496,6 +528,17 @@ namespace SIL.FieldWorks.IText
 				vwenv.AddProp(ktagInnerNonBoundary, this, kfragRightBracketLowHook);
 				vwenv.CloseInnerPile();
 			}
+		}
+
+		/// <summary>
+		/// Every fragment this VC renders is a computed display (Display/DisplayVariant read
+		/// live node state), not a real bound field, so an edit that reaches this far has
+		/// nothing to apply. Absorb it and let the next layout redraw the correct value, the
+		/// same way RuleFormulaVcBase.UpdateProp does for the sibling rule-formula editor.
+		/// </summary>
+		public override ITsString UpdateProp(IVwSelection vwsel, int hvo, int tag, int frag, ITsString tssVal)
+		{
+			return tssVal;
 		}
 
 		public ITsString CreateFeatureLine(ITsString name, ITsString value, bool negated)

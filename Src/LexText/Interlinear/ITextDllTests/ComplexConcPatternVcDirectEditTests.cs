@@ -17,6 +17,7 @@
 // entry point IME composition or drag-and-drop would use, and one PatternView.OnKeyPress never
 // sees because it only reacts to Windows key events, not to ReplaceWithTsString.
 using System.Collections.Generic;
+using System.Reflection;
 using System.Windows.Forms;
 using NUnit.Framework;
 using SIL.LCModel;
@@ -95,6 +96,8 @@ namespace SIL.FieldWorks.IText
 			{
 				OnKeyDown(new KeyEventArgs(key));
 			}
+
+			public bool TestAllowDisplaySelection => AllowDisplaySelection;
 		}
 
 		private IPartOfSpeech CreatePartOfSpeech(string name, string abbr)
@@ -407,19 +410,78 @@ namespace SIL.FieldWorks.IText
 		// RemoveItemsRequested for the Delete key; this must survive whatever fix is applied.
 		// ------------------------------------------------------------------
 
+		// ------------------------------------------------------------------
+		// Ablation evidence for the fix's layers.
+		// ------------------------------------------------------------------
+
+		/// <summary>
+		/// Confirms ComplexConcPatternVc's SetNotEditable calls actually take effect: a
+		/// selection over a fake-tag fragment must not be editable, independent of whether
+		/// UpdateProp would otherwise absorb an edit there.
+		/// </summary>
 		[Test]
-		public void DeleteKey_StillRaisesRemoveItemsRequested()
+		public void SelectionOverFormLine_IsNotEditable()
+		{
+			var (model, view) = BuildView();
+			var wordNode = new ComplexConcWordNode { Form = TsStringUtils.MakeString("original", Cache.DefaultVernWs) };
+			model.Root.Children.Add(wordNode);
+			view.CallLayout();
+
+			IVwSelection sel = MakeSelOnChild(view, 0, ComplexConcPatternVc.ktagForm);
+			Assert.That(sel, Is.Not.Null);
+			Assert.That(sel.IsEditable, Is.False,
+				"the Form line's fragment must be marked ktptNotEditable, not merely absorbed by UpdateProp");
+		}
+
+		/// <summary>
+		/// ComplexConcControl.Designer.cs must wire up the pattern-builder view as read-only
+		/// (this is the categorical fix for the IME-composition/keyboard-controller-registration
+		/// path named in the bug report, distinct from the per-fragment ktptEditable markings).
+		/// </summary>
+		[Test]
+		public void ComplexConcControl_WiresViewAsReadOnly()
+		{
+			using (var control = new ComplexConcControl())
+			{
+				var viewField = typeof(ComplexConcControl).GetField("m_view", BindingFlags.NonPublic | BindingFlags.Instance);
+				Assert.That(viewField, Is.Not.Null, "test assumption: ComplexConcControl has a private m_view field");
+				var view = (PatternView) viewField.GetValue(control);
+				Assert.That(view.ReadOnlyView, Is.True,
+					"ComplexConcControl must wire up its PatternView with ReadOnlyView = true");
+			}
+		}
+
+		/// <summary>
+		/// PatternView.AllowDisplaySelection must be overridden to stay true even when
+		/// ReadOnlyView is true, or the pattern-builder's chooser-driven selection highlight
+		/// would disappear once ReadOnlyView is turned on (SimpleRootSite suppresses Activate()
+		/// by default for read-only views).
+		/// </summary>
+		[Test]
+		public void AllowDisplaySelection_IsTrue_WhenRootsiteIsReadOnly()
+		{
+			var (model, view) = BuildView();
+			view.ReadOnlyView = true;
+
+			Assert.That(view.TestAllowDisplaySelection, Is.True,
+				"the selection must still be shown even though the rootsite is read-only");
+		}
+
+		[Test]
+		public void DeleteKey_StillRaisesRemoveItemsRequested_WhenRootsiteIsReadOnly()
 		{
 			var (model, view) = BuildView();
 			model.Root.Children.Add(new ComplexConcWordNode());
 			view.CallLayout();
+			view.ReadOnlyView = true;
 
 			bool removeRequested = false;
 			view.RemoveItemsRequested += (sender, e) => removeRequested = true;
 
 			view.SimulateKeyDown(Keys.Delete);
 
-			Assert.That(removeRequested, Is.True, "Delete must still raise RemoveItemsRequested");
+			Assert.That(removeRequested, Is.True,
+				"Delete must still raise RemoveItemsRequested now that ComplexConcControl wires the view as ReadOnlyView = true");
 		}
 	}
 }
