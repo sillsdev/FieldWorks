@@ -128,7 +128,8 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 						var sFeature = (string) feature.Attribute("feature");
 						var sValue = (string) feature.Attribute("value");
 						IFsFeatDefn featDefn = m_cache.LanguageProject.PhFeatureSystemOA.GetFeature(sFeature);
-						if (featDefn == null)
+						var closedFeat = featDefn as IFsClosedFeature;
+						if (closedFeat == null)
 							continue;
 
 						IFsSymFeatVal symVal = m_cache.LanguageProject.PhFeatureSystemOA.GetSymbolicValue(sValue);
@@ -138,9 +139,10 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 						{
 							phoneme.FeaturesOA = m_cache.ServiceLocator.GetInstance<IFsFeatStrucFactory>().Create();
 						}
-						IFsClosedValue value = m_cache.ServiceLocator.GetInstance<IFsClosedValueFactory>().Create();
-						phoneme.FeaturesOA.FeatureSpecsOC.Add(value);
-						value.FeatureRA = featDefn;
+						// Reuse any spec already held for this feature, so that repopulating a
+						// phoneme cannot leave it with two specs for one feature (LT-22714).
+						IFsClosedValue value = phoneme.FeaturesOA.GetOrCreateValue(closedFeat);
+						value.FeatureRA = closedFeat;
 						value.ValueRA = symVal;
 						m_justChangedFeatures = true;
 					}
