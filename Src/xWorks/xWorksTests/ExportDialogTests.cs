@@ -1363,38 +1363,9 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		private void AddBoundaryMarker(Guid guid, string strRep, IPhPhonemeSet phonemeSet)
-		{
-			var bdry = m_cache.ServiceLocator.GetInstance<IPhBdryMarkerFactory>().Create(guid, phonemeSet);
-			var tss = TsStringUtils.MakeString(strRep, m_cache.DefaultAnalWs);
-			bdry.Name.set_String(m_cache.DefaultAnalWs, tss);
-			var code = m_cache.ServiceLocator.GetInstance<IPhCodeFactory>().Create();
-			bdry.CodesOS.Add(code);
-			code.Representation.set_String(m_cache.DefaultAnalWs, tss);
-		}
-
-		/// <summary>
-		/// Gives HCLoader the minimum it needs: ParserParameters as a valid XML fragment and a
-		/// phoneme set carrying morph and word boundary markers, none of which
-		/// CreateCacheWithNewBlankLangProj provides.
-		/// </summary>
-		private void SeedMinimalHCGrammarData()
-		{
-			UndoableUnitOfWorkHelper.Do("Undo", "Redo", m_cache.ActionHandlerAccessor, () =>
-			{
-				m_cache.LanguageProject.MorphologicalDataOA.ParserParameters =
-					"<ParserParameters><ActiveParser>HC</ActiveParser><HC/></ParserParameters>";
-				var phonemeSet = m_cache.ServiceLocator.GetInstance<IPhPhonemeSetFactory>().Create();
-				m_cache.LanguageProject.PhonologicalDataOA.PhonemeSetsOS.Add(phonemeSet);
-				AddBoundaryMarker(LangProjectTags.kguidPhRuleMorphBdry, "+", phonemeSet);
-				AddBoundaryMarker(LangProjectTags.kguidPhRuleWordBdry, "#", phonemeSet);
-			});
-		}
-
 		[Test]
-		public void ExportGrammarAndTextsForAI_NoFlexTextListenerRegistered_RecordsFailureAndStillWritesGrammar()
+		public void ExportGrammarAndTextsForAI_NoListenerRegistered_ReportsTheServiceIsUnavailable()
 		{
-			SeedMinimalHCGrammarData();
 			var tempFolder = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
 			Directory.CreateDirectory(tempFolder);
 			using (var mediator = new Mediator())
@@ -1411,42 +1382,8 @@ namespace SIL.FieldWorks.XWorks
 						var messages = (List<string>)exportDlg.ExportGrammarAndTextsForAI(new DummyProgressDlg(),
 							new object[] { Path.Combine(tempFolder, "HCGrammar.xml") });
 
-						Assert.That(File.Exists(Path.Combine(tempFolder, "HCGrammar.xml")), Is.True);
-						Assert.That(messages, Has.Count.EqualTo(1));
-						Assert.That(messages[0], Does.Contain("FLExText export service was not available"));
-					}
-				}
-				finally
-				{
-					Directory.Delete(tempFolder, true);
-				}
-			}
-		}
-
-		[Test]
-		public void ExportGrammarAndTextsForAI_HCLoaderThrows_PropagatesTheException()
-		{
-			// Deliberately skips seeding ParserParameters/phonemes/boundary markers, so
-			// HCLoader.Load throws -- this must propagate, not get swallowed, so the whole
-			// export aborts instead of silently omitting HCGrammar.xml.
-			var tempFolder = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
-			Directory.CreateDirectory(tempFolder);
-			using (var mediator = new Mediator())
-			using (var propertyTable = new PropertyTable(mediator))
-			{
-				try
-				{
-					using (var exportDlg = new ExportDialog())
-					{
-						exportDlg.SetCache(m_cache);
-						exportDlg.SetPropertyTable(propertyTable);
-						exportDlg.SetSelectedTextsForAIExport(new List<IStText>());
-
-						Assert.Throws<ArgumentNullException>(() =>
-							exportDlg.ExportGrammarAndTextsForAI(new DummyProgressDlg(),
-								new object[] { Path.Combine(tempFolder, "HCGrammar.xml") }));
-
 						Assert.That(File.Exists(Path.Combine(tempFolder, "HCGrammar.xml")), Is.False);
+						Assert.That(messages, Has.Some.Contains("was not available"));
 					}
 				}
 				finally
@@ -1459,7 +1396,6 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void ExportGrammarAndTextsForAI_CopiesTheShippedInstructionsIntoTheFolder()
 		{
-			SeedMinimalHCGrammarData();
 			var tempFolder = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
 			Directory.CreateDirectory(tempFolder);
 			using (var mediator = new Mediator())

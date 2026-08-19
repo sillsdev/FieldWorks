@@ -782,6 +782,15 @@ namespace SIL.FieldWorks.XWorks {
         }
 
         /// <summary>
+        ///   Looks up a localized string similar to The AI-analysis export service was not available, so no grammar or text files were written.
+        /// </summary>
+        internal static string ksAIExportServiceUnavailable {
+            get {
+                return ResourceManager.GetString("ksAIExportServiceUnavailable", resourceCulture);
+            }
+        }
+
+        /// <summary>
         ///   Looks up a localized string similar to Abbreviation.
         /// </summary>
         internal static string ksAbbreviation {

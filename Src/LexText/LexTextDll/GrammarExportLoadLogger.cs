@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using SIL.LCModel;
 using SIL.FieldWorks.WordWorks.Parser;
 
-namespace SIL.FieldWorks.XWorks
+namespace SIL.FieldWorks.XWorks.LexText
 {
 	/// <summary>
 	/// Collects HCLoader's per-item load warnings into a plain message list instead of

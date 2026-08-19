@@ -17,8 +17,6 @@ using System.Xml;
 using System.Xml.Xsl;
 using Microsoft.Win32;
 using SIL.Extensions;
-using SIL.Machine.Morphology.HermitCrab;
-using SIL.FieldWorks.WordWorks.Parser;
 using SIL.LCModel.Core.Text;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Controls.FileDialog;
@@ -1147,34 +1145,28 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
-		/// Writes the HC grammar (HCGrammar.xml, at outPath), one .flextext file per
-		/// selected text, and the instructions file that tells an LLM how to read them,
-		/// all into the same folder. HCLoader already catches per-item
-		/// linguistic problems internally, so an exception escaping here aborts the
-		/// whole export; a per-text export failure only skips that one text. Runs on
-		/// the background task thread, so it returns the combined warning/failure list
-		/// rather than showing it -- the UI thread shows it once this returns.
+		/// Asks the export service to write the grammar (at outPath), one .flextext file per
+		/// selected text, and the instructions file that tells an LLM how to read them, all into
+		/// the same folder. A grammar that cannot be built throws, aborting the whole export; a
+		/// per-text failure only skips that one text. Runs on the background task thread, so it
+		/// returns the warning list rather than showing it.
 		/// </summary>
 		internal object ExportGrammarAndTextsForAI(IThreadedProgress progress, object[] args)
 		{
 			var outPath = (string)args[0];
 			var outFolder = Path.GetDirectoryName(outPath);
-			var loadMessages = new List<string>();
-			var logger = new GrammarExportLoadLogger(loadMessages);
-			var language = HCLoader.Load(m_cache, logger);
-			XmlLanguageWriter.Save(language, outPath);
-			CopyAiExportInstructions(outFolder, loadMessages);
+			var texts = m_selectedTextsForAIExport ?? new List<IStText>();
+			var request = new AiAnalysisExportRequest(texts, outFolder, outPath);
+			Publisher.Publish(new PublisherParameterObject(EventConstants.ExportForAiAnalysis, request, m_propertyTable.GetWindow()));
+			if (!request.Handled)
+				request.Messages.Add(xWorksStrings.ksAIExportServiceUnavailable);
 			progress.Step(1);
 
-			var texts = m_selectedTextsForAIExport ?? new List<IStText>();
-			var request = new ExportTextsAsFlexTextRequest(texts, outFolder);
-			Publisher.Publish(new PublisherParameterObject(EventConstants.ExportTextsAsFlexText, request, m_propertyTable.GetWindow()));
-			if (!request.Handled)
-				request.Failures.Add("FLExText export service was not available.");
+			CopyAiExportInstructions(outFolder, request.Messages);
 			foreach (var text in texts)
 				progress.Step(1);
 
-			return loadMessages.Concat(request.Failures).ToList();
+			return request.Messages;
 		}
 
 		/// <summary>Name the exported instructions file gets in the export folder.</summary>

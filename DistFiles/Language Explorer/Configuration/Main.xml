@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="UTF-8"?>
 <!-- edited with XML Spy v4.4 U (http://www.xmlspy.com) by Randy Regnier (SIL International) -->
 <window label="FieldWorks Language Explorer" settingsId="Language Explorer">
 
@@ -921,9 +921,9 @@ I (RandyR) brought them into this file, just to keep track of them for the time 
 			populates the "tools" list appropriately. -->
 		<listener assemblyPath="LexTextDll.dll" class="SIL.FieldWorks.XWorks.LexText.AreaListener"/>
 		<listener assemblyPath="LexEdDll.dll" class="SIL.FieldWorks.XWorks.LexEd.FLExBridgeListener"/>
-		<!-- answers the grammar+texts-for-AI export's request to write FLExText files,
-			since InterlinVc/InterlinearExporter are only reachable from ITextDll.dll -->
-		<listener assemblyPath="ITextDll.dll" class="SIL.FieldWorks.IText.FlexTextAIExportListener"/>
+		<!-- answers the AI-analysis export's request to write the grammar and FLExText
+			files, the one assembly that can reach both HCLoader and InterlinearExporter -->
+		<listener assemblyPath="LexTextDll.dll" class="SIL.FieldWorks.XWorks.LexText.AiAnalysisExportListener"/>
 		<!-- take care of the writing system combo box -->
 		<listener assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.WritingSystemListHandler"/>
 		<listener assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.CombinedStylesListHandler"/>

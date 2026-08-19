@@ -536,6 +536,9 @@ Are you SURE you want to delete the field {2}?</value>
   <data name="ksAIExportInstructionsMissing" xml:space="preserve">
     <value>The instructions file was not found, so export-instructions.md was not written to the export folder: {0}</value>
   </data>
+  <data name="ksAIExportServiceUnavailable" xml:space="preserve">
+    <value>The AI-analysis export service was not available, so no grammar or text files were written.</value>
+  </data>
   <data name="ksAIExportColumnText" xml:space="preserve">
     <value>Text</value>
   </data>
