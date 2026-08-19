@@ -1,4 +1,4 @@
-// Copyright (c) 2019-2023 SIL International
+// Copyright (c) 2019-2026 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -7,27 +7,18 @@ using SIL.DisambiguateInFLExDB;
 using SIL.FieldWorks.LexText.Controls;
 using SIL.FieldWorks.WordWorks.Parser;
 using SIL.LCModel;
-using SIL.LCModel.Core.Text;
-using SIL.LCModel.Core.WritingSystems;
-using SIL.LCModel.DomainServices;
 using SIL.PrepFLExDB;
-using SIL.WritingSystems;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Xml.Linq;
 using XCore;
-using XAmpleManagedWrapper;
 using System.Text.RegularExpressions;
 using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.Common.FwUtils;
@@ -38,7 +29,7 @@ namespace SIL.ToneParsFLEx
 	public partial class ToneParsFLExForm : Form
 	{
 		public LcmCache Cache { get; set; }
-
+		public PropertyTable PropTable { get; set; }
 		protected IList<IText> Texts { get; set; }
 		protected IList<SegmentToShow> SegmentsInListBox { get; set; }
 		protected FLExDBExtractor Extractor { get; set; }
@@ -301,9 +292,11 @@ namespace SIL.ToneParsFLEx
 		private void EnsureDatabaseHasBeenPrepped()
 		{
 			var preparer = new Preparer(Cache, false);
+			preparer.PropTable = PropTable;
 			preparer.AddToneParsList();
 			preparer.AddToneParsFormCustomField();
 			preparer.AddToneParsSenseCustomField();
+			FwUtils.Publisher.Publish(new PublisherParameterObject(EventConstants.MasterRefresh, null, PropTable.GetWindow()));
 		}
 
 		public void PrepareForm()
