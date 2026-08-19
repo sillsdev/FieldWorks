@@ -715,6 +715,22 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		}
 
 		/// <summary>
+		/// True for a lazy placeholder standing in for objects not yet built. It reports its
+		/// OWNER as its Object, so object lookups must skip it. Distinct from
+		/// <see cref="IsRealSlice"/>, which for view slices reports layout state, not
+		/// placeholder-ness.
+		/// </summary>
+		public virtual bool IsLazyPlaceholder
+		{
+			get
+			{
+				CheckDisposed();
+
+				return false;
+			}
+		}
+
+		/// <summary>
 		/// In some contexts, we use a "ghost" slice to represent data that
 		/// has not yet been created.  These are "real" slices, but they don't
 		/// represent "real" data.  Thus, for example, the underlying object
@@ -2815,7 +2831,12 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			// hides the data tree but does not remove slices when no record is current.
 			// Thus, a slice that is not visible might belong to a display of a deleted
 			// or unavailable object, so be very careful what you enable!
-			if (Visible && ContainingDataTree.Visible)
+			//
+			// Exception: a hidden command-adapter tree still needs its slice handlers
+			// reachable; its owner points CurrentSlice at the acted-on row first, so the
+			// deleted-object hazard above does not apply.
+			var isCommandAdapter = ContainingDataTree != null && ContainingDataTree.IsExternalCommandAdapter;
+			if ((Visible && ContainingDataTree.Visible) || isCommandAdapter)
 			{
 				if (Control != null && Control.IsDisposed)
 					throw new ObjectDisposedException(ToString() + GetHashCode(), "Trying to use object that no longer exists: ");

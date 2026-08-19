@@ -18,6 +18,8 @@ using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Infrastructure;
 using XCore;
+// Both namespaces above define DataTree; the adapter tests mean the legacy WinForms one.
+using LegacyDataTree = SIL.FieldWorks.Common.Framework.DetailControls.DataTree;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -277,6 +279,59 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		// -----------------------------------------------------------------
+		// Lexeme Form slice menu: adapter reachability, Writing Systems
+		// -----------------------------------------------------------------
+
+		// The adapter tree is never shown, so message-target selection must keep it in the
+		// colleague chain for handlers defined on DataTree itself, such as OnJumpToTool.
+		[Test]
+		public void HiddenAdapterTree_StaysInTheColleagueChain_SoItsOwnHandlersAreReachable()
+		{
+			EnsureAdapter(m_entry.LexemeFormOA.Hvo, "Form");
+
+			var dataTree = (LegacyDataTree)GetField(m_view, "m_dataEntryForm");
+			Assert.That(dataTree.Visible, Is.False,
+				"precondition: the adapter tree is hidden while Avalonia is the active host");
+			Assert.That(dataTree.IsExternalCommandAdapter, Is.True,
+				"precondition: the host flagged it as the command-routing adapter");
+			Assert.That(dataTree.GetMessageTargets(), Does.Contain(dataTree),
+				"handlers defined on the tree itself (JumpToTool, Delete, Insert) must stay reachable");
+		}
+
+		// The Lexeme Form row and its indented siblings share one MoForm, so matching by
+		// object alone is ambiguous; the concordance jump and the Writing Systems list
+		// both need the Form slice.
+		[Test]
+		public void LexemeFormRow_TargetsTheFormSlice_NotJustSomeSliceOnTheSameMorph()
+		{
+			EnsureAdapter(m_entry.LexemeFormOA.Hvo, "Form");
+
+			var dataTree = (LegacyDataTree)GetField(m_view, "m_dataEntryForm");
+			var current = dataTree.CurrentSlice;
+			Assert.That(current, Is.Not.Null, "a slice must be targeted for the Lexeme Form row");
+			Assert.That(current.Object?.Hvo, Is.EqualTo(m_entry.LexemeFormOA.Hvo));
+			Assert.That(current.Flid, Is.EqualTo(MoFormTags.kflidForm),
+				"the targeted slice must be the Form field's own slice");
+		}
+
+		// DataTree.OnDisplayJumpToTool offers the jump only when CurrentSlice.Flid is the
+		// MoForm's Form field, so an enabled item proves the tree is reachable and the row
+		// targeted that slice.
+		[Test]
+		public void ConcordanceCommand_OnTheLexemeFormRow_IsEnabledByItsRealHandler()
+		{
+			EnsureAdapter(m_entry.LexemeFormOA.Hvo, "Form");
+
+			var jump = FindItem(BuildItems(new[] { "mnuDataTree-LexemeForm", "mnuDataTree-MultiStringSlice" }),
+				"Show Lexeme Form in Concordance");
+
+			Assert.That(jump, Is.Not.Null, "the command materializes on the Lexeme Form row");
+			Assert.That(jump.IsEnabled, Is.True,
+				"DataTree.OnDisplayJumpToTool must run and resolve a concordance target for the Form field");
+			Assert.That(jump.Execute, Is.Not.Null, "and it carries a mediator-dispatch action");
+		}
+
+		// -----------------------------------------------------------------
 		// Helpers -- production-path command drivers
 		// -----------------------------------------------------------------
 
@@ -317,12 +372,12 @@ namespace SIL.FieldWorks.XWorks
 			return true;
 		}
 
-		private void EnsureAdapter(int targetHvo)
+		private void EnsureAdapter(int targetHvo, string fieldName = null)
 		{
 			var method = typeof(RecordEditView).GetMethod("EnsureMenuCommandAdapter",
 				BindingFlags.Instance | BindingFlags.NonPublic);
 			Assert.That(method, Is.Not.Null, "EnsureMenuCommandAdapter must exist (adapter targeting seam)");
-			method.Invoke(m_view, new object[] { targetHvo });
+			method.Invoke(m_view, new object[] { targetHvo, fieldName });
 		}
 
 		private IReadOnlyList<DetailMenuItem> BuildItems(string[] menuIds)

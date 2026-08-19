@@ -237,12 +237,12 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		private void EnsureAdapter(int targetHvo)
+		private void EnsureAdapter(int targetHvo, string fieldName = null)
 		{
 			var method = typeof(RecordEditView).GetMethod("EnsureMenuCommandAdapter",
 				BindingFlags.Instance | BindingFlags.NonPublic);
 			Assert.That(method, Is.Not.Null);
-			method.Invoke(m_view, new object[] { targetHvo });
+			method.Invoke(m_view, new object[] { targetHvo, fieldName });
 		}
 
 		private void LoadRecordEditView(string toolValue)

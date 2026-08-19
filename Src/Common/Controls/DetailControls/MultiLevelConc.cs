@@ -369,6 +369,16 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				}
 			}
 
+			/// <summary>This slice stands in for a node not yet built (see BecomeReal).</summary>
+			public override bool IsLazyPlaceholder
+			{
+				get
+				{
+					CheckDisposed();
+					return true;
+				}
+			}
+
 			public override Slice BecomeReal(int index)
 			{
 				CheckDisposed();

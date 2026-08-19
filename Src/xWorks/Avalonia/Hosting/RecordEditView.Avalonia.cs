@@ -17,6 +17,7 @@ using SIL.FieldWorks.Common.Framework.DetailControls;
 // Bare DataTree in this file means the legacy WinForms tree; the Avalonia twin stays qualified.
 using DataTree = SIL.FieldWorks.Common.Framework.DetailControls.DataTree;
 using SIL.LCModel;
+using SIL.LCModel.Infrastructure;
 using SIL.LCModel.Utils;
 using XCore;
 using System.Collections.Generic;
@@ -439,7 +440,7 @@ namespace SIL.FieldWorks.XWorks
 				// colleague chain disable, everything else still works (and the failure is logged).
 				try
 				{
-					EnsureMenuCommandAdapter(request.Field.ObjectHvo);
+					EnsureMenuCommandAdapter(request.Field.ObjectHvo, request.Field.Field);
 				}
 				catch (Exception adapterError)
 				{
@@ -690,7 +691,7 @@ namespace SIL.FieldWorks.XWorks
 		// DTMenuHandler provide the colleague chain and CurrentSlice context the legacy command
 		// handlers require. Created lazily on first right-click; never attached/visible while the
 		// Avalonia is active.
-		private void EnsureMenuCommandAdapter(int targetHvo)
+		private void EnsureMenuCommandAdapter(int targetHvo, string fieldName)
 		{
 			// The active-host contract is enforced, not just documented: driving the hidden
 			// legacy DataTree is legal only through an adapter id the host's contract lists. The
@@ -710,11 +711,20 @@ namespace SIL.FieldWorks.XWorks
 
 			var current = Clerk?.CurrentObject;
 			if (current == null)
+			{
+				// No current record: drop any target left by a previous interaction, same
+				// fail-loud rule as the no-slice-found path below.
+				m_dataEntryForm.ClearCurrentSlice();
 				return;
+			}
 			m_dataEntryForm.ShowObject(current, m_layoutName, m_layoutChoiceField, current, true);
 
 			if (targetHvo == 0)
+			{
+				// The row carries no object, so no slice can be its target.
+				m_dataEntryForm.ClearCurrentSlice();
 				return;
+			}
 
 			// Targeting hardening: the legacy command handlers act on m_dataEntryForm.CurrentSlice,
 			// so the adapter must point CurrentSlice at the slice bound to the clicked row's object. A first
@@ -725,51 +735,113 @@ namespace SIL.FieldWorks.XWorks
 			// retry rather
 			// than silently leaving the wrong (or stale) CurrentSlice pointed, which would make the command
 			// mutate the wrong object or, for Merge's class guard, silently fail.
-			if (TrySetCurrentSliceForHvo(targetHvo))
+			if (TrySetCurrentSliceForRow(targetHvo, fieldName))
 				return;
 
-			if (RealizeLazySlicesAndRetry(targetHvo))
+			if (RealizeLazySlicesAndRetry(targetHvo, fieldName))
 				return;
 
 			// Fail loud, not silent: if we still cannot produce a slice for the target we must NOT leave
 			// CurrentSlice pointed at whatever the previous interaction selected (it would mis-target the
 			// command). Clear it so command handlers see "no current slice" and no-op, and log so the
 			// degradation is diagnosable from the field rather than only in a debugger.
-			m_dataEntryForm.CurrentSlice = null;
+			m_dataEntryForm.ClearCurrentSlice();
 			Logger.WriteEvent(string.Format(
-				"Detail menu command adapter found no DataTree slice for target hvo {0}; CurrentSlice was "
-				+ "cleared so the command no-ops rather than mis-targeting another object.", targetHvo));
+				"Detail menu command adapter found no DataTree slice for target hvo {0} field '{1}'; "
+				+ "CurrentSlice was cleared so the command no-ops rather than mis-targeting another object.",
+				targetHvo, fieldName ?? string.Empty));
 		}
 
-		// Points CurrentSlice at the (already-realized) slice whose bound object is targetHvo. Returns
-		// false when no realized slice matches (the target may still be inside an unrealized dummy).
-		private bool TrySetCurrentSliceForHvo(int targetHvo)
+		/// <summary>
+		/// Picks the slice a menu request targets. Sibling rows can share one object (a MoForm's
+		/// Form, Morph Type, ...) while handlers key on <c>CurrentSlice.Flid</c>, so prefer a
+		/// match on object AND field; fall back to object alone (headers, ghosts, custom rows).
+		/// Returns -1 when nothing matches.
+		/// </summary>
+		internal static int ChooseTargetSliceIndex(IReadOnlyList<(int Hvo, string FieldName)> candidates,
+			int targetHvo, string fieldName)
 		{
-			foreach (var sliceObj in m_dataEntryForm.Slices)
+			if (candidates == null)
+				return -1;
+
+			if (!string.IsNullOrEmpty(fieldName))
 			{
-				if (sliceObj is Slice slice && slice.IsRealSlice && slice.Object != null
-					&& slice.Object.Hvo == targetHvo)
+				for (var i = 0; i < candidates.Count; i++)
 				{
-					m_dataEntryForm.CurrentSlice = slice;
-					return true;
+					if (candidates[i].Hvo == targetHvo
+						&& string.Equals(candidates[i].FieldName, fieldName, StringComparison.Ordinal))
+					{
+						return i;
+					}
 				}
 			}
-			return false;
+
+			for (var i = 0; i < candidates.Count; i++)
+			{
+				if (candidates[i].Hvo == targetHvo)
+					return i;
+			}
+			return -1;
 		}
 
-		// Forces every lazy DummyObjectSlice to become real, then retries the hvo match. A dummy stands
-		// in for a run of objects in a sequence and reports its OWNER as its Object, so the target hvo
-		// cannot match until the dummy is realized into the per-object slices. DataTree.FieldAt(i)
-		// realizes the slice at index i in place (replacing the dummy); we walk by index because the
-		// collection mutates as dummies expand.
-		private bool RealizeLazySlicesAndRetry(int targetHvo)
+		// Targets the best realized slice for the row; false when nothing matches (the
+		// target may still sit inside a lazy placeholder).
+		private bool TrySetCurrentSliceForRow(int targetHvo, string fieldName)
+		{
+			// Not filtered on Slice.IsRealSlice: for a view slice that is
+			// RootSite.AllowLayout, false forever in a tree that never lays out. Lazy
+			// placeholders report their OWNER, so exclude them by type instead.
+			var candidates = new List<Slice>();
+			foreach (var sliceObj in m_dataEntryForm.Slices)
+			{
+				if (sliceObj is Slice slice && slice.Object != null && !slice.IsLazyPlaceholder)
+					candidates.Add(slice);
+			}
+
+			// Field names are only ever compared for hvo matches, so skip the metadata
+			// lookup for every other slice (and entirely when no field name was requested).
+			var index = ChooseTargetSliceIndex(
+				candidates.Select(s => (
+					s.Object.Hvo,
+					s.Object.Hvo == targetHvo && !string.IsNullOrEmpty(fieldName)
+						? SliceFieldName(s)
+						: null)).ToList(),
+				targetHvo, fieldName);
+			if (index < 0)
+				return false;
+
+			// ShowObject suspends ordinary CurrentSlice assignment until idle; the
+			// command-target setter applies immediately.
+			m_dataEntryForm.SetCurrentSliceForCommandTarget(candidates[index]);
+			return true;
+		}
+
+		// The model field name a slice edits, or null (header/object rows, unknown flids).
+		private string SliceFieldName(Slice slice)
+		{
+			var flid = slice.Flid;
+			// A ViewPropertySlice can carry its field only in FieldId, with no "field"
+			// attribute on its configuration node.
+			if (flid == 0 && slice is ViewPropertySlice viewPropertySlice)
+				flid = viewPropertySlice.FieldId;
+			// Virtual and decorator-only flids are absent from the MDC and never field-match.
+			var mdc = (IFwMetaDataCacheManaged)Cache.MetaDataCacheAccessor;
+			return flid != 0 && mdc.FieldExists(flid) ? mdc.GetFieldName(flid) : null;
+		}
+
+		/// <summary>
+		/// Expands every lazy placeholder in place, then retries the match: a placeholder reports
+		/// its OWNER as its Object, so the target cannot match until expansion. Walks by index
+		/// because the collection mutates as placeholders expand.
+		/// </summary>
+		private bool RealizeLazySlicesAndRetry(int targetHvo, string fieldName)
 		{
 			try
 			{
 				for (var i = 0; i < m_dataEntryForm.Slices.Count; i++)
 				{
-					if (m_dataEntryForm.Slices[i] is Slice slice && !slice.IsRealSlice)
-						m_dataEntryForm.FieldAt(i); // realizes the dummy at i in place
+					if (m_dataEntryForm.Slices[i] is Slice slice && slice.IsLazyPlaceholder)
+						m_dataEntryForm.FieldAt(i); // expands the placeholder at i in place
 				}
 			}
 			catch (Exception e)
@@ -778,7 +850,7 @@ namespace SIL.FieldWorks.XWorks
 				return false;
 			}
 
-			return TrySetCurrentSliceForHvo(targetHvo);
+			return TrySetCurrentSliceForRow(targetHvo, fieldName);
 		}
 
 		private bool? GetPersistedExpansionState(string stableId)

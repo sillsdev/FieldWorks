@@ -769,7 +769,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				CheckDisposed();
 
 				if (value == null)
-					throw new ArgumentException("CurrentSlice on DataTree cannot be set to null. Set the underlying data member to null, if you really want it to be null.");
+					throw new ArgumentException("CurrentSlice on DataTree cannot be set to null. Call ClearCurrentSlice(), if you really want it to be null.");
 				Debug.Assert(!value.IsDisposed, "Setting CurrentSlice to a disposed slice -- not a good idea!");
 
 				// don't set the current slice until we're all setup to do so (LT-7307)
@@ -4411,11 +4411,57 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			Subscriber.Subscribe(EventConstants.JumpToField, JumpToField, m_propertyTable.GetWindow());
 		}
 
+		/// <summary>
+		/// Drops the current slice so command handlers see no target and no-op. The deliberate
+		/// counterpart to the <see cref="CurrentSlice"/> setter, which rejects null.
+		/// </summary>
+		public void ClearCurrentSlice()
+		{
+			CheckDisposed();
+
+			m_currentSliceNew = null;
+			m_fSetCurrentSliceNew = false;
+			if (m_currentSlice != null && !m_currentSlice.IsDisposed)
+				m_currentSlice.SetCurrentState(false);
+			m_currentSlice = null;
+		}
+
+		/// <summary>
+		/// Points <see cref="CurrentSlice"/> at <paramref name="slice"/> for command targeting.
+		/// The ordinary setter is suspended between <c>ShowObject</c> and an idle callback
+		/// (LT-3915), which would silently discard the assignment, and its scroll/tab-stop work
+		/// needs a laid-out tree.
+		/// </summary>
+		public void SetCurrentSliceForCommandTarget(Slice slice)
+		{
+			CheckDisposed();
+
+			if (slice == null)
+			{
+				ClearCurrentSlice();
+				return;
+			}
+
+			m_currentSliceNew = null;
+			m_fSetCurrentSliceNew = false;
+			if (m_currentSlice == slice)
+				return;
+
+			if (m_currentSlice != null && !m_currentSlice.IsDisposed)
+				m_currentSlice.SetCurrentState(false);
+
+			m_currentSlice = slice;
+			m_currentSlice.SetCurrentState(true);
+			m_descendant = DescendantForSlice(m_currentSlice);
+		}
+
 		public IxCoreColleague[] GetMessageTargets()
 		{
 			CheckDisposed();
 
-			if (Visible)
+			// A command adapter is never shown, yet still drives this tree, so excluding
+			// it for invisibility would silence the handlers defined on the tree itself.
+			if (Visible || IsExternalCommandAdapter)
 			{
 				if (m_currentSlice != null)
 					return new IxCoreColleague[] { m_currentSlice, this };
@@ -5366,6 +5412,17 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			{
 				CheckDisposed();
 				return false;
+			}
+		}
+
+		/// <summary>This slice stands in for objects not yet built; its Object is the
+		/// OWNER.</summary>
+		public override bool IsLazyPlaceholder
+		{
+			get
+			{
+				CheckDisposed();
+				return true;
 			}
 		}
 
