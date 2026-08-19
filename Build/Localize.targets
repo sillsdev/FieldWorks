@@ -35,6 +35,7 @@
 		<ListsDirectory>$(L10nsBaseDir)/lists</ListsDirectory>
 		<GoldEticDir>$(ListsDirectory)/GramCats</GoldEticDir>
 		<MessagesPot>$(L10nsBaseDir)/messages.pot</MessagesPot>
+		<LcmRootDir Condition="'$(LcmRootDir)'==''">$(L10nsBaseDir)/LCMRepo</LcmRootDir>
 		<LcmSrcDir>$(LcmRootDir)/src</LcmSrcDir>
 		<WarnForMissingDD Condition="'$(DownloadsDir)'==''">true</WarnForMissingDD>
 		<DownloadsDir>$(fwrt)/Downloads</DownloadsDir><!-- TODO (Hasso) 2026.02: figure out why this isn't getting set elsewhere -->
