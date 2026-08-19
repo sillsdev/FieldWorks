@@ -235,7 +235,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// Control how much output we send to the application's listeners (e.g. visual studio output window)
 		/// </summary>
 		protected TraceSwitch m_traceSwitch = new TraceSwitch("DataTree", "");
-		private static readonly bool s_enableInteractionTrace = IsOptInPerfFlagEnabled("FW_PERF_INTERACTION_TRACE");
+		private static readonly bool s_enableInteractionTrace = EnvironmentVariables.IsTrue("FW_PERF_INTERACTION_TRACE");
 		private static readonly int s_interactionTraceThresholdMs = GetPerfThresholdMs(
 			"FW_PERF_INTERACTION_TRACE_THRESHOLD_MS", 25);
 		protected void TraceVerbose(string s)
@@ -253,17 +253,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			if(m_traceSwitch.TraceInfo || m_traceSwitch.TraceVerbose)
 				Trace.WriteLine("DataTreeThreadID="+System.Threading.Thread.CurrentThread.GetHashCode()+": "+s);
 		}
-		private static bool IsOptInPerfFlagEnabled(string variableName)
-		{
-			var value = Environment.GetEnvironmentVariable(variableName);
-			if (string.IsNullOrEmpty(value))
-				return false;
-
-			return !string.Equals(value, "0", StringComparison.OrdinalIgnoreCase) &&
-				!string.Equals(value, "false", StringComparison.OrdinalIgnoreCase) &&
-				!string.Equals(value, "off", StringComparison.OrdinalIgnoreCase);
-		}
-
 		private static int GetPerfThresholdMs(string variableName, int defaultValue)
 		{
 			var value = Environment.GetEnvironmentVariable(variableName);

@@ -61,20 +61,9 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </summary>
 		public event EventHandler OnRefreshForScrollBarVisibility;
 		#endregion Events
-		private static readonly bool s_enableInteractionTrace = IsOptInPerfFlagEnabled("FW_PERF_INTERACTION_TRACE");
+		private static readonly bool s_enableInteractionTrace = EnvironmentVariables.IsTrue("FW_PERF_INTERACTION_TRACE");
 		private static readonly int s_interactionTraceThresholdMs = GetPerfThresholdMs(
 			"FW_PERF_INTERACTION_TRACE_THRESHOLD_MS", 25);
-
-		private static bool IsOptInPerfFlagEnabled(string variableName)
-		{
-			var value = Environment.GetEnvironmentVariable(variableName);
-			if (string.IsNullOrEmpty(value))
-				return false;
-
-			return !string.Equals(value, "0", StringComparison.OrdinalIgnoreCase) &&
-				!string.Equals(value, "false", StringComparison.OrdinalIgnoreCase) &&
-				!string.Equals(value, "off", StringComparison.OrdinalIgnoreCase);
-		}
 
 		private static int GetPerfThresholdMs(string variableName, int defaultValue)
 		{

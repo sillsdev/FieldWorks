@@ -17,6 +17,10 @@ It is intentionally not a full architecture manual. It should stay biased toward
 - **MSBuild project**: A `.csproj`, `.vcxproj`, `.wixproj`, or similar build unit.
 - **Installer project**: WiX authoring and packaging work under `FLExInstaller/`.
 - **Worktree**: A git worktree for isolated builds and edits.
+- **`Grammar`**: overloaded — qualify when the distinction matters.
+  - **Grammar Area**: One of the five top-level Areas (see Core Domain section) — the Parts of Speech/Features/etc. tool group.
+  - **Grammar Sketch**: An existing human-readable, published linguistic-description document export (`ExportDialog.ExportGrammarSketch`); unrelated to the HC grammar below despite the shared word.
+  - **HC grammar**: The HermitCrab-format grammar (phonology, morphology, features, categories) produced from a language project via `HCLoader.Load` + `XmlLanguageWriter.Save` (`SIL.Machine.Morphology.HermitCrab`). Always say "HC grammar," never bare "grammar," when the distinction from the other two matters.
 - **`Writing system`**: overloaded — qualify when the distinction matters.
   - **Writing system definition**: `WritingSystemDefinition` (libpalaso / `SIL.WritingSystems`); the base writing system class, identified by a BCP-47 language tag.
   - **Core writing system definition**: `CoreWritingSystemDefinition` (liblcm / `SIL.LCModel.Core.WritingSystems`); extends `WritingSystemDefinition` with a `Handle` and LCM-specific features such as character sets.
@@ -33,6 +37,7 @@ It is intentionally not a full architecture manual. It should stay biased toward
 - **IME composition**: The transient input-method editing state before text is committed. Treat composition behavior and committed text behavior as separate test and parity concerns.
 - **Lexicon**: The lexical data and editing experience in FLEx.
 - **Interlinear text**: Text annotated with multiple aligned linguistic analysis lines.
+- **Word occurrence** (`IAnalysis`, in `SIL.LCModel`): One tokenized position in a paragraph — either a bare, unanalyzed **wordform occurrence** (`IWfiWordform`, `HasWordform == true` but no morphological breakdown chosen) or an **analyzed occurrence** (`IWfiAnalysis`/`IWfiGloss` — a morphological breakdown/gloss has been attached, whether by a human or an unreviewed parser guess; "analyzed" says nothing about whether the analysis is linguistically correct). Punctuation occurrences also satisfy `IAnalysis` but not `HasWordform`. This three-way distinction (punctuation / wordform-only / analyzed) recurs across `StatisticsView`, `ConcordanceControl`, and Interlinear editing — use these names rather than inventing new ones.
 - **Morphology**: The part of the system and data model concerned with morphemes, rules, and word analysis.
 - **Parser**: Morphological analysis tooling such as HermitCrab or XAmple.
 - **Paratext integration**: Scripture and lexicon interoperability with Paratext. Implemented across `FwParatextLexiconPlugin`, `ParatextImport` (scripture text import via `ParatextImportManager`/`ParatextSfmImporter`), and `Paratext8Plugin` (bridge to Paratext APIs).
@@ -53,7 +58,7 @@ It is intentionally not a full architecture manual. It should stay biased toward
 - **Service locator**: `LcmCache.ServiceLocator` (`ILcmServiceLocator`). IoC container for LCModel — the primary way to retrieve repositories, factories, and services.
 - **Unit of work**: Groups data-model changes under `IActionHandler`. All LCModel writes must occur inside one. `UndoableUnitOfWorkHelper` (undoable) and `NonUndoableUnitOfWorkHelper` (non-undoable) are in `SIL.LCModel.Infrastructure`; use as a `using` block or via their static `.Do(...)` helpers.
 - **Publish/subscribe system**: Messaging system (`IPublisher` / `ISubscriber`, `SIL.FieldWorks.Common.FwUtils`) via `FwUtils.Publisher` and `FwUtils.Subscriber` singletons. Supports exact-name and prefix subscriptions; `PublishAtEndOfAction` defers delivery to end of user action. Event-based problems deserve event-based solutions — avoid state variables for event timing when a deterministic subscribe/unsubscribe solution can be used.
-- **Area**: One of the five top-level navigation divisions — Lexicon, Grammar, Words & Texts, Notebook, Lists. Declared in `areaConfiguration.xml` and identified by constants in `AreaConstants`. Each Area has its own sidebar and owns a set of Tools.
+- **Area**: One of the five top-level navigation divisions — Lexicon, Grammar, Texts & Words, Notebook, Lists. Declared in `areaConfiguration.xml` and identified by constants in `AreaConstants`. Each Area has its own sidebar and owns a set of Tools. (The Texts & Words area's internal `areaChoice` value is `textsWords`.)
 - **Tool**: A view or function within an Area, declared in `toolConfiguration.xml`. The active Tool per Area is tracked via `ToolForAreaNamed_<area>`; switching Areas restores the last-used Tool. Navigation is property-driven through the XCore mediator system.
 - **Dictionary configuration**: A `.fwdictconfig` XML file (`DictionaryConfigurationModel`) defining which LCModel fields appear in a dictionary view, their order, style, and options. Scoped to one or more Publications.
 - **Publication**: A named output target (e.g. a print edition or web view) that dictionary configurations are scoped to. `AllPublications` applies a configuration to all current and future publications.

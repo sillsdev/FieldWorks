@@ -35,24 +35,12 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public static bool ShouldUseAvaloniaUIFromSettings(string persistedUiMode) =>
 			IsSwitchingEnabled() && ShouldUseAvaloniaUI(persistedUiMode);
 
-		/// <summary>Reads <see cref="SwitchingEnabledVariable"/> from the current process environment.</summary>
-		public static bool IsSwitchingEnabled() =>
-			IsSwitchingEnabled(Environment.GetEnvironmentVariable(SwitchingEnabledVariable));
-
 		/// <summary>
-		/// True for any <paramref name="variableValue"/> except null, blank, "0", "false", and "off"
-		/// (case-insensitive), so the variable can be spelled "1", "true", or "yes" and still turns
-		/// switching on, while "0" reliably turns it back off.
+		/// True when <see cref="SwitchingEnabledVariable"/> is set in the current process
+		/// environment to a value that opts in, which is anything except blank, "0",
+		/// "false", and "off".
 		/// </summary>
-		internal static bool IsSwitchingEnabled(string variableValue)
-		{
-			if (string.IsNullOrWhiteSpace(variableValue))
-				return false;
-
-			var trimmed = variableValue.Trim();
-			return !string.Equals(trimmed, "0", StringComparison.OrdinalIgnoreCase) &&
-				!string.Equals(trimmed, "false", StringComparison.OrdinalIgnoreCase) &&
-				!string.Equals(trimmed, "off", StringComparison.OrdinalIgnoreCase);
-		}
+		public static bool IsSwitchingEnabled() =>
+			EnvironmentVariables.IsTrue(SwitchingEnabledVariable);
 	}
 }
