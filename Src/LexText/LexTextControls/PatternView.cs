@@ -70,8 +70,10 @@ namespace SIL.FieldWorks.LexText.Controls
 		}
 
 		/// <summary>
-		/// Activate() is suppressed by default in ReadOnlyViews (SimpleRootSite.AllowDisplaySelection
-		/// defaults to IsEditable), but both PatternView consumers are pattern builders whose chooser
+		/// Activate() is suppressed by default in ReadOnlyViews
+		/// (SimpleRootSite.AllowDisplaySelection
+		/// defaults to IsEditable), but both PatternView consumers are pattern builders whose
+		/// chooser
 		/// insert/delete needs the user to see the current selection even when the view itself is
 		/// read-only.
 		/// </summary>

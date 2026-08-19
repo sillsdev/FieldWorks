@@ -1,21 +1,7 @@
 // Copyright (c) 2026 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// Reproduction and regression coverage for the Complex Concordance pattern-builder crash.
-// ComplexConcControl and the phonological rule formula editor share PatternView/
-// PatternVcBase. ComplexConcPatternVc has no UpdateProp override, so an edit that reaches
-// the view engine without passing through PatternView.OnKeyPress (IME composition,
-// drag-and-drop, or any direct IVwSelection.ReplaceWithTsString call) falls through to
-// VwBaseVc.UpdateProp, which throws NotImplementedException. Unlike the sibling rule-formula
-// bug, ComplexConcPatternVc binds no real domain fields via AddStringAltMember (verified by
-// inspection: zero occurrences in ComplexConcPatternVc.cs), so this is a crash, not a silent
-// corruption/rename.
-//
-// These tests drive a real IVwRootBox (PatternView/ComplexConcPatternVc) against a real
-// in-memory LcmCache and call IVwSelection.ReplaceWithTsString directly -- the same low-level
-// entry point IME composition or drag-and-drop would use, and one PatternView.OnKeyPress never
-// sees because it only reacts to Windows key events, not to ReplaceWithTsString.
+
 using System.Collections.Generic;
 using System.Reflection;
 using System.Windows.Forms;
@@ -32,6 +18,16 @@ using FS = System.Collections.Generic.Dictionary<SIL.LCModel.IFsFeatDefn, object
 
 namespace SIL.FieldWorks.IText
 {
+	/// <summary>
+	/// Covers the Complex Concordance pattern builder's response to an edit that reaches the
+	/// view engine without passing through PatternView.OnKeyPress, as IME composition and
+	/// drag-and-drop do. Without an UpdateProp override such an edit falls through to
+	/// VwBaseVc.UpdateProp, which throws. The pattern builder binds no real domain fields, so
+	/// the failure is a crash rather than a silent rename of shared project data.
+	///
+	/// These tests drive a real IVwRootBox against an in-memory LcmCache and call
+	/// IVwSelection.ReplaceWithTsString directly.
+	/// </summary>
 	[TestFixture]
 	public class ComplexConcPatternVcDirectEditTests : MemoryOnlyBackendProviderTestBase
 	{
@@ -251,11 +247,8 @@ namespace SIL.FieldWorks.IText
 			Assert.That(tss.Text, Is.EqualTo("Gloss: myGloss"));
 		}
 
-		// ------------------------------------------------------------------
-		// Angle 1: breadth of the crash across the fragments ComplexConcPatternVc renders.
-		// Each of these encodes the DESIRED end state (no crash, content unchanged) and must
-		// fail against current code, which throws NotImplementedException instead.
-		// ------------------------------------------------------------------
+		// Breadth of the crash across every fragment ComplexConcPatternVc renders. Each case
+		// asserts no crash and unchanged content.
 
 		[Test]
 		public void ReplaceWithTsString_OnWordNodeTypeLine_DoesNotThrow()
@@ -342,10 +335,8 @@ namespace SIL.FieldWorks.IText
 
 			Assert.DoesNotThrow(() => AttemptEdit(sel, "HACKED", Cache.DefaultAnalWs),
 				"a direct edit on the morph node's Category line must not crash the view engine");
-			// This is the specific check for the bug doc's claim that this is a crash, not a
-			// Bug-1-style corruption: the category line displays a REAL, shared IPartOfSpeech's
-			// Abbreviation, so if this bug were the same class as Bug 1, a botched edit here
-			// could rename it project-wide. Confirm it does not.
+			// The category line displays a real, shared IPartOfSpeech's Abbreviation, so a
+			// botched edit here would rename it project-wide.
 			Assert.That(noun.Abbreviation.BestAnalysisAlternative.Text, Is.EqualTo("N"),
 				"an edit attempt on the Category line must not rename the real, shared PartOfSpeech");
 		}
@@ -458,15 +449,8 @@ namespace SIL.FieldWorks.IText
 				"the synthetic pattern node's Minimum must not be mutated by a discarded edit");
 		}
 
-		// ------------------------------------------------------------------
-		// Angle 2: is the crash reachable through PatternView's own input handling (keystrokes),
-		// or only through paths that bypass it (IME composition, drag-and-drop, or any other
-		// direct ReplaceWithTsString caller)? PatternView.OnKeyPress unconditionally sets
-		// e.Handled = true and returns without calling base.OnKeyPress for anything but
-		// Backspace/Delete, so ordinary WM_CHAR-driven typing never reaches the engine at all.
-		// This test is expected to PASS today: it documents that the keystroke path is already
-		// safe, which is what makes the ReplaceWithTsString bypass above the actual bug.
-		// ------------------------------------------------------------------
+		// Ordinary typing never reaches the view engine: OnKeyPress handles everything except
+		// Backspace and Delete, so only paths that bypass it can crash.
 
 		[Test]
 		public void SimulateTyping_ViaOnKeyPress_DoesNotReachEngine_AndDoesNotCrash()
@@ -486,10 +470,7 @@ namespace SIL.FieldWorks.IText
 				"a plain keystroke must not reach the engine and alter content -- PatternView.OnKeyPress swallows it before that");
 		}
 
-		// ------------------------------------------------------------------
-		// Angle 3: insert/delete must keep working. PatternView.OnKeyDown raises
-		// RemoveItemsRequested for the Delete key; this must survive whatever fix is applied.
-		// ------------------------------------------------------------------
+		// Insert and delete must keep working: OnKeyDown raises RemoveItemsRequested for Delete.
 
 		// ------------------------------------------------------------------
 		// Ablation evidence for the fix's layers.
@@ -559,20 +540,14 @@ namespace SIL.FieldWorks.IText
 		}
 
 		/// <summary>
-		/// SimpleRootSite.ReadOnlyView's setter forces AcceptsReturn = AcceptsTab = false when set
-		/// to true (SimpleRootSite.cs), which happens AFTER the Designer's own explicit
-		/// AcceptsReturn = true / AcceptsTab = false assignments in InitializeComponent's
-		/// generated-code ordering. This pins the actual, real behaviour change: AcceptsTab was
-		/// already false before this fix (Designer-set, independent of ReadOnlyView) so Tab
-		/// navigation out of the pane is unchanged; AcceptsReturn flips from true to false, which
-		/// is new. Since PatternView.OnKeyPress already swallows Return either way (it is not
-		/// Backspace/Delete), the observable difference is only where the key is disposed of: it
-		/// used to reach the control and be silently swallowed there; now IsInputKey(Return)
-		/// returns false and the key is never delivered to the control at all, so it is processed
-		/// as an ordinary dialog/navigation key by whatever contains this pane. This control is
-		/// hosted as a Words-area tool pane (DistFiles/.../Concordance/toolConfiguration.xml), not
-		/// inside a modal dialog with an AcceptButton, so no default-button activation is expected
-		/// in practice -- but that is unverified live; see the review doc.
+		/// SimpleRootSite.ReadOnlyView's setter forces AcceptsReturn and AcceptsTab to false,
+		/// after the Designer's own assignments in InitializeComponent. AcceptsTab is false
+		/// either way, so Tab navigation out of the pane is unchanged. AcceptsReturn becomes
+		/// false, and since PatternView.OnKeyPress swallows Return regardless, the only
+		/// difference is where the key is disposed of: IsInputKey(Return) returns false, so the
+		/// key is not delivered to the control and whatever hosts the pane treats it as an
+		/// ordinary navigation key. The pane is a Words-area tool rather than a modal dialog
+		/// with an AcceptButton, so no default-button activation is expected. Unverified live.
 		/// </summary>
 		[Test]
 		public void ComplexConcControl_AcceptsTabUnchanged_AcceptsReturnNowFalse()

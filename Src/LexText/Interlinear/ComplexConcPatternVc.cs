@@ -427,7 +427,8 @@ namespace SIL.FieldWorks.IText
 		private void DisplayFeatures(IVwEnv vwenv, ComplexConcPatternNode node)
 		{
 			// Every line here (Type, Form, Entry, Category, Gloss, Infl Features) is a computed
-			// summary of the synthetic pattern node, not free text; see UpdateProp and SetNotEditable.
+			// summary of the synthetic pattern node, not free text; see UpdateProp and
+			// SetNotEditable.
 			SetNotEditable(vwenv);
 			vwenv.AddProp(ktagType, this, kfragFeatureLine);
 			var morphNode = node as ComplexConcMorphNode;
