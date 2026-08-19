@@ -136,9 +136,6 @@ namespace SIL.FieldWorks.XWorks
 				var caseFunctions =
 					new CaseFunctions(cache.ServiceLocator.WritingSystemManager.Get(wsString));
 				var upperCase = caseFunctions.ToTitle(firstLetter);
-				// GetLeadChar returns whatever case the sort rules use for the
-				// primary character, and Shoebox-style simple rules are
-				// conventionally uppercase-first. LT-22651
 				var lowerCase = caseFunctions.ToLower(firstLetter).Normalize();
 				headerTextBuilder.Append(upperCase);
 				if (lowerCase != upperCase)
