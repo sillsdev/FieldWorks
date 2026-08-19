@@ -439,20 +439,30 @@ namespace SIL.FieldWorks.LexText.Controls
 			{
 				ClearWordformAnalyses(wf);
 				// Clear lower-case version of wf.
-				var vernWs = wf.Form.BestVernacularAlternative.get_WritingSystemAt(0);
-				var cf = new CaseFunctions(m_cache.ServiceLocator.WritingSystemManager.Get(vernWs));
-				string word = wf.Form.BestVernacularAlternative.Text;
-				string lcWord = cf.ToLower(word);
-				if (lcWord != word)
+				IWfiWordform lcWf = GetLowercaseWordform(wf);
+				if (lcWf != null && lcWf != wf)
 				{
-					if (m_cache.ServiceLocator.GetInstance<IWfiWordformRepository>().TryGetObject(
-						TsStringUtils.MakeString(lcWord, vernWs), true, out IWfiWordform lcWf))
-					{
-						ClearWordformAnalyses(lcWf);
-					}
+					ClearWordformAnalyses(lcWf);
 				}
 			});
 			return true;    //we handled this.
+		}
+
+		private IWfiWordform GetLowercaseWordform(IWfiWordform wf)
+		{
+			var vernWs = wf.Form.BestVernacularAlternative.get_WritingSystemAt(0);
+			var cf = new CaseFunctions(m_cache.ServiceLocator.WritingSystemManager.Get(vernWs));
+			string word = wf.Form.BestVernacularAlternative.Text;
+			string lcWord = cf.ToLower(word);
+			if (lcWord != word)
+			{
+				if (m_cache.ServiceLocator.GetInstance<IWfiWordformRepository>().TryGetObject(
+					TsStringUtils.MakeString(lcWord, vernWs), true, out IWfiWordform lcWf))
+				{
+					return lcWf;
+				}
+			}
+			return null;
 		}
 
 		private void ClearWordformAnalyses(IWfiWordform wf)
@@ -555,15 +565,40 @@ namespace SIL.FieldWorks.LexText.Controls
 				{
 					foreach (IAnalysis analysis in seg.AnalysesRS)
 					{
-						if (analysis is IWfiWordform)
+						// Skip punctuation and approved wordforms.
+						if (analysis is IWfiWordform wordform)
 						{
-							unapprovedWordforms.Add(analysis.Wordform);
+							bool approved = HasApprovedAnalysis(wordform);
+							if (!approved)
+							{
+								IWfiWordform lcWordform = GetLowercaseWordform(wordform);
+								if (lcWordform != null && lcWordform != wordform)
+								{
+									approved = HasApprovedAnalysis(lcWordform);
+								}
+							}
+							if (!approved)
+							{
+								unapprovedWordforms.Add(wordform);
+							}
 						}
 					}
 				}
 			}
 			return unapprovedWordforms;
+		}
 
+		private bool HasApprovedAnalysis(IWfiWordform wordform)
+		{
+			var parserAgent = wordform.Cache.LanguageProject.DefaultParserAgent;
+			foreach (IWfiAnalysis wfAnalysis in wordform.AnalysesOC)
+			{
+				if (wfAnalysis.GetAgentOpinion(parserAgent) == Opinions.approves)
+				{
+					return true;
+				}
+			}
+			return false;
 		}
 
 		public bool OnCheckParserOnCurrentText(object argument)
