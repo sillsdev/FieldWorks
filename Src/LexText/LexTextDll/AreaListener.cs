@@ -28,18 +28,6 @@ namespace SIL.FieldWorks.XWorks.LexText
 		protected Mediator m_mediator;
 		protected PropertyTable m_propertyTable;
 
-		/// <summary>
-		/// Keeps track of how many lists are loaded into List area
-		/// memory windowConfiguration XML (including Custom ones).
-		/// </summary>
-		private int m_ctotalLists;
-
-		/// <summary>
-		/// Keeps track of how many Custom lists are loaded into List area
-		/// memory windowConfiguration XML.
-		/// </summary>
-		private int m_ccustomLists;
-
 		#endregion
 
 		#region IDisposable & Co. implementation
@@ -152,8 +140,6 @@ namespace SIL.FieldWorks.XWorks.LexText
 			m_mediator = mediator;
 			m_propertyTable = propertyTable;
 			mediator.AddColleague(this);
-			m_ctotalLists = 0;
-			m_ccustomLists = 0;
 			Subscriber.Subscribe(EventConstants.SetInitialContentObject, SetInitialContentObject, m_propertyTable.GetWindow());
 			Subscriber.Subscribe(EventConstants.SetToolFromName, SetToolFromName, m_propertyTable.GetWindow());
 			Subscriber.Subscribe(EventConstants.ReloadAreaTools, ReloadAreaTools, m_propertyTable.GetWindow());
@@ -326,56 +312,45 @@ namespace SIL.FieldWorks.XWorks.LexText
 		/// Lists area listener was getting too different from other areas, so I made a
 		/// separate version of FillList just for the Lists area.
 		/// </summary>
-		/// <param name="display"></param>
-		/// <returns></returns>
 		private bool FillListAreaList(UIListDisplayProperties display)
 		{
-			var customLists = GetListOfOwnerlessLists();
-			var fcustomChanged = customLists.Count != m_ccustomLists;
-			// Since we're in the 'Lists' area, don't bother refreshing this
-			// list, unless the number of Custom lists has changed. This happens
-			// whenever someone adds one.
-			if (display.List.Count > 0 && !fcustomChanged)
+			var windowConfiguration = m_propertyTable.GetValue<XmlNode>("WindowConfiguration");
+			var ownerlessLists = GetListOfOwnerlessLists();
+			var configuredGuids = GetConfiguredOwnerlessListGuids(windowConfiguration);
+			// Only additions are reconciled: deleting a Custom list rebuilds the window it was
+			// deleted in, discarding that window's copy of this configuration.
+			var newLists = ownerlessLists.Where(list => !configuredGuids.Contains(list.Guid)).ToList();
+			// Since we're in the 'Lists' area, don't bother refreshing this list unless a Custom
+			// list has shown up that the window configuration doesn't know about yet.
+			if (display.List.Count > 0 && newLists.Count == 0)
 				return true;
 
-			// We can get here in the following cases:
-			// Case 1: display.List is empty and m_ctotalLists == 0
-			//       Load 'windowConfiguration' with all Custom lists,
-			//       Update both list counts,
-			//       Load 'display' with ALL lists.
-			// Case 2: display.List is empty, but m_ctotalLists > 0
-			//       We MAY have a recent Custom list addition to add.
-			//       If 'fcustomChanged', load the new Custom list into 'windowConfiguration',
-			//          and update both list counts,
-			//       Load 'display' with ALL lists.
-			// Case 3: display.List is loaded, but we have a recent Custom list addition to add.
-			//       Load the new Custom list into 'windowConfiguration',
-			//       Update both list counts,
-			//       Only update 'display' with new Custom list.
-			// N.B. This may need changing if we allow the user to DELETE Custom lists someday.
-			var windowConfiguration = m_propertyTable.GetValue<XmlNode>("WindowConfiguration");
-			UpdateWinConfig(fcustomChanged, customLists, windowConfiguration);
+			if (newLists.Count > 0)
+			{
+				AddListsToWindowConfig(newLists, windowConfiguration);
+				UpdateMediatorConfig(windowConfiguration);
+			}
 
-			// Now update 'display'
+			var toolNodes = windowConfiguration.SelectNodes(XWindow.GetToolXPath("lists"));
+			if (toolNodes == null)
+				return true;
+
+			// A display that already holds the other lists only wants the ones just added.
+			var wantNewListsOnly = display.List.Count > 0;
+			var newListGuids = new HashSet<Guid>(newLists.Select(list => list.Guid));
+			var liveGuids = new HashSet<Guid>(ownerlessLists.Select(list => list.Guid));
 			var cache = m_propertyTable.GetValue<LcmCache>("cache");
 			var possRepo = cache.ServiceLocator.GetInstance<ICmPossibilityListRepository>();
-			if (display.List.Count > 0)
+			foreach (XmlNode toolNode in toolNodes)
 			{
-				var node = windowConfiguration.SelectSingleNode(GetListToolsXPath()).LastChild;
-				if (node != null)
-					AddToolNodeToDisplay(possRepo, cache, display, node);
-			}
-			else
-			{
-				var nodes = windowConfiguration.SelectNodes(XWindow.GetToolXPath("lists"));
-				if (nodes == null)
-				{
-					return true;
-				}
-					foreach (XmlNode node in nodes)
-					{
-					AddToolNodeToDisplay(possRepo, cache, display, node);
-					}
+				var listGuid = GetOwnerlessListGuidFromToolNode(toolNode);
+				// A Custom list deleted in another main window leaves its tool in this window's
+				// configuration, where the guid no longer resolves to a list.
+				if (listGuid != Guid.Empty && !liveGuids.Contains(listGuid))
+					continue;
+				if (wantNewListsOnly && !newListGuids.Contains(listGuid))
+					continue;
+				AddToolNodeToDisplay(possRepo, cache, display, toolNode);
 			}
 			return true;
 		}
@@ -534,41 +509,38 @@ namespace SIL.FieldWorks.XWorks.LexText
 			return null;
 		}
 
-		private void UpdateWinConfig(bool fcustomChanged, List<ICmPossibilityList> customLists, XmlNode windowConfig)
+		/// <summary>
+		/// Gets the guids of the ownerless lists that the 'lists' area of the given window
+		/// configuration already has a tool for.
+		/// </summary>
+		private static HashSet<Guid> GetConfiguredOwnerlessListGuids(XmlNode windowConfig)
 		{
-			// See caller FillListAreaList() for description of Case 1-3
-			if (m_ctotalLists == 0) // Case 1
-				LoadAllCustomLists(customLists, windowConfig);
-			else // Case 2 and 3
-				if (fcustomChanged) // Case 3 is automatically true
-					AddACustomList(customLists[customLists.Count - 1], windowConfig);
+			var configuredGuids = new HashSet<Guid>();
+			var toolNodes = windowConfig.SelectNodes(XWindow.GetToolXPath("lists"));
+			if (toolNodes == null)
+				return configuredGuids;
+			foreach (XmlNode toolNode in toolNodes)
+			{
+				var listGuid = GetOwnerlessListGuidFromToolNode(toolNode);
+				if (listGuid != Guid.Empty)
+					configuredGuids.Add(listGuid);
+			}
+			return configuredGuids;
 		}
 
-		private void AddACustomList(ICmPossibilityList customList, XmlNode windowConfig)
+		/// <summary>
+		/// Gets the guid of the ownerless list that the given tool edits, or Guid.Empty if the
+		/// tool edits an owned list or isn't wired to a list at all.
+		/// </summary>
+		private static Guid GetOwnerlessListGuidFromToolNode(XmlNode toolNode)
 		{
-			// Add 'customList' to windowConfig
-			AddListsToWindowConfig(new List<ICmPossibilityList> {customList}, windowConfig);
-
-			// We have to update this because other things besides 'tools' need to get set.
-			UpdateMediatorConfig(windowConfig);
-
-			m_ccustomLists++;
-			m_ctotalLists++;
-		}
-
-		private void LoadAllCustomLists(List<ICmPossibilityList> customLists, XmlNode windowConfig)
-		{
-
-			AddListsToWindowConfig(customLists, windowConfig);
-
-			// We have to update this because other things besides 'tools' need to get set.
-			UpdateMediatorConfig(windowConfig);
-
-			var nodes = windowConfig.SelectNodes(XWindow.GetToolXPath("lists"));
-			if (nodes != null)
-				m_ctotalLists = nodes.Count;
-			m_ccustomLists = customLists.Count;
-			m_ctotalLists += m_ccustomLists;
+			var recordListNode = GetClerkRecordListNodeFromToolNode(toolNode);
+			if (recordListNode == null || XmlUtils.GetAttributeValue(recordListNode, "owner") != "unowned")
+				return Guid.Empty;
+			// An unowned recordList carries the list's guid as its property.
+			Guid listGuid;
+			return Guid.TryParse(XmlUtils.GetAttributeValue(recordListNode, "property"), out listGuid)
+				? listGuid : Guid.Empty;
 		}
 
 		private void UpdateMediatorConfig(XmlNode windowConfig)
