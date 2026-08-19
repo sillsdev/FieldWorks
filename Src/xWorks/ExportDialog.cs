@@ -1490,7 +1490,7 @@ namespace SIL.FieldWorks.XWorks
 					continue;
 				}
 				// The AI-analysis export is opt-in, so it stays out of the list entirely when unset.
-				if (IsAiExportTemplate(document) && !AiExportGate.IsEnabled())
+				if (IsAiExportTemplate(document) && !EnvironmentVariables.IsTrue(ksAiExportEnabledVariable))
 					continue;
 				XmlNode node = document.SelectSingleNode("//FxtDocumentDescription");
 				if (node == null)
@@ -1526,6 +1526,9 @@ namespace SIL.FieldWorks.XWorks
 
 		/// <summary>Value of the export template's type attribute that selects the AI-analysis export.</summary>
 		private const string ksAiExportTemplateType = "grammarTextsAI";
+
+		/// <summary>Environment variable that opts in to the AI-analysis export.</summary>
+		private const string ksAiExportEnabledVariable = "FLEX_AI_EXPORT";
 
 		/// <summary>
 		/// True when the export template describes exporting a grammar and texts for AI analysis.

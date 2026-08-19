@@ -2,39 +2,53 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System;
 using NUnit.Framework;
 
 namespace SIL.FieldWorks.Common.FwUtils
 {
 	/// <summary>
-	/// Covers which FW_AVALONIA values count as opting in to the New UI. The rule is a pure function,
-	/// so nothing here reads or writes the process environment.
+	/// Covers which UI-mode values select the New UI, and how that combines with the
+	/// FW_AVALONIA opt-in.
 	/// </summary>
 	[TestFixture]
 	public class UIModeGatesTests
 	{
-		[TestCase("1")]
-		[TestCase("true")]
-		[TestCase("TRUE")]
-		[TestCase("yes")]
-		[TestCase("on")]
-		[TestCase(" 1 ")]
-		public void IsSwitchingEnabled_TreatsAnyOtherValueAsOptedIn(string value)
+		[TestCase("New")]
+		[TestCase("new")]
+		[TestCase("NEW")]
+		public void ShouldUseAvaloniaUI_TrueOnlyForNew(string uiMode)
 		{
-			Assert.That(UIModeGates.IsSwitchingEnabled(value), Is.True);
+			Assert.That(UIModeGates.ShouldUseAvaloniaUI(uiMode), Is.True);
 		}
 
 		[TestCase(null)]
 		[TestCase("")]
-		[TestCase("   ")]
-		[TestCase("0")]
-		[TestCase("false")]
-		[TestCase("False")]
-		[TestCase("off")]
-		[TestCase(" off ")]
-		public void IsSwitchingEnabled_FailsClosedForUnsetAndNegativeValues(string value)
+		[TestCase("Legacy")]
+		[TestCase(" New ")]
+		[TestCase("Newer")]
+		public void ShouldUseAvaloniaUI_FalseForEverythingElse(string uiMode)
 		{
-			Assert.That(UIModeGates.IsSwitchingEnabled(value), Is.False);
+			Assert.That(UIModeGates.ShouldUseAvaloniaUI(uiMode), Is.False);
+		}
+
+		[Test]
+		public void ShouldUseAvaloniaUIFromSettings_NeedsBothTheOptInAndNew()
+		{
+			var original = Environment.GetEnvironmentVariable(UIModeGates.SwitchingEnabledVariable);
+			try
+			{
+				Environment.SetEnvironmentVariable(UIModeGates.SwitchingEnabledVariable, "1");
+				Assert.That(UIModeGates.ShouldUseAvaloniaUIFromSettings("New"), Is.True);
+				Assert.That(UIModeGates.ShouldUseAvaloniaUIFromSettings("Legacy"), Is.False);
+
+				Environment.SetEnvironmentVariable(UIModeGates.SwitchingEnabledVariable, null);
+				Assert.That(UIModeGates.ShouldUseAvaloniaUIFromSettings("New"), Is.False);
+			}
+			finally
+			{
+				Environment.SetEnvironmentVariable(UIModeGates.SwitchingEnabledVariable, original);
+			}
 		}
 	}
 }
