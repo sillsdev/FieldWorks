@@ -55,7 +55,8 @@ namespace SIL.FieldWorks.IText
 			this.m_view.Mediator = null;
 			this.m_view.Name = "m_view";
 			// The pattern builder is modifiable only via chooser-insert and delete, never free
-			// text; see Docs/bugs/complex-conc-pattern-crash.md.
+			// text: content is entirely computed from the synthetic pattern-node tree, so a
+			// typed or IME-composed edit has nothing valid to apply.
 			this.m_view.ReadOnlyView = true;
 			this.m_view.ScrollMinSize = new System.Drawing.Size(0, 0);
 			this.m_view.ScrollPosition = new System.Drawing.Point(0, 0);

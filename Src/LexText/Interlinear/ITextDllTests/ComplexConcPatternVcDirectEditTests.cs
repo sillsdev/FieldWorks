@@ -2,15 +2,15 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 //
-// Reproduction and regression coverage for the Complex Concordance pattern-builder crash
-// (Docs/bugs/complex-conc-pattern-crash.md). ComplexConcControl and the phonological rule
-// formula editor share PatternView/PatternVcBase. ComplexConcPatternVc has no UpdateProp
-// override, so an edit that reaches the view engine without passing through
-// PatternView.OnKeyPress (IME composition, drag-and-drop, or any direct
-// IVwSelection.ReplaceWithTsString call) falls through to VwBaseVc.UpdateProp, which throws
-// NotImplementedException. Unlike the sibling rule-formula bug, ComplexConcPatternVc binds no
-// real domain fields via AddStringAltMember (verified by inspection: zero occurrences in
-// ComplexConcPatternVc.cs), so this is a crash, not a silent corruption/rename.
+// Reproduction and regression coverage for the Complex Concordance pattern-builder crash.
+// ComplexConcControl and the phonological rule formula editor share PatternView/
+// PatternVcBase. ComplexConcPatternVc has no UpdateProp override, so an edit that reaches
+// the view engine without passing through PatternView.OnKeyPress (IME composition,
+// drag-and-drop, or any direct IVwSelection.ReplaceWithTsString call) falls through to
+// VwBaseVc.UpdateProp, which throws NotImplementedException. Unlike the sibling rule-formula
+// bug, ComplexConcPatternVc binds no real domain fields via AddStringAltMember (verified by
+// inspection: zero occurrences in ComplexConcPatternVc.cs), so this is a crash, not a silent
+// corruption/rename.
 //
 // These tests drive a real IVwRootBox (PatternView/ComplexConcPatternVc) against a real
 // in-memory LcmCache and call IVwSelection.ReplaceWithTsString directly -- the same low-level
