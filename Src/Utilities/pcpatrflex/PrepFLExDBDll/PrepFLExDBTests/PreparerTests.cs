@@ -29,7 +29,10 @@ namespace SIL.PrepFLExDBTests
 		public ProjectId ProjId { get; set; }
 		private List<FieldDescription> customFields;
 		Preparer Preparer { get; set; }
+		Mediator Mediator { get; set; }
+		PropertyTable PropertyTable { get; set; }
 
+		[SetUp]
 		public override void FixtureSetup()
 		{
 			base.FixtureSetup();
@@ -48,16 +51,21 @@ namespace SIL.PrepFLExDBTests
 			var progress = new DisambiguateInFLExDBTests.NullThreadedProgress(synchronizeInvoke);
 			MyCache = LcmCache.CreateCacheFromExistingData(ProjId, "en", logger, dirs, settings, progress);
 			Preparer = new Preparer(MyCache, false);
-			Preparer.PropTable = new XCore.PropertyTable(new XCore.Mediator());
+			Mediator = new Mediator();
+			PropertyTable = new PropertyTable(Mediator);
+			Preparer.PropTable = PropertyTable;
 
 		}
 
 		/// <summary></summary>
+		[TearDown]
 		public override void FixtureTeardown()
 		{
 			//Directory.Delete(m_projectsDirectory, true);
 			base.FixtureTeardown();
 			MyCache.Dispose();
+			Mediator.Dispose();
+			PropertyTable.Dispose();
 		}
 
 		/// <summary>
@@ -66,7 +74,6 @@ namespace SIL.PrepFLExDBTests
 		[Test]
 		public void PCPATRPreparerTest()
 		{
-			FixtureSetup();
 			Assert.IsNotNull(MyCache);
 			Assert.AreEqual(5, MyCache.LangProject.AllPartsOfSpeech.Count);
 			Assert.AreEqual(0, MyCache.LangProject.LexDbOA.Entries.Count());
@@ -131,11 +138,9 @@ namespace SIL.PrepFLExDBTests
 		[Test]
 		public void ToneParsPreparerTest()
 		{
-			FixtureSetup();
 			Assert.IsNotNull(MyCache);
 			Assert.AreEqual(5, MyCache.LangProject.AllPartsOfSpeech.Count);
 			Assert.AreEqual(0, MyCache.LangProject.LexDbOA.Entries.Count());
-			Preparer.PropTable = new XCore.PropertyTable(new XCore.Mediator());
 
 			// If we try to create the custom field before the master possibility list, the field is not created.
 			customFields = Preparer.GetListOfCustomFields();
