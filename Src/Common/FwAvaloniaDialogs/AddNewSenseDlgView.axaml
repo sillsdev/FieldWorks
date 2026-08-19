@@ -5,7 +5,7 @@
              x:Class="FwAvaloniaDialogs.AddNewSenseDlgView"
              x:DataType="vm:AddNewSenseDlgViewModel"
              Classes="fwDialogRoot"
-             MinWidth="360" MinHeight="240">
+             MinWidth="{DynamicResource AddNewSenseMinWidth}" MinHeight="{DynamicResource AddNewSenseMinHeight}">
 	<!-- The reusable Add New Sense dialog: a read-only citation form, an editable gloss field,
 	     and the grammatical-info group box, over Create/Cancel/Help. The gloss field + MSA box are owned native
 	     controls injected as code-behind children (set on DataContextChanged like InsertEntryDlgView). Visible

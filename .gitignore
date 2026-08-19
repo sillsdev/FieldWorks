@@ -104,6 +104,8 @@ Output/RenderBenchmarks/
 Output/RenderBenchmarks/**
 Output_i686/
 Output_x86_64/
+# GenerateTokenKeys (Build/Src/FwBuildTasks) regenerates this at every build.
+Src/Common/FwAvalonia/GeneratedTokenKeys.g.cs
 __pycache__/
 .venv/
 venv/

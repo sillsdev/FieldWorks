@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2026 SIL International
+﻿﻿// Copyright (c) 2026 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -121,10 +121,10 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			// CreateOptionFlyout, so this is the ONLY border the user sees around the options.
 			Background = FwAvaloniaDensity.PickerBackgroundBrush;
 			BorderBrush = FwAvaloniaDensity.PickerBorderBrush;
-			BorderThickness = new Thickness(1);
-			CornerRadius = new CornerRadius(3);
-			Padding = new Thickness(4);
-			MinWidth = 180;
+			BorderThickness = FwAvaloniaDensity.HairlineBorderThickness;
+			CornerRadius = FwAvaloniaDensity.PickerCornerRadius;
+			Padding = FwAvaloniaDensity.TightPadding;
+			MinWidth = FwAvaloniaDensity.PickerMinWidth;
 			_automationId = automationId;
 			AutomationProperties.SetAutomationId(this, automationId + ".Picker");
 
@@ -132,8 +132,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			{
 				MinHeight = 0,
 				Padding = FwAvaloniaDensity.EditorPadding,
-				Background = Brushes.Transparent,
-				BorderBrush = Brushes.Transparent,
+				Background = FwAvaloniaDensity.TransparentBrush,
+				BorderBrush = FwAvaloniaDensity.TransparentBrush,
 				BorderThickness = new Thickness(0),
 				Watermark = FwAvaloniaStrings.SearchPrompt
 			};
@@ -148,8 +148,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				Focusable = false,
 				SelectionMode = SelectionMode.Single,
 				MaxHeight = FwAvaloniaDensity.OptionListMaxHeight,
-				Background = Brushes.Transparent,
-				BorderBrush = Brushes.Transparent,
+				Background = FwAvaloniaDensity.TransparentBrush,
+				BorderBrush = FwAvaloniaDensity.TransparentBrush,
 				BorderThickness = new Thickness(0),
 				Padding = new Thickness(0),
 				ItemsPanel = new FuncTemplate<Panel>(() => new VirtualizingStackPanel()),
@@ -171,8 +171,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				{
 					Content = FwAvaloniaStrings.AddSelected,
 					HorizontalAlignment = HorizontalAlignment.Right,
-					Margin = new Thickness(0, 4, 0, 0),
-					Padding = new Thickness(10, 2, 10, 2),
+					Margin = FwAvaloniaDensity.OptionGroupTopMargin,
+					Padding = FwAvaloniaDensity.OptionRowPadding,
 					MinHeight = 0,
 					IsEnabled = false // nothing checked yet
 				};
@@ -197,7 +197,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				// the filter+list panel is hosted in a Flyout anchored to that button. The picker's own
 				// border becomes invisible (the button supplies the box look) so it sits cleanly in
 				// the fwFieldHost frame.
-				Background = Brushes.Transparent;
+				Background = FwAvaloniaDensity.TransparentBrush;
 				BorderThickness = new Thickness(0);
 				CornerRadius = new CornerRadius(0);
 				Padding = new Thickness(0);
@@ -205,14 +205,14 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				_dropdownLabel = new TextBlock
 				{
 					VerticalAlignment = VerticalAlignment.Center,
-					Foreground = Brushes.Black
+					Foreground = FwAvaloniaDensity.PickerForegroundBrush
 				};
 				var chevron = new TextBlock
 				{
 					Text = "▾", // ▾ collapsed-dropdown affordance
 					VerticalAlignment = VerticalAlignment.Center,
-					Margin = new Thickness(4, 0, 0, 0),
-					Foreground = Brushes.Gray
+					Margin = FwAvaloniaDensity.OptionIndentMargin,
+					Foreground = FwAvaloniaDensity.DisabledOptionBrush
 				};
 				var content = new DockPanel { LastChildFill = true };
 				DockPanel.SetDock(chevron, Dock.Right);
@@ -228,8 +228,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 					MinHeight = 0,
 					Background = FwAvaloniaDensity.PickerBackgroundBrush,
 					BorderBrush = FwAvaloniaDensity.PickerBorderBrush,
-					BorderThickness = new Thickness(1),
-					CornerRadius = new CornerRadius(3)
+					BorderThickness = FwAvaloniaDensity.HairlineBorderThickness,
+					CornerRadius = FwAvaloniaDensity.PickerCornerRadius
 				};
 				AutomationProperties.SetAutomationId(_dropdownButton, automationId + ".Dropdown");
 				_dropdownButton.IsCheckedChanged += OnDropdownButtonCheckedChanged;
@@ -240,10 +240,10 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				{
 					Background = FwAvaloniaDensity.PickerBackgroundBrush,
 					BorderBrush = FwAvaloniaDensity.PickerBorderBrush,
-					BorderThickness = new Thickness(1),
-					CornerRadius = new CornerRadius(3),
-					Padding = new Thickness(4),
-					MinWidth = 180,
+					BorderThickness = FwAvaloniaDensity.HairlineBorderThickness,
+					CornerRadius = FwAvaloniaDensity.PickerCornerRadius,
+					Padding = FwAvaloniaDensity.TightPadding,
+					MinWidth = FwAvaloniaDensity.PickerMinWidth,
 					Child = layout
 				};
 				AutomationProperties.SetAutomationId(popupPanel, automationId + ".Popup");
@@ -776,7 +776,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				{
 					Text = option.Name,
 					VerticalAlignment = VerticalAlignment.Center,
-					Foreground = IsOptionAvailable(option) ? Brushes.Black : Brushes.Gray,
+					Foreground = IsOptionAvailable(option) ? FwAvaloniaDensity.PickerForegroundBrush : FwAvaloniaDensity.DisabledOptionBrush,
 					Opacity = IsOptionAvailable(option) ? 1.0 : 0.55
 				};
 				if (!_multiSelect)
@@ -797,7 +797,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 					Focusable = false,
 					IsHitTestVisible = false,
 					VerticalAlignment = VerticalAlignment.Center,
-					Margin = new Thickness(0, 0, 4, 0),
+					Margin = FwAvaloniaDensity.TrailingItemGap,
 					MinWidth = 0,
 					MinHeight = 0
 				};

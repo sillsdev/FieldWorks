@@ -36,6 +36,9 @@
 		<PackageReference Include="Avalonia.Desktop" ExcludeAssets="analyzers" PrivateAssets="all" />
 		<PackageReference Include="Avalonia.Themes.Fluent" ExcludeAssets="analyzers" PrivateAssets="all" />
 		<PackageReference Include="Avalonia.Win32.Interoperability" ExcludeAssets="analyzers" PrivateAssets="all" />
+		<PackageReference Include="Semi.Avalonia" ExcludeAssets="analyzers" PrivateAssets="all" />
+		<PackageReference Include="Irihi.Ursa" ExcludeAssets="analyzers" PrivateAssets="all" />
+		<PackageReference Include="Irihi.Ursa.Themes.Semi" ExcludeAssets="analyzers" PrivateAssets="all" />
 		<!-- Canonical view-definition JSON serialization; repo-standard pin. -->
 		<PackageReference Include="Newtonsoft.Json" />
 	</ItemGroup>
@@ -43,6 +46,12 @@
 	<ItemGroup>
 		<Reference Include="System.Drawing" />
 		<Reference Include="System.Windows.Forms" />
+	</ItemGroup>
+
+	<!-- Shared color/brush + font-size token dictionary (Src/Common/FwAvaloniaTheme), merged into
+	     Application.Resources by FwAvaloniaApp.Initialize(). -->
+	<ItemGroup>
+		<ProjectReference Include="..\FwAvaloniaTheme\FwAvaloniaTheme.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -60,5 +69,41 @@
 	<ItemGroup>
 		<Compile Remove="Preview/**/*.cs" />
 	</ItemGroup>
+
+	<!-- Produced by GenerateFwTokenKeys below, not the default glob: excluded here so it is
+	     only ever added to @(Compile) once, whether or not a prior build left it on disk. -->
+	<ItemGroup>
+		<Compile Remove="GeneratedTokenKeys.g.cs" />
+	</ItemGroup>
+
+	<PropertyGroup>
+		<FwTokenKeysGeneratedFile>$(MSBuildProjectDirectory)\GeneratedTokenKeys.g.cs</FwTokenKeysGeneratedFile>
+		<FwColorTokensFile>$(MSBuildProjectDirectory)\..\FwAvaloniaTheme\Tokens\FwColorTokens.axaml</FwColorTokensFile>
+		<DataTreeTokensFile>$(MSBuildProjectDirectory)\..\FwAvaloniaTheme\Tokens\DataTree\DataTreeTokens.axaml</DataTreeTokensFile>
+		<DialogThemeTokensFile>$(MSBuildProjectDirectory)\..\FwAvaloniaDialogs\DialogTheme.axaml</DialogThemeTokensFile>
+	</PropertyGroup>
+
+	<!-- FwBuildTasks.dll is dropped to BuildTools/ before the solution graph builds (see
+	     build.ps1's bootstrap step), so GenerateTokenKeys is resolvable at CoreCompile. -->
+	<Import Project="$(MSBuildProjectDirectory)\..\..\..\Build\FwBuildTasks.targets" />
+
+	<!-- Turns the token .axaml files' x:Key declarations into compile-time-safe C# constants,
+	     so a typo'd/stale key is a compile error, not a runtime InvalidOperationException. -->
+	<Target Name="GenerateFwTokenKeys" BeforeTargets="BeforeCompile;CoreCompile"
+	        Inputs="$(FwColorTokensFile);$(DataTreeTokensFile);$(DialogThemeTokensFile)"
+	        Outputs="$(FwTokenKeysGeneratedFile)">
+		<GenerateTokenKeys
+			FullKeyTokenFiles="$(FwColorTokensFile);$(DataTreeTokensFile)"
+			PrefixedKeyTokenFile="$(DialogThemeTokensFile)"
+			KeyPrefix="Dialog"
+			OutputFile="$(FwTokenKeysGeneratedFile)"
+			Namespace="SIL.FieldWorks.Common.FwAvalonia"
+			ClassName="GeneratedTokenKeys"
+		/>
+		<ItemGroup>
+			<Compile Remove="$(FwTokenKeysGeneratedFile)" />
+			<Compile Include="$(FwTokenKeysGeneratedFile)" />
+		</ItemGroup>
+	</Target>
 
 </Project>

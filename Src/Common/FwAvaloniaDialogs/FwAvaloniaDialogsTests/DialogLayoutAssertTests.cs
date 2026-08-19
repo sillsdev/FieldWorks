@@ -8,6 +8,7 @@ using Avalonia.Headless.NUnit;
 using Avalonia.Layout;
 using Avalonia.Media;
 using Avalonia.Threading;
+using FwAvaloniaDialogs;
 using NUnit.Framework;
 
 namespace FwAvaloniaDialogsTests
@@ -98,6 +99,78 @@ namespace FwAvaloniaDialogsTests
 
 			Assert.That(() => DialogLayoutAssert.AssertNoCrowding(good), Throws.Nothing,
 				"a framed, non-overlapping, padded layout must pass the tripwire");
+		}
+
+		[AvaloniaTest]
+		public void Catches_UnreadableFontSize()
+		{
+			// Below DialogLayoutAssert.MinReadableFontSize (8) -- a genuinely broken
+			// near-invisible size.
+			var bad = new StackPanel
+			{
+				Children = { new TextBlock { Text = "tiny", FontSize = 3 } }
+			};
+			ShowRoot(bad);
+
+			Assert.That(() => DialogLayoutAssert.AssertNoCrowding(bad), Throws.InstanceOf<AssertionException>(),
+				"a text control rendered below the readable-size floor must trip the assertion");
+		}
+
+		[AvaloniaTest]
+		public void Passes_OnReadableFontSize()
+		{
+			var good = new StackPanel
+			{
+				Children = { new TextBlock { Text = "Lexeme form", FontSize = 11 } }
+			};
+			ShowRoot(good);
+
+			Assert.That(() => DialogLayoutAssert.AssertNoCrowding(good), Throws.Nothing,
+				"text at a normal dialog font size must pass the readable-size floor");
+		}
+
+		[AvaloniaTest]
+		public void Catches_UnseparatedGroupBoxes()
+		{
+			// A local Margin of zero outranks the fwGroupBox style's own Margin setter, forcing
+			// the two boxes flush together despite carrying the fwGroupBox class.
+			var container = new StackPanel();
+			DialogThemeBootstrap.Apply(container);
+			var first = new Border
+			{
+				Classes = { "fwGroupBox" },
+				Margin = new Thickness(0),
+				Child = new TextBlock { Text = "General" }
+			};
+			var second = new Border
+			{
+				Classes = { "fwGroupBox" },
+				Margin = new Thickness(0),
+				Child = new TextBlock { Text = "Startup" }
+			};
+			container.Children.Add(first);
+			container.Children.Add(second);
+			ShowRoot(container);
+
+			Assert.That(() => DialogLayoutAssert.AssertNoCrowding(container), Throws.InstanceOf<AssertionException>(),
+				"two fwGroupBox siblings with no gap between them must trip the assertion");
+		}
+
+		[AvaloniaTest]
+		public void Passes_OnSeparatedGroupBoxes()
+		{
+			// No local Margin override: the Border.fwGroupBox style's own DialogGroupSeparation
+			// margin applies, the same way a real dialog view's group boxes are separated.
+			var container = new StackPanel();
+			DialogThemeBootstrap.Apply(container);
+			var first = new Border { Classes = { "fwGroupBox" }, Child = new TextBlock { Text = "General" } };
+			var second = new Border { Classes = { "fwGroupBox" }, Child = new TextBlock { Text = "Startup" } };
+			container.Children.Add(first);
+			container.Children.Add(second);
+			ShowRoot(container);
+
+			Assert.That(() => DialogLayoutAssert.AssertNoCrowding(container), Throws.Nothing,
+				"fwGroupBox siblings separated by the theme's own DialogGroupSeparation margin must pass");
 		}
 	}
 }

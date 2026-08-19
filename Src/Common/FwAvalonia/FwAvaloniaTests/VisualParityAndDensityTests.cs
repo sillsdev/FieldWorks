@@ -133,13 +133,13 @@ namespace FwAvaloniaTests
 	[TestFixture]
 	public class DensityTokenGateTests
 	{
-		[Test]
+		[AvaloniaTest]
 		public void DensityTokens_MatchTheCompactWinFormsBaseline()
 		{
-			Assert.That(FwAvaloniaDensity.LabelColumnWidth, Is.EqualTo(96d));
-			Assert.That(FwAvaloniaDensity.WsAbbrevWidth, Is.EqualTo(28d));
+			Assert.That(FwAvaloniaDensity.LabelColumnWidth, Is.EqualTo(150d));
+			Assert.That(FwAvaloniaDensity.WsAbbrevWidth, Is.EqualTo(60d));
 			Assert.That(FwAvaloniaDensity.RowSpacing, Is.EqualTo(1d));
-			Assert.That(FwAvaloniaDensity.FieldSpacing, Is.EqualTo(2d));
+			Assert.That(FwAvaloniaDensity.FieldSpacing, Is.EqualTo(1d));
 			Assert.That(FwAvaloniaDensity.EditorPadding, Is.EqualTo(new Thickness(3, 1, 3, 1)));
 			Assert.That(FwAvaloniaDensity.SliceMargin, Is.EqualTo(new Thickness(4, 2, 4, 2)));
 			Assert.That(FwAvaloniaDensity.BrowseRowMinHeight, Is.EqualTo(18d));

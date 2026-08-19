@@ -215,8 +215,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			{
 				Data = KebabGeometry,
 				Fill = FwAvaloniaDensity.WsAbbrevBrush,
-				Width = 14,
-				Height = 14,
+				Width = FwAvaloniaDensity.IconGlyphSize,
+				Height = FwAvaloniaDensity.IconGlyphSize,
 				Stretch = Stretch.Uniform,
 				VerticalAlignment = VerticalAlignment.Center
 			};
@@ -227,10 +227,10 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			=> new Button
 			{
 				Content = CreateKebabIcon(),
-				Padding = new Thickness(2, 0, 2, 0),
+				Padding = FwAvaloniaDensity.HoverChipPadding,
 				MinHeight = 0,
 				MinWidth = 0,
-				Background = Brushes.Transparent,
+				Background = FwAvaloniaDensity.TransparentBrush,
 				BorderThickness = new Thickness(0),
 				VerticalAlignment = VerticalAlignment.Top
 			};
@@ -250,8 +250,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			{
 				Data = GearGeometry,
 				Fill = FwAvaloniaDensity.WsAbbrevBrush,
-				Width = 14,
-				Height = 14,
+				Width = FwAvaloniaDensity.IconGlyphSize,
+				Height = FwAvaloniaDensity.IconGlyphSize,
 				Stretch = Stretch.Uniform,
 				VerticalAlignment = VerticalAlignment.Center
 			};
@@ -261,10 +261,10 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			=> new Button
 			{
 				Content = CreateGearIcon(),
-				Padding = new Thickness(4, 0, 4, 0),
+				Padding = FwAvaloniaDensity.IconButtonPadding,
 				MinHeight = 0,
 				MinWidth = 0,
-				Background = Brushes.Transparent,
+				Background = FwAvaloniaDensity.TransparentBrush,
 				BorderThickness = new Thickness(0),
 				VerticalAlignment = VerticalAlignment.Center
 			};

@@ -62,17 +62,10 @@ namespace FwAvaloniaDialogs
 				Source = new Uri(ThemeUri, UriKind.Absolute)
 			});
 
-			// FwCheckBoxStyle must be added in code (not DialogTheme.axaml) because it replaces
-			// the Fluent CheckBox's hardcoded 20x20 box/32px slot local values, which a style
-			// selector cannot override.
-			foreach (var checkBoxStyle in SIL.FieldWorks.Common.FwAvalonia.FwCheckBoxStyle.Build())
-				dialogBody.Styles.Add(checkBoxStyle);
-
-			// FwRadioButtonStyle is added in code for the same reason as the checkbox: it
-			// replaces the Fluent RadioButton's hardcoded ellipse/slot local values, which a
-			// style selector cannot override.
-			foreach (var radioStyle in SIL.FieldWorks.Common.FwAvalonia.FwRadioButtonStyle.Build())
-				dialogBody.Styles.Add(radioStyle);
+			// CheckBox/RadioButton density needs no per-dialog style here: Semi sizes those
+			// controls from
+			// overridable resources (unlike Fluent), which FwSemiDensity retargets once at the
+			// Application level.
 
 			// A control's own Styles target its DESCENDANTS, not itself, so the `fwDialogRoot` window-padding
 			// style cannot reach the dialog body from here. Apply that one structurally in code: every dialog

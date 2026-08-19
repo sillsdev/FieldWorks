@@ -49,40 +49,25 @@ from Fluent's ~32px).
 **Checkboxes (the ONE global, deterministic rule):** checkboxes are **font-proportional** and **never add row
 height**. `FwAvaloniaDensity.CheckboxBoxSize = 14` (a fixed function of the 12px surface font) is the glyph-box
 size on *every* view — dialogs (chooser, options, feature manager), the chooser's flat list + tree, and the
-detail view's `FwOptionChooser` field. The size is **deterministic** (a concrete px size applied to the template,
-identical regardless of content) — **not** a `RenderTransform`/`ScaleTransform` (a scale shrinks the paint but
-leaves the tall layout slot, which still inflates the row — the rejected hack, now removed). The single builder
-`FwCheckBoxStyle.Build()` REPLACES the Fluent 11.3 `CheckBox` template outright (the same move `FwRadioButtonStyle`
-makes for radios, below) with a compact `ControlTheme`: `MinHeight=0`/`MinWidth=0`/`VerticalAlignment=Center` on
-the `CheckBox`, an outer `Border#FwCheckBox_Box` pinned to `14×14`, and `Path#FwCheckBox_CheckGlyph`/
-`FwCheckBox_IndeterminateGlyph` riding a `Viewbox` inside it that auto-scales to the box — so the layout
-footprint, not just the paint, is the box. Net: a row with a checkbox is no taller than a text row
-(`BrowseRowMinHeight = 18`). This is **global — applied in both render paths: the runtime host and the headless
-test renderer**: `FwSurfaceStyles.Build()` (region/detail) calls `FwCheckBoxStyle.Build()` directly; the dialog
-path gets it once via `DialogThemeBootstrap.Apply` (deliberately NOT `CompactDialogStyles`, which skips it to
-avoid a double-add — see the note in `CompactDialogStyles.cs`), and `DialogTheme.axaml` mirrors the SAME `14` as
-an XAML token for the headless dialog tests — the `14` there must stay equal to `CheckboxBoxSize`. The Fluent
-11.3 template being replaced hardcoded the box as a 20×20 `Border` (`NormalRectangle`) inside an unnamed inner
-`Grid` pinned to `Height=32` — both LOCAL values a style selector cannot override, which is why a full template
-replace (not a selector tweak) was required (`Avalonia.Themes.Fluent 11.3.6`, `Controls/CheckBox.xaml`).
+detail view's `FwOptionChooser` field. The size is **deterministic** (a concrete px size), not a
+`RenderTransform`/`ScaleTransform` (a scale shrinks the paint but leaves the tall layout slot, which still
+inflates the row — a rejected hack). Unlike Fluent 11.3 (which hardcodes the checkbox box as LOCAL template
+values — a 20×20 `Border` inside a `Height=32` `Grid` — that a style selector cannot override, so FieldWorks
+used to replace the whole `ControlTheme` for it), Semi's `CheckBox` template reads the box size from overridable
+`DynamicResource`s, so retargeting the resources is enough: `FwSemiDensity.ApplyTo` sets `CheckBoxBoxWidth`,
+`CheckBoxBoxHeight`, `CheckBoxBoxGlyphWidth`, and `CheckBoxBoxGlyphHeight` to `14` on the `Application`'s
+resources — called once from `FwAvaloniaApp`'s (and `PreviewHostApp`'s) constructor, so no per-view or
+per-dialog style is needed. Net: a row with a checkbox is no taller than a text row (`BrowseRowMinHeight = 18`).
 
 **Radio buttons (the checkbox's counterpart — same global, deterministic rule):** radios are
 **font-proportional** and **never add row height**, exactly like checkboxes. `FwAvaloniaDensity.RadioBoxSize`
-(= `CheckboxBoxSize` = 14) is the outer-circle size on *every* view (dialogs, detail, bulk-edit bar). The
-single builder `FwRadioButtonStyle.Build()` REPLACES the Fluent 11.3 `RadioButton` template (whose ~20px ellipse
-on a tall ~32px slot are LOCAL values a style selector cannot override — same precedence trap as the checkbox)
-with a compact `ControlTheme`: an outer `Ellipse#FwRadio_Box` pinned to `14×14` + an inner filled
-`Ellipse#FwRadio_Dot` (~45% of the box) revealed on `:checked`, the label after a `CheckboxLabelGap` (6px)
-`StackPanel.Spacing`, `MinHeight=0`/`MinWidth=0`, `VerticalAlignment=Center`. Concrete brushes (white fill, gray
-`#7A7A7A` stroke, blue `#005FB8` accent stroke + dot when checked, gray when disabled) — NOT Fluent
-`DynamicResource`s (hard rule 1). **Global in both render paths**, wired in the SAME two places as the checkbox:
-`FwSurfaceStyles.Build()` (region/browse/bulk-bar) and `DialogThemeBootstrap.Apply` (dialogs — runtime host AND
-headless tests). It is NOT in `DialogTheme.axaml` (the template replace must be a C# `ControlTheme`) and NOT in
-`CompactDialogStyles` (the bootstrap already covers both dialog paths). The dedicated headless no-inflation test
-for this (`RadioButton_OnStyledSurface_IsFontProportional_AndDoesNotExceedTheTextRowHeight`, asserting the ring is
-exactly `RadioBoxSize`, the control is ≤ `BrowseRowMinHeight`, and the dot opacity goes 0 → 1 on `:checked`) lived
-in `LexicalBrowseDensityTests.cs`, deleted along with the rest of the browse table (commit `bd7d3a5e5`); no test
-currently covers this invariant for radios — add one before a new view ships them.
+(= `CheckboxBoxSize` = 14) is the outer-circle size on *every* view (dialogs, detail, bulk-edit bar). Same
+Semi-resource mechanism as the checkbox: `FwSemiDensity.ApplyTo` sets `RadioButtonIconRadius` (the outer ring)
+to `14` and `RadioButtonGlyphRadius` (the inner checked dot) to `14 * 0.45` — deliberately NOT equal to
+`IconRadius`, or a checked radio would render as a solid disc, since Semi's own default ratio is ~0.375 —
+on the `Application`'s resources, from the same single call site as the checkbox (`FwSemiDensity.cs`). No
+dedicated headless no-inflation test currently covers this invariant for radios; add one before a new view
+leans on it.
 
 **Group separation:** adjacent logical control GROUPS (e.g. a radio group followed by a checkbox group)
 get a little visual distance so they read as distinct rather than butting together:

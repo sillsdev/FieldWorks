@@ -18,10 +18,15 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Preview
 	/// </summary>
 	public sealed class DetailPreviewWindow : Window
 	{
+		// Dev-tool-only window chrome, not a shared design-system value: named locally rather
+		// than routed through FwAvaloniaTheme's Tokens/, which is for product-surface values.
+		private const double WindowWidth = 900;
+		private const double WindowHeight = 520;
+
 		public DetailPreviewWindow()
 		{
-			Width = 900;
-			Height = 520;
+			Width = WindowWidth;
+			Height = WindowHeight;
 			AutomationProperties.SetAutomationId(this, "DetailPreviewWindow");
 		}
 

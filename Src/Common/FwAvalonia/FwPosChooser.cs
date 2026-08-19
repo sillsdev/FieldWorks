@@ -114,7 +114,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 
 			// The collapsed control is a transparent host so it sits cleanly inside an fwFieldHost frame;
 			// the toggle button supplies the box look (mirrors FwOptionChooser dropdown mode).
-			Background = Brushes.Transparent;
+			Background = FwAvaloniaDensity.TransparentBrush;
 			BorderThickness = new Thickness(0);
 			Padding = new Thickness(0);
 			MinWidth = FwAvaloniaDensity.DropdownMinWidth;
@@ -124,14 +124,14 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 			_dropdownLabel = new TextBlock
 			{
 				VerticalAlignment = VerticalAlignment.Center,
-				Foreground = Brushes.Black
+				Foreground = FwAvaloniaDensity.PickerForegroundBrush
 			};
 			var chevron = new TextBlock
 			{
 				Text = "▾", // ▾ collapsed-dropdown affordance
 				VerticalAlignment = VerticalAlignment.Center,
 				Margin = new Thickness(FwAvaloniaDensity.CheckboxLabelGap, 0, 0, 0),
-				Foreground = Brushes.Gray
+				Foreground = FwAvaloniaDensity.DisabledOptionBrush
 			};
 			var buttonContent = new DockPanel { LastChildFill = true };
 			DockPanel.SetDock(chevron, Dock.Right);
@@ -147,8 +147,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 				MinHeight = 0,
 				Background = FwAvaloniaDensity.PickerBackgroundBrush,
 				BorderBrush = FwAvaloniaDensity.PickerBorderBrush,
-				BorderThickness = new Thickness(1),
-				CornerRadius = new CornerRadius(3)
+				BorderThickness = FwAvaloniaDensity.HairlineBorderThickness,
+				CornerRadius = FwAvaloniaDensity.PickerCornerRadius
 			};
 			AutomationProperties.SetAutomationId(_dropdownButton, _automationId + ".Dropdown");
 			AutomationProperties.SetName(_dropdownButton, FwAvaloniaStrings.PosChooserName);
@@ -158,8 +158,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 			{
 				MinHeight = 0,
 				Padding = FwAvaloniaDensity.EditorPadding,
-				Background = Brushes.Transparent,
-				BorderBrush = Brushes.Transparent,
+				Background = FwAvaloniaDensity.TransparentBrush,
+				BorderBrush = FwAvaloniaDensity.TransparentBrush,
 				BorderThickness = new Thickness(0),
 				Watermark = FwAvaloniaStrings.SearchPrompt
 			};
@@ -171,7 +171,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 			{
 				ItemsSource = _roots,
 				MaxHeight = FwAvaloniaDensity.OptionListMaxHeight,
-				Background = Brushes.Transparent,
+				Background = FwAvaloniaDensity.TransparentBrush,
 				BorderThickness = new Thickness(0),
 				ItemContainerTheme = FilterableDropdownSupport.CompactTreeItemTheme(),
 				ItemTemplate = TreeNodeTemplate()
@@ -188,7 +188,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 				IsVisible = false,
 				SelectionMode = SelectionMode.Single,
 				MaxHeight = FwAvaloniaDensity.OptionListMaxHeight,
-				Background = Brushes.Transparent,
+				Background = FwAvaloniaDensity.TransparentBrush,
 				BorderThickness = new Thickness(0),
 				Padding = new Thickness(0),
 				ItemContainerTheme = FilterableDropdownSupport.CompactListItemTheme(),
@@ -209,11 +209,11 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 			};
 			_createRow = new Border
 			{
-				Background = Brushes.Transparent,
+				Background = FwAvaloniaDensity.TransparentBrush,
 				Padding = FwAvaloniaDensity.OptionItemPadding,
 				Margin = new Thickness(0, FwAvaloniaDensity.RowSpacing, 0, 0),
 				BorderBrush = FwAvaloniaDensity.SliceRuleBrush,
-				BorderThickness = new Thickness(0, 1, 0, 0),
+				BorderThickness = FwAvaloniaDensity.TopHairlineBorderThickness,
 				Child = createLabel,
 				Cursor = new Cursor(StandardCursorType.Hand)
 			};
@@ -238,9 +238,9 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 			{
 				Background = FwAvaloniaDensity.PickerBackgroundBrush,
 				BorderBrush = FwAvaloniaDensity.PickerBorderBrush,
-				BorderThickness = new Thickness(1),
-				CornerRadius = new CornerRadius(3),
-				Padding = new Thickness(4),
+				BorderThickness = FwAvaloniaDensity.HairlineBorderThickness,
+				CornerRadius = FwAvaloniaDensity.PickerCornerRadius,
+				Padding = FwAvaloniaDensity.TightPadding,
 				MinWidth = FwAvaloniaDensity.DropdownMinWidth + 20,
 				Child = body
 			};
@@ -624,7 +624,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 					{
 						Text = node.Source.Name,
 						VerticalAlignment = VerticalAlignment.Center,
-						Foreground = Brushes.Black
+						Foreground = FwAvaloniaDensity.PickerForegroundBrush
 					};
 					AutomationProperties.SetAutomationId(label, _automationId + ".Node");
 					AutomationProperties.SetName(label, node.Source.Name);
@@ -643,7 +643,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 				{
 					Text = node.Name,
 					VerticalAlignment = VerticalAlignment.Center,
-					Foreground = Brushes.Black,
+					Foreground = FwAvaloniaDensity.PickerForegroundBrush,
 					// Keep the hierarchy readable even in the flat filter list, by depth indent.
 					Margin = new Thickness(node.Depth * FwAvaloniaDensity.TreeIndentPerLevel, 0, 0, 0)
 				};

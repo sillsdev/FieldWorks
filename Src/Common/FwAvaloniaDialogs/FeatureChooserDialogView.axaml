@@ -5,7 +5,7 @@
              x:Class="FwAvaloniaDialogs.FeatureChooserDialogView"
              x:DataType="vm:FeatureChooserDialogViewModel"
              Classes="fwDialogRoot"
-             MinWidth="320" MinHeight="260">
+             MinWidth="{DynamicResource FeatureChooserMinWidth}" MinHeight="{DynamicResource FeatureChooserMinHeight}">
 	<!-- The standalone feature-structure chooser dialog: an optional instruction prompt, then
 	     the shared FwFeatureStructureEditor tree, over OK/Cancel/Help. The editor is an owned native control injected
 	     as a code-behind child (set on DataContextChanged like MsaCreatorDlgView). Visible text is localized via

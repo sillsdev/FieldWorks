@@ -40,6 +40,12 @@
 	Enforce the comment-hygiene check, failing the run on any violation in the lines this
 	branch adds.
 
+.PARAMETER TokenHygiene
+	Enforce the token-hygiene gate, failing the run on any hardcoded color or
+	spacing/sizing literal anywhere in the Avalonia surface (not diff-scoped -- the whole
+	scoped tree must be clean). Required of coding agents; a developer run leaves it off
+	and never runs the gate.
+
 .PARAMETER StartedBy
 	Optional actor label written to worktree lock metadata (for example: user or agent).
 	Defaults to FW_BUILD_STARTED_BY if set; otherwise 'unknown'.
@@ -106,7 +112,8 @@ param(
 	[switch]$Coverage,
 	[ValidateSet('user', 'agent', 'unknown')]
 	[string]$StartedBy = 'unknown',
-	[switch]$CommentHygiene
+	[switch]$CommentHygiene,
+	[switch]$TokenHygiene
 )
 
 $ErrorActionPreference = 'Stop'
@@ -115,6 +122,17 @@ if ($CommentHygiene) {
 	$commentHygienePath = Join-Path $PSScriptRoot "Build/Agent/comment-hygiene.ps1"
 	& $commentHygienePath
 	if ($LASTEXITCODE -ne 0) {
+		exit $LASTEXITCODE
+	}
+}
+
+# Token hygiene is opt-in: with -TokenHygiene it blocks the run, in CI it
+# only annotates the pull request, and an ordinary developer run is silent.
+$tokenHygieneInCI = ($env:GITHUB_ACTIONS -eq 'true') -or ($env:CI -eq 'true')
+if ($TokenHygiene -or $tokenHygieneInCI) {
+	$tokenHygienePath = Join-Path $PSScriptRoot "Build/Agent/token-hygiene.ps1"
+	& $tokenHygienePath -Advisory:(-not $TokenHygiene)
+	if ($TokenHygiene -and $LASTEXITCODE -ne 0) {
 		exit $LASTEXITCODE
 	}
 }

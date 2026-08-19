@@ -6,7 +6,7 @@
              x:DataType="vm:ChooserDialogViewModel"
              x:Name="Root"
              Classes="fwDialogRoot"
-             MinWidth="320" MinHeight="300">
+             MinWidth="{DynamicResource ChooserDialogMinWidth}" MinHeight="{DynamicResource ChooserDialogMinHeight}">
 	<!-- The reusable chooser dialog. FLAT mode: a prompt over the shared FwOptionChooser (hosted as a
 	     code-behind child since the picker is a native composite, not an MVVM-bindable control) + OK/Cancel/Help.
 	     HIERARCHICAL mode: a search box over a VIRTUALIZING TreeView of the candidates (folded from their
@@ -71,13 +71,13 @@
 							toggles the item. The CheckBox is display-only so it never
 							double-toggles.
 							-->
-						<Border Background="Transparent" PointerReleased="OnRowPointerReleased">
+						<Border Background="{StaticResource FwTransparentBrush}" PointerReleased="OnRowPointerReleased">
 							<StackPanel Orientation="Horizontal">
 								<CheckBox IsChecked="{Binding IsChecked, Mode=TwoWay}"
 								          IsVisible="{Binding #Root.DataContext.IsMultiSelect}"
 								          IsHitTestVisible="False"
 								          VerticalAlignment="Center"
-								          Margin="0,0,4,0"
+								          Margin="{StaticResource DialogCheckboxTrailingGap}"
 								          MinWidth="0" MinHeight="0"
 								          AutomationProperties.AutomationId="Chooser.Tree.Check"
 								          AutomationProperties.Name="{Binding Name}"/>
@@ -98,13 +98,13 @@
 					<DataTemplate x:DataType="vm:ChooserTreeNode">
 						<!-- Same whole-row toggle as the tree (see the tree template): the transparent row owns the click
 						     so the label area toggles, the display-only box never double-toggles, and shift ranges. -->
-						<Border Background="Transparent" PointerReleased="OnRowPointerReleased">
+						<Border Background="{StaticResource FwTransparentBrush}" PointerReleased="OnRowPointerReleased">
 							<StackPanel Orientation="Horizontal">
 								<CheckBox IsChecked="{Binding IsChecked, Mode=TwoWay}"
 								          IsVisible="{Binding #Root.DataContext.IsMultiSelect}"
 								          IsHitTestVisible="False"
 								          VerticalAlignment="Center"
-								          Margin="0,0,4,0"
+								          Margin="{StaticResource DialogCheckboxTrailingGap}"
 								          MinWidth="0" MinHeight="0"
 								          AutomationProperties.AutomationId="Chooser.SearchResults.Check"
 								          AutomationProperties.Name="{Binding Name}"/>

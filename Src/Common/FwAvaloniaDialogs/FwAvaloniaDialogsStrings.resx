@@ -55,6 +55,12 @@
   <data name="FwAvaloniaDialogs.AutoOpenLastProject" xml:space="preserve">
     <value>Open the last project automatically</value>
   </data>
+  <data name="FwAvaloniaDialogs.GeneralInterfaceGroupHeader" xml:space="preserve">
+    <value>Interface</value>
+  </data>
+  <data name="FwAvaloniaDialogs.GeneralStartupGroupHeader" xml:space="preserve">
+    <value>Startup</value>
+  </data>
   <data name="FwAvaloniaDialogs.PluginsUnavailableNote" xml:space="preserve">
     <value>Plugin management is not available in the new dialog yet.</value>
   </data>
@@ -66,6 +72,9 @@
   </data>
   <data name="FwAvaloniaDialogs.AutoUpdate" xml:space="preserve">
     <value>Install updates automatically</value>
+  </data>
+  <data name="FwAvaloniaDialogs.UpdatesGroupHeader" xml:space="preserve">
+    <value>Automatic Updates</value>
   </data>
   <data name="FwAvaloniaDialogs.UpdateChannelLabel" xml:space="preserve">
     <value>Update channel</value>

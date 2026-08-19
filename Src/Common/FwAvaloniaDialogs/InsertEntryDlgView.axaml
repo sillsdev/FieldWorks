@@ -5,7 +5,7 @@
              x:Class="FwAvaloniaDialogs.InsertEntryDlgView"
              x:DataType="vm:InsertEntryDlgViewModel"
              Classes="fwDialogRoot"
-             MinWidth="360" MinHeight="260">
+             MinWidth="{DynamicResource InsertEntryMinWidth}" MinHeight="{DynamicResource InsertEntryMinHeight}">
 	<!-- The reusable Insert Entry dialog: lexeme-form field + morph-type picker + gloss field, each
 	     an owned native control hosted as a code-behind child (set on DataContextChanged like ChooserDialogView),
 	     over Create/Cancel/Help. Visible text is localized via FwAvaloniaDialogsStrings; AutomationIds stay
@@ -35,7 +35,7 @@
 			invalid
 		     (empty or mismatched lexeme form, incomplete circumfix, unparseable form). -->
 		<TextBlock DockPanel.Dock="Bottom" Text="{Binding ValidationMessage}"
-		           Foreground="Red" TextWrapping="Wrap" IsVisible="{Binding !IsValid}"
+		           Foreground="{StaticResource SemiColorDanger}" TextWrapping="Wrap" IsVisible="{Binding !IsValid}"
 		           Margin="{StaticResource DialogControlGapAbove}"
 		           AutomationProperties.AutomationId="InsertEntry.ValidationError"/>
 
@@ -111,7 +111,7 @@
 				           Margin="{StaticResource DialogLabelGroupGapAbove}"
 				           AutomationProperties.AutomationId="InsertEntry.MatchingEntriesLabel"/>
 				<Border Classes="fwFieldHost">
-					<ListBox Name="PART_Matches" MinHeight="80" MaxHeight="160"
+					<ListBox Name="PART_Matches" MinHeight="{StaticResource InsertEntryMatchesListMinHeight}" MaxHeight="{StaticResource InsertEntryMatchesListMaxHeight}"
 					         ItemsSource="{Binding Matches}"
 					         SelectedItem="{Binding SelectedMatch, Mode=TwoWay}"
 					         AutomationProperties.AutomationId="InsertEntry.Matches">
