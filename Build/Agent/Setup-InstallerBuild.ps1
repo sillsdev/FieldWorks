@@ -182,7 +182,7 @@ $helperRepos = @(
 
 $missingRepos = @()
 foreach ($repo in $helperRepos) {
-	if ($repo.Name -eq 'liblcm' -and $env:LcmRootDir) {
+	if ($repo.Name -eq 'liblcm' -and $env:LcmRootDir -and (Test-Path (Join-Path $env:LcmRootDir '.git'))) {
 		$fullPath = $env:LcmRootDir
 		$displayPath = $fullPath
 	} else {
