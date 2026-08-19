@@ -231,8 +231,19 @@ namespace SIL.FieldWorks.LexText.Controls
 													app.ActiveMainWindow, false);
 				}
 			}
-			if (ParserActivityString == ParserUIStrings.ksIdle_ && m_timer.Enabled)
+			if (ParserActivityString == ParserUIStrings.ksIdle_ && m_timer.Enabled && QueuesAreEmpty())
 				StopUpdateProgressTimer();
+		}
+
+		private bool QueuesAreEmpty()
+		{
+			if (m_parserConnection == null)
+			{
+				return true;
+			}
+			return m_parserConnection.GetQueueSize(ParserPriority.Low) == 0
+				&& m_parserConnection.GetQueueSize(ParserPriority.Medium) == 0
+				&& m_parserConnection.GetQueueSize(ParserPriority.High) == 0;
 		}
 
 		//note that the Parser also supports an event oriented system
