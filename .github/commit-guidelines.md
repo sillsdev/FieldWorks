@@ -12,6 +12,7 @@ These align with the gitlint rules run in CI.
 ## Body (optional)
 
 - Blank line after the subject.
+- At least 20 characters, if present.
 - Wrap lines at 80 characters.
 - Explain what and why over how; link issues like "Fixes #1234" when applicable.
 - No hard tabs, no trailing whitespace.
