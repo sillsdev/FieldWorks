@@ -35,9 +35,12 @@ sit inside a `Border.fwFieldHost` that supplies the box.
 
 ## The tokens / values (the calibrated numbers)
 
-**Font:** `12` px app-wide on the Avalonia views (down from Fluent's ~14). One value: `DialogFontSize`
-in `DialogTheme.axaml`, `FwSurfaceStyles.SurfaceFontSize`, and `CompactDialogStyles.DialogFontSize` are all 12
-and must stay equal.
+**Font:** `11` px app-wide on the Avalonia views (down from Fluent's ~14). One source of truth:
+`FwSurfaceFontSize` in `Src/Common/FwAvaloniaTheme/Tokens/FwColorTokens.axaml`.
+`FwSurfaceStyles.SurfaceFontSize`, `CompactDialogStyles.DialogFontSize`, and
+`DialogTheme.axaml`'s `{StaticResource FwSurfaceFontSize}` all resolve that one token
+directly (not three independently-maintained copies) -- see
+`Src/Common/FwAvalonia/FwThemeResources.cs`.
 
 **Control height:** `TextBox`/`ComboBox`/`Button` `MinHeight = 24` (WinForms runs ~21-23px; 24 is the
 pointer-accessibility floor — see the "Why `DialogMinControlHeight` is 24, not 22" note below — still far
@@ -47,7 +50,7 @@ from Fluent's ~32px).
 **Paddings:** `TextBox 4,2` · `ComboBox 6,1` · `Button 8,2` · `TabItem 8,3` · `ListBoxItem 4,1`.
 
 **Checkboxes (the ONE global, deterministic rule):** checkboxes are **font-proportional** and **never add row
-height**. `FwAvaloniaDensity.CheckboxBoxSize = 14` (a fixed function of the 12px surface font) is the glyph-box
+height**. `FwAvaloniaDensity.CheckboxBoxSize = 14` (a fixed function of the 11px surface font) is the glyph-box
 size on *every* view — dialogs (chooser, options, feature manager), the chooser's flat list + tree, and the
 detail view's `FwOptionChooser` field. The size is **deterministic** (a concrete px size), not a
 `RenderTransform`/`ScaleTransform` (a scale shrinks the paint but leaves the tall layout slot, which still
@@ -144,9 +147,9 @@ values already in `DialogTheme.axaml`.
   `AvaloniaDialogHost.ShowModal` additionally calls `CompactDialogStyles.Apply` — a belt-and-suspenders C#
   duplicate of the same values (both idempotent; keep the two numerically identical).
 - **Region / browse** — `FwSurfaceStyles.Apply(this)` in the `DataTree`
-  ctor adds the **font-only** baseline (TextBlock/TextBox → 12px). The flat-with-separators (region)
-  structure comes from `FwAvaloniaDensity` literals, which are concrete and already render
-  headlessly; `FwSurfaceStyles` exists only to drop the Fluent default font those literals don't touch.
+  ctor adds the **font-only** baseline (TextBlock/TextBox → 11px). The flat-with-separators (region)
+  structure comes from `FwAvaloniaDensity`'s token-resolved values, which are concrete and already
+  render headlessly; `FwSurfaceStyles` exists only to drop the Fluent default font those values don't touch.
 
 ## Changing the density
 
