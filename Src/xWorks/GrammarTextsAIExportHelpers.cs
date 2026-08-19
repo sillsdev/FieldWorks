@@ -21,7 +21,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>Every word-token occurrence, whether analyzed or not.</summary>
 		public int Words { get; }
 
-		/// <summary>Word-token occurrences that have an IWfiAnalysis/IWfiGloss attached.</summary>
+		/// <summary>Word-token occurrences with an IWfiAnalysis/IWfiGloss attached.</summary>
 		public int Analyses { get; }
 	}
 

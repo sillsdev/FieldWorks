@@ -1173,10 +1173,11 @@ namespace SIL.FieldWorks.XWorks
 		internal const string ksAiExportInstructionsFileName = "export-instructions.md";
 
 		/// <summary>
-		/// Copies the shipped AI-analysis instructions into <paramref name="outFolder"/>, so that
-		/// dropping the whole folder into a chat carries the reading instructions and reference links
-		/// with it. A missing shipped file is reported in <paramref name="messages"/> instead of
-		/// aborting, since the exported grammar and texts are still usable without it.
+		/// Copies the shipped AI-analysis instructions into <paramref name="outFolder"/>, so
+		/// that dropping the whole folder into a chat carries the reading instructions and
+		/// reference links with it. A missing shipped file is reported in
+		/// <paramref name="messages"/> instead of aborting, since the exported grammar and
+		/// texts are still usable without it.
 		/// </summary>
 		private static void CopyAiExportInstructions(string outFolder, List<string> messages)
 		{
@@ -1481,7 +1482,7 @@ namespace SIL.FieldWorks.XWorks
 				{
 					continue;
 				}
-				// The AI-analysis export is opt-in, so it stays out of the list entirely when unset.
+				// The AI-analysis export is opt-in, so it stays out of the list when unset.
 				if (IsAiExportTemplate(document) && !EnvironmentVariables.IsTrue(ksAiExportEnabledVariable))
 					continue;
 				XmlNode node = document.SelectSingleNode("//FxtDocumentDescription");
@@ -1516,7 +1517,7 @@ namespace SIL.FieldWorks.XWorks
 
 		}
 
-		/// <summary>Value of the export template's type attribute that selects the AI-analysis export.</summary>
+		/// <summary>Template type attribute value that selects the AI-analysis export.</summary>
 		private const string ksAiExportTemplateType = "grammarTextsAI";
 
 		/// <summary>Environment variable that opts in to the AI-analysis export.</summary>

@@ -61,10 +61,9 @@ namespace SIL.FieldWorks.IText
 		[Test]
 		public void ExportTexts_OnAThreadPoolThread_WritesTheFileWithoutThrowing()
 		{
-			// The real export runs inside a ProgressDialogWithTask BackgroundWorker, i.e. on an
-			// MTA thread-pool thread rather than the STA UI thread. InterlinVc is built here, so
-			// anything in it that needs an apartment or a UI-thread handle fails there and only
-			// there.
+			// The real export runs on a ProgressDialogWithTask BackgroundWorker, an MTA
+			// thread-pool thread rather than the STA UI thread. InterlinVc is built here, so
+			// apartment-sensitive work fails only there.
 			var text = MakeOneParagraphText("Background Thread Text");
 			var tempFolder = MakeTempFolder();
 			try

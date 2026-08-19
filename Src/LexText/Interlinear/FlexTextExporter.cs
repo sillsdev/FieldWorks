@@ -18,10 +18,11 @@ namespace SIL.FieldWorks.IText
 	public static class FlexTextExporter
 	{
 		/// <summary>
-		/// Writes one .flextext file per text into <paramref name="outputFolder"/>, named after the
-		/// text and made unique against <paramref name="reservedNames"/> and against each other. A
-		/// text that cannot be written appends a "&lt;name&gt;: &lt;message&gt;" entry to
-		/// <paramref name="messages"/> and is skipped, so one bad text does not lose the rest.
+		/// Writes one .flextext file per text into <paramref name="outputFolder"/>, named
+		/// after the text and made unique against <paramref name="reservedNames"/> and
+		/// against each other. A text that cannot be written appends a
+		/// "&lt;name&gt;: &lt;message&gt;" entry to <paramref name="messages"/> and is
+		/// skipped, so one bad text does not lose the rest.
 		/// </summary>
 		public static void ExportTexts(LcmCache cache, IEnumerable<IStText> texts, string outputFolder,
 			IEnumerable<string> reservedNames, ICollection<string> messages)

@@ -45,9 +45,9 @@ namespace LexTextDllTests
 		[Test]
 		public void Export_UnloadableGrammar_ThrowsAndWritesNothing()
 		{
-			// Deliberately skips seeding ParserParameters/phonemes/boundary markers, so the
-			// grammar cannot be built. That must propagate rather than get swallowed, so the
-			// whole export aborts instead of silently omitting the grammar.
+			// Skips seeding ParserParameters/phonemes/boundary markers, so the grammar cannot
+			// be built. That must propagate rather than be swallowed, so the export aborts
+			// instead of omitting the grammar.
 			var tempFolder = MakeTempFolder();
 			try
 			{
@@ -65,9 +65,9 @@ namespace LexTextDllTests
 		}
 
 		/// <summary>
-		/// Gives the grammar loader the minimum it needs: ParserParameters as a valid XML fragment
-		/// and a phoneme set carrying morph and word boundary markers, none of which the blank
-		/// test project provides.
+		/// Gives the grammar loader the minimum it needs: ParserParameters as a valid XML
+		/// fragment and a phoneme set carrying morph and word boundary markers, none of
+		/// which the blank test project provides.
 		/// </summary>
 		/// <remarks>
 		/// Already runs inside an ambient undo task here, so this must not open its own --
