@@ -157,6 +157,65 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		}
 
 		/// <summary>
+		/// The feature-value line (kfragFeature) is a computed "abbreviation value" string bound
+		/// to a fake tag, not free text.
+		/// </summary>
+		[Test]
+		public void Display_FeatureLineFragment_IsMarkedNotEditable()
+		{
+			var vc = new RegRuleFormulaVc(Cache, m_propertyTable);
+			var env = new EditabilityRecordingEnv();
+
+			vc.Display(env, 0, RuleFormulaVcBase.kfragFeature);
+
+			Assert.That(env.AddPropCalls, Is.Not.Empty,
+				"expected AddProp to be called for the feature-line fragment");
+			foreach (var call in env.AddPropCalls)
+			{
+				Assert.That(call.EditableAtCallTime, Is.EqualTo((int)TptEditable.ktptNotEditable),
+					"the feature-value line must not be directly editable in the rule formula view");
+			}
+		}
+
+		/// <summary>The plus-variable line (kfragPlusVariable) is a computed string bound to a
+		/// fake tag, not free text.</summary>
+		[Test]
+		public void Display_PlusVariableLineFragment_IsMarkedNotEditable()
+		{
+			var vc = new RegRuleFormulaVc(Cache, m_propertyTable);
+			var env = new EditabilityRecordingEnv();
+
+			vc.Display(env, 0, RuleFormulaVcBase.kfragPlusVariable);
+
+			Assert.That(env.AddPropCalls, Is.Not.Empty,
+				"expected AddProp to be called for the plus-variable fragment");
+			foreach (var call in env.AddPropCalls)
+			{
+				Assert.That(call.EditableAtCallTime, Is.EqualTo((int)TptEditable.ktptNotEditable),
+					"the plus-variable line must not be directly editable in the rule formula view");
+			}
+		}
+
+		/// <summary>The minus-variable line (kfragMinusVariable) is a computed string bound to a
+		/// fake tag, not free text.</summary>
+		[Test]
+		public void Display_MinusVariableLineFragment_IsMarkedNotEditable()
+		{
+			var vc = new RegRuleFormulaVc(Cache, m_propertyTable);
+			var env = new EditabilityRecordingEnv();
+
+			vc.Display(env, 0, RuleFormulaVcBase.kfragMinusVariable);
+
+			Assert.That(env.AddPropCalls, Is.Not.Empty,
+				"expected AddProp to be called for the minus-variable fragment");
+			foreach (var call in env.AddPropCalls)
+			{
+				Assert.That(call.EditableAtCallTime, Is.EqualTo((int)TptEditable.ktptNotEditable),
+					"the minus-variable line must not be directly editable in the rule formula view");
+			}
+		}
+
+		/// <summary>
 		/// Records enough of IVwEnv's calls to observe, at the moment AddStringAltMember binds a
 		/// fragment to a real domain-object field, whether the view constructor had most recently
 		/// set the ktptEditable property to NotEditable. All other members are unused by the
@@ -172,13 +231,26 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 				public int EditableAtCallTime;
 			}
 
+			public struct PropCall
+			{
+				public int Tag;
+				public int Frag;
+				public int EditableAtCallTime;
+			}
+
 			public List<Call> StringAltMemberCalls = new List<Call>();
+			public List<PropCall> AddPropCalls = new List<PropCall>();
 
 			private int m_currentEditable = int.MinValue; // sentinel: never set
 
 			public void AddStringAltMember(int tag, int ws, IVwViewConstructor _vwvc)
 			{
 				StringAltMemberCalls.Add(new Call { Tag = tag, Ws = ws, EditableAtCallTime = m_currentEditable });
+			}
+
+			public void AddProp(int tag, IVwViewConstructor _vwvc, int frag)
+			{
+				AddPropCalls.Add(new PropCall { Tag = tag, Frag = frag, EditableAtCallTime = m_currentEditable });
 			}
 
 			public void set_IntProperty(int tpt, int tpv, int nValue)
@@ -220,7 +292,6 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			public void AddObj(int hvo, IVwViewConstructor _vwvc, int frag) { throw new NotImplementedException(); }
 			public void AddLazyVecItems(int tag, IVwViewConstructor _vwvc, int frag) { throw new NotImplementedException(); }
 			public void AddLazyItems(int[] _rghvo, int chvo, IVwViewConstructor _vwvc, int frag) { throw new NotImplementedException(); }
-			public void AddProp(int tag, IVwViewConstructor _vwvc, int frag) { throw new NotImplementedException(); }
 			public void AddDerivedProp(int[] _rgtag, int ctag, IVwViewConstructor _vwvc, int frag) { throw new NotImplementedException(); }
 			public void NoteDependency(int[] _rghvo, int[] _rgtag, int chvo) { }
 			public void NoteStringValDependency(int hvo, int tag, int ws, ITsString _tssVal) { throw new NotImplementedException(); }

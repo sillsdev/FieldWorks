@@ -88,6 +88,8 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 				var e = new KeyEventArgs(key);
 				OnKeyDown(e);
 			}
+
+			public bool TestAllowDisplaySelection => AllowDisplaySelection;
 		}
 
 		private IPhPhoneme CreatePhoneme(string name)
@@ -131,6 +133,79 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			view.CallLayout();
 			m_view = view;
 			return (phoneme, view);
+		}
+
+		/// <summary>
+		/// Builds a real regular-rule RHS whose left context is a natural class special-cased to
+		/// display only its abbreviation ("C" or "V", per RuleFormulaVcBase's kfragNC branch),
+		/// hosts it in a live PatternView/RegRuleFormulaVc pair, and returns the natural class
+		/// plus the live view.
+		/// </summary>
+		private (IPhNaturalClass naturalClass, TestPatternView view) BuildLiveRuleFormulaViewWithNaturalClass(string abbr)
+		{
+			IPhNaturalClass nc = null;
+			IPhSegRuleRHS rhs = null;
+			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
+			{
+				nc = Cache.ServiceLocator.GetInstance<IPhNCFeaturesFactory>().Create();
+				Cache.LangProject.PhonologicalDataOA.NaturalClassesOS.Add(nc);
+				nc.Name.SetAnalysisDefaultWritingSystem("Test Class");
+				nc.Abbreviation.SetAnalysisDefaultWritingSystem(abbr);
+
+				var rule = Cache.ServiceLocator.GetInstance<IPhRegularRuleFactory>().Create();
+				Cache.LangProject.PhonologicalDataOA.PhonRulesOS.Add(rule);
+				rhs = Cache.ServiceLocator.GetInstance<IPhSegRuleRHSFactory>().Create();
+				rule.RightHandSidesOS.Add(rhs);
+				var ncCtxt = Cache.ServiceLocator.GetInstance<IPhSimpleContextNCFactory>().Create();
+				rhs.LeftContextOA = ncCtxt;
+				ncCtxt.FeatureStructureRA = nc;
+				// GetNumLines(ncCtxt) must be exactly 1 to hit the "C"/"V" abbreviation-only
+				// branch; one plus-constraint variable is the cheapest way to make that so.
+				var constraint = Cache.ServiceLocator.GetInstance<IPhFeatureConstraintFactory>().Create();
+				Cache.LangProject.PhonologicalDataOA.FeatConstraintsOS.Add(constraint);
+				ncCtxt.PlusConstrRS.Add(constraint);
+			});
+
+			var vc = new RegRuleFormulaVc(Cache, m_propertyTable);
+			var view = new TestPatternView { Cache = Cache, Visible = false, Width = 300, Height = 60 };
+			view.Init(m_mediator, m_propertyTable, rhs.Hvo, new NullPatternControl(), vc, RegRuleFormulaVc.kfragRHS,
+				Cache.MainCacheAccessor);
+			view.ReadOnlyView = true;
+			view.CallLayout();
+			m_view = view;
+			return (nc, view);
+		}
+
+		/// <summary>
+		/// Selects the whole displayed natural-class abbreviation (via its object path from the
+		/// RHS root, bypassing PatternView.OnKeyPress entirely) and replaces its text directly
+		/// through IVwSelection.ReplaceWithTsString. A natural class is shared by every rule that
+		/// references it, so an edit landing here is a project-wide rename, exactly like the
+		/// phoneme case.
+		/// </summary>
+		[Test]
+		public void ReplaceWithTsString_OnNaturalClassAbbreviation_BypassesOnKeyPress_AndShouldNotRenameTheClass()
+		{
+			var (naturalClass, view) = BuildLiveRuleFormulaViewWithNaturalClass("C");
+
+			var levels = new[]
+			{
+				new SelLevInfo { tag = PhSimpleContextNCTags.kflidFeatureStructure, ihvo = 0 },
+				new SelLevInfo { tag = PhSegRuleRHSTags.kflidLeftContext, ihvo = 0 }
+			};
+			IVwSelection sel = view.RootBox.MakeTextSelInObj(0, levels.Length, levels, 0, null,
+				true, false, false, /* fWholeObj */ true, /* fInstall */ true);
+			Assert.That(sel, Is.Not.Null,
+				"could not construct a selection over the natural class's abbreviation display -- fixture/path assumption is wrong");
+
+			ITsString corrupted = TsStringUtils.MakeString("CORRUPTED", Cache.DefaultAnalWs);
+
+			UndoableUnitOfWorkHelper.Do("undo", "redo", naturalClass, () => sel.ReplaceWithTsString(corrupted));
+
+			string abbrAfter = naturalClass.Abbreviation.AnalysisDefaultWritingSystem.Text;
+			Assert.That(abbrAfter, Is.EqualTo("C"),
+				"an edit that bypassed PatternView.OnKeyPress altered the real, project-wide " +
+				"PhNaturalClass.Abbreviation (got '" + abbrAfter + "')");
 		}
 
 		/// <summary>
@@ -186,6 +261,20 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 			Assert.That(removeRequested, Is.True,
 				"Delete must still raise RemoveItemsRequested when the rootsite is read-only");
+		}
+
+		/// <summary>
+		/// A read-only rootsite suppresses Activate() by default (SimpleRootSite.AllowDisplaySelection),
+		/// which would hide the selection a chooser insert/delete needs the user to see.
+		/// </summary>
+		[Test]
+		public void AllowDisplaySelection_IsTrue_WhenRootsiteIsReadOnly()
+		{
+			var (_, view) = BuildLiveRuleFormulaView("p");
+			Assert.That(view.ReadOnlyView, Is.True, "fixture assumption: the rootsite is read-only");
+
+			Assert.That(view.TestAllowDisplaySelection, Is.True,
+				"the selection must still be shown even though the rootsite is read-only");
 		}
 	}
 }

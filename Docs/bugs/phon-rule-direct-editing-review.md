@@ -64,12 +64,22 @@ it would trade one narrow, already-fixed hole for a wider, unaudited one.
 
 ## 3. What was not fixed, and why
 
-- **`ComplexConcPatternVc`** (the complex-concordance pattern builder) extends the same
-  `PatternVcBase` and is built on the same "chooser insert/delete only" premise, but was
-  not inspected fragment-by-fragment or fixed. It is a different feature with no test
-  coverage in this session's reach, and changing its rootsite's editability was
-  deliberately left alone (see section 2). It is worth a follow-up audit using the same
-  method used here.
+The audit surface here is closed, not open-ended: `PatternVcBase` has exactly two
+subclasses (`RuleFormulaVcBase`, fixed here, and `ComplexConcPatternVc`) and `PatternView`
+has exactly two consumers (`RuleFormulaControl` and `ComplexConcControl`). Both are
+accounted for below.
+
+- **`ComplexConcPatternVc`/`ComplexConcControl`** (the complex-concordance pattern
+  builder) share `PatternVcBase`/`PatternView` and the same "chooser insert/delete only"
+  premise, but were deliberately left alone -- this is a different feature with no test
+  coverage in this session's reach. This is confirmed to be a *different* defect than the
+  one fixed here: `ComplexConcPatternVc` never overrides `UpdateProp`, so a direct edit that
+  bypasses `OnKeyPress` (the same `ReplaceWithTsString` path used above) throws an unhandled
+  `NotImplementedException` out of the Views engine rather than renaming anything. It cannot
+  reproduce this bug's corruption, because it binds no real domain fields the way
+  `kfragNC`/`kfragTerminalUnit` do -- so the "keep `CanCut`/`CanPaste` for
+  `ComplexConcControl`" reasoning in section 2 still stands. The crash risk is its own,
+  separate issue.
 - **Literal/fake-tag spans elsewhere in the same VC family** -- bracket glyphs
   (`kfragLeftBracket`/`kfragRightBracket`, via `m_bracketProps`, which never sets
   `ktptEditable`), zero-width boundary markers (`ktagLeftBoundary`/`ktagRightBoundary`),
@@ -78,8 +88,13 @@ it would trade one narrow, already-fixed hole for a wider, unaudited one.
   None of them bind to a real, shared domain field the way `kfragNC`/`kfragTerminalUnit`
   do, so an edit landing there cannot rename a phoneme or natural class -- the actual bug
   in scope -- but an edit attempt against a fake tag is unverified territory (it may throw,
-  or silently no-op, depending on how the data access layer handles an unknown flid). This
-  is exactly the gap `OnKeyPress` is still covering.
+  the same way `ComplexConcPatternVc` does, or silently no-op). This is exactly the gap
+  `OnKeyPress` is still covering.
+- **`ConstChartVc`** (`ConstChartVc.cs:297`) has the same defect shape (a fragment bound to
+  a real field with no visible `ktptEditable` marking), but is reported to be guarded at the
+  cell level by `MakeCellsMethod.cs:495`. That guard was checked by reading the code only,
+  not by mutation or a live reproduction attempt, so it is unverified/SUSPECTED-safe, not
+  confirmed clean.
 - **The IME repro itself.** The bug report's own "Verification required" section already
   flagged this: the IME mechanism was inferred, not reproduced, because it requires a live
   IME/vernacular keyboard. That remains true after this fix; see section 4.
