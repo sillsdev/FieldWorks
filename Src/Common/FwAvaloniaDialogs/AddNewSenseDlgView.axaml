@@ -1,11 +1,17 @@
-<UserControl xmlns="https://github.com/avaloniaui"
+﻿<UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vm="clr-namespace:FwAvaloniaDialogs"
              xmlns:res="clr-namespace:FwAvaloniaDialogs"
              x:Class="FwAvaloniaDialogs.AddNewSenseDlgView"
              x:DataType="vm:AddNewSenseDlgViewModel"
              Classes="fwDialogRoot"
-             MinWidth="360" MinHeight="240">
+             MinWidth="{DynamicResource AddNewSenseMinWidth}" MinHeight="{DynamicResource AddNewSenseMinHeight}">
+	<UserControl.Resources>
+		<!-- Used only by this view, so it lives here rather than in the shared
+		     dialog dictionary. -->
+		<x:Double x:Key="AddNewSenseMinWidth">360</x:Double>
+		<x:Double x:Key="AddNewSenseMinHeight">240</x:Double>
+	</UserControl.Resources>
 	<!-- The reusable Add New Sense dialog: a read-only citation form, an editable gloss field,
 	     and the grammatical-info group box, over Create/Cancel/Help. The gloss field + MSA box are owned native
 	     controls injected as code-behind children (set on DataContextChanged like InsertEntryDlgView). Visible

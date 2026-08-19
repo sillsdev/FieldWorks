@@ -1,4 +1,4 @@
-// Copyright (c) 2026 SIL International
+﻿// Copyright (c) 2026 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -224,5 +224,44 @@ namespace FwAvaloniaDialogsTests
 			Assert.That(tabs.SelectedIndex, Is.EqualTo(2),
 				"the dialog must open on the tab requested at construction");
 		}
+
+		[AvaloniaTest]
+		public void UpdatesTab_GroupsTheAutoUpdateCheckboxWithTheChannelPicker()
+		{
+			var vm = new LexOptionsDlgViewModel(SampleState(), 3); // Updates
+			var view = new LexOptionsDlgView { DataContext = vm };
+			var window = new Window { Content = view, Width = 480, Height = 380 };
+			window.Show();
+			Dispatcher.UIThread.RunJobs();
+			view.UpdateLayout();
+			Dispatcher.UIThread.RunJobs();
+			DialogSnapshot.Capture(window, "Options-initial-tab-updates");
+			DialogLayoutAssert.AssertNoCrowding(view);
+
+			var tabs = FindByAutomationId<TabControl>(view, "Options.Tabs");
+			Assert.That(tabs.SelectedIndex, Is.EqualTo(3),
+				"the dialog must open on the Updates tab when requested");
+
+			var checkBox = FindByAutomationId<CheckBox>(view, "Options.Updates.AutoUpdate");
+			var channel = FindByAutomationId<ComboBox>(view, "Options.Updates.Channel");
+			var group = NearestGroupBox(checkBox);
+			Assert.That(group, Is.Not.Null, "the auto-update checkbox must sit inside a fwGroupBox");
+			Assert.That(NearestGroupBox(channel), Is.SameAs(group),
+				"the channel picker the checkbox gates must share the checkbox's group box");
+			Assert.That(group.GetVisualDescendants().OfType<TextBlock>()
+					.Any(t => t.Classes.Contains("fwGroupHeader")), Is.True,
+				"the group box must carry a fwGroupHeader caption");
+			// FwDialogGroupSeparatorBrush lives in a ThemeDictionary, which only DynamicResource
+			// reaches; a StaticResource regression would leave BorderBrush unset.
+			Assert.That(group.BorderBrush, Is.Not.Null,
+				"the fwGroupBox style must resolve its themed border brush");
+		}
+
+		/// <summary>The nearest ancestor (or self) Border carrying the fwGroupBox
+		/// class.</summary>
+		private static Border NearestGroupBox(Control control) => control
+			.GetSelfAndVisualAncestors()
+			.OfType<Border>()
+			.FirstOrDefault(b => b.Classes.Contains("fwGroupBox"));
 	}
 }

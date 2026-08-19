@@ -1,11 +1,21 @@
-<UserControl xmlns="https://github.com/avaloniaui"
+﻿<UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vm="clr-namespace:FwAvaloniaDialogs"
              xmlns:res="clr-namespace:FwAvaloniaDialogs"
              x:Class="FwAvaloniaDialogs.InsertEntryDlgView"
              x:DataType="vm:InsertEntryDlgViewModel"
              Classes="fwDialogRoot"
-             MinWidth="360" MinHeight="260">
+             MinWidth="{DynamicResource InsertEntryMinWidth}" MinHeight="{DynamicResource InsertEntryMinHeight}">
+	<UserControl.Resources>
+		<!-- Used only by this view, so it lives here rather than in the shared
+		     dialog dictionary. -->
+		<!-- Content-driven height range of the duplicate-match list, so -->
+		<x:Double x:Key="InsertEntryMatchesListMinHeight">80</x:Double>
+		<!-- a long match list scrolls instead of growing the dialog. -->
+		<x:Double x:Key="InsertEntryMatchesListMaxHeight">160</x:Double>
+		<x:Double x:Key="InsertEntryMinWidth">360</x:Double>
+		<x:Double x:Key="InsertEntryMinHeight">260</x:Double>
+	</UserControl.Resources>
 	<!-- The reusable Insert Entry dialog: lexeme-form field + morph-type picker + gloss field, each
 	     an owned native control hosted as a code-behind child (set on DataContextChanged like ChooserDialogView),
 	     over Create/Cancel/Help. Visible text is localized via FwAvaloniaDialogsStrings; AutomationIds stay
@@ -35,7 +45,7 @@
 			invalid
 		     (empty or mismatched lexeme form, incomplete circumfix, unparseable form). -->
 		<TextBlock DockPanel.Dock="Bottom" Text="{Binding ValidationMessage}"
-		           Foreground="Red" TextWrapping="Wrap" IsVisible="{Binding !IsValid}"
+		           Foreground="{StaticResource SemiColorDanger}" TextWrapping="Wrap" IsVisible="{Binding !IsValid}"
 		           Margin="{StaticResource DialogControlGapAbove}"
 		           AutomationProperties.AutomationId="InsertEntry.ValidationError"/>
 
@@ -111,7 +121,7 @@
 				           Margin="{StaticResource DialogLabelGroupGapAbove}"
 				           AutomationProperties.AutomationId="InsertEntry.MatchingEntriesLabel"/>
 				<Border Classes="fwFieldHost">
-					<ListBox Name="PART_Matches" MinHeight="80" MaxHeight="160"
+					<ListBox Name="PART_Matches" MinHeight="{StaticResource InsertEntryMatchesListMinHeight}" MaxHeight="{StaticResource InsertEntryMatchesListMaxHeight}"
 					         ItemsSource="{Binding Matches}"
 					         SelectedItem="{Binding SelectedMatch, Mode=TwoWay}"
 					         AutomationProperties.AutomationId="InsertEntry.Matches">

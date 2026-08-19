@@ -1,0 +1,103 @@
+﻿<!--
+	FwColorTokens - the FieldWorks Layer-3 color/brush + font-size tokens that Semi.Avalonia's own
+	Layer-2 semantic roles (SemiColorText0, SemiColorBackground0, SemiColorDanger, SemiColorLink,
+	...) do not already cover.
+
+	Every key below is a deliberate FieldWorks-owned value (a "Layer-1 extension" in the
+	three-tier model: FieldWorks token, Semi semantic role, Semi palette primitive), because it
+	has no Semi Layer-1/Layer-2 equivalent that fits without a visible regression; see each key's
+	comment for the specific reason. Anywhere Semi's own role fit as-is (background/picker
+	surfaces, default text, danger text, link blue), the FieldWorks key was deleted and call sites
+	now resolve the Semi key directly (see FwAvaloniaDensity.cs's property comments for the
+	removed keys' replacements).
+
+	Merged app-wide into Application.Resources by both FwAvaloniaApp and PreviewHostApp, and into
+	DialogTheme.axaml's own Styles.Resources, so both the pure-C# foundation (FwAvalonia) and the
+	XAML dialogs (FwAvaloniaDialogs) resolve the same keys.
+-->
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+	<ResourceDictionary.ThemeDictionaries>
+
+		<ResourceDictionary x:Key="Light">
+
+			<!-- Measured: the only ink in the label column (x 23-162) of the committed
+			     DataTreeRender_multiws.verified.png. Semi's Text2 composites to ~#727477 on
+			     White, lighter, so the measured value stays. -->
+			<SolidColorBrush x:Key="FwLabelBrush" Color="#696969"/>
+
+			<!-- Measured from the same baseline: #404040 is the ink in the writing-system
+			     abbreviation gutter (x 178-194). Nearest role SemiColorText1 composites to
+			     ~#494C4F on White, lighter than this. -->
+			<SolidColorBrush x:Key="FwWsAbbrevBrush" Color="#404040"/>
+
+			<!-- SemiColorBorder is SemiGrey9Color at 8% Opacity, ~#EDEDED on White - nearly
+			     invisible, not opaque or heavy. LightGray matches DataTree.cs's own
+			     Color.LightGray divider pen, kept for WinForms parity. -->
+			<SolidColorBrush x:Key="FwSliceRuleBrush" Color="LightGray"/>
+			<SolidColorBrush x:Key="FwSectionRuleBrush" Color="LightGray"/>
+
+			<!-- Pinned to the legacy WinForms selected-row value (kclrBackgroundSelRow) for
+				pixel parity; Semi's PrimaryLight is the same pale-blue family, different tone.
+				-->
+			<SolidColorBrush x:Key="FwSelectedRowBrush" Color="#D7E6FF"/>
+
+			<!-- Thin grid line between browse rows/columns: same reasoning as the slice/section
+			     rules above, since the real, faint composited SemiColorBorder is too subtle for
+			     a browse grid divider. -->
+			<SolidColorBrush x:Key="FwBrowseGridLineBrush" Color="#DCDCDC"/>
+
+			<!-- Owned picker panel border: composited SemiColorBorder (~#EDEDED) is too faint to
+			     read as a divider on White; kept for legibility consistency with the
+			     slice/section rules above. -->
+			<SolidColorBrush x:Key="FwPickerBorderBrush" Color="LightGray"/>
+
+			<!-- This frame needs a visible input boundary. SemiColorBorder is 8% Opacity,
+			     ~#EDEDED on White, too faint for an input frame, so a darker literal gives the
+			     contrast a bounded field needs. -->
+			<Color x:Key="FwDialogFieldBorderColor">#FF7A7A7A</Color>
+			<SolidColorBrush x:Key="FwDialogFieldBorderBrush" Color="#FF7A7A7A"/>
+
+			<!-- Same reasoning as FwPickerBorderBrush: the real, faint composited
+			     SemiColorBorder, not a heavy Semi value, is why LightGray is kept. -->
+			<SolidColorBrush x:Key="FwDialogGroupSeparatorBrush" Color="LightGray"/>
+
+			<!--
+				Fully transparent fill for a hit-test-only/hover-surface panel. Transparent has no
+			     hue/lightness to map to any Semi role. -->
+			<SolidColorBrush x:Key="FwTransparentBrush" Color="Transparent"/>
+
+			<!-- SemiColorDisabledText is a distinct brush (Opacity 0.35), composited ~#B0B1B2 on
+			     White - lighter than legacy Color.Gray (#808080), used for an unavailable
+			     option, so Gray stays for pixel parity. -->
+			<SolidColorBrush x:Key="FwDisabledOptionBrush" Color="Gray"/>
+
+		</ResourceDictionary>
+
+		<!-- Dark: unreviewed first-pass placeholders, not design-approved. FieldWorks has no
+		     dark-mode toggle yet; kept only so the ThemeDictionary stays ready for one. -->
+		<ResourceDictionary x:Key="Dark">
+
+			<SolidColorBrush x:Key="FwLabelBrush" Color="#A0A0A0"/>
+			<SolidColorBrush x:Key="FwWsAbbrevBrush" Color="#D0D0D0"/>
+			<SolidColorBrush x:Key="FwSliceRuleBrush" Color="#3A3A3A"/>
+			<SolidColorBrush x:Key="FwSectionRuleBrush" Color="#3A3A3A"/>
+			<SolidColorBrush x:Key="FwSelectedRowBrush" Color="#2F4B73"/>
+			<SolidColorBrush x:Key="FwBrowseGridLineBrush" Color="#444444"/>
+			<SolidColorBrush x:Key="FwPickerBorderBrush" Color="#555555"/>
+			<Color x:Key="FwDialogFieldBorderColor">#FFA0A0A0</Color>
+			<SolidColorBrush x:Key="FwDialogFieldBorderBrush" Color="#FFA0A0A0"/>
+			<SolidColorBrush x:Key="FwDialogGroupSeparatorBrush" Color="#4D4D4D"/>
+			<SolidColorBrush x:Key="FwTransparentBrush" Color="Transparent"/>
+			<SolidColorBrush x:Key="FwDisabledOptionBrush" Color="#909090"/>
+
+		</ResourceDictionary>
+
+	</ResourceDictionary.ThemeDictionaries>
+
+	<!-- No light/dark variance. Off Semi's Small/Regular (12/14) steps: pinned to the legacy
+	     WinForms 11pt baseline for compact-density parity. -->
+	<x:Double x:Key="FwSurfaceFontSize">11</x:Double>
+
+</ResourceDictionary>

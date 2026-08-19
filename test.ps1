@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
 	Runs tests for the FieldWorks repository.
 
@@ -39,6 +39,13 @@
 .PARAMETER CommentHygiene
 	Enforce the comment-hygiene check, failing the run on any violation in the lines this
 	branch adds.
+
+.PARAMETER TokenHygiene
+	Enforce the token-hygiene check, failing the run on any hardcoded color or
+	spacing/sizing literal anywhere in the Avalonia surface (not diff-scoped -- the whole
+	scoped tree must be clean). Required of coding agents; a developer run leaves it off
+	and never runs the check -- except that CI=true or GITHUB_ACTIONS=true
+	forces an advisory run even without the flag.
 
 .PARAMETER StartedBy
 	Optional actor label written to worktree lock metadata (for example: user or agent).
@@ -106,7 +113,8 @@ param(
 	[switch]$Coverage,
 	[ValidateSet('user', 'agent', 'unknown')]
 	[string]$StartedBy = 'unknown',
-	[switch]$CommentHygiene
+	[switch]$CommentHygiene,
+	[switch]$TokenHygiene
 )
 
 $ErrorActionPreference = 'Stop'
@@ -115,6 +123,18 @@ if ($CommentHygiene) {
 	$commentHygienePath = Join-Path $PSScriptRoot "Build/Agent/comment-hygiene.ps1"
 	& $commentHygienePath
 	if ($LASTEXITCODE -ne 0) {
+		exit $LASTEXITCODE
+	}
+}
+
+# Token hygiene blocks the run with -TokenHygiene. Without the flag, CI=true or
+# GITHUB_ACTIONS=true still forces an advisory run that annotates the pull request. An
+# ordinary developer run is silent.
+$tokenHygieneInCI = ($env:GITHUB_ACTIONS -eq 'true') -or ($env:CI -eq 'true')
+if ($TokenHygiene -or $tokenHygieneInCI) {
+	$tokenHygienePath = Join-Path $PSScriptRoot "Build/Agent/token-hygiene.ps1"
+	& $tokenHygienePath -Advisory:(-not $TokenHygiene)
+	if ($TokenHygiene -and $LASTEXITCODE -ne 0) {
 		exit $LASTEXITCODE
 	}
 }

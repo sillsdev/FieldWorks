@@ -5,12 +5,20 @@ Minimal, high-signal guidance for coding agents in this repository.
 ## Non-negotiable defaults
 
 - Platform is Windows/x64.
-- Build with `.\build.ps1 -CommentHygiene`.
-- Test with `.\test.ps1 -CommentHygiene`.
+- Build with `.\build.ps1 -CommentHygiene -TokenHygiene`.
+- Test with `.\test.ps1 -CommentHygiene -TokenHygiene`.
 - `-CommentHygiene` is required of agents and not of humans: it fails the run on
 	any comment-hygiene violation in the lines your branch adds, so you fix your
 	own comments before they reach review. Do not drop the flag to get a build
 	through.
+- `-TokenHygiene` is required of agents and not of humans locally, and also
+	fails CI outright (unlike comment-hygiene, which stays advisory-only in
+	CI): it fails the run on any hardcoded color or spacing/sizing literal
+	anywhere in the Avalonia surface (Src/Common/FwAvalonia,
+	FwAvaloniaDialogs, FwAvaloniaTheme, FwAvaloniaPreviewHost,
+	Src/LexText/LexTextControls/Avalonia, Src/xWorks/Avalonia) -- not
+	diff-scoped like comment-hygiene, the whole scoped tree must be clean on
+	every run. Do not drop the flag to get a build through.
 - Do not bypass repository scripts for normal build/test work.
 - Commit messages must pass `gitlint` (CI: `.github/workflows/CommitMessage.yml`):
 	title <=72 characters, body lines <=80 characters, blank line between

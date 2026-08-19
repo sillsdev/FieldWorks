@@ -23,16 +23,28 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 	/// it never affects the detail/table views, which own their own density (<see cref="FwAvaloniaDensity"/>).
 	///
 	/// The same density also lives in <c>DialogTheme.axaml</c>, which the headless dialog tests apply instead
-	/// of this runtime chokepoint, so both paths must carry the same numbers: CHANGE BOTH TOGETHER. The
-	/// duplication cannot be removed by referencing these constants from the theme -- Avalonia's compiled
-	/// XAML rejects <c>x:Static</c> as a resource declaration, and it drops the whole file silently rather
-	/// than failing the build.
+	/// of this runtime chokepoint, so both paths must carry the same numbers: CHANGE BOTH
+	/// TOGETHER. Font size resolves the single FwSurfaceFontSize token from
+	/// Src/Common/FwAvaloniaTheme (see <see cref="DialogFontSize"/>); the padding Thickness
+	/// literals resolve <see cref="GeneratedTokenKeys"/>' baked copies of DialogTheme.axaml's own
+	/// Dialog*Padding tokens, since Avalonia's compiled XAML rejects <c>x:Static</c> as a
+	/// resource
+	/// declaration and this file cannot read them via <c>{StaticResource}</c> at runtime.
+	/// <see cref="LineControlMinHeight"/> stays an independent literal: it mirrors
+	/// DialogMinControlHeight, which is itself an alias onto a Semi resource with no token text
+	/// to
+	/// bake.
 	/// </summary>
 	public static class CompactDialogStyles
 	{
 		/// <summary>Dialog body font, tuned against the legacy WinForms dialogs (Segoe UI 9pt) and well
-		/// below the ~14px Fluent default. Mirrors <c>DialogFontSize</c> in DialogTheme.axaml.</summary>
-		public const double DialogFontSize = 11.0;
+		/// below the ~14px Fluent default. Resolved from the shared FwAvaloniaTheme token
+		/// dictionary
+		/// (FwSurfaceFontSize), the same key DialogTheme.axaml's <c>DialogFontSize</c> now points
+		/// at.
+		/// A property, not a field: resolved at point-of-use, after the Application has
+		/// started.</summary>
+		public static double DialogFontSize => FwThemeResources.RequireDouble(GeneratedTokenKeys.FwSurfaceFontSize);
 
 		/// <summary>Min height for compact line controls (buttons/combos/text boxes), vs the Fluent ~32px floor.
 		/// Genuine WinForms line controls run 20-23px, but that falls below the ~24px desktop pointer-target
@@ -64,15 +76,17 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 
 		private static IEnumerable<IStyle> Build()
 		{
-			yield return Templated<Button>(new Thickness(8, 2), LineControlMinHeight);
-			yield return Templated<ComboBox>(new Thickness(6, 1), LineControlMinHeight);
-			yield return Templated<TextBox>(new Thickness(4, 2), LineControlMinHeight);
+			// GeneratedTokenKeys' baked copies of DialogTheme.axaml's Dialog*Padding tokens:
+			// compiled XAML rejects x:Static, so this C# path cannot read them via
+			// {StaticResource}.
+			yield return Templated<Button>(GeneratedTokenKeys.DialogButtonPaddingValue, LineControlMinHeight);
+			yield return Templated<ComboBox>(GeneratedTokenKeys.DialogComboBoxPaddingValue, LineControlMinHeight);
+			yield return Templated<TextBox>(GeneratedTokenKeys.DialogTextBoxPaddingValue, LineControlMinHeight);
 			// Tabs size to content (drop the Fluent min-height floor) for compact rows.
-			yield return Templated<TabItem>(new Thickness(8, 3), 0);
+			yield return Templated<TabItem>(GeneratedTokenKeys.DialogTabItemPaddingValue, 0);
 
-			// CheckBox and RadioButton are deliberately absent: DialogThemeBootstrap adds
-			// FwCheckBoxStyle / FwRadioButtonStyle per dialog body, and adding them here
-			// too would apply each twice.
+			// CheckBox/RadioButton density is not set here: Semi sizes them from overridable
+			// resources that FwSemiDensity retargets once at Application level.
 
 			yield return new Style(s => s.OfType<TextBlock>())
 			{
@@ -83,7 +97,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 				Setters =
 				{
 					new Setter(Layoutable.MinHeightProperty, 0.0),
-					new Setter(TemplatedControl.PaddingProperty, new Thickness(4, 1))
+					new Setter(TemplatedControl.PaddingProperty, GeneratedTokenKeys.DialogListBoxItemPaddingValue)
 				}
 			};
 		}

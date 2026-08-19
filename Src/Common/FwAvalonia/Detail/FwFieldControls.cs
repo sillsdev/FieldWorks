@@ -1,9 +1,10 @@
-﻿// Copyright (c) 2026 SIL International
+﻿﻿// Copyright (c) 2026 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using Avalonia;
 using Avalonia.Automation;
@@ -66,15 +67,38 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			Action<DetailMenuRequest> menuRequested = null,
 			IFwClipboard clipboard = null,
 			bool showWritingSystemAbbreviation = true,
-			Action save = null)
+			Action save = null,
+			double? wsAbbrevColumnWidth = null)
 		{
 			Spacing = FwAvaloniaDensity.RowSpacing;
 			AutomationProperties.SetAutomationId(this, automationId);
 			AutomationProperties.SetName(this, field.Label ?? field.Field ?? automationId);
+			var resolvedWsAbbrevColumnWidth = wsAbbrevColumnWidth ?? FwAvaloniaDensity.WsAbbrevWidth;
 
 			foreach (var value in field.Values)
 				AddValueRow(field, automationId, editContext, writingSystemFocused,
-					menuRequested, clipboard, showWritingSystemAbbreviation, value);
+					menuRequested, clipboard, showWritingSystemAbbreviation, value, resolvedWsAbbrevColumnWidth);
+		}
+
+		// The widest abbreviation in the model, measured at its own font and clamped to
+		// [WsAbbrevWidth, WsAbbrevMaxWidth]; one width for every row keeps the value column
+		// aligned.
+		public static double ComputeWsAbbrevColumnWidth(DetailModel model)
+		{
+			if (model == null)
+				return FwAvaloniaDensity.WsAbbrevWidth;
+
+			var typeface = new Typeface(FontFamily.Default);
+			double widest = 0;
+			foreach (var abbrev in model.Fields.SelectMany(f => f.Values).Select(v => v.WsAbbrev)
+				.Where(a => !string.IsNullOrEmpty(a)).Distinct())
+			{
+				var formatted = new FormattedText(abbrev, CultureInfo.CurrentCulture, FlowDirection.LeftToRight,
+					typeface, FwAvaloniaDensity.WsAbbrevFontSize, FwAvaloniaDensity.PickerForegroundBrush);
+				widest = Math.Max(widest, formatted.Width);
+			}
+			var needed = widest + FwAvaloniaDensity.WsAbbrevGutter;
+			return Math.Max(FwAvaloniaDensity.WsAbbrevWidth, Math.Min(needed, FwAvaloniaDensity.WsAbbrevMaxWidth));
 		}
 
 		// Builds one writing-system row: the abbreviation gutter, the value editor (with its rich-text
@@ -84,10 +108,10 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		private void AddValueRow(DetailField field, string automationId,
 			IDetailEditContext editContext, Action<string> writingSystemFocused,
 			Action<DetailMenuRequest> menuRequested, IFwClipboard clipboard,
-			bool showWritingSystemAbbreviation, DetailWsValue value)
+			bool showWritingSystemAbbreviation, DetailWsValue value, double wsAbbrevColumnWidth)
 		{
 				var currentRich = value.RichText;
-				var abbrev = CreateWsAbbrev(value);
+				var abbrev = CreateWsAbbrev(value, wsAbbrevColumnWidth);
 
 				// Values render flat with no box/fill, and go read-only with a tooltip
 				// -- instead of corrupting on the first keystroke -- when a run carries
@@ -516,7 +540,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 							var urlBox = new TextBox
 							{
 								Watermark = FwAvaloniaStrings.LinkUrlPrompt,
-								MinWidth = 220,
+								MinWidth = FwAvaloniaDensity.LinkUrlMinWidth,
 								Padding = FwAvaloniaDensity.EditorPadding,
 								MinHeight = 0
 							};
@@ -525,7 +549,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 							var applyButton = new Button
 							{
 								Content = FwAvaloniaStrings.LinkApply,
-								Padding = new Thickness(6, 0, 6, 0),
+								Padding = FwAvaloniaDensity.CompactButtonPadding,
 								MinHeight = 0
 							};
 							AutomationProperties.SetAutomationId(applyButton, automationId + "." + wsKey + ".Link.Apply");
@@ -533,7 +557,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 							var linkPanel = new StackPanel
 							{
 								Orientation = Orientation.Horizontal,
-								Spacing = 4,
+								Spacing = FwAvaloniaDensity.LinkPromptGap,
 								Children = { urlBox, applyButton }
 							};
 							var linkFlyout = new Flyout
@@ -714,7 +738,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				var valueContent = CreateValueContentWithFontSwap(field, automationId, wsKey, box,
 					currentRich, !valueIsReadOnly);
 
-				var rowPanel = CreateRowPanel(abbrev, valueContent, showWritingSystemAbbreviation);
+				var rowPanel = CreateRowPanel(abbrev, valueContent, showWritingSystemAbbreviation, wsAbbrevColumnWidth);
 				// The whole row opens the in-string menu. The box's tunnelling handler wins
 				// inside the value.
 				if (hasBridge)
@@ -729,18 +753,21 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		// own fixed gutter column (see the row Grid below) so a bold vernacular value can never crowd
 		// or overlap it. ClipToBounds keeps an unusually long abbreviation inside the gutter width
 		// rather than bleeding into the value column.
-		private static TextBlock CreateWsAbbrev(DetailWsValue value)
+		private static TextBlock CreateWsAbbrev(DetailWsValue value, double wsAbbrevColumnWidth)
 		{
-			return new TextBlock
+			var abbrev = new TextBlock
 			{
 				Text = value.WsAbbrev,
-				MinWidth = FwAvaloniaDensity.WsAbbrevWidth,
+				MinWidth = wsAbbrevColumnWidth,
 				VerticalAlignment = VerticalAlignment.Top,
 				Margin = new Thickness(0, 1, FwAvaloniaDensity.WsAbbrevGutter, 0),
 				FontSize = FwAvaloniaDensity.WsAbbrevFontSize,
 				Foreground = FwAvaloniaDensity.WsAbbrevBrush,
 				ClipToBounds = true
 			};
+			// The gutter clips a long abbreviation, so the full text stays discoverable on hover.
+			ToolTip.SetTip(abbrev, value.WsAbbrev);
+			return abbrev;
 		}
 
 		// The flat value editor: a voice/audio or rich-content-lossy value is read-only and carries the
@@ -756,7 +783,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				IsReadOnly = valueIsReadOnly,
 				FlowDirection = value.RightToLeft ? FlowDirection.RightToLeft : FlowDirection.LeftToRight,
 				BorderThickness = new Thickness(0),
-				Background = Brushes.Transparent,
+				Background = FwAvaloniaDensity.TransparentBrush,
 				TextWrapping = TextWrapping.Wrap // 14.5: long values wrap; the row grows vertically
 			};
 			// A voice/audio writing system has no sound player in this view yet, so the row
@@ -856,18 +883,19 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		// is single-writing-system per column, so the gutter is suppressed there (it would otherwise
 		// show "vern"/"anal" in front of every cell, which the WinForms browse never does) and the
 		// value spans the whole row.
-		private static Grid CreateRowPanel(TextBlock abbrev, Control valueContent, bool showWritingSystemAbbreviation)
+		private static Grid CreateRowPanel(TextBlock abbrev, Control valueContent, bool showWritingSystemAbbreviation,
+			double wsAbbrevColumnWidth)
 		{
 			var rowPanel = new Grid
 			{
 				// 14.2: a null background only hit-tests the glyphs -- the whole row must
 				// receive hover/right-click over the gaps too.
-				Background = Brushes.Transparent
+				Background = FwAvaloniaDensity.TransparentBrush
 			};
 			if (showWritingSystemAbbreviation)
 			{
 				rowPanel.ColumnDefinitions.Add(
-					new ColumnDefinition(new GridLength(FwAvaloniaDensity.WsAbbrevWidth, GridUnitType.Pixel)));
+					new ColumnDefinition(new GridLength(wsAbbrevColumnWidth, GridUnitType.Pixel)));
 				rowPanel.ColumnDefinitions.Add(new ColumnDefinition(new GridLength(1, GridUnitType.Star)));
 				Grid.SetColumn(abbrev, 0);
 				rowPanel.Children.Add(abbrev);
@@ -900,7 +928,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			// Exactly ONE of {display, box} occupies the row at a time (IsVisible collapses the other out
 			// of layout, so they never overlap): the per-run-font display shows while unfocused; a pointer
 			// press swaps in the editable box and focuses it. On blur the box collapses, the display returns.
-			var panel = new Panel { Background = Brushes.Transparent };
+			var panel = new Panel { Background = FwAvaloniaDensity.TransparentBrush };
 			panel.Children.Add(display);
 			panel.Children.Add(box);
 			display.IsVisible = true;
@@ -1064,7 +1092,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			Padding = FwAvaloniaDensity.EditorPadding;
 			MinHeight = 0;
 			HorizontalAlignment = HorizontalAlignment.Left;
-			Background = Brushes.Transparent;
+			Background = FwAvaloniaDensity.TransparentBrush;
 			BorderThickness = new Thickness(0);
 			_valueText = new TextBlock
 			{
@@ -1074,7 +1102,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			var content = new StackPanel
 			{
 				Orientation = Orientation.Horizontal,
-				Spacing = 6,
+				Spacing = FwAvaloniaDensity.ChooserGearGap,
 				Children = { _valueText }
 			};
 			// GEAR = CONFIGURE: only a resolved list-edit target draws the gear; clicking it
@@ -1217,7 +1245,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			// 14.2-style hit-testing rule: a null background only hit-tests the glyphs -- the
 			// WHOLE
 			// row must receive hover so the reveal affordances work over the gaps between items.
-			Background = Brushes.Transparent;
+			Background = FwAvaloniaDensity.TransparentBrush;
 			AutomationProperties.SetAutomationId(this, automationId);
 			AutomationProperties.SetName(this, field.Label ?? field.Field ?? automationId);
 
@@ -1228,11 +1256,11 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				{
 					Text = item.Name,
 					VerticalAlignment = VerticalAlignment.Center,
-					Margin = new Thickness(0, 0, 4, 0),
+					Margin = FwAvaloniaDensity.TrailingItemGap,
 					// 14.2: a null background only hit-tests the glyphs -- the whole item must
 					// take
 					// the right-click or the Remove flyout only opens over ink.
-					Background = Brushes.Transparent
+					Background = FwAvaloniaDensity.TransparentBrush
 				};
 				AutomationProperties.SetAutomationId(text, automationId + ".Item." + item.Key);
 				if (editable)
@@ -1273,10 +1301,10 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			var addButton = new Button
 			{
 				Content = "+",
-				Padding = new Thickness(4, 0, 4, 0),
+				Padding = FwAvaloniaDensity.IconButtonPadding,
 				MinHeight = 0,
 				MinWidth = 0,
-				Background = Brushes.Transparent,
+				Background = FwAvaloniaDensity.TransparentBrush,
 				BorderThickness = new Thickness(0),
 				Foreground = FwAvaloniaDensity.WsAbbrevBrush
 			};
@@ -1372,10 +1400,10 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		{
 			var bar = new Border
 			{
-				Width = 2,
-				Height = 14,
-				Background = Brushes.LightGray,
-				Margin = new Thickness(2, 0, 6, 0),
+				Width = FwAvaloniaDensity.SeparatorBarWidth,
+				Height = FwAvaloniaDensity.IconGlyphSize,
+				Background = FwAvaloniaDensity.SliceRuleBrush,
+				Margin = FwAvaloniaDensity.SeparatorBarMargin,
 				VerticalAlignment = VerticalAlignment.Center
 			};
 			Children.Add(bar);
@@ -1403,7 +1431,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			LastChildFill = true;
 			// A null background only hit-tests the glyphs -- the WHOLE row must receive hover
 			// so the gear reveal works over the gaps.
-			Background = Brushes.Transparent;
+			Background = FwAvaloniaDensity.TransparentBrush;
 			AutomationProperties.SetName(this, label ?? string.Empty);
 
 			// The legacy ButtonLauncher launch affordance, docked at the row's end like m_panel
@@ -1424,8 +1452,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				Text = value ?? string.Empty,
 				VerticalAlignment = VerticalAlignment.Center,
 				TextWrapping = TextWrapping.Wrap,
-				Margin = new Thickness(0, 0, 6, 0),
-				Background = Brushes.Transparent // 14.2 again: the value text is the hover surface
+				Margin = FwAvaloniaDensity.TrailingGap,
+				Background = FwAvaloniaDensity.TransparentBrush // 14.2 again: the value text is the hover surface
 			};
 			AutomationProperties.SetName(text, label ?? string.Empty);
 

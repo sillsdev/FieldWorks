@@ -143,9 +143,9 @@ namespace FwAvaloniaDialogs
 
 			Background = FwAvaloniaDensity.PickerBackgroundBrush;
 			BorderBrush = FwAvaloniaDensity.PickerBorderBrush;
-			BorderThickness = new Thickness(1);
-			CornerRadius = new CornerRadius(3);
-			Padding = new Thickness(4);
+			BorderThickness = FwAvaloniaDensity.HairlineBorderThickness;
+			CornerRadius = FwAvaloniaDensity.PickerCornerRadius;
+			Padding = FwAvaloniaDensity.TightPadding;
 			MinWidth = FwAvaloniaDensity.DropdownMinWidth;
 			AutomationProperties.SetAutomationId(this, _automationId + ".FeatureEditor");
 			AutomationProperties.SetName(this, FwAvaloniaDialogsStrings.FeatureEditorName);
@@ -154,9 +154,9 @@ namespace FwAvaloniaDialogs
 			{
 				MinHeight = 0,
 				Padding = FwAvaloniaDensity.EditorPadding,
-				Background = Brushes.Transparent,
+				Background = FwAvaloniaDensity.TransparentBrush,
 				BorderBrush = FwAvaloniaDensity.PickerBorderBrush,
-				BorderThickness = new Thickness(0, 0, 0, 1),
+				BorderThickness = FwAvaloniaDensity.BottomHairlineBorderThickness,
 				Watermark = FwAvaloniaStrings.SearchPrompt
 			};
 			AutomationProperties.SetAutomationId(_filterBox, _automationId + ".Search");
@@ -167,7 +167,7 @@ namespace FwAvaloniaDialogs
 			{
 				ItemsSource = _roots,
 				MaxHeight = FwAvaloniaDensity.OptionListMaxHeight,
-				Background = Brushes.Transparent,
+				Background = FwAvaloniaDensity.TransparentBrush,
 				BorderThickness = new Thickness(0),
 				ItemContainerTheme = FilterableDropdownSupport.CompactTreeItemTheme(),
 				ItemTemplate = TreeNodeTemplate()
@@ -182,7 +182,7 @@ namespace FwAvaloniaDialogs
 				IsVisible = false,
 				SelectionMode = SelectionMode.Single,
 				MaxHeight = FwAvaloniaDensity.OptionListMaxHeight,
-				Background = Brushes.Transparent,
+				Background = FwAvaloniaDensity.TransparentBrush,
 				BorderThickness = new Thickness(0),
 				Padding = new Thickness(0),
 				ItemContainerTheme = FilterableDropdownSupport.CompactListItemTheme(),
@@ -201,11 +201,11 @@ namespace FwAvaloniaDialogs
 			};
 			_createFeatureRow = new Border
 			{
-				Background = Brushes.Transparent,
+				Background = FwAvaloniaDensity.TransparentBrush,
 				Padding = FwAvaloniaDensity.OptionItemPadding,
 				Margin = new Thickness(0, FwAvaloniaDensity.RowSpacing, 0, 0),
 				BorderBrush = FwAvaloniaDensity.SliceRuleBrush,
-				BorderThickness = new Thickness(0, 1, 0, 0),
+				BorderThickness = FwAvaloniaDensity.TopHairlineBorderThickness,
 				Child = createLabel,
 				Cursor = new Cursor(StandardCursorType.Hand)
 			};
@@ -704,7 +704,7 @@ namespace FwAvaloniaDialogs
 			{
 				Content = "+",
 				Foreground = FwAvaloniaDensity.LabelBrush,
-				Background = Brushes.Transparent,
+				Background = FwAvaloniaDensity.TransparentBrush,
 				BorderThickness = new Thickness(0),
 				Padding = new Thickness(FwAvaloniaDensity.CheckboxLabelGap, 0, 0, 0),
 				MinWidth = 0,

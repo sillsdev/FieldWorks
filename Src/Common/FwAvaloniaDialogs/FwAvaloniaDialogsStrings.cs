@@ -38,6 +38,11 @@ namespace FwAvaloniaDialogs
 		// m_uiModeBetaWarning.
 		public static string UiModeBetaWarning => Text("FwAvaloniaDialogs.UiModeBetaWarning");
 		public static string AutoOpenLastProject => Text("FwAvaloniaDialogs.AutoOpenLastProject");
+		// Group-box headers chunking the General tab into logical clusters (visual grouping only
+		// --
+		// no WinForms equivalent id, so these are new dialog-local captions).
+		public static string GeneralInterfaceGroupHeader => Text("FwAvaloniaDialogs.GeneralInterfaceGroupHeader");
+		public static string GeneralStartupGroupHeader => Text("FwAvaloniaDialogs.GeneralStartupGroupHeader");
 
 		// Plugins tab.
 		public static string PluginsUnavailableNote => Text("FwAvaloniaDialogs.PluginsUnavailableNote");
@@ -48,6 +53,8 @@ namespace FwAvaloniaDialogs
 
 		// Updates tab.
 		public static string AutoUpdate => Text("FwAvaloniaDialogs.AutoUpdate");
+		// Group-box header wrapping the auto-update checkbox + channel picker together.
+		public static string UpdatesGroupHeader => Text("FwAvaloniaDialogs.UpdatesGroupHeader");
 		public static string UpdateChannelLabel => Text("FwAvaloniaDialogs.UpdateChannelLabel");
 
 		public static string Ok => Text("FwAvaloniaDialogs.OK");

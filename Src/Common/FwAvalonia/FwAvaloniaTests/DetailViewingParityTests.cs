@@ -4,6 +4,7 @@
 
 using System.Collections.Generic;
 using System.Linq;
+using Avalonia;
 using Avalonia.Automation;
 using Avalonia.Controls;
 using Avalonia.Headless.NUnit;
@@ -52,15 +53,42 @@ namespace FwAvaloniaTests
 		public void Rules_UnderlineOnlyTheValueColumn_AndValuesWrap()
 		{
 			var view = Show(Text("f1", "Field 1", 0), Text("f2", "Field 2", 0));
+			view.UpdateLayout();
+			Dispatcher.UIThread.RunJobs();
 
+			// The 1px rule is a DockPanel-bottom border inside the field's value content;
+			// asserting
+			// its origin lands at/after the label column is a geometry claim (a rule under the
+			// label would start at 0).
 			var rule = view.GetVisualDescendants().OfType<Border>()
 				.First(b => AutomationProperties.GetAutomationId(b) == "SliceRule.0");
-			Assert.That(Grid.GetColumn(rule), Is.EqualTo(2), "no line under the label panel (14.3)");
-			Assert.That(Grid.GetColumnSpan(rule), Is.EqualTo(1));
+			var origin = rule.TranslatePoint(new Avalonia.Point(0, 0), view) ?? new Avalonia.Point(0, 0);
+			Assert.That(origin.X,
+				Is.GreaterThanOrEqualTo(SIL.FieldWorks.Common.FwAvalonia.FwAvaloniaDensity.LabelColumnWidth),
+				"no line under the label panel (14.3): the rule must start at/after the label column");
 
 			var box = view.GetVisualDescendants().OfType<TextBox>().First();
 			Assert.That(box.TextWrapping, Is.EqualTo(Avalonia.Media.TextWrapping.Wrap),
 				"long values wrap; the field expands vertically (14.5)");
+		}
+
+		// Regression: a long label must wrap inside the label column instead of measuring to its
+		// full unwrapped width and painting over the value column (the reported overlap bug).
+		[AvaloniaTest]
+		public void LongFieldLabel_WrapsInsideTheLabelColumn_AndNeverOverlapsTheValue()
+		{
+			var view = Show(Text("f1", "Grammatical Information Category", 0));
+			view.UpdateLayout();
+			Dispatcher.UIThread.RunJobs();
+
+			var label = view.GetVisualDescendants().OfType<TextBlock>()
+				.First(t => AutomationProperties.GetAutomationId(t) == "f1.Label");
+			var origin = label.TranslatePoint(new Avalonia.Point(0, 0), view) ?? new Avalonia.Point(0, 0);
+			var rightEdge = origin.X + label.Bounds.Width;
+
+			Assert.That(rightEdge,
+				Is.LessThanOrEqualTo(SIL.FieldWorks.Common.FwAvalonia.FwAvaloniaDensity.LabelColumnWidth + 2),
+				"a long label must wrap inside the label column, never overlap the value column");
 		}
 
 		[AvaloniaTest]
@@ -86,23 +114,25 @@ namespace FwAvaloniaTests
 				Header("h2", "Sense 2", 0),
 				Text("g2", "Gloss2", 1));
 
-			var gloss1 = view.GetVisualDescendants().OfType<TextBox>()
-				.First(t => (AutomationProperties.GetAutomationId(t) ?? "").StartsWith("g1"));
-			Assert.That(gloss1.IsEffectivelyVisible, Is.True);
+			// Collapsing rebuilds the Form's Items from the visible-field subsequence, so each
+			// check below re-queries the live tree rather than caching a control reference across
+			// a toggle.
+			bool GlossPresent(string idPrefix) => view.HasDescendant<TextBox>(
+				t => (AutomationProperties.GetAutomationId(t) ?? "").StartsWith(idPrefix));
+
+			Assert.That(GlossPresent("g1"), Is.True);
 
 			var sense1 = view.GetVisualDescendants().OfType<Button>()
 				.First(b => AutomationProperties.GetAutomationId(b) == "h1");
 			sense1.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
 			Dispatcher.UIThread.RunJobs();
 
-			Assert.That(gloss1.IsEffectivelyVisible, Is.False, "collapsing Sense 1 hides its nested rows");
-			var gloss2 = view.GetVisualDescendants().OfType<TextBox>()
-				.First(t => (AutomationProperties.GetAutomationId(t) ?? "").StartsWith("g2"));
-			Assert.That(gloss2.IsEffectivelyVisible, Is.True, "the sibling sense is unaffected");
+			Assert.That(GlossPresent("g1"), Is.False, "collapsing Sense 1 removes its nested rows");
+			Assert.That(GlossPresent("g2"), Is.True, "the sibling sense is unaffected");
 
 			sense1.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
 			Dispatcher.UIThread.RunJobs();
-			Assert.That(gloss1.IsEffectivelyVisible, Is.True, "expanding restores the rows");
+			Assert.That(GlossPresent("g1"), Is.True, "expanding restores the rows");
 		}
 
 		[AvaloniaTest]
@@ -117,44 +147,50 @@ namespace FwAvaloniaTests
 				Text("grand2", "Translation", 2),
 				Text("sibling", "Gloss", 1));
 
-			TextBox Box(string idPrefix) => view.GetVisualDescendants().OfType<TextBox>()
-				.First(t => (AutomationProperties.GetAutomationId(t) ?? "").StartsWith(idPrefix));
-			Button Toggle(string id) => view.GetVisualDescendants().OfType<Button>()
-				.First(b => AutomationProperties.GetAutomationId(b) == id);
-			void Click(Button b)
+			// Absent-not-hidden while collapsed, same as above; every lookup here is a fresh
+			// query too,
+			// since collapsing/expanding "child" or "parent" also rebuilds every OTHER realized
+			// row.
+			bool BoxPresent(string idPrefix) => view.HasDescendant<TextBox>(
+				t => (AutomationProperties.GetAutomationId(t) ?? "").StartsWith(idPrefix));
+			bool ButtonPresent(string id) => view.HasDescendant<Button>(
+				b => AutomationProperties.GetAutomationId(b) == id);
+			void Click(string id)
 			{
-				b.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+				view.GetVisualDescendants().OfType<Button>()
+					.First(b => AutomationProperties.GetAutomationId(b) == id)
+					.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
 				Dispatcher.UIThread.RunJobs();
 			}
-			// The child header's toggle button lives in the row that the parent owns; assert against
-			// that row's visibility via the button's effective visibility.
-			var childToggle = Toggle("child");
 
-			// All visible to start.
-			Assert.That(Box("grand1").IsEffectivelyVisible, Is.True);
-			Assert.That(Box("sibling").IsEffectivelyVisible, Is.True);
-			Assert.That(childToggle.IsEffectivelyVisible, Is.True);
+			// All present to start.
+			Assert.That(BoxPresent("grand1"), Is.True);
+			Assert.That(BoxPresent("sibling"), Is.True);
+			Assert.That(ButtonPresent("child"), Is.True);
 
-			// (1) Collapse the child -> grandchild rows hide; the sibling under the parent is unaffected.
-			Click(childToggle);
-			Assert.That(Box("grand1").IsEffectivelyVisible, Is.False, "collapsing the child hides grandchildren");
-			Assert.That(Box("grand2").IsEffectivelyVisible, Is.False);
-			Assert.That(Box("sibling").IsEffectivelyVisible, Is.True, "the parent-level sibling stays visible");
+			// (1) Collapse the child -> grandchild rows disappear; the sibling under the parent
+			// is unaffected.
+			Click("child");
+			Assert.That(BoxPresent("grand1"), Is.False, "collapsing the child removes grandchildren from the tree");
+			Assert.That(BoxPresent("grand2"), Is.False);
+			Assert.That(BoxPresent("sibling"), Is.True, "the parent-level sibling stays present");
 
-			// (2) Collapse the parent -> everything under it hides, including the child header row.
-			Click(Toggle("parent"));
-			Assert.That(childToggle.IsEffectivelyVisible, Is.False, "collapsing the parent hides the child header");
-			Assert.That(Box("grand1").IsEffectivelyVisible, Is.False);
-			Assert.That(Box("sibling").IsEffectivelyVisible, Is.False);
+			// (2) Collapse the parent -> everything under it disappears, including the child
+			// header row.
+			Click("parent");
+			Assert.That(ButtonPresent("child"), Is.False, "collapsing the parent removes the child header too");
+			Assert.That(BoxPresent("grand1"), Is.False);
+			Assert.That(BoxPresent("sibling"), Is.False);
 
 			// (3) Re-expand the parent -> the child header row and the sibling reappear, but the
-			// grandchild rows STAY hidden because the child is still collapsed (nested-collapse fidelity).
-			Click(Toggle("parent"));
-			Assert.That(childToggle.IsEffectivelyVisible, Is.True, "re-expanding the parent shows the child header");
-			Assert.That(Box("sibling").IsEffectivelyVisible, Is.True, "the parent-level sibling reappears");
-			Assert.That(Box("grand1").IsEffectivelyVisible, Is.False,
-				"the grandchildren stay hidden: the child is still collapsed (this fails the old blanket Apply)");
-			Assert.That(Box("grand2").IsEffectivelyVisible, Is.False);
+			// grandchild rows STAY absent because the child is still collapsed (nested-collapse
+			// fidelity).
+			Click("parent");
+			Assert.That(ButtonPresent("child"), Is.True, "re-expanding the parent restores the child header");
+			Assert.That(BoxPresent("sibling"), Is.True, "the parent-level sibling reappears");
+			Assert.That(BoxPresent("grand1"), Is.False,
+				"the grandchildren stay absent: the child is still collapsed (this fails the old blanket Apply)");
+			Assert.That(BoxPresent("grand2"), Is.False);
 		}
 
 		[AvaloniaTest]
@@ -164,9 +200,11 @@ namespace FwAvaloniaTests
 				Header("h1", "Publication Settings", 0, expanded: false),
 				Text("p1", "Hidden child", 1));
 
-			var child = view.GetVisualDescendants().OfType<TextBox>()
-				.First(t => (AutomationProperties.GetAutomationId(t) ?? "").StartsWith("p1"));
-			Assert.That(child.IsEffectivelyVisible, Is.False, "expansion='collapsed' sections start collapsed");
+			// A collapsed-at-construction row is never added to the Form's Items, so it is absent
+			// from
+			// the tree from the first build, not merely hidden within it.
+			Assert.That(view.HasDescendant<TextBox>(t => (AutomationProperties.GetAutomationId(t) ?? "").StartsWith("p1")),
+				Is.False, "expansion='collapsed' sections start collapsed");
 		}
 
 		[AvaloniaTest]
@@ -199,10 +237,12 @@ namespace FwAvaloniaTests
 			var w2 = new Window { Content = second, Width = 480, Height = 200 };
 			w2.Show();
 			Dispatcher.UIThread.RunJobs();
-			var child = second.GetVisualDescendants().OfType<TextBox>()
-				.First(t => (AutomationProperties.GetAutomationId(t) ?? "").StartsWith("g1"));
-			Assert.That(child.IsEffectivelyVisible, Is.False,
-				"the persisted collapse state applies to the rebuilt view");
+			// The rebuilt view applies the persisted collapse before its first paint, so the
+			// collapsed
+			// row's controls never get built at all -- absent from the tree, not merely hidden in
+			// it.
+			Assert.That(second.HasDescendant<TextBox>(t => (AutomationProperties.GetAutomationId(t) ?? "").StartsWith("g1")),
+				Is.False, "the persisted collapse state applies to the rebuilt view");
 		}
 
 		[AvaloniaTest]
@@ -298,6 +338,35 @@ namespace FwAvaloniaTests
 				Assert.That(ed.Bounds.Y, Is.EqualTo(ro.Bounds.Y),
 					$"{id}: an editable field row must sit at the SAME vertical offset as the read-only row");
 			}
+		}
+
+		// 16.x regression guard: dropped WS-abbrev-width wiring silently falls back to the fixed
+		// floor, clipping a long abbreviation like "MbuOriginalOrthography".
+		[AvaloniaTest]
+		public void LongWsAbbreviation_WidensTheGutterColumn_PastTheFloor_ButNotPastTheCap()
+		{
+			var fields = new[]
+			{
+				MultiWsText("d0", "Lexeme Form", ("MbuOriginalOrthography", "casa"), ("en", "house")),
+			};
+			var model = new DetailModel("LexEntry", "detail", fields.ToList(),
+				new List<ViewDiagnostic>());
+			var view = new DataTree(model);
+			var window = new Window { Content = view, Width = 520, Height = 300 };
+			window.Show();
+			Dispatcher.UIThread.RunJobs();
+			view.UpdateLayout();
+			Dispatcher.UIThread.RunJobs();
+
+			var abbrev = view.GetVisualDescendants().OfType<TextBlock>().First(t => t.Text == "MbuOriginalOrthography");
+
+			Assert.That(abbrev.Bounds.Width,
+				Is.GreaterThan(SIL.FieldWorks.Common.FwAvalonia.FwAvaloniaDensity.WsAbbrevWidth),
+				"a long abbreviation must widen the gutter beyond the fixed floor -- an upper-bound-only " +
+				"assertion here would still pass if the width wiring silently fell back to the floor");
+			Assert.That(abbrev.Bounds.Width,
+				Is.LessThanOrEqualTo(SIL.FieldWorks.Common.FwAvalonia.FwAvaloniaDensity.WsAbbrevMaxWidth),
+				"the adaptive gutter still clamps to the max-width cap");
 		}
 
 		private static DetailField MultiWsText(string id, string label,

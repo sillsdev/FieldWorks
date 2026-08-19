@@ -16,6 +16,7 @@
 	<UsingTask TaskName="DownloadFilesFromTeamCity" AssemblyFile="$(FwBuildTasksAssembly)" Condition="'$(SkipFwBuildTasksUsingTask)' != 'true'" />
 	<UsingTask TaskName="ForceDelete" AssemblyFile="$(FwBuildTasksAssembly)" Condition="'$(SkipFwBuildTasksUsingTask)' != 'true'" />
 	<UsingTask TaskName="GenerateFwTargets" AssemblyFile="$(FwBuildTasksAssembly)" Condition="'$(SkipFwBuildTasksUsingTask)' != 'true'" />
+	<UsingTask TaskName="GenerateTokenKeys" AssemblyFile="$(FwBuildTasksAssembly)" Condition="'$(SkipFwBuildTasksUsingTask)' != 'true'" />
 	<UsingTask TaskName="GenerateNUnitReports" AssemblyFile="$(FwBuildTasksAssembly)" Condition="'$(SkipFwBuildTasksUsingTask)' != 'true'" />
 	<UsingTask TaskName="GenerateTestCoverageReport" AssemblyFile="$(FwBuildTasksAssembly)" Condition="'$(SkipFwBuildTasksUsingTask)' != 'true'" />
 	<UsingTask TaskName="GetSpecialFolderPath" AssemblyFile="$(FwBuildTasksAssembly)" Condition="'$(SkipFwBuildTasksUsingTask)' != 'true'" />

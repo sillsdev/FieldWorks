@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2026 SIL International
+﻿﻿// Copyright (c) 2026 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -57,7 +57,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				// Flat like the editors it stands in for (the box collapses out of layout while the display
 				// shows, so no overlay is needed -- a pointer press swaps the editable box back
 				// in).
-				Background = Brushes.Transparent,
+				Background = FwAvaloniaDensity.TransparentBrush,
 				FlowDirection = rightToLeft ? FlowDirection.RightToLeft : FlowDirection.LeftToRight
 			};
 			AutomationProperties.SetAutomationId(display, automationId);
@@ -97,10 +97,10 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			var button = new Button
 			{
 				Content = content,
-				Padding = new Thickness(6, 0, 6, 0),
+				Padding = FwAvaloniaDensity.CompactButtonPadding,
 				MinHeight = 0,
 				MinWidth = 0,
-				Background = Brushes.Transparent,
+				Background = FwAvaloniaDensity.TransparentBrush,
 				BorderThickness = new Thickness(0),
 				Foreground = FwAvaloniaDensity.WsAbbrevBrush,
 				FontSize = FwAvaloniaDensity.WsAbbrevFontSize,

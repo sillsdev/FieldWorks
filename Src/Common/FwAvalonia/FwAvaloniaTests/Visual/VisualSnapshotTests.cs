@@ -1,4 +1,4 @@
-// Copyright (c) 2026 SIL International
+﻿// Copyright (c) 2026 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -99,6 +99,17 @@ namespace FwAvaloniaTests.VisualChecks
 			var view = new DataTree(RealisticDetailModel());
 
 			DialogSnapshot.Capture(view, "Detail-03-multi-field", width: 520, height: 420);
+			DialogLayoutAssert.AssertNoCrowding(view);
+		}
+
+		[AvaloniaTest]
+		public void DetailEditView_AtWindowWidth_RendersCleanly()
+		{
+			// The detail pane at a real window width, where a value column that fails to fill
+			// shows up.
+			var view = new DataTree(RealisticDetailModel());
+
+			DialogSnapshot.Capture(view, "Detail-07-wide", width: 1000, height: 420);
 			DialogLayoutAssert.AssertNoCrowding(view);
 		}
 

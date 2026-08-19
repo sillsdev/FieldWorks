@@ -1,11 +1,23 @@
-<UserControl xmlns="https://github.com/avaloniaui"
+﻿<UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vm="clr-namespace:FwAvaloniaDialogs"
              xmlns:res="clr-namespace:FwAvaloniaDialogs"
              x:Class="FwAvaloniaDialogs.EntryGoDialogView"
              x:DataType="vm:EntryGoDialogViewModel"
              Classes="fwDialogRoot"
-             MinWidth="440" MinHeight="340">
+             MinWidth="{DynamicResource EntryGoMinWidth}" MinHeight="{DynamicResource EntryGoMinHeight}">
+	<UserControl.Resources>
+		<!-- Used only by this view, so it lives here rather than in the shared
+		     dialog dictionary. -->
+		<!-- Horizontal gutter between the list and its button column. -->
+		<Thickness x:Key="DialogColumnGutter">6,0</Thickness>
+		<!--
+			Caps the auxiliary-options list so a long list scrolls instead of growing the dialog.
+		-->
+		<x:Double x:Key="EntryGoAuxiliaryOptionsMaxHeight">120</x:Double>
+		<x:Double x:Key="EntryGoMinWidth">440</x:Double>
+		<x:Double x:Key="EntryGoMinHeight">340</x:Double>
+	</UserControl.Resources>
 	<!-- The reusable entry-search ("go") dialog body: the Avalonia replacement for the legacy
 	     EntryGoDlg/BaseGoDlg family. The matching entries fill the dialog body as a PERSISTENT,
 	     multi-column list under the search box, live-updating as the user types (an empty search shows an
@@ -94,7 +106,7 @@
 					           Margin="{StaticResource DialogLabelFieldGapBelow}"
 					           AutomationProperties.AutomationId="EntryGo.AuxiliaryLabel"/>
 					<Border Classes="fwFieldHost">
-						<ListBox MaxHeight="120"
+						<ListBox MaxHeight="{StaticResource EntryGoAuxiliaryOptionsMaxHeight}"
 						         ItemsSource="{Binding AuxiliaryOptions}"
 						         SelectedItem="{Binding SelectedAuxiliaryOption, Mode=TwoWay}"
 						         AutomationProperties.AutomationId="EntryGo.AuxiliaryOptions">
