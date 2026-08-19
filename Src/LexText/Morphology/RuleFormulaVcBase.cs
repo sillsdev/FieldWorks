@@ -285,6 +285,8 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 					break;
 
 				case kfragNC:
+					// This renders the referenced natural class's own Abbreviation/Name; a rule cell is never free text.
+					vwenv.set_IntProperty((int)FwTextPropType.ktptEditable, (int)FwTextPropVar.ktpvEnum, (int)TptEditable.ktptNotEditable);
 					int ncWs = WritingSystemServices.ActualWs(m_cache, WritingSystemServices.kwsFirstAnal, hvo,
 						PhNaturalClassTags.kflidAbbreviation);
 					if (ncWs != 0)
@@ -303,6 +305,8 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 					break;
 
 				case kfragTerminalUnit:
+					// This renders the referenced phoneme's or boundary marker's own live Name.
+					vwenv.set_IntProperty((int)FwTextPropType.ktptEditable, (int)FwTextPropVar.ktpvEnum, (int)TptEditable.ktptNotEditable);
 					int tuWs = WritingSystemServices.ActualWs(m_cache, WritingSystemServices.kwsFirstVern,
 						hvo, PhTerminalUnitTags.kflidName);
 					if (tuWs != 0)
@@ -320,14 +324,18 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 					break;
 
 				case kfragFeature:
+					// This is a computed "abbreviation value" line, not free text.
+					vwenv.set_IntProperty((int)FwTextPropType.ktptEditable, (int)FwTextPropVar.ktpvEnum, (int)TptEditable.ktptNotEditable);
 					vwenv.AddProp(ktagFeature, this, kfragFeatureLine);
 					break;
 
 				case kfragPlusVariable:
+					vwenv.set_IntProperty((int)FwTextPropType.ktptEditable, (int)FwTextPropVar.ktpvEnum, (int)TptEditable.ktptNotEditable);
 					vwenv.AddProp(ktagVariable, this, kfragPlusVariableLine);
 					break;
 
 				case kfragMinusVariable:
+					vwenv.set_IntProperty((int)FwTextPropType.ktptEditable, (int)FwTextPropVar.ktpvEnum, (int)TptEditable.ktptNotEditable);
 					vwenv.AddProp(ktagVariable, this, kfragMinusVariableLine);
 					break;
 			}

@@ -16,23 +16,18 @@ using XCore;
 namespace SIL.FieldWorks.XWorks.MorphologyEditor
 {
 	/// <summary>
-	/// Reproduces the "phonological-rule formula cells are directly editable" bug
-	/// (Docs/bugs/phon-rule-direct-editing.md) at the level that matters: does an edit that
-	/// lands via the rootsite's own selection/text-replacement API (i.e. NOT via
-	/// PatternView.OnKeyPress, which only filters WM_CHAR) actually corrupt the referenced
-	/// PhPhoneme's real, project-wide Name?
-	///
-	/// This drives a real IVwRootBox (the managed Views engine) hosted by a real
-	/// RegRuleFormulaControl-equivalent PatternView/RegRuleFormulaVc pair against a real
-	/// in-memory LcmCache, then calls IVwSelection.ReplaceWithTsString directly -- the same
-	/// low-level entry point IME composition or drag-and-drop would use, and one that
-	/// PatternView.OnKeyPress never sees because it only reacts to Windows key events.
+	/// Drives a real IVwRootBox (the managed Views engine), hosted by a live
+	/// PatternView/RegRuleFormulaVc pair against a real in-memory LcmCache, and calls
+	/// IVwSelection.ReplaceWithTsString directly -- the same low-level entry point IME
+	/// composition or drag-and-drop would use, and one PatternView.OnKeyPress never sees
+	/// because it only reacts to Windows key events.
 	/// </summary>
 	[TestFixture]
 	public class RuleFormulaDirectEditReproTests : MemoryOnlyBackendProviderTestBase
 	{
 		private Mediator m_mediator;
 		private PropertyTable m_propertyTable;
+		private TestPatternView m_view;
 
 		public override void TestSetup()
 		{
@@ -44,6 +39,11 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 		public override void TestTearDown()
 		{
+			if (m_view != null)
+			{
+				m_view.Dispose();
+				m_view = null;
+			}
 			if (m_propertyTable != null)
 			{
 				m_propertyTable.Dispose();
@@ -81,6 +81,12 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			public void CallLayout()
 			{
 				OnLayout(new LayoutEventArgs(this, string.Empty));
+			}
+
+			public void SimulateKeyDown(Keys key)
+			{
+				var e = new KeyEventArgs(key);
+				OnKeyDown(e);
 			}
 		}
 
@@ -121,7 +127,9 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			var view = new TestPatternView { Cache = Cache, Visible = false, Width = 300, Height = 60 };
 			view.Init(m_mediator, m_propertyTable, rhs.Hvo, new NullPatternControl(), vc, RegRuleFormulaVc.kfragRHS,
 				Cache.MainCacheAccessor);
+			view.ReadOnlyView = true;
 			view.CallLayout();
+			m_view = view;
 			return (phoneme, view);
 		}
 
@@ -157,9 +165,27 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 			string nameAfter = phoneme.Name.VernacularDefaultWritingSystem.Text;
 			Assert.That(nameAfter, Is.EqualTo("p"),
-				"an edit that bypassed PatternView.OnKeyPress altered the real PhPhoneme.Name " +
-				"(got '" + nameAfter + "') -- this is the project-wide-rename data corruption " +
-				"described in Docs/bugs/phon-rule-direct-editing.md");
+				"an edit that bypassed PatternView.OnKeyPress altered the real, project-wide " +
+				"PhPhoneme.Name (got '" + nameAfter + "')");
+		}
+
+		/// <summary>
+		/// A read-only rootsite must not prevent PatternView's own Delete-key handling, which
+		/// removes items through RemoveItemsRequested rather than by editing text.
+		/// </summary>
+		[Test]
+		public void DeleteKey_StillRaisesRemoveItemsRequested_WhenRootsiteIsReadOnly()
+		{
+			var (_, view) = BuildLiveRuleFormulaView("p");
+			Assert.That(view.ReadOnlyView, Is.True, "fixture assumption: the rootsite is read-only");
+
+			bool removeRequested = false;
+			view.RemoveItemsRequested += (sender, e) => removeRequested = true;
+
+			view.SimulateKeyDown(Keys.Delete);
+
+			Assert.That(removeRequested, Is.True,
+				"Delete must still raise RemoveItemsRequested when the rootsite is read-only");
 		}
 	}
 }

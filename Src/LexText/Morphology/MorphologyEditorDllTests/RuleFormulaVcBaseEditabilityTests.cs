@@ -15,13 +15,10 @@ using XCore;
 namespace SIL.FieldWorks.XWorks.MorphologyEditor
 {
 	/// <summary>
-	/// Reproduces the "phonological-rule formula cells are directly editable" bug
-	/// (Docs/bugs/phon-rule-direct-editing.md). The rule formula view is meant to be
-	/// modifiable only by chooser-insert and delete; these tests demonstrate that the
-	/// view constructor never marks the substantive fragments -- the natural class
-	/// abbreviation and the terminal unit (phoneme/boundary) name -- as non-editable,
-	/// which is the structural hole that lets anything bypassing the WM_CHAR filter in
-	/// PatternView.OnKeyPress (e.g. IME composition) rename the referenced object.
+	/// The rule formula view is modifiable only by chooser-insert and delete, so
+	/// RuleFormulaVcBase must mark the natural-class abbreviation and terminal-unit
+	/// (phoneme/boundary) name fragments non-editable; both bind directly to the
+	/// referenced object's own live string field.
 	/// </summary>
 	[TestFixture]
 	public class RuleFormulaVcBaseEditabilityTests : MemoryOnlyBackendProviderTestBase
@@ -80,9 +77,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 		/// <summary>
 		/// The natural-class abbreviation fragment (kfragNC) is rendered via AddStringAltMember
-		/// directly against the natural class's own Abbreviation field. Per the bug report, no
-		/// ktptEditable=NotEditable is ever set before that call. This test currently FAILS,
-		/// demonstrating the hole; RuleFormulaVcBase.cs:287-303.
+		/// directly against the natural class's own Abbreviation field.
 		/// </summary>
 		[Test]
 		public void Display_NaturalClassAbbreviationFragment_IsMarkedNotEditable()
@@ -105,8 +100,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		/// <summary>
 		/// The terminal-unit (phoneme/boundary) fragment (kfragTerminalUnit) is rendered via
 		/// AddStringAltMember directly against the terminal unit's own Name field -- a live
-		/// write channel into the phoneme's real, project-wide Name. No ktptEditable=NotEditable
-		/// is ever set. This test currently FAILS; RuleFormulaVcBase.cs:305-312.
+		/// write channel into the phoneme's real, project-wide name.
 		/// </summary>
 		[Test]
 		public void Display_TerminalUnitNameFragment_IsMarkedNotEditable()
