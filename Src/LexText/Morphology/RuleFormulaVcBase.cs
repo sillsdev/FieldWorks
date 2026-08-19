@@ -285,7 +285,8 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 					break;
 
 				case kfragNC:
-					// This renders the referenced natural class's own Abbreviation/Name; a rule cell is never free text.
+					// The text belongs to the referenced natural class, not to the rule, so an
+					// edit here would rename it for every rule that uses it.
 					vwenv.set_IntProperty((int)FwTextPropType.ktptEditable, (int)FwTextPropVar.ktpvEnum, (int)TptEditable.ktptNotEditable);
 					int ncWs = WritingSystemServices.ActualWs(m_cache, WritingSystemServices.kwsFirstAnal, hvo,
 						PhNaturalClassTags.kflidAbbreviation);
@@ -305,7 +306,8 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 					break;
 
 				case kfragTerminalUnit:
-					// This renders the referenced phoneme's or boundary marker's own live Name.
+					// The text belongs to the referenced phoneme or boundary marker, so an edit
+					// here would rename it for every rule that uses it.
 					vwenv.set_IntProperty((int)FwTextPropType.ktptEditable, (int)FwTextPropVar.ktpvEnum, (int)TptEditable.ktptNotEditable);
 					int tuWs = WritingSystemServices.ActualWs(m_cache, WritingSystemServices.kwsFirstVern,
 						hvo, PhTerminalUnitTags.kflidName);

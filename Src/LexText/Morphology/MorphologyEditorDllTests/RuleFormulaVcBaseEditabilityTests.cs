@@ -120,7 +120,8 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			}
 		}
 
-		/// <summary>Same defect, exercised through the metathesis-rule view constructor.</summary>
+		/// <summary>Same defect, exercised through the metathesis-rule view
+		/// constructor.</summary>
 		[Test]
 		public void Display_TerminalUnitNameFragment_ViaMetaRuleFormulaVc_IsMarkedNotEditable()
 		{

@@ -74,8 +74,8 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			public int GetFlid(object ctxt) => 0;
 		}
 
-		/// <summary>Exposes the protected layout hook so the view can be laid out headlessly,
-		/// exactly like RootSiteTests' DummyBasicView.CallLayout().</summary>
+		/// <summary>Exposes the protected layout hook so the view can be laid out
+		/// headlessly.</summary>
 		private class TestPatternView : PatternView
 		{
 			public void CallLayout()
@@ -137,7 +137,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 		/// <summary>
 		/// Builds a real regular-rule RHS whose left context is a natural class special-cased to
-		/// display only its abbreviation ("C" or "V", per RuleFormulaVcBase's kfragNC branch),
+		/// display only its abbreviation ("C" or "V"),
 		/// hosts it in a live PatternView/RegRuleFormulaVc pair, and returns the natural class
 		/// plus the live view.
 		/// </summary>
@@ -231,11 +231,9 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 			ITsString corrupted = TsStringUtils.MakeString("CORRUPTED", Cache.DefaultVernWs);
 
-			// This call never goes through PatternView.OnKeyPress -- it is the rootsite's own
-			// low-level text-replacement API, exactly what bypasses the WM_CHAR filter. It is
-			// wrapped in a UOW only because the change-tracking infrastructure requires one for
-			// any edit to commit at all; IME composition and drag-and-drop land inside a UOW
-			// supplied by the real editing helper, not by PatternView.OnKeyPress.
+			// The rootsite's own low-level text-replacement API, which bypasses the WM_CHAR
+			// filter. The unit of work is required for any edit to commit, not part of the
+			// bypass.
 			UndoableUnitOfWorkHelper.Do("undo", "redo", phoneme, () => sel.ReplaceWithTsString(corrupted));
 
 			string nameAfter = phoneme.Name.VernacularDefaultWritingSystem.Text;
@@ -264,7 +262,8 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		}
 
 		/// <summary>
-		/// A read-only rootsite suppresses Activate() by default (SimpleRootSite.AllowDisplaySelection),
+		/// A read-only rootsite suppresses Activate() by default
+		/// (SimpleRootSite.AllowDisplaySelection),
 		/// which would hide the selection a chooser insert/delete needs the user to see.
 		/// </summary>
 		[Test]

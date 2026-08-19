@@ -7,9 +7,8 @@ using NUnit.Framework;
 namespace SIL.FieldWorks.XWorks.MorphologyEditor
 {
 	/// <summary>
-	/// Proves the shipped wiring, not a test-only substitute: constructing each real rule
-	/// formula control must produce a read-only rootsite, since a rule cell is modifiable only
-	/// by chooser-insert and delete.
+	/// Constructing each real rule formula control must produce a read-only rootsite, since a
+	/// rule cell is modifiable only by chooser-insert and delete.
 	/// </summary>
 	[TestFixture]
 	public class RuleFormulaControlWiringTests
