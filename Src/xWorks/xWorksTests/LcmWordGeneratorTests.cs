@@ -329,6 +329,68 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
+		public void GenerateCharacterStyleFromLcmStyleSheet_DefaultFontFeaturesFromPersistedStyleRules_AddsWordTypographyProperties()
+		{
+			var styleName = "WordFeatureStylePersisted" + Guid.NewGuid().ToString("N");
+			var styles = FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable).Styles;
+			styles.Add(CreateStyleInfoFromPersistedRules(styleName, StyleType.kstCharacter,
+				"liga=0,lnum=1,pnum=1,calt=0,ss02=0,cv01=2"));
+			try
+			{
+				var style = WordStylesGenerator.GenerateCharacterStyleFromLcmStyleSheet(styleName, Cache.DefaultVernWs,
+					new ReadOnlyPropertyTable(m_propertyTable));
+
+				var runProps = style.GetFirstChild<StyleRunProperties>();
+				AssertWordTypographyProperties(runProps, W14.LigaturesValues.None, W14.NumberFormValues.Lining,
+					W14.NumberSpacingValues.Proportional, false, 2U, false);
+			}
+			finally
+			{
+				// Fixture-owned styles outlive the model changes made by this test.
+				styles.Remove(styleName);
+			}
+		}
+
+		[Test]
+		public void GenerateCharacterStyleFromLcmStyleSheet_NormalStyleOwnFontFeatures_BeatWritingSystemDefaultFontFeatures()
+		{
+			var vernWs = Cache.ServiceLocator.WritingSystemManager.Get(Cache.DefaultVernWs);
+			vernWs.DefaultFont = new FontDefinition("Charis SIL") { Features = "ss11=1,ss12=1" };
+
+			var styles = FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable).Styles;
+			if (styles.Contains(WordStylesGenerator.NormalParagraphStyleName))
+				styles.Remove(WordStylesGenerator.NormalParagraphStyleName);
+			styles.Add(CreateStyleInfoFromPersistedRules(WordStylesGenerator.NormalParagraphStyleName,
+				StyleType.kstParagraph, "ss02=1"));
+			try
+			{
+				var style = WordStylesGenerator.GenerateCharacterStyleFromLcmStyleSheet(
+					WordStylesGenerator.NormalParagraphStyleName,
+					vernWs.Handle,
+					new ReadOnlyPropertyTable(m_propertyTable));
+
+				var runProps = style.GetFirstChild<StyleRunProperties>();
+				Assert.That(runProps, Is.Not.Null);
+
+				var runFonts = runProps.GetFirstChild<RunFonts>();
+				Assert.That(runFonts, Is.Not.Null);
+				Assert.That(runFonts.Ascii?.Value, Is.EqualTo("Charis SIL"));
+
+				var stylisticSets = runProps.GetFirstChild<W14.StylisticSets>();
+				Assert.That(stylisticSets, Is.Not.Null);
+				var styleSet = stylisticSets.Elements<W14.StyleSet>().Single();
+				Assert.That(styleSet.Id?.Value, Is.EqualTo(2U));
+				Assert.That(styleSet.Val?.Value, Is.EqualTo(W14.OnOffValues.True));
+			}
+			finally
+			{
+				// Fixture-owned styles outlive the model changes made by this test.
+				styles.Remove(WordStylesGenerator.NormalParagraphStyleName);
+				styles.Add(new BaseStyleInfo { Name = WordStylesGenerator.NormalParagraphStyleName, IsParagraphStyle = true });
+			}
+		}
+
+		[Test]
 		[Category("ManualDocx")]
 		public void GenerateManualDocxArtifact_CharisBaseline_NoFontOptions()
 		{
@@ -348,6 +410,21 @@ namespace SIL.FieldWorks.XWorks
 			var styleSetIds = GetDocxStyleSetIds(docxPath);
 			Assert.That(styleSetIds, Does.Contain(11U));
 			Assert.That(styleSetIds, Does.Contain(12U));
+		}
+
+		private BaseStyleInfo CreateStyleInfoFromPersistedRules(string name, StyleType type, string fontFeatures)
+		{
+			var style = Cache.ServiceLocator.GetInstance<IStStyleFactory>().Create();
+			Cache.LanguageProject.StylesOC.Add(style);
+			style.Name = name;
+			style.Context = ContextValues.Internal;
+			style.Function = FunctionValues.Prose;
+			style.Structure = StructureValues.Undefined;
+			style.Type = type;
+			var propsBldr = TsStringUtils.MakePropsBldr();
+			propsBldr.SetStrPropValue((int)FwTextPropType.ktptFontVariations, fontFeatures);
+			style.Rules = propsBldr.GetTextProps();
+			return new BaseStyleInfo(style);
 		}
 
 		private static void AssertWordTypographyProperties(OpenXmlCompositeElement runProps,
