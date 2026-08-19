@@ -138,9 +138,14 @@ namespace SIL.FieldWorks.IText
 							SetNotEditable(vwenv);
 							vwenv.OpenInnerPile();
 							AddExtraLines(maxNumLines - numLines, ktagLeftNonBoundary, vwenv);
+							SetNotEditable(vwenv);
 							vwenv.AddProp(ktagLeftNonBoundary, this, kfragLeftParenUpHook);
 							for (int i = 1; i < numLines - 1; i++)
+							{
+								SetNotEditable(vwenv);
 								vwenv.AddProp(ktagLeftNonBoundary, this, kfragLeftParenExt);
+							}
+							SetNotEditable(vwenv);
 							vwenv.AddProp(ktagLeftBoundary, this, kfragLeftParenLowHook);
 							vwenv.CloseInnerPile();
 
@@ -151,9 +156,14 @@ namespace SIL.FieldWorks.IText
 							SetNotEditable(vwenv);
 							vwenv.OpenInnerPile();
 							AddExtraLines(maxNumLines - numLines, hasMinMax ? ktagInnerNonBoundary : ktagRightNonBoundary, vwenv);
+							SetNotEditable(vwenv);
 							vwenv.AddProp(hasMinMax ? ktagInnerNonBoundary : ktagRightNonBoundary, this, kfragRightParenUpHook);
 							for (int i = 1; i < numLines - 1; i++)
+							{
+								SetNotEditable(vwenv);
 								vwenv.AddProp(hasMinMax ? ktagInnerNonBoundary : ktagRightNonBoundary, this, kfragRightParenExt);
+							}
+							SetNotEditable(vwenv);
 							vwenv.AddProp(hasMinMax ? ktagInnerNonBoundary : ktagRightBoundary, this, kfragRightParenLowHook);
 							vwenv.CloseInnerPile();
 							if (hasMinMax)
@@ -187,9 +197,14 @@ namespace SIL.FieldWorks.IText
 							SetNotEditable(vwenv);
 							vwenv.OpenInnerPile();
 							AddExtraLines(maxNumLines - numLines, ktagLeftNonBoundary, vwenv);
+							SetNotEditable(vwenv);
 							vwenv.AddProp(ktagLeftNonBoundary, this, kfragLeftBracketUpHook);
 							for (int i = 1; i < numLines - 1; i++)
+							{
+								SetNotEditable(vwenv);
 								vwenv.AddProp(ktagLeftNonBoundary, this, kfragLeftBracketExt);
+							}
+							SetNotEditable(vwenv);
 							vwenv.AddProp(ktagLeftBoundary, this, kfragLeftBracketLowHook);
 							vwenv.CloseInnerPile();
 
@@ -206,9 +221,14 @@ namespace SIL.FieldWorks.IText
 							SetNotEditable(vwenv);
 							vwenv.OpenInnerPile();
 							AddExtraLines(maxNumLines - numLines, hasMinMax ? ktagInnerNonBoundary : ktagRightNonBoundary, vwenv);
+							SetNotEditable(vwenv);
 							vwenv.AddProp(hasMinMax ? ktagInnerNonBoundary : ktagRightNonBoundary, this, kfragRightBracketUpHook);
 							for (int i = 1; i < numLines - 1; i++)
+							{
+								SetNotEditable(vwenv);
 								vwenv.AddProp(hasMinMax ? ktagInnerNonBoundary : ktagRightNonBoundary, this, kfragRightBracketExt);
+							}
+							SetNotEditable(vwenv);
 							vwenv.AddProp(hasMinMax ? ktagInnerNonBoundary : ktagRightBoundary, this, kfragRightBracketLowHook);
 							vwenv.CloseInnerPile();
 							if (hasMinMax)
@@ -414,16 +434,29 @@ namespace SIL.FieldWorks.IText
 			if (morphNode != null)
 			{
 				if (morphNode.Form != null)
+				{
+					SetNotEditable(vwenv);
 					vwenv.AddProp(ktagForm, this, kfragFeatureLine);
+				}
 				if (morphNode.Entry != null)
+				{
+					SetNotEditable(vwenv);
 					vwenv.AddProp(ktagEntry, this, kfragFeatureLine);
+				}
 				if (morphNode.Category != null)
+				{
+					SetNotEditable(vwenv);
 					vwenv.AddProp(ktagCategory, this, kfragFeatureLine);
+				}
 				if (morphNode.Gloss != null)
+				{
+					SetNotEditable(vwenv);
 					vwenv.AddProp(ktagGloss, this, kfragFeatureLine);
+				}
 				if (morphNode.InflFeatures.Count > 0)
 				{
 					vwenv.OpenParagraph();
+					SetNotEditable(vwenv);
 					vwenv.AddProp(ktagInfl, this, kfragFeatureLine);
 					DisplayInflFeatures(vwenv, morphNode.InflFeatures);
 					vwenv.CloseParagraph();
@@ -435,14 +468,24 @@ namespace SIL.FieldWorks.IText
 				if (wordNode != null)
 				{
 					if (wordNode.Form != null)
+					{
+						SetNotEditable(vwenv);
 						vwenv.AddProp(ktagForm, this, kfragFeatureLine);
+					}
 					if (wordNode.Category != null)
+					{
+						SetNotEditable(vwenv);
 						vwenv.AddProp(ktagCategory, this, kfragFeatureLine);
+					}
 					if (wordNode.Gloss != null)
+					{
+						SetNotEditable(vwenv);
 						vwenv.AddProp(ktagGloss, this, kfragFeatureLine);
+					}
 					if (wordNode.InflFeatures.Count > 0)
 					{
 						vwenv.OpenParagraph();
+						SetNotEditable(vwenv);
 						vwenv.AddProp(ktagInfl, this, kfragFeatureLine);
 						DisplayInflFeatures(vwenv, wordNode.InflFeatures);
 						vwenv.CloseParagraph();
@@ -454,7 +497,10 @@ namespace SIL.FieldWorks.IText
 					if (tagNode != null)
 					{
 						if (tagNode.Tag != null)
+						{
+							SetNotEditable(vwenv);
 							vwenv.AddProp(ktagTag, this, kfragFeatureLine);
+						}
 					}
 				}
 			}
@@ -464,13 +510,13 @@ namespace SIL.FieldWorks.IText
 		{
 			IDictionary<IFsFeatDefn, object> lastInflFeatures = m_curInflFeatures;
 			m_curInflFeatures = inflFeatures;
-			SetNotEditable(vwenv);
 			foreach (KeyValuePair<IFsFeatDefn, object> kvp in inflFeatures)
 			{
 				if (kvp.Key is IFsComplexFeature)
 				{
 					if (openPara)
 						vwenv.OpenParagraph();
+					SetNotEditable(vwenv);
 					vwenv.AddProp(kvp.Key.Hvo, this, kfragFeatureLine);
 					DisplayInflFeatures(vwenv, (IDictionary<IFsFeatDefn, object>) kvp.Value);
 					if (openPara)
@@ -478,6 +524,7 @@ namespace SIL.FieldWorks.IText
 				}
 				else
 				{
+					SetNotEditable(vwenv);
 					vwenv.AddProp(kvp.Key.Hvo, this, kfragFeatureLine);
 				}
 			}
@@ -505,9 +552,14 @@ namespace SIL.FieldWorks.IText
 				vwenv.set_IntProperty((int) FwTextPropType.ktptMarginLeading, (int) FwTextPropVar.ktpvMilliPoint, PileMargin);
 				SetNotEditable(vwenv);
 				vwenv.OpenInnerPile();
+				SetNotEditable(vwenv);
 				vwenv.AddProp(ktagLeftNonBoundary, this, kfragLeftBracketUpHook);
 				for (int i = 1; i < numLines - 1; i++)
+				{
+					SetNotEditable(vwenv);
 					vwenv.AddProp(ktagLeftNonBoundary, this, kfragLeftBracketExt);
+				}
+				SetNotEditable(vwenv);
 				vwenv.AddProp(ktagLeftBoundary, this, kfragLeftBracketLowHook);
 				vwenv.CloseInnerPile();
 
@@ -522,9 +574,14 @@ namespace SIL.FieldWorks.IText
 				vwenv.set_IntProperty((int) FwTextPropType.ktptMarginTrailing, (int) FwTextPropVar.ktpvMilliPoint, PileMargin);
 				SetNotEditable(vwenv);
 				vwenv.OpenInnerPile();
+				SetNotEditable(vwenv);
 				vwenv.AddProp(ktagInnerNonBoundary, this, kfragRightBracketUpHook);
 				for (int i = 1; i < numLines - 1; i++)
+				{
+					SetNotEditable(vwenv);
 					vwenv.AddProp(ktagInnerNonBoundary, this, kfragRightBracketExt);
+				}
+				SetNotEditable(vwenv);
 				vwenv.AddProp(ktagInnerNonBoundary, this, kfragRightBracketLowHook);
 				vwenv.CloseInnerPile();
 			}

@@ -165,20 +165,90 @@ namespace SIL.FieldWorks.IText
 			return (model, view);
 		}
 
-		private static IVwSelection MakeSelOnChild(TestPatternView view, int childIndex, int tag)
+		/// <summary>
+		/// Selects the fragment rendered under fake tag <paramref name="tag"/> on the child
+		/// node at <paramref name="childIndex"/>, via IVwRootBox.MakeTextSelection with
+		/// <paramref name="tag"/> passed as tagTextProp -- the same call PatternView itself uses
+		/// (PatternView.SelectLeftBoundary/SelectRightBoundary) to target one specific fake-tag
+		/// property on an object, as opposed to the whole object's rendering.
+		///
+		/// MakeTextSelInObj (the API the original version of this helper used) does NOT take a
+		/// tag argument at all: its signature is (ihvoRoot, cvsli, rgvsli, cvsliEnd, rgvsliEnd,
+		/// fInitial, fEdit, fRange, fWholeObj, fInstall). The previous version of this helper
+		/// passed `tag` into the cvsliEnd slot and set fWholeObj: true, which per the documented
+		/// contract (Views.cs "If fWholeObject is true, these arguments are not used") made that
+		/// argument dead and made every call select the same thing: the whole child object's
+		/// rendering, anchored at its outermost boundary glyph. Nine of the eleven "fragment
+		/// angle" tests that used it were therefore the same selection in disguise -- see
+		/// MakeSelOnFragment_DiscriminatesBetweenFragments_OnTheSameNode below for the proof this
+		/// version actually targets the requested tag.
+		/// </summary>
+		private static IVwSelection MakeSelOnFragment(TestPatternView view, int childIndex, int tag, int ich = 0)
 		{
 			var levels = new[]
 			{
 				new SelLevInfo { tag = ComplexConcPatternSda.ktagChildren, ihvo = childIndex }
 			};
-			return view.RootBox.MakeTextSelInObj(0, levels.Length, levels, tag, null, true, false, false,
-				/* fWholeObj */ true, /* fInstall */ true);
+			return view.RootBox.MakeTextSelection(0, levels.Length, levels, tag, 0, ich, ich, 0, false, -1, null, true);
+		}
+
+		/// <summary>
+		/// Fails the test with a diagnostic if <paramref name="sel"/> does not actually target
+		/// <paramref name="expectedTag"/> -- proof, not assumption, that a fragment test is
+		/// exercising the fragment it claims to.
+		/// </summary>
+		private static void AssertSelectionTargets(IVwSelection sel, int expectedTag)
+		{
+			ITsString tss;
+			int ich, hvo, tag, ws;
+			bool fAssocPrev;
+			sel.TextSelInfo(false, out tss, out ich, out fAssocPrev, out hvo, out tag, out ws);
+			Assert.That(tag, Is.EqualTo(expectedTag),
+				$"selection did not target the requested tag {expectedTag}; got tag {tag} (text '{tss?.Text}')");
 		}
 
 		private void AttemptEdit(IVwSelection sel, string replacementText, int ws)
 		{
 			ITsString replacement = TsStringUtils.MakeString(replacementText, ws);
 			UndoableUnitOfWorkHelper.Do("undo", "redo", Cache.LangProject, () => sel.ReplaceWithTsString(replacement));
+		}
+
+		/// <summary>
+		/// Proof that MakeSelOnFragment actually discriminates between fragments, rather than
+		/// resolving to the same selection regardless of the requested tag (the bug an
+		/// adversarial review found in this helper's first version, which used
+		/// IVwRootBox.MakeTextSelInObj with fWholeObj: true -- see MakeSelOnFragment's doc
+		/// comment). One node with three populated fields is selected by three different tags;
+		/// each selection must land on its own distinct tag and text, not all collapse onto one
+		/// (e.g. the node's outermost boundary glyph).
+		/// </summary>
+		[Test]
+		public void MakeSelOnFragment_DiscriminatesBetweenFragments_OnTheSameNode()
+		{
+			var (model, view) = BuildView();
+			var wordNode = new ComplexConcWordNode
+			{
+				Form = TsStringUtils.MakeString("myform", Cache.DefaultVernWs),
+				Gloss = TsStringUtils.MakeString("myGloss", Cache.DefaultAnalWs)
+			};
+			model.Root.Children.Add(wordNode);
+			view.CallLayout();
+
+			IVwSelection selType = MakeSelOnFragment(view, 0, ComplexConcPatternVc.ktagType);
+			IVwSelection selForm = MakeSelOnFragment(view, 0, ComplexConcPatternVc.ktagForm);
+			IVwSelection selGloss = MakeSelOnFragment(view, 0, ComplexConcPatternVc.ktagGloss);
+
+			AssertSelectionTargets(selType, ComplexConcPatternVc.ktagType);
+			AssertSelectionTargets(selForm, ComplexConcPatternVc.ktagForm);
+			AssertSelectionTargets(selGloss, ComplexConcPatternVc.ktagGloss);
+
+			ITsString tss; int ich, hvo, tag, ws; bool fAssocPrev;
+			selType.TextSelInfo(false, out tss, out ich, out fAssocPrev, out hvo, out tag, out ws);
+			Assert.That(tss.Text, Is.EqualTo("Type: Word"));
+			selForm.TextSelInfo(false, out tss, out ich, out fAssocPrev, out hvo, out tag, out ws);
+			Assert.That(tss.Text, Is.EqualTo("Form: myform"));
+			selGloss.TextSelInfo(false, out tss, out ich, out fAssocPrev, out hvo, out tag, out ws);
+			Assert.That(tss.Text, Is.EqualTo("Gloss: myGloss"));
 		}
 
 		// ------------------------------------------------------------------
@@ -195,8 +265,9 @@ namespace SIL.FieldWorks.IText
 			model.Root.Children.Add(wordNode);
 			view.CallLayout();
 
-			IVwSelection sel = MakeSelOnChild(view, 0, ComplexConcPatternVc.ktagType);
+			IVwSelection sel = MakeSelOnFragment(view, 0, ComplexConcPatternVc.ktagType);
 			Assert.That(sel, Is.Not.Null, "could not construct a selection over the Type line");
+			AssertSelectionTargets(sel, ComplexConcPatternVc.ktagType);
 
 			Assert.DoesNotThrow(() => AttemptEdit(sel, "HACKED", Cache.DefaultUserWs),
 				"a direct edit on the word node's Type line must not crash the view engine");
@@ -210,8 +281,9 @@ namespace SIL.FieldWorks.IText
 			model.Root.Children.Add(wordNode);
 			view.CallLayout();
 
-			IVwSelection sel = MakeSelOnChild(view, 0, ComplexConcPatternVc.ktagForm);
+			IVwSelection sel = MakeSelOnFragment(view, 0, ComplexConcPatternVc.ktagForm);
 			Assert.That(sel, Is.Not.Null, "could not construct a selection over the Form line");
+			AssertSelectionTargets(sel, ComplexConcPatternVc.ktagForm);
 
 			Assert.DoesNotThrow(() => AttemptEdit(sel, "HACKED", Cache.DefaultVernWs),
 				"a direct edit on the word node's Form line must not crash the view engine");
@@ -227,8 +299,9 @@ namespace SIL.FieldWorks.IText
 			model.Root.Children.Add(morphNode);
 			view.CallLayout();
 
-			IVwSelection sel = MakeSelOnChild(view, 0, ComplexConcPatternVc.ktagGloss);
+			IVwSelection sel = MakeSelOnFragment(view, 0, ComplexConcPatternVc.ktagGloss);
 			Assert.That(sel, Is.Not.Null, "could not construct a selection over the Gloss line");
+			AssertSelectionTargets(sel, ComplexConcPatternVc.ktagGloss);
 
 			Assert.DoesNotThrow(() => AttemptEdit(sel, "HACKED", Cache.DefaultAnalWs),
 				"a direct edit on the morph node's Gloss line must not crash the view engine");
@@ -244,8 +317,9 @@ namespace SIL.FieldWorks.IText
 			model.Root.Children.Add(morphNode);
 			view.CallLayout();
 
-			IVwSelection sel = MakeSelOnChild(view, 0, ComplexConcPatternVc.ktagEntry);
+			IVwSelection sel = MakeSelOnFragment(view, 0, ComplexConcPatternVc.ktagEntry);
 			Assert.That(sel, Is.Not.Null, "could not construct a selection over the Entry line");
+			AssertSelectionTargets(sel, ComplexConcPatternVc.ktagEntry);
 
 			Assert.DoesNotThrow(() => AttemptEdit(sel, "HACKED", Cache.DefaultVernWs),
 				"a direct edit on the morph node's Entry line must not crash the view engine");
@@ -262,8 +336,9 @@ namespace SIL.FieldWorks.IText
 			model.Root.Children.Add(morphNode);
 			view.CallLayout();
 
-			IVwSelection sel = MakeSelOnChild(view, 0, ComplexConcPatternVc.ktagCategory);
+			IVwSelection sel = MakeSelOnFragment(view, 0, ComplexConcPatternVc.ktagCategory);
 			Assert.That(sel, Is.Not.Null, "could not construct a selection over the Category line");
+			AssertSelectionTargets(sel, ComplexConcPatternVc.ktagCategory);
 
 			Assert.DoesNotThrow(() => AttemptEdit(sel, "HACKED", Cache.DefaultAnalWs),
 				"a direct edit on the morph node's Category line must not crash the view engine");
@@ -288,8 +363,9 @@ namespace SIL.FieldWorks.IText
 			model.Root.Children.Add(morphNode);
 			view.CallLayout();
 
-			IVwSelection sel = MakeSelOnChild(view, 0, ComplexConcPatternVc.ktagInfl);
+			IVwSelection sel = MakeSelOnFragment(view, 0, ComplexConcPatternVc.ktagInfl);
 			Assert.That(sel, Is.Not.Null, "could not construct a selection over the Infl Features header line");
+			AssertSelectionTargets(sel, ComplexConcPatternVc.ktagInfl);
 
 			Assert.DoesNotThrow(() => AttemptEdit(sel, "HACKED", Cache.DefaultAnalWs),
 				"a direct edit on the morph node's Infl Features header line must not crash the view engine");
@@ -304,8 +380,9 @@ namespace SIL.FieldWorks.IText
 			model.Root.Children.Add(tagNode);
 			view.CallLayout();
 
-			IVwSelection sel = MakeSelOnChild(view, 0, ComplexConcPatternVc.ktagTag);
+			IVwSelection sel = MakeSelOnFragment(view, 0, ComplexConcPatternVc.ktagTag);
 			Assert.That(sel, Is.Not.Null, "could not construct a selection over the Tag line");
+			AssertSelectionTargets(sel, ComplexConcPatternVc.ktagTag);
 
 			Assert.DoesNotThrow(() => AttemptEdit(sel, "HACKED", Cache.DefaultAnalWs),
 				"a direct edit on the tag node's Tag line must not crash the view engine");
@@ -321,8 +398,9 @@ namespace SIL.FieldWorks.IText
 			model.Root.Children.Add(new ComplexConcWordBdryNode());
 			view.CallLayout();
 
-			IVwSelection sel = MakeSelOnChild(view, 0, PatternVcBase.ktagInnerNonBoundary);
+			IVwSelection sel = MakeSelOnFragment(view, 0, PatternVcBase.ktagInnerNonBoundary);
 			Assert.That(sel, Is.Not.Null, "could not construct a selection over the OR literal");
+			AssertSelectionTargets(sel, PatternVcBase.ktagInnerNonBoundary);
 
 			Assert.DoesNotThrow(() => AttemptEdit(sel, "HACKED", Cache.DefaultUserWs),
 				"a direct edit on the OR literal must not crash the view engine");
@@ -336,8 +414,9 @@ namespace SIL.FieldWorks.IText
 			model.Root.Children.Add(new ComplexConcWordBdryNode());
 			view.CallLayout();
 
-			IVwSelection sel = MakeSelOnChild(view, 1, PatternVcBase.ktagInnerNonBoundary);
+			IVwSelection sel = MakeSelOnFragment(view, 1, PatternVcBase.ktagInnerNonBoundary);
 			Assert.That(sel, Is.Not.Null, "could not construct a selection over the '#' literal");
+			AssertSelectionTargets(sel, PatternVcBase.ktagInnerNonBoundary);
 
 			Assert.DoesNotThrow(() => AttemptEdit(sel, "HACKED", Cache.DefaultUserWs),
 				"a direct edit on the word-boundary '#' literal must not crash the view engine");
@@ -351,8 +430,9 @@ namespace SIL.FieldWorks.IText
 			model.Root.Children.Add(wordNode);
 			view.CallLayout();
 
-			IVwSelection sel = MakeSelOnChild(view, 0, PatternVcBase.ktagRightNonBoundary);
+			IVwSelection sel = MakeSelOnFragment(view, 0, PatternVcBase.ktagRightNonBoundary);
 			Assert.That(sel, Is.Not.Null, "could not construct a selection over the max-quantifier line");
+			AssertSelectionTargets(sel, PatternVcBase.ktagRightNonBoundary);
 
 			Assert.DoesNotThrow(() => AttemptEdit(sel, "9", Cache.DefaultUserWs),
 				"a direct edit on the max-quantifier line must not crash the view engine");
@@ -368,8 +448,9 @@ namespace SIL.FieldWorks.IText
 			model.Root.Children.Add(wordNode);
 			view.CallLayout();
 
-			IVwSelection sel = MakeSelOnChild(view, 0, PatternVcBase.ktagRightBoundary);
+			IVwSelection sel = MakeSelOnFragment(view, 0, PatternVcBase.ktagRightBoundary);
 			Assert.That(sel, Is.Not.Null, "could not construct a selection over the min-quantifier line");
+			AssertSelectionTargets(sel, PatternVcBase.ktagRightBoundary);
 
 			Assert.DoesNotThrow(() => AttemptEdit(sel, "9", Cache.DefaultUserWs),
 				"a direct edit on the min-quantifier line must not crash the view engine");
@@ -395,7 +476,7 @@ namespace SIL.FieldWorks.IText
 			model.Root.Children.Add(wordNode);
 			view.CallLayout();
 
-			IVwSelection sel = MakeSelOnChild(view, 0, ComplexConcPatternVc.ktagForm);
+			IVwSelection sel = MakeSelOnFragment(view, 0, ComplexConcPatternVc.ktagForm);
 			Assert.That(sel, Is.Not.Null, "could not construct a selection over the Form line");
 			sel.Install();
 
@@ -427,10 +508,36 @@ namespace SIL.FieldWorks.IText
 			model.Root.Children.Add(wordNode);
 			view.CallLayout();
 
-			IVwSelection sel = MakeSelOnChild(view, 0, ComplexConcPatternVc.ktagForm);
+			IVwSelection sel = MakeSelOnFragment(view, 0, ComplexConcPatternVc.ktagForm);
 			Assert.That(sel, Is.Not.Null);
+			AssertSelectionTargets(sel, ComplexConcPatternVc.ktagForm);
 			Assert.That(sel.IsEditable, Is.False,
 				"the Form line's fragment must be marked ktptNotEditable, not merely absorbed by UpdateProp");
+		}
+
+		/// <summary>
+		/// PatternVcBase.OpenSingleLinePile/CloseSingleLinePile add a 1-char zero-width-space
+		/// boundary run (tag ktagLeftBoundary/ktagRightBoundary, frag kfragZeroWidthSpace) around
+		/// single-line piles, with no ktptEditable marking at all -- an unmarked gap shared by
+		/// both PatternVcBase subclasses, found by mutation testing: with UpdateProp removed and
+		/// every other guard left in place, an edit on this run still threw
+		/// NotImplementedException, because nothing else was rejecting it at the selection layer.
+		/// This test fails without the ktptEditable marking added to OpenSingleLinePile/
+		/// CloseSingleLinePile (verified by temporarily reverting it) and passes with it.
+		/// </summary>
+		[Test]
+		public void SelectionOverZeroWidthBoundaryRun_IsNotEditable()
+		{
+			var (model, view) = BuildView();
+			model.Root.Children.Add(new ComplexConcOrNode());
+			view.CallLayout();
+
+			// The 1-char ZWSP boundary run precedes OR in the same paragraph, at ich=0.
+			IVwSelection sel = MakeSelOnFragment(view, 0, PatternVcBase.ktagLeftBoundary, 0);
+			Assert.That(sel, Is.Not.Null, "could not construct a selection over the zero-width-space boundary run");
+			AssertSelectionTargets(sel, PatternVcBase.ktagLeftBoundary);
+			Assert.That(sel.IsEditable, Is.False,
+				"the zero-width-space boundary run (PatternVcBase.OpenSingleLinePile) must be marked ktptNotEditable");
 		}
 
 		/// <summary>
@@ -448,6 +555,38 @@ namespace SIL.FieldWorks.IText
 				var view = (PatternView) viewField.GetValue(control);
 				Assert.That(view.ReadOnlyView, Is.True,
 					"ComplexConcControl must wire up its PatternView with ReadOnlyView = true");
+			}
+		}
+
+		/// <summary>
+		/// SimpleRootSite.ReadOnlyView's setter forces AcceptsReturn = AcceptsTab = false when set
+		/// to true (SimpleRootSite.cs), which happens AFTER the Designer's own explicit
+		/// AcceptsReturn = true / AcceptsTab = false assignments in InitializeComponent's
+		/// generated-code ordering. This pins the actual, real behaviour change: AcceptsTab was
+		/// already false before this fix (Designer-set, independent of ReadOnlyView) so Tab
+		/// navigation out of the pane is unchanged; AcceptsReturn flips from true to false, which
+		/// is new. Since PatternView.OnKeyPress already swallows Return either way (it is not
+		/// Backspace/Delete), the observable difference is only where the key is disposed of: it
+		/// used to reach the control and be silently swallowed there; now IsInputKey(Return)
+		/// returns false and the key is never delivered to the control at all, so it is processed
+		/// as an ordinary dialog/navigation key by whatever contains this pane. This control is
+		/// hosted as a Words-area tool pane (DistFiles/.../Concordance/toolConfiguration.xml), not
+		/// inside a modal dialog with an AcceptButton, so no default-button activation is expected
+		/// in practice -- but that is unverified live; see the review doc.
+		/// </summary>
+		[Test]
+		public void ComplexConcControl_AcceptsTabUnchanged_AcceptsReturnNowFalse()
+		{
+			using (var control = new ComplexConcControl())
+			{
+				var viewField = typeof(ComplexConcControl).GetField("m_view", BindingFlags.NonPublic | BindingFlags.Instance);
+				var view = (PatternView) viewField.GetValue(control);
+
+				Assert.That(view.AcceptsTab, Is.False,
+					"AcceptsTab was already false in the Designer before this fix; it must still be false");
+				Assert.That(view.AcceptsReturn, Is.False,
+					"ReadOnlyView = true forces AcceptsReturn to false, overriding the Designer's " +
+					"explicit AcceptsReturn = true -- this is the real behaviour change, not Tab");
 			}
 		}
 
