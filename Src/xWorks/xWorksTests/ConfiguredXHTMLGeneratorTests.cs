@@ -5319,6 +5319,82 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
+		public void GenerateLetterHeaderIfNeeded_ShoeboxSortRules_GeneratesHeadingWithBothCases()
+		{
+			var ws = Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
+			var originalCollation = ws.DefaultCollation;
+			// Rule set and headwords mirror the project attached to LT-22651: the uppercase
+			// form is named first, so it is the form that reaches the heading builder.
+			ws.DefaultCollation = new SimpleRulesCollationDefinition("standard")
+			{
+				SimpleRules = "A a" + Environment.NewLine + "B b" + Environment.NewLine
+					+ "C c" + Environment.NewLine + "Ch ch"
+			};
+			try
+			{
+				AssertHeadingsCarryBothCases(ws);
+			}
+			finally
+			{
+				ws.DefaultCollation = originalCollation;
+			}
+		}
+
+		[Test]
+		public void GenerateLetterHeaderIfNeeded_UppercaseFirstIcuRules_GeneratesHeadingWithBothCases()
+		{
+			var ws = Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
+			var originalCollation = ws.DefaultCollation;
+			// The compiled form of the LT-22651 rules names the uppercase letter as the
+			// primary and the lowercase as a secondary, so it collapses the pair too.
+			var icuCollation = new IcuRulesCollationDefinition("standard")
+			{
+				IcuRules = "&[before 1] [first regular] < A << a < B << b < C << c < Ch << ch",
+				OwningWritingSystemDefinition = ws
+			};
+			icuCollation.Validate(out _);
+			ws.DefaultCollation = icuCollation;
+			try
+			{
+				AssertHeadingsCarryBothCases(ws);
+			}
+			finally
+			{
+				ws.DefaultCollation = originalCollation;
+			}
+		}
+
+		/// <summary>
+		/// Asserts that a plain letter, a letter sharing its first character with a digraph,
+		/// and the digraph itself each produce a heading carrying both cases.
+		/// </summary>
+		private void AssertHeadingsCarryBothCases(CoreWritingSystemDefinition ws)
+		{
+			var plainEntry = CreateInterestingLexEntry(Cache, "aussi");
+			var sharedFirstCharEntry = CreateInterestingLexEntry(Cache, "couleur");
+			var digraphEntry = CreateInterestingLexEntry(Cache, "chat");
+			using (var col = new CollatorForTest(ws.Id))
+			using (var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
+			{
+				// SUT
+				string last = null;
+				XHTMLWriter.WriteStartElement("TestElement");
+				LcmXhtmlGenerator.GenerateLetterHeaderIfNeeded(plainEntry, ref last, XHTMLWriter, col, DefaultSettings, m_Clerk);
+				LcmXhtmlGenerator.GenerateLetterHeaderIfNeeded(sharedFirstCharEntry, ref last, XHTMLWriter, col, DefaultSettings, m_Clerk);
+				LcmXhtmlGenerator.GenerateLetterHeaderIfNeeded(digraphEntry, ref last, XHTMLWriter, col, DefaultSettings, m_Clerk);
+				XHTMLWriter.WriteEndElement();
+				XHTMLWriter.Flush();
+				var xhtml = XHTMLStringBuilder.ToString();
+				foreach (var heading in new[] { "A a", "C c", "Ch ch" })
+				{
+					var headingXpath = string.Format(
+						"//div[@class='letHead']/span[@class='letter' and @lang='{0}' and text()='{1}']", ws.Id, heading);
+					AssertThatXmlIn.String(xhtml).HasSpecifiedNumberOfMatchesForXpath(headingXpath, 1);
+				}
+			}
+		}
+
+		[Test]
 		public void GenerateLetterHeaderIfNeeded_GeneratesHeaderLexemeFormSorting()
 		{
 			var entry = CreateInterestingLexEntry(Cache);
