@@ -3,21 +3,41 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Globalization;
 using Avalonia;
 using Avalonia.Automation;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
+using Avalonia.Markup.Xaml.Styling;
 using Avalonia.Media;
-using Avalonia.Themes.Fluent;
 using SIL.FieldWorks.Common.FwAvalonia.Preview;
+using SemiCore = Semi.Avalonia.SemiTheme;
+using SemiUrsa = Ursa.Themes.Semi.SemiTheme;
 
 namespace SIL.FieldWorks.Common.FwAvalonia.PreviewHost
 {
 	internal sealed class PreviewHostApp : Application
 	{
+		// Dev-tool-only window chrome, not a shared design-system value: named locally rather
+		// than routed through FwAvaloniaTheme's Tokens/, which is for product-surface values.
+		private const double ErrorWindowWidth = 1000;
+		private const double ErrorWindowHeight = 700;
+
 		public override void Initialize()
 		{
-			Styles.Add(new FluentTheme());
+			Styles.Add(new SemiCore { Locale = FwSemiLocale.ForSemi(CultureInfo.CurrentUICulture) });
+			Styles.Add(new SemiUrsa { Locale = FwSemiLocale.ForUrsa(CultureInfo.CurrentUICulture) });
+			FwSemiDensity.ApplyTo(this);
+			// Shared token tiers, kept structurally parallel to FwAvaloniaApp.Initialize() so the
+			// Preview Host renders the same tokens.
+			MergeTokens("avares://FwAvaloniaTheme/Tokens/FwColorTokens.axaml");
+			MergeTokens("avares://FwAvaloniaTheme/Tokens/DataTree/DataTreeTokens.axaml");
+		}
+
+		private void MergeTokens(string avaresUri)
+		{
+			var tokenUri = new Uri(avaresUri);
+			Resources.MergedDictionaries.Add(new ResourceInclude(tokenUri) { Source = tokenUri });
 		}
 
 		public override void OnFrameworkInitializationCompleted()
@@ -73,8 +93,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.PreviewHost
 			var window = new Window
 			{
 				Title = "FieldWorks Avalonia Preview Host - Error",
-				Width = 1000,
-				Height = 700,
+				Width = ErrorWindowWidth,
+				Height = ErrorWindowHeight,
 				Content = text
 			};
 			AutomationProperties.SetAutomationId(window, "PreviewHost.ErrorWindow");

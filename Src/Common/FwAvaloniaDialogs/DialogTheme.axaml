@@ -1,4 +1,4 @@
-﻿<!--
+<!--
 	DialogTheme - the shared spacing/border system for every FwAvaloniaDialogs dialog body.
 
 	A single source of truth so dialogs cannot regress to "no border / text crowding the edges":
@@ -17,14 +17,24 @@
 <Styles xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 	<Styles.Resources>
-		<!-- Padding around the whole dialog body (between the chrome and the content). -->
+		<ResourceDictionary>
+			<ResourceDictionary.MergedDictionaries>
+				<!-- Supplies FwSurfaceFontSize and the FwDialogFieldBorderBrush/
+					FwDialogFieldBorderColor/FwDialogGroupSeparatorBrush keys this file's styles
+					use.
+					-->
+				<ResourceInclude Source="avares://FwAvaloniaTheme/Tokens/FwColorTokens.axaml"/>
+			</ResourceDictionary.MergedDictionaries>
+			<!-- Padding around the whole dialog body (between the chrome and the content). -->
 		<Thickness x:Key="DialogWindowPadding">10</Thickness>
 		<!-- Vertical gap between stacked controls / rows. -->
 		<x:Double x:Key="DialogControlGap">6</x:Double>
-		<!-- Gap between a field's label and the field itself. -->
-		<x:Double x:Key="DialogLabelFieldGap">4</x:Double>
-		<!-- Gap between the buttons in an OK/Cancel/Help strip. -->
-		<x:Double x:Key="DialogButtonStripGap">8</x:Double>
+		<!-- Gap between a field's label and the field itself. Matches Semi's own ExtraTight
+		     spacing step exactly. -->
+		<StaticResource x:Key="DialogLabelFieldGap" ResourceKey="SemiSpacingExtraTight"/>
+		<!-- Gap between the buttons in an OK/Cancel/Help strip. Matches Semi's own Tight
+		     spacing step exactly. -->
+		<StaticResource x:Key="DialogButtonStripGap" ResourceKey="SemiSpacingTight"/>
 		<!-- Directional margins derived from the gaps, for the few one-sided spacing needs that Spacing
 		     cannot express (a strip docked below content; a prompt above content). -->
 		<Thickness x:Key="DialogControlGapAbove">0,6,0,0</Thickness>
@@ -44,77 +54,134 @@
 		<!-- Extra top whitespace so a control group reads as separate from the group before it
 		     (mirrors FwAvaloniaDensity.GroupSeparation). -->
 		<Thickness x:Key="DialogGroupSeparation">0,8,0,0</Thickness>
-		<!-- A thin grey 1px hairline drawn BETWEEN two logical groups, for the clearest cases. The brush is a
-		     concrete LightGray (not a Fluent DynamicResource) so it renders headlessly. -->
-		<SolidColorBrush x:Key="DialogGroupSeparatorBrush" Color="LightGray"/>
+		<!--
+			Inner padding for a fwGroupBox's content (space between its border and the
+			header/controls). Matches Semi's own Tight thickness step exactly.
+		-->
+		<StaticResource x:Key="DialogGroupPadding" ResourceKey="SemiThicknessTight"/>
 		<!-- 24, not the tighter 20-23px legacy WinForms line controls measured, so height never
-		     regresses below the desktop pointer-target accessibility floor; still well under
-		     Fluent's ~32px default. -->
-		<x:Double x:Key="DialogMinControlHeight">24</x:Double>
-		<!-- Border thickness for a host/field frame. -->
-		<Thickness x:Key="DialogFieldBorderThickness">1</Thickness>
+		     regresses below the desktop pointer-target accessibility floor. Matches Semi's own
+		     Small control-height step exactly. -->
+		<StaticResource x:Key="DialogMinControlHeight" ResourceKey="SemiHeightControlSmall"/>
+		<!-- Border thickness for a host/field frame. Matches Semi's own control-border-thickness
+		     primitive exactly. -->
+		<StaticResource x:Key="DialogFieldBorderThickness" ResourceKey="SemiBorderThicknessControl"/>
 		<!-- Inner padding for a host/field frame (breathing room around the embedded control). -->
 		<Thickness x:Key="DialogFieldPadding">3</Thickness>
-		<!-- Base dialog body font, tuned against the legacy WinForms dialogs (Segoe UI 9pt) and well below
-		     the ~14px Fluent default. This one value drives every FontSize setter below. -->
-		<x:Double x:Key="DialogFontSize">11</x:Double>
 		<!--
-			A concrete color, not the Fluent DynamicResource ControlStrokeColorDefault: that theme
-			resource does not resolve in the headless test app, rendering the frame invisible
-			there.
-			-->
-		<Color x:Key="DialogFieldBorderColor">#FF7A7A7A</Color>
-		<SolidColorBrush x:Key="DialogFieldBorderBrush" Color="#FF7A7A7A"/>
+			Per-control padding tokens for the density Style setters below, so a value used both
+			as
+		     a named resource and a Setter literal has exactly one source. -->
+		<Thickness x:Key="DialogTextBoxPadding">4,2</Thickness>
+		<Thickness x:Key="DialogComboBoxPadding">6,1</Thickness>
+		<Thickness x:Key="DialogButtonPadding">8,2</Thickness>
+		<Thickness x:Key="DialogTabItemPadding">8,3</Thickness>
+		<Thickness x:Key="DialogListBoxItemPadding">4,1</Thickness>
+		<!-- Small trailing gap between a display-only checkbox and the label text beside it
+		     (Chooser dialog's tree/filtered-list rows). -->
+		<Thickness x:Key="DialogCheckboxTrailingGap">0,0,4,0</Thickness>
+		<!-- Content-driven minimum height of the Insert Entry dialog's duplicate-match list. -->
+		<x:Double x:Key="InsertEntryMatchesListMinHeight">80</x:Double>
+		<!-- Content-driven maximum height of the Insert Entry dialog's duplicate-match list, so
+		     a long match list scrolls instead of growing the dialog. -->
+		<x:Double x:Key="InsertEntryMatchesListMaxHeight">160</x:Double>
+		<!-- Content-driven maximum height of the Entry Go dialog's auxiliary-options list, so a
+		     long option list scrolls instead of growing the dialog. -->
+		<x:Double x:Key="EntryGoAuxiliaryOptionsMaxHeight">120</x:Double>
+		<!-- Minimum width shared by the Options dialog's UI Mode and Update Channel combos. -->
+		<x:Double x:Key="LexOptionsComboMinWidth">160</x:Double>
+		<!-- Minimum width of the Options dialog's (wider) UI Language combo. -->
+		<x:Double x:Key="LexOptionsUiLanguageComboMinWidth">220</x:Double>
+		<!-- Font/line-height of the message-box severity glyph. -->
+		<x:Double x:Key="MessageBoxIconGlyphSize">28</x:Double>
+		<!-- Per-dialog minimum window sizes: one-off, content-driven, but still named for the
+		     token-hygiene gate. -->
+		<x:Double x:Key="AddNewSenseMinWidth">360</x:Double>
+		<x:Double x:Key="AddNewSenseMinHeight">240</x:Double>
+		<x:Double x:Key="ChooserDialogMinWidth">320</x:Double>
+		<x:Double x:Key="ChooserDialogMinHeight">300</x:Double>
+		<x:Double x:Key="CreateFeatureMinWidth">320</x:Double>
+		<x:Double x:Key="CreateFeatureMinHeight">180</x:Double>
+		<x:Double x:Key="EntryGoMinWidth">440</x:Double>
+		<x:Double x:Key="EntryGoMinHeight">340</x:Double>
+		<x:Double x:Key="FeatureChooserMinWidth">320</x:Double>
+		<x:Double x:Key="FeatureChooserMinHeight">260</x:Double>
+		<x:Double x:Key="InsertEntryMinWidth">360</x:Double>
+		<x:Double x:Key="InsertEntryMinHeight">260</x:Double>
+		<x:Double x:Key="LexOptionsMinWidth">460</x:Double>
+		<x:Double x:Key="LexOptionsMinHeight">380</x:Double>
+		<x:Double x:Key="MessageBoxMinWidth">280</x:Double>
+		<x:Double x:Key="MessageBoxMinHeight">110</x:Double>
+		<x:Double x:Key="MsaCreatorMinWidth">360</x:Double>
+		<x:Double x:Key="MsaCreatorMinHeight">220</x:Double>
+		</ResourceDictionary>
 	</Styles.Resources>
 
 	<!-- Density setters live here too, not only in the C# CompactDialogStyles, so a headless
 		dialog test (which applies only this theme) renders the same density as the runtime path.
 		-->
 	<Style Selector="TextBlock">
-		<Setter Property="FontSize" Value="{StaticResource DialogFontSize}"/>
+		<Setter Property="FontSize" Value="{StaticResource FwSurfaceFontSize}"/>
 	</Style>
 	<Style Selector="TextBox">
-		<Setter Property="FontSize" Value="{StaticResource DialogFontSize}"/>
-		<Setter Property="MinHeight" Value="24"/>
-		<Setter Property="Padding" Value="4,2"/>
+		<Setter Property="FontSize" Value="{StaticResource FwSurfaceFontSize}"/>
+		<Setter Property="MinHeight" Value="{StaticResource DialogMinControlHeight}"/>
+		<Setter Property="Padding" Value="{StaticResource DialogTextBoxPadding}"/>
 	</Style>
 	<Style Selector="ComboBox">
-		<Setter Property="FontSize" Value="{StaticResource DialogFontSize}"/>
-		<Setter Property="MinHeight" Value="24"/>
-		<Setter Property="Padding" Value="6,1"/>
+		<Setter Property="FontSize" Value="{StaticResource FwSurfaceFontSize}"/>
+		<Setter Property="MinHeight" Value="{StaticResource DialogMinControlHeight}"/>
+		<Setter Property="Padding" Value="{StaticResource DialogComboBoxPadding}"/>
 	</Style>
 	<Style Selector="Button">
-		<Setter Property="FontSize" Value="{StaticResource DialogFontSize}"/>
-		<Setter Property="MinHeight" Value="24"/>
-		<Setter Property="Padding" Value="8,2"/>
+		<Setter Property="FontSize" Value="{StaticResource FwSurfaceFontSize}"/>
+		<Setter Property="MinHeight" Value="{StaticResource DialogMinControlHeight}"/>
+		<Setter Property="Padding" Value="{StaticResource DialogButtonPadding}"/>
 	</Style>
-	<!-- Font only: the box size is a ControlTheme applied separately (FwCheckBoxStyle), since its
-	     hardcoded 20x20 box / 32px slot are local values a style setter here cannot override. -->
+	<!-- Font only: the box size comes from Semi's CheckBoxBoxWidth/Height tokens, retargeted
+	     once at Application level by FwSemiDensity. -->
 	<Style Selector="CheckBox">
-		<Setter Property="FontSize" Value="{StaticResource DialogFontSize}"/>
+		<Setter Property="FontSize" Value="{StaticResource FwSurfaceFontSize}"/>
 	</Style>
 	<Style Selector="TabItem">
-		<Setter Property="FontSize" Value="{StaticResource DialogFontSize}"/>
+		<Setter Property="FontSize" Value="{StaticResource FwSurfaceFontSize}"/>
 		<Setter Property="MinHeight" Value="0"/>
-		<Setter Property="Padding" Value="8,3"/>
+		<Setter Property="Padding" Value="{StaticResource DialogTabItemPadding}"/>
 	</Style>
 	<Style Selector="ListBoxItem">
 		<Setter Property="MinHeight" Value="0"/>
-		<Setter Property="Padding" Value="4,1"/>
+		<Setter Property="Padding" Value="{StaticResource DialogListBoxItemPadding}"/>
 	</Style>
 
-	<!-- A literal, not StaticResource: a Setter's StaticResource resolves against the styled
-	     element's own scope, not this file's Styles.Resources. -->
+	<!-- DynamicResource: a Setter's StaticResource on this root is not guaranteed to see this
+	     file's own Resources yet; DynamicResource resolves lazily instead. -->
 	<Style Selector="UserControl.fwDialogRoot">
-		<Setter Property="Padding" Value="10"/>
+		<Setter Property="Padding" Value="{DynamicResource DialogWindowPadding}"/>
 	</Style>
 
 	<!--
-		A visible border for a host frame, since the embedded owned control's own inner TextBox is
-	     borderless. Uses the concrete gray brush above so the frame renders headlessly too. -->
+		A visible border, since the embedded control's inner TextBox is borderless.
+		DynamicResource,
+	     not StaticResource: FwDialogFieldBorderBrush lives in a ThemeDictionary. -->
 	<Style Selector="Border.fwFieldHost">
-		<Setter Property="BorderThickness" Value="1"/>
-		<Setter Property="BorderBrush" Value="#FF7A7A7A"/>
-		<Setter Property="Padding" Value="3"/>
+		<Setter Property="BorderThickness" Value="{StaticResource DialogFieldBorderThickness}"/>
+		<Setter Property="BorderBrush" Value="{DynamicResource FwDialogFieldBorderBrush}"/>
+		<Setter Property="Padding" Value="{StaticResource DialogFieldPadding}"/>
+	</Style>
+
+	<!-- A titled border chunking related controls (the Avalonia analog of a WinForms GroupBox).
+	     Margin is the gap above the group; give the inner StackPanel DialogLabelFieldGap. -->
+	<Style Selector="Border.fwGroupBox">
+		<Setter Property="BorderThickness" Value="{StaticResource DialogFieldBorderThickness}"/>
+		<Setter Property="BorderBrush" Value="{DynamicResource FwDialogGroupSeparatorBrush}"/>
+		<Setter Property="Padding" Value="{StaticResource DialogGroupPadding}"/>
+		<Setter Property="Margin" Value="{StaticResource DialogGroupSeparation}"/>
+	</Style>
+	<!--
+		Group-box header caption: the same DimGray the DataTree section labels use (FwLabelBrush),
+	     so the dialog stack and the detail-view stack read as one visual family. -->
+	<Style Selector="TextBlock.fwGroupHeader">
+		<Setter Property="Foreground" Value="{DynamicResource FwLabelBrush}"/>
+		<Setter Property="FontWeight" Value="Bold"/>
 	</Style>
 </Styles>

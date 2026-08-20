@@ -4,7 +4,7 @@
              x:Class="FwAvaloniaDialogs.MessageBoxView"
              x:DataType="vm:MessageBoxViewModel"
              Classes="fwDialogRoot"
-             MinWidth="280" MinHeight="110">
+             MinWidth="{DynamicResource MessageBoxMinWidth}" MinHeight="{DynamicResource MessageBoxMinHeight}">
 	<!-- Reusable message / confirmation dialog (the Avalonia analog of WinForms MessageBox). The message body
 	     and an optional severity glyph sit above a right-aligned button row; which buttons show is driven by the
 	     VM's Show* flags, and the labels come from FwAvaloniaDialogsStrings (.resx). AutomationIds are stable +
@@ -39,7 +39,7 @@
 			-->
 		<Grid ColumnDefinitions="Auto,*" VerticalAlignment="Center">
 			<TextBlock Grid.Column="0" Text="{Binding IconGlyph}" IsVisible="{Binding ShowIcon}"
-			           FontSize="28" LineHeight="28" Margin="{StaticResource DialogIconGap}"
+			           FontSize="{StaticResource MessageBoxIconGlyphSize}" LineHeight="{StaticResource MessageBoxIconGlyphSize}" Margin="{StaticResource DialogIconGap}"
 			           VerticalAlignment="Center" HorizontalAlignment="Center"
 			           AutomationProperties.AutomationId="MessageBox.Icon"
 			           AutomationProperties.Name="{Binding IconAccessibleName}"/>

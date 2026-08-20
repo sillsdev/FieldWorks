@@ -103,6 +103,16 @@ namespace FwAvaloniaTests.VisualChecks
 		}
 
 		[AvaloniaTest]
+		public void DetailEditView_AtWindowWidth_RendersCleanly()
+		{
+			// The detail pane at a real window width, where a value column that fails to fill
+			// shows up.
+			var view = new DataTree(RealisticDetailModel());
+
+			DialogSnapshot.Capture(view, "Detail-07-wide", width: 1000, height: 420);
+		}
+
+		[AvaloniaTest]
 		public void DetailEditView_RealisticMultiField_Editable_RendersCleanly()
 		{
 			// The same realistic field spread, now editable (an edit context makes the text/chooser editors

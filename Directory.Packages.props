@@ -199,5 +199,12 @@
 		<!-- MVVM for hand-authored Avalonia dialogs. 8.x ships netstandard2.0 source
 		     generators, so it works on net48. -->
 		<PackageVersion Include="CommunityToolkit.Mvvm" Version="8.2.2" />
+		<!--
+			Semi theme and Ursa's Semi-styled controls, pinned to each vendor's last
+			netstandard2.0-capable line for net48 hosting; newer lines require Avalonia 12.
+		-->
+		<PackageVersion Include="Semi.Avalonia" Version="11.3.14" />
+		<PackageVersion Include="Irihi.Ursa" Version="1.15.1" />
+		<PackageVersion Include="Irihi.Ursa.Themes.Semi" Version="1.15.1" />
 	</ItemGroup>
 </Project>

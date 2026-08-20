@@ -1,0 +1,173 @@
+<!--
+	DataTreeTokens - the DataTree/detail-view layout dimensions (widths, spacing, padding) chosen
+	to match the compact WinForms DataTree baseline. Flat, not a ThemeDictionary: these are pure
+	dimensions with no light/dark variance. Kept separate from the shared FwColorTokens.axaml tier
+	because these keys are DataTree-specific, not shared with the FwAvaloniaDialogs dialog stack.
+	Merged app-wide into Application.Resources by both FwAvaloniaApp and PreviewHostApp, so
+	FwAvaloniaDensity.cs resolves every DataTree.* key here.
+
+	A handful of keys below are aliases (<StaticResource x:Key="X" ResourceKey="SemiY"/>) onto a
+	Semi.Avalonia Layer-1 scale primitive landing exactly on FieldWorks' own measured value; the
+	rest stay literal since FieldWorks' compact pixels mostly miss Semi's coarser flat scale.
+-->
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+	<!-- Legacy WinForms default (DataTree.cs m_sliceSplitPositionBase). -->
+	<x:Double x:Key="DataTree.LabelColumnWidth">150</x:Double>
+
+	<!-- Floor width of the writing-system abbreviation gutter column, matching the legacy
+	     Slice.MaxAbbrevWidth cap; a view widens it up to DataTree.WsAbbrevMaxWidth for longer
+	     abbreviations. -->
+	<x:Double x:Key="DataTree.WsAbbrevWidth">60</x:Double>
+
+	<!-- Ceiling on the abbreviation gutter column, so one pathological abbreviation cannot eat
+	     the pane. -->
+	<x:Double x:Key="DataTree.WsAbbrevMaxWidth">120</x:Double>
+
+	<!-- The abbreviation's trailing margin inside its gutter column, so the raised label reads
+	     as distinct from the value. Matches Semi's own ExtraTight spacing step exactly. -->
+	<StaticResource x:Key="DataTree.WsAbbrevGutter" ResourceKey="SemiSpacingExtraTight"/>
+
+	<!-- Vertical spacing between writing-system rows within a field. -->
+	<x:Double x:Key="DataTree.RowSpacing">1</x:Double>
+
+	<!-- Vertical spacing between fields. -->
+	<x:Double x:Key="DataTree.FieldSpacing">1</x:Double>
+
+	<!-- Compact padding inside text editors. -->
+	<Thickness x:Key="DataTree.EditorPadding">3,1,3,1</Thickness>
+
+	<!-- Compact list/table row height (legacy XMLViews rows are ~17px), replacing the taller
+	     Fluent ListBoxItem floor and the budget the checkbox/radio glyph sizes derive from. -->
+	<x:Double x:Key="DataTree.BrowseRowMinHeight">18</x:Double>
+
+	<!-- Extra top whitespace so a control group reads as separate from the group before it,
+	     optionally paired with a thin rule for the clearest cases. Matches Semi's own Tight
+	     spacing step exactly. -->
+	<StaticResource x:Key="DataTree.GroupSeparation" ResourceKey="SemiSpacingTight"/>
+
+	<!-- Compact margin around the slice. -->
+	<Thickness x:Key="DataTree.SliceMargin">4,2,4,2</Thickness>
+
+	<!-- Legacy splitter width (Slice.cs SplitterWidth). -->
+	<x:Double x:Key="DataTree.SplitterWidth">5</x:Double>
+
+	<!-- Compact padding of one option row in the option picker (legacy menu spacing). -->
+	<Thickness x:Key="DataTree.OptionItemPadding">6,2,6,2</Thickness>
+
+	<!-- The option picker's list cap: off-screen content scrolls instead of growing. -->
+	<x:Double x:Key="DataTree.OptionListMaxHeight">320</x:Double>
+
+	<!-- Compact context-menu item padding (legacy WinForms menu density, not Fluent). -->
+	<Thickness x:Key="DataTree.MenuItemPadding">8,3,8,3</Thickness>
+
+	<!-- Compact context-menu item height floor (legacy items are ~22px, Fluent ~32px). -->
+	<x:Double x:Key="DataTree.MenuItemMinHeight">22</x:Double>
+
+	<!-- The horizontal indent per hierarchy level in an indented list/POS tree row (the legacy
+	     chooser tree's per-depth inset), so depth-indented rows indent identically. -->
+	<x:Double x:Key="DataTree.TreeIndentPerLevel">14</x:Double>
+
+	<!-- Compact width of the collapsed dropdown chooser (POS picker and similar) so the
+		collapsed control reads as a field-sized box rather than shrinking to its current text.
+		-->
+	<x:Double x:Key="DataTree.DropdownMinWidth">160</x:Double>
+
+	<!-- Margin around the inline validation-error message under a slice. -->
+	<Thickness x:Key="DataTree.ValidationMessageMargin">0,4,0,2</Thickness>
+
+	<!-- Margin above/below the heavy section-header rule. -->
+	<Thickness x:Key="DataTree.SectionRuleMargin">0,6,0,2</Thickness>
+
+	<!-- Horizontal padding for a small flat (transparent/borderless) span-acting button, e.g. a
+	     per-run style picker trigger or a link-apply button. -->
+	<Thickness x:Key="DataTree.CompactButtonPadding">6,0,6,0</Thickness>
+
+	<!-- Small trailing gap between an inline item (a reference-vector chip, a multi-select
+	     checkbox) and the content that follows it. -->
+	<Thickness x:Key="DataTree.TrailingItemGap">0,0,4,0</Thickness>
+
+	<!-- Padding for a small square glyph-only button (add/delete/kebab/gear icon buttons). -->
+	<Thickness x:Key="DataTree.IconButtonPadding">4,0,4,0</Thickness>
+
+	<!-- Margin around the legacy VwSeparatorBox-style vertical bar between reference-vector
+	     items. -->
+	<Thickness x:Key="DataTree.SeparatorBarMargin">2,0,6,0</Thickness>
+
+	<!-- A small trailing right-gap between a row's leading text/content and a trailing
+	     affordance (a gear button, an adjacent grid cell). -->
+	<Thickness x:Key="DataTree.TrailingGap">0,0,6,0</Thickness>
+
+	<!-- Uniform 1px border for a compact bordered host (option/POS picker frame, MSA/feature
+	     group box). Semi's own control-border-thickness primitive is exactly 1px. -->
+	<StaticResource x:Key="DataTree.HairlineBorderThickness" ResourceKey="SemiBorderThicknessControl"/>
+
+	<!-- Uniform compact padding for a bordered host's inner content (pairs with
+		DataTree.HairlineBorderThickness). Matches Semi's own ExtraTight thickness step exactly.
+		-->
+	<StaticResource x:Key="DataTree.TightPadding" ResourceKey="SemiThicknessExtraTight"/>
+
+	<!-- Top margin separating a control group (e.g. the multi-select Add-Selected button) from
+	     the group above it. -->
+	<Thickness x:Key="DataTree.OptionGroupTopMargin">0,4,0,0</Thickness>
+
+	<!-- Padding for a prominent option-picker action row (e.g. Add Selected). -->
+	<Thickness x:Key="DataTree.OptionRowPadding">10,2,10,2</Thickness>
+
+	<!-- Small leading indent for a glyph that follows an option-picker label (e.g. the collapsed
+	     dropdown chevron). -->
+	<Thickness x:Key="DataTree.OptionIndentMargin">4,0,0,0</Thickness>
+
+	<!-- Top-only 1px hairline border, e.g. the rule above an inline "create new..." picker
+	     row. -->
+	<Thickness x:Key="DataTree.TopHairlineBorderThickness">0,1,0,0</Thickness>
+
+	<!-- Bottom-only 1px hairline border, e.g. under a picker's filter box. -->
+	<Thickness x:Key="DataTree.BottomHairlineBorderThickness">0,0,0,1</Thickness>
+
+	<!-- Left-only 2px rule marking a structured-text paragraph row's boundary (the legacy StText
+	     paragraph gutter). -->
+	<Thickness x:Key="DataTree.ParagraphRuleBorderThickness">2,0,0,0</Thickness>
+
+	<!-- Padding for one structured-text paragraph row. -->
+	<Thickness x:Key="DataTree.ParagraphRowPadding">4,1,0,1</Thickness>
+
+	<!-- Padding for a small hover-revealed chip/affordance (e.g. the kebab menu trigger). -->
+	<Thickness x:Key="DataTree.HoverChipPadding">2,0,2,0</Thickness>
+
+	<!-- Padding for one list/browse row built from code, not a XAML ListBoxItem template. Kept
+	     numerically equal to DialogListBoxItemPadding in DialogTheme.axaml: change both. -->
+	<Thickness x:Key="DataTree.ListRowPadding">4,1</Thickness>
+
+	<!-- The legacy 1px inter-slice rule (DataTree.PaintLinesBetweenSlices). -->
+	<x:Double x:Key="DataTree.SliceRuleHeight">1</x:Double>
+
+	<!-- The heavier 2px rule above a top-level section header. -->
+	<x:Double x:Key="DataTree.SectionRuleHeight">2</x:Double>
+
+	<!-- Minimum width of the inline external-link URL prompt textbox (the "Insert/edit
+	     link..." flyout). -->
+	<x:Double x:Key="DataTree.LinkUrlMinWidth">220</x:Double>
+
+	<!-- Horizontal gap between the link-prompt URL box and its Apply button. Matches Semi's own
+	     ExtraTight spacing step exactly. -->
+	<StaticResource x:Key="DataTree.LinkPromptGap" ResourceKey="SemiSpacingExtraTight"/>
+
+	<!-- Horizontal gap between a chooser field's value text and its trailing configure-gear
+	     glyph. -->
+	<x:Double x:Key="DataTree.ChooserGearGap">6</x:Double>
+
+	<!-- Width of the legacy VwSeparatorBox-style vertical bar between reference-vector items
+	     (pairs with DataTree.SeparatorBarMargin). -->
+	<x:Double x:Key="DataTree.SeparatorBarWidth">2</x:Double>
+
+	<!-- Corner radius for a compact bordered host; pairs with HairlineBorderThickness and
+	     TightPadding. Matches Semi's own Small radius step exactly. -->
+	<StaticResource x:Key="DataTree.PickerCornerRadius" ResourceKey="SemiBorderRadiusSmall"/>
+
+	<!-- Minimum width of the option/POS picker's own selection panel - distinct from
+	     DataTree.DropdownMinWidth, which sizes the COLLAPSED dropdown chooser. -->
+	<x:Double x:Key="DataTree.PickerMinWidth">180</x:Double>
+
+</ResourceDictionary>

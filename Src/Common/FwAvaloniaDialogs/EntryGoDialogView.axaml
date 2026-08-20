@@ -5,7 +5,7 @@
              x:Class="FwAvaloniaDialogs.EntryGoDialogView"
              x:DataType="vm:EntryGoDialogViewModel"
              Classes="fwDialogRoot"
-             MinWidth="440" MinHeight="340">
+             MinWidth="{DynamicResource EntryGoMinWidth}" MinHeight="{DynamicResource EntryGoMinHeight}">
 	<!-- The reusable entry-search ("go") dialog body: the Avalonia replacement for the legacy
 	     EntryGoDlg/BaseGoDlg family. The matching entries fill the dialog body as a PERSISTENT,
 	     multi-column list under the search box, live-updating as the user types (an empty search shows an
@@ -94,7 +94,7 @@
 					           Margin="{StaticResource DialogLabelFieldGapBelow}"
 					           AutomationProperties.AutomationId="EntryGo.AuxiliaryLabel"/>
 					<Border Classes="fwFieldHost">
-						<ListBox MaxHeight="120"
+						<ListBox MaxHeight="{StaticResource EntryGoAuxiliaryOptionsMaxHeight}"
 						         ItemsSource="{Binding AuxiliaryOptions}"
 						         SelectedItem="{Binding SelectedAuxiliaryOption, Mode=TwoWay}"
 						         AutomationProperties.AutomationId="EntryGo.AuxiliaryOptions">

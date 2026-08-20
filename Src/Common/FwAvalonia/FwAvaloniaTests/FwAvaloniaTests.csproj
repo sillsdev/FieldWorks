@@ -26,6 +26,9 @@
 	<ItemGroup>
 		<PackageReference Include="Avalonia" ExcludeAssets="analyzers" />
 		<PackageReference Include="Avalonia.Themes.Fluent" ExcludeAssets="analyzers" />
+		<PackageReference Include="Semi.Avalonia" ExcludeAssets="analyzers" />
+		<PackageReference Include="Irihi.Ursa" ExcludeAssets="analyzers" />
+		<PackageReference Include="Irihi.Ursa.Themes.Semi" ExcludeAssets="analyzers" />
 		<PackageReference Include="Avalonia.Headless" ExcludeAssets="analyzers" />
 		<PackageReference Include="Avalonia.Headless.NUnit" ExcludeAssets="analyzers" />
 		<!-- Skia-backed headless drawing so rendered-frame parity capture works. -->

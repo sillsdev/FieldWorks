@@ -129,5 +129,30 @@ not the content-overlap defect.
   no second copy of the logic). `FwAvaloniaTests` (which owns `DialogSnapshot`) links `DialogLayoutAssert.cs`;
   `FwAvaloniaDialogsTests` (which owns `DialogLayoutAssert`) links `DialogSnapshot.cs` — symmetric, so both
   test projects get both the PNG harness and the geometry tripwire from a single copy of each.
-- Snapshots are ephemeral. Don't assert on pixels/bytes beyond "non-empty"; the PNG is for human/agent
-  eyes, the geometry tripwire is the deterministic gate.
+- Most snapshots stay ephemeral: don't assert on pixels/bytes beyond "non-empty", the PNG is for
+  human/agent eyes, and the geometry tripwire is the deterministic gate. A small curated subset is
+  committed instead — see the next section.
+
+## Committed baseline screenshots
+
+`Output/Snapshots/` is gitignored, so every capture above vanishes at the end of the run — no reviewer,
+human or AI, can ever check a past "I looked at this and it's fine" claim against a specific PNG. To keep
+that possible for the surfaces that matter most, one representative screenshot per dialog is committed to
+`Docs/migration/baseline-screenshots/`, tracked in git.
+
+- **Small and curated, not exhaustive.** One screenshot per dialog — whichever captured stage best answers
+  "does this dialog look right" (usually its normal populated state, not an empty or error stage) — not
+  every interaction stage of every test. Everything else stays ephemeral in `Output/Snapshots/` as
+  described above.
+- **Reuse the existing capture, don't invent a new one.** Pick from the stage names the dialog's own test
+  suite already captures (e.g. `Options-01-initial.png`); do not add a capture point solely to produce a
+  baseline image.
+- **Refresh by copying, not by hand-editing.** After running the dialog tests, copy the chosen file(s) from
+  `Output/Snapshots/` over their committed counterpart, e.g.:
+  ```powershell
+  Copy-Item Output/Snapshots/Options-01-initial.png Docs/migration/baseline-screenshots/ -Force
+  ```
+- **A baseline diff gets the same review scrutiny as a code change.** When a PR changes a committed PNG's
+  bytes, that is a real, reviewable claim that the dialog's look has changed on purpose — a reviewer must
+  actually open the image and judge it (the same six questions from the review step above), never
+  rubber-stamp it as "just an image diff."

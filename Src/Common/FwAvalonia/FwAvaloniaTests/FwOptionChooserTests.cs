@@ -707,7 +707,7 @@ namespace FwAvaloniaTests
 			Dispatcher.UIThread.RunJobs();
 
 			Assert.That(picker.IsDropdown, Is.False, "the default picker is inline, not dropdown");
-			Assert.That(picker.GetVisualDescendants().OfType<ToggleButton>(), Is.Empty,
+			Assert.That(picker.AuthoredDescendants<ToggleButton>(), Is.Empty,
 				"inline mode renders no collapsed dropdown toggle");
 			Assert.That(picker.GetVisualDescendants().Contains(picker.FilterBox), Is.True,
 				"the filter box still renders inline under the picker (unchanged)");

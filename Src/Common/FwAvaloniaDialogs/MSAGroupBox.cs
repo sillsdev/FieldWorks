@@ -106,9 +106,9 @@ namespace FwAvaloniaDialogs
 			// A dense, bordered host (the group-box frame), following the shared density tokens.
 			Background = FwAvaloniaDensity.PickerBackgroundBrush;
 			BorderBrush = FwAvaloniaDensity.PickerBorderBrush;
-			BorderThickness = new Thickness(1);
-			CornerRadius = new CornerRadius(3);
-			Padding = new Thickness(4);
+			BorderThickness = FwAvaloniaDensity.HairlineBorderThickness;
+			CornerRadius = FwAvaloniaDensity.PickerCornerRadius;
+			Padding = FwAvaloniaDensity.TightPadding;
 			AutomationProperties.SetAutomationId(this, "MsaGroupBox");
 
 			_affixTypeCombo = new ComboBox

@@ -21,6 +21,9 @@
 		<PackageReference Include="Avalonia" ExcludeAssets="analyzers" />
 		<PackageReference Include="Avalonia.Desktop" ExcludeAssets="analyzers" />
 		<PackageReference Include="Avalonia.Themes.Fluent" ExcludeAssets="analyzers" />
+		<PackageReference Include="Semi.Avalonia" ExcludeAssets="analyzers" />
+		<PackageReference Include="Irihi.Ursa" ExcludeAssets="analyzers" />
+		<PackageReference Include="Irihi.Ursa.Themes.Semi" ExcludeAssets="analyzers" />
 	</ItemGroup>
 
 	<ItemGroup>

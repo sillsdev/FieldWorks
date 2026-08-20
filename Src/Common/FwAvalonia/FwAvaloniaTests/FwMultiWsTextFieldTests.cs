@@ -145,7 +145,7 @@ namespace FwAvaloniaTests
 			window.UpdateLayout();
 			Dispatcher.UIThread.RunJobs();
 
-			Assert.That(control.GetVisualDescendants().OfType<Button>().Any(), Is.False,
+			Assert.That(control.AuthoredDescendants<Button>().Any(), Is.False,
 				"a text row carries no always-visible inline affordance buttons");
 
 			var box = control.GetVisualDescendants().OfType<TextBox>().Single();

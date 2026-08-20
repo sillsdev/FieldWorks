@@ -14,6 +14,7 @@ using NUnit.Framework;
 using SIL.FieldWorks.Common.FwAvalonia;
 using SIL.FieldWorks.Common.FwAvalonia.Detail;
 using SIL.FieldWorks.Common.FwAvalonia.ViewDefinition;
+using Ursa.Controls;
 
 namespace FwAvaloniaTests
 {
@@ -62,8 +63,15 @@ namespace FwAvaloniaTests
 				.FirstOrDefault(t => AutomationProperties.GetAutomationId(t) == "PluginNotesBar");
 			Assert.That(rendered, Is.SameAs(pluginControl),
 				"the factory's control renders inside the detail view");
-			Assert.That(Grid.GetColumn(pluginControl), Is.EqualTo(2),
-				"the plugin control occupies the value column; the label stays in the gutter");
+
+			// The plugin control IS the Form item's value content; Ursa reads the label from
+			// FormItem.Label on that same control, so the label lives in the Form's own label
+			// slot, not inside the plugin's content.
+			var label = FormItem.GetLabel(pluginControl) as TextBlock;
+			Assert.That(label, Is.Not.Null,
+				"the field's label rides the Form item's label slot, not the plugin control's content");
+			Assert.That(label.Text, Is.EqualTo("Messages"),
+				"the label slot carries the field's own label text, distinct from the plugin control");
 			Assert.That(FindUnsupportedBlock(view), Is.Null,
 				"a working factory never shows the unsupported text");
 		}
