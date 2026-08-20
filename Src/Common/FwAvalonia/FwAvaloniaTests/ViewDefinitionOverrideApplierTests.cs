@@ -25,6 +25,12 @@ namespace FwAvaloniaTests
 				EditorClassification.GroupingNone, null, ViewVisibility.Always, ViewExpansion.Expanded,
 				false, null, children);
 
+		private static ViewNode WsFieldNode(string id, string[] visibleWritingSystems)
+			=> new ViewNode(id, ViewNodeKind.Field, "A", null, "Form", "multistring",
+				EditorClassification.Known, "all vernacular", ViewVisibility.Always,
+				ViewExpansion.NotApplicable, false, null, null,
+				visibleWritingSystems: visibleWritingSystems);
+
 		private static ViewDefinitionModel Model(params ViewNode[] roots)
 			=> new ViewDefinitionModel("LexEntry", "detail", "jtview", roots, null);
 
@@ -70,6 +76,45 @@ namespace FwAvaloniaTests
 			Assert.That(rebuilt.ToggleValue, Is.True, "a toggle value survives the rebuild");
 			Assert.That(rebuilt.EnumStringList?.Ids, Is.EqualTo(options.Ids),
 				"an enum option list survives the rebuild");
+		}
+
+		// The writing-system subset a user picks for one field, recorded against its stable id.
+		[Test]
+		public void Apply_SetVisibleWritingSystems_RestrictsThatFieldOnly()
+		{
+			var shipped = Model(GroupNode("g", "Group",
+				WsFieldNode("g/a", new[] { "fr", "seh", "aka" }),
+				FieldNode("g/b", "B")));
+			var patch = new ViewDefinitionOverride("LexEntry", "detail", "jtview",
+				new[]
+				{
+					new ViewOverrideOperation(ViewOverrideOperationKind.SetVisibleWritingSystems, "g/a",
+						writingSystems: new[] { "fr" })
+				}, null);
+
+			var applied = ViewDefinitionOverrideApplier.Apply(shipped, patch);
+
+			Assert.That(applied.Roots[0].Children[0].VisibleWritingSystems, Is.EqualTo(new[] { "fr" }),
+				"the patched field is restricted to the chosen writing systems");
+			Assert.That(applied.Roots[0].Children[1].VisibleWritingSystems, Is.Null,
+				"a field the patch does not name is untouched");
+		}
+
+		[Test]
+		public void Apply_SetVisibleWritingSystems_PreservesTheChosenOrder()
+		{
+			var shipped = Model(GroupNode("g", "Group", WsFieldNode("g/a", new[] { "fr", "seh" })));
+			var patch = new ViewDefinitionOverride("LexEntry", "detail", "jtview",
+				new[]
+				{
+					new ViewOverrideOperation(ViewOverrideOperationKind.SetVisibleWritingSystems, "g/a",
+						writingSystems: new[] { "seh", "fr" })
+				}, null);
+
+			var applied = ViewDefinitionOverrideApplier.Apply(shipped, patch);
+
+			Assert.That(applied.Roots[0].Children[0].VisibleWritingSystems,
+				Is.EqualTo(new[] { "seh", "fr" }), "display order is the user's order, not the shipped one");
 		}
 
 		[Test]
@@ -170,6 +215,62 @@ namespace FwAvaloniaTests
 			var applied = ViewDefinitionOverrideApplier.Apply(shipped, patch);
 
 			Assert.That(applied.ToSnapshot(), Is.EqualTo(customized.ToSnapshot()));
+		}
+
+		// VisibleWritingSystems is outside ToSnapshot(), so these round trips assert it directly.
+		[Test]
+		public void RoundTrip_DiffThenApply_ReproducesCustomized_WritingSystemRestriction()
+		{
+			var shipped = Model(GroupNode("g", "Group", WsFieldNode("g/a", new[] { "fr", "seh" })));
+			var customized = Model(GroupNode("g", "Group", WsFieldNode("g/a", new[] { "seh" })));
+
+			var patch = ViewDefinitionOverrideDiffer.Diff(shipped, customized);
+			var applied = ViewDefinitionOverrideApplier.Apply(shipped, patch);
+
+			Assert.That(applied.Roots[0].Children[0].VisibleWritingSystems,
+				Is.EqualTo(new[] { "seh" }), "the differ captures the restriction and apply replays it");
+		}
+
+		[Test]
+		public void RoundTrip_DiffThenApply_ClearedRestrictionComesBackNull()
+		{
+			var shipped = Model(GroupNode("g", "Group", WsFieldNode("g/a", new[] { "fr", "seh" })));
+			var customized = Model(GroupNode("g", "Group", WsFieldNode("g/a", null)));
+
+			var patch = ViewDefinitionOverrideDiffer.Diff(shipped, customized);
+			var applied = ViewDefinitionOverrideApplier.Apply(shipped, patch);
+
+			Assert.That(applied.Roots[0].Children[0].VisibleWritingSystems, Is.Null,
+				"clearing normalizes to null, the model's own \"unrestricted\"");
+		}
+
+		[Test]
+		public void Diff_CaseOnlyWritingSystemDifference_EmitsNoOp()
+		{
+			var shipped = Model(GroupNode("g", "Group", WsFieldNode("g/a", new[] { "fr-FR" })));
+			var customized = Model(GroupNode("g", "Group", WsFieldNode("g/a", new[] { "fr-fr" })));
+
+			var patch = ViewDefinitionOverrideDiffer.Diff(shipped, customized);
+
+			Assert.That(patch.Operations, Is.Empty,
+				"the composer matches tags case-insensitively, so these render identically");
+		}
+
+		[Test]
+		public void Diff_AddedNodeWithWsRestriction_ReportsDiagnostic()
+		{
+			var shipped = Model(GroupNode("g", "Group", FieldNode("g/a", "A")));
+			var customized = Model(GroupNode("g", "Group", FieldNode("g/a", "A"),
+				WsFieldNode("g/new", new[] { "fr" })));
+
+			var patch = ViewDefinitionOverrideDiffer.Diff(shipped, customized);
+
+			Assert.That(patch.Operations.Single(o =>
+					o.Kind == ViewOverrideOperationKind.AddNode).StableId,
+				Is.EqualTo("g/new"), "the added node itself is still representable");
+			Assert.That(patch.Diagnostics.Any(
+					d => d.Code == "override-added-ws-restriction-dropped"), Is.True,
+				"the dropped restriction is reported, never silent");
 		}
 	}
 }
