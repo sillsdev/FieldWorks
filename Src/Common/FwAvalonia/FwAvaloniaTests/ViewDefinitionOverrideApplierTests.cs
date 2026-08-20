@@ -42,8 +42,8 @@ namespace FwAvaloniaTests
 		}
 
 		// Every node is rebuilt on apply, so a clone that omits a field strips it tree-wide once
-		// any override exists. These three fields are outside ToSnapshot(), so the empty-patch
-		// test misses it.
+		// any override exists. These three fields are outside ToSnapshot() and aren't covered by
+		// the EmptyPatch test.
 		[Test]
 		public void Apply_PreservesNodeFieldsNoOperationTouches()
 		{
