@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using Avalonia.Controls;
+using Avalonia.Input;
 using SIL.FieldWorks.Common.FwAvalonia.ViewDefinition;
 
 namespace SIL.FieldWorks.Common.FwAvalonia.Detail
@@ -1706,13 +1707,13 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		public IReadOnlyList<DetailChooserLink> ChooserLinks { get; }
 	}
 
-	/// <summary>Which legacy menu a right-click maps to.</summary>
+	/// <summary>Which configured menu a context-menu request maps to.</summary>
 	public enum DetailMenuKind
 	{
-		/// <summary>The slice menu (layout `menu=`), legacy right-click on the tree node/label.</summary>
+		/// <summary>The slice menu (layout `menu=`), opened from a row's label.</summary>
 		SliceMenu,
 
-		/// <summary>The in-string menu (`contextMenu=`), legacy right-click inside the value view.</summary>
+		/// <summary>The in-string menu (`contextMenu=`), opened inside a row's value.</summary>
 		ContextMenu,
 
 		/// <summary>The section hotlinks commands.</summary>
@@ -1720,24 +1721,63 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 	}
 
 	/// <summary>
-	/// A request to show a legacy-defined context menu for a detail row: the host
-	/// resolves the menu id against the xCore window configuration and shows the same menu the
-	/// legacy slice shows, at the given screen point, with the row's bound object as command target.
+	/// A request to show a configured context menu for a detail row: the host resolves the menu
+	/// id against the xCore window configuration and shows it with the row's bound object as
+	/// command target.
+	///
+	/// A right-click opens the menu at the pointer. A request with no pointer position (the
+	/// context-menu key, Shift+F10, or activating the field-options button) anchors it under
+	/// <see cref="AnchorControl"/> instead.
 	/// </summary>
 	public sealed class DetailMenuRequest
 	{
-		public DetailMenuRequest(DetailField field, DetailMenuKind kind, int screenX, int screenY)
+		private DetailMenuRequest(DetailField field, DetailMenuKind kind, Control anchorControl,
+			bool openAtPointer)
 		{
 			Field = field;
 			Kind = kind;
-			ScreenX = screenX;
-			ScreenY = screenY;
+			AnchorControl = anchorControl;
+			OpenAtPointer = openAtPointer;
 		}
+
+		/// <summary>
+		/// The request for a ContextRequested event: a right-click opens at the pointer, while
+		/// the context-menu key and Shift+F10 carry none, so the menu anchors under the surface.
+		/// </summary>
+		/// <param name="surface">The control the request arrived on; becomes the anchor.</param>
+		/// <param name="e">Read only for whether it carries a pointer position.</param>
+		/// <param name="field">The row the menu acts on.</param>
+		/// <param name="kind">Which configured menu the request maps to.</param>
+		public static DetailMenuRequest FromContextRequested(Control surface,
+			ContextRequestedEventArgs e, DetailField field, DetailMenuKind kind)
+			=> new DetailMenuRequest(field, kind, surface, e.TryGetPosition(surface, out _));
+
+		/// <summary>
+		/// The request for a pointer-less activation -- a button's mouse or keyboard Click, which
+		/// reports no pointer either way -- so the menu always anchors under the control.
+		/// </summary>
+		/// <param name="anchor">The control to drop the menu from.</param>
+		/// <param name="field">The row the menu acts on.</param>
+		/// <param name="kind">Which configured menu the activation maps to.</param>
+		public static DetailMenuRequest FromAnchor(Control anchor, DetailField field,
+			DetailMenuKind kind)
+			=> new DetailMenuRequest(field, kind, anchor, openAtPointer: false);
 
 		public DetailField Field { get; }
 		public DetailMenuKind Kind { get; }
-		public int ScreenX { get; }
-		public int ScreenY { get; }
+
+		/// <summary>
+		/// The control the request came from; the menu anchors under it when
+		/// <see cref="OpenAtPointer"/> is false. Null when the request had no source control.
+		/// </summary>
+		public Control AnchorControl { get; }
+
+		/// <summary>
+		/// False when the request carried no pointer position (context-menu key, Shift+F10, or
+		/// keyboard activation of the field-options button), which is when the menu anchors to
+		/// <see cref="AnchorControl"/> rather than opening at the pointer.
+		/// </summary>
+		public bool OpenAtPointer { get; }
 	}
 
 	/// <summary>

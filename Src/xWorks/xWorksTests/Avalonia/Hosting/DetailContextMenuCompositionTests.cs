@@ -8,71 +8,107 @@ using NUnit.Framework;
 namespace SIL.FieldWorks.XWorks
 {
 	/// <summary>
-	/// Locks the in-string right-click menu-id composition (<see cref="RecordEditView.ComposeContextMenuIds"/>)
-	/// against the legacy <c>DTMenuHandler.MakeSliceContextMenu</c> recipe. Both
-	/// mnuDataTree-MultiStringSlice and mnuDataTree-Object independently define the shared
-	/// Field Visibility / Move Field / Help group, so composing BOTH source menus makes that group
-	/// appear twice on a bridged row. These tests prove the composition adds at most one of the two.
+	/// Locks the two menu-id compositions, which stay separate. A row's slice menu
+	/// (<see cref="RecordEditView.ComposeSliceMenuIds"/>) is the row's own menu plus exactly one
+	/// shared trailing group; its in-string menu
+	/// (<see cref="RecordEditView.ComposeInStringMenuIds"/>) is the contextMenu binding alone.
+	/// The shared group belongs only to the former.
 	/// </summary>
 	[TestFixture]
 	public class DetailContextMenuCompositionTests
 	{
-		[Test]
-		public void MultiStringRow_AddsMultiStringSliceButNotObject()
-		{
-			var ids = RecordEditView.ComposeContextMenuIds("mnuDataTree-CitationFormContext",
-				isMultiStringRow: true);
+		// The Lexeme Form row's bindings (MorphologyParts.xml, MoForm-Detail-AsLexemeForm).
+		private const string LexemeFormMenu = "mnuDataTree-LexemeForm";
+		private const string LexemeFormContextMenu = "mnuDataTree-LexemeFormContext";
 
-			// The multistring slice group carries the Writing Systems submenu plus the shared
-			// Field Visibility / Move Field / Help leaves, so mnuDataTree-Object must NOT also be added
-			// (that would double the shared group).
-			Assert.That(ids, Is.EqualTo(new[]
-			{
-				"mnuDataTree-CitationFormContext",
-				RecordEditView.MultiStringSliceMenuId
-			}));
+		[Test]
+		public void SliceMenu_ForAMultiStringRow_AddsTheMultiStringGroup_NotTheObjectGroup()
+		{
+			var ids = RecordEditView.ComposeSliceMenuIds(LexemeFormMenu, isMultiStringRow: true);
+
+			// Only mnuDataTree-MultiStringSlice carries the Writing Systems submenu; composing
+			// mnuDataTree-Object here would drop Writing Systems off the slice menu.
+			Assert.That(ids, Is.EqualTo(new[] { LexemeFormMenu, RecordEditView.MultiStringSliceMenuId }));
 			Assert.That(ids, Has.No.Member(RecordEditView.ObjectMenuId),
-				"A multistring row must not add mnuDataTree-Object on top of mnuDataTree-MultiStringSlice: "
-				+ "both define Field Visibility / Move Field / Help, so the group would appear twice.");
+				"both shared menus define Field Visibility / Move Field / Help, so adding both doubles it");
 		}
 
 		[Test]
-		public void SingleStringRow_AddsObjectButNotMultiStringSlice()
+		public void SliceMenu_ForASingleStringRow_AddsTheObjectGroup()
 		{
-			var ids = RecordEditView.ComposeContextMenuIds("mnuDataTree-CitationFormContext",
-				isMultiStringRow: false);
+			var ids = RecordEditView.ComposeSliceMenuIds("mnuDataTree-Help", isMultiStringRow: false);
 
-			Assert.That(ids, Is.EqualTo(new[]
-			{
-				"mnuDataTree-CitationFormContext",
-				RecordEditView.ObjectMenuId
-			}));
+			Assert.That(ids, Is.EqualTo(new[] { "mnuDataTree-Help", RecordEditView.ObjectMenuId }));
 			Assert.That(ids, Has.No.Member(RecordEditView.MultiStringSliceMenuId));
 		}
 
 		[Test]
-		public void SharedSliceGroupSourceMenus_AreNeverBothPresent()
+		public void SliceMenu_ForAnUnboundRow_IsTheSharedObjectGroupAlone()
 		{
-			// The defect: a bridged multistring row composing BOTH shared source menus. Whatever the
-			// row kind, the two menus that carry the shared group must never both appear.
-			foreach (var isMultiString in new[] { true, false })
+			// A row with no menu= binding still composes mnuDataTree-Object, so Field
+			// Visibility / Move Field / Help stay reachable on every row.
+			Assert.That(RecordEditView.ComposeSliceMenuIds(null, isMultiStringRow: false),
+				Is.EqualTo(new[] { RecordEditView.ObjectMenuId }));
+			Assert.That(RecordEditView.ComposeSliceMenuIds(string.Empty, isMultiStringRow: false),
+				Is.EqualTo(new[] { RecordEditView.ObjectMenuId }));
+		}
+
+		// Every binding a row can carry, including a row bound directly to one of the two shared
+		// menus, which already supplies the group its own way.
+		[Test]
+		public void SliceMenu_NeverCarriesBothSharedGroupSources()
+		{
+			var bindings = new[]
 			{
-				var ids = RecordEditView.ComposeContextMenuIds("mnuDataTree-CitationFormContext",
-					isMultiString);
-				var sharedGroupSources = ids.Count(id =>
-					id == RecordEditView.MultiStringSliceMenuId || id == RecordEditView.ObjectMenuId);
-				Assert.That(sharedGroupSources, Is.EqualTo(1),
-					$"Exactly one shared-group source menu must be present (isMultiStringRow={isMultiString}); "
-					+ "adding both doubles the Field Visibility / Move Field / Help group.");
+				LexemeFormMenu, null, string.Empty,
+				RecordEditView.ObjectMenuId, RecordEditView.MultiStringSliceMenuId
+			};
+			foreach (var binding in bindings)
+			{
+				foreach (var isMultiString in new[] { true, false })
+				{
+					var ids = RecordEditView.ComposeSliceMenuIds(binding, isMultiString);
+					var sharedGroupSources = ids.Count(id =>
+						id == RecordEditView.MultiStringSliceMenuId || id == RecordEditView.ObjectMenuId);
+					Assert.That(sharedGroupSources, Is.EqualTo(1),
+						$"exactly one shared-group source must be present (menu={binding ?? "<null>"}, "
+						+ $"isMultiStringRow={isMultiString})");
+				}
 			}
 		}
 
 		[Test]
-		public void EmptyFieldContextMenuId_IsDropped()
+		public void SliceMenu_WithAnExplicitObjectBinding_DoesNotRepeatIt()
 		{
-			var ids = RecordEditView.ComposeContextMenuIds(null, isMultiStringRow: false);
+			// Even on a multistring row: the row's own binding already carries the shared group,
+			// so the multistring group must not be appended on top of it.
+			Assert.That(RecordEditView.ComposeSliceMenuIds(RecordEditView.ObjectMenuId,
+					isMultiStringRow: false),
+				Is.EqualTo(new[] { RecordEditView.ObjectMenuId }));
+			Assert.That(RecordEditView.ComposeSliceMenuIds(RecordEditView.ObjectMenuId,
+					isMultiStringRow: true),
+				Is.EqualTo(new[] { RecordEditView.ObjectMenuId }));
+		}
 
-			Assert.That(ids, Is.EqualTo(new[] { RecordEditView.ObjectMenuId }));
+		[Test]
+		public void InStringMenu_IsTheContextBindingAlone_EvenOnAMultiStringRow()
+		{
+			var ids = RecordEditView.ComposeInStringMenuIds(LexemeFormContextMenu);
+
+			// A single menu id, so the Lexeme Form value area shows exactly its two
+			// Concordance commands -- no shared group.
+			Assert.That(ids, Is.EqualTo(new[] { LexemeFormContextMenu }));
+			Assert.That(ids, Has.No.Member(RecordEditView.MultiStringSliceMenuId));
+			Assert.That(ids, Has.No.Member(RecordEditView.ObjectMenuId));
+		}
+
+		[Test]
+		public void InStringMenu_IsEmpty_WhenTheRowHasNoContextBinding()
+		{
+			// An unbound value box keeps its own local menu; it must not fall back to the
+			// slice menu.
+			Assert.That(RecordEditView.ComposeInStringMenuIds(null), Is.Empty);
+			Assert.That(RecordEditView.ComposeInStringMenuIds(string.Empty), Is.Empty);
 		}
 	}
 }

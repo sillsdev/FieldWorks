@@ -512,6 +512,44 @@ namespace SIL.FieldWorks.XWorks
 				"the in-string context menu binding survives alongside");
 		}
 
+		// The two inputs show different menus: the label merges the multistring group, which
+		// is where Writing Systems lives, and the value area shows the contextMenu binding alone.
+		[Test]
+		public void Compose_LexemeFormRow_FeedsTheTwoMenus_WithWritingSystemsOnTheSliceMenuOnly()
+		{
+			var composed = DetailComposer.Compose(m_entry, Cache);
+			var lexemeForm = composed.Model.Fields.Single(f => f.Field == "Form"
+				&& f.Kind == DetailFieldKind.Text && f.ObjectHvo == m_entry.LexemeFormOA.Hvo);
+
+			Assert.That(lexemeForm.IsMultiStringRow, Is.True,
+				"editor=\"multistring\" is what the menu merge keys on");
+
+			var sliceMenuIds = RecordEditView.ComposeSliceMenuIds(lexemeForm.MenuId,
+				lexemeForm.IsMultiStringRow);
+			Assert.That(sliceMenuIds, Is.EqualTo(new[]
+			{
+				"mnuDataTree-LexemeForm",
+				RecordEditView.MultiStringSliceMenuId
+			}), "the label menu is the row's own menu plus the multistring group");
+
+			var inStringMenuIds = RecordEditView.ComposeInStringMenuIds(lexemeForm.ContextMenuId);
+			Assert.That(inStringMenuIds, Is.EqualTo(new[] { "mnuDataTree-LexemeFormContext" }),
+				"the value menu is the contextMenu binding alone");
+
+			// Only mnuDataTree-MultiStringSlice defines the Writing Systems submenu, so it must
+			// reach the label menu and must NOT reach the value menu.
+			var commonInclude = System.IO.Path.Combine(
+				SIL.FieldWorks.Common.FwUtils.FwDirectoryFinder.GetCodeSubDirectory(
+					@"Language Explorer\Configuration"),
+				"CommonDataTreeInclude.xml");
+			var multiStringGroup = System.Xml.Linq.XDocument.Load(commonInclude).Descendants("menu")
+				.First(m => (string)m.Attribute("id") == RecordEditView.MultiStringSliceMenuId);
+			Assert.That(multiStringGroup.Elements("menu")
+					.Select(m => (string)m.Attribute("id")),
+				Does.Contain("DataTree-WritingSystemsMenu"),
+				"the multistring group is the one that carries Writing Systems");
+		}
+
 		[Test]
 		public void Compose_RichTextReplacement_PreservesStringTableLabels_AndFwAvaloniaMessageLane()
 		{
