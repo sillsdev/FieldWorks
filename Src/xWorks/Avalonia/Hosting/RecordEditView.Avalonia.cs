@@ -602,24 +602,17 @@ namespace SIL.FieldWorks.XWorks
 			if (location == null)
 				return null; // unknown/stale target: leave commands on the legacy path rather than guess.
 
-			return choice =>
-			{
-				switch (choice.HelpId)
-				{
-					case "CmdAlwaysVisible":
-						return VisibilityItem(choice, field, templateId, location, ViewVisibility.Always);
-					case "CmdIfData":
-						return VisibilityItem(choice, field, templateId, location, ViewVisibility.IfData);
-					case "CmdNormallyHidden":
-						return VisibilityItem(choice, field, templateId, location, ViewVisibility.Never);
-					case "CmdDataTree-MoveFieldUp":
-						return MoveItem(choice, field, location, up: true);
-					case "CmdDataTree-MoveFieldDown":
-						return MoveItem(choice, field, location, up: false);
-					default:
-						return null; // not a field command: keep its normal mediator dispatch.
-				}
-			};
+			// An unregistered command falls through TryBuild as null: normal mediator dispatch.
+			var registry = new OverrideCommandRegistry();
+			registry.Add("CmdAlwaysVisible",
+				c => VisibilityItem(c, field, templateId, location, ViewVisibility.Always));
+			registry.Add("CmdIfData",
+				c => VisibilityItem(c, field, templateId, location, ViewVisibility.IfData));
+			registry.Add("CmdNormallyHidden",
+				c => VisibilityItem(c, field, templateId, location, ViewVisibility.Never));
+			registry.Add("CmdDataTree-MoveFieldUp", c => MoveItem(c, field, location, up: true));
+			registry.Add("CmdDataTree-MoveFieldDown", c => MoveItem(c, field, location, up: false));
+			return registry.TryBuild;
 		}
 
 		// A Field Visibility menu item: checked when it is the field's current visibility, executes the
