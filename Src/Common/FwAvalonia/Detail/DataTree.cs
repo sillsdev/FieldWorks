@@ -288,9 +288,9 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 
 				AutomationProperties.SetAutomationId(header, automationId);
 				AutomationProperties.SetName(header, field.Label ?? string.Empty);
-				// 13.3/13.5: the section menu/hotlinks open from the hover "..." field-menu
-				// button (which
-				// replaced right-click), in a thin gutter to the left of the header.
+				// 13.3/13.5: the header answers right-click with its slice menu; the hover
+				// "..." field-menu button (in a thin gutter to the left of the header)
+				// opens the section menu/hotlinks.
 				var headerCell = WrapWithFieldMenu(header, field, automationId, out var headerKebab);
 
 				// Discoverability parity (legacy SummaryCommandControl): a section header with hotlinks
@@ -357,9 +357,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			AutomationProperties.SetAutomationId(labelBlock, automationId + ".Label");
 			AutomationProperties.SetName(labelBlock, field.Label ?? field.Field ?? string.Empty);
 			ToolTip.SetTip(labelBlock, field.Label ?? field.Field); // 11.17: legacy label tooltips
-			// 13.3: the field's slice menu opens from the hover "..." button in the left gutter
-			// (which
-			// replaced right-click on the label).
+			// 13.3: the field's slice menu opens from a right-click on the label cell
+			// or from the hover "..." button in the left gutter.
 			var labelCell = WrapWithFieldMenu(labelBlock, field, automationId, out var labelKebab);
 			Grid.SetRow(labelCell, row * 2);
 			Grid.SetColumn(labelCell, 0);
@@ -388,9 +387,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		// every row (when a host bridge is present) so labels align whether or not a row has a menu.
 		private const double FieldMenuGutterWidth = 18;
 
-		// The hover/keyboard-revealed "..." kebab replaces right-click, raising the
-		// same DetailMenuRequest; with no host bridge the content returns unwrapped
-		// so preview/test hosts stay unchanged.
+		// The label cell answers context gestures with the row's slice menu; the kebab raises
+		// the row's own menu or hotlinks. With no host bridge the content returns unwrapped.
 		private Control WrapWithFieldMenu(Control inner, DetailField field, string automationId,
 			out Control kebab)
 		{
@@ -421,11 +419,9 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				// affordance is fully keyboard-operable once Tab focus reveals it.
 				button.Click += (s, e) =>
 				{
-					// Anchor the menu to the icon (drop from its bottom-left) -- the
-					// screen-coordinate
-					// contract the host's DetailMenuRequest handler positions the xCore menu by.
-					var screen = button.PointToScreen(new Point(0, button.Bounds.Height));
-					_menuRequested(new DetailMenuRequest(field, kind, screen.X, screen.Y));
+					// No pointer position is available here, so the menu drops from the
+					// icon rather than from wherever the mouse sits.
+					_menuRequested(DetailMenuRequest.FromAnchor(button, field, kind));
 				};
 				rail.Child = button;
 				kebab = button;
@@ -435,7 +431,21 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			DockPanel.SetDock(rail, Dock.Left);
 			wrapper.Children.Add(rail);
 			wrapper.Children.Add(inner); // fills the width remaining after the gutter
+			WireLabelContextMenu(wrapper, field);
 			return wrapper;
+		}
+
+		/// <summary>
+		/// Wires up the Label context menu for a slice.
+		/// </summary>
+		private void WireLabelContextMenu(Control cell, DetailField field)
+		{
+			cell.AddHandler(Control.ContextRequestedEvent, (s, e) =>
+			{
+				_menuRequested(DetailMenuRequest.FromContextRequested(cell, e, field,
+					DetailMenuKind.SliceMenu));
+				e.Handled = true;
+			}, Avalonia.Interactivity.RoutingStrategies.Bubble);
 		}
 
 		// Legacy command-link blue (SummaryCommandControl LinkLabel) for the inline hotlinks strip.
@@ -470,10 +480,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			ToolTip.SetTip(link, FwAvaloniaStrings.FieldOptionsMenu);
 			link.Click += (s, e) =>
 			{
-				// Anchor the hotlinks menu to the link (drop from its bottom-left), the same
-				// screen-coordinate contract the kebab uses.
-				var screen = link.PointToScreen(new Point(0, link.Bounds.Height));
-				_menuRequested(new DetailMenuRequest(field, DetailMenuKind.Hotlinks, screen.X, screen.Y));
+				// Drops from the link's bottom-left.
+				_menuRequested(DetailMenuRequest.FromAnchor(link, field, DetailMenuKind.Hotlinks));
 			};
 			return link;
 		}

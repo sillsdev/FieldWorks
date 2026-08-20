@@ -63,12 +63,25 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			return flyout;
 		}
 
-		/// <summary>Shows the flyout at the current pointer position over the target control.</summary>
-		public static void Show(IReadOnlyList<DetailMenuItem> items, Control target)
+		/// <summary>
+		/// Shows the flyout over a target control: at the pointer for a pointer gesture, dropped
+		/// from the target when the gesture carries no pointer position.
+		/// </summary>
+		/// <param name="items">The menu items; null or empty shows nothing.</param>
+		/// <param name="target">The control to open over; null shows nothing.</param>
+		/// <param name="atPointer">False drops the menu from the target's bottom-left corner --
+		/// the context-menu key, Shift+F10, and keyboard button activation.</param>
+		/// <returns>The flyout that was shown, or null when there was nothing to show.</returns>
+		public static MenuFlyout Show(IReadOnlyList<DetailMenuItem> items, Control target,
+			bool atPointer)
 		{
 			if (items == null || items.Count == 0 || target == null)
-				return;
-			Build(items).ShowAt(target, showAtPointer: true);
+				return null;
+			var flyout = Build(items);
+			if (!atPointer)
+				flyout.Placement = PlacementMode.BottomEdgeAlignedLeft;
+			flyout.ShowAt(target, showAtPointer: atPointer);
+			return flyout;
 		}
 
 		private static IEnumerable<Control> CreateControls(IReadOnlyList<DetailMenuItem> items)

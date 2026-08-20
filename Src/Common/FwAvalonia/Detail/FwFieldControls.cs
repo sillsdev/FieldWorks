@@ -35,9 +35,11 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 	/// (<see cref="DetailRichTextValue.CanEditRichText"/>); such a value shows the explanatory tooltip
 	/// and stays full-fidelity in the classic view.
 	/// Menus: a row whose layout binds a slice menu (`menu=`, e.g. the Lexeme Form's
-	/// mnuDataTree-LexemeForm with Swap/Convert commands) surfaces it on RIGHT-CLICK only (the
-	/// label/value right-click paths) -- text rows draw NO gear. The gear is reserved for the
-	/// "configure the supporting list" jump on chooser/vector rows; it never opens a menu.
+	/// mnuDataTree-LexemeForm with Swap/Convert commands) surfaces it from the label cell: its
+	/// right-click and its "..." field-options button. A row binding an in-string menu
+	/// (`contextMenu=`) surfaces THAT one here, from the value box. Text rows draw
+	/// NO gear; the gear is reserved for the "configure the supporting list" jump on
+	/// chooser/vector rows and never opens a menu.
 	/// Rich-text operations (character style, per-run writing-system retag, insert/edit external link,
 	/// delete embedded object) are NOT always-visible inline controls: like the legacy detail slice, which
 	/// shows only the abbreviation + value with such operations reached off-row, they are offered as items
@@ -713,6 +715,13 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 					currentRich, !valueIsReadOnly);
 
 				var rowPanel = CreateRowPanel(abbrev, valueContent, showWritingSystemAbbreviation);
+				// The whole row opens the in-string menu. The box's tunnelling handler wins
+				// inside the value.
+				if (hasBridge)
+				{
+					WireInStringContextMenu(rowPanel, field, menuRequested,
+						Avalonia.Interactivity.RoutingStrategies.Bubble);
+				}
 				Children.Add(rowPanel);
 		}
 
@@ -796,30 +805,36 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			var hasBridge = menuRequested != null && !string.IsNullOrEmpty(field.ContextMenuId);
 			if (hasBridge)
 			{
-				EventHandler<PointerPressedEventArgs> menuPressed = (s2, e2) =>
-				{
-					if (!e2.GetCurrentPoint(box).Properties.IsRightButtonPressed)
-						return;
-					var screen = box.PointToScreen(e2.GetPosition(box));
-					menuRequested(new DetailMenuRequest(field, DetailMenuKind.ContextMenu, screen.X, screen.Y));
-					e2.Handled = true;
-				};
-				EventHandler<ContextRequestedEventArgs> swallowContext = (s2, e2) => e2.Handled = true;
-				box.AddHandler(InputElement.PointerPressedEvent, menuPressed,
-					Avalonia.Interactivity.RoutingStrategies.Tunnel);
-				// 15.2: exactly ONE menu -- drop the TextBox flyout (Cut/Copy/Paste,
-				// which opens from ContextRequested on right-button RELEASE) so only the
-				// bridged menu shows; swallow the request so nothing else opens.
+				// 15.2: exactly ONE menu -- drop the TextBox flyout (Cut/Copy/Paste) so
+				// only the bridged menu shows. Tunnelling puts this handler ahead of
+				// anything the box or the whole-row handler would open.
 				box.ContextFlyout = null;
-				box.AddHandler(Control.ContextRequestedEvent, swallowContext,
+				WireInStringContextMenu(box, field, menuRequested,
 					Avalonia.Interactivity.RoutingStrategies.Tunnel);
-				_teardown.Add(() =>
-				{
-					box.RemoveHandler(InputElement.PointerPressedEvent, menuPressed);
-					box.RemoveHandler(Control.ContextRequestedEvent, swallowContext);
-				});
 			}
 			return hasBridge;
+		}
+
+		/// <summary>
+		/// Raises the row's in-string menu request.
+		/// </summary>
+		/// <param name="surface">The region the gesture is answered on -- the value box or the
+		/// whole row panel; also the anchor a keyboard-raised menu drops from.</param>
+		/// <param name="field">The row supplying the <c>contextMenu=</c> binding.</param>
+		/// <param name="menuRequested">The host bridge that shows the menu.</param>
+		/// <param name="routes">Tunnel puts this ahead of an inner surface's own handler; the
+		/// value box needs it so one gesture raises exactly one request.</param>
+		private void WireInStringContextMenu(Control surface, DetailField field,
+			Action<DetailMenuRequest> menuRequested, Avalonia.Interactivity.RoutingStrategies routes)
+		{
+			EventHandler<ContextRequestedEventArgs> handler = (s, e) =>
+			{
+				menuRequested(DetailMenuRequest.FromContextRequested(surface, e, field,
+					DetailMenuKind.ContextMenu));
+				e.Handled = true;
+			};
+			surface.AddHandler(Control.ContextRequestedEvent, handler, routes);
+			_teardown.Add(() => surface.RemoveHandler(Control.ContextRequestedEvent, handler));
 		}
 
 		private void WireWritingSystemKeyboard(TextBox box, DetailWsValue value,
@@ -932,7 +947,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			return null;
 		}
 
-		/// <summary>Text rows have no hover-revealed affordances (the slice menu is right-click only).</summary>
+		/// <summary>Text rows have no hover-revealed affordances of their own.</summary>
 		public IReadOnlyList<Control> HoverAffordances => Array.Empty<Control>();
 
 		/// <summary>
