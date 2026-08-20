@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2003-2017 SIL International
+// Copyright (c) 2003-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -381,13 +381,38 @@ namespace SIL.FieldWorks.XWorks
 			if (!m_detailEditContext.IsDeactivateHookAttached)
 				m_detailEditContext.AttachDeactivateHook(FindForm());
 			m_avaloniaEntryForm.ShowDetail(detail, editContext,
-				wsTag => WritingSystemKeyboards.Activate(Cache, wsTag),
+				OnDetailWritingSystemFocused,
 				GetPersistedExpansionState, PersistExpansionState,
 				OnDetailMenuRequested, OnDetailLinkRequested,
 				new FwTsStringClipboard(Cache.WritingSystemFactory),
 				GetPersistedLabelColumnWidth, PersistLabelColumnWidth);
 		}
 
+		/// <summary>
+		/// Called when a writing system editor gains focus. Never throws: a focus
+		/// event can race view teardown, so failures are logged instead.
+		/// </summary>
+		internal void OnDetailWritingSystemFocused(string wsTag)
+		{
+			if (IsDisposed || m_propertyTable == null)
+				return;
+			try
+			{
+				// Without this, the last-focused root site still answers WasFocused() and the
+				// property change below would make it steal focus and re-tag its selection.
+				SimpleRootSite.ForgetLastFocusedRootSite();
+				WritingSystemKeyboards.Activate(Cache, wsTag);
+				var ws = Cache.WritingSystemFactory.GetWsFromStr(wsTag);
+				if (ws <= 0)
+					return;
+				Publisher.Publish(new PublisherParameterObject(
+					EventConstants.WritingSystemUnderCursorChanged, ws, m_propertyTable.GetWindow()));
+			}
+			catch (Exception e)
+			{
+				Logger.WriteError("Writing-system focus handling failed.", e);
+			}
+		}
 
 		/// <summary>
 		/// Shows the SAME xCore-defined context menu the legacy slice shows, over the

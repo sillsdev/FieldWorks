@@ -55,5 +55,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public const string ViewLiftMessages = "ViewLiftMessages";
 		public const string ViewMessages = "ViewMessages";
 		public const string WarnUserAboutFailedLiftImportIfNecessary = "WarnUserAboutFailedLiftImportIfNecessary";
+		public const string WritingSystemUnderCursorChanged = "WritingSystemUnderCursorChanged";
 	}
 }

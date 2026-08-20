@@ -9,9 +9,11 @@ using System.Linq;
 using System.Xml;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.WritingSystems;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.DomainServices;
 using XCore;
+using static SIL.FieldWorks.Common.FwUtils.FwUtils;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -123,6 +125,9 @@ namespace SIL.FieldWorks.XWorks
 
 			if (disposing)
 			{
+				Subscriber.Unsubscribe(EventConstants.WritingSystemUnderCursorChanged,
+					WritingSystemUnderCursorChanged);
+
 				// Dispose managed resources here.
 				if (m_mediator !=  null)
 					m_mediator.RemoveColleague(this);
@@ -149,6 +154,21 @@ namespace SIL.FieldWorks.XWorks
 				cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle.ToString(),
 				true);
 			m_propertyTable.SetPropertyPersistence("WritingSystemHvo", false);
+
+			Subscriber.Subscribe(EventConstants.WritingSystemUnderCursorChanged,
+				WritingSystemUnderCursorChanged, m_propertyTable.GetWindow());
+
+		}
+
+		/// <summary>
+		/// Subscriber for the focus writing system changing.
+		/// </summary>
+		private void WritingSystemUnderCursorChanged(object argument)
+		{
+			if (!(argument is int ws))
+				return;
+			m_propertyTable.SetProperty(PropertyConstants.WritingSystemHvo,
+				ws.ToString(CultureInfo.InvariantCulture), true);
 		}
 
 		/// <summary>
