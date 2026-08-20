@@ -133,7 +133,10 @@ namespace SIL.FieldWorks.XWorks
 			if (progress != null)
 			  progress.Maximum = entriesToSave.Length;
 
-			var dictConfig = new DictionaryConfigurationModel(
+			// ReSharper disable once ObjectCreationAsStatement - The Reversal Configuration needs to be loaded per
+			// https://github.com/sillsdev/FieldWorks/pull/939
+			// REVIEW (Hasso) 2026.08: why is this needed? The revConfig is passed in, so it must have been loaded already.
+			new DictionaryConfigurationModel(
 				DictionaryConfigurationListener.GetCurrentConfiguration(m_propertyTable, "ReversalIndex"), m_cache);
 
 			string reversalFilePath = filePath.Split(new string[] { ".docx"}, StringSplitOptions.None)[0] + "-reversal-" + reversalWs + ".docx";
