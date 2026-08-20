@@ -65,6 +65,96 @@ namespace SIL.FieldWorks.Common.FwUtils
 			Assert.That(FwDirectoryFinder.CodeDirectory, Is.SamePath(currentDir));
 		}
 
+		///-------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests that FindDevDistFiles locates DistFiles from anywhere inside a source tree,
+		/// not only from the Output/&lt;Configuration&gt; folder two levels below its root.
+		/// </summary>
+		///-------------------------------------------------------------------------------------
+		[TestCase("Output/Debug")]
+		[TestCase("Output/Debug/x64")]
+		[TestCase("Src/Common/FwUtils/bin/Debug/net8.0")]
+		public void FindDevDistFiles_InsideSourceTree_FindsTreeDistFiles(string startSubDirectory)
+		{
+			var treeRoot = CreateFakeSourceTree(withSolutionFile: true);
+			try
+			{
+				var startDir = Directory.CreateDirectory(Path.Combine(treeRoot, startSubDirectory)).FullName;
+
+				Assert.That(FwDirectoryFinder.FindDevDistFiles(startDir),
+					Is.SamePath(Path.Combine(treeRoot, "DistFiles")));
+			}
+			finally
+			{
+				Directory.Delete(treeRoot, true);
+			}
+		}
+
+		///-------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests that FindDevDistFiles ignores a DistFiles folder that is not part of a source
+		/// tree, which is what keeps an installed FieldWorks on its registry directories.
+		/// </summary>
+		///-------------------------------------------------------------------------------------
+		[Test]
+		public void FindDevDistFiles_OutsideSourceTree_ReturnsNull()
+		{
+			var installRoot = CreateFakeSourceTree(withSolutionFile: false);
+			try
+			{
+				var startDir = Directory.CreateDirectory(Path.Combine(installRoot, "Output", "Debug")).FullName;
+
+				Assert.That(FwDirectoryFinder.FindDevDistFiles(startDir), Is.Null);
+			}
+			finally
+			{
+				Directory.Delete(installRoot, true);
+			}
+		}
+
+		///-------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests that the source tree the assembly runs from wins over a registry value naming
+		/// another tree, so that worktrees do not read each other's DistFiles.
+		/// </summary>
+		///-------------------------------------------------------------------------------------
+		[TestCase("RootCodeDir")]
+		[TestCase("RootDataDir")]
+		public void CodeAndDataDirectory_PreferSourceTreeOverRegistry(string registryValueName)
+		{
+			var expectedDir = Path.GetFullPath(Path.Combine(UtilsAssemblyDir, "../../DistFiles"));
+			using (var fwHKCU = FwRegistryHelper.FieldWorksRegistryKey)
+			{
+				var originalValue = fwHKCU.GetValue(registryValueName);
+				fwHKCU.SetValue(registryValueName, Path.Combine(Path.GetTempPath(), "SomeOtherWorktree", "DistFiles"));
+				try
+				{
+					Assert.That(FwDirectoryFinder.CodeDirectory, Is.SamePath(expectedDir));
+					Assert.That(FwDirectoryFinder.DataDirectory, Is.SamePath(expectedDir));
+				}
+				finally
+				{
+					fwHKCU.SetValue(registryValueName, originalValue);
+				}
+			}
+		}
+
+		///-------------------------------------------------------------------------------------
+		/// <summary>
+		/// Creates a throw-away directory holding a DistFiles folder, and the solution file that
+		/// marks a source tree unless <paramref name="withSolutionFile"/> says otherwise.
+		/// </summary>
+		///-------------------------------------------------------------------------------------
+		private static string CreateFakeSourceTree(bool withSolutionFile)
+		{
+			var root = Directory.CreateDirectory(Path.Combine(Path.GetTempPath(),
+				"FwDirectoryFinderTests", Guid.NewGuid().ToString("N"))).FullName;
+			Directory.CreateDirectory(Path.Combine(root, "DistFiles"));
+			if (withSolutionFile)
+				File.WriteAllText(Path.Combine(root, "FieldWorks.sln"), string.Empty);
+			return root;
+		}
+
 		/// <summary>
 		/// Verify that the user project key falls back to the local machine.
 		/// </summary>

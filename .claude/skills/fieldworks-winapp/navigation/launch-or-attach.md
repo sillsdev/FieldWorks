@@ -28,6 +28,9 @@ returns empty and `winforms_take_screenshot` is blank even though the process is
   when the other worktree is NOT active (no FieldWorks.exe running from it) and was NOT used in the last 24h
   (registry key write time). If it prints `RESULT=ASK_USER`, the other worktree may be active — **ask the
   user** before realigning, then re-run with `-Force` if they approve.
+  Since `FwDirectoryFinder` learned to anchor on the source tree it runs from, an exe built from a current
+  worktree already reads its own `DistFiles`; keep running the script for older builds, and for the other
+  registry values (`ProjectsDir`), which are still shared across worktrees.
 
 See the script headers and `../references/mcp-setup.md`.
 
