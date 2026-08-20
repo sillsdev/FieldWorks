@@ -113,7 +113,9 @@
 	<Target Name="RescuePatching">
 		<ItemGroup>
 			<!-- <RemovedSinceLastBase Include="$(dir-outputBase)/Helps/WW-ConceptualIntro/ConceptualIntroduction.htm" /> -->
-			<!-- Empty as of the base build cut after 1437; add entries here when a change stops emitting a file the base still ships. -->
+			<!-- liblcm swapped its IoC container from StructureMap to Microsoft.Extensions.DependencyInjection
+				in SIL.LCModel 11.0.0-beta0176, so nothing copies StructureMap.dll to the output any more. -->
+			<RemovedSinceLastBase Include="$(dir-outputBase)/StructureMap.dll" />
 		</ItemGroup>
 		<WriteLinesToFile
 			File="%(RemovedSinceLastBase.FullPath)"
