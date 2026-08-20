@@ -4,7 +4,7 @@ These align with the gitlint rules run in CI.
 
 ## Subject (first line)
 
-- Max 72 characters.
+- Min 8, max 72 characters.
 - Use imperative mood when reasonable (e.g., "Fix crash on startup").
 - No trailing punctuation (e.g., don't end with a period).
 - No tabs, no leading/trailing whitespace.
