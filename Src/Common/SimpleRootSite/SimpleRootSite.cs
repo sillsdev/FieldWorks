@@ -5792,6 +5792,21 @@ namespace SIL.FieldWorks.Common.RootSites
 			return g_focusRootSite.Target == this;
 		}
 
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Forgets which root site last had focus, so no root site reports <see
+		/// cref="WasFocused"/>.
+		/// Call when focus is known to have moved to an HWND that is not a WinForms control:
+		/// the kill-focus plumbing resolves such a window to null and leaves the stale
+		/// reference in place (see OnKillFocus), so a later "WritingSystemHvo"/"BestStyleName"
+		/// change would act on a root site the user has left.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		public static void ForgetLastFocusedRootSite()
+		{
+			g_focusRootSite = new WeakReference(null);
+		}
+
 		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Some situations lead to invalidating very large rectangles. Something seems to go wrong
