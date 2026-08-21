@@ -51,7 +51,7 @@ Name files `NN-state-subject.png` so they sort into reading order:
 
 ## Publish -- GitHub
 
-Probe for a route in this order and say which one was used.
+Try these in order and say which one was used.
 
 **1. `gh --attach`, once it ships.** Native upload on six commands (issue and
 PR create, edit, comment), tracked by `github/roadmap#1324`. It uses the
@@ -77,24 +77,17 @@ that defeats extraction on Windows, so a Chrome-only machine will report
   a developer chooses this route, they set `GH_SESSION_TOKEN` in their own
   shell before starting the session -- never pasted into a prompt.
 
-**3. Orphan `evidence` branch.** Always available, no credential, and the only
-route in CI. The branch is created once, never merged, and never appears in a
-diff:
+**3. Ask the author to drag it in.** When neither route above is available --
+no `--attach` yet, no session cookie, or a CI run, where the official flag
+excludes Actions tokens anyway -- say so and hand the file over. Name the exact
+path to drop into the comment box, then splice the returned URL into the body.
 
-```powershell
-git switch --orphan evidence
-```
+That is a real answer, not a failure. An agent that cannot upload should say
+which route it tried and stop, rather than inventing somewhere to put the file.
 
-Reference the file by a **sha-pinned** raw URL so a merged PR's images can
-never change under it:
-
-```markdown
-![Before -- Lexeme lists seh and pt (headless capture)](https://raw.githubusercontent.com/sillsdev/FieldWorks/<sha>/LT-22691d/01-before.png)
-```
-
-`sillsdev/FieldWorks` is public, so these render for everyone with no auth.
-The branch must be protected: deleting it breaks every image in every PR that
-ever referenced it.
+**Do not commit images to the repository** to work around this, and do not
+create a side branch to host them. Both put binaries in history permanently to
+solve a problem that lasts one review.
 
 ## Publish -- Jira
 
@@ -137,4 +130,4 @@ project access, and a GitHub attachment on a public repo is public.
 - [ ] Captioned with what to look at.
 - [ ] Provenance named: headless, live, or mockup.
 - [ ] Permission asked and answered before upload.
-- [ ] The publish route used is stated, and any URL is sha-pinned.
+- [ ] The publish route used is stated, including when it was you.
