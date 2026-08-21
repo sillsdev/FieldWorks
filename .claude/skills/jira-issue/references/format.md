@@ -9,6 +9,13 @@
 | Description | 250 words total, ending in one `*Next:*` line | Nothing can be collapsed |
 | Analysis comment | As long as the reasoning deserves | Nobody is forced to scroll past it |
 
+Required fields, regardless of subject:
+
+| Field | Value |
+| --- | --- |
+| Affects Version (`versions`) | `FW 9.3` on every new ticket, plus any specific point release the reporter names |
+| Assignee | Only when someone is taking it now. Data Center wants `{"name": "<username>"}` |
+
 Count words before publishing. Over budget means the overflow was comment
 material, not that the budget was wrong.
 

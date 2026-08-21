@@ -60,6 +60,9 @@ no project file, no menu path, and no reproduction inside the application.
 "N/A" is worse than a short ticket: it costs the reader the same scan and
 returns nothing. Drop the heading instead.
 
+One exception, and it is not a section: **Affects Version is always set**, even
+on a ticket with no FLEx version in its body. See Phase 6.
+
 The same test governs the interview. Asking a developer which FLEx build they
 were running, for a ticket about a Markdown reference file, wastes one of the
 six questions and signals that the ticket was generated rather than written.
@@ -164,6 +167,32 @@ describe the data instead of attaching it and record that in the ticket.
 
 ## Phase 6 -- Publish
 
+### Required on every new issue
+
+**Affects Version is `FW 9.3` on every new ticket, without exception.** It is
+a filing convention that keeps the queue filterable, not a claim about which
+build the reporter was running -- so Phase 0b does **not** exempt a tooling,
+build or documentation ticket from it. If the reporter names a specific point
+release, add that version as well; never in place of `FW 9.3`.
+
+The field is `versions` (Affects Version), not `fixVersions`. Neither
+`jira_create_issue` nor `jira_update_issue` exposes it directly, so it goes
+through `custom_fields`:
+
+```powershell
+python -c @'
+import sys; sys.path.insert(0, ".claude/skills/atlassian-skills/scripts")
+from jira_issues import jira_update_issue
+print(jira_update_issue("LT-XXXXX", custom_fields={"versions": [{"name": "FW 9.3"}]}))
+'@
+```
+
+`assignee` is the same story: `jira_create_issue` sends a Cloud-style
+`accountId`, which SIL's Data Center rejects. Use
+`custom_fields={"assignee": {"name": "<username>"}}`.
+
+### Order
+
 Order matters: issue, then comment, then links.
 
 Write the description and the comment to files first; never inline multi-line
@@ -240,6 +269,7 @@ If Phase 2 found the work already exists, Phase 8 targets that existing key.
 - [ ] Every unknown is a `*Not known:*` line rather than a guess.
 - [ ] No section was emitted that does not apply -- no "N/A" environment, no
       empty repro steps on a ticket with nothing to reproduce.
+- [ ] Affects Version is set to `FW 9.3`. Every new ticket, no exceptions.
 - [ ] The duplicate table was shown and answered.
 - [ ] Links created for every candidate marked duplicate or related.
 - [ ] Nothing was attached without the permission question being answered.
