@@ -4,6 +4,7 @@
 ## CI-ready checklist
 
 - [ ] Commit messages follow [`.github/commit-guidelines.md`](https://github.com/sillsdev/FieldWorks/blob/main/.github/commit-guidelines.md).
+- [ ] As much as possible, the change is unit tested.
 - [ ] Builds & tests pass locally (or I've run the CI-style build via `build.ps1`, `test.ps1`, or MSBuild).
 - [ ] If this is core-developer AI-assisted work, I followed `Docs/workflows/ai-pr-workflow.md` and ran `pr-preflight` or the equivalent branch-readiness review before requesting review.
 - [ ] For any `Src/**` folders touched, corresponding `AGENTS.md` files are updated or explicitly confirmed still accurate.
