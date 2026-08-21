@@ -34,14 +34,17 @@ By default, dependencies are downloaded as NuGet packages during the build. The 
 
 ## Building and Debugging Dependencies Locally
 
-If you need to debug into or modify a dependency library, use the `Build/Manage-LocalLibraries.ps1` script. It packs a local checkout into a local NuGet feed, detects the produced version, and updates `SilVersions.props` to match.
+If you need to debug into or modify a dependency library, select it with
+`build.ps1 -LocalLibraries`. The build packs the local checkout into a local NuGet
+feed and uses its detected version for that invocation without changing
+`SilVersions.props`.
 
 Quick start:
 
 ```powershell
 $env:LOCAL_NUGET_REPO = "C:\localnugetpackages"
-.\Build\Manage-LocalLibraries.ps1 -Palaso -PalasoPath C:\Repos\libpalaso
-.\build.ps1
+$env:LIBPALASO_PATH = "C:\Repos\libpalaso"
+.\build.ps1 -LocalLibraries palaso
 ```
 
 For the full workflow (setup, pack, build, debug, revert), see **[Local Library Debugging](local-library-debugging.md)**.

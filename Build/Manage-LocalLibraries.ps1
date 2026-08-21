@@ -5,11 +5,11 @@
 .DESCRIPTION
 	Two modes of operation:
 
-	Pack mode (one or more source paths provided):
-	  Packs local checkouts of liblcm, libpalaso, chorus, and/or machine into the
-	  local NuGet feed using each library's own version. Detects the version
-	  from produced packages, updates SilVersions.props to match, copies
-	  PDBs, and clears stale cached packages.
+	Build pack mode (one or more source paths and -VersionOutputPath provided):
+	  Packs local checkouts of liblcm, libpalaso, chorus, machine, and/or
+	  L10NSharp into the local NuGet feed using each library's own version.
+	  Detects the versions, writes them for build.ps1, copies PDBs, and clears
+	  stale cached packages.
 
 	  Multiple libraries can be packed in a single call. libpalaso is always
 	  packed first (other libraries may depend on it).
@@ -66,13 +66,16 @@
 	Sets the version in SilVersions.props (SetVersion mode). Use to revert
 	to an upstream version. Not used in pack mode.
 
-.EXAMPLE
-	.\Build\Manage-LocalLibraries.ps1 -Palaso -PalasoPath C:\Repos\libpalaso
-	Packs libpalaso, detects its version, and updates SilVersions.props.
+.PARAMETER VersionOutputPath
+	JSON output consumed by build.ps1 for invocation-scoped version overrides.
 
 .EXAMPLE
-	.\Build\Manage-LocalLibraries.ps1 -Palaso -Chorus -ChorusPath C:\Repos\chorus
-	Packs libpalaso (from env var) and then chorus from the given path.
+	.\build.ps1 -LocalLibraries palaso
+	Rebuilds libpalaso from LIBPALASO_PATH for this FieldWorks build.
+
+.EXAMPLE
+	.\build.ps1 -LocalLibraries palaso,chorus
+	Rebuilds libpalaso and chorus from their configured paths for this build.
 
 .EXAMPLE
 	.\Build\Manage-LocalLibraries.ps1 -Library palaso -Version 17.0.0
@@ -98,59 +101,16 @@ param(
 	[ValidateSet('palaso', 'lcm', 'chorus', 'machine', 'l10nsharp')]
 	[string]$Library,
 
-	[string]$Version
+	[string]$Version,
+
+	[string]$VersionOutputPath
 )
 
 $ErrorActionPreference = "Stop"
-
-# ---------------------------------------------------------------------------
-# Library-specific configuration
-# ---------------------------------------------------------------------------
-
-$LibraryConfig = @{
-	palaso = @{
-		VersionProperty = 'SilLibPalasoVersion'
-		PdbRelativeDir  = 'output/Debug/net462'
-		CachePrefixes   = @(
-			'sil.core', 'sil.windows', 'sil.dblbundle', 'sil.writingsystems',
-			'sil.dictionary', 'sil.lift', 'sil.lexicon', 'sil.archiving',
-			'sil.media', 'sil.scripture', 'sil.testutilities'
-		)
-		EnvVar          = 'LIBPALASO_PATH'
-	}
-	lcm = @{
-		VersionProperty = 'SilLcmVersion'
-		PdbRelativeDir  = 'artifacts/Debug/net462'
-		CachePrefixes   = @('sil.lcmodel')
-		EnvVar          = 'LIBLCM_PATH'
-	}
-	chorus = @{
-		VersionProperty = 'SilChorusVersion'
-		PdbRelativeDir  = 'output/Debug/net462'
-		CachePrefixes   = @('sil.chorus')
-		EnvVar          = 'LIBCHORUS_PATH'
-	}
-	machine = @{
-		VersionProperty = 'SilMachineVersion'
-		PdbRelativeDir  = 'bin/Debug/netstandard2.0'
-		CachePrefixes   = @('sil.machine')
-		EnvVar          = 'SILMACHINE_PATH'
-		# Pack only the projects FieldWorks uses (avoids native CMake deps)
-		PackProjects    = @(
-			'src/SIL.Machine/SIL.Machine.csproj',
-			'src/SIL.Machine.Morphology.HermitCrab/SIL.Machine.Morphology.HermitCrab.csproj'
-		)
-	}
-	l10nsharp = @{
-		VersionProperty = 'L10NSharpVersion'
-		PdbRelativeDir  = 'output/Debug/net462'
-		CachePrefixes   = @('l10nsharp')
-		EnvVar          = 'L10NSHARP_PATH'
-	}
-}
-
-# Pack order: libpalaso first (other libraries may depend on it)
-$PackOrder = @('palaso', 'l10nsharp', 'lcm', 'chorus', 'machine')
+Import-Module (Join-Path $PSScriptRoot 'LocalLibraries.psm1') -Force
+$LibraryConfig = Get-FieldWorksLocalLibraryConfig
+$PackOrder = @($LibraryConfig.Keys)
+$packedVersions = [ordered]@{}
 
 # ---------------------------------------------------------------------------
 # Read SilVersions.props
@@ -205,15 +165,8 @@ function Update-VersionAndClearCache {
 
 	Write-Host "Updated SilVersions.props ($($cfg.VersionProperty) = $NewVersion)" -ForegroundColor Yellow
 
-	$packagesDir = Join-Path $repoRoot "packages"
-	if (Test-Path $packagesDir) {
-		$patterns = $cfg.CachePrefixes | ForEach-Object { "$packagesDir/$_*" }
-		$stale = @(Get-ChildItem -Path $patterns -Directory -ErrorAction SilentlyContinue)
-		if ($stale.Count -gt 0) {
-			$stale | Remove-Item -Recurse -Force
-			Write-Host "Cleared $($stale.Count) stale package folder(s) from packages/." -ForegroundColor Yellow
-		}
-	}
+	Clear-FieldWorksLibraryPackageCache -PackagesDirectory (Join-Path $repoRoot 'packages') `
+		-Libraries @($LibName)
 }
 
 # ---------------------------------------------------------------------------
@@ -261,6 +214,7 @@ function Invoke-PackLibrary {
 		'-c', 'Debug'
 		"-p:IncludeSymbols=true"
 		"-p:SymbolPackageFormat=snupkg"
+		"-p:RestoreAdditionalProjectSources=$LocalRepo"
 		'--output', $LocalRepo
 	)
 
@@ -318,9 +272,9 @@ function Invoke-PackLibrary {
 	Write-Host ""
 	Write-Host "Pack complete ($($newPackages.Count) package(s), version $packVersion)." -ForegroundColor Green
 
-	# Update SilVersions.props and clear cache
-	Update-VersionAndClearCache -LibName $LibName -NewVersion $packVersion
-	Write-Host "To revert: git checkout Build/SilVersions.props" -ForegroundColor Yellow
+	$script:packedVersions[$cfg.VersionProperty] = $packVersion
+	Clear-FieldWorksLibraryPackageCache -PackagesDirectory (Join-Path $repoRoot 'packages') `
+		-Libraries @($LibName)
 
 	# Copy PDB files to Output/Debug/ and Downloads/
 	$pdbSourceDir = Join-Path $SourceDir $cfg.PdbRelativeDir
@@ -397,6 +351,9 @@ if ($toPack.Count -gt 0) {
 	if ($Version) {
 		Write-Host "WARNING: -Version is ignored in pack mode (version is detected from produced packages)." -ForegroundColor Yellow
 	}
+	if (-not $VersionOutputPath) {
+		throw "Packing local libraries is build-scoped. Run .\build.ps1 -LocalLibraries <name>."
+	}
 
 	$localRepo = $env:LOCAL_NUGET_REPO
 	if (-not $localRepo) {
@@ -406,17 +363,8 @@ if ($toPack.Count -gt 0) {
 		Write-Host "Creating local NuGet repo folder: $localRepo" -ForegroundColor Yellow
 		New-Item -Path $localRepo -ItemType Directory -Force | Out-Null
 	}
-
-	# Ensure local NuGet source is registered (user-level config)
-	$sourceList = & dotnet nuget list source 2>&1
-	$normalizedRepo = [System.IO.Path]::GetFullPath($localRepo).TrimEnd('\', '/')
-	$alreadyRegistered = $sourceList | Where-Object {
-		$_.Trim() -replace '[\\/]$', '' -ieq $normalizedRepo
-	}
-	if (-not $alreadyRegistered) {
-		& dotnet nuget add source $localRepo --name local 2>&1 | Out-Null
-		Write-Host "Added local NuGet source: $localRepo" -ForegroundColor Yellow
-	}
+	Clear-FieldWorksLocalLibraries -PackagesDirectory (Join-Path $repoRoot 'packages') `
+		-LocalRepository $localRepo -Libraries @($toPack.Keys)
 
 	Write-Host ""
 	Write-Host "Libraries to pack: $($toPack.Keys -join ', ')" -ForegroundColor Cyan
@@ -424,10 +372,16 @@ if ($toPack.Count -gt 0) {
 	foreach ($lib in $toPack.Keys) {
 		Invoke-PackLibrary -LibName $lib -SourceDir $toPack[$lib] -LocalRepo $localRepo
 	}
+	$versionOutputDirectory = Split-Path $VersionOutputPath -Parent
+	if ($versionOutputDirectory -and -not (Test-Path $versionOutputDirectory)) {
+		New-Item -Path $versionOutputDirectory -ItemType Directory -Force | Out-Null
+	}
+	$packedVersions | ConvertTo-Json | Set-Content -LiteralPath $VersionOutputPath `
+		-Encoding UTF8
 
 	Write-Host ""
 	Write-Host "========================================" -ForegroundColor Green
-	Write-Host "[OK] All libraries packed. Run .\build.ps1 to build." -ForegroundColor Green
+	Write-Host "[OK] Selected local libraries packed for this build." -ForegroundColor Green
 	Write-Host "========================================" -ForegroundColor Green
 }
 elseif ($Library -and $Version) {
@@ -450,5 +404,5 @@ elseif ($Library -and $Version) {
 	Write-Host "Run .\build.ps1 to restore and build with the new version." -ForegroundColor Cyan
 }
 else {
-	throw "Nothing to do. Use -Palaso/-Lcm/-Chorus/-Machine/-L10nSharp switches to pack, or -Library and -Version to set a version.`nExamples:`n  .\Build\Manage-LocalLibraries.ps1 -Palaso -PalasoPath C:\Repos\libpalaso`n  .\Build\Manage-LocalLibraries.ps1 -Palaso -Chorus`n  .\Build\Manage-LocalLibraries.ps1 -Machine -MachinePath C:\Repos\machine`n  .\Build\Manage-LocalLibraries.ps1 -Library l10nsharp -Version 10.0.0`n  .\Build\Manage-LocalLibraries.ps1 -Library palaso -Version 17.0.0"
+	throw "Nothing to do. Use .\build.ps1 -LocalLibraries <name> to pack local libraries, or -Library and -Version to set a version.`nExamples:`n  .\build.ps1 -LocalLibraries palaso`n  .\build.ps1 -LocalLibraries palaso,chorus`n  .\build.ps1 -LocalLibraries machine`n  .\Build\Manage-LocalLibraries.ps1 -Library l10nsharp -Version 10.0.0`n  .\Build\Manage-LocalLibraries.ps1 -Library palaso -Version 17.0.0"
 }

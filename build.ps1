@@ -114,6 +114,10 @@
 	Path to the local liblcm repository. Defaults to ../liblcm relative to the FieldWorks repo root.
 	Only used when -UseLocalLcm is specified.
 
+.PARAMETER LocalLibraries
+	Local SIL libraries to rebuild and use for this invocation. Supported values are
+	palaso, lcm, chorus, machine, and l10nsharp. Omitted libraries are cleaned before restore.
+
 .PARAMETER StartedBy
 	Optional actor label written to the worktree lock metadata (for example: user or agent).
 	Defaults to the FW_BUILD_STARTED_BY environment variable when set, otherwise 'unknown'.
@@ -153,6 +157,10 @@
 	.\build.ps1 -UseLocalLcm
 	Builds FieldWorks, then builds liblcm from ../liblcm and copies DLLs into Output.
 
+.EXAMPLE
+	.\build.ps1 -LocalLibraries machine
+	Rebuilds Machine from SILMACHINE_PATH and uses it only for this build.
+
 .NOTES
 	FieldWorks is x64-only. The x86 platform is no longer supported.
 #>
@@ -191,6 +199,8 @@ param(
 	[switch]$EnableTracing,
 	[switch]$UseLocalLcm,
 	[string]$LocalLcmPath,
+	[ValidateSet('palaso', 'lcm', 'chorus', 'machine', 'l10nsharp')]
+	[string[]]$LocalLibraries = @(),
 	[ValidateSet('user', 'agent', 'unknown')]
 	[string]$StartedBy = 'unknown',
 	[switch]$SkipWorktreeLock,
@@ -575,6 +585,53 @@ try {
 			& $staleDllScript -OutputDir $outputDir -RepoRoot $PSScriptRoot -Verbose:$VerbosePreference
 		}
 
+		$localLibrariesModule = Join-Path $PSScriptRoot 'Build/LocalLibraries.psm1'
+		Import-Module $localLibrariesModule -Force
+		$packagesDir = Join-Path $PSScriptRoot 'packages'
+		Clear-FieldWorksLocalLibraries -PackagesDirectory $packagesDir `
+			-LocalRepository $env:LOCAL_NUGET_REPO
+
+		$localVersionProperties = [ordered]@{}
+		$localRestoreSourceArgs = @()
+		if ($LocalLibraries.Count -gt 0) {
+			if ($SkipRestore) {
+				throw '-LocalLibraries cannot be combined with -SkipRestore.'
+			}
+			if ($UseLocalLcm -and $LocalLibraries -contains 'lcm') {
+				throw 'Choose either -LocalLibraries lcm or -UseLocalLcm, not both.'
+			}
+			if ([string]::IsNullOrWhiteSpace($env:LOCAL_NUGET_REPO)) {
+				throw 'LOCAL_NUGET_REPO must be set when -LocalLibraries is used.'
+			}
+
+			$versionOutputPath = Join-Path ([System.IO.Path]::GetTempPath()) `
+				("FieldWorksLocalVersions_{0}.json" -f [System.Guid]::NewGuid().ToString('N'))
+			$managerArgs = @{ VersionOutputPath = $versionOutputPath }
+			foreach ($localLibrary in $LocalLibraries) {
+				$managerArgs[$localLibrary] = $true
+			}
+			try {
+				& (Join-Path $PSScriptRoot 'Build/Manage-LocalLibraries.ps1') @managerArgs
+				if ($LASTEXITCODE -ne 0) {
+					throw 'Local library packing failed.'
+				}
+				$versionOutput = Get-Content -LiteralPath $versionOutputPath -Raw |
+					ConvertFrom-Json
+				foreach ($property in $versionOutput.PSObject.Properties) {
+					$localVersionProperties[$property.Name] = [string]$property.Value
+				}
+			}
+			finally {
+				if (Test-Path -LiteralPath $versionOutputPath) {
+					Remove-Item -LiteralPath $versionOutputPath -Force
+				}
+			}
+			$localRestoreSourceArgs = @(
+				'--source', $env:LOCAL_NUGET_REPO,
+				'--source', 'https://api.nuget.org/v3/index.json'
+			)
+		}
+
 		# =============================================================================
 		# Build Configuration
 		# =============================================================================
@@ -616,6 +673,9 @@ try {
 		# Properties
 		$finalMsBuildArgs += "/p:Configuration=$Configuration"
 		$finalMsBuildArgs += "/p:Platform=$Platform"
+		foreach ($propertyName in $localVersionProperties.Keys) {
+			$finalMsBuildArgs += "/p:$propertyName=$($localVersionProperties[$propertyName])"
+		}
 		if ($SkipNative) {
 			$finalMsBuildArgs += "/p:SkipNative=true"
 		}
@@ -657,18 +717,9 @@ try {
 			Write-Host "Including optional FieldWorks executables" -ForegroundColor Yellow
 		}
 
-		# Report local library packages when LOCAL_NUGET_REPO is configured
-		if ($env:LOCAL_NUGET_REPO -and (Test-Path $env:LOCAL_NUGET_REPO)) {
-			$localPkgs = Get-ChildItem -Path $env:LOCAL_NUGET_REPO -Filter "SIL.*.nupkg" -File -ErrorAction SilentlyContinue
-			if ($localPkgs.Count -gt 0) {
-				Write-Host ""
-				Write-Host "Local library packages detected in $($env:LOCAL_NUGET_REPO):" -ForegroundColor Yellow
-				foreach ($pkg in $localPkgs) {
-					Write-Host "  $($pkg.Name)" -ForegroundColor Yellow
-				}
-				Write-Host "These will shadow upstream NuGet packages during restore." -ForegroundColor Yellow
-				Write-Host ""
-			}
+		if ($LocalLibraries.Count -gt 0) {
+			Write-Host "Using local libraries: $($LocalLibraries -join ', ')" `
+				-ForegroundColor Yellow
 		}
 
 		# Bootstrap: Build FwBuildTasks first (required by SetupInclude.targets)
@@ -705,7 +756,19 @@ try {
 			if (-not (Test-Path $packagesDir)) {
 				New-Item -Path $packagesDir -ItemType Directory -Force | Out-Null
 			}
-			& dotnet restore "$PSScriptRoot\FieldWorks.sln" /p:NoWarn=NU1903 /p:DisableWarnForInvalidRestoreProjects=true "/p:Configuration=$Configuration" "/p:Platform=$Platform" --verbosity quiet
+			$restoreArgs = @(
+				"$PSScriptRoot\FieldWorks.sln",
+				'/p:NoWarn=NU1903',
+				'/p:DisableWarnForInvalidRestoreProjects=true',
+				"/p:Configuration=$Configuration",
+				"/p:Platform=$Platform",
+				'--verbosity', 'quiet'
+			)
+			foreach ($propertyName in $localVersionProperties.Keys) {
+				$restoreArgs += "/p:$propertyName=$($localVersionProperties[$propertyName])"
+			}
+			$restoreArgs += $localRestoreSourceArgs
+			& dotnet restore @restoreArgs
 			if ($LASTEXITCODE -ne 0) {
 				throw "NuGet package restore failed for FieldWorks.sln"
 			}
