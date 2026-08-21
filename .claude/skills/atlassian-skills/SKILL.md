@@ -1,12 +1,12 @@
 ---
 name: atlassian-skills
-description: Python utilities for Jira, Confluence, and Bitbucket integration. Provides issue management, search, workflows, page management, pull requests, commit history, and more. Use when users need to interact with Atlassian products like "create a Jira issue", "search Confluence pages", "create a pull request", "get commit history", or "update sprint status".
+description: Python utilities for Jira (SIL Data Center) covering issue management, JQL search, workflows and transitions, links, agile boards, worklogs and projects. Use when users need to create, update, comment on, link or transition a Jira issue, or search Jira with JQL -- including any LT-prefixed FieldWorks ticket.
 license: Complete terms in LICENSE
 ---
 
 # Atlassian Skills
 
-Python utilities for Jira, Confluence, and Bitbucket integration, supporting both Cloud and Data Center deployments.
+Python utilities for Jira, supporting both Cloud and Data Center deployments.
 
 ## FieldWorks / SIL JIRA Integration
 
@@ -49,224 +49,62 @@ For read-only operations (get issue, search, get comments), use `atlassian-reado
 
 ## Configuration
 
-Two configuration modes are supported:
+Jira only. Confluence and Bitbucket support was removed from this copy -- see
+`PROVENANCE.md`.
 
-### Mode 1: Environment Variables (Traditional)
+### Mode 1: environment variables
 
-Set environment variables based on your deployment type. This mode is used when `credentials` parameter is not provided to skill functions.
-
-#### SIL JIRA (Data Center / PAT Token)
+SIL JIRA (Data Center, PAT token) -- this is the one FieldWorks uses:
 
 ```bash
-# SIL JIRA instance for LT-* tickets
 JIRA_URL=https://jira.sil.org
-# Personal Access Token - generate at: https://jira.sil.org/secure/ViewProfile.jspa → Personal Access Tokens
+# Generate at https://jira.sil.org/secure/ViewProfile.jspa -> Personal Access Tokens
 JIRA_PAT_TOKEN=your_jira_pat_token_here
 ```
 
-#### Cloud (API Token)
+Jira Cloud (API token), for completeness:
 
 ```bash
-# Jira Cloud
 JIRA_URL=https://your-company.atlassian.net
 JIRA_USERNAME=your.email@company.com
 JIRA_API_TOKEN=your_api_token
-
-# Confluence Cloud
-CONFLUENCE_URL=https://your-company.atlassian.net/wiki
-CONFLUENCE_USERNAME=your.email@company.com
-CONFLUENCE_API_TOKEN=your_api_token
 ```
 
-Generate API tokens at: https://id.atlassian.com/manage-profile/security/api-tokens
+A PAT token takes precedence if both are provided.
 
-#### Data Center / Server (PAT Token)
-
-```bash
-# Jira Data Center
-JIRA_URL=https://jira.your-company.com
-JIRA_PAT_TOKEN=your_pat_token
-
-# Confluence Data Center
-CONFLUENCE_URL=https://confluence.your-company.com
-CONFLUENCE_PAT_TOKEN=your_pat_token
-
-# Bitbucket Server/Data Center
-BITBUCKET_URL=https://bitbucket.your-company.com
-BITBUCKET_PAT_TOKEN=your_pat_token
-```
-
-> **Note**: PAT Token takes precedence if both are provided.
-
-### Mode 2: Parameter-Based (Agent Environments)
-
-When deploying skills in Agent environments where environment variables are not available, pass credentials directly to skill functions using the `AtlassianCredentials` object.
-
-```python
-from scripts._common import AtlassianCredentials, check_available_skills
-from scripts.jira_issues import jira_create_issue, jira_get_issue
-
-# Create credentials object
-credentials = AtlassianCredentials(
-    # Jira configuration
-    jira_url="https://your-company.atlassian.net",
-    jira_username="your.email@company.com",
-    jira_api_token="your_api_token",
-    
-    # Confluence configuration (optional)
-    confluence_url="https://your-company.atlassian.net/wiki",
-    confluence_username="your.email@company.com",
-    confluence_api_token="your_api_token",
-    
-    # Bitbucket configuration (optional)
-    # bitbucket_url="https://bitbucket.your-company.com",
-    # bitbucket_pat_token="your_pat_token"
-)
-
-# Check which services are available
-availability = check_available_skills(credentials)
-print(availability["available_services"])  # ["jira", "confluence"]
-print(availability["unavailable_services"])  # {"bitbucket": "Missing bitbucket_url"}
-
-# Use skills with credentials parameter
-result = jira_create_issue(
-    project_key="PROJ",
-    summary="New task",
-    issue_type="Task",
-    credentials=credentials  # Pass credentials here
-)
-```
-
-#### Partial Service Configuration
-
-You can configure only the services you need. Services without complete credentials will be unavailable:
-
-```python
-# Only configure Jira
-credentials = AtlassianCredentials(
-    jira_url="https://your-company.atlassian.net",
-    jira_username="your.email@company.com",
-    jira_api_token="your_api_token"
-)
-
-# Jira skills will work
-jira_get_issue("PROJ-123", credentials=credentials)  # ✓ Works
-
-# Confluence/Bitbucket skills will fail with ConfigurationError
-confluence_get_page("Page Title", "SPACE", credentials=credentials)  # ✗ Fails
-```
-
-#### Credentials Object Fields
-
-```python
-AtlassianCredentials(
-    # Jira
-    jira_url: Optional[str] = None,
-    jira_username: Optional[str] = None,
-    jira_api_token: Optional[str] = None,
-    jira_pat_token: Optional[str] = None,
-    jira_api_version: Optional[str] = None,  # '2' or '3', auto-detected if not set
-    jira_ssl_verify: bool = False,
-    
-    # Confluence
-    confluence_url: Optional[str] = None,
-    confluence_username: Optional[str] = None,
-    confluence_api_token: Optional[str] = None,
-    confluence_pat_token: Optional[str] = None,
-    confluence_api_version: Optional[str] = None,
-    confluence_ssl_verify: bool = False,
-    
-    # Bitbucket
-    bitbucket_url: Optional[str] = None,
-    bitbucket_username: Optional[str] = None,
-    bitbucket_api_token: Optional[str] = None,
-    bitbucket_pat_token: Optional[str] = None,
-    bitbucket_api_version: Optional[str] = None,
-    bitbucket_ssl_verify: bool = False
-)
-```
-
-For each service, provide either:
-- PAT Token (for Data Center/Server): `{service}_pat_token`
-- Username + API Token (for Cloud): `{service}_username` + `{service}_api_token`
-
-## Core Workflow
-
-### Using Environment Variables
-
-```python
-from scripts.jira_issues import jira_create_issue, jira_get_issue
-from scripts.confluence_pages import confluence_create_page
-import json
-
-# 1. Create a Jira issue
-result = jira_create_issue(
-    project_key="PROJ",
-    summary="Implement new feature",
-    issue_type="Task",
-    description="Feature description here",
-    priority="High"
-)
-issue = json.loads(result)
-print(f"Created: {issue['key']}")
-
-# 2. Get issue details
-result = jira_get_issue(issue_key="PROJ-123")
-issue = json.loads(result)
-
-# 3. Create a Confluence page
-result = confluence_create_page(
-    space_key="DEV",
-    title="Feature Documentation",
-    content="<p>Documentation content here</p>"
-)
-```
-
-### Using Credentials Parameter (Agent Mode)
+### Mode 2: credentials parameter (agent environments)
 
 ```python
 from scripts._common import AtlassianCredentials
-from scripts.jira_issues import jira_create_issue, jira_get_issue
-from scripts.confluence_pages import confluence_create_page
-import json
 
-# Create credentials
 credentials = AtlassianCredentials(
-    jira_url="https://company.atlassian.net",
-    jira_username="user@company.com",
-    jira_api_token="token123",
-    confluence_url="https://company.atlassian.net/wiki",
-    confluence_username="user@company.com",
-    confluence_api_token="token123"
-)
-
-# 1. Create a Jira issue with credentials
-result = jira_create_issue(
-    project_key="PROJ",
-    summary="Implement new feature",
-    issue_type="Task",
-    description="Feature description here",
-    priority="High",
-    credentials=credentials  # Pass credentials
-)
-issue = json.loads(result)
-print(f"Created: {issue['key']}")
-
-# 2. Get issue details with credentials
-result = jira_get_issue(
-    issue_key="PROJ-123",
-    credentials=credentials
-)
-issue = json.loads(result)
-
-# 3. Create a Confluence page with credentials
-result = confluence_create_page(
-    space_key="DEV",
-    title="Feature Documentation",
-    content="<p>Documentation content here</p>",
-    credentials=credentials
+    jira_url="https://jira.sil.org",
+    jira_pat_token="your_pat_token",
 )
 ```
+
+Every function takes an optional `credentials` argument. Without one, the
+environment variables above are used.
+
+## Core Workflow
+
+```python
+import json
+from scripts.jira_issues import jira_get_issue
+from scripts.jira_search import jira_search
+
+issue = json.loads(jira_get_issue(issue_key="LT-22382"))
+print(f"{issue['key']} - {issue['summary']}")
+
+results = json.loads(jira_search(
+    jql="project = LT AND status = 'In Progress'",
+    fields="summary,status,assignee",
+    limit=50,
+))
+```
+
+Pass `credentials=credentials` to any of them to use Mode 2 instead of the
+environment.
 
 ## Available Utilities
 
@@ -411,185 +249,6 @@ jira_create_version(
 )
 ```
 
-### Confluence Pages (`scripts.confluence_pages`)
-
-```python
-from scripts.confluence_pages import (
-    confluence_get_page,
-    confluence_create_page,
-    confluence_update_page,
-    confluence_delete_page
-)
-
-# Get page by title
-confluence_get_page(title="Meeting Notes", space_key="TEAM")
-
-# Create page with parent
-confluence_create_page(
-    space_key="DEV",
-    title="API Documentation",
-    content="<h1>API Docs</h1><p>Content here</p>",
-    parent_id="12345"
-)
-
-# Update page
-confluence_update_page(
-    page_id="67890",
-    title="Updated Title",
-    content="<p>New content</p>"
-)
-```
-
-### Confluence Search (`scripts.confluence_search`)
-
-```python
-from scripts.confluence_search import confluence_search
-
-# Search with CQL
-confluence_search(
-    query="space = DEV AND type = page AND text ~ 'API'",
-    limit=25
-)
-```
-
-### Confluence Comments (`scripts.confluence_comments`)
-
-```python
-from scripts.confluence_comments import confluence_get_comments, confluence_add_comment
-
-# Add comment
-confluence_add_comment(
-    page_id="12345",
-    content="Great documentation!"
-)
-```
-
-### Confluence Labels (`scripts.confluence_labels`)
-
-```python
-from scripts.confluence_labels import (
-    confluence_get_labels,
-    confluence_add_label,
-    confluence_remove_label
-)
-
-# Manage labels
-confluence_add_label(page_id="12345", name="reviewed")
-confluence_remove_label(page_id="12345", name="draft")
-```
-
-### Bitbucket Projects (`scripts.bitbucket_projects`)
-
-```python
-from scripts.bitbucket_projects import (
-    bitbucket_list_projects,
-    bitbucket_list_repositories
-)
-
-# List all projects
-bitbucket_list_projects(limit=25)
-
-# List repositories in a project
-bitbucket_list_repositories(project_key="PROJ", limit=50)
-```
-
-### Bitbucket Pull Requests (`scripts.bitbucket_pull_requests`)
-
-```python
-from scripts.bitbucket_pull_requests import (
-    bitbucket_create_pull_request,
-    bitbucket_get_pull_request,
-    bitbucket_merge_pull_request,
-    bitbucket_decline_pull_request,
-    bitbucket_add_pr_comment,
-    bitbucket_get_pr_diff
-)
-
-# Create a pull request
-bitbucket_create_pull_request(
-    project_key="PROJ",
-    repository_slug="my-repo",
-    title="Feature: Add new API",
-    source_branch="feature/new-api",
-    target_branch="master",
-    description="Implements the new API endpoint",
-    reviewers=["john.doe", "jane.smith"]
-)
-
-# Get PR details
-bitbucket_get_pull_request(
-    project_key="PROJ",
-    repository_slug="my-repo",
-    pr_id=123
-)
-
-# Merge PR (version from get_pull_request)
-bitbucket_merge_pull_request(
-    project_key="PROJ",
-    repository_slug="my-repo",
-    pr_id=123,
-    version=5,
-    strategy="squash"
-)
-
-# Add comment to PR
-bitbucket_add_pr_comment(
-    project_key="PROJ",
-    repository_slug="my-repo",
-    pr_id=123,
-    text="LGTM!"
-)
-```
-
-### Bitbucket Files & Search (`scripts.bitbucket_files`)
-
-```python
-from scripts.bitbucket_files import (
-    bitbucket_get_file_content,
-    bitbucket_search
-)
-
-# Get file content
-bitbucket_get_file_content(
-    project_key="PROJ",
-    repository_slug="my-repo",
-    file_path="src/main.py",
-    branch="develop"
-)
-
-# Search code
-bitbucket_search(
-    query="def authenticate",
-    project_key="PROJ",
-    search_type="code",
-    limit=25
-)
-```
-
-### Bitbucket Commits (`scripts.bitbucket_commits`)
-
-```python
-from scripts.bitbucket_commits import (
-    bitbucket_get_commits,
-    bitbucket_get_commit
-)
-
-# Get recent commits from a branch
-bitbucket_get_commits(
-    project_key="PROJ",
-    repository_slug="my-repo",
-    branch="master",
-    limit=10
-)
-
-# Get details of a specific commit
-bitbucket_get_commit(
-    project_key="PROJ",
-    repository_slug="my-repo",
-    commit_id="1da11eaec25aed8b251de24841885c91493b3173"
-)
-```
-
 ### Jira Users (`scripts.jira_users`)
 
 ```python
@@ -656,24 +315,6 @@ All functions return JSON strings with **flattened** data structures (not nested
   "custom_fields": {}
 }
 ```
-
-### Confluence Page Structure
-
-```json
-{
-  "id": "12345",
-  "title": "Page Title",
-  "space_key": "DEV",
-  "status": "current",
-  "created": "2024-01-15T10:30:00.000Z",
-  "updated": "2024-01-16T14:20:00.000Z",
-  "author": "user@company.com",
-  "version": 3,
-  "url": "https://company.atlassian.net/wiki/spaces/DEV/pages/12345"
-}
-```
-
-> **Note**: These are simplified structures. The original Jira API returns nested data like `{"key": "...", "fields": {"summary": "...", "status": {"name": "..."}}}`, but this skill flattens it for easier use.
 
 ## Error Handling
 

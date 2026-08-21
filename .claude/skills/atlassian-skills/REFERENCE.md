@@ -1,6 +1,6 @@
 # Atlassian Skills API Reference
 
-Detailed usage examples and API documentation for Jira, Confluence, and Bitbucket tools.
+Detailed usage examples and API documentation for the Jira tools.
 
 ## Configuration Modes
 
@@ -199,80 +199,6 @@ result = jira_create_sprint(
 )
 ```
 
-## Confluence Examples
-
-### Search for Pages
-
-```python
-from scripts.confluence_search import confluence_search
-
-result = confluence_search("API documentation", limit=10)
-```
-
-### Get a Page
-
-```python
-from scripts.confluence_pages import confluence_get_page
-
-# Get by ID
-result = confluence_get_page(page_id="123456")
-
-# Get by title and space
-result = confluence_get_page(title="API Guide", space_key="DEV")
-```
-
-### Create a Page
-
-```python
-from scripts.confluence_pages import confluence_create_page
-
-result = confluence_create_page(
-    space_key="DEV",
-    title="New Documentation Page",
-    content="# Welcome\n\nThis is **markdown** content.",
-    parent_id="123456"
-)
-```
-
-### Update a Page
-
-```python
-from scripts.confluence_pages import confluence_update_page
-
-result = confluence_update_page(
-    page_id="123456",
-    title="Updated Title",
-    content="# Updated Content\n\nNew information here."
-)
-```
-
-### Manage Comments
-
-```python
-from scripts.confluence_comments import confluence_add_comment, confluence_get_comments
-
-# Get comments
-comments = confluence_get_comments(page_id="123456")
-
-# Add comment
-result = confluence_add_comment(
-    page_id="123456",
-    content="Great documentation!"
-)
-```
-
-### Manage Labels
-
-```python
-from scripts.confluence_labels import confluence_add_label, confluence_remove_label
-
-# Add label
-result = confluence_add_label(page_id="123456", name="api-docs")
-
-# Remove label
-result = confluence_remove_label(page_id="123456", name="outdated")
-```
-
 ## JQL Query Examples
 
 Common JQL patterns for searching Jira issues:
@@ -304,33 +230,6 @@ reporter = "user@example.com"
 
 # Combined query
 project = MYPROJ AND status = "In Progress" AND assignee = currentUser() ORDER BY priority DESC
-```
-
-## CQL Query Examples
-
-Common CQL patterns for searching Confluence:
-
-```
-# Search by text
-text ~ "API documentation"
-
-# Search in specific space
-space = DEV AND text ~ "guide"
-
-# Search by title
-title ~ "Getting Started"
-
-# Search by label
-label = "api-docs"
-
-# Search by type
-type = page AND space = DEV
-
-# Recently modified
-lastModified >= now("-7d")
-
-# Created by user
-creator = "user@example.com"
 ```
 
 ## Time Format Reference
@@ -381,244 +280,49 @@ For worklog entries, use these time formats:
 }
 ```
 
-## Bitbucket Examples
-
-### Get Recent Commits
-
-```python
-from scripts.bitbucket_commits import bitbucket_get_commits
-import json
-
-# Get latest 10 commits from master branch
-result = bitbucket_get_commits(
-    project_key="PROJ",
-    repository_slug="my-repo",
-    branch="master",
-    limit=10
-)
-
-# Parse and display commits
-data = json.loads(result)
-for commit in data['commits']:
-    print(f"{commit['display_id']}: {commit['message']}")
-    print(f"  Author: {commit['author_name']}")
-    print(f"  Date: {commit['timestamp']}")
-```
-
-### Get Specific Commit Details
-
-```python
-from scripts.bitbucket_commits import bitbucket_get_commit
-import json
-
-# Get details of a specific commit
-result = bitbucket_get_commit(
-    project_key="PROJ",
-    repository_slug="my-repo",
-    commit_id="1da11eaec25aed8b251de24841885c91493b3173"
-)
-
-# Parse commit details
-commit = json.loads(result)
-print(f"Commit: {commit['display_id']}")
-print(f"Message: {commit['message']}")
-print(f"Author: {commit['author_name']} <{commit['author_email']}>")
-print(f"Timestamp: {commit['timestamp']}")
-```
-
-### List Pull Requests
-
-```python
-from scripts.bitbucket_pull_requests import bitbucket_get_pull_request
-
-# Get PR details
-result = bitbucket_get_pull_request(
-    project_key="PROJ",
-    repository_slug="my-repo",
-    pr_id=123
-)
-```
-
-### Search Code
-
-```python
-from scripts.bitbucket_files import bitbucket_search
-
-# Search for specific code pattern
-result = bitbucket_search(
-    query="def authenticate",
-    project_key="PROJ",
-    search_type="code",
-    limit=25
-)
-```
-
-### Bitbucket Commit Response Structure
-
-```json
-{
-  "project_key": "PROJ",
-  "repository": "my-repo",
-  "branch": "master",
-  "total": 5,
-  "is_last_page": false,
-  "commits": [
-    {
-      "id": "1da11eaec25aed8b251de24841885c91493b3173",
-      "display_id": "1da11eaec25",
-      "message": "Feature: Add new API endpoint",
-      "author_name": "John Doe",
-      "author_email": "john.doe@company.com",
-      "committer_name": "John Doe",
-      "committer_email": "john.doe@company.com",
-      "timestamp": 1765534577000,
-      "parents": ["b97ad25d330e36480b045c5dea36f97999297ff6"]
-    }
-  ]
-}
-```
-
 ## Agent Mode Complete Example
 
-When deploying in Agent environments without environment variables:
-
 ```python
-from scripts._common import AtlassianCredentials, check_available_skills
-from scripts.jira_issues import jira_create_issue, jira_get_issue
-from scripts.jira_search import jira_search
-from scripts.confluence_pages import confluence_create_page
 import json
-
-# Step 1: Create credentials object with all needed services
-credentials = AtlassianCredentials(
-    # Jira configuration
-    jira_url="https://company.atlassian.net",
-    jira_username="user@company.com",
-    jira_api_token="jira_token_here",
-    
-    # Confluence configuration
-    confluence_url="https://company.atlassian.net/wiki",
-    confluence_username="user@company.com",
-    confluence_api_token="confluence_token_here",
-    
-    # Bitbucket configuration (optional)
-    bitbucket_url="https://bitbucket.company.com",
-    bitbucket_pat_token="bitbucket_pat_here"
-)
-
-# Step 2: Check which services are available
-availability = check_available_skills(credentials)
-print(f"Available: {availability['available_services']}")
-print(f"Unavailable: {availability['unavailable_services']}")
-
-# Step 3: Use skills with credentials parameter
-if "jira" in availability["available_services"]:
-    # Create an issue
-    result = jira_create_issue(
-        project_key="PROJ",
-        summary="New task from Agent",
-        issue_type="Task",
-        credentials=credentials  # Pass credentials
-    )
-    issue = json.loads(result)
-    
-    if not issue.get("error"):
-        print(f"Created issue: {issue['key']}")
-        
-        # Get the issue
-        result = jira_get_issue(
-            issue_key=issue['key'],
-            credentials=credentials
-        )
-        
-        # Search for issues
-        result = jira_search(
-            jql=f"project = PROJ AND key = {issue['key']}",
-            credentials=credentials
-        )
-
-if "confluence" in availability["available_services"]:
-    # Create a Confluence page
-    result = confluence_create_page(
-        space_key="TEAM",
-        title="Documentation from Agent",
-        content="<p>Created by Agent</p>",
-        credentials=credentials
-    )
-    page = json.loads(result)
-    if not page.get("error"):
-        print(f"Created page: {page['title']}")
-
-# Step 4: Handle unavailable services
-if "bitbucket" not in availability["available_services"]:
-    reason = availability["unavailable_services"].get("bitbucket", "Unknown")
-    print(f"Bitbucket unavailable: {reason}")
-```
-
-## Partial Service Configuration
-
-You can configure only the services you need:
-
-```python
 from scripts._common import AtlassianCredentials, check_available_skills
+from scripts.jira_issues import jira_create_issue, jira_add_comment
 
-# Only Jira configured
-jira_only_creds = AtlassianCredentials(
-    jira_url="https://company.atlassian.net",
-    jira_username="user@company.com",
-    jira_api_token="token"
+credentials = AtlassianCredentials(
+    jira_url="https://jira.sil.org",
+    jira_pat_token="your_pat_token",
 )
 
-# Check availability
-availability = check_available_skills(jira_only_creds)
-# Returns: {
-#   "available_services": ["jira"],
-#   "unavailable_services": {
-#     "confluence": "Missing confluence_url",
-#     "bitbucket": "Missing bitbucket_url"
-#   }
-# }
+availability = check_available_skills(credentials)
+if "jira" not in availability["available_services"]:
+    raise SystemExit(availability["unavailable_services"]["jira"])
 
-# Jira functions work
-from scripts.jira_issues import jira_get_issue
-result = jira_get_issue("PROJ-123", credentials=jira_only_creds)  # ✓ Works
-
-# Confluence functions fail with clear error
-from scripts.confluence_pages import confluence_get_page
-result = confluence_get_page("Page", "SPACE", credentials=jira_only_creds)  # ✗ Fails
-# Returns: {"error": "Confluence credentials not provided...", "error_type": "ConfigurationError"}
+created = json.loads(jira_create_issue(
+    project_key="LT",
+    summary="Example issue",
+    issue_type="Bug",
+    description="Filed from agent mode.",
+    custom_fields={"versions": [{"name": "FW 9.3"}]},
+    credentials=credentials,
+))
+jira_add_comment(created["key"], "First comment.", credentials=credentials)
 ```
 
 ## Credentials Object Reference
 
 ```python
 AtlassianCredentials(
-    # Jira
     jira_url: Optional[str] = None,
     jira_username: Optional[str] = None,
     jira_api_token: Optional[str] = None,
     jira_pat_token: Optional[str] = None,
-    jira_api_version: Optional[str] = None,  # '2' or '3', auto-detected if not set
-    jira_ssl_verify: bool = False,
-    
-    # Confluence
-    confluence_url: Optional[str] = None,
-    confluence_username: Optional[str] = None,
-    confluence_api_token: Optional[str] = None,
-    confluence_pat_token: Optional[str] = None,
-    confluence_api_version: Optional[str] = None,
-    confluence_ssl_verify: bool = False,
-    
-    # Bitbucket
-    bitbucket_url: Optional[str] = None,
-    bitbucket_username: Optional[str] = None,
-    bitbucket_api_token: Optional[str] = None,
-    bitbucket_pat_token: Optional[str] = None,
-    bitbucket_api_version: Optional[str] = None,
-    bitbucket_ssl_verify: bool = False
+    jira_api_version: Optional[str] = None,
+    jira_ssl_verify: bool = True,
 )
 ```
 
-For each service, provide either:
-- **PAT Token** (for Data Center/Server): `{service}_pat_token`
-- **Username + API Token** (for Cloud): `{service}_username` + `{service}_api_token`
+For SIL's Data Center instance, `jira_url` plus `jira_pat_token` is enough.
+`jira_username` and `jira_api_token` are the Cloud pairing. A PAT token wins if
+both are supplied.
+
+`check_available_skills(credentials)` returns `available_services` and
+`unavailable_services`, the latter naming the missing field.

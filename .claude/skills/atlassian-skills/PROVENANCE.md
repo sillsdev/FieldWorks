@@ -50,3 +50,17 @@ FieldWorks-owned skills. It is ~740 lines of API reference that loads only when
 Atlassian work happens, and keeping it close to upstream is worth more than the
 context saving. The near-total duplication with `atlassian-readonly-skills` is
 upstream's design, not something introduced here.
+
+## Jira only
+
+Confluence and Bitbucket were removed entirely on 2026-08-21. FieldWorks uses
+Jira and nothing else, and nothing in the repository referenced either.
+
+Removed: the eight `confluence_*` and `bitbucket_*` script modules, their
+documentation in `SKILL.md` and `REFERENCE.md`, their configuration blocks and
+credential fields, and their plumbing in `_common.py` -- the dataclass fields,
+`is_*_available` checks, `get_*_client` factories and the service branches in
+`AtlassianConfig.from_credentials`.
+
+This is a hard fork from upstream for these two skills. A re-sync is no longer
+a merge; treat upstream as a source to cherry-pick Jira fixes from.
