@@ -62,10 +62,24 @@ _Analysis in the first comment._
 Feature track replaces Steps/Expected/Actual with the sections in
 `feature-track.md`. Everything else is identical.
 
-This is a skeleton, not a form. Drop any heading that does not apply to the
-subject -- a ticket about a build script has no `h3. Environment` worth
-writing, and a ticket about a documentation file has nothing to reproduce.
-See Phase 0b in `../SKILL.md`.
+This is a skeleton, not a form. Drop any heading that does not apply.
+
+## Relevance (Phase 0b)
+
+Not every LT ticket is about FLEx the product. Decide the subject before the
+interview, because it decides which questions are worth one of your six.
+
+| Subject | Environment questions that apply |
+| --- | --- |
+| FLEx product | Version and build, OS, project, menu path, keyboard/IME |
+| Developer tooling, agent skills, docs | Repo, branch, which skill or script. No FLEx version |
+| Build, CI, installer | Branch, runner, toolchain, which script. No project |
+
+A template dutifully filled with "N/A" is worse than a short ticket: same scan,
+no information. Drop the heading instead.
+
+One exception, and it is a field rather than a section: **Affects Version is
+always set**, whatever the subject.
 
 ## Jira Data Center wiki markup
 
