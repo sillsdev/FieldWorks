@@ -89,6 +89,21 @@
       "description": "Lex entry with senses nested 6 levels deep, 2-wide (depth 6, breadth 2 = 126 senses)",
       "tags": ["lex-entry", "nested-senses", "exponential-cost", "stress"],
       "viewType": "LexEntry"
+    },
+    {
+      "id": "single-para-mixed-ws",
+      "description": "One paragraph, 236 unique short sentences alternating two writing systems, spelled with decomposed diacritics (base letter plus combining mark)",
+      "tags": ["stress", "layout-stress", "multi-ws", "single-paragraph", "shape-cache", "nfc"]
+    },
+    {
+      "id": "nfc-composable-diacritics",
+      "description": "Single paragraph of Latin prose spelled with decomposed diacritics (base letter plus combining mark), wrapping over several lines — exercises NFC index-map translation during line-break retries",
+      "tags": ["stress", "layout-stress", "nfc", "diacritics", "line-breaking"]
+    },
+    {
+      "id": "multi-line-wrap-single-ws",
+      "description": "Single long paragraph of unique English sentences spelled with decomposed diacritics (base letter plus combining mark), one writing system and font family throughout, wrapping over many lines",
+      "tags": ["stress", "layout-stress", "single-paragraph", "line-breaking", "nfc"]
     }
   ]
 }

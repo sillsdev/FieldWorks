@@ -25,6 +25,8 @@ namespace SIL.FieldWorks.Common.RootSites.RenderBenchmark
 	public abstract class RenderBenchmarkTestsBase : RealDataTestsBase
 	{
 		protected const string DeterministicRenderFontFamily = "Segoe UI";
+		// Second Latin font for writing-system-alternation scenarios.
+		protected const string SecondaryRenderFontFamily = "Times New Roman";
 		// Pinned Arabic font (loaded privately by RenderTestAssemblySetup). Used for Arabic runs so
 		// they don't depend on the host's Segoe UI Arabic version / font fallback.
 		protected const string ArabicRenderFontFamily = "Scheherazade New";
@@ -320,6 +322,15 @@ namespace SIL.FieldWorks.Common.RootSites.RenderBenchmark
 				case "multi-ws":
 					CreateMultiWsScenario();
 					break;
+				case "single-para-mixed-ws":
+					CreateSingleParaMixedWsScenario();
+					break;
+				case "nfc-composable-diacritics":
+					CreateNfcComposableDiacriticsScenario();
+					break;
+				case "multi-line-wrap-single-ws":
+					CreateMultiLineWrapSingleWsScenario();
+					break;
 				case "lex-shallow":
 					CreateLexEntryScenario(depth: 2, breadth: 3);
 					break;
@@ -537,6 +548,30 @@ namespace SIL.FieldWorks.Common.RootSites.RenderBenchmark
 			var book = CreateBook(14); // 2CH
 			m_hvoRoot = book.Hvo;
 			AddMultiWsSections(book, 5, versesPerSection: 8, chapterStart: 1);
+		}
+
+		/// <summary>Single paragraph of many short sentences alternating two writing systems.</summary>
+		private void CreateSingleParaMixedWsScenario()
+		{
+			var book = CreateBook(19); // PSA
+			m_hvoRoot = book.Hvo;
+			AddSingleMixedWsParagraph(book, sentenceCount: 236);
+		}
+
+		/// <summary>Single wrapped paragraph of Latin words spelled with decomposed diacritics.</summary>
+		private void CreateNfcComposableDiacriticsScenario()
+		{
+			var book = CreateBook(15); // EZR
+			m_hvoRoot = book.Hvo;
+			AddNfcComposableDiacriticsParagraph(book, wordCount: 80);
+		}
+
+		/// <summary>Single long wrapped paragraph of unique sentences in one writing system.</summary>
+		private void CreateMultiLineWrapSingleWsScenario()
+		{
+			var book = CreateBook(17); // EST
+			m_hvoRoot = book.Hvo;
+			AddSingleWsProseParagraph(book, sentenceCount: 200);
 		}
 
 		#region Rich Data Factories
@@ -926,6 +961,132 @@ namespace SIL.FieldWorks.Common.RootSites.RenderBenchmark
 
 				paraBldr.CreateParagraph(section.ContentOA);
 			}
+		}
+
+		/// <summary>Single paragraph of alternating-writing-system sentences with decomposed diacritics.</summary>
+		protected void AddSingleMixedWsParagraph(IScrBook book, int sentenceCount)
+		{
+			var section = Cache.ServiceLocator.GetInstance<IScrSectionFactory>().Create();
+			book.SectionsOS.Add(section);
+
+			var stTextFactory = Cache.ServiceLocator.GetInstance<IStTextFactory>();
+
+			section.HeadingOA = stTextFactory.Create();
+			var headingBldr = new StTxtParaBldr(Cache) { ParaStyleName = ScrStyleNames.SectionHead };
+			headingBldr.AppendRun("Single Paragraph, Mixed Writing Systems",
+				StyleUtils.CharStyleTextProps(null, m_wsEng));
+			headingBldr.CreateParagraph(section.HeadingOA);
+
+			string[] subjects =
+			{
+				"the élder", "the hèrder", "the sïnger",
+				"the teaçher", "the travêler", "the womãn"
+			};
+			string[] predicates =
+			{
+				"spoke of the lóng rains", "walked to the fàr well", "named the sevën hills",
+				"counted the cattlé at dusk", "kept the ôld story", "asked for a blessĩng"
+			};
+
+			section.ContentOA = stTextFactory.Create();
+			var paraBldr = new StTxtParaBldr(Cache) { ParaStyleName = ScrStyleNames.NormalParagraph };
+			paraBldr.AppendRun("1", StyleUtils.CharStyleTextProps(ScrStyleNames.ChapterNumber, m_wsEng));
+
+			for (int i = 0; i < sentenceCount; i++)
+			{
+				string sentence = $"{subjects[i % subjects.Length]} {predicates[i % predicates.Length]} {i + 1}. ";
+				paraBldr.AppendRun(sentence, AlternatingFontRunProps(i % 2 == 0));
+			}
+
+			paraBldr.CreateParagraph(section.ContentOA);
+		}
+
+		/// <summary>Run properties alternating writing system and font family together.</summary>
+		private ITsTextProps AlternatingFontRunProps(bool first)
+		{
+			return AlternatingFontRunProps(first, first);
+		}
+
+		/// <summary>Run properties combining an independently chosen writing system and font family.</summary>
+		private ITsTextProps AlternatingFontRunProps(bool useFirstWs, bool useFirstFont)
+		{
+			var bldr = TsStringUtils.MakePropsBldr();
+			bldr.SetIntPropValues((int)FwTextPropType.ktptWs, (int)FwTextPropVar.ktpvDefault,
+				useFirstWs ? m_wsEng : m_wsFr);
+			bldr.SetStrPropValue((int)FwTextPropType.ktptFontFamily,
+				useFirstFont ? DeterministicRenderFontFamily : SecondaryRenderFontFamily);
+			return bldr.GetTextProps();
+		}
+
+		/// <summary>Single wrapped paragraph of Latin words spelled with decomposed diacritics.</summary>
+		protected void AddNfcComposableDiacriticsParagraph(IScrBook book, int wordCount)
+		{
+			var section = Cache.ServiceLocator.GetInstance<IScrSectionFactory>().Create();
+			book.SectionsOS.Add(section);
+
+			var stTextFactory = Cache.ServiceLocator.GetInstance<IStTextFactory>();
+
+			section.HeadingOA = stTextFactory.Create();
+			var headingBldr = new StTxtParaBldr(Cache) { ParaStyleName = ScrStyleNames.SectionHead };
+			headingBldr.AppendRun("Decomposed Diacritics Microbenchmark",
+				StyleUtils.CharStyleTextProps(null, m_wsEng));
+			headingBldr.CreateParagraph(section.HeadingOA);
+
+			string[] decomposedWords =
+			{
+				"café", "déjà", "noël", "français", "garçon",
+				"hôtel", "año", "créée", "élégant", "façade",
+			};
+
+			section.ContentOA = stTextFactory.Create();
+			var paraBldr = new StTxtParaBldr(Cache) { ParaStyleName = ScrStyleNames.NormalParagraph };
+
+			for (int i = 0; i < wordCount; i++)
+			{
+				string word = decomposedWords[i % decomposedWords.Length];
+				paraBldr.AppendRun($"The {word} recorded here is entry {i + 1}. ",
+					StyleUtils.CharStyleTextProps(null, m_wsEng));
+			}
+
+			paraBldr.CreateParagraph(section.ContentOA);
+		}
+
+		/// <summary>Single long wrapped paragraph of unique sentences with decomposed diacritics, one writing system.</summary>
+		protected void AddSingleWsProseParagraph(IScrBook book, int sentenceCount)
+		{
+			var section = Cache.ServiceLocator.GetInstance<IScrSectionFactory>().Create();
+			book.SectionsOS.Add(section);
+
+			var stTextFactory = Cache.ServiceLocator.GetInstance<IStTextFactory>();
+
+			section.HeadingOA = stTextFactory.Create();
+			var headingBldr = new StTxtParaBldr(Cache) { ParaStyleName = ScrStyleNames.SectionHead };
+			headingBldr.AppendRun("Single Writing-System Line-Wrap Microbenchmark",
+				StyleUtils.CharStyleTextProps(null, m_wsEng));
+			headingBldr.CreateParagraph(section.HeadingOA);
+
+			string[] subjects =
+			{
+				"the merçhant", "the masón", "the scribë",
+				"the shephèrd", "the weavêr", "the pottér"
+			};
+			string[] predicates =
+			{
+				"measured the grain by the rivér", "repaired the eastèrn wall before dusk",
+				"copied the ledger onto fresh parchmënt", "counted the flock past the old gatê",
+				"dyed the cloth a deep saffrõn", "shaped the jar on the slow wheël"
+			};
+
+			section.ContentOA = stTextFactory.Create();
+			var paraBldr = new StTxtParaBldr(Cache) { ParaStyleName = ScrStyleNames.NormalParagraph };
+
+			for (int i = 0; i < sentenceCount; i++)
+			{
+				string sentence = $"{subjects[i % subjects.Length]} {predicates[i % predicates.Length]} on day {i + 1}. ";
+				paraBldr.AppendRun(sentence, StyleUtils.CharStyleTextProps(null, m_wsEng));
+			}
+
+			paraBldr.CreateParagraph(section.ContentOA);
 		}
 
 		#endregion
