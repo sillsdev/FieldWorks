@@ -34,13 +34,21 @@ Keep these few and listed, so re-syncing upstream stays possible.
    `jira_agile`, `jira_links`, `jira_projects`, `jira_workflow`,
    `jira_worklog`. The fix restores the pruned names, nothing else.
 
-   **This is an upstream bug and should be reported there.** Until it is fixed
-   upstream, a re-sync will reintroduce it.
+   **Reported upstream as langpingxue/atlassian-skills#14.** Until it is fixed
+   there, a re-sync will reintroduce it.
 
-## Deliberately not done
+## Restructuring done here
 
-This skill has **not** been compressed or restructured, unlike the
-FieldWorks-owned skills. It is ~560 lines of API reference that loads only
-when Atlassian work happens, and keeping it close to upstream is worth more
-than the context saving. The near-total duplication between this variant and
-`atlassian-skills` is upstream's design, not something introduced here.
+`SKILL.md` dropped its `## Available Utilities` section -- 237 lines restating
+all 48 function signatures that `REFERENCE.md` already documents in the same
+folder, copied from the write variant. It is now a module-to-function index
+generated from the scripts, with `REFERENCE.md` carrying the signatures. 560
+lines to 265.
+
+Only three sections proved byte-identical to the write variant and were safe to
+document once there: Response Data Structures, Error Handling, Dependencies.
+Configuration, Core Workflow and Philosophy differ -- the write variant's are
+supersets carrying write examples -- so the first two are kept here verbatim.
+
+This is the largest local divergence from upstream. A re-sync has to re-apply
+it, along with the import fix and the SIL section.
