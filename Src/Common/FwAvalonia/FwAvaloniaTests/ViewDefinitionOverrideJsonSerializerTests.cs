@@ -25,6 +25,8 @@ namespace FwAvaloniaTests
 				new ViewOverrideOperation(ViewOverrideOperationKind.SetLabel, "b", label: "Headword"),
 				new ViewOverrideOperation(ViewOverrideOperationKind.ReorderChildren, "g",
 					childOrder: new[] { "g/b", "g/a" }),
+				new ViewOverrideOperation(ViewOverrideOperationKind.SetVisibleWritingSystems, "w",
+					writingSystems: new[] { "seh", "fr" }),
 				new ViewOverrideOperation(ViewOverrideOperationKind.HideNode, "c")
 			};
 			var diags = new List<ViewDiagnostic>
@@ -47,7 +49,7 @@ namespace FwAvaloniaTests
 			Assert.That(restored.LayoutName, Is.EqualTo("detail"));
 			Assert.That(restored.LayoutType, Is.EqualTo("jtview"));
 
-			Assert.That(restored.Operations.Count, Is.EqualTo(4));
+			Assert.That(restored.Operations.Count, Is.EqualTo(5));
 
 			var vis = restored.Operations.Single(o => o.Kind == ViewOverrideOperationKind.SetVisibility);
 			Assert.That(vis.StableId, Is.EqualTo("a"));
@@ -63,6 +65,12 @@ namespace FwAvaloniaTests
 
 			var hide = restored.Operations.Single(o => o.Kind == ViewOverrideOperationKind.HideNode);
 			Assert.That(hide.StableId, Is.EqualTo("c"));
+
+			var writingSystems = restored.Operations
+				.Single(o => o.Kind == ViewOverrideOperationKind.SetVisibleWritingSystems);
+			Assert.That(writingSystems.StableId, Is.EqualTo("w"));
+			Assert.That(writingSystems.WritingSystems, Is.EqualTo(new[] { "seh", "fr" }),
+				"the chosen writing systems round-trip in display order");
 
 			Assert.That(restored.Diagnostics.Count, Is.EqualTo(1));
 			Assert.That(restored.Diagnostics[0].Code, Is.EqualTo("override-added-node"));
@@ -97,6 +105,28 @@ namespace FwAvaloniaTests
 			const string json = "{ \"formatVersion\": 99, \"class\": \"LexEntry\", \"operations\": [] }";
 			Assert.That(() => ViewDefinitionOverrideJsonSerializer.Deserialize(json),
 				Throws.TypeOf<InvalidDataException>());
+		}
+
+		[Test]
+		public void Deserialize_NullWritingSystemEntry_Throws()
+		{
+			const string json = "{ \"formatVersion\": 1, \"class\": \"LexEntry\", \"name\": \"detail\","
+				+ " \"type\": \"jtview\", \"operations\": [ { \"op\": \"setVisibleWritingSystems\","
+				+ " \"id\": \"w\", \"writingSystems\": [ \"seh\", null ] } ] }";
+			Assert.That(() => ViewDefinitionOverrideJsonSerializer.Deserialize(json),
+				Throws.TypeOf<InvalidDataException>(),
+				"a null entry must fail the load, not flow into the node model");
+		}
+
+		[Test]
+		public void Deserialize_NullChildOrderEntry_Throws()
+		{
+			const string json = "{ \"formatVersion\": 1, \"class\": \"LexEntry\", \"name\": \"detail\","
+				+ " \"type\": \"jtview\", \"operations\": [ { \"op\": \"reorderChildren\","
+				+ " \"id\": \"g\", \"childOrder\": [ \"g/a\", null ] } ] }";
+			Assert.That(() => ViewDefinitionOverrideJsonSerializer.Deserialize(json),
+				Throws.TypeOf<InvalidDataException>(),
+				"a null entry must fail the load, not surface at compose time");
 		}
 
 		[Test]

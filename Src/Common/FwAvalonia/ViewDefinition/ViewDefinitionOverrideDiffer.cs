@@ -24,6 +24,11 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 		/// <summary>Reorder a node's children (same child set, different order).</summary>
 		ReorderChildren,
 
+		/// <summary>
+		/// Restrict a field to a subset of its writing systems, in display order.
+		/// </summary>
+		SetVisibleWritingSystems,
+
 		/// <summary>A node present in the shipped definition that the override removed/hid.</summary>
 		HideNode,
 
@@ -53,13 +58,15 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 			string field = null,
 			string editor = null,
 			string sourceStableId = null,
-			string writingSystem = null)
+			string writingSystem = null,
+			IReadOnlyList<string> writingSystems = null)
 		{
 			Kind = kind;
 			StableId = stableId ?? throw new ArgumentNullException(nameof(stableId));
 			Visibility = visibility;
 			Label = label;
 			ChildOrder = childOrder ?? (IReadOnlyList<string>)Array.Empty<string>();
+			WritingSystems = writingSystems ?? (IReadOnlyList<string>)Array.Empty<string>();
 			ParentStableId = parentStableId;
 			Index = index;
 			NodeKind = nodeKind;
@@ -82,6 +89,11 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 
 		/// <summary>New child order (StableIds) for <see cref="ViewOverrideOperationKind.ReorderChildren"/>.</summary>
 		public IReadOnlyList<string> ChildOrder { get; }
+
+		/// <summary>
+		/// The writing systems a field is restricted to, in display order.
+		/// </summary>
+		public IReadOnlyList<string> WritingSystems { get; }
 
 		/// <summary>For <see cref="ViewOverrideOperationKind.AddNode"/>: the parent the new node is inserted under.</summary>
 		public string ParentStableId { get; }
@@ -115,6 +127,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 					return $"setLabel {StableId} -> {Label}";
 				case ViewOverrideOperationKind.ReorderChildren:
 					return $"reorderChildren {StableId} -> [{string.Join(",", ChildOrder)}]";
+				case ViewOverrideOperationKind.SetVisibleWritingSystems:
+					return $"setVisibleWritingSystems {StableId} -> [{string.Join(",", WritingSystems)}]";
 				case ViewOverrideOperationKind.HideNode:
 					return $"hideNode {StableId}";
 				case ViewOverrideOperationKind.AddNode:
@@ -170,9 +184,10 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 	/// the diff keys on <see cref="ViewNode.StableId"/>
 	/// -- the identity scheme the semantic baselines already use -- instead of a second one.
 	///
-	/// Representable edits (visibility, label, child reorder, node hidden) become operations; everything
-	/// else (added nodes, changed binding/editor/kind) becomes an explicit diagnostic. Output is
-	/// deterministic: operations and diagnostics are ordered by StableId then kind.
+	/// Representable edits (visibility, label, child reorder, writing-system restriction, node
+	/// hidden) become operations; everything else (added nodes, changed binding/editor/kind)
+	/// becomes an explicit diagnostic. Output is deterministic: operations and diagnostics are
+	/// ordered by StableId then kind.
 	/// </summary>
 	public static class ViewDefinitionOverrideDiffer
 	{
@@ -239,6 +254,14 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 						stableId, label: overriddenNode.Label));
 				}
 
+				if (!WritingSystemsEqual(shippedNode.VisibleWritingSystems,
+					overriddenNode.VisibleWritingSystems))
+				{
+					operations.Add(new ViewOverrideOperation(
+						ViewOverrideOperationKind.SetVisibleWritingSystems, stableId,
+						writingSystems: overriddenNode.VisibleWritingSystems));
+				}
+
 				AppendReorderIfNeeded(operations, stableId, shippedNode, overriddenNode);
 			}
 
@@ -257,6 +280,17 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 					parentStableId: place.ParentId, index: place.Index,
 					nodeKind: added.Kind, field: added.Field, editor: added.RawEditor,
 					writingSystem: added.WritingSystem));
+
+				// An AddNode op cannot carry a writing-system restriction; report the drop
+				// rather than lose it silently.
+				if (added.VisibleWritingSystems != null && added.VisibleWritingSystems.Count > 0)
+				{
+					diagnostics.Add(new ViewDiagnostic(ViewDiagnosticSeverity.Warning,
+						"override-added-ws-restriction-dropped",
+						$"added node '{stableId}' restricts its writing systems; the restriction"
+							+ " is not representable on an AddNode op",
+						stableId));
+				}
 			}
 
 			AppendReorderIfNeeded(operations, RootParentKey,
@@ -296,6 +330,12 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 			operations.Add(new ViewOverrideOperation(ViewOverrideOperationKind.ReorderChildren,
 				key, childOrder: overriddenOrder));
 		}
+
+		// Null and empty both mean "no restriction"; order matters (it is the display order).
+		// Tags compare case-insensitively, matching how the composer resolves them.
+		private static bool WritingSystemsEqual(IReadOnlyList<string> shipped, IReadOnlyList<string> overridden)
+			=> (shipped ?? Array.Empty<string>()).SequenceEqual(
+				overridden ?? Array.Empty<string>(), StringComparer.OrdinalIgnoreCase);
 
 		private static int CompareOperations(ViewOverrideOperation a, ViewOverrideOperation b)
 		{
