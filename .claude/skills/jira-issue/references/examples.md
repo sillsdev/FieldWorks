@@ -55,11 +55,10 @@ ones fabricated silently when features are inserted into a rule. Both are
 
 h3. Symptoms, filed separately
 
-# LT-AAAAA -- a shared class is rewritten from inside a rule, with nothing on
-screen saying so
-# LT-BBBBB -- a named class renders as a decomposed feature list
-# LT-CCCCC -- generated classes accumulate in the user's list, never cleaned up
-# LT-DDDDD -- no way to promote a feature bundle into a real class
+# LT-22724 -- editing a class from one rule changes every rule using it
+# LT-22725 -- a named feature class renders as a feature list inside rules
+# LT-22726 -- generated classes accumulate and are never cleaned up
+# LT-22727 -- no way to promote a generated feature bundle into a real class
 
 h3. Ideas to resolve
 
@@ -81,7 +80,9 @@ comment._
 *Next:* team decision on the migration question.
 ```
 
-228 words. The four symptom tickets are linked, each triageable on its own.
+271 words with the Environment line. The four symptom tickets were filed on
+2026-08-21 as LT-22724 through LT-22727, linked to this one with "Issue split",
+and each is triageable on its own.
 
 ## What moved to the comment
 
