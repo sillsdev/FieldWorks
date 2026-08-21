@@ -158,9 +158,8 @@ namespace SIL.FieldWorks.LexText.Controls
 						m_propertyTable.SetProperty(UIModePropertyName, newUiMode, true);
 						m_propertyTable.SetPropertyPersistence(UIModePropertyName, false);
 					}
+					ErrorReporter.AddProperty("AvaloniaUIMode", newUiMode);
 				}
-				// Keep the crash-report value in step with a live toggle, not just the startup seed.
-				ErrorReporter.AddProperty("AvaloniaUIMode", newUiMode);
 			}
 
 			m_sNewUserWs = m_userInterfaceChooser.NewUserWs;

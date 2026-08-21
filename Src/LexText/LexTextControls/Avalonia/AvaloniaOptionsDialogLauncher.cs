@@ -493,8 +493,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		}
 
 		// Applies a UI-mode change live: persist into settings + mirror+broadcast through the PropertyTable
-		// so the open views (RecordBrowseView/RecordEditView) re-resolve without a restart, and updates the
-		// crash-report value to match so a report reflects the mode active at crash time, not just at startup.
+		// so the open views (RecordBrowseView/RecordEditView) re-resolve without a restart.
 		internal static void ApplyUiModeLive(PropertyTable propertyTable, FwApplicationSettingsBase settings, string mode)
 		{
 			var norm = NormalizeUiMode(mode);
@@ -507,8 +506,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			ErrorReporter.AddProperty("AvaloniaUIMode", norm);
 		}
 
-		// Applies a disabled-tools change live: persist into settings + mirror+broadcast through the
-		// PropertyTable, and keep the crash-report value in step, mirroring ApplyUiModeLive.
+		// Applies a per-tool disabled-tools change live, mirroring ApplyUiModeLive.
 		internal static void ApplyDisabledToolsLive(PropertyTable propertyTable, FwApplicationSettingsBase settings, string disabledTools)
 		{
 			settings.UIModeDisabledTools = disabledTools;

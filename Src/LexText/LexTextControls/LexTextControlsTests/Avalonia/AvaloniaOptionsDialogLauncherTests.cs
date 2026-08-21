@@ -32,7 +32,7 @@ namespace LexTextControlsTests
 			ErrorReport.Properties.Remove("AvaloniaDisabledTools");
 		}
 
-		// ----- ApplyUiModeLive / ApplyDisabledToolsLive (the crash-report mirror behind Apply) -----
+		// ----- ApplyUiModeLive / ApplyDisabledToolsLive: crash-report mirror -----
 
 		[Test]
 		public void ApplyUiModeLive_PersistsBroadcastsAndRecordsForCrashReports()

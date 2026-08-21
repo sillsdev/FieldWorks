@@ -562,7 +562,6 @@ namespace SIL.FieldWorks.XWorks
 				settingsDisabledTools ?? string.Empty, false);
 			propertyTable.SetPropertyPersistence(UIFrameworkResolver.UIModeDisabledToolsPropertyName, false);
 
-			// Record for crash reports; everything else about the crash comes from the trace.
 			ErrorReporter.AddProperty("AvaloniaUIMode", UIFrameworkResolver.NormalizeUIMode(settingsUiMode));
 			ErrorReporter.AddProperty("AvaloniaDisabledTools", settingsDisabledTools ?? string.Empty);
 		}
