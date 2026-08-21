@@ -15,8 +15,23 @@ print(jira_create_issue("LT", "<summary>", "Bug", description=desc,
 '@
 ```
 
-Then `jira_add_comment(key, comment)`, then `jira_add_attachment(key, paths)`
-once Phase 5 is answered, then one link per related ticket.
+Then `jira_add_comment(key, comment)`, then attachments once Phase 5 is
+answered, then one link per related ticket.
+
+## Attachments
+
+```powershell
+python -c @'
+import sys; sys.path.insert(0, ".claude/skills/atlassian-skills/scripts")
+from jira_attachments import jira_add_attachment
+print(jira_add_attachment("LT-XXXXX", ["01-before.png", "02-after.png"]))
+'@
+```
+
+Reference them with `!01-before.png!`, or `!01-before.png|thumbnail!` to keep a
+long description scannable. Images belong in the analysis comment unless the
+picture *is* the report. Trimming, captioning and provenance labelling are in
+`.claude/references/evidence.md`; they are not optional.
 
 ## Fields that need the custom_fields back door
 

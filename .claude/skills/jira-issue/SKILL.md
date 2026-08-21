@@ -12,6 +12,7 @@ description is length on the screen for every reader, permanently. Keep the
 description short and put the depth in the first comment.
 
 Style contract: `.claude/references/compact-style.md`. Read it first.
+Screenshots: `.claude/references/evidence.md`, before publishing any image.
 
 ## Phases
 
@@ -23,7 +24,7 @@ Style contract: `.claude/references/compact-style.md`. Read it first.
 | 2 | Duplicates | Search **before** drafting. Show at most 5 candidates as a table with verdicts |
 | 3 | Lede | Three labelled lines, **approved before anything else is written**. Max 3 revisions, then ask which line is wrong |
 | 4 | Body | Track file, plus the budgets in `references/format.md` |
-| 5 | Permission | "Do you have permission to post this?" Hard stop before anything leaves the machine |
+| 5 | Permission | "Do you have permission to post this?" Hard stop. A screenshot of a live project counts |
 | 6 | Publish | `references/publish.md` |
 | 7 | Report | Key, URL, one `Next:` line. Nothing else |
 | 8 | Start now? | Assign, transition, comment the branch and worktree, hand to `jira-bugfix` at its Step 3 |
@@ -91,5 +92,6 @@ wrong one is visible.
 - [ ] Description 250 words or fewer, ending in one `*Next:*` line.
 - [ ] Every unknown is a `*Not known:*` line rather than a guess.
 - [ ] No section emitted that does not apply.
+- [ ] Every image trimmed, captioned, and labelled headless / live / mockup.
 - [ ] The title and the last line alone tell the reader what is wrong and what
       happens next.

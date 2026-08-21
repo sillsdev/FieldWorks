@@ -281,6 +281,15 @@ from scripts.jira_issues import (
     jira_add_comment     # Add comment to issue
 )
 
+# Attachments live in their own module because they need a multipart POST
+from scripts.jira_attachments import (
+    jira_add_attachment  # Upload one or more files to an issue
+)
+
+# Attachments are visible to everyone who can see the issue. Confirm
+# permission before uploading user data -- see .claude/references/evidence.md
+jira_add_attachment("LT-22715", ["01-before.png", "02-after.png"])
+
 # Create issue with full options
 jira_create_issue(
     project_key="PROJ",

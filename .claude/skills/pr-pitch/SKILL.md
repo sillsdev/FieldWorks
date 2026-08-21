@@ -18,6 +18,10 @@ Read `.claude/references/compact-style.md` before writing the pitch. It is the
 shared style contract for issues and PR bodies, and it is where the banned
 openers, the five-item list cap and the pre-send check live.
 
+Read `.claude/references/evidence.md` before publishing any screenshot. It
+covers trimming, captioning, provenance labelling, the three upload routes,
+and the permission question that precedes all of them.
+
 ## What this produces
 
 Two artifacts, always together, never one without the other:
@@ -156,6 +160,14 @@ from a comment thread.
 Open with the concrete thing, not the framing. A screenshot or GIF if the
 change is visible; otherwise one sentence naming what a user or caller can
 now do that they could not before. Never open with "This PR refactors...".
+
+**If the change is visible, a picture is expected, not optional.** For
+Avalonia work the capture is automated and there is no excuse for its absence;
+for WinForms work the author supplies it. Every image is trimmed, captioned
+with what to look at, and labelled with its provenance -- a headless
+control-level capture is not a screenshot of the product, and a body that
+blurs the two misleads the reviewer about what has been proven. The image
+supports the claim; the test pins it. See `.claude/references/evidence.md`.
 
 ### 2. The unknown the reviewer starts with (one paragraph)
 
