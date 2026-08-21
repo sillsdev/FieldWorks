@@ -21,7 +21,7 @@ Description:
 This class implements a search pattern and the top level mechanisms to do the actual searching.
 @h3{Hungarian: zpat}
 ----------------------------------------------------------------------------------------------*/
-class VwPattern : public IVwPattern
+class VwPattern : public IVwPattern2
 {
 	friend class VwLazyBox; // Can set relevant instance vars on successful find.
 	friend class FindInAlgorithm; // used in method implementation.
@@ -105,6 +105,8 @@ public:
 	STDMETHOD(get_ErrorMessage)(BSTR * pbstrMsg);
 	STDMETHOD(get_ReplacementText)(ITsString ** pptssText);
 	STDMETHOD(get_Group)(int iGroup, ITsString ** pptssGroup);
+	STDMETHOD(ReplaceAllIn)(ITsString * ptss, int ichStart, int ichEnd,
+		int * pcMatches, ITsString ** pptssResult);
 
 	// Other public methods
 
@@ -180,6 +182,9 @@ protected:
 	// Other protected methods
 	void Compile();
 	void CleanupRegexPattern();
+	void ReplaceAllWithAlgorithm(FindInAlgorithmBase * pfia, IVwTextSource * pts,
+		ITsString * ptssSource,
+		int ichStart, int ichEnd, int * pcMatches, ITsString ** pptssResult);
 };
 
 

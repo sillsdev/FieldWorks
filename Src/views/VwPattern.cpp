@@ -25,6 +25,12 @@ DEFINE_THIS_FILE
 //:>	VwPattern Methods
 //:>********************************************************************************************
 
+static int CheckedPatternPosition(__int64 value)
+{
+	if (value < 0 || value > INT_MAX)
+		ThrowHr(WarnHr(HRESULT_FROM_WIN32(ERROR_ARITHMETIC_OVERFLOW)));
+	return static_cast<int>(value);
+}
 
 /*----------------------------------------------------------------------------------------------
 	Constructor.
@@ -37,7 +43,6 @@ VwPattern::VwPattern()
 	m_sbstrDefaultCharStyle = L"<!default chars!>";
 	m_fMatchDiacritics = true;
 }
-
 
 /*----------------------------------------------------------------------------------------------
 	Destructor.
@@ -62,9 +67,12 @@ STDMETHODIMP VwPattern::QueryInterface(REFIID riid, void **ppv)
 		*ppv = static_cast<IUnknown *>(this);
 	else if (riid == IID_IVwPattern)
 		*ppv = static_cast<IVwPattern *>(this);
+	else if (riid == IID_IVwPattern2)
+		*ppv = static_cast<IVwPattern2 *>(this);
 	else if (riid == IID_ISupportErrorInfo)
 	{
-		*ppv = NewObj CSupportErrorInfo(this, IID_IVwPattern);
+		*ppv = NewObj CSupportErrorInfo2(static_cast<IVwPattern *>(this),
+			IID_IVwPattern, IID_IVwPattern2);
 		return S_OK;
 	}
 	else
@@ -566,7 +574,6 @@ STDMETHODIMP VwPattern::get_Group(int iGroup, ITsString ** pptssGroup)
 	END_COM_METHOD(g_fact, IID_IVwPattern);
 }
 
-
 /*----------------------------------------------------------------------------------------------
 	Set whether to treat character sequences that are equivalent
 	as defined by Unicode compatibility decompositions as being identical.
@@ -915,7 +922,10 @@ public:
 	int m_ichMinSearch; // Range of text to search (from smallest to largest index)
 	int m_ichLimSearch;
 	OLECHAR * m_pchBuf; // Text contents of m_pts;
+	Vector<OLECHAR> m_vchBuf;
 	UErrorCode m_error;
+	bool m_fSessionInitialized;
+	bool m_fPropertiesOnly;
 
 	FindInAlgorithmBase(IVwTextSource * pts, int ichStartLog, int ichEndLog, ComBool fForward,
 		IVwSearchKiller * pxserkl, VwPattern * pat)
@@ -929,6 +939,8 @@ public:
 		m_ichLimFoundSearch = -1;
 		m_pat = pat;
 		m_error = U_ZERO_ERROR;
+		m_fSessionInitialized = false;
+		m_fPropertiesOnly = false;
 	}
 
 	virtual ~FindInAlgorithmBase()
@@ -1108,9 +1120,9 @@ public:
 	virtual void InitSearcher() = 0;
 	// Run the main search loop over a single text source.
 	virtual bool Search() = 0;
+	virtual bool SearchNext() = 0;
 
-	// Run the main body of the algorithm. Return true if a match is made successfully.
-	bool Run()
+	bool Prepare()
 	{
 		// Get the characters (paragraph) we have to search.
 		// We are getting the whole paragraph to give ICU enough context for whole word matching.
@@ -1131,16 +1143,64 @@ public:
 			m_pat->Compile();
 
 		if ((!m_pat->m_fUseRegularExpressions) && m_pat->m_stuCompiled.Length() == 0)
+		{
+			m_fPropertiesOnly = true;
+			return true;
+		}
+		return true;
+	}
+
+	bool InitializeSession()
+	{
+		if (!Prepare())
+			return false;
+		if (m_fPropertiesOnly)
+		{
+			m_fSessionInitialized = true;
+			return true;
+		}
+
+		m_vchBuf.Resize(CheckedPatternPosition(static_cast<__int64>(m_cchSrcSearch) + 1));
+		InitializeSearcher(m_vchBuf.Begin());
+		m_fSessionInitialized = true;
+		return true;
+	}
+
+	bool Run()
+	{
+		if (!Prepare())
+			return false;
+		if (m_fPropertiesOnly)
 			return SearchForProperties();
 
-		m_pchBuf = (OLECHAR *)(_alloca((m_cchSrcSearch + 1) * isizeof(OLECHAR)));
-		CheckHr(m_pts->FetchSearch(0, m_cchSrcSearch, m_pchBuf));
-		* (m_pchBuf + m_cchSrcSearch) = 0; // null termination required.
-		m_ichLimSearch = std::min(m_cchSrcSearch, m_ichLimSearch); // Because of disregarded ORCs, we might get fewer charcaters in the buffer than we asked for.
-
-		InitSearcher();
+		OLECHAR * pchBuf =
+			(OLECHAR *)(_alloca((m_cchSrcSearch + 1) * isizeof(OLECHAR)));
+		InitializeSearcher(pchBuf);
 
 		return Search();
+	}
+
+	void InitializeSearcher(OLECHAR * pchBuf)
+	{
+		m_pchBuf = pchBuf;
+		CheckHr(m_pts->FetchSearch(0, m_cchSrcSearch, m_pchBuf));
+		m_pchBuf[m_cchSrcSearch] = 0;
+		m_ichLimSearch = std::min(m_cchSrcSearch, m_ichLimSearch);
+		InitSearcher();
+	}
+
+	bool NextAcceptedMatch(int ichStartLog)
+	{
+		Assert(m_fSessionInitialized);
+		Assert(m_fForward);
+		CheckHr(m_pts->LogToSearch(ichStartLog, &m_ichMinSearch));
+		if (m_ichMinSearch > m_ichLimSearch)
+			return Fail();
+		m_ichMinFoundSearch = -1;
+		m_ichLimFoundSearch = -1;
+		if (m_fPropertiesOnly)
+			return SearchForProperties();
+		return SearchNext();
 	}
 
 	// Checks to see if the next char in the searched string is a Diacritic.  If it is a diacritic
@@ -1154,13 +1214,13 @@ public:
 			return true;
 
 		OLECHAR rgchw[2];
-		CheckHr(m_pts->FetchSearch(m_ichLimFoundSearch, m_ichLimFoundSearch + 1, &rgchw[0]));
+		rgchw[0] = m_pchBuf[m_ichLimFoundSearch];
 		uint ch32;
 		// if chw is the first char of a surrogate pair, and , fetch the next char as well and translate the pair into a UChar32
 		// otherwise, copy chw to a UChar32.
 		if (U_IS_LEAD(rgchw[0]) && m_ichLimFoundSearch + 1 < m_ichLimSearch)
 		{
-			CheckHr(m_pts->FetchSearch(m_ichLimFoundSearch + 1, m_ichLimFoundSearch + 2, &rgchw[1]));
+			rgchw[1] = m_pchBuf[m_ichLimFoundSearch + 1];
 			Assert(U_IS_TRAIL(rgchw[1]));
 			bool fSurrogateOk = FromSurrogate(rgchw[0], rgchw[1], &ch32);
 			Assert(fSurrogateOk);
@@ -1305,6 +1365,7 @@ class FindInAlgorithm : public FindInAlgorithmBase
 {
 	StringSearch * m_piter;
 	BreakIterator * m_pbi;
+	bool m_fSearchStarted;
 public:
 	FindInAlgorithm(IVwTextSource * pts, int ichStartLog, int ichEndLog, ComBool fForward,
 		IVwSearchKiller * pxserkl, VwPattern * pat)
@@ -1312,6 +1373,7 @@ public:
 	{
 		m_piter = NULL;
 		m_pbi = NULL;
+		m_fSearchStarted = false;
 	}
 
 	virtual ~FindInAlgorithm()
@@ -1383,29 +1445,7 @@ public:
 	bool Search()
 	{
 		if (m_fForward)
-		{
-			for (m_ichMinFoundSearch = m_piter->first(m_error);
-				; // termination checks are inside the loop body
-				m_ichMinFoundSearch = m_piter->next(m_error) )
-			{
-				CheckError(); // see if first() or next() call failed.
-				if (m_ichMinFoundSearch == USEARCH_DONE)
-					return Fail();
-				if (m_ichMinFoundSearch < m_ichMinSearch)
-					continue;
-				if (m_ichMinFoundSearch >= m_ichLimSearch)
-					continue;
-				m_ichLimFoundSearch = m_ichMinFoundSearch + m_piter->getMatchedLength();
-				AdjustSearchLimitForDiacritics();
-				if (m_ichLimFoundSearch > m_ichLimSearch)
-					return Fail(); // The first match extends past the end of our range.
-				if (m_pat->m_fMatchDiacritics && !CheckMatchDiacritic())
-					continue;
-				// We have a candidate match. See if it satisfies ws, style, tag requirements if any
-				if (CheckAndExtendCandidate())
-					return true;
-			}
-		}
+			return SearchNext();
 		else
 		{
 			for (m_ichMinFoundSearch = m_piter->last(m_error);
@@ -1432,6 +1472,33 @@ public:
 			}
 		}
 		return false; // arbitrary (should never get here).
+	}
+
+	bool SearchNext()
+	{
+		Assert(m_fForward);
+		for (m_ichMinFoundSearch = m_fSearchStarted ? m_piter->next(m_error) :
+			m_piter->first(m_error);
+			; // termination checks are inside the loop body
+			m_ichMinFoundSearch = m_piter->next(m_error))
+		{
+			m_fSearchStarted = true;
+			CheckError(); // see if first() or next() call failed.
+			if (m_ichMinFoundSearch == USEARCH_DONE)
+				return Fail();
+			if (m_ichMinFoundSearch < m_ichMinSearch)
+				continue;
+			if (m_ichMinFoundSearch >= m_ichLimSearch)
+				continue;
+			m_ichLimFoundSearch = m_ichMinFoundSearch + m_piter->getMatchedLength();
+			AdjustSearchLimitForDiacritics();
+			if (m_ichLimFoundSearch > m_ichLimSearch)
+				return Fail(); // The first match extends past the end of our range.
+			if (m_pat->m_fMatchDiacritics && !CheckMatchDiacritic())
+				continue;
+			if (CheckAndExtendCandidate())
+				return true;
+		}
 	}
 
 	/*------------------------------------------------------------------------------------------
@@ -1505,27 +1572,7 @@ protected:
 	{
 		bool fMatch = true; // did we get a match this iteration?
 		if (m_fForward)
-		{
-			for (fMatch = m_pmatcher->find(m_ichMinSearch, m_error); ; fMatch = m_pmatcher->find() )
-			{
-				if (!fMatch)
-					return Fail(); // no more matches.
-				m_ichMinFoundSearch = m_pmatcher->start(m_error);
-				m_ichLimFoundSearch = m_pmatcher->end(m_error);
-				CheckError(); // see if find() or start() or end() call failed.
-				if (m_ichLimFoundSearch > m_ichLimSearch)
-					return Fail(); // The current match extends past the end of our range.
-				// Doesn't seem to be any reasonable way to do this
-				//if (m_pat->m_fMatchDiacritics)
-				//	if(!CheckMatchDiacritic())
-				//		return Fail();
-				// We have a candidate match. See if it satisfies ws, style, tag requirements if any
-				// I don't think we can usefully do this either.
-				//if (CheckAndExtendCandidate())
-				//	return true;
-				return true; // got a useful match.
-			}
-		}
+			return SearchNext();
 		else
 		{
 			// Simulate searching backwards by searching forwards and keeping the last match in range.
@@ -1561,6 +1608,19 @@ protected:
 			}
 		}
 		return false; // arbitrary (should never get here).
+	}
+
+	bool SearchNext()
+	{
+		Assert(m_fForward);
+		if (!m_pmatcher->find(m_ichMinSearch, m_error))
+			return Fail();
+		m_ichMinFoundSearch = m_pmatcher->start(m_error);
+		m_ichLimFoundSearch = m_pmatcher->end(m_error);
+		CheckError();
+		if (m_ichLimFoundSearch > m_ichLimSearch)
+			return Fail();
+		return true;
 	}
 };
 
@@ -1644,6 +1704,122 @@ STDMETHODIMP VwPattern::FindIn(IVwTextSource * pts, int ichStartLog, int ichEndL
 	m_qtsWhereFound = pts;
 
 	END_COM_METHOD(g_fact, IID_IVwPattern);
+}
+
+void VwPattern::ReplaceAllWithAlgorithm(FindInAlgorithmBase * pfia, IVwTextSource * pts,
+	ITsString * ptssSource, int ichStart, int ichEnd, int * pcMatches,
+	ITsString ** pptssResult)
+{
+	struct Replacement
+	{
+		int ichMin;
+		int ichLim;
+		ITsStringPtr qtss;
+	};
+	Vector<Replacement> vrepl;
+	ITsStringPtr qtssSource = ptssSource;
+	ITsStrBldrPtr qtsb;
+	int ichStartSearch = ichStart;
+	int ichLimLastMatch = -1;
+	int cMatches = 0;
+
+	if (pfia->InitializeSession())
+	{
+		while (ichStartSearch <= ichEnd && pfia->NextAcceptedMatch(ichStartSearch))
+		{
+			int ichMin;
+			int ichLim;
+			CheckHr(pts->SearchToLog(pfia->m_ichMinFoundSearch, false, &ichMin));
+			CheckHr(pts->SearchToLog(pfia->m_ichLimFoundSearch, true, &ichLim));
+			if (ichMin == ichLim)
+			{
+				if (ichMin > 0 || !m_fUseRegularExpressions || !m_stuCompiled.Equals(L"^"))
+				{
+					ichLim = CheckedPatternPosition(static_cast<__int64>(ichLim) + 1);
+					if (ichLim > ichEnd)
+						ichLim = ichEnd;
+				}
+			}
+
+			m_ichMinFoundLog = ichMin;
+			m_ichLimFoundLog = ichLim;
+			m_qtsWhereFound = pts;
+			if (ichLim == ichLimLastMatch)
+			{
+				ichStartSearch = CheckedPatternPosition(static_cast<__int64>(ichLim) + 1);
+				continue;
+			}
+			ichLimLastMatch = ichLim;
+
+			ITsStringPtr qtssReplacement;
+			CheckHr(get_ReplacementText(&qtssReplacement));
+			if (!qtsb)
+				CheckHr(qtssSource->GetBldr(&qtsb));
+			int ichMinResult;
+			int ichLimResult;
+			CheckHr(pts->LogToRen(ichMin, &ichMinResult));
+			CheckHr(pts->LogToRen(ichLim, &ichLimResult));
+			Replacement repl = { ichMinResult, ichLimResult, qtssReplacement };
+			vrepl.Push(repl);
+			cMatches++;
+			ichStartSearch = ichLim;
+		}
+	}
+	for (int irepl = vrepl.Size() - 1; irepl >= 0; --irepl)
+	{
+		CheckHr(qtsb->ReplaceTsString(vrepl[irepl].ichMin, vrepl[irepl].ichLim,
+			vrepl[irepl].qtss));
+	}
+
+	ITsStringPtr qtssResult;
+	if (qtsb)
+		CheckHr(qtsb->GetString(&qtssResult));
+	else
+		qtssResult = qtssSource;
+	m_ichMinFoundLog = -1;
+	m_ichLimFoundLog = -1;
+	m_qtsWhereFound = pts;
+	*pptssResult = qtssResult.Detach();
+	*pcMatches = cMatches;
+}
+
+STDMETHODIMP VwPattern::ReplaceAllIn(ITsString * ptss, int ichStart, int ichEnd,
+	int * pcMatches, ITsString ** pptssResult)
+{
+	BEGIN_COM_METHOD;
+	ChkComOutPtr(pcMatches);
+	*pcMatches = 0;
+	ChkComOutPtr(pptssResult);
+	*pptssResult = NULL;
+	ChkComArgPtr(ptss);
+	if (ichStart < 0 || ichEnd < ichStart)
+		ThrowHr(WarnHr(E_INVALIDARG));
+	int cch;
+	CheckHr(ptss->get_Length(&cch));
+	if (ichEnd > cch)
+		ThrowHr(WarnHr(E_INVALIDARG));
+	IVwTxtSrcInitPtr qtsi;
+	qtsi.CreateInstance(CLSID_VwStringTextSource);
+	CheckHr(qtsi->SetString(ptss));
+	IVwTextSourcePtr qts;
+	CheckHr(qtsi->QueryInterface(IID_IVwTextSource, (void **)&qts));
+	int cMatches = 0;
+	ITsStringPtr qtssResult;
+	if (m_fUseRegularExpressions)
+	{
+		RegExFindInAlgorithm refia(qts, ichStart, ichEnd, true, NULL, this);
+		ReplaceAllWithAlgorithm(&refia, qts, ptss, ichStart, ichEnd, &cMatches,
+			&qtssResult);
+	}
+	else
+	{
+		FindInAlgorithm fia(qts, ichStart, ichEnd, true, NULL, this);
+		ReplaceAllWithAlgorithm(&fia, qts, ptss, ichStart, ichEnd, &cMatches,
+			&qtssResult);
+	}
+	*pptssResult = qtssResult.Detach();
+	*pcMatches = cMatches;
+	END_COM_METHOD(g_fact, IID_IVwPattern2);
 }
 
 /*----------------------------------------------------------------------------------------------
