@@ -25,6 +25,9 @@ namespace LexTextControlsTests
 			m_savedSwitchingVariable =
 				Environment.GetEnvironmentVariable(UIModeGates.SwitchingEnabledVariable);
 			Environment.SetEnvironmentVariable(UIModeGates.SwitchingEnabledVariable, "1");
+			// ErrorReport.Properties is process-wide: establish the absence this
+			// fixture asserts instead of inheriting a sibling test's teardown.
+			ErrorReport.Properties.Remove("AvaloniaUIMode");
 		}
 
 		[TearDown]
