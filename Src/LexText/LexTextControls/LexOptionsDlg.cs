@@ -19,6 +19,7 @@ using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel.Utils;
 using SIL.LCModel;
 using SIL.PlatformUtilities;
+using SIL.Reporting;
 using SIL.Settings;
 using SIL.Utils;
 using XCore;
@@ -157,6 +158,7 @@ namespace SIL.FieldWorks.LexText.Controls
 						m_propertyTable.SetProperty(UIModePropertyName, newUiMode, true);
 						m_propertyTable.SetPropertyPersistence(UIModePropertyName, false);
 					}
+					ErrorReporter.AddProperty("AvaloniaUIMode", newUiMode);
 				}
 			}
 

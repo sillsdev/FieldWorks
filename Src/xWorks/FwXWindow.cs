@@ -561,6 +561,9 @@ namespace SIL.FieldWorks.XWorks
 			propertyTable.SetProperty(UIFrameworkResolver.UIModeDisabledToolsPropertyName,
 				settingsDisabledTools ?? string.Empty, false);
 			propertyTable.SetPropertyPersistence(UIFrameworkResolver.UIModeDisabledToolsPropertyName, false);
+
+			ErrorReporter.AddProperty("AvaloniaUIMode", UIFrameworkResolver.NormalizeUIMode(settingsUiMode));
+			ErrorReporter.AddProperty("AvaloniaDisabledTools", settingsDisabledTools ?? string.Empty);
 		}
 
 		/// ------------------------------------------------------------------------------------
