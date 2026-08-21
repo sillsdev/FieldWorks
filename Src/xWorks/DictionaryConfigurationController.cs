@@ -1,4 +1,4 @@
-// Copyright (c) 2014-2017 SIL International
+// Copyright (c) 2014-2026 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -551,19 +551,14 @@ namespace SIL.FieldWorks.XWorks
 		/// Note: homograph parameters are used for sense numbers in both the dictionary and reversal. They are never used for reversal numbers.
 		/// So, homograph parameters should always be set based on the dictionary configuration and not the reversal index configuration.
 		/// </summary>
-		/// <param name="model"></param>
-		/// <param name="cache"></param>
 		public static void SetConfigureHomographParameters(PropertyTable propertyTable, LcmCache cache)
 		{
-			var cacheHc = cache.ServiceLocator.GetInstance<HomographConfiguration>();
-
 			// Load the dictionary configuration.
-			var dictionaryConfigPath = propertyTable.GetStringProperty("DictionaryPublicationLayout", string.Empty);
+			var dictionaryConfigPath = DictionaryConfigurationListener.GetCurrentConfiguration(
+				propertyTable, false, DictionaryConfigurationListener.DictConfigDirName, null, false);
 			var dictionaryModel = new DictionaryConfigurationModel(dictionaryConfigPath, cache);
-			if (dictionaryModel.HomographConfiguration == null)
-			{
-				dictionaryModel.HomographConfiguration = new DictionaryHomographConfiguration(new HomographConfiguration());
-			}
+			dictionaryModel.HomographConfiguration ??=
+				new DictionaryHomographConfiguration(new HomographConfiguration());
 
 			ConfigurableDictionaryNode dictionarySenseNode = null;
 
@@ -571,18 +566,19 @@ namespace SIL.FieldWorks.XWorks
 			{
 				// Find the "Senses" node in the dictionary configuration
 				var dictionaryMainEntry = dictionaryModel.Parts[0];
-				dictionarySenseNode = dictionaryMainEntry.Children
-					.Where(prop => prop.Label == "Senses").FirstOrDefault();
+				dictionarySenseNode = dictionaryMainEntry.Children.FirstOrDefault(prop => prop.Label == "Senses");
 			}
 
 			if (dictionarySenseNode != null)
 			{
+				var cacheHc = cache.ServiceLocator.GetInstance<HomographConfiguration>();
+
 				var dictionarySenseOptions = (DictionaryNodeSenseOptions)dictionarySenseNode.DictionaryNodeOptions;
 				// Apply the dictionary sense numbering styles to the cache
 				cacheHc.ksSenseNumberStyle = dictionarySenseOptions.NumberingStyle;
 
 				// Similarly for subsenses
-				var dictionarySubSenseNode = dictionarySenseNode.Children.Where(prop => prop.Label == "Subsenses").FirstOrDefault();
+				var dictionarySubSenseNode = dictionarySenseNode.Children.FirstOrDefault(prop => prop.Label == "Subsenses");
 				if (dictionarySubSenseNode != null)
 				{
 					var dictionarySubSenseOptions = (DictionaryNodeSenseOptions)dictionarySubSenseNode.DictionaryNodeOptions;
@@ -590,7 +586,9 @@ namespace SIL.FieldWorks.XWorks
 					cacheHc.ksParentSenseNumberStyle = dictionarySubSenseOptions.ParentSenseNumberingStyle;
 
 					// And for subsubsenses
-					var dictionarySubSubSenseNode = dictionarySubSenseNode.ReferencedOrDirectChildren.Where(prop => prop.Label == "Subsenses").FirstOrDefault();
+					var dictionarySubSubSenseNode =
+						dictionarySubSenseNode.ReferencedOrDirectChildren.FirstOrDefault(prop =>
+							prop.Label == "Subsenses");
 					if (dictionarySubSubSenseNode != null)
 					{
 						var dictionarySubSubSenseOptions = (DictionaryNodeSenseOptions)dictionarySubSubSenseNode.DictionaryNodeOptions;

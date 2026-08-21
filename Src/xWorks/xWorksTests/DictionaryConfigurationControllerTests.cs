@@ -1,4 +1,4 @@
-// Copyright (c) 2014-2017 SIL International
+// Copyright (c) 2014-2026 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -17,6 +17,7 @@ using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.LCModel;
+using SIL.LCModel.DomainImpl;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
 using SIL.LCModel.Utils;
@@ -42,6 +43,30 @@ namespace SIL.FieldWorks.XWorks
 		public void Setup()
 		{
 			m_model = new DictionaryConfigurationModel();
+		}
+
+		[Test]
+		public void SetConfigureHomographParameters_InvalidPathInPropertyTable_UsesDefaultConfiguration()
+		{
+			var nonExistentPath = Path.Combine(Path.GetTempPath(),
+				Guid.NewGuid() + DictionaryConfigurationModel.FileExtension);
+			m_propertyTable.SetProperty("DictionaryPublicationLayout", nonExistentPath, false);
+
+			// set sense numbering styles to something other than the default to verify that
+			// values are loaded from the default configuration file.
+			var hc = Cache.ServiceLocator.GetInstance<HomographConfiguration>();
+			hc.ksSenseNumberStyle = "sense-";
+			hc.ksSubSenseNumberStyle = "numbing";
+			// not setting subsubsense numbering style because the default configuration file
+			// does not have a value for it
+
+			// SUT
+			DictionaryConfigurationController.SetConfigureHomographParameters(m_propertyTable, Cache);
+
+			Assert.That(hc, Is.Not.Null, "HomographConfiguration instance should exist");
+			Assert.That(hc.ksSenseNumberStyle, Is.EqualTo("%d"), "Sense numbering style should have been configured");
+			Assert.That(hc.ksSubSenseNumberStyle, Is.EqualTo("%d"), "Subsense numbering style should have been configured");
+			Assert.That(hc.ksSubSubSenseNumberStyle, Is.EqualTo("%d"), "Subsubsense numbering style should still be configured");
 		}
 
 		[OneTimeSetUp]

@@ -1,4 +1,4 @@
-// Copyright (c) 2014-2016 SIL International
+// Copyright (c) 2014-2026 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -8,16 +8,9 @@ using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using System.Xml;
-using SIL.Extensions;
 using SIL.FieldWorks.Common.FwUtils;
 using static SIL.FieldWorks.Common.FwUtils.FwUtils;
-using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.Common.Widgets;
 using SIL.LCModel;
-using SIL.LCModel.DomainImpl;
-using SIL.FieldWorks.FwCoreDlgs;
-using SIL.FieldWorks.XWorks.LexText;
-using SIL.LCModel.Core.WritingSystems;
 using XCore;
 using SIL.FieldWorks.FdoUi;
 
@@ -268,27 +261,19 @@ namespace SIL.FieldWorks.XWorks
 			return GetCurrentConfiguration(propertyTable, true, innerConfigDir, obj);
 		}
 
-		private static void SetConfigureHomographParameters(PropertyTable propertyTable, LcmCache cache)
-		{
-			DictionaryConfigurationController.SetConfigureHomographParameters(propertyTable, cache);
-		}
-
-
 		/// <summary>
 		/// Returns the path to the current Dictionary or ReversalIndex configuration file, based on client specification or the current tool
 		/// Guarantees that the path is set to an existing configuration file, which may cause a redisplay of the XHTML view if fUpdate is true.
 		/// </summary>
-		public static string GetCurrentConfiguration(PropertyTable propertyTable, bool fUpdate, string innerConfigDir = null, ICmObject obj = null)
+		public static string GetCurrentConfiguration(PropertyTable propertyTable,
+			bool fBroadcastIfChanged, string innerConfigDir = null, ICmObject obj = null,
+			bool fSetConfigureHomographParameters = true)
 		{
 			// Since this is used in the display of the title and XWorksViews sometimes tries to display the title
 			// before full initialization (if this view is the one being displayed on startup) test the propertyTable before continuing.
 			if(propertyTable == null)
 				return null;
-			if (innerConfigDir == null)
-			{
-				innerConfigDir = GetInnermostConfigurationDirectory(propertyTable, obj) ??
-								 ReversalIndexServices.RevIndexDir;
-			}
+			innerConfigDir ??= GetInnermostConfigurationDirectory(propertyTable, obj) ?? DictConfigDirName;
 			var pubLayoutPropName = GetPropNameForConfigType(innerConfigDir);
 			var currentConfig = pubLayoutPropName != null
 				? propertyTable.GetStringProperty(pubLayoutPropName, string.Empty)
@@ -296,8 +281,10 @@ namespace SIL.FieldWorks.XWorks
 			var cache = propertyTable.GetValue<LcmCache>("cache");
 			if (!string.IsNullOrEmpty(currentConfig) && File.Exists(currentConfig))
 			{
-				var dictionaryConfigDir = GetProjectConfigurationDirectory(propertyTable, DictConfigDirName);
-				SetConfigureHomographParameters(propertyTable, cache);
+				if (fSetConfigureHomographParameters)
+				{
+					DictionaryConfigurationController.SetConfigureHomographParameters(propertyTable, cache);
+				}
 				return currentConfig;
 			}
 			var defaultConfigFileName = GetDefaultConfigFileName(innerConfigDir);
@@ -307,7 +294,7 @@ namespace SIL.FieldWorks.XWorks
 			// and the value is "publishSomething", try to use the new "Something" config
 			if (currentConfig != null && currentConfig.StartsWith("publish", StringComparison.Ordinal))
 			{
-				var selectedPublication = currentConfig.Replace("publish", string.Empty);
+				var selectedPublication = currentConfig.Substring("publish".Length);
 				if (innerConfigDir == RevIndexConfigDirName)
 				{
 					var languageCode = selectedPublication.Replace("Reversal-", string.Empty);
@@ -327,7 +314,7 @@ namespace SIL.FieldWorks.XWorks
 					// check in projectConfigDir for files whose name = default analysis ws
 					if (TryMatchingReversalConfigByWritingSystem(propertyTable, projectConfigDir, cache, out currentConfig))
 					{
-						propertyTable.SetProperty(pubLayoutPropName, currentConfig, fUpdate);
+						propertyTable.SetProperty(pubLayoutPropName, currentConfig, fBroadcastIfChanged);
 						return currentConfig;
 					}
 				}
@@ -340,7 +327,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 			if (File.Exists(currentConfig) && pubLayoutPropName != null)
 			{
-				propertyTable.SetProperty(pubLayoutPropName, currentConfig, fUpdate);
+				propertyTable.SetProperty(pubLayoutPropName, currentConfig, fBroadcastIfChanged);
 			}
 			else if(pubLayoutPropName != null)
 			{
