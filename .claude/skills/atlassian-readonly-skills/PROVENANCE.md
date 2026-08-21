@@ -52,3 +52,17 @@ supersets carrying write examples -- so the first two are kept here verbatim.
 
 This is the largest local divergence from upstream. A re-sync has to re-apply
 it, along with the import fix and the SIL section.
+
+## Jira only
+
+Confluence and Bitbucket were removed entirely on 2026-08-21. FieldWorks uses
+Jira and nothing else, and nothing in the repository referenced either.
+
+Removed: the eight `confluence_*` and `bitbucket_*` script modules, their
+documentation in `SKILL.md` and `REFERENCE.md`, their configuration blocks and
+credential fields, and their plumbing in `_common.py` -- the dataclass fields,
+`is_*_available` checks, `get_*_client` factories and the service branches in
+`AtlassianConfig.from_credentials`.
+
+This is a hard fork from upstream for these two skills. A re-sync is no longer
+a merge; treat upstream as a source to cherry-pick Jira fixes from.
