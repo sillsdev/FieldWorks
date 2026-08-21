@@ -14,6 +14,10 @@ Related skills this one calls: `fieldworks-code-commenting` (when doc text
 is inlined into source), `fieldworks-migration-scope-review` (when the PR is
 a large migration branch and the pitch must justify its scope).
 
+Read `.claude/references/compact-style.md` before writing the pitch. It is the
+shared style contract for issues and PR bodies, and it is where the banned
+openers, the five-item list cap and the pre-send check live.
+
 ## What this produces
 
 Two artifacts, always together, never one without the other:
@@ -137,6 +141,16 @@ deleting the qualifiers that make a claim honest.
 
 The top zone, in this order.
 
+### 0. Status, for a PR that has been open a while (one line, optional)
+
+A reviewer returning to a long-lived PR cannot hold its state between visits.
+Give them one line at the top: what it is waiting on, and anything red.
+
+> Ready for review. CI green except the known-flaky interlinear test.
+
+Skip it on a PR opened today. It exists so nobody has to reconstruct the state
+from a comment thread.
+
 ### 1. Lead with what it does (2-3 sentences)
 
 Open with the concrete thing, not the framing. A screenshot or GIF if the
@@ -152,7 +166,15 @@ not make them read to find it.
 
 ### 3. Where to look (at most five bullets, one line each)
 
-The load-bearing section. The failure points a domain expert would
+Open with one `**Start here:**` line naming the first file to read and why.
+That is the *entry point*, not the riskiest thing -- a reviewer who is not told
+where to begin reads the diff in alphabetical order, which is nobody's reading
+order.
+
+> **Start here:** `ViewDefinitionOverrideApplier.cs` -- everything else is
+> plumbing around what it does.
+
+Then the load-bearing part. The failure points a domain expert would
 anticipate, ordered by what would sink the PR -- not by what was hardest to
 build. One line each: the risk, and the thing that pins it -- the gate, the
 test, the invariant.
@@ -175,6 +197,23 @@ If the PR is stacked, say what it merges into and in what order. Then build,
 tests, manual checks -- and what was *not* run. Anything currently red or
 known-broken goes here in plain words; a reviewer must never learn of a red
 job from the checks tab after reading a body that implied green.
+
+When the reviewer needs to run something themselves, give it as numbered
+steps, one bounded action each, copy-pasteable:
+
+> 1. `.\build.ps1 -CommentHygiene`
+> 2. `.\test.ps1 -TestProject '<project>' -TestFilter '<filter>'`
+> 3. Open Grammar > Natural Classes and delete a feature-based class.
+
+Prose verification instructions get skipped. Numbered ones get run.
+
+### 6. What you want from the reviewer (one line)
+
+Close the top zone with a single line naming the next action and who takes it.
+A pitch that ends on a verification paragraph leaves the reviewer guessing
+whether they are approving, splitting, or blocking.
+
+> Next: approve, or tell me to split the installer change out.
 
 Pitch rules:
 
@@ -314,6 +353,11 @@ Before finishing, confirm:
 - [ ] Every count was recounted.
 - [ ] The pitch does not repeat what an accordion already says.
 - [ ] Working notes are gitignored (`Docs/migration/working/`), not merged.
+- [ ] The top zone opens with a `**Start here:**` line and closes with a
+      `Next:` line.
+- [ ] The pre-send check in `.claude/references/compact-style.md` passes:
+      reading only the title and the last line, does the reviewer know what
+      this does and what is wanted from them?
 
 Do not mark this complete on unverified claims. If a claim could not be
 checked, say so in the report rather than asserting it.

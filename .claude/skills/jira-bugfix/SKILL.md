@@ -128,20 +128,37 @@ git branch --show-current
 
    > The current branch is `<name>`. This doesn't match
    > LT-XXXXX. Options:
-   > - Create a new branch `LT-XXXXX` from `main`
+   > - Create a new branch `LT-XXXXX-<short-slug>` from `main`
    > - Continue on the current branch
    > - Switch to an existing branch (specify name)
 
    If creating a new branch:
    ```powershell
    git fetch origin
-   git checkout -b LT-XXXXX origin/main
+   git checkout -b LT-XXXXX-<short-slug> origin/main
    ```
 
-> **Important**: Do NOT create worktrees automatically. This
-> repo uses worktrees but creating them involves workspace
-> setup scripts. If a worktree is needed, tell the user to
-> run the "Worktree: Create/Open from branch" VS Code task.
+**Branch naming**: `LT-XXXXX-short-slug`, for example
+`LT-22715-nc-delete-warning`. The number keeps this step's
+"contains the LT number" check working and makes the branch
+greppable; the slug is what makes a list of a dozen worktrees
+readable. A bare `LT-XXXXX` tells you nothing at a glance.
+
+> **Worktrees**: do not create one without asking, and do not
+> refuse to create one either. The repo has
+> `scripts/Worktree-CreateFromBranch.ps1` and a set of
+> `Worktree:` VS Code tasks. Ask which the user wants; if the
+> `jira-issue` skill already recorded a `workspace` preference
+> in `.claude/.jira-issue-prefs.json`, follow it and say so.
+> Note that the script places worktrees under
+> `../<repo>.worktrees/` while existing worktrees on disk are
+> under `.tmp/worktrees/` -- match what is already there.
+
+> **Arriving from `jira-issue`**: if that skill just filed the
+> ticket and the user chose "start now", Steps 0-2 are already
+> done -- the issue is fetched, assigned, In Progress, and the
+> branch and worktree exist and are named in a ticket comment.
+> Begin at Step 3.
 
 ## Step 3: Reproduce the Bug (TDD)
 
@@ -410,6 +427,9 @@ All other steps proceed automatically.
 ## Integration with Other Skills
 
 This skill composes with:
+- `jira-issue` — files the ticket in the first place, and
+  hands off to this skill at Step 3 when the user chooses
+  "start now"
 - `atlassian-readonly-skills` — reading JIRA issues
 - `atlassian-skills` — writing to JIRA (assign, comment)
 - `session-workflow` — session management and handoff
