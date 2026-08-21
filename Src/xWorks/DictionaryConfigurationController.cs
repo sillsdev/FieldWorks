@@ -553,8 +553,6 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		public static void SetConfigureHomographParameters(PropertyTable propertyTable, LcmCache cache)
 		{
-			var cacheHc = cache.ServiceLocator.GetInstance<HomographConfiguration>();
-
 			// Load the dictionary configuration.
 			var dictionaryConfigPath = DictionaryConfigurationListener.GetCurrentConfiguration(
 				propertyTable, false, DictionaryConfigurationListener.DictConfigDirName, null, false);
@@ -573,6 +571,8 @@ namespace SIL.FieldWorks.XWorks
 
 			if (dictionarySenseNode != null)
 			{
+				var cacheHc = cache.ServiceLocator.GetInstance<HomographConfiguration>();
+
 				var dictionarySenseOptions = (DictionaryNodeSenseOptions)dictionarySenseNode.DictionaryNodeOptions;
 				// Apply the dictionary sense numbering styles to the cache
 				cacheHc.ksSenseNumberStyle = dictionarySenseOptions.NumberingStyle;
