@@ -43,10 +43,32 @@ it contains "four separate user-visible problems"; that is four tickets and a
 set of links, and splitting is far cheaper now than after triage. Propose the
 split, name each ticket in one line, and get agreement before drafting.
 
+## Phase 0b -- Relevance
+
+**Ask what kind of thing this ticket is about before asking anything else.**
+Not every LT ticket is about FLEx the product. A ticket about developer
+tooling, an agent skill, the build, CI, or documentation has no FLEx version,
+no project file, no menu path, and no reproduction inside the application.
+
+| Subject | Environment questions that apply |
+| --- | --- |
+| FLEx product | Version and build, OS, project, menu path, keyboard/IME |
+| Developer tooling, agent skills, docs | Repo, branch, which skill or script. No FLEx version |
+| Build, CI, installer | Branch, runner, toolchain, which script. No project |
+
+**Never emit a section that does not apply.** A template dutifully filled with
+"N/A" is worse than a short ticket: it costs the reader the same scan and
+returns nothing. Drop the heading instead.
+
+The same test governs the interview. Asking a developer which FLEx build they
+were running, for a ticket about a Markdown reference file, wastes one of the
+six questions and signals that the ticket was generated rather than written.
+
 ## Phase 1 -- Interview
 
 One question at a time. **Hard cap of six.** Quote the answers; do not
-paraphrase them into confidence.
+paraphrase them into confidence. Skip any row Phase 0b ruled irrelevant --
+the cap is a budget, and a wasted question is one you do not get back.
 
 | | Bug | Feature |
 | --- | --- | --- |
@@ -216,6 +238,8 @@ If Phase 2 found the work already exists, Phase 8 targets that existing key.
 - [ ] Description is 250 words or fewer and ends in one `*Next:*` line.
 - [ ] Every claim above the fold was said by the reporter or verified by us.
 - [ ] Every unknown is a `*Not known:*` line rather than a guess.
+- [ ] No section was emitted that does not apply -- no "N/A" environment, no
+      empty repro steps on a ticket with nothing to reproduce.
 - [ ] The duplicate table was shown and answered.
 - [ ] Links created for every candidate marked duplicate or related.
 - [ ] Nothing was attached without the permission question being answered.

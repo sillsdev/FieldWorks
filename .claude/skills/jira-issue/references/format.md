@@ -55,6 +55,11 @@ _Analysis in the first comment._
 Feature track replaces Steps/Expected/Actual with the sections in
 `feature-track.md`. Everything else is identical.
 
+This is a skeleton, not a form. Drop any heading that does not apply to the
+subject -- a ticket about a build script has no `h3. Environment` worth
+writing, and a ticket about a documentation file has nothing to reproduce.
+See Phase 0b in `../SKILL.md`.
+
 ## Jira Data Center wiki markup
 
 There is **no `{expand}`**. It is a Confluence macro. Do not write one, and do
