@@ -11,6 +11,7 @@ sys.path.insert(0, str(Path(__file__).parent))
 from typing import Any, Dict, Optional
 
 from _common import (
+    AtlassianCredentials,
     get_confluence_client,
     format_json_response,
     format_error_response,
