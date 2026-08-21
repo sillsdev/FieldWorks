@@ -24,7 +24,7 @@ distinction evaporates the moment an image is pasted without one.
 
 | Surface | Who captures | How |
 | --- | --- | --- |
-| Avalonia | The agent, automated | Headless Skia. See `fieldworks-avalonia-ui/references/visual-snapshot-testing.md` |
+| Avalonia | The agent, automated | Headless Skia. See `.claude/skills/fieldworks-avalonia-ui/references/visual-snapshot-testing.md` |
 | WinForms, live project | The developer | Real scenarios need real data, and real data needs permission |
 | WinForms, throwaway project | Either | `fieldworks-winapp/navigation/screenshot-evidence.md`, MCP-driven |
 
