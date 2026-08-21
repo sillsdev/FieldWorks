@@ -315,9 +315,15 @@ namespace SIL.FieldWorks.Common.FwUtils
 					ResourceHelper.GetResourceString("kstidInvalidInstallation")
 				);
 			}
-			// Hundreds of callers of this method are using Path.Combine with the results.
-			// Combine only works with a root directory if it is followed by \ (e.g., c:\)
-			// so we don't want to trim the \ in this situation.
+			return TidyRootDir(rootDir);
+		}
+
+		/// <summary>
+		/// Strips the trailing separator that hundreds of callers would otherwise pass on to
+		/// Path.Combine, except on a root directory (e.g. c:\), where Combine needs it.
+		/// </summary>
+		private static string TidyRootDir(string rootDir)
+		{
 			string dir = rootDir.TrimEnd(
 				Path.DirectorySeparatorChar,
 				Path.AltDirectorySeparatorChar
@@ -325,15 +331,46 @@ namespace SIL.FieldWorks.Common.FwUtils
 			return dir.Length > 2 ? dir : dir + Path.DirectorySeparatorChar;
 		}
 
+		/// <summary>The file that marks the root of a FieldWorks source tree.</summary>
+		private const string ksSolutionFilename = "FieldWorks.sln";
+
+		/// <summary>Set this to let the registry name the directories again.</summary>
+		private const string ksUseRegistryDirsVariable = "FW_USE_REGISTRY_DIRS";
+
+		/// <summary>
+		/// Gets the DistFiles folder of the source tree that <paramref name="startDirectory"/>
+		/// lies in, or <c>null</c> if it lies outside a source tree (the installed case).
+		/// </summary>
+		/// <remarks>
+		/// Walking up to the tree root, rather than assuming a fixed depth, finds
+		/// DistFiles from Output/&lt;Configuration&gt;, from its architecture
+		/// subfolders, and from a project's own bin folder alike.
+		/// </remarks>
+		/// <param name="startDirectory">The directory to start searching upwards from.</param>
+		public static string FindDevDistFiles(string startDirectory)
+		{
+			for (
+				string dir = startDirectory;
+				!string.IsNullOrEmpty(dir);
+				dir = Path.GetDirectoryName(dir)
+			)
+			{
+				string distFiles = Path.Combine(dir, "DistFiles");
+				// The solution file is what keeps an installed FieldWorks from matching here.
+				if (Directory.Exists(distFiles)
+					&& File.Exists(Path.Combine(dir, ksSolutionFilename)))
+					return distFiles;
+			}
+			return null;
+		}
+
 		private static string GetDevDistFilesPath()
 		{
+			if (EnvironmentVariables.IsTrue(ksUseRegistryDirsVariable))
+				return null;
+
 			string assemblyDir = Path.GetDirectoryName(FileUtils.StripFilePrefix(Assembly.GetExecutingAssembly().CodeBase));
-			// Check if we are in Output/Debug or Output/Release
-			// DistFiles is at ../../DistFiles
-			string distFiles = Path.GetFullPath(Path.Combine(assemblyDir, "..", "..", "DistFiles"));
-			if (Directory.Exists(distFiles))
-				return distFiles;
-			return null;
+			return FindDevDistFiles(assemblyDir);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -349,15 +386,16 @@ namespace SIL.FieldWorks.Common.FwUtils
 		{
 			get
 			{
+				// The tree the assembly runs from owns its DistFiles, so it beats the registry.
+				string devDistFiles = GetDevDistFilesPath();
+				if (devDistFiles != null)
+					return TidyRootDir(devDistFiles);
+
 				string defaultDir = Path.Combine(
 					Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles),
 					CompanyName,
 					$"FieldWorks {FwUtils.SuiteVersion}"
 				);
-
-				string devDistFiles = GetDevDistFilesPath();
-				if (devDistFiles != null)
-					defaultDir = devDistFiles;
 
 				return GetDirectory("RootCodeDir", defaultDir);
 			}
@@ -377,11 +415,12 @@ namespace SIL.FieldWorks.Common.FwUtils
 		{
 			get
 			{
-				string defaultDir = Path.Combine(LcmFileHelper.CommonApplicationData, CompanyName, ksFieldWorks);
-
+				// See CodeDirectory: the running tree outranks the shared registry.
 				string devDistFiles = GetDevDistFilesPath();
 				if (devDistFiles != null)
-					defaultDir = devDistFiles;
+					return TidyRootDir(devDistFiles);
+
+				string defaultDir = Path.Combine(LcmFileHelper.CommonApplicationData, CompanyName, ksFieldWorks);
 
 				return GetDirectory(
 					ksRootDataDir,
