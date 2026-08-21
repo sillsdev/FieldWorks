@@ -69,6 +69,15 @@ namespace SIL.FieldWorks.LexText.Controls
 			return new PatternEditingHelper(Cache, this);
 		}
 
+		/// <summary>
+		/// Activate() is disabled by default in ReadOnlyViews, but a pattern editor does want to
+		/// show selections so the user can see what a chooser insert/delete will act on.
+		/// </summary>
+		protected override bool AllowDisplaySelection
+		{
+			get { return true; }
+		}
+
 		public void Init(Mediator mediator, PropertyTable propertyTable, int hvo, IPatternControl patternControl, PatternVcBase vc, int rootFrag, ISilDataAccess sda)
 		{
 			CheckDisposed();
