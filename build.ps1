@@ -592,7 +592,7 @@ try {
 			-LocalRepository $env:LOCAL_NUGET_REPO
 
 		$localVersionProperties = [ordered]@{}
-		$localRestoreSourceArgs = @()
+		$localRestoreSourceArg = $null
 		if ($LocalLibraries.Count -gt 0) {
 			if ($SkipRestore) {
 				throw '-LocalLibraries cannot be combined with -SkipRestore.'
@@ -626,10 +626,8 @@ try {
 					Remove-Item -LiteralPath $versionOutputPath -Force
 				}
 			}
-			$localRestoreSourceArgs = @(
-				'--source', $env:LOCAL_NUGET_REPO,
-				'--source', 'https://api.nuget.org/v3/index.json'
-			)
+			$localRestoreSourceArg =
+				"/p:RestoreAdditionalProjectSources=$($env:LOCAL_NUGET_REPO)"
 		}
 
 		# =============================================================================
@@ -767,7 +765,9 @@ try {
 			foreach ($propertyName in $localVersionProperties.Keys) {
 				$restoreArgs += "/p:$propertyName=$($localVersionProperties[$propertyName])"
 			}
-			$restoreArgs += $localRestoreSourceArgs
+			if ($localRestoreSourceArg) {
+				$restoreArgs += $localRestoreSourceArg
+			}
 			& dotnet restore @restoreArgs
 			if ($LASTEXITCODE -ne 0) {
 				throw "NuGet package restore failed for FieldWorks.sln"

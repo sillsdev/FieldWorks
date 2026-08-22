@@ -80,6 +80,13 @@ try {
 			"Cleanup should remove $packageName."
 	}
 
+	Clear-FieldWorksLibraryPackageCache -PackagesDirectory $packagesDirectory `
+		-Libraries @('machine')
+	Assert-True (-not (Test-Path $publishedMachine)) `
+		'Selected packing should evict a published cache entry with the same version.'
+	Assert-True (Test-Path $unrelatedPackage) `
+		'Selected packing should preserve cache entries outside its package family.'
+
 	$managerText = Get-Content -LiteralPath (
 		Join-Path $PSScriptRoot 'Manage-LocalLibraries.ps1') -Raw
 	Assert-True ($managerText -match '\$VersionOutputPath') `
@@ -88,6 +95,8 @@ try {
 		'Manage-LocalLibraries should import the shared library catalogue.'
 	Assert-True ($managerText -match 'Clear-FieldWorksLocalLibraries') `
 		'Manage-LocalLibraries should use the shared cache cleanup.'
+	Assert-True ($managerText -match 'Clear-FieldWorksLibraryPackageCache') `
+		'Pack mode should evict selected package families before local restore.'
 	Assert-True ($managerText -match 'Packing local libraries is build-scoped') `
 		'Direct pack mode should direct callers to build.ps1.'
 	Assert-True ($managerText -notmatch 'dotnet nuget add source') `
@@ -103,8 +112,8 @@ try {
 	Assert-True ($buildText -match 'VersionOutputPath') `
 		'build.ps1 should consume non-persistent packed version output.'
 	Assert-True (($buildText -match 'LOCAL_NUGET_REPO') -and `
-		($buildText -match "'--source'")) `
-		'build.ps1 should add the local feed only to an explicit local restore.'
+		($buildText -match 'RestoreAdditionalProjectSources')) `
+		'build.ps1 should add the local feed to configured restore sources.'
 
 	[xml]$nugetConfig = Get-Content -LiteralPath (Join-Path $PSScriptRoot '..\nuget.config')
 	Assert-True ($null -ne $nugetConfig.SelectSingleNode('/configuration/packageSources/clear')) `
