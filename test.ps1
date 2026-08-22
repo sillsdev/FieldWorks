@@ -125,6 +125,12 @@ if ($LASTEXITCODE -ne 0) {
 	exit $LASTEXITCODE
 }
 
+$localLibrariesTestPath = Join-Path $PSScriptRoot "Build/LocalLibraries.Tests.ps1"
+& $localLibrariesTestPath
+if ($LASTEXITCODE -ne 0) {
+	exit $LASTEXITCODE
+}
+
 if (-not $PSBoundParameters.ContainsKey('StartedBy') -and -not [string]::IsNullOrWhiteSpace($env:FW_BUILD_STARTED_BY)) {
 	$startedByFromEnv = $env:FW_BUILD_STARTED_BY.ToLowerInvariant()
 	if ($startedByFromEnv -in @('user', 'agent', 'unknown')) {

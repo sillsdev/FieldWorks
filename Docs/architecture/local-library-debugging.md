@@ -1,149 +1,91 @@
 # Local Library Debugging
 
-This document describes how to debug locally-modified versions of **liblcm**, **libpalaso**, **chorus**, or **machine** (SIL.Machine) in FieldWorks using a local NuGet feed.
+Use `build.ps1 -LocalLibraries` to rebuild locally modified SIL libraries and
+use them for one FieldWorks build. A later build that does not select a library
+automatically removes its local packages and restores the published version.
 
-## Overview
+## One-time setup
 
-The workflow uses a single PowerShell script (`Build/Manage-LocalLibraries.ps1`) that:
-
-1. Adds a local NuGet source to `nuget.config` (pointing to your `LOCAL_NUGET_REPO` folder).
-2. Runs `dotnet pack` in Debug configuration with symbols, letting the library use its own version.
-3. Detects the version from the produced packages.
-4. Updates `SilVersions.props` so FieldWorks resolves that exact version.
-5. Places `.nupkg` / `.snupkg` in your local NuGet feed folder.
-6. Copies PDB files to `Output/Debug/` and `Downloads/` for debugger access.
-7. Clears stale cached packages so the next restore picks up the local build.
-
-This approach works identically for all three libraries.
-
-## Setup (one-time)
-
-### 1. Create a local NuGet folder
-
-Pick any folder, for example:
-
-```
-C:\localnugetpackages
-```
-
-### 2. Set the `LOCAL_NUGET_REPO` environment variable
+Choose a folder for locally packed NuGet packages and set its environment
+variable:
 
 ```powershell
-# Current session
 $env:LOCAL_NUGET_REPO = "C:\localnugetpackages"
-
-# Persistent (user-level)
-[System.Environment]::SetEnvironmentVariable("LOCAL_NUGET_REPO", "C:\localnugetpackages", "User")
+[System.Environment]::SetEnvironmentVariable(
+	"LOCAL_NUGET_REPO", "C:\localnugetpackages", "User")
 ```
 
-The script automatically registers this folder as a NuGet source in your user-level NuGet config when you pack. The repo's `nuget.config` is not modified.
-
-### 3. Clone the library you need
-
-```powershell
-git clone https://github.com/sillsdev/liblcm.git
-git clone https://github.com/sillsdev/libpalaso.git
-git clone https://github.com/sillsdev/chorus.git
-git clone https://github.com/sillsdev/machine.git
-```
-
-## Pack a local library
-
-```powershell
-# Single library — explicit path
-.\Build\Manage-LocalLibraries.ps1 -Palaso -PalasoPath C:\Repos\libpalaso
-
-# Multiple libraries (libpalaso is always packed first)
-.\Build\Manage-LocalLibraries.ps1 -Palaso -PalasoPath C:\Repos\libpalaso -Chorus -ChorusPath C:\Repos\chorus
-```
-
-Or set environment variables so you can omit the paths:
+Set the path variable for each local checkout you use:
 
 ```powershell
 $env:LIBPALASO_PATH  = "C:\Repos\libpalaso"
 $env:LIBLCM_PATH     = "C:\Repos\liblcm"
 $env:LIBCHORUS_PATH  = "C:\Repos\chorus"
 $env:SILMACHINE_PATH = "C:\Repos\machine"
-
-# Switches still required — env vars only provide the path
-.\Build\Manage-LocalLibraries.ps1 -Palaso -Chorus
+$env:L10NSHARP_PATH  = "C:\Repos\L10NSharp"
 ```
 
-The script:
-- Lets the library build with its own version (no version override).
-- Detects the produced version and updates `Build/SilVersions.props` to match.
-- Produces `.snupkg` symbol packages (same format as production).
-- Copies PDB files to `Output/Debug/` and `Downloads/` for the debugger.
-- Clears stale packages from the `packages/` cache.
+## Build with local libraries
 
-## Build FieldWorks
+Name every local library that this invocation should use:
+
+```powershell
+# Rebuild and use Machine locally for this build.
+.\build.ps1 -LocalLibraries machine
+
+# Rebuild and use Palaso and Chorus locally for this build.
+.\build.ps1 -LocalLibraries palaso,chorus
+```
+
+Every selected library is repacked from its configured checkout. The detected
+package versions are passed to restore and MSBuild without modifying
+`Build/SilVersions.props`. The local feed is a restore source only for that
+invocation.
+
+An ordinary build selects no local libraries:
 
 ```powershell
 .\build.ps1
 ```
 
-The build will print a yellow message listing any local packages detected in `LOCAL_NUGET_REPO`. NuGet restore will use your local packages because `SilVersions.props` was updated to request the exact version produced by the library.
+Before restore, every build removes managed packages from `LOCAL_NUGET_REPO`
+and removes managed cache versions whose NuGet metadata identifies a filesystem
+source. Published packages restored from an HTTP source stay cached, so an
+ordinary build does not redownload them every time. Repository `nuget.config`
+also ignores package sources inherited from user-level configuration.
 
-## Debug
+## Debug and iterate
 
-1. Open FieldWorks in Visual Studio.
-2. PDB files are already in `Output/Debug/` — the debugger will find them automatically.
-3. If breakpoints show "No symbols loaded", disable **Debug > Options > Enable Just My Code**.
-4. You can also open the library solution side-by-side and use **Debug > Attach to Process**.
+The local build copies PDBs to `Output/Debug/` and `Downloads/`. If Visual
+Studio reports that symbols are not loaded, disable **Debug > Options > Enable
+Just My Code**.
 
-## Iterating
+After each local-library change, rerun `build.ps1` with the same
+`-LocalLibraries` selection. Omit a library whenever FieldWorks should return to
+its published package.
 
-After each change to the library:
+## Set an explicit published version
 
-1. Re-run `Manage-LocalLibraries.ps1` (~30-60 seconds).
-2. Re-run `.\build.ps1`.
-
-## Setting a specific version
-
-Use `-Version` to set any library to a specific version in `SilVersions.props` without packing:
-
-```powershell
-# Revert libpalaso to an upstream version
-.\Build\Manage-LocalLibraries.ps1 -Library libpalaso -Version 17.0.0
-
-# Set liblcm to a specific pre-release version
-.\Build\Manage-LocalLibraries.ps1 -Library liblcm -Version 11.0.0-beta0159
-```
-
-This updates `SilVersions.props` and clears stale cached packages. Run `.\build.ps1` afterward to restore and build with the new version.
-
-## Reverting to upstream packages
-
-Use `-Version` to set the library back to its upstream version:
+The lower-level script still supports changing `SilVersions.props` deliberately:
 
 ```powershell
-.\Build\Manage-LocalLibraries.ps1 -Library libpalaso -Version 17.0.0
+.\Build\Manage-LocalLibraries.ps1 -Library palaso -Version 17.0.0
 ```
 
-Or revert all libraries at once:
-
-```powershell
-git checkout Build/SilVersions.props
-Remove-Item -Recurse packages/sil.*
-.\build.ps1
-```
-
-To also remove the user-level local source:
-
-```powershell
-dotnet nuget remove source local
-```
+Local packing through `Manage-LocalLibraries.ps1` is build-internal. Run
+`build.ps1 -LocalLibraries` instead.
 
 ## Supported libraries
 
-| Library | Switch | Path parameter | Version property | Env var fallback |
-|---------|--------|---------------|------------------|-----------------|
-| liblcm | `-Lcm` | `-LcmPath` | `SilLcmVersion` | `LIBLCM_PATH` |
-| libpalaso | `-Palaso` | `-PalasoPath` | `SilLibPalasoVersion` | `LIBPALASO_PATH` |
-| chorus | `-Chorus` | `-ChorusPath` | `SilChorusVersion` | `LIBCHORUS_PATH` |
-| machine | `-Machine` | `-MachinePath` | `SilMachineVersion` | `SILMACHINE_PATH` |
+| Library | Selection | Version property | Checkout environment variable |
+|---------|-----------|------------------|-------------------------------|
+| libpalaso | `palaso` | `SilLibPalasoVersion` | `LIBPALASO_PATH` |
+| L10NSharp | `l10nsharp` | `L10NSharpVersion` | `L10NSHARP_PATH` |
+| liblcm | `lcm` | `SilLcmVersion` | `LIBLCM_PATH` |
+| chorus | `chorus` | `SilChorusVersion` | `LIBCHORUS_PATH` |
+| Machine | `machine` | `SilMachineVersion` | `SILMACHINE_PATH` |
 
-## See Also
+## See also
 
-- [Dependencies](dependencies.md) — overview of external dependencies
-- [Build Instructions](../../.github/instructions/build.instructions.md) — building FieldWorks
+- [Dependencies](dependencies.md)
+- [Build Instructions](../../.github/instructions/build.instructions.md)
