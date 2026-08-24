@@ -41,6 +41,37 @@ namespace FwAvaloniaTests
 			Assert.That(applied.ToSnapshot(), Is.EqualTo(shipped.ToSnapshot()));
 		}
 
+		// Every node is rebuilt on apply, so a clone that omits a field strips it tree-wide once
+		// any override exists. These three fields are outside ToSnapshot() and aren't covered by
+		// the EmptyPatch test.
+		[Test]
+		public void Apply_PreservesNodeFieldsNoOperationTouches()
+		{
+			var writingSystems = new[] { "fr", "seh" };
+			var options = new ViewStringList(new[] { "IsElsewhereForm", "IsAbstractForm" }, "AllomorphStatus");
+			var shipped = Model(GroupNode("g", "Group",
+				new ViewNode("g/a", ViewNodeKind.Field, "A", null, "F", "multistring",
+					EditorClassification.Known, "vern", ViewVisibility.Always,
+					ViewExpansion.NotApplicable, false, null, null,
+					enumStringList: options, visibleWritingSystems: writingSystems, toggleValue: true)));
+			var patch = new ViewDefinitionOverride("LexEntry", "detail", "jtview",
+				new[]
+				{
+					new ViewOverrideOperation(ViewOverrideOperationKind.SetVisibility, "g/a",
+						visibility: ViewVisibility.Never)
+				}, null);
+
+			var applied = ViewDefinitionOverrideApplier.Apply(shipped, patch);
+
+			var rebuilt = applied.Roots[0].Children[0];
+			Assert.That(rebuilt.Visibility, Is.EqualTo(ViewVisibility.Never), "the operation still applies");
+			Assert.That(rebuilt.VisibleWritingSystems, Is.EqualTo(writingSystems),
+				"a per-field writing-system subset survives the rebuild");
+			Assert.That(rebuilt.ToggleValue, Is.True, "a toggle value survives the rebuild");
+			Assert.That(rebuilt.EnumStringList?.Ids, Is.EqualTo(options.Ids),
+				"an enum option list survives the rebuild");
+		}
+
 		[Test]
 		public void Apply_AddNode_InsertsAtParentIndex()
 		{

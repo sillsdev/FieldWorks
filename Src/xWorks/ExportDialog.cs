@@ -89,7 +89,8 @@ namespace SIL.FieldWorks.XWorks
 			kftWebonary,
 			kftWordOpenXml,
 			kftWordClassifiedDict,
-			kftPhonology
+			kftPhonology,
+			kftGrammarTextsAI
 		}
 		// ReSharper restore InconsistentNaming
 		protected internal struct FxtType
@@ -534,6 +535,7 @@ namespace SIL.FieldWorks.XWorks
 		private List<int> m_translationWritingSystems;
 		private List<ICmPossibilityList> m_translatedLists;
 		private bool m_allQuestions; // For semantic domains, export missing translations as English?
+		private List<IStText> m_selectedTextsForAIExport;
 
 		private void btnExport_Click(object sender, EventArgs e)
 		{
@@ -548,6 +550,8 @@ namespace SIL.FieldWorks.XWorks
 				if (!PrepareForExport())
 					return;
 				bool fLiftExport = m_exportItems[0].SubItems[2].Text == "lift";
+				bool fGrammarTextsAIExport = m_rgFxtTypes.Count > 0
+					&& m_rgFxtTypes[FxtIndex((string)m_exportItems[0].Tag)].m_ft == FxtTypes.kftGrammarTextsAI;
 				string sFileName;
 				string sDirectory;
 				if (fLiftExport)
@@ -591,6 +595,34 @@ namespace SIL.FieldWorks.XWorks
 								return;
 						}
 					}
+				}
+				else if (fGrammarTextsAIExport)
+				{
+					var textList = InterestingTextsDecorator.GetInterestingTextList(m_mediator, m_propertyTable, m_cache.ServiceLocator).InterestingTexts;
+					using (var textDlg = new GrammarAndTextsAIExportSelectionDlg(m_cache, textList))
+					{
+						var previousSelection = m_propertyTable.GetStringProperty("GrammarTextsAIExportSelection", null);
+						if (previousSelection != null)
+							textDlg.ApplyPreviousSelection(new HashSet<string>(previousSelection.Split(',')));
+						if (textDlg.ShowDialog(this) != DialogResult.OK)
+							return;
+						m_selectedTextsForAIExport = textDlg.SelectedTexts.ToList();
+						m_propertyTable.SetProperty("GrammarTextsAIExportSelection",
+							string.Join(",", m_selectedTextsForAIExport.Select(t => t.Guid.ToString())), true);
+						m_propertyTable.SetPropertyPersistence("GrammarTextsAIExportSelection", true);
+					}
+					using (var dlg = new FolderBrowserDialogAdapter())
+					{
+						dlg.Description = xWorksStrings.ksChooseGrammarTextsAIExportFolder;
+						dlg.ShowNewFolderButton = true;
+						dlg.RootFolder = Environment.SpecialFolder.Desktop;
+						dlg.SelectedPath = m_propertyTable.GetStringProperty("ExportDir",
+							Environment.GetFolderPath(Environment.SpecialFolder.Personal));
+						if (dlg.ShowDialog(this) != DialogResult.OK)
+							return;
+						sDirectory = dlg.SelectedPath;
+					}
+					sFileName = Path.Combine(sDirectory, "HCGrammar.xml");
 				}
 				else
 				{
@@ -749,6 +781,12 @@ namespace SIL.FieldWorks.XWorks
 			return true;
 		}
 
+		/// <summary>Sets the texts to include in a grammar+texts-for-AI export.</summary>
+		internal void SetSelectedTextsForAIExport(List<IStText> texts)
+		{
+			m_selectedTextsForAIExport = texts;
+		}
+
 		/// <summary>
 		/// This version is overridden by (currently) Interlinear and Discourse Chart exports.
 		/// </summary>
@@ -843,6 +881,19 @@ namespace SIL.FieldWorks.XWorks
 								progressDlg.Restartable = true;
 								progressDlg.RunTask(true, ExportPhonology, outPath, ft.m_sDataType, ft.m_sXsltFiles);
 								break;
+							case FxtTypes.kftGrammarTextsAI:
+							{
+								progressDlg.Minimum = 0;
+								progressDlg.Maximum = m_selectedTextsForAIExport.Count + 1;
+								progressDlg.AllowCancel = true;
+								var aiExportMessages = (List<string>)progressDlg.RunTask(true, ExportGrammarAndTextsForAI, outPath);
+								if (aiExportMessages.Count > 0)
+								{
+									MessageBox.Show(this, string.Format(xWorksStrings.ksGrammarTextsAIExportSummary,
+										Environment.NewLine, string.Join(Environment.NewLine, aiExportMessages)));
+								}
+								break;
+							}
 							case FxtTypes.kftWordOpenXml:
 							case FxtTypes.kftWordClassifiedDict:
 								progressDlg.Minimum = 0;
@@ -1091,6 +1142,53 @@ namespace SIL.FieldWorks.XWorks
 			phonologyServices.ExportPhonologyAsXml(outPath);
 			m_progressDlg.Step(1000);
 			return null;
+		}
+
+		/// <summary>
+		/// Asks the export service to write the grammar (at outPath), one .flextext file per
+		/// selected text, and the instructions file that tells an LLM how to read them, all into
+		/// the same folder. A grammar that cannot be built throws, aborting the whole export; a
+		/// per-text failure only skips that one text. Runs on the background task thread, so it
+		/// returns the warning list rather than showing it.
+		/// </summary>
+		internal object ExportGrammarAndTextsForAI(IThreadedProgress progress, object[] args)
+		{
+			var outPath = (string)args[0];
+			var outFolder = Path.GetDirectoryName(outPath);
+			var texts = m_selectedTextsForAIExport ?? new List<IStText>();
+			var request = new AiAnalysisExportRequest(texts, outFolder, outPath);
+			Publisher.Publish(new PublisherParameterObject(EventConstants.ExportForAiAnalysis, request, m_propertyTable.GetWindow()));
+			if (!request.Handled)
+				request.Messages.Add(xWorksStrings.ksAIExportServiceUnavailable);
+			progress.Step(1);
+
+			CopyAiExportInstructions(outFolder, request.Messages);
+			foreach (var text in texts)
+				progress.Step(1);
+
+			return request.Messages;
+		}
+
+		/// <summary>Name the exported instructions file gets in the export folder.</summary>
+		internal const string ksAiExportInstructionsFileName = "export-instructions.md";
+
+		/// <summary>
+		/// Copies the shipped AI-analysis instructions into <paramref name="outFolder"/>, so
+		/// that dropping the whole folder into a chat carries the reading instructions and
+		/// reference links with it. A missing shipped file is reported in
+		/// <paramref name="messages"/> instead of aborting, since the exported grammar and
+		/// texts are still usable without it.
+		/// </summary>
+		private static void CopyAiExportInstructions(string outFolder, List<string> messages)
+		{
+			var shippedFile = Path.Combine(FwDirectoryFinder.CodeDirectory, "Language Explorer",
+				"Export Templates", "AIExportInstructions.md");
+			if (!File.Exists(shippedFile))
+			{
+				messages.Add(string.Format(xWorksStrings.ksAIExportInstructionsMissing, shippedFile));
+				return;
+			}
+			File.Copy(shippedFile, Path.Combine(outFolder, ksAiExportInstructionsFileName), true);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1384,6 +1482,9 @@ namespace SIL.FieldWorks.XWorks
 				{
 					continue;
 				}
+				// The AI-analysis export is opt-in, so it stays out of the list when unset.
+				if (IsAiExportTemplate(document) && !EnvironmentVariables.IsTrue(ksAiExportEnabledVariable))
+					continue;
 				XmlNode node = document.SelectSingleNode("//FxtDocumentDescription");
 				if (node == null)
 					continue;
@@ -1414,6 +1515,22 @@ namespace SIL.FieldWorks.XWorks
 				}
 			}
 
+		}
+
+		/// <summary>Template type attribute value that selects the AI-analysis export.</summary>
+		private const string ksAiExportTemplateType = "grammarTextsAI";
+
+		/// <summary>Environment variable that opts in to the AI-analysis export.</summary>
+		private const string ksAiExportEnabledVariable = "FLEX_AI_EXPORT";
+
+		/// <summary>
+		/// True when the export template describes exporting a grammar and texts for AI analysis.
+		/// </summary>
+		internal static bool IsAiExportTemplate(XmlDocument document)
+		{
+			var templateRootNode = document.SelectSingleNode("//template");
+			return templateRootNode != null
+				&& XmlUtils.GetOptionalAttributeValue(templateRootNode, "type", "fxt") == ksAiExportTemplateType;
 		}
 
 		/// <summary>
@@ -1470,6 +1587,9 @@ namespace SIL.FieldWorks.XWorks
 					break;
 				case "phonology":
 					ft.m_ft = FxtTypes.kftPhonology;
+					break;
+				case ksAiExportTemplateType:
+					ft.m_ft = FxtTypes.kftGrammarTextsAI;
 					break;
 				default:
 					Debug.Fail("Invalid type attribute value for the template element");
@@ -1618,6 +1738,12 @@ namespace SIL.FieldWorks.XWorks
 		internal void SetCache(LcmCache cache)
 		{
 			m_cache = cache;
+		}
+
+		/// <summary>Sets the property table this dialog uses.</summary>
+		internal void SetPropertyTable(PropertyTable propertyTable)
+		{
+			m_propertyTable = propertyTable;
 		}
 
 		/// <summary>

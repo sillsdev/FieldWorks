@@ -8,6 +8,7 @@ using System.Xml.Linq;
 using Avalonia;
 using Avalonia.Automation;
 using Avalonia.Controls;
+using Avalonia.Headless;
 using Avalonia.Headless.NUnit;
 using Avalonia.Input;
 using Avalonia.Interactivity;
@@ -99,11 +100,11 @@ namespace FwAvaloniaTests
 	}
 
 	/// <summary>
-	/// Right-click on the Avalonia detail view raises a <see cref="DetailMenuRequest"/>
-	/// through the host bridge with the legacy menu binding and screen coordinates: labels/headers
-	/// raise the slice menu (or hotlinks when only those exist), value boxes with a `contextMenu=`
-	/// binding raise the in-string context menu, and unbound rows raise nothing (they keep the
-	/// local Copy flyout).
+	/// How a detail row's menus are opened, and which menu each input maps to. Every
+	/// row's LABEL cell answers right-click and the keyboard menu key with the slice menu; the
+	/// "..." field-options button raises the row's own menu or hotlinks. A row's VALUE box
+	/// answers the same inputs with the in-string `contextMenu=` menu; an unbound value
+	/// box raises nothing and keeps its local Copy flyout.
 	/// </summary>
 	[TestFixture]
 	public class DetailMenuRequestTests
@@ -121,7 +122,7 @@ namespace FwAvaloniaTests
 				menuId: menuId, contextMenuId: contextMenuId, hotlinksId: hotlinksId,
 				objectHvo: 1234);
 
-		private static (DataTree view, List<DetailMenuRequest> requests) Show(
+		private static (Window window, DataTree view, List<DetailMenuRequest> requests) Show(
 			params DetailField[] fields)
 		{
 			var requests = new List<DetailMenuRequest>();
@@ -131,19 +132,40 @@ namespace FwAvaloniaTests
 			var window = new Window { Content = view, Width = 480, Height = 300 };
 			window.Show();
 			Dispatcher.UIThread.RunJobs();
-			return (view, requests);
+			return (window, view, requests);
 		}
 
-		private static void RightClick(Control control)
+		// Right-click through the real headless input pipeline: the right-button RELEASE
+		// becomes ContextRequested. A null TranslatePoint fails loud so negative tests
+		// cannot pass against a detached target.
+		private static void RightClick(Window window, Control control)
 		{
-			var root = (Visual)control.GetVisualRoot();
-			var position = control.TranslatePoint(new Point(2, 2), root) ?? new Point(0, 0);
-			control.RaiseEvent(new PointerPressedEventArgs(control,
-				new Pointer(Pointer.GetNextFreeId(), PointerType.Mouse, true),
-				root, position, 0,
-				new PointerPointProperties(RawInputModifiers.RightMouseButton,
-					PointerUpdateKind.RightButtonPressed),
-				KeyModifiers.None));
+			Click(window, control, MouseButton.Right);
+		}
+
+		private static void LeftClick(Window window, Control control)
+		{
+			Click(window, control, MouseButton.Left);
+		}
+
+		private static void Click(Window window, Control control, MouseButton button)
+		{
+			var point = control.TranslatePoint(new Point(2, 2), window);
+			Assert.That(point, Is.Not.Null, "the click target must be attached and laid out");
+			window.MouseDown(point.Value, button);
+			window.MouseUp(point.Value, button);
+			Dispatcher.UIThread.RunJobs();
+		}
+
+		// Control.OnKeyUp raises ContextRequested for the platform's OpenContextMenu
+		// hotkeys. Headless lists Apps and Win32 adds Shift+F10, so Apps covers both;
+		// the RELEASE is the half that fires.
+		private static void PressContextMenuKey(Window window)
+		{
+#pragma warning disable 618 // the Key-based overload avoids the headless physical-key map
+			window.KeyPress(Key.Apps, RawInputModifiers.None);
+			window.KeyRelease(Key.Apps, RawInputModifiers.None);
+#pragma warning restore 618
 			Dispatcher.UIThread.RunJobs();
 		}
 
@@ -167,9 +189,8 @@ namespace FwAvaloniaTests
 		[AvaloniaTest]
 		public void FieldMenuButton_OnLabelRow_RaisesTheSliceMenuRequest_WithTheLegacyMenuId()
 		{
-			var (view, requests) = Show(Field("Gloss", DetailFieldKind.Text, menuId: "mnuDataTree-Help"));
+			var (_, view, requests) = Show(Field("Gloss", DetailFieldKind.Text, menuId: "mnuDataTree-Help"));
 
-			// The "..." field-options button (which replaced right-click) opens the slice menu.
 			ClickKebab(Find<Button>(view, "Gloss.FieldMenu"));
 
 			Assert.That(requests, Has.Count.EqualTo(1));
@@ -179,25 +200,78 @@ namespace FwAvaloniaTests
 				"the request carries the bound object so command routing can target it");
 		}
 
+		// Right-click and the drop-down icon open the same menu.
 		[AvaloniaTest]
-		public void RightClick_OnLabel_NoLongerRaisesAnyRequest()
+		public void RightClick_OnLabel_RaisesTheSliceMenuRequest()
 		{
-			var (view, requests) = Show(Field("Gloss", DetailFieldKind.Text, menuId: "mnuDataTree-Help"));
+			var (window, view, requests) = Show(
+				Field("Gloss", DetailFieldKind.Text, menuId: "mnuDataTree-Help"));
 
-			// The label does not open the menu; the "..." field-options button does.
-			RightClick(Find<TextBlock>(view, "Gloss.Label"));
+			RightClick(window, Find<TextBlock>(view, "Gloss.Label"));
 
-			Assert.That(requests, Is.Empty, "the slice menu now opens only from the field-options button");
+			Assert.That(requests, Has.Count.EqualTo(1));
+			Assert.That(requests[0].Kind, Is.EqualTo(DetailMenuKind.SliceMenu));
+			Assert.That(requests[0].Field.MenuId, Is.EqualTo("mnuDataTree-Help"));
+		}
+
+		// The empty gutter beside the label is part of the same cell, so it opens the same
+		// menu rather than being a dead strip.
+		[AvaloniaTest]
+		public void RightClick_OnTheLabelGutter_RaisesTheSameSliceMenuRequest()
+		{
+			var (window, view, requests) = Show(
+				Field("Gloss", DetailFieldKind.Text, menuId: "mnuDataTree-Help"));
+
+			var labelCell = (Control)Find<TextBlock>(view, "Gloss.Label").GetVisualParent();
+			RightClick(window, labelCell);
+
+			Assert.That(requests, Has.Count.EqualTo(1));
+			Assert.That(requests[0].Kind, Is.EqualTo(DetailMenuKind.SliceMenu));
+		}
+
+		[AvaloniaTest]
+		public void ContextMenuKey_OnTheFocusedLabelCell_RaisesTheSliceMenuRequest()
+		{
+			var (window, view, requests) = Show(
+				Field("Gloss", DetailFieldKind.Text, menuId: "mnuDataTree-Help"));
+
+			// Tab focus reaches the row through its field-options button; the request is
+			// answered by the label cell that contains it.
+			var kebab = Find<Button>(view, "Gloss.FieldMenu");
+			kebab.Focus();
+			Dispatcher.UIThread.RunJobs();
+			Assert.That(kebab.IsFocused, Is.True, "precondition: the row's affordance has focus");
+
+			PressContextMenuKey(window);
+
+			Assert.That(requests, Has.Count.EqualTo(1),
+				"the keyboard menu key opens the same menu right-click does");
+			Assert.That(requests[0].Kind, Is.EqualTo(DetailMenuKind.SliceMenu));
+		}
+
+		// A header's right-click ignores hotlinks= and opens the slice menu (the shared
+		// object group); the hotlinks stay on the kebab and the inline strip.
+		[AvaloniaTest]
+		public void RightClick_OnASectionHeader_RaisesTheSliceMenuRequest()
+		{
+			var (window, view, requests) = Show(
+				Field("Senses", DetailFieldKind.Header, hotlinksId: "mnuDataTree-Sense-Hotlinks",
+					collapsible: true));
+
+			RightClick(window, Find<Button>(view, "Senses"));
+
+			Assert.That(requests, Has.Count.EqualTo(1),
+				"a header row answers right-click like any other row");
+			Assert.That(requests[0].Kind, Is.EqualTo(DetailMenuKind.SliceMenu));
 		}
 
 		[AvaloniaTest]
 		public void RightClick_OnValueBox_WithContextMenuBinding_RaisesTheContextMenuRequest()
 		{
-			var (view, requests) = Show(Field("CitationForm", DetailFieldKind.Text,
+			var (window, view, requests) = Show(Field("CitationForm", DetailFieldKind.Text,
 				menuId: "mnuDataTree-Help", contextMenuId: "mnuDataTree-CitationFormContext"));
 
-			var box = view.GetVisualDescendants().OfType<TextBox>().First();
-			RightClick(box);
+			RightClick(window, view.GetVisualDescendants().OfType<TextBox>().First());
 
 			Assert.That(requests, Has.Count.EqualTo(1));
 			Assert.That(requests[0].Kind, Is.EqualTo(DetailMenuKind.ContextMenu),
@@ -205,10 +279,180 @@ namespace FwAvaloniaTests
 			Assert.That(requests[0].Field.ContextMenuId, Is.EqualTo("mnuDataTree-CitationFormContext"));
 		}
 
+		// The whole value row takes the right-click, including the per-writing-system
+		// abbreviation gutter, which shows the same menu the value text does.
+		[AvaloniaTest]
+		public void RightClick_OnTheWritingSystemAbbreviation_RaisesTheSameContextMenuRequest()
+		{
+			var (window, view, requests) = Show(Field("LexemeForm", DetailFieldKind.Text,
+				menuId: "mnuDataTree-LexemeForm", contextMenuId: "mnuDataTree-LexemeFormContext"));
+
+			var abbrev = view.GetVisualDescendants().OfType<TextBlock>()
+				.First(t => t.Text == "en");
+			RightClick(window, abbrev);
+
+			Assert.That(requests, Has.Count.EqualTo(1),
+				"the abbreviation gutter is part of the value row, not a dead strip");
+			Assert.That(requests[0].Kind, Is.EqualTo(DetailMenuKind.ContextMenu));
+			Assert.That(requests[0].Field.ContextMenuId, Is.EqualTo("mnuDataTree-LexemeFormContext"));
+		}
+
+		// One right-click must never raise two requests: the value box tunnels ahead of the
+		// row handler.
+		[AvaloniaTest]
+		public void RightClick_InTheValue_RaisesExactlyOneRequest_NotAlsoTheRowHandler()
+		{
+			var (window, view, requests) = Show(Field("LexemeForm", DetailFieldKind.Text,
+				menuId: "mnuDataTree-LexemeForm", contextMenuId: "mnuDataTree-LexemeFormContext"));
+
+			RightClick(window, view.GetVisualDescendants().OfType<TextBox>().First());
+
+			Assert.That(requests, Has.Count.EqualTo(1));
+		}
+
+		[AvaloniaTest]
+		public void ContextMenuKey_InTheValueBox_RaisesTheContextMenuRequest()
+		{
+			var (window, view, requests) = Show(Field("CitationForm", DetailFieldKind.Text,
+				menuId: "mnuDataTree-Help", contextMenuId: "mnuDataTree-CitationFormContext"));
+
+			var box = view.GetVisualDescendants().OfType<TextBox>().First();
+			box.Focus();
+			Dispatcher.UIThread.RunJobs();
+
+			PressContextMenuKey(window);
+
+			Assert.That(requests, Has.Count.EqualTo(1),
+				"the keyboard menu key works inside the value");
+			Assert.That(requests[0].Kind, Is.EqualTo(DetailMenuKind.ContextMenu));
+		}
+
+		// A keyboard-opened menu anchors to the field rather than to the last mouse
+		// position; a right-click still opens at the pointer.
+		[AvaloniaTest]
+		public void RightClick_OpensAtThePointer_AnchoredAtTheControlItCameFrom()
+		{
+			var (window, view, requests) = Show(Field("CitationForm", DetailFieldKind.Text,
+				contextMenuId: "mnuDataTree-CitationFormContext"));
+
+			var box = view.GetVisualDescendants().OfType<TextBox>().First();
+			RightClick(window, box);
+
+			Assert.That(requests, Has.Count.EqualTo(1));
+			Assert.That(requests[0].OpenAtPointer, Is.True, "right-click opens at the pointer");
+			Assert.That(requests[0].AnchorControl, Is.SameAs(box));
+		}
+
+		[AvaloniaTest]
+		public void ContextMenuKey_InTheValueBox_AnchorsToTheEditField_NotThePointer()
+		{
+			var (window, view, requests) = Show(Field("CitationForm", DetailFieldKind.Text,
+				contextMenuId: "mnuDataTree-CitationFormContext"));
+
+			var box = view.GetVisualDescendants().OfType<TextBox>().First();
+			box.Focus();
+			Dispatcher.UIThread.RunJobs();
+
+			PressContextMenuKey(window);
+
+			Assert.That(requests, Has.Count.EqualTo(1));
+			Assert.That(requests[0].OpenAtPointer, Is.False,
+				"a keyboard-opened menu carries no pointer position");
+			Assert.That(requests[0].AnchorControl, Is.SameAs(box),
+				"the menu anchors to the edit field the user is on");
+		}
+
+		[AvaloniaTest]
+		public void ContextMenuKey_OnTheLabelCell_AnchorsToThatCell()
+		{
+			var (window, view, requests) = Show(
+				Field("Gloss", DetailFieldKind.Text, menuId: "mnuDataTree-Help"));
+
+			var kebab = Find<Button>(view, "Gloss.FieldMenu");
+			kebab.Focus();
+			Dispatcher.UIThread.RunJobs();
+
+			PressContextMenuKey(window);
+
+			Assert.That(requests, Has.Count.EqualTo(1));
+			Assert.That(requests[0].OpenAtPointer, Is.False);
+			Assert.That(requests[0].AnchorControl, Is.Not.Null,
+				"the label cell is the anchor for a keyboard-opened menu on the row");
+		}
+
+		// The field-options button opens on mouse click AND on Enter/Space, and Button.Click
+		// carries no pointer either way, so it always drops from the icon, not the mouse.
+		[AvaloniaTest]
+		public void FieldMenuButton_AlwaysAnchorsToTheButton()
+		{
+			var (_, view, requests) = Show(Field("Gloss", DetailFieldKind.Text, menuId: "mnuDataTree-Help"));
+
+			var kebab = Find<Button>(view, "Gloss.FieldMenu");
+			ClickKebab(kebab);
+
+			Assert.That(requests, Has.Count.EqualTo(1));
+			Assert.That(requests[0].OpenAtPointer, Is.False);
+			Assert.That(requests[0].AnchorControl, Is.SameAs(kebab));
+		}
+
+		// The flyout-level half of the same contract: anchored placement drops the menu from the
+		// target's bottom-left, pointer placement leaves the framework default alone.
+		[AvaloniaTest]
+		public void DetailMenuFlyout_AnchoredPlacement_DropsFromTheTargetsBottomLeft()
+		{
+			var items = new List<DetailMenuItem> { new DetailMenuItem("Show in Concordance") };
+			var target = new Button { Content = "field" };
+			var window = new Window { Content = target, Width = 300, Height = 200 };
+			window.Show();
+			Dispatcher.UIThread.RunJobs();
+
+			var anchored = DetailMenuFlyout.Show(items, target, atPointer: false);
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(anchored, Is.Not.Null);
+			Assert.That(anchored.Placement, Is.EqualTo(PlacementMode.BottomEdgeAlignedLeft),
+				"a keyboard-invoked menu drops from the field, not from the pointer");
+		}
+
+		[AvaloniaTest]
+		public void DetailMenuFlyout_PointerPlacement_LeavesTheDefault()
+		{
+			var items = new List<DetailMenuItem> { new DetailMenuItem("Show in Concordance") };
+			var target = new Button { Content = "field" };
+			var window = new Window { Content = target, Width = 300, Height = 200 };
+			window.Show();
+			Dispatcher.UIThread.RunJobs();
+
+			var atPointer = DetailMenuFlyout.Show(items, target, atPointer: true);
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(atPointer, Is.Not.Null);
+			Assert.That(atPointer.Placement, Is.Not.EqualTo(PlacementMode.BottomEdgeAlignedLeft),
+				"a mouse-invoked menu still opens at the pointer");
+		}
+
+		// The two menus are DISTINCT: the label opens the slice menu, the value opens the
+		// in-string menu. Neither input may produce the other's menu.
+		[AvaloniaTest]
+		public void LabelAndValue_RaiseTheirOwnDistinctMenus()
+		{
+			var (window, view, requests) = Show(Field("LexemeForm", DetailFieldKind.Text,
+				menuId: "mnuDataTree-LexemeForm", contextMenuId: "mnuDataTree-LexemeFormContext"));
+
+			RightClick(window, Find<TextBlock>(view, "LexemeForm.Label"));
+			RightClick(window, view.GetVisualDescendants().OfType<TextBox>().First());
+
+			Assert.That(requests.Select(r => r.Kind), Is.EqualTo(new[]
+			{
+				DetailMenuKind.SliceMenu,
+				DetailMenuKind.ContextMenu
+			}));
+		}
+
 		[AvaloniaTest]
 		public void FieldMenuButton_OnHotlinksOnlyHeader_RaisesTheHotlinksRequest()
 		{
-			var (view, requests) = Show(Field("Senses", DetailFieldKind.Header,
+			var (_, view, requests) = Show(Field("Senses", DetailFieldKind.Header,
 				hotlinksId: "mnuDataTree-Sense-Hotlinks", collapsible: true));
 
 			// The header's "..." button raises the hotlinks request; the collapsible toggle (id
@@ -228,7 +472,7 @@ namespace FwAvaloniaTests
 		[AvaloniaTest]
 		public void HotlinksStrip_AppearsForHotlinkHeader_IsAlwaysVisible_AndKeepsTheKebab()
 		{
-			var (view, _) = Show(Field("Senses", DetailFieldKind.Header,
+			var (_, view, _) = Show(Field("Senses", DetailFieldKind.Header,
 				hotlinksId: "mnuDataTree-Sense-Hotlinks", collapsible: true));
 
 			var strip = FindOrNull<Button>(view, "Senses.Hotlinks");
@@ -250,7 +494,7 @@ namespace FwAvaloniaTests
 		[AvaloniaTest]
 		public void HotlinksStrip_Activating_RaisesTheSameHotlinksRequest_AsTheKebab()
 		{
-			var (view, requests) = Show(Field("Senses", DetailFieldKind.Header,
+			var (_, view, requests) = Show(Field("Senses", DetailFieldKind.Header,
 				hotlinksId: "mnuDataTree-Sense-Hotlinks", collapsible: true));
 
 			// Activating the strip arrives as Button.Click (mouse OR keyboard), the same path the kebab uses.
@@ -265,7 +509,7 @@ namespace FwAvaloniaTests
 		[AvaloniaTest]
 		public void HotlinksStrip_IsAbsent_ForHeaderWithoutHotlinks()
 		{
-			var (view, _) = Show(Field("Notes", DetailFieldKind.Header, menuId: "mnuDataTree-Object"));
+			var (_, view, _) = Show(Field("Notes", DetailFieldKind.Header, menuId: "mnuDataTree-Object"));
 
 			Assert.That(FindOrNull<Button>(view, "Notes.Hotlinks"), Is.Null,
 				"a header carrying only a slice menu (no hotlinks) gets no inline command strip");
@@ -277,27 +521,33 @@ namespace FwAvaloniaTests
 		[AvaloniaTest]
 		public void BridgedValueBox_DropsTheThemeFlyout_UnboundKeepsCopy()
 		{
-			var (boundView, _) = Show(Field("CitationForm", DetailFieldKind.Text,
+			var (_, boundView, _) = Show(Field("CitationForm", DetailFieldKind.Text,
 				contextMenuId: "mnuDataTree-CitationFormContext"));
 			var boundBox = boundView.GetVisualDescendants().OfType<TextBox>().First();
 			Assert.That(boundBox.ContextFlyout, Is.Null,
 				"a bridged box must not raise a second (built-in) menu");
 
-			var (plainView, _) = Show(Field("Comment", DetailFieldKind.Text));
+			var (_, plainView, _) = Show(Field("Comment", DetailFieldKind.Text));
 			var plainBox = plainView.GetVisualDescendants().OfType<TextBox>().First();
 			Assert.That(plainBox.ContextFlyout, Is.Not.Null, "unbound rows keep the local Copy flyout");
 		}
 
 		[AvaloniaTest]
-		public void RightClick_OnUnboundRow_RaisesNoRequest()
+		public void RightClick_OnUnboundRow_LabelRaisesTheSliceMenu_ValueRaisesNothing()
 		{
-			var (view, requests) = Show(Field("Comment", DetailFieldKind.Text));
+			var (window, view, requests) = Show(Field("Comment", DetailFieldKind.Text));
 
-			RightClick(Find<TextBlock>(view, "Comment.Label"));
-			RightClick(view.GetVisualDescendants().OfType<TextBox>().First());
+			// A label right-click opens the shared object menu (Field Visibility / Move
+			// Field / Help) even when the row binds no menu=.
+			RightClick(window, Find<TextBlock>(view, "Comment.Label"));
+			Assert.That(requests, Has.Count.EqualTo(1));
+			Assert.That(requests[0].Kind, Is.EqualTo(DetailMenuKind.SliceMenu));
 
-			Assert.That(requests, Is.Empty,
-				"rows without a legacy menu binding keep local behavior (Copy flyout) only");
+			// The value box of a row without a contextMenu= binding keeps its local
+			// Copy flyout only.
+			RightClick(window, view.GetVisualDescendants().OfType<TextBox>().First());
+			Assert.That(requests, Has.Count.EqualTo(1),
+				"an unbound value box raises no host menu request");
 			Assert.That(FindOrNull<Button>(view, "Comment.FieldMenu"), Is.Null,
 				"a row with no menu/hotlinks binding gets no field-options button");
 		}
@@ -305,7 +555,7 @@ namespace FwAvaloniaTests
 		[AvaloniaTest]
 		public void FieldMenuButton_IsHiddenAtRest_RevealedOnHover_AndKeyboardAddressable()
 		{
-			var (view, _) = Show(Field("Gloss", DetailFieldKind.Text, menuId: "mnuDataTree-Help"));
+			var (_, view, _) = Show(Field("Gloss", DetailFieldKind.Text, menuId: "mnuDataTree-Help"));
 
 			var kebab = Find<Button>(view, "Gloss.FieldMenu");
 			// Accessibility: a localized name so a screen reader announces the affordance.
@@ -396,18 +646,10 @@ namespace FwAvaloniaTests
 		[AvaloniaTest]
 		public void LeftClick_OnBoundLabel_RaisesNoRequest()
 		{
-			var (view, requests) = Show(Field("Gloss", DetailFieldKind.Text, menuId: "mnuDataTree-Help"));
+			var (window, view, requests) = Show(
+				Field("Gloss", DetailFieldKind.Text, menuId: "mnuDataTree-Help"));
 
-			var label = Find<TextBlock>(view, "Gloss.Label");
-			var root = (Visual)label.GetVisualRoot();
-			var position = label.TranslatePoint(new Point(2, 2), root) ?? new Point(0, 0);
-			label.RaiseEvent(new PointerPressedEventArgs(label,
-				new Pointer(Pointer.GetNextFreeId(), PointerType.Mouse, true),
-				root, position, 0,
-				new PointerPointProperties(RawInputModifiers.LeftMouseButton,
-					PointerUpdateKind.LeftButtonPressed),
-				KeyModifiers.None));
-			Dispatcher.UIThread.RunJobs();
+			LeftClick(window, Find<TextBlock>(view, "Gloss.Label"));
 
 			Assert.That(requests, Is.Empty, "only the right button opens the slice menu, like legacy");
 		}

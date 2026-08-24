@@ -133,10 +133,10 @@ namespace SIL.FieldWorks.XWorks
 			if (firstLetter != lastHeader && !string.IsNullOrEmpty(firstLetter))
 			{
 				var headerTextBuilder = new StringBuilder();
-				var upperCase =
-					new CaseFunctions(cache.ServiceLocator.WritingSystemManager.Get(wsString))
-						.ToTitle(firstLetter);
-				var lowerCase = firstLetter.Normalize();
+				var caseFunctions =
+					new CaseFunctions(cache.ServiceLocator.WritingSystemManager.Get(wsString));
+				var upperCase = caseFunctions.ToTitle(firstLetter);
+				var lowerCase = caseFunctions.ToLower(firstLetter).Normalize();
 				headerTextBuilder.Append(upperCase);
 				if (lowerCase != upperCase)
 				{

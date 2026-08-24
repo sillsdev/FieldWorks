@@ -1,12 +1,6 @@
-// Copyright (c) 2018 SIL International
+// Copyright (c) 2018-2026 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using SIL.FieldWorks.FwCoreDlgs;
 using SIL.LCModel;
 
@@ -51,6 +45,7 @@ namespace SIL.PcPatrFLEx
 		{
 			var pcpatrFlexForm = new PcPatrFLExForm();
 			pcpatrFlexForm.Cache = m_dlg.PropTable.GetValue<LcmCache>("cache");
+			pcpatrFlexForm.PropTable = m_dlg.PropTable;
 			pcpatrFlexForm.PrepareForm();
 			//pcpatrFlexForm.FillTextsListBox();
 			pcpatrFlexForm.Show();

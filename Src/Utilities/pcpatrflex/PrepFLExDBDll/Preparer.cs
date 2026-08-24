@@ -3,6 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using SIL.DisambiguateInFLExDB;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Core.Cellar;
 using SIL.LCModel.DomainServices;
@@ -10,11 +11,14 @@ using SIL.LCModel.Infrastructure;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
+using XCore;
 
 namespace SIL.PrepFLExDB
 {
 	public class Preparer
 	{
+		public PropertyTable PropTable{ get; set; }
+
 		private static readonly string[] ToneParsProperties = { "sampleToneParsAllomorphProperty", "sampleToneParsMorphemeProperty" };
 
 		private static readonly string[] FeatureDescriptors =
@@ -204,6 +208,7 @@ namespace SIL.PrepFLExDB
 					CreateNewPcPatrFeaturePossibility(ws, pcpatrList, factPoss, name);
 				}
 			});
+			ReloadListsArea();
 		}
 
 		private static void CreateNewPcPatrFeaturePossibility(int ws, ICmPossibilityList newList, ICmCustomItemFactory factPoss, string name)
@@ -292,6 +297,7 @@ namespace SIL.PrepFLExDB
 					CreateNewToneParsPropertyPossibility(ws, toneParsList, factPoss, name);
 				}
 			});
+			ReloadListsArea();
 		}
 
 		private static void CreateNewToneParsPropertyPossibility(int ws, ICmPossibilityList newList, ICmCustomItemFactory factPoss, string name)
@@ -379,5 +385,9 @@ namespace SIL.PrepFLExDB
 			});
 		}
 
+		private void ReloadListsArea()
+		{
+			FwUtils.Publisher.Publish(new PublisherParameterObject(EventConstants.ReloadAreaTools, "lists", PropTable.GetWindow()));
+		}
 	}
 }

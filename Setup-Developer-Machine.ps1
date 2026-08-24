@@ -202,35 +202,44 @@ if ($InstallerDeps) {
 		}
 	}
 
-	# Special case: liblcm goes inside Localizations
-	$lcmTarget = Join-Path $scriptDir "Localizations/LCMRepo"
+	# Special case: liblcm is found via the LcmRootDir environment variable
 	$localizationsPath = Join-Path $scriptDir "Localizations"
-	if ((Test-Path $localizationsPath) -and -not (Test-Path $lcmTarget)) {
-		if ($isWorktree) {
-			$sharedLcm = Join-Path $repoRoot "liblcm"
-			if (-not (Test-Path $sharedLcm)) {
-				if ($PSCmdlet.ShouldProcess("liblcm", "Clone to $sharedLcm")) {
-					Write-Host "Cloning liblcm to shared location..." -ForegroundColor Cyan
-					git clone https://github.com/sillsdev/liblcm.git $sharedLcm 2>&1 | Out-Null
-				}
-			}
-			if (Test-Path $sharedLcm) {
-				if ($PSCmdlet.ShouldProcess("Localizations/LCMRepo", "Create junction to $sharedLcm")) {
-					New-Item -ItemType Junction -Path $lcmTarget -Target $sharedLcm -Force | Out-Null
-					Write-Host "[OK] Created junction: Localizations/LCMRepo -> $sharedLcm" -ForegroundColor Green
-				}
-			}
+	$lcmTarget = Join-Path $localizationsPath "LCMRepo"
+	if ($env:LcmRootDir -and (Test-Path (Join-Path $env:LcmRootDir ".git"))) {
+		Write-Host "[OK] liblcm already exists at $env:LcmRootDir" -ForegroundColor Green
+	} elseif (Test-Path $lcmTarget) {
+		$env:LcmRootDir = $lcmTarget
+		Write-Host "[OK] Localizations/LCMRepo already exists" -ForegroundColor Green
+	} elseif ($isWorktree) {
+		$sharedLcm = Join-Path $repoRoot "liblcm"
+		if ((Test-Path $sharedLcm)) {
+			$env:LcmRootDir = $sharedLcm
+			Write-Host "[OK] liblcm already exists at $sharedLcm" -ForegroundColor Green
 		} else {
-			if ($PSCmdlet.ShouldProcess("liblcm", "Clone to $lcmTarget")) {
-				Write-Host "Cloning liblcm..." -ForegroundColor Cyan
-				git clone https://github.com/sillsdev/liblcm.git $lcmTarget 2>&1 | Out-Null
+			if ($PSCmdlet.ShouldProcess("liblcm", "Clone to $sharedLcm")) {
+				Write-Host "Cloning liblcm to shared location..." -ForegroundColor Cyan
+				git clone https://github.com/sillsdev/liblcm.git $sharedLcm 2>&1 | Out-Null
 				if ($LASTEXITCODE -eq 0) {
-					Write-Host "[OK] Cloned liblcm to $lcmTarget" -ForegroundColor Green
+					$env:LcmRootDir = $sharedLcm
+					Write-Host "[OK] Cloned liblcm to $sharedLcm" -ForegroundColor Green
+				} else {
+					Write-Host "[ERROR] Failed to clone liblcm" -ForegroundColor Red
 				}
 			}
 		}
-	} elseif (Test-Path $lcmTarget) {
-		Write-Host "[OK] Localizations/LCMRepo already exists" -ForegroundColor Green
+	} elseif ((Test-Path $localizationsPath)) {
+		if ($PSCmdlet.ShouldProcess("LCMRepo", "Clone to $lcmTarget")) {
+			Write-Host "Cloning liblcm..." -ForegroundColor Cyan
+			git clone https://github.com/sillsdev/liblcm.git $lcmTarget 2>&1 | Out-Null
+			if ($LASTEXITCODE -eq 0) {
+				$env:LcmRootDir = $lcmTarget
+				Write-Host "[OK] Cloned liblcm to $lcmTarget" -ForegroundColor Green
+			} else {
+				Write-Host "[ERROR] Failed to clone liblcm" -ForegroundColor Red
+			}
+		}
+	} else {
+		Write-Host "[ERROR] Failed to clone liblcm because Localizations does not exist" -ForegroundColor Red
 	}
 }
 
@@ -272,41 +281,35 @@ if ($PSCmdlet.ShouldProcess("$pathScope PATH", "Save changes")) {
 	$env:PATH = "$env:PATH;$($pathsToAdd -join ';')"
 }
 
+# Refresh PATH for this session
+$env:PATH = [Environment]::GetEnvironmentVariable('PATH', 'Machine') + ';' + [Environment]::GetEnvironmentVariable('PATH', 'User')
+
 #endregion
 
 #region Environment Variables
 
 Write-Host "`n--- Configuring Environment Variables ---" -ForegroundColor Yellow
 
-Write-Host "[INFO] WIX env var is not required for WiX v6 SDK builds" -ForegroundColor Gray
+if ($env:LcmRootDir -and (Test-Path (Join-Path $env:LcmRootDir ".git")) -and
+		$PSCmdlet.ShouldProcess('LcmRootDir', "Set LcmRootDir to '$env:LcmRootDir' for the current user")) {
+	[Environment]::SetEnvironmentVariable('LcmRootDir', $env:LcmRootDir, 'User')
+}
 
-#endregion
-
-#region Verification
-
-Write-Host "`n--- Verification ---" -ForegroundColor Yellow
-
-# Refresh PATH for this session
-$env:PATH = [Environment]::GetEnvironmentVariable('PATH', 'Machine') + ';' + [Environment]::GetEnvironmentVariable('PATH', 'User')
-
-$allGood = $true
-
-# WiX (v6) is acquired via NuGet restore; no PATH verification needed.
-Write-Host "[OK] WiX v6: acquired via NuGet restore during build" -ForegroundColor Green
+if ($PSCmdlet.ShouldProcess('FEEDBACK', 'Turn off production analytics for SIL software')) {
+	[Environment]::SetEnvironmentVariable('FEEDBACK', 'off', $pathScope)
+}
 
 #endregion
 
 Write-Host "`n========================================" -ForegroundColor Cyan
-if ($allGood) {
-	Write-Host " Setup Complete!" -ForegroundColor Green
-} else {
-	Write-Host " Setup Complete (restart terminal for PATH changes)" -ForegroundColor Yellow
-}
+Write-Host " Setup Complete!" -ForegroundColor Green
 Write-Host "========================================" -ForegroundColor Cyan
 Write-Host ""
 Write-Host "Next steps:" -ForegroundColor White
-Write-Host "  1. Restart VS Code (or your terminal) for PATH changes to take effect"
+Write-Host "  1. Restart your IDE and your terminal (not necessary for this terminal) for PATH and environment changes to take effect"
 Write-Host "  2. Build: .\build.ps1"
 Write-Host ""
-Write-Host "Before building installers, run: .\Setup-Developer-Machine.ps1 -InstallerDeps" -ForegroundColor Gray
+if (-not $InstallerDeps) {
+	Write-Host "Before building installers, run: .\Setup-Developer-Machine.ps1 -InstallerDeps" -ForegroundColor Gray
+}
 Write-Host "For Serena MCP support, see Docs/mcp.md" -ForegroundColor Gray

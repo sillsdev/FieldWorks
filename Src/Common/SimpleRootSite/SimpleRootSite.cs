@@ -61,20 +61,9 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </summary>
 		public event EventHandler OnRefreshForScrollBarVisibility;
 		#endregion Events
-		private static readonly bool s_enableInteractionTrace = IsOptInPerfFlagEnabled("FW_PERF_INTERACTION_TRACE");
+		private static readonly bool s_enableInteractionTrace = EnvironmentVariables.IsTrue("FW_PERF_INTERACTION_TRACE");
 		private static readonly int s_interactionTraceThresholdMs = GetPerfThresholdMs(
 			"FW_PERF_INTERACTION_TRACE_THRESHOLD_MS", 25);
-
-		private static bool IsOptInPerfFlagEnabled(string variableName)
-		{
-			var value = Environment.GetEnvironmentVariable(variableName);
-			if (string.IsNullOrEmpty(value))
-				return false;
-
-			return !string.Equals(value, "0", StringComparison.OrdinalIgnoreCase) &&
-				!string.Equals(value, "false", StringComparison.OrdinalIgnoreCase) &&
-				!string.Equals(value, "off", StringComparison.OrdinalIgnoreCase);
-		}
 
 		private static int GetPerfThresholdMs(string variableName, int defaultValue)
 		{
@@ -5801,6 +5790,21 @@ namespace SIL.FieldWorks.Common.RootSites
 		public bool WasFocused()
 		{
 			return g_focusRootSite.Target == this;
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Forgets which root site last had focus, so no root site reports <see
+		/// cref="WasFocused"/>.
+		/// Call when focus is known to have moved to an HWND that is not a WinForms control:
+		/// the kill-focus plumbing resolves such a window to null and leaves the stale
+		/// reference in place (see OnKillFocus), so a later "WritingSystemHvo"/"BestStyleName"
+		/// change would act on a root site the user has left.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		public static void ForgetLastFocusedRootSite()
+		{
+			g_focusRootSite = new WeakReference(null);
 		}
 
 		/// -----------------------------------------------------------------------------------

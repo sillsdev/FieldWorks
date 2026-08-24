@@ -66,6 +66,15 @@ namespace SIL.FieldWorks.XWorks
 					var children = Convert(submenu, interceptor);
 					if (children.Count == 0)
 						continue;
+
+					// An inline choice list is a population rule, not a level of menu, and
+					// reports itself invisible: splice its items rather than nesting them.
+					if (submenu.IsInlineChoiceList)
+					{
+						items.AddRange(children);
+						continue;
+					}
+
 					var display = submenu.GetDisplayProperties();
 					if (!display.Visible)
 						continue;

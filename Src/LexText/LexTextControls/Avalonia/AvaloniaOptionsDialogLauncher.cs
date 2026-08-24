@@ -343,14 +343,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			// restart.
 			var newDisabledTools = state.UIModeDisabledTools ?? string.Empty;
 			if ((settings.UIModeDisabledTools ?? string.Empty) != newDisabledTools)
-			{
-				settings.UIModeDisabledTools = newDisabledTools;
-				if (propertyTable != null)
-				{
-					propertyTable.SetProperty(UIFrameworkResolver.UIModeDisabledToolsPropertyName, newDisabledTools, true);
-					propertyTable.SetPropertyPersistence(UIFrameworkResolver.UIModeDisabledToolsPropertyName, false);
-				}
-			}
+				ApplyDisabledToolsLive(propertyTable, settings, newDisabledTools);
 
 			// User-interface language: switch the current thread's UI culture live (matches
 			// LexOptionsDlg.m_btnOK_Click), then persist registry value + project WS + reload the string
@@ -501,7 +494,7 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		// Applies a UI-mode change live: persist into settings + mirror+broadcast through the PropertyTable
 		// so the open views (RecordBrowseView/RecordEditView) re-resolve without a restart.
-		private static void ApplyUiModeLive(PropertyTable propertyTable, FwApplicationSettingsBase settings, string mode)
+		internal static void ApplyUiModeLive(PropertyTable propertyTable, FwApplicationSettingsBase settings, string mode)
 		{
 			var norm = NormalizeUiMode(mode);
 			settings.UIMode = norm;
@@ -510,6 +503,19 @@ namespace SIL.FieldWorks.LexText.Controls
 				propertyTable.SetProperty(UIModePropertyName, norm, true);
 				propertyTable.SetPropertyPersistence(UIModePropertyName, false);
 			}
+			ErrorReporter.AddProperty("AvaloniaUIMode", norm);
+		}
+
+		// Applies a per-tool disabled-tools change live, mirroring ApplyUiModeLive.
+		internal static void ApplyDisabledToolsLive(PropertyTable propertyTable, FwApplicationSettingsBase settings, string disabledTools)
+		{
+			settings.UIModeDisabledTools = disabledTools;
+			if (propertyTable != null)
+			{
+				propertyTable.SetProperty(UIFrameworkResolver.UIModeDisabledToolsPropertyName, disabledTools, true);
+				propertyTable.SetPropertyPersistence(UIFrameworkResolver.UIModeDisabledToolsPropertyName, false);
+			}
+			ErrorReporter.AddProperty("AvaloniaDisabledTools", disabledTools);
 		}
 
 		internal static string NormalizeUiMode(string mode) =>

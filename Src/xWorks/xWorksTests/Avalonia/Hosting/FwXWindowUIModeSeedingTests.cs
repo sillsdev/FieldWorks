@@ -6,6 +6,7 @@ using System;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwAvalonia;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.Reporting;
 using XCore;
 
 namespace SIL.FieldWorks.XWorks
@@ -43,6 +44,8 @@ namespace SIL.FieldWorks.XWorks
 				UIModeGates.SwitchingEnabledVariable, m_savedSwitchingVariable);
 			m_propertyTable.Dispose();
 			m_mediator.Dispose();
+			ErrorReport.Properties.Remove("AvaloniaUIMode");
+			ErrorReport.Properties.Remove("AvaloniaDisabledTools");
 		}
 
 		[TestCase("New", "New")]
@@ -70,6 +73,15 @@ namespace SIL.FieldWorks.XWorks
 			FwXWindow.SeedUIModeProperties(m_propertyTable, "New", null);
 			Assert.That(m_propertyTable.GetStringProperty(
 				UIFrameworkResolver.UIModeDisabledToolsPropertyName, null), Is.EqualTo(""));
+		}
+
+		[Test]
+		public void SeedUIModeProperties_RecordsModeAndDisabledToolsForCrashReports()
+		{
+			FwXWindow.SeedUIModeProperties(m_propertyTable, "New", "lexiconEdit,posEdit");
+
+			Assert.That(ErrorReport.Properties["AvaloniaUIMode"], Is.EqualTo("New"));
+			Assert.That(ErrorReport.Properties["AvaloniaDisabledTools"], Is.EqualTo("lexiconEdit,posEdit"));
 		}
 	}
 }

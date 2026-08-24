@@ -12,7 +12,9 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Threading;
 using SIL.LCModel.Infrastructure;
+using SIL.LCModel.Core.Text;
 using SIL.FieldWorks.Common.FwUtils;
+using XCore;
 // ReSharper disable InconsistentNaming
 
 namespace SIL.FieldWorks.XWorks
@@ -1357,6 +1359,67 @@ namespace SIL.FieldWorks.XWorks
 					Assert.That(r.ReadLine(), Is.EqualTo("</Possibilities>"));
 					Assert.That(r.ReadLine(), Is.EqualTo("</List>"));
 					Assert.That(r.ReadLine(), Is.EqualTo("</Lists>"));
+				}
+			}
+		}
+
+		[Test]
+		public void ExportGrammarAndTextsForAI_NoListenerRegistered_ReportsTheServiceIsUnavailable()
+		{
+			var tempFolder = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
+			Directory.CreateDirectory(tempFolder);
+			using (var mediator = new Mediator())
+			using (var propertyTable = new PropertyTable(mediator))
+			{
+				try
+				{
+					using (var exportDlg = new ExportDialog())
+					{
+						exportDlg.SetCache(m_cache);
+						exportDlg.SetPropertyTable(propertyTable);
+						exportDlg.SetSelectedTextsForAIExport(new List<IStText>());
+
+						var messages = (List<string>)exportDlg.ExportGrammarAndTextsForAI(new DummyProgressDlg(),
+							new object[] { Path.Combine(tempFolder, "HCGrammar.xml") });
+
+						Assert.That(File.Exists(Path.Combine(tempFolder, "HCGrammar.xml")), Is.False);
+						Assert.That(messages, Has.Some.Contains("was not available"));
+					}
+				}
+				finally
+				{
+					Directory.Delete(tempFolder, true);
+				}
+			}
+		}
+
+		[Test]
+		public void ExportGrammarAndTextsForAI_CopiesTheShippedInstructionsIntoTheFolder()
+		{
+			var tempFolder = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
+			Directory.CreateDirectory(tempFolder);
+			using (var mediator = new Mediator())
+			using (var propertyTable = new PropertyTable(mediator))
+			{
+				try
+				{
+					using (var exportDlg = new ExportDialog())
+					{
+						exportDlg.SetCache(m_cache);
+						exportDlg.SetPropertyTable(propertyTable);
+						exportDlg.SetSelectedTextsForAIExport(new List<IStText>());
+
+						exportDlg.ExportGrammarAndTextsForAI(new DummyProgressDlg(),
+							new object[] { Path.Combine(tempFolder, "HCGrammar.xml") });
+
+						var instructions = Path.Combine(tempFolder, ExportDialog.ksAiExportInstructionsFileName);
+						Assert.That(File.Exists(instructions), Is.True);
+						Assert.That(File.ReadAllText(instructions), Does.Contain("HCGrammar.xml"));
+					}
+				}
+				finally
+				{
+					Directory.Delete(tempFolder, true);
 				}
 			}
 		}

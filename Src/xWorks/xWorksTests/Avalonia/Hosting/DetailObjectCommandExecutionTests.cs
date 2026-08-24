@@ -331,6 +331,38 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(jump.Execute, Is.Not.Null, "and it carries a mediator-dispatch action");
 		}
 
+		// The writing-system entries come from an inline list group: they need the Form slice
+		// targeted and the group spliced into its parent.
+		[Test]
+		public void LexemeFormSliceMenu_WritingSystemsSubmenu_ListsTheProjectWritingSystems()
+		{
+			EnsureAdapter(m_entry.LexemeFormOA.Hvo, "Form");
+			var items = BuildItems(new[] { "mnuDataTree-LexemeForm", "mnuDataTree-MultiStringSlice" });
+
+			var writingSystems = FindItem(items, "Writing Systems");
+			Assert.That(writingSystems, Is.Not.Null,
+				"the multistring group contributes the Writing Systems submenu");
+
+			var labels = writingSystems.Children.Where(c => !c.IsSeparator).Select(c => c.Label).ToList();
+			Assert.That(labels, Does.Contain("Show all right now"));
+			Assert.That(labels, Does.Contain("Configure..."));
+
+			// Both commands are handled by the slice, so they enable only once it is
+			// reachable through the colleague chain.
+			Assert.That(FindItem(items, "Show all right now").IsEnabled, Is.True);
+			Assert.That(FindItem(items, "Configure...").IsEnabled, Is.True);
+
+			// The inline list splices the slice's own writing systems between the two commands.
+			var spliced = labels.Where(l => l != "Show all right now" && l != "Configure...").ToList();
+			Assert.That(spliced, Is.Not.Empty,
+				"the inline list group must contribute the slice's writing systems, not be nested away");
+
+			var vernacular = Cache.LangProject.CurrentVernacularWritingSystems
+				.Select(ws => ws.DisplayLabel).ToList();
+			Assert.That(spliced.Intersect(vernacular), Is.Not.Empty,
+				"the spliced entries are the project's vernacular writing systems (the Lexeme Form's ws set)");
+		}
+
 		// -----------------------------------------------------------------
 		// Helpers -- production-path command drivers
 		// -----------------------------------------------------------------

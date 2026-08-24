@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<template type="grammarTextsAI">
+	<FxtDocumentDescription dataLabel="Grammar and Texts" formatLabel="XML for AI Analysis"
+		defaultExtension="" filter="">Export Grammar and Texts for AI Analysis
+
+WARNING: this is AI. It can be very wrong, and it can be wrong while sounding certain. Treat anything it tells you about your grammar or your texts as a suggestion to check against your own data, never as a finding. Understand a change, and confirm it yourself, before you apply it to your project.
+
+Writes this project's HermitCrab grammar (HCGrammar.xml), one .flextext file per selected text, and an export-instructions.md file into a folder you choose.
+
+Then drag and drop all the files into ChatGPT (or Claude) and ask your question. The export-instructions.md file carries the reference links and reading instructions the AI needs, so there is nothing else for you to paste.</FxtDocumentDescription>
+</template>

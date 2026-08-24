@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2003-2017 SIL International
+// Copyright (c) 2003-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -381,25 +381,39 @@ namespace SIL.FieldWorks.XWorks
 			if (!m_detailEditContext.IsDeactivateHookAttached)
 				m_detailEditContext.AttachDeactivateHook(FindForm());
 			m_avaloniaEntryForm.ShowDetail(detail, editContext,
-				wsTag => WritingSystemKeyboards.Activate(Cache, wsTag),
+				OnDetailWritingSystemFocused,
 				GetPersistedExpansionState, PersistExpansionState,
 				OnDetailMenuRequested, OnDetailLinkRequested,
 				new FwTsStringClipboard(Cache.WritingSystemFactory),
 				GetPersistedLabelColumnWidth, PersistLabelColumnWidth);
 		}
 
-
 		/// <summary>
-		/// Shows the SAME xCore-defined context menu the legacy slice shows, over the
-		/// Avalonia detail view -- the menu ids come from the layout (imported into the typed IR), the menu
-		/// is materialized from the window configuration and dispatched through the mediator,
-		/// exactly
-		/// the legacy `DTMenuHandler.MakeSliceContextMenu` recipe (menu + mnuDataTree-Object; in-string
-		/// menus add mnuDataTree-MultiStringSlice). Command targeting uses the approved baseline
-		/// adapter "command-menu-routing": the legacy DataTree + DTMenuHandler are initialized lazily and
-		/// kept HIDDEN purely as the command-target colleague chain, with CurrentSlice pointed at the
-		/// slice bound to the clicked row's object -- never shown, never active.
+		/// Called when a writing system editor gains focus. Never throws: a focus
+		/// event can race view teardown, so failures are logged instead.
 		/// </summary>
+		internal void OnDetailWritingSystemFocused(string wsTag)
+		{
+			if (IsDisposed || m_propertyTable == null)
+				return;
+			try
+			{
+				// Without this, the last-focused root site still answers WasFocused() and the
+				// property change below would make it steal focus and re-tag its selection.
+				SimpleRootSite.ForgetLastFocusedRootSite();
+				WritingSystemKeyboards.Activate(Cache, wsTag);
+				var ws = Cache.WritingSystemFactory.GetWsFromStr(wsTag);
+				if (ws <= 0)
+					return;
+				Publisher.Publish(new PublisherParameterObject(
+					EventConstants.WritingSystemUnderCursorChanged, ws, m_propertyTable.GetWindow()));
+			}
+			catch (Exception e)
+			{
+				Logger.WriteError("Writing-system focus handling failed.", e);
+			}
+		}
+
 		/// <summary>The shared per-object menu group (Field Visibility / Move Field / Help).</summary>
 		internal const string ObjectMenuId = "mnuDataTree-Object";
 
@@ -410,25 +424,34 @@ namespace SIL.FieldWorks.XWorks
 		internal const string MultiStringSliceMenuId = "mnuDataTree-MultiStringSlice";
 
 		/// <summary>
-		/// Composes the ordered menu-id list for an in-string right-click, mirroring the legacy
-		/// <c>DTMenuHandler.MakeSliceContextMenu</c> recipe: the field's own context menu, then
-		/// <see cref="MultiStringSliceMenuId"/> only for a multistring row, then
-		/// <see cref="ObjectMenuId"/> only when NEITHER shared group is already present. Both
-		/// mnuDataTree-MultiStringSlice and mnuDataTree-Object independently define Field Visibility /
-		/// Move Field / Help, so adding both would show that group twice; this guard adds exactly one.
-		/// Empty ids are dropped. Kept internal-static so the composition is unit-testable without a
-		/// live window.
+		/// Composes the ordered menu-id list for a row's SLICE menu (label right-click and the
+		/// field-options button): the row's own <c>menu=</c> binding, then exactly ONE shared
+		/// trailing group. Both shared menus define Field Visibility / Move Field / Help, so
+		/// adding both would show that group twice. Section hotlinks never join this menu; they
+		/// stay on their own affordance. Internal-static so the composition is unit-testable
+		/// without a live window.
 		/// </summary>
-		internal static IReadOnlyList<string> ComposeContextMenuIds(string fieldContextMenuId,
+		internal static IReadOnlyList<string> ComposeSliceMenuIds(string fieldMenuId,
 			bool isMultiStringRow)
+		{
+			var menus = new List<string>();
+			if (!string.IsNullOrEmpty(fieldMenuId))
+				menus.Add(fieldMenuId);
+			// Exactly one shared group, whichever route put it there: a row whose own binding IS
+			// one of the two already carries it.
+			if (menus.TrueForAll(id => id != MultiStringSliceMenuId && id != ObjectMenuId))
+				menus.Add(isMultiStringRow ? MultiStringSliceMenuId : ObjectMenuId);
+			return menus;
+		}
+
+		/// <summary>
+		/// Composes the menu-id list for an IN-STRING right-click (inside a row's value).
+		/// </summary>
+		internal static IReadOnlyList<string> ComposeInStringMenuIds(string fieldContextMenuId)
 		{
 			var menus = new List<string>();
 			if (!string.IsNullOrEmpty(fieldContextMenuId))
 				menus.Add(fieldContextMenuId);
-			if (isMultiStringRow)
-				menus.Add(MultiStringSliceMenuId);
-			if (menus.TrueForAll(id => id != MultiStringSliceMenuId && id != ObjectMenuId))
-				menus.Add(ObjectMenuId);
 			return menus;
 		}
 
@@ -452,17 +475,14 @@ namespace SIL.FieldWorks.XWorks
 				switch (request.Kind)
 				{
 					case DetailMenuKind.ContextMenu:
-						ids.AddRange(ComposeContextMenuIds(request.Field.ContextMenuId,
-							request.Field.IsMultiStringRow));
+						ids.AddRange(ComposeInStringMenuIds(request.Field.ContextMenuId));
 						break;
 					case DetailMenuKind.Hotlinks:
 						ids.Add(request.Field.HotlinksId);
 						break;
 					default:
-						ids.Add(request.Field.MenuId);
-						if (!string.IsNullOrEmpty(request.Field.HotlinksId))
-							ids.Add(request.Field.HotlinksId); // section link commands stay reachable
-						ids.Add(ObjectMenuId);
+						ids.AddRange(ComposeSliceMenuIds(request.Field.MenuId,
+							request.Field.IsMultiStringRow));
 						break;
 				}
 
@@ -481,7 +501,10 @@ namespace SIL.FieldWorks.XWorks
 					var items = XCoreMenuBridge.CreateMenuItems(window, idArray, interceptor);
 					if (items.Count > 0)
 					{
-						m_avaloniaEntryForm.ShowContextMenu(items);
+						// A keyboard-opened menu anchors under the row it came from; a
+						// right-click opens it at the pointer.
+						m_avaloniaEntryForm.ShowContextMenu(items, request.AnchorControl,
+							request.OpenAtPointer);
 						return;
 					}
 				}
@@ -491,13 +514,27 @@ namespace SIL.FieldWorks.XWorks
 						nativeMenuError);
 				}
 
-				window.ShowContextMenu(idArray,
-					new System.Drawing.Point(request.ScreenX, request.ScreenY), null, null);
+				window.ShowContextMenu(idArray, AdapterMenuScreenPoint(request), null, null);
 			}
 			catch (Exception e)
 			{
 				Logger.WriteError("Detail context menu failed.", e);
 			}
+		}
+
+		// The adapter fallback needs a raw screen point: cursor position for a right-click,
+		// the anchor's bottom-left otherwise. Both corners are mapped since
+		// RTL flow mirrors X in PointToScreen.
+		private static System.Drawing.Point AdapterMenuScreenPoint(DetailMenuRequest request)
+		{
+			var anchor = request.AnchorControl;
+			if (request.OpenAtPointer || anchor == null)
+				return System.Windows.Forms.Cursor.Position;
+			var left = Avalonia.VisualExtensions.PointToScreen(anchor,
+				new Avalonia.Point(0, anchor.Bounds.Height));
+			var right = Avalonia.VisualExtensions.PointToScreen(anchor,
+				new Avalonia.Point(anchor.Bounds.Width, anchor.Bounds.Height));
+			return new System.Drawing.Point(Math.Min(left.X, right.X), left.Y);
 		}
 
 		// The per-(class, layout) override file lives in this project's

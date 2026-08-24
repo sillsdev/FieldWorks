@@ -125,10 +125,17 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 			_companionStrip.Visible = height > 0;
 		}
 
-		public void ShowContextMenu(IReadOnlyList<DetailMenuItem> items)
+		/// <summary>
+		/// Shows a context menu of 'items'.
+		/// </summary>
+		/// <param name="anchor">The control to anchor the menu to.</param>
+		/// <param name="atPointer">True: Open at the pointer location.
+		///                         False: Open under the anchor control.</param>
+		public void ShowContextMenu(IReadOnlyList<DetailMenuItem> items,
+			Avalonia.Controls.Control anchor, bool atPointer)
 		{
-			if (Host.Content is Avalonia.Controls.Control target)
-				DetailMenuFlyout.Show(items, target);
+			var target = anchor ?? Host.Content as Avalonia.Controls.Control;
+			DetailMenuFlyout.Show(items, target, atPointer);
 		}
 
 		public void ShowMessage(string message)

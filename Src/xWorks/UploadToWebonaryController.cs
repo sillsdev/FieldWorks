@@ -191,7 +191,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		internal virtual bool UseJsonApi => !string.IsNullOrEmpty(Environment.GetEnvironmentVariable("WEBONARY_API"));
+		internal virtual bool UseJsonApi => EnvironmentVariables.IsTrue("WEBONARY_API");
 		internal virtual bool ForTesting => false;
 
 		internal bool UploadFileToWebonary(string signedUrl, string fileName, IUploadToWebonaryView view)

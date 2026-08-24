@@ -16,6 +16,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public const string DeleteRecord = "DeleteRecord";
 		public const string DialogInsertItemInVector = "DialogInsertItemInVector";
 		public const string DictionaryConfigured = "DictionaryConfigured";
+		public const string ExportForAiAnalysis = "ExportForAiAnalysis";
 		public const string FilterListChanged = "FilterListChanged";
 		public const string FollowLink = "FollowLink";
 		public const string GetContentControlParameters = "GetContentControlParameters";
@@ -54,5 +55,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public const string ViewLiftMessages = "ViewLiftMessages";
 		public const string ViewMessages = "ViewMessages";
 		public const string WarnUserAboutFailedLiftImportIfNecessary = "WarnUserAboutFailedLiftImportIfNecessary";
+		public const string WritingSystemUnderCursorChanged = "WritingSystemUnderCursorChanged";
 	}
 }
