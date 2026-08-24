@@ -8,7 +8,9 @@ using System.IO;
 using System.Xml;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.RootSites;
+using SIL.FieldWorks.FdoUi;
 using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
 using SIL.IO;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
@@ -430,6 +432,228 @@ namespace SIL.FieldWorks.XWorks
 				}
 			}
 		}
+
+		#region Reversal configuration switching (LT-22642)
+
+		private const string ReversalConfigDirName = "XhtmlDocViewReversalConfigs";
+
+		/// <summary>
+		/// Writes a minimal reversal configuration file for <paramref name="writingSystemId"/>.
+		/// </summary>
+		private static void WriteReversalConfiguration(string path, string label, string writingSystemId)
+		{
+			new DictionaryConfigurationModel
+			{
+				FilePath = path,
+				Label = label,
+				WritingSystem = writingSystemId,
+				Parts = new List<ConfigurableDictionaryNode>(),
+				SharedItems = new List<ConfigurableDictionaryNode>(),
+				Publications = new List<string>()
+			}.Save();
+		}
+
+		/// <summary>
+		/// Makes <paramref name="writingSystemId"/> an analysis writing system and returns
+		/// its reversal index, creating the index if the project does not have one yet.
+		/// </summary>
+		private IReversalIndex CreateReversalIndex(string writingSystemId)
+		{
+			CoreWritingSystemDefinition writingSystem;
+			Cache.ServiceLocator.WritingSystemManager.GetOrSet(writingSystemId, out writingSystem);
+			if (!Cache.ServiceLocator.WritingSystems.AnalysisWritingSystems.Contains(writingSystem))
+				Cache.ServiceLocator.WritingSystems.AnalysisWritingSystems.Add(writingSystem);
+			return Cache.ServiceLocator.GetInstance<IReversalIndexRepository>().FindOrCreateIndexForWs(writingSystem.Handle);
+		}
+
+		private static string CreateReversalConfigDirectory()
+		{
+			var directory = Path.Combine(Path.GetTempPath(), ReversalConfigDirName);
+			if (Directory.Exists(directory))
+				Directory.Delete(directory, true);
+			Directory.CreateDirectory(directory);
+			return directory;
+		}
+
+		[Test]
+		public void SyncReversalIndexGuidToConfiguration_SecondConfigurationOfSameWritingSystem_ReportsNoIndexChange()
+		{
+			var configDirectory = CreateReversalConfigDirectory();
+			try
+			{
+				using (new UndoableUnitOfWorkHelper(Cache.ActionHandlerAccessor, "doit", "undoit"))
+				using (var docView = new TestXhtmlDocView())
+				{
+					CreateReversalIndex("en");
+					var printConfig = Path.Combine(configDirectory, "en-print" + DictionaryConfigurationModel.FileExtension);
+					var webonaryConfig = Path.Combine(configDirectory, "en-webonary" + DictionaryConfigurationModel.FileExtension);
+					WriteReversalConfiguration(printConfig, "English-print", "en");
+					WriteReversalConfiguration(webonaryConfig, "English-Webonary", "en");
+					docView.SetPropertyTable(m_propertyTable);
+					m_propertyTable.SetProperty("ReversalIndexPublicationLayout", printConfig, false);
+					Assert.That(docView.SyncReversalIndexGuidToConfiguration(), Is.True,
+						"Choosing the first configuration should select its reversal index");
+					var guidAfterFirstChoice = m_propertyTable.GetStringProperty(ReversalIndexEntryUi.ReversalIndexGuidProperty, string.Empty);
+					m_propertyTable.SetProperty("ReversalIndexPublicationLayout", webonaryConfig, false);
+
+					// SUT
+					var indexChanged = docView.SyncReversalIndexGuidToConfiguration();
+
+					Assert.That(indexChanged, Is.False,
+						"Both configurations use 'en', so the index does not change, no clerk reload follows, and the view must refresh right away");
+					Assert.That(m_propertyTable.GetStringProperty(ReversalIndexEntryUi.ReversalIndexGuidProperty, string.Empty), Is.EqualTo(guidAfterFirstChoice));
+				}
+			}
+			finally
+			{
+				Directory.Delete(configDirectory, true);
+			}
+		}
+
+		[Test]
+		public void SyncReversalIndexGuidToConfiguration_ConfigurationOfOtherWritingSystem_ReportsIndexChange()
+		{
+			var configDirectory = CreateReversalConfigDirectory();
+			try
+			{
+				using (new UndoableUnitOfWorkHelper(Cache.ActionHandlerAccessor, "doit", "undoit"))
+				using (var docView = new TestXhtmlDocView())
+				{
+					CreateReversalIndex("en");
+					var spanishIndex = CreateReversalIndex("es");
+					var englishConfig = Path.Combine(configDirectory, "en" + DictionaryConfigurationModel.FileExtension);
+					var spanishConfig = Path.Combine(configDirectory, "es" + DictionaryConfigurationModel.FileExtension);
+					WriteReversalConfiguration(englishConfig, "English-print", "en");
+					WriteReversalConfiguration(spanishConfig, "Spanish", "es");
+					docView.SetPropertyTable(m_propertyTable);
+					m_propertyTable.SetProperty("ReversalIndexPublicationLayout", englishConfig, false);
+					docView.SyncReversalIndexGuidToConfiguration();
+					m_propertyTable.SetProperty("ReversalIndexPublicationLayout", spanishConfig, false);
+
+					// SUT
+					var indexChanged = docView.SyncReversalIndexGuidToConfiguration();
+
+					Assert.That(indexChanged, Is.True, "Switching writing systems selects a different reversal index");
+					Assert.That(m_propertyTable.GetStringProperty(ReversalIndexEntryUi.ReversalIndexGuidProperty, string.Empty),
+						Is.EqualTo(spanishIndex.Guid.ToString()));
+				}
+			}
+			finally
+			{
+				Directory.Delete(configDirectory, true);
+			}
+		}
+
+		[Test]
+		public void TryGetReplacementReversalConfiguration_ConfigurationMatchesSelectedIndex_KeepsUserChoice()
+		{
+			var configDirectory = CreateReversalConfigDirectory();
+			try
+			{
+				using (new UndoableUnitOfWorkHelper(Cache.ActionHandlerAccessor, "doit", "undoit"))
+				using (var docView = new TestXhtmlDocView())
+				{
+					CreateReversalIndex("en");
+					var spanishIndex = CreateReversalIndex("es");
+					var englishConfig = Path.Combine(configDirectory, "en" + DictionaryConfigurationModel.FileExtension);
+					var spanishConfig = Path.Combine(configDirectory, "es" + DictionaryConfigurationModel.FileExtension);
+					WriteReversalConfiguration(englishConfig, "English-print", "en");
+					WriteReversalConfiguration(spanishConfig, "Spanish", "es");
+					docView.SetPropertyTable(m_propertyTable);
+					m_propertyTable.SetProperty("ReversalIndexPublicationLayout", spanishConfig, false);
+					m_propertyTable.SetProperty(ReversalIndexEntryUi.ReversalIndexGuidProperty, spanishIndex.Guid.ToString(), false);
+
+					// SUT: the clerk still holds an English entry while the switch to Spanish
+					// is in flight
+					string replacement;
+					var needsRewrite = docView.TryGetReplacementReversalConfiguration("en", configDirectory, out replacement);
+
+					Assert.That(needsRewrite, Is.False,
+						"The configuration matches the selected index, so the choice the user made must not be overwritten");
+					Assert.That(replacement, Is.Null);
+				}
+			}
+			finally
+			{
+				Directory.Delete(configDirectory, true);
+			}
+		}
+
+		[Test]
+		public void TryGetReplacementReversalConfiguration_ConfigurationOfOtherIndex_IsReplaced()
+		{
+			var configDirectory = CreateReversalConfigDirectory();
+			try
+			{
+				using (new UndoableUnitOfWorkHelper(Cache.ActionHandlerAccessor, "doit", "undoit"))
+				using (var docView = new TestXhtmlDocView())
+				{
+					CreateReversalIndex("en");
+					var spanishIndex = CreateReversalIndex("es");
+					var englishConfig = Path.Combine(configDirectory, "en" + DictionaryConfigurationModel.FileExtension);
+					var spanishConfig = Path.Combine(configDirectory, "es" + DictionaryConfigurationModel.FileExtension);
+					WriteReversalConfiguration(englishConfig, "English-print", "en");
+					WriteReversalConfiguration(spanishConfig, "Spanish", "es");
+					docView.SetPropertyTable(m_propertyTable);
+					m_propertyTable.SetProperty("ReversalIndexPublicationLayout", englishConfig, false);
+					m_propertyTable.SetProperty(ReversalIndexEntryUi.ReversalIndexGuidProperty, spanishIndex.Guid.ToString(), false);
+
+					// SUT: following a link into a Spanish entry must still pull
+					// the configuration across (FWR-1105)
+					string replacement;
+					var needsRewrite = docView.TryGetReplacementReversalConfiguration("es", configDirectory, out replacement);
+
+					Assert.That(needsRewrite, Is.True);
+					Assert.That(replacement, Is.EqualTo(spanishConfig));
+				}
+			}
+			finally
+			{
+				Directory.Delete(configDirectory, true);
+			}
+		}
+
+		[Test]
+		public void SilentLayoutChange_SyncingGuidThenValidating_KeepsTheChosenConfiguration()
+		{
+			var configDirectory = CreateReversalConfigDirectory();
+			try
+			{
+				using (new UndoableUnitOfWorkHelper(Cache.ActionHandlerAccessor, "doit", "undoit"))
+				using (var docView = new TestXhtmlDocView())
+				{
+					CreateReversalIndex("en");
+					var spanishIndex = CreateReversalIndex("es");
+					var englishConfig = Path.Combine(configDirectory, "en" + DictionaryConfigurationModel.FileExtension);
+					var spanishConfig = Path.Combine(configDirectory, "es" + DictionaryConfigurationModel.FileExtension);
+					WriteReversalConfiguration(englishConfig, "English-print", "en");
+					WriteReversalConfiguration(spanishConfig, "Spanish", "es");
+					docView.SetPropertyTable(m_propertyTable);
+					m_propertyTable.SetProperty("ReversalIndexPublicationLayout", englishConfig, false);
+					docView.SyncReversalIndexGuidToConfiguration();
+					// The Configure dialog saves the Spanish choice with the broadcast
+					// suppressed,
+					// so the guid still names the English index at this point
+					m_propertyTable.SetProperty("ReversalIndexPublicationLayout", spanishConfig, false);
+
+					// SUT: what RefreshAllContent does when the dialog closes
+					var indexChanged = docView.SyncReversalIndexGuidToConfiguration();
+
+					Assert.That(indexChanged, Is.True, "The dialog's choice must move the selection to the Spanish index");
+					Assert.That(m_propertyTable.GetStringProperty(ReversalIndexEntryUi.ReversalIndexGuidProperty, string.Empty),
+						Is.EqualTo(spanishIndex.Guid.ToString()));
+					string replacement;
+					Assert.That(docView.TryGetReplacementReversalConfiguration("en", configDirectory, out replacement), Is.False,
+						"The English entry the clerk still holds must not pull the configuration back to English");
+				}
+			}
+			finally
+			{
+				Directory.Delete(configDirectory, true);
+			}
+		}
+
+		#endregion
 
 		private class TestXhtmlDocView : XhtmlDocView
 		{
