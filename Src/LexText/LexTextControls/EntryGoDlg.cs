@@ -54,8 +54,8 @@ namespace SIL.FieldWorks.LexText.Controls
 		}
 
 		/// <summary>
-		/// The substring (match-anywhere) engine. Built lazily the first time a query is long enough
-		/// to use substring matching (see <see cref="SubstringSearchPolicy"/>).
+		/// The substring (match-anywhere) engine. Built lazily the first time a query is long
+		/// enough to use substring matching (see <see cref="SubstringSearchPolicy"/>).
 		/// </summary>
 		private SearchEngine SubstringSearchEngine
 		{
@@ -67,9 +67,10 @@ namespace SIL.FieldWorks.LexText.Controls
 		}
 
 		/// <summary>
-		/// True when this query should use substring matching. The decision (minimum query length)
-		/// lives in <see cref="SubstringSearchPolicy"/>. (Kept separate from <see cref="SearchEngineFor"/>
-		/// so callers can test the mode without instantiating the substring engine.)
+		/// True when this query should use substring matching. The decision (minimum query
+		/// length) lives in <see cref="SubstringSearchPolicy"/>. Kept separate from
+		/// <see cref="SearchEngineFor"/> so callers can test the mode without instantiating the
+		/// substring engine.
 		/// </summary>
 		private bool UseSubstringFor(string searchKey)
 		{
@@ -202,8 +203,8 @@ namespace SIL.FieldWorks.LexText.Controls
 			m_oldSearchKey = searchKey;
 			m_oldSearchWs = wsSelHvo;
 
-			// Select the engine for this query: substring once the key is long enough (>= MinQueryLength);
-			// otherwise the default full-text engine, so short keys behave like the original search.
+			// Select the engine for this query: substring once the key is long enough
+			// (>= MinQueryLength), otherwise full-text so short keys behave like the original.
 			m_matchingObjectsBrowser.SetSearchEngine(SearchEngineFor(searchKey));
 			m_matchingObjectsBrowser.SearchAsync(GetFields(searchKey, wsSelHvo));
 		}

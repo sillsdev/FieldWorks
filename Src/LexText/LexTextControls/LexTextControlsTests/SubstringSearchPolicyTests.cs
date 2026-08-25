@@ -8,14 +8,14 @@ using SIL.FieldWorks.LexText.Controls;
 namespace LexTextControlsTests
 {
 	/// <summary>
-	/// Tests for the pure Find-Lexical-Entry substring-search decision logic that was extracted from
-	/// EntryGoDlg so it could be tested without driving the dialog.
+	/// Verifies the query-length gate that decides when Find Lexical Entry uses substring
+	/// (match-anywhere) matching.
 	/// </summary>
 	[TestFixture]
 	public class SubstringSearchPolicyTests
 	{
-		// A base letter followed by a combining acute accent (U+0301): 2 UTF-16 units that compose to
-		// a single character under FormC normalization.
+		// A base letter followed by a combining acute accent (U+0301): 2 UTF-16 units that
+		// compose to a single character under FormC normalization.
 		private static readonly string ComposedAcuteE = "e" + (char)0x0301;
 
 		[TestCase("", ExpectedResult = false)]
@@ -37,9 +37,9 @@ namespace LexTextControlsTests
 		[Test]
 		public void UseSubstring_countsComposedCharacters_notUtf16Units()
 		{
-			// Each ComposedAcuteE is 2 UTF-16 units but 1 character after FormC. If the policy counted
-			// raw Length it would see 4 and 6 (both >= 3) and wrongly enable substring; counting composed
-			// characters it sees 2 and 3.
+			// Each ComposedAcuteE is 2 UTF-16 units but 1 character after FormC. Counting raw
+			// Length would see 4 and 6 (both >= 3) and wrongly enable substring; composed
+			// characters count as 2 and 3.
 			string twoComposed = ComposedAcuteE + ComposedAcuteE;                   // raw Length 4 -> 2
 			string threeComposed = ComposedAcuteE + ComposedAcuteE + ComposedAcuteE; // raw Length 6 -> 3
 
