@@ -16,23 +16,26 @@ namespace SIL.FieldWorks.XWorks
 	/// </summary>
 	internal sealed class OverrideCommandRegistry
 	{
-		private readonly List<KeyValuePair<Func<ChoiceBase, bool>, Func<ChoiceBase, DetailMenuItem>>> _entries
-			= new List<KeyValuePair<Func<ChoiceBase, bool>, Func<ChoiceBase, DetailMenuItem>>>();
+		private readonly List<KeyValuePair<Func<ChoiceBase, bool>,
+			Func<ChoiceBase, UIItemDisplayProperties, DetailMenuItem>>> _entries
+			= new List<KeyValuePair<Func<ChoiceBase, bool>,
+				Func<ChoiceBase, UIItemDisplayProperties, DetailMenuItem>>>();
 
-		public void Add(string helpId, Func<ChoiceBase, DetailMenuItem> build)
+		public void Add(string helpId, Func<ChoiceBase, UIItemDisplayProperties, DetailMenuItem> build)
 			=> Add(c => string.Equals(c.HelpId, helpId, StringComparison.Ordinal), build);
 
 		/// <summary>Registers by matcher, for items that carry no command id.</summary>
-		public void Add(Func<ChoiceBase, bool> matches, Func<ChoiceBase, DetailMenuItem> build)
-			=> _entries.Add(
-				new KeyValuePair<Func<ChoiceBase, bool>, Func<ChoiceBase, DetailMenuItem>>(matches, build));
+		public void Add(Func<ChoiceBase, bool> matches,
+			Func<ChoiceBase, UIItemDisplayProperties, DetailMenuItem> build)
+			=> _entries.Add(new KeyValuePair<Func<ChoiceBase, bool>,
+				Func<ChoiceBase, UIItemDisplayProperties, DetailMenuItem>>(matches, build));
 
-		public DetailMenuItem TryBuild(ChoiceBase choice)
+		public DetailMenuItem TryBuild(ChoiceBase choice, UIItemDisplayProperties display)
 		{
 			foreach (var entry in _entries)
 			{
 				if (entry.Key(choice))
-					return entry.Value(choice);
+					return entry.Value(choice, display);
 			}
 
 			return null;

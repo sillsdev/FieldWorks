@@ -570,7 +570,8 @@ namespace SIL.FieldWorks.XWorks
 		/// rows; that keeps the legacy behavior intact when the override layer cannot be
 		/// addressed.
 		/// </summary>
-		private Func<ChoiceBase, DetailMenuItem> BuildOverrideCommandInterceptor(DetailField field)
+		private Func<ChoiceBase, UIItemDisplayProperties, DetailMenuItem> BuildOverrideCommandInterceptor(
+			DetailField field)
 		{
 			if (field == null || string.IsNullOrEmpty(field.ClassName) || string.IsNullOrEmpty(field.LayoutName)
 				|| ViewOverrideStore == null)
@@ -582,7 +583,7 @@ namespace SIL.FieldWorks.XWorks
 			// into the override. They need no located template node, so they stay registered
 			// even when locating fails.
 			var registry = new OverrideCommandRegistry();
-			registry.Add(IsWritingSystemVisibilityChoice, c => WritingSystemItem(c, field));
+			registry.Add(IsWritingSystemVisibilityChoice, (c, d) => WritingSystemItem(c, d, field));
 
 			var templateId = ViewDefinitionOverrideEditor.StripRuntimeSuffix(field.StableId);
 			// Locate the clicked node in the field's OWN compiled model (with any current override
@@ -610,14 +611,15 @@ namespace SIL.FieldWorks.XWorks
 			if (location != null)
 			{
 				registry.Add("CmdAlwaysVisible",
-					c => VisibilityItem(c, field, templateId, location, ViewVisibility.Always));
+					(c, d) => VisibilityItem(d, field, templateId, location, ViewVisibility.Always));
 				registry.Add("CmdIfData",
-					c => VisibilityItem(c, field, templateId, location, ViewVisibility.IfData));
+					(c, d) => VisibilityItem(d, field, templateId, location, ViewVisibility.IfData));
 				registry.Add("CmdNormallyHidden",
-					c => VisibilityItem(c, field, templateId, location, ViewVisibility.Never));
-				registry.Add("CmdDataTree-MoveFieldUp", c => MoveItem(c, field, location, up: true));
+					(c, d) => VisibilityItem(d, field, templateId, location, ViewVisibility.Never));
+				registry.Add("CmdDataTree-MoveFieldUp",
+					(c, d) => MoveItem(d, field, location, up: true));
 				registry.Add("CmdDataTree-MoveFieldDown",
-					c => MoveItem(c, field, location, up: false));
+					(c, d) => MoveItem(d, field, location, up: false));
 			}
 
 			return registry.TryBuild;
@@ -626,20 +628,20 @@ namespace SIL.FieldWorks.XWorks
 		// A Field Visibility menu item: checked when it is the field's current visibility, executes the
 		// SetVisibility override mutation (idempotent -- re-choosing the current value is a
 		// harmless write).
-		private DetailMenuItem VisibilityItem(ChoiceBase choice, DetailField field,
+		private DetailMenuItem VisibilityItem(UIItemDisplayProperties display, DetailField field,
 			string templateId, ViewNodeLocation location, ViewVisibility target)
 		{
-			var label = XCoreMenuBridge.StripAccelerator(choice.GetDisplayProperties().Text);
+			var label = XCoreMenuBridge.StripAccelerator(display.Text);
 			var isChecked = location.Visibility == target;
 			return new DetailMenuItem(label, isEnabled: true, isChecked: isChecked, children: null,
 				execute: () => ApplyFieldVisibility(field, templateId, target));
 		}
 
 		// A Move Field item: disabled at the first sibling (up) / last sibling (down) / when alone.
-		private DetailMenuItem MoveItem(ChoiceBase choice, DetailField field,
+		private DetailMenuItem MoveItem(UIItemDisplayProperties display, DetailField field,
 			ViewNodeLocation location, bool up)
 		{
-			var label = XCoreMenuBridge.StripAccelerator(choice.GetDisplayProperties().Text);
+			var label = XCoreMenuBridge.StripAccelerator(display.Text);
 			var canMove = up ? location.CanMoveUp : location.CanMoveDown;
 			return new DetailMenuItem(label, isEnabled: canMove, isChecked: false, children: null,
 				execute: canMove ? (Action)(() => ApplyMoveField(field, location, up)) : null);
@@ -670,23 +672,21 @@ namespace SIL.FieldWorks.XWorks
 		/// Configure dialog, while the Avalonia detail view composes from its own override
 		/// store.
 		/// </summary>
-		private DetailMenuItem WritingSystemItem(ChoiceBase choice, DetailField field)
+		private DetailMenuItem WritingSystemItem(ChoiceBase choice, UIItemDisplayProperties display,
+			DetailField field)
 		{
-			var display = choice.GetDisplayProperties();
 			var isListToggle = choice is ListPropertyChoice;
-			// No execute when disabled: clicking the last checked toggle would EMPTY the set.
-			var execute = display.Enabled
-				? (Action)(() =>
+			// The bridge strips execute from disabled items, so the last checked toggle
+			// (disabled) can never be invoked to EMPTY the set.
+			return new DetailMenuItem(XCoreMenuBridge.StripAccelerator(display.Text), display.Enabled,
+				display.Checked, children: null, execute: () =>
 				{
 					// Snapshot first, so a dialog that changes nothing (e.g. Cancel) copies
 					// nothing.
 					var before = isListToggle ? null : CurrentSliceSelectedWritingSystems();
 					choice.OnClick(null, EventArgs.Empty);
 					CopyWritingSystemSelectionToOverride(field, isListToggle, before);
-				})
-				: null;
-			return new DetailMenuItem(XCoreMenuBridge.StripAccelerator(display.Text), display.Enabled,
-				display.Checked, children: null, execute: execute);
+				});
 		}
 
 		// Copies the click's selection into the row's override and recomposes. A toggle

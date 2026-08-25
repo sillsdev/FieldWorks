@@ -489,7 +489,8 @@ namespace SIL.FieldWorks.XWorks
 			var build = typeof(RecordEditView).GetMethod("BuildOverrideCommandInterceptor",
 				BindingFlags.Instance | BindingFlags.NonPublic);
 			Assert.That(build, Is.Not.Null, "the override interceptor seam must exist");
-			var interceptor = (Func<ChoiceBase, DetailMenuItem>)build.Invoke(m_view, new object[] { field });
+			var interceptor = (Func<ChoiceBase, UIItemDisplayProperties, DetailMenuItem>)build.Invoke(
+				m_view, new object[] { field });
 			TestContext.WriteLine("interceptor built: " + (interceptor != null));
 			var window = m_propertyTable.GetValue<XWindow>("window");
 			return XCoreMenuBridge.CreateMenuItems(window, menuIds, interceptor);

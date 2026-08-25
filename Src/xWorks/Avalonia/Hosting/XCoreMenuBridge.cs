@@ -32,16 +32,18 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// As <see cref="CreateMenuItems(XWindow, string[])"/>, but lets the host RETARGET specific leaf
 		/// commands for the Avalonia detail view (advanced-entry-view). For each command leaf, the
-		/// <paramref name="interceptor"/> is offered the leaf <see cref="ChoiceBase"/> (so the host can
-		/// read the localized label and command id from it); if it returns a non-null
+		/// <paramref name="interceptor"/> is offered the leaf <see cref="ChoiceBase"/> and its
+		/// already-computed display properties (so the host reads the localized label and state
+		/// without a second Display* round trip); if it returns a non-null
 		/// <see cref="DetailMenuItem"/>, that item (its label/checked/enabled/execute) is used INSTEAD of
 		/// the default xCore-dispatched item. Returning null leaves the command on its normal mediator
 		/// path. This is how the per-field Field Visibility / Move Field commands route to the project
 		/// override layer while Help and every other item keep working unchanged. The interceptor only
-		/// sees leaf commands (submenus pass through).
+		/// sees leaf commands (submenus pass through). Every leaf, default or retargeted, is
+		/// normalized so a disabled item carries no execute action.
 		/// </summary>
 		public static IReadOnlyList<DetailMenuItem> CreateMenuItems(XWindow window, string[] menuIds,
-			Func<ChoiceBase, DetailMenuItem> interceptor)
+			Func<ChoiceBase, UIItemDisplayProperties, DetailMenuItem> interceptor)
 		{
 			var group = window?.GetContextMenuChoiceGroup(menuIds);
 			if (group == null)
@@ -50,7 +52,8 @@ namespace SIL.FieldWorks.XWorks
 			return Convert(group, interceptor);
 		}
 
-		private static List<DetailMenuItem> Convert(ChoiceGroup group, Func<ChoiceBase, DetailMenuItem> interceptor)
+		private static List<DetailMenuItem> Convert(ChoiceGroup group,
+			Func<ChoiceBase, UIItemDisplayProperties, DetailMenuItem> interceptor)
 		{
 			var items = new List<DetailMenuItem>();
 			foreach (var member in group)
@@ -90,22 +93,30 @@ namespace SIL.FieldWorks.XWorks
 					// advanced-entry-view: offer the leaf to the host; a non-null result retargets this
 					// command to the override layer (Field Visibility / Move Field) instead of the
 					// hidden-DataTree mediator dispatch.
-					var retargeted = interceptor?.Invoke(choice);
+					var retargeted = interceptor?.Invoke(choice, display);
 					if (retargeted != null)
 					{
-						items.Add(retargeted);
+						items.Add(WithoutExecuteWhenDisabled(retargeted));
 						continue;
 					}
 
 					var captured = choice;
 					items.Add(new DetailMenuItem(StripAccelerator(display.Text), display.Enabled,
-						display.Checked, null, () => captured.OnClick(null, EventArgs.Empty)));
+						display.Checked, null,
+						display.Enabled ? (Action)(() => captured.OnClick(null, EventArgs.Empty)) : null));
 				}
 			}
 
 			TrimSeparators(items);
 			return items;
 		}
+
+		// A disabled leaf carries no execute action, so "Execute != null" means invokable for
+		// every consumer -- programmatic invokers included, not just the pointer UI.
+		private static DetailMenuItem WithoutExecuteWhenDisabled(DetailMenuItem item)
+			=> item.IsEnabled || item.Execute == null
+				? item
+				: new DetailMenuItem(item.Label, isEnabled: false, item.IsChecked, item.Children, null);
 
 		// xCore marks the accelerator with a single '_' before the mnemonic; WinForms
 		// translates it to '&'. Avalonia shows text raw, so strip only the first
