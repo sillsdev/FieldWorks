@@ -9,10 +9,12 @@ using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.Widgets;
+using SIL.FieldWorks.FdoUi;
 using SIL.FieldWorks.FwCoreDlgControls;
 using SIL.FieldWorks.FwCoreDlgs;
 using SIL.IO;
 using SIL.LCModel;
+using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Utils;
 using SIL.Progress;
@@ -45,6 +47,10 @@ namespace SIL.FieldWorks.XWorks
 		internal string m_configObjectName;
 		internal const string CurrentSelectedEntryClass = "currentSelectedEntry";
 		private const string ClassifiedDictConfig = "SemanticDomainSenses.fwdictconfig";
+		/// <summary>
+		/// Id of the reversal clerk, declared in Configuration/Lexicon/areaConfiguration.xml.
+		/// </summary>
+		private const string AllReversalEntriesClerkId = "AllReversalEntries";
 		private const string FieldWorksPrintLimitEnv = "FIELDWORKS_PRINT_LIMIT";
 		private bool m_updateContentLater = false; // Whether we should postpone calling UpdateContent
 		private string m_loadedConfig = null;
@@ -73,7 +79,7 @@ namespace SIL.FieldWorks.XWorks
 			if (m_mainView.NativeBrowser is GeckoWebBrowser browser)
 			{
 				var clerk = XmlUtils.GetOptionalAttributeValue(configurationParameters, "clerk");
-				if (clerk == "entries" || clerk == "AllReversalEntries" || clerk == "SemanticDomainList")
+				if (clerk == "entries" || clerk == AllReversalEntriesClerkId || clerk == "SemanticDomainList")
 				{
 					browser.DomClick += OnDomClick;
 					browser.DomKeyPress += OnDomKeyPress;
@@ -1125,9 +1131,10 @@ namespace SIL.FieldWorks.XWorks
 					var currentConfig = GetCurrentConfiguration(false);
 					if (name == "ReversalIndexPublicationLayout")
 					{
-						DictionaryConfigurationUtils.SetReversalIndexGuidBasedOnReversalIndexConfiguration(m_propertyTable, Cache);
-						// Wait until SetActiveSelectedEntryOnView to call UpdateContent.
-						m_updateContentLater = true;
+						// Sync ReversalIndexGuid to the chosen configuration. True means a
+						// different index, so let the clerk's reload refresh the view; false
+						// means no reload is coming, so refresh below.
+						m_updateContentLater = SyncReversalIndexGuidToConfiguration();
 					}
 					var currentPublication = GetCurrentPublication();
 					var validPublication = GetValidPublicationForConfiguration(currentConfig) ?? xWorksStrings.AllEntriesPublication;
@@ -1192,13 +1199,74 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
+		/// Points the ReversalIndexGuid property at the reversal index described by the current
+		/// ReversalIndexPublicationLayout. The index comes from the configuration's writing
+		/// system, so two configurations of one writing system select the same index.
+		/// </summary>
+		/// <returns><c>true</c> if the selected index changed. Setting the property has
+		/// already told the clerk to reload, so ActiveClerkSelectedObject will follow on
+		/// Idle; the caller can defer refreshing until then.</returns>
+		internal bool SyncReversalIndexGuidToConfiguration()
+		{
+			var oldGuid = ReversalIndexEntryUi.GetReversalIndexGuid(m_propertyTable);
+			DictionaryConfigurationUtils.SetReversalIndexGuidBasedOnReversalIndexConfiguration(m_propertyTable, Cache);
+			return ReversalIndexEntryUi.GetReversalIndexGuid(m_propertyTable) != oldGuid;
+		}
+
+		/// <summary>
+		/// Gets the writing system id of the reversal index named by the ReversalIndexGuid
+		/// property, or <c>null</c> if no valid index is selected.
+		/// </summary>
+		private string GetSelectedReversalWritingSystemId()
+		{
+			var reversalIndexGuid = ReversalIndexEntryUi.GetReversalIndexGuid(m_propertyTable);
+			if (reversalIndexGuid.Equals(Guid.Empty))
+				return null;
+			var reversalIndex = Cache.ServiceLocator.GetObject(reversalIndexGuid) as IReversalIndex;
+			CoreWritingSystemDefinition writingSystem;
+			if (reversalIndex == null || !Cache.ServiceLocator.WritingSystemManager.TryGet(reversalIndex.WritingSystem, out writingSystem))
+				return null;
+			return writingSystem.Id;
+		}
+
+		/// <summary>
+		/// Decides whether ReversalIndexPublicationLayout still describes the reversal index
+		/// that is selected, and if not, works out what it should be replaced with.
+		/// </summary>
+		/// <param name="currentEntryWritingSystemId">Writing system of the clerk's current
+		/// entry, used only when no valid index is selected.</param>
+		/// <param name="projectConfigurationDirectory">Folder holding this project's reversal
+		/// configurations.</param>
+		/// <param name="replacementConfiguration">The configuration to switch to, or
+		/// <c>null</c> when the expected writing system has no configuration file.</param>
+		/// <returns><c>true</c> if the property needs to be rewritten.</returns>
+		internal bool TryGetReplacementReversalConfiguration(string currentEntryWritingSystemId,
+			string projectConfigurationDirectory, out string replacementConfiguration)
+		{
+			// Take the writing system from ReversalIndexGuid, the selection the user made; the
+			// clerk's current entry can still belong to the index we are leaving (LT-22642).
+			var expectedWritingSystemId = GetSelectedReversalWritingSystemId() ?? currentEntryWritingSystemId;
+			var currentConfiguration = m_propertyTable.GetStringProperty("ReversalIndexPublicationLayout", string.Empty);
+			if (File.Exists(currentConfiguration)
+				&& new DictionaryConfigurationModel(currentConfiguration, Cache).WritingSystem == expectedWritingSystemId)
+			{
+				replacementConfiguration = null;
+				return false;
+			}
+			var newConfiguration = Path.Combine(projectConfigurationDirectory,
+				expectedWritingSystemId + DictionaryConfigurationModel.FileExtension);
+			replacementConfiguration = File.Exists(newConfiguration) ? newConfiguration : null;
+			return true;
+		}
+
+		/// <summary>
 		/// Set the style attribute on the current entry to color the background.
 		/// </summary>
 		private void SetActiveSelectedEntryOnView(GeckoWebBrowser browser)
 		{
 			if (Clerk.CurrentObject == null)
 			{
-				if (Clerk.Id == "AllReversalEntries" && m_updateContentLater)
+				if (Clerk.Id == AllReversalEntriesClerkId && m_updateContentLater)
 				{
 					// There are no entries, but we still need to clear the pane and update the title.
 					var currentConfig = m_propertyTable.GetStringProperty("ReversalIndexPublicationLayout", string.Empty);
@@ -1209,7 +1277,7 @@ namespace SIL.FieldWorks.XWorks
 				return;
 			}
 
-			if (Clerk.Id == "AllReversalEntries")
+			if (Clerk.Id == AllReversalEntriesClerkId)
 			{
 				var reversalentry = Clerk.CurrentObject as IReversalIndexEntry;
 				if (reversalentry == null)
@@ -1219,13 +1287,12 @@ namespace SIL.FieldWorks.XWorks
 					return;
 				var currReversalWs = writingSystem.Id;
 				var currentConfig = m_propertyTable.GetStringProperty("ReversalIndexPublicationLayout", string.Empty);
-				var configuration = File.Exists(currentConfig) ? new DictionaryConfigurationModel(currentConfig, Cache) : null;
 				var currentPage = GetTopCurrentPageButton(browser.Document.Body);
-				if (configuration == null || configuration.WritingSystem != currReversalWs)
+				string newConfig;
+				if (TryGetReplacementReversalConfiguration(currReversalWs,
+					DictionaryConfigurationListener.GetProjectConfigurationDirectory(m_propertyTable, reversalentry), out newConfig))
 				{
-					var newConfig = Path.Combine(DictionaryConfigurationListener.GetProjectConfigurationDirectory(m_propertyTable, reversalentry),
-						writingSystem.Id + DictionaryConfigurationModel.FileExtension);
-					m_propertyTable.SetProperty("ReversalIndexPublicationLayout", File.Exists(newConfig) ? newConfig : null, true);
+					m_propertyTable.SetProperty("ReversalIndexPublicationLayout", newConfig, true);
 				} else if (m_updateContentLater)
 				{
 					// Force the content to be updated once (LT-21702).
@@ -1350,6 +1417,11 @@ namespace SIL.FieldWorks.XWorks
 		private void RefreshAllContent(object _)
 		{
 			var currentConfig = GetCurrentConfiguration(false);
+			if (Clerk.Id == AllReversalEntriesClerkId)
+			{
+				// The Configure dialog sets the layout silently, so sync the guid.
+				SyncReversalIndexGuidToConfiguration();
+			}
 			var currentPublication = GetCurrentPublication();
 			var validPublication = GetValidPublicationForConfiguration(currentConfig) ?? xWorksStrings.AllEntriesPublication;
 			if (currentPublication != xWorksStrings.AllEntriesPublication && currentPublication != validPublication)

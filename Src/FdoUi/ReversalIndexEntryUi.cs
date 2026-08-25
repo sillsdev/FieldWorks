@@ -47,6 +47,20 @@ namespace SIL.FieldWorks.FdoUi
 		}
 
 		/// <summary>
+		/// PropertyTable key naming the reversal index whose entries the clerk loads.
+		/// </summary>
+		public const string ReversalIndexGuidProperty = "ReversalIndexGuid";
+
+		/// <summary>
+		/// Fetches the GUID of the reversal index named by the ReversalIndexGuid property.
+		/// </summary>
+		/// <returns>The reversal index GUID, or empty GUID if there is a problem</returns>
+		public static Guid GetReversalIndexGuid(PropertyTable propertyTable)
+		{
+			return GetObjectGuidIfValid(propertyTable, ReversalIndexGuidProperty);
+		}
+
+		/// <summary>
 		/// Fetches the GUID value of the given property, having checked it is a valid object.
 		/// If it is not a valid object, the property is removed.
 		/// </summary>
