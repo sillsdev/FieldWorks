@@ -190,8 +190,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				RestoreOverrideFile(configurationDirectory, overridePath, overrideExisted,
 					overrideBytes);
-				LayoutCache.InitializePartInventories(Cache.ProjectId.Name, m_application,
-					Cache.ProjectId.ProjectFolder);
+				layouts.Reload();
 			}
 			Assert.That(File.Exists(overridePath), Is.EqualTo(overrideExisted),
 				"the persistence test should restore the override file's prior existence");
@@ -200,10 +199,21 @@ namespace SIL.FieldWorks.XWorks
 				Assert.That(File.ReadAllBytes(overridePath), Is.EqualTo(overrideBytes),
 					"the persistence test should restore the override file's exact bytes");
 			}
-			var restored = Inventory.GetInventory("layouts", Cache.ProjectId.Name).GetElement("layout",
+			Assert.That(Inventory.GetInventory("layouts", Cache.ProjectId.Name), Is.SameAs(layouts),
+				"cleanup should retain the Inventory instance held by the live Avalonia source");
+			var restored = layouts.GetElement("layout",
 				new[] { "LexEntry", "detail", "Normal", null });
 			Assert.That(restored.OuterXml, Is.EqualTo(original.OuterXml),
 				"the effective layout inventory should be restored for later tests");
+
+			m_propertyTable.SetProperty("UIMode", "Legacy", true);
+			DrainMediatorAndIdleQueues();
+			m_propertyTable.SetProperty("UIMode", "New", true);
+			DrainMediatorAndIdleQueues();
+			EnsureCurrentRecord(control);
+			Assert.That(GetHostedDetailModel(control).Fields,
+				Has.Some.Property("Field").EqualTo("CitationForm"),
+				"the retained project source should recompose from the restored inventory");
 		}
 
 		// Tools not registered for Avalonia fall back to legacy under

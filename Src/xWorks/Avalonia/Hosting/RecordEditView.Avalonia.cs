@@ -344,7 +344,6 @@ namespace SIL.FieldWorks.XWorks
 			}
 			catch (Exception e)
 			{
-				// Host fallback is diagnosable for both lexical and unsupported record roots.
 				Logger.WriteError("Avalonia detail composition failed; using the host fallback.", e);
 			}
 
