@@ -21,7 +21,6 @@ namespace SIL.FieldWorks.XWorks
 	{
 		private PropertyTable m_propertyTable;
 		private List<ICmObject> m_createdObjects;
-		private string m_fixtureProjectFolder;
 
 		protected override void Init()
 		{
@@ -30,11 +29,8 @@ namespace SIL.FieldWorks.XWorks
 			// The legacy DataTree's ShowObject (driven by EnsureDataTreeInitialized) needs the
 			// legacy layout/parts Inventory loaded; that Inventory is keyed by the project path, so
 			// give the in-memory test project a writable temp path before the inventory bootstrap.
-			var projectName = Cache.ProjectId.Name;
-			m_fixtureProjectFolder = Path.Combine(Path.GetTempPath(),
-				"fw-record-edit-switch-" + Guid.NewGuid().ToString("N"));
-			Directory.CreateDirectory(m_fixtureProjectFolder);
-			Cache.ProjectId.Path = Path.Combine(m_fixtureProjectFolder, projectName + ".junk");
+			Cache.ProjectId.Path = Path.Combine(Path.GetTempPath(), Cache.ProjectId.Name,
+				Cache.ProjectId.Name + ".junk");
 		}
 
 		[SetUp]
@@ -67,16 +63,6 @@ namespace SIL.FieldWorks.XWorks
 				m_window.Dispose();
 				m_window = null;
 			}
-		}
-
-		protected override void TearDown()
-		{
-			Inventory.RemoveInventory("layouts", Cache.ProjectId.Name);
-			Inventory.RemoveInventory("parts", Cache.ProjectId.Name);
-			var configurationDirectory = LcmFileHelper.GetConfigSettingsDir(m_fixtureProjectFolder);
-			DeleteEmptyFixtureDirectory(configurationDirectory, m_fixtureProjectFolder);
-			DeleteEmptyFixtureDirectory(m_fixtureProjectFolder, Path.GetTempPath());
-			base.TearDown();
 		}
 
 		[Test]
@@ -358,24 +344,6 @@ namespace SIL.FieldWorks.XWorks
 			else if (File.Exists(validatedPath))
 			{
 				File.Delete(validatedPath);
-			}
-		}
-
-		private static void DeleteEmptyFixtureDirectory(string directory, string expectedParent)
-		{
-			var fullDirectory = Path.GetFullPath(directory)
-				.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
-			var fullParent = Path.GetFullPath(expectedParent)
-				.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
-			if (!string.Equals(Path.GetDirectoryName(fullDirectory), fullParent,
-				StringComparison.OrdinalIgnoreCase))
-			{
-				throw new InvalidOperationException("Fixture cleanup directory is outside its expected parent.");
-			}
-			if (Directory.Exists(fullDirectory)
-				&& Directory.GetFileSystemEntries(fullDirectory).Length == 0)
-			{
-				Directory.Delete(fullDirectory);
 			}
 		}
 
