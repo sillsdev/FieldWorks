@@ -43,8 +43,10 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		/// <summary>
 		/// The default engine: full-text (word-prefix) matching. Cached in the property table.
+		/// Overridable so a subclass can supply a specialized engine (for example one that
+		/// excludes a starting entry).
 		/// </summary>
-		private SearchEngine FullTextSearchEngine
+		protected virtual SearchEngine FullTextSearchEngine
 		{
 			get
 			{
@@ -54,10 +56,11 @@ namespace SIL.FieldWorks.LexText.Controls
 		}
 
 		/// <summary>
-		/// The substring (match-anywhere) engine. Built lazily the first time a query is long
-		/// enough to use substring matching (see <see cref="SubstringSearchPolicy"/>).
+		/// The substring (match-anywhere) engine, used once a query is long enough
+		/// (see <see cref="SubstringSearchPolicy"/>). A subclass can override it to supply a
+		/// specialized engine that also filters substring results.
 		/// </summary>
-		private SearchEngine SubstringSearchEngine
+		protected virtual SearchEngine SubstringSearchEngine
 		{
 			get
 			{
