@@ -332,14 +332,12 @@ namespace SIL.FieldWorks.XWorks
 			try
 			{
 				composed = lexEntry != null
-					? DetailComposer.Compose(lexEntry, Cache, showHidden,
-						overrides: ResolveViewOverride)
+					? DetailComposer.Compose(lexEntry, Cache, showHidden)
 					// Non-entry roots compose against the tool's configured layout
 					// (m_layoutName, default "Normal"); a type-selected layout (m_layoutChoiceField, e.g.
 					// Notebook RnGenericRec keyed on "Type") resolves to the right variant inside Compose.
 					: DetailComposer.Compose(obj, Cache,
 						string.IsNullOrEmpty(m_layoutName) ? "Normal" : m_layoutName, showHidden,
-						overrides: ResolveViewOverride,
 						layoutChoiceField: m_layoutChoiceField);
 				if (composed != null)
 				{
@@ -586,8 +584,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				if (Cache.ServiceLocator.ObjectRepository.TryGetObject(field.ObjectHvo, out var fieldObj))
 				{
-					var model = DetailComposer.CompileForObject(Cache, fieldObj, field.LayoutName,
-						ResolveViewOverride);
+					var model = DetailComposer.CompileForObject(Cache, fieldObj, field.LayoutName);
 					if (model != null)
 						location = ViewDefinitionOverrideEditor.LocateTarget(model, templateId);
 				}

@@ -3,7 +3,6 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -41,12 +40,10 @@ namespace SIL.FieldWorks.XWorks
 	}
 
 	/// <summary>
-	/// Resolves the per-project sparse override patch for a compiled (class, layout), or null when the
-	/// project did not customize that layout. The host wires this to the
-	/// <c>ViewDefinitionOverrideStore</c> in the project ConfigurationSettings folder; tests supply an
-	/// in-memory resolver. Kept a delegate so the composer needs no reference to the file-backed store.
+	/// Resolves an immutable effective project layout snapshot, or null when no layout matches.
 	/// </summary>
-	public delegate ViewDefinitionOverride ViewDefinitionOverrideResolver(string className, string layoutName);
+	public delegate ViewDefinitionSourceSnapshot ViewDefinitionSourceResolver(string className,
+		string layoutName, string choiceGuid);
 
 	/// <summary>
 	/// Composes the COMPLETE Lexical Edit view for an entry (sections 6/7): walks the compiled
@@ -86,18 +83,13 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		// Observable memoization: counts the expensive snapshot builds (layout
-		// lookup + layout.ToString() + fingerprint + compile). A repeat compose must not grow it.
+		// Counts source snapshots handed to the content-fingerprint compiler cache.
 		private static int s_snapshotCompileCount;
 
 		internal static int SnapshotCompileCount => s_snapshotCompileCount;
 
 		/// <summary>
-		/// The loaded sources, immutable for the process lifetime: the layout lookup is
-		/// indexed once and compiled definitions are memoized per (starting class, layout),
-		/// so repeat composes and the per-item menu peeks never rebuild or re-fingerprint
-		/// the ~300KB parts snapshot. Class ids and the class hierarchy are fixed LCModel
-		/// metadata, so the memo is safe across caches.
+		/// The immutable shipped sources used when an effective project source has no layout.
 		/// </summary>
 		private sealed class CompilerSources
 		{
@@ -106,17 +98,12 @@ namespace SIL.FieldWorks.XWorks
 			// the right one (legacy distinguishes e.g. 11 RnGenericRec/Normal layouts only by
 			// choiceGuid).
 			public Dictionary<(string ClassName, string Type, string Name), List<XElement>> LayoutIndex;
-			// Memoized per (starting class, layout, choiceGuid) -- choiceGuid is part of the
-			// identity so two
-			// record Types on the same class compile to two distinct models (never a cache collision).
-			public readonly ConcurrentDictionary<(int ClassId, string LayoutName, string ChoiceGuid), ViewDefinitionModel> CompiledModels
-				= new ConcurrentDictionary<(int, string, string), ViewDefinitionModel>();
 		}
 
 		public static ComposedDetail Compose(ILexEntry entry, LcmCache cache, bool showHiddenFields = false,
 			SlicePluginRegistry plugins = null,
-			ViewDefinitionOverrideResolver overrides = null)
-			=> Compose((ICmObject)entry, cache, "Normal", showHiddenFields, plugins, overrides);
+			ViewDefinitionSourceResolver source = null)
+			=> Compose((ICmObject)entry, cache, "Normal", showHiddenFields, plugins, source);
 
 		/// <summary>
 		/// Compose the structured detail view for ANY record root + starting layout -- the
@@ -129,7 +116,7 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		public static ComposedDetail Compose(ICmObject obj, LcmCache cache, string layoutName = "Normal",
 			bool showHiddenFields = false, SlicePluginRegistry plugins = null,
-			ViewDefinitionOverrideResolver overrides = null,
+			ViewDefinitionSourceResolver source = null,
 			string layoutChoiceField = null)
 		{
 			if (obj == null) throw new ArgumentNullException(nameof(obj));
@@ -141,7 +128,7 @@ namespace SIL.FieldWorks.XWorks
 			// picks the matching layout variant instead of the document-first one.
 			var choiceGuid = ResolveLayoutChoiceGuid(cache, obj, layoutChoiceField);
 
-			var root = CompileForObject(cache, obj, layoutName, choiceGuid, overrides);
+			var root = CompileForObject(cache, obj, layoutName, choiceGuid, source);
 			if (root == null)
 				return null;
 
@@ -150,7 +137,7 @@ namespace SIL.FieldWorks.XWorks
 			// bridges the gap (plugin factories run at render time, not compose).
 			IDetailEditContext composedContext = null;
 			var state = new ComposeState(cache, showHiddenFields,
-				plugins ?? SlicePluginRegistry.Default, () => composedContext, overrides);
+				plugins ?? SlicePluginRegistry.Default, () => composedContext, source);
 			state.EnterModel(root);
 			foreach (var node in root.Roots)
 				state.Walk(node, obj, 0);
@@ -281,12 +268,10 @@ namespace SIL.FieldWorks.XWorks
 			}
 
 			private readonly bool _showHidden;
-			// The per-project override resolver, threaded into every CompileForObject
-			// so a descended object's layout gets its own patch applied; plus the (class, layout) of the
-			// model currently being walked, captured onto each emitted field so the host's per-field
-			// gear-menu commands target the right override file. A stack so the entry context restores
-			// after a nested object's walk returns.
-			private readonly ViewDefinitionOverrideResolver _overrides;
+			// Descended objects use the same source. Model context stamps fields and restores
+			// after a
+			// nested walk.
+			private readonly ViewDefinitionSourceResolver _source;
 			private readonly Stack<(string ClassName, string LayoutName)> _modelContext
 				= new Stack<(string, string)>();
 			// The plugin registry consulted FIRST for every
@@ -319,7 +304,8 @@ namespace SIL.FieldWorks.XWorks
 			// CHOICE-UNSAFE KEY: this cache key omits choiceGuid while the menu
 			// binding is derived from the compiled layout's root, which can differ per choice variant. It is
 			// correct ONLY because descent currently compiles every embedded object with choiceGuid=null
-			// (CompileForObjectWithOverrides), so within one compose there is no choice variance to collide.
+			// (CompileForObjectWithSource), so within one compose there is no choice variance to
+			// collide.
 			// If descent is ever changed to thread choiceGuid through, change this key to
 			// (ClassId, LayoutName, choiceGuid) in the SAME change, or this becomes a wrong-menu bug.
 			private readonly Dictionary<(int ClassId, string LayoutName), (string MenuId, string HotlinksId)> _itemMenuBindings
@@ -327,13 +313,13 @@ namespace SIL.FieldWorks.XWorks
 
 			public ComposeState(LcmCache cache, bool showHiddenFields,
 				SlicePluginRegistry plugins, Func<IDetailEditContext> editContextAccessor,
-				ViewDefinitionOverrideResolver overrides = null)
+				ViewDefinitionSourceResolver source = null)
 			{
 				_cache = cache;
 				_showHidden = showHiddenFields;
 				_plugins = plugins;
 				_editContextAccessor = editContextAccessor;
-				_overrides = overrides;
+				_source = source;
 				_sda = cache.DomainDataByFlid;
 				_mdc = (IFwMetaDataCacheManaged)cache.DomainDataByFlid.MetaDataCache;
 			}
@@ -497,10 +483,9 @@ namespace SIL.FieldWorks.XWorks
 				return _writingSystemFonts;
 			}
 
-			// Every CompileForObject in the walk goes through here so the per-project
-			// override patch for the descended object's own (class, layout) is applied to its model too.
-			private ViewDefinitionModel CompileForObjectWithOverrides(ICmObject obj, string layoutName)
-				=> CompileForObject(_cache, obj, layoutName, _overrides);
+			// Every descended object uses the root composition's effective project source.
+			private ViewDefinitionModel CompileForObjectWithSource(ICmObject obj, string layoutName)
+				=> CompileForObject(_cache, obj, layoutName, _source);
 
 			// Viewing parity: "show hidden fields" surfaces visibility=never fields and keeps empty
 			// ifdata fields visible, exactly like legacy m_fShowAllFields.
@@ -957,7 +942,8 @@ namespace SIL.FieldWorks.XWorks
 						// nested layout's fields INLINE for this same object, at depth+1 -- the
 						// recursive
 						// sub-view the legacy XmlView renders. WalkEmbeddedView reuses the
-						// CompileForObjectWithOverrides/EnterModel/Walk descent (the visited-set guards
+						// CompileForObjectWithSource/EnterModel/Walk descent (the visited-set
+						// guards
 						// cycles); when the nested layout cannot be resolved it degrades to the
 						// read-only ShortName row rather than vanishing.
 						WalkEmbeddedView(node, obj, depth);
@@ -2941,7 +2927,7 @@ namespace SIL.FieldWorks.XWorks
 				if (_itemMenuBindings.TryGetValue((item.ClassID, layoutName), out var cached))
 					return cached;
 
-				var compiled = CompileForObjectWithOverrides(item, layoutName);
+				var compiled = CompileForObjectWithSource(item, layoutName);
 				string menu = null, hotlinks = null;
 				if (compiled != null)
 				{
@@ -2983,7 +2969,7 @@ namespace SIL.FieldWorks.XWorks
 
 				try
 				{
-					var compiled = CompileForObjectWithOverrides(obj, layoutName);
+					var compiled = CompileForObjectWithSource(obj, layoutName);
 					if (compiled != null && compiled.Roots.Count > 0)
 					{
 						EnterModel(compiled);
@@ -3008,7 +2994,7 @@ namespace SIL.FieldWorks.XWorks
 				if (!_visited.Add((target.Hvo, layoutName)))
 					return;
 
-				var compiled = CompileForObjectWithOverrides(target, layoutName);
+				var compiled = CompileForObjectWithSource(target, layoutName);
 				if (compiled != null && compiled.Roots.Count > 0)
 				{
 					// Rows from the descended model are stamped with ITS (class,
@@ -3131,43 +3117,34 @@ namespace SIL.FieldWorks.XWorks
 			=> CompileForObject(cache, obj, layoutName, null, null);
 
 		internal static ViewDefinitionModel CompileForObject(LcmCache cache, ICmObject obj, string layoutName,
-			ViewDefinitionOverrideResolver overrides)
-			=> CompileForObject(cache, obj, layoutName, null, overrides);
+			ViewDefinitionSourceResolver source)
+			=> CompileForObject(cache, obj, layoutName, null, source);
 
 		/// <summary>
-		/// Compiles (with the legacy base-class walk) and, when <paramref name="overrides"/> supplies a
-		/// per-project patch for the resulting (class, layout), returns the patched model
-		/// CRITICAL: the cache (<see cref="CompilerSources.CompiledModels"/>) holds
-		/// the SHIPPED model only -- the override is applied on the way OUT to a fresh copy
-		/// (<see cref="ViewDefinitionOverrideApplier.Apply"/> is pure), so a patched project never poisons
-		/// the process-wide cache that other projects/classes read.
+		/// Compiles the effective project layout when supplied, otherwise using shipped sources.
 		/// </summary>
 		internal static ViewDefinitionModel CompileForObject(LcmCache cache, ICmObject obj, string layoutName,
-			string choiceGuid, ViewDefinitionOverrideResolver overrides)
+			string choiceGuid, ViewDefinitionSourceResolver source)
+			=> CompileForClass(cache, obj.ClassID, layoutName, choiceGuid, source);
+
+		private static ViewDefinitionModel CompileForClass(LcmCache cache, int classId, string layoutName,
+			string choiceGuid, ViewDefinitionSourceResolver source)
 		{
+			var mdc = (IFwMetaDataCacheManaged)cache.DomainDataByFlid.MetaDataCache;
+			if (source != null)
+			{
+				var projectSnapshot = source(mdc.GetClassName(classId), layoutName, choiceGuid);
+				if (projectSnapshot != null)
+				{
+					Interlocked.Increment(ref s_snapshotCompileCount);
+					return Compiler.Compile(projectSnapshot);
+				}
+			}
+
 			var sources = GetSources();
 			if (sources == null)
 				return null;
 
-			var shipped = sources.CompiledModels.GetOrAdd((obj.ClassID, layoutName, choiceGuid ?? string.Empty),
-				key => CompileForClass(cache, key.ClassId, key.LayoutName, key.ChoiceGuid, sources));
-			if (shipped == null || overrides == null)
-				return shipped;
-
-			// The compiled model's ClassName is the class where the layout was actually found (possibly a
-			// base class of obj.ClassID); key the override by that, matching how the patch was authored.
-			var patch = overrides(shipped.ClassName, shipped.LayoutName);
-			return patch == null || patch.IsEmpty
-				? shipped
-				: ViewDefinitionOverrideApplier.Apply(shipped, patch);
-		}
-
-		private static ViewDefinitionModel CompileForClass(LcmCache cache, int classId, string layoutName,
-			string choiceGuid, CompilerSources sources)
-		{
-			Interlocked.Increment(ref s_snapshotCompileCount);
-
-			var mdc = (IFwMetaDataCacheManaged)cache.DomainDataByFlid.MetaDataCache;
 			var baseClassMap = new Dictionary<string, string>(StringComparer.Ordinal);
 			var clsid = classId;
 			XElement layout = null;
@@ -3206,6 +3183,7 @@ namespace SIL.FieldWorks.XWorks
 
 			var snapshot = new ViewDefinitionSourceSnapshot(className, "detail", layout.ToString(),
 				sources.PartsXml, baseClassMap);
+			Interlocked.Increment(ref s_snapshotCompileCount);
 			return Compiler.Compile(snapshot);
 		}
 

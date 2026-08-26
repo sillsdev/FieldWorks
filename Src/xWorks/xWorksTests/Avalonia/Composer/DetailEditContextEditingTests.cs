@@ -590,22 +590,18 @@ namespace SIL.FieldWorks.XWorks
 				"Khmer fixture declares the Khmer script for automation/manual scenario setup");
 		}
 
-		// Compiled definitions are memoized per (class, layout) while sources stay
-		// loaded, so a repeat compose reuses every layout instead of rebuilding and
-		// re-fingerprinting the ~300KB parts snapshot.
 		[Test]
-		public void Compose_RepeatCompose_ServesCompiledLayoutsFromTheMemo()
+		public void CompileForObject_RepeatContentReusesCompiledModel()
 		{
-			Assert.That(DetailComposer.Compose(m_entry, Cache), Is.Not.Null,
-				"priming compose populates the (class, layout) memo");
-			var compilesAfterFirst = DetailComposer.SnapshotCompileCount;
-			Assert.That(compilesAfterFirst, Is.GreaterThan(0), "the first compose really compiled");
+			var first = DetailComposer.CompileForObject(Cache, m_entry, "Normal");
+			var snapshotsAfterFirst = DetailComposer.SnapshotCompileCount;
 
-			var second = DetailComposer.Compose(m_entry, Cache);
-			Assert.That(second, Is.Not.Null);
-			Assert.That(second.Model.Fields, Is.Not.Empty, "the memoized models still compose fully");
-			Assert.That(DetailComposer.SnapshotCompileCount, Is.EqualTo(compilesAfterFirst),
-				"a repeat compose must not rebuild any layout snapshot");
+			var second = DetailComposer.CompileForObject(Cache, m_entry, "Normal");
+
+			Assert.That(second, Is.SameAs(first),
+				"equal source content must reuse the fingerprint-cached compiled model");
+			Assert.That(DetailComposer.SnapshotCompileCount, Is.EqualTo(snapshotsAfterFirst + 1),
+				"each source lookup constructs a snapshot before content deduplication");
 		}
 
 		[Test]
