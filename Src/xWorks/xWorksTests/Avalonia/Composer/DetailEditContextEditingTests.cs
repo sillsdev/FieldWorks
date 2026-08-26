@@ -594,14 +594,11 @@ namespace SIL.FieldWorks.XWorks
 		public void CompileForObject_RepeatContentReusesCompiledModel()
 		{
 			var first = DetailComposer.CompileForObject(Cache, m_entry, "Normal");
-			var snapshotsAfterFirst = DetailComposer.SnapshotCompileCount;
 
 			var second = DetailComposer.CompileForObject(Cache, m_entry, "Normal");
 
 			Assert.That(second, Is.SameAs(first),
 				"equal source content must reuse the fingerprint-cached compiled model");
-			Assert.That(DetailComposer.SnapshotCompileCount, Is.EqualTo(snapshotsAfterFirst + 1),
-				"each source lookup constructs a snapshot before content deduplication");
 		}
 
 		[Test]

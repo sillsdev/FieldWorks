@@ -6,7 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using System.Threading;
 using System.Xml.Linq;
 using SIL.FieldWorks.Common.FwAvalonia;
 using SIL.FieldWorks.Common.FwAvalonia.Detail;
@@ -82,11 +81,6 @@ namespace SIL.FieldWorks.XWorks
 				return s_sources ?? (s_sources = LoadSources());
 			}
 		}
-
-		// Counts source snapshots handed to the content-fingerprint compiler cache.
-		private static int s_snapshotCompileCount;
-
-		internal static int SnapshotCompileCount => s_snapshotCompileCount;
 
 		/// <summary>
 		/// The immutable shipped sources used when an effective project source has no layout.
@@ -3077,12 +3071,6 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
-		/// Compiles the layout for an object's class, walking base classes the way legacy
-		/// DataTree
-		/// does (e.g. MoStemAllomorph -> MoForm) for both layout lookup and part resolution.
-		/// Memoized per (starting class, layout) for the lifetime of the loaded sources.
-		/// </summary>
-		/// <summary>
 		/// Resolve the layout-choice GUID for a record whose detail layout is type-selected via
 		/// a <c>layoutChoiceField</c> (e.g. RnGenericRec/Normal keyed on the record's <c>Type</c> possibility).
 		/// Returns the chosen possibility's GUID string, or null when there is no choice field / no value /
@@ -3135,10 +3123,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				var projectSnapshot = source(mdc.GetClassName(classId), layoutName, choiceGuid);
 				if (projectSnapshot != null)
-				{
-					Interlocked.Increment(ref s_snapshotCompileCount);
 					return Compiler.Compile(projectSnapshot);
-				}
 			}
 
 			var sources = GetSources();
@@ -3183,7 +3168,6 @@ namespace SIL.FieldWorks.XWorks
 
 			var snapshot = new ViewDefinitionSourceSnapshot(className, "detail", layout.ToString(),
 				sources.PartsXml, baseClassMap);
-			Interlocked.Increment(ref s_snapshotCompileCount);
 			return Compiler.Compile(snapshot);
 		}
 
