@@ -10,11 +10,9 @@ using NUnit.Framework;
 namespace SIL.FieldWorks.Common.FwUtils
 {
 	/// <summary>
-	/// How versions and copyrights are read out of the generated version attributes
-	/// (CommonAssemblyInfo.cs, generated from CommonAssemblyInfoTemplate.cs + MasterVersionInfo.txt).
-	/// This test assembly links the generated file, so these tests run against the real attribute
-	/// shapes the product ships -- including the empty-FWBETAVERSION informational version
-	/// ("9.x.y.NNNNN NNNNN " with a trailing space).
+	/// How versions and copyrights are read out of the generated version attributes.
+	/// This assembly links the generated CommonAssemblyInfo.cs, so the tests run against
+	/// the attribute shapes the product ships rather than a fake.
 	/// </summary>
 	[TestFixture]
 	public class VersionInfoProviderTests
@@ -53,8 +51,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 		[Test]
 		public void FallbackCopyrightStrings_AreNotFrozenInThePast()
 		{
-			// The fallbacks (used when an assembly carries no copyright attribute) must not trail
-			// the running year; they were once hardcoded "2002-2021" and shipped stale for years.
 			StringAssert.Contains(DateTime.Now.Year.ToString(), VersionInfoProvider.kDefaultCopyrightString);
 			StringAssert.Contains(DateTime.Now.Year.ToString(), VersionInfoProvider.kSensitiveCopyrightString);
 		}
@@ -62,8 +58,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		[Test]
 		public void ApplicationVersion_ReportsTheProvidersAssembly_NotTheEntryAssembly()
 		{
-			// Under a test runner the entry assembly is testhost, not FieldWorks; a provider
-			// constructed for a specific assembly must report THAT assembly's version.
+			// Under a test runner the entry assembly is testhost, not FieldWorks.
 			var provider = new VersionInfoProvider(TestAssembly, true);
 			Assert.That(provider.ApplicationVersion, Does.Contain(provider.NumericAppVersion));
 		}

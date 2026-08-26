@@ -19,12 +19,12 @@ namespace SIL.FieldWorks.Common.FwUtils
 	{
 
 		internal static DateTime DefaultBuildDate = new DateTime(2001, 06, 23);
-		/// <summary>Default copyright string if the assembly carries no copyright attribute.
-		/// Computed so it can never ship frozen at the year somebody last edited this file.</summary>
+		/// <summary>Fallback copyright string, through the current year, for an assembly
+		/// that carries no copyright attribute</summary>
 		public static readonly string kDefaultCopyrightString =
 			$"Copyright (c) 2002-{DateTime.Now.Year} SIL International";
-		/// <summary>Copyright string to use in sensitive areas (i.e. when m_fShowSILInfo is false)
-		/// and the assembly carries no copyright attribute</summary>
+		/// <summary>Fallback copyright string for sensitive areas, which omit the SIL
+		/// name</summary>
 		public static readonly string kSensitiveCopyrightString =
 			$"Copyright (c) 2002-{DateTime.Now.Year}";
 
@@ -177,9 +177,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 		{
 			get
 			{
-				// Set the application version text from the assembly this provider was built for;
-				// InternalProductVersion (the entry assembly) is only a fallback for assemblies
-				// that carry no version attributes of their own.
+				// The entry assembly is only a fallback: under a test runner it is not
+				// FieldWorks.
 				ParseInformationalVersion(m_assembly, out var appVersion, out var productDate);
 				if (string.IsNullOrEmpty(appVersion))
 					appVersion = InternalProductVersion;
@@ -234,7 +233,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 				}
 				case 2:
 				{
-					int date = Convert.ToInt32(versionParts[1]);
+					// A non-numeric token here would otherwise throw out of a property getter
+					// that the splash screen and About box read.
+					int.TryParse(versionParts[1], out var date);
 					if (date > 0)
 					{
 						DateTime dt = DateTime.FromOADate(date);
@@ -260,9 +261,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 		{
 			get
 			{
-				// Set the FieldWorks version text. Parts: MAJOR.MINOR.REVISION.BUILDNUMBER STABILITY;
-				// STABILITY (Alpha/Beta/RC) is absent in stable builds, so index defensively and trim
-				// rather than leaking a placeholder or a trailing space into the About box.
+				// Parts are MAJOR.MINOR.REVISION.BUILDNUMBER STABILITY; stable builds carry no
+				// STABILITY, so a missing part must yield nothing rather than a placeholder.
 				ParseInformationalVersion(m_assembly, out var productVersion, out _);
 				var realParts = productVersion.Split('.', ' ');
 				var major = realParts.Length > 0 ? realParts[0] : "?";
@@ -297,9 +297,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		{
 			get
 			{
-				// Get copyright information from assembly info. By doing this we don't have
-				// to update the splash screen each year - in EITHER mode: the sensitive variant
-				// derives from the same attribute so its years stay current too.
+				// Both modes derive from the assembly attribute, so the years stay current.
 				string copyRight = null;
 				object[] attributes = m_assembly.GetCustomAttributes(typeof(AssemblyCopyrightAttribute), false);
 				if (attributes != null && attributes.Length > 0)
