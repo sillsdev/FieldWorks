@@ -21,6 +21,7 @@ namespace SIL.FieldWorks.XWorks
 	{
 		private PropertyTable m_propertyTable;
 		private List<ICmObject> m_createdObjects;
+		private string m_fixtureProjectFolder;
 
 		protected override void Init()
 		{
@@ -29,8 +30,11 @@ namespace SIL.FieldWorks.XWorks
 			// The legacy DataTree's ShowObject (driven by EnsureDataTreeInitialized) needs the
 			// legacy layout/parts Inventory loaded; that Inventory is keyed by the project path, so
 			// give the in-memory test project a writable temp path before the inventory bootstrap.
-			Cache.ProjectId.Path = Path.Combine(Path.GetTempPath(), Cache.ProjectId.Name,
-				Cache.ProjectId.Name + ".junk");
+			var projectName = Cache.ProjectId.Name;
+			m_fixtureProjectFolder = Path.Combine(Path.GetTempPath(),
+				"fw-record-edit-switch-" + Guid.NewGuid().ToString("N"));
+			Directory.CreateDirectory(m_fixtureProjectFolder);
+			Cache.ProjectId.Path = Path.Combine(m_fixtureProjectFolder, projectName + ".junk");
 		}
 
 		[SetUp]
@@ -45,7 +49,8 @@ namespace SIL.FieldWorks.XWorks
 			// EnsureDataTreeInitialized (LayoutCache loads the real lexicon .fwlayout/Parts).
 			// Without it, DataTree.GetTemplateForObjLayout finds a null layout inventory and ShowObject
 			// throws an NRE once the idle-queued show actually runs.
-			LayoutCache.InitializePartInventories(Cache.ProjectId.Name, m_application, Cache.ProjectId.Path);
+			LayoutCache.InitializePartInventories(Cache.ProjectId.Name, m_application,
+				Cache.ProjectId.ProjectFolder);
 			m_createdObjects = new List<ICmObject>();
 			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, CreateLexiconTestData);
 		}
@@ -62,6 +67,16 @@ namespace SIL.FieldWorks.XWorks
 				m_window.Dispose();
 				m_window = null;
 			}
+		}
+
+		protected override void TearDown()
+		{
+			Inventory.RemoveInventory("layouts", Cache.ProjectId.Name);
+			Inventory.RemoveInventory("parts", Cache.ProjectId.Name);
+			var configurationDirectory = LcmFileHelper.GetConfigSettingsDir(m_fixtureProjectFolder);
+			DeleteEmptyFixtureDirectory(configurationDirectory, m_fixtureProjectFolder);
+			DeleteEmptyFixtureDirectory(m_fixtureProjectFolder, Path.GetTempPath());
+			base.TearDown();
 		}
 
 		[Test]
@@ -161,6 +176,11 @@ namespace SIL.FieldWorks.XWorks
 				"precondition: the initial project layout includes Citation Form");
 
 			var layouts = Inventory.GetInventory("layouts", Cache.ProjectId.Name);
+			var configurationDirectory = LcmFileHelper.GetConfigSettingsDir(
+				Cache.ProjectId.ProjectFolder);
+			var overridePath = GetLexEntryOverridePath(configurationDirectory);
+			var overrideExisted = File.Exists(overridePath);
+			var overrideBytes = overrideExisted ? File.ReadAllBytes(overridePath) : null;
 			var original = layouts.GetElement("layout",
 				new[] { "LexEntry", "detail", "Normal", null }).Clone();
 			var changed = new XmlDocument();
@@ -182,8 +202,22 @@ namespace SIL.FieldWorks.XWorks
 			}
 			finally
 			{
-				layouts.PersistOverrideElement(original);
+				RestoreOverrideFile(configurationDirectory, overridePath, overrideExisted,
+					overrideBytes);
+				LayoutCache.InitializePartInventories(Cache.ProjectId.Name, m_application,
+					Cache.ProjectId.ProjectFolder);
 			}
+			Assert.That(File.Exists(overridePath), Is.EqualTo(overrideExisted),
+				"the persistence test should restore the override file's prior existence");
+			if (overrideExisted)
+			{
+				Assert.That(File.ReadAllBytes(overridePath), Is.EqualTo(overrideBytes),
+					"the persistence test should restore the override file's exact bytes");
+			}
+			var restored = Inventory.GetInventory("layouts", Cache.ProjectId.Name).GetElement("layout",
+				new[] { "LexEntry", "detail", "Normal", null });
+			Assert.That(restored.OuterXml, Is.EqualTo(original.OuterXml),
+				"the effective layout inventory should be restored for later tests");
 		}
 
 		// Tools not registered for Avalonia fall back to legacy under
@@ -298,6 +332,51 @@ namespace SIL.FieldWorks.XWorks
 			var tree = content as SIL.FieldWorks.Common.FwAvalonia.Detail.DataTree;
 			Assert.That(tree, Is.Not.Null, "the Avalonia host should contain a detail tree");
 			return tree.Model;
+		}
+
+		private static string GetLexEntryOverridePath(string configurationDirectory)
+		{
+			var fullDirectory = Path.GetFullPath(configurationDirectory);
+			var overridePath = Path.GetFullPath(Path.Combine(fullDirectory, "LexEntry.fwlayout"));
+			Assert.That(Path.GetDirectoryName(overridePath),
+				Is.EqualTo(fullDirectory).IgnoreCase,
+				"the override path must remain inside the fixture ConfigurationSettings directory");
+			return overridePath;
+		}
+
+		private static void RestoreOverrideFile(string configurationDirectory, string overridePath,
+			bool existed, byte[] bytes)
+		{
+			var validatedPath = GetLexEntryOverridePath(configurationDirectory);
+			Assert.That(overridePath, Is.EqualTo(validatedPath).IgnoreCase,
+				"cleanup must target the captured LexEntry override path");
+			if (existed)
+			{
+				Directory.CreateDirectory(configurationDirectory);
+				File.WriteAllBytes(validatedPath, bytes);
+			}
+			else if (File.Exists(validatedPath))
+			{
+				File.Delete(validatedPath);
+			}
+		}
+
+		private static void DeleteEmptyFixtureDirectory(string directory, string expectedParent)
+		{
+			var fullDirectory = Path.GetFullPath(directory)
+				.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+			var fullParent = Path.GetFullPath(expectedParent)
+				.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+			if (!string.Equals(Path.GetDirectoryName(fullDirectory), fullParent,
+				StringComparison.OrdinalIgnoreCase))
+			{
+				throw new InvalidOperationException("Fixture cleanup directory is outside its expected parent.");
+			}
+			if (Directory.Exists(fullDirectory)
+				&& Directory.GetFileSystemEntries(fullDirectory).Length == 0)
+			{
+				Directory.Delete(fullDirectory);
+			}
 		}
 
 		// DrainMediatorAndIdleQueues is inherited from XWorksAppTestBase.
