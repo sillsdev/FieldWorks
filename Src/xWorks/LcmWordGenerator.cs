@@ -189,7 +189,7 @@ namespace SIL.FieldWorks.XWorks
 						// Get styles if firstGuidewordStyles is null or empty
 						if (firstGuidewordStyles == null || firstGuidewordStyles.Count == 0)
 						{
-							firstGuidewordStyles = GetFirstGuidewordStylesList((DocFragment)entry.Item2, configuration.Type);
+							firstGuidewordStyles = GetFirstGuidewordStylesList((DocFragment)entry.Item2, configuration);
 						}
 					}
 				}
@@ -2936,30 +2936,37 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="type">Indicates if we are are exporting a Reversal, Classified Dictionary, or regular Configured Dictionary.</param>
 		/// <returns>A list of the full style names beginning with each guideword style.
 		///          Null if none are found.</returns>
-		public static List<string> GetFirstGuidewordStylesList(DocFragment frag, DictionaryConfigurationModel.ConfigType type)
+		public static List<string> GetFirstGuidewordStylesList(DocFragment frag, DictionaryConfigurationModel configuration)
 		{
+			// guidewordBaseStyles lists the base styles of the words in the document from which guidewords are drawn;
+			// it does not describe the styles applied to the guidewords themselves.
 			List<string> guidewordBaseStyles = new List<string>();
 			var runStyles = frag.DocBody.Descendants<RunStyle>().ToList();
+			// Add any before, after, between, or language-specific tags to the style names in
+			// guideWordBaseStyles to produce the final style names from which guidewords are drawn.
 			List<string> guidewordFinalStyleNames = new List<string>();
 
-			switch (type)
+			if (configuration.IsReversal)
+				// For Reversals, guidewords are pulled from Reversal Forms.
+				guidewordBaseStyles.Add(WordStylesGenerator.ReversalFormDisplayName);
+
+			else if (configuration.IsClassified)
 			{
-				case DictionaryConfigurationModel.ConfigType.Reversal:
-					guidewordBaseStyles.Add(WordStylesGenerator.ReversalFormDisplayName);
-					break;
-				// Lexeme type means this is a Classified Dictionary;
-				// the Abbreviation and Name are semantic domain numbers and names respectively,
-				// which we want to combine into the guidewords in this case.
-				case DictionaryConfigurationModel.ConfigType.Lexeme:
-					guidewordBaseStyles.Add(WordStylesGenerator.Abbreviation);
-					guidewordBaseStyles.Add(WordStylesGenerator.Name);
-					break;
-				// Root type is the default Configured Dictionary;
-				// use headwords as the guidewords.
-				case DictionaryConfigurationModel.ConfigType.Root:
-				default:
-					guidewordBaseStyles.Add(WordStylesGenerator.HeadwordDisplayName);
-					break;
+				// For Classified Dictionary, the Abbreviation and Name are semantic domain numbers and names respectively;
+				// we combine these into the guidewords in this case.
+				guidewordBaseStyles.Add(WordStylesGenerator.Abbreviation);
+				guidewordBaseStyles.Add(WordStylesGenerator.Name);
+			}
+
+			else
+			{
+				// Configured Dictionary entries are based on either Headword, Lexeme Form, or Citation Form.
+				// For guidewords, use whichever of these appears first in the list of dictionary configuration fields selected for display, defaulting to Headword.
+				var primaryFieldOptions = new List<string> {WordStylesGenerator.HeadwordDisplayName, WordStylesGenerator.LexemeForm, WordStylesGenerator.CitationForm};
+				var firstSelectedPrimaryField = configuration.Parts[0].Children?
+					.FirstOrDefault(c => c.IsEnabled && primaryFieldOptions.Contains(c.Label));
+				var selectedPrimaryFieldName = firstSelectedPrimaryField?.Label ?? WordStylesGenerator.HeadwordDisplayName;
+				guidewordBaseStyles.Add(selectedPrimaryFieldName);
 			}
 
 			// Include beforeafterbetween only if there is more than one guideword base style
