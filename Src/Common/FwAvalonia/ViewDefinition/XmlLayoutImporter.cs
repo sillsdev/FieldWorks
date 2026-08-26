@@ -165,13 +165,14 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 		{
 			var stableId = $"{parentPath}/#{output.Count}";
 			var refName = (string)callerEl.Attribute("ref");
+			var sourceCallerPath = LegacyLayoutCallerPath.Get(callerEl);
 
 			// Custom-field placeholder: <part customFields="here"/> or ref="_CustomFieldPlaceholder".
 			if (callerEl.Attribute("customFields") != null || refName == "_CustomFieldPlaceholder")
 			{
 				output.Add(MakeLeaf(stableId, ViewNodeKind.CustomFieldPlaceholder, "(custom fields)", null,
 					null, null, EditorClassification.GroupingNone, null, ViewVisibility.Always,
-					ViewExpansion.NotApplicable, indented, null));
+					ViewExpansion.NotApplicable, indented, null, sourceCallerPath));
 				return;
 			}
 
@@ -219,7 +220,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 							ParseExpansion(Attr(callerEl, "expansion")), indented, null,
 							recoveredChildren,
 							menuId: Attr(callerEl, "menu"),
-							hotlinksId: Attr(callerEl, "hotlinks")));
+							hotlinksId: Attr(callerEl, "hotlinks"),
+							sourceCallerPath: sourceCallerPath));
 					}
 				}
 				return;
@@ -233,7 +235,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 				// Each sibling after the first needs its own stable id so they don't collide.
 				var childStableId = i == 0 ? stableId : $"{parentPath}/#{output.Count}";
 				var node = CreateNode(contents[i], callerEl, parts, className, layoutType, childStableId,
-					indented, diagnostics);
+					indented, diagnostics, sourceCallerPath);
 				if (node != null)
 				{
 					output.Add(node);
@@ -249,7 +251,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 			string layoutType,
 			string stableId,
 			bool indented,
-			List<ViewDiagnostic> diagnostics)
+			List<ViewDiagnostic> diagnostics,
+			string sourceCallerPath = null)
 		{
 			var label = Attr(callerEl, "label") ?? Attr(contentEl, "label");
 			var abbreviation = Attr(callerEl, "abbr") ?? Attr(contentEl, "abbr");
@@ -342,7 +345,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 					}
 
 					var children = new List<ViewNode>();
-					AddInlineChildren(childElements, parts, className, layoutType, stableId, children, diagnostics);
+					AddInlineChildren(childElements, parts, className, layoutType, stableId, children,
+						diagnostics, sourceCallerPath);
 
 					// A jtview slice (editor="jtview") names the nested layout to compose for this
 					// object in its caller's param (legacy SliceFactory jtview: param ?? node layout attr).
@@ -394,7 +398,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 							localizationKey, automationId, routing, boldEmphasis, fontScalePercent,
 							menuId, contextMenuId, hotlinksId,
 							chooserLinks: chooserLinks.Count > 0 ? chooserLinks : null,
-							visibleWritingSystems: visibleWss);
+							visibleWritingSystems: visibleWss,
+							sourceCallerPath: sourceCallerPath);
 					}
 
 					// Dynamic custom slices keep their legacy class/assembly identity so the host can
@@ -413,7 +418,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 						visibleWritingSystems: visibleWss,
 						// Legacy toggleValue= on a boolean slice (the displayed checkbox is the
 						// logical inverse of the stored property); carried so the composer inverts read+write.
-						toggleValue: ParseOptionalBool(Attr(contentEl, "toggleValue")) ?? false);
+						toggleValue: ParseOptionalBool(Attr(contentEl, "toggleValue")) ?? false,
+						sourceCallerPath: sourceCallerPath);
 				}
 				case "obj":
 				case "seq":
@@ -436,7 +442,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 						ghostLabel: Attr(contentEl, "ghostLabel") ?? Attr(callerEl, "ghostLabel"),
 						// The layout's post-create hook rides the node so the composer's ghost
 						// setter can invoke it the way GhostStringSliceView.MakeRealObject does.
-						ghostInitMethod: Attr(contentEl, "ghostInitMethod") ?? Attr(callerEl, "ghostInitMethod"));
+						ghostInitMethod: Attr(contentEl, "ghostInitMethod") ?? Attr(callerEl, "ghostInitMethod"),
+						sourceCallerPath: sourceCallerPath);
 				}
 				// Conditional display: <if>/<ifnot> shows content only when the condition
 				// passes (fails, for ifnot), evaluated via XmlVc.ConditionPasses. Preserved
@@ -451,12 +458,12 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 
 					var children = new List<ViewNode>();
 					AddConditionalChildren(contentEl, parts, className, layoutType, stableId, indented,
-						children, diagnostics);
+						children, diagnostics, sourceCallerPath);
 					return new ViewNode(stableId, ViewNodeKind.Conditional, label, abbreviation,
 						Attr(contentEl, "field"), null, EditorClassification.GroupingNone, null,
 						visibility, expansion, indented, null, children, localizationKey, automationId,
 						routing, menuId: menuId, contextMenuId: contextMenuId, hotlinksId: hotlinksId,
-						condition: condition);
+						condition: condition, sourceCallerPath: sourceCallerPath);
 				}
 
 				// <choice> holds <where> branches (first passing one renders) and an optional
@@ -488,17 +495,19 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 
 						var branchChildren = new List<ViewNode>();
 						AddConditionalChildren(clause, parts, className, layoutType, branchId, indented,
-							branchChildren, diagnostics);
+							branchChildren, diagnostics, sourceCallerPath);
 						branches.Add(new ViewNode(branchId, ViewNodeKind.Conditional, null, null,
 							Attr(clause, "field"), null, EditorClassification.GroupingNone, null,
 							ViewVisibility.Always, ViewExpansion.NotApplicable, indented, null,
-							branchChildren, condition: branchCondition));
+							branchChildren, condition: branchCondition,
+							sourceCallerPath: sourceCallerPath));
 					}
 
 					return new ViewNode(stableId, ViewNodeKind.ChoiceGroup, label, abbreviation, null,
 						null, EditorClassification.GroupingNone, null, visibility, expansion, indented,
 						null, branches, localizationKey, automationId, routing, menuId: menuId,
-						contextMenuId: contextMenuId, hotlinksId: hotlinksId);
+						contextMenuId: contextMenuId, hotlinksId: hotlinksId,
+						sourceCallerPath: sourceCallerPath);
 				}
 
 				default:
@@ -590,7 +599,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 			string parentPath,
 			bool indented,
 			List<ViewNode> output,
-			List<ViewDiagnostic> diagnostics)
+			List<ViewDiagnostic> diagnostics,
+			string sourceCallerPath)
 		{
 			foreach (var child in container.Elements())
 			{
@@ -604,7 +614,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 					default:
 					{
 						var node = CreateNode(child, child, parts, className, layoutType,
-							$"{parentPath}/#{output.Count}", indented, diagnostics);
+							$"{parentPath}/#{output.Count}", indented, diagnostics, sourceCallerPath);
 						if (node != null)
 							output.Add(node);
 						break;
@@ -671,12 +681,14 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 			string layoutType,
 			string parentPath,
 			List<ViewNode> output,
-			List<ViewDiagnostic> diagnostics)
+			List<ViewDiagnostic> diagnostics,
+			string sourceCallerPath)
 		{
 			foreach (var child in childElements)
 			{
 				var stableId = $"{parentPath}/#{output.Count}";
-				var node = CreateNode(child, child, parts, className, layoutType, stableId, false, diagnostics);
+				var node = CreateNode(child, child, parts, className, layoutType, stableId, false,
+					diagnostics, sourceCallerPath);
 				if (node != null)
 				{
 					output.Add(node);
@@ -722,7 +734,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 					continue;
 				}
 
-				var node = CreateNode(content, child, parts, "", layoutType, stableId, false, diagnostics);
+				var node = CreateNode(content, child, parts, "", layoutType, stableId, false, diagnostics,
+					LegacyLayoutCallerPath.Get(child));
 				if (node != null)
 				{
 					output.Add(node);
@@ -754,9 +767,11 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 			string stableId, ViewNodeKind kind, string label, string abbreviation, string field, string editor,
 			EditorClassification classification, string ws, ViewVisibility visibility, ViewExpansion expansion,
 			bool indented, string targetLayout,
-			string localizationKey = null, string automationId = null, HostRouting routing = HostRouting.Inherit)
+			string sourceCallerPath = null, string localizationKey = null, string automationId = null,
+			HostRouting routing = HostRouting.Inherit)
 			=> new ViewNode(stableId, kind, label, abbreviation, field, editor, classification, ws, visibility,
-				expansion, indented, targetLayout, System.Array.Empty<ViewNode>(), localizationKey, automationId, routing);
+				expansion, indented, targetLayout, System.Array.Empty<ViewNode>(), localizationKey, automationId,
+				routing, sourceCallerPath: sourceCallerPath);
 
 		private static string Attr(XElement el, string name) => (string)el.Attribute(name);
 

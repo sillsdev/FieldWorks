@@ -275,6 +275,7 @@ namespace SIL.FieldWorks.XWorks
 			private readonly ViewDefinitionSourceResolver _source;
 			private readonly Stack<(string ClassName, string LayoutName)> _modelContext
 				= new Stack<(string, string)>();
+			private readonly Stack<string> _sourceCallerPaths = new Stack<string>();
 			// The plugin registry consulted FIRST for every
 			// custom slice, plus the deferred accessor for the edit context plugin factories
 			// receive (resolved when the factory runs, after Compose has built the context).
@@ -345,6 +346,8 @@ namespace SIL.FieldWorks.XWorks
 					field.ClassName = ctx.ClassName;
 					field.LayoutName = ctx.LayoutName;
 				}
+				if (_sourceCallerPaths.Count > 0)
+					field.SourceCallerPath = _sourceCallerPaths.Peek();
 
 				Fields.Add(field);
 			}
@@ -499,35 +502,37 @@ namespace SIL.FieldWorks.XWorks
 				if (IsHidden(node) || depth > MaxDepth)
 					return;
 
-				switch (node.Kind)
+				_sourceCallerPaths.Push(node.SourceCallerPath);
+				try
 				{
-					case ViewNodeKind.Field:
-						WalkField(node, obj, depth);
-						break;
-					case ViewNodeKind.Group:
-						WalkGroup(node, obj, depth);
-						break;
-					case ViewNodeKind.ObjectAtom:
-						WalkObjectAtom(node, obj, depth);
-						break;
-					case ViewNodeKind.Sequence:
-						WalkSequence(node, obj, depth);
-						break;
-					case ViewNodeKind.CustomFieldPlaceholder:
-						// Runtime expansion of `customFields="here"` from
-						// live MDC metadata.
-						WalkCustomFields(node, obj, depth);
-						break;
-					case ViewNodeKind.Conditional:
-						// Legacy <if>/<ifnot> -- content composes only when the per-object
-						// condition
-						// passes (DataTree.ProcessSubpartNode cases "if"/"ifnot").
-						WalkConditional(node, obj, depth);
-						break;
-					case ViewNodeKind.ChoiceGroup:
-						// Legacy <choice> -- first passing <where> (or the <otherwise>) only.
-						WalkChoiceGroup(node, obj, depth);
-						break;
+					switch (node.Kind)
+					{
+						case ViewNodeKind.Field:
+							WalkField(node, obj, depth);
+							break;
+						case ViewNodeKind.Group:
+							WalkGroup(node, obj, depth);
+							break;
+						case ViewNodeKind.ObjectAtom:
+							WalkObjectAtom(node, obj, depth);
+							break;
+						case ViewNodeKind.Sequence:
+							WalkSequence(node, obj, depth);
+							break;
+						case ViewNodeKind.CustomFieldPlaceholder:
+							WalkCustomFields(node, obj, depth);
+							break;
+						case ViewNodeKind.Conditional:
+							WalkConditional(node, obj, depth);
+							break;
+						case ViewNodeKind.ChoiceGroup:
+							WalkChoiceGroup(node, obj, depth);
+							break;
+					}
+				}
+				finally
+				{
+					_sourceCallerPaths.Pop();
 				}
 			}
 
@@ -787,7 +792,8 @@ namespace SIL.FieldWorks.XWorks
 				return new ViewNode($"{placeholder.StableId}/custom:{fieldName}", ViewNodeKind.Field,
 					_mdc.GetFieldLabel(flid), null, fieldName, rawEditor, EditorClassification.Known,
 					wsSpec, ViewVisibility.Always, ViewExpansion.NotApplicable, placeholder.Indented,
-					null, null, menuId: "mnuDataTree-Help");
+					null, null, menuId: "mnuDataTree-Help",
+					sourceCallerPath: placeholder.SourceCallerPath);
 			}
 
 			// The node's chooserLink wins; else the row derives its tool like the legacy path.

@@ -12,6 +12,7 @@ using System.Xml;
 using SIL.FieldWorks.Common.FwAvalonia;
 using SIL.FieldWorks.Common.FwAvalonia.Detail;
 using SIL.FieldWorks.Common.FwAvalonia.Seams;
+using SIL.FieldWorks.Common.FwAvalonia.ViewDefinition;
 using SIL.FieldWorks.Common.Framework.DetailControls;
 // Bare DataTree in this file means the legacy WinForms tree; the Avalonia twin stays qualified.
 using DataTree = SIL.FieldWorks.Common.Framework.DetailControls.DataTree;
@@ -511,7 +512,7 @@ namespace SIL.FieldWorks.XWorks
 				// adapter menu remains the fallback if materialization fails.
 				try
 				{
-					var items = XCoreMenuBridge.CreateMenuItems(window, idArray);
+					var items = CreateNativeDetailMenuItems(request.Field, idArray);
 					if (items.Count > 0)
 					{
 						// A keyboard-opened menu anchors under the row it came from; a
@@ -528,10 +529,55 @@ namespace SIL.FieldWorks.XWorks
 				}
 
 				window.ShowContextMenu(idArray, AdapterMenuScreenPoint(request), null, null);
+				RefreshAvaloniaDetail();
 			}
 			catch (Exception e)
 			{
 				Logger.WriteError("Detail context menu failed.", e);
+			}
+		}
+
+		private IReadOnlyList<DetailMenuItem> CreateNativeDetailMenuItems(DetailField field,
+			string[] menuIds)
+		{
+			var window = m_propertyTable.GetValue<XWindow>("window");
+			return XCoreMenuBridge.CreateMenuItems(window, menuIds,
+				choice => CreateLegacyCommandMenuItem(field, choice));
+		}
+
+		private DetailMenuItem CreateLegacyCommandMenuItem(DetailField field, ChoiceBase choice)
+		{
+			var persistent = IsPersistentLayoutCommand(choice);
+			var hasTarget = persistent
+				? EnsurePersistentMenuCommandTarget(field)
+				: EnsureMenuCommandTarget(field.ObjectHvo, field.Field);
+			var display = choice.GetDisplayProperties();
+			var captured = choice;
+			return new DetailMenuItem(XCoreMenuBridge.StripAccelerator(display.Text),
+				hasTarget && display.Enabled, display.Checked, null, () =>
+				{
+					var canExecute = persistent
+						? EnsurePersistentMenuCommandTarget(field)
+						: EnsureMenuCommandTarget(field.ObjectHvo, field.Field);
+					if (!canExecute)
+						return;
+					captured.OnClick(null, EventArgs.Empty);
+					RefreshAvaloniaDetail();
+				});
+		}
+
+		private static bool IsPersistentLayoutCommand(ChoiceBase choice)
+		{
+			switch (choice?.HelpId)
+			{
+				case "CmdAlwaysVisible":
+				case "CmdIfData":
+				case "CmdNormallyHidden":
+				case "CmdDataTree-MoveFieldUp":
+				case "CmdDataTree-MoveFieldDown":
+					return true;
+				default:
+					return false;
 			}
 		}
 
@@ -594,6 +640,11 @@ namespace SIL.FieldWorks.XWorks
 		// Avalonia is active.
 		private void EnsureMenuCommandAdapter(int targetHvo, string fieldName)
 		{
+			EnsureMenuCommandTarget(targetHvo, fieldName);
+		}
+
+		private bool EnsureMenuCommandTarget(int targetHvo, string fieldName)
+		{
 			// The active-host contract is enforced, not just documented: driving the hidden
 			// legacy DataTree is legal only through an adapter id the host's contract lists. The
 			// contract was built from ApprovedBaselineAdapters when the view activated; this
@@ -616,7 +667,7 @@ namespace SIL.FieldWorks.XWorks
 				// No current record: drop any target left by a previous interaction, same
 				// fail-loud rule as the no-slice-found path below.
 				m_dataEntryForm.ClearCurrentSlice();
-				return;
+				return false;
 			}
 			m_dataEntryForm.ShowObject(current, m_layoutName, m_layoutChoiceField, current, true);
 
@@ -624,7 +675,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				// The row carries no object, so no slice can be its target.
 				m_dataEntryForm.ClearCurrentSlice();
-				return;
+				return false;
 			}
 
 			// Targeting hardening: the legacy command handlers act on m_dataEntryForm.CurrentSlice,
@@ -637,10 +688,10 @@ namespace SIL.FieldWorks.XWorks
 			// than silently leaving the wrong (or stale) CurrentSlice pointed, which would make the command
 			// mutate the wrong object or, for Merge's class guard, silently fail.
 			if (TrySetCurrentSliceForRow(targetHvo, fieldName))
-				return;
+				return true;
 
 			if (RealizeLazySlicesAndRetry(targetHvo, fieldName))
-				return;
+				return true;
 
 			// Fail loud, not silent: if we still cannot produce a slice for the target we must NOT leave
 			// CurrentSlice pointed at whatever the previous interaction selected (it would mis-target the
@@ -651,6 +702,85 @@ namespace SIL.FieldWorks.XWorks
 				"Detail menu command adapter found no DataTree slice for target hvo {0} field '{1}'; "
 				+ "CurrentSlice was cleared so the command no-ops rather than mis-targeting another object.",
 				targetHvo, fieldName ?? string.Empty));
+			return false;
+		}
+
+		private bool EnsurePersistentMenuCommandTarget(DetailField field)
+		{
+			if (!EnsureMenuCommandTarget(field.ObjectHvo, field.Field))
+				return false;
+
+			var candidates = new List<Slice>();
+			foreach (var sliceObj in m_dataEntryForm.Slices)
+			{
+				if (sliceObj is Slice slice && slice.Object != null && !slice.IsLazyPlaceholder)
+					candidates.Add(slice);
+			}
+			var identities = candidates.Select(slice => PersistentSliceIdentity(slice)).ToList();
+			var index = ChoosePersistentTargetSliceIndex(identities, field.ObjectHvo, field.Field,
+				field.ClassName, field.LayoutName, field.SourceCallerPath);
+			if (index < 0)
+			{
+				m_dataEntryForm.ClearCurrentSlice();
+				Logger.WriteEvent(string.Format(
+					"Detail layout command found no unique slice for '{0}' at '{1}'; CurrentSlice was cleared.",
+					field.Field ?? string.Empty, field.SourceCallerPath ?? string.Empty));
+				return false;
+			}
+			m_dataEntryForm.SetCurrentSliceForCommandTarget(candidates[index]);
+			return true;
+		}
+
+		internal static int ChoosePersistentTargetSliceIndex(
+			IReadOnlyList<(int Hvo, string FieldName, string ClassName, string LayoutName, string CallerPath)> candidates,
+			int targetHvo, string fieldName, string className, string layoutName, string callerPath)
+		{
+			if (candidates == null || string.IsNullOrEmpty(callerPath))
+				return -1;
+			var match = -1;
+			for (var i = 0; i < candidates.Count; i++)
+			{
+				var candidate = candidates[i];
+				if (candidate.Hvo != targetHvo
+					|| !string.Equals(candidate.FieldName, fieldName, StringComparison.Ordinal)
+					|| !string.Equals(candidate.ClassName, className, StringComparison.Ordinal)
+					|| !string.Equals(candidate.LayoutName, layoutName, StringComparison.Ordinal)
+					|| !string.Equals(candidate.CallerPath, callerPath, StringComparison.Ordinal))
+				{
+					continue;
+				}
+				if (match >= 0)
+					return -1;
+				match = i;
+			}
+			return match;
+		}
+
+		private (int Hvo, string FieldName, string ClassName, string LayoutName, string CallerPath)
+			PersistentSliceIdentity(Slice slice)
+		{
+			if (slice?.Key == null)
+				return (0, null, null, null, null);
+			XmlNode layout = null;
+			XmlNode part = null;
+			foreach (var keyItem in slice.Key)
+			{
+				if (!(keyItem is XmlNode node))
+					continue;
+				if (node.Name == "layout")
+				{
+					layout = node;
+					part = null;
+				}
+				else if (layout != null && node.Name == "part"
+					&& node.Attributes?["ref"] != null && LegacyLayoutCallerPath.Get(node) != null)
+				{
+					part = node;
+				}
+			}
+			return (slice.Object?.Hvo ?? 0, SliceFieldName(slice),
+				layout?.Attributes?["class"]?.Value, layout?.Attributes?["name"]?.Value,
+				LegacyLayoutCallerPath.Get(part));
 		}
 
 		/// <summary>

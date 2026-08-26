@@ -9,9 +9,11 @@ using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
 using System.Xml;
+using System.Xml.Linq;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwAvalonia;
+using SIL.FieldWorks.Common.FwAvalonia.ViewDefinition;
 using SIL.FieldWorks.Common.Framework.DetailControls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
@@ -224,6 +226,72 @@ namespace SIL.FieldWorks.XWorks
 				"showing the record should lazily create the project view-definition source");
 			Assert.That(GetField(source, "_layouts"), Is.SameAs(expected),
 				"the host source must use the project-keyed Inventory singleton");
+		}
+
+		[Test]
+		public void ImportedCallerPath_IsCanonicalWhenPartsSkipOrExpandOutput()
+		{
+			var parts = new DictionaryPartResolver(XElement.Parse(@"
+<PartInventory><bin>
+  <part id='LexEntry-Detail-Multiple'>
+    <slice field='CitationForm' editor='string'/>
+    <slice field='CitationForm' editor='string'/>
+  </part>
+  <part id='LexEntry-Detail-Single'>
+    <slice field='CitationForm' editor='string'/>
+  </part>
+</bin></PartInventory>"));
+			const string layoutXml = @"
+<layout class='LexEntry' type='detail' name='Normal'>
+  <part ref='Missing'/>
+  <part ref='Multiple'/>
+  <part ref='Single'/>
+</layout>";
+
+			var model = new XmlLayoutImporter().Import(XElement.Parse(layoutXml), parts);
+			var xml = new XmlDocument();
+			xml.LoadXml(layoutXml);
+			var legacyCaller = xml.SelectSingleNode("/layout/part[@ref='Multiple']");
+
+			Assert.That(model.Roots.Take(2).Select(node => node.SourceCallerPath),
+				Is.All.EqualTo("part[1]"),
+				"every output expanded from one caller must retain the same source identity");
+			Assert.That(model.Roots[2].SourceCallerPath, Is.EqualTo("part[2]"),
+				"a skipped caller must not collapse the source address to the output index");
+			Assert.That(LegacyLayoutCallerPath.Get(legacyCaller), Is.EqualTo("part[1]"),
+				"the XmlNode slice key and XElement importer clones must compute the same identity");
+		}
+
+		[Test]
+		public void ChoosePersistentTargetSliceIndex_UsesCallerPathToDisambiguateDuplicateFields()
+		{
+			var candidates = new List<(int Hvo, string FieldName, string ClassName, string LayoutName, string CallerPath)>
+			{
+				(m_entry.Hvo, "CitationForm", "LexEntry", "Normal", "part[0]"),
+				(m_entry.Hvo, "CitationForm", "LexEntry", "Normal", "part[3]")
+			};
+
+			var index = RecordEditView.ChoosePersistentTargetSliceIndex(candidates,
+				m_entry.Hvo, "CitationForm", "LexEntry", "Normal", "part[3]");
+
+			Assert.That(index, Is.EqualTo(1),
+				"the imported caller path should select the same layout part as the legacy slice key");
+		}
+
+		[Test]
+		public void ChoosePersistentTargetSliceIndex_AmbiguousExactPath_FailsClosed()
+		{
+			var candidates = new List<(int Hvo, string FieldName, string ClassName, string LayoutName, string CallerPath)>
+			{
+				(m_entry.Hvo, "CitationForm", "LexEntry", "Normal", "part[0]"),
+				(m_entry.Hvo, "CitationForm", "LexEntry", "Normal", "part[0]")
+			};
+
+			var index = RecordEditView.ChoosePersistentTargetSliceIndex(candidates,
+				m_entry.Hvo, "CitationForm", "LexEntry", "Normal", "part[0]");
+
+			Assert.That(index, Is.EqualTo(-1),
+				"persistent layout commands require one exact slice and must reject ambiguous matches");
 		}
 
 		// ----------------------------------------------------------------------------------------

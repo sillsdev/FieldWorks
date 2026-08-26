@@ -1622,6 +1622,10 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		/// </summary>
 		public string LayoutName { get; set; }
 
+		/// <summary>The owning caller part's structural address in the effective legacy
+		/// layout.</summary>
+		public string SourceCallerPath { get; set; }
+
 		/// <summary>
 		/// The project's available CHARACTER-type style names
 		/// the per-WS editor offers when restyling a selection (sourced by the composer from the project's

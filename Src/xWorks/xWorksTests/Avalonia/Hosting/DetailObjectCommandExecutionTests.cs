@@ -16,6 +16,7 @@ using SIL.FieldWorks.Common.FwAvalonia.Detail;
 using SIL.FieldWorks.Common.Framework.DetailControls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
+using SIL.LCModel.Core.Text;
 using SIL.LCModel.Infrastructure;
 using XCore;
 // Both namespaces above define DataTree; the adapter tests mean the legacy WinForms one.
@@ -55,6 +56,10 @@ namespace SIL.FieldWorks.XWorks
 		private List<ICmObject> m_createdObjects;
 		private ILexEntry m_entry;
 		private RecordEditView m_view;
+		private Inventory m_layouts;
+		private string m_layoutOverridePath;
+		private bool m_layoutOverrideExisted;
+		private byte[] m_layoutOverrideBytes;
 
 		protected override void Init()
 		{
@@ -87,6 +92,16 @@ namespace SIL.FieldWorks.XWorks
 			// Without it, DataTree.GetTemplateForObjLayout finds a null layout inventory and ShowObject
 			// throws an NRE. This is the same bootstrap the DictionaryConfigurationMigrator tests use.
 			LayoutCache.InitializePartInventories(Cache.ProjectId.Name, m_application, Cache.ProjectId.Path);
+			m_layouts = Inventory.GetInventory("layouts", Cache.ProjectId.Name);
+			var configurationDirectory = LcmFileHelper.GetConfigSettingsDir(Cache.ProjectId.Path);
+			m_layoutOverridePath = Path.GetFullPath(Path.Combine(configurationDirectory,
+				"LexEntry.fwlayout"));
+			Assert.That(Path.GetDirectoryName(m_layoutOverridePath),
+				Is.EqualTo(Path.GetFullPath(configurationDirectory)).IgnoreCase);
+			m_layoutOverrideExisted = File.Exists(m_layoutOverridePath);
+			m_layoutOverrideBytes = m_layoutOverrideExisted
+				? File.ReadAllBytes(m_layoutOverridePath)
+				: null;
 			m_createdObjects = new List<ICmObject>();
 			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, CreateTestEntry);
 
@@ -105,6 +120,7 @@ namespace SIL.FieldWorks.XWorks
 		[TearDown]
 		public void TearDownWindow()
 		{
+			RestoreLayoutOverride();
 			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, DestroyTestData);
 			m_createdObjects = null;
 			m_entry = null;
@@ -116,6 +132,85 @@ namespace SIL.FieldWorks.XWorks
 				m_window.Dispose();
 				m_window = null;
 			}
+		}
+
+		[TestCase("CmdAlwaysVisible", "Always visible", "ifdata", "always")]
+		[TestCase("CmdIfData", "Normally hidden, unless non-empty", "always", "ifdata")]
+		[TestCase("CmdNormallyHidden", "Normally hidden", "always", "never")]
+		[TestCase("CmdDataTree-MoveFieldUp", "Move Up", null, "up")]
+		[TestCase("CmdDataTree-MoveFieldDown", "Move Down", null, "down")]
+		public void PersistentLayoutCommand_UsesLegacyWriter_PersistsAndRecomposes(
+			string commandId, string label, string initialVisibility, string expectedChange)
+		{
+			if (initialVisibility != null)
+				PersistCitationVisibility(initialVisibility);
+			RefreshAvaloniaDetail();
+			if (expectedChange == "up")
+				MoveCitationDownThroughNativeCommand();
+
+			var beforeModel = GetHostedDetailModel();
+			var field = beforeModel.Fields.Single(f => f.Field == "CitationForm");
+			var beforeIndex = beforeModel.Fields.ToList().IndexOf(field);
+			var layoutBefore = CurrentLexEntryLayout().OuterXml;
+
+			var items = CreateNativeMenuItems(field,
+				new[] { "mnuDataTree-MultiStringSlice", RecordEditView.ObjectMenuId });
+			var item = FindItem(items, label);
+			Assert.That(item, Is.Not.Null, commandId + " should materialize through the native menu");
+			Assert.That(item.IsEnabled, Is.True, commandId + " should be enabled for Citation Form");
+			item.Execute();
+
+			var persisted = CurrentLexEntryLayout();
+			Assert.That(persisted.OuterXml, Is.Not.EqualTo(layoutBefore),
+				commandId + " should run the legacy Slice handler and change its Inventory layout");
+			Assert.That(File.Exists(m_layoutOverridePath), Is.True,
+				commandId + " should persist through Inventory to the project .fwlayout file");
+
+			var afterModel = GetHostedDetailModel();
+			Assert.That(afterModel, Is.Not.SameAs(beforeModel),
+				commandId + " should refresh the Avalonia model from the changed XML");
+			if (expectedChange == "never")
+			{
+				Assert.That(afterModel.Fields, Has.None.Property("Field").EqualTo("CitationForm"));
+			}
+			else if (expectedChange == "up" || expectedChange == "down")
+			{
+				var afterIndex = afterModel.Fields.ToList().FindIndex(f => f.Field == "CitationForm");
+				Assert.That(Math.Sign(afterIndex - beforeIndex),
+					Is.EqualTo(expectedChange == "up" ? -1 : 1),
+					commandId + " should recompose Citation Form in the persisted direction");
+			}
+			else
+			{
+				var part = persisted.SelectSingleNode("part[@ref='CitationFormAllV']");
+				Assert.That(part.Attributes["visibility"].Value, Is.EqualTo(expectedChange));
+				Assert.That(afterModel.Fields, Has.Some.Property("Field").EqualTo("CitationForm"));
+			}
+
+			var configurationDirectory = Path.GetDirectoryName(m_layoutOverridePath);
+			Assert.That(Directory.GetFiles(configurationDirectory, "*.viewoverride.json"), Is.Empty);
+		}
+
+		[Test]
+		public void PersistentLayoutCommand_MissingExactIdentity_ClearsTargetAndDoesNotWrite()
+		{
+			PersistCitationVisibility("ifdata");
+			RefreshAvaloniaDetail();
+			var field = GetHostedDetailModel().Fields.Single(f => f.Field == "CitationForm");
+			field.SourceCallerPath = "part[999]";
+			var beforeBytes = File.ReadAllBytes(m_layoutOverridePath);
+
+			var items = CreateNativeMenuItems(field,
+				new[] { "mnuDataTree-MultiStringSlice", RecordEditView.ObjectMenuId });
+			var item = FindItem(items, "Always visible");
+			var dataTree = (LegacyDataTree)GetField(m_view, "m_dataEntryForm");
+
+			Assert.That(item, Is.Not.Null.And.Property("IsEnabled").False);
+			Assert.That(dataTree.CurrentSlice, Is.Null,
+				"a persistent command with no unique exact identity must clear the legacy target");
+			item.Execute();
+			Assert.That(File.ReadAllBytes(m_layoutOverridePath), Is.EqualTo(beforeBytes),
+				"a disabled persistent command must not invoke the legacy Inventory writer");
 		}
 
 		// ----------------------------------------------------------------------------------------
@@ -419,6 +514,16 @@ namespace SIL.FieldWorks.XWorks
 			return XCoreMenuBridge.CreateMenuItems(window, menuIds);
 		}
 
+		private IReadOnlyList<DetailMenuItem> CreateNativeMenuItems(DetailField field, string[] menuIds)
+		{
+			var method = typeof(RecordEditView).GetMethod("CreateNativeDetailMenuItems",
+				BindingFlags.Instance | BindingFlags.NonPublic);
+			Assert.That(method, Is.Not.Null,
+				"the product host should expose its native menu materialization seam");
+			return (IReadOnlyList<DetailMenuItem>)method.Invoke(m_view,
+				new object[] { field, menuIds });
+		}
+
 		private void InvokeItem(IReadOnlyList<DetailMenuItem> items, string label)
 		{
 			var item = FindItem(items, label);
@@ -473,6 +578,77 @@ namespace SIL.FieldWorks.XWorks
 			return DetailComposer.Compose(m_entry, Cache).Model.Fields.Count;
 		}
 
+		private void RefreshAvaloniaDetail()
+		{
+			var refresh = typeof(RecordEditView).GetMethod("RefreshAvaloniaDetail",
+				BindingFlags.Instance | BindingFlags.NonPublic);
+			Assert.That(refresh, Is.Not.Null);
+			refresh.Invoke(m_view, null);
+			DrainMediatorAndIdleQueues();
+		}
+
+		private DetailModel GetHostedDetailModel()
+		{
+			var entryForm = (DetailHostControl)GetField(m_view, "m_avaloniaEntryForm");
+			var hostField = typeof(AvaloniaHostControlBase).GetField("Host",
+				BindingFlags.Instance | BindingFlags.NonPublic);
+			Assert.That(hostField, Is.Not.Null);
+			var host = hostField.GetValue(entryForm);
+			var content = host.GetType().GetProperty("Content").GetValue(host, null);
+			var tree = content as SIL.FieldWorks.Common.FwAvalonia.Detail.DataTree;
+			Assert.That(tree, Is.Not.Null);
+			return tree.Model;
+		}
+
+		private XmlNode CurrentLexEntryLayout()
+		{
+			var layout = m_layouts.GetElement("layout",
+				new[] { "LexEntry", "detail", "Normal", null });
+			Assert.That(layout, Is.Not.Null);
+			return layout;
+		}
+
+		private void PersistCitationVisibility(string visibility)
+		{
+			var changed = CurrentLexEntryLayout().Clone();
+			var part = changed.SelectSingleNode("part[@ref='CitationFormAllV']");
+			Assert.That(part, Is.Not.Null);
+			var attribute = part.Attributes["visibility"]
+				?? changed.OwnerDocument.CreateAttribute("visibility");
+			attribute.Value = visibility;
+			if (attribute.OwnerElement == null)
+				part.Attributes.Append(attribute);
+			m_layouts.PersistOverrideElement(changed);
+		}
+
+		private void MoveCitationDownThroughNativeCommand()
+		{
+			var field = GetHostedDetailModel().Fields.Single(f => f.Field == "CitationForm");
+			var items = CreateNativeMenuItems(field,
+				new[] { "mnuDataTree-MultiStringSlice", RecordEditView.ObjectMenuId });
+			var item = FindItem(items, "Move Down");
+			Assert.That(item, Is.Not.Null.And.Property("IsEnabled").True,
+				"Move Down must establish a real legacy-slice predecessor for Move Up");
+			item.Execute();
+		}
+
+		private void RestoreLayoutOverride()
+		{
+			if (m_layouts == null || string.IsNullOrEmpty(m_layoutOverridePath))
+				return;
+			if (m_layoutOverrideExisted)
+			{
+				Directory.CreateDirectory(Path.GetDirectoryName(m_layoutOverridePath));
+				File.WriteAllBytes(m_layoutOverridePath, m_layoutOverrideBytes);
+			}
+			else if (File.Exists(m_layoutOverridePath))
+			{
+				File.Delete(m_layoutOverridePath);
+			}
+			m_layouts.Reload();
+			Assert.That(Inventory.GetInventory("layouts", Cache.ProjectId.Name), Is.SameAs(m_layouts));
+		}
+
 		// ----------------------------------------------------------------------------------------
 		// Bootstrap helpers (mirrors RecordEditViewActiveHostContractTests)
 		// ----------------------------------------------------------------------------------------
@@ -482,6 +658,8 @@ namespace SIL.FieldWorks.XWorks
 			var stemMorphType = GetMorphTypeOrCreateOne("stem");
 			var noun = GetGrammaticalCategoryOrCreateOne("noun", Cache.LangProject.PartsOfSpeechOA);
 			m_entry = AddLexeme(m_createdObjects, "command-entry", stemMorphType, "first gloss", noun);
+			m_entry.CitationForm.set_String(Cache.DefaultVernWs,
+				TsStringUtils.MakeString("citation", Cache.DefaultVernWs));
 		}
 
 		private void AddSense(string gloss)

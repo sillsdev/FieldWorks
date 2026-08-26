@@ -7,9 +7,72 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
+using System.Xml;
+using System.Xml.Linq;
 
 namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 {
+	/// <summary>
+	/// Creates the same structural address for a legacy layout caller represented by either XML
+	/// API.
+	/// Same-name element ordinals make the address independent of whitespace and stable across
+	/// the cloned
+	/// effective layout documents used by the importer and legacy slice tree.
+	/// </summary>
+	public static class LegacyLayoutCallerPath
+	{
+		public static string Get(XElement caller)
+		{
+			if (caller == null)
+				return null;
+			var path = new Stack<string>();
+			var current = caller;
+			while (current.Parent != null && current.Parent.Name.LocalName != "layout")
+			{
+				path.Push(Segment(current.Name.LocalName,
+					current.ElementsBeforeSelf().Count(element =>
+						element.Name.LocalName == current.Name.LocalName)));
+				current = current.Parent;
+			}
+			if (current.Parent == null || current.Parent.Name.LocalName != "layout")
+				return null;
+			path.Push(Segment(current.Name.LocalName,
+				current.ElementsBeforeSelf().Count(element =>
+					element.Name.LocalName == current.Name.LocalName)));
+			return string.Join("/", path);
+		}
+
+		public static string Get(XmlNode caller)
+		{
+			if (caller == null)
+				return null;
+			var path = new Stack<string>();
+			var current = caller;
+			while (current.ParentNode != null && current.ParentNode.LocalName != "layout")
+			{
+				path.Push(Segment(current.LocalName, SameNamePredecessorCount(current)));
+				current = current.ParentNode;
+			}
+			if (current.ParentNode == null || current.ParentNode.LocalName != "layout")
+				return null;
+			path.Push(Segment(current.LocalName, SameNamePredecessorCount(current)));
+			return string.Join("/", path);
+		}
+
+		private static int SameNamePredecessorCount(XmlNode node)
+		{
+			var count = 0;
+			for (var sibling = node.PreviousSibling; sibling != null; sibling = sibling.PreviousSibling)
+			{
+				if (sibling.NodeType == XmlNodeType.Element && sibling.LocalName == node.LocalName)
+					count++;
+			}
+			return count;
+		}
+
+		private static string Segment(string name, int ordinal) => $"{name}[{ordinal}]";
+	}
+
 	/// <summary>
 	/// Structural kind of a typed view-definition node. Mirrors the node types produced by the
 	/// legacy XML Parts/Layout interpretation in <c>SliceFactory</c>/<c>DataTree</c>:
@@ -385,7 +448,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 			IReadOnlyList<ViewChooserLink> chooserLinks = null,
 			ViewStringList enumStringList = null,
 			IReadOnlyList<string> visibleWritingSystems = null,
-			bool toggleValue = false)
+			bool toggleValue = false,
+			string sourceCallerPath = null)
 		{
 			ToggleValue = toggleValue;
 			VisibleWritingSystems = visibleWritingSystems;
@@ -421,10 +485,15 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 			GhostInitMethod = ghostInitMethod;
 			Condition = condition;
 			ChooserLinks = chooserLinks ?? (IReadOnlyList<ViewChooserLink>)Array.Empty<ViewChooserLink>();
+			SourceCallerPath = sourceCallerPath;
 		}
 
 		/// <summary>Deterministic identity derived from the node's path (stable across realizations).</summary>
 		public string StableId { get; }
+
+		/// <summary>The structural address of the owning caller part in the effective legacy
+		/// layout.</summary>
+		public string SourceCallerPath { get; }
 
 		public ViewNodeKind Kind { get; }
 
