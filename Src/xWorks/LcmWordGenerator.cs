@@ -2933,17 +2933,18 @@ namespace SIL.FieldWorks.XWorks
 		/// Get the full style names for the runs that should be used for guidewords.
 		/// For each of the guideword styles, the full style name is retrieved from the first RunStyle that begins with that guideword style name.
 		/// </summary>
-		/// <param name="type">Indicates if we are are exporting a Reversal, Classified Dictionary, or regular Configured Dictionary.</param>
-		/// <returns>A list of the full style names beginning with each guideword style.
+		/// <returns>A list of the full style names for the runs that should be used for guidewords.
 		///          Null if none are found.</returns>
 		public static List<string> GetFirstGuidewordStylesList(DocFragment frag, DictionaryConfigurationModel configuration)
 		{
-			// guidewordBaseStyles lists the base styles of the words in the document from which guidewords are drawn;
-			// it does not describe the styles applied to the guidewords themselves.
+			// guidewordBaseStyles lists the base styles of the words in the document from which
+			// guidewords are drawn; it does not describe the styles applied to the guidewords
+			// themselves.
 			List<string> guidewordBaseStyles = new List<string>();
 			var runStyles = frag.DocBody.Descendants<RunStyle>().ToList();
 			// Add any before, after, between, or language-specific tags to the style names in
-			// guideWordBaseStyles to produce the final style names from which guidewords are drawn.
+			// guideWordBaseStyles to produce the final style names from which guidewords are
+			// drawn.
 			List<string> guidewordFinalStyleNames = new List<string>();
 
 			if (configuration.IsReversal)
@@ -2952,7 +2953,8 @@ namespace SIL.FieldWorks.XWorks
 
 			else if (configuration.IsClassified)
 			{
-				// For Classified Dictionary, the Abbreviation and Name are semantic domain numbers and names respectively;
+				// For Classified Dictionary, the Abbreviation and Name are
+				// semantic domain numbers and names respectively;
 				// we combine these into the guidewords in this case.
 				guidewordBaseStyles.Add(WordStylesGenerator.Abbreviation);
 				guidewordBaseStyles.Add(WordStylesGenerator.Name);
@@ -2960,8 +2962,10 @@ namespace SIL.FieldWorks.XWorks
 
 			else
 			{
-				// Configured Dictionary entries are based on either Headword, Lexeme Form, or Citation Form.
-				// For guidewords, use whichever of these appears first in the list of dictionary configuration fields selected for display, defaulting to Headword.
+				// Configured Dictionary entries are based on either Headword, Lexeme Form,
+				// or Citation Form.
+				// For guidewords, use whichever of these appears first in the list of dictionary
+				// configuration fields selected for display, defaulting to Headword.
 				var primaryFieldOptions = new List<string> {WordStylesGenerator.HeadwordDisplayName, WordStylesGenerator.LexemeForm, WordStylesGenerator.CitationForm};
 				var firstSelectedPrimaryField = configuration.Parts[0].Children?
 					.FirstOrDefault(c => c.IsEnabled && primaryFieldOptions.Contains(c.Label));

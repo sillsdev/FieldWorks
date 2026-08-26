@@ -128,7 +128,8 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
-		/// Checks which folder this will be saved in to determine if it is a classified dictionary
+		/// Checks which folder this will be saved in to determine if it is a
+		/// classified dictionary
 		/// </summary>
 		internal bool IsClassified
 		{

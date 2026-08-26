@@ -1553,12 +1553,19 @@ namespace SIL.FieldWorks.XWorks
 		public void GetGuidewordStyleForConfiguredDictionary()
 		{
 			var wsOpts = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] { "en" });
+			var headwordWsOpts = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] { "fr" });
+			var headwordNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "MLHeadWord",
+				DictionaryNodeOptions = headwordWsOpts,
+				Style = "Dictionary-Headword",
+				Label = WordStylesGenerator.HeadwordDisplayName
+			};
 			var glossNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "Gloss",
 				DictionaryNodeOptions = wsOpts,
-				Style = "Dictionary-Headword",
-				Label = WordStylesGenerator.HeadwordDisplayName
+				Style = DictionaryGlossStyleName
 			};
 			var sensesNode = new ConfigurableDictionaryNode
 			{
@@ -1570,7 +1577,7 @@ namespace SIL.FieldWorks.XWorks
 			var mainEntryNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "LexEntry",
-				Children = new List<ConfigurableDictionaryNode> { sensesNode },
+				Children = new List<ConfigurableDictionaryNode> { headwordNode, sensesNode },
 				Style = MainEntryParagraphStyleName,
 				Label = MainEntryParagraphDisplayName
 			};
@@ -1578,11 +1585,16 @@ namespace SIL.FieldWorks.XWorks
 			var entry = ConfiguredXHTMLGeneratorTests.CreateInterestingLexEntry(Cache);
 			var result = ConfiguredLcmGenerator.GenerateContentForEntry(entry, mainEntryNode, null, DefaultSettings, 0) as DocFragment;
 
+			var configuration = new DictionaryConfigurationModel
+			{
+				Parts = new List<ConfigurableDictionaryNode> { mainEntryNode }
+			};
+
 			//SUT
-			List<string> firstHeadwordStyles = LcmWordGenerator.GetFirstGuidewordStylesList(result, DictionaryConfigurationModel.ConfigType.Root);
+			List<string> firstHeadwordStyles = LcmWordGenerator.GetFirstGuidewordStylesList(result, configuration);
 
 			Assert.That(firstHeadwordStyles.Count == 1, Is.True);
-			Assert.That(firstHeadwordStyles[0] == "Headword[lang=en]", Is.True);
+			Assert.That(firstHeadwordStyles[0] == "Headword[lang=fr]", Is.True);
 		}
 
 		[Test]
@@ -1620,11 +1632,18 @@ namespace SIL.FieldWorks.XWorks
 			var domain = CreateSemanticDomain(Cache);
 			var result = ConfiguredLcmGenerator.GenerateContentForEntry(domain, mainEntryNode, null, DefaultSettings, 0) as DocFragment;
 
-			//SUT
-			List<string> firstGuidewordStyles = LcmWordGenerator.GetFirstGuidewordStylesList(result, DictionaryConfigurationModel.ConfigType.Lexeme);
+			var configuration = new DictionaryConfigurationModel
+			{
+				FilePath = Path.Combine("Classified Dictionary", "ClassifiedDictionary" + DictionaryConfigurationModel.FileExtension),
+				Parts = new List<ConfigurableDictionaryNode> { mainEntryNode }
+			};
 
-			// For Classified Dictionary, the guidewords should consist of the following three pieces:
-			// semantic domain number (abbreviation), after content associated with the semantic domain number, semantic domain name.
+			//SUT
+			List<string> firstGuidewordStyles = LcmWordGenerator.GetFirstGuidewordStylesList(result, configuration);
+
+			// For Classified Dictionary, guidewords consist of the following 3 pieces:
+			// semantic domain number (abbreviation),
+			// after content associated with the semantic domain number, semantic domain name.
 			Assert.That(firstGuidewordStyles.Count, Is.EqualTo(3));
 			Assert.That(firstGuidewordStyles[0], Is.EqualTo(WordStylesGenerator.Abbreviation+"[lang=en]"));
 			Assert.That(firstGuidewordStyles[1], Is.EqualTo(WordStylesGenerator.Abbreviation+WordStylesGenerator.BeforeAfterBetween+"[lang=en]"));
