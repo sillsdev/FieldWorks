@@ -125,6 +125,53 @@ namespace SIL.FieldWorks.XWorks
 			}));
 		}
 
+		[Test]
+		public void GetSnapshot_BaseClassMapRejectsMutationThroughDictionaryContract()
+		{
+			const string layoutXml = @"
+<LayoutInventory>
+  <layout class='MoForm' type='detail' name='Normal'/>
+</LayoutInventory>";
+			var source = CreateSource(CreateLayoutInventory(layoutXml), CreatePartsInventory());
+			var snapshot = source.GetSnapshot("MoStemAllomorph", "Normal");
+			var map = (IDictionary<string, string>)snapshot.BaseClassMap;
+
+			Assert.That(() => map["MoStemAllomorph"] = "CmObject",
+				Throws.TypeOf<NotSupportedException>());
+		}
+
+		[Test]
+		public void GetSnapshot_DerivedChoiceFallbackWinsBeforeBaseExactChoice()
+		{
+			const string selectedGuid = "11111111-1111-1111-1111-111111111111";
+			const string layoutXml = @"
+<LayoutInventory>
+  <layout class='MoStemAllomorph' type='detail' name='Normal' marker='derived-fallback'/>
+  <layout class='MoForm' type='detail' name='Normal'
+          choiceGuid='11111111-1111-1111-1111-111111111111' marker='base-exact'/>
+</LayoutInventory>";
+			var source = CreateSource(CreateLayoutInventory(layoutXml), CreatePartsInventory());
+
+			var snapshot = source.GetSnapshot("MoStemAllomorph", "Normal", selectedGuid);
+
+			Assert.That(XElement.Parse(snapshot.LayoutXml).Attribute("marker")?.Value,
+				Is.EqualTo("derived-fallback"));
+		}
+
+		[Test]
+		public void GetSnapshot_NoLayoutInClassHierarchyReturnsNull()
+		{
+			const string layoutXml = @"
+<LayoutInventory>
+  <layout class='MoForm' type='detail' name='Different'/>
+</LayoutInventory>";
+			var source = CreateSource(CreateLayoutInventory(layoutXml), CreatePartsInventory());
+
+			var snapshot = source.GetSnapshot("MoStemAllomorph", "Normal");
+
+			Assert.That(snapshot, Is.Null);
+		}
+
 		private InventoryViewDefinitionSource CreateSource(Inventory layouts, Inventory parts)
 		{
 			return new InventoryViewDefinitionSource(layouts, parts.Root.OuterXml,

@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using SIL.FieldWorks.Common.FwAvalonia.ViewDefinition;
 using SIL.LCModel.Core.KernelInterfaces;
 using XCore;
@@ -69,18 +70,19 @@ namespace SIL.FieldWorks.XWorks
 				classId = baseId;
 			}
 
-			var chain = classId;
-			while (chain != 0)
+			var ancestorClassId = classId;
+			while (ancestorClassId != 0)
 			{
-				var baseId = _metadataCache.GetBaseClsId(chain);
-				if (baseId == chain || baseId == 0)
+				var baseId = _metadataCache.GetBaseClsId(ancestorClassId);
+				if (baseId == ancestorClassId || baseId == 0)
 					break;
-				baseClassMap[_metadataCache.GetClassName(chain)] = _metadataCache.GetClassName(baseId);
-				chain = baseId;
+				baseClassMap[_metadataCache.GetClassName(ancestorClassId)] =
+					_metadataCache.GetClassName(baseId);
+				ancestorClassId = baseId;
 			}
 
 			return new ViewDefinitionSourceSnapshot(resolvedClassName, "detail", layoutXml,
-				_partsXml, baseClassMap);
+				_partsXml, new ReadOnlyDictionary<string, string>(baseClassMap));
 		}
 	}
 }
