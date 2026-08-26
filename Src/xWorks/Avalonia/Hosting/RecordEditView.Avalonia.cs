@@ -12,7 +12,6 @@ using System.Xml;
 using SIL.FieldWorks.Common.FwAvalonia;
 using SIL.FieldWorks.Common.FwAvalonia.Detail;
 using SIL.FieldWorks.Common.FwAvalonia.Seams;
-using SIL.FieldWorks.Common.FwAvalonia.ViewDefinition;
 using SIL.FieldWorks.Common.Framework.DetailControls;
 // Bare DataTree in this file means the legacy WinForms tree; the Avalonia twin stays qualified.
 using DataTree = SIL.FieldWorks.Common.Framework.DetailControls.DataTree;
@@ -50,13 +49,8 @@ namespace SIL.FieldWorks.XWorks
 		// open undo task is never orphaned (an orphan makes the shutdown Save throw "Commit at wrong place").
 		private readonly DetailEditContextHolder m_detailEditContext = new DetailEditContextHolder();
 		private AvaloniaDetailRefreshController m_avaloniaRefreshController;
-		// The per-project home of the sparse view-definition override patches that
-		// drive the Avalonia detail view's per-field Field Visibility / Move Field commands. Lazily built from
-		// the project ConfigurationSettings folder; the detail view reads it at Compose and the gear
-		// menu writes it. The legacy WinForms DataTree path NEVER touches this -- it keeps its
-		// Inventory
-		// store untouched.
-		private ViewDefinitionOverrideStore m_viewOverrideStore;
+		private InventoryViewDefinitionSource m_inventoryViewDefinitionSource;
+		private string m_inventoryViewDefinitionProjectName;
 		// The approved baseline-adapter ids -- the ONLY routes allowed to drive hidden legacy
 		// infrastructure while Avalonia is active.
 		internal const string CommandMenuRoutingAdapterId = "command-menu-routing";
@@ -331,13 +325,16 @@ namespace SIL.FieldWorks.XWorks
 			ComposedDetail composed = null;
 			try
 			{
+				var source = GetInventoryViewDefinitionSource();
 				composed = lexEntry != null
-					? DetailComposer.Compose(lexEntry, Cache, showHidden)
+					? DetailComposer.Compose(lexEntry, Cache, showHidden,
+						source: source.GetSnapshot)
 					// Non-entry roots compose against the tool's configured layout
 					// (m_layoutName, default "Normal"); a type-selected layout (m_layoutChoiceField, e.g.
 					// Notebook RnGenericRec keyed on "Type") resolves to the right variant inside Compose.
 					: DetailComposer.Compose(obj, Cache,
 						string.IsNullOrEmpty(m_layoutName) ? "Normal" : m_layoutName, showHidden,
+						source: source.GetSnapshot,
 						layoutChoiceField: m_layoutChoiceField);
 				if (composed != null)
 				{
@@ -347,9 +344,8 @@ namespace SIL.FieldWorks.XWorks
 			}
 			catch (Exception e)
 			{
-				// The user silently gets the fixed first-slice view instead of the full entry;
-				// that degradation must be diagnosable from the log, not just a debugger.
-				Logger.WriteError("Full-entry composition failed; falling back to the first slice.", e);
+				// Host fallback is diagnosable for both lexical and unsupported record roots.
+				Logger.WriteError("Avalonia detail composition failed; using the host fallback.", e);
 			}
 
 			if (detail == null)
@@ -384,6 +380,30 @@ namespace SIL.FieldWorks.XWorks
 				OnDetailMenuRequested, OnDetailLinkRequested,
 				new FwTsStringClipboard(Cache.WritingSystemFactory),
 				GetPersistedLabelColumnWidth, PersistLabelColumnWidth);
+		}
+
+		private InventoryViewDefinitionSource GetInventoryViewDefinitionSource()
+		{
+			var projectName = Cache?.ProjectId?.Name;
+			if (string.IsNullOrEmpty(projectName))
+				throw new InvalidOperationException("The project layout inventory key is unavailable.");
+			if (m_inventoryViewDefinitionSource != null
+				&& m_inventoryViewDefinitionProjectName == projectName)
+			{
+				return m_inventoryViewDefinitionSource;
+			}
+
+			var layouts = Inventory.GetInventory("layouts", Cache.ProjectId.Name);
+			if (layouts == null)
+				throw new InvalidOperationException("The project layout inventory is unavailable.");
+			var partsXml = DetailComposer.GetMergedPartsXml();
+			if (string.IsNullOrEmpty(partsXml))
+				throw new InvalidOperationException("The merged detail parts are unavailable.");
+
+			m_inventoryViewDefinitionSource = new InventoryViewDefinitionSource(layouts, partsXml,
+				Cache.MetaDataCacheAccessor);
+			m_inventoryViewDefinitionProjectName = projectName;
+			return m_inventoryViewDefinitionSource;
 		}
 
 		/// <summary>
@@ -492,11 +512,7 @@ namespace SIL.FieldWorks.XWorks
 				// adapter menu remains the fallback if materialization fails.
 				try
 				{
-					// Retarget the per-field Field Visibility / Move Field commands
-					// to the project override layer for the Avalonia detail view; every other command (Help,
-					// inserts, writing-system menu, ...) keeps its normal mediator dispatch.
-					var interceptor = BuildOverrideCommandInterceptor(request.Field);
-					var items = XCoreMenuBridge.CreateMenuItems(window, idArray, interceptor);
+					var items = XCoreMenuBridge.CreateMenuItems(window, idArray);
 					if (items.Count > 0)
 					{
 						// A keyboard-opened menu anchors under the row it came from; a
@@ -533,154 +549,6 @@ namespace SIL.FieldWorks.XWorks
 			var right = Avalonia.VisualExtensions.PointToScreen(anchor,
 				new Avalonia.Point(anchor.Bounds.Width, anchor.Bounds.Height));
 			return new System.Drawing.Point(Math.Min(left.X, right.X), left.Y);
-		}
-
-		// The per-(class, layout) override file lives in this project's
-		// ConfigurationSettings folder. Built lazily and
-		// reused; one store per view instance, so it caches the patches it has loaded.
-		private ViewDefinitionOverrideStore ViewOverrideStore
-		{
-			get
-			{
-				if (m_viewOverrideStore == null && Cache?.ProjectId?.ProjectFolder != null)
-				{
-					m_viewOverrideStore = new ViewDefinitionOverrideStore(
-						LcmFileHelper.GetConfigSettingsDir(Cache.ProjectId.ProjectFolder));
-				}
-
-				return m_viewOverrideStore;
-			}
-		}
-
-		// The resolver the composer calls for each compiled (class, layout); null result = shipped
-		// definition. A load failure is logged, not fatal -- compose then uses the shipped
-		// definition.
-		private ViewDefinitionOverride ResolveViewOverride(string className, string layoutName)
-			=> ViewOverrideStore?.TryGet(className, layoutName,
-				(path, error) => Logger.WriteError("Failed to load view-definition override '" + path
-					+ "'; using the shipped definition.", error));
-
-		/// <summary>
-		/// Builds the interceptor that retargets the per-field Field Visibility and
-		/// Move Field commands to the project override layer for the Avalonia detail view. Returns null
-		/// (intercept nothing -- every command keeps its normal mediator dispatch) when the
-		/// clicked row
-		/// carries no (class, layout) context, e.g. the first-slice fallback rows; that keeps the legacy
-		/// behavior intact when the override layer cannot be addressed.
-		/// </summary>
-		private Func<ChoiceBase, DetailMenuItem> BuildOverrideCommandInterceptor(DetailField field)
-		{
-			if (field == null || string.IsNullOrEmpty(field.ClassName) || string.IsNullOrEmpty(field.LayoutName)
-				|| ViewOverrideStore == null)
-			{
-				return null;
-			}
-
-			var templateId = ViewDefinitionOverrideEditor.StripRuntimeSuffix(field.StableId);
-			// Locate the clicked node in the field's OWN compiled model (with any current override
-			// already applied), so visibility checkmarks and move enablement reflect the live state.
-			ViewNodeLocation location = null;
-			try
-			{
-				if (Cache.ServiceLocator.ObjectRepository.TryGetObject(field.ObjectHvo, out var fieldObj))
-				{
-					var model = DetailComposer.CompileForObject(Cache, fieldObj, field.LayoutName);
-					if (model != null)
-						location = ViewDefinitionOverrideEditor.LocateTarget(model, templateId);
-				}
-			}
-			catch (Exception e)
-			{
-				Logger.WriteError("Resolving the field's override target failed; the gear-menu field "
-					+ "commands fall back to the legacy path for this row.", e);
-				return null;
-			}
-
-			if (location == null)
-				return null; // unknown/stale target: leave commands on the legacy path rather than guess.
-
-			return choice =>
-			{
-				switch (choice.HelpId)
-				{
-					case "CmdAlwaysVisible":
-						return VisibilityItem(choice, field, templateId, location, ViewVisibility.Always);
-					case "CmdIfData":
-						return VisibilityItem(choice, field, templateId, location, ViewVisibility.IfData);
-					case "CmdNormallyHidden":
-						return VisibilityItem(choice, field, templateId, location, ViewVisibility.Never);
-					case "CmdDataTree-MoveFieldUp":
-						return MoveItem(choice, field, location, up: true);
-					case "CmdDataTree-MoveFieldDown":
-						return MoveItem(choice, field, location, up: false);
-					default:
-						return null; // not a field command: keep its normal mediator dispatch.
-				}
-			};
-		}
-
-		// A Field Visibility menu item: checked when it is the field's current visibility, executes the
-		// SetVisibility override mutation (idempotent -- re-choosing the current value is a
-		// harmless write).
-		private DetailMenuItem VisibilityItem(ChoiceBase choice, DetailField field,
-			string templateId, ViewNodeLocation location, ViewVisibility target)
-		{
-			var label = XCoreMenuBridge.StripAccelerator(choice.GetDisplayProperties().Text);
-			var isChecked = location.Visibility == target;
-			return new DetailMenuItem(label, isEnabled: true, isChecked: isChecked, children: null,
-				execute: () => ApplyFieldVisibility(field, templateId, target));
-		}
-
-		// A Move Field item: disabled at the first sibling (up) / last sibling (down) / when alone.
-		private DetailMenuItem MoveItem(ChoiceBase choice, DetailField field,
-			ViewNodeLocation location, bool up)
-		{
-			var label = XCoreMenuBridge.StripAccelerator(choice.GetDisplayProperties().Text);
-			var canMove = up ? location.CanMoveUp : location.CanMoveDown;
-			return new DetailMenuItem(label, isEnabled: canMove, isChecked: false, children: null,
-				execute: canMove ? (Action)(() => ApplyMoveField(field, location, up)) : null);
-		}
-
-		// Writes a SetVisibility op for the field's template id into the project override and recomposes.
-		private void ApplyFieldVisibility(DetailField field, string templateId, ViewVisibility target)
-		{
-			var op = new ViewOverrideOperation(ViewOverrideOperationKind.SetVisibility, templateId,
-				visibility: target);
-			MutateOverrideAndRefresh(field, op);
-		}
-
-		// Writes a ReorderChildren op on the field's PARENT (the sibling order with this field swapped one
-		// position) into the project override and recomposes. A no-op when the move is not possible.
-		private void ApplyMoveField(DetailField field, ViewNodeLocation location, bool up)
-		{
-			var moved = ViewDefinitionOverrideEditor.ComputeMovedOrder(location.SiblingOrder, location.Index, up);
-			if (moved == null || string.IsNullOrEmpty(location.ParentStableId))
-				return; // first/last/only sibling, or a root-level row with no parent to reorder.
-			var op = new ViewOverrideOperation(ViewOverrideOperationKind.ReorderChildren,
-				location.ParentStableId, childOrder: moved);
-			MutateOverrideAndRefresh(field, op);
-		}
-
-		// Loads-or-creates the (class, layout) override, folds the op in, saves it, and recomposes the
-		// Avalonia detail view so the change is visible immediately. The legacy DataTree/Inventory is untouched.
-		private void MutateOverrideAndRefresh(DetailField field, ViewOverrideOperation op)
-		{
-			try
-			{
-				var store = ViewOverrideStore;
-				if (store == null)
-					return;
-
-				var existing = store.TryGet(field.ClassName, field.LayoutName)
-					?? new ViewDefinitionOverride(field.ClassName, field.LayoutName, "detail", null, null);
-				var merged = ViewDefinitionOverrideEditor.MergeOperation(existing, op);
-				store.Save(merged);
-				RefreshAvaloniaDetail();
-			}
-			catch (Exception e)
-			{
-				Logger.WriteError("Applying the field override failed.", e);
-			}
 		}
 
 		/// <summary>

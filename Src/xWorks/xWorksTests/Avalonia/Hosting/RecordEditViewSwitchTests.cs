@@ -7,6 +7,7 @@ using System.Xml;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwAvalonia;
+using SIL.FieldWorks.Common.FwAvalonia.Detail;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Infrastructure;
@@ -143,6 +144,48 @@ namespace SIL.FieldWorks.XWorks
 				"flipping back to New must rebuild the refresh controller");
 		}
 
+		[Test]
+		public void LexiconEditTool_PersistedProjectLayoutChange_IsVisibleAfterFrameworkSwitch()
+		{
+			m_propertyTable.SetProperty("UIMode", "New", true);
+			m_propertyTable.SetPropertyPersistence("UIMode", false);
+			LoadRecordEditView();
+			DrainMediatorAndIdleQueues();
+
+			var control = m_propertyTable.GetValue<object>("currentContentControlObject", null)
+				as RecordEditView;
+			Assert.That(control, Is.Not.Null);
+			EnsureCurrentRecord(control);
+			Assert.That(GetHostedDetailModel(control).Fields,
+				Has.Some.Property("Field").EqualTo("CitationForm"),
+				"precondition: the initial project layout includes Citation Form");
+
+			var layouts = Inventory.GetInventory("layouts", Cache.ProjectId.Name);
+			var original = layouts.GetElement("layout",
+				new[] { "LexEntry", "detail", "Normal", null }).Clone();
+			var changed = new XmlDocument();
+			changed.LoadXml("<layout class='LexEntry' type='detail' name='Normal'>"
+				+ "<part ref='CitationForm' visibility='never'/></layout>");
+			try
+			{
+				layouts.PersistOverrideElement(changed.DocumentElement);
+
+				m_propertyTable.SetProperty("UIMode", "Legacy", true);
+				DrainMediatorAndIdleQueues();
+				m_propertyTable.SetProperty("UIMode", "New", true);
+				DrainMediatorAndIdleQueues();
+				EnsureCurrentRecord(control);
+
+				Assert.That(GetHostedDetailModel(control).Fields,
+					Has.None.Property("Field").EqualTo("CitationForm"),
+					"the next host composition should read the persisted inventory content");
+			}
+			finally
+			{
+				layouts.PersistOverrideElement(original);
+			}
+		}
+
 		// Tools not registered for Avalonia fall back to legacy under
 		// New mode. (domainTypeEdit = a Lists CmPossibility tool.) Analyses rides
 		// the interlinear editor's Avalonia work -- see
@@ -241,6 +284,20 @@ namespace SIL.FieldWorks.XWorks
 			var field = target.GetType().GetField(fieldName, BindingFlags.Instance | BindingFlags.NonPublic);
 			Assert.That(field, Is.Not.Null, "Missing private field: " + fieldName);
 			return field.GetValue(target);
+		}
+
+		private static DetailModel GetHostedDetailModel(RecordEditView control)
+		{
+			var entryForm = GetPrivateField<DetailHostControl>(control, "m_avaloniaEntryForm");
+			Assert.That(entryForm, Is.Not.Null, "the Avalonia detail host should be initialized");
+			var hostField = typeof(AvaloniaHostControlBase).GetField("Host",
+				BindingFlags.Instance | BindingFlags.NonPublic);
+			Assert.That(hostField, Is.Not.Null, "the host content field should exist");
+			var host = hostField.GetValue(entryForm);
+			var content = host.GetType().GetProperty("Content").GetValue(host, null);
+			var tree = content as SIL.FieldWorks.Common.FwAvalonia.Detail.DataTree;
+			Assert.That(tree, Is.Not.Null, "the Avalonia host should contain a detail tree");
+			return tree.Model;
 		}
 
 		// DrainMediatorAndIdleQueues is inherited from XWorksAppTestBase.

@@ -211,6 +211,21 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(read.Invoke(m_view, null), Is.Null, "a negative width must not be persisted");
 		}
 
+		[Test]
+		public void AvaloniaComposition_UsesProjectLayoutInventoryInitializedByLayoutCache()
+		{
+			var expected = Inventory.GetInventory("layouts", Cache.ProjectId.Name);
+			Assert.That(expected, Is.Not.Null,
+				"LayoutCache.InitializePartInventories should install the project inventory");
+
+			var source = GetField(m_view, "m_inventoryViewDefinitionSource");
+
+			Assert.That(source, Is.Not.Null,
+				"showing the record should lazily create the project view-definition source");
+			Assert.That(GetField(source, "_layouts"), Is.SameAs(expected),
+				"the host source must use the project-keyed Inventory singleton");
+		}
+
 		// ----------------------------------------------------------------------------------------
 		// Bootstrap helpers
 		// ----------------------------------------------------------------------------------------

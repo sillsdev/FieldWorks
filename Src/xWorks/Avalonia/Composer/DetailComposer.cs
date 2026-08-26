@@ -83,6 +83,12 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
+		/// Gets the immutable merged parts XML used by the shipped composition source.
+		/// </summary>
+		internal static string GetMergedPartsXml()
+			=> GetSources()?.PartsXml;
+
+		/// <summary>
 		/// The immutable shipped sources used when an effective project source has no layout.
 		/// </summary>
 		private sealed class CompilerSources
