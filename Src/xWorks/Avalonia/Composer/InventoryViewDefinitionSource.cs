@@ -24,6 +24,7 @@ namespace SIL.FieldWorks.XWorks
 		/// Creates a source backed by the current effective layouts and immutable merged parts
 		/// XML.
 		/// </summary>
+		/// <exception cref="ArgumentNullException">A constructor argument is null.</exception>
 		public InventoryViewDefinitionSource(Inventory layouts, string partsXml,
 			IFwMetaDataCache metadataCache)
 		{
