@@ -250,17 +250,12 @@
 		<ItemGroup>
 			<SILNugetFiles Include="$(PackagesDir)/$([System.String]::new('%(SILNugetPackages.Identity)').ToLower())/%(SILNugetPackages.Version)/%(SILNugetPackages.Path)" />
 		</ItemGroup>
-		<!-- TODO (Hasso) 2011.11: copy on Condition="'$(UseLocalLibraries)'!='Y'" -->
 		<Message Text="Copying artifacts from Palaso, Chorus, LCM, and related packages to Downloads." />
 		<Copy
 			SourceFiles="@(SILNugetFiles)"
 			DestinationFolder="$(DownloadsDir)/%(RecursiveDir)"
 			SkipUnchangedFiles="true"
 			OverwriteReadOnlyFiles="true"
-		/>
-		<Message
-			Text="(Palaso, Chorus, and LCM artifacts will be copied to Output from $(PalasoArtifactsDir), $(ChorusArtifactsDir), and $(LcmArtifactsDir), respectively, as  specified in LibraryDevelopment.targets)"
-			Condition="'$(UseLocalLibraries)'=='Y'"
 		/>
 		<!-- ExCss.dll is now provided by the SIL.ExCSS NuGet package (no TeamCity download needed). -->
 		<!-- GeckofxHtmlToPdf binaries downloaded from GitHub release (replaces decommissioned TeamCity server). -->

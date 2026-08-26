@@ -64,7 +64,6 @@ Also hosts `BuildWindowsXslAssemblies` (invoked by `Directory.Build.targets` for
 | `Build/FwBuildTasks.targets` | UsingTask declarations for custom MSBuild tasks (Make, RegFree, etc.) | InstallerBuild.proj, NativeBuild.csproj |
 | `Build/RegFree.targets` | Registration-free COM manifest generation | InstallerBuild.proj, NativeBuild.csproj |
 | `Build/Localize.targets` | Crowdin localization integration | InstallerBuild.proj, NativeBuild.csproj |
-| `Build/LocalLibrary.targets` | Local Palaso/LCM/Chorus development overrides | InstallerBuild.proj |
 | `Build/SilVersions.props` | SIL ecosystem version numbers (shared with Directory.Packages.props) | PackageRestore.targets |
 | `Build/Installer.Wix3.targets` | WiX 3 installer entry point | InstallerBuild.proj |
 | `Build/Installer.targets` | WiX 6 installer pipeline | InstallerBuild.proj |
