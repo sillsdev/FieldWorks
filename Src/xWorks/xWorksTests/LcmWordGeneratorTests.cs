@@ -1598,6 +1598,109 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
+		public void GetGuidewordStyleForConfiguredDictionary_LexemeForm()
+		{
+			var wsOpts = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] { "en" });
+			var lexemeFormWsOpts = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] { "fr" });
+			var lexemeFormNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexemeFormOA",
+				DictionaryNodeOptions = lexemeFormWsOpts,
+				Style = "Dictionary-LexemeForm",
+				Label = WordStylesGenerator.LexemeForm
+			};
+			var glossNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Gloss",
+				DictionaryNodeOptions = wsOpts,
+				Style = DictionaryGlossStyleName
+			};
+			var sensesNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Senses",
+				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetSenseNodeOptions(),
+				Children = new List<ConfigurableDictionaryNode> { glossNode },
+				Style = DictionaryNormal
+			};
+			// Lexeme Form is selected as the field to draw guidewords from
+			// when it is the first enabled child of the main entry node
+			// from the list {Headword, Lexeme Form, Citation Form}.
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry",
+				Children = new List<ConfigurableDictionaryNode> { lexemeFormNode, sensesNode },
+				Style = MainEntryParagraphStyleName,
+				Label = MainEntryParagraphDisplayName
+			};
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
+			var entry = ConfiguredXHTMLGeneratorTests.CreateInterestingLexEntry(Cache);
+			ConfiguredXHTMLGeneratorTests.AddLexemeFormToEntry(entry, "LexemeFormTest", Cache);
+			var result = ConfiguredLcmGenerator.GenerateContentForEntry(entry, mainEntryNode, null, DefaultSettings, 0) as DocFragment;
+
+			var configuration = new DictionaryConfigurationModel
+			{
+				Parts = new List<ConfigurableDictionaryNode> { mainEntryNode }
+			};
+
+			//SUT
+			List<string> firstLexemeFormStyles = LcmWordGenerator.GetFirstGuidewordStylesList(result, configuration);
+
+			Assert.That(firstLexemeFormStyles.Count == 1, Is.True);
+			Assert.That(firstLexemeFormStyles[0] == "Lexeme Form[lang=fr]", Is.True);
+		}
+
+		[Test]
+		public void GetGuidewordStyleForConfiguredDictionary_CitationForm()
+		{
+			var wsOpts = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] { "en" });
+			var citationFormWsOpts = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] { "fr" });
+			var citationFormNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "CitationForm",
+				DictionaryNodeOptions = citationFormWsOpts,
+				Style = "Dictionary-CitationForm",
+				Label = WordStylesGenerator.CitationForm
+			};
+			var glossNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Gloss",
+				DictionaryNodeOptions = wsOpts,
+				Style = DictionaryGlossStyleName
+			};
+			var sensesNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Senses",
+				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetSenseNodeOptions(),
+				Children = new List<ConfigurableDictionaryNode> { glossNode },
+				Style = DictionaryNormal
+			};
+			// Citation Form is selected as the field to draw guidewords from
+			// when it is the first enabled child of the main entry node
+			// from the list {Headword, Lexeme Form, Citation Form}.
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry",
+				Children = new List<ConfigurableDictionaryNode> { citationFormNode, sensesNode },
+				Style = MainEntryParagraphStyleName,
+				Label = MainEntryParagraphDisplayName
+			};
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
+			var entry = ConfiguredXHTMLGeneratorTests.CreateInterestingLexEntry(Cache);
+			var result = ConfiguredLcmGenerator.GenerateContentForEntry(entry, mainEntryNode, null, DefaultSettings, 0) as DocFragment;
+
+			var configuration = new DictionaryConfigurationModel
+			{
+				Parts = new List<ConfigurableDictionaryNode> { mainEntryNode }
+			};
+
+			//SUT
+			List<string> firstCitationFormStyles = LcmWordGenerator.GetFirstGuidewordStylesList(result, configuration);
+
+			Assert.That(firstCitationFormStyles.Count == 1, Is.True);
+			Assert.That(firstCitationFormStyles[0] == "Citation Form[lang=fr]", Is.True);
+		}
+
+		[Test]
 		public void GetGuidewordStyleForClassifiedDictionary()
 		{
 			var classifiedClerk = CreateClassifiedClerk();
