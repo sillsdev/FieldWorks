@@ -789,8 +789,16 @@ namespace SIL.FieldWorks.XWorks
 						break;
 					case CellarPropertyType.MultiUnicode:
 					case CellarPropertyType.MultiString:
-						rawEditor = EditorKindMap.MultiStringEditor;
-						wsSpec = WritingSystemServices.GetMagicWsNameFromId(_mdc.GetFieldWs(flid));
+						var fieldWs = _mdc.GetFieldWs(flid);
+						// A multi-alternative field with a singular (or unset) selector (LIFT
+						// import mints these) shows one fixed alternative, so it composes a
+						// plain string row without the Writing Systems menu.
+						rawEditor = fieldWs == WritingSystemServices.kwsAnal
+							|| fieldWs == WritingSystemServices.kwsVern
+							|| fieldWs == 0
+							? EditorKindMap.StringEditor
+							: EditorKindMap.MultiStringEditor;
+						wsSpec = WritingSystemServices.GetMagicWsNameFromId(fieldWs);
 						break;
 					default:
 						// Resolved by CellarPropertyType in WalkOtherField, like autoCustom.

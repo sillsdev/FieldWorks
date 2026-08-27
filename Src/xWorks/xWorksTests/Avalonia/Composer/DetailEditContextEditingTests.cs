@@ -1857,6 +1857,7 @@ namespace SIL.FieldWorks.XWorks
 		private IMoMorphType m_secondListItem;
 		private bool m_fieldsCreated;
 		private int m_flidEntryMulti;
+		private int m_flidEntryMultiSingleWs;
 		private int m_flidEntrySingle;
 		private int m_flidEntryDate;
 		private int m_flidEntryListRef;
@@ -1948,6 +1949,8 @@ namespace SIL.FieldWorks.XWorks
 					TsStringUtils.MakeString("alto-bajo", Cache.DefaultVernWs));
 				sda.SetString(m_entry.Hvo, m_flidEntrySingle,
 					TsStringUtils.MakeString("from Smith", Cache.DefaultAnalWs));
+				sda.SetMultiStringAlt(m_entry.Hvo, m_flidEntryMultiSingleWs, Cache.DefaultAnalWs,
+					TsStringUtils.MakeString("imported note", Cache.DefaultAnalWs));
 				m_genDate = new GenDate(GenDate.PrecisionType.Approximate, 3, 14, 2020, true);
 				((ISilDataAccessManaged)sda).SetGenDate(m_entry.Hvo, m_flidEntryDate, m_genDate);
 				m_listItem = Cache.LangProject.LexDbOA.MorphTypesOA.ReallyReallyAllPossibilities
@@ -2053,6 +2056,10 @@ namespace SIL.FieldWorks.XWorks
 				CellarPropertyType.String, WritingSystemServices.kwsAnal);
 			m_flidSenseSingle = MakeCustomField("Sense Source", LexSenseTags.kClassId,
 				CellarPropertyType.String, WritingSystemServices.kwsAnal);
+			// A multi-alternative type paired with a SINGULAR selector: the current dialog
+			// cannot mint this combination, but LIFT import and older projects can.
+			m_flidEntryMultiSingleWs = MakeCustomField("Import Note", LexEntryTags.kClassId,
+				CellarPropertyType.MultiString, WritingSystemServices.kwsAnal);
 		}
 
 		private ICmPossibility CreateExtendedNoteType(string name)
@@ -2140,6 +2147,24 @@ namespace SIL.FieldWorks.XWorks
 			var senseFieldIndex = fields.ToList().IndexOf(senseField);
 			Assert.That(senseFieldIndex, Is.GreaterThan(glossIndex),
 				"the sense placeholder sits after the authored sense fields");
+		}
+
+		[Test]
+		public void Compose_CustomMultiStringWithSingularWsSelector_ComposesAPlainStringRow()
+		{
+			var fields = Compose();
+
+			var singleWs = fields.FirstOrDefault(f => f.Label == "Import Note");
+			Assert.That(singleWs, Is.Not.Null, "the singular-selector custom field composes a row");
+			Assert.That(singleWs.Kind, Is.EqualTo(DetailFieldKind.Text));
+			Assert.That(singleWs.IsMultiStringRow, Is.False,
+				"a singular WsSelector composes a plain string row, like the legacy StringSlice, "
+				+ "so its menus must not gain the mnuDataTree-MultiStringSlice group");
+			Assert.That(singleWs.Values.Single().Value, Is.EqualTo("imported note"));
+
+			var multi = fields.First(f => f.Label == "Tone Pattern");
+			Assert.That(multi.IsMultiStringRow, Is.True,
+				"a plural WsSelector keeps the multistring row and its Writing Systems menu");
 		}
 
 		[Test]
