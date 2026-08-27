@@ -186,9 +186,6 @@ namespace SIL.FieldWorks.XWorks
 				Assert.That(part.Attributes["visibility"].Value, Is.EqualTo(expectedChange));
 				Assert.That(afterModel.Fields, Has.Some.Property("Field").EqualTo("CitationForm"));
 			}
-
-			var configurationDirectory = Path.GetDirectoryName(m_layoutOverridePath);
-			Assert.That(Directory.GetFiles(configurationDirectory, "*.viewoverride.json"), Is.Empty);
 		}
 
 		[Test]

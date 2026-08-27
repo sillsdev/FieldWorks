@@ -1604,21 +1604,19 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		public int ObjectHvo { get; }
 
 		/// <summary>
-		/// The class of the compiled view definition this row was projected from (advanced-entry-view):
-		/// the entry's own fields carry "LexEntry"; a row from a descended object (a sense, an
-		/// allomorph)
-		/// carries that object's layout class. Paired with <see cref="LayoutName"/> it keys the per-project
-		/// <c>ViewDefinitionOverride</c> store so the per-field gear-menu commands (Field
-		/// Visibility / Move
-		/// Field) target the right layout. Set by the composer at compose time (null on rows built outside
-		/// the full-entry composer, e.g. the first-slice fallback).
+		/// The class of the compiled view definition this row was projected from. The entry's own
+		/// fields carry "LexEntry"; a row from a descended object carries that object's layout
+		/// class.
+		/// Paired with <see cref="LayoutName"/>, it identifies the exact legacy layout command
+		/// target.
+		/// Set by the composer at compose time; null on rows built outside the full-entry
+		/// composer.
 		/// </summary>
 		public string ClassName { get; set; }
 
 		/// <summary>
-		/// The layout name of the compiled view definition this row was projected from (e.g.
-		/// "Normal").
-		/// See <see cref="ClassName"/>.
+		/// The layout name of the compiled view definition this row was projected from, such as
+		/// "Normal". See <see cref="ClassName"/>.
 		/// </summary>
 		public string LayoutName { get; set; }
 
