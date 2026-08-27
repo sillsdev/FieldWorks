@@ -36,6 +36,8 @@ namespace SIL.FieldWorks.XWorks
 		internal const string WritingSystemStyleName = "Writing System Abbreviation";
 		internal const string WritingSystemDisplayName = "Writing System Abbreviation";
 		internal const string HeadwordDisplayName = "Headword";
+		internal const string LexemeForm = "Lexeme Form";
+		internal const string CitationForm = "Citation Form";
 		internal const string ReversalFormDisplayName = "Reversal Form";
 		internal const string StyleSeparator = "-";
 		internal const string LangTagPre = "[lang=";

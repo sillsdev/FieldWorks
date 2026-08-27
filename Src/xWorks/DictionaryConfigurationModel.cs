@@ -128,6 +128,21 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
+		/// Checks which folder this will be saved in to determine if it is a
+		/// classified dictionary
+		/// </summary>
+		internal bool IsClassified
+		{
+			get
+			{
+				if (string.IsNullOrEmpty(FilePath))
+					return false; // easiest way to avoid a crash; assume something that may not be true!
+				var directory = Path.GetFileName(Path.GetDirectoryName(FilePath));
+				return DictionaryConfigurationListener.ClassifiedDictConfigDirName.Equals(directory);
+			}
+		}
+
+		/// <summary>
 		/// Checks if this model is Hybrid type. Not root and has Subentries
 		/// </summary>
 		internal bool IsHybrid
