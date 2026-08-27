@@ -278,6 +278,36 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
+		public void UploadToWebonaryCompletesTheUploadWhenRequiredInfoIsMissing()
+		{
+			// Covers the settings whose absence can be probed repeatedly. Reading an
+			// unset SelectedConfiguration mutates shared project configuration.
+			var missingSettings = new Dictionary<string, Action<UploadToWebonaryModel>>
+			{
+				{ "SiteName", m => m.SiteName = null },
+				{ "UserName", m => m.UserName = null },
+				{ "Password", m => m.Password = null },
+				{ "SelectedPublication", m => m.SelectedPublication = null }
+			};
+
+			foreach (var missingSetting in missingSettings)
+			{
+				using (var controller = SetUpController())
+				{
+					var view = SetUpView();
+					missingSetting.Value(view.Model);
+					//SUT
+					controller.UploadToWebonary(view.Model, view);
+
+					Assert.That(view.StatusConditions, Does.Contain(WebonaryStatusCondition.Error),
+						"Missing " + missingSetting.Key + " should be reported as an error.");
+					Assert.That(view.UploadCompletedCount, Is.EqualTo(1),
+						"Missing " + missingSetting.Key + " left the upload uncompleted, so the dialog would still show it running.");
+				}
+			}
+		}
+
+		[Test]
 		public void UploadToWebonaryCanCompleteWithoutError()
 		{
 			using (var controller = SetUpController())
@@ -456,8 +486,11 @@ namespace SIL.FieldWorks.XWorks
 				StatusConditions.Add(condition);
 			}
 
+			public int UploadCompletedCount;
+
 			public void UploadCompleted()
 			{
+				UploadCompletedCount++;
 			}
 
 			public void PopulatePublicationsList(IEnumerable<string> publications)

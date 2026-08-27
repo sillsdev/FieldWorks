@@ -117,12 +117,14 @@ namespace SIL.FieldWorks.XWorks
 			resources.ApplyResources(this.webonaryPasswordTextbox, "webonaryPasswordTextbox");
 			this.webonaryPasswordTextbox.Name = "webonaryPasswordTextbox";
 			this.toolTip.SetToolTip(this.webonaryPasswordTextbox, resources.GetString("webonaryPasswordTextbox.ToolTip"));
+			this.webonaryPasswordTextbox.TextChanged += new System.EventHandler(this.credentialsBox_TextChanged);
 			// 
 			// webonaryUsernameTextbox
 			// 
 			resources.ApplyResources(this.webonaryUsernameTextbox, "webonaryUsernameTextbox");
 			this.webonaryUsernameTextbox.Name = "webonaryUsernameTextbox";
 			this.toolTip.SetToolTip(this.webonaryUsernameTextbox, resources.GetString("webonaryUsernameTextbox.ToolTip"));
+			this.webonaryUsernameTextbox.TextChanged += new System.EventHandler(this.credentialsBox_TextChanged);
 			// 
 			// webonarySiteNameTextbox
 			// 

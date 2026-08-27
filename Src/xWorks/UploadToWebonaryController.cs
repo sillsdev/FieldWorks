@@ -417,38 +417,53 @@ namespace SIL.FieldWorks.XWorks
 			//TODO: Copy the user selected other files into the temp directory and normalize filenames to NFC
 		}
 
-		public void UploadToWebonary(UploadToWebonaryModel model, IUploadToWebonaryView view)
+		/// <summary>
+		/// Reports the first absent upload setting to the view, and answers whether
+		/// every setting an upload needs is present.
+		/// </summary>
+		private static bool HasRequiredUploadSettings(UploadToWebonaryModel model, IUploadToWebonaryView view)
 		{
-			TrackingHelper.TrackExport("lexicon", "webonary", ImportExportStep.Launched);
-			view.UpdateStatus(xWorksStrings.ksUploadingToWebonary, WebonaryStatusCondition.None);
-
 			if (string.IsNullOrEmpty(model.SiteName))
 			{
 				view.UpdateStatus(xWorksStrings.ksErrorNoSiteName, WebonaryStatusCondition.Error);
-				return;
+				return false;
 			}
 
-			if(string.IsNullOrEmpty(model.UserName))
+			if (string.IsNullOrEmpty(model.UserName))
 			{
 				view.UpdateStatus(xWorksStrings.ksErrorNoUsername, WebonaryStatusCondition.Error);
-				return;
+				return false;
 			}
 
 			if (string.IsNullOrEmpty(model.Password))
 			{
 				view.UpdateStatus(xWorksStrings.ksErrorNoPassword, WebonaryStatusCondition.Error);
-				return;
+				return false;
 			}
 
-			if(string.IsNullOrEmpty(model.SelectedPublication))
+			if (string.IsNullOrEmpty(model.SelectedPublication))
 			{
 				view.UpdateStatus(xWorksStrings.ksErrorNoPublication, WebonaryStatusCondition.Error);
-				return;
+				return false;
 			}
 
-			if(string.IsNullOrEmpty(model.SelectedConfiguration))
+			if (string.IsNullOrEmpty(model.SelectedConfiguration))
 			{
 				view.UpdateStatus(xWorksStrings.ksErrorNoConfiguration, WebonaryStatusCondition.Error);
+				return false;
+			}
+
+			return true;
+		}
+
+		public void UploadToWebonary(UploadToWebonaryModel model, IUploadToWebonaryView view)
+		{
+			TrackingHelper.TrackExport("lexicon", "webonary", ImportExportStep.Launched);
+			view.UpdateStatus(xWorksStrings.ksUploadingToWebonary, WebonaryStatusCondition.None);
+
+			if (!HasRequiredUploadSettings(model, view))
+			{
+				view.UploadCompleted();
 				return;
 			}
 

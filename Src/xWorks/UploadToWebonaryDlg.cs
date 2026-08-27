@@ -9,10 +9,8 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using Gecko.WebIDL;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.IO;
-using SIL.LCModel.Core.Phonology;
 using SIL.Windows.Forms;
 using SIL.PlatformUtilities;
 using PropertyTable = XCore.PropertyTable;
@@ -102,6 +100,23 @@ namespace SIL.FieldWorks.XWorks
 		{
 			// ReSharper disable once LocalizableElement -- this is the *world-wide* web, not a LAN.
 			webonarySiteURLLabel.Text = $"https://www.{UploadToWebonaryController.Server}/{webonarySiteNameTextbox.Text}";
+			UpdateSubmitButtonEnabledState();
+		}
+
+		private void credentialsBox_TextChanged(object sender, EventArgs e)
+		{
+			UpdateSubmitButtonEnabledState();
+		}
+
+		/// <summary>
+		/// Enables Submit only while a site name, a user name, and a password are all
+		/// present.
+		/// </summary>
+		private void UpdateSubmitButtonEnabledState()
+		{
+			publishButton.Enabled = !string.IsNullOrWhiteSpace(webonarySiteNameTextbox.Text)
+				&& !string.IsNullOrWhiteSpace(webonaryUsernameTextbox.Text)
+				&& !string.IsNullOrWhiteSpace(webonaryPasswordTextbox.Text);
 		}
 
 		private void UpdateEntriesToBePublishedLabel()
@@ -201,6 +216,8 @@ namespace SIL.FieldWorks.XWorks
 
 		public void UploadCompleted()
 		{
+			// Let pending log writes finish so the report covers the whole upload.
+			Model.Log.WaitForLogEntries();
 			m_progress.Value = m_progress.Maximum;
 			m_progress.Style = ProgressBarStyle.Continuous;
 			reportButton.Enabled = true;
@@ -246,6 +263,7 @@ namespace SIL.FieldWorks.XWorks
 				UpdateEntriesToBePublishedLabel();
 				reportButton.Enabled = Model.CanViewReport;
 			}
+			UpdateSubmitButtonEnabledState();
 		}
 
 		private void SaveToModel()
