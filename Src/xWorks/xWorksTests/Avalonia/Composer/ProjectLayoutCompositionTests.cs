@@ -17,7 +17,7 @@ using XCore;
 namespace SIL.FieldWorks.XWorks
 {
 	[TestFixture]
-	public class DetailComposerOverrideTests : MemoryOnlyBackendProviderTestBase
+	public class ProjectLayoutCompositionTests : MemoryOnlyBackendProviderTestBase
 	{
 		private const string LayoutXml = @"
 <LayoutInventory>
@@ -218,7 +218,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var parts = new Inventory("*Parts.xml", "/PartInventory/bin/*",
 				new Dictionary<string, string[]> { ["part"] = new[] { "id" } },
-				"DetailComposerOverrideTests", "unused");
+				"ProjectLayoutCompositionTests", "unused");
 			parts.LoadElements(PartsXml, 0);
 			return new InventoryViewDefinitionSource(layouts, parts.Root.OuterXml,
 				Cache.MetaDataCacheAccessor);
@@ -230,7 +230,7 @@ namespace SIL.FieldWorks.XWorks
 				new Dictionary<string, string[]>
 				{
 					["layout"] = new[] { "class", "type", "name", "choiceGuid" }
-				}, "DetailComposerOverrideTests", projectPath);
+				}, "ProjectLayoutCompositionTests", projectPath);
 			layouts.LoadElements(LayoutXml, 0);
 			return layouts;
 		}
