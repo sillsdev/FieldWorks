@@ -269,9 +269,6 @@ namespace SIL.FieldWorks.XWorks
 			}
 
 			private readonly bool _showHidden;
-			// Descended objects use the same source. Model context stamps fields and restores
-			// after a
-			// nested walk.
 			private readonly ViewDefinitionSourceResolver _source;
 			private readonly Stack<(string ClassName, string LayoutName)> _modelContext
 				= new Stack<(string, string)>();
@@ -3135,8 +3132,7 @@ namespace SIL.FieldWorks.XWorks
 			if (source != null)
 			{
 				var projectSnapshot = source(mdc.GetClassName(classId), layoutName, choiceGuid);
-				if (projectSnapshot != null)
-					return Compiler.Compile(projectSnapshot);
+				return projectSnapshot == null ? null : Compiler.Compile(projectSnapshot);
 			}
 
 			var sources = GetSources();

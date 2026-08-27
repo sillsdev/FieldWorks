@@ -49,6 +49,14 @@ The adapter must clone XML to text before compilation. Compiler code must never 
 
 Remove `DetailComposer.CompilerSources.CompiledModels`, whose key omits project identity and XML content. Continue using `ViewDefinitionCompiler`, whose key includes a SHA-256 fingerprint of layout XML, parts XML, class, type, and base-class map. When a legacy command calls `Inventory.PersistOverrideElement`, the next snapshot has different XML and therefore a different compiler key without explicit invalidation.
 
+**Implementation correction:** The Task 2 instruction to preserve `SnapshotCompileCount` was
+not implemented. Arbitrary source resolvers may return reused snapshot instances, so an
+incrementing static count would not describe compiler work or source freshness reliably. The
+observable replacement contract is
+`CompileForObject_InventoryContentFingerprintReusesAndRefreshesCompiledModel`: identical
+snapshot content returns the same compiled model instance, while changed content returns a
+different model with the changed behavior.
+
 ### Parts rule
 
 This change makes layout customization converge; it does not redesign part loading. Keep the existing immutable merged `*Parts.xml` snapshot in `DetailComposer`. Project customization currently persists effective `<layout>` elements, and `LayoutCache.InitializePartInventories` does not load project-level part overrides. A separate parts-inventory unification would be unrelated scope.

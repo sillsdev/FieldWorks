@@ -194,11 +194,19 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
-		public void CompileForObject_NullSourceResultFallsBackToShippedLayout()
+		public void CompileForObject_ProjectSourceMissingLayoutReturnsNull()
 		{
 			ViewDefinitionSourceResolver source = (className, layoutName, choiceGuid) => null;
 
 			var compiled = DetailComposer.CompileForObject(Cache, m_entry, "Normal", source);
+
+			Assert.That(compiled, Is.Null);
+		}
+
+		[Test]
+		public void CompileForObject_NoProjectSourceFallsBackToShippedLayout()
+		{
+			var compiled = DetailComposer.CompileForObject(Cache, m_entry, "Normal");
 
 			Assert.That(compiled, Is.Not.Null);
 			Assert.That(compiled.Roots, Has.Count.GreaterThan(2));

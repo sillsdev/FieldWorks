@@ -265,14 +265,17 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void ChoosePersistentTargetSliceIndex_UsesCallerPathToDisambiguateDuplicateFields()
 		{
-			var candidates = new List<(int Hvo, string FieldName, string ClassName, string LayoutName, string CallerPath)>
+			var candidates = new List<RecordEditView.PersistentCommandTargetIdentity>
 			{
-				(m_entry.Hvo, "CitationForm", "LexEntry", "Normal", "part[0]"),
-				(m_entry.Hvo, "CitationForm", "LexEntry", "Normal", "part[3]")
+				new RecordEditView.PersistentCommandTargetIdentity(
+					m_entry.Hvo, "CitationForm", "LexEntry", "Normal", "part[0]"),
+				new RecordEditView.PersistentCommandTargetIdentity(
+					m_entry.Hvo, "CitationForm", "LexEntry", "Normal", "part[3]")
 			};
-
-			var index = RecordEditView.ChoosePersistentTargetSliceIndex(candidates,
+			var target = new RecordEditView.PersistentCommandTargetIdentity(
 				m_entry.Hvo, "CitationForm", "LexEntry", "Normal", "part[3]");
+
+			var index = RecordEditView.ChoosePersistentTargetSliceIndex(candidates, target);
 
 			Assert.That(index, Is.EqualTo(1),
 				"the imported caller path should select the same layout part as the legacy slice key");
@@ -281,14 +284,15 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void ChoosePersistentTargetSliceIndex_AmbiguousExactPath_FailsClosed()
 		{
-			var candidates = new List<(int Hvo, string FieldName, string ClassName, string LayoutName, string CallerPath)>
+			var target = new RecordEditView.PersistentCommandTargetIdentity(
+				m_entry.Hvo, "CitationForm", "LexEntry", "Normal", "part[0]");
+			var candidates = new List<RecordEditView.PersistentCommandTargetIdentity>
 			{
-				(m_entry.Hvo, "CitationForm", "LexEntry", "Normal", "part[0]"),
-				(m_entry.Hvo, "CitationForm", "LexEntry", "Normal", "part[0]")
+				target,
+				target
 			};
 
-			var index = RecordEditView.ChoosePersistentTargetSliceIndex(candidates,
-				m_entry.Hvo, "CitationForm", "LexEntry", "Normal", "part[0]");
+			var index = RecordEditView.ChoosePersistentTargetSliceIndex(candidates, target);
 
 			Assert.That(index, Is.EqualTo(-1),
 				"persistent layout commands require one exact slice and must reject ambiguous matches");

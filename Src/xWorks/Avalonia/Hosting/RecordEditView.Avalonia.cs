@@ -41,6 +41,54 @@ namespace SIL.FieldWorks.XWorks
 	/// </summary>
 	public partial class RecordEditView
 	{
+		internal readonly struct PersistentCommandTargetIdentity
+			: IEquatable<PersistentCommandTargetIdentity>
+		{
+			internal PersistentCommandTargetIdentity(int hvo, string fieldName,
+				string className, string layoutName, string callerPath)
+			{
+				Hvo = hvo;
+				FieldName = fieldName;
+				ClassName = className;
+				LayoutName = layoutName;
+				CallerPath = callerPath;
+			}
+
+			internal int Hvo { get; }
+
+			internal string FieldName { get; }
+
+			internal string ClassName { get; }
+
+			internal string LayoutName { get; }
+
+			internal string CallerPath { get; }
+
+			public bool Equals(PersistentCommandTargetIdentity other)
+			{
+				return Hvo == other.Hvo
+					&& string.Equals(FieldName, other.FieldName, StringComparison.Ordinal)
+					&& string.Equals(ClassName, other.ClassName, StringComparison.Ordinal)
+					&& string.Equals(LayoutName, other.LayoutName, StringComparison.Ordinal)
+					&& string.Equals(CallerPath, other.CallerPath, StringComparison.Ordinal);
+			}
+
+			public override bool Equals(object obj)
+				=> obj is PersistentCommandTargetIdentity other && Equals(other);
+
+			public override int GetHashCode()
+			{
+				unchecked
+				{
+					var hash = Hvo;
+					hash = (hash * 397) ^ (FieldName?.GetHashCode() ?? 0);
+					hash = (hash * 397) ^ (ClassName?.GetHashCode() ?? 0);
+					hash = (hash * 397) ^ (LayoutName?.GetHashCode() ?? 0);
+					return (hash * 397) ^ (CallerPath?.GetHashCode() ?? 0);
+				}
+			}
+		}
+
 		private UIFramework m_activeUIFramework;
 		private readonly EditControlFactory m_lexicalEditControlFactory;
 		private readonly UIFrameworkSelectionService m_frameworkSelectionService = new UIFrameworkSelectionService();
@@ -726,8 +774,9 @@ namespace SIL.FieldWorks.XWorks
 					candidates.Add(slice);
 			}
 			var identities = candidates.Select(slice => PersistentSliceIdentity(slice)).ToList();
-			var index = ChoosePersistentTargetSliceIndex(identities, field.ObjectHvo, field.Field,
+			var target = new PersistentCommandTargetIdentity(field.ObjectHvo, field.Field,
 				field.ClassName, field.LayoutName, field.SourceCallerPath);
+			var index = ChoosePersistentTargetSliceIndex(identities, target);
 			if (index < 0)
 			{
 				if (clearOnFailure)
@@ -744,23 +793,16 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		internal static int ChoosePersistentTargetSliceIndex(
-			IReadOnlyList<(int Hvo, string FieldName, string ClassName, string LayoutName, string CallerPath)> candidates,
-			int targetHvo, string fieldName, string className, string layoutName, string callerPath)
+			IReadOnlyList<PersistentCommandTargetIdentity> candidates,
+			PersistentCommandTargetIdentity target)
 		{
-			if (candidates == null || string.IsNullOrEmpty(callerPath))
+			if (candidates == null || string.IsNullOrEmpty(target.CallerPath))
 				return -1;
 			var match = -1;
 			for (var i = 0; i < candidates.Count; i++)
 			{
-				var candidate = candidates[i];
-				if (candidate.Hvo != targetHvo
-					|| !string.Equals(candidate.FieldName, fieldName, StringComparison.Ordinal)
-					|| !string.Equals(candidate.ClassName, className, StringComparison.Ordinal)
-					|| !string.Equals(candidate.LayoutName, layoutName, StringComparison.Ordinal)
-					|| !string.Equals(candidate.CallerPath, callerPath, StringComparison.Ordinal))
-				{
+				if (!candidates[i].Equals(target))
 					continue;
-				}
 				if (match >= 0)
 					return -1;
 				match = i;
@@ -768,11 +810,10 @@ namespace SIL.FieldWorks.XWorks
 			return match;
 		}
 
-		private (int Hvo, string FieldName, string ClassName, string LayoutName, string CallerPath)
-			PersistentSliceIdentity(Slice slice)
+		private PersistentCommandTargetIdentity PersistentSliceIdentity(Slice slice)
 		{
 			if (slice?.Key == null)
-				return (0, null, null, null, null);
+				return default;
 			XmlNode layout = null;
 			XmlNode part = null;
 			foreach (var keyItem in slice.Key)
@@ -790,7 +831,7 @@ namespace SIL.FieldWorks.XWorks
 					part = node;
 				}
 			}
-			return (slice.Object?.Hvo ?? 0, SliceFieldName(slice),
+			return new PersistentCommandTargetIdentity(slice.Object?.Hvo ?? 0, SliceFieldName(slice),
 				layout?.Attributes?["class"]?.Value, layout?.Attributes?["name"]?.Value,
 				LegacyLayoutCallerPath.Get(part));
 		}

@@ -154,6 +154,10 @@ namespace SIL.FieldWorks.XWorks
 		public void LegacyAlwaysVisible_ReloadsIntoReconstructedAvaloniaHost()
 		{
 			ResetToNoProjectOverride();
+			var originalView = m_view;
+			var originalHost = GetField(m_view, "m_avaloniaEntryForm");
+			var originalSource = GetField(m_view, "m_inventoryViewDefinitionSource");
+			var originalModel = GetHostedDetailModel();
 			var field = GetHostedDetailModel().Fields.Single(item => item.Field == "CitationForm");
 			ExecuteNative(field, "Normally hidden, unless non-empty");
 			m_layouts.Reload();
@@ -167,7 +171,12 @@ namespace SIL.FieldWorks.XWorks
 
 			m_layouts.Reload();
 			AssertCitationVisibility("always");
-			RefreshAvaloniaDetail();
+			ReconstructAvaloniaHost();
+			Assert.That(m_view, Is.Not.SameAs(originalView));
+			Assert.That(GetField(m_view, "m_avaloniaEntryForm"), Is.Not.SameAs(originalHost));
+			Assert.That(GetField(m_view, "m_inventoryViewDefinitionSource"),
+				Is.Not.SameAs(originalSource));
+			Assert.That(GetHostedDetailModel(), Is.Not.SameAs(originalModel));
 			Assert.That(GetHostedDetailModel().Fields,
 				Has.Some.Property("Field").EqualTo("CitationForm"));
 		}
@@ -596,6 +605,29 @@ namespace SIL.FieldWorks.XWorks
 			m_propertyTable.SetPropertyPersistence("currentContentControlParameters", false);
 			m_propertyTable.SetProperty("currentContentControl", toolValue, true);
 			m_propertyTable.SetPropertyPersistence("currentContentControl", false);
+		}
+
+		private void ReconstructAvaloniaHost()
+		{
+			var originalView = m_view;
+			var windowConfiguration = m_propertyTable.GetValue<XmlNode>("WindowConfiguration");
+			var browseControl = windowConfiguration.SelectSingleNode(
+				"//tool[@value='lexiconBrowse']/control");
+			Assert.That(browseControl, Is.Not.Null);
+			m_propertyTable.SetProperty("currentContentControlParameters", browseControl, true);
+			m_propertyTable.SetPropertyPersistence("currentContentControlParameters", false);
+			m_propertyTable.SetProperty("currentContentControl", "lexiconBrowse", true);
+			m_propertyTable.SetPropertyPersistence("currentContentControl", false);
+			DrainMediatorAndIdleQueues();
+			Assert.That(originalView.IsDisposed, Is.True);
+
+			LoadRecordEditView("lexiconEdit");
+			DrainMediatorAndIdleQueues();
+			m_view = m_propertyTable.GetValue<object>("currentContentControlObject", null)
+				as RecordEditView;
+			Assert.That(m_view, Is.Not.Null);
+			EnsureCurrentRecord();
+			Assert.That(GetField(m_view, "m_activeUIFramework"), Is.EqualTo(UIFramework.Avalonia));
 		}
 
 		private void EnsureCurrentRecord()
