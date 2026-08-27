@@ -522,6 +522,80 @@ namespace SIL.FieldWorks.XWorks.Search
 				out var differences), Is.True, differences);
 		}
 
+		/// <summary>
+		/// The skip path returns the builder's string when the text is already NFD, so a run
+		/// boundary that falls between a base character and its combining mark must survive
+		/// exactly as get_NormalizedForm would leave it.
+		/// </summary>
+		[Test]
+		public void FakeDoit_MatchesOracleForAlreadyNfdValueWithRunSplitInsideCombiningSequence()
+		{
+			ILexEntry entry = null;
+			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
+			{
+				entry = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create();
+				m_createdObjectList.Add(entry);
+			});
+			var sourceBuilder = TsStringUtils.MakeString("old á old", Cache.DefaultVernWs)
+				.GetBldr();
+			sourceBuilder.SetStrPropValue(5, 6, (int)FwTextPropType.ktptNamedStyle,
+				"Split Combining Mark");
+			m_bv.SpecialCache.SetString(entry.Hvo, XMLViewsDataCache.ktagAlternateValue,
+				sourceBuilder.GetString());
+			var decoratedValue = m_bv.SpecialCache.get_StringProp(entry.Hvo,
+				XMLViewsDataCache.ktagAlternateValue);
+			Assert.That(decoratedValue.Text.IsNormalized(NormalizationForm.FormD), Is.True);
+			Assert.That(decoratedValue.RunCount, Is.EqualTo(3));
+
+			var pattern = VwPatternClass.Create();
+			pattern.Pattern = TsStringUtils.MakeString("old", Cache.DefaultVernWs);
+			pattern.ReplaceWith = TsStringUtils.MakeString("new", Cache.DefaultVernWs);
+			pattern.MatchCase = true;
+			pattern.MatchDiacritics = true;
+			var oracleInit = VwStringTextSourceClass.Create();
+			oracleInit.SetString(decoratedValue);
+			var oracleSource = (IVwTextSource)oracleInit;
+			var expectedBuilder = decoratedValue.GetBldr();
+			var ichStart = 0;
+			var delta = 0;
+			var expectedCount = 0;
+			while (ichStart <= decoratedValue.Length)
+			{
+				pattern.FindIn(oracleSource, ichStart, decoratedValue.Length, true,
+					out var ichMin, out var ichLim, null);
+				if (ichMin < 0)
+					break;
+				var replacement = pattern.ReplacementText;
+				expectedBuilder.ReplaceTsString(ichMin + delta, ichLim + delta, replacement);
+				delta += replacement.Length - (ichLim - ichMin);
+				expectedCount++;
+				ichStart = ichLim;
+			}
+
+			Assert.That(expectedCount, Is.EqualTo(2));
+			var document = new XmlDocument();
+			document.LoadXml("<column transduce=\"LexEntry.CitationForm\" ws=\"$ws=vernacular\" />");
+			var accessor = new DecoratorStringReadWriter(m_bv.SpecialCache,
+				XMLViewsDataCache.ktagAlternateValue, Cache.DefaultVernWs);
+			var method = new ReplaceWithMethodPreviewTests.CountingReplaceWithMethod(Cache,
+				m_bv.SpecialCache, accessor, document.DocumentElement, pattern,
+				pattern.ReplaceWith);
+
+			method.FakeDoit(new[] { entry.Hvo }, XMLViewsDataCache.ktagAlternateValue,
+				XMLViewsDataCache.ktagItemEnabled, new NullProgressState());
+
+			var actual = m_bv.SpecialCache.get_StringProp(entry.Hvo,
+				XMLViewsDataCache.ktagAlternateValue);
+			var expected = expectedBuilder.GetString()
+				.get_NormalizedForm(FwNormalizationMode.knmNFD);
+			Assert.That(method.ReplaceAllInCount, Is.EqualTo(1));
+			Assert.That(method.FindInCount, Is.Zero);
+			Assert.That(actual.Text, Is.EqualTo("new á new"));
+			Assert.That(actual.RunCount, Is.EqualTo(expected.RunCount));
+			Assert.That(TsStringHelper.TsStringsAreEqual(expected, actual,
+				out var differences), Is.True, differences);
+		}
+
 		private sealed class DecoratorStringReadWriter : FieldReadWriter
 		{
 			private readonly int m_tag;
