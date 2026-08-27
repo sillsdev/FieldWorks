@@ -32,11 +32,15 @@ namespace SIL.FieldWorks.XWorks
 		private ILexEntry m_entry;
 		private RecordEditView m_view;
 		private Inventory m_layouts;
+		private Inventory m_previousLayouts;
+		private Inventory m_previousParts;
+		private bool m_inventoryRegistrationCaptured;
 		private string m_configurationDirectory;
 		private string m_overridePath;
 		private bool m_overrideExisted;
 		private byte[] m_overrideBytes;
 		private string m_originalLayoutXml;
+		private int m_originalCitationIndex;
 
 		protected override void Init()
 		{
@@ -50,6 +54,7 @@ namespace SIL.FieldWorks.XWorks
 		[SetUp]
 		public void SetUpWindow()
 		{
+			m_inventoryRegistrationCaptured = false;
 			m_window = new MockFwXWindow(m_application, m_configFilePath);
 			((MockFwXWindow)m_window).Init(Cache);
 			m_propertyTable = m_window.PropTable;
@@ -57,9 +62,17 @@ namespace SIL.FieldWorks.XWorks
 			m_window.LoadUI(m_configFilePath);
 			TestLocalizationManagerBootstrap.EnsureInitialized();
 			TestLocalizationManagerBootstrap.EnsureHelpTopicProvider(m_propertyTable);
-			LayoutCache.InitializePartInventories(Cache.ProjectId.Name, m_application,
-				Cache.ProjectId.Path);
+			m_previousLayouts = Inventory.GetInventory("layouts", Cache.ProjectId.Name);
+			m_previousParts = Inventory.GetInventory("parts", Cache.ProjectId.Name);
+			m_inventoryRegistrationCaptured = true;
+			if (m_previousLayouts == null || m_previousParts == null)
+			{
+				LayoutCache.InitializePartInventories(Cache.ProjectId.Name, m_application,
+					Cache.ProjectId.Path);
+			}
 			m_layouts = Inventory.GetInventory("layouts", Cache.ProjectId.Name);
+			Assert.That(m_layouts, Is.Not.Null);
+			Assert.That(Inventory.GetInventory("parts", Cache.ProjectId.Name), Is.Not.Null);
 			m_configurationDirectory = Path.GetFullPath(
 				LcmFileHelper.GetConfigSettingsDir(Cache.ProjectId.Path));
 			m_overridePath = Path.GetFullPath(Path.Combine(m_configurationDirectory,
@@ -80,6 +93,7 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(m_view, Is.Not.Null);
 			EnsureCurrentRecord();
 			Assert.That(GetField(m_view, "m_activeUIFramework"), Is.EqualTo(UIFramework.Avalonia));
+			m_originalCitationIndex = FieldIndex(GetHostedDetailModel(), "CitationForm");
 		}
 
 		[TearDown]
@@ -97,16 +111,25 @@ namespace SIL.FieldWorks.XWorks
 				}
 				finally
 				{
-					m_createdObjects = null;
-					m_entry = null;
-					m_view = null;
-					m_layouts = null;
-					m_overridePath = null;
-					m_propertyTable?.RemoveLocalAndGlobalSettings();
-					m_propertyTable = null;
-					if (m_window != null && !m_window.IsDisposed)
-						m_window.Dispose();
-					m_window = null;
+					try
+					{
+						m_createdObjects = null;
+						m_entry = null;
+						m_view = null;
+						m_overridePath = null;
+						m_propertyTable?.RemoveLocalAndGlobalSettings();
+						m_propertyTable = null;
+						if (m_window != null && !m_window.IsDisposed)
+							m_window.Dispose();
+						m_window = null;
+					}
+					finally
+					{
+						RestoreInventoryRegistrations();
+						m_layouts = null;
+						m_previousLayouts = null;
+						m_previousParts = null;
+					}
 				}
 			}
 		}
@@ -121,15 +144,23 @@ namespace SIL.FieldWorks.XWorks
 
 			Assert.That(GetHostedDetailModel().Fields,
 				Has.None.Property("Field").EqualTo("CitationForm"));
+			var modelBeforeReload = GetHostedDetailModel();
 			m_layouts.Reload();
+			RefreshAvaloniaDetail();
+			Assert.That(GetHostedDetailModel(), Is.Not.SameAs(modelBeforeReload));
+			Assert.That(GetHostedDetailModel().Fields,
+				Has.None.Property("Field").EqualTo("CitationForm"));
 			AssertCitationVisibility("never");
 			var legacyTree = LegacyTree();
+			legacyTree.RefreshList(true);
 			var legacyLayouts = (Inventory)GetField(legacyTree, "m_layoutInventory");
 			Assert.That(legacyLayouts, Is.SameAs(m_layouts));
 			var part = legacyLayouts.GetElement("layout",
 				new[] { "LexEntry", "detail", "Normal", null })
 				.SelectSingleNode("part[@ref='CitationFormAllV']");
 			Assert.That(part.Attributes?["visibility"]?.Value, Is.EqualTo("never"));
+			Assert.That(legacyTree.Slices,
+				Has.None.Property("Flid").EqualTo(LexEntryTags.kflidCitationForm));
 		}
 
 		[Test]
@@ -359,9 +390,29 @@ namespace SIL.FieldWorks.XWorks
 			if (m_view != null && !m_view.IsDisposed)
 			{
 				RefreshAvaloniaDetail();
-				Assert.That(GetHostedDetailModel().Fields,
-					Has.Some.Property("Field").EqualTo("CitationForm"));
+				Assert.That(FieldIndex(GetHostedDetailModel(), "CitationForm"),
+					Is.EqualTo(m_originalCitationIndex));
 			}
+		}
+
+		private void RestoreInventoryRegistrations()
+		{
+			if (!m_inventoryRegistrationCaptured)
+				return;
+			RestoreInventoryRegistration("layouts", m_previousLayouts);
+			RestoreInventoryRegistration("parts", m_previousParts);
+			m_inventoryRegistrationCaptured = false;
+		}
+
+		private void RestoreInventoryRegistration(string key, Inventory previous)
+		{
+			if (ReferenceEquals(Inventory.GetInventory(key, Cache.ProjectId.Name), previous))
+				return;
+			if (previous == null)
+				Inventory.RemoveInventory(key, Cache.ProjectId.Name);
+			else
+				Inventory.SetInventory(key, Cache.ProjectId.Name, previous);
+			Assert.That(Inventory.GetInventory(key, Cache.ProjectId.Name), Is.SameAs(previous));
 		}
 
 		private void CreateTestEntry()
