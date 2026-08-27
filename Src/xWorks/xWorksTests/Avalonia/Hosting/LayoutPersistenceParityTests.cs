@@ -38,9 +38,7 @@ namespace SIL.FieldWorks.XWorks
 		private bool m_inventoryRegistrationCaptured;
 		private string m_configurationDirectory;
 		private string m_configurationBoundary;
-		private bool m_configurationDirectoryExisted;
-		private Dictionary<string, byte[]> m_configurationSnapshot;
-		private HashSet<string> m_configurationDirectories;
+		private ConfigurationSettingsSnapshot m_configurationSnapshot;
 		private string m_overridePath;
 		private string m_originalLayoutXml;
 		private int m_originalCitationIndex;
@@ -58,6 +56,7 @@ namespace SIL.FieldWorks.XWorks
 		public void SetUpWindow()
 		{
 			m_inventoryRegistrationCaptured = false;
+			m_configurationSnapshot = null;
 			m_previousLayouts = Inventory.GetInventory("layouts", Cache.ProjectId.Name);
 			m_previousParts = Inventory.GetInventory("parts", Cache.ProjectId.Name);
 			m_inventoryRegistrationCaptured = true;
@@ -68,6 +67,7 @@ namespace SIL.FieldWorks.XWorks
 					.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
 				m_configurationBoundary = m_configurationDirectory + Path.DirectorySeparatorChar;
 				CaptureConfigurationSettings();
+				Assert.That(m_configurationSnapshot, Is.Not.Null);
 				m_overridePath = Path.GetFullPath(Path.Combine(m_configurationDirectory,
 					"LexEntry.fwlayout"));
 				AssertPathIsInConfigurationSettings(m_overridePath);
@@ -370,21 +370,23 @@ namespace SIL.FieldWorks.XWorks
 
 		private void CaptureConfigurationSettings()
 		{
-			m_configurationDirectoryExisted = Directory.Exists(m_configurationDirectory);
-			m_configurationSnapshot = new Dictionary<string, byte[]>(
-				StringComparer.OrdinalIgnoreCase);
-			m_configurationDirectories = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-			if (!m_configurationDirectoryExisted)
-				return;
-			foreach (var file in ConfigurationFileSnapshot())
-				m_configurationSnapshot.Add(RelativeConfigurationPath(file.Key), file.Value);
-			foreach (var directory in Directory.GetDirectories(m_configurationDirectory, "*",
-				SearchOption.AllDirectories))
+			var directoryExisted = Directory.Exists(m_configurationDirectory);
+			var files = new Dictionary<string, byte[]>(StringComparer.OrdinalIgnoreCase);
+			var directories = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+			if (directoryExisted)
 			{
-				var fullPath = Path.GetFullPath(directory);
-				AssertPathIsInConfigurationSettings(fullPath);
-				m_configurationDirectories.Add(RelativeConfigurationPath(fullPath));
+				foreach (var file in ConfigurationFileSnapshot())
+					files.Add(RelativeConfigurationPath(file.Key), file.Value);
+				foreach (var directory in Directory.GetDirectories(m_configurationDirectory, "*",
+					SearchOption.AllDirectories))
+				{
+					var fullPath = Path.GetFullPath(directory);
+					AssertPathIsInConfigurationSettings(fullPath);
+					directories.Add(RelativeConfigurationPath(fullPath));
+				}
 			}
+			m_configurationSnapshot = new ConfigurationSettingsSnapshot(directoryExisted,
+				files, directories);
 		}
 
 		private string RelativeConfigurationPath(string path)
@@ -412,10 +414,10 @@ namespace SIL.FieldWorks.XWorks
 			foreach (var file in currentFiles.Keys)
 			{
 				var relative = RelativeConfigurationPath(file);
-				if (!m_configurationSnapshot.ContainsKey(relative))
+				if (!m_configurationSnapshot.Files.ContainsKey(relative))
 					File.Delete(file);
 			}
-			foreach (var file in m_configurationSnapshot)
+			foreach (var file in m_configurationSnapshot.Files)
 			{
 				var fullPath = FullConfigurationPath(file.Key);
 				Directory.CreateDirectory(Path.GetDirectoryName(fullPath));
@@ -447,16 +449,19 @@ namespace SIL.FieldWorks.XWorks
 				{
 					var fullPath = Path.GetFullPath(directory);
 					AssertPathIsInConfigurationSettings(fullPath);
-					if (!m_configurationDirectories.Contains(RelativeConfigurationPath(fullPath))
+					if (!m_configurationSnapshot.Directories.Contains(
+						RelativeConfigurationPath(fullPath))
 						&& !Directory.EnumerateFileSystemEntries(fullPath).Any())
 					{
 						Directory.Delete(fullPath, false);
 					}
 				}
 			}
-			foreach (var directory in m_configurationDirectories.OrderBy(path => path.Length))
+			foreach (var directory in m_configurationSnapshot.Directories
+				.OrderBy(path => path.Length))
 				Directory.CreateDirectory(FullConfigurationPath(directory));
-			if (!m_configurationDirectoryExisted && Directory.Exists(m_configurationDirectory)
+			if (!m_configurationSnapshot.DirectoryExisted
+				&& Directory.Exists(m_configurationDirectory)
 				&& !Directory.EnumerateFileSystemEntries(m_configurationDirectory).Any())
 			{
 				Directory.Delete(m_configurationDirectory, false);
@@ -466,18 +471,19 @@ namespace SIL.FieldWorks.XWorks
 		private void AssertConfigurationSettingsRestored()
 		{
 			Assert.That(Directory.Exists(m_configurationDirectory),
-				Is.EqualTo(m_configurationDirectoryExisted));
-			if (!m_configurationDirectoryExisted)
+				Is.EqualTo(m_configurationSnapshot.DirectoryExisted));
+			if (!m_configurationSnapshot.DirectoryExisted)
 				return;
 			var restored = ConfigurationFileSnapshot().ToDictionary(
 				item => RelativeConfigurationPath(item.Key), item => item.Value,
 				StringComparer.OrdinalIgnoreCase);
-			Assert.That(restored.Keys, Is.EquivalentTo(m_configurationSnapshot.Keys));
-			foreach (var file in m_configurationSnapshot)
+			Assert.That(restored.Keys, Is.EquivalentTo(m_configurationSnapshot.Files.Keys));
+			foreach (var file in m_configurationSnapshot.Files)
 				Assert.That(restored[file.Key], Is.EqualTo(file.Value));
 			var restoredDirectories = Directory.GetDirectories(m_configurationDirectory, "*",
 				SearchOption.AllDirectories).Select(RelativeConfigurationPath).ToArray();
-			Assert.That(restoredDirectories, Is.EquivalentTo(m_configurationDirectories));
+			Assert.That(restoredDirectories,
+				Is.EquivalentTo(m_configurationSnapshot.Directories));
 		}
 
 		private void CleanupTestState(bool assertBehavior)
@@ -511,7 +517,6 @@ namespace SIL.FieldWorks.XWorks
 			m_window = null;
 			m_overridePath = null;
 			m_configurationSnapshot = null;
-			m_configurationDirectories = null;
 			if (firstFailure != null)
 				ExceptionDispatchInfo.Capture(firstFailure).Throw();
 		}
@@ -527,6 +532,23 @@ namespace SIL.FieldWorks.XWorks
 				if (firstFailure == null)
 					firstFailure = error;
 			}
+		}
+
+		private sealed class ConfigurationSettingsSnapshot
+		{
+			internal ConfigurationSettingsSnapshot(bool directoryExisted,
+				Dictionary<string, byte[]> files, HashSet<string> directories)
+			{
+				DirectoryExisted = directoryExisted;
+				Files = files;
+				Directories = directories;
+			}
+
+			internal bool DirectoryExisted { get; }
+
+			internal Dictionary<string, byte[]> Files { get; }
+
+			internal HashSet<string> Directories { get; }
 		}
 
 		private void RestoreInventoryRegistration(string key, Inventory previous)
