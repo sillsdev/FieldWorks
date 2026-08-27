@@ -30,15 +30,10 @@ namespace SIL.FieldWorks.XWorks
 			=> CreateMenuItems(window, menuIds, null);
 
 		/// <summary>
-		/// As <see cref="CreateMenuItems(XWindow, string[])"/>, but lets the host RETARGET specific leaf
-		/// commands for the Avalonia detail view (advanced-entry-view). For each command leaf, the
-		/// <paramref name="interceptor"/> is offered the leaf <see cref="ChoiceBase"/> (so the host can
-		/// read the localized label and command id from it); if it returns a non-null
-		/// <see cref="DetailMenuItem"/>, that item (its label/checked/enabled/execute) is used INSTEAD of
-		/// the default xCore-dispatched item. Returning null leaves the command on its normal mediator
-		/// path. This is how the per-field Field Visibility / Move Field commands route to the project
-		/// override layer while Help and every other item keep working unchanged. The interceptor only
-		/// sees leaf commands (submenus pass through).
+		/// Builds the menu and lets the host replace command leaves.
+		/// Native replacements preserve host-specific targeting and execution.
+		/// Returning null keeps normal xCore dispatch.
+		/// Submenus are not intercepted.
 		/// </summary>
 		public static IReadOnlyList<DetailMenuItem> CreateMenuItems(XWindow window, string[] menuIds,
 			Func<ChoiceBase, DetailMenuItem> interceptor)

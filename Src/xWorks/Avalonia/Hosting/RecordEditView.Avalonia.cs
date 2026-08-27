@@ -541,25 +541,30 @@ namespace SIL.FieldWorks.XWorks
 			string[] menuIds)
 		{
 			var window = m_propertyTable.GetValue<XWindow>("window");
+			var hasBroadTarget = EnsureMenuCommandTarget(field.ObjectHvo, field.Field);
+			var hasPersistentTarget = hasBroadTarget
+				&& TrySetPersistentMenuCommandTarget(field, false);
 			return XCoreMenuBridge.CreateMenuItems(window, menuIds,
-				choice => CreateLegacyCommandMenuItem(field, choice));
+				choice => CreateLegacyCommandMenuItem(field, choice, hasPersistentTarget));
 		}
 
-		private DetailMenuItem CreateLegacyCommandMenuItem(DetailField field, ChoiceBase choice)
+		private DetailMenuItem CreateLegacyCommandMenuItem(DetailField field, ChoiceBase choice,
+			bool hasPersistentTarget)
 		{
 			var persistent = IsPersistentLayoutCommand(choice);
-			var hasTarget = persistent
-				? EnsurePersistentMenuCommandTarget(field)
-				: EnsureMenuCommandTarget(field.ObjectHvo, field.Field);
 			var display = choice.GetDisplayProperties();
 			var captured = choice;
 			return new DetailMenuItem(XCoreMenuBridge.StripAccelerator(display.Text),
-				hasTarget && display.Enabled, display.Checked, null, () =>
+				(!persistent || hasPersistentTarget) && display.Enabled,
+				display.Checked, null, () =>
 				{
 					var canExecute = persistent
 						? EnsurePersistentMenuCommandTarget(field)
 						: EnsureMenuCommandTarget(field.ObjectHvo, field.Field);
 					if (!canExecute)
+						return;
+					var currentDisplay = captured.GetDisplayProperties();
+					if (!currentDisplay.Visible || !currentDisplay.Enabled)
 						return;
 					captured.OnClick(null, EventArgs.Empty);
 					RefreshAvaloniaDetail();
@@ -709,7 +714,11 @@ namespace SIL.FieldWorks.XWorks
 		{
 			if (!EnsureMenuCommandTarget(field.ObjectHvo, field.Field))
 				return false;
+			return TrySetPersistentMenuCommandTarget(field, true);
+		}
 
+		private bool TrySetPersistentMenuCommandTarget(DetailField field, bool clearOnFailure)
+		{
 			var candidates = new List<Slice>();
 			foreach (var sliceObj in m_dataEntryForm.Slices)
 			{
@@ -721,10 +730,13 @@ namespace SIL.FieldWorks.XWorks
 				field.ClassName, field.LayoutName, field.SourceCallerPath);
 			if (index < 0)
 			{
-				m_dataEntryForm.ClearCurrentSlice();
-				Logger.WriteEvent(string.Format(
-					"Detail layout command found no unique slice for '{0}' at '{1}'; CurrentSlice was cleared.",
-					field.Field ?? string.Empty, field.SourceCallerPath ?? string.Empty));
+				if (clearOnFailure)
+				{
+					m_dataEntryForm.ClearCurrentSlice();
+					Logger.WriteEvent(string.Format(
+						"Detail layout command found no unique slice for '{0}' at '{1}'; CurrentSlice was cleared.",
+						field.Field ?? string.Empty, field.SourceCallerPath ?? string.Empty));
+				}
 				return false;
 			}
 			m_dataEntryForm.SetCurrentSliceForCommandTarget(candidates[index]);

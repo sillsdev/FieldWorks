@@ -203,14 +203,49 @@ namespace SIL.FieldWorks.XWorks
 			var items = CreateNativeMenuItems(field,
 				new[] { "mnuDataTree-MultiStringSlice", RecordEditView.ObjectMenuId });
 			var item = FindItem(items, "Always visible");
+			var writingSystems = FindItem(items, "Writing Systems");
 			var dataTree = (LegacyDataTree)GetField(m_view, "m_dataEntryForm");
 
 			Assert.That(item, Is.Not.Null.And.Property("IsEnabled").False);
-			Assert.That(dataTree.CurrentSlice, Is.Null,
-				"a persistent command with no unique exact identity must clear the legacy target");
+			Assert.That(writingSystems, Is.Not.Null);
+			Assert.That(FindItem(writingSystems.Children, "Configure...").IsEnabled, Is.True,
+				"failure to find an exact persistent target must not disable broad legacy commands");
 			item.Execute();
+			Assert.That(dataTree.CurrentSlice, Is.Null,
+				"executing a persistent command with no exact identity must clear the legacy target");
 			Assert.That(File.ReadAllBytes(m_layoutOverridePath), Is.EqualTo(beforeBytes),
 				"a disabled persistent command must not invoke the legacy Inventory writer");
+		}
+
+		[Test]
+		public void PersistentMoveCommand_DisabledBeforeExecute_DoesNotWrite()
+		{
+			RefreshAvaloniaDetail();
+			MoveCitationDownThroughNativeCommand();
+			var field = GetHostedDetailModel().Fields.Single(f => f.Field == "CitationForm");
+			var staleItems = CreateNativeMenuItems(field,
+				new[] { "mnuDataTree-MultiStringSlice", RecordEditView.ObjectMenuId });
+			var staleMoveUp = FindItem(staleItems, "Move Up");
+			Assert.That(staleMoveUp, Is.Not.Null.And.Property("IsEnabled").True);
+
+			var currentItems = CreateNativeMenuItems(field,
+				new[] { "mnuDataTree-MultiStringSlice", RecordEditView.ObjectMenuId });
+			FindItem(currentItems, "Move Up").Execute();
+			field.SourceCallerPath = GetHostedDetailModel().Fields
+				.Single(f => f.Field == "CitationForm").SourceCallerPath;
+			var refreshedItems = CreateNativeMenuItems(field,
+				new[] { "mnuDataTree-MultiStringSlice", RecordEditView.ObjectMenuId });
+			Assert.That(FindItem(refreshedItems, "Move Up").IsEnabled, Is.False,
+				"returning Citation Form to its first movable position must disable Move Up");
+			var beforeBytes = File.ReadAllBytes(m_layoutOverridePath);
+			var beforeModel = GetHostedDetailModel();
+
+			staleMoveUp.Execute();
+
+			Assert.That(File.ReadAllBytes(m_layoutOverridePath), Is.EqualTo(beforeBytes),
+				"click-time display state must prevent a stale disabled move from reaching the writer");
+			Assert.That(GetHostedDetailModel(), Is.SameAs(beforeModel),
+				"a stale disabled command must return before dispatch and detail recomposition");
 		}
 
 		// ----------------------------------------------------------------------------------------

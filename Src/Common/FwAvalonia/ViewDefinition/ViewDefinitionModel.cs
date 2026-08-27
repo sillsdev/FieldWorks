@@ -13,14 +13,15 @@ using System.Xml.Linq;
 namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 {
 	/// <summary>
-	/// Creates the same structural address for a legacy layout caller represented by either XML
-	/// API.
-	/// Same-name element ordinals make the address independent of whitespace and stable across
-	/// the cloned
-	/// effective layout documents used by the importer and legacy slice tree.
+	/// Provides a canonical identity for an element in an effective legacy layout. The identity
+	/// lets independently cloned XML representations recognize the same layout caller.
 	/// </summary>
 	public static class LegacyLayoutCallerPath
 	{
+		/// <summary>
+		/// Returns the caller's canonical layout-relative identity. Returns null when the caller
+		/// is null or does not belong to a layout.
+		/// </summary>
 		public static string Get(XElement caller)
 		{
 			if (caller == null)
@@ -42,6 +43,10 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 			return string.Join("/", path);
 		}
 
+		/// <summary>
+		/// Returns the caller's canonical layout-relative identity. Returns null when the caller
+		/// is null or does not belong to a layout.
+		/// </summary>
 		public static string Get(XmlNode caller)
 		{
 			if (caller == null)
