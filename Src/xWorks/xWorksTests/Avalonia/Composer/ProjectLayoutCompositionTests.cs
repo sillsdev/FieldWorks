@@ -117,6 +117,23 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
+		public void Compose_MissingNestedProjectLayoutUsesCallerInjectedChildren()
+		{
+			var layouts = CreateLayoutInventory(Path.Combine(m_projectPath, "nested-fallback"),
+				"<LayoutInventory><layout class='LexEntry' type='detail' name='Normal'/>"
+				+ "</LayoutInventory>");
+			PersistLayout(layouts, includeSenses: true, injectSenseGloss: true);
+			var source = CreateSource(layouts);
+
+			var composed = DetailComposer.Compose(m_entry, Cache, source: source.GetSnapshot);
+			var nested = composed.Model.Fields.Single(field => field.ObjectHvo == m_sense.Hvo
+				&& field.Field == "Gloss");
+
+			Assert.That(nested.Label, Is.EqualTo("Project-only Gloss"));
+			Assert.That(nested.Values.Any(value => value.Value == "house"), Is.True);
+		}
+
+		[Test]
 		public void Compose_InventoryVisibilityOverrideMatchesLegacyShowHiddenBehavior()
 		{
 			var layouts = CreateLayoutInventory(Path.Combine(m_projectPath, "visibility"));
@@ -232,19 +249,20 @@ namespace SIL.FieldWorks.XWorks
 				Cache.MetaDataCacheAccessor);
 		}
 
-		private static Inventory CreateLayoutInventory(string projectPath)
+		private static Inventory CreateLayoutInventory(string projectPath,
+			string layoutXml = LayoutXml)
 		{
 			var layouts = new Inventory("*.fwlayout", "/LayoutInventory/*",
 				new Dictionary<string, string[]>
 				{
 					["layout"] = new[] { "class", "type", "name", "choiceGuid" }
 				}, "ProjectLayoutCompositionTests", projectPath);
-			layouts.LoadElements(LayoutXml, 0);
+			layouts.LoadElements(layoutXml, 0);
 			return layouts;
 		}
 
 		private static void PersistLayout(Inventory layouts, string citationVisibility = "always",
-			bool reverse = false, bool includeSenses = false)
+			bool reverse = false, bool includeSenses = false, bool injectSenseGloss = false)
 		{
 			var first = reverse
 				? "<part ref='Bibliography' visibility='always'/>"
@@ -253,8 +271,11 @@ namespace SIL.FieldWorks.XWorks
 				? "<part ref='CitationForm' visibility='" + citationVisibility + "'/>"
 				: "<part ref='Bibliography' visibility='always'/>";
 			var document = new XmlDocument();
+			var senses = injectSenseGloss
+				? "<part ref='Senses' param='Normal'><part ref='ProjectGloss'/></part>"
+				: "<part ref='Senses' param='Normal'/>";
 			document.LoadXml("<layout class='LexEntry' type='detail' name='Normal'>"
-				+ first + second + (includeSenses ? "<part ref='Senses' param='Normal'/>" : "")
+				+ first + second + (includeSenses ? senses : "")
 				+ "</layout>");
 			layouts.PersistOverrideElement(document.DocumentElement);
 		}
