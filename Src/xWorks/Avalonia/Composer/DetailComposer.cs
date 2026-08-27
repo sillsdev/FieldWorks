@@ -942,14 +942,9 @@ namespace SIL.FieldWorks.XWorks
 						WalkUnsupported(node, obj, depth);
 						break;
 					case DetailEditorCategory.EmbeddedView:
-						// An embedded formatted view (legacy jtview / ViewSlice + XmlView) composes the
-						// nested layout's fields INLINE for this same object, at depth+1 -- the
-						// recursive
-						// sub-view the legacy XmlView renders. WalkEmbeddedView reuses the
-						// CompileForObjectWithSource/EnterModel/Walk descent (the visited-set
-						// guards
-						// cycles); when the nested layout cannot be resolved it degrades to the
-						// read-only ShortName row rather than vanishing.
+						// Embedded views inline a nested layout for the same object.
+						// Missing layouts use a read-only ShortName row.
+						// Cycles terminate safely.
 						WalkEmbeddedView(node, obj, depth);
 						break;
 					case DetailEditorCategory.Command:

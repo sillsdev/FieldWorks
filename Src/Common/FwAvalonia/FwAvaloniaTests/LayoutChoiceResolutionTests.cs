@@ -93,8 +93,6 @@ namespace FwAvaloniaTests
 			Assert.That(LayoutSourceLoader.SelectLayoutForChoice(null, GuidA), Is.Null);
 		}
 
-		// Two different choiceGuids on the SAME class must yield two DISTINCT
-		// layouts (the selector is the cache-discriminator; the composer keys CompiledModels by choiceGuid).
 		[Test]
 		public void TwoChoiceGuids_OnSameKey_SelectDistinctLayouts_NoCollision()
 		{
