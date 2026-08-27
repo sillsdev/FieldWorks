@@ -1771,7 +1771,7 @@ namespace TestViews
 			CheckHr(qtsi->QueryInterface(IID_IVwTextSource, (void **)&qts));
 			int cMatches = -1;
 			ITsStringPtr qtssResult;
-			HRESULT hr = m_qpat2->ReplaceAllIn(qtssSource, 0, 7, &cMatches, &qtssResult);
+			HRESULT hr = m_qpat2->ReplaceAllIn(qtssSource, 0, 7, NULL, &cMatches, &qtssResult);
 			unitpp::assert_eq("ReplaceAllIn succeeds", (int)S_OK, (int)hr);
 			CheckHr(hr);
 			unitpp::assert_eq("literal match count", 2, cMatches);
@@ -1800,7 +1800,7 @@ namespace TestViews
 			CheckHr(qtsi->QueryInterface(IID_IVwTextSource, (void **)&qts));
 			cMatches = -1;
 			qtssResult.Clear();
-			CheckHr(m_qpat2->ReplaceAllIn(qtssSource, 0, 7, &cMatches, &qtssResult));
+			CheckHr(m_qpat2->ReplaceAllIn(qtssSource, 0, 7, NULL, &cMatches, &qtssResult));
 			unitpp::assert_eq("regex capture match count", 2, cMatches);
 			unitpp::assert_eq("regex differential match count", cExpected, cMatches);
 			CheckHr(qtssResult->Equals(qtssExpected, &fEqual));
@@ -1820,7 +1820,7 @@ namespace TestViews
 			CheckHr(qtsi->QueryInterface(IID_IVwTextSource, (void **)&qts));
 			cMatches = -1;
 			qtssResult.Clear();
-			CheckHr(m_qpat2->ReplaceAllIn(qtssSource, 0, 3, &cMatches, &qtssResult));
+			CheckHr(m_qpat2->ReplaceAllIn(qtssSource, 0, 3, NULL, &cMatches, &qtssResult));
 			unitpp::assert_eq("UTF-16 zero-width match count", 3, cMatches);
 			unitpp::assert_eq("zero-width differential match count", cExpected, cMatches);
 			CheckHr(qtssResult->Equals(qtssExpected, &fEqual));
@@ -1838,7 +1838,7 @@ namespace TestViews
 			CheckHr(qtsi->QueryInterface(IID_IVwTextSource, (void **)&qts));
 			cMatches = -1;
 			qtssResult.Clear();
-			CheckHr(m_qpat2->ReplaceAllIn(qtssSource, 0, 3, &cMatches, &qtssResult));
+			CheckHr(m_qpat2->ReplaceAllIn(qtssSource, 0, 3, NULL, &cMatches, &qtssResult));
 			unitpp::assert_eq("no-match count", 0, cMatches);
 			unitpp::assert_eq("no-match differential count", cExpected, cMatches);
 			CheckHr(qtssResult->Equals(qtssExpected, &fEqual));
@@ -1848,7 +1848,7 @@ namespace TestViews
 
 			cMatches = 99;
 			ITsString * ptssRawResult = reinterpret_cast<ITsString *>(1);
-			hr = m_qpat2->ReplaceAllIn(NULL, 0, 3, &cMatches, &ptssRawResult);
+			hr = m_qpat2->ReplaceAllIn(NULL, 0, 3, NULL, &cMatches, &ptssRawResult);
 			unitpp::assert_eq("null source is rejected", (int)E_POINTER, (int)hr);
 			unitpp::assert_eq("count is cleared before null-source failure", 0, cMatches);
 			unitpp::assert_true("result is cleared before null-source failure",
@@ -1867,21 +1867,21 @@ namespace TestViews
 			CheckHr(m_qpat->putref_Pattern(qtssPattern));
 			CheckHr(m_qpat->putref_ReplaceWith(qtssReplacement));
 			ITsString * ptssRawResult = reinterpret_cast<ITsString *>(1);
-			HRESULT hr = m_qpat2->ReplaceAllIn(qtssSource, 0, 3, NULL, &ptssRawResult);
+			HRESULT hr = m_qpat2->ReplaceAllIn(qtssSource, 0, 3, NULL, NULL, &ptssRawResult);
 			unitpp::assert_eq("null match count is rejected", (int)E_POINTER, (int)hr);
-			unitpp::assert_true("result is untouched when first output is null",
-				ptssRawResult == reinterpret_cast<ITsString *>(1));
+			unitpp::assert_true("result is cleared when the match count is null",
+				ptssRawResult == NULL);
 			SetErrorInfo(0, NULL);
 
 			int cMatches = 99;
-			hr = m_qpat2->ReplaceAllIn(qtssSource, 0, 3, &cMatches, NULL);
+			hr = m_qpat2->ReplaceAllIn(qtssSource, 0, 3, NULL, &cMatches, NULL);
 			unitpp::assert_eq("null result is rejected", (int)E_POINTER, (int)hr);
 			unitpp::assert_eq("count is cleared before null-result failure", 0, cMatches);
 			SetErrorInfo(0, NULL);
 
 			cMatches = 99;
 			ptssRawResult = reinterpret_cast<ITsString *>(1);
-			hr = m_qpat2->ReplaceAllIn(qtssSource, -1, 3, &cMatches, &ptssRawResult);
+			hr = m_qpat2->ReplaceAllIn(qtssSource, -1, 3, NULL, &cMatches, &ptssRawResult);
 			unitpp::assert_eq("negative range is rejected", (int)E_INVALIDARG, (int)hr);
 			unitpp::assert_eq("count is cleared before negative-range failure", 0,
 				cMatches);
@@ -1891,7 +1891,7 @@ namespace TestViews
 
 			cMatches = 99;
 			ptssRawResult = reinterpret_cast<ITsString *>(1);
-			hr = m_qpat2->ReplaceAllIn(qtssSource, 2, 1, &cMatches, &ptssRawResult);
+			hr = m_qpat2->ReplaceAllIn(qtssSource, 2, 1, NULL, &cMatches, &ptssRawResult);
 			unitpp::assert_eq("reversed range is rejected", (int)E_INVALIDARG, (int)hr);
 			unitpp::assert_eq("count is cleared before reversed-range failure", 0,
 				cMatches);
@@ -1901,7 +1901,7 @@ namespace TestViews
 
 			cMatches = 99;
 			ptssRawResult = reinterpret_cast<ITsString *>(1);
-			hr = m_qpat2->ReplaceAllIn(qtssSource, 0, 4, &cMatches, &ptssRawResult);
+			hr = m_qpat2->ReplaceAllIn(qtssSource, 0, 4, NULL, &cMatches, &ptssRawResult);
 			unitpp::assert_eq("range past source is rejected", (int)E_INVALIDARG,
 				(int)hr);
 			unitpp::assert_eq("count is cleared before past-source failure", 0,
@@ -1927,7 +1927,7 @@ namespace TestViews
 
 			int cMatches = 99;
 			ITsString * ptssResult = reinterpret_cast<ITsString *>(1);
-			HRESULT hr = m_qpat2->ReplaceAllIn(qtssSource, 0, 7, &cMatches, &ptssResult);
+			HRESULT hr = m_qpat2->ReplaceAllIn(qtssSource, 0, 7, NULL, &cMatches, &ptssResult);
 			SetErrorInfo(0, NULL);
 			unitpp::assert_eq("replacement failure is returned", (int)E_FAIL, (int)hr);
 			unitpp::assert_eq("count remains zero after replacement failure", 0, cMatches);
@@ -1935,9 +1935,8 @@ namespace TestViews
 				ptssResult == NULL);
 		}
 
-		// Re-run the TE4727 regression (replacing the character immediately preceding a
-		// trailing owned ORC) through the bulk ReplaceAllIn path instead of FindIn, and
-		// confirm the ORC and its footnote guid data survive the splice.
+		// TE4727: replacing the character before a trailing owned ORC must leave the ORC
+		// and its footnote guid data intact through the splice.
 		void testReplaceAllInReplaceCharPrecedingFinalORC_TE4727()
 		{
 			unitpp::assert_true("English writing system exists", m_qwsEng.Ptr());
@@ -1988,7 +1987,7 @@ namespace TestViews
 
 			int cMatches = -1;
 			ITsStringPtr qtssResult;
-			CheckHr(m_qpat2->ReplaceAllIn(qtssSource, 0, cchTotal, &cMatches, &qtssResult));
+			CheckHr(m_qpat2->ReplaceAllIn(qtssSource, 0, cchTotal, NULL, &cMatches, &qtssResult));
 			unitpp::assert_eq("single 'e' preceding final ORC found", 1, cMatches);
 			unitpp::assert_eq("match count matches repeated FindIn", cExpected, cMatches);
 			ComBool fEqual;
@@ -2010,9 +2009,8 @@ namespace TestViews
 				!wcscmp(stuData.Chars(), sbstrObjData.Chars()));
 		}
 
-		// Re-run the canonical/writing-system-restricted matching combinations from
-		// testMatchingWs through ReplaceAllIn, confirming bulk match counts and results
-		// agree with repeated FindIn as MatchOldWritingSystem and MatchDiacritics change.
+		// Bulk match counts and results must agree with repeated FindIn as
+		// MatchOldWritingSystem and MatchDiacritics change.
 		void testReplaceAllInRespectsMatchOldWritingSystem()
 		{
 			unitpp::assert_true("English writing system exists", m_qwsEng.Ptr());
@@ -2053,7 +2051,7 @@ namespace TestViews
 				&cExpected);
 			int cMatches = -1;
 			ITsStringPtr qtssResult;
-			CheckHr(m_qpat2->ReplaceAllIn(qtssSearch, 0, len, &cMatches, &qtssResult));
+			CheckHr(m_qpat2->ReplaceAllIn(qtssSearch, 0, len, NULL, &cMatches, &qtssResult));
 			unitpp::assert_eq("both canonical matches replaced without ws matching", 2,
 				cMatches);
 			unitpp::assert_eq("count matches repeated FindIn (no ws)", cExpected, cMatches);
@@ -2066,7 +2064,7 @@ namespace TestViews
 			qtssExpected = ReplaceWithRepeatedFindIn(qtssSearch, 0, len, &cExpected);
 			cMatches = -1;
 			qtssResult.Clear();
-			CheckHr(m_qpat2->ReplaceAllIn(qtssSearch, 0, len, &cMatches, &qtssResult));
+			CheckHr(m_qpat2->ReplaceAllIn(qtssSearch, 0, len, NULL, &cMatches, &qtssResult));
 			unitpp::assert_eq("both canonical matches replaced, ws required, diacritics ignored",
 				2, cMatches);
 			unitpp::assert_eq("count matches repeated FindIn (ws, no diacritics)", cExpected,
@@ -2080,7 +2078,7 @@ namespace TestViews
 			qtssExpected = ReplaceWithRepeatedFindIn(qtssSearch, 0, len, &cExpected);
 			cMatches = -1;
 			qtssResult.Clear();
-			CheckHr(m_qpat2->ReplaceAllIn(qtssSearch, 0, len, &cMatches, &qtssResult));
+			CheckHr(m_qpat2->ReplaceAllIn(qtssSearch, 0, len, NULL, &cMatches, &qtssResult));
 			unitpp::assert_eq("only first occurrence matches ws+diacritics", 1, cMatches);
 			unitpp::assert_eq("count matches repeated FindIn (ws + diacritics)", cExpected,
 				cMatches);
@@ -2119,7 +2117,7 @@ namespace TestViews
 				&cExpected);
 			int cMatches = -1;
 			ITsStringPtr qtssResult;
-			CheckHr(m_qpat2->ReplaceAllIn(qtssSearchCase, 0, lenCase, &cMatches, &qtssResult));
+			CheckHr(m_qpat2->ReplaceAllIn(qtssSearchCase, 0, lenCase, NULL, &cMatches, &qtssResult));
 			unitpp::assert_eq("case-insensitive replaces both 'And' and 'and'", 2, cMatches);
 			unitpp::assert_eq("case-insensitive count matches repeated FindIn", cExpected,
 				cMatches);
@@ -2130,7 +2128,7 @@ namespace TestViews
 			qtssExpected = ReplaceWithRepeatedFindIn(qtssSearchCase, 0, lenCase, &cExpected);
 			cMatches = -1;
 			qtssResult.Clear();
-			CheckHr(m_qpat2->ReplaceAllIn(qtssSearchCase, 0, lenCase, &cMatches, &qtssResult));
+			CheckHr(m_qpat2->ReplaceAllIn(qtssSearchCase, 0, lenCase, NULL, &cMatches, &qtssResult));
 			unitpp::assert_eq("match case skips capitalized 'And'", 1, cMatches);
 			unitpp::assert_eq("match-case count matches repeated FindIn", cExpected, cMatches);
 			CheckHr(qtssResult->Equals(qtssExpected, &fEqual));
@@ -2153,7 +2151,7 @@ namespace TestViews
 			qtssExpected = ReplaceWithRepeatedFindIn(qtssSearchDia, 0, lenDia, &cExpected);
 			cMatches = -1;
 			qtssResult.Clear();
-			CheckHr(m_qpat2->ReplaceAllIn(qtssSearchDia, 0, lenDia, &cMatches, &qtssResult));
+			CheckHr(m_qpat2->ReplaceAllIn(qtssSearchDia, 0, lenDia, NULL, &cMatches, &qtssResult));
 			unitpp::assert_eq("ignoring diacritics replaces both occurrences", 2, cMatches);
 			unitpp::assert_eq("ignore-diacritics count matches repeated FindIn", cExpected,
 				cMatches);
@@ -2164,7 +2162,7 @@ namespace TestViews
 			qtssExpected = ReplaceWithRepeatedFindIn(qtssSearchDia, 0, lenDia, &cExpected);
 			cMatches = -1;
 			qtssResult.Clear();
-			CheckHr(m_qpat2->ReplaceAllIn(qtssSearchDia, 0, lenDia, &cMatches, &qtssResult));
+			CheckHr(m_qpat2->ReplaceAllIn(qtssSearchDia, 0, lenDia, NULL, &cMatches, &qtssResult));
 			unitpp::assert_eq("requiring diacritics skips the accented occurrence", 1,
 				cMatches);
 			unitpp::assert_eq("match-diacritics count matches repeated FindIn", cExpected,
@@ -2173,9 +2171,8 @@ namespace TestViews
 			unitpp::assert_true("match-diacritics bulk result equals repeated FindIn", fEqual);
 		}
 
-		// Re-run testSearchCanonical's NFD canonical-equivalence scenario through
-		// ReplaceAllIn: the pattern is correctly-ordered decomposed text, while the source
-		// contains both a fully-composed and an out-of-order-decomposed occurrence.
+		// The pattern is correctly-ordered decomposed text; the source holds both a
+		// fully-composed and an out-of-order-decomposed occurrence of it.
 		void testReplaceAllInCanonicalEquivalence()
 		{
 			unitpp::assert_true("English writing system exists", m_qwsEng.Ptr());
@@ -2205,7 +2202,7 @@ namespace TestViews
 				&cExpected);
 			int cMatches = -1;
 			ITsStringPtr qtssResult;
-			CheckHr(m_qpat2->ReplaceAllIn(qtssSearch, 0, len, &cMatches, &qtssResult));
+			CheckHr(m_qpat2->ReplaceAllIn(qtssSearch, 0, len, NULL, &cMatches, &qtssResult));
 			unitpp::assert_eq("both canonically-equivalent occurrences replaced", 2, cMatches);
 			unitpp::assert_eq("canonical count matches repeated FindIn", cExpected, cMatches);
 			CheckHr(qtssResult->Equals(qtssExpected, &fEqual));
@@ -2222,7 +2219,7 @@ namespace TestViews
 			qtssExpected = ReplaceWithRepeatedFindIn(qtssSearch, 0, len, &cExpected);
 			cMatches = -1;
 			qtssResult.Clear();
-			CheckHr(m_qpat2->ReplaceAllIn(qtssSearch, 0, len, &cMatches, &qtssResult));
+			CheckHr(m_qpat2->ReplaceAllIn(qtssSearch, 0, len, NULL, &cMatches, &qtssResult));
 			unitpp::assert_eq("both occurrences still replaced, match case/diacritics", 2,
 				cMatches);
 			unitpp::assert_eq("canonical count matches repeated FindIn, match case/diacritics",

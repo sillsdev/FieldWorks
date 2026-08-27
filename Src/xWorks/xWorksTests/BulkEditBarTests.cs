@@ -682,17 +682,53 @@ namespace SIL.FieldWorks.XWorks
 				"the outer bulk-edit undo task must be ended even when applying one item throws");
 		}
 
+		[Test]
+		public void Doit_OuterLoop_RollsBackItemsAppliedBeforeTheFailure()
+		{
+			var entries = Cache.LangProject.LexDbOA.Entries.Take(2).ToList();
+			Assert.That(entries.Count, Is.EqualTo(2), "this test needs two entries to work with");
+			var hvoApplied = entries[0].Hvo;
+			var hvoThatThrows = entries[1].Hvo;
+
+			var document = new XmlDocument();
+			document.LoadXml("<column transduce=\"LexEntry.CitationForm\" ws=\"$ws=vernacular\" />");
+			var accessor = FieldReadWriter.Create(document.DocumentElement, Cache);
+			var originalValue = accessor.CurrentValue(hvoApplied);
+			var newValue = TsStringUtils.MakeString("bulk edited", Cache.DefaultVernWs);
+
+			var method = new ThrowingDoItMethod(Cache, (ISilDataAccessManaged)Cache.DomainDataByFlid,
+				accessor, document.DocumentElement, hvoThatThrows, newValue);
+
+			Assert.Throws<InvalidOperationException>(() =>
+				method.Doit(new[] { hvoApplied, hvoThatThrows }, new NullProgressState()));
+
+			Assert.That(accessor.CurrentValue(hvoApplied).Text, Is.EqualTo(originalValue?.Text),
+				"a bulk edit that failed part way through must roll back the rows it had already applied, "
+				+ "not commit them as a completed undo task");
+			Assert.That(Cache.ActionHandlerAccessor.CurrentDepth, Is.EqualTo(0));
+		}
+
 		private sealed class ThrowingDoItMethod : DoItMethod
 		{
+			private readonly int m_hvoThatThrows;
+			private readonly ITsString m_valueForOthers;
+
+			/// <summary>Applies <paramref name="valueForOthers"/> to every hvo except
+			/// <paramref name="hvoThatThrows"/>, which throws instead.</summary>
 			internal ThrowingDoItMethod(LcmCache cache, ISilDataAccessManaged sda,
-				FieldReadWriter accessor, XmlNode spec)
+				FieldReadWriter accessor, XmlNode spec, int hvoThatThrows = 0,
+				ITsString valueForOthers = null)
 				: base(cache, sda, accessor, spec)
 			{
+				m_hvoThatThrows = hvoThatThrows;
+				m_valueForOthers = valueForOthers;
 			}
 
 			protected override ITsString NewValue(int hvo)
 			{
-				throw new InvalidOperationException("simulated failure applying one bulk-edit item");
+				if (m_valueForOthers == null || hvo == m_hvoThatThrows)
+					throw new InvalidOperationException("simulated failure applying one bulk-edit item");
+				return m_valueForOthers;
 			}
 		}
 

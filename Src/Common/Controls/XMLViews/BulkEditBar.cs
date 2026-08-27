@@ -4837,12 +4837,15 @@ namespace SIL.FieldWorks.Common.Controls
 
 		public void Doit(IEnumerable<int> itemsToChange, ProgressState state)
 		{
-			m_sda.BeginUndoTask(XMLViewsStrings.ksUndoBulkEdit, XMLViewsStrings.ksRedoBulkEdit);
-			try
+			// A failure part way through rolls the whole batch back; a bulk edit that stopped
+			// on row 30,000 must not leave the first 29,999 applied as a completed undo task.
+			UndoableUnitOfWorkHelper.Do(XMLViewsStrings.ksUndoBulkEdit, XMLViewsStrings.ksRedoBulkEdit,
+				m_cache.ActionHandlerAccessor, () =>
 			{
 				string commitChanges = XmlUtils.GetOptionalAttributeValue(m_nodeSpec, "commitChanges");
 				int i = 0;
-				// Report progress 50 times or every 100 items, whichever is more (but no more than once per item!)
+				// Report progress 50 times or every 100 items, whichever is more (but no more
+				// than once per item!)
 				int interval = Math.Min(100, Math.Max(itemsToChange.Count() / 50, 1));
 				foreach (int hvo in itemsToChange)
 				{
@@ -4855,11 +4858,7 @@ namespace SIL.FieldWorks.Common.Controls
 					Doit(hvo);
 					BulkEditBar.CommitChanges(hvo, commitChanges, m_cache, m_accessor.WritingSystem);
 				}
-			}
-			finally
-			{
-				m_sda.EndUndoTask();
-			}
+			});
 		}
 
 		/// <summary>
@@ -4929,11 +4928,7 @@ namespace SIL.FieldWorks.Common.Controls
 		private ITsString m_cachedNewValue;
 
 		/// <summary>
-		/// Returns NewValue(hvo), reusing a value an OkToChange override already computed
-		/// for the same hvo within this same TryGetNewValue call (to decide whether a change
-		/// would occur) instead of recomputing it. The cache is cleared at the end of every
-		/// TryGetNewValue call: a later call for the same hvo (e.g. preview, then apply) must
-		/// still recompute, since the underlying data or pattern state may have changed.
+		/// Returns NewValue(hvo), computing it at most once per hvo until the cache is cleared.
 		/// </summary>
 		protected ITsString NewValueCached(int hvo)
 		{
@@ -4951,6 +4946,9 @@ namespace SIL.FieldWorks.Common.Controls
 			m_cachedNewValue = null;
 		}
 
+		/// <summary>
+		/// The value to store for this object, or null to leave the row unchanged.
+		/// </summary>
 		protected abstract ITsString NewValue(int hvo);
 
 		#region IGetReplacedObjects Members
@@ -5186,12 +5184,8 @@ namespace SIL.FieldWorks.Common.Controls
 
 		private static ITsString NormalizeResult(ITsString tssResult)
 		{
-			string text = tssResult.Text;
-			if (!string.IsNullOrEmpty(text) &&
-				CustomIcu.GetIcuNormalizer(FwNormalizationMode.knmNFD).IsNormalized(text))
-			{
+			if (tssResult.get_IsNormalizedForm(FwNormalizationMode.knmNFD))
 				return tssResult;
-			}
 			return tssResult.get_NormalizedForm(FwNormalizationMode.knmNFD);
 		}
 
@@ -5208,7 +5202,7 @@ namespace SIL.FieldWorks.Common.Controls
 				return false;
 			}
 
-			result = m_bulkPattern.ReplaceAllIn(source, 0, source.Length, out matchCount);
+			result = m_bulkPattern.ReplaceAllIn(source, 0, source.Length, null, out matchCount);
 			return true;
 		}
 

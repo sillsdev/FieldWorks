@@ -4,15 +4,17 @@
 
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using System.Threading;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Core.Text;
 
-namespace SIL.FieldWorks.XWorks.Performance
+namespace SIL.FieldWorks.XWorks.Search
 {
 	[TestFixture]
+	[Apartment(ApartmentState.STA)]
 	[Category("BulkReplacement")]
 	public class VwPatternReplacementTests : MemoryOnlyBackendProviderTestBase
 	{
@@ -143,7 +145,7 @@ namespace SIL.FieldWorks.XWorks.Performance
 				delta += match.Replacement.Length - (match.IchLim - match.IchMin);
 			}
 
-			var actual = ((IVwPattern2)pattern).ReplaceAllIn(source, ichStart, ichEnd,
+			var actual = ((IVwPattern2)pattern).ReplaceAllIn(source, ichStart, ichEnd, null,
 				out var actualCount);
 			Assert.That(actualCount, Is.EqualTo(matches.Count), "bulk match count");
 			if (expectedCount.HasValue)
@@ -426,7 +428,7 @@ namespace SIL.FieldWorks.XWorks.Performance
 				"Replacement Style");
 			pattern.ReplaceWith = replacementBuilder.GetString();
 
-			var actual = ((IVwPattern2)pattern).ReplaceAllIn(source, 0, source.Length,
+			var actual = ((IVwPattern2)pattern).ReplaceAllIn(source, 0, source.Length, null,
 				out var count);
 
 			Assert.That(count, Is.EqualTo(1));
@@ -447,7 +449,7 @@ namespace SIL.FieldWorks.XWorks.Performance
 			var pattern = MakePattern("old");
 			pattern.ReplaceWith = TsStringUtils.MakeString("new", Ws);
 
-			var actual = ((IVwPattern2)pattern).ReplaceAllIn(source, 0, source.Length,
+			var actual = ((IVwPattern2)pattern).ReplaceAllIn(source, 0, source.Length, null,
 				out var count);
 
 			Assert.That(count, Is.EqualTo(1));
@@ -465,7 +467,7 @@ namespace SIL.FieldWorks.XWorks.Performance
 			pattern.ReplaceWith = TsStringUtils.MakeString("new", Ws);
 			var source = TsStringUtils.MakeString("old old", Ws);
 
-			var actual = ((IVwPattern2)pattern).ReplaceAllIn(source, 0, source.Length,
+			var actual = ((IVwPattern2)pattern).ReplaceAllIn(source, 0, source.Length, null,
 				out var count);
 
 			Assert.That(actual.Text, Is.EqualTo("new new"));

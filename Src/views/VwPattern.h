@@ -106,7 +106,7 @@ public:
 	STDMETHOD(get_ReplacementText)(ITsString ** pptssText);
 	STDMETHOD(get_Group)(int iGroup, ITsString ** pptssGroup);
 	STDMETHOD(ReplaceAllIn)(ITsString * ptss, int ichStart, int ichEnd,
-		int * pcMatches, ITsString ** pptssResult);
+		IVwSearchKiller * pxserkl, int * pcMatches, ITsString ** pptssResult);
 
 	// Other public methods
 
@@ -116,6 +116,8 @@ public:
 	bool Forward() {return m_fForward;}
 	void SetFound(bool fFound = true) {m_fFound = fFound;}
 	void RemoveIgnorableRuns(ITsString * ptssIn, ITsString ** pptssOut);
+
+	void WidenZeroLengthMatch(int ichMin, int * pichLim, int ichEndLog);
 
 protected:
 	// Member variables

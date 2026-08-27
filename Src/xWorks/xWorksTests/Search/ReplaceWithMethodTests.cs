@@ -18,7 +18,7 @@ using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Infrastructure;
 
-namespace SIL.FieldWorks.XWorks.Performance
+namespace SIL.FieldWorks.XWorks.Search
 {
 	[TestFixture]
 	[Category("BulkReplacement")]
@@ -269,9 +269,8 @@ namespace SIL.FieldWorks.XWorks.Performance
 		[Test]
 		public void FakeDoit_NormalizesNonLatinScriptReplacementResultToNfd()
 		{
-			// U+AC00 (Hangul syllable "GA") has a real canonical decomposition to two
-			// Jamo characters under NFD, unlike the single-diacritic Latin case above.
-			// This hardens the NormalizeResult skip-check for a non-Latin script.
+			// U+AC00 (Hangul syllable "GA") decomposes to two Jamo under NFD, so this
+			// exercises the NormalizeResult skip-check on a non-Latin script.
 			var entry = CreateEntries(1, 1, "old \uac00", "old \uac00").Single();
 			var document = BuildColumnSpec();
 			var accessor = FieldReadWriter.Create(document.DocumentElement, Cache);

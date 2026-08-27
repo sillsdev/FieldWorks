@@ -4261,10 +4261,13 @@ Last reviewed:
 		// Replaces non-overlapping forward matches in the UTF-16 range.
 		// No matches returns the source.
 		// Success leaves the pattern in a terminal no-match state.
+		// pxserkl may be NULL; a regular-expression replace over a long string is
+		// otherwise uninterruptible.
 		HRESULT ReplaceAllIn(
 			[in] ITsString * ptss,
 			[in] int ichStart,
 			[in] int ichEnd,
+			[in] IVwSearchKiller * pxserkl,
 			[out] int * pcMatches,
 			[out, retval] ITsString ** pptssResult);
 	};

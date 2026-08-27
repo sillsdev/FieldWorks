@@ -33,6 +33,25 @@ static int CheckedPatternPosition(__int64 value)
 }
 
 /*----------------------------------------------------------------------------------------------
+	Widen a match that came back empty so it covers one character, clamped to ichEndLog.
+	A zero-length match is otherwise found again by every subsequent search from the same
+	spot. The only non-regular-expression way to get one is a match inside the text of a hot
+	link, where the whole link is selected. A zero-length match at position 0 is legitimate
+	for the regular expression "^" and is left alone. See LT-6707.
+----------------------------------------------------------------------------------------------*/
+void VwPattern::WidenZeroLengthMatch(int ichMin, int * pichLim, int ichEndLog)
+{
+	AssertPtr(pichLim);
+	if (ichMin != *pichLim)
+		return;
+	if (ichMin == 0 && m_fUseRegularExpressions && m_stuCompiled.Equals(L"^"))
+		return;
+	*pichLim = CheckedPatternPosition(static_cast<__int64>(*pichLim) + 1);
+	if (*pichLim > ichEndLog)
+		*pichLim = ichEndLog;
+}
+
+/*----------------------------------------------------------------------------------------------
 	Constructor.
 ----------------------------------------------------------------------------------------------*/
 VwPattern::VwPattern()
@@ -1493,7 +1512,7 @@ public:
 			m_ichLimFoundSearch = m_ichMinFoundSearch + m_piter->getMatchedLength();
 			AdjustSearchLimitForDiacritics();
 			if (m_ichLimFoundSearch > m_ichLimSearch)
-				return Fail(); // The first match extends past the end of our range.
+				return Fail(); // This match extends past the end of our range.
 			if (m_pat->m_fMatchDiacritics && !CheckMatchDiacritic())
 				continue;
 			if (CheckAndExtendCandidate())
@@ -1680,23 +1699,7 @@ STDMETHODIMP VwPattern::FindIn(IVwTextSource * pts, int ichStartLog, int ichEndL
 		CheckHr(pts->SearchToLog(ichMinFoundSearch, false, pichMinFoundLog));
 		CheckHr(pts->SearchToLog(ichLimFoundSearch, true, pichLimFoundLog));
 
-		if (*pichMinFoundLog == *pichLimFoundLog)
-		{
-			// Zero length match at beginning is okay for regular expression "^".  See LT-6707.
-			if (*pichMinFoundLog > 0 || !m_fUseRegularExpressions || !m_stuCompiled.Equals(L"^"))
-			{
-				// The only way this can happen is a match inside the text of a hot link.
-				// Select the whole link. (Other solutions are possible, but beware of the
-				// previous behavior of leaving them the same: this produces an IP at the
-				// start of the hot link, and then every subsequent search finds it again.)
-				(*pichLimFoundLog)++;
-				// not so not so....
-				// a search like \n* or \s* or * also comes through here... and crashes
-				// with out the following check.
-				if (*pichLimFoundLog > ichEndLog)
-					*pichLimFoundLog = ichEndLog;	// cant be larger than lim
-			}
-		}
+		WidenZeroLengthMatch(*pichMinFoundLog, pichLimFoundLog, ichEndLog);
 	}
 
 	m_ichMinFoundLog = *pichMinFoundLog;
@@ -1731,15 +1734,7 @@ void VwPattern::ReplaceAllWithAlgorithm(FindInAlgorithmBase * pfia, IVwTextSourc
 			int ichLim;
 			CheckHr(pts->SearchToLog(pfia->m_ichMinFoundSearch, false, &ichMin));
 			CheckHr(pts->SearchToLog(pfia->m_ichLimFoundSearch, true, &ichLim));
-			if (ichMin == ichLim)
-			{
-				if (ichMin > 0 || !m_fUseRegularExpressions || !m_stuCompiled.Equals(L"^"))
-				{
-					ichLim = CheckedPatternPosition(static_cast<__int64>(ichLim) + 1);
-					if (ichLim > ichEnd)
-						ichLim = ichEnd;
-				}
-			}
+			WidenZeroLengthMatch(ichMin, &ichLim, ichEnd);
 
 			m_ichMinFoundLog = ichMin;
 			m_ichLimFoundLog = ichLim;
@@ -1784,13 +1779,17 @@ void VwPattern::ReplaceAllWithAlgorithm(FindInAlgorithmBase * pfia, IVwTextSourc
 }
 
 STDMETHODIMP VwPattern::ReplaceAllIn(ITsString * ptss, int ichStart, int ichEnd,
-	int * pcMatches, ITsString ** pptssResult)
+	IVwSearchKiller * pxserkl, int * pcMatches, ITsString ** pptssResult)
 {
 	BEGIN_COM_METHOD;
-	ChkComOutPtr(pcMatches);
-	*pcMatches = 0;
-	ChkComOutPtr(pptssResult);
-	*pptssResult = NULL;
+	// Clear every output actually supplied before rejecting a null one: COM requires an
+	// [out] parameter be cleared on failure, including when a different one is at fault.
+	if (pcMatches)
+		*pcMatches = 0;
+	if (pptssResult)
+		*pptssResult = NULL;
+	ChkComArgPtr(pcMatches);
+	ChkComArgPtr(pptssResult);
 	ChkComArgPtr(ptss);
 	if (ichStart < 0 || ichEnd < ichStart)
 		ThrowHr(WarnHr(E_INVALIDARG));
@@ -1807,13 +1806,13 @@ STDMETHODIMP VwPattern::ReplaceAllIn(ITsString * ptss, int ichStart, int ichEnd,
 	ITsStringPtr qtssResult;
 	if (m_fUseRegularExpressions)
 	{
-		RegExFindInAlgorithm refia(qts, ichStart, ichEnd, true, NULL, this);
+		RegExFindInAlgorithm refia(qts, ichStart, ichEnd, true, pxserkl, this);
 		ReplaceAllWithAlgorithm(&refia, qts, ptss, ichStart, ichEnd, &cMatches,
 			&qtssResult);
 	}
 	else
 	{
-		FindInAlgorithm fia(qts, ichStart, ichEnd, true, NULL, this);
+		FindInAlgorithm fia(qts, ichStart, ichEnd, true, pxserkl, this);
 		ReplaceAllWithAlgorithm(&fia, qts, ptss, ichStart, ichEnd, &cMatches,
 			&qtssResult);
 	}
