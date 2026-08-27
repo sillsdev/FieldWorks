@@ -82,9 +82,6 @@ namespace SIL.FieldWorks.XWorks
 					if (!display.Visible)
 						continue;
 
-					// advanced-entry-view: offer the leaf to the host; a non-null result retargets this
-					// command to the override layer (Field Visibility / Move Field) instead of the
-					// hidden-DataTree mediator dispatch.
 					var retargeted = interceptor?.Invoke(choice);
 					if (retargeted != null)
 					{
