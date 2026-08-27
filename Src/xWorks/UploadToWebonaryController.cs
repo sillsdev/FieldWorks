@@ -142,11 +142,14 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
-		/// Converts siteName to lowercase and removes https://www.webonary.org, if present. LT-21224, LT-21387
+		/// Converts siteName to lowercase, strips surrounding whitespace, and removes
+		/// https://www.webonary.org, if present. LT-21224, LT-21387
 		/// </summary>
 		internal static string NormalizeSiteName(string siteName)
 		{
-			siteName = siteName.ToLowerInvariant();
+			if (string.IsNullOrWhiteSpace(siteName))
+				return string.Empty;
+			siteName = siteName.Trim().ToLowerInvariant();
 			// trim a leading [http[s]://]webonary.org/
 			const string domainSlash = WebonaryOrg + "/";
 			var domainIndex = siteName.IndexOf(domainSlash, StringComparison.InvariantCulture);
@@ -423,19 +426,19 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		private static bool HasRequiredUploadSettings(UploadToWebonaryModel model, IUploadToWebonaryView view)
 		{
-			if (string.IsNullOrEmpty(model.SiteName))
+			if (string.IsNullOrWhiteSpace(model.SiteName))
 			{
 				view.UpdateStatus(xWorksStrings.ksErrorNoSiteName, WebonaryStatusCondition.Error);
 				return false;
 			}
 
-			if (string.IsNullOrEmpty(model.UserName))
+			if (string.IsNullOrWhiteSpace(model.UserName))
 			{
 				view.UpdateStatus(xWorksStrings.ksErrorNoUsername, WebonaryStatusCondition.Error);
 				return false;
 			}
 
-			if (string.IsNullOrEmpty(model.Password))
+			if (string.IsNullOrWhiteSpace(model.Password))
 			{
 				view.UpdateStatus(xWorksStrings.ksErrorNoPassword, WebonaryStatusCondition.Error);
 				return false;

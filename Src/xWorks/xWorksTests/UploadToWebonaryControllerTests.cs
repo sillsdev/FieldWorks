@@ -160,6 +160,10 @@ namespace SIL.FieldWorks.XWorks
 		[TestCase(UploadToWebonaryController.WebonaryOrg + "/thAI", "thai")]
 		[TestCase("httpS://www.Webonary.org/tPi", "tpi")]
 		[TestCase("httpS://www.Webonary.org/tPi/", "tpi")]
+		[TestCase("  English  ", "english")]
+		[TestCase("  httpS://www.Webonary.org/tPi/  ", "tpi")]
+		[TestCase(null, "")]
+		[TestCase("   ", "")]
 		public void NormalizeSiteName(string userEntered, string expected)
 		{
 			Assert.That(UploadToWebonaryController.NormalizeSiteName(userEntered), Is.EqualTo(expected));
@@ -285,8 +289,11 @@ namespace SIL.FieldWorks.XWorks
 			var missingSettings = new Dictionary<string, Action<UploadToWebonaryModel>>
 			{
 				{ "SiteName", m => m.SiteName = null },
+				{ "whitespace SiteName", m => m.SiteName = "   " },
 				{ "UserName", m => m.UserName = null },
+				{ "whitespace UserName", m => m.UserName = "   " },
 				{ "Password", m => m.Password = null },
+				{ "whitespace Password", m => m.Password = "   " },
 				{ "SelectedPublication", m => m.SelectedPublication = null }
 			};
 
