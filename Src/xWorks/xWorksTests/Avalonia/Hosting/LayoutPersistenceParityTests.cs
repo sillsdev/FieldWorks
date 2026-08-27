@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.ExceptionServices;
 using System.Xml;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.Controls;
@@ -36,9 +37,11 @@ namespace SIL.FieldWorks.XWorks
 		private Inventory m_previousParts;
 		private bool m_inventoryRegistrationCaptured;
 		private string m_configurationDirectory;
+		private string m_configurationBoundary;
+		private bool m_configurationDirectoryExisted;
+		private Dictionary<string, byte[]> m_configurationSnapshot;
+		private HashSet<string> m_configurationDirectories;
 		private string m_overridePath;
-		private bool m_overrideExisted;
-		private byte[] m_overrideBytes;
 		private string m_originalLayoutXml;
 		private int m_originalCitationIndex;
 
@@ -55,83 +58,67 @@ namespace SIL.FieldWorks.XWorks
 		public void SetUpWindow()
 		{
 			m_inventoryRegistrationCaptured = false;
-			m_window = new MockFwXWindow(m_application, m_configFilePath);
-			((MockFwXWindow)m_window).Init(Cache);
-			m_propertyTable = m_window.PropTable;
-			m_propertyTable.RemoveLocalAndGlobalSettings();
-			m_window.LoadUI(m_configFilePath);
-			TestLocalizationManagerBootstrap.EnsureInitialized();
-			TestLocalizationManagerBootstrap.EnsureHelpTopicProvider(m_propertyTable);
 			m_previousLayouts = Inventory.GetInventory("layouts", Cache.ProjectId.Name);
 			m_previousParts = Inventory.GetInventory("parts", Cache.ProjectId.Name);
 			m_inventoryRegistrationCaptured = true;
-			if (m_previousLayouts == null || m_previousParts == null)
+			try
 			{
-				LayoutCache.InitializePartInventories(Cache.ProjectId.Name, m_application,
-					Cache.ProjectId.Path);
-			}
-			m_layouts = Inventory.GetInventory("layouts", Cache.ProjectId.Name);
-			Assert.That(m_layouts, Is.Not.Null);
-			Assert.That(Inventory.GetInventory("parts", Cache.ProjectId.Name), Is.Not.Null);
-			m_configurationDirectory = Path.GetFullPath(
-				LcmFileHelper.GetConfigSettingsDir(Cache.ProjectId.Path));
-			m_overridePath = Path.GetFullPath(Path.Combine(m_configurationDirectory,
-				"LexEntry.fwlayout"));
-			AssertPathIsInConfigurationSettings(m_overridePath);
-			m_overrideExisted = File.Exists(m_overridePath);
-			m_overrideBytes = m_overrideExisted ? File.ReadAllBytes(m_overridePath) : null;
-			m_originalLayoutXml = CurrentLexEntryLayout().OuterXml;
+				m_configurationDirectory = Path.GetFullPath(
+					LcmFileHelper.GetConfigSettingsDir(Cache.ProjectId.Path))
+					.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+				m_configurationBoundary = m_configurationDirectory + Path.DirectorySeparatorChar;
+				CaptureConfigurationSettings();
+				m_overridePath = Path.GetFullPath(Path.Combine(m_configurationDirectory,
+					"LexEntry.fwlayout"));
+				AssertPathIsInConfigurationSettings(m_overridePath);
 
-			m_createdObjects = new List<ICmObject>();
-			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, CreateTestEntry);
-			m_propertyTable.SetProperty("UIMode", "New", true);
-			m_propertyTable.SetPropertyPersistence("UIMode", false);
-			LoadRecordEditView("lexiconEdit");
-			DrainMediatorAndIdleQueues();
-			m_view = m_propertyTable.GetValue<object>("currentContentControlObject", null)
-				as RecordEditView;
-			Assert.That(m_view, Is.Not.Null);
-			EnsureCurrentRecord();
-			Assert.That(GetField(m_view, "m_activeUIFramework"), Is.EqualTo(UIFramework.Avalonia));
-			m_originalCitationIndex = FieldIndex(GetHostedDetailModel(), "CitationForm");
+				m_window = new MockFwXWindow(m_application, m_configFilePath);
+				((MockFwXWindow)m_window).Init(Cache);
+				m_propertyTable = m_window.PropTable;
+				m_propertyTable.RemoveLocalAndGlobalSettings();
+				m_window.LoadUI(m_configFilePath);
+				TestLocalizationManagerBootstrap.EnsureInitialized();
+				TestLocalizationManagerBootstrap.EnsureHelpTopicProvider(m_propertyTable);
+				if (m_previousLayouts == null || m_previousParts == null)
+				{
+					LayoutCache.InitializePartInventories(Cache.ProjectId.Name, m_application,
+						Cache.ProjectId.Path);
+				}
+				m_layouts = Inventory.GetInventory("layouts", Cache.ProjectId.Name);
+				Assert.That(m_layouts, Is.Not.Null);
+				Assert.That(Inventory.GetInventory("parts", Cache.ProjectId.Name), Is.Not.Null);
+				m_originalLayoutXml = CurrentLexEntryLayout().OuterXml;
+
+				m_createdObjects = new List<ICmObject>();
+				NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, CreateTestEntry);
+				m_propertyTable.SetProperty("UIMode", "New", true);
+				m_propertyTable.SetPropertyPersistence("UIMode", false);
+				LoadRecordEditView("lexiconEdit");
+				DrainMediatorAndIdleQueues();
+				m_view = m_propertyTable.GetValue<object>("currentContentControlObject", null)
+					as RecordEditView;
+				Assert.That(m_view, Is.Not.Null);
+				EnsureCurrentRecord();
+				Assert.That(GetField(m_view, "m_activeUIFramework"), Is.EqualTo(UIFramework.Avalonia));
+				m_originalCitationIndex = FieldIndex(GetHostedDetailModel(), "CitationForm");
+			}
+			catch
+			{
+				try
+				{
+					CleanupTestState(false);
+				}
+				catch
+				{
+				}
+				throw;
+			}
 		}
 
 		[TearDown]
 		public void TearDownWindow()
 		{
-			try
-			{
-				RestoreLayoutOverride();
-			}
-			finally
-			{
-				try
-				{
-					NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, DestroyTestData);
-				}
-				finally
-				{
-					try
-					{
-						m_createdObjects = null;
-						m_entry = null;
-						m_view = null;
-						m_overridePath = null;
-						m_propertyTable?.RemoveLocalAndGlobalSettings();
-						m_propertyTable = null;
-						if (m_window != null && !m_window.IsDisposed)
-							m_window.Dispose();
-						m_window = null;
-					}
-					finally
-					{
-						RestoreInventoryRegistrations();
-						m_layouts = null;
-						m_previousLayouts = null;
-						m_previousParts = null;
-					}
-				}
-			}
+			CleanupTestState(true);
 		}
 
 		[Test]
@@ -229,16 +216,26 @@ namespace SIL.FieldWorks.XWorks
 		public void PersistentLayoutCommand_CreatesOnlyProjectFwlayoutArtifact()
 		{
 			ResetToNoProjectOverride();
-			var filesBefore = ConfigurationFiles();
+			var filesBefore = ConfigurationFileSnapshot();
 			var field = GetHostedDetailModel().Fields.Single(item => item.Field == "CitationForm");
 
 			ExecuteNative(field, "Normally hidden");
 
-			var created = ConfigurationFiles().Except(filesBefore,
+			var filesAfter = ConfigurationFileSnapshot();
+			var created = filesAfter.Keys.Except(filesBefore.Keys,
+				StringComparer.OrdinalIgnoreCase).ToArray();
+			var removed = filesBefore.Keys.Except(filesAfter.Keys,
 				StringComparer.OrdinalIgnoreCase).ToArray();
 			Assert.That(created.Select(path => path.ToUpperInvariant()),
 				Is.EqualTo(new[] { m_overridePath.ToUpperInvariant() }));
 			Assert.That(created.Select(Path.GetExtension), Is.All.EqualTo(".fwlayout"));
+			Assert.That(filesAfter[m_overridePath], Is.Not.Empty);
+			Assert.That(removed, Is.Empty);
+			foreach (var file in filesBefore)
+			{
+				Assert.That(filesAfter, Does.ContainKey(file.Key));
+				Assert.That(filesAfter[file.Key], Is.EqualTo(file.Value));
+			}
 		}
 
 		private void ResetToNoProjectOverride()
@@ -349,59 +346,187 @@ namespace SIL.FieldWorks.XWorks
 			return model.Fields.ToList().FindIndex(field => field.Field == fieldName);
 		}
 
-		private string[] ConfigurationFiles()
+		private Dictionary<string, byte[]> ConfigurationFileSnapshot()
 		{
+			var snapshot = new Dictionary<string, byte[]>(StringComparer.OrdinalIgnoreCase);
 			if (!Directory.Exists(m_configurationDirectory))
-				return Array.Empty<string>();
-			return Directory.GetFiles(m_configurationDirectory, "*", SearchOption.AllDirectories)
-				.Select(Path.GetFullPath).OrderBy(path => path, StringComparer.OrdinalIgnoreCase).ToArray();
+				return snapshot;
+			foreach (var path in Directory.GetFiles(m_configurationDirectory, "*",
+				SearchOption.AllDirectories))
+			{
+				var fullPath = Path.GetFullPath(path);
+				AssertPathIsInConfigurationSettings(fullPath);
+				snapshot.Add(fullPath, File.ReadAllBytes(fullPath));
+			}
+			return snapshot;
 		}
 
 		private void AssertPathIsInConfigurationSettings(string path)
 		{
-			var relative = Path.GetFullPath(path).Substring(m_configurationDirectory.Length)
-				.TrimStart(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
-			Assert.That(relative, Is.Not.Empty);
-			Assert.That(relative.StartsWith(".." + Path.DirectorySeparatorChar,
-				StringComparison.Ordinal), Is.False);
-			Assert.That(Path.IsPathRooted(relative), Is.False);
+			var fullPath = Path.GetFullPath(path);
+			Assert.That(fullPath.StartsWith(m_configurationBoundary,
+				StringComparison.OrdinalIgnoreCase), Is.True);
 		}
 
-		private void RestoreLayoutOverride()
+		private void CaptureConfigurationSettings()
 		{
-			if (m_layouts == null || string.IsNullOrEmpty(m_overridePath))
+			m_configurationDirectoryExisted = Directory.Exists(m_configurationDirectory);
+			m_configurationSnapshot = new Dictionary<string, byte[]>(
+				StringComparer.OrdinalIgnoreCase);
+			m_configurationDirectories = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+			if (!m_configurationDirectoryExisted)
 				return;
-			AssertPathIsInConfigurationSettings(m_overridePath);
-			if (m_overrideExisted)
+			foreach (var file in ConfigurationFileSnapshot())
+				m_configurationSnapshot.Add(RelativeConfigurationPath(file.Key), file.Value);
+			foreach (var directory in Directory.GetDirectories(m_configurationDirectory, "*",
+				SearchOption.AllDirectories))
 			{
-				Directory.CreateDirectory(m_configurationDirectory);
-				File.WriteAllBytes(m_overridePath, m_overrideBytes);
+				var fullPath = Path.GetFullPath(directory);
+				AssertPathIsInConfigurationSettings(fullPath);
+				m_configurationDirectories.Add(RelativeConfigurationPath(fullPath));
 			}
-			else if (File.Exists(m_overridePath))
+		}
+
+		private string RelativeConfigurationPath(string path)
+		{
+			var fullPath = Path.GetFullPath(path);
+			if (!fullPath.StartsWith(m_configurationBoundary, StringComparison.OrdinalIgnoreCase))
+				throw new InvalidOperationException("Path is outside ConfigurationSettings: " + fullPath);
+			return fullPath.Substring(m_configurationBoundary.Length);
+		}
+
+		private string FullConfigurationPath(string relativePath)
+		{
+			if (string.IsNullOrEmpty(relativePath) || Path.IsPathRooted(relativePath))
+				throw new InvalidOperationException("ConfigurationSettings path must be relative.");
+			var fullPath = Path.GetFullPath(Path.Combine(m_configurationDirectory, relativePath));
+			AssertPathIsInConfigurationSettings(fullPath);
+			return fullPath;
+		}
+
+		private void RestoreConfigurationSettings(bool assertBehavior)
+		{
+			if (m_configurationSnapshot == null)
+				return;
+			var currentFiles = ConfigurationFileSnapshot();
+			foreach (var file in currentFiles.Keys)
 			{
-				File.Delete(m_overridePath);
+				var relative = RelativeConfigurationPath(file);
+				if (!m_configurationSnapshot.ContainsKey(relative))
+					File.Delete(file);
 			}
+			foreach (var file in m_configurationSnapshot)
+			{
+				var fullPath = FullConfigurationPath(file.Key);
+				Directory.CreateDirectory(Path.GetDirectoryName(fullPath));
+				File.WriteAllBytes(fullPath, file.Value);
+			}
+			RestoreConfigurationDirectories();
+			AssertConfigurationSettingsRestored();
+			if (m_layouts == null)
+				return;
 			m_layouts.Reload();
+			if (!assertBehavior || string.IsNullOrEmpty(m_originalLayoutXml))
+				return;
 			Assert.That(Inventory.GetInventory("layouts", Cache.ProjectId.Name), Is.SameAs(m_layouts));
-			Assert.That(File.Exists(m_overridePath), Is.EqualTo(m_overrideExisted));
-			if (m_overrideExisted)
-				Assert.That(File.ReadAllBytes(m_overridePath), Is.EqualTo(m_overrideBytes));
 			Assert.That(CurrentLexEntryLayout().OuterXml, Is.EqualTo(m_originalLayoutXml));
-			if (m_view != null && !m_view.IsDisposed)
+			if (m_view == null || m_view.IsDisposed)
+				return;
+			RefreshAvaloniaDetail();
+			Assert.That(FieldIndex(GetHostedDetailModel(), "CitationForm"),
+				Is.EqualTo(m_originalCitationIndex));
+		}
+
+		private void RestoreConfigurationDirectories()
+		{
+			if (Directory.Exists(m_configurationDirectory))
 			{
-				RefreshAvaloniaDetail();
-				Assert.That(FieldIndex(GetHostedDetailModel(), "CitationForm"),
-					Is.EqualTo(m_originalCitationIndex));
+				var directories = Directory.GetDirectories(m_configurationDirectory, "*",
+					SearchOption.AllDirectories).OrderByDescending(path => path.Length).ToArray();
+				foreach (var directory in directories)
+				{
+					var fullPath = Path.GetFullPath(directory);
+					AssertPathIsInConfigurationSettings(fullPath);
+					if (!m_configurationDirectories.Contains(RelativeConfigurationPath(fullPath))
+						&& !Directory.EnumerateFileSystemEntries(fullPath).Any())
+					{
+						Directory.Delete(fullPath, false);
+					}
+				}
+			}
+			foreach (var directory in m_configurationDirectories.OrderBy(path => path.Length))
+				Directory.CreateDirectory(FullConfigurationPath(directory));
+			if (!m_configurationDirectoryExisted && Directory.Exists(m_configurationDirectory)
+				&& !Directory.EnumerateFileSystemEntries(m_configurationDirectory).Any())
+			{
+				Directory.Delete(m_configurationDirectory, false);
 			}
 		}
 
-		private void RestoreInventoryRegistrations()
+		private void AssertConfigurationSettingsRestored()
 		{
-			if (!m_inventoryRegistrationCaptured)
+			Assert.That(Directory.Exists(m_configurationDirectory),
+				Is.EqualTo(m_configurationDirectoryExisted));
+			if (!m_configurationDirectoryExisted)
 				return;
-			RestoreInventoryRegistration("layouts", m_previousLayouts);
-			RestoreInventoryRegistration("parts", m_previousParts);
-			m_inventoryRegistrationCaptured = false;
+			var restored = ConfigurationFileSnapshot().ToDictionary(
+				item => RelativeConfigurationPath(item.Key), item => item.Value,
+				StringComparer.OrdinalIgnoreCase);
+			Assert.That(restored.Keys, Is.EquivalentTo(m_configurationSnapshot.Keys));
+			foreach (var file in m_configurationSnapshot)
+				Assert.That(restored[file.Key], Is.EqualTo(file.Value));
+			var restoredDirectories = Directory.GetDirectories(m_configurationDirectory, "*",
+				SearchOption.AllDirectories).Select(RelativeConfigurationPath).ToArray();
+			Assert.That(restoredDirectories, Is.EquivalentTo(m_configurationDirectories));
+		}
+
+		private void CleanupTestState(bool assertBehavior)
+		{
+			Exception firstFailure = null;
+			CaptureCleanupFailure(() => RestoreConfigurationSettings(assertBehavior), ref firstFailure);
+			if (m_createdObjects != null)
+			{
+				CaptureCleanupFailure(() => NonUndoableUnitOfWorkHelper.Do(
+					Cache.ActionHandlerAccessor, DestroyTestData), ref firstFailure);
+			}
+			CaptureCleanupFailure(() => m_propertyTable?.RemoveLocalAndGlobalSettings(),
+				ref firstFailure);
+			if (m_window != null && !m_window.IsDisposed)
+				CaptureCleanupFailure(() => m_window.Dispose(), ref firstFailure);
+			if (m_inventoryRegistrationCaptured)
+			{
+				CaptureCleanupFailure(() => RestoreInventoryRegistration("layouts", m_previousLayouts),
+					ref firstFailure);
+				CaptureCleanupFailure(() => RestoreInventoryRegistration("parts", m_previousParts),
+					ref firstFailure);
+				m_inventoryRegistrationCaptured = false;
+			}
+			m_createdObjects = null;
+			m_entry = null;
+			m_view = null;
+			m_layouts = null;
+			m_previousLayouts = null;
+			m_previousParts = null;
+			m_propertyTable = null;
+			m_window = null;
+			m_overridePath = null;
+			m_configurationSnapshot = null;
+			m_configurationDirectories = null;
+			if (firstFailure != null)
+				ExceptionDispatchInfo.Capture(firstFailure).Throw();
+		}
+
+		private static void CaptureCleanupFailure(Action action, ref Exception firstFailure)
+		{
+			try
+			{
+				action();
+			}
+			catch (Exception error)
+			{
+				if (firstFailure == null)
+					firstFailure = error;
+			}
 		}
 
 		private void RestoreInventoryRegistration(string key, Inventory previous)
