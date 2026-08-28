@@ -432,13 +432,14 @@ namespace SIL.FieldWorks.XWorks
 				return false;
 			}
 
-			if (string.IsNullOrWhiteSpace(model.UserName))
+            // For username and password, allow whitespace (it may be a valid value), but not empty string.
+			if (string.IsNullOrEmpty(model.UserName))
 			{
 				view.UpdateStatus(xWorksStrings.ksErrorNoUsername, WebonaryStatusCondition.Error);
 				return false;
 			}
 
-			if (string.IsNullOrWhiteSpace(model.Password))
+			if (string.IsNullOrEmpty(model.Password))
 			{
 				view.UpdateStatus(xWorksStrings.ksErrorNoPassword, WebonaryStatusCondition.Error);
 				return false;

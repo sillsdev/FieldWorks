@@ -110,13 +110,14 @@ namespace SIL.FieldWorks.XWorks
 
 		/// <summary>
 		/// Enables Submit only while a site name, a user name, and a password are all
-		/// present.
+		/// present. Whitespace is not valid for site name, but may be valid for
+		/// user name and password.
 		/// </summary>
 		private void UpdateSubmitButtonEnabledState()
 		{
 			publishButton.Enabled = !string.IsNullOrWhiteSpace(webonarySiteNameTextbox.Text)
-				&& !string.IsNullOrWhiteSpace(webonaryUsernameTextbox.Text)
-				&& !string.IsNullOrWhiteSpace(webonaryPasswordTextbox.Text);
+				&& !string.IsNullOrEmpty(webonaryUsernameTextbox.Text)
+				&& !string.IsNullOrEmpty(webonaryPasswordTextbox.Text);
 		}
 
 		private void UpdateEntriesToBePublishedLabel()

@@ -39,9 +39,13 @@ namespace SIL.FieldWorks.XWorks
 				Assert.That(submit.Enabled, Is.True, "Submit should be enabled once all three fields are filled in.");
 
 				userName.Text = "   ";
-				Assert.That(submit.Enabled, Is.False, "Whitespace should not satisfy the user name.");
+				Assert.That(submit.Enabled, Is.True,
+					"A credential is opaque, so whitespace in one still counts as filled in.");
 
 				userName.Text = "user";
+				siteName.Text = "   ";
+				Assert.That(submit.Enabled, Is.False, "Whitespace should not satisfy the site name.");
+
 				siteName.Text = string.Empty;
 				Assert.That(submit.Enabled, Is.False, "Clearing the site name should disable Submit again.");
 			}

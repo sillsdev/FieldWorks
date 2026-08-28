@@ -291,9 +291,7 @@ namespace SIL.FieldWorks.XWorks
 				{ "SiteName", m => m.SiteName = null },
 				{ "whitespace SiteName", m => m.SiteName = "   " },
 				{ "UserName", m => m.UserName = null },
-				{ "whitespace UserName", m => m.UserName = "   " },
 				{ "Password", m => m.Password = null },
-				{ "whitespace Password", m => m.Password = "   " },
 				{ "SelectedPublication", m => m.SelectedPublication = null }
 			};
 
