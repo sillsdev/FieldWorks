@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2017 SIL International
+﻿// Copyright (c) 2003-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -91,6 +91,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 					}
 					if (!installedBinary)
 					{
+						// Walks to the LAST 'output' segment, not to a solution file like
+						// FwDirectoryFinder. See LT-22769.
 						while (parentOfLanguageExplorerFolder.ToLowerInvariant().LastIndexOf("output") > -1)
 						{
 							// If a dev machine, move up to parent of 'output' folder.

@@ -1,4 +1,4 @@
-// Copyright (c) 2008-2017 SIL International
+﻿// Copyright (c) 2008-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -37,6 +37,60 @@ namespace SIL.FieldWorks.Common.FwUtils
 			FwRegistryHelper.Manager.SetRegistryHelper(new DummyFwRegistryHelper());
 			FwRegistryHelper.FieldWorksRegistryKey.SetValue("RootDataDir", Path.GetFullPath(Path.Combine(UtilsAssemblyDir, "../../DistFiles")));
 			FwRegistryHelper.FieldWorksRegistryKey.SetValue("RootCodeDir", Path.GetFullPath(Path.Combine(UtilsAssemblyDir, "../../DistFiles")));
+		}
+
+		/// <summary>
+		/// The solution file is the only thing telling a source tree from an install, so if it is
+		/// ever renamed every dev build silently reverts to the registry. This makes that a red
+		/// build instead. Three FwAvalonia fixtures also walk up to it to find the repo root, so
+		/// a
+		/// rename would break four things at once, all of them confusingly.
+		/// </summary>
+		[Test]
+		public void SourceTreeMarker_StillExistsAtTheRepoRoot()
+		{
+			var distFiles = FwDirectoryFinder.FindDevDistFiles(UtilsAssemblyDir);
+			Assert.That(distFiles, Is.Not.Null,
+				"the test assembly is not inside a source tree, so the marker cannot be checked");
+
+			var repoRoot = Path.GetDirectoryName(distFiles);
+			Assert.That(File.Exists(Path.Combine(repoRoot, "FieldWorks.sln")), Is.True,
+				"FieldWorks.sln is what FwDirectoryFinder uses to recognise a source tree. If it "
+				+ "was renamed or removed, update ksSolutionFilename in the same commit -- "
+				+ "otherwise dev builds fall back to the machine registry with no diagnostic.");
+		}
+
+		/// <summary>
+		/// A space in the repo path must not defeat the walk: the assembly path comes from a
+		/// file:// URI, so it has to be unescaped before any directory is probed.
+		/// </summary>
+		[Test]
+		public void FindDevDistFiles_UnderAPathContainingASpace_FindsTreeDistFiles()
+		{
+			var root = Directory.CreateDirectory(Path.Combine(Path.GetTempPath(),
+				"FwDirectoryFinderTests", "My Repos " + Guid.NewGuid().ToString("N"))).FullName;
+			try
+			{
+				Directory.CreateDirectory(Path.Combine(root, "DistFiles"));
+				File.WriteAllText(Path.Combine(root, "FieldWorks.sln"), string.Empty);
+				var start = Directory.CreateDirectory(
+					Path.Combine(root, "Output", "Debug", "x64")).FullName;
+
+				// Through the same conversion production uses, from a file:// URI -- the walk
+				// itself never saw the escaping, so testing it alone would prove nothing.
+				var codeBase = new Uri(Path.Combine(start, "FwUtils.dll")).AbsoluteUri;
+				Assert.That(codeBase, Does.Contain("%20"),
+					"the fixture path must actually round-trip an escaped space");
+
+				var derived = FwDirectoryFinder.AssemblyDirectoryFromCodeBase(codeBase);
+				Assert.That(derived, Is.SamePath(start));
+				Assert.That(FwDirectoryFinder.FindDevDistFiles(derived),
+					Is.SamePath(Path.Combine(root, "DistFiles")));
+			}
+			finally
+			{
+				Directory.Delete(root, true);
+			}
 		}
 
 		///-------------------------------------------------------------------------------------
@@ -122,7 +176,12 @@ namespace SIL.FieldWorks.Common.FwUtils
 		[TestCase("RootDataDir")]
 		public void CodeAndDataDirectory_PreferSourceTreeOverRegistry(string registryValueName)
 		{
-			var expectedDir = Path.GetFullPath(Path.Combine(UtilsAssemblyDir, "../../DistFiles"));
+			// Derived the way production derives it, not by re-encoding the ../../DistFiles
+			// depth this change exists to remove -- that would pass today and mislead tomorrow.
+			var expectedDir = FwDirectoryFinder.FindDevDistFiles(UtilsAssemblyDir);
+			Assert.That(expectedDir, Is.Not.Null,
+				"the test assembly must itself be inside a source tree for this test to mean "
+				+ "anything");
 			using (var fwHKCU = FwRegistryHelper.FieldWorksRegistryKey)
 			{
 				var originalValue = fwHKCU.GetValue(registryValueName);
@@ -134,7 +193,13 @@ namespace SIL.FieldWorks.Common.FwUtils
 				}
 				finally
 				{
-					fwHKCU.SetValue(registryValueName, originalValue);
+					// SetValue(name, null) throws, so an absent original must be deleted instead
+					// --
+					// otherwise the cleanup masks whichever assertion actually failed.
+					if (originalValue == null)
+						fwHKCU.DeleteValue(registryValueName, false);
+					else
+						fwHKCU.SetValue(registryValueName, originalValue);
 				}
 			}
 		}

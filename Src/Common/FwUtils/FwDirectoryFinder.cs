@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2018 SIL International
+﻿// Copyright (c) 2003-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 //
@@ -319,8 +319,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 		}
 
 		/// <summary>
-		/// Strips the trailing separator that hundreds of callers would otherwise pass on to
-		/// Path.Combine, except on a root directory (e.g. c:\), where Combine needs it.
+		/// The directory without a trailing separator, except at a drive root (e.g. c:\), where
+		/// Path.Combine requires one.
 		/// </summary>
 		private static string TidyRootDir(string rootDir)
 		{
@@ -334,19 +334,27 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <summary>The file that marks the root of a FieldWorks source tree.</summary>
 		private const string ksSolutionFilename = "FieldWorks.sln";
 
-		/// <summary>Set this to let the registry name the directories again.</summary>
-		private const string ksUseRegistryDirsVariable = "FW_USE_REGISTRY_DIRS";
-
 		/// <summary>
 		/// Gets the DistFiles folder of the source tree that <paramref name="startDirectory"/>
 		/// lies in, or <c>null</c> if it lies outside a source tree (the installed case).
 		/// </summary>
 		/// <remarks>
-		/// Walking up to the tree root, rather than assuming a fixed depth, finds
-		/// DistFiles from Output/&lt;Configuration&gt;, from its architecture
-		/// subfolders, and from a project's own bin folder alike.
+		/// The solution file is what distinguishes a source tree from an install, so an
+		/// installed FieldWorks never matches here however deep its DistFiles sits.
 		/// </remarks>
-		/// <param name="startDirectory">The directory to start searching upwards from.</param>
+		/// <summary>
+		/// The directory holding the assembly at <paramref name="codeBase"/>, a file:// URI.
+		/// </summary>
+		/// <remarks>
+		/// Unescapes before returning: a repo path containing a space arrives here as %20, and
+		/// a start directory that still holds it matches no directory at all.
+		/// </remarks>
+		internal static string AssemblyDirectoryFromCodeBase(string codeBase)
+		{
+			var uri = new Uri(codeBase);
+			return Path.GetDirectoryName(Uri.UnescapeDataString(uri.AbsolutePath));
+		}
+
 		public static string FindDevDistFiles(string startDirectory)
 		{
 			for (
@@ -366,11 +374,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 		private static string GetDevDistFilesPath()
 		{
-			if (EnvironmentVariables.IsTrue(ksUseRegistryDirsVariable))
-				return null;
-
-			string assemblyDir = Path.GetDirectoryName(FileUtils.StripFilePrefix(Assembly.GetExecutingAssembly().CodeBase));
-			return FindDevDistFiles(assemblyDir);
+			return FindDevDistFiles(AssemblyDirectoryFromCodeBase(
+				Assembly.GetExecutingAssembly().CodeBase));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -462,8 +467,10 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Gets the src dir (for running tests)
+		/// The Src directory of the source tree this assembly is running from (for tests).
 		/// </summary>
+		/// <exception cref="ApplicationException">The assembly is not inside a source tree, or
+		/// the tree has no Src directory.</exception>
 		/// ------------------------------------------------------------------------------------
 		public static string SourceDirectory
 		{
@@ -472,15 +479,16 @@ namespace SIL.FieldWorks.Common.FwUtils
 				if (!string.IsNullOrEmpty(m_srcdir))
 					return m_srcdir;
 
-				// We'll assume the executing assembly is $FW/Output/Debug/FwUtils.dll,
-				// and the source dir is $FW/Src.
-				var dir = ExeOrDllDirectory;
-				dir = Path.GetDirectoryName(dir); // strip the parent directory name (Debug)
-				dir = Path.GetDirectoryName(dir); // strip the parent directory again (Output)
-				dir = Path.Combine(dir, "Src");
-				if (!Directory.Exists(dir))
+				// The same walk the code and data directories use, so every layout it supports
+				// resolves here too.
+				string distFiles = FindDevDistFiles(ExeOrDllDirectory);
+				string dir = distFiles == null
+					? null
+					: Path.Combine(Path.GetDirectoryName(distFiles), "Src");
+				if (dir == null || !Directory.Exists(dir))
 					throw new ApplicationException(
-						"Could not find the Src directory.  Was expecting it at: " + dir
+						"Could not find the Src directory.  Was expecting it at: "
+						+ (dir ?? "(no source tree above " + ExeOrDllDirectory + ")")
 					);
 				m_srcdir = dir;
 

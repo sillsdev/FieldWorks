@@ -1,4 +1,4 @@
-// Copyright (c) 2009-2018 SIL International
+﻿// Copyright (c) 2009-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -221,6 +221,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 					return null;
 
 				var ver = CustomIcu.Version.ToString(CultureInfo.InvariantCulture);
+				// Not FwDirectoryFinder.FindDevDistFiles: on the InitIcuDataDir bootstrap path
+				// that dependency is an initialisation-order question. See LT-22768.
 				var distFiles = Path.GetFullPath(Path.Combine(assemblyDir, "..", "..", "DistFiles"));
 				if (!Directory.Exists(distFiles))
 					return null;
