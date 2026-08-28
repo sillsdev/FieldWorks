@@ -463,6 +463,24 @@ namespace SIL.FieldWorks.Common.FwUtils
 			}
 		}
 
+		/// <summary>
+		/// The Src directory of the source tree <paramref name="startDirectory"/> lies in.
+		/// </summary>
+		/// <exception cref="ApplicationException">There is no source tree above
+		/// <paramref name="startDirectory"/>, or the tree has no Src directory.</exception>
+		internal static string FindSourceDirectory(string startDirectory)
+		{
+			string distFiles = FindDevDistFiles(startDirectory);
+			string dir = distFiles == null
+				? null
+				: Path.Combine(Path.GetDirectoryName(distFiles), "Src");
+			if (dir == null || !Directory.Exists(dir))
+				throw new ApplicationException(
+					"Could not find the Src directory.  Was expecting it at: "
+					+ (dir ?? "(no source tree above " + startDirectory + ")"));
+			return dir;
+		}
+
 		private static string m_srcdir;
 
 		/// ------------------------------------------------------------------------------------
@@ -481,16 +499,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 				// The same walk the code and data directories use, so every layout it supports
 				// resolves here too.
-				string distFiles = FindDevDistFiles(ExeOrDllDirectory);
-				string dir = distFiles == null
-					? null
-					: Path.Combine(Path.GetDirectoryName(distFiles), "Src");
-				if (dir == null || !Directory.Exists(dir))
-					throw new ApplicationException(
-						"Could not find the Src directory.  Was expecting it at: "
-						+ (dir ?? "(no source tree above " + ExeOrDllDirectory + ")")
-					);
-				m_srcdir = dir;
+				m_srcdir = FindSourceDirectory(ExeOrDllDirectory);
 
 				return m_srcdir;
 			}

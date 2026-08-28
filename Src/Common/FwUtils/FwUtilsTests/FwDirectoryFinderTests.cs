@@ -4,6 +4,7 @@
 
 using System;
 using System.IO;
+using System.Linq;
 using NUnit.Framework;
 using SIL.PlatformUtilities;
 
@@ -193,8 +194,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 				}
 				finally
 				{
-					// SetValue(name, null) throws, so an absent original must be deleted instead
-					// --
+					// SetValue(name, null) throws, so an absent original is deleted instead;
 					// otherwise the cleanup masks whichever assertion actually failed.
 					if (originalValue == null)
 						fwHKCU.DeleteValue(registryValueName, false);
@@ -277,6 +277,48 @@ namespace SIL.FieldWorks.Common.FwUtils
 		{
 			var currentDir = Path.GetFullPath(Path.Combine(UtilsAssemblyDir, "../../DistFiles"));
 			Assert.That(FwDirectoryFinder.DataDirectory, Is.SamePath(currentDir));
+		}
+
+		/// <summary>
+		/// SourceDirectory resolves from every layout the walk supports, including the
+		/// Output/Debug/x64 that FindDevDistFiles_InsideSourceTree also claims.
+		/// </summary>
+		[TestCase("Output", "Debug")]
+		[TestCase("Output", "Debug", "x64")]
+		[TestCase("Src", "SomeProject", "bin", "Debug")]
+		public void FindSourceDirectory_FromASupportedLayout_FindsTreeSrc(params string[] startSubDirectory)
+		{
+			var root = CreateFakeSourceTree(true);
+			try
+			{
+				Directory.CreateDirectory(Path.Combine(root, "Src"));
+				var start = Directory.CreateDirectory(
+					Path.Combine(new[] { root }.Concat(startSubDirectory).ToArray())).FullName;
+
+				Assert.That(FwDirectoryFinder.FindSourceDirectory(start),
+					Is.SamePath(Path.Combine(root, "Src")));
+			}
+			finally
+			{
+				Directory.Delete(root, true);
+			}
+		}
+
+		/// <summary>Outside a source tree it throws rather than returning something
+		/// wrong.</summary>
+		[Test]
+		public void FindSourceDirectory_OutsideASourceTree_Throws()
+		{
+			var root = CreateFakeSourceTree(false);
+			try
+			{
+				Assert.That(() => FwDirectoryFinder.FindSourceDirectory(root),
+					Throws.TypeOf<ApplicationException>());
+			}
+			finally
+			{
+				Directory.Delete(root, true);
+			}
 		}
 
 		///-------------------------------------------------------------------------------------
