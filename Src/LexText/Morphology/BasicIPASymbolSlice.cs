@@ -108,51 +108,30 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		}
 
 		/// <summary>
-		/// Set description based on the content of the BasicIPASymbol field and the BasicIPAInfo document
+		/// Populates or clears the phoneme's features to match the BasicIPASymbol field.
 		/// </summary>
+		/// <remarks>
+		/// WHEN to write belongs here because it depends on slice state: the latch records that
+		/// this slice populated the features, which is what lets clearing the symbol clear them
+		/// again without discarding features a user set through the chooser. The writing itself
+		/// is in PhonemeFeaturePopulator, so the LT-22716 repair can reuse it.
+		/// </remarks>
 		public void SetFeaturesBasedOnIPA()
 		{
 			var phoneme = (IPhPhoneme)m_obj;
 
 			if (phoneme.BasicIPASymbol.Length > 0 && (m_justChangedFeatures || phoneme.FeaturesOA == null || phoneme.FeaturesOA.FeatureSpecsOC.Count == 0))
 			{
-				// Mono XPath processing crashes when the expression starts out with // here.  See FWNX-730.
-				string sXPath = "/SegmentDefinitions/SegmentDefinition[Representations/Representation[.='" +
-					XmlUtils.MakeSafeXmlAttribute(phoneme.BasicIPASymbol.Text) +
-					"']]/Features";
-				XElement features = s_ipaInfoDocument.XPathSelectElement(sXPath);
-				if (features != null)
+				if (PhonemeFeaturePopulator.ApplyFeaturesFromIpaSymbol(m_cache, phoneme,
+						s_ipaInfoDocument) > 0)
 				{
-					foreach (XElement feature in features.Elements("FeatureValuePair"))
-					{
-						var sFeature = (string) feature.Attribute("feature");
-						var sValue = (string) feature.Attribute("value");
-						IFsFeatDefn featDefn = m_cache.LanguageProject.PhFeatureSystemOA.GetFeature(sFeature);
-						var closedFeat = featDefn as IFsClosedFeature;
-						if (closedFeat == null)
-							continue;
-
-						IFsSymFeatVal symVal = m_cache.LanguageProject.PhFeatureSystemOA.GetSymbolicValue(sValue);
-						if (symVal == null)
-							continue;
-						if (phoneme.FeaturesOA == null)
-						{
-							phoneme.FeaturesOA = m_cache.ServiceLocator.GetInstance<IFsFeatStrucFactory>().Create();
-						}
-						// Reuse any spec already held for this feature, so that repopulating a
-						// phoneme cannot leave it with two specs for one feature (LT-22714).
-						IFsClosedValue value = phoneme.FeaturesOA.GetOrCreateValue(closedFeat);
-						value.FeatureRA = closedFeat;
-						value.ValueRA = symVal;
-						m_justChangedFeatures = true;
-					}
+					m_justChangedFeatures = true;
 				}
 			}
 			else if (phoneme.BasicIPASymbol.Length == 0 && m_justChangedFeatures)
 			{
-				if (phoneme.FeaturesOA != null)
-					// user has cleared the basic IPA symbol; clear the features
-					phoneme.FeaturesOA.FeatureSpecsOC.Clear();
+				// user has cleared the basic IPA symbol; clear the features
+				PhonemeFeaturePopulator.ClearFeatures(phoneme);
 				m_justChangedFeatures = true;
 			}
 			else

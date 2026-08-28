@@ -1,4 +1,4 @@
-// Copyright (c) 2026 SIL International
+﻿// Copyright (c) 2026 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -21,6 +21,9 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 	/// leaves at most one feature specification per phonological feature (LT-22714).
 	/// </summary>
 	[TestFixture]
+	// Some tests here build a real Slice, which is a UserControl whose rootsite creates
+	// apartment-threaded Views COM objects. NUnit 3 defaults to MTA.
+	[Apartment(System.Threading.ApartmentState.STA)]
 	public class BasicIPASymbolSliceTests : MemoryOnlyBackendProviderTestBase
 	{
 		private IPhPhoneme m_phoneme;
@@ -181,6 +184,91 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 				.ToList();
 			Assert.That(duplicated, Is.Empty,
 				"features specified more than once: " + string.Join(", ", duplicated));
+		}
+
+		/// <summary>
+		/// The populate service must be idempotent on its own terms, whatever the slice's gate
+		/// decides. These drive it directly, so they do not construct a UserControl and do not
+		/// depend on the latch -- which is what the LT-22716 repair will do too.
+		/// </summary>
+		[Test]
+		public void Populator_AppliedRepeatedly_WritesEachFeatureOnce()
+		{
+			CreateFeatureSystemFor("p");
+			SetSymbol("p");
+
+			NonUndoableUnitOfWorkHelper.Do(m_actionHandler, () =>
+			{
+				PhonemeFeaturePopulator.ApplyFeaturesFromIpaSymbol(Cache, m_phoneme, IpaInfoDocument());
+				PhonemeFeaturePopulator.ApplyFeaturesFromIpaSymbol(Cache, m_phoneme, IpaInfoDocument());
+				PhonemeFeaturePopulator.ApplyFeaturesFromIpaSymbol(Cache, m_phoneme, IpaInfoDocument());
+			});
+
+			AssertNoFeatureIsSpecifiedTwice();
+			Assert.That(PhonemeFeaturePopulator.DuplicatedFeatureIds(m_phoneme), Is.Empty);
+		}
+
+		[Test]
+		public void Populator_AfterASymbolChange_KeepsOneSpecPerFeatureWithTheNewValue()
+		{
+			CreateFeatureSystemFor("p", "t");
+			SetSymbol("p");
+			NonUndoableUnitOfWorkHelper.Do(m_actionHandler, () =>
+				PhonemeFeaturePopulator.ApplyFeaturesFromIpaSymbol(Cache, m_phoneme, IpaInfoDocument()));
+
+			SetSymbol("t");
+			NonUndoableUnitOfWorkHelper.Do(m_actionHandler, () =>
+				PhonemeFeaturePopulator.ApplyFeaturesFromIpaSymbol(Cache, m_phoneme, IpaInfoDocument()));
+
+			AssertNoFeatureIsSpecifiedTwice();
+			foreach (var pair in FeaturePairsFor("t"))
+			{
+				var spec = m_phoneme.FeaturesOA.FeatureSpecsOC.OfType<IFsClosedValue>()
+					.SingleOrDefault(value => value.FeatureRA.CatalogSourceId == pair.Key);
+				Assert.That(spec, Is.Not.Null, "no specification for " + pair.Key);
+				Assert.That(spec.ValueRA.CatalogSourceId, Is.EqualTo(pair.Value),
+					"wrong value for " + pair.Key);
+			}
+		}
+
+		/// <summary>An empty symbol writes nothing, so the repair cannot blank a
+		/// phoneme.</summary>
+		[Test]
+		public void Populator_WithNoSymbol_WritesNothing()
+		{
+			CreateFeatureSystemFor("p");
+			SetSymbol(string.Empty);
+
+			int written = 0;
+			NonUndoableUnitOfWorkHelper.Do(m_actionHandler, () =>
+				written = PhonemeFeaturePopulator.ApplyFeaturesFromIpaSymbol(Cache, m_phoneme,
+					IpaInfoDocument()));
+
+			Assert.That(written, Is.Zero);
+		}
+
+		/// <summary>
+		/// DuplicatedFeatureIds is what a repair would report, so it has to actually see damage
+		/// rather than always returning empty.
+		/// </summary>
+		[Test]
+		public void DuplicatedFeatureIds_ReportsAnInjectedDuplicate()
+		{
+			CreateFeatureSystemFor("p");
+			SetSymbol("p");
+			NonUndoableUnitOfWorkHelper.Do(m_actionHandler, () =>
+			{
+				PhonemeFeaturePopulator.ApplyFeaturesFromIpaSymbol(Cache, m_phoneme, IpaInfoDocument());
+				// The pre-fix behaviour: a second spec for a feature already specified.
+				var existing = m_phoneme.FeaturesOA.FeatureSpecsOC.OfType<IFsClosedValue>().First();
+				var extra = Cache.ServiceLocator.GetInstance<IFsClosedValueFactory>().Create();
+				m_phoneme.FeaturesOA.FeatureSpecsOC.Add(extra);
+				extra.FeatureRA = existing.FeatureRA;
+				extra.ValueRA = existing.ValueRA;
+			});
+
+			Assert.That(PhonemeFeaturePopulator.DuplicatedFeatureIds(m_phoneme),
+				Has.Length.EqualTo(1));
 		}
 
 		private BasicIPASymbolSlice CreateSlice()
