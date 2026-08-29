@@ -21,6 +21,7 @@ from _common import (
     ConfigurationError,
     AuthenticationError,
     ValidationError,
+    NotFoundError,
     APIError,
     NetworkError,
 )

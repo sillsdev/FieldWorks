@@ -23,19 +23,42 @@ Keep these few and listed, so re-syncing upstream stays possible.
 1. **`SKILL.md`** gains a leading `## FieldWorks / SIL JIRA Integration`
    section (~39 lines) covering `jira.sil.org`, the `LT` project key and the
    Data Center specifics. Everything below it matches upstream.
-2. **`scripts/*.py` import fix.** Eight modules were unusable: they raised
-   `NameError: name 'Optional' is not defined` or
-   `NameError: name 'AtlassianCredentials' is not defined` on import, because
-   the read-only variant appears to be generated from the write variant by
-   stripping write functions, and the stripper also pruned those two names
-   from the import lines while the surviving signatures still referenced them.
-
-   Affected: `confluence_comments`, `confluence_labels`, `confluence_pages`,
+2. **`scripts/*.py` import fix.** Eight modules raised `NameError` on import:
+   `Optional` or `AtlassianCredentials` was missing from their import lines
+   while the surviving signatures still referenced them. Affected:
+   `confluence_comments`, `confluence_labels`, `confluence_pages`,
    `jira_agile`, `jira_links`, `jira_projects`, `jira_workflow`,
-   `jira_worklog`. The fix restores the pruned names, nothing else.
+   `jira_worklog`.
 
-   **Reported upstream as langpingxue/atlassian-skills#14.** Until it is fixed
-   there, a re-sync will reintroduce it.
+   A ninth defect was runtime-only and easy to miss: `jira_projects` raised
+   `NotFoundError` at `:179` without importing it, so the module imported
+   cleanly and broke only when a project was absent. **A successful import is
+   not evidence a module works** -- `python -m pyflakes <files>` finds this
+   class of bug, and a shell that does not expand globs will silently scan
+   nothing, so pass real paths.
+
+   **This was upstream's bug, and upstream had already fixed it before we
+   vendored.** It arrived in upstream `cdd1823f6` (2025-12-20) and was fixed in
+   upstream `0fafb48e7`, "Fix missing imports in readonly variant scripts"
+   (2026-02-10). Our files are byte-identical to upstream at `cdd1823f6`, and
+   `d1a9bc66d` vendored that pre-fix state on 2026-06-11 -- four months after
+   the fix existed. So this was a stale snapshot, not an inherited live defect,
+   and a re-sync would have *fixed* it rather than reintroducing it. Upstream
+   issue #14 was filed here against the stale copy and has been closed as
+   already-fixed.
+
+   Still true upstream today: the four `bitbucket_*` modules use
+   `from ._common import`, a relative import that cannot resolve under the
+   invocation this `SKILL.md` documents. Moot here, since those modules are
+   removed -- see "Jira only" below.
+
+3. **TLS verification is off.** `_common.py` sets `ssl_verify = False` on the
+   credentials dataclass (`:128`), on the config (`:192`), and as the
+   `*_SSL_VERIFY` environment default (`:236`), where upstream sets `True`.
+   Deliberate: `jira.sil.org`'s certificate chain does not validate here, so
+   every call would fail with verification on. The cost is an
+   `InsecureRequestWarning` per request. Do not align this with upstream
+   without first confirming the chain validates.
 
 ## Restructuring done here
 
