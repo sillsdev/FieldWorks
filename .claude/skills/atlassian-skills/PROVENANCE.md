@@ -24,8 +24,18 @@ Keep these few and listed, so re-syncing upstream stays possible.
    section (~39 lines) covering `jira.sil.org`, the `LT` project key and the
    Data Center specifics. Everything below it matches upstream.
 
-No script changes. The import bug that made eight modules unusable affects only
-the read-only variant -- see its `PROVENANCE.md`.
+2. **TLS verification is off.** `_common.py` sets `ssl_verify = False` on the
+   credentials dataclass, on the config, and as the `*_SSL_VERIFY` environment
+   default, where upstream sets `True`. Deliberate: `jira.sil.org`'s
+   certificate chain does not validate here, so every call would fail with
+   verification on. The cost is an `InsecureRequestWarning` per request. Do not
+   align this with upstream without first confirming the chain validates.
+
+3. **`_common.py` and `__init__.py`** lost their Confluence and Bitbucket
+   plumbing -- see "Jira only" below.
+
+The `NameError`-on-import bug affected only the read-only variant; see its
+`PROVENANCE.md` for what it was and where it came from.
 
 ## Data Center gotchas worth knowing before reading the docs
 
