@@ -10,9 +10,10 @@ import sys
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent))
 
-from typing import Any, Dict
+from typing import Any, Dict, Optional
 
 from _common import (
+    AtlassianCredentials,
     get_jira_client,
     simplify_issue,
     format_json_response,
@@ -20,6 +21,7 @@ from _common import (
     ConfigurationError,
     AuthenticationError,
     ValidationError,
+    NotFoundError,
     APIError,
     NetworkError,
 )

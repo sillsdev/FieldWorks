@@ -80,7 +80,7 @@ headless tests), and then PROMOTES it:
    citations.
 2. Add a numbered subsection to dialog-conversion.md (the §2c/§2d shape:
    what the legacy behavior was, the shared design, the test names).
-3. Record any surprise in `references/lessons-learned.md` per its update
+3. Record any surprise in `lessons-learned.md` per its update
    protocol.
 
 Until a gap's exemplar exists, conversions that need it stay on the Legacy

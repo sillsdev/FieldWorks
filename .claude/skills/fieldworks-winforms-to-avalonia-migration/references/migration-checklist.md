@@ -47,7 +47,7 @@ Use this when collapsing a large multi-view derisk branch into a landable PR (se
 ## Phase 3 — Seams
 
 - [ ] Existing seams reused from `Src/Common/FwAvalonia/Seams/`
-- [ ] Any new seam added to `references/seam-catalog.md` with purpose,
+- [ ] Any new seam added to `seam-catalog.md` with purpose,
       rules, and pivot trigger
 - [ ] No region code reaches directly into PropertyTable/mediator/LCModel
       outside a seam
@@ -125,7 +125,7 @@ Use this when collapsing a large multi-view derisk branch into a landable PR (se
 ## Phase 10 — Retrospective (updates this skill set)
 
 - [ ] New patterns/gotchas/pivots recorded per the protocol in
-      `references/lessons-learned.md`
+      `lessons-learned.md`
 - [ ] New plugins added to the canonical examples in
       architecture-patterns.md §5
 - [ ] Stale file pointers in any fieldworks-* skill fixed
