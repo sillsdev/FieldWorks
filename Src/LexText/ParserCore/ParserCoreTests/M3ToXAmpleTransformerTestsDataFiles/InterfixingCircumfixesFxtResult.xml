@@ -1,0 +1,773 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<M3Dump>
+  <PartsOfSpeech>
+    <PartOfSpeech Id="2755" DefaultInflectionClass="0">
+      <Name>Adverb</Name>
+      <Description>An adverb, narrowly defined, is a part of speech whose members modify verbs for such categories as time, manner, place, or direction. An adverb, broadly defined, is a part of speech whose members modify any constituent class of words other than nouns, such as verbs, adjectives, adverbs, phrases, clauses, or sentences. Under this definition, the possible type of modification depends on the class of the constituent being modified.</Description>
+      <Abbreviation>adv</Abbreviation>
+      <NumberOfLexEntries>0</NumberOfLexEntries>
+      <AffixSlots></AffixSlots>
+      <AffixTemplates></AffixTemplates>
+      <InflectionClasses></InflectionClasses>
+      <InflectableFeats></InflectableFeats>
+      <StemNames></StemNames>
+      <BearableFeatures></BearableFeatures>
+    </PartOfSpeech>
+    <PartOfSpeech Id="6621" DefaultInflectionClass="0">
+      <Name>Noun</Name>
+      <Description>A noun is a broad classification of parts of speech which include substantives and nominals.</Description>
+      <Abbreviation>n</Abbreviation>
+      <NumberOfLexEntries>0</NumberOfLexEntries>
+      <AffixSlots></AffixSlots>
+      <AffixTemplates></AffixTemplates>
+      <InflectionClasses></InflectionClasses>
+      <InflectableFeats></InflectableFeats>
+      <StemNames></StemNames>
+      <BearableFeatures></BearableFeatures>
+    </PartOfSpeech>
+    <PartOfSpeech Id="6475" DefaultInflectionClass="0">
+      <Name>Pro-form</Name>
+      <Description>A pro-form is a part of speech whose members usually substitute for other constituents, including phrases, clauses, or sentences, and whose meaning is recoverable from the linguistic or extralinguistic context.</Description>
+      <Abbreviation>pro-form</Abbreviation>
+      <NumberOfLexEntries>0</NumberOfLexEntries>
+      <AffixSlots></AffixSlots>
+      <AffixTemplates></AffixTemplates>
+      <InflectionClasses></InflectionClasses>
+      <InflectableFeats></InflectableFeats>
+      <StemNames></StemNames>
+      <BearableFeatures></BearableFeatures>
+      <SubPossibilities dst="6398"></SubPossibilities>
+    </PartOfSpeech>
+    <PartOfSpeech Id="6398" DefaultInflectionClass="0">
+      <Name>Pronoun</Name>
+      <Description>A pronoun is a pro-form which functions like a noun and substitutes for a noun or noun phrase.</Description>
+      <Abbreviation>pro</Abbreviation>
+      <NumberOfLexEntries>0</NumberOfLexEntries>
+      <AffixSlots></AffixSlots>
+      <AffixTemplates></AffixTemplates>
+      <InflectionClasses></InflectionClasses>
+      <InflectableFeats></InflectableFeats>
+      <StemNames></StemNames>
+      <BearableFeatures></BearableFeatures>
+    </PartOfSpeech>
+    <PartOfSpeech Id="5361" DefaultInflectionClass="0">
+      <Name>Verb</Name>
+      <Description>A verb is a part of speech whose members typically signal events and actions; constitute, singly or in a phrase, a minimal predicate in a clause; govern the number and types of other constituents which may occur in the clause; and, in inflectional languages, may be inflected for tense, aspect, voice, modality, or agreement with other constituents in person, number, or grammatical gender.</Description>
+      <Abbreviation>v</Abbreviation>
+      <NumberOfLexEntries>2</NumberOfLexEntries>
+      <AffixSlots>
+        <MoInflAffixSlot Id="3468" Optional="true">
+          <Name>Circumfix</Name>
+          <Description>***</Description>
+          <orderclass>
+            <minValue>PP1</minValue>
+            <maxValue>PP1</maxValue>
+          </orderclass>
+        </MoInflAffixSlot>
+        <MoInflAffixSlot Id="9441" Optional="false">
+          <Name>person/aspect</Name>
+          <Description>***</Description>
+          <orderclass>
+            <minValue>SP1</minValue>
+            <maxValue>SP1</maxValue>
+          </orderclass>
+        </MoInflAffixSlot>
+      </AffixSlots>
+      <AffixTemplates>
+        <MoInflAffixTemplate Id="4378" Final="true">
+          <Name>Basic verb</Name>
+          <Description>***</Description>
+          <PrefixSlots dst="3468" ord="0"></PrefixSlots>
+          <SuffixSlots dst="9441" ord="-1"></SuffixSlots>
+        </MoInflAffixTemplate>
+        <MoInflAffixTemplate Id="208" Final="false">
+          <Name>Basic verb in compound</Name>
+          <Description>***</Description>
+          <PrefixSlots dst="3468" ord="0"></PrefixSlots>
+          <SuffixSlots dst="9441" ord="-1"></SuffixSlots>
+        </MoInflAffixTemplate>
+      </AffixTemplates>
+      <InflectionClasses></InflectionClasses>
+      <InflectableFeats></InflectableFeats>
+      <StemNames></StemNames>
+      <BearableFeatures></BearableFeatures>
+    </PartOfSpeech>
+    <PartOfSpeech Id="3822" DefaultInflectionClass="0">
+      <Name>Compounded verb</Name>
+      <Description>***</Description>
+      <Abbreviation>cmpv</Abbreviation>
+      <NumberOfLexEntries>0</NumberOfLexEntries>
+      <AffixSlots></AffixSlots>
+      <AffixTemplates></AffixTemplates>
+      <InflectionClasses></InflectionClasses>
+      <InflectableFeats></InflectableFeats>
+      <StemNames></StemNames>
+      <BearableFeatures></BearableFeatures>
+    </PartOfSpeech>
+  </PartsOfSpeech>
+  <PhPhonData Id="10212">
+    <Environments>
+      <PhEnvironment Id="2498" StringRepresentation="/#[V]_" LeftContext="0" RightContext="0">
+        <Name>***</Name>
+        <Description>***</Description>
+      </PhEnvironment>
+      <PhEnvironment Id="3660" StringRepresentation="/#[C]_" LeftContext="0" RightContext="0">
+        <Name>After stem-initial consonant</Name>
+        <Description>Default infix position environment</Description>
+      </PhEnvironment>
+    </Environments>
+    <NaturalClasses>
+      <PhNCSegments Id="10408">
+        <Name>Consonants</Name>
+        <Description>Consonants</Description>
+        <Abbreviation>C</Abbreviation>
+        <Segments dst="10421"></Segments>
+        <Segments dst="10422"></Segments>
+        <Segments dst="10424"></Segments>
+        <Segments dst="10425"></Segments>
+        <Segments dst="10427"></Segments>
+        <Segments dst="10428"></Segments>
+        <Segments dst="10429"></Segments>
+        <Segments dst="10430"></Segments>
+        <Segments dst="10431"></Segments>
+        <Segments dst="10433"></Segments>
+        <Segments dst="10434"></Segments>
+        <Segments dst="10435"></Segments>
+        <Segments dst="10452"></Segments>
+        <Segments dst="10454"></Segments>
+        <Segments dst="10455"></Segments>
+        <Segments dst="10456"></Segments>
+        <Segments dst="10457"></Segments>
+        <Segments dst="10458"></Segments>
+      </PhNCSegments>
+      <PhNCSegments Id="10409">
+        <Name>Vowels</Name>
+        <Description>Vowels</Description>
+        <Abbreviation>V</Abbreviation>
+        <Segments dst="10420"></Segments>
+        <Segments dst="10423"></Segments>
+        <Segments dst="10426"></Segments>
+        <Segments dst="10432"></Segments>
+        <Segments dst="10453"></Segments>
+      </PhNCSegments>
+    </NaturalClasses>
+    <Contexts></Contexts>
+    <PhonemeSets>
+      <PhPhonemeSet Id="10213">
+        <Name>Main phoneme set</Name>
+        <Description>Main phoneme set</Description>
+        <Phonemes>
+          <PhPhoneme Id="10420">
+            <Name>a</Name>
+            <Description>low central unrounded vowel</Description>
+            <Codes>
+              <PhCode Id="10218">
+                <Representation>a</Representation>
+              </PhCode>
+            </Codes>
+            <BasicIPASymbol></BasicIPASymbol>
+            <PhonologicalFeatures></PhonologicalFeatures>
+          </PhPhoneme>
+          <PhPhoneme Id="10421">
+            <Name>b</Name>
+            <Description>voiced bilabial stop</Description>
+            <Codes>
+              <PhCode Id="10222">
+                <Representation>b</Representation>
+              </PhCode>
+            </Codes>
+            <BasicIPASymbol></BasicIPASymbol>
+            <PhonologicalFeatures></PhonologicalFeatures>
+          </PhPhoneme>
+          <PhPhoneme Id="10422">
+            <Name>d</Name>
+            <Description>voiced alveolar stop</Description>
+            <Codes>
+              <PhCode Id="10224">
+                <Representation>d</Representation>
+              </PhCode>
+            </Codes>
+            <BasicIPASymbol></BasicIPASymbol>
+            <PhonologicalFeatures></PhonologicalFeatures>
+          </PhPhoneme>
+          <PhPhoneme Id="10423">
+            <Name>e</Name>
+            <Description>mid front unrounded vowel</Description>
+            <Codes>
+              <PhCode Id="10217">
+                <Representation>e</Representation>
+              </PhCode>
+            </Codes>
+            <BasicIPASymbol></BasicIPASymbol>
+            <PhonologicalFeatures></PhonologicalFeatures>
+          </PhPhoneme>
+          <PhPhoneme Id="10424">
+            <Name>f</Name>
+            <Description>voiceless labiodental fricative</Description>
+            <Codes>
+              <PhCode Id="10227">
+                <Representation>f</Representation>
+              </PhCode>
+            </Codes>
+            <BasicIPASymbol></BasicIPASymbol>
+            <PhonologicalFeatures></PhonologicalFeatures>
+          </PhPhoneme>
+          <PhPhoneme Id="10425">
+            <Name>g</Name>
+            <Description>voiced velar stop</Description>
+            <Codes>
+              <PhCode Id="10226">
+                <Representation>g</Representation>
+              </PhCode>
+            </Codes>
+            <BasicIPASymbol></BasicIPASymbol>
+            <PhonologicalFeatures></PhonologicalFeatures>
+          </PhPhoneme>
+          <PhPhoneme Id="10426">
+            <Name>i</Name>
+            <Description>high front unrounded vowel</Description>
+            <Codes>
+              <PhCode Id="10216">
+                <Representation>i</Representation>
+              </PhCode>
+            </Codes>
+            <BasicIPASymbol></BasicIPASymbol>
+            <PhonologicalFeatures></PhonologicalFeatures>
+          </PhPhoneme>
+          <PhPhoneme Id="10427">
+            <Name>j</Name>
+            <Description>palatal approximant</Description>
+            <Codes>
+              <PhCode Id="10238">
+                <Representation>j</Representation>
+              </PhCode>
+            </Codes>
+            <BasicIPASymbol></BasicIPASymbol>
+            <PhonologicalFeatures></PhonologicalFeatures>
+          </PhPhoneme>
+          <PhPhoneme Id="10428">
+            <Name>k</Name>
+            <Description>voiceless velar stop</Description>
+            <Codes>
+              <PhCode Id="10225">
+                <Representation>k</Representation>
+              </PhCode>
+            </Codes>
+            <BasicIPASymbol></BasicIPASymbol>
+            <PhonologicalFeatures></PhonologicalFeatures>
+          </PhPhoneme>
+          <PhPhoneme Id="10429">
+            <Name>l</Name>
+            <Description>alveolar lateral</Description>
+            <Codes>
+              <PhCode Id="10235">
+                <Representation>l</Representation>
+              </PhCode>
+            </Codes>
+            <BasicIPASymbol></BasicIPASymbol>
+            <PhonologicalFeatures></PhonologicalFeatures>
+          </PhPhoneme>
+          <PhPhoneme Id="10430">
+            <Name>m</Name>
+            <Description>bilabial nasal</Description>
+            <Codes>
+              <PhCode Id="10232">
+                <Representation>m</Representation>
+              </PhCode>
+            </Codes>
+            <BasicIPASymbol></BasicIPASymbol>
+            <PhonologicalFeatures></PhonologicalFeatures>
+          </PhPhoneme>
+          <PhPhoneme Id="10431">
+            <Name>n</Name>
+            <Description>alveolar nasal</Description>
+            <Codes>
+              <PhCode Id="10233">
+                <Representation>n</Representation>
+              </PhCode>
+            </Codes>
+            <BasicIPASymbol></BasicIPASymbol>
+            <PhonologicalFeatures></PhonologicalFeatures>
+          </PhPhoneme>
+          <PhPhoneme Id="10432">
+            <Name>o</Name>
+            <Description>mid back rounded vowel</Description>
+            <Codes>
+              <PhCode Id="10219">
+                <Representation>o</Representation>
+              </PhCode>
+            </Codes>
+            <BasicIPASymbol></BasicIPASymbol>
+            <PhonologicalFeatures></PhonologicalFeatures>
+          </PhPhoneme>
+          <PhPhoneme Id="10433">
+            <Name>p</Name>
+            <Description>voiceless bilabial stop</Description>
+            <Codes>
+              <PhCode Id="10221">
+                <Representation>p</Representation>
+              </PhCode>
+            </Codes>
+            <BasicIPASymbol></BasicIPASymbol>
+            <PhonologicalFeatures></PhonologicalFeatures>
+          </PhPhoneme>
+          <PhPhoneme Id="10434">
+            <Name>r</Name>
+            <Description>alveolar flap</Description>
+            <Codes>
+              <PhCode Id="10236">
+                <Representation>r</Representation>
+              </PhCode>
+            </Codes>
+            <BasicIPASymbol></BasicIPASymbol>
+            <PhonologicalFeatures></PhonologicalFeatures>
+          </PhPhoneme>
+          <PhPhoneme Id="10435">
+            <Name>s</Name>
+            <Description>voiceless alveolar fricative</Description>
+            <Codes>
+              <PhCode Id="10229">
+                <Representation>s</Representation>
+              </PhCode>
+            </Codes>
+            <BasicIPASymbol></BasicIPASymbol>
+            <PhonologicalFeatures></PhonologicalFeatures>
+          </PhPhoneme>
+          <PhPhoneme Id="10452">
+            <Name>t</Name>
+            <Description>voiceless alveolar stop</Description>
+            <Codes>
+              <PhCode Id="10223">
+                <Representation>t</Representation>
+              </PhCode>
+            </Codes>
+            <BasicIPASymbol></BasicIPASymbol>
+            <PhonologicalFeatures></PhonologicalFeatures>
+          </PhPhoneme>
+          <PhPhoneme Id="10453">
+            <Name>u</Name>
+            <Description>high back rounded vowel</Description>
+            <Codes>
+              <PhCode Id="10220">
+                <Representation>u</Representation>
+              </PhCode>
+            </Codes>
+            <BasicIPASymbol></BasicIPASymbol>
+            <PhonologicalFeatures></PhonologicalFeatures>
+          </PhPhoneme>
+          <PhPhoneme Id="10454">
+            <Name>v</Name>
+            <Description>voiced labiodental fricative</Description>
+            <Codes>
+              <PhCode Id="10228">
+                <Representation>v</Representation>
+              </PhCode>
+            </Codes>
+            <BasicIPASymbol></BasicIPASymbol>
+            <PhonologicalFeatures></PhonologicalFeatures>
+          </PhPhoneme>
+          <PhPhoneme Id="10455">
+            <Name>w</Name>
+            <Description>labiovelar approximant</Description>
+            <Codes>
+              <PhCode Id="10237">
+                <Representation>w</Representation>
+              </PhCode>
+            </Codes>
+            <BasicIPASymbol></BasicIPASymbol>
+            <PhonologicalFeatures></PhonologicalFeatures>
+          </PhPhoneme>
+          <PhPhoneme Id="10456">
+            <Name>x</Name>
+            <Description>voiceless velar fricative</Description>
+            <Codes>
+              <PhCode Id="10231">
+                <Representation>x</Representation>
+              </PhCode>
+            </Codes>
+            <BasicIPASymbol></BasicIPASymbol>
+            <PhonologicalFeatures></PhonologicalFeatures>
+          </PhPhoneme>
+          <PhPhoneme Id="10457">
+            <Name>z</Name>
+            <Description>voiced alveolar fricative</Description>
+            <Codes>
+              <PhCode Id="10230">
+                <Representation>z</Representation>
+              </PhCode>
+            </Codes>
+            <BasicIPASymbol></BasicIPASymbol>
+            <PhonologicalFeatures></PhonologicalFeatures>
+          </PhPhoneme>
+          <PhPhoneme Id="10458">
+            <Name>ŋ</Name>
+            <Description>velar nasal</Description>
+            <Codes>
+              <PhCode Id="10234">
+                <Representation>ŋ</Representation>
+              </PhCode>
+            </Codes>
+            <BasicIPASymbol></BasicIPASymbol>
+            <PhonologicalFeatures></PhonologicalFeatures>
+          </PhPhoneme>
+        </Phonemes>
+        <BoundaryMarkers>
+          <PhBdryMarker Id="2342" Guid="3bde17ce-e39a-4bae-8a5c-a8d96fd4cb56">
+            <Name>+</Name>
+            <Codes>
+              <PhCode Id="10215">
+                <Representation>+</Representation>
+              </PhCode>
+            </Codes>
+          </PhBdryMarker>
+          <PhBdryMarker Id="4984" Guid="7db635e0-9ef3-4167-a594-12551ed89aaa">
+            <Name>#</Name>
+            <Codes>
+              <PhCode Id="10214">
+                <Representation>#</Representation>
+              </PhCode>
+            </Codes>
+          </PhBdryMarker>
+        </BoundaryMarkers>
+      </PhPhonemeSet>
+    </PhonemeSets>
+    <FeatureConstraints></FeatureConstraints>
+    <PhonRules></PhonRules>
+    <PhonRuleFeats></PhonRuleFeats>
+    <PhIters></PhIters>
+    <PhIters></PhIters>
+    <PhIters></PhIters>
+    <PhIters></PhIters>
+    <PhIters></PhIters>
+    <PhIters></PhIters>
+  </PhPhonData>
+  <ParserParameters>
+    <ParserParameters>
+      <XAmple>
+        <MaxNulls>1</MaxNulls>
+        <MaxPrefixes>5</MaxPrefixes>
+        <MaxInfixes>1</MaxInfixes>
+        <MaxRoots>2</MaxRoots>
+        <MaxSuffixes>5</MaxSuffixes>
+        <MaxInterfixes>1</MaxInterfixes>
+        <MaxAnalysesToReturn>10</MaxAnalysesToReturn>
+      </XAmple>
+      <HC>
+        <DelReapps>0</DelReapps>
+        <NotOnClitics>true</NotOnClitics>
+        <NoDefaultCompounding>false</NoDefaultCompounding>
+        <MaxRoots>2</MaxRoots>
+        <AcceptUnspecifiedGraphemes>false</AcceptUnspecifiedGraphemes>
+        <GuessRoots>true</GuessRoots>
+        <MergeAnalyses>true</MergeAnalyses>
+        <MaxAlternatives>0</MaxAlternatives>
+        <Strata></Strata>
+      </HC>
+    </ParserParameters>
+  </ParserParameters>
+  <CompoundRules>
+    <MoExoCompound Id="6116">
+      <Name>V-V compound</Name>
+      <Description>***</Description>
+      <LeftMsa dst="8166"></LeftMsa>
+      <RightMsa dst="8913"></RightMsa>
+      <ToMsa dst="1701"></ToMsa>
+    </MoExoCompound>
+  </CompoundRules>
+  <AdhocCoProhibitions></AdhocCoProhibitions>
+  <ProdRestrict></ProdRestrict>
+  <MoMorphTypes>
+    <MoMorphType Id="493" Guid="0cc8c35a-cee9-434d-be58-5d29130fba5b">
+      <Name>discontiguous phrase</Name>
+      <Abbreviation>dis phr</Abbreviation>
+      <Description>A discontiguous phrase has discontiguous constituents which (a) are separated from each other by one or more intervening constituents, and (b) are considered either (i) syntactically contiguous and unitary, or (ii) realizing the same, single meaning. An example is French ne...pas.</Description>
+      <NumberOfLexEntries>0</NumberOfLexEntries>
+    </MoMorphType>
+    <MoMorphType Id="984" Guid="18d9b1c3-b5b6-4c07-b92c-2fe1d2281bd4">
+      <Name>infixing interfix</Name>
+      <Abbreviation>ifxnfx</Abbreviation>
+      <Description>An infixing interfix is an infix that can occur between two roots or stems.</Description>
+      <NumberOfLexEntries>1</NumberOfLexEntries>
+    </MoMorphType>
+    <MoMorphType Id="2042" Guid="3433683d-08a9-4bae-ae53-2a7798f64068">
+      <Name>suffixing interfix</Name>
+      <Abbreviation>sfxnfx</Abbreviation>
+      <Description>A suffixing interfix is a suffix that can occur between two roots or stems.</Description>
+      <NumberOfLexEntries>1</NumberOfLexEntries>
+    </MoMorphType>
+    <MoMorphType Id="3418" Guid="56db04bf-3d58-44cc-b292-4c8aa68538f4">
+      <Name>particle</Name>
+      <Abbreviation>part</Abbreviation>
+      <Description>A particle is a word that does not belong to one of the main classes of words, is invariable in form, and typically has grammatical or pragmatic meaning.</Description>
+      <NumberOfLexEntries>0</NumberOfLexEntries>
+    </MoMorphType>
+    <MoMorphType Id="6361" Guid="a23b6faa-1052-4f4d-984b-4b338bdaf95f">
+      <Name>phrase</Name>
+      <Abbreviation>phr</Abbreviation>
+      <Description>A phrase is a syntactic structure that consists of more than one word but lacks the subject-predicate organization of a clause.</Description>
+      <NumberOfLexEntries>0</NumberOfLexEntries>
+    </MoMorphType>
+    <MoMorphType Id="9255" Guid="af6537b0-7175-4387-ba6a-36547d37fb13">
+      <Name>prefixing interfix</Name>
+      <Abbreviation>pfxnfx</Abbreviation>
+      <Description>A prefixing interfix is a prefix that can occur between two roots or stems.</Description>
+      <NumberOfLexEntries>1</NumberOfLexEntries>
+    </MoMorphType>
+    <MoMorphType Id="10295" Guid="c2d140e5-7ca9-41f4-a69a-22fc7049dd2c">
+      <Name>clitic</Name>
+      <Abbreviation>clit</Abbreviation>
+      <Description>A clitic is a morpheme that has syntactic characteristics of a word, but shows evidence of being phonologically bound to another word. Orthographically, it stands alone.</Description>
+      <NumberOfLexEntries>0</NumberOfLexEntries>
+    </MoMorphType>
+    <MoMorphType Id="10437" Guid="d7f713da-e8cf-11d3-9764-00c04f186933">
+      <Name>infix</Name>
+      <Abbreviation>ifx</Abbreviation>
+      <Description>An infix is an affix that is inserted within a root or stem.</Description>
+      <NumberOfLexEntries>0</NumberOfLexEntries>
+    </MoMorphType>
+    <MoMorphType Id="10438" Guid="d7f713db-e8cf-11d3-9764-00c04f186933">
+      <Name>prefix</Name>
+      <Abbreviation>pfx</Abbreviation>
+      <Description>A prefix is an affix that is joined before a root or stem.</Description>
+      <NumberOfLexEntries>0</NumberOfLexEntries>
+    </MoMorphType>
+    <MoMorphType Id="10439" Guid="d7f713dc-e8cf-11d3-9764-00c04f186933">
+      <Name>simulfix</Name>
+      <Abbreviation>smfx</Abbreviation>
+      <Description>A simulfix is a change or replacement of vowels or consonants (usually vowels) which changes the meaning of a word. (Note: the parser does not currently handle simulfixes.)</Description>
+      <NumberOfLexEntries>0</NumberOfLexEntries>
+    </MoMorphType>
+    <MoMorphType Id="10440" Guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+      <Name>suffix</Name>
+      <Abbreviation>sfx</Abbreviation>
+      <Description>A suffix is an affix that is attached to the end of a root or stem.</Description>
+      <NumberOfLexEntries>0</NumberOfLexEntries>
+    </MoMorphType>
+    <MoMorphType Id="10441" Guid="d7f713de-e8cf-11d3-9764-00c04f186933">
+      <Name>suprafix</Name>
+      <Abbreviation>spfx</Abbreviation>
+      <Description>A suprafix is a kind of affix in which a suprasegmental is superimposed on one or more syllables of the root or stem, signalling a particular morphosyntactic operation. (Note: the parser does not currently handle suprafixes.)</Description>
+      <NumberOfLexEntries>0</NumberOfLexEntries>
+    </MoMorphType>
+    <MoMorphType Id="10442" Guid="d7f713df-e8cf-11d3-9764-00c04f186933">
+      <Name>circumfix</Name>
+      <Abbreviation>cfx</Abbreviation>
+      <Description>A circumfix is an affix made up of two separate parts which surround and attach to a root or stem.</Description>
+      <NumberOfLexEntries>3</NumberOfLexEntries>
+    </MoMorphType>
+    <MoMorphType Id="10443" Guid="d7f713e1-e8cf-11d3-9764-00c04f186933">
+      <Name>enclitic</Name>
+      <Abbreviation>enclit</Abbreviation>
+      <Description>An enclitic is a clitic that is phonologically joined at the end of a preceding word to form a single unit. Orthographically, it may attach to the preceding word.</Description>
+      <NumberOfLexEntries>0</NumberOfLexEntries>
+    </MoMorphType>
+    <MoMorphType Id="10444" Guid="d7f713e2-e8cf-11d3-9764-00c04f186933">
+      <Name>proclitic</Name>
+      <Abbreviation>proclit</Abbreviation>
+      <Description>A proclitic is a clitic that precedes the word to which it is phonologically joined. Orthographically, it may attach to the following word.</Description>
+      <NumberOfLexEntries>0</NumberOfLexEntries>
+    </MoMorphType>
+    <MoMorphType Id="10445" Guid="d7f713e4-e8cf-11d3-9764-00c04f186933">
+      <Name>bound root</Name>
+      <Abbreviation>bd root</Abbreviation>
+      <Description>A bound root is a root which cannot occur as a separate word apart from any other morpheme.</Description>
+      <NumberOfLexEntries>2</NumberOfLexEntries>
+    </MoMorphType>
+    <MoMorphType Id="10446" Guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+      <Name>root</Name>
+      <Abbreviation>ubd root</Abbreviation>
+      <Description>A root is the portion of a word that (i) is common to a set of derived or inflected forms, if any, when all affixes are removed, (ii) is not further analyzable into meaningful elements, being morphologically simple, and, (iii) carries the principal portion of meaning of the words in which it functions.</Description>
+      <NumberOfLexEntries>0</NumberOfLexEntries>
+    </MoMorphType>
+    <MoMorphType Id="10447" Guid="d7f713e7-e8cf-11d3-9764-00c04f186933">
+      <Name>bound stem</Name>
+      <Abbreviation>bd stem</Abbreviation>
+      <Description>A bound stem is a stem which cannot occur as a separate word apart from any other morpheme.</Description>
+      <NumberOfLexEntries>0</NumberOfLexEntries>
+    </MoMorphType>
+    <MoMorphType Id="10448" Guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+      <Name>stem</Name>
+      <Abbreviation>ubd stem</Abbreviation>
+      <Description>"A stem is the root or roots of a word, together with any derivational affixes, to which inflectional affixes are added." (LinguaLinks Library). A stem "may consist solely of a single root morpheme (i.e. a 'simple' stem as in man), or of two root morphemes (e.g. a 'compound' stem, as in blackbird), or of a root morpheme plus a derivational affix (i.e. a 'complex' stem, as in manly, unmanly, manliness). All have in common the notion that it is to the stem that inflectional affixes are attached." (Crystal, 1997:362)</Description>
+      <NumberOfLexEntries>0</NumberOfLexEntries>
+    </MoMorphType>
+  </MoMorphTypes>
+  <LexEntryInflTypes>
+    <LexEntryInflType Id="67" Guid="01d4fbc1-3b0c-4f52-9163-7ab0d4f4711c">
+      <Name>Irregularly Inflected Form</Name>
+      <Abbreviation>irreg. infl.</Abbreviation>
+      <Description>An Irregularly Inflected Form is an inflected form of the lexeme that is different from what you would expect from the normal rules of the grammar.</Description>
+      <GlossPrepend>***</GlossPrepend>
+      <GlossAppend>.irr.infl</GlossAppend>
+      <InflectionFeatures></InflectionFeatures>
+    </LexEntryInflType>
+    <LexEntryInflType Id="5225" Guid="837ebe72-8c1d-4864-95d9-fa313c499d78">
+      <Name>Past</Name>
+      <Abbreviation>pst.</Abbreviation>
+      <Description>The past tense form of a verb that does not take the regular inflectional affix for past tense.</Description>
+      <GlossPrepend>***</GlossPrepend>
+      <GlossAppend>.pst</GlossAppend>
+      <InflectionFeatures></InflectionFeatures>
+    </LexEntryInflType>
+    <LexEntryInflType Id="6400" Guid="a32f1d1c-4832-46a2-9732-c2276d6547e8">
+      <Name>Plural</Name>
+      <Abbreviation>pl.</Abbreviation>
+      <Description>The plural form of a noun that does not take the regular inflectional affix for plural.</Description>
+      <GlossPrepend>***</GlossPrepend>
+      <GlossAppend>.pl</GlossAppend>
+      <InflectionFeatures></InflectionFeatures>
+    </LexEntryInflType>
+  </LexEntryInflTypes>
+  <Lexicon>
+    <Entries>
+      <LexEntry Id="154">
+        <CitationForm></CitationForm>
+        <AlternateForms dst="6451" ord="0"></AlternateForms>
+        <AlternateForms dst="4103" ord="1"></AlternateForms>
+        <LexemeForm dst="8021" MorphType="10442"></LexemeForm>
+        <Sense dst="9170"></Sense>
+        <MorphoSyntaxAnalysis dst="5146"></MorphoSyntaxAnalysis>
+      </LexEntry>
+      <LexEntry Id="939">
+        <CitationForm></CitationForm>
+        <AlternateForms dst="4200" ord="0"></AlternateForms>
+        <AlternateForms dst="3911" ord="1"></AlternateForms>
+        <LexemeForm dst="4052" MorphType="10442"></LexemeForm>
+        <Sense dst="133"></Sense>
+        <MorphoSyntaxAnalysis dst="897"></MorphoSyntaxAnalysis>
+      </LexEntry>
+      <LexEntry Id="1046">
+        <CitationForm></CitationForm>
+        <LexemeForm dst="3936" MorphType="10445"></LexemeForm>
+        <Sense dst="2358"></Sense>
+        <MorphoSyntaxAnalysis dst="7060"></MorphoSyntaxAnalysis>
+      </LexEntry>
+      <LexEntry Id="3984">
+        <CitationForm></CitationForm>
+        <AlternateForms dst="4777" ord="0"></AlternateForms>
+        <AlternateForms dst="3262" ord="1"></AlternateForms>
+        <LexemeForm dst="8347" MorphType="10442"></LexemeForm>
+        <Sense dst="2724"></Sense>
+        <MorphoSyntaxAnalysis dst="1363"></MorphoSyntaxAnalysis>
+      </LexEntry>
+      <LexEntry Id="4367">
+        <CitationForm></CitationForm>
+        <LexemeForm dst="1361" MorphType="10445"></LexemeForm>
+        <Sense dst="7721"></Sense>
+        <MorphoSyntaxAnalysis dst="4996"></MorphoSyntaxAnalysis>
+      </LexEntry>
+    </Entries>
+    <MorphoSyntaxAnalyses>
+      <MoStemMsa Id="1701" PartOfSpeech="3822" InflectionClass="0">
+        <InflectionFeatures></InflectionFeatures>
+        <FromPartsOfSpeech></FromPartsOfSpeech>
+      </MoStemMsa>
+      <MoStemMsa Id="4996" PartOfSpeech="5361" InflectionClass="0">
+        <InflectionFeatures></InflectionFeatures>
+        <FromPartsOfSpeech></FromPartsOfSpeech>
+      </MoStemMsa>
+      <MoStemMsa Id="7060" PartOfSpeech="5361" InflectionClass="0">
+        <InflectionFeatures></InflectionFeatures>
+        <FromPartsOfSpeech></FromPartsOfSpeech>
+      </MoStemMsa>
+      <MoStemMsa Id="8166" PartOfSpeech="5361" InflectionClass="0">
+        <InflectionFeatures></InflectionFeatures>
+        <FromPartsOfSpeech></FromPartsOfSpeech>
+      </MoStemMsa>
+      <MoStemMsa Id="8913" PartOfSpeech="5361" InflectionClass="0">
+        <InflectionFeatures></InflectionFeatures>
+        <FromPartsOfSpeech></FromPartsOfSpeech>
+      </MoStemMsa>
+      <MoInflAffMsa Id="897" AffixCategory="0" PartOfSpeech="5361">
+        <Slots dst="3468"></Slots>
+        <Slots dst="9441"></Slots>
+        <InflectionFeatures></InflectionFeatures>
+      </MoInflAffMsa>
+      <MoInflAffMsa Id="1363" AffixCategory="0" PartOfSpeech="5361">
+        <Slots dst="3468"></Slots>
+        <Slots dst="9441"></Slots>
+        <InflectionFeatures></InflectionFeatures>
+      </MoInflAffMsa>
+      <MoInflAffMsa Id="5146" AffixCategory="0" PartOfSpeech="5361">
+        <Slots dst="3468"></Slots>
+        <Slots dst="9441"></Slots>
+        <InflectionFeatures></InflectionFeatures>
+      </MoInflAffMsa>
+    </MorphoSyntaxAnalyses>
+    <Senses>
+      <LexSense Id="133" Msa="897">
+        <Gloss>3m.PFV.pst</Gloss>
+        <Definition>***</Definition>
+      </LexSense>
+      <LexSense Id="2358" Msa="7060">
+        <Gloss>bring;give</Gloss>
+        <Definition>***</Definition>
+      </LexSense>
+      <LexSense Id="2724" Msa="1363">
+        <Gloss>juss.3m</Gloss>
+        <Definition>***</Definition>
+      </LexSense>
+      <LexSense Id="7721" Msa="4996">
+        <Gloss>put.on</Gloss>
+        <Definition>***</Definition>
+      </LexSense>
+      <LexSense Id="9170" Msa="5146">
+        <Gloss>3m.IMPV</Gloss>
+        <Definition>***</Definition>
+      </LexSense>
+    </Senses>
+    <Allomorphs>
+      <MoStemAllomorph Id="1361" MorphType="10445" IsAbstract="0" StemName="0">
+        <Form>saar</Form>
+      </MoStemAllomorph>
+      <MoStemAllomorph Id="3936" MorphType="10445" IsAbstract="0" StemName="0">
+        <Form>eb</Form>
+      </MoStemAllomorph>
+      <MoAffixAllomorph Id="3262" MorphType="2042" IsAbstract="0">
+        <Form>is</Form>
+        <MsEnvFeatures></MsEnvFeatures>
+      </MoAffixAllomorph>
+      <MoAffixAllomorph Id="3911" MorphType="10440" IsAbstract="0">
+        <Form>iy</Form>
+        <MsEnvFeatures></MsEnvFeatures>
+      </MoAffixAllomorph>
+      <MoAffixAllomorph Id="4052" MorphType="10442" IsAbstract="1">
+        <Form>y-...-iy</Form>
+        <MsEnvFeatures></MsEnvFeatures>
+      </MoAffixAllomorph>
+      <MoAffixAllomorph Id="4103" MorphType="10440" IsAbstract="0">
+        <Form>it</Form>
+        <MsEnvFeatures></MsEnvFeatures>
+      </MoAffixAllomorph>
+      <MoAffixAllomorph Id="4200" MorphType="9255" IsAbstract="0">
+        <Form>y</Form>
+        <MsEnvFeatures></MsEnvFeatures>
+      </MoAffixAllomorph>
+      <MoAffixAllomorph Id="4777" MorphType="10438" IsAbstract="0">
+        <Form>y</Form>
+        <MsEnvFeatures></MsEnvFeatures>
+      </MoAffixAllomorph>
+      <MoAffixAllomorph Id="6451" MorphType="984" IsAbstract="0">
+        <Form>y</Form>
+        <Position dst="2498" ord="0"></Position>
+        <MsEnvFeatures></MsEnvFeatures>
+      </MoAffixAllomorph>
+      <MoAffixAllomorph Id="8021" MorphType="10442" IsAbstract="1">
+        <Form>-y-...-it</Form>
+        <MsEnvFeatures></MsEnvFeatures>
+      </MoAffixAllomorph>
+      <MoAffixAllomorph Id="8347" MorphType="10442" IsAbstract="1">
+        <Form>y-...-is</Form>
+        <MsEnvFeatures></MsEnvFeatures>
+      </MoAffixAllomorph>
+    </Allomorphs>
+  </Lexicon>
+  <FeatureSystem Id="10412">
+    <Types></Types>
+    <Features></Features>
+  </FeatureSystem>
+  <PhFeatureSystem Id="10414">
+    <Types></Types>
+    <Features></Features>
+  </PhFeatureSystem>
+</M3Dump>
