@@ -133,8 +133,14 @@ namespace SIL.FieldWorks.XWorks
 			if (progress != null)
 			  progress.Maximum = entriesToSave.Length;
 
-			var dictConfig = new DictionaryConfigurationModel(
-				DictionaryConfigurationListener.GetCurrentConfiguration(m_propertyTable, "ReversalIndex"), m_cache);
+			// ReSharper disable once ObjectCreationAsStatement
+			// (Re)loading the reversal configuration ensures its homograph settings are in the
+			// cache's HomographConfiguration singleton during export.
+			// https://github.com/sillsdev/FieldWorks/pull/939
+			// REVIEW (Hasso) 2026.08: would revConfig.Load(m_cache); suffice?
+			new DictionaryConfigurationModel(
+				DictionaryConfigurationListener.GetCurrentConfiguration(m_propertyTable,
+					"ReversalIndex"), m_cache);
 
 			string reversalFilePath = filePath.Split(new string[] { ".docx"}, StringSplitOptions.None)[0] + "-reversal-" + reversalWs + ".docx";
 			LcmWordGenerator.SavePublishedDocx(entriesToSave, revClerk, pubDecorator, int.MaxValue, revConfig, m_propertyTable,
