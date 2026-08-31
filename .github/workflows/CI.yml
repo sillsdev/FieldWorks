@@ -50,7 +50,7 @@ jobs:
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
       # Same dual-engine rationale as the comment-hygiene suite above: the
-      # token-hygiene gate runs under whichever engine invoked build.ps1.
+      # token-hygiene check runs under whichever engine invoked build.ps1.
       - name: Token hygiene fixture tests (PowerShell 7)
         id: token-hygiene-tests-pwsh
         shell: pwsh

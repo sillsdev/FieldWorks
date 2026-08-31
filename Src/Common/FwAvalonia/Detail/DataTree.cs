@@ -95,7 +95,6 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			_labelColumnWidthChanged = labelColumnWidthChanged;
 			_wsAbbrevColumnWidth = FwMultiWsTextField.ComputeWsAbbrevColumnWidth(Model);
 			var labelColumnWidth = getLabelColumnWidth?.Invoke() ?? FwAvaloniaDensity.LabelColumnWidth;
-			_labelColumnWidth = labelColumnWidth;
 
 			Name = "DataTree";
 			AutomationProperties.SetAutomationId(this, "DataTree");
@@ -108,13 +107,9 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 
 			_form = new Form
 			{
-				// Covers the splitter column too: the value area would otherwise begin under
-				// the splitter, which is on top and swallows clicks on it.
-				LabelWidth = new GridLength(labelColumnWidth + FwAvaloniaDensity.SplitterWidth),
 				LabelPosition = Position.Left,
 				// Ursa's Form ControlTheme sets HorizontalAlignment=Left (sizes to content);
-				// override
-				// so the value column fills the pane instead of hugging the left edge.
+				// override so the value column fills the pane instead of hugging the left edge.
 				HorizontalAlignment = HorizontalAlignment.Stretch
 			};
 
@@ -126,8 +121,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				Setters = { new Setter(Layoutable.MarginProperty, new Thickness(0, FwAvaloniaDensity.RowSpacing)) }
 			});
 
-			// The splitter drags column 0, mirrored into form.LabelWidth; FormItem honors
-			// only an absolute width.
+			// Column 0 is the single source for the label column's width: the splitter drags
+			// it, and ApplyLabelColumnWidth is the only place anything is derived from it.
 			var outerGrid = new Grid
 			{
 				Margin = FwAvaloniaDensity.SliceMargin,
@@ -141,6 +136,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			Grid.SetColumn(_form, 0);
 			Grid.SetColumnSpan(_form, 3);
 			outerGrid.Children.Add(_form);
+			ApplyLabelColumnWidth(labelColumnWidth, notifyHost: false);
 
 			var splitter = new GridSplitter
 			{
@@ -155,15 +151,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			{
 				var w = outerGrid.ColumnDefinitions[0].Width;
 				if (w.IsAbsolute && w.Value > 0)
-				{
-					_form.LabelWidth =
-						new GridLength(w.Value + FwAvaloniaDensity.SplitterWidth);
-					_labelColumnWidth = w.Value;
-					foreach (var entry in _labelBlocks)
-						entry.Label.MaxWidth = Math.Max(0, w.Value - entry.Reserved);
-					// Reports the label column itself, not the form's label+splitter span.
-					_labelColumnWidthChanged?.Invoke(w.Value);
-				}
+					ApplyLabelColumnWidth(w.Value, notifyHost: true);
 			};
 
 			RebuildItems();
@@ -209,6 +197,31 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				if (_editContext != null && _editContext.IsOpen)
 					OnSave();
 			}, Avalonia.Interactivity.RoutingStrategies.Bubble);
+		}
+
+		/// <summary>
+		/// Re-derives everything that depends on the label column's width, from that width. The
+		/// grid column is the source and this is its only consumer, so the three derived values
+		/// cannot drift apart the way they did when construction and the splitter handler each
+		/// computed their own.
+		/// </summary>
+		/// <param name="columnWidth">The label column's width, in pixels.</param>
+		/// <param name="notifyHost">
+		/// Whether to report the new width to the host. False while constructing, because
+		/// the host supplied the width in the first place.
+		/// </param>
+		private void ApplyLabelColumnWidth(double columnWidth, bool notifyHost)
+		{
+			_labelColumnWidth = columnWidth;
+			// Covers the splitter column too: the value area would otherwise begin under the
+			// splitter, which is on top and swallows clicks on it. FormItem honors only an
+			// absolute width.
+			_form.LabelWidth = new GridLength(columnWidth + FwAvaloniaDensity.SplitterWidth);
+			foreach (var entry in _labelBlocks)
+				entry.Label.MaxWidth = Math.Max(0, columnWidth - entry.Reserved);
+			if (notifyHost)
+				// Reports the label column itself, not the form's label+splitter span.
+				_labelColumnWidthChanged?.Invoke(columnWidth);
 		}
 
 		private void OnViewKeyDown(object sender, Avalonia.Input.KeyEventArgs e)

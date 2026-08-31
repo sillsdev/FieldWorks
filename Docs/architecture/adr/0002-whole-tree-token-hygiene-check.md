@@ -20,11 +20,6 @@ zero-tolerance cheap here and expensive elsewhere: applied to the ~218-dialog Wi
 surface, the same rule would fail every build until a large retrofit finished, so the
 scope deliberately excludes it.
 
-An earlier draft of this record justified the split by appeal to "current design-token
-literature" without naming a source. The argument above stands on this repository's own
-circumstances instead, which is checkable; if a citation is wanted later, it should be
-added as support rather than as the reason.
-
 **Consequence, accepted deliberately**: since humans aren't required to run
 `-TokenHygiene` locally (only agents are, per `AGENTS.md`), a single violation that lands
 on `main` will fail every subsequent unrelated PR touching the Avalonia tree until someone

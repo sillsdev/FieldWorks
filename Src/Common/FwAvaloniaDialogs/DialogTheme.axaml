@@ -73,10 +73,9 @@
 		<Setter Property="Padding" Value="{DynamicResource DialogWindowPadding}"/>
 	</Style>
 
-	<!--
-		A visible border, since the embedded control's inner TextBox is borderless.
-		DynamicResource,
-	     not StaticResource: FwDialogFieldBorderBrush lives in a ThemeDictionary. -->
+	<!-- A visible border, since the embedded control's inner TextBox is borderless.
+	     DynamicResource, not StaticResource: FwDialogFieldBorderBrush lives in a
+	     ThemeDictionary. -->
 	<Style Selector="Border.fwFieldHost">
 		<Setter Property="BorderThickness" Value="{StaticResource DialogFieldBorderThickness}"/>
 		<Setter Property="BorderBrush" Value="{DynamicResource FwDialogFieldBorderBrush}"/>

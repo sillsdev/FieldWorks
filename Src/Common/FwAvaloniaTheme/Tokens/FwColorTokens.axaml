@@ -6,10 +6,7 @@
 	Every key below is a deliberate FieldWorks-owned value (a "Layer-1 extension" in the
 	three-tier model: FieldWorks token, Semi semantic role, Semi palette primitive), because it
 	has no Semi Layer-1/Layer-2 equivalent that fits without a visible regression; see each key's
-	comment for the specific reason. Anywhere Semi's own role fit as-is (background/picker
-	surfaces, default text, danger text, link blue), the FieldWorks key was deleted and call sites
-	now resolve the Semi key directly (see FwAvaloniaDensity.cs's property comments for the
-	removed keys' replacements).
+	comment for the specific reason.
 
 	Merged app-wide into Application.Resources by both FwAvaloniaApp and PreviewHostApp, and into
 	DialogTheme.axaml's own Styles.Resources, so both the pure-C# foundation (FwAvalonia) and the

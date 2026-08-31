@@ -379,6 +379,15 @@ Assert-TokenCategory 'cs-opacity-literal' @(
 Assert-TokenCategory 'cs-margin-literal' @(
 	'control.Margin = 8;'
 ) 'hardcoded-spacing'
+Assert-TokenCategory 'cs-padding-literal' @(
+	'control.Padding = 12;'
+) 'hardcoded-spacing'
+Assert-TokenCategory 'cs-border-thickness-literal' @(
+	'control.BorderThickness = 2;'
+) 'hardcoded-spacing'
+Assert-TokenCategory 'cs-corner-radius-literal' @(
+	'control.CornerRadius = 4;'
+) 'hardcoded-spacing'
 
 # A cast or a numeric suffix must not smuggle a literal past the assignment pattern.
 Assert-TokenCategory 'cs-cast-literal' @(

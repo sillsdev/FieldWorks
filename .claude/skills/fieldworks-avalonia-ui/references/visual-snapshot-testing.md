@@ -130,7 +130,7 @@ not the content-overlap defect.
   `FwAvaloniaDialogsTests` (which owns `DialogLayoutAssert`) links `DialogSnapshot.cs` — symmetric, so both
   test projects get both the PNG harness and the geometry tripwire from a single copy of each.
 - Most snapshots stay ephemeral: don't assert on pixels/bytes beyond "non-empty", the PNG is for
-  human/agent eyes, and the geometry tripwire is the deterministic gate. A small curated subset is
+  human/agent eyes, and the geometry tripwire is the deterministic check. A small curated subset is
   committed instead — see the next section.
 
 ## Committed baseline screenshots

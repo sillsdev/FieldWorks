@@ -14,24 +14,20 @@ using SIL.FieldWorks.Common.FwAvalonia;
 namespace FwAvaloniaDialogsTests
 {
 	/// <summary>
-	/// Guards the token-hygiene gate's blind spot: a few value pairs must be kept numerically
-	/// equal
-	/// by COMMENT convention alone, because the gate (Build/Agent/TokenHygiene.psm1) can never
-	/// see
-	/// both sides of the pair at once -- either both sides live in a file the gate whole-file
-	/// allowlists (<see cref="CompactDialogStyles"/>, since Avalonia's compiled XAML rejects
-	/// <c>x:Static</c> as a resource declaration -- see that class's own doc comment), or one
-	/// side is
-	/// a Setter literal inside DialogTheme.axaml's declarative Styles, which the gate's own
-	/// x:Key-declaration skip does not re-examine as a usage.
+	/// Guards the token-hygiene check's blind spot: a few value pairs must be kept numerically
+	/// equal by COMMENT convention alone, because the check (Build/Agent/TokenHygiene.psm1) can
+	/// never see both sides of the pair at once -- either both sides live in a file the check
+	/// whole-file allowlists (<see cref="CompactDialogStyles"/>, since Avalonia's compiled XAML
+	/// rejects <c>x:Static</c> as a resource declaration -- see that class's own doc comment),
+	/// or one side is a Setter literal inside DialogTheme.axaml's declarative Styles, which the
+	/// check's own x:Key-declaration skip does not re-examine as a usage.
 	///
 	/// Each test resolves BOTH sides through the real code path -- <see
-	/// cref="CompactDialogStyles.Apply"/>
-	/// realized on a live control for the CompactDialogStyles side, <see
-	/// cref="DialogThemeBootstrap.Apply"/>
-	/// + TryGetResource for the DialogTheme.axaml side, <see cref="FwAvaloniaDensity"/> for the
-	/// DataTree side -- and asserts numeric equality, so an edit to one side that forgets its
-	/// documented partner fails a real test instead of silently drifting.
+	/// cref="CompactDialogStyles.Apply"/> realized on a live control for the
+	/// CompactDialogStyles side, <see cref="DialogThemeBootstrap.Apply"/> + TryGetResource for
+	/// the DialogTheme.axaml side, <see cref="FwAvaloniaDensity"/> for the DataTree side -- and
+	/// asserts numeric equality, so an edit to one side that forgets its documented partner
+	/// fails a real test instead of silently drifting.
 	/// </summary>
 	[TestFixture]
 	public class DuplicateTokenPairConsistencyTests

@@ -20,8 +20,8 @@ namespace FwAvaloniaDialogsTests
 	///   * a visible text-bearing control (TextBlock / TextBox / text ContentPresenter) with a zero-area bounds,
 	///   * a visible text-bearing control rendered at a near-invisible font size,
 	///   * two sibling controls whose bounds overlap,
-	/// * a child whose bounds butt against its parent container edge (inset below the spacing
-	/// token),
+	///   * a child whose bounds butt against its parent container edge (inset below the
+	///     spacing token),
 	///   * a PART_*Host border with no effective border thickness, or
 	///   * two fwGroupBox siblings in the same panel with no visual separation between them.
 	/// Deterministic; no real windows (relies only on the laid-out Bounds).
@@ -31,12 +31,9 @@ namespace FwAvaloniaDialogsTests
 		/// <summary>The minimum edge inset (in px) a child must keep from its padded parent's content edge.</summary>
 		public const double MinEdgeInset = 0.5;
 
-		/// <summary>The floor a text-bearing control's FontSize must clear. Safely below every
-		/// legitimate
-		/// current usage (FwSurfaceFontSize/WsAbbrevFontSize = 11, LabelFontSize = 13), so this
-		/// catches only
-		/// a genuinely broken near-invisible size, never a deliberately small-but-real
-		/// caption.</summary>
+		/// <summary>The floor a text-bearing control's FontSize must clear. Safely below
+		/// every legitimate current usage (11 and 13), so this catches only a genuinely
+		/// broken near-invisible size, never a deliberately small-but-real caption.</summary>
 		public const double MinReadableFontSize = 8.0;
 
 		public static void AssertNoCrowding(Control root)

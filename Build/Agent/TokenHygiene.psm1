@@ -11,9 +11,9 @@
 
 	Unlike CommentHygiene.psm1, this module has no diff/added-lines mode:
 	Get-TokenHygieneViolations always scans every line of every given file.
-	The token-hygiene check enforces full conformance across the whole scoped
-	tree on every run, not just lines a diff adds -- see token-hygiene.ps1's
-	header for why.
+	The scoped tree is new code with nothing to grandfather, so there is no
+	backlog for an added-lines phase-in to work through and a violation can
+	only arrive with a new edit.
 
 .NOTES
 	Import this module from token-hygiene.ps1:

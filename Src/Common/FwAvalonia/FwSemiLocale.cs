@@ -19,7 +19,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 	/// context menu, validation furniture) for 6 of the 29 shipped locales, and leaves the other
 	/// 23 in English. The destination is a FieldWorks .resx translated through Crowdin overriding
 	/// Semi's localized keys; crowdin.json already globs Src/**/*.resx, so such a file needs no
-	/// config change.
+	/// config change. Tracked as LT-22763.
 	/// </remarks>
 	public static class FwSemiLocale
 	{

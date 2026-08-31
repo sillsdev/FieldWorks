@@ -1,44 +1,33 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-	<!--
-		FwAvaloniaTheme
-
-		Shared, FieldWorks-owned tier of color/brush and font-size tokens, expressed as Avalonia
-		ResourceDictionaries (Light + Dark ThemeDictionaries). Exists so the pure-C# foundation
+	<!-- Holds the shared FieldWorks token dictionaries so the pure-C# foundation
 		(Src/Common/FwAvalonia) and the XAML-compiled dialog project
 		(Src/Common/FwAvaloniaDialogs)
-		can share ONE token source without either depending on the other - FwAvalonia keeps its
-		documented "independent of the Avalonia XAML compiler" guarantee, while FwAvaloniaDialogs
-		keeps its compiled-bindings XAML pipeline. This project has zero bindings and no
-		code-behind
-		(resource dictionaries only), so AvaloniaUseCompiledBindingsByDefault is intentionally
-		left
-		unset. Part of the normal repo build - included in the FieldWorks.proj traversal via the
-		Src
-		glob and listed in FieldWorks.sln.
-
-		Targets net48 for in-process hosting beside WinForms, matching
-		FwAvalonia/FwAvaloniaDialogs.
-		Avalonia 11.3.x is the last line that still ships netstandard2.0 assemblies and therefore
-		loads on net48; stay on the 11.x line until WinForms is removed.
-	-->
+	     resolve ONE token source without either depending on the other: FwAvalonia keeps its
+	     documented independence from the Avalonia XAML compiler, FwAvaloniaDialogs keeps its
+	     compiled-bindings pipeline. -->
 	<PropertyGroup>
+		<!-- net48 for in-process hosting beside WinForms, matching FwAvalonia/FwAvaloniaDialogs.
+		     net8-only BCL features (Index/Range, IAsyncEnumerable, nint/nuint) therefore fail at
+		     build rather than at review. -->
 		<TargetFramework>net48</TargetFramework>
 		<!-- Explicit RootNamespace so Crowdin/satellite-assembly localization builds work. -->
 		<RootNamespace>FwAvaloniaTheme</RootNamespace>
-		<!-- net48 TFM: net8-only BCL features (Index/Range, IAsyncEnumerable, nint/nuint) fail at
-		     build, not review; C# 8 is fine. LangVersion is 'latest' for consistency with its
-		     sibling projects. -->
+		<!-- 'latest' for consistency with the sibling projects; the net48 TFM is what actually
+		     bounds the usable language and BCL surface. -->
 		<LangVersion>latest</LangVersion>
 		<IsPackable>false</IsPackable>
 		<GenerateDocumentationFile>false</GenerateDocumentationFile>
 		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-		<!-- Auto-include *.axaml as AvaloniaXaml items and compile XAML at build time. -->
+		<!-- Resource dictionaries only, no bindings, so
+		     AvaloniaUseCompiledBindingsByDefault is deliberately left unset. -->
 		<EnableDefaultAvaloniaItems>true</EnableDefaultAvaloniaItems>
 		<NoWarn>$(NoWarn);CS1591;NU1701</NoWarn>
 	</PropertyGroup>
 
 	<ItemGroup>
+		<!-- Avalonia 11.3.x is the last line still shipping netstandard2.0 assemblies, so it is
+		     the last line that loads on net48; stay on 11.x until WinForms is removed. -->
 		<PackageReference Include="Avalonia" ExcludeAssets="analyzers" />
 	</ItemGroup>
 
