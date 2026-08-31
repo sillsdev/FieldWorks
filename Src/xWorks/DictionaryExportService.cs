@@ -133,10 +133,11 @@ namespace SIL.FieldWorks.XWorks
 			if (progress != null)
 			  progress.Maximum = entriesToSave.Length;
 
-			// ReSharper disable once ObjectCreationAsStatement - The Reversal Configuration needs
-			// to be loaded per https://github.com/sillsdev/FieldWorks/pull/939
-			// REVIEW (Hasso) 2026.08: why is this needed? The revConfig is passed in, so it must
-			// have been loaded already.
+			// ReSharper disable once ObjectCreationAsStatement
+			// (Re)loading the reversal configuration ensures its homograph settings are in the
+			// cache's HomographConfiguration singleton during export.
+			// https://github.com/sillsdev/FieldWorks/pull/939
+			// REVIEW (Hasso) 2026.08: would revConfig.Load(m_cache); suffice?
 			new DictionaryConfigurationModel(
 				DictionaryConfigurationListener.GetCurrentConfiguration(m_propertyTable,
 					"ReversalIndex"), m_cache);
