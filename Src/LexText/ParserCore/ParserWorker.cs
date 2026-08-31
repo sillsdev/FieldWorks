@@ -63,7 +63,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			switch (m_cache.LanguageProject.MorphologicalDataOA.ActiveParser)
 			{
 				case "XAmple":
-					m_parser = new XAmpleParser(cache, dataDir);
+					m_parser = new XAmpleParser(cache, dataDir, m_propertyTable);
 					agent = cache.ServiceLocator.GetInstance<ICmAgentRepository>().GetObject(CmAgentTags.kguidAgentXAmpleParser);
 					break;
 				case "HC":

@@ -2,6 +2,18 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using Paratext.LexicalContracts;
+using SIL.FieldWorks.WordWorks.Parser;
+using SIL.LCModel;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.DomainImpl;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Infrastructure;
+using SIL.LCModel.Utils;
+using SIL.Machine.Morphology;
+using SIL.ObjectModel;
+using SIL.PlatformUtilities;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -11,18 +23,7 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Web;
-using Paratext.LexicalContracts;
-using SIL.LCModel.Core.Text;
-using SIL.LCModel.Core.KernelInterfaces;
-using SIL.LCModel;
-using SIL.LCModel.DomainImpl;
-using SIL.LCModel.DomainServices;
-using SIL.LCModel.Infrastructure;
-using SIL.LCModel.Utils;
-using SIL.FieldWorks.WordWorks.Parser;
-using SIL.Machine.Morphology;
-using SIL.ObjectModel;
-using SIL.PlatformUtilities;
+using XCore;
 using WordAnalysis = Paratext.LexicalContracts.WordAnalysis;
 
 namespace SIL.FieldWorks.ParatextLexiconPlugin
@@ -39,7 +40,8 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 		private readonly int m_defaultVernWs;
 		private PoorMansStemmer<string, char> m_stemmer;
 		private readonly string m_projectId;
-
+		Mediator Mediator { get; set; }
+		PropertyTable PropertyTable { get; set; }
 		internal FdoLexicon(string scrTextName, string projectId, LcmCache cache, int defaultVernWs)
 		{
 			m_scrTextName = scrTextName;
@@ -79,6 +81,10 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 			{
 				m_parser.Dispose();
 				m_parser = null;
+				Mediator.Dispose();
+				Mediator = null;
+				PropertyTable.Dispose();
+				PropertyTable = null;
 			}
 		}
 
@@ -646,7 +652,11 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 			switch (m_cache.LanguageProject.MorphologicalDataOA.ActiveParser)
 			{
 				case "XAmple":
-					m_parser = new XAmpleParser(m_cache, parserDataDir);
+					// LT-22708 As of 2026.08.26, this is only called within FLEx from FdoLexiconTests.
+					// Creating the mediator and property table here works fine.
+					Mediator = new Mediator();
+					PropertyTable = new PropertyTable(Mediator);
+					m_parser = new XAmpleParser(m_cache, parserDataDir, PropertyTable);
 					break;
 				case "HC":
 					m_parser = new HCParser(m_cache);
