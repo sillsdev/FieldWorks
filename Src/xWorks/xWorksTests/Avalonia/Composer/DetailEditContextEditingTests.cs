@@ -590,22 +590,15 @@ namespace SIL.FieldWorks.XWorks
 				"Khmer fixture declares the Khmer script for automation/manual scenario setup");
 		}
 
-		// Compiled definitions are memoized per (class, layout) while sources stay
-		// loaded, so a repeat compose reuses every layout instead of rebuilding and
-		// re-fingerprinting the ~300KB parts snapshot.
 		[Test]
-		public void Compose_RepeatCompose_ServesCompiledLayoutsFromTheMemo()
+		public void CompileForObject_RepeatContentReusesCompiledModel()
 		{
-			Assert.That(DetailComposer.Compose(m_entry, Cache), Is.Not.Null,
-				"priming compose populates the (class, layout) memo");
-			var compilesAfterFirst = DetailComposer.SnapshotCompileCount;
-			Assert.That(compilesAfterFirst, Is.GreaterThan(0), "the first compose really compiled");
+			var first = DetailComposer.CompileForObject(Cache, m_entry, "Normal");
 
-			var second = DetailComposer.Compose(m_entry, Cache);
-			Assert.That(second, Is.Not.Null);
-			Assert.That(second.Model.Fields, Is.Not.Empty, "the memoized models still compose fully");
-			Assert.That(DetailComposer.SnapshotCompileCount, Is.EqualTo(compilesAfterFirst),
-				"a repeat compose must not rebuild any layout snapshot");
+			var second = DetailComposer.CompileForObject(Cache, m_entry, "Normal");
+
+			Assert.That(second, Is.SameAs(first),
+				"equal source content must reuse the fingerprint-cached compiled model");
 		}
 
 		[Test]
@@ -1331,6 +1324,21 @@ namespace SIL.FieldWorks.XWorks
 				"unmarked/unknown specs take GetWritingSystemList's analysis default, like legacy");
 		}
 
+		[Test]
+		public void ResolveWritingSystemOptions_OptionalSetIsOnlyAnUncheckedCandidate()
+		{
+			var selected = DetailComposer.ResolveWritingSystemOptions(Cache, "all analysis",
+				"all vernacular", 0, includeUncheckedActive: false, forceIncludeEnglish: false);
+			var primary = DetailComposer.ResolveWritingSystems(Cache, "all analysis");
+			Assert.That(selected.Select(ws => ws.Handle), Is.EqualTo(primary.Select(ws => ws.Handle)));
+
+			var candidates = DetailComposer.ResolveWritingSystemOptions(Cache, "all analysis",
+				"all vernacular", 0, includeUncheckedActive: true, forceIncludeEnglish: false);
+			var optional = DetailComposer.ResolveWritingSystems(Cache, "all vernacular");
+			Assert.That(candidates.Select(ws => ws.Handle),
+				Does.Contain(optional.First().Handle));
+		}
+
 		// The Abbreviation is user-editable and can collide across writing systems;
 		// composition must still succeed (no ToDictionary crash) and edits must route by the
 		// unique IETF tag, never to the wrong alternative.
@@ -1771,7 +1779,8 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var fields = DetailComposer.Compose(m_entry, Cache).Model.Fields;
 			var senseHeader = fields.First(f => f.Kind == DetailFieldKind.Header
-				&& f.Field == "Senses" && f.ObjectHvo == m_entry.SensesOS[0].Hvo);
+				&& f.MenuId == "mnuDataTree-Sense"
+				&& f.ObjectHvo == m_entry.SensesOS[0].Hvo);
 
 			Assert.That(senseHeader.MenuId, Is.EqualTo("mnuDataTree-Sense"),
 				"the per-sense header carries the legacy sense slice menu");
@@ -2182,11 +2191,12 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(customIndex, Is.LessThan(dateCreatedIndex),
 				"entry custom rows come before the trailing never-visibility fields, like the layout's placeholder");
 
-			// Creation order (the MDC enumeration legacy FieldDescription.FieldDescriptors walks).
+			// WinForms inserts every generated part after the same placeholder. The final sibling
+			// order is therefore the reverse of FieldDescription enumeration order.
 			var multiIndex = fields.FindIndex(f => f.Label == "Tone Pattern");
 			var dateIndex = fields.FindIndex(f => f.Label == "Date Collected");
-			Assert.That(multiIndex, Is.LessThan(customIndex), "custom rows keep field-creation order");
-			Assert.That(customIndex, Is.LessThan(dateIndex), "custom rows keep field-creation order");
+			Assert.That(dateIndex, Is.LessThan(customIndex), "custom rows keep WinForms sibling order");
+			Assert.That(customIndex, Is.LessThan(multiIndex), "custom rows keep WinForms sibling order");
 		}
 
 		[Test]

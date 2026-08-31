@@ -21,7 +21,11 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 		// outside these sets is reported with an `unhandled-attribute` diagnostic instead of being
 		// silently dropped, so importer coverage is measurable (see LayoutImportCoverage).
 		public static readonly HashSet<string> HandledLayoutAttributes =
-			new HashSet<string>(System.StringComparer.Ordinal) { "class", "type", "name", "version" };
+			new HashSet<string>(System.StringComparer.Ordinal)
+				{ "class", "type", "name", "choiceGuid", "version" };
+
+		public static readonly HashSet<string> HandledSublayoutAttributes =
+			new HashSet<string>(System.StringComparer.Ordinal) { "name", "layoutChoiceField" };
 
 		public static readonly HashSet<string> HandledCallerPartAttributes =
 			new HashSet<string>(System.StringComparer.Ordinal)
@@ -36,7 +40,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 			{
 				"label", "abbr", "field", "ws", "editor", "visibility", "expansion",
 				"localizationKey", "labelId", "automationId", "routing", "menu", "contextMenu", "hotlinks",
-				"forVariant", "visibleWritingSystems"
+				"forVariant", "visibleWritingSystems", "optionalWs", "forceIncludeEnglish"
 			};
 
 		public static readonly HashSet<string> HandledObjSeqAttributes =
@@ -44,7 +48,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 			{
 				"field", "layout", "label", "abbr", "ws", "visibility", "expansion",
 				"localizationKey", "labelId", "automationId", "routing", "menu", "hotlinks",
-				"ghost", "ghostWs", "ghostClass", "ghostLabel", "ghostInitMethod"
+				"ghost", "ghostWs", "ghostClass", "ghostLabel", "ghostInitMethod",
+				"layoutChoiceField"
 			};
 
 		// The chooserLink attribute vocabulary the importer consumes (the legacy reader's exact
@@ -77,9 +82,11 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 			};
 
 		/// <inheritdoc />
-		public ViewDefinitionModel Import(XElement layoutElement, IPartResolver parts)
+		public ViewDefinitionModel Import(XElement layoutElement, IPartResolver parts,
+			string partLookupClassName = null)
 		{
 			var className = (string)layoutElement.Attribute("class") ?? "";
+			var lookupClassName = partLookupClassName ?? className;
 			var layoutName = (string)layoutElement.Attribute("name") ?? "";
 			var layoutType = (string)layoutElement.Attribute("type") ?? "detail";
 
@@ -87,9 +94,11 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 			var roots = new List<ViewNode>();
 			var basePath = $"{className}/{layoutName}";
 
-			ProcessContainer(layoutElement.Elements(), parts, className, layoutType, basePath, false, roots, diagnostics);
+			ProcessContainer(layoutElement.Elements(), parts, lookupClassName, layoutType, basePath,
+				false, roots, diagnostics);
 
-			return new ViewDefinitionModel(className, layoutName, layoutType, roots, diagnostics);
+			return new ViewDefinitionModel(className, layoutName, layoutType, roots, diagnostics,
+				(string)layoutElement.Attribute("choiceGuid"));
 		}
 
 		private void ProcessContainer(
@@ -117,11 +126,14 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 					// Named drop codes for the real-layout constructs the importer does not
 					// expand, so coverage reports can count them instead of lumping them as unknown.
 					case "generate":
+						var generatedId = $"{parentPath}/#{output.Count}";
 						diagnostics.Add(new ViewDiagnostic(
 							ViewDiagnosticSeverity.Warning,
 							"generated-content-dropped",
 							$"<generate class='{(string)el.Attribute("class")}' fieldType='{(string)el.Attribute("fieldType")}'> drives schema/custom-field UI generation and is not imported.",
-							$"{parentPath}/#{output.Count}"));
+							generatedId));
+						output.Add(UnsupportedNode(el, generatedId, indented,
+							LegacyLayoutCallerPath.Get(el), "generate"));
 						break;
 					// Conditionals import as typed Conditional/ChoiceGroup nodes (evaluated per
 					// object at compose time); unsupported condition forms still drop with a diagnostic.
@@ -136,18 +148,26 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 						break;
 					}
 					case "sublayout":
-						diagnostics.Add(new ViewDiagnostic(
-							ViewDiagnosticSeverity.Info,
-							"sublayout-dropped",
-							$"<sublayout name='{(string)el.Attribute("name")}'> is a publishing construct and is not imported for detail views.",
-							$"{parentPath}/#{output.Count}"));
+					{
+						var stableId = $"{parentPath}/#{output.Count}";
+						ReportUnhandledAttributes(el, HandledSublayoutAttributes, "sublayout",
+							stableId, diagnostics);
+						output.Add(new ViewNode(stableId, ViewNodeKind.Sublayout, null, null,
+							null, null, EditorClassification.GroupingNone, null,
+							ViewVisibility.Always, ViewExpansion.NotApplicable, indented,
+							Attr(el, "name"), null,
+							sourceCallerPath: LegacyLayoutCallerPath.Get(el),
+							layoutChoiceField: Attr(el, "layoutChoiceField")));
 						break;
+					}
 					default:
 						diagnostics.Add(new ViewDiagnostic(
 							ViewDiagnosticSeverity.Warning,
 							"unknown-container-element",
 							$"Unsupported layout container element '{el.Name.LocalName}'.",
 							$"{parentPath}/#{output.Count}"));
+						output.Add(UnsupportedNode(el, $"{parentPath}/#{output.Count}", indented,
+							LegacyLayoutCallerPath.Get(el), Attr(el, "label") ?? el.Name.LocalName));
 						break;
 				}
 			}
@@ -165,13 +185,14 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 		{
 			var stableId = $"{parentPath}/#{output.Count}";
 			var refName = (string)callerEl.Attribute("ref");
+			var sourceCallerPath = LegacyLayoutCallerPath.Get(callerEl);
 
 			// Custom-field placeholder: <part customFields="here"/> or ref="_CustomFieldPlaceholder".
 			if (callerEl.Attribute("customFields") != null || refName == "_CustomFieldPlaceholder")
 			{
 				output.Add(MakeLeaf(stableId, ViewNodeKind.CustomFieldPlaceholder, "(custom fields)", null,
 					null, null, EditorClassification.GroupingNone, null, ViewVisibility.Always,
-					ViewExpansion.NotApplicable, indented, null));
+					ViewExpansion.NotApplicable, indented, null, sourceCallerPath));
 				return;
 			}
 
@@ -179,6 +200,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 			{
 				diagnostics.Add(new ViewDiagnostic(ViewDiagnosticSeverity.Warning, "part-without-ref",
 					"A <part> has neither a 'ref' nor 'customFields' attribute.", stableId));
+				output.Add(UnsupportedNode(callerEl, stableId, indented, sourceCallerPath,
+					Attr(callerEl, "label") ?? "part"));
 				return;
 			}
 
@@ -187,41 +210,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 			{
 				diagnostics.Add(new ViewDiagnostic(ViewDiagnosticSeverity.Error, "unresolved-part",
 					$"Could not resolve part ref '{refName}' for class '{className}'.", stableId));
-
-				// Recover the caller's structural children so an unresolved *section* part (e.g.
-				// LexSense/Normal's HeavySummary, which has no shipped part definition) does not
-				// drop
-				// its real fields: <part ref='HeavySummary'><indent><part
-				// ref='GlossAllA'/>...</indent></part>.
-				// Legacy DataTree omits the whole subtree here; recovering the children is strictly
-				// more faithful to what users see and keeps the diagnostic for the audit trail.
-				var recoverable = new List<XElement>();
-				foreach (var child in callerEl.Elements())
-				{
-					if (child.Name.LocalName == "indent" || child.Name.LocalName == "part")
-						recoverable.Add(child);
-				}
-
-				if (recoverable.Count > 0)
-				{
-					// Recovered children ride a group node that keeps CALLER's bindings --
-					// HeavySummary's menu="mnuDataTree-Sense" hotlinks survive, so composed
-					// per-sense headers offer the legacy sense menu (Insert Sense).
-					var recoveredChildren = new List<ViewNode>();
-					ProcessContainer(recoverable, parts, className, layoutType, stableId, indented,
-						recoveredChildren, diagnostics);
-					if (recoveredChildren.Count > 0)
-					{
-						output.Add(new ViewNode(stableId, ViewNodeKind.Group,
-							Attr(callerEl, "label"), Attr(callerEl, "abbr"), null, null,
-							EditorClassification.GroupingNone, null,
-							ParseVisibility(Attr(callerEl, "visibility")),
-							ParseExpansion(Attr(callerEl, "expansion")), indented, null,
-							recoveredChildren,
-							menuId: Attr(callerEl, "menu"),
-							hotlinksId: Attr(callerEl, "hotlinks")));
-					}
-				}
+				// DataTree omits an unresolved part and its entire subtree; never reinterpret
+				// the descendants as if they belonged to the parent layout.
 				return;
 			}
 
@@ -233,7 +223,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 				// Each sibling after the first needs its own stable id so they don't collide.
 				var childStableId = i == 0 ? stableId : $"{parentPath}/#{output.Count}";
 				var node = CreateNode(contents[i], callerEl, parts, className, layoutType, childStableId,
-					indented, diagnostics);
+					indented, diagnostics, sourceCallerPath);
 				if (node != null)
 				{
 					output.Add(node);
@@ -249,14 +239,21 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 			string layoutType,
 			string stableId,
 			bool indented,
-			List<ViewDiagnostic> diagnostics)
+			List<ViewDiagnostic> diagnostics,
+			string sourceCallerPath = null)
 		{
 			var label = Attr(callerEl, "label") ?? Attr(contentEl, "label");
 			var abbreviation = Attr(callerEl, "abbr") ?? Attr(contentEl, "abbr");
 			var visibility = ParseVisibility(Attr(callerEl, "visibility") ?? Attr(contentEl, "visibility"));
 			var expansion = ParseExpansion(Attr(callerEl, "expansion") ?? Attr(contentEl, "expansion"));
-			var field = Attr(contentEl, "field");
+			var generatedCustomField = string.Equals(Attr(callerEl, "ref"), "Custom",
+				System.StringComparison.Ordinal)
+				? Attr(callerEl, "param")
+				: null;
+			var field = Attr(contentEl, "field") ?? generatedCustomField;
 			var ws = Attr(contentEl, "ws");
+			var optionalWs = Attr(contentEl, "optionalWs");
+			var forceIncludeEnglish = ParseOptionalBool(Attr(contentEl, "forceIncludeEnglish")) ?? false;
 
 			// Report attributes the importer drops instead of dropping them silently. The caller
 			// element is reported only when distinct from the content element (inline children pass the
@@ -308,6 +305,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 					ReportSubstitutionValues(contentEl, HandledSliceAttributes, stableId, diagnostics);
 
 					var chooserLinks = new List<ViewChooserLink>();
+					var children = new List<ViewNode>();
 					var childElements = new List<XElement>();
 					ViewStringList enumStringList = null;
 					foreach (var child in contentEl.Elements())
@@ -335,14 +333,18 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 						}
 						else if (child.Name.LocalName != "properties")
 						{
-							// <properties> is consumed above; the rest is reported.
+							// <properties> is consumed above; unknown children remain visible as
+							// unsupported rows so malformed content cannot disappear.
+							var childStableId = $"{stableId}/content[{children.Count}]";
 							diagnostics.Add(new ViewDiagnostic(ViewDiagnosticSeverity.Info, "slice-content-dropped",
-								$"Slice content child <{child.Name.LocalName}> is not imported.", stableId));
+								$"Slice content child <{child.Name.LocalName}> is not imported.", childStableId));
+							children.Add(UnsupportedNode(child, childStableId, false,
+								LegacyLayoutCallerPath.Get(child), child.Name.LocalName));
 						}
 					}
 
-					var children = new List<ViewNode>();
-					AddInlineChildren(childElements, parts, className, layoutType, stableId, children, diagnostics);
+					AddInlineChildren(childElements, parts, className, layoutType, stableId, children,
+						diagnostics, sourceCallerPath);
 
 					// A jtview slice (editor="jtview") names the nested layout to compose for this
 					// object in its caller's param (legacy SliceFactory jtview: param ?? node layout attr).
@@ -354,7 +356,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 						sliceTargetLayout = Attr(callerEl, "param") ?? Attr(contentEl, "layout");
 
 					// A per-field writing-system visibility override (legacy visibleWritingSystems on a
-					// multistring slice or its persisted partRef property -- a space/comma list
+					// multistring slice or its persisted partRef property -- a comma-delimited
+					// list
 					// of ws specs).
 					// Carry the ordered specs onto the node; the composer intersects them with the resolved
 					// ws= set so the field shows exactly that subset. Caller (partRef) wins over content,
@@ -377,9 +380,12 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 							}
 							else
 							{
+								var childStableId = $"{stableId}/caller[{children.Count}]";
 								diagnostics.Add(new ViewDiagnostic(ViewDiagnosticSeverity.Warning, "caller-children-dropped",
 									$"Caller child <{callerChild.Name.LocalName}> under part ref with slice content is not imported.",
-									stableId));
+									childStableId));
+								children.Add(UnsupportedNode(callerChild, childStableId, false,
+									LegacyLayoutCallerPath.Get(callerChild), callerChild.Name.LocalName));
 							}
 						}
 
@@ -394,7 +400,10 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 							localizationKey, automationId, routing, boldEmphasis, fontScalePercent,
 							menuId, contextMenuId, hotlinksId,
 							chooserLinks: chooserLinks.Count > 0 ? chooserLinks : null,
-							visibleWritingSystems: visibleWss);
+							visibleWritingSystems: visibleWss,
+							sourceCallerPath: sourceCallerPath,
+							optionalWritingSystem: optionalWs,
+							forceIncludeEnglish: forceIncludeEnglish);
 					}
 
 					// Dynamic custom slices keep their legacy class/assembly identity so the host can
@@ -413,13 +422,16 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 						visibleWritingSystems: visibleWss,
 						// Legacy toggleValue= on a boolean slice (the displayed checkbox is the
 						// logical inverse of the stored property); carried so the composer inverts read+write.
-						toggleValue: ParseOptionalBool(Attr(contentEl, "toggleValue")) ?? false);
+						toggleValue: ParseOptionalBool(Attr(contentEl, "toggleValue")) ?? false,
+						sourceCallerPath: sourceCallerPath,
+						optionalWritingSystem: optionalWs,
+						forceIncludeEnglish: forceIncludeEnglish);
 				}
 				case "obj":
 				case "seq":
 				{
 					var kind = contentEl.Name.LocalName == "obj" ? ViewNodeKind.ObjectAtom : ViewNodeKind.Sequence;
-					var targetLayout = Attr(callerEl, "param") ?? Attr(contentEl, "layout");
+					var targetLayout = Attr(contentEl, "layout") ?? Attr(callerEl, "param");
 					ReportUnhandledAttributes(contentEl, HandledObjSeqAttributes, contentEl.Name.LocalName, stableId, diagnostics);
 					ReportSubstitutionValues(contentEl, HandledObjSeqAttributes, stableId, diagnostics);
 					var children = new List<ViewNode>();
@@ -436,7 +448,12 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 						ghostLabel: Attr(contentEl, "ghostLabel") ?? Attr(callerEl, "ghostLabel"),
 						// The layout's post-create hook rides the node so the composer's ghost
 						// setter can invoke it the way GhostStringSliceView.MakeRealObject does.
-						ghostInitMethod: Attr(contentEl, "ghostInitMethod") ?? Attr(callerEl, "ghostInitMethod"));
+						ghostInitMethod: Attr(contentEl, "ghostInitMethod") ?? Attr(callerEl, "ghostInitMethod"),
+						sourceCallerPath: sourceCallerPath,
+						layoutChoiceField: Attr(contentEl, "layoutChoiceField"),
+						sourceCallerXml: callerEl.Elements().Any()
+							? callerEl.ToString(SaveOptions.DisableFormatting)
+							: null);
 				}
 				// Conditional display: <if>/<ifnot> shows content only when the condition
 				// passes (fails, for ifnot), evaluated via XmlVc.ConditionPasses. Preserved
@@ -447,16 +464,17 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 					var condition = TryParseCondition(contentEl, contentEl.Name.LocalName == "ifnot",
 						stableId, diagnostics);
 					if (condition == null)
-						return null; // unsupported condition form; diagnostic already raised
+						return UnsupportedNode(contentEl, stableId, indented, sourceCallerPath,
+							label ?? contentEl.Name.LocalName); // diagnostic already raised
 
 					var children = new List<ViewNode>();
 					AddConditionalChildren(contentEl, parts, className, layoutType, stableId, indented,
-						children, diagnostics);
+						children, diagnostics, sourceCallerPath);
 					return new ViewNode(stableId, ViewNodeKind.Conditional, label, abbreviation,
 						Attr(contentEl, "field"), null, EditorClassification.GroupingNone, null,
 						visibility, expansion, indented, null, children, localizationKey, automationId,
 						routing, menuId: menuId, contextMenuId: contextMenuId, hotlinksId: hotlinksId,
-						condition: condition);
+						condition: condition, sourceCallerPath: sourceCallerPath);
 				}
 
 				// <choice> holds <where> branches (first passing one renders) and an optional
@@ -464,6 +482,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 				case "choice":
 				{
 					var branches = new List<ViewNode>();
+					var hasUnsupportedBranch = false;
 					foreach (var clause in contentEl.Elements())
 					{
 						var branchId = $"{stableId}/#{branches.Count}";
@@ -474,38 +493,61 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 							// One unevaluable where would mis-select a later branch/otherwise; drop the
 							// whole choice (the diagnostic from TryParseCondition records why).
 							if (branchCondition == null)
-								return null;
+							{
+								hasUnsupportedBranch = true;
+								continue;
+							}
 						}
 						else if (clause.Name.LocalName != "otherwise")
 						{
 							// Legacy throws "elements in choice must be <where...> or <otherwise>".
-							diagnostics.Add(new ViewDiagnostic(ViewDiagnosticSeverity.Warning,
-								"unknown-part-content",
-								$"<choice> child <{clause.Name.LocalName}> is not where/otherwise and is not imported.",
-								branchId));
+								diagnostics.Add(new ViewDiagnostic(ViewDiagnosticSeverity.Warning,
+									"unknown-part-content",
+									$"<choice> child <{clause.Name.LocalName}> is not where/otherwise and is not imported.",
+									branchId));
+							hasUnsupportedBranch = true;
 							continue;
 						}
 
 						var branchChildren = new List<ViewNode>();
 						AddConditionalChildren(clause, parts, className, layoutType, branchId, indented,
-							branchChildren, diagnostics);
+							branchChildren, diagnostics, sourceCallerPath);
 						branches.Add(new ViewNode(branchId, ViewNodeKind.Conditional, null, null,
 							Attr(clause, "field"), null, EditorClassification.GroupingNone, null,
 							ViewVisibility.Always, ViewExpansion.NotApplicable, indented, null,
-							branchChildren, condition: branchCondition));
+							branchChildren, condition: branchCondition,
+							sourceCallerPath: sourceCallerPath));
 					}
+
+					if (hasUnsupportedBranch)
+						return UnsupportedNode(contentEl, stableId, indented, sourceCallerPath,
+							label ?? "choice");
 
 					return new ViewNode(stableId, ViewNodeKind.ChoiceGroup, label, abbreviation, null,
 						null, EditorClassification.GroupingNone, null, visibility, expansion, indented,
 						null, branches, localizationKey, automationId, routing, menuId: menuId,
-						contextMenuId: contextMenuId, hotlinksId: hotlinksId);
+						contextMenuId: contextMenuId, hotlinksId: hotlinksId,
+						sourceCallerPath: sourceCallerPath);
 				}
 
 				default:
+					// DataTree.ProcessSubpartNode ignores content it does not recognize
+					// (a nested <part>, deParams, RecordChangeHandler), so no row is rendered.
 					diagnostics.Add(new ViewDiagnostic(ViewDiagnosticSeverity.Warning, "unknown-part-content",
 						$"Unsupported part content element '{contentEl.Name.LocalName}'.", stableId));
 					return null;
 			}
+		}
+
+		private static ViewNode UnsupportedNode(XElement element, string stableId, bool indented,
+			string sourceCallerPath, string label)
+		{
+			return new ViewNode(stableId, ViewNodeKind.Field, label, Attr(element, "abbr"), null,
+				"unsupported", EditorClassification.Unknown, null, ViewVisibility.Always,
+				ViewExpansion.NotApplicable, indented, null, null,
+				menuId: Attr(element, "menu"), contextMenuId: Attr(element, "contextMenu"),
+				hotlinksId: Attr(element, "hotlinks"), sourceCallerPath: sourceCallerPath,
+				routing: HostRouting.Unsupported);
 		}
 
 		// Import a slice's <chooserInfo> -- the chooserLink jump links become typed metadata in
@@ -590,7 +632,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 			string parentPath,
 			bool indented,
 			List<ViewNode> output,
-			List<ViewDiagnostic> diagnostics)
+			List<ViewDiagnostic> diagnostics,
+			string sourceCallerPath)
 		{
 			foreach (var child in container.Elements())
 			{
@@ -604,7 +647,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 					default:
 					{
 						var node = CreateNode(child, child, parts, className, layoutType,
-							$"{parentPath}/#{output.Count}", indented, diagnostics);
+							$"{parentPath}/#{output.Count}", indented, diagnostics, sourceCallerPath);
 						if (node != null)
 							output.Add(node);
 						break;
@@ -671,12 +714,14 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 			string layoutType,
 			string parentPath,
 			List<ViewNode> output,
-			List<ViewDiagnostic> diagnostics)
+			List<ViewDiagnostic> diagnostics,
+			string sourceCallerPath)
 		{
 			foreach (var child in childElements)
 			{
 				var stableId = $"{parentPath}/#{output.Count}";
-				var node = CreateNode(child, child, parts, className, layoutType, stableId, false, diagnostics);
+				var node = CreateNode(child, child, parts, className, layoutType, stableId, false,
+					diagnostics, sourceCallerPath);
 				if (node != null)
 				{
 					output.Add(node);
@@ -700,9 +745,12 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 				{
 					// E.g. an <indent> wrapper under an obj/seq caller; its nested parts are not expanded
 					// here. Report rather than silently drop.
+					var malformedId = $"{parentPath}/#{output.Count}";
 					diagnostics.Add(new ViewDiagnostic(ViewDiagnosticSeverity.Warning, "injected-child-dropped",
 						$"Caller child <{child.Name.LocalName}> under an object/sequence part is not imported.",
-						$"{parentPath}/#{output.Count}"));
+						malformedId));
+					output.Add(UnsupportedNode(child, malformedId, false,
+						LegacyLayoutCallerPath.Get(child), child.Name.LocalName));
 					continue;
 				}
 
@@ -710,6 +758,10 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 				var refName = (string)child.Attribute("ref");
 				if (string.IsNullOrEmpty(refName))
 				{
+					diagnostics.Add(new ViewDiagnostic(ViewDiagnosticSeverity.Warning, "injected-child-dropped",
+						"An injected object/sequence child has no 'ref' and is not imported.", stableId));
+					output.Add(UnsupportedNode(child, stableId, false,
+						LegacyLayoutCallerPath.Get(child), "part"));
 					continue;
 				}
 
@@ -717,12 +769,15 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 				if (content == null)
 				{
 					diagnostics.Add(new ViewDiagnostic(ViewDiagnosticSeverity.Info, "cross-object-deferred",
-						$"Injected child '{refName}' could not be resolved by ref; deep cross-object expansion is deferred.",
+						$"Injected child '{refName}' could not be resolved by ref and is not imported.",
 						stableId));
+					output.Add(UnsupportedNode(child, stableId, false,
+						LegacyLayoutCallerPath.Get(child), refName));
 					continue;
 				}
 
-				var node = CreateNode(content, child, parts, "", layoutType, stableId, false, diagnostics);
+				var node = CreateNode(content, child, parts, "", layoutType, stableId, false, diagnostics,
+					LegacyLayoutCallerPath.Get(child));
 				if (node != null)
 				{
 					output.Add(node);
@@ -754,20 +809,20 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 			string stableId, ViewNodeKind kind, string label, string abbreviation, string field, string editor,
 			EditorClassification classification, string ws, ViewVisibility visibility, ViewExpansion expansion,
 			bool indented, string targetLayout,
-			string localizationKey = null, string automationId = null, HostRouting routing = HostRouting.Inherit)
+			string sourceCallerPath = null, string localizationKey = null, string automationId = null,
+			HostRouting routing = HostRouting.Inherit)
 			=> new ViewNode(stableId, kind, label, abbreviation, field, editor, classification, ws, visibility,
-				expansion, indented, targetLayout, System.Array.Empty<ViewNode>(), localizationKey, automationId, routing);
+				expansion, indented, targetLayout, System.Array.Empty<ViewNode>(), localizationKey, automationId,
+				routing, sourceCallerPath: sourceCallerPath);
 
 		private static string Attr(XElement el, string name) => (string)el.Attribute(name);
 
-		// Split a legacy visibleWritingSystems value (the legacy slice persists a comma-delimited ICU
-		// locale list; layout authors also write space-separated). Null/blank => no override (full set).
+		// Decode the comma-delimited value with ChoiceGroup's exact token semantics.
 		private static IReadOnlyList<string> ParseWsList(string value)
 		{
-			if (string.IsNullOrWhiteSpace(value))
+			if (value == null)
 				return null;
-			var parts = value.Split(new[] { ',', ' ', ';' }, System.StringSplitOptions.RemoveEmptyEntries);
-			return parts.Length == 0 ? null : parts;
+			return value.Split(new[] { ',' });
 		}
 
 		// One diagnostic per attribute the importer does not consume. Functional drops

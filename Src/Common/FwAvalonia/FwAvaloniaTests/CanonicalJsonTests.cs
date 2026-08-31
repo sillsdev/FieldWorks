@@ -51,6 +51,57 @@ namespace FwAvaloniaTests
 		}
 
 		[Test]
+		public void ChoiceGuid_RoundTripDistinguishesEmptyFromAbsent()
+		{
+			var emptyChoice = new ViewDefinitionModel("RnGenericRec", "Normal", "detail",
+				new List<ViewNode>(), new List<ViewDiagnostic>(), string.Empty);
+			var absentChoice = new ViewDefinitionModel("RnGenericRec", "Normal", "detail",
+				new List<ViewNode>(), new List<ViewDiagnostic>());
+
+			var emptyReloaded = ViewDefinitionJsonSerializer.Deserialize(
+				ViewDefinitionJsonSerializer.Serialize(emptyChoice));
+			var absentReloaded = ViewDefinitionJsonSerializer.Deserialize(
+				ViewDefinitionJsonSerializer.Serialize(absentChoice));
+
+			Assert.That(emptyReloaded.ChoiceGuid, Is.EqualTo(string.Empty));
+			Assert.That(absentReloaded.ChoiceGuid, Is.Null);
+		}
+
+		[Test]
+		public void RequestedAndResolvedLayoutIdentity_RoundTripsWithoutCollapsingChoice()
+		{
+			var selected = new ViewDefinitionModel("LexEntry", "default", "detail",
+				new List<ViewNode>(), new List<ViewDiagnostic>(), "resolved")
+				.WithLayoutIdentities("Requested", string.Empty, "default", "resolved");
+
+			var reloaded = ViewDefinitionJsonSerializer.Deserialize(
+				ViewDefinitionJsonSerializer.Serialize(selected));
+
+			Assert.That(reloaded.RequestedLayoutName, Is.EqualTo("Requested"));
+			Assert.That(reloaded.RequestedChoiceGuid, Is.EqualTo(string.Empty));
+			Assert.That(reloaded.ResolvedLayoutName, Is.EqualTo("default"));
+			Assert.That(reloaded.ResolvedChoiceGuid, Is.EqualTo("resolved"));
+		}
+
+		[Test]
+		public void RequestedAndResolvedLayoutIdentity_RoundTripsConcreteAndBaseClasses()
+		{
+			var selected = new ViewDefinitionModel("BaseClass", "default", "detail",
+				new List<ViewNode>(), new List<ViewDiagnostic>(), "resolved")
+				.WithLayoutIdentities(
+					new ViewDefinitionIdentity("ConcreteClass", "detail", "Requested", "requested"),
+					new ViewDefinitionIdentity("BaseClass", "detail", "default", "resolved"));
+
+			var reloaded = ViewDefinitionJsonSerializer.Deserialize(
+				ViewDefinitionJsonSerializer.Serialize(selected));
+
+			Assert.That(reloaded.RequestedIdentity,
+				Is.EqualTo(new ViewDefinitionIdentity("ConcreteClass", "detail", "Requested", "requested")));
+			Assert.That(reloaded.ResolvedIdentity,
+				Is.EqualTo(new ViewDefinitionIdentity("BaseClass", "detail", "default", "resolved")));
+		}
+
+		[Test]
 		public void UnsupportedFormatVersion_IsRejected()
 		{
 			Assert.That(() => ViewDefinitionJsonSerializer.Deserialize("{\"formatVersion\": 99, \"nodes\": []}"),
@@ -93,6 +144,8 @@ namespace FwAvaloniaTests
 				ghostLabel: "Gloss",
 				forVariant: true,
 				ghostInitMethod: "SetMorphTypeToRoot",
+				customEditorClass: "SIL.FieldWorks.CustomSlice",
+				customEditorAssembly: "Custom.dll",
 				condition: new ViewCondition(
 					negated: true,
 					target: "owner",
@@ -111,16 +164,27 @@ namespace FwAvaloniaTests
 				{
 					new ViewChooserLink("goto", "Edit the Publications list", "publicationsEdit"),
 					new ViewChooserLink("simple", "Add a slot", "MakeInflAffixSlotChooserCommand", "TopPOS")
-				});
+				},
+				enumStringList: new ViewStringList(new[] { "Hidden", "Visible" }, "EnumLabels"),
+				visibleWritingSystems: new[] { "en", "fr" },
+				toggleValue: true,
+				sourceCallerPath: "part[2]/if[1]",
+				layoutChoiceField: "MorphType",
+				sourceCallerXml: "<part ref='Senses'/>",
+				optionalWritingSystem: "all vernacular",
+				forceIncludeEnglish: true);
 			var model = new ViewDefinitionModel("LexEntry", "Normal", "detail",
-				new List<ViewNode> { node }, new List<ViewDiagnostic>());
+				new List<ViewNode> { node }, new List<ViewDiagnostic>(), "choice-1");
 
 			var reloaded = ViewDefinitionJsonSerializer.Deserialize(ViewDefinitionJsonSerializer.Serialize(model));
 			var r = reloaded.Roots[0];
 
 			Assert.Multiple(() =>
 			{
+				Assert.That(reloaded.ChoiceGuid, Is.EqualTo("choice-1"), nameof(reloaded.ChoiceGuid));
 				Assert.That(r.StableId, Is.EqualTo("n/#0"), nameof(r.StableId));
+				Assert.That(r.SourceCallerPath, Is.EqualTo("part[2]/if[1]"), nameof(r.SourceCallerPath));
+				Assert.That(r.SourceCallerXml, Is.EqualTo("<part ref='Senses'/>"), nameof(r.SourceCallerXml));
 				Assert.That(r.Kind, Is.EqualTo(ViewNodeKind.Sequence), nameof(r.Kind));
 				Assert.That(r.Label, Is.EqualTo("Senses"), nameof(r.Label));
 				Assert.That(r.Abbreviation, Is.EqualTo("sns"), nameof(r.Abbreviation));
@@ -128,10 +192,15 @@ namespace FwAvaloniaTests
 				Assert.That(r.RawEditor, Is.EqualTo("seq"), nameof(r.RawEditor));
 				Assert.That(r.EditorClassification, Is.EqualTo(EditorClassification.Known), nameof(r.EditorClassification));
 				Assert.That(r.WritingSystem, Is.EqualTo("vernacular"), nameof(r.WritingSystem));
+				Assert.That(r.OptionalWritingSystem, Is.EqualTo("all vernacular"), nameof(r.OptionalWritingSystem));
+				Assert.That(r.ForceIncludeEnglish, Is.True, nameof(r.ForceIncludeEnglish));
 				Assert.That(r.Visibility, Is.EqualTo(ViewVisibility.IfData), nameof(r.Visibility));
 				Assert.That(r.Expansion, Is.EqualTo(ViewExpansion.Expanded), nameof(r.Expansion));
 				Assert.That(r.Indented, Is.True, nameof(r.Indented));
 				Assert.That(r.TargetLayout, Is.EqualTo("detail"), nameof(r.TargetLayout));
+				Assert.That(r.LayoutChoiceField, Is.EqualTo("MorphType"), nameof(r.LayoutChoiceField));
+				Assert.That(r.VisibleWritingSystems, Is.EqualTo(new[] { "en", "fr" }),
+					nameof(r.VisibleWritingSystems));
 				Assert.That(r.Children, Has.Count.EqualTo(1), nameof(r.Children));
 				Assert.That(r.Children[0].StableId, Is.EqualTo("n/#0/#0"), "child StableId");
 				Assert.That(r.LocalizationKey, Is.EqualTo("ksSenses"), nameof(r.LocalizationKey));
@@ -147,6 +216,10 @@ namespace FwAvaloniaTests
 				Assert.That(r.GhostClass, Is.EqualTo("LexSense"), nameof(r.GhostClass));
 				Assert.That(r.GhostLabel, Is.EqualTo("Gloss"), nameof(r.GhostLabel));
 				Assert.That(r.ForVariant, Is.True, nameof(r.ForVariant));
+				Assert.That(r.CustomEditorClass, Is.EqualTo("SIL.FieldWorks.CustomSlice"),
+					nameof(r.CustomEditorClass));
+				Assert.That(r.CustomEditorAssembly, Is.EqualTo("Custom.dll"),
+					nameof(r.CustomEditorAssembly));
 				Assert.That(r.GhostInitMethod, Is.EqualTo("SetMorphTypeToRoot"), nameof(r.GhostInitMethod));
 				Assert.That(r.Condition, Is.Not.Null, nameof(r.Condition));
 				Assert.That(r.Condition.Negated, Is.True, "Condition.Negated");
@@ -172,6 +245,11 @@ namespace FwAvaloniaTests
 				Assert.That(r.ChooserLinks[0].Target, Is.Null, "ChooserLinks[0].Target");
 				Assert.That(r.ChooserLinks[1].Type, Is.EqualTo("simple"), "ChooserLinks[1].Type");
 				Assert.That(r.ChooserLinks[1].Target, Is.EqualTo("TopPOS"), "ChooserLinks[1].Target");
+				Assert.That(r.EnumStringList.Ids, Is.EqualTo(new[] { "Hidden", "Visible" }),
+					"EnumStringList.Ids");
+				Assert.That(r.EnumStringList.Group, Is.EqualTo("EnumLabels"),
+					"EnumStringList.Group");
+				Assert.That(r.ToggleValue, Is.True, nameof(r.ToggleValue));
 			});
 		}
 	}

@@ -4,9 +4,13 @@
 
 using System.Collections.Generic;
 using System.Linq;
+using Avalonia;
 using Avalonia.Automation;
 using Avalonia.Controls;
+using Avalonia.Headless;
 using Avalonia.Headless.NUnit;
+using Avalonia.Input;
+using Avalonia.Input.Raw;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
 using NUnit.Framework;
@@ -375,6 +379,81 @@ namespace FwAvaloniaTests
 			var chooser = view.GetVisualDescendants().OfType<Button>()
 				.FirstOrDefault(c => AutomationProperties.GetAutomationId(c) == "MorphTypeChooser");
 			Assert.That(chooser, Is.Not.Null, "the chooser field should render the owned flyout chooser");
+		}
+
+		[AvaloniaTest]
+		public void DetailView_ReportsTheFieldWhoseEditorReceivesFocus()
+		{
+			var model = DetailModelProjector.FromViewDefinition(SampleDefinition(),
+				new FakeDetailValueProvider());
+			var focused = new List<DetailField>();
+			var view = new DataTree(model, fieldFocused: focused.Add);
+			var window = new Window { Content = view, Width = 420, Height = 240 };
+			window.Show();
+			Dispatcher.UIThread.RunJobs();
+			var lexemeBox = view.GetVisualDescendants().OfType<TextBox>()
+				.First(box => AutomationProperties.GetAutomationId(box) == "LexemeFormEditor.vern");
+			var chooser = view.GetVisualDescendants().OfType<Button>()
+				.First(button => AutomationProperties.GetAutomationId(button) == "MorphTypeChooser");
+
+			lexemeBox.Focus();
+			Dispatcher.UIThread.RunJobs();
+			chooser.Focus();
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(focused.Select(field => field.Field),
+				Does.Contain("LexemeForm").And.Contain("MorphType"));
+		}
+
+		[AvaloniaTest]
+		public void DetailView_ReportsTheFieldWhoseLabelIsClicked()
+		{
+			var model = DetailModelProjector.FromViewDefinition(SampleDefinition(),
+				new FakeDetailValueProvider());
+			var focused = new List<DetailField>();
+			var view = new DataTree(model, fieldFocused: focused.Add);
+			var window = new Window { Content = view, Width = 420, Height = 240 };
+			window.Show();
+			Dispatcher.UIThread.RunJobs();
+			var label = view.GetVisualDescendants().OfType<TextBlock>()
+				.First(block => AutomationProperties.GetAutomationId(block) == "LexemeFormEditor.Label");
+
+			label.RaiseEvent(new PointerReleasedEventArgs(label,
+				new Pointer(Pointer.GetNextFreeId(), PointerType.Mouse, true),
+				window, default, 0,
+				new PointerPointProperties(RawInputModifiers.None,
+					PointerUpdateKind.LeftButtonReleased),
+				KeyModifiers.None, MouseButton.Left));
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(focused.Select(field => field.Field), Does.Contain("LexemeForm"));
+		}
+
+		[AvaloniaTest]
+		public void PointerFocus_ReportsFieldOnlyAfterTheActivationIsReleased()
+		{
+			var model = DetailModelProjector.FromViewDefinition(SampleDefinition(),
+				new FakeDetailValueProvider());
+			var focused = new List<DetailField>();
+			var view = new DataTree(model, fieldFocused: focused.Add);
+			var window = new Window { Content = view, Width = 420, Height = 240 };
+			window.Show();
+			Dispatcher.UIThread.RunJobs();
+			var box = view.GetVisualDescendants().OfType<TextBox>()
+				.First(control => AutomationProperties.GetAutomationId(control)
+					== "LexemeFormEditor.vern");
+			var point = box.TranslatePoint(new Point(2, 2), window);
+			Assert.That(point, Is.Not.Null);
+			var beforePress = focused.Count;
+
+			window.MouseDown(point.Value, MouseButton.Left);
+			Dispatcher.UIThread.RunJobs();
+			Assert.That(focused, Has.Count.EqualTo(beforePress),
+				"pointer focus must not replace the editor while the activation is held");
+
+			window.MouseUp(point.Value, MouseButton.Left);
+			Dispatcher.UIThread.RunJobs();
+			Assert.That(focused.Select(field => field.Field), Does.Contain("LexemeForm"));
 		}
 	}
 

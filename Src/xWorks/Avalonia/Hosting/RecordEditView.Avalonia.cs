@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2003-2017 SIL International
+// Copyright (c) 2003-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -41,6 +41,72 @@ namespace SIL.FieldWorks.XWorks
 	/// </summary>
 	public partial class RecordEditView
 	{
+		internal readonly struct PersistentCommandTargetIdentity
+			: IEquatable<PersistentCommandTargetIdentity>
+		{
+			private readonly DetailLayoutSliceIdentity _sliceIdentity;
+
+			internal PersistentCommandTargetIdentity(int hvo, string fieldName,
+				string className, string layoutName, string callerPath,
+				string layoutType = null, string choiceGuid = null,
+				IReadOnlyList<DetailLayoutIdentity> layoutPath = null)
+			{
+				var layoutIdentity = new DetailLayoutIdentity(className, layoutType, layoutName,
+					choiceGuid);
+				var layoutPartIdentity = new DetailLayoutPartIdentity(layoutIdentity, callerPath,
+					layoutPath);
+				_sliceIdentity = new DetailLayoutSliceIdentity(layoutPartIdentity, hvo, fieldName);
+			}
+
+			internal int Hvo => _sliceIdentity.ObjectHvo;
+
+			internal string FieldName => _sliceIdentity.FieldName;
+
+			internal string ClassName => _sliceIdentity.LayoutPart.Layout.ClassName;
+
+			internal string LayoutName => _sliceIdentity.LayoutPart.Layout.LayoutName;
+
+			internal string CallerPath => _sliceIdentity.LayoutPart.CallerPath;
+			internal string LayoutType => _sliceIdentity.LayoutPart.Layout.LayoutType;
+			internal string ChoiceGuid => _sliceIdentity.LayoutPart.Layout.ChoiceGuid;
+			internal IReadOnlyList<DetailLayoutIdentity> LayoutPath
+				=> _sliceIdentity.LayoutPart.LayoutPath;
+
+			public bool Equals(PersistentCommandTargetIdentity other)
+				=> _sliceIdentity.Equals(other._sliceIdentity);
+
+			public override bool Equals(object obj)
+				=> obj is PersistentCommandTargetIdentity other && Equals(other);
+
+			public override int GetHashCode() => _sliceIdentity.GetHashCode();
+		}
+
+		private readonly struct PersistentLazyTargetMatch
+		{
+			internal PersistentLazyTargetMatch(Slice slice, int index)
+			{
+				Slice = slice;
+				Index = index;
+			}
+
+			internal Slice Slice { get; }
+			internal int Index { get; }
+		}
+
+		private sealed class PersistentTargetMatches
+		{
+			internal readonly List<Slice> Realized = new List<Slice>();
+			internal readonly List<PersistentLazyTargetMatch> Lazy
+				= new List<PersistentLazyTargetMatch>();
+		}
+
+		internal enum PersistentTargetAction
+		{
+			Reject,
+			UseRealized,
+			RealizeLazy
+		}
+
 		private UIFramework m_activeUIFramework;
 		private readonly EditControlFactory m_lexicalEditControlFactory;
 		private readonly UIFrameworkSelectionService m_frameworkSelectionService = new UIFrameworkSelectionService();
@@ -50,13 +116,8 @@ namespace SIL.FieldWorks.XWorks
 		// open undo task is never orphaned (an orphan makes the shutdown Save throw "Commit at wrong place").
 		private readonly DetailEditContextHolder m_detailEditContext = new DetailEditContextHolder();
 		private AvaloniaDetailRefreshController m_avaloniaRefreshController;
-		// The per-project home of the sparse view-definition override patches that
-		// drive the Avalonia detail view's per-field Field Visibility / Move Field commands. Lazily built from
-		// the project ConfigurationSettings folder; the detail view reads it at Compose and the gear
-		// menu writes it. The legacy WinForms DataTree path NEVER touches this -- it keeps its
-		// Inventory
-		// store untouched.
-		private ViewDefinitionOverrideStore m_viewOverrideStore;
+		private InventoryViewDefinitionSource m_inventoryViewDefinitionSource;
+		private string m_inventoryViewDefinitionProjectName;
 		// The approved baseline-adapter ids -- the ONLY routes allowed to drive hidden legacy
 		// infrastructure while Avalonia is active.
 		internal const string CommandMenuRoutingAdapterId = "command-menu-routing";
@@ -72,13 +133,10 @@ namespace SIL.FieldWorks.XWorks
 		// behavior. Per-instance deliberately: a process-wide static would leak state across
 		// projects/windows for the app lifetime.
 		private readonly Dictionary<string, bool> m_expansionStates = new Dictionary<string, bool>();
-
-		// The transient "Show all right now" reveal: template StableIds of parts whose rows
-		// show every writing-system option. Cleared when the shown record changes; never
-		// persisted.
-		private readonly HashSet<string> m_showAllWsFields = new HashSet<string>(StringComparer.Ordinal);
-		// The record m_showAllWsFields belongs to; a different record expires the reveal.
-		private int m_showAllWsRecordHvo;
+		private DetailLayoutSliceIdentity? m_showAllWritingSystemsSlice;
+		private bool m_pendingDetailFocusRefresh;
+		private int m_detailFocusRefreshVersion;
+		private int m_lastAvaloniaCurrentObjectHvo;
 
 		private bool ShouldUseAvaloniaLexiconEdit
 		{
@@ -149,10 +207,7 @@ namespace SIL.FieldWorks.XWorks
 			SettleDetailEdits();
 			m_detailEditContext.Clear();
 			m_avaloniaEntryForm?.Dispose();
-			// Transient view state dies with the view: rebuilding the host must not
-			// resurrect a stale reveal.
-			m_showAllWsFields.Clear();
-			m_showAllWsRecordHvo = 0;
+			m_showAllWritingSystemsSlice = null;
 			// Null the host + refresh controller after disposing them. The recreation guards
 			// (EnsureAvaloniaEntryFormInitialized / EnsureAvaloniaRefreshController) key on `== null`, so a
 			// runtime flip New->Legacy->New rebuilds a fresh entry form instead of re-showing a disposed one.
@@ -303,21 +358,26 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		private void ShowAvaloniaEntry(ICmObject obj)
 		{
+			m_pendingDetailFocusRefresh = false;
+			m_detailFocusRefreshVersion++;
 			// Auto-save: a session still open from the previous record/edit settles (commit
 			// when valid, roll back when not) before the detail view is replaced. Replace's
 			// cancel-on-displace remains the safety net.
 			SettleDetailEdits();
-
-			// Record-navigation expiry: the transient reveal belongs to ONE record -- it
-			// survives focus changes within the record and dies when the record changes.
-			if (obj == null || obj.Hvo != m_showAllWsRecordHvo)
-				m_showAllWsFields.Clear();
-			m_showAllWsRecordHvo = obj?.Hvo ?? 0;
+			var currentObjectHvo = Clerk?.CurrentObject?.Hvo ?? 0;
+			if (currentObjectHvo != m_lastAvaloniaCurrentObjectHvo)
+				m_showAllWritingSystemsSlice = null;
+			m_lastAvaloniaCurrentObjectHvo = currentObjectHvo;
+			if (obj == null || m_dataEntryForm?.Root == null
+				|| m_dataEntryForm.Root.Hvo != obj.Hvo)
+			{
+				m_showAllWritingSystemsSlice = null;
+			}
 
 			// Adapter hygiene: the hidden command-routing DataTree must never answer mediator
 			// commands for a PREVIOUS record -- reset it whenever the shown record changes; the
 			// next
-			// right-click re-syncs it (EnsureMenuCommandAdapter). Without this, Insert Sense from
+			// right-click re-syncs it through the targeting path. Without this, Insert Sense from
 			// the main menu could silently target the entry that was last right-clicked.
 			if (m_dataTreeInitialized && m_dataEntryForm?.Root != null && obj != null
 				&& m_dataEntryForm.Root.Hvo != obj.Hvo)
@@ -348,33 +408,35 @@ namespace SIL.FieldWorks.XWorks
 			ComposedDetail composed = null;
 			try
 			{
-				composed = lexEntry != null
-					? DetailComposer.Compose(lexEntry, Cache, showHidden,
-						overrides: ResolveViewOverride,
-						showAllWritingSystemsFields: m_showAllWsFields)
-					// Non-entry roots compose against the tool's configured layout
-					// (m_layoutName, default "Normal"); a type-selected layout (m_layoutChoiceField, e.g.
-					// Notebook RnGenericRec keyed on "Type") resolves to the right variant inside Compose.
-					: DetailComposer.Compose(obj, Cache,
-						string.IsNullOrEmpty(m_layoutName) ? "Normal" : m_layoutName, showHidden,
-						overrides: ResolveViewOverride,
-						layoutChoiceField: m_layoutChoiceField,
-						showAllWritingSystemsFields: m_showAllWsFields);
+				var source = GetInventoryViewDefinitionSource();
+				composed = DetailComposer.Compose(obj, Cache, m_layoutName, showHidden,
+					source: source.GetSnapshot,
+					layoutChoiceField: m_layoutChoiceField,
+					showAllWritingSystemsSlices: RevealedWritingSystemSlices());
 				if (composed != null)
 				{
+					if (m_showAllWritingSystemsSlice.HasValue
+						&& !composed.Model.Fields.Any(field => field.LayoutSliceIdentity.Equals(
+							m_showAllWritingSystemsSlice.Value)))
+					{
+						m_showAllWritingSystemsSlice = null;
+					}
 					detail = composed.Model;
 					editContext = composed.EditContext;
 				}
 			}
+			catch (LayoutNotFoundException)
+			{
+				throw;
+			}
 			catch (Exception e)
 			{
-				// The user silently gets the fixed first-slice view instead of the full entry;
-				// that degradation must be diagnosable from the log, not just a debugger.
-				Logger.WriteError("Full-entry composition failed; falling back to the first slice.", e);
+				Logger.WriteError("Avalonia detail composition failed; using the host fallback.", e);
 			}
 
 			if (detail == null)
 			{
+				m_showAllWritingSystemsSlice = null;
 				if (lexEntry == null)
 				{
 					// No first-slice fallback exists for a non-LexEntry root: show the unsupported state
@@ -404,7 +466,33 @@ namespace SIL.FieldWorks.XWorks
 				GetPersistedExpansionState, PersistExpansionState,
 				OnDetailMenuRequested, OnDetailLinkRequested,
 				new FwTsStringClipboard(Cache.WritingSystemFactory),
-				GetPersistedLabelColumnWidth, PersistLabelColumnWidth);
+				GetPersistedLabelColumnWidth, PersistLabelColumnWidth,
+				OnDetailFieldFocused);
+		}
+
+		private InventoryViewDefinitionSource GetInventoryViewDefinitionSource()
+		{
+			var projectName = Cache?.ProjectId?.Name;
+			if (string.IsNullOrEmpty(projectName))
+				throw new InvalidOperationException("The project layout inventory key is unavailable.");
+			if (m_inventoryViewDefinitionSource != null
+				&& m_inventoryViewDefinitionProjectName == projectName)
+			{
+				return m_inventoryViewDefinitionSource;
+			}
+
+			var layouts = Inventory.GetInventory("layouts", Cache.ProjectId.Name);
+			if (layouts == null)
+				throw new InvalidOperationException("The project layout inventory is unavailable.");
+			var parts = Inventory.GetInventory("parts", Cache.ProjectId.Name);
+			if (parts?.Root == null)
+				throw new InvalidOperationException("The project part inventory is unavailable.");
+
+			m_inventoryViewDefinitionSource = new InventoryViewDefinitionSource(layouts,
+				parts.Root.OuterXml,
+				Cache.MetaDataCacheAccessor, Cache);
+			m_inventoryViewDefinitionProjectName = projectName;
+			return m_inventoryViewDefinitionSource;
 		}
 
 		/// <summary>
@@ -476,20 +564,10 @@ namespace SIL.FieldWorks.XWorks
 
 		private void OnDetailMenuRequested(DetailMenuRequest request)
 		{
+			var refreshAfterMenu = TakePendingDetailFocusRefresh()
+				| ClearShowAllFor(request.Field);
 			try
 			{
-				// An adapter failure must not suppress the menu itself: items that need the hidden
-				// colleague chain disable, everything else still works (and the failure is logged).
-				try
-				{
-					EnsureMenuCommandAdapter(request.Field.ObjectHvo, request.Field.Field);
-				}
-				catch (Exception adapterError)
-				{
-					Logger.WriteError("Detail menu command adapter failed; menu items that need "
-						+ "the hidden colleague chain will be disabled.", adapterError);
-				}
-
 				var ids = new List<string>();
 				switch (request.Kind)
 				{
@@ -506,191 +584,153 @@ namespace SIL.FieldWorks.XWorks
 				}
 
 				var idArray = ids.Where(id => !string.IsNullOrEmpty(id)).ToArray();
-				var window = m_propertyTable.GetValue<XWindow>("window");
-
 				// Render the SAME xCore menu natively in Avalonia -- identical items,
-				// enablement, and mediator dispatch; only rendering changes. The WinForms
-				// adapter menu remains the fallback if materialization fails.
+				// enablement, and mediator dispatch; only rendering changes.
 				try
 				{
-					// Retarget the per-field Field Visibility / Move Field commands
-					// to the project override layer for the Avalonia detail view; every other command (Help,
-					// inserts, writing-system menu, ...) keeps its normal mediator dispatch.
-					var interceptor = BuildOverrideCommandInterceptor(request.Field);
-					var items = XCoreMenuBridge.CreateMenuItems(window, idArray, interceptor);
+					var items = CreateNativeDetailMenuItems(request.Field, idArray);
 					if (items.Count > 0)
 					{
 						// A keyboard-opened menu anchors under the row it came from; a
 						// right-click opens it at the pointer.
-						m_avaloniaEntryForm.ShowContextMenu(items, request.AnchorControl,
-							request.OpenAtPointer);
-						return;
+						var shown = m_avaloniaEntryForm.ShowContextMenu(items,
+							request.AnchorControl, request.OpenAtPointer,
+							refreshAfterMenu ? (Action)RefreshAvaloniaDetail : null);
+						if (shown)
+						{
+							refreshAfterMenu = false;
+							return;
+						}
 					}
 				}
 				catch (Exception nativeMenuError)
 				{
-					Logger.WriteError("Avalonia-native menu failed; falling back to the adapter menu.",
+					Logger.WriteError("Avalonia-native menu failed; the menu was not shown.",
 						nativeMenuError);
 				}
-
-				window.ShowContextMenu(idArray, AdapterMenuScreenPoint(request), null, null);
 			}
 			catch (Exception e)
 			{
 				Logger.WriteError("Detail context menu failed.", e);
 			}
-		}
-
-		// The adapter fallback needs a raw screen point: cursor position for a right-click,
-		// the anchor's bottom-left otherwise. Both corners are mapped since
-		// RTL flow mirrors X in PointToScreen.
-		private static System.Drawing.Point AdapterMenuScreenPoint(DetailMenuRequest request)
-		{
-			var anchor = request.AnchorControl;
-			if (request.OpenAtPointer || anchor == null)
-				return System.Windows.Forms.Cursor.Position;
-			var left = Avalonia.VisualExtensions.PointToScreen(anchor,
-				new Avalonia.Point(0, anchor.Bounds.Height));
-			var right = Avalonia.VisualExtensions.PointToScreen(anchor,
-				new Avalonia.Point(anchor.Bounds.Width, anchor.Bounds.Height));
-			return new System.Drawing.Point(Math.Min(left.X, right.X), left.Y);
-		}
-
-		// The per-(class, layout) override file lives in this project's
-		// ConfigurationSettings folder. Built lazily and
-		// reused; one store per view instance, so it caches the patches it has loaded.
-		private ViewDefinitionOverrideStore ViewOverrideStore
-		{
-			get
+			finally
 			{
-				if (m_viewOverrideStore == null && Cache?.ProjectId?.ProjectFolder != null)
-				{
-					m_viewOverrideStore = new ViewDefinitionOverrideStore(
-						LcmFileHelper.GetConfigSettingsDir(Cache.ProjectId.ProjectFolder));
-				}
-
-				return m_viewOverrideStore;
+				if (refreshAfterMenu)
+					RefreshAvaloniaDetail();
 			}
 		}
 
-		// The resolver the composer calls for each compiled (class, layout); null result = shipped
-		// definition. A load failure is logged, not fatal -- compose then uses the shipped
-		// definition.
-		private ViewDefinitionOverride ResolveViewOverride(string className, string layoutName)
-			=> ViewOverrideStore?.TryGet(className, layoutName,
-				(path, error) => Logger.WriteError("Failed to load view-definition override '" + path
-					+ "'; using the shipped definition.", error));
-
-		/// <summary>
-		/// Builds the interceptor that retargets the per-field Field Visibility, Move Field, and
-		/// writing-system commands to the project override layer for the Avalonia detail view.
-		/// Returns null (intercept nothing -- every command keeps its normal mediator dispatch)
-		/// when the clicked row carries no (class, layout) context, e.g. the first-slice fallback
-		/// rows; that keeps the legacy behavior intact when the override layer cannot be
-		/// addressed.
-		/// </summary>
-		private Func<ChoiceBase, UIItemDisplayProperties, DetailMenuItem> BuildOverrideCommandInterceptor(
-			DetailField field)
+		// Preserve the legacy command-routing entry point; all targeting still flows through the
+		// invariant-enforcing path that clears stale CurrentSlice state on failure.
+		private void EnsureMenuCommandAdapter(int targetHvo, string fieldName)
 		{
-			if (field == null || string.IsNullOrEmpty(field.ClassName) || string.IsNullOrEmpty(field.LayoutName)
-				|| ViewOverrideStore == null)
-			{
-				return null;
-			}
+			EnsureMenuCommandTarget(targetHvo, fieldName);
+		}
 
-			// Writing-system items dispatch normally; the resulting selection is then copied
-			// into the override. They need no located template node, so they stay registered
-			// even when locating fails.
-			var registry = new OverrideCommandRegistry();
-			registry.Add(IsWritingSystemVisibilityChoice, (c, d) => WritingSystemItem(c, d, field));
-			// Show all right now never dispatches or persists: it only marks the row for the
-			// host's transient reveal.
-			registry.Add("CmdDataTree-WritingSystemMenu-ShowAllRightNow",
-				(c, d) => ShowAllWritingSystemsItem(d, field));
-
-			var templateId = ViewDefinitionOverrideEditor.StripRuntimeSuffix(field.StableId);
-			// Locate the clicked node in the field's OWN compiled model (with any current override
-			// already applied), so visibility checkmarks and move enablement reflect the live state.
-			ViewNodeLocation location = null;
+		private IReadOnlyList<DetailMenuItem> CreateNativeDetailMenuItems(DetailField field,
+			string[] menuIds)
+		{
+			var window = m_propertyTable.GetValue<XWindow>("window");
+			var hasPersistentTarget = false;
 			try
 			{
-				if (Cache.ServiceLocator.ObjectRepository.TryGetObject(field.ObjectHvo, out var fieldObj))
-				{
-					var model = DetailComposer.CompileForObject(Cache, fieldObj, field.LayoutName,
-						ResolveViewOverride);
-					if (model != null)
-						location = ViewDefinitionOverrideEditor.LocateTarget(model, templateId);
-				}
+				hasPersistentTarget = EnsurePersistentMenuCommandTarget(field);
 			}
-			catch (Exception e)
+			catch (Exception adapterError)
 			{
-				Logger.WriteError("Resolving the field's override target failed; this row's "
-					+ "menu-button commands fall back to ordinary command dispatch.", e);
-				return registry.TryBuild;
+				Logger.WriteError("Detail menu command adapter failed; menu items that need "
+					+ "the hidden colleague chain will be disabled.", adapterError);
 			}
+			return XCoreMenuBridge.CreateMenuItems(window, menuIds,
+				(choice, display) => CreateLegacyCommandMenuItem(field, choice, display,
+					hasPersistentTarget));
+		}
 
-			// Unknown/stale target: leave the field commands on the legacy path rather than
-			// guess.
-			if (location != null)
+		internal void OnDetailFieldFocused(DetailField field)
+		{
+			if (ClearShowAllFor(field))
 			{
-				registry.Add("CmdAlwaysVisible",
-					(c, d) => VisibilityItem(d, field, templateId, location, ViewVisibility.Always));
-				registry.Add("CmdIfData",
-					(c, d) => VisibilityItem(d, field, templateId, location, ViewVisibility.IfData));
-				registry.Add("CmdNormallyHidden",
-					(c, d) => VisibilityItem(d, field, templateId, location, ViewVisibility.Never));
-				registry.Add("CmdDataTree-MoveFieldUp",
-					(c, d) => MoveItem(d, field, location, up: true));
-				registry.Add("CmdDataTree-MoveFieldDown",
-					(c, d) => MoveItem(d, field, location, up: false));
+				m_pendingDetailFocusRefresh = true;
+				var version = ++m_detailFocusRefreshVersion;
+				Avalonia.Threading.Dispatcher.UIThread.Post(() =>
+				{
+					if (!m_pendingDetailFocusRefresh || version != m_detailFocusRefreshVersion)
+						return;
+					m_pendingDetailFocusRefresh = false;
+					RefreshAvaloniaDetail();
+				},
+					Avalonia.Threading.DispatcherPriority.Background);
+			}
+		}
+
+		private bool TakePendingDetailFocusRefresh()
+		{
+			if (!m_pendingDetailFocusRefresh)
+				return false;
+			m_pendingDetailFocusRefresh = false;
+			m_detailFocusRefreshVersion++;
+			return true;
+		}
+
+		private bool ClearShowAllFor(DetailField field)
+		{
+			if (!m_showAllWritingSystemsSlice.HasValue || field == null
+				|| m_showAllWritingSystemsSlice.Value.Equals(field.LayoutSliceIdentity))
+			{
+				return false;
+			}
+			m_showAllWritingSystemsSlice = null;
+			return true;
+		}
+
+		private ISet<DetailLayoutSliceIdentity> RevealedWritingSystemSlices()
+			=> m_showAllWritingSystemsSlice.HasValue
+				? new HashSet<DetailLayoutSliceIdentity> { m_showAllWritingSystemsSlice.Value }
+				: null;
+
+		private DetailMenuItem CreateLegacyCommandMenuItem(DetailField field, ChoiceBase choice,
+			UIItemDisplayProperties display, bool hasPersistentTarget)
+		{
+			if (string.Equals(choice?.HelpId,
+				"CmdDataTree-WritingSystemMenu-ShowAllRightNow", StringComparison.Ordinal))
+			{
+				return new DetailMenuItem(XCoreMenuBridge.StripAccelerator(display.Text),
+					hasPersistentTarget && display.Enabled, false, null,
+					hasPersistentTarget && display.Enabled ? (Action)(() =>
+					{
+						if (!EnsurePersistentMenuCommandTarget(field))
+							return;
+						m_showAllWritingSystemsSlice = field.LayoutSliceIdentity;
+						RefreshAvaloniaDetail();
+					}) : null);
 			}
 
-			return registry.TryBuild;
-		}
-
-		// A Field Visibility menu item: checked when it is the field's current visibility, executes the
-		// SetVisibility override mutation (idempotent -- re-choosing the current value is a
-		// harmless write).
-		private DetailMenuItem VisibilityItem(UIItemDisplayProperties display, DetailField field,
-			string templateId, ViewNodeLocation location, ViewVisibility target)
-		{
-			var label = XCoreMenuBridge.StripAccelerator(display.Text);
-			var isChecked = location.Visibility == target;
-			return new DetailMenuItem(label, isEnabled: true, isChecked: isChecked, children: null,
-				execute: () => ApplyFieldVisibility(field, templateId, target));
-		}
-
-		// A Move Field item: disabled at the first sibling (up) / last sibling (down) / when alone.
-		private DetailMenuItem MoveItem(UIItemDisplayProperties display, DetailField field,
-			ViewNodeLocation location, bool up)
-		{
-			var label = XCoreMenuBridge.StripAccelerator(display.Text);
-			var canMove = up ? location.CanMoveUp : location.CanMoveDown;
-			return new DetailMenuItem(label, isEnabled: canMove, isChecked: false, children: null,
-				execute: canMove ? (Action)(() => ApplyMoveField(field, location, up)) : null);
-		}
-
-		/// <summary>
-		/// The "Show all right now" item: marks the row's part for the transient reveal (every
-		/// row of the part shows every writing-system option until the user navigates to another
-		/// record) and recomposes. The reveal is view state, not a command, so the item
-		/// dispatches nothing and never writes the override.
-		/// </summary>
-		private DetailMenuItem ShowAllWritingSystemsItem(UIItemDisplayProperties display, DetailField field)
-			=> new DetailMenuItem(XCoreMenuBridge.StripAccelerator(display.Text), isEnabled: true,
-				isChecked: false, children: null, execute: () =>
+			var persistent = IsPersistentLayoutCommand(choice)
+				|| IsWritingSystemVisibilityChoice(choice);
+			var captured = choice;
+			return new DetailMenuItem(XCoreMenuBridge.StripAccelerator(display.Text),
+				(!persistent || hasPersistentTarget) && display.Enabled,
+				display.Checked, null, () =>
 				{
-					m_showAllWsFields.Add(ViewDefinitionOverrideEditor.StripRuntimeSuffix(field.StableId));
+					var canExecute = persistent
+						? EnsurePersistentMenuCommandTarget(field)
+						: EnsureMenuCommandTarget(field.ObjectHvo, field.Field);
+					if (!canExecute)
+						return;
+					var currentDisplay = captured.GetDisplayProperties();
+					if (!currentDisplay.Visible || !currentDisplay.Enabled)
+						return;
+					var before = persistent ? PersistentLayoutXml(field) : null;
+					captured.OnClick(null, EventArgs.Empty);
+					if (persistent && !string.Equals(before, PersistentLayoutXml(field),
+						StringComparison.Ordinal))
+					{
+						m_showAllWritingSystemsSlice = null;
+					}
 					RefreshAvaloniaDetail();
 				});
+		}
 
-		/// <summary>
-		/// Whether this menu item makes a persistent change to which writing systems a
-		/// multi-writing-system field shows: a per-writing-system toggle (recognized by the
-		/// property its group drives -- the toggles carry no command id) or the Configure
-		/// dialog. Show all right now is not one of these: it is the transient reveal
-		/// (<see cref="ShowAllWritingSystemsItem"/>), not a configuration change to persist.
-		/// </summary>
 		private static bool IsWritingSystemVisibilityChoice(ChoiceBase choice)
 		{
 			if (choice is ListPropertyChoice list)
@@ -698,157 +738,29 @@ namespace SIL.FieldWorks.XWorks
 				return string.Equals(list.ParentProperty,
 					PropertyConstants.CurrentContextMenuSelectedWsIds, StringComparison.Ordinal);
 			}
-
-			return string.Equals(choice.HelpId, "CmdDataTree-WritingSystemMenu-Configure",
-				StringComparison.Ordinal);
+			return string.Equals(choice?.HelpId,
+				"CmdDataTree-WritingSystemMenu-Configure", StringComparison.Ordinal);
 		}
 
-		/// <summary>
-		/// A writing-system item that dispatches normally and then copies the resulting
-		/// selection into the override: the hidden adapter slice owns the picker and the
-		/// Configure dialog, while the Avalonia detail view composes from its own override
-		/// store.
-		/// </summary>
-		private DetailMenuItem WritingSystemItem(ChoiceBase choice, UIItemDisplayProperties display,
-			DetailField field)
+		private string PersistentLayoutXml(DetailField field)
 		{
-			var isListToggle = choice is ListPropertyChoice;
-			// The bridge strips execute from disabled items, so the last checked toggle
-			// (disabled) can never be invoked to EMPTY the set.
-			return new DetailMenuItem(XCoreMenuBridge.StripAccelerator(display.Text), display.Enabled,
-				display.Checked, children: null, execute: () =>
-				{
-					// Snapshot first, so a dialog that changes nothing (e.g. Cancel) copies
-					// nothing.
-					var before = isListToggle ? null : CurrentSliceSelectedWritingSystems();
-					choice.OnClick(null, EventArgs.Empty);
-					CopyWritingSystemSelectionToOverride(field, isListToggle, before);
-				});
+			var layout = Inventory.GetInventory("layouts", Cache.ProjectId.Name)?.GetElement("layout",
+				new[] { field.ClassName, field.LayoutType, field.LayoutName, field.ChoiceGuid });
+			return layout?.OuterXml;
 		}
 
-		// Copies the click's selection into the row's override and recomposes. A toggle
-		// updates its property BEFORE the slice: read the property, in option order;
-		// Configure reads the slice.
-		private void CopyWritingSystemSelectionToOverride(DetailField field, bool fromListToggle,
-			IReadOnlyList<string> sliceSetBeforeClick)
+		private static bool IsPersistentLayoutCommand(ChoiceBase choice)
 		{
-			try
+			switch (choice?.HelpId)
 			{
-				var slice = m_dataEntryForm?.CurrentSlice as MultiStringSlice;
-				if (slice == null)
-				{
-					// The command dispatched, but the result is unreadable: say so, or the
-					// symptom is "the menu did nothing" with no trail.
-					Logger.WriteEvent("Writing-system selection was not copied: the adapter "
-						+ "slice is unreadable; the view override was not updated.");
-					return;
-				}
-
-				// A stale adapter target would store another row's set under this row's id.
-				if (slice.Object == null || slice.Object.Hvo != field.ObjectHvo)
-				{
-					Logger.WriteEvent("Writing-system selection was not copied: the adapter "
-						+ "slice is not the clicked row's; the view override was not updated.");
-					return;
-				}
-
-				List<string> selected;
-				if (fromListToggle)
-				{
-					var ids = m_propertyTable.GetStringProperty(
-						PropertyConstants.CurrentContextMenuSelectedWsIds, null);
-					// Canonicalize: option order, junk tokens dropped -- the stored order is the
-					// render order.
-					selected = string.IsNullOrEmpty(ids)
-						? null
-						: StringSliceUtils.GetVisibleWritingSystems(ids,
-							slice.WritingSystemOptionsForDisplay).Select(ws => ws.Id).ToList();
-				}
-				else
-				{
-					selected = slice.WritingSystemsSelectedForDisplay?.Select(ws => ws.Id).ToList();
-					if (selected != null && sliceSetBeforeClick != null
-						&& selected.SequenceEqual(sliceSetBeforeClick, StringComparer.Ordinal))
-					{
-						return; // the dialog changed nothing (e.g. Cancel): no override write.
-					}
-				}
-
-				// The menu disables the last checked toggle, so an empty set only means "nothing
-				// to copy" -- and an empty op would CLEAR the restriction, so bail instead.
-				if (selected == null || selected.Count == 0)
-					return;
-
-				var templateId = ViewDefinitionOverrideEditor.StripRuntimeSuffix(field.StableId);
-				var op = new ViewOverrideOperation(ViewOverrideOperationKind.SetVisibleWritingSystems,
-					templateId, writingSystems: selected);
-				if (!TryMutateOverride(field, op))
-					return;
-
-				// A successful configuration write replaces any transient reveal on the part:
-				// a newly persisted display set supersedes the reveal on every row sharing it.
-				m_showAllWsFields.Remove(templateId);
-				RefreshAvaloniaDetail();
-			}
-			catch (Exception e)
-			{
-				Logger.WriteError("Copying the writing-system selection into the view override failed.", e);
-			}
-		}
-
-		// The adapter slice's current selection, or null when it cannot be read.
-		private IReadOnlyList<string> CurrentSliceSelectedWritingSystems()
-			=> (m_dataEntryForm?.CurrentSlice as MultiStringSlice)
-				?.WritingSystemsSelectedForDisplay?.Select(ws => ws.Id).ToList();
-
-		// Writes a SetVisibility op for the field's template id into the project override and recomposes.
-		private void ApplyFieldVisibility(DetailField field, string templateId, ViewVisibility target)
-		{
-			var op = new ViewOverrideOperation(ViewOverrideOperationKind.SetVisibility, templateId,
-				visibility: target);
-			MutateOverrideAndRefresh(field, op);
-		}
-
-		// Writes a ReorderChildren op on the field's PARENT (the sibling order with this field swapped one
-		// position) into the project override and recomposes. A no-op when the move is not possible.
-		private void ApplyMoveField(DetailField field, ViewNodeLocation location, bool up)
-		{
-			var moved = ViewDefinitionOverrideEditor.ComputeMovedOrder(location.SiblingOrder, location.Index, up);
-			if (moved == null || string.IsNullOrEmpty(location.ParentStableId))
-				return; // first/last/only sibling, or a root-level row with no parent to reorder.
-			var op = new ViewOverrideOperation(ViewOverrideOperationKind.ReorderChildren,
-				location.ParentStableId, childOrder: moved);
-			MutateOverrideAndRefresh(field, op);
-		}
-
-		// Loads-or-creates the (class, layout) override, folds the op in, saves it, and recomposes the
-		// Avalonia detail view so the change is visible immediately. The legacy DataTree/Inventory is untouched.
-		private void MutateOverrideAndRefresh(DetailField field, ViewOverrideOperation op)
-		{
-			if (TryMutateOverride(field, op))
-				RefreshAvaloniaDetail();
-		}
-
-		// Folds the op into the (class, layout) override and saves it, WITHOUT recomposing.
-		// Returns whether the save succeeded, so a failed save can leave view state untouched.
-		private bool TryMutateOverride(DetailField field, ViewOverrideOperation op)
-		{
-			try
-			{
-				var store = ViewOverrideStore;
-				if (store == null)
+				case "CmdAlwaysVisible":
+				case "CmdIfData":
+				case "CmdNormallyHidden":
+				case "CmdDataTree-MoveFieldUp":
+				case "CmdDataTree-MoveFieldDown":
+					return true;
+				default:
 					return false;
-
-				var existing = store.TryGet(field.ClassName, field.LayoutName)
-					?? new ViewDefinitionOverride(field.ClassName, field.LayoutName, "detail", null, null);
-				var merged = ViewDefinitionOverrideEditor.MergeOperation(existing, op);
-				store.Save(merged);
-				return true;
-			}
-			catch (Exception e)
-			{
-				Logger.WriteError("Applying the field override failed.", e);
-				return false;
 			}
 		}
 
@@ -890,11 +802,7 @@ namespace SIL.FieldWorks.XWorks
 			return new FwLinkArgs(request.Link.Tool, target);
 		}
 
-		// Approved baseline adapter "command-menu-routing": the hidden legacy DataTree +
-		// DTMenuHandler provide the colleague chain and CurrentSlice context the legacy command
-		// handlers require. Created lazily on first right-click; never attached/visible while the
-		// Avalonia is active.
-		private void EnsureMenuCommandAdapter(int targetHvo, string fieldName)
+		private bool EnsureMenuCommandAdapterInitialized()
 		{
 			// The active-host contract is enforced, not just documented: driving the hidden
 			// legacy DataTree is legal only through an adapter id the host's contract lists. The
@@ -918,15 +826,23 @@ namespace SIL.FieldWorks.XWorks
 				// No current record: drop any target left by a previous interaction, same
 				// fail-loud rule as the no-slice-found path below.
 				m_dataEntryForm.ClearCurrentSlice();
-				return;
+				return false;
 			}
-			m_dataEntryForm.ShowObject(current, m_layoutName, m_layoutChoiceField, current, true);
+			var shown = ResolveShownRecord(current);
+			m_dataEntryForm.ShowObject(shown, m_layoutName, m_layoutChoiceField, current, true);
+			return true;
+		}
+
+		private bool EnsureMenuCommandTarget(int targetHvo, string fieldName)
+		{
+			if (!EnsureMenuCommandAdapterInitialized())
+				return false;
 
 			if (targetHvo == 0)
 			{
 				// The row carries no object, so no slice can be its target.
 				m_dataEntryForm.ClearCurrentSlice();
-				return;
+				return false;
 			}
 
 			// Targeting hardening: the legacy command handlers act on m_dataEntryForm.CurrentSlice,
@@ -939,10 +855,10 @@ namespace SIL.FieldWorks.XWorks
 			// than silently leaving the wrong (or stale) CurrentSlice pointed, which would make the command
 			// mutate the wrong object or, for Merge's class guard, silently fail.
 			if (TrySetCurrentSliceForRow(targetHvo, fieldName))
-				return;
+				return true;
 
 			if (RealizeLazySlicesAndRetry(targetHvo, fieldName))
-				return;
+				return true;
 
 			// Fail loud, not silent: if we still cannot produce a slice for the target we must NOT leave
 			// CurrentSlice pointed at whatever the previous interaction selected (it would mis-target the
@@ -953,7 +869,303 @@ namespace SIL.FieldWorks.XWorks
 				"Detail menu command adapter found no DataTree slice for target hvo {0} field '{1}'; "
 				+ "CurrentSlice was cleared so the command no-ops rather than mis-targeting another object.",
 				targetHvo, fieldName ?? string.Empty));
+			return false;
 		}
+
+		private bool EnsurePersistentMenuCommandTarget(DetailField field)
+		{
+			if (!EnsureMenuCommandAdapterInitialized())
+				return false;
+			return EnsurePersistentMenuCommandTargetAfterExactMiss(field);
+		}
+
+		private bool EnsurePersistentMenuCommandTargetAfterExactMiss(DetailField field)
+		{
+			PersistentTargetMatches matches;
+			try
+			{
+				matches = EnumeratePersistentTargetMatches(field);
+			}
+			catch (Exception e)
+			{
+				Logger.WriteError("Enumerating exact persistent DataTree target matches failed.", e);
+				return FailPersistentTarget(field, 0, 0);
+			}
+			return ExecutePersistentTargetArbitration(matches.Realized.Count, matches.Lazy.Count,
+				() =>
+				{
+					m_dataEntryForm.SetCurrentSliceForCommandTarget(matches.Realized[0]);
+					return true;
+				},
+				() => RealizeExactLazyOccurrence(matches.Lazy[0]),
+				() => TrySetPersistentMenuCommandTarget(field),
+				() => FailPersistentTarget(field, matches.Realized.Count, matches.Lazy.Count));
+		}
+
+		private PersistentTargetMatches EnumeratePersistentTargetMatches(DetailField field)
+		{
+			var matches = new PersistentTargetMatches();
+			if (!IsValidPersistentTarget(field))
+				return matches;
+
+			var target = PersistentTargetIdentity(field);
+			for (var i = 0; i < m_dataEntryForm.Slices.Count; i++)
+			{
+				var slice = m_dataEntryForm.Slices[i] as Slice;
+				if (slice == null)
+					continue;
+				if (slice.IsLazyPlaceholder)
+				{
+					if (IsExactLazyOccurrence(slice, field))
+						matches.Lazy.Add(new PersistentLazyTargetMatch(slice, i));
+				}
+				else if (slice.Object != null && PersistentSliceIdentity(slice).Equals(target))
+				{
+					matches.Realized.Add(slice);
+				}
+			}
+			return matches;
+		}
+
+		private bool IsValidPersistentTarget(DetailField field)
+		{
+			if (field == null || field.ObjectHvo == 0 || string.IsNullOrEmpty(field.Field)
+				|| string.IsNullOrEmpty(field.ClassName) || field.LayoutName == null
+				|| string.IsNullOrEmpty(field.SourceCallerPath)
+				|| field.LayoutPath == null || field.LayoutPath.Count == 0)
+				return false;
+
+			try
+			{
+				var target = Cache.ServiceLocator.GetObject(field.ObjectHvo);
+				return target != null
+					&& Cache.MetaDataCacheAccessor.GetFieldId2(target.ClassID, field.Field, true) != 0;
+			}
+			catch (Exception)
+			{
+				return false;
+			}
+		}
+
+		private static PersistentCommandTargetIdentity PersistentTargetIdentity(DetailField field)
+			=> new PersistentCommandTargetIdentity(field.ObjectHvo, field.Field, field.ClassName,
+				field.LayoutName, field.SourceCallerPath, field.LayoutType, field.ChoiceGuid,
+				field.LayoutPath);
+
+		private bool RealizeExactLazyOccurrence(PersistentLazyTargetMatch match)
+		{
+			try
+			{
+				if (match.Slice == null || !match.Slice.IsLazyPlaceholder
+					|| match.Index < 0 || match.Index >= m_dataEntryForm.Slices.Count
+					|| !ReferenceEquals(m_dataEntryForm.Slices[match.Index], match.Slice))
+					return false;
+
+				m_dataEntryForm.FieldAt(match.Index);
+				return true;
+			}
+			catch (Exception e)
+			{
+				Logger.WriteError("Realizing the exact lazy DataTree slice for persistent menu targeting failed.", e);
+				return false;
+			}
+		}
+
+		private bool IsExactLazyOccurrence(Slice slice, DetailField field)
+		{
+			try
+			{
+				if (slice.Object == null || slice.LazySequenceFlid == 0
+					|| slice.LazySequenceIndex < 0)
+					return false;
+
+				var count = Cache.DomainDataByFlid.get_VecSize(slice.Object.Hvo,
+					slice.LazySequenceFlid);
+				if (slice.LazySequenceIndex >= count
+					|| Cache.DomainDataByFlid.get_VecItem(slice.Object.Hvo,
+						slice.LazySequenceFlid, slice.LazySequenceIndex) != field.ObjectHvo)
+					return false;
+
+				return LazyPathMatchesTarget(slice.LazySequencePath, field);
+			}
+			catch (Exception)
+			{
+				return false;
+			}
+		}
+
+		private static bool LazyPathMatchesTarget(object[] lazyPath, DetailField field)
+		{
+			if (lazyPath == null || field == null)
+				return false;
+
+			var lazyLayouts = new List<DetailLayoutIdentity>();
+			var callerPaths = new List<string>();
+			string callerInLayout = null;
+			foreach (var pathPart in lazyPath)
+			{
+				var node = pathPart as XmlNode;
+				if (node == null)
+					continue;
+				if (node.Name == "sublayout")
+				{
+					lazyLayouts.Clear();
+					callerPaths.Clear();
+					callerInLayout = null;
+				}
+				else if (node.Name == "layout")
+				{
+					if (callerInLayout != null)
+						callerPaths.Add(callerInLayout);
+					callerInLayout = null;
+					lazyLayouts.Add(new DetailLayoutIdentity(node.Attributes?["class"]?.Value,
+						node.Attributes?["type"]?.Value, node.Attributes?["name"]?.Value,
+						node.Attributes?["choiceGuid"]?.Value));
+				}
+				else if (node.Name == "part" && node.Attributes?["ref"] != null)
+				{
+					callerInLayout = LegacyLayoutCallerPath.Get(node) ?? callerInLayout;
+				}
+				else if ((node.Name == "obj" || node.Name == "seq") && callerInLayout == null)
+				{
+					callerInLayout = LegacyLayoutCallerPath.Get(node);
+				}
+			}
+			if (callerInLayout != null)
+				callerPaths.Add(callerInLayout);
+
+			var lazyCallerPath = LegacyLayoutCallerPath.Combine(callerPaths.ToArray());
+			if (string.IsNullOrEmpty(lazyCallerPath) || string.IsNullOrEmpty(field.SourceCallerPath)
+				|| (!string.Equals(field.SourceCallerPath, lazyCallerPath, StringComparison.Ordinal)
+					&& !field.SourceCallerPath.StartsWith(lazyCallerPath + "|",
+						StringComparison.Ordinal)))
+				return false;
+
+			var targetLayouts = field.LayoutPath;
+			if (lazyLayouts.Count == 0 || targetLayouts == null
+				|| targetLayouts.Count < lazyLayouts.Count)
+				return false;
+			for (var i = 0; i < lazyLayouts.Count; i++)
+			{
+				if (!lazyLayouts[i].Equals(targetLayouts[i]))
+					return false;
+			}
+			return true;
+		}
+
+		private bool TrySetPersistentMenuCommandTarget(DetailField field)
+		{
+			if (!IsValidPersistentTarget(field))
+				return FailPersistentTarget(field, 0, 0);
+
+			try
+			{
+				var candidates = new List<Slice>();
+				var target = PersistentTargetIdentity(field);
+				foreach (var sliceObj in m_dataEntryForm.Slices)
+				{
+					if (sliceObj is Slice slice && slice.Object != null && !slice.IsLazyPlaceholder
+						&& PersistentSliceIdentity(slice).Equals(target))
+						candidates.Add(slice);
+				}
+				if (ArbitratePersistentTarget(candidates.Count, 0)
+					!= PersistentTargetAction.UseRealized)
+					return FailPersistentTarget(field, candidates.Count, 0);
+
+				m_dataEntryForm.SetCurrentSliceForCommandTarget(candidates[0]);
+				return true;
+			}
+			catch (Exception e)
+			{
+				Logger.WriteError("Rescanning exact realized persistent DataTree targets failed.", e);
+				return FailPersistentTarget(field, 0, 0);
+			}
+		}
+
+		private bool FailPersistentTarget(DetailField field, int realizedCount, int lazyCount)
+		{
+			m_dataEntryForm.ClearCurrentSlice();
+			Logger.WriteEvent(string.Format(
+				"Detail layout command found {0} exact realized and {1} exact lazy target(s) for "
+				+ "'{2}' at '{3}'; CurrentSlice was cleared.", realizedCount, lazyCount,
+				field?.Field ?? string.Empty, field?.SourceCallerPath ?? string.Empty));
+			return false;
+		}
+
+		internal static PersistentTargetAction ArbitratePersistentTarget(int realizedCount,
+			int lazyCount)
+		{
+			if (realizedCount < 0 || lazyCount < 0 || realizedCount + lazyCount != 1)
+				return PersistentTargetAction.Reject;
+			return realizedCount == 1
+				? PersistentTargetAction.UseRealized
+				: PersistentTargetAction.RealizeLazy;
+		}
+
+		internal static bool ExecutePersistentTargetArbitration(int realizedCount, int lazyCount,
+			Func<bool> useRealized, Func<bool> realizeLazy, Func<bool> rescanRealized,
+			Func<bool> reject)
+		{
+			switch (ArbitratePersistentTarget(realizedCount, lazyCount))
+			{
+				case PersistentTargetAction.UseRealized:
+					return useRealized();
+				case PersistentTargetAction.RealizeLazy:
+					if (!realizeLazy())
+						return reject();
+					return rescanRealized();
+				default:
+					return reject();
+			}
+		}
+
+		internal PersistentCommandTargetIdentity PersistentSliceIdentity(Slice slice)
+		{
+			if (slice?.Key == null)
+				return default;
+			var start = 0;
+			for (var i = slice.Key.Length - 1; i > 0; i--)
+			{
+				if (slice.Key[i] is XmlNode node && node.Name == "sublayout")
+				{
+					start = i + 1;
+					break;
+				}
+			}
+			var layout = start < slice.Key.Length ? slice.Key[start] as XmlNode : null;
+			if (layout?.Name != "layout")
+				return default;
+			var layoutPaths = new List<string>();
+			var selectedLayouts = new List<DetailLayoutIdentity> { LayoutIdentity(layout) };
+			string lastPartPath = null;
+			for (var i = start + 1; i < slice.Key.Length; i++)
+			{
+				if (!(slice.Key[i] is XmlNode node))
+					continue;
+				if (node.Name == "layout")
+				{
+					if (!string.IsNullOrEmpty(lastPartPath))
+						layoutPaths.Add(lastPartPath);
+					lastPartPath = null;
+					selectedLayouts.Add(LayoutIdentity(node));
+				}
+				else if (node.Name == "part" && node.Attributes?["ref"] != null)
+				{
+					lastPartPath = LegacyLayoutCallerPath.Get(node) ?? lastPartPath;
+				}
+			}
+			if (!string.IsNullOrEmpty(lastPartPath))
+				layoutPaths.Add(lastPartPath);
+			return new PersistentCommandTargetIdentity(slice.Object?.Hvo ?? 0, SliceFieldName(slice),
+				layout?.Attributes?["class"]?.Value, layout?.Attributes?["name"]?.Value,
+				LegacyLayoutCallerPath.Combine(layoutPaths.ToArray()), layout?.Attributes?["type"]?.Value,
+				layout?.Attributes?["choiceGuid"]?.Value, selectedLayouts);
+		}
+
+		private static DetailLayoutIdentity LayoutIdentity(XmlNode layout)
+			=> new DetailLayoutIdentity(layout?.Attributes?["class"]?.Value,
+				layout?.Attributes?["type"]?.Value, layout?.Attributes?["name"]?.Value,
+				layout?.Attributes?["choiceGuid"]?.Value);
 
 		/// <summary>
 		/// Picks the slice a menu request targets. Sibling rows can share one object (a MoForm's
@@ -1037,7 +1249,7 @@ namespace SIL.FieldWorks.XWorks
 		/// its OWNER as its Object, so the target cannot match until expansion. Walks by index
 		/// because the collection mutates as placeholders expand.
 		/// </summary>
-		private bool RealizeLazySlicesAndRetry(int targetHvo, string fieldName)
+		private bool RealizeLazySlices()
 		{
 			try
 			{
@@ -1053,6 +1265,13 @@ namespace SIL.FieldWorks.XWorks
 				return false;
 			}
 
+			return true;
+		}
+
+		private bool RealizeLazySlicesAndRetry(int targetHvo, string fieldName)
+		{
+			if (!RealizeLazySlices())
+				return false;
 			return TrySetCurrentSliceForRow(targetHvo, fieldName);
 		}
 
@@ -1109,8 +1328,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		// Re-shows the detail view for the current record (external edit, commit/cancel).
-		// Resolves the shown record like ShowRecord, so a showDescendantInRoot tool recomposes
-		// the root, not the subrecord.
+		// Resolve it like ShowRecord so a showDescendantInRoot tool recomposes the root.
 		private void RefreshAvaloniaDetail()
 		{
 			if (m_avaloniaEntryForm == null || !ShouldUseAvaloniaLexiconEdit)

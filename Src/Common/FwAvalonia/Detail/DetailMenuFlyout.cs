@@ -71,13 +71,16 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		/// <param name="target">The control to open over; null shows nothing.</param>
 		/// <param name="atPointer">False drops the menu from the target's bottom-left corner --
 		/// the context-menu key, Shift+F10, and keyboard button activation.</param>
+		/// <param name="closed">Optional action invoked after the flyout closes.</param>
 		/// <returns>The flyout that was shown, or null when there was nothing to show.</returns>
 		public static MenuFlyout Show(IReadOnlyList<DetailMenuItem> items, Control target,
-			bool atPointer)
+			bool atPointer, Action closed = null)
 		{
 			if (items == null || items.Count == 0 || target == null)
 				return null;
 			var flyout = Build(items);
+			if (closed != null)
+				flyout.Closed += (sender, args) => closed();
 			if (!atPointer)
 				flyout.Placement = PlacementMode.BottomEdgeAlignedLeft;
 			flyout.ShowAt(target, showAtPointer: atPointer);

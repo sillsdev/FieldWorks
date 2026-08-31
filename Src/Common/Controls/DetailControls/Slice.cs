@@ -731,6 +731,20 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		}
 
 		/// <summary>
+		/// The sequence flid and item index represented by a lazy placeholder. Real slices do
+		/// not expose lazy-sequence metadata.
+		/// </summary>
+		public virtual int LazySequenceFlid => 0;
+
+		/// <summary>Gets the first sequence index represented by this lazy placeholder.</summary>
+		public virtual int LazySequenceIndex => -1;
+
+		/// <summary>
+		/// Gets the XML/object path captured when this lazy placeholder was created.
+		/// </summary>
+		public virtual object[] LazySequencePath => null;
+
+		/// <summary>
 		/// In some contexts, we use a "ghost" slice to represent data that
 		/// has not yet been created.  These are "real" slices, but they don't
 		/// represent "real" data.  Thus, for example, the underlying object

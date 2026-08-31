@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
@@ -20,14 +21,59 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 	/// </summary>
 	public sealed class ViewDefinitionSourceSnapshot
 	{
+		private readonly XElement _layoutElement;
+		private readonly ViewDefinitionIdentity _requestedIdentity;
+		private readonly ViewDefinitionIdentity _resolvedIdentity;
+		private readonly Lazy<string> _fingerprint;
+
+		/// <summary>Creates a snapshot without an explicit requested layout identity.</summary>
+		public ViewDefinitionSourceSnapshot(string className, string layoutType, string layoutXml,
+			string partsXml, IReadOnlyDictionary<string, string> baseClassMap)
+			: this(className, layoutType, layoutXml, partsXml, baseClassMap, null, null)
+		{
+		}
+
+		/// <summary>Creates a snapshot with optional requested layout identity
+		/// metadata.</summary>
 		public ViewDefinitionSourceSnapshot(string className, string layoutType, string layoutXml, string partsXml,
-			IReadOnlyDictionary<string, string> baseClassMap = null)
+			IReadOnlyDictionary<string, string> baseClassMap = null,
+			string requestedLayoutName = null, string requestedChoiceGuid = null)
 		{
 			ClassName = className ?? "";
 			LayoutType = string.IsNullOrEmpty(layoutType) ? "detail" : layoutType;
 			LayoutXml = layoutXml ?? "";
 			PartsXml = partsXml ?? "";
-			BaseClassMap = baseClassMap;
+			_layoutElement = XElement.Parse(LayoutXml);
+			BaseClassMap = CopyBaseClassMap(baseClassMap);
+
+			var resolvedLayoutName = (string)_layoutElement.Attribute("name") ?? "";
+			var resolvedClassName = (string)_layoutElement.Attribute("class") ?? ClassName;
+			var resolvedLayoutType = (string)_layoutElement.Attribute("type") ?? LayoutType;
+			var resolvedChoiceGuid = (string)_layoutElement.Attribute("choiceGuid");
+			RequestedLayoutName = requestedLayoutName ?? resolvedLayoutName;
+			RequestedChoiceGuid = requestedChoiceGuid;
+			ResolvedLayoutName = resolvedLayoutName;
+			ResolvedClassName = resolvedClassName;
+			ResolvedLayoutType = resolvedLayoutType;
+			ResolvedChoiceGuid = resolvedChoiceGuid;
+			_requestedIdentity = new ViewDefinitionIdentity(ClassName, LayoutType,
+				RequestedLayoutName, RequestedChoiceGuid);
+			_resolvedIdentity = new ViewDefinitionIdentity(ResolvedClassName, ResolvedLayoutType,
+				ResolvedLayoutName, ResolvedChoiceGuid);
+			CustomFieldsExpanded = false;
+			_fingerprint = new Lazy<string>(ComputeFingerprintCore,
+				LazyThreadSafetyMode.ExecutionAndPublication);
+		}
+
+		/// <summary>Creates a snapshot with optional requested layout identity and expansion
+		/// metadata.</summary>
+		public ViewDefinitionSourceSnapshot(string className, string layoutType, string layoutXml, string partsXml,
+			IReadOnlyDictionary<string, string> baseClassMap, string requestedLayoutName,
+			string requestedChoiceGuid, bool customFieldsExpanded)
+			: this(className, layoutType, layoutXml, partsXml, baseClassMap, requestedLayoutName,
+				requestedChoiceGuid)
+		{
+			CustomFieldsExpanded = customFieldsExpanded;
 		}
 
 		public string ClassName { get; }
@@ -45,19 +91,62 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 		public IReadOnlyDictionary<string, string> BaseClassMap { get; }
 
 		/// <summary>The layout name parsed from <see cref="LayoutXml"/>.</summary>
-		public string LayoutName => (string)XElement.Parse(LayoutXml).Attribute("name") ?? "";
+		public string LayoutName => ResolvedLayoutName;
+
+		/// <summary>The resolved class parsed from the selected layout XML.</summary>
+		public string ResolvedClassName { get; }
+
+		/// <summary>The resolved type parsed from the selected layout XML.</summary>
+		public string ResolvedLayoutType { get; }
+
+		/// <summary>The requested layout name before class/default fallback.</summary>
+		public string RequestedLayoutName { get; }
+
+		/// <summary>The requested nullable layout choice before variant fallback.</summary>
+		public string RequestedChoiceGuid { get; }
+
+		/// <summary>The effective layout name parsed from <see cref="LayoutXml"/>.</summary>
+		public string ResolvedLayoutName { get; }
+
+		/// <summary>The effective nullable layout choice parsed from <see
+		/// cref="LayoutXml"/>.</summary>
+		public string ResolvedChoiceGuid { get; }
+
+		/// <summary>The complete identity requested from the inventory.</summary>
+		public ViewDefinitionIdentity RequestedIdentity => _requestedIdentity;
+
+		/// <summary>The complete identity selected by the inventory, including base-class
+		/// fallback.</summary>
+		public ViewDefinitionIdentity ResolvedIdentity => _resolvedIdentity;
+
+		/// <summary>The effective nullable layout choice parsed from <see
+		/// cref="LayoutXml"/>.</summary>
+		public string ChoiceGuid => ResolvedChoiceGuid;
+
+		/// <summary>Whether custom fields have already been expanded into this snapshot's
+		/// layout.</summary>
+		public bool CustomFieldsExpanded { get; private set; }
 
 		/// <summary>Computes a stable content fingerprint over the layout and parts source text.</summary>
-		public string ComputeFingerprint()
+		public string ComputeFingerprint() => _fingerprint.Value;
+
+		private string ComputeFingerprintCore()
 		{
 			using (var sha = SHA256.Create())
 			{
 				var baseMapText = BaseClassMap == null
 					? ""
-					: string.Join(";", BaseClassMap.OrderBy(p => p.Key, StringComparer.Ordinal)
-						.Select(p => p.Key + ">" + p.Value));
+					: string.Join(";", BaseClassMap.OrderBy(p => NormalizeIdentity(p.Key), StringComparer.Ordinal)
+						.Select(p => NormalizeIdentity(p.Key) + ">" + NormalizeIdentity(p.Value)));
+				var identityText = string.Join("\n", new[]
+				{
+					NormalizeIdentity(ClassName), NormalizeIdentity(LayoutType),
+					NormalizeIdentity(RequestedLayoutName), NormalizeIdentity(RequestedChoiceGuid),
+					NormalizeIdentity(ResolvedClassName), NormalizeIdentity(ResolvedLayoutType),
+					NormalizeIdentity(ResolvedLayoutName), NormalizeIdentity(ResolvedChoiceGuid)
+				});
 				var bytes = Encoding.UTF8.GetBytes(
-					ClassName + "\n" + LayoutType + "\n" + LayoutXml + "\n" + PartsXml + "\n" + baseMapText);
+					identityText + "\n" + LayoutXml + "\n" + PartsXml + "\n" + baseMapText);
 				var hash = sha.ComputeHash(bytes);
 				var sb = new StringBuilder(hash.Length * 2);
 				foreach (var b in hash)
@@ -71,7 +160,25 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 
 		/// <summary>Builds the cache key for this snapshot.</summary>
 		public ViewDefinitionCacheKey ToKey()
-			=> new ViewDefinitionCacheKey(ClassName, LayoutName, LayoutType, ComputeFingerprint());
+			=> new ViewDefinitionCacheKey(_requestedIdentity.ClassName, _requestedIdentity.LayoutName,
+				_requestedIdentity.LayoutType, _requestedIdentity.ChoiceGuid, _fingerprint.Value);
+
+		private static string NormalizeIdentity(string value)
+			=> value == null ? "<null>" : value.ToUpperInvariant();
+
+		private static IReadOnlyDictionary<string, string> CopyBaseClassMap(
+			IReadOnlyDictionary<string, string> baseClassMap)
+		{
+			if (baseClassMap == null)
+				return null;
+
+			var copy = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+			foreach (var pair in baseClassMap)
+				copy.Add(pair.Key, pair.Value);
+			return new ReadOnlyDictionary<string, string>(copy);
+		}
+
+		internal XElement CreateLayoutElement() => new XElement(_layoutElement);
 	}
 
 	/// <summary>A thread-safe cache of compiled view definitions keyed by content fingerprint.</summary>
@@ -88,43 +195,106 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 		int Count { get; }
 	}
 
-	/// <summary>Simple thread-safe dictionary-backed cache.</summary>
+	/// <summary>Simple thread-safe FIFO-bounded cache.</summary>
 	public sealed class ViewDefinitionCache : IViewDefinitionCache
 	{
+		/// <summary>Default maximum number of compiled definitions retained by a cache.</summary>
+		public const int DefaultCapacity = 256;
+
+		private sealed class CacheEntry
+		{
+			public CacheEntry(Lazy<ViewDefinitionModel> value, LinkedListNode<ViewDefinitionCacheKey> orderNode)
+			{
+				Value = value;
+				OrderNode = orderNode;
+			}
+
+			public Lazy<ViewDefinitionModel> Value { get; }
+
+			public LinkedListNode<ViewDefinitionCacheKey> OrderNode { get; }
+		}
+
 		private readonly object _gate = new object();
-		private readonly Dictionary<ViewDefinitionCacheKey, ViewDefinitionModel> _map
-			= new Dictionary<ViewDefinitionCacheKey, ViewDefinitionModel>();
+		private readonly Dictionary<ViewDefinitionCacheKey, CacheEntry> _map
+			= new Dictionary<ViewDefinitionCacheKey, CacheEntry>();
+		private readonly LinkedList<ViewDefinitionCacheKey> _insertionOrder
+			= new LinkedList<ViewDefinitionCacheKey>();
+
+		/// <summary>Creates a cache with the default maximum capacity.</summary>
+		public ViewDefinitionCache() : this(DefaultCapacity)
+		{
+		}
+
+		/// <summary>Creates a cache that retains at most <paramref name="capacity"/>
+		/// entries.</summary>
+		/// <exception cref="ArgumentOutOfRangeException"><paramref name="capacity"/> is not
+		/// positive.</exception>
+		public ViewDefinitionCache(int capacity)
+		{
+			if (capacity <= 0)
+				throw new ArgumentOutOfRangeException(nameof(capacity), capacity,
+					"The view definition cache capacity must be positive.");
+
+			Capacity = capacity;
+		}
+
+		/// <summary>The maximum number of compiled definitions retained by this cache.</summary>
+		public int Capacity { get; }
 
 		public bool TryGet(ViewDefinitionCacheKey key, out ViewDefinitionModel model)
 		{
+			CacheEntry entry;
 			lock (_gate)
 			{
-				return _map.TryGetValue(key, out model);
+				if (!_map.TryGetValue(key, out entry) || !entry.Value.IsValueCreated)
+				{
+					model = null;
+					return false;
+				}
+			}
+
+			try
+			{
+				model = entry.Value.Value;
+				return true;
+			}
+			catch
+			{
+				RemoveFailedEntry(key, entry);
+				model = null;
+				return false;
 			}
 		}
 
 		public ViewDefinitionModel GetOrAdd(ViewDefinitionCacheKey key, Func<ViewDefinitionModel> factory)
 		{
+			CacheEntry entry;
 			lock (_gate)
 			{
-				if (_map.TryGetValue(key, out var existing))
+				if (!_map.TryGetValue(key, out entry))
 				{
-					return existing;
+					if (factory == null)
+						throw new ArgumentNullException(nameof(factory));
+
+					if (_map.Count >= Capacity)
+						EvictOldest();
+
+					var value = new Lazy<ViewDefinitionModel>(factory,
+						LazyThreadSafetyMode.ExecutionAndPublication);
+					var orderNode = _insertionOrder.AddLast(key);
+					entry = new CacheEntry(value, orderNode);
+					_map[key] = entry;
 				}
 			}
 
-			// Compile outside the lock so a slow compile does not block other keys.
-			var created = factory();
-
-			lock (_gate)
+			try
 			{
-				if (_map.TryGetValue(key, out var raced))
-				{
-					return raced;
-				}
-
-				_map[key] = created;
-				return created;
+				return entry.Value.Value;
+			}
+			catch
+			{
+				RemoveFailedEntry(key, entry);
+				throw;
 			}
 		}
 
@@ -132,7 +302,11 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 		{
 			lock (_gate)
 			{
-				_map.Remove(key);
+				if (_map.TryGetValue(key, out var entry))
+				{
+					_map.Remove(key);
+					_insertionOrder.Remove(entry.OrderNode);
+				}
 			}
 		}
 
@@ -141,6 +315,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 			lock (_gate)
 			{
 				_map.Clear();
+				_insertionOrder.Clear();
 			}
 		}
 
@@ -151,6 +326,28 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 				lock (_gate)
 				{
 					return _map.Count;
+				}
+			}
+		}
+
+		private void EvictOldest()
+		{
+			var oldest = _insertionOrder.First;
+			if (oldest == null)
+				return;
+
+			_insertionOrder.RemoveFirst();
+			_map.Remove(oldest.Value);
+		}
+
+		private void RemoveFailedEntry(ViewDefinitionCacheKey key, CacheEntry entry)
+		{
+			lock (_gate)
+			{
+				if (_map.TryGetValue(key, out var current) && ReferenceEquals(current, entry))
+				{
+					_map.Remove(key);
+					_insertionOrder.Remove(entry.OrderNode);
 				}
 			}
 		}
@@ -203,10 +400,11 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 		private ViewDefinitionModel CompileCore(ViewDefinitionSourceSnapshot snapshot, CancellationToken cancellationToken)
 		{
 			cancellationToken.ThrowIfCancellationRequested();
-			var layout = XElement.Parse(snapshot.LayoutXml);
+			var layout = snapshot.CreateLayoutElement();
 			var parts = new DictionaryPartResolver(XElement.Parse(snapshot.PartsXml), snapshot.BaseClassMap);
 			cancellationToken.ThrowIfCancellationRequested();
-			return _importer.Import(layout, parts);
+			var imported = _importer.Import(layout, parts, snapshot.ClassName);
+			return imported.WithLayoutIdentities(snapshot.RequestedIdentity, snapshot.ResolvedIdentity);
 		}
 	}
 }

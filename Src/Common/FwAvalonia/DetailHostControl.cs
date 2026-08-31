@@ -37,7 +37,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 			Action<DetailLinkRequest> linkRequested = null,
 			IFwClipboard clipboard = null,
 			Func<double?> getLabelColumnWidth = null,
-			Action<double> labelColumnWidthChanged = null)
+			Action<double> labelColumnWidthChanged = null,
+			Action<DetailField> fieldFocused = null)
 		{
 			if (detail == null) throw new ArgumentNullException(nameof(detail));
 			// Splitter position persists per-HOST across re-shows: this long-lived host owns
@@ -53,7 +54,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 				{
 					_rememberedLabelColumnWidth = w;
 					labelColumnWidthChanged?.Invoke(w);
-				});
+				}, fieldFocused);
 			view.EditCompleted += (s, e) => RaiseDetailEditCompleted();
 
 			var focusMemento = DetailFocusMemory.Capture(CurrentContent);

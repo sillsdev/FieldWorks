@@ -9,15 +9,15 @@ using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
 using System.Xml;
+using Avalonia.Threading;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwAvalonia;
 using SIL.FieldWorks.Common.FwAvalonia.Detail;
-using SIL.FieldWorks.Common.FwAvalonia.ViewDefinition;
 using SIL.FieldWorks.Common.Framework.DetailControls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
-using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.Core.Text;
 using SIL.LCModel.Infrastructure;
 using XCore;
 // Both namespaces above define DataTree; the adapter tests mean the legacy WinForms one.
@@ -57,6 +57,10 @@ namespace SIL.FieldWorks.XWorks
 		private List<ICmObject> m_createdObjects;
 		private ILexEntry m_entry;
 		private RecordEditView m_view;
+		private Inventory m_layouts;
+		private string m_layoutOverridePath;
+		private bool m_layoutOverrideExisted;
+		private byte[] m_layoutOverrideBytes;
 
 		protected override void Init()
 		{
@@ -89,6 +93,16 @@ namespace SIL.FieldWorks.XWorks
 			// Without it, DataTree.GetTemplateForObjLayout finds a null layout inventory and ShowObject
 			// throws an NRE. This is the same bootstrap the DictionaryConfigurationMigrator tests use.
 			LayoutCache.InitializePartInventories(Cache.ProjectId.Name, m_application, Cache.ProjectId.Path);
+			m_layouts = Inventory.GetInventory("layouts", Cache.ProjectId.Name);
+			var configurationDirectory = LcmFileHelper.GetConfigSettingsDir(Cache.ProjectId.Path);
+			m_layoutOverridePath = Path.GetFullPath(Path.Combine(configurationDirectory,
+				"LexEntry.fwlayout"));
+			Assert.That(Path.GetDirectoryName(m_layoutOverridePath),
+				Is.EqualTo(Path.GetFullPath(configurationDirectory)).IgnoreCase);
+			m_layoutOverrideExisted = File.Exists(m_layoutOverridePath);
+			m_layoutOverrideBytes = m_layoutOverrideExisted
+				? File.ReadAllBytes(m_layoutOverridePath)
+				: null;
 			m_createdObjects = new List<ICmObject>();
 			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, CreateTestEntry);
 
@@ -107,6 +121,7 @@ namespace SIL.FieldWorks.XWorks
 		[TearDown]
 		public void TearDownWindow()
 		{
+			RestoreLayoutOverride();
 			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, DestroyTestData);
 			m_createdObjects = null;
 			m_entry = null;
@@ -118,6 +133,145 @@ namespace SIL.FieldWorks.XWorks
 				m_window.Dispose();
 				m_window = null;
 			}
+		}
+
+		[TestCase("CmdAlwaysVisible", "Always visible", "ifdata", "always")]
+		[TestCase("CmdIfData", "Normally hidden, unless non-empty", "always", "ifdata")]
+		[TestCase("CmdNormallyHidden", "Normally hidden", "always", "never")]
+		[TestCase("CmdDataTree-MoveFieldUp", "Move Up", null, "up")]
+		[TestCase("CmdDataTree-MoveFieldDown", "Move Down", null, "down")]
+		public void PersistentLayoutCommand_UsesLegacyWriter_PersistsAndRecomposes(
+			string commandId, string label, string initialVisibility, string expectedChange)
+		{
+			if (initialVisibility != null)
+				PersistCitationVisibility(initialVisibility);
+			RefreshAvaloniaDetail();
+			if (expectedChange == "up")
+				MoveCitationDownThroughNativeCommand();
+
+			var beforeModel = GetHostedDetailModel();
+			var field = beforeModel.Fields.Single(f => f.Field == "CitationForm");
+			var beforeIndex = beforeModel.Fields.ToList().IndexOf(field);
+			var layoutBefore = CurrentLexEntryLayout().OuterXml;
+
+			var items = CreateNativeMenuItems(field,
+				new[] { "mnuDataTree-MultiStringSlice", RecordEditView.ObjectMenuId });
+			var item = FindItem(items, label);
+			Assert.That(item, Is.Not.Null, commandId + " should materialize through the native menu");
+			Assert.That(item.IsEnabled, Is.True, commandId + " should be enabled for Citation Form");
+			item.Execute();
+
+			var persisted = CurrentLexEntryLayout();
+			Assert.That(persisted.OuterXml, Is.Not.EqualTo(layoutBefore),
+				commandId + " should run the legacy Slice handler and change its Inventory layout");
+			Assert.That(File.Exists(m_layoutOverridePath), Is.True,
+				commandId + " should persist through Inventory to the project .fwlayout file");
+
+			var afterModel = GetHostedDetailModel();
+			Assert.That(afterModel, Is.Not.SameAs(beforeModel),
+				commandId + " should refresh the Avalonia model from the changed XML");
+			if (expectedChange == "never")
+			{
+				Assert.That(afterModel.Fields, Has.None.Property("Field").EqualTo("CitationForm"));
+			}
+			else if (expectedChange == "up" || expectedChange == "down")
+			{
+				var afterIndex = afterModel.Fields.ToList().FindIndex(f => f.Field == "CitationForm");
+				Assert.That(Math.Sign(afterIndex - beforeIndex),
+					Is.EqualTo(expectedChange == "up" ? -1 : 1),
+					commandId + " should recompose Citation Form in the persisted direction");
+			}
+			else
+			{
+				var part = persisted.SelectSingleNode("part[@ref='CitationFormAllV']");
+				Assert.That(part.Attributes["visibility"].Value, Is.EqualTo(expectedChange));
+				Assert.That(afterModel.Fields, Has.Some.Property("Field").EqualTo("CitationForm"));
+			}
+		}
+
+		[Test]
+		public void PersistentLayoutCommand_MissingExactIdentity_DisablesPersistenceAndDoesNotWrite()
+		{
+			PersistCitationVisibility("ifdata");
+			RefreshAvaloniaDetail();
+			var field = GetHostedDetailModel().Fields.Single(f => f.Field == "CitationForm");
+			field.SourceCallerPath = "part[999]";
+			var beforeBytes = File.ReadAllBytes(m_layoutOverridePath);
+
+			var items = CreateNativeMenuItems(field,
+				new[] { "mnuDataTree-MultiStringSlice", RecordEditView.ObjectMenuId });
+			var item = FindItem(items, "Always visible");
+			var writingSystems = FindItem(items, "Writing Systems");
+			Assert.That(item, Is.Not.Null.And.Property("IsEnabled").False);
+			Assert.That(item.Execute, Is.Null);
+			Assert.That(writingSystems, Is.Not.Null);
+			Assert.That(FindItem(writingSystems.Children, "Configure...").IsEnabled, Is.False,
+				"writing-system persistence requires the same exact layout-part target");
+			Assert.That(File.ReadAllBytes(m_layoutOverridePath), Is.EqualTo(beforeBytes),
+				"a disabled persistent command must not invoke the legacy Inventory writer");
+		}
+
+		[Test]
+		public void ShowAllWritingSystems_IsTransientAndExpiresWhenAnotherSliceBecomesCurrent()
+		{
+			PersistCitationVisibility("ifdata");
+			RefreshAvaloniaDetail();
+			var model = GetHostedDetailModel();
+			var citation = model.Fields.Single(field => field.Field == "CitationForm");
+			var beforeBytes = File.ReadAllBytes(m_layoutOverridePath);
+			var items = CreateNativeMenuItems(citation,
+				new[] { "mnuDataTree-MultiStringSlice", RecordEditView.ObjectMenuId });
+
+			var showAll = FindItem(items, "Show all right now");
+			Assert.That(showAll, Is.Not.Null.And.Property("IsEnabled").True);
+			showAll.Execute();
+
+			Assert.That(File.ReadAllBytes(m_layoutOverridePath), Is.EqualTo(beforeBytes));
+			Assert.That(GetField(m_view, "m_showAllWritingSystemsSlice"),
+				Is.EqualTo(citation.LayoutSliceIdentity));
+			var revealed = GetHostedDetailModel();
+			Assert.That(revealed, Is.Not.SameAs(model), "Show all recomposes the detail view");
+
+			var otherField = revealed.Fields
+				.First(field => !field.LayoutSliceIdentity.Equals(citation.LayoutSliceIdentity));
+			m_view.OnDetailFieldFocused(otherField);
+
+			Assert.That(GetField(m_view, "m_showAllWritingSystemsSlice"), Is.Null);
+			Assert.That(GetHostedDetailModel(), Is.SameAs(revealed),
+				"focus must not replace a pressed Avalonia control before its click is dispatched");
+			Dispatcher.UIThread.RunJobs();
+			Assert.That(GetHostedDetailModel(), Is.Not.SameAs(revealed));
+		}
+
+		[Test]
+		public void PersistentMoveCommand_DisabledBeforeExecute_DoesNotWrite()
+		{
+			RefreshAvaloniaDetail();
+			MoveCitationDownThroughNativeCommand();
+			var field = GetHostedDetailModel().Fields.Single(f => f.Field == "CitationForm");
+			var staleItems = CreateNativeMenuItems(field,
+				new[] { "mnuDataTree-MultiStringSlice", RecordEditView.ObjectMenuId });
+			var staleMoveUp = FindItem(staleItems, "Move Up");
+			Assert.That(staleMoveUp, Is.Not.Null.And.Property("IsEnabled").True);
+
+			var currentItems = CreateNativeMenuItems(field,
+				new[] { "mnuDataTree-MultiStringSlice", RecordEditView.ObjectMenuId });
+			FindItem(currentItems, "Move Up").Execute();
+			field.SourceCallerPath = GetHostedDetailModel().Fields
+				.Single(f => f.Field == "CitationForm").SourceCallerPath;
+			var refreshedItems = CreateNativeMenuItems(field,
+				new[] { "mnuDataTree-MultiStringSlice", RecordEditView.ObjectMenuId });
+			Assert.That(FindItem(refreshedItems, "Move Up").IsEnabled, Is.False,
+				"returning Citation Form to its first movable position must disable Move Up");
+			var beforeBytes = File.ReadAllBytes(m_layoutOverridePath);
+			var beforeModel = GetHostedDetailModel();
+
+			staleMoveUp.Execute();
+
+			Assert.That(File.ReadAllBytes(m_layoutOverridePath), Is.EqualTo(beforeBytes),
+				"click-time display state must prevent a stale disabled move from reaching the writer");
+			Assert.That(GetHostedDetailModel(), Is.SameAs(beforeModel),
+				"a stale disabled command must return before dispatch and detail recomposition");
 		}
 
 		// ----------------------------------------------------------------------------------------
@@ -365,364 +519,9 @@ namespace SIL.FieldWorks.XWorks
 				"the spliced entries are the project's vernacular writing systems (the Lexeme Form's ws set)");
 		}
 
-		// THE decisive copy test: unchecking one of two vernaculars must store the REDUCED
-		// set (the slice still holds the pre-click set right after OnClick), and re-checking
-		// must store the restored set.
-		[Test]
-		public void WritingSystemToggle_TwoVernaculars_StoresTheReducedThenRestoredSet()
-		{
-			CoreWritingSystemDefinition second = null;
-			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
-			{
-				Cache.ServiceLocator.WritingSystemManager.GetOrSet("es", out second);
-				Cache.ServiceLocator.WritingSystems.AddToCurrentVernacularWritingSystems(second);
-			});
-			var field = LexemeFormField();
-			try
-			{
-				EnsureAdapter(m_entry.LexemeFormOA.Hvo, "Form");
-				var writingSystems = BuildWritingSystemsSubmenu(field);
-				var checkedEntries = writingSystems.Children
-					.Where(c => !c.IsSeparator && c.IsChecked && c.Execute != null).ToList();
-				TestContext.WriteLine("checked: " + string.Join(", ",
-					checkedEntries.Select(e => e.Label)));
-				Assert.That(checkedEntries.Count, Is.EqualTo(2),
-					"precondition: both vernacular writing systems start visible");
-				var toggled = checkedEntries[0].Label;
-
-				checkedEntries[0].Execute();
-				DrainMediatorAndIdleQueues();
-
-				var reduced = StoredWritingSystems(field);
-				TestContext.WriteLine("reduced: " + string.Join(",", reduced));
-				Assert.That(reduced, Is.EqualTo(new[] { "es" }),
-					"the stored op holds the set AFTER the uncheck, not the pre-click set");
-
-				// Re-check the same writing system on a freshly built menu: the ADD direction.
-				writingSystems = BuildWritingSystemsSubmenu(field);
-				var reAdd = writingSystems.Children.Single(c => !c.IsSeparator && c.Label == toggled);
-				Assert.That(reAdd.IsChecked, Is.False, "the unchecked toggle stays unchecked");
-				Assert.That(reAdd.Execute, Is.Not.Null, "an unchecked toggle is clickable");
-				reAdd.Execute();
-				DrainMediatorAndIdleQueues();
-
-				var restored = StoredWritingSystems(field);
-				TestContext.WriteLine("restored: " + string.Join(",", restored));
-				// Exact order matters: the property appends the re-checked writing system at the
-				// end, but the copy canonicalizes to option order so rows never reorder.
-				Assert.That(restored, Is.EqualTo(new[] { "fr", "es" }),
-					"re-checking stores the restored set in option order");
-			}
-			finally
-			{
-				DeleteOverrideFor(field);
-				NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
-					Cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems.Remove(second));
-			}
-		}
-
-		// The Lexeme Form row is keyed by the MoForm's own descended (class, layout). Compose
-		// must resolve an override for it, or the row's customizations are written and never
-		// read.
-		[Test]
-		public void Compose_ResolvesTheOverrideForADescendedLayout()
-		{
-			var field = LexemeFormField();
-			var store = GetOverrideStore();
-			var templateId = ViewDefinitionOverrideEditor.StripRuntimeSuffix(field.StableId);
-			TestContext.WriteLine(
-				$"class={field.ClassName} layout={field.LayoutName} template={templateId}");
-			try
-			{
-				store.Save(new ViewDefinitionOverride(field.ClassName, field.LayoutName, "detail",
-					new[]
-					{
-						new ViewOverrideOperation(ViewOverrideOperationKind.SetLabel, templateId,
-							label: "OverrideMarker")
-					}, null));
-
-				var asked = new List<string>();
-				var recomposed = DetailComposer.Compose(m_entry, Cache, showHiddenFields: false,
-					overrides: (cls, layout) =>
-					{
-						asked.Add(cls + "/" + layout);
-						return store.TryGet(cls, layout);
-					});
-				TestContext.WriteLine("compose asked for: " + string.Join(", ", asked));
-
-				var row = FindLexemeFormRow(recomposed.Model);
-				Assert.That(row.Label, Is.EqualTo("OverrideMarker"),
-					"an override keyed by the row's own (class, layout) must reach the composed row");
-			}
-			finally
-			{
-				DeleteOverrideFor(field);
-			}
-		}
-
-		// -----------------------------------------------------------------
-		// "Show all right now": the transient writing-system reveal
-		// -----------------------------------------------------------------
-
-		// The intercepted item must reveal WITHOUT persisting: the row composes with the full
-		// set while the stored override keeps the restriction.
-		[Test]
-		public void ShowAllRightNow_RevealsTheFullSet_WithoutWritingTheOverride()
-		{
-			CoreWritingSystemDefinition second = null;
-			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
-			{
-				Cache.ServiceLocator.WritingSystemManager.GetOrSet("es", out second);
-				Cache.ServiceLocator.WritingSystems.AddToCurrentVernacularWritingSystems(second);
-			});
-			var field = LexemeFormField();
-			try
-			{
-				var fullSet = field.Values.Select(v => v.WsTag).ToList();
-				Assume.That(fullSet, Is.EqualTo(new List<string> { "fr", "es" }),
-					"precondition: the unrestricted Lexeme Form row shows both vernaculars");
-				GetOverrideStore().Save(new ViewDefinitionOverride(field.ClassName, field.LayoutName,
-					"detail", new[]
-					{
-						new ViewOverrideOperation(ViewOverrideOperationKind.SetVisibleWritingSystems,
-							ViewDefinitionOverrideEditor.StripRuntimeSuffix(field.StableId),
-							writingSystems: new[] { "fr" })
-					}, null));
-				Assert.That(ComposedFormWsTags(RevealedFields()), Is.EqualTo(new[] { "fr" }),
-					"precondition: the override restricts the composed row");
-
-				InvokeShowAllRightNow(field);
-
-				Assert.That(RevealedFields(), Does.Contain(TemplateId(field)),
-					"the click marks the row's part in the host's transient reveal set");
-				Assert.That(ComposedFormWsTags(RevealedFields()), Is.EqualTo(fullSet),
-					"the revealed row composes with the full writing-system set");
-				Assert.That(StoredWritingSystems(field), Is.EqualTo(new[] { "fr" }),
-					"the stored override keeps the restriction -- the reveal is never persisted");
-			}
-			finally
-			{
-				DeleteOverrideFor(field);
-				NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
-					Cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems.Remove(second));
-			}
-		}
-
-		// The reveal survives everything within the record and expires only when the shown
-		// record changes.
-		[Test]
-		public void TransientReveal_ExpiresOnRecordNavigation()
-		{
-			var field = LexemeFormField();
-			InvokeShowAllRightNow(field);
-			Assert.That(RevealedFields(), Does.Contain(TemplateId(field)), "precondition: revealed");
-
-			ILexEntry other = null;
-			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
-			{
-				var stemMorphType = GetMorphTypeOrCreateOne("stem");
-				var noun = GetGrammaticalCategoryOrCreateOne("noun", Cache.LangProject.PartsOfSpeechOA);
-				other = AddLexeme(m_createdObjects, "other-entry", stemMorphType, "other gloss", noun);
-			});
-			m_view.Clerk.JumpToRecord(other.Hvo);
-			DrainMediatorAndIdleQueues();
-
-			Assert.That(RevealedFields(), Is.Empty,
-				"showing a different record expires every transient reveal");
-		}
-
-		// A configuration write replaces the reveal: after a toggle, the row shows the newly
-		// stored set, not the stale full set.
-		[Test]
-		public void WritingSystemToggle_ReplacesTheTransientReveal()
-		{
-			CoreWritingSystemDefinition second = null;
-			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
-			{
-				Cache.ServiceLocator.WritingSystemManager.GetOrSet("es", out second);
-				Cache.ServiceLocator.WritingSystems.AddToCurrentVernacularWritingSystems(second);
-			});
-			var field = LexemeFormField();
-			try
-			{
-				InvokeShowAllRightNow(field);
-				Assert.That(RevealedFields(), Does.Contain(TemplateId(field)), "precondition: revealed");
-
-				var toggle = BuildWritingSystemsSubmenu(field).Children
-					.First(c => !c.IsSeparator && c.IsChecked && c.Execute != null);
-				var toggledLabel = toggle.Label;
-				toggle.Execute();
-				DrainMediatorAndIdleQueues();
-
-				Assert.That(RevealedFields(), Does.Not.Contain(TemplateId(field)),
-					"persisting a new display set replaces the transient reveal");
-
-				// Re-check the toggled writing system: the toggle persists the visible set into
-				// the part-ref Inventory, which is shared across this fixture's tests.
-				var reAdd = BuildWritingSystemsSubmenu(field).Children
-					.Single(c => !c.IsSeparator && c.Label == toggledLabel);
-				reAdd.Execute();
-				DrainMediatorAndIdleQueues();
-			}
-			finally
-			{
-				DeleteOverrideFor(field);
-				NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
-					Cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems.Remove(second));
-			}
-		}
-
-		// Drives the intercepted "Show all right now" item for a row the way
-		// OnDetailMenuRequested would: target the adapter, materialize the submenu, invoke,
-		// drain.
-		private void InvokeShowAllRightNow(DetailField field)
-		{
-			EnsureAdapter(field.ObjectHvo, field.Field);
-			var showAll = FindItem(BuildWritingSystemsSubmenu(field).Children, "Show all right now");
-			Assert.That(showAll, Is.Not.Null, "the intercepted reveal item must materialize");
-			Assert.That(showAll.IsEnabled, Is.True);
-			Assert.That(showAll.Execute, Is.Not.Null);
-			showAll.Execute();
-			DrainMediatorAndIdleQueues();
-		}
-
-		// The reveal set is keyed by the part's template id, not the runtime row id.
-		private static string TemplateId(DetailField field)
-			=> ViewDefinitionOverrideEditor.StripRuntimeSuffix(field.StableId);
-
-		// A failed override save must leave the reveal alone: ending it without recomposing
-		// would collapse the row at the next unrelated refresh, with nothing to explain it.
-		[Test]
-		public void TransientReveal_SurvivesAFailedOverrideSave()
-		{
-			CoreWritingSystemDefinition second = null;
-			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
-			{
-				Cache.ServiceLocator.WritingSystemManager.GetOrSet("es", out second);
-				Cache.ServiceLocator.WritingSystems.AddToCurrentVernacularWritingSystems(second);
-			});
-			var field = LexemeFormField();
-			// A file where the store expects its directory: Save's CreateDirectory throws.
-			var blocker = Path.Combine(Path.GetTempPath(), "fw-reveal-" + Guid.NewGuid().ToString("N"));
-			File.WriteAllText(blocker, "not a directory");
-			var storeField = typeof(RecordEditView).GetField("m_viewOverrideStore",
-				BindingFlags.Instance | BindingFlags.NonPublic);
-			Assert.That(storeField, Is.Not.Null, "the override store field must exist");
-			var original = storeField.GetValue(m_view);
-			string toggledLabel = null;
-			try
-			{
-				InvokeShowAllRightNow(field);
-				Assert.That(RevealedFields(), Does.Contain(TemplateId(field)), "precondition: revealed");
-
-				storeField.SetValue(m_view, new ViewDefinitionOverrideStore(blocker));
-				var toggle = BuildWritingSystemsSubmenu(field).Children
-					.First(c => !c.IsSeparator && c.IsChecked && c.Execute != null);
-				toggledLabel = toggle.Label;
-				toggle.Execute();
-				DrainMediatorAndIdleQueues();
-
-				Assert.That(RevealedFields(), Does.Contain(TemplateId(field)),
-					"a save that failed must leave the transient reveal in place");
-			}
-			finally
-			{
-				storeField.SetValue(m_view, original);
-				File.Delete(blocker);
-				// The toggle persists into the part-ref inventory this fixture shares; re-check
-				// it or later tests see no visible writing system.
-				if (toggledLabel != null)
-				{
-					BuildWritingSystemsSubmenu(field).Children
-						.Single(c => !c.IsSeparator && c.Label == toggledLabel).Execute();
-					DrainMediatorAndIdleQueues();
-				}
-				DeleteOverrideFor(field);
-				NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
-					Cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems.Remove(second));
-			}
-		}
-
-		// The host's transient reveal set, read through the same seam the production compose
-		// uses.
-		private HashSet<string> RevealedFields()
-			=> (HashSet<string>)GetField(m_view, "m_showAllWsFields");
-
-		// The Lexeme Form row's composed writing-system tags under the CURRENT stored override
-		// and the given reveal set -- the same Compose call ShowAvaloniaEntry makes.
-		private IReadOnlyList<string> ComposedFormWsTags(HashSet<string> reveal)
-			=> FindLexemeFormRow(DetailComposer.Compose(m_entry, Cache,
-					overrides: (cls, layout) => GetOverrideStore().TryGet(cls, layout),
-					showAllWritingSystemsFields: reveal).Model)
-				.Values.Select(v => v.WsTag).ToList();
-
 		// -----------------------------------------------------------------
 		// Helpers -- production-path command drivers
 		// -----------------------------------------------------------------
-
-		// The composed Lexeme Form row, as the production host resolves it before raising a
-		// menu request.
-		private DetailField LexemeFormField()
-			=> FindLexemeFormRow(DetailComposer.Compose(m_entry, Cache).Model);
-
-		// The one locator for the Lexeme Form row (the MoForm's own Form field) in a composed
-		// model.
-		private DetailField FindLexemeFormRow(DetailModel model)
-			=> model.Fields.Single(f => f.Field == "Form" && f.Kind == DetailFieldKind.Text
-				&& f.ObjectHvo == m_entry.LexemeFormOA.Hvo);
-
-		private ViewDefinitionOverrideStore GetOverrideStore()
-		{
-			var storeProperty = typeof(RecordEditView).GetProperty("ViewOverrideStore",
-				BindingFlags.Instance | BindingFlags.NonPublic);
-			Assert.That(storeProperty, Is.Not.Null, "the override store seam must exist");
-			var store = (ViewDefinitionOverrideStore)storeProperty.GetValue(m_view);
-			Assert.That(store, Is.Not.Null, "the project must have a reachable override store");
-			return store;
-		}
-
-		// Materializes a menu the way OnDetailMenuRequested does, WITH the override interceptor,
-		// so the intercepted writing-system items are the ones under test.
-		private IReadOnlyList<DetailMenuItem> BuildItemsWithOverrideInterceptor(string[] menuIds,
-			DetailField field)
-		{
-			var build = typeof(RecordEditView).GetMethod("BuildOverrideCommandInterceptor",
-				BindingFlags.Instance | BindingFlags.NonPublic);
-			Assert.That(build, Is.Not.Null, "the override interceptor seam must exist");
-			var interceptor = (Func<ChoiceBase, UIItemDisplayProperties, DetailMenuItem>)build.Invoke(
-				m_view, new object[] { field });
-			TestContext.WriteLine("interceptor built: " + (interceptor != null));
-			var window = m_propertyTable.GetValue<XWindow>("window");
-			return XCoreMenuBridge.CreateMenuItems(window, menuIds, interceptor);
-		}
-
-		private ViewDefinitionOverride ReadOverrideFor(DetailField field)
-			=> GetOverrideStore().TryGet(field.ClassName, field.LayoutName);
-
-		private DetailMenuItem BuildWritingSystemsSubmenu(DetailField field)
-		{
-			var items = BuildItemsWithOverrideInterceptor(
-				new[] { "mnuDataTree-LexemeForm", "mnuDataTree-MultiStringSlice" }, field);
-			var writingSystems = FindItem(items, "Writing Systems");
-			Assert.That(writingSystems, Is.Not.Null,
-				"precondition: the Writing Systems submenu is present");
-			return writingSystems;
-		}
-
-		// The writing systems the stored override op carries for the field's row.
-		private IReadOnlyList<string> StoredWritingSystems(DetailField field)
-		{
-			var stored = ReadOverrideFor(field);
-			Assert.That(stored, Is.Not.Null,
-				"toggling a writing system must write a project override");
-			return stored.Operations.Single(o =>
-				o.Kind == ViewOverrideOperationKind.SetVisibleWritingSystems).WritingSystems;
-		}
-
-		// Saving an empty patch deletes the file, so overrides never leak between tests.
-		private void DeleteOverrideFor(DetailField field)
-			=> GetOverrideStore().Save(new ViewDefinitionOverride(
-				field.ClassName, field.LayoutName, "detail", null, null));
 
 		// Drives a SLICE-menu command exactly as OnDetailMenuRequested(Kind=SliceMenu) does: ensure the
 		// adapter targets the object, materialize the menu (menuId + the host-appended mnuDataTree-Object)
@@ -776,6 +575,16 @@ namespace SIL.FieldWorks.XWorks
 			return XCoreMenuBridge.CreateMenuItems(window, menuIds);
 		}
 
+		private IReadOnlyList<DetailMenuItem> CreateNativeMenuItems(DetailField field, string[] menuIds)
+		{
+			var method = typeof(RecordEditView).GetMethod("CreateNativeDetailMenuItems",
+				BindingFlags.Instance | BindingFlags.NonPublic);
+			Assert.That(method, Is.Not.Null,
+				"the product host should expose its native menu materialization seam");
+			return (IReadOnlyList<DetailMenuItem>)method.Invoke(m_view,
+				new object[] { field, menuIds });
+		}
+
 		private void InvokeItem(IReadOnlyList<DetailMenuItem> items, string label)
 		{
 			var item = FindItem(items, label);
@@ -815,7 +624,8 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var composed = DetailComposer.Compose(m_entry, Cache);
 			Assert.That(composed, Is.Not.Null, "the entry must compose");
-			return composed.Model.Fields.Count(f => f.Kind == DetailFieldKind.Header && f.Field == "Senses");
+			return composed.Model.Fields.Count(f => f.Kind == DetailFieldKind.Header
+				&& f.MenuId == "mnuDataTree-Sense");
 		}
 
 		// Calls the host's real RefreshAvaloniaDetail and reports the field count of the recomposed
@@ -830,6 +640,77 @@ namespace SIL.FieldWorks.XWorks
 			return DetailComposer.Compose(m_entry, Cache).Model.Fields.Count;
 		}
 
+		private void RefreshAvaloniaDetail()
+		{
+			var refresh = typeof(RecordEditView).GetMethod("RefreshAvaloniaDetail",
+				BindingFlags.Instance | BindingFlags.NonPublic);
+			Assert.That(refresh, Is.Not.Null);
+			refresh.Invoke(m_view, null);
+			DrainMediatorAndIdleQueues();
+		}
+
+		private DetailModel GetHostedDetailModel()
+		{
+			var entryForm = (DetailHostControl)GetField(m_view, "m_avaloniaEntryForm");
+			var hostField = typeof(AvaloniaHostControlBase).GetField("Host",
+				BindingFlags.Instance | BindingFlags.NonPublic);
+			Assert.That(hostField, Is.Not.Null);
+			var host = hostField.GetValue(entryForm);
+			var content = host.GetType().GetProperty("Content").GetValue(host, null);
+			var tree = content as SIL.FieldWorks.Common.FwAvalonia.Detail.DataTree;
+			Assert.That(tree, Is.Not.Null);
+			return tree.Model;
+		}
+
+		private XmlNode CurrentLexEntryLayout()
+		{
+			var layout = m_layouts.GetElement("layout",
+				new[] { "LexEntry", "detail", "Normal", null });
+			Assert.That(layout, Is.Not.Null);
+			return layout;
+		}
+
+		private void PersistCitationVisibility(string visibility)
+		{
+			var changed = CurrentLexEntryLayout().Clone();
+			var part = changed.SelectSingleNode("part[@ref='CitationFormAllV']");
+			Assert.That(part, Is.Not.Null);
+			var attribute = part.Attributes["visibility"]
+				?? changed.OwnerDocument.CreateAttribute("visibility");
+			attribute.Value = visibility;
+			if (attribute.OwnerElement == null)
+				part.Attributes.Append(attribute);
+			m_layouts.PersistOverrideElement(changed);
+		}
+
+		private void MoveCitationDownThroughNativeCommand()
+		{
+			var field = GetHostedDetailModel().Fields.Single(f => f.Field == "CitationForm");
+			var items = CreateNativeMenuItems(field,
+				new[] { "mnuDataTree-MultiStringSlice", RecordEditView.ObjectMenuId });
+			var item = FindItem(items, "Move Down");
+			Assert.That(item, Is.Not.Null.And.Property("IsEnabled").True,
+				"Move Down must establish a real legacy-slice predecessor for Move Up");
+			item.Execute();
+		}
+
+		private void RestoreLayoutOverride()
+		{
+			if (m_layouts == null || string.IsNullOrEmpty(m_layoutOverridePath))
+				return;
+			if (m_layoutOverrideExisted)
+			{
+				Directory.CreateDirectory(Path.GetDirectoryName(m_layoutOverridePath));
+				File.WriteAllBytes(m_layoutOverridePath, m_layoutOverrideBytes);
+			}
+			else if (File.Exists(m_layoutOverridePath))
+			{
+				File.Delete(m_layoutOverridePath);
+			}
+			m_layouts.Reload();
+			Assert.That(Inventory.GetInventory("layouts", Cache.ProjectId.Name), Is.SameAs(m_layouts));
+		}
+
 		// ----------------------------------------------------------------------------------------
 		// Bootstrap helpers (mirrors RecordEditViewActiveHostContractTests)
 		// ----------------------------------------------------------------------------------------
@@ -839,6 +720,8 @@ namespace SIL.FieldWorks.XWorks
 			var stemMorphType = GetMorphTypeOrCreateOne("stem");
 			var noun = GetGrammaticalCategoryOrCreateOne("noun", Cache.LangProject.PartsOfSpeechOA);
 			m_entry = AddLexeme(m_createdObjects, "command-entry", stemMorphType, "first gloss", noun);
+			m_entry.CitationForm.set_String(Cache.DefaultVernWs,
+				TsStringUtils.MakeString("citation", Cache.DefaultVernWs));
 		}
 
 		private void AddSense(string gloss)

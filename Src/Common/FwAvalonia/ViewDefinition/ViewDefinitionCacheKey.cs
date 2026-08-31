@@ -13,19 +13,28 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 	/// </summary>
 	public sealed class ViewDefinitionCacheKey : IEquatable<ViewDefinitionCacheKey>
 	{
+		private readonly ViewDefinitionIdentity _identity;
+
 		public ViewDefinitionCacheKey(string className, string layoutName, string layoutType, string sourceFingerprint)
+			: this(className, layoutName, layoutType, null, sourceFingerprint)
 		{
-			ClassName = className ?? "";
-			LayoutName = layoutName ?? "";
-			LayoutType = layoutType ?? "";
+		}
+
+		public ViewDefinitionCacheKey(string className, string layoutName, string layoutType,
+			string choiceGuid, string sourceFingerprint)
+		{
+			_identity = new ViewDefinitionIdentity(className, layoutType, layoutName, choiceGuid);
 			SourceFingerprint = sourceFingerprint ?? "";
 		}
 
-		public string ClassName { get; }
+		public string ClassName => _identity.ClassName;
 
-		public string LayoutName { get; }
+		public string LayoutName => _identity.LayoutName;
 
-		public string LayoutType { get; }
+		public string LayoutType => _identity.LayoutType;
+
+		/// <summary>The nullable selected layout variant. Null and empty are distinct.</summary>
+		public string ChoiceGuid => _identity.ChoiceGuid;
 
 		/// <summary>A stable hash of the layout + parts source text.</summary>
 		public string SourceFingerprint { get; }
@@ -34,28 +43,17 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 		{
 			if (ReferenceEquals(null, other)) return false;
 			if (ReferenceEquals(this, other)) return true;
-			return ClassName == other.ClassName
-				&& LayoutName == other.LayoutName
-				&& LayoutType == other.LayoutType
-				&& SourceFingerprint == other.SourceFingerprint;
+			return _identity.Equals(other._identity)
+				&& StringComparer.Ordinal.Equals(SourceFingerprint, other.SourceFingerprint);
 		}
 
 		public override bool Equals(object obj) => Equals(obj as ViewDefinitionCacheKey);
 
 		public override int GetHashCode()
-		{
-			unchecked
-			{
-				var hash = 17;
-				hash = hash * 31 + ClassName.GetHashCode();
-				hash = hash * 31 + LayoutName.GetHashCode();
-				hash = hash * 31 + LayoutType.GetHashCode();
-				hash = hash * 31 + SourceFingerprint.GetHashCode();
-				return hash;
-			}
-		}
+			=> (_identity.GetHashCode() * 31)
+				+ StringComparer.Ordinal.GetHashCode(SourceFingerprint);
 
 		public override string ToString()
-			=> $"{ClassName}/{LayoutName}/{LayoutType}@{SourceFingerprint}";
+			=> $"{ClassName}/{LayoutName}/{LayoutType}/{(ChoiceGuid == null ? "<null>" : ChoiceGuid)}@{SourceFingerprint}";
 	}
 }

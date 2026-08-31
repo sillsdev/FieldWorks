@@ -12,11 +12,9 @@ using Newtonsoft.Json.Linq;
 namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 {
 	/// <summary>
-	/// Canonical JSON serialization of the typed view definition: deterministic property order, defaults
-	/// omitted, and a `formatVersion` header so per-project overrides can be validated. This is the migration
-	/// tooling core -- shipped XML compiles to the typed IR (existing importer), the IR
-	/// serializes to
-	/// canonical JSON, and a gated layout can load JSON with the XML importer retained as fallback.
+	/// Canonical JSON serialization of the typed view definition: deterministic property order,
+	/// defaults omitted, and a <c>formatVersion</c> header. This is an interchange format for the
+	/// complete typed model; it is not the current layout-persistence store.
 	/// </summary>
 	public static class ViewDefinitionJsonSerializer
 	{
@@ -33,8 +31,15 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 				["class"] = model.ClassName,
 				["name"] = model.LayoutName,
 				["type"] = model.LayoutType,
+				["requestedIdentity"] = WriteIdentity(model.RequestedIdentity),
+				["resolvedIdentity"] = WriteIdentity(model.ResolvedIdentity),
 				["nodes"] = new JArray(model.Roots.Select(WriteNode))
 			};
+			AddIfNotNull(root, "choiceGuid", model.ChoiceGuid);
+			if (!string.Equals(model.RequestedLayoutName, model.ResolvedLayoutName,
+				StringComparison.Ordinal))
+				root["requestedName"] = model.RequestedLayoutName;
+			AddIfNotNull(root, "requestedChoiceGuid", model.RequestedChoiceGuid);
 			return root.ToString(Formatting.Indented);
 		}
 
@@ -48,12 +53,43 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 				throw new InvalidDataException($"Unsupported view-definition formatVersion {version} (expected {FormatVersion}).");
 
 			var nodes = ((JArray)root["nodes"] ?? new JArray()).Select(ReadNode).ToList();
-			return new ViewDefinitionModel(
-				(string)root["class"] ?? "",
-				(string)root["name"] ?? "",
-				(string)root["type"] ?? "detail",
+			var resolvedName = (string)root["name"] ?? "";
+			var resolvedChoice = (string)root["choiceGuid"];
+			var resolvedIdentity = ReadIdentity((JObject)root["resolvedIdentity"])
+				?? new ViewDefinitionIdentity((string)root["class"] ?? "", (string)root["type"] ?? "detail",
+					resolvedName, resolvedChoice);
+			var requestedIdentity = ReadIdentity((JObject)root["requestedIdentity"])
+				?? new ViewDefinitionIdentity((string)root["class"] ?? "", (string)root["type"] ?? "detail",
+					(string)root["requestedName"] ?? resolvedName, (string)root["requestedChoiceGuid"]);
+			var model = new ViewDefinitionModel(
+				resolvedIdentity.ClassName,
+				resolvedIdentity.LayoutName,
+				resolvedIdentity.LayoutType,
 				nodes,
-				Array.Empty<ViewDiagnostic>());
+				Array.Empty<ViewDiagnostic>(),
+				resolvedIdentity.ChoiceGuid);
+			return model.WithLayoutIdentities(requestedIdentity, resolvedIdentity);
+		}
+
+		private static JObject WriteIdentity(ViewDefinitionIdentity identity)
+		{
+			var value = new JObject
+			{
+				["class"] = identity.ClassName,
+				["type"] = identity.LayoutType,
+				["name"] = identity.LayoutName
+			};
+			AddIfNotNull(value, "choiceGuid", identity.ChoiceGuid);
+			return value;
+		}
+
+		private static ViewDefinitionIdentity? ReadIdentity(JObject value)
+		{
+			if (value == null)
+				return null;
+			return new ViewDefinitionIdentity((string)value["class"] ?? "",
+				(string)value["type"] ?? "detail", (string)value["name"] ?? "",
+				(string)value["choiceGuid"]);
 		}
 
 		private static JObject WriteNode(ViewNode node)
@@ -64,6 +100,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 				["id"] = node.StableId,
 				["kind"] = node.Kind.ToString()
 			};
+			AddIfNotNull(o, "sourceCallerPath", node.SourceCallerPath);
+			AddIfNotNull(o, "sourceCallerXml", node.SourceCallerXml);
 			AddIfPresent(o, "label", node.Label);
 			AddIfPresent(o, "abbr", node.Abbreviation);
 			AddIfPresent(o, "field", node.Field);
@@ -71,6 +109,9 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 			if (node.EditorClassification != EditorClassification.GroupingNone)
 				o["editorClass"] = node.EditorClassification.ToString();
 			AddIfPresent(o, "ws", node.WritingSystem);
+			AddIfNotNull(o, "optionalWs", node.OptionalWritingSystem);
+			if (node.ForceIncludeEnglish)
+				o["forceIncludeEnglish"] = true;
 			if (node.Visibility != ViewVisibility.Always)
 				o["visibility"] = node.Visibility.ToString();
 			if (node.Expansion != ViewExpansion.NotApplicable)
@@ -78,6 +119,9 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 			if (node.Indented)
 				o["indented"] = true;
 			AddIfPresent(o, "targetLayout", node.TargetLayout);
+			AddIfNotNull(o, "layoutChoiceField", node.LayoutChoiceField);
+			if (node.VisibleWritingSystems != null)
+				o["visibleWritingSystems"] = new JArray(node.VisibleWritingSystems);
 			AddIfPresent(o, "localizationKey", node.LocalizationKey);
 			AddIfPresent(o, "automationId", node.AutomationId);
 			if (node.Routing != HostRouting.Inherit)
@@ -95,6 +139,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 			AddIfPresent(o, "ghostLabel", node.GhostLabel);
 			if (node.ForVariant)
 				o["forVariant"] = true;
+			AddIfNotNull(o, "customEditorClass", node.CustomEditorClass);
+			AddIfNotNull(o, "customEditorAssembly", node.CustomEditorAssembly);
 			AddIfPresent(o, "ghostInitMethod", node.GhostInitMethod);
 			if (node.Condition != null)
 				o["condition"] = WriteCondition(node.Condition);
@@ -102,6 +148,14 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 			// chooserLink carries.
 			if (node.ChooserLinks.Count > 0)
 				o["chooserLinks"] = new JArray(node.ChooserLinks.Select(WriteChooserLink));
+			if (node.EnumStringList != null)
+			{
+				var list = new JObject { ["ids"] = new JArray(node.EnumStringList.Ids) };
+				AddIfNotNull(list, "group", node.EnumStringList.Group);
+				o["enumStringList"] = list;
+			}
+			if (node.ToggleValue)
+				o["toggleValue"] = true;
 			if (node.Children.Count > 0)
 				o["children"] = new JArray(node.Children.Select(WriteNode));
 			return o;
@@ -210,9 +264,27 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 				(string)o["ghostClass"],
 				(string)o["ghostLabel"],
 				(bool?)o["forVariant"] ?? false,
+				customEditorClass: (string)o["customEditorClass"],
+				customEditorAssembly: (string)o["customEditorAssembly"],
 				ghostInitMethod: (string)o["ghostInitMethod"],
 				condition: ReadCondition((JObject)o["condition"]),
-				chooserLinks: ((JArray)o["chooserLinks"])?.Select(ReadChooserLink).ToList());
+				chooserLinks: ((JArray)o["chooserLinks"])?.Select(ReadChooserLink).ToList(),
+				enumStringList: ReadStringList((JObject)o["enumStringList"]),
+				visibleWritingSystems: ((JArray)o["visibleWritingSystems"])?.Values<string>().ToList(),
+				toggleValue: (bool?)o["toggleValue"] ?? false,
+				sourceCallerPath: (string)o["sourceCallerPath"],
+				layoutChoiceField: (string)o["layoutChoiceField"],
+				sourceCallerXml: (string)o["sourceCallerXml"],
+				optionalWritingSystem: (string)o["optionalWs"],
+				forceIncludeEnglish: (bool?)o["forceIncludeEnglish"] ?? false);
+		}
+
+		private static ViewStringList ReadStringList(JObject o)
+		{
+			if (o == null)
+				return null;
+			return new ViewStringList(((JArray)o["ids"])?.Values<string>().ToList(),
+				(string)o["group"]);
 		}
 
 		private static T ParseEnum<T>(JObject o, string name, T fallback) where T : struct
@@ -224,6 +296,12 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 		private static void AddIfPresent(JObject o, string name, string value)
 		{
 			if (!string.IsNullOrEmpty(value))
+				o[name] = value;
+		}
+
+		private static void AddIfNotNull(JObject o, string name, string value)
+		{
+			if (value != null)
 				o[name] = value;
 		}
 	}

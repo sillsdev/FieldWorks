@@ -9,14 +9,19 @@ using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
 using System.Xml;
+using System.Xml.Linq;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwAvalonia;
+using SIL.FieldWorks.Common.FwAvalonia.Detail;
+using SIL.FieldWorks.Common.FwAvalonia.ViewDefinition;
 using SIL.FieldWorks.Common.Framework.DetailControls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Infrastructure;
 using XCore;
+using DetailLayoutIdentity = SIL.FieldWorks.Common.FwAvalonia.Detail.DetailLayoutIdentity;
+using LegacyDataTree = SIL.FieldWorks.Common.Framework.DetailControls.DataTree;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -128,7 +133,7 @@ namespace SIL.FieldWorks.XWorks
 
 			EnsureAdapter(deepSenseHvo);
 
-			var dataTree = (DataTree)GetField(m_view, "m_dataEntryForm");
+			var dataTree = (LegacyDataTree)GetField(m_view, "m_dataEntryForm");
 			var current = dataTree.CurrentSlice;
 			Assert.That(current, Is.Not.Null,
 				"the adapter must realize the lazy slice and point CurrentSlice at the deep target");
@@ -145,7 +150,7 @@ namespace SIL.FieldWorks.XWorks
 			// First point the adapter at a real sense, so CurrentSlice is non-null...
 			var realSenseHvo = m_entry.SensesOS[0].Hvo;
 			EnsureAdapter(realSenseHvo);
-			var dataTree = (DataTree)GetField(m_view, "m_dataEntryForm");
+			var dataTree = (LegacyDataTree)GetField(m_view, "m_dataEntryForm");
 			Assert.That(dataTree.CurrentSlice, Is.Not.Null, "precondition: a slice is current");
 
 			// ...then target an hvo that has NO slice in this entry's tree (a foreign object). The hardened
@@ -209,6 +214,229 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(read.Invoke(m_view, null), Is.Null, "a zero width must not be persisted");
 			persist.Invoke(m_view, new object[] { -5.0 });
 			Assert.That(read.Invoke(m_view, null), Is.Null, "a negative width must not be persisted");
+		}
+
+		[Test]
+		public void AvaloniaComposition_UsesProjectLayoutInventoryInitializedByLayoutCache()
+		{
+			var expected = Inventory.GetInventory("layouts", Cache.ProjectId.Name);
+			Assert.That(expected, Is.Not.Null,
+				"LayoutCache.InitializePartInventories should install the project inventory");
+
+			var source = GetField(m_view, "m_inventoryViewDefinitionSource");
+
+			Assert.That(source, Is.Not.Null,
+				"showing the record should lazily create the project view-definition source");
+			Assert.That(GetField(source, "_layouts"), Is.SameAs(expected),
+				"the host source must use the project-keyed Inventory singleton");
+		}
+
+		[Test]
+		public void ImportedCallerPath_IsCanonicalWhenPartsSkipOrExpandOutput()
+		{
+			var parts = new DictionaryPartResolver(XElement.Parse(@"
+<PartInventory><bin>
+  <part id='LexEntry-Detail-Multiple'>
+    <slice field='CitationForm' editor='string'/>
+    <slice field='CitationForm' editor='string'/>
+  </part>
+  <part id='LexEntry-Detail-Single'>
+    <slice field='CitationForm' editor='string'/>
+  </part>
+</bin></PartInventory>"));
+			const string layoutXml = @"
+<layout class='LexEntry' type='detail' name='Normal'>
+  <part ref='Missing'/>
+  <part ref='Multiple'/>
+  <part ref='Single'/>
+</layout>";
+
+			var model = new XmlLayoutImporter().Import(XElement.Parse(layoutXml), parts);
+			var xml = new XmlDocument();
+			xml.LoadXml(layoutXml);
+			var legacyCaller = xml.SelectSingleNode("/layout/part[@ref='Multiple']");
+
+			Assert.That(model.Roots.Take(2).Select(node => node.SourceCallerPath),
+				Is.All.EqualTo("part[1]"),
+				"every output expanded from one caller must retain the same source identity");
+			Assert.That(model.Roots[2].SourceCallerPath, Is.EqualTo("part[2]"),
+				"a skipped caller must not collapse the source address to the output index");
+			Assert.That(LegacyLayoutCallerPath.Get(legacyCaller), Is.EqualTo("part[1]"),
+				"the XmlNode slice key and XElement importer clones must compute the same identity");
+		}
+
+		[TestCase(0, 0, "Reject")]
+		[TestCase(1, 0, "UseRealized")]
+		[TestCase(0, 1, "RealizeLazy")]
+		[TestCase(1, 1, "Reject")]
+		[TestCase(0, 2, "Reject")]
+		public void PersistentTargetArbitration_RequiresExactlyOneCombinedMatch(int realized,
+			int lazy, string expectedName)
+		{
+			var expected = (RecordEditView.PersistentTargetAction)Enum.Parse(
+				typeof(RecordEditView.PersistentTargetAction), expectedName);
+			Assert.That(RecordEditView.ArbitratePersistentTarget(realized, lazy), Is.EqualTo(expected));
+		}
+
+		[Test]
+		public void PersistentTargetArbitration_SoleRealizedUsesItOnce()
+		{
+			var realizedCalls = 0;
+			var lazyCalls = 0;
+			var rescanCalls = 0;
+
+			Assert.That(RecordEditView.ExecutePersistentTargetArbitration(1, 0,
+				() => { realizedCalls++; return true; },
+				() => { lazyCalls++; return true; },
+				() => { rescanCalls++; return true; },
+				() => false), Is.True);
+			Assert.That(realizedCalls, Is.EqualTo(1));
+			Assert.That(lazyCalls, Is.Zero);
+			Assert.That(rescanCalls, Is.Zero);
+		}
+
+		[Test]
+		public void PersistentTargetArbitration_SoleLazyRealizesOnceAndRescansOnce()
+		{
+			var realizedCalls = 0;
+			var lazyCalls = 0;
+			var rescanCalls = 0;
+
+			Assert.That(RecordEditView.ExecutePersistentTargetArbitration(0, 1,
+				() => { realizedCalls++; return true; },
+				() => { lazyCalls++; return true; },
+				() => { rescanCalls++; return true; },
+				() => false), Is.True);
+			Assert.That(realizedCalls, Is.Zero);
+			Assert.That(lazyCalls, Is.EqualTo(1));
+			Assert.That(rescanCalls, Is.EqualTo(1));
+		}
+
+		[Test]
+		public void PersistentTargetArbitration_RescanFailureAfterSoleLazyMatchFailsClosed()
+		{
+			var realizedCalls = 0;
+			var lazyCalls = 0;
+			var rescanCalls = 0;
+			var rejectCalls = 0;
+
+			Assert.That(RecordEditView.ExecutePersistentTargetArbitration(0, 1,
+				() => { realizedCalls++; return true; },
+				() => { lazyCalls++; return true; },
+				() => { rescanCalls++; return false; },
+				() => { rejectCalls++; return false; }), Is.False);
+			Assert.That(realizedCalls, Is.Zero);
+			Assert.That(lazyCalls, Is.EqualTo(1));
+			Assert.That(rescanCalls, Is.EqualTo(1));
+			Assert.That(rejectCalls, Is.Zero);
+		}
+
+		[Test]
+		public void PersistentTargetArbitration_RealizationFailureDoesNotRescan()
+		{
+			var lazyCalls = 0;
+			var rescanCalls = 0;
+			var rejectCalls = 0;
+
+			Assert.That(RecordEditView.ExecutePersistentTargetArbitration(0, 1,
+				() => true,
+				() => { lazyCalls++; return false; },
+				() => { rescanCalls++; return true; },
+				() => { rejectCalls++; return false; }), Is.False);
+			Assert.That(lazyCalls, Is.EqualTo(1));
+			Assert.That(rescanCalls, Is.Zero);
+			Assert.That(rejectCalls, Is.EqualTo(1));
+		}
+
+		[Test]
+		public void IsValidPersistentTarget_EmptyLayoutNameIsValidButNullIsAbsent()
+		{
+			var validator = typeof(RecordEditView).GetMethod("IsValidPersistentTarget",
+				BindingFlags.Instance | BindingFlags.NonPublic);
+			Assert.That(validator, Is.Not.Null);
+
+			Assert.That((bool)validator.Invoke(m_view, new object[] { PersistentField(string.Empty) }),
+				Is.True);
+			Assert.That((bool)validator.Invoke(m_view, new object[] { PersistentField(null) }),
+				Is.False);
+		}
+
+		private DetailField PersistentField(string layoutName)
+		{
+			var field = new DetailField("LexEntry/test", "Citation Form", "CitationForm", null,
+				DetailFieldKind.Text, EditorClassification.Known, null, null, HostRouting.Product,
+				null, null, null, objectHvo: m_entry.Hvo);
+			field.ClassName = "LexEntry";
+			field.LayoutType = "detail";
+			field.LayoutName = layoutName;
+			field.SourceCallerPath = "part[0]";
+			field.LayoutPath = new[]
+			{
+				new DetailLayoutIdentity("LexEntry", "detail", layoutName, null)
+			};
+			return field;
+		}
+
+		[Test]
+		public void PersistentSliceIdentity_CarriesCallerAndSelectedLayoutAcrossObjectDescent()
+		{
+			var document = new XmlDocument();
+			document.LoadXml(@"<root>
+  <layout class='LexEntry' type='detail' name='Normal'>
+    <part ref='Outer'><indent><part ref='Inner'/></indent></part>
+  </layout>
+  <layout class='LexSense' type='detail' name='Normal' choiceGuid='choice-a'>
+    <part ref='Nested'/>
+  </layout>
+</root>");
+			var layouts = document.SelectNodes("/root/layout");
+			var inner = layouts[0].SelectSingleNode("part/indent/part");
+			var nested = layouts[1].SelectSingleNode("part");
+			using (var slice = new Slice
+			{
+				Cache = Cache,
+				Object = m_entry,
+				ConfigurationNode = document.CreateElement("slice"),
+				Key = new object[] { layouts[0], inner, m_entry.Hvo, layouts[1], nested }
+			})
+			{
+				var identity = m_view.PersistentSliceIdentity(slice);
+
+				Assert.That(identity.CallerPath,
+					Is.EqualTo("part[0]/indent[0]/part[0]|part[0]"));
+				Assert.That(identity.LayoutPath, Has.Count.EqualTo(2));
+				Assert.That(identity.LayoutPath[1].ChoiceGuid, Is.EqualTo("choice-a"));
+			}
+		}
+
+		[Test]
+		public void PersistentSliceIdentity_FinalSublayoutResetsLayoutAndCallerChain()
+		{
+			var document = new XmlDocument();
+			document.LoadXml(@"<root>
+  <layout class='LexEntry' type='detail' name='Normal'><part ref='Outer'/></layout>
+  <sublayout name='Inline'/>
+  <layout class='LexEntry' type='detail' name='Inline'><part ref='Inner'/></layout>
+</root>");
+			var outerLayout = document.SelectSingleNode("/root/layout[@name='Normal']");
+			var outerPart = outerLayout.SelectSingleNode("part");
+			var sublayout = document.SelectSingleNode("/root/sublayout");
+			var innerLayout = document.SelectSingleNode("/root/layout[@name='Inline']");
+			var innerPart = innerLayout.SelectSingleNode("part");
+			using (var slice = new Slice
+			{
+				Cache = Cache,
+				Object = m_entry,
+				ConfigurationNode = document.CreateElement("slice"),
+				Key = new object[] { outerLayout, outerPart, sublayout, innerLayout, innerPart }
+			})
+			{
+				var identity = m_view.PersistentSliceIdentity(slice);
+
+				Assert.That(identity.LayoutName, Is.EqualTo("Inline"));
+				Assert.That(identity.CallerPath, Is.EqualTo("part[0]"));
+				Assert.That(identity.LayoutPath, Has.Count.EqualTo(1));
+			}
 		}
 
 		// ----------------------------------------------------------------------------------------

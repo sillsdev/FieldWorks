@@ -3,11 +3,9 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using System.Threading;
 using System.Xml.Linq;
 using SIL.FieldWorks.Common.FwAvalonia;
 using SIL.FieldWorks.Common.FwAvalonia.Detail;
@@ -41,12 +39,10 @@ namespace SIL.FieldWorks.XWorks
 	}
 
 	/// <summary>
-	/// Resolves the per-project sparse override patch for a compiled (class, layout), or null when the
-	/// project did not customize that layout. The host wires this to the
-	/// <c>ViewDefinitionOverrideStore</c> in the project ConfigurationSettings folder; tests supply an
-	/// in-memory resolver. Kept a delegate so the composer needs no reference to the file-backed store.
+	/// Resolves an immutable effective project layout snapshot, or null when no layout matches.
 	/// </summary>
-	public delegate ViewDefinitionOverride ViewDefinitionOverrideResolver(string className, string layoutName);
+	public delegate ViewDefinitionSourceSnapshot ViewDefinitionSourceResolver(ICmObject obj,
+		string layoutName, string choiceGuid, string callerXml);
 
 	/// <summary>
 	/// Composes the COMPLETE Lexical Edit view for an entry (sections 6/7): walks the compiled
@@ -86,18 +82,8 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		// Observable memoization: counts the expensive snapshot builds (layout
-		// lookup + layout.ToString() + fingerprint + compile). A repeat compose must not grow it.
-		private static int s_snapshotCompileCount;
-
-		internal static int SnapshotCompileCount => s_snapshotCompileCount;
-
 		/// <summary>
-		/// The loaded sources, immutable for the process lifetime: the layout lookup is
-		/// indexed once and compiled definitions are memoized per (starting class, layout),
-		/// so repeat composes and the per-item menu peeks never rebuild or re-fingerprint
-		/// the ~300KB parts snapshot. Class ids and the class hierarchy are fixed LCModel
-		/// metadata, so the memo is safe across caches.
+		/// The immutable shipped sources used when an effective project source has no layout.
 		/// </summary>
 		private sealed class CompilerSources
 		{
@@ -106,19 +92,14 @@ namespace SIL.FieldWorks.XWorks
 			// the right one (legacy distinguishes e.g. 11 RnGenericRec/Normal layouts only by
 			// choiceGuid).
 			public Dictionary<(string ClassName, string Type, string Name), List<XElement>> LayoutIndex;
-			// Memoized per (starting class, layout, choiceGuid) -- choiceGuid is part of the
-			// identity so two
-			// record Types on the same class compile to two distinct models (never a cache collision).
-			public readonly ConcurrentDictionary<(int ClassId, string LayoutName, string ChoiceGuid), ViewDefinitionModel> CompiledModels
-				= new ConcurrentDictionary<(int, string, string), ViewDefinitionModel>();
 		}
 
 		public static ComposedDetail Compose(ILexEntry entry, LcmCache cache, bool showHiddenFields = false,
 			SlicePluginRegistry plugins = null,
-			ViewDefinitionOverrideResolver overrides = null,
-			ISet<string> showAllWritingSystemsFields = null)
-			=> Compose((ICmObject)entry, cache, "Normal", showHiddenFields, plugins, overrides,
-				showAllWritingSystemsFields: showAllWritingSystemsFields);
+			ViewDefinitionSourceResolver source = null,
+			ISet<DetailLayoutSliceIdentity> showAllWritingSystemsSlices = null)
+			=> Compose((ICmObject)entry, cache, "Normal", showHiddenFields, plugins, source,
+				showAllWritingSystemsSlices: showAllWritingSystemsSlices);
 
 		/// <summary>
 		/// Compose the structured detail view for ANY record root + starting layout -- the
@@ -129,25 +110,21 @@ namespace SIL.FieldWorks.XWorks
 		/// object and the starting layout instead of hardcoding LexEntry/"Normal", so wiring a new tool onto
 		/// the Avalonia side needs only its registration + (when its layout uses one) a layoutChoiceField.
 		/// </summary>
-		/// <param name="showAllWritingSystemsFields">Template StableIds of parts under a
-		/// transient "Show all right now" reveal: every row of those parts composes with its
-		/// full writing-system set, ignoring per-field visibility restrictions.</param>
 		public static ComposedDetail Compose(ICmObject obj, LcmCache cache, string layoutName = "Normal",
 			bool showHiddenFields = false, SlicePluginRegistry plugins = null,
-			ViewDefinitionOverrideResolver overrides = null,
+			ViewDefinitionSourceResolver source = null,
 			string layoutChoiceField = null,
-			ISet<string> showAllWritingSystemsFields = null)
+			ISet<DetailLayoutSliceIdentity> showAllWritingSystemsSlices = null)
 		{
 			if (obj == null) throw new ArgumentNullException(nameof(obj));
 			if (cache == null) throw new ArgumentNullException(nameof(cache));
-			if (string.IsNullOrEmpty(layoutName)) layoutName = "Normal";
 
 			// When the tool's layout is type-selected (e.g. Notebook RnGenericRec uses
 			// layoutChoiceField="Type"), resolve the record's chosen possibility GUID so CompileForObject
 			// picks the matching layout variant instead of the document-first one.
 			var choiceGuid = ResolveLayoutChoiceGuid(cache, obj, layoutChoiceField);
 
-			var root = CompileForObject(cache, obj, layoutName, choiceGuid, overrides);
+			var root = CompileForObject(cache, obj, layoutName, choiceGuid, source, null);
 			if (root == null)
 				return null;
 
@@ -156,8 +133,8 @@ namespace SIL.FieldWorks.XWorks
 			// bridges the gap (plugin factories run at render time, not compose).
 			IDetailEditContext composedContext = null;
 			var state = new ComposeState(cache, showHiddenFields,
-				plugins ?? SlicePluginRegistry.Default, () => composedContext, overrides,
-				showAllWritingSystemsFields);
+				plugins ?? SlicePluginRegistry.Default, () => composedContext, source,
+				showAllWritingSystemsSlices);
 			state.EnterModel(root);
 			foreach (var node in root.Roots)
 				state.Walk(node, obj, 0);
@@ -165,7 +142,7 @@ namespace SIL.FieldWorks.XWorks
 
 			var context = new ComposedDetailEditContext(cache, obj, state.Handlers);
 			composedContext = context;
-			var model = new DetailModel(obj.ClassName, layoutName, state.Fields, root.Diagnostics);
+			var model = new DetailModel(root.ClassName, root.LayoutName, state.Fields, state.Diagnostics);
 			return new ComposedDetail(model, context);
 		}
 
@@ -265,9 +242,13 @@ namespace SIL.FieldWorks.XWorks
 			private readonly LcmCache _cache;
 			private readonly ISilDataAccess _sda;
 			private readonly IFwMetaDataCacheManaged _mdc;
-			private readonly HashSet<(int hvo, string layout)> _visited = new HashSet<(int, string)>();
+			private readonly HashSet<(int hvo, string layout, string choice)> _visited
+				= new HashSet<(int, string, string)>();
 
 			public readonly List<DetailField> Fields = new List<DetailField>();
+			// Preserve diagnostics from every layout crossed during composition.
+			// Nested unsupported constructs must remain visible to the host.
+			public readonly List<ViewDiagnostic> Diagnostics = new List<ViewDiagnostic>();
 			// One edit handler per composed field, keyed by StableId. A field's text/rich-text/option/
 			// reference/paragraph write delegates live together on its handler (null where the field's kind
 			// does not support a gesture), replacing the former nine parallel setter dictionaries that had
@@ -288,24 +269,17 @@ namespace SIL.FieldWorks.XWorks
 			}
 
 			private readonly bool _showHidden;
-			// The per-project override resolver, threaded into every CompileForObject
-			// so a descended object's layout gets its own patch applied; plus the (class, layout) of the
-			// model currently being walked, captured onto each emitted field so the host's per-field
-			// menu-button commands target the right override file. A stack so the entry
-			// context restores after a nested object's walk returns.
-			private readonly ViewDefinitionOverrideResolver _overrides;
-			private readonly Stack<(string ClassName, string LayoutName)> _modelContext
-				= new Stack<(string, string)>();
+			private readonly ViewDefinitionSourceResolver _source;
+			private readonly ISet<DetailLayoutPartIdentity> _showAllWsParts;
+			private readonly Stack<PersistenceContext> _persistenceContexts
+				= new Stack<PersistenceContext>();
+			private readonly Stack<string> _sourceCallerPaths = new Stack<string>();
 			// The plugin registry consulted FIRST for every
 			// custom slice, plus the deferred accessor for the edit context plugin factories
 			// receive (resolved when the factory runs, after Compose has built the context).
 			private readonly SlicePluginRegistry _plugins;
 			private readonly Func<IDetailEditContext> _editContextAccessor;
-			// Parts under the host's transient "Show all right now" reveal (template StableIds);
-			// every row of those parts composes with its full writing-system set.
-			private readonly ISet<string> _showAllWsFields;
-			// Per-compose memos -- the morph-type option list is identical for every
-			// IMoForm, and an item layout's menu/hotlinks binding is identical per (class, layout).
+			// Per-compose memos -- the morph-type option list is identical for every IMoForm.
 			private List<DetailChoiceOption> _morphTypeOptions;
 			// The project's character-type style names, computed once
 			// per compose from Cache.LangProject.StylesOC and stamped onto every editable text row's
@@ -326,52 +300,123 @@ namespace SIL.FieldWorks.XWorks
 			// once per compose from the project's analysis + vernacular writing systems and stamped onto
 			// every editable text / StText row so the owned editors can draw the per-run font display.
 			private IReadOnlyDictionary<string, DetailRunFont> _writingSystemFonts;
-			// CHOICE-UNSAFE KEY: this cache key omits choiceGuid while the menu
-			// binding is derived from the compiled layout's root, which can differ per choice variant. It is
-			// correct ONLY because descent currently compiles every embedded object with choiceGuid=null
-			// (CompileForObjectWithOverrides), so within one compose there is no choice variance to collide.
-			// If descent is ever changed to thread choiceGuid through, change this key to
-			// (ClassId, LayoutName, choiceGuid) in the SAME change, or this becomes a wrong-menu bug.
-			private readonly Dictionary<(int ClassId, string LayoutName), (string MenuId, string HotlinksId)> _itemMenuBindings
-				= new Dictionary<(int, string), (string, string)>();
+			private readonly Dictionary<(int ClassId, string LayoutName, string ChoiceGuid,
+				string CallerXml), ItemMenuBinding> _itemMenuBindings
+				= new Dictionary<(int, string, string, string), ItemMenuBinding>();
+
+			private static string NormalizeLayoutKey(string layoutName)
+				=> layoutName?.ToUpperInvariant();
+
+			private static string NormalizeChoiceKey(string choiceGuid)
+				=> choiceGuid?.ToUpperInvariant();
+
+			private readonly struct PersistenceContext
+			{
+				internal PersistenceContext(DetailLayoutIdentity layout, string callerPrefix,
+					IReadOnlyList<DetailLayoutIdentity> layoutPath)
+				{
+					Layout = layout;
+					CallerPrefix = callerPrefix;
+					LayoutPath = layoutPath;
+				}
+
+				internal DetailLayoutIdentity Layout { get; }
+				internal string CallerPrefix { get; }
+				internal IReadOnlyList<DetailLayoutIdentity> LayoutPath { get; }
+			}
+
+			private readonly struct ItemMenuBinding
+			{
+				internal ItemMenuBinding(string menuId, string hotlinksId, string callerPath,
+					string fieldName, bool hasTarget, DetailLayoutIdentity layout)
+				{
+					MenuId = menuId;
+					HotlinksId = hotlinksId;
+					CallerPath = callerPath;
+					FieldName = fieldName;
+					HasTarget = hasTarget;
+					Layout = layout;
+				}
+
+				internal string MenuId { get; }
+				internal string HotlinksId { get; }
+				internal string CallerPath { get; }
+				internal string FieldName { get; }
+				internal bool HasTarget { get; }
+				internal DetailLayoutIdentity Layout { get; }
+			}
 
 			public ComposeState(LcmCache cache, bool showHiddenFields,
 				SlicePluginRegistry plugins, Func<IDetailEditContext> editContextAccessor,
-				ViewDefinitionOverrideResolver overrides = null,
-				ISet<string> showAllWritingSystemsFields = null)
+				ViewDefinitionSourceResolver source = null,
+				ISet<DetailLayoutSliceIdentity> showAllWritingSystemsSlices = null)
 			{
 				_cache = cache;
 				_showHidden = showHiddenFields;
 				_plugins = plugins;
 				_editContextAccessor = editContextAccessor;
-				_overrides = overrides;
-				_showAllWsFields = showAllWritingSystemsFields;
+				_source = source;
+				_showAllWsParts = showAllWritingSystemsSlices == null
+					? null
+					: new HashSet<DetailLayoutPartIdentity>(showAllWritingSystemsSlices
+						.Select(slice => slice.LayoutPart));
 				_sda = cache.DomainDataByFlid;
 				_mdc = (IFwMetaDataCacheManaged)cache.DomainDataByFlid.MetaDataCache;
 			}
 
-			// Track which compiled model the walk is currently inside so each emitted
-			// field is stamped with its (class, layout). EnterModel/ExitModel bracket each compiled model's
-			// roots (the entry's own, and each descended object's), AddField stamps from the top of stack.
+			// The legacy writer persists against the root layout even while an object or
+			// sequence descent compiles another object's layout. Only a sublayout resets it.
 			public void EnterModel(ViewDefinitionModel model)
-				=> _modelContext.Push((model?.ClassName, model?.LayoutName));
+			{
+				AddDiagnostics(model);
+				var identity = LayoutIdentity(model);
+				_persistenceContexts.Push(new PersistenceContext(identity, null,
+					new[] { identity }));
+			}
+
+			private void EnterDescendedModel(ViewDefinitionModel model, string callerPath)
+			{
+				AddDiagnostics(model);
+				var current = _persistenceContexts.Peek();
+				var path = current.LayoutPath.Concat(new[] { LayoutIdentity(model) }).ToArray();
+				_persistenceContexts.Push(new PersistenceContext(current.Layout,
+					LegacyLayoutCallerPath.Combine(current.CallerPrefix, callerPath), path));
+			}
 
 			public void ExitModel()
 			{
-				if (_modelContext.Count > 0)
-					_modelContext.Pop();
+				if (_persistenceContexts.Count > 0)
+					_persistenceContexts.Pop();
 			}
 
 			private void AddField(DetailField field)
 			{
-				if (_modelContext.Count > 0)
+				if (_persistenceContexts.Count > 0)
 				{
-					var ctx = _modelContext.Peek();
-					field.ClassName = ctx.ClassName;
-					field.LayoutName = ctx.LayoutName;
+					var ctx = _persistenceContexts.Peek();
+					StampPersistenceIdentity(field, ctx.Layout,
+						LegacyLayoutCallerPath.Combine(ctx.CallerPrefix,
+							_sourceCallerPaths.Count > 0 ? _sourceCallerPaths.Peek() : null),
+						ctx.LayoutPath);
 				}
 
 				Fields.Add(field);
+			}
+
+			private static DetailLayoutIdentity LayoutIdentity(ViewDefinitionModel model)
+				=> new DetailLayoutIdentity(model?.ClassName, model?.LayoutType, model?.LayoutName,
+					model?.ChoiceGuid);
+
+			private static void StampPersistenceIdentity(DetailField field,
+				DetailLayoutIdentity layout, string callerPath,
+				IReadOnlyList<DetailLayoutIdentity> layoutPath)
+			{
+				field.ClassName = layout.ClassName;
+				field.LayoutName = layout.LayoutName;
+				field.LayoutType = layout.LayoutType;
+				field.ChoiceGuid = layout.ChoiceGuid;
+				field.SourceCallerPath = callerPath;
+				field.LayoutPath = layoutPath;
 			}
 
 			// The project's character-type style names, sourced from
@@ -509,11 +554,6 @@ namespace SIL.FieldWorks.XWorks
 				return _writingSystemFonts;
 			}
 
-			// Every CompileForObject in the walk goes through here so the per-project
-			// override patch for the descended object's own (class, layout) is applied to its model too.
-			private ViewDefinitionModel CompileForObjectWithOverrides(ICmObject obj, string layoutName)
-				=> CompileForObject(_cache, obj, layoutName, _overrides);
-
 			// Viewing parity: "show hidden fields" surfaces visibility=never fields and keeps empty
 			// ifdata fields visible, exactly like legacy m_fShowAllFields.
 			private bool IsHidden(ViewNode node) => node.Visibility == ViewVisibility.Never && !_showHidden;
@@ -525,35 +565,39 @@ namespace SIL.FieldWorks.XWorks
 				if (IsHidden(node) || depth > MaxDepth)
 					return;
 
-				switch (node.Kind)
+				_sourceCallerPaths.Push(node.SourceCallerPath);
+				try
 				{
-					case ViewNodeKind.Field:
-						WalkField(node, obj, depth);
-						break;
-					case ViewNodeKind.Group:
-						WalkGroup(node, obj, depth);
-						break;
-					case ViewNodeKind.ObjectAtom:
-						WalkObjectAtom(node, obj, depth);
-						break;
-					case ViewNodeKind.Sequence:
-						WalkSequence(node, obj, depth);
-						break;
-					case ViewNodeKind.CustomFieldPlaceholder:
-						// Runtime expansion of `customFields="here"` from
-						// live MDC metadata.
-						WalkCustomFields(node, obj, depth);
-						break;
-					case ViewNodeKind.Conditional:
-						// Legacy <if>/<ifnot> -- content composes only when the per-object
-						// condition
-						// passes (DataTree.ProcessSubpartNode cases "if"/"ifnot").
-						WalkConditional(node, obj, depth);
-						break;
-					case ViewNodeKind.ChoiceGroup:
-						// Legacy <choice> -- first passing <where> (or the <otherwise>) only.
-						WalkChoiceGroup(node, obj, depth);
-						break;
+					switch (node.Kind)
+					{
+						case ViewNodeKind.Field:
+							WalkField(node, obj, depth);
+							break;
+						case ViewNodeKind.Group:
+							WalkGroup(node, obj, depth);
+							break;
+						case ViewNodeKind.ObjectAtom:
+							WalkObjectAtom(node, obj, depth);
+							break;
+						case ViewNodeKind.Sequence:
+							WalkSequence(node, obj, depth);
+							break;
+						case ViewNodeKind.Sublayout:
+							WalkSublayout(node, obj, depth);
+							break;
+						case ViewNodeKind.CustomFieldPlaceholder:
+							break;
+						case ViewNodeKind.Conditional:
+							WalkConditional(node, obj, depth);
+							break;
+						case ViewNodeKind.ChoiceGroup:
+							WalkChoiceGroup(node, obj, depth);
+							break;
+					}
+				}
+				finally
+				{
+					_sourceCallerPaths.Pop();
 				}
 			}
 
@@ -745,83 +789,16 @@ namespace SIL.FieldWorks.XWorks
 				return false;
 			}
 
-			// A layout can reach the same object through two placeholders (e.g. a
-			// persisted user override); legacy dedupes by sibling scan
-			// (DataTree.CheckCustomFieldsSibling) -- a (hvo, flid) set does the same.
-			private readonly HashSet<(int Hvo, int Flid)> _emittedCustomFields = new HashSet<(int, int)>();
-
-			// Expand the placeholder the way legacy DataTree.EnsureCustomFields +
-			// SliceFactory.MakeAutoCustomSlice do -- enumerate the MDC's custom fields whose
-			// class
-			// is the object's class or a base class (legacy walks FieldDescription.FieldDescriptors,
-			// i.e. the MDC field list; sorted by flid here for determinism = creation order per
-			// class), synthesize a typed field node per custom field, and dispatch it through the
-			// normal walk so text rows ride the same setter registry/fenced session as authored
-			// fields. The legacy generated `<part ref="Custom" param=.../>` carries no visibility
-			// attribute, so every node is visibility=always: empty custom fields still render,
-			// with or without "show hidden fields".
-			private void WalkCustomFields(ViewNode placeholder, ICmObject obj, int depth)
+			private void AddDiagnostics(ViewDefinitionModel model)
 			{
-				var interestingClasses = new HashSet<int>();
-				var clsid = obj.ClassID;
-				while (clsid != 0)
-				{
-					interestingClasses.Add(clsid);
-					clsid = _mdc.GetBaseClsId(clsid);
-				}
+				if (model?.Diagnostics == null)
+					return;
 
-				foreach (var flid in _mdc.GetFieldIds()
-					.Where(f => _mdc.IsCustom(f) && interestingClasses.Contains(_mdc.GetOwnClsId(f)))
-					.OrderBy(f => f))
+				foreach (var diagnostic in model.Diagnostics)
 				{
-					if (!_emittedCustomFields.Add((obj.Hvo, flid)))
-						continue;
-					Walk(MakeCustomFieldNode(placeholder, flid), obj, depth);
+					Diagnostics.Add(diagnostic);
+					SIL.Reporting.Logger.WriteEvent("Avalonia layout diagnostic: " + diagnostic);
 				}
-			}
-
-			// One synthesized node per custom field, typed like MakeAutoCustomSlice's editor
-			// switch: String/MultiString/MultiUnicode take the text path (multi-WS per the field's
-			// WsSelector, resolved through the same legacy magic-ws pair WalkTextField uses);
-			// Integer stays an editable int row, GenDate a read-only formatted row, references
-			// read-only joined names (chooser write-back rides the reference-vector path), and OwningAtomic StText
-			// read-only paragraphs -- all via WalkOtherField's type dispatch. The label is the
-			// field's Userlabel (mdc.GetFieldLabel), the menu the autoCustom slice's
-			// mnuDataTree-Help (StandardParts.xml CmObject-Detail-Custom).
-			private ViewNode MakeCustomFieldNode(ViewNode placeholder, int flid)
-			{
-				var fieldName = _mdc.GetFieldName(flid);
-				string rawEditor;
-				string wsSpec = null;
-				switch ((CellarPropertyType)_mdc.GetFieldType(flid))
-				{
-					case CellarPropertyType.String:
-						rawEditor = EditorKindMap.StringEditor;
-						wsSpec = WritingSystemServices.GetMagicWsNameFromId(_mdc.GetFieldWs(flid));
-						break;
-					case CellarPropertyType.MultiUnicode:
-					case CellarPropertyType.MultiString:
-						var fieldWs = _mdc.GetFieldWs(flid);
-						// A multi-alternative field with a singular (or unset) selector (LIFT
-						// import mints these) shows one fixed alternative, so it composes a
-						// plain string row without the Writing Systems menu.
-						rawEditor = fieldWs == WritingSystemServices.kwsAnal
-							|| fieldWs == WritingSystemServices.kwsVern
-							|| fieldWs == 0
-							? EditorKindMap.StringEditor
-							: EditorKindMap.MultiStringEditor;
-						wsSpec = WritingSystemServices.GetMagicWsNameFromId(fieldWs);
-						break;
-					default:
-						// Resolved by CellarPropertyType in WalkOtherField, like autoCustom.
-						rawEditor = EditorKindMap.AutoCustomEditor;
-						break;
-				}
-
-				return new ViewNode($"{placeholder.StableId}/custom:{fieldName}", ViewNodeKind.Field,
-					_mdc.GetFieldLabel(flid), null, fieldName, rawEditor, EditorClassification.Known,
-					wsSpec, ViewVisibility.Always, ViewExpansion.NotApplicable, placeholder.Indented,
-					null, null, menuId: "mnuDataTree-Help");
 			}
 
 			// The node's chooserLink wins; else the row derives its tool like the legacy path.
@@ -865,6 +842,12 @@ namespace SIL.FieldWorks.XWorks
 
 			// The three section-header construction sites (group header, summary slice, sequence
 			// banner) build the identical collapsible header row; one helper keeps them from drifting.
+			private bool LastFieldIsItemHeaderFor(ICmObject obj)
+			{
+				var last = Fields.Count > 0 ? Fields[Fields.Count - 1] : null;
+				return last != null && last.Kind == DetailFieldKind.Header && last.ObjectHvo == obj.Hvo;
+			}
+
 			private void AddHeader(ViewNode node, ICmObject obj, int depth, string label)
 			{
 				// Header row construction is shared with the thin mapper -- one construction
@@ -945,6 +928,16 @@ namespace SIL.FieldWorks.XWorks
 					}
 				}
 
+				if (string.Equals(node.RawEditor, EditorKindMap.AutoCustomEditor,
+					StringComparison.OrdinalIgnoreCase)
+					&& IsTextField(obj, node.Field))
+				{
+					WalkTextField(node, obj, depth);
+					foreach (var child in node.Children)
+						Walk(child, obj, depth + 1);
+					return;
+				}
+
 				// Category classification lives in EditorKindMap; this switch routes to walkers.
 				switch (EditorKindMap.ClassifyDetailFieldKind(node.RawEditor))
 				{
@@ -958,8 +951,15 @@ namespace SIL.FieldWorks.XWorks
 						WalkMsaChooser(node, obj, depth);
 						break;
 					case DetailEditorCategory.Summary:
-						// Summary slices are section header rows in legacy too.
-						AddHeader(node, obj, depth, Localize(node.Label) ?? node.Field);
+						// Summary slices are section headers in legacy too. A HeavySummary right
+						// under its object's item header IS that header: no repeat, same depth.
+						if (string.IsNullOrEmpty(Localize(node.Label)) && LastFieldIsItemHeaderFor(obj))
+						{
+							foreach (var child in node.Children)
+								Walk(child, obj, depth);
+							return;
+						}
+						AddHeader(node, obj, depth, Localize(node.Label) ?? obj.ShortName ?? string.Empty);
 						break;
 					case DetailEditorCategory.Literal:
 						// A literal/"lit" slice (legacy MessageSlice) -- static label text
@@ -973,13 +973,9 @@ namespace SIL.FieldWorks.XWorks
 						WalkUnsupported(node, obj, depth);
 						break;
 					case DetailEditorCategory.EmbeddedView:
-						// An embedded formatted view (legacy jtview / ViewSlice + XmlView) composes the
-						// nested layout's fields INLINE for this same object, at depth+1 -- the
-						// recursive
-						// sub-view the legacy XmlView renders. WalkEmbeddedView reuses the
-						// CompileForObjectWithOverrides/EnterModel/Walk descent (the visited-set guards
-						// cycles); when the nested layout cannot be resolved it degrades to the
-						// read-only ShortName row rather than vanishing.
+						// Embedded views inline a nested layout for the same object.
+						// Missing layouts use a read-only ShortName row.
+						// Cycles terminate safely.
 						WalkEmbeddedView(node, obj, depth);
 						break;
 					case DetailEditorCategory.Command:
@@ -1026,7 +1022,16 @@ namespace SIL.FieldWorks.XWorks
 				}
 
 				var hvo = obj.Hvo;
-				var systems = ResolveTextRowWritingSystems(hvo, flid, type, node);
+				// autoCustom has no ws= of its own: MakeAutoCustomSlice shapes the row from the
+				// field's WsSelector (singular -> StringSlice, plural -> MultiStringSlice).
+				var isAutoCustom = string.Equals(node.RawEditor, EditorKindMap.AutoCustomEditor,
+					StringComparison.OrdinalIgnoreCase);
+				var fieldWs = isAutoCustom ? _mdc.GetFieldWs(flid) : 0;
+				var wsSpec = node.WritingSystem;
+				if (isAutoCustom && wsSpec == null)
+					wsSpec = WritingSystemServices.GetMagicWsNameFromId(fieldWs == 0
+						? WritingSystemServices.kwsAnal : fieldWs);
+				var systems = ResolveTextRowWritingSystems(hvo, flid, type, node, wsSpec);
 				var values = CreateTextRowValues(hvo, flid, type, systems, node, out var anyData, out var anyAudio);
 
 				if (!anyData && !anyAudio && HideWhenEmpty(node))
@@ -1038,16 +1043,18 @@ namespace SIL.FieldWorks.XWorks
 				// rows stay editable via the same plain text setter as the filename.
 				var editable = type != CellarPropertyType.Unicode
 					&& values.All(v => v.CanEditRichText || v.IsAudio);
-				var textField = new DetailField(stableId, Localize(node.Label) ?? node.Field, node.Field,
-					node.WritingSystem, DetailFieldKind.Text, node.EditorClassification, node.AutomationId,
+				var textField = new DetailField(stableId, NodeLabel(node, obj), node.Field,
+					wsSpec, DetailFieldKind.Text, node.EditorClassification, node.AutomationId,
 					node.LocalizationKey, node.Routing, values, null, null, editable, depth,
 					menuId: node.MenuId, contextMenuId: node.ContextMenuId, hotlinksId: node.HotlinksId,
 					objectHvo: obj.Hvo);
 				// A multistring editor is the legacy MultiStringSlice; its in-string context menu adds the
 				// shared mnuDataTree-MultiStringSlice group (Writing Systems submenu), a single-ws string
 				// editor does not. Carry that so the menu composition mirrors the legacy slice test.
-				textField.IsMultiStringRow = string.Equals(node.RawEditor,
-					EditorKindMap.MultiStringEditor, StringComparison.OrdinalIgnoreCase);
+				textField.IsMultiStringRow = isAutoCustom
+					? IsPluralMagicWritingSystem(fieldWs)
+					: string.Equals(node.RawEditor, EditorKindMap.MultiStringEditor,
+						StringComparison.OrdinalIgnoreCase);
 				if (editable)
 				{
 					// An editable text row over a run-bearing TsString property (String/MultiString)
@@ -1069,20 +1076,32 @@ namespace SIL.FieldWorks.XWorks
 				RegisterTextRowEditHandler(stableId, hvo, flid, type, systems);
 			}
 
-			// A text row's writing systems: the layout set, restricted by visibleWritingSystems
-			// unless the row's part is under the Show-all reveal, then collapsed to one ws for
-			// String/Unicode props.
+			// Resolve the layout set, its visible subset, and single-alternative row metadata.
+			// The MultiStringSlice selectors of MakeAutoCustomSlice; the rest are StringSlice.
+			private static bool IsPluralMagicWritingSystem(int magicWs)
+				=> magicWs == WritingSystemServices.kwsAnals
+					|| magicWs == WritingSystemServices.kwsVerns
+					|| magicWs == WritingSystemServices.kwsAnalVerns
+					|| magicWs == WritingSystemServices.kwsVernAnals;
+
 			private IReadOnlyList<CoreWritingSystemDefinition> ResolveTextRowWritingSystems(int hvo, int flid,
-				CellarPropertyType type, ViewNode node)
+				CellarPropertyType type, ViewNode node, string wsSpec)
 			{
-				IReadOnlyList<CoreWritingSystemDefinition> systems = ResolveWritingSystems(_cache, node.WritingSystem);
-				// A per-field writing-system visibility override (legacy visibleWritingSystems) restricts
-				// the resolved set to the authored subset (in the override's order), intersected with the
-				// field's valid writing systems. An empty intersection keeps the full set rather than hiding
-				// the field entirely (defensive -- a stale override must never blank a real
-				// field).
-				if (_showAllWsFields == null || !_showAllWsFields.Contains(node.StableId))
-					systems = ApplyVisibleWritingSystems(systems, node.VisibleWritingSystems);
+				IReadOnlyList<CoreWritingSystemDefinition> systems = ResolveWritingSystemOptions(
+					_cache, wsSpec, node.OptionalWritingSystem, hvo,
+					includeUncheckedActive: true, forceIncludeEnglish: node.ForceIncludeEnglish);
+				// A configured list keeps its selected alternatives plus every unselected
+				// alternative
+				// that contains data, in the valid-definition order used by the legacy view.
+				if (!IsWritingSystemReveal(node, hvo))
+				{
+					var selected = node.VisibleWritingSystems
+						?? ResolveWritingSystemOptions(_cache, wsSpec,
+							node.OptionalWritingSystem, hvo, includeUncheckedActive: false,
+							forceIncludeEnglish: node.ForceIncludeEnglish).Select(system => system.Id).ToArray();
+					systems = ApplyVisibleWritingSystems(systems, selected,
+						ws => HasAlternativeData(hvo, flid, type, ws.Handle));
+				}
 				if ((type == CellarPropertyType.String || type == CellarPropertyType.Unicode)
 					&& systems.Count > 0)
 				{
@@ -1116,6 +1135,24 @@ namespace SIL.FieldWorks.XWorks
 					systems = new[] { rowWs };
 				}
 				return systems;
+			}
+
+			private bool HasAlternativeData(int hvo, int flid, CellarPropertyType type, int ws)
+			{
+				if (type != CellarPropertyType.MultiString && type != CellarPropertyType.MultiUnicode)
+					return false;
+				return ReadTextProp(hvo, flid, ws, type)?.Length > 0;
+			}
+
+			private bool IsWritingSystemReveal(ViewNode node, int objectHvo)
+			{
+				if (_showAllWsParts == null || _persistenceContexts.Count == 0)
+					return false;
+				var ctx = _persistenceContexts.Peek();
+				var callerPath = LegacyLayoutCallerPath.Combine(ctx.CallerPrefix,
+					node.SourceCallerPath);
+				var part = new DetailLayoutPartIdentity(ctx.Layout, callerPath, ctx.LayoutPath);
+				return _showAllWsParts.Contains(part);
 			}
 
 			// The per-writing-system display values of a text row, with any voice alternative swapped for
@@ -1299,7 +1336,7 @@ namespace SIL.FieldWorks.XWorks
 				var options = _morphTypeOptions;
 
 				var stableId = StableId(node, obj);
-				AddField(new DetailField(stableId, Localize(node.Label) ?? node.Field, node.Field,
+				AddField(new DetailField(stableId, NodeLabel(node, obj), node.Field,
 					node.WritingSystem, DetailFieldKind.Chooser, node.EditorClassification, node.AutomationId,
 					node.LocalizationKey, node.Routing, null, options, form.MorphTypeRA?.Guid.ToString(),
 					isEditable: true, indent: depth,
@@ -1348,7 +1385,7 @@ namespace SIL.FieldWorks.XWorks
 				var selected = (sense.MorphoSyntaxAnalysisRA as IMoStemMsa)?.PartOfSpeechRA?.Guid.ToString();
 
 				var stableId = StableId(node, obj);
-				AddField(new DetailField(stableId, Localize(node.Label) ?? node.Field, node.Field,
+				AddField(new DetailField(stableId, NodeLabel(node, obj), node.Field,
 					node.WritingSystem, DetailFieldKind.Chooser, node.EditorClassification, node.AutomationId,
 					node.LocalizationKey, node.Routing, null, options, selected, isEditable: true, indent: depth,
 					menuId: node.MenuId, contextMenuId: node.ContextMenuId, hotlinksId: node.HotlinksId,
@@ -1397,7 +1434,7 @@ namespace SIL.FieldWorks.XWorks
 					? null
 					: _cache.ServiceLocator.ObjectRepository.GetObject(targetHvo).Guid.ToString();
 				var stableId = StableId(node, obj);
-				AddField(new DetailField(stableId, Localize(node.Label) ?? node.Field, node.Field,
+				AddField(new DetailField(stableId, NodeLabel(node, obj), node.Field,
 					node.WritingSystem, DetailFieldKind.Chooser, node.EditorClassification, node.AutomationId,
 					node.LocalizationKey, node.Routing, null, options, selected, isEditable: true, indent: depth,
 					menuId: node.MenuId, contextMenuId: node.ContextMenuId, hotlinksId: node.HotlinksId,
@@ -1445,7 +1482,7 @@ namespace SIL.FieldWorks.XWorks
 					? null
 					: _cache.ServiceLocator.ObjectRepository.GetObject(targetHvo).Guid.ToString();
 				var stableId = StableId(node, obj);
-				AddField(new DetailField(stableId, Localize(node.Label) ?? node.Field, node.Field,
+				AddField(new DetailField(stableId, NodeLabel(node, obj), node.Field,
 					node.WritingSystem, DetailFieldKind.Chooser, node.EditorClassification, node.AutomationId,
 					node.LocalizationKey, node.Routing, null, options, selected, isEditable: true, indent: depth,
 					menuId: node.MenuId, contextMenuId: node.ContextMenuId, hotlinksId: node.HotlinksId,
@@ -1482,7 +1519,7 @@ namespace SIL.FieldWorks.XWorks
 
 				var options = CreatePossibilityOptions(list, flat: false); // FlatList not imported; see above
 				var stableId = StableId(node, obj);
-				AddField(new DetailField(stableId, Localize(node.Label) ?? node.Field, node.Field,
+				AddField(new DetailField(stableId, NodeLabel(node, obj), node.Field,
 					node.WritingSystem, DetailFieldKind.ReferenceVector, node.EditorClassification,
 					node.AutomationId, node.LocalizationKey, node.Routing, null, options, null,
 					isEditable: true, indent: depth, menuId: node.MenuId, contextMenuId: node.ContextMenuId,
@@ -1547,7 +1584,7 @@ namespace SIL.FieldWorks.XWorks
 				}
 
 				var stableId = StableId(node, obj);
-				AddField(new DetailField(stableId, Localize(node.Label) ?? node.Field, node.Field,
+				AddField(new DetailField(stableId, NodeLabel(node, obj), node.Field,
 					node.WritingSystem, DetailFieldKind.ReferenceVector, node.EditorClassification,
 					node.AutomationId, node.LocalizationKey, node.Routing, null, options, null,
 					isEditable: true, indent: depth, menuId: node.MenuId, contextMenuId: node.ContextMenuId,
@@ -1923,7 +1960,7 @@ namespace SIL.FieldWorks.XWorks
 			private void AddGhostLexRefVector(ViewNode node, ILexEntry entry, int depth)
 			{
 				var stableId = StableId(node, entry);
-				AddField(new DetailField(stableId, Localize(node.Label) ?? node.Field, node.Field,
+				AddField(new DetailField(stableId, NodeLabel(node, entry), node.Field,
 					node.WritingSystem, DetailFieldKind.ReferenceVector, node.EditorClassification,
 					node.AutomationId, node.LocalizationKey, node.Routing, null, null, null,
 					isEditable: true, indent: depth, menuId: node.MenuId, contextMenuId: node.ContextMenuId,
@@ -2044,7 +2081,7 @@ namespace SIL.FieldWorks.XWorks
 				// object when it IS an entry, else its owning entry (e.g. obj is the LexEntryRef).
 				var owningEntry = obj as ILexEntry ?? obj.OwnerOfClass<ILexEntry>();
 
-				AddField(new DetailField(stableId, Localize(node.Label) ?? node.Field, node.Field,
+				AddField(new DetailField(stableId, NodeLabel(node, obj), node.Field,
 					node.WritingSystem, DetailFieldKind.ReferenceVector, node.EditorClassification,
 					node.AutomationId, node.LocalizationKey, node.Routing, null, null, null,
 					isEditable: true, indent: depth, menuId: node.MenuId, contextMenuId: node.ContextMenuId,
@@ -2181,7 +2218,7 @@ namespace SIL.FieldWorks.XWorks
 
 				var stableId = StableId(node, obj);
 
-				AddField(new DetailField(stableId, Localize(node.Label) ?? node.Field, node.Field,
+				AddField(new DetailField(stableId, NodeLabel(node, obj), node.Field,
 					node.WritingSystem, DetailFieldKind.ReferenceVector, node.EditorClassification,
 					node.AutomationId, node.LocalizationKey, node.Routing, null, null, null,
 					isEditable: true, indent: depth, menuId: node.MenuId, contextMenuId: node.ContextMenuId,
@@ -2581,7 +2618,7 @@ namespace SIL.FieldWorks.XWorks
 				// The "lit" slice's label/message text IS the content (legacy
 				// MessageSlice). Label column stays empty; message rides the value
 				// slot so it renders ONCE, as static gray content -- not duplicated.
-				var message = Localize(node.Label) ?? node.Field ?? string.Empty;
+				var message = NodeLabel(node, obj) ?? string.Empty;
 				AddField(new DetailField(StableId(node, obj), string.Empty,
 					node.Field, node.WritingSystem, DetailFieldKind.Literal, node.EditorClassification,
 					node.AutomationId, node.LocalizationKey, node.Routing,
@@ -2591,7 +2628,7 @@ namespace SIL.FieldWorks.XWorks
 
 			private void AddReadOnlyRow(ViewNode node, ICmObject obj, int depth, string display)
 			{
-				AddField(new DetailField(StableId(node, obj), Localize(node.Label) ?? node.Field,
+				AddField(new DetailField(StableId(node, obj), NodeLabel(node, obj),
 					node.Field, node.WritingSystem, DetailFieldKind.Text, node.EditorClassification,
 					node.AutomationId, node.LocalizationKey, node.Routing,
 					new List<DetailWsValue> { new DetailWsValue("", display ?? string.Empty) }, null, null,
@@ -2620,7 +2657,7 @@ namespace SIL.FieldWorks.XWorks
 				// The field is editable when the field itself is not hidden and EVERY paragraph round-trips
 				// (no ORC/lossy paragraph). A lossy paragraph holds its own row read-only via CanEditText, but
 				// the row's structural affordances (add/delete) stay available, so the field stays editable.
-				var field = new DetailField(stableId, Localize(node.Label) ?? node.Field, node.Field,
+				var field = new DetailField(stableId, NodeLabel(node, obj), node.Field,
 					node.WritingSystem, DetailFieldKind.StructuredText, node.EditorClassification,
 					node.AutomationId, node.LocalizationKey, node.Routing, null, null, null,
 					isEditable: true, indent: depth, menuId: node.MenuId, contextMenuId: node.ContextMenuId,
@@ -2709,7 +2746,7 @@ namespace SIL.FieldWorks.XWorks
 				// service-aware marker type test.
 				var context = new SlicePluginBuildContext(obj, node, _editContextAccessor, _cache);
 				Func<Avalonia.Controls.Control> factory = () => plugin.BuildControl(context);
-				AddField(new DetailField(StableId(node, obj), Localize(node.Label) ?? node.Field,
+				AddField(new DetailField(StableId(node, obj), NodeLabel(node, obj),
 					node.Field, node.WritingSystem, DetailFieldKind.Custom, node.EditorClassification,
 					node.AutomationId, node.LocalizationKey, node.Routing, null, null, null,
 					isEditable: true, indent: depth,
@@ -2723,7 +2760,7 @@ namespace SIL.FieldWorks.XWorks
 				// The Unsupported worklist row still binds its object and slice menus so a right-click
 				// keeps the legacy per-object commands (Field Visibility / Move Field / Help), and so the
 				// row is addressable by its object (menu targeting, override editing) like any other row.
-				AddField(new DetailField(StableId(node, obj), Localize(node.Label) ?? node.Field,
+				AddField(new DetailField(StableId(node, obj), NodeLabel(node, obj),
 					node.Field, node.WritingSystem, DetailFieldKind.Unsupported, node.EditorClassification,
 					node.AutomationId, node.LocalizationKey, node.Routing, null, null, null,
 					isEditable: false, indent: depth, menuId: node.MenuId, contextMenuId: node.ContextMenuId,
@@ -2737,7 +2774,7 @@ namespace SIL.FieldWorks.XWorks
 			// (ghost=/ghostWs=, e.g. the new allomorph's Form).
 			private void AddGhostPrompt(ViewNode node, ICmObject obj, int depth)
 			{
-				var label = Localize(node.GhostLabel) ?? Localize(node.Label) ?? node.Field;
+				var label = Localize(node.GhostLabel) ?? NodeLabel(node, obj);
 				if (string.IsNullOrEmpty(label))
 					return;
 				var prompt = string.Format(
@@ -2914,7 +2951,7 @@ namespace SIL.FieldWorks.XWorks
 
 				var expanded = node.Expansion != ViewExpansion.Collapsed;
 				var isSenses = node.Field == "Senses";
-				var sectionLabel = Localize(node.Label) ?? node.Field;
+				var sectionLabel = NodeLabel(node, obj);
 				// Nested sense sequences (Senses on a sense) don't repeat the section banner; the
 				// numbered items carry it.
 				if (!(isSenses && obj is ILexSense))
@@ -2941,14 +2978,24 @@ namespace SIL.FieldWorks.XWorks
 					// HeavySummary part ref binds mnuDataTree-Sense in LexSense.fwlayout) -- the
 					// sequence node itself usually has none.
 					var itemBinding = ResolveItemMenuBinding(node, item);
-					AddField(new DetailField($"{StableId(node, obj)}/item{i}",
-						itemLabel, node.Field, null, DetailFieldKind.Header,
+					var itemHeader = new DetailField($"{StableId(node, obj)}/item{i}",
+						itemLabel, itemBinding.HasTarget ? itemBinding.FieldName : node.Field,
+						null, DetailFieldKind.Header,
 						EditorClassification.GroupingNone, null, null, HostRouting.Inherit,
 						null, null, null, isEditable: false, indent: depth + 1,
 						isCollapsible: true, isInitiallyExpanded: expanded,
-						menuId: itemBinding.MenuId ?? node.MenuId,
-						hotlinksId: itemBinding.HotlinksId ?? node.HotlinksId,
-						objectHvo: item.Hvo));
+						menuId: itemBinding.HasTarget ? itemBinding.MenuId : node.MenuId,
+						hotlinksId: itemBinding.HasTarget ? itemBinding.HotlinksId : node.HotlinksId,
+						objectHvo: item.Hvo);
+					AddField(itemHeader);
+					if (itemBinding.HasTarget && !string.IsNullOrEmpty(itemBinding.CallerPath))
+					{
+						var ctx = _persistenceContexts.Peek();
+						StampPersistenceIdentity(itemHeader, ctx.Layout,
+							LegacyLayoutCallerPath.Combine(ctx.CallerPrefix,
+								node.SourceCallerPath, itemBinding.CallerPath),
+							ctx.LayoutPath.Concat(new[] { itemBinding.Layout }).ToArray());
+					}
 					DescendInto(node, item, depth + 1);
 				}
 			}
@@ -2956,27 +3003,54 @@ namespace SIL.FieldWorks.XWorks
 			// First root-level menu/hotlinks binding of the item's compiled layout (compile
 			// results are memoized per (class, layout), and the binding itself is memoized per
 			// compose state).
-			private (string MenuId, string HotlinksId) ResolveItemMenuBinding(ViewNode node, ICmObject item)
+			private ItemMenuBinding ResolveItemMenuBinding(ViewNode node, ICmObject item)
 			{
-				var layoutName = string.IsNullOrEmpty(node.TargetLayout) ? "Normal" : node.TargetLayout;
-				if (_itemMenuBindings.TryGetValue((item.ClassID, layoutName), out var cached))
+				var layoutName = node.TargetLayout ?? "default";
+				var choiceGuid = ResolveLayoutChoiceGuid(_cache, item, node.LayoutChoiceField);
+				var key = (item.ClassID, NormalizeLayoutKey(layoutName), NormalizeChoiceKey(choiceGuid),
+					node.SourceCallerXml);
+				if (_itemMenuBindings.TryGetValue(key, out var cached))
 					return cached;
 
-				var compiled = CompileForObjectWithOverrides(item, layoutName);
-				string menu = null, hotlinks = null;
+				var compiled = CompileForObject(_cache, item, layoutName, choiceGuid, _source,
+					node.SourceCallerXml);
+				ViewNode bindingRoot = null;
 				if (compiled != null)
 				{
-					foreach (var root in compiled.Roots)
-					{
-						menu = menu ?? (string.IsNullOrEmpty(root.MenuId) ? null : root.MenuId);
-						hotlinks = hotlinks ?? (string.IsNullOrEmpty(root.HotlinksId) ? null : root.HotlinksId);
-						if (menu != null && hotlinks != null)
-							break;
-					}
+					bindingRoot = compiled.Roots.FirstOrDefault(root =>
+						!string.IsNullOrEmpty(root.MenuId))
+						?? compiled.Roots.FirstOrDefault(root =>
+							!string.IsNullOrEmpty(root.HotlinksId));
 				}
 
-				_itemMenuBindings[(item.ClassID, layoutName)] = (menu, hotlinks);
-				return (menu, hotlinks);
+				var binding = new ItemMenuBinding(bindingRoot?.MenuId, bindingRoot?.HotlinksId,
+					bindingRoot?.SourceCallerPath,
+					bindingRoot?.Field, bindingRoot != null, LayoutIdentity(compiled));
+				_itemMenuBindings[key] = binding;
+				return binding;
+			}
+
+			private void WalkSublayout(ViewNode node, ICmObject obj, int depth)
+			{
+				var layoutName = node.TargetLayout ?? "default";
+				var choiceGuid = ResolveLayoutChoiceGuid(_cache, obj, node.LayoutChoiceField);
+				var key = (obj.Hvo, NormalizeLayoutKey(layoutName), NormalizeChoiceKey(choiceGuid));
+				if (!_visited.Add(key))
+					return;
+				try
+				{
+					var compiled = CompileForObject(_cache, obj, layoutName, choiceGuid, _source);
+					if (compiled == null)
+						return;
+					EnterModel(compiled);
+					foreach (var child in compiled.Roots)
+						Walk(child, obj, depth);
+					ExitModel();
+				}
+				finally
+				{
+					_visited.Remove(key);
+				}
 			}
 
 			// An embedded formatted view (legacy jtview / ViewSlice over an XmlView). The jtview's
@@ -2994,7 +3068,9 @@ namespace SIL.FieldWorks.XWorks
 					return;
 				}
 
-				if (!_visited.Add((obj.Hvo, layoutName)))
+				var choiceGuid = ResolveLayoutChoiceGuid(_cache, obj, node.LayoutChoiceField);
+				var key = (obj.Hvo, NormalizeLayoutKey(layoutName), NormalizeChoiceKey(choiceGuid));
+				if (!_visited.Add(key))
 				{
 					// Already composing this (object, layout) higher in the stack -- a cyclic
 					// jtview nest.
@@ -3004,10 +3080,10 @@ namespace SIL.FieldWorks.XWorks
 
 				try
 				{
-					var compiled = CompileForObjectWithOverrides(obj, layoutName);
+					var compiled = CompileForObject(_cache, obj, layoutName, choiceGuid, _source);
 					if (compiled != null && compiled.Roots.Count > 0)
 					{
-						EnterModel(compiled);
+						EnterDescendedModel(compiled, node.SourceCallerPath);
 						foreach (var child in compiled.Roots)
 							Walk(child, obj, depth + 1);
 						ExitModel();
@@ -3019,35 +3095,39 @@ namespace SIL.FieldWorks.XWorks
 				}
 				finally
 				{
-					_visited.Remove((obj.Hvo, layoutName));
+					_visited.Remove(key);
 				}
 			}
 
 			private void DescendInto(ViewNode node, ICmObject target, int depth)
 			{
-				var layoutName = string.IsNullOrEmpty(node.TargetLayout) ? "Normal" : node.TargetLayout;
-				if (!_visited.Add((target.Hvo, layoutName)))
+				var layoutName = node.TargetLayout ?? "default";
+				var choiceGuid = ResolveLayoutChoiceGuid(_cache, target, node.LayoutChoiceField);
+				var key = (target.Hvo, NormalizeLayoutKey(layoutName), NormalizeChoiceKey(choiceGuid));
+				if (!_visited.Add(key))
 					return;
 
-				var compiled = CompileForObjectWithOverrides(target, layoutName);
-				if (compiled != null && compiled.Roots.Count > 0)
+				try
 				{
-					// Rows from the descended model are stamped with ITS (class,
-					// layout), so the menu-button commands on a sense/allomorph row target
-					// that layout's override file, not the entry's.
-					EnterModel(compiled);
-					foreach (var child in compiled.Roots)
-						Walk(child, target, depth + 1);
-					ExitModel();
+					var compiled = CompileForObject(_cache, target, layoutName, choiceGuid, _source,
+						node.SourceCallerXml);
+					if (compiled != null && compiled.Roots.Count > 0)
+					{
+						EnterDescendedModel(compiled, node.SourceCallerPath);
+						foreach (var child in compiled.Roots)
+							Walk(child, target, depth + 1);
+						ExitModel();
+					}
+					else
+					{
+						foreach (var child in node.Children)
+							Walk(child, target, depth + 1);
+					}
 				}
-				else
+				finally
 				{
-					// No layout for the target: fall back to the caller-injected children, if any.
-					foreach (var child in node.Children)
-						Walk(child, target, depth + 1);
+					_visited.Remove(key);
 				}
-
-				_visited.Remove((target.Hvo, layoutName));
 			}
 
 			private int GetFlid(ICmObject obj, string fieldName)
@@ -3061,6 +3141,38 @@ namespace SIL.FieldWorks.XWorks
 				catch (Exception)
 				{
 					return 0;
+				}
+			}
+
+			private string NodeLabel(ViewNode node, ICmObject obj)
+			{
+				var label = Localize(node.Label);
+				if (label != null)
+					return label;
+				if (string.Equals(node.RawEditor, EditorKindMap.AutoCustomEditor,
+					StringComparison.OrdinalIgnoreCase))
+				{
+					var flid = GetFlid(obj, node.Field);
+					if (flid != 0)
+						return _mdc.GetFieldLabel(flid);
+				}
+				return node.Field;
+			}
+
+			private bool IsTextField(ICmObject obj, string fieldName)
+			{
+				var flid = GetFlid(obj, fieldName);
+				if (flid == 0)
+					return false;
+				switch ((CellarPropertyType)_mdc.GetFieldType(flid))
+				{
+					case CellarPropertyType.MultiUnicode:
+					case CellarPropertyType.MultiString:
+					case CellarPropertyType.String:
+					case CellarPropertyType.Unicode:
+						return true;
+					default:
+						return false;
 				}
 			}
 
@@ -3079,23 +3191,38 @@ namespace SIL.FieldWorks.XWorks
 
 		// Mirrors legacy's GetMagicWsIdFromName/GetWritingSystemList; override falls back to all.
 		internal static IReadOnlyList<CoreWritingSystemDefinition> ApplyVisibleWritingSystems(
-			IReadOnlyList<CoreWritingSystemDefinition> systems, IReadOnlyList<string> visible)
+			IReadOnlyList<CoreWritingSystemDefinition> systems, IReadOnlyList<string> visible,
+			Func<CoreWritingSystemDefinition, bool> hasData = null)
 		{
-			if (visible == null || visible.Count == 0 || systems == null || systems.Count == 0)
+			if (visible == null || systems == null || systems.Count == 0)
 				return systems;
 
-			var byId = systems.ToDictionary(ws => ws.Id, System.StringComparer.OrdinalIgnoreCase);
-			var result = new List<CoreWritingSystemDefinition>();
-			var seen = new HashSet<string>(System.StringComparer.OrdinalIgnoreCase);
-			foreach (var spec in visible)
-			{
-				if (byId.TryGetValue(spec, out var ws) && seen.Add(ws.Id))
-					result.Add(ws);
-			}
-			return result.Count > 0 ? result : systems;
+			var visibleIds = new HashSet<string>(visible);
+			return systems.Where(ws => visibleIds.Contains(ws.Id) || hasData?.Invoke(ws) == true)
+				.ToArray();
 		}
 
 		internal static IReadOnlyList<CoreWritingSystemDefinition> ResolveWritingSystems(LcmCache cache, string spec)
+			=> ResolveWritingSystems(cache, spec, 0, false, false);
+
+		internal static IReadOnlyList<CoreWritingSystemDefinition> ResolveWritingSystemOptions(
+			LcmCache cache, string spec, string optionalSpec, int hvo,
+			bool includeUncheckedActive, bool forceIncludeEnglish)
+		{
+			var systems = ResolveWritingSystems(cache, spec, hvo, includeUncheckedActive,
+				forceIncludeEnglish);
+			if (!includeUncheckedActive || string.IsNullOrEmpty(optionalSpec))
+				return systems;
+
+			var optional = ResolveWritingSystems(cache, optionalSpec, hvo, includeUncheckedActive,
+				forceIncludeEnglish);
+			var seen = new HashSet<int>(systems.Select(system => system.Handle));
+			return systems.Concat(optional.Where(system => seen.Add(system.Handle))).ToArray();
+		}
+
+		private static IReadOnlyList<CoreWritingSystemDefinition> ResolveWritingSystems(
+			LcmCache cache, string spec, int hvo, bool includeUncheckedActive,
+			bool forceIncludeEnglish)
 		{
 			var magicId = WritingSystemServices.GetMagicWsIdFromName(spec);
 			switch (magicId)
@@ -3108,108 +3235,91 @@ namespace SIL.FieldWorks.XWorks
 					break;
 			}
 
-			return WritingSystemServices.GetWritingSystemList(cache, magicId, forceIncludeEnglish: false);
+			return WritingSystemServices.GetWritingSystemList(cache, magicId, hvo,
+				forceIncludeEnglish, includeUncheckedActive);
 		}
 
 		/// <summary>
-		/// Compiles the layout for an object's class, walking base classes the way legacy
-		/// DataTree
-		/// does (e.g. MoStemAllomorph -> MoForm) for both layout lookup and part resolution.
-		/// Memoized per (starting class, layout) for the lifetime of the loaded sources.
-		/// </summary>
-		/// <summary>
 		/// Resolve the layout-choice GUID for a record whose detail layout is type-selected via
 		/// a <c>layoutChoiceField</c> (e.g. RnGenericRec/Normal keyed on the record's <c>Type</c> possibility).
-		/// Returns the chosen possibility's GUID string, or null when there is no choice field / no value /
-		/// the field is not an atomic object reference -- mirroring legacy DataTree, which then
-		/// falls back to
-		/// the choiceGuid-less layout variant.
+		/// Returns the chosen possibility's GUID string, or null when there is no choice field or
+		/// the atomic reference has no value.
 		/// </summary>
 		internal static string ResolveLayoutChoiceGuid(LcmCache cache, ICmObject obj, string layoutChoiceField)
 		{
 			if (obj == null || string.IsNullOrEmpty(layoutChoiceField))
 				return null;
-			try
-			{
-				var mdc = (IFwMetaDataCacheManaged)cache.DomainDataByFlid.MetaDataCache;
-				var flid = mdc.GetFieldId2(obj.ClassID, layoutChoiceField, true);
-				if (flid == 0)
-					return null;
-				var targetHvo = cache.DomainDataByFlid.get_ObjectProp(obj.Hvo, flid);
-				if (targetHvo == 0 || !cache.ServiceLocator.IsValidObjectId(targetHvo))
-					return null;
-				return cache.ServiceLocator.GetObject(targetHvo).Guid.ToString();
-			}
-			catch (Exception)
-			{
-				// A non-atomic field (or any metadata mismatch) just means "no choice" ->
-				// choiceGuid-less layout.
-				return null;
-			}
+			var mdc = (IFwMetaDataCacheManaged)cache.DomainDataByFlid.MetaDataCache;
+			var flid = mdc.GetFieldId2(obj.ClassID, layoutChoiceField, true);
+			var targetHvo = cache.DomainDataByFlid.get_ObjectProp(obj.Hvo, flid);
+			return targetHvo == 0
+				? null
+				: cache.ServiceLocator.GetObject(targetHvo).Guid.ToString();
 		}
 
 		internal static ViewDefinitionModel CompileForObject(LcmCache cache, ICmObject obj, string layoutName)
 			=> CompileForObject(cache, obj, layoutName, null, null);
 
 		internal static ViewDefinitionModel CompileForObject(LcmCache cache, ICmObject obj, string layoutName,
-			ViewDefinitionOverrideResolver overrides)
-			=> CompileForObject(cache, obj, layoutName, null, overrides);
+			ViewDefinitionSourceResolver source)
+			=> CompileForObject(cache, obj, layoutName, null, source);
 
 		/// <summary>
-		/// Compiles (with the legacy base-class walk) and, when <paramref name="overrides"/> supplies a
-		/// per-project patch for the resulting (class, layout), returns the patched model
-		/// CRITICAL: the cache (<see cref="CompilerSources.CompiledModels"/>) holds
-		/// the SHIPPED model only -- the override is applied on the way OUT to a fresh copy
-		/// (<see cref="ViewDefinitionOverrideApplier.Apply"/> is pure), so a patched project never poisons
-		/// the process-wide cache that other projects/classes read.
+		/// Compiles the effective project layout when supplied, otherwise using shipped sources.
 		/// </summary>
 		internal static ViewDefinitionModel CompileForObject(LcmCache cache, ICmObject obj, string layoutName,
-			string choiceGuid, ViewDefinitionOverrideResolver overrides)
+			string choiceGuid, ViewDefinitionSourceResolver source, string callerXml = null)
 		{
+			if (source != null)
+			{
+				var projectSnapshot = source(obj, layoutName, choiceGuid, callerXml);
+				if (projectSnapshot == null)
+					return null;
+				var expandedSnapshot = projectSnapshot.CustomFieldsExpanded
+					? projectSnapshot
+					: ExpandCustomFields(cache, obj.ClassID, projectSnapshot);
+				return Compiler.Compile(expandedSnapshot);
+			}
+			return CompileForClass(cache, obj.ClassID, layoutName, choiceGuid);
+		}
+
+		private static ViewDefinitionModel CompileForClass(LcmCache cache, int classId, string layoutName,
+			string choiceGuid)
+		{
+			var mdc = (IFwMetaDataCacheManaged)cache.DomainDataByFlid.MetaDataCache;
 			var sources = GetSources();
 			if (sources == null)
 				return null;
 
-			var shipped = sources.CompiledModels.GetOrAdd((obj.ClassID, layoutName, choiceGuid ?? string.Empty),
-				key => CompileForClass(cache, key.ClassId, key.LayoutName, key.ChoiceGuid, sources));
-			if (shipped == null || overrides == null)
-				return shipped;
-
-			// The compiled model's ClassName is the class where the layout was actually found (possibly a
-			// base class of obj.ClassID); key the override by that, matching how the patch was authored.
-			var patch = overrides(shipped.ClassName, shipped.LayoutName);
-			return patch == null || patch.IsEmpty
-				? shipped
-				: ViewDefinitionOverrideApplier.Apply(shipped, patch);
-		}
-
-		private static ViewDefinitionModel CompileForClass(LcmCache cache, int classId, string layoutName,
-			string choiceGuid, CompilerSources sources)
-		{
-			Interlocked.Increment(ref s_snapshotCompileCount);
-
-			var mdc = (IFwMetaDataCacheManaged)cache.DomainDataByFlid.MetaDataCache;
 			var baseClassMap = new Dictionary<string, string>(StringComparer.Ordinal);
+			var originalClassId = classId;
 			var clsid = classId;
+			var requestedName = layoutName ?? "default";
+			var useName = requestedName;
 			XElement layout = null;
 			string className = null;
 			while (true)
 			{
 				className = mdc.GetClassName(clsid);
-				// Pick the choiceGuid-matching variant (exact match, else the choiceGuid-less
-				// fallback, else first) so a record's layoutChoiceField selects the right layout instead of the
-				// document-first one.
-				if (sources.LayoutIndex.TryGetValue((className, "detail", layoutName), out var variants))
+				if (sources.LayoutIndex.TryGetValue((className, "detail", useName), out var variants))
 				{
 					layout = LayoutSourceLoader.SelectLayoutForChoice(variants, choiceGuid);
 					if (layout != null)
 						break;
 				}
+				if (clsid == 0 && !string.Equals(useName, "default",
+					StringComparison.OrdinalIgnoreCase))
+				{
+					useName = "default";
+					clsid = originalClassId;
+					className = mdc.GetClassName(clsid);
+				}
 				if (clsid == 0)
-					return null;
+					throw new LayoutNotFoundException("No exact layout found for class "
+						+ className + " detail layout " + requestedName + ".");
 				var baseId = mdc.GetBaseClsId(clsid);
 				if (baseId == clsid)
-					return null;
+					throw new InvalidOperationException("The metadata class hierarchy contains a cycle.");
 				baseClassMap[className] = mdc.GetClassName(baseId);
 				clsid = baseId;
 			}
@@ -3219,36 +3329,138 @@ namespace SIL.FieldWorks.XWorks
 			while (chain != 0)
 			{
 				var baseId = mdc.GetBaseClsId(chain);
-				if (baseId == chain || baseId == 0)
+				if (baseId == chain)
 					break;
 				baseClassMap[mdc.GetClassName(chain)] = mdc.GetClassName(baseId);
+				if (baseId == 0)
+					break;
 				chain = baseId;
 			}
 
-			var snapshot = new ViewDefinitionSourceSnapshot(className, "detail", layout.ToString(),
-				sources.PartsXml, baseClassMap);
+			var effectiveLayout = new XElement(layout);
+			ExpandCustomFields(effectiveLayout, cache, originalClassId, null);
+			var snapshot = new ViewDefinitionSourceSnapshot(mdc.GetClassName(originalClassId), "detail",
+				effectiveLayout.ToString(),
+				sources.PartsXml, baseClassMap, requestedName, choiceGuid, true);
 			return Compiler.Compile(snapshot);
+		}
+
+		internal static ViewDefinitionSourceSnapshot ExpandCustomFields(LcmCache cache,
+			ViewDefinitionSourceSnapshot snapshot)
+		{
+			if (snapshot == null)
+				return null;
+			if (cache == null)
+				return snapshot;
+			return ExpandCustomFields(cache,
+				cache.MetaDataCacheAccessor.GetClassId(snapshot.ClassName), snapshot);
+		}
+
+		internal static ViewDefinitionSourceSnapshot ExpandCustomFields(LcmCache cache,
+			int runtimeClassId, ViewDefinitionSourceSnapshot snapshot)
+		{
+			if (snapshot == null)
+				return null;
+			if (snapshot.CustomFieldsExpanded)
+				return snapshot;
+			var layout = XElement.Parse(snapshot.LayoutXml, LoadOptions.PreserveWhitespace);
+			ExpandCustomFields(layout, cache, runtimeClassId, null);
+			return new ViewDefinitionSourceSnapshot(snapshot.ClassName, snapshot.LayoutType,
+				layout.ToString(), snapshot.PartsXml, snapshot.BaseClassMap,
+				snapshot.RequestedLayoutName, snapshot.RequestedChoiceGuid, true);
+		}
+
+		internal static void ExpandCustomFields(XElement layout, LcmCache cache,
+			Action<XElement> persistMissingPlaceholder)
+		{
+			if (layout == null || cache == null)
+				return;
+			ExpandCustomFields(layout, cache,
+				cache.MetaDataCacheAccessor.GetClassId((string)layout.Attribute("class")),
+				persistMissingPlaceholder);
+		}
+
+		internal static void ExpandCustomFields(XElement layout, LcmCache cache,
+			int runtimeClassId, Action<XElement> persistMissingPlaceholder)
+		{
+			if (layout == null || cache == null)
+				return;
+
+			var interestingClasses = new HashSet<int>();
+			var clsid = runtimeClassId;
+			while (clsid != 0)
+			{
+				interestingClasses.Add(clsid);
+				clsid = cache.MetaDataCacheAccessor.GetBaseClsId(clsid);
+			}
+
+			var placeholders = layout.Descendants("part")
+				.Where(part => part.Attribute("customFields") != null
+					|| (string)part.Attribute("ref") == "_CustomFieldPlaceholder")
+				.ToList();
+			foreach (var placeholder in placeholders)
+			{
+				foreach (var descriptor in FieldDescription.FieldDescriptors(cache))
+				{
+					if (!descriptor.IsCustomField || !interestingClasses.Contains(descriptor.Class))
+						continue;
+					if (HasCustomFieldSibling(placeholder, descriptor.Name))
+						continue;
+
+					if (placeholder.Attribute("ref") == null)
+					{
+						placeholder.SetAttributeValue("ref", "_CustomFieldPlaceholder");
+						persistMissingPlaceholder?.Invoke(FindPersistableParent(placeholder));
+					}
+
+					placeholder.AddAfterSelf(new XElement("part",
+						new XAttribute("ref", "Custom"), new XAttribute("param", descriptor.Name)));
+				}
+			}
+		}
+
+		private static bool HasCustomFieldSibling(XElement placeholder, string fieldName)
+		{
+			return placeholder.Parent?.Elements()
+				.Any(sibling => sibling.Name.LocalName == "part"
+					&& (string)sibling.Attribute("ref") == "Custom"
+					&& (string)sibling.Attribute("param") == fieldName) == true;
+		}
+
+		private static XElement FindPersistableParent(XElement placeholder)
+		{
+			for (var parent = placeholder.Parent; parent != null; parent = parent.Parent)
+			{
+				if (parent.Name.LocalName == "part" || parent.Name.LocalName == "layout")
+					return parent;
+			}
+			throw new InvalidOperationException("No layout or part parent exists for a custom-field placeholder.");
 		}
 
 		private static CompilerSources LoadSources()
 		{
 			try
 			{
-				// The parts merge and layout glob live in the ONE shared loader
-				// (LayoutSourceLoader) that LexiconFirstSlice also uses.
-				var partsDirectory = FwDirectoryFinder.GetCodeSubDirectory(@"Language Explorer\Configuration\Parts");
-				var partsXml = LayoutSourceLoader.LoadMergedPartsXml(partsDirectory);
+				// The legacy Inventory loads DistFiles/Parts and then lets Language Explorer
+				// replace same-id entries; the loader is first-wins, so list that one first.
+				var partsDirectories = new[]
+				{
+					FwDirectoryFinder.GetCodeSubDirectory(@"Language Explorer\Configuration\Parts"),
+					FwDirectoryFinder.GetCodeSubDirectory("Parts")
+				};
+				var partsXml = LayoutSourceLoader.LoadMergedPartsXml(partsDirectories);
 				if (partsXml == null)
 				{
 					// Never a silent permanent failure -- log, fall back to the
 					// 3-field first slice for THIS compose, and retry next time (GetSources).
 					SIL.Reporting.Logger.WriteEvent(
-						"DetailComposer: no merged parts XML under '" + partsDirectory
+						"DetailComposer: no merged parts XML under '"
+						+ string.Join("', '", partsDirectories)
 						+ "'; falling back to the first slice (will retry on the next compose).");
 					return null;
 				}
 
-				var layoutFiles = LayoutSourceLoader.LoadLayoutFiles(partsDirectory);
+				var layoutFiles = LayoutSourceLoader.LoadLayoutFiles(partsDirectories);
 				return new CompilerSources
 				{
 					PartsXml = partsXml,

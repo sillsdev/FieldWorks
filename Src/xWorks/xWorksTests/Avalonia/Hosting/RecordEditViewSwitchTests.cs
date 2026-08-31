@@ -7,6 +7,7 @@ using System.Xml;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwAvalonia;
+using SIL.FieldWorks.Common.FwAvalonia.Detail;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Infrastructure;
@@ -44,7 +45,8 @@ namespace SIL.FieldWorks.XWorks
 			// EnsureDataTreeInitialized (LayoutCache loads the real lexicon .fwlayout/Parts).
 			// Without it, DataTree.GetTemplateForObjLayout finds a null layout inventory and ShowObject
 			// throws an NRE once the idle-queued show actually runs.
-			LayoutCache.InitializePartInventories(Cache.ProjectId.Name, m_application, Cache.ProjectId.Path);
+			LayoutCache.InitializePartInventories(Cache.ProjectId.Name, m_application,
+				Cache.ProjectId.ProjectFolder);
 			m_createdObjects = new List<ICmObject>();
 			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, CreateLexiconTestData);
 		}
@@ -141,6 +143,77 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(GetPrivateFieldValue(control, "m_activeUIFramework"), Is.EqualTo(UIFramework.Avalonia));
 			Assert.That(GetPrivateFieldValue(control, "m_avaloniaRefreshController"), Is.Not.Null,
 				"flipping back to New must rebuild the refresh controller");
+		}
+
+		[Test]
+		public void LexiconEditTool_PersistedProjectLayoutChange_IsVisibleAfterFrameworkSwitch()
+		{
+			m_propertyTable.SetProperty("UIMode", "New", true);
+			m_propertyTable.SetPropertyPersistence("UIMode", false);
+			LoadRecordEditView();
+			DrainMediatorAndIdleQueues();
+
+			var control = m_propertyTable.GetValue<object>("currentContentControlObject", null)
+				as RecordEditView;
+			Assert.That(control, Is.Not.Null);
+			EnsureCurrentRecord(control);
+			Assert.That(GetHostedDetailModel(control).Fields,
+				Has.Some.Property("Field").EqualTo("CitationForm"),
+				"precondition: the initial project layout includes Citation Form");
+
+			var layouts = Inventory.GetInventory("layouts", Cache.ProjectId.Name);
+			var configurationDirectory = LcmFileHelper.GetConfigSettingsDir(
+				Cache.ProjectId.ProjectFolder);
+			var overridePath = GetLexEntryOverridePath(configurationDirectory);
+			var overrideExisted = File.Exists(overridePath);
+			var overrideBytes = overrideExisted ? File.ReadAllBytes(overridePath) : null;
+			var original = layouts.GetElement("layout",
+				new[] { "LexEntry", "detail", "Normal", null }).Clone();
+			var changed = new XmlDocument();
+			changed.LoadXml("<layout class='LexEntry' type='detail' name='Normal'>"
+				+ "<part ref='CitationForm' visibility='never'/></layout>");
+			try
+			{
+				layouts.PersistOverrideElement(changed.DocumentElement);
+
+				m_propertyTable.SetProperty("UIMode", "Legacy", true);
+				DrainMediatorAndIdleQueues();
+				m_propertyTable.SetProperty("UIMode", "New", true);
+				DrainMediatorAndIdleQueues();
+				EnsureCurrentRecord(control);
+
+				Assert.That(GetHostedDetailModel(control).Fields,
+					Has.None.Property("Field").EqualTo("CitationForm"),
+					"the next host composition should read the persisted inventory content");
+			}
+			finally
+			{
+				RestoreOverrideFile(configurationDirectory, overridePath, overrideExisted,
+					overrideBytes);
+				layouts.Reload();
+			}
+			Assert.That(File.Exists(overridePath), Is.EqualTo(overrideExisted),
+				"the persistence test should restore the override file's prior existence");
+			if (overrideExisted)
+			{
+				Assert.That(File.ReadAllBytes(overridePath), Is.EqualTo(overrideBytes),
+					"the persistence test should restore the override file's exact bytes");
+			}
+			Assert.That(Inventory.GetInventory("layouts", Cache.ProjectId.Name), Is.SameAs(layouts),
+				"cleanup should retain the Inventory instance held by the live Avalonia source");
+			var restored = layouts.GetElement("layout",
+				new[] { "LexEntry", "detail", "Normal", null });
+			Assert.That(restored.OuterXml, Is.EqualTo(original.OuterXml),
+				"the effective layout inventory should be restored for later tests");
+
+			m_propertyTable.SetProperty("UIMode", "Legacy", true);
+			DrainMediatorAndIdleQueues();
+			m_propertyTable.SetProperty("UIMode", "New", true);
+			DrainMediatorAndIdleQueues();
+			EnsureCurrentRecord(control);
+			Assert.That(GetHostedDetailModel(control).Fields,
+				Has.Some.Property("Field").EqualTo("CitationForm"),
+				"the retained project source should recompose from the restored inventory");
 		}
 
 		// Tools not registered for Avalonia fall back to legacy under
@@ -241,6 +314,47 @@ namespace SIL.FieldWorks.XWorks
 			var field = target.GetType().GetField(fieldName, BindingFlags.Instance | BindingFlags.NonPublic);
 			Assert.That(field, Is.Not.Null, "Missing private field: " + fieldName);
 			return field.GetValue(target);
+		}
+
+		private static DetailModel GetHostedDetailModel(RecordEditView control)
+		{
+			var entryForm = GetPrivateField<DetailHostControl>(control, "m_avaloniaEntryForm");
+			Assert.That(entryForm, Is.Not.Null, "the Avalonia detail host should be initialized");
+			var hostField = typeof(AvaloniaHostControlBase).GetField("Host",
+				BindingFlags.Instance | BindingFlags.NonPublic);
+			Assert.That(hostField, Is.Not.Null, "the host content field should exist");
+			var host = hostField.GetValue(entryForm);
+			var content = host.GetType().GetProperty("Content").GetValue(host, null);
+			var tree = content as SIL.FieldWorks.Common.FwAvalonia.Detail.DataTree;
+			Assert.That(tree, Is.Not.Null, "the Avalonia host should contain a detail tree");
+			return tree.Model;
+		}
+
+		private static string GetLexEntryOverridePath(string configurationDirectory)
+		{
+			var fullDirectory = Path.GetFullPath(configurationDirectory);
+			var overridePath = Path.GetFullPath(Path.Combine(fullDirectory, "LexEntry.fwlayout"));
+			Assert.That(Path.GetDirectoryName(overridePath),
+				Is.EqualTo(fullDirectory).IgnoreCase,
+				"the override path must remain inside the fixture ConfigurationSettings directory");
+			return overridePath;
+		}
+
+		private static void RestoreOverrideFile(string configurationDirectory, string overridePath,
+			bool existed, byte[] bytes)
+		{
+			var validatedPath = GetLexEntryOverridePath(configurationDirectory);
+			Assert.That(overridePath, Is.EqualTo(validatedPath).IgnoreCase,
+				"cleanup must target the captured LexEntry override path");
+			if (existed)
+			{
+				Directory.CreateDirectory(configurationDirectory);
+				File.WriteAllBytes(validatedPath, bytes);
+			}
+			else if (File.Exists(validatedPath))
+			{
+				File.Delete(validatedPath);
+			}
 		}
 
 		// DrainMediatorAndIdleQueues is inherited from XWorksAppTestBase.

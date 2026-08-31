@@ -43,8 +43,13 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 	{
 		/// <summary>
 		/// Imports a single <c>&lt;layout&gt;</c> element using <paramref name="parts"/> to resolve
-		/// part references. Never throws on unsupported constructs; it records diagnostics instead.
+		/// part references. When supplied, <paramref name="partLookupClassName"/> overrides the
+		/// layout's class for part lookup, allowing a concrete runtime class to resolve parts
+		/// after
+		/// XML layout fallback. Never throws on unsupported constructs; it records diagnostics
+		/// instead.
 		/// </summary>
-		ViewDefinitionModel Import(XElement layoutElement, IPartResolver parts);
+		ViewDefinitionModel Import(XElement layoutElement, IPartResolver parts,
+			string partLookupClassName = null);
 	}
 }
