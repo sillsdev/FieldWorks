@@ -75,9 +75,18 @@ namespace SIL.FieldWorks.XWorks
 			return logTask;
 		}
 
+		/// <summary>
+		/// Blocks until the entries queued so far have been written.
+		/// </summary>
 		public void WaitForLogEntries()
 		{
-			Task.WaitAll(logTasks.ToArray());
+			try
+			{
+				Task.WaitAll(logTasks.ToArray());
+			}
+			catch (AggregateException)
+			{
+			}
 		}
 	}
 }

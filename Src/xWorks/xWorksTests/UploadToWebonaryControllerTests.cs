@@ -160,6 +160,10 @@ namespace SIL.FieldWorks.XWorks
 		[TestCase(UploadToWebonaryController.WebonaryOrg + "/thAI", "thai")]
 		[TestCase("httpS://www.Webonary.org/tPi", "tpi")]
 		[TestCase("httpS://www.Webonary.org/tPi/", "tpi")]
+		[TestCase("  English  ", "english")]
+		[TestCase("  httpS://www.Webonary.org/tPi/  ", "tpi")]
+		[TestCase(null, "")]
+		[TestCase("   ", "")]
 		public void NormalizeSiteName(string userEntered, string expected)
 		{
 			Assert.That(UploadToWebonaryController.NormalizeSiteName(userEntered), Is.EqualTo(expected));
@@ -274,6 +278,37 @@ namespace SIL.FieldWorks.XWorks
 				model.SelectedPublication = "Test publication";
 				model.SelectedConfiguration = null;
 				Assert.DoesNotThrow(() => controller.UploadToWebonary(model, view));
+			}
+		}
+
+		[Test]
+		public void UploadToWebonaryCompletesTheUploadWhenRequiredInfoIsMissing()
+		{
+			// Covers the settings whose absence can be probed repeatedly. Reading an
+			// unset SelectedConfiguration mutates shared project configuration.
+			var missingSettings = new Dictionary<string, Action<UploadToWebonaryModel>>
+			{
+				{ "SiteName", m => m.SiteName = null },
+				{ "whitespace SiteName", m => m.SiteName = "   " },
+				{ "UserName", m => m.UserName = null },
+				{ "Password", m => m.Password = null },
+				{ "SelectedPublication", m => m.SelectedPublication = null }
+			};
+
+			foreach (var missingSetting in missingSettings)
+			{
+				using (var controller = SetUpController())
+				{
+					var view = SetUpView();
+					missingSetting.Value(view.Model);
+					//SUT
+					controller.UploadToWebonary(view.Model, view);
+
+					Assert.That(view.StatusConditions, Does.Contain(WebonaryStatusCondition.Error),
+						"Missing " + missingSetting.Key + " should be reported as an error.");
+					Assert.That(view.UploadCompletedCount, Is.EqualTo(1),
+						"Missing " + missingSetting.Key + " left the upload uncompleted, so the dialog would still show it running.");
+				}
 			}
 		}
 
@@ -456,8 +491,11 @@ namespace SIL.FieldWorks.XWorks
 				StatusConditions.Add(condition);
 			}
 
+			public int UploadCompletedCount;
+
 			public void UploadCompleted()
 			{
+				UploadCompletedCount++;
 			}
 
 			public void PopulatePublicationsList(IEnumerable<string> publications)

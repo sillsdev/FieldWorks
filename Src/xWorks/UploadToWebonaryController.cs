@@ -142,11 +142,14 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
-		/// Converts siteName to lowercase and removes https://www.webonary.org, if present. LT-21224, LT-21387
+		/// Converts siteName to lowercase, strips surrounding whitespace, and removes
+		/// https://www.webonary.org, if present. LT-21224, LT-21387
 		/// </summary>
 		internal static string NormalizeSiteName(string siteName)
 		{
-			siteName = siteName.ToLowerInvariant();
+			if (string.IsNullOrWhiteSpace(siteName))
+				return string.Empty;
+			siteName = siteName.Trim().ToLowerInvariant();
 			// trim a leading [http[s]://]webonary.org/
 			const string domainSlash = WebonaryOrg + "/";
 			var domainIndex = siteName.IndexOf(domainSlash, StringComparison.InvariantCulture);
@@ -417,38 +420,55 @@ namespace SIL.FieldWorks.XWorks
 			//TODO: Copy the user selected other files into the temp directory and normalize filenames to NFC
 		}
 
-		public void UploadToWebonary(UploadToWebonaryModel model, IUploadToWebonaryView view)
+		/// <summary>
+		/// Reports the first absent upload setting to the view, and answers whether
+		/// every setting an upload needs is present.
+		/// </summary>
+		private static bool HasRequiredUploadSettings(UploadToWebonaryModel model, IUploadToWebonaryView view)
 		{
-			TrackingHelper.TrackExport("lexicon", "webonary", ImportExportStep.Launched);
-			view.UpdateStatus(xWorksStrings.ksUploadingToWebonary, WebonaryStatusCondition.None);
-
-			if (string.IsNullOrEmpty(model.SiteName))
+			if (string.IsNullOrWhiteSpace(model.SiteName))
 			{
 				view.UpdateStatus(xWorksStrings.ksErrorNoSiteName, WebonaryStatusCondition.Error);
-				return;
+				return false;
 			}
 
-			if(string.IsNullOrEmpty(model.UserName))
+            // For username and password, allow whitespace (it may be a valid value),
+            // but not empty string.
+			if (string.IsNullOrEmpty(model.UserName))
 			{
 				view.UpdateStatus(xWorksStrings.ksErrorNoUsername, WebonaryStatusCondition.Error);
-				return;
+				return false;
 			}
 
 			if (string.IsNullOrEmpty(model.Password))
 			{
 				view.UpdateStatus(xWorksStrings.ksErrorNoPassword, WebonaryStatusCondition.Error);
-				return;
+				return false;
 			}
 
-			if(string.IsNullOrEmpty(model.SelectedPublication))
+			if (string.IsNullOrEmpty(model.SelectedPublication))
 			{
 				view.UpdateStatus(xWorksStrings.ksErrorNoPublication, WebonaryStatusCondition.Error);
-				return;
+				return false;
 			}
 
-			if(string.IsNullOrEmpty(model.SelectedConfiguration))
+			if (string.IsNullOrEmpty(model.SelectedConfiguration))
 			{
 				view.UpdateStatus(xWorksStrings.ksErrorNoConfiguration, WebonaryStatusCondition.Error);
+				return false;
+			}
+
+			return true;
+		}
+
+		public void UploadToWebonary(UploadToWebonaryModel model, IUploadToWebonaryView view)
+		{
+			TrackingHelper.TrackExport("lexicon", "webonary", ImportExportStep.Launched);
+			view.UpdateStatus(xWorksStrings.ksUploadingToWebonary, WebonaryStatusCondition.None);
+
+			if (!HasRequiredUploadSettings(model, view))
+			{
+				view.UploadCompleted();
 				return;
 			}
 
