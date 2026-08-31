@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FxtDocumentDescription dataLabel="LaTeX (gb4e interlinear)" formatLabel="LaTeX" defaultExtension="tex" filter="LaTeX files (*.tex)|*.tex|All files (*.*)|*.*" mode="applySingleTransform" transform="xml2LaTeX.xsl">
+<p>Export to a standalone LaTeX document using the gb4e package's interlinear example macros (\ea / \gll / \glt / \z). Each phrase becomes one gb4e example with a morpheme line and a gloss line aligned word-by-word.</p>
+<p>The file compiles on its own (\documentclass{article}, gb4e, utf8 inputenc, T1 fontenc), but the intent is that you copy the individual \ea ... \z blocks into an existing paper -- a leading comment in the file says so.</p>
+<p>Requires the gb4e LaTeX package (available on CTAN and in most TeX distributions).</p>
+</FxtDocumentDescription>
