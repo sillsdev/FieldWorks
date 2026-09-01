@@ -2,12 +2,14 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System;
 using System.Collections.Generic;
 using System.Xml;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.LCModel;
+using SIL.LCModel.Application;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Infrastructure;
@@ -122,6 +124,55 @@ namespace SIL.FieldWorks.XWorks.Search
 			Assert.That(entry.CitationForm.get_String(Cache.DefaultVernWs).Text, Is.EqualTo("abc"));
 		}
 
+		/// <summary>
+		/// Every case must come out the same through the bulk ReplaceAllIn path and through the
+		/// repeated-FindIn fallback, so the two engines cannot drift apart unnoticed.
+		/// </summary>
+		[Test]
+		public void BulkAndFallbackEngines_ProduceTheSameResult()
+		{
+			foreach (var replacementCase in ReplacementCases)
+			{
+				var bulk = RunCase(replacementCase, false);
+				var fallback = RunCase(replacementCase, true);
+				AssertSameString(bulk.Item1, fallback.Item1, replacementCase.Name + " preview");
+				AssertSameString(bulk.Item2, fallback.Item2, replacementCase.Name + " apply");
+			}
+		}
+
+		private Tuple<ITsString, ITsString> RunCase(ReplacementCase replacementCase, bool fallback)
+		{
+			var entry = CreateEntry(replacementCase.Input);
+			var method = CreateReplaceMethod(replacementCase, fallback);
+
+			method.FakeDoit(new[] { entry.Hvo }, XMLViewsDataCache.ktagAlternateValue,
+				XMLViewsDataCache.ktagItemEnabled, new NullProgressState());
+			var preview = m_bv.SpecialCache.get_StringProp(entry.Hvo,
+				XMLViewsDataCache.ktagAlternateValue);
+
+			Cache.DomainDataByFlid.BeginUndoTask("characterization engine apply",
+				"characterization engine apply");
+			method.Doit(entry.Hvo);
+			Cache.DomainDataByFlid.EndUndoTask();
+			var applied = entry.CitationForm.get_String(Cache.DefaultVernWs);
+			Cache.ActionHandlerAccessor.Undo();
+
+			return new Tuple<ITsString, ITsString>(preview, applied);
+		}
+
+		private static void AssertSameString(ITsString expected, ITsString actual, string message)
+		{
+			Assert.That(actual.Text, Is.EqualTo(expected.Text), message);
+			Assert.That(actual.RunCount, Is.EqualTo(expected.RunCount), message);
+			for (var run = 0; run < expected.RunCount; run++)
+			{
+				Assert.That(actual.get_RunText(run), Is.EqualTo(expected.get_RunText(run)),
+					message);
+				Assert.That(TsStringUtils.GetWsOfRun(actual, run),
+					Is.EqualTo(TsStringUtils.GetWsOfRun(expected, run)), message);
+			}
+		}
+
 		private ILexEntry CreateEntry(string text)
 		{
 			ILexEntry entry = null;
@@ -135,7 +186,8 @@ namespace SIL.FieldWorks.XWorks.Search
 			return entry;
 		}
 
-		private ReplaceWithMethod CreateReplaceMethod(ReplacementCase replacementCase)
+		private ReplaceWithMethod CreateReplaceMethod(ReplacementCase replacementCase,
+			bool fallback = false)
 		{
 			var document = new XmlDocument();
 			document.LoadXml("<column transduce=\"LexEntry.CitationForm\" ws=\"$ws=vernacular\" />");
@@ -148,8 +200,34 @@ namespace SIL.FieldWorks.XWorks.Search
 			pattern.UseRegularExpressions = replacementCase.UseRegularExpressions;
 			pattern.ReplaceWith = TsStringUtils.MakeString(replacementCase.Replacement,
 				Cache.DefaultVernWs);
+			if (fallback)
+			{
+				return new FallbackReplaceWithMethod(Cache, m_bv.SpecialCache, accessor,
+					document.DocumentElement, pattern, pattern.ReplaceWith);
+			}
 			return new ReplaceWithMethod(Cache, m_bv.SpecialCache, accessor,
 				document.DocumentElement, pattern, pattern.ReplaceWith);
+		}
+
+		/// <summary>
+		/// Declines the bulk replacement capability so the caller runs on the repeated-FindIn
+		/// path instead.
+		/// </summary>
+		private sealed class FallbackReplaceWithMethod : ReplaceWithMethod
+		{
+			internal FallbackReplaceWithMethod(LcmCache cache, ISilDataAccessManaged sda,
+				FieldReadWriter accessor, XmlNode spec, IVwPattern pattern, ITsString replacement)
+				: base(cache, sda, accessor, spec, pattern, replacement)
+			{
+			}
+
+			protected override bool TryReplaceAllIn(ITsString source, out ITsString result,
+				out int matchCount)
+			{
+				result = null;
+				matchCount = 0;
+				return false;
+			}
 		}
 
 		private void AssertResult(ITsString result, string expectedText, string message)

@@ -73,6 +73,88 @@ namespace TestViews
 		}
 	};
 
+	class FailSecondLockTsString : public ITsString
+	{
+		long m_cref;
+		ITsStringPtr m_qtss;
+		int m_cLocks;
+
+	public:
+		FailSecondLockTsString(ITsString * ptss) : m_cref(1), m_qtss(ptss), m_cLocks(0)
+		{
+		}
+
+		STDMETHOD(QueryInterface)(REFIID riid, void ** ppv)
+		{
+			if (!ppv)
+				return E_POINTER;
+			*ppv = NULL;
+			if (riid != IID_IUnknown && riid != IID_ITsString)
+				return E_NOINTERFACE;
+			*ppv = static_cast<ITsString *>(this);
+			AddRef();
+			return S_OK;
+		}
+		STDMETHOD_(UCOMINT32, AddRef)() { return InterlockedIncrement(&m_cref); }
+		STDMETHOD_(UCOMINT32, Release)()
+		{
+			long cref = InterlockedDecrement(&m_cref);
+			if (!cref)
+				delete this;
+			return cref;
+		}
+		STDMETHOD(get_Text)(BSTR * pbstr) { return m_qtss->get_Text(pbstr); }
+		STDMETHOD(get_Length)(int * pcch) { return m_qtss->get_Length(pcch); }
+		STDMETHOD(get_RunCount)(int * pcrun) { return m_qtss->get_RunCount(pcrun); }
+		STDMETHOD(get_RunAt)(int ich, int * pirun) { return m_qtss->get_RunAt(ich, pirun); }
+		STDMETHOD(get_MinOfRun)(int irun, int * pichMin)
+			{ return m_qtss->get_MinOfRun(irun, pichMin); }
+		STDMETHOD(get_LimOfRun)(int irun, int * pichLim)
+			{ return m_qtss->get_LimOfRun(irun, pichLim); }
+		STDMETHOD(GetBoundsOfRun)(int irun, int * pichMin, int * pichLim)
+			{ return m_qtss->GetBoundsOfRun(irun, pichMin, pichLim); }
+		STDMETHOD(FetchRunInfoAt)(int ich, TsRunInfo * ptri, ITsTextProps ** ppttp)
+			{ return m_qtss->FetchRunInfoAt(ich, ptri, ppttp); }
+		STDMETHOD(FetchRunInfo)(int irun, TsRunInfo * ptri, ITsTextProps ** ppttp)
+			{ return m_qtss->FetchRunInfo(irun, ptri, ppttp); }
+		STDMETHOD(get_RunText)(int irun, BSTR * pbstr)
+			{ return m_qtss->get_RunText(irun, pbstr); }
+		STDMETHOD(GetChars)(int ichMin, int ichLim, BSTR * pbstr)
+			{ return m_qtss->GetChars(ichMin, ichLim, pbstr); }
+		STDMETHOD(FetchChars)(int ichMin, int ichLim, OLECHAR * prgch)
+			{ return m_qtss->FetchChars(ichMin, ichLim, prgch); }
+		STDMETHOD(LockText)(const OLECHAR ** pprgch, int * pcch)
+		{
+			if (++m_cLocks == 2)
+				return E_FAIL;
+			return m_qtss->LockText(pprgch, pcch);
+		}
+		STDMETHOD(UnlockText)(const OLECHAR * prgch) { return m_qtss->UnlockText(prgch); }
+		STDMETHOD(LockRun)(int irun, const OLECHAR ** pprgch, int * pcch)
+			{ return m_qtss->LockRun(irun, pprgch, pcch); }
+		STDMETHOD(UnlockRun)(int irun, const OLECHAR * prgch)
+			{ return m_qtss->UnlockRun(irun, prgch); }
+		STDMETHOD(get_PropertiesAt)(int ich, ITsTextProps ** ppttp)
+			{ return m_qtss->get_PropertiesAt(ich, ppttp); }
+		STDMETHOD(get_Properties)(int irun, ITsTextProps ** ppttp)
+			{ return m_qtss->get_Properties(irun, ppttp); }
+		STDMETHOD(GetBldr)(ITsStrBldr ** pptsb) { return m_qtss->GetBldr(pptsb); }
+		STDMETHOD(GetIncBldr)(ITsIncStrBldr ** pptisb)
+			{ return m_qtss->GetIncBldr(pptisb); }
+		STDMETHOD(Equals)(ITsString * ptss, ComBool * pfEqual)
+			{ return m_qtss->Equals(ptss, pfEqual); }
+		STDMETHOD(get_IsNormalizedForm)(FwNormalizationMode nm, ComBool * pfRet)
+			{ return m_qtss->get_IsNormalizedForm(nm, pfRet); }
+		STDMETHOD(get_NormalizedForm)(FwNormalizationMode nm, ITsString ** pptssRet)
+			{ return m_qtss->get_NormalizedForm(nm, pptssRet); }
+		STDMETHOD(NfdAndFixOffsets)(ITsString ** pptssRet, int ** prgpichOffsetsToFix,
+			int cichOffsetsToFix)
+		{
+			return m_qtss->NfdAndFixOffsets(pptssRet, prgpichOffsetsToFix, cichOffsetsToFix);
+		}
+		STDMETHOD(GetSubstring)(int ichMin, int ichLim, ITsString ** pptssRet)
+			{ return m_qtss->GetSubstring(ichMin, ichLim, pptssRet); }
+	};
 	class TestVwPattern : public unitpp::suite
 	{
 	public:
@@ -80,6 +162,7 @@ namespace TestViews
 		ILgWritingSystemPtr m_qwsEng;
 		ITsStrFactoryPtr m_qtsf;
 		IVwPatternPtr m_qpat;
+		IVwPattern2Ptr m_qpat2;
 		VwTxtSrcPtr m_qts;
 		VwPropertyStorePtr m_qzvps;
 
@@ -649,19 +732,19 @@ namespace TestViews
 			int ichMin, ichLim;
 			CheckHr(m_qpat->put_MatchDiacritics(false));	// This is set true by default.
 			CheckHr(m_qpat->FindIn(m_qts, 0, stuSearch.Length(), true, &ichMin, &ichLim, NULL));
-			unitpp::assert_eq("Found 'Änd' at start (ignoring diacritics)", 0, ichMin);
-			unitpp::assert_eq("End of 'Änd' at start (ignoring diacritics)", 3, ichLim);
+			unitpp::assert_eq("Found 'ï¿½nd' at start (ignoring diacritics)", 0, ichMin);
+			unitpp::assert_eq("End of 'ï¿½nd' at start (ignoring diacritics)", 3, ichLim);
 
 			// ...but not match requiring diacritics to match
 			CheckHr(m_qpat->put_MatchDiacritics(true));
 			CheckHr(m_qpat->FindIn(m_qts, 0, stuSearch.Length(), true, &ichMin, &ichLim, NULL));
-			unitpp::assert_eq("Skipped 'Änd' at start (match diacritics)", kichoffsetofAnd, ichMin);
+			unitpp::assert_eq("Skipped 'ï¿½nd' at start (match diacritics)", kichoffsetofAnd, ichMin);
 
 			// ...still not if we have to match case
 			CheckHr(m_qpat->put_MatchDiacritics(false));
 			CheckHr(m_qpat->put_MatchCase(true));
 			CheckHr(m_qpat->FindIn(m_qts, 0, stuSearch.Length(), true, &ichMin, &ichLim, NULL));
-			unitpp::assert_eq("Skipped 'Änd' at start, match case", kichoffsetofAnd, ichMin);
+			unitpp::assert_eq("Skipped 'ï¿½nd' at start, match case", kichoffsetofAnd, ichMin);
 		}
 
 		/*--------------------------------------------------------------------------------------
@@ -1622,6 +1705,530 @@ namespace TestViews
 			unitpp::assert_eq("Length of 'in' (search 3)", ichMin + 2, ichLim);
 		}
 
+		ITsStringPtr ReplaceWithRepeatedFindIn(ITsString * ptssSource, int ichStart,
+			int ichEnd, int * pcMatches)
+		{
+			IVwTxtSrcInitPtr qtsi;
+			qtsi.CreateInstance(CLSID_VwStringTextSource);
+			CheckHr(qtsi->SetString(ptssSource));
+			IVwTextSourcePtr qts;
+			CheckHr(qtsi->QueryInterface(IID_IVwTextSource, (void **)&qts));
+			ITsStrBldrPtr qtsb;
+			int ichStartSearch = ichStart;
+			int ichLimLastMatch = -1;
+			int cchDelta = 0;
+			*pcMatches = 0;
+			while (ichStartSearch <= ichEnd)
+			{
+				int ichMin;
+				int ichLim;
+				CheckHr(m_qpat->FindIn(qts, ichStartSearch, ichEnd, true, &ichMin, &ichLim, NULL));
+				if (ichMin < 0)
+					break;
+				if (ichLim == ichLimLastMatch)
+				{
+					ichStartSearch = ichLim + 1;
+					continue;
+				}
+				ichLimLastMatch = ichLim;
+				ITsStringPtr qtssReplacement;
+				CheckHr(m_qpat->get_ReplacementText(&qtssReplacement));
+				if (!qtsb)
+					CheckHr(ptssSource->GetBldr(&qtsb));
+				CheckHr(qtsb->ReplaceTsString(ichMin + cchDelta, ichLim + cchDelta,
+					qtssReplacement));
+				int cchReplacement;
+				CheckHr(qtssReplacement->get_Length(&cchReplacement));
+				cchDelta += cchReplacement - (ichLim - ichMin);
+				(*pcMatches)++;
+				ichStartSearch = ichLim;
+			}
+			ITsStringPtr qtssResult;
+			if (qtsb)
+				CheckHr(qtsb->GetString(&qtssResult));
+			else
+				qtssResult = ptssSource;
+			return qtssResult;
+		}
+
+		void testReplaceAllInMatchesRepeatedFindIn()
+		{
+			ITsStringPtr qtssSource;
+			ITsStringPtr qtssPattern;
+			ITsStringPtr qtssReplacement;
+			CheckHr(m_qtsf->MakeStringRgch(L"and and", 7, g_wsEng, &qtssSource));
+			CheckHr(m_qtsf->MakeStringRgch(L"and", 3, g_wsEng, &qtssPattern));
+			CheckHr(m_qtsf->MakeStringRgch(L"or", 2, g_wsEng, &qtssReplacement));
+			CheckHr(m_qpat->putref_Pattern(qtssPattern));
+			CheckHr(m_qpat->putref_ReplaceWith(qtssReplacement));
+			int cExpected;
+			ITsStringPtr qtssExpected = ReplaceWithRepeatedFindIn(qtssSource, 0, 7,
+				&cExpected);
+			IVwTxtSrcInitPtr qtsi;
+			qtsi.CreateInstance(CLSID_VwStringTextSource);
+			CheckHr(qtsi->SetString(qtssSource));
+			IVwTextSourcePtr qts;
+			CheckHr(qtsi->QueryInterface(IID_IVwTextSource, (void **)&qts));
+			int cMatches = -1;
+			ITsStringPtr qtssResult;
+			HRESULT hr = m_qpat2->ReplaceAllIn(qtssSource, 0, 7, NULL, &cMatches, &qtssResult);
+			unitpp::assert_eq("ReplaceAllIn succeeds", (int)S_OK, (int)hr);
+			CheckHr(hr);
+			unitpp::assert_eq("literal match count", 2, cMatches);
+			unitpp::assert_eq("literal differential match count", cExpected, cMatches);
+			ComBool fEqual;
+			CheckHr(qtssResult->Equals(qtssExpected, &fEqual));
+			unitpp::assert_true("literal result equals repeated FindIn", fEqual);
+			SmartBstr sbstrResult;
+			CheckHr(qtssResult->get_Text(&sbstrResult));
+			unitpp::assert_true("literal replacement text", sbstrResult == L"or or");
+
+			CheckHr(m_qtsf->MakeStringRgch(L"(o|e)(ld)", 10, g_wsEng, &qtssPattern));
+			CheckHr(m_qtsf->MakeStringRgch(L"$2-$1", 5, g_wsEng, &qtssReplacement));
+			CheckHr(m_qtsf->MakeStringRgch(L"old eld", 7, g_wsEng, &qtssSource));
+			ITsStrBldrPtr qtsbSource;
+			CheckHr(qtssSource->GetBldr(&qtsbSource));
+			StrUni stuSourceStyle(L"source-style");
+			CheckHr(qtsbSource->SetStrPropValue(4, 7, ktptNamedStyle, stuSourceStyle.Bstr()));
+			CheckHr(qtsbSource->GetString(&qtssSource));
+			CheckHr(m_qpat->putref_Pattern(qtssPattern));
+			CheckHr(m_qpat->putref_ReplaceWith(qtssReplacement));
+			CheckHr(m_qpat->put_UseRegularExpressions(true));
+			qtssExpected = ReplaceWithRepeatedFindIn(qtssSource, 0, 7, &cExpected);
+			qtsi.CreateInstance(CLSID_VwStringTextSource);
+			CheckHr(qtsi->SetString(qtssSource));
+			CheckHr(qtsi->QueryInterface(IID_IVwTextSource, (void **)&qts));
+			cMatches = -1;
+			qtssResult.Clear();
+			CheckHr(m_qpat2->ReplaceAllIn(qtssSource, 0, 7, NULL, &cMatches, &qtssResult));
+			unitpp::assert_eq("regex capture match count", 2, cMatches);
+			unitpp::assert_eq("regex differential match count", cExpected, cMatches);
+			CheckHr(qtssResult->Equals(qtssExpected, &fEqual));
+			unitpp::assert_true("regex rich result equals repeated FindIn", fEqual);
+			CheckHr(qtssResult->get_Text(&sbstrResult));
+			unitpp::assert_true("regex captures are materialized per match",
+				sbstrResult == L"ld-o ld-e");
+
+			CheckHr(m_qtsf->MakeStringRgch(L"(?=.)", 5, g_wsEng, &qtssPattern));
+			CheckHr(m_qtsf->MakeStringRgch(L"x", 1, g_wsEng, &qtssReplacement));
+			CheckHr(m_qtsf->MakeStringRgch(L"\xD83D\xDE00" L"a", 3, g_wsEng, &qtssSource));
+			CheckHr(m_qpat->putref_Pattern(qtssPattern));
+			CheckHr(m_qpat->putref_ReplaceWith(qtssReplacement));
+			qtssExpected = ReplaceWithRepeatedFindIn(qtssSource, 0, 3, &cExpected);
+			qtsi.CreateInstance(CLSID_VwStringTextSource);
+			CheckHr(qtsi->SetString(qtssSource));
+			CheckHr(qtsi->QueryInterface(IID_IVwTextSource, (void **)&qts));
+			cMatches = -1;
+			qtssResult.Clear();
+			CheckHr(m_qpat2->ReplaceAllIn(qtssSource, 0, 3, NULL, &cMatches, &qtssResult));
+			unitpp::assert_eq("UTF-16 zero-width match count", 3, cMatches);
+			unitpp::assert_eq("zero-width differential match count", cExpected, cMatches);
+			CheckHr(qtssResult->Equals(qtssExpected, &fEqual));
+			unitpp::assert_true("zero-width result equals repeated FindIn", fEqual);
+			CheckHr(qtssResult->get_Text(&sbstrResult));
+			unitpp::assert_true("zero-width matches preserve one-code-unit advancement",
+				sbstrResult == L"xxx");
+
+			CheckHr(m_qtsf->MakeStringRgch(L"not present", 11, g_wsEng, &qtssPattern));
+			CheckHr(m_qpat->putref_Pattern(qtssPattern));
+			CheckHr(m_qpat->put_UseRegularExpressions(false));
+			qtssExpected = ReplaceWithRepeatedFindIn(qtssSource, 0, 3, &cExpected);
+			qtsi.CreateInstance(CLSID_VwStringTextSource);
+			CheckHr(qtsi->SetString(qtssSource));
+			CheckHr(qtsi->QueryInterface(IID_IVwTextSource, (void **)&qts));
+			cMatches = -1;
+			qtssResult.Clear();
+			CheckHr(m_qpat2->ReplaceAllIn(qtssSource, 0, 3, NULL, &cMatches, &qtssResult));
+			unitpp::assert_eq("no-match count", 0, cMatches);
+			unitpp::assert_eq("no-match differential count", cExpected, cMatches);
+			CheckHr(qtssResult->Equals(qtssExpected, &fEqual));
+			unitpp::assert_true("no-match result equals repeated FindIn", fEqual);
+			CheckHr(qtssResult->Equals(qtssSource, &fEqual));
+			unitpp::assert_true("no-match result preserves source content and properties", fEqual);
+
+			cMatches = 99;
+			ITsString * ptssRawResult = reinterpret_cast<ITsString *>(1);
+			hr = m_qpat2->ReplaceAllIn(NULL, 0, 3, NULL, &cMatches, &ptssRawResult);
+			unitpp::assert_eq("null source is rejected", (int)E_POINTER, (int)hr);
+			unitpp::assert_eq("count is cleared before null-source failure", 0, cMatches);
+			unitpp::assert_true("result is cleared before null-source failure",
+				ptssRawResult == NULL);
+			SetErrorInfo(0, NULL);
+		}
+
+		void testReplaceAllInValidatesOutputsAndRanges()
+		{
+			ITsStringPtr qtssSource;
+			ITsStringPtr qtssPattern;
+			ITsStringPtr qtssReplacement;
+			CheckHr(m_qtsf->MakeStringRgch(L"and", 3, g_wsEng, &qtssSource));
+			CheckHr(m_qtsf->MakeStringRgch(L"and", 3, g_wsEng, &qtssPattern));
+			CheckHr(m_qtsf->MakeStringRgch(L"or", 2, g_wsEng, &qtssReplacement));
+			CheckHr(m_qpat->putref_Pattern(qtssPattern));
+			CheckHr(m_qpat->putref_ReplaceWith(qtssReplacement));
+			ITsString * ptssRawResult = reinterpret_cast<ITsString *>(1);
+			HRESULT hr = m_qpat2->ReplaceAllIn(qtssSource, 0, 3, NULL, NULL, &ptssRawResult);
+			unitpp::assert_eq("null match count is rejected", (int)E_POINTER, (int)hr);
+			unitpp::assert_true("result is cleared when the match count is null",
+				ptssRawResult == NULL);
+			SetErrorInfo(0, NULL);
+
+			int cMatches = 99;
+			hr = m_qpat2->ReplaceAllIn(qtssSource, 0, 3, NULL, &cMatches, NULL);
+			unitpp::assert_eq("null result is rejected", (int)E_POINTER, (int)hr);
+			unitpp::assert_eq("count is cleared before null-result failure", 0, cMatches);
+			SetErrorInfo(0, NULL);
+
+			cMatches = 99;
+			ptssRawResult = reinterpret_cast<ITsString *>(1);
+			hr = m_qpat2->ReplaceAllIn(qtssSource, -1, 3, NULL, &cMatches, &ptssRawResult);
+			unitpp::assert_eq("negative range is rejected", (int)E_INVALIDARG, (int)hr);
+			unitpp::assert_eq("count is cleared before negative-range failure", 0,
+				cMatches);
+			unitpp::assert_true("result is cleared before negative-range failure",
+				ptssRawResult == NULL);
+			SetErrorInfo(0, NULL);
+
+			cMatches = 99;
+			ptssRawResult = reinterpret_cast<ITsString *>(1);
+			hr = m_qpat2->ReplaceAllIn(qtssSource, 2, 1, NULL, &cMatches, &ptssRawResult);
+			unitpp::assert_eq("reversed range is rejected", (int)E_INVALIDARG, (int)hr);
+			unitpp::assert_eq("count is cleared before reversed-range failure", 0,
+				cMatches);
+			unitpp::assert_true("result is cleared before reversed-range failure",
+				ptssRawResult == NULL);
+			SetErrorInfo(0, NULL);
+
+			cMatches = 99;
+			ptssRawResult = reinterpret_cast<ITsString *>(1);
+			hr = m_qpat2->ReplaceAllIn(qtssSource, 0, 4, NULL, &cMatches, &ptssRawResult);
+			unitpp::assert_eq("range past source is rejected", (int)E_INVALIDARG,
+				(int)hr);
+			unitpp::assert_eq("count is cleared before past-source failure", 0,
+				cMatches);
+			unitpp::assert_true("result is cleared before past-source failure",
+				ptssRawResult == NULL);
+			SetErrorInfo(0, NULL);
+		}
+
+		void testReplaceAllInClearsOutputsAfterReplacementFailure()
+		{
+			ITsStringPtr qtssSource;
+			ITsStringPtr qtssPattern;
+			ITsStringPtr qtssReplacement;
+			CheckHr(m_qtsf->MakeStringRgch(L"and and", 7, g_wsEng, &qtssSource));
+			CheckHr(m_qtsf->MakeStringRgch(L"(and)", 5, g_wsEng, &qtssPattern));
+			CheckHr(m_qtsf->MakeStringRgch(L"$1", 2, g_wsEng, &qtssReplacement));
+			ITsStringPtr qtssFailingReplacement;
+			qtssFailingReplacement.Attach(NewObj FailSecondLockTsString(qtssReplacement));
+			CheckHr(m_qpat->putref_Pattern(qtssPattern));
+			CheckHr(m_qpat->putref_ReplaceWith(qtssFailingReplacement));
+			CheckHr(m_qpat->put_UseRegularExpressions(true));
+
+			int cMatches = 99;
+			ITsString * ptssResult = reinterpret_cast<ITsString *>(1);
+			HRESULT hr = m_qpat2->ReplaceAllIn(qtssSource, 0, 7, NULL, &cMatches, &ptssResult);
+			SetErrorInfo(0, NULL);
+			unitpp::assert_eq("replacement failure is returned", (int)E_FAIL, (int)hr);
+			unitpp::assert_eq("count remains zero after replacement failure", 0, cMatches);
+			unitpp::assert_true("result remains null after replacement failure",
+				ptssResult == NULL);
+		}
+
+		// TE4727: replacing the character before a trailing owned ORC must leave the ORC
+		// and its footnote guid data intact through the splice.
+		void testReplaceAllInReplaceCharPrecedingFinalORC_TE4727()
+		{
+			unitpp::assert_true("English writing system exists", m_qwsEng.Ptr());
+
+			ITsStrBldrPtr qtsbStringBuilder;
+			qtsbStringBuilder.CreateInstance(CLSID_TsStrBldr);
+			ITsPropsBldrPtr qtpbTextPropsBuilder;
+			qtpbTextPropsBuilder.CreateInstance(CLSID_TsPropsBldr);
+			CheckHr(qtpbTextPropsBuilder->SetIntPropValues(ktptWs, ktpvDefault, g_wsEng));
+			ITsTextPropsPtr qttp;
+			CheckHr(qtpbTextPropsBuilder->GetTextProps(&qttp));
+			StrUni stuSearch(L"Tha Tant of tha Lord's Prasance");
+			CheckHr(qtsbStringBuilder->Replace(0, 0, stuSearch.Bstr(), qttp));
+
+			// Insert a footnote ORC as the very last character of the string.
+			StrUni stuData;
+			OLECHAR * prgchData;
+			GUID uidFootnote;
+			CheckHr(CoCreateGuid(&uidFootnote));
+			stuData.SetSize(isizeof(GUID) / isizeof(OLECHAR) + 1, &prgchData);
+			*prgchData = kodtOwnNameGuidHot;
+			memmove(prgchData + 1, &uidFootnote, isizeof(uidFootnote));
+			CheckHr(qtpbTextPropsBuilder->SetStrPropValue(ktptObjData, stuData.Bstr()));
+			CheckHr(qtpbTextPropsBuilder->GetTextProps(&qttp));
+			OLECHAR chObj = kchObject;
+			CheckHr(qtsbStringBuilder->ReplaceRgch(stuSearch.Length(), stuSearch.Length(),
+				&chObj, 1, qttp));
+			ITsStringPtr qtssSource;
+			CheckHr(qtsbStringBuilder->GetString(&qtssSource));
+
+			ITsStringPtr qtssPattern;
+			StrUni stuPattern(L"e");
+			CheckHr(m_qtsf->MakeString(stuPattern.Bstr(), g_wsEng, &qtssPattern));
+			CheckHr(m_qpat->putref_Pattern(qtssPattern));
+			CheckHr(m_qpat->put_UseRegularExpressions(false));
+
+			ITsStringPtr qtssReplacement;
+			StrUni stuReplacement(L"E");
+			CheckHr(m_qtsf->MakeString(stuReplacement.Bstr(), g_wsEng, &qtssReplacement));
+			CheckHr(m_qpat->putref_ReplaceWith(qtssReplacement));
+
+			int cchTotal;
+			CheckHr(qtssSource->get_Length(&cchTotal));
+
+			int cExpected;
+			ITsStringPtr qtssExpected = ReplaceWithRepeatedFindIn(qtssSource, 0, cchTotal,
+				&cExpected);
+
+			int cMatches = -1;
+			ITsStringPtr qtssResult;
+			CheckHr(m_qpat2->ReplaceAllIn(qtssSource, 0, cchTotal, NULL, &cMatches, &qtssResult));
+			unitpp::assert_eq("single 'e' preceding final ORC found", 1, cMatches);
+			unitpp::assert_eq("match count matches repeated FindIn", cExpected, cMatches);
+			ComBool fEqual;
+			CheckHr(qtssResult->Equals(qtssExpected, &fEqual));
+			unitpp::assert_true("bulk result equals repeated FindIn result", fEqual);
+
+			// Confirm the ORC after the replaced character survived intact, with its
+			// footnote guid data untouched.
+			int crun;
+			CheckHr(qtssResult->get_RunCount(&crun));
+			SmartBstr sbstrLastRun;
+			CheckHr(qtssResult->get_RunText(crun - 1, &sbstrLastRun));
+			unitpp::assert_eq("last run is the ORC", kchObject, sbstrLastRun[0]);
+			ITsTextPropsPtr qttpLastRun;
+			CheckHr(qtssResult->get_Properties(crun - 1, &qttpLastRun));
+			SmartBstr sbstrObjData;
+			CheckHr(qttpLastRun->GetStrPropValue(ktptObjData, &sbstrObjData));
+			unitpp::assert_true("trailing ORC's footnote guid data preserved",
+				!wcscmp(stuData.Chars(), sbstrObjData.Chars()));
+		}
+
+		// Bulk match counts and results must agree with repeated FindIn as
+		// MatchOldWritingSystem and MatchDiacritics change.
+		void testReplaceAllInRespectsMatchOldWritingSystem()
+		{
+			unitpp::assert_true("English writing system exists", m_qwsEng.Ptr());
+
+			ITsStringPtr qtssSearchT;
+			StrUni stuSearch(L"abc" A_WITH_DIAERESIS COMBINING_DOT_BELOW L"abcA" COMBINING_DOT_BELOW
+				COMBINING_DIAERESIS L"rubbish");
+			CheckHr(m_qtsf->MakeString(stuSearch.Bstr(), g_wsEng, &qtssSearchT));
+			ITsStringPtr qtssSearch;
+			CheckHr(qtssSearchT->get_NormalizedForm(knmNFD, &qtssSearch));
+			ITsStrBldrPtr qtsb;
+			CheckHr(qtssSearch->GetBldr(&qtsb));
+			// Make the first A with diacritics and the later A and combining dot french.
+			CheckHr(qtsb->SetIntPropValues(3, 6, ktptWs, ktpvDefault, g_wsFrn));
+			CheckHr(qtsb->SetIntPropValues(9, 11, ktptWs, ktpvDefault, g_wsFrn));
+			CheckHr(qtsb->GetString(&qtssSearch));
+
+			ITsStringPtr qtssPattern;
+			StrUni stuPattern(L"cA" COMBINING_DOT_BELOW COMBINING_DIAERESIS);
+			CheckHr(m_qtsf->MakeString(stuPattern.Bstr(), g_wsEng, &qtssPattern));
+			CheckHr(qtssPattern->GetBldr(&qtsb));
+			// Make the first A with diacritics and the later combining macron french.
+			CheckHr(qtsb->SetIntPropValues(1, 4, ktptWs, ktpvDefault, g_wsFrn));
+			CheckHr(qtsb->GetString(&qtssPattern));
+			CheckHr(m_qpat->putref_Pattern(qtssPattern));
+
+			ITsStringPtr qtssReplacement;
+			StrUni stuReplacement(L"X");
+			CheckHr(m_qtsf->MakeString(stuReplacement.Bstr(), g_wsEng, &qtssReplacement));
+			CheckHr(m_qpat->putref_ReplaceWith(qtssReplacement));
+
+			int len = stuSearch.Length();
+			ComBool fEqual;
+
+			// Default: MatchOldWritingSystem is off, so both canonical occurrences match.
+			int cExpected;
+			ITsStringPtr qtssExpected = ReplaceWithRepeatedFindIn(qtssSearch, 0, len,
+				&cExpected);
+			int cMatches = -1;
+			ITsStringPtr qtssResult;
+			CheckHr(m_qpat2->ReplaceAllIn(qtssSearch, 0, len, NULL, &cMatches, &qtssResult));
+			unitpp::assert_eq("both canonical matches replaced without ws matching", 2,
+				cMatches);
+			unitpp::assert_eq("count matches repeated FindIn (no ws)", cExpected, cMatches);
+			CheckHr(qtssResult->Equals(qtssExpected, &fEqual));
+			unitpp::assert_true("bulk result equals repeated FindIn (no ws)", fEqual);
+
+			// Requiring old ws but ignoring diacritics: still both occurrences match.
+			CheckHr(m_qpat->put_MatchDiacritics(false));
+			CheckHr(m_qpat->put_MatchOldWritingSystem(true));
+			qtssExpected = ReplaceWithRepeatedFindIn(qtssSearch, 0, len, &cExpected);
+			cMatches = -1;
+			qtssResult.Clear();
+			CheckHr(m_qpat2->ReplaceAllIn(qtssSearch, 0, len, NULL, &cMatches, &qtssResult));
+			unitpp::assert_eq("both canonical matches replaced, ws required, diacritics ignored",
+				2, cMatches);
+			unitpp::assert_eq("count matches repeated FindIn (ws, no diacritics)", cExpected,
+				cMatches);
+			CheckHr(qtssResult->Equals(qtssExpected, &fEqual));
+			unitpp::assert_true("bulk result equals repeated FindIn (ws, no diacritics)",
+				fEqual);
+
+			// Requiring both old ws and diacritics narrows the match to the first occurrence.
+			CheckHr(m_qpat->put_MatchDiacritics(true));
+			qtssExpected = ReplaceWithRepeatedFindIn(qtssSearch, 0, len, &cExpected);
+			cMatches = -1;
+			qtssResult.Clear();
+			CheckHr(m_qpat2->ReplaceAllIn(qtssSearch, 0, len, NULL, &cMatches, &qtssResult));
+			unitpp::assert_eq("only first occurrence matches ws+diacritics", 1, cMatches);
+			unitpp::assert_eq("count matches repeated FindIn (ws + diacritics)", cExpected,
+				cMatches);
+			CheckHr(qtssResult->Equals(qtssExpected, &fEqual));
+			unitpp::assert_true("bulk result equals repeated FindIn (ws + diacritics)", fEqual);
+		}
+
+		// Re-run the MatchCase / MatchDiacritics option combinations from testMatchingCase
+		// and testMatchingDiacritics through ReplaceAllIn.
+		void testReplaceAllInWithCaseAndDiacriticsOptions()
+		{
+			unitpp::assert_true("English writing system exists", m_qwsEng.Ptr());
+			ComBool fEqual;
+
+			// --- Case sensitivity ---
+			ITsStringPtr qtssSearchCase;
+			StrUni stuSearchCase(L"And this sentence uses 'and' a lot");
+			CheckHr(m_qtsf->MakeString(stuSearchCase.Bstr(), g_wsEng, &qtssSearchCase));
+
+			ITsStringPtr qtssPattern;
+			StrUni stuPattern(L"and");
+			CheckHr(m_qtsf->MakeString(stuPattern.Bstr(), g_wsEng, &qtssPattern));
+			CheckHr(m_qpat->putref_Pattern(qtssPattern));
+
+			ITsStringPtr qtssReplacement;
+			StrUni stuReplacement(L"or");
+			CheckHr(m_qtsf->MakeString(stuReplacement.Bstr(), g_wsEng, &qtssReplacement));
+			CheckHr(m_qpat->putref_ReplaceWith(qtssReplacement));
+
+			int lenCase = stuSearchCase.Length();
+			CheckHr(m_qpat->put_MatchDiacritics(true));
+			CheckHr(m_qpat->put_MatchCase(false));
+
+			int cExpected;
+			ITsStringPtr qtssExpected = ReplaceWithRepeatedFindIn(qtssSearchCase, 0, lenCase,
+				&cExpected);
+			int cMatches = -1;
+			ITsStringPtr qtssResult;
+			CheckHr(m_qpat2->ReplaceAllIn(qtssSearchCase, 0, lenCase, NULL, &cMatches, &qtssResult));
+			unitpp::assert_eq("case-insensitive replaces both 'And' and 'and'", 2, cMatches);
+			unitpp::assert_eq("case-insensitive count matches repeated FindIn", cExpected,
+				cMatches);
+			CheckHr(qtssResult->Equals(qtssExpected, &fEqual));
+			unitpp::assert_true("case-insensitive bulk result equals repeated FindIn", fEqual);
+
+			CheckHr(m_qpat->put_MatchCase(true));
+			qtssExpected = ReplaceWithRepeatedFindIn(qtssSearchCase, 0, lenCase, &cExpected);
+			cMatches = -1;
+			qtssResult.Clear();
+			CheckHr(m_qpat2->ReplaceAllIn(qtssSearchCase, 0, lenCase, NULL, &cMatches, &qtssResult));
+			unitpp::assert_eq("match case skips capitalized 'And'", 1, cMatches);
+			unitpp::assert_eq("match-case count matches repeated FindIn", cExpected, cMatches);
+			CheckHr(qtssResult->Equals(qtssExpected, &fEqual));
+			unitpp::assert_true("match-case bulk result equals repeated FindIn", fEqual);
+			SmartBstr sbstrResult;
+			CheckHr(qtssResult->get_Text(&sbstrResult));
+			unitpp::assert_true("only the lowercase 'and' was replaced",
+				sbstrResult == L"And this sentence uses 'or' a lot");
+
+			// --- Diacritics sensitivity ---
+			ITsStringPtr qtssSearchDia;
+			StrUni stuSearchDia(LATIN_CAPITAL_A_WITH_DIARESIS L"nd this sentence uses 'and' a lot");
+			CheckHr(m_qtsf->MakeString(stuSearchDia.Bstr(), g_wsEng, &qtssSearchDia));
+			CheckHr(m_qpat->putref_Pattern(qtssPattern));
+			CheckHr(m_qpat->putref_ReplaceWith(qtssReplacement));
+			CheckHr(m_qpat->put_MatchCase(false));
+			CheckHr(m_qpat->put_MatchDiacritics(false));
+
+			int lenDia = stuSearchDia.Length();
+			qtssExpected = ReplaceWithRepeatedFindIn(qtssSearchDia, 0, lenDia, &cExpected);
+			cMatches = -1;
+			qtssResult.Clear();
+			CheckHr(m_qpat2->ReplaceAllIn(qtssSearchDia, 0, lenDia, NULL, &cMatches, &qtssResult));
+			unitpp::assert_eq("ignoring diacritics replaces both occurrences", 2, cMatches);
+			unitpp::assert_eq("ignore-diacritics count matches repeated FindIn", cExpected,
+				cMatches);
+			CheckHr(qtssResult->Equals(qtssExpected, &fEqual));
+			unitpp::assert_true("ignore-diacritics bulk result equals repeated FindIn", fEqual);
+
+			CheckHr(m_qpat->put_MatchDiacritics(true));
+			qtssExpected = ReplaceWithRepeatedFindIn(qtssSearchDia, 0, lenDia, &cExpected);
+			cMatches = -1;
+			qtssResult.Clear();
+			CheckHr(m_qpat2->ReplaceAllIn(qtssSearchDia, 0, lenDia, NULL, &cMatches, &qtssResult));
+			unitpp::assert_eq("requiring diacritics skips the accented occurrence", 1,
+				cMatches);
+			unitpp::assert_eq("match-diacritics count matches repeated FindIn", cExpected,
+				cMatches);
+			CheckHr(qtssResult->Equals(qtssExpected, &fEqual));
+			unitpp::assert_true("match-diacritics bulk result equals repeated FindIn", fEqual);
+		}
+
+		// The pattern is correctly-ordered decomposed text; the source holds both a
+		// fully-composed and an out-of-order-decomposed occurrence of it.
+		void testReplaceAllInCanonicalEquivalence()
+		{
+			unitpp::assert_true("English writing system exists", m_qwsEng.Ptr());
+
+			ITsStringPtr qtssSearchT;
+			StrUni stuSearch(L"abc" A_WITH_DIAERESIS COMBINING_DOT_BELOW L"abcA" COMBINING_DOT_BELOW
+				COMBINING_DIAERESIS L"rubbish");
+			CheckHr(m_qtsf->MakeString(stuSearch.Bstr(), g_wsEng, &qtssSearchT));
+			ITsStringPtr qtssSearch;
+			CheckHr(qtssSearchT->get_NormalizedForm(knmNFD, &qtssSearch));
+
+			ITsStringPtr qtssPattern;
+			StrUni stuPattern(L"cA" COMBINING_DOT_BELOW COMBINING_DIAERESIS);
+			CheckHr(m_qtsf->MakeString(stuPattern.Bstr(), g_wsEng, &qtssPattern));
+			CheckHr(m_qpat->putref_Pattern(qtssPattern));
+
+			ITsStringPtr qtssReplacement;
+			StrUni stuReplacement(L"XYZ");
+			CheckHr(m_qtsf->MakeString(stuReplacement.Bstr(), g_wsEng, &qtssReplacement));
+			CheckHr(m_qpat->putref_ReplaceWith(qtssReplacement));
+
+			int len = stuSearch.Length();
+			ComBool fEqual;
+
+			int cExpected;
+			ITsStringPtr qtssExpected = ReplaceWithRepeatedFindIn(qtssSearch, 0, len,
+				&cExpected);
+			int cMatches = -1;
+			ITsStringPtr qtssResult;
+			CheckHr(m_qpat2->ReplaceAllIn(qtssSearch, 0, len, NULL, &cMatches, &qtssResult));
+			unitpp::assert_eq("both canonically-equivalent occurrences replaced", 2, cMatches);
+			unitpp::assert_eq("canonical count matches repeated FindIn", cExpected, cMatches);
+			CheckHr(qtssResult->Equals(qtssExpected, &fEqual));
+			unitpp::assert_true("canonical bulk result equals repeated FindIn", fEqual);
+			SmartBstr sbstrResult;
+			CheckHr(qtssResult->get_Text(&sbstrResult));
+			unitpp::assert_true("both occurrences replaced with XYZ",
+				sbstrResult == L"abXYZabXYZrubbish");
+
+			// Same result even requiring case and diacritics to match: the canonical
+			// equivalence logic still finds both.
+			CheckHr(m_qpat->put_MatchDiacritics(true));
+			CheckHr(m_qpat->put_MatchCase(true));
+			qtssExpected = ReplaceWithRepeatedFindIn(qtssSearch, 0, len, &cExpected);
+			cMatches = -1;
+			qtssResult.Clear();
+			CheckHr(m_qpat2->ReplaceAllIn(qtssSearch, 0, len, NULL, &cMatches, &qtssResult));
+			unitpp::assert_eq("both occurrences still replaced, match case/diacritics", 2,
+				cMatches);
+			unitpp::assert_eq("canonical count matches repeated FindIn, match case/diacritics",
+				cExpected, cMatches);
+			CheckHr(qtssResult->Equals(qtssExpected, &fEqual));
+			unitpp::assert_true(
+				"canonical bulk result equals repeated FindIn, match case/diacritics", fEqual);
+		}
+
 		virtual void Setup()
 		{
 			CreateTestWritingSystemFactory();
@@ -1631,6 +2238,7 @@ namespace TestViews
 			// Use this rather than CreateInstance, because for the ORC test the pattern
 			// and text source need to be in the same compilation unit.
 			m_qpat.Attach(NewObj VwPattern());
+			CheckHr(m_qpat->QueryInterface(IID_IVwPattern2, (void **)&m_qpat2));
 			m_qts.Attach(NewObj VwSimpleTxtSrc());
 			m_qzvps.Attach(NewObj VwPropertyStore());
 			m_qts->SetWritingSystemFactory(g_qwsf);
@@ -1643,6 +2251,7 @@ namespace TestViews
 		virtual void Teardown()
 		{
 			m_qts.Clear();
+			m_qpat2.Clear();
 			m_qpat.Clear();
 			m_qwsEng.Clear();
 			m_qtsf.Clear();

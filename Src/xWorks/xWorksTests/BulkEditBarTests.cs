@@ -10,6 +10,7 @@ using System.Linq;
 using System.Windows.Forms;
 using System.Xml;
 using NUnit.Framework;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Core.Text;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.Controls;
@@ -616,7 +617,121 @@ namespace SIL.FieldWorks.XWorks
 	[TestFixture]
 	public class BulkEditBarTests : BulkEditBarTestsBase
 	{
+		public enum ChangePath { Preview, Direct }
+
 		#region BulkEditEntries tests
+		[TestCase(ChangePath.Preview, true, true, TestName = "FakeDoit_ComputesAndCachesAnEnabledResultOnce")]
+		[TestCase(ChangePath.Preview, false, true, TestName = "FakeDoit_DisablesRowsThatCannotChange")]
+		[TestCase(ChangePath.Preview, true, false, TestName = "FakeDoit_DisablesRowsWithoutAValue")]
+		[TestCase(ChangePath.Direct, true, true, TestName = "Doit_AppliesAnEnabledResultOnce")]
+		[TestCase(ChangePath.Direct, false, true, TestName = "Doit_LeavesTheDestinationUnchangedWhenDisabled")]
+		[TestCase(ChangePath.Direct, true, false, TestName = "Doit_LeavesTheDestinationUnchangedWithoutAValue")]
+		public void Doit_ComputesEachResultOnce(ChangePath path, bool canChange, bool hasValue)
+		{
+			var hvo = Cache.LangProject.LexDbOA.Entries.First().Hvo;
+			var value = hasValue
+				? TsStringUtils.MakeString("changed", Cache.DefaultVernWs)
+				: null;
+			CountingFieldReadWriter accessor;
+			var method = CreateCountingDoItMethod(path, canChange, value, out accessor);
+			var before = accessor.CurrentValue(hvo).Text;
+
+			if (path == ChangePath.Preview)
+			{
+				var sentinel = TsStringUtils.MakeString("previous preview", Cache.DefaultVernWs);
+				m_bv.SpecialCache.SetString(hvo, XMLViewsDataCache.ktagAlternateValue, sentinel);
+				method.FakeDoit(new[] { hvo }, XMLViewsDataCache.ktagAlternateValue,
+					XMLViewsDataCache.ktagItemEnabled, new NullProgressState());
+
+				var expected = canChange && hasValue ? value : sentinel;
+				Assert.That(m_bv.SpecialCache.get_StringProp(hvo,
+					XMLViewsDataCache.ktagAlternateValue), Is.SameAs(expected));
+				Assert.That(m_bv.SpecialCache.get_IntProp(hvo,
+					XMLViewsDataCache.ktagItemEnabled), Is.EqualTo(canChange && hasValue ? 1 : 0));
+			}
+			else
+			{
+				DoWithUndoTask(() => method.Doit(hvo));
+				Assert.That(accessor.SetNewValueCount,
+					Is.EqualTo(canChange && hasValue ? 1 : 0));
+				Assert.That(accessor.CurrentValue(hvo).Text,
+					Is.EqualTo(canChange && hasValue ? value.Text : before));
+			}
+
+			Assert.That(method.TryGetNewValueCount, Is.EqualTo(1));
+			Assert.That(method.OkToChangeCount, Is.EqualTo(1));
+			Assert.That(method.NewValueCount, Is.EqualTo(canChange ? 1 : 0));
+		}
+
+		[Test]
+		public void Doit_OuterLoop_EndsUndoTaskWhenAnItemThrows()
+		{
+			var hvo = Cache.LangProject.LexDbOA.Entries.First().Hvo;
+			var document = new XmlDocument();
+			document.LoadXml("<column transduce=\"LexEntry.CitationForm\" ws=\"$ws=vernacular\" />");
+			var accessor = FieldReadWriter.Create(document.DocumentElement, Cache);
+			var method = new ThrowingDoItMethod(Cache, (ISilDataAccessManaged)Cache.DomainDataByFlid,
+				accessor, document.DocumentElement);
+
+			Assert.That(Cache.ActionHandlerAccessor.CurrentDepth, Is.EqualTo(0));
+
+			Assert.Throws<InvalidOperationException>(() =>
+				method.Doit(new[] { hvo }, new NullProgressState()));
+
+			Assert.That(Cache.ActionHandlerAccessor.CurrentDepth, Is.EqualTo(0),
+				"the outer bulk-edit undo task must be ended even when applying one item throws");
+		}
+
+		[Test]
+		public void Doit_OuterLoop_RollsBackItemsAppliedBeforeTheFailure()
+		{
+			var entries = Cache.LangProject.LexDbOA.Entries.Take(2).ToList();
+			Assert.That(entries.Count, Is.EqualTo(2), "this test needs two entries to work with");
+			var hvoApplied = entries[0].Hvo;
+			var hvoThatThrows = entries[1].Hvo;
+
+			var document = new XmlDocument();
+			document.LoadXml("<column transduce=\"LexEntry.CitationForm\" ws=\"$ws=vernacular\" />");
+			var accessor = FieldReadWriter.Create(document.DocumentElement, Cache);
+			var originalValue = accessor.CurrentValue(hvoApplied);
+			var newValue = TsStringUtils.MakeString("bulk edited", Cache.DefaultVernWs);
+
+			var method = new ThrowingDoItMethod(Cache, (ISilDataAccessManaged)Cache.DomainDataByFlid,
+				accessor, document.DocumentElement, hvoThatThrows, newValue);
+
+			Assert.Throws<InvalidOperationException>(() =>
+				method.Doit(new[] { hvoApplied, hvoThatThrows }, new NullProgressState()));
+
+			Assert.That(accessor.CurrentValue(hvoApplied).Text, Is.EqualTo(originalValue?.Text),
+				"a bulk edit that failed part way through must roll back the rows it had already applied, "
+				+ "not commit them as a completed undo task");
+			Assert.That(Cache.ActionHandlerAccessor.CurrentDepth, Is.EqualTo(0));
+		}
+
+		private sealed class ThrowingDoItMethod : DoItMethod
+		{
+			private readonly int m_hvoThatThrows;
+			private readonly ITsString m_valueForOthers;
+
+			/// <summary>Applies <paramref name="valueForOthers"/> to every hvo except
+			/// <paramref name="hvoThatThrows"/>, which throws instead.</summary>
+			internal ThrowingDoItMethod(LcmCache cache, ISilDataAccessManaged sda,
+				FieldReadWriter accessor, XmlNode spec, int hvoThatThrows = 0,
+				ITsString valueForOthers = null)
+				: base(cache, sda, accessor, spec)
+			{
+				m_hvoThatThrows = hvoThatThrows;
+				m_valueForOthers = valueForOthers;
+			}
+
+			protected override ITsString NewValue(int hvo)
+			{
+				if (m_valueForOthers == null || hvo == m_hvoThatThrows)
+					throw new InvalidOperationException("simulated failure applying one bulk-edit item");
+				return m_valueForOthers;
+			}
+		}
+
 		[Test]
 		public void FilterBar_HeaderAndFilterControlsExposeReachableBaseline()
 		{
@@ -1621,6 +1736,136 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		#endregion BulkEditEntries tests
+
+		private CountingDoItMethod CreateCountingDoItMethod(ChangePath path, bool canChange,
+			ITsString value, out CountingFieldReadWriter accessor)
+		{
+			var document = new XmlDocument();
+			document.LoadXml("<column transduce=\"LexEntry.CitationForm\" ws=\"$ws=vernacular\" />");
+			accessor = new CountingFieldReadWriter(FieldReadWriter.Create(document.DocumentElement, Cache));
+			var dataAccess = path == ChangePath.Preview
+				? m_bv.SpecialCache
+				: (ISilDataAccessManaged)Cache.DomainDataByFlid;
+			return new CountingDoItMethod(Cache, dataAccess,
+				accessor, document.DocumentElement, canChange, value);
+		}
+
+		private void DoWithUndoTask(Action action)
+		{
+			Cache.DomainDataByFlid.BeginUndoTask("test", "test");
+			try
+			{
+				action();
+			}
+			finally
+			{
+				Cache.DomainDataByFlid.EndUndoTask();
+			}
+		}
+
+		private sealed class CountingDoItMethod : DoItMethod
+		{
+			private readonly bool m_canChange;
+			private readonly ITsString m_value;
+
+			internal CountingDoItMethod(LcmCache cache, ISilDataAccessManaged sda,
+				FieldReadWriter accessor, XmlNode spec, bool canChange, ITsString value)
+				: base(cache, sda, accessor, spec)
+			{
+				m_canChange = canChange;
+				m_value = value;
+			}
+
+			internal int TryGetNewValueCount { get; private set; }
+			internal int OkToChangeCount { get; private set; }
+			internal int NewValueCount { get; private set; }
+
+			protected override bool TryGetNewValue(int hvo, out ITsString newValue)
+			{
+				TryGetNewValueCount++;
+				return base.TryGetNewValue(hvo, out newValue);
+			}
+
+			protected override bool OkToChange(int hvo)
+			{
+				OkToChangeCount++;
+				return m_canChange;
+			}
+
+			protected override ITsString NewValue(int hvo)
+			{
+				NewValueCount++;
+				return m_value;
+			}
+		}
+
+		[Test]
+		public void BulkCopy_ComputesSourceValueOnce()
+		{
+			var hvo = Cache.LangProject.LexDbOA.Entries.First().Hvo;
+
+			var srcDoc = new XmlDocument();
+			srcDoc.LoadXml("<column transduce=\"LexEntry.Comment\" ws=\"$ws=analysis\" />");
+			var srcAccessor = new CountingFieldReadWriter(FieldReadWriter.Create(srcDoc.DocumentElement, Cache));
+
+			var dstDoc = new XmlDocument();
+			dstDoc.LoadXml("<column transduce=\"LexEntry.CitationForm\" ws=\"$ws=vernacular\" />");
+			var dstAccessor = FieldReadWriter.Create(dstDoc.DocumentElement, Cache);
+
+			DoWithUndoTask(() =>
+			{
+				srcAccessor.SetNewValue(hvo, TsStringUtils.MakeString("source note", Cache.DefaultAnalWs));
+				dstAccessor.SetNewValue(hvo, TsStringUtils.MakeString("existing citation form", Cache.DefaultVernWs));
+			});
+			srcAccessor.ResetCounts();
+
+			var method = new BulkCopyMethod(Cache, m_bv.SpecialCache, dstAccessor, dstDoc.DocumentElement,
+				srcAccessor, null, NonEmptyTargetOptions.Overwrite);
+
+			method.FakeDoit(new[] { hvo }, XMLViewsDataCache.ktagAlternateValue,
+				XMLViewsDataCache.ktagItemEnabled, new NullProgressState());
+
+			Assert.That(m_bv.SpecialCache.get_IntProp(hvo, XMLViewsDataCache.ktagItemEnabled), Is.EqualTo(1));
+			Assert.That(srcAccessor.CurrentValueCount, Is.EqualTo(1),
+				"OkToChange and NewValue must share one computed source value per item instead of reading it twice");
+		}
+
+		private sealed class CountingFieldReadWriter : FieldReadWriter
+		{
+			private readonly FieldReadWriter m_inner;
+
+			internal CountingFieldReadWriter(FieldReadWriter inner)
+				: base(inner.DataAccess)
+			{
+				m_inner = inner;
+			}
+
+			internal int SetNewValueCount { get; private set; }
+			internal int CurrentValueCount { get; private set; }
+
+			internal void ResetCounts()
+			{
+				SetNewValueCount = 0;
+				CurrentValueCount = 0;
+			}
+
+			public override ITsString CurrentValue(int hvo)
+			{
+				CurrentValueCount++;
+				return m_inner.CurrentValue(hvo);
+			}
+
+			public override void SetNewValue(int hvo, ITsString tss)
+			{
+				SetNewValueCount++;
+				m_inner.SetNewValue(hvo, tss);
+			}
+
+			public override int WritingSystem
+			{
+				get { return m_inner.WritingSystem; }
+			}
+		}
 	}
 
 	/// <summary>
