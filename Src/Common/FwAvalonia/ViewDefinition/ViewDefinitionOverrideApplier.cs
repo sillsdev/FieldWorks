@@ -30,6 +30,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 			var setLabel = new Dictionary<string, string>(StringComparer.Ordinal);
 			var hide = new HashSet<string>(StringComparer.Ordinal);
 			var reorder = new Dictionary<string, IReadOnlyList<string>>(StringComparer.Ordinal);
+			var setWritingSystems = new Dictionary<string, IReadOnlyList<string>>(StringComparer.Ordinal);
 			var addByParent = new Dictionary<string, List<ViewOverrideOperation>>(StringComparer.Ordinal);
 			var duplicateByParent = new Dictionary<string, List<ViewOverrideOperation>>(StringComparer.Ordinal);
 
@@ -49,6 +50,11 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 					case ViewOverrideOperationKind.ReorderChildren:
 						reorder[op.StableId] = op.ChildOrder;
 						break;
+					case ViewOverrideOperationKind.SetVisibleWritingSystems:
+						// An empty op clears the restriction; null is the model's "unrestricted".
+						setWritingSystems[op.StableId] =
+							op.WritingSystems.Count > 0 ? op.WritingSystems : null;
+						break;
 					case ViewOverrideOperationKind.AddNode:
 						AppendByParent(addByParent, op);
 						break;
@@ -64,7 +70,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 			var diagnostics = new List<ViewDiagnostic>(shipped.Diagnostics);
 			var baseById = FlattenBase(shipped.Roots);
 			var context = new ApplyContext(
-				setVisibility, setLabel, hide, reorder, addByParent, duplicateByParent, baseById, diagnostics);
+				setVisibility, setLabel, hide, reorder, setWritingSystems, addByParent, duplicateByParent,
+				baseById, diagnostics);
 
 			var newRoots = context.RebuildChildren(RootParentKey, shipped.Roots);
 
@@ -81,6 +88,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 			private readonly Dictionary<string, string> _setLabel;
 			private readonly HashSet<string> _hide;
 			private readonly Dictionary<string, IReadOnlyList<string>> _reorder;
+			private readonly Dictionary<string, IReadOnlyList<string>> _setWritingSystems;
 			private readonly Dictionary<string, List<ViewOverrideOperation>> _addByParent;
 			private readonly Dictionary<string, List<ViewOverrideOperation>> _duplicateByParent;
 			private readonly Dictionary<string, ViewNode> _baseById;
@@ -92,6 +100,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 				Dictionary<string, string> setLabel,
 				HashSet<string> hide,
 				Dictionary<string, IReadOnlyList<string>> reorder,
+				Dictionary<string, IReadOnlyList<string>> setWritingSystems,
 				Dictionary<string, List<ViewOverrideOperation>> addByParent,
 				Dictionary<string, List<ViewOverrideOperation>> duplicateByParent,
 				Dictionary<string, ViewNode> baseById,
@@ -101,6 +110,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 				_setLabel = setLabel;
 				_hide = hide;
 				_reorder = reorder;
+				_setWritingSystems = setWritingSystems;
 				_addByParent = addByParent;
 				_duplicateByParent = duplicateByParent;
 				_baseById = baseById;
@@ -154,7 +164,10 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 				var visibility = _setVisibility.TryGetValue(node.StableId, out var v) ? v : node.Visibility;
 				var label = _setLabel.TryGetValue(node.StableId, out var l) ? l : node.Label;
 				var children = RebuildChildren(node.StableId, node.Children);
-				return CloneWith(node, visibility, label, children);
+				var writingSystems = _setWritingSystems.TryGetValue(node.StableId, out var w)
+					? w
+					: node.VisibleWritingSystems;
+				return CloneWith(node, visibility, label, children, writingSystems);
 			}
 
 			private ViewNode CreateAddedNode(ViewOverrideOperation addOp)
@@ -286,17 +299,17 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 			return map;
 		}
 
-		// Reconstruct an immutable node with overridden visibility/label/children, copying every
-		// other field. Every trailing optional constructor argument must be passed, or that
-		// field is stripped.
-		private static ViewNode CloneWith(ViewNode n, ViewVisibility visibility, string label, IReadOnlyList<ViewNode> children)
+		// Reconstruct an immutable node with the overridden fields, copying every other one.
+		// Every trailing optional constructor argument must be passed, or that field is stripped.
+		private static ViewNode CloneWith(ViewNode n, ViewVisibility visibility, string label,
+			IReadOnlyList<ViewNode> children, IReadOnlyList<string> visibleWritingSystems)
 			=> new ViewNode(
 				n.StableId, n.Kind, label, n.Abbreviation, n.Field, n.RawEditor, n.EditorClassification,
 				n.WritingSystem, visibility, n.Expansion, n.Indented, n.TargetLayout, children,
 				n.LocalizationKey, n.AutomationId, n.Routing, n.BoldEmphasis, n.FontScalePercent, n.MenuId,
 				n.ContextMenuId, n.HotlinksId, n.GhostField, n.GhostWs, n.GhostClass, n.GhostLabel,
 				n.ForVariant, n.CustomEditorClass, n.CustomEditorAssembly, n.GhostInitMethod, n.Condition,
-				n.ChooserLinks, n.EnumStringList, n.VisibleWritingSystems, n.ToggleValue);
+				n.ChooserLinks, n.EnumStringList, visibleWritingSystems, n.ToggleValue);
 
 		// Copy a (leaf) node under a new StableId; AutomationId is dropped so the duplicate gets a fresh,
 		// non-colliding identity (the renderer derives one from the new StableId by convention).

@@ -26,6 +26,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 				{ ViewOverrideOperationKind.SetVisibility, "setVisibility" },
 				{ ViewOverrideOperationKind.SetLabel, "setLabel" },
 				{ ViewOverrideOperationKind.ReorderChildren, "reorderChildren" },
+				{ ViewOverrideOperationKind.SetVisibleWritingSystems, "setVisibleWritingSystems" },
 				{ ViewOverrideOperationKind.HideNode, "hideNode" },
 				{ ViewOverrideOperationKind.AddNode, "addNode" },
 				{ ViewOverrideOperationKind.DuplicateNode, "duplicateNode" }
@@ -94,6 +95,9 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 				case ViewOverrideOperationKind.ReorderChildren:
 					o["childOrder"] = new JArray(op.ChildOrder);
 					break;
+				case ViewOverrideOperationKind.SetVisibleWritingSystems:
+					o["writingSystems"] = new JArray(op.WritingSystems);
+					break;
 				case ViewOverrideOperationKind.HideNode:
 					break;
 				case ViewOverrideOperationKind.AddNode:
@@ -132,8 +136,11 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 				case ViewOverrideOperationKind.SetLabel:
 					return new ViewOverrideOperation(kind, stableId, label: (string)o["label"]);
 				case ViewOverrideOperationKind.ReorderChildren:
-					var order = ((JArray)o["childOrder"] ?? new JArray()).Select(t => (string)t).ToList();
-					return new ViewOverrideOperation(kind, stableId, childOrder: order);
+					return new ViewOverrideOperation(kind, stableId,
+						childOrder: ReadStringList(o, "childOrder"));
+				case ViewOverrideOperationKind.SetVisibleWritingSystems:
+					return new ViewOverrideOperation(kind, stableId,
+						writingSystems: ReadStringList(o, "writingSystems"));
 				case ViewOverrideOperationKind.AddNode:
 					var addKindText = (string)o["nodeKind"];
 					var addKind = addKindText == null
@@ -171,6 +178,16 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 			var o = (JObject)token;
 			var severity = ParseEnum<ViewDiagnosticSeverity>((string)o["severity"], "severity");
 			return new ViewDiagnostic(severity, (string)o["code"], (string)o["message"], (string)o["path"]);
+		}
+
+		// Reads a string-array field. To prevent a null/empty entry from flowing
+		// into the node model, fail the load with InvalidDataException.
+		private static List<string> ReadStringList(JObject o, string field)
+		{
+			var list = ((JArray)o[field] ?? new JArray()).Select(t => (string)t).ToList();
+			if (list.Any(string.IsNullOrEmpty))
+				throw new InvalidDataException($"Null or empty {field} entry in override patch.");
+			return list;
 		}
 
 		// Parses an enum value from committed JSON, turning a null/garbage token into a controlled
