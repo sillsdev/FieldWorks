@@ -395,7 +395,12 @@ Main template
 					<xsl:call-template name="DoInflAffix">
 						<xsl:with-param name="inflMsa" select="$inflMsa"/>
 						<xsl:with-param name="gloss" select="$gloss"/>
-						<xsl:with-param name="sTypes">prefix</xsl:with-param>
+						<xsl:with-param name="sTypes">
+							<xsl:choose>
+								<xsl:when test="contains($sTypes,'prefixing interfix')">prefixing interfix</xsl:when>
+								<xsl:otherwise>prefix</xsl:otherwise>
+							</xsl:choose>
+						</xsl:with-param>
 						<xsl:with-param name="Slot" select="$PrefixSlots[1]"/>
 						<xsl:with-param name="lexEntry" select="$lexEntry"/>
 						<xsl:with-param name="allos" select="$allos"/>
@@ -415,7 +420,12 @@ Main template
 					<xsl:call-template name="DoInflAffix">
 						<xsl:with-param name="inflMsa" select="$inflMsa"/>
 						<xsl:with-param name="gloss" select="$gloss"/>
-						<xsl:with-param name="sTypes">infix</xsl:with-param>
+						<xsl:with-param name="sTypes">
+							<xsl:choose>
+								<xsl:when test="contains($sTypes,'infixing interfix')">infixing interfix</xsl:when>
+								<xsl:otherwise>infix</xsl:otherwise>
+							</xsl:choose>
+						</xsl:with-param>
 						<xsl:with-param name="Slot" select="$PrefixSlots[1]"/>
 						<xsl:with-param name="lexEntry" select="$lexEntry"/>
 						<xsl:with-param name="allos" select="$allos"/>
@@ -449,7 +459,12 @@ Main template
 					<xsl:call-template name="DoInflAffix">
 						<xsl:with-param name="inflMsa" select="$inflMsa"/>
 						<xsl:with-param name="gloss" select="$gloss"/>
-						<xsl:with-param name="sTypes">suffix</xsl:with-param>
+						<xsl:with-param name="sTypes">
+							<xsl:choose>
+								<xsl:when test="contains($sTypes,'suffixing interfix')">suffixing interfix</xsl:when>
+								<xsl:otherwise>suffix</xsl:otherwise>
+							</xsl:choose>
+						</xsl:with-param>
 						<xsl:with-param name="Slot" select="$SuffixSlots[1]"/>
 						<xsl:with-param name="lexEntry" select="$lexEntry"/>
 						<xsl:with-param name="allos" select="$allos"/>
@@ -1075,6 +1090,9 @@ DoAffixAllomorphs
 					<xsl:choose>
 						<xsl:when test="contains($sTypes,'suffix')">
 							<xsl:value-of select="$sSuffixingInterfix"/>
+						</xsl:when>
+						<xsl:when test="contains($sTypes,'infix')">
+							<xsl:value-of select="$sInfixingInterfix"/>
 						</xsl:when>
 						<!-- for both prefix and infix (although we don't know for sure that infixes will be prefixes... -->
 						<xsl:otherwise>

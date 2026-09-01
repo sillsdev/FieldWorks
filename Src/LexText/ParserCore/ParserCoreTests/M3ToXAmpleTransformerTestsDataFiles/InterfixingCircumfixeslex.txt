@@ -1,0 +1,77 @@
+
+\lx 5146
+\g 3m.IMPV
+\c W/W
+\o -2 -2 
+\wc 3468
+\a y {6451}
+\eType infix nterfix
+\loc prefix root /#[10409]_  | /#[V]_ 
+		
+\mcc 5146 +/ _ ... 5146 +/ 5146 ... _
+
+
+\lx 5146
+\g 3m.IMPV
+\c W/W
+\o 2 2 
+\wc 9441
+\a it {4103}
+\eType suffix
+\mcc 5146 +/ _ ... 5146 +/ 5146 ... _
+
+ 
+\lx 897
+\g 3m.PFV.pst
+\c W/W
+\o -2 -2 
+\wc 3468
+\a y {4200}
+\eType prefix nterfix
+\mcc 897 +/ _ ... 897 +/ 897 ... _
+
+
+\lx 897
+\g 3m.PFV.pst
+\c W/W
+\o 2 2 
+\wc 9441
+\a iy {3911}
+\eType suffix
+\mcc 897 +/ _ ... 897 +/ 897 ... _
+
+ 
+\lx 7060
+\g bring;give
+\c W
+\wc root
+\mp RootPOS5361
+\a eb {3936} Bound
+ 
+\lx 1363
+\g juss.3m
+\c W/W
+\o -2 -2 
+\wc 3468
+\a y {4777}
+\eType prefix
+\mcc 1363 +/ _ ... 1363 +/ 1363 ... _
+
+
+\lx 1363
+\g juss.3m
+\c W/W
+\o 2 2 
+\wc 9441
+\a is {3262}
+\eType suffix nterfix
+\mcc 1363 +/ _ ... 1363 +/ 1363 ... _
+
+ 
+\lx 4996
+\g put.on
+\c W
+\wc root
+\mp RootPOS5361
+\a saar {1361} Bound
+ 

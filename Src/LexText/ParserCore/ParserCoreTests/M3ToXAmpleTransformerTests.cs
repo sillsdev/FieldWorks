@@ -43,6 +43,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		string m_sM3FXTStemFreeFluctuationFLExDump;
 		string m_sM3FXTCompundRulesWithExceptionFeaturesFLExDump;
 		private string m_sAbazaOrderClassPlayDump;
+		private string m_sInterfixingCircumfixesDump;
 		readonly Dictionary<string, XPathDocument> m_mapXmlDocs = new Dictionary<string, XPathDocument>();
 
 		XslCompiledTransform m_adTransform;
@@ -87,6 +88,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			m_sM3FXTLatinDump = Path.Combine(m_sTestPath, "LatinParserFxtResult.xml");
 			m_sM3FXTIrregularlyInflectedFormsDump = Path.Combine(m_sTestPath, "IrregularlyInflectedFormsParserFxtResult.xml");
 			m_sAbazaOrderClassPlayDump = Path.Combine(m_sTestPath, "Abaza-OrderclassPlay.xml");
+			m_sInterfixingCircumfixesDump = Path.Combine(m_sTestPath, "InterfixingCircumfixesFxtResult.xml");
 			m_sM3FXTQuechuaMYLDump = Path.Combine(m_sTestPath, "QuechuaMYLFxtResult.xml");
 			m_sM3FXTEmiFLExDump = Path.Combine(m_sTestPath, "emi-flexFxtResult.xml");
 			m_sM3FXTStemFreeFluctuationFLExDump = Path.Combine(m_sTestPath, "StemFreeFluctuationFLExDump.xml");
@@ -107,6 +109,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			SetupXmlDocument(m_sM3FXTLatinDump);
 			SetupXmlDocument(m_sM3FXTIrregularlyInflectedFormsDump);
 			SetupXmlDocument(m_sAbazaOrderClassPlayDump);
+			SetupXmlDocument(m_sInterfixingCircumfixesDump);
 			SetupXmlDocument(m_sM3FXTQuechuaMYLDump);
 			SetupXmlDocument(m_sM3FXTEmiFLExDump);
 			SetupXmlDocument(m_sM3FXTStemFreeFluctuationFLExDump);
@@ -169,6 +172,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			ApplyTransform(m_sM3FXTAffixAlloFeatsDump, m_lexTransform, "AffixAlloFeatsLexicon.txt");
 			ApplyTransform(m_sM3FXTIrregularlyInflectedFormsDump, m_lexTransform, "IrregularlyInflectedFormsLexicon.txt");
 			ApplyTransform(m_sAbazaOrderClassPlayDump, m_lexTransform, "Abaza-OrderclassPlaylex.txt");
+			ApplyTransform(m_sInterfixingCircumfixesDump, m_lexTransform, "InterfixingCircumfixeslex.txt");
 			ApplyTransform(m_sM3FXTQuechuaMYLDump, m_lexTransform, "QuechuaMYLlex.txt");
 			ApplyTransform(m_sM3FXTEmiFLExDump, m_lexTransform, "emi-flexlex.txt");
 			ApplyTransform(m_sM3FXTStemFreeFluctuationFLExDump, m_lexTransform, "stemFreeFluctuationlex.txt");
