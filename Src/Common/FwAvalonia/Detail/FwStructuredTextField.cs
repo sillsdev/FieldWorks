@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2026 SIL International
+﻿﻿// Copyright (c) 2026 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -94,7 +94,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				AcceptsReturn = false, // Enter inserts a NEW paragraph (handled below), never a line break
 				IsReadOnly = !paraEditable,
 				BorderThickness = new Thickness(0),
-				Background = Brushes.Transparent,
+				Background = FwAvaloniaDensity.TransparentBrush,
 				TextWrapping = TextWrapping.Wrap
 			};
 			AutomationProperties.SetAutomationId(box, automationId + ".Para." + index);
@@ -203,7 +203,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 
 			// Dense bordered paragraph row: a thin left rule marks the paragraph boundary (the legacy
 			// StText paragraph gutter), the style button leads, the value box fills, add/delete trail.
-			var rowPanel = new DockPanel { Background = Brushes.Transparent };
+			var rowPanel = new DockPanel { Background = FwAvaloniaDensity.TransparentBrush };
 			if (deleteAffordance != null)
 			{
 				DockPanel.SetDock(deleteAffordance, Dock.Right);
@@ -236,10 +236,10 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			return new Border
 			{
 				BorderBrush = FwAvaloniaDensity.SectionRuleBrush,
-				BorderThickness = new Thickness(2, 0, 0, 0),
-				Padding = new Thickness(4, 1, 0, 1),
+				BorderThickness = FwAvaloniaDensity.ParagraphRuleBorderThickness,
+				Padding = FwAvaloniaDensity.ParagraphRowPadding,
 				Child = rowPanel,
-				Background = Brushes.Transparent
+				Background = FwAvaloniaDensity.TransparentBrush
 			};
 		}
 
@@ -295,10 +295,10 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			var styleButton = new Button
 			{
 				Content = FwAvaloniaStrings.ParagraphStyle,
-				Padding = new Thickness(6, 0, 6, 0),
+				Padding = FwAvaloniaDensity.CompactButtonPadding,
 				MinHeight = 0,
 				MinWidth = 0,
-				Background = Brushes.Transparent,
+				Background = FwAvaloniaDensity.TransparentBrush,
 				BorderThickness = new Thickness(0),
 				Foreground = FwAvaloniaDensity.WsAbbrevBrush,
 				FontSize = FwAvaloniaDensity.WsAbbrevFontSize,
@@ -371,7 +371,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			// pointer press on it swaps in the editable box and focuses it (the box can't take focus while
 			// collapsed, so the press both reveals and focuses it). On blur the box collapses and the display
 			// returns. A read-only paragraph keeps the display up (the box never reveals).
-			var panel = new Panel { Background = Brushes.Transparent };
+			var panel = new Panel { Background = FwAvaloniaDensity.TransparentBrush };
 			panel.Children.Add(display);
 			panel.Children.Add(box);
 			display.IsVisible = true;
@@ -531,10 +531,10 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			var button = new Button
 			{
 				Content = glyph,
-				Padding = new Thickness(4, 0, 4, 0),
+				Padding = FwAvaloniaDensity.IconButtonPadding,
 				MinHeight = 0,
 				MinWidth = 0,
-				Background = Brushes.Transparent,
+				Background = FwAvaloniaDensity.TransparentBrush,
 				BorderThickness = new Thickness(0),
 				Foreground = FwAvaloniaDensity.WsAbbrevBrush,
 				VerticalAlignment = VerticalAlignment.Top

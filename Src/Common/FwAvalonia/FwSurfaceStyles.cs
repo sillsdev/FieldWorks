@@ -35,8 +35,12 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 	/// </summary>
 	public static class FwSurfaceStyles
 	{
-		/// <summary>The surface font, kept equal to the dialog density font so text is one size app-wide.</summary>
-		public const double SurfaceFontSize = 11.0;
+		/// <summary>The surface font, resolved from the shared FwAvaloniaTheme token dictionary
+		/// (FwSurfaceFontSize) so it stays equal to the dialog density font -- one value across
+		/// every
+		/// Avalonia view and dialog. A property, not a field: resolved at point-of-use, after the
+		/// Application has started.</summary>
+		public static double SurfaceFontSize => FwThemeResources.RequireDouble(GeneratedTokenKeys.FwSurfaceFontSize);
 
 		/// <summary>
 		/// Marks a surface whose subtree already carries the styles, so a second call is a genuine no-op
@@ -93,17 +97,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 				}
 			};
 
-			// The ONE deterministic, font-proportional CheckBox style (the same definition the dialog path
-			// gets), so a browse/table/tree select checkbox is sized to FwAvaloniaDensity.CheckboxBoxSize and
-			// never inflates a row past BrowseRowMinHeight.
-			foreach (var checkBoxStyle in FwCheckBoxStyle.Build())
-				yield return checkBoxStyle;
-
-			// The ONE deterministic, font-proportional RadioButton style (its checkbox counterpart, the same
-			// definition the dialog path gets), so a radio is sized to FwAvaloniaDensity.RadioBoxSize and never
-			// inflates a row past the text line.
-			foreach (var radioStyle in FwRadioButtonStyle.Build())
-				yield return radioStyle;
+			// Semi sizes CheckBox/RadioButton controls from overridable resources; FwSemiDensity
+			// retargets those once at the Application level.
 		}
 	}
 }

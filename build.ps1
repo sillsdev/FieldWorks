@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
 	Builds the FieldWorks repository using the MSBuild Traversal SDK.
 
@@ -122,6 +122,13 @@
 	Enforce the comment-hygiene check, failing the build on any violation in the lines this
 	branch adds.
 
+.PARAMETER TokenHygiene
+	Enforce the token-hygiene check, failing the build on any hardcoded color or
+	spacing/sizing literal anywhere in the Avalonia surface (not diff-scoped -- the whole
+	scoped tree must be clean). Required of coding agents; a developer build leaves it off
+	and never runs the check. CI always runs it: the build step passes -TokenHygiene, so CI
+	fails on a violation rather than annotating it.
+
 .PARAMETER SkipWorktreeLock
 	Internal switch used when build.ps1 is invoked from test.ps1 while the parent test workflow
 	already owns the same-worktree lock. Skips acquiring/releasing that lock again.
@@ -195,7 +202,8 @@ param(
 	[string]$StartedBy = 'unknown',
 	[switch]$SkipWorktreeLock,
 	[switch]$SkipDependencyCheck,
-	[switch]$CommentHygiene
+	[switch]$CommentHygiene,
+	[switch]$TokenHygiene
 )
 
 $ErrorActionPreference = "Stop"
@@ -213,6 +221,18 @@ if ($CommentHygiene) {
 	$commentHygienePath = Join-Path $PSScriptRoot "Build/Agent/comment-hygiene.ps1"
 	& $commentHygienePath
 	if ($LASTEXITCODE -ne 0) {
+		exit $LASTEXITCODE
+	}
+}
+
+# -TokenHygiene blocks the build, and CI passes it, so CI fails rather than
+# annotating. Without the flag but with CI set, the run is advisory and
+# annotates instead. An ordinary developer build is silent.
+$tokenHygieneInCI = ($env:GITHUB_ACTIONS -eq 'true') -or ($env:CI -eq 'true')
+if ($TokenHygiene -or $tokenHygieneInCI) {
+	$tokenHygienePath = Join-Path $PSScriptRoot "Build/Agent/token-hygiene.ps1"
+	& $tokenHygienePath -Advisory:(-not $TokenHygiene)
+	if ($TokenHygiene -and $LASTEXITCODE -ne 0) {
 		exit $LASTEXITCODE
 	}
 }

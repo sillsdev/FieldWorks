@@ -549,7 +549,7 @@ namespace FwAvaloniaTests
 			Assert.That(box.IsReadOnly, Is.True,
 				"an audio alternative is read-only text (no fake editor to corrupt the recording)");
 			Assert.That(box.Text, Is.EqualTo("casa.wav"), "the recording filename stays visible");
-			Assert.That(fieldControl.GetVisualDescendants().OfType<Button>().Any(), Is.False,
+			Assert.That(fieldControl.AuthoredDescendants<Button>().Any(), Is.False,
 				"the media seam was removed, so there are no play/record affordances");
 			Assert.That(context.TextEdits, Is.Empty, "a read-only audio row never stages a text edit");
 		}

@@ -8,6 +8,7 @@ using Avalonia.Controls;
 using Avalonia.Controls.Templates;
 using Avalonia.Input;
 using Avalonia.Media;
+using SIL.FieldWorks.Common.FwAvalonia;
 
 namespace FwAvaloniaDialogs
 {
@@ -26,10 +27,12 @@ namespace FwAvaloniaDialogs
 	/// </summary>
 	public partial class EntryGoDialogView : UserControl
 	{
-		// Mirrors the theme's ListBoxItem Padding (4,1) so the header cells align with the row cells below them.
-		private static readonly Thickness HeaderInset = new Thickness(4, 1);
+		// Mirrors the theme's ListBoxItem Padding (4,1) so header cells align with row cells
+		// below.
+		// A property, not a field: resolved at point-of-use, after the Application has started.
+		private static Thickness HeaderInset => FwAvaloniaDensity.ListRowPadding;
 		// Horizontal gap between column cells (numerically the theme's DialogControlGap).
-		private static readonly Thickness CellGap = new Thickness(0, 0, 6, 0);
+		private static Thickness CellGap => FwAvaloniaDensity.TrailingGap;
 
 		public EntryGoDialogView()
 		{

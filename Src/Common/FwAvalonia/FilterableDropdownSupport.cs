@@ -128,7 +128,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 			var theme = new ControlTheme(typeof(FlyoutPresenter)) { BasedOn = baseTheme };
 			theme.Setters.Add(new Setter(TemplatedControl.PaddingProperty, new Thickness(0)));
 			theme.Setters.Add(new Setter(TemplatedControl.BorderThicknessProperty, new Thickness(0)));
-			theme.Setters.Add(new Setter(TemplatedControl.BackgroundProperty, Brushes.Transparent));
+			theme.Setters.Add(new Setter(TemplatedControl.BackgroundProperty, FwAvaloniaDensity.TransparentBrush));
 			theme.Setters.Add(new Setter(TemplatedControl.CornerRadiusProperty, new CornerRadius(0)));
 			return theme;
 		}

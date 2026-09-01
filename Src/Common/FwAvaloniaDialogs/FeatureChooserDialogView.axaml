@@ -1,11 +1,17 @@
-<UserControl xmlns="https://github.com/avaloniaui"
+﻿<UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vm="clr-namespace:FwAvaloniaDialogs"
              xmlns:res="clr-namespace:FwAvaloniaDialogs"
              x:Class="FwAvaloniaDialogs.FeatureChooserDialogView"
              x:DataType="vm:FeatureChooserDialogViewModel"
              Classes="fwDialogRoot"
-             MinWidth="320" MinHeight="260">
+             MinWidth="{DynamicResource FeatureChooserMinWidth}" MinHeight="{DynamicResource FeatureChooserMinHeight}">
+	<UserControl.Resources>
+		<!-- Used only by this view, so it lives here rather than in the shared
+		     dialog dictionary. -->
+		<x:Double x:Key="FeatureChooserMinWidth">320</x:Double>
+		<x:Double x:Key="FeatureChooserMinHeight">260</x:Double>
+	</UserControl.Resources>
 	<!-- The standalone feature-structure chooser dialog: an optional instruction prompt, then
 	     the shared FwFeatureStructureEditor tree, over OK/Cancel/Help. The editor is an owned native control injected
 	     as a code-behind child (set on DataContextChanged like MsaCreatorDlgView). Visible text is localized via

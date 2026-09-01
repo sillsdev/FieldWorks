@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2026 SIL International
+﻿﻿// Copyright (c) 2026 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -30,7 +30,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			Action<DetailLinkRequest> linkRequested = null,
 			IFwClipboard clipboard = null,
 			Action save = null,
-			bool showWritingSystemAbbreviation = true)
+			bool showWritingSystemAbbreviation = true,
+			double? wsAbbrevColumnWidth = null)
 		{
 			EditContext = editContext;
 			WritingSystemFocused = writingSystemFocused;
@@ -39,6 +40,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			Clipboard = clipboard;
 			Save = save;
 			ShowWritingSystemAbbreviation = showWritingSystemAbbreviation;
+			WsAbbrevColumnWidth = wsAbbrevColumnWidth ?? FwAvaloniaDensity.WsAbbrevWidth;
 		}
 
 		/// <summary>The shared edit-session/staging context; null -> read-only display.</summary>
@@ -70,6 +72,10 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		/// a dense in-cell editor suppresses it (matching the legacy in-cell editor).
 		/// </summary>
 		public bool ShowWritingSystemAbbreviation { get; }
+
+		/// <summary>Adaptive width for the per-WS abbreviation gutter, computed once per view
+		/// from the widest abbreviation.</summary>
+		public double WsAbbrevColumnWidth { get; }
 	}
 
 	/// <summary>
@@ -121,7 +127,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				default:
 					return new FwMultiWsTextField(field, automationId, context.EditContext,
 						context.WritingSystemFocused, context.MenuRequested, context.Clipboard,
-						context.ShowWritingSystemAbbreviation, context.Save);
+						context.ShowWritingSystemAbbreviation, context.Save, context.WsAbbrevColumnWidth);
 			}
 		}
 
@@ -184,7 +190,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			var block = new TextBlock
 			{
 				Text = FwAvaloniaStrings.UnsupportedEditor,
-				Foreground = Brushes.Gray,
+				Foreground = FwAvaloniaDensity.DisabledOptionBrush,
 				VerticalAlignment = VerticalAlignment.Center
 			};
 			AutomationProperties.SetAutomationId(block, automationId);

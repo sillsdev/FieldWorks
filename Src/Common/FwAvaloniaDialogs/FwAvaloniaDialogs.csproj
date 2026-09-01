@@ -32,7 +32,9 @@
 
 	<ItemGroup>
 		<PackageReference Include="Avalonia" ExcludeAssets="analyzers" />
-		<PackageReference Include="Avalonia.Themes.Fluent" ExcludeAssets="analyzers" />
+		<PackageReference Include="Semi.Avalonia" ExcludeAssets="analyzers" />
+		<PackageReference Include="Irihi.Ursa" ExcludeAssets="analyzers" />
+		<PackageReference Include="Irihi.Ursa.Themes.Semi" ExcludeAssets="analyzers" />
 		<PackageReference Include="CommunityToolkit.Mvvm" />
 	</ItemGroup>
 
@@ -50,6 +52,12 @@
 	<!-- Reuse the foundation's owned writing-system-aware field controls + product strings inside dialogs. -->
 	<ItemGroup>
 		<ProjectReference Include="..\FwAvalonia\FwAvalonia.csproj" />
+	</ItemGroup>
+
+	<!-- Shared color/brush + font-size token dictionary, merged into DialogTheme.axaml's
+	     Styles.Resources so {StaticResource FwSurfaceFontSize} etc. resolve. -->
+	<ItemGroup>
+		<ProjectReference Include="..\FwAvaloniaTheme\FwAvaloniaTheme.csproj" />
 	</ItemGroup>
 
 	<!-- The nested FwAvaloniaDialogsTests/ folder is excluded from this library's default SDK

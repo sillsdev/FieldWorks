@@ -49,11 +49,30 @@ jobs:
           Build\Agent\Test-BuildCommentHygieneComment.ps1
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
+      # Same dual-engine rationale as the comment-hygiene suite above: the
+      # token-hygiene check runs under whichever engine invoked build.ps1.
+      - name: Token hygiene fixture tests (PowerShell 7)
+        id: token-hygiene-tests-pwsh
+        shell: pwsh
+        run: |
+          Build/Agent/TokenHygiene.Tests.ps1
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+      - name: Token hygiene fixture tests (Windows PowerShell 5.1)
+        id: token-hygiene-tests-winps
+        shell: powershell
+        run: |
+          Build\Agent\TokenHygiene.Tests.ps1
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+      # -TokenHygiene fails CI on any hardcoded color/spacing literal in the Avalonia
+      # surface (full-tree, no grandfathering -- unlike -CommentHygiene, which stays
+      # advisory-only for humans here and only blocks agents locally).
       - name: Build with tests
         id: build
         shell: powershell
         run: |
-          .\build.ps1 -Configuration Debug -BuildTests
+          .\build.ps1 -Configuration Debug -BuildTests -TokenHygiene
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
       # Native tests run under OpenCppCoverage inside the test step below; without the tool they

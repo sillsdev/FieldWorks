@@ -1,0 +1,59 @@
+﻿<!--
+	DialogTokens - the shared spacing/border tokens for every FwAvaloniaDialogs dialog body.
+
+	Lives in FwAvaloniaTheme, not in FwAvaloniaDialogs, because FwAvalonia's build generates
+	compile-time key constants from this file and FwAvaloniaDialogs depends on FwAvalonia. Keeping
+	the file in the dependent made the foundation's generated public API a function of its own
+	dependent, and let a Dialogs-only edit fail the foundation's compile.
+
+	A value used by exactly one view does NOT belong here - it lives in that view's own
+	Resources. This dictionary is for values shared by two or more views, used by
+	DialogTheme.axaml's own styles, or consumed from C# via GeneratedTokenKeys.
+-->
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+		<!-- Padding around the whole dialog body (between the chrome and the content). -->
+	<Thickness x:Key="DialogWindowPadding">10</Thickness>
+	<!-- Vertical gap between stacked controls / rows. -->
+	<x:Double x:Key="DialogControlGap">6</x:Double>
+	<!-- Gap between a field's label and the field itself. Matches Semi's own ExtraTight
+	     spacing step exactly. -->
+	<StaticResource x:Key="DialogLabelFieldGap" ResourceKey="SemiSpacingExtraTight"/>
+	<!-- Gap between the buttons in an OK/Cancel/Help strip. Matches Semi's own Tight
+	     spacing step exactly. -->
+	<StaticResource x:Key="DialogButtonStripGap" ResourceKey="SemiSpacingTight"/>
+	<!--
+		Directional margins derived from the gaps, for the few one-sided spacing needs that
+		Spacing
+	     cannot express (a strip docked below content; a prompt above content). -->
+	<Thickness x:Key="DialogControlGapAbove">0,6,0,0</Thickness>
+	<Thickness x:Key="DialogLabelFieldGapBelow">0,0,0,4</Thickness>
+	<!-- A label-field gap applied above (a label separated from the control above it). -->
+	<Thickness x:Key="DialogLabelGroupGapAbove">0,6,0,0</Thickness>
+	<!-- Extra top whitespace so a control group reads as separate from the group before it
+	     (mirrors FwAvaloniaDensity.GroupSeparation). -->
+	<Thickness x:Key="DialogGroupSeparation">0,8,0,0</Thickness>
+	<!--
+		Inner padding for a fwGroupBox's content (space between its border and the
+		header/controls). Matches Semi's own Tight thickness step exactly.
+	-->
+	<StaticResource x:Key="DialogGroupPadding" ResourceKey="SemiThicknessTight"/>
+	<!-- 24, not the tighter 20-23px legacy WinForms line controls measured, so height never
+	     regresses below the desktop pointer-target accessibility floor. Matches Semi's own
+	     Small control-height step exactly. -->
+	<StaticResource x:Key="DialogMinControlHeight" ResourceKey="SemiHeightControlSmall"/>
+	<!-- Border thickness for a host/field frame. Matches Semi's own control-border-thickness
+	     primitive exactly. -->
+	<StaticResource x:Key="DialogFieldBorderThickness" ResourceKey="SemiBorderThicknessControl"/>
+	<!-- Inner padding for a host/field frame (breathing room around the embedded control). -->
+	<Thickness x:Key="DialogFieldPadding">3</Thickness>
+	<!--
+		Per-control padding tokens for the density Style setters below, so a value used both
+		as
+	     a named resource and a Setter literal has exactly one source. -->
+	<Thickness x:Key="DialogTextBoxPadding">4,2</Thickness>
+	<Thickness x:Key="DialogComboBoxPadding">6,1</Thickness>
+	<Thickness x:Key="DialogButtonPadding">8,2</Thickness>
+	<Thickness x:Key="DialogTabItemPadding">8,3</Thickness>
+	<Thickness x:Key="DialogListBoxItemPadding">4,1</Thickness>
+</ResourceDictionary>
