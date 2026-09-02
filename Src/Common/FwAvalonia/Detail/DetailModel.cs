@@ -67,7 +67,18 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		/// read-only in the value column (the label/message text IS the content). Carries no editable
 		/// value and no setter.
 		/// </summary>
-		Literal
+		Literal,
+
+		/// <summary>
+		/// A boolean field (legacy <c>checkbox</c>/<c>checkboxwithrefresh</c> editors,
+		/// <c>CheckBoxSlice</c>) rendered as a single checkbox in the value column. The row's
+		/// label
+		/// is the whole caption, as in legacy, so no yes/no text is drawn and the row carries no
+		/// options: <see cref="DetailField.SelectedOptionKey"/> is the literal "true" or "false",
+		/// and the toggle stages through the same
+		/// <see cref="IDetailEditContext.TrySetOption"/> path a chooser uses.
+		/// </summary>
+		Boolean
 	}
 
 	/// <summary>

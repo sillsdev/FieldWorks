@@ -2418,10 +2418,8 @@ namespace SIL.FieldWorks.XWorks
 				=> !string.IsNullOrEmpty(text)
 					&& text.StartsWith(query, StringComparison.OrdinalIgnoreCase);
 
-			// Viewing parity: every field type the legacy slices display has a rendering here:
-			// booleans as checkboxes (editable), integers editable, dates/gendates formatted,
-			// structured text as paragraph text, references as value rows; explicit unsupported rows
-			// for the rest. Empty fields show under "show hidden fields" exactly like legacy.
+			// Field types resolved by LCModel type rather than editor string. A type with no
+			// branch here renders the labeled Unsupported worklist row rather than a guess.
 			private void WalkOtherField(ViewNode node, ICmObject obj, int depth)
 			{
 				var flid = GetFlid(obj, node.Field);
@@ -2430,6 +2428,9 @@ namespace SIL.FieldWorks.XWorks
 					var type = (CellarPropertyType)_mdc.GetFieldType(flid);
 					switch (type)
 					{
+						case CellarPropertyType.Boolean:
+							WalkBooleanField(node, obj, depth, flid);
+							return;
 						case CellarPropertyType.ReferenceAtomic:
 							WalkReferenceAtomicField(node, obj, depth, flid);
 							return;
@@ -2445,6 +2446,33 @@ namespace SIL.FieldWorks.XWorks
 
 				if (!HideWhenEmpty(node))
 					WalkUnsupported(node, obj, depth);
+			}
+
+			// A boolean field (legacy CheckBoxSlice). The row's label is the whole caption, so
+			// the
+			// row carries no options; the state stages through the shared option path.
+			private void WalkBooleanField(ViewNode node, ICmObject obj, int depth, int flid)
+			{
+				var hvo = obj.Hvo;
+				var current = _sda.get_BooleanProp(hvo, flid);
+				var stableId = StableId(node, obj);
+				AddField(new DetailField(stableId, Localize(node.Label) ?? node.Field, node.Field,
+					node.WritingSystem, DetailFieldKind.Boolean, node.EditorClassification,
+					node.AutomationId, node.LocalizationKey, node.Routing, null, null,
+					current ? bool.TrueString : bool.FalseString, isEditable: true, indent: depth,
+					menuId: node.MenuId, contextMenuId: node.ContextMenuId,
+					hotlinksId: node.HotlinksId, objectHvo: hvo));
+
+				HandlerFor(stableId).Option = key =>
+				{
+					// Only the two literals are accepted; anything else is rejected WITHOUT
+					// opening
+					// the session, like a chooser key outside its list.
+					if (!bool.TryParse(key, out var value))
+						return false;
+					_sda.SetBoolean(hvo, flid, value);
+					return true;
+				};
 			}
 
 			// The atomic-reference dispatch of WalkOtherField, split out unchanged: a possibility-list or

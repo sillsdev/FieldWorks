@@ -75,8 +75,8 @@ namespace SIL.FieldWorks.XWorks
 			TestContext.WriteLine("MoAdhocProhibGr composed field/label:kind: " + string.Join(", ", kinds));
 			// The group's own scalar fields compose editably (Name/Description Text + Active checkbox).
 			Assert.That(composed.Model.Fields.Any(f => f.Kind == DetailFieldKind.Text), "Name/Description compose");
-			Assert.That(composed.Model.Fields.Any(f => f.Kind == DetailFieldKind.Unsupported),
-				"the Active boolean flag composes as a labeled Unsupported worklist row (checkbox editing dropped)");
+			Assert.That(composed.Model.Fields.Any(f => f.Kind == DetailFieldKind.Boolean),
+				"the Active boolean flag composes as an editable checkbox row");
 		}
 
 		/// <summary>
@@ -123,12 +123,15 @@ namespace SIL.FieldWorks.XWorks
 			// Active part's field is Disabled, labelled "Active".
 			foreach (var field in new[] { "FirstMorpheme", "Adjacency", "RestOfMorphs", "Disabled" })
 				Assert.That(memberRows.Any(f => f.Field == field), $"the member's {field} part composes");
-			// Key/Others/Adjacency are custom slices, so the member's parts compose as labeled
-			// Unsupported
-			// worklist rows rather than editors -- the structure composes, the editors do not.
+			// Key/Others/Adjacency are custom slices and compose as labeled Unsupported worklist
+			// rows; the Disabled part is a boolean and composes as an editable checkbox.
 			Assert.That(memberRows.Any(f => f.Kind != DetailFieldKind.Header
-				&& f.Kind != DetailFieldKind.Unsupported), Is.False,
-				"the member's parts compose as Unsupported worklist rows");
+				&& f.Kind != DetailFieldKind.Unsupported
+				&& f.Kind != DetailFieldKind.Boolean), Is.False,
+				"the member's custom-slice parts compose as Unsupported worklist rows");
+			Assert.That(memberRows.Any(f => f.Field == "Disabled"
+				&& f.Kind == DetailFieldKind.Boolean), Is.True,
+				"the member's Disabled part composes as an editable checkbox row");
 			// <seq field="Members" ... indent="true"> nests the member below the group's own rows.
 			var groupIndent = composed.Model.Fields
 				.Where(f => f.ObjectHvo == group.Hvo && f.Kind != DetailFieldKind.Header).Max(f => f.Indent);

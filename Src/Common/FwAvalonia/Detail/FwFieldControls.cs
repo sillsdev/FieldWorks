@@ -1478,4 +1478,64 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		/// <summary>The button-click path; a no-op without an injected callback.</summary>
 		public void Launch() => _launch?.Invoke();
 	}
+	/// <summary>
+	/// A boolean row (legacy <c>CheckBoxSlice</c>): one checkbox in the value column, with the
+	/// row's own label as its caption, so no yes/no text is drawn. The toggle stages through
+	/// <see cref="IDetailEditContext.TrySetOption"/> as the literal "true"/"false" -- a boolean
+	/// is a
+	/// two-state choice, so it reuses the option path rather than widening the edit seam. A null
+	/// edit context yields a read-only checkbox, like every other row.
+	/// </summary>
+	public sealed class FwBooleanField : CheckBox
+	{
+		// Avalonia keys a ControlTheme on the EXACT type, so a subclass resolves none of its own.
+		// Without this the row gets no template: no box drawn, no input taken.
+		protected override Type StyleKeyOverride => typeof(CheckBox);
+
+		private readonly DetailField _field;
+		private readonly IDetailEditContext _editContext;
+		// Guards the programmatic IsChecked assignment in the constructor from being read back as
+		// a
+		// user toggle and staged as an edit.
+		private bool _wiring;
+
+		public FwBooleanField(DetailField field, string automationId, IDetailEditContext editContext)
+		{
+			_field = field;
+			_editContext = editContext;
+
+			_wiring = true;
+			IsChecked = bool.TryParse(field?.SelectedOptionKey, out var value) && value;
+			_wiring = false;
+
+			Padding = FwAvaloniaDensity.EditorPadding;
+			MinHeight = 0;
+			HorizontalAlignment = HorizontalAlignment.Left;
+			VerticalAlignment = VerticalAlignment.Center;
+			IsEnabled = field != null && field.IsEditable && editContext != null;
+
+			AutomationProperties.SetAutomationId(this, automationId ?? string.Empty);
+			AutomationProperties.SetName(this, field?.Label ?? string.Empty);
+
+			IsCheckedChanged += OnIsCheckedChanged;
+		}
+
+		private void OnIsCheckedChanged(object sender, Avalonia.Interactivity.RoutedEventArgs e)
+		{
+			if (_wiring || _editContext == null)
+				return;
+
+			var staged = _editContext.TrySetOption(_field,
+				IsChecked == true ? bool.TrueString : bool.FalseString);
+			if (staged)
+				return;
+
+			// The edit was refused; put the box back rather than showing a state the model does
+			// not
+			// have.
+			_wiring = true;
+			IsChecked = !(IsChecked == true);
+			_wiring = false;
+		}
+	}
 }

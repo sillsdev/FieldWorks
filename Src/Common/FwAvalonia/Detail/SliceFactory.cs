@@ -120,6 +120,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 						context.EditContext == null ? null : context.Save, context.Clipboard);
 				case DetailFieldKind.Chooser:
 					return new FwChooserField(field, automationId, context.EditContext, context.LinkRequested);
+				case DetailFieldKind.Boolean:
+					return new FwBooleanField(field, automationId, context.EditContext);
 				case DetailFieldKind.Literal:
 					return CreateLiteral(field, automationId);
 				case DetailFieldKind.Unsupported:
