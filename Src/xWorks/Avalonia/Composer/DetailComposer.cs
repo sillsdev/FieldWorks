@@ -284,8 +284,8 @@ namespace SIL.FieldWorks.XWorks
 			// The per-project override resolver, threaded into every CompileForObject
 			// so a descended object's layout gets its own patch applied; plus the (class, layout) of the
 			// model currently being walked, captured onto each emitted field so the host's per-field
-			// gear-menu commands target the right override file. A stack so the entry context restores
-			// after a nested object's walk returns.
+			// menu-button commands target the right override file. A stack so the entry
+			// context restores after a nested object's walk returns.
 			private readonly ViewDefinitionOverrideResolver _overrides;
 			private readonly Stack<(string ClassName, string LayoutName)> _modelContext
 				= new Stack<(string, string)>();
@@ -3020,8 +3020,8 @@ namespace SIL.FieldWorks.XWorks
 				if (compiled != null && compiled.Roots.Count > 0)
 				{
 					// Rows from the descended model are stamped with ITS (class,
-					// layout), so the gear-menu commands on a sense/allomorph row target that layout's
-					// override file, not the entry's.
+					// layout), so the menu-button commands on a sense/allomorph row target
+					// that layout's override file, not the entry's.
 					EnterModel(compiled);
 					foreach (var child in compiled.Roots)
 						Walk(child, target, depth + 1);
