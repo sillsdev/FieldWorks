@@ -360,6 +360,17 @@ namespace SIL.FieldWorks.XWorks
 			ShowRecord(new RecordNavigationInfo(Clerk, Clerk.SuppressSaveOnChangeRecord, false, false));
 		}
 
+		// The record the view shows for a clerk object: a showDescendantInRoot tool displays
+		// the subrecord's owning root, so every show/refresh path resolves through this.
+		private ICmObject ResolveShownRecord(ICmObject obj)
+		{
+			if (obj == null || !m_showDescendantInRoot)
+				return obj;
+			while (obj.Owner != Clerk.OwningObject)
+				obj = obj.Owner;
+			return obj;
+		}
+
 		/// <summary>
 		/// Shows the record on idle. This is where the record is actually shown.
 		/// </summary>
@@ -421,14 +432,7 @@ namespace SIL.FieldWorks.XWorks
 				}
 
 				// Enhance: Maybe do something here to allow changing the templates without the starting the application.
-				ICmObject obj = Clerk.CurrentObject;
-
-				if (m_showDescendantInRoot)
-				{
-					// find the root object of the current object
-					while (obj.Owner != Clerk.OwningObject)
-						obj = obj.Owner;
-				}
+				ICmObject obj = ResolveShownRecord(Clerk.CurrentObject);
 
 				if (ShouldUseAvaloniaLexiconEdit && m_avaloniaEntryForm != null)
 				{

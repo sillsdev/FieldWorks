@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2017 SIL International
+﻿// Copyright (c) 2003-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -73,6 +73,13 @@ namespace SIL.FieldWorks.XWorks
 		// projects/windows for the app lifetime.
 		private readonly Dictionary<string, bool> m_expansionStates = new Dictionary<string, bool>();
 
+		// The transient "Show all right now" reveal: template StableIds of parts whose rows
+		// show every writing-system option. Cleared when the shown record changes; never
+		// persisted.
+		private readonly HashSet<string> m_showAllWsFields = new HashSet<string>(StringComparer.Ordinal);
+		// The record m_showAllWsFields belongs to; a different record expires the reveal.
+		private int m_showAllWsRecordHvo;
+
 		private bool ShouldUseAvaloniaLexiconEdit
 		{
 			get { return m_activeUIFramework == UIFramework.Avalonia; }
@@ -142,6 +149,10 @@ namespace SIL.FieldWorks.XWorks
 			SettleDetailEdits();
 			m_detailEditContext.Clear();
 			m_avaloniaEntryForm?.Dispose();
+			// Transient view state dies with the view: rebuilding the host must not
+			// resurrect a stale reveal.
+			m_showAllWsFields.Clear();
+			m_showAllWsRecordHvo = 0;
 			// Null the host + refresh controller after disposing them. The recreation guards
 			// (EnsureAvaloniaEntryFormInitialized / EnsureAvaloniaRefreshController) key on `== null`, so a
 			// runtime flip New->Legacy->New rebuilds a fresh entry form instead of re-showing a disposed one.
@@ -297,6 +308,12 @@ namespace SIL.FieldWorks.XWorks
 			// cancel-on-displace remains the safety net.
 			SettleDetailEdits();
 
+			// Record-navigation expiry: the transient reveal belongs to ONE record -- it
+			// survives focus changes within the record and dies when the record changes.
+			if (obj == null || obj.Hvo != m_showAllWsRecordHvo)
+				m_showAllWsFields.Clear();
+			m_showAllWsRecordHvo = obj?.Hvo ?? 0;
+
 			// Adapter hygiene: the hidden command-routing DataTree must never answer mediator
 			// commands for a PREVIOUS record -- reset it whenever the shown record changes; the
 			// next
@@ -333,14 +350,16 @@ namespace SIL.FieldWorks.XWorks
 			{
 				composed = lexEntry != null
 					? DetailComposer.Compose(lexEntry, Cache, showHidden,
-						overrides: ResolveViewOverride)
+						overrides: ResolveViewOverride,
+						showAllWritingSystemsFields: m_showAllWsFields)
 					// Non-entry roots compose against the tool's configured layout
 					// (m_layoutName, default "Normal"); a type-selected layout (m_layoutChoiceField, e.g.
 					// Notebook RnGenericRec keyed on "Type") resolves to the right variant inside Compose.
 					: DetailComposer.Compose(obj, Cache,
 						string.IsNullOrEmpty(m_layoutName) ? "Normal" : m_layoutName, showHidden,
 						overrides: ResolveViewOverride,
-						layoutChoiceField: m_layoutChoiceField);
+						layoutChoiceField: m_layoutChoiceField,
+						showAllWritingSystemsFields: m_showAllWsFields);
 				if (composed != null)
 				{
 					detail = composed.Model;
@@ -584,6 +603,10 @@ namespace SIL.FieldWorks.XWorks
 			// even when locating fails.
 			var registry = new OverrideCommandRegistry();
 			registry.Add(IsWritingSystemVisibilityChoice, (c, d) => WritingSystemItem(c, d, field));
+			// Show all right now never dispatches or persists: it only marks the row for the
+			// host's transient reveal.
+			registry.Add("CmdDataTree-WritingSystemMenu-ShowAllRightNow",
+				(c, d) => ShowAllWritingSystemsItem(d, field));
 
 			var templateId = ViewDefinitionOverrideEditor.StripRuntimeSuffix(field.StableId);
 			// Locate the clicked node in the field's OWN compiled model (with any current override
@@ -601,8 +624,8 @@ namespace SIL.FieldWorks.XWorks
 			}
 			catch (Exception e)
 			{
-				Logger.WriteError("Resolving the field's override target failed; the gear-menu field "
-					+ "commands fall back to the legacy path for this row.", e);
+				Logger.WriteError("Resolving the field's override target failed; this row's "
+					+ "menu-button commands fall back to ordinary command dispatch.", e);
 				return registry.TryBuild;
 			}
 
@@ -648,11 +671,25 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
+		/// The "Show all right now" item: marks the row's part for the transient reveal (every
+		/// row of the part shows every writing-system option until the user navigates to another
+		/// record) and recomposes. The reveal is view state, not a command, so the item
+		/// dispatches nothing and never writes the override.
+		/// </summary>
+		private DetailMenuItem ShowAllWritingSystemsItem(UIItemDisplayProperties display, DetailField field)
+			=> new DetailMenuItem(XCoreMenuBridge.StripAccelerator(display.Text), isEnabled: true,
+				isChecked: false, children: null, execute: () =>
+				{
+					m_showAllWsFields.Add(ViewDefinitionOverrideEditor.StripRuntimeSuffix(field.StableId));
+					RefreshAvaloniaDetail();
+				});
+
+		/// <summary>
 		/// Whether this menu item makes a persistent change to which writing systems a
 		/// multi-writing-system field shows: a per-writing-system toggle (recognized by the
 		/// property its group drives -- the toggles carry no command id) or the Configure
-		/// dialog. Show all right now is excluded: it is a transient reveal on the slice,
-		/// not a configuration change, so persisting it would wrongly pin the full set.
+		/// dialog. Show all right now is not one of these: it is the transient reveal
+		/// (<see cref="ShowAllWritingSystemsItem"/>), not a configuration change to persist.
 		/// </summary>
 		private static bool IsWritingSystemVisibilityChoice(ChoiceBase choice)
 		{
@@ -742,10 +779,16 @@ namespace SIL.FieldWorks.XWorks
 				if (selected == null || selected.Count == 0)
 					return;
 
+				var templateId = ViewDefinitionOverrideEditor.StripRuntimeSuffix(field.StableId);
 				var op = new ViewOverrideOperation(ViewOverrideOperationKind.SetVisibleWritingSystems,
-					ViewDefinitionOverrideEditor.StripRuntimeSuffix(field.StableId),
-					writingSystems: selected);
-				MutateOverrideAndRefresh(field, op);
+					templateId, writingSystems: selected);
+				if (!TryMutateOverride(field, op))
+					return;
+
+				// A successful configuration write replaces any transient reveal on the part:
+				// a newly persisted display set supersedes the reveal on every row sharing it.
+				m_showAllWsFields.Remove(templateId);
+				RefreshAvaloniaDetail();
 			}
 			catch (Exception e)
 			{
@@ -782,21 +825,30 @@ namespace SIL.FieldWorks.XWorks
 		// Avalonia detail view so the change is visible immediately. The legacy DataTree/Inventory is untouched.
 		private void MutateOverrideAndRefresh(DetailField field, ViewOverrideOperation op)
 		{
+			if (TryMutateOverride(field, op))
+				RefreshAvaloniaDetail();
+		}
+
+		// Folds the op into the (class, layout) override and saves it, WITHOUT recomposing.
+		// Returns whether the save succeeded, so a failed save can leave view state untouched.
+		private bool TryMutateOverride(DetailField field, ViewOverrideOperation op)
+		{
 			try
 			{
 				var store = ViewOverrideStore;
 				if (store == null)
-					return;
+					return false;
 
 				var existing = store.TryGet(field.ClassName, field.LayoutName)
 					?? new ViewDefinitionOverride(field.ClassName, field.LayoutName, "detail", null, null);
 				var merged = ViewDefinitionOverrideEditor.MergeOperation(existing, op);
 				store.Save(merged);
-				RefreshAvaloniaDetail();
+				return true;
 			}
 			catch (Exception e)
 			{
 				Logger.WriteError("Applying the field override failed.", e);
+				return false;
 			}
 		}
 
@@ -1056,13 +1108,14 @@ namespace SIL.FieldWorks.XWorks
 			m_propertyTable.SetPropertyPersistence(key, true, PropertyTable.SettingsGroup.LocalSettings);
 		}
 
-		// Re-resolves and re-shows the detail view for the current record from current domain state
-		// (after an external edit or this view's commit/cancel).
+		// Re-shows the detail view for the current record (external edit, commit/cancel).
+		// Resolves the shown record like ShowRecord, so a showDescendantInRoot tool recomposes
+		// the root, not the subrecord.
 		private void RefreshAvaloniaDetail()
 		{
 			if (m_avaloniaEntryForm == null || !ShouldUseAvaloniaLexiconEdit)
 				return;
-			var current = Clerk?.CurrentObject;
+			var current = ResolveShownRecord(Clerk?.CurrentObject);
 			if (current == null)
 				return;
 

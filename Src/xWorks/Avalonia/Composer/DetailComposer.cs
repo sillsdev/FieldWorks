@@ -115,8 +115,10 @@ namespace SIL.FieldWorks.XWorks
 
 		public static ComposedDetail Compose(ILexEntry entry, LcmCache cache, bool showHiddenFields = false,
 			SlicePluginRegistry plugins = null,
-			ViewDefinitionOverrideResolver overrides = null)
-			=> Compose((ICmObject)entry, cache, "Normal", showHiddenFields, plugins, overrides);
+			ViewDefinitionOverrideResolver overrides = null,
+			ISet<string> showAllWritingSystemsFields = null)
+			=> Compose((ICmObject)entry, cache, "Normal", showHiddenFields, plugins, overrides,
+				showAllWritingSystemsFields: showAllWritingSystemsFields);
 
 		/// <summary>
 		/// Compose the structured detail view for ANY record root + starting layout -- the
@@ -127,10 +129,14 @@ namespace SIL.FieldWorks.XWorks
 		/// object and the starting layout instead of hardcoding LexEntry/"Normal", so wiring a new tool onto
 		/// the Avalonia side needs only its registration + (when its layout uses one) a layoutChoiceField.
 		/// </summary>
+		/// <param name="showAllWritingSystemsFields">Template StableIds of parts under a
+		/// transient "Show all right now" reveal: every row of those parts composes with its
+		/// full writing-system set, ignoring per-field visibility restrictions.</param>
 		public static ComposedDetail Compose(ICmObject obj, LcmCache cache, string layoutName = "Normal",
 			bool showHiddenFields = false, SlicePluginRegistry plugins = null,
 			ViewDefinitionOverrideResolver overrides = null,
-			string layoutChoiceField = null)
+			string layoutChoiceField = null,
+			ISet<string> showAllWritingSystemsFields = null)
 		{
 			if (obj == null) throw new ArgumentNullException(nameof(obj));
 			if (cache == null) throw new ArgumentNullException(nameof(cache));
@@ -150,7 +156,8 @@ namespace SIL.FieldWorks.XWorks
 			// bridges the gap (plugin factories run at render time, not compose).
 			IDetailEditContext composedContext = null;
 			var state = new ComposeState(cache, showHiddenFields,
-				plugins ?? SlicePluginRegistry.Default, () => composedContext, overrides);
+				plugins ?? SlicePluginRegistry.Default, () => composedContext, overrides,
+				showAllWritingSystemsFields);
 			state.EnterModel(root);
 			foreach (var node in root.Roots)
 				state.Walk(node, obj, 0);
@@ -294,6 +301,9 @@ namespace SIL.FieldWorks.XWorks
 			// receive (resolved when the factory runs, after Compose has built the context).
 			private readonly SlicePluginRegistry _plugins;
 			private readonly Func<IDetailEditContext> _editContextAccessor;
+			// Parts under the host's transient "Show all right now" reveal (template StableIds);
+			// every row of those parts composes with its full writing-system set.
+			private readonly ISet<string> _showAllWsFields;
 			// Per-compose memos -- the morph-type option list is identical for every
 			// IMoForm, and an item layout's menu/hotlinks binding is identical per (class, layout).
 			private List<DetailChoiceOption> _morphTypeOptions;
@@ -327,13 +337,15 @@ namespace SIL.FieldWorks.XWorks
 
 			public ComposeState(LcmCache cache, bool showHiddenFields,
 				SlicePluginRegistry plugins, Func<IDetailEditContext> editContextAccessor,
-				ViewDefinitionOverrideResolver overrides = null)
+				ViewDefinitionOverrideResolver overrides = null,
+				ISet<string> showAllWritingSystemsFields = null)
 			{
 				_cache = cache;
 				_showHidden = showHiddenFields;
 				_plugins = plugins;
 				_editContextAccessor = editContextAccessor;
 				_overrides = overrides;
+				_showAllWsFields = showAllWritingSystemsFields;
 				_sda = cache.DomainDataByFlid;
 				_mdc = (IFwMetaDataCacheManaged)cache.DomainDataByFlid.MetaDataCache;
 			}
@@ -1057,9 +1069,9 @@ namespace SIL.FieldWorks.XWorks
 				RegisterTextRowEditHandler(stableId, hvo, flid, type, systems);
 			}
 
-			// The writing systems of a text row: the layout set restricted by the field's per-field
-			// visibleWritingSystems override, then collapsed to a single derived row ws for a
-			// single-alternative (String/Unicode) property. Split out of WalkTextField unchanged.
+			// A text row's writing systems: the layout set, restricted by visibleWritingSystems
+			// unless the row's part is under the Show-all reveal, then collapsed to one ws for
+			// String/Unicode props.
 			private IReadOnlyList<CoreWritingSystemDefinition> ResolveTextRowWritingSystems(int hvo, int flid,
 				CellarPropertyType type, ViewNode node)
 			{
@@ -1069,7 +1081,8 @@ namespace SIL.FieldWorks.XWorks
 				// field's valid writing systems. An empty intersection keeps the full set rather than hiding
 				// the field entirely (defensive -- a stale override must never blank a real
 				// field).
-				systems = ApplyVisibleWritingSystems(systems, node.VisibleWritingSystems);
+				if (_showAllWsFields == null || !_showAllWsFields.Contains(node.StableId))
+					systems = ApplyVisibleWritingSystems(systems, node.VisibleWritingSystems);
 				if ((type == CellarPropertyType.String || type == CellarPropertyType.Unicode)
 					&& systems.Count > 0)
 				{

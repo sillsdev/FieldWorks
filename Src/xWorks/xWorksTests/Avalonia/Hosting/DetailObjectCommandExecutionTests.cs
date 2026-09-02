@@ -450,8 +450,7 @@ namespace SIL.FieldWorks.XWorks
 					});
 				TestContext.WriteLine("compose asked for: " + string.Join(", ", asked));
 
-				var row = recomposed.Model.Fields.Single(f => f.Field == "Form"
-					&& f.Kind == DetailFieldKind.Text && f.ObjectHvo == m_entry.LexemeFormOA.Hvo);
+				var row = FindLexemeFormRow(recomposed.Model);
 				Assert.That(row.Label, Is.EqualTo("OverrideMarker"),
 					"an override keyed by the row's own (class, layout) must reach the composed row");
 			}
@@ -462,14 +461,215 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		// -----------------------------------------------------------------
+		// "Show all right now": the transient writing-system reveal
+		// -----------------------------------------------------------------
+
+		// The intercepted item must reveal WITHOUT persisting: the row composes with the full
+		// set while the stored override keeps the restriction.
+		[Test]
+		public void ShowAllRightNow_RevealsTheFullSet_WithoutWritingTheOverride()
+		{
+			CoreWritingSystemDefinition second = null;
+			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
+			{
+				Cache.ServiceLocator.WritingSystemManager.GetOrSet("es", out second);
+				Cache.ServiceLocator.WritingSystems.AddToCurrentVernacularWritingSystems(second);
+			});
+			var field = LexemeFormField();
+			try
+			{
+				var fullSet = field.Values.Select(v => v.WsTag).ToList();
+				Assume.That(fullSet, Is.EqualTo(new List<string> { "fr", "es" }),
+					"precondition: the unrestricted Lexeme Form row shows both vernaculars");
+				GetOverrideStore().Save(new ViewDefinitionOverride(field.ClassName, field.LayoutName,
+					"detail", new[]
+					{
+						new ViewOverrideOperation(ViewOverrideOperationKind.SetVisibleWritingSystems,
+							ViewDefinitionOverrideEditor.StripRuntimeSuffix(field.StableId),
+							writingSystems: new[] { "fr" })
+					}, null));
+				Assert.That(ComposedFormWsTags(RevealedFields()), Is.EqualTo(new[] { "fr" }),
+					"precondition: the override restricts the composed row");
+
+				InvokeShowAllRightNow(field);
+
+				Assert.That(RevealedFields(), Does.Contain(TemplateId(field)),
+					"the click marks the row's part in the host's transient reveal set");
+				Assert.That(ComposedFormWsTags(RevealedFields()), Is.EqualTo(fullSet),
+					"the revealed row composes with the full writing-system set");
+				Assert.That(StoredWritingSystems(field), Is.EqualTo(new[] { "fr" }),
+					"the stored override keeps the restriction -- the reveal is never persisted");
+			}
+			finally
+			{
+				DeleteOverrideFor(field);
+				NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
+					Cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems.Remove(second));
+			}
+		}
+
+		// The reveal survives everything within the record and expires only when the shown
+		// record changes.
+		[Test]
+		public void TransientReveal_ExpiresOnRecordNavigation()
+		{
+			var field = LexemeFormField();
+			InvokeShowAllRightNow(field);
+			Assert.That(RevealedFields(), Does.Contain(TemplateId(field)), "precondition: revealed");
+
+			ILexEntry other = null;
+			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
+			{
+				var stemMorphType = GetMorphTypeOrCreateOne("stem");
+				var noun = GetGrammaticalCategoryOrCreateOne("noun", Cache.LangProject.PartsOfSpeechOA);
+				other = AddLexeme(m_createdObjects, "other-entry", stemMorphType, "other gloss", noun);
+			});
+			m_view.Clerk.JumpToRecord(other.Hvo);
+			DrainMediatorAndIdleQueues();
+
+			Assert.That(RevealedFields(), Is.Empty,
+				"showing a different record expires every transient reveal");
+		}
+
+		// A configuration write replaces the reveal: after a toggle, the row shows the newly
+		// stored set, not the stale full set.
+		[Test]
+		public void WritingSystemToggle_ReplacesTheTransientReveal()
+		{
+			CoreWritingSystemDefinition second = null;
+			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
+			{
+				Cache.ServiceLocator.WritingSystemManager.GetOrSet("es", out second);
+				Cache.ServiceLocator.WritingSystems.AddToCurrentVernacularWritingSystems(second);
+			});
+			var field = LexemeFormField();
+			try
+			{
+				InvokeShowAllRightNow(field);
+				Assert.That(RevealedFields(), Does.Contain(TemplateId(field)), "precondition: revealed");
+
+				var toggle = BuildWritingSystemsSubmenu(field).Children
+					.First(c => !c.IsSeparator && c.IsChecked && c.Execute != null);
+				var toggledLabel = toggle.Label;
+				toggle.Execute();
+				DrainMediatorAndIdleQueues();
+
+				Assert.That(RevealedFields(), Does.Not.Contain(TemplateId(field)),
+					"persisting a new display set replaces the transient reveal");
+
+				// Re-check the toggled writing system: the toggle persists the visible set into
+				// the part-ref Inventory, which is shared across this fixture's tests.
+				var reAdd = BuildWritingSystemsSubmenu(field).Children
+					.Single(c => !c.IsSeparator && c.Label == toggledLabel);
+				reAdd.Execute();
+				DrainMediatorAndIdleQueues();
+			}
+			finally
+			{
+				DeleteOverrideFor(field);
+				NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
+					Cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems.Remove(second));
+			}
+		}
+
+		// Drives the intercepted "Show all right now" item for a row the way
+		// OnDetailMenuRequested would: target the adapter, materialize the submenu, invoke,
+		// drain.
+		private void InvokeShowAllRightNow(DetailField field)
+		{
+			EnsureAdapter(field.ObjectHvo, field.Field);
+			var showAll = FindItem(BuildWritingSystemsSubmenu(field).Children, "Show all right now");
+			Assert.That(showAll, Is.Not.Null, "the intercepted reveal item must materialize");
+			Assert.That(showAll.IsEnabled, Is.True);
+			Assert.That(showAll.Execute, Is.Not.Null);
+			showAll.Execute();
+			DrainMediatorAndIdleQueues();
+		}
+
+		// The reveal set is keyed by the part's template id, not the runtime row id.
+		private static string TemplateId(DetailField field)
+			=> ViewDefinitionOverrideEditor.StripRuntimeSuffix(field.StableId);
+
+		// A failed override save must leave the reveal alone: ending it without recomposing
+		// would collapse the row at the next unrelated refresh, with nothing to explain it.
+		[Test]
+		public void TransientReveal_SurvivesAFailedOverrideSave()
+		{
+			CoreWritingSystemDefinition second = null;
+			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
+			{
+				Cache.ServiceLocator.WritingSystemManager.GetOrSet("es", out second);
+				Cache.ServiceLocator.WritingSystems.AddToCurrentVernacularWritingSystems(second);
+			});
+			var field = LexemeFormField();
+			// A file where the store expects its directory: Save's CreateDirectory throws.
+			var blocker = Path.Combine(Path.GetTempPath(), "fw-reveal-" + Guid.NewGuid().ToString("N"));
+			File.WriteAllText(blocker, "not a directory");
+			var storeField = typeof(RecordEditView).GetField("m_viewOverrideStore",
+				BindingFlags.Instance | BindingFlags.NonPublic);
+			Assert.That(storeField, Is.Not.Null, "the override store field must exist");
+			var original = storeField.GetValue(m_view);
+			string toggledLabel = null;
+			try
+			{
+				InvokeShowAllRightNow(field);
+				Assert.That(RevealedFields(), Does.Contain(TemplateId(field)), "precondition: revealed");
+
+				storeField.SetValue(m_view, new ViewDefinitionOverrideStore(blocker));
+				var toggle = BuildWritingSystemsSubmenu(field).Children
+					.First(c => !c.IsSeparator && c.IsChecked && c.Execute != null);
+				toggledLabel = toggle.Label;
+				toggle.Execute();
+				DrainMediatorAndIdleQueues();
+
+				Assert.That(RevealedFields(), Does.Contain(TemplateId(field)),
+					"a save that failed must leave the transient reveal in place");
+			}
+			finally
+			{
+				storeField.SetValue(m_view, original);
+				File.Delete(blocker);
+				// The toggle persists into the part-ref inventory this fixture shares; re-check
+				// it or later tests see no visible writing system.
+				if (toggledLabel != null)
+				{
+					BuildWritingSystemsSubmenu(field).Children
+						.Single(c => !c.IsSeparator && c.Label == toggledLabel).Execute();
+					DrainMediatorAndIdleQueues();
+				}
+				DeleteOverrideFor(field);
+				NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
+					Cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems.Remove(second));
+			}
+		}
+
+		// The host's transient reveal set, read through the same seam the production compose
+		// uses.
+		private HashSet<string> RevealedFields()
+			=> (HashSet<string>)GetField(m_view, "m_showAllWsFields");
+
+		// The Lexeme Form row's composed writing-system tags under the CURRENT stored override
+		// and the given reveal set -- the same Compose call ShowAvaloniaEntry makes.
+		private IReadOnlyList<string> ComposedFormWsTags(HashSet<string> reveal)
+			=> FindLexemeFormRow(DetailComposer.Compose(m_entry, Cache,
+					overrides: (cls, layout) => GetOverrideStore().TryGet(cls, layout),
+					showAllWritingSystemsFields: reveal).Model)
+				.Values.Select(v => v.WsTag).ToList();
+
+		// -----------------------------------------------------------------
 		// Helpers -- production-path command drivers
 		// -----------------------------------------------------------------
 
 		// The composed Lexeme Form row, as the production host resolves it before raising a
 		// menu request.
 		private DetailField LexemeFormField()
-			=> DetailComposer.Compose(m_entry, Cache).Model.Fields.Single(f => f.Field == "Form"
-				&& f.Kind == DetailFieldKind.Text && f.ObjectHvo == m_entry.LexemeFormOA.Hvo);
+			=> FindLexemeFormRow(DetailComposer.Compose(m_entry, Cache).Model);
+
+		// The one locator for the Lexeme Form row (the MoForm's own Form field) in a composed
+		// model.
+		private DetailField FindLexemeFormRow(DetailModel model)
+			=> model.Fields.Single(f => f.Field == "Form" && f.Kind == DetailFieldKind.Text
+				&& f.ObjectHvo == m_entry.LexemeFormOA.Hvo);
 
 		private ViewDefinitionOverrideStore GetOverrideStore()
 		{
