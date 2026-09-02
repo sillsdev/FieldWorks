@@ -4,6 +4,8 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 
@@ -37,7 +39,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 		/// <summary>
 		/// Gets the ordered named options for a character-variant feature; empty for binary
-		/// features. Option index i (zero-based) corresponds to feature value i+1.
+		/// features. Option index i (zero-based) corresponds to feature value i+1. An entry is
+		/// null when the font's name table supplies no usable string for that slot; the slot
+		/// still holds its position, because the position is the value that gets persisted.
 		/// </summary>
 		public IReadOnlyList<string> Options { get; }
 	}
@@ -60,6 +64,21 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// when the font has no such table. Records are deduplicated by tag; when a tag appears in
 		/// more than one script/language the richest record (one carrying a label or options) wins.
 		/// </summary>
+		/// <remarks>
+		/// Deduplication is script-blind on purpose, and that is a known limitation. The feature list
+		/// is walked flat, so a tag registered under several scripts arrives several times and the
+		/// first-or-richest record wins with no reference to the writing system being edited. A font
+		/// that gave the same tag different labels or options per script would therefore show one
+		/// script's strings to another - Cyrillic text offered Latin variant names, for instance.
+		/// <para>Accepted because fonts do not do this. Across 178 installed fonts, 173 cv/ss tags
+		/// appear more than once in a flat feature list and every duplicate carries identical derived
+		/// metadata, so the choice is always between equal records; the SIL fonts that cover Latin,
+		/// Cyrillic and Greek together (Charis, Doulos, Gentium Plus) define each feature once and
+		/// register it under every script they cover.</para>
+		/// <para>Fixing it properly means passing the writing system's script tag in and keeping
+		/// per-script records instead of deduplicating, which changes this signature and its caller.
+		/// Do that when a font turns up that actually labels a tag differently per script.</para>
+		/// </remarks>
 		public static IReadOnlyList<OpenTypeFontFeatureInfo> Read(Func<string, byte[]> tableSource)
 		{
 			if (tableSource == null)
@@ -97,8 +116,12 @@ namespace SIL.FieldWorks.Common.FwUtils
 			{
 				return tableSource(tag);
 			}
-			catch
+			catch (Exception e)
 			{
+				// Without this a font whose table read fails is indistinguishable from a font with
+				// no features at all.
+				TraceFailure(true, string.Format(CultureInfo.InvariantCulture,
+					"reading the '{0}' table", tag), e);
 				return null;
 			}
 		}
@@ -161,14 +184,21 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 			if (numNamedParameters == 0 || numNamedParameters > MaxNamedParameters)
 				return;
-			var resolved = new List<string>(numNamedParameters);
+			var resolved = new string[numNamedParameters];
+			var anyResolved = false;
 			for (var i = 0; i < numNamedParameters; i++)
 			{
 				var option = LookupName(names, firstParamNameId + i);
-				if (!string.IsNullOrEmpty(option))
-					resolved.Add(option);
+				if (string.IsNullOrEmpty(option))
+					continue;
+				resolved[i] = option;
+				anyResolved = true;
 			}
-			options = resolved.ToArray();
+			// A slot's position is the persisted feature value, so one whose name will not decode
+			// keeps its place and is numbered by the UI; dropping it would renumber the slots after
+			// it and select a different glyph. A font that names none of them has nothing to choose
+			// between, so it stays a binary feature rather than a list of bare numbers.
+			options = anyResolved ? resolved : Array.Empty<string>();
 		}
 
 		private static string ReadStylisticSetName(byte[] table, int paramsStart, IReadOnlyDictionary<int, string> names)
@@ -234,9 +264,12 @@ namespace SIL.FieldWorks.Common.FwUtils
 				if (platformId == 1)
 					return MacRoman.GetString(table, stringStart, length).TrimEnd('\0');
 			}
-			catch
+			catch (Exception e)
 			{
-				// Fall through to null so the feature uses its fallback label.
+				// Fall through to null so the feature uses its fallback label. Info rather than
+				// warning: this runs per name record and an undecodable platform is expected.
+				TraceFailure(false, string.Format(CultureInfo.InvariantCulture,
+					"decoding a name record on platform {0}", platformId), e);
 			}
 			return null;
 		}
@@ -300,10 +333,28 @@ namespace SIL.FieldWorks.Common.FwUtils
 			{
 				return Encoding.GetEncoding(10000);
 			}
-			catch
+			catch (Exception e)
 			{
+				// ASCII mangles any non-ASCII Mac Roman name, so say so once rather than silently
+				// producing wrong labels.
+				TraceFailure(true, "loading the Mac Roman encoding (codepage 10000)", e);
 				return Encoding.ASCII;
 			}
+		}
+
+		/// <summary>
+		/// Reports a swallowed parse failure through the FwUtils font-feature diagnostics switch.
+		/// Discovery degrades rather than throwing, so without this a malformed font and a font
+		/// with no features look the same.
+		/// </summary>
+		private static void TraceFailure(bool warn, string what, Exception e)
+		{
+			Trace.WriteLineIf(
+				warn ? FontFeatureSettings.DiagnosticsSwitch.TraceWarning
+					: FontFeatureSettings.DiagnosticsSwitch.TraceInfo,
+				string.Format(CultureInfo.InvariantCulture,
+					"OpenType feature discovery: {0} failed: {1}", what, e.Message),
+				FontFeatureSettings.DiagnosticsSwitch.DisplayName);
 		}
 	}
 }

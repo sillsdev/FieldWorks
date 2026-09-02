@@ -112,6 +112,40 @@ namespace SIL.FieldWorks.Common.FwUtils
 			Assert.That(cv01.Options, Is.EqualTo(new[] { "First", "Second" }));
 		}
 
+		[Test]
+		public void OptionNameMissing_LeavesTheLaterOptionsOnTheirOwnValues()
+		{
+			// An option's index is the feature value written to the writing system, so a slot the
+			// font does not name has to keep its place. Dropping it would move "Third" onto value 2
+			// and apply the wrong glyph to text already saved with that value.
+			var gsub = BuildGsub(new FeatureSpec("cv01", cvLabelNameId: 256,
+				cvOptionNameIds: new[] { 257, 258, 259 }));
+			var name = BuildNameTable(
+				new NameSpec(3, 1, 0x0409, 256, "Alpha"),
+				new NameSpec(3, 1, 0x0409, 257, "First"),
+				new NameSpec(3, 1, 0x0409, 259, "Third"));
+
+			var cv01 = Read(gsub, name).Single(f => f.Tag == "cv01");
+
+			Assert.That(cv01.Options, Is.EqualTo(new[] { "First", null, "Third" }));
+		}
+
+		[Test]
+		public void NoOptionNameDecodes_LeavesTheFeatureBinary()
+		{
+			// Nothing to choose between, so the feature stays an on/off toggle rather than becoming
+			// a list of bare numbers. Every cvNN in the shipped SIL fonts names its options, and
+			// 248 of the 275 declare exactly one, so this is the shape that matters when it fails.
+			var gsub = BuildGsub(new FeatureSpec("cv01", cvLabelNameId: 256,
+				cvOptionNameIds: new[] { 257, 258 }));
+			var name = BuildNameTable(new NameSpec(3, 1, 0x0409, 256, "Alpha"));
+
+			var cv01 = Read(gsub, name).Single(f => f.Tag == "cv01");
+
+			Assert.That(cv01.FontSuppliedLabel, Is.EqualTo("Alpha"));
+			Assert.That(cv01.Options, Is.Empty);
+		}
+
 		private static IReadOnlyList<OpenTypeFontFeatureInfo> Read(byte[] gsub, byte[] name)
 		{
 			return OpenTypeFontFeatureInfoReader.Read(tag =>
