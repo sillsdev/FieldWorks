@@ -44,6 +44,25 @@ convert-dialog: `Docs/migration/working/<SliceClass>/` holding
 `<SliceClass>-design.md`; detect-and-resume on re-invocation; the documents
 remain after completion (retention is the developer's call).
 
+**Every working document opens with a LINKED ticket reference whenever a ticket
+is involved.** Write the Jira key as a markdown link to
+`https://jira.sil.org/browse/<KEY>`, never as bare text, and link the parent or
+epic the same way when there is one:
+
+```markdown
+Ticket: [LT-22672](https://jira.sil.org/browse/LT-22672) "[Avalonia] Convert
+Allomorphs slice", parent [LT-22622](https://jira.sil.org/browse/LT-22622).
+```
+
+These documents are gitignored and outlive the session that wrote them, so a
+reader arriving later has no other route back to the ticket. It applies to the
+analysis, test plan, design report, and state manifest alike.
+
+This does NOT license ticket keys as pointers in code comments. Comment hygiene
+governs there: a bare finding-code such as `P1:` referring to one of these
+documents is a banned doc-pointer, because the document it points into is not
+in the repository.
+
 ### Citing other documents and sections
 
 Every reference -- to another document OR to a section of the document you
@@ -184,8 +203,46 @@ is worse than an honest Unsupported row for preview users).
 1. create-integration-test against the plan (tests land per the mirroring
    rule: control tests in `FwAvaloniaTests/Detail/`, composer tests in
    `xWorksTests/Avalonia/Composer/`).
-2. Developer manual test in live FieldWorks, New UI on: the field at its
-   real position, edit interactions per the analysis document, focus-loss
-   autosave, single Ctrl+Z per save, cross-framework PropChanged refresh both
-   directions, tool-switch mid-edit settles cleanly.
-3. Land the exemplar-promotion row for anything new (human-gated, same PR).
+2. Ask the developer to manually test -- then STOP and wait for their
+   findings. They own the app; do not drive it or change its UI mode for
+   them. In live FieldWorks, New UI on: the field at its real position, edit
+   interactions per the analysis document, focus-loss autosave, single Ctrl+Z
+   per save, cross-framework PropChanged refresh both directions, tool-switch
+   mid-edit settles cleanly.
+3. Legacy-mode smoke: with the UI-mode toggle OFF, every field the change
+   touched still behaves unchanged. A composer or shared-control change
+   reaches far beyond the slice being converted, so name what else it reaches
+   and have that checked too.
+4. Work each manual finding through
+   [The manual-finding loop](#the-manual-finding-loop).
+5. Land the exemplar-promotion row for anything new (human-gated, same PR).
+
+### The manual-finding loop
+
+A green suite that missed a defect the developer found by looking is evidence
+the SUITE has a hole, not just the code. Close both.
+
+1. **Triage the layer before writing anything.** Model (composer), dispatch
+   (factory), or render (control)? Existing green tests narrow it in one step:
+   if the composer tests pass and the row looks wrong, the model is right and
+   the defect is below it.
+2. **Write the missing test at the layer the defect lives in**, before the
+   fix. A model-only plan cannot see a control that draws nothing; a
+   render-layer defect needs a render-layer test.
+3. **Verify the new test actually catches the defect: revert the fix (or
+   write the test first) and watch it FAIL.** This is not ceremony. A test
+   asserting a control "renders" can pass against a control drawing nothing --
+   an untemplated Avalonia control still measures to its padding and still has
+   visual children. A test that has never failed proves nothing, and a
+   false-green test is worse than no test because it silences the next person.
+4. **Fix, then re-run the owning suite AND every suite the change reaches.**
+   Shared code (the composer, `SliceFactory`, a shared control style) means
+   the blast radius is not the slice.
+5. **Record it in `<SliceClass>-state.md`**: the cause, the fix, and -- when
+   the first test attempt was a false green -- which assertion was too weak
+   and which one actually bites. That lesson is the reusable part.
+
+If the finding turns out to be a scope decision rather than a defect (a row
+nobody planned, a behavior the plan never covered), do not absorb it silently:
+put it to the developer as a decision, and if they take it in, add plan items
+for it rather than implementing untested.
