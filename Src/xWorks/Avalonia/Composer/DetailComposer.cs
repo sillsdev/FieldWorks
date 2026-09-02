@@ -840,6 +840,36 @@ namespace SIL.FieldWorks.XWorks
 			}
 
 			// The node's chooserLink wins; else the row derives its tool like the legacy path.
+			/// <summary>
+			/// The row's list-editor jump links: the layout's authored
+			/// <c>chooserLink type="goto"</c> entries, else a synthesized "Edit the &lt;list&gt;"
+			/// link when the field's possibility list resolves to a list-editor tool.
+			///
+			/// APPROVED DIVERGENCE (approved by Zachary Burnham, 2026-09-02) -- the synthesized
+			/// fallback is deliberately BROADER than legacy, on two axes:
+			///
+			/// Trigger: legacy synthesizes a chooserInfo only for <c>editor="autoCustom"</c>
+			/// custom-list
+			/// reference fields (<c>ReallySimpleListChooser.GenerateChooserInfoForCustomNode</c>,
+			/// FWR-1187);
+			/// every other row shows a jump link only when the layout authors one. This fallback
+			/// applies to
+			/// ANY possibility-list chooser row with no authored link, so rows legacy leaves
+			/// linkless --
+			/// Morph Type among them, whose part authors only <c>chooserInfo title=</c> -- gain
+			/// one.
+			///
+			/// Surface: legacy puts the link INSIDE the chooser dialog as a LinkLabel; the row's
+			/// gear
+			/// promotes it to the row itself, reachable without opening the chooser.
+			///
+			/// Kept because the jump is useful on every list-backed row and the narrower legacy
+			/// rule
+			/// reads as an accident of which parts happened to author a link, not a decision. The
+			/// dispatch path is unchanged (<c>FollowLink</c>), so the jump behaves as legacy's
+			/// does.
+			/// Recorded so the next reader does not "fix" it back to the legacy trigger.
+			/// </summary>
 			private IReadOnlyList<DetailChooserLink> CreateChooserLinks(ViewNode node,
 				ICmPossibilityList list = null)
 			{

@@ -1028,6 +1028,11 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 	/// link items. The gear renders ONLY when a list-edit target resolved at compose time (the
 	/// row carries at least one goto <see cref="DetailChooserLink"/>); the FIRST link wins when
 	/// several resolved (rare). Rows without a resolvable list editor draw no gear at all.
+	///
+	/// The dispatch path matches legacy, but WHICH rows carry a link does not: the composer
+	/// synthesizes one for any possibility-list row the layout left linkless, where legacy
+	/// synthesizes only for <c>autoCustom</c>. That is a recorded APPROVED DIVERGENCE -- see
+	/// <c>DetailComposer.CreateChooserLinks</c> for the reason and approver.
 	/// </summary>
 	internal static class DetailGearChrome
 	{
