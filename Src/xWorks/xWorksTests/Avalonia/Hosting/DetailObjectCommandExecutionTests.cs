@@ -13,9 +13,11 @@ using NUnit.Framework;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwAvalonia;
 using SIL.FieldWorks.Common.FwAvalonia.Detail;
+using SIL.FieldWorks.Common.FwAvalonia.ViewDefinition;
 using SIL.FieldWorks.Common.Framework.DetailControls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
+using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.Infrastructure;
 using XCore;
 // Both namespaces above define DataTree; the adapter tests mean the legacy WinForms one.
@@ -363,9 +365,164 @@ namespace SIL.FieldWorks.XWorks
 				"the spliced entries are the project's vernacular writing systems (the Lexeme Form's ws set)");
 		}
 
+		// THE decisive copy test: unchecking one of two vernaculars must store the REDUCED
+		// set (the slice still holds the pre-click set right after OnClick), and re-checking
+		// must store the restored set.
+		[Test]
+		public void WritingSystemToggle_TwoVernaculars_StoresTheReducedThenRestoredSet()
+		{
+			CoreWritingSystemDefinition second = null;
+			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
+			{
+				Cache.ServiceLocator.WritingSystemManager.GetOrSet("es", out second);
+				Cache.ServiceLocator.WritingSystems.AddToCurrentVernacularWritingSystems(second);
+			});
+			var field = LexemeFormField();
+			try
+			{
+				EnsureAdapter(m_entry.LexemeFormOA.Hvo, "Form");
+				var writingSystems = BuildWritingSystemsSubmenu(field);
+				var checkedEntries = writingSystems.Children
+					.Where(c => !c.IsSeparator && c.IsChecked && c.Execute != null).ToList();
+				TestContext.WriteLine("checked: " + string.Join(", ",
+					checkedEntries.Select(e => e.Label)));
+				Assert.That(checkedEntries.Count, Is.EqualTo(2),
+					"precondition: both vernacular writing systems start visible");
+				var toggled = checkedEntries[0].Label;
+
+				checkedEntries[0].Execute();
+				DrainMediatorAndIdleQueues();
+
+				var reduced = StoredWritingSystems(field);
+				TestContext.WriteLine("reduced: " + string.Join(",", reduced));
+				Assert.That(reduced, Is.EqualTo(new[] { "es" }),
+					"the stored op holds the set AFTER the uncheck, not the pre-click set");
+
+				// Re-check the same writing system on a freshly built menu: the ADD direction.
+				writingSystems = BuildWritingSystemsSubmenu(field);
+				var reAdd = writingSystems.Children.Single(c => !c.IsSeparator && c.Label == toggled);
+				Assert.That(reAdd.IsChecked, Is.False, "the unchecked toggle stays unchecked");
+				Assert.That(reAdd.Execute, Is.Not.Null, "an unchecked toggle is clickable");
+				reAdd.Execute();
+				DrainMediatorAndIdleQueues();
+
+				var restored = StoredWritingSystems(field);
+				TestContext.WriteLine("restored: " + string.Join(",", restored));
+				// Exact order matters: the property appends the re-checked writing system at the
+				// end, but the copy canonicalizes to option order so rows never reorder.
+				Assert.That(restored, Is.EqualTo(new[] { "fr", "es" }),
+					"re-checking stores the restored set in option order");
+			}
+			finally
+			{
+				DeleteOverrideFor(field);
+				NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
+					Cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems.Remove(second));
+			}
+		}
+
+		// The Lexeme Form row is keyed by the MoForm's own descended (class, layout). Compose
+		// must resolve an override for it, or the row's customizations are written and never
+		// read.
+		[Test]
+		public void Compose_ResolvesTheOverrideForADescendedLayout()
+		{
+			var field = LexemeFormField();
+			var store = GetOverrideStore();
+			var templateId = ViewDefinitionOverrideEditor.StripRuntimeSuffix(field.StableId);
+			TestContext.WriteLine(
+				$"class={field.ClassName} layout={field.LayoutName} template={templateId}");
+			try
+			{
+				store.Save(new ViewDefinitionOverride(field.ClassName, field.LayoutName, "detail",
+					new[]
+					{
+						new ViewOverrideOperation(ViewOverrideOperationKind.SetLabel, templateId,
+							label: "OverrideMarker")
+					}, null));
+
+				var asked = new List<string>();
+				var recomposed = DetailComposer.Compose(m_entry, Cache, showHiddenFields: false,
+					overrides: (cls, layout) =>
+					{
+						asked.Add(cls + "/" + layout);
+						return store.TryGet(cls, layout);
+					});
+				TestContext.WriteLine("compose asked for: " + string.Join(", ", asked));
+
+				var row = recomposed.Model.Fields.Single(f => f.Field == "Form"
+					&& f.Kind == DetailFieldKind.Text && f.ObjectHvo == m_entry.LexemeFormOA.Hvo);
+				Assert.That(row.Label, Is.EqualTo("OverrideMarker"),
+					"an override keyed by the row's own (class, layout) must reach the composed row");
+			}
+			finally
+			{
+				DeleteOverrideFor(field);
+			}
+		}
+
 		// -----------------------------------------------------------------
 		// Helpers -- production-path command drivers
 		// -----------------------------------------------------------------
+
+		// The composed Lexeme Form row, as the production host resolves it before raising a
+		// menu request.
+		private DetailField LexemeFormField()
+			=> DetailComposer.Compose(m_entry, Cache).Model.Fields.Single(f => f.Field == "Form"
+				&& f.Kind == DetailFieldKind.Text && f.ObjectHvo == m_entry.LexemeFormOA.Hvo);
+
+		private ViewDefinitionOverrideStore GetOverrideStore()
+		{
+			var storeProperty = typeof(RecordEditView).GetProperty("ViewOverrideStore",
+				BindingFlags.Instance | BindingFlags.NonPublic);
+			Assert.That(storeProperty, Is.Not.Null, "the override store seam must exist");
+			var store = (ViewDefinitionOverrideStore)storeProperty.GetValue(m_view);
+			Assert.That(store, Is.Not.Null, "the project must have a reachable override store");
+			return store;
+		}
+
+		// Materializes a menu the way OnDetailMenuRequested does, WITH the override interceptor,
+		// so the intercepted writing-system items are the ones under test.
+		private IReadOnlyList<DetailMenuItem> BuildItemsWithOverrideInterceptor(string[] menuIds,
+			DetailField field)
+		{
+			var build = typeof(RecordEditView).GetMethod("BuildOverrideCommandInterceptor",
+				BindingFlags.Instance | BindingFlags.NonPublic);
+			Assert.That(build, Is.Not.Null, "the override interceptor seam must exist");
+			var interceptor = (Func<ChoiceBase, UIItemDisplayProperties, DetailMenuItem>)build.Invoke(
+				m_view, new object[] { field });
+			TestContext.WriteLine("interceptor built: " + (interceptor != null));
+			var window = m_propertyTable.GetValue<XWindow>("window");
+			return XCoreMenuBridge.CreateMenuItems(window, menuIds, interceptor);
+		}
+
+		private ViewDefinitionOverride ReadOverrideFor(DetailField field)
+			=> GetOverrideStore().TryGet(field.ClassName, field.LayoutName);
+
+		private DetailMenuItem BuildWritingSystemsSubmenu(DetailField field)
+		{
+			var items = BuildItemsWithOverrideInterceptor(
+				new[] { "mnuDataTree-LexemeForm", "mnuDataTree-MultiStringSlice" }, field);
+			var writingSystems = FindItem(items, "Writing Systems");
+			Assert.That(writingSystems, Is.Not.Null,
+				"precondition: the Writing Systems submenu is present");
+			return writingSystems;
+		}
+
+		// The writing systems the stored override op carries for the field's row.
+		private IReadOnlyList<string> StoredWritingSystems(DetailField field)
+		{
+			var stored = ReadOverrideFor(field);
+			Assert.That(stored, Is.Not.Null,
+				"toggling a writing system must write a project override");
+			return stored.Operations.Single(o =>
+				o.Kind == ViewOverrideOperationKind.SetVisibleWritingSystems).WritingSystems;
+		}
+
+		// Saving an empty patch deletes the file, so overrides never leak between tests.
+		private void DeleteOverrideFor(DetailField field)
+			=> GetOverrideStore().Save(new ViewDefinitionOverride(
+				field.ClassName, field.LayoutName, "detail", null, null));
 
 		// Drives a SLICE-menu command exactly as OnDetailMenuRequested(Kind=SliceMenu) does: ensure the
 		// adapter targets the object, materialize the menu (menuId + the host-appended mnuDataTree-Object)

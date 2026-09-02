@@ -563,20 +563,27 @@ namespace SIL.FieldWorks.XWorks
 					+ "'; using the shipped definition.", error));
 
 		/// <summary>
-		/// Builds the interceptor that retargets the per-field Field Visibility and
-		/// Move Field commands to the project override layer for the Avalonia detail view. Returns null
-		/// (intercept nothing -- every command keeps its normal mediator dispatch) when the
-		/// clicked row
-		/// carries no (class, layout) context, e.g. the first-slice fallback rows; that keeps the legacy
-		/// behavior intact when the override layer cannot be addressed.
+		/// Builds the interceptor that retargets the per-field Field Visibility, Move Field, and
+		/// writing-system commands to the project override layer for the Avalonia detail view.
+		/// Returns null (intercept nothing -- every command keeps its normal mediator dispatch)
+		/// when the clicked row carries no (class, layout) context, e.g. the first-slice fallback
+		/// rows; that keeps the legacy behavior intact when the override layer cannot be
+		/// addressed.
 		/// </summary>
-		private Func<ChoiceBase, DetailMenuItem> BuildOverrideCommandInterceptor(DetailField field)
+		private Func<ChoiceBase, UIItemDisplayProperties, DetailMenuItem> BuildOverrideCommandInterceptor(
+			DetailField field)
 		{
 			if (field == null || string.IsNullOrEmpty(field.ClassName) || string.IsNullOrEmpty(field.LayoutName)
 				|| ViewOverrideStore == null)
 			{
 				return null;
 			}
+
+			// Writing-system items dispatch normally; the resulting selection is then copied
+			// into the override. They need no located template node, so they stay registered
+			// even when locating fails.
+			var registry = new OverrideCommandRegistry();
+			registry.Add(IsWritingSystemVisibilityChoice, (c, d) => WritingSystemItem(c, d, field));
 
 			var templateId = ViewDefinitionOverrideEditor.StripRuntimeSuffix(field.StableId);
 			// Locate the clicked node in the field's OWN compiled model (with any current override
@@ -596,53 +603,160 @@ namespace SIL.FieldWorks.XWorks
 			{
 				Logger.WriteError("Resolving the field's override target failed; the gear-menu field "
 					+ "commands fall back to the legacy path for this row.", e);
-				return null;
+				return registry.TryBuild;
 			}
 
-			if (location == null)
-				return null; // unknown/stale target: leave commands on the legacy path rather than guess.
-
-			return choice =>
+			// Unknown/stale target: leave the field commands on the legacy path rather than
+			// guess.
+			if (location != null)
 			{
-				switch (choice.HelpId)
-				{
-					case "CmdAlwaysVisible":
-						return VisibilityItem(choice, field, templateId, location, ViewVisibility.Always);
-					case "CmdIfData":
-						return VisibilityItem(choice, field, templateId, location, ViewVisibility.IfData);
-					case "CmdNormallyHidden":
-						return VisibilityItem(choice, field, templateId, location, ViewVisibility.Never);
-					case "CmdDataTree-MoveFieldUp":
-						return MoveItem(choice, field, location, up: true);
-					case "CmdDataTree-MoveFieldDown":
-						return MoveItem(choice, field, location, up: false);
-					default:
-						return null; // not a field command: keep its normal mediator dispatch.
-				}
-			};
+				registry.Add("CmdAlwaysVisible",
+					(c, d) => VisibilityItem(d, field, templateId, location, ViewVisibility.Always));
+				registry.Add("CmdIfData",
+					(c, d) => VisibilityItem(d, field, templateId, location, ViewVisibility.IfData));
+				registry.Add("CmdNormallyHidden",
+					(c, d) => VisibilityItem(d, field, templateId, location, ViewVisibility.Never));
+				registry.Add("CmdDataTree-MoveFieldUp",
+					(c, d) => MoveItem(d, field, location, up: true));
+				registry.Add("CmdDataTree-MoveFieldDown",
+					(c, d) => MoveItem(d, field, location, up: false));
+			}
+
+			return registry.TryBuild;
 		}
 
 		// A Field Visibility menu item: checked when it is the field's current visibility, executes the
 		// SetVisibility override mutation (idempotent -- re-choosing the current value is a
 		// harmless write).
-		private DetailMenuItem VisibilityItem(ChoiceBase choice, DetailField field,
+		private DetailMenuItem VisibilityItem(UIItemDisplayProperties display, DetailField field,
 			string templateId, ViewNodeLocation location, ViewVisibility target)
 		{
-			var label = XCoreMenuBridge.StripAccelerator(choice.GetDisplayProperties().Text);
+			var label = XCoreMenuBridge.StripAccelerator(display.Text);
 			var isChecked = location.Visibility == target;
 			return new DetailMenuItem(label, isEnabled: true, isChecked: isChecked, children: null,
 				execute: () => ApplyFieldVisibility(field, templateId, target));
 		}
 
 		// A Move Field item: disabled at the first sibling (up) / last sibling (down) / when alone.
-		private DetailMenuItem MoveItem(ChoiceBase choice, DetailField field,
+		private DetailMenuItem MoveItem(UIItemDisplayProperties display, DetailField field,
 			ViewNodeLocation location, bool up)
 		{
-			var label = XCoreMenuBridge.StripAccelerator(choice.GetDisplayProperties().Text);
+			var label = XCoreMenuBridge.StripAccelerator(display.Text);
 			var canMove = up ? location.CanMoveUp : location.CanMoveDown;
 			return new DetailMenuItem(label, isEnabled: canMove, isChecked: false, children: null,
 				execute: canMove ? (Action)(() => ApplyMoveField(field, location, up)) : null);
 		}
+
+		/// <summary>
+		/// Whether this menu item makes a persistent change to which writing systems a
+		/// multi-writing-system field shows: a per-writing-system toggle (recognized by the
+		/// property its group drives -- the toggles carry no command id) or the Configure
+		/// dialog. Show all right now is excluded: it is a transient reveal on the slice,
+		/// not a configuration change, so persisting it would wrongly pin the full set.
+		/// </summary>
+		private static bool IsWritingSystemVisibilityChoice(ChoiceBase choice)
+		{
+			if (choice is ListPropertyChoice list)
+			{
+				return string.Equals(list.ParentProperty,
+					PropertyConstants.CurrentContextMenuSelectedWsIds, StringComparison.Ordinal);
+			}
+
+			return string.Equals(choice.HelpId, "CmdDataTree-WritingSystemMenu-Configure",
+				StringComparison.Ordinal);
+		}
+
+		/// <summary>
+		/// A writing-system item that dispatches normally and then copies the resulting
+		/// selection into the override: the hidden adapter slice owns the picker and the
+		/// Configure dialog, while the Avalonia detail view composes from its own override
+		/// store.
+		/// </summary>
+		private DetailMenuItem WritingSystemItem(ChoiceBase choice, UIItemDisplayProperties display,
+			DetailField field)
+		{
+			var isListToggle = choice is ListPropertyChoice;
+			// The bridge strips execute from disabled items, so the last checked toggle
+			// (disabled) can never be invoked to EMPTY the set.
+			return new DetailMenuItem(XCoreMenuBridge.StripAccelerator(display.Text), display.Enabled,
+				display.Checked, children: null, execute: () =>
+				{
+					// Snapshot first, so a dialog that changes nothing (e.g. Cancel) copies
+					// nothing.
+					var before = isListToggle ? null : CurrentSliceSelectedWritingSystems();
+					choice.OnClick(null, EventArgs.Empty);
+					CopyWritingSystemSelectionToOverride(field, isListToggle, before);
+				});
+		}
+
+		// Copies the click's selection into the row's override and recomposes. A toggle
+		// updates its property BEFORE the slice: read the property, in option order;
+		// Configure reads the slice.
+		private void CopyWritingSystemSelectionToOverride(DetailField field, bool fromListToggle,
+			IReadOnlyList<string> sliceSetBeforeClick)
+		{
+			try
+			{
+				var slice = m_dataEntryForm?.CurrentSlice as MultiStringSlice;
+				if (slice == null)
+				{
+					// The command dispatched, but the result is unreadable: say so, or the
+					// symptom is "the menu did nothing" with no trail.
+					Logger.WriteEvent("Writing-system selection was not copied: the adapter "
+						+ "slice is unreadable; the view override was not updated.");
+					return;
+				}
+
+				// A stale adapter target would store another row's set under this row's id.
+				if (slice.Object == null || slice.Object.Hvo != field.ObjectHvo)
+				{
+					Logger.WriteEvent("Writing-system selection was not copied: the adapter "
+						+ "slice is not the clicked row's; the view override was not updated.");
+					return;
+				}
+
+				List<string> selected;
+				if (fromListToggle)
+				{
+					var ids = m_propertyTable.GetStringProperty(
+						PropertyConstants.CurrentContextMenuSelectedWsIds, null);
+					// Canonicalize: option order, junk tokens dropped -- the stored order is the
+					// render order.
+					selected = string.IsNullOrEmpty(ids)
+						? null
+						: StringSliceUtils.GetVisibleWritingSystems(ids,
+							slice.WritingSystemOptionsForDisplay).Select(ws => ws.Id).ToList();
+				}
+				else
+				{
+					selected = slice.WritingSystemsSelectedForDisplay?.Select(ws => ws.Id).ToList();
+					if (selected != null && sliceSetBeforeClick != null
+						&& selected.SequenceEqual(sliceSetBeforeClick, StringComparer.Ordinal))
+					{
+						return; // the dialog changed nothing (e.g. Cancel): no override write.
+					}
+				}
+
+				// The menu disables the last checked toggle, so an empty set only means "nothing
+				// to copy" -- and an empty op would CLEAR the restriction, so bail instead.
+				if (selected == null || selected.Count == 0)
+					return;
+
+				var op = new ViewOverrideOperation(ViewOverrideOperationKind.SetVisibleWritingSystems,
+					ViewDefinitionOverrideEditor.StripRuntimeSuffix(field.StableId),
+					writingSystems: selected);
+				MutateOverrideAndRefresh(field, op);
+			}
+			catch (Exception e)
+			{
+				Logger.WriteError("Copying the writing-system selection into the view override failed.", e);
+			}
+		}
+
+		// The adapter slice's current selection, or null when it cannot be read.
+		private IReadOnlyList<string> CurrentSliceSelectedWritingSystems()
+			=> (m_dataEntryForm?.CurrentSlice as MultiStringSlice)
+				?.WritingSystemsSelectedForDisplay?.Select(ws => ws.Id).ToList();
 
 		// Writes a SetVisibility op for the field's template id into the project override and recomposes.
 		private void ApplyFieldVisibility(DetailField field, string templateId, ViewVisibility target)
