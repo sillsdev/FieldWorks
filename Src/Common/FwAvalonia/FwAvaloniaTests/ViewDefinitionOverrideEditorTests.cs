@@ -9,7 +9,7 @@ using SIL.FieldWorks.Common.FwAvalonia.ViewDefinition;
 namespace FwAvaloniaTests
 {
 	/// <summary>
-	/// advanced-entry-view: the pure "where does the per-field gear-menu command land" logic --
+	/// advanced-entry-view: the pure "where does the per-field menu-button command land" logic --
 	/// strip the
 	/// runtime hvo suffix, locate a node's parent + sibling order + visibility in a compiled definition,
 	/// compute the moved sibling order, and fold one operation into an existing override (idempotently).

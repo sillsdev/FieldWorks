@@ -14,9 +14,9 @@ using SIL.LCModel.Infrastructure;
 namespace SIL.FieldWorks.XWorks
 {
 	/// <summary>
-	/// advanced-entry-view: end-to-end coverage that the per-field gear-menu commands actually change
-	/// what the Avalonia detail view composes, BY GOING THROUGH the override layer the menu
-	/// writes -- not the
+	/// advanced-entry-view: end-to-end coverage that the per-field menu-button commands
+	/// actually change what the Avalonia detail view composes, BY GOING THROUGH the
+	/// override layer the menu writes -- not the
 	/// legacy Inventory store. Visibility overrides hide/show rows under the same showHidden semantics
 	/// legacy slices use; reorder overrides move sibling rows; both survive a recompose; and applying an
 	/// override never poisons the process-wide compiled-model cache (a compose without the patch is

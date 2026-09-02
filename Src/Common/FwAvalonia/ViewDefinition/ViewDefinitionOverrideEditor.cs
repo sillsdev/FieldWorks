@@ -9,9 +9,9 @@ using System.Linq;
 namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 {
 	/// <summary>
-	/// The runtime "where the per-field gear-menu command lands" helper for the Avalonia detail view
-	/// (advanced-entry-view). Two pure jobs over the immutable IR + override model, both unit-testable
-	/// without any XCore/Inventory/LCModel dependency:
+	/// The runtime "where the per-field menu-button command lands" helper for the
+	/// Avalonia detail view (advanced-entry-view). Two pure jobs over the immutable IR +
+	/// override model, both unit-testable without any XCore/Inventory/LCModel dependency:
 	///
 	/// <list type="number">
 	/// <item><see cref="LocateTarget"/> -- given a compiled <see cref="ViewDefinitionModel"/> and
@@ -174,7 +174,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 	/// <summary>
 	/// Where a node sits in a compiled definition: its current visibility, its parent's StableId (null
 	/// at the root), the parent's ordered child StableIds, and the node's index among them. The address
-	/// the gear-menu commands turn into a <see cref="ViewOverrideOperation"/>.
+	/// the menu-button commands turn into a <see cref="ViewOverrideOperation"/>.
 	/// </summary>
 	public sealed class ViewNodeLocation
 	{

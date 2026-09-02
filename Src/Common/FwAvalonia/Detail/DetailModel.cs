@@ -1608,7 +1608,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		/// the entry's own fields carry "LexEntry"; a row from a descended object (a sense, an
 		/// allomorph)
 		/// carries that object's layout class. Paired with <see cref="LayoutName"/> it keys the per-project
-		/// <c>ViewDefinitionOverride</c> store so the per-field gear-menu commands (Field
+		/// <c>ViewDefinitionOverride</c> store so the per-field menu-button commands (Field
 		/// Visibility / Move
 		/// Field) target the right layout. Set by the composer at compose time (null on rows built outside
 		/// the full-entry composer, e.g. the first-slice fallback).
