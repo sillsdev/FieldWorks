@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.Globalization;
@@ -28,7 +29,12 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 		/// <summary></summary>
 		public const int kGrLangFeature = 1; // See FmtFntDlg.h for real defn.
 		/// <summary></summary>
-		public const int kMaxValPerFeat = 32; // See FmtFntDlg.h for real defn.
+		// Values offered per feature, including the "None"/"Off" value, so 31 selectable
+		// options. Inherited from the Graphite dialog; no native code enforces it (the
+		// FmtFntDlg.h this once pointed at is no longer in the tree). The most any shipping
+		// font declares is 4 named character variants, so nothing reaches the ceiling today -
+		// GetFeatureValues traces if one ever does.
+		public const int kMaxValPerFeat = 32;
 		// This is copied from nLang in FmtFntDlg.cpp, FmtFntDlg::CreateFeaturesMenu.
 		/// <summary></summary>
 		public const int kUiCodePage = 0x00000409;	// for now the UI language is US English
@@ -1026,6 +1032,17 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 				{
 					// value 0 = "None", value i = the i-th named character-variant option.
 					var optionCount = Math.Min(info.Options.Count, Math.Max(0, maxValues - 1));
+					if (optionCount < info.Options.Count)
+					{
+						// Unreachable with any font we have seen (four named options is the most
+						// any of them declares), so report it rather than raising the ceiling on
+						// speculation. The dropped options are simply not offered.
+						Trace.WriteLineIf(s_openTypeTraceSwitch.TraceWarning,
+							string.Format(CultureInfo.InvariantCulture,
+								"OpenType feature '{0}' declares {1} named options; only {2} can be offered.",
+								tag, info.Options.Count, optionCount),
+							s_openTypeTraceSwitch.DisplayName);
+					}
 					var values = new int[optionCount + 1];
 					for (var i = 0; i <= optionCount; i++)
 						values[i] = i;
@@ -1048,7 +1065,14 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 					if (valueId == 0)
 						return ResourceString("kstidOpenTypeFeatureValueNone") ?? "None";
 					var index = valueId - 1;
-					return index >= 0 && index < info.Options.Count ? info.Options[index] : string.Empty;
+					if (index < 0 || index >= info.Options.Count)
+						return string.Empty;
+					// A slot the font did not name keeps its position so the persisted value stays
+					// correct; number it rather than showing the user a blank choice.
+					var option = info.Options[index];
+					return string.IsNullOrEmpty(option)
+						? FormatResource("kstidOpenTypeFeatureOptionNumbered", valueId) ?? string.Empty
+						: option;
 				}
 				// Binary features report invariant "Off"/"On". These values only classify the
 				// feature and are never displayed, so they must not be localized.
@@ -1110,10 +1134,13 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 			private const int MaxCacheEntries = 32;
 			private const int ObjFont = 6;
 			private static readonly object s_cacheLock = new object();
-			private static readonly Dictionary<FontFeatureCacheKey, OpenTypeFontFeatureInfo[]> s_featureCache =
-				new Dictionary<FontFeatureCacheKey, OpenTypeFontFeatureInfo[]>();
+			private static readonly Dictionary<FontFeatureCacheKey, ReadOnlyCollection<OpenTypeFontFeatureInfo>> s_featureCache =
+				new Dictionary<FontFeatureCacheKey, ReadOnlyCollection<OpenTypeFontFeatureInfo>>();
 			private static readonly Queue<FontFeatureCacheKey> s_cacheOrder = new Queue<FontFeatureCacheKey>();
 			private static Func<IntPtr, uint, byte[]> s_tableReader = ReadTable;
+			// Bumped whenever s_tableReader changes, so a discovery that started under the old
+			// reader cannot land its result in a cache that has since been cleared for a new one.
+			private static int s_readerGeneration;
 
 			[DllImport("gdi32.dll", SetLastError = true)]
 			private static extern uint GetFontData(IntPtr hdc, uint table, uint offset, byte[] buffer, uint length);
@@ -1127,24 +1154,41 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 			public static IReadOnlyList<OpenTypeFontFeatureInfo> GetFeatureInfos(IntPtr hdc)
 			{
 				var cacheKey = FontFeatureCacheKey.FromHdc(hdc);
+				Func<IntPtr, uint, byte[]> reader;
+				int generation;
 				lock (s_cacheLock)
 				{
-					OpenTypeFontFeatureInfo[] cached;
+					ReadOnlyCollection<OpenTypeFontFeatureInfo> cached;
 					if (s_featureCache.TryGetValue(cacheKey, out cached))
 						return cached;
+					// Both read here so the discovery below and the insert that follows agree on
+					// which reader produced the result.
+					reader = s_tableReader;
+					generation = s_readerGeneration;
 				}
 
-				var discovered = OpenTypeFontFeatureInfoReader
-					.Read(tag => s_tableReader(hdc, MakeTableTag(tag))).ToArray();
+				// Wrapped before it is cached, not copied on the way out: the declared
+				// IReadOnlyList is a compile-time promise only, so handing back the cached array
+				// itself lets a caller cast to the array type and write through it, changing what
+				// every later caller sees for that font. GetFeatureTags copied on both paths
+				// before this; the wrapper keeps that guarantee without allocating per call.
+				var discovered = new ReadOnlyCollection<OpenTypeFontFeatureInfo>(
+					OpenTypeFontFeatureInfoReader
+						.Read(tag => reader(hdc, MakeTableTag(tag))).ToArray());
 				lock (s_cacheLock)
 				{
-					if (!s_featureCache.ContainsKey(cacheKey))
-					{
-						if (s_cacheOrder.Count >= MaxCacheEntries)
-							s_featureCache.Remove(s_cacheOrder.Dequeue());
-						s_featureCache[cacheKey] = discovered;
-						s_cacheOrder.Enqueue(cacheKey);
-					}
+					ReadOnlyCollection<OpenTypeFontFeatureInfo> winner;
+					if (s_featureCache.TryGetValue(cacheKey, out winner))
+						return winner;
+					// The reader changed while this ran, so the cache was cleared for a different
+					// one. Hand this result back to the caller that asked for it, but do not seed
+					// the cache with data the current reader did not produce.
+					if (generation != s_readerGeneration)
+						return discovered;
+					if (s_cacheOrder.Count >= MaxCacheEntries)
+						s_featureCache.Remove(s_cacheOrder.Dequeue());
+					s_featureCache[cacheKey] = discovered;
+					s_cacheOrder.Enqueue(cacheKey);
 				}
 				return discovered;
 			}
@@ -1163,12 +1207,14 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 				{
 					var previousReader = s_tableReader;
 					s_tableReader = tableReader ?? ReadTable;
+					s_readerGeneration++;
 					ClearCache();
 					return new DisposableAction(() =>
 					{
 						lock (s_cacheLock)
 						{
 							s_tableReader = previousReader;
+							s_readerGeneration++;
 							ClearCache();
 						}
 					});

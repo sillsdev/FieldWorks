@@ -2,6 +2,7 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System;
 using System.Linq;
 using NUnit.Framework;
 
@@ -52,6 +53,29 @@ namespace SIL.FieldWorks.Common.FwUtils
 		{
 			Assert.That(OpenTypeFeatureCatalog.IsHidden(tag), Is.False);
 			Assert.That(OpenTypeFeatureCatalog.IsDefaultOn(tag), Is.True);
+		}
+
+		[Test]
+		public void DefaultOnFeatures_AreOnlyTheDocumentedFour()
+		{
+			// A default-on feature is applied to text the user never opted into, and is written to
+			// the writing system only when they turn it off, so the set is a policy decision rather
+			// than a per-tag judgement. Docs/opentype-font-features.md names these four; asserting
+			// membership one tag at a time cannot catch a fifth being added, which is how "rand",
+			// "chws", "cpsp", "halt" and "size" got in. LT-22638.
+			//
+			// The set deliberately diverges from the OpenType registry, which suggests cpsp, rand,
+			// chws and halt be on by default. Unlike the Graphite provider, which reads defaultValue
+			// out of the font, this one asserts it from a static table, because OpenType has no
+			// per-feature default to read; a wrong assertion here inverts the user's first click.
+			// Docs/opentype-font-features.md has the full reasoning, and LT-22774 measures what
+			// Uniscribe actually applies. Do not widen this set without that measurement.
+			var defaultOn = OpenTypeFeatureCatalog.AllTags
+				.Where(OpenTypeFeatureCatalog.IsDefaultOn)
+				.OrderBy(tag => tag, StringComparer.Ordinal)
+				.ToArray();
+
+			Assert.That(defaultOn, Is.EqualTo(new[] { "calt", "clig", "kern", "liga" }));
 		}
 
 		[Test]
