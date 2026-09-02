@@ -109,10 +109,13 @@ namespace FwAvaloniaTests
 	[TestFixture]
 	public class DetailMenuRequestTests
 	{
+		// Text rows are multistring rows, so the per-writing-system abbreviation gutter renders
+		// and can be right-clicked; the view draws it only for a MultiStringSlice row.
 		private static DetailField Field(string id, DetailFieldKind kind,
 			string menuId = null, string contextMenuId = null, string hotlinksId = null,
 			bool collapsible = false)
-			=> new DetailField(id, id, id, null, kind,
+		{
+			var field = new DetailField(id, id, id, null, kind,
 				EditorClassification.Known, id, null, HostRouting.Inherit,
 				kind == DetailFieldKind.Text
 					? new List<DetailWsValue> { new DetailWsValue("en", "value") }
@@ -121,6 +124,9 @@ namespace FwAvaloniaTests
 				isCollapsible: collapsible, isInitiallyExpanded: true,
 				menuId: menuId, contextMenuId: contextMenuId, hotlinksId: hotlinksId,
 				objectHvo: 1234);
+			field.IsMultiStringRow = kind == DetailFieldKind.Text;
+			return field;
+		}
 
 		private static (Window window, DataTree view, List<DetailMenuRequest> requests) Show(
 			params DetailField[] fields)

@@ -1605,9 +1605,18 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		/// True when this row is a multi-writing-system text row -- the legacy <c>multistring</c>
 		/// editor
 		/// (<c>MultiStringSlice</c>), as opposed to a single-ws <c>string</c> editor. It mirrors the
-		/// legacy <c>slice is MultiStringSlice</c> test so the in-string context menu can add the shared
-		/// <c>mnuDataTree-MultiStringSlice</c> group (with the Writing Systems submenu) for exactly those
-		/// rows. Set by the composer; false for every non-multistring row.
+		/// legacy <c>slice is MultiStringSlice</c> test. Set by the composer; false for every
+		/// non-multistring row.
+		///
+		/// It is the row's IDENTITY, not one feature's switch, and legacy keys both of that
+		/// slice's
+		/// distinguishing behaviors on it: the in-string context menu adds the shared
+		/// <c>mnuDataTree-MultiStringSlice</c> group (with the Writing Systems submenu), and the
+		/// view
+		/// draws the per-writing-system abbreviation gutter. A <c>StringSlice</c> row gets
+		/// neither.
+		/// Note that value count is NOT the test: a multistring row with one configured writing
+		/// system still labels it.
 		/// </summary>
 		public bool IsMultiStringRow { get; set; }
 

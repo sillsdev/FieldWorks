@@ -621,7 +621,9 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				linkRequested: _linkRequested,
 				clipboard: _clipboard,
 				save: _editContext == null ? (Action)null : OnSave,
-				showWritingSystemAbbreviation: true,
+				// Legacy labels each alternative of a MultiStringSlice and leaves a StringSlice's
+				// single value unlabelled, so the gutter follows the row's own kind.
+				showWritingSystemAbbreviation: field.IsMultiStringRow,
 				wsAbbrevColumnWidth: _wsAbbrevColumnWidth));
 	}
 }
