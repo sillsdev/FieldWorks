@@ -154,6 +154,37 @@ namespace SIL.FieldWorks.XWorks
 				"the host can re-show the detail view after a hotlink-create");
 		}
 
+		// --------------------------------------------------------------------------------------
+		// Insert Allomorph
+		// --------------------------------------------------------------------------------------
+
+		// The Allomorphs section binds its commands to the ENTRY, not to an allomorph:
+		// AlternateForms is a LexEntry field, so the section header's bound object is the entry.
+		[Test]
+		public void InsertAllomorph_ViaHotlinks_AddsAllomorph_EndToEndThroughXCoreMenuBridge()
+		{
+			var allomorphsBefore = m_entry.AlternateFormsOS.Count;
+
+			InvokeHotlinksCommand(m_entry.Hvo, "mnuDataTree-AlternateForms-Hotlinks",
+				"Insert Allomorph");
+
+			Assert.That(m_entry.AlternateFormsOS.Count, Is.EqualTo(allomorphsBefore + 1),
+				"Insert Allomorph via hotlinks mutates the model through XCoreMenuBridge");
+			Assert.That(RefreshedDetailFieldCount(), Is.GreaterThan(0),
+				"the host can re-show the detail view after a hotlink-create");
+		}
+
+		[Test]
+		public void InsertAllomorph_FromSectionMenu_AddsAllomorphToModel()
+		{
+			var allomorphsBefore = m_entry.AlternateFormsOS.Count;
+
+			InvokeSliceMenuCommand(m_entry.Hvo, "mnuDataTree-AlternateForms", "Insert Allomorph");
+
+			Assert.That(m_entry.AlternateFormsOS.Count, Is.EqualTo(allomorphsBefore + 1),
+				"Insert Allomorph from the section menu adds an allomorph via the real command + UOW");
+		}
+
 		// ----------------------------------------------------------------------------------------
 		// Delete Sense / Delete object
 		// ----------------------------------------------------------------------------------------

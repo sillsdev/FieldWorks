@@ -342,6 +342,12 @@ namespace SIL.FieldWorks.XWorks
 			private readonly Dictionary<(int ClassId, string LayoutName), (string MenuId, string HotlinksId)> _itemMenuBindings
 				= new Dictionary<(int, string), (string, string)>();
 
+			// Memoized per (class, layout) like the menu bindings above, and invalidated by the
+			// same
+			// rule: a compile keyed on more than (ClassId, LayoutName) must widen this key too.
+			private readonly Dictionary<(int ClassId, string LayoutName), bool> _itemRootLabelled
+				= new Dictionary<(int, string), bool>();
+
 			public ComposeState(LcmCache cache, bool showHiddenFields,
 				SlicePluginRegistry plugins, Func<IDetailEditContext> editContextAccessor,
 				ViewDefinitionOverrideResolver overrides = null,
@@ -2924,14 +2930,36 @@ namespace SIL.FieldWorks.XWorks
 				var expanded = node.Expansion != ViewExpansion.Collapsed;
 				var isSenses = node.Field == "Senses";
 				var sectionLabel = Localize(node.Label) ?? node.Field;
+
+				// A sequence sitting directly under a section header that already names it (the
+				// Allomorphs/Variants shape: a summary slice wrapping an <indent> with one seq)
+				// would otherwise emit a second banner plus a numbered header per item, above
+				// item
+				// rows their own layouts already label. Both are duplicates, and with no label
+				// authored on the part ref or the <seq> the banner falls back to the raw model
+				// field name, which bypasses StringTable and cannot be translated.
+				var flatten = !isSenses
+					&& string.IsNullOrEmpty(node.Label)
+					&& FollowsEnclosingHeader(depth)
+					&& ItemRootIsLabelled(node, obj, flid, count);
+
 				// Nested sense sequences (Senses on a sense) don't repeat the section banner; the
 				// numbered items carry it.
-				if (!(isSenses && obj is ILexSense))
+				if (!flatten && !(isSenses && obj is ILexSense))
 					AddHeader(node, obj, depth, sectionLabel);
 
 				for (var i = 0; i < count; i++)
 				{
 					var item = _cache.ServiceLocator.ObjectRepository.GetObject(_sda.get_VecItem(obj.Hvo, flid, i));
+					if (flatten)
+					{
+						// The item's own labelled root row IS the item row, so it takes the depth
+						// the
+						// suppressed banner would have used.
+						DescendIntoAtChildDepth(node, item, depth);
+						continue;
+					}
+
 					string itemLabel;
 					if (isSenses && item is ILexSense sense)
 					{
@@ -2960,6 +2988,35 @@ namespace SIL.FieldWorks.XWorks
 						objectHvo: item.Hvo));
 					DescendInto(node, item, depth + 1);
 				}
+			}
+
+			// True when the row just emitted is a section header one level shallower than this
+			// sequence. A sequence with no such header keeps its own banner.
+			private bool FollowsEnclosingHeader(int depth)
+			{
+				if (depth == 0 || Fields.Count == 0)
+					return false;
+				var previous = Fields[Fields.Count - 1];
+				return previous.Kind == DetailFieldKind.Header && previous.Indent == depth - 1;
+			}
+
+			// True when the items compile to a layout whose first root row carries its own label.
+			// Without one, suppressing the synthesized header would leave the items unlabelled.
+			private bool ItemRootIsLabelled(ViewNode node, ICmObject obj, int flid, int count)
+			{
+				if (count == 0)
+					return false;
+				var first = _cache.ServiceLocator.ObjectRepository.GetObject(
+					_sda.get_VecItem(obj.Hvo, flid, 0));
+				var layoutName = string.IsNullOrEmpty(node.TargetLayout) ? "Normal" : node.TargetLayout;
+				if (_itemRootLabelled.TryGetValue((first.ClassID, layoutName), out var cached))
+					return cached;
+
+				var compiled = CompileForObjectWithOverrides(first, layoutName);
+				var labelled = compiled != null && compiled.Roots.Count > 0
+					&& !string.IsNullOrEmpty(compiled.Roots[0].Label);
+				_itemRootLabelled[(first.ClassID, layoutName)] = labelled;
+				return labelled;
 			}
 
 			// First root-level menu/hotlinks binding of the item's compiled layout (compile
@@ -3033,6 +3090,12 @@ namespace SIL.FieldWorks.XWorks
 			}
 
 			private void DescendInto(ViewNode node, ICmObject target, int depth)
+				=> DescendIntoAtChildDepth(node, target, depth + 1);
+
+			// The descent, taking the depth the target's own rows land at rather than the
+			// caller's.
+			// A flattened sequence needs them one level shallower than caller-plus-one.
+			private void DescendIntoAtChildDepth(ViewNode node, ICmObject target, int childDepth)
 			{
 				var layoutName = string.IsNullOrEmpty(node.TargetLayout) ? "Normal" : node.TargetLayout;
 				if (!_visited.Add((target.Hvo, layoutName)))
@@ -3046,14 +3109,14 @@ namespace SIL.FieldWorks.XWorks
 					// that layout's override file, not the entry's.
 					EnterModel(compiled);
 					foreach (var child in compiled.Roots)
-						Walk(child, target, depth + 1);
+						Walk(child, target, childDepth);
 					ExitModel();
 				}
 				else
 				{
 					// No layout for the target: fall back to the caller-injected children, if any.
 					foreach (var child in node.Children)
-						Walk(child, target, depth + 1);
+						Walk(child, target, childDepth);
 				}
 
 				_visited.Remove((target.Hvo, layoutName));
