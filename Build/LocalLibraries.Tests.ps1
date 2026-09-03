@@ -207,14 +207,6 @@ ope' `
 	Assert-True ($managerText -match 'Uncommitted changes force a repack') `
 		'Pack should name the paths that force a repack.'
 
-	# --- Worktree setup ---
-	# Branch names may contain path separators; the directory keeps the full
-	# name so a developer recognises which worktree is which.
-	Assert-True ((ConvertTo-FieldWorksWorktreeName -BranchName 'feature/x') -eq `
-		'feature-x') 'A branch name should become one directory name.'
-	Assert-True ((ConvertTo-FieldWorksWorktreeName `
-		-BranchName 'LT-22728-keep-full-name') -eq 'LT-22728-keep-full-name') `
-		'A worktree name should not be truncated or lowercased.'
 	Assert-True ($config['lcm'].RepoDirectory -eq 'liblcm') `
 		'Each library should name its sibling checkout directory.'
 
@@ -297,25 +289,6 @@ ope' `
 	$testText = Get-Content -LiteralPath (Join-Path (Split-Path $PSScriptRoot -Parent) 'test.ps1') -Raw
 	Assert-True ($testText -match 'if \(-not \$TestProject -and -not \$TestFilter\)') `
 		'A targeted test run should not also run the local library tests.'
-
-	$setupText = Get-Content -LiteralPath `
-		(Join-Path $PSScriptRoot 'Setup-LocalLibraries.ps1') -Raw
-	Assert-True ($setupText -notmatch 'Read-Host|PromptForChoice|ReadLine') `
-		'Setup must fail with instructions rather than wait for input.'
-	$moduleText = Get-Content -LiteralPath `
-		(Join-Path $PSScriptRoot 'LocalLibraries.psm1') -Raw
-	Assert-True (($moduleText + $setupText) -notmatch '&\s*git[^
-
-]*(switch|checkout|reset|clean)') `
-		'Setup must never switch a branch in a checkout that already has one.'
-	Assert-True ($moduleText -match 'fetch --quiet') `
-		'Setup should fetch, which cannot disturb a working tree.'
-	Assert-True ($moduleText -notmatch 'git -C \$RepositoryPath pull') `
-		'Setup must not pull, which can conflict or lose work.'
-	Assert-True ($moduleText -match 'worktree list --porcelain') `
-		'An existing worktree for the branch should be discovered, not recreated.'
-	Assert-True ($moduleText -match '--path-format=absolute') `
-		'Git directory lookups must be absolute, not relative to the caller.'
 
 	[xml]$nugetConfig = Get-Content -LiteralPath (
 		Join-Path (Split-Path $PSScriptRoot -Parent) 'nuget.config')

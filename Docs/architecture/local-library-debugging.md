@@ -12,27 +12,6 @@ working tree's build delete packages another working tree just produced.
 `LOCAL_NUGET_REPO` still overrides the location when it is set, but sharing one
 folder across working trees reintroduces that problem.
 
-## Prepare a library branch
-
-`Setup-LocalLibraries.ps1` finds a library's checkout and makes a branch
-available as a worktree:
-
-```powershell
-.\Build\Setup-LocalLibraries.ps1 -Library lcm:my-fix
-.\Build\Setup-LocalLibraries.ps1 -Library lcm:my-fix,palaso:my-fix
-```
-
-It looks for the checkout in the path you pass, then beside the FieldWorks
-checkout (`../liblcm`), then in the library's path variable. If the branch is
-already checked out somewhere it uses that worktree as it stands, because git
-refuses to check one branch out twice and because that worktree may hold work in
-progress. Otherwise it creates one under the library's `.tmp/worktrees/`.
-
-The command fetches but never merges, and never switches a branch in a checkout
-that already has one, so it cannot disturb work you have not committed. It
-reports what it found and never waits for input, so it behaves the same when run
-unattended. It prints the path variable to set for the worktree it resolved.
-
 Set the path variable for each local checkout you use:
 
 ```powershell
