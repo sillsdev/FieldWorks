@@ -99,6 +99,31 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
+		/// The Environments row keeps the jump its layout authors -- "Edit the Environments",
+		/// targeting the Grammar area's EnvironmentEdit tool.
+		///
+		/// Fails until the environment editor exists. The row falls through to the read-only
+		/// row, which carries no chooser links, so the jump the layout authors never reaches the
+		/// user. Passing the node's authored links through the generic reference-vector path is
+		/// necessary but not sufficient: this row does not take that path, because
+		/// PhoneEnv yields no reference-target candidates to enumerate.
+		/// </summary>
+		[Test]
+		public void Compose_Environments_KeepsTheAuthoredEditEnvironmentsLink()
+		{
+			GiveProjectAnEnvironment("/ _ a");
+
+			var row = ComposeEnvironmentsRow();
+
+			Assert.That(row, Is.Not.Null, "the allomorph composes an Environments row");
+			Assert.That(row.ChooserLinks, Is.Not.Empty,
+				"the layout authors a goto chooserLink for this field; composing must carry it. "
+				+ $"Composed kind: {row.Kind}, editable: {row.IsEditable}");
+			Assert.That(row.ChooserLinks[0].Tool, Is.EqualTo("EnvironmentEdit"),
+				"the jump targets the Grammar area's Environments tool");
+		}
+
+		/// <summary>
 		/// Editing an allomorph's form through the composed edit context commits as ONE undoable
 		/// step on the global stack legacy views share, so a single Ctrl+Z restores it.
 		/// </summary>

@@ -1592,11 +1592,14 @@ namespace SIL.FieldWorks.XWorks
 				}
 
 				var stableId = StableId(node, obj);
+				// Authored goto links ride this row too (Environments authors one). No list is
+				// passed, so the synthesized fallback stays with the possibility-list paths.
 				AddField(new DetailField(stableId, Localize(node.Label) ?? node.Field, node.Field,
 					node.WritingSystem, DetailFieldKind.ReferenceVector, node.EditorClassification,
 					node.AutomationId, node.LocalizationKey, node.Routing, null, options, null,
 					isEditable: true, indent: depth, menuId: node.MenuId, contextMenuId: node.ContextMenuId,
-					hotlinksId: node.HotlinksId, objectHvo: obj.Hvo, items: items));
+					hotlinksId: node.HotlinksId, objectHvo: obj.Hvo, items: items,
+					chooserLinks: CreateChooserLinks(node)));
 
 				var hvo = obj.Hvo;
 				HandlerFor(stableId).ReferenceAdd = key =>
