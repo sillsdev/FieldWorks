@@ -1628,7 +1628,47 @@ namespace SIL.FieldWorks.XWorks
 					}
 					return false;
 				};
+
+				// Environments and infix Positions are ALSO typed in legacy. Only that editor
+				// registers a create handler, so other vector rows stay pick-only.
+				if (EditorKindMap.CreatesReferenceItemsFromText(node.RawEditor))
+				{
+					HandlerFor(stableId).ReferenceCreate = text =>
+					{
+						var env = FindOrCreateEnvironment(text);
+						if (env == null)
+							return false;
+						var size = _sda.get_VecSize(hvo, flid);
+						for (var i = 0; i < size; i++)
+							if (_sda.get_VecItem(hvo, flid, i) == env.Hvo)
+								return false; // already on the field; nothing to add
+						_sda.Replace(hvo, flid, size, size, new[] { env.Hvo }, 1);
+						return true;
+					};
+				}
 			}
+
+			// Matches with SPACES REMOVED, like ConnectToRealCache. Validity is NOT a
+			// precondition: legacy creates regardless, so filtering would discard the typed text.
+			private IPhEnvironment FindOrCreateEnvironment(string text)
+			{
+				var wanted = StripSpaces(text);
+				var inventory = _cache.LanguageProject.PhonologicalDataOA?.EnvironmentsOS;
+				if (inventory == null)
+					return null;
+				foreach (var existing in inventory)
+				{
+					if (StripSpaces(existing.StringRepresentation?.Text) == wanted)
+						return existing;
+				}
+
+				var created = _cache.ServiceLocator.GetInstance<IPhEnvironmentFactory>().Create();
+				inventory.Add(created);
+				created.StringRepresentation = TsStringUtils.MakeString(text, _cache.DefaultAnalWs);
+				return created;
+			}
+
+			private static string StripSpaces(string s) => s?.Replace(" ", null) ?? string.Empty;
 
 			// Capped so a huge candidate set (entries/senses are already handled by the
 			// type-ahead path above) falls back to a read-only row instead of eagerly
@@ -2627,11 +2667,15 @@ namespace SIL.FieldWorks.XWorks
 				// matching the legacy reference-vector slice. Entry/sense (huge) vectors were
 				// handled above; the candidate cap guards any other large set into read-only.
 				var genericCandidates = SafeReferenceTargetCandidates(obj, flid);
-				if (genericCandidates != null && genericCandidates.Count > 0)
+				// A create-on-type row is the chooser even with NO candidates: the user types the
+				// project's first environment.
+				var createsFromText = EditorKindMap.CreatesReferenceItemsFromText(node.RawEditor);
+				if (createsFromText || (genericCandidates != null && genericCandidates.Count > 0))
 				{
 					if (count == 0 && HideWhenEmpty(node))
 						return;
-					AddGenericReferenceVector(node, obj, depth, flid, count, genericCandidates);
+					AddGenericReferenceVector(node, obj, depth, flid, count,
+						genericCandidates ?? Array.Empty<ICmObject>());
 					return;
 				}
 

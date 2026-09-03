@@ -1229,6 +1229,14 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 	/// Kept because "+" means add, which is what the symbol promises, and the row already carries
 	/// its own remove. The greyed rows still show the user what is present, so nothing is hidden.
 	/// Recorded so the next reader does not "fix" the picker to pre-check and call it parity.
+	///
+	/// CREATE-ON-TYPE (opt-in): a row whose edit context implements
+	/// <see cref="IReferenceItemCreation"/> for it also lets the user mint a target object by
+	/// typing into the picker's filter box -- the list offers a create row when the text matches
+	/// nothing. This is what makes an environments row reach an environment the project does not
+	/// own yet, which the picker alone cannot do. Every other vector row passes allowCreate:
+	/// false
+	/// and is unaffected.
 	/// </summary>
 	public sealed class FwReferenceVectorField : StackPanel, IHoverAffordanceProvider, IDisposable
 	{
@@ -1337,8 +1345,14 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			// and
 			// removal is the per-item right-click. That is an approved divergence from legacy's
 			// set-the-membership chooser -- see the class doc for the reason and approver.
+			// Create-on-type is opt-in per row: only a context that can mint the target object
+			// offers it (environments find-or-create a PhEnvironment from the typed string).
+			// Every
+			// other vector row passes allowCreate: false and behaves exactly as before.
+			var creation = editContext as IReferenceItemCreation;
+			var canCreate = creation != null && creation.CanCreateReferenceItem(field);
 			var picker = new FwOptionChooser(field.Options, field.SearchOptions, automationId,
-				field.Items.Select(i => i.Key), multiSelect: true);
+				field.Items.Select(i => i.Key), multiSelect: true, allowCreate: canCreate);
 			var flyout = FwOptionChooser.CreateOptionFlyout(picker, PlacementMode.BottomEdgeAlignedLeft);
 			addButton.Flyout = flyout;
 			// Commit the whole checked set as ONE batch: every staged add rides the SAME open edit
@@ -1363,11 +1377,24 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				flyout.Hide();
 				addButton.Focus();
 			};
+			// The create row commits on its own, outside the checked batch: it is one new item,
+			// and
+			// a failed create leaves the row untouched rather than completing the gesture.
+			Action<string> created = text =>
+			{
+				var added = canCreate && creation.TryCreateAndAddReferenceItem(field, text);
+				flyout.Hide();
+				addButton.Focus();
+				if (added)
+					gestureCompleted?.Invoke();
+			};
 			picker.OptionsCommitted += committedSet;
+			picker.CreateRequested += created;
 			picker.Dismissed += dismissed;
 			_teardown.Add(() =>
 			{
 				picker.OptionsCommitted -= committedSet;
+				picker.CreateRequested -= created;
 				picker.Dismissed -= dismissed;
 				addButton.Flyout = null;
 			});

@@ -18,23 +18,21 @@ namespace SIL.FieldWorks.XWorks
 	/// shares
 	/// with every other composed row.
 	///
-	/// Legacy edits environments as typed strings validated one row at a time, then reconciles
-	/// them
-	/// against the project's environment inventory. The Avalonia composer has no editor for that
-	/// editor string, so the row currently falls through the reference-vector walker into one of
-	/// two wrong shapes depending on whether the project owns any environments at all. Both
-	/// shapes
-	/// are covered here so a fixture without environments cannot pass for the wrong reason.
+	/// Legacy's row is BOTH: PhoneEnvReferenceLauncher opens a SimpleListChooser over the
+	/// project's existing environments, and its inline PhoneEnvReferenceView lets the user type a
+	/// new environment string that ConnectToRealCache reconciles into the project
+	/// (find-or-create,
+	/// matching with spaces stripped). So the Avalonia row composes as an ordinary reference
+	/// vector -- the chooser half -- whose edit context also offers IReferenceItemCreation.
+	///
+	/// Both data states are covered: the empty project and the populated one compose through
+	/// different branches, so a fixture without environments can pass for the wrong reason.
 	/// </summary>
 	[TestFixture]
 	public class AllomorphEnvironmentAndEditingTests : MemoryOnlyBackendProviderTestBase
 	{
 		private ILexEntry m_entry;
 		private IMoStemAllomorph m_allomorph;
-
-		// Cleaned up explicitly, not via base UndoAll(): EnvironmentsOS is project-level state
-		// that leaked into later tests when left to Undo (confirmed by probing the undo stack).
-		private readonly List<IPhEnvironment> m_createdEnvironments = new List<IPhEnvironment>();
 
 		public override void TestSetup()
 		{
@@ -56,17 +54,22 @@ namespace SIL.FieldWorks.XWorks
 
 		public override void TestTearDown()
 		{
-			if (m_createdEnvironments.Count > 0)
+			// Clear the WHOLE inventory: create-on-type means the code under test mints
+			// environments too, and NonUndoableUnitOfWorkHelper bypasses the base UndoAll.
+			var inventory = Cache.LanguageProject.PhonologicalDataOA?.EnvironmentsOS;
+			if (inventory != null && inventory.Count > 0)
 			{
 				NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
 				{
-					foreach (var env in m_createdEnvironments)
+					foreach (var env in inventory.ToList())
 						env.Delete();
 				});
-				m_createdEnvironments.Clear();
 			}
 			base.TestTearDown();
 		}
+
+		private int EnvironmentCount
+			=> Cache.LanguageProject.PhonologicalDataOA?.EnvironmentsOS.Count ?? 0;
 
 		private void GiveProjectAnEnvironment(string representation)
 		{
@@ -77,7 +80,6 @@ namespace SIL.FieldWorks.XWorks
 				phonData.EnvironmentsOS.Add(env);
 				env.StringRepresentation = TsStringUtils.MakeString(
 					representation, Cache.DefaultAnalWs);
-				m_createdEnvironments.Add(env);
 			});
 		}
 
@@ -89,30 +91,115 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
-		/// The row is the environment editor in BOTH data states. With no environments in the
-		/// project it must not degrade to a blank read-only text row, and with environments
-		/// present
-		/// it must not become the generic reference-vector chooser: legacy types environment
-		/// strings, it does not pick them from a list.
+		/// The row is a chooser AND create-capable, in BOTH data states.
+		///
+		/// This test previously asserted the OPPOSITE -- that the row must not be a
+		/// ReferenceVector. That was wrong. Legacy's PhoneEnvReferenceLauncher opens a
+		/// SimpleListChooser over the existing environments, so the chooser IS parity. What
+		/// legacy
+		/// also has, and a chooser alone cannot give, is typing a NEW environment string that
+		/// ConnectToRealCache reconciles into the project. Asserting the negative drove an
+		/// implementation that deleted the chooser; it was reverted.
 		/// </summary>
 		[Test]
-		public void Compose_Environments_UsesEnvironmentEditor_NotGenericReferenceVector()
+		public void Compose_Environments_IsChooserRowSupportingCreate()
 		{
-			var emptyProject = ComposeEnvironmentsRow();
-			Assert.That(emptyProject, Is.Not.Null, "the allomorph composes an Environments row");
-			Assert.That(emptyProject.Kind, Is.Not.EqualTo(DetailFieldKind.ReferenceVector),
-				"environments are typed, not chosen from a possibility list");
-			Assert.That(emptyProject.IsEditable, Is.True,
-				"with no environments in the project the row still accepts typing; a blank read-only "
-				+ "row is the fall-through, not the editor");
+			var empty = ComposeEnvironments();
+			Assert.That(empty.Row, Is.Not.Null, "the allomorph composes an Environments row");
+			Assert.That(empty.Row.Kind, Is.EqualTo(DetailFieldKind.ReferenceVector),
+				"with NO environments in the project the row must still be the chooser row: the "
+				+ "read-only fall-through would leave the user nothing to do in the very state "
+				+ "where they need to type the project's first environment");
+			Assert.That(empty.Row.IsEditable, Is.True);
+			Assert.That(empty.Creation, Is.Not.Null,
+				"the composed context offers the create sub-capability");
+			Assert.That(empty.Creation.CanCreateReferenceItem(empty.Row), Is.True,
+				"which is what makes the picker show its create row");
 
 			GiveProjectAnEnvironment("/ # _");
 
-			var populatedProject = ComposeEnvironmentsRow();
-			Assert.That(populatedProject, Is.Not.Null);
-			Assert.That(populatedProject.Kind, Is.Not.EqualTo(DetailFieldKind.ReferenceVector),
-				"once the project owns environments the row must not become the generic chooser: "
-				+ "picking an existing environment is not the legacy interaction");
+			var populated = ComposeEnvironments();
+			Assert.That(populated.Row.Kind, Is.EqualTo(DetailFieldKind.ReferenceVector),
+				"and once the project owns environments it is the same chooser row");
+			Assert.That(populated.Creation.CanCreateReferenceItem(populated.Row), Is.True,
+				"still create-capable -- picking from the list never replaces typing a new one");
+			Assert.That(populated.Row.Options, Is.Not.Empty,
+				"the existing environment is offered as a candidate to pick");
+		}
+
+		/// <summary>
+		/// P8. A typed string find-or-creates: matching an existing environment attaches THAT one
+		/// rather than minting a duplicate, and the match strips spaces exactly as legacy's
+		/// ConnectToRealCache does, so "/ # _" and "/#_" are one environment.
+		/// </summary>
+		[Test]
+		public void Environments_CreateFromTypedText_FindsExisting_MatchingWithSpacesStripped()
+		{
+			GiveProjectAnEnvironment("/ # _");
+			var composed = ComposeEnvironments();
+			var before = EnvironmentCount;
+
+			Assert.That(composed.Creation.TryCreateAndAddReferenceItem(composed.Row, "/#_"), Is.True,
+				"the spacing differs but the environment does not");
+			composed.Context.Commit();
+
+			Assert.That(EnvironmentCount, Is.EqualTo(before),
+				"matched the existing environment with spaces stripped; no duplicate was created");
+			Assert.That(m_allomorph.PhoneEnvRC.Count, Is.EqualTo(1),
+				"and it was attached to the allomorph");
+		}
+
+		/// <summary>P8. A string the project does not have yet is created and attached.</summary>
+		[Test]
+		public void Environments_CreateFromTypedText_CreatesWhenTheProjectHasNoMatch()
+		{
+			var composed = ComposeEnvironments();
+
+			Assert.That(composed.Creation.TryCreateAndAddReferenceItem(composed.Row, "/ # _"), Is.True,
+				"an empty project must still accept the first environment the user types");
+			composed.Context.Commit();
+
+			Assert.That(EnvironmentCount, Is.EqualTo(1), "the environment was minted");
+			Assert.That(m_allomorph.PhoneEnvRC.Count, Is.EqualTo(1));
+			Assert.That(m_allomorph.PhoneEnvRC.First().StringRepresentation.Text,
+				Is.EqualTo("/ # _"), "stored as typed, spaces and all");
+		}
+
+		/// <summary>
+		/// P9. A malformed string is still created and attached. Legacy's ConnectToRealCache
+		/// applies no validity filter when minting -- CheckConstraints only drives the squiggly
+		/// line -- so rejecting it here would silently discard what the user typed.
+		/// </summary>
+		[Test]
+		public void Environments_CreateFromMalformedText_StillCreates_LikeLegacy()
+		{
+			var composed = ComposeEnvironments();
+
+			Assert.That(composed.Creation.TryCreateAndAddReferenceItem(composed.Row, "/ _ ["), Is.True,
+				"legacy stores a malformed environment and annotates it; it does not refuse it");
+			composed.Context.Commit();
+
+			Assert.That(m_allomorph.PhoneEnvRC.Count, Is.EqualTo(1),
+				"the user's text survived rather than being dropped on the floor");
+		}
+
+		private struct ComposedEnvironments
+		{
+			public DetailField Row;
+			public IDetailEditContext Context;
+			public IReferenceItemCreation Creation;
+		}
+
+		private ComposedEnvironments ComposeEnvironments()
+		{
+			var composed = DetailComposer.Compose(m_entry, Cache, true);
+			return new ComposedEnvironments
+			{
+				Row = composed.Model.Fields.FirstOrDefault(
+					f => f.Field == "PhoneEnv" && f.ObjectHvo == m_allomorph.Hvo),
+				Context = composed.EditContext,
+				Creation = composed.EditContext as IReferenceItemCreation
+			};
 		}
 
 		/// <summary>
@@ -134,6 +221,23 @@ namespace SIL.FieldWorks.XWorks
 				+ $"Composed kind: {row.Kind}, editable: {row.IsEditable}");
 			Assert.That(row.ChooserLinks[0].Tool, Is.EqualTo("EnvironmentEdit"),
 				"the jump targets the Grammar area's Environments tool");
+		}
+
+		/// <summary>
+		/// P7b's remaining gap: a project with NO environments keeps the jump too. That state
+		/// used
+		/// to fall to the read-only row, which carries no chooser links, so it was the one state
+		/// where the user could not reach the Environments tool at all.
+		/// </summary>
+		[Test]
+		public void Compose_Environments_KeepsTheJump_WhenTheProjectHasNoEnvironments()
+		{
+			var row = ComposeEnvironmentsRow();
+
+			Assert.That(row, Is.Not.Null);
+			Assert.That(row.ChooserLinks, Is.Not.Empty,
+				"an empty project is exactly when the user most needs the Environments tool");
+			Assert.That(row.ChooserLinks[0].Tool, Is.EqualTo("EnvironmentEdit"));
 		}
 
 		/// <summary>

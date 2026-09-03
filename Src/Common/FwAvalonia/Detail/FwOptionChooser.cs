@@ -78,6 +78,13 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		// select mode (the default) is unchanged: no checkboxes, no Add button, Enter/click commits
 		// the one highlighted item.
 		private readonly bool _multiSelect;
+
+		// Opt-in create-on-type, for rows whose context can mint an item from typed text. The
+		// row is identified by REFERENCE: its text changes on every keystroke.
+		private const string CreateRowKey = "\u0001create";
+		private readonly bool _allowCreate;
+		private DetailChoiceOption _createOption;
+		private string _createText = string.Empty;
 		// Checked keys survive ItemsSource swaps (filter typing, search re-query) so the user can
 		// accumulate a set; ordered so the committed batch keeps check order.
 		private readonly List<string> _checkedOrder = new List<string>();
@@ -108,8 +115,10 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			string automationId,
 			IEnumerable<string> unavailableKeys = null,
 			bool multiSelect = false,
-			bool dropdown = false)
+			bool dropdown = false,
+			bool allowCreate = false)
 		{
+			_allowCreate = allowCreate;
 			_options = options ?? Array.Empty<DetailChoiceOption>();
 			_searchOptions = searchOptions;
 			_unavailableKeys = new HashSet<string>(unavailableKeys ?? Array.Empty<string>(), StringComparer.Ordinal);
@@ -465,6 +474,13 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		public event Action<DetailChoiceOption> OptionCommitted;
 
 		/// <summary>
+		/// Raised with the typed text when the user commits the create row. Only ever raised on a
+		/// picker built with <c>allowCreate</c>; the host turns the text into a real item. Never
+		/// raised alongside <see cref="OptionCommitted"/> for the same gesture.
+		/// </summary>
+		public event Action<string> CreateRequested;
+
+		/// <summary>
 		/// Raised when the user commits the CHECKED SET (the "Add" button) in multi-select mode
 		/// -- the
 		/// whole batch in one signal so the host stages it as one undoable step. Never raised in
@@ -490,6 +506,15 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			var option = (_list.SelectedItem as DetailChoiceOption) ?? _currentResults.FirstOrDefault();
 			if (option == null || !IsOptionAvailable(option))
 				return;
+			// The create row commits IMMEDIATELY, in both modes: minting a new item is an action,
+			// not a selection. Riding the multi-select batch would mean tracking it by key, and
+			// its
+			// key changes on every keystroke.
+			if (IsCreateRow(option))
+			{
+				CreateRequested?.Invoke(_createText);
+				return;
+			}
 			if (_multiSelect)
 			{
 				ToggleChecked(option);
@@ -622,6 +647,42 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			}
 		}
 
+		// Identity of the synthetic create row. Reference equality, so a domain key can never be
+		// mistaken for it however the user's typing collides.
+		private bool IsCreateRow(DetailChoiceOption option)
+			=> _createOption != null && ReferenceEquals(option, _createOption);
+
+		/// <summary>
+		/// Prepends the create row when the picker can create AND the typed text is worth
+		/// creating:
+		/// non-blank, and matching no listed option by name. An exact match offers nothing -- the
+		/// item is already in the list, so creating would duplicate it.
+		/// </summary>
+		private IReadOnlyList<DetailChoiceOption> WithCreateRow(
+			IReadOnlyList<DetailChoiceOption> results, string query)
+		{
+			_createOption = null;
+			_createText = string.Empty;
+			if (!_allowCreate)
+				return results;
+
+			var typed = (query ?? string.Empty).Trim();
+			if (typed.Length == 0)
+				return results;
+			if (results.Any(o => string.Equals(o.Name, typed, StringComparison.CurrentCultureIgnoreCase)))
+				return results;
+
+			_createText = typed;
+			_createOption = new DetailChoiceOption(CreateRowKey,
+				string.Format(FwAvaloniaStrings.CreateOptionPrompt, typed));
+			// TRAILING: leading would take the default highlight, so Enter on "Sk" would mint
+			// "Sk" rather than pick "Sky".
+			var withCreate = new List<DetailChoiceOption>(results.Count + 1);
+			withCreate.AddRange(results);
+			withCreate.Add(_createOption);
+			return withCreate;
+		}
+
 		private bool IsOptionAvailable(DetailChoiceOption option)
 			=> option != null && !_unavailableKeys.Contains(option.Key ?? string.Empty);
 
@@ -659,7 +720,11 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 					: (_searchOptions(query) ?? Array.Empty<DetailChoiceOption>());
 			}
 
+			// Seen-cache the REAL options only: CommitChecked resolves its batch through it, and
+			// the
+			// synthetic create row must never resolve as a checked member.
 			RememberSeen(_currentResults);
+			_currentResults = WithCreateRow(_currentResults, query);
 			_list.ItemsSource = _currentResults;
 			var firstEnabled = FirstEnabledIndex(_currentResults);
 			if (firstEnabled >= 0)
@@ -772,6 +837,19 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			{
 				if (option == null)
 					return null;
+				if (IsCreateRow(option))
+				{
+					// No checkbox even in multi-select: this row acts rather than accumulating.
+					var create = new TextBlock
+					{
+						Text = option.Name,
+						VerticalAlignment = VerticalAlignment.Center,
+						Foreground = FwAvaloniaDensity.HotlinkBrush
+					};
+					AutomationProperties.SetAutomationId(create, _automationId + ".Create");
+					AutomationProperties.SetName(create, option.Name);
+					return create;
+				}
 				var label = new TextBlock
 				{
 					Text = option.Name,

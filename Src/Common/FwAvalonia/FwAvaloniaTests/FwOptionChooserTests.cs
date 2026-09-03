@@ -726,5 +726,131 @@ namespace FwAvaloniaTests
 				KeyModifiers.None, MouseButton.Left));
 			Dispatcher.UIThread.RunJobs();
 		}
+
+		#region Create-on-type (P7c)
+
+		// Environments is the case this exists for. Most of these pin the other half: that
+		// every OTHER chooser row is unaffected.
+		private static (FwOptionChooser picker, Window window, List<string> created,
+			List<DetailChoiceOption> committed) ShowCreatable(bool multiSelect = false)
+		{
+			var picker = new FwOptionChooser(Tree(), null, "Domains", null,
+				multiSelect: multiSelect, allowCreate: true);
+			var created = new List<string>();
+			var committed = new List<DetailChoiceOption>();
+			picker.CreateRequested += created.Add;
+			picker.OptionCommitted += committed.Add;
+			var window = new Window { Content = picker, Width = 400, Height = 420 };
+			window.Show();
+			Dispatcher.UIThread.RunJobs();
+			AvaloniaHeadlessPlatform.ForceRenderTimerTick();
+			Dispatcher.UIThread.RunJobs();
+			return (picker, window, created, committed);
+		}
+
+		private static string CreateLabel(string typed)
+			=> string.Format(FwAvaloniaStrings.CreateOptionPrompt, typed);
+
+		[AvaloniaTest]
+		public void WithoutAllowCreate_NoCreateRowEverAppears()
+		{
+			var (picker, window, _, _) = ShowStatic();
+
+			window.KeyTextInput("/ # _");
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(Items(picker), Is.Empty,
+				"an ordinary chooser matching nothing shows nothing -- it must not offer to create. "
+				+ "This is the guard for every other chooser row in the app.");
+		}
+
+		[AvaloniaTest]
+		public void TypedTextMatchingNothing_OffersTheCreateRow()
+		{
+			var (picker, window, _, _) = ShowCreatable();
+
+			window.KeyTextInput("/ # _");
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(Items(picker), Has.Count.EqualTo(1));
+			Assert.That(Items(picker)[0].Name, Is.EqualTo(CreateLabel("/ # _")),
+				"the only row, so it IS the highlighted default -- Enter creates, which is what "
+				+ "the user meant when nothing matched");
+		}
+
+		[AvaloniaTest]
+		public void CreateRow_TrailsTheMatches_SoEnterStillPicksTheMatch()
+		{
+			var (picker, window, _, _) = ShowCreatable();
+
+			window.KeyTextInput("Sk"); // matches "Sky", but is not it
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(Items(picker).Select(o => o.Name),
+				Is.EqualTo(new[] { "Sky", CreateLabel("Sk") }),
+				"a partial match still offers create -- the user may want a NEW item whose name "
+				+ "merely contains an existing one -- but it TRAILS the real matches");
+			Assert.That(picker.OptionsList.SelectedIndex, Is.EqualTo(0),
+				"so Enter picks Sky. A leading create row would silently mint 'Sk' instead, which "
+				+ "is the trap this ordering exists to avoid");
+		}
+
+		[AvaloniaTest]
+		public void ExactNameMatch_SuppressesTheCreateRow()
+		{
+			var (picker, window, _, _) = ShowCreatable();
+
+			window.KeyTextInput("Sky");
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(Items(picker).Select(o => o.Name), Is.EqualTo(new[] { "Sky" }),
+				"offering to create what the list already has would only ever duplicate it");
+		}
+
+		[AvaloniaTest]
+		public void EmptyOrBlankFilter_SuppressesTheCreateRow()
+		{
+			var (picker, window, _, _) = ShowCreatable();
+
+			Assert.That(Items(picker), Has.Count.EqualTo(4), "nothing typed yet: just the options");
+
+			window.KeyTextInput("   ");
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(Items(picker).Any(o => o.Name.StartsWith("Create")), Is.False,
+				"whitespace is not something to create");
+		}
+
+		[AvaloniaTest]
+		public void CommittingTheCreateRow_RaisesCreate_WithTheTypedTextNotTheLabel()
+		{
+			var (picker, window, created, committed) = ShowCreatable();
+
+			window.KeyTextInput("/ # _");
+			RaiseKey(picker.FilterBox, Key.Enter);
+
+			Assert.That(created, Is.EqualTo(new[] { "/ # _" }),
+				"the host receives what the user TYPED, not the decorated row label");
+			Assert.That(committed, Is.Empty,
+				"a create is not an option pick; raising both would double-handle the gesture");
+		}
+
+		[AvaloniaTest]
+		public void InMultiSelect_TheCreateRow_CommitsImmediately_RatherThanJoiningTheCheckedBatch()
+		{
+			var (picker, window, created, _) = ShowCreatable(multiSelect: true);
+
+			window.KeyTextInput("/ # _");
+			RaiseKey(picker.FilterBox, Key.Enter);
+
+			Assert.That(created, Is.EqualTo(new[] { "/ # _" }),
+				"minting a new item is an action, not a selection -- it does not wait for Add");
+			Assert.That(picker.CheckedKeys, Is.Empty,
+				"the create row must never enter the checked set: its key changes on every "
+				+ "keystroke, so a batch resolving it by key would resolve nothing");
+		}
+
+		#endregion
+
 	}
 }
