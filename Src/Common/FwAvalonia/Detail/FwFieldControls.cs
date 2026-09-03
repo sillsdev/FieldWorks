@@ -1219,6 +1219,16 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 	/// row's list resolved a list-editor target -- the CONFIGURE gear (which directly dispatches
 	/// the host jump, never a flyout: <see cref="DetailGearChrome"/>) fade in on row hover; the
 	/// items/text stay always visible.
+	///
+	/// APPROVED DIVERGENCE (approved by Zachary Burnham, 2026-09-02) -- the picker is ADD-ONLY.
+	/// Items already in the field are passed as the chooser's unavailable keys, so they appear in
+	/// the list greyed and un-toggleable rather than checked, and removal is the per-item
+	/// right-click. Legacy's <c>SimpleListChooser</c> instead pre-CHECKS the current members and
+	/// treats the dialog as setting the whole membership, so unticking removes.
+	///
+	/// Kept because "+" means add, which is what the symbol promises, and the row already carries
+	/// its own remove. The greyed rows still show the user what is present, so nothing is hidden.
+	/// Recorded so the next reader does not "fix" the picker to pre-check and call it parity.
 	/// </summary>
 	public sealed class FwReferenceVectorField : StackPanel, IHoverAffordanceProvider, IDisposable
 	{
@@ -1320,8 +1330,13 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			// (with Depth hierarchy), search-backed vectors ride the host search delegate.
 			// No link items ever ride this flyout. The vector add slot opens in MULTI-SELECT mode
 			// (checkboxes + an "Add" button): the user checks several candidates and commits the
-			// whole set in ONE edit-context batch (one undoable step), like the legacy multi-check
-			// chooser. Atomic choosers (FwChooserField) stay single-select.
+			// whole set in ONE edit-context batch, one undoable step. Atomic choosers
+			// (FwChooserField) stay single-select.
+			//
+			// Current members ride as UNAVAILABLE keys, not as checked ones: this picker adds,
+			// and
+			// removal is the per-item right-click. That is an approved divergence from legacy's
+			// set-the-membership chooser -- see the class doc for the reason and approver.
 			var picker = new FwOptionChooser(field.Options, field.SearchOptions, automationId,
 				field.Items.Select(i => i.Key), multiSelect: true);
 			var flyout = FwOptionChooser.CreateOptionFlyout(picker, PlacementMode.BottomEdgeAlignedLeft);
