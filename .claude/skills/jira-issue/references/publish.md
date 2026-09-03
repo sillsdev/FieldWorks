@@ -98,7 +98,7 @@ mail burst: do it in one sitting and tell the team it is coming.
 3. Comment on the ticket naming both, so the ticket indexes the worktree list:
 
    > Taken. Working on branch `LT-22715-nc-delete-warning`, worktree
-   > `.tmp/worktrees/nc-delete-warning`.
+   > `<worktree path from the script>`.
 
 4. Hand to `jira-bugfix` at its Step 3. Its Steps 0-2 are already done.
 

@@ -29,7 +29,7 @@ Screenshots: `.claude/references/evidence.md`, before publishing any image.
 | 7 | Report | Key, URL, one `Next:` line. Nothing else |
 | 8 | Start now? | Assign, transition, comment the branch and worktree, hand to `jira-bugfix` at its Step 3 |
 
-## The gates
+## The checks
 
 Nothing is filed until the developer has answered all three:
 
@@ -88,7 +88,7 @@ wrong one is visible.
 
 ## Before finishing
 
-- [ ] All three gates answered by the developer.
+- [ ] All three checks answered by the developer.
 - [ ] Affects Version set.
 - [ ] Description 250 words or fewer, ending in one `*Next:*` line.
 - [ ] Every unknown is a `*Not known:*` line rather than a guess.
