@@ -2,6 +2,7 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwAvalonia.Detail;
@@ -31,6 +32,10 @@ namespace SIL.FieldWorks.XWorks
 		private ILexEntry m_entry;
 		private IMoStemAllomorph m_allomorph;
 
+		// Cleaned up explicitly, not via base UndoAll(): EnvironmentsOS is project-level state
+		// that leaked into later tests when left to Undo (confirmed by probing the undo stack).
+		private readonly List<IPhEnvironment> m_createdEnvironments = new List<IPhEnvironment>();
+
 		public override void TestSetup()
 		{
 			base.TestSetup();
@@ -49,9 +54,20 @@ namespace SIL.FieldWorks.XWorks
 			});
 		}
 
-		// The project owns no environments until a test asks for them, which is what separates
-		// the
-		// row's two wrong shapes.
+		public override void TestTearDown()
+		{
+			if (m_createdEnvironments.Count > 0)
+			{
+				NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
+				{
+					foreach (var env in m_createdEnvironments)
+						env.Delete();
+				});
+				m_createdEnvironments.Clear();
+			}
+			base.TestTearDown();
+		}
+
 		private void GiveProjectAnEnvironment(string representation)
 		{
 			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
@@ -61,6 +77,7 @@ namespace SIL.FieldWorks.XWorks
 				phonData.EnvironmentsOS.Add(env);
 				env.StringRepresentation = TsStringUtils.MakeString(
 					representation, Cache.DefaultAnalWs);
+				m_createdEnvironments.Add(env);
 			});
 		}
 
@@ -89,7 +106,7 @@ namespace SIL.FieldWorks.XWorks
 				"with no environments in the project the row still accepts typing; a blank read-only "
 				+ "row is the fall-through, not the editor");
 
-			GiveProjectAnEnvironment("/ _ a");
+			GiveProjectAnEnvironment("/ # _");
 
 			var populatedProject = ComposeEnvironmentsRow();
 			Assert.That(populatedProject, Is.Not.Null);
@@ -100,18 +117,14 @@ namespace SIL.FieldWorks.XWorks
 
 		/// <summary>
 		/// The Environments row keeps the jump its layout authors -- "Edit the Environments",
-		/// targeting the Grammar area's EnvironmentEdit tool.
-		///
-		/// Fails until the environment editor exists. The row falls through to the read-only
-		/// row, which carries no chooser links, so the jump the layout authors never reaches the
-		/// user. Passing the node's authored links through the generic reference-vector path is
-		/// necessary but not sufficient: this row does not take that path, because
-		/// PhoneEnv yields no reference-target candidates to enumerate.
+		/// targeting the Grammar area's EnvironmentEdit tool. With a valid environment already in
+		/// the project, PhoneEnv yields a reference-target candidate and the row composes through
+		/// AddGenericReferenceVector, which carries authored chooser links.
 		/// </summary>
 		[Test]
 		public void Compose_Environments_KeepsTheAuthoredEditEnvironmentsLink()
 		{
-			GiveProjectAnEnvironment("/ _ a");
+			GiveProjectAnEnvironment("/ # _");
 
 			var row = ComposeEnvironmentsRow();
 
