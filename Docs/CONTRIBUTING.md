@@ -7,8 +7,10 @@ Thank you for your interest in contributing to FieldWorks (FLEx)!
 There are several ways you can contribute to the development of FieldWorks:
 
 - **Contributing code** - Fix bugs, add features, improve documentation
-- **Testing alpha and beta versions** - Help us find and report issues
-- **Reporting issues** - File bugs on [GitHub Issues](https://github.com/sillsdev/FieldWorks/issues)
+- **Testing alpha and beta versions** - Help us find and report issues ([download](https://software.sil.org/fieldworks/download/) from our website or choose Tools > Options > Updates and automatically download Alpha or Beta updates)
+- **Reporting bugs** - We plan to enable [GitHub Issues](https://github.com/sillsdev/FieldWorks/issues) in the near future. Until then, you can
+  - Choose Help > Report a Problem... from within FieldWorks
+  - Fill out the [contact form](https://software.sil.org/fieldworks/about/contact/) at our website
 
 ## Getting Started
 
@@ -34,16 +36,6 @@ Download and install Visual Studio Community Edition or higher (2026 preferred; 
 Required workloads:
 - .NET desktop development
 - Desktop development with C++ (including ATL/MFC)
-
-#### WiX Toolset (v6 via NuGet restore) (for installer building)
-
-Installer builds use SDK-style `.wixproj` projects and restore WiX v6 tooling via NuGet during the build.
-
-```powershell
-.\Setup-Developer-Machine.ps1
-```
-
-See [Installer Build Guide](installer-build-guide.md) for building installers locally.
 
 #### Windows Defender Exclusions (Recommended)
 
@@ -73,12 +65,24 @@ git clone git@github.com:sillsdev/FieldWorks.git
 cd FieldWorks
 ```
 
-#### Optional: Clone FwLocalizations (for translation work)
+#### Run the setup script
 
-If you're working on translations:
+```powershell
+.\Setup-Developer-Machine.ps1
+
+# Option: set up with installer helper repositories (Helps, Localizations, etc.)
+.\Setup-Developer-Machine.ps1 -InstallerDeps
+```
+
+See [Installer Build Guide](installer-build-guide.md) for building installers locally.
+
+#### Optional: Clone FwLocalizations and LibLCM (for translation work)
+
+If you're working on translations, and you didn't run `.\Setup-Developer-Machine.ps1 -InstallerDeps`:
 
 ```powershell
 git clone https://github.com/sillsdev/FwLocalizations.git Localizations
+git clone https://github.com/sillsdev/liblcm.git Localizations/LCMRepo
 ```
 
 #### Set up fonts for Non-Roman test data
@@ -96,8 +100,14 @@ $env:FEEDBACK = "off"
 # Set up ICU data path (required for debugging ICU-related projects)
 $env:ICU_DATA = "C:\path-to-repo\DistFiles\Icu70\icudt70l"
 
-# For FlexBridge development (optional)
+# For Paratext integration (optional)
 $env:FIELDWORKSDIR = "C:\path-to-repo\Output\Debug"
+
+# For FlexBridge development (optional)
+$env:FLEXBRIDGEDIR = "C:\path-to-repo\Output\Debug\net462"
+
+# For working on translations (optional)
+$env:LcmRootDir = "C:\path-to-liblcm-repo"
 ```
 
 > **Tip**: Add these to your PowerShell profile or system environment variables for persistence.

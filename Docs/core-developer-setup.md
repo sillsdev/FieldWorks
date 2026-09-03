@@ -15,32 +15,15 @@ Complete all steps in [CONTRIBUTING.md](CONTRIBUTING.md) first:
 
 The following tools are required for FieldWorks development:
 
-### Visual Studio 2026 or 2022
-
-FieldWorks builds with either; when both are installed the build uses the newest.
-Install with these workloads:
-- **.NET desktop development**
-- **Desktop development with C++** (including ATL/MFC components)
-
-See [Visual Studio Setup](visual-studio-setup.md) for the detailed component list, or import the repo-root `.vsconfig` in the Visual Studio Installer.
-
 ### WiX Toolset (v6 via NuGet restore)
 
 Installer builds use SDK-style `.wixproj` projects and restore WiX v6 tools via NuGet during the build. No separate WiX 3.x installation is required.
-
-```powershell
-# Standard developer machine setup
-.\Setup-Developer-Machine.ps1
-
-# Optional: set up installer helper repositories
-.\Setup-Developer-Machine.ps1 -InstallerDeps
-```
 
 ### Environment Variables
 
 No WiX-specific environment variables are required for WiX v6 SDK builds.
 
-### Verification
+### Verification (TODO: is this redundant to CONTRIBUTING?)
 
 Run these commands to verify your environment:
 
@@ -104,7 +87,7 @@ For streamlined pushing and pulling, set up an SSH key:
 
 ```powershell
 git config user.name "Your Name"
-git config user.email "your.email@example.com"
+git config user.email "your.github.id@users.noreply.github.com"
 ```
 
 #### Increase Rename Limits
