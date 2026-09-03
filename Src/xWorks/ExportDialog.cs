@@ -1898,8 +1898,9 @@ namespace SIL.FieldWorks.XWorks
 				ExportMultiUnicode(w, list.Abbreviation);
 				ExportMultiString(w, list.Description);
 				w.WriteLine("<Possibilities>");
+				var exportGuids = m_flidsForGuids.ContainsKey(list.OwningFlid);
 				foreach (var item in list.PossibilitiesOS)
-					ExportTranslatedItem(w, item, list.OwningFlid);
+					ExportTranslatedItem(w, item, exportGuids);
 				w.WriteLine("</Possibilities>");
 				w.WriteLine("</List>");
 			}
@@ -1940,9 +1941,9 @@ namespace SIL.FieldWorks.XWorks
 				w.WriteLine("</{0}>", sField);
 			}
 
-			private void ExportTranslatedItem(TextWriter w, ICmPossibility item, int listFlid)
+			private void ExportTranslatedItem(TextWriter w, ICmPossibility item, bool exportGuid)
 			{
-				if (m_flidsForGuids.ContainsKey(listFlid))
+				if (exportGuid)
 					w.WriteLine("<{0} guid=\"{1}\">", item.ClassName, item.Guid);
 				else
 					w.WriteLine("<{0}>", item.ClassName);
@@ -1977,7 +1978,7 @@ namespace SIL.FieldWorks.XWorks
 				{
 					w.WriteLine("<SubPossibilities>");
 					foreach (var subItem in item.SubPossibilitiesOS)
-						ExportTranslatedItem(w, subItem, listFlid);
+						ExportTranslatedItem(w, subItem, exportGuid);
 					w.WriteLine("</SubPossibilities>");
 				}
 				w.WriteLine("</{0}>", item.ClassName);
