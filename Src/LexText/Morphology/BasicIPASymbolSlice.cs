@@ -27,6 +27,8 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		}
 
 		private bool m_justChangedDescription;
+		/// True when this slice populated the phoneme's features from the IPA symbol, so
+		/// clearing the symbol may clear them. False means the user chose them; leave them.
 		private bool m_justChangedFeatures;
 
 		/// <summary>
@@ -108,7 +110,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		}
 
 		/// <summary>
-		/// Set description based on the content of the BasicIPASymbol field and the BasicIPAInfo document
+		/// Populates or clears the phoneme's features to match the BasicIPASymbol field.
 		/// </summary>
 		public void SetFeaturesBasedOnIPA()
 		{
@@ -116,41 +118,16 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 			if (phoneme.BasicIPASymbol.Length > 0 && (m_justChangedFeatures || phoneme.FeaturesOA == null || phoneme.FeaturesOA.FeatureSpecsOC.Count == 0))
 			{
-				// Mono XPath processing crashes when the expression starts out with // here.  See FWNX-730.
-				string sXPath = "/SegmentDefinitions/SegmentDefinition[Representations/Representation[.='" +
-					XmlUtils.MakeSafeXmlAttribute(phoneme.BasicIPASymbol.Text) +
-					"']]/Features";
-				XElement features = s_ipaInfoDocument.XPathSelectElement(sXPath);
-				if (features != null)
+				if (PhonemeFeaturePopulator.ApplyFeaturesFromIpaSymbol(m_cache, phoneme,
+						s_ipaInfoDocument) > 0)
 				{
-					foreach (XElement feature in features.Elements("FeatureValuePair"))
-					{
-						var sFeature = (string) feature.Attribute("feature");
-						var sValue = (string) feature.Attribute("value");
-						IFsFeatDefn featDefn = m_cache.LanguageProject.PhFeatureSystemOA.GetFeature(sFeature);
-						if (featDefn == null)
-							continue;
-
-						IFsSymFeatVal symVal = m_cache.LanguageProject.PhFeatureSystemOA.GetSymbolicValue(sValue);
-						if (symVal == null)
-							continue;
-						if (phoneme.FeaturesOA == null)
-						{
-							phoneme.FeaturesOA = m_cache.ServiceLocator.GetInstance<IFsFeatStrucFactory>().Create();
-						}
-						IFsClosedValue value = m_cache.ServiceLocator.GetInstance<IFsClosedValueFactory>().Create();
-						phoneme.FeaturesOA.FeatureSpecsOC.Add(value);
-						value.FeatureRA = featDefn;
-						value.ValueRA = symVal;
-						m_justChangedFeatures = true;
-					}
+					m_justChangedFeatures = true;
 				}
 			}
 			else if (phoneme.BasicIPASymbol.Length == 0 && m_justChangedFeatures)
 			{
-				if (phoneme.FeaturesOA != null)
-					// user has cleared the basic IPA symbol; clear the features
-					phoneme.FeaturesOA.FeatureSpecsOC.Clear();
+				// user has cleared the basic IPA symbol; clear the features
+				PhonemeFeaturePopulator.ClearFeatures(phoneme);
 				m_justChangedFeatures = true;
 			}
 			else

@@ -340,13 +340,11 @@
 		 <FeatureValuePair feature="fPAConsonantal" value="vPAConsonantalPositive"/>
 		 <FeatureValuePair feature="fPASyllabic" value="vPASyllabicNegative"/>
 		 <FeatureValuePair feature="fPASonorant" value="vPASonorantPositive"/>
-		  <FeatureValuePair feature="fPAAnterior" value="vPAAnteriorNegative"/>
-		  <FeatureValuePair feature="fPACoronal" value="vPACoronalPositive"/>
-		  <FeatureValuePair feature="fPAHigh" value="vPAHighPositive"/>
-		 <FeatureValuePair feature="fPABack" value="vPABackNegative"/>
-		 <FeatureValuePair feature="fPALow" value="vPALowNegative"/>
 		 <FeatureValuePair feature="fPAAnterior" value="vPAAnteriorNegative"/>
 		 <FeatureValuePair feature="fPACoronal" value="vPACoronalPositive"/>
+		 <FeatureValuePair feature="fPAHigh" value="vPAHighPositive"/>
+		 <FeatureValuePair feature="fPABack" value="vPABackNegative"/>
+		 <FeatureValuePair feature="fPALow" value="vPALowNegative"/>
 		 <FeatureValuePair feature="fPAVoice" value="vPAVoicePositive"/>
 		 <FeatureValuePair feature="fPANasal" value="vPANasalNegative"/>
 		 <FeatureValuePair feature="fPADelayedRelease" value="vPADelayedReleasePositive"/>
