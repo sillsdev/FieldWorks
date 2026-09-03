@@ -69,12 +69,12 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 					$"Avalonia is supported for tool '{toolName}' and the UI mode selects it.");
 			}
 
-			// The framework resolved to Legacy. Distinguish "legacy mode" from "new mode, tool not migrated".
-			var isNewMode = overrideEnabled == true
-				|| (!overrideEnabled.HasValue && string.Equals(uiMode, UIFrameworkResolver.NewUIMode,
-					System.StringComparison.OrdinalIgnoreCase));
+			// Legacy resolved. Ask the resolver what the preference alone selects, so the
+			// override-versus-preference precedence has one home.
+			var preferenceSelectsAvalonia =
+				UIFrameworkResolver.ResolvePreference(overrideEnabled, uiMode) == UIFramework.Avalonia;
 
-			if (isNewMode && !supportsAvalonia)
+			if (preferenceSelectsAvalonia && !supportsAvalonia)
 			{
 				return new UIFrameworkDecision(UIFramework.Legacy, HostUiBehavior.ExplicitLegacyFallback,
 					$"Tool '{toolName}' is not migrated; it explicitly falls back to legacy under the New UI mode.");

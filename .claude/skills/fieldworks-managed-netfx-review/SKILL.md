@@ -23,11 +23,11 @@ description: "Review or change FieldWorks managed C# code that crosses the .NET 
 ## Required Checks
 
 - User-visible strings use `.resx` patterns where product-facing.
-- UI and async code marshals to the correct UI thread (via `IUiScheduler`
-  in region code) and does not use sync-over-async.
+- UI and async code marshals to the correct UI thread (via the Avalonia
+  dispatcher) and does not use sync-over-async.
 - Disposable WinForms/GDI/LCModel/test resources are owned and disposed
-  deterministically; region code follows the `IDetailLifetime` rules
-  (idempotent disposal, late-callback suppression, event unsubscribe).
+  deterministically, with idempotent disposal, late-callback suppression,
+  and event unsubscribe.
 - Test discovery changes are validated across both net48 and net8 test
   assemblies.
 - Use repo scripts for evidence: `./build.ps1` and `./test.ps1` — never

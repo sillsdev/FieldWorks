@@ -118,10 +118,14 @@ cannot veto; it always settles.
 A **seam** (Feathers, *Working Effectively with Legacy Code*) is a
 substitution point: an interface whose implementations -- the product one
 driving legacy infrastructure, and the test/preview doubles (`Fake*`,
-`InMemory*`, `ImmediateUiScheduler`) -- swap without editing a call site.
-`Src/Common/FwAvalonia/Seams/` holds the six seams (`IEditSession`,
-`IDetailRefreshCoordinator`, `IUiScheduler`, `IDetailLifetime`,
-`IXCoreCommandBridge`, `IRecordNavigationContext`), their default
+`InMemory*`) -- swap without editing a call site. An interface earns a place
+here when something varies across it today, or when it is a named extension
+point for the Avalonia base. An extension-point seam must have a test double
+that its consumer tests inject, a live caller that reads it, and a comment
+naming the adapter it is waiting for. One production adapter is not a reason
+to remove a seam; a seam with no double and no reader is not yet a seam.
+`Src/Common/FwAvalonia/Seams/` holds the three seams (`IEditSession`,
+`IDetailRefreshCoordinator`, `IRecordNavigationContext`), their default
 implementations, the boundary data contracts (`IFwClipboard`/`FwClipboardText`,
 `FwDragDropFormats`/`FwRecordKeyPayload`), and the boundary policy
 `ActiveHostContract` ("may I drive the legacy DataTree right now?",

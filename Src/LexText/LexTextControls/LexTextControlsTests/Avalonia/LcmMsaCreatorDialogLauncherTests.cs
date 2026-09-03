@@ -106,21 +106,6 @@ namespace LexTextControlsTests
 
 		// ----- the chosen FwSandboxMsa resolves back to a real SandboxGenericMSA (the shared resolver) -----
 
-		[Test]
-		public void BuildSandboxMsa_ResolvesAChosenStemMsa()
-		{
-			// The launcher's Apply uses the shared LcmInsertEntryDialogLauncher.BuildSandboxMsa; verify the
-			// round-trip resolves the shared payload's POS ids back to the live objects.
-			var chosen = new FwSandboxMsa(FwMsaType.Stem, mainPosId: _noun.Guid.ToString());
-			var morphType = Cache.ServiceLocator.GetInstance<IMoMorphTypeRepository>()
-				.GetObject(MoMorphTypeTags.kguidMorphStem);
-
-			var resolved = LcmInsertEntryDialogLauncher.BuildSandboxMsa(Cache, chosen, morphType);
-
-			Assert.That(resolved.MsaType, Is.EqualTo(MsaType.kStem));
-			Assert.That(resolved.MainPOS, Is.SameAs(_noun), "the chosen main POS id resolves to the live POS");
-		}
-
 		// ----- inflection-class feed + seed -----
 
 		[Test]

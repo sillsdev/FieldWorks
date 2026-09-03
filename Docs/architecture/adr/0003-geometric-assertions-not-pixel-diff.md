@@ -25,5 +25,5 @@ small set of screenshots is committed rather than only reviewed once and discard
 human reviewer, not just the agent that captured it, gets a chance to actually look.
 
 **Revisit when**: a managed, Avalonia-native pixel-diff tool with the noise-suppression
-tooling web-side tools have matures, or FieldWorks' Avalonia surface grows large enough
+tooling web-side tools have matures, or FieldWorks' Avalonia UI grows large enough
 that "an agent looks at a PNG" stops scaling as the primary visual-quality check.

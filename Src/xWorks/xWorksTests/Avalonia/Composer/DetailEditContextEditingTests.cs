@@ -378,6 +378,76 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
+		// A double at the IDetailRefreshCoordinator seam: records the gate calls the controller
+		// makes so the suspend/pending contract is asserted through the seam, not inferred from
+		// refresh counts.
+		private sealed class RecordingRefreshCoordinator : IDetailRefreshCoordinator
+		{
+			public readonly List<string> Calls = new List<string>();
+			private bool _pending;
+
+			public bool IsSuspended { get; private set; }
+			public bool RefreshPending => _pending;
+
+			public void BeginSuspend()
+			{
+				Calls.Add("BeginSuspend");
+				IsSuspended = true;
+			}
+
+			public bool EndSuspend()
+			{
+				Calls.Add("EndSuspend");
+				IsSuspended = false;
+				var due = _pending;
+				_pending = false;
+				return due;
+			}
+
+			public bool RequestRefresh()
+			{
+				Calls.Add(IsSuspended ? "RequestRefresh(held)" : "RequestRefresh");
+				if (IsSuspended)
+				{
+					_pending = true;
+					return false;
+				}
+				return true;
+			}
+		}
+
+		[Test]
+		public void RefreshController_WhileEditing_DrivesTheCoordinatorSeam_SuspendHoldRelease()
+		{
+			var editing = true;
+			var refreshes = 0;
+			var gate = new RecordingRefreshCoordinator();
+			using (var controller = new AvaloniaDetailRefreshController(
+				Cache, () => m_entry, () => editing, () => refreshes++, gate))
+			{
+				NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
+					m_entry.CitationForm.set_String(Cache.DefaultVernWs,
+						TsStringUtils.MakeString("held", Cache.DefaultVernWs)));
+				NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
+					m_entry.CitationForm.set_String(Cache.DefaultVernWs,
+						TsStringUtils.MakeString("held again", Cache.DefaultVernWs)));
+
+				Assert.That(refreshes, Is.EqualTo(0));
+				Assert.That(gate.Calls.Count(c => c == "BeginSuspend"), Is.EqualTo(1),
+					"the gate is suspended once, on the first notification during an edit");
+				Assert.That(gate.Calls.Count(c => c == "RequestRefresh(held)"), Is.GreaterThanOrEqualTo(1),
+					"notifications during the edit are requested against the suspended gate, so they go pending");
+				Assert.That(gate.RefreshPending, Is.True);
+
+				editing = false;
+				controller.DiscardHeldRefresh();
+
+				Assert.That(gate.Calls.Last(), Is.EqualTo("EndSuspend"),
+					"edit completion releases the gate through the seam");
+				Assert.That(gate.IsSuspended, Is.False);
+			}
+		}
+
 		[Test]
 		public void RefreshController_Dispose_StopsListening()
 		{
@@ -684,10 +754,12 @@ namespace SIL.FieldWorks.XWorks
 				Cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Id, "flattened"),
 				Is.False, "the plain-text setter must reject rich rows so it cannot flatten them");
 
-			var updated = DetailRichTextEditAlgorithms.ApplyPlainTextEdit(
-				rich.Values.Single().RichText, "Smith 2001");
-			Assert.That(composed.EditContext.TrySetRichText(rich,
-				Cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Id, updated), Is.True);
+			// The keystroke itself runs through DetailTextEditor, the same gesture wrapper
+			// production wires between the box and the edit context.
+			var wsTag = Cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Id;
+			var editor = new DetailTextEditor(rich.Values.Single().RichText, () => "Smith 2001", wsTag,
+				value => composed.EditContext.TrySetRichText(rich, wsTag, value));
+			Assert.That(editor.ReplacePlainText("Smith 2001"), Is.True);
 			composed.EditContext.Commit();
 
 			var stored = m_entry.Bibliography.get_String(Cache.DefaultAnalWs);
@@ -727,9 +799,10 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(context.TrySetText(form, form.Values.Single().WsTag, "flattened"), Is.False,
 				"the plain-text setter must reject rich rows so it cannot flatten the TsString");
 
-			var edited = DetailRichTextEditAlgorithms.ApplyPlainTextEdit(form.Values.Single().RichText,
-				"ផ្ទះថ្មី house");
-			Assert.That(context.TrySetRichText(form, form.Values.Single().WsTag, edited), Is.True);
+			var formWsTag = form.Values.Single().WsTag;
+			var editor = new DetailTextEditor(form.Values.Single().RichText, () => "ផ្ទះថ្មី house",
+				formWsTag, value => context.TrySetRichText(form, formWsTag, value));
+			Assert.That(editor.ReplacePlainText("ផ្ទះថ្មី house"), Is.True);
 			context.Commit();
 
 			var stored = m_entry.LexemeFormOA.Form.get_String(Cache.DefaultVernWs);
@@ -812,13 +885,13 @@ namespace SIL.FieldWorks.XWorks
 			var wsTag = field.Values.Single().WsTag;
 			var rich = field.Values.Single().RichText;
 
-			// Apply "Emphasis" over "alpha" (0..5), link "beta" (6..10), retag "gamma" (11..16) to French.
-			rich = DetailRichTextEditAlgorithms.ApplySpanNamedStyle(rich, 0, 5, "Emphasis");
-			Assert.That(detail.EditContext.TrySetRichText(field, wsTag, rich), Is.True);
-			rich = DetailRichTextEditAlgorithms.RetagSpanWritingSystem(rich, 11, 16, frTag);
-			Assert.That(detail.EditContext.TrySetRichText(field, wsTag, rich), Is.True);
-			rich = DetailRichTextEditAlgorithms.ApplyHyperlink(rich, 6, 10, "https://software.sil.org");
-			Assert.That(detail.EditContext.TrySetRichText(field, wsTag, rich), Is.True);
+			// Emphasis over "alpha" (0..5), link "beta" (6..10), retag "gamma" (11..16) to French
+			// -- three gestures through the SAME editor production wires onto this field.
+			var editor = new DetailTextEditor(rich, () => rich.PlainText, wsTag,
+				value => detail.EditContext.TrySetRichText(field, wsTag, value));
+			Assert.That(editor.SetNamedStyle(0, 5, "Emphasis"), Is.True);
+			Assert.That(editor.RetagWritingSystem(11, 16, frTag), Is.True);
+			Assert.That(editor.SetHyperlink(6, 10, "https://software.sil.org"), Is.True);
 
 			detail.EditContext.Commit();
 
@@ -917,12 +990,12 @@ namespace SIL.FieldWorks.XWorks
 			// Mid-run keystroke INSIDE run 1 ("1999" -> "19999"): legacy insertion attaches to the
 			// preceding (containing) run, so run 0's style/bold must survive untouched.
 			var value = rich.Values.Single();
-			var edited = DetailRichTextEditAlgorithms.ApplyPlainTextEdit(value.RichText, "Smith 19999");
-
 			var composed = DetailComposer.Compose(m_entry, Cache);
 			var richField = composed.Model.Fields.Single(f => f.Field == "Bibliography");
-			Assert.That(composed.EditContext.TrySetRichText(richField,
-				richField.Values.Single().WsTag, edited), Is.True);
+			var richFieldWsTag = richField.Values.Single().WsTag;
+			var editor = new DetailTextEditor(value.RichText, () => "Smith 19999", richFieldWsTag,
+				edit => composed.EditContext.TrySetRichText(richField, richFieldWsTag, edit));
+			Assert.That(editor.ReplacePlainText("Smith 19999"), Is.True);
 			composed.EditContext.Commit();
 
 			var stored = m_entry.Bibliography.get_String(Cache.DefaultAnalWs);
@@ -959,14 +1032,14 @@ namespace SIL.FieldWorks.XWorks
 			var value = richField.Values.Single();
 			Assert.That(value.RichText.LossyProperties, Is.False);
 
-			// Bold the first word "important" (indices 0..9).
-			var formatted = DetailRichTextEditAlgorithms.ApplySpanFormatting(value.RichText, 0, 9,
-				DetailRunFormat.Bold, true);
-			Assert.That(formatted.PlainText, Is.EqualTo("important note"),
+			// Bold the first word "important" (indices 0..9), through the same gesture editor
+			// production wires between the box and the edit context.
+			var editor = new DetailTextEditor(value.RichText, () => value.RichText.PlainText, value.WsTag,
+				formatted => composedBefore.EditContext.TrySetRichText(richField, value.WsTag, formatted));
+			Assert.That(editor.ToggleFormat(0, 9, DetailRunFormat.Bold), Is.True);
+			Assert.That(editor.Current.PlainText, Is.EqualTo("important note"),
 				"formatting never changes the plain text");
 
-			Assert.That(composedBefore.EditContext.TrySetRichText(richField, value.WsTag, formatted),
-				Is.True);
 			composedBefore.EditContext.Commit();
 
 			var stored = m_entry.Bibliography.get_String(Cache.DefaultAnalWs);
@@ -999,12 +1072,15 @@ namespace SIL.FieldWorks.XWorks
 			var value = richField.Values.Single();
 			Assert.That(value.RichText.LossyProperties, Is.False);
 
-			// Style the first word "important" (indices 0..9) with the built-in "Emphasis" style.
-			var styled = DetailRichTextEditAlgorithms.ApplySpanNamedStyle(value.RichText, 0, 9, "Emphasis");
-			Assert.That(styled.PlainText, Is.EqualTo("important note"),
+			// Style the first word "important" (indices 0..9) with the built-in "Emphasis" style,
+			// through the same gesture editor production wires between the box and the edit
+			// context.
+			var editor = new DetailTextEditor(value.RichText, () => value.RichText.PlainText, value.WsTag,
+				styled => composedBefore.EditContext.TrySetRichText(richField, value.WsTag, styled));
+			Assert.That(editor.SetNamedStyle(0, 9, "Emphasis"), Is.True);
+			Assert.That(editor.Current.PlainText, Is.EqualTo("important note"),
 				"styling never changes the plain text");
 
-			Assert.That(composedBefore.EditContext.TrySetRichText(richField, value.WsTag, styled), Is.True);
 			composedBefore.EditContext.Commit();
 
 			var stored = m_entry.Bibliography.get_String(Cache.DefaultAnalWs);
@@ -1021,8 +1097,10 @@ namespace SIL.FieldWorks.XWorks
 			var composedAfter = DetailComposer.Compose(m_entry, Cache);
 			var afterField = composedAfter.Model.Fields.Single(f => f.Field == "Bibliography");
 			var afterValue = afterField.Values.Single();
-			var cleared = DetailRichTextEditAlgorithms.ApplySpanNamedStyle(afterValue.RichText, 0, 9, null);
-			Assert.That(composedAfter.EditContext.TrySetRichText(afterField, afterValue.WsTag, cleared), Is.True);
+			var clearEditor = new DetailTextEditor(afterValue.RichText, () => afterValue.RichText.PlainText,
+				afterValue.WsTag,
+				cleared => composedAfter.EditContext.TrySetRichText(afterField, afterValue.WsTag, cleared));
+			Assert.That(clearEditor.SetNamedStyle(0, 9, null), Is.True);
 			composedAfter.EditContext.Commit();
 
 			var storedCleared = m_entry.Bibliography.get_String(Cache.DefaultAnalWs);
@@ -1098,9 +1176,11 @@ namespace SIL.FieldWorks.XWorks
 			var value = field.Values.Single();
 			var vernTag = Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Id;
 
-			// Retag "alpha" (the first 5 chars) to the vernacular ws.
-			var retagged = DetailRichTextEditAlgorithms.RetagSpanWritingSystem(value.RichText, 0, 5, vernTag);
-			Assert.That(composed.EditContext.TrySetRichText(field, value.WsTag, retagged), Is.True);
+			// Retag "alpha" (the first 5 chars) to the vernacular ws, through the same gesture
+			// editor production wires between the box and the edit context.
+			var editor = new DetailTextEditor(value.RichText, () => value.RichText.PlainText, value.WsTag,
+				retagged => composed.EditContext.TrySetRichText(field, value.WsTag, retagged));
+			Assert.That(editor.RetagWritingSystem(0, 5, vernTag), Is.True);
 			composed.EditContext.Commit();
 
 			var stored = m_entry.Bibliography.get_String(Cache.DefaultAnalWs);

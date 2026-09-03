@@ -106,10 +106,11 @@ namespace FwAvaloniaTests
 	}
 
 	/// <summary>
-	/// Span-level link + ORC editing helpers over the run model (sibling of
-	/// ApplySpanNamedStyle / RetagSpanWritingSystem): apply a hyperlink over a selection, edit an
-	/// existing link's URL, delete an ORC run. Plain text / run metadata around the edit is preserved
-	/// and the result drops RichXml so the adapter re-emits via run-replay.
+	/// Link + ORC editing GESTURES driven through <see cref="DetailTextEditor"/> (sibling of
+	/// the character-format/style/ws gesture tests): insert a hyperlink over a selection, edit
+	/// an existing link's URL in place, delete an embedded object, and probe for the ORC
+	/// overlapping a selection. Plain text and run metadata around the edit are preserved, and
+	/// the result drops RichXml so the adapter re-emits via run-replay.
 	/// </summary>
 	[TestFixture]
 	public class DetailLinkAndOrcEditTests
@@ -117,101 +118,114 @@ namespace FwAvaloniaTests
 		private const char ExternalLink = (char)4;
 		private const char Picture = (char)8;
 
+		private static DetailRichTextValue Rich(string text, string ws = "en")
+			=> DetailRichTextEditAlgorithms.FromRuns(text, new[] { new DetailTextRun(text, ws) });
+
+		private static DetailTextEditor Editor(DetailRichTextValue initial, string text)
+			=> new DetailTextEditor(initial, () => text, "en", _ => true);
+
 		[Test]
-		public void ApplyHyperlink_OverASpan_TagsTheCoveredRunsWithLinkObjData()
+		public void SetHyperlink_OverASpan_TagsTheCoveredRunsWithLinkObjData()
 		{
-			var value = DetailRichTextEditAlgorithms.FromRuns("see SIL here",
-				new[] { new DetailTextRun("see SIL here", "en") });
+			const string text = "see SIL here";
+			var editor = Editor(Rich(text), text);
 
-			var linked = DetailRichTextEditAlgorithms.ApplyHyperlink(value, 4, 7,
-				"https://software.sil.org/fieldworks");
+			Assert.That(editor.SetHyperlink(4, 7, "https://software.sil.org/fieldworks"), Is.True);
 
-			Assert.That(linked.PlainText, Is.EqualTo("see SIL here"), "the plain text is unchanged");
-			var linkRun = linked.Runs.Single(r => r.OrcKind == DetailOrcKind.ExternalLink);
+			Assert.That(editor.Current.PlainText, Is.EqualTo(text), "the plain text is unchanged");
+			var linkRun = editor.Current.Runs.Single(r => r.OrcKind == DetailOrcKind.ExternalLink);
 			Assert.That(linkRun.Text, Is.EqualTo("SIL"), "exactly the selected span becomes the link");
 			Assert.That(linkRun.HyperlinkUrl, Is.EqualTo("https://software.sil.org/fieldworks"));
-			Assert.That(linked.RichXml, Is.Null, "drops RichXml so the adapter re-emits via run-replay");
+			Assert.That(editor.Current.RichXml, Is.Null, "drops RichXml so the adapter re-emits via run-replay");
 		}
 
 		[Test]
-		public void ApplyHyperlink_WithNoSelection_IsANoOp()
+		public void SetHyperlink_WithNoSelection_IsANoOp()
 		{
-			var value = DetailRichTextEditAlgorithms.FromRuns("text",
-				new[] { new DetailTextRun("text", "en") });
-			var result = DetailRichTextEditAlgorithms.ApplyHyperlink(value, 2, 2, "https://x");
-			Assert.That(ReferenceEquals(result, value), Is.True, "a collapsed selection inserts no link");
+			const string text = "text";
+			var editor = Editor(Rich(text), text);
+
+			Assert.That(editor.SetHyperlink(2, 2, "https://x"), Is.False, "a collapsed selection inserts no link");
+			Assert.That(editor.Current.PlainText, Is.EqualTo(text));
 		}
 
 		[Test]
-		public void ApplyHyperlink_WithBlankUrl_IsANoOp()
+		public void SetHyperlink_WithBlankUrl_IsANoOp()
 		{
-			var value = DetailRichTextEditAlgorithms.FromRuns("text",
-				new[] { new DetailTextRun("text", "en") });
-			Assert.That(ReferenceEquals(DetailRichTextEditAlgorithms.ApplyHyperlink(value, 0, 4, ""), value),
-				Is.True, "an empty URL inserts no link");
-			Assert.That(ReferenceEquals(DetailRichTextEditAlgorithms.ApplyHyperlink(value, 0, 4, null), value),
-				Is.True, "a null URL inserts no link");
+			const string text = "text";
+			var editor = Editor(Rich(text), text);
+
+			Assert.That(editor.SetHyperlink(0, 4, ""), Is.False, "an empty URL inserts no link");
+			Assert.That(editor.SetHyperlink(0, 4, null), Is.False, "a null URL inserts no link");
 		}
 
 		[Test]
-		public void EditHyperlinkUrl_AtAPosition_ChangesOnlyThatLinkRunsUrl()
+		public void SetHyperlink_AtAnExistingLink_ChangesOnlyThatLinksUrlInPlace()
 		{
-			var value = DetailRichTextEditAlgorithms.FromRuns("a SIL b",
-				new[]
-				{
-					new DetailTextRun("a ", "en"),
-					new DetailTextRun("SIL", "en", objectData: ExternalLink + "https://old.example"),
-					new DetailTextRun(" b", "en")
-				});
+			const string text = "a SIL b";
+			var initial = DetailRichTextEditAlgorithms.FromRuns(text, new[]
+			{
+				new DetailTextRun("a ", "en"),
+				new DetailTextRun("SIL", "en", objectData: ExternalLink + "https://old.example"),
+				new DetailTextRun(" b", "en")
+			});
+			var editor = Editor(initial, text);
+			var linkStart = editor.FirstEmbeddedObjectStart(0, text.Length);
 
-			var edited = DetailRichTextEditAlgorithms.EditHyperlinkUrl(value, 3, "https://new.example");
+			Assert.That(editor.SetHyperlink(linkStart, linkStart + 1, "https://new.example"), Is.True);
 
-			Assert.That(edited.PlainText, Is.EqualTo("a SIL b"));
-			var linkRun = edited.Runs.Single(r => r.OrcKind == DetailOrcKind.ExternalLink);
+			Assert.That(editor.Current.PlainText, Is.EqualTo(text));
+			var linkRun = editor.Current.Runs.Single(r => r.OrcKind == DetailOrcKind.ExternalLink);
 			Assert.That(linkRun.HyperlinkUrl, Is.EqualTo("https://new.example"));
-			Assert.That(edited.RichXml, Is.Null);
+			Assert.That(editor.Current.RichXml, Is.Null);
 		}
 
 		[Test]
-		public void DeleteOrc_AtAPosition_RemovesThatOrcRun_KeepingTheRest()
+		public void DeleteEmbeddedObject_AtAPosition_RemovesThatOrcRun_KeepingTheRest()
 		{
-			var value = DetailRichTextEditAlgorithms.FromRuns("a￼b",
-				new[]
-				{
-					new DetailTextRun("a", "en"),
-					new DetailTextRun("￼", "en", objectData: Picture.ToString()),
-					new DetailTextRun("b", "en")
-				});
+			const string text = "a￼b";
+			var initial = DetailRichTextEditAlgorithms.FromRuns(text, new[]
+			{
+				new DetailTextRun("a", "en"),
+				new DetailTextRun("￼", "en", objectData: Picture.ToString()),
+				new DetailTextRun("b", "en")
+			});
+			var editor = Editor(initial, text);
 
-			var deleted = DetailRichTextEditAlgorithms.DeleteOrcRun(value, 1);
+			Assert.That(editor.DeleteEmbeddedObject(1, 2), Is.True);
 
-			Assert.That(deleted.PlainText, Is.EqualTo("ab"), "the ORC character is removed");
-			Assert.That(deleted.Runs.Any(r => r.IsOrc), Is.False, "no ORC run remains");
-			Assert.That(deleted.RichXml, Is.Null);
+			Assert.That(editor.Current.PlainText, Is.EqualTo("ab"), "the ORC character is removed");
+			Assert.That(editor.Current.Runs.Any(r => r.IsOrc), Is.False, "no ORC run remains");
+			Assert.That(editor.Current.RichXml, Is.Null);
+			Assert.That(editor.LastStagedText, Is.EqualTo("ab"));
 		}
 
 		[Test]
-		public void DeleteOrc_AtANonOrcPosition_IsANoOp()
+		public void DeleteEmbeddedObject_AtANonOrcPosition_IsANoOp()
 		{
-			var value = DetailRichTextEditAlgorithms.FromRuns("ab",
-				new[] { new DetailTextRun("ab", "en") });
-			Assert.That(ReferenceEquals(DetailRichTextEditAlgorithms.DeleteOrcRun(value, 0), value), Is.True,
-				"deleting at a position with no ORC run is a no-op");
+			const string text = "ab";
+			var editor = Editor(Rich(text), text);
+
+			Assert.That(editor.DeleteEmbeddedObject(0, 1), Is.False,
+				"deleting where no ORC run overlaps the span is a no-op");
+			Assert.That(editor.Current.PlainText, Is.EqualTo(text));
 		}
 
 		[Test]
-		public void FirstOrcRunStart_FindsTheOrcOverlappingASelection()
+		public void FirstEmbeddedObjectStart_FindsTheOrcOverlappingASelection()
 		{
-			var value = DetailRichTextEditAlgorithms.FromRuns("a￼b",
-				new[]
-				{
-					new DetailTextRun("a", "en"),
-					new DetailTextRun("￼", "en", objectData: Picture.ToString()),
-					new DetailTextRun("b", "en")
-				});
+			const string text = "a￼b";
+			var initial = DetailRichTextEditAlgorithms.FromRuns(text, new[]
+			{
+				new DetailTextRun("a", "en"),
+				new DetailTextRun("￼", "en", objectData: Picture.ToString()),
+				new DetailTextRun("b", "en")
+			});
+			var editor = Editor(initial, text);
+
 			// A selection covering the ORC reports its start offset; a selection clear of it reports -1.
-			Assert.That(DetailRichTextEditAlgorithms.FirstOrcRunStart(value, 1, 2), Is.EqualTo(1));
-			Assert.That(DetailRichTextEditAlgorithms.FirstOrcRunStart(value, 0, 1), Is.EqualTo(-1));
+			Assert.That(editor.FirstEmbeddedObjectStart(1, 2), Is.EqualTo(1));
+			Assert.That(editor.FirstEmbeddedObjectStart(0, 1), Is.EqualTo(-1));
 		}
 	}
 }

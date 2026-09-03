@@ -25,7 +25,8 @@ namespace SIL.FieldWorks.LexText.Controls
 	/// slot provider, and the box seeded from the existing <c>SandboxGenericMSA</c> / morph type) and a
 	/// <see cref="MsaCreatorDlgPayload"/> (the chosen <see cref="FwSandboxMsa"/>). This launcher builds that state from
 	/// the live cache and, on OK, resolves the chosen <see cref="FwSandboxMsa"/> back into a real
-	/// <c>SandboxGenericMSA</c> (via the shared <see cref="LcmInsertEntryDialogLauncher.BuildSandboxMsa"/>), exposed
+	/// <c>SandboxGenericMSA</c> (via the shared <see
+	/// cref="GrammaticalInfoProjection.BuildSandboxMsa"/>), exposed
 	/// as <see cref="ChosenSandboxMsa"/>.
 	///
 	/// Two consumers apply the result differently -- <c>MSAPopupTreeManager</c> assigns
@@ -92,7 +93,8 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// Same as <see cref="Show(LcmCache, Mediator, PropertyTable, ILexEntry, SandboxGenericMSA, int, bool, string, IWin32Window, IHelpTopicProvider)"/>
 		/// but also returns the LCModel-free <see cref="FwSandboxMsa"/> the box chose: the caller can
 		/// round-trip its inflection features onto the resolved MSA via
-		/// <see cref="LcmInsertEntryDialogLauncher.ApplyInflectionFeatures(LcmCache, IMoMorphSynAnalysis, FwSandboxMsa)"/>
+		/// <see cref="GrammaticalInfoProjection.ApplyInflectionFeatures(LcmCache,
+		/// IMoMorphSynAnalysis, FwSandboxMsa)"/>
 		/// after it has applied the SandboxGenericMSA (assign-to-sense path). Null + null on cancel.
 		/// </summary>
 		public static SandboxGenericMSA Show(LcmCache cache, Mediator mediator, PropertyTable propertyTable,
@@ -152,19 +154,19 @@ namespace SIL.FieldWorks.LexText.Controls
 				LexicalEntry = entry.HeadWord?.Text,
 				Senses = BuildSensesSummary(cache, entry, hvoOriginalMsa),
 				HelpTopic = useForEdit ? "khtpEditGrammaticalFunction" : "khtpCreateNewGrammaticalFunction",
-				PosNodes = LcmInsertEntryDialogLauncher.BuildPosNodes(cache),
+				PosNodes = GrammaticalInfoProjection.BuildPosNodes(cache),
 				InitialMsaType = ToFwMsaType(seedMsa.MsaType),
 				InitialMainPosId = seedMsa.MainPOS?.Guid.ToString(),
 				InitialSecondaryPosId = seedMsa.SecondaryPOS?.Guid.ToString(),
 				InitialSlotId = seedMsa.Slot?.Guid.ToString(),
-				SlotsForPos = posId => LcmInsertEntryDialogLauncher.BuildSlots(cache, posId, morphTypeGuid),
+				SlotsForPos = posId => GrammaticalInfoProjection.BuildSlots(cache, posId, morphTypeGuid),
 				// Inflection-class picker: the selected main POS's classes, re-fed when the main POS changes,
 				// seeded from the existing stem/deriv-step MSA's inflection class.
-				InflectionClassesForPos = posId => LcmInsertEntryDialogLauncher.BuildInflectionClasses(cache, posId),
+				InflectionClassesForPos = posId => GrammaticalInfoProjection.BuildInflectionClasses(cache, posId),
 				InitialInflectionClassId = InflectionClassIdFromExistingMsa(cache, hvoOriginalMsa),
 				// Inflection-feature editor: the selected main POS's inflectable-feature system, re-fed
 				// when the main POS changes (infl/deriv), seeded from the existing MSA's IFsFeatStruc (the edit path).
-				InflectionFeaturesForPos = posId => LcmInsertEntryDialogLauncher.BuildInflectionFeatures(cache, posId),
+				InflectionFeaturesForPos = posId => GrammaticalInfoProjection.BuildInflectionFeatures(cache, posId),
 				InitialInflectionFeatures = InflectionFeaturesFromExistingMsa(cache, hvoOriginalMsa)
 			};
 		}
@@ -266,7 +268,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				_helpProvider);
 			if (node == null)
 				return;
-			_viewModel.AcceptCreatedPos(target, node, LcmInsertEntryDialogLauncher.BuildPosNodes(_cache));
+			_viewModel.AcceptCreatedPos(target, node, GrammaticalInfoProjection.BuildPosNodes(_cache));
 		}
 
 		protected override AvControl CreateView(MsaCreatorDlgViewModel viewModel) =>
@@ -274,7 +276,8 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		/// <summary>
 		/// Resolves the chosen grammatical info into a real <c>SandboxGenericMSA</c> via the shared
-		/// <see cref="LcmInsertEntryDialogLauncher.BuildSandboxMsa"/>; the caller applies it. Does NOT mutate
+		/// <see cref="GrammaticalInfoProjection.BuildSandboxMsa"/>; the caller applies it. Does
+		/// NOT mutate
 		/// the model.
 		/// </summary>
 		protected override MsaCreatorDlgPayload Apply(MsaCreatorDlgInput state)
@@ -289,11 +292,12 @@ namespace SIL.FieldWorks.LexText.Controls
 				try { morphType = _cache.ServiceLocator.GetInstance<IMoMorphTypeRepository>().GetObject(g); }
 				catch { morphType = null; }
 			}
-			ChosenSandboxMsa = LcmInsertEntryDialogLauncher.BuildSandboxMsa(_cache, payload.Msa, morphType);
+			ChosenSandboxMsa = GrammaticalInfoProjection.BuildSandboxMsa(_cache, payload.Msa, morphType);
 			ChosenBoxMsa = payload.Msa;
 			// The chosen inflection-feature set rides back via ChosenBoxMsa so a caller that assigns the resolved
 			// SandboxGenericMSA to a definite MSA (MSAPopupTreeManager) can round-trip the features onto it in its
-			// own UOW, via the Show out-param overload + LcmInsertEntryDialogLauncher.ApplyInflectionFeatures.
+			// own UOW, via the Show out-param overload +
+			// GrammaticalInfoProjection.ApplyInflectionFeatures.
 			// TODO: two round-trips are missing here. MSADlgLauncher's UpdateOrReplace path does not round-trip the
 			// features, because UpdateOrReplace may replace the MSA with a different instance and the post-apply
 			// target is then ambiguous. The inflection class is not round-tripped at all: SandboxGenericMSA carries

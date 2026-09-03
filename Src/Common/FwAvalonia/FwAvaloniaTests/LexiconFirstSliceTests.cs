@@ -2,6 +2,7 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Xml.Linq;
@@ -18,7 +19,7 @@ namespace FwAvaloniaTests
 	[TestFixture]
 	public class LexiconFirstSliceTests
 	{
-		private static string ShippedPartsDirectory()
+		private static string RepoRoot()
 		{
 			var dir = new DirectoryInfo(TestContext.CurrentContext.TestDirectory);
 			while (dir != null && !File.Exists(Path.Combine(dir.FullName, "FieldWorks.sln")))
@@ -27,13 +28,19 @@ namespace FwAvaloniaTests
 			}
 
 			Assert.That(dir, Is.Not.Null, "could not locate the repo root from the test directory");
-			return Path.Combine(dir.FullName, "DistFiles", "Language Explorer", "Configuration", "Parts");
+			return dir.FullName;
 		}
+
+		/// <summary>The shipped search path, resolved against the repo's DistFiles instead of an
+		/// installed code directory. Order and membership stay <see
+		/// cref="PartsInventory"/>'s.</summary>
+		private static IReadOnlyList<string> ShippedSearchPath()
+			=> PartsInventory.SearchPath(sub => Path.Combine(RepoRoot(), "DistFiles", sub));
 
 		[Test]
 		public void CompileFromLayoutDirectory_OverShippedLayouts_YieldsTheThreeFirstSliceFields()
 		{
-			var definition = LexiconFirstSlice.CompileFromLayoutDirectory(ShippedPartsDirectory());
+			var definition = LexiconFirstSlice.CompileFromLayoutDirectory(ShippedSearchPath());
 
 			Assert.That(definition, Is.Not.Null, "the shipped layouts must compile (fallback means a regression)");
 			Assert.That(definition.Roots.Select(r => r.Field), Is.EqualTo(new[] { "Form", "MorphType", "Gloss" }));
@@ -43,7 +50,7 @@ namespace FwAvaloniaTests
 		[Test]
 		public void CompiledFields_CarryRealLayoutBindings_AndProductMetadata()
 		{
-			var definition = LexiconFirstSlice.CompileFromLayoutDirectory(ShippedPartsDirectory());
+			var definition = LexiconFirstSlice.CompileFromLayoutDirectory(ShippedSearchPath());
 			Assert.That(definition, Is.Not.Null);
 
 			var form = definition.Roots[0];
@@ -73,7 +80,7 @@ namespace FwAvaloniaTests
 		[Test]
 		public void CompiledDefinition_MapsToDetailFields_WithChooserAndTextKinds()
 		{
-			var definition = LexiconFirstSlice.CompileFromLayoutDirectory(ShippedPartsDirectory());
+			var definition = LexiconFirstSlice.CompileFromLayoutDirectory(ShippedSearchPath());
 			Assert.That(definition, Is.Not.Null);
 
 			var detail = DetailModelProjector.FromViewDefinition(definition, new FakeDetailValueProvider());
@@ -89,7 +96,7 @@ namespace FwAvaloniaTests
 		{
 			Assert.That(LexiconFirstSlice.CompileFromLayoutDirectory(null), Is.Null);
 			Assert.That(LexiconFirstSlice.CompileFromLayoutDirectory(
-				Path.Combine(Path.GetTempPath(), "no-such-layout-dir")), Is.Null);
+				new[] { Path.Combine(Path.GetTempPath(), "no-such-layout-dir") }), Is.Null);
 
 			var fallback = LexiconFirstSlice.AuthoredFallback();
 			Assert.That(fallback.Roots.Select(r => r.Field), Is.EqualTo(new[] { "Form", "MorphType", "Gloss" }));

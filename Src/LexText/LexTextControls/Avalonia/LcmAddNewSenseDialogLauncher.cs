@@ -29,8 +29,11 @@ namespace SIL.FieldWorks.LexText.Controls
 	/// (per-WS gloss strings + the chosen <see cref="FwSandboxMsa"/>). This launcher builds that state from the live
 	/// cache and, on OK, creates the new <c>ILexSense</c> (gloss + find-or-created MSA) in ONE undoable step.
 	///
-	/// Layering + the MSA mapping mirror <see cref="LcmInsertEntryDialogLauncher"/> exactly (they share its internal
-	/// <c>BuildPosNodes</c>/<c>BuildSlots</c>/<c>BuildSandboxMsa</c> + create-POS routing); BuildState / Apply are
+	/// Layering mirrors <see cref="LcmInsertEntryDialogLauncher"/> exactly, and the MSA mapping
+	/// is identical
+	/// because both go through the shared <see cref="GrammaticalInfoProjection"/>
+	/// (POS/slot/feature projection
+	/// and the MSA apply) and the same create-POS routing. BuildState / Apply are
 	/// internal so the full state mapping + create are unit-testable against a real cache (via InternalsVisibleTo)
 	/// without running the modal. The legacy "find the entry's morph type to seed the MSA class" step is the lift of
 	/// <c>AddNewSenseDlg.SetDlgInfo</c>'s <c>MorphTypePreference</c> loop.
@@ -118,23 +121,23 @@ namespace SIL.FieldWorks.LexText.Controls
 			// MorphTypePreference loop over AlternateFormsOS -- the first allomorph's type
 			// wins). Fall back to stem when there is no allomorph.
 			var morphTypeGuid = FirstAllomorphMorphTypeGuid(entry);
-			var initialMsaType = LcmInsertEntryDialogLauncher.MorphTypeGuidToMsaType(morphTypeGuid);
+			var initialMsaType = GrammaticalInfoProjection.MorphTypeGuidToMsaType(morphTypeGuid);
 
 			return new AddNewSenseDlgInput
 			{
 				CitationForm = citation,
 				Gloss = gloss,
 				HelpTopic = s_helpTopic,
-				PosNodes = LcmInsertEntryDialogLauncher.BuildPosNodes(cache),
+				PosNodes = GrammaticalInfoProjection.BuildPosNodes(cache),
 				InitialMsaType = initialMsaType,
 				InitialMainPosId = null,
-				SlotsForPos = posId => LcmInsertEntryDialogLauncher.BuildSlots(cache, posId, morphTypeGuid),
+				SlotsForPos = posId => GrammaticalInfoProjection.BuildSlots(cache, posId, morphTypeGuid),
 				// Inflection-class picker: the selected main POS's classes, re-fed when the main POS changes.
-				InflectionClassesForPos = posId => LcmInsertEntryDialogLauncher.BuildInflectionClasses(cache, posId),
+				InflectionClassesForPos = posId => GrammaticalInfoProjection.BuildInflectionClasses(cache, posId),
 				InitialInflectionClassId = null,
 				// Inflection-feature editor: the selected main POS's inflectable-feature system, re-fed
 				// when the main POS changes (infl/deriv). No initial features on the create path.
-				InflectionFeaturesForPos = posId => LcmInsertEntryDialogLauncher.BuildInflectionFeatures(cache, posId),
+				InflectionFeaturesForPos = posId => GrammaticalInfoProjection.BuildInflectionFeatures(cache, posId),
 				InitialInflectionFeatures = null
 			};
 		}
@@ -173,7 +176,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				_helpProvider);
 			if (node == null)
 				return;
-			_viewModel.AcceptCreatedPos(target, node, LcmInsertEntryDialogLauncher.BuildPosNodes(_cache));
+			_viewModel.AcceptCreatedPos(target, node, GrammaticalInfoProjection.BuildPosNodes(_cache));
 		}
 
 		protected override AvControl CreateView(AddNewSenseDlgViewModel viewModel) =>
@@ -236,13 +239,13 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 
 			var morphType = ResolveMorphType(cache, FirstAllomorphMorphTypeGuid(entry));
-			sense.SandboxMSA = LcmInsertEntryDialogLauncher.BuildSandboxMsa(cache, payload.Msa, morphType);
+			sense.SandboxMSA = GrammaticalInfoProjection.BuildSandboxMsa(cache, payload.Msa, morphType);
 			// SandboxGenericMSA carries no inflection class, so set it on the find-or-created stem MSA AFTER
 			// the SandboxMSA assign (the lift of InsertEntryDlg.SetEntryMsa). Same UOW as the create.
-			LcmInsertEntryDialogLauncher.ApplyInflectionClass(cache, sense, payload.Msa);
+			GrammaticalInfoProjection.ApplyInflectionClass(cache, sense, payload.Msa);
 			// Rebuild the inflection IFsFeatStruc on the find-or-created infl/deriv MSA from the chosen
 			// assignment set, same UOW. A stem MSA (or no features) is a no-op.
-			LcmInsertEntryDialogLauncher.ApplyInflectionFeatures(cache, sense, payload.Msa);
+			GrammaticalInfoProjection.ApplyInflectionFeatures(cache, sense, payload.Msa);
 			return sense;
 		}
 

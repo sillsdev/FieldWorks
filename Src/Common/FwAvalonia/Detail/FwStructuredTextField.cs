@@ -103,6 +103,12 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			if (!paragraph.CanEditText)
 				ToolTip.SetTip(box, FwAvaloniaStrings.EmbeddedObjectReadOnly);
 
+			// One editor holds THIS paragraph's value and every gesture over it, staging through
+			// the paragraph-text seam. Runs carry their own writing systems, so a synthesized
+			// single run stays untagged.
+			var editor = new DetailTextEditor(paragraph.Text, () => box.Text ?? string.Empty, null,
+				rich => editContext != null && editContext.TrySetParagraphText(field, index, rich));
+
 			Control styleAffordance = null;
 			Control charStyleAffordance = null;
 			Control wsAffordance = null;
@@ -111,19 +117,15 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 
 			if (paraEditable)
 			{
-				WireParagraphTextEditing(field, editContext, box, currentRich, index, rich => currentRich = rich);
+				WireParagraphTextEditing(box, editor);
 
-				// The SAME run-level character-style picker and writing-system retag picker
-				// FwMultiWsTextField exposes, here acting on THIS paragraph's run-aware value and staging
-				// through the paragraph-text seam (ApplySpanNamedStyle / RetagSpanWritingSystem ->
-				// TrySetParagraphText). Built only on an editable, non-lossy paragraph carrying the
-				// host-supplied styles / writing systems (else suppressed). The pickers read the LIVE
-				// currentRich (updated by WireParagraphTextEditing's onStaged), so a style applied after a
-				// typed edit still splits the latest runs.
-				charStyleAffordance = CreateCharStyleAffordance(field, automationId, editContext,
-					gestureCompleted, box, index, () => currentRich, rich => currentRich = rich);
-				wsAffordance = CreateWsRetagAffordance(field, automationId, editContext,
-					gestureCompleted, box, index, () => currentRich, rich => currentRich = rich);
+				// The character-style and writing-system pickers FwMultiWsTextField exposes,
+				// built only when the host supplied styles or writing systems. They share the
+				// editor with the typing path.
+				charStyleAffordance = CreateCharStyleAffordance(field, automationId,
+					gestureCompleted, box, index, editor);
+				wsAffordance = CreateWsRetagAffordance(field, automationId,
+					gestureCompleted, box, index, editor);
 
 				// Enter inserts a new empty paragraph after this one. Backspace at the START of an EMPTY
 				// paragraph deletes it (when more than one remains).
@@ -243,28 +245,17 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			};
 		}
 
-		// The run-aware text-edit wiring shared with FwMultiWsTextField, narrowed to one paragraph editor:
-		// a TextChanged stages a plain-text-over-preserved-runs edit through the paragraph seam. A
-		// last-staged guard keeps the template's initial set and no-op events from staging; the guard
-		// advances only on a successful stage so a failed write re-attempts.
-		private void WireParagraphTextEditing(DetailField field, IStructuredTextEditing editContext,
-			TextBox box, DetailRichTextValue currentRich, int index, Action<DetailRichTextValue> onStaged)
+		// TextChanged stages a plain-text-over-preserved-runs edit for one paragraph. The
+		// editor's last-staged text gates staging and advances only on a successful stage, so a
+		// failed write is re-attempted.
+		private void WireParagraphTextEditing(TextBox box, DetailTextEditor editor)
 		{
-			var lastStaged = currentRich?.PlainText ?? string.Empty;
 			EventHandler<TextChangedEventArgs> textChanged = (s, e) =>
 			{
 				var text = box.Text ?? string.Empty;
-				if (text == lastStaged)
+				if (text == editor.LastStagedText)
 					return;
-				var updatedRich = DetailRichTextEditAlgorithms.ApplyPlainTextEdit(
-					currentRich ?? DetailRichTextEditAlgorithms.FromRuns(string.Empty, Array.Empty<DetailTextRun>()),
-					text);
-				if (editContext != null && editContext.TrySetParagraphText(field, index, updatedRich))
-				{
-					lastStaged = text;
-					currentRich = updatedRich;
-					onStaged(updatedRich);
-				}
+				editor.ReplacePlainText(text);
 			};
 			box.TextChanged += textChanged;
 			_teardown.Add(() => box.TextChanged -= textChanged);
@@ -408,8 +399,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		// clear entry plus the project's character styles, acting on the box's current selection and
 		// staging ApplySpanNamedStyle through the paragraph-text seam. Null when no character styles.
 		private Control CreateCharStyleAffordance(DetailField field, string automationId,
-			IStructuredTextEditing editContext, Action gestureCompleted, TextBox box, int index,
-			Func<DetailRichTextValue> getRich, Action<DetailRichTextValue> setRich)
+			Action gestureCompleted, TextBox box, int index, DetailTextEditor editor)
 		{
 			if (field.AvailableNamedStyles == null || field.AvailableNamedStyles.Count == 0)
 				return null;
@@ -432,9 +422,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				{
 					spanStart = Math.Min(box.SelectionStart, box.SelectionEnd);
 					spanEnd = Math.Max(box.SelectionStart, box.SelectionEnd);
-					var rich = getRich();
-					var current = rich == null ? null
-						: DetailRichTextEditAlgorithms.SpanNamedStyle(rich, spanStart, spanEnd);
+					var current = editor.NamedStyleIn(spanStart, spanEnd);
 					var pos = string.IsNullOrEmpty(current) ? 0
 						: options.FindIndex(o => string.Equals(o.Key, current, StringComparison.Ordinal));
 					picker.OptionsList.SelectedIndex = pos < 0 ? 0 : pos;
@@ -448,19 +436,10 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 						lo = Math.Min(box.SelectionStart, box.SelectionEnd);
 						hi = Math.Max(box.SelectionStart, box.SelectionEnd);
 					}
-					if (lo == hi)
-						return; // no span: nothing to (re)style
-
-					var rich = getRich() ?? DetailRichTextEditAlgorithms.FromRuns(box.Text ?? string.Empty,
-						new[] { new DetailTextRun(box.Text ?? string.Empty) });
-					var styleName = string.IsNullOrEmpty(option?.Key) ? null : option.Key;
-					var restyled = DetailRichTextEditAlgorithms.ApplySpanNamedStyle(rich, lo, hi, styleName);
-					if (!ReferenceEquals(restyled, rich)
-						&& editContext != null && editContext.TrySetParagraphText(field, index, restyled))
-					{
-						setRich(restyled);
+					// A collapsed span stages nothing; the clear entry's empty key clears the
+					// style.
+					if (editor.SetNamedStyle(lo, hi, option?.Key))
 						gestureCompleted?.Invoke();
-					}
 				},
 				_teardown);
 		}
@@ -470,8 +449,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		// writing systems (no clear entry), acting on the box's current selection and staging
 		// RetagSpanWritingSystem through the paragraph-text seam. Null when no writing systems.
 		private Control CreateWsRetagAffordance(DetailField field, string automationId,
-			IStructuredTextEditing editContext, Action gestureCompleted, TextBox box, int index,
-			Func<DetailRichTextValue> getRich, Action<DetailRichTextValue> setRich)
+			Action gestureCompleted, TextBox box, int index, DetailTextEditor editor)
 		{
 			if (field.AvailableWritingSystems == null || field.AvailableWritingSystems.Count == 0)
 				return null;
@@ -494,9 +472,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				{
 					spanStart = Math.Min(box.SelectionStart, box.SelectionEnd);
 					spanEnd = Math.Max(box.SelectionStart, box.SelectionEnd);
-					var rich = getRich();
-					var current = rich == null ? null
-						: DetailRichTextEditAlgorithms.SpanWritingSystem(rich, spanStart, spanEnd);
+					var current = editor.WritingSystemIn(spanStart, spanEnd);
 					var pos = string.IsNullOrEmpty(current) ? -1
 						: options.FindIndex(o => string.Equals(o.Key, current, StringComparison.Ordinal));
 					picker.OptionsList.SelectedIndex = pos < 0 ? 0 : pos;
@@ -510,18 +486,11 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 						lo = Math.Min(box.SelectionStart, box.SelectionEnd);
 						hi = Math.Max(box.SelectionStart, box.SelectionEnd);
 					}
-					if (lo == hi || string.IsNullOrEmpty(option?.Key))
-						return; // no span, or no real ws (a run must always carry a writing system)
-
-					var rich = getRich() ?? DetailRichTextEditAlgorithms.FromRuns(box.Text ?? string.Empty,
-						new[] { new DetailTextRun(box.Text ?? string.Empty) });
-					var retagged = DetailRichTextEditAlgorithms.RetagSpanWritingSystem(rich, lo, hi, option.Key);
-					if (!ReferenceEquals(retagged, rich)
-						&& editContext != null && editContext.TrySetParagraphText(field, index, retagged))
-					{
-						setRich(retagged);
+					// A collapsed span stages nothing, and an empty key is refused: a run must
+					// always
+					// carry a writing system.
+					if (editor.RetagWritingSystem(lo, hi, option?.Key))
 						gestureCompleted?.Invoke();
-					}
 				},
 				_teardown);
 		}

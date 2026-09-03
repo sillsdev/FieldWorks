@@ -64,7 +64,11 @@ off — it is the per-region definition of done.
    `Src/Common/Controls/DetailControls/DetailControlsTests/`.
 3. **Extract seams.** Reuse the existing contracts in
    `Src/Common/FwAvalonia/Seams/`; only add a new seam when
-   `references/seam-catalog.md` has no fit, and record why there.
+   `references/seam-catalog.md` has no fit, and record why there. A seam
+   with one production adapter stays when it is a named extension point for
+   the Avalonia base: give it the test double and the live reader before the
+   PR lands, and name the adapter it waits for. Never remove a seam on the
+   adapter count alone.
 4. **Select controls.** Look the control up in
    `references/control-exemplar-map.md` first; default to the
    owned-control decisions in architecture-patterns.md §4. Re-evaluate

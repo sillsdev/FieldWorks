@@ -1,6 +1,6 @@
 ﻿<#
 .SYNOPSIS
-	Shared token-hygiene scanning engine for the FieldWorks Avalonia surface.
+	Shared design-token hygiene scanning engine for the FieldWorks Avalonia projects.
 
 .DESCRIPTION
 	Detects hardcoded color and spacing/dimension literals in the C# and
@@ -78,7 +78,7 @@ function Test-TokenHygieneExcludedPath {
 	}
 
 	# Tokens/ files are scanned like any other file; only the per-line x:Key exemption
-	# below protects a declaration -- the FieldWorks Layer-1-extension boundary.
+	# below protects a declaration -- the boundary where a FieldWorks token is defined.
 
 	if ($normalized -match '\.g\.cs$') { return $true }
 	if ($normalized -match 'Designer\.cs$') { return $true }
@@ -106,7 +106,7 @@ function Get-TokenHygieneScopedFiles {
 	<#
 	.SYNOPSIS
 		Returns absolute paths of every in-scope .cs/.axaml/.xaml file under
-		the Avalonia surface roots, tracked or newly created on disk, minus
+		the token-hygiene scope roots, tracked or newly created on disk, minus
 		excluded paths.
 
 	.DESCRIPTION

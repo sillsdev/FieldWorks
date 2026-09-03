@@ -47,22 +47,26 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		};
 
 		/// <summary>
-		/// Compiles the first-slice definition from the shipped layout/parts directory. Returns null when
-		/// the directory or any required layout/node cannot be found, so the caller can fall back to
+		/// Compiles the first-slice definition from the shipped parts/layout search path (see
+		/// <see cref="PartsInventory"/>), which is also where the one directly-named layout file,
+		/// <c>Morphology.fwlayout</c>, is looked up. Returns null when the path holds no parts or
+		/// a
+		/// required layout/node cannot be found, so the caller can fall back to
 		/// <see cref="AuthoredFallback"/> explicitly.
 		/// </summary>
-		public static ViewDefinitionModel CompileFromLayoutDirectory(string partsDirectory, ViewDefinitionCompiler compiler = null)
+		public static ViewDefinitionModel CompileFromLayoutDirectory(IReadOnlyList<string> searchPath,
+			ViewDefinitionCompiler compiler = null)
 		{
-			if (string.IsNullOrEmpty(partsDirectory) || !Directory.Exists(partsDirectory))
+			if (searchPath == null || searchPath.Count == 0)
 			{
 				return null;
 			}
 
 			try
 			{
-				// The parts merge rides the ONE shared loader DetailComposer
-				// (xWorks) also uses, so the two compile paths cannot drift apart.
-				var partsXml = LayoutSourceLoader.LoadMergedPartsXml(partsDirectory);
+				// Which directories, and which wins a collision, is PartsInventory's call;
+				// DetailComposer (xWorks) compiles through the same search path.
+				var partsXml = PartsInventory.LoadMergedPartsXml(searchPath);
 				if (partsXml == null)
 				{
 					return null;
@@ -70,7 +74,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 
 				compiler = compiler ?? SharedCompiler;
 
-				var lexemeFormModel = CompileLayout(compiler, partsDirectory, "Morphology.fwlayout",
+				var lexemeFormModel = CompileLayout(compiler, searchPath, "Morphology.fwlayout",
 					"MoStemAllomorph", "AsLexemeFormBasic", partsXml, MoFormBaseClassMap);
 				var senseModel = compiler.Compile(
 					new ViewDefinitionSourceSnapshot("LexSense", "detail", GlossCallerLayout, partsXml));
@@ -132,12 +136,12 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		private static readonly ViewDefinitionCompiler SharedCompiler = new ViewDefinitionCompiler();
 
 		private static ViewDefinitionModel CompileLayout(
-			ViewDefinitionCompiler compiler, string partsDirectory, string layoutFileName,
+			ViewDefinitionCompiler compiler, IReadOnlyList<string> searchPath, string layoutFileName,
 			string className, string layoutName, string partsXml,
 			IReadOnlyDictionary<string, string> baseClassMap)
 		{
-			var layoutPath = Path.Combine(partsDirectory, layoutFileName);
-			if (!File.Exists(layoutPath))
+			var layoutPath = PartsInventory.FindFile(searchPath, layoutFileName);
+			if (layoutPath == null)
 			{
 				return null;
 			}

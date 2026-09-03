@@ -17,19 +17,19 @@ namespace FwAvaloniaTests
 		[TestCase(1.5, 8.0)]
 		public void TypingHarness_MeetsPerKeystrokeThresholds(double dpiScale, double maxMsPerKey)
 		{
-			var rich = DetailRichTextEditAlgorithms.FromRuns(string.Empty,
-				new[] { new DetailTextRun(string.Empty, "qaa-x-kal") });
+			// Drives the same DetailTextEditor gesture production typing uses, so the gate covers
+			// the wrapper's staging overhead, not just the bare span algorithm.
 			var text = string.Empty;
+			var editor = new DetailTextEditor(null, () => text, "qaa-x-kal", _ => true);
 
 			var timer = Stopwatch.StartNew();
 			for (var i = 0; i < Keystrokes; i++)
 			{
 				text += "a";
-				rich = DetailRichTextEditAlgorithms.ApplyPlainTextEdit(rich, text);
+				editor.ReplacePlainText(text);
 
 				var rtl = (i % 11) == 0;
-				_ = DetailBidirectionalTextNavigation.MoveCaret(text, rich.Runs, text.Length,
-					physicalLeft: rtl, defaultRightToLeft: rtl);
+				_ = editor.MoveCaret(text.Length, physicalLeft: rtl);
 			}
 
 			timer.Stop();

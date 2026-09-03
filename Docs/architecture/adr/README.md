@@ -26,5 +26,5 @@ editing the next time the code changes, it belongs in one of the other three.
 | ADR | Decision |
 | --- | --- |
 | [0001](0001-alias-semi-semantic-tokens.md) | Alias Semi's semantic tokens instead of inventing a FieldWorks palette |
-| [0002](0002-whole-tree-token-hygiene-check.md) | token-hygiene.ps1 enforces full conformance across the Avalonia surface, with no grandfathering |
+| [0002](0002-whole-tree-token-hygiene-check.md) | token-hygiene.ps1 enforces full conformance across its whole scope, with no grandfathering |
 | [0003](0003-geometric-assertions-not-pixel-diff.md) | Assert geometry, not pixel diffs, for layout parity |

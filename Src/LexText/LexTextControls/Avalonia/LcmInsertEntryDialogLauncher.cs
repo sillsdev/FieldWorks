@@ -217,18 +217,19 @@ namespace SIL.FieldWorks.LexText.Controls
 				// Grammatical-info (MSA) section: the project POS hierarchy + the morph-type ->
 				// MsaType map +
 				// the per-POS slot provider, so the LCModel-free MSAGroupBox can drive its layout live.
-				PosNodes = BuildPosNodes(cache),
-				MorphTypeToMsaType = BuildMorphTypeToMsaTypeMap(cache),
-				InitialMsaType = MorphTypeToMsaType(MoMorphTypeTags.kguidMorphStem.ToString()),
+				PosNodes = GrammaticalInfoProjection.BuildPosNodes(cache),
+				MorphTypeToMsaType = GrammaticalInfoProjection.BuildMorphTypeToMsaTypeMap(cache),
+				InitialMsaType = GrammaticalInfoProjection.MorphTypeGuidToMsaType(
+					MoMorphTypeTags.kguidMorphStem.ToString()),
 				InitialMainPosId = null,
-				SlotsForPos = posId => BuildSlots(cache, posId, MoMorphTypeTags.kguidMorphStem.ToString()),
+				SlotsForPos = posId => GrammaticalInfoProjection.BuildSlots(cache, posId, MoMorphTypeTags.kguidMorphStem.ToString()),
 				// Inflection-class picker: the selected main POS's classes, re-fed when the main POS changes.
-				InflectionClassesForPos = posId => BuildInflectionClasses(cache, posId),
+				InflectionClassesForPos = posId => GrammaticalInfoProjection.BuildInflectionClasses(cache, posId),
 				InitialInflectionClassId = null,
 				// Inflection-feature editor: the selected main POS's inflectable-feature system,
 				// re-fed
 				// when the main POS changes (infl/deriv). No initial features on the create path.
-				InflectionFeaturesForPos = posId => BuildInflectionFeatures(cache, posId),
+				InflectionFeaturesForPos = posId => GrammaticalInfoProjection.BuildInflectionFeatures(cache, posId),
 				InitialInflectionFeatures = null,
 				// Complex Form Type picker (WinForms m_cbComplexFormType, LT-21666): the
 				// project's complex-form types plus morph-type gating map. Opens at
@@ -240,216 +241,6 @@ namespace SIL.FieldWorks.LexText.Controls
 				// The Help button opens the same topic the legacy dialog uses (InsertEntryDlg s_helpTopic :81).
 				HelpTopic = "khtpInsertEntry"
 			};
-		}
-
-		/// <summary>
-		/// Builds the project's parts-of-speech hierarchy as a flat, document-order, depth-tagged
-		/// <see cref="FwPosNode"/> list from <c>cache.LangProject.PartsOfSpeechOA</c> (mirroring how
-		/// <c>LcmChooserDialogLauncher.BuildCandidates</c> folds a possibility list). The id is the POS guid string
-		/// (round-tripped back through the repository on commit); the display name uses the best-analysis fallback and
-		/// the abbreviation is carried for the row. Internal so the POS feed is unit-testable against a real cache.
-		/// </summary>
-		internal static IReadOnlyList<FwPosNode> BuildPosNodes(LcmCache cache)
-		{
-			var nodes = new List<FwPosNode>();
-			void Add(IPartOfSpeech pos, int depth)
-			{
-				nodes.Add(new FwPosNode(pos.Guid.ToString(), PosName(pos), depth,
-					pos.Abbreviation?.BestAnalysisAlternative?.Text));
-				foreach (var sub in pos.SubPossibilitiesOS.OfType<IPartOfSpeech>())
-					Add(sub, depth + 1);
-			}
-
-			foreach (var pos in cache.LangProject.PartsOfSpeechOA.PossibilitiesOS.OfType<IPartOfSpeech>())
-				Add(pos, 0);
-			return nodes;
-		}
-
-		private static string PosName(IPartOfSpeech pos)
-			=> pos.Name.BestAnalysisAlternative?.Text ?? pos.ShortName ?? pos.Guid.ToString();
-
-		/// <summary>
-		/// Builds the morph-type guid string -> <see cref="FwMsaType"/> map -- the data the
-		/// shared dialog uses to drive the MSA
-		/// box's layout live without LCModel. It mirrors the WinForms <c>MSAGroupBox.MorphTypePreference</c> switch:
-		/// stem/bound-stem/phrase -> Stem; clitic/root family -> Root; the affix family ->
-		/// Unclassified (the box then
-		/// lets the user refine to Inflectional/Derivational via the affix-type combo). Built over the project's
-		/// actual morph types so every option in the picker has a mapping. Internal for unit testing.
-		/// </summary>
-		internal static IReadOnlyDictionary<string, FwMsaType> BuildMorphTypeToMsaTypeMap(LcmCache cache)
-		{
-			var map = new Dictionary<string, FwMsaType>(StringComparer.Ordinal);
-			foreach (var type in cache.LanguageProject.LexDbOA.MorphTypesOA.ReallyReallyAllPossibilities
-				.OfType<IMoMorphType>())
-			{
-				map[type.Guid.ToString()] = MorphTypeToMsaType(type.Guid.ToString());
-			}
-			return map;
-		}
-
-		/// <summary>
-		/// The morph-type-guid -> <see cref="FwMsaType"/> rule (the lift of
-		/// MSAGroupBox.MorphTypePreference's switch),
-		/// exposed so the sibling MSA-section launchers (Add New Sense, MSA Creator) seed the box's initial class from
-		/// an entry's morph type the same way. Internal for reuse + unit testing.
-		/// </summary>
-		internal static FwMsaType MorphTypeGuidToMsaType(string morphTypeGuid) => MorphTypeToMsaType(morphTypeGuid);
-
-		// The morph-type-guid -> FwMsaType rule, lifted verbatim from
-		// MSAGroupBox.MorphTypePreference's switch.
-		private static FwMsaType MorphTypeToMsaType(string morphTypeGuid)
-		{
-			switch (morphTypeGuid)
-			{
-				case MoMorphTypeTags.kMorphStem:
-				case MoMorphTypeTags.kMorphBoundStem:
-				case MoMorphTypeTags.kMorphPhrase:
-				case MoMorphTypeTags.kMorphDiscontiguousPhrase:
-					return FwMsaType.Stem;
-				case MoMorphTypeTags.kMorphProclitic:
-				case MoMorphTypeTags.kMorphClitic:
-				case MoMorphTypeTags.kMorphEnclitic:
-				case MoMorphTypeTags.kMorphParticle:
-				case MoMorphTypeTags.kMorphRoot:
-				case MoMorphTypeTags.kMorphBoundRoot:
-					return FwMsaType.Root;
-				default:
-					// The affix family (prefix/suffix/infix/...): the box opens Unclassified, then the user refines.
-					return FwMsaType.Unclassified;
-			}
-		}
-
-		/// <summary>
-		/// Builds the inflectional-affix slot options for a main POS (guid string), filtered by the morph type's
-		/// prefixal/suffixal nature -- the lift of
-		/// <c>MSAGroupBox.GetSlots</c>/<c>ResetSlotCombo</c>. A prefixal-and-
-		/// suffixal (or unknown) morph type yields every affix slot; otherwise the matching subset. Each slot's id is
-		/// its guid string (round-tripped back on commit). Internal so the slot feed is unit-testable.
-		/// </summary>
-		internal static IReadOnlyList<FwInflectionSlot> BuildSlots(LcmCache cache, string posId, string morphTypeGuid)
-		{
-			if (string.IsNullOrEmpty(posId) || !Guid.TryParse(posId, out var posGuid))
-				return Array.Empty<FwInflectionSlot>();
-			IPartOfSpeech pos;
-			try
-			{
-				pos = cache.ServiceLocator.GetInstance<IPartOfSpeechRepository>().GetObject(posGuid);
-			}
-			catch
-			{
-				return Array.Empty<FwInflectionSlot>();
-			}
-
-			IEnumerable<IMoInflAffixSlot> slots;
-			IMoMorphType morphType = null;
-			if (!string.IsNullOrEmpty(morphTypeGuid) && Guid.TryParse(morphTypeGuid, out var mtGuid))
-			{
-				try { morphType = cache.ServiceLocator.GetInstance<IMoMorphTypeRepository>().GetObject(mtGuid); }
-				catch { morphType = null; }
-			}
-
-			if (morphType == null)
-			{
-				slots = pos.AllAffixSlots;
-			}
-			else
-			{
-				var isPrefixal = MorphServices.IsPrefixishType(cache, morphType.Hvo);
-				var isSuffixal = MorphServices.IsSuffixishType(cache, morphType.Hvo);
-				slots = (isPrefixal && isSuffixal)
-					? pos.AllAffixSlots
-					: DomainObjectServices.GetSomeSlots(cache, pos.AllAffixSlots, isPrefixal);
-			}
-
-			return slots
-				.Select(s => new FwInflectionSlot(s.Guid.ToString(), s.Name.BestAnalysisAlternative?.Text ?? s.ShortName))
-				.Where(s => !string.IsNullOrEmpty(s.Name))
-				.ToList();
-		}
-
-		/// <summary>
-		/// Builds the inflection-class options for a main POS (guid string) -- the lift of the
-		/// WinForms
-		/// <c>InflectionClassPopupTreeManager</c> tree, but scoped to the SINGLE selected POS (the box's inflection
-		/// class is the selected main POS's class). Walks <c>IPartOfSpeech.InflectionClassesOC</c> and the nested
-		/// <c>IMoInflClass.SubclassesOC</c> in document order, tagging each with its nesting depth so the picker can
-		/// indent subclasses. Each class's id is its guid string (round-tripped back on commit). An empty/unknown POS
-		/// yields no classes (the box still shows the "&lt;None&gt;" row). Internal so the feed is unit-testable.
-		/// </summary>
-		internal static IReadOnlyList<FwInflectionClass> BuildInflectionClasses(LcmCache cache, string posId)
-		{
-			if (string.IsNullOrEmpty(posId) || !Guid.TryParse(posId, out var posGuid))
-				return Array.Empty<FwInflectionClass>();
-			IPartOfSpeech pos;
-			try
-			{
-				pos = cache.ServiceLocator.GetInstance<IPartOfSpeechRepository>().GetObject(posGuid);
-			}
-			catch
-			{
-				return Array.Empty<FwInflectionClass>();
-			}
-
-			var result = new List<FwInflectionClass>();
-			void Add(IMoInflClass cls, int depth)
-			{
-				var name = cls.Name.BestAnalysisAlternative?.Text ?? cls.ShortName;
-				if (!string.IsNullOrEmpty(name))
-					result.Add(new FwInflectionClass(cls.Guid.ToString(), name, depth));
-				foreach (var sub in cls.SubclassesOC)
-					Add(sub, depth + 1);
-			}
-
-			foreach (var cls in pos.InflectionClassesOC)
-				Add(cls, 0);
-			return result;
-		}
-
-		/// <summary>
-		/// Builds the inflection-feature SYSTEM for a main POS (guid string) as a flat, document-order, depth-tagged
-		/// <see cref="FwFeatureNode"/> list -- the lift of
-		/// <c>MsaInflectionFeatureListDlg.PopulateTreeFromPos</c> via <see
-		/// cref="FwFeatureStructureAdapter.BuildNodes"/>:
-		/// the POS's (and its parent POSes') <c>InflectableFeatsRC</c>, closed features expanded
-		/// to their values, complex
-		/// features expanded to their nested features. An empty/unknown POS yields no nodes. Shared by all three MSA-section
-		/// launchers + unit-testable against a real cache.
-		/// </summary>
-		internal static IReadOnlyList<FwFeatureNode> BuildInflectionFeatures(LcmCache cache, string posId)
-		{
-			var pos = ResolvePos(cache, posId);
-			return FwFeatureStructureAdapter.BuildNodes(pos);
-		}
-
-		/// <summary>
-		/// Rebuilds the inflection <c>IFsFeatStruc</c> on a sense's morpheme MSA from the chosen inflection-feature
-		/// assignment set -- the create-side parity of
-		/// <c>MsaInflectionFeatureListDlg_Closing</c>.
-		/// Scoped to <c>IMoInflAffMsa.InflFeatsOA</c> / <c>IMoDerivAffMsa.FromMsFeaturesOA</c> (the surface the box edits);
-		/// other MSA flavours are a no-op. Resolves the feature-system nodes from the MSA's own POS (deterministic, so the
-		/// commit need not carry the live node list), then writes/clears the FS in the caller's UOW. Internal static so
-		/// both create paths share it and it is unit-testable inside a UOW.
-		/// </summary>
-		internal static void ApplyInflectionFeatures(LcmCache cache, ILexSense sense, FwSandboxMsa chosen)
-		{
-			if (sense == null || chosen == null)
-				return;
-			ApplyInflectionFeatures(cache, sense.MorphoSyntaxAnalysisRA, chosen);
-		}
-
-		/// <summary>
-		/// Rebuilds the inflection <c>IFsFeatStruc</c> on a morpheme MSA from the chosen assignment set (see the sense
-		/// overload). Used directly by the MSA Creator caller path. Internal static for reuse +
-		/// unit testing.
-		/// </summary>
-		internal static void ApplyInflectionFeatures(LcmCache cache, IMoMorphSynAnalysis msa, FwSandboxMsa chosen)
-		{
-			if (cache == null || msa == null || chosen == null)
-				return;
-			var pos = FwFeatureStructureAdapter.GetInflectionFeaturePos(msa);
-			var nodes = FwFeatureStructureAdapter.BuildNodes(pos);
-			FwFeatureStructureAdapter.ApplyInflectionFeatures(cache, msa, nodes, chosen.InflectionFeatures);
 		}
 
 		/// <summary>
@@ -841,7 +632,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			// Re-feed the rebuilt POS hierarchy (including the new POS at its real
 			// depth) to BOTH choosers, selecting it in the requesting chooser --
 			// mirrors POSPopupTreeManager after MasterCategoryListDlg returns.
-			_viewModel.AcceptCreatedPos(target, node, BuildPosNodes(_cache));
+			_viewModel.AcceptCreatedPos(target, node, GrammaticalInfoProjection.BuildPosNodes(_cache));
 		}
 
 		protected override AvControl CreateView(InsertEntryDlgViewModel viewModel) =>
@@ -890,66 +681,41 @@ namespace SIL.FieldWorks.LexText.Controls
 				: null;
 		}
 
+		/// <summary>Creates the entry for <paramref name="payload"/> inside the caller's undo
+		/// task.</summary>
+		internal ILexEntry CreateNewEntry(InsertEntryDlgPayload payload) => CreateNewEntry(_cache, payload);
+
 		/// <summary>
-		/// Builds a <c>LexEntryComponents</c> from the dialog payload and creates the entry --
-		/// the lift of
-		/// InsertEntryDlg's BuildEntryComponentsDTO + CreateNewEntryInternal (~1548-1601). The morph type comes from
-		/// the chosen key; the lexeme-form and gloss alternatives are rebuilt per writing system from the payload's
-		/// per-WS strings. LT-11950: each alternative's TsString is rebuilt with the alternative's OWN writing
-		/// system handle (TsStringUtils.MakeString(text, ws)) rather than trusting a possibly-mismatched ws carried
-		/// on copied text -- the same fix-up the legacy CollectValuesFromMultiStringControl
-		/// applies. Internal so the
-		/// create is unit-testable against a real cache inside a UOW.
+		/// Builds a <c>LexEntryComponents</c> from the dialog payload and creates the
+		/// entry -- the lift of InsertEntryDlg's BuildEntryComponentsDTO +
+		/// CreateNewEntryInternal (~1548-1601). The morph type comes from the chosen key;
+		/// the lexeme-form and gloss alternatives are rebuilt per writing system from the
+		/// payload's per-WS strings. LT-11950: each alternative's TsString is rebuilt with
+		/// the alternative's OWN writing system handle (TsStringUtils.MakeString(text, ws))
+		/// rather than trusting a possibly-mismatched ws carried on copied text -- the same
+		/// fix-up the legacy CollectValuesFromMultiStringControl applies. The four steps
+		/// below are one ordering contract: create, then inflection class, then inflection
+		/// features, then complex-form type, all inside the caller's undo task. Static so
+		/// that contract is the thing the tests call.
 		/// </summary>
-		internal ILexEntry CreateNewEntry(InsertEntryDlgPayload payload)
+		internal static ILexEntry CreateNewEntry(LcmCache cache, InsertEntryDlgPayload payload)
 		{
-			var components = BuildEntryComponents(_cache, payload);
-			var entry = _cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create(components);
+			var components = BuildEntryComponents(cache, payload);
+			var entry = cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create(components);
 			// SandboxGenericMSA carries no inflection class, so set it on the find-or-created stem MSA AFTER
 			// creation (the lift of InsertEntryDlg.SetEntryMsa, which sets IMoStemMsa.InflectionClassRA on the new
 			// sense's MSA). Same UOW as the create (this runs inside the caller's UndoableUnitOfWorkHelper.Do).
-			ApplyInflectionClass(_cache, entry, payload.Msa);
+			GrammaticalInfoProjection.ApplyInflectionClass(cache, entry, payload.Msa);
 			// SandboxGenericMSA carries no inflection features either; rebuild the inflection IFsFeatStruc
 			// on the find-or-created infl/deriv MSA from the chosen assignment set, same UOW as the create. A stem MSA
 			// (or no features) is a no-op.
 			if (payload.Msa != null && entry.SensesOS.Count > 0)
-				ApplyInflectionFeatures(_cache, entry.SensesOS[0], payload.Msa);
+				GrammaticalInfoProjection.ApplyInflectionFeatures(cache, entry.SensesOS[0], payload.Msa);
 			// Complex Form Type (WinForms m_cbComplexFormType, LT-21666): a real chosen
 			// type adds a complex-form ILexEntryRef carrying it, same UOW as the create.
 			// "<Not Applicable>" (null/empty key) adds nothing.
-			ApplyComplexFormType(_cache, entry, payload.ComplexFormTypeKey);
+			ApplyComplexFormType(cache, entry, payload.ComplexFormTypeKey);
 			return entry;
-		}
-
-		/// <summary>
-		/// Sets the chosen inflection class on the entry's first sense, if it has one.
-		/// Internal static so the set is unit-testable inside a UOW.
-		/// </summary>
-		internal static void ApplyInflectionClass(LcmCache cache, ILexEntry entry, FwSandboxMsa chosen)
-		{
-			if (entry == null || chosen == null || string.IsNullOrEmpty(chosen.InflectionClassId))
-				return;
-			if (entry.SensesOS.Count == 0)
-				return;
-			ApplyInflectionClass(cache, entry.SensesOS[0], chosen);
-		}
-
-		/// <summary>
-		/// Sets the chosen inflection class on a sense's STEM MSA (the lift of <c>InsertEntryDlg.SetEntryMsa</c>'s
-		/// <c>IMoStemMsa</c> branch). Resolves the id to an <c>IMoInflClass</c> and assigns <c>InflectionClassRA</c>;
-		/// a non-stem MSA or an unresolvable id is a no-op. Internal static so both create paths (Insert Entry / Add
-		/// New Sense) share it and it is unit-testable inside a UOW.
-		/// </summary>
-		internal static void ApplyInflectionClass(LcmCache cache, ILexSense sense, FwSandboxMsa chosen)
-		{
-			if (sense == null || chosen == null || string.IsNullOrEmpty(chosen.InflectionClassId))
-				return;
-			if (sense.MorphoSyntaxAnalysisRA is IMoStemMsa stemMsa)
-			{
-				var inflClass = ResolveInflectionClass(cache, chosen.InflectionClassId);
-				if (inflClass != null)
-					stemMsa.InflectionClassRA = inflClass;
-			}
 		}
 
 		/// <summary>
@@ -982,14 +748,6 @@ namespace SIL.FieldWorks.LexText.Controls
 			catch { return null; }
 		}
 
-		private static IMoInflClass ResolveInflectionClass(LcmCache cache, string id)
-		{
-			if (string.IsNullOrEmpty(id) || !Guid.TryParse(id, out var guid))
-				return null;
-			try { return cache.ServiceLocator.GetInstance<IMoInflClassRepository>().GetObject(guid); }
-			catch { return null; }
-		}
-
 		internal static LexEntryComponents BuildEntryComponents(LcmCache cache, InsertEntryDlgPayload payload)
 		{
 			var components = new LexEntryComponents { MorphType = ResolveMorphType(cache, payload.MorphTypeKey) };
@@ -1002,74 +760,8 @@ namespace SIL.FieldWorks.LexText.Controls
 			// InsertEntryDlg's m_msaGroupBox.SandboxMSA). The LexEntryFactory.Create FIND-OR-CREATEs the matching MSA
 			// on the entry's first sense from this descriptor (POS + slot/secondary POS), exactly as the WinForms
 			// dialog does. When no MSA was chosen (older callers / no MSA section) fall back to the morph-type default.
-			components.MSA = BuildSandboxMsa(cache, payload.Msa, components.MorphType);
+			components.MSA = GrammaticalInfoProjection.BuildSandboxMsa(cache, payload.Msa, components.MorphType);
 			return components;
-		}
-
-		/// <summary>
-		/// Resolves the dialog's LCModel-free <see cref="FwSandboxMsa"/> (MsaType + POS/slot ids) into a real
-		/// <c>SandboxGenericMSA</c> the factory uses to find-or-create the sense's MSA -- the
-		/// parity of
-		/// <c>MSAGroupBox.SandboxMSA</c>: only the fields relevant to the MsaType are populated, the POS/slot ids are
-		/// resolved back through the repositories by guid, and an unresolvable id is simply dropped (the &lt;Any&gt;
-		/// pick). A null descriptor falls back to the morph-type's default MSA flavor. Internal for unit testing.
-		/// </summary>
-		internal static SandboxGenericMSA BuildSandboxMsa(LcmCache cache, FwSandboxMsa chosen, IMoMorphType morphType)
-		{
-			if (chosen == null)
-				return new SandboxGenericMSA { MsaType = DefaultMsaType(morphType) };
-
-			var msa = new SandboxGenericMSA { MsaType = ToLcmMsaType(chosen.MsaType, morphType) };
-			var mainPos = ResolvePos(cache, chosen.MainPosId);
-			switch (msa.MsaType)
-			{
-				case MsaType.kRoot:
-				case MsaType.kStem:
-				case MsaType.kUnclassified:
-					msa.MainPOS = mainPos;
-					break;
-				case MsaType.kInfl:
-					msa.MainPOS = mainPos;
-					var slot = ResolveSlot(cache, chosen.SlotId);
-					if (slot != null)
-						msa.Slot = slot;
-					break;
-				case MsaType.kDeriv:
-					msa.MainPOS = mainPos;
-					msa.SecondaryPOS = ResolvePos(cache, chosen.SecondaryPosId);
-					break;
-			}
-			return msa;
-		}
-
-		// Maps the shared FwMsaType to the LCModel MsaType. FwMsaType.NotSet falls back to the morph-type default.
-		private static MsaType ToLcmMsaType(FwMsaType type, IMoMorphType morphType)
-		{
-			switch (type)
-			{
-				case FwMsaType.Stem: return MsaType.kStem;
-				case FwMsaType.Root: return MsaType.kRoot;
-				case FwMsaType.Inflectional: return MsaType.kInfl;
-				case FwMsaType.Derivational: return MsaType.kDeriv;
-				case FwMsaType.Unclassified: return MsaType.kUnclassified;
-				default: return DefaultMsaType(morphType);
-			}
-		}
-
-		private static IPartOfSpeech ResolvePos(LcmCache cache, string id)
-		{
-			if (string.IsNullOrEmpty(id) || !Guid.TryParse(id, out var guid))
-				return null;
-			try { return cache.ServiceLocator.GetInstance<IPartOfSpeechRepository>().GetObject(guid); }
-			catch { return null; }
-		}
-
-		private static IMoInflAffixSlot ResolveSlot(LcmCache cache, string id)
-		{
-			if (string.IsNullOrEmpty(id) || !Guid.TryParse(id, out var guid))
-				return null;
-			try { return cache.ServiceLocator.GetInstance<IMoInflAffixSlotRepository>().GetObject(guid); }
-			catch { return null; }
 		}
 
 		// LT-11950 fix-up: rebuild each alternative's TsString with its OWN writing-system handle, never a ws that
@@ -1105,29 +797,6 @@ namespace SIL.FieldWorks.LexText.Controls
 				}
 			}
 			return repo.GetObject(MoMorphTypeTags.kguidMorphStem);
-		}
-
-		// The default MSA flavor a morph type implies (parity with MSAGroupBox's morph-type-driven default): roots
-		// take a root/stem MSA, affixes an unclassified-affix MSA, everything else a stem MSA.
-		private static MsaType DefaultMsaType(IMoMorphType morphType)
-		{
-			if (morphType == null)
-				return MsaType.kStem;
-			switch (morphType.Guid.ToString())
-			{
-				case MoMorphTypeTags.kMorphPrefix:
-				case MoMorphTypeTags.kMorphInfix:
-				case MoMorphTypeTags.kMorphSuffix:
-				case MoMorphTypeTags.kMorphSimulfix:
-				case MoMorphTypeTags.kMorphSuprafix:
-				case MoMorphTypeTags.kMorphCircumfix:
-				case MoMorphTypeTags.kMorphInfixingInterfix:
-				case MoMorphTypeTags.kMorphPrefixingInterfix:
-				case MoMorphTypeTags.kMorphSuffixingInterfix:
-					return MsaType.kUnclassified;
-				default:
-					return MsaType.kStem;
-			}
 		}
 
 		private void OnHelpRequested(string topic)

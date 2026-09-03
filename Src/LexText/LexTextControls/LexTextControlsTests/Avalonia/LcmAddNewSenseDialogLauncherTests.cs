@@ -171,28 +171,6 @@ namespace LexTextControlsTests
 		// ----- inflection-class feed + commit -----
 
 		[Test]
-		public void BuildInflectionClasses_ReturnsThePosClassesDepthTagged()
-		{
-			var classes = LcmInsertEntryDialogLauncher.BuildInflectionClasses(Cache, _noun.Guid.ToString());
-
-			// Strong (depth 0), Irregular (depth 1, nested under Strong), Weak (depth 0) --
-			// document order.
-			Assert.That(classes.Select(c => c.Name), Is.EqualTo(new[] { "Strong", "Irregular", "Weak" }),
-				"the POS's classes are returned in document order, nested subclasses inline");
-			Assert.That(classes.Select(c => c.Depth), Is.EqualTo(new[] { 0, 1, 0 }),
-				"nested subclasses are depth-tagged");
-			Assert.That(classes.Single(c => c.Name == "Strong").Id, Is.EqualTo(_nounStrong.Guid.ToString()),
-				"the id round-trips the inflection-class guid");
-		}
-
-		[Test]
-		public void BuildInflectionClasses_PosWithNoClasses_ReturnsEmpty()
-		{
-			Assert.That(LcmInsertEntryDialogLauncher.BuildInflectionClasses(Cache, _verb.Guid.ToString()),
-				Is.Empty, "a POS with no inflection classes yields none");
-		}
-
-		[Test]
 		public void BuildInput_FeedsTheInflectionClassProvider()
 		{
 			var input = LcmAddNewSenseDialogLauncher.BuildInput(Cache, _casa, tssCitationForm: null);

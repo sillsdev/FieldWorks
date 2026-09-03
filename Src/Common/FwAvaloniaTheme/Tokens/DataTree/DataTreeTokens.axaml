@@ -7,7 +7,7 @@
 	FwAvaloniaDensity.cs resolves every DataTree.* key here.
 
 	A handful of keys below are aliases (<StaticResource x:Key="X" ResourceKey="SemiY"/>) onto a
-	Semi.Avalonia Layer-1 scale primitive landing exactly on FieldWorks' own measured value; the
+	Semi primitive on the scale landing exactly on FieldWorks' own measured value; the
 	rest stay literal since FieldWorks' compact pixels mostly miss Semi's coarser flat scale.
 -->
 <ResourceDictionary xmlns="https://github.com/avaloniaui"

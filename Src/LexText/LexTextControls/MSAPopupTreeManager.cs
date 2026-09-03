@@ -460,7 +460,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			Cache.DomainDataByFlid.BeginUndoTask(String.Format(LexTextControls.ksUndoSetX, FieldName),
 				String.Format(LexTextControls.ksRedoSetX, FieldName));
 			m_sense.SandboxMSA = sandboxMsa;
-			SIL.FieldWorks.LexText.Controls.LcmInsertEntryDialogLauncher.ApplyInflectionFeatures(
+			SIL.FieldWorks.LexText.Controls.GrammaticalInfoProjection.ApplyInflectionFeatures(
 				Cache, m_sense, chosenBoxMsa);
 			Cache.DomainDataByFlid.EndUndoTask();
 			LoadPopupTree(m_sense.MorphoSyntaxAnalysisRA.Hvo);

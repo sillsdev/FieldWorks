@@ -9,7 +9,6 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Xml.Linq;
-using Avalonia;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 
@@ -23,12 +22,11 @@ namespace FwBuildTasks
 	/// references a compile-time-checked constant instead of a literal string that only fails at
 	/// runtime when it typos or outlives a renamed/deleted key.
 	///
-	/// Also bakes <see cref="Thickness"/> VALUES (not just key names) for every literal (non
-	/// <c>StaticResource</c>-aliased) Thickness token, parsed with Avalonia's own
-	/// <see cref="Thickness.Parse"/> rather than hand-rolled comma-splitting. This exists for the
-	/// narrow case where Avalonia's compiled XAML rejects <c>x:Static</c> as a resource
-	/// declaration, so a C# style builder (e.g. CompactDialogStyles) cannot read a token via
-	/// <c>{StaticResource}</c> and previously hand-duplicated the literal instead.
+	/// Also bakes Thickness VALUES (not just key names) for every literal (non
+	/// <c>StaticResource</c>-aliased) Thickness token. This exists for the narrow case where
+	/// Avalonia's compiled XAML rejects <c>x:Static</c> as a resource declaration, so a C# style
+	/// builder (e.g. CompactDialogStyles) cannot read a token via <c>{StaticResource}</c> and
+	/// previously hand-duplicated the literal instead.
 	///
 	/// Identifier mapping: an x:Key's '.' characters become '_' (e.g. "DataTree.RowSpacing"
 	/// becomes DataTree_RowSpacing); a key with no '.' keeps its exact text (e.g.
@@ -124,12 +122,73 @@ namespace FwBuildTasks
 		/// A literal (inline-text) <c>&lt;Thickness&gt;</c> element parses to a baked value;
 		/// a <c>&lt;StaticResource&gt;</c> alias or any other element has none.
 		/// </summary>
-		private static Thickness? TryParseLiteralThickness(XElement element)
+		private static ThicknessValue? TryParseLiteralThickness(XElement element)
 		{
 			if (element.Name.LocalName != "Thickness")
 				return null;
 			var text = element.Value.Trim();
-			return string.IsNullOrEmpty(text) ? (Thickness?)null : Thickness.Parse(text);
+			return string.IsNullOrEmpty(text) ? (ThicknessValue?)null : ParseThickness(text);
+		}
+
+		/// <summary>
+		/// Avalonia's own Thickness grammar: 1, 2 or 4 invariant-culture doubles separated by
+		/// commas, whitespace, or both. 1 value is uniform; 2 are horizontal then vertical.
+		/// </summary>
+		/// <remarks>Reimplemented rather than calling Avalonia's Thickness.Parse so the build
+		/// tasks assembly does not drag Avalonia's rendering stack into BuildTools/.
+		/// GenerateTokenKeysTests pins the grammar, including the space-separated form a
+		/// comma-splitting parser gets wrong.</remarks>
+		internal static ThicknessValue ParseThickness(string text)
+		{
+			var values = ReadComponents(text);
+			switch (values.Count)
+			{
+				case 1:
+					return new ThicknessValue(values[0], values[0], values[0], values[0]);
+				case 2:
+					return new ThicknessValue(values[0], values[1], values[0], values[1]);
+				case 4:
+					return new ThicknessValue(values[0], values[1], values[2], values[3]);
+				default:
+					throw new FormatException(
+						$"Invalid Thickness '{text}': expected 1, 2 or 4 values, found {values.Count}.");
+			}
+		}
+
+		/// <summary>
+		/// Splits on comma and whitespace runs. A separator with no value on either side is an
+		/// error, where Avalonia's tokenizer would silently accept some of those forms.
+		/// </summary>
+		private static List<double> ReadComponents(string text)
+		{
+			var values = new List<double>(4);
+			var index = 0;
+			var expectValue = false;
+			while (true)
+			{
+				while (index < text.Length && char.IsWhiteSpace(text[index]))
+					index++;
+				if (index >= text.Length)
+					break;
+				var start = index;
+				while (index < text.Length && !char.IsWhiteSpace(text[index]) && text[index] != ',')
+					index++;
+				if (index == start)
+					throw new FormatException($"Invalid Thickness '{text}': separator where a value was expected.");
+				values.Add(double.Parse(text.Substring(start, index - start), NumberStyles.Float,
+					CultureInfo.InvariantCulture));
+				expectValue = false;
+				while (index < text.Length && char.IsWhiteSpace(text[index]))
+					index++;
+				if (index < text.Length && text[index] == ',')
+				{
+					index++;
+					expectValue = true;
+				}
+			}
+			if (expectValue)
+				throw new FormatException($"Invalid Thickness '{text}': trailing separator.");
+			return values;
 		}
 
 		/// <summary>Replaces every '.' with '_'; the rest of a token key is already a valid C#
@@ -190,7 +249,7 @@ namespace FwBuildTasks
 		/// differ,
 		/// otherwise all four components explicit.
 		/// </summary>
-		private static string ThicknessLiteral(Thickness t)
+		internal static string ThicknessLiteral(ThicknessValue t)
 		{
 			string N(double d) => d.ToString(CultureInfo.InvariantCulture);
 			if (t.Left == t.Top && t.Top == t.Right && t.Right == t.Bottom)
@@ -200,9 +259,27 @@ namespace FwBuildTasks
 			return $"new Thickness({N(t.Left)}, {N(t.Top)}, {N(t.Right)}, {N(t.Bottom)})";
 		}
 
+		/// <summary>The four sides of a parsed Thickness token, in Avalonia's declaration
+		/// order.</summary>
+		internal struct ThicknessValue
+		{
+			public ThicknessValue(double left, double top, double right, double bottom)
+			{
+				Left = left;
+				Top = top;
+				Right = right;
+				Bottom = bottom;
+			}
+
+			public double Left { get; }
+			public double Top { get; }
+			public double Right { get; }
+			public double Bottom { get; }
+		}
+
 		private class TokenEntry
 		{
-			public TokenEntry(string identifier, string originalKey, string sourceFile, Thickness? thicknessValue)
+			public TokenEntry(string identifier, string originalKey, string sourceFile, ThicknessValue? thicknessValue)
 			{
 				Identifier = identifier;
 				OriginalKey = originalKey;
@@ -213,7 +290,7 @@ namespace FwBuildTasks
 			public string Identifier { get; }
 			public string OriginalKey { get; }
 			public string SourceFile { get; }
-			public Thickness? ThicknessValue { get; }
+			public ThicknessValue? ThicknessValue { get; }
 		}
 	}
 }

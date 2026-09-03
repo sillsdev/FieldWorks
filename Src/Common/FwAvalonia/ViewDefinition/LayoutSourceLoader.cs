@@ -11,36 +11,30 @@ using System.Xml.Linq;
 namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 {
 	/// <summary>
-	/// The ONE loader for the shipped layout/parts directory: merges every
-	/// <c>*Parts.xml</c> into a single <c>&lt;PartInventory&gt;</c> and loads the <c>*.fwlayout</c>
-	/// files, both in ordinal filename order so the merge is deterministic. Shared by
-	/// <c>LexiconFirstSlice</c> (FwAvalonia) and <c>DetailComposer</c> (xWorks) so the
-	/// two compile paths cannot drift apart. Directory resolution (FwDirectoryFinder vs an explicit
-	/// test path) stays with the caller; this class only reads a directory it is given.
+	/// Reads ONE layout/parts directory: its <c>*Parts.xml</c> and <c>*.fwlayout</c> files, in
+	/// ordinal filename order so the read is deterministic, plus the first-wins matchers over
+	/// the result. It knows nothing about which directories ship or which wins a collision --
+	/// that is <see cref="PartsInventory"/>'s, and both <c>LexiconFirstSlice</c> (FwAvalonia)
+	/// and <c>DetailComposer</c> (xWorks) go through it so the compile paths cannot drift.
 	/// </summary>
 	public static class LayoutSourceLoader
 	{
 		/// <summary>
-		/// Merges every <c>*Parts.xml</c> in <paramref name="partsDirectory"/> (ordinal filename
-		/// order) into one <c>&lt;PartInventory&gt;</c> source string. Returns null when the
-		/// directory is missing or holds no parts files.
+		/// Loads every <c>*Parts.xml</c> root element in <paramref name="partsDirectory"/>, in
+		/// ordinal filename order; empty when the directory is missing. The per-directory read
+		/// <see cref="PartsInventory"/> merges across the shipped search path.
 		/// </summary>
-		public static string LoadMergedPartsXml(string partsDirectory)
+		internal static IReadOnlyList<XElement> LoadPartsFiles(string partsDirectory)
 		{
 			if (string.IsNullOrEmpty(partsDirectory) || !Directory.Exists(partsDirectory))
 			{
-				return null;
+				return new List<XElement>();
 			}
 
-			var partsFiles = Directory.GetFiles(partsDirectory, "*Parts.xml")
+			return Directory.GetFiles(partsDirectory, "*Parts.xml")
 				.OrderBy(f => f, StringComparer.Ordinal)
+				.Select(XElement.Load)
 				.ToList();
-			if (partsFiles.Count == 0)
-			{
-				return null;
-			}
-
-			return new XElement("PartInventory", partsFiles.Select(XElement.Load)).ToString();
 		}
 
 		/// <summary>

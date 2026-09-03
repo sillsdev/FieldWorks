@@ -1,10 +1,10 @@
-﻿# token-hygiene.ps1 enforces full conformance across the Avalonia surface, with no grandfathering
+﻿# token-hygiene.ps1 enforces full conformance across its whole scope, with no grandfathering
 
 Most lint/hygiene checks in this repo (`comment-hygiene.ps1`) are deliberately diff-scoped:
 they check only the lines a branch adds, so pre-existing violations are grandfathered
 rather than blocking unrelated work. `token-hygiene.ps1` (hardcoded color/spacing literal
 detection for the Avalonia design-token system) is the opposite on purpose: every run
-scans the entire scoped tree and fails on any violation found anywhere in it, with no
+scans the entire token-hygiene scope and fails on any violation found in it, with no
 diff-scoping and no per-file suppression mechanism beyond a small, hand-audited allowlist
 of the token system's own plumbing files.
 

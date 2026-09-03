@@ -511,23 +511,36 @@ namespace FwAvaloniaTests
 			return dir.FullName;
 		}
 
+		/// <summary>
+		/// Loads BOTH directories of the shipped search path -- hand-authored
+		/// Configuration/Parts and the build-generated DistFiles/Parts fallback (see
+		/// <c>PartsInventory</c>) -- hand-authored first so the first-wins matchers below
+		/// (<c>FindLayout</c>, <c>DictionaryPartResolver</c>) give it precedence on a colliding
+		/// key,
+		/// matching legacy's last-loaded-directory-wins merge.
+		/// </summary>
 		private static (List<LayoutSourceFile> layouts, List<LayoutSourceFile> parts) LoadShippedFiles(string repoRoot)
 		{
-			var partsDir = Path.Combine(repoRoot, "DistFiles", "Language Explorer", "Configuration", "Parts");
-			Assert.That(Directory.Exists(partsDir), Is.True, $"missing shipped parts directory: {partsDir}");
+			var searchPath = PartsInventory.SearchPath(sub => Path.Combine(repoRoot, "DistFiles", sub));
+			foreach (var directory in searchPath)
+			{
+				Assert.That(Directory.Exists(directory), Is.True, $"missing shipped parts directory: {directory}");
+			}
 
-			var layouts = Directory.GetFiles(partsDir, "*.fwlayout")
-				.OrderBy(f => f, StringComparer.Ordinal)
-				.Select(f => new LayoutSourceFile(Path.GetFileName(f), XElement.Load(f)))
-				.ToList();
-			var parts = Directory.GetFiles(partsDir, "*Parts.xml")
-				.OrderBy(f => f, StringComparer.Ordinal)
-				.Select(f => new LayoutSourceFile(Path.GetFileName(f), XElement.Load(f)))
-				.ToList();
+			var layouts = searchPath.SelectMany(d => LoadSourceFiles(d, "*.fwlayout")).ToList();
+			var parts = searchPath.SelectMany(d => LoadSourceFiles(d, "*Parts.xml")).ToList();
 
 			Assert.That(layouts, Is.Not.Empty, "no .fwlayout files found");
 			Assert.That(parts, Is.Not.Empty, "no *Parts.xml files found");
 			return (layouts, parts);
+		}
+
+		private static List<LayoutSourceFile> LoadSourceFiles(string directory, string pattern)
+		{
+			return Directory.GetFiles(directory, pattern)
+				.OrderBy(f => f, StringComparer.Ordinal)
+				.Select(f => new LayoutSourceFile(Path.GetFileName(f), XElement.Load(f)))
+				.ToList();
 		}
 
 		/// <summary>
@@ -622,6 +635,13 @@ namespace FwAvaloniaTests
 		/// inventories -- refs legacy DataTree also silently omits ("Just omit the missing part",
 		/// DataTree.cs:2455-2457; the detail view has no PartGenerator). Asserting the exact set keeps
 		/// both regressions (new unresolved refs) and silent improvements (parts added) visible.
+		///
+		/// The set is 3 refs because the compile searches the whole shipped path
+		/// (<c>PartsInventory</c>): StandardParts.xml supplies the <c>CmObject-Detail-*</c> base
+		/// parts and GeneratedParts.xml a default part per model field, both in DistFiles/Parts.
+		/// Searching Configuration/Parts alone leaves 35 refs / 63 occurrences unresolved, and an
+		/// unresolved ref drops its slice with no error, so this count is a user-visible contract
+		/// (LT-22772).
 		/// </summary>
 		[Test]
 		public void ShippedLayouts_UnresolvedParts_AreExactlyTheLegacyUnresolvableSet()
@@ -630,56 +650,21 @@ namespace FwAvaloniaTests
 			var (layouts, parts) = LoadShippedFiles(repoRoot);
 			var report = LayoutImportCoverage.Run(layouts, parts, LoadBaseClassMap(repoRoot));
 
-			// Every entry below was verified to have no matching part id (case-insensitive) on the
-			// class or any base class in the shipped *Parts.xml files; legacy omits them too. Most are
-			// summary/section header parts that were never shipped, plus the DateCreated/DateModified
-			// refs Notebook hides (visibility='never') whose parts never existed in the detail view.
+			// These three have no matching part on the class or any base class in EITHER
+			// shipped directory, so legacy omits them too.
 			var legacyUnresolvable = new SortedDictionary<string, int>(StringComparer.Ordinal)
 			{
-				{ "CmAnthroItem-Summary", 1 },
 				{ "CmPerson-Role", 1 },
-				{ "CmPossibility-Summary", 1 },
-				{ "CmSemanticDomain-Summary", 1 },
-				{ "FsClosedValue-Summary", 1 },
-				{ "FsComplexFeature-Message", 1 },
-				{ "FsComplexValue-Summary", 1 },
-				{ "FsFeatStruc-Blank", 1 },
-				{ "FsFeatStrucType-Message", 1 },
-				{ "FsFeatureSpecification-Summary", 1 },
-				{ "LexEntry-ImportResidue", 1 },
-				{ "LexEntryInflType-Summary", 1 },
-				{ "LexEntryType-Summary", 2 },
-				{ "LexEtymology-NormalSummary", 1 },
-				{ "LexExtendedNote-NormalSummary", 1 },
-				{ "LexPronunciation-MediaFiles", 1 },
 				{ "LexReference-ShowSingleReference", 1 },
-				{ "LexSense-HeavySummary", 1 },
-				{ "LexSense-ImportResidue", 1 },
-				// LexSense `Pictures` has no LexSense-Detail-Pictures part, so legacy DataTree (and this
-				// importer) omit sense pictures.
-				{ "LexSense-Pictures", 1 },
-				{ "MoAlloAdhocProhib-Message", 1 },
-				{ "MoEndoCompound-HeadLast", 2 },
-				{ "MoExoCompound-ToMsa", 1 },
-				{ "MoInflAffixSlot-Optional", 1 },
-				{ "MoInflClass-SubclassesAllA", 1 },
-				{ "MoMorphAdhocProhib-Message", 1 },
-				{ "PartOfSpeech-Section", 2 },
-				{ "PhPhoneme-Codes", 1 },
-				{ "ReversalIndexEntry-Section", 2 },
-				{ "RnGenericRec-DateCreated", 12 },
-				{ "RnGenericRec-DateModified", 12 },
-				{ "Text-DateCreated", 1 },
-				{ "Text-DateModified", 1 },
-				{ "WfiAnalysis-HeavySummary", 3 },
-				{ "WfiWordform-HeavySummary", 1 }
+				{ "MoInflClass-SubclassesAllA", 1 }
 			};
 
 			Assert.That(report.UnresolvedPartRefs, Is.EquivalentTo(legacyUnresolvable),
 				"the unresolved-part set changed; if a part was added/renamed update this set, if a "
-				+ "resolution rule regressed fix the resolver (B10 baseline: 63 occurrences, was 259)");
-			Assert.That(report.UnresolvedPartRefs.Values.Sum(), Is.EqualTo(63),
-				"B10 unresolved-part occurrence ceiling");
+				+ "resolution rule regressed fix the resolver (LT-22772 baseline: 3 occurrences, "
+				+ "was 63 on one directory, 259 before base-class fallback)");
+			Assert.That(report.UnresolvedPartRefs.Values.Sum(), Is.EqualTo(3),
+				"LT-22772 unresolved-part occurrence ceiling");
 		}
 
 		/// <summary>
@@ -740,21 +725,22 @@ namespace FwAvaloniaTests
 		}
 
 		/// <summary>
-		/// A documented member of the remaining set. CmAnthroItem 'nested' refs 'Summary'
-		/// and no Summary detail part exists on CmAnthroItem/CmPossibility/CmObject -- legacy
-		/// DataTree
-		/// omits the slice the same way (DataTree.cs:2455-2457).
+		/// The sharpest single case of the shipped search path mattering (LT-22772):
+		/// CmAnthroItem 'nested' refs 'Summary', which resolves through the base-class chain to
+		/// <c>CmObject-Detail-Summary</c>. That part ships in DistFiles/Parts/StandardParts.xml
+		/// and nowhere in Configuration/Parts, so the ref resolves only when both directories
+		/// are on the path -- and an unresolved ref drops the slice with no error.
 		/// </summary>
 		[Test]
-		public void CmAnthroItemNestedLayout_SummaryStaysUnresolved_MatchingLegacyOmission()
+		public void CmAnthroItemNestedLayout_SummaryResolves_ThroughTheGeneratedDirectoryBasePart()
 		{
 			var repoRoot = FindRepoRoot();
 			var (layouts, parts) = LoadShippedFiles(repoRoot);
 			var model = ImportShippedLayout(repoRoot, layouts, parts, "CmAnthroItem", "nested");
 
-			var unresolved = model.Diagnostics.Where(d => d.Code == "unresolved-part").ToList();
-			Assert.That(unresolved.Count, Is.EqualTo(1));
-			Assert.That(unresolved[0].Message, Does.Contain("'Summary'"));
+			Assert.That(model.Diagnostics.Where(d => d.Code == "unresolved-part"), Is.Empty,
+				"'Summary' resolves via CmObject-Detail-Summary once DistFiles/Parts is on the path");
+			Assert.That(model.Roots, Is.Not.Empty);
 		}
 
 		/// <summary>

@@ -53,7 +53,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 	{
 		// Teardown registered as each handler/subscription is wired, so a recycled or
 		// active-cell-deactivated field can detach EVERY handler (several capture closures over box,
-		// currentRich, clipboard) and release its flyouts -- preventing the handler-closure leak
+		// editor, clipboard) and release its flyouts -- preventing the handler-closure leak
 		// on the
 		// editor path when VirtualizingStackPanel discards the container.
 		private readonly CompositeDisposable _teardown = new CompositeDisposable();
@@ -101,16 +101,14 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			return Math.Max(FwAvaloniaDensity.WsAbbrevWidth, Math.Min(needed, FwAvaloniaDensity.WsAbbrevMaxWidth));
 		}
 
-		// Builds one writing-system row: the abbreviation gutter, the value editor (with its rich-text
-		// editing/clipboard/menu wiring when the field is editable), and the two-column row layout. One
-		// call per WS alternative; the shared per-row editor state (currentRich/lastStaged) lives here so
-		// the value box's handlers and its context-menu Copy see the same mutations.
+		// Builds one writing-system row: abbreviation gutter, value editor, two-column layout.
+		// One DetailTextEditor per row holds its value, so the box's handlers and its Copy item
+		// see the same mutations.
 		private void AddValueRow(DetailField field, string automationId,
 			IDetailEditContext editContext, Action<string> writingSystemFocused,
 			Action<DetailMenuRequest> menuRequested, IFwClipboard clipboard,
 			bool showWritingSystemAbbreviation, DetailWsValue value, double wsAbbrevColumnWidth)
 		{
-				var currentRich = value.RichText;
 				var abbrev = CreateWsAbbrev(value, wsAbbrevColumnWidth);
 
 				// Values render flat with no box/fill, and go read-only with a tooltip
@@ -130,6 +128,12 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				var wsKey = string.IsNullOrEmpty(value.WsTag) ? value.WsAbbrev : value.WsTag;
 				AutomationProperties.SetAutomationId(box, automationId + "." + wsKey);
 				AutomationProperties.SetName(box, (field.Label ?? automationId) + " " + value.WsAbbrev);
+
+				// One editor owns this row's value and every gesture over it: a gesture hands it
+				// a span, it stages through the seam and only then advances the value.
+				var editor = new DetailTextEditor(value.RichText, () => box.Text ?? string.Empty, value.WsTag,
+					rich => editContext != null && editContext.TrySetRichText(field, wsKey, rich),
+					value.RightToLeft);
 
 				// The rich-text operations for THIS writing-system row, each built as a right-click
 				// CONTEXT-MENU item (not an always-visible inline control), gated on editable + non-lossy plus
@@ -157,58 +161,15 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 							return;
 						}
 
-						var physicalLeft = e.Key == Key.Left;
-						var hasShift = (e.KeyModifiers & KeyModifiers.Shift) != 0;
-						var text = box.Text ?? string.Empty;
-						var runs = currentRich?.Runs;
-
-						if (!hasShift && box.SelectionStart != box.SelectionEnd)
-						{
-							var collapse = DetailBidirectionalTextNavigation.CollapseSelectionEdge(text, runs,
-								box.SelectionStart, box.SelectionEnd, physicalLeft, value.RightToLeft);
-							box.CaretIndex = collapse;
-							box.SelectionStart = collapse;
-							box.SelectionEnd = collapse;
-							selectionAnchor = null;
-							e.Handled = true;
-							return;
-						}
-
-						var currentCaret = box.SelectionStart == box.SelectionEnd
-							? box.CaretIndex
-							: box.SelectionEnd;
-						var nextCaret = DetailBidirectionalTextNavigation.MoveCaret(text, runs,
-							currentCaret, physicalLeft, value.RightToLeft);
-
-						if (hasShift)
-						{
-							if (!selectionAnchor.HasValue)
-								selectionAnchor = box.SelectionStart == box.SelectionEnd
-									? currentCaret
-									: box.SelectionStart;
-
-							// The moving edge (nextCaret) already lands on a whole
-							// grapheme-cluster boundary
-							// (MoveCaret steps by clusters) and the anchor is a cluster-aligned
-							// caret/selection
-							// edge, so the span [anchor..nextCaret] never splits a cluster. Set the caret FIRST:
-							// Avalonia's CaretIndex setter clears the selection, so assigning SelectionStart/
-							// SelectionEnd AFTER leaves the caret on the moving edge without
-							// re-collapsing -- the
-							// original order (selection then CaretIndex) collapsed the span to an empty caret,
-							// which is why Shift+Arrow moved the caret with nothing selected.
-							box.CaretIndex = nextCaret;
-							box.SelectionStart = selectionAnchor.Value;
-							box.SelectionEnd = nextCaret;
-						}
-						else
-						{
-							selectionAnchor = null;
-							box.CaretIndex = nextCaret;
-							box.SelectionStart = nextCaret;
-							box.SelectionEnd = nextCaret;
-						}
-
+						// CaretIndex FIRST: Avalonia's setter clears the selection, so assigning
+						// the edges after it leaves the caret on the moving edge.
+						var nav = editor.NavigateByArrow(e.Key == Key.Left,
+							(e.KeyModifiers & KeyModifiers.Shift) != 0,
+							box.CaretIndex, box.SelectionStart, box.SelectionEnd, selectionAnchor);
+						box.CaretIndex = nav.CaretIndex;
+						box.SelectionStart = nav.SelectionStart;
+						box.SelectionEnd = nav.SelectionEnd;
+						selectionAnchor = nav.SelectionAnchor;
 						e.Handled = true;
 					};
 					box.AddHandler(InputElement.KeyDownEvent, navKeyDown, Avalonia.Interactivity.RoutingStrategies.Tunnel);
@@ -216,17 +177,15 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 
 					EventHandler<PointerReleasedEventArgs> pointerReleased = (s, e) =>
 					{
-						var text = box.Text ?? string.Empty;
 						if (box.SelectionStart == box.SelectionEnd)
 						{
-							var normalizedCaret = DetailBidirectionalTextNavigation.NormalizeHitTestCaretIndex(text,
-								box.CaretIndex);
+							var normalizedCaret = editor.NormalizeHitTestCaretIndex(box.CaretIndex);
 							if (normalizedCaret != box.CaretIndex)
 								box.CaretIndex = normalizedCaret;
 							return;
 						}
 
-						var normalized = DetailBidirectionalTextNavigation.NormalizeSelectionToClusters(text,
+						var normalized = editor.NormalizeSelectionToClusters(
 							box.SelectionStart, box.SelectionEnd);
 						if (normalized.Start == box.SelectionStart && normalized.End == box.SelectionEnd)
 							return;
@@ -237,33 +196,23 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 					box.AddHandler(InputElement.PointerReleasedEvent, pointerReleased, Avalonia.Interactivity.RoutingStrategies.Bubble);
 					_teardown.Add(() => box.RemoveHandler(InputElement.PointerReleasedEvent, pointerReleased));
 
-					// TextChanged also fires when the template first applies the initial value, so a
-					// last-staged guard keeps construction and no-op events from staging. The guard
-					// only advances on a SUCCESSFUL stage: a failed TrySetText leaves lastStaged at
-					// the last text the domain actually received, so further edits (including retyping
-					// the same text) re-attempt instead of being suppressed forever.
-					var lastStaged = value.Value ?? string.Empty;
-					DetailRichTextValue pendingRichOverride = null;
+					// TextChanged also fires on the template's initial value, so the editor's
+					// last-staged text gates staging. It advances only on a SUCCESSFUL stage, so
+					// a rejected edit is re-attempted.
+					editor.MarkStaged(value.Value ?? string.Empty);
 					EventHandler<TextChangedEventArgs> textChanged = (s, e) =>
 					{
 						var text = box.Text ?? string.Empty;
-						if (text == lastStaged)
+						if (text == editor.LastStagedText)
 							return;
-						if (currentRich != null && currentRich.RequiresRichEditor)
+						if (editor.Current != null && editor.Current.RequiresRichEditor)
 						{
-							var updatedRich = pendingRichOverride
-								?? DetailRichTextEditAlgorithms.ApplyPlainTextEdit(currentRich, text);
-							pendingRichOverride = null;
-							if (editContext.TrySetRichText(field, wsKey, updatedRich))
-							{
-								lastStaged = text;
-								currentRich = updatedRich;
-							}
+							editor.ReplacePlainText(text);
 							return;
 						}
 
 						if (editContext.TrySetText(field, wsKey, text))
-							lastStaged = text;
+							editor.MarkStaged(text);
 					};
 					box.TextChanged += textChanged;
 					_teardown.Add(() => box.TextChanged -= textChanged);
@@ -301,25 +250,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 							return;
 						}
 
-						// A row may carry only plain text (no projected rich value yet); synthesize a
-						// single-run rich projection so the first formatting gesture has runs to split.
-						var richSource = currentRich
-							?? DetailRichTextEditAlgorithms.FromRuns(box.Text ?? string.Empty,
-								new[] { new DetailTextRun(box.Text ?? string.Empty, value.WsTag) });
-
 						// Toggle: if the entire selection already carries the attribute, turn it off.
-						var turnOn = !DetailRichTextEditAlgorithms.SpanFullyHasFormat(
-							richSource, selectionStart, selectionEnd, which);
-						var formatted = DetailRichTextEditAlgorithms.ApplySpanFormatting(
-							richSource, selectionStart, selectionEnd, which, turnOn);
-
-						if (!ReferenceEquals(formatted, richSource)
-							&& editContext.TrySetRichText(field, wsKey, formatted))
-						{
-							currentRich = formatted;
-							lastStaged = box.Text ?? string.Empty;
-						}
-
+						editor.ToggleFormat(selectionStart, selectionEnd, which);
 						e.Handled = true;
 					};
 					box.AddHandler(InputElement.KeyDownEvent, formatKeyDown, Avalonia.Interactivity.RoutingStrategies.Tunnel);
@@ -375,23 +307,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 							if (selectionStart == selectionEnd)
 								return; // no span: nothing to (re)style (no pending caret style)
 
-							// A row may still carry only plain text (no projected rich value yet);
-							// synthesize a single-run projection so the first style gesture has runs.
-							var richSource = currentRich
-								?? DetailRichTextEditAlgorithms.FromRuns(box.Text ?? string.Empty,
-									new[] { new DetailTextRun(box.Text ?? string.Empty, value.WsTag) });
-
 							// The clear-style entry carries an empty key -> null clears the named style.
-							var styleName = string.IsNullOrEmpty(option?.Key) ? null : option.Key;
-							var restyled = DetailRichTextEditAlgorithms.ApplySpanNamedStyle(
-								richSource, selectionStart, selectionEnd, styleName);
-
-							if (!ReferenceEquals(restyled, richSource)
-								&& editContext.TrySetRichText(field, wsKey, restyled))
-							{
-								currentRich = restyled;
-								lastStaged = box.Text ?? string.Empty;
-							}
+							editor.SetNamedStyle(selectionStart, selectionEnd, option?.Key);
 						};
 						stylePicker.OptionCommitted += styleCommitted;
 						EventHandler styleDismissed = (s2, e2) => styleFlyout.Hide();
@@ -405,9 +322,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 						{
 							styleSpanStart = Math.Min(box.SelectionStart, box.SelectionEnd);
 							styleSpanEnd = Math.Max(box.SelectionStart, box.SelectionEnd);
-							var current = currentRich == null
-								? null
-								: DetailRichTextEditAlgorithms.SpanNamedStyle(currentRich, styleSpanStart, styleSpanEnd);
+							var current = editor.NamedStyleIn(styleSpanStart, styleSpanEnd);
 							var index = string.IsNullOrEmpty(current)
 								? 0
 								: styleOptions.FindIndex(o => string.Equals(o.Key, current, StringComparison.Ordinal));
@@ -474,26 +389,10 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 									selectionEnd = Math.Max(box.SelectionStart, box.SelectionEnd);
 								}
 
-								if (selectionStart == selectionEnd)
-									return; // no span: nothing to retag (no pending caret ws)
-								if (string.IsNullOrEmpty(option?.Key))
-									return; // a run must always carry a writing system
-
-								// A row may still carry only plain text (no projected rich value yet);
-								// synthesize a single-run projection so the first retag gesture has runs.
-								var richSource = currentRich
-									?? DetailRichTextEditAlgorithms.FromRuns(box.Text ?? string.Empty,
-										new[] { new DetailTextRun(box.Text ?? string.Empty, value.WsTag) });
-
-								var retagged = DetailRichTextEditAlgorithms.RetagSpanWritingSystem(
-									richSource, selectionStart, selectionEnd, option.Key);
-
-								if (!ReferenceEquals(retagged, richSource)
-									&& editContext.TrySetRichText(field, wsKey, retagged))
-								{
-									currentRich = retagged;
-									lastStaged = box.Text ?? string.Empty;
-								}
+								// A collapsed span stages nothing, and an empty key is refused: a
+								// run must
+								// always carry a writing system.
+								editor.RetagWritingSystem(selectionStart, selectionEnd, option?.Key);
 							};
 							wsPicker.OptionCommitted += wsCommitted;
 							EventHandler wsDismissed = (s2, e2) => wsFlyout.Hide();
@@ -506,9 +405,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 							{
 								wsSpanStart = Math.Min(box.SelectionStart, box.SelectionEnd);
 								wsSpanEnd = Math.Max(box.SelectionStart, box.SelectionEnd);
-								var current = currentRich == null
-									? null
-									: DetailRichTextEditAlgorithms.SpanWritingSystem(currentRich, wsSpanStart, wsSpanEnd);
+								var current = editor.WritingSystemIn(wsSpanStart, wsSpanEnd);
 								var index = string.IsNullOrEmpty(current)
 									? -1
 									: wsOptions.FindIndex(o => string.Equals(o.Key, current, StringComparison.Ordinal));
@@ -577,13 +474,11 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 							{
 								linkSpanStart = Math.Min(box.SelectionStart, box.SelectionEnd);
 								linkSpanEnd = Math.Max(box.SelectionStart, box.SelectionEnd);
-								var existing = currentRich == null
-									? -1
-									: DetailRichTextEditAlgorithms.FirstOrcRunStart(currentRich, linkSpanStart, linkSpanEnd);
+								var existing = editor.FirstEmbeddedObjectStart(linkSpanStart, linkSpanEnd);
 								urlBox.Text = string.Empty;
-								if (existing >= 0 && currentRich != null)
+								if (existing >= 0)
 								{
-									var run = RunAt(currentRich, existing);
+									var run = editor.RunAt(existing);
 									if (run != null && run.OrcKind == DetailOrcKind.ExternalLink)
 										urlBox.Text = run.HyperlinkUrl ?? string.Empty;
 								}
@@ -597,24 +492,10 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 								if (string.IsNullOrEmpty(url))
 									return; // a blank URL inserts/edits nothing
 
-								var richSource = currentRich
-									?? DetailRichTextEditAlgorithms.FromRuns(box.Text ?? string.Empty,
-										new[] { new DetailTextRun(box.Text ?? string.Empty, value.WsTag) });
-
-								var onLink = DetailRichTextEditAlgorithms.FirstOrcRunStart(richSource, linkSpanStart, linkSpanEnd);
-								var run = onLink >= 0 ? RunAt(richSource, onLink) : null;
-								DetailRichTextValue updated;
-								if (run != null && run.OrcKind == DetailOrcKind.ExternalLink)
-									updated = DetailRichTextEditAlgorithms.EditHyperlinkUrl(richSource, onLink, url);
-								else
-									updated = DetailRichTextEditAlgorithms.ApplyHyperlink(richSource, linkSpanStart, linkSpanEnd, url);
-
-								if (!ReferenceEquals(updated, richSource)
-									&& editContext.TrySetRichText(field, wsKey, updated))
-								{
-									currentRich = updated;
-									lastStaged = box.Text ?? string.Empty;
-								}
+								// Edits the URL in place when the span already sits on an
+								// external link,
+								// otherwise inserts one.
+								editor.SetHyperlink(linkSpanStart, linkSpanEnd, url);
 							};
 							applyButton.Click += linkApply;
 							linkMenuItem = linkItem;
@@ -637,28 +518,19 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 							AutomationProperties.SetName(deleteItem, FwAvaloniaStrings.DeleteEmbeddedObject);
 							EventHandler<Avalonia.Interactivity.RoutedEventArgs> orcDelete = (s2, e2) =>
 							{
-								if (currentRich == null)
-									return;
 								var selStart = Math.Min(box.SelectionStart, box.SelectionEnd);
 								var selEnd = Math.Max(box.SelectionStart, box.SelectionEnd);
-								var orcStart = DetailRichTextEditAlgorithms.FirstOrcRunStart(currentRich, selStart, selEnd);
-								if (orcStart < 0)
-									return; // no ORC under the selection
-								var updated = DetailRichTextEditAlgorithms.DeleteOrcRun(currentRich, orcStart);
-								if (!ReferenceEquals(updated, currentRich)
-									&& editContext.TrySetRichText(field, wsKey, updated))
-								{
-									currentRich = updated;
-									box.Text = updated.PlainText;
-									lastStaged = updated.PlainText;
-								}
+								// Deleting the object shortens the text, so the box follows the
+								// new value.
+								if (editor.DeleteEmbeddedObject(selStart, selEnd))
+									box.Text = editor.Current.PlainText;
 							};
 							deleteItem.Click += orcDelete;
 							orcDeleteMenuItem = deleteItem;
 							_teardown.Add(() => deleteItem.Click -= orcDelete);
 						}
 
-					if (clipboard != null && currentRich != null && currentRich.CanEditRichText)
+					if (clipboard != null && editor.Current != null && editor.Current.CanEditRichText)
 					{
 						EventHandler<KeyEventArgs> clipboardKeyDown = (s, e) =>
 						{
@@ -667,7 +539,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 
 							if (e.Key == Key.C)
 							{
-								CopySelectionAsync(box, currentRich, clipboard).GetAwaiter().GetResult();
+								CopySelectionAsync(box, editor, clipboard).GetAwaiter().GetResult();
 								e.Handled = true;
 								return;
 							}
@@ -679,20 +551,13 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 							if (payload == null)
 								return;
 
-							var existingText = box.Text ?? string.Empty;
-							var selectionStart = Math.Min(box.SelectionStart, box.SelectionEnd);
-							var selectionEnd = Math.Max(box.SelectionStart, box.SelectionEnd);
-							var replacement = payload.PlainText ?? string.Empty;
-							var newText = existingText.Remove(selectionStart, selectionEnd - selectionStart)
-								.Insert(selectionStart, replacement);
-
-							if (payload.RichText != null && selectionStart == 0 && selectionEnd == existingText.Length)
-								pendingRichOverride = payload.RichText;
-							else
-								pendingRichOverride = DetailRichTextEditAlgorithms.ApplyPlainTextEdit(currentRich, newText);
-
-							box.Text = newText;
-							box.CaretIndex = selectionStart + replacement.Length;
+							// The splice-over-selection and whole-row-rich-paste decisions live
+							// on
+							// the editor; this handler only writes the result to the box.
+							var prepared = editor.PreparePaste(payload, Math.Min(box.SelectionStart, box.SelectionEnd),
+								Math.Max(box.SelectionStart, box.SelectionEnd), box.Text ?? string.Empty);
+							box.Text = prepared.NewText;
+							box.CaretIndex = prepared.NewCaretIndex;
 							e.Handled = true;
 						};
 						box.AddHandler(InputElement.KeyDownEvent, clipboardKeyDown, Avalonia.Interactivity.RoutingStrategies.Tunnel);
@@ -712,7 +577,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				{
 					var copyItem = new MenuItem { Header = FwAvaloniaStrings.Copy };
 					EventHandler<Avalonia.Interactivity.RoutedEventArgs> copyClick = async (s2, e2) =>
-						await CopySelectionAsync(box, currentRich, clipboard);
+						await CopySelectionAsync(box, editor, clipboard);
 					copyItem.Click += copyClick;
 
 					var contextMenu = new MenuFlyout();
@@ -736,7 +601,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				// Per-run font display: differing runs render a read-along per-run-font TextBlock
 				// swapping to the editable box on focus; a uniform value renders the bare box.
 				var valueContent = CreateValueContentWithFontSwap(field, automationId, wsKey, box,
-					currentRich, !valueIsReadOnly);
+					editor.Current, !valueIsReadOnly);
 
 				var rowPanel = CreateRowPanel(abbrev, valueContent, showWritingSystemAbbreviation, wsAbbrevColumnWidth);
 				// The whole row opens the in-string menu. The box's tunnelling handler wins
@@ -1000,22 +865,21 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		}
 
 		private static async System.Threading.Tasks.Task CopySelectionAsync(TextBox box,
-			DetailRichTextValue richText, IFwClipboard clipboard)
+			DetailTextEditor editor, IFwClipboard clipboard)
 		{
-			var selectedText = box.SelectedText;
-			var useWholeValue = string.IsNullOrEmpty(selectedText) || selectedText == (box.Text ?? string.Empty);
+			// What to copy -- the whole value or the bare selection -- is the editor's call; this
+			// method only picks a destination for the built payload.
+			var payload = editor.BuildCopyPayload(box.SelectedText, box.Text ?? string.Empty);
 
 			if (clipboard != null)
 			{
-				clipboard.SetText(useWholeValue
-					? new FwClipboardText(box.Text ?? string.Empty, richText?.RichXml, richText)
-					: new FwClipboardText(selectedText ?? string.Empty));
+				clipboard.SetText(payload);
 				return;
 			}
 
 			var top = TopLevel.GetTopLevel(box);
 			if (top?.Clipboard != null)
-				await top.Clipboard.SetTextAsync(useWholeValue ? (box.Text ?? string.Empty) : (selectedText ?? string.Empty));
+				await top.Clipboard.SetTextAsync(payload.PlainText);
 		}
 	}
 

@@ -19,19 +19,25 @@ namespace FwAvaloniaTests
 	[TestFixture]
 	public class ViewDefinitionJsonSerializerTests
 	{
-		private static string ShippedPartsDirectory()
+		private static string RepoRoot()
 		{
 			var dir = new DirectoryInfo(TestContext.CurrentContext.TestDirectory);
 			while (dir != null && !File.Exists(Path.Combine(dir.FullName, "FieldWorks.sln")))
 				dir = dir.Parent;
 			Assert.That(dir, Is.Not.Null);
-			return Path.Combine(dir.FullName, "DistFiles", "Language Explorer", "Configuration", "Parts");
+			return dir.FullName;
 		}
+
+		/// <summary>The shipped search path, resolved against the repo's DistFiles instead of an
+		/// installed code directory. Order and membership stay <see
+		/// cref="PartsInventory"/>'s.</summary>
+		private static IReadOnlyList<string> ShippedSearchPath()
+			=> PartsInventory.SearchPath(sub => Path.Combine(RepoRoot(), "DistFiles", sub));
 
 		[Test]
 		public void CompiledFirstSlice_RoundTripsThroughCanonicalJson_SnapshotIdentical()
 		{
-			var compiled = LexiconFirstSlice.CompileFromLayoutDirectory(ShippedPartsDirectory());
+			var compiled = LexiconFirstSlice.CompileFromLayoutDirectory(ShippedSearchPath());
 			Assert.That(compiled, Is.Not.Null);
 
 			var json = ViewDefinitionJsonSerializer.Serialize(compiled);

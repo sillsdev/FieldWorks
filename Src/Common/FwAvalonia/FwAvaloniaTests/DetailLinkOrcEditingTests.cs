@@ -202,6 +202,34 @@ namespace FwAvaloniaTests
 		}
 
 		[AvaloniaTest]
+		public void OrcDelete_StagesExactlyOnce_WhenTheBoxFollowsTheShortenedText()
+		{
+			// One gesture stages one edit. The old order advanced the last-staged guard after
+			// writing the box, which was safe only because TextChanged is dispatched
+			// asynchronously.
+			var rich = DetailRichTextEditAlgorithms.FromRuns("a￼b",
+				new[]
+				{
+					new DetailTextRun("a", "en"),
+					new DetailTextRun("￼", "en", objectData: Picture.ToString()),
+					new DetailTextRun("b", "en")
+				});
+			var (control, context, _) = Show(FieldWith(rich));
+			var box = Find<TextBox>(control, "BibEditor.en");
+			box.SelectionStart = 1;
+			box.SelectionEnd = 2;
+			Dispatcher.UIThread.RunJobs();
+
+			FindMenuItem(box, "BibEditor.en.OrcDelete")
+				.RaiseEvent(new Avalonia.Interactivity.RoutedEventArgs(MenuItem.ClickEvent));
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(box.Text, Is.EqualTo("ab"), "the box follows the shortened value");
+			Assert.That(context.RichTextEdits.Count + context.TextEdits.Count, Is.EqualTo(1),
+				"one gesture stages one edit, counting both the rich and the plain-text paths");
+		}
+
+		[AvaloniaTest]
 		public void OrcDelete_AlsoRemovesAFootnoteOrc_DeferredButDeletable()
 		{
 			var rich = DetailRichTextEditAlgorithms.FromRuns("x￼y",

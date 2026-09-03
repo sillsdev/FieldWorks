@@ -42,7 +42,7 @@
 
 .PARAMETER TokenHygiene
 	Enforce the token-hygiene check, failing the run on any hardcoded color or
-	spacing/sizing literal anywhere in the Avalonia surface (not diff-scoped -- the whole
+	spacing/sizing literal anywhere in the token-hygiene scope (not diff-scoped -- the whole
 	scoped tree must be clean). Required of coding agents; a developer run leaves it off
 	and never runs the check -- except that CI=true or GITHUB_ACTIONS=true
 	forces an advisory run even without the flag.

@@ -1,12 +1,11 @@
 ﻿<!--
-	FwColorTokens - the FieldWorks Layer-3 color/brush + font-size tokens that Semi.Avalonia's own
-	Layer-2 semantic roles (SemiColorText0, SemiColorBackground0, SemiColorDanger, SemiColorLink,
-	...) do not already cover.
+	FwColorTokens - the FieldWorks color/brush + font-size tokens that Semi.Avalonia's own Semi
+	roles (SemiColorText0, SemiColorBackground0, SemiColorDanger, SemiColorLink, ...) do not
+	already cover.
 
-	Every key below is a deliberate FieldWorks-owned value (a "Layer-1 extension" in the
-	three-tier model: FieldWorks token, Semi semantic role, Semi palette primitive), because it
-	has no Semi Layer-1/Layer-2 equivalent that fits without a visible regression; see each key's
-	comment for the specific reason.
+	Every key below is a deliberate FieldWorks-owned value, the top tier of the three (Semi
+	primitive, Semi role, FieldWorks token), because no Semi primitive or Semi role fits without
+	a visible regression; see each key's comment for the specific reason.
 
 	Merged app-wide into Application.Resources by both FwAvaloniaApp and PreviewHostApp, and into
 	DialogTheme.axaml's own Styles.Resources, so both the pure-C# foundation (FwAvalonia) and the

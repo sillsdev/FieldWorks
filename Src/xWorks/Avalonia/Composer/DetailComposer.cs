@@ -74,6 +74,40 @@ namespace SIL.FieldWorks.XWorks
 		// forever; a failure logs (see LoadSources) and is retried on the next compose.
 		private static readonly object SourcesSync = new object();
 		private static CompilerSources s_sources;
+		private static IReadOnlyList<string> s_searchPathOverride;
+
+		/// <summary>
+		/// The composer's source term, made explicit: the layout/parts search path it
+		/// compiles from. By default that is the shipped path
+		/// (<see cref="PartsInventory.SearchPath"/> over the code directory). Inside the
+		/// returned scope it is <paramref name="searchPath"/> instead, and the memoized
+		/// sources and compiled models are dropped on entry and on dispose, so a test can
+		/// compose against a synthetic layout and assert the diagnostics the compile
+		/// reports. Scopes do not nest and are not safe against concurrent composes; use
+		/// one from one test at a time.
+		/// </summary>
+		internal static IDisposable OverrideSearchPath(IReadOnlyList<string> searchPath)
+		{
+			if (searchPath == null) throw new ArgumentNullException(nameof(searchPath));
+			lock (SourcesSync)
+			{
+				s_searchPathOverride = searchPath;
+				s_sources = null;
+			}
+			return new SearchPathScope();
+		}
+
+		private sealed class SearchPathScope : IDisposable
+		{
+			public void Dispose()
+			{
+				lock (SourcesSync)
+				{
+					s_searchPathOverride = null;
+					s_sources = null;
+				}
+			}
+		}
 
 		private static CompilerSources GetSources()
 		{
@@ -3234,21 +3268,23 @@ namespace SIL.FieldWorks.XWorks
 		{
 			try
 			{
-				// The parts merge and layout glob live in the ONE shared loader
-				// (LayoutSourceLoader) that LexiconFirstSlice also uses.
-				var partsDirectory = FwDirectoryFinder.GetCodeSubDirectory(@"Language Explorer\Configuration\Parts");
-				var partsXml = LayoutSourceLoader.LoadMergedPartsXml(partsDirectory);
+				// Which directories are searched, and in what precedence, is PartsInventory's
+				// call; only resolving a subdirectory to a path stays here. A test scope may
+				// substitute the whole path (OverrideSearchPath).
+				var searchPath = s_searchPathOverride
+					?? PartsInventory.SearchPath(FwDirectoryFinder.GetCodeSubDirectory);
+				var partsXml = PartsInventory.LoadMergedPartsXml(searchPath);
 				if (partsXml == null)
 				{
 					// Never a silent permanent failure -- log, fall back to the
 					// 3-field first slice for THIS compose, and retry next time (GetSources).
 					SIL.Reporting.Logger.WriteEvent(
-						"DetailComposer: no merged parts XML under '" + partsDirectory
+						"DetailComposer: no merged parts XML under '" + string.Join("', '", searchPath)
 						+ "'; falling back to the first slice (will retry on the next compose).");
 					return null;
 				}
 
-				var layoutFiles = LayoutSourceLoader.LoadLayoutFiles(partsDirectory);
+				var layoutFiles = PartsInventory.LoadLayoutFiles(searchPath);
 				return new CompilerSources
 				{
 					PartsXml = partsXml,

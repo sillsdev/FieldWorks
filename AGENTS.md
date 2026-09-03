@@ -14,7 +14,7 @@ Minimal, high-signal guidance for coding agents in this repository.
 - `-TokenHygiene` is required of agents and not of humans locally, and also
 	fails CI outright (unlike comment-hygiene, which stays advisory-only in
 	CI): it fails the run on any hardcoded color or spacing/sizing literal
-	anywhere in the Avalonia surface (Src/Common/FwAvalonia,
+	anywhere in the token-hygiene scope (Src/Common/FwAvalonia,
 	FwAvaloniaDialogs, FwAvaloniaTheme, FwAvaloniaPreviewHost,
 	Src/LexText/LexTextControls/Avalonia, Src/xWorks/Avalonia) -- not
 	diff-scoped like comment-hygiene, the whole scoped tree must be clean on

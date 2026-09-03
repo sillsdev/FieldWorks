@@ -162,8 +162,11 @@ namespace SIL.FieldWorks.XWorks
 
 		/// <summary>
 		/// The bidirectional selection bridge for this host's clerk. Created on first use so
-		/// the clerk is initialized. Views (including the Avalonia host) follow the current-record bus
-		/// through its event and publish their own selection back through it.
+		/// the clerk is initialized. Views follow the current-record bus through its event and
+		/// publish their own selection back through it. Extension-point seam: the Avalonia host
+		/// does not read it, so nothing instantiates the bridge today. Its reader is the detail
+		/// view's selection-follow adapter, which the selection-sync work builds against this
+		/// property rather than against the clerk (see the seam catalog).
 		/// </summary>
 		internal IRecordNavigationContext RecordNavigationContext
 		{

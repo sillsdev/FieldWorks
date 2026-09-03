@@ -124,7 +124,7 @@
 
 .PARAMETER TokenHygiene
 	Enforce the token-hygiene check, failing the build on any hardcoded color or
-	spacing/sizing literal anywhere in the Avalonia surface (not diff-scoped -- the whole
+	spacing/sizing literal anywhere in the token-hygiene scope (not diff-scoped -- the whole
 	scoped tree must be clean). Required of coding agents; a developer build leaves it off
 	and never runs the check. CI always runs it: the build step passes -TokenHygiene, so CI
 	fails on a violation rather than annotating it.

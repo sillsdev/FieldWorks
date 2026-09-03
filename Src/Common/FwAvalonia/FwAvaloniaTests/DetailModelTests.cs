@@ -285,56 +285,58 @@ namespace FwAvaloniaTests
 		}
 
 		[Test]
-		public void RichTextEditAlgorithm_InsertAtRunBoundary_PreservesNeighborRunMetadata()
+		public void ReplacePlainText_InsertAtRunBoundary_PreservesNeighborRunMetadata()
 		{
-			var original = DetailRichTextEditAlgorithms.FromRuns("abc\u05d0\u05d1\u05d2", new[]
+			const string text = "abc\u05d0\u05d1\u05d2";
+			var initial = DetailRichTextEditAlgorithms.FromRuns(text, new[]
 			{
 				new DetailTextRun("abc", "qaa-x-left", namedStyle: "LeftStyle"),
 				new DetailTextRun("\u05d0\u05d1\u05d2", "qaa-x-rtl", namedStyle: "RtlStyle")
 			});
+			var editor = new DetailTextEditor(initial, () => text, "qaa-x-left", _ => true);
 
-			var edited = DetailRichTextEditAlgorithms.ApplyPlainTextEdit(original, "abcX\u05d0\u05d1\u05d2");
+			Assert.That(editor.ReplacePlainText("abcX\u05d0\u05d1\u05d2"), Is.True);
 
-			Assert.That(edited.Runs.Select(r => r.Text), Is.EqualTo(new[] { "abcX", "\u05d0\u05d1\u05d2" }));
-			Assert.That(edited.Runs[0].NamedStyle, Is.EqualTo("LeftStyle"));
-			Assert.That(edited.Runs[1].NamedStyle, Is.EqualTo("RtlStyle"),
+			Assert.That(editor.Current.Runs.Select(r => r.Text), Is.EqualTo(new[] { "abcX", "\u05d0\u05d1\u05d2" }));
+			Assert.That(editor.Current.Runs[0].NamedStyle, Is.EqualTo("LeftStyle"));
+			Assert.That(editor.Current.Runs[1].NamedStyle, Is.EqualTo("RtlStyle"),
 				"inserts at run boundaries must not leak style metadata across the boundary");
 		}
 
 		[Test]
-		public void BidirectionalCaretNavigation_MapsArrowKeysThroughActiveRunDirection()
+		public void MoveCaret_MapsArrowKeysThroughActiveRunDirection()
 		{
 			const string mixed = "abc \u05d0\u05d1\u05d2 xyz";
-			var rich = DetailRichTextEditAlgorithms.FromRuns(mixed, new[]
+			var initial = DetailRichTextEditAlgorithms.FromRuns(mixed, new[]
 			{
 				new DetailTextRun("abc ", "qaa-x-left"),
 				new DetailTextRun("\u05d0\u05d1\u05d2", "qaa-x-rtl"),
 				new DetailTextRun(" xyz", "qaa-x-left")
 			});
+			var editor = new DetailTextEditor(initial, () => mixed, "qaa-x-left", _ => true, rightToLeft: true);
 
 			var insideRtl = 5;
-			var afterLeft = DetailBidirectionalTextNavigation.MoveCaret(mixed, rich.Runs, insideRtl,
-				physicalLeft: true, defaultRightToLeft: true);
+			var afterLeft = editor.MoveCaret(insideRtl, physicalLeft: true);
 			Assert.That(afterLeft, Is.EqualTo(6),
 				"inside RTL run, Left arrow advances logically");
 
-			var afterRight = DetailBidirectionalTextNavigation.MoveCaret(mixed, rich.Runs, afterLeft,
-				physicalLeft: false, defaultRightToLeft: true);
+			var afterRight = editor.MoveCaret(afterLeft, physicalLeft: false);
 			Assert.That(afterRight, Is.EqualTo(5),
 				"inside RTL run, Right arrow moves logically backward");
 		}
 
 		[Test]
-		public void SelectionAndHitTest_NormalizeToWholeGraphemeClusters()
+		public void NormalizeSelectionAndHitTest_SnapToWholeGraphemeClusters()
 		{
 			const string text = "a\U0001F469\u200D\U0001F467b";
+			var editor = new DetailTextEditor(null, () => text, "en", _ => true);
 
-			var normalizedRange = DetailBidirectionalTextNavigation.NormalizeSelectionToClusters(text, 2, 4);
+			var normalizedRange = editor.NormalizeSelectionToClusters(2, 4);
 			Assert.That(normalizedRange.Start, Is.EqualTo(1));
 			Assert.That(normalizedRange.End, Is.EqualTo(6),
 				"selection covering part of a ZWJ cluster expands to whole user-visible character");
 
-			var normalizedCaret = DetailBidirectionalTextNavigation.NormalizeHitTestCaretIndex(text, 3);
+			var normalizedCaret = editor.NormalizeHitTestCaretIndex(3);
 			Assert.That(normalizedCaret, Is.EqualTo(1),
 				"hit-test caret in the middle of a grapheme snaps to cluster start");
 		}
@@ -379,11 +381,15 @@ namespace FwAvaloniaTests
 	}
 
 	/// <summary>
-	/// Pure: <see cref="DetailRichTextEditAlgorithms.ApplySpanFormatting"/> splits runs at the
-	/// selection boundaries and sets the chosen attribute only on covered runs, leaving the rest of the
-	/// value's run metadata untouched -- across run boundaries, partial runs, grapheme clusters,
-	/// and the
-	/// lossy read-only guard.
+	/// Character-format GESTURES driven through <see cref="DetailTextEditor.ToggleFormat"/>: it
+	/// splits runs at the selection boundaries and sets the chosen attribute only on covered
+	/// runs,
+	/// leaving the rest of the value's run metadata untouched -- across run boundaries, partial
+	/// runs,
+	/// grapheme clusters, and the lossy read-only guard. The one exception is
+	/// <see cref="SpanFullyHasFormat_ReportsWhetherTheWholeSpanCarriesTheAttribute"/>, which
+	/// stays at the algorithm layer: <see cref="DetailTextEditor"/> exposes no probe for it,
+	/// because it is a decision <c>ToggleFormat</c> makes rather than a query callers ask.
 	/// </summary>
 	[TestFixture]
 	public class DetailSpanFormattingTests
@@ -394,124 +400,135 @@ namespace FwAvaloniaTests
 			new DetailTextRun("g", "qaa-x-two", namedStyle: "Emphasis")
 		});
 
+		private static DetailTextEditor Editor(DetailRichTextValue initial)
+			=> new DetailTextEditor(initial, () => "dog", "qaa-x-one", _ => true);
+
 		// Selection fully inside the FIRST run: the run splits into bold "do"-prefix... here the whole
 		// first run is covered, so it becomes one bold run; the styled trailing run is untouched.
 		[Test]
-		public void ApplySpanFormatting_CoveringFirstRun_BoldsOnlyThatRun()
+		public void ToggleFormat_CoveringFirstRun_BoldsOnlyThatRun()
 		{
-			var result = DetailRichTextEditAlgorithms.ApplySpanFormatting(TwoRunDog(), 0, 2,
-				DetailRunFormat.Bold, true);
+			var editor = Editor(TwoRunDog());
 
-			Assert.That(result.PlainText, Is.EqualTo("dog"), "plain text is never changed");
-			Assert.That(result.Runs.Select(r => r.Text), Is.EqualTo(new[] { "do", "g" }));
-			Assert.That(result.Runs[0].Bold, Is.True, "the covered run gets bold");
-			Assert.That(result.Runs[0].WritingSystemTag, Is.EqualTo("qaa-x-one"), "other metadata is preserved");
-			Assert.That(result.Runs[1].Bold, Is.False, "the uncovered run is untouched");
-			Assert.That(result.Runs[1].NamedStyle, Is.EqualTo("Emphasis"), "uncovered run keeps its style");
-			Assert.That(result.RichXml, Is.Null, "no RichXml so ToTsString takes the run-replay path");
+			Assert.That(editor.ToggleFormat(0, 2, DetailRunFormat.Bold), Is.True);
+
+			Assert.That(editor.Current.PlainText, Is.EqualTo("dog"), "plain text is never changed");
+			Assert.That(editor.Current.Runs.Select(r => r.Text), Is.EqualTo(new[] { "do", "g" }));
+			Assert.That(editor.Current.Runs[0].Bold, Is.True, "the covered run gets bold");
+			Assert.That(editor.Current.Runs[0].WritingSystemTag, Is.EqualTo("qaa-x-one"), "other metadata is preserved");
+			Assert.That(editor.Current.Runs[1].Bold, Is.False, "the uncovered run is untouched");
+			Assert.That(editor.Current.Runs[1].NamedStyle, Is.EqualTo("Emphasis"), "uncovered run keeps its style");
+			Assert.That(editor.Current.RichXml, Is.Null, "no RichXml so ToTsString takes the run-replay path");
 		}
 
 		// A PARTIAL-run selection splits that run: "d" stays plain, "o" goes bold, "g" untouched.
 		[Test]
-		public void ApplySpanFormatting_PartialRun_SplitsAndBoldsOnlyTheCoveredSlice()
+		public void ToggleFormat_PartialRun_SplitsAndBoldsOnlyTheCoveredSlice()
 		{
-			var result = DetailRichTextEditAlgorithms.ApplySpanFormatting(TwoRunDog(), 1, 2,
-				DetailRunFormat.Bold, true);
+			var editor = Editor(TwoRunDog());
 
-			Assert.That(result.Runs.Select(r => r.Text), Is.EqualTo(new[] { "d", "o", "g" }),
+			Assert.That(editor.ToggleFormat(1, 2, DetailRunFormat.Bold), Is.True);
+
+			Assert.That(editor.Current.Runs.Select(r => r.Text), Is.EqualTo(new[] { "d", "o", "g" }),
 				"the first run splits at the selection boundary");
-			Assert.That(result.Runs[0].Bold, Is.False);
-			Assert.That(result.Runs[1].Bold, Is.True, "only the covered slice is bold");
-			Assert.That(result.Runs[1].WritingSystemTag, Is.EqualTo("qaa-x-one"),
+			Assert.That(editor.Current.Runs[0].Bold, Is.False);
+			Assert.That(editor.Current.Runs[1].Bold, Is.True, "only the covered slice is bold");
+			Assert.That(editor.Current.Runs[1].WritingSystemTag, Is.EqualTo("qaa-x-one"),
 				"the split slice inherits its source run's metadata");
-			Assert.That(result.Runs[2].Bold, Is.False);
+			Assert.That(editor.Current.Runs[2].Bold, Is.False);
 		}
 
 		// A selection that SPANS a run boundary bolds across both runs, splitting each as needed.
 		[Test]
-		public void ApplySpanFormatting_AcrossRunBoundary_BoldsBothCoveredSlices()
+		public void ToggleFormat_AcrossRunBoundary_BoldsBothCoveredSlices()
 		{
-			var result = DetailRichTextEditAlgorithms.ApplySpanFormatting(TwoRunDog(), 1, 3,
-				DetailRunFormat.Bold, true);
+			var editor = Editor(TwoRunDog());
 
-			Assert.That(result.Runs.Select(r => r.Text), Is.EqualTo(new[] { "d", "o", "g" }));
-			Assert.That(result.Runs[0].Bold, Is.False, "the leading slice outside the span stays plain");
-			Assert.That(result.Runs[1].Bold, Is.True, "the tail of run 1 inside the span is bold");
-			Assert.That(result.Runs[2].Bold, Is.True, "run 2 (fully covered) is bold");
-			Assert.That(result.Runs[2].NamedStyle, Is.EqualTo("Emphasis"),
+			Assert.That(editor.ToggleFormat(1, 3, DetailRunFormat.Bold), Is.True);
+
+			Assert.That(editor.Current.Runs.Select(r => r.Text), Is.EqualTo(new[] { "d", "o", "g" }));
+			Assert.That(editor.Current.Runs[0].Bold, Is.False, "the leading slice outside the span stays plain");
+			Assert.That(editor.Current.Runs[1].Bold, Is.True, "the tail of run 1 inside the span is bold");
+			Assert.That(editor.Current.Runs[2].Bold, Is.True, "run 2 (fully covered) is bold");
+			Assert.That(editor.Current.Runs[2].NamedStyle, Is.EqualTo("Emphasis"),
 				"the bolded run keeps its other metadata");
 		}
 
 		[Test]
-		public void ApplySpanFormatting_Italic_And_Underline_SetTheCorrectAttribute()
+		public void ToggleFormat_Italic_And_Underline_SetTheCorrectAttribute()
 		{
-			var italic = DetailRichTextEditAlgorithms.ApplySpanFormatting(TwoRunDog(), 0, 2,
-				DetailRunFormat.Italic, true);
-			Assert.That(italic.Runs[0].Italic, Is.True);
-			Assert.That(italic.Runs[0].Bold, Is.False);
-			Assert.That(italic.Runs[0].Underline, Is.False);
+			var italicEditor = Editor(TwoRunDog());
+			italicEditor.ToggleFormat(0, 2, DetailRunFormat.Italic);
+			Assert.That(italicEditor.Current.Runs[0].Italic, Is.True);
+			Assert.That(italicEditor.Current.Runs[0].Bold, Is.False);
+			Assert.That(italicEditor.Current.Runs[0].Underline, Is.False);
 
-			var underline = DetailRichTextEditAlgorithms.ApplySpanFormatting(TwoRunDog(), 0, 2,
-				DetailRunFormat.Underline, true);
-			Assert.That(underline.Runs[0].Underline, Is.True);
-			Assert.That(underline.Runs[0].Bold, Is.False);
+			var underlineEditor = Editor(TwoRunDog());
+			underlineEditor.ToggleFormat(0, 2, DetailRunFormat.Underline);
+			Assert.That(underlineEditor.Current.Runs[0].Underline, Is.True);
+			Assert.That(underlineEditor.Current.Runs[0].Bold, Is.False);
 		}
 
 		[Test]
-		public void ApplySpanFormatting_TogglingOff_ClearsTheAttribute()
+		public void ToggleFormat_ASecondTime_ClearsTheAttribute()
 		{
-			var bolded = DetailRichTextEditAlgorithms.ApplySpanFormatting(TwoRunDog(), 1, 2,
-				DetailRunFormat.Bold, true);
-			Assert.That(bolded.Runs.First(r => r.Text == "o").Bold, Is.True);
+			var editor = Editor(TwoRunDog());
+			editor.ToggleFormat(1, 2, DetailRunFormat.Bold);
+			Assert.That(editor.Current.Runs.First(r => r.Text == "o").Bold, Is.True);
 
-			var cleared = DetailRichTextEditAlgorithms.ApplySpanFormatting(bolded, 1, 2,
-				DetailRunFormat.Bold, false);
-			Assert.That(cleared.Runs.Any(r => r.Bold), Is.False, "the attribute is cleared over the span");
-			Assert.That(cleared.PlainText, Is.EqualTo("dog"));
+			Assert.That(editor.ToggleFormat(1, 2, DetailRunFormat.Bold), Is.True,
+				"an all-on span toggles off rather than staying a no-op");
+
+			Assert.That(editor.Current.Runs.Any(r => r.Bold), Is.False, "the attribute is cleared over the span");
+			Assert.That(editor.Current.PlainText, Is.EqualTo("dog"));
 		}
 
 		[Test]
-		public void ApplySpanFormatting_ZeroLengthSelection_IsNoOp()
+		public void ToggleFormat_ZeroLengthSelection_IsNoOp()
 		{
-			var original = TwoRunDog();
-			var result = DetailRichTextEditAlgorithms.ApplySpanFormatting(original, 1, 1,
-				DetailRunFormat.Bold, true);
-			Assert.That(result, Is.SameAs(original), "a collapsed selection is a no-op");
+			var initial = TwoRunDog();
+			var editor = Editor(initial);
+
+			Assert.That(editor.ToggleFormat(1, 1, DetailRunFormat.Bold), Is.False, "a collapsed selection is a no-op");
+			Assert.That(editor.Current, Is.SameAs(initial));
 		}
 
-		// At the pure layer: a lossy value is read-only and is returned unchanged.
+		// At the gesture layer: a lossy value is read-only and the toggle stages nothing.
 		[Test]
-		public void ApplySpanFormatting_LossyValue_ReturnsUnchanged()
+		public void ToggleFormat_LossyValue_StagesNothing()
 		{
 			var lossy = new DetailRichTextValue("coloured",
 				new[] { new DetailTextRun("coloured", "qaa-x-one") },
 				richXml: "<Str/>", requiresRichEditor: true, lossyProperties: true);
 			Assert.That(lossy.CanEditRichText, Is.False);
+			var editor = new DetailTextEditor(lossy, () => "coloured", "qaa-x-one", _ => true);
 
-			var result = DetailRichTextEditAlgorithms.ApplySpanFormatting(lossy, 0, 4,
-				DetailRunFormat.Bold, true);
-			Assert.That(result, Is.SameAs(lossy), "a lossy/read-only value is never reformatted");
+			Assert.That(editor.ToggleFormat(0, 4, DetailRunFormat.Bold), Is.False,
+				"a lossy/read-only value is never reformatted");
+			Assert.That(editor.Current, Is.SameAs(lossy));
 		}
 
 		// Grapheme-cluster safety: a selection whose boundaries fall inside a combining cluster snaps
 		// OUTWARD so the cluster is never split (matching the bidi navigation's boundary logic).
 		[Test]
-		public void ApplySpanFormatting_RespectsGraphemeClusterBoundaries()
+		public void ToggleFormat_RespectsGraphemeClusterBoundaries()
 		{
 			// "a" + (e + combining acute U+0301) + "b": indices 0='a',1='e',2=U+0301,3='b'.
 			const string text = "aéb";
-			var value = DetailRichTextEditAlgorithms.FromRuns(text,
+			var initial = DetailRichTextEditAlgorithms.FromRuns(text,
 				new[] { new DetailTextRun(text, "qaa-x-one") });
+			var editor = new DetailTextEditor(initial, () => text, "qaa-x-one", _ => true);
 
 			// Selecting [1,2) lands inside the e-acute cluster; it must snap out to cover the whole cluster.
-			var result = DetailRichTextEditAlgorithms.ApplySpanFormatting(value, 1, 2,
-				DetailRunFormat.Bold, true);
+			editor.ToggleFormat(1, 2, DetailRunFormat.Bold);
 
-			var boldText = string.Concat(result.Runs.Where(r => r.Bold).Select(r => r.Text));
+			var boldText = string.Concat(editor.Current.Runs.Where(r => r.Bold).Select(r => r.Text));
 			Assert.That(boldText, Is.EqualTo("é"),
 				"the combining cluster is bolded whole, never split mid-character");
 		}
 
+		// FINDING: no editor-level equivalent exists for this probe (see class remarks), so it
+		// stays at the algorithm layer.
 		[Test]
 		public void SpanFullyHasFormat_ReportsWhetherTheWholeSpanCarriesTheAttribute()
 		{
@@ -528,10 +545,10 @@ namespace FwAvaloniaTests
 	}
 
 	/// <summary>
-	/// Pure: <see cref="DetailRichTextEditAlgorithms.ApplySpanNamedStyle"/> splits runs at the
-	/// selection boundaries and sets/clears the named character style only on covered runs, cluster-safe,
-	/// honoring the lossy read-only guard; <see cref="DetailRichTextEditAlgorithms.SpanNamedStyle"/>
-	/// reports the common style across the span (null when mixed/none).
+	/// Named-character-style GESTURES driven through <see cref="DetailTextEditor.SetNamedStyle"/>
+	/// and probed through <see cref="DetailTextEditor.NamedStyleIn"/>: it splits runs at the
+	/// selection boundaries and sets/clears the named character style only on covered runs,
+	/// cluster-safe, honoring the lossy read-only guard.
 	/// </summary>
 	[TestFixture]
 	public class DetailSpanNamedStyleTests
@@ -543,120 +560,138 @@ namespace FwAvaloniaTests
 			new DetailTextRun("g", "qaa-x-two", namedStyle: "Emphasis")
 		});
 
-		[Test]
-		public void ApplySpanNamedStyle_CoveringFirstRun_StylesOnlyThatRun()
-		{
-			var result = DetailRichTextEditAlgorithms.ApplySpanNamedStyle(TwoRunDog(), 0, 2, "Strong");
+		private static DetailTextEditor Editor(DetailRichTextValue initial)
+			=> new DetailTextEditor(initial, () => "dog", "qaa-x-one", _ => true);
 
-			Assert.That(result.PlainText, Is.EqualTo("dog"), "plain text is never changed");
-			Assert.That(result.Runs.Select(r => r.Text), Is.EqualTo(new[] { "do", "g" }));
-			Assert.That(result.Runs[0].NamedStyle, Is.EqualTo("Strong"), "the covered run gets the style");
-			Assert.That(result.Runs[0].WritingSystemTag, Is.EqualTo("qaa-x-one"), "other metadata is preserved");
-			Assert.That(result.Runs[1].NamedStyle, Is.EqualTo("Emphasis"), "the uncovered styled run is untouched");
-			Assert.That(result.RichXml, Is.Null, "no RichXml so ToTsString takes the run-replay path");
+		[Test]
+		public void SetNamedStyle_CoveringFirstRun_StylesOnlyThatRun()
+		{
+			var editor = Editor(TwoRunDog());
+
+			Assert.That(editor.SetNamedStyle(0, 2, "Strong"), Is.True);
+
+			Assert.That(editor.Current.PlainText, Is.EqualTo("dog"), "plain text is never changed");
+			Assert.That(editor.Current.Runs.Select(r => r.Text), Is.EqualTo(new[] { "do", "g" }));
+			Assert.That(editor.Current.Runs[0].NamedStyle, Is.EqualTo("Strong"), "the covered run gets the style");
+			Assert.That(editor.Current.Runs[0].WritingSystemTag, Is.EqualTo("qaa-x-one"), "other metadata is preserved");
+			Assert.That(editor.Current.Runs[1].NamedStyle, Is.EqualTo("Emphasis"), "the uncovered styled run is untouched");
+			Assert.That(editor.Current.RichXml, Is.Null, "no RichXml so ToTsString takes the run-replay path");
 		}
 
 		[Test]
-		public void ApplySpanNamedStyle_PartialRun_SplitsAndStylesOnlyTheCoveredSlice()
+		public void SetNamedStyle_PartialRun_SplitsAndStylesOnlyTheCoveredSlice()
 		{
-			var result = DetailRichTextEditAlgorithms.ApplySpanNamedStyle(TwoRunDog(), 1, 2, "Strong");
+			var editor = Editor(TwoRunDog());
 
-			Assert.That(result.Runs.Select(r => r.Text), Is.EqualTo(new[] { "d", "o", "g" }),
+			Assert.That(editor.SetNamedStyle(1, 2, "Strong"), Is.True);
+
+			Assert.That(editor.Current.Runs.Select(r => r.Text), Is.EqualTo(new[] { "d", "o", "g" }),
 				"the first run splits at the selection boundary");
-			Assert.That(result.Runs[0].NamedStyle, Is.Null);
-			Assert.That(result.Runs[1].NamedStyle, Is.EqualTo("Strong"), "only the covered slice gets the style");
-			Assert.That(result.Runs[1].WritingSystemTag, Is.EqualTo("qaa-x-one"),
+			Assert.That(editor.Current.Runs[0].NamedStyle, Is.Null);
+			Assert.That(editor.Current.Runs[1].NamedStyle, Is.EqualTo("Strong"), "only the covered slice gets the style");
+			Assert.That(editor.Current.Runs[1].WritingSystemTag, Is.EqualTo("qaa-x-one"),
 				"the split slice inherits its source run's metadata");
-			Assert.That(result.Runs[2].NamedStyle, Is.EqualTo("Emphasis"));
+			Assert.That(editor.Current.Runs[2].NamedStyle, Is.EqualTo("Emphasis"));
 		}
 
 		[Test]
-		public void ApplySpanNamedStyle_AcrossRunBoundary_StylesBothCoveredSlices()
+		public void SetNamedStyle_AcrossRunBoundary_StylesBothCoveredSlices()
 		{
-			var result = DetailRichTextEditAlgorithms.ApplySpanNamedStyle(TwoRunDog(), 1, 3, "Strong");
+			var editor = Editor(TwoRunDog());
 
-			Assert.That(result.Runs.Select(r => r.Text), Is.EqualTo(new[] { "d", "o", "g" }));
-			Assert.That(result.Runs[0].NamedStyle, Is.Null, "the leading slice outside the span keeps no style");
-			Assert.That(result.Runs[1].NamedStyle, Is.EqualTo("Strong"), "the tail of run 1 inside the span is styled");
-			Assert.That(result.Runs[2].NamedStyle, Is.EqualTo("Strong"),
+			Assert.That(editor.SetNamedStyle(1, 3, "Strong"), Is.True);
+
+			Assert.That(editor.Current.Runs.Select(r => r.Text), Is.EqualTo(new[] { "d", "o", "g" }));
+			Assert.That(editor.Current.Runs[0].NamedStyle, Is.Null, "the leading slice outside the span keeps no style");
+			Assert.That(editor.Current.Runs[1].NamedStyle, Is.EqualTo("Strong"), "the tail of run 1 inside the span is styled");
+			Assert.That(editor.Current.Runs[2].NamedStyle, Is.EqualTo("Strong"),
 				"run 2 (fully covered) is restyled, overwriting its previous Emphasis");
 		}
 
 		[Test]
-		public void ApplySpanNamedStyle_NullStyle_ClearsTheStyleOverTheSpan()
+		public void SetNamedStyle_NullStyle_ClearsTheStyleOverTheSpan()
 		{
+			var editor = Editor(TwoRunDog());
+
 			// The trailing run carries "Emphasis"; clearing over [2,3) drops it, leaving no styled run.
-			var cleared = DetailRichTextEditAlgorithms.ApplySpanNamedStyle(TwoRunDog(), 2, 3, null);
+			Assert.That(editor.SetNamedStyle(2, 3, null), Is.True);
 
-			Assert.That(cleared.PlainText, Is.EqualTo("dog"));
-			Assert.That(cleared.Runs.Any(r => !string.IsNullOrEmpty(r.NamedStyle)), Is.False,
+			Assert.That(editor.Current.PlainText, Is.EqualTo("dog"));
+			Assert.That(editor.Current.Runs.Any(r => !string.IsNullOrEmpty(r.NamedStyle)), Is.False,
 				"clearing removes the named style over the span");
-			Assert.That(cleared.RichXml, Is.Null);
+			Assert.That(editor.Current.RichXml, Is.Null);
 		}
 
 		[Test]
-		public void ApplySpanNamedStyle_ZeroLengthSelection_IsNoOp()
+		public void SetNamedStyle_ZeroLengthSelection_IsNoOp()
 		{
-			var original = TwoRunDog();
-			var result = DetailRichTextEditAlgorithms.ApplySpanNamedStyle(original, 1, 1, "Strong");
-			Assert.That(result, Is.SameAs(original), "a collapsed selection is a no-op");
+			var initial = TwoRunDog();
+			var editor = Editor(initial);
+
+			Assert.That(editor.SetNamedStyle(1, 1, "Strong"), Is.False, "a collapsed selection is a no-op");
+			Assert.That(editor.Current, Is.SameAs(initial));
 		}
 
 		[Test]
-		public void ApplySpanNamedStyle_LossyValue_ReturnsUnchanged()
+		public void SetNamedStyle_LossyValue_StagesNothing()
 		{
 			var lossy = new DetailRichTextValue("coloured",
 				new[] { new DetailTextRun("coloured", "qaa-x-one") },
 				richXml: "<Str/>", requiresRichEditor: true, lossyProperties: true);
 			Assert.That(lossy.CanEditRichText, Is.False);
+			var editor = new DetailTextEditor(lossy, () => "coloured", "qaa-x-one", _ => true);
 
-			var result = DetailRichTextEditAlgorithms.ApplySpanNamedStyle(lossy, 0, 4, "Strong");
-			Assert.That(result, Is.SameAs(lossy), "a lossy/read-only value is never restyled");
+			Assert.That(editor.SetNamedStyle(0, 4, "Strong"), Is.False, "a lossy/read-only value is never restyled");
+			Assert.That(editor.Current, Is.SameAs(lossy));
 		}
 
 		[Test]
-		public void ApplySpanNamedStyle_RespectsGraphemeClusterBoundaries()
+		public void SetNamedStyle_RespectsGraphemeClusterBoundaries()
 		{
-			const string text = "aéb"; // 'a', 'e'+combining-acute, 'b' — combining cluster at [1,3)
-			var value = DetailRichTextEditAlgorithms.FromRuns(text,
+			const string text = "aéb"; // 'a', 'e'+combining-acute, 'b' -- combining cluster at [1,3)
+			var initial = DetailRichTextEditAlgorithms.FromRuns(text,
 				new[] { new DetailTextRun(text, "qaa-x-one") });
+			var editor = new DetailTextEditor(initial, () => text, "qaa-x-one", _ => true);
 
-			var result = DetailRichTextEditAlgorithms.ApplySpanNamedStyle(value, 1, 2, "Strong");
+			editor.SetNamedStyle(1, 2, "Strong");
 
-			var styledText = string.Concat(result.Runs
+			var styledText = string.Concat(editor.Current.Runs
 				.Where(r => r.NamedStyle == "Strong").Select(r => r.Text));
-			Assert.That(styledText, Is.EqualTo("é"),
+			Assert.That(styledText, Is.EqualTo("é"),
 				"the combining cluster is styled whole, never split mid-character");
 		}
 
 		[Test]
-		public void SpanNamedStyle_ReportsCommonStyle_OrNullWhenMixedOrNone()
+		public void NamedStyleIn_ReportsCommonStyle_OrNullWhenMixedOrNone()
 		{
-			var styled = DetailRichTextEditAlgorithms.ApplySpanNamedStyle(TwoRunDog(), 0, 3, "Strong");
-			Assert.That(DetailRichTextEditAlgorithms.SpanNamedStyle(styled, 0, 3), Is.EqualTo("Strong"),
+			var styledEditor = Editor(TwoRunDog());
+			styledEditor.SetNamedStyle(0, 3, "Strong");
+			Assert.That(styledEditor.NamedStyleIn(0, 3), Is.EqualTo("Strong"),
 				"a uniformly styled span reports its common style");
 
 			// Original: "do" plain + "g" Emphasis -> mixed across [0,3).
-			Assert.That(DetailRichTextEditAlgorithms.SpanNamedStyle(TwoRunDog(), 0, 3), Is.Null,
+			var unstyledEditor = Editor(TwoRunDog());
+			Assert.That(unstyledEditor.NamedStyleIn(0, 3), Is.Null,
 				"a span whose runs carry different styles reports null (mixed)");
 
 			// A span entirely within the plain first run reports null (no style).
-			Assert.That(DetailRichTextEditAlgorithms.SpanNamedStyle(TwoRunDog(), 0, 2), Is.Null,
+			Assert.That(unstyledEditor.NamedStyleIn(0, 2), Is.Null,
 				"a span carrying no style reports null");
 
 			// A span entirely within the styled run reports that style.
-			Assert.That(DetailRichTextEditAlgorithms.SpanNamedStyle(TwoRunDog(), 2, 3), Is.EqualTo("Emphasis"));
+			Assert.That(unstyledEditor.NamedStyleIn(2, 3), Is.EqualTo("Emphasis"));
 
-			Assert.That(DetailRichTextEditAlgorithms.SpanNamedStyle(TwoRunDog(), 1, 1), Is.Null,
+			Assert.That(unstyledEditor.NamedStyleIn(1, 1), Is.Null,
 				"a collapsed span reports null");
 		}
 	}
 
 	/// <summary>
-	/// Pure: <see cref="DetailRichTextEditAlgorithms.RetagSpanWritingSystem"/> splits runs at
-	/// the selection boundaries and sets the writing-system tag only on covered runs, cluster-safe,
-	/// honoring the lossy read-only guard; <see cref="DetailRichTextEditAlgorithms.SpanWritingSystem"/>
-	/// reports the common writing system across the span (null when mixed).
+	/// Per-run writing-system-retag GESTURES driven through
+	/// <see cref="DetailTextEditor.RetagWritingSystem"/> and probed through
+	/// <see cref="DetailTextEditor.WritingSystemIn"/>: the gesture splits runs at the
+	/// selection boundaries and sets the writing-system tag only on covered runs,
+	/// cluster-safe, honoring the lossy read-only guard.
 	/// </summary>
 	[TestFixture]
 	public class DetailSpanWritingSystemTests
@@ -668,99 +703,116 @@ namespace FwAvaloniaTests
 			new DetailTextRun("g", "qaa-x-two")
 		});
 
-		[Test]
-		public void RetagSpanWritingSystem_CoveringFirstRun_RetagsOnlyThatRun()
-		{
-			var result = DetailRichTextEditAlgorithms.RetagSpanWritingSystem(TwoRunDog(), 0, 2, "fr");
+		private static DetailTextEditor Editor(DetailRichTextValue initial)
+			=> new DetailTextEditor(initial, () => "dog", "qaa-x-one", _ => true);
 
-			Assert.That(result.PlainText, Is.EqualTo("dog"), "plain text is never changed");
-			Assert.That(result.Runs.Select(r => r.Text), Is.EqualTo(new[] { "do", "g" }));
-			Assert.That(result.Runs[0].WritingSystemTag, Is.EqualTo("fr"), "the covered run gets the new ws");
-			Assert.That(result.Runs[0].NamedStyle, Is.EqualTo("Emphasis"), "other metadata is preserved");
-			Assert.That(result.Runs[1].WritingSystemTag, Is.EqualTo("qaa-x-two"), "the uncovered run keeps its ws");
-			Assert.That(result.RichXml, Is.Null, "no RichXml so ToTsString takes the run-replay path");
+		[Test]
+		public void RetagWritingSystem_CoveringFirstRun_RetagsOnlyThatRun()
+		{
+			var editor = Editor(TwoRunDog());
+
+			Assert.That(editor.RetagWritingSystem(0, 2, "fr"), Is.True);
+
+			Assert.That(editor.Current.PlainText, Is.EqualTo("dog"), "plain text is never changed");
+			Assert.That(editor.Current.Runs.Select(r => r.Text), Is.EqualTo(new[] { "do", "g" }));
+			Assert.That(editor.Current.Runs[0].WritingSystemTag, Is.EqualTo("fr"), "the covered run gets the new ws");
+			Assert.That(editor.Current.Runs[0].NamedStyle, Is.EqualTo("Emphasis"), "other metadata is preserved");
+			Assert.That(editor.Current.Runs[1].WritingSystemTag, Is.EqualTo("qaa-x-two"), "the uncovered run keeps its ws");
+			Assert.That(editor.Current.RichXml, Is.Null, "no RichXml so ToTsString takes the run-replay path");
 		}
 
 		[Test]
-		public void RetagSpanWritingSystem_PartialRun_SplitsAndRetagsOnlyTheCoveredSlice()
+		public void RetagWritingSystem_PartialRun_SplitsAndRetagsOnlyTheCoveredSlice()
 		{
-			var result = DetailRichTextEditAlgorithms.RetagSpanWritingSystem(TwoRunDog(), 1, 2, "fr");
+			var editor = Editor(TwoRunDog());
 
-			Assert.That(result.Runs.Select(r => r.Text), Is.EqualTo(new[] { "d", "o", "g" }),
+			Assert.That(editor.RetagWritingSystem(1, 2, "fr"), Is.True);
+
+			Assert.That(editor.Current.Runs.Select(r => r.Text), Is.EqualTo(new[] { "d", "o", "g" }),
 				"the first run splits at the selection boundary");
-			Assert.That(result.Runs[0].WritingSystemTag, Is.EqualTo("qaa-x-one"));
-			Assert.That(result.Runs[1].WritingSystemTag, Is.EqualTo("fr"), "only the covered slice is retagged");
-			Assert.That(result.Runs[1].NamedStyle, Is.EqualTo("Emphasis"),
+			Assert.That(editor.Current.Runs[0].WritingSystemTag, Is.EqualTo("qaa-x-one"));
+			Assert.That(editor.Current.Runs[1].WritingSystemTag, Is.EqualTo("fr"), "only the covered slice is retagged");
+			Assert.That(editor.Current.Runs[1].NamedStyle, Is.EqualTo("Emphasis"),
 				"the split slice inherits its source run's metadata");
-			Assert.That(result.Runs[2].WritingSystemTag, Is.EqualTo("qaa-x-two"));
+			Assert.That(editor.Current.Runs[2].WritingSystemTag, Is.EqualTo("qaa-x-two"));
 		}
 
 		[Test]
-		public void RetagSpanWritingSystem_AcrossRunBoundary_RetagsBothCoveredSlices()
+		public void RetagWritingSystem_AcrossRunBoundary_RetagsBothCoveredSlices()
 		{
-			var result = DetailRichTextEditAlgorithms.RetagSpanWritingSystem(TwoRunDog(), 1, 3, "fr");
+			var editor = Editor(TwoRunDog());
 
-			Assert.That(result.Runs.Select(r => r.Text), Is.EqualTo(new[] { "d", "o", "g" }));
-			Assert.That(result.Runs[0].WritingSystemTag, Is.EqualTo("qaa-x-one"), "the leading slice keeps its ws");
-			Assert.That(result.Runs[1].WritingSystemTag, Is.EqualTo("fr"), "the tail of run 1 inside the span is retagged");
-			Assert.That(result.Runs[2].WritingSystemTag, Is.EqualTo("fr"), "run 2 (fully covered) is retagged");
+			Assert.That(editor.RetagWritingSystem(1, 3, "fr"), Is.True);
+
+			Assert.That(editor.Current.Runs.Select(r => r.Text), Is.EqualTo(new[] { "d", "o", "g" }));
+			Assert.That(editor.Current.Runs[0].WritingSystemTag, Is.EqualTo("qaa-x-one"), "the leading slice keeps its ws");
+			Assert.That(editor.Current.Runs[1].WritingSystemTag, Is.EqualTo("fr"), "the tail of run 1 inside the span is retagged");
+			Assert.That(editor.Current.Runs[2].WritingSystemTag, Is.EqualTo("fr"), "run 2 (fully covered) is retagged");
 		}
 
 		[Test]
-		public void RetagSpanWritingSystem_EmptyWsTag_IsNoOp()
+		public void RetagWritingSystem_EmptyWsTag_IsNoOp()
 		{
-			var original = TwoRunDog();
-			Assert.That(DetailRichTextEditAlgorithms.RetagSpanWritingSystem(original, 0, 2, null),
-				Is.SameAs(original), "a run must always carry a ws; a null tag is a no-op");
-			Assert.That(DetailRichTextEditAlgorithms.RetagSpanWritingSystem(original, 0, 2, string.Empty),
-				Is.SameAs(original), "an empty tag is a no-op too");
+			var initial = TwoRunDog();
+			var editor = Editor(initial);
+
+			Assert.That(editor.RetagWritingSystem(0, 2, null), Is.False,
+				"a run must always carry a ws; a null tag is a no-op");
+			Assert.That(editor.RetagWritingSystem(0, 2, string.Empty), Is.False, "an empty tag is a no-op too");
+			Assert.That(editor.Current, Is.SameAs(initial));
 		}
 
 		[Test]
-		public void RetagSpanWritingSystem_ZeroLengthSelection_IsNoOp()
+		public void RetagWritingSystem_ZeroLengthSelection_IsNoOp()
 		{
-			var original = TwoRunDog();
-			var result = DetailRichTextEditAlgorithms.RetagSpanWritingSystem(original, 1, 1, "fr");
-			Assert.That(result, Is.SameAs(original), "a collapsed selection is a no-op");
+			var initial = TwoRunDog();
+			var editor = Editor(initial);
+
+			Assert.That(editor.RetagWritingSystem(1, 1, "fr"), Is.False, "a collapsed selection is a no-op");
+			Assert.That(editor.Current, Is.SameAs(initial));
 		}
 
 		[Test]
-		public void RetagSpanWritingSystem_LossyValue_ReturnsUnchanged()
+		public void RetagWritingSystem_LossyValue_StagesNothing()
 		{
 			var lossy = new DetailRichTextValue("coloured",
 				new[] { new DetailTextRun("coloured", "qaa-x-one") },
 				richXml: "<Str/>", requiresRichEditor: true, lossyProperties: true);
 			Assert.That(lossy.CanEditRichText, Is.False);
+			var editor = new DetailTextEditor(lossy, () => "coloured", "qaa-x-one", _ => true);
 
-			var result = DetailRichTextEditAlgorithms.RetagSpanWritingSystem(lossy, 0, 4, "fr");
-			Assert.That(result, Is.SameAs(lossy), "a lossy/read-only value is never retagged");
+			Assert.That(editor.RetagWritingSystem(0, 4, "fr"), Is.False, "a lossy/read-only value is never retagged");
+			Assert.That(editor.Current, Is.SameAs(lossy));
 		}
 
 		[Test]
-		public void RetagSpanWritingSystem_RespectsGraphemeClusterBoundaries()
+		public void RetagWritingSystem_RespectsGraphemeClusterBoundaries()
 		{
-			const string text = "aéb"; // 'a', 'e'+combining-acute, 'b' — combining cluster at [1,3)
-			var value = DetailRichTextEditAlgorithms.FromRuns(text,
+			const string text = "aéb"; // 'a', 'e'+combining-acute, 'b' — combining cluster at [1,3)
+			var initial = DetailRichTextEditAlgorithms.FromRuns(text,
 				new[] { new DetailTextRun(text, "qaa-x-one") });
+			var editor = new DetailTextEditor(initial, () => text, "qaa-x-one", _ => true);
 
-			var result = DetailRichTextEditAlgorithms.RetagSpanWritingSystem(value, 1, 2, "fr");
+			editor.RetagWritingSystem(1, 2, "fr");
 
-			var retaggedText = string.Concat(result.Runs
+			var retaggedText = string.Concat(editor.Current.Runs
 				.Where(r => r.WritingSystemTag == "fr").Select(r => r.Text));
-			Assert.That(retaggedText, Is.EqualTo("é"),
+			Assert.That(retaggedText, Is.EqualTo("é"),
 				"the combining cluster is retagged whole, never split mid-character");
 		}
 
 		[Test]
-		public void SpanWritingSystem_ReportsCommonWs_OrNullWhenMixed()
+		public void WritingSystemIn_ReportsCommonWs_OrNullWhenMixed()
 		{
+			var editor = Editor(TwoRunDog());
+
 			// "do" qaa-x-one + "g" qaa-x-two.
-			Assert.That(DetailRichTextEditAlgorithms.SpanWritingSystem(TwoRunDog(), 0, 2), Is.EqualTo("qaa-x-one"),
+			Assert.That(editor.WritingSystemIn(0, 2), Is.EqualTo("qaa-x-one"),
 				"a span entirely within one run reports that run's ws");
-			Assert.That(DetailRichTextEditAlgorithms.SpanWritingSystem(TwoRunDog(), 0, 3), Is.Null,
+			Assert.That(editor.WritingSystemIn(0, 3), Is.Null,
 				"a span whose runs carry different ws reports null (mixed)");
-			Assert.That(DetailRichTextEditAlgorithms.SpanWritingSystem(TwoRunDog(), 2, 3), Is.EqualTo("qaa-x-two"));
-			Assert.That(DetailRichTextEditAlgorithms.SpanWritingSystem(TwoRunDog(), 1, 1), Is.Null,
+			Assert.That(editor.WritingSystemIn(2, 3), Is.EqualTo("qaa-x-two"));
+			Assert.That(editor.WritingSystemIn(1, 1), Is.Null,
 				"a collapsed span reports null");
 		}
 	}

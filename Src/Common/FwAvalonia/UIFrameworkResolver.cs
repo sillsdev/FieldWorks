@@ -112,6 +112,15 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 				: UIFramework.Legacy;
 		}
 
+		/// <summary>
+		/// The framework the override and the persisted UI-mode preference select on their own,
+		/// with the tool gate treated as open. Lets a caller that already knows the gate is
+		/// closed tell "Legacy because legacy was chosen" from "Legacy because this tool is not
+		/// migrated" without restating the override-versus-preference precedence.
+		/// </summary>
+		public static UIFramework ResolvePreference(bool? overrideEnabled, string uiMode)
+			=> ResolveFromPreference(true, overrideEnabled, uiMode);
+
 		public static string ToUIModeValue(UIFramework framework)
 			=> framework == UIFramework.Avalonia ? NewUIMode : LegacyUIMode;
 

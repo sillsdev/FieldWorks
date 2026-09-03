@@ -30,8 +30,8 @@ namespace FwAvaloniaTests
 		public void FirstSlice_Path3Bundle_AssemblesAllLanes_WithExplicitStatus()
 		{
 			var repoRoot = FindRepoRoot();
-			var partsDir = Path.Combine(repoRoot, "DistFiles", "Language Explorer", "Configuration", "Parts");
-			var definition = LexiconFirstSlice.CompileFromLayoutDirectory(partsDir);
+			var searchPath = PartsInventory.SearchPath(sub => Path.Combine(repoRoot, "DistFiles", sub));
+			var definition = LexiconFirstSlice.CompileFromLayoutDirectory(searchPath);
 			Assert.That(definition, Is.Not.Null);
 
 			var bundleDir = Path.Combine(TestContext.CurrentContext.WorkDirectory, "path3-first-slice");

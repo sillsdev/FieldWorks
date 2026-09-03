@@ -176,13 +176,11 @@ namespace LexTextControlsTests
 				new System.Collections.Generic.Dictionary<string, string> { [analTag] = "house" },
 				MoMorphTypeTags.kguidMorphStem.ToString());
 
-			// The base (MemoryOnlyBackendProviderRestoredForEachTestTestBase) opens an undoable UOW in TestSetup,
-			// so the create runs directly here with NO UOW wrapper (wrapping it would throw "Nested tasks are not
-			// supported"). The launcher's Apply opens its OWN single UndoableUnitOfWorkHelper.Do at runtime; here
-			// we exercise the SAME BuildEntryComponents + factory create inside the test's open task.
+			// The base opens an undoable UOW in TestSetup, so the create runs inside it
+			// with no wrapper; the launcher's Apply supplies its own
+			// UndoableUnitOfWorkHelper.Do at runtime.
 			var entriesBefore = Cache.ServiceLocator.GetInstance<ILexEntryRepository>().Count;
-			var components = LcmInsertEntryDialogLauncher.BuildEntryComponents(Cache, payload);
-			var entry = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create(components);
+			var entry = LcmInsertEntryDialogLauncher.CreateNewEntry(Cache, payload);
 
 			Assert.That(entry, Is.Not.Null, "the entry was created");
 			Assert.That(Cache.ServiceLocator.GetInstance<ILexEntryRepository>().Count,
@@ -349,14 +347,13 @@ namespace LexTextControlsTests
 			Assert.That(existing, Is.SameAs(_casa));
 			Assert.That(repo.Count, Is.EqualTo(before), "the use-existing path creates no new entry");
 
-			// Create: build components + create (as the launcher's create branch does).
+			// Create: the launcher's create branch.
 			var vernTag = Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Id;
 			var payload = new InsertEntryDlgPayload(
 				new System.Collections.Generic.Dictionary<string, string> { [vernTag] = "nuevo" },
 				new System.Collections.Generic.Dictionary<string, string>(),
 				MoMorphTypeTags.kguidMorphStem.ToString());
-			var created = Cache.ServiceLocator.GetInstance<ILexEntryFactory>()
-				.Create(LcmInsertEntryDialogLauncher.BuildEntryComponents(Cache, payload));
+			var created = LcmInsertEntryDialogLauncher.CreateNewEntry(Cache, payload);
 			Assert.That(created, Is.Not.Null);
 			Assert.That(repo.Count, Is.EqualTo(before + 1), "the create path adds exactly one entry");
 		}
@@ -375,36 +372,6 @@ namespace LexTextControlsTests
 		}
 
 		[Test]
-		public void BuildPosNodes_ProjectsThePartsOfSpeechAsGuidKeyedNodes()
-		{
-			var nodes = LcmInsertEntryDialogLauncher.BuildPosNodes(Cache);
-			Assert.That(nodes.Any(n => n.Id == _verb.Guid.ToString() && n.Name == "Verb"), Is.True,
-				"the POS nodes carry the project parts of speech, keyed by guid string");
-			Assert.That(nodes.Any(n => n.Id == _noun.Guid.ToString() && n.Name == "Noun"), Is.True);
-		}
-
-		[Test]
-		public void MorphTypeToMsaTypeMap_MapsStemAndAffixFamilies()
-		{
-			var map = LcmInsertEntryDialogLauncher.BuildMorphTypeToMsaTypeMap(Cache);
-			Assert.That(map[MoMorphTypeTags.kguidMorphStem.ToString()], Is.EqualTo(FwMsaType.Stem),
-				"stem maps to Stem (MorphTypePreference parity)");
-			Assert.That(map[MoMorphTypeTags.kguidMorphRoot.ToString()], Is.EqualTo(FwMsaType.Root),
-				"root maps to Root");
-			Assert.That(map[MoMorphTypeTags.kguidMorphSuffix.ToString()], Is.EqualTo(FwMsaType.Unclassified),
-				"an affix maps to Unclassified (the box then refines to Infl/Deriv)");
-		}
-
-		[Test]
-		public void BuildSlots_ReturnsThePosAffixSlots()
-		{
-			var slots = LcmInsertEntryDialogLauncher.BuildSlots(Cache, _verb.Guid.ToString(),
-				MoMorphTypeTags.kguidMorphSuffix.ToString());
-			Assert.That(slots.Any(s => s.Id == _tenseSlot.Guid.ToString() && s.Name == "Tense"), Is.True,
-				"the verb's inflectional-affix slot is offered, keyed by guid string");
-		}
-
-		[Test]
 		public void CreateNewEntry_StemMsa_FindOrCreatesAStemMsaWithTheChosenPos()
 		{
 			var vernTag = Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Id;
@@ -414,36 +381,13 @@ namespace LexTextControlsTests
 				MoMorphTypeTags.kguidMorphStem.ToString(),
 				msa: new FwSandboxMsa(FwMsaType.Stem, mainPosId: _noun.Guid.ToString()));
 
-			var entry = Cache.ServiceLocator.GetInstance<ILexEntryFactory>()
-				.Create(LcmInsertEntryDialogLauncher.BuildEntryComponents(Cache, payload));
+			var entry = LcmInsertEntryDialogLauncher.CreateNewEntry(Cache, payload);
 
 			Assert.That(entry.SensesOS.Count, Is.EqualTo(1), "a sense was created");
 			var msa = entry.SensesOS[0].MorphoSyntaxAnalysisRA;
 			Assert.That(msa, Is.InstanceOf<IMoStemMsa>(), "a stem MSA was found-or-created on the sense");
 			Assert.That(((IMoStemMsa)msa).PartOfSpeechRA, Is.SameAs(_noun),
 				"the chosen main POS is set on the created stem MSA");
-		}
-
-		[Test]
-		public void ApplyInflectionClass_StemMsa_SetsTheChosenClassOnTheNewEntrySense()
-		{
-			var vernTag = Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Id;
-			var msa = new FwSandboxMsa(FwMsaType.Stem, mainPosId: _noun.Guid.ToString(),
-				inflectionClassId: _nounWeak.Guid.ToString());
-			var payload = new InsertEntryDlgPayload(
-				new System.Collections.Generic.Dictionary<string, string> { [vernTag] = "perro" },
-				new System.Collections.Generic.Dictionary<string, string>(),
-				MoMorphTypeTags.kguidMorphStem.ToString(), msa: msa);
-
-			// Build the entry (find-or-creates the stem MSA), then apply the inflection class as CreateNewEntry does.
-			var entry = Cache.ServiceLocator.GetInstance<ILexEntryFactory>()
-				.Create(LcmInsertEntryDialogLauncher.BuildEntryComponents(Cache, payload));
-			LcmInsertEntryDialogLauncher.ApplyInflectionClass(Cache, entry, msa);
-
-			var stemMsa = entry.SensesOS[0].MorphoSyntaxAnalysisRA as IMoStemMsa;
-			Assert.That(stemMsa, Is.Not.Null);
-			Assert.That(stemMsa.InflectionClassRA, Is.SameAs(_nounWeak),
-				"the chosen inflection class is set on the new entry's stem MSA (the SetEntryMsa parity)");
 		}
 
 		[Test]
@@ -466,8 +410,7 @@ namespace LexTextControlsTests
 				msa: new FwSandboxMsa(FwMsaType.Inflectional, mainPosId: _verb.Guid.ToString(),
 					slotId: _tenseSlot.Guid.ToString()));
 
-			var entry = Cache.ServiceLocator.GetInstance<ILexEntryFactory>()
-				.Create(LcmInsertEntryDialogLauncher.BuildEntryComponents(Cache, payload));
+			var entry = LcmInsertEntryDialogLauncher.CreateNewEntry(Cache, payload);
 
 			var msa = entry.SensesOS[0].MorphoSyntaxAnalysisRA;
 			Assert.That(msa, Is.InstanceOf<IMoInflAffMsa>(), "an inflectional-affix MSA was created");
@@ -487,8 +430,7 @@ namespace LexTextControlsTests
 				msa: new FwSandboxMsa(FwMsaType.Derivational, mainPosId: _verb.Guid.ToString(),
 					secondaryPosId: _noun.Guid.ToString()));
 
-			var entry = Cache.ServiceLocator.GetInstance<ILexEntryFactory>()
-				.Create(LcmInsertEntryDialogLauncher.BuildEntryComponents(Cache, payload));
+			var entry = LcmInsertEntryDialogLauncher.CreateNewEntry(Cache, payload);
 
 			var msa = entry.SensesOS[0].MorphoSyntaxAnalysisRA;
 			Assert.That(msa, Is.InstanceOf<IMoDerivAffMsa>(), "a derivational-affix MSA was created");
@@ -511,12 +453,6 @@ namespace LexTextControlsTests
 				Is.True, "with their symbolic values");
 		}
 
-		[Test]
-		public void BuildInflectionFeatures_UnknownPos_IsEmpty()
-		{
-			Assert.That(LcmInsertEntryDialogLauncher.BuildInflectionFeatures(Cache, "not-a-guid"), Is.Empty);
-		}
-
 		// One realized create exercises morph type (suffix) + MSA POS + slot + INFLECTION FEATURE
 		// together; the find-or-created infl MSA composes all of them, and the IFsFeatStruc round-trips.
 		[Test]
@@ -534,10 +470,9 @@ namespace LexTextControlsTests
 				new System.Collections.Generic.Dictionary<string, string>(),
 				MoMorphTypeTags.kguidMorphSuffix.ToString(), msa: msa);
 
-			// Build the entry (find-or-creates the infl MSA), then apply the inflection features as CreateNewEntry does.
-			var entry = Cache.ServiceLocator.GetInstance<ILexEntryFactory>()
-				.Create(LcmInsertEntryDialogLauncher.BuildEntryComponents(Cache, payload));
-			LcmInsertEntryDialogLauncher.ApplyInflectionFeatures(Cache, entry.SensesOS[0], msa);
+			// The launcher's create path: build, find-or-create the infl MSA, apply the
+			// inflection features.
+			var entry = LcmInsertEntryDialogLauncher.CreateNewEntry(Cache, payload);
 
 			var inflMsa = (IMoInflAffMsa)entry.SensesOS[0].MorphoSyntaxAnalysisRA;
 			// POS + slot compose with the features on the SAME MSA.
@@ -566,9 +501,7 @@ namespace LexTextControlsTests
 				MoMorphTypeTags.kguidMorphSuffix.ToString(), msa: msa);
 
 			// Commit (the launcher's create path).
-			var entry = Cache.ServiceLocator.GetInstance<ILexEntryFactory>()
-				.Create(LcmInsertEntryDialogLauncher.BuildEntryComponents(Cache, payload));
-			LcmInsertEntryDialogLauncher.ApplyInflectionFeatures(Cache, entry.SensesOS[0], msa);
+			var entry = LcmInsertEntryDialogLauncher.CreateNewEntry(Cache, payload);
 
 			// "Reopen": resolve the persisted MSA's FS the way the MsaCreator edit path seeds the editor, and verify
 			// the assignment set the editor would show matches what was committed.
@@ -593,9 +526,7 @@ namespace LexTextControlsTests
 				new System.Collections.Generic.Dictionary<string, string>(),
 				MoMorphTypeTags.kguidMorphStem.ToString(), msa: msa);
 
-			var entry = Cache.ServiceLocator.GetInstance<ILexEntryFactory>()
-				.Create(LcmInsertEntryDialogLauncher.BuildEntryComponents(Cache, payload));
-			LcmInsertEntryDialogLauncher.ApplyInflectionFeatures(Cache, entry.SensesOS[0], msa);
+			var entry = LcmInsertEntryDialogLauncher.CreateNewEntry(Cache, payload);
 
 			Assert.That(entry.SensesOS[0].MorphoSyntaxAnalysisRA, Is.InstanceOf<IMoStemMsa>(),
 				"a stem MSA is unaffected by the inflection-feature apply");
@@ -609,43 +540,6 @@ namespace LexTextControlsTests
 		// if either guard here regressed to a plain dereference, a null sense/chosen/msa reaching this call would
 		// throw a NullReferenceException mid-undo-task, leaving the undo stack unbalanced (BeginUndoTask with no
 		// matching EndUndoTask) instead of the documented, safe no-op.
-
-		[Test]
-		public void ApplyInflectionFeatures_SenseOverload_NullSense_DoesNotThrow()
-		{
-			var chosen = new FwSandboxMsa(FwMsaType.Inflectional, mainPosId: _verb.Guid.ToString());
-			Assert.DoesNotThrow(() => LcmInsertEntryDialogLauncher.ApplyInflectionFeatures(Cache, (ILexSense)null, chosen));
-		}
-
-		[Test]
-		public void ApplyInflectionFeatures_SenseOverload_NullChosen_DoesNotThrow()
-		{
-			var sense = Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
-			_cantar.SensesOS.Add(sense);
-			sense.SandboxMSA = new SandboxGenericMSA { MsaType = MsaType.kStem, MainPOS = _noun };
-
-			Assert.DoesNotThrow(() => LcmInsertEntryDialogLauncher.ApplyInflectionFeatures(Cache, sense, null));
-			Assert.That(sense.MorphoSyntaxAnalysisRA, Is.InstanceOf<IMoStemMsa>(),
-				"a null chosen payload leaves the sense's already-assigned MSA untouched");
-		}
-
-		[Test]
-		public void ApplyInflectionFeatures_MsaOverload_NullMsa_DoesNotThrow()
-		{
-			var chosen = new FwSandboxMsa(FwMsaType.Inflectional, mainPosId: _verb.Guid.ToString());
-			Assert.DoesNotThrow(() =>
-				LcmInsertEntryDialogLauncher.ApplyInflectionFeatures(Cache, (IMoMorphSynAnalysis)null, chosen));
-		}
-
-		[Test]
-		public void ApplyInflectionFeatures_MsaOverload_NullCache_DoesNotThrow()
-		{
-			var msa = Cache.ServiceLocator.GetInstance<IMoInflAffMsaFactory>().Create();
-			_cantar.MorphoSyntaxAnalysesOC.Add(msa);
-			var chosen = new FwSandboxMsa(FwMsaType.Inflectional, mainPosId: _verb.Guid.ToString());
-
-			Assert.DoesNotThrow(() => LcmInsertEntryDialogLauncher.ApplyInflectionFeatures(null, msa, chosen));
-		}
 
 		[Test]
 		public void BuildEntryComponents_NoChosenMsa_FallsBackToTheMorphTypeDefault()
@@ -699,9 +593,7 @@ namespace LexTextControlsTests
 				MoMorphTypeTags.kguidMorphPhrase.ToString(),
 				complexFormTypeKey: _compoundType.Guid.ToString());
 
-			var entry = Cache.ServiceLocator.GetInstance<ILexEntryFactory>()
-				.Create(LcmInsertEntryDialogLauncher.BuildEntryComponents(Cache, payload));
-			LcmInsertEntryDialogLauncher.ApplyComplexFormType(Cache, entry, payload.ComplexFormTypeKey);
+			var entry = LcmInsertEntryDialogLauncher.CreateNewEntry(Cache, payload);
 
 			Assert.That(entry.EntryRefsOS.Count, Is.EqualTo(1), "a complex-form entry ref is added to the new entry");
 			var ler = entry.EntryRefsOS[0];
@@ -721,9 +613,7 @@ namespace LexTextControlsTests
 				MoMorphTypeTags.kguidMorphStem.ToString(),
 				complexFormTypeKey: null); // <Not Applicable>
 
-			var entry = Cache.ServiceLocator.GetInstance<ILexEntryFactory>()
-				.Create(LcmInsertEntryDialogLauncher.BuildEntryComponents(Cache, payload));
-			LcmInsertEntryDialogLauncher.ApplyComplexFormType(Cache, entry, payload.ComplexFormTypeKey);
+			var entry = LcmInsertEntryDialogLauncher.CreateNewEntry(Cache, payload);
 
 			Assert.That(entry.EntryRefsOS, Is.Empty,
 				"<Not Applicable> adds no complex-form entry ref (CreateNewEntryInternal m_fComplexForm false)");

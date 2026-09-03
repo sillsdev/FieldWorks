@@ -1,6 +1,6 @@
 ﻿<#
 .SYNOPSIS
-	Full-conformance token-hygiene check for the FieldWorks Avalonia surface.
+	Full-conformance design-token hygiene check for the FieldWorks Avalonia projects.
 
 .DESCRIPTION
 	Enforces that every color and spacing/dimension value under every root
@@ -82,7 +82,7 @@ if ($env:GITHUB_ACTIONS -eq 'true') {
 }
 
 $files = Get-TokenHygieneScopedFiles -RepoRoot $repoRoot
-Write-Host "token-hygiene: scanning $($files.Count) file(s) under the Avalonia surface"
+Write-Host "token-hygiene: scanning $($files.Count) file(s) in the token-hygiene scope"
 
 $violations = Get-TokenHygieneViolations -Files $files
 

@@ -1,13 +1,17 @@
 ﻿# FieldWorks Avalonia tokens alias Semi's own semantic layer, not independent values
 
-Semi.Avalonia already ships a two-tier token system of its own: raw color-ramp/spacing
-primitives (Layer 1, ~449 keys, no meaning attached) and named semantic roles that alias
-them (Layer 2: `SemiColorText0`-`3`, `SemiColorBorder`, `SemiColorBackground0`-`4`,
-`SemiColorDanger`, `SemiColorLink`, plus a flat spacing/radius/height scale). FieldWorks'
-own product tokens (`FwLabelBrush`, `DataTree.LabelColumnWidth`, `Dialog*`, ...) sit above
-that as a third, FieldWorks-owned tier.
+Semi.Avalonia already ships a two-tier design-token system of its own: raw
+color-ramp/spacing values with no meaning attached (**Semi primitives**, ~449 keys) and
+named semantic roles that alias them (**Semi roles**: `SemiColorText0`-`3`,
+`SemiColorBorder`, `SemiColorBackground0`-`4`, `SemiColorDanger`, `SemiColorLink`, plus a
+flat spacing/radius/height scale). FieldWorks' own product tokens (`FwLabelBrush`,
+`DataTree.LabelColumnWidth`, `Dialog*`, ...) sit above that as a third, FieldWorks-owned
+tier (**FieldWorks tokens**).
 
-**Decision**: default every FieldWorks token to aliasing Semi's Layer 2 role directly,
+The three tiers are named, never numbered: a numbered scheme was tried first and the
+numbering was read in both directions inside a single file. See CONTEXT.md.
+
+**Decision**: default every FieldWorks token to aliasing its Semi role directly,
 deleting the FieldWorks-owned key entirely where Semi's role fits with no divergence
 (callers resolve `SemiColorDanger` etc. directly). Keep a FieldWorks-owned value only where
 a specific, written reason shows Semi's shared role doesn't fit — and that reason must be
@@ -43,7 +47,7 @@ independently by sampling old WinForms screenshots, with no relationship to Semi
 at all).
 
 **Enforcement**: `token-hygiene.ps1` fails on a hardcoded color or spacing literal used
-anywhere in the scoped Avalonia surface. It does not police the token dictionaries
+anywhere in the token-hygiene scope. It does not police the token dictionaries
 themselves: a literal on a primitive resource declaration line — `<SolidColorBrush
 x:Key="..." Color="#696969"/>` — is exempt, because that literal is the token's definition.
 The check requires no justification comment, and does not verify that a token aliases Semi

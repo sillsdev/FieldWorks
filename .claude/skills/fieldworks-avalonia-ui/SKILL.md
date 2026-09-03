@@ -144,8 +144,8 @@ Rules specific to dialogs:
   interop message handling, or other legacy host-only routes unless the
   task explicitly targets interop behavior. Default to fixing the issue
   inside the Avalonia control tree or Avalonia-owned seams.
-- Marshal to the UI thread through `IUiScheduler` (or Avalonia dispatcher
-  in non-region code); no hidden `Task.Run`, no sync-over-async.
+- Marshal to the UI thread through the Avalonia dispatcher; no hidden
+  `Task.Run`, no sync-over-async.
 - Keep preview data lightweight unless the change explicitly opts into
   LCModel/project data; product-facing paths use real edit-session/domain
   contracts — detached DTO-only models remain preview-only.

@@ -60,17 +60,18 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		private static ViewDefinitionModel CompileOrFallback()
 		{
-			string partsDirectory = null;
+			IReadOnlyList<string> searchPath = null;
 			try
 			{
-				partsDirectory = FwDirectoryFinder.GetCodeSubDirectory(@"Language Explorer\Configuration\Parts");
+				// The same search path DetailComposer compiles through -- PartsInventory owns it.
+				searchPath = PartsInventory.SearchPath(FwDirectoryFinder.GetCodeSubDirectory);
 			}
 			catch (ApplicationException)
 			{
 				// No FieldWorks code directory in this environment (bare harness); use the fallback.
 			}
 
-			return LexiconFirstSlice.CompileFromLayoutDirectory(partsDirectory)
+			return LexiconFirstSlice.CompileFromLayoutDirectory(searchPath)
 				?? LexiconFirstSlice.AuthoredFallback();
 		}
 
