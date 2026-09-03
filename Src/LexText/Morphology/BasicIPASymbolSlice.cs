@@ -27,6 +27,8 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		}
 
 		private bool m_justChangedDescription;
+		/// True when this slice populated the phoneme's features from the IPA symbol, so
+		/// clearing the symbol may clear them. False means the user chose them; leave them.
 		private bool m_justChangedFeatures;
 
 		/// <summary>
@@ -110,12 +112,6 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		/// <summary>
 		/// Populates or clears the phoneme's features to match the BasicIPASymbol field.
 		/// </summary>
-		/// <remarks>
-		/// WHEN to write belongs here because it depends on slice state: the latch records that
-		/// this slice populated the features, which is what lets clearing the symbol clear them
-		/// again without discarding features a user set through the chooser. The writing itself
-		/// is in PhonemeFeaturePopulator, so the LT-22716 repair can reuse it.
-		/// </remarks>
 		public void SetFeaturesBasedOnIPA()
 		{
 			var phoneme = (IPhPhoneme)m_obj;
