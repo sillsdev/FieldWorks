@@ -28,7 +28,6 @@
   <Import Project="$(MSBuildThisFileDirectory)RegFree.targets"/>
   <Import Project="$(MSBuildThisFileDirectory)Installer.Wix3.targets" Condition="'$(OS)'=='Windows_NT' and '$(InstallerToolset)'=='Wix3'"/>
   <Import Project="$(MSBuildThisFileDirectory)Installer.targets" Condition="'$(OS)'=='Windows_NT' and '$(InstallerToolset)'=='Wix6'"/>
-  <Import Project="$(MSBuildThisFileDirectory)LocalLibrary.targets"/>
 
   <!-- BuildInstaller target is imported from Installer.Wix3.targets or Installer.targets (Wix6) -->
 

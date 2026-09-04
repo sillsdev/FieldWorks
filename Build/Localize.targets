@@ -105,8 +105,8 @@
 	<Target Name="VerifyLcmCloned">
 		<Error
 			Text="LcmSrcDir '$(LcmSrcDir)' was not found.
-To update localizations, liblcm must be cloned locally to the location specified by %24LcmRootDir
-(historically set in $(MSBuildThisFileDirectory)LibraryDevelopment.properties; now an environment variable)."
+To update localizations, liblcm must be cloned locally to the location specified by the
+%24LcmRootDir environment variable."
 			Condition="!Exists('$(LcmSrcDir)')"
 		/>
 	</Target>
