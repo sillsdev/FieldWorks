@@ -77,14 +77,14 @@ git config user.email "your.github.id@users.noreply.github.com"
 
 #### Configure Branch Tracking
 
-Set up tracking for release branches you'll be working on:
+Set up tracking for branches you'll be working on:
 
 ```powershell
 # Fetch all branches
 git fetch --all
 
-# Track a specific release branch
-git checkout release/9.3
+# Track the main branch
+git checkout main
 ```
 
 ### 3. Development Environment
@@ -111,26 +111,16 @@ Recommended Git tools:
 
 For core developers, the canonical AI-assisted path is now [AI-Assisted PR Workflow](workflows/ai-pr-workflow.md).
 
-Use that guide when you want the full FieldWorks workflow from Jira through merge-ready review:
+## Working with Branches
 
-1. Pull the Jira ticket through approved Atlassian tooling.
-2. Create a dedicated branch worktree with the repo task.
-3. Build and test with `./build.ps1`, `./test.ps1`, or the matching VS Code tasks.
-4. Run `pr-preflight` before opening or updating the PR.
-5. Use the review-response workflow for Copilot and human comments.
-
-If you use Claude Code, create the worktree with the repo task first, then launch Claude inside that worktree.
-
-### 4. Working with Branches
-
-#### Branch Naming Conventions
+### Branch Naming Conventions
 
 - `feature/<name>` - New features
 - `bugfix/<issue-number>-<description>` - Bug fixes
 - `hotfix/<version>` - Emergency fixes for released versions
 - `release/<version>` - Release preparation branches
 
-#### Creating Feature Branches
+### Creating Feature Branches
 
 ```powershell
 # Create a new feature branch from the default branch
@@ -139,7 +129,7 @@ git pull
 git checkout -b feature/my-feature-name
 ```
 
-#### Submitting Changes
+### Submitting Changes
 
 1. Push your branch to origin:
    ```powershell
@@ -154,7 +144,7 @@ git checkout -b feature/my-feature-name
 
 See [AI-Assisted PR Workflow](workflows/ai-pr-workflow.md) for the canonical core-developer workflow, and [Pull Request Workflow](workflows/pull-request-workflow.md) for the generic GitHub PR mechanics.
 
-### 5. Release Management
+## Release Management
 
 If you are a release manager, additional setup may be required. Contact the team lead for:
 - Access to release automation scripts

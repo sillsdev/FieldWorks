@@ -188,6 +188,7 @@ git config --global merge.conflictstyle diff3
 # Enable helpful coloring
 git config --global color.ui auto
 ```
+
 ## Contributing Code
 
 ### General Guidelines
@@ -223,7 +224,7 @@ People we know well might be asked to join the core development team. Core devel
 ## Getting Help
 
 - **Documentation**: Check the [docs/](.) folder for additional guides
-- **Issues**: Search or file issues on [GitHub](https://github.com/sillsdev/FieldWorks/issues)
+- **Issues**: Search or file issues on [Jira](https://jira.sil.org/issues/?jql=project%20%3D%20LT)
 - **Wiki**: Historical documentation at [FwDocumentation wiki](https://github.com/sillsdev/FwDocumentation/wiki) (being migrated to this repository)
 
 ## See Also
