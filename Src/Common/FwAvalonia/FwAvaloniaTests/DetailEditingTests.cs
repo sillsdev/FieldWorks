@@ -423,6 +423,151 @@ namespace FwAvaloniaTests
 			Assert.That(errors.Text, Does.Contain("required"));
 		}
 
+		/// <summary>
+		/// Clicking one row while another holds a staged edit must not re-show the view
+		/// mid-click.
+		///
+		/// Found in the app: with a custom field edited, clicking the Is Abstract checkbox only
+		/// focused it -- a second click was needed to toggle. The press moved focus, the autosave
+		/// committed, the host rebuilt these controls, and the release then landed on a detached
+		/// control. Typing nothing first made it work, because no session was open to commit.
+		/// </summary>
+		[AvaloniaTest]
+		public void AutoSave_DuringAPointerGesture_HoldsTheReShowUntilTheRelease()
+		{
+			var (view, context, _) = ShowEditable();
+			var completed = 0;
+			view.EditCompleted += (s, e) => completed++;
+			var box = Find<TextBox>(view, "LexemeFormEditor.vern");
+
+			box.Text = "perro"; // stage: opens the session
+			Dispatcher.UIThread.RunJobs();
+
+			RaisePointerPressed(view);
+			box.RaiseEvent(new RoutedEventArgs(InputElement.LostFocusEvent));
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(context.CommitCount, Is.EqualTo(1),
+				"the edit still COMMITS on focus loss -- only the re-show waits");
+			Assert.That(completed, Is.Zero,
+				"re-showing here would rebuild the control the press landed on, and the release "
+				+ "would reach nothing");
+
+			RaisePointerReleased(view);
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(completed, Is.EqualTo(1),
+				"the held re-show is delivered once the gesture has completed");
+		}
+
+		/// <summary>
+		/// Several commits inside ONE gesture produce ONE re-show.
+		///
+		/// Driven through reference-remove gestures rather than two focus-loss autosaves: the
+		/// fake context reports IsOpen only until its first commit, so a second autosave never
+		/// fires and a test written that way passes whether or not the holding works.
+		/// </summary>
+		[AvaloniaTest]
+		public void ManyCommitsInOneGesture_ProduceOneReShow()
+		{
+			var model = new DetailModel("LexEntry", "test",
+				new List<DetailField> { PublishInField(), SecondVectorField() },
+				new List<ViewDiagnostic>());
+			var context = new FakeDetailEditContext();
+			var view = new DataTree(model, context);
+			var window = new Window { Content = view, Width = 500, Height = 300 };
+			window.Show();
+			Dispatcher.UIThread.RunJobs();
+			var completed = 0;
+			view.EditCompleted += (s, e) => completed++;
+
+			RaisePointerPressed(view);
+			RemoveFirstItem(view, "PublishIn.Item.p1");
+			RemoveFirstItem(view, "Second.Item.s1");
+
+			Assert.That(context.CommitCount, Is.EqualTo(2), "both gestures committed");
+			Assert.That(completed, Is.Zero, "and neither re-showed mid-gesture");
+
+			RaisePointerReleased(view);
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(completed, Is.EqualTo(1), "one gesture, one re-show");
+		}
+
+		private static void RemoveFirstItem(DataTree view, string itemAutomationId)
+		{
+			var item = Find<TextBlock>(view, itemAutomationId);
+			var removeItem = (MenuItem)((MenuFlyout)item.ContextFlyout).Items[0];
+			removeItem.RaiseEvent(new RoutedEventArgs(MenuItem.ClickEvent));
+			Dispatcher.UIThread.RunJobs();
+		}
+
+		private static DetailField SecondVectorField() => new DetailField(
+			"LexEntry/x/#10", "Second Vector", "Second", null,
+			DetailFieldKind.ReferenceVector, EditorClassification.Known, "Second", null,
+			HostRouting.Inherit, null,
+			new List<DetailChoiceOption> { new DetailChoiceOption("s1", "One") },
+			null, isEditable: true, indent: 0,
+			items: new List<DetailChoiceOption> { new DetailChoiceOption("s1", "One") });
+
+
+		/// <summary>
+		/// A gesture that ends outside the view delivers no release here. The held re-show is not
+		/// lost -- the next gesture's release delivers it. Nothing that matters is stale
+		/// meanwhile:
+		/// the commit already happened, so the values on screen are the committed ones.
+		///
+		/// PointerCaptureLostEvent is NOT the net for this. It is a Direct routed event, so it
+		/// fires on no Bubble registration and does not route up from the descendant that lost
+		/// capture.
+		/// </summary>
+		[AvaloniaTest]
+		public void AutoSave_WhenAGestureEndsOutsideTheView_TheNextReleaseDelivers()
+		{
+			var (view, _, _) = ShowEditable();
+			var completed = 0;
+			view.EditCompleted += (s, e) => completed++;
+			var box = Find<TextBox>(view, "LexemeFormEditor.vern");
+
+			box.Text = "perro";
+			Dispatcher.UIThread.RunJobs();
+			RaisePointerPressed(view);
+			box.RaiseEvent(new RoutedEventArgs(InputElement.LostFocusEvent));
+			Dispatcher.UIThread.RunJobs();
+			Assert.That(completed, Is.Zero, "held for the gesture");
+
+			// No release arrives for that gesture: the pointer went up outside the view.
+			RaisePointerPressed(view);
+			RaisePointerReleased(view);
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(completed, Is.EqualTo(1),
+				"the held re-show is delivered by the next release, not stranded");
+		}
+
+
+		private static void RaisePointerPressed(Control target)
+		{
+			target.RaiseEvent(new PointerPressedEventArgs(target,
+				new Pointer(Pointer.GetNextFreeId(), PointerType.Mouse, true),
+				target, default, 0,
+				new PointerPointProperties(RawInputModifiers.LeftMouseButton,
+					PointerUpdateKind.LeftButtonPressed),
+				KeyModifiers.None));
+			Dispatcher.UIThread.RunJobs();
+		}
+
+		private static void RaisePointerReleased(Control target)
+		{
+			target.RaiseEvent(new PointerReleasedEventArgs(target,
+				new Pointer(Pointer.GetNextFreeId(), PointerType.Mouse, true),
+				target, default, 0,
+				new PointerPointProperties(RawInputModifiers.None,
+					PointerUpdateKind.LeftButtonReleased),
+				KeyModifiers.None, MouseButton.Left));
+			Dispatcher.UIThread.RunJobs();
+		}
+
 		[AvaloniaTest]
 		public void Escape_CancelsTheSession_AndRaisesEditCompleted()
 		{

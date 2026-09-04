@@ -197,6 +197,18 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				if (_editContext != null && _editContext.IsOpen)
 					OnSave();
 			}, Avalonia.Interactivity.RoutingStrategies.Bubble);
+
+			// A click on another row autosaves and re-shows, rebuilding controls between press
+			// and release. Tunnel, to beat any descendant to the press.
+			AddHandler(Avalonia.Input.InputElement.PointerPressedEvent, (s, e) =>
+				_pointerGestureActive = true,
+				Avalonia.Interactivity.RoutingStrategies.Tunnel, handledEventsToo: true);
+			// Bubble, so descendants finish the gesture (a checkbox toggles, and may itself
+			// commit) before the held re-show is released.
+			AddHandler(Avalonia.Input.InputElement.PointerReleasedEvent, (s, e) => EndPointerGesture(),
+				Avalonia.Interactivity.RoutingStrategies.Bubble, handledEventsToo: true);
+			// A gesture ending outside the view delivers no release here; the next release
+			// delivers the held re-show. Only the refresh waits -- the commit already happened.
 		}
 
 		/// <summary>
@@ -283,13 +295,47 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 
 			_validationBlock.IsVisible = false;
 			_editContext.Commit();
-			EditCompleted?.Invoke(this, EventArgs.Empty);
+			RaiseOrDeferEditCompleted();
 		}
 
 		private void OnCancel()
 		{
 			_validationBlock.IsVisible = false;
 			_editContext.Cancel();
+			RaiseOrDeferEditCompleted();
+		}
+
+		// True between a pointer press and its release anywhere in this view.
+		private bool _pointerGestureActive;
+		private bool _editCompletedHeld;
+
+		/// <summary>
+		/// Raises the completion the host re-shows on -- unless a pointer gesture is in flight,
+		/// in
+		/// which case it waits for the release. The commit itself is NOT delayed; only the
+		/// re-show
+		/// is, because rebuilding mid-click destroys the control the press landed on.
+		/// </summary>
+		private void RaiseOrDeferEditCompleted()
+		{
+			if (_pointerGestureActive)
+			{
+				_editCompletedHeld = true;
+				return;
+			}
+
+			EditCompleted?.Invoke(this, EventArgs.Empty);
+		}
+
+		// One re-show per gesture however many commits it produced: the focus-loss autosave of
+		// the
+		// field being left, and any commit by the control being clicked, coalesce into this.
+		private void EndPointerGesture()
+		{
+			_pointerGestureActive = false;
+			if (!_editCompletedHeld)
+				return;
+			_editCompletedHeld = false;
 			EditCompleted?.Invoke(this, EventArgs.Empty);
 		}
 
