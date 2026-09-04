@@ -22,6 +22,10 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 		// also survives across SESSIONS, mirroring legacy slice-splitter persistence.
 		private double? _rememberedLabelColumnWidth;
 
+		/// <inheritdoc />
+		public override bool IsDetailPointerGestureActive
+			=> (CurrentContent as DataTree)?.IsPointerGestureActive == true;
+
 		public DetailHostControl()
 		{
 			Name = "DetailHostControl";
@@ -55,6 +59,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 					labelColumnWidthChanged?.Invoke(w);
 				});
 			view.EditCompleted += (s, e) => RaiseDetailEditCompleted();
+			view.PointerGestureEnded += (s, e) => RaiseDetailPointerGestureEnded();
 
 			var focusMemento = DetailFocusMemory.Capture(CurrentContent);
 			if (focusMemento != null)

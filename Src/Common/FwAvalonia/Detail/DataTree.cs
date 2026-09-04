@@ -262,6 +262,17 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		/// </summary>
 		public event EventHandler EditCompleted;
 
+		/// <summary>
+		/// Whether a pointer press is in flight anywhere in this view. A host must not rebuild
+		/// these controls while it is true: the release would reach a detached control and the
+		/// click would do nothing.
+		/// </summary>
+		public bool IsPointerGestureActive => _pointerGestureActive;
+
+		/// <summary>Raised when that gesture ends, so a host holding a refresh can deliver it.
+		/// Raised for every gesture, edit or no edit.</summary>
+		public event EventHandler PointerGestureEnded;
+
 		// 14.4: no Save/Cancel buttons -- the legacy view saves as you go. The footer carries
 		// only the
 		// inline validation messages (a failed autosave is never silent).
@@ -332,11 +343,18 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		// field being left, and any commit by the control being clicked, coalesce into this.
 		private void EndPointerGesture()
 		{
-			_pointerGestureActive = false;
-			if (!_editCompletedHeld)
+			if (!_pointerGestureActive)
 				return;
-			_editCompletedHeld = false;
-			EditCompleted?.Invoke(this, EventArgs.Empty);
+			_pointerGestureActive = false;
+			if (_editCompletedHeld)
+			{
+				_editCompletedHeld = false;
+				EditCompleted?.Invoke(this, EventArgs.Empty);
+			}
+
+			// Always, even with no edit of our own: the commit's PropChanged may have left the
+			// host holding a refresh that only this signal releases.
+			PointerGestureEnded?.Invoke(this, EventArgs.Empty);
 		}
 
 		// Viewing parity (11.x): a header owns every more-indented row up to the next row at its
