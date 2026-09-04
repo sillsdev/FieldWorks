@@ -7,6 +7,7 @@
 		Imported by:
 		  - Directory.Packages.props  (managed NuGet CPM)
 		  - Build/mkall.targets       (native C++ build)
+		  - Build/PackageRestore.targets (restore, including nested ones)
 
 		Update a version here to update ALL consumers automatically.
 		=============================================================
@@ -24,4 +25,12 @@
 		<IcuNugetVersion>70.1.152</IcuNugetVersion>
 		<GeckoNugetVersion>60.0.56</GeckoNugetVersion>
 	</PropertyGroup>
+
+	<!--
+		Local library overrides, written by build.ps1 -LocalLibraries. Imported
+		here, not passed on a command line, because a restore run through Exec
+		is a new process and does not inherit global properties.
+	-->
+	<Import Project="$(MSBuildThisFileDirectory)LocalLibraries.props"
+		Condition="Exists('$(MSBuildThisFileDirectory)LocalLibraries.props')" />
 </Project>

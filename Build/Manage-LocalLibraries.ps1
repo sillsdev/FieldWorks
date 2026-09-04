@@ -5,11 +5,11 @@
 .DESCRIPTION
 	Two modes of operation:
 
-	Pack mode (one or more source paths provided):
-	  Packs local checkouts of liblcm, libpalaso, chorus, and/or machine into the
-	  local NuGet feed using each library's own version. Detects the version
-	  from produced packages, updates SilVersions.props to match, copies
-	  PDBs, and clears stale cached packages.
+	Build pack mode (one or more source paths and -VersionOutputPath provided):
+	  Packs local checkouts of liblcm, libpalaso, chorus, machine, and/or
+	  L10NSharp into the local NuGet feed using each library's own version.
+	  Detects the versions, writes them for build.ps1, copies PDBs, and clears
+	  stale cached packages.
 
 	  Multiple libraries can be packed in a single call. libpalaso is always
 	  packed first (other libraries may depend on it).
@@ -66,13 +66,16 @@
 	Sets the version in SilVersions.props (SetVersion mode). Use to revert
 	to an upstream version. Not used in pack mode.
 
-.EXAMPLE
-	.\Build\Manage-LocalLibraries.ps1 -Palaso -PalasoPath C:\Repos\libpalaso
-	Packs libpalaso, detects its version, and updates SilVersions.props.
+.PARAMETER VersionOutputPath
+	Path to write the packed versions to, as JSON keyed by version property.
 
 .EXAMPLE
-	.\Build\Manage-LocalLibraries.ps1 -Palaso -Chorus -ChorusPath C:\Repos\chorus
-	Packs libpalaso (from env var) and then chorus from the given path.
+	.\build.ps1 -LocalLibraries palaso
+	Rebuilds libpalaso from LIBPALASO_PATH for this FieldWorks build.
+
+.EXAMPLE
+	.\build.ps1 -LocalLibraries palaso,chorus
+	Rebuilds libpalaso and chorus from their configured paths for this build.
 
 .EXAMPLE
 	.\Build\Manage-LocalLibraries.ps1 -Library palaso -Version 17.0.0
@@ -98,59 +101,20 @@ param(
 	[ValidateSet('palaso', 'lcm', 'chorus', 'machine', 'l10nsharp')]
 	[string]$Library,
 
-	[string]$Version
+	[string]$Version,
+
+	[string]$VersionOutputPath,
+
+	[string]$LocalFeedPath
 )
 
 $ErrorActionPreference = "Stop"
-
-# ---------------------------------------------------------------------------
-# Library-specific configuration
-# ---------------------------------------------------------------------------
-
-$LibraryConfig = @{
-	palaso = @{
-		VersionProperty = 'SilLibPalasoVersion'
-		PdbRelativeDir  = 'output/Debug/net462'
-		CachePrefixes   = @(
-			'sil.core', 'sil.windows', 'sil.dblbundle', 'sil.writingsystems',
-			'sil.dictionary', 'sil.lift', 'sil.lexicon', 'sil.archiving',
-			'sil.media', 'sil.scripture', 'sil.testutilities'
-		)
-		EnvVar          = 'LIBPALASO_PATH'
-	}
-	lcm = @{
-		VersionProperty = 'SilLcmVersion'
-		PdbRelativeDir  = 'artifacts/Debug/net462'
-		CachePrefixes   = @('sil.lcmodel')
-		EnvVar          = 'LIBLCM_PATH'
-	}
-	chorus = @{
-		VersionProperty = 'SilChorusVersion'
-		PdbRelativeDir  = 'output/Debug/net462'
-		CachePrefixes   = @('sil.chorus')
-		EnvVar          = 'LIBCHORUS_PATH'
-	}
-	machine = @{
-		VersionProperty = 'SilMachineVersion'
-		PdbRelativeDir  = 'bin/Debug/netstandard2.0'
-		CachePrefixes   = @('sil.machine')
-		EnvVar          = 'SILMACHINE_PATH'
-		# Pack only the projects FieldWorks uses (avoids native CMake deps)
-		PackProjects    = @(
-			'src/SIL.Machine/SIL.Machine.csproj',
-			'src/SIL.Machine.Morphology.HermitCrab/SIL.Machine.Morphology.HermitCrab.csproj'
-		)
-	}
-	l10nsharp = @{
-		VersionProperty = 'L10NSharpVersion'
-		PdbRelativeDir  = 'output/Debug/net462'
-		CachePrefixes   = @('l10nsharp')
-		EnvVar          = 'L10NSHARP_PATH'
-	}
-}
-
-# Pack order: libpalaso first (other libraries may depend on it)
-$PackOrder = @('palaso', 'l10nsharp', 'lcm', 'chorus', 'machine')
+Import-Module (Join-Path $PSScriptRoot 'LocalLibraries.psm1') -Force
+$LibraryConfig = Get-FieldWorksLocalLibraryConfig
+# Pack order: libpalaso first, because other libraries may depend on it. The
+# order comes from the catalogue's declaration order, so do not alphabetise it.
+$PackOrder = @($LibraryConfig.Keys)
+$packedVersions = [ordered]@{}
 
 # ---------------------------------------------------------------------------
 # Read SilVersions.props
@@ -205,34 +169,49 @@ function Update-VersionAndClearCache {
 
 	Write-Host "Updated SilVersions.props ($($cfg.VersionProperty) = $NewVersion)" -ForegroundColor Yellow
 
-	$packagesDir = Join-Path $repoRoot "packages"
-	if (Test-Path $packagesDir) {
-		$patterns = $cfg.CachePrefixes | ForEach-Object { "$packagesDir/$_*" }
-		$stale = @(Get-ChildItem -Path $patterns -Directory -ErrorAction SilentlyContinue)
-		if ($stale.Count -gt 0) {
-			$stale | Remove-Item -Recurse -Force
-			Write-Host "Cleared $($stale.Count) stale package folder(s) from packages/." -ForegroundColor Yellow
-		}
-	}
+	Clear-FieldWorksLibraryPackageCache -PackagesDirectory (Join-Path $repoRoot 'packages') `
+		-Libraries @($LibName)
 }
 
-# ---------------------------------------------------------------------------
-# Helper: extract version from a .nupkg filename
-# ---------------------------------------------------------------------------
-# Split on '.', find the first segment starting with a digit — everything
-# from there onward (minus .nupkg) is the version.
-# E.g. SIL.Windows.Forms.Keyboarding.18.0.0-beta.nupkg → 18.0.0-beta
+# --- Copy a library's PDBs next to the build output ---
 
-function Get-PackageVersion {
-	param([string]$FileName)
-	$base = $FileName -replace '\.nupkg$', ''
-	$segments = $base -split '\.'
-	for ($i = 0; $i -lt $segments.Count; $i++) {
-		if ($segments[$i] -match '^\d') {
-			return ($segments[$i..($segments.Count - 1)] -join '.')
+function Copy-LibrarySymbols {
+	param([string]$LibName, [string]$SourceDir)
+	$cfg = $LibraryConfig[$LibName]
+
+	$outputDebugDir = Join-Path $repoRoot "Output/Debug"
+	$downloadsDir   = Join-Path $repoRoot "Downloads"
+	$copied = 0
+
+	# A library that writes per-project output needs one directory per project.
+	foreach ($relativeDir in @($cfg.PdbRelativeDir)) {
+		$pdbSourceDir = Join-Path $SourceDir $relativeDir
+		if (-not (Test-Path $pdbSourceDir)) {
+			continue
 		}
+		$pdbFiles = @(Get-ChildItem -Path $pdbSourceDir -Filter "*.pdb" -File)
+		if ($pdbFiles.Count -eq 0) {
+			continue
+		}
+		foreach ($dir in @($outputDebugDir, $downloadsDir)) {
+			if (-not (Test-Path $dir)) {
+				New-Item -Path $dir -ItemType Directory -Force | Out-Null
+			}
+		}
+		$pdbFiles | Copy-Item -Destination $outputDebugDir -Force
+		$pdbFiles | Copy-Item -Destination $downloadsDir -Force
+		$copied += $pdbFiles.Count
 	}
-	return $null
+
+	if ($copied -gt 0) {
+		Write-Host "Copied $copied PDB file(s) to Output/Debug/ and Downloads/..." `
+			-ForegroundColor Cyan
+	}
+	else {
+		# Say where we looked: a wrong directory here fails silently otherwise.
+		Write-Host ("No PDB files found for {0} under: {1}" -f $LibName,
+			((@($cfg.PdbRelativeDir)) -join ', ')) -ForegroundColor Yellow
+	}
 }
 
 # ---------------------------------------------------------------------------
@@ -245,109 +224,108 @@ function Invoke-PackLibrary {
 	$cfg = $LibraryConfig[$LibName]
 	$node = Get-VersionNode $LibName
 
+	$packTargets = if ($cfg.PackProjects -and $cfg.PackProjects.Count -gt 0) {
+		@($cfg.PackProjects | ForEach-Object { Join-Path $SourceDir $_ })
+	} else { @($SourceDir) }
+
+	# NuGet resolves an extracted (id, version) before consulting a folder feed,
+	# so a local pack must never reuse the published version string.
+	$sourceState = Get-FieldWorksLibrarySourceState -SourceDirectory $SourceDir
+	$coreVersion = Get-FieldWorksLibraryCoreVersion -SourceDirectory $SourceDir `
+		-LibraryEntry $cfg -FallbackVersion $node.InnerText.Trim()
+	$packVersion = Get-FieldWorksLocalPackVersion `
+		-CoreVersion $coreVersion -SourceState $sourceState
+
 	Write-Host ""
 	Write-Host "========================================" -ForegroundColor Cyan
 	Write-Host "Packing $LibName" -ForegroundColor Cyan
 	Write-Host "  Source:     $SourceDir" -ForegroundColor Cyan
+	$dirtyNote = if ($sourceState.IsDirty) { ' (dirty)' } else { '' }
+	Write-Host "  Branch:     $($sourceState.Branch)$dirtyNote" -ForegroundColor Cyan
+	Write-Host "  Commit:     $($sourceState.ShortSha)" -ForegroundColor Cyan
 	Write-Host "  Current:    $($node.InnerText.Trim())" -ForegroundColor Cyan
+	Write-Host "  Packing as: $packVersion" -ForegroundColor Cyan
 	Write-Host "  Output:     $LocalRepo" -ForegroundColor Cyan
 	Write-Host "========================================" -ForegroundColor Cyan
 
-	# Record timestamp before pack so we can find newly-produced packages
-	$packStart = Get-Date
+	if ($sourceState.IsDirty) {
+		# Name the paths: while the tree is dirty every build repacks, so the
+		# way to a reusable package is to commit or remove these.
+		$shown = @($sourceState.DirtyPaths | Select-Object -First 5)
+		Write-Host ("Uncommitted changes force a repack ({0}):" -f
+			$sourceState.DirtyPaths.Count) -ForegroundColor Yellow
+		$shown | ForEach-Object { Write-Host "  $_" -ForegroundColor Yellow }
+		if ($sourceState.DirtyPaths.Count -gt $shown.Count) {
+			Write-Host ("  ... and {0} more" -f
+				($sourceState.DirtyPaths.Count - $shown.Count)) -ForegroundColor Yellow
+		}
+	}
+	elseif (Test-FieldWorksPackIsCurrent -LocalRepository $LocalRepo `
+			-PackVersion $packVersion -SourceState $sourceState) {
+		Write-Host "Reusing the packed $packVersion (commit unchanged)." `
+			-ForegroundColor Green
+		$script:packedVersions[$cfg.VersionProperty] = $packVersion
+		Copy-LibrarySymbols -LibName $LibName -SourceDir $SourceDir
+		return
+	}
+
+	# Only the library being repacked loses its local packages.
+	Clear-FieldWorksLocalLibraries -PackagesDirectory (Join-Path $repoRoot 'packages') `
+		-LocalRepository $LocalRepo -Libraries @($LibName)
+
+	# Build first: a package may include output from a framework its own project
+	# does not build, which pack alone does not produce.
+	$commonBuildArgs = @(
+		'-c', 'Debug'
+		"-p:Version=$packVersion"
+		'-p:DisableGitVersionTask=true'
+		"-p:RestoreAdditionalProjectSources=$LocalRepo"
+	)
+	Write-Host "Running dotnet build..." -ForegroundColor Cyan
+	foreach ($buildTarget in $packTargets) {
+		& dotnet build $buildTarget @commonBuildArgs
+		if ($LASTEXITCODE -ne 0) {
+			throw "dotnet build failed for $LibName ($buildTarget)."
+		}
+	}
 
 	Write-Host "Running dotnet pack..." -ForegroundColor Cyan
 	$commonPackArgs = @(
 		'-c', 'Debug'
+		"-p:Version=$packVersion"
+		# GitVersion.MsBuild assigns Version inside a target, which outranks a
+		# command-line property, so it must be switched off for the stamp to hold.
+		'-p:DisableGitVersionTask=true'
 		"-p:IncludeSymbols=true"
 		"-p:SymbolPackageFormat=snupkg"
+		"-p:RestoreAdditionalProjectSources=$LocalRepo"
 		'--output', $LocalRepo
 	)
 
-	$projects = $cfg.PackProjects
-	if ($projects -and $projects.Count -gt 0) {
-		foreach ($proj in $projects) {
-			$projPath = Join-Path $SourceDir $proj
-			& dotnet pack $projPath @commonPackArgs
-			if ($LASTEXITCODE -ne 0) {
-				throw "dotnet pack failed for $LibName ($proj)."
-			}
-		}
-	}
-	else {
-		& dotnet pack $SourceDir @commonPackArgs
+	foreach ($packTarget in $packTargets) {
+		& dotnet pack $packTarget @commonPackArgs
 		if ($LASTEXITCODE -ne 0) {
-			throw "dotnet pack failed for $LibName."
+			throw "dotnet pack failed for $LibName ($packTarget)."
 		}
 	}
 
-	# Find .nupkg files created after pack started (exclude .snupkg and test pkgs)
-	$newPackages = @(
-		Get-ChildItem -Path $LocalRepo -Filter "*.nupkg" -File |
-			Where-Object { $_.LastWriteTime -ge $packStart -and $_.Extension -eq '.nupkg' -and $_.Name -notmatch 'tests' }
+	# Verify the stamped version actually reached the feed.
+	$produced = @(
+		Get-ChildItem -Path $LocalRepo -Filter "*.$packVersion.nupkg" -File |
+			Where-Object { $_.Name -notmatch 'tests' }
 	)
-
-	if ($newPackages.Count -eq 0) {
-		$currentVer = (Get-VersionNode $LibName).InnerText.Trim()
-		Write-Host ""
-		Write-Host "WARNING: No new .nupkg files were produced for $LibName." -ForegroundColor Yellow
-		Write-Host "  The library version may not have changed since the last pack." -ForegroundColor Yellow
-		Write-Host "  Current version in SilVersions.props: $currentVer" -ForegroundColor Yellow
-		Write-Host "  Skipping version update for $LibName." -ForegroundColor Yellow
-		return
+	if ($produced.Count -eq 0) {
+		throw ("dotnet pack produced no package for $LibName at version " +
+			"$packVersion. Inspect $LocalRepo.")
 	}
 
-	Write-Host "New packages found:" -ForegroundColor Gray
-	$newPackages | ForEach-Object { Write-Host "  $($_.Name)" -ForegroundColor Gray }
-
-	$detectedVersions = @($newPackages | ForEach-Object { Get-PackageVersion $_.Name } |
-		Where-Object { $_ } | Sort-Object -Unique)
-
-	Write-Host "Detected version(s): $($detectedVersions -join ', ')" -ForegroundColor Gray
-
-	if ($detectedVersions.Count -eq 0) {
-		throw "Could not parse version from produced packages: $($newPackages.Name -join ', ')"
-	}
-	if ($detectedVersions.Count -gt 1) {
-		Write-Host "WARNING: Multiple versions detected in produced packages:" -ForegroundColor Red
-		$detectedVersions | ForEach-Object { Write-Host "  $_" -ForegroundColor Red }
-		throw "Expected all packages to share one version. Clean $LocalRepo and retry."
-	}
-
-	$packVersion = $detectedVersions[0]
 	Write-Host ""
-	Write-Host "Pack complete ($($newPackages.Count) package(s), version $packVersion)." -ForegroundColor Green
+	Write-Host "Pack complete ($($produced.Count) package(s), version $packVersion)." `
+		-ForegroundColor Green
 
-	# Update SilVersions.props and clear cache
-	Update-VersionAndClearCache -LibName $LibName -NewVersion $packVersion
-	Write-Host "To revert: git checkout Build/SilVersions.props" -ForegroundColor Yellow
+	$script:packedVersions[$cfg.VersionProperty] = $packVersion
 
-	# Copy PDB files to Output/Debug/ and Downloads/
-	$pdbSourceDir = Join-Path $SourceDir $cfg.PdbRelativeDir
-
-	if (Test-Path $pdbSourceDir) {
-		$outputDebugDir = Join-Path $repoRoot "Output/Debug"
-		$downloadsDir   = Join-Path $repoRoot "Downloads"
-
-		foreach ($dir in @($outputDebugDir, $downloadsDir)) {
-			if (-not (Test-Path $dir)) {
-				New-Item -Path $dir -ItemType Directory -Force | Out-Null
-			}
-		}
-
-		$pdbFiles = @(Get-ChildItem -Path $pdbSourceDir -Filter "*.pdb" -File)
-		if ($pdbFiles.Count -gt 0) {
-			Write-Host "Copying $($pdbFiles.Count) PDB file(s) to Output/Debug/ and Downloads/..." -ForegroundColor Cyan
-			$pdbFiles | Copy-Item -Destination $outputDebugDir -Force
-			$pdbFiles | Copy-Item -Destination $downloadsDir -Force
-		}
-		else {
-			Write-Host "No PDB files found in $pdbSourceDir" -ForegroundColor Yellow
-		}
-	}
-	else {
-		Write-Host "PDB source directory not found: $pdbSourceDir (PDBs will only be in .snupkg)" -ForegroundColor Yellow
-	}
+	Copy-LibrarySymbols -LibName $LibName -SourceDir $SourceDir
 
 	Write-Host ""
 	Write-Host "[OK] $LibName packed successfully." -ForegroundColor Green
@@ -397,37 +375,39 @@ if ($toPack.Count -gt 0) {
 	if ($Version) {
 		Write-Host "WARNING: -Version is ignored in pack mode (version is detected from produced packages)." -ForegroundColor Yellow
 	}
+	if (-not $VersionOutputPath) {
+		throw "Packing local libraries is build-scoped. Run .\build.ps1 -LocalLibraries <name>."
+	}
 
-	$localRepo = $env:LOCAL_NUGET_REPO
+	$localRepo = $LocalFeedPath
 	if (-not $localRepo) {
-		throw "The LOCAL_NUGET_REPO environment variable is not set. Set it to a folder path (e.g. C:\localnugetpackages)."
+		$localRepo = Get-FieldWorksLocalFeedPath -RepositoryRoot $repoRoot
 	}
 	if (-not (Test-Path $localRepo)) {
 		Write-Host "Creating local NuGet repo folder: $localRepo" -ForegroundColor Yellow
 		New-Item -Path $localRepo -ItemType Directory -Force | Out-Null
 	}
-
-	# Ensure local NuGet source is registered (user-level config)
-	$sourceList = & dotnet nuget list source 2>&1
-	$normalizedRepo = [System.IO.Path]::GetFullPath($localRepo).TrimEnd('\', '/')
-	$alreadyRegistered = $sourceList | Where-Object {
-		$_.Trim() -replace '[\\/]$', '' -ieq $normalizedRepo
-	}
-	if (-not $alreadyRegistered) {
-		& dotnet nuget add source $localRepo --name local 2>&1 | Out-Null
-		Write-Host "Added local NuGet source: $localRepo" -ForegroundColor Yellow
-	}
-
 	Write-Host ""
 	Write-Host "Libraries to pack: $($toPack.Keys -join ', ')" -ForegroundColor Cyan
 
 	foreach ($lib in $toPack.Keys) {
 		Invoke-PackLibrary -LibName $lib -SourceDir $toPack[$lib] -LocalRepo $localRepo
 	}
+	$versionOutputDirectory = Split-Path $VersionOutputPath -Parent
+	if ($versionOutputDirectory -and -not (Test-Path $versionOutputDirectory)) {
+		New-Item -Path $versionOutputDirectory -ItemType Directory -Force | Out-Null
+	}
+	$packedVersions | ConvertTo-Json | Set-Content -LiteralPath $VersionOutputPath `
+		-Encoding UTF8
+
+	# The property file, not the command line, is what a nested restore can see.
+	Write-FieldWorksLocalLibraryProps `
+		-Path (Get-FieldWorksLocalLibraryPropsPath -RepositoryRoot $repoRoot) `
+		-Versions $packedVersions -LocalRepository $localRepo
 
 	Write-Host ""
 	Write-Host "========================================" -ForegroundColor Green
-	Write-Host "[OK] All libraries packed. Run .\build.ps1 to build." -ForegroundColor Green
+	Write-Host "[OK] Selected local libraries packed for this build." -ForegroundColor Green
 	Write-Host "========================================" -ForegroundColor Green
 }
 elseif ($Library -and $Version) {
@@ -450,5 +430,5 @@ elseif ($Library -and $Version) {
 	Write-Host "Run .\build.ps1 to restore and build with the new version." -ForegroundColor Cyan
 }
 else {
-	throw "Nothing to do. Use -Palaso/-Lcm/-Chorus/-Machine/-L10nSharp switches to pack, or -Library and -Version to set a version.`nExamples:`n  .\Build\Manage-LocalLibraries.ps1 -Palaso -PalasoPath C:\Repos\libpalaso`n  .\Build\Manage-LocalLibraries.ps1 -Palaso -Chorus`n  .\Build\Manage-LocalLibraries.ps1 -Machine -MachinePath C:\Repos\machine`n  .\Build\Manage-LocalLibraries.ps1 -Library l10nsharp -Version 10.0.0`n  .\Build\Manage-LocalLibraries.ps1 -Library palaso -Version 17.0.0"
+	throw "Nothing to do. Use .\build.ps1 -LocalLibraries <name> to pack local libraries, or -Library and -Version to set a version.`nExamples:`n  .\build.ps1 -LocalLibraries palaso`n  .\build.ps1 -LocalLibraries palaso,chorus`n  .\build.ps1 -LocalLibraries machine`n  .\Build\Manage-LocalLibraries.ps1 -Library l10nsharp -Version 10.0.0`n  .\Build\Manage-LocalLibraries.ps1 -Library palaso -Version 17.0.0"
 }
