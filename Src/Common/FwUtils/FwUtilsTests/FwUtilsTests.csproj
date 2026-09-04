@@ -46,4 +46,19 @@
     <ProjectReference Include="../../ViewsInterfaces/ViewsInterfaces.csproj" />
     <ProjectReference Include="../FwUtils.csproj" />
   </ItemGroup>
+
+  <!-- Charis SIL test font: downloaded (not committed) by Build/PackageRestore.targets into
+       Downloads/CharisSIL; copied beside the test assembly so OpenTypeFontFeatureInfoReader tests
+       can slice its tables privately. Keep CharisSilTestFontVersion in sync with CharisSilVersion
+       in Build/PackageRestore.targets (see also Src/views/Test/TestViews.vcxproj). LT-22638. -->
+  <PropertyGroup>
+    <CharisSilTestFontVersion>6.200</CharisSilTestFontVersion>
+    <CharisSilTestFontPath>$(FwRoot)\Downloads\CharisSIL\CharisSIL-$(CharisSilTestFontVersion)\CharisSIL-Regular.ttf</CharisSilTestFontPath>
+  </PropertyGroup>
+  <Target Name="CopyCharisSilTestFont" AfterTargets="Build">
+    <Copy SourceFiles="$(CharisSilTestFontPath)"
+          DestinationFolder="$(OutDir)TestData\Fonts\CharisSIL"
+          SkipUnchangedFiles="true"
+          Condition="Exists('$(CharisSilTestFontPath)')" />
+  </Target>
 </Project>
