@@ -155,7 +155,7 @@ Only use this opt-in for attended local debugging. CI and normal local runs shou
 
 Default recommendation:
 - Use **VS Code + ReSharper extension** for everyday coding, navigation, and managed test explorer workflows.
-- **C# Dev Kit is discouraged** in this workspace.
+- **C# Dev Kit is discouraged** in this workspace (it doesn't support debugging or test discovery for legacy .NET Framework projects, which this workspace uses).
 - Use repo scripts/tasks as source of truth for build/test: `./build.ps1` and `./test.ps1`.
 
 Switch to **Visual Studio** (2026 or 2022) when you need:
@@ -165,7 +165,7 @@ Switch to **Visual Studio** (2026 or 2022) when you need:
 
 See [VS Code Stability Profile](vscode-stability-profile.md) for current workspace guidance.
 
-## Git Configuration Reference
+## Git Configuration
 
 It is helpful to increase the rename limits for Git to properly detect renames in large commits:
 
