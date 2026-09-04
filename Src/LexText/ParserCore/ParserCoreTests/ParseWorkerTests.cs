@@ -24,6 +24,8 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		private String m_taskDetailsString;
 		private IdleQueue m_idleQueue;
 		private CoreWritingSystemDefinition m_vernacularWS;
+		Mediator Mediator { get; set; }
+		PropertyTable PropertyTable { get; set; }
 		#endregion Data Members
 
 		#region Non-test methods
@@ -67,6 +69,8 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			base.FixtureSetup();
 			m_vernacularWS = Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
 			m_idleQueue = new IdleQueue {IsPaused = true};
+			Mediator = new Mediator();
+			PropertyTable = new PropertyTable(Mediator);
 		}
 
 		public override void FixtureTeardown()
@@ -74,7 +78,10 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			m_vernacularWS = null;
 			m_idleQueue.Dispose();
 			m_idleQueue = null;
-
+			Mediator.Dispose();
+			Mediator = null;
+			PropertyTable.Dispose();
+			PropertyTable = null;
 			base.FixtureTeardown();
 		}
 
@@ -106,7 +113,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		public void TryAWord()
 		{
 			XDocument lowerXDoc = new XDocument(new XComment("cats"));
-			var parserWorker = new ParserWorker(Cache, null, HandleTaskUpdate, m_idleQueue, null);
+			var parserWorker = new ParserWorker(Cache, PropertyTable, HandleTaskUpdate, m_idleQueue, null);
 			parserWorker.Parser = new TestParserClass(null, lowerXDoc);
 
 			// SUT
@@ -141,7 +148,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				});
 			});
 
-			var parserWorker = new ParserWorker(Cache, null, HandleTaskUpdate, m_idleQueue, null);
+			var parserWorker = new ParserWorker(Cache, PropertyTable, HandleTaskUpdate, m_idleQueue, null);
 			parserWorker.Parser = new TestParserClass(lowerResult, null);
 
 			// SUT
