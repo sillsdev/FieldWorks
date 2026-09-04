@@ -652,7 +652,8 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 			switch (m_cache.LanguageProject.MorphologicalDataOA.ActiveParser)
 			{
 				case "XAmple":
-					// LT-22708 As of 2026.08.26, this is only called within FLEx from FdoLexiconTests.
+					// LT-22708 As of 2026.08.26, this is only called within FLEx from
+					// FdoLexiconTests.
 					// Creating the mediator and property table here works fine.
 					Mediator = new Mediator();
 					PropertyTable = new PropertyTable(Mediator);

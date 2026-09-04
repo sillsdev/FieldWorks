@@ -2,7 +2,6 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Core.Cellar;
 using SIL.LCModel.DomainServices;
@@ -61,22 +60,13 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		public Boolean ListsAlreadyAdded()
 		{
 			var possListRepository = Cache.ServiceLocator.GetInstance<ICmPossibilityListRepository>();
-			var customList = possListRepository.AllInstances().FirstOrDefault(list => list.Name.BestAnalysisAlternative.Text == customListName);
-			if (customList != null)
-			{
-				return true;
-			}
-			return false;
+			return possListRepository.AllInstances().Any(list => list.Name.BestAnalysisAlternative.Text == customListName);
 		}
 
 		public Boolean XAmplePropertiesCustomFieldAlreadyAdded(string fieldName, int fieldClassId)
 		{
 			var customFields = GetListOfCustomFields();
-			if (customFields.Find(fd => fd.Name == fieldName) != null)
-			{
-				return true;
-			}
-			return false;
+			return customFields.Any(fd => fd.Name == fieldName && fd.Class == fieldClassId);
 		}
 
 		public void AddListsAndFields()
