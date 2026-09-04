@@ -120,6 +120,8 @@ verifies that launch will succeed.
 - `scripts/Set-FieldWorksLegacyMode.ps1`: forces `UIMode=Legacy` — run before EVERY launch.
 - `scripts/Resolve-FieldWorksDevRegistry.ps1`: aligns the dev registry (`RootCodeDir`/`RootDataDir`) to
   this worktree before launch; auto-realigns when the other worktree is idle, else prints `RESULT=ASK_USER`.
+  A build running from inside a source tree resolves code and data from that tree and
+  ignores these values; they govern a build launched from outside one.
 - `references/headless-rendering.md`: why FieldWorks needs a display-bound desktop; what works/doesn't for
   invisible capture (winforms-mcp HEADLESS does NOT render FieldWorks; a Virtual Display Driver was tried
   and abandoned — see the doc for why; use visible capture, or RDP for true invisibility). Starts with the

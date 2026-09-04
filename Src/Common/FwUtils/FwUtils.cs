@@ -221,6 +221,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 					return null;
 
 				var ver = CustomIcu.Version.ToString(CultureInfo.InvariantCulture);
+				// Not FwDirectoryFinder.FindDevDistFiles: on the InitIcuDataDir bootstrap path
+				// that dependency is an initialisation-order question. See LT-22768.
 				var distFiles = Path.GetFullPath(Path.Combine(assemblyDir, "..", "..", "DistFiles"));
 				if (!Directory.Exists(distFiles))
 					return null;

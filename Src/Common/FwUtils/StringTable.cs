@@ -91,6 +91,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 					}
 					if (!installedBinary)
 					{
+						// Walks to the LAST 'output' segment, not to a solution file like
+						// FwDirectoryFinder. See LT-22769.
 						while (parentOfLanguageExplorerFolder.ToLowerInvariant().LastIndexOf("output") > -1)
 						{
 							// If a dev machine, move up to parent of 'output' folder.
