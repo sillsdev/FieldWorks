@@ -1230,6 +1230,10 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 	/// its own remove. The greyed rows still show the user what is present, so nothing is hidden.
 	/// Recorded so the next reader does not "fix" the picker to pre-check and call it parity.
 	///
+	/// An item the domain reports as invalid (ICmObject.CheckConstraints) is shown in the error
+	/// colour, underlined, with the explanation as its tooltip. It is still a normal item --
+	/// legacy STORES an invalid environment and marks it rather than refusing it.
+	///
 	/// CREATE-ON-TYPE (opt-in): a row whose edit context implements
 	/// <see cref="IReferenceItemCreation"/> for it also lets the user mint a target object by
 	/// typing into the picker's filter box -- the list offers a create row when the text matches
@@ -1286,6 +1290,15 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 					Background = FwAvaloniaDensity.TransparentBrush
 				};
 				AutomationProperties.SetAutomationId(text, automationId + ".Item." + item.Key);
+				if (item.HasValidationMessage)
+				{
+					// Legacy draws a red squiggle. Avalonia has no wavy decoration, so this is
+					// colour PLUS an underline -- colour alone would carry the whole signal.
+					text.Foreground = FwAvaloniaDensity.ValidationErrorBrush;
+					text.TextDecorations = TextDecorations.Underline;
+					ToolTip.SetTip(text, item.ValidationMessage);
+					AutomationProperties.SetHelpText(text, item.ValidationMessage);
+				}
 				if (editable)
 				{
 					var removeItem = new MenuItem { Header = FwAvaloniaStrings.Remove };

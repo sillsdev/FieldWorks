@@ -1576,9 +1576,9 @@ namespace SIL.FieldWorks.XWorks
 				for (var i = 0; i < count; i++)
 				{
 					var itemHvo = _sda.get_VecItem(obj.Hvo, flid, i);
-					items.Add(new DetailChoiceOption(
-						_cache.ServiceLocator.ObjectRepository.GetObject(itemHvo).Guid.ToString(),
-						ResolveShortName(itemHvo)));
+					var item = _cache.ServiceLocator.ObjectRepository.GetObject(itemHvo);
+					items.Add(new DetailChoiceOption(item.Guid.ToString(), ResolveShortName(itemHvo),
+						validationMessage: ValidationMessageFor(item)));
 				}
 
 				var candidateHvoByGuid = new Dictionary<Guid, int>();
@@ -1646,6 +1646,27 @@ namespace SIL.FieldWorks.XWorks
 						return true;
 					};
 				}
+			}
+
+			/// <summary>
+			/// The domain's own verdict on an object, for display beside it. Reuses
+			/// ICmObject.CheckConstraints -- the same oracle legacy's squiggly runs on -- rather
+			/// than re-deriving validity here, so the two views cannot disagree.
+			///
+			/// Read-only by construction: with createAnnotation false and the squiggly-adjusting
+			/// overload untouched, CheckConstraints computes no change and opens no unit of work.
+			/// Composing must never write. Minting the annotation stays on the edit path, where
+			/// legacy does it too.
+			/// </summary>
+			private string ValidationMessageFor(ICmObject item)
+			{
+				if (item == null || !item.IsValidObject)
+					return null;
+				// Flid 0 means "any constraint on this object". The base implementation returns
+				// true without allocating, so this stays free for the classes that never
+				// validate.
+				ConstraintFailure failure;
+				return item.CheckConstraints(0, false, out failure) ? null : failure?.GetMessage();
 			}
 
 			// Matches with SPACES REMOVED, like ConnectToRealCache. Validity is NOT a

@@ -183,6 +183,60 @@ namespace SIL.FieldWorks.XWorks
 				"the user's text survived rather than being dropped on the floor");
 		}
 
+		/// <summary>
+		/// The composed item carries the DOMAIN's verdict, from the same CheckConstraints legacy
+		/// runs for its squiggly -- so the two views cannot disagree about what is invalid.
+		/// Composing must not write: CheckConstraints is called with createAnnotation false.
+		/// </summary>
+		[Test]
+		public void Compose_Environments_AnnotatesTheItem_WhenTheDomainReportsItInvalid()
+		{
+			var composed = ComposeEnvironments();
+			Assert.That(composed.Creation.TryCreateAndAddReferenceItem(composed.Row, "/ _ ["), Is.True);
+			Assert.That(composed.Creation.TryCreateAndAddReferenceItem(composed.Row, "/ # _"), Is.True);
+			composed.Context.Commit();
+
+			var row = ComposeEnvironmentsRow();
+			Assert.That(row.Items, Has.Count.EqualTo(2), "both are attached; neither is filtered");
+
+			var bad = row.Items.Single(i => i.Name.Contains("["));
+			var good = row.Items.Single(i => !i.Name.Contains("["));
+			Assert.That(bad.HasValidationMessage, Is.True,
+				"the malformed environment is annotated rather than rejected");
+			Assert.That(bad.ValidationMessage, Is.Not.Empty,
+				"and carries the domain's explanation for the tooltip");
+			Assert.That(good.HasValidationMessage, Is.False,
+				"the well-formed sibling is clean -- the check discriminates");
+		}
+
+		/// <summary>
+		/// Composing is a READ. CheckConstraints can mint a ConstraintFailure annotation and
+		/// adjust
+		/// the stored string, so calling it the wrong way would have compose writing to the
+		/// model.
+		/// </summary>
+		[Test]
+		public void Compose_Environments_DoesNotWrite_WhenAnnotatingAnInvalidItem()
+		{
+			var composed = ComposeEnvironments();
+			composed.Creation.TryCreateAndAddReferenceItem(composed.Row, "/ _ [");
+			composed.Context.Commit();
+
+			// NOT the undo count: CheckConstraints writes NON-undoably, so that probe would pass
+			// even if composing wrote. These are what it actually touches.
+			var annotationsBefore = Cache.LanguageProject.AnnotationsOC.Count;
+			var stringBefore = m_allomorph.PhoneEnvRC.First().StringRepresentation.Text;
+
+			var row = ComposeEnvironmentsRow();
+			Assert.That(row.Items.Any(i => i.HasValidationMessage), Is.True,
+				"the verdict was computed");
+			Assert.That(Cache.LanguageProject.AnnotationsOC.Count, Is.EqualTo(annotationsBefore),
+				"composing minted no ConstraintFailure annotation");
+			Assert.That(m_allomorph.PhoneEnvRC.First().StringRepresentation.Text,
+				Is.EqualTo(stringBefore),
+				"and did not rewrite the stored string to carry a squiggly");
+		}
+
 		private struct ComposedEnvironments
 		{
 			public DetailField Row;

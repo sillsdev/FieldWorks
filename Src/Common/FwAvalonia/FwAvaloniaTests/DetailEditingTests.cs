@@ -8,6 +8,7 @@ using System.Linq;
 using Avalonia;
 using Avalonia.Automation;
 using Avalonia.Controls;
+using Avalonia.Media;
 using Avalonia.Headless.NUnit;
 using Avalonia.Input;
 using Avalonia.Interactivity;
@@ -674,6 +675,44 @@ namespace FwAvaloniaTests
 			Assert.That(context.ReferenceRemoves, Has.Count.EqualTo(1));
 			Assert.That(context.ReferenceRemoves[0], Is.EqualTo(("ComponentLexemes", "e-burro")),
 				"the remove behavior is unchanged for search-backed vectors");
+		}
+
+		/// <summary>
+		/// An item the domain flagged is annotated in place, not hidden or dropped: legacy STORES
+		/// an invalid environment and marks it with a squiggly. Colour is not the only cue --
+		/// an underline and the automation help text carry it for anyone who cannot see red.
+		/// </summary>
+		[AvaloniaTest]
+		public void ReferenceVector_AnnotatesAnItemTheDomainReportsInvalid()
+		{
+			var field = new DetailField("MoForm/x/#0", "Environments", "PhoneEnv",
+				null, DetailFieldKind.ReferenceVector, EditorClassification.Known, "Envs", null,
+				HostRouting.Inherit, null, null, null, isEditable: true, indent: 0,
+				items: new List<DetailChoiceOption>
+				{
+					new DetailChoiceOption("ok", "/ # _"),
+					new DetailChoiceOption("bad", "/ _ [", validationMessage: "Unmatched bracket.")
+				});
+			var vector = new FwReferenceVectorField(field, "Envs", new FakeDetailEditContext());
+			var window = new Window { Content = vector, Width = 480, Height = 240 };
+			window.Show();
+			Dispatcher.UIThread.RunJobs();
+
+			var good = Find<TextBlock>(vector, "Envs.Item.ok");
+			var bad = Find<TextBlock>(vector, "Envs.Item.bad");
+			Assert.That(good, Is.Not.Null);
+			Assert.That(bad, Is.Not.Null, "the invalid item is still SHOWN, not filtered out");
+
+			Assert.That(bad.Foreground, Is.EqualTo(FwAvaloniaDensity.ValidationErrorBrush));
+			Assert.That(bad.TextDecorations, Is.EqualTo(TextDecorations.Underline),
+				"a non-colour cue too -- colour alone would carry the whole signal");
+			Assert.That(ToolTip.GetTip(bad), Is.EqualTo("Unmatched bracket."),
+				"the domain's own explanation, not a generic 'invalid'");
+			Assert.That(AutomationProperties.GetHelpText(bad), Is.EqualTo("Unmatched bracket."));
+
+			Assert.That(good.Foreground, Is.Not.EqualTo(FwAvaloniaDensity.ValidationErrorBrush),
+				"the valid sibling is untouched");
+			Assert.That(ToolTip.GetTip(good), Is.Null);
 		}
 
 		private static DetailField PublishInField() => new DetailField(

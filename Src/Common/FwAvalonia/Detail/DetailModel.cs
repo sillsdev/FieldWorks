@@ -1421,11 +1421,13 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 	/// <summary>A chooser option (key + display name).</summary>
 	public sealed class DetailChoiceOption
 	{
-		public DetailChoiceOption(string key, string name, int depth = 0)
+		public DetailChoiceOption(string key, string name, int depth = 0,
+			string validationMessage = null)
 		{
 			Key = key;
 			Name = name;
 			Depth = depth;
+			ValidationMessage = validationMessage;
 		}
 
 		public string Key { get; }
@@ -1438,6 +1440,20 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		/// chooser tree. Flat lists (and chooserInfo FlatList specs) stay 0 throughout.
 		/// </summary>
 		public int Depth { get; }
+
+		/// <summary>
+		/// The domain's explanation of why this item is invalid, or null when it is fine. Set
+		/// only
+		/// for a class that overrides ICmObject.CheckConstraints -- PhEnvironment and the two
+		/// adhoc co-prohibitions today; everything else inherits the no-op and stays null.
+		///
+		/// The item is DISPLAYED, not rejected: legacy stores an invalid environment and marks it
+		/// with a squiggly rather than refusing it, so this annotates what is already there.
+		/// </summary>
+		public string ValidationMessage { get; }
+
+		/// <summary>Whether the domain reported a problem with this item.</summary>
+		public bool HasValidationMessage => !string.IsNullOrEmpty(ValidationMessage);
 	}
 
 	/// <summary>
