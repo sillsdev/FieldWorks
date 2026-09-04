@@ -6,39 +6,7 @@ This document describes additional setup steps for core FieldWorks developers. U
 
 ## Prerequisites
 
-Complete all steps in [CONTRIBUTING.md](CONTRIBUTING.md) first:
-1. Install required software (Git, Visual Studio 2026 or 2022)
-2. Clone the repository
-3. Verify you can build successfully
-
-## Required Software
-
-The following tools are required for FieldWorks development:
-
-### Visual Studio 2026 or 2022
-
-FieldWorks builds with either; when both are installed the build uses the newest.
-Install with these workloads:
-- **.NET desktop development**
-- **Desktop development with C++** (including ATL/MFC components)
-
-See [Visual Studio Setup](visual-studio-setup.md) for the detailed component list, or import the repo-root `.vsconfig` in the Visual Studio Installer.
-
-### WiX Toolset (v6 via NuGet restore)
-
-Installer builds use SDK-style `.wixproj` projects and restore WiX v6 tools via NuGet during the build. No separate WiX 3.x installation is required.
-
-```powershell
-# Standard developer machine setup
-.\Setup-Developer-Machine.ps1
-
-# Optional: set up installer helper repositories
-.\Setup-Developer-Machine.ps1 -InstallerDeps
-```
-
-### Environment Variables
-
-No WiX-specific environment variables are required for WiX v6 SDK builds.
+Complete all steps in [CONTRIBUTING.md](CONTRIBUTING.md) first.
 
 ### Verification
 
@@ -104,26 +72,19 @@ For streamlined pushing and pulling, set up an SSH key:
 
 ```powershell
 git config user.name "Your Name"
-git config user.email "your.email@example.com"
-```
-
-#### Increase Rename Limits
-
-```powershell
-git config diff.renameLimit 10000
-git config merge.renameLimit 10000
+git config user.email "your.github.id@users.noreply.github.com"
 ```
 
 #### Configure Branch Tracking
 
-Set up tracking for release branches you'll be working on:
+Set up tracking for branches you'll be working on:
 
 ```powershell
 # Fetch all branches
 git fetch --all
 
-# Track a specific release branch
-git checkout release/9.3
+# Track the main branch
+git checkout main
 ```
 
 ### 3. Development Environment
@@ -135,11 +96,6 @@ Recommended VS Code extensions for daily development:
 - **C# Dev Kit** (`ms-dotnettools.csdevkit`) and **C#** (`ms-dotnettools.csharp`) are discouraged in this workspace
 - **C/C++** (`ms-vscode.cpptools`) for native editing/debugging
 - **PowerShell** (`ms-vscode.powershell`) for build/test scripts
-
-Use **Visual Studio** (2026 or 2022) when working on:
-- WinForms designer changes
-- Mixed managed/native debugging across interop boundaries
-- Complex legacy .NET Framework project-system issues
 
 Optional Visual Studio extension:
 - **ReSharper** (if you have a license) for advanced refactoring/navigation
@@ -155,35 +111,26 @@ Recommended Git tools:
 
 For core developers, the canonical AI-assisted path is now [AI-Assisted PR Workflow](workflows/ai-pr-workflow.md).
 
-Use that guide when you want the full FieldWorks workflow from Jira through merge-ready review:
+## Working with Branches
 
-1. Pull the Jira ticket through approved Atlassian tooling.
-2. Create a dedicated branch worktree with the repo task.
-3. Build and test with `./build.ps1`, `./test.ps1`, or the matching VS Code tasks.
-4. Run `pr-preflight` before opening or updating the PR.
-5. Use the review-response workflow for Copilot and human comments.
-
-If you use Claude Code, create the worktree with the repo task first, then launch Claude inside that worktree.
-
-### 4. Working with Branches
-
-#### Branch Naming Conventions
+### Branch Naming Conventions
 
 - `feature/<name>` - New features
 - `bugfix/<issue-number>-<description>` - Bug fixes
 - `hotfix/<version>` - Emergency fixes for released versions
 - `release/<version>` - Release preparation branches
+- `main` - Main development on the current or upcoming release
 
-#### Creating Feature Branches
+### Creating Feature Branches
 
 ```powershell
 # Create a new feature branch from the default branch
-git checkout release/9.3
+git checkout main
 git pull
 git checkout -b feature/my-feature-name
 ```
 
-#### Submitting Changes
+### Submitting Changes
 
 1. Push your branch to origin:
    ```powershell
@@ -198,40 +145,12 @@ git checkout -b feature/my-feature-name
 
 See [AI-Assisted PR Workflow](workflows/ai-pr-workflow.md) for the canonical core-developer workflow, and [Pull Request Workflow](workflows/pull-request-workflow.md) for the generic GitHub PR mechanics.
 
-### 5. Release Management
+## Release Management
 
-If you are a release manager, additional setup may be required. Contact Jason Naylor for:
+If you are a release manager, additional setup may be required. Contact the team lead for:
 - Access to release automation scripts
 - Build server access
 - Installer signing certificates
-
-## Git Configuration Reference
-
-### Recommended Global Settings
-
-```powershell
-# Use rebase by default when pulling
-git config --global pull.rebase true
-
-# Prune deleted remote branches on fetch
-git config --global fetch.prune true
-
-# Use diff3 conflict style for better merge conflict resolution
-git config --global merge.conflictstyle diff3
-
-# Enable helpful coloring
-git config --global color.ui auto
-```
-
-### Repository-Specific Settings
-
-These are set in the FieldWorks repository:
-
-```powershell
-# Increase rename detection limits
-git config diff.renameLimit 10000
-git config merge.renameLimit 10000
-```
 
 ## Troubleshooting
 
