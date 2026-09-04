@@ -862,44 +862,32 @@ namespace SIL.AllomorphGenerator
 		{
 			if (!File.Exists(OperationsFile))
 			{
-				if (String.IsNullOrEmpty(OperationsFile))
+				// probably first time it is run
+				var dlg = BuildCreateNewOpenCancelDialog();
+				var result = dlg.ShowDialog();
+				if (result == DialogResult.OK)
 				{
-					// probably first time it is run
-					var dlg = BuildCreateNewOpenCancelDialog();
-					var result = dlg.ShowDialog();
-					if (result == DialogResult.OK)
+					// create new operations file
+					ChangesMade = false;
+					SetupFontAndStyleInfo();
+					btnNewFile_Click(this, new EventArgs());
+					if (!String.IsNullOrEmpty(OperationsFile))
 					{
-						// create new operations file
-						ChangesMade = false;
-						SetupFontAndStyleInfo();
-						btnNewFile_Click(this, new EventArgs());
-						if (!String.IsNullOrEmpty(OperationsFile))
-						{
-							// Need to save it since it exists
-							DoSave();
-						}
+						// Need to save it since it exists
+						DoSave();
 					}
-					else if (result == DialogResult.Yes)
-					{
-						// Open existing operations file
-						btnBrowse_Click(this, new EventArgs());
-					}
-					else
-					{
-						// Assume it was canceled, so quit
-						this.Dispose();
-					}
+				}
+				else if (result == DialogResult.Yes)
+				{
+					// Open existing operations file
+					btnBrowse_Click(this, new EventArgs());
 				}
 				else
 				{
-					MessageBox.Show(
-						AllomorphGeneratorDll_Strings.ksOperationsFileNotFound,
-						AllomorphGeneratorDll_Strings.ksLoadError,
-						MessageBoxButtons.OK,
-						MessageBoxIcon.Error
-					);
+					// Assume it was canceled, so quit
+					this.Dispose();
 				}
-				return;
+			return;
 			}
 #if Marks
 			Provider.LoadDataFromFile(OperationsFile);
