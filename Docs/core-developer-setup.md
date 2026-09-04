@@ -6,24 +6,9 @@ This document describes additional setup steps for core FieldWorks developers. U
 
 ## Prerequisites
 
-Complete all steps in [CONTRIBUTING.md](CONTRIBUTING.md) first:
-1. Install required software (Git, Visual Studio 2026 or 2022)
-2. Clone the repository
-3. Verify you can build successfully
+Complete all steps in [CONTRIBUTING.md](CONTRIBUTING.md) first.
 
-## Required Software
-
-The following tools are required for FieldWorks development:
-
-### WiX Toolset (v6 via NuGet restore)
-
-Installer builds use SDK-style `.wixproj` projects and restore WiX v6 tools via NuGet during the build. No separate WiX 3.x installation is required.
-
-### Environment Variables
-
-No WiX-specific environment variables are required for WiX v6 SDK builds.
-
-### Verification (TODO: is this redundant to CONTRIBUTING?)
+### Verification
 
 Run these commands to verify your environment:
 
@@ -90,13 +75,6 @@ git config user.name "Your Name"
 git config user.email "your.github.id@users.noreply.github.com"
 ```
 
-#### Increase Rename Limits
-
-```powershell
-git config diff.renameLimit 10000
-git config merge.renameLimit 10000
-```
-
 #### Configure Branch Tracking
 
 Set up tracking for release branches you'll be working on:
@@ -118,11 +96,6 @@ Recommended VS Code extensions for daily development:
 - **C# Dev Kit** (`ms-dotnettools.csdevkit`) and **C#** (`ms-dotnettools.csharp`) are discouraged in this workspace
 - **C/C++** (`ms-vscode.cpptools`) for native editing/debugging
 - **PowerShell** (`ms-vscode.powershell`) for build/test scripts
-
-Use **Visual Studio** (2026 or 2022) when working on:
-- WinForms designer changes
-- Mixed managed/native debugging across interop boundaries
-- Complex legacy .NET Framework project-system issues
 
 Optional Visual Studio extension:
 - **ReSharper** (if you have a license) for advanced refactoring/navigation
@@ -183,38 +156,10 @@ See [AI-Assisted PR Workflow](workflows/ai-pr-workflow.md) for the canonical cor
 
 ### 5. Release Management
 
-If you are a release manager, additional setup may be required. Contact Jason Naylor for:
+If you are a release manager, additional setup may be required. Contact the team lead for:
 - Access to release automation scripts
 - Build server access
 - Installer signing certificates
-
-## Git Configuration Reference
-
-### Recommended Global Settings
-
-```powershell
-# Use rebase by default when pulling
-git config --global pull.rebase true
-
-# Prune deleted remote branches on fetch
-git config --global fetch.prune true
-
-# Use diff3 conflict style for better merge conflict resolution
-git config --global merge.conflictstyle diff3
-
-# Enable helpful coloring
-git config --global color.ui auto
-```
-
-### Repository-Specific Settings
-
-These are set in the FieldWorks repository:
-
-```powershell
-# Increase rename detection limits
-git config diff.renameLimit 10000
-git config merge.renameLimit 10000
-```
 
 ## Troubleshooting
 

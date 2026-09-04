@@ -157,8 +157,6 @@ Default recommendation:
 - **C# Dev Kit is discouraged** in this workspace.
 - Use repo scripts/tasks as source of truth for build/test: `./build.ps1` and `./test.ps1`.
 
-If you are a core developer using GitHub Copilot or Claude Code, follow [AI-Assisted PR Workflow](workflows/ai-pr-workflow.md) for the Jira-to-PR path: create a dedicated worktree, validate with repo tasks/scripts, run `pr-preflight`, and then work review comments through the repo review-response workflow.
-
 Switch to **Visual Studio** (2026 or 2022) when you need:
 - WinForms designer workflows
 - Mixed managed/native debugging across interop boundaries
@@ -166,7 +164,7 @@ Switch to **Visual Studio** (2026 or 2022) when you need:
 
 See [VS Code Stability Profile](vscode-stability-profile.md) for current workspace guidance.
 
-#### Git Configuration Tips
+## Git Configuration Reference
 
 It is helpful to increase the rename limits for Git to properly detect renames in large commits:
 
@@ -175,6 +173,21 @@ git config diff.renameLimit 10000
 git config merge.renameLimit 10000
 ```
 
+### Recommended Global Settings
+
+```powershell
+# Use rebase by default when pulling
+git config --global pull.rebase true
+
+# Prune deleted remote branches on fetch
+git config --global fetch.prune true
+
+# Use diff3 conflict style for better merge conflict resolution
+git config --global merge.conflictstyle diff3
+
+# Enable helpful coloring
+git config --global color.ui auto
+```
 ## Contributing Code
 
 ### General Guidelines
