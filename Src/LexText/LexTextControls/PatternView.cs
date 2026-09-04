@@ -38,11 +38,11 @@ namespace SIL.FieldWorks.LexText.Controls
 			{
 			}
 
-			public override bool CanCopy()
-			{
-				return false;
-			}
-
+			/// <summary>
+			/// Cut and paste stay refused because they would change the rule. Copy is not
+			/// overridden: a read-only view still has to let the formula be copied out, and the
+			/// base implementation already requires a real range selection.
+			/// </summary>
 			public override bool CanCut()
 			{
 				return false;
@@ -67,6 +67,15 @@ namespace SIL.FieldWorks.LexText.Controls
 			// we can't just use the Editable property to disable copy/cut/paste, because we want
 			// the view to be read only, so instead we use a custom EditingHelper
 			return new PatternEditingHelper(Cache, this);
+		}
+
+		/// <summary>
+		/// Activate() is disabled by default in ReadOnlyViews, but a pattern editor does want to
+		/// show selections so the user can see what a chooser insert/delete will act on.
+		/// </summary>
+		protected override bool AllowDisplaySelection
+		{
+			get { return true; }
 		}
 
 		public void Init(Mediator mediator, PropertyTable propertyTable, int hvo, IPatternControl patternControl, PatternVcBase vc, int rootFrag, ISilDataAccess sda)

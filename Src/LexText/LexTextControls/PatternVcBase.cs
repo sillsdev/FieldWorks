@@ -213,6 +213,25 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 		}
 
+		/// <summary>
+		/// Keeps the zero-width-space boundary spans editable even inside a pattern that has
+		/// been marked not editable as a whole.
+		/// </summary>
+		/// <remarks>
+		/// Clicking an item, and every insert and delete, place the cursor through
+		/// MakeTextSelInObj with fEditable true, so a cell has to offer at least one editable
+		/// position or those commands stop working with no error. These boundary spans are the
+		/// position. They are safe to leave editable because ktagLeftBoundary and
+		/// ktagRightBoundary are fake tags rather than model properties, and
+		/// RuleFormulaVcBase.UpdateProp returns the value unchanged, so an edit landing here
+		/// reaches nothing real.
+		/// </remarks>
+		protected static void MarkBoundaryEditable(IVwEnv vwenv)
+		{
+			vwenv.set_IntProperty((int)FwTextPropType.ktptEditable, (int)FwTextPropVar.ktpvEnum,
+				(int)TptEditable.ktptIsEditable);
+		}
+
 		protected void OpenSingleLinePile(IVwEnv vwenv, int maxNumLines)
 		{
 			OpenSingleLinePile(vwenv, maxNumLines, true);
@@ -227,6 +246,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			if (addBoundary)
 			{
 				vwenv.Props = m_bracketProps;
+				MarkBoundaryEditable(vwenv);
 				vwenv.AddProp(ktagLeftBoundary, this, kfragZeroWidthSpace);
 			}
 		}
@@ -241,6 +261,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			if (addBoundary)
 			{
 				vwenv.Props = m_bracketProps;
+				MarkBoundaryEditable(vwenv);
 				vwenv.AddProp(ktagRightBoundary, this, kfragZeroWidthSpace);
 			}
 			vwenv.CloseParagraph();
