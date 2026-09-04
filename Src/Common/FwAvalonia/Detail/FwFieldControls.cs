@@ -1131,7 +1131,9 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				return;
 
 			// "+"/chooser click = OPTIONS ONLY: the one compact filterable picker, zero links.
-			var picker = new FwOptionChooser(field.Options, null, automationId);
+			// Seeded with the row's current value so opening the list highlights what is chosen.
+			var picker = new FwOptionChooser(field.Options, null, automationId,
+				selectedKey: field.SelectedOptionKey);
 			var flyout = FwOptionChooser.CreateOptionFlyout(picker, PlacementMode.BottomEdgeAlignedLeft);
 			Flyout = flyout;
 
@@ -1143,6 +1145,10 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				{
 					_selectedKey = option.Key;
 					_valueText.Text = option.Name;
+					// Only a COMMITTED change moves the picker's highlight; a rejected edit
+					// leaves
+					// the list still pointing at the value the row actually holds.
+					picker.SelectByKey(option.Key);
 				}
 
 				flyout.Hide();

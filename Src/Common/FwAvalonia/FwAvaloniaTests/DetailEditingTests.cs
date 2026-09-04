@@ -452,6 +452,37 @@ namespace FwAvaloniaTests
 		}
 
 		// Chooser options can share a display name (e.g. identically named list items);
+		/// <summary>
+		/// The chooser hands the picker the row's current value, so opening the list highlights
+		/// what the field holds rather than whatever option sorts first.
+		/// </summary>
+		[AvaloniaTest]
+		public void Chooser_OpeningTheList_HighlightsTheRowsCurrentValue()
+		{
+			var field = new DetailField("LexEntry/x/#0", "Morph Type", "MorphType", null,
+				DetailFieldKind.Chooser, EditorClassification.Known, "MorphType", null,
+				HostRouting.Inherit, null,
+				new List<DetailChoiceOption>
+				{
+					new DetailChoiceOption("mt-stem", "stem"),
+					new DetailChoiceOption("mt-prefix", "prefix"),
+					new DetailChoiceOption("mt-suffix", "suffix")
+				},
+				"mt-suffix"); // NOT the first option
+			var chooser = new FwChooserField(field, "MorphType", new FakeDetailEditContext());
+			var window = new Window { Content = chooser, Width = 300, Height = 160 };
+			window.Show();
+			Dispatcher.UIThread.RunJobs();
+
+			var flyout = (Flyout)chooser.Flyout;
+			flyout.ShowAt(chooser);
+			Dispatcher.UIThread.RunJobs();
+
+			var picker = (FwOptionChooser)flyout.Content;
+			Assert.That(picker.OptionsList.SelectedIndex, Is.EqualTo(2),
+				"the current morph type is highlighted, not the first in the list");
+		}
+
 		// selection must map back by INDEX, never by name, or the wrong option's key is staged.
 		[AvaloniaTest]
 		public void Chooser_DuplicateDisplayNames_StagesTheOptionAtTheSelectedIndex()

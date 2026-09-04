@@ -82,6 +82,9 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		// Opt-in create-on-type, for rows whose context can mint an item from typed text. The
 		// row is identified by REFERENCE: its text changes on every keystroke.
 		private const string CreateRowKey = "\u0001create";
+		// The row's CURRENT value, highlighted when the picker opens so the list says what is
+		// already chosen rather than pointing at whatever sorts first. Single-select only.
+		private string _selectedKey;
 		private readonly bool _allowCreate;
 		private DetailChoiceOption _createOption;
 		private string _createText = string.Empty;
@@ -116,8 +119,10 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			IEnumerable<string> unavailableKeys = null,
 			bool multiSelect = false,
 			bool dropdown = false,
-			bool allowCreate = false)
+			bool allowCreate = false,
+			string selectedKey = null)
 		{
+			_selectedKey = selectedKey;
 			_allowCreate = allowCreate;
 			_options = options ?? Array.Empty<DetailChoiceOption>();
 			_searchOptions = searchOptions;
@@ -285,7 +290,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				_currentResults = _options;
 				RememberSeen(_currentResults);
 				_list.ItemsSource = _currentResults;
-				_list.SelectedIndex = FirstEnabledIndex(_currentResults);
+				HighlightSelectedOrFirst();
 			}
 			else
 			{
@@ -434,6 +439,9 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			{
 				if (s_trace.TraceInfo)
 					Trace.WriteLine("[FwOptionPicker] Flyout.Opened; posting focus (Input).");
+				// Re-highlight on every open, not just the first: after the user picks a new
+				// value the picker instance is reused, so a stale highlight would persist.
+				picker.HighlightSelectedOrFirst();
 				Avalonia.Threading.Dispatcher.UIThread.Post(picker.FocusFilter,
 					Avalonia.Threading.DispatcherPriority.Input);
 			};
@@ -649,6 +657,48 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 
 		// Identity of the synthetic create row. Reference equality, so a domain key can never be
 		// mistaken for it however the user's typing collides.
+		/// <summary>
+		/// Tells the picker which option is the row's current value, so reopening it highlights
+		/// what is chosen. The host calls this after a COMMITTED change -- a rejected edit must
+		/// not
+		/// move the highlight, so the picker cannot infer it from the commit alone.
+		/// </summary>
+		public void SelectByKey(string key)
+		{
+			_selectedKey = key;
+			HighlightSelectedOrFirst();
+		}
+
+		/// <summary>
+		/// Highlights the current value if it is in the result set, else the first available row.
+		/// Scrolls it into view: a value far down a long list is exactly the case where pointing
+		/// at the top is most misleading.
+		/// </summary>
+		public void HighlightSelectedOrFirst()
+		{
+			var index = IndexOfSelectedKey();
+			if (index < 0)
+				index = FirstEnabledIndex(_currentResults);
+			_list.SelectedIndex = index;
+			if (index >= 0)
+				_list.ScrollIntoView(index);
+		}
+
+		// Multi-select has no single current value (its checked set carries that), so the key is
+		// ignored there rather than highlighting one arbitrary member.
+		private int IndexOfSelectedKey()
+		{
+			if (_multiSelect || string.IsNullOrEmpty(_selectedKey) || _currentResults == null)
+				return -1;
+			for (var i = 0; i < _currentResults.Count; i++)
+			{
+				if (string.Equals(_currentResults[i].Key, _selectedKey, StringComparison.Ordinal))
+					return IsOptionAvailable(_currentResults[i]) ? i : -1;
+			}
+
+			return -1;
+		}
+
 		private bool IsCreateRow(DetailChoiceOption option)
 			=> _createOption != null && ReferenceEquals(option, _createOption);
 
@@ -726,6 +776,14 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			RememberSeen(_currentResults);
 			_currentResults = WithCreateRow(_currentResults, query);
 			_list.ItemsSource = _currentResults;
+			// Unfiltered, the current value wins. Once they type, the first MATCH wins: typing is
+			// a search, and Enter should take it rather than snap back to the old value.
+			if (string.IsNullOrEmpty(query))
+			{
+				HighlightSelectedOrFirst();
+				return;
+			}
+
 			var firstEnabled = FirstEnabledIndex(_currentResults);
 			if (firstEnabled >= 0)
 			{

@@ -410,17 +410,8 @@ namespace FwAvaloniaDialogs
 		{
 			if (string.IsNullOrEmpty(key) || _morphTypes.Count == 0)
 				return;
-			var index = -1;
-			for (var i = 0; i < _morphTypes.Count; i++)
-			{
-				if (string.Equals(_morphTypes[i].Key, key, StringComparison.Ordinal))
-				{
-					index = i;
-					break;
-				}
-			}
-			if (index >= 0)
-				MorphTypePicker.OptionsList.SelectedIndex = index;
+			// The picker owns highlight identity; every consumer shares this one path.
+			MorphTypePicker.SelectByKey(key);
 		}
 
 		// ----- complex-form type picker <-> chosen-key mirroring + morph-type gating (LT-21666) -----

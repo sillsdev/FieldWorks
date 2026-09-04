@@ -727,6 +727,80 @@ namespace FwAvaloniaTests
 			Dispatcher.UIThread.RunJobs();
 		}
 
+		#region Current-value highlight
+
+		// Tree() order: 0 Universe, 1 Sky, 2 Weather, 3 Person. "Weather" is deliberately NOT
+		// first, because the bug was that the list always pointed at whatever sorted first.
+		private static (FwOptionChooser picker, Window window) ShowWithCurrent(string selectedKey)
+		{
+			var picker = new FwOptionChooser(Tree(), null, "Domains", selectedKey: selectedKey);
+			var window = new Window { Content = picker, Width = 400, Height = 420 };
+			window.Show();
+			Dispatcher.UIThread.RunJobs();
+			AvaloniaHeadlessPlatform.ForceRenderTimerTick();
+			Dispatcher.UIThread.RunJobs();
+			return (picker, window);
+		}
+
+		[AvaloniaTest]
+		public void OpeningWithACurrentValue_HighlightsIt_NotTheFirstOption()
+		{
+			var (picker, _) = ShowWithCurrent("u-weather");
+
+			Assert.That(picker.OptionsList.SelectedIndex, Is.EqualTo(2),
+				"the highlight says what is ALREADY chosen; pointing at the first row claims a "
+				+ "value the field does not hold");
+		}
+
+		[AvaloniaTest]
+		public void WithNoCurrentValue_TheFirstOptionIsStillHighlighted()
+		{
+			var (picker, _) = ShowWithCurrent(null);
+
+			Assert.That(picker.OptionsList.SelectedIndex, Is.EqualTo(0),
+				"unchanged for every picker that has no current value to show");
+		}
+
+		[AvaloniaTest]
+		public void TypingBeatsTheCurrentValue_SoEnterTakesWhatWasSearchedFor()
+		{
+			var (picker, window) = ShowWithCurrent("u-weather");
+
+			window.KeyTextInput("Sk");
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(picker.CurrentItems.Select(o => o.Name), Is.EqualTo(new[] { "Sky" }));
+			Assert.That(picker.OptionsList.SelectedIndex, Is.EqualTo(0),
+				"typing is a SEARCH -- Enter must take the match, not snap back to the old value");
+		}
+
+		[AvaloniaTest]
+		public void ClearingTheFilter_ReturnsTheHighlightToTheCurrentValue()
+		{
+			var (picker, window) = ShowWithCurrent("u-weather");
+			window.KeyTextInput("Sk");
+			Dispatcher.UIThread.RunJobs();
+
+			picker.FilterBox.Text = string.Empty;
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(picker.OptionsList.SelectedIndex, Is.EqualTo(2),
+				"back to showing what is chosen once the search is abandoned");
+		}
+
+		[AvaloniaTest]
+		public void SelectByKey_MovesTheHighlight_SoAReopenedPickerIsNotStale()
+		{
+			var (picker, _) = ShowWithCurrent("u-weather");
+
+			picker.SelectByKey("p"); // the host committed a new value
+
+			Assert.That(picker.OptionsList.SelectedIndex, Is.EqualTo(3),
+				"the picker instance is reused across opens, so a stale highlight would persist");
+		}
+
+		#endregion
+
 		#region Create-on-type (P7c)
 
 		// Environments is the case this exists for. Most of these pin the other half: that
