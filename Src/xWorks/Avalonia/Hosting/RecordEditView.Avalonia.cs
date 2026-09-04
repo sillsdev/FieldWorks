@@ -141,8 +141,10 @@ namespace SIL.FieldWorks.XWorks
 		private void TearDownAvaloniaEntryForm()
 		{
 			if (m_avaloniaEntryForm != null)
+			{
 				m_avaloniaEntryForm.DetailEditCompleted -= OnAvaloniaDetailEditCompleted;
 				m_avaloniaEntryForm.DetailPointerGestureEnded -= OnAvaloniaPointerGestureEnded;
+			}
 			m_detailEditContext.DetachDeactivateHook();
 			m_detailEditContext.DetachUndoGuard();
 			m_detailEditContext.InvalidEditRolledBack = null;
