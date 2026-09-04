@@ -41,19 +41,22 @@ namespace SIL.FieldWorks.XWorks
 	/// Everything the composer hands a plugin factory, bundled into one contract:
 	/// the row's object and typed node, the detail view's edit context (resolved lazily through the
 	/// composer's deferred accessor -- the context object is created during compose, BEFORE the
-	/// edit context exists; plugin factories run at render time, after), and the cache.
+	/// edit context exists; plugin factories run at render time, after), the cache, and the
+	/// host's writing-system focus callback.
 	/// </summary>
 	public sealed class SlicePluginBuildContext
 	{
 		private readonly Func<IDetailEditContext> _editContextAccessor;
 
 		public SlicePluginBuildContext(ICmObject target, ViewNode node,
-			Func<IDetailEditContext> editContextAccessor, LcmCache cache)
+			Func<IDetailEditContext> editContextAccessor, LcmCache cache,
+			Action<string> writingSystemFocused = null)
 		{
 			Target = target;
 			Node = node;
 			_editContextAccessor = editContextAccessor;
 			Cache = cache;
+			WritingSystemFocused = writingSystemFocused;
 		}
 
 		/// <summary>The composed row's own object (the slice's object in legacy terms).</summary>
@@ -66,6 +69,12 @@ namespace SIL.FieldWorks.XWorks
 		public IDetailEditContext EditContext => _editContextAccessor?.Invoke();
 
 		public LcmCache Cache { get; }
+
+		/// <summary>
+		/// The host's editor-focus callback, raised with the writing-system tag of the plugin
+		/// editor that gained focus. Null when the host supplies none.
+		/// </summary>
+		public Action<string> WritingSystemFocused { get; }
 	}
 
 	/// <summary>

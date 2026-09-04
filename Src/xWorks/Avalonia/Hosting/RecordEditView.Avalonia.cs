@@ -351,7 +351,8 @@ namespace SIL.FieldWorks.XWorks
 				composed = lexEntry != null
 					? DetailComposer.Compose(lexEntry, Cache, showHidden,
 						overrides: ResolveViewOverride,
-						showAllWritingSystemsFields: m_showAllWsFields)
+						showAllWritingSystemsFields: m_showAllWsFields,
+						writingSystemFocused: OnDetailWritingSystemFocused)
 					// Non-entry roots compose against the tool's configured layout
 					// (m_layoutName, default "Normal"); a type-selected layout (m_layoutChoiceField, e.g.
 					// Notebook RnGenericRec keyed on "Type") resolves to the right variant inside Compose.
@@ -359,7 +360,8 @@ namespace SIL.FieldWorks.XWorks
 						string.IsNullOrEmpty(m_layoutName) ? "Normal" : m_layoutName, showHidden,
 						overrides: ResolveViewOverride,
 						layoutChoiceField: m_layoutChoiceField,
-						showAllWritingSystemsFields: m_showAllWsFields);
+						showAllWritingSystemsFields: m_showAllWsFields,
+						writingSystemFocused: OnDetailWritingSystemFocused);
 				if (composed != null)
 				{
 					detail = composed.Model;

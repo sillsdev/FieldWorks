@@ -116,9 +116,11 @@ namespace SIL.FieldWorks.XWorks
 		public static ComposedDetail Compose(ILexEntry entry, LcmCache cache, bool showHiddenFields = false,
 			SlicePluginRegistry plugins = null,
 			ViewDefinitionOverrideResolver overrides = null,
-			ISet<string> showAllWritingSystemsFields = null)
+			ISet<string> showAllWritingSystemsFields = null,
+			Action<string> writingSystemFocused = null)
 			=> Compose((ICmObject)entry, cache, "Normal", showHiddenFields, plugins, overrides,
-				showAllWritingSystemsFields: showAllWritingSystemsFields);
+				showAllWritingSystemsFields: showAllWritingSystemsFields,
+				writingSystemFocused: writingSystemFocused);
 
 		/// <summary>
 		/// Compose the structured detail view for ANY record root + starting layout -- the
@@ -132,11 +134,14 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="showAllWritingSystemsFields">Template StableIds of parts under a
 		/// transient "Show all right now" reveal: every row of those parts composes with its
 		/// full writing-system set, ignoring per-field visibility restrictions.</param>
+		/// <param name="writingSystemFocused">The host's editor-focus callback for plugin rows;
+		/// null when no host supplies one.</param>
 		public static ComposedDetail Compose(ICmObject obj, LcmCache cache, string layoutName = "Normal",
 			bool showHiddenFields = false, SlicePluginRegistry plugins = null,
 			ViewDefinitionOverrideResolver overrides = null,
 			string layoutChoiceField = null,
-			ISet<string> showAllWritingSystemsFields = null)
+			ISet<string> showAllWritingSystemsFields = null,
+			Action<string> writingSystemFocused = null)
 		{
 			if (obj == null) throw new ArgumentNullException(nameof(obj));
 			if (cache == null) throw new ArgumentNullException(nameof(cache));
@@ -157,7 +162,7 @@ namespace SIL.FieldWorks.XWorks
 			IDetailEditContext composedContext = null;
 			var state = new ComposeState(cache, showHiddenFields,
 				plugins ?? SlicePluginRegistry.Default, () => composedContext, overrides,
-				showAllWritingSystemsFields);
+				showAllWritingSystemsFields, writingSystemFocused);
 			state.EnterModel(root);
 			foreach (var node in root.Roots)
 				state.Walk(node, obj, 0);
@@ -301,6 +306,8 @@ namespace SIL.FieldWorks.XWorks
 			// receive (resolved when the factory runs, after Compose has built the context).
 			private readonly SlicePluginRegistry _plugins;
 			private readonly Func<IDetailEditContext> _editContextAccessor;
+			// The host's editor-focus callback, handed to plugin rows through the build context.
+			private readonly Action<string> _writingSystemFocused;
 			// Parts under the host's transient "Show all right now" reveal (template StableIds);
 			// every row of those parts composes with its full writing-system set.
 			private readonly ISet<string> _showAllWsFields;
@@ -338,12 +345,14 @@ namespace SIL.FieldWorks.XWorks
 			public ComposeState(LcmCache cache, bool showHiddenFields,
 				SlicePluginRegistry plugins, Func<IDetailEditContext> editContextAccessor,
 				ViewDefinitionOverrideResolver overrides = null,
-				ISet<string> showAllWritingSystemsFields = null)
+				ISet<string> showAllWritingSystemsFields = null,
+				Action<string> writingSystemFocused = null)
 			{
 				_cache = cache;
 				_showHidden = showHiddenFields;
 				_plugins = plugins;
 				_editContextAccessor = editContextAccessor;
+				_writingSystemFocused = writingSystemFocused;
 				_overrides = overrides;
 				_showAllWsFields = showAllWritingSystemsFields;
 				_sda = cache.DomainDataByFlid;
@@ -2704,10 +2713,10 @@ namespace SIL.FieldWorks.XWorks
 			private void AddPluginRow(ViewNode node, ICmObject obj, int depth, ISlicePlugin plugin)
 			{
 				// ONE plugin contract -- the build context bundles everything a
-				// plugin can need (object, node, deferred edit-context accessor, cache); there is
-				// no
-				// service-aware marker type test.
-				var context = new SlicePluginBuildContext(obj, node, _editContextAccessor, _cache);
+				// plugin can need (object, node, deferred edit-context accessor, cache, focus
+				// callback); there is no service-aware marker type test.
+				var context = new SlicePluginBuildContext(obj, node, _editContextAccessor, _cache,
+					_writingSystemFocused);
 				Func<Avalonia.Controls.Control> factory = () => plugin.BuildControl(context);
 				AddField(new DetailField(StableId(node, obj), Localize(node.Label) ?? node.Field,
 					node.Field, node.WritingSystem, DetailFieldKind.Custom, node.EditorClassification,
