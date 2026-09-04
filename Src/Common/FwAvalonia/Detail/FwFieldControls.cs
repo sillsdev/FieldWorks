@@ -1551,6 +1551,10 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 	/// is a
 	/// two-state choice, so it reuses the option path rather than widening the edit seam. A null
 	/// edit context yields a read-only checkbox, like every other row.
+	///
+	/// The toggle COMMITS rather than only staging: it is one discrete gesture, and legacy's
+	/// CheckBoxSlice writes it as it lands. Staging alone would leave the box visibly ticked with
+	/// nothing on the undo stack until focus moved elsewhere.
 	/// </summary>
 	public sealed class FwBooleanField : CheckBox
 	{
@@ -1564,11 +1568,19 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		// a
 		// user toggle and staged as an edit.
 		private bool _wiring;
+		private readonly Action _gestureCompleted;
 
-		public FwBooleanField(DetailField field, string automationId, IDetailEditContext editContext)
+		/// <param name="gestureCompleted">
+		/// Invoked after a SUCCESSFUL toggle so the host commits it immediately, exactly as the
+		/// reference vector's add/remove does. Null on a host that drives its own commit; the
+		/// toggle then only stages.
+		/// </param>
+		public FwBooleanField(DetailField field, string automationId, IDetailEditContext editContext,
+			Action gestureCompleted = null)
 		{
 			_field = field;
 			_editContext = editContext;
+			_gestureCompleted = gestureCompleted;
 
 			_wiring = true;
 			IsChecked = bool.TryParse(field?.SelectedOptionKey, out var value) && value;
@@ -1594,7 +1606,13 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			var staged = _editContext.TrySetOption(_field,
 				IsChecked == true ? bool.TrueString : bool.FalseString);
 			if (staged)
+			{
+				// Only a successful toggle completes the gesture; a refused one leaves the
+				// session
+				// untouched rather than committing a change the model rejected.
+				_gestureCompleted?.Invoke();
 				return;
+			}
 
 			// The edit was refused; put the box back rather than showing a state the model does
 			// not

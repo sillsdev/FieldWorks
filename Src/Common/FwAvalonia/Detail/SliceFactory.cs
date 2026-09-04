@@ -121,7 +121,10 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				case DetailFieldKind.Chooser:
 					return new FwChooserField(field, automationId, context.EditContext, context.LinkRequested);
 				case DetailFieldKind.Boolean:
-					return new FwBooleanField(field, automationId, context.EditContext);
+					// A toggle is a DISCRETE gesture, like a vector add/remove: legacy writes it
+					// immediately. Staging only leaves Ctrl+Z nothing to undo until focus moves.
+					return new FwBooleanField(field, automationId, context.EditContext,
+						context.EditContext == null ? null : context.Save);
 				case DetailFieldKind.Literal:
 					return CreateLiteral(field, automationId);
 				case DetailFieldKind.Unsupported:

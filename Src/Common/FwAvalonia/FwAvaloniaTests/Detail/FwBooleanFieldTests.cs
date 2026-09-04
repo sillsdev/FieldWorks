@@ -28,10 +28,10 @@ namespace FwAvaloniaTests.Detail
 				null, null, value ? bool.TrueString : bool.FalseString, isEditable);
 
 		private static (Control Editor, Window Window) Show(DetailField field,
-			IDetailEditContext editContext)
+			IDetailEditContext editContext, System.Action save = null)
 		{
 			var editor = SliceFactory.Build(field, "IsAbstract",
-				new SliceFactoryContext(editContext: editContext));
+				new SliceFactoryContext(editContext: editContext, save: save));
 			var window = new Window { Content = editor, Width = 420, Height = 120 };
 			window.Show();
 			Dispatcher.UIThread.RunJobs();
@@ -102,6 +102,40 @@ namespace FwAvaloniaTests.Detail
 
 			Assert.That(checkbox.IsChecked, Is.False,
 				"a refused edit puts the box back rather than showing a state the model lacks");
+		}
+
+		/// <summary>
+		/// A toggle COMMITS, it does not merely stage. Staging alone left the box ticked with
+		/// nothing on the undo stack until focus happened to move off the row, so Ctrl+Z appeared
+		/// to do nothing. Legacy's CheckBoxSlice writes the toggle as it lands.
+		/// </summary>
+		[AvaloniaTest]
+		public void Toggle_BooleanField_CommitsImmediately_SoUndoWorksWithoutMovingFocus()
+		{
+			var commits = 0;
+			var context = new FakeDetailEditContext();
+			var (editor, _) = Show(BooleanField(false), context, () => commits++);
+
+			((FwBooleanField)editor).IsChecked = true;
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(commits, Is.EqualTo(1),
+				"the gesture completes on the toggle -- not on some later focus change");
+		}
+
+		[AvaloniaTest]
+		public void Toggle_BooleanField_DoesNotCommit_WhenTheEditIsRefused()
+		{
+			var commits = 0;
+			var context = new FakeDetailEditContext { OptionResult = false };
+			var (editor, _) = Show(BooleanField(false), context, () => commits++);
+
+			((FwBooleanField)editor).IsChecked = true;
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(commits, Is.Zero,
+				"a refused edit commits nothing; committing here would push an empty step onto "
+				+ "the undo stack");
 		}
 
 		[AvaloniaTest]
