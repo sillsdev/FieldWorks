@@ -11,6 +11,7 @@ There are several ways you can contribute to the development of FieldWorks:
 - **Reporting bugs** - We plan to enable [GitHub Issues](https://github.com/sillsdev/FieldWorks/issues) in the near future. Until then, you can
   - Choose Help > Report a Problem... from within FieldWorks
   - Fill out the [contact form](https://software.sil.org/fieldworks/about/contact/) at our website
+  - Create an account on [Jira](https://jira.sil.org/issues/?jql=project%20%3D%20LT)
 
 ## Getting Started
 

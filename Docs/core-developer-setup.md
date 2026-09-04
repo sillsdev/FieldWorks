@@ -119,12 +119,13 @@ For core developers, the canonical AI-assisted path is now [AI-Assisted PR Workf
 - `bugfix/<issue-number>-<description>` - Bug fixes
 - `hotfix/<version>` - Emergency fixes for released versions
 - `release/<version>` - Release preparation branches
+- `main` - Main development on the current or upcoming release
 
 ### Creating Feature Branches
 
 ```powershell
 # Create a new feature branch from the default branch
-git checkout release/9.3
+git checkout main
 git pull
 git checkout -b feature/my-feature-name
 ```
