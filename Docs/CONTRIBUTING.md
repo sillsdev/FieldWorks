@@ -155,7 +155,7 @@ Only use this opt-in for attended local debugging. CI and normal local runs shou
 
 Default recommendation:
 - Use **VS Code + ReSharper extension** for everyday coding, navigation, and managed test explorer workflows.
-- **C# Dev Kit is discouraged** in this workspace (it doesn't support debugging or test discovery for legacy .NET Framework projects, which this workspace uses).
+- **C# Dev Kit is discouraged** in this workspace (this kit doesn't support debugging or test discovery for projects that use .NET Framework, as this workspace still does).
 - Use repo scripts/tasks as source of truth for build/test: `./build.ps1` and `./test.ps1`.
 
 Switch to **Visual Studio** (2026 or 2022) when you need:
