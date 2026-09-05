@@ -41,6 +41,12 @@ namespace SIL.FieldWorks.XWorks
 	/// </summary>
 	public partial class RecordEditView
 	{
+		/// <summary>
+		/// Logged when Avalonia-native menu construction throws and no menu is shown.
+		/// </summary>
+		internal const string NativeMenuFailureLogMessage =
+			"Avalonia-native menu failed; the menu was not shown.";
+
 		internal readonly struct PersistentCommandTargetIdentity
 			: IEquatable<PersistentCommandTargetIdentity>
 		{
@@ -607,8 +613,7 @@ namespace SIL.FieldWorks.XWorks
 				{
 					// Log only: a WinForms adapter menu here would bypass the interceptor and
 					// the post-menu refresh, so the native menu is the sole rendering.
-					Logger.WriteError("Avalonia-native menu failed; the menu was not shown.",
-						nativeMenuError);
+					Logger.WriteError(NativeMenuFailureLogMessage, nativeMenuError);
 				}
 			}
 			catch (Exception e)

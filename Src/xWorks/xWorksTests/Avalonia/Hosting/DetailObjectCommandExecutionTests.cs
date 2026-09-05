@@ -217,22 +217,11 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void ShowAllWritingSystems_IsTransientAndExpiresWhenAnotherSliceBecomesCurrent()
 		{
-			PersistCitationVisibility("ifdata");
-			RefreshAvaloniaDetail();
-			var model = GetHostedDetailModel();
-			var citation = model.Fields.Single(field => field.Field == "CitationForm");
-			var beforeBytes = File.ReadAllBytes(m_layoutOverridePath);
-			var items = CreateNativeMenuItems(citation,
-				new[] { "mnuDataTree-MultiStringSlice", RecordEditView.ObjectMenuId });
-
-			var showAll = FindItem(items, "Show all right now");
-			Assert.That(showAll, Is.Not.Null.And.Property("IsEnabled").True);
-			showAll.Execute();
+			byte[] beforeBytes = null;
+			var (citation, model, revealed) = RevealShowAllOnCitation(
+				() => beforeBytes = File.ReadAllBytes(m_layoutOverridePath));
 
 			Assert.That(File.ReadAllBytes(m_layoutOverridePath), Is.EqualTo(beforeBytes));
-			Assert.That(GetField(m_view, "m_showAllWritingSystemsSlice"),
-				Is.EqualTo(citation.LayoutSliceIdentity));
-			var revealed = GetHostedDetailModel();
 			Assert.That(revealed, Is.Not.SameAs(model), "Show all recomposes the detail view");
 
 			var otherField = revealed.Fields
@@ -251,15 +240,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void MenuRequest_WhenNoMenuCanBeShown_StillEndsShowAllAndRefreshes()
 		{
-			PersistCitationVisibility("ifdata");
-			RefreshAvaloniaDetail();
-			var citation = GetHostedDetailModel().Fields.Single(field => field.Field == "CitationForm");
-			var items = CreateNativeMenuItems(citation,
-				new[] { "mnuDataTree-MultiStringSlice", RecordEditView.ObjectMenuId });
-			FindItem(items, "Show all right now").Execute();
-			var revealed = GetHostedDetailModel();
-			Assert.That(GetField(m_view, "m_showAllWritingSystemsSlice"),
-				Is.EqualTo(citation.LayoutSliceIdentity), "precondition: Show all is active");
+			var (citation, _, revealed) = RevealShowAllOnCitation();
 
 			// A hotlinks request on a row without a hotlinks menu resolves to no items, so
 			// no menu opens.
@@ -267,11 +248,22 @@ namespace SIL.FieldWorks.XWorks
 				!field.LayoutSliceIdentity.Equals(citation.LayoutSliceIdentity)
 				&& string.IsNullOrEmpty(field.HotlinksId));
 			var request = DetailMenuRequest.FromAnchor(null, otherField, DetailMenuKind.Hotlinks);
-			var onMenuRequested = typeof(RecordEditView).GetMethod("OnDetailMenuRequested",
-				BindingFlags.Instance | BindingFlags.NonPublic);
-			Assert.That(onMenuRequested, Is.Not.Null);
+			var ownsLogger = Logger.Singleton == null;
+			if (ownsLogger)
+				Logger.Init("xWorksTests");
+			try
+			{
+				InvokeOnDetailMenuRequested(request);
 
-			onMenuRequested.Invoke(m_view, new object[] { request });
+				Assert.That(Logger.LogText,
+					Does.Not.Contain(RecordEditView.NativeMenuFailureLogMessage),
+					"no native-menu-construction failure occurred, so nothing is logged");
+			}
+			finally
+			{
+				if (ownsLogger)
+					Logger.ShutDown();
+			}
 
 			Assert.That(GetField(m_view, "m_showAllWritingSystemsSlice"), Is.Null,
 				"the request ends the transient reveal even though no menu was shown");
@@ -284,15 +276,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void MenuRequest_WhenNativeMenuConstructionThrows_LogsEndsShowAllAndRefreshes()
 		{
-			PersistCitationVisibility("ifdata");
-			RefreshAvaloniaDetail();
-			var citation = GetHostedDetailModel().Fields.Single(field => field.Field == "CitationForm");
-			var items = CreateNativeMenuItems(citation,
-				new[] { "mnuDataTree-MultiStringSlice", RecordEditView.ObjectMenuId });
-			FindItem(items, "Show all right now").Execute();
-			var revealed = GetHostedDetailModel();
-			Assert.That(GetField(m_view, "m_showAllWritingSystemsSlice"),
-				Is.EqualTo(citation.LayoutSliceIdentity), "precondition: Show all is active");
+			var (_, _, revealed) = RevealShowAllOnCitation();
 
 			// XWindow.GetContextMenuNodeFromMenuId throws for an unknown menu id, so an in-string
 			// request on a row bound to one makes XCoreMenuBridge.CreateMenuItems throw.
@@ -301,18 +285,15 @@ namespace SIL.FieldWorks.XWorks
 				HostRouting.Inherit, new List<DetailWsValue> { new DetailWsValue("en", "value") },
 				null, null, contextMenuId: "mnuDataTree-DoesNotExist", objectHvo: m_entry.Hvo);
 			var request = DetailMenuRequest.FromAnchor(null, brokenRow, DetailMenuKind.ContextMenu);
-			var onMenuRequested = typeof(RecordEditView).GetMethod("OnDetailMenuRequested",
-				BindingFlags.Instance | BindingFlags.NonPublic);
-			Assert.That(onMenuRequested, Is.Not.Null);
 			var ownsLogger = Logger.Singleton == null;
 			if (ownsLogger)
 				Logger.Init("xWorksTests");
 			try
 			{
-				onMenuRequested.Invoke(m_view, new object[] { request });
+				InvokeOnDetailMenuRequested(request);
 
 				Assert.That(Logger.LogText,
-					Does.Contain("Avalonia-native menu failed; the menu was not shown."),
+					Does.Contain(RecordEditView.NativeMenuFailureLogMessage),
 					"the construction failure is logged so the defect stays visible");
 			}
 			finally
@@ -731,6 +712,35 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(refresh, Is.Not.Null);
 			refresh.Invoke(m_view, null);
 			DrainMediatorAndIdleQueues();
+		}
+
+		// Turns Show all right now on for Citation Form. beforeExecute runs with the menu
+		// built but not yet clicked, for baselines the caller compares afterwards.
+		private (DetailField Citation, DetailModel Model, DetailModel Revealed)
+			RevealShowAllOnCitation(Action beforeExecute = null)
+		{
+			PersistCitationVisibility("ifdata");
+			RefreshAvaloniaDetail();
+			var model = GetHostedDetailModel();
+			var citation = model.Fields.Single(field => field.Field == "CitationForm");
+			var items = CreateNativeMenuItems(citation,
+				new[] { "mnuDataTree-MultiStringSlice", RecordEditView.ObjectMenuId });
+			var showAll = FindItem(items, "Show all right now");
+			Assert.That(showAll, Is.Not.Null.And.Property("IsEnabled").True);
+			beforeExecute?.Invoke();
+			showAll.Execute();
+
+			Assert.That(GetField(m_view, "m_showAllWritingSystemsSlice"),
+				Is.EqualTo(citation.LayoutSliceIdentity), "precondition: Show all is active");
+			return (citation, model, GetHostedDetailModel());
+		}
+
+		private void InvokeOnDetailMenuRequested(DetailMenuRequest request)
+		{
+			var onMenuRequested = typeof(RecordEditView).GetMethod("OnDetailMenuRequested",
+				BindingFlags.Instance | BindingFlags.NonPublic);
+			Assert.That(onMenuRequested, Is.Not.Null);
+			onMenuRequested.Invoke(m_view, new object[] { request });
 		}
 
 		private DetailModel GetHostedDetailModel()

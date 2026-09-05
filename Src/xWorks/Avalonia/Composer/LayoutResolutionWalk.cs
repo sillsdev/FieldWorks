@@ -34,10 +34,9 @@ namespace SIL.FieldWorks.XWorks
 	}
 
 	/// <summary>
-	/// The detail-layout fallback walk both the project-inventory source and the shipped-file
-	/// compiler use, matching the legacy <c>DataTree.GetTemplateForObjLayout</c> order: the
-	/// requested name on the concrete class and each base class, then <c>default</c> starting
-	/// at the concrete class's base.
+	/// The detail-layout fallback walk in the legacy <c>DataTree.GetTemplateForObjLayout</c>
+	/// order: the requested name on the concrete class and each base class, then
+	/// <c>default</c> starting at the concrete class's base.
 	/// </summary>
 	internal static class LayoutResolutionWalk
 	{
@@ -47,6 +46,8 @@ namespace SIL.FieldWorks.XWorks
 		/// case-insensitively because <c>ViewDefinitionSourceSnapshot</c> copies them into a
 		/// case-insensitive dictionary anyway.
 		/// </summary>
+		/// <exception cref="ArgumentNullException"><paramref name="mdc"/>,
+		/// <paramref name="requestedName"/>, or <paramref name="lookup"/> is null.</exception>
 		/// <exception cref="LayoutNotFoundException">Neither the requested layout nor the
 		/// default layout exists in the class hierarchy.</exception>
 		/// <exception cref="InvalidOperationException">The metadata class hierarchy contains a

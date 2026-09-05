@@ -170,8 +170,7 @@ design.
   construction throws (`XCoreMenuBridge` conversion or the host interceptor).
   **WinForms**: the legacy `DataTree` shows the xCore menu through the
   WinForms adapter `ContextMenuStrip` (`XWindow.ShowContextMenu` ->
-  `MenuAdapter`), and the pre-parity Avalonia host fell back to that same
-  adapter menu, so a usable menu still appeared.
+  `MenuAdapter`).
   **Avalonia**: `RecordEditView.OnDetailMenuRequested` logs the
   error and shows no menu; the pending Show-all reveal still ends and the
   detail view still recomposes. **Why accepted**: the adapter menu bypasses
