@@ -179,7 +179,10 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			=> new ViewNode(source.StableId, ViewNodeKind.Field, labelOverride ?? source.Label, source.Abbreviation,
 				source.Field, source.RawEditor, source.EditorClassification, source.WritingSystem, source.Visibility,
 				source.Expansion, source.Indented, source.TargetLayout, null,
-				source.LocalizationKey, automationId, HostRouting.Product);
+				source.LocalizationKey, automationId, HostRouting.Product,
+				sourceCallerPath: source.SourceCallerPath,
+				optionalWritingSystem: source.OptionalWritingSystem,
+				forceIncludeEnglish: source.ForceIncludeEnglish);
 
 		private static ViewNode Leaf(string stableId, string label, string field, string editor, string ws, string automationId)
 			=> new ViewNode(stableId, ViewNodeKind.Field, label, null, field, editor,

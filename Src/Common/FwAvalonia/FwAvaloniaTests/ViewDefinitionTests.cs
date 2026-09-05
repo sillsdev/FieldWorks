@@ -2,7 +2,9 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Threading;
 using System.Xml.Linq;
 using NUnit.Framework;
@@ -49,6 +51,13 @@ namespace FwAvaloniaTests
   <part id='LexEntry-Detail-PerFieldWs'>
     <slice label='Form' editor='multistring' field='CitationForm' ws='all analysis'/>
   </part>
+  <part id='LexEntry-Detail-ExtendedWs'>
+    <slice label='Form' editor='multistring' field='CitationForm' ws='all pronunciation'
+      optionalWs='all vernacular' forceIncludeEnglish='true'/>
+  </part>
+  <part id='LexEntry-Detail-SelectedObject'>
+    <obj field='LexemeForm' layout='ContentLayout' layoutChoiceField='MorphType'/>
+  </part>
 </bin></PartInventory>";
 
 		private static ViewDefinitionModel Import(string layoutXml)
@@ -80,6 +89,19 @@ namespace FwAvaloniaTests
 
 			var bib = model.Roots[1];
 			Assert.That(bib.Visibility, Is.EqualTo(ViewVisibility.IfData), "caller visibility overrides");
+		}
+
+		[Test]
+		public void Import_ObjectLayoutAndChoiceFieldMatchLegacyPrecedence()
+		{
+			var model = Import(@"
+<layout class='LexEntry' type='detail' name='T'>
+  <part ref='SelectedObject' param='CallerLayout'/>
+</layout>");
+
+			var node = model.Roots.Single();
+			Assert.That(node.TargetLayout, Is.EqualTo("ContentLayout"));
+			Assert.That(node.LayoutChoiceField, Is.EqualTo("MorphType"));
 		}
 
 		[Test]
@@ -175,7 +197,7 @@ namespace FwAvaloniaTests
 			// writing systems. The ordered specs ride the node for the composer to intersect with the set.
 			var model = Import(@"
 <layout class='LexEntry' type='detail' name='PFW'>
-  <part ref='PerFieldWs' visibleWritingSystems='fr en'/>
+  <part ref='PerFieldWs' visibleWritingSystems='fr,en'/>
 </layout>");
 
 			var field = model.Roots[0];
@@ -193,6 +215,40 @@ namespace FwAvaloniaTests
 </layout>");
 			Assert.That(model.Roots[0].VisibleWritingSystems, Is.Null,
 				"a field with no override shows the full configured set (null = no restriction)");
+		}
+
+		[Test]
+		public void Import_WritingSystemOptions_CaptureOptionalSetAndEnglishFlag()
+		{
+			var model = Import(@"
+<layout class='LexEntry' type='detail' name='PFW'>
+  <part ref='ExtendedWs'/>
+</layout>");
+
+			var field = model.Roots.Single();
+			Assert.That(field.OptionalWritingSystem, Is.EqualTo("all vernacular"));
+			Assert.That(field.ForceIncludeEnglish, Is.True);
+			Assert.That(model.Diagnostics, Is.Empty);
+		}
+
+		[Test]
+		public void Import_EmptyVisibleWritingSystems_PreservesExplicitEmptyOverride()
+		{
+			var model = Import(@"<layout class='LexEntry' type='detail' name='Normal'>
+  <part ref='PerFieldWs' visibleWritingSystems=''/>
+</layout>");
+
+			Assert.That(model.Roots[0].VisibleWritingSystems, Is.EqualTo(new[] { string.Empty }));
+		}
+
+		[Test]
+		public void Import_SpaceSeparatedVisibleWritingSystems_RemainsOneLegacyToken()
+		{
+			var model = Import(@"<layout class='LexEntry' type='detail' name='Normal'>
+  <part ref='PerFieldWs' visibleWritingSystems='fr en'/>
+</layout>");
+
+			Assert.That(model.Roots[0].VisibleWritingSystems, Is.EqualTo(new[] { "fr en" }));
 		}
 
 		[Test]
@@ -235,15 +291,47 @@ namespace FwAvaloniaTests
 		}
 
 		[Test]
-		public void Import_UnresolvedPart_RaisesErrorDiagnostic_AndDoesNotThrow()
+		public void Import_UnresolvedPart_RaisesErrorDiagnostic_AndOmitsTheCaller()
 		{
 			var model = Import(@"
 <layout class='LexEntry' type='detail' name='Broken'>
   <part ref='DoesNotExist'/>
 </layout>");
 
-			Assert.That(model.Roots, Is.Empty);
+			Assert.That(model.Roots, Is.Empty, "DataTree omits an unresolved part");
 			Assert.That(model.Diagnostics.Single().Code, Is.EqualTo("unresolved-part"));
+		}
+
+		[Test]
+		public void Import_ContainerConstructsDataTreeIgnores_AreOmittedWithDiagnostics()
+		{
+			// DataTree.ProcessPartRefNode only handles sublayout/indent/part, so a <generate>
+			// or an unknown element in a detail layout renders nothing in WinForms.
+			var model = Import(@"
+<layout class='LexEntry' type='detail' name='Ignored'>
+  <generate class='LexEntry' fieldType='custom'/>
+  <mystery/>
+</layout>");
+
+			Assert.That(model.Roots, Is.Empty, "an Unsupported row here would be a divergence");
+			var generated = model.Diagnostics.Single(d => d.Code == "generated-content-dropped");
+			var unknown = model.Diagnostics.Single(d => d.Code == "unknown-container-element");
+			Assert.That(generated.NodePath, Is.Not.EqualTo(unknown.NodePath),
+				"omitted siblings must not share a diagnostic path");
+		}
+
+		[Test]
+		public void Import_PartWithoutRef_IsOmittedWithDiagnostic()
+		{
+			// DataTree reads the ref with GetMandatoryAttributeValue and throws, so no
+			// row renders.
+			var model = Import(@"
+<layout class='LexEntry' type='detail' name='Orphan'>
+  <part label='Orphan'/>
+</layout>");
+
+			Assert.That(model.Roots, Is.Empty);
+			Assert.That(model.Diagnostics.Single().Code, Is.EqualTo("part-without-ref"));
 		}
 	}
 
@@ -261,6 +349,18 @@ namespace FwAvaloniaTests
 				"detail",
 				$"<layout class='LexEntry' type='detail' name='{layoutName}'><part ref='CitationForm'/></layout>",
 				partsXml);
+
+		[Test]
+		public void Snapshot_DistinguishesAbsentAndEmptyChoiceGuid()
+		{
+			var withoutChoice = new ViewDefinitionModel("RnGenericRec", "Normal", "detail",
+				new ViewNode[0], new ViewDiagnostic[0]);
+			var emptyChoice = new ViewDefinitionModel("RnGenericRec", "Normal", "detail",
+				new ViewNode[0], new ViewDiagnostic[0], string.Empty);
+
+			Assert.That(emptyChoice.ToSnapshot(), Is.Not.EqualTo(withoutChoice.ToSnapshot()));
+			Assert.That(emptyChoice.ToSnapshot(), Does.Contain(" choice="));
+		}
 
 		[Test]
 		public void Compile_CachesByFingerprint_ReturnsSameInstance()
@@ -328,6 +428,116 @@ namespace FwAvaloniaTests
 				Assert.That(async () => await compiler.CompileAsync(Snapshot("CfOnly"), cts.Token),
 					Throws.InstanceOf<System.OperationCanceledException>());
 			}
+		}
+
+		[Test]
+		public void Snapshot_PreservesRequestedIdentityWhenResolvedLayoutFallsBack()
+		{
+			var snapshot = new ViewDefinitionSourceSnapshot(
+				"LexEntry", "detail",
+				"<layout class='LexEntry' type='detail' name='default' choiceGuid='resolved'/>",
+				PartsXml, requestedLayoutName: "Requested", requestedChoiceGuid: null);
+
+			Assert.That(snapshot.RequestedLayoutName, Is.EqualTo("Requested"));
+			Assert.That(snapshot.RequestedChoiceGuid, Is.Null);
+			Assert.That(snapshot.ResolvedLayoutName, Is.EqualTo("default"));
+			Assert.That(snapshot.ResolvedChoiceGuid, Is.EqualTo("resolved"));
+
+			var model = new ViewDefinitionCompiler().Compile(snapshot);
+			Assert.That(model.RequestedLayoutName, Is.EqualTo("Requested"));
+			Assert.That(model.RequestedChoiceGuid, Is.Null);
+			Assert.That(model.ResolvedLayoutName, Is.EqualTo("default"));
+			Assert.That(model.ResolvedChoiceGuid, Is.EqualTo("resolved"));
+		}
+
+		[Test]
+		public void Snapshot_BaseClassMapLookupIsCaseInsensitiveAfterCopy()
+		{
+			var snapshot = new ViewDefinitionSourceSnapshot(
+				"derivedclass", "detail",
+				"<layout class='derivedclass' type='detail' name='Normal'><part ref='CitationForm'/></layout>",
+				"<PartInventory><bin><part id='BaseClass-Detail-CitationForm'>"
+				+ "<slice field='CitationForm'/></part></bin></PartInventory>",
+				new Dictionary<string, string> { ["DerivedClass"] = "BaseClass" });
+
+			var model = new ViewDefinitionCompiler().Compile(snapshot);
+
+			Assert.That(model.Roots, Has.Count.EqualTo(1));
+			Assert.That(model.Roots[0].Field, Is.EqualTo("CitationForm"));
+		}
+
+		[Test]
+		public void Compile_RetainsConcreteRequestedIdentityWhenXmlUsesBaseLayout()
+		{
+			var snapshot = new ViewDefinitionSourceSnapshot(
+				"ConcreteClass", "detail",
+				"<layout class='BaseClass' type='detail' name='default' choiceGuid='resolved'/>",
+				"<PartInventory/>", requestedLayoutName: "Requested", requestedChoiceGuid: "requested");
+
+			var model = new ViewDefinitionCompiler().Compile(snapshot);
+
+			Assert.That(model.RequestedIdentity,
+				Is.EqualTo(new ViewDefinitionIdentity("ConcreteClass", "detail", "Requested", "requested")));
+			Assert.That(model.ResolvedIdentity,
+				Is.EqualTo(new ViewDefinitionIdentity("BaseClass", "detail", "default", "resolved")));
+		}
+
+		[Test]
+		public void CacheKey_UsesCaseInsensitiveFourPartIdentityButDistinguishesNullAndEmptyChoice()
+		{
+			var upper = new ViewDefinitionCacheKey("LexEntry", "Normal", "Detail", null, "fingerprint");
+			var mixed = new ViewDefinitionCacheKey("lexentry", "normal", "detail", null, "fingerprint");
+			var empty = new ViewDefinitionCacheKey("lexentry", "normal", "detail", string.Empty, "fingerprint");
+
+			Assert.That(upper, Is.EqualTo(mixed));
+			Assert.That(upper.GetHashCode(), Is.EqualTo(mixed.GetHashCode()));
+			Assert.That(upper, Is.Not.EqualTo(empty));
+		}
+
+		[Test]
+		public void CacheKey_FingerprintRetainsSourceXmlDifferences()
+		{
+			var first = Snapshot("Normal").ToKey();
+			var changed = new ViewDefinitionSourceSnapshot("LexEntry", "detail",
+				"<layout class='LexEntry' type='detail' name='Normal'><part ref='citationform'/></layout>",
+				PartsXml).ToKey();
+
+			Assert.That(first, Is.Not.EqualTo(changed));
+		}
+
+		[Test]
+		public void Snapshot_LazilyCachesFingerprintWhenOriginalBaseClassMapChanges()
+		{
+			var baseClassMap = new Dictionary<string, string>
+			{
+				["LexEntry"] = "LexObject"
+			};
+			var snapshot = new ViewDefinitionSourceSnapshot("LexEntry", "detail",
+				"<layout class='LexEntry' type='detail' name='Normal'/>", PartsXml, baseClassMap);
+			var fingerprintField = typeof(ViewDefinitionSourceSnapshot).GetField("_fingerprint",
+				BindingFlags.Instance | BindingFlags.NonPublic);
+			Assert.That(fingerprintField, Is.Not.Null);
+			var lazyFingerprint = (System.Lazy<string>)fingerprintField.GetValue(snapshot);
+			Assert.That(lazyFingerprint.IsValueCreated, Is.False);
+
+			var first = snapshot.ComputeFingerprint();
+			Assert.That(lazyFingerprint.IsValueCreated, Is.True);
+			Assert.That(ReferenceEquals(first, snapshot.ComputeFingerprint()), Is.True);
+			baseClassMap["LexEntry"] = "ChangedBase";
+
+			Assert.That(snapshot.ComputeFingerprint(), Is.EqualTo(first));
+			Assert.That(snapshot.ToKey().SourceFingerprint, Is.EqualTo(first));
+		}
+
+		[Test]
+		public void Snapshot_CustomFieldsExpandedMetadataDefaultsFalseAndCanBeSet()
+		{
+			var unexpanded = Snapshot("Unexpanded");
+			var expanded = new ViewDefinitionSourceSnapshot(
+				"LexEntry", "detail", unexpanded.LayoutXml, unexpanded.PartsXml, null, null, null, true);
+
+			Assert.That(unexpanded.CustomFieldsExpanded, Is.False);
+			Assert.That(expanded.CustomFieldsExpanded, Is.True);
 		}
 	}
 }

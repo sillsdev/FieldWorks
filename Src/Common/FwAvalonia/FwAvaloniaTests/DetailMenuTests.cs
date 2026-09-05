@@ -200,6 +200,47 @@ namespace FwAvaloniaTests
 				"the request carries the bound object so command routing can target it");
 		}
 
+		[AvaloniaTest]
+		public void MenuAffordances_ReportTheirExactOwnerOnFocusAndBeforeActivation()
+		{
+			var gloss = Field("Gloss", DetailFieldKind.Text, menuId: "mnuDataTree-Help");
+			var senses = Field("Senses", DetailFieldKind.Header,
+				hotlinksId: "mnuDataTree-Sense-Hotlinks", collapsible: true);
+			var events = new List<string>();
+			var model = new DetailModel("LexEntry", "Normal",
+				new List<DetailField> { gloss, senses }, new List<ViewDiagnostic>());
+			var view = new DataTree(model, null, null, null, null,
+				request => events.Add("menu:" + request.Field.Field),
+				fieldFocused: focused => events.Add("focus:" + focused.Field));
+			var window = new Window { Content = view, Width = 480, Height = 300 };
+			window.Show();
+			Dispatcher.UIThread.RunJobs();
+
+			var fieldMenu = Find<Button>(view, "Gloss.FieldMenu");
+			fieldMenu.Focus();
+			Dispatcher.UIThread.RunJobs();
+			Assert.That(events, Is.EqualTo(new[] { "focus:Gloss" }),
+				"keyboard focus makes this field current before the menu is activated");
+
+			fieldMenu.RaiseEvent(new RoutedEventArgs { RoutedEvent = Button.ClickEvent });
+			Assert.That(events, Is.EqualTo(new[]
+			{
+				"focus:Gloss", "focus:Gloss", "menu:Gloss"
+			}));
+
+			events.Clear();
+			var hotlinks = Find<Button>(view, "Senses.Hotlinks");
+			hotlinks.Focus();
+			Dispatcher.UIThread.RunJobs();
+			Assert.That(events, Is.EqualTo(new[] { "focus:Senses" }));
+
+			hotlinks.RaiseEvent(new RoutedEventArgs { RoutedEvent = Button.ClickEvent });
+			Assert.That(events, Is.EqualTo(new[]
+			{
+				"focus:Senses", "focus:Senses", "menu:Senses"
+			}));
+		}
+
 		// Right-click and the drop-down icon open the same menu.
 		[AvaloniaTest]
 		public void RightClick_OnLabel_RaisesTheSliceMenuRequest()
@@ -429,6 +470,27 @@ namespace FwAvaloniaTests
 			Assert.That(atPointer, Is.Not.Null);
 			Assert.That(atPointer.Placement, Is.Not.EqualTo(PlacementMode.BottomEdgeAlignedLeft),
 				"a mouse-invoked menu still opens at the pointer");
+		}
+
+		[AvaloniaTest]
+		public void DetailMenuFlyout_InvokesClosedActionAfterTheMenuCloses()
+		{
+			var target = new Button { Content = "field" };
+			var window = new Window { Content = target, Width = 300, Height = 200 };
+			window.Show();
+			Dispatcher.UIThread.RunJobs();
+			var closed = 0;
+
+			var flyout = DetailMenuFlyout.Show(
+				new[] { new DetailMenuItem("Show in Concordance") }, target,
+				atPointer: false, closed: () => closed++);
+			Dispatcher.UIThread.RunJobs();
+			Assert.That(closed, Is.Zero);
+
+			flyout.Hide();
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(closed, Is.EqualTo(1));
 		}
 
 		// The two menus are DISTINCT: the label opens the slice menu, the value opens the

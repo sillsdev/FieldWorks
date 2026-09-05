@@ -35,6 +35,11 @@ namespace FwAvaloniaTests
       <deParams ws='best analysis'/>
     </slice>
   </part>
+  <part id='LexEntry-Detail-SliceWithUnknownChild'>
+    <slice label='Odd'>
+      <mystery/>
+    </slice>
+  </part>
   <part id='LexEntry-Detail-Senses'>
     <seq field='Senses'/>
   </part>
@@ -112,6 +117,8 @@ namespace FwAvaloniaTests
 
 			var diag = model.Diagnostics.Single(d => d.Code == "generated-content-dropped");
 			Assert.That(diag.Severity, Is.EqualTo(ViewDiagnosticSeverity.Warning));
+			Assert.That(model.Roots, Is.Empty,
+				"DataTree has no PartGenerator path, so WinForms renders nothing for <generate>");
 		}
 
 		[Test]
@@ -126,19 +133,24 @@ namespace FwAvaloniaTests
 </layout>");
 
 			Assert.That(model.Diagnostics.Count(d => d.Code == "conditional-dropped"), Is.EqualTo(2));
-			Assert.That(model.Roots, Is.Empty, "an unevaluable condition must not import its content");
+			Assert.That(model.Roots, Has.Count.EqualTo(2),
+				"an unevaluable condition stays visible as an unsupported row without importing content");
+			Assert.That(model.Roots.All(root => root.EditorClassification == EditorClassification.Unknown), Is.True);
 		}
 
 		[Test]
-		public void SublayoutElement_RaisesInfoDropDiagnostic()
+		public void SublayoutElement_ImportsTargetAndChoiceField()
 		{
 			var model = Import(@"
 <layout class='LexEntry' type='detail' name='T'>
-  <sublayout name='domainLabel' group='para'/>
+  <sublayout name='domainLabel' layoutChoiceField='Type'/>
 </layout>");
 
-			Assert.That(model.Diagnostics.Single(d => d.Code == "sublayout-dropped").Severity,
-				Is.EqualTo(ViewDiagnosticSeverity.Info));
+			var sublayout = model.Roots.Single();
+			Assert.That(sublayout.Kind, Is.EqualTo(ViewNodeKind.Sublayout));
+			Assert.That(sublayout.TargetLayout, Is.EqualTo("domainLabel"));
+			Assert.That(sublayout.LayoutChoiceField, Is.EqualTo("Type"));
+			Assert.That(model.Diagnostics.Any(d => d.Code == "sublayout-dropped"), Is.False);
 		}
 
 		[Test]
@@ -162,8 +174,10 @@ namespace FwAvaloniaTests
 		}
 
 		[Test]
-		public void CallerChildren_OfOtherKinds_UnderSliceContentPart_AreStillReported()
+		public void CallerChildren_OfOtherKinds_UnderSliceContentPart_AreReportedAndOmitted()
 		{
+			// Slice.CreateIndentedNodes only consults the caller's <indent>; WinForms renders
+			// nothing for other caller children, so no row may appear here either.
 			var model = Import(@"
 <layout class='LexEntry' type='detail' name='T'>
   <part ref='MenuSection'>
@@ -173,11 +187,31 @@ namespace FwAvaloniaTests
 
 			Assert.That(model.Diagnostics.Any(d => d.Code == "caller-children-dropped"), Is.True,
 				"non-structural caller children must still be reported, not silently dropped");
+			Assert.That(model.Roots.Single().Children, Is.Empty);
 		}
 
 		[Test]
-		public void NonPartCallerChildren_UnderSequencePart_AreReported()
+		public void CallerChildren_BarePart_UnderSliceContentPart_IsReportedAndOmitted()
 		{
+			// Slice.GenerateChildren and CreateIndentedNodes read only the caller's <indent>;
+			// a <part> directly under the caller is never read, so WinForms renders nothing.
+			var model = Import(@"
+<layout class='LexEntry' type='detail' name='T'>
+  <part ref='MenuSection'>
+    <part ref='CitationForm'/>
+  </part>
+</layout>");
+
+			Assert.That(model.Diagnostics.Single(d => d.Code == "caller-children-dropped").Message,
+				Does.Contain("<part>"));
+			Assert.That(model.Roots.Single().Children, Is.Empty);
+		}
+
+		[Test]
+		public void NonPartCallerChildren_UnderSequencePart_AreReportedAndOmitted()
+		{
+			// DataTree.CreateSlicesFor unifies caller children into each item's layout; the
+			// composer does the same from SourceCallerXml, so the importer emits no row here.
 			var model = Import(@"
 <layout class='LexEntry' type='detail' name='T'>
   <part ref='Senses'>
@@ -186,6 +220,28 @@ namespace FwAvaloniaTests
 </layout>");
 
 			Assert.That(model.Diagnostics.Any(d => d.Code == "injected-child-dropped"), Is.True);
+			Assert.That(model.Roots.Single().Children, Is.Empty);
+			Assert.That(model.Roots.Single().SourceCallerXml, Does.Contain("<indent>"));
+		}
+
+		[Test]
+		public void InjectedChildren_WithoutRef_OrUnresolvable_AreReportedAndOmitted()
+		{
+			// A ref-less injected part throws in DataTree (GetMandatoryAttributeValue) and an
+			// unresolvable one is omitted like any unresolved part; neither renders a row.
+			var model = Import(@"
+<layout class='LexEntry' type='detail' name='T'>
+  <part ref='Senses'>
+    <part/>
+    <part ref='NoSuchPart'/>
+  </part>
+</layout>");
+
+			var noRef = model.Diagnostics.Single(d => d.Code == "injected-child-dropped");
+			var unresolved = model.Diagnostics.Single(d => d.Code == "cross-object-deferred");
+			Assert.That(noRef.NodePath, Is.Not.EqualTo(unresolved.NodePath),
+				"omitted siblings must not share a diagnostic path");
+			Assert.That(model.Roots.Single().Children, Is.Empty);
 		}
 
 		// The chooserLink jump links import as typed metadata on the slice node -- the
@@ -224,6 +280,8 @@ namespace FwAvaloniaTests
 			var diag = model.Diagnostics.Single(d => d.Code == "slice-content-dropped");
 			Assert.That(diag.Severity, Is.EqualTo(ViewDiagnosticSeverity.Info));
 			Assert.That(diag.Message, Does.Contain("title"));
+			Assert.That(model.Roots.Single().Children, Is.Empty,
+				"slice configuration never renders a row in WinForms");
 		}
 
 		[Test]
@@ -236,6 +294,23 @@ namespace FwAvaloniaTests
 
 			var diag = model.Diagnostics.Single(d => d.Code == "slice-content-dropped");
 			Assert.That(diag.Message, Does.Contain("deParams"));
+			Assert.That(model.Roots.Single().Children, Is.Empty,
+				"DataTree.ProcessSubpartNode ignores deParams, so no row renders");
+		}
+
+		[Test]
+		public void SliceContentChildren_Unknown_AreReportedAndOmitted()
+		{
+			var model = Import(@"
+<layout class='LexEntry' type='detail' name='T'>
+  <part ref='SliceWithUnknownChild'/>
+</layout>");
+
+			var diag = model.Diagnostics.Single(d => d.Code == "slice-content-dropped");
+			Assert.That(diag.Message, Does.Contain("mystery"));
+			Assert.That(model.Roots.Single().Kind, Is.EqualTo(ViewNodeKind.Field),
+				"an editor-less slice with any child row would become a Group; omission keeps it a Field");
+			Assert.That(model.Roots.Single().Children, Is.Empty);
 		}
 
 		[Test]
@@ -387,11 +462,14 @@ namespace FwAvaloniaTests
 		[Test]
 		public void UnsupportedPublishingConditionForm_KeepsTheDropLane()
 		{
-			// stringaltequals/ws is publishing-only vocabulary (XmlVc string tests, all on Jt parts in
-			// the shipped files); evaluating it wrongly would hide/show the wrong fields, so it drops.
+			// stringaltequals/ws is publishing-only vocabulary in XmlVc string tests on Jt
+			// parts. Evaluating it wrongly could hide/show fields, so retain the visible
+			// unsupported row and drop diagnostic.
 			var model = Import("LexSense", "PublishingDropped");
 
-			Assert.That(model.Roots, Is.Empty);
+			Assert.That(model.Roots, Has.Count.EqualTo(1));
+			Assert.That(model.Roots.Single().Routing, Is.EqualTo(HostRouting.Unsupported));
+			Assert.That(model.Roots.Single().EditorClassification, Is.EqualTo(EditorClassification.Unknown));
 			Assert.That(model.Diagnostics.Single(d => d.Code == "conditional-dropped").Message,
 				Does.Contain("stringaltequals").Or.Contain("ws"));
 		}
@@ -513,15 +591,22 @@ namespace FwAvaloniaTests
 
 		private static (List<LayoutSourceFile> layouts, List<LayoutSourceFile> parts) LoadShippedFiles(string repoRoot)
 		{
-			var partsDir = Path.Combine(repoRoot, "DistFiles", "Language Explorer", "Configuration", "Parts");
-			Assert.That(Directory.Exists(partsDir), Is.True, $"missing shipped parts directory: {partsDir}");
+			// The legacy Inventory loads DistFiles/Parts and then lets Language Explorer
+			// replace same-id entries; the resolver is first-wins, so list that one first.
+			var partsDirs = new[]
+			{
+				Path.Combine(repoRoot, "DistFiles", "Language Explorer", "Configuration", "Parts"),
+				Path.Combine(repoRoot, "DistFiles", "Parts")
+			};
+			foreach (var dir in partsDirs)
+				Assert.That(Directory.Exists(dir), Is.True, $"missing shipped parts directory: {dir}");
 
-			var layouts = Directory.GetFiles(partsDir, "*.fwlayout")
-				.OrderBy(f => f, StringComparer.Ordinal)
+			var layouts = partsDirs.SelectMany(dir => Directory.GetFiles(dir, "*.fwlayout")
+					.OrderBy(f => f, StringComparer.Ordinal))
 				.Select(f => new LayoutSourceFile(Path.GetFileName(f), XElement.Load(f)))
 				.ToList();
-			var parts = Directory.GetFiles(partsDir, "*Parts.xml")
-				.OrderBy(f => f, StringComparer.Ordinal)
+			var parts = partsDirs.SelectMany(dir => Directory.GetFiles(dir, "*Parts.xml")
+					.OrderBy(f => f, StringComparer.Ordinal))
 				.Select(f => new LayoutSourceFile(Path.GetFileName(f), XElement.Load(f)))
 				.ToList();
 
@@ -631,55 +716,19 @@ namespace FwAvaloniaTests
 			var report = LayoutImportCoverage.Run(layouts, parts, LoadBaseClassMap(repoRoot));
 
 			// Every entry below was verified to have no matching part id (case-insensitive) on the
-			// class or any base class in the shipped *Parts.xml files; legacy omits them too. Most are
-			// summary/section header parts that were never shipped, plus the DateCreated/DateModified
-			// refs Notebook hides (visibility='never') whose parts never existed in the detail view.
+			// class or any base class in the shipped *Parts.xml files; legacy omits them too.
 			var legacyUnresolvable = new SortedDictionary<string, int>(StringComparer.Ordinal)
 			{
-				{ "CmAnthroItem-Summary", 1 },
 				{ "CmPerson-Role", 1 },
-				{ "CmPossibility-Summary", 1 },
-				{ "CmSemanticDomain-Summary", 1 },
-				{ "FsClosedValue-Summary", 1 },
-				{ "FsComplexFeature-Message", 1 },
-				{ "FsComplexValue-Summary", 1 },
-				{ "FsFeatStruc-Blank", 1 },
-				{ "FsFeatStrucType-Message", 1 },
-				{ "FsFeatureSpecification-Summary", 1 },
-				{ "LexEntry-ImportResidue", 1 },
-				{ "LexEntryInflType-Summary", 1 },
-				{ "LexEntryType-Summary", 2 },
-				{ "LexEtymology-NormalSummary", 1 },
-				{ "LexExtendedNote-NormalSummary", 1 },
-				{ "LexPronunciation-MediaFiles", 1 },
 				{ "LexReference-ShowSingleReference", 1 },
-				{ "LexSense-HeavySummary", 1 },
-				{ "LexSense-ImportResidue", 1 },
-				// LexSense `Pictures` has no LexSense-Detail-Pictures part, so legacy DataTree (and this
-				// importer) omit sense pictures.
-				{ "LexSense-Pictures", 1 },
-				{ "MoAlloAdhocProhib-Message", 1 },
-				{ "MoEndoCompound-HeadLast", 2 },
-				{ "MoExoCompound-ToMsa", 1 },
-				{ "MoInflAffixSlot-Optional", 1 },
-				{ "MoInflClass-SubclassesAllA", 1 },
-				{ "MoMorphAdhocProhib-Message", 1 },
-				{ "PartOfSpeech-Section", 2 },
-				{ "PhPhoneme-Codes", 1 },
-				{ "ReversalIndexEntry-Section", 2 },
-				{ "RnGenericRec-DateCreated", 12 },
-				{ "RnGenericRec-DateModified", 12 },
-				{ "Text-DateCreated", 1 },
-				{ "Text-DateModified", 1 },
-				{ "WfiAnalysis-HeavySummary", 3 },
-				{ "WfiWordform-HeavySummary", 1 }
+				{ "MoInflClass-SubclassesAllA", 1 }
 			};
 
 			Assert.That(report.UnresolvedPartRefs, Is.EquivalentTo(legacyUnresolvable),
 				"the unresolved-part set changed; if a part was added/renamed update this set, if a "
-				+ "resolution rule regressed fix the resolver (B10 baseline: 63 occurrences, was 259)");
-			Assert.That(report.UnresolvedPartRefs.Values.Sum(), Is.EqualTo(63),
-				"B10 unresolved-part occurrence ceiling");
+				+ "resolution rule regressed fix the resolver (baseline: 3 occurrences, was 259)");
+			Assert.That(report.UnresolvedPartRefs.Values.Sum(), Is.EqualTo(3),
+				"unresolved-part occurrence ceiling");
 		}
 
 		/// <summary>
@@ -740,21 +789,20 @@ namespace FwAvaloniaTests
 		}
 
 		/// <summary>
-		/// A documented member of the remaining set. CmAnthroItem 'nested' refs 'Summary'
-		/// and no Summary detail part exists on CmAnthroItem/CmPossibility/CmObject -- legacy
-		/// DataTree
-		/// omits the slice the same way (DataTree.cs:2455-2457).
+		/// CmAnthroItem 'nested' refs 'Summary', which only DistFiles/Parts/StandardParts.xml
+		/// defines (CmObject-Detail-Summary). Loading both shipped directories, as the legacy
+		/// Inventory does, resolves it through the CmPossibility -> CmObject chain.
 		/// </summary>
 		[Test]
-		public void CmAnthroItemNestedLayout_SummaryStaysUnresolved_MatchingLegacyOmission()
+		public void CmAnthroItemNestedLayout_SummaryResolves_ViaTheStandardCmObjectPart()
 		{
 			var repoRoot = FindRepoRoot();
 			var (layouts, parts) = LoadShippedFiles(repoRoot);
 			var model = ImportShippedLayout(repoRoot, layouts, parts, "CmAnthroItem", "nested");
 
-			var unresolved = model.Diagnostics.Where(d => d.Code == "unresolved-part").ToList();
-			Assert.That(unresolved.Count, Is.EqualTo(1));
-			Assert.That(unresolved[0].Message, Does.Contain("'Summary'"));
+			Assert.That(model.Diagnostics.Where(d => d.Code == "unresolved-part"), Is.Empty);
+			Assert.That(model.Roots.Single().RawEditor, Is.EqualTo("jtview"));
+			Assert.That(model.Roots.Single().Label, Is.EqualTo("Subcategory"));
 		}
 
 		/// <summary>
@@ -831,9 +879,15 @@ namespace FwAvaloniaTests
 			Assert.That(translations.GhostClass, Is.Null, "class comes from the field signature");
 			Assert.That(translations.GhostInitMethod, Is.EqualTo("SetTypeToFreeTrans"));
 
-			// LexSense/Normal reaches Examples (ghost=Example ghostWs=vernacular) and ExtendedNotes
-			// (ghost=Discussion ghostWs=analysis), both without ghostClass/ghostInitMethod.
-			var sense = ImportShippedLayout(repoRoot, layouts, parts, "LexSense", "Normal");
+			// Import the concrete shipped parts directly so their ghost metadata stays
+			// covered independently of the LexSense/Normal layout structure.
+			var mergedParts = new XElement("PartInventory", parts.Select(file => file.Root));
+			var resolver = new DictionaryPartResolver(mergedParts, LoadBaseClassMap(repoRoot));
+			var sense = new XmlLayoutImporter().Import(XElement.Parse(@"
+<layout class='LexSense' type='detail' name='GhostMetadata'>
+  <part ref='Examples'/>
+  <part ref='ExtendedNotes'/>
+</layout>"), resolver);
 			var examples = FindNode(sense.Roots, n => n.Field == "Examples" && n.GhostField != null);
 			Assert.That(examples?.GhostField, Is.EqualTo("Example"));
 			Assert.That(examples?.GhostWs, Is.EqualTo("vernacular"));

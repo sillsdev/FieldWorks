@@ -9,21 +9,26 @@ using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
 using System.Xml;
+using System.Xml.Linq;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwAvalonia;
+using SIL.FieldWorks.Common.FwAvalonia.Detail;
+using SIL.FieldWorks.Common.FwAvalonia.ViewDefinition;
 using SIL.FieldWorks.Common.Framework.DetailControls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Infrastructure;
 using XCore;
+using DetailLayoutIdentity = SIL.FieldWorks.Common.FwAvalonia.Detail.DetailLayoutIdentity;
+using LegacyDataTree = SIL.FieldWorks.Common.Framework.DetailControls.DataTree;
 
 namespace SIL.FieldWorks.XWorks
 {
 	/// <summary>
 	/// Hardening for the Avalonia lexical-edit object-command path.
 	///
-	/// <c>EnsureMenuCommandAdapter</c> targeting: when the target hvo's slice is a lazy,
+	/// <c>EnsureMenuCommandTarget</c> targeting: when the target hvo's slice is a lazy,
 	/// unrealized <c>DummyObjectSlice</c> (a sequence with &gt;= <c>DataTree.kInstantSliceMax</c> items
 	/// builds lazy placeholders whose <c>Object</c> is the OWNER, not the target), a naive walk finds no
 	/// matching slice and leaves CurrentSlice pointed wherever the previous interaction left it
@@ -48,9 +53,8 @@ namespace SIL.FieldWorks.XWorks
 		{
 			m_application = new MockFwXApp(new MockFwManager { Cache = Cache }, null, null);
 			m_configFilePath = Path.Combine(FwDirectoryFinder.CodeDirectory, m_application.DefaultConfigurationPathname);
-			// The hidden legacy DataTree's ShowObject (driven by EnsureMenuCommandAdapter) needs the
-			// legacy layout/parts Inventory loaded; that Inventory is keyed by the project path, so
-			// give the in-memory test project a writable temp path before the inventory bootstrap.
+			// The hidden legacy DataTree's ShowObject needs the layout/parts Inventory, which is
+			// keyed by project path: give the in-memory project a writable temp path first.
 			Cache.ProjectId.Path = Path.Combine(Path.GetTempPath(), Cache.ProjectId.Name,
 				Cache.ProjectId.Name + ".junk");
 		}
@@ -117,7 +121,7 @@ namespace SIL.FieldWorks.XWorks
 		// reachability logic that CAN be exercised without a live tree.)
 		[Test]
 		[Explicit("Requires the live (laid-out, visible) legacy DataTree to realize lazy slices and resolve CurrentSlice; see note above. Runs in the desktop environment.")]
-		public void EnsureMenuCommandAdapter_TargetInLazySliceRange_RealizesAndTargetsTheRightObject()
+		public void EnsureMenuCommandTarget_TargetInLazySliceRange_RealizesAndTargetsTheRightObject()
 		{
 			// The entry has well over DataTree.kInstantSliceMax (20) senses, so Senses
 			// builds lazy DummyObjectSlices; a deep target's slice does not exist yet,
@@ -128,7 +132,7 @@ namespace SIL.FieldWorks.XWorks
 
 			EnsureAdapter(deepSenseHvo);
 
-			var dataTree = (DataTree)GetField(m_view, "m_dataEntryForm");
+			var dataTree = (LegacyDataTree)GetField(m_view, "m_dataEntryForm");
 			var current = dataTree.CurrentSlice;
 			Assert.That(current, Is.Not.Null,
 				"the adapter must realize the lazy slice and point CurrentSlice at the deep target");
@@ -140,12 +144,12 @@ namespace SIL.FieldWorks.XWorks
 
 		[Test]
 		[Explicit("Requires the live (laid-out, visible) legacy DataTree to realize slices and resolve/clear CurrentSlice; the hidden detached adapter tree never lays out headlessly. Runs in the desktop environment.")]
-		public void EnsureMenuCommandAdapter_NoSliceMatchesHvo_ClearsCurrentSliceRatherThanMisTarget()
+		public void EnsureMenuCommandTarget_NoSliceMatchesHvo_ClearsCurrentSliceRatherThanMisTarget()
 		{
 			// First point the adapter at a real sense, so CurrentSlice is non-null...
 			var realSenseHvo = m_entry.SensesOS[0].Hvo;
 			EnsureAdapter(realSenseHvo);
-			var dataTree = (DataTree)GetField(m_view, "m_dataEntryForm");
+			var dataTree = (LegacyDataTree)GetField(m_view, "m_dataEntryForm");
 			Assert.That(dataTree.CurrentSlice, Is.Not.Null, "precondition: a slice is current");
 
 			// ...then target an hvo that has NO slice in this entry's tree (a foreign object). The hardened
@@ -211,6 +215,229 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(read.Invoke(m_view, null), Is.Null, "a negative width must not be persisted");
 		}
 
+		[Test]
+		public void AvaloniaComposition_UsesProjectLayoutInventoryInitializedByLayoutCache()
+		{
+			var expected = Inventory.GetInventory("layouts", Cache.ProjectId.Name);
+			Assert.That(expected, Is.Not.Null,
+				"LayoutCache.InitializePartInventories should install the project inventory");
+
+			var source = GetField(m_view, "m_inventoryViewDefinitionSource");
+
+			Assert.That(source, Is.Not.Null,
+				"showing the record should lazily create the project view-definition source");
+			Assert.That(GetField(source, "_layouts"), Is.SameAs(expected),
+				"the host source must use the project-keyed Inventory singleton");
+		}
+
+		[Test]
+		public void ImportedCallerPath_IsCanonicalWhenPartsSkipOrExpandOutput()
+		{
+			var parts = new DictionaryPartResolver(XElement.Parse(@"
+<PartInventory><bin>
+  <part id='LexEntry-Detail-Multiple'>
+    <slice field='CitationForm' editor='string'/>
+    <slice field='CitationForm' editor='string'/>
+  </part>
+  <part id='LexEntry-Detail-Single'>
+    <slice field='CitationForm' editor='string'/>
+  </part>
+</bin></PartInventory>"));
+			const string layoutXml = @"
+<layout class='LexEntry' type='detail' name='Normal'>
+  <part ref='Missing'/>
+  <part ref='Multiple'/>
+  <part ref='Single'/>
+</layout>";
+
+			var model = new XmlLayoutImporter().Import(XElement.Parse(layoutXml), parts);
+			var xml = new XmlDocument();
+			xml.LoadXml(layoutXml);
+			var legacyCaller = xml.SelectSingleNode("/layout/part[@ref='Multiple']");
+
+			Assert.That(model.Roots.Take(2).Select(node => node.SourceCallerPath),
+				Is.All.EqualTo("part[1]"),
+				"every output expanded from one caller must retain the same source identity");
+			Assert.That(model.Roots[2].SourceCallerPath, Is.EqualTo("part[2]"),
+				"a skipped caller must not collapse the source address to the output index");
+			Assert.That(LegacyLayoutCallerPath.Get(legacyCaller), Is.EqualTo("part[1]"),
+				"the XmlNode slice key and XElement importer clones must compute the same identity");
+		}
+
+		[TestCase(0, 0, "Reject")]
+		[TestCase(1, 0, "UseRealized")]
+		[TestCase(0, 1, "RealizeLazy")]
+		[TestCase(1, 1, "Reject")]
+		[TestCase(0, 2, "Reject")]
+		public void PersistentTargetArbitration_RequiresExactlyOneCombinedMatch(int realized,
+			int lazy, string expectedName)
+		{
+			var expected = (RecordEditView.PersistentTargetAction)Enum.Parse(
+				typeof(RecordEditView.PersistentTargetAction), expectedName);
+			Assert.That(RecordEditView.ArbitratePersistentTarget(realized, lazy), Is.EqualTo(expected));
+		}
+
+		[Test]
+		public void PersistentTargetArbitration_SoleRealizedUsesItOnce()
+		{
+			var realizedCalls = 0;
+			var lazyCalls = 0;
+			var rescanCalls = 0;
+
+			Assert.That(RecordEditView.ExecutePersistentTargetArbitration(1, 0,
+				() => { realizedCalls++; return true; },
+				() => { lazyCalls++; return true; },
+				() => { rescanCalls++; return true; },
+				() => false), Is.True);
+			Assert.That(realizedCalls, Is.EqualTo(1));
+			Assert.That(lazyCalls, Is.Zero);
+			Assert.That(rescanCalls, Is.Zero);
+		}
+
+		[Test]
+		public void PersistentTargetArbitration_SoleLazyRealizesOnceAndRescansOnce()
+		{
+			var realizedCalls = 0;
+			var lazyCalls = 0;
+			var rescanCalls = 0;
+
+			Assert.That(RecordEditView.ExecutePersistentTargetArbitration(0, 1,
+				() => { realizedCalls++; return true; },
+				() => { lazyCalls++; return true; },
+				() => { rescanCalls++; return true; },
+				() => false), Is.True);
+			Assert.That(realizedCalls, Is.Zero);
+			Assert.That(lazyCalls, Is.EqualTo(1));
+			Assert.That(rescanCalls, Is.EqualTo(1));
+		}
+
+		[Test]
+		public void PersistentTargetArbitration_RescanFailureAfterSoleLazyMatchFailsClosed()
+		{
+			var realizedCalls = 0;
+			var lazyCalls = 0;
+			var rescanCalls = 0;
+			var rejectCalls = 0;
+
+			Assert.That(RecordEditView.ExecutePersistentTargetArbitration(0, 1,
+				() => { realizedCalls++; return true; },
+				() => { lazyCalls++; return true; },
+				() => { rescanCalls++; return false; },
+				() => { rejectCalls++; return false; }), Is.False);
+			Assert.That(realizedCalls, Is.Zero);
+			Assert.That(lazyCalls, Is.EqualTo(1));
+			Assert.That(rescanCalls, Is.EqualTo(1));
+			Assert.That(rejectCalls, Is.Zero);
+		}
+
+		[Test]
+		public void PersistentTargetArbitration_RealizationFailureDoesNotRescan()
+		{
+			var lazyCalls = 0;
+			var rescanCalls = 0;
+			var rejectCalls = 0;
+
+			Assert.That(RecordEditView.ExecutePersistentTargetArbitration(0, 1,
+				() => true,
+				() => { lazyCalls++; return false; },
+				() => { rescanCalls++; return true; },
+				() => { rejectCalls++; return false; }), Is.False);
+			Assert.That(lazyCalls, Is.EqualTo(1));
+			Assert.That(rescanCalls, Is.Zero);
+			Assert.That(rejectCalls, Is.EqualTo(1));
+		}
+
+		[Test]
+		public void IsValidPersistentTarget_EmptyLayoutNameIsValidButNullIsAbsent()
+		{
+			var validator = typeof(RecordEditView).GetMethod("IsValidPersistentTarget",
+				BindingFlags.Instance | BindingFlags.NonPublic);
+			Assert.That(validator, Is.Not.Null);
+
+			Assert.That((bool)validator.Invoke(m_view, new object[] { PersistentField(string.Empty) }),
+				Is.True);
+			Assert.That((bool)validator.Invoke(m_view, new object[] { PersistentField(null) }),
+				Is.False);
+		}
+
+		private DetailField PersistentField(string layoutName)
+		{
+			var field = new DetailField("LexEntry/test", "Citation Form", "CitationForm", null,
+				DetailFieldKind.Text, EditorClassification.Known, null, null, HostRouting.Product,
+				null, null, null, objectHvo: m_entry.Hvo);
+			field.ClassName = "LexEntry";
+			field.LayoutType = "detail";
+			field.LayoutName = layoutName;
+			field.SourceCallerPath = "part[0]";
+			field.LayoutPath = new[]
+			{
+				new DetailLayoutIdentity("LexEntry", "detail", layoutName, null)
+			};
+			return field;
+		}
+
+		[Test]
+		public void PersistentSliceIdentity_CarriesCallerAndSelectedLayoutAcrossObjectDescent()
+		{
+			var document = new XmlDocument();
+			document.LoadXml(@"<root>
+  <layout class='LexEntry' type='detail' name='Normal'>
+    <part ref='Outer'><indent><part ref='Inner'/></indent></part>
+  </layout>
+  <layout class='LexSense' type='detail' name='Normal' choiceGuid='choice-a'>
+    <part ref='Nested'/>
+  </layout>
+</root>");
+			var layouts = document.SelectNodes("/root/layout");
+			var inner = layouts[0].SelectSingleNode("part/indent/part");
+			var nested = layouts[1].SelectSingleNode("part");
+			using (var slice = new Slice
+			{
+				Cache = Cache,
+				Object = m_entry,
+				ConfigurationNode = document.CreateElement("slice"),
+				Key = new object[] { layouts[0], inner, m_entry.Hvo, layouts[1], nested }
+			})
+			{
+				var identity = m_view.PersistentSliceIdentity(slice);
+
+				Assert.That(identity.CallerPath,
+					Is.EqualTo("part[0]/indent[0]/part[0]|part[0]"));
+				Assert.That(identity.LayoutPath, Has.Count.EqualTo(2));
+				Assert.That(identity.LayoutPath[1].ChoiceGuid, Is.EqualTo("choice-a"));
+			}
+		}
+
+		[Test]
+		public void PersistentSliceIdentity_FinalSublayoutResetsLayoutAndCallerChain()
+		{
+			var document = new XmlDocument();
+			document.LoadXml(@"<root>
+  <layout class='LexEntry' type='detail' name='Normal'><part ref='Outer'/></layout>
+  <sublayout name='Inline'/>
+  <layout class='LexEntry' type='detail' name='Inline'><part ref='Inner'/></layout>
+</root>");
+			var outerLayout = document.SelectSingleNode("/root/layout[@name='Normal']");
+			var outerPart = outerLayout.SelectSingleNode("part");
+			var sublayout = document.SelectSingleNode("/root/sublayout");
+			var innerLayout = document.SelectSingleNode("/root/layout[@name='Inline']");
+			var innerPart = innerLayout.SelectSingleNode("part");
+			using (var slice = new Slice
+			{
+				Cache = Cache,
+				Object = m_entry,
+				ConfigurationNode = document.CreateElement("slice"),
+				Key = new object[] { outerLayout, outerPart, sublayout, innerLayout, innerPart }
+			})
+			{
+				var identity = m_view.PersistentSliceIdentity(slice);
+
+				Assert.That(identity.LayoutName, Is.EqualTo("Inline"));
+				Assert.That(identity.CallerPath, Is.EqualTo("part[0]"));
+				Assert.That(identity.LayoutPath, Has.Count.EqualTo(1));
+			}
+		}
+
 		// ----------------------------------------------------------------------------------------
 		// Bootstrap helpers
 		// ----------------------------------------------------------------------------------------
@@ -237,9 +464,10 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
+		// Targets the hidden adapter tree exactly as a native menu item's Execute does.
 		private void EnsureAdapter(int targetHvo, string fieldName = null)
 		{
-			var method = typeof(RecordEditView).GetMethod("EnsureMenuCommandAdapter",
+			var method = typeof(RecordEditView).GetMethod("EnsureMenuCommandTarget",
 				BindingFlags.Instance | BindingFlags.NonPublic);
 			Assert.That(method, Is.Not.Null);
 			method.Invoke(m_view, new object[] { targetHvo, fieldName });

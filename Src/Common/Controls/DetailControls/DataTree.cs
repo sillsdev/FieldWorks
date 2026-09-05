@@ -5415,6 +5415,33 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			}
 		}
 
+		public override int LazySequenceFlid
+		{
+			get
+			{
+				CheckDisposed();
+				return m_flid;
+			}
+		}
+
+		public override int LazySequenceIndex
+		{
+			get
+			{
+				CheckDisposed();
+				return m_ihvoMin;
+			}
+		}
+
+		public override object[] LazySequencePath
+		{
+			get
+			{
+				CheckDisposed();
+				return m_path == null ? null : m_path.ToArray();
+			}
+		}
+
 		/// <summary>
 		/// Turn this dummy slice into whatever it stands for, replacing itself in the data tree's
 		/// slices (where it occupies slot index) with whatever is appropriate.

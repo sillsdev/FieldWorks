@@ -54,6 +54,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		private readonly Action<string, bool> _expansionChanged;
 		private readonly Action<DetailMenuRequest> _menuRequested;
 		private readonly Action<DetailLinkRequest> _linkRequested;
+		private readonly Action<DetailField> _fieldFocused;
 		private readonly IFwClipboard _clipboard;
 
 		// Computed once per view (not per field/row) from the widest WS abbreviation across the
@@ -82,7 +83,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			Action<DetailLinkRequest> linkRequested = null,
 			IFwClipboard clipboard = null,
 			Func<double?> getLabelColumnWidth = null,
-			Action<double> labelColumnWidthChanged = null)
+			Action<double> labelColumnWidthChanged = null,
+			Action<DetailField> fieldFocused = null)
 		{
 			Model = model ?? throw new ArgumentNullException(nameof(model));
 			_editContext = editContext;
@@ -91,6 +93,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			_expansionChanged = expansionChanged;
 			_menuRequested = menuRequested;
 			_linkRequested = linkRequested;
+			_fieldFocused = fieldFocused;
 			_clipboard = clipboard;
 			_labelColumnWidthChanged = labelColumnWidthChanged;
 			_wsAbbrevColumnWidth = FwMultiWsTextField.ComputeWsAbbrevColumnWidth(Model);
@@ -322,11 +325,49 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		{
 			var fieldContent = AddField(index, field);
 			var content = ApplyRule(fieldContent.Content, index);
+			content.AddHandler(Avalonia.Input.InputElement.GotFocusEvent,
+				(s, e) => ReportFocusedField(e, field),
+				Avalonia.Interactivity.RoutingStrategies.Bubble);
+			content.AddHandler(Avalonia.Input.InputElement.PointerReleasedEvent,
+				(s, e) => ReportPointerReleasedField(e, field),
+				Avalonia.Interactivity.RoutingStrategies.Bubble, true);
 			if (fieldContent.Label != null)
+			{
+				fieldContent.Label.AddHandler(Avalonia.Input.InputElement.GotFocusEvent,
+					(s, e) => ReportFocusedField(e, field),
+					Avalonia.Interactivity.RoutingStrategies.Bubble);
+				fieldContent.Label.AddHandler(Avalonia.Input.InputElement.PointerReleasedEvent,
+					(s, e) => ReportPointerReleasedField(e, field),
+					Avalonia.Interactivity.RoutingStrategies.Bubble, true);
 				FormItem.SetLabel(content, fieldContent.Label);
+			}
 			else
 				FormItem.SetNoLabel(content, true);
 			return content;
+		}
+
+		private void ReportFocusedField(Avalonia.Input.GotFocusEventArgs args,
+			DetailField field)
+		{
+			if (args.NavigationMethod == Avalonia.Input.NavigationMethod.Pointer)
+				return;
+			_fieldFocused?.Invoke(field);
+		}
+
+		private void ReportPointerReleasedField(Avalonia.Input.PointerReleasedEventArgs args,
+			DetailField field)
+		{
+			if (!IsMenuActivationControl(args.Source))
+				_fieldFocused?.Invoke(field);
+		}
+
+		private static bool IsMenuActivationControl(object source)
+		{
+			if (!(source is Control control))
+				return false;
+			var id = AutomationProperties.GetAutomationId(control);
+			return id?.EndsWith(".FieldMenu", StringComparison.Ordinal) == true
+				|| id?.EndsWith(".Hotlinks", StringComparison.Ordinal) == true;
 		}
 
 		// 12.1: the legacy 1px inter-slice rule renders as a per-item bottom border; the last
@@ -546,6 +587,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				{
 					// No pointer position is available here, so the menu drops from the
 					// icon rather than from wherever the mouse sits.
+					_fieldFocused?.Invoke(field);
 					_menuRequested(DetailMenuRequest.FromAnchor(button, field, kind));
 				};
 				rail.Child = button;
@@ -604,6 +646,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			link.Click += (s, e) =>
 			{
 				// Drops from the link's bottom-left.
+				_fieldFocused?.Invoke(field);
 				_menuRequested(DetailMenuRequest.FromAnchor(link, field, DetailMenuKind.Hotlinks));
 			};
 			return link;

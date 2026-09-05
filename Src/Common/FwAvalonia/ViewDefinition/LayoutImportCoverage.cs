@@ -39,7 +39,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 		private static readonly HashSet<string> HandledLayoutFileElements =
 			new HashSet<string>(StringComparer.Ordinal)
 			{
-				"LayoutInventory", "layoutType", "layout", "part", "indent",
+				"LayoutInventory", "layoutType", "layout", "part", "indent", "sublayout",
 				"if", "ifnot", "choice", "where", "otherwise"
 			};
 
@@ -158,6 +158,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 					return attributeName == "class";
 				case "layout":
 					return XmlLayoutImporter.HandledLayoutAttributes.Contains(attributeName);
+				case "sublayout":
+					return XmlLayoutImporter.HandledSublayoutAttributes.Contains(attributeName);
 				case "part":
 					// In a parts file the <part> definition carries an id; in a layout it is a caller ref.
 					return isPartsFile

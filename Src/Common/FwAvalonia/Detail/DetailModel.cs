@@ -1478,6 +1478,139 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		public DetailChooserLink Link { get; }
 	}
 
+	/// <summary>Identifies one effective legacy layout.</summary>
+	public readonly struct DetailLayoutIdentity : IEquatable<DetailLayoutIdentity>
+	{
+		private readonly ViewDefinitionIdentity _canonicalIdentity;
+
+		/// <summary>Creates an identity from the four legacy layout key attributes.</summary>
+		public DetailLayoutIdentity(string className, string layoutType, string layoutName,
+			string choiceGuid)
+		{
+			_canonicalIdentity = new ViewDefinitionIdentity(className, layoutType, layoutName,
+				choiceGuid);
+		}
+
+		/// <summary>Gets the layout's <c>class</c> key.</summary>
+		public string ClassName => _canonicalIdentity.ClassName;
+		/// <summary>Gets the layout's <c>type</c> key.</summary>
+		public string LayoutType => _canonicalIdentity.LayoutType;
+		/// <summary>Gets the layout's <c>name</c> key.</summary>
+		public string LayoutName => _canonicalIdentity.LayoutName;
+		/// <summary>Gets the layout's optional <c>choiceGuid</c> key.</summary>
+		public string ChoiceGuid => _canonicalIdentity.ChoiceGuid;
+
+		/// <summary>Compares all four layout keys without regard to case.</summary>
+		public bool Equals(DetailLayoutIdentity other)
+			=> _canonicalIdentity.Equals(other._canonicalIdentity);
+
+		/// <inheritdoc />
+		public override bool Equals(object obj)
+			=> obj is DetailLayoutIdentity other && Equals(other);
+
+		/// <inheritdoc />
+		public override int GetHashCode() => _canonicalIdentity.GetHashCode();
+	}
+
+	/// <summary>Identifies one caller part inside an effective legacy layout.</summary>
+	public readonly struct DetailLayoutPartIdentity : IEquatable<DetailLayoutPartIdentity>
+	{
+		/// <summary>Creates an identity for one caller path in a legacy layout.</summary>
+		public DetailLayoutPartIdentity(DetailLayoutIdentity layout, string callerPath,
+			IReadOnlyList<DetailLayoutIdentity> layoutPath = null)
+		{
+			Layout = layout;
+			CallerPath = callerPath;
+			LayoutPath = Array.AsReadOnly((layoutPath ?? new[] { layout }).ToArray());
+		}
+
+		/// <summary>Gets the persistence-root layout identity.</summary>
+		public DetailLayoutIdentity Layout { get; }
+		/// <summary>Gets the structural caller path, including crossed object layouts.</summary>
+		public string CallerPath { get; }
+		/// <summary>Gets every selected layout crossed since the persistence root.</summary>
+		public IReadOnlyList<DetailLayoutIdentity> LayoutPath { get; }
+
+		/// <summary>Compares the layout and case-sensitive structural caller path.</summary>
+		public bool Equals(DetailLayoutPartIdentity other)
+			=> Layout.Equals(other.Layout)
+				&& string.Equals(CallerPath, other.CallerPath, StringComparison.Ordinal)
+				&& LayoutPathEqual(LayoutPath, other.LayoutPath);
+
+		/// <inheritdoc />
+		public override bool Equals(object obj)
+			=> obj is DetailLayoutPartIdentity other && Equals(other);
+
+		/// <inheritdoc />
+		public override int GetHashCode()
+		{
+			unchecked
+			{
+				var hash = (Layout.GetHashCode() * 397) ^ (CallerPath?.GetHashCode() ?? 0);
+				foreach (var item in LayoutPath ?? Array.Empty<DetailLayoutIdentity>())
+					hash = (hash * 397) ^ item.GetHashCode();
+				return hash;
+			}
+		}
+
+		private static bool LayoutPathEqual(IReadOnlyList<DetailLayoutIdentity> left,
+			IReadOnlyList<DetailLayoutIdentity> right)
+		{
+			if (ReferenceEquals(left, right))
+				return true;
+			if (left == null || right == null || left.Count != right.Count)
+				return false;
+			for (var i = 0; i < left.Count; i++)
+			{
+				if (!left[i].Equals(right[i]))
+					return false;
+			}
+			return true;
+		}
+	}
+
+	/// <summary>Identifies one runtime slice backed by a legacy layout caller.</summary>
+	public readonly struct DetailLayoutSliceIdentity : IEquatable<DetailLayoutSliceIdentity>
+	{
+		/// <summary>Creates an identity for one runtime field backed by a legacy
+		/// caller.</summary>
+		public DetailLayoutSliceIdentity(DetailLayoutPartIdentity layoutPart, int objectHvo,
+			string fieldName)
+		{
+			LayoutPart = layoutPart;
+			ObjectHvo = objectHvo;
+			FieldName = fieldName;
+		}
+
+		/// <summary>Gets the backing legacy layout caller.</summary>
+		public DetailLayoutPartIdentity LayoutPart { get; }
+		/// <summary>Gets the bound object's runtime HVO.</summary>
+		public int ObjectHvo { get; }
+		/// <summary>Gets the bound field name.</summary>
+		public string FieldName { get; }
+
+		/// <summary>Compares the caller, runtime object, and case-sensitive field name.</summary>
+		public bool Equals(DetailLayoutSliceIdentity other)
+			=> LayoutPart.Equals(other.LayoutPart)
+				&& ObjectHvo == other.ObjectHvo
+				&& string.Equals(FieldName, other.FieldName, StringComparison.Ordinal);
+
+		/// <inheritdoc />
+		public override bool Equals(object obj)
+			=> obj is DetailLayoutSliceIdentity other && Equals(other);
+
+		/// <inheritdoc />
+		public override int GetHashCode()
+		{
+			unchecked
+			{
+				var hash = LayoutPart.GetHashCode();
+				hash = (hash * 397) ^ ObjectHvo;
+				return (hash * 397) ^ (FieldName?.GetHashCode() ?? 0);
+			}
+		}
+	}
+
 	/// <summary>
 	/// A field on a lexical-edit detail view, projected from a typed <see cref="ViewNode"/> and bound to live
 	/// values by an <see cref="IDetailValueProvider"/>. This is the product contract that replaces the
@@ -1604,23 +1737,54 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		public int ObjectHvo { get; }
 
 		/// <summary>
-		/// The class of the compiled view definition this row was projected from (advanced-entry-view):
-		/// the entry's own fields carry "LexEntry"; a row from a descended object (a sense, an
-		/// allomorph)
-		/// carries that object's layout class. Paired with <see cref="LayoutName"/> it keys the per-project
-		/// <c>ViewDefinitionOverride</c> store so the per-field menu-button commands (Field
-		/// Visibility / Move
-		/// Field) target the right layout. Set by the composer at compose time (null on rows built outside
-		/// the full-entry composer, e.g. the first-slice fallback).
+		/// The class key of the layout that the legacy writer will persist. Object and sequence
+		/// descent retain the outer layout; a sublayout starts a new persistence root.
+		/// Paired with <see cref="LayoutName"/>, it identifies the exact legacy layout command
+		/// target.
+		/// Set by the composer at compose time; null on rows built outside the full-entry
+		/// composer.
 		/// </summary>
 		public string ClassName { get; set; }
 
 		/// <summary>
-		/// The layout name of the compiled view definition this row was projected from (e.g.
-		/// "Normal").
+		/// The name key of the layout that the legacy writer will persist, such as "Normal".
 		/// See <see cref="ClassName"/>.
 		/// </summary>
 		public string LayoutName { get; set; }
+
+		/// <summary>The legacy layout type, normally <c>detail</c>.</summary>
+		public string LayoutType { get; set; }
+
+		/// <summary>The selected layout variant, or null for a layout without
+		/// <c>choiceGuid</c>.</summary>
+		public string ChoiceGuid { get; set; }
+
+		/// <summary>The owning caller part's structural address in the effective legacy
+		/// layout.</summary>
+		public string SourceCallerPath { get; set; }
+
+		private IReadOnlyList<DetailLayoutIdentity> _layoutPath;
+
+		/// <summary>The ordered selected-layout chain crossed by object or sequence descent.
+		/// A sublayout starts a new chain.</summary>
+		public IReadOnlyList<DetailLayoutIdentity> LayoutPath
+		{
+			get => _layoutPath;
+			set => _layoutPath = value == null ? null : Array.AsReadOnly(value.ToArray());
+		}
+
+		/// <summary>Gets the four-key identity of the legacy persistence-root layout.</summary>
+		public DetailLayoutIdentity LayoutIdentity
+			=> new DetailLayoutIdentity(ClassName, LayoutType, LayoutName, ChoiceGuid);
+
+		/// <summary>Gets the identity of the exact caller within the persistence-root
+		/// path.</summary>
+		public DetailLayoutPartIdentity LayoutPartIdentity
+			=> new DetailLayoutPartIdentity(LayoutIdentity, SourceCallerPath, LayoutPath);
+
+		/// <summary>Gets the runtime identity used for legacy slice matching.</summary>
+		public DetailLayoutSliceIdentity LayoutSliceIdentity
+			=> new DetailLayoutSliceIdentity(LayoutPartIdentity, ObjectHvo, Field);
 
 		/// <summary>
 		/// The project's available CHARACTER-type style names

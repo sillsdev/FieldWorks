@@ -7,9 +7,157 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
+using System.Xml;
+using System.Xml.Linq;
 
 namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 {
+	/// <summary>
+	/// The four-part identity used by the legacy layout inventory. Values retain their source
+	/// spelling; equality follows inventory lookup's ordinal-ignore-case semantics. A null choice
+	/// remains distinct from an explicitly empty choice.
+	/// </summary>
+	public readonly struct ViewDefinitionIdentity : IEquatable<ViewDefinitionIdentity>
+	{
+		/// <summary>Creates an identity from the four legacy layout key attributes.</summary>
+		/// <param name="className">The layout class key.</param>
+		/// <param name="layoutType">The layout type key.</param>
+		/// <param name="layoutName">The layout name key.</param>
+		/// <param name="choiceGuid">The optional layout-choice GUID.</param>
+		public ViewDefinitionIdentity(string className, string layoutType, string layoutName,
+			string choiceGuid)
+		{
+			ClassName = className;
+			LayoutType = layoutType;
+			LayoutName = layoutName;
+			ChoiceGuid = choiceGuid;
+		}
+
+		/// <summary>Gets the layout class key.</summary>
+		public string ClassName { get; }
+		/// <summary>Gets the layout type key.</summary>
+		public string LayoutType { get; }
+		/// <summary>Gets the layout name key.</summary>
+		public string LayoutName { get; }
+		/// <summary>Gets the optional layout-choice GUID.</summary>
+		public string ChoiceGuid { get; }
+
+		/// <summary>Determines whether another identity has the same case-insensitive key
+		/// values.</summary>
+		/// <param name="other">The identity to compare.</param>
+		/// <returns><see langword="true"/> when the identities are equal.</returns>
+		public bool Equals(ViewDefinitionIdentity other)
+			=> Equal(ClassName, other.ClassName)
+				&& Equal(LayoutType, other.LayoutType)
+				&& Equal(LayoutName, other.LayoutName)
+				&& Equal(ChoiceGuid, other.ChoiceGuid);
+
+		/// <inheritdoc />
+		public override bool Equals(object obj)
+			=> obj is ViewDefinitionIdentity other && Equals(other);
+
+		/// <inheritdoc />
+		public override int GetHashCode()
+		{
+			unchecked
+			{
+				var comparer = StringComparer.OrdinalIgnoreCase;
+				var hash = comparer.GetHashCode(ClassName ?? string.Empty);
+				hash = (hash * 397) ^ comparer.GetHashCode(LayoutType ?? string.Empty);
+				hash = (hash * 397) ^ comparer.GetHashCode(LayoutName ?? string.Empty);
+				return (hash * 397) ^ (ChoiceGuid == null
+					? 0 : comparer.GetHashCode(ChoiceGuid));
+			}
+		}
+
+		/// <inheritdoc />
+		public override string ToString()
+			=> $"{ClassName}/{LayoutType}/{LayoutName}/{(ChoiceGuid == null ? "<null>" : ChoiceGuid)}";
+
+		private static bool Equal(string left, string right)
+			=> string.Equals(left, right, StringComparison.OrdinalIgnoreCase);
+	}
+
+	/// <summary>
+	/// Provides a canonical identity for an element in an effective legacy layout. The identity
+	/// lets independently cloned XML representations recognize the same layout caller.
+	/// </summary>
+	public static class LegacyLayoutCallerPath
+	{
+		private const string LayoutBoundary = "|";
+
+		/// <summary>
+		/// Returns the caller's canonical layout-relative identity. Returns null when the caller
+		/// is null or does not belong to a layout.
+		/// </summary>
+		public static string Get(XElement caller)
+		{
+			if (caller == null)
+				return null;
+			var path = new Stack<string>();
+			var current = caller;
+			while (current.Parent != null && current.Parent.Name.LocalName != "layout")
+			{
+				path.Push(Segment(current.Name.LocalName,
+					current.ElementsBeforeSelf().Count(element =>
+						element.Name.LocalName == current.Name.LocalName)));
+				current = current.Parent;
+			}
+			if (current.Parent == null || current.Parent.Name.LocalName != "layout")
+				return null;
+			path.Push(Segment(current.Name.LocalName,
+				current.ElementsBeforeSelf().Count(element =>
+					element.Name.LocalName == current.Name.LocalName)));
+			return string.Join("/", path);
+		}
+
+		/// <summary>
+		/// Returns the caller's canonical layout-relative identity. Returns null when the caller
+		/// is null or does not belong to a layout.
+		/// </summary>
+		public static string Get(XmlNode caller)
+		{
+			if (caller == null)
+				return null;
+			var path = new Stack<string>();
+			var current = caller;
+			while (current.ParentNode != null && current.ParentNode.LocalName != "layout")
+			{
+				path.Push(Segment(current.LocalName, SameNamePredecessorCount(current)));
+				current = current.ParentNode;
+			}
+			if (current.ParentNode == null || current.ParentNode.LocalName != "layout")
+				return null;
+			path.Push(Segment(current.LocalName, SameNamePredecessorCount(current)));
+			return string.Join("/", path);
+		}
+
+		/// <summary>
+		/// Combines caller paths from layouts crossed by object or sequence descent. A sublayout
+		/// starts a new persistence root, so callers before it must not be supplied.
+		/// </summary>
+		/// <param name="callerPaths">Layout-relative paths in traversal order.</param>
+		/// <returns>A canonical cross-layout path, or an empty string when none is
+		/// supplied.</returns>
+		public static string Combine(params string[] callerPaths)
+			=> callerPaths == null
+				? null
+				: string.Join(LayoutBoundary, callerPaths.Where(path => !string.IsNullOrEmpty(path)));
+
+		private static int SameNamePredecessorCount(XmlNode node)
+		{
+			var count = 0;
+			for (var sibling = node.PreviousSibling; sibling != null; sibling = sibling.PreviousSibling)
+			{
+				if (sibling.NodeType == XmlNodeType.Element && sibling.LocalName == node.LocalName)
+					count++;
+			}
+			return count;
+		}
+
+		private static string Segment(string name, int ordinal) => $"{name}[{ordinal}]";
+	}
+
 	/// <summary>
 	/// Structural kind of a typed view-definition node. Mirrors the node types produced by the
 	/// legacy XML Parts/Layout interpretation in <c>SliceFactory</c>/<c>DataTree</c>:
@@ -29,6 +177,10 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 
 		/// <summary>An owning/reference sequence (legacy <c>&lt;seq field=.. layout=..&gt;</c>).</summary>
 		Sequence,
+
+		/// <summary>An inline layout for the current object (legacy
+		/// <c>&lt;sublayout&gt;</c>).</summary>
+		Sublayout,
 
 		/// <summary>The custom-field placeholder expanded from the model (legacy <c>customFields="here"</c>).</summary>
 		CustomFieldPlaceholder,
@@ -385,7 +537,12 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 			IReadOnlyList<ViewChooserLink> chooserLinks = null,
 			ViewStringList enumStringList = null,
 			IReadOnlyList<string> visibleWritingSystems = null,
-			bool toggleValue = false)
+			bool toggleValue = false,
+			string sourceCallerPath = null,
+			string layoutChoiceField = null,
+			string sourceCallerXml = null,
+			string optionalWritingSystem = null,
+			bool forceIncludeEnglish = false)
 		{
 			ToggleValue = toggleValue;
 			VisibleWritingSystems = visibleWritingSystems;
@@ -421,10 +578,23 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 			GhostInitMethod = ghostInitMethod;
 			Condition = condition;
 			ChooserLinks = chooserLinks ?? (IReadOnlyList<ViewChooserLink>)Array.Empty<ViewChooserLink>();
+			SourceCallerPath = sourceCallerPath;
+			LayoutChoiceField = layoutChoiceField;
+			SourceCallerXml = sourceCallerXml;
+			OptionalWritingSystem = optionalWritingSystem;
+			ForceIncludeEnglish = forceIncludeEnglish;
 		}
 
 		/// <summary>Deterministic identity derived from the node's path (stable across realizations).</summary>
 		public string StableId { get; }
+
+		/// <summary>The structural address of the owning caller part in the effective legacy
+		/// layout.</summary>
+		public string SourceCallerPath { get; }
+
+		/// <summary>Caller XML supplied to <c>Inventory.GetUnified</c> for object and
+		/// sequence layouts.</summary>
+		public string SourceCallerXml { get; }
 
 		public ViewNodeKind Kind { get; }
 
@@ -441,6 +611,14 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 
 		public string WritingSystem { get; }
 
+		/// <summary>An additional legacy writing-system set appended to the primary
+		/// <see cref="WritingSystem"/> options.</summary>
+		public string OptionalWritingSystem { get; }
+
+		/// <summary>Whether legacy writing-system resolution must include English even when it is
+		/// not otherwise selected.</summary>
+		public bool ForceIncludeEnglish { get; }
+
 		public ViewVisibility Visibility { get; }
 
 		public ViewExpansion Expansion { get; }
@@ -449,6 +627,10 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 
 		/// <summary>For object/sequence nodes, the destination layout name.</summary>
 		public string TargetLayout { get; }
+
+		/// <summary>The field that selects the target layout's <c>choiceGuid</c>
+		/// variant.</summary>
+		public string LayoutChoiceField { get; }
 
 		/// <summary>
 		/// An optional per-field writing-system visibility override (legacy
@@ -570,11 +752,28 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 			string layoutName,
 			string layoutType,
 			IReadOnlyList<ViewNode> roots,
-			IReadOnlyList<ViewDiagnostic> diagnostics)
+			IReadOnlyList<ViewDiagnostic> diagnostics,
+			string choiceGuid = null)
+			: this(className, layoutName, layoutType, roots, diagnostics,
+				new ViewDefinitionIdentity(className, layoutType, layoutName, choiceGuid),
+				new ViewDefinitionIdentity(className, layoutType, layoutName, choiceGuid))
 		{
-			ClassName = className;
-			LayoutName = layoutName;
-			LayoutType = layoutType;
+		}
+
+		private ViewDefinitionModel(
+			string className,
+			string layoutName,
+			string layoutType,
+			IReadOnlyList<ViewNode> roots,
+			IReadOnlyList<ViewDiagnostic> diagnostics,
+			ViewDefinitionIdentity requestedIdentity,
+			ViewDefinitionIdentity resolvedIdentity)
+		{
+			RequestedIdentity = requestedIdentity;
+			ResolvedIdentity = resolvedIdentity;
+			ClassName = resolvedIdentity.ClassName;
+			LayoutName = resolvedIdentity.LayoutName;
+			LayoutType = resolvedIdentity.LayoutType;
 			Roots = roots ?? (IReadOnlyList<ViewNode>)Array.Empty<ViewNode>();
 			Diagnostics = diagnostics ?? (IReadOnlyList<ViewDiagnostic>)Array.Empty<ViewDiagnostic>();
 		}
@@ -584,6 +783,43 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 		public string LayoutName { get; }
 
 		public string LayoutType { get; }
+
+		/// <summary>The concrete four-part identity selected by the caller before
+		/// fallback.</summary>
+		public ViewDefinitionIdentity RequestedIdentity { get; }
+
+		/// <summary>The four-part identity whose XML was compiled.</summary>
+		public ViewDefinitionIdentity ResolvedIdentity { get; }
+
+		/// <summary>The layout name selected by the caller before fallback.</summary>
+		public string RequestedLayoutName => RequestedIdentity.LayoutName;
+
+		/// <summary>The nullable layout choice selected by the caller before fallback.</summary>
+		public string RequestedChoiceGuid => RequestedIdentity.ChoiceGuid;
+
+		/// <summary>The layout name whose XML was compiled.</summary>
+		public string ResolvedLayoutName => ResolvedIdentity.LayoutName;
+
+		/// <summary>Gets the selected layout variant, or null for a choiceless layout.</summary>
+		public string ChoiceGuid => ResolvedIdentity.ChoiceGuid;
+
+		/// <summary>The nullable layout choice whose XML was compiled.</summary>
+		public string ResolvedChoiceGuid => ResolvedIdentity.ChoiceGuid;
+
+		/// <summary>Copies this model while retaining both requested and resolved
+		/// identities.</summary>
+		public ViewDefinitionModel WithLayoutIdentities(string requestedLayoutName,
+			string requestedChoiceGuid, string resolvedLayoutName, string resolvedChoiceGuid)
+			=> WithLayoutIdentities(
+				new ViewDefinitionIdentity(ClassName, LayoutType, requestedLayoutName, requestedChoiceGuid),
+				new ViewDefinitionIdentity(ClassName, LayoutType, resolvedLayoutName, resolvedChoiceGuid));
+
+		/// <summary>Copies this model while retaining complete requested and resolved
+		/// identities.</summary>
+		public ViewDefinitionModel WithLayoutIdentities(ViewDefinitionIdentity requestedIdentity,
+			ViewDefinitionIdentity resolvedIdentity)
+			=> new ViewDefinitionModel(resolvedIdentity.ClassName, resolvedIdentity.LayoutName,
+				resolvedIdentity.LayoutType, Roots, Diagnostics, requestedIdentity, resolvedIdentity);
 
 		public IReadOnlyList<ViewNode> Roots { get; }
 
@@ -599,7 +835,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 		public string ToSnapshot()
 		{
 			var sb = new StringBuilder();
-			sb.AppendLine($"layout class={ClassName} name={LayoutName} type={LayoutType}");
+			sb.AppendLine($"layout class={ClassName} name={LayoutName} type={LayoutType}"
+				+ (ChoiceGuid == null ? string.Empty : $" choice={ChoiceGuid}"));
 			foreach (var root in Roots)
 			{
 				AppendNode(sb, root, 0);
@@ -647,10 +884,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 			// Chooser links likewise ride the snapshot so a lossy round trip fails loudly.
 			if (node.ChooserLinks.Count > 0)
 				sb.Append($" | links=[{string.Join(";", node.ChooserLinks)}]");
-			// NOTE: EnumStringList is deliberately NOT in the snapshot. The canonical
-			// JSON serializer does not persist it, so adding it here would break the lossless
-			// JSON round-trip parity test. The importer carrier is covered directly by
-			// DetailEditorParityTests instead.
+			// Enum-list and persistence-routing metadata are covered directly by their
+			// round-trip tests; this human-readable semantic snapshot stays compact.
 			if (node.ForVariant)
 				sb.Append(" | forVariant=1");
 			return sb.ToString();

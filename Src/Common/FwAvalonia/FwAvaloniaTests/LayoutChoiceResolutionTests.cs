@@ -50,6 +50,28 @@ namespace FwAvaloniaTests
 		}
 
 		[Test]
+		public void LayoutIndexes_MatchClassTypeAndNameCaseInsensitively()
+		{
+			var files = new[]
+			{
+				XElement.Parse("<LayoutInventory><layout class='rngenericrec' type='DETAIL' "
+					+ "name='normal'><part ref='A'/></layout></LayoutInventory>")
+			};
+
+			var byChoice = LayoutSourceLoader.IndexLayoutsByChoice(files);
+			var byFirst = LayoutSourceLoader.IndexLayouts(files);
+
+			Assert.That(byChoice.TryGetValue(("RnGenericRec", "detail", "Normal"), out var variants),
+				Is.True);
+			Assert.That(variants, Has.Count.EqualTo(1));
+			Assert.That(LayoutSourceLoader.FindLayout(files, "RNGENERICREC", "NORMAL", "Detail"),
+				Is.SameAs(variants[0]));
+			Assert.That(byFirst.TryGetValue(("RNGENERICREC", "Detail", "NORMAL"), out var first),
+				Is.True);
+			Assert.That(first, Is.SameAs(variants[0]));
+		}
+
+		[Test]
 		public void SelectLayoutForChoice_ExactGuidMatchWins()
 		{
 			var variants = LayoutSourceLoader.IndexLayoutsByChoice(Files())[("RnGenericRec", "detail", "Normal")];
@@ -66,24 +88,35 @@ namespace FwAvaloniaTests
 		}
 
 		[Test]
-		public void SelectLayoutForChoice_UnknownOrBlankGuid_FallsBackToChoicelessVariant()
+		public void SelectLayoutForChoice_ChoicelessRequestSelectsOnlyAbsentAttribute()
 		{
 			var variants = LayoutSourceLoader.IndexLayoutsByChoice(Files())[("RnGenericRec", "detail", "Normal")];
-			Assert.That(Ref(LayoutSourceLoader.SelectLayoutForChoice(variants, "no-such-guid")), Is.EqualTo("Fallback"));
 			Assert.That(Ref(LayoutSourceLoader.SelectLayoutForChoice(variants, null)), Is.EqualTo("Fallback"));
-			Assert.That(Ref(LayoutSourceLoader.SelectLayoutForChoice(variants, "")), Is.EqualTo("Fallback"));
+			Assert.That(LayoutSourceLoader.SelectLayoutForChoice(variants, "no-such-guid"), Is.Null);
+			Assert.That(LayoutSourceLoader.SelectLayoutForChoice(variants, ""), Is.Null);
 		}
 
 		[Test]
-		public void SelectLayoutForChoice_NoChoicelessFallbackAndNoMatch_ReturnsFirst()
+		public void SelectLayoutForChoice_NoExactMatch_ReturnsNull()
 		{
 			var onlyGuided = new List<XElement>
 			{
 				XElement.Parse($"<layout class='X' type='detail' name='Normal' choiceGuid='{GuidA}'><part ref='A'/></layout>"),
 				XElement.Parse($"<layout class='X' type='detail' name='Normal' choiceGuid='{GuidB}'><part ref='B'/></layout>")
 			};
-			Assert.That(Ref(LayoutSourceLoader.SelectLayoutForChoice(onlyGuided, "no-match")), Is.EqualTo("A"),
-				"with no choiceGuid-less fallback and no match, the first variant is used (never null/crash)");
+			Assert.That(LayoutSourceLoader.SelectLayoutForChoice(onlyGuided, "no-match"), Is.Null);
+		}
+
+		[Test]
+		public void SelectLayoutForChoice_EmptyAttributeIsDistinctFromAbsentAttribute()
+		{
+			var variants = new List<XElement>
+			{
+				XElement.Parse("<layout choiceGuid=''><part ref='Empty'/></layout>"),
+				XElement.Parse("<layout><part ref='Absent'/></layout>")
+			};
+			Assert.That(Ref(LayoutSourceLoader.SelectLayoutForChoice(variants, "")), Is.EqualTo("Empty"));
+			Assert.That(Ref(LayoutSourceLoader.SelectLayoutForChoice(variants, null)), Is.EqualTo("Absent"));
 		}
 
 		[Test]
@@ -93,8 +126,6 @@ namespace FwAvaloniaTests
 			Assert.That(LayoutSourceLoader.SelectLayoutForChoice(null, GuidA), Is.Null);
 		}
 
-		// Two different choiceGuids on the SAME class must yield two DISTINCT
-		// layouts (the selector is the cache-discriminator; the composer keys CompiledModels by choiceGuid).
 		[Test]
 		public void TwoChoiceGuids_OnSameKey_SelectDistinctLayouts_NoCollision()
 		{
