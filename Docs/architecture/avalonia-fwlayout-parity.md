@@ -71,9 +71,11 @@ must not become `.fwlayout` persistence keys.
 
 1. Rebase PR #1111 onto `origin/main`. Preserve the current
    `XCoreMenuBridge` interceptor contract and disabled-item normalization, and
-   preserve the `RecordEditView.ResolveShownRecord` refresh fix. Replace
-   conflicting JSON-backed persistence and Show-all code with the parity
-   behavior defined here.
+   preserve the `RecordEditView.ResolveShownRecord` refresh fix.
+   `OnDetailMenuRequested` renders the native menu only, with no WinForms
+   adapter-menu fallback: a menu that cannot be shown is logged while the
+   post-menu refresh still runs. Replace conflicting JSON-backed persistence
+   and Show-all code with the parity behavior defined here.
 2. Carry `class`, `type`, `name`, and optional `choiceGuid` through layout
    loading, view-definition models, composed fields, command identities, menu
    bindings, and nested object or sequence composition. Retain the caller path

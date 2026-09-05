@@ -605,6 +605,8 @@ namespace SIL.FieldWorks.XWorks
 				}
 				catch (Exception nativeMenuError)
 				{
+					// Log only: a WinForms adapter menu here would bypass the interceptor and
+					// the post-menu refresh, so the native menu is the sole rendering.
 					Logger.WriteError("Avalonia-native menu failed; the menu was not shown.",
 						nativeMenuError);
 				}
@@ -618,13 +620,6 @@ namespace SIL.FieldWorks.XWorks
 				if (refreshAfterMenu)
 					RefreshAvaloniaDetail();
 			}
-		}
-
-		// Preserve the legacy command-routing entry point; all targeting still flows through the
-		// invariant-enforcing path that clears stale CurrentSlice state on failure.
-		private void EnsureMenuCommandAdapter(int targetHvo, string fieldName)
-		{
-			EnsureMenuCommandTarget(targetHvo, fieldName);
 		}
 
 		private IReadOnlyList<DetailMenuItem> CreateNativeDetailMenuItems(DetailField field,

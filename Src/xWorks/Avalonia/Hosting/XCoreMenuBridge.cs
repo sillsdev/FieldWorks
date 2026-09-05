@@ -24,7 +24,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Materializes the merged context menu for the given menu ids (the same merge
 		/// XWindow.ShowContextMenu performs) as a renderable item tree. Empty when nothing
-		/// resolves -- callers fall back to the legacy adapter menu.
+		/// resolves; the host then shows no menu.
 		/// </summary>
 		public static IReadOnlyList<DetailMenuItem> CreateMenuItems(XWindow window, string[] menuIds)
 			=> CreateMenuItems(window, menuIds, null);

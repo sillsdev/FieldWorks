@@ -28,7 +28,7 @@ namespace SIL.FieldWorks.XWorks
 	/// <summary>
 	/// Hardening for the Avalonia lexical-edit object-command path.
 	///
-	/// <c>EnsureMenuCommandAdapter</c> targeting: when the target hvo's slice is a lazy,
+	/// <c>EnsureMenuCommandTarget</c> targeting: when the target hvo's slice is a lazy,
 	/// unrealized <c>DummyObjectSlice</c> (a sequence with &gt;= <c>DataTree.kInstantSliceMax</c> items
 	/// builds lazy placeholders whose <c>Object</c> is the OWNER, not the target), a naive walk finds no
 	/// matching slice and leaves CurrentSlice pointed wherever the previous interaction left it
@@ -53,9 +53,8 @@ namespace SIL.FieldWorks.XWorks
 		{
 			m_application = new MockFwXApp(new MockFwManager { Cache = Cache }, null, null);
 			m_configFilePath = Path.Combine(FwDirectoryFinder.CodeDirectory, m_application.DefaultConfigurationPathname);
-			// The hidden legacy DataTree's ShowObject (driven by EnsureMenuCommandAdapter) needs the
-			// legacy layout/parts Inventory loaded; that Inventory is keyed by the project path, so
-			// give the in-memory test project a writable temp path before the inventory bootstrap.
+			// The hidden legacy DataTree's ShowObject needs the layout/parts Inventory, which is
+			// keyed by project path: give the in-memory project a writable temp path first.
 			Cache.ProjectId.Path = Path.Combine(Path.GetTempPath(), Cache.ProjectId.Name,
 				Cache.ProjectId.Name + ".junk");
 		}
@@ -122,7 +121,7 @@ namespace SIL.FieldWorks.XWorks
 		// reachability logic that CAN be exercised without a live tree.)
 		[Test]
 		[Explicit("Requires the live (laid-out, visible) legacy DataTree to realize lazy slices and resolve CurrentSlice; see note above. Runs in the desktop environment.")]
-		public void EnsureMenuCommandAdapter_TargetInLazySliceRange_RealizesAndTargetsTheRightObject()
+		public void EnsureMenuCommandTarget_TargetInLazySliceRange_RealizesAndTargetsTheRightObject()
 		{
 			// The entry has well over DataTree.kInstantSliceMax (20) senses, so Senses
 			// builds lazy DummyObjectSlices; a deep target's slice does not exist yet,
@@ -145,7 +144,7 @@ namespace SIL.FieldWorks.XWorks
 
 		[Test]
 		[Explicit("Requires the live (laid-out, visible) legacy DataTree to realize slices and resolve/clear CurrentSlice; the hidden detached adapter tree never lays out headlessly. Runs in the desktop environment.")]
-		public void EnsureMenuCommandAdapter_NoSliceMatchesHvo_ClearsCurrentSliceRatherThanMisTarget()
+		public void EnsureMenuCommandTarget_NoSliceMatchesHvo_ClearsCurrentSliceRatherThanMisTarget()
 		{
 			// First point the adapter at a real sense, so CurrentSlice is non-null...
 			var realSenseHvo = m_entry.SensesOS[0].Hvo;
@@ -465,9 +464,10 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
+		// Targets the hidden adapter tree exactly as a native menu item's Execute does.
 		private void EnsureAdapter(int targetHvo, string fieldName = null)
 		{
-			var method = typeof(RecordEditView).GetMethod("EnsureMenuCommandAdapter",
+			var method = typeof(RecordEditView).GetMethod("EnsureMenuCommandTarget",
 				BindingFlags.Instance | BindingFlags.NonPublic);
 			Assert.That(method, Is.Not.Null);
 			method.Invoke(m_view, new object[] { targetHvo, fieldName });

@@ -298,9 +298,10 @@ namespace SIL.FieldWorks.XWorks
 			return null;
 		}
 
+		// Targets the hidden adapter tree exactly as a native menu item's Execute does.
 		private void EnsureAdapter(int targetHvo, string fieldName)
 		{
-			var method = typeof(RecordEditView).GetMethod("EnsureMenuCommandAdapter",
+			var method = typeof(RecordEditView).GetMethod("EnsureMenuCommandTarget",
 				BindingFlags.Instance | BindingFlags.NonPublic);
 			Assert.That(method, Is.Not.Null);
 			method.Invoke(m_view, new object[] { targetHvo, fieldName });

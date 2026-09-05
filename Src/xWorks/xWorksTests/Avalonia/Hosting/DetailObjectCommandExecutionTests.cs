@@ -35,16 +35,18 @@ namespace SIL.FieldWorks.XWorks
 	/// New UI mode (the same bootstrap <c>RecordEditViewActiveHostContractTests</c> uses), so the
 	/// Avalonia is the active host and the hidden legacy DataTree exists only as the approved
 	/// "command-menu-routing" baseline adapter. Each test drives a command through the PRODUCTION path:
-	/// 1. <c>EnsureMenuCommandAdapter(targetHvo)</c> -- builds/syncs the hidden adapter tree and
-	/// points
-	///      its CurrentSlice at the slice bound to the clicked row's object (exactly what
-	///      <c>OnDetailMenuRequested</c> calls first).
+	/// 1. <c>EnsureMenuCommandTarget(targetHvo, fieldName)</c> -- builds/syncs the hidden
+	///      adapter tree and points its CurrentSlice at the slice bound to the clicked row's
+	///      object. In the product a native item's Execute runs this at click time (persistent
+	///      layout commands use <c>EnsurePersistentMenuCommandTarget</c>); the tests run it up
+	///      front so enablement is computed against the targeted slice.
 	/// 2. <see cref="XCoreMenuBridge.CreateMenuItems(XWindow, string[])"/> -- the same
-	/// native-menu
-	/// materialization <c>OnDetailMenuRequested</c> performs; the resulting <see
-	/// cref="DetailMenuItem"/>
-	///      carries an Execute action that dispatches the command through the mediator
-	/// (<c>ChoiceBase.OnClick</c> -> hidden DataTree/DTMenuHandler colleagues -> UOW mutation).
+	///      native-menu materialization <c>CreateNativeDetailMenuItems</c> performs for
+	///      <c>OnDetailMenuRequested</c>, here without the host interceptor that wraps each
+	///      item in the re-target + refresh of <c>CreateLegacyCommandMenuItem</c>; the
+	///      resulting <see cref="DetailMenuItem"/> carries an Execute action that dispatches
+	///      the command through the mediator (<c>ChoiceBase.OnClick</c> -> hidden
+	///      DataTree/DTMenuHandler colleagues -> UOW mutation).
 	/// Invoking that Execute is the user clicking the item. We then assert (a) the model mutated and
 	/// (b) re-composing the entry (the same <see cref="DetailComposer.Compose"/> call
 	/// <c>RecordEditView.ShowAvaloniaEntry</c> makes on refresh) reflects it.
@@ -66,9 +68,8 @@ namespace SIL.FieldWorks.XWorks
 		{
 			m_application = new MockFwXApp(new MockFwManager { Cache = Cache }, null, null);
 			m_configFilePath = Path.Combine(FwDirectoryFinder.CodeDirectory, m_application.DefaultConfigurationPathname);
-			// The hidden legacy DataTree's ShowObject (driven by EnsureMenuCommandAdapter) needs the
-			// legacy layout/parts Inventory loaded; that Inventory is keyed by the project path, so
-			// give the in-memory test project a writable temp path before the inventory bootstrap.
+			// The hidden legacy DataTree's ShowObject needs the layout/parts Inventory, which is
+			// keyed by project path: give the in-memory project a writable temp path first.
 			Cache.ProjectId.Path = Path.Combine(Path.GetTempPath(), Cache.ProjectId.Name,
 				Cache.ProjectId.Name + ".junk");
 		}
@@ -241,6 +242,39 @@ namespace SIL.FieldWorks.XWorks
 				"focus must not replace a pressed Avalonia control before its click is dispatched");
 			Dispatcher.UIThread.RunJobs();
 			Assert.That(GetHostedDetailModel(), Is.Not.SameAs(revealed));
+		}
+
+		// When no native menu can be shown, the request still ends the transient Show all
+		// reveal and refreshes the detail view; the native menu is the only rendering.
+		[Test]
+		public void MenuRequest_WhenNoMenuCanBeShown_StillEndsShowAllAndRefreshes()
+		{
+			PersistCitationVisibility("ifdata");
+			RefreshAvaloniaDetail();
+			var citation = GetHostedDetailModel().Fields.Single(field => field.Field == "CitationForm");
+			var items = CreateNativeMenuItems(citation,
+				new[] { "mnuDataTree-MultiStringSlice", RecordEditView.ObjectMenuId });
+			FindItem(items, "Show all right now").Execute();
+			var revealed = GetHostedDetailModel();
+			Assert.That(GetField(m_view, "m_showAllWritingSystemsSlice"),
+				Is.EqualTo(citation.LayoutSliceIdentity), "precondition: Show all is active");
+
+			// A hotlinks request on a row without a hotlinks menu resolves to no items, so
+			// no menu opens.
+			var otherField = revealed.Fields.First(field =>
+				!field.LayoutSliceIdentity.Equals(citation.LayoutSliceIdentity)
+				&& string.IsNullOrEmpty(field.HotlinksId));
+			var request = DetailMenuRequest.FromAnchor(null, otherField, DetailMenuKind.Hotlinks);
+			var onMenuRequested = typeof(RecordEditView).GetMethod("OnDetailMenuRequested",
+				BindingFlags.Instance | BindingFlags.NonPublic);
+			Assert.That(onMenuRequested, Is.Not.Null);
+
+			onMenuRequested.Invoke(m_view, new object[] { request });
+
+			Assert.That(GetField(m_view, "m_showAllWritingSystemsSlice"), Is.Null,
+				"the request ends the transient reveal even though no menu was shown");
+			Assert.That(GetHostedDetailModel(), Is.Not.SameAs(revealed),
+				"the detail view refreshes so the revealed writing systems collapse again");
 		}
 
 		[Test]
@@ -560,11 +594,12 @@ namespace SIL.FieldWorks.XWorks
 			return true;
 		}
 
+		// Targets the hidden adapter tree exactly as a native menu item's Execute does.
 		private void EnsureAdapter(int targetHvo, string fieldName = null)
 		{
-			var method = typeof(RecordEditView).GetMethod("EnsureMenuCommandAdapter",
+			var method = typeof(RecordEditView).GetMethod("EnsureMenuCommandTarget",
 				BindingFlags.Instance | BindingFlags.NonPublic);
-			Assert.That(method, Is.Not.Null, "EnsureMenuCommandAdapter must exist (adapter targeting seam)");
+			Assert.That(method, Is.Not.Null, "EnsureMenuCommandTarget must exist (adapter targeting seam)");
 			method.Invoke(m_view, new object[] { targetHvo, fieldName });
 		}
 
