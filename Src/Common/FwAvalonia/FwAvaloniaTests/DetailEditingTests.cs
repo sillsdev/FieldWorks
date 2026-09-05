@@ -546,6 +546,81 @@ namespace FwAvaloniaTests
 		}
 
 
+		/// <summary>
+		/// A click that OPENS a picker is not finished when the button is released -- the user is
+		/// still choosing. The view stays busy until the picker closes.
+		///
+		/// Found in the app: with a field edited, clicking "+" showed the dropdown and then it
+		/// vanished. Releasing the held re-show at the pointer release rebuilt the view, and
+		/// these
+		/// flyouts anchor to a control INSIDE it, so the anchor went and took the picker with it.
+		/// </summary>
+		[AvaloniaTest]
+		public void AnOpenPicker_KeepsTheViewBusy_UntilItCloses()
+		{
+			var model = new DetailModel("LexEntry", "test",
+				new List<DetailField> { PublishInField() }, new List<ViewDiagnostic>());
+			var view = new DataTree(model, new FakeDetailEditContext());
+			var window = new Window { Content = view, Width = 500, Height = 260 };
+			window.Show();
+			Dispatcher.UIThread.RunJobs();
+			var idle = 0;
+			view.InteractionCompleted += (s, e) => idle++;
+
+			var addButton = view.GetVisualDescendants().OfType<Button>()
+				.Single(b => AutomationProperties.GetAutomationId(b) == "PublishIn.Add");
+			var flyout = (Flyout)addButton.Flyout;
+
+			flyout.ShowAt(addButton);
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(view.IsInteractionInFlight, Is.True,
+				"a picker anchored inside the view is up; rebuilding now would dismiss it");
+			Assert.That(idle, Is.Zero);
+
+			flyout.Hide();
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(view.IsInteractionInFlight, Is.False, "the choice is over");
+			Assert.That(idle, Is.EqualTo(1), "so the view reports itself idle, exactly once");
+		}
+
+		/// <summary>
+		/// The pointer release alone is not enough: a press that leaves a picker open keeps the
+		/// view busy past the release.
+		/// </summary>
+		[AvaloniaTest]
+		public void ReleasingThePointer_WithAPickerStillOpen_DoesNotReportIdle()
+		{
+			var model = new DetailModel("LexEntry", "test",
+				new List<DetailField> { PublishInField() }, new List<ViewDiagnostic>());
+			var view = new DataTree(model, new FakeDetailEditContext());
+			var window = new Window { Content = view, Width = 500, Height = 260 };
+			window.Show();
+			Dispatcher.UIThread.RunJobs();
+			var idle = 0;
+			view.InteractionCompleted += (s, e) => idle++;
+
+			var addButton = view.GetVisualDescendants().OfType<Button>()
+				.Single(b => AutomationProperties.GetAutomationId(b) == "PublishIn.Add");
+			var flyout = (Flyout)addButton.Flyout;
+
+			RaisePointerPressed(view);
+			flyout.ShowAt(addButton); // the click opened the picker
+			Dispatcher.UIThread.RunJobs();
+			RaisePointerReleased(view);
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(view.IsInteractionInFlight, Is.True,
+				"the button is up but the user is still choosing");
+			Assert.That(idle, Is.Zero, "so nothing is released yet");
+
+			flyout.Hide();
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(idle, Is.EqualTo(1), "and only the picker closing ends the interaction");
+		}
+
 		private static void RaisePointerPressed(Control target)
 		{
 			target.RaiseEvent(new PointerPressedEventArgs(target,

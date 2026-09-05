@@ -23,8 +23,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 		private double? _rememberedLabelColumnWidth;
 
 		/// <inheritdoc />
-		public override bool IsDetailPointerGestureActive
-			=> (CurrentContent as DataTree)?.IsPointerGestureActive == true;
+		public override bool IsDetailInteractionInFlight
+			=> (CurrentContent as DataTree)?.IsInteractionInFlight == true;
 
 		public DetailHostControl()
 		{
@@ -59,7 +59,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 					labelColumnWidthChanged?.Invoke(w);
 				});
 			view.EditCompleted += (s, e) => RaiseDetailEditCompleted();
-			view.PointerGestureEnded += (s, e) => RaiseDetailPointerGestureEnded();
+			view.InteractionCompleted += (s, e) => RaiseDetailInteractionCompleted();
 
 			var focusMemento = DetailFocusMemory.Capture(CurrentContent);
 			if (focusMemento != null)

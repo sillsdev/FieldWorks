@@ -1091,7 +1091,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			DetailField field,
 			string automationId,
 			IDetailEditContext editContext,
-			Action<DetailLinkRequest> linkRequested = null)
+			Action<DetailLinkRequest> linkRequested = null,
+			Action<bool> popupOpenChanged = null)
 		{
 			_selectedKey = field.SelectedOptionKey;
 			Padding = FwAvaloniaDensity.EditorPadding;
@@ -1161,10 +1162,12 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			};
 			picker.OptionCommitted += committed;
 			picker.Dismissed += dismissed;
+			var popupTeardown = PopupReporting.Wire(flyout, popupOpenChanged);
 			_teardown.Add(() =>
 			{
 				picker.OptionCommitted -= committed;
 				picker.Dismissed -= dismissed;
+				popupTeardown();
 				Flyout = null;
 			});
 		}
@@ -1207,6 +1210,32 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		{
 			var selected = field.Options.FirstOrDefault(o => o.Key == field.SelectedOptionKey);
 			return selected?.Name ?? string.Empty;
+		}
+	}
+
+	/// <summary>
+	/// Reports a picker flyout's open state to whoever owns the view, so a rebuild can wait:
+	/// these
+	/// flyouts anchor to a control INSIDE the view, and rebuilding destroys the anchor,
+	/// dismissing
+	/// the picker under the user.
+	/// </summary>
+	internal static class PopupReporting
+	{
+		/// <summary>Wires open/close reporting; returns the teardown for it.</summary>
+		public static Action Wire(FlyoutBase flyout, Action<bool> report)
+		{
+			if (flyout == null || report == null)
+				return () => { };
+			EventHandler opened = (s, e) => report(true);
+			EventHandler closed = (s, e) => report(false);
+			flyout.Opened += opened;
+			flyout.Closed += closed;
+			return () =>
+			{
+				flyout.Opened -= opened;
+				flyout.Closed -= closed;
+			};
 		}
 	}
 
@@ -1272,7 +1301,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			string automationId,
 			IDetailEditContext editContext,
 			Action gestureCompleted = null,
-			Action<DetailLinkRequest> linkRequested = null)
+			Action<DetailLinkRequest> linkRequested = null,
+			Action<bool> popupOpenChanged = null)
 		{
 			Orientation = Orientation.Horizontal;
 			// 14.2-style hit-testing rule: a null background only hit-tests the glyphs -- the
@@ -1410,11 +1440,13 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			picker.OptionsCommitted += committedSet;
 			picker.CreateRequested += created;
 			picker.Dismissed += dismissed;
+			var popupTeardown = PopupReporting.Wire(flyout, popupOpenChanged);
 			_teardown.Add(() =>
 			{
 				picker.OptionsCommitted -= committedSet;
 				picker.CreateRequested -= created;
 				picker.Dismissed -= dismissed;
+				popupTeardown();
 				addButton.Flyout = null;
 			});
 			Children.Add(addButton);

@@ -267,11 +267,11 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		/// these controls while it is true: the release would reach a detached control and the
 		/// click would do nothing.
 		/// </summary>
-		public bool IsPointerGestureActive => _pointerGestureActive;
+		public bool IsInteractionInFlight => _pointerGestureActive || _openPickers > 0;
 
-		/// <summary>Raised when that gesture ends, so a host holding a refresh can deliver it.
-		/// Raised for every gesture, edit or no edit.</summary>
-		public event EventHandler PointerGestureEnded;
+		/// <summary>Raised when the view goes idle again -- the click finished and no picker it
+		/// opened is still up -- so a host holding a refresh can deliver it.</summary>
+		public event EventHandler InteractionCompleted;
 
 		// 14.4: no Save/Cancel buttons -- the legacy view saves as you go. The footer carries
 		// only the
@@ -318,6 +318,10 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 
 		// True between a pointer press and its release anywhere in this view.
 		private bool _pointerGestureActive;
+		// Pickers opened FROM this view. Their flyouts anchor to a control inside it, so a
+		// rebuild
+		// destroys the anchor and the picker vanishes mid-choice.
+		private int _openPickers;
 		private bool _editCompletedHeld;
 
 		/// <summary>
@@ -329,7 +333,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		/// </summary>
 		private void RaiseOrDeferEditCompleted()
 		{
-			if (_pointerGestureActive)
+			if (IsInteractionInFlight)
 			{
 				_editCompletedHeld = true;
 				return;
@@ -346,6 +350,28 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			if (!_pointerGestureActive)
 				return;
 			_pointerGestureActive = false;
+			DeliverWhenIdle();
+		}
+
+		// A click that opens a picker is not finished when the button is released -- the user is
+		// still choosing. Rebuilding then would close the picker under them.
+		private void OnPickerOpenChanged(bool open)
+		{
+			if (open)
+			{
+				_openPickers++;
+				return;
+			}
+
+			if (_openPickers > 0)
+				_openPickers--;
+			DeliverWhenIdle();
+		}
+
+		private void DeliverWhenIdle()
+		{
+			if (IsInteractionInFlight)
+				return;
 			if (_editCompletedHeld)
 			{
 				_editCompletedHeld = false;
@@ -354,7 +380,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 
 			// Always, even with no edit of our own: the commit's PropChanged may have left the
 			// host holding a refresh that only this signal releases.
-			PointerGestureEnded?.Invoke(this, EventArgs.Empty);
+			InteractionCompleted?.Invoke(this, EventArgs.Empty);
 		}
 
 		// Viewing parity (11.x): a header owns every more-indented row up to the next row at its
@@ -687,6 +713,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				save: _editContext == null ? (Action)null : OnSave,
 				// Legacy labels each alternative of a MultiStringSlice and leaves a StringSlice's
 				// single value unlabelled, so the gutter follows the row's own kind.
+				popupOpenChanged: OnPickerOpenChanged,
 				showWritingSystemAbbreviation: field.IsMultiStringRow,
 				wsAbbrevColumnWidth: _wsAbbrevColumnWidth));
 	}

@@ -143,7 +143,7 @@ namespace SIL.FieldWorks.XWorks
 			if (m_avaloniaEntryForm != null)
 			{
 				m_avaloniaEntryForm.DetailEditCompleted -= OnAvaloniaDetailEditCompleted;
-				m_avaloniaEntryForm.DetailPointerGestureEnded -= OnAvaloniaPointerGestureEnded;
+				m_avaloniaEntryForm.DetailInteractionCompleted -= OnAvaloniaInteractionCompleted;
 			}
 			m_detailEditContext.DetachDeactivateHook();
 			m_detailEditContext.DetachUndoGuard();
@@ -211,7 +211,7 @@ namespace SIL.FieldWorks.XWorks
 			m_avaloniaEntryForm = (DetailHostControl)m_lexicalEditControlFactory.Create(UIFramework.Avalonia);
 			m_avaloniaEntryForm.Dock = DockStyle.Fill;
 			m_avaloniaEntryForm.DetailEditCompleted += OnAvaloniaDetailEditCompleted;
-			m_avaloniaEntryForm.DetailPointerGestureEnded += OnAvaloniaPointerGestureEnded;
+			m_avaloniaEntryForm.DetailInteractionCompleted += OnAvaloniaInteractionCompleted;
 			if (!m_panel.Controls.Contains(m_avaloniaEntryForm))
 				m_panel.Controls.Add(m_avaloniaEntryForm);
 		}
@@ -237,7 +237,7 @@ namespace SIL.FieldWorks.XWorks
 				// EndUndoTask raises PropChanged, so its own notification would recompose
 				// midclick.
 				() => m_detailEditContext.Current?.IsOpen == true
-					|| m_avaloniaEntryForm?.IsDetailPointerGestureActive == true,
+					|| m_avaloniaEntryForm?.IsDetailInteractionInFlight == true,
 				RefreshAvaloniaDetail,
 				new RefreshCoordinator(),
 				ScheduleOnUiThread,
@@ -1132,8 +1132,8 @@ namespace SIL.FieldWorks.XWorks
 			ShowAvaloniaEntry(current);
 		}
 
-		// The click is over, so anything held for it can land now.
-		private void OnAvaloniaPointerGestureEnded(object sender, EventArgs e)
+		// The view is idle again, so anything held for the interaction can land now.
+		private void OnAvaloniaInteractionCompleted(object sender, EventArgs e)
 		{
 			m_avaloniaRefreshController?.ReleaseHeldRefresh();
 		}
