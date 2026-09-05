@@ -586,6 +586,40 @@ namespace FwAvaloniaTests
 		}
 
 		/// <summary>
+		/// The per-item Remove menu is a popup like any other. Found in the app right after the
+		/// picker fix: right-clicking an environment after typing showed Remove, which then
+		/// vanished. Every popup anchored in the view has to report, not just the ones that look
+		/// like pickers.
+		/// </summary>
+		[AvaloniaTest]
+		public void TheItemRemoveMenu_AlsoKeepsTheViewBusy()
+		{
+			var model = new DetailModel("LexEntry", "test",
+				new List<DetailField> { PublishInField() }, new List<ViewDiagnostic>());
+			var view = new DataTree(model, new FakeDetailEditContext());
+			var window = new Window { Content = view, Width = 500, Height = 260 };
+			window.Show();
+			Dispatcher.UIThread.RunJobs();
+			var idle = 0;
+			view.InteractionCompleted += (s, e) => idle++;
+
+			var item = Find<TextBlock>(view, "PublishIn.Item.p1");
+			var menu = (MenuFlyout)item.ContextFlyout;
+
+			menu.ShowAt(item);
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(view.IsInteractionInFlight, Is.True,
+				"the Remove menu is up; rebuilding now would dismiss it mid-choice");
+
+			menu.Hide();
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(view.IsInteractionInFlight, Is.False);
+			Assert.That(idle, Is.EqualTo(1));
+		}
+
+		/// <summary>
 		/// The pointer release alone is not enough: a press that leaves a picker open keeps the
 		/// view busy past the release.
 		/// </summary>

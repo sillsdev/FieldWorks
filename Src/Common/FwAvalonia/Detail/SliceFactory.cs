@@ -31,10 +31,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			IFwClipboard clipboard = null,
 			Action save = null,
 			bool showWritingSystemAbbreviation = true,
-			double? wsAbbrevColumnWidth = null,
-			Action<bool> popupOpenChanged = null)
+			double? wsAbbrevColumnWidth = null)
 		{
-			PopupOpenChanged = popupOpenChanged;
 			EditContext = editContext;
 			WritingSystemFocused = writingSystemFocused;
 			MenuRequested = menuRequested;
@@ -79,15 +77,6 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		/// from the widest abbreviation.</summary>
 		public double WsAbbrevColumnWidth { get; }
 
-		/// <summary>
-		/// Reports that a picker flyout opened (true) or closed (false). The host must not
-		/// rebuild
-		/// the view while one is open: these flyouts anchor to a control INSIDE the view, so a
-		/// rebuild destroys the anchor and the picker vanishes under the user. Null on a host
-		/// that
-		/// never rebuilds.
-		/// </summary>
-		public Action<bool> PopupOpenChanged { get; }
 	}
 
 	/// <summary>
@@ -120,8 +109,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 					// focus-loss autosave uses, whose re-show rebuilds the row from domain truth. A host
 					// that owns its own commit (an in-cell editor) passes a null Save and just stages.
 					return new FwReferenceVectorField(field, automationId, context.EditContext,
-						context.EditContext == null ? null : context.Save, context.LinkRequested,
-						context.PopupOpenChanged);
+						context.EditContext == null ? null : context.Save, context.LinkRequested);
 				case DetailFieldKind.StructuredText:
 					// An editable multi-paragraph StText field. Per-paragraph text edits stage and
 					// ride the focus-loss autosave; structural gestures (add/delete/style) commit
@@ -132,8 +120,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 						context.WritingSystemFocused,
 						context.EditContext == null ? null : context.Save, context.Clipboard);
 				case DetailFieldKind.Chooser:
-					return new FwChooserField(field, automationId, context.EditContext,
-						context.LinkRequested, context.PopupOpenChanged);
+					return new FwChooserField(field, automationId, context.EditContext, context.LinkRequested);
 				case DetailFieldKind.Boolean:
 					// A toggle is a DISCRETE gesture, like a vector add/remove: legacy writes it
 					// immediately. Staging only leaves Ctrl+Z nothing to undo until focus moves.

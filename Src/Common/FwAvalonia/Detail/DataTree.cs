@@ -32,7 +32,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 	/// undo step per field, no Save/Cancel buttons. Validation failures show inline and block the
 	/// commit; Escape rolls the session back. Without a context the view is read-only display.
 	/// </summary>
-	public sealed class DataTree : UserControl
+	public sealed class DataTree : UserControl, IDetailPopupSink
 	{
 		private readonly IDetailEditContext _editContext;
 		private readonly Action<string> _writingSystemFocused;
@@ -355,7 +355,11 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 
 		// A click that opens a picker is not finished when the button is released -- the user is
 		// still choosing. Rebuilding then would close the picker under them.
-		private void OnPickerOpenChanged(bool open)
+		/// <summary>
+		/// A click that opens a popup is not finished when the button is released -- the user is
+		/// still choosing. Rebuilding then would close it under them.
+		/// </summary>
+		public void PopupOpenChanged(bool open)
 		{
 			if (open)
 			{
@@ -713,7 +717,6 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				save: _editContext == null ? (Action)null : OnSave,
 				// Legacy labels each alternative of a MultiStringSlice and leaves a StringSlice's
 				// single value unlabelled, so the gutter follows the row's own kind.
-				popupOpenChanged: OnPickerOpenChanged,
 				showWritingSystemAbbreviation: field.IsMultiStringRow,
 				wsAbbrevColumnWidth: _wsAbbrevColumnWidth));
 	}

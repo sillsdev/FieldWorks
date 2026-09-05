@@ -13,6 +13,7 @@ using Avalonia.Controls.Primitives;
 using Avalonia.Input;
 using Avalonia.Layout;
 using Avalonia.Media;
+using Avalonia.VisualTree;
 using SIL.FieldWorks.Common.FwAvalonia;
 using SIL.FieldWorks.Common.FwAvalonia.Seams;
 
@@ -352,6 +353,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 							PlacementMode.BottomEdgeAlignedLeft);
 						// The picker flyout the item opens, surfaced for automation/discovery.
 						styleItem.Tag = styleFlyout;
+						_teardown.Add(PopupReporting.Wire(styleFlyout));
 
 						// The selection the gesture acts on, snapshotted when the picker opens (the click
 						// moves focus off the TextBox; capturing here keeps the span the user had selected).
@@ -456,6 +458,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 								PlacementMode.BottomEdgeAlignedLeft);
 							// The picker flyout the item opens, surfaced for automation/discovery.
 							wsItem.Tag = wsFlyout;
+							_teardown.Add(PopupReporting.Wire(wsFlyout));
 
 							// The selection the gesture acts on, snapshotted when the picker opens (the click
 							// moves focus off the TextBox; capturing here keeps the span the user had selected).
@@ -570,6 +573,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 							AutomationProperties.SetName(linkItem, FwAvaloniaStrings.Link);
 							// The link flyout the item opens, surfaced for automation/discovery.
 							linkItem.Tag = linkFlyout;
+							_teardown.Add(PopupReporting.Wire(linkFlyout));
 
 							var linkSpanStart = 0;
 							var linkSpanEnd = 0;
@@ -716,6 +720,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 					copyItem.Click += copyClick;
 
 					var contextMenu = new MenuFlyout();
+					_teardown.Add(PopupReporting.Wire(contextMenu));
 					contextMenu.Items.Add(copyItem);
 					var richTextOps = new[] { styleMenuItem, wsMenuItem, linkMenuItem, orcDeleteMenuItem }
 						.Where(op => op != null).ToList();
@@ -1091,8 +1096,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			DetailField field,
 			string automationId,
 			IDetailEditContext editContext,
-			Action<DetailLinkRequest> linkRequested = null,
-			Action<bool> popupOpenChanged = null)
+			Action<DetailLinkRequest> linkRequested = null)
 		{
 			_selectedKey = field.SelectedOptionKey;
 			Padding = FwAvaloniaDensity.EditorPadding;
@@ -1162,7 +1166,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			};
 			picker.OptionCommitted += committed;
 			picker.Dismissed += dismissed;
-			var popupTeardown = PopupReporting.Wire(flyout, popupOpenChanged);
+			var popupTeardown = PopupReporting.Wire(flyout);
 			_teardown.Add(() =>
 			{
 				picker.OptionCommitted -= committed;
@@ -1214,28 +1218,62 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 	}
 
 	/// <summary>
-	/// Reports a picker flyout's open state to whoever owns the view, so a rebuild can wait:
-	/// these
-	/// flyouts anchor to a control INSIDE the view, and rebuilding destroys the anchor,
-	/// dismissing
-	/// the picker under the user.
+	/// A view that must not rebuild while a popup it opened is still up. Popups anchor to a
+	/// control INSIDE the view, so a rebuild destroys the anchor and the popup vanishes.
+	/// </summary>
+	internal interface IDetailPopupSink
+	{
+		void PopupOpenChanged(bool open);
+	}
+
+	/// <summary>
+	/// Reports a popup's open state to the detail view containing it. The sink is found from the
+	/// flyout's own target rather than passed in, so every popup site reports with one call and
+	/// none threads a callback down to it.
 	/// </summary>
 	internal static class PopupReporting
 	{
 		/// <summary>Wires open/close reporting; returns the teardown for it.</summary>
-		public static Action Wire(FlyoutBase flyout, Action<bool> report)
+		public static Action Wire(FlyoutBase flyout)
 		{
-			if (flyout == null || report == null)
+			if (flyout == null)
 				return () => { };
-			EventHandler opened = (s, e) => report(true);
-			EventHandler closed = (s, e) => report(false);
+			// Resolved on open and REMEMBERED: the target can be gone by the time Closed fires,
+			// and an unmatched close would wedge the view as permanently busy.
+			Action<bool> sink = null;
+			EventHandler opened = (s, e) =>
+			{
+				sink = FindSink(flyout);
+				sink?.Invoke(true);
+			};
+			EventHandler closed = (s, e) =>
+			{
+				sink?.Invoke(false);
+				sink = null;
+			};
 			flyout.Opened += opened;
 			flyout.Closed += closed;
 			return () =>
 			{
+				// A flyout torn down while open still owes its close.
+				sink?.Invoke(false);
+				sink = null;
 				flyout.Opened -= opened;
 				flyout.Closed -= closed;
 			};
+		}
+
+		private static Action<bool> FindSink(FlyoutBase flyout)
+		{
+			var visual = flyout.Target as Visual;
+			while (visual != null)
+			{
+				if (visual is IDetailPopupSink sink)
+					return sink.PopupOpenChanged;
+				visual = visual.GetVisualParent();
+			}
+
+			return null;
 		}
 	}
 
@@ -1301,8 +1339,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			string automationId,
 			IDetailEditContext editContext,
 			Action gestureCompleted = null,
-			Action<DetailLinkRequest> linkRequested = null,
-			Action<bool> popupOpenChanged = null)
+			Action<DetailLinkRequest> linkRequested = null)
 		{
 			Orientation = Orientation.Horizontal;
 			// 14.2-style hit-testing rule: a null background only hit-tests the glyphs -- the
@@ -1347,10 +1384,14 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 					};
 					removeItem.Click += removeClick;
 					var itemText = text;
-					itemText.ContextFlyout = new MenuFlyout { Items = { removeItem } };
+					var itemMenu = new MenuFlyout { Items = { removeItem } };
+					itemText.ContextFlyout = itemMenu;
+					// A rebuild under the Remove menu dismisses it, like any other popup.
+					var itemMenuTeardown = PopupReporting.Wire(itemMenu);
 					_teardown.Add(() =>
 					{
 						removeItem.Click -= removeClick;
+						itemMenuTeardown();
 						itemText.ContextFlyout = null;
 					});
 				}
@@ -1440,7 +1481,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			picker.OptionsCommitted += committedSet;
 			picker.CreateRequested += created;
 			picker.Dismissed += dismissed;
-			var popupTeardown = PopupReporting.Wire(flyout, popupOpenChanged);
+			var popupTeardown = PopupReporting.Wire(flyout);
 			_teardown.Add(() =>
 			{
 				picker.OptionsCommitted -= committedSet;
