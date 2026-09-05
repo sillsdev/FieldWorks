@@ -301,27 +301,37 @@ namespace SIL.FieldWorks.XWorks
 			// once per compose from the project's analysis + vernacular writing systems and stamped onto
 			// every editable text / StText row so the owned editors can draw the per-run font display.
 			private IReadOnlyDictionary<string, DetailRunFont> _writingSystemFonts;
-			private readonly Dictionary<(int ClassId, string LayoutName, string ChoiceGuid,
-				string CallerXml), ItemMenuBinding> _itemMenuBindings
-				= new Dictionary<(int, string, string, string), ItemMenuBinding>();
+			private readonly Dictionary<(int ClassId, int ListHvo, string LayoutName,
+				string ChoiceGuid, string CallerXml), ItemMenuBinding> _itemMenuBindings
+				= new Dictionary<(int, int, string, string, string), ItemMenuBinding>();
 			// Per-compose memo of compiled models. A model depends on the object only through its
-			// class, so every sense/example/allomorph of one class shares one snapshot build.
-			private readonly Dictionary<(int ClassId, string LayoutName, string ChoiceGuid,
-				string CallerXml), ViewDefinitionModel> _compiledModels
-				= new Dictionary<(int, string, string, string), ViewDefinitionModel>();
+			// class (plus the list discriminator), so every item of one class shares one build.
+			private readonly Dictionary<(int ClassId, int ListHvo, string LayoutName,
+				string ChoiceGuid, string CallerXml), ViewDefinitionModel> _compiledModels
+				= new Dictionary<(int, int, string, string, string), ViewDefinitionModel>();
 
 			// The compiled model for the object's layout, built once per compose per distinct
-			// (class, layout, choice, callerXml) so later items of the same class reuse it.
+			// (class, list, layout, choice, callerXml) so later items of the same class reuse it.
 			public ViewDefinitionModel Compile(ICmObject obj, string layoutName, string choiceGuid,
 				string callerXml)
 			{
-				var key = (obj.ClassID, NormalizeLayoutKey(layoutName), NormalizeChoiceKey(choiceGuid),
-					callerXml);
+				var key = (obj.ClassID, ResolverListHvo(obj), NormalizeLayoutKey(layoutName),
+					NormalizeChoiceKey(choiceGuid), callerXml);
 				if (_compiledModels.TryGetValue(key, out var compiled))
 					return compiled;
 				compiled = CompileForObject(_cache, obj, layoutName, choiceGuid, _source, callerXml);
 				_compiledModels[key] = compiled;
 				return compiled;
+			}
+
+			// All the source reads from an object beyond its class: a CmCustomItem's
+			// layout name comes from its OWNING LIST's writing-system selector, so the
+			// list is part of the memo key.
+			private static int ResolverListHvo(ICmObject obj)
+			{
+				if (!(obj is ICmCustomItem item) || item.Owner == null)
+					return 0;
+				return item.OwningList?.Hvo ?? 0;
 			}
 
 			private static string NormalizeLayoutKey(string layoutName)
@@ -3026,8 +3036,8 @@ namespace SIL.FieldWorks.XWorks
 			{
 				var layoutName = node.TargetLayout ?? "default";
 				var choiceGuid = ResolveLayoutChoiceGuid(_cache, item, node.LayoutChoiceField);
-				var key = (item.ClassID, NormalizeLayoutKey(layoutName), NormalizeChoiceKey(choiceGuid),
-					node.SourceCallerXml);
+				var key = (item.ClassID, ResolverListHvo(item), NormalizeLayoutKey(layoutName),
+					NormalizeChoiceKey(choiceGuid), node.SourceCallerXml);
 				if (_itemMenuBindings.TryGetValue(key, out var cached))
 					return cached;
 

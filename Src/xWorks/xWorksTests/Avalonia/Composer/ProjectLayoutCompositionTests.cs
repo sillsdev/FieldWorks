@@ -297,6 +297,72 @@ namespace SIL.FieldWorks.XWorks
 				Is.EqualTo(new[] { "LexEntry", "LexSense" }));
 		}
 
+		// The source maps a CmCustomItem's layout from its OWNING LIST's writing-system selector,
+		// so two custom items of one class composed in one pass can need different layouts.
+		[Test]
+		public void Compose_CustomItemsFromListsWithDifferentWsSelectors_GetTheirOwnLayouts()
+		{
+			const string layoutXml = @"
+<LayoutInventory>
+  <layout class='CmCustomItem' type='detail' name='CmPossibilityA'>
+    <part ref='AnalysisMarker' visibility='always'/>
+    <part ref='Restrictions' param='Normal'/>
+  </layout>
+  <layout class='CmCustomItem' type='detail' name='CmPossibilityV'>
+    <part ref='VernacularMarker' visibility='always'/>
+  </layout>
+</LayoutInventory>";
+			const string partsXml = @"
+<PartInventory><bin>
+  <part id='CmCustomItem-Detail-AnalysisMarker'>
+    <slice label='Analysis Marker' editor='multistring' field='Name'/>
+  </part>
+  <part id='CmCustomItem-Detail-VernacularMarker'>
+    <slice label='Vernacular Marker' editor='multistring' field='Name'/>
+  </part>
+  <part id='CmCustomItem-Detail-Restrictions'>
+    <seq field='Restrictions'/>
+  </part>
+</bin></PartInventory>";
+			ICmCustomItem root = null;
+			ICmCustomItem analysisItem = null;
+			ICmCustomItem vernacularItem = null;
+			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
+			{
+				var items = Cache.ServiceLocator.GetInstance<ICmCustomItemFactory>();
+				var lists = Cache.ServiceLocator.GetInstance<ICmPossibilityListFactory>();
+				var analysisList = lists.CreateUnowned("Analysis list", Cache.DefaultUserWs);
+				analysisList.WsSelector = WritingSystemServices.kwsAnals;
+				var vernacularList = lists.CreateUnowned("Vernacular list", Cache.DefaultUserWs);
+				vernacularList.WsSelector = WritingSystemServices.kwsVerns;
+				root = items.Create();
+				analysisList.PossibilitiesOS.Add(root);
+				analysisItem = items.Create();
+				analysisList.PossibilitiesOS.Add(analysisItem);
+				analysisItem.Name.set_String(Cache.DefaultAnalWs,
+					TsStringUtils.MakeString("analysis item", Cache.DefaultAnalWs));
+				vernacularItem = items.Create();
+				vernacularList.PossibilitiesOS.Add(vernacularItem);
+				vernacularItem.Name.set_String(Cache.DefaultVernWs,
+					TsStringUtils.MakeString("vernacular item", Cache.DefaultVernWs));
+				root.RestrictionsRC.Add(analysisItem);
+				root.RestrictionsRC.Add(vernacularItem);
+			});
+			var layouts = CreateLayoutInventory(Path.Combine(m_projectPath, "custom-items"),
+				layoutXml);
+			var source = CreateSource(layouts, partsXml);
+
+			var composed = DetailComposer.Compose(root, Cache, "Normal", source: source.GetSnapshot);
+
+			var labelsByItem = composed.Model.Fields.Where(field => field.Field == "Name")
+				.ToLookup(field => field.ObjectHvo, field => field.Label);
+			Assert.That(labelsByItem[analysisItem.Hvo], Is.EqualTo(new[] { "Analysis Marker" }),
+				"an item of the analysis-selector list composes the CmPossibilityA layout");
+			Assert.That(labelsByItem[vernacularItem.Hvo], Is.EqualTo(new[] { "Vernacular Marker" }),
+				"an item of the vernacular-selector list composes ITS list's CmPossibilityV layout, "
+				+ "not the layout compiled for the previous item of the same class");
+		}
+
 		[Test]
 		public void Compose_MissingNestedProjectLayoutThrows()
 		{
