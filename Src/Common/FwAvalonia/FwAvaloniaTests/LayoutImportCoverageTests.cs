@@ -36,7 +36,7 @@ namespace FwAvaloniaTests
     </slice>
   </part>
   <part id='LexEntry-Detail-SliceWithUnknownChild'>
-    <slice label='Odd' editor='string' field='X' ws='analysis'>
+    <slice label='Odd'>
       <mystery/>
     </slice>
   </part>
@@ -191,6 +191,23 @@ namespace FwAvaloniaTests
 		}
 
 		[Test]
+		public void CallerChildren_BarePart_UnderSliceContentPart_IsReportedAndOmitted()
+		{
+			// Slice.GenerateChildren and CreateIndentedNodes read only the caller's <indent>;
+			// a <part> directly under the caller is never read, so WinForms renders nothing.
+			var model = Import(@"
+<layout class='LexEntry' type='detail' name='T'>
+  <part ref='MenuSection'>
+    <part ref='CitationForm'/>
+  </part>
+</layout>");
+
+			Assert.That(model.Diagnostics.Single(d => d.Code == "caller-children-dropped").Message,
+				Does.Contain("<part>"));
+			Assert.That(model.Roots.Single().Children, Is.Empty);
+		}
+
+		[Test]
 		public void NonPartCallerChildren_UnderSequencePart_AreReportedAndOmitted()
 		{
 			// DataTree.CreateSlicesFor unifies caller children into each item's layout; the
@@ -220,8 +237,10 @@ namespace FwAvaloniaTests
   </part>
 </layout>");
 
-			Assert.That(model.Diagnostics.Any(d => d.Code == "injected-child-dropped"), Is.True);
-			Assert.That(model.Diagnostics.Any(d => d.Code == "cross-object-deferred"), Is.True);
+			var noRef = model.Diagnostics.Single(d => d.Code == "injected-child-dropped");
+			var unresolved = model.Diagnostics.Single(d => d.Code == "cross-object-deferred");
+			Assert.That(noRef.NodePath, Is.Not.EqualTo(unresolved.NodePath),
+				"omitted siblings must not share a diagnostic path");
 			Assert.That(model.Roots.Single().Children, Is.Empty);
 		}
 
@@ -290,7 +309,7 @@ namespace FwAvaloniaTests
 			var diag = model.Diagnostics.Single(d => d.Code == "slice-content-dropped");
 			Assert.That(diag.Message, Does.Contain("mystery"));
 			Assert.That(model.Roots.Single().Kind, Is.EqualTo(ViewNodeKind.Field),
-				"no child row, so the slice stays a plain field rather than a group");
+				"an editor-less slice with any child row would become a Group; omission keeps it a Field");
 			Assert.That(model.Roots.Single().Children, Is.Empty);
 		}
 

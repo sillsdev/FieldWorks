@@ -314,8 +314,10 @@ namespace FwAvaloniaTests
 </layout>");
 
 			Assert.That(model.Roots, Is.Empty, "an Unsupported row here would be a divergence");
-			Assert.That(model.Diagnostics.Any(d => d.Code == "generated-content-dropped"), Is.True);
-			Assert.That(model.Diagnostics.Any(d => d.Code == "unknown-container-element"), Is.True);
+			var generated = model.Diagnostics.Single(d => d.Code == "generated-content-dropped");
+			var unknown = model.Diagnostics.Single(d => d.Code == "unknown-container-element");
+			Assert.That(generated.NodePath, Is.Not.EqualTo(unknown.NodePath),
+				"omitted siblings must not share a diagnostic path");
 		}
 
 		[Test]

@@ -132,7 +132,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 							ViewDiagnosticSeverity.Warning,
 							"generated-content-dropped",
 							$"<generate class='{(string)el.Attribute("class")}' fieldType='{(string)el.Attribute("fieldType")}'> drives schema/custom-field UI generation and is not imported.",
-							$"{parentPath}/#{output.Count}"));
+							OmittedPath(parentPath, el)));
 						break;
 					// Conditionals import as typed Conditional/ChoiceGroup nodes (evaluated per
 					// object at compose time); unsupported condition forms still drop with a diagnostic.
@@ -166,7 +166,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 							ViewDiagnosticSeverity.Warning,
 							"unknown-container-element",
 							$"Unsupported layout container element '{el.Name.LocalName}'.",
-							$"{parentPath}/#{output.Count}"));
+							OmittedPath(parentPath, el)));
 						break;
 				}
 			}
@@ -197,10 +197,10 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 
 			if (string.IsNullOrEmpty(refName))
 			{
-				// DataTree reads the ref with GetMandatoryAttributeValue and throws, so
-				// WinForms renders no row for it.
+				// DataTree.ProcessPartRefNode throws on a missing ref; nothing renders.
 				diagnostics.Add(new ViewDiagnostic(ViewDiagnosticSeverity.Warning, "part-without-ref",
-					"A <part> has neither a 'ref' nor 'customFields' attribute.", stableId));
+					"A <part> has neither a 'ref' nor 'customFields' attribute.",
+					OmittedPath(parentPath, callerEl)));
 				return;
 			}
 
@@ -208,7 +208,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 			if (contents.Count == 0)
 			{
 				diagnostics.Add(new ViewDiagnostic(ViewDiagnosticSeverity.Error, "unresolved-part",
-					$"Could not resolve part ref '{refName}' for class '{className}'.", stableId));
+					$"Could not resolve part ref '{refName}' for class '{className}'.",
+					OmittedPath(parentPath, callerEl)));
 				// DataTree omits an unresolved part and its entire subtree; never reinterpret
 				// the descendants as if they belonged to the parent layout.
 				return;
@@ -336,7 +337,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 							// ignores other slice children, so report them without a row.
 							diagnostics.Add(new ViewDiagnostic(ViewDiagnosticSeverity.Info, "slice-content-dropped",
 								$"Slice content child <{child.Name.LocalName}> is not imported.",
-								$"{stableId}/content[{children.Count}]"));
+								OmittedPath(stableId, child)));
 						}
 					}
 
@@ -362,15 +363,15 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 					var visibleWss = ParseWsList(Attr(callerEl, "visibleWritingSystems")
 						?? Attr(contentEl, "visibleWritingSystems"));
 
-					// <indent>/<part> caller children become child nodes, the way
-					// Slice.CreateIndentedNodes expands the caller's <indent>. It reads
-					// nothing else under the caller, so other kinds get no row.
+					// Slice.GenerateChildren and CreateIndentedNodes read only the caller's
+					// <indent>, so it becomes child nodes; every other caller child, a bare
+					// <part> included, gets no row.
 					if (!ReferenceEquals(callerEl, contentEl))
 					{
 						var structuralCallerChildren = new List<XElement>();
 						foreach (var callerChild in callerEl.Elements())
 						{
-							if (callerChild.Name.LocalName == "indent" || callerChild.Name.LocalName == "part")
+							if (callerChild.Name.LocalName == "indent")
 							{
 								structuralCallerChildren.Add(callerChild);
 							}
@@ -378,7 +379,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 							{
 								diagnostics.Add(new ViewDiagnostic(ViewDiagnosticSeverity.Warning, "caller-children-dropped",
 									$"Caller child <{callerChild.Name.LocalName}> under part ref with slice content is not imported.",
-									$"{stableId}/caller[{children.Count}]"));
+									OmittedPath(stableId, callerChild)));
 							}
 						}
 
@@ -530,6 +531,16 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 						$"Unsupported part content element '{contentEl.Name.LocalName}'.", stableId));
 					return null;
 			}
+		}
+
+		// Diagnostic path for an element that yields no node. Omitted siblings would all share
+		// the output.Count id, so key them by source element instead.
+		private static string OmittedPath(string parentPath, XElement element)
+		{
+			var name = element.Name.LocalName;
+			var segment = LegacyLayoutCallerPath.Get(element)
+				?? $"{name}[{element.ElementsBeforeSelf().Count(sibling => sibling.Name.LocalName == name)}]";
+			return $"{parentPath}/{segment}";
 		}
 
 		private static ViewNode UnsupportedNode(XElement element, string stableId, bool indented,
@@ -741,7 +752,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 					// SourceCallerXml), so it is reported here, not given its own row.
 					diagnostics.Add(new ViewDiagnostic(ViewDiagnosticSeverity.Warning, "injected-child-dropped",
 						$"Caller child <{child.Name.LocalName}> under an object/sequence part is not imported.",
-						$"{parentPath}/#{output.Count}"));
+						OmittedPath(parentPath, child)));
 					continue;
 				}
 
@@ -749,10 +760,10 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 				var refName = (string)child.Attribute("ref");
 				if (string.IsNullOrEmpty(refName))
 				{
-					// DataTree's GetMandatoryAttributeValue(partRef, "ref") throws, so
-					// nothing renders.
+					// DataTree.ProcessPartRefNode throws on a missing ref; nothing renders.
 					diagnostics.Add(new ViewDiagnostic(ViewDiagnosticSeverity.Warning, "injected-child-dropped",
-						"An injected object/sequence child has no 'ref' and is not imported.", stableId));
+						"An injected object/sequence child has no 'ref' and is not imported.",
+						OmittedPath(parentPath, child)));
 					continue;
 				}
 
@@ -762,7 +773,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 					// Omitted like any unresolved part (DataTree "Just omit the missing part").
 					diagnostics.Add(new ViewDiagnostic(ViewDiagnosticSeverity.Info, "cross-object-deferred",
 						$"Injected child '{refName}' could not be resolved by ref and is not imported.",
-						stableId));
+						OmittedPath(parentPath, child)));
 					continue;
 				}
 
