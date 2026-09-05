@@ -73,71 +73,21 @@ namespace SIL.FieldWorks.XWorks
 			string choiceGuid = null, string callerXml = null)
 		{
 			var originalClassId = _metadataCache.GetClassId(className);
-			var classId = originalClassId;
-			var baseClassMap = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 			var requestedName = layoutName ?? "default";
-			var useName = requestedName;
 			var isRnGenericRecord = IsSameOrSubclass(originalClassId,
 				_metadataCache.GetClassId("RnGenericRec"));
-			string resolvedClassName;
-			XmlNode resolvedLayout;
 
-			while (true)
-			{
-				resolvedClassName = _metadataCache.GetClassName(classId);
-				var layout = _layouts.GetElement("layout",
-					new[] { resolvedClassName, "detail", useName, choiceGuid });
-				if (layout == null && isRnGenericRecord && choiceGuid != null)
+			var resolution = LayoutResolutionWalk.Resolve(_metadataCache, originalClassId,
+				requestedName, (resolvedClassName, useName) =>
 				{
-					var generic = _layouts.GetElement("layout",
-						new[] { resolvedClassName, "detail", useName, null });
-					if (generic != null)
-					{
-						var clone = generic.Clone();
-						XmlUtils.AppendAttribute(clone, "choiceGuid", choiceGuid);
-						_layouts.AddNodeToInventory(clone);
-						_layouts.PersistOverrideElement(clone);
-						layout = clone;
-					}
-				}
-
-				if (layout != null)
-				{
-					resolvedLayout = layout;
-					break;
-				}
-
-				if (classId == 0 && !string.Equals(useName, "default",
-					StringComparison.Ordinal))
-				{
-					useName = "default";
-					classId = originalClassId;
-					resolvedClassName = _metadataCache.GetClassName(classId);
-				}
-				if (classId == 0)
-				{
-					throw new LayoutNotFoundException("No matching layout found for class "
-						+ resolvedClassName + " detail layout " + requestedName + ".");
-				}
-				var baseId = _metadataCache.GetBaseClsId(classId);
-				if (baseId == classId)
-					throw new InvalidOperationException("The metadata class hierarchy contains a cycle.");
-				baseClassMap[resolvedClassName] = _metadataCache.GetClassName(baseId);
-				classId = baseId;
-			}
-
-			var ancestorClassId = classId;
-			while (ancestorClassId != 0)
-			{
-				var baseId = _metadataCache.GetBaseClsId(ancestorClassId);
-				if (baseId == ancestorClassId)
-					break;
-				baseClassMap[_metadataCache.GetClassName(ancestorClassId)] =
-					_metadataCache.GetClassName(baseId);
-				if (baseId == 0)
-					break;
-				ancestorClassId = baseId;
-			}
+					var layout = _layouts.GetElement("layout",
+						new[] { resolvedClassName, "detail", useName, choiceGuid });
+					if (layout == null && isRnGenericRecord && choiceGuid != null)
+						layout = CloneLayoutForChoice(resolvedClassName, useName, choiceGuid);
+					return layout;
+				});
+			var resolvedLayout = resolution.Layout;
+			var baseClassMap = resolution.BaseClassMap;
 
 			if (!string.IsNullOrEmpty(callerXml))
 				resolvedLayout = _layouts.GetUnified(resolvedLayout, CallerNode(callerXml));
@@ -154,6 +104,24 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
+		/// Clones a Notebook record's no-choice layout for a record type that has none yet,
+		/// adding the clone to the inventory and persisting it (FWR-1049), or returns null when
+		/// the class has no no-choice layout either.
+		/// </summary>
+		private XmlNode CloneLayoutForChoice(string className, string layoutName, string choiceGuid)
+		{
+			var generic = _layouts.GetElement("layout",
+				new[] { className, "detail", layoutName, null });
+			if (generic == null)
+				return null;
+			var clone = generic.Clone();
+			XmlUtils.AppendAttribute(clone, "choiceGuid", choiceGuid);
+			_layouts.AddNodeToInventory(clone);
+			_layouts.PersistOverrideElement(clone);
+			return clone;
+		}
+
+		/// <summary>
 		/// Sets <c>ref="_CustomFieldPlaceholder"</c> on the live inventory node behind a
 		/// placeholder the snapshot copy just expanded, then persists that node's nearest
 		/// <c>layout</c> or <c>part</c> ancestor through the inventory. Mutating the node the
@@ -166,12 +134,13 @@ namespace SIL.FieldWorks.XWorks
 		private void PersistPlaceholderRef(XmlNode liveLayout, XElement snapshotLayout,
 			XElement snapshotPlaceholder)
 		{
-			// The snapshot copy is parsed from the live node's XML and generated Custom parts
-			// carry no customFields attribute, so the placeholders line up by document order.
+			// The snapshot copy is parsed from the live node's XML and generated Custom parts are
+			// not placeholders, so one predicate on both sides lines up by document order.
 			var index = snapshotLayout.Descendants("part")
-				.Where(part => part.Attribute("customFields") != null)
+				.Where(DetailComposer.IsCustomFieldPlaceholder)
 				.ToList().IndexOf(snapshotPlaceholder);
-			var livePlaceholders = liveLayout.SelectNodes(".//part[@customFields]");
+			var livePlaceholders = liveLayout.SelectNodes(".//part")?.Cast<XmlNode>()
+				.Where(DetailComposer.IsCustomFieldPlaceholder).ToList();
 			if (index < 0 || livePlaceholders == null || index >= livePlaceholders.Count)
 			{
 				throw new InvalidOperationException(
@@ -179,7 +148,10 @@ namespace SIL.FieldWorks.XWorks
 			}
 			var livePlaceholder = livePlaceholders[index];
 			if (livePlaceholder.Attributes?["ref"] == null)
-				XmlUtils.AppendAttribute(livePlaceholder, "ref", "_CustomFieldPlaceholder");
+			{
+				XmlUtils.AppendAttribute(livePlaceholder, "ref",
+					DetailComposer.CustomFieldPlaceholderRef);
+			}
 			_layouts.PersistOverrideElement(FindPersistableParent(livePlaceholder));
 		}
 

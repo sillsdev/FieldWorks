@@ -248,12 +248,15 @@ namespace SIL.FieldWorks.XWorks
 
 			var snapshot = source.GetSnapshot(allomorph, "Normal");
 
-			var persisted = File.ReadAllText(PersistedLayoutPath());
+			var persistedParts = XElement.Load(PersistedLayoutPath()).Descendants("part").ToList();
 			Assert.That(XElement.Parse(snapshot.LayoutXml).Descendants("part").Any(part =>
 				(string)part.Attribute("ref") == "Custom"), Is.True,
 				"the snapshot still expands the custom field");
-			Assert.That(persisted, Does.Contain("_CustomFieldPlaceholder"));
-			Assert.That(persisted, Does.Not.Contain("ref=\"Custom\""),
+			Assert.That(persistedParts.Single(part => part.Attribute("customFields") != null)
+				.Attribute("ref")?.Value, Is.EqualTo("_CustomFieldPlaceholder"),
+				"the placeholder ref is written to the project layout file");
+			Assert.That(persistedParts.Any(part => (string)part.Attribute("ref") == "Custom"),
+				Is.False,
 				"generated custom parts are regenerated on every load, never written to disk");
 		}
 

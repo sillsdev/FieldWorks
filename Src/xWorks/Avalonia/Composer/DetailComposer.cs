@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Xml;
 using System.Xml.Linq;
 using SIL.FieldWorks.Common.FwAvalonia;
 using SIL.FieldWorks.Common.FwAvalonia.Detail;
@@ -3291,57 +3292,18 @@ namespace SIL.FieldWorks.XWorks
 			if (sources == null)
 				return null;
 
-			var baseClassMap = new Dictionary<string, string>(StringComparer.Ordinal);
-			var originalClassId = classId;
-			var clsid = classId;
 			var requestedName = layoutName ?? "default";
-			var useName = requestedName;
-			XElement layout = null;
-			string className = null;
-			while (true)
-			{
-				className = mdc.GetClassName(clsid);
-				if (sources.LayoutIndex.TryGetValue((className, "detail", useName), out var variants))
-				{
-					layout = LayoutSourceLoader.SelectLayoutForChoice(variants, choiceGuid);
-					if (layout != null)
-						break;
-				}
-				if (clsid == 0 && !string.Equals(useName, "default",
-					StringComparison.Ordinal))
-				{
-					useName = "default";
-					clsid = originalClassId;
-					className = mdc.GetClassName(clsid);
-				}
-				if (clsid == 0)
-					throw new LayoutNotFoundException("No exact layout found for class "
-						+ className + " detail layout " + requestedName + ".");
-				var baseId = mdc.GetBaseClsId(clsid);
-				if (baseId == clsid)
-					throw new InvalidOperationException("The metadata class hierarchy contains a cycle.");
-				baseClassMap[className] = mdc.GetClassName(baseId);
-				clsid = baseId;
-			}
+			var resolution = LayoutResolutionWalk.Resolve(mdc, classId, requestedName,
+				(className, useName) =>
+					sources.LayoutIndex.TryGetValue((className, "detail", useName), out var variants)
+						? LayoutSourceLoader.SelectLayoutForChoice(variants, choiceGuid)
+						: null);
 
-			// Part resolution may still need to climb from the layout's class upward.
-			var chain = clsid;
-			while (chain != 0)
-			{
-				var baseId = mdc.GetBaseClsId(chain);
-				if (baseId == chain)
-					break;
-				baseClassMap[mdc.GetClassName(chain)] = mdc.GetClassName(baseId);
-				if (baseId == 0)
-					break;
-				chain = baseId;
-			}
-
-			var effectiveLayout = new XElement(layout);
-			ExpandCustomFields(effectiveLayout, cache, originalClassId, null);
-			var snapshot = new ViewDefinitionSourceSnapshot(mdc.GetClassName(originalClassId), "detail",
+			var effectiveLayout = new XElement(resolution.Layout);
+			ExpandCustomFields(effectiveLayout, cache, classId, null);
+			var snapshot = new ViewDefinitionSourceSnapshot(mdc.GetClassName(classId), "detail",
 				effectiveLayout.ToString(),
-				sources.PartsXml, baseClassMap, requestedName, choiceGuid, true);
+				sources.PartsXml, resolution.BaseClassMap, requestedName, choiceGuid, true);
 			return Compiler.Compile(snapshot);
 		}
 
@@ -3402,10 +3364,7 @@ namespace SIL.FieldWorks.XWorks
 				clsid = cache.MetaDataCacheAccessor.GetBaseClsId(clsid);
 			}
 
-			var placeholders = layout.Descendants("part")
-				.Where(part => part.Attribute("customFields") != null
-					|| (string)part.Attribute("ref") == "_CustomFieldPlaceholder")
-				.ToList();
+			var placeholders = layout.Descendants("part").Where(IsCustomFieldPlaceholder).ToList();
 			foreach (var placeholder in placeholders)
 			{
 				foreach (var descriptor in FieldDescription.FieldDescriptors(cache))
@@ -3417,7 +3376,7 @@ namespace SIL.FieldWorks.XWorks
 
 					if (placeholder.Attribute("ref") == null)
 					{
-						placeholder.SetAttributeValue("ref", "_CustomFieldPlaceholder");
+						placeholder.SetAttributeValue("ref", CustomFieldPlaceholderRef);
 						persistMissingPlaceholder?.Invoke(placeholder);
 					}
 
@@ -3426,6 +3385,27 @@ namespace SIL.FieldWorks.XWorks
 				}
 			}
 		}
+
+		/// <summary>The <c>ref</c> an expanded custom-field placeholder part carries.</summary>
+		internal const string CustomFieldPlaceholderRef = "_CustomFieldPlaceholder";
+
+		/// <summary>
+		/// Whether a <c>part</c> is a custom-field placeholder: it has a <c>customFields</c>
+		/// attribute or already carries <see cref="CustomFieldPlaceholderRef"/>. The snapshot
+		/// (XElement) and live inventory (XmlNode) sides share this one rule so the placeholders
+		/// they select line up by document order.
+		/// </summary>
+		internal static bool IsCustomFieldPlaceholder(XElement part)
+			=> IsCustomFieldPlaceholder((string)part.Attribute("customFields"),
+				(string)part.Attribute("ref"));
+
+		/// <inheritdoc cref="IsCustomFieldPlaceholder(XElement)"/>
+		internal static bool IsCustomFieldPlaceholder(XmlNode part)
+			=> IsCustomFieldPlaceholder(part.Attributes?["customFields"]?.Value,
+				part.Attributes?["ref"]?.Value);
+
+		private static bool IsCustomFieldPlaceholder(string customFields, string refName)
+			=> customFields != null || refName == CustomFieldPlaceholderRef;
 
 		private static bool HasCustomFieldSibling(XElement placeholder, string fieldName)
 		{
