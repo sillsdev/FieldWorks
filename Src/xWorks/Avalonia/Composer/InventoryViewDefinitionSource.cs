@@ -5,6 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
 using SIL.FieldWorks.Common.FwAvalonia.ViewDefinition;
@@ -144,18 +145,53 @@ namespace SIL.FieldWorks.XWorks
 			var effectiveLayout = XElement.Parse(resolvedLayout.OuterXml,
 				LoadOptions.PreserveWhitespace);
 			DetailComposer.ExpandCustomFields(effectiveLayout, _cache, originalClassId,
-				persistableParent => PersistMissingPlaceholder(persistableParent));
+				placeholder => PersistPlaceholderRef(resolvedLayout, effectiveLayout,
+					placeholder));
 
 			return new ViewDefinitionSourceSnapshot(className, "detail", effectiveLayout.ToString(),
 				_partsXml, new ReadOnlyDictionary<string, string>(baseClassMap), requestedName,
 				choiceGuid, _cache != null);
 		}
 
-		private void PersistMissingPlaceholder(XElement parent)
+		/// <summary>
+		/// Sets <c>ref="_CustomFieldPlaceholder"</c> on the live inventory node behind a
+		/// placeholder the snapshot copy just expanded, then persists that node's nearest
+		/// <c>layout</c> or <c>part</c> ancestor through the inventory. Mutating the node the
+		/// inventory handed out, rather than the snapshot copy, matches the legacy DataTree so
+		/// every holder of that node and the project layout file agree on the ref.
+		/// </summary>
+		/// <exception cref="InvalidOperationException">The snapshot placeholder has no
+		/// counterpart in the live layout, or that counterpart has no layout or part
+		/// ancestor.</exception>
+		private void PersistPlaceholderRef(XmlNode liveLayout, XElement snapshotLayout,
+			XElement snapshotPlaceholder)
 		{
-			var document = new XmlDocument();
-			document.LoadXml(parent.ToString(SaveOptions.DisableFormatting));
-			_layouts.PersistOverrideElement(document.DocumentElement);
+			// The snapshot copy is parsed from the live node's XML and generated Custom parts
+			// carry no customFields attribute, so the placeholders line up by document order.
+			var index = snapshotLayout.Descendants("part")
+				.Where(part => part.Attribute("customFields") != null)
+				.ToList().IndexOf(snapshotPlaceholder);
+			var livePlaceholders = liveLayout.SelectNodes(".//part[@customFields]");
+			if (index < 0 || livePlaceholders == null || index >= livePlaceholders.Count)
+			{
+				throw new InvalidOperationException(
+					"The custom-field placeholder has no counterpart in the live layout.");
+			}
+			var livePlaceholder = livePlaceholders[index];
+			if (livePlaceholder.Attributes?["ref"] == null)
+				XmlUtils.AppendAttribute(livePlaceholder, "ref", "_CustomFieldPlaceholder");
+			_layouts.PersistOverrideElement(FindPersistableParent(livePlaceholder));
+		}
+
+		private static XmlNode FindPersistableParent(XmlNode placeholder)
+		{
+			for (var parent = placeholder.ParentNode; parent != null; parent = parent.ParentNode)
+			{
+				if (parent.Name == "part" || parent.Name == "layout")
+					return parent;
+			}
+			throw new InvalidOperationException(
+				"No layout or part parent exists for a custom-field placeholder.");
 		}
 
 		private XmlNode CallerNode(string callerXml)

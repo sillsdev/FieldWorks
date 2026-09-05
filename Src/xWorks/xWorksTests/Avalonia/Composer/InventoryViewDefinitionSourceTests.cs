@@ -41,6 +41,9 @@ namespace SIL.FieldWorks.XWorks
 		public override void TestTearDown()
 		{
 			base.TestTearDown();
+			// Custom-field metadata survives the per-test undo, so the static descriptor list
+			// must not leak into the next test.
+			FieldDescription.ClearDataAbout();
 			if (Directory.Exists(_projectPath))
 				Directory.Delete(_projectPath, true);
 		}
@@ -196,6 +199,62 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(Directory.GetFiles(Path.Combine(_projectPath, "ConfigurationSettings"),
 				"*.fwlayout"), Is.Not.Empty,
 				"adding the missing placeholder through the source persists the effective layout");
+		}
+
+		[Test]
+		public void GetSnapshot_SetsMissingPlaceholderRefOnLiveInventoryNode()
+		{
+			var allomorph = CreateAllomorphWithCustomField();
+			var layouts = CreateLayoutInventory(PlaceholderLayoutXml);
+			var liveLayout = layouts.GetElement("layout",
+				new[] { "MoForm", "detail", "Normal", null });
+			var source = CreateSource(layouts, CreatePartsInventory(), Cache);
+
+			source.GetSnapshot(allomorph, "Normal");
+
+			Assert.That(PlaceholderRef(liveLayout), Is.EqualTo("_CustomFieldPlaceholder"),
+				"the placeholder ref is set on the live node the inventory handed out");
+			Assert.That(PlaceholderRef(layouts.GetElement("layout",
+				new[] { "MoForm", "detail", "Normal", null })),
+				Is.EqualTo("_CustomFieldPlaceholder"),
+				"the inventory keeps serving the layout with the placeholder ref");
+		}
+
+		[Test]
+		public void GetSnapshot_DoesNotRewriteProjectLayoutOnceThePlaceholderRefIsPersisted()
+		{
+			var allomorph = CreateAllomorphWithCustomField();
+			var source = CreateSource(CreateLayoutInventory(PlaceholderLayoutXml),
+				CreatePartsInventory(), Cache);
+
+			source.GetSnapshot(allomorph, "Normal");
+			var persistedPath = PersistedLayoutPath();
+			var persistedAfterFirstCall = File.ReadAllBytes(persistedPath);
+			var sentinel = new DateTime(2000, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+			File.SetLastWriteTimeUtc(persistedPath, sentinel);
+			source.GetSnapshot(allomorph, "Normal");
+
+			Assert.That(File.GetLastWriteTimeUtc(persistedPath), Is.EqualTo(sentinel),
+				"the second snapshot finds the placeholder ref already in the inventory");
+			Assert.That(File.ReadAllBytes(persistedPath), Is.EqualTo(persistedAfterFirstCall));
+		}
+
+		[Test]
+		public void GetSnapshot_PersistsOnlyThePlaceholderRefNotGeneratedCustomParts()
+		{
+			var allomorph = CreateAllomorphWithCustomField();
+			var source = CreateSource(CreateLayoutInventory(PlaceholderLayoutXml),
+				CreatePartsInventory(), Cache);
+
+			var snapshot = source.GetSnapshot(allomorph, "Normal");
+
+			var persisted = File.ReadAllText(PersistedLayoutPath());
+			Assert.That(XElement.Parse(snapshot.LayoutXml).Descendants("part").Any(part =>
+				(string)part.Attribute("ref") == "Custom"), Is.True,
+				"the snapshot still expands the custom field");
+			Assert.That(persisted, Does.Contain("_CustomFieldPlaceholder"));
+			Assert.That(persisted, Does.Not.Contain("ref=\"Custom\""),
+				"generated custom parts are regenerated on every load, never written to disk");
 		}
 
 		[Test]
@@ -371,6 +430,40 @@ namespace SIL.FieldWorks.XWorks
 
 			Assert.That(() => source.GetSnapshot("MoStemAllomorph", "Normal"),
 				Throws.InstanceOf<InvalidOperationException>());
+		}
+
+		private const string PlaceholderLayoutXml = @"
+<LayoutInventory>
+  <layout class='MoForm' type='detail' name='Normal'>
+    <part customFields='here'/>
+  </layout>
+</LayoutInventory>";
+
+		private IMoStemAllomorph CreateAllomorphWithCustomField()
+		{
+			var allomorph = Cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>().Create();
+			var field = new FieldDescription(Cache)
+			{
+				Userlabel = "Placeholder source field " + Guid.NewGuid().ToString("N"),
+				HelpString = string.Empty,
+				Class = allomorph.ClassID,
+				Type = CellarPropertyType.String,
+				WsSelector = WritingSystemServices.kwsVern
+			};
+			field.UpdateCustomField();
+			FieldDescription.ClearDataAbout();
+			return allomorph;
+		}
+
+		private static string PlaceholderRef(XmlNode layout)
+		{
+			return layout.SelectSingleNode("part[@customFields]")?.Attributes?["ref"]?.Value;
+		}
+
+		private string PersistedLayoutPath()
+		{
+			return Directory.GetFiles(Path.Combine(_projectPath, "ConfigurationSettings"),
+				"*.fwlayout").Single();
 		}
 
 		private InventoryViewDefinitionSource CreateSource(Inventory layouts, Inventory parts,

@@ -3380,6 +3380,14 @@ namespace SIL.FieldWorks.XWorks
 				persistMissingPlaceholder);
 		}
 
+		/// <summary>
+		/// Adds a <c>part ref="Custom"</c> sibling after each custom-field placeholder for
+		/// every custom field of the runtime class and its base classes, setting the placeholder
+		/// ref when it is missing. <paramref name="persistMissingPlaceholder"/>, when given,
+		/// receives each placeholder that just gained its ref so the caller can persist the
+		/// layout it came from; the generated Custom parts are regenerated on every load and are
+		/// added only after that callback returns, so they are never part of what it persists.
+		/// </summary>
 		internal static void ExpandCustomFields(XElement layout, LcmCache cache,
 			int runtimeClassId, Action<XElement> persistMissingPlaceholder)
 		{
@@ -3410,7 +3418,7 @@ namespace SIL.FieldWorks.XWorks
 					if (placeholder.Attribute("ref") == null)
 					{
 						placeholder.SetAttributeValue("ref", "_CustomFieldPlaceholder");
-						persistMissingPlaceholder?.Invoke(FindPersistableParent(placeholder));
+						persistMissingPlaceholder?.Invoke(placeholder);
 					}
 
 					placeholder.AddAfterSelf(new XElement("part",
@@ -3425,16 +3433,6 @@ namespace SIL.FieldWorks.XWorks
 				.Any(sibling => sibling.Name.LocalName == "part"
 					&& (string)sibling.Attribute("ref") == "Custom"
 					&& (string)sibling.Attribute("param") == fieldName) == true;
-		}
-
-		private static XElement FindPersistableParent(XElement placeholder)
-		{
-			for (var parent = placeholder.Parent; parent != null; parent = parent.Parent)
-			{
-				if (parent.Name.LocalName == "part" || parent.Name.LocalName == "layout")
-					return parent;
-			}
-			throw new InvalidOperationException("No layout or part parent exists for a custom-field placeholder.");
 		}
 
 		private static CompilerSources LoadSources()
