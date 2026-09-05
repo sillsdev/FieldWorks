@@ -14,11 +14,13 @@ using NUnit.Framework;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwAvalonia;
 using SIL.FieldWorks.Common.FwAvalonia.Detail;
+using SIL.FieldWorks.Common.FwAvalonia.ViewDefinition;
 using SIL.FieldWorks.Common.Framework.DetailControls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Infrastructure;
+using SIL.Reporting;
 using XCore;
 // Both namespaces above define DataTree; the adapter tests mean the legacy WinForms one.
 using LegacyDataTree = SIL.FieldWorks.Common.Framework.DetailControls.DataTree;
@@ -271,6 +273,53 @@ namespace SIL.FieldWorks.XWorks
 
 			onMenuRequested.Invoke(m_view, new object[] { request });
 
+			Assert.That(GetField(m_view, "m_showAllWritingSystemsSlice"), Is.Null,
+				"the request ends the transient reveal even though no menu was shown");
+			Assert.That(GetHostedDetailModel(), Is.Not.SameAs(revealed),
+				"the detail view refreshes so the revealed writing systems collapse again");
+		}
+
+		// A native menu construction failure is logged and shows no menu; the request still
+		// ends the Show all reveal and refreshes the view.
+		[Test]
+		public void MenuRequest_WhenNativeMenuConstructionThrows_LogsEndsShowAllAndRefreshes()
+		{
+			PersistCitationVisibility("ifdata");
+			RefreshAvaloniaDetail();
+			var citation = GetHostedDetailModel().Fields.Single(field => field.Field == "CitationForm");
+			var items = CreateNativeMenuItems(citation,
+				new[] { "mnuDataTree-MultiStringSlice", RecordEditView.ObjectMenuId });
+			FindItem(items, "Show all right now").Execute();
+			var revealed = GetHostedDetailModel();
+			Assert.That(GetField(m_view, "m_showAllWritingSystemsSlice"),
+				Is.EqualTo(citation.LayoutSliceIdentity), "precondition: Show all is active");
+
+			// XWindow.GetContextMenuNodeFromMenuId throws for an unknown menu id, so an in-string
+			// request on a row bound to one makes XCoreMenuBridge.CreateMenuItems throw.
+			var brokenRow = new DetailField("broken-row", "Broken", "Broken", null,
+				DetailFieldKind.Text, EditorClassification.Known, "broken-row", null,
+				HostRouting.Inherit, new List<DetailWsValue> { new DetailWsValue("en", "value") },
+				null, null, contextMenuId: "mnuDataTree-DoesNotExist", objectHvo: m_entry.Hvo);
+			var request = DetailMenuRequest.FromAnchor(null, brokenRow, DetailMenuKind.ContextMenu);
+			var onMenuRequested = typeof(RecordEditView).GetMethod("OnDetailMenuRequested",
+				BindingFlags.Instance | BindingFlags.NonPublic);
+			Assert.That(onMenuRequested, Is.Not.Null);
+			var ownsLogger = Logger.Singleton == null;
+			if (ownsLogger)
+				Logger.Init("xWorksTests");
+			try
+			{
+				onMenuRequested.Invoke(m_view, new object[] { request });
+
+				Assert.That(Logger.LogText,
+					Does.Contain("Avalonia-native menu failed; the menu was not shown."),
+					"the construction failure is logged so the defect stays visible");
+			}
+			finally
+			{
+				if (ownsLogger)
+					Logger.ShutDown();
+			}
 			Assert.That(GetField(m_view, "m_showAllWritingSystemsSlice"), Is.Null,
 				"the request ends the transient reveal even though no menu was shown");
 			Assert.That(GetHostedDetailModel(), Is.Not.SameAs(revealed),

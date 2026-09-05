@@ -73,9 +73,11 @@ must not become `.fwlayout` persistence keys.
    `XCoreMenuBridge` interceptor contract and disabled-item normalization, and
    preserve the `RecordEditView.ResolveShownRecord` refresh fix.
    `OnDetailMenuRequested` renders the native menu only, with no WinForms
-   adapter-menu fallback: a menu that cannot be shown is logged while the
-   post-menu refresh still runs. Replace conflicting JSON-backed persistence
-   and Show-all code with the parity behavior defined here.
+   adapter-menu fallback: when native menu construction throws, the error is
+   logged and no menu is shown; when the menu ids resolve to no items, no menu
+   is shown and nothing is logged. In both cases the post-menu refresh still
+   runs (see Divergences). Replace conflicting JSON-backed persistence and
+   Show-all code with the parity behavior defined here.
 2. Carry `class`, `type`, `name`, and optional `choiceGuid` through layout
    loading, view-definition models, composed fields, command identities, menu
    bindings, and nested object or sequence composition. Retain the caller path
@@ -163,3 +165,17 @@ format described above is not the future format and must not constrain its
 design.
 
 ## Divergences
+
+- **Behavior**: a detail-row menu request whose Avalonia-native menu
+  construction throws (`XCoreMenuBridge` conversion or the host interceptor).
+  **WinForms**: the legacy `DataTree` shows the xCore menu through the
+  WinForms adapter `ContextMenuStrip` (`XWindow.ShowContextMenu` ->
+  `MenuAdapter`), and the pre-parity Avalonia host fell back to that same
+  adapter menu, so a usable menu still appeared.
+  **Avalonia**: `RecordEditView.OnDetailMenuRequested` logs the
+  error and shows no menu; the pending Show-all reveal still ends and the
+  detail view still recomposes. **Why accepted**: the adapter menu bypasses
+  the `XCoreMenuBridge` interceptor, so its commands would skip the
+  exact-slice re-targeting and the post-command Avalonia recompose and leave
+  the view stale. Such a failure is a defect to fix, made visible through the
+  log rather than masked by a second rendering.
