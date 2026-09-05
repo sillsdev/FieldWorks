@@ -1120,17 +1120,15 @@ namespace SIL.FieldWorks.XWorks
 				IReadOnlyList<CoreWritingSystemDefinition> systems = ResolveWritingSystemOptions(
 					_cache, wsSpec, node.OptionalWritingSystem, hvo,
 					includeUncheckedActive: true, forceIncludeEnglish: node.ForceIncludeEnglish);
-				// A configured list keeps its selected alternatives plus every unselected
-				// alternative
-				// that contains data, in the valid-definition order used by the legacy view.
+				// A configured list keeps its selected alternatives, in the valid-definition
+				// order used by the legacy view.
 				if (!IsWritingSystemReveal(node, hvo))
 				{
 					var selected = node.VisibleWritingSystems
 						?? ResolveWritingSystemOptions(_cache, wsSpec,
 							node.OptionalWritingSystem, hvo, includeUncheckedActive: false,
 							forceIncludeEnglish: node.ForceIncludeEnglish).Select(system => system.Id).ToArray();
-					systems = ApplyVisibleWritingSystems(systems, selected,
-						ws => HasAlternativeData(hvo, flid, type, ws.Handle));
+					systems = ApplyVisibleWritingSystems(systems, selected);
 				}
 				if ((type == CellarPropertyType.String || type == CellarPropertyType.Unicode)
 					&& systems.Count > 0)
@@ -1165,13 +1163,6 @@ namespace SIL.FieldWorks.XWorks
 					systems = new[] { rowWs };
 				}
 				return systems;
-			}
-
-			private bool HasAlternativeData(int hvo, int flid, CellarPropertyType type, int ws)
-			{
-				if (type != CellarPropertyType.MultiString && type != CellarPropertyType.MultiUnicode)
-					return false;
-				return ReadTextProp(hvo, flid, ws, type)?.Length > 0;
 			}
 
 			private bool IsWritingSystemReveal(ViewNode node, int objectHvo)
@@ -3218,15 +3209,13 @@ namespace SIL.FieldWorks.XWorks
 
 		// Mirrors legacy's GetMagicWsIdFromName/GetWritingSystemList; override falls back to all.
 		internal static IReadOnlyList<CoreWritingSystemDefinition> ApplyVisibleWritingSystems(
-			IReadOnlyList<CoreWritingSystemDefinition> systems, IReadOnlyList<string> visible,
-			Func<CoreWritingSystemDefinition, bool> hasData = null)
+			IReadOnlyList<CoreWritingSystemDefinition> systems, IReadOnlyList<string> visible)
 		{
 			if (visible == null || systems == null || systems.Count == 0)
 				return systems;
 
 			var visibleIds = new HashSet<string>(visible);
-			return systems.Where(ws => visibleIds.Contains(ws.Id) || hasData?.Invoke(ws) == true)
-				.ToArray();
+			return systems.Where(ws => visibleIds.Contains(ws.Id)).ToArray();
 		}
 
 		internal static IReadOnlyList<CoreWritingSystemDefinition> ResolveWritingSystems(LcmCache cache, string spec)

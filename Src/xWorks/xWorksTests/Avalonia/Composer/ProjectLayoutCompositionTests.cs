@@ -584,8 +584,8 @@ namespace SIL.FieldWorks.XWorks
 				var source = CreateSource(layouts);
 				var restricted = DetailComposer.Compose(m_entry, Cache, source: source.GetSnapshot);
 				var field = restricted.Model.Fields.Single(item => item.Field == "CitationForm");
-				Assert.That(field.Values.Select(value => value.WsTag), Is.EqualTo(new[] { "fr", "es" }),
-					"an unselected alternative with data remains visible, but an empty one does not");
+				Assert.That(field.Values.Select(value => value.WsTag), Is.EqualTo(new[] { "fr" }),
+					"the configured list restricts the row to its selected alternatives");
 
 				var revealed = DetailComposer.Compose(m_entry, Cache, source: source.GetSnapshot,
 					showAllWritingSystemsSlices: new HashSet<DetailLayoutSliceIdentity>

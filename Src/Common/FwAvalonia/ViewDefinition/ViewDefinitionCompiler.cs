@@ -6,7 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
@@ -131,30 +130,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 		/// <summary>Computes a stable content fingerprint over the layout and parts source text.</summary>
 		public string ComputeFingerprint() => _fingerprint.Value;
 
-		private static int s_fingerprintComputeCount;
-
-		/// <summary>
-		/// The process-wide number of snapshot fingerprints actually computed, one per snapshot
-		/// whose key was requested.
-		/// </summary>
-		internal static int FingerprintComputeCount => Volatile.Read(ref s_fingerprintComputeCount);
-
-		// The parts source is a few hundred KB shared by every snapshot a source hands out, so
-		// its hash is memoized per string instance; distinct instances still hash by content.
-		private static readonly ConditionalWeakTable<string, string> s_partsHashes
-			= new ConditionalWeakTable<string, string>();
-
-		private static int s_partsHashComputeCount;
-
-		/// <summary>
-		/// The process-wide number of parts-source hashes actually computed, one per distinct
-		/// parts string rather than one per snapshot.
-		/// </summary>
-		internal static int PartsHashComputeCount => Volatile.Read(ref s_partsHashComputeCount);
-
 		private string ComputeFingerprintCore()
 		{
-			Interlocked.Increment(ref s_fingerprintComputeCount);
 			var baseMapText = BaseClassMap == null
 				? ""
 				: string.Join(";", BaseClassMap.OrderBy(p => NormalizeIdentity(p.Key), StringComparer.Ordinal)
@@ -166,14 +143,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 				NormalizeIdentity(ResolvedClassName), NormalizeIdentity(ResolvedLayoutType),
 				NormalizeIdentity(ResolvedLayoutName), NormalizeIdentity(ResolvedChoiceGuid)
 			});
-			var partsHash = s_partsHashes.GetValue(PartsXml, ComputePartsHash);
-			return Sha256Hex(identityText + "\n" + LayoutXml + "\n" + partsHash + "\n" + baseMapText);
-		}
-
-		private static string ComputePartsHash(string partsXml)
-		{
-			Interlocked.Increment(ref s_partsHashComputeCount);
-			return Sha256Hex(partsXml);
+			return Sha256Hex(identityText + "\n" + LayoutXml + "\n" + PartsXml + "\n" + baseMapText);
 		}
 
 		private static string Sha256Hex(string text)
@@ -228,130 +198,67 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 		int Count { get; }
 	}
 
-	/// <summary>Simple thread-safe FIFO-bounded cache.</summary>
+	/// <summary>Simple thread-safe cache of compiled view definitions.</summary>
 	public sealed class ViewDefinitionCache : IViewDefinitionCache
 	{
-		/// <summary>Default maximum number of compiled definitions retained by a cache.</summary>
-		public const int DefaultCapacity = 256;
-
-		private sealed class CacheEntry
-		{
-			public CacheEntry(Lazy<ViewDefinitionModel> value, LinkedListNode<ViewDefinitionCacheKey> orderNode)
-			{
-				Value = value;
-				OrderNode = orderNode;
-			}
-
-			public Lazy<ViewDefinitionModel> Value { get; }
-
-			public LinkedListNode<ViewDefinitionCacheKey> OrderNode { get; }
-		}
-
 		private readonly object _gate = new object();
-		private readonly Dictionary<ViewDefinitionCacheKey, CacheEntry> _map
-			= new Dictionary<ViewDefinitionCacheKey, CacheEntry>();
-		private readonly LinkedList<ViewDefinitionCacheKey> _insertionOrder
-			= new LinkedList<ViewDefinitionCacheKey>();
+		private readonly Dictionary<ViewDefinitionCacheKey, ViewDefinitionModel> _map
+			= new Dictionary<ViewDefinitionCacheKey, ViewDefinitionModel>();
 
-		/// <summary>Creates a cache with the default maximum capacity.</summary>
-		public ViewDefinitionCache() : this(DefaultCapacity)
-		{
-		}
-
-		/// <summary>Creates a cache that retains at most <paramref name="capacity"/>
-		/// entries.</summary>
-		/// <exception cref="ArgumentOutOfRangeException"><paramref name="capacity"/> is not
-		/// positive.</exception>
-		public ViewDefinitionCache(int capacity)
-		{
-			if (capacity <= 0)
-				throw new ArgumentOutOfRangeException(nameof(capacity), capacity,
-					"The view definition cache capacity must be positive.");
-
-			Capacity = capacity;
-		}
-
-		/// <summary>The maximum number of compiled definitions retained by this cache.</summary>
-		public int Capacity { get; }
-
+		/// <inheritdoc />
 		public bool TryGet(ViewDefinitionCacheKey key, out ViewDefinitionModel model)
 		{
-			CacheEntry entry;
 			lock (_gate)
 			{
-				if (!_map.TryGetValue(key, out entry) || !entry.Value.IsValueCreated)
-				{
-					model = null;
-					return false;
-				}
-			}
-
-			try
-			{
-				model = entry.Value.Value;
-				return true;
-			}
-			catch
-			{
-				RemoveFailedEntry(key, entry);
-				model = null;
-				return false;
+				return _map.TryGetValue(key, out model);
 			}
 		}
 
+		/// <inheritdoc />
 		public ViewDefinitionModel GetOrAdd(ViewDefinitionCacheKey key, Func<ViewDefinitionModel> factory)
 		{
-			CacheEntry entry;
 			lock (_gate)
 			{
-				if (!_map.TryGetValue(key, out entry))
+				if (_map.TryGetValue(key, out var existing))
 				{
-					if (factory == null)
-						throw new ArgumentNullException(nameof(factory));
-
-					if (_map.Count >= Capacity)
-						EvictOldest();
-
-					var value = new Lazy<ViewDefinitionModel>(factory,
-						LazyThreadSafetyMode.ExecutionAndPublication);
-					var orderNode = _insertionOrder.AddLast(key);
-					entry = new CacheEntry(value, orderNode);
-					_map[key] = entry;
+					return existing;
 				}
 			}
 
-			try
+			// Compile outside the lock so a slow compile does not block other keys.
+			var created = factory();
+
+			lock (_gate)
 			{
-				return entry.Value.Value;
-			}
-			catch
-			{
-				RemoveFailedEntry(key, entry);
-				throw;
+				if (_map.TryGetValue(key, out var raced))
+				{
+					return raced;
+				}
+
+				_map[key] = created;
+				return created;
 			}
 		}
 
+		/// <inheritdoc />
 		public void Invalidate(ViewDefinitionCacheKey key)
 		{
 			lock (_gate)
 			{
-				if (_map.TryGetValue(key, out var entry))
-				{
-					_map.Remove(key);
-					_insertionOrder.Remove(entry.OrderNode);
-				}
+				_map.Remove(key);
 			}
 		}
 
+		/// <inheritdoc />
 		public void InvalidateAll()
 		{
 			lock (_gate)
 			{
 				_map.Clear();
-				_insertionOrder.Clear();
 			}
 		}
 
+		/// <inheritdoc />
 		public int Count
 		{
 			get
@@ -362,29 +269,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 				}
 			}
 		}
-
-		private void EvictOldest()
-		{
-			var oldest = _insertionOrder.First;
-			if (oldest == null)
-				return;
-
-			_insertionOrder.RemoveFirst();
-			_map.Remove(oldest.Value);
-		}
-
-		private void RemoveFailedEntry(ViewDefinitionCacheKey key, CacheEntry entry)
-		{
-			lock (_gate)
-			{
-				if (_map.TryGetValue(key, out var current) && ReferenceEquals(current, entry))
-				{
-					_map.Remove(key);
-					_insertionOrder.Remove(entry.OrderNode);
-				}
-			}
-		}
 	}
+
 
 	/// <summary>
 	/// Compiles <see cref="ViewDefinitionSourceSnapshot"/>s into <see cref="ViewDefinitionModel"/>s via
@@ -430,17 +316,9 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 			}, cancellationToken);
 		}
 
-		private static int s_compileCount;
-
-		/// <summary>
-		/// The process-wide number of cache misses that ran the importer.
-		/// </summary>
-		internal static int CompileCount => Volatile.Read(ref s_compileCount);
-
 		private ViewDefinitionModel CompileCore(ViewDefinitionSourceSnapshot snapshot, CancellationToken cancellationToken)
 		{
 			cancellationToken.ThrowIfCancellationRequested();
-			Interlocked.Increment(ref s_compileCount);
 			var layout = snapshot.CreateLayoutElement();
 			var parts = new DictionaryPartResolver(XElement.Parse(snapshot.PartsXml), snapshot.BaseClassMap);
 			cancellationToken.ThrowIfCancellationRequested();
