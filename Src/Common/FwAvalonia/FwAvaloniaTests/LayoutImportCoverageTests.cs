@@ -35,6 +35,11 @@ namespace FwAvaloniaTests
       <deParams ws='best analysis'/>
     </slice>
   </part>
+  <part id='LexEntry-Detail-SliceWithUnknownChild'>
+    <slice label='Odd' editor='string' field='X' ws='analysis'>
+      <mystery/>
+    </slice>
+  </part>
   <part id='LexEntry-Detail-Senses'>
     <seq field='Senses'/>
   </part>
@@ -112,8 +117,8 @@ namespace FwAvaloniaTests
 
 			var diag = model.Diagnostics.Single(d => d.Code == "generated-content-dropped");
 			Assert.That(diag.Severity, Is.EqualTo(ViewDiagnosticSeverity.Warning));
-			Assert.That(model.Roots.Single().EditorClassification, Is.EqualTo(EditorClassification.Unknown),
-				"unsupported generation stays visible as a fail-closed row");
+			Assert.That(model.Roots, Is.Empty,
+				"DataTree has no PartGenerator path, so WinForms renders nothing for <generate>");
 		}
 
 		[Test]
@@ -169,8 +174,10 @@ namespace FwAvaloniaTests
 		}
 
 		[Test]
-		public void CallerChildren_OfOtherKinds_UnderSliceContentPart_AreStillReported()
+		public void CallerChildren_OfOtherKinds_UnderSliceContentPart_AreReportedAndOmitted()
 		{
+			// Slice.CreateIndentedNodes only consults the caller's <indent>; WinForms renders
+			// nothing for other caller children, so no row may appear here either.
 			var model = Import(@"
 <layout class='LexEntry' type='detail' name='T'>
   <part ref='MenuSection'>
@@ -180,11 +187,14 @@ namespace FwAvaloniaTests
 
 			Assert.That(model.Diagnostics.Any(d => d.Code == "caller-children-dropped"), Is.True,
 				"non-structural caller children must still be reported, not silently dropped");
+			Assert.That(model.Roots.Single().Children, Is.Empty);
 		}
 
 		[Test]
-		public void NonPartCallerChildren_UnderSequencePart_AreReported()
+		public void NonPartCallerChildren_UnderSequencePart_AreReportedAndOmitted()
 		{
+			// DataTree.CreateSlicesFor unifies caller children into each item's layout; the
+			// composer does the same from SourceCallerXml, so the importer emits no row here.
 			var model = Import(@"
 <layout class='LexEntry' type='detail' name='T'>
   <part ref='Senses'>
@@ -193,6 +203,26 @@ namespace FwAvaloniaTests
 </layout>");
 
 			Assert.That(model.Diagnostics.Any(d => d.Code == "injected-child-dropped"), Is.True);
+			Assert.That(model.Roots.Single().Children, Is.Empty);
+			Assert.That(model.Roots.Single().SourceCallerXml, Does.Contain("<indent>"));
+		}
+
+		[Test]
+		public void InjectedChildren_WithoutRef_OrUnresolvable_AreReportedAndOmitted()
+		{
+			// A ref-less injected part throws in DataTree (GetMandatoryAttributeValue) and an
+			// unresolvable one is omitted like any unresolved part; neither renders a row.
+			var model = Import(@"
+<layout class='LexEntry' type='detail' name='T'>
+  <part ref='Senses'>
+    <part/>
+    <part ref='NoSuchPart'/>
+  </part>
+</layout>");
+
+			Assert.That(model.Diagnostics.Any(d => d.Code == "injected-child-dropped"), Is.True);
+			Assert.That(model.Diagnostics.Any(d => d.Code == "cross-object-deferred"), Is.True);
+			Assert.That(model.Roots.Single().Children, Is.Empty);
 		}
 
 		// The chooserLink jump links import as typed metadata on the slice node -- the
@@ -231,6 +261,8 @@ namespace FwAvaloniaTests
 			var diag = model.Diagnostics.Single(d => d.Code == "slice-content-dropped");
 			Assert.That(diag.Severity, Is.EqualTo(ViewDiagnosticSeverity.Info));
 			Assert.That(diag.Message, Does.Contain("title"));
+			Assert.That(model.Roots.Single().Children, Is.Empty,
+				"slice configuration never renders a row in WinForms");
 		}
 
 		[Test]
@@ -243,6 +275,23 @@ namespace FwAvaloniaTests
 
 			var diag = model.Diagnostics.Single(d => d.Code == "slice-content-dropped");
 			Assert.That(diag.Message, Does.Contain("deParams"));
+			Assert.That(model.Roots.Single().Children, Is.Empty,
+				"DataTree.ProcessSubpartNode ignores deParams, so no row renders");
+		}
+
+		[Test]
+		public void SliceContentChildren_Unknown_AreReportedAndOmitted()
+		{
+			var model = Import(@"
+<layout class='LexEntry' type='detail' name='T'>
+  <part ref='SliceWithUnknownChild'/>
+</layout>");
+
+			var diag = model.Diagnostics.Single(d => d.Code == "slice-content-dropped");
+			Assert.That(diag.Message, Does.Contain("mystery"));
+			Assert.That(model.Roots.Single().Kind, Is.EqualTo(ViewNodeKind.Field),
+				"no child row, so the slice stays a plain field rather than a group");
+			Assert.That(model.Roots.Single().Children, Is.Empty);
 		}
 
 		[Test]

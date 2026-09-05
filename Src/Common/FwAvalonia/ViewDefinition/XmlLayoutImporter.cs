@@ -126,14 +126,13 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 					// Named drop codes for the real-layout constructs the importer does not
 					// expand, so coverage reports can count them instead of lumping them as unknown.
 					case "generate":
-						var generatedId = $"{parentPath}/#{output.Count}";
+						// DataTree.ProcessPartRefNode expands only sublayout/indent/part, so
+						// WinForms renders nothing for <generate>: report it without a row.
 						diagnostics.Add(new ViewDiagnostic(
 							ViewDiagnosticSeverity.Warning,
 							"generated-content-dropped",
 							$"<generate class='{(string)el.Attribute("class")}' fieldType='{(string)el.Attribute("fieldType")}'> drives schema/custom-field UI generation and is not imported.",
-							generatedId));
-						output.Add(UnsupportedNode(el, generatedId, indented,
-							LegacyLayoutCallerPath.Get(el), "generate"));
+							$"{parentPath}/#{output.Count}"));
 						break;
 					// Conditionals import as typed Conditional/ChoiceGroup nodes (evaluated per
 					// object at compose time); unsupported condition forms still drop with a diagnostic.
@@ -161,13 +160,13 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 						break;
 					}
 					default:
+						// DataTree.ProcessPartRefNode has no default case, so WinForms skips
+						// an unknown element: report it without a row.
 						diagnostics.Add(new ViewDiagnostic(
 							ViewDiagnosticSeverity.Warning,
 							"unknown-container-element",
 							$"Unsupported layout container element '{el.Name.LocalName}'.",
 							$"{parentPath}/#{output.Count}"));
-						output.Add(UnsupportedNode(el, $"{parentPath}/#{output.Count}", indented,
-							LegacyLayoutCallerPath.Get(el), Attr(el, "label") ?? el.Name.LocalName));
 						break;
 				}
 			}
@@ -198,10 +197,10 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 
 			if (string.IsNullOrEmpty(refName))
 			{
+				// DataTree reads the ref with GetMandatoryAttributeValue and throws, so
+				// WinForms renders no row for it.
 				diagnostics.Add(new ViewDiagnostic(ViewDiagnosticSeverity.Warning, "part-without-ref",
 					"A <part> has neither a 'ref' nor 'customFields' attribute.", stableId));
-				output.Add(UnsupportedNode(callerEl, stableId, indented, sourceCallerPath,
-					Attr(callerEl, "label") ?? "part"));
 				return;
 			}
 
@@ -333,13 +332,11 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 						}
 						else if (child.Name.LocalName != "properties")
 						{
-							// <properties> is consumed above; unknown children remain visible as
-							// unsupported rows so malformed content cannot disappear.
-							var childStableId = $"{stableId}/content[{children.Count}]";
+							// <properties> is consumed above. DataTree.ProcessSubpartNode
+							// ignores other slice children, so report them without a row.
 							diagnostics.Add(new ViewDiagnostic(ViewDiagnosticSeverity.Info, "slice-content-dropped",
-								$"Slice content child <{child.Name.LocalName}> is not imported.", childStableId));
-							children.Add(UnsupportedNode(child, childStableId, false,
-								LegacyLayoutCallerPath.Get(child), child.Name.LocalName));
+								$"Slice content child <{child.Name.LocalName}> is not imported.",
+								$"{stableId}/content[{children.Count}]"));
 						}
 					}
 
@@ -365,10 +362,9 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 					var visibleWss = ParseWsList(Attr(callerEl, "visibleWritingSystems")
 						?? Attr(contentEl, "visibleWritingSystems"));
 
-					// Caller children under a slice-content part (<indent>/<part> wrappers on a section
-					// part, e.g. AsLexemeForm's MorphTypeBasic) become child nodes, mirroring how
-					// DataTree.ProcessPartRefNode realizes them as indented child slices. Other caller
-					// child kinds are reported, not silently dropped.
+					// <indent>/<part> caller children become child nodes, the way
+					// Slice.CreateIndentedNodes expands the caller's <indent>. It reads
+					// nothing else under the caller, so other kinds get no row.
 					if (!ReferenceEquals(callerEl, contentEl))
 					{
 						var structuralCallerChildren = new List<XElement>();
@@ -380,12 +376,9 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 							}
 							else
 							{
-								var childStableId = $"{stableId}/caller[{children.Count}]";
 								diagnostics.Add(new ViewDiagnostic(ViewDiagnosticSeverity.Warning, "caller-children-dropped",
 									$"Caller child <{callerChild.Name.LocalName}> under part ref with slice content is not imported.",
-									childStableId));
-								children.Add(UnsupportedNode(callerChild, childStableId, false,
-									LegacyLayoutCallerPath.Get(callerChild), callerChild.Name.LocalName));
+									$"{stableId}/caller[{children.Count}]"));
 							}
 						}
 
@@ -743,14 +736,12 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 			{
 				if (child.Name.LocalName != "part")
 				{
-					// E.g. an <indent> wrapper under an obj/seq caller; its nested parts are not expanded
-					// here. Report rather than silently drop.
-					var malformedId = $"{parentPath}/#{output.Count}";
+					// E.g. an <indent> under an obj/seq caller. DataTree.CreateSlicesFor
+					// unifies it into each item's layout (the composer does the same from
+					// SourceCallerXml), so it is reported here, not given its own row.
 					diagnostics.Add(new ViewDiagnostic(ViewDiagnosticSeverity.Warning, "injected-child-dropped",
 						$"Caller child <{child.Name.LocalName}> under an object/sequence part is not imported.",
-						malformedId));
-					output.Add(UnsupportedNode(child, malformedId, false,
-						LegacyLayoutCallerPath.Get(child), child.Name.LocalName));
+						$"{parentPath}/#{output.Count}"));
 					continue;
 				}
 
@@ -758,21 +749,20 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 				var refName = (string)child.Attribute("ref");
 				if (string.IsNullOrEmpty(refName))
 				{
+					// DataTree's GetMandatoryAttributeValue(partRef, "ref") throws, so
+					// nothing renders.
 					diagnostics.Add(new ViewDiagnostic(ViewDiagnosticSeverity.Warning, "injected-child-dropped",
 						"An injected object/sequence child has no 'ref' and is not imported.", stableId));
-					output.Add(UnsupportedNode(child, stableId, false,
-						LegacyLayoutCallerPath.Get(child), "part"));
 					continue;
 				}
 
 				var content = parts.ResolvePartByRef(refName);
 				if (content == null)
 				{
+					// Omitted like any unresolved part (DataTree "Just omit the missing part").
 					diagnostics.Add(new ViewDiagnostic(ViewDiagnosticSeverity.Info, "cross-object-deferred",
 						$"Injected child '{refName}' could not be resolved by ref and is not imported.",
 						stableId));
-					output.Add(UnsupportedNode(child, stableId, false,
-						LegacyLayoutCallerPath.Get(child), refName));
 					continue;
 				}
 

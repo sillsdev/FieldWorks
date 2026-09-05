@@ -303,18 +303,33 @@ namespace FwAvaloniaTests
 		}
 
 		[Test]
-		public void Import_UnsupportedContainerConstructsRemainVisible()
+		public void Import_ContainerConstructsDataTreeIgnores_AreOmittedWithDiagnostics()
 		{
+			// DataTree.ProcessPartRefNode only handles sublayout/indent/part, so a <generate>
+			// or an unknown element in a detail layout renders nothing in WinForms.
 			var model = Import(@"
-<layout class='LexEntry' type='detail' name='Unsupported'>
+<layout class='LexEntry' type='detail' name='Ignored'>
   <generate class='LexEntry' fieldType='custom'/>
   <mystery/>
 </layout>");
 
-			Assert.That(model.Roots, Has.Count.EqualTo(2));
-			Assert.That(model.Roots.All(root => root.Routing == HostRouting.Unsupported), Is.True);
+			Assert.That(model.Roots, Is.Empty, "an Unsupported row here would be a divergence");
 			Assert.That(model.Diagnostics.Any(d => d.Code == "generated-content-dropped"), Is.True);
 			Assert.That(model.Diagnostics.Any(d => d.Code == "unknown-container-element"), Is.True);
+		}
+
+		[Test]
+		public void Import_PartWithoutRef_IsOmittedWithDiagnostic()
+		{
+			// DataTree reads the ref with GetMandatoryAttributeValue and throws, so no
+			// row renders.
+			var model = Import(@"
+<layout class='LexEntry' type='detail' name='Orphan'>
+  <part label='Orphan'/>
+</layout>");
+
+			Assert.That(model.Roots, Is.Empty);
+			Assert.That(model.Diagnostics.Single().Code, Is.EqualTo("part-without-ref"));
 		}
 	}
 
