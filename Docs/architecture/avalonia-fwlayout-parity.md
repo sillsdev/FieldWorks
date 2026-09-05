@@ -67,17 +67,16 @@ from reaching a stale or ambiguous row, but they are not persistent layout
 identity. Avalonia-generated stable IDs are likewise runtime identities and
 must not become `.fwlayout` persistence keys.
 
-## Plan
+## Design
 
-1. Rebase PR #1111 onto `origin/main`. Preserve the current
-   `XCoreMenuBridge` interceptor contract and disabled-item normalization, and
-   preserve the `RecordEditView.ResolveShownRecord` refresh fix.
+1. Keep the `XCoreMenuBridge` interceptor contract, its disabled-item
+   normalization, and the `RecordEditView.ResolveShownRecord` refresh.
    `OnDetailMenuRequested` renders the native menu only, with no WinForms
    adapter-menu fallback: when native menu construction throws, the error is
    logged and no menu is shown; when the menu ids resolve to no items, no menu
    is shown and nothing is logged. In both cases the post-menu refresh still
-   runs (see Divergences). Replace conflicting JSON-backed persistence and
-   Show-all code with the parity behavior defined here.
+   runs (see Divergences). JSON-backed persistence and its Show-all code give
+   way to the parity behavior defined here.
 2. Carry `class`, `type`, `name`, and optional `choiceGuid` through layout
    loading, view-definition models, composed fields, command identities, menu
    bindings, and nested object or sequence composition. Retain the caller path

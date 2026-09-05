@@ -433,6 +433,8 @@ namespace SIL.FieldWorks.XWorks
 			}
 			catch (LayoutNotFoundException)
 			{
+				// A layout the class hierarchy cannot satisfy is a corrupt project, which
+				// WinForms also reports rather than hides; the fallback view would mask it.
 				throw;
 			}
 			catch (Exception e)
