@@ -125,10 +125,6 @@ namespace SIL.FieldWorks.XWorks
 			// picks the matching layout variant instead of the document-first one.
 			var choiceGuid = ResolveLayoutChoiceGuid(cache, obj, layoutChoiceField);
 
-			var root = CompileForObject(cache, obj, layoutName, choiceGuid, source, null);
-			if (root == null)
-				return null;
-
 			// Plugin rows close over the detail view's own edit context, which
 			// only exists once the walk gathers every setter -- a deferred accessor
 			// bridges the gap (plugin factories run at render time, not compose).
@@ -136,6 +132,10 @@ namespace SIL.FieldWorks.XWorks
 			var state = new ComposeState(cache, showHiddenFields,
 				plugins ?? SlicePluginRegistry.Default, () => composedContext, source,
 				showAllWritingSystemsSlices);
+			var root = state.Compile(obj, layoutName, choiceGuid, null);
+			if (root == null)
+				return null;
+
 			state.EnterModel(root);
 			foreach (var node in root.Roots)
 				state.Walk(node, obj, 0);
@@ -304,6 +304,25 @@ namespace SIL.FieldWorks.XWorks
 			private readonly Dictionary<(int ClassId, string LayoutName, string ChoiceGuid,
 				string CallerXml), ItemMenuBinding> _itemMenuBindings
 				= new Dictionary<(int, string, string, string), ItemMenuBinding>();
+			// Per-compose memo of compiled models. A model depends on the object only through its
+			// class, so every sense/example/allomorph of one class shares one snapshot build.
+			private readonly Dictionary<(int ClassId, string LayoutName, string ChoiceGuid,
+				string CallerXml), ViewDefinitionModel> _compiledModels
+				= new Dictionary<(int, string, string, string), ViewDefinitionModel>();
+
+			// The compiled model for the object's layout, built once per compose per distinct
+			// (class, layout, choice, callerXml) so later items of the same class reuse it.
+			public ViewDefinitionModel Compile(ICmObject obj, string layoutName, string choiceGuid,
+				string callerXml)
+			{
+				var key = (obj.ClassID, NormalizeLayoutKey(layoutName), NormalizeChoiceKey(choiceGuid),
+					callerXml);
+				if (_compiledModels.TryGetValue(key, out var compiled))
+					return compiled;
+				compiled = CompileForObject(_cache, obj, layoutName, choiceGuid, _source, callerXml);
+				_compiledModels[key] = compiled;
+				return compiled;
+			}
 
 			private static string NormalizeLayoutKey(string layoutName)
 				=> layoutName?.ToUpperInvariant();
@@ -3001,9 +3020,8 @@ namespace SIL.FieldWorks.XWorks
 				}
 			}
 
-			// First root-level menu/hotlinks binding of the item's compiled layout (compile
-			// results are memoized per (class, layout), and the binding itself is memoized per
-			// compose state).
+			// First root-level menu/hotlinks binding of the item's compiled layout (the model and
+			// the binding are both memoized per compose state, so this peek costs one lookup).
 			private ItemMenuBinding ResolveItemMenuBinding(ViewNode node, ICmObject item)
 			{
 				var layoutName = node.TargetLayout ?? "default";
@@ -3013,8 +3031,7 @@ namespace SIL.FieldWorks.XWorks
 				if (_itemMenuBindings.TryGetValue(key, out var cached))
 					return cached;
 
-				var compiled = CompileForObject(_cache, item, layoutName, choiceGuid, _source,
-					node.SourceCallerXml);
+				var compiled = Compile(item, layoutName, choiceGuid, node.SourceCallerXml);
 				ViewNode bindingRoot = null;
 				if (compiled != null)
 				{
@@ -3040,7 +3057,7 @@ namespace SIL.FieldWorks.XWorks
 					return;
 				try
 				{
-					var compiled = CompileForObject(_cache, obj, layoutName, choiceGuid, _source);
+					var compiled = Compile(obj, layoutName, choiceGuid, null);
 					if (compiled == null)
 						return;
 					EnterModel(compiled);
@@ -3081,7 +3098,7 @@ namespace SIL.FieldWorks.XWorks
 
 				try
 				{
-					var compiled = CompileForObject(_cache, obj, layoutName, choiceGuid, _source);
+					var compiled = Compile(obj, layoutName, choiceGuid, null);
 					if (compiled != null && compiled.Roots.Count > 0)
 					{
 						EnterDescendedModel(compiled, node.SourceCallerPath);
@@ -3110,8 +3127,7 @@ namespace SIL.FieldWorks.XWorks
 
 				try
 				{
-					var compiled = CompileForObject(_cache, target, layoutName, choiceGuid, _source,
-						node.SourceCallerXml);
+					var compiled = Compile(target, layoutName, choiceGuid, node.SourceCallerXml);
 					if (compiled != null && compiled.Roots.Count > 0)
 					{
 						EnterDescendedModel(compiled, node.SourceCallerPath);

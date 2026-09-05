@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
@@ -130,24 +131,56 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 		/// <summary>Computes a stable content fingerprint over the layout and parts source text.</summary>
 		public string ComputeFingerprint() => _fingerprint.Value;
 
+		private static int s_fingerprintComputeCount;
+
+		/// <summary>
+		/// The process-wide number of snapshot fingerprints actually computed (one per snapshot
+		/// whose key was requested), for tests that bound the compile work a compose performs.
+		/// </summary>
+		internal static int FingerprintComputeCount => Volatile.Read(ref s_fingerprintComputeCount);
+
+		// The parts source is a few hundred KB shared by every snapshot a source hands out, so
+		// its hash is memoized per string instance; distinct instances still hash by content.
+		private static readonly ConditionalWeakTable<string, string> s_partsHashes
+			= new ConditionalWeakTable<string, string>();
+
+		private static int s_partsHashComputeCount;
+
+		/// <summary>
+		/// The process-wide number of parts-source hashes actually computed, for tests that bound
+		/// the fingerprint work a compose performs.
+		/// </summary>
+		internal static int PartsHashComputeCount => Volatile.Read(ref s_partsHashComputeCount);
+
 		private string ComputeFingerprintCore()
+		{
+			Interlocked.Increment(ref s_fingerprintComputeCount);
+			var baseMapText = BaseClassMap == null
+				? ""
+				: string.Join(";", BaseClassMap.OrderBy(p => NormalizeIdentity(p.Key), StringComparer.Ordinal)
+					.Select(p => NormalizeIdentity(p.Key) + ">" + NormalizeIdentity(p.Value)));
+			var identityText = string.Join("\n", new[]
+			{
+				NormalizeIdentity(ClassName), NormalizeIdentity(LayoutType),
+				NormalizeIdentity(RequestedLayoutName), NormalizeIdentity(RequestedChoiceGuid),
+				NormalizeIdentity(ResolvedClassName), NormalizeIdentity(ResolvedLayoutType),
+				NormalizeIdentity(ResolvedLayoutName), NormalizeIdentity(ResolvedChoiceGuid)
+			});
+			var partsHash = s_partsHashes.GetValue(PartsXml, ComputePartsHash);
+			return Sha256Hex(identityText + "\n" + LayoutXml + "\n" + partsHash + "\n" + baseMapText);
+		}
+
+		private static string ComputePartsHash(string partsXml)
+		{
+			Interlocked.Increment(ref s_partsHashComputeCount);
+			return Sha256Hex(partsXml);
+		}
+
+		private static string Sha256Hex(string text)
 		{
 			using (var sha = SHA256.Create())
 			{
-				var baseMapText = BaseClassMap == null
-					? ""
-					: string.Join(";", BaseClassMap.OrderBy(p => NormalizeIdentity(p.Key), StringComparer.Ordinal)
-						.Select(p => NormalizeIdentity(p.Key) + ">" + NormalizeIdentity(p.Value)));
-				var identityText = string.Join("\n", new[]
-				{
-					NormalizeIdentity(ClassName), NormalizeIdentity(LayoutType),
-					NormalizeIdentity(RequestedLayoutName), NormalizeIdentity(RequestedChoiceGuid),
-					NormalizeIdentity(ResolvedClassName), NormalizeIdentity(ResolvedLayoutType),
-					NormalizeIdentity(ResolvedLayoutName), NormalizeIdentity(ResolvedChoiceGuid)
-				});
-				var bytes = Encoding.UTF8.GetBytes(
-					identityText + "\n" + LayoutXml + "\n" + PartsXml + "\n" + baseMapText);
-				var hash = sha.ComputeHash(bytes);
+				var hash = sha.ComputeHash(Encoding.UTF8.GetBytes(text));
 				var sb = new StringBuilder(hash.Length * 2);
 				foreach (var b in hash)
 				{
@@ -397,9 +430,18 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 			}, cancellationToken);
 		}
 
+		private static int s_compileCount;
+
+		/// <summary>
+		/// The process-wide number of cache misses that ran the importer, for tests that bound
+		/// the compile work a compose performs.
+		/// </summary>
+		internal static int CompileCount => Volatile.Read(ref s_compileCount);
+
 		private ViewDefinitionModel CompileCore(ViewDefinitionSourceSnapshot snapshot, CancellationToken cancellationToken)
 		{
 			cancellationToken.ThrowIfCancellationRequested();
+			Interlocked.Increment(ref s_compileCount);
 			var layout = snapshot.CreateLayoutElement();
 			var parts = new DictionaryPartResolver(XElement.Parse(snapshot.PartsXml), snapshot.BaseClassMap);
 			cancellationToken.ThrowIfCancellationRequested();

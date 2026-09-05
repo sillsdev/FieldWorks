@@ -399,6 +399,26 @@ namespace FwAvaloniaTests
 			Assert.That(Snapshot("CfOnly").ToKey(), Is.Not.EqualTo(Snapshot("CfOther").ToKey()));
 		}
 
+		// A source hands every snapshot the same parts string, so its hash is computed once per
+		// instance; the fingerprint still keys identical content identically across instances.
+		[Test]
+		public void Fingerprint_HashesSharedPartsSourceOncePerInstance_AndStillKeysByContent()
+		{
+			var shared = new string(PartsXml.ToCharArray());
+			var before = ViewDefinitionSourceSnapshot.PartsHashComputeCount;
+
+			var first = Snapshot("CfOnly", shared).ComputeFingerprint();
+			var other = Snapshot("CfOther", shared).ComputeFingerprint();
+
+			Assert.That(ViewDefinitionSourceSnapshot.PartsHashComputeCount - before, Is.EqualTo(1),
+				"two snapshots over one parts instance hash the parts once");
+			Assert.That(other, Is.Not.EqualTo(first), "the layout still tells the fingerprints apart");
+			Assert.That(Snapshot("CfOnly", new string(PartsXml.ToCharArray())).ComputeFingerprint(),
+				Is.EqualTo(first), "identical parts content in another instance fingerprints identically");
+			Assert.That(Snapshot("CfOnly", PartsXml + " ").ComputeFingerprint(), Is.Not.EqualTo(first),
+				"changed parts content still changes the fingerprint");
+		}
+
 		[Test]
 		public void SameSource_ProducesEqualKeys()
 		{
