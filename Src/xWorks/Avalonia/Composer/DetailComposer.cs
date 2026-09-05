@@ -1076,7 +1076,6 @@ namespace SIL.FieldWorks.XWorks
 				RegisterTextRowEditHandler(stableId, hvo, flid, type, systems);
 			}
 
-			// Resolve the layout set, its visible subset, and single-alternative row metadata.
 			// The MultiStringSlice selectors of MakeAutoCustomSlice; the rest are StringSlice.
 			private static bool IsPluralMagicWritingSystem(int magicWs)
 				=> magicWs == WritingSystemServices.kwsAnals
@@ -1084,6 +1083,7 @@ namespace SIL.FieldWorks.XWorks
 					|| magicWs == WritingSystemServices.kwsAnalVerns
 					|| magicWs == WritingSystemServices.kwsVernAnals;
 
+			// Resolve the layout set, its visible subset, and single-alternative row metadata.
 			private IReadOnlyList<CoreWritingSystemDefinition> ResolveTextRowWritingSystems(int hvo, int flid,
 				CellarPropertyType type, ViewNode node, string wsSpec)
 			{
@@ -3308,7 +3308,7 @@ namespace SIL.FieldWorks.XWorks
 						break;
 				}
 				if (clsid == 0 && !string.Equals(useName, "default",
-					StringComparison.OrdinalIgnoreCase))
+					StringComparison.Ordinal))
 				{
 					useName = "default";
 					clsid = originalClassId;

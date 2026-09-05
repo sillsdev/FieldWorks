@@ -501,10 +501,10 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 						else if (clause.Name.LocalName != "otherwise")
 						{
 							// Legacy throws "elements in choice must be <where...> or <otherwise>".
-								diagnostics.Add(new ViewDiagnostic(ViewDiagnosticSeverity.Warning,
-									"unknown-part-content",
-									$"<choice> child <{clause.Name.LocalName}> is not where/otherwise and is not imported.",
-									branchId));
+							diagnostics.Add(new ViewDiagnostic(ViewDiagnosticSeverity.Warning,
+								"unknown-part-content",
+								$"<choice> child <{clause.Name.LocalName}> is not where/otherwise and is not imported.",
+								branchId));
 							hasUnsupportedBranch = true;
 							continue;
 						}

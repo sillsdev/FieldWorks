@@ -64,7 +64,10 @@ namespace SIL.FieldWorks.XWorks
 			return GetSnapshot(obj.ClassName, layoutName, choiceGuid, callerXml);
 		}
 
-		/// <summary>Gets a snapshot by class name for tooling and isolated tests.</summary>
+		/// <summary>
+		/// Resolves a snapshot by class name rather than a live object. The CmCustomItem
+		/// writing-system layout mapping is not applied.
+		/// </summary>
 		public ViewDefinitionSourceSnapshot GetSnapshot(string className, string layoutName,
 			string choiceGuid = null, string callerXml = null)
 		{
@@ -104,7 +107,7 @@ namespace SIL.FieldWorks.XWorks
 				}
 
 				if (classId == 0 && !string.Equals(useName, "default",
-					StringComparison.OrdinalIgnoreCase))
+					StringComparison.Ordinal))
 				{
 					useName = "default";
 					classId = originalClassId;

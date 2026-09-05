@@ -731,12 +731,15 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		}
 
 		/// <summary>
-		/// The sequence flid and item index represented by a lazy placeholder. Real slices do
-		/// not expose lazy-sequence metadata.
+		/// The sequence flid represented by a lazy placeholder. Real slices do not expose
+		/// lazy-sequence metadata.
 		/// </summary>
 		public virtual int LazySequenceFlid => 0;
 
-		/// <summary>Gets the first sequence index represented by this lazy placeholder.</summary>
+		/// <summary>
+		/// The first sequence item index represented by a lazy placeholder. Real slices do not
+		/// expose lazy-sequence metadata.
+		/// </summary>
 		public virtual int LazySequenceIndex => -1;
 
 		/// <summary>

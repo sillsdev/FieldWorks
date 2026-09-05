@@ -119,6 +119,7 @@ must not become `.fwlayout` persistence keys.
 | Move a field | Change physical sibling order through `Slice.MoveField`. |
 | Configure visible writing systems | Update `visibleWritingSystems` through `MultiStringSlice`, retaining its pronunciation-writing-system side effects. |
 | Show all writing systems temporarily | Use WinForms transient state. Do not write the layout file. Reload configured writing systems when the target slice changes from current to not current. |
+| Sense or record item header | WinForms renders the HeavySummary SummarySlice as the item's header. Avalonia synthesizes the item header from LexSenseOutline + ShortName and folds a HeavySummary that directly follows it into that header (no repeated row, children at the item's depth). |
 
 For nested edits, WinForms promotes the selected layout after the final
 `sublayout` to the persistence root. Avalonia must therefore keep the selected
