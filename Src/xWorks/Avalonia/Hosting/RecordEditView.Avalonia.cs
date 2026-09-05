@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2017 SIL International
+﻿// Copyright (c) 2003-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -572,6 +572,8 @@ namespace SIL.FieldWorks.XWorks
 
 		private void OnDetailMenuRequested(DetailMenuRequest request)
 		{
+			// Both sides consume pending state, so this is a non-short-circuiting or: with ||
+			// a pending focus refresh would leave the Show-all reveal on the previous slice.
 			var refreshAfterMenu = TakePendingDetailFocusRefresh()
 				| ClearShowAllFor(request.Field);
 			try

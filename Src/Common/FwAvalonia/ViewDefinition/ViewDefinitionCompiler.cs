@@ -134,8 +134,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 		private static int s_fingerprintComputeCount;
 
 		/// <summary>
-		/// The process-wide number of snapshot fingerprints actually computed (one per snapshot
-		/// whose key was requested), for tests that bound the compile work a compose performs.
+		/// The process-wide number of snapshot fingerprints actually computed, one per snapshot
+		/// whose key was requested.
 		/// </summary>
 		internal static int FingerprintComputeCount => Volatile.Read(ref s_fingerprintComputeCount);
 
@@ -147,8 +147,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 		private static int s_partsHashComputeCount;
 
 		/// <summary>
-		/// The process-wide number of parts-source hashes actually computed, for tests that bound
-		/// the fingerprint work a compose performs.
+		/// The process-wide number of parts-source hashes actually computed, one per distinct
+		/// parts string rather than one per snapshot.
 		/// </summary>
 		internal static int PartsHashComputeCount => Volatile.Read(ref s_partsHashComputeCount);
 
@@ -433,8 +433,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 		private static int s_compileCount;
 
 		/// <summary>
-		/// The process-wide number of cache misses that ran the importer, for tests that bound
-		/// the compile work a compose performs.
+		/// The process-wide number of cache misses that ran the importer.
 		/// </summary>
 		internal static int CompileCount => Volatile.Read(ref s_compileCount);
 
