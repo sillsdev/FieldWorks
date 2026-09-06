@@ -177,3 +177,10 @@ design.
   exact-slice re-targeting and the post-command Avalonia recompose and leave
   the view stale. Such a failure is a defect to fix, made visible through the
   log rather than masked by a second rendering.
+
+- **Behavior**: a detail-row menu request whose ids resolve to no menu items.
+  **WinForms**: `MenuAdapter.ShowContextMenu` opens the `ContextMenuStrip`
+  even when it holds nothing, so an empty popup appears at the pointer.
+  **Avalonia**: no flyout opens and nothing is logged; the post-menu refresh
+  still runs. **Why accepted**: an empty popup tells the user nothing and
+  costs a click to dismiss.
