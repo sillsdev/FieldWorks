@@ -407,6 +407,9 @@ namespace SIL.FieldWorks.XWorks
 		public override void TestSetup()
 		{
 			base.TestSetup();
+			// The reversal plugin tests build a real Avalonia editor, which needs the (headless)
+			// platform; run in isolation, no earlier fixture has initialized it.
+			FwAvaloniaRuntime.EnsureInitialized();
 			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
 			{
 				m_entry = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create();

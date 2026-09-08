@@ -5,8 +5,15 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Xml;
+using Avalonia.Automation;
+using Avalonia.Controls;
+using Avalonia.Threading;
+using Avalonia.VisualTree;
 using NUnit.Framework;
+using SIL.FieldWorks.Common.FwAvalonia;
+using SIL.FieldWorks.Common.FwAvalonia.Detail;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Infrastructure;
@@ -28,6 +35,7 @@ namespace SIL.FieldWorks.XWorks
 	{
 		private PropertyTable m_propertyTable;
 		private List<ICmObject> m_createdObjects;
+		private ILexEntry m_entry;
 		private RecordEditView m_view;
 		// The real subscriber under test. MockFwXWindow's bare-minimum LoadUI never loads the
 		// Main.xml listeners, so the fixture creates the one this channel needs itself.
@@ -66,6 +74,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, DestroyLexiconTestData);
 			m_createdObjects = null;
+			m_entry = null;
 			m_view = null;
 			// Unsubscribes from the process-wide Pub/Sub singleton; without it a disposed
 			// handler would still hear later fixtures' publishes.
@@ -110,6 +119,64 @@ namespace SIL.FieldWorks.XWorks
 				"focusing an analysis editor must move the combo property back");
 		}
 
+		// Plugin rows bypass SliceFactory, so the host's focus handler reaches them only
+		// through the callback Compose threads into SlicePluginBuildContext.
+		[Test]
+		public void PluginRowEditorFocus_UpdatesWritingSystemHvoProperty_ThroughPubSub()
+		{
+			var vernacular = Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
+			var analysis = Cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem;
+			var sense = m_entry.SensesOS[0];
+			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
+			{
+				var repository = Cache.ServiceLocator.GetInstance<IReversalIndexRepository>();
+				var hadIndex = repository.AllInstances().Any(index => index.WritingSystem == analysis.Id);
+				var reversalIndex = repository.FindOrCreateIndexForWs(analysis.Handle);
+				if (!hadIndex)
+					m_createdObjects.Add(reversalIndex);
+				var reversalEntry = reversalIndex.FindOrCreateReversalEntry("dwelling");
+				reversalEntry.SensesRS.Add(sense);
+				m_createdObjects.Add(reversalEntry);
+			});
+
+			// Compose with the host's handler as the plugin callback, the way ShowAvaloniaEntry
+			// does, and realize the view with the same handler on the composer-row path.
+			var composed = DetailComposer.Compose(m_entry, Cache,
+				writingSystemFocused: m_view.OnDetailWritingSystemFocused);
+			FwAvaloniaRuntime.EnsureInitialized();
+			var view = new DataTree(composed.Model, composed.EditContext, m_view.OnDetailWritingSystemFocused);
+			var window = new Window { Content = view, Width = 520, Height = 360 };
+			try
+			{
+				window.Show();
+				Dispatcher.UIThread.RunJobs();
+				// The plugin stamps <row automation id>.<ws tag> on each of its value boxes.
+				var row = composed.Model.Fields.First(f => f.Kind == DetailFieldKind.Custom
+					&& f.ObjectHvo == sense.Hvo);
+				var boxId = (row.AutomationId ?? ReversalIndexEntryPlugin.DefaultAutomationId) + "." + analysis.Id;
+				var reversalBox = view.GetVisualDescendants().OfType<TextBox>()
+					.FirstOrDefault(box => AutomationProperties.GetAutomationId(box) == boxId);
+				Assert.That(reversalBox, Is.Not.Null,
+					"precondition: the Reversal Entries plugin row realized its analysis-ws editor");
+
+				m_view.OnDetailWritingSystemFocused(vernacular.Id);
+				Assert.That(CurrentWritingSystemHvoProperty(),
+					Is.EqualTo(vernacular.Handle.ToString(CultureInfo.InvariantCulture)),
+					"precondition: the combo property starts away from the reversal row's ws");
+
+				reversalBox.Focus();
+				Dispatcher.UIThread.RunJobs();
+
+				Assert.That(CurrentWritingSystemHvoProperty(),
+					Is.EqualTo(analysis.Handle.ToString(CultureInfo.InvariantCulture)),
+					"focusing a plugin row's editor must publish its ws like every composer-built row");
+			}
+			finally
+			{
+				window.Close();
+			}
+		}
+
 		private string CurrentWritingSystemHvoProperty()
 		{
 			return m_propertyTable.GetStringProperty(PropertyConstants.WritingSystemHvo, null);
@@ -133,17 +200,19 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var stemMorphType = GetMorphTypeOrCreateOne("stem");
 			var nounPartOfSpeech = GetGrammaticalCategoryOrCreateOne("noun", Cache.LangProject.PartsOfSpeechOA);
-			AddLexeme(m_createdObjects, "ws-state-entry", stemMorphType, "ws state gloss", nounPartOfSpeech);
+			m_entry = AddLexeme(m_createdObjects, "ws-state-entry", stemMorphType, "ws state gloss",
+				nounPartOfSpeech);
 		}
 
 		private void DestroyLexiconTestData()
 		{
 			if (m_createdObjects == null)
 				return;
-			foreach (var obj in m_createdObjects)
+			// Reverse order: a reversal entry is deleted before the index that owns it.
+			for (var i = m_createdObjects.Count - 1; i >= 0; i--)
 			{
-				if (obj.IsValidObject && obj is ILexEntry)
-					obj.Delete();
+				if (m_createdObjects[i].IsValidObject)
+					m_createdObjects[i].Delete();
 			}
 		}
 	}

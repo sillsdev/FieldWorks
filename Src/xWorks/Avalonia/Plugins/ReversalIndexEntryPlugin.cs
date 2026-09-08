@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Avalonia.Controls;
 using SIL.FieldWorks.Common.FwAvalonia.Detail;
-using SIL.FieldWorks.Common.FwAvalonia.Seams;
 using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Core.Text;
@@ -40,6 +39,9 @@ namespace SIL.FieldWorks.XWorks
 		public const string ReversalIndexEntrySliceClassName =
 			"SIL.FieldWorks.XWorks.LexEd.ReversalIndexEntrySlice";
 
+		/// <summary>The editor's automation id when the layout node declares none.</summary>
+		public const string DefaultAutomationId = "ReversalEntriesEditor";
+
 		public string LegacyClassName => ReversalIndexEntrySliceClassName;
 
 		public Control BuildControl(SlicePluginBuildContext context)
@@ -64,7 +66,7 @@ namespace SIL.FieldWorks.XWorks
 					kind: DetailFieldKind.Text,
 					editorClassification: node?.EditorClassification
 						?? SIL.FieldWorks.Common.FwAvalonia.ViewDefinition.EditorClassification.Known,
-					automationId: node?.AutomationId ?? "ReversalEntriesEditor",
+					automationId: node?.AutomationId ?? DefaultAutomationId,
 					localizationKey: node?.LocalizationKey,
 					routing: node?.Routing ?? SIL.FieldWorks.Common.FwAvalonia.ViewDefinition.HostRouting.Product,
 					values: rows,
@@ -74,9 +76,9 @@ namespace SIL.FieldWorks.XWorks
 					objectHvo: sense.Hvo);
 
 				var reversalContext = new ReversalDetailEditContext(cache, context.EditContext, entryByWsKey);
-				var automationId = node?.AutomationId ?? "ReversalEntriesEditor";
+				var automationId = node?.AutomationId ?? DefaultAutomationId;
 				return new FwMultiWsTextField(field, automationId, reversalContext,
-					writingSystemFocused: wsTag => WritingSystemKeyboards.Activate(cache, wsTag));
+					writingSystemFocused: context.WritingSystemFocused);
 			}
 			catch (Exception e)
 			{
