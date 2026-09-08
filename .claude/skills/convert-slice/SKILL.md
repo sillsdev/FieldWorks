@@ -175,7 +175,9 @@ is worse than an honest Unsupported row for preview users).
 - Plugin factories degrade: missing/null/throwing renders the labeled
   Unsupported row, never a crash or a blank row.
 - Keep `FwAvalonia` LCModel-free (projection and write-back live in
-  xWorks). The repository comment standard applies throughout.
+  xWorks).
+- The repository comment standard, `.claude/skills/fieldworks-code-commenting/SKILL.md`, applies
+  throughout.
 
 ## Proving it works
 
