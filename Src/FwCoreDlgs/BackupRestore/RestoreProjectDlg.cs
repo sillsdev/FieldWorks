@@ -265,6 +265,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 			m_presenter.EmptyProjectName = false;
 			if (m_txtOtherProjectName.Enabled && m_txtOtherProjectName.Text == String.Empty)
 				m_txtOtherProjectName.Text = m_presenter.GetSuggestedNewProjectName();
+			UpdateSendReceiveDataOption();
 		}
 
 		private void m_btnBrowse_Click(object sender, EventArgs e)
@@ -372,8 +373,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 			m_supportingFiles.Enabled = settings.IncludeSupportingFiles;
 			m_spellCheckAdditions.Checked = settings.IncludeSpellCheckAdditions;
 			m_spellCheckAdditions.Enabled = settings.IncludeSpellCheckAdditions;
-			m_sendReceiveData.Checked = settings.IncludeSendReceiveData;
-			m_sendReceiveData.Enabled = settings.IncludeSendReceiveData;
+			UpdateSendReceiveDataOption();
 			if (m_rdoDefaultFolder.Checked)
 				m_lblDefaultBackupIncludes.Text = m_presenter.IncludesFiles(settings);
 			else
@@ -384,6 +384,22 @@ namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 				m_lblOtherBackupIncludes.Text = m_presenter.IncludesFiles(settings);
 			}
 			SetOriginalNameFromSettings();
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Sets the Send/Receive option from the restore target. Restoring over the original
+		/// project keeps that project's repository history, so the option is forced on;
+		/// restoring to a different name leaves it off unless the user opts in (LT-22738).
+		/// It is unavailable either way when the backup holds no Send/Receive data.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		private void UpdateSendReceiveDataOption()
+		{
+			var backupHasSendReceiveData = Settings.Backup != null && Settings.Backup.IncludeSendReceiveData;
+			var restoringToOriginalName = m_rdoUseOriginalName.Checked;
+			m_sendReceiveData.Checked = backupHasSendReceiveData && restoringToOriginalName;
+			m_sendReceiveData.Enabled = backupHasSendReceiveData && !restoringToOriginalName;
 		}
 
 
