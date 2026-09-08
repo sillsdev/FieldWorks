@@ -102,7 +102,7 @@ Then use Visual Studio for editing and debugging.
 
 ## Debugging FieldWorks
 
-1. Set **FieldWorks** (or the specific project you're working on) as the **Startup Project**
+1. Ensure **FieldWorks** is the **Startup Project**
 2. Ensure the configuration is **Debug** and platform is **x64**
 3. Press **F5** to start debugging
 

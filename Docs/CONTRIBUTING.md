@@ -38,6 +38,11 @@ Required workloads:
 - .NET desktop development
 - Desktop development with C++ (including ATL/MFC)
 
+Optional Visual Studio extension:
+- **ReSharper** (if you have a license) for advanced refactoring/navigation
+
+Visual Studio Code is an option for some development if you prefer it to Visual Studio. See [VS Code Stability Profile](vscode-stability-profile.md).
+
 #### Windows Defender Exclusions (Recommended)
 
 FieldWorks builds can be significantly slowed by Windows Defender real-time scanning. To configure exclusions, run the following in an **Administrator PowerShell**:
@@ -125,7 +130,7 @@ For more build options, see [.github/instructions/build.instructions.md](../.git
 
 On Linux or macOS, do not run `build.ps1` or `test.ps1`; those entry points intentionally fail fast with a not-supported message.
 
-### Run tests from the command line
+### 5. Run tests from the command line
 
 Use `test.ps1` for local test runs:
 
@@ -151,20 +156,6 @@ Remove-Item Env:FW_TEST_ALLOW_ASSERT_DIALOGS
 
 Only use this opt-in for attended local debugging. CI and normal local runs should leave it unset.
 
-### 5. VS Code and Visual Studio usage
-
-Default recommendation:
-- Use **VS Code + ReSharper extension** for everyday coding, navigation, and managed test explorer workflows.
-- **C# Dev Kit is discouraged** in this workspace (this kit doesn't support debugging or test discovery for projects that use .NET Framework, as this workspace still does).
-- Use repo scripts/tasks as source of truth for build/test: `./build.ps1` and `./test.ps1`.
-
-Switch to **Visual Studio** (2026 or 2022) when you need:
-- WinForms designer workflows
-- Mixed managed/native debugging across interop boundaries
-- Complex legacy .NET Framework project-system scenarios where VS Code is unreliable
-
-See [VS Code Stability Profile](vscode-stability-profile.md) for current workspace guidance.
-
 ## Git Configuration
 
 It is helpful to increase the rename limits for Git to properly detect renames in large commits:
@@ -189,6 +180,12 @@ git config --global merge.conflictstyle diff3
 # Enable helpful coloring
 git config --global color.ui auto
 ```
+
+### Recommended Git GUI Tools
+
+- **Git GUI** (included with Git) - for commits and basic operations
+- **GitKraken** or **SourceTree** - for visual branch management
+- **Visual Studio** (and **VS Code**) have Git integration
 
 ## Contributing Code
 

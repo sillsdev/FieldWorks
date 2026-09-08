@@ -1,13 +1,15 @@
 # VS Code Stability Profile (FieldWorks)
 
 This repository is a mixed native + managed solution (C++ + .NET Framework `net48`) with traversal orchestration in `FieldWorks.proj`.
+See [Contributing](CONTRIBUTING.md) for the recommended Visual Studio.
 
-## Supported inner-loop in VS Code
+## Recommended Extensions and Tools
 
-- Use ReSharper for VS Code (`jetbrains.resharper-code`) as the default C# experience in VS Code.
-- C# Dev Kit (`ms-dotnettools.csdevkit`) and C# (`ms-dotnettools.csharp`) are discouraged in this workspace.
-- Use `ms-vscode.cpptools` for C/C++ editing and IntelliSense.
-- Build and test through repo scripts/tasks:
+- **ReSharper for VS Code** (`jetbrains.resharper-code`) for C# editing, navigation, refactoring, and test explorer
+- **Discouraged:** C# Dev Kit (`ms-dotnettools.csdevkit`) and C# (`ms-dotnettools.csharp`)
+  (these do not support debugging or test discovery for projects that use .NET Framework, as this workspace still does).
+- **C/C++** (`ms-vscode.cpptools`) for C/C++ IntelliSense and debugging.
+- **PowerShell** (`ms-vscode.powershell`) for build and test scripts:
   - `./build.ps1`
   - `./test.ps1`
 

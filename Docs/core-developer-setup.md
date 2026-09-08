@@ -87,26 +87,6 @@ git fetch --all
 git checkout main
 ```
 
-### 3. Development Environment
-
-#### IDE Extensions
-
-Recommended VS Code extensions for daily development:
-- **ReSharper for VS Code** (`jetbrains.resharper-code`) for C# editing, navigation, refactoring, and test explorer
-- **C# Dev Kit** (`ms-dotnettools.csdevkit`) and **C#** (`ms-dotnettools.csharp`) are discouraged in this workspace
-- **C/C++** (`ms-vscode.cpptools`) for native editing/debugging
-- **PowerShell** (`ms-vscode.powershell`) for build/test scripts
-
-Optional Visual Studio extension:
-- **ReSharper** (if you have a license) for advanced refactoring/navigation
-
-#### Git GUI Tools
-
-Recommended Git tools:
-- **Git GUI** (included with Git) - For commits and basic operations
-- **GitKraken** or **SourceTree** - For visual branch management
-- **VS Code** - Has excellent Git integration
-
 ## AI-Assisted PR Workflow
 
 For core developers, the canonical AI-assisted path is now [AI-Assisted PR Workflow](workflows/ai-pr-workflow.md).
