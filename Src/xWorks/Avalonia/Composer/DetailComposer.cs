@@ -1685,7 +1685,9 @@ namespace SIL.FieldWorks.XWorks
 
 				var created = _cache.ServiceLocator.GetInstance<IPhEnvironmentFactory>().Create();
 				inventory.Add(created);
-				created.StringRepresentation = TsStringUtils.MakeString(text, _cache.DefaultAnalWs);
+				// VERNACULAR, as PhoneEnvReferenceView types it (m_wsVern). Analysis would give
+				// the string the wrong font wherever a view renders its own writing system.
+				created.StringRepresentation = TsStringUtils.MakeString(text, _cache.DefaultVernWs);
 				return created;
 			}
 

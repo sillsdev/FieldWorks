@@ -78,8 +78,10 @@ namespace SIL.FieldWorks.XWorks
 				var phonData = Cache.LanguageProject.PhonologicalDataOA;
 				var env = Cache.ServiceLocator.GetInstance<IPhEnvironmentFactory>().Create();
 				phonData.EnvironmentsOS.Add(env);
+				// Vernacular, as legacy types them -- seeding analysis would make the wrong
+				// writing system look normal here.
 				env.StringRepresentation = TsStringUtils.MakeString(
-					representation, Cache.DefaultAnalWs);
+					representation, Cache.DefaultVernWs);
 			});
 		}
 
@@ -163,6 +165,30 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(m_allomorph.PhoneEnvRC.Count, Is.EqualTo(1));
 			Assert.That(m_allomorph.PhoneEnvRC.First().StringRepresentation.Text,
 				Is.EqualTo("/ # _"), "stored as typed, spaces and all");
+		}
+
+		/// <summary>
+		/// A created environment carries the VERNACULAR writing system, as legacy's
+		/// PhoneEnvReferenceView does (m_wsVern). An environment string is phonology in the
+		/// vernacular script.
+		///
+		/// Found by the developer, who noticed two visually identical environments rendering with
+		/// different underscores in the legacy view: one typed in legacy, one created here with
+		/// the analysis writing system, so the two picked up different fonts.
+		/// </summary>
+		[Test]
+		public void Environments_CreateFromTypedText_TagsTheStringVernacular()
+		{
+			var composed = ComposeEnvironments();
+
+			Assert.That(composed.Creation.TryCreateAndAddReferenceItem(composed.Row, "/ # _"), Is.True);
+			composed.Context.Commit();
+
+			var created = m_allomorph.PhoneEnvRC.First().StringRepresentation;
+			Assert.That(created.get_WritingSystem(0), Is.EqualTo(Cache.DefaultVernWs),
+				"the analysis writing system gives the string the wrong font wherever a view "
+				+ "renders its own writing system, which is how this was spotted");
+			Assert.That(created.get_WritingSystem(0), Is.Not.EqualTo(Cache.DefaultAnalWs));
 		}
 
 		/// <summary>
