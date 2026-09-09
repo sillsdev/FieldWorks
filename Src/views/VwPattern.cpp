@@ -373,11 +373,18 @@ bool IsEmpty(ITsString * ptss)
 	By default this answers the same as ReplaceWith(). However, if a find has recently
 	occurred involving a regular expression, this computes the replacement text,
 	taking account of any uses of saved groups in the replace with string.
+	@error E_UNEXPECTED if there is no current match. A pattern that has not searched yet,
+	one whose last FindIn failed, and one that has just completed a ReplaceAllIn are all in
+	that state.
 ----------------------------------------------------------------------------------------------*/
 STDMETHODIMP VwPattern::get_ReplacementText(ITsString ** pptssText)
 {
 	BEGIN_COM_METHOD;
 	ChkComOutPtr(pptssText);
+	// The answer is derived from the matched range of the text source the match was found in,
+	// so with no current match there is nothing to derive it from.
+	if (!m_qtsWhereFound || m_ichMinFoundLog < 0 || m_ichLimFoundLog < 0)
+		ThrowHr(WarnHr(E_UNEXPECTED));
 	int ichMinRen = m_ichMinFoundLog;
 	int ichLimRen = m_ichLimFoundLog;
 	VwTxtSrcPtr qts;
