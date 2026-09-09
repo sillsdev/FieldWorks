@@ -10,18 +10,22 @@ namespace SIL.FieldWorks.Common.FwUtils
 	/// <summary>The default applied state of an OpenType feature in typical shaping.</summary>
 	public enum OpenTypeFeatureDefaultState
 	{
-		/// <summary>No documented default; treated as off until the user selects a value.</summary>
+		/// <summary>No documented default; treated as off until the user selects a
+		/// value.</summary>
 		Unspecified,
 		/// <summary>Off unless the user turns it on.</summary>
 		Off,
-		/// <summary>Applied automatically by shaping engines unless the user turns it off.</summary>
+		/// <summary>Applied automatically by shaping engines unless the user turns it
+		/// off.</summary>
 		On
 	}
 
-	/// <summary>Registered-feature classification: friendly name, visibility, and default state.</summary>
+	/// <summary>Registered-feature classification: friendly name, visibility, and default
+	/// state.</summary>
 	public sealed class OpenTypeFeatureCatalogEntry
 	{
-		/// <summary>Initializes a new instance of the <see cref="OpenTypeFeatureCatalogEntry"/> class.</summary>
+		/// <summary>Initializes a new instance of the <see cref="OpenTypeFeatureCatalogEntry"/>
+		/// class.</summary>
 		public OpenTypeFeatureCatalogEntry(string englishName, bool isHidden, OpenTypeFeatureDefaultState defaultState)
 		{
 			EnglishName = englishName;
@@ -29,10 +33,12 @@ namespace SIL.FieldWorks.Common.FwUtils
 			DefaultState = defaultState;
 		}
 
-		/// <summary>Gets the English friendly name; a resx entry may override it for the UI.</summary>
+		/// <summary>Gets the English friendly name; a resx entry may override it for the
+		/// UI.</summary>
 		public string EnglishName { get; }
 
-		/// <summary>Gets whether the feature is required for shaping or otherwise not user-configurable.</summary>
+		/// <summary>Gets whether the feature is required for shaping or otherwise not
+		/// user-configurable.</summary>
 		public bool IsHidden { get; }
 
 		/// <summary>Gets the feature's default applied state.</summary>
@@ -40,13 +46,13 @@ namespace SIL.FieldWorks.Common.FwUtils
 	}
 
 	/// <summary>
-	/// Catalog of registered OpenType features used to classify feature tags as hidden or
-	/// user-configurable and to supply a default state and friendly name. Seeded from Paratext's
+	/// Catalog of registered OpenType features that classifies feature tags as hidden or
+	/// user-configurable and supplies a default state and friendly name. Seeded from Paratext's
 	/// RegisteredFeatureCatalog and audited against the OpenType feature registry: `dlig` is
 	/// user-visible (Paratext hides it), `aalt` is hidden (a glyph palette, not a toggle), and
 	/// `kern` is default-on. Stylistic sets (`ssXX`) and character variants (`cvXX`) are
-	/// intentionally absent; their names come from the font and their visibility is handled by the
-	/// UI. See LT-22638.
+	/// intentionally absent; their names come from the font and their visibility is handled
+	/// by the UI. See LT-22638.
 	/// </summary>
 	public static class OpenTypeFeatureCatalog
 	{
@@ -190,34 +196,39 @@ namespace SIL.FieldWorks.Common.FwUtils
 				["zero"] = Visible("Slashed Zero", OpenTypeFeatureDefaultState.Off),
 			};
 
-		/// <summary>Gets the catalog entry for a tag, or null when the tag is not registered here.</summary>
+		/// <summary>Gets the catalog entry for a tag, or null when the tag is not registered
+		/// here.</summary>
 		public static OpenTypeFeatureCatalogEntry Lookup(string tag)
 		{
 			OpenTypeFeatureCatalogEntry entry;
 			return tag != null && s_entries.TryGetValue(tag, out entry) ? entry : null;
 		}
 
-		/// <summary>Gets whether the tag is a registered feature this catalog knows about.</summary>
+		/// <summary>Gets whether the tag is a registered feature this catalog knows
+		/// about.</summary>
 		public static bool IsKnown(string tag)
 		{
 			return tag != null && s_entries.ContainsKey(tag);
 		}
 
-		/// <summary>Gets whether the tag is a registered feature classified as hidden from users.</summary>
+		/// <summary>Gets whether the tag is a registered feature classified as hidden from
+		/// users.</summary>
 		public static bool IsHidden(string tag)
 		{
 			var entry = Lookup(tag);
 			return entry != null && entry.IsHidden;
 		}
 
-		/// <summary>Gets whether the tag is a registered feature that shaping applies by default.</summary>
+		/// <summary>Gets whether the tag is a registered feature that shaping applies by
+		/// default.</summary>
 		public static bool IsDefaultOn(string tag)
 		{
 			var entry = Lookup(tag);
 			return entry != null && entry.DefaultState == OpenTypeFeatureDefaultState.On;
 		}
 
-		/// <summary>Gets the English friendly name for a registered tag, or null when unknown.</summary>
+		/// <summary>Gets the English friendly name for a registered tag, or null when
+		/// unknown.</summary>
 		public static string GetEnglishName(string tag)
 		{
 			return Lookup(tag)?.EnglishName;

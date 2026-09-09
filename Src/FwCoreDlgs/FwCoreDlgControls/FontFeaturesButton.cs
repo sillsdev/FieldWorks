@@ -29,11 +29,9 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 		/// <summary></summary>
 		public const int kGrLangFeature = 1; // See FmtFntDlg.h for real defn.
 		/// <summary></summary>
-		// Values offered per feature, including the "None"/"Off" value, so 31 selectable
-		// options. Inherited from the Graphite dialog; no native code enforces it (the
-		// FmtFntDlg.h this once pointed at is no longer in the tree). The most any shipping
-		// font declares is 4 named character variants, so nothing reaches the ceiling today -
-		// GetFeatureValues traces if one ever does.
+		// Values per feature, including the "None"/"Off" value, so 31 selectable options.
+		// Inherited from the Graphite dialog; no native code enforces it. GetFeatureValues
+		// traces if one ever exceeds it.
 		public const int kMaxValPerFeat = 32;
 		// This is copied from nLang in FmtFntDlg.cpp, FmtFntDlg::CreateFeaturesMenu.
 		/// <summary></summary>
@@ -959,7 +957,8 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 				m_infoById = new Dictionary<int, OpenTypeFontFeatureInfo>();
 				foreach (var info in infos)
 				{
-					// Hidden features (shaping-required or otherwise not user-configurable) are omitted.
+					// Hidden features (shaping-required or otherwise not user-configurable) are
+					// omitted.
 					if (OpenTypeFeatureCatalog.IsHidden(info.Tag))
 						continue;
 					var id = ConvertFontFeatureCodeToId(info.Tag);
@@ -976,7 +975,8 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 				return infos.Count == 0 ? null : new OpenTypeFontFeatureProvider(infos);
 			}
 
-			/// <summary>Builds a provider directly from feature records for unit testing.</summary>
+			/// <summary>Builds a provider directly from feature records for unit
+			/// testing.</summary>
 			internal static OpenTypeFontFeatureProvider CreateForTests(IEnumerable<OpenTypeFontFeatureInfo> infos)
 			{
 				return new OpenTypeFontFeatureProvider(infos);
@@ -1008,7 +1008,8 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 				OpenTypeFontFeatureInfo info;
 				m_infoById.TryGetValue(featureId, out info);
 
-				// Label priority: the font's own name, a localized resx name, the catalog's English
+				// Label priority: the font's own name, a localized resx name, the catalog's
+				// English
 				// name, a generated "Stylistic Set N" / "Character Variant N" fallback, or empty
 				// when the tag has no known name.
 				if (info != null && !string.IsNullOrEmpty(info.FontSuppliedLabel))
@@ -1067,8 +1068,8 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 					var index = valueId - 1;
 					if (index < 0 || index >= info.Options.Count)
 						return string.Empty;
-					// A slot the font did not name keeps its position so the persisted value stays
-					// correct; number it rather than showing the user a blank choice.
+					// A slot the font did not name keeps its position so the persisted
+					// value stays correct; number it rather than showing a blank choice.
 					var option = info.Options[index];
 					return string.IsNullOrEmpty(option)
 						? FormatResource("kstidOpenTypeFeatureOptionNumbered", valueId) ?? string.Empty
@@ -1167,11 +1168,9 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 					generation = s_readerGeneration;
 				}
 
-				// Wrapped before it is cached, not copied on the way out: the declared
-				// IReadOnlyList is a compile-time promise only, so handing back the cached array
-				// itself lets a caller cast to the array type and write through it, changing what
-				// every later caller sees for that font. GetFeatureTags copied on both paths
-				// before this; the wrapper keeps that guarantee without allocating per call.
+				// Wrapped at insert, not copied out: IReadOnlyList is a compile-time
+				// promise only, so returning the cached array lets a caller cast and
+				// write through it. Wrapping once avoids a copy per call.
 				var discovered = new ReadOnlyCollection<OpenTypeFontFeatureInfo>(
 					OpenTypeFontFeatureInfoReader
 						.Read(tag => reader(hdc, MakeTableTag(tag))).ToArray());
@@ -1181,8 +1180,8 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 					if (s_featureCache.TryGetValue(cacheKey, out winner))
 						return winner;
 					// The reader changed while this ran, so the cache was cleared for a different
-					// one. Hand this result back to the caller that asked for it, but do not seed
-					// the cache with data the current reader did not produce.
+					// one. Hand this result back to the caller, but do not seed the cache with
+					// data the current reader did not produce.
 					if (generation != s_readerGeneration)
 						return discovered;
 					if (s_cacheOrder.Count >= MaxCacheEntries)

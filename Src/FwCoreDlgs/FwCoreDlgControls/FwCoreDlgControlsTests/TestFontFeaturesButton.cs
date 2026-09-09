@@ -139,7 +139,8 @@ namespace SIL.FieldWorks.FwCoreDlgControlsTests
 
 				Assert.That(firstRead.Select(f => f.Tag), Is.EqualTo(new[] { "kern" }));
 				Assert.That(secondRead.Select(f => f.Tag), Is.EqualTo(new[] { "kern" }));
-				// One read each for the name, GSUB and GPOS tables on the first call; the second is cached.
+				// One read each for the name, GSUB and GPOS tables on the first call; the second
+				// is cached.
 				Assert.That(readCount, Is.EqualTo(3));
 			}
 		}
@@ -147,7 +148,8 @@ namespace SIL.FieldWorks.FwCoreDlgControlsTests
 		[Test]
 		public void OpenTypeFontFeatureReader_DiscoversAllTagsAndProviderFiltersShaping()
 		{
-			// The reader reports every declared feature; hidden-feature filtering is the provider's job.
+			// The reader reports every declared feature; hidden-feature filtering is the
+			// provider's job.
 			var tableData = MakeOpenTypeLayoutTable("ccmp", "liga", "rlig");
 			FontFeaturesButton.OpenTypeFontFeatureReader.ClearCacheForTests();
 
@@ -235,7 +237,8 @@ namespace SIL.FieldWorks.FwCoreDlgControlsTests
 			Assert.That(provider.GetFeatureLabel(FeatureId("swsh"), UiLang), Is.EqualTo("Swash"));
 			// ss07: not named by the font and not in the resx subset -> numbered fallback.
 			Assert.That(provider.GetFeatureLabel(FeatureId("ss07"), UiLang), Is.EqualTo("Stylistic Set 7"));
-			// wxyz: unknown vendor tag -> empty so OnClick applies its generic "Feature #<tag>" fallback.
+			// wxyz: unknown vendor tag -> empty so OnClick applies its generic "Feature #<tag>"
+			// fallback.
 			Assert.That(provider.GetFeatureLabel(FeatureId("wxyz"), UiLang), Is.Empty);
 		}
 

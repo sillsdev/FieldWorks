@@ -34,7 +34,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 		[Test]
 		public void DiscretionaryLigatures_AreUserVisible()
 		{
-			// Audit correction: Paratext hides dlig, but it is the canonical user-facing ligature feature.
+			// Audit correction: Paratext hides dlig, but it is the canonical user-facing ligature
+			// feature.
 			Assert.That(OpenTypeFeatureCatalog.IsHidden("dlig"), Is.False);
 		}
 
@@ -58,18 +59,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 		[Test]
 		public void DefaultOnFeatures_AreOnlyTheDocumentedFour()
 		{
-			// A default-on feature is applied to text the user never opted into, and is written to
-			// the writing system only when they turn it off, so the set is a policy decision rather
-			// than a per-tag judgement. Docs/opentype-font-features.md names these four; asserting
-			// membership one tag at a time cannot catch a fifth being added, which is how "rand",
-			// "chws", "cpsp", "halt" and "size" got in. LT-22638.
-			//
-			// The set deliberately diverges from the OpenType registry, which suggests cpsp, rand,
-			// chws and halt be on by default. Unlike the Graphite provider, which reads defaultValue
-			// out of the font, this one asserts it from a static table, because OpenType has no
-			// per-feature default to read; a wrong assertion here inverts the user's first click.
-			// Docs/opentype-font-features.md has the full reasoning, and LT-22774 measures what
-			// Uniscribe actually applies. Do not widen this set without that measurement.
+			// Asserting the whole set, not one tag at a time: a per-tag assertion cannot catch a
+			// fifth being added, which is how "rand", "chws", "cpsp", "halt" and "size" got in.
+			// Do not widen without LT-22774.
 			var defaultOn = OpenTypeFeatureCatalog.AllTags
 				.Where(OpenTypeFeatureCatalog.IsDefaultOn)
 				.OrderBy(tag => tag, StringComparer.Ordinal)

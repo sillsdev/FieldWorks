@@ -33,7 +33,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 		/// <summary>
 		/// Gets the human-readable feature label supplied by the font, or null when the font
-		/// provides none (registered features and stylistic/character sets without featureParams).
+		/// provides none (registered features and stylistic/character sets without
+		/// featureParams).
 		/// </summary>
 		public string FontSuppliedLabel { get; }
 
@@ -47,7 +48,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 	}
 
 	/// <summary>
-	/// Reads user-facing OpenType feature information from a font's layout tables. Table bytes are
+	/// Reads user-facing OpenType feature information from a font's layout tables. Table bytes
+	/// are
 	/// supplied through a delegate so production callers can pass GDI GetFontData results while
 	/// tests pass bytes sliced from a font file; every read is bounds-checked so malformed or
 	/// hostile fonts degrade to tag-only records instead of throwing. Parsing is adapted from
@@ -59,25 +61,29 @@ namespace SIL.FieldWorks.Common.FwUtils
 		private const int MaxNamedParameters = 1024;
 
 		/// <summary>
-		/// Reads feature information for the current font. <paramref name="tableSource"/> receives a
-		/// four-character table tag ("GSUB", "GPOS", "name") and returns that table's bytes, or null
-		/// when the font has no such table. Records are deduplicated by tag; when a tag appears in
-		/// more than one script/language the richest record (one carrying a label or options) wins.
+		/// Reads feature information for the current font. <paramref name="tableSource"/>
+		/// receives a
+		/// four-character table tag ("GSUB", "GPOS", "name") and returns that table's bytes, or
+		/// null
+		/// when the font has no such table. Records are deduplicated by tag; when a tag appears
+		/// in
+		/// more than one script/language the richest record (one carrying a label or options)
+		/// wins.
 		/// </summary>
 		/// <remarks>
-		/// Deduplication is script-blind on purpose, and that is a known limitation. The feature list
-		/// is walked flat, so a tag registered under several scripts arrives several times and the
-		/// first-or-richest record wins with no reference to the writing system being edited. A font
-		/// that gave the same tag different labels or options per script would therefore show one
-		/// script's strings to another - Cyrillic text offered Latin variant names, for instance.
-		/// <para>Accepted because fonts do not do this. Across 178 installed fonts, 173 cv/ss tags
-		/// appear more than once in a flat feature list and every duplicate carries identical derived
-		/// metadata, so the choice is always between equal records; the SIL fonts that cover Latin,
-		/// Cyrillic and Greek together (Charis, Doulos, Gentium Plus) define each feature once and
-		/// register it under every script they cover.</para>
+		/// Deduplication is script-blind on purpose, and for these features that is what the
+		/// specification describes. The feature list is walked flat, so a tag registered under
+		/// several scripts arrives several times and the first-or-richest record wins with no
+		/// reference to the writing system being edited. A font that gave the same tag different
+		/// labels or options per script would therefore show one script's strings to another -
+		/// Cyrillic text offered Latin variant names, for instance.
+		/// <para>Accepted because the registry lists Script/language sensitivity: None for
+		/// cv01-cv99 and ss01-ss20, so one label set per tag is what the specification describes
+		/// for them.</para>
 		/// <para>Fixing it properly means passing the writing system's script tag in and keeping
-		/// per-script records instead of deduplicating, which changes this signature and its caller.
-		/// Do that when a font turns up that actually labels a tag differently per script.</para>
+		/// per-script records instead of deduplicating, which changes this signature and its
+		/// caller. Do that if a font turns up that actually labels a tag differently per
+		/// script.</para>
 		/// </remarks>
 		public static IReadOnlyList<OpenTypeFontFeatureInfo> Read(Func<string, byte[]> tableSource)
 		{
@@ -118,7 +124,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 			}
 			catch (Exception e)
 			{
-				// Without this a font whose table read fails is indistinguishable from a font with
+				// Without this a font whose table read fails is indistinguishable from a font
+				// with
 				// no features at all.
 				TraceFailure(true, string.Format(CultureInfo.InvariantCulture,
 					"reading the '{0}' table", tag), e);
@@ -194,10 +201,10 @@ namespace SIL.FieldWorks.Common.FwUtils
 				resolved[i] = option;
 				anyResolved = true;
 			}
-			// A slot's position is the persisted feature value, so one whose name will not decode
-			// keeps its place and is numbered by the UI; dropping it would renumber the slots after
-			// it and select a different glyph. A font that names none of them has nothing to choose
-			// between, so it stays a binary feature rather than a list of bare numbers.
+			// A slot's position is the persisted value, so an undecodable name keeps its place as
+			// a null for the UI to number; dropping it would renumber later slots. If none
+			// decode,
+			// the feature stays binary.
 			options = anyResolved ? resolved : Array.Empty<string>();
 		}
 
@@ -258,7 +265,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 			try
 			{
 				// Platform 0 (Unicode) and 3 (Windows) store UTF-16 big-endian; platform 1 (Mac)
-				// stores Mac Roman. Other platforms are not decodable here and fall back to labels.
+				// stores Mac Roman. Other platforms are not decodable here and fall back to
+				// labels.
 				if (platformId == 0 || platformId == 3)
 					return Encoding.BigEndianUnicode.GetString(table, stringStart, length).TrimEnd('\0');
 				if (platformId == 1)

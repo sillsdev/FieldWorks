@@ -39,3 +39,44 @@ Conclusion: no storage change needed; the multi-value round-trip is sound.
 ## Catalog audit deviations from Paratext
 
 Beyond the planned corrections (`dlig` visible, `aalt` hidden, `kern` default-on), fixed Paratext's 5-character `stchc` typo to the registered tag `stch`. All other entries match Paratext, including the legacy 33-tag shaping blocklist which remains hidden (asserted by `OpenTypeFeatureCatalogTests`).
+
+## Font survey (2026-09, one machine)
+
+Measured with the reader over 192 font files: the Windows font directory, the per-user
+font store, `DistFiles` and `Downloads`. Machine-local and not reproducible from the
+repository, which is why the numbers live here rather than in shipping comments. An
+earlier run over 178 files reported 173 duplicate tags; the doc and the `Read` remark
+carried those figures until this change.
+
+**Script sensitivity.** 176 `cv`/`ss` tags appear more than once in a flat feature list,
+and none of the duplicates differ in derived label or options, so `IsRicher` always
+chooses between equal records. This agrees with the specification rather than merely
+happening to hold: the registry lists *Script/language sensitivity: None* for both
+`cv01`-`cv99` and `ss01`-`ss20`. The tooling follows the registry — feaLib keys
+`featureNames` and `cvParameters` by tag alone, so fontmake, ufo2ft and Glyphs pipelines
+cannot author per-script labels for a shared tag, and HarfBuzz documents the duplicate
+script/langsys entries as raw repetition for the caller to collapse. Word, InDesign and
+Paratext's own reader were not checked, so this is strong evidence rather than proof.
+
+**Named options.** 477 cvNN features declare named options, across 15 fonts, and every
+slot resolved. Their option counts:
+
+| Options | Features |
+| ------- | -------- |
+| 1       | 420      |
+| 2       | 40       |
+| 3       | 16       |
+| 4       | 1        |
+
+The maximum anywhere is four, `ScheherazadeNew cv82`. Two decisions rest on this
+distribution: the 32-option ceiling is exposed through diagnostics rather than raised,
+since a font would have to ship 32 named alternates of one character to reach it; and a
+feature whose single option fails to decode keeps the binary on/off fallback, because 420
+of the 477 have exactly one option and a "None / Option 1" dropdown would be worse than a
+checkbox.
+
+Narrowed to the shipped SIL fonts alone, 275 cvNN features declare named options and
+248 of them declare exactly one, the same shape at a different scope.
+
+**`size`.** No font in the set declares it, so the dead `size` checkbox the catalog now
+hides was never reachable in practice either.
