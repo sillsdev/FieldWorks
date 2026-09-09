@@ -170,17 +170,33 @@
   <data name="kstidFeatureValue" xml:space="preserve">
     <value>Value #{0}</value>
   </data>
-  <data name="kstidOpenTypeFeatureValueOff" xml:space="preserve">
-    <value>Off</value>
+  <data name="kstidOpenTypeFeatureValueNone" xml:space="preserve">
+    <value>None</value>
+    <comment>Shown as the first (default) choice for a multi-valued character-variant feature.</comment>
   </data>
-  <data name="kstidOpenTypeFeatureValueOn" xml:space="preserve">
-    <value>On</value>
+  <data name="kstidOpenTypeFeatureStylisticSet" xml:space="preserve">
+    <value>Stylistic Set {0}</value>
+    <comment>Fallback label for a stylistic set the font does not name. {0} is the set number.</comment>
   </data>
-  <data name="kstidOpenTypeFeature_aalt" xml:space="preserve">
-    <value>Access All Alternates</value>
+  <data name="kstidOpenTypeFeatureCharacterVariant" xml:space="preserve">
+    <value>Character Variant {0}</value>
+    <comment>Fallback label for a character variant the font does not name. {0} is the variant number.</comment>
+  </data>
+  <data name="kstidOpenTypeFeatureOptionNumbered" xml:space="preserve">
+    <value>Option {0}</value>
+    <comment>Label for a character-variant option the font does not name. {0} is the option number, which is also the value stored in the writing system.</comment>
+  </data>
+  <data name="kstidOpenTypeFeature_afrc" xml:space="preserve">
+    <value>Vertical Fractions</value>
+  </data>
+  <data name="kstidOpenTypeFeature_alig" xml:space="preserve">
+    <value>Ancient Ligatures</value>
+  </data>
+  <data name="kstidOpenTypeFeature_c2pc" xml:space="preserve">
+    <value>Capitals to Petite Capitals</value>
   </data>
   <data name="kstidOpenTypeFeature_c2sc" xml:space="preserve">
-    <value>Small Capitals From Capitals</value>
+    <value>Capitals to Small Capitals</value>
   </data>
   <data name="kstidOpenTypeFeature_calt" xml:space="preserve">
     <value>Contextual Alternates</value>
@@ -188,20 +204,80 @@
   <data name="kstidOpenTypeFeature_case" xml:space="preserve">
     <value>Case-Sensitive Forms</value>
   </data>
-  <data name="kstidOpenTypeFeature_ccmp" xml:space="preserve">
-    <value>Glyph Composition/Decomposition</value>
+  <data name="kstidOpenTypeFeature_chws" xml:space="preserve">
+    <value>Contextual Half-width Spacing</value>
   </data>
   <data name="kstidOpenTypeFeature_clig" xml:space="preserve">
     <value>Contextual Ligatures</value>
   </data>
+  <data name="kstidOpenTypeFeature_cpct" xml:space="preserve">
+    <value>Centered CJK Punctuation</value>
+  </data>
+  <data name="kstidOpenTypeFeature_cpsp" xml:space="preserve">
+    <value>Capital Spacing</value>
+  </data>
+  <data name="kstidOpenTypeFeature_cswh" xml:space="preserve">
+    <value>Contextual Swash</value>
+  </data>
+  <data name="kstidOpenTypeFeature_dcap" xml:space="preserve">
+    <value>Drop Caps</value>
+  </data>
   <data name="kstidOpenTypeFeature_dlig" xml:space="preserve">
     <value>Discretionary Ligatures</value>
   </data>
+  <data name="kstidOpenTypeFeature_expt" xml:space="preserve">
+    <value>Expert Forms</value>
+  </data>
+  <data name="kstidOpenTypeFeature_falt" xml:space="preserve">
+    <value>Final Glyph On Line</value>
+  </data>
   <data name="kstidOpenTypeFeature_frac" xml:space="preserve">
-    <value>Fractions</value>
+    <value>Diagonal Fractions</value>
+  </data>
+  <data name="kstidOpenTypeFeature_fwid" xml:space="preserve">
+    <value>Full Widths</value>
+  </data>
+  <data name="kstidOpenTypeFeature_halt" xml:space="preserve">
+    <value>Alternative Half Widths</value>
+  </data>
+  <data name="kstidOpenTypeFeature_hist" xml:space="preserve">
+    <value>Historical Forms</value>
+  </data>
+  <data name="kstidOpenTypeFeature_hkna" xml:space="preserve">
+    <value>Horizontal Kana Alternatives</value>
+  </data>
+  <data name="kstidOpenTypeFeature_hlig" xml:space="preserve">
+    <value>Historic Ligatures</value>
+  </data>
+  <data name="kstidOpenTypeFeature_hojo" xml:space="preserve">
+    <value>Hojo (JIS X 0212-1990) Kanji Forms</value>
+  </data>
+  <data name="kstidOpenTypeFeature_hwid" xml:space="preserve">
+    <value>Half Widths</value>
+  </data>
+  <data name="kstidOpenTypeFeature_ital" xml:space="preserve">
+    <value>Italics</value>
+  </data>
+  <data name="kstidOpenTypeFeature_jalt" xml:space="preserve">
+    <value>Justification Alternatives</value>
+  </data>
+  <data name="kstidOpenTypeFeature_jp04" xml:space="preserve">
+    <value>JIS2004 Forms</value>
+  </data>
+  <data name="kstidOpenTypeFeature_jp78" xml:space="preserve">
+    <value>JIS78 Forms</value>
+  </data>
+  <data name="kstidOpenTypeFeature_jp83" xml:space="preserve">
+    <value>JIS83 Forms</value>
+  </data>
+  <data name="kstidOpenTypeFeature_jp90" xml:space="preserve">
+    <value>JIS90 Forms</value>
   </data>
   <data name="kstidOpenTypeFeature_kern" xml:space="preserve">
-    <value>Kerning</value>
+    <value>Horizontal Kerning</value>
+  </data>
+  <data name="kstidOpenTypeFeature_lfbd" xml:space="preserve">
+    <value>Left Bounds</value>
   </data>
   <data name="kstidOpenTypeFeature_liga" xml:space="preserve">
     <value>Standard Ligatures</value>
@@ -209,35 +285,119 @@
   <data name="kstidOpenTypeFeature_lnum" xml:space="preserve">
     <value>Lining Figures</value>
   </data>
+  <data name="kstidOpenTypeFeature_mgrk" xml:space="preserve">
+    <value>Mathematical Greek</value>
+  </data>
+  <data name="kstidOpenTypeFeature_mset" xml:space="preserve">
+    <value>Mark Positioning via Substitution</value>
+  </data>
+  <data name="kstidOpenTypeFeature_nalt" xml:space="preserve">
+    <value>Alternate Annotation Forms</value>
+  </data>
+  <data name="kstidOpenTypeFeature_nlck" xml:space="preserve">
+    <value>NLC Kanji Forms</value>
+  </data>
   <data name="kstidOpenTypeFeature_onum" xml:space="preserve">
     <value>Oldstyle Figures</value>
   </data>
+  <data name="kstidOpenTypeFeature_ordn" xml:space="preserve">
+    <value>Ordinals</value>
+  </data>
+  <data name="kstidOpenTypeFeature_ornm" xml:space="preserve">
+    <value>Ornaments</value>
+  </data>
+  <data name="kstidOpenTypeFeature_palt" xml:space="preserve">
+    <value>Proportional Alternate Metrics</value>
+  </data>
+  <data name="kstidOpenTypeFeature_pcap" xml:space="preserve">
+    <value>Lowercase to Petite Capitals</value>
+  </data>
+  <data name="kstidOpenTypeFeature_pkna" xml:space="preserve">
+    <value>Proportional Kana</value>
+  </data>
   <data name="kstidOpenTypeFeature_pnum" xml:space="preserve">
-    <value>Proportional Figures</value>
+    <value>Proportional Numbers</value>
+  </data>
+  <data name="kstidOpenTypeFeature_pwid" xml:space="preserve">
+    <value>Proportional Width</value>
+  </data>
+  <data name="kstidOpenTypeFeature_qwid" xml:space="preserve">
+    <value>Quarter Widths</value>
+  </data>
+  <data name="kstidOpenTypeFeature_rand" xml:space="preserve">
+    <value>Randomize</value>
+  </data>
+  <data name="kstidOpenTypeFeature_rtbd" xml:space="preserve">
+    <value>Right Bounds</value>
+  </data>
+  <data name="kstidOpenTypeFeature_ruby" xml:space="preserve">
+    <value>Ruby Notational Forms</value>
   </data>
   <data name="kstidOpenTypeFeature_salt" xml:space="preserve">
-    <value>Stylistic Alternates</value>
+    <value>Stylistic Alternatives</value>
+  </data>
+  <data name="kstidOpenTypeFeature_sinf" xml:space="preserve">
+    <value>Scientific Inferiors</value>
   </data>
   <data name="kstidOpenTypeFeature_smcp" xml:space="preserve">
-    <value>Small Capitals</value>
+    <value>Lowercase to Small Capitals</value>
   </data>
-  <data name="kstidOpenTypeFeature_ss01" xml:space="preserve">
-    <value>Stylistic Set 1</value>
+  <data name="kstidOpenTypeFeature_smpl" xml:space="preserve">
+    <value>Simplified Forms</value>
   </data>
-  <data name="kstidOpenTypeFeature_ss02" xml:space="preserve">
-    <value>Stylistic Set 2</value>
+  <data name="kstidOpenTypeFeature_subs" xml:space="preserve">
+    <value>Subscript</value>
   </data>
-  <data name="kstidOpenTypeFeature_ss03" xml:space="preserve">
-    <value>Stylistic Set 3</value>
+  <data name="kstidOpenTypeFeature_sups" xml:space="preserve">
+    <value>Superscript</value>
   </data>
-  <data name="kstidOpenTypeFeature_ss04" xml:space="preserve">
-    <value>Stylistic Set 4</value>
+  <data name="kstidOpenTypeFeature_swsh" xml:space="preserve">
+    <value>Swash</value>
   </data>
-  <data name="kstidOpenTypeFeature_ss05" xml:space="preserve">
-    <value>Stylistic Set 5</value>
+  <data name="kstidOpenTypeFeature_titl" xml:space="preserve">
+    <value>Titling</value>
+  </data>
+  <data name="kstidOpenTypeFeature_tnam" xml:space="preserve">
+    <value>Traditional Name Forms</value>
   </data>
   <data name="kstidOpenTypeFeature_tnum" xml:space="preserve">
-    <value>Tabular Figures</value>
+    <value>Tabular Numbers</value>
+  </data>
+  <data name="kstidOpenTypeFeature_trad" xml:space="preserve">
+    <value>Traditional Forms</value>
+  </data>
+  <data name="kstidOpenTypeFeature_twid" xml:space="preserve">
+    <value>Third Widths</value>
+  </data>
+  <data name="kstidOpenTypeFeature_unic" xml:space="preserve">
+    <value>Unicase</value>
+  </data>
+  <data name="kstidOpenTypeFeature_valt" xml:space="preserve">
+    <value>Alternate Vertical Metrics</value>
+  </data>
+  <data name="kstidOpenTypeFeature_vchw" xml:space="preserve">
+    <value>Vertical Contextual Half-width Spacing</value>
+  </data>
+  <data name="kstidOpenTypeFeature_vert" xml:space="preserve">
+    <value>Vertical Alternates</value>
+  </data>
+  <data name="kstidOpenTypeFeature_vhal" xml:space="preserve">
+    <value>Alternate Vertical Half Metrics</value>
+  </data>
+  <data name="kstidOpenTypeFeature_vkna" xml:space="preserve">
+    <value>Vertical Kana Alternates</value>
+  </data>
+  <data name="kstidOpenTypeFeature_vkrn" xml:space="preserve">
+    <value>Vertical Kerning</value>
+  </data>
+  <data name="kstidOpenTypeFeature_vpal" xml:space="preserve">
+    <value>Proportional Alternate Vertical Metrics</value>
+  </data>
+  <data name="kstidOpenTypeFeature_vrt2" xml:space="preserve">
+    <value>Vertical Rotation &amp; Alternates</value>
+  </data>
+  <data name="kstidOpenTypeFeature_zero" xml:space="preserve">
+    <value>Slashed Zero</value>
   </data>
   <data name="kstidBadMsr" xml:space="preserve">
     <value>"{0}"  is not a valid measurement.</value>
