@@ -228,5 +228,47 @@ namespace SIL.FieldWorks.XWorks
 				"an empty allomorph sequence composes the ghost add row. Composed:\n"
 				+ Describe(subtree));
 		}
+
+		/// <summary>
+		/// The domain decides whether a field applies to THIS object, and the composer must ask
+		/// --
+		/// legacy does, through SliceFilter -> ICmObject.IsFieldRelevant.
+		/// MoStemAllomorph.IsFieldRelevant returns false for StemName unless the morph type is a
+		/// root/stem/phrase kind, so a clitic or particle allomorph has no Stem Allomorph Label
+		/// row at all.
+		///
+		/// Found by the developer: legacy showed the row on one allomorph of four, the New UI on
+		/// all four. The four differed only by morph type.
+		/// </summary>
+		[Test]
+		public void Compose_StemName_OnlyWhereTheDomainSaysTheFieldApplies()
+		{
+			var morphTypes = Cache.ServiceLocator.GetInstance<IMoMorphTypeRepository>();
+			IMoStemAllomorph stem = null;
+			IMoStemAllomorph particle = null;
+			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
+			{
+				stem = Cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>().Create();
+				m_entry.AlternateFormsOS.Add(stem);
+				stem.Form.set_String(Cache.DefaultVernWs,
+					TsStringUtils.MakeString("stemform", Cache.DefaultVernWs));
+				stem.MorphTypeRA = morphTypes.GetObject(MoMorphTypeTags.kguidMorphStem);
+
+				particle = Cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>().Create();
+				m_entry.AlternateFormsOS.Add(particle);
+				particle.Form.set_String(Cache.DefaultVernWs,
+					TsStringUtils.MakeString("particleform", Cache.DefaultVernWs));
+				particle.MorphTypeRA = morphTypes.GetObject(MoMorphTypeTags.kguidMorphParticle);
+			});
+
+			var fields = DetailComposer.Compose(m_entry, Cache, showHiddenFields: true).Model.Fields;
+
+			Assert.That(fields.Any(f => f.Field == "StemName" && f.ObjectHvo == stem.Hvo), Is.True,
+				"a stem-type allomorph keeps its Stem Allomorph Label row");
+			Assert.That(fields.Any(f => f.Field == "StemName" && f.ObjectHvo == particle.Hvo),
+				Is.False,
+				"a particle has no stem name to give, so the row must not compose -- and note "
+				+ "showHiddenFields is ON: relevance is not a hidden field, it does not apply");
+		}
 	}
 }

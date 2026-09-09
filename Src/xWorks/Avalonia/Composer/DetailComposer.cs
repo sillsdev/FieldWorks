@@ -535,9 +535,34 @@ namespace SIL.FieldWorks.XWorks
 
 			private bool HideWhenEmpty(ViewNode node) => node.Visibility == ViewVisibility.IfData && !_showHidden;
 
+			/// <summary>
+			/// Whether the DOMAIN says this field does not apply to this object, which legacy
+			/// asks
+			/// before building a slice (SliceFilter -> ICmObject.IsFieldRelevant). StemName is
+			/// irrelevant on a clitic or particle, Position on a non-infix, InflectionClasses on
+			/// some affix forms.
+			///
+			/// Not the same as hidden: show-hidden-fields does NOT reveal an irrelevant field, so
+			/// this is checked whatever _showHidden says. Legacy's propsToMonitor set is
+			/// discarded
+			/// -- it exists so a live slice can re-evaluate when the property it depends on
+			/// changes, and this view recomposes on PropChanged instead.
+			/// </summary>
+			private bool IsIrrelevantForObject(ViewNode node, ICmObject obj)
+			{
+				if (obj == null || string.IsNullOrEmpty(node?.Field))
+					return false;
+				var flid = GetFlid(obj, node.Field);
+				if (flid == 0)
+					return false;
+				// The base returns true without allocating, so this stays free for the classes
+				// that never override it.
+				return !obj.IsFieldRelevant(flid, new HashSet<Tuple<int, int>>());
+			}
+
 			public void Walk(ViewNode node, ICmObject obj, int depth)
 			{
-				if (IsHidden(node) || depth > MaxDepth)
+				if (IsHidden(node) || depth > MaxDepth || IsIrrelevantForObject(node, obj))
 					return;
 
 				switch (node.Kind)
