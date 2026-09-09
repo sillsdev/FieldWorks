@@ -64,6 +64,15 @@
 	(when installed; otherwise they run bare with a warning), writing
 	native.<exe>.cobertura.xml to the same TestResults folder.
 
+.PARAMETER MaxCrashAttempts
+	How many times one managed test assembly is run when its test host crashes (default 5).
+	Only a crash is retried, never a reported test failure. A run that passed only after a
+	retry prints [FLAKY], writes TestResults/crash-retries.json, and exits with code 2.
+
+.PARAMETER Blame
+	Passes /Blame to vstest.console.exe so a host crash leaves a Sequence_*.xml naming the
+	test that was running.
+
 .EXAMPLE
 	.\test.ps1
 	Runs all tests in Debug configuration (builds first if needed).
@@ -114,7 +123,10 @@ param(
 	[ValidateSet('user', 'agent', 'unknown')]
 	[string]$StartedBy = 'unknown',
 	[switch]$CommentHygiene,
-	[switch]$TokenHygiene
+	[switch]$TokenHygiene,
+	[ValidateRange(1, 20)]
+	[int]$MaxCrashAttempts = 5,
+	[switch]$Blame
 )
 
 $ErrorActionPreference = 'Stop'
@@ -263,6 +275,59 @@ function Get-CentralPackageVersion {
 	return $null
 }
 
+function Test-HostCrashed {
+	param([string]$OutputText)
+
+	# vstest also prints "The active test run was aborted" on Ctrl+C and CI cancellation, so only
+	# the crash line marks a run whose results are missing rather than failed.
+	return $OutputText -match 'Test host process crashed'
+}
+
+function Invoke-VsTestWithCrashRetry {
+	param(
+		[string]$VsTestPath,
+		[string[]]$Arguments,
+		[string]$CoverageOutputPath,
+		[int]$MaxAttempts,
+		[string]$Label
+	)
+
+	# Only a crash is retried. A run that reported test failures is already an answer, and
+	# retrying it would turn a genuine failure into a false pass.
+	$attempt = 0
+	$exitCode = 0
+	$output = $null
+	$previousEap = $ErrorActionPreference
+	$ErrorActionPreference = 'Continue'
+	try {
+		while ($true) {
+			$attempt++
+			if ($CoverageOutputPath) {
+				& dotnet tool run dotnet-coverage collect -f cobertura -o $CoverageOutputPath --nologo $VsTestPath @Arguments 2>&1 | Tee-Object -Variable output | Out-Host
+			}
+			else {
+				& $VsTestPath $Arguments 2>&1 | Tee-Object -Variable output | Out-Host
+			}
+			$exitCode = $LASTEXITCODE
+
+			if ($exitCode -eq 0 -or $attempt -ge $MaxAttempts -or -not (Test-HostCrashed ($output | Out-String))) {
+				break
+			}
+
+			Write-Host "[WARN] $Label crashed its test host (attempt $attempt of $MaxAttempts). Retrying; results so far are incomplete, not a pass." -ForegroundColor Yellow
+		}
+	}
+	finally {
+		$ErrorActionPreference = $previousEap
+	}
+
+	return [pscustomobject]@{
+		ExitCode = $exitCode
+		Output = $output
+		Attempts = $attempt
+	}
+}
+
 function Get-NUnitTestAdapterPaths {
 	param(
 		[string]$RepoRoot,
@@ -326,6 +391,7 @@ $cleanupArgs = @{
 }
 
 $testExitCode = 0
+$script:crashRetryReport = @()
 $script:coverageFailed = $false
 
 try {
@@ -702,6 +768,10 @@ try {
 		$vstestVerbosity = $verbosityMap[$Verbosity]
 		$vstestArgs += "/Logger:trx"
 		$vstestArgs += "/Logger:console;verbosity=$vstestVerbosity"
+		if ($Blame) {
+			# Records the test that was running when a host crashed, as Sequence_*.xml.
+			$vstestArgs += "/Blame"
+		}
 
 		if ($TestFilter) {
 			$vstestArgs += "/TestCaseFilter:$TestFilter"
@@ -755,22 +825,22 @@ try {
 		}
 		Write-Host ""
 
-		$previousEap = $ErrorActionPreference
-		$ErrorActionPreference = 'Continue'
-		try {
-			if ($coverageOutputPath) {
-				& dotnet tool run dotnet-coverage collect -f cobertura -o $coverageOutputPath --nologo $vstestPath @vstestArgs 2>&1 | Tee-Object -Variable testOutput
-			}
-			else {
-				& $vstestPath $vstestArgs 2>&1 | Tee-Object -Variable testOutput
-			}
-			# Don't overwrite a non-zero exit code from native tests with a zero exit code from these tests.
-			if ($LASTEXITCODE -ne 0) {
-				$script:testExitCode = $LASTEXITCODE
+		# A multi-assembly run falls back to per-assembly runs below when a host crashes, so only
+		# a single-assembly run is retried here.
+		$mainAttempts = if ($testDlls.Count -eq 1) { $MaxCrashAttempts } else { 1 }
+		$mainRun = Invoke-VsTestWithCrashRetry -VsTestPath $vstestPath -Arguments $vstestArgs `
+			-CoverageOutputPath $coverageOutputPath -MaxAttempts $mainAttempts -Label 'The test run'
+		$testOutput = $mainRun.Output
+		if ($mainRun.Attempts -gt 1) {
+			$script:crashRetryReport += [pscustomobject]@{
+				Assembly = [System.IO.Path]::GetFileNameWithoutExtension($testDlls[0])
+				Attempts = $mainRun.Attempts
+				Recovered = ($mainRun.ExitCode -eq 0)
 			}
 		}
-		finally {
-			$ErrorActionPreference = $previousEap
+		# Keep a non-zero exit code from native tests; a passing managed run must not clear it.
+		if ($mainRun.ExitCode -ne 0) {
+			$script:testExitCode = $mainRun.ExitCode
 		}
 
 		$vstestLogPath = Join-Path $resultsDir "vstest.console.log"
@@ -782,19 +852,27 @@ try {
 			Write-Host "[WARN] Failed to write VSTest output log to $vstestLogPath" -ForegroundColor Yellow
 		}
 
+		$outputText = ($testOutput | Out-String)
 		if ($script:testExitCode -ne 0) {
-			$outputText = ($testOutput | Out-String)
 			if ($outputText -match 'used by another process|file is locked|cannot access the file') {
 				throw "Detected possible file is locked during vstest execution."
 			}
 		}
 
+		# A crashed test host aborts the whole run, so the assemblies after it never report.
+		$hostCrashAborted = $script:testExitCode -ne 0 -and (Test-HostCrashed $outputText)
+
 		# =============================================================================
 		# Workaround: multi-assembly VSTest may fail with exit code -1 and minimal output
 		# =============================================================================
 
-		if (-not $ListTests -and $testDlls.Count -gt 1 -and $script:testExitCode -eq -1) {
-			Write-Host "[WARN] vstest.console.exe returned exit code -1 with multiple test assemblies. Retrying per-assembly to isolate failures." -ForegroundColor Yellow
+		if (-not $ListTests -and $testDlls.Count -gt 1 -and ($script:testExitCode -eq -1 -or $hostCrashAborted)) {
+			if ($hostCrashAborted) {
+				Write-Host "[WARN] A test host crashed and aborted the run. Retrying per-assembly so every assembly reports." -ForegroundColor Yellow
+			}
+			else {
+				Write-Host "[WARN] vstest.console.exe returned exit code -1 with multiple test assemblies. Retrying per-assembly to isolate failures." -ForegroundColor Yellow
+			}
 
 			$timestamp = Get-Date -Format 'yyyyMMdd_HHmmss'
 			$overallExitCode = 0
@@ -814,19 +892,30 @@ try {
 				}
 				$singleArgs += "/Logger:trx;LogFileName=${dllName}_${timestamp}.trx"
 				$singleArgs += "/Logger:console;verbosity=$vstestVerbosity"
+				if ($Blame) {
+					$singleArgs += "/Blame"
+				}
 
 				if ($TestFilter) {
 					$singleArgs += "/TestCaseFilter:$TestFilter"
 				}
 
+				$singleCoverageOutput = $null
 				if ($coverageOutputPath) {
 					$singleCoverageOutput = Join-Path $resultsDir "coverage.${dllName}.cobertura.xml"
-					& dotnet tool run dotnet-coverage collect -f cobertura -o $singleCoverageOutput --nologo $vstestPath @singleArgs 2>&1 | Tee-Object -Variable singleTestOutput
 				}
-				else {
-					& $vstestPath $singleArgs 2>&1 | Tee-Object -Variable singleTestOutput
+				$singleRun = Invoke-VsTestWithCrashRetry -VsTestPath $vstestPath -Arguments $singleArgs `
+					-CoverageOutputPath $singleCoverageOutput -MaxAttempts $MaxCrashAttempts -Label $dllName
+				$singleExitCode = $singleRun.ExitCode
+				$singleTestOutput = $singleRun.Output
+				if ($singleRun.Attempts -gt 1) {
+					$script:crashRetryReport += [pscustomobject]@{
+						Assembly = $dllName
+						Attempts = $singleRun.Attempts
+						Recovered = ($singleExitCode -eq 0)
+					}
 				}
-				$singleExitCode = $LASTEXITCODE
+
 				if ($singleExitCode -ne 0 -and $overallExitCode -eq 0) {
 					$overallExitCode = $singleExitCode
 				}
@@ -961,7 +1050,49 @@ if ($script:coverageFailed -and $testExitCode -eq 0) {
 	Write-Host "[FAIL] Tests passed but code coverage collection failed (see [ERROR] above)." -ForegroundColor Red
 }
 
-if ($testExitCode -eq 0) {
+# A crash that only passed on a retry is not a clean run, so it never reports as one.
+if ($script:crashRetryReport.Count -gt 0) {
+	# $resultsDir was assigned inside the scriptblock that ran the tests, so it is out of
+	# scope here; rebuild the path as the failure summary above rebuilds its log path.
+	$crashReportPath = Join-Path $PSScriptRoot "Output/$Configuration/TestResults/crash-retries.json"
+	try {
+		$script:crashRetryReport | ConvertTo-Json -Depth 3 | Out-File -FilePath $crashReportPath -Encoding UTF8
+	}
+	catch {
+		Write-Host "[WARN] Failed to write crash retry report to $crashReportPath" -ForegroundColor Yellow
+	}
+
+	$crashLines = foreach ($entry in $script:crashRetryReport) {
+		$verdict = if ($entry.Recovered) { "passed on attempt $($entry.Attempts)" } else { "still failing after $($entry.Attempts) attempts" }
+		"  {0}: {1}" -f $entry.Assembly, $verdict
+	}
+
+	Write-Host ""
+	Write-Host "========== FLAKY: TEST HOST CRASHED ==========" -ForegroundColor Magenta
+	$crashLines | ForEach-Object { Write-Host $_ -ForegroundColor Magenta }
+	Write-Host "  This is a real defect. Retrying only recovered the results; it did not fix the crash." -ForegroundColor Magenta
+	Write-Host "  Report: $crashReportPath" -ForegroundColor Magenta
+	Write-Host "==============================================" -ForegroundColor Magenta
+
+	# GitHub Actions shows the step summary on the run page, where a retried crash stays visible.
+	if ($env:GITHUB_STEP_SUMMARY) {
+		try {
+			@("### Flaky: a test host crashed and was retried", "") + ($crashLines | ForEach-Object { "- " + $_.Trim() }) |
+				Out-File -FilePath $env:GITHUB_STEP_SUMMARY -Append -Encoding UTF8
+		}
+		catch {
+			Write-Host "[WARN] Failed to append the crash retry report to the GitHub step summary" -ForegroundColor Yellow
+		}
+	}
+}
+
+if ($testExitCode -eq 0 -and $script:crashRetryReport.Count -gt 0) {
+	# Exit code 2 keeps a recovered crash visible to gates that only read the exit code.
+	$testExitCode = 2
+	Write-Host ""
+	Write-Host "[FLAKY] All tests passed, but a test host crashed and had to be retried (exit code: 2)" -ForegroundColor Magenta
+}
+elseif ($testExitCode -eq 0) {
 	Write-Host ""
 	Write-Host "[PASS] All tests passed" -ForegroundColor Green
 }

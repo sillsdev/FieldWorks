@@ -185,6 +185,7 @@ jobs:
           name: trx-results
           path: |
             **/*.trx
+            **/TestResults/crash-retries.json
           if-no-files-found: warn
 
       - uses: actions/upload-artifact@v7
