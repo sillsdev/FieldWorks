@@ -21,7 +21,7 @@ Use the installer setup script to validate your environment:
 ### Required Software
 
 1. **Visual Studio 2026 or 2022** with Desktop workloads (C++ and .NET). Official installers are produced from Visual Studio 2022 (v143) builds; a v145 build gets a warning because the bundled VC++ redistributables predate that toolset.
-2. **WiX Toolset v3.x** for the legacy WiX 3 build (default), plus the **Visual Studio WiX Toolset v3 extension** so `Wix.CA.targets` is available under MSBuild
+2. **WiX Toolset v3.14** for the legacy WiX 3 build (default), plus the **Visual Studio WiX Toolset v3 extension** so `Wix.CA.targets` is available under MSBuild
 3. **WiX Toolset v6** via `WixToolset.Sdk` for the opt-in WiX 6 build (restored via NuGet as part of the build)
 4. **MSBuild** (included with Visual Studio)
 5. **.NET Framework 4.8 SDK** (included with Visual Studio)
@@ -58,14 +58,7 @@ git clone https://github.com/sillsdev/liblcm.git Localizations/LCMRepo
 ### Full Build (Recommended)
 
 ```powershell
-# Open VS Developer Command Prompt (x64) or run:
-# & "C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\Tools\Launch-VsDevShell.ps1" -Arch amd64
-
-# Restore packages
-msbuild Build/InstallerBuild.proj /t:RestorePackages /p:Configuration=Debug /p:Platform=x64
-
-# Build base installer (x64 only)
-msbuild Build/InstallerBuild.proj /t:BuildInstaller /p:Configuration=Release /p:Platform=x64 /p:config=release /m /v:n
+.\build.ps1 -BuildInstaller -Configuration Release
 ```
 
 ### Output Location
@@ -88,11 +81,7 @@ These can be downloaded from GitHub Releases (e.g., `build-1188`).
 ### Build Command
 
 ```powershell
-# Restore packages
-msbuild Build/InstallerBuild.proj /t:RestorePackages /p:Configuration=Debug /p:Platform=x64
-
-# Build patch installer (x64 only)
-msbuild Build/InstallerBuild.proj /t:BuildPatchInstaller /p:Configuration=Release /p:Platform=x64 /p:config=release /m /v:n
+.\build.ps1 -BuildPatch -Configuration Release
 ```
 
 ### Output Location
@@ -146,10 +135,6 @@ The automated build process is defined in two GitHub Actions workflows:
 - `base_release`: GitHub release tag for base build artifacts (e.g., `build-1188`)
 - `base_build_number`: Numeric base build number
 - `make_release`: Whether to upload to S3 (default: true)
-
-### WiX Version
-
-Workflows should use **WiX Toolset v6** via `WixToolset.Sdk` restored from NuGet.
 
 ## Troubleshooting
 

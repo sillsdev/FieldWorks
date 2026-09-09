@@ -7,8 +7,11 @@ Thank you for your interest in contributing to FieldWorks (FLEx)!
 There are several ways you can contribute to the development of FieldWorks:
 
 - **Contributing code** - Fix bugs, add features, improve documentation
-- **Testing alpha and beta versions** - Help us find and report issues
-- **Reporting issues** - File bugs on [GitHub Issues](https://github.com/sillsdev/FieldWorks/issues)
+- **Testing alpha and beta versions** - Help us find and report issues ([download](https://software.sil.org/fieldworks/download/) from our website or choose Tools > Options > Updates and automatically download Alpha or Beta updates)
+- **Reporting bugs** - We plan to enable [GitHub Issues](https://github.com/sillsdev/FieldWorks/issues) in the near future. Until then, you can
+  - Choose Help > Report a Problem... from within FieldWorks
+  - Fill out the [contact form](https://software.sil.org/fieldworks/about/contact/) at our website
+  - Create an account on [Jira](https://jira.sil.org/issues/?jql=project%20%3D%20LT)
 
 ## Getting Started
 
@@ -35,15 +38,10 @@ Required workloads:
 - .NET desktop development
 - Desktop development with C++ (including ATL/MFC)
 
-#### WiX Toolset (v6 via NuGet restore) (for installer building)
+Optional Visual Studio extension:
+- **ReSharper** (if you have a license) for advanced refactoring/navigation
 
-Installer builds use SDK-style `.wixproj` projects and restore WiX v6 tooling via NuGet during the build.
-
-```powershell
-.\Setup-Developer-Machine.ps1
-```
-
-See [Installer Build Guide](installer-build-guide.md) for building installers locally.
+Visual Studio Code is an option for some development if you prefer it to Visual Studio. See [VS Code Stability Profile](vscode-stability-profile.md).
 
 #### Windows Defender Exclusions (Recommended)
 
@@ -73,12 +71,24 @@ git clone git@github.com:sillsdev/FieldWorks.git
 cd FieldWorks
 ```
 
-#### Optional: Clone FwLocalizations (for translation work)
+#### Run the setup script
 
-If you're working on translations:
+```powershell
+.\Setup-Developer-Machine.ps1
+
+# Option: set up with installer helper repositories (Helps, Localizations, etc.)
+.\Setup-Developer-Machine.ps1 -InstallerDeps
+```
+
+See [Installer Build Guide](installer-build-guide.md) for building installers locally.
+
+#### Optional: Clone FwLocalizations and LibLCM (for translation work)
+
+If you're working on translations, and you didn't run `.\Setup-Developer-Machine.ps1 -InstallerDeps`:
 
 ```powershell
 git clone https://github.com/sillsdev/FwLocalizations.git Localizations
+git clone https://github.com/sillsdev/liblcm.git Localizations/LCMRepo
 ```
 
 #### Set up fonts for Non-Roman test data
@@ -96,8 +106,14 @@ $env:FEEDBACK = "off"
 # Set up ICU data path (required for debugging ICU-related projects)
 $env:ICU_DATA = "C:\path-to-repo\DistFiles\Icu70\icudt70l"
 
-# For FlexBridge development (optional)
+# For Paratext integration (optional)
 $env:FIELDWORKSDIR = "C:\path-to-repo\Output\Debug"
+
+# For FlexBridge development (optional)
+$env:FLEXBRIDGEDIR = "C:\path-to-repo\Output\Debug\net462"
+
+# For working on translations (optional)
+$env:LcmRootDir = "C:\path-to-liblcm-repo"
 ```
 
 > **Tip**: Add these to your PowerShell profile or system environment variables for persistence.
@@ -114,7 +130,7 @@ For more build options, see [.github/instructions/build.instructions.md](../.git
 
 On Linux or macOS, do not run `build.ps1` or `test.ps1`; those entry points intentionally fail fast with a not-supported message.
 
-### Run tests from the command line
+### 5. Run tests from the command line
 
 Use `test.ps1` for local test runs:
 
@@ -140,23 +156,7 @@ Remove-Item Env:FW_TEST_ALLOW_ASSERT_DIALOGS
 
 Only use this opt-in for attended local debugging. CI and normal local runs should leave it unset.
 
-### 5. VS Code and Visual Studio usage
-
-Default recommendation:
-- Use **VS Code + ReSharper extension** for everyday coding, navigation, and managed test explorer workflows.
-- **C# Dev Kit is discouraged** in this workspace.
-- Use repo scripts/tasks as source of truth for build/test: `./build.ps1` and `./test.ps1`.
-
-If you are a core developer using GitHub Copilot or Claude Code, follow [AI-Assisted PR Workflow](workflows/ai-pr-workflow.md) for the Jira-to-PR path: create a dedicated worktree, validate with repo tasks/scripts, run `pr-preflight`, and then work review comments through the repo review-response workflow.
-
-Switch to **Visual Studio** (2026 or 2022) when you need:
-- WinForms designer workflows
-- Mixed managed/native debugging across interop boundaries
-- Complex legacy .NET Framework project-system scenarios where VS Code is unreliable
-
-See [VS Code Stability Profile](vscode-stability-profile.md) for current workspace guidance.
-
-#### Git Configuration Tips
+## Git Configuration
 
 It is helpful to increase the rename limits for Git to properly detect renames in large commits:
 
@@ -164,6 +164,28 @@ It is helpful to increase the rename limits for Git to properly detect renames i
 git config diff.renameLimit 10000
 git config merge.renameLimit 10000
 ```
+
+### Recommended Global Settings
+
+```powershell
+# Use rebase by default when pulling
+git config --global pull.rebase true
+
+# Prune deleted remote branches on fetch
+git config --global fetch.prune true
+
+# Use diff3 conflict style for better merge conflict resolution
+git config --global merge.conflictstyle diff3
+
+# Enable helpful coloring
+git config --global color.ui auto
+```
+
+### Recommended Git GUI Tools
+
+- **Git GUI** (included with Git) - for commits and basic operations
+- **GitKraken** or **SourceTree** - for visual branch management
+- **Visual Studio** (and **VS Code**) have Git integration
 
 ## Contributing Code
 
@@ -200,7 +222,7 @@ People we know well might be asked to join the core development team. Core devel
 ## Getting Help
 
 - **Documentation**: Check the [docs/](.) folder for additional guides
-- **Issues**: Search or file issues on [GitHub](https://github.com/sillsdev/FieldWorks/issues)
+- **Issues**: Search or file issues on [Jira](https://jira.sil.org/issues/?jql=project%20%3D%20LT)
 - **Wiki**: Historical documentation at [FwDocumentation wiki](https://github.com/sillsdev/FwDocumentation/wiki) (being migrated to this repository)
 
 ## See Also
