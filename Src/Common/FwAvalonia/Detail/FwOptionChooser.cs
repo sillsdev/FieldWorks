@@ -79,8 +79,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		// the one highlighted item.
 		private readonly bool _multiSelect;
 
-		// Opt-in create-on-type, for rows whose context can mint an item from typed text. The
-		// row is identified by REFERENCE: its text changes on every keystroke.
+		// Opt-in create-on-type, for rows whose context can mint an item from typed text. The row
+		// is identified by REFERENCE: its text changes on every keystroke.
 		private const string CreateRowKey = "\u0001create";
 		// The row's CURRENT value, highlighted when the picker opens so the list says what is
 		// already chosen rather than pointing at whatever sorts first. Single-select only.
@@ -516,8 +516,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				return;
 			// The create row commits IMMEDIATELY, in both modes: minting a new item is an action,
 			// not a selection. Riding the multi-select batch would mean tracking it by key, and
-			// its
-			// key changes on every keystroke.
+			// its key changes on every keystroke.
 			if (IsCreateRow(option))
 			{
 				CreateRequested?.Invoke(_createText);
@@ -660,8 +659,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		/// <summary>
 		/// Tells the picker which option is the row's current value, so reopening it highlights
 		/// what is chosen. The host calls this after a COMMITTED change -- a rejected edit must
-		/// not
-		/// move the highlight, so the picker cannot infer it from the commit alone.
+		/// not move the highlight, so the picker cannot infer it from the commit alone.
 		/// </summary>
 		public void SelectByKey(string key)
 		{
@@ -704,9 +702,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 
 		/// <summary>
 		/// Prepends the create row when the picker can create AND the typed text is worth
-		/// creating:
-		/// non-blank, and matching no listed option by name. An exact match offers nothing -- the
-		/// item is already in the list, so creating would duplicate it.
+		/// creating: non-blank, and matching no listed option by name. An exact match offers
+		/// nothing -- the item is already in the list, so creating would duplicate it.
 		/// </summary>
 		private IReadOnlyList<DetailChoiceOption> WithCreateRow(
 			IReadOnlyList<DetailChoiceOption> results, string query)
@@ -771,8 +768,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			}
 
 			// Seen-cache the REAL options only: CommitChecked resolves its batch through it, and
-			// the
-			// synthetic create row must never resolve as a checked member.
+			// the synthetic create row must never resolve as a checked member.
 			RememberSeen(_currentResults);
 			_currentResults = WithCreateRow(_currentResults, query);
 			_list.ItemsSource = _currentResults;

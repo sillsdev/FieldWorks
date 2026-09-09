@@ -20,9 +20,8 @@ namespace FwAvaloniaTests.Detail
 	/// <c>StringSlice</c>, so a plain string row -- including a custom field whose writing-system
 	/// selector is singular -- must render its value with no abbreviation beside it.
 	///
-	/// These tests RENDER through <see cref="DataTree"/> rather than calling
-	/// <see cref="SliceFactory"/> directly, because the gutter decision is the view's: the
-	/// composed
+	/// These tests RENDER through <see cref="DataTree"/> rather than calling <see
+	/// cref="SliceFactory"/> directly, because the gutter decision is the view's: the composed
 	/// model already carries <see cref="DetailField.IsMultiStringRow"/>, and a model-level test
 	/// cannot see the view ignoring it.
 	/// </summary>

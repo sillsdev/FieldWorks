@@ -107,10 +107,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 		/// Environments and infix Positions. The row composes as an ordinary reference vector --
 		/// legacy's launcher IS a chooser -- but its edit context also offers create-on-type,
 		/// because legacy's inline view lets the user type an environment the project does not
-		/// own
-		/// yet and reconciles it (find-or-create) on commit. Editor-string knowledge lives here,
-		/// so
-		/// the composer asks this rather than matching the literal itself.
+		/// own yet and reconciles it (find-or-create) on commit. Editor-string knowledge lives
+		/// here, so the composer asks this rather than matching the literal itself.
 		/// </summary>
 		public const string PhoneEnvReferenceEditor = "phoneenvreference";
 

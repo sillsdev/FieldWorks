@@ -69,8 +69,7 @@ namespace SIL.FieldWorks.XWorks
 
 		/// <summary>
 		/// Toggling Is Abstract Form writes through to the model and commits as ONE undoable
-		/// step,
-		/// staged through the same option path a chooser row uses.
+		/// step, staged through the same option path a chooser row uses.
 		/// </summary>
 		[Test]
 		public void Edit_IsAbstract_CommitsAsOneUndoStep()

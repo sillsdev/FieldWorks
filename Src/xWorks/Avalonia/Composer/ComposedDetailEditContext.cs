@@ -26,8 +26,7 @@ namespace SIL.FieldWorks.XWorks
 		public Func<string, bool> ReferenceAdd;
 		public Func<string, bool> ReferenceRemove;
 		// Set only by a field that can mint its target from typed text (environments); its
-		// presence
-		// is what makes the picker offer a create row.
+		// presence is what makes the picker offer a create row.
 		public Func<string, bool> ReferenceCreate;
 		public Func<int, DetailRichTextValue, bool> ParagraphText;
 		public Func<int, string, bool> ParagraphStyle;
@@ -96,8 +95,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>Whether the row registered a create-from-text handler. Independent of what
-		/// the
-		/// user has typed, because it decides whether the create row exists at all.</summary>
+		/// the user has typed, because it decides whether the create row exists at all.</summary>
 		public bool CanCreateReferenceItem(DetailField field)
 			=> Handler(field)?.ReferenceCreate != null;
 

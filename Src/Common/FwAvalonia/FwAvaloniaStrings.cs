@@ -118,8 +118,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 		/// commits the checked set in one undoable step.</summary>
 		public static string AddSelected => Text("FwAvalonia.AddSelected");
 
-		/// <summary>Create row of a picker that can mint a new item from typed text
-		/// ({0} = the text). Only shown by rows whose edit context supports creation.</summary>
+		/// <summary>Create row of a picker that can mint a new item from typed text ({0} = the
+		/// text). Only shown by rows whose edit context supports creation.</summary>
 		public static string CreateOptionPrompt => Text("FwAvalonia.CreateOptionPrompt");
 
 		/// <summary>Accessible name of the "..." dialog-launcher button.</summary>

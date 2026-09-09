@@ -56,8 +56,7 @@ namespace FwAvaloniaTests.Detail
 
 			// Neither bounds nor a non-empty visual tree prove a template: an untemplated control
 			// still measures to its padding and still has children. The box border is what the
-			// user
-			// clicks, so assert that.
+			// user clicks, so assert that.
 			Assert.That(editor.GetVisualDescendants().OfType<Border>().Any(), Is.True,
 				"an untemplated row draws no box and cannot be clicked");
 		}

@@ -343,8 +343,8 @@ namespace SIL.FieldWorks.XWorks
 				= new Dictionary<(int, string), (string, string)>();
 
 			// Memoized per (class, layout) like the menu bindings above, and invalidated by the
-			// same
-			// rule: a compile keyed on more than (ClassId, LayoutName) must widen this key too.
+			// same rule: a compile keyed on more than (ClassId, LayoutName) must widen this key
+			// too.
 			private readonly Dictionary<(int ClassId, string LayoutName), bool> _itemRootLabelled
 				= new Dictionary<(int, string), bool>();
 
@@ -537,16 +537,14 @@ namespace SIL.FieldWorks.XWorks
 
 			/// <summary>
 			/// Whether the DOMAIN says this field does not apply to this object, which legacy
-			/// asks
-			/// before building a slice (SliceFilter -> ICmObject.IsFieldRelevant). StemName is
-			/// irrelevant on a clitic or particle, Position on a non-infix, InflectionClasses on
-			/// some affix forms.
+			/// asks before building a slice (SliceFilter -> ICmObject.IsFieldRelevant). StemName
+			/// is irrelevant on a clitic or particle, Position on a non-infix, InflectionClasses
+			/// on some affix forms.
 			///
 			/// Not the same as hidden: show-hidden-fields does NOT reveal an irrelevant field, so
 			/// this is checked whatever _showHidden says. Legacy's propsToMonitor set is
-			/// discarded
-			/// -- it exists so a live slice can re-evaluate when the property it depends on
-			/// changes, and this view recomposes on PropChanged instead.
+			/// discarded -- it exists so a live slice can re-evaluate when the property it
+			/// depends on changes, and this view recomposes on PropChanged instead.
 			/// </summary>
 			private bool IsIrrelevantForObject(ViewNode node, ICmObject obj)
 			{
@@ -866,34 +864,30 @@ namespace SIL.FieldWorks.XWorks
 
 			// The node's chooserLink wins; else the row derives its tool like the legacy path.
 			/// <summary>
-			/// The row's list-editor jump links: the layout's authored
-			/// <c>chooserLink type="goto"</c> entries, else a synthesized "Edit the &lt;list&gt;"
-			/// link when the field's possibility list resolves to a list-editor tool.
+			/// The row's list-editor jump links: the layout's authored <c>chooserLink
+			/// type="goto"</c> entries, else a synthesized "Edit the &lt;list&gt;" link when the
+			/// field's possibility list resolves to a list-editor tool.
 			///
 			/// APPROVED DIVERGENCE (approved by Zachary Burnham, 2026-09-02) -- the synthesized
 			/// fallback is deliberately BROADER than legacy, on two axes:
 			///
 			/// Trigger: legacy synthesizes a chooserInfo only for <c>editor="autoCustom"</c>
-			/// custom-list
-			/// reference fields (<c>ReallySimpleListChooser.GenerateChooserInfoForCustomNode</c>,
+			/// custom-list reference fields
+			/// (<c>ReallySimpleListChooser.GenerateChooserInfoForCustomNode</c>,
 			/// FWR-1187);
 			/// every other row shows a jump link only when the layout authors one. This fallback
-			/// applies to
-			/// ANY possibility-list chooser row with no authored link, so rows legacy leaves
-			/// linkless --
-			/// Morph Type among them, whose part authors only <c>chooserInfo title=</c> -- gain
-			/// one.
+			/// applies to ANY possibility-list chooser row with no authored link, so rows legacy
+			/// leaves linkless -- Morph Type among them, whose part authors only <c>chooserInfo
+			/// title=</c> -- gain one.
 			///
 			/// Surface: legacy puts the link INSIDE the chooser dialog as a LinkLabel; the row's
-			/// gear
-			/// promotes it to the row itself, reachable without opening the chooser.
+			/// gear promotes it to the row itself, reachable without opening the chooser.
 			///
 			/// Kept because the jump is useful on every list-backed row and the narrower legacy
-			/// rule
-			/// reads as an accident of which parts happened to author a link, not a decision. The
-			/// dispatch path is unchanged (<c>FollowLink</c>), so the jump behaves as legacy's
-			/// does.
-			/// Recorded so the next reader does not "fix" it back to the legacy trigger.
+			/// rule reads as an accident of which parts happened to author a link, not a
+			/// decision. The dispatch path is unchanged (<c>FollowLink</c>), so the jump behaves
+			/// as legacy's does. Recorded so the next reader does not "fix" it back to the legacy
+			/// trigger.
 			/// </summary>
 			private IReadOnlyList<DetailChooserLink> CreateChooserLinks(ViewNode node,
 				ICmPossibilityList list = null)
@@ -2570,8 +2564,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 
 			// A boolean field (legacy CheckBoxSlice). The row's label is the whole caption, so
-			// the
-			// row carries no options; the state stages through the shared option path.
+			// the row carries no options; the state stages through the shared option path.
 			private void WalkBooleanField(ViewNode node, ICmObject obj, int depth, int flid)
 			{
 				var hvo = obj.Hvo;
@@ -2587,8 +2580,7 @@ namespace SIL.FieldWorks.XWorks
 				HandlerFor(stableId).Option = key =>
 				{
 					// Only the two literals are accepted; anything else is rejected WITHOUT
-					// opening
-					// the session, like a chooser key outside its list.
+					// opening the session, like a chooser key outside its list.
 					if (!bool.TryParse(key, out var value))
 						return false;
 					_sda.SetBoolean(hvo, flid, value);
@@ -3087,10 +3079,9 @@ namespace SIL.FieldWorks.XWorks
 				// A sequence sitting directly under a section header that already names it (the
 				// Allomorphs/Variants shape: a summary slice wrapping an <indent> with one seq)
 				// would otherwise emit a second banner plus a numbered header per item, above
-				// item
-				// rows their own layouts already label. Both are duplicates, and with no label
-				// authored on the part ref or the <seq> the banner falls back to the raw model
-				// field name, which bypasses StringTable and cannot be translated.
+				// item rows their own layouts already label. Both are duplicates, and with no
+				// label authored on the part ref or the <seq> the banner falls back to the raw
+				// model field name, which bypasses StringTable and cannot be translated.
 				var flatten = !isSenses
 					&& string.IsNullOrEmpty(node.Label)
 					&& FollowsEnclosingHeader(depth)
@@ -3107,8 +3098,7 @@ namespace SIL.FieldWorks.XWorks
 					if (flatten)
 					{
 						// The item's own labelled root row IS the item row, so it takes the depth
-						// the
-						// suppressed banner would have used.
+						// the suppressed banner would have used.
 						DescendIntoAtChildDepth(node, item, depth);
 						continue;
 					}
@@ -3246,8 +3236,7 @@ namespace SIL.FieldWorks.XWorks
 				=> DescendIntoAtChildDepth(node, target, depth + 1);
 
 			// The descent, taking the depth the target's own rows land at rather than the
-			// caller's.
-			// A flattened sequence needs them one level shallower than caller-plus-one.
+			// caller's. A flattened sequence needs them one level shallower than caller-plus-one.
 			private void DescendIntoAtChildDepth(ViewNode node, ICmObject target, int childDepth)
 			{
 				var layoutName = string.IsNullOrEmpty(node.TargetLayout) ? "Normal" : node.TargetLayout;

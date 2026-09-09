@@ -15,15 +15,14 @@ namespace SIL.FieldWorks.XWorks
 {
 	/// <summary>
 	/// The Environments row of an allomorph, plus the editing and refresh contracts the row
-	/// shares
-	/// with every other composed row.
+	/// shares with every other composed row.
 	///
 	/// Legacy's row is BOTH: PhoneEnvReferenceLauncher opens a SimpleListChooser over the
 	/// project's existing environments, and its inline PhoneEnvReferenceView lets the user type a
 	/// new environment string that ConnectToRealCache reconciles into the project
-	/// (find-or-create,
-	/// matching with spaces stripped). So the Avalonia row composes as an ordinary reference
-	/// vector -- the chooser half -- whose edit context also offers IReferenceItemCreation.
+	/// (find-or-create, matching with spaces stripped). So the Avalonia row composes as an
+	/// ordinary reference vector -- the chooser half -- whose edit context also offers
+	/// IReferenceItemCreation.
 	///
 	/// Both data states are covered: the empty project and the populated one compose through
 	/// different branches, so a fixture without environments can pass for the wrong reason.
@@ -171,8 +170,8 @@ namespace SIL.FieldWorks.XWorks
 		/// vernacular script.
 		///
 		/// The wrong writing system is invisible in a view that renders every reference-vector
-		/// item in one font. It shows up in a view that honours each string's own writing
-		/// system, where two identical-looking environments draw with different fonts.
+		/// item in one font. It shows up in a view that honours each string's own writing system,
+		/// where two identical-looking environments draw with different fonts.
 		/// </summary>
 		[Test]
 		public void Environments_CreateFromTypedText_TagsTheStringVernacular()
@@ -190,9 +189,9 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
-		/// A malformed string is still created and attached. Legacy's ConnectToRealCache
-		/// applies no validity filter when minting -- CheckConstraints only drives the squiggly
-		/// line -- so rejecting it here would silently discard what the user typed.
+		/// A malformed string is still created and attached. Legacy's ConnectToRealCache applies
+		/// no validity filter when minting -- CheckConstraints only drives the squiggly line --
+		/// so rejecting it here would silently discard what the user typed.
 		/// </summary>
 		[Test]
 		public void Environments_CreateFromMalformedText_StillCreates_LikeLegacy()
@@ -235,9 +234,8 @@ namespace SIL.FieldWorks.XWorks
 
 		/// <summary>
 		/// Composing is a READ. CheckConstraints can mint a ConstraintFailure annotation and
-		/// adjust
-		/// the stored string, so calling it the wrong way would have compose writing to the
-		/// model.
+		/// adjust the stored string, so calling it the wrong way would have compose writing to
+		/// the model.
 		/// </summary>
 		[Test]
 		public void Compose_Environments_DoesNotWrite_WhenAnnotatingAnInvalidItem()
@@ -348,8 +346,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// An allomorph added outside the detail view reaches the view through the shared
 		/// PropChanged bus, and the re-composed model gains its row -- rows do not live-update,
-		/// the
-		/// re-show does.
+		/// the re-show does.
 		/// </summary>
 		[Test]
 		public void Refresh_AllomorphSection_ReflectsExternalPropChanged()

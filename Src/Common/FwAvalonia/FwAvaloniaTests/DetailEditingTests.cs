@@ -514,8 +514,8 @@ namespace FwAvaloniaTests
 		/// <summary>
 		/// A gesture that ends outside the view delivers no release here. The held re-show is not
 		/// lost -- the next gesture's release delivers it. Nothing that matters is stale
-		/// meanwhile:
-		/// the commit already happened, so the values on screen are the committed ones.
+		/// meanwhile: the commit already happened, so the values on screen are the committed
+		/// ones.
 		///
 		/// PointerCaptureLostEvent is NOT the net for this. It is a Direct routed event, so it
 		/// fires on no Bubble registration and does not route up from the descendant that lost
@@ -735,8 +735,8 @@ namespace FwAvaloniaTests
 
 		/// <summary>
 		/// An EMPTY chooser must still be clickable. It has no text to wrap around, so hugging
-		/// its content leaves a target a few pixels each way -- findable only by hovering for
-		/// the grey.
+		/// its content leaves a target a few pixels each way -- findable only by hovering for the
+		/// grey.
 		/// </summary>
 		[AvaloniaTest]
 		public void Chooser_WithNoValue_StillFillsItsCell_SoItCanBeClicked()
@@ -1015,8 +1015,8 @@ namespace FwAvaloniaTests
 
 		/// <summary>
 		/// An item the domain flagged is annotated in place, not hidden or dropped: legacy STORES
-		/// an invalid environment and marks it with a squiggly. Colour is not the only cue --
-		/// an underline and the automation help text carry it for anyone who cannot see red.
+		/// an invalid environment and marks it with a squiggly. Colour is not the only cue -- an
+		/// underline and the automation help text carry it for anyone who cannot see red.
 		/// </summary>
 		[AvaloniaTest]
 		public void ReferenceVector_AnnotatesAnItemTheDomainReportsInvalid()

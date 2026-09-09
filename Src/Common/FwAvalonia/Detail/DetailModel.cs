@@ -72,11 +72,10 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		/// <summary>
 		/// A boolean field (legacy <c>checkbox</c>/<c>checkboxwithrefresh</c> editors,
 		/// <c>CheckBoxSlice</c>) rendered as a single checkbox in the value column. The row's
-		/// label
-		/// is the whole caption, as in legacy, so no yes/no text is drawn and the row carries no
-		/// options: <see cref="DetailField.SelectedOptionKey"/> is the literal "true" or "false",
-		/// and the toggle stages through the same
-		/// <see cref="IDetailEditContext.TrySetOption"/> path a chooser uses.
+		/// label is the whole caption, as in legacy, so no yes/no text is drawn and the row
+		/// carries no options: <see cref="DetailField.SelectedOptionKey"/> is the literal "true"
+		/// or "false", and the toggle stages through the same <see
+		/// cref="IDetailEditContext.TrySetOption"/> path a chooser uses.
 		/// </summary>
 		Boolean
 	}
@@ -1443,9 +1442,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 
 		/// <summary>
 		/// The domain's explanation of why this item is invalid, or null when it is fine. Set
-		/// only
-		/// for a class that overrides ICmObject.CheckConstraints -- PhEnvironment and the two
-		/// adhoc co-prohibitions today; everything else inherits the no-op and stays null.
+		/// only for a class that overrides ICmObject.CheckConstraints -- PhEnvironment and the
+		/// two adhoc co-prohibitions today; everything else inherits the no-op and stays null.
 		///
 		/// The item is DISPLAYED, not rejected: legacy stores an invalid environment and marks it
 		/// with a squiggly rather than refusing it, so this annotates what is already there.
@@ -1625,14 +1623,11 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		/// non-multistring row.
 		///
 		/// It is the row's IDENTITY, not one feature's switch, and legacy keys both of that
-		/// slice's
-		/// distinguishing behaviors on it: the in-string context menu adds the shared
+		/// slice's distinguishing behaviors on it: the in-string context menu adds the shared
 		/// <c>mnuDataTree-MultiStringSlice</c> group (with the Writing Systems submenu), and the
-		/// view
-		/// draws the per-writing-system abbreviation gutter. A <c>StringSlice</c> row gets
-		/// neither.
-		/// Note that value count is NOT the test: a multistring row with one configured writing
-		/// system still labels it.
+		/// view draws the per-writing-system abbreviation gutter. A <c>StringSlice</c> row gets
+		/// neither. Note that value count is NOT the test: a multistring row with one configured
+		/// writing system still labels it.
 		/// </summary>
 		public bool IsMultiStringRow { get; set; }
 

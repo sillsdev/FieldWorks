@@ -1158,8 +1158,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 					// The row now has a value of its own to hit, so it stops filling the cell.
 					ApplyEmptyValueWidth();
 					// Only a COMMITTED change moves the picker's highlight; a rejected edit
-					// leaves
-					// the list still pointing at the value the row actually holds.
+					// leaves the list still pointing at the value the row actually holds.
 					picker.SelectByKey(option.Key);
 				}
 
@@ -1320,13 +1319,12 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 	/// colour, underlined, with the explanation as its tooltip. It is still a normal item --
 	/// legacy STORES an invalid environment and marks it rather than refusing it.
 	///
-	/// CREATE-ON-TYPE (opt-in): a row whose edit context implements
-	/// <see cref="IReferenceItemCreation"/> for it also lets the user mint a target object by
-	/// typing into the picker's filter box -- the list offers a create row when the text matches
+	/// CREATE-ON-TYPE (opt-in): a row whose edit context implements <see
+	/// cref="IReferenceItemCreation"/> for it also lets the user mint a target object by typing
+	/// into the picker's filter box -- the list offers a create row when the text matches
 	/// nothing. This is what makes an environments row reach an environment the project does not
 	/// own yet, which the picker alone cannot do. Every other vector row passes allowCreate:
-	/// false
-	/// and is unaffected.
+	/// false and is unaffected.
 	/// </summary>
 	public sealed class FwReferenceVectorField : StackPanel, IHoverAffordanceProvider, IDisposable
 	{
@@ -1445,13 +1443,12 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			// (FwChooserField) stay single-select.
 			//
 			// Current members ride as UNAVAILABLE keys, not as checked ones: this picker adds,
-			// and
-			// removal is the per-item right-click. That is an approved divergence from legacy's
-			// set-the-membership chooser, deliberately: "+" means add, and the row owns removal.
-			// Create-on-type is opt-in per row: only a context that can mint the target object
-			// offers it (environments find-or-create a PhEnvironment from the typed string).
-			// Every
-			// other vector row passes allowCreate: false and behaves exactly as before.
+			// and removal is the per-item right-click. That is an approved divergence from
+			// legacy's set-the-membership chooser, deliberately: "+" means add, and the row owns
+			// removal. Create-on-type is opt-in per row: only a context that can mint the target
+			// object offers it (environments find-or-create a PhEnvironment from the typed
+			// string). Every other vector row passes allowCreate: false and behaves exactly as
+			// before.
 			var creation = editContext as IReferenceItemCreation;
 			var canCreate = creation != null && creation.CanCreateReferenceItem(field);
 			var picker = new FwOptionChooser(field.Options, field.SearchOptions, automationId,
@@ -1481,8 +1478,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				addButton.Focus();
 			};
 			// The create row commits on its own, outside the checked batch: it is one new item,
-			// and
-			// a failed create leaves the row untouched rather than completing the gesture.
+			// and a failed create leaves the row untouched rather than completing the gesture.
 			Action<string> created = text =>
 			{
 				var added = canCreate && creation.TryCreateAndAddReferenceItem(field, text);
@@ -1632,9 +1628,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 	}
 	/// <summary>
 	/// A boolean row (legacy <c>CheckBoxSlice</c>): one checkbox in the value column, with the
-	/// row's own label as its caption, so no yes/no text is drawn. The toggle stages through
-	/// <see cref="IDetailEditContext.TrySetOption"/> as the literal "true"/"false" -- a boolean
-	/// is a
+	/// row's own label as its caption, so no yes/no text is drawn. The toggle stages through <see
+	/// cref="IDetailEditContext.TrySetOption"/> as the literal "true"/"false" -- a boolean is a
 	/// two-state choice, so it reuses the option path rather than widening the edit seam. A null
 	/// edit context yields a read-only checkbox, like every other row.
 	///
@@ -1651,8 +1646,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		private readonly DetailField _field;
 		private readonly IDetailEditContext _editContext;
 		// Guards the programmatic IsChecked assignment in the constructor from being read back as
-		// a
-		// user toggle and staged as an edit.
+		// a user toggle and staged as an edit.
 		private bool _wiring;
 		private readonly Action _gestureCompleted;
 
@@ -1694,15 +1688,13 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			if (staged)
 			{
 				// Only a successful toggle completes the gesture; a refused one leaves the
-				// session
-				// untouched rather than committing a change the model rejected.
+				// session untouched rather than committing a change the model rejected.
 				_gestureCompleted?.Invoke();
 				return;
 			}
 
 			// The edit was refused; put the box back rather than showing a state the model does
-			// not
-			// have.
+			// not have.
 			_wiring = true;
 			IsChecked = !(IsChecked == true);
 			_wiring = false;

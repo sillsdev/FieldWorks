@@ -803,8 +803,8 @@ namespace FwAvaloniaTests
 
 		#region Create-on-type (P7c)
 
-		// Environments is the case this exists for. Most of these pin the other half: that
-		// every OTHER chooser row is unaffected.
+		// Environments is the case this exists for. Most of these pin the other half: that every
+		// OTHER chooser row is unaffected.
 		private static (FwOptionChooser picker, Window window, List<string> created,
 			List<DetailChoiceOption> committed) ShowCreatable(bool multiSelect = false)
 		{

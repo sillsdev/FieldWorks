@@ -319,17 +319,14 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		// True between a pointer press and its release anywhere in this view.
 		private bool _pointerGestureActive;
 		// Pickers opened FROM this view. Their flyouts anchor to a control inside it, so a
-		// rebuild
-		// destroys the anchor and the picker vanishes mid-choice.
+		// rebuild destroys the anchor and the picker vanishes mid-choice.
 		private int _openPickers;
 		private bool _editCompletedHeld;
 
 		/// <summary>
 		/// Raises the completion the host re-shows on -- unless a pointer gesture is in flight,
-		/// in
-		/// which case it waits for the release. The commit itself is NOT delayed; only the
-		/// re-show
-		/// is, because rebuilding mid-click destroys the control the press landed on.
+		/// in which case it waits for the release. The commit itself is NOT delayed; only the
+		/// re-show is, because rebuilding mid-click destroys the control the press landed on.
 		/// </summary>
 		private void RaiseOrDeferEditCompleted()
 		{
@@ -343,8 +340,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		}
 
 		// One re-show per gesture however many commits it produced: the focus-loss autosave of
-		// the
-		// field being left, and any commit by the control being clicked, coalesce into this.
+		// the field being left, and any commit by the control being clicked, coalesce into this.
 		private void EndPointerGesture()
 		{
 			if (!_pointerGestureActive)

@@ -15,14 +15,12 @@ namespace SIL.FieldWorks.XWorks
 	/// <summary>
 	/// Composition of the entry-level Allomorphs section (LexEntry.fwlayout's
 	/// AlternateFormsSection summary header over the AlternateForms owning sequence), covering
-	/// the
-	/// its structural and label parity with legacy.
+	/// the its structural and label parity with legacy.
 	///
 	/// Legacy nests three levels -- the "Allomorphs" banner, the per-allomorph row labelled by
-	/// its
-	/// concrete type, then that allomorph's fields. These tests assert the composed model matches
-	/// that shape, so the extra sequence banner and the raw model-name item labels the composer
-	/// currently emits are failures rather than accepted behavior.
+	/// its concrete type, then that allomorph's fields. These tests assert the composed model
+	/// matches that shape, so the extra sequence banner and the raw model-name item labels the
+	/// composer currently emits are failures rather than accepted behavior.
 	/// </summary>
 	[TestFixture]
 	public class AllomorphSectionCompositionTests : MemoryOnlyBackendProviderTestBase
@@ -130,8 +128,8 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
-		/// Each allomorph row is labelled by its concrete type, from the item layout's own
-		/// label, rather than a numbered section-plus-index string.
+		/// Each allomorph row is labelled by its concrete type, from the item layout's own label,
+		/// rather than a numbered section-plus-index string.
 		/// </summary>
 		[Test]
 		public void Compose_AllomorphItems_UseTypeLabels_WhenSectionHasStemAndAffix()
@@ -150,8 +148,8 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
-		/// The rows a user edits compose as real editors carrying real values, not as the
-		/// labeled Unsupported worklist row.
+		/// The rows a user edits compose as real editors carrying real values, not as the labeled
+		/// Unsupported worklist row.
 		/// </summary>
 		[Test]
 		public void Compose_StemAllomorph_RendersFormAndMorphType_NotUnsupported()
@@ -231,8 +229,7 @@ namespace SIL.FieldWorks.XWorks
 
 		/// <summary>
 		/// The domain decides whether a field applies to THIS object, and the composer must ask
-		/// --
-		/// legacy does, through SliceFilter -> ICmObject.IsFieldRelevant.
+		/// -- legacy does, through SliceFilter -> ICmObject.IsFieldRelevant.
 		/// MoStemAllomorph.IsFieldRelevant returns false for StemName unless the morph type is a
 		/// root/stem/phrase kind, so a clitic or particle allomorph has no Stem Allomorph Label
 		/// row at all.

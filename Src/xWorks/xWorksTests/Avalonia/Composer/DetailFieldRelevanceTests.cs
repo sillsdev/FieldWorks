@@ -38,11 +38,9 @@ namespace SIL.FieldWorks.XWorks
 		///
 		/// NOT relevance coverage, despite living here. Verified by removing the relevance gate:
 		/// this still passes, because the layout already excludes Position for a non-infix
-		/// through
-		/// its own choice/where guidequals filter, so IsFieldRelevant is never reached. The row
-		/// is
-		/// gated twice and this pins the outer gate -- kept because the negative case was
-		/// otherwise untested, and labelled so nobody reads it as covering the domain rule.
+		/// through its own choice/where guidequals filter, so IsFieldRelevant is never reached.
+		/// The row is gated twice and this pins the outer gate -- kept because the negative case
+		/// was otherwise untested, and labelled so nobody reads it as covering the domain rule.
 		/// MoAffixAllomorph.Position's relevance rule therefore has NO composer test that bites.
 		/// </summary>
 		[Test]
@@ -110,8 +108,7 @@ namespace SIL.FieldWorks.XWorks
 
 		/// <summary>
 		/// MoStemMsa.InflectionClass is irrelevant until a part of speech is chosen -- there is
-		/// no
-		/// inflection class to pick without one. This one is NOT an allomorph field; it is the
+		/// no inflection class to pick without one. This one is NOT an allomorph field; it is the
 		/// Grammatical Info section, which is why the gate lives in Walk rather than in the
 		/// allomorph path.
 		/// </summary>
