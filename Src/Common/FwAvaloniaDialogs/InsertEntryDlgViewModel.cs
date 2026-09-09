@@ -410,7 +410,7 @@ namespace FwAvaloniaDialogs
 		{
 			if (string.IsNullOrEmpty(key) || _morphTypes.Count == 0)
 				return;
-			// The picker owns highlight identity; every consumer shares this one path.
+			// The picker owns highlight identity.
 			MorphTypePicker.SelectByKey(key);
 		}
 

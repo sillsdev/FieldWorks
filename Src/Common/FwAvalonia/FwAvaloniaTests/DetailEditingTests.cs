@@ -427,10 +427,10 @@ namespace FwAvaloniaTests
 		/// Clicking one row while another holds a staged edit must not re-show the view
 		/// mid-click.
 		///
-		/// Found in the app: with a custom field edited, clicking the Is Abstract checkbox only
-		/// focused it -- a second click was needed to toggle. The press moved focus, the autosave
-		/// committed, the host rebuilt these controls, and the release then landed on a detached
-		/// control. Typing nothing first made it work, because no session was open to commit.
+		/// The press moves focus, the autosave commits, the host rebuilds these controls, and the
+		/// release lands on a detached control -- so the click does nothing and a second one is
+		/// needed. Only an open session triggers it, so an edited row behaves differently from an
+		/// untouched one.
 		/// </summary>
 		[AvaloniaTest]
 		public void AutoSave_DuringAPointerGesture_HoldsTheReShowUntilTheRelease()
@@ -550,10 +550,8 @@ namespace FwAvaloniaTests
 		/// A click that OPENS a picker is not finished when the button is released -- the user is
 		/// still choosing. The view stays busy until the picker closes.
 		///
-		/// Found in the app: with a field edited, clicking "+" showed the dropdown and then it
-		/// vanished. Releasing the held re-show at the pointer release rebuilt the view, and
-		/// these
-		/// flyouts anchor to a control INSIDE it, so the anchor went and took the picker with it.
+		/// Releasing the held re-show at the pointer release rebuilds the view, and these flyouts
+		/// anchor to a control INSIDE it -- the anchor goes, and takes the picker with it.
 		/// </summary>
 		[AvaloniaTest]
 		public void AnOpenPicker_KeepsTheViewBusy_UntilItCloses()
@@ -586,10 +584,8 @@ namespace FwAvaloniaTests
 		}
 
 		/// <summary>
-		/// The per-item Remove menu is a popup like any other. Found in the app right after the
-		/// picker fix: right-clicking an environment after typing showed Remove, which then
-		/// vanished. Every popup anchored in the view has to report, not just the ones that look
-		/// like pickers.
+		/// The per-item Remove menu is a popup like any other: every popup anchored in the view
+		/// has to report itself, not only the ones that look like pickers.
 		/// </summary>
 		[AvaloniaTest]
 		public void TheItemRemoveMenu_AlsoKeepsTheViewBusy()
@@ -739,10 +735,8 @@ namespace FwAvaloniaTests
 
 		/// <summary>
 		/// An EMPTY chooser must still be clickable. It has no text to wrap around, so hugging
-		/// its
-		/// content collapsed it to a few pixels each way -- the developer found the Stem
-		/// Allomorph
-		/// Label picker only by noticing a thin strip that greyed on hover.
+		/// its content leaves a target a few pixels each way -- findable only by hovering for
+		/// the grey.
 		/// </summary>
 		[AvaloniaTest]
 		public void Chooser_WithNoValue_StillFillsItsCell_SoItCanBeClicked()

@@ -95,13 +95,11 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// The row is a chooser AND create-capable, in BOTH data states.
 		///
-		/// This test previously asserted the OPPOSITE -- that the row must not be a
-		/// ReferenceVector. That was wrong. Legacy's PhoneEnvReferenceLauncher opens a
-		/// SimpleListChooser over the existing environments, so the chooser IS parity. What
-		/// legacy
-		/// also has, and a chooser alone cannot give, is typing a NEW environment string that
-		/// ConnectToRealCache reconciles into the project. Asserting the negative drove an
-		/// implementation that deleted the chooser; it was reverted.
+		/// Legacy's PhoneEnvReferenceLauncher opens a SimpleListChooser over the existing
+		/// environments, so the chooser IS parity rather than a stand-in for it. What a chooser
+		/// alone cannot give is typing a NEW environment string, which ConnectToRealCache
+		/// reconciles into the project. The row has to be both: asserting it is not a chooser
+		/// would drive an implementation that drops half of what legacy does.
 		/// </summary>
 		[Test]
 		public void Compose_Environments_IsChooserRowSupportingCreate()
@@ -130,7 +128,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
-		/// P8. A typed string find-or-creates: matching an existing environment attaches THAT one
+		/// A typed string find-or-creates: matching an existing environment attaches THAT one
 		/// rather than minting a duplicate, and the match strips spaces exactly as legacy's
 		/// ConnectToRealCache does, so "/ # _" and "/#_" are one environment.
 		/// </summary>
@@ -151,7 +149,7 @@ namespace SIL.FieldWorks.XWorks
 				"and it was attached to the allomorph");
 		}
 
-		/// <summary>P8. A string the project does not have yet is created and attached.</summary>
+		/// <summary>A string the project does not have yet is created and attached.</summary>
 		[Test]
 		public void Environments_CreateFromTypedText_CreatesWhenTheProjectHasNoMatch()
 		{
@@ -172,9 +170,9 @@ namespace SIL.FieldWorks.XWorks
 		/// PhoneEnvReferenceView does (m_wsVern). An environment string is phonology in the
 		/// vernacular script.
 		///
-		/// Found by the developer, who noticed two visually identical environments rendering with
-		/// different underscores in the legacy view: one typed in legacy, one created here with
-		/// the analysis writing system, so the two picked up different fonts.
+		/// The wrong writing system is invisible in a view that renders every reference-vector
+		/// item in one font. It shows up in a view that honours each string's own writing
+		/// system, where two identical-looking environments draw with different fonts.
 		/// </summary>
 		[Test]
 		public void Environments_CreateFromTypedText_TagsTheStringVernacular()
@@ -192,7 +190,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
-		/// P9. A malformed string is still created and attached. Legacy's ConnectToRealCache
+		/// A malformed string is still created and attached. Legacy's ConnectToRealCache
 		/// applies no validity filter when minting -- CheckConstraints only drives the squiggly
 		/// line -- so rejecting it here would silently discard what the user typed.
 		/// </summary>
@@ -304,10 +302,9 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
-		/// P7b's remaining gap: a project with NO environments keeps the jump too. That state
-		/// used
-		/// to fall to the read-only row, which carries no chooser links, so it was the one state
-		/// where the user could not reach the Environments tool at all.
+		/// A project with NO environments keeps the jump too. That is the state where the
+		/// Environments tool is most needed and least reachable: a row with no chooser links
+		/// leaves no way to get there.
 		/// </summary>
 		[Test]
 		public void Compose_Environments_KeepsTheJump_WhenTheProjectHasNoEnvironments()

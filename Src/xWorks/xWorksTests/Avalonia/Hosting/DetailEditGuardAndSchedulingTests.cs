@@ -449,10 +449,9 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// A click in flight must hold the refresh, exactly as an open session does.
 		///
-		/// Found in the app: with a field edited, clicking a checkbox, the "+" or the gear only
-		/// focused it. LcmDetailEditSession.Commit clears IsOpen BEFORE EndUndoTask raises
-		/// PropChanged, so the commit's own notification recomposed while the click was still in
-		/// flight, and the release reached a control that had been rebuilt away.
+		/// LcmDetailEditSession.Commit clears IsOpen BEFORE EndUndoTask raises PropChanged, so
+		/// without the hold the commit's own notification recomposes while a click is still in
+		/// flight, and the release reaches a control that has been rebuilt away.
 		/// </summary>
 		[Test]
 		public void PropChanged_WhileBusy_HoldsTheRefresh_AndReleaseDeliversItOnce()

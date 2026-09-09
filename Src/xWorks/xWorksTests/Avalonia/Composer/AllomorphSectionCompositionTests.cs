@@ -16,7 +16,7 @@ namespace SIL.FieldWorks.XWorks
 	/// Composition of the entry-level Allomorphs section (LexEntry.fwlayout's
 	/// AlternateFormsSection summary header over the AlternateForms owning sequence), covering
 	/// the
-	/// structural and label parity items of the LT-22672 test plan.
+	/// its structural and label parity with legacy.
 	///
 	/// Legacy nests three levels -- the "Allomorphs" banner, the per-allomorph row labelled by
 	/// its
@@ -237,8 +237,8 @@ namespace SIL.FieldWorks.XWorks
 		/// root/stem/phrase kind, so a clitic or particle allomorph has no Stem Allomorph Label
 		/// row at all.
 		///
-		/// Found by the developer: legacy showed the row on one allomorph of four, the New UI on
-		/// all four. The four differed only by morph type.
+		/// Without the check the row composes on every allomorph, which is easy to miss:
+		/// allomorphs that differ only by morph type otherwise look alike.
 		/// </summary>
 		[Test]
 		public void Compose_StemName_OnlyWhereTheDomainSaysTheFieldApplies()

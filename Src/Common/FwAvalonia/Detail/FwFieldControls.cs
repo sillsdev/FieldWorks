@@ -1447,7 +1447,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			// Current members ride as UNAVAILABLE keys, not as checked ones: this picker adds,
 			// and
 			// removal is the per-item right-click. That is an approved divergence from legacy's
-			// set-the-membership chooser -- see the class doc for the reason and approver.
+			// set-the-membership chooser, deliberately: "+" means add, and the row owns removal.
 			// Create-on-type is opt-in per row: only a context that can mint the target object
 			// offers it (environments find-or-create a PhEnvironment from the typed string).
 			// Every
