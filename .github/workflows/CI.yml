@@ -87,7 +87,7 @@ jobs:
         id: test
         shell: powershell
         run: |
-          .\test.ps1 -Configuration Debug -NoBuild -Coverage -TestFilter 'TestCategory!=LongRunning&TestCategory!=ByHand&TestCategory!=SmokeTest&TestCategory!=DesktopRequired'
+          .\test.ps1 -Configuration Debug -NoBuild -Coverage -TestFilter 'TestCategory!=DesktopRequired'
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
       - name: Upload coverage to Codecov
