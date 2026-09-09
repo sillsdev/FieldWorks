@@ -1101,7 +1101,12 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			_selectedKey = field.SelectedOptionKey;
 			Padding = FwAvaloniaDensity.EditorPadding;
 			MinHeight = 0;
-			HorizontalAlignment = HorizontalAlignment.Left;
+			// Fill the value cell, as legacy's launcher does: an EMPTY chooser has no text to
+			// wrap, so hugging content collapsed it to a sliver. The text still sits left.
+			HorizontalAlignment = HorizontalAlignment.Stretch;
+			VerticalAlignment = VerticalAlignment.Stretch;
+			HorizontalContentAlignment = HorizontalAlignment.Left;
+			VerticalContentAlignment = VerticalAlignment.Center;
 			Background = FwAvaloniaDensity.TransparentBrush;
 			BorderThickness = new Thickness(0);
 			_valueText = new TextBlock

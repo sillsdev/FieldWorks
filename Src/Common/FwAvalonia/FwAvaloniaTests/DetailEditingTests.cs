@@ -737,6 +737,36 @@ namespace FwAvaloniaTests
 				"the current morph type is highlighted, not the first in the list");
 		}
 
+		/// <summary>
+		/// An EMPTY chooser must still be clickable. It has no text to wrap around, so hugging
+		/// its
+		/// content collapsed it to a few pixels each way -- the developer found the Stem
+		/// Allomorph
+		/// Label picker only by noticing a thin strip that greyed on hover.
+		/// </summary>
+		[AvaloniaTest]
+		public void Chooser_WithNoValue_StillFillsItsCell_SoItCanBeClicked()
+		{
+			var field = new DetailField("LexEntry/x/#0", "Stem Allomorph Label", "StemName", null,
+				DetailFieldKind.Chooser, EditorClassification.Known, "StemName", null,
+				HostRouting.Inherit, null,
+				new List<DetailChoiceOption> { new DetailChoiceOption("s1", "Stem1") },
+				null); // no value selected -- the empty case
+			var chooser = new FwChooserField(field, "StemName", new FakeDetailEditContext());
+			var host = new Border { Child = chooser, Width = 300, Height = 40 };
+			var window = new Window { Content = host, Width = 360, Height = 120 };
+			window.Show();
+			Dispatcher.UIThread.RunJobs();
+			window.UpdateLayout();
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(chooser.Bounds.Width, Is.GreaterThan(200),
+				"an empty chooser fills the value cell; a few pixels of padding is not a target "
+				+ "a user can find, let alone hit");
+			Assert.That(chooser.Bounds.Height, Is.GreaterThan(10),
+				"and it fills the row vertically too -- the strip was thin in BOTH directions");
+		}
+
 		// selection must map back by INDEX, never by name, or the wrong option's key is staged.
 		[AvaloniaTest]
 		public void Chooser_DuplicateDisplayNames_StagesTheOptionAtTheSelectedIndex()
