@@ -160,6 +160,13 @@ int main(int argc, const char* argv[])
 		retval = 1;
 	}
 	printf("DEBUG: unit++ main end (retval=%d)\n", retval); fflush(stdout);
+#if defined(UNITPP_WINDOWS)
+	// The OS text-input stack loaded by text shaping never finishes teardown without a
+	// message pump, so end the process once tests and GlobalTeardown have run. Static
+	// destructors are skipped.
+	fflush(NULL);
+	::TerminateProcess(::GetCurrentProcess(), static_cast<UINT>(retval));
+#endif
 	return retval;
 }
 
