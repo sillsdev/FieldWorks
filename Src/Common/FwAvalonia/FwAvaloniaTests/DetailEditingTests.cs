@@ -767,6 +767,33 @@ namespace FwAvaloniaTests
 				"and it fills the row vertically too -- the strip was thin in BOTH directions");
 		}
 
+		/// <summary>
+		/// A chooser that HAS a value is its text, and that is target enough. Filling the cell
+		/// there only spreads the hover highlight past the value and the gear, which reads wrong.
+		/// Only the empty row stretches.
+		/// </summary>
+		[AvaloniaTest]
+		public void Chooser_WithAValue_HugsIt_RatherThanFillingTheCell()
+		{
+			var field = new DetailField("LexEntry/x/#0", "Morph Type", "MorphType", null,
+				DetailFieldKind.Chooser, EditorClassification.Known, "MorphType", null,
+				HostRouting.Inherit, null,
+				new List<DetailChoiceOption> { new DetailChoiceOption("s1", "stem") },
+				"s1"); // a value IS selected
+			var chooser = new FwChooserField(field, "MorphType", new FakeDetailEditContext());
+			var host = new Border { Child = chooser, Width = 300, Height = 40 };
+			var window = new Window { Content = host, Width = 360, Height = 120 };
+			window.Show();
+			Dispatcher.UIThread.RunJobs();
+			window.UpdateLayout();
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(chooser.Bounds.Width, Is.LessThan(200),
+				"it wraps its value rather than spanning the cell");
+			Assert.That(chooser.Bounds.Width, Is.GreaterThan(10),
+				"but the value is still a real target -- this is not the collapsed case");
+		}
+
 		// selection must map back by INDEX, never by name, or the wrong option's key is staged.
 		[AvaloniaTest]
 		public void Chooser_DuplicateDisplayNames_StagesTheOptionAtTheSelectedIndex()

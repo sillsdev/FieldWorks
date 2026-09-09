@@ -1101,9 +1101,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			_selectedKey = field.SelectedOptionKey;
 			Padding = FwAvaloniaDensity.EditorPadding;
 			MinHeight = 0;
-			// Fill the value cell, as legacy's launcher does: an EMPTY chooser has no text to
-			// wrap, so hugging content collapsed it to a sliver. The text still sits left.
-			HorizontalAlignment = HorizontalAlignment.Stretch;
+			// A valued chooser IS its text, so that is the target. An EMPTY one has no text to
+			// wrap and collapsed to a sliver, so only that case fills the cell.
 			VerticalAlignment = VerticalAlignment.Stretch;
 			HorizontalContentAlignment = HorizontalAlignment.Left;
 			VerticalContentAlignment = VerticalAlignment.Center;
@@ -1114,6 +1113,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				Text = CurrentName(field),
 				VerticalAlignment = VerticalAlignment.Center
 			};
+			ApplyEmptyValueWidth();
 			var content = new StackPanel
 			{
 				Orientation = Orientation.Horizontal,
@@ -1155,6 +1155,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				{
 					_selectedKey = option.Key;
 					_valueText.Text = option.Name;
+					// The row now has a value of its own to hit, so it stops filling the cell.
+					ApplyEmptyValueWidth();
 					// Only a COMMITTED change moves the picker's highlight; a rejected edit
 					// leaves
 					// the list still pointing at the value the row actually holds.
@@ -1180,6 +1182,12 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				Flyout = null;
 			});
 		}
+
+		// Only the empty row fills its cell; once it has text, the text is the target.
+		private void ApplyEmptyValueWidth()
+			=> HorizontalAlignment = string.IsNullOrEmpty(_valueText.Text)
+				? HorizontalAlignment.Stretch
+				: HorizontalAlignment.Left;
 
 		/// <summary>The count of still-attached subscriptions -- zero after <see
 		/// cref="Dispose"/>.</summary>
