@@ -209,7 +209,8 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var field = request.Field;
 			var index = request.SelectedItemIndex;
-			var canMove = field.Kind == DetailFieldKind.ReferenceVector && field.CanReorderItems
+			var canMove = field.Kind == DetailFieldKind.ReferenceVector && field.IsEditable
+				&& field.CanReorderItems
 				&& index >= 0 && (forward ? index < field.Items.Count - 1 : index > 0);
 			var key = request.SelectedItemKey;
 			return new DetailMenuItem(XCoreMenuBridge.StripAccelerator(display.Text), isEnabled: canMove,
@@ -230,10 +231,14 @@ namespace SIL.FieldWorks.XWorks
 			var context = m_detailEditContext.Current;
 			if (context == null || !context.TryMoveReferenceItem(field, key, forward))
 				return;
+			// A move that fails validation rolls back and never re-shows, so the focus
+			// request is made only once the commit is known to have succeeded; nothing
+			// clears a request the re-show does not consume.
+			if (m_detailEditContext.Settle().Count != 0)
+				return;
 			// The menu took keyboard focus; the re-show hands it to the moved item.
 			m_avaloniaEntryForm?.FocusVectorItemOnNextShow();
-			if (m_detailEditContext.Settle().Count == 0)
-				OnAvaloniaDetailEditCompleted(this, EventArgs.Empty);
+			OnAvaloniaDetailEditCompleted(this, EventArgs.Empty);
 		}
 	}
 }
