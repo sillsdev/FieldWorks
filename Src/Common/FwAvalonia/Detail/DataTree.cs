@@ -207,9 +207,30 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			// commit) before the held re-show is released.
 			AddHandler(Avalonia.Input.InputElement.PointerReleasedEvent, (s, e) => EndPointerGesture(),
 				Avalonia.Interactivity.RoutingStrategies.Bubble, handledEventsToo: true);
-			// A gesture ending outside the view delivers no release here; the next release
-			// delivers the held re-show. Only the refresh waits -- the commit already happened.
 		}
+
+		// A press that takes no capture, released after the pointer leaves the view, bubbles
+		// nowhere near this control. The top level catches it, so no gesture outlives its
+		// button and wedges the view busy.
+		protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
+		{
+			base.OnAttachedToVisualTree(e);
+			_topLevel = e.Root as Avalonia.Input.InputElement;
+			_topLevel?.AddHandler(Avalonia.Input.InputElement.PointerReleasedEvent,
+				OnTopLevelPointerReleased, Avalonia.Interactivity.RoutingStrategies.Bubble,
+				handledEventsToo: true);
+		}
+
+		protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
+		{
+			_topLevel?.RemoveHandler(Avalonia.Input.InputElement.PointerReleasedEvent,
+				(EventHandler<Avalonia.Input.PointerReleasedEventArgs>)OnTopLevelPointerReleased);
+			_topLevel = null;
+			base.OnDetachedFromVisualTree(e);
+		}
+
+		private void OnTopLevelPointerReleased(object sender,
+			Avalonia.Input.PointerReleasedEventArgs e) => EndPointerGesture();
 
 		/// <summary>
 		/// Re-derives everything that depends on the label column's width, from that width. The
@@ -319,6 +340,9 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 
 		// True between a pointer press and its release anywhere in this view.
 		private bool _pointerGestureActive;
+		// The window this view is in, while it is in one: the backstop for a release the view
+		// itself never sees.
+		private Avalonia.Input.InputElement _topLevel;
 		// Pickers opened FROM this view. Their flyouts anchor to a control inside it, so a
 		// rebuild destroys the anchor and the picker vanishes mid-choice.
 		private int _openPickers;

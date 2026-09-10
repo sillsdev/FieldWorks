@@ -756,6 +756,39 @@ namespace FwAvaloniaTests
 			Dispatcher.UIThread.RunJobs();
 		}
 
+		/// <summary>
+		/// A press inside the view whose release lands elsewhere in the window -- the pointer
+		/// left the view before the button came up, and nothing in the view had capture -- still
+		/// ends the gesture. Otherwise the view reports itself busy until the user happens to
+		/// click inside it again, and every refresh in between is held.
+		/// </summary>
+		[AvaloniaTest]
+		public void APressReleasedOutsideTheView_StillEndsTheGesture()
+		{
+			var model = new DetailModel("LexEntry", "test",
+				new List<DetailField> { PublishInField() }, new List<ViewDiagnostic>());
+			var view = new DataTree(model, new FakeDetailEditContext());
+			var elsewhere = new Button { Content = "elsewhere" };
+			var window = new Window
+			{
+				Content = new StackPanel { Children = { view, elsewhere } },
+				Width = 500,
+				Height = 300
+			};
+			window.Show();
+			Dispatcher.UIThread.RunJobs();
+
+			RaisePointerPressed(view);
+			Dispatcher.UIThread.RunJobs();
+			Assert.That(view.IsInteractionInFlight, Is.True, "the press started a gesture");
+
+			RaisePointerReleased(elsewhere);
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(view.IsInteractionInFlight, Is.False,
+				"the button came up, so the gesture is over wherever the pointer had got to");
+		}
+
 		private static void RaisePointerReleased(Control target)
 		{
 			target.RaiseEvent(new PointerReleasedEventArgs(target,
