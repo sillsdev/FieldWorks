@@ -51,7 +51,7 @@ sequence, cues, and safety notes to perform that route.
 
 - One reusable navigation destination or workflow per `navigation/*.md` file.
 - Shared safety and triggering rules stay in `SKILL.md`.
-- Skill maintenance rules stay in `references/how-to-update.md`.
+- Skill maintenance rules stay in `how-to-update.md`.
 - Research rationale stays in this file so future edits can revisit the design
   without bloating the active route instructions.
 

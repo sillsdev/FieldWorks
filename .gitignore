@@ -224,3 +224,6 @@ DataTreeTimingBaselines.json
 Docs/migration/working/
 Build/Agent/comment-hygiene-report.json
 .review/
+
+# Per-developer preferences for the jira-issue skill
+.claude/.jira-issue-prefs.json

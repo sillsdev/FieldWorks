@@ -7,269 +7,115 @@ user-invocable: true
 
 # PR Preflight
 
-Use this skill when the user wants an interactive FieldWorks branch review before posting or updating a PR.
+Interactive branch review before a PR is posted or updated. This is the
+orchestration layer: review policy lives in
+`.github/instructions/review-analyzer.instructions.md`, shared terminology in
+`CONTEXT.md`, and the write-up belongs to `pr-pitch`.
 
-This is the orchestration layer. The review policy lives in `.github/instructions/review-analyzer.instructions.md`, shared terminology lives in `CONTEXT.md`, and specialized reviewer agents may be used for independent read-only passes.
-
-## Goals
-
-- Analyze the branch diff from `origin/main` using FieldWorks review policy.
-- Use specialist agents for deep read-only review where they fit the changed files.
-- Challenge the author on risks, assumptions, validation gaps, and design understanding.
-- Record author explanations, dismissed findings, unresolved concerns, and in-review fixes.
-- Write a fresh `.review/summary.md` that a reviewer can use as a meeting agenda.
-- Optionally commit, push, and create or update a PR only after the author confirms readiness, delegating the write-up to `pr-pitch`.
-
-## Start Here
-
-First tell the author what will happen:
-
-> **Here's what this preflight will do:**
->
-> 1. **Setup** - Check your branch and ask a couple of quick questions
-> 2. **Analysis** - Review contracts/correctness, managed UI/localization, native interop/COM, build/test/installer risk, and validation evidence
-> 3. **Interview** - Walk through findings and challenge the reasoning
-> 4. **Output** - Write `.review/summary.md` and optionally create or update a PR
->
-> During the interview, you can explain changes, dismiss findings with reasons, ask me to fix something, or say you are unsure. I will record all of that for the reviewer.
+Tell the author what will happen before starting: setup, analysis, interview,
+then `.review/summary.md` and optionally the PR. During the interview they can
+explain, dismiss a finding with a reason, ask for a fix, or say they are
+unsure -- all of which get recorded.
 
 ## Setup
 
-1. Determine the review model name. Use `GitHub Copilot` when running in Copilot. Do not invent AI co-author trailers.
-2. Validate the current branch:
-   - Run `git branch --show-current`.
-   - If the branch is `main`, stop and tell the author to run this from a feature branch.
-3. Check working tree state with `git status --porcelain`.
-   - If there are uncommitted changes, explain that any fixes made during the review will be staged and may be committed with existing changes at the end.
-   - Ask whether the author wants to commit existing work first or continue with it included.
-4. Compute the diff range against `origin/main`.
-   - Run `git fetch origin --quiet`.
-   - Compute `MERGE_BASE` with `git merge-base origin/main HEAD`.
-   - Compute `HEAD_SHA`, `FILE_COUNT`, and `INITIAL_COMMIT_COUNT`.
-   - List changed files with `git diff --name-only MERGE_BASE`.
-   - If this fails, ask the author which base branch to use.
-5. Check whether `.review` is ignored.
-   - If `.review` is missing from `.gitignore`, ask whether to add it now.
-   - Do not combine this question with the purpose question.
-6. Determine the branch purpose.
-   - Use any purpose supplied in the prompt invocation.
-   - If none was supplied, ask: "What is the overall purpose of these changes? Please describe it in your own words."
+Name the review model for the summary header -- `GitHub Copilot` when running
+in Copilot. **Never invent an AI co-author trailer.**
 
-## Context And Language Check
+1. `git branch --show-current`. **Stop if it is `main`.**
+2. `git status --porcelain`. If dirty, ask whether to commit first; in-review
+   fixes will otherwise be committed alongside.
+3. `git fetch origin --quiet`, then merge-base against `origin/main`. Record
+   the file count and commit count.
+4. If `.review` is not gitignored, ask to add it -- as its own question.
+5. Ask the branch purpose in the author's own words, unless supplied.
 
-Before analysis, load `CONTEXT.md` and `.github/context/codebase.context.md`.
-
-If the branch purpose, PR title, plan, or spec uses overloaded FieldWorks terms such as `project`, `model`, `view`, `app`, `context`, `review`, or `validation`, apply the `grill-with-docs` discipline before writing the summary:
-
-- Clarify the term with the author.
-- Ground the term in code, docs, tests, or build files.
-- Update `CONTEXT.md` only for durable shared language decisions.
-- Carry the clarified terms into findings, interview notes, and PR copy.
+Load `CONTEXT.md` and `.github/context/codebase.context.md`. If the purpose or
+title uses an overloaded FieldWorks term -- `project`, `model`, `view`, `app`,
+`context`, `review`, `validation` -- apply `grill-with-docs` before writing
+the summary, and carry the clarified term into the findings and PR copy.
 
 ## Analysis
 
-Load `.github/instructions/review-analyzer.instructions.md` and run all four required passes:
+Run all four passes from `review-analyzer.instructions.md`:
 
-- Contracts, compatibility, and correctness.
-- Managed UI, C#, and localization.
-- Native, COM, and boundary safety.
-- Build, tests, CI, dependencies, and installer.
+1. Contracts, compatibility, correctness
+2. Managed UI, C#, localization
+3. Native, COM, boundary safety
+4. Build, tests, CI, dependencies, installer
 
-Use specialist agents as independent read-only reviewers when the changed files justify them and the agent tooling is available. Keep them scoped; the final synthesis remains your responsibility.
+Use specialist read-only agents where the changed files justify one --
+`FieldWorks C# Expert`, `WinForms Expert`, `C++ Expert`, `Avalonia UI Expert`
+(Avalonia work only), `devils-advocate` for large scope or risk arguments. Run
+the passes directly for a small diff. The synthesis is yours either way.
 
-Recommended agents:
+Per pass: compare against the merge base, **verify each finding against the
+actual code before reporting it**, and grade Critical / Important / Minor.
+Record positive observations and validation gaps too. Merge into one severity
+-ordered list; deduplicate only when two passes flagged the same file for the
+same concern.
 
-- `FieldWorks C# Expert` for managed `*.cs`, `.csproj`, config, resources, or net48 behavior.
-- `FieldWorks WinForms Expert` for WinForms UI, designer, layout, event-handler, resource, or localization changes.
-- `FieldWorks C++ Expert` for native, C++/CLI-adjacent, COM, Views, FwKernel, ViewsInterfaces, or ABI-sensitive changes.
-- `FieldWorks Avalonia UI Expert` only for Avalonia/XAML work; do not use it for existing WinForms UI.
-- `devils-advocate` for large architecture, scope, or risk arguments where a skeptical pass would sharpen the interview.
+## Interview
 
-If specialist agents are unavailable or would add friction for a small diff, run the passes directly using the review policy.
+5-15 questions. One Critical or Important finding at a time, unless several
+share a root cause.
 
-For each pass:
+Per finding: why is this safe or intentional, and what validation covers it?
+One follow-up if the answer is vague; if still unclear, record it unresolved.
 
-- Compare against `MERGE_BASE`.
-- Verify findings against actual code before reporting.
-- Record findings as Critical, Important, or Minor.
-- Record positive observations.
-- Record required validation and evidence gaps.
+For large, cross-boundary or non-obvious changes, ask separately:
 
-After all passes:
+> "Can you walk me through the most complex or non-obvious part of these
+> changes? I want to make sure I understand the reasoning."
 
-- Merge findings into one list ordered by severity.
-- Deduplicate only when two passes flagged the same file for the same concern.
-- Keep distinct concerns about the same file as separate findings.
-- Keep a factual Contract/API Changes summary.
-- Keep Required Validation separate from findings.
+**Record lack of understanding literally.** "The AI did it", "I'm not sure",
+or an explanation that never describes the mechanism becomes
+`Author does not understand: <area>`. Never soften it into acceptance.
 
-## Author Interview
+Minor findings: print them all first. Three or fewer, ask whether to take them
+together; more than three, go one at a time.
 
-Aim for 5-15 questions total. Ask one Critical or Important finding at a time unless multiple findings share one root cause.
+Close with: "Anything else to flag -- trade-offs, uncertainties, context a
+reviewer should know?"
 
-For each Critical and Important finding:
+## In-review fixes
 
-- Ask directly why the change is safe or intentional.
-- Ask what validation covers it.
-- If the answer is vague, ask one follow-up.
-- If it remains unclear after the follow-up, record it as unresolved.
+Keep them minimal and scoped to the finding. `git add`, do not commit yet.
+Record each as `INTERVIEW_CHANGES`. **Do not delete a fixed finding** -- mark
+it `[x]` with a fixed-during-review note.
 
-If the changes are large, cross native/managed/build/installer boundaries, involve non-obvious design decisions, or the author's answers reveal uncertainty, ask separately:
+Then run the repo scripts, never ad-hoc `msbuild` / `dotnet build` /
+`vstest.console` / `nmake`:
 
-> "Can you walk me through the most complex or non-obvious part of these changes? I want to make sure I understand the reasoning."
+| Changed | Run |
+| --- | --- |
+| Anything build-affecting | `./build.ps1 -CommentHygiene` |
+| Managed behaviour | `./test.ps1` with the narrowest reliable `-TestProject` or `-TestFilter` |
+| Native code or tests | `./test.ps1 -Native -TestProject <p>` |
+| Installer, WiX, helper scripts | `./Build/Agent/Setup-InstallerBuild.ps1 -ValidateOnly` |
+| Whitespace | VS Code task `CI: Whitespace check` |
 
-Watch for lack-of-understanding signals:
+A `-TestFilter` that matches nothing still exits 0 and prints PASS -- check
+`Total tests: N` is above zero. **Never mark manual validation complete unless
+you performed it or the author explicitly confirms it.** Report skipped checks
+and why.
 
-- "The AI did it" or similar deferrals.
-- "I'm not sure" or "I don't know".
-- Vague explanations that do not describe the mechanism.
-- Inability to explain a changed section.
+## Summary and PR
 
-Record those explicitly as `Author does not understand: <area>`. Do not soften them into acceptance or satisfaction.
+Write `.review/summary.md` per `references/summary-template.md`.
 
-For Minor findings:
+Then offer -- and only act on confirmation:
 
-- Print the full list first.
-- If there are 3 or fewer, ask whether the author wants to respond to all at once or one at a time.
-- If there are more than 3, go one at a time.
+> "Summary written to `.review/summary.md`. Review it, make changes where
+> appropriate, and re-run until you are ready. When you are, shall I commit,
+> push and post the PR? I will update an existing one if there is one. The
+> write-up runs through `pr-pitch`, which also triages the branch's research
+> and working markdown into collapsed sections in the PR body and out of the
+> tree -- you approve that triage before anything is deleted."
 
-End the interview by asking:
+**This skill never composes the description itself.** Hand `pr-pitch` the
+branch purpose, the findings and the summary. For a branch named
+`lt-1234-anything`, prefix the PR title `LT-1234:` and write a sentence-case
+title from the actual change, not the branch slug.
 
-> "Is there anything else you want to flag or discuss before I write up the summary? Any tradeoffs you made, things you're uncertain about, or context a reviewer should know?"
-
-## In-Review Fixes
-
-If the author asks you to fix a finding, implement the fix unless it is ambiguous. Ask one clarifying question only when needed.
-
-Rules:
-
-- Keep fixes minimal and scoped to the finding.
-- Stage fixes with `git add`; do not commit yet.
-- Record each fix as `INTERVIEW_CHANGES` with the finding and what changed.
-- Do not remove fixed findings from the summary; mark them `[x]` with a fixed-during-review note.
-
-After in-review fixes, run relevant FieldWorks checks:
-
-- Use repository scripts and tasks, not ad-hoc `msbuild`, `dotnet build`, `vstest.console`, or `nmake`.
-- Prefer the VS Code task `CI: Whitespace check` for whitespace.
-- Run `./build.ps1` when build-affecting, managed, native, resource, or project files changed.
-- Run `./test.ps1` with the narrowest reliable `-TestProject` or `-TestFilter` for managed behavior.
-- Run `./test.ps1 -Native` with `-TestProject` when native code or tests changed.
-- Run `./Build/Agent/Setup-InstallerBuild.ps1 -ValidateOnly` for installer/WiX/helper-script changes.
-- Do not mark manual validation complete unless you directly performed it or the author explicitly confirms it.
-
-Report checks that were skipped and why.
-
-## Summary File
-
-Always write a fresh `.review/summary.md`. Do not merge with an existing summary.
-
-Use this structure:
-
-```markdown
-# Code Review Summary
-
-**Branch**: <branch>
-
-**Base**: <base branch>
-
-**Date**: <today's date>
-
-**Review model**: <model name>
-
-**Files changed**: <file count>
-
-## Overview
-
-[One or two paragraphs combining the author's purpose with the analysis result.]
-
-## Contract/API Changes
-
-[Factual Contract/API Changes summary. Write "None." if none.]
-
-## Findings
-
-Finding states:
-- `- [ ] **Description**` - open
-- `- [ ] ~~Description~~ _(author's explanation)_` - dismissed
-- `- [x] **Description** _(fixed during review: what changed)_` - fixed
-
-### Critical - Must address before merge
-
-[All Critical findings, or "None."]
-
-### Important - Should address before merge
-
-[All Important findings, or "None."]
-
-### Minor - Consider
-
-[All Minor findings, or "None."]
-
-## Required Validation / Evidence
-
-[Commands run, commands still needed, manual validation gaps, or "None."]
-
-## Positive Observations
-
-[Positive observations, or "None."]
-
-## Interview Notes
-
-[Author explanations, decisions, unresolved items, and explicit lack-of-understanding notes.]
-
-## In-Review Quality Check
-
-[Only include if in-review changes were made.]
-
-## Suggested Review Focus
-
-- [ ] [High-priority review meeting agenda item]
-- [ ] [High-priority review meeting agenda item]
-```
-
-## PR Offer
-
-After writing the summary, tell the author:
-
-> "Review summary written to `.review/summary.md`.
->
-> Please review it, make changes where appropriate, and run `/pr-preflight` again until you are ready to post the PR.
->
-> If you do not want to make any changes and are ready for review, would you like me to commit any uncommitted changes, push, and post the PR? I will check whether one already exists for this branch and update it, or create a new one if not. The write-up runs through `pr-pitch`, which will also triage any research or working markdown on the branch into collapsed sections in the PR body and out of the tree -- you approve that triage before anything is deleted."
-
-Only create or update a PR after the author confirms.
-
-## PR Description
-
-This skill is the single entrypoint for making a PR, but it does not compose
-the description itself. Once the author confirms readiness, invoke the
-`pr-pitch` skill and let it own the write-up. It produces two artifacts
-together: the PR body (a pitch above the fold, provenance in collapsed
-accordions below it) and a commit evicting the branch's research and working
-markdown from the tree.
-
-Hand `pr-pitch` the branch purpose, the findings, and `.review/summary.md`.
-
-The preflight record still belongs on the PR, but as a collapsed section
-below the pitch, not as the opening content:
-
-```markdown
-<details>
-<summary>Preflight review details</summary>
-
-<!-- pr-preflight:summary:start -->
-[summary]
-<!-- pr-preflight:summary:end -->
-
-</details>
-```
-
-Keep the markers so a re-run replaces the section instead of appending a
-second copy. Do not duplicate findings, interview notes, or validation logs
-into the pitch itself -- the pitch states validation status in a sentence
-and leaves the detail here.
-
-For branch names like `lt-1234-anything`, prefix the PR title with `LT-1234:`. Use a sentence-case title based on the actual change, not just the branch slug.
-
-After Copilot or human reviewers leave comments, use `.github/prompts/respond-to-review-comments.prompt.md` to work through the review response loop: evaluate comments, fix sensible requests, ask about ambiguity, verify, commit, push, reply, resolve, and summarize.
+After reviewers comment, use `respond-to-review-comments`.
