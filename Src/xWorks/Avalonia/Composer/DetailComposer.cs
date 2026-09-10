@@ -553,6 +553,16 @@ namespace SIL.FieldWorks.XWorks
 			{
 				if (obj == null || string.IsNullOrEmpty(node?.Field))
 					return false;
+				// A condition aimed at another object names a field of THAT object's class,
+				// so there is nothing here to ask about. Legacy resolves no flid for one
+				// either, and lets the node through.
+				var conditionTarget = node.Condition?.Target;
+				if (!string.IsNullOrEmpty(conditionTarget)
+					&& !string.Equals(conditionTarget, "this", StringComparison.OrdinalIgnoreCase))
+				{
+					return false;
+				}
+
 				var flid = GetFlid(obj, node.Field);
 				if (flid == 0)
 					return false;
