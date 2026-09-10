@@ -21,11 +21,11 @@
 	<ItemGroup Label="Transitive Pins">
 		<!-- System.Drawing.Common: ParatextData requires >= 9.0.9; SIL.LCModel.Core
 			 pulls 6.0.0 transitively. -->
-		<PackageVersion Include="System.Drawing.Common" Version="9.0.18" />
-		<PackageVersion Include="System.Reflection.Metadata" Version="10.0.10" />
+		<PackageVersion Include="System.Drawing.Common" Version="9.0.19" />
+		<PackageVersion Include="System.Reflection.Metadata" Version="10.0.11" />
 		<!-- System.Resources.Extensions: required for non-string resources (images, icons)
 			 in .NET Framework SDK-style projects. -->
-		<PackageVersion Include="System.Resources.Extensions" Version="9.0.18" />
+		<PackageVersion Include="System.Resources.Extensions" Version="9.0.19" />
 		<!-- Held at 9.0.16: 9.0.17 throws TypeInitializationException on
 			 Icu.NativeMethods in the net48 test host (PR #1000). Retest: bump, full
 			 test.ps1, grep .trx for "Icu.NativeMethods" - zero hits is safe. -->
@@ -43,7 +43,7 @@
 		<PackageVersion Include="Microsoft.Bcl.HashCode" Version="6.0.0" />
 		<!-- System.Security.Permissions (LT-22394): ProDotNetZip requires >= 8.0.0,
 			 System.Security.AccessControl >= 6.0.0. -->
-		<PackageVersion Include="System.Security.Permissions" Version="9.0.18" />
+		<PackageVersion Include="System.Security.Permissions" Version="9.0.19" />
 		<!-- System.Text.Encoding.CodePages: SIL.Machine requires >= 10.0.3,
 			 ProDotNetZip >= 8.0.0; must match the plugin project. -->
 		<PackageVersion Include="System.Text.Encoding.CodePages" Version="10.0.3" />
@@ -169,7 +169,7 @@
 		<PackageVersion Include="HarfBuzzSharp.NativeAssets.Win32" Version="8.3.1.1" />
 		<!-- Pinned: multiple test projects copy this into the shared Output folder, and without
 		     one version the last-built project's copy breaks the others' binding redirects. -->
-		<PackageVersion Include="System.Diagnostics.DiagnosticSource" Version="9.0.2" />
+		<PackageVersion Include="System.Diagnostics.DiagnosticSource" Version="9.0.19" />
 		<PackageVersion Include="Moq" Version="4.20.70" />
 		<PackageVersion Include="NUnit" Version="3.14.0" />
 		<PackageVersion Include="NUnit3TestAdapter" Version="4.6.0" />
@@ -183,18 +183,18 @@
 	<!-- Avalonia is pinned to 11.3.x: it still ships netstandard2.0 assemblies, so it can load
 	     in-process on net48. Avalonia 12.x drops netstandard2.0 (net8+ only) and cannot. -->
 	<ItemGroup Label="Avalonia">
-		<PackageVersion Include="Avalonia" Version="11.3.17" />
+		<PackageVersion Include="Avalonia" Version="11.3.20" />
 		<!-- Transitive analyzer carrier (Avalonia -> Avalonia.BuildServices). Pinned so xWorks
 		     can reference it with IncludeAssets="none": its analyzers must not run where
 		     warnings are errors. -->
 		<PackageVersion Include="Avalonia.BuildServices" Version="11.3.2" />
 		<PackageVersion Include="Avalonia.Desktop" Version="11.3.17" />
-		<PackageVersion Include="Avalonia.Win32.Interoperability" Version="11.3.17" />
-		<PackageVersion Include="Avalonia.Headless" Version="11.3.17" />
-		<PackageVersion Include="Avalonia.Headless.NUnit" Version="11.3.17" />
+		<PackageVersion Include="Avalonia.Win32.Interoperability" Version="11.3.20" />
+		<PackageVersion Include="Avalonia.Headless" Version="11.3.20" />
+		<PackageVersion Include="Avalonia.Headless.NUnit" Version="11.3.20" />
 		<!-- Skia-enabled headless rendering for visual parity frame capture.
 		     The HarfBuzzSharp 8.3.1.1 pin above was aligned for exactly this package. -->
-		<PackageVersion Include="Avalonia.Skia" Version="11.3.17" />
+		<PackageVersion Include="Avalonia.Skia" Version="11.3.20" />
 		<!-- MVVM for hand-authored Avalonia dialogs. 8.x ships netstandard2.0 source
 		     generators, so it works on net48. -->
 		<PackageVersion Include="CommunityToolkit.Mvvm" Version="8.2.2" />

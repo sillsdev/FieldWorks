@@ -12,15 +12,15 @@
 		=============================================================
 	-->
 	<PropertyGroup Label="SIL Ecosystem Versions">
-		<SilLcmVersion>11.0.0-beta0178</SilLcmVersion>
-		<SilLibPalasoVersion>18.0.0-beta0030</SilLibPalasoVersion>
+		<SilLcmVersion>11.0.0-beta0181</SilLcmVersion>
+		<SilLibPalasoVersion>18.0.0-beta0035</SilLibPalasoVersion>
 		<SilLibPalasoL10nsVersion>18.0.0-beta0012</SilLibPalasoL10nsVersion>
 		<SilChorusVersion>6.0.0-beta0065</SilChorusVersion>
 		<SilChorusL10nsVersion>3.0.1</SilChorusL10nsVersion>
 		<SilMachineVersion>3.9.2</SilMachineVersion>
 		<SilIPCFrameworkVersion>1.1.1-beta0001</SilIPCFrameworkVersion>
 		<L10NSharpVersion>10.0.0-beta0014</L10NSharpVersion>
-		<EncodingConvertersCoreVersion>0.9.8</EncodingConvertersCoreVersion>
+		<EncodingConvertersCoreVersion>0.9.9</EncodingConvertersCoreVersion>
 		<IcuNugetVersion>70.1.152</IcuNugetVersion>
 		<GeckoNugetVersion>60.0.56</GeckoNugetVersion>
 	</PropertyGroup>
