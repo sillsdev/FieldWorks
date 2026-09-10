@@ -53,6 +53,33 @@ namespace FwAvaloniaTests.Detail
 		private static bool ShowsAbbreviation(DataTree view, string abbrev)
 			=> view.GetVisualDescendants().OfType<TextBlock>().Any(t => t.Text == abbrev);
 
+		private static DetailModel Model(params DetailField[] fields)
+			=> new DetailModel("LexEntry", "Normal", fields.ToList(), new List<ViewDiagnostic>());
+
+		/// <summary>
+		/// One width serves every gutter in the view, measured from the widest abbreviation the
+		/// model carries. A row that draws no gutter has no say in it -- otherwise a plain string
+		/// row with a long abbreviation pads a column it is not even in.
+		/// </summary>
+		[AvaloniaTest]
+		public void TheGutterWidth_IgnoresTheRowsThatDrawNoGutter()
+		{
+			var shortAbbrev = FwMultiWsTextField.ComputeWsAbbrevColumnWidth(
+				Model(Row("f1", "Form", isMultiString: true, ("Sen", "barigi"))));
+			var longAbbrev = FwMultiWsTextField.ComputeWsAbbrevColumnWidth(
+				Model(Row("f1", "Form", isMultiString: true, ("Senoufo-Supyire", "barigi"))));
+
+			Assert.That(longAbbrev, Is.GreaterThan(shortAbbrev),
+				"fixture check: a long abbreviation does widen the column when the row draws one");
+
+			var longOnAPlainRow = FwMultiWsTextField.ComputeWsAbbrevColumnWidth(
+				Model(Row("f1", "Form", isMultiString: true, ("Sen", "barigi")),
+					Row("f2", "Custom Field 1", isMultiString: false, ("Senoufo-Supyire", "nota"))));
+
+			Assert.That(longOnAPlainRow, Is.EqualTo(shortAbbrev),
+				"the same abbreviation on a row with no gutter leaves the column alone");
+		}
+
 		[AvaloniaTest]
 		public void MultiStringRow_DrawsTheAbbreviationGutter()
 		{

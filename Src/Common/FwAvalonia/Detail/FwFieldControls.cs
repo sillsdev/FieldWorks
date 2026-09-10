@@ -81,9 +81,9 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 					menuRequested, clipboard, showWritingSystemAbbreviation, value, resolvedWsAbbrevColumnWidth);
 		}
 
-		// The widest abbreviation in the model, measured at its own font and clamped to
-		// [WsAbbrevWidth, WsAbbrevMaxWidth]; one width for every row keeps the value column
-		// aligned.
+		// The widest abbreviation among the rows that DRAW a gutter, clamped to
+		// [WsAbbrevWidth, WsAbbrevMaxWidth]. One width keeps the value column aligned;
+		// a single-string row draws none, so it has no say.
 		public static double ComputeWsAbbrevColumnWidth(DetailModel model)
 		{
 			if (model == null)
@@ -91,7 +91,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 
 			var typeface = new Typeface(FontFamily.Default);
 			double widest = 0;
-			foreach (var abbrev in model.Fields.SelectMany(f => f.Values).Select(v => v.WsAbbrev)
+			foreach (var abbrev in model.Fields.Where(f => f.IsMultiStringRow)
+				.SelectMany(f => f.Values).Select(v => v.WsAbbrev)
 				.Where(a => !string.IsNullOrEmpty(a)).Distinct())
 			{
 				var formatted = new FormattedText(abbrev, CultureInfo.CurrentCulture, FlowDirection.LeftToRight,
