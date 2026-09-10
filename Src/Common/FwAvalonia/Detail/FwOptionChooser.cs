@@ -654,8 +654,6 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			}
 		}
 
-		// Identity of the synthetic create row. Reference equality, so a domain key can never be
-		// mistaken for it however the user's typing collides.
 		/// <summary>
 		/// Tells the picker which option is the row's current value, so reopening it highlights
 		/// what is chosen. The host calls this after a COMMITTED change -- a rejected edit must
@@ -697,6 +695,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			return -1;
 		}
 
+		// Identity of the synthetic create row. Reference equality, so a domain key can never be
+		// mistaken for it however the user's typing collides.
 		private bool IsCreateRow(DetailChoiceOption option)
 			=> _createOption != null && ReferenceEquals(option, _createOption);
 

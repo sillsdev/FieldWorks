@@ -349,8 +349,6 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			DeliverWhenIdle();
 		}
 
-		// A click that opens a picker is not finished when the button is released -- the user is
-		// still choosing. Rebuilding then would close the picker under them.
 		/// <summary>
 		/// A click that opens a popup is not finished when the button is released -- the user is
 		/// still choosing. Rebuilding then would close it under them.

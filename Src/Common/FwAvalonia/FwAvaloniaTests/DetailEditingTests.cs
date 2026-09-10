@@ -701,7 +701,6 @@ namespace FwAvaloniaTests
 			Assert.That(Find<Button>(view, "DetailEditor.Cancel"), Is.Null);
 		}
 
-		// Chooser options can share a display name (e.g. identically named list items);
 		/// <summary>
 		/// The chooser hands the picker the row's current value, so opening the list highlights
 		/// what the field holds rather than whatever option sorts first.
@@ -788,6 +787,7 @@ namespace FwAvaloniaTests
 				"but the value is still a real target -- this is not the collapsed case");
 		}
 
+		// Chooser options can share a display name (e.g. identically named list items);
 		// selection must map back by INDEX, never by name, or the wrong option's key is staged.
 		[AvaloniaTest]
 		public void Chooser_DuplicateDisplayNames_StagesTheOptionAtTheSelectedIndex()

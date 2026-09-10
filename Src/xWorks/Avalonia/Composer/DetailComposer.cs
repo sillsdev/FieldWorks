@@ -862,7 +862,6 @@ namespace SIL.FieldWorks.XWorks
 					null, null, menuId: "mnuDataTree-Help");
 			}
 
-			// The node's chooserLink wins; else the row derives its tool like the legacy path.
 			/// <summary>
 			/// The row's list-editor jump links: the layout's authored <c>chooserLink
 			/// type="goto"</c> entries, else a synthesized "Edit the &lt;list&gt;" link when the
