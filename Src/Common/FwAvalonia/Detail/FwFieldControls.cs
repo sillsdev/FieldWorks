@@ -353,7 +353,6 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 							PlacementMode.BottomEdgeAlignedLeft);
 						// The picker flyout the item opens, surfaced for automation/discovery.
 						styleItem.Tag = styleFlyout;
-						_teardown.Add(PopupReporting.Wire(styleFlyout));
 
 						// The selection the gesture acts on, snapshotted when the picker opens (the click
 						// moves focus off the TextBox; capturing here keeps the span the user had selected).
@@ -458,7 +457,6 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 								PlacementMode.BottomEdgeAlignedLeft);
 							// The picker flyout the item opens, surfaced for automation/discovery.
 							wsItem.Tag = wsFlyout;
-							_teardown.Add(PopupReporting.Wire(wsFlyout));
 
 							// The selection the gesture acts on, snapshotted when the picker opens (the click
 							// moves focus off the TextBox; capturing here keeps the span the user had selected).
@@ -1172,12 +1170,10 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			};
 			picker.OptionCommitted += committed;
 			picker.Dismissed += dismissed;
-			var popupTeardown = PopupReporting.Wire(flyout);
 			_teardown.Add(() =>
 			{
 				picker.OptionCommitted -= committed;
 				picker.Dismissed -= dismissed;
-				popupTeardown();
 				Flyout = null;
 			});
 		}
@@ -1490,13 +1486,11 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			picker.OptionsCommitted += committedSet;
 			picker.CreateRequested += created;
 			picker.Dismissed += dismissed;
-			var popupTeardown = PopupReporting.Wire(flyout);
 			_teardown.Add(() =>
 			{
 				picker.OptionsCommitted -= committedSet;
 				picker.CreateRequested -= created;
 				picker.Dismissed -= dismissed;
-				popupTeardown();
 				addButton.Flyout = null;
 			});
 			Children.Add(addButton);

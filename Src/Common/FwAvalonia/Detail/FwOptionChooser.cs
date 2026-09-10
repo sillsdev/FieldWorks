@@ -445,6 +445,9 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				Avalonia.Threading.Dispatcher.UIThread.Post(picker.FocusFilter,
 					Avalonia.Threading.DispatcherPriority.Input);
 			};
+			// Every option flyout is built here, so reporting it here is what makes the rule
+			// unconditional: a picker open anywhere in the view holds off that view's rebuild.
+			PopupReporting.Wire(flyout);
 			return flyout;
 		}
 

@@ -616,6 +616,100 @@ namespace FwAvaloniaTests
 		}
 
 		/// <summary>
+		/// The row and gear context menus are built by the HOST from its own menu system and
+		/// shown through <see cref="DetailMenuFlyout"/>, so no field control is in a position
+		/// to report them. They anchor inside the view like any other popup, and obey the rule.
+		/// </summary>
+		[AvaloniaTest]
+		public void ARowsContextMenu_AlsoKeepsTheViewBusy()
+		{
+			var model = new DetailModel("LexEntry", "test",
+				new List<DetailField> { PublishInField() }, new List<ViewDiagnostic>());
+			var view = new DataTree(model, new FakeDetailEditContext());
+			var window = new Window { Content = view, Width = 500, Height = 260 };
+			window.Show();
+			Dispatcher.UIThread.RunJobs();
+			var idle = 0;
+			view.InteractionCompleted += (s, e) => idle++;
+
+			var anchor = Find<TextBlock>(view, "PublishIn.Item.p1");
+			var menu = DetailMenuFlyout.Show(
+				new List<DetailMenuItem> { new DetailMenuItem("Delete") }, anchor, atPointer: false);
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(view.IsInteractionInFlight, Is.True,
+				"the host's menu is up; rebuilding now would dismiss it mid-choice");
+
+			menu.Hide();
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(view.IsInteractionInFlight, Is.False);
+			Assert.That(idle, Is.EqualTo(1));
+		}
+
+		/// <summary>
+		/// The per-paragraph style picker is built inside the structured-text control, which owns
+		/// its flyouts rather than receiving them -- the rule reaches it the same way.
+		/// </summary>
+		[AvaloniaTest]
+		public void TheParagraphStylePicker_AlsoKeepsTheViewBusy()
+		{
+			var model = new DetailModel("LexEntry", "test",
+				new List<DetailField> { DiscussionField() }, new List<ViewDiagnostic>());
+			var view = new DataTree(model, new FakeDetailEditContext());
+			var window = new Window { Content = view, Width = 500, Height = 260 };
+			window.Show();
+			Dispatcher.UIThread.RunJobs();
+			var idle = 0;
+			view.InteractionCompleted += (s, e) => idle++;
+
+			var styleButton = view.GetVisualDescendants().OfType<Button>()
+				.Single(b => AutomationProperties.GetAutomationId(b) == "Discussion.Para.0.Style");
+			var flyout = (Flyout)styleButton.Flyout;
+
+			flyout.ShowAt(styleButton);
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(view.IsInteractionInFlight, Is.True,
+				"the style picker is up; rebuilding now would dismiss it mid-choice");
+
+			flyout.Hide();
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(view.IsInteractionInFlight, Is.False);
+			Assert.That(idle, Is.EqualTo(1));
+		}
+
+		/// <summary>
+		/// Reporting is wired where the popup is BUILT, so nothing hands back a teardown to run
+		/// when the anchor goes. An anchor torn down while its popup is open must therefore
+		/// still end up reported closed, or the view stays permanently busy and never refreshes.
+		/// </summary>
+		[AvaloniaTest]
+		public void APopupWhoseAnchorIsTornDown_StillReportsItselfClosed()
+		{
+			var model = new DetailModel("LexEntry", "test",
+				new List<DetailField> { PublishInField() }, new List<ViewDiagnostic>());
+			var view = new DataTree(model, new FakeDetailEditContext());
+			var window = new Window { Content = view, Width = 500, Height = 260 };
+			window.Show();
+			Dispatcher.UIThread.RunJobs();
+
+			var addButton = view.GetVisualDescendants().OfType<Button>()
+				.Single(b => AutomationProperties.GetAutomationId(b) == "PublishIn.Add");
+			var flyout = (Flyout)addButton.Flyout;
+			flyout.ShowAt(addButton);
+			Dispatcher.UIThread.RunJobs();
+			Assert.That(view.IsInteractionInFlight, Is.True, "the picker is up");
+
+			window.Content = new TextBlock();
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(view.IsInteractionInFlight, Is.False,
+				"the anchor is gone, so the picker is gone, so the view is idle again");
+		}
+
+		/// <summary>
 		/// The pointer release alone is not enough: a press that leaves a picker open keeps the
 		/// view busy past the release.
 		/// </summary>
@@ -1062,6 +1156,24 @@ namespace FwAvaloniaTests
 			},
 			null, isEditable: true, indent: 0,
 			items: new List<DetailChoiceOption> { new DetailChoiceOption("p1", "Main Dictionary") });
+
+		private static DetailField DiscussionField()
+		{
+			var text = "one";
+			var paragraph = new DetailParagraph(new DetailRichTextValue(text,
+				new[] { new DetailTextRun(text, "en") }, richXml: null, requiresRichEditor: false,
+				canEditRichText: true, lossyProperties: false));
+			var field = new DetailField(
+				stableId: "LexEntry/Discussion@1", label: "Discussion", field: "Discussion",
+				writingSystem: null, kind: DetailFieldKind.StructuredText,
+				editorClassification: EditorClassification.Known, automationId: "Discussion",
+				localizationKey: null, routing: HostRouting.Product, values: null, options: null,
+				selectedOptionKey: null, isEditable: true,
+				paragraphs: new List<DetailParagraph> { paragraph });
+			// The style affordance is built only for a field that carries styles to offer.
+			field.AvailableParagraphStyles = new List<string> { "Block Quote" };
+			return field;
+		}
 
 		private static (FwReferenceVectorField vector, FakeDetailEditContext context) ShowVector(
 			Action gestureCompleted)
