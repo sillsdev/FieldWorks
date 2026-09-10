@@ -107,6 +107,8 @@ $ErrorActionPreference = "Stop"
 # Library-specific configuration
 # ---------------------------------------------------------------------------
 
+Import-Module (Join-Path $PSScriptRoot 'LocalLibraries.psm1') -Force
+
 $LibraryConfig = @{
 	palaso = @{
 		VersionProperty = 'SilLibPalasoVersion'
@@ -117,22 +119,29 @@ $LibraryConfig = @{
 			'sil.media', 'sil.scripture', 'sil.testutilities'
 		)
 		EnvVar          = 'LIBPALASO_PATH'
+		VersionProject  = 'SIL.Core/SIL.Core.csproj'
 	}
 	lcm = @{
 		VersionProperty = 'SilLcmVersion'
 		PdbRelativeDir  = 'artifacts/Debug/net462'
 		CachePrefixes   = @('sil.lcmodel')
 		EnvVar          = 'LIBLCM_PATH'
+		VersionProject  = 'src/SIL.LCModel/SIL.LCModel.csproj'
 	}
 	chorus = @{
 		VersionProperty = 'SilChorusVersion'
 		PdbRelativeDir  = 'output/Debug/net462'
 		CachePrefixes   = @('sil.chorus')
 		EnvVar          = 'LIBCHORUS_PATH'
+		VersionProject  = 'src/Chorus/Chorus.csproj'
 	}
 	machine = @{
 		VersionProperty = 'SilMachineVersion'
-		PdbRelativeDir  = 'bin/Debug/netstandard2.0'
+		# Machine writes per-project, not at the repository root.
+		PdbRelativeDir  = @(
+			'src/SIL.Machine/bin/Debug/netstandard2.0',
+			'src/SIL.Machine.Morphology.HermitCrab/bin/Debug/netstandard2.0'
+		)
 		CachePrefixes   = @('sil.machine')
 		EnvVar          = 'SILMACHINE_PATH'
 		# Pack only the projects FieldWorks uses (avoids native CMake deps)
@@ -143,9 +152,11 @@ $LibraryConfig = @{
 	}
 	l10nsharp = @{
 		VersionProperty = 'L10NSharpVersion'
-		PdbRelativeDir  = 'output/Debug/net462'
+		# l10nsharp builds net461/net48/net8.0, never net462; FieldWorks is net48.
+		PdbRelativeDir  = 'output/Debug/net48'
 		CachePrefixes   = @('l10nsharp')
 		EnvVar          = 'L10NSHARP_PATH'
+		VersionProject  = 'src/L10NSharp/L10NSharp.csproj'
 	}
 }
 
@@ -183,25 +194,61 @@ function Get-VersionNode {
 # Helper: update SilVersions.props and clear stale cached packages
 # ---------------------------------------------------------------------------
 
-function Update-VersionAndClearCache {
-	param([string]$LibName, [string]$NewVersion)
-	$cfg = $LibraryConfig[$LibName]
-	$node = Get-VersionNode $LibName
-	$node.InnerText = $NewVersion
-
-	# Save with XmlWriter to preserve tab indentation (XmlDocument.Save() converts tabs to spaces)
+function Save-VersionProps {
+	# XmlWriter, not XmlDocument.Save: Save() turns the file's tabs into spaces.
 	$writerSettings = New-Object System.Xml.XmlWriterSettings
 	$writerSettings.Indent = $true
 	$writerSettings.IndentChars = "`t"
 	$writerSettings.NewLineChars = "`r`n"
-	$writerSettings.Encoding = New-Object System.Text.UTF8Encoding($false) # UTF-8 without BOM
-	$writerSettings.OmitXmlDeclaration = -not $versionProps.FirstChild.NodeType.Equals([System.Xml.XmlNodeType]::XmlDeclaration)
+	$writerSettings.Encoding = New-Object System.Text.UTF8Encoding($false)
+	$writerSettings.OmitXmlDeclaration = -not $versionProps.FirstChild.NodeType.Equals(
+		[System.Xml.XmlNodeType]::XmlDeclaration)
 	$writer = [System.Xml.XmlWriter]::Create($versionPropsPath, $writerSettings)
 	try {
 		$versionProps.WriteTo($writer)
 	} finally {
 		$writer.Close()
 	}
+	# XmlWriter does not emit a final newline, and this file is tracked: without
+	# one every pack shows a spurious \ No newline at end of file.
+	$text = [System.IO.File]::ReadAllText($versionPropsPath)
+	if (-not $text.EndsWith("`n")) {
+		[System.IO.File]::AppendAllText($versionPropsPath, "`r`n")
+	}
+}
+
+function Set-LocalFeedSource {
+	param([string]$LocalRepository)
+
+	$group = $versionProps.SelectSingleNode(
+		"//PropertyGroup[@Label='SIL Ecosystem Versions']")
+	$name = 'RestoreAdditionalProjectSources'
+	$node = $group.SelectSingleNode($name)
+	if (-not $node) {
+		$node = $versionProps.CreateElement($name)
+		# Indent it: this file is tracked, so the diff a developer sees must be tidy.
+		[void]$group.AppendChild($versionProps.CreateWhitespace("`r`n`t`t"))
+		[void]$group.AppendChild($node)
+		[void]$group.AppendChild($versionProps.CreateWhitespace("`r`n`t"))
+	}
+	# Append, so a feed set for one library survives packing the next.
+	$existing = @($node.InnerText -split ';' | Where-Object { $_ })
+	if ($existing -notcontains $LocalRepository) {
+		$existing += $LocalRepository
+	}
+	$node.InnerText = ($existing -join ';')
+	Save-VersionProps
+	Write-Host "Pointed restore at the local feed: $LocalRepository" `
+		-ForegroundColor Yellow
+}
+
+function Update-VersionAndClearCache {
+	param([string]$LibName, [string]$NewVersion)
+	$cfg = $LibraryConfig[$LibName]
+	$node = Get-VersionNode $LibName
+	$node.InnerText = $NewVersion
+
+	Save-VersionProps
 
 	Write-Host "Updated SilVersions.props ($($cfg.VersionProperty) = $NewVersion)" -ForegroundColor Yellow
 
@@ -256,9 +303,27 @@ function Invoke-PackLibrary {
 	# Record timestamp before pack so we can find newly-produced packages
 	$packStart = Get-Date
 
+	# LT-22728: stamp the pack with the source state. Sharing the published
+	# version lets an extracted copy keep satisfying restores after its
+	# .nupkg is gone, because NuGet keys on (id, version) alone.
+	$sourceState = Get-FieldWorksLibrarySourceState -SourceDirectory $SourceDir
+	$coreVersion = Get-FieldWorksLibraryCoreVersion -SourceDirectory $SourceDir `
+		-LibraryEntry $cfg -FallbackVersion $node.InnerText.Trim()
+	$packVersion = Get-FieldWorksLocalPackVersion -CoreVersion $coreVersion `
+		-SourceState $sourceState
+	Write-Host "  Packing as:  $packVersion" -ForegroundColor Cyan
+	if ($sourceState.IsDirty) {
+		Write-Host "  Source has uncommitted changes; the stamp says dirty." `
+			-ForegroundColor Yellow
+	}
+
 	Write-Host "Running dotnet pack..." -ForegroundColor Cyan
 	$commonPackArgs = @(
 		'-c', 'Debug'
+		"-p:Version=$packVersion"
+		# GitVersion.MsBuild assigns Version inside a target, which outranks a
+		# command-line property, so it must be off for the stamp to hold.
+		'-p:DisableGitVersionTask=true'
 		"-p:IncludeSymbols=true"
 		"-p:SymbolPackageFormat=snupkg"
 		'--output', $LocalRepo
@@ -300,21 +365,15 @@ function Invoke-PackLibrary {
 	Write-Host "New packages found:" -ForegroundColor Gray
 	$newPackages | ForEach-Object { Write-Host "  $($_.Name)" -ForegroundColor Gray }
 
+	# The stamp is the contract. If GitVersion still won, the produced package
+	# carries another version and the collision this guards against is back.
 	$detectedVersions = @($newPackages | ForEach-Object { Get-PackageVersion $_.Name } |
 		Where-Object { $_ } | Sort-Object -Unique)
-
-	Write-Host "Detected version(s): $($detectedVersions -join ', ')" -ForegroundColor Gray
-
-	if ($detectedVersions.Count -eq 0) {
-		throw "Could not parse version from produced packages: $($newPackages.Name -join ', ')"
+	$unstamped = @($detectedVersions | Where-Object { $_ -ne $packVersion })
+	if ($unstamped.Count -gt 0) {
+		throw ("Packed $LibName as '$($unstamped -join ", ")' rather than " +
+			"'$packVersion'. The -p:Version stamp was overridden.")
 	}
-	if ($detectedVersions.Count -gt 1) {
-		Write-Host "WARNING: Multiple versions detected in produced packages:" -ForegroundColor Red
-		$detectedVersions | ForEach-Object { Write-Host "  $_" -ForegroundColor Red }
-		throw "Expected all packages to share one version. Clean $LocalRepo and retry."
-	}
-
-	$packVersion = $detectedVersions[0]
 	Write-Host ""
 	Write-Host "Pack complete ($($newPackages.Count) package(s), version $packVersion)." -ForegroundColor Green
 
@@ -323,9 +382,10 @@ function Invoke-PackLibrary {
 	Write-Host "To revert: git checkout Build/SilVersions.props" -ForegroundColor Yellow
 
 	# Copy PDB files to Output/Debug/ and Downloads/
-	$pdbSourceDir = Join-Path $SourceDir $cfg.PdbRelativeDir
+	$pdbSourceDirs = @($cfg.PdbRelativeDir | ForEach-Object { Join-Path $SourceDir $_ })
+	$foundPdbDirs = @($pdbSourceDirs | Where-Object { Test-Path $_ })
 
-	if (Test-Path $pdbSourceDir) {
+	if ($foundPdbDirs.Count -gt 0) {
 		$outputDebugDir = Join-Path $repoRoot "Output/Debug"
 		$downloadsDir   = Join-Path $repoRoot "Downloads"
 
@@ -335,18 +395,22 @@ function Invoke-PackLibrary {
 			}
 		}
 
-		$pdbFiles = @(Get-ChildItem -Path $pdbSourceDir -Filter "*.pdb" -File)
+		$pdbFiles = @($foundPdbDirs | ForEach-Object {
+				Get-ChildItem -Path $_ -Filter "*.pdb" -File
+			})
 		if ($pdbFiles.Count -gt 0) {
 			Write-Host "Copying $($pdbFiles.Count) PDB file(s) to Output/Debug/ and Downloads/..." -ForegroundColor Cyan
 			$pdbFiles | Copy-Item -Destination $outputDebugDir -Force
 			$pdbFiles | Copy-Item -Destination $downloadsDir -Force
 		}
 		else {
-			Write-Host "No PDB files found in $pdbSourceDir" -ForegroundColor Yellow
+			Write-Host "No PDB files found in: $($foundPdbDirs -join ', ')" `
+				-ForegroundColor Yellow
 		}
 	}
 	else {
-		Write-Host "PDB source directory not found: $pdbSourceDir (PDBs will only be in .snupkg)" -ForegroundColor Yellow
+		Write-Host ("PDB source directory not found, so PDBs are only in the .snupkg. " +
+			"Looked in: $($pdbSourceDirs -join ', ')") -ForegroundColor Yellow
 	}
 
 	Write-Host ""
@@ -398,25 +462,15 @@ if ($toPack.Count -gt 0) {
 		Write-Host "WARNING: -Version is ignored in pack mode (version is detected from produced packages)." -ForegroundColor Yellow
 	}
 
-	$localRepo = $env:LOCAL_NUGET_REPO
-	if (-not $localRepo) {
-		throw "The LOCAL_NUGET_REPO environment variable is not set. Set it to a folder path (e.g. C:\localnugetpackages)."
-	}
+	$localRepo = Get-FieldWorksLocalFeedPath -RepositoryRoot $repoRoot
 	if (-not (Test-Path $localRepo)) {
-		Write-Host "Creating local NuGet repo folder: $localRepo" -ForegroundColor Yellow
+		Write-Host "Creating local NuGet feed folder: $localRepo" -ForegroundColor Yellow
 		New-Item -Path $localRepo -ItemType Directory -Force | Out-Null
 	}
 
-	# Ensure local NuGet source is registered (user-level config)
-	$sourceList = & dotnet nuget list source 2>&1
-	$normalizedRepo = [System.IO.Path]::GetFullPath($localRepo).TrimEnd('\', '/')
-	$alreadyRegistered = $sourceList | Where-Object {
-		$_.Trim() -replace '[\\/]$', '' -ieq $normalizedRepo
-	}
-	if (-not $alreadyRegistered) {
-		& dotnet nuget add source $localRepo --name local 2>&1 | Out-Null
-		Write-Host "Added local NuGet source: $localRepo" -ForegroundColor Yellow
-	}
+	# The feed path rides in SilVersions.props, which PackageRestore.targets
+	# imports, so a nested restore in its own process sees it. No machine-level
+	# NuGet source: one outlives its checkout.
 
 	Write-Host ""
 	Write-Host "Libraries to pack: $($toPack.Keys -join ', ')" -ForegroundColor Cyan
@@ -424,6 +478,8 @@ if ($toPack.Count -gt 0) {
 	foreach ($lib in $toPack.Keys) {
 		Invoke-PackLibrary -LibName $lib -SourceDir $toPack[$lib] -LocalRepo $localRepo
 	}
+
+	Set-LocalFeedSource -LocalRepository $localRepo
 
 	Write-Host ""
 	Write-Host "========================================" -ForegroundColor Green
