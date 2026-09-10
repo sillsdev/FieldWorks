@@ -110,6 +110,13 @@
 	and copies the resulting DLLs into the output directory, overwriting the NuGet package versions.
 	Use this to test local liblcm fixes without publishing a NuGet package.
 
+.PARAMETER LocalLibraries
+	Local SIL libraries to repack before building: palaso, lcm, chorus, machine, l10nsharp.
+	Runs Build/Manage-LocalLibraries.ps1 for each, which pins the packed version in
+	Build/SilVersions.props. That pin is tracked and is left dirty on purpose: it records
+	that this tree depends on a library version nobody has released. Clear it yourself,
+	by setting the released version or with git checkout Build/SilVersions.props.
+
 .PARAMETER LocalLcmPath
 	Path to the local liblcm repository. Defaults to ../liblcm relative to the FieldWorks repo root.
 	Only used when -UseLocalLcm is specified.
@@ -198,6 +205,8 @@ param(
 	[switch]$EnableTracing,
 	[switch]$UseLocalLcm,
 	[string]$LocalLcmPath,
+	[ValidateSet('palaso', 'lcm', 'chorus', 'machine', 'l10nsharp')]
+	[string[]]$LocalLibraries = @(),
 	[ValidateSet('user', 'agent', 'unknown')]
 	[string]$StartedBy = 'unknown',
 	[switch]$SkipWorktreeLock,
@@ -595,6 +604,27 @@ try {
 			& $staleDllScript -OutputDir $outputDir -RepoRoot $PSScriptRoot -Verbose:$VerbosePreference
 		}
 
+		Import-Module (Join-Path $PSScriptRoot 'Build/LocalLibraries.psm1') -Force
+		$localFeed = Get-FieldWorksLocalFeedPath -RepositoryRoot $PSScriptRoot
+
+		# A thin wrapper over Manage-LocalLibraries.ps1: it packs and pins exactly as
+		# it does when run by hand, so the tracked pin and its revert instruction are
+		# unchanged. This only saves the second command.
+		if ($LocalLibraries.Count -gt 0) {
+			if ($UseLocalLcm -and $LocalLibraries -contains 'lcm') {
+				throw 'Choose either -LocalLibraries lcm or -UseLocalLcm, not both.'
+			}
+			$switchFor = @{ palaso = 'Palaso'; lcm = 'Lcm'; chorus = 'Chorus'
+				machine = 'Machine'; l10nsharp = 'L10nSharp' }
+			$managerArgs = @{}
+			foreach ($localLibrary in $LocalLibraries) {
+				$managerArgs[$switchFor[$localLibrary]] = $true
+			}
+			# That script reports failure by throwing, so $LASTEXITCODE would hold the
+			# last native command's result rather than its verdict.
+			& (Join-Path $PSScriptRoot 'Build/Manage-LocalLibraries.ps1') @managerArgs
+		}
+
 		# =============================================================================
 		# Build Configuration
 		# =============================================================================
@@ -677,16 +707,23 @@ try {
 			Write-Host "Including optional FieldWorks executables" -ForegroundColor Yellow
 		}
 
-		# Report local library packages when LOCAL_NUGET_REPO is configured
-		if ($env:LOCAL_NUGET_REPO -and (Test-Path $env:LOCAL_NUGET_REPO)) {
-			$localPkgs = Get-ChildItem -Path $env:LOCAL_NUGET_REPO -Filter "SIL.*.nupkg" -File -ErrorAction SilentlyContinue
+		# Report only what restore will actually resolve. A file in the feed proves
+		# nothing: the pin and the feed entry in SilVersions.props are what wire it in.
+		$versionPropsText = ''
+		$versionPropsFile = Join-Path $PSScriptRoot 'Build/SilVersions.props'
+		if (Test-Path $versionPropsFile) {
+			$versionPropsText = Get-Content -LiteralPath $versionPropsFile -Raw
+		}
+		# Literal compare: -like would treat a bracket in the path as a wildcard.
+		if ($versionPropsText.Contains($localFeed)) {
+			$localPkgs = @(Get-ChildItem -Path $localFeed -Filter "SIL.*.nupkg" -File -ErrorAction SilentlyContinue)
 			if ($localPkgs.Count -gt 0) {
 				Write-Host ""
-				Write-Host "Local library packages detected in $($env:LOCAL_NUGET_REPO):" -ForegroundColor Yellow
+				Write-Host "Local library packages wired into this restore from ${localFeed}:" -ForegroundColor Yellow
 				foreach ($pkg in $localPkgs) {
 					Write-Host "  $($pkg.Name)" -ForegroundColor Yellow
 				}
-				Write-Host "These will shadow upstream NuGet packages during restore." -ForegroundColor Yellow
+				Write-Host "Build/SilVersions.props pins these, so it is dirty until you set the released version." -ForegroundColor Yellow
 				Write-Host ""
 			}
 		}

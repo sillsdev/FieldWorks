@@ -6,7 +6,7 @@ This document describes how to debug locally-modified versions of **liblcm**, **
 
 The workflow uses a single PowerShell script (`Build/Manage-LocalLibraries.ps1`) that:
 
-1. Adds a local NuGet source to `nuget.config` (pointing to your `LOCAL_NUGET_REPO` folder).
+1. Packs into `.localfeed` in this working tree and records that feed path in `SilVersions.props`.
 2. Runs `dotnet pack` in Debug configuration with symbols, letting the library use its own version.
 3. Detects the version from the produced packages.
 4. Updates `SilVersions.props` so FieldWorks resolves that exact version.
@@ -18,27 +18,7 @@ This approach works identically for all three libraries.
 
 ## Setup (one-time)
 
-### 1. Create a local NuGet folder
-
-Pick any folder, for example:
-
-```
-C:\localnugetpackages
-```
-
-### 2. Set the `LOCAL_NUGET_REPO` environment variable
-
-```powershell
-# Current session
-$env:LOCAL_NUGET_REPO = "C:\localnugetpackages"
-
-# Persistent (user-level)
-[System.Environment]::SetEnvironmentVariable("LOCAL_NUGET_REPO", "C:\localnugetpackages", "User")
-```
-
-The script automatically registers this folder as a NuGet source in your user-level NuGet config when you pack. The repo's `nuget.config` is not modified.
-
-### 3. Clone the library you need
+### 1. Clone the library you need
 
 ```powershell
 git clone https://github.com/sillsdev/liblcm.git
@@ -46,6 +26,26 @@ git clone https://github.com/sillsdev/libpalaso.git
 git clone https://github.com/sillsdev/chorus.git
 git clone https://github.com/sillsdev/machine.git
 ```
+
+### 2. Nothing else
+
+Packed packages go to `.localfeed` inside this working tree, which is created on
+demand and gitignored. No environment variable and no user-level NuGet source are
+needed: `Build/SilVersions.props` carries the feed path, and
+`Build/PackageRestore.targets` imports it, so even a nested restore in its own
+process finds it. Set `LOCAL_NUGET_REPO` if you would rather share one feed across
+checkouts; it still wins.
+
+## One command
+
+```powershell
+$env:SILMACHINE_PATH = "C:\Repos\machine"
+.uild.ps1 -LocalLibraries machine
+```
+
+That packs the library and then builds. It is a wrapper over the two steps below:
+the version is pinned in tracked `Build/SilVersions.props` exactly as when the pack
+script is run by hand, and clearing that pin stays a manual step.
 
 ## Pack a local library
 
@@ -70,11 +70,32 @@ $env:SILMACHINE_PATH = "C:\Repos\machine"
 ```
 
 The script:
-- Lets the library build with its own version (no version override).
+- Stamps the pack with the source state, so the version can never be one a
+  published package already uses (see Version stamping below).
 - Detects the produced version and updates `Build/SilVersions.props` to match.
 - Produces `.snupkg` symbol packages (same format as production).
 - Copies PDB files to `Output/Debug/` and `Downloads/` for the debugger.
 - Clears stale packages from the `packages/` cache.
+
+## Version stamping
+
+A local pack is never given the published version string. It is stamped from the
+library checkout, so `3.9.2` packs as, for example:
+
+```
+3.9.2-my-branch.d3b7643    committed
+3.9.2-my-branch.dirty      uncommitted changes present
+```
+
+NuGet keys an extracted package on (id, version) and, once it has unpacked one
+into `packages/`, never consults the `.nupkg` again. A local build sharing the
+published version therefore kept satisfying restores after its `.nupkg` was
+deleted, silently, for as long as the folder survived. A stamped version cannot
+collide, so an ordinary build resolves the published package again (LT-22728).
+
+The stamp also makes the pin in `SilVersions.props` self-describing: a version
+with a branch and commit in it is visibly not something anyone can restore from
+nuget.org.
 
 ## Build FieldWorks
 
@@ -82,7 +103,7 @@ The script:
 .\build.ps1
 ```
 
-The build will print a yellow message listing any local packages detected in `LOCAL_NUGET_REPO`. NuGet restore will use your local packages because `SilVersions.props` was updated to request the exact version produced by the library.
+The build prints a yellow message listing any local packages in the feed. NuGet restore will use your local packages because `SilVersions.props` was updated to request the exact version produced by the library.
 
 ## Debug
 
@@ -120,6 +141,10 @@ Use `-Version` to set the library back to its upstream version:
 .\Build\Manage-LocalLibraries.ps1 -Library libpalaso -Version 17.0.0
 ```
 
+When the library change is released, set the pin to the released version rather
+than reverting. The dirty `SilVersions.props` is the reminder that FieldWorks is
+still depending on something unpublished.
+
 Or revert all libraries at once:
 
 ```powershell
@@ -128,7 +153,7 @@ Remove-Item -Recurse packages/sil.*
 .\build.ps1
 ```
 
-To also remove the user-level local source:
+If an older setup registered a user-level NuGet source, remove it too:
 
 ```powershell
 dotnet nuget remove source local
