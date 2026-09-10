@@ -269,13 +269,14 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		/// </summary>
 		public bool IsInteractionInFlight => _pointerGestureActive || _openPickers > 0;
 
-		/// <summary>Raised when the view goes idle again -- the click finished and no picker it
-		/// opened is still up -- so a host holding a refresh can deliver it.</summary>
+		/// <summary>
+		/// Raised when the view goes idle again -- the click finished and no picker it
+		/// opened is still up -- so a host holding a refresh can deliver it.
+		/// </summary>
 		public event EventHandler InteractionCompleted;
 
 		// 14.4: no Save/Cancel buttons -- the legacy view saves as you go. The footer carries
-		// only the
-		// inline validation messages (a failed autosave is never silent).
+		// only the inline validation messages (a failed autosave is never silent).
 		private Control CreateEditFooter()
 		{
 			_validationBlock = new TextBlock
