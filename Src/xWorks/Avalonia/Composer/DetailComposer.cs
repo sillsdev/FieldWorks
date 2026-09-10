@@ -546,6 +546,9 @@ namespace SIL.FieldWorks.XWorks
 			/// discarded -- it exists so a live slice can re-evaluate when the property it
 			/// depends on changes, and this view recomposes on PropChanged instead.
 			/// </summary>
+			private readonly HashSet<Tuple<int, int>> _propsToMonitor
+				= new HashSet<Tuple<int, int>>();
+
 			private bool IsIrrelevantForObject(ViewNode node, ICmObject obj)
 			{
 				if (obj == null || string.IsNullOrEmpty(node?.Field))
@@ -553,9 +556,10 @@ namespace SIL.FieldWorks.XWorks
 				var flid = GetFlid(obj, node.Field);
 				if (flid == 0)
 					return false;
-				// The base returns true without allocating, so this stays free for the classes
-				// that never override it.
-				return !obj.IsFieldRelevant(flid, new HashSet<Tuple<int, int>>());
+				// One set for the whole walk, cleared per node. The overrides that fill it are
+				// telling a live slice what to watch; nothing here reads it back.
+				_propsToMonitor.Clear();
+				return !obj.IsFieldRelevant(flid, _propsToMonitor);
 			}
 
 			public void Walk(ViewNode node, ICmObject obj, int depth)

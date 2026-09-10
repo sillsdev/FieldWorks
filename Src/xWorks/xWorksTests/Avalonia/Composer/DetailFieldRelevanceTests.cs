@@ -78,6 +78,9 @@ namespace SIL.FieldWorks.XWorks
 		/// MoAffixForm.InflectionClasses is relevant only when the entry's MSAs include an
 		/// inflectional affix MSA (ILexEntry.SupportsInflectionClasses). An entry with a stem MSA
 		/// has no inflection classes to offer its affix forms.
+		///
+		/// Composed twice over one fixture, with only the precondition changed between them: the
+		/// absent half alone would pass just as well if the row never composed for any reason.
 		/// </summary>
 		[Test]
 		public void Compose_AffixInflectionClasses_OnlyWhenTheEntrySupportsThem()
@@ -104,6 +107,27 @@ namespace SIL.FieldWorks.XWorks
 
 			Assert.That(HasRow(fields, "InflectionClasses", affix.Hvo), Is.False,
 				"with nothing to choose from, the domain says the row does not apply");
+
+			// The positive control: give the entry an inflectional affix MSA with a part of
+			// speech, change nothing else, and the same row on the same object composes.
+			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
+			{
+				var pos = Cache.ServiceLocator.GetInstance<IPartOfSpeechFactory>().Create();
+				Cache.LangProject.PartsOfSpeechOA.PossibilitiesOS.Add(pos);
+				pos.Name.set_String(Cache.DefaultAnalWs,
+					TsStringUtils.MakeString("Noun", Cache.DefaultAnalWs));
+				var inflMsa = Cache.ServiceLocator.GetInstance<IMoInflAffMsaFactory>().Create();
+				entry.MorphoSyntaxAnalysesOC.Add(inflMsa);
+				inflMsa.PartOfSpeechRA = pos;
+			});
+
+			Assert.That(entry.SupportsInflectionClasses(), Is.True,
+				"fixture check: an inflectional affix MSA with a part of speech supplies them");
+
+			fields = DetailComposer.Compose(entry, Cache, showHiddenFields: true).Model.Fields;
+
+			Assert.That(HasRow(fields, "InflectionClasses", affix.Hvo), Is.True,
+				"now there is something to choose from, so the row composes");
 		}
 
 		/// <summary>
@@ -111,6 +135,10 @@ namespace SIL.FieldWorks.XWorks
 		/// no inflection class to pick without one. This one is NOT an allomorph field; it is the
 		/// Grammatical Info section, which is why the gate lives in Walk rather than in the
 		/// allomorph path.
+		///
+		/// Composed twice over one fixture, with only the part of speech changed between them:
+		/// the absent half alone would pass just as well if the row never composed for any
+		/// reason.
 		/// </summary>
 		[Test]
 		public void Compose_StemMsaInflectionClass_OnlyOnceAPartOfSpeechIsChosen()
@@ -132,6 +160,22 @@ namespace SIL.FieldWorks.XWorks
 
 			Assert.That(HasRow(fields, "InflectionClass", msa.Hvo), Is.False,
 				"no part of speech means no inflection class to choose, and the domain says so");
+
+			// The positive control: choose one, change nothing else, and the same row on the
+			// same object composes.
+			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
+			{
+				var pos = Cache.ServiceLocator.GetInstance<IPartOfSpeechFactory>().Create();
+				Cache.LangProject.PartsOfSpeechOA.PossibilitiesOS.Add(pos);
+				pos.Name.set_String(Cache.DefaultAnalWs,
+					TsStringUtils.MakeString("Noun", Cache.DefaultAnalWs));
+				msa.PartOfSpeechRA = pos;
+			});
+
+			fields = DetailComposer.Compose(entry, Cache, showHiddenFields: true).Model.Fields;
+
+			Assert.That(HasRow(fields, "InflectionClass", msa.Hvo), Is.True,
+				"with a part of speech chosen there is an inflection class to pick, so it shows");
 		}
 	}
 }
