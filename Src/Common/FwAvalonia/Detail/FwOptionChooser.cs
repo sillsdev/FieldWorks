@@ -439,9 +439,9 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			{
 				if (s_trace.TraceInfo)
 					Trace.WriteLine("[FwOptionPicker] Flyout.Opened; posting focus (Input).");
-				// Re-highlight on every open, not just the first: after the user picks a new
-				// value the picker instance is reused, so a stale highlight would persist.
-				picker.HighlightSelectedOrFirst();
+				// Re-highlight on every open, not just the first: the picker instance is reused,
+				// so a value picked last time would otherwise leave a stale highlight.
+				picker.RehighlightCurrentValue();
 				Avalonia.Threading.Dispatcher.UIThread.Post(picker.FocusFilter,
 					Avalonia.Threading.DispatcherPriority.Input);
 			};
@@ -662,6 +662,18 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		public void SelectByKey(string key)
 		{
 			_selectedKey = key;
+			HighlightSelectedOrFirst();
+		}
+
+		/// <summary>
+		/// Re-applies the highlight to the row's current value, when the picker was given one.
+		/// A picker with no current value keeps the highlight it already has, which is the one
+		/// its host assigned before showing it.
+		/// </summary>
+		public void RehighlightCurrentValue()
+		{
+			if (string.IsNullOrEmpty(_selectedKey))
+				return;
 			HighlightSelectedOrFirst();
 		}
 

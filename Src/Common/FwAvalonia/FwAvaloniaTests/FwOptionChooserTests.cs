@@ -727,6 +727,32 @@ namespace FwAvaloniaTests
 			Dispatcher.UIThread.RunJobs();
 		}
 
+		/// <summary>
+		/// A picker with no seeded current value keeps whatever highlight its host set before
+		/// showing it. Several hosts -- the character-style and writing-system pickers on a
+		/// rich-text row, the complex-form type dropdown -- compute an index themselves and
+		/// assign
+		/// it immediately before ShowAt, so anything the shared flyout does on open must not
+		/// overwrite that.
+		/// </summary>
+		[AvaloniaTest]
+		public void OpeningAPickerWithNoSeededValue_KeepsTheHostsOwnHighlight()
+		{
+			var picker = new FwOptionChooser(Tree(), null, "Domains");
+			var anchor = new Button { Content = "open" };
+			var flyout = FwOptionChooser.CreateOptionFlyout(picker, PlacementMode.BottomEdgeAlignedLeft);
+			var window = new Window { Content = anchor, Width = 400, Height = 420 };
+			window.Show();
+			Dispatcher.UIThread.RunJobs();
+
+			picker.OptionsList.SelectedIndex = 2; // the host's own pre-selection
+			flyout.ShowAt(anchor);
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(picker.OptionsList.SelectedIndex, Is.EqualTo(2),
+				"the host chose this row; opening the flyout must not reset it to the first item");
+		}
+
 		#region Current-value highlight
 
 		// Tree() order: 0 Universe, 1 Sky, 2 Weather, 3 Person. "Weather" is deliberately NOT
