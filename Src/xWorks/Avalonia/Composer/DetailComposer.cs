@@ -1671,10 +1671,12 @@ namespace SIL.FieldWorks.XWorks
 			/// ICmObject.CheckConstraints -- the same oracle legacy's squiggly runs on -- rather
 			/// than re-deriving validity here, so the two views cannot disagree.
 			///
-			/// Read-only by construction: with createAnnotation false and the squiggly-adjusting
-			/// overload untouched, CheckConstraints computes no change and opens no unit of work.
-			/// Composing must never write. Minting the annotation stays on the edit path, where
-			/// legacy does it too.
+			/// Composing must never write, and createAnnotation false is not by itself enough to
+			/// guarantee that: of the three classes that override CheckConstraints, only
+			/// PhEnvironment honours the flag. MoMorphAdhocProhib and MoAlloAdhocProhib mint an
+			/// annotation on any failure regardless. Neither is reachable here -- the model gives
+			/// adhoc prohibitions owning collections only, never a reference property -- so this
+			/// stays a pure read for as long as it is asked only about REFERENCE vector items.
 			/// </summary>
 			private string ValidationMessageFor(ICmObject item)
 			{
