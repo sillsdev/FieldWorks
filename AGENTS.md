@@ -34,6 +34,9 @@ Minimal, high-signal guidance for coding agents in this repository.
 	`.claude/skills/fieldworks-code-commenting/SKILL.md`.
 - Follow the commit-message rules in
 	`.claude/skills/commit-messages/SKILL.md` for every commit.
+- Do not write "legacy" in code comments or commit messages -- name the
+	actual class, project, or UI, or state what the code does in its own
+	terms. PR descriptions and review discussion may use the term freely.
 
 ## Context model
 

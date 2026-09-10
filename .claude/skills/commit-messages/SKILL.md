@@ -34,6 +34,11 @@ is checked. There is no leniency for "just the summary" or "just this once."
 - Prefer several short lines over one long one, and several short
   paragraphs over one dense one -- a commit message is read in a `git log`
   pane, not a text editor with wrapping.
+- Don't use "legacy" as the name of a thing, here or in a code comment.
+  `git log` is read years later, when whatever was legacy at the time is
+  gone and the reader cannot recover what it meant. Name the class,
+  project, or UI -- "the WinForms DataTree", "the xCore Mediator" -- not
+  "the legacy path". PR descriptions are exempt.
 
 ## Verify before considering a commit done
 
