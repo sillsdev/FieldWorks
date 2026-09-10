@@ -949,6 +949,92 @@ namespace FwAvaloniaTests
 			Assert.That(chooser.SelectedKey, Is.EqualTo("g2"));
 		}
 
+		// A chooser row with two options, the first selected.
+		private static DetailField PickableChooserField() => new DetailField(
+			"LexEntry/x/#0", "Morph Type", "MorphType", null,
+			DetailFieldKind.Chooser, EditorClassification.Known, "MorphType", null,
+			HostRouting.Inherit, null,
+			new List<DetailChoiceOption>
+			{
+				new DetailChoiceOption("s1", "stem"),
+				new DetailChoiceOption("s2", "enclitic")
+			},
+			"s1");
+
+		// Opens the chooser's picker and commits the option at 'index'.
+		private static void PickOption(FwChooserField chooser, int index)
+		{
+			var flyout = (Flyout)chooser.Flyout;
+			flyout.ShowAt(chooser);
+			Dispatcher.UIThread.RunJobs();
+			var picker = (FwOptionChooser)flyout.Content;
+			picker.OptionsList.SelectedIndex = index;
+			picker.CommitHighlighted();
+			Dispatcher.UIThread.RunJobs();
+		}
+
+		private static (FwChooserField Chooser, Window Window) ShowChooser(
+			DetailField field, IDetailEditContext context, Action gestureCompleted)
+		{
+			var chooser = new FwChooserField(field, "MorphType", context, null, gestureCompleted);
+			var window = new Window { Content = chooser, Width = 300, Height = 120 };
+			window.Show();
+			Dispatcher.UIThread.RunJobs();
+			return (chooser, window);
+		}
+
+		/// <summary>
+		/// Picking an option COMMITS, it does not merely stage. Staging alone left the row
+		/// showing
+		/// the new value with nothing on the undo stack until focus happened to move, so Undo hit
+		/// the session guard, settled the pending edit and cancelled itself -- the change looked
+		/// locked in and nothing was undone. A pick is as discrete a gesture as a toggle.
+		/// </summary>
+		[AvaloniaTest]
+		public void Chooser_CommitsImmediately_SoUndoWorksWithoutMovingFocus()
+		{
+			var commits = 0;
+			var context = new FakeDetailEditContext();
+			var (chooser, _) = ShowChooser(PickableChooserField(), context, () => commits++);
+
+			PickOption(chooser, 1);
+
+			Assert.That(context.OptionEdits, Has.Count.EqualTo(1), "the pick staged");
+			Assert.That(commits, Is.EqualTo(1),
+				"the gesture completes on the pick -- not on some later focus change");
+		}
+
+		[AvaloniaTest]
+		public void Chooser_DoesNotCommit_WhenTheEditIsRefused()
+		{
+			var commits = 0;
+			var context = new FakeDetailEditContext { OptionResult = false };
+			var (chooser, _) = ShowChooser(PickableChooserField(), context, () => commits++);
+
+			PickOption(chooser, 1);
+
+			Assert.That(commits, Is.Zero,
+				"a refused edit commits nothing; committing here would push an empty step onto "
+				+ "the undo stack");
+		}
+
+		/// <summary>
+		/// Re-picking the value the row already holds stages nothing, so it must commit nothing
+		/// either -- an empty undo step the user cannot see is worse than no step at all.
+		/// </summary>
+		[AvaloniaTest]
+		public void Chooser_DoesNotCommit_WhenTheChosenOptionIsAlreadyTheValue()
+		{
+			var commits = 0;
+			var context = new FakeDetailEditContext();
+			var (chooser, _) = ShowChooser(PickableChooserField(), context, () => commits++);
+
+			PickOption(chooser, 0); // "s1" is already the row's value
+
+			Assert.That(context.OptionEdits, Is.Empty, "nothing changed, so nothing staged");
+			Assert.That(commits, Is.Zero, "and nothing is committed");
+		}
+
 		// Edits address the writing system by its unique IETF tag
 		// (DetailWsValue.WsTag); the user-editable abbreviation is only a fallback for tag-less
 		// rows (tests/fakes using aliases like "vern").

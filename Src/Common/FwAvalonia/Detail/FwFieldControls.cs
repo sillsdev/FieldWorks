@@ -1091,11 +1091,14 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		private readonly List<Action> _teardown = new List<Action>();
 		private bool _disposed;
 
+		/// <param name="gestureCompleted">Raised after a pick that actually staged, so the host
+		/// commits it as one undoable step. Null for a read-only row.</param>
 		public FwChooserField(
 			DetailField field,
 			string automationId,
 			IDetailEditContext editContext,
-			Action<DetailLinkRequest> linkRequested = null)
+			Action<DetailLinkRequest> linkRequested = null,
+			Action gestureCompleted = null)
 		{
 			_selectedKey = field.SelectedOptionKey;
 			Padding = FwAvaloniaDensity.EditorPadding;
@@ -1159,6 +1162,10 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 					// Only a COMMITTED change moves the picker's highlight; a rejected edit
 					// leaves the list still pointing at the value the row actually holds.
 					picker.SelectByKey(option.Key);
+					// A pick is a DISCRETE gesture, like a toggle: commit it now. Staging alone
+					// leaves Undo nothing to revert until focus moves, and the session guard
+					// spends that Undo settling the pending edit instead.
+					gestureCompleted?.Invoke();
 				}
 
 				flyout.Hide();
