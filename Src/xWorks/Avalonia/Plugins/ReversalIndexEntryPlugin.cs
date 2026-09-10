@@ -199,6 +199,8 @@ namespace SIL.FieldWorks.XWorks
 
 		public bool TryRemoveReferenceItem(DetailField field, string optionKey) => false;
 
+		public bool TryMoveReferenceItem(DetailField field, string optionKey, bool forward) => false;
+
 		// The Reversal Entries plugin edits multi-unicode reversal forms only; it implements neither
 		// IStructuredTextEditing (no StText rows are composed for it) nor picture editing.
 

@@ -62,6 +62,10 @@ namespace SIL.FieldWorks.XWorks
 		public virtual bool TryRemoveReferenceItem(DetailField detailField, string optionKey) => false;
 
 		/// <inheritdoc />
+		public virtual bool TryMoveReferenceItem(DetailField detailField, string optionKey, bool forward)
+			=> false;
+
+		/// <inheritdoc />
 		public virtual IReadOnlyList<string> Validate()
 		{
 			// Validation seam (minimal rule set, deterministic order). The lexeme/citation-form

@@ -133,9 +133,36 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 		///                         False: Open under the anchor control.</param>
 		public void ShowContextMenu(IReadOnlyList<DetailMenuItem> items,
 			Avalonia.Controls.Control anchor, bool atPointer)
+			=> ShowContextMenu(items, anchor, atPointer, null);
+
+		/// <summary>
+		/// Shows a context menu and reports when it has closed.
+		/// </summary>
+		/// <param name="items">The menu items; null or empty shows nothing.</param>
+		/// <param name="anchor">The control to anchor the menu to.</param>
+		/// <param name="atPointer">True: Open at the pointer location.
+		///                         False: Open under the anchor control.</param>
+		/// <param name="closed">Invoked once the menu closes, or at once when nothing could be
+		/// shown; null for no notification.</param>
+		public void ShowContextMenu(IReadOnlyList<DetailMenuItem> items,
+			Avalonia.Controls.Control anchor, bool atPointer, Action closed)
 		{
 			var target = anchor ?? Host.Content as Avalonia.Controls.Control;
-			DetailMenuFlyout.Show(items, target, atPointer);
+			var flyout = DetailMenuFlyout.Show(items, target, atPointer);
+			if (closed == null)
+				return;
+			if (flyout == null)
+			{
+				closed();
+				return;
+			}
+			EventHandler onClosed = null;
+			onClosed = (s, e) =>
+			{
+				flyout.Closed -= onClosed;
+				closed();
+			};
+			flyout.Closed += onClosed;
 		}
 
 		public void ShowMessage(string message)

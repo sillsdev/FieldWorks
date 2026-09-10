@@ -1209,22 +1209,26 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 	/// possibility tree indented by <see cref="DetailChoiceOption.Depth"/> for enumerated lists,
 	/// or the host search delegate's results for search-backed vectors (lexicons search, lists
 	/// enumerate), both behind the same filter box and virtualized capped list.
-	/// Right-clicking an item offers Remove. Without an edit context the row is read-only display.
+	/// Clicking an item (any button) makes it the row's current item, shown with the
+	/// selected-row brush and exposed through <see cref="IDetailItemSelection"/> so menu
+	/// requests can carry it. Right-clicking an item raises the host's per-item menu when a
+	/// bridge is supplied, else offers a local Remove; Backspace or Delete removes the focused
+	/// item. Without an edit context the row is read-only display whose items still select.
 	/// Hover-reveal polish: the separator bars, the "+" launcher, and -- only when the
 	/// row's list resolved a list-editor target -- the CONFIGURE gear (which directly dispatches
 	/// the host jump, never a flyout: <see cref="DetailGearChrome"/>) fade in on row hover; the
 	/// items/text stay always visible.
 	/// </summary>
-	public sealed class FwReferenceVectorField : StackPanel, IHoverAffordanceProvider, IDisposable
+	public sealed class FwReferenceVectorField : StackPanel, IHoverAffordanceProvider,
+		IDetailItemSelection, IDisposable
 	{
 		private readonly List<Control> _affordances = new List<Control>();
-		// Teardown for the per-item Remove handlers, the add picker's OptionCommitted/Dismissed
-		// subscriptions, the gear click, and the option flyout -- so a recycled vector cell
-		// releases
-		// every closure it wired and drops its flyout, mirroring FwChooserField/FwMultiWsTextField
-		// (wiring these with NO teardown leaks the editor path
-		// when VirtualizingStackPanel discards the container). Empty for read-only rows.
+		// Teardown for the per-item select/Remove handlers, the add picker's subscriptions, the
+		// gear click, and the option flyout, so a recycled vector cell releases every closure.
 		private readonly List<Action> _teardown = new List<Action>();
+		private readonly IReadOnlyList<DetailChoiceOption> _items;
+		private readonly List<TextBlock> _itemBlocks = new List<TextBlock>();
+		private int _selectedIndex = -1;
 		private bool _disposed;
 
 		/// <summary>
@@ -1233,13 +1237,18 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		/// -- legacy commits each chooser-dialog gesture as it lands, and the row's Items are a
 		/// compose-time snapshot, so without a commit + re-show nothing visibly changes.
 		/// Failed stages never fire it.
+		/// <paramref name="menuRequested"/> (optional): the host bridge that shows the row's
+		/// menus. When present, right-clicking an item raises a <see
+		/// cref="DetailMenuKind.ItemMenu"/> request carrying that item instead of the local
+		/// Remove flyout.
 		/// </summary>
 		public FwReferenceVectorField(
 			DetailField field,
 			string automationId,
 			IDetailEditContext editContext,
 			Action gestureCompleted = null,
-			Action<DetailLinkRequest> linkRequested = null)
+			Action<DetailLinkRequest> linkRequested = null,
+			Action<DetailMenuRequest> menuRequested = null)
 		{
 			Orientation = Orientation.Horizontal;
 			// 14.2-style hit-testing rule: a null background only hit-tests the glyphs -- the
@@ -1249,9 +1258,11 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			AutomationProperties.SetAutomationId(this, automationId);
 			AutomationProperties.SetName(this, field.Label ?? field.Field ?? automationId);
 
+			_items = field.Items;
 			var editable = editContext != null && field.IsEditable;
-			foreach (var item in field.Items)
+			for (var index = 0; index < field.Items.Count; index++)
 			{
+				var item = field.Items[index];
 				var text = new TextBlock
 				{
 					Text = item.Name,
@@ -1262,8 +1273,61 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 					// the right-click or the Remove flyout only opens over ink.
 					Background = FwAvaloniaDensity.TransparentBrush
 				};
-				AutomationProperties.SetAutomationId(text, automationId + ".Item." + item.Key);
+				AutomationProperties.SetAutomationId(text, ItemAutomationId(automationId, item.Key));
+				// Any button selects, so a right-click's menu acts on the item under the pointer;
+				// focus selects too. Items are focusable (a click focuses one) but not tab stops.
+				var itemIndex = index;
+				text.Focusable = true;
+				KeyboardNavigation.SetIsTabStop(text, false);
+				EventHandler<GotFocusEventArgs> focusSelect = (s, e) => SelectItem(itemIndex);
+				text.GotFocus += focusSelect;
+				EventHandler<PointerPressedEventArgs> select = (s, e) =>
+				{
+					SelectItem(itemIndex);
+					// Ctrl+click runs the item menu's default jump without showing the menu.
+					if (menuRequested != null
+						&& e.GetCurrentPoint(text).Properties.IsLeftButtonPressed
+						&& e.KeyModifiers.HasFlag(KeyModifiers.Control))
+					{
+						menuRequested(DetailMenuRequest.FromDefaultActivation(text, field, this));
+						e.Handled = true;
+					}
+				};
+				text.PointerPressed += select;
+				_itemBlocks.Add(text);
+				_teardown.Add(() =>
+				{
+					text.PointerPressed -= select;
+					text.GotFocus -= focusSelect;
+				});
 				if (editable)
+				{
+					// Backspace or Delete removes the focused item.
+					EventHandler<KeyEventArgs> keyRemove = (s, e) =>
+					{
+						if (e.Key != Key.Back && e.Key != Key.Delete)
+							return;
+						e.Handled = true;
+						if (editContext.TryRemoveReferenceItem(field, item.Key))
+							gestureCompleted?.Invoke();
+					};
+					text.KeyDown += keyRemove;
+					_teardown.Add(() => text.KeyDown -= keyRemove);
+				}
+				if (menuRequested != null)
+				{
+					// The press above already made this the current item, so the request's
+					// selected item is the one under the pointer.
+					EventHandler<ContextRequestedEventArgs> itemMenu = (s, e) =>
+					{
+						menuRequested(DetailMenuRequest.FromContextRequested(text, e, field,
+							DetailMenuKind.ItemMenu, this));
+						e.Handled = true;
+					};
+					text.AddHandler(ContextRequestedEvent, itemMenu);
+					_teardown.Add(() => text.RemoveHandler(ContextRequestedEvent, itemMenu));
+				}
+				else if (editable)
 				{
 					var removeItem = new MenuItem { Header = FwAvaloniaStrings.Remove };
 					var key = item.Key;
@@ -1371,6 +1435,83 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		/// <summary>The separator bars, "+" launcher, and configure gear reveal on row hover.</summary>
 		public IReadOnlyList<Control> HoverAffordances => _affordances;
 
+		private const string ItemAutomationIdInfix = ".Item.";
+
+		/// <summary>The automation id of the item with this option key in the row with this
+		/// automation id.</summary>
+		public static string ItemAutomationId(string rowAutomationId, string itemKey)
+			=> rowAutomationId + ItemAutomationIdInfix + itemKey;
+
+		/// <summary>Whether an automation id names an item of the row with this automation
+		/// id.</summary>
+		public static bool IsItemAutomationId(string rowAutomationId, string automationId)
+			=> rowAutomationId != null && automationId != null
+				&& automationId.StartsWith(rowAutomationId + ItemAutomationIdInfix, StringComparison.Ordinal);
+
+		/// <summary>The option key of the selected item; null when none is selected.</summary>
+		public string SelectedItemKey => _selectedIndex < 0 ? null : _items[_selectedIndex].Key;
+
+		/// <summary>The index of the selected item in the field's Items; -1 when none.</summary>
+		public int SelectedItemIndex => _selectedIndex;
+
+		/// <summary>Makes the item with this option key current; false when no item has
+		/// it.</summary>
+		public bool SelectItem(string key)
+		{
+			for (var i = 0; i < _items.Count; i++)
+			{
+				if (!string.Equals(_items[i].Key, key, StringComparison.Ordinal))
+					continue;
+				SelectItem(i);
+				return true;
+			}
+			return false;
+		}
+
+		/// <summary>
+		/// Makes the item at this index current, clamped to the row's items; false when the row
+		/// is empty.
+		/// </summary>
+		public bool SelectItemAt(int index)
+		{
+			if (_itemBlocks.Count == 0)
+				return false;
+			SelectItem(Math.Max(0, Math.Min(index, _itemBlocks.Count - 1)));
+			return true;
+		}
+
+		/// <summary>
+		/// Makes the item at this index current, clamped to the row's items, and gives it
+		/// keyboard focus; false when the row is empty.
+		/// </summary>
+		public bool FocusItemAt(int index)
+		{
+			if (!SelectItemAt(index))
+				return false;
+			_itemBlocks[_selectedIndex].Focus();
+			return true;
+		}
+
+		/// <summary>Raised after the current item changes, including when it is
+		/// cleared.</summary>
+		public event EventHandler SelectionChanged;
+
+		/// <summary>Leaves the row with no current item.</summary>
+		public void ClearSelection() => SelectItem(-1);
+
+		// Exactly one item is current at a time; the highlight moves with it.
+		private void SelectItem(int index)
+		{
+			if (index == _selectedIndex)
+				return;
+			if (_selectedIndex >= 0)
+				_itemBlocks[_selectedIndex].Background = FwAvaloniaDensity.TransparentBrush;
+			_selectedIndex = index;
+			if (index >= 0)
+				_itemBlocks[index].Background = FwAvaloniaDensity.SelectedRowBrush;
+			SelectionChanged?.Invoke(this, EventArgs.Empty);
+		}
+
 		/// <summary>
 		/// The count of still-attached subscriptions/handlers -- zero after <see
 		/// cref="Dispose"/>.
@@ -1379,10 +1520,10 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		public int AttachedHandlerCount => _teardown.Count;
 
 		/// <summary>
-		/// Detaches the per-item Remove handlers and the add picker's subscriptions and drops the option
-		/// flyout so a recycled reference-vector cell does not retain its closures. Idempotent;
-		/// a no-op for read-only rows (none wired). The host (DataTree / EditableCellHost)
-		/// already disposes IDisposable editors on teardown, so wiring IDisposable here is enough.
+		/// Detaches the per-item select and Remove handlers and the add picker's subscriptions
+		/// and drops the option flyout so a recycled reference-vector cell does not retain its
+		/// closures. Idempotent. The host (DataTree / EditableCellHost) already disposes
+		/// IDisposable editors on teardown, so wiring IDisposable here is enough.
 		/// </summary>
 		public void Dispose()
 		{

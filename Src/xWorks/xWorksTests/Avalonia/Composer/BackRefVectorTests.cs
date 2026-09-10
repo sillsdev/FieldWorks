@@ -68,6 +68,88 @@ namespace SIL.FieldWorks.XWorks
 			=> composed.Model.Fields.SingleOrDefault(f => f.Field == field
 				&& f.Kind == DetailFieldKind.ReferenceVector);
 
+		// ===== Reordering =====
+
+		// Subentries is virtual with reorder="true": a move records a virtual ordering that the
+		// recomposed row reflects, as one undo step.
+		[Test]
+		public void Subentries_MoveForward_RecordsAVirtualOrdering_AndRoundTrips()
+		{
+			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
+			{
+				m_complexRef.PrimaryLexemesRS.Add(m_component);
+				m_complex2Ref.PrimaryLexemesRS.Add(m_component);
+			});
+
+			var composed = Compose();
+			var field = FindField(composed, "Subentries");
+			Assert.That(field, Is.Not.Null);
+			Assert.That(field.CanReorderItems, Is.True, "reorder='true' makes the virtual vector reorderable");
+			var before = field.Items.Select(i => i.Key).ToList();
+			Assert.That(before, Has.Count.EqualTo(2));
+
+			Assert.That(composed.EditContext.TryMoveReferenceItem(field, before[0], forward: true), Is.True);
+			composed.EditContext.Commit();
+
+			var after = FindField(Compose(), "Subentries").Items.Select(i => i.Key).ToList();
+			Assert.That(after, Is.EqualTo(new[] { before[1], before[0] }), "the first item moved right");
+
+			Cache.ActionHandlerAccessor.Undo();
+			Assert.That(FindField(Compose(), "Subentries").Items.Select(i => i.Key), Is.EqualTo(before),
+				"the move is one undo step");
+		}
+
+		[Test]
+		public void Subentries_MovePastAnEnd_OrUnknownItem_Rejects_WithoutOpeningASession()
+		{
+			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
+			{
+				m_complexRef.PrimaryLexemesRS.Add(m_component);
+				m_complex2Ref.PrimaryLexemesRS.Add(m_component);
+			});
+
+			var composed = Compose();
+			var field = FindField(composed, "Subentries");
+			var keys = field.Items.Select(i => i.Key).ToList();
+
+			Assert.That(composed.EditContext.TryMoveReferenceItem(field, keys[0], forward: false), Is.False,
+				"the first item cannot move left");
+			Assert.That(composed.EditContext.TryMoveReferenceItem(field, keys[1], forward: true), Is.False,
+				"the last item cannot move right");
+			Assert.That(composed.EditContext.TryMoveReferenceItem(field, Guid.NewGuid().ToString(), true), Is.False);
+			Assert.That(composed.EditContext.IsOpen, Is.False, "rejected moves never open the fence");
+		}
+
+		// ComponentLexemes is a real reference sequence: a move rewrites the vector itself.
+		[Test]
+		public void ComponentLexemes_MoveBackward_RewritesTheSequence_AndRoundTrips()
+		{
+			ILexEntry second = null;
+			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
+			{
+				second = MakeEntry("techo");
+				m_complexRef.ComponentLexemesRS.Add(second);
+			});
+
+			var composed = DetailComposer.Compose(m_complex, Cache);
+			var field = FindField(composed, "ComponentLexemes");
+			Assert.That(field, Is.Not.Null, "the complex form's Components row composes as a vector");
+			Assert.That(field.CanReorderItems, Is.True, "a real reference sequence is always reorderable");
+			Assert.That(field.Items.Select(i => i.Key),
+				Is.EqualTo(new[] { m_component.Guid.ToString(), second.Guid.ToString() }));
+
+			Assert.That(composed.EditContext.TryMoveReferenceItem(field, second.Guid.ToString(), forward: false),
+				Is.True);
+			composed.EditContext.Commit();
+
+			Assert.That(m_complexRef.ComponentLexemesRS.Select(c => c.Guid),
+				Is.EqualTo(new[] { second.Guid, m_component.Guid }), "the sequence itself was reordered");
+
+			Cache.ActionHandlerAccessor.Undo();
+			Assert.That(m_complexRef.ComponentLexemesRS.Select(c => c.Guid),
+				Is.EqualTo(new[] { m_component.Guid, second.Guid }), "one undo step");
+		}
+
 		// ===== Subentries =====
 
 		[Test]

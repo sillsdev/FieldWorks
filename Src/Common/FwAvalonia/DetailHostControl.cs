@@ -56,16 +56,18 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 				});
 			view.EditCompleted += (s, e) => RaiseDetailEditCompleted();
 
+			// Continuity across the re-show, applied once the new view lays out. Focus leaves the
+			// old view first: detaching a focused editor makes Avalonia refocus and scroll away.
 			var focusMemento = DetailFocusMemory.Capture(CurrentContent);
-			if (focusMemento != null)
-				DetailFocusMemory.TryRestoreScroll(view, focusMemento);
+			DetailFocusMemory.ReleaseFocus(CurrentContent);
 			SetHostContent(view);
-			if (!string.IsNullOrEmpty(focusMemento?.AutomationId))
-			{
-				Avalonia.Threading.Dispatcher.UIThread.Post(
-					() => DetailFocusMemory.TryRestoreFocus(view, focusMemento),
-					Avalonia.Threading.DispatcherPriority.Input);
-			}
+			DetailFocusMemory.RestoreAfterLayout(view, focusMemento);
 		}
+
+		/// <summary>
+		/// Asks the next re-show to give keyboard focus to the vector row's current item, for a
+		/// gesture (a menu-driven move) made while no editor had focus.
+		/// </summary>
+		public void FocusVectorItemOnNextShow() => (CurrentContent as DataTree)?.RequestVectorFocusOnRebuild();
 	}
 }

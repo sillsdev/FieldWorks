@@ -1512,8 +1512,10 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			Func<Control> controlFactory = null,
 			Func<string, IReadOnlyList<DetailChoiceOption>> searchOptions = null,
 			IReadOnlyList<DetailChooserLink> chooserLinks = null,
-			IReadOnlyList<DetailParagraph> paragraphs = null)
+			IReadOnlyList<DetailParagraph> paragraphs = null,
+			bool canReorderItems = false)
 		{
+			CanReorderItems = canReorderItems;
 			Paragraphs = paragraphs ?? Array.Empty<DetailParagraph>();
 			ChooserLinks = chooserLinks ?? new List<DetailChooserLink>();
 			Items = items ?? new List<DetailChoiceOption>();
@@ -1566,6 +1568,13 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		/// (key = possibility guid, name = display name). Empty for other kinds.
 		/// </summary>
 		public IReadOnlyList<DetailChoiceOption> Items { get; }
+
+		/// <summary>
+		/// Whether the user may reorder <see cref="Items"/> (Move Left / Move Right): a real
+		/// reference sequence, or a virtual one whose layout allows reordering. False for other
+		/// kinds.
+		/// </summary>
+		public bool CanReorderItems { get; }
 
 		/// <summary>False for display-only fields (e.g. reference fields without chooser write-back yet).</summary>
 		public bool IsEditable { get; }
@@ -1707,6 +1716,19 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		public IReadOnlyList<DetailChooserLink> ChooserLinks { get; }
 	}
 
+	/// <summary>
+	/// A field editor that keeps one of its items current (a reference vector's selected
+	/// entry). Menu requests read it so item-relative commands know which item they act on.
+	/// </summary>
+	public interface IDetailItemSelection
+	{
+		/// <summary>The option key of the current item; null when no item is selected.</summary>
+		string SelectedItemKey { get; }
+
+		/// <summary>The index of the current item in the field's Items; -1 when none.</summary>
+		int SelectedItemIndex { get; }
+	}
+
 	/// <summary>Which configured menu a context-menu request maps to.</summary>
 	public enum DetailMenuKind
 	{
@@ -1717,7 +1739,13 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		ContextMenu,
 
 		/// <summary>The section hotlinks commands.</summary>
-		Hotlinks
+		Hotlinks,
+
+		/// <summary>
+		/// The per-item menu of a reference-vector row, opened on one of its items; the request's
+		/// selected item is the item under the pointer.
+		/// </summary>
+		ItemMenu
 	}
 
 	/// <summary>
@@ -1732,13 +1760,29 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 	public sealed class DetailMenuRequest
 	{
 		private DetailMenuRequest(DetailField field, DetailMenuKind kind, Control anchorControl,
-			bool openAtPointer)
+			bool openAtPointer, IDetailItemSelection selection, bool isDefaultActivation = false)
 		{
 			Field = field;
 			Kind = kind;
 			AnchorControl = anchorControl;
 			OpenAtPointer = openAtPointer;
+			SelectedItemKey = selection?.SelectedItemKey;
+			SelectedItemIndex = selection?.SelectedItemIndex ?? -1;
+			IsDefaultActivation = isDefaultActivation;
 		}
+
+		/// <summary>
+		/// The request for an item's default activation (Ctrl+click on a reference-vector
+		/// item): the host runs the item menu's first enabled jump command instead of showing
+		/// the menu.
+		/// </summary>
+		/// <param name="anchor">The item that was activated.</param>
+		/// <param name="field">The row the item belongs to.</param>
+		/// <param name="selection">The row editor's current item (the activated one).</param>
+		public static DetailMenuRequest FromDefaultActivation(Control anchor, DetailField field,
+			IDetailItemSelection selection)
+			=> new DetailMenuRequest(field, DetailMenuKind.ItemMenu, anchor, openAtPointer: false,
+				selection, isDefaultActivation: true);
 
 		/// <summary>
 		/// The request for a ContextRequested event: a right-click opens at the pointer, while
@@ -1748,9 +1792,12 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		/// <param name="e">Read only for whether it carries a pointer position.</param>
 		/// <param name="field">The row the menu acts on.</param>
 		/// <param name="kind">Which configured menu the request maps to.</param>
+		/// <param name="selection">The row editor's current item, when it keeps one.</param>
 		public static DetailMenuRequest FromContextRequested(Control surface,
-			ContextRequestedEventArgs e, DetailField field, DetailMenuKind kind)
-			=> new DetailMenuRequest(field, kind, surface, e.TryGetPosition(surface, out _));
+			ContextRequestedEventArgs e, DetailField field, DetailMenuKind kind,
+			IDetailItemSelection selection = null)
+			=> new DetailMenuRequest(field, kind, surface, e.TryGetPosition(surface, out _),
+				selection);
 
 		/// <summary>
 		/// The request for a pointer-less activation -- a button's mouse or keyboard Click, which
@@ -1759,12 +1806,30 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		/// <param name="anchor">The control to drop the menu from.</param>
 		/// <param name="field">The row the menu acts on.</param>
 		/// <param name="kind">Which configured menu the activation maps to.</param>
+		/// <param name="selection">The row editor's current item, when it keeps one.</param>
 		public static DetailMenuRequest FromAnchor(Control anchor, DetailField field,
-			DetailMenuKind kind)
-			=> new DetailMenuRequest(field, kind, anchor, openAtPointer: false);
+			DetailMenuKind kind, IDetailItemSelection selection = null)
+			=> new DetailMenuRequest(field, kind, anchor, openAtPointer: false, selection);
 
 		public DetailField Field { get; }
 		public DetailMenuKind Kind { get; }
+
+		/// <summary>
+		/// The option key of the row's current item at request time (a reference vector's
+		/// selected entry); null when the row has none. Item-relative commands such as
+		/// Move Left / Move Right act on it.
+		/// </summary>
+		public string SelectedItemKey { get; }
+
+		/// <summary>The index of <see cref="SelectedItemKey"/> in the field's Items; -1 when
+		/// none.</summary>
+		public int SelectedItemIndex { get; }
+
+		/// <summary>
+		/// True for a Ctrl+click on an item: the host runs the item menu's default command
+		/// (its first enabled jump) rather than showing the menu.
+		/// </summary>
+		public bool IsDefaultActivation { get; }
 
 		/// <summary>
 		/// The control the request came from; the menu anchors under it when

@@ -42,6 +42,10 @@ namespace FwAvaloniaTests
   <part id='LexEntry-Detail-Senses'>
     <seq field='Senses' menu='mnuDataTree-Sense' hotlinks='mnuDataTree-Sense-Hotlinks'/>
   </part>
+  <part id='LexEntry-Detail-Subentries'>
+	<slice field='Subentries' label='Subentries' menu='mnuReorderVector' reorder='true'
+		   editor='custom' assemblyPath='LexEdDll.dll' class='SIL.FieldWorks.XWorks.LexEd.EntrySequenceReferenceSlice'/>
+  </part>
 </bin></PartInventory>";
 
 		private static ViewDefinitionModel Import(string layoutXml)
@@ -96,6 +100,21 @@ namespace FwAvaloniaTests
 				"sequence nodes keep their menu so per-item headers can show the sense menu");
 			Assert.That(model.Roots[1].HotlinksId, Is.EqualTo("mnuDataTree-Sense-Hotlinks"));
 			Assert.That(model.Diagnostics, Is.Empty);
+		}
+
+		[Test]
+		public void Import_ReorderFlag_LandsOnTheNode_AndIsNotReportedAsUnhandled()
+		{
+			var model = Import(@"
+<layout class='LexEntry' type='detail' name='Menus'>
+  <part ref='Subentries'/>
+  <part ref='CitationForm'/>
+</layout>");
+
+			Assert.That(model.Roots[0].Reorder, Is.True, "reorder='true' rides the typed node");
+			Assert.That(model.Roots[1].Reorder, Is.False, "absent means not reorderable");
+			Assert.That(model.Diagnostics.Where(d => d.Message.Contains("reorder")), Is.Empty,
+				"reorder is a handled slice attribute");
 		}
 	}
 
@@ -641,6 +660,260 @@ namespace FwAvaloniaTests
 			var child = (MenuItem)top[1].Items[0];
 			Assert.That(child.Padding, Is.EqualTo(SIL.FieldWorks.Common.FwAvalonia.FwAvaloniaDensity.MenuItemPadding),
 				"submenu items compact too");
+		}
+
+		// A read-only reference-vector row (no edit context): items still select, since the
+		// item-relative commands act on whichever item is current.
+		private static DetailField VectorField(string id, params string[] itemKeys)
+			=> new DetailField(id, id, id, null, DetailFieldKind.ReferenceVector,
+				EditorClassification.Known, id, null, HostRouting.Inherit, null, null, null,
+				isEditable: false, indent: 0, menuId: "mnuReorderVector", objectHvo: 1234,
+				items: itemKeys.Select(k => new DetailChoiceOption(k, k.ToUpperInvariant())).ToList());
+
+		[AvaloniaTest]
+		public void VectorRow_WithNoItemClicked_RequestCarriesNoSelectedItem()
+		{
+			var (window, view, requests) = Show(VectorField("Subentries", "a", "b"));
+			var vector = Find<FwReferenceVectorField>(view, "Subentries");
+			Assert.That(vector.SelectedItemKey, Is.Null);
+			Assert.That(vector.SelectedItemIndex, Is.EqualTo(-1));
+
+			RightClick(window, Find<TextBlock>(view, "Subentries.Label"));
+
+			Assert.That(requests, Has.Count.EqualTo(1));
+			Assert.That(requests[0].SelectedItemKey, Is.Null);
+			Assert.That(requests[0].SelectedItemIndex, Is.EqualTo(-1));
+		}
+
+		[AvaloniaTest]
+		public void ClickingAVectorItem_SelectsIt_AndTheLabelMenuRequestCarriesIt()
+		{
+			var (window, view, requests) = Show(VectorField("Subentries", "a", "b"));
+			var second = Find<TextBlock>(view, "Subentries.Item.b");
+
+			LeftClick(window, second);
+
+			var vector = Find<FwReferenceVectorField>(view, "Subentries");
+			Assert.That(vector.SelectedItemKey, Is.EqualTo("b"));
+			Assert.That(vector.SelectedItemIndex, Is.EqualTo(1));
+			Assert.That(second.Background, Is.SameAs(FwAvaloniaDensity.SelectedRowBrush),
+				"the current item is highlighted");
+			Assert.That(requests, Is.Empty, "selecting an item opens no menu");
+
+			RightClick(window, Find<TextBlock>(view, "Subentries.Label"));
+
+			Assert.That(requests, Has.Count.EqualTo(1));
+			Assert.That(requests[0].Kind, Is.EqualTo(DetailMenuKind.SliceMenu));
+			Assert.That(requests[0].SelectedItemKey, Is.EqualTo("b"));
+			Assert.That(requests[0].SelectedItemIndex, Is.EqualTo(1));
+		}
+
+		[AvaloniaTest]
+		public void SelectingInOneVectorRow_ClearsTheOtherRowsSelection()
+		{
+			var (window, view, _) = Show(VectorField("Subentries", "a", "b"),
+				VectorField("ComplexForms", "c", "d"));
+			var subentries = Find<FwReferenceVectorField>(view, "Subentries");
+			var complexForms = Find<FwReferenceVectorField>(view, "ComplexForms");
+
+			LeftClick(window, Find<TextBlock>(view, "Subentries.Item.b"));
+			Assert.That(subentries.SelectedItemKey, Is.EqualTo("b"));
+
+			LeftClick(window, Find<TextBlock>(view, "ComplexForms.Item.c"));
+
+			Assert.That(complexForms.SelectedItemKey, Is.EqualTo("c"));
+			Assert.That(subentries.SelectedItemKey, Is.Null, "one current item per view");
+			Assert.That(Find<TextBlock>(view, "Subentries.Item.b").Background,
+				Is.SameAs(FwAvaloniaDensity.TransparentBrush), "the old highlight is gone");
+			Assert.That(subentries.SelectItem("a"), Is.True);
+			Assert.That(complexForms.SelectedItemKey, Is.Null, "a programmatic select clears the others too");
+		}
+
+		[AvaloniaTest]
+		public void ClickingAnotherVectorItem_MovesTheSelection_AndTheHighlight()
+		{
+			var (window, view, _) = Show(VectorField("Subentries", "a", "b"));
+			var first = Find<TextBlock>(view, "Subentries.Item.a");
+			var second = Find<TextBlock>(view, "Subentries.Item.b");
+
+			LeftClick(window, second);
+			LeftClick(window, first);
+
+			var vector = Find<FwReferenceVectorField>(view, "Subentries");
+			Assert.That(vector.SelectedItemKey, Is.EqualTo("a"));
+			Assert.That(first.Background, Is.SameAs(FwAvaloniaDensity.SelectedRowBrush));
+			Assert.That(second.Background, Is.SameAs(FwAvaloniaDensity.TransparentBrush),
+				"only one item is current at a time");
+		}
+
+		[AvaloniaTest]
+		public void RightClickingAVectorItem_SelectsIt_SoItsMenuActsOnTheItemUnderThePointer()
+		{
+			var (window, view, requests) = Show(VectorField("Subentries", "a", "b"));
+
+			RightClick(window, Find<TextBlock>(view, "Subentries.Item.a"));
+
+			var vector = Find<FwReferenceVectorField>(view, "Subentries");
+			Assert.That(vector.SelectedItemKey, Is.EqualTo("a"));
+			Assert.That(requests, Has.Count.EqualTo(1));
+			Assert.That(requests[0].Kind, Is.EqualTo(DetailMenuKind.ItemMenu), "the item's own menu, not the row's");
+			Assert.That(requests[0].SelectedItemKey, Is.EqualTo("a"));
+
+			ClickKebab(Find<Button>(view, "Subentries.FieldMenu"));
+
+			Assert.That(requests, Has.Count.EqualTo(2));
+			Assert.That(requests[1].Kind, Is.EqualTo(DetailMenuKind.SliceMenu));
+			Assert.That(requests[1].SelectedItemKey, Is.EqualTo("a"),
+				"the field-options button carries the current item too");
+		}
+
+		[AvaloniaTest]
+		public void RightClickingAVectorItem_RaisesTheItemMenuRequest_ForThatItem()
+		{
+			var (window, view, requests) = Show(VectorField("Subentries", "a", "b"));
+
+			var second = Find<TextBlock>(view, "Subentries.Item.b");
+			RightClick(window, second);
+
+			Assert.That(requests, Has.Count.EqualTo(1));
+			Assert.That(requests[0].Kind, Is.EqualTo(DetailMenuKind.ItemMenu));
+			Assert.That(requests[0].SelectedItemKey, Is.EqualTo("b"),
+				"the item under the pointer is the request's item");
+			Assert.That(requests[0].SelectedItemIndex, Is.EqualTo(1));
+			Assert.That(requests[0].Field.ObjectHvo, Is.EqualTo(1234), "the row's object still rides along");
+			Assert.That(requests[0].OpenAtPointer, Is.True);
+			Assert.That(ReferenceEquals(requests[0].AnchorControl, second), Is.True);
+			Assert.That(second.ContextFlyout, Is.Null, "one menu: the bridged item menu replaces the local flyout");
+		}
+
+		[AvaloniaTest]
+		public void CtrlClickingAVectorItem_RaisesTheDefaultActivation_ForThatItem()
+		{
+			var (window, view, requests) = Show(VectorField("Subentries", "a", "b"));
+			var second = Find<TextBlock>(view, "Subentries.Item.b");
+
+			var point = second.TranslatePoint(new Point(2, 2), window);
+			Assert.That(point, Is.Not.Null);
+			window.MouseDown(point.Value, MouseButton.Left, RawInputModifiers.Control);
+			window.MouseUp(point.Value, MouseButton.Left, RawInputModifiers.Control);
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(requests, Has.Count.EqualTo(1));
+			Assert.That(requests[0].IsDefaultActivation, Is.True, "Ctrl+click runs the default jump");
+			Assert.That(requests[0].Kind, Is.EqualTo(DetailMenuKind.ItemMenu));
+			Assert.That(requests[0].SelectedItemKey, Is.EqualTo("b"));
+			Assert.That(requests[0].OpenAtPointer, Is.False);
+
+			LeftClick(window, second);
+			Assert.That(requests, Has.Count.EqualTo(1), "a plain click only selects");
+		}
+
+		[AvaloniaTest]
+		public void FocusingAVectorItem_SelectsIt_AndTheContextMenuKey_RaisesTheItemMenuUnderIt()
+		{
+			var (window, view, requests) = Show(VectorField("Subentries", "a", "b"));
+			var second = Find<TextBlock>(view, "Subentries.Item.b");
+
+			second.Focus();
+			Dispatcher.UIThread.RunJobs();
+			var vector = Find<FwReferenceVectorField>(view, "Subentries");
+			Assert.That(vector.SelectedItemKey, Is.EqualTo("b"), "keyboard focus selects the item");
+
+			PressContextMenuKey(window);
+
+			Assert.That(requests, Has.Count.EqualTo(1));
+			Assert.That(requests[0].Kind, Is.EqualTo(DetailMenuKind.ItemMenu));
+			Assert.That(requests[0].IsDefaultActivation, Is.False);
+			Assert.That(requests[0].SelectedItemKey, Is.EqualTo("b"));
+			Assert.That(requests[0].OpenAtPointer, Is.False, "a keyboard-raised menu anchors under the item");
+			Assert.That(ReferenceEquals(requests[0].AnchorControl, second), Is.True);
+		}
+
+		// Items take focus from a click (so the keys and the context-menu key reach them) but
+		// add no Tab stops to the detail view.
+		[AvaloniaTest]
+		public void VectorItems_AreFocusable_ButNotTabStops()
+		{
+			var (_, view, _) = Show(VectorField("Subentries", "a", "b"));
+			var vector = Find<FwReferenceVectorField>(view, "Subentries");
+			var first = Find<TextBlock>(view, "Subentries.Item.a");
+			Assert.That(first.Focusable, Is.True);
+			Assert.That(KeyboardNavigation.GetIsTabStop(first), Is.False, "items are not tab stops");
+			Assert.That(vector.Focusable, Is.False, "nor is the row");
+		}
+
+		// Backspace or Delete on a focused item removes it, staging through the edit context
+		// and completing the gesture; read-only rows ignore the keys.
+		[AvaloniaTest]
+		public void DeleteOrBackspace_OnAFocusedVectorItem_RemovesIt_ThroughTheEditContext()
+		{
+			var field = new DetailField("v", "Publish In", "PublishIn", null, DetailFieldKind.ReferenceVector,
+				EditorClassification.Known, "PublishIn", null, HostRouting.Inherit, null,
+				new List<DetailChoiceOption> { new DetailChoiceOption("p1", "Main Dictionary") }, null,
+				isEditable: true, items: new List<DetailChoiceOption>
+				{
+					new DetailChoiceOption("p1", "Main Dictionary"),
+					new DetailChoiceOption("p2", "Pocket")
+				});
+			var context = new FakeDetailEditContext();
+			var gestures = 0;
+			var vector = new FwReferenceVectorField(field, "PublishIn", context, () => gestures++,
+				menuRequested: r => { });
+			var window = new Window { Content = vector, Width = 480, Height = 200 };
+			window.Show();
+			Dispatcher.UIThread.RunJobs();
+
+			Find<TextBlock>(vector, "PublishIn.Item.p2").Focus();
+			Dispatcher.UIThread.RunJobs();
+#pragma warning disable 618 // the Key-based overload avoids the headless physical-key map
+			window.KeyPress(Key.Delete, RawInputModifiers.None);
+			window.KeyRelease(Key.Delete, RawInputModifiers.None);
+#pragma warning restore 618
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(context.ReferenceRemoves, Is.EqualTo(new[] { ("PublishIn", "p2") }));
+			Assert.That(gestures, Is.EqualTo(1), "a successful remove completes the gesture once");
+
+			Find<TextBlock>(vector, "PublishIn.Item.p1").Focus();
+			Dispatcher.UIThread.RunJobs();
+#pragma warning disable 618
+			window.KeyPress(Key.Back, RawInputModifiers.None);
+			window.KeyRelease(Key.Back, RawInputModifiers.None);
+#pragma warning restore 618
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(context.ReferenceRemoves.Count, Is.EqualTo(2));
+			Assert.That(context.ReferenceRemoves[1], Is.EqualTo(("PublishIn", "p1")), "Backspace removes too");
+
+			// A read-only row (no edit context) ignores the keys.
+			var readOnly = new FwReferenceVectorField(field, "ReadOnly", null);
+			window.Content = readOnly;
+			Dispatcher.UIThread.RunJobs();
+			Find<TextBlock>(readOnly, "ReadOnly.Item.p1").Focus();
+			Dispatcher.UIThread.RunJobs();
+#pragma warning disable 618
+			window.KeyPress(Key.Delete, RawInputModifiers.None);
+			window.KeyRelease(Key.Delete, RawInputModifiers.None);
+#pragma warning restore 618
+			Dispatcher.UIThread.RunJobs();
+			Assert.That(context.ReferenceRemoves.Count, Is.EqualTo(2), "nothing wired on a read-only row");
+		}
+
+		[AvaloniaTest]
+		public void EditableVectorItem_WithAMenuBridge_HasNoLocalRemoveFlyout_AndWithoutOneKeepsIt()
+		{
+			var field = new DetailField("v", "Publish In", "PublishIn", null, DetailFieldKind.ReferenceVector,
+				EditorClassification.Known, "PublishIn", null, HostRouting.Inherit, null,
+				new List<DetailChoiceOption> { new DetailChoiceOption("p1", "Main Dictionary") }, null,
+				isEditable: true, items: new List<DetailChoiceOption> { new DetailChoiceOption("p1", "Main Dictionary") });
+
+			var bridged = new FwReferenceVectorField(field, "Bridged", new FakeDetailEditContext(),
+				menuRequested: r => { });
+			Assert.That(Find<TextBlock>(bridged, "Bridged.Item.p1").ContextFlyout, Is.Null);
+
+			var local = new FwReferenceVectorField(field, "Local", new FakeDetailEditContext());
+			Assert.That(Find<TextBlock>(local, "Local.Item.p1").ContextFlyout, Is.Not.Null,
+				"without a host bridge the row keeps its local Remove flyout");
 		}
 
 		[AvaloniaTest]

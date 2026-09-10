@@ -783,6 +783,13 @@ namespace SIL.FieldWorks.FdoUi
 			return HandleRightClick(mediator, propertyTable, hostControl, shouldDisposeThisWhenClosed, ContextMenuId, adjustMenu);
 		}
 
+		/// <summary>The message of the jump commands a ctrl-click runs.</summary>
+		public const string JumpToToolMessage = "JumpToTool";
+
+		/// <summary>The suffix appended to the label of the menu item a ctrl-click
+		/// runs.</summary>
+		public static string CtrlClickSuffix => FdoUiStrings.ksCtrlClick;
+
 		/// <summary>
 		/// Given a populated choice group, mark the one that will be invoked by a ctrl-click.
 		/// This method is typically used as the menuAdjuster argument in calling HandleRightClick.
@@ -796,7 +803,7 @@ namespace SIL.FieldWorks.FdoUi
 				if (item1 == null || !(item1.Tag is CommandChoice) || !item1.Enabled)
 					continue;
 				var command = (CommandChoice) item1.Tag;
-				if (command.Message != "JumpToTool")
+				if (command.Message != JumpToToolMessage)
 					continue;
 
 				item1.Text += FdoUiStrings.ksCtrlClick;
@@ -838,7 +845,7 @@ namespace SIL.FieldWorks.FdoUi
 		private static bool IsCtrlClickItem(object item)
 		{
 			var command = item as CommandChoice;
-			if (command == null || command.Message != "JumpToTool")
+			if (command == null || command.Message != JumpToToolMessage)
 				return false;
 			var displayProps = command.GetDisplayProperties();
 			return (displayProps.Visible && displayProps.Enabled);

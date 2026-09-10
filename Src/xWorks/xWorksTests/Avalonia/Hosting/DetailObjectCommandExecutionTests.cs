@@ -154,6 +154,120 @@ namespace SIL.FieldWorks.XWorks
 				"the host can re-show the detail view after a hotlink-create");
 		}
 
+		// ===== Reference-vector rows: the per-item menu and Move Left / Move Right =====
+
+		private sealed class ItemSelection : IDetailItemSelection
+		{
+			public string SelectedItemKey { get; set; }
+			public int SelectedItemIndex { get; set; }
+		}
+
+		// Two complex forms whose primary lexeme is the test entry, so its Subentries row shows
+		// two items; then the host re-shows the record so its edit context knows the row.
+		private void MakeTwoSubentries()
+		{
+			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
+			{
+				var stem = GetMorphTypeOrCreateOne("stem");
+				var noun = GetGrammaticalCategoryOrCreateOne("noun", Cache.LangProject.PartsOfSpeechOA);
+				foreach (var form in new[] { "command-entry-sub-a", "command-entry-sub-b" })
+				{
+					var complex = AddLexeme(m_createdObjects, form, stem, "sub " + form, noun);
+					var ler = Cache.ServiceLocator.GetInstance<ILexEntryRefFactory>().Create();
+					complex.EntryRefsOS.Add(ler);
+					ler.RefType = LexEntryRefTags.krtComplexForm;
+					ler.ComponentLexemesRS.Add(m_entry);
+					ler.PrimaryLexemesRS.Add(m_entry);
+				}
+			});
+			DrainMediatorAndIdleQueues();
+			RefreshedDetailFieldCount();
+		}
+
+		private DetailField SubentriesField()
+		{
+			var field = DetailComposer.Compose(m_entry, Cache).Model.Fields
+				.SingleOrDefault(f => f.Field == "Subentries" && f.Kind == DetailFieldKind.ReferenceVector);
+			Assert.That(field, Is.Not.Null, "the entry composes a Subentries vector row");
+			Assert.That(field.Items, Has.Count.EqualTo(2));
+			return field;
+		}
+
+		[Test]
+		public void SubentriesItemMenu_OffersTheJumpAsCtrlClickDefault_AndTheMoveCommands_ForTheClickedItem()
+		{
+			MakeTwoSubentries();
+			var field = SubentriesField();
+			var request = DetailMenuRequest.FromAnchor(null, field, DetailMenuKind.ItemMenu,
+				new ItemSelection { SelectedItemKey = field.Items[0].Key, SelectedItemIndex = 0 });
+
+			var items = m_view.BuildReferenceItemMenu(request, out var colleague);
+			try
+			{
+				Assert.That(colleague, Is.Not.Null, "the clicked item's object UI joins as the temporary colleague");
+				var jump = items.FirstOrDefault(i => !i.IsSeparator
+					&& i.Label.StartsWith("Show Entry in Lexicon", StringComparison.Ordinal));
+				Assert.That(jump, Is.Not.Null, "the clicked entry's jump command materializes");
+				Assert.That(jump.Label, Does.EndWith(SIL.FieldWorks.FdoUi.CmObjectUi.CtrlClickSuffix),
+					"the first enabled jump is marked as the Ctrl+click default, with the shared suffix");
+				Assert.That(jump.IsEnabled, Is.True);
+
+				var left = FindItem(items, "Move Left");
+				var right = FindItem(items, "Move Right");
+				Assert.That(left, Is.Not.Null, "Move Left materializes on the item menu");
+				Assert.That(right, Is.Not.Null, "Move Right materializes on the item menu");
+				Assert.That(left.IsEnabled, Is.False, "the first item cannot move left");
+				Assert.That(right.IsEnabled, Is.True, "the first item can move right");
+			}
+			finally
+			{
+				colleague?.Dispose();
+			}
+		}
+
+		[Test]
+		public void SubentriesCtrlClick_ResolvesTheClickedEntry_AndRunsTheDefaultJumpPath()
+		{
+			MakeTwoSubentries();
+			var field = SubentriesField();
+			var targetHvo = Cache.ServiceLocator.ObjectRepository.GetObject(new Guid(field.Items[1].Key)).Hvo;
+			var request = DetailMenuRequest.FromDefaultActivation(null, field,
+				new ItemSelection { SelectedItemKey = field.Items[1].Key, SelectedItemIndex = 1 });
+
+			// The host's half: the clicked item resolves to its own object UI, wired to this
+			// view's mediator so its jump commands can run.
+			using (var ui = m_view.ResolveItemUi(request))
+			{
+				Assert.That(ui, Is.Not.Null, "the clicked subentry resolves to an object UI");
+				Assert.That(ui.Object.Hvo, Is.EqualTo(m_entry.Hvo), "the UI's root is the row's object");
+				Assert.That(ui.Mediator, Is.Not.Null);
+				Assert.That(ui.PropTable, Is.Not.Null);
+				Assert.That(((SIL.FieldWorks.FdoUi.ReferenceBaseUi)ui).ContextMenuId, Is.EqualTo("mnuReferenceChoices"));
+			}
+			Assert.That(Cache.ServiceLocator.ObjectRepository.IsValidObjectId(targetHvo), Is.True);
+
+			// The default activation runs the object UI's Ctrl-click path end to end without
+			// faulting (the jump is a mediator FollowLink this headless window does not service).
+			Assert.DoesNotThrow(() => m_view.OnDetailItemMenuRequested(request));
+			DrainMediatorAndIdleQueues();
+		}
+
+		[Test]
+		public void SubentriesMoveRight_ThroughTheHost_ReordersTheRow()
+		{
+			MakeTwoSubentries();
+			var field = SubentriesField();
+			var before = field.Items.Select(i => i.Key).ToList();
+
+			m_view.MoveReferenceItem(field, before[0], forward: true);
+			DrainMediatorAndIdleQueues();
+
+			var after = SubentriesField().Items.Select(i => i.Key).ToList();
+			Assert.That(after, Is.EqualTo(new[] { before[1], before[0] }), "the first item moved right");
+			Assert.That(RefreshedDetailFieldCount(), Is.GreaterThan(0),
+				"the host re-shows the record after the coalesced completion");
+		}
+
 		// ----------------------------------------------------------------------------------------
 		// Delete Sense / Delete object
 		// ----------------------------------------------------------------------------------------
@@ -686,14 +800,10 @@ namespace SIL.FieldWorks.XWorks
 		private IReadOnlyList<DetailMenuItem> BuildItemsWithOverrideInterceptor(string[] menuIds,
 			DetailField field)
 		{
-			var build = typeof(RecordEditView).GetMethod("BuildOverrideCommandInterceptor",
-				BindingFlags.Instance | BindingFlags.NonPublic);
-			Assert.That(build, Is.Not.Null, "the override interceptor seam must exist");
-			var interceptor = (Func<ChoiceBase, UIItemDisplayProperties, DetailMenuItem>)build.Invoke(
-				m_view, new object[] { field });
-			TestContext.WriteLine("interceptor built: " + (interceptor != null));
+			var registry = new OverrideCommandRegistry();
+			m_view.AddOverrideCommands(registry, field);
 			var window = m_propertyTable.GetValue<XWindow>("window");
-			return XCoreMenuBridge.CreateMenuItems(window, menuIds, interceptor);
+			return XCoreMenuBridge.CreateMenuItems(window, menuIds, registry.TryBuild);
 		}
 
 		private ViewDefinitionOverride ReadOverrideFor(DetailField field)

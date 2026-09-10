@@ -50,7 +50,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		/// switch).</summary>
 		public Action<string> WritingSystemFocused { get; }
 
-		/// <summary>Right-click slice/section menu callback (null on hosts without a slice menu).</summary>
+		/// <summary>Right-click menu callback for rows, sections, and vector items (null on
+		/// hosts without a menu bridge; vector rows then keep a local Remove flyout).</summary>
 		public Action<DetailMenuRequest> MenuRequested { get; }
 
 		/// <summary>Hyperlink follow callback for choosers/vectors (null -> no link
@@ -108,7 +109,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 					// focus-loss autosave uses, whose re-show rebuilds the row from domain truth. A host
 					// that owns its own commit (an in-cell editor) passes a null Save and just stages.
 					return new FwReferenceVectorField(field, automationId, context.EditContext,
-						context.EditContext == null ? null : context.Save, context.LinkRequested);
+						context.EditContext == null ? null : context.Save, context.LinkRequested,
+						context.MenuRequested);
 				case DetailFieldKind.StructuredText:
 					// An editable multi-paragraph StText field. Per-paragraph text edits stage and
 					// ride the focus-loss autosave; structural gestures (add/delete/style) commit
