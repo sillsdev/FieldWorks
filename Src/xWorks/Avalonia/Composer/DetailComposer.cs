@@ -2567,7 +2567,10 @@ namespace SIL.FieldWorks.XWorks
 			private void WalkBooleanField(ViewNode node, ICmObject obj, int depth, int flid)
 			{
 				var hvo = obj.Hvo;
-				var current = _sda.get_BooleanProp(hvo, flid);
+				// A toggleValue slice shows and stores the LOGICAL INVERSE of its property, on
+				// read AND write, as legacy's CheckBoxSlice does: "Active" is stored as Disabled.
+				var inverted = node.ToggleValue;
+				var current = _sda.get_BooleanProp(hvo, flid) ^ inverted;
 				var stableId = StableId(node, obj);
 				AddField(new DetailField(stableId, Localize(node.Label) ?? node.Field, node.Field,
 					node.WritingSystem, DetailFieldKind.Boolean, node.EditorClassification,
@@ -2582,7 +2585,7 @@ namespace SIL.FieldWorks.XWorks
 					// opening the session, like a chooser key outside its list.
 					if (!bool.TryParse(key, out var value))
 						return false;
-					_sda.SetBoolean(hvo, flid, value);
+					_sda.SetBoolean(hvo, flid, value ^ inverted);
 					return true;
 				};
 			}
