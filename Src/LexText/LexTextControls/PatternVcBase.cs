@@ -226,7 +226,10 @@ namespace SIL.FieldWorks.LexText.Controls
 			vwenv.OpenParagraph();
 			if (addBoundary)
 			{
+				// This zero-width-space boundary run is a cursor-parking glyph for arrow-key
+				// navigation, never free text; a fake tag with no bound field behind it.
 				vwenv.Props = m_bracketProps;
+				vwenv.set_IntProperty((int) FwTextPropType.ktptEditable, (int) FwTextPropVar.ktpvEnum, (int) TptEditable.ktptNotEditable);
 				vwenv.AddProp(ktagLeftBoundary, this, kfragZeroWidthSpace);
 			}
 		}
@@ -241,6 +244,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			if (addBoundary)
 			{
 				vwenv.Props = m_bracketProps;
+				vwenv.set_IntProperty((int) FwTextPropType.ktptEditable, (int) FwTextPropVar.ktpvEnum, (int) TptEditable.ktptNotEditable);
 				vwenv.AddProp(ktagRightBoundary, this, kfragZeroWidthSpace);
 			}
 			vwenv.CloseParagraph();
