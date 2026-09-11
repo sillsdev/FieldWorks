@@ -1149,7 +1149,7 @@ namespace SIL.FieldWorks.LexText.Controls {
                 return ResourceManager.GetString("ksFindLexEntry", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Find Record.
         /// </summary>

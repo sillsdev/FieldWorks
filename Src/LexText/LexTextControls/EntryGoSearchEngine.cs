@@ -20,8 +20,8 @@ namespace SIL.FieldWorks.LexText.Controls
 	{
 		private readonly Virtuals m_virtuals;
 
-		public EntryGoSearchEngine(LcmCache cache)
-			: base(cache, SearchType.FullText)
+		public EntryGoSearchEngine(LcmCache cache, SearchType searchType = SearchType.FullText)
+			: base(cache, searchType)
 		{
 			m_virtuals = Cache.ServiceLocator.GetInstance<Virtuals>();
 		}

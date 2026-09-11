@@ -187,35 +187,44 @@ namespace SIL.FieldWorks.LexText.Controls
 			m_fwTextBoxBottomMsg.Tss = tsb.GetString();
 		}
 
-		protected override void InitializeMatchingObjects(LcmCache cache)
+		/// <summary>
+		/// The full-text engine, specialized to drop the starting entry so an entry can never be
+		/// offered as a merge target for itself.
+		/// </summary>
+		protected override SearchEngine FullTextSearchEngine
 		{
-			var xnWindow = m_propertyTable.GetValue<XmlNode>("WindowConfiguration");
-			XmlNode configNode = xnWindow.SelectSingleNode("controls/parameters/guicontrol[@id=\"matchingEntries\"]/parameters");
-
-			var searchEngine = (MergeEntrySearchEngine)SearchEngine.Get(m_mediator, m_propertyTable, "MergeEntrySearchEngine", () => new MergeEntrySearchEngine(cache));
-			searchEngine.CurrentEntryHvo = m_startingEntry.Hvo;
-
-			m_matchingObjectsBrowser.Initialize(cache, FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable), m_mediator, m_propertyTable, configNode,
-				searchEngine);
-
-			// start building index
-			var selectedWs = (CoreWritingSystemDefinition) m_cbWritingSystems.SelectedItem;
-			if(selectedWs != null)
-				m_matchingObjectsBrowser.SearchAsync(GetFields(string.Empty, selectedWs.Handle));
+			get { return MergeSearchEngine("MergeEntrySearchEngine", SearchType.FullText); }
 		}
 
 		/// <summary>
-		/// A search engine that excludes the current entry (you can't merge an entry with its self
+		/// The substring engine, specialized to drop the starting entry.
 		/// </summary>
-		private class MergeEntrySearchEngine : EntryGoSearchEngine
+		protected override SearchEngine SubstringSearchEngine
+		{
+			get { return MergeSearchEngine("MergeEntrySubstringSearchEngine", SearchType.Substring); }
+		}
+
+		private SearchEngine MergeSearchEngine(string cacheKey, SearchType searchType)
+		{
+			var searchEngine = (MergeEntrySearchEngine)SearchEngine.Get(m_mediator, m_propertyTable,
+				cacheKey, () => new MergeEntrySearchEngine(m_cache, searchType));
+			searchEngine.CurrentEntryHvo = m_startingEntry.Hvo;
+			return searchEngine;
+		}
+
+		/// <summary>
+		/// A search engine that excludes the current entry, since you cannot merge an entry
+		/// with itself.
+		/// </summary>
+		internal class MergeEntrySearchEngine : EntryGoSearchEngine
 		{
 			public int CurrentEntryHvo { private get; set; }
 
-			public MergeEntrySearchEngine(LcmCache cache) : base(cache)
+			public MergeEntrySearchEngine(LcmCache cache, SearchType searchType) : base(cache, searchType)
 			{
 			}
 
-			protected override IEnumerable<int>  FilterResults(IEnumerable<int> results)
+			protected override IEnumerable<int> FilterResults(IEnumerable<int> results)
 			{
 				return results == null ? null : results.Where(hvo => hvo != CurrentEntryHvo);
 			}
