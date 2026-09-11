@@ -61,6 +61,15 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		bool TryRemoveReferenceItem(DetailField field, string optionKey);
 
 		/// <summary>
+		/// Stages moving an item (by option key) one place within a <see
+		/// cref="DetailFieldKind.ReferenceVector"/> row: forward is toward the end of the vector
+		/// (Move Right), otherwise toward the start (Move Left). Returns false -- without opening
+		/// the session -- when the row cannot be reordered, the item is not in the vector, or it
+		/// is already at that end.
+		/// </summary>
+		bool TryMoveReferenceItem(DetailField field, string optionKey, bool forward);
+
+		/// <summary>
 		/// Validates the staged state. Empty result means commit may proceed; messages are
 		/// user-facing (validation seam, deterministic order).
 		/// </summary>

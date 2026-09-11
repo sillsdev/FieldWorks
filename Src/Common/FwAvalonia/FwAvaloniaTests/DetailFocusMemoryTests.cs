@@ -182,6 +182,127 @@ namespace FwAvaloniaTests
 				"rebuilding the detail view should keep the user at the same scroll position instead of jumping back to the top");
 		}
 
+		private static DataTree NewVectorView(params string[] keys)
+		{
+			var field = new DetailField("LexEntry/x/#7", "Subentries", "Subentries", null,
+				DetailFieldKind.ReferenceVector, EditorClassification.Known, "Subentries", null,
+				HostRouting.Inherit, null, null, null, isEditable: false,
+				items: keys.Select(k => new DetailChoiceOption(k, k.ToUpperInvariant())).ToList());
+			return new DataTree(new DetailModel("LexEntry", "Normal",
+				new List<DetailField> { field }, new List<ViewDiagnostic>()));
+		}
+
+		private static TextBlock FindChip(Control root, string automationId)
+			=> root.GetVisualDescendants().OfType<TextBlock>()
+				.Single(t => AutomationProperties.GetAutomationId(t) == automationId);
+
+		// A move or a keyboard removal leaves no focused editor; the row's current item (or,
+		// when no item has its key, the item now at its index) takes focus after the rebuild.
+		[AvaloniaTest]
+		public void RestoreAfterLayout_FocusesTheCurrentItem_OnlyWhenAskedTo_OrAfterAnItemRemoval()
+		{
+			var first = NewVectorView("a", "b", "c");
+			var window = new Window { Content = first, Width = 420, Height = 200 };
+			window.Show();
+			Dispatcher.UIThread.RunJobs();
+			Assert.That(first.GetVisualDescendants().OfType<FwReferenceVectorField>().Single().SelectItem("b"), Is.True);
+
+			// A selection alone (focus elsewhere) restores the highlight but never takes focus.
+			var passive = DetailFocusMemory.Capture(first);
+			Assert.That(passive.AutomationId, Is.Null, "nothing is focused");
+			Assert.That(passive.FocusVectorItem, Is.False);
+			var second = NewVectorView("a", "b", "c");
+			DetailFocusMemory.RestoreAfterLayout(second, passive);
+			window.Content = second;
+			Dispatcher.UIThread.RunJobs();
+			var restored = second.GetVisualDescendants().OfType<FwReferenceVectorField>().Single();
+			Assert.That(restored.SelectedItemKey, Is.EqualTo("b"));
+			Assert.That(FindChip(second, "Subentries.Item.b").IsFocused, Is.False,
+				"an unrelated re-show must not pull focus into the row");
+
+			// The outgoing view asked for it (a menu-driven move): the current item takes focus.
+			second.RequestVectorFocusOnRebuild();
+			var requested = DetailFocusMemory.Capture(second);
+			Assert.That(requested.FocusVectorItem, Is.True);
+			var third = NewVectorView("a", "b", "c");
+			DetailFocusMemory.RestoreAfterLayout(third, requested);
+			window.Content = third;
+			Dispatcher.UIThread.RunJobs();
+			Assert.That(FindChip(third, "Subentries.Item.b").IsFocused, Is.True);
+
+			// Keyboard focus sat on an item that the rebuilt row lacks: the item now at its index
+			// takes over.
+			FindChip(third, "Subentries.Item.b").Focus();
+			Dispatcher.UIThread.RunJobs();
+			var removal = DetailFocusMemory.Capture(third);
+			Assert.That(removal.AutomationId, Is.EqualTo("Subentries.Item.b"));
+			var fourth = NewVectorView("a", "c");
+			DetailFocusMemory.RestoreAfterLayout(fourth, removal);
+			window.Content = fourth;
+			Dispatcher.UIThread.RunJobs();
+			Assert.That(fourth.GetVisualDescendants().OfType<FwReferenceVectorField>().Single().SelectedItemKey,
+				Is.EqualTo("c"));
+			Assert.That(FindChip(fourth, "Subentries.Item.c").IsFocused, Is.True);
+		}
+
+		// A vector row's current item is view state; it must survive the rebuild even when
+		// nothing is focused (the move was made from a menu).
+		[AvaloniaTest]
+		public void CaptureAndRestore_CarryTheVectorRowsCurrentItem_AcrossAViewRebuild()
+		{
+			var first = NewVectorView("a", "b");
+			var window = new Window { Content = first, Width = 420, Height = 200 };
+			window.Show();
+			Dispatcher.UIThread.RunJobs();
+			var vector = first.GetVisualDescendants().OfType<FwReferenceVectorField>().Single();
+			Assert.That(vector.SelectItem("b"), Is.True);
+
+			var memento = DetailFocusMemory.Capture(first);
+			Assert.That(memento.AutomationId, Is.Null, "nothing is focused");
+			Assert.That(memento.VectorAutomationId, Is.EqualTo("Subentries"));
+			Assert.That(memento.VectorItemKey, Is.EqualTo("b"));
+
+			// Handed over BEFORE the new view is attached, as the host does; the row only joins
+			// the visual tree on the first layout pass.
+			var second = NewVectorView("a", "b");
+			DetailFocusMemory.RestoreAfterLayout(second, memento);
+			window.Content = second;
+			Dispatcher.UIThread.RunJobs();
+
+			var restored = second.GetVisualDescendants().OfType<FwReferenceVectorField>().Single();
+			Assert.That(restored.SelectedItemKey, Is.EqualTo("b"), "the current item follows the rebuild");
+
+			var third = NewVectorView("a", "b");
+			Assert.That(DetailFocusMemory.TryRestoreVectorSelection(third,
+				new DetailFocusMemory.Memento(null, -1, 0, "Subentries", "zzz")), Is.False,
+				"an item that disappeared restores nothing");
+		}
+
+		// A re-show driven from a menu (a vector item moved or removed) has no focused editor,
+		// and the host hands the memento to the NEW view before it has laid out.
+		[AvaloniaTest]
+		public void RestoreAfterLayout_KeepsTheScrollOffset_WithNoFocusedEditor_WhenGivenBeforeLayout()
+		{
+			var first = NewLongView();
+			var window = new Window { Content = first, Width = 420, Height = 200 };
+			window.Show();
+			Dispatcher.UIThread.RunJobs();
+			FindScroller(first).Offset = new Avalonia.Vector(0, 120);
+			Dispatcher.UIThread.RunJobs();
+
+			var memento = DetailFocusMemory.Capture(first);
+			Assert.That(memento.AutomationId, Is.Null, "precondition: nothing in the view is focused");
+
+			// Handed the memento BEFORE it is attached or laid out, as the host does.
+			var second = NewLongView();
+			DetailFocusMemory.RestoreAfterLayout(second, memento);
+			window.Content = second;
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(FindScroller(second).Offset.Y, Is.EqualTo(120).Within(0.5),
+				"the deferred restore lands after layout, so the user stays where they were");
+		}
+
 		// A single-text-field view's editor automation id is exactly
 		// <paramref name="stableId"/> + ".vern", reproducing the ghost id
 		// ("...@ownerHvo/ghost.vern") and real successor ("...@newHvo.vern").

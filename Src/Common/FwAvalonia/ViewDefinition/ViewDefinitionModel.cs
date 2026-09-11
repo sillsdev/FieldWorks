@@ -385,8 +385,10 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 			IReadOnlyList<ViewChooserLink> chooserLinks = null,
 			ViewStringList enumStringList = null,
 			IReadOnlyList<string> visibleWritingSystems = null,
-			bool toggleValue = false)
+			bool toggleValue = false,
+			bool reorder = false)
 		{
+			Reorder = reorder;
 			ToggleValue = toggleValue;
 			VisibleWritingSystems = visibleWritingSystems;
 			EnumStringList = enumStringList;
@@ -557,6 +559,12 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 		/// PartOfSpeech "Final" / inflection-class flag round-trips with the same sense the WinForms slice shows.
 		/// </summary>
 		public bool ToggleValue { get; }
+
+		/// <summary>
+		/// The slice's <c>reorder="true"</c> layout attribute: the user may reorder the items
+		/// even when the property is virtual; the order persists as a virtual ordering.
+		/// </summary>
+		public bool Reorder { get; }
 	}
 
 	/// <summary>

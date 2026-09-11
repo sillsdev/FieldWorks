@@ -1491,14 +1491,17 @@ namespace SIL.FieldWorks.XWorks
 
 				var options = CreatePossibilityOptions(list, flat: false); // FlatList not imported; see above
 				var stableId = StableId(node, obj);
+				var canReorder = CanReorderItems(node, flid);
 				AddField(new DetailField(stableId, Localize(node.Label) ?? node.Field, node.Field,
 					node.WritingSystem, DetailFieldKind.ReferenceVector, node.EditorClassification,
 					node.AutomationId, node.LocalizationKey, node.Routing, null, options, null,
 					isEditable: true, indent: depth, menuId: node.MenuId, contextMenuId: node.ContextMenuId,
 					hotlinksId: node.HotlinksId, objectHvo: obj.Hvo, items: items,
-					chooserLinks: CreateChooserLinks(node, list)));
+					chooserLinks: CreateChooserLinks(node, list),
+					canReorderItems: canReorder));
 
 				var hvo = obj.Hvo;
+				RegisterReferenceMove(stableId, canReorder, obj, flid);
 				HandlerFor(stableId).ReferenceAdd = key =>
 				{
 					var possibility = ResolvePossibilityInList(list, key);
@@ -1556,13 +1559,16 @@ namespace SIL.FieldWorks.XWorks
 				}
 
 				var stableId = StableId(node, obj);
+				var canReorder = CanReorderItems(node, flid);
 				AddField(new DetailField(stableId, Localize(node.Label) ?? node.Field, node.Field,
 					node.WritingSystem, DetailFieldKind.ReferenceVector, node.EditorClassification,
 					node.AutomationId, node.LocalizationKey, node.Routing, null, options, null,
 					isEditable: true, indent: depth, menuId: node.MenuId, contextMenuId: node.ContextMenuId,
-					hotlinksId: node.HotlinksId, objectHvo: obj.Hvo, items: items));
+					hotlinksId: node.HotlinksId, objectHvo: obj.Hvo, items: items,
+					canReorderItems: canReorder));
 
 				var hvo = obj.Hvo;
+				RegisterReferenceMove(stableId, canReorder, obj, flid);
 				HandlerFor(stableId).ReferenceAdd = key =>
 				{
 					if (!Guid.TryParse(key, out var guid) || !candidateHvoByGuid.TryGetValue(guid, out var targetHvo))
@@ -2052,6 +2058,7 @@ namespace SIL.FieldWorks.XWorks
 				// row's
 				// object when it IS an entry, else its owning entry (e.g. obj is the LexEntryRef).
 				var owningEntry = obj as ILexEntry ?? obj.OwnerOfClass<ILexEntry>();
+				var canReorder = CanReorderItems(node, flid);
 
 				AddField(new DetailField(stableId, Localize(node.Label) ?? node.Field, node.Field,
 					node.WritingSystem, DetailFieldKind.ReferenceVector, node.EditorClassification,
@@ -2059,8 +2066,10 @@ namespace SIL.FieldWorks.XWorks
 					isEditable: true, indent: depth, menuId: node.MenuId, contextMenuId: node.ContextMenuId,
 					hotlinksId: node.HotlinksId, objectHvo: obj.Hvo, items: items,
 					searchOptions: query => SearchLexicon(query, hvo, flid, owningEntry),
-					chooserLinks: CreateChooserLinks(node)));
+					chooserLinks: CreateChooserLinks(node),
+					canReorderItems: canReorder));
 
+				RegisterReferenceMove(stableId, canReorder, obj, flid);
 				HandlerFor(stableId).ReferenceAdd = key =>
 				{
 					var target = ResolveEntryOrSense(key);
@@ -2189,6 +2198,7 @@ namespace SIL.FieldWorks.XWorks
 				}
 
 				var stableId = StableId(node, obj);
+				var canReorder = CanReorderItems(node, flid);
 
 				AddField(new DetailField(stableId, Localize(node.Label) ?? node.Field, node.Field,
 					node.WritingSystem, DetailFieldKind.ReferenceVector, node.EditorClassification,
@@ -2196,10 +2206,72 @@ namespace SIL.FieldWorks.XWorks
 					isEditable: true, indent: depth, menuId: node.MenuId, contextMenuId: node.ContextMenuId,
 					hotlinksId: node.HotlinksId, objectHvo: obj.Hvo, items: items,
 					searchOptions: query => SearchBackRefCandidates(query, obj),
-					chooserLinks: CreateChooserLinks(node)));
+					chooserLinks: CreateChooserLinks(node),
+					canReorderItems: canReorder));
 
 				HandlerFor(stableId).ReferenceAdd = key => TryAddBackRef(obj, kind, key);
 				HandlerFor(stableId).ReferenceRemove = key => TryRemoveBackRef(obj, flid, kind, key);
+				// Items are keyed on their owning complex-form entry, so the move resolves keys
+				// the same way.
+				RegisterReferenceMove(stableId, canReorder, obj, flid,
+					itemHvo => BackRefItemOwningEntry(
+						_cache.ServiceLocator.ObjectRepository.GetObject(itemHvo)).Guid.ToString());
+			}
+
+			// Whether a vector row's items may be reordered: a real reference sequence always
+			// may; a virtual one only when its layout says reorder="true".
+			private bool CanReorderItems(ViewNode node, int flid)
+			{
+				var isSequence = (CellarPropertyType)_mdc.GetFieldType(flid)
+					== CellarPropertyType.ReferenceSequence;
+				return (isSequence && !_mdc.get_IsVirtual(flid)) || node.Reorder;
+			}
+
+			// The one-place move of a vector item: a real reference sequence rewrites the whole
+			// vector, a virtual one records the new order as a virtual ordering. Rejects unknown
+			// items and moves past either end.
+			// keyOfItem maps a vector item to the option key its row shows (default: its guid).
+			private void RegisterReferenceMove(string stableId, bool canReorder, ICmObject obj, int flid,
+				Func<int, string> keyOfItem = null)
+			{
+				if (!canReorder)
+					return;
+				keyOfItem = keyOfItem
+					?? (itemHvo => _cache.ServiceLocator.ObjectRepository.GetObject(itemHvo).Guid.ToString());
+				var hvo = obj.Hvo;
+				var isVirtual = _mdc.get_IsVirtual(flid);
+				HandlerFor(stableId).ReferenceMove = (key, forward) =>
+				{
+					var size = _sda.get_VecSize(hvo, flid);
+					var order = new List<int>(size);
+					var from = -1;
+					for (var i = 0; i < size; i++)
+					{
+						var itemHvo = _sda.get_VecItem(hvo, flid, i);
+						order.Add(itemHvo);
+						if (from < 0 && string.Equals(keyOfItem(itemHvo), key, StringComparison.Ordinal))
+							from = i;
+					}
+					if (from < 0)
+						return false;
+					var to = forward ? from + 1 : from - 1;
+					if (to < 0 || to >= size)
+						return false;
+					var moved = order[from];
+					order.RemoveAt(from);
+					order.Insert(to, moved);
+
+					if (isVirtual)
+					{
+						VirtualOrderingServices.SetVO(obj, flid,
+							order.Select(h => _cache.ServiceLocator.ObjectRepository.GetObject(h)).ToList());
+					}
+					else
+					{
+						_sda.Replace(hvo, flid, 0, size, order.ToArray(), size);
+					}
+					return true;
+				};
 			}
 
 			// The owning complex-form entry of a back-ref vector item: the entry itself for the

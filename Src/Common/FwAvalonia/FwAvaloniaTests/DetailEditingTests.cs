@@ -45,6 +45,15 @@ namespace FwAvaloniaTests
 			ReferenceRemoves.Add((field.Field, optionKey));
 			return ReferenceGestureResult;
 		}
+
+		public readonly List<(string Field, string Key, bool Forward)> ReferenceMoves
+			= new List<(string, string, bool)>();
+
+		public bool TryMoveReferenceItem(DetailField field, string optionKey, bool forward)
+		{
+			ReferenceMoves.Add((field.Field, optionKey, forward));
+			return ReferenceGestureResult;
+		}
 		public IReadOnlyList<string> ValidateResult = new List<string>();
 		public int CommitCount;
 		public int CancelCount;

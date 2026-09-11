@@ -480,6 +480,12 @@ namespace SIL.FieldWorks.XWorks
 		{
 			try
 			{
+				if (request.Kind == DetailMenuKind.ItemMenu)
+				{
+					OnDetailItemMenuRequested(request);
+					return;
+				}
+
 				// An adapter failure must not suppress the menu itself: items that need the hidden
 				// colleague chain disable, everything else still works (and the failure is logged).
 				try
@@ -515,11 +521,12 @@ namespace SIL.FieldWorks.XWorks
 				// adapter menu remains the fallback if materialization fails.
 				try
 				{
-					// Retarget the per-field Field Visibility / Move Field commands
-					// to the project override layer for the Avalonia detail view; every other command (Help,
-					// inserts, writing-system menu, ...) keeps its normal mediator dispatch.
-					var interceptor = BuildOverrideCommandInterceptor(request.Field);
-					var items = XCoreMenuBridge.CreateMenuItems(window, idArray, interceptor);
+					// Field Visibility / Move Field retarget to the override layer, the reorder
+					// commands to the row's current item; other commands keep their dispatch.
+					var registry = new OverrideCommandRegistry();
+					AddOverrideCommands(registry, request.Field);
+					AddMoveCommands(registry, request);
+					var items = XCoreMenuBridge.CreateMenuItems(window, idArray, registry.TryBuild);
 					if (items.Count > 0)
 					{
 						// A keyboard-opened menu anchors under the row it came from; a
@@ -584,26 +591,23 @@ namespace SIL.FieldWorks.XWorks
 					+ "'; using the shipped definition.", error));
 
 		/// <summary>
-		/// Builds the interceptor that retargets the per-field Field Visibility, Move Field, and
-		/// writing-system commands to the project override layer for the Avalonia detail view.
-		/// Returns null (intercept nothing -- every command keeps its normal mediator dispatch)
-		/// when the clicked row carries no (class, layout) context, e.g. the first-slice fallback
-		/// rows; that keeps the legacy behavior intact when the override layer cannot be
-		/// addressed.
+		/// Registers the per-field Field Visibility, Move Field, and writing-system commands that
+		/// retarget to the project override layer for the Avalonia detail view. Registers nothing
+		/// (every command keeps its normal mediator dispatch) when the clicked row carries no
+		/// (class, layout) context, e.g. the first-slice fallback rows, so ordinary dispatch
+		/// stays in force when the override layer cannot be addressed.
 		/// </summary>
-		private Func<ChoiceBase, UIItemDisplayProperties, DetailMenuItem> BuildOverrideCommandInterceptor(
-			DetailField field)
+		internal void AddOverrideCommands(OverrideCommandRegistry registry, DetailField field)
 		{
 			if (field == null || string.IsNullOrEmpty(field.ClassName) || string.IsNullOrEmpty(field.LayoutName)
 				|| ViewOverrideStore == null)
 			{
-				return null;
+				return;
 			}
 
 			// Writing-system items dispatch normally; the resulting selection is then copied
 			// into the override. They need no located template node, so they stay registered
 			// even when locating fails.
-			var registry = new OverrideCommandRegistry();
 			registry.Add(IsWritingSystemVisibilityChoice, (c, d) => WritingSystemItem(c, d, field));
 			// Show all right now never dispatches or persists: it only marks the row for the
 			// host's transient reveal.
@@ -628,7 +632,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				Logger.WriteError("Resolving the field's override target failed; this row's "
 					+ "menu-button commands fall back to ordinary command dispatch.", e);
-				return registry.TryBuild;
+				return;
 			}
 
 			// Unknown/stale target: leave the field commands on the legacy path rather than
@@ -646,8 +650,6 @@ namespace SIL.FieldWorks.XWorks
 				registry.Add("CmdDataTree-MoveFieldDown",
 					(c, d) => MoveItem(d, field, location, up: false));
 			}
-
-			return registry.TryBuild;
 		}
 
 		// A Field Visibility menu item: checked when it is the field's current visibility, executes the

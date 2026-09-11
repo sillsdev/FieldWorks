@@ -101,13 +101,13 @@ namespace FwAvaloniaTests
 		}
 
 		[AvaloniaTest]
-		public void ReferenceVector_ReadOnly_HasNothingToDetach()
+		public void ReferenceVector_ReadOnly_WiresOnlyTheItemSelectHandlers()
 		{
-			// A read-only vector (no edit context) wires no edit handlers, so its teardown is
-			// empty --
-			// Dispose is a safe no-op.
+			// A read-only vector (no edit context) wires no edit handlers: its teardown holds
+			// exactly one select handler per item, and Dispose releases them.
 			var vector = new FwReferenceVectorField(VectorFieldWithItems(), "PublishIn", editContext: null);
-			Assert.That(vector.AttachedHandlerCount, Is.EqualTo(0));
+			Assert.That(vector.AttachedHandlerCount, Is.EqualTo(1),
+				"one item, one select handler; no Remove handler or add-picker subscription");
 			vector.Dispose();
 			Assert.That(vector.AttachedHandlerCount, Is.EqualTo(0));
 		}

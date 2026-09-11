@@ -54,6 +54,26 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		private readonly Action<string, bool> _expansionChanged;
 		private readonly Action<DetailMenuRequest> _menuRequested;
 		private readonly Action<DetailLinkRequest> _linkRequested;
+		// The vector rows of the shown fields, and the one whose item is current (at most one
+		// per view), so re-show continuity can read and restore that selection cheaply.
+		private readonly List<FwReferenceVectorField> _vectors = new List<FwReferenceVectorField>();
+
+		/// <summary>The reference-vector row that has a current item; null when none
+		/// does.</summary>
+		internal FwReferenceVectorField SelectedVector { get; private set; }
+
+		/// <summary>The reference-vector rows of the shown fields.</summary>
+		internal IReadOnlyList<FwReferenceVectorField> VectorRows => _vectors;
+
+		/// <summary>True when the rebuild that follows should give keyboard focus to the vector
+		/// row's current item.</summary>
+		internal bool VectorFocusRequested { get; private set; }
+
+		/// <summary>
+		/// Asks the rebuild that follows to give keyboard focus to the vector row's current item,
+		/// for a gesture (a menu-driven move) made while no editor had focus.
+		/// </summary>
+		public void RequestVectorFocusOnRebuild() => VectorFocusRequested = true;
 		private readonly IFwClipboard _clipboard;
 
 		// Computed once per view (not per field/row) from the widest WS abbreviation across the
@@ -299,6 +319,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		private void RebuildItems()
 		{
 			_form.Items.Clear();
+			_vectors.Clear();
+			SelectedVector = null;
 			var visible = DetailVisibility.ComputeVisibility(Model.Fields, GetRecordedExpansion);
 			for (var i = 0; i < Model.Fields.Count; i++)
 			{
@@ -488,12 +510,18 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			AutomationProperties.SetAutomationId(labelBlock, automationId + ".Label");
 			AutomationProperties.SetName(labelBlock, field.Label ?? field.Field ?? string.Empty);
 			ToolTip.SetTip(labelBlock, field.Label ?? field.Field); // 11.17: legacy label tooltips
-			// 13.3: the field's slice menu opens from a right-click on the label cell
-			// or from the hover "..." button in the left gutter.
-			var labelCell = WrapWithFieldMenu(labelBlock, field, automationId, out var labelKebab);
-
 			var editor = CreateEditor(field, automationId);
 			editor.Margin = new Thickness(0, 0, 0, FwAvaloniaDensity.FieldSpacing);
+			if (editor is FwReferenceVectorField vector)
+			{
+				_vectors.Add(vector);
+				vector.SelectionChanged += OnVectorSelectionChanged;
+			}
+
+			// 13.3: the field's slice menu opens from the label cell's right-click or the
+			// gutter "..." button; the editor's current item rides each request it raises.
+			var labelCell = WrapWithFieldMenu(labelBlock, field, automationId, out var labelKebab,
+				editor as IDetailItemSelection);
 
 			// Hover-reveal: the WHOLE row (label cell + editor) is the hover/focus
 			// surface for the field-options "..." and any editor affordance (chooser
@@ -507,6 +535,24 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			return new FieldContent { Content = editor, Label = labelCell };
 		}
 
+		// One current item per view: selecting in one vector row clears every other row's, so
+		// the item-relative commands always have a single target.
+		private void OnVectorSelectionChanged(object sender, EventArgs e)
+		{
+			if (!(sender is FwReferenceVectorField source))
+				return;
+			if (source.SelectedItemIndex < 0)
+			{
+				if (ReferenceEquals(SelectedVector, source))
+					SelectedVector = null;
+				return;
+			}
+			var previous = SelectedVector;
+			SelectedVector = source;
+			if (previous != null && !ReferenceEquals(previous, source))
+				previous.ClearSelection();
+		}
+
 		// The width of the left gutter holding the per-row field-options "..." button.
 		// Reserved on every row (when a host bridge is present) so labels align whether
 		// or not a row has a menu.
@@ -515,7 +561,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		// The label cell answers context-menu requests with the row's slice menu; the
 		// kebab opens its own menu or hotlinks. With no host bridge, content is unwrapped.
 		private Control WrapWithFieldMenu(Control inner, DetailField field, string automationId,
-			out Control kebab)
+			out Control kebab, IDetailItemSelection selection = null)
 		{
 			kebab = null;
 			if (_menuRequested == null)
@@ -546,7 +592,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				{
 					// No pointer position is available here, so the menu drops from the
 					// icon rather than from wherever the mouse sits.
-					_menuRequested(DetailMenuRequest.FromAnchor(button, field, kind));
+					_menuRequested(DetailMenuRequest.FromAnchor(button, field, kind, selection));
 				};
 				rail.Child = button;
 				kebab = button;
@@ -556,19 +602,21 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			DockPanel.SetDock(rail, Dock.Left);
 			wrapper.Children.Add(rail);
 			wrapper.Children.Add(inner); // fills the width remaining after the gutter
-			WireLabelContextMenu(wrapper, field);
+			WireLabelContextMenu(wrapper, field, selection);
 			return wrapper;
 		}
 
 		/// <summary>
-		/// Wires up the Label context menu for a slice.
+		/// Wires up the Label context menu for a slice; the request carries the row editor's
+		/// current item when it keeps one.
 		/// </summary>
-		private void WireLabelContextMenu(Control cell, DetailField field)
+		private void WireLabelContextMenu(Control cell, DetailField field,
+			IDetailItemSelection selection)
 		{
 			cell.AddHandler(Control.ContextRequestedEvent, (s, e) =>
 			{
 				_menuRequested(DetailMenuRequest.FromContextRequested(cell, e, field,
-					DetailMenuKind.SliceMenu));
+					DetailMenuKind.SliceMenu, selection));
 				e.Handled = true;
 			}, Avalonia.Interactivity.RoutingStrategies.Bubble);
 		}
