@@ -1382,48 +1382,6 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-
-		/// <summary>
-		/// Method which set the index to the WS property
-		/// </summary>
-		/// <param name="selectedWsObj">selected writing system</param>
-		private void SetReversalIndexGuid(CoreWritingSystemDefinition selectedWsObj)
-		{
-			if (selectedWsObj != null)
-			{
-				if (selectedWsObj.DisplayLabel.ToLower().IndexOf("audio", StringComparison.Ordinal) == -1)
-				{
-					var revGuid = ReversalIndexServices.GetOrCreateWsGuid(selectedWsObj, Cache);
-					m_propertyTable.SetProperty("ReversalIndexGuid", revGuid.ToString(), true);
-				}
-				else
-				{
-					m_propertyTable.SetProperty("ReversalIndexGuid", Guid.Empty.ToString(), true);
-				}
-			}
-			m_propertyTable.SetPropertyPersistence("ReversalIndexGuid", true);
-		}
-
-		/// <summary>
-		///
-		/// </summary>
-		/// <param name="fullName"></param>
-		/// <param name="oldString"></param>
-		/// <param name="newString"></param>
-		/// <returns></returns>
-		public static string CreateNewFileName(string fullName, string oldString, string newString)
-		{
-			string oldName = fullName;
-			StringBuilder strBuilderNewName = new StringBuilder(fullName);
-			int index = fullName.LastIndexOf(oldString);
-			if (index != -1)
-			{
-				strBuilderNewName.Replace(oldString, newString, index, oldString.Length);
-				oldName = strBuilderNewName.ToString();
-			}
-			return oldName;
-		}
-
 		/// <summary>
 		/// Show the writing systems properties dialog with the Vernacular list.
 		/// </summary>
