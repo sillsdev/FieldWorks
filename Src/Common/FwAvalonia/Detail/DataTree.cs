@@ -32,7 +32,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 	/// undo step per field, no Save/Cancel buttons. Validation failures show inline and block the
 	/// commit; Escape rolls the session back. Without a context the view is read-only display.
 	/// </summary>
-	public sealed class DataTree : UserControl
+	public sealed class DataTree : UserControl, IDetailPopupSink
 	{
 		private readonly IDetailEditContext _editContext;
 		private readonly Action<string> _writingSystemFocused;
@@ -197,7 +197,40 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				if (_editContext != null && _editContext.IsOpen)
 					OnSave();
 			}, Avalonia.Interactivity.RoutingStrategies.Bubble);
+
+			// A click on another row autosaves and re-shows, rebuilding controls between press
+			// and release. Tunnel, to beat any descendant to the press.
+			AddHandler(Avalonia.Input.InputElement.PointerPressedEvent, (s, e) =>
+				_pointerGestureActive = true,
+				Avalonia.Interactivity.RoutingStrategies.Tunnel, handledEventsToo: true);
+			// Bubble, so descendants finish the gesture (a checkbox toggles, and may itself
+			// commit) before the held re-show is released.
+			AddHandler(Avalonia.Input.InputElement.PointerReleasedEvent, (s, e) => EndPointerGesture(),
+				Avalonia.Interactivity.RoutingStrategies.Bubble, handledEventsToo: true);
 		}
+
+		// A press that takes no capture, released after the pointer leaves the view, bubbles
+		// nowhere near this control. The top level catches it, so no gesture outlives its
+		// button and wedges the view busy.
+		protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
+		{
+			base.OnAttachedToVisualTree(e);
+			_topLevel = e.Root as Avalonia.Input.InputElement;
+			_topLevel?.AddHandler(Avalonia.Input.InputElement.PointerReleasedEvent,
+				OnTopLevelPointerReleased, Avalonia.Interactivity.RoutingStrategies.Bubble,
+				handledEventsToo: true);
+		}
+
+		protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
+		{
+			_topLevel?.RemoveHandler(Avalonia.Input.InputElement.PointerReleasedEvent,
+				(EventHandler<Avalonia.Input.PointerReleasedEventArgs>)OnTopLevelPointerReleased);
+			_topLevel = null;
+			base.OnDetachedFromVisualTree(e);
+		}
+
+		private void OnTopLevelPointerReleased(object sender,
+			Avalonia.Input.PointerReleasedEventArgs e) => EndPointerGesture();
 
 		/// <summary>
 		/// Re-derives everything that depends on the label column's width, from that width. The
@@ -250,9 +283,21 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		/// </summary>
 		public event EventHandler EditCompleted;
 
+		/// <summary>
+		/// Whether a pointer press is in flight anywhere in this view. A host must not rebuild
+		/// these controls while it is true: the release would reach a detached control and the
+		/// click would do nothing.
+		/// </summary>
+		public bool IsInteractionInFlight => _pointerGestureActive || _openPickers > 0;
+
+		/// <summary>
+		/// Raised when the view goes idle again -- the click finished and no picker it
+		/// opened is still up -- so a host holding a refresh can deliver it.
+		/// </summary>
+		public event EventHandler InteractionCompleted;
+
 		// 14.4: no Save/Cancel buttons -- the legacy view saves as you go. The footer carries
-		// only the
-		// inline validation messages (a failed autosave is never silent).
+		// only the inline validation messages (a failed autosave is never silent).
 		private Control CreateEditFooter()
 		{
 			_validationBlock = new TextBlock
@@ -283,14 +328,82 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 
 			_validationBlock.IsVisible = false;
 			_editContext.Commit();
-			EditCompleted?.Invoke(this, EventArgs.Empty);
+			RaiseOrDeferEditCompleted();
 		}
 
 		private void OnCancel()
 		{
 			_validationBlock.IsVisible = false;
 			_editContext.Cancel();
+			RaiseOrDeferEditCompleted();
+		}
+
+		// True between a pointer press and its release anywhere in this view.
+		private bool _pointerGestureActive;
+		// The window this view is in, while it is in one: the backstop for a release the view
+		// itself never sees.
+		private Avalonia.Input.InputElement _topLevel;
+		// Pickers opened FROM this view. Their flyouts anchor to a control inside it, so a
+		// rebuild destroys the anchor and the picker vanishes mid-choice.
+		private int _openPickers;
+		private bool _editCompletedHeld;
+
+		/// <summary>
+		/// Raises the completion the host re-shows on -- unless a pointer gesture is in flight,
+		/// in which case it waits for the release. The commit itself is NOT delayed; only the
+		/// re-show is, because rebuilding mid-click destroys the control the press landed on.
+		/// </summary>
+		private void RaiseOrDeferEditCompleted()
+		{
+			if (IsInteractionInFlight)
+			{
+				_editCompletedHeld = true;
+				return;
+			}
+
 			EditCompleted?.Invoke(this, EventArgs.Empty);
+		}
+
+		// One re-show per gesture however many commits it produced: the focus-loss autosave of
+		// the field being left, and any commit by the control being clicked, coalesce into this.
+		private void EndPointerGesture()
+		{
+			if (!_pointerGestureActive)
+				return;
+			_pointerGestureActive = false;
+			DeliverWhenIdle();
+		}
+
+		/// <summary>
+		/// A click that opens a popup is not finished when the button is released -- the user is
+		/// still choosing. Rebuilding then would close it under them.
+		/// </summary>
+		public void PopupOpenChanged(bool open)
+		{
+			if (open)
+			{
+				_openPickers++;
+				return;
+			}
+
+			if (_openPickers > 0)
+				_openPickers--;
+			DeliverWhenIdle();
+		}
+
+		private void DeliverWhenIdle()
+		{
+			if (IsInteractionInFlight)
+				return;
+			if (_editCompletedHeld)
+			{
+				_editCompletedHeld = false;
+				EditCompleted?.Invoke(this, EventArgs.Empty);
+			}
+
+			// Always, even with no edit of our own: the commit's PropChanged may have left the
+			// host holding a refresh that only this signal releases.
+			InteractionCompleted?.Invoke(this, EventArgs.Empty);
 		}
 
 		// Viewing parity (11.x): a header owns every more-indented row up to the next row at its
@@ -621,7 +734,9 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				linkRequested: _linkRequested,
 				clipboard: _clipboard,
 				save: _editContext == null ? (Action)null : OnSave,
-				showWritingSystemAbbreviation: true,
+				// Legacy labels each alternative of a MultiStringSlice and leaves a StringSlice's
+				// single value unlabelled, so the gutter follows the row's own kind.
+				showWritingSystemAbbreviation: field.IsMultiStringRow,
 				wsAbbrevColumnWidth: _wsAbbrevColumnWidth));
 	}
 }

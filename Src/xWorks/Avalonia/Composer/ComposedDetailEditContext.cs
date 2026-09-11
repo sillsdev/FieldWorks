@@ -25,6 +25,9 @@ namespace SIL.FieldWorks.XWorks
 		public Func<string, bool> Option;
 		public Func<string, bool> ReferenceAdd;
 		public Func<string, bool> ReferenceRemove;
+		// Set only by a field that can mint its target from typed text (environments); its
+		// presence is what makes the picker offer a create row.
+		public Func<string, bool> ReferenceCreate;
 		public Func<int, DetailRichTextValue, bool> ParagraphText;
 		public Func<int, string, bool> ParagraphStyle;
 		public Func<int, bool> ParagraphInsert;
@@ -37,7 +40,8 @@ namespace SIL.FieldWorks.XWorks
 	/// LCModel setters inside the fenced session owned by <see cref="DetailEditContextBase"/>
 	/// (one shared session lifecycle + required-lexeme validation).
 	/// </summary>
-	public sealed class ComposedDetailEditContext : DetailEditContextBase, IStructuredTextEditing
+	public sealed class ComposedDetailEditContext : DetailEditContextBase, IStructuredTextEditing,
+		IReferenceItemCreation
 	{
 		// One handler per composed field, keyed by StableId; a null delegate slot means the field's kind
 		// does not support that gesture (rejected like an unknown field). Replaces the former nine parallel
@@ -88,6 +92,22 @@ namespace SIL.FieldWorks.XWorks
 			if (setter == null)
 				return false;
 			return Stage(() => setter(optionKey), FieldLabelFor(field));
+		}
+
+		/// <summary>Whether the row registered a create-from-text handler. Independent of what
+		/// the user has typed, because it decides whether the create row exists at all.</summary>
+		public bool CanCreateReferenceItem(DetailField field)
+			=> Handler(field)?.ReferenceCreate != null;
+
+		/// <summary>Find-or-creates the target named by the text and stages adding it. Rides the
+		/// SAME fenced session as an ordinary add, so create-and-add is one undoable
+		/// step.</summary>
+		public bool TryCreateAndAddReferenceItem(DetailField field, string text)
+		{
+			var creator = Handler(field)?.ReferenceCreate;
+			if (creator == null || string.IsNullOrWhiteSpace(text))
+				return false;
+			return Stage(() => creator(text), FieldLabelFor(field));
 		}
 
 		public override bool TryAddReferenceItem(DetailField field, string optionKey)

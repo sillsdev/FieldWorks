@@ -1381,20 +1381,32 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
-		public void Compose_BooleanFields_RenderAsUnsupportedWorklistRow()
+		public void Compose_BooleanFields_RenderAsEditableCheckbox()
 		{
-			// The Avalonia detail view does not compose the checkbox editor, so a boolean slice
-			// composes as the labeled Unsupported worklist row instead.
+			// IsAbstract is authored twice over the same field: the allomorph part uses
+			// editor="Checkbox", the lexeme form's a closed editor="enumComboBox".
+			IMoStemAllomorph allomorph = null;
 			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
-				m_entry.AlternateFormsOS.Add(
-					Cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>().Create()));
+			{
+				allomorph = Cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>().Create();
+				m_entry.AlternateFormsOS.Add(allomorph);
+			});
 
 			var hidden = DetailComposer.Compose(m_entry, Cache, showHiddenFields: true);
-			var boolField = hidden.Model.Fields.FirstOrDefault(f => f.Field == "IsAbstract"
-				&& f.Kind == DetailFieldKind.Unsupported);
-			Assert.That(boolField, Is.Not.Null,
-				"the boolean checkbox slice composes as a labeled Unsupported worklist row");
-			Assert.That(boolField.IsEditable, Is.False, "an Unsupported row is not editable");
+			var checkbox = hidden.Model.Fields.FirstOrDefault(
+				f => f.Field == "IsAbstract" && f.ObjectHvo == allomorph.Hvo);
+			Assert.That(checkbox, Is.Not.Null, "the allomorph composes its IsAbstract row");
+			Assert.That(checkbox.Kind, Is.EqualTo(DetailFieldKind.Boolean),
+				"the checkbox editor composes as a boolean row");
+			Assert.That(checkbox.IsEditable, Is.True, "a boolean row is editable");
+			Assert.That(checkbox.SelectedOptionKey, Is.EqualTo(bool.FalseString),
+				"a new allomorph is not abstract, and the row carries that value");
+
+			var enumCombo = hidden.Model.Fields.FirstOrDefault(
+				f => f.Field == "IsAbstract" && f.ObjectHvo == m_entry.LexemeFormOA.Hvo);
+			Assert.That(enumCombo, Is.Not.Null, "the lexeme form composes its own IsAbstract row");
+			Assert.That(enumCombo.Kind, Is.EqualTo(DetailFieldKind.Unsupported),
+				"the closed enum combo over the same field stays out of scope");
 		}
 
 		[Test]
@@ -1673,8 +1685,8 @@ namespace SIL.FieldWorks.XWorks
 			var after = DetailComposer.Compose(m_entry, Cache).Model.Fields;
 			var row = after.FirstOrDefault(f => f.Field == "PublishAsMinorEntry");
 			Assert.That(row, Is.Not.Null, "with an EntryRef the lengthatleast=1 condition passes");
-			Assert.That(row.Kind, Is.EqualTo(DetailFieldKind.Unsupported),
-				"the checkbox editor was dropped; the conditionally-visible boolean row renders the Unsupported worklist row");
+			Assert.That(row.Kind, Is.EqualTo(DetailFieldKind.Boolean),
+				"the conditionally-visible boolean row composes as an editable checkbox");
 		}
 
 		// <choice>/<where guidequals>: MoAffixAllomorph-Detail-AsPosition shows the infix

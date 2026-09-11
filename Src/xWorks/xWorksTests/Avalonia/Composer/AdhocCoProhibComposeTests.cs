@@ -75,8 +75,45 @@ namespace SIL.FieldWorks.XWorks
 			TestContext.WriteLine("MoAdhocProhibGr composed field/label:kind: " + string.Join(", ", kinds));
 			// The group's own scalar fields compose editably (Name/Description Text + Active checkbox).
 			Assert.That(composed.Model.Fields.Any(f => f.Kind == DetailFieldKind.Text), "Name/Description compose");
-			Assert.That(composed.Model.Fields.Any(f => f.Kind == DetailFieldKind.Unsupported),
-				"the Active boolean flag composes as a labeled Unsupported worklist row (checkbox editing dropped)");
+			Assert.That(composed.Model.Fields.Any(f => f.Kind == DetailFieldKind.Boolean),
+				"the Active boolean flag composes as an editable checkbox row");
+		}
+
+		/// <summary>
+		/// A slice marked <c>toggleValue="true"</c> shows and stores the LOGICAL INVERSE of its
+		/// property. "Active" is <c>MoAdhocProhibGr.Disabled</c>, so an enabled rule -- Disabled
+		/// false -- must render TICKED, and unticking must set Disabled true.
+		///
+		/// Asserting the VALUE, not just the row kind: a composer that ignores toggleValue still
+		/// produces a Boolean row, so a kind-only assertion passes while the checkbox reads and
+		/// writes backwards.
+		/// </summary>
+		[Test]
+		public void Compose_ActiveCheckbox_InvertsBothWays_BecauseTheSliceTogglesItsValue()
+		{
+			IMoAdhocProhibGr group = null;
+			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
+			{
+				group = Cache.ServiceLocator.GetInstance<IMoAdhocProhibGrFactory>().Create();
+				Cache.LangProject.MorphologicalDataOA.AdhocCoProhibitionsOC.Add(group);
+				group.Name.SetAnalysisDefaultWritingSystem("Group A");
+			});
+			Assert.That(group.Disabled, Is.False, "fixture check: a new rule is enabled");
+
+			var composed = DetailComposer.Compose(group, Cache, layoutName: "Edit",
+				plugins: SlicePluginRegistry.Default);
+			var active = composed.Model.Fields.Single(f => f.Kind == DetailFieldKind.Boolean);
+
+			Assert.That(active.SelectedOptionKey, Is.EqualTo(bool.TrueString),
+				"an enabled rule shows Active TICKED; showing it clear tells the user the rule is "
+				+ "off when it is on");
+
+			Assert.That(composed.EditContext.TrySetOption(active, bool.FalseString), Is.True);
+			composed.EditContext.Commit();
+
+			Assert.That(group.Disabled, Is.True,
+				"unticking Active disables the rule; without the inversion this writes Disabled "
+				+ "false and silently leaves the rule enabled");
 		}
 
 		/// <summary>
@@ -123,12 +160,15 @@ namespace SIL.FieldWorks.XWorks
 			// Active part's field is Disabled, labelled "Active".
 			foreach (var field in new[] { "FirstMorpheme", "Adjacency", "RestOfMorphs", "Disabled" })
 				Assert.That(memberRows.Any(f => f.Field == field), $"the member's {field} part composes");
-			// Key/Others/Adjacency are custom slices, so the member's parts compose as labeled
-			// Unsupported
-			// worklist rows rather than editors -- the structure composes, the editors do not.
+			// Key/Others/Adjacency are custom slices and compose as labeled Unsupported worklist
+			// rows; the Disabled part is a boolean and composes as an editable checkbox.
 			Assert.That(memberRows.Any(f => f.Kind != DetailFieldKind.Header
-				&& f.Kind != DetailFieldKind.Unsupported), Is.False,
-				"the member's parts compose as Unsupported worklist rows");
+				&& f.Kind != DetailFieldKind.Unsupported
+				&& f.Kind != DetailFieldKind.Boolean), Is.False,
+				"the member's custom-slice parts compose as Unsupported worklist rows");
+			Assert.That(memberRows.Any(f => f.Field == "Disabled"
+				&& f.Kind == DetailFieldKind.Boolean), Is.True,
+				"the member's Disabled part composes as an editable checkbox row");
 			// <seq field="Members" ... indent="true"> nests the member below the group's own rows.
 			var groupIndent = composed.Model.Fields
 				.Where(f => f.ObjectHvo == group.Hvo && f.Kind != DetailFieldKind.Header).Max(f => f.Indent);

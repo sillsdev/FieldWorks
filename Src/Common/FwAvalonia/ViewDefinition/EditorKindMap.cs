@@ -103,6 +103,20 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 		/// <summary>The dynamically resolved per-type custom-field editor (<c>autocustom</c>).</summary>
 		public const string AutoCustomEditor = "autocustom";
 
+		/// <summary>
+		/// Environments and infix Positions. The row composes as an ordinary reference vector --
+		/// legacy's launcher IS a chooser -- but its edit context also offers create-on-type,
+		/// because legacy's inline view lets the user type an environment the project does not
+		/// own yet and reconciles it (find-or-create) on commit. Editor-string knowledge lives
+		/// here, so the composer asks this rather than matching the literal itself.
+		/// </summary>
+		public const string PhoneEnvReferenceEditor = "phoneenvreference";
+
+		/// <summary>Whether a raw editor string is the environment editor, which supports
+		/// create-from-typed-text on top of the ordinary chooser.</summary>
+		public static bool CreatesReferenceItemsFromText(string rawEditor)
+			=> string.Equals(rawEditor, PhoneEnvReferenceEditor, StringComparison.OrdinalIgnoreCase);
+
 		// Mirrors the case labels in Src/Common/Controls/DetailControls/SliceFactory.cs. Comparison is
 		// case-insensitive because DataTree lowercases the editor attribute before dispatch
 		// (DataTree.ProcessSubpartNode: editor.ToLower()), so e.g. "MorphTypeAtomicReference" in shipped

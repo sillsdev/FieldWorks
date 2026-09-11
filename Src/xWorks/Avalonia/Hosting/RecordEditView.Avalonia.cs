@@ -141,7 +141,10 @@ namespace SIL.FieldWorks.XWorks
 		private void TearDownAvaloniaEntryForm()
 		{
 			if (m_avaloniaEntryForm != null)
+			{
 				m_avaloniaEntryForm.DetailEditCompleted -= OnAvaloniaDetailEditCompleted;
+				m_avaloniaEntryForm.DetailInteractionCompleted -= OnAvaloniaInteractionCompleted;
+			}
 			m_detailEditContext.DetachDeactivateHook();
 			m_detailEditContext.DetachUndoGuard();
 			m_detailEditContext.InvalidEditRolledBack = null;
@@ -208,6 +211,7 @@ namespace SIL.FieldWorks.XWorks
 			m_avaloniaEntryForm = (DetailHostControl)m_lexicalEditControlFactory.Create(UIFramework.Avalonia);
 			m_avaloniaEntryForm.Dock = DockStyle.Fill;
 			m_avaloniaEntryForm.DetailEditCompleted += OnAvaloniaDetailEditCompleted;
+			m_avaloniaEntryForm.DetailInteractionCompleted += OnAvaloniaInteractionCompleted;
 			if (!m_panel.Controls.Contains(m_avaloniaEntryForm))
 				m_panel.Controls.Add(m_avaloniaEntryForm);
 		}
@@ -229,7 +233,11 @@ namespace SIL.FieldWorks.XWorks
 			m_avaloniaRefreshController = new AvaloniaDetailRefreshController(
 				Cache,
 				() => Clerk?.CurrentObject,
-				() => m_detailEditContext.Current?.IsOpen == true,
+				// "Busy" means an open session OR a click in flight: Commit clears IsOpen BEFORE
+				// EndUndoTask raises PropChanged, so its own notification would recompose
+				// midclick.
+				() => m_detailEditContext.Current?.IsOpen == true
+					|| m_avaloniaEntryForm?.IsDetailInteractionInFlight == true,
 				RefreshAvaloniaDetail,
 				new RefreshCoordinator(),
 				ScheduleOnUiThread,
@@ -1122,6 +1130,12 @@ namespace SIL.FieldWorks.XWorks
 				return;
 
 			ShowAvaloniaEntry(current);
+		}
+
+		// The view is idle again, so anything held for the interaction can land now.
+		private void OnAvaloniaInteractionCompleted(object sender, EventArgs e)
+		{
+			m_avaloniaRefreshController?.ReleaseHeldRefresh();
 		}
 
 		private void OnAvaloniaDetailEditCompleted(object sender, EventArgs e)

@@ -67,7 +67,17 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		/// read-only in the value column (the label/message text IS the content). Carries no editable
 		/// value and no setter.
 		/// </summary>
-		Literal
+		Literal,
+
+		/// <summary>
+		/// A boolean field (legacy <c>checkbox</c>/<c>checkboxwithrefresh</c> editors,
+		/// <c>CheckBoxSlice</c>) rendered as a single checkbox in the value column. The row's
+		/// label is the whole caption, as in legacy, so no yes/no text is drawn and the row
+		/// carries no options: <see cref="DetailField.SelectedOptionKey"/> is the literal "true"
+		/// or "false", and the toggle stages through the same <see
+		/// cref="IDetailEditContext.TrySetOption"/> path a chooser uses.
+		/// </summary>
+		Boolean
 	}
 
 	/// <summary>
@@ -1410,11 +1420,13 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 	/// <summary>A chooser option (key + display name).</summary>
 	public sealed class DetailChoiceOption
 	{
-		public DetailChoiceOption(string key, string name, int depth = 0)
+		public DetailChoiceOption(string key, string name, int depth = 0,
+			string validationMessage = null)
 		{
 			Key = key;
 			Name = name;
 			Depth = depth;
+			ValidationMessage = validationMessage;
 		}
 
 		public string Key { get; }
@@ -1427,6 +1439,19 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		/// chooser tree. Flat lists (and chooserInfo FlatList specs) stay 0 throughout.
 		/// </summary>
 		public int Depth { get; }
+
+		/// <summary>
+		/// The domain's explanation of why this item is invalid, or null when it is fine. Set
+		/// only for a class that overrides ICmObject.CheckConstraints -- PhEnvironment and the
+		/// two adhoc co-prohibitions today; everything else inherits the no-op and stays null.
+		///
+		/// The item is DISPLAYED, not rejected: legacy stores an invalid environment and marks it
+		/// with a squiggly rather than refusing it, so this annotates what is already there.
+		/// </summary>
+		public string ValidationMessage { get; }
+
+		/// <summary>Whether the domain reported a problem with this item.</summary>
+		public bool HasValidationMessage => !string.IsNullOrEmpty(ValidationMessage);
 	}
 
 	/// <summary>
@@ -1594,9 +1619,15 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		/// True when this row is a multi-writing-system text row -- the legacy <c>multistring</c>
 		/// editor
 		/// (<c>MultiStringSlice</c>), as opposed to a single-ws <c>string</c> editor. It mirrors the
-		/// legacy <c>slice is MultiStringSlice</c> test so the in-string context menu can add the shared
-		/// <c>mnuDataTree-MultiStringSlice</c> group (with the Writing Systems submenu) for exactly those
-		/// rows. Set by the composer; false for every non-multistring row.
+		/// legacy <c>slice is MultiStringSlice</c> test. Set by the composer; false for every
+		/// non-multistring row.
+		///
+		/// It is the row's IDENTITY, not one feature's switch, and legacy keys both of that
+		/// slice's distinguishing behaviors on it: the in-string context menu adds the shared
+		/// <c>mnuDataTree-MultiStringSlice</c> group (with the Writing Systems submenu), and the
+		/// view draws the per-writing-system abbreviation gutter. A <c>StringSlice</c> row gets
+		/// neither. Note that value count is NOT the test: a multistring row with one configured
+		/// writing system still labels it.
 		/// </summary>
 		public bool IsMultiStringRow { get; set; }
 

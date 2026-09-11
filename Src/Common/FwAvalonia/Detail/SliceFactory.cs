@@ -76,6 +76,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		/// <summary>Adaptive width for the per-WS abbreviation gutter, computed once per view
 		/// from the widest abbreviation.</summary>
 		public double WsAbbrevColumnWidth { get; }
+
 	}
 
 	/// <summary>
@@ -119,7 +120,15 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 						context.WritingSystemFocused,
 						context.EditContext == null ? null : context.Save, context.Clipboard);
 				case DetailFieldKind.Chooser:
-					return new FwChooserField(field, automationId, context.EditContext, context.LinkRequested);
+					// Commits on the pick, for the same reason the toggle below does.
+					return new FwChooserField(field, automationId, context.EditContext,
+						context.LinkRequested,
+						context.EditContext == null ? null : context.Save);
+				case DetailFieldKind.Boolean:
+					// A toggle is a DISCRETE gesture, like a vector add/remove: legacy writes it
+					// immediately. Staging only leaves Ctrl+Z nothing to undo until focus moves.
+					return new FwBooleanField(field, automationId, context.EditContext,
+						context.EditContext == null ? null : context.Save);
 				case DetailFieldKind.Literal:
 					return CreateLiteral(field, automationId);
 				case DetailFieldKind.Unsupported:

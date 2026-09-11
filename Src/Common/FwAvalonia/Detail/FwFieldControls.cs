@@ -13,6 +13,7 @@ using Avalonia.Controls.Primitives;
 using Avalonia.Input;
 using Avalonia.Layout;
 using Avalonia.Media;
+using Avalonia.VisualTree;
 using SIL.FieldWorks.Common.FwAvalonia;
 using SIL.FieldWorks.Common.FwAvalonia.Seams;
 
@@ -80,9 +81,9 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 					menuRequested, clipboard, showWritingSystemAbbreviation, value, resolvedWsAbbrevColumnWidth);
 		}
 
-		// The widest abbreviation in the model, measured at its own font and clamped to
-		// [WsAbbrevWidth, WsAbbrevMaxWidth]; one width for every row keeps the value column
-		// aligned.
+		// The widest abbreviation among the rows that DRAW a gutter, clamped to
+		// [WsAbbrevWidth, WsAbbrevMaxWidth]. One width keeps the value column aligned;
+		// a single-string row draws none, so it has no say.
 		public static double ComputeWsAbbrevColumnWidth(DetailModel model)
 		{
 			if (model == null)
@@ -90,7 +91,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 
 			var typeface = new Typeface(FontFamily.Default);
 			double widest = 0;
-			foreach (var abbrev in model.Fields.SelectMany(f => f.Values).Select(v => v.WsAbbrev)
+			foreach (var abbrev in model.Fields.Where(f => f.IsMultiStringRow)
+				.SelectMany(f => f.Values).Select(v => v.WsAbbrev)
 				.Where(a => !string.IsNullOrEmpty(a)).Distinct())
 			{
 				var formatted = new FormattedText(abbrev, CultureInfo.CurrentCulture, FlowDirection.LeftToRight,
@@ -570,6 +572,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 							AutomationProperties.SetName(linkItem, FwAvaloniaStrings.Link);
 							// The link flyout the item opens, surfaced for automation/discovery.
 							linkItem.Tag = linkFlyout;
+							_teardown.Add(PopupReporting.Wire(linkFlyout));
 
 							var linkSpanStart = 0;
 							var linkSpanEnd = 0;
@@ -716,6 +719,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 					copyItem.Click += copyClick;
 
 					var contextMenu = new MenuFlyout();
+					_teardown.Add(PopupReporting.Wire(contextMenu));
 					contextMenu.Items.Add(copyItem);
 					var richTextOps = new[] { styleMenuItem, wsMenuItem, linkMenuItem, orcDeleteMenuItem }
 						.Where(op => op != null).ToList();
@@ -1028,6 +1032,11 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 	/// link items. The gear renders ONLY when a list-edit target resolved at compose time (the
 	/// row carries at least one goto <see cref="DetailChooserLink"/>); the FIRST link wins when
 	/// several resolved (rare). Rows without a resolvable list editor draw no gear at all.
+	///
+	/// The dispatch path matches legacy, but WHICH rows carry a link does not: the composer
+	/// synthesizes one for any possibility-list row the layout left linkless, where legacy
+	/// synthesizes only for <c>autoCustom</c>. That is a recorded APPROVED DIVERGENCE -- see
+	/// <c>DetailComposer.CreateChooserLinks</c> for the reason and approver.
 	/// </summary>
 	internal static class DetailGearChrome
 	{
@@ -1082,16 +1091,23 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		private readonly List<Action> _teardown = new List<Action>();
 		private bool _disposed;
 
+		/// <param name="gestureCompleted">Raised after a pick that actually staged, so the host
+		/// commits it as one undoable step. Null for a read-only row.</param>
 		public FwChooserField(
 			DetailField field,
 			string automationId,
 			IDetailEditContext editContext,
-			Action<DetailLinkRequest> linkRequested = null)
+			Action<DetailLinkRequest> linkRequested = null,
+			Action gestureCompleted = null)
 		{
 			_selectedKey = field.SelectedOptionKey;
 			Padding = FwAvaloniaDensity.EditorPadding;
 			MinHeight = 0;
-			HorizontalAlignment = HorizontalAlignment.Left;
+			// A valued chooser IS its text, so that is the target. An EMPTY one has no text to
+			// wrap and collapsed to a sliver, so only that case fills the cell.
+			VerticalAlignment = VerticalAlignment.Stretch;
+			HorizontalContentAlignment = HorizontalAlignment.Left;
+			VerticalContentAlignment = VerticalAlignment.Center;
 			Background = FwAvaloniaDensity.TransparentBrush;
 			BorderThickness = new Thickness(0);
 			_valueText = new TextBlock
@@ -1099,6 +1115,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				Text = CurrentName(field),
 				VerticalAlignment = VerticalAlignment.Center
 			};
+			ApplyEmptyValueWidth();
 			var content = new StackPanel
 			{
 				Orientation = Orientation.Horizontal,
@@ -1126,7 +1143,9 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				return;
 
 			// "+"/chooser click = OPTIONS ONLY: the one compact filterable picker, zero links.
-			var picker = new FwOptionChooser(field.Options, null, automationId);
+			// Seeded with the row's current value so opening the list highlights what is chosen.
+			var picker = new FwOptionChooser(field.Options, null, automationId,
+				selectedKey: field.SelectedOptionKey);
 			var flyout = FwOptionChooser.CreateOptionFlyout(picker, PlacementMode.BottomEdgeAlignedLeft);
 			Flyout = flyout;
 
@@ -1138,6 +1157,15 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				{
 					_selectedKey = option.Key;
 					_valueText.Text = option.Name;
+					// The row now has a value of its own to hit, so it stops filling the cell.
+					ApplyEmptyValueWidth();
+					// Only a COMMITTED change moves the picker's highlight; a rejected edit
+					// leaves the list still pointing at the value the row actually holds.
+					picker.SelectByKey(option.Key);
+					// A pick is a DISCRETE gesture, like a toggle: commit it now. Staging alone
+					// leaves Undo nothing to revert until focus moves, and the session guard
+					// spends that Undo settling the pending edit instead.
+					gestureCompleted?.Invoke();
 				}
 
 				flyout.Hide();
@@ -1157,6 +1185,12 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				Flyout = null;
 			});
 		}
+
+		// Only the empty row fills its cell; once it has text, the text is the target.
+		private void ApplyEmptyValueWidth()
+			=> HorizontalAlignment = string.IsNullOrEmpty(_valueText.Text)
+				? HorizontalAlignment.Stretch
+				: HorizontalAlignment.Left;
 
 		/// <summary>The count of still-attached subscriptions -- zero after <see
 		/// cref="Dispose"/>.</summary>
@@ -1200,6 +1234,66 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 	}
 
 	/// <summary>
+	/// A view that must not rebuild while a popup it opened is still up. Popups anchor to a
+	/// control INSIDE the view, so a rebuild destroys the anchor and the popup vanishes.
+	/// </summary>
+	internal interface IDetailPopupSink
+	{
+		void PopupOpenChanged(bool open);
+	}
+
+	/// <summary>
+	/// Reports a popup's open state to the detail view containing it. The sink is found from the
+	/// flyout's own target rather than passed in, so every popup site reports with one call and
+	/// none threads a callback down to it.
+	/// </summary>
+	internal static class PopupReporting
+	{
+		/// <summary>Wires open/close reporting; returns the teardown for it.</summary>
+		public static Action Wire(FlyoutBase flyout)
+		{
+			if (flyout == null)
+				return () => { };
+			// Resolved on open and REMEMBERED: the target can be gone by the time Closed fires,
+			// and an unmatched close would wedge the view as permanently busy.
+			Action<bool> sink = null;
+			EventHandler opened = (s, e) =>
+			{
+				sink = FindSink(flyout);
+				sink?.Invoke(true);
+			};
+			EventHandler closed = (s, e) =>
+			{
+				sink?.Invoke(false);
+				sink = null;
+			};
+			flyout.Opened += opened;
+			flyout.Closed += closed;
+			return () =>
+			{
+				// A flyout torn down while open still owes its close.
+				sink?.Invoke(false);
+				sink = null;
+				flyout.Opened -= opened;
+				flyout.Closed -= closed;
+			};
+		}
+
+		private static Action<bool> FindSink(FlyoutBase flyout)
+		{
+			var visual = flyout.Target as Visual;
+			while (visual != null)
+			{
+				if (visual is IDetailPopupSink sink)
+					return sink.PopupOpenChanged;
+				visual = visual.GetVisualParent();
+			}
+
+			return null;
+		}
+	}
+
+	/// <summary>
 	/// FieldWorks-owned editable reference-vector field: the current items rendered
 	/// inline, each followed by the thin grey separator bar legacy reference slices draw
 	/// (VwSeparatorBox), with the TRAILING bar fronting the add slot -- a "+" launcher whose
@@ -1214,6 +1308,27 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 	/// row's list resolved a list-editor target -- the CONFIGURE gear (which directly dispatches
 	/// the host jump, never a flyout: <see cref="DetailGearChrome"/>) fade in on row hover; the
 	/// items/text stay always visible.
+	///
+	/// APPROVED DIVERGENCE (approved by Zachary Burnham, 2026-09-02) -- the picker is ADD-ONLY.
+	/// Items already in the field are passed as the chooser's unavailable keys, so they appear in
+	/// the list greyed and un-toggleable rather than checked, and removal is the per-item
+	/// right-click. Legacy's <c>SimpleListChooser</c> instead pre-CHECKS the current members and
+	/// treats the dialog as setting the whole membership, so unticking removes.
+	///
+	/// Kept because "+" means add, which is what the symbol promises, and the row already carries
+	/// its own remove. The greyed rows still show the user what is present, so nothing is hidden.
+	/// Recorded so the next reader does not "fix" the picker to pre-check and call it parity.
+	///
+	/// An item the domain reports as invalid (ICmObject.CheckConstraints) is shown in the error
+	/// colour, underlined, with the explanation as its tooltip. It is still a normal item --
+	/// legacy STORES an invalid environment and marks it rather than refusing it.
+	///
+	/// CREATE-ON-TYPE (opt-in): a row whose edit context implements <see
+	/// cref="IReferenceItemCreation"/> for it also lets the user mint a target object by typing
+	/// into the picker's filter box -- the list offers a create row when the text matches
+	/// nothing. This is what makes an environments row reach an environment the project does not
+	/// own yet, which the picker alone cannot do. Every other vector row passes allowCreate:
+	/// false and is unaffected.
 	/// </summary>
 	public sealed class FwReferenceVectorField : StackPanel, IHoverAffordanceProvider, IDisposable
 	{
@@ -1263,6 +1378,15 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 					Background = FwAvaloniaDensity.TransparentBrush
 				};
 				AutomationProperties.SetAutomationId(text, automationId + ".Item." + item.Key);
+				if (item.HasValidationMessage)
+				{
+					// Legacy draws a red squiggle. Avalonia has no wavy decoration, so this is
+					// colour PLUS an underline -- colour alone would carry the whole signal.
+					text.Foreground = FwAvaloniaDensity.ValidationErrorBrush;
+					text.TextDecorations = TextDecorations.Underline;
+					ToolTip.SetTip(text, item.ValidationMessage);
+					AutomationProperties.SetHelpText(text, item.ValidationMessage);
+				}
 				if (editable)
 				{
 					var removeItem = new MenuItem { Header = FwAvaloniaStrings.Remove };
@@ -1275,10 +1399,14 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 					};
 					removeItem.Click += removeClick;
 					var itemText = text;
-					itemText.ContextFlyout = new MenuFlyout { Items = { removeItem } };
+					var itemMenu = new MenuFlyout { Items = { removeItem } };
+					itemText.ContextFlyout = itemMenu;
+					// A rebuild under the Remove menu dismisses it, like any other popup.
+					var itemMenuTeardown = PopupReporting.Wire(itemMenu);
 					_teardown.Add(() =>
 					{
 						removeItem.Click -= removeClick;
+						itemMenuTeardown();
 						itemText.ContextFlyout = null;
 					});
 				}
@@ -1315,10 +1443,20 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			// (with Depth hierarchy), search-backed vectors ride the host search delegate.
 			// No link items ever ride this flyout. The vector add slot opens in MULTI-SELECT mode
 			// (checkboxes + an "Add" button): the user checks several candidates and commits the
-			// whole set in ONE edit-context batch (one undoable step), like the legacy multi-check
-			// chooser. Atomic choosers (FwChooserField) stay single-select.
+			// whole set in ONE edit-context batch, one undoable step. Atomic choosers
+			// (FwChooserField) stay single-select.
+			//
+			// Current members ride as UNAVAILABLE keys, not as checked ones: this picker adds,
+			// and removal is the per-item right-click. That is an approved divergence from
+			// legacy's set-the-membership chooser, deliberately: "+" means add, and the row owns
+			// removal. Create-on-type is opt-in per row: only a context that can mint the target
+			// object offers it (environments find-or-create a PhEnvironment from the typed
+			// string). Every other vector row passes allowCreate: false and behaves exactly as
+			// before.
+			var creation = editContext as IReferenceItemCreation;
+			var canCreate = creation != null && creation.CanCreateReferenceItem(field);
 			var picker = new FwOptionChooser(field.Options, field.SearchOptions, automationId,
-				field.Items.Select(i => i.Key), multiSelect: true);
+				field.Items.Select(i => i.Key), multiSelect: true, allowCreate: canCreate);
 			var flyout = FwOptionChooser.CreateOptionFlyout(picker, PlacementMode.BottomEdgeAlignedLeft);
 			addButton.Flyout = flyout;
 			// Commit the whole checked set as ONE batch: every staged add rides the SAME open edit
@@ -1343,11 +1481,23 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				flyout.Hide();
 				addButton.Focus();
 			};
+			// The create row commits on its own, outside the checked batch: it is one new item,
+			// and a failed create leaves the row untouched rather than completing the gesture.
+			Action<string> created = text =>
+			{
+				var added = canCreate && creation.TryCreateAndAddReferenceItem(field, text);
+				flyout.Hide();
+				addButton.Focus();
+				if (added)
+					gestureCompleted?.Invoke();
+			};
 			picker.OptionsCommitted += committedSet;
+			picker.CreateRequested += created;
 			picker.Dismissed += dismissed;
 			_teardown.Add(() =>
 			{
 				picker.OptionsCommitted -= committedSet;
+				picker.CreateRequested -= created;
 				picker.Dismissed -= dismissed;
 				addButton.Flyout = null;
 			});
@@ -1477,5 +1627,79 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 
 		/// <summary>The button-click path; a no-op without an injected callback.</summary>
 		public void Launch() => _launch?.Invoke();
+	}
+	/// <summary>
+	/// A boolean row (legacy <c>CheckBoxSlice</c>): one checkbox in the value column, with the
+	/// row's own label as its caption, so no yes/no text is drawn. The toggle stages through <see
+	/// cref="IDetailEditContext.TrySetOption"/> as the literal "true"/"false" -- a boolean is a
+	/// two-state choice, so it reuses the option path rather than widening the edit seam. A null
+	/// edit context yields a read-only checkbox, like every other row.
+	///
+	/// The toggle COMMITS rather than only staging: it is one discrete gesture, and legacy's
+	/// CheckBoxSlice writes it as it lands. Staging alone would leave the box visibly ticked with
+	/// nothing on the undo stack until focus moved elsewhere.
+	/// </summary>
+	public sealed class FwBooleanField : CheckBox
+	{
+		// Avalonia keys a ControlTheme on the EXACT type, so a subclass resolves none of its own.
+		// Without this the row gets no template: no box drawn, no input taken.
+		protected override Type StyleKeyOverride => typeof(CheckBox);
+
+		private readonly DetailField _field;
+		private readonly IDetailEditContext _editContext;
+		// Guards the programmatic IsChecked assignment in the constructor from being read back as
+		// a user toggle and staged as an edit.
+		private bool _wiring;
+		private readonly Action _gestureCompleted;
+
+		/// <param name="gestureCompleted">
+		/// Invoked after a SUCCESSFUL toggle so the host commits it immediately, exactly as the
+		/// reference vector's add/remove does. Null on a host that drives its own commit; the
+		/// toggle then only stages.
+		/// </param>
+		public FwBooleanField(DetailField field, string automationId, IDetailEditContext editContext,
+			Action gestureCompleted = null)
+		{
+			_field = field;
+			_editContext = editContext;
+			_gestureCompleted = gestureCompleted;
+
+			_wiring = true;
+			IsChecked = bool.TryParse(field?.SelectedOptionKey, out var value) && value;
+			_wiring = false;
+
+			Padding = FwAvaloniaDensity.EditorPadding;
+			MinHeight = 0;
+			HorizontalAlignment = HorizontalAlignment.Left;
+			VerticalAlignment = VerticalAlignment.Center;
+			IsEnabled = field != null && field.IsEditable && editContext != null;
+
+			AutomationProperties.SetAutomationId(this, automationId ?? string.Empty);
+			AutomationProperties.SetName(this, field?.Label ?? string.Empty);
+
+			IsCheckedChanged += OnIsCheckedChanged;
+		}
+
+		private void OnIsCheckedChanged(object sender, Avalonia.Interactivity.RoutedEventArgs e)
+		{
+			if (_wiring || _editContext == null)
+				return;
+
+			var staged = _editContext.TrySetOption(_field,
+				IsChecked == true ? bool.TrueString : bool.FalseString);
+			if (staged)
+			{
+				// Only a successful toggle completes the gesture; a refused one leaves the
+				// session untouched rather than committing a change the model rejected.
+				_gestureCompleted?.Invoke();
+				return;
+			}
+
+			// The edit was refused; put the box back rather than showing a state the model does
+			// not have.
+			_wiring = true;
+			IsChecked = !(IsChecked == true);
+			_wiring = false;
+		}
 	}
 }

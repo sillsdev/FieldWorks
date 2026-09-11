@@ -60,6 +60,10 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			var flyout = new MenuFlyout();
 			foreach (var control in CreateControls(items))
 				flyout.Items.Add(control);
+			// A host menu is a popup like any other: a rebuild while it is up dismisses it
+			// mid-choice. Reported here because the host that builds these holds no per-row
+			// teardown to wire it from.
+			PopupReporting.Wire(flyout);
 			return flyout;
 		}
 

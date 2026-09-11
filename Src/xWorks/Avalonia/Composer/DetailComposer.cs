@@ -342,6 +342,12 @@ namespace SIL.FieldWorks.XWorks
 			private readonly Dictionary<(int ClassId, string LayoutName), (string MenuId, string HotlinksId)> _itemMenuBindings
 				= new Dictionary<(int, string), (string, string)>();
 
+			// Memoized per (class, layout) like the menu bindings above, and invalidated by the
+			// same rule: a compile keyed on more than (ClassId, LayoutName) must widen this key
+			// too.
+			private readonly Dictionary<(int ClassId, string LayoutName), bool> _itemRootLabelled
+				= new Dictionary<(int, string), bool>();
+
 			public ComposeState(LcmCache cache, bool showHiddenFields,
 				SlicePluginRegistry plugins, Func<IDetailEditContext> editContextAccessor,
 				ViewDefinitionOverrideResolver overrides = null,
@@ -529,9 +535,46 @@ namespace SIL.FieldWorks.XWorks
 
 			private bool HideWhenEmpty(ViewNode node) => node.Visibility == ViewVisibility.IfData && !_showHidden;
 
+			/// <summary>
+			/// Whether the DOMAIN says this field does not apply to this object, which legacy
+			/// asks before building a slice (SliceFilter -> ICmObject.IsFieldRelevant). StemName
+			/// is irrelevant on a clitic or particle, Position on a non-infix, InflectionClasses
+			/// on some affix forms.
+			///
+			/// Not the same as hidden: show-hidden-fields does NOT reveal an irrelevant field, so
+			/// this is checked whatever _showHidden says. Legacy's propsToMonitor set is
+			/// discarded -- it exists so a live slice can re-evaluate when the property it
+			/// depends on changes, and this view recomposes on PropChanged instead.
+			/// </summary>
+			private readonly HashSet<Tuple<int, int>> _propsToMonitor
+				= new HashSet<Tuple<int, int>>();
+
+			private bool IsIrrelevantForObject(ViewNode node, ICmObject obj)
+			{
+				if (obj == null || string.IsNullOrEmpty(node?.Field))
+					return false;
+				// A condition aimed at another object names a field of THAT object's class,
+				// so there is nothing here to ask about. Legacy resolves no flid for one
+				// either, and lets the node through.
+				var conditionTarget = node.Condition?.Target;
+				if (!string.IsNullOrEmpty(conditionTarget)
+					&& !string.Equals(conditionTarget, "this", StringComparison.OrdinalIgnoreCase))
+				{
+					return false;
+				}
+
+				var flid = GetFlid(obj, node.Field);
+				if (flid == 0)
+					return false;
+				// One set for the whole walk, cleared per node. The overrides that fill it are
+				// telling a live slice what to watch; nothing here reads it back.
+				_propsToMonitor.Clear();
+				return !obj.IsFieldRelevant(flid, _propsToMonitor);
+			}
+
 			public void Walk(ViewNode node, ICmObject obj, int depth)
 			{
-				if (IsHidden(node) || depth > MaxDepth)
+				if (IsHidden(node) || depth > MaxDepth || IsIrrelevantForObject(node, obj))
 					return;
 
 				switch (node.Kind)
@@ -833,7 +876,32 @@ namespace SIL.FieldWorks.XWorks
 					null, null, menuId: "mnuDataTree-Help");
 			}
 
-			// The node's chooserLink wins; else the row derives its tool like the legacy path.
+			/// <summary>
+			/// The row's list-editor jump links: the layout's authored <c>chooserLink
+			/// type="goto"</c> entries, else a synthesized "Edit the &lt;list&gt;" link when the
+			/// field's possibility list resolves to a list-editor tool.
+			///
+			/// APPROVED DIVERGENCE (approved by Zachary Burnham, 2026-09-02) -- the synthesized
+			/// fallback is deliberately BROADER than legacy, on two axes:
+			///
+			/// Trigger: legacy synthesizes a chooserInfo only for <c>editor="autoCustom"</c>
+			/// custom-list reference fields
+			/// (<c>ReallySimpleListChooser.GenerateChooserInfoForCustomNode</c>,
+			/// FWR-1187);
+			/// every other row shows a jump link only when the layout authors one. This fallback
+			/// applies to ANY possibility-list chooser row with no authored link, so rows legacy
+			/// leaves linkless -- Morph Type among them, whose part authors only <c>chooserInfo
+			/// title=</c> -- gain one.
+			///
+			/// Surface: legacy puts the link INSIDE the chooser dialog as a LinkLabel; the row's
+			/// gear promotes it to the row itself, reachable without opening the chooser.
+			///
+			/// Kept because the jump is useful on every list-backed row and the narrower legacy
+			/// rule reads as an accident of which parts happened to author a link, not a
+			/// decision. The dispatch path is unchanged (<c>FollowLink</c>), so the jump behaves
+			/// as legacy's does. Recorded so the next reader does not "fix" it back to the legacy
+			/// trigger.
+			/// </summary>
 			private IReadOnlyList<DetailChooserLink> CreateChooserLinks(ViewNode node,
 				ICmPossibilityList list = null)
 			{
@@ -1540,9 +1608,9 @@ namespace SIL.FieldWorks.XWorks
 				for (var i = 0; i < count; i++)
 				{
 					var itemHvo = _sda.get_VecItem(obj.Hvo, flid, i);
-					items.Add(new DetailChoiceOption(
-						_cache.ServiceLocator.ObjectRepository.GetObject(itemHvo).Guid.ToString(),
-						ResolveShortName(itemHvo)));
+					var item = _cache.ServiceLocator.ObjectRepository.GetObject(itemHvo);
+					items.Add(new DetailChoiceOption(item.Guid.ToString(), ResolveShortName(itemHvo),
+						validationMessage: ValidationMessageFor(item)));
 				}
 
 				var candidateHvoByGuid = new Dictionary<Guid, int>();
@@ -1556,11 +1624,14 @@ namespace SIL.FieldWorks.XWorks
 				}
 
 				var stableId = StableId(node, obj);
+				// Authored goto links ride this row too (Environments authors one). No list is
+				// passed, so the synthesized fallback stays with the possibility-list paths.
 				AddField(new DetailField(stableId, Localize(node.Label) ?? node.Field, node.Field,
 					node.WritingSystem, DetailFieldKind.ReferenceVector, node.EditorClassification,
 					node.AutomationId, node.LocalizationKey, node.Routing, null, options, null,
 					isEditable: true, indent: depth, menuId: node.MenuId, contextMenuId: node.ContextMenuId,
-					hotlinksId: node.HotlinksId, objectHvo: obj.Hvo, items: items));
+					hotlinksId: node.HotlinksId, objectHvo: obj.Hvo, items: items,
+					chooserLinks: CreateChooserLinks(node)));
 
 				var hvo = obj.Hvo;
 				HandlerFor(stableId).ReferenceAdd = key =>
@@ -1589,7 +1660,72 @@ namespace SIL.FieldWorks.XWorks
 					}
 					return false;
 				};
+
+				// Environments and infix Positions are ALSO typed in legacy. Only that editor
+				// registers a create handler, so other vector rows stay pick-only.
+				if (EditorKindMap.CreatesReferenceItemsFromText(node.RawEditor))
+				{
+					HandlerFor(stableId).ReferenceCreate = text =>
+					{
+						var env = FindOrCreateEnvironment(text);
+						if (env == null)
+							return false;
+						var size = _sda.get_VecSize(hvo, flid);
+						for (var i = 0; i < size; i++)
+							if (_sda.get_VecItem(hvo, flid, i) == env.Hvo)
+								return false; // already on the field; nothing to add
+						_sda.Replace(hvo, flid, size, size, new[] { env.Hvo }, 1);
+						return true;
+					};
+				}
 			}
+
+			/// <summary>
+			/// The domain's own verdict on an object, for display beside it. Reuses
+			/// ICmObject.CheckConstraints -- the same oracle legacy's squiggly runs on -- rather
+			/// than re-deriving validity here, so the two views cannot disagree.
+			///
+			/// Composing must never write, and createAnnotation false is not by itself enough to
+			/// guarantee that: of the three classes that override CheckConstraints, only
+			/// PhEnvironment honours the flag. MoMorphAdhocProhib and MoAlloAdhocProhib mint an
+			/// annotation on any failure regardless. Neither is reachable here -- the model gives
+			/// adhoc prohibitions owning collections only, never a reference property -- so this
+			/// stays a pure read for as long as it is asked only about REFERENCE vector items.
+			/// </summary>
+			private string ValidationMessageFor(ICmObject item)
+			{
+				if (item == null || !item.IsValidObject)
+					return null;
+				// Flid 0 means "any constraint on this object". The base implementation returns
+				// true without allocating, so this stays free for the classes that never
+				// validate.
+				ConstraintFailure failure;
+				return item.CheckConstraints(0, false, out failure) ? null : failure?.GetMessage();
+			}
+
+			// Matches with SPACES REMOVED, like ConnectToRealCache. Validity is NOT a
+			// precondition: legacy creates regardless, so filtering would discard the typed text.
+			private IPhEnvironment FindOrCreateEnvironment(string text)
+			{
+				var wanted = StripSpaces(text);
+				var inventory = _cache.LanguageProject.PhonologicalDataOA?.EnvironmentsOS;
+				if (inventory == null)
+					return null;
+				foreach (var existing in inventory)
+				{
+					if (StripSpaces(existing.StringRepresentation?.Text) == wanted)
+						return existing;
+				}
+
+				var created = _cache.ServiceLocator.GetInstance<IPhEnvironmentFactory>().Create();
+				inventory.Add(created);
+				// VERNACULAR, as PhoneEnvReferenceView types it (m_wsVern). Analysis would give
+				// the string the wrong font wherever a view renders its own writing system.
+				created.StringRepresentation = TsStringUtils.MakeString(text, _cache.DefaultVernWs);
+				return created;
+			}
+
+			private static string StripSpaces(string s) => s?.Replace(" ", null) ?? string.Empty;
 
 			// Capped so a huge candidate set (entries/senses are already handled by the
 			// type-ahead path above) falls back to a read-only row instead of eagerly
@@ -2412,10 +2548,8 @@ namespace SIL.FieldWorks.XWorks
 				=> !string.IsNullOrEmpty(text)
 					&& text.StartsWith(query, StringComparison.OrdinalIgnoreCase);
 
-			// Viewing parity: every field type the legacy slices display has a rendering here:
-			// booleans as checkboxes (editable), integers editable, dates/gendates formatted,
-			// structured text as paragraph text, references as value rows; explicit unsupported rows
-			// for the rest. Empty fields show under "show hidden fields" exactly like legacy.
+			// Field types resolved by LCModel type rather than editor string. A type with no
+			// branch here renders the labeled Unsupported worklist row rather than a guess.
 			private void WalkOtherField(ViewNode node, ICmObject obj, int depth)
 			{
 				var flid = GetFlid(obj, node.Field);
@@ -2424,6 +2558,9 @@ namespace SIL.FieldWorks.XWorks
 					var type = (CellarPropertyType)_mdc.GetFieldType(flid);
 					switch (type)
 					{
+						case CellarPropertyType.Boolean:
+							WalkBooleanField(node, obj, depth, flid);
+							return;
 						case CellarPropertyType.ReferenceAtomic:
 							WalkReferenceAtomicField(node, obj, depth, flid);
 							return;
@@ -2439,6 +2576,34 @@ namespace SIL.FieldWorks.XWorks
 
 				if (!HideWhenEmpty(node))
 					WalkUnsupported(node, obj, depth);
+			}
+
+			// A boolean field (legacy CheckBoxSlice). The row's label is the whole caption, so
+			// the row carries no options; the state stages through the shared option path.
+			private void WalkBooleanField(ViewNode node, ICmObject obj, int depth, int flid)
+			{
+				var hvo = obj.Hvo;
+				// A toggleValue slice shows and stores the LOGICAL INVERSE of its property, on
+				// read AND write, as legacy's CheckBoxSlice does: "Active" is stored as Disabled.
+				var inverted = node.ToggleValue;
+				var current = _sda.get_BooleanProp(hvo, flid) ^ inverted;
+				var stableId = StableId(node, obj);
+				AddField(new DetailField(stableId, Localize(node.Label) ?? node.Field, node.Field,
+					node.WritingSystem, DetailFieldKind.Boolean, node.EditorClassification,
+					node.AutomationId, node.LocalizationKey, node.Routing, null, null,
+					current ? bool.TrueString : bool.FalseString, isEditable: true, indent: depth,
+					menuId: node.MenuId, contextMenuId: node.ContextMenuId,
+					hotlinksId: node.HotlinksId, objectHvo: hvo));
+
+				HandlerFor(stableId).Option = key =>
+				{
+					// Only the two literals are accepted; anything else is rejected WITHOUT
+					// opening the session, like a chooser key outside its list.
+					if (!bool.TryParse(key, out var value))
+						return false;
+					_sda.SetBoolean(hvo, flid, value ^ inverted);
+					return true;
+				};
 			}
 
 			// The atomic-reference dispatch of WalkOtherField, split out unchanged: a possibility-list or
@@ -2560,11 +2725,15 @@ namespace SIL.FieldWorks.XWorks
 				// matching the legacy reference-vector slice. Entry/sense (huge) vectors were
 				// handled above; the candidate cap guards any other large set into read-only.
 				var genericCandidates = SafeReferenceTargetCandidates(obj, flid);
-				if (genericCandidates != null && genericCandidates.Count > 0)
+				// A create-on-type row is the chooser even with NO candidates: the user types the
+				// project's first environment.
+				var createsFromText = EditorKindMap.CreatesReferenceItemsFromText(node.RawEditor);
+				if (createsFromText || (genericCandidates != null && genericCandidates.Count > 0))
 				{
 					if (count == 0 && HideWhenEmpty(node))
 						return;
-					AddGenericReferenceVector(node, obj, depth, flid, count, genericCandidates);
+					AddGenericReferenceVector(node, obj, depth, flid, count,
+						genericCandidates ?? Array.Empty<ICmObject>());
 					return;
 				}
 
@@ -2924,14 +3093,34 @@ namespace SIL.FieldWorks.XWorks
 				var expanded = node.Expansion != ViewExpansion.Collapsed;
 				var isSenses = node.Field == "Senses";
 				var sectionLabel = Localize(node.Label) ?? node.Field;
+
+				// A sequence sitting directly under a section header that already names it (the
+				// Allomorphs/Variants shape: a summary slice wrapping an <indent> with one seq)
+				// would otherwise emit a second banner plus a numbered header per item, above
+				// item rows their own layouts already label. Both are duplicates, and with no
+				// label authored on the part ref or the <seq> the banner falls back to the raw
+				// model field name, which bypasses StringTable and cannot be translated.
+				var flatten = !isSenses
+					&& string.IsNullOrEmpty(node.Label)
+					&& FollowsEnclosingHeader(depth)
+					&& ItemRootIsLabelled(node, obj, flid, count);
+
 				// Nested sense sequences (Senses on a sense) don't repeat the section banner; the
 				// numbered items carry it.
-				if (!(isSenses && obj is ILexSense))
+				if (!flatten && !(isSenses && obj is ILexSense))
 					AddHeader(node, obj, depth, sectionLabel);
 
 				for (var i = 0; i < count; i++)
 				{
 					var item = _cache.ServiceLocator.ObjectRepository.GetObject(_sda.get_VecItem(obj.Hvo, flid, i));
+					if (flatten)
+					{
+						// The item's own labelled root row IS the item row, so it takes the depth
+						// the suppressed banner would have used.
+						DescendIntoAtChildDepth(node, item, depth);
+						continue;
+					}
+
 					string itemLabel;
 					if (isSenses && item is ILexSense sense)
 					{
@@ -2960,6 +3149,35 @@ namespace SIL.FieldWorks.XWorks
 						objectHvo: item.Hvo));
 					DescendInto(node, item, depth + 1);
 				}
+			}
+
+			// True when the row just emitted is a section header one level shallower than this
+			// sequence. A sequence with no such header keeps its own banner.
+			private bool FollowsEnclosingHeader(int depth)
+			{
+				if (depth == 0 || Fields.Count == 0)
+					return false;
+				var previous = Fields[Fields.Count - 1];
+				return previous.Kind == DetailFieldKind.Header && previous.Indent == depth - 1;
+			}
+
+			// True when the items compile to a layout whose first root row carries its own label.
+			// Without one, suppressing the synthesized header would leave the items unlabelled.
+			private bool ItemRootIsLabelled(ViewNode node, ICmObject obj, int flid, int count)
+			{
+				if (count == 0)
+					return false;
+				var first = _cache.ServiceLocator.ObjectRepository.GetObject(
+					_sda.get_VecItem(obj.Hvo, flid, 0));
+				var layoutName = string.IsNullOrEmpty(node.TargetLayout) ? "Normal" : node.TargetLayout;
+				if (_itemRootLabelled.TryGetValue((first.ClassID, layoutName), out var cached))
+					return cached;
+
+				var compiled = CompileForObjectWithOverrides(first, layoutName);
+				var labelled = compiled != null && compiled.Roots.Count > 0
+					&& !string.IsNullOrEmpty(compiled.Roots[0].Label);
+				_itemRootLabelled[(first.ClassID, layoutName)] = labelled;
+				return labelled;
 			}
 
 			// First root-level menu/hotlinks binding of the item's compiled layout (compile
@@ -3033,6 +3251,11 @@ namespace SIL.FieldWorks.XWorks
 			}
 
 			private void DescendInto(ViewNode node, ICmObject target, int depth)
+				=> DescendIntoAtChildDepth(node, target, depth + 1);
+
+			// The descent, taking the depth the target's own rows land at rather than the
+			// caller's. A flattened sequence needs them one level shallower than caller-plus-one.
+			private void DescendIntoAtChildDepth(ViewNode node, ICmObject target, int childDepth)
 			{
 				var layoutName = string.IsNullOrEmpty(node.TargetLayout) ? "Normal" : node.TargetLayout;
 				if (!_visited.Add((target.Hvo, layoutName)))
@@ -3046,14 +3269,14 @@ namespace SIL.FieldWorks.XWorks
 					// that layout's override file, not the entry's.
 					EnterModel(compiled);
 					foreach (var child in compiled.Roots)
-						Walk(child, target, depth + 1);
+						Walk(child, target, childDepth);
 					ExitModel();
 				}
 				else
 				{
 					// No layout for the target: fall back to the caller-injected children, if any.
 					foreach (var child in node.Children)
-						Walk(child, target, depth + 1);
+						Walk(child, target, childDepth);
 				}
 
 				_visited.Remove((target.Hvo, layoutName));

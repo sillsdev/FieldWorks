@@ -8,6 +8,7 @@ using System.Linq;
 using Avalonia;
 using Avalonia.Automation;
 using Avalonia.Controls;
+using Avalonia.Media;
 using Avalonia.Headless.NUnit;
 using Avalonia.Input;
 using Avalonia.Interactivity;
@@ -422,6 +423,383 @@ namespace FwAvaloniaTests
 			Assert.That(errors.Text, Does.Contain("required"));
 		}
 
+		/// <summary>
+		/// Clicking one row while another holds a staged edit must not re-show the view
+		/// mid-click.
+		///
+		/// The press moves focus, the autosave commits, the host rebuilds these controls, and the
+		/// release lands on a detached control -- so the click does nothing and a second one is
+		/// needed. Only an open session triggers it, so an edited row behaves differently from an
+		/// untouched one.
+		/// </summary>
+		[AvaloniaTest]
+		public void AutoSave_DuringAPointerGesture_HoldsTheReShowUntilTheRelease()
+		{
+			var (view, context, _) = ShowEditable();
+			var completed = 0;
+			view.EditCompleted += (s, e) => completed++;
+			var box = Find<TextBox>(view, "LexemeFormEditor.vern");
+
+			box.Text = "perro"; // stage: opens the session
+			Dispatcher.UIThread.RunJobs();
+
+			RaisePointerPressed(view);
+			box.RaiseEvent(new RoutedEventArgs(InputElement.LostFocusEvent));
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(context.CommitCount, Is.EqualTo(1),
+				"the edit still COMMITS on focus loss -- only the re-show waits");
+			Assert.That(completed, Is.Zero,
+				"re-showing here would rebuild the control the press landed on, and the release "
+				+ "would reach nothing");
+
+			RaisePointerReleased(view);
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(completed, Is.EqualTo(1),
+				"the held re-show is delivered once the gesture has completed");
+		}
+
+		/// <summary>
+		/// Several commits inside ONE gesture produce ONE re-show.
+		///
+		/// Driven through reference-remove gestures rather than two focus-loss autosaves: the
+		/// fake context reports IsOpen only until its first commit, so a second autosave never
+		/// fires and a test written that way passes whether or not the holding works.
+		/// </summary>
+		[AvaloniaTest]
+		public void ManyCommitsInOneGesture_ProduceOneReShow()
+		{
+			var model = new DetailModel("LexEntry", "test",
+				new List<DetailField> { PublishInField(), SecondVectorField() },
+				new List<ViewDiagnostic>());
+			var context = new FakeDetailEditContext();
+			var view = new DataTree(model, context);
+			var window = new Window { Content = view, Width = 500, Height = 300 };
+			window.Show();
+			Dispatcher.UIThread.RunJobs();
+			var completed = 0;
+			view.EditCompleted += (s, e) => completed++;
+
+			RaisePointerPressed(view);
+			RemoveFirstItem(view, "PublishIn.Item.p1");
+			RemoveFirstItem(view, "Second.Item.s1");
+
+			Assert.That(context.CommitCount, Is.EqualTo(2), "both gestures committed");
+			Assert.That(completed, Is.Zero, "and neither re-showed mid-gesture");
+
+			RaisePointerReleased(view);
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(completed, Is.EqualTo(1), "one gesture, one re-show");
+		}
+
+		private static void RemoveFirstItem(DataTree view, string itemAutomationId)
+		{
+			var item = Find<TextBlock>(view, itemAutomationId);
+			var removeItem = (MenuItem)((MenuFlyout)item.ContextFlyout).Items[0];
+			removeItem.RaiseEvent(new RoutedEventArgs(MenuItem.ClickEvent));
+			Dispatcher.UIThread.RunJobs();
+		}
+
+		private static DetailField SecondVectorField() => new DetailField(
+			"LexEntry/x/#10", "Second Vector", "Second", null,
+			DetailFieldKind.ReferenceVector, EditorClassification.Known, "Second", null,
+			HostRouting.Inherit, null,
+			new List<DetailChoiceOption> { new DetailChoiceOption("s1", "One") },
+			null, isEditable: true, indent: 0,
+			items: new List<DetailChoiceOption> { new DetailChoiceOption("s1", "One") });
+
+
+		/// <summary>
+		/// A gesture that ends outside the view delivers no release here. The held re-show is not
+		/// lost -- the next gesture's release delivers it. Nothing that matters is stale
+		/// meanwhile: the commit already happened, so the values on screen are the committed
+		/// ones.
+		///
+		/// PointerCaptureLostEvent is NOT the net for this. It is a Direct routed event, so it
+		/// fires on no Bubble registration and does not route up from the descendant that lost
+		/// capture.
+		/// </summary>
+		[AvaloniaTest]
+		public void AutoSave_WhenAGestureEndsOutsideTheView_TheNextReleaseDelivers()
+		{
+			var (view, _, _) = ShowEditable();
+			var completed = 0;
+			view.EditCompleted += (s, e) => completed++;
+			var box = Find<TextBox>(view, "LexemeFormEditor.vern");
+
+			box.Text = "perro";
+			Dispatcher.UIThread.RunJobs();
+			RaisePointerPressed(view);
+			box.RaiseEvent(new RoutedEventArgs(InputElement.LostFocusEvent));
+			Dispatcher.UIThread.RunJobs();
+			Assert.That(completed, Is.Zero, "held for the gesture");
+
+			// No release arrives for that gesture: the pointer went up outside the view.
+			RaisePointerPressed(view);
+			RaisePointerReleased(view);
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(completed, Is.EqualTo(1),
+				"the held re-show is delivered by the next release, not stranded");
+		}
+
+
+		/// <summary>
+		/// A click that OPENS a picker is not finished when the button is released -- the user is
+		/// still choosing. The view stays busy until the picker closes.
+		///
+		/// Releasing the held re-show at the pointer release rebuilds the view, and these flyouts
+		/// anchor to a control INSIDE it -- the anchor goes, and takes the picker with it.
+		/// </summary>
+		[AvaloniaTest]
+		public void AnOpenPicker_KeepsTheViewBusy_UntilItCloses()
+		{
+			var model = new DetailModel("LexEntry", "test",
+				new List<DetailField> { PublishInField() }, new List<ViewDiagnostic>());
+			var view = new DataTree(model, new FakeDetailEditContext());
+			var window = new Window { Content = view, Width = 500, Height = 260 };
+			window.Show();
+			Dispatcher.UIThread.RunJobs();
+			var idle = 0;
+			view.InteractionCompleted += (s, e) => idle++;
+
+			var addButton = view.GetVisualDescendants().OfType<Button>()
+				.Single(b => AutomationProperties.GetAutomationId(b) == "PublishIn.Add");
+			var flyout = (Flyout)addButton.Flyout;
+
+			flyout.ShowAt(addButton);
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(view.IsInteractionInFlight, Is.True,
+				"a picker anchored inside the view is up; rebuilding now would dismiss it");
+			Assert.That(idle, Is.Zero);
+
+			flyout.Hide();
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(view.IsInteractionInFlight, Is.False, "the choice is over");
+			Assert.That(idle, Is.EqualTo(1), "so the view reports itself idle, exactly once");
+		}
+
+		/// <summary>
+		/// The per-item Remove menu is a popup like any other: every popup anchored in the view
+		/// has to report itself, not only the ones that look like pickers.
+		/// </summary>
+		[AvaloniaTest]
+		public void TheItemRemoveMenu_AlsoKeepsTheViewBusy()
+		{
+			var model = new DetailModel("LexEntry", "test",
+				new List<DetailField> { PublishInField() }, new List<ViewDiagnostic>());
+			var view = new DataTree(model, new FakeDetailEditContext());
+			var window = new Window { Content = view, Width = 500, Height = 260 };
+			window.Show();
+			Dispatcher.UIThread.RunJobs();
+			var idle = 0;
+			view.InteractionCompleted += (s, e) => idle++;
+
+			var item = Find<TextBlock>(view, "PublishIn.Item.p1");
+			var menu = (MenuFlyout)item.ContextFlyout;
+
+			menu.ShowAt(item);
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(view.IsInteractionInFlight, Is.True,
+				"the Remove menu is up; rebuilding now would dismiss it mid-choice");
+
+			menu.Hide();
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(view.IsInteractionInFlight, Is.False);
+			Assert.That(idle, Is.EqualTo(1));
+		}
+
+		/// <summary>
+		/// The row and gear context menus are built by the HOST from its own menu system and
+		/// shown through <see cref="DetailMenuFlyout"/>, so no field control is in a position
+		/// to report them. They anchor inside the view like any other popup, and obey the rule.
+		/// </summary>
+		[AvaloniaTest]
+		public void ARowsContextMenu_AlsoKeepsTheViewBusy()
+		{
+			var model = new DetailModel("LexEntry", "test",
+				new List<DetailField> { PublishInField() }, new List<ViewDiagnostic>());
+			var view = new DataTree(model, new FakeDetailEditContext());
+			var window = new Window { Content = view, Width = 500, Height = 260 };
+			window.Show();
+			Dispatcher.UIThread.RunJobs();
+			var idle = 0;
+			view.InteractionCompleted += (s, e) => idle++;
+
+			var anchor = Find<TextBlock>(view, "PublishIn.Item.p1");
+			var menu = DetailMenuFlyout.Show(
+				new List<DetailMenuItem> { new DetailMenuItem("Delete") }, anchor, atPointer: false);
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(view.IsInteractionInFlight, Is.True,
+				"the host's menu is up; rebuilding now would dismiss it mid-choice");
+
+			menu.Hide();
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(view.IsInteractionInFlight, Is.False);
+			Assert.That(idle, Is.EqualTo(1));
+		}
+
+		/// <summary>
+		/// The per-paragraph style picker is built inside the structured-text control, which owns
+		/// its flyouts rather than receiving them -- the rule reaches it the same way.
+		/// </summary>
+		[AvaloniaTest]
+		public void TheParagraphStylePicker_AlsoKeepsTheViewBusy()
+		{
+			var model = new DetailModel("LexEntry", "test",
+				new List<DetailField> { DiscussionField() }, new List<ViewDiagnostic>());
+			var view = new DataTree(model, new FakeDetailEditContext());
+			var window = new Window { Content = view, Width = 500, Height = 260 };
+			window.Show();
+			Dispatcher.UIThread.RunJobs();
+			var idle = 0;
+			view.InteractionCompleted += (s, e) => idle++;
+
+			var styleButton = view.GetVisualDescendants().OfType<Button>()
+				.Single(b => AutomationProperties.GetAutomationId(b) == "Discussion.Para.0.Style");
+			var flyout = (Flyout)styleButton.Flyout;
+
+			flyout.ShowAt(styleButton);
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(view.IsInteractionInFlight, Is.True,
+				"the style picker is up; rebuilding now would dismiss it mid-choice");
+
+			flyout.Hide();
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(view.IsInteractionInFlight, Is.False);
+			Assert.That(idle, Is.EqualTo(1));
+		}
+
+		/// <summary>
+		/// Reporting is wired where the popup is BUILT, so nothing hands back a teardown to run
+		/// when the anchor goes. An anchor torn down while its popup is open must therefore
+		/// still end up reported closed, or the view stays permanently busy and never refreshes.
+		/// </summary>
+		[AvaloniaTest]
+		public void APopupWhoseAnchorIsTornDown_StillReportsItselfClosed()
+		{
+			var model = new DetailModel("LexEntry", "test",
+				new List<DetailField> { PublishInField() }, new List<ViewDiagnostic>());
+			var view = new DataTree(model, new FakeDetailEditContext());
+			var window = new Window { Content = view, Width = 500, Height = 260 };
+			window.Show();
+			Dispatcher.UIThread.RunJobs();
+
+			var addButton = view.GetVisualDescendants().OfType<Button>()
+				.Single(b => AutomationProperties.GetAutomationId(b) == "PublishIn.Add");
+			var flyout = (Flyout)addButton.Flyout;
+			flyout.ShowAt(addButton);
+			Dispatcher.UIThread.RunJobs();
+			Assert.That(view.IsInteractionInFlight, Is.True, "the picker is up");
+
+			window.Content = new TextBlock();
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(view.IsInteractionInFlight, Is.False,
+				"the anchor is gone, so the picker is gone, so the view is idle again");
+		}
+
+		/// <summary>
+		/// The pointer release alone is not enough: a press that leaves a picker open keeps the
+		/// view busy past the release.
+		/// </summary>
+		[AvaloniaTest]
+		public void ReleasingThePointer_WithAPickerStillOpen_DoesNotReportIdle()
+		{
+			var model = new DetailModel("LexEntry", "test",
+				new List<DetailField> { PublishInField() }, new List<ViewDiagnostic>());
+			var view = new DataTree(model, new FakeDetailEditContext());
+			var window = new Window { Content = view, Width = 500, Height = 260 };
+			window.Show();
+			Dispatcher.UIThread.RunJobs();
+			var idle = 0;
+			view.InteractionCompleted += (s, e) => idle++;
+
+			var addButton = view.GetVisualDescendants().OfType<Button>()
+				.Single(b => AutomationProperties.GetAutomationId(b) == "PublishIn.Add");
+			var flyout = (Flyout)addButton.Flyout;
+
+			RaisePointerPressed(view);
+			flyout.ShowAt(addButton); // the click opened the picker
+			Dispatcher.UIThread.RunJobs();
+			RaisePointerReleased(view);
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(view.IsInteractionInFlight, Is.True,
+				"the button is up but the user is still choosing");
+			Assert.That(idle, Is.Zero, "so nothing is released yet");
+
+			flyout.Hide();
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(idle, Is.EqualTo(1), "and only the picker closing ends the interaction");
+		}
+
+		private static void RaisePointerPressed(Control target)
+		{
+			target.RaiseEvent(new PointerPressedEventArgs(target,
+				new Pointer(Pointer.GetNextFreeId(), PointerType.Mouse, true),
+				target, default, 0,
+				new PointerPointProperties(RawInputModifiers.LeftMouseButton,
+					PointerUpdateKind.LeftButtonPressed),
+				KeyModifiers.None));
+			Dispatcher.UIThread.RunJobs();
+		}
+
+		/// <summary>
+		/// A press inside the view whose release lands elsewhere in the window -- the pointer
+		/// left the view before the button came up, and nothing in the view had capture -- still
+		/// ends the gesture. Otherwise the view reports itself busy until the user happens to
+		/// click inside it again, and every refresh in between is held.
+		/// </summary>
+		[AvaloniaTest]
+		public void APressReleasedOutsideTheView_StillEndsTheGesture()
+		{
+			var model = new DetailModel("LexEntry", "test",
+				new List<DetailField> { PublishInField() }, new List<ViewDiagnostic>());
+			var view = new DataTree(model, new FakeDetailEditContext());
+			var elsewhere = new Button { Content = "elsewhere" };
+			var window = new Window
+			{
+				Content = new StackPanel { Children = { view, elsewhere } },
+				Width = 500,
+				Height = 300
+			};
+			window.Show();
+			Dispatcher.UIThread.RunJobs();
+
+			RaisePointerPressed(view);
+			Dispatcher.UIThread.RunJobs();
+			Assert.That(view.IsInteractionInFlight, Is.True, "the press started a gesture");
+
+			RaisePointerReleased(elsewhere);
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(view.IsInteractionInFlight, Is.False,
+				"the button came up, so the gesture is over wherever the pointer had got to");
+		}
+
+		private static void RaisePointerReleased(Control target)
+		{
+			target.RaiseEvent(new PointerReleasedEventArgs(target,
+				new Pointer(Pointer.GetNextFreeId(), PointerType.Mouse, true),
+				target, default, 0,
+				new PointerPointProperties(RawInputModifiers.None,
+					PointerUpdateKind.LeftButtonReleased),
+				KeyModifiers.None, MouseButton.Left));
+			Dispatcher.UIThread.RunJobs();
+		}
+
 		[AvaloniaTest]
 		public void Escape_CancelsTheSession_AndRaisesEditCompleted()
 		{
@@ -448,6 +826,92 @@ namespace FwAvaloniaTests
 			var (view, _, _) = ShowEditable();
 			Assert.That(Find<Button>(view, "DetailEditor.Save"), Is.Null, "14.4: legacy has no Save button");
 			Assert.That(Find<Button>(view, "DetailEditor.Cancel"), Is.Null);
+		}
+
+		/// <summary>
+		/// The chooser hands the picker the row's current value, so opening the list highlights
+		/// what the field holds rather than whatever option sorts first.
+		/// </summary>
+		[AvaloniaTest]
+		public void Chooser_OpeningTheList_HighlightsTheRowsCurrentValue()
+		{
+			var field = new DetailField("LexEntry/x/#0", "Morph Type", "MorphType", null,
+				DetailFieldKind.Chooser, EditorClassification.Known, "MorphType", null,
+				HostRouting.Inherit, null,
+				new List<DetailChoiceOption>
+				{
+					new DetailChoiceOption("mt-stem", "stem"),
+					new DetailChoiceOption("mt-prefix", "prefix"),
+					new DetailChoiceOption("mt-suffix", "suffix")
+				},
+				"mt-suffix"); // NOT the first option
+			var chooser = new FwChooserField(field, "MorphType", new FakeDetailEditContext());
+			var window = new Window { Content = chooser, Width = 300, Height = 160 };
+			window.Show();
+			Dispatcher.UIThread.RunJobs();
+
+			var flyout = (Flyout)chooser.Flyout;
+			flyout.ShowAt(chooser);
+			Dispatcher.UIThread.RunJobs();
+
+			var picker = (FwOptionChooser)flyout.Content;
+			Assert.That(picker.OptionsList.SelectedIndex, Is.EqualTo(2),
+				"the current morph type is highlighted, not the first in the list");
+		}
+
+		/// <summary>
+		/// An EMPTY chooser must still be clickable. It has no text to wrap around, so hugging
+		/// its content leaves a target a few pixels each way -- findable only by hovering for the
+		/// grey.
+		/// </summary>
+		[AvaloniaTest]
+		public void Chooser_WithNoValue_StillFillsItsCell_SoItCanBeClicked()
+		{
+			var field = new DetailField("LexEntry/x/#0", "Stem Allomorph Label", "StemName", null,
+				DetailFieldKind.Chooser, EditorClassification.Known, "StemName", null,
+				HostRouting.Inherit, null,
+				new List<DetailChoiceOption> { new DetailChoiceOption("s1", "Stem1") },
+				null); // no value selected -- the empty case
+			var chooser = new FwChooserField(field, "StemName", new FakeDetailEditContext());
+			var host = new Border { Child = chooser, Width = 300, Height = 40 };
+			var window = new Window { Content = host, Width = 360, Height = 120 };
+			window.Show();
+			Dispatcher.UIThread.RunJobs();
+			window.UpdateLayout();
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(chooser.Bounds.Width, Is.GreaterThan(200),
+				"an empty chooser fills the value cell; a few pixels of padding is not a target "
+				+ "a user can find, let alone hit");
+			Assert.That(chooser.Bounds.Height, Is.GreaterThan(10),
+				"and it fills the row vertically too -- the strip was thin in BOTH directions");
+		}
+
+		/// <summary>
+		/// A chooser that HAS a value is its text, and that is target enough. Filling the cell
+		/// there only spreads the hover highlight past the value and the gear, which reads wrong.
+		/// Only the empty row stretches.
+		/// </summary>
+		[AvaloniaTest]
+		public void Chooser_WithAValue_HugsIt_RatherThanFillingTheCell()
+		{
+			var field = new DetailField("LexEntry/x/#0", "Morph Type", "MorphType", null,
+				DetailFieldKind.Chooser, EditorClassification.Known, "MorphType", null,
+				HostRouting.Inherit, null,
+				new List<DetailChoiceOption> { new DetailChoiceOption("s1", "stem") },
+				"s1"); // a value IS selected
+			var chooser = new FwChooserField(field, "MorphType", new FakeDetailEditContext());
+			var host = new Border { Child = chooser, Width = 300, Height = 40 };
+			var window = new Window { Content = host, Width = 360, Height = 120 };
+			window.Show();
+			Dispatcher.UIThread.RunJobs();
+			window.UpdateLayout();
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(chooser.Bounds.Width, Is.LessThan(200),
+				"it wraps its value rather than spanning the cell");
+			Assert.That(chooser.Bounds.Width, Is.GreaterThan(10),
+				"but the value is still a real target -- this is not the collapsed case");
 		}
 
 		// Chooser options can share a display name (e.g. identically named list items);
@@ -483,6 +947,92 @@ namespace FwAvaloniaTests
 			Assert.That(context.OptionEdits[0], Is.EqualTo(("MorphType", "g2")),
 				"the staged key is the selected option's key, not the first name match");
 			Assert.That(chooser.SelectedKey, Is.EqualTo("g2"));
+		}
+
+		// A chooser row with two options, the first selected.
+		private static DetailField PickableChooserField() => new DetailField(
+			"LexEntry/x/#0", "Morph Type", "MorphType", null,
+			DetailFieldKind.Chooser, EditorClassification.Known, "MorphType", null,
+			HostRouting.Inherit, null,
+			new List<DetailChoiceOption>
+			{
+				new DetailChoiceOption("s1", "stem"),
+				new DetailChoiceOption("s2", "enclitic")
+			},
+			"s1");
+
+		// Opens the chooser's picker and commits the option at 'index'.
+		private static void PickOption(FwChooserField chooser, int index)
+		{
+			var flyout = (Flyout)chooser.Flyout;
+			flyout.ShowAt(chooser);
+			Dispatcher.UIThread.RunJobs();
+			var picker = (FwOptionChooser)flyout.Content;
+			picker.OptionsList.SelectedIndex = index;
+			picker.CommitHighlighted();
+			Dispatcher.UIThread.RunJobs();
+		}
+
+		private static (FwChooserField Chooser, Window Window) ShowChooser(
+			DetailField field, IDetailEditContext context, Action gestureCompleted)
+		{
+			var chooser = new FwChooserField(field, "MorphType", context, null, gestureCompleted);
+			var window = new Window { Content = chooser, Width = 300, Height = 120 };
+			window.Show();
+			Dispatcher.UIThread.RunJobs();
+			return (chooser, window);
+		}
+
+		/// <summary>
+		/// Picking an option COMMITS, it does not merely stage. Staging alone left the row
+		/// showing
+		/// the new value with nothing on the undo stack until focus happened to move, so Undo hit
+		/// the session guard, settled the pending edit and cancelled itself -- the change looked
+		/// locked in and nothing was undone. A pick is as discrete a gesture as a toggle.
+		/// </summary>
+		[AvaloniaTest]
+		public void Chooser_CommitsImmediately_SoUndoWorksWithoutMovingFocus()
+		{
+			var commits = 0;
+			var context = new FakeDetailEditContext();
+			var (chooser, _) = ShowChooser(PickableChooserField(), context, () => commits++);
+
+			PickOption(chooser, 1);
+
+			Assert.That(context.OptionEdits, Has.Count.EqualTo(1), "the pick staged");
+			Assert.That(commits, Is.EqualTo(1),
+				"the gesture completes on the pick -- not on some later focus change");
+		}
+
+		[AvaloniaTest]
+		public void Chooser_DoesNotCommit_WhenTheEditIsRefused()
+		{
+			var commits = 0;
+			var context = new FakeDetailEditContext { OptionResult = false };
+			var (chooser, _) = ShowChooser(PickableChooserField(), context, () => commits++);
+
+			PickOption(chooser, 1);
+
+			Assert.That(commits, Is.Zero,
+				"a refused edit commits nothing; committing here would push an empty step onto "
+				+ "the undo stack");
+		}
+
+		/// <summary>
+		/// Re-picking the value the row already holds stages nothing, so it must commit nothing
+		/// either -- an empty undo step the user cannot see is worse than no step at all.
+		/// </summary>
+		[AvaloniaTest]
+		public void Chooser_DoesNotCommit_WhenTheChosenOptionIsAlreadyTheValue()
+		{
+			var commits = 0;
+			var context = new FakeDetailEditContext();
+			var (chooser, _) = ShowChooser(PickableChooserField(), context, () => commits++);
+
+			PickOption(chooser, 0); // "s1" is already the row's value
+
+			Assert.That(context.OptionEdits, Is.Empty, "nothing changed, so nothing staged");
+			Assert.That(commits, Is.Zero, "and nothing is committed");
 		}
 
 		// Edits address the writing system by its unique IETF tag
@@ -676,6 +1226,44 @@ namespace FwAvaloniaTests
 				"the remove behavior is unchanged for search-backed vectors");
 		}
 
+		/// <summary>
+		/// An item the domain flagged is annotated in place, not hidden or dropped: legacy STORES
+		/// an invalid environment and marks it with a squiggly. Colour is not the only cue -- an
+		/// underline and the automation help text carry it for anyone who cannot see red.
+		/// </summary>
+		[AvaloniaTest]
+		public void ReferenceVector_AnnotatesAnItemTheDomainReportsInvalid()
+		{
+			var field = new DetailField("MoForm/x/#0", "Environments", "PhoneEnv",
+				null, DetailFieldKind.ReferenceVector, EditorClassification.Known, "Envs", null,
+				HostRouting.Inherit, null, null, null, isEditable: true, indent: 0,
+				items: new List<DetailChoiceOption>
+				{
+					new DetailChoiceOption("ok", "/ # _"),
+					new DetailChoiceOption("bad", "/ _ [", validationMessage: "Unmatched bracket.")
+				});
+			var vector = new FwReferenceVectorField(field, "Envs", new FakeDetailEditContext());
+			var window = new Window { Content = vector, Width = 480, Height = 240 };
+			window.Show();
+			Dispatcher.UIThread.RunJobs();
+
+			var good = Find<TextBlock>(vector, "Envs.Item.ok");
+			var bad = Find<TextBlock>(vector, "Envs.Item.bad");
+			Assert.That(good, Is.Not.Null);
+			Assert.That(bad, Is.Not.Null, "the invalid item is still SHOWN, not filtered out");
+
+			Assert.That(bad.Foreground, Is.EqualTo(FwAvaloniaDensity.ValidationErrorBrush));
+			Assert.That(bad.TextDecorations, Is.EqualTo(TextDecorations.Underline),
+				"a non-colour cue too -- colour alone would carry the whole signal");
+			Assert.That(ToolTip.GetTip(bad), Is.EqualTo("Unmatched bracket."),
+				"the domain's own explanation, not a generic 'invalid'");
+			Assert.That(AutomationProperties.GetHelpText(bad), Is.EqualTo("Unmatched bracket."));
+
+			Assert.That(good.Foreground, Is.Not.EqualTo(FwAvaloniaDensity.ValidationErrorBrush),
+				"the valid sibling is untouched");
+			Assert.That(ToolTip.GetTip(good), Is.Null);
+		}
+
 		private static DetailField PublishInField() => new DetailField(
 			"LexEntry/x/#9", "Publish Entry In", "PublishIn", null,
 			DetailFieldKind.ReferenceVector, EditorClassification.Known, "PublishIn", null,
@@ -687,6 +1275,24 @@ namespace FwAvaloniaTests
 			},
 			null, isEditable: true, indent: 0,
 			items: new List<DetailChoiceOption> { new DetailChoiceOption("p1", "Main Dictionary") });
+
+		private static DetailField DiscussionField()
+		{
+			var text = "one";
+			var paragraph = new DetailParagraph(new DetailRichTextValue(text,
+				new[] { new DetailTextRun(text, "en") }, richXml: null, requiresRichEditor: false,
+				canEditRichText: true, lossyProperties: false));
+			var field = new DetailField(
+				stableId: "LexEntry/Discussion@1", label: "Discussion", field: "Discussion",
+				writingSystem: null, kind: DetailFieldKind.StructuredText,
+				editorClassification: EditorClassification.Known, automationId: "Discussion",
+				localizationKey: null, routing: HostRouting.Product, values: null, options: null,
+				selectedOptionKey: null, isEditable: true,
+				paragraphs: new List<DetailParagraph> { paragraph });
+			// The style affordance is built only for a field that carries styles to offer.
+			field.AvailableParagraphStyles = new List<string> { "Block Quote" };
+			return field;
+		}
 
 		private static (FwReferenceVectorField vector, FakeDetailEditContext context) ShowVector(
 			Action gestureCompleted)
