@@ -85,8 +85,8 @@ namespace SIL.FieldWorks.Common.RenderVerification
 			{
 				var savedArtifact = LoadSavedArtifact(expectedBitmap, verifiedPath, verifiedMetadataPath);
 				var diffSummary = CompareBitmaps(expectedBitmap, actualBitmap);
-				// A size change is a layout regression, so it fails whatever the pixel tolerance
-				// allows.
+				// A size change is a layout regression, so it fails regarldess of the pixel
+				// tolerance.
 				bool sizeMatches = expectedBitmap.Width == actualBitmap.Width
 					&& expectedBitmap.Height == actualBitmap.Height;
 				if (sizeMatches && IsWithinTolerance(diffSummary))

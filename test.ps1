@@ -1,4 +1,4 @@
-﻿<#
+<#
 .SYNOPSIS
 	Runs tests for the FieldWorks repository.
 
@@ -1086,15 +1086,17 @@ if ($script:crashRetryReport.Count -gt 0) {
 	}
 }
 
-if ($testExitCode -eq 0 -and $script:crashRetryReport.Count -gt 0) {
-	# Exit code 2 keeps a recovered crash visible to gates that only read the exit code.
-	$testExitCode = 2
-	Write-Host ""
-	Write-Host "[FLAKY] All tests passed, but a test host crashed and had to be retried (exit code: 2)" -ForegroundColor Magenta
-}
-elseif ($testExitCode -eq 0) {
-	Write-Host ""
-	Write-Host "[PASS] All tests passed" -ForegroundColor Green
+if ($testExitCode -eq 0) {
+	if ($script:crashRetryReport.Count -gt 0) {
+		# Exit code 2 keeps a recovered crash visible to gates that only read the exit code.
+		$testExitCode = 2
+		Write-Host ""
+		Write-Host "[FLAKY] All tests passed, but a test host crashed and had to be retried (exit code: 2)" -ForegroundColor Magenta
+	}
+	else {
+		Write-Host ""
+		Write-Host "[PASS] All tests passed" -ForegroundColor Green
+	}
 }
 else {
 	Write-Host ""
