@@ -102,7 +102,7 @@ namespace SIL.FieldWorks.XWorks
 				{
 					UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW("Undo Adding reversal Guid", "Redo Adding reversal Guid",
 						cache.ActionHandlerAccessor,
-						() => GetOrCreateRiGuidForWs(wsObj, cache));
+						() => cache.ServiceLocator.GetInstance<IReversalIndexRepository>().FindOrCreateIndexForWs(wsObj.Handle));
 				}
 			}
 		}
@@ -113,16 +113,6 @@ namespace SIL.FieldWorks.XWorks
 			var config = doc.Element(DictConfigElement);
 			wsAtt = config == null || !config.HasAttributes ? null : config.Attribute(WsAttribute);
 			return doc;
-		}
-
-		/// <summary>
-		/// Returns Guid of existing or created Reversal Index for the given Writing System
-		/// </summary>
-		public static Guid GetOrCreateRiGuidForWs(CoreWritingSystemDefinition wsObj, LcmCache cache)
-		{
-			var riRepo = cache.ServiceLocator.GetInstance<IReversalIndexRepository>();
-			var mHvoRevIdx = riRepo.FindOrCreateIndexForWs(wsObj.Handle).Hvo;
-			return cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(mHvoRevIdx).Guid;
 		}
 	}
 }
