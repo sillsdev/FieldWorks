@@ -331,4 +331,10 @@ We don't know why this happens. If you have any idea what recently changed on yo
 (To configure update settings, go to Tools-&gt;Options-&gt;Updates.)</value>
     <comment>Question asked on first launch. Options are Yes and No.</comment>
   </data>
+  <data name="ksAbandonedMutexOnStartup" xml:space="preserve">
+    <value>Another SIL program that shares data with FieldWorks closed unexpectedly, so the project could not be opened.
+
+Close any other SIL programs that are running, such as FieldWorks Lite or Paratext, and try again. If no other program is running, restart your computer.</value>
+    <comment>Shown on the Unable to Open Project dialog box when a shared lock was left behind by a program that crashed</comment>
+  </data>
 </root>

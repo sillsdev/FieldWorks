@@ -120,6 +120,15 @@ namespace SIL.FieldWorks.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Another SIL program that shares data with FieldWorks closed unexpectedly, so the project could not be opened.
+        /// </summary>
+        internal static string ksAbandonedMutexOnStartup {
+            get {
+                return ResourceManager.GetString("ksAbandonedMutexOnStartup", resourceCulture);
+            }
+        }
+
+        /// <summary>
         ///   Looks up a localized string similar to Do you want to continue with the restore?.
         /// </summary>
         internal static string ksBackupErrorDuringRestore {

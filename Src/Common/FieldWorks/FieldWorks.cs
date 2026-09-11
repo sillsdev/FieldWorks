@@ -3121,6 +3121,14 @@ namespace SIL.FieldWorks
 			{
 				throw new StartupException(fie.Message, fie);
 			}
+			catch (AbandonedMutexException ame)
+			{
+				// Startup owns the machine-wide lock once the wait completes, so exiting
+				// here would abandon it again and make every later launch fail the same
+				// way (LT-21834).
+				Logger.WriteError(ame);
+				throw new StartupException(Properties.Resources.ksAbandonedMutexOnStartup, ame);
+			}
 			finally
 			{
 				CloseSplashScreen();
