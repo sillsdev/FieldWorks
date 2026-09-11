@@ -723,7 +723,8 @@ namespace SIL.ToneParsFLEx
 					Path.Combine(
 						FwDirectoryFinder.CodeDirectory,
 						FwDirectoryFinder.ksFlexFolderName
-					)
+					),
+					PropTable
 				);
 			}
 			return m_XAmpleParser.IsUpToDate();

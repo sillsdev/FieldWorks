@@ -10,8 +10,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
-using System.Collections;
 using System.Xml.XPath;
+using XCore;
 
 namespace SIL.FieldWorks.WordWorks.Parser
 {
@@ -57,13 +57,24 @@ namespace SIL.FieldWorks.WordWorks.Parser
 					select fd).ToList();
 		}
 
+		public Boolean ListsAlreadyAdded()
+		{
+			var possListRepository = Cache.ServiceLocator.GetInstance<ICmPossibilityListRepository>();
+			return possListRepository.AllInstances().Any(list => list.Name.BestAnalysisAlternative.Text == customListName);
+		}
+
+		public Boolean XAmplePropertiesCustomFieldAlreadyAdded(string fieldName, int fieldClassId)
+		{
+			var customFields = GetListOfCustomFields();
+			return customFields.Any(fd => fd.Name == fieldName && fd.Class == fieldClassId);
+		}
+
 		public void AddListsAndFields()
 		{
 			if (Root == null)
 			{
 				return;
 			}
-
 			AddXAmplePropertiesList();
 			var customFields = GetListOfCustomFields();
 			AddXAmplePropertiesCustomField(entryCustomFieldName, LexEntryTags.kClassId);
@@ -75,8 +86,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		/// </summary>
 		public void AddXAmplePropertiesCustomField(string fieldName, int fieldClassId)
 		{
-			var customFields = GetListOfCustomFields();
-			if (customFields.Find(fd => fd.Name == fieldName) != null)
+			if (XAmplePropertiesCustomFieldAlreadyAdded(fieldName, fieldClassId))
 			{
 				// already done; quit
 				return;
@@ -117,22 +127,15 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		/// </summary>
 		public void AddXAmplePropertiesList()
 		{
-			if (Root == null)
+			if (Root == null || ListsAlreadyAdded())
 			{
 				// nothing to do
-				return;
-			}
-			var possListRepository = Cache.ServiceLocator.GetInstance<ICmPossibilityListRepository>();
-			var customList = possListRepository.AllInstances().FirstOrDefault(list => list.Name.BestAnalysisAlternative.Text == customListName);
-			if (customList != null)
-			{
 				return;
 			}
 			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
 			{
 				int ws = WritingSystemServices.kwsAnal;
-				Cache.ServiceLocator.GetInstance<ICmPossibilityListFactory>().CreateUnowned(customListName, ws);
-				customList = possListRepository.AllInstances().Last();
+				var customList = Cache.ServiceLocator.GetInstance<ICmPossibilityListFactory>().CreateUnowned(customListName, ws);
 				var propPoss = Cache.ServiceLocator.GetInstance<ICmCustomItemFactory>();
 				ws = Cache.DefaultAnalWs;
 				var elements = Root.XPathSelectElements("CustomList/Contents/Element");

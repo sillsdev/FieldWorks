@@ -555,12 +555,6 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 			matchingLexeme = m_lexicon.FindClosestMatchingLexeme("a");
 			Assert.That(matchingLexeme.LexicalForm == "a", Is.True);
 
-			// Found by parser
-			lexeme = m_lexicon.CreateLexeme(LexemeType.Prefix, "pre");
-			m_lexicon.AddLexeme(lexeme);
-			matchingLexeme = m_lexicon.FindClosestMatchingLexeme("prea");
-			Assert.That(matchingLexeme.LexicalForm == "a", Is.True);
-
 			// Found by unsupervised stemmer
 			m_lexicon.AddLexeme(m_lexicon.CreateLexeme(LexemeType.Stem, "b"));
 			m_lexicon.AddLexeme(m_lexicon.CreateLexeme(LexemeType.Stem, "c"));

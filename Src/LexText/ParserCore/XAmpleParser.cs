@@ -2,6 +2,12 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using SIL.FieldWorks.Common.FwUtils;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Infrastructure;
+using SIL.ObjectModel;
+using SIL.Xml;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -11,12 +17,8 @@ using System.Linq;
 using System.Text;
 using System.Xml;
 using System.Xml.Linq;
-using SIL.LCModel;
-using SIL.LCModel.DomainServices;
-using SIL.LCModel.Infrastructure;
-using SIL.ObjectModel;
-using SIL.Xml;
 using XAmpleManagedWrapper;
+using XCore;
 
 namespace SIL.FieldWorks.WordWorks.Parser
 {
@@ -25,6 +27,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		private static readonly char[] Digits = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' };
 
 		private XAmpleWrapper m_xample;
+		private PropertyTable m_propTable;
 		private readonly string m_dataDir;
 		private readonly LcmCache m_cache;
 		private ParserModelChangeListener m_changeListener;
@@ -33,7 +36,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		private bool m_forceUpdate;
 		private XElement xampleAddonFileRoot;
 
-		public XAmpleParser(LcmCache cache, string dataDir)
+		public XAmpleParser(LcmCache cache, string dataDir, PropertyTable propertyTable)
 		{
 			m_cache = cache;
 			m_xample = new XAmpleWrapper();
@@ -43,6 +46,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			m_database = ConvertNameToUseAnsiCharacters(m_cache.ProjectId.Name);
 			m_transformer = new M3ToXAmpleTransformer(m_database);
 			m_forceUpdate = true;
+			m_propTable = propertyTable;
 			InitXAmpleAddonDataInfo();
 		}
 		private void InitXAmpleAddonDataInfo()
@@ -58,7 +62,11 @@ namespace SIL.FieldWorks.WordWorks.Parser
 					{
 						xampleAddonFileRoot = doc.Root;
 						var preparer = new XAmplePropertiesPreparer(m_cache, xampleAddonFileRoot, false);
-						preparer.AddListsAndFields();
+						if (!preparer.ListsAlreadyAdded())
+						{
+							preparer.AddListsAndFields();
+							FwUtils.Publisher.Publish(new PublisherParameterObject(EventConstants.ReloadAreaTools, "lists", m_propTable.GetWindow()));
+						}
 					}
 				}
 			}
