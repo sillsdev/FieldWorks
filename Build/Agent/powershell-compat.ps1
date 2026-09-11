@@ -48,11 +48,14 @@ $ErrorActionPreference = 'Stop'
 Import-Module (Join-Path $PSScriptRoot 'CommentHygiene.psm1') -Force
 
 $repoRoot = (Resolve-Path (Join-Path $PSScriptRoot '../..')).Path
-# Every PowerShell file under Build/Agent, so a new script is covered the day it
-# lands rather than when someone remembers to name it here.
-$targetFiles = @(Get-ChildItem -LiteralPath $PSScriptRoot -Recurse -File |
+# Every PowerShell file under Build, not just Build/Agent: build.ps1 loads
+# modules from there under Windows PowerShell 5.1 in CI.
+$scanRoots = @($PSScriptRoot, (Join-Path $repoRoot 'Build'))
+$targetFiles = @($scanRoots | ForEach-Object {
+		Get-ChildItem -LiteralPath $_ -Recurse -File -ErrorAction SilentlyContinue
+	} |
 	Where-Object { $_.Extension -eq '.ps1' -or $_.Extension -eq '.psm1' } |
-	ForEach-Object { $_.FullName } | Sort-Object)
+	ForEach-Object { $_.FullName } | Sort-Object -Unique)
 
 $violations = New-Object System.Collections.ArrayList
 
