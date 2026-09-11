@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2021 SIL International
+// Copyright (c) 2003-2026 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -11,7 +11,6 @@ using SIL.FieldWorks.Common.FwAvalonia;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.UIAdapters;
-using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.FwCoreDlgControls;
 using SIL.FieldWorks.FwCoreDlgs;
 using SIL.FieldWorks.LexText.Controls;
@@ -21,7 +20,6 @@ using SIL.IO;
 using SIL.LCModel;
 using SIL.LCModel.Application;
 using SIL.LCModel.Core.KernelInterfaces;
-using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
 using SIL.LCModel.Utils;
@@ -34,7 +32,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 using System.Windows.Forms;
 using System.Xml;
 using XCore;
