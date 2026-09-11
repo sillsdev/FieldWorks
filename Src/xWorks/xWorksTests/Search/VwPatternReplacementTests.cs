@@ -18,6 +18,11 @@ namespace SIL.FieldWorks.XWorks.Search
 	[Category("BulkReplacement")]
 	public class VwPatternReplacementTests : MemoryOnlyBackendProviderTestBase
 	{
+		/// <summary>
+		/// E_UNEXPECTED, the HRESULT a pattern answers when it has no current match.
+		/// </summary>
+		private const int EUnexpected = unchecked((int)0x8000FFFF);
+
 		private int Ws => Cache.DefaultVernWs;
 
 		private IVwPattern MakePattern(string patternText, bool matchCase = false,
@@ -472,6 +477,33 @@ namespace SIL.FieldWorks.XWorks.Search
 
 			Assert.That(actual.Text, Is.EqualTo("new new"));
 			Assert.That(count, Is.EqualTo(2));
+			var exception = Assert.Throws<COMException>(
+				() => { var unused = pattern.ReplacementText; });
+
+			Assert.That(exception.HResult, Is.EqualTo(EUnexpected));
+		}
+
+		[Test]
+		public void ReplacementText_BeforeFirstSearch_Throws()
+		{
+			var pattern = MakePattern("old");
+			pattern.ReplaceWith = TsStringUtils.MakeString("new", Ws);
+
+			var exception = Assert.Throws<COMException>(
+				() => { var unused = pattern.ReplacementText; });
+
+			Assert.That(exception.HResult, Is.EqualTo(EUnexpected));
+		}
+
+		[Test]
+		public void ReplacementText_AfterUnsuccessfulFind_Throws()
+		{
+			var pattern = MakePattern("missing");
+			pattern.ReplaceWith = TsStringUtils.MakeString("new", Ws);
+			var source = MakeTextSource("old old", out var length);
+			Find(pattern, source, 0, length, true, out var ichMin, out _);
+			AssertNotFound(ichMin, "pattern with no occurrence in the source");
+
 			Assert.Throws<COMException>(() => { var unused = pattern.ReplacementText; });
 		}
 
