@@ -617,9 +617,6 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 		{
 			ILexEntry matchingEntry = null;
 			if (m_parser == null)
-				InstantiateParser();
-
-			if (m_parser == null)
 				return null;
 
 			if (!m_parser.IsUpToDate())
@@ -638,23 +635,6 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 				}
 			}
 			return matchingEntry;
-		}
-
-		private void InstantiateParser()
-		{
-			// LT-22708 2026.09.11 Jason Naylor says to keep m_parser as null for now.
-			//string parserDataDir = Path.Combine(ParatextLexiconPluginDirectoryFinder.CodeDirectory, "Language Explorer");
-			//switch (m_cache.LanguageProject.MorphologicalDataOA.ActiveParser)
-			//{
-			//	case "XAmple":
-			//		m_parser = new XAmpleParser(m_cache, parserDataDir, PropertyTable);
-			//		break;
-			//	case "HC":
-			//		m_parser = new HCParser(m_cache);
-			//		break;
-			//	default:
-			//		throw new InvalidOperationException("The language project is set to use an unrecognized parser.");
-			//}
 		}
 
 		private ILexEntry GetMatchingEntryFromStemmer(string wordForm)
