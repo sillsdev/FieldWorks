@@ -2,7 +2,7 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System.Text;
+using System.Globalization;
 
 namespace SIL.FieldWorks.LexText.Controls
 {
@@ -23,15 +23,16 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		/// <summary>
 		/// True when a query should use substring matching: the key is at least
-		/// <see cref="MinQueryLength"/> characters. Length is counted after FormC normalization,
-		/// so a base character plus a combining diacritic counts as one character. Shorter keys
-		/// fall back to the default full-text search.
+		/// <see cref="MinQueryLength"/> characters. Length is counted in text elements
+		/// (graphemes), so a base character plus one or more combining diacritics counts as one
+		/// character whether or not a precomposed form exists, and a non-BMP character counts as
+		/// one. Shorter keys fall back to the default full-text search.
 		/// </summary>
 		/// <param name="searchKey">The (already trimmed) search key.</param>
 		public static bool UseSubstring(string searchKey)
 		{
 			return !string.IsNullOrEmpty(searchKey)
-				&& searchKey.Normalize(NormalizationForm.FormC).Length >= MinQueryLength;
+				&& new StringInfo(searchKey).LengthInTextElements >= MinQueryLength;
 		}
 	}
 }

@@ -14,9 +14,18 @@ namespace LexTextControlsTests
 	[TestFixture]
 	public class SubstringSearchPolicyTests
 	{
-		// A base letter followed by a combining acute accent (U+0301): 2 UTF-16 units that
-		// compose to a single character under FormC normalization.
+		// A base letter plus combining acute (U+0301): 2 UTF-16 units that DO compose to one
+		// precomposed character under FormC.
 		private static readonly string ComposedAcuteE = "e" + (char)0x0301;
+
+		// A base letter plus combining tilde (U+0303): one grapheme (2 UTF-16 units) with NO
+		// precomposed form, so FormC leaves it decomposed. This is the case a code-unit count
+		// gets wrong.
+		private static readonly string NonComposableGrapheme = "b" + (char)0x0303;
+
+		// A non-BMP character (U+10480): one grapheme encoded as a surrogate pair, so 2 UTF-16
+		// units.
+		private static readonly string SurrogatePairChar = char.ConvertFromUtf32(0x10480);
 
 		[TestCase("", ExpectedResult = false)]
 		[TestCase("l", ExpectedResult = false)]
@@ -35,18 +44,19 @@ namespace LexTextControlsTests
 		}
 
 		[Test]
-		public void UseSubstring_countsComposedCharacters_notUtf16Units()
+		public void UseSubstring_countsGraphemes_notUtf16Units()
 		{
-			// Each ComposedAcuteE is 2 UTF-16 units but 1 character after FormC. Counting raw
-			// Length would see 4 and 6 (both >= 3) and wrongly enable substring; composed
-			// characters count as 2 and 3.
-			string twoComposed = ComposedAcuteE + ComposedAcuteE;                   // raw Length 4 -> 2
-			string threeComposed = ComposedAcuteE + ComposedAcuteE + ComposedAcuteE; // raw Length 6 -> 3
-
-			Assert.That(SubstringSearchPolicy.UseSubstring(twoComposed), Is.False,
-				"two composed characters should count as length 2, below the threshold");
-			Assert.That(SubstringSearchPolicy.UseSubstring(threeComposed), Is.True,
-				"three composed characters should count as length 3, at the threshold");
+			// Each grapheme below is 2 UTF-16 units, so a code-unit count would over-count.
+			// All three kinds (composable, non-composable, non-BMP) must gate on text
+			// elements, not raw code units.
+			var graphemes = new[] { ComposedAcuteE, NonComposableGrapheme, SurrogatePairChar };
+			foreach (var grapheme in graphemes)
+			{
+				Assert.That(SubstringSearchPolicy.UseSubstring(grapheme + grapheme), Is.False,
+					"two graphemes should count as length 2, below the threshold");
+				Assert.That(SubstringSearchPolicy.UseSubstring(grapheme + grapheme + grapheme), Is.True,
+					"three graphemes should count as length 3, at the threshold");
+			}
 		}
 
 		[Test]

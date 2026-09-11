@@ -142,7 +142,10 @@ namespace SIL.FieldWorks.LexText.Controls
 			// start building index
 			var selectedWs = (CoreWritingSystemDefinition) m_cbWritingSystems.SelectedItem;
 			if (selectedWs != null)
+			{
 				m_matchingObjectsBrowser.SearchAsync(GetFields(string.Empty, selectedWs.Handle));
+				SubstringSearchEngine.SearchAsync(GetFields(string.Empty, selectedWs.Handle));
+			}
 		}
 
 		#endregion Construction and Destruction
