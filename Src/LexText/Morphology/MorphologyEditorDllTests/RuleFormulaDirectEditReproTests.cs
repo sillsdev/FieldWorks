@@ -1,0 +1,309 @@
+﻿// Copyright (c) 2026 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
+using System.Windows.Forms;
+using System.Threading;
+using NUnit.Framework;
+using SIL.LCModel;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Infrastructure;
+using SIL.FieldWorks.Common.RootSites;
+using SIL.FieldWorks.Common.ViewsInterfaces;
+using SIL.FieldWorks.LexText.Controls;
+using XCore;
+
+namespace SIL.FieldWorks.XWorks.MorphologyEditor
+{
+	/// <summary>
+	/// Drives a real IVwRootBox (the managed Views engine), hosted by a live
+	/// PatternView/RegRuleFormulaVc pair against a real in-memory LcmCache, and calls
+	/// IVwSelection.ReplaceWithTsString directly -- the same low-level entry point IME
+	/// composition or drag-and-drop would use, and one PatternView.OnKeyPress never sees
+	/// because it only reacts to Windows key events.
+	/// </summary>
+	[TestFixture]
+	// Drives a real IVwRootBox through MakeTextSelInObj and ReplaceWithTsString, and the
+	// Views COM objects are registered Apartment-threaded. NUnit 3 defaults to MTA.
+	[Apartment(ApartmentState.STA)]
+	public class RuleFormulaDirectEditReproTests : MemoryOnlyBackendProviderTestBase
+	{
+		private Mediator m_mediator;
+		private PropertyTable m_propertyTable;
+		private TestPatternView m_view;
+
+		public override void TestSetup()
+		{
+			base.TestSetup();
+			m_mediator = new Mediator();
+			m_propertyTable = new PropertyTable(m_mediator);
+			m_propertyTable.SetProperty("cache", Cache, false);
+		}
+
+		public override void TestTearDown()
+		{
+			if (m_view != null)
+			{
+				m_view.Dispose();
+				m_view = null;
+			}
+			if (m_propertyTable != null)
+			{
+				m_propertyTable.Dispose();
+				m_propertyTable = null;
+			}
+			if (m_mediator != null)
+			{
+				m_mediator.Dispose();
+				m_mediator = null;
+			}
+			base.TestTearDown();
+		}
+
+		/// <summary>Minimal no-op IPatternControl -- sufficient because we never drive
+		/// selection through the chooser/insert/delete UI in this test; we only need
+		/// PatternView's selection-changed handler not to crash when we install a
+		/// selection directly.</summary>
+		private class NullPatternControl : IPatternControl
+		{
+			public object GetContext(SelectionHelper sel) => null;
+			public object GetContext(SelectionHelper sel, SelectionHelper.SelLimitType limit) => null;
+			public object GetItem(SelectionHelper sel, SelectionHelper.SelLimitType limit) => null;
+			public int GetItemContextIndex(object ctxt, object obj) => -1;
+			public SelLevInfo[] GetLevelInfo(object ctxt, int index) => null;
+			public int GetContextCount(object ctxt) => 0;
+			public object GetNextContext(object ctxt) => null;
+			public object GetPrevContext(object ctxt) => null;
+			public int GetFlid(object ctxt) => 0;
+		}
+
+		/// <summary>Exposes the protected layout hook so the view can be laid out
+		/// headlessly.</summary>
+		private class TestPatternView : PatternView
+		{
+			public void CallLayout()
+			{
+				OnLayout(new LayoutEventArgs(this, string.Empty));
+			}
+
+			public void SimulateKeyDown(Keys key)
+			{
+				var e = new KeyEventArgs(key);
+				OnKeyDown(e);
+			}
+
+			public bool TestAllowDisplaySelection => AllowDisplaySelection;
+		}
+
+		private IPhPhoneme CreatePhoneme(string name)
+		{
+			IPhPhoneme p = null;
+			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
+			{
+				Cache.LangProject.PhonologicalDataOA.PhonemeSetsOS.Add(
+					Cache.ServiceLocator.GetInstance<IPhPhonemeSetFactory>().Create());
+				p = Cache.ServiceLocator.GetInstance<IPhPhonemeFactory>().Create();
+				Cache.LangProject.PhonologicalDataOA.PhonemeSetsOS[0].PhonemesOC.Add(p);
+				p.Name.SetVernacularDefaultWritingSystem(name);
+			});
+			return p;
+		}
+
+		/// <summary>
+		/// Builds a real regular-rule RHS whose left context is a single phoneme, hosts it in a
+		/// live PatternView/RegRuleFormulaVc pair, and returns the phoneme plus the live view.
+		/// </summary>
+		private (IPhPhoneme phoneme, TestPatternView view) BuildLiveRuleFormulaView(string phonemeName)
+		{
+			IPhPhoneme phoneme = CreatePhoneme(phonemeName);
+			IPhSegRuleRHS rhs = null;
+			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
+			{
+				var rule = Cache.ServiceLocator.GetInstance<IPhRegularRuleFactory>().Create();
+				Cache.LangProject.PhonologicalDataOA.PhonRulesOS.Add(rule);
+				rhs = Cache.ServiceLocator.GetInstance<IPhSegRuleRHSFactory>().Create();
+				rule.RightHandSidesOS.Add(rhs);
+				var segCtxt = Cache.ServiceLocator.GetInstance<IPhSimpleContextSegFactory>().Create();
+				rhs.LeftContextOA = segCtxt;
+				segCtxt.FeatureStructureRA = phoneme;
+			});
+
+			var vc = new RegRuleFormulaVc(Cache, m_propertyTable);
+			var view = new TestPatternView { Cache = Cache, Visible = false, Width = 300, Height = 60 };
+			view.Init(m_mediator, m_propertyTable, rhs.Hvo, new NullPatternControl(), vc, RegRuleFormulaVc.kfragRHS,
+				Cache.MainCacheAccessor);
+			view.ReadOnlyView = true;
+			view.CallLayout();
+			m_view = view;
+			return (phoneme, view);
+		}
+
+		/// <summary>
+		/// Builds a real regular-rule RHS whose left context is a natural class special-cased to
+		/// display only its abbreviation ("C" or "V"),
+		/// hosts it in a live PatternView/RegRuleFormulaVc pair, and returns the natural class
+		/// plus the live view.
+		/// </summary>
+		private (IPhNaturalClass naturalClass, TestPatternView view) BuildLiveRuleFormulaViewWithNaturalClass(string abbr)
+		{
+			IPhNaturalClass nc = null;
+			IPhSegRuleRHS rhs = null;
+			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
+			{
+				nc = Cache.ServiceLocator.GetInstance<IPhNCFeaturesFactory>().Create();
+				Cache.LangProject.PhonologicalDataOA.NaturalClassesOS.Add(nc);
+				nc.Name.SetAnalysisDefaultWritingSystem("Test Class");
+				nc.Abbreviation.SetAnalysisDefaultWritingSystem(abbr);
+
+				var rule = Cache.ServiceLocator.GetInstance<IPhRegularRuleFactory>().Create();
+				Cache.LangProject.PhonologicalDataOA.PhonRulesOS.Add(rule);
+				rhs = Cache.ServiceLocator.GetInstance<IPhSegRuleRHSFactory>().Create();
+				rule.RightHandSidesOS.Add(rhs);
+				var ncCtxt = Cache.ServiceLocator.GetInstance<IPhSimpleContextNCFactory>().Create();
+				rhs.LeftContextOA = ncCtxt;
+				ncCtxt.FeatureStructureRA = nc;
+				// GetNumLines(ncCtxt) must be exactly 1 to hit the "C"/"V" abbreviation-only
+				// branch; one plus-constraint variable is the cheapest way to make that so.
+				var constraint = Cache.ServiceLocator.GetInstance<IPhFeatureConstraintFactory>().Create();
+				Cache.LangProject.PhonologicalDataOA.FeatConstraintsOS.Add(constraint);
+				ncCtxt.PlusConstrRS.Add(constraint);
+			});
+
+			var vc = new RegRuleFormulaVc(Cache, m_propertyTable);
+			var view = new TestPatternView { Cache = Cache, Visible = false, Width = 300, Height = 60 };
+			view.Init(m_mediator, m_propertyTable, rhs.Hvo, new NullPatternControl(), vc, RegRuleFormulaVc.kfragRHS,
+				Cache.MainCacheAccessor);
+			view.ReadOnlyView = true;
+			view.CallLayout();
+			m_view = view;
+			return (nc, view);
+		}
+
+		/// <summary>
+		/// Selects the whole displayed natural-class abbreviation (via its object path from the
+		/// RHS root, bypassing PatternView.OnKeyPress entirely) and replaces its text directly
+		/// through IVwSelection.ReplaceWithTsString. A natural class is shared by every rule that
+		/// references it, so an edit landing here is a project-wide rename, exactly like the
+		/// phoneme case.
+		/// </summary>
+		[Test]
+		public void ReplaceWithTsString_OnNaturalClassAbbreviation_BypassesOnKeyPress_AndShouldNotRenameTheClass()
+		{
+			var (naturalClass, view) = BuildLiveRuleFormulaViewWithNaturalClass("C");
+
+			var levels = new[]
+			{
+				new SelLevInfo { tag = PhSimpleContextNCTags.kflidFeatureStructure, ihvo = 0 },
+				new SelLevInfo { tag = PhSegRuleRHSTags.kflidLeftContext, ihvo = 0 }
+			};
+			IVwSelection sel = view.RootBox.MakeTextSelInObj(0, levels.Length, levels, 0, null,
+				true, false, false, /* fWholeObj */ true, /* fInstall */ true);
+			Assert.That(sel, Is.Not.Null,
+				"could not construct a selection over the natural class's abbreviation display -- fixture/path assumption is wrong");
+
+			ITsString corrupted = TsStringUtils.MakeString("CORRUPTED", Cache.DefaultAnalWs);
+
+			UndoableUnitOfWorkHelper.Do("undo", "redo", naturalClass, () => sel.ReplaceWithTsString(corrupted));
+
+			string abbrAfter = naturalClass.Abbreviation.AnalysisDefaultWritingSystem.Text;
+			Assert.That(abbrAfter, Is.EqualTo("C"),
+				"an edit that bypassed PatternView.OnKeyPress altered the real, project-wide " +
+				"PhNaturalClass.Abbreviation (got '" + abbrAfter + "')");
+		}
+
+		/// <summary>
+		/// Selects the whole displayed phoneme (via its object path from the RHS root, bypassing
+		/// any WM_CHAR-level filtering entirely -- PatternView.OnKeyPress is never invoked here)
+		/// and replaces its text directly through IVwSelection.ReplaceWithTsString, exactly the
+		/// kind of call an IME composition commit or a drag-and-drop would make.
+		/// </summary>
+		[Test]
+		public void ReplaceWithTsString_OnPhonemeTerminalUnit_BypassesOnKeyPress_AndShouldNotRenameThePhoneme()
+		{
+			var (phoneme, view) = BuildLiveRuleFormulaView("p");
+
+			var levels = new[]
+			{
+				new SelLevInfo { tag = PhSimpleContextSegTags.kflidFeatureStructure, ihvo = 0 },
+				new SelLevInfo { tag = PhSegRuleRHSTags.kflidLeftContext, ihvo = 0 }
+			};
+			IVwSelection sel = view.RootBox.MakeTextSelInObj(0, levels.Length, levels, 0, null,
+				true, false, false, /* fWholeObj */ true, /* fInstall */ true);
+			Assert.That(sel, Is.Not.Null,
+				"could not construct a selection over the phoneme's terminal-unit display -- fixture/path assumption is wrong");
+
+			ITsString corrupted = TsStringUtils.MakeString("CORRUPTED", Cache.DefaultVernWs);
+
+			// The rootsite's own low-level text-replacement API, which bypasses the WM_CHAR
+			// filter. The unit of work is required for any edit to commit, not part of the
+			// bypass.
+			UndoableUnitOfWorkHelper.Do("undo", "redo", phoneme, () => sel.ReplaceWithTsString(corrupted));
+
+			string nameAfter = phoneme.Name.VernacularDefaultWritingSystem.Text;
+			Assert.That(nameAfter, Is.EqualTo("p"),
+				"an edit that bypassed PatternView.OnKeyPress altered the real, project-wide " +
+				"PhPhoneme.Name (got '" + nameAfter + "')");
+		}
+
+		/// <summary>
+		/// A read-only rootsite must not prevent PatternView's own Delete-key handling, which
+		/// removes items through RemoveItemsRequested rather than by editing text.
+		/// </summary>
+		[Test]
+		public void DeleteKey_StillRaisesRemoveItemsRequested_WhenRootsiteIsReadOnly()
+		{
+			var (_, view) = BuildLiveRuleFormulaView("p");
+			Assert.That(view.ReadOnlyView, Is.True, "fixture assumption: the rootsite is read-only");
+
+			bool removeRequested = false;
+			view.RemoveItemsRequested += (sender, e) => removeRequested = true;
+
+			view.SimulateKeyDown(Keys.Delete);
+
+			Assert.That(removeRequested, Is.True,
+				"Delete must still raise RemoveItemsRequested when the rootsite is read-only");
+		}
+
+		/// <summary>
+		/// A formula marked not editable as a whole must still offer one editable position, or
+		/// clicking an item and every chooser insert and delete stop working with no exception
+		/// and nothing to see. The zero-width-space boundary spans are that position.
+		/// </summary>
+		/// <remarks>
+		/// MakeSimpleSel returns a null selection rather than failing when it cannot find a
+		/// position with the requested characteristics, so a null return here is the regression
+		/// this guards: PatternView.GetSelectionInfo gives up on a non-editable selection, and
+		/// RuleFormulaControl.ReconstructView restores the cursor with fEditable true after
+		/// every insert and delete.
+		/// </remarks>
+		[Test]
+		public void RuleFormula_StillOffersAnEditablePosition_WhenMarkedNotEditable()
+		{
+			var (phoneme, view) = BuildLiveRuleFormulaView("p");
+			Assert.That(view.ReadOnlyView, Is.True, "fixture assumption: the rootsite is read-only");
+
+			IVwSelection editable = view.RootBox.MakeSimpleSel(true, true, false, true);
+
+			Assert.That(editable, Is.Not.Null,
+				"the formula must keep an editable position for the cursor to land on");
+			Assert.That(phoneme.Name.VernacularDefaultWritingSystem.Text, Is.EqualTo("p"),
+				"placing the cursor must not have altered the referenced phoneme");
+		}
+
+		/// <summary>
+		/// A read-only rootsite suppresses Activate() by default
+		/// (SimpleRootSite.AllowDisplaySelection),
+		/// which would hide the selection a chooser insert/delete needs the user to see.
+		/// </summary>
+		[Test]
+		public void AllowDisplaySelection_IsTrue_WhenRootsiteIsReadOnly()
+		{
+			var (_, view) = BuildLiveRuleFormulaView("p");
+			Assert.That(view.ReadOnlyView, Is.True, "fixture assumption: the rootsite is read-only");
+
+			Assert.That(view.TestAllowDisplaySelection, Is.True,
+				"the selection must still be shown even though the rootsite is read-only");
+		}
+	}
+}

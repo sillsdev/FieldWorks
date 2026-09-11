@@ -112,12 +112,32 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		public RuleFormulaControl()
 		{
 			InitializeComponent();
+			MakeViewReadOnly();
 		}
 
 		public RuleFormulaControl(XmlNode configurationNode)
 		{
 			m_configurationNode = configurationNode;
 			InitializeComponent();
+			MakeViewReadOnly();
+		}
+
+		/// <summary>
+		/// Makes the formula view read-only. A cell changes only through chooser-insert and
+		/// delete, never through free text; see LT-22710.
+		/// </summary>
+		/// <remarks>
+		/// This must run before PatternView.MakeRoot, and it does, because both constructors
+		/// call it while m_rootb is still null. SimpleRootSite's ReadOnlyView setter forces
+		/// MaxParasToScan to 0 whenever the rootbox already exists, and MakeRoot deliberately
+		/// raises it to 10 so the arrow keys can cross the non-editable empty lines in a pile.
+		/// Setting ReadOnlyView on a live PatternView would undo that silently, so keep this
+		/// out of MakeRoot and out of the designer region, which a designer round-trip can
+		/// rewrite.
+		/// </remarks>
+		private void MakeViewReadOnly()
+		{
+			m_view.ReadOnlyView = true;
 		}
 
 		public RootSite RootSite
@@ -1150,7 +1170,6 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			this.m_view.Location = new System.Drawing.Point(0, 0);
 			this.m_view.Mediator = null;
 			this.m_view.Name = "m_view";
-			this.m_view.ReadOnlyView = false;
 			this.m_view.ScrollMinSize = new System.Drawing.Size(0, 0);
 			this.m_view.ScrollPosition = new System.Drawing.Point(0, 0);
 			this.m_view.ShowRangeSelAfterLostFocus = false;
