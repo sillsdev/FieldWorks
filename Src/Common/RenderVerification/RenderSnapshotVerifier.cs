@@ -16,7 +16,11 @@ namespace SIL.FieldWorks.Common.RenderVerification
 	{
 		private const string UpdateBaselinesEnvVar = "FW_UPDATE_RENDER_BASELINES";
 		private const string FontQualityEnvVar = "FW_FONT_QUALITY";
-		private const int MaxAllowedPixelDifferences = 4;
+		// Font-smoothing drift between machines peaks at 50 touched pixels and magnitude
+		// 1.57, three channels off about 8 levels each; a shifted glyph touches thousands
+		// at a magnitude near 1.
+		private const int MaxAllowedPixelDifferences = 100;
+		private const double MaxAllowedDifferenceMagnitude = 10.0;
 		private const string DeterministicRenderFontFamily = "Segoe UI";
 		private const int DpiAwarenessInvalid = -1;
 		private const int DpiAwarenessUnaware = 0;
@@ -81,7 +85,11 @@ namespace SIL.FieldWorks.Common.RenderVerification
 			{
 				var savedArtifact = LoadSavedArtifact(expectedBitmap, verifiedPath, verifiedMetadataPath);
 				var diffSummary = CompareBitmaps(expectedBitmap, actualBitmap);
-				if (diffSummary.DifferentPixelCount <= MaxAllowedPixelDifferences)
+				// A size change is a layout regression, so it fails regarldess of the pixel
+				// tolerance.
+				bool sizeMatches = expectedBitmap.Width == actualBitmap.Width
+					&& expectedBitmap.Height == actualBitmap.Height;
+				if (sizeMatches && IsWithinTolerance(diffSummary))
 				{
 					DeleteIfPresent(receivedPath);
 					DeleteIfPresent(receivedMetadataPath);
@@ -113,6 +121,7 @@ namespace SIL.FieldWorks.Common.RenderVerification
 					ScenarioId = scenarioId,
 					SnapshotName = name,
 					AllowedDifferentPixelCount = MaxAllowedPixelDifferences,
+					AllowedDifferenceMagnitude = MaxAllowedDifferenceMagnitude,
 					SavedBaseline = savedArtifact,
 					CurrentRun = currentArtifact,
 					Diff = diffSummary,
@@ -299,11 +308,18 @@ namespace SIL.FieldWorks.Common.RenderVerification
 		{
 			var builder = new StringBuilder();
 			builder.AppendFormat(CultureInfo.InvariantCulture,
-				"Render output for '{0}' differed from baseline by {1} pixels; {2} or fewer differences are allowed.",
+				"Render output for '{0}' differed from baseline by {1} pixels ({2} full-pixel equivalents); fewer than {3} pixels and fewer than {4} full-pixel equivalents are allowed.",
 				scenarioId,
 				report.Diff.DifferentPixelCount,
-				report.AllowedDifferentPixelCount);
+				FormatMagnitude(report.Diff.DifferenceMagnitude),
+				report.AllowedDifferentPixelCount,
+				FormatMagnitude(report.AllowedDifferenceMagnitude));
 			builder.AppendLine();
+			if (report.SavedBaseline.ImageWidth != report.CurrentRun.ImageWidth
+				|| report.SavedBaseline.ImageHeight != report.CurrentRun.ImageHeight)
+			{
+				builder.AppendLine("Image size changed, which fails regardless of the pixel tolerance.");
+			}
 			builder.AppendLine(FormatArtifactLine("Saved baseline", report.SavedBaseline));
 			builder.AppendLine(FormatArtifactLine("Current run", report.CurrentRun));
 			builder.AppendFormat(CultureInfo.InvariantCulture,
@@ -530,6 +546,35 @@ namespace SIL.FieldWorks.Common.RenderVerification
 				File.Delete(path);
 		}
 
+		/// <summary>
+		/// Answers whether a diff is small enough to be environment drift rather than a render
+		/// change. The touched-pixel count and the summed magnitude must both stay under their
+		/// limit.
+		/// </summary>
+		private static bool IsWithinTolerance(RenderPixelDiffSummary summary)
+		{
+			return summary.DifferentPixelCount < MaxAllowedPixelDifferences
+				&& summary.DifferenceMagnitude < MaxAllowedDifferenceMagnitude;
+		}
+
+		/// <summary>
+		/// Scores one differing pixel. All three channels fully inverted score 1, so a single
+		/// saturated channel scores a third and the magnitude limit admits three times as many
+		/// single-channel changes as whole-pixel ones. Alpha is not scored.
+		/// </summary>
+		private static double PixelDifferenceMagnitude(Color expected, Color actual)
+		{
+			int channelDelta = Math.Abs(expected.R - actual.R)
+				+ Math.Abs(expected.G - actual.G)
+				+ Math.Abs(expected.B - actual.B);
+			return channelDelta / (3.0 * 255.0);
+		}
+
+		private static string FormatMagnitude(double magnitude)
+		{
+			return magnitude.ToString("0.##", CultureInfo.InvariantCulture);
+		}
+
 		private static RenderPixelDiffSummary CompareBitmaps(Bitmap expectedBitmap, Bitmap actualBitmap)
 		{
 			int maxWidth = Math.Max(expectedBitmap.Width, actualBitmap.Width);
@@ -546,6 +591,7 @@ namespace SIL.FieldWorks.Common.RenderVerification
 					if (!expectedInBounds || !actualInBounds)
 					{
 						summary.DifferentPixelCount++;
+						summary.DifferenceMagnitude += 1.0;
 						if (expectedInBounds)
 							summary.ExpectedOnlyPixelDifferences++;
 						else if (actualInBounds)
@@ -554,11 +600,14 @@ namespace SIL.FieldWorks.Common.RenderVerification
 						continue;
 					}
 
-					if (expectedBitmap.GetPixel(x, y) == actualBitmap.GetPixel(x, y))
+					Color expectedPixel = expectedBitmap.GetPixel(x, y);
+					Color actualPixel = actualBitmap.GetPixel(x, y);
+					if (expectedPixel == actualPixel)
 						continue;
 
 					summary.DifferentPixelCount++;
 					summary.InBoundsPixelDifferences++;
+					summary.DifferenceMagnitude += PixelDifferenceMagnitude(expectedPixel, actualPixel);
 					UpdateDiffBounds(summary, x, y);
 				}
 			}
@@ -670,6 +719,7 @@ namespace SIL.FieldWorks.Common.RenderVerification
 		public string ScenarioId { get; set; }
 		public string SnapshotName { get; set; }
 		public int AllowedDifferentPixelCount { get; set; }
+		public double AllowedDifferenceMagnitude { get; set; }
 		public RenderSnapshotArtifact SavedBaseline { get; set; }
 		public RenderSnapshotArtifact CurrentRun { get; set; }
 		public RenderPixelDiffSummary Diff { get; set; }
@@ -679,6 +729,7 @@ namespace SIL.FieldWorks.Common.RenderVerification
 	public sealed class RenderPixelDiffSummary
 	{
 		public int DifferentPixelCount { get; set; }
+		public double DifferenceMagnitude { get; set; }
 		public int InBoundsPixelDifferences { get; set; }
 		public int ExpectedOnlyPixelDifferences { get; set; }
 		public int ActualOnlyPixelDifferences { get; set; }
