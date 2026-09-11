@@ -128,6 +128,10 @@ leaves the reviewer guessing whether they are approving, splitting or blocking.
 - No section that exists only to demonstrate rigor.
 - Every claim with a name in it must be true of the current tree. Re-verify
   claims carried over from an earlier version of the body.
+- "Legacy" is allowed here, and in review discussion. Code comments and
+  commit messages must name the actual class or UI instead, but a PR body
+  is read alongside the diff while the context is live -- use the team's
+  own word rather than coining a euphemism for it.
 - Word-count before publishing. Over 400, cut -- do not rationalize.
 
 ## Phases 4 and 5

@@ -73,15 +73,27 @@ an agent passes one of them on every run.
 
 ## Legacy references
 
-Only as a behavioral-parity WHY ("matches the legacy X"). No temporal
-framing -- not "the replacement for X", not "until we build Y". Prefer
-symbol names over line numbers, which rot.
+Do not use the word "legacy" in a comment -- not "matches the legacy X",
+not "as legacy does". Legacy is being deleted; once it is gone the word
+names nothing the reader can look up, and they cannot tell whether the
+behavior it describes is still required.
+
+State what the code does in its own terms instead -- "a keyboard gesture
+has no pointer position, so the menu anchors under the field" rather than
+"matches legacy SliceTreeNode, which anchors at the cursor". No temporal
+framing either -- not "the replacement for X", not "until we build Y".
+
+This covers the assertion messages of new tests too. Commit messages
+follow the same rule (`.claude/skills/commit-messages/SKILL.md`). PR
+descriptions and review discussion are exempt, so do not coin a
+euphemism to avoid the word there.
 
 ## References to other code
 
 Only when the reader needs it to understand THIS symbol, never for
 completeness or navigation. `<see cref="X"/>` in doc comments; a bare
-symbol path in `//` comments, where tooling won't resolve it.
+symbol path in `//` comments, where tooling won't resolve it. Prefer
+symbol names over line numbers, which rot.
 
 **Link the contract, not the collaborator.** State what a delegation
 guarantees; leave the callee unnamed -- naming it documents HOW, not WHAT.
