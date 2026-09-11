@@ -556,10 +556,11 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 			Assert.That(matchingLexeme.LexicalForm == "a", Is.True);
 
 			// Found by parser
-			lexeme = m_lexicon.CreateLexeme(LexemeType.Prefix, "pre");
-			m_lexicon.AddLexeme(lexeme);
-			matchingLexeme = m_lexicon.FindClosestMatchingLexeme("prea");
-			Assert.That(matchingLexeme.LexicalForm == "a", Is.True);
+			// LT-22708 2026.09.11 Jason Naylor says to keep m_parser as null for now.
+			//lexeme = m_lexicon.CreateLexeme(LexemeType.Prefix, "pre");
+			//m_lexicon.AddLexeme(lexeme);
+			//matchingLexeme = m_lexicon.FindClosestMatchingLexeme("prea");
+			//Assert.That(matchingLexeme.LexicalForm == "a", Is.True);
 
 			// Found by unsupervised stemmer
 			m_lexicon.AddLexeme(m_lexicon.CreateLexeme(LexemeType.Stem, "b"));
