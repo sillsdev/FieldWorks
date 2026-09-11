@@ -14,6 +14,7 @@ sys.path.insert(0, str(Path(__file__).parent))
 from typing import Any, Dict, Optional
 
 from _common import (
+    AtlassianCredentials,
     get_jira_client,
     simplify_issue,
     format_json_response,
