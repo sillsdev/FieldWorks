@@ -227,3 +227,5 @@ Build/Agent/comment-hygiene-report.json
 
 # Per-developer preferences for the jira-issue skill
 .claude/.jira-issue-prefs.json
+# Local NuGet feed for packs made by build.ps1 -LocalLibraries
+.localfeed/

@@ -36,6 +36,11 @@
 	Allow FieldWorks Abort/Retry/Ignore assertion dialogs during this local test run.
 	Equivalent environment variable: FW_TEST_ALLOW_ASSERT_DIALOGS=1.
 
+.PARAMETER LocalLibraryTests
+	Run Build/LocalLibraries.Tests.ps1, which covers the local-library version stamp.
+	Off by default: local libraries are a deliberate, occasional workflow, so the check
+	does not gate runs that never touch one.
+
 .PARAMETER CommentHygiene
 	Enforce the comment-hygiene check, failing the run on any violation in the lines this
 	branch adds.
@@ -114,7 +119,8 @@ param(
 	[ValidateSet('user', 'agent', 'unknown')]
 	[string]$StartedBy = 'unknown',
 	[switch]$CommentHygiene,
-	[switch]$TokenHygiene
+	[switch]$TokenHygiene,
+	[switch]$LocalLibraryTests
 )
 
 $ErrorActionPreference = 'Stop'
@@ -122,6 +128,14 @@ $ErrorActionPreference = 'Stop'
 if ($CommentHygiene) {
 	$commentHygienePath = Join-Path $PSScriptRoot "Build/Agent/comment-hygiene.ps1"
 	& $commentHygienePath
+	if ($LASTEXITCODE -ne 0) {
+		exit $LASTEXITCODE
+	}
+}
+
+if ($LocalLibraryTests) {
+	$localLibraryTestPath = Join-Path $PSScriptRoot "Build/LocalLibraries.Tests.ps1"
+	& $localLibraryTestPath
 	if ($LASTEXITCODE -ne 0) {
 		exit $LASTEXITCODE
 	}
