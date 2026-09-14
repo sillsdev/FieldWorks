@@ -28,6 +28,10 @@ namespace SIL.FieldWorks.XWorks
 		// Set only by a field that can mint its target from typed text (environments); its
 		// presence is what makes the picker offer a create row.
 		public Func<string, bool> ReferenceCreate;
+
+		/// <summary>(item key, forward) -> moved; null on rows whose items cannot be
+		/// reordered.</summary>
+		public Func<string, bool, bool> ReferenceMove;
 		public Func<int, DetailRichTextValue, bool> ParagraphText;
 		public Func<int, string, bool> ParagraphStyle;
 		public Func<int, bool> ParagraphInsert;
@@ -124,6 +128,14 @@ namespace SIL.FieldWorks.XWorks
 			if (setter == null)
 				return false;
 			return Stage(() => setter(optionKey), FieldLabelFor(field));
+		}
+
+		public override bool TryMoveReferenceItem(DetailField field, string optionKey, bool forward)
+		{
+			var setter = Handler(field)?.ReferenceMove;
+			if (setter == null)
+				return false;
+			return Stage(() => setter(optionKey, forward), FieldLabelFor(field));
 		}
 
 		public bool TrySetParagraphText(DetailField field, int paragraphIndex,

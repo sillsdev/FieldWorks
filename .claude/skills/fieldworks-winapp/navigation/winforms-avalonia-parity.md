@@ -17,7 +17,7 @@ a dialog, a browse table. The WinForms side needs the live app (this skill); the
 - A project with the relevant data (e.g. Words ▸ Analyses parity needs **parsed wordform analyses** — a
   bare project shows an empty interlinear). Restore per `project-loading.md`.
 - Evidence folders and parity-bundle naming: see `screenshot-evidence.md` (canonical parity
-  layout defined in the migration skill's `references/parity-evidence.md` §6).
+  layout defined in the migration skill's `.claude/skills/fieldworks-winforms-to-avalonia-migration/references/parity-evidence.md` §6).
 
 ## The two captures
 

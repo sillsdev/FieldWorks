@@ -18,7 +18,6 @@ from _common import (
     format_error_response,
     ConfigurationError,
     AuthenticationError,
-    ValidationError,
     NotFoundError,
     APIError,
     NetworkError,

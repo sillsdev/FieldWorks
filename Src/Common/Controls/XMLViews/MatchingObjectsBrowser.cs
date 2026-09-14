@@ -205,6 +205,21 @@ namespace SIL.FieldWorks.Common.Controls
 			ResumeLayout(false);
 		}
 
+		/// <summary>
+		/// Swap the active search engine (e.g. when toggling substring-match mode). The caller
+		/// owns the lifetime of both engines; this only re-hooks the SearchCompleted event.
+		/// </summary>
+		public void SetSearchEngine(SearchEngine searchEngine)
+		{
+			CheckDisposed();
+			if (ReferenceEquals(m_searchEngine, searchEngine))
+				return;
+			if (m_searchEngine != null)
+				m_searchEngine.SearchCompleted -= m_searchEngine_SearchCompleted;
+			m_searchEngine = searchEngine;
+			m_searchEngine.SearchCompleted += m_searchEngine_SearchCompleted;
+		}
+
 		private void m_searchEngine_SearchCompleted(object sender, SearchCompletedEventArgs e)
 		{
 			UpdateResults(e.Fields.FirstOrDefault(), e.Results);

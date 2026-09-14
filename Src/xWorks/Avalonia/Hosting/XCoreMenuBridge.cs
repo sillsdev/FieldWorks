@@ -44,10 +44,23 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		public static IReadOnlyList<DetailMenuItem> CreateMenuItems(XWindow window, string[] menuIds,
 			Func<ChoiceBase, UIItemDisplayProperties, DetailMenuItem> interceptor)
+			=> CreateMenuItems(window, menuIds, interceptor, null);
+
+		/// <summary>
+		/// As <see cref="CreateMenuItems(XWindow, string[])"/> with an interceptor, plus a
+		/// temporary colleague registered on the mediator before the menu populates, so
+		/// per-target commands (an item's Show-in-tool jumps) find their handler. The mediator
+		/// keeps one temporary colleague at a time; the host disposes it once the menu closes.
+		/// </summary>
+		public static IReadOnlyList<DetailMenuItem> CreateMenuItems(XWindow window, string[] menuIds,
+			Func<ChoiceBase, UIItemDisplayProperties, DetailMenuItem> interceptor,
+			IxCoreColleague temporaryColleague)
 		{
 			var group = window?.GetContextMenuChoiceGroup(menuIds);
 			if (group == null)
 				return new List<DetailMenuItem>();
+			if (temporaryColleague != null)
+				window.Mediator.AddTemporaryColleague(temporaryColleague);
 			group.PopulateNow();
 			return Convert(group, interceptor);
 		}

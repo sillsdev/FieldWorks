@@ -367,7 +367,7 @@ delta in the region manifest).
 > intentionally diverge. The visual-parity evidence type therefore checks
 > density/layout, not pixel-for-pixel appearance. The density tokens and
 > per-view border/font rules that this parity is measured against live in
-> `fieldworks-avalonia-ui/references/style-system.md`, even where styling
+> `.claude/skills/fieldworks-avalonia-ui/references/style-system.md`, even where styling
 > intentionally diverges.
 
 **Canonical code.** `Src/Common/FwAvalonia/FwAvaloniaDensity.cs`;

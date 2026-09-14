@@ -69,6 +69,8 @@ namespace FwAvaloniaDialogs
 
 		public bool TryRemoveReferenceItem(DetailField field, string optionKey) => false;
 
+		public bool TryMoveReferenceItem(DetailField field, string optionKey, bool forward) => false;
+
 		// The Insert Entry dialog edits plain lexeme-form/gloss strings only; it implements neither
 		// IStructuredTextEditing (no StText rows) nor picture editing.
 

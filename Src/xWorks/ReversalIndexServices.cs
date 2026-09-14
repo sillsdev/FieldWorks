@@ -1,4 +1,8 @@
-﻿using System;
+// Copyright (c) 2003-2026 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
+using System;
 using System.IO;
 using System.Linq;
 using System.Xml.Linq;
@@ -24,11 +28,6 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Create configuration file for analysis writing systems in Reversal Index
 		/// </summary>
-		/// <param name="wsMgr">IWritingSystemManager</param>
-		/// <param name="cache">The FDO cache</param>
-		/// <param name="defaultConfigDir">Default Configuration directory</param>
-		/// <param name="projectsDir">Projects directory</param>
-		/// <param name="originalProjectName">Project Name</param>
 		public static void CreateOrRemoveReversalIndexConfigurationFiles(WritingSystemManager wsMgr, LcmCache cache, string defaultConfigDir,
 			string projectsDir, string originalProjectName)
 		{
@@ -83,7 +82,6 @@ namespace SIL.FieldWorks.XWorks
 					}
 					else if (wsAtt.Value != curWs)
 					{
-						// REVIEW (Hasso) 2016.09: what to do? Rename the conflicting file, or re-WS the config? Can't ask, b/c FDO has no UI
 						// If the user has duplicated some other Reversal Index Config and given it this name, it is possible they were trying
 						// to configure the RI for this WS. Update the Config to point to this WS
 						wsAtt.Value = curWs;
@@ -108,7 +106,7 @@ namespace SIL.FieldWorks.XWorks
 				{
 					UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW("Undo Adding reversal Guid", "Redo Adding reversal Guid",
 						cache.ActionHandlerAccessor,
-						() => GetOrCreateWsGuid(wsObj, cache));
+						() => cache.ServiceLocator.GetInstance<IReversalIndexRepository>().FindOrCreateIndexForWs(wsObj.Handle));
 				}
 			}
 		}
@@ -119,24 +117,6 @@ namespace SIL.FieldWorks.XWorks
 			var config = doc.Element(DictConfigElement);
 			wsAtt = config == null || !config.HasAttributes ? null : config.Attribute(WsAttribute);
 			return doc;
-		}
-
-		internal static string GetConfigPathForWs(WritingSystemManager wsMgr, string configDir, string ws)
-		{
-			return Path.Combine(configDir, wsMgr.Get(ws).LanguageTag + ConfigFileExtension);
-		}
-
-		/// <summary>
-		/// Method returns Guid of existing or created writing system
-		/// </summary>
-		/// <param name="wsObj">Writing system Object</param>
-		/// <param name="cache">The FDO cache</param>
-		/// <returns>returns Guid</returns>
-		public static Guid GetOrCreateWsGuid(CoreWritingSystemDefinition wsObj, LcmCache cache)
-		{
-			var riRepo = cache.ServiceLocator.GetInstance<IReversalIndexRepository>();
-			var mHvoRevIdx = riRepo.FindOrCreateIndexForWs(wsObj.Handle).Hvo;
-			return cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(mHvoRevIdx).Guid;
 		}
 	}
 }

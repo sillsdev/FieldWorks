@@ -36,7 +36,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 			{
 				"label", "abbr", "field", "ws", "editor", "visibility", "expansion",
 				"localizationKey", "labelId", "automationId", "routing", "menu", "contextMenu", "hotlinks",
-				"forVariant", "visibleWritingSystems"
+				"forVariant", "visibleWritingSystems", "reorder"
 			};
 
 		public static readonly HashSet<string> HandledObjSeqAttributes =
@@ -413,7 +413,10 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 						visibleWritingSystems: visibleWss,
 						// Legacy toggleValue= on a boolean slice (the displayed checkbox is the
 						// logical inverse of the stored property); carried so the composer inverts read+write.
-						toggleValue: ParseOptionalBool(Attr(contentEl, "toggleValue")) ?? false);
+						toggleValue: ParseOptionalBool(Attr(contentEl, "toggleValue")) ?? false,
+						// The slice's reorder= attribute: its items may be reordered
+						// even when the property is virtual.
+						reorder: ParseOptionalBool(Attr(contentEl, "reorder")) ?? false);
 				}
 				case "obj":
 				case "seq":

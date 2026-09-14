@@ -248,8 +248,8 @@ requirements it fed are synced to `openspec/specs/lexical-edit-parity-automation
   `xWorksTests` (~1400 tests share the host); the restored test base holds the
   undoable task open (no nested `NonUndoableUnitOfWorkHelper`); `OnChangeFilter`
   takes an (added, removed) delta that `RecordList` composes into its `AndFilter`.
-- Skill files changed: `references/architecture-patterns.md` (§13),
-  `references/parity-evidence.md` (§2a, §3), `references/migration-checklist.md`
+- Skill files changed: `architecture-patterns.md` (§13),
+  `parity-evidence.md` (§2a, §3), `migration-checklist.md`
   (Phase 7), `SKILL.md` (quick map + workflow step 7), this ledger.
 
 ### 2026-06 — Lexical Edit (full entry view), phases 1–2 (seed entry)

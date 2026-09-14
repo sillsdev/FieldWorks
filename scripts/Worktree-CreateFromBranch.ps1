@@ -380,17 +380,20 @@ else {
 		$targetWorktreePath = $desiredPath
 	}
 	else {
+		# --quiet suppresses the progress git writes to stderr, which PowerShell 5.1
+		# turns into a terminating error under $ErrorActionPreference = "Stop"
+		# even though git exited 0.
 		if ($hasLocal) {
 			Write-Host "Creating worktree at $desiredPath for existing local branch '$branch'..."
-			& git -C $mainRepoRoot worktree add $desiredPath $branch
+			& git -C $mainRepoRoot worktree add --quiet $desiredPath $branch
 		}
 		elseif ($hasRemote) {
 			Write-Host "Creating worktree at $desiredPath for remote branch 'origin/$branch'..."
-			& git -C $mainRepoRoot worktree add -b $branch $desiredPath "origin/$branch"
+			& git -C $mainRepoRoot worktree add --quiet -b $branch $desiredPath "origin/$branch"
 		}
 		else {
 			Write-Host "Branch '$branch' not found; creating new branch and worktree at $desiredPath..."
-			& git -C $mainRepoRoot worktree add -b $branch $desiredPath
+			& git -C $mainRepoRoot worktree add --quiet -b $branch $desiredPath
 		}
 
 		if ($LASTEXITCODE -ne 0) {

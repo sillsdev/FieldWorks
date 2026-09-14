@@ -70,12 +70,12 @@ on the remote even though `Docs/workflows/pull-request-workflow.md` omits it).
 
 ## Step 3 - Construct the branch
 
-Work in a dedicated worktree; `.gitignore` reserves `.claude/worktrees/*`.
-Use a flat directory name (the branch name contains a slash) and an absolute
-path under the main repository root:
+Work in a dedicated worktree. `scripts/Worktree-CreateFromBranch.ps1` decides
+the location; use a flat directory name, because the branch name contains a
+slash. Creating one by hand instead:
 
 ```bash
-git worktree add --no-track <mainRepo>/.claude/worktrees/dependabot-combined-<yyyyMMdd> -b <branch> origin/<base>
+git worktree add --no-track <worktreeRoot>/dependabot-combined-<yyyyMMdd> -b <branch> origin/<base>
 ```
 
 `--no-track` prevents the branch tracking `origin/<base>` (else `git status`

@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2021 SIL International
+// Copyright (c) 2003-2026 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -21,7 +21,6 @@ using SIL.IO;
 using SIL.LCModel;
 using SIL.LCModel.Application;
 using SIL.LCModel.Core.KernelInterfaces;
-using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
 using SIL.LCModel.Utils;
@@ -34,7 +33,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 using System.Windows.Forms;
 using System.Xml;
 using XCore;
@@ -1380,48 +1378,6 @@ namespace SIL.FieldWorks.XWorks
 			{
 				((FwXApp)m_app).RefreshAllWindows();
 			}
-		}
-
-
-		/// <summary>
-		/// Method which set the index to the WS property
-		/// </summary>
-		/// <param name="selectedWsObj">selected writing system</param>
-		private void SetReversalIndexGuid(CoreWritingSystemDefinition selectedWsObj)
-		{
-			if (selectedWsObj != null)
-			{
-				if (selectedWsObj.DisplayLabel.ToLower().IndexOf("audio", StringComparison.Ordinal) == -1)
-				{
-					var revGuid = ReversalIndexServices.GetOrCreateWsGuid(selectedWsObj, Cache);
-					m_propertyTable.SetProperty("ReversalIndexGuid", revGuid.ToString(), true);
-				}
-				else
-				{
-					m_propertyTable.SetProperty("ReversalIndexGuid", Guid.Empty.ToString(), true);
-				}
-			}
-			m_propertyTable.SetPropertyPersistence("ReversalIndexGuid", true);
-		}
-
-		/// <summary>
-		///
-		/// </summary>
-		/// <param name="fullName"></param>
-		/// <param name="oldString"></param>
-		/// <param name="newString"></param>
-		/// <returns></returns>
-		public static string CreateNewFileName(string fullName, string oldString, string newString)
-		{
-			string oldName = fullName;
-			StringBuilder strBuilderNewName = new StringBuilder(fullName);
-			int index = fullName.LastIndexOf(oldString);
-			if (index != -1)
-			{
-				strBuilderNewName.Replace(oldString, newString, index, oldString.Length);
-				oldName = strBuilderNewName.ToString();
-			}
-			return oldName;
 		}
 
 		/// <summary>

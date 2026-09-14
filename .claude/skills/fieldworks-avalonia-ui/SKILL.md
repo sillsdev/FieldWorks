@@ -173,6 +173,29 @@ Rules specific to dialogs:
   `../fieldworks-winforms-to-avalonia-migration/references/parity-evidence.md`
   §"Evidence language").
 
+## Evidence for a PR or a ticket
+
+Avalonia is the surface where capture is automated, so a visible change ships
+with a picture. Do not leave it to the reviewer to imagine the before and
+after.
+
+1. Capture both states from a permanent headless test, not a throwaway
+   fixture, so the evidence regenerates. `references/visual-snapshot-testing.md`
+   has the harness.
+2. Assert the behaviour deterministically in that same test. **The test is the
+   evidence; the screenshot is the courtesy.** Keep PNGs as subjective
+   evidence rather than pixel-golden tests.
+3. Trim, caption and label before publishing, then upload by the routes in
+   `.claude/references/evidence.md`.
+
+Label every capture **control-level headless**, never "screenshot of FLEx",
+unless the product actually drives the code path. When an operation exists but
+nothing writes it at runtime yet, say so beside the image; a reader who
+assumes otherwise believes a feature has shipped.
+
+Captures belong in `Output/ManualEvidence/<TICKET>/`, which is gitignored.
+Do not commit files from `Output`.
+
 ## Handoff
 
 Report Avalonia docs consulted, tests run, remaining prototype gaps,

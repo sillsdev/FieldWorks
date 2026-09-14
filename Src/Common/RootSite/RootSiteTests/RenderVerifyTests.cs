@@ -4,7 +4,6 @@
 
 using System.Collections.Generic;
 using System.Threading;
-using System.Threading.Tasks;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.RootSites.RenderBenchmark;
 
@@ -16,7 +15,7 @@ namespace SIL.FieldWorks.Common.RootSites
 	/// Each run saves a .received.png and compares it against the committed
 	/// .verified.png baseline by decoded pixel values, not by the PNG file bytes.
 	/// Small encoder-level differences are therefore ignored as long as the rendered
-	/// image differs by fewer than five pixels.
+	/// image stays within the verifier's pixel-count and difference-magnitude tolerance.
 	///
 	/// Each scenario is set up inside its own UndoableUnitOfWork, matching the pattern
 	/// used by RenderTimingSuiteTests.
@@ -40,13 +39,11 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// compares decoded pixels against the committed .verified.png baseline.
 		/// </summary>
 		[Test, TestCaseSource(nameof(GetVerifyScenarios))]
-		public async Task VerifyScenario(string scenarioId)
+		public void VerifyScenario(string scenarioId)
 		{
 			var execution = ExecuteScenarioAndCapture(scenarioId, includeWarmRender: false);
 			if (!execution.Verification.Passed)
 				Assert.Fail(execution.Verification.FailureMessage);
-
-			await Task.CompletedTask;
 		}
 
 		/// <summary>
