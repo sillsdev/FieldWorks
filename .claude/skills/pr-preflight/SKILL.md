@@ -55,6 +55,28 @@ Record positive observations and validation gaps too. Merge into one severity
 -ordered list; deduplicate only when two passes flagged the same file for the
 same concern.
 
+### Does this need a Jira ticket
+
+Decide it here, while the diff is fresh. One test:
+
+> Could a manual tester verify this by installing FieldWorks and using it, or
+> by running the installer?
+
+**Yes, and the branch carries no `LT-` ticket key** -- raise it in the interview
+and offer `jira-issue`. FieldWorks is tested from the nightly build against
+tickets, so a user-visible change without one is a change nobody is asked to
+test.
+
+**No** -- record "developer-only, no ticket needed" in the summary and move on.
+Build scripts, CI workflows, test harnesses, agent skills and developer docs
+never reach a tester, and a ticket for one is noise in their queue.
+
+Judge by what a tester can reach, not by which directory changed: a native fix
+counts when a user can see its effect, and a change under `Src/` that only
+alters a developer-facing diagnostic does not. A branch doing both wants a
+ticket for the user-visible half. Filing is the author's call -- offer, never
+file unprompted.
+
 ## Interview
 
 5-15 questions. One Critical or Important finding at a time, unless several
