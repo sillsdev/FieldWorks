@@ -3,7 +3,6 @@
 New to FieldWorks development? Start here:
 
 - **[Contributing Guide](Docs/CONTRIBUTING.md)** - How to set up your development environment and contribute code
-- **[VS Code Stability Profile](Docs/vscode-stability-profile.md)** - ReSharper-first VS Code setup and when to switch to Visual Studio
 - **[Visual Studio Setup](Docs/visual-studio-setup.md)** - Detailed Visual Studio configuration (2026 or 2022)
 - **[Core Developer Setup](Docs/core-developer-setup.md)** - Additional setup for team members
 - **[AI-Assisted PR Workflow](Docs/workflows/ai-pr-workflow.md)** - Canonical core-developer path from Jira to worktree setup, branch preflight, and review response
@@ -20,18 +19,7 @@ If you need runnable output, use a Windows machine and run `./build.ps1` or `./t
 
 ## Developer Machine Setup
 
-For first-time setup on a Windows development machine:
-
-- Install required software:
-	- [Visual Studio 2026](https://visualstudio.microsoft.com/downloads/) (preferred) or [Visual Studio 2022](https://aka.ms/vs/17/release/vs_community.exe) with .NET desktop and C++ desktop workloads (the repo-root `.vsconfig` lists the exact components)
-	- Git for Windows
-- Run the setup script:
-```powershell
-# Run as Administrator (or User for user-level PATH)
-.\Setup-Developer-Machine.ps1
-```
-
-This configures a dev machine for builds and tests (verifies prerequisites and configures PATH).
+See [Contributing](Docs/CONTRIBUTING.md).
 
 ## Building FieldWorks
 
