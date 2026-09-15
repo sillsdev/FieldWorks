@@ -214,11 +214,12 @@ namespace SIL.FieldWorks.WordWorks.Parser
 					string form = work.Wordform.Form.BestVernacularAlternative.Text;
 					using (new TaskReport(String.Format(ParserCoreStrings.ksUpdateX, form), m_taskUpdateHandler))
 					{
-						// delete all old problem annotations
-						// (We no longer create new problem annotations.)
+						// Delete leftover parse-error annotations; nothing creates them now.
+						// The constraint checker shares this agent, so the wordform test keeps
+						// its environment problem reports from being deleted too.
 						IEnumerable<ICmBaseAnnotation> problemAnnotations =
 							from ann in m_baseAnnotationRepository.AllInstances()
-							where ann.SourceRA == m_parserAgent
+							where ann.SourceRA == m_parserAgent && ann.BeginObjectRA is IWfiWordform
 							select ann;
 						foreach (ICmBaseAnnotation problem in problemAnnotations)
 							m_cache.DomainDataByFlid.DeleteObj(problem.Hvo);

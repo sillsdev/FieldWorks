@@ -93,7 +93,10 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			Debug.Assert(m_dlg != null);
 			var cache = m_dlg.PropTable.GetValue<LcmCache>("cache");
 			ICmBaseAnnotationRepository repository = cache.ServiceLocator.GetInstance<ICmBaseAnnotationRepository>();
-			IList<ICmBaseAnnotation> problemAnnotations = (from ann in repository.AllInstances() where ann.SourceRA is ICmAgent select ann).ToList();
+			// Only wordform annotations are the parser's. The constraint checker shares
+			// the parser agent, and its environment problem reports must survive this.
+			IList<ICmBaseAnnotation> problemAnnotations = (from ann in repository.AllInstances()
+				where ann.SourceRA is ICmAgent && ann.BeginObjectRA is IWfiWordform select ann).ToList();
 			if (problemAnnotations.Count > 0)
 			{
 				// Set up progress bar.

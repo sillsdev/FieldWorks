@@ -102,6 +102,29 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		}
 
 		/// <summary>
+		/// Creates a problem report against the given object, sourced to the parser agent,
+		/// which is also the agent the constraint checker uses. Caller supplies the UOW.
+		/// </summary>
+		private ICmBaseAnnotation MakeParserAnnotation(ICmObject target)
+		{
+			ICmBaseAnnotation annotation = Cache.ServiceLocator.GetInstance<ICmBaseAnnotationFactory>().Create();
+			Cache.LanguageProject.AnnotationsOC.Add(annotation);
+			annotation.BeginObjectRA = target;
+			annotation.SourceRA = ParserAgent;
+			return annotation;
+		}
+
+		private IPhEnvironment AddEnvironment(string strRep)
+		{
+			if (Cache.LanguageProject.PhonologicalDataOA == null)
+				Cache.LanguageProject.PhonologicalDataOA = Cache.ServiceLocator.GetInstance<IPhPhonDataFactory>().Create();
+			IPhEnvironment env = Cache.ServiceLocator.GetInstance<IPhEnvironmentFactory>().Create();
+			Cache.LanguageProject.PhonologicalDataOA.EnvironmentsOS.Add(env);
+			env.StringRepresentation = TsStringUtils.MakeString(strRep, m_vernacularWS.Handle);
+			return env;
+		}
+
+		/// <summary>
 		/// Creates a stem entry with two senses, each with its own MoStemMsa, so tests can
 		/// verify that a specific MSA (not just "the first one") gets resolved.
 		/// </summary>
@@ -195,6 +218,38 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		#endregion Setup and TearDown
 
 		#region Tests
+
+		[Test]
+		public void ParsingDeletesStaleWordformAnnotation()
+		{
+			IWfiWordform gnat = CheckAnalysisSize("gnatTEST", 0, true);
+			ICmBaseAnnotation stale = null;
+			UndoableUnitOfWorkHelper.Do("Undo stuff", "Redo stuff", m_actionHandler,
+				() => stale = MakeParserAnnotation(gnat));
+
+			m_filer.ProcessParse(gnat, ParserPriority.Low, new ParseResult("Maximum permitted analyses (448) reached."));
+			ExecuteIdleQueue();
+
+			Assert.That(stale.IsValidObject, Is.False, "a parser annotation on a wordform should be deleted");
+		}
+
+		/// <summary>
+		/// The constraint checker stamps its problem reports with the parser agent, so the
+		/// wordform annotations the parser sweeps up must be told apart by their target.
+		/// </summary>
+		[Test]
+		public void ParsingKeepsEnvironmentProblemAnnotation()
+		{
+			IWfiWordform midge = CheckAnalysisSize("midgeTEST", 0, true);
+			ICmBaseAnnotation envProblem = null;
+			UndoableUnitOfWorkHelper.Do("Undo stuff", "Redo stuff", m_actionHandler,
+				() => envProblem = MakeParserAnnotation(AddEnvironment("/ [Cons] _")));
+
+			m_filer.ProcessParse(midge, ParserPriority.Low, new ParseResult("Maximum permitted analyses (448) reached."));
+			ExecuteIdleQueue();
+
+			Assert.That(envProblem.IsValidObject, Is.True, "an environment's problem report should survive a parse");
+		}
 
 		[Test]
 		public void TwoAnalyses()
