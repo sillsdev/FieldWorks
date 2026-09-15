@@ -10,6 +10,7 @@ using Avalonia.Automation;
 using Avalonia.Controls;
 using Avalonia.Layout;
 using Avalonia.Media;
+using Avalonia.VisualTree;
 using Avalonia.Styling;
 using SIL.FieldWorks.Common.FwAvalonia;
 using SIL.FieldWorks.Common.FwAvalonia.Seams;
@@ -36,6 +37,13 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 	{
 		private readonly IDetailEditContext _editContext;
 		private readonly Action<string> _writingSystemFocused;
+		private readonly List<List<Control>> _rowControls = new List<List<Control>>();
+		// Row index by control, for OnRowGotFocus's focus-to-row lookup (LT-22688).
+		private readonly Dictionary<Control, int> _controlToRow = new Dictionary<Control, int>();
+		// Collapsible section toggles, keyed by field stable id, captured at build
+		// time: WireCollapsibleHeaders finds them since the header now wraps in
+		// the field-menu gutter, where the kebab is also a Button.
+		private readonly Dictionary<string, Button> _collapsibleToggles = new Dictionary<string, Button>();
 		private readonly Action<double> _labelColumnWidthChanged;
 		private TextBlock _validationBlock;
 
@@ -176,6 +184,26 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 
 			RebuildItems();
 
+				if (i < model.Fields.Count - 1)
+				{
+					var rule = new Border { Background = FwAvaloniaDensity.SliceRuleBrush, Height = 1 };
+					AutomationProperties.SetAutomationId(rule, $"SliceRule.{i}");
+					Grid.SetRow(rule, i * 2 + 1);
+					// 14.3: the rule underlines the VALUE side only; the label panel stays clean.
+					Grid.SetColumn(rule, 2);
+					grid.Children.Add(rule);
+					_rowControls[i].Add(rule); // collapses with its row
+				}
+			}
+
+			for (var r = 0; r < _rowControls.Count; r++)
+			{
+				foreach (var control in _rowControls[r])
+					_controlToRow[control] = r;
+			}
+
+			WireCollapsibleHeaders(model.Fields);
+
 			// Viewing parity (11.x): the whole detail view scrolls, like legacy DataTree's AutoScroll panel.
 			// Equal row height read-only vs editable (layout parity): the field container is
 			// ALWAYS wrapped in
@@ -202,6 +230,11 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			AutomationProperties.SetAutomationId(scroller, "DataTree.Scroll");
 			Content = scroller;
 
+			// Contains Tab/Shift+Tab to this view instead of continuing into the hosting
+			// WinForms Form (LT-22688).
+			Avalonia.Input.KeyboardNavigation.SetTabNavigation(this,
+				Avalonia.Input.KeyboardNavigationMode.Contained);
+
 			// Screen-local command shortcuts:
 			// Enter commits (validation-gated), Escape cancels -- handled at the view so they
 			// work
@@ -217,6 +250,10 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				if (_editContext != null && _editContext.IsOpen)
 					OnSave();
 			}, Avalonia.Interactivity.RoutingStrategies.Bubble);
+
+			// Tracks CurrentRow and scrolls newly focused rows into view (LT-22688).
+			AddHandler(Avalonia.Input.InputElement.GotFocusEvent, OnRowGotFocus,
+				Avalonia.Interactivity.RoutingStrategies.Bubble);
 		}
 
 		/// <summary>
@@ -261,6 +298,29 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			}
 		}
 
+		// Keeps CurrentRow in sync with whichever row actually has focus and scrolls it
+		// into view (LT-22688).
+		private void OnRowGotFocus(object sender, Avalonia.Input.GotFocusEventArgs e)
+		{
+			if (!(e.Source is Control focused))
+				return;
+
+			for (var control = focused; control != null; control = control.GetVisualParent() as Control)
+			{
+				if (!_controlToRow.TryGetValue(control, out var row))
+					continue;
+				var field = Model.Fields[row];
+				if (!ReferenceEquals(CurrentRow, field))
+				{
+					CurrentRow = field;
+					CurrentRowChanged?.Invoke(this, EventArgs.Empty);
+				}
+				break;
+			}
+
+			focused.BringIntoView();
+		}
+
 		/// <summary>The detail model this view renders.</summary>
 		public DetailModel Model { get; }
 
@@ -269,6 +329,15 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		/// detail view from current domain state.
 		/// </summary>
 		public event EventHandler EditCompleted;
+
+		/// <summary>
+		/// The row that currently has keyboard focus, or null when focus is elsewhere. Matches
+		/// legacy Slice's ContainingDataTree.CurrentSlice role in this view (LT-22688).
+		/// </summary>
+		public DetailField CurrentRow { get; private set; }
+
+		/// <summary>Raised when CurrentRow changes.</summary>
+		public event EventHandler CurrentRowChanged;
 
 		// 14.4: no Save/Cancel buttons -- the legacy view saves as you go. The footer carries
 		// only the
@@ -416,6 +485,9 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 						RebuildItems();
 					};
 					header = button;
+					_collapsibleToggles[field.StableId] = button;
+					// Chrome, not a field, same reasoning as the field-menu kebab (LT-22688).
+					Avalonia.Input.KeyboardNavigation.SetIsTabStop(button, false);
 				}
 				else
 				{
@@ -512,6 +584,14 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			ToolTip.SetTip(labelBlock, field.Label ?? field.Field); // 11.17: legacy label tooltips
 			var editor = CreateEditor(field, automationId);
 			editor.Margin = new Thickness(0, 0, 0, FwAvaloniaDensity.FieldSpacing);
+			Grid.SetRow(editor, row * 2);
+			Grid.SetColumn(editor, 2);
+			grid.Children.Add(editor);
+			_rowControls[row].Add(editor);
+			// Every reachable control in a row shares its TabIndex, so Avalonia visits them in
+			// visual order (editor first, then any affordance below) before moving to the next
+			// row (LT-22688).
+			Avalonia.Input.KeyboardNavigation.SetTabIndex(editor, row);
 			if (editor is FwReferenceVectorField vector)
 			{
 				_vectors.Add(vector);
@@ -530,7 +610,13 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			if (labelKebab != null)
 				HoverReveal.Attach(hoverSources, new[] { labelKebab });
 			if (editor is IHoverAffordanceProvider provider && provider.HoverAffordances.Count > 0)
+			{
 				HoverReveal.Attach(hoverSources, provider.HoverAffordances);
+				// Matches legacy's per-slice multi-stop shape: Tab reaches the configure gear
+				// (and any other affordance) right after the field's own value (LT-22688).
+				foreach (var affordance in provider.HoverAffordances)
+					Avalonia.Input.KeyboardNavigation.SetTabIndex(affordance, row);
+			}
 
 			return new FieldContent { Content = editor, Label = labelCell };
 		}
@@ -582,6 +668,9 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			if (hasMenu || hasHotlinks)
 			{
 				var button = DetailChrome.CreateKebabButton();
+				// Mouse/right-click reachable only, matching legacy's slice menu, which was
+				// never its own Tab stop (LT-22688).
+				Avalonia.Input.KeyboardNavigation.SetIsTabStop(button, false);
 				AutomationProperties.SetAutomationId(button, automationId + ".FieldMenu");
 				AutomationProperties.SetName(button, FwAvaloniaStrings.FieldOptionsMenu);
 				ToolTip.SetTip(button, FwAvaloniaStrings.FieldOptionsMenu);

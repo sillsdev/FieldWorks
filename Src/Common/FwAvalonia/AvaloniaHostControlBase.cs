@@ -5,6 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
+using Avalonia.Controls.Primitives;
 using Avalonia.Win32.Interoperability;
 using SIL.FieldWorks.Common.FwAvalonia.Detail;
 using SIL.FieldWorks.Common.FwAvalonia.Seams;
@@ -22,6 +23,9 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 	{
 		/// <summary>The Avalonia content host. Protected so derived detail hosts can set content directly.</summary>
 		protected readonly WinFormsAvaloniaControlHost Host;
+		// The one VisualLayerManager for this embedded root, which has no Window chrome to supply
+		// one. Without it, Control.FocusAdorner has no AdornerLayer to paint into (LT-22688).
+		private readonly VisualLayerManager _layerManager;
 		private readonly Panel _companionStrip;
 
 		/// <summary>Raised after a hosted detail view reports an edit completed (wired by the derived host).</summary>
@@ -46,6 +50,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 			// deliberate no-op. The Avalonia content still constructs and lays out off-screen. No-op (and
 			// thus identical) on the real Win32 platform.
 			FwAvaloniaPlatform.GuardHeadlessEmbed(Host);
+			_layerManager = new VisualLayerManager();
+			Host.Content = _layerManager;
 
 			_companionStrip = new Panel
 			{
@@ -67,12 +73,13 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 		/// <summary>Swaps the hosted Avalonia content and shows the control.</summary>
 		protected void SetHostContent(Avalonia.Controls.Control content)
 		{
-			Host.Content = content;
+			_layerManager.Child = content;
 			Show();
 		}
 
 		/// <summary>The current Avalonia content, or null.</summary>
-		protected Avalonia.Controls.Control CurrentContent => Host.Content as Avalonia.Controls.Control;
+		protected Avalonia.Controls.Control CurrentContent =>
+			_layerManager.Child as Avalonia.Controls.Control;
 
 		public void SetCompanionControls(IReadOnlyList<Control> controls)
 		{
@@ -167,7 +174,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 
 		public void ShowMessage(string message)
 		{
-			Host.Content = new Avalonia.Controls.TextBlock { Text = message ?? string.Empty };
+			_layerManager.Child = new Avalonia.Controls.TextBlock { Text = message ?? string.Empty };
 			Show();
 		}
 

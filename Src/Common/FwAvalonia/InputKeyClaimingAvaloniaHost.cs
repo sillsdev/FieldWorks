@@ -17,8 +17,9 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 	public static class InputKeyClaimPolicy
 	{
 		/// <summary>
-		/// Whether the host claims <paramref name="keyData"/> as an input key: the arrow keys always, Enter
-		/// only when <paramref name="claimEnterKey"/> is set, and never unless the host holds focus.
+		/// Whether the host claims <paramref name="keyData"/> as an input key: the arrow keys
+		/// and Tab (excluding Ctrl+Tab) always, Enter only when <paramref name="claimEnterKey"/>
+		/// is set, and never unless the host holds focus.
 		/// </summary>
 		public static bool ShouldClaimKey(Keys keyData, bool hostContainsFocus, bool claimEnterKey)
 		{
@@ -31,6 +32,9 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 				case 0x25: // Left
 				case 0x27: // Right
 					return true;
+				// Matches legacy SimpleRootSite.IsInputKey's Ctrl+Tab exclusion (LT-22688).
+				case 0x09: // Tab
+					return (keyData & Keys.Control) == Keys.None;
 				case 0x0D: // Enter
 					return claimEnterKey;
 				default:
@@ -43,11 +47,11 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 	/// A <see cref="WinFormsAvaloniaControlHost"/> that claims the keyboard-navigation keys the hosted
 	/// Avalonia control needs, so the WinForms parent (a detail pane, or a modal dialog form)
 	/// does not
-	/// consume Up/Down/Left/Right -- and, when asked, Enter -- as its own control-navigation /
-	/// default-button
-	/// handling before the Avalonia content sees them. Without this, WinForms eats the presses and hosted
-	/// list/keyboard navigation does nothing. Keys are claimed only while this host holds focus, so they
-	/// route normally when focus is elsewhere in the parent.
+	/// consume Up/Down/Left/Right/Tab -- and, when asked, Enter -- as its own
+	/// control-navigation / default-button
+	/// handling before the Avalonia content sees them. Without this, WinForms eats the presses
+	/// and hosted list/keyboard/Tab navigation does nothing. Keys are claimed only while this
+	/// host holds focus, so they route normally when focus is elsewhere in the parent.
 	/// </summary>
 	public class InputKeyClaimingAvaloniaHost : WinFormsAvaloniaControlHost
 	{
