@@ -1,18 +1,16 @@
-﻿// Copyright (c) 2026 SIL International
+// Copyright (c) 2026 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using Avalonia.Controls;
 using SIL.FieldWorks.Common.FwAvalonia.Detail;
 using SIL.LCModel;
-using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Core.Text;
 using SIL.Reporting;
 
-namespace SIL.FieldWorks.XWorks
+namespace SIL.FieldWorks.XWorks.Avalonia.Plugins
 {
 	/// <summary>
 	/// The native Avalonia Reversal Entries editor: claims the legacy

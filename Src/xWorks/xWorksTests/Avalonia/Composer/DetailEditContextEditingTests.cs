@@ -11,6 +11,7 @@ using SIL.FieldWorks.Common.FwAvalonia;
 using SIL.FieldWorks.Common.FwAvalonia.Detail;
 using SIL.FieldWorks.Common.FwAvalonia.Seams;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.XWorks.Avalonia.Plugins;
 using SIL.LCModel;
 using SIL.LCModel.Application;
 using SIL.LCModel.Core.Cellar;

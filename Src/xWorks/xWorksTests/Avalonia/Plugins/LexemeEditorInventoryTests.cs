@@ -9,6 +9,7 @@ using System.Linq;
 using System.Xml.Linq;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwAvalonia.Detail;
+using SIL.FieldWorks.XWorks.Avalonia.Plugins;
 using SIL.LCModel;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Infrastructure;

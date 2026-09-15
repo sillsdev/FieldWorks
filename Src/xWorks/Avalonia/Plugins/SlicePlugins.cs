@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using Avalonia.Controls;
 using SIL.FieldWorks.Common.FwAvalonia.Detail;
 using SIL.FieldWorks.Common.FwAvalonia.ViewDefinition;
+using SIL.FieldWorks.XWorks.Avalonia.Plugins;
 using SIL.LCModel;
 
 namespace SIL.FieldWorks.XWorks
