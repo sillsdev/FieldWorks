@@ -320,6 +320,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		{
 			_form.Items.Clear();
 			_vectors.Clear();
+			_labelBlocks.Clear();
 			SelectedVector = null;
 			var visible = DetailVisibility.ComputeVisibility(Model.Fields, GetRecordedExpansion);
 			for (var i = 0; i < Model.Fields.Count; i++)
