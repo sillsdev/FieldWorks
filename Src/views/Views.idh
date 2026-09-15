@@ -4242,6 +4242,8 @@ Last reviewed:
 		// By default this answers the same as ReplaceWith(). However, if a find has recently
 		// occurred involving a regular expression, this computes the replacement text,
 		// taking account of any uses of saved groups in the replace with string.
+		// Returns E_UNEXPECTED if there is no current match, which is the state before the
+		// first search, after an unsuccessful FindIn, and after ReplaceAllIn.
 		[propget] HRESULT ReplacementText(
 			[out, retval] ITsString ** pptssText);
 		// If a regular expression has just been searched successfully, this returns the
