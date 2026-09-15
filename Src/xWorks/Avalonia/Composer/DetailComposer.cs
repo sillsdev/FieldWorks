@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2026 SIL International
+// Copyright (c) 2026 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -13,6 +13,7 @@ using SIL.FieldWorks.Common.FwAvalonia;
 using SIL.FieldWorks.Common.FwAvalonia.Detail;
 using SIL.FieldWorks.Common.FwAvalonia.ViewDefinition;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.XWorks.Avalonia.Plugins;
 using SIL.LCModel;
 using SIL.LCModel.Application;
 using SIL.LCModel.Application.ApplicationServices;
