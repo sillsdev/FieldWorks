@@ -1628,14 +1628,24 @@ namespace SIL.FieldWorks.XWorks
 
 				var stableId = StableId(node, obj);
 				var canReorder = CanReorderItems(node, flid);
+				var createsFromText = EditorKindMap.CreatesReferenceItemsFromText(node.RawEditor);
 				// Authored goto links ride this row too (Environments authors one). No list is
 				// passed, so the synthesized fallback stays with the possibility-list paths.
-				AddField(new DetailField(stableId, Localize(node.Label) ?? node.Field, node.Field,
+				var row = new DetailField(stableId, Localize(node.Label) ?? node.Field, node.Field,
 					node.WritingSystem, DetailFieldKind.ReferenceVector, node.EditorClassification,
 					node.AutomationId, node.LocalizationKey, node.Routing, null, options, null,
 					isEditable: true, indent: depth, menuId: node.MenuId, contextMenuId: node.ContextMenuId,
 					hotlinksId: node.HotlinksId, objectHvo: obj.Hvo, items: items,
-					chooserLinks: CreateChooserLinks(node), canReorderItems: canReorder));
+					chooserLinks: CreateChooserLinks(node), canReorderItems: canReorder);
+				if (createsFromText)
+				{
+					// The picker compares names the way FindOrCreateEnvironment does, so the
+					// option the typed text resolves to is listed rather than filtered out and
+					// then offered as a create.
+					row.NormalizeOptionName = StripSpaces;
+				}
+
+				AddField(row);
 
 				var hvo = obj.Hvo;
 				RegisterReferenceMove(stableId, canReorder, obj, flid);
@@ -1668,7 +1678,7 @@ namespace SIL.FieldWorks.XWorks
 
 				// Environments and infix Positions are ALSO typed in legacy. Only that editor
 				// registers a create handler, so other vector rows stay pick-only.
-				if (EditorKindMap.CreatesReferenceItemsFromText(node.RawEditor))
+				if (createsFromText)
 				{
 					HandlerFor(stableId).ReferenceCreate = text =>
 					{

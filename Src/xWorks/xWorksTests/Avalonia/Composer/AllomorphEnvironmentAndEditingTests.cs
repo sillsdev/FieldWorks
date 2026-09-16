@@ -127,6 +127,39 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
+		/// The row publishes the comparison its own domain uses, so the picker filters and the
+		/// create-row guard decide the same way find-or-create does. Without it the picker
+		/// matched literally: typing "/ # _" hid the stored "/#_" and offered to create it.
+		/// </summary>
+		[Test]
+		public void Compose_Environments_PublishesTheDomainsNameComparison()
+		{
+			GiveProjectAnEnvironment("/ # _");
+			var row = ComposeEnvironments().Row;
+
+			Assert.That(row.NormalizeOptionName, Is.Not.Null,
+				"a row that mints items from typed text must tell the picker how it compares");
+			Assert.That(row.NormalizeOptionName("/ # _"), Is.EqualTo(row.NormalizeOptionName("/#_")),
+				"spacing is the difference legacy's ConnectToRealCache ignores");
+		}
+
+		/// <summary>
+		/// The other half: a vector row that cannot mint items publishes no comparison, so every
+		/// pick-only chooser in the app keeps the literal matching it has always had.
+		/// </summary>
+		[Test]
+		public void Compose_APickOnlyVectorRow_PublishesNoNameComparison()
+		{
+			var pickOnly = DetailComposer.Compose(m_entry, Cache, showHiddenFields: true)
+				.Model.Fields.FirstOrDefault(f => f.Kind == DetailFieldKind.ReferenceVector
+					&& f.Field != "PhoneEnv");
+
+			Assert.That(pickOnly, Is.Not.Null, "fixture check: the entry composes some other vector row");
+			Assert.That(pickOnly.NormalizeOptionName, Is.Null,
+				"only the rows whose domain normalizes may change how the picker matches");
+		}
+
+		/// <summary>
 		/// A typed string find-or-creates: matching an existing environment attaches THAT one
 		/// rather than minting a duplicate, and the match strips spaces exactly as legacy's
 		/// ConnectToRealCache does, so "/ # _" and "/#_" are one environment.

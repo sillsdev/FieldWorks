@@ -1520,7 +1520,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			var creation = editContext as IReferenceItemCreation;
 			var canCreate = creation != null && creation.CanCreateReferenceItem(field);
 			var picker = new FwOptionChooser(field.Options, field.SearchOptions, automationId,
-				field.Items.Select(i => i.Key), multiSelect: true, allowCreate: canCreate);
+				field.Items.Select(i => i.Key), multiSelect: true, allowCreate: canCreate,
+				normalizeName: field.NormalizeOptionName);
 			var flyout = FwOptionChooser.CreateOptionFlyout(picker, PlacementMode.BottomEdgeAlignedLeft);
 			addButton.Flyout = flyout;
 			// Commit the whole checked set as ONE batch: every staged add rides the SAME open edit

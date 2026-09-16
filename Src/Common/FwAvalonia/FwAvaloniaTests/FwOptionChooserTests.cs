@@ -895,6 +895,94 @@ namespace FwAvaloniaTests
 				+ "is the trap this ordering exists to avoid");
 		}
 
+		// The environments case, with the domain's own matcher supplied: legacy compares
+		// environments with spaces stripped, so "/ _ #" and "/_#" are one environment
+		// however the user spaced it.
+		private static (FwOptionChooser picker, Window window, List<string> created) ShowEnvironments()
+		{
+			var options = new List<DetailChoiceOption>
+			{
+				new DetailChoiceOption("e1", "/_#"),
+				new DetailChoiceOption("e2", "/_a")
+			};
+			var picker = new FwOptionChooser(options, null, "Environments", null,
+				allowCreate: true, normalizeName: t => (t ?? string.Empty).Replace(" ", null));
+			var created = new List<string>();
+			picker.CreateRequested += created.Add;
+			var window = new Window { Content = picker, Width = 400, Height = 420 };
+			window.Show();
+			Dispatcher.UIThread.RunJobs();
+			AvaloniaHeadlessPlatform.ForceRenderTimerTick();
+			Dispatcher.UIThread.RunJobs();
+			return (picker, window, created);
+		}
+
+		/// <summary>
+		/// The picker's matcher and the domain's matcher have to agree about the same text.
+		/// Filtering literally hid the stored environment the typed text resolves to, so the row
+		/// offered to CREATE what the project already had, and the user could not see or pick it.
+		/// </summary>
+		[AvaloniaTest]
+		public void SpacingThatDiffersFromTheStoredOption_StillMatchesIt()
+		{
+			var (picker, window, _) = ShowEnvironments();
+
+			window.KeyTextInput("/ _ #");
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(Items(picker).Select(o => o.Name), Does.Contain("/_#"),
+				"the stored environment the typed text resolves to must be listed, so the user "
+				+ "can pick it rather than be offered a create row that duplicates it");
+		}
+
+		[AvaloniaTest]
+		public void SpacingThatDiffersFromTheStoredOption_SuppressesTheCreateRow()
+		{
+			var (picker, window, _) = ShowEnvironments();
+
+			window.KeyTextInput("/ _ #");
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(Items(picker).Select(o => o.Name), Is.EqualTo(new[] { "/_#" }),
+				"the create row promised to mint an environment the project already has; taking "
+				+ "it either re-attached the existing one or did nothing at all, silently");
+		}
+
+		[AvaloniaTest]
+		public void TextThatMatchesNothingEvenNormalised_StillOffersTheCreateRow()
+		{
+			var (picker, window, _) = ShowEnvironments();
+
+			window.KeyTextInput("/ _ [V]");
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(Items(picker).Select(o => o.Name),
+				Is.EqualTo(new[] { CreateLabel("/ _ [V]") }),
+				"normalising must not suppress a genuine create -- the row still mints what the "
+				+ "project does not have, with the user's own spacing");
+		}
+
+		/// <summary>
+		/// The guard for every other chooser row: without a normalizer the matcher is unchanged,
+		/// so nothing outside the rows whose domain normalizes sees any difference.
+		/// </summary>
+		[AvaloniaTest]
+		public void WithoutANormalizer_SpacingStillMatchesLiterally()
+		{
+			var options = new List<DetailChoiceOption> { new DetailChoiceOption("e1", "/_#") };
+			var picker = new FwOptionChooser(options, null, "Plain", null, allowCreate: true);
+			var window = new Window { Content = picker, Width = 400, Height = 420 };
+			window.Show();
+			Dispatcher.UIThread.RunJobs();
+
+			window.KeyTextInput("/ _ #");
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(Items(picker).Select(o => o.Name),
+				Is.EqualTo(new[] { CreateLabel("/ _ #") }),
+				"a row whose domain does not normalize keeps the literal match it always had");
+		}
+
 		[AvaloniaTest]
 		public void ExactNameMatch_SuppressesTheCreateRow()
 		{

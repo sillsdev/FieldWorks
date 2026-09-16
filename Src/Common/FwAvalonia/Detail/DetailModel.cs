@@ -1640,6 +1640,14 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		/// </summary>
 		public bool IsMultiStringRow { get; set; }
 
+		/// <summary>
+		/// How this row's domain decides two option names are the same name, for rows that mint
+		/// items from typed text. Environments compare with spaces stripped, so the picker must
+		/// too, or it filters out the very option the typed text resolves to and then offers to
+		/// create it. Null on every other row, which compares literally.
+		/// </summary>
+		public Func<string, string> NormalizeOptionName { get; set; }
+
 		/// <summary>The LCModel object this row is bound to (command-target context for menus).</summary>
 		public int ObjectHvo { get; }
 

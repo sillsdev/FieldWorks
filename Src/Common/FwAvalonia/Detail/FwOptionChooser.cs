@@ -66,6 +66,9 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		private readonly IReadOnlyList<DetailChoiceOption> _options;
 		private readonly Func<string, IReadOnlyList<DetailChoiceOption>> _searchOptions;
 		private readonly HashSet<string> _unavailableKeys;
+		// How this row's DOMAIN compares two names. Null means compare them literally, which is
+		// every row but the ones that mint items from typed text.
+		private readonly Func<string, string> _normalizeName;
 		private readonly string _automationId;
 		private readonly TextBox _filterBox;
 		private readonly ListBox _list;
@@ -120,10 +123,12 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			bool multiSelect = false,
 			bool dropdown = false,
 			bool allowCreate = false,
-			string selectedKey = null)
+			string selectedKey = null,
+			Func<string, string> normalizeName = null)
 		{
 			_selectedKey = selectedKey;
 			_allowCreate = allowCreate;
+			_normalizeName = normalizeName;
 			_options = options ?? Array.Empty<DetailChoiceOption>();
 			_searchOptions = searchOptions;
 			_unavailableKeys = new HashSet<string>(unavailableKeys ?? Array.Empty<string>(), StringComparer.Ordinal);
@@ -731,8 +736,11 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			var typed = (query ?? string.Empty).Trim();
 			if (typed.Length == 0)
 				return results;
-			if (results.Any(o => string.Equals(o.Name, typed, StringComparison.CurrentCultureIgnoreCase)))
+			if (results.Any(o => string.Equals(Normalized(o.Name), Normalized(typed),
+					StringComparison.CurrentCultureIgnoreCase)))
+			{
 				return results;
+			}
 
 			_createText = typed;
 			_createOption = new DetailChoiceOption(CreateRowKey,
@@ -764,6 +772,14 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		private int FirstEnabledIndex(IReadOnlyList<DetailChoiceOption> options)
 			=> FirstEnabledIndex(options, IsOptionAvailable);
 
+		// Both ends of the create-on-type decision go through here, so the list the user sees and
+		// the guard that suppresses the create row can never disagree about the same text.
+		private string Normalized(string text)
+		{
+			text = text ?? string.Empty;
+			return _normalizeName == null ? text : _normalizeName(text) ?? string.Empty;
+		}
+
 		private void ApplyFilter()
 		{
 			var query = _filterBox.Text ?? string.Empty;
@@ -773,7 +789,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				_currentResults = string.IsNullOrEmpty(query)
 					? _options
 					: _options.Where(o => o.Name != null
-						&& o.Name.IndexOf(query, StringComparison.OrdinalIgnoreCase) >= 0).ToList();
+						&& Normalized(o.Name).IndexOf(Normalized(query),
+							StringComparison.OrdinalIgnoreCase) >= 0).ToList();
 			}
 			else
 			{
