@@ -32,6 +32,9 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>(item key, forward) -> moved; null on rows whose items cannot be
 		/// reordered.</summary>
 		public Func<string, bool, bool> ReferenceMove;
+		/// <summary>Discards the row's stored item order; null unless the layout marks the
+		/// row reorderable.</summary>
+		public Func<bool> ReferenceResetOrder;
 		public Func<int, DetailRichTextValue, bool> ParagraphText;
 		public Func<int, string, bool> ParagraphStyle;
 		public Func<int, bool> ParagraphInsert;
@@ -136,6 +139,14 @@ namespace SIL.FieldWorks.XWorks
 			if (setter == null)
 				return false;
 			return Stage(() => setter(optionKey, forward), FieldLabelFor(field));
+		}
+
+		public override bool TryResetReferenceOrder(DetailField field)
+		{
+			var setter = Handler(field)?.ReferenceResetOrder;
+			if (setter == null)
+				return false;
+			return Stage(setter, FieldLabelFor(field));
 		}
 
 		public bool TrySetParagraphText(DetailField field, int paragraphIndex,

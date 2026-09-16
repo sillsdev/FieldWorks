@@ -66,6 +66,9 @@ namespace SIL.FieldWorks.XWorks
 			=> false;
 
 		/// <inheritdoc />
+		public virtual bool TryResetReferenceOrder(DetailField detailField) => false;
+
+		/// <inheritdoc />
 		public virtual IReadOnlyList<string> Validate()
 		{
 			// Validation seam (minimal rule set, deterministic order). The lexeme/citation-form

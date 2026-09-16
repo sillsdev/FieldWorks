@@ -70,6 +70,14 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		bool TryMoveReferenceItem(DetailField field, string optionKey, bool forward);
 
 		/// <summary>
+		/// Stages discarding the stored item order of a reference-vector row (Alphabetical
+		/// Order), so the items fall back to the property's default order. Returns false --
+		/// without opening the session -- when the row has no resettable order
+		/// (<see cref="DetailField.CanResetItemOrder"/> is false).
+		/// </summary>
+		bool TryResetReferenceOrder(DetailField field);
+
+		/// <summary>
 		/// Validates the staged state. Empty result means commit may proceed; messages are
 		/// user-facing (validation seam, deterministic order).
 		/// </summary>
