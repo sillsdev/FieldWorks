@@ -337,7 +337,38 @@ Build conventions the result must satisfy (confirm each in the diff):
    mode for them.
 4. Legacy-mode smoke: with the toggle OFF, every launch site from the
    analysis document still opens the legacy dialog unchanged.
-5. Add any new exemplars created during this conversion to the exemplar map
+5. Work each manual finding through
+   [The manual-finding loop](#the-manual-finding-loop).
+6. Add any new exemplars created during this conversion to the exemplar map
    (the promotion row from Planning the replacement, if not already landed).
-6. Land: comment audit against the repository standard, preflight the
+7. Land: comment audit against the repository standard, preflight the
    branch, and PR per the repo's conventions.
+
+### The manual-finding loop
+
+A green suite that missed a defect the developer found by looking is evidence
+the SUITE has a hole, not just the code. Close both.
+
+1. **Triage the layer before writing anything.** ViewModel, launcher edge, or
+   rendered view? Existing green tests narrow it in one step: if the ViewModel
+   tests pass and the dialog looks wrong, the state is right and the defect is
+   below it.
+2. **Write the missing test at the layer the defect lives in**, before the
+   fix. A ViewModel-only suite cannot see a control that draws nothing; a
+   render-layer defect needs a render-layer test.
+3. **Verify the new test actually catches the defect: revert the fix (or
+   write the test first) and watch it FAIL.** This is not ceremony. A test
+   asserting a control "renders" can pass against a control drawing nothing --
+   an untemplated Avalonia control still measures to its padding and still has
+   visual children. A test that has never failed proves nothing, and a
+   false-green test is worse than no test because it silences the next person.
+4. **Fix, then re-run the owning suite AND every suite the change reaches.**
+   A shared control, style, or seam means the blast radius is not the dialog.
+5. **Record it in the working documents**: the cause, the fix, and -- when the
+   first test attempt was a false green -- which assertion was too weak and
+   which one actually bites. That lesson is the reusable part.
+
+If the finding turns out to be a scope decision rather than a defect (a
+control nobody planned, a behavior the plan never covered), do not absorb it
+silently: put it to the developer as a decision, and if they take it in, add
+plan items for it rather than implementing untested.

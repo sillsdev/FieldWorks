@@ -68,6 +68,8 @@ migration burden.
 | Localization | `FwAvaloniaDialogsStrings` accessor + neutral resx (dialog-conversion.md §5) |
 | Clipboard in text fields | `IFwClipboard` seam (`Src/Common/FwAvalonia/Seams/`) |
 | Headless ViewModel/view tests | `FwAvaloniaDialogsTests/EntryGoDialogTests.cs` shapes; launcher-over-real-cache: `LcmLinkMsaDialogLauncherTests.cs` |
+| List-editor jump from a chooser row ("Edit the … list") | `DetailGearChrome.CreateConfigureGear` (row gear → `DetailLinkRequest` → `FollowLink`); links built by `DetailComposer.CreateChooserLinks`. **Approved divergence:** the detail view synthesizes the link for ANY possibility-list row the layout left linkless and puts it on the row, where legacy synthesizes only for `autoCustom` and puts it inside the chooser dialog. Reason and approver are in the `CreateChooserLinks` doc — do not "fix" it back to the legacy trigger. |
+| Adding to a reference-vector field | `FwReferenceVectorField`'s "+" opens `FwOptionChooser` in multi-select; the per-item right-click removes. **Approved divergence:** current members ride as UNAVAILABLE keys, so they list greyed and un-toggleable rather than pre-checked; legacy's `SimpleListChooser` pre-checks them and treats the dialog as setting the whole membership. "+" means add, and the row owns removal. Reason and approver are in the `FwReferenceVectorField` class doc. |
 
 ## 3. Gap register — the first implementation becomes the exemplar
 

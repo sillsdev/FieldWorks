@@ -115,6 +115,9 @@
   <data name="FwAvalonia.AddSelected" xml:space="preserve">
     <value>Add</value>
   </data>
+  <data name="FwAvalonia.CreateOptionPrompt" xml:space="preserve">
+    <value>Create "{0}"</value>
+  </data>
   <data name="FwAvalonia.LaunchDialog" xml:space="preserve">
     <value>Open dialog</value>
   </data>

@@ -445,5 +445,53 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(RecordEditView.IsChangeWithinEntry(null, m_entry), Is.False);
 			Assert.That(RecordEditView.IsChangeWithinEntry(m_entry, null), Is.False);
 		}
+
+		/// <summary>
+		/// A click in flight must hold the refresh, exactly as an open session does.
+		///
+		/// LcmDetailEditSession.Commit clears IsOpen BEFORE EndUndoTask raises PropChanged, so
+		/// without the hold the commit's own notification recomposes while a click is still in
+		/// flight, and the release reaches a control that has been rebuilt away.
+		/// </summary>
+		[Test]
+		public void PropChanged_WhileBusy_HoldsTheRefresh_AndReleaseDeliversItOnce()
+		{
+			var refreshes = 0;
+			var busy = true; // a click is in flight
+			using (var controller = new AvaloniaDetailRefreshController(
+				Cache, () => m_entry, () => busy, () => refreshes++, new RefreshCoordinator()))
+			{
+				NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
+					m_entry.CitationForm.set_String(Cache.DefaultVernWs,
+						TsStringUtils.MakeString("held", Cache.DefaultVernWs)));
+
+				Assert.That(refreshes, Is.Zero,
+					"recomposing here destroys the control the press landed on");
+
+				busy = false;
+				controller.ReleaseHeldRefresh();
+
+				Assert.That(refreshes, Is.EqualTo(1),
+					"the gesture ended, so what was held is delivered -- exactly once");
+			}
+		}
+
+		/// <summary>
+		/// An ordinary click costs nothing: with no refresh held, releasing delivers none. A
+		/// recompose per click would be churn, and would itself disturb the view.
+		/// </summary>
+		[Test]
+		public void ReleaseHeldRefresh_WithNothingHeld_DeliversNoRefresh()
+		{
+			var refreshes = 0;
+			using (var controller = new AvaloniaDetailRefreshController(
+				Cache, () => m_entry, () => false, () => refreshes++, new RefreshCoordinator()))
+			{
+				controller.ReleaseHeldRefresh();
+				controller.ReleaseHeldRefresh();
+
+				Assert.That(refreshes, Is.Zero);
+			}
+		}
 	}
 }

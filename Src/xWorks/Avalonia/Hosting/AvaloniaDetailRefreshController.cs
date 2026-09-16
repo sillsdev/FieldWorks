@@ -112,6 +112,18 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
+		/// Delivers a refresh that was held while the view was busy, and only then -- a no-op
+		/// when nothing was held, so an ordinary click costs no recompose.
+		/// </summary>
+		public void ReleaseHeldRefresh()
+		{
+			if (_disposed || !_coordinator.IsSuspended)
+				return;
+			if (_coordinator.EndSuspend())
+				ScheduleRefresh();
+		}
+
+		/// <summary>
 		/// Called by the host when it is about to re-show the detail view itself anyway: drops any held
 		/// delivery so completion does not double the recompose.
 		/// </summary>

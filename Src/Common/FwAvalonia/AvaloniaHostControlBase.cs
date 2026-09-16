@@ -27,6 +27,15 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 		/// <summary>Raised after a hosted detail view reports an edit completed (wired by the derived host).</summary>
 		public event EventHandler DetailEditCompleted;
 
+		/// <summary>Raised when the hosted detail view goes idle: the click finished and no
+		/// picker it opened is still up.</summary>
+		public event EventHandler DetailInteractionCompleted;
+
+		/// <summary>Whether a click is in flight in the hosted detail view, or a picker it opened
+		/// is still up. Rebuilding while this is true destroys what the user is interacting
+		/// with.</summary>
+		public virtual bool IsDetailInteractionInFlight => false;
+
 		protected AvaloniaHostControlBase()
 		{
 			FwAvaloniaRuntime.EnsureInitialized();
@@ -63,6 +72,9 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 		}
 
 		protected void RaiseDetailEditCompleted() => DetailEditCompleted?.Invoke(this, EventArgs.Empty);
+
+		protected void RaiseDetailInteractionCompleted()
+			=> DetailInteractionCompleted?.Invoke(this, EventArgs.Empty);
 
 		/// <summary>Swaps the hosted Avalonia content and shows the control.</summary>
 		protected void SetHostContent(Avalonia.Controls.Control content)
