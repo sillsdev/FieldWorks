@@ -37,12 +37,6 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 	{
 		private readonly IDetailEditContext _editContext;
 		private readonly Action<string> _writingSystemFocused;
-		// Row index by control, for OnRowGotFocus's focus-to-row lookup. Repopulated by
-		// AddField on every RebuildItems() call, which clears it first -- a rebuild
-		// replaces the Form's Items outright rather than toggling IsVisible on cached
-		// controls, so a stale entry would otherwise point at a control no longer in
-		// the visual tree (LT-22688).
-		private readonly Dictionary<Control, int> _controlToRow = new Dictionary<Control, int>();
 		// Collapsible section toggles, keyed by field stable id, captured at build
 		// time: WireCollapsibleHeaders finds them since the header now wraps in
 		// the field-menu gutter, where the kebab is also a Button.
@@ -176,11 +170,9 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				Width = FwAvaloniaDensity.SplitterWidth
 			};
 			AutomationProperties.SetAutomationId(splitter, "DataTree.Splitter");
-			// Chrome, not a field, same reasoning as the field-menu kebab and the
-			// collapsible-header toggle: a column-resize handle has no row of its own to
-			// take a TabIndex from, so it was left at Avalonia's default (int.MaxValue)
-			// and visited out of order; legacy's splitter was never keyboard-focusable
-			// either (LT-22688).
+			// Chrome, not a field: a column-resize handle has no row of its own for a
+			// TabIndex, so it defaults to Avalonia's int.MaxValue and sorts out of
+			// order. Excluded from the tab order entirely (LT-22688).
 			Avalonia.Input.KeyboardNavigation.SetIsTabStop(splitter, false);
 			Grid.SetColumn(splitter, 1);
 			outerGrid.Children.Add(splitter); // added after the Form so its drag handle stays hit-testable
@@ -240,7 +232,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 					OnSave();
 			}, Avalonia.Interactivity.RoutingStrategies.Bubble);
 
-			// Tracks CurrentRow and scrolls newly focused rows into view (LT-22688).
+			// Scrolls newly focused rows into view (LT-22688).
 			AddHandler(Avalonia.Input.InputElement.GotFocusEvent, OnRowGotFocus,
 				Avalonia.Interactivity.RoutingStrategies.Bubble);
 		}
@@ -287,43 +279,20 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			}
 		}
 
-		// Keeps CurrentRow in sync with whichever row actually has focus and scrolls it
-		// into view (LT-22688).
+		// Scrolls newly focused rows into view (LT-22688).
 		private void OnRowGotFocus(object sender, Avalonia.Input.GotFocusEventArgs e)
 		{
-			if (!(e.Source is Control focused))
-				return;
-
-			for (var control = focused; control != null; control = control.GetVisualParent() as Control)
-			{
-				if (!_controlToRow.TryGetValue(control, out var row))
-					continue;
-				var field = Model.Fields[row];
-				if (!ReferenceEquals(CurrentRow, field))
-				{
-					CurrentRow = field;
-					CurrentRowChanged?.Invoke(this, EventArgs.Empty);
-				}
-				break;
-			}
-
-			focused.BringIntoView();
+			(e.Source as Control)?.BringIntoView();
 		}
 
-		// Records that `control` belongs to `row`, so OnRowGotFocus's ancestor walk can
-		// resolve focus anywhere in the row back to its DetailField (LT-22688).
-		private void RegisterRowControl(int row, Control control)
-		{
-			if (control != null)
-				_controlToRow[control] = row;
-		}
-
-		// Applies `row`'s TabIndex to `root` AND every visual descendant, not just
-		// `root` itself -- TabIndex does not inherit in Avalonia, so a composite
-		// control's real focusable parts (a header's hotlink Button, a multi-WS
-		// field's per-WS TextBox, ...) would otherwise keep Avalonia's default
-		// TabIndex (int.MaxValue) and sort after every explicitly row-indexed
-		// control regardless of visual position (LT-22688).
+		/// <summary>
+		/// Applies <paramref name="row"/> as the TabIndex of <paramref name="root"/> and every
+		/// visual descendant, not just <paramref name="root"/> itself -- TabIndex does not
+		/// inherit in Avalonia, so a composite control's real focusable parts (a header's
+		/// hotlink button, a multi-writing-system field's per-value text box, ...) would
+		/// otherwise keep Avalonia's default TabIndex (int.MaxValue) and sort after every
+		/// explicitly row-indexed control regardless of visual position (LT-22688).
+		/// </summary>
 		private static void ApplyRowTabIndex(Control root, int row)
 		{
 			Avalonia.Input.KeyboardNavigation.SetTabIndex(root, row);
@@ -342,15 +311,6 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		/// detail view from current domain state.
 		/// </summary>
 		public event EventHandler EditCompleted;
-
-		/// <summary>
-		/// The row that currently has keyboard focus, or null when focus is elsewhere. Matches
-		/// legacy Slice's ContainingDataTree.CurrentSlice role in this view (LT-22688).
-		/// </summary>
-		public DetailField CurrentRow { get; private set; }
-
-		/// <summary>Raised when CurrentRow changes.</summary>
-		public event EventHandler CurrentRowChanged;
 
 		// 14.4: no Save/Cancel buttons -- the legacy view saves as you go. The footer carries
 		// only the
@@ -402,7 +362,6 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		{
 			_form.Items.Clear();
 			_vectors.Clear();
-			_controlToRow.Clear();
 			SelectedVector = null;
 			var visible = DetailVisibility.ComputeVisibility(Model.Fields, GetRecordedExpansion);
 			for (var i = 0; i < Model.Fields.Count; i++)
@@ -563,11 +522,9 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 
 				if (headerKebab != null)
 					HoverReveal.Attach(new[] { headerCell }, new[] { headerKebab });
-				// The hotlink strip's "Field Options" Button never gets a TabIndex any
-				// other way, so without this it defaults to int.MaxValue and is visited
-				// dead last, well after every explicitly row-indexed field (LT-22688).
+				// The hotlink strip's "Field Options" button gets no TabIndex any other
+				// way, so it would default to int.MaxValue and sort dead last (LT-22688).
 				ApplyRowTabIndex(headerControl, row);
-				RegisterRowControl(row, headerControl);
 				return new FieldContent { Content = headerControl, Label = null };
 			}
 
@@ -607,19 +564,6 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			// Every reachable control in a row shares its TabIndex, so Avalonia visits them in
 			// visual order (editor first, then any affordance below) before moving to the next
 			// row (LT-22688).
-			// TabIndex is not an inherited property: setting it on `editor` alone does
-			// nothing for a composite editor's REAL focusable descendants (e.g.
-			// FwMultiWsTextField's own per-WS TextBox, built directly in its
-			// constructor) when the composite container itself is Focusable=false.
-			// Left unset, those descendants sort at Avalonia's default TabIndex
-			// (int.MaxValue) -- after every row whose editor DID get an explicit,
-			// small row-number TabIndex -- so Tab could never reach a Button-rooted
-			// row (FwChooserField, FwReferenceVectorField's buttons) from within a
-			// TextBox-rooted one: nothing in that tier ever sorts after a lower
-			// explicit index. Propagating the row's TabIndex to every visual
-			// descendant closes that gap for any composite editor uniformly
-			// (confirmed via live-test Debug logging showing TabIndex=2147483647 on
-			// the TextBox that actually receives focus) (LT-22688).
 			ApplyRowTabIndex(editor, row);
 			if (editor is FwReferenceVectorField vector)
 			{
@@ -641,17 +585,12 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			if (editor is IHoverAffordanceProvider provider && provider.HoverAffordances.Count > 0)
 			{
 				HoverReveal.Attach(hoverSources, provider.HoverAffordances);
-				// Matches legacy's per-slice multi-stop shape: Tab reaches the configure gear
-				// (and any other affordance) right after the field's own value (LT-22688).
+				// Sequences a row's own affordances (the chooser's configure gear, a
+				// reference vector's add/gear buttons) right after its editor (LT-22688).
 				foreach (var affordance in provider.HoverAffordances)
-				{
 					Avalonia.Input.KeyboardNavigation.SetTabIndex(affordance, row);
-					RegisterRowControl(row, affordance);
-				}
 			}
 
-			RegisterRowControl(row, editor);
-			RegisterRowControl(row, labelCell);
 			return new FieldContent { Content = editor, Label = labelCell };
 		}
 
@@ -702,8 +641,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			if (hasMenu || hasHotlinks)
 			{
 				var button = DetailChrome.CreateKebabButton();
-				// Mouse/right-click reachable only, matching legacy's slice menu, which was
-				// never its own Tab stop (LT-22688).
+				// Mouse/right-click reachable only; never its own Tab stop (LT-22688).
 				Avalonia.Input.KeyboardNavigation.SetIsTabStop(button, false);
 				AutomationProperties.SetAutomationId(button, automationId + ".FieldMenu");
 				AutomationProperties.SetName(button, FwAvaloniaStrings.FieldOptionsMenu);

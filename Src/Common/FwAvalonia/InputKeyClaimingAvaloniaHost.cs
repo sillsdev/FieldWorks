@@ -32,7 +32,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 				case 0x25: // Left
 				case 0x27: // Right
 					return true;
-				// Matches legacy SimpleRootSite.IsInputKey's Ctrl+Tab exclusion (LT-22688).
+				// Ctrl+Tab is excluded so the surrounding application keeps it for its
+				// own tab/window switching (LT-22688).
 				case 0x09: // Tab
 					return (keyData & Keys.Control) == Keys.None;
 				case 0x0D: // Enter
