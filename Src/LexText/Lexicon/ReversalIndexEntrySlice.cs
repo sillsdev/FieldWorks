@@ -113,13 +113,6 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				Cache = m_propertyTable.GetValue<LcmCache>("cache")
 			};
 			Control = ctrl;
-			//m_menuHandler = InflAffixTemplateMenuHandler.Create(ctrl, ConfigurationNode["deParams"]);
-#if !Want
-			//m_menuHandler.Init(this.Mediator, null);
-#else
-			//m_menuHandler.Init(null, null);
-#endif
-			//ctrl.SetContextMenuHandler(new InflAffixTemplateEventHandler(m_menuHandler.ShowSliceContextMenu));
 			ctrl.Mediator = Mediator;
 			m_sda = ctrl.Cache.DomainDataByFlid;
 			m_sda.AddNotification(this);
@@ -132,9 +125,6 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// <summary>
 		/// Populate the writing system options for the slice.
 		/// </summary>
-		/// <param name="parameter">The parameter.</param>
-		/// <param name="display">The display.</param>
-		/// <returns></returns>
 		public bool OnDisplayWritingSystemOptionsForSlice(object parameter, ref UIListDisplayProperties display)
 		{
 			CheckDisposed();
@@ -148,8 +138,6 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// <summary>
 		/// stores the list values in terms of icu locale
 		/// </summary>
-		/// <param name="display"></param>
-		/// <param name="list"></param>
 		private void AddWritingSystemListWithIcuLocales(UIListDisplayProperties display, IEnumerable<CoreWritingSystemDefinition> list)
 		{
 			var active = StringSliceUtils.GetVisibleWSSPropertyValue(PartRef(),
@@ -163,12 +151,9 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Called when property changed.
 		/// </summary>
-		/// <param name="name">The name.</param>
-		/// ------------------------------------------------------------------------------------
 		public virtual void OnPropertyChanged(string name)
 		{
 			CheckDisposed();
@@ -497,7 +482,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				var entry = Cache.ServiceLocator.GetInstance<IReversalIndexEntryRepository>().GetObject(hvo);
 				if (entry == null || getVisibleWritingSystems == null)
 				{
-					Debug.Assert(entry != null & getVisibleWritingSystems != null, "Method call not valid under current conditions");
+					Debug.Assert(entry != null && getVisibleWritingSystems != null, "Method call not valid under current conditions");
 					return false;
 				}
 
