@@ -54,6 +54,8 @@ namespace FwAvaloniaTests
 			ReferenceMoves.Add((field.Field, optionKey, forward));
 			return ReferenceGestureResult;
 		}
+
+		public bool TryResetReferenceOrder(DetailField field) => ReferenceGestureResult;
 		public IReadOnlyList<string> ValidateResult = new List<string>();
 		public int CommitCount;
 		public int CancelCount;

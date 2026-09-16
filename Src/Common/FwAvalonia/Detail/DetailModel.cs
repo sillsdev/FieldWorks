@@ -1513,9 +1513,11 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			Func<string, IReadOnlyList<DetailChoiceOption>> searchOptions = null,
 			IReadOnlyList<DetailChooserLink> chooserLinks = null,
 			IReadOnlyList<DetailParagraph> paragraphs = null,
-			bool canReorderItems = false)
+			bool canReorderItems = false,
+			bool canResetItemOrder = false)
 		{
 			CanReorderItems = canReorderItems;
+			CanResetItemOrder = canResetItemOrder;
 			Paragraphs = paragraphs ?? Array.Empty<DetailParagraph>();
 			ChooserLinks = chooserLinks ?? new List<DetailChooserLink>();
 			Items = items ?? new List<DetailChoiceOption>();
@@ -1575,6 +1577,13 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		/// kinds.
 		/// </summary>
 		public bool CanReorderItems { get; }
+
+		/// <summary>
+		/// Whether the user may discard the row's stored item order (Alphabetical Order): the
+		/// layout marks the row <c>reorder="true"</c>, so its order is a virtual ordering that
+		/// resets to the property's default order. False for other kinds.
+		/// </summary>
+		public bool CanResetItemOrder { get; }
 
 		/// <summary>False for display-only fields (e.g. reference fields without chooser write-back yet).</summary>
 		public bool IsEditable { get; }

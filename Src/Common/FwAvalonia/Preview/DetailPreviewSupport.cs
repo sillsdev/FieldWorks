@@ -175,6 +175,12 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Preview
 			return true;
 		}
 
+		public bool TryResetReferenceOrder(DetailField field)
+		{
+			IsOpen = true;
+			return true;
+		}
+
 		// The preview context accepts every gesture so the preview shows editable StText affordances.
 		public bool TrySetParagraphText(DetailField field, int paragraphIndex, DetailRichTextValue value)
 		{
