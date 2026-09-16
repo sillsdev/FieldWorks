@@ -944,6 +944,22 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				};
 				display.AddHandler(InputElement.PointerPressedEvent, displayPressed,
 					Avalonia.Interactivity.RoutingStrategies.Tunnel);
+				// Keyboard equivalent of the pointer-press swap above (LT-22688): `box`
+				// starts invisible and `display` starts non-focusable (TextBlock's
+				// default), so Tab correctly treats this row as having nothing reachable
+				// at all -- a value needing true per-run fonts (mixed styling within one
+				// alternative) was keyboard-unreachable, while a plain value (which never
+				// takes this display/box swap at all, see the early return above) worked
+				// fine. Making `display` a normal tab stop and swapping on GotFocus (not
+				// just PointerPressed) gives Tab the same entry point a mouse click has.
+				display.Focusable = true;
+				EventHandler<GotFocusEventArgs> displayGotFocus = (s, e) =>
+				{
+					box.IsVisible = true;
+					display.IsVisible = false;
+					box.Focus();
+				};
+				display.GotFocus += displayGotFocus;
 				EventHandler<Avalonia.Interactivity.RoutedEventArgs> lost = (s, e) =>
 				{
 					box.IsVisible = false;
@@ -953,6 +969,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				_teardown.Add(() =>
 				{
 					display.RemoveHandler(InputElement.PointerPressedEvent, displayPressed);
+					display.GotFocus -= displayGotFocus;
 					box.LostFocus -= lost;
 				});
 			}

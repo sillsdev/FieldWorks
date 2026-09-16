@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2026 SIL International
+// Copyright (c) 2026 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -37,8 +37,11 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 	{
 		private readonly IDetailEditContext _editContext;
 		private readonly Action<string> _writingSystemFocused;
-		private readonly List<List<Control>> _rowControls = new List<List<Control>>();
-		// Row index by control, for OnRowGotFocus's focus-to-row lookup (LT-22688).
+		// Row index by control, for OnRowGotFocus's focus-to-row lookup. Repopulated by
+		// AddField on every RebuildItems() call, which clears it first -- a rebuild
+		// replaces the Form's Items outright rather than toggling IsVisible on cached
+		// controls, so a stale entry would otherwise point at a control no longer in
+		// the visual tree (LT-22688).
 		private readonly Dictionary<Control, int> _controlToRow = new Dictionary<Control, int>();
 		// Collapsible section toggles, keyed by field stable id, captured at build
 		// time: WireCollapsibleHeaders finds them since the header now wraps in
@@ -173,6 +176,12 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				Width = FwAvaloniaDensity.SplitterWidth
 			};
 			AutomationProperties.SetAutomationId(splitter, "DataTree.Splitter");
+			// Chrome, not a field, same reasoning as the field-menu kebab and the
+			// collapsible-header toggle: a column-resize handle has no row of its own to
+			// take a TabIndex from, so it was left at Avalonia's default (int.MaxValue)
+			// and visited out of order; legacy's splitter was never keyboard-focusable
+			// either (LT-22688).
+			Avalonia.Input.KeyboardNavigation.SetIsTabStop(splitter, false);
 			Grid.SetColumn(splitter, 1);
 			outerGrid.Children.Add(splitter); // added after the Form so its drag handle stays hit-testable
 			outerGrid.LayoutUpdated += (s, e) =>
@@ -183,26 +192,6 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			};
 
 			RebuildItems();
-
-				if (i < model.Fields.Count - 1)
-				{
-					var rule = new Border { Background = FwAvaloniaDensity.SliceRuleBrush, Height = 1 };
-					AutomationProperties.SetAutomationId(rule, $"SliceRule.{i}");
-					Grid.SetRow(rule, i * 2 + 1);
-					// 14.3: the rule underlines the VALUE side only; the label panel stays clean.
-					Grid.SetColumn(rule, 2);
-					grid.Children.Add(rule);
-					_rowControls[i].Add(rule); // collapses with its row
-				}
-			}
-
-			for (var r = 0; r < _rowControls.Count; r++)
-			{
-				foreach (var control in _rowControls[r])
-					_controlToRow[control] = r;
-			}
-
-			WireCollapsibleHeaders(model.Fields);
 
 			// Viewing parity (11.x): the whole detail view scrolls, like legacy DataTree's AutoScroll panel.
 			// Equal row height read-only vs editable (layout parity): the field container is
@@ -321,6 +310,30 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			focused.BringIntoView();
 		}
 
+		// Records that `control` belongs to `row`, so OnRowGotFocus's ancestor walk can
+		// resolve focus anywhere in the row back to its DetailField (LT-22688).
+		private void RegisterRowControl(int row, Control control)
+		{
+			if (control != null)
+				_controlToRow[control] = row;
+		}
+
+		// Applies `row`'s TabIndex to `root` AND every visual descendant, not just
+		// `root` itself -- TabIndex does not inherit in Avalonia, so a composite
+		// control's real focusable parts (a header's hotlink Button, a multi-WS
+		// field's per-WS TextBox, ...) would otherwise keep Avalonia's default
+		// TabIndex (int.MaxValue) and sort after every explicitly row-indexed
+		// control regardless of visual position (LT-22688).
+		private static void ApplyRowTabIndex(Control root, int row)
+		{
+			Avalonia.Input.KeyboardNavigation.SetTabIndex(root, row);
+			foreach (var descendant in root.GetVisualDescendants())
+			{
+				if (descendant is Control descendantControl)
+					Avalonia.Input.KeyboardNavigation.SetTabIndex(descendantControl, row);
+			}
+		}
+
 		/// <summary>The detail model this view renders.</summary>
 		public DetailModel Model { get; }
 
@@ -389,6 +402,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		{
 			_form.Items.Clear();
 			_vectors.Clear();
+			_controlToRow.Clear();
 			SelectedVector = null;
 			var visible = DetailVisibility.ComputeVisibility(Model.Fields, GetRecordedExpansion);
 			for (var i = 0; i < Model.Fields.Count; i++)
@@ -445,7 +459,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			public Control Label;
 		}
 
-		private FieldContent AddField(int index, DetailField field)
+		private FieldContent AddField(int row, DetailField field)
 		{
 			var automationId = string.IsNullOrEmpty(field.AutomationId) ? field.StableId : field.AutomationId;
 			var indent = new Thickness(field.Indent * 12, 0, 0, 0);
@@ -521,7 +535,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				// The header cell and its inline hotlink strip always travel together (the strip is part of
 				// the header row, hidden/shown with it by the collapse logic).
 				Control headerControl;
-				if (field.Indent == 0 && index > 0)
+				if (field.Indent == 0 && row > 0)
 				{
 					var withRule = new StackPanel();
 					withRule.Children.Add(new Border
@@ -549,6 +563,11 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 
 				if (headerKebab != null)
 					HoverReveal.Attach(new[] { headerCell }, new[] { headerKebab });
+				// The hotlink strip's "Field Options" Button never gets a TabIndex any
+				// other way, so without this it defaults to int.MaxValue and is visited
+				// dead last, well after every explicitly row-indexed field (LT-22688).
+				ApplyRowTabIndex(headerControl, row);
+				RegisterRowControl(row, headerControl);
 				return new FieldContent { Content = headerControl, Label = null };
 			}
 
@@ -584,14 +603,24 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			ToolTip.SetTip(labelBlock, field.Label ?? field.Field); // 11.17: legacy label tooltips
 			var editor = CreateEditor(field, automationId);
 			editor.Margin = new Thickness(0, 0, 0, FwAvaloniaDensity.FieldSpacing);
-			Grid.SetRow(editor, row * 2);
-			Grid.SetColumn(editor, 2);
-			grid.Children.Add(editor);
-			_rowControls[row].Add(editor);
+
 			// Every reachable control in a row shares its TabIndex, so Avalonia visits them in
 			// visual order (editor first, then any affordance below) before moving to the next
 			// row (LT-22688).
-			Avalonia.Input.KeyboardNavigation.SetTabIndex(editor, row);
+			// TabIndex is not an inherited property: setting it on `editor` alone does
+			// nothing for a composite editor's REAL focusable descendants (e.g.
+			// FwMultiWsTextField's own per-WS TextBox, built directly in its
+			// constructor) when the composite container itself is Focusable=false.
+			// Left unset, those descendants sort at Avalonia's default TabIndex
+			// (int.MaxValue) -- after every row whose editor DID get an explicit,
+			// small row-number TabIndex -- so Tab could never reach a Button-rooted
+			// row (FwChooserField, FwReferenceVectorField's buttons) from within a
+			// TextBox-rooted one: nothing in that tier ever sorts after a lower
+			// explicit index. Propagating the row's TabIndex to every visual
+			// descendant closes that gap for any composite editor uniformly
+			// (confirmed via live-test Debug logging showing TabIndex=2147483647 on
+			// the TextBox that actually receives focus) (LT-22688).
+			ApplyRowTabIndex(editor, row);
 			if (editor is FwReferenceVectorField vector)
 			{
 				_vectors.Add(vector);
@@ -615,9 +644,14 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				// Matches legacy's per-slice multi-stop shape: Tab reaches the configure gear
 				// (and any other affordance) right after the field's own value (LT-22688).
 				foreach (var affordance in provider.HoverAffordances)
+				{
 					Avalonia.Input.KeyboardNavigation.SetTabIndex(affordance, row);
+					RegisterRowControl(row, affordance);
+				}
 			}
 
+			RegisterRowControl(row, editor);
+			RegisterRowControl(row, labelCell);
 			return new FieldContent { Content = editor, Label = labelCell };
 		}
 
