@@ -12,12 +12,13 @@ namespace SIL.FieldWorks.XWorks
 {
 	/// <summary>
 	/// The composer asks the DOMAIN whether a field applies to an object before emitting a row,
-	/// which legacy does through SliceFilter -> ICmObject.IsFieldRelevant.
+	/// through ICmObject.IsFieldRelevant -- the second of the two gates legacy's
+	/// SliceFilter.IncludeSlice applies (the id/filter-list gate is LT-22802).
 	///
 	/// Five classes override it in liblcm. MoStemAllomorph.StemName is covered by
-	/// AllomorphSectionCompositionTests; the detail-view relevant remainder is covered here.
-	/// VirtualOrdering also overrides it, but that class is not shown in a detail view, so there
-	/// is nothing for the composer to gate.
+	/// AllomorphSectionCompositionTests; VirtualOrdering is not shown in a detail view, so there
+	/// is nothing to gate. The rest are here, EXCEPT the InflectionClass limb that withholds the
+	/// row from a compound rule's left/right MSA, which no test reaches.
 	///
 	/// Every test runs with showHiddenFields TRUE. Relevance is not a hidden field -- legacy
 	/// withholds an irrelevant row even with Show Hidden Fields on -- and the flag also keeps an
@@ -128,6 +129,44 @@ namespace SIL.FieldWorks.XWorks
 
 			Assert.That(HasRow(fields, "InflectionClasses", affix.Hvo), Is.True,
 				"now there is something to choose from, so the row composes");
+		}
+
+		/// <summary>
+		/// MoStemMsa.FromPartsOfSpeech ("Attaches to Categories") is relevant only when the
+		/// owning entry has a proclitic or enclitic allomorph. The layout declares that part
+		/// visibility="always", so before the relevance gate it composed on EVERY stem MSA --
+		/// making this the gate's most visible consequence, and the one with the most rows
+		/// riding on it.
+		/// </summary>
+		[Test]
+		public void Compose_FromPartsOfSpeech_OnlyForAnEntryWithAClitic()
+		{
+			ILexEntry entry = null;
+			IMoStemMsa msa = null;
+			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
+			{
+				entry = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create();
+				msa = Cache.ServiceLocator.GetInstance<IMoStemMsaFactory>().Create();
+				entry.MorphoSyntaxAnalysesOC.Add(msa);
+			});
+
+			var fields = DetailComposer.Compose(entry, Cache, showHiddenFields: true).Model.Fields;
+			Assert.That(HasRow(fields, "FromPartsOfSpeech", msa.Hvo), Is.False,
+				"no clitic on the entry, so the domain says the row does not apply");
+
+			// The positive control: add a proclitic allomorph, change nothing else.
+			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
+			{
+				var clitic = Cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>().Create();
+				entry.AlternateFormsOS.Add(clitic);
+				clitic.Form.set_String(Cache.DefaultVernWs,
+					TsStringUtils.MakeString("clitico", Cache.DefaultVernWs));
+				clitic.MorphTypeRA = MorphTypes.GetObject(MoMorphTypeTags.kguidMorphProclitic);
+			});
+
+			fields = DetailComposer.Compose(entry, Cache, showHiddenFields: true).Model.Fields;
+			Assert.That(HasRow(fields, "FromPartsOfSpeech", msa.Hvo), Is.True,
+				"the same row on the same object composes once the entry has a clitic");
 		}
 
 		/// <summary>
