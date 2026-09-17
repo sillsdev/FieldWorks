@@ -803,6 +803,9 @@ namespace SIL.FieldWorks.XWorks
 			var field = FindTopLevelMovableRow(out var location);
 			Assert.That(field, Is.Not.Null,
 				"the entry layout must still compose at least one movable top-level row");
+			// The subject was located in the SHIPPED model; clear any stored override so the
+			// menu's own location, which compiles with overrides applied, agrees with it.
+			DeleteOverrideFor(field);
 			var up = location.CanMoveUp;
 			var expected = ViewDefinitionOverrideEditor.ComputeMovedOrder(
 				location.SiblingOrder, location.Index, up);
