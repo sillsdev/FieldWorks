@@ -536,10 +536,15 @@ namespace SIL.FieldWorks.XWorks
 			private bool HideWhenEmpty(ViewNode node) => node.Visibility == ViewVisibility.IfData && !_showHidden;
 
 			/// <summary>
-			/// Whether the DOMAIN says this field does not apply to this object, which legacy
-			/// asks before building a slice (SliceFilter -> ICmObject.IsFieldRelevant). StemName
-			/// is irrelevant on a clitic or particle, Position on a non-infix, InflectionClasses
-			/// on some affix forms.
+			/// Whether the DOMAIN says this field does not apply to this object. StemName is
+			/// irrelevant on a clitic or particle, Position on a non-infix, InflectionClasses on
+			/// some affix forms, FromPartsOfSpeech on an entry with no clitic.
+			///
+			/// This is the SECOND of the two gates legacy's SliceFilter.IncludeSlice applies, not
+			/// the whole of it. The first looks the slice's id up in the tool's filter list and
+			/// withholds the row when it is listed; that one is NOT implemented here, because
+			/// the id never reaches the composer -- the importer does not carry it, and
+			/// ViewNode has no Id. Tracked as LT-22802.
 			///
 			/// Not the same as hidden: show-hidden-fields does NOT reveal an irrelevant field, so
 			/// this is checked whatever _showHidden says. Legacy's propsToMonitor set is
