@@ -788,6 +788,91 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
+		// -----------------------------------------------------------------
+		// Move Field
+		// -----------------------------------------------------------------
+
+		// A row at the TOP LEVEL of its own layout has no parent StableId, but move
+		// enablement reads only the sibling order, so the item enables. The write must
+		// then reorder the ROOT list, keyed on an empty id.
+		[Test]
+		public void MoveField_OnATopLevelRow_ReordersTheRootList()
+		{
+			// Chosen by SHAPE, not by name: a named row that stops being movable would leave this
+			// test passing on a move it never made.
+			var field = FindTopLevelMovableRow(out var location);
+			Assert.That(field, Is.Not.Null,
+				"the entry layout must still compose at least one movable top-level row");
+			// The subject was located in the SHIPPED model; clear any stored override so the
+			// menu's own location, which compiles with overrides applied, agrees with it.
+			DeleteOverrideFor(field);
+			var up = location.CanMoveUp;
+			var expected = ViewDefinitionOverrideEditor.ComputeMovedOrder(
+				location.SiblingOrder, location.Index, up);
+			TestContext.WriteLine($"class={field.ClassName} layout={field.LayoutName} "
+				+ $"template={ViewDefinitionOverrideEditor.StripRuntimeSuffix(field.StableId)} "
+				+ $"index={location.Index} up={up}");
+			try
+			{
+				EnsureAdapter(field.ObjectHvo);
+				var items = BuildItemsWithOverrideInterceptor(
+					new[] { "mnuDataTree-Object" }, field);
+				var item = FindItem(items, up ? "Move Up" : "Move Down");
+				Assert.That(item, Is.Not.Null, "the Move Field submenu must offer the item");
+				Assert.That(item.IsEnabled, Is.True,
+					"a row with somewhere to move must enable its Move item");
+
+				item.Execute();
+				DrainMediatorAndIdleQueues();
+
+				var stored = ReadOverrideFor(field);
+				Assert.That(stored, Is.Not.Null,
+					"an enabled Move must write a project override, not silently do nothing");
+				var op = stored.Operations.Single(o =>
+					o.Kind == ViewOverrideOperationKind.ReorderChildren);
+				Assert.That(op.StableId, Is.Empty,
+					"a top-level move reorders the root list, keyed on the empty id");
+				Assert.That(op.ChildOrder, Is.EqualTo(expected),
+					"the stored order must be the siblings with this row swapped one position");
+			}
+			finally
+			{
+				DeleteOverrideFor(field);
+			}
+		}
+
+		// The first composed row its own layout places at the top level (LocateTarget
+		// reports no parent) and that can move, found through the compile + locate pair
+		// AddOverrideCommands uses.
+		private DetailField FindTopLevelMovableRow(out ViewNodeLocation location)
+		{
+			foreach (var field in DetailComposer.Compose(m_entry, Cache).Model.Fields)
+			{
+				if (string.IsNullOrEmpty(field.ClassName)
+					|| string.IsNullOrEmpty(field.LayoutName)
+					|| !Cache.ServiceLocator.ObjectRepository.TryGetObject(
+						field.ObjectHvo, out var obj))
+				{
+					continue;
+				}
+
+				var model = DetailComposer.CompileForObject(Cache, obj, field.LayoutName);
+				var located = model == null
+					? null
+					: ViewDefinitionOverrideEditor.LocateTarget(model,
+						ViewDefinitionOverrideEditor.StripRuntimeSuffix(field.StableId));
+				if (located != null && located.ParentStableId == null
+					&& (located.CanMoveUp || located.CanMoveDown))
+				{
+					location = located;
+					return field;
+				}
+			}
+
+			location = null;
+			return null;
+		}
+
 		// The host's transient reveal set, read through the same seam the production compose
 		// uses.
 		private HashSet<string> RevealedFields()
