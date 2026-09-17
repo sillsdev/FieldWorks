@@ -85,50 +85,47 @@ namespace SIL.FieldWorks.XWorks
 			get { return m_activeUIFramework == UIFramework.Avalonia; }
 		}
 
-		// Memoized: the tool's configuration cannot change while the view lives. Null until read,
-		// then either the id set or an empty set (which the composer treats as "filter nothing").
+		// Memoized: the tool's configuration cannot change while the view lives.
 		private ISet<string> m_hiddenSliceIds;
 
-		/// <summary>
-		/// The slice ids this tool's filter list withholds, read from the filterPath its own
-		/// configuration names. Empty for a tool that configures no filterPath, and empty when
-		/// the file cannot be read: a detail view showing an extra row beats one that will not
-		/// open.
-		/// </summary>
+		/// <summary>The slice ids this tool's filter list withholds.</summary>
 		private ISet<string> HiddenSliceIds
+			=> m_hiddenSliceIds ?? (m_hiddenSliceIds = ReadSliceFilterIds(m_configurationParameters));
+
+		/// <summary>
+		/// The slice ids named by the filter list a tool's configuration points at through its
+		/// filterPath. Empty for a configuration that names none, and empty when the file cannot
+		/// be read: a detail view showing an extra row beats one that will not open.
+		/// </summary>
+		/// <param name="configuration">The tool's configuration parameters; null yields an empty
+		/// set.</param>
+		internal static ISet<string> ReadSliceFilterIds(XmlNode configuration)
 		{
-			get
+			var ids = new HashSet<string>(StringComparer.Ordinal);
+			try
 			{
-				if (m_hiddenSliceIds != null)
-					return m_hiddenSliceIds;
+				var filterPath = XmlUtils.GetOptionalAttributeValue(configuration, "filterPath");
+				if (string.IsNullOrEmpty(filterPath))
+					return ids;
+				if (!Platform.IsWindows)
+					filterPath = filterPath.Replace(@"\", "/");
 
-				m_hiddenSliceIds = new HashSet<string>(StringComparer.Ordinal);
-				try
+				var document = new XmlDocument();
+				document.Load(FwDirectoryFinder.GetCodeFile(filterPath));
+				foreach (XmlNode node in document.SelectNodes("SliceFilter/node"))
 				{
-					var filterPath = XmlUtils.GetOptionalAttributeValue(
-						m_configurationParameters, "filterPath");
-					if (string.IsNullOrEmpty(filterPath))
-						return m_hiddenSliceIds;
-					if (!Platform.IsWindows)
-						filterPath = filterPath.Replace(@"\", "/");
-
-					var document = new XmlDocument();
-					document.Load(FwDirectoryFinder.GetCodeFile(filterPath));
-					foreach (XmlNode node in document.SelectNodes("SliceFilter/node"))
-					{
-						var id = XmlUtils.GetOptionalAttributeValue(node, "id");
-						if (!string.IsNullOrEmpty(id))
-							m_hiddenSliceIds.Add(id);
-					}
+					var id = XmlUtils.GetOptionalAttributeValue(node, "id");
+					if (!string.IsNullOrEmpty(id))
+						ids.Add(id);
 				}
-				catch (Exception e)
-				{
-					Logger.WriteError("Reading the tool's slice filter failed; no row is "
-						+ "withheld by it.", e);
-				}
-
-				return m_hiddenSliceIds;
 			}
+			catch (Exception e)
+			{
+				Logger.WriteError("Reading the tool's slice filter failed; no row is withheld "
+					+ "by it.", e);
+			}
+
+			return ids;
 		}
 
 		/// <summary>
