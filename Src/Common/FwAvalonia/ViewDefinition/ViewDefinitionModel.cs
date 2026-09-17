@@ -386,8 +386,10 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 			ViewStringList enumStringList = null,
 			IReadOnlyList<string> visibleWritingSystems = null,
 			bool toggleValue = false,
-			bool reorder = false)
+			bool reorder = false,
+			string sliceId = null)
 		{
+			SliceId = sliceId;
 			Reorder = reorder;
 			ToggleValue = toggleValue;
 			VisibleWritingSystems = visibleWritingSystems;
@@ -429,6 +431,13 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 		public string StableId { get; }
 
 		public ViewNodeKind Kind { get; }
+
+		/// <summary>
+		/// The slice's authored <c>id=</c>, the name a tool's filter list uses to withhold the
+		/// row. Null on the nodes that author none, which is most of them. NOT
+		/// <see cref="StableId"/>, which is synthesized and always present.
+		/// </summary>
+		public string SliceId { get; }
 
 		public string Label { get; }
 

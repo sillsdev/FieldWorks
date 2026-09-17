@@ -12,8 +12,8 @@ namespace SIL.FieldWorks.XWorks
 {
 	/// <summary>
 	/// The composer asks the DOMAIN whether a field applies to an object before emitting a row,
-	/// through ICmObject.IsFieldRelevant -- the second of the two gates legacy's
-	/// SliceFilter.IncludeSlice applies (the id/filter-list gate is LT-22802).
+	/// through ICmObject.IsFieldRelevant. A tool's own filter list is a separate gate, covered
+	/// by DetailSliceFilterTests.
 	///
 	/// Five classes override it in liblcm. MoStemAllomorph.StemName is covered by
 	/// AllomorphSectionCompositionTests; VirtualOrdering is not shown in a detail view, so there

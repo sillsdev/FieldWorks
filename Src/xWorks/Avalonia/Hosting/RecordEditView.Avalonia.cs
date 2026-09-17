@@ -85,6 +85,52 @@ namespace SIL.FieldWorks.XWorks
 			get { return m_activeUIFramework == UIFramework.Avalonia; }
 		}
 
+		// Memoized: the tool's configuration cannot change while the view lives. Null until read,
+		// then either the id set or an empty set (which the composer treats as "filter nothing").
+		private ISet<string> m_hiddenSliceIds;
+
+		/// <summary>
+		/// The slice ids this tool's filter list withholds, read from the filterPath its own
+		/// configuration names. Empty for a tool that configures no filterPath, and empty when
+		/// the file cannot be read: a detail view showing an extra row beats one that will not
+		/// open.
+		/// </summary>
+		private ISet<string> HiddenSliceIds
+		{
+			get
+			{
+				if (m_hiddenSliceIds != null)
+					return m_hiddenSliceIds;
+
+				m_hiddenSliceIds = new HashSet<string>(StringComparer.Ordinal);
+				try
+				{
+					var filterPath = XmlUtils.GetOptionalAttributeValue(
+						m_configurationParameters, "filterPath");
+					if (string.IsNullOrEmpty(filterPath))
+						return m_hiddenSliceIds;
+					if (!Platform.IsWindows)
+						filterPath = filterPath.Replace(@"\", "/");
+
+					var document = new XmlDocument();
+					document.Load(FwDirectoryFinder.GetCodeFile(filterPath));
+					foreach (XmlNode node in document.SelectNodes("SliceFilter/node"))
+					{
+						var id = XmlUtils.GetOptionalAttributeValue(node, "id");
+						if (!string.IsNullOrEmpty(id))
+							m_hiddenSliceIds.Add(id);
+					}
+				}
+				catch (Exception e)
+				{
+					Logger.WriteError("Reading the tool's slice filter failed; no row is "
+						+ "withheld by it.", e);
+				}
+
+				return m_hiddenSliceIds;
+			}
+		}
+
 		/// <summary>
 		/// Auto-save: settles any open fenced edit session -- commit when validation is
 		/// clean, roll back otherwise. The holder guards internally (no-op when nothing is open),
@@ -360,7 +406,8 @@ namespace SIL.FieldWorks.XWorks
 					? DetailComposer.Compose(lexEntry, Cache, showHidden,
 						overrides: ResolveViewOverride,
 						showAllWritingSystemsFields: m_showAllWsFields,
-						writingSystemFocused: OnDetailWritingSystemFocused)
+						writingSystemFocused: OnDetailWritingSystemFocused,
+						hiddenSliceIds: HiddenSliceIds)
 					// Non-entry roots compose against the tool's configured layout
 					// (m_layoutName, default "Normal"); a type-selected layout (m_layoutChoiceField, e.g.
 					// Notebook RnGenericRec keyed on "Type") resolves to the right variant inside Compose.
@@ -369,7 +416,8 @@ namespace SIL.FieldWorks.XWorks
 						overrides: ResolveViewOverride,
 						layoutChoiceField: m_layoutChoiceField,
 						showAllWritingSystemsFields: m_showAllWsFields,
-						writingSystemFocused: OnDetailWritingSystemFocused);
+						writingSystemFocused: OnDetailWritingSystemFocused,
+						hiddenSliceIds: HiddenSliceIds);
 				if (composed != null)
 				{
 					detail = composed.Model;

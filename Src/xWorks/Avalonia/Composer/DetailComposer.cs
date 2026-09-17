@@ -117,10 +117,12 @@ namespace SIL.FieldWorks.XWorks
 			SlicePluginRegistry plugins = null,
 			ViewDefinitionOverrideResolver overrides = null,
 			ISet<string> showAllWritingSystemsFields = null,
-			Action<string> writingSystemFocused = null)
+			Action<string> writingSystemFocused = null,
+			ISet<string> hiddenSliceIds = null)
 			=> Compose((ICmObject)entry, cache, "Normal", showHiddenFields, plugins, overrides,
 				showAllWritingSystemsFields: showAllWritingSystemsFields,
-				writingSystemFocused: writingSystemFocused);
+				writingSystemFocused: writingSystemFocused,
+				hiddenSliceIds: hiddenSliceIds);
 
 		/// <summary>
 		/// Compose the structured detail view for ANY record root + starting layout -- the
@@ -141,7 +143,8 @@ namespace SIL.FieldWorks.XWorks
 			ViewDefinitionOverrideResolver overrides = null,
 			string layoutChoiceField = null,
 			ISet<string> showAllWritingSystemsFields = null,
-			Action<string> writingSystemFocused = null)
+			Action<string> writingSystemFocused = null,
+			ISet<string> hiddenSliceIds = null)
 		{
 			if (obj == null) throw new ArgumentNullException(nameof(obj));
 			if (cache == null) throw new ArgumentNullException(nameof(cache));
@@ -162,7 +165,7 @@ namespace SIL.FieldWorks.XWorks
 			IDetailEditContext composedContext = null;
 			var state = new ComposeState(cache, showHiddenFields,
 				plugins ?? SlicePluginRegistry.Default, () => composedContext, overrides,
-				showAllWritingSystemsFields, writingSystemFocused);
+				showAllWritingSystemsFields, writingSystemFocused, hiddenSliceIds);
 			state.EnterModel(root);
 			foreach (var node in root.Roots)
 				state.Walk(node, obj, 0);
@@ -352,8 +355,10 @@ namespace SIL.FieldWorks.XWorks
 				SlicePluginRegistry plugins, Func<IDetailEditContext> editContextAccessor,
 				ViewDefinitionOverrideResolver overrides = null,
 				ISet<string> showAllWritingSystemsFields = null,
-				Action<string> writingSystemFocused = null)
+				Action<string> writingSystemFocused = null,
+				ISet<string> hiddenSliceIds = null)
 			{
+				_hiddenSliceIds = hiddenSliceIds;
 				_cache = cache;
 				_showHidden = showHiddenFields;
 				_plugins = plugins;
@@ -540,12 +545,6 @@ namespace SIL.FieldWorks.XWorks
 			/// irrelevant on a clitic or particle, Position on a non-infix, InflectionClasses on
 			/// some affix forms, FromPartsOfSpeech on an entry with no clitic.
 			///
-			/// This is the SECOND of the two gates legacy's SliceFilter.IncludeSlice applies, not
-			/// the whole of it. The first looks the slice's id up in the tool's filter list and
-			/// withholds the row when it is listed; that one is NOT implemented here, because
-			/// the id never reaches the composer -- the importer does not carry it, and
-			/// ViewNode has no Id. Tracked as LT-22802.
-			///
 			/// Not the same as hidden: show-hidden-fields does NOT reveal an irrelevant field, so
 			/// this is checked whatever _showHidden says. Legacy's propsToMonitor set is
 			/// discarded -- it exists so a live slice can re-evaluate when the property it
@@ -577,10 +576,26 @@ namespace SIL.FieldWorks.XWorks
 				return !obj.IsFieldRelevant(flid, _propsToMonitor);
 			}
 
+			// The tool's filter list, by authored slice id; null when the tool configures none.
+			private readonly ISet<string> _hiddenSliceIds;
+
+			/// <summary>
+			/// Whether the TOOL withholds this row: a tool's configuration can name slice ids
+			/// to leave out, and a node carrying one of them is dropped. Checked before the
+			/// node kind is dispatched, so a withheld node takes its subtree with it.
+			/// </summary>
+			private bool IsFilteredOutByTool(ViewNode node)
+				=> _hiddenSliceIds != null
+					&& !string.IsNullOrEmpty(node?.SliceId)
+					&& _hiddenSliceIds.Contains(node.SliceId);
+
 			public void Walk(ViewNode node, ICmObject obj, int depth)
 			{
-				if (IsHidden(node) || depth > MaxDepth || IsIrrelevantForObject(node, obj))
+				if (IsHidden(node) || depth > MaxDepth || IsFilteredOutByTool(node)
+					|| IsIrrelevantForObject(node, obj))
+				{
 					return;
+				}
 
 				switch (node.Kind)
 				{
