@@ -34,7 +34,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 		public static readonly HashSet<string> HandledSliceAttributes =
 			new HashSet<string>(System.StringComparer.Ordinal)
 			{
-				"label", "abbr", "field", "ws", "editor", "visibility", "expansion",
+				"id", "label", "abbr", "field", "ws", "editor", "visibility", "expansion",
 				"localizationKey", "labelId", "automationId", "routing", "menu", "contextMenu", "hotlinks",
 				"forVariant", "visibleWritingSystems", "reorder"
 			};
@@ -394,7 +394,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 							localizationKey, automationId, routing, boldEmphasis, fontScalePercent,
 							menuId, contextMenuId, hotlinksId,
 							chooserLinks: chooserLinks.Count > 0 ? chooserLinks : null,
-							visibleWritingSystems: visibleWss);
+							visibleWritingSystems: visibleWss,
+							sliceId: Attr(contentEl, "id"));
 					}
 
 					// Dynamic custom slices keep their legacy class/assembly identity so the host can
@@ -411,6 +412,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 						chooserLinks: chooserLinks.Count > 0 ? chooserLinks : null,
 						enumStringList: enumStringList,
 						visibleWritingSystems: visibleWss,
+						// A tool's filter list withholds rows by this authored id.
+						sliceId: Attr(contentEl, "id"),
 						// Legacy toggleValue= on a boolean slice (the displayed checkbox is the
 						// logical inverse of the stored property); carried so the composer inverts read+write.
 						toggleValue: ParseOptionalBool(Attr(contentEl, "toggleValue")) ?? false,
