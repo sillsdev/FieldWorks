@@ -163,8 +163,17 @@ jobs:
         run: |
           .\build.ps1 -BuildInstaller -Configuration Release -Verbosity detailed -BuildTests -MsBuildArgs @("/bl") *>&1 | Tee-Object -FilePath build.log
 
+      # TEMPORARY DIAGNOSTIC FOR LT-22801 -- DO NOT MERGE.
+      # Branch ci-artifact-base-installer-lt22801 makes a test failure
+      # non-fatal so the base installer still gets staged, signed, and
+      # uploaded as a workflow artifact, letting us pull down a candidate
+      # build without publishing to the production S3 update channel or
+      # tagging the repo. Revert continue-on-error below, and remove the
+      # "Upload base installer artifact" step further down, before this
+      # workflow is ever merged to main.
       - name: Run tests
         shell: powershell
+        continue-on-error: true
         run: |
           .\test.ps1 -Configuration Release -NoBuild -TestFilter 'TestCategory!=DesktopRequired&TestCategory!=RenderBenchmark' *>&1 | Tee-Object -FilePath test.log
 
@@ -230,6 +239,19 @@ jobs:
             files-folder-filter: FieldWorks_*.exe
             description:  'FieldWorks Installer'
             description-url: 'https://software.sil.org/fieldworks/'
+
+      # TEMPORARY DIAGNOSTIC FOR LT-22801 -- DO NOT MERGE. See the note above
+      # the "Run tests" step. This step is unrelated to make_release and
+      # never touches S3, tags, or releases.
+      - name: Upload base installer artifact (LT-22801 diagnostic)
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          if-no-files-found: warn
+          name: base-installer-lt22801
+          path: |
+            Installers/FieldWorks_*.exe
+          retention-days: 5
 
       - name: Configure AWS credentials
         if: ${{ inputs.make_release == 'true' }}
