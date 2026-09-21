@@ -1,6 +1,7 @@
 Set-StrictMode -Version Latest
 
-# Patch component identities from the base and immediate previous patch must remain present.
+# File-backed components under MSI APPFOLDER must remain present across the base
+# and immediate previous patch.
 
 $script:UpdateBucket = 'https://flex-updates.s3.amazonaws.com'
 $script:PatchPrefix = 'jobs/FieldWorks-Win-all-Release-Patch/'
@@ -29,17 +30,64 @@ function Invoke-MsiQuery {
 	return , $rows
 }
 
+function Get-MsiDirectoryName {
+	<#
+	.SYNOPSIS
+	Extracts the target directory name from an MSI DefaultDir value.
+	#>
+	param(
+		[Parameter(Mandatory = $true)][AllowEmptyString()][string]$DefaultDir
+	)
+	$target = ($DefaultDir -split ':', 2)[0]
+	if ([string]::IsNullOrEmpty($target) -or $target -eq '.') { return '' }
+	return ($target -split '\|', 2)[-1]
+}
+
+function Get-RelativeMsiFilePath {
+	<#
+	.SYNOPSIS
+	Resolves a file path relative to the MSI APPFOLDER directory.
+	#>
+	param(
+		[Parameter(Mandatory = $true)][hashtable]$Directories,
+		[Parameter(Mandatory = $true)][string]$DirectoryId,
+		[Parameter(Mandatory = $true)][AllowEmptyString()][string]$FileName
+	)
+	if ([string]::IsNullOrWhiteSpace($FileName)) { return $null }
+	if ($DirectoryId -ieq 'APPFOLDER') { return $FileName }
+
+	$segments = New-Object System.Collections.Generic.List[string]
+	$visited = @{}
+	$current = $DirectoryId
+	while ($current -and $current -ine 'APPFOLDER') {
+		if ($visited.ContainsKey($current) -or -not $Directories.ContainsKey($current)) { return $null }
+		$visited[$current] = $true
+		$directory = $Directories[$current]
+		if (-not [string]::IsNullOrWhiteSpace($directory.Name)) { $segments.Insert(0, $directory.Name) }
+		$current = $directory.Parent
+	}
+	if ($current -ine 'APPFOLDER') { return $null }
+	$segments.Add($FileName)
+	return ($segments -join '/')
+}
+
 function Get-MsiComponents {
 	<#
 	.SYNOPSIS
-	Returns the components of an MSI keyed by ComponentId, each with its key-path file name and
-	feature.
+	Returns file-backed components under MSI APPFOLDER keyed by ComponentId, each
+	with their relative path and feature.
 	#>
 	param([Parameter(Mandatory = $true)][string]$MsiPath)
 
 	$installer = New-Object -ComObject WindowsInstaller.Installer
 	# 0 = msiOpenDatabaseModeReadOnly
 	$db = $installer.GetType().InvokeMember('OpenDatabase', 'InvokeMethod', $null, $installer, @((Resolve-Path -LiteralPath $MsiPath).Path, 0))
+
+	$directories = @{}
+	foreach ($row in (Invoke-MsiQuery -Database $db -Sql 'SELECT `Directory`,`Directory_Parent`,`DefaultDir` FROM `Directory`' -Columns 3)) {
+		$name = Get-MsiDirectoryName -DefaultDir ([string]$row[2])
+		$directories[$row[0]] = [pscustomobject]@{ Name = $name; Parent = $row[1] }
+	}
 
 	$fileNames = @{}
 	foreach ($row in (Invoke-MsiQuery -Database $db -Sql 'SELECT `File`,`FileName` FROM `File`' -Columns 2)) {
@@ -51,10 +99,10 @@ function Get-MsiComponents {
 		$features[$row[1]] = $row[0]
 	}
 	$components = @{}
-	foreach ($row in (Invoke-MsiQuery -Database $db -Sql 'SELECT `Component`,`ComponentId`,`KeyPath` FROM `Component`' -Columns 3)) {
-		if ([string]::IsNullOrEmpty($row[1])) { continue }
-		$file = ''
-		if ($fileNames.ContainsKey($row[2])) { $file = $fileNames[$row[2]] }
+	foreach ($row in (Invoke-MsiQuery -Database $db -Sql 'SELECT `Component`,`ComponentId`,`Directory_`,`KeyPath` FROM `Component`' -Columns 4)) {
+		if ([string]::IsNullOrEmpty($row[1]) -or [string]::IsNullOrEmpty($row[2]) -or -not $fileNames.ContainsKey($row[3])) { continue }
+		$file = Get-RelativeMsiFilePath -Directories $directories -DirectoryId $row[2] -FileName $fileNames[$row[3]]
+		if ($null -eq $file) { continue }
 		$feature = ''
 		if ($features.ContainsKey($row[0])) { $feature = $features[$row[0]] }
 		$components[$row[1].ToUpperInvariant()] = [pscustomobject]@{
@@ -71,7 +119,7 @@ function Get-MsiComponents {
 function Read-ComponentLedger {
 	<#
 	.SYNOPSIS
-	Reads one ledger into a table keyed by ComponentId.
+	Reads a ledger of file-backed components under MSI APPFOLDER keyed by ComponentId.
 	#>
 	param([Parameter(Mandatory = $true)][AllowEmptyCollection()][string[]]$Path)
 
@@ -104,6 +152,10 @@ function Read-ComponentLedger {
 }
 
 function Write-ComponentLedger {
+	<#
+	.SYNOPSIS
+	Writes file-backed components under MSI APPFOLDER to a tab-separated ledger.
+	#>
 	param(
 		[Parameter(Mandatory = $true)][string]$Path,
 		[Parameter(Mandatory = $true)][object[]]$Entries,
@@ -156,6 +208,10 @@ function Get-PublishedPatchKeys {
 }
 
 function Save-PublishedFile {
+	<#
+	.SYNOPSIS
+	Downloads one published file to a local directory.
+	#>
 	param(
 		[Parameter(Mandatory = $true)][string]$Key,
 		[Parameter(Mandatory = $true)][string]$Directory
@@ -166,12 +222,20 @@ function Save-PublishedFile {
 }
 
 function Get-PatchVersionFromKey {
+	<#
+	.SYNOPSIS
+	Parses a patch version from a published object key.
+	#>
 	param([Parameter(Mandatory = $true)][string]$Key)
 	# FieldWorks_<version>_b<base>_<arch>.<ext>
 	return [version]((Split-Path $Key -Leaf) -split '_')[1]
 }
 
 function Select-PreviousPublishedPatch {
+	<#
+	.SYNOPSIS
+	Selects the previous patch and matching ledger for a base and version.
+	#>
 	param(
 		[Parameter(Mandatory = $true)][string[]]$PatchKeys,
 		[string[]]$LedgerKeys = @(),
@@ -224,6 +288,10 @@ function Select-PreviousPublishedPatch {
 }
 
 function Format-RemovedComponentRemediation {
+	<#
+	.SYNOPSIS
+	Formats remediation for file-backed components under MSI APPFOLDER missing from a patch.
+	#>
 	param([Parameter(Mandatory = $true)][object[]]$Dropped)
 	$lines = New-Object System.Collections.Generic.List[string]
 	$lines.Add('Remediation:')
@@ -237,6 +305,10 @@ function Format-RemovedComponentRemediation {
 }
 
 function Get-UpdateMinusBaseLedgerEntries {
+	<#
+	.SYNOPSIS
+	Returns update file-backed components under MSI APPFOLDER absent from the base MSI.
+	#>
 	param(
 		[Parameter(Mandatory = $true)][hashtable]$Master,
 		[Parameter(Mandatory = $true)][hashtable]$Update
@@ -256,6 +328,11 @@ function Get-UpdateMinusBaseLedgerEntries {
 }
 
 function Get-MissingComponents {
+	<#
+	.SYNOPSIS
+	Finds required file-backed components under MSI APPFOLDER absent from the
+	available set.
+	#>
 	param(
 		[Parameter(Mandatory = $true)][hashtable]$Required,
 		[Parameter(Mandatory = $true)][hashtable]$Available
@@ -268,6 +345,11 @@ function Get-MissingComponents {
 }
 
 function Format-DroppedComponentMessage {
+	<#
+	.SYNOPSIS
+	Formats a diagnostic for file-backed components under MSI APPFOLDER
+	dropped by a patch.
+	#>
 	param(
 		[Parameter(Mandatory = $true)][string]$PatchVersion,
 		[Parameter(Mandatory = $true)][string]$BaseBuildNumber,
@@ -275,7 +357,7 @@ function Format-DroppedComponentMessage {
 	)
 	$lines = New-Object System.Collections.Generic.List[string]
 	foreach ($entry in $Dropped) {
-		$lines.Add("Patch $PatchVersion drops component $($entry.ComponentId)")
+		$lines.Add("Patch $PatchVersion drops file-backed component $($entry.ComponentId)")
 		$lines.Add("  file:    $($entry.File)   (feature $($entry.Feature))")
 		$lines.Add("  base:    $BaseBuildNumber")
 	}
@@ -283,4 +365,4 @@ function Format-DroppedComponentMessage {
 	return ($lines -join [Environment]::NewLine)
 }
 
-Export-ModuleMember -Function Get-MsiComponents, Read-ComponentLedger, Write-ComponentLedger, Get-UpdateBucketKeys, Get-PublishedPatchKeys, Save-PublishedFile, Get-PatchVersionFromKey, Select-PreviousPublishedPatch, Get-UpdateMinusBaseLedgerEntries, Get-MissingComponents, Format-RemovedComponentRemediation, Format-DroppedComponentMessage
+Export-ModuleMember -Function Get-MsiDirectoryName, Get-RelativeMsiFilePath, Get-MsiComponents, Read-ComponentLedger, Write-ComponentLedger, Get-UpdateBucketKeys, Get-PublishedPatchKeys, Save-PublishedFile, Get-PatchVersionFromKey, Select-PreviousPublishedPatch, Get-UpdateMinusBaseLedgerEntries, Get-MissingComponents, Format-RemovedComponentRemediation, Format-DroppedComponentMessage

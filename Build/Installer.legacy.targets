@@ -115,8 +115,8 @@
 				in SIL.LCModel 11.0.0-beta0176, so nothing copies StructureMap.dll to the output any more. -->
 			<RemovedSinceLastBase Include="$(dir-outputBase)/StructureMap.dll" />
 			<!--
-				Patches on base 1452 shipped this until the Semi.Avalonia switch dropped it
-				(LT-22801). Remove before the next base (LT-22807).
+				The zero-byte Avalonia.Themes.Fluent.dll stand-in preserves its component identity
+				on patches built from base 1452.
 			-->
 			<RemovedSinceLastBase Include="$(dir-outputBase)/Avalonia.Themes.Fluent.dll" />
 		</ItemGroup>

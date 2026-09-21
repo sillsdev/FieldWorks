@@ -75,6 +75,21 @@ try {
             Feature     = 'Complete'
         }
     }
+    Assert-Equal (Get-MsiDirectoryName -DefaultDir 'short|Long Name:SourceDir') 'Long Name' 'Directory parsing must use the target long name before the source portion.'
+    Assert-Equal (Get-MsiDirectoryName -DefaultDir 'TargetDir:SourceDir') 'TargetDir' 'Directory parsing must retain a target name without a short name.'
+    Assert-Equal (Get-MsiDirectoryName -DefaultDir '.') '' 'Dot directories must be transparent.'
+    $directories = @{
+        APPFOLDER = [pscustomobject]@{ Name = 'App'; Parent = '' }
+        Help      = [pscustomobject]@{ Name = 'Help'; Parent = 'APPFOLDER' }
+        Nested    = [pscustomobject]@{ Name = 'Nested'; Parent = 'Help' }
+        Dot       = [pscustomobject]@{ Name = ''; Parent = 'Help' }
+        Outside   = [pscustomobject]@{ Name = 'Outside'; Parent = '' }
+    }
+    Assert-Equal (Get-RelativeMsiFilePath -Directories $directories -DirectoryId 'APPFOLDER' -FileName 'Root.dll') 'Root.dll' 'Files directly under APPFOLDER must keep their basename.'
+    Assert-Equal (Get-RelativeMsiFilePath -Directories $directories -DirectoryId 'Nested' -FileName 'Nested.dll') 'Help/Nested/Nested.dll' 'Nested files must keep their path below APPFOLDER.'
+    Assert-Equal (Get-RelativeMsiFilePath -Directories $directories -DirectoryId 'Dot' -FileName 'Dot.dll') 'Help/Dot.dll' 'Dot directories must continue to their parent.'
+    Assert-Equal (Get-RelativeMsiFilePath -Directories $directories -DirectoryId 'Outside' -FileName 'Outside.dll') $null 'Files outside APPFOLDER must be excluded.'
+
     $update = @{
         '{33333333-3333-3333-3333-333333333333}' = $master['{33333333-3333-3333-3333-333333333333}']
         '{44444444-4444-4444-4444-444444444444}' = [pscustomobject]@{

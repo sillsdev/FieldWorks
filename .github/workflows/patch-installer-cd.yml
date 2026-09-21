@@ -39,7 +39,7 @@ on:
 # on Jenkins-built bases.
       base_release:
         description: 'The github release for the base build artifacts (separate only for bootstrapping; should be removed after 9.3 is the stable)'
-        default: 'build-1452' # When updating this, update base_build_number and their fallbacks below, too. Before cutting a new base, follow Docs/workflows/patch-component-removal.md.
+        default: 'build-1452' # Must match base_build_number and its fallbacks.
       base_build_number:
         description: 'The base build number'
         required: false
@@ -333,4 +333,3 @@ jobs:
             ./Output/**/*.log.stderr
             ./PatchableInstaller/CreateUpdatePatch/Master/AppHarvest.wxs
             ./PatchableInstaller/CreateUpdatePatch/Update/AppHarvest.wxs
-            ./BuildDir/*_components.tsv
