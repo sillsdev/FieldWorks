@@ -105,10 +105,8 @@
 		/>
 	</Target>
 	<!--
-		Removing files breaks the ability to patch and requires a new Base build to update.
-		To improve our user experience we may want to delay making a new Base build so this target adds zero byte files to
-		replace files that were removed (for instance during a library update).
-		A base build should warn if we have 'RemovedSinceLastBase' items to help us remember to clear these out.
+		Zero-byte stand-ins for files the base or a patch on it shipped, so patching keeps working
+		until the next Base build. A base build warns while any remain.
 	-->
 	<Target Name="RescuePatching">
 		<ItemGroup>
@@ -116,6 +114,11 @@
 			<!-- liblcm swapped its IoC container from StructureMap to Microsoft.Extensions.DependencyInjection
 				in SIL.LCModel 11.0.0-beta0176, so nothing copies StructureMap.dll to the output any more. -->
 			<RemovedSinceLastBase Include="$(dir-outputBase)/StructureMap.dll" />
+			<!--
+				Patches on base 1452 shipped this until the Semi.Avalonia switch dropped it
+				(LT-22801). Remove before the next base (LT-22807).
+			-->
+			<RemovedSinceLastBase Include="$(dir-outputBase)/Avalonia.Themes.Fluent.dll" />
 		</ItemGroup>
 		<WriteLinesToFile
 			File="%(RemovedSinceLastBase.FullPath)"

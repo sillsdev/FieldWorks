@@ -17,6 +17,7 @@ Minimal installer guidance for agents.
 	- **Stopgap fix (patch against the existing base):** add the dropped file to the **`RemovedSinceLastBase`** item list in the **`RescuePatching`** target of **`Build/Installer.legacy.targets`** (runs via `BuildProduct`). It writes a zero-byte placeholder into the build output (**`$(dir-outputBase)`**) so the file appears in both harvests and `pyro` treats it as *changed*, not *removed*. Mirror the existing entries (`ManagedVwWindow.manifest`, `SimpleRootSite.manifest`) and add **only** the basenames actually dropped — usually just the `*.manifest`, not a still-shipping `.dll`.
 	- **Permanent fix:** cut a new **Base** build so the file is absent from Master too, then delete the now-stale `RemovedSinceLastBase` entries (the target comment notes a base build should warn when these exist).
 	- **Do not** add it to **`PatchableInstallerHeatExclude.xml`** — that list is for artifacts that must never be harvested (build-output dedup / test-only files), not for reconciling files removed since the base.
+- **Patch drops a component an earlier patch shipped:** `pyro` cannot see this (it only compares against the base), and the patch installs nothing while returning success. The patch workflow's component-ledger check and install test catch it; the fix is the same `RemovedSinceLastBase` placeholder plus a `remove-before-next-base` issue. See **`Docs/workflows/patch-component-removal.md`**.
 
 ## Constraints
 

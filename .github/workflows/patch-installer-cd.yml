@@ -39,7 +39,7 @@ on:
 # on Jenkins-built bases.
       base_release:
         description: 'The github release for the base build artifacts (separate only for bootstrapping; should be removed after 9.3 is the stable)'
-        default: 'build-1452' # When updating this, update base_build_number and their fallbacks below, too.
+        default: 'build-1452' # When updating this, update base_build_number and their fallbacks below, too. Before cutting a new base, follow Docs/workflows/patch-component-removal.md.
       base_build_number:
         description: 'The base build number'
         required: false
@@ -258,6 +258,37 @@ jobs:
 
             $patchPath = $patch.FullName
             "patch_file=$patchPath" >> $env:GITHUB_OUTPUT
+            "patch_version=$(($patch.Name -split '_')[1])" >> $env:GITHUB_OUTPUT
+            "ledger_file=$($patchPath -replace '\.msp$', '_components.tsv')" >> $env:GITHUB_OUTPUT
+            "update_msi=$((Get-ChildItem PatchableInstaller/CreateUpdatePatch/Update -Filter '*.msi' | Select-Object -First 1).FullName)" >> $env:GITHUB_OUTPUT
+            "master_msi=$((Get-ChildItem PatchableInstaller/CreateUpdatePatch/Master -Filter '*.msi' | Select-Object -First 1).FullName)" >> $env:GITHUB_OUTPUT
+
+      # A patch must keep every component any patch on this base has shipped, or Windows
+      # Installer silently installs nothing (LT-22801). See Docs/workflows/patch-component-removal.md.
+      - name: Check patch keeps every published component
+        shell: pwsh
+        run: |
+          .\scripts\Installer\Test-PatchComponentLedger.ps1 `
+            -MasterMsi "${{ steps.find_patch.outputs.master_msi }}" `
+            -UpdateMsi "${{ steps.find_patch.outputs.update_msi }}" `
+            -BaseBuildNumber $env:BASE_BUILD_NUMBER `
+            -PatchVersion "${{ steps.find_patch.outputs.patch_version }}" `
+            -SeedLedger "FLExInstaller/PatchComponentLedger/b$($env:BASE_BUILD_NUMBER).tsv" `
+            -OutLedger "${{ steps.find_patch.outputs.ledger_file }}"
+
+      - name: Test patch install over the latest published patch
+        shell: pwsh
+        timeout-minutes: 60
+        run: |
+          $ledgers = @("FLExInstaller/PatchComponentLedger/b$($env:BASE_BUILD_NUMBER).tsv", "${{ steps.find_patch.outputs.ledger_file }}")
+          $ledgers += @(Get-ChildItem (Join-Path ([IO.Path]::GetTempPath()) "fw-patch-ledgers-b$($env:BASE_BUILD_NUMBER)") -Filter '*.tsv' -ErrorAction SilentlyContinue | ForEach-Object { $_.FullName })
+          .\scripts\Installer\Test-PatchInstall.ps1 `
+            -Patch "${{ steps.find_patch.outputs.patch_file }}" `
+            -PatchVersion "${{ steps.find_patch.outputs.patch_version }}" `
+            -BaseBuildNumber $env:BASE_BUILD_NUMBER `
+            -UpdateMsi "${{ steps.find_patch.outputs.update_msi }}" `
+            -LedgerPaths $ledgers `
+            -WorkDir "${{ runner.temp }}/patch-install-test"
 
       - name: Sign Patch
         if: github.event_name != 'pull_request'
@@ -291,6 +322,11 @@ jobs:
           $s3Key = "jobs/FieldWorks-Win-all-Release-Patch/$($env:FW_BUILD_NUMBER)/$patchFile"
           aws s3 cp $patchPath "s3://flex-updates/$s3Key"
           Write-Host "Uploaded to s3://flex-updates/$s3Key"
+          # Later patches on this base are checked against every published ledger.
+          $ledgerPath = "${{ steps.find_patch.outputs.ledger_file }}"
+          $ledgerKey = "jobs/FieldWorks-Win-all-Release-Patch/$($env:FW_BUILD_NUMBER)/$(Split-Path $ledgerPath -Leaf)"
+          aws s3 cp $ledgerPath "s3://flex-updates/$ledgerKey"
+          Write-Host "Uploaded to s3://flex-updates/$ledgerKey"
 
       - name: Upload Build Logs
         uses: actions/upload-artifact@v7
@@ -305,3 +341,5 @@ jobs:
             ./Output/**/*.log.stderr
             ./PatchableInstaller/CreateUpdatePatch/Master/AppHarvest.wxs
             ./PatchableInstaller/CreateUpdatePatch/Update/AppHarvest.wxs
+            ./BuildDir/*_components.tsv
+            ${{ runner.temp }}/patch-install-test/*.log
