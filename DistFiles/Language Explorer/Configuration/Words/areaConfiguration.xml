@@ -14,8 +14,8 @@
 		<command id="CmdReparseAllWords" label="_Reparse all words" message="ReparseAllWords"/>
 		<command id="CmdTryAWord" label="_Try a Word..." icon="tryAWord" message="TryAWord"/>
 		<command id="CmdParseCurrentWord" label="Parse _Current Word" message="ParseCurrentWord"/>
-		<command id="CmdParseWordsInCurrentText" label="Parse Words in Te_xt" message="ParseWordsInCurrentText"/>
-        <command id="CmdParseUnapprovedWordsInCurrentText" label="Parse Unapproved Words in Text" message="ParseUnapprovedWordsInCurrentText"/>
+		<command id="CmdParseAllWordsInCurrentText" label="_All Words in Text" message="ParseAllWordsInCurrentText"/>
+		<command id="CmdParseWordsWithoutApprovedAnalysis" label="_Words Without an Approved Analysis" message="ParseWordsWithoutApprovedAnalysis"/>
 		<command id="CmdClearSelectedWordParserAnalyses" label="Clear Current Word's Parser _Analyses" message="ClearSelectedWordParserAnalyses"/>
 		<command id="CmdReInitializeParser" label="Re_load Grammar / Lexicon" message="ReInitParser" tooltip="Reloads data from the Grammar and Lexicon, so the parser uses your latest changes."/>
         <command id="CmdCheckParserOnCurrentText" label="On Current Text" message="CheckParserOnCurrentText" tooltip="Checks parser on currrent text and reports results."/>
@@ -281,8 +281,10 @@
 	  <item command="CmdStopParser"/>
 			<item label="-" translate="do not translate"/>
 	  <item command="CmdTryAWord"/>
-	  <item command="CmdParseWordsInCurrentText"/>
-      <item command="CmdParseUnapprovedWordsInCurrentText"/>
+	  <menu id="ParseWordsInTextMenu" label="Parse Words in Te_xt">
+	    <item command="CmdParseAllWordsInCurrentText"/>
+	    <item command="CmdParseWordsWithoutApprovedAnalysis"/>
+	  </menu>
 	  <item command="CmdParseCurrentWord"/>
 	  <item command="CmdClearSelectedWordParserAnalyses" defaultVisible="false"/>
           <item label="-" translate="do not translate"/>
