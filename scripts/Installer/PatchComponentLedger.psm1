@@ -1,11 +1,10 @@
 Set-StrictMode -Version Latest
 
-# Later patches must keep every component a published patch on the base shipped, or Windows
-# Installer silently installs nothing. The ledger records those components.
+# Patch component identities from the base and immediate previous patch must remain present.
 
 $script:UpdateBucket = 'https://flex-updates.s3.amazonaws.com'
 $script:PatchPrefix = 'jobs/FieldWorks-Win-all-Release-Patch/'
-$script:LedgerColumns = @('ComponentId', 'Component', 'File', 'Feature', 'FirstShipped', 'LastShipped')
+$script:LedgerColumns = @('ComponentId', 'Component', 'File', 'Feature')
 
 function Invoke-MsiQuery {
 	param(
@@ -69,49 +68,35 @@ function Get-MsiComponents {
 	return $components
 }
 
-function Get-MsiProperty {
-	param(
-		[Parameter(Mandatory = $true)][string]$MsiPath,
-		[Parameter(Mandatory = $true)][string]$Name
-	)
-	$installer = New-Object -ComObject WindowsInstaller.Installer
-	$db = $installer.GetType().InvokeMember('OpenDatabase', 'InvokeMethod', $null, $installer, @((Resolve-Path -LiteralPath $MsiPath).Path, 0))
-	$rows = Invoke-MsiQuery -Database $db -Sql "SELECT ``Value`` FROM ``Property`` WHERE ``Property`` = '$Name'" -Columns 1
-	[System.Runtime.InteropServices.Marshal]::ReleaseComObject($db) | Out-Null
-	if ($rows.Count -eq 0) { return $null }
-	return $rows[0][0]
-}
-
 function Read-ComponentLedger {
 	<#
 	.SYNOPSIS
-	Merges ledger files into one table keyed by ComponentId, widening each entry's shipped range.
+	Reads one ledger into a table keyed by ComponentId.
 	#>
-	param([string[]]$Path)
+	param([Parameter(Mandatory = $true)][string[]]$Path)
 
 	$ledger = @{}
 	foreach ($file in $Path) {
-		if (-not (Test-Path -LiteralPath $file)) { continue }
+		if (-not (Test-Path -LiteralPath $file -PathType Leaf)) {
+			throw "Component ledger file not found: $file"
+		}
+		$lineNumber = 0
 		foreach ($line in (Get-Content -LiteralPath $file)) {
+			$lineNumber++
 			if ($line -match '^\s*(#|$)') { continue }
-			$cells = $line -split "`t"
-			if ($cells.Count -lt $script:LedgerColumns.Count) { continue }
+			$cells = [regex]::Split($line, [char]9)
+			if ($cells.Count -ne $script:LedgerColumns.Count -or @($cells | Where-Object { [string]::IsNullOrWhiteSpace($_) }).Count -gt 0) {
+				throw "Malformed component ledger row in '$file' at line $lineNumber. Expected four non-empty tab-separated fields."
+			}
 			$id = $cells[0].ToUpperInvariant()
-			$entry = [pscustomobject]@{
-				ComponentId  = $id
-				Component    = $cells[1]
-				File         = $cells[2]
-				Feature      = $cells[3]
-				FirstShipped = $cells[4]
-				LastShipped  = $cells[5]
-			}
 			if ($ledger.ContainsKey($id)) {
-				$known = $ledger[$id]
-				if ([version]$entry.FirstShipped -lt [version]$known.FirstShipped) { $known.FirstShipped = $entry.FirstShipped }
-				if ([version]$entry.LastShipped -gt [version]$known.LastShipped) { $known.LastShipped = $entry.LastShipped }
+				throw "Duplicate component ID '$id' in component ledger '$file' at line $lineNumber."
 			}
-			else {
-				$ledger[$id] = $entry
+			$ledger[$id] = [pscustomobject]@{
+				ComponentId = $id
+				Component   = $cells[1]
+				File        = $cells[2]
+				Feature     = $cells[3]
 			}
 		}
 	}
@@ -186,6 +171,105 @@ function Get-PatchVersionFromKey {
 	return [version]((Split-Path $Key -Leaf) -split '_')[1]
 }
 
+function Select-PreviousPublishedPatch {
+	param(
+		[Parameter(Mandatory = $true)][string[]]$PatchKeys,
+		[string[]]$LedgerKeys = @(),
+		[Parameter(Mandatory = $true)][string]$BaseBuildNumber,
+		[Parameter(Mandatory = $true)][string]$PatchVersion
+	)
+	$baseMarker = "_b${BaseBuildNumber}_"
+	$targetVersion = [version]$PatchVersion
+	$eligiblePatches = New-Object System.Collections.Generic.List[object]
+	foreach ($key in $PatchKeys) {
+		if (-not $key.Contains($baseMarker)) { continue }
+		try { $version = Get-PatchVersionFromKey -Key $key }
+		catch { continue }
+		if ($version -lt $targetVersion) {
+			$eligiblePatches.Add([pscustomobject]@{ Key = $key; Version = $version })
+		}
+	}
+	if ($eligiblePatches.Count -eq 0) {
+		return [pscustomobject]@{
+			PatchKey       = $null
+			LedgerKey      = $null
+			UsesSeedLedger = $true
+		}
+	}
+	$orderedPatches = @($eligiblePatches | Sort-Object Version)
+	$previous = $orderedPatches[$orderedPatches.Count - 1]
+	$expectedLedgerKey = $previous.Key -replace '\.msp$', '_components.tsv'
+	$matchingLedger = @($LedgerKeys | Where-Object { $_ -eq $expectedLedgerKey })
+	if ($matchingLedger.Count -gt 0) {
+		return [pscustomobject]@{
+			PatchKey       = $previous.Key
+			LedgerKey      = $matchingLedger[0]
+			UsesSeedLedger = $false
+		}
+	}
+	$earlierLedgerPair = $false
+	foreach ($candidate in $orderedPatches) {
+		if ($candidate.Version -ge $previous.Version) { continue }
+		$candidateLedger = $candidate.Key -replace '\.msp$', '_components.tsv'
+		if (@($LedgerKeys | Where-Object { $_ -eq $candidateLedger }).Count -gt 0) {
+			$earlierLedgerPair = $true
+			break
+		}
+	}
+	if ($earlierLedgerPair) {
+		throw "Bootstrap has ended: published patch $($previous.Key) has no matching ledger $expectedLedgerKey. Publish the ledger beside that patch before building another patch."
+	}
+	return [pscustomobject]@{
+		PatchKey       = $previous.Key
+		LedgerKey      = $null
+		UsesSeedLedger = $true
+	}
+}
+
+function Format-RemovedComponentRemediation {
+	param([Parameter(Mandatory = $true)][object[]]$Dropped)
+	$lines = New-Object System.Collections.Generic.List[string]
+	$lines.Add('Remediation:')
+	$lines.Add('Add the output path for each missing file to RemovedSinceLastBase in Build/Installer.legacy.targets; preserve the relative output path when one exists:')
+	foreach ($entry in ($Dropped | Sort-Object File, ComponentId)) {
+		$path = '$(dir-outputBase)/' + $entry.File
+		$lines.Add(('  <RemovedSinceLastBase Include="' + $path + '" />'))
+	}
+	$lines.Add('Create an issue to remove the placeholder before the next base build.')
+	return ($lines -join [Environment]::NewLine)
+}
+
+function Get-UpdateMinusBaseLedgerEntries {
+	param(
+		[Parameter(Mandatory = $true)][hashtable]$Master,
+		[Parameter(Mandatory = $true)][hashtable]$Update
+	)
+	$entries = New-Object System.Collections.Generic.List[object]
+	foreach ($id in $Update.Keys) {
+		if ($Master.ContainsKey($id)) { continue }
+		$entry = $Update[$id]
+		$entries.Add([pscustomobject]@{
+			ComponentId = $entry.ComponentId
+			Component   = $entry.Component
+			File        = $entry.File
+			Feature     = $entry.Feature
+		})
+	}
+	return $entries.ToArray()
+}
+
+function Get-MissingComponents {
+	param(
+		[Parameter(Mandatory = $true)][hashtable]$Required,
+		[Parameter(Mandatory = $true)][hashtable]$Available
+	)
+	$missing = New-Object System.Collections.Generic.List[object]
+	foreach ($id in $Required.Keys) {
+		if (-not $Available.ContainsKey($id)) { $missing.Add($Required[$id]) }
+	}
+	return ($missing | Sort-Object File, ComponentId)
+}
+
 function Format-DroppedComponentMessage {
 	param(
 		[Parameter(Mandatory = $true)][string]$PatchVersion,
@@ -196,12 +280,10 @@ function Format-DroppedComponentMessage {
 	foreach ($entry in $Dropped) {
 		$lines.Add("Patch $PatchVersion drops component $($entry.ComponentId)")
 		$lines.Add("  file:    $($entry.File)   (feature $($entry.Feature))")
-		$lines.Add("  shipped: patches $($entry.FirstShipped) to $($entry.LastShipped) on base $BaseBuildNumber")
+		$lines.Add("  base:    $BaseBuildNumber")
 	}
-	$lines.Add('Fix: restore the file to the output, or add a component stand-in (see')
-	$lines.Add('     Docs/workflows/patch-component-removal.md), as well as an issue to remove')
-	$lines.Add('     the file before cutting the next base build.')
+	$lines.Add((Format-RemovedComponentRemediation -Dropped $Dropped))
 	return ($lines -join [Environment]::NewLine)
 }
 
-Export-ModuleMember -Function Get-MsiComponents, Get-MsiProperty, Read-ComponentLedger, Write-ComponentLedger, Get-UpdateBucketKeys, Get-PublishedPatchKeys, Save-PublishedFile, Get-PatchVersionFromKey, Format-DroppedComponentMessage
+Export-ModuleMember -Function Get-MsiComponents, Read-ComponentLedger, Write-ComponentLedger, Get-UpdateBucketKeys, Get-PublishedPatchKeys, Save-PublishedFile, Get-PatchVersionFromKey, Select-PreviousPublishedPatch, Get-UpdateMinusBaseLedgerEntries, Get-MissingComponents, Format-RemovedComponentRemediation, Format-DroppedComponentMessage

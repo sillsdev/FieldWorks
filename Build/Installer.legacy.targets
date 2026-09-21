@@ -105,8 +105,8 @@
 		/>
 	</Target>
 	<!--
-		Zero-byte stand-ins for files the base or a patch on it shipped, so patching keeps working
-		until the next Base build. A base build warns while any remain.
+		Zero-byte stand-ins keep files shipped by the base or its patches present until a new
+		base.
 	-->
 	<Target Name="RescuePatching">
 		<ItemGroup>
@@ -672,8 +672,8 @@
 		<Base Condition="'$(BASE_BUILD_NUMBER)' != ''">b$(BASE_BUILD_NUMBER)_</Base>
 	</PropertyGroup>
 	<Target Name="BuildProductBaseMsi" DependsOnTargets="InstallerVersionNumbers">
-		<Warning
-			Text="RemovedSinceLastBase should be cleared out before making a new base build."
+		<Error
+			Text="Cannot create a base build while RemovedSinceLastBase contains %(RemovedSinceLastBase.Identity). Remove the RemovedSinceLastBase entry and its zero-byte file before creating the base build."
 			Condition="'@(RemovedSinceLastBase)' != ''"
 		/>
 		<Message

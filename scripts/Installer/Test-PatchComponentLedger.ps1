@@ -1,14 +1,10 @@
 <#
 .SYNOPSIS
-Fails a patch build when the new patch drops a component that a patch published on the same base
-shipped.
+Fails a patch build when the new Update MSI drops a component from the base or previous patch.
 
 .DESCRIPTION
-Compares the patch's upgraded MSI image against the ledger of every component that
-earlier patches on this base added: the committed seed ledger plus the per-patch
-ledgers published next to each .msp. Writes this patch's own ledger for publishing.
-pyro already rejects dropping a component the base itself ships (PYRO0305), so only
-patch-added components are checked here.
+Compares the new Update MSI with the base MSI and the complete ledger from the immediately
+previous published patch. Writes the complete update-minus-base ledger for this patch.
 
 .PARAMETER MasterMsi
 The base (Master) MSI rebuilt by the patch build.
@@ -20,13 +16,11 @@ The upgraded (Update) MSI the patch was diffed from.
 The new patch's product version, e.g. 9.3.12.2761.
 
 .PARAMETER SeedLedger
-Committed ledger covering patches published before per-patch ledgers existed. Optional.
+Committed snapshot supplies the initial previous-patch component set for a base.
 
 .PARAMETER OutLedger
 Where to write this patch's ledger.
 
-.PARAMETER SkipPublished
-Check against the seed ledger only, without reading published ledgers from the update bucket.
 #>
 [CmdletBinding()]
 param(
@@ -35,8 +29,7 @@ param(
 	[Parameter(Mandatory = $true)][string]$BaseBuildNumber,
 	[Parameter(Mandatory = $true)][string]$PatchVersion,
 	[string]$SeedLedger,
-	[Parameter(Mandatory = $true)][string]$OutLedger,
-	[switch]$SkipPublished
+	[Parameter(Mandatory = $true)][string]$OutLedger
 )
 
 Set-StrictMode -Version Latest
@@ -46,46 +39,47 @@ Import-Module (Join-Path $PSScriptRoot 'PatchComponentLedger.psm1') -Force
 $master = Get-MsiComponents -MsiPath $MasterMsi
 $update = Get-MsiComponents -MsiPath $UpdateMsi
 
-$added = New-Object System.Collections.Generic.List[object]
-foreach ($id in $update.Keys) {
-	if (-not $master.ContainsKey($id)) {
-		$entry = $update[$id]
-		$added.Add([pscustomobject]@{
-				ComponentId  = $entry.ComponentId
-				Component    = $entry.Component
-				File         = $entry.File
-				Feature      = $entry.Feature
-				FirstShipped = $PatchVersion
-				LastShipped  = $PatchVersion
-			})
-	}
-}
-Write-ComponentLedger -Path $OutLedger -Entries $added.ToArray() -Heading "Components patch $PatchVersion adds to base $BaseBuildNumber"
-Write-Output "Patch $PatchVersion adds $($added.Count) components to base $BaseBuildNumber; ledger written to $OutLedger"
+$publishedPatchKeys = @(Get-PublishedPatchKeys -BaseBuildNumber $BaseBuildNumber -Wildcard '*.msp')
+$publishedLedgerKeys = @(Get-PublishedPatchKeys -BaseBuildNumber $BaseBuildNumber -Wildcard '*_components.tsv')
+$previous = Select-PreviousPublishedPatch `
+	-PatchKeys $publishedPatchKeys `
+	-LedgerKeys $publishedLedgerKeys `
+	-BaseBuildNumber $BaseBuildNumber `
+	-PatchVersion $PatchVersion
 
 $ledgerFiles = New-Object System.Collections.Generic.List[string]
-if ($SeedLedger -and (Test-Path -LiteralPath $SeedLedger)) { $ledgerFiles.Add($SeedLedger) }
-if (-not $SkipPublished) {
+if ($previous.LedgerKey) {
 	$downloads = Join-Path ([IO.Path]::GetTempPath()) "fw-patch-ledgers-b$BaseBuildNumber"
 	New-Item -ItemType Directory -Force -Path $downloads | Out-Null
-	foreach ($key in (Get-PublishedPatchKeys -BaseBuildNumber $BaseBuildNumber -Wildcard '*_components.tsv')) {
-		$ledgerFiles.Add((Save-PublishedFile -Key $key -Directory $downloads))
-	}
+	$ledgerFiles.Add((Save-PublishedFile -Key $previous.LedgerKey -Directory $downloads))
 }
-$ledger = Read-ComponentLedger -Path $ledgerFiles.ToArray()
-Write-Output "Checking against $($ledger.Count) components from $($ledgerFiles.Count) ledger files"
+elseif ($SeedLedger -and (Test-Path -LiteralPath $SeedLedger)) {
+	$ledgerFiles.Add($SeedLedger)
+}
+elseif ($previous.PatchKey) {
+	throw "Published patch $($previous.PatchKey) has no matching ledger, and the bootstrap ledger '$SeedLedger' is unavailable."
+}
 
-$dropped = @($ledger.Values | Where-Object { -not $update.ContainsKey($_.ComponentId) } | Sort-Object File)
+$previousLedger = Read-ComponentLedger -Path $ledgerFiles.ToArray()
+$required = @{}
+foreach ($entry in $master.Values) { $required[$entry.ComponentId] = $entry }
+foreach ($entry in $previousLedger.Values) {
+	if (-not $required.ContainsKey($entry.ComponentId)) { $required[$entry.ComponentId] = $entry }
+}
+$dropped = @(Get-MissingComponents -Required $required -Available $update)
+$newLedgerEntries = @(Get-UpdateMinusBaseLedgerEntries -Master $master -Update $update)
+Write-ComponentLedger -Path $OutLedger -Entries $newLedgerEntries -Heading "Complete update-minus-base ledger for patch $PatchVersion on base $BaseBuildNumber"
+Write-Output "Patch $PatchVersion ledger contains $($newLedgerEntries.Count) update-minus-base components; ledger written to $OutLedger"
+Write-Output "Checking against $($required.Count) base and previous-patch components"
+
 if ($dropped.Count -eq 0) {
-	Write-Output '[OK] The patch keeps every component published patches on this base have shipped.'
+	Write-Output '[OK] The patch keeps every base and immediately previous-patch component.'
 	exit 0
 }
 
 $message = Format-DroppedComponentMessage -PatchVersion $PatchVersion -BaseBuildNumber $BaseBuildNumber -Dropped $dropped
 Write-Output $message
 if ($env:GITHUB_ACTIONS -eq 'true') {
-	foreach ($entry in $dropped) {
-		Write-Output "::error title=Patch drops a shipped component::Patch $PatchVersion drops $($entry.File) (component $($entry.ComponentId), feature $($entry.Feature)), shipped by patches $($entry.FirstShipped) to $($entry.LastShipped) on base $BaseBuildNumber. See Docs/workflows/patch-component-removal.md."
-	}
+	Write-Output ('::error title=Patch component removal::' + ($message -replace "`r?`n", ' '))
 }
 exit 1
