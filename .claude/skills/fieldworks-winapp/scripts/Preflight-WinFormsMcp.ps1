@@ -5,14 +5,14 @@
 .DESCRIPTION
 	The winforms-mcp server (@fnrhombus/winforms-mcp) is launched by the MCP client itself
 	(Claude Code reads .mcp.json; VS Code reads .vscode/mcp.json). This script does NOT start
-	the server — it verifies the prerequisites that make `winforms_launch_app` succeed, and
+	the server -- it verifies the prerequisites that make `winforms_launch_app` succeed, and
 	prints the exact FieldWorks.exe path to launch. Run it before a parity/screenshot session.
 
 	Checks:
 	  1. node + npx are on PATH (the server runs under npx).
 	  2. The @fnrhombus/winforms-mcp package resolves on the registry (will be fetched on first use).
-	  3. Output/<Configuration>/FieldWorks.exe exists (the app the MCP drives) — else points at build.ps1.
-	  4. ICU_DATA is discoverable (FieldWorks needs it; mirrors test.ps1's resolution) — advisory.
+	  3. Output/<Configuration>/FieldWorks.exe exists (the app the MCP drives), else build.ps1.
+	  4. ICU_DATA is discoverable (FieldWorks needs it; mirrors test.ps1's resolution), advisory.
 	  5. .mcp.json registers winforms-mcp for Claude Code (the fix for "no winforms_* tools").
 
 .PARAMETER Configuration
@@ -49,24 +49,25 @@ Write-Host "winforms-mcp preflight (FieldWorks WinForms control)" -ForegroundCol
 Write-Host "Repo: $repoRoot`n"
 
 # 1. node + npx
-$node = (Get-Command node -ErrorAction SilentlyContinue)?.Source
-$npx = (Get-Command npx -ErrorAction SilentlyContinue)?.Source
+$nodeCmd = Get-Command node -ErrorAction SilentlyContinue
+$node = if ($nodeCmd) { $nodeCmd.Source } else { $null }
+$npxCmd = Get-Command npx -ErrorAction SilentlyContinue
+$npx = if ($npxCmd) { $npxCmd.Source } else { $null }
 Write-Check ([bool]$node) "node on PATH" $node
 Write-Check ([bool]$npx) "npx on PATH" $npx
 
-# 2. package resolves (validate a real semver; a stray error string must not count as success).
-# Routed through `cmd /c` because PowerShell mangles the leading '@' of a scoped package name — the
-# same Windows quirk that makes the MCP server itself launch via `cmd /c npx` in .mcp.json.
+# 2. package resolves (a real semver; a stray error string must not count as success).
+# `cmd /c` because PowerShell mangles a scoped name's '@', as .mcp.json does for the server.
 $pkgVersion = $null
 try { $pkgVersion = (& cmd /c 'npm view @fnrhombus/winforms-mcp version 2>NUL' | Select-Object -First 1) } catch {}
 $pkgOk = ($pkgVersion -match '^\d+\.\d+\.\d+')
 Write-Check $pkgOk "@fnrhombus/winforms-mcp resolves" `
-	($(if ($pkgOk) { "version $pkgVersion (fetched on first MCP use)" } else { 'npm view failed — check network/registry' }))
+	($(if ($pkgOk) { "version $pkgVersion (fetched on first MCP use)" } else { 'npm view failed -- check network/registry' }))
 
 # 3. FieldWorks.exe
 $exe = Join-Path $repoRoot "Output/$Configuration/FieldWorks.exe"
 Write-Check (Test-Path $exe) "FieldWorks.exe built ($Configuration)" `
-	($(if (Test-Path $exe) { "winforms_launch_app path: $exe" } else { "missing — run: .\build.ps1 -Configuration $Configuration" }))
+	($(if (Test-Path $exe) { "winforms_launch_app path: $exe" } else { "missing -- run: .\build.ps1 -Configuration $Configuration" }))
 
 # 4. ICU_DATA (advisory; FieldWorks needs ICU at runtime)
 $icuOk = $false
@@ -76,13 +77,13 @@ else {
 		Select-Object -First 1
 	if ($cand) { $icuOk = $true; Write-Host "        (set ICU_DATA=$($cand.FullName) if FieldWorks fails to start)" -ForegroundColor DarkGray }
 }
-Write-Check $icuOk "ICU data discoverable" $(if ($icuOk) { 'advisory' } else { 'advisory — FieldWorks may need ICU_DATA set' })
+Write-Check $icuOk "ICU data discoverable" $(if ($icuOk) { 'advisory' } else { 'advisory -- FieldWorks may need ICU_DATA set' })
 
 # 5. .mcp.json registers winforms-mcp for Claude Code
 $mcpJson = Join-Path $repoRoot '.mcp.json'
 $registered = (Test-Path $mcpJson) -and ((Get-Content $mcpJson -Raw) -match 'winforms-mcp')
 Write-Check $registered ".mcp.json registers winforms-mcp (Claude Code)" `
-	($(if ($registered) { 'reconnect Claude Code to load the winforms_* tools (approve the project server when prompted)' } else { 'missing — Claude Code will not expose winforms_* tools' }))
+	($(if ($registered) { 'reconnect Claude Code to load the winforms_* tools (approve the project server when prompted)' } else { 'missing -- Claude Code will not expose winforms_* tools' }))
 
 if ($PrewarmPackage -and $npx) {
 	Write-Host "`nPre-warming the MCP package..." -ForegroundColor Cyan
