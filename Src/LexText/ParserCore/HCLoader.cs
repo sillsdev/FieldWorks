@@ -636,7 +636,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 							var mainEntry = component as ILexEntry;
 							if (mainEntry != null)
 							{
-								foreach (IMoStemMsa msa in mainEntry.MorphoSyntaxAnalysesOC.OfType<IMoStemMsa>())
+								foreach (IMoStemMsa msa in UniqueStemMSAs(mainEntry.MorphoSyntaxAnalysesOC.OfType<IMoStemMsa>()))
 									LoadLexEntryOfVariant(stratum, inflType, msa, allos, entry.ShortName);
 							}
 							else
@@ -650,8 +650,30 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				}
 			}
 
-			foreach (IMoStemMsa msa in entry.MorphoSyntaxAnalysesOC.OfType<IMoStemMsa>())
+			foreach (IMoStemMsa msa in UniqueStemMSAs(entry.MorphoSyntaxAnalysesOC.OfType<IMoStemMsa>()))
 				LoadLexEntry(stratum, msa, allos, entry.ShortName);
+		}
+
+		IEnumerable<IMoStemMsa> UniqueStemMSAs(IEnumerable<IMoStemMsa> msas)
+		{
+			IList<IMoStemMsa> newMsas = new List<IMoStemMsa>();
+			foreach (var msa in msas)
+			{
+				bool found = false;
+				foreach (var newMsa in newMsas)
+				{
+					if (newMsa.EqualsMsa(msa))
+					{
+						found = true;
+						break;
+					}
+				}
+				if (!found)
+				{
+					newMsas.Add(msa);
+				}
+			}
+			return newMsas;
 		}
 
 		protected IEnumerable<ILexEntryInflType> GetInflTypes(ILexEntryRef lexEntryRef)
