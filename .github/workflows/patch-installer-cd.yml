@@ -272,7 +272,6 @@ jobs:
             -UpdateMsi "${{ steps.find_patch.outputs.update_msi }}" `
             -BaseBuildNumber $env:BASE_BUILD_NUMBER `
             -PatchVersion "${{ steps.find_patch.outputs.patch_version }}" `
-            -SeedLedger "FLExInstaller/PatchComponentLedger/b$($env:BASE_BUILD_NUMBER).tsv" `
             -OutLedger "${{ steps.find_patch.outputs.ledger_file }}"
 
       - name: Sign Patch

@@ -57,11 +57,11 @@ try {
     $patch2762 = 'jobs/FieldWorks-Win-all-Release-Patch/2762/FieldWorks_9.3.12.2762_b1452_x64.msp'
     $ledger2760 = $patch2760 -replace '\.msp$', '_components.tsv'
     $selection = Select-PreviousPublishedPatch -PatchKeys @($patch2758, $patch2760, $patch2762) -LedgerKeys @($ledger2760) -BaseBuildNumber '1452' -PatchVersion '9.3.12.2761'
-    Assert-Equal "$($selection.PatchKey)|$($selection.LedgerKey)|$($selection.UsesSeedLedger)" "$patch2760|$ledger2760|False" 'The selector must choose the immediate previous version and its matching ledger, ignoring later versions.'
+    Assert-Equal "$($selection.PatchKey)|$($selection.LedgerKey)" "$patch2760|$ledger2760" 'The selector must choose the immediate previous version and its matching ledger, ignoring later versions.'
 
     $orphanLedger = $patch2760 -replace '\.msp$', '_components.tsv'
     $bootstrap = Select-PreviousPublishedPatch -PatchKeys @($patch2758) -LedgerKeys @($orphanLedger) -BaseBuildNumber '1452' -PatchVersion '9.3.12.2761'
-    Assert-True $bootstrap.UsesSeedLedger 'An orphan ledger must not end bootstrap.'
+    Assert-Equal "$($bootstrap.PatchKey)|$($bootstrap.LedgerKey)" "$patch2758|" 'A patch line without a published ledger must start by publishing the current patch ledger.'
 
     Assert-Throws {
         Select-PreviousPublishedPatch -PatchKeys @($patch2758, $patch2760) -LedgerKeys @($patch2758 -replace '\.msp$', '_components.tsv') -BaseBuildNumber '1452' -PatchVersion '9.3.12.2761'
@@ -118,6 +118,7 @@ try {
     $targetText = Get-Content -Raw (Join-Path $PSScriptRoot '..\..\Build\Installer.legacy.targets')
     Assert-True ($targetText.Contains('<Error') -and $targetText.Contains('Cannot create a base build while RemovedSinceLastBase contains %(RemovedSinceLastBase.Identity).')) 'The base target must use the actual MSBuild Error gate and name the stand-in.'
 
+    Assert-Equal (Read-ComponentLedger -Path @()).Count 0 'A patch line with no S3 ledger must start with an empty previous-patch set.'
     $headerOnlyPath = New-TestLedgerFile @('# ComponentId' + [char]9 + 'Component' + [char]9 + 'File' + [char]9 + 'Feature')
     Assert-Equal (Read-ComponentLedger -Path $headerOnlyPath).Count 0 'A valid header-only ledger must be accepted.'
     $malformedPath = New-TestLedgerFile @(
@@ -127,11 +128,6 @@ try {
     Assert-Throws { Read-ComponentLedger -Path $malformedPath } 'Malformed component ledger row'
     $missingPath = Join-Path ([IO.Path]::GetTempPath()) "missing-ledger-$([guid]::NewGuid()).tsv"
     Assert-Throws { Read-ComponentLedger -Path $missingPath } 'Component ledger file not found'
-
-    $seedLines = Get-Content -LiteralPath (Join-Path $PSScriptRoot '..\..\FLExInstaller\PatchComponentLedger\b1452.tsv')
-    Assert-Equal $seedLines[0] '# Required update-minus-base components for the first checked patch on base 1452, including Fluent previously shipped on this base' 'The base seed heading must describe its bootstrap scope.'
-    $fluentRow = $seedLines | Where-Object { $_ -like ('*' + [char]9 + 'Avalonia.Themes.Fluent.dll' + [char]9 + '*') }
-    Assert-True ($fluentRow -and ($fluentRow -split [char]9).Count -eq 4) 'The bootstrap seed must preserve the Fluent component as a four-column row.'
 
     Write-Output "[OK] $script:AssertionCount patch-component-ledger assertions passed."
 }

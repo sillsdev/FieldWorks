@@ -73,7 +73,7 @@ function Read-ComponentLedger {
 	.SYNOPSIS
 	Reads one ledger into a table keyed by ComponentId.
 	#>
-	param([Parameter(Mandatory = $true)][string[]]$Path)
+	param([Parameter(Mandatory = $true)][AllowEmptyCollection()][string[]]$Path)
 
 	$ledger = @{}
 	foreach ($file in $Path) {
@@ -193,7 +193,6 @@ function Select-PreviousPublishedPatch {
 		return [pscustomobject]@{
 			PatchKey       = $null
 			LedgerKey      = $null
-			UsesSeedLedger = $true
 		}
 	}
 	$orderedPatches = @($eligiblePatches | Sort-Object Version)
@@ -204,7 +203,6 @@ function Select-PreviousPublishedPatch {
 		return [pscustomobject]@{
 			PatchKey       = $previous.Key
 			LedgerKey      = $matchingLedger[0]
-			UsesSeedLedger = $false
 		}
 	}
 	$earlierLedgerPair = $false
@@ -222,7 +220,6 @@ function Select-PreviousPublishedPatch {
 	return [pscustomobject]@{
 		PatchKey       = $previous.Key
 		LedgerKey      = $null
-		UsesSeedLedger = $true
 	}
 }
 

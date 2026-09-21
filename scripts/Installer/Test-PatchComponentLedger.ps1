@@ -15,9 +15,6 @@ The upgraded (Update) MSI the patch was diffed from.
 .PARAMETER PatchVersion
 The new patch's product version, e.g. 9.3.12.2761.
 
-.PARAMETER SeedLedger
-Committed snapshot supplies the initial previous-patch component set for a base.
-
 .PARAMETER OutLedger
 Where to write this patch's ledger.
 
@@ -28,7 +25,6 @@ param(
 	[Parameter(Mandatory = $true)][string]$UpdateMsi,
 	[Parameter(Mandatory = $true)][string]$BaseBuildNumber,
 	[Parameter(Mandatory = $true)][string]$PatchVersion,
-	[string]$SeedLedger,
 	[Parameter(Mandatory = $true)][string]$OutLedger
 )
 
@@ -52,12 +48,6 @@ if ($previous.LedgerKey) {
 	$downloads = Join-Path ([IO.Path]::GetTempPath()) "fw-patch-ledgers-b$BaseBuildNumber"
 	New-Item -ItemType Directory -Force -Path $downloads | Out-Null
 	$ledgerFiles.Add((Save-PublishedFile -Key $previous.LedgerKey -Directory $downloads))
-}
-elseif ($SeedLedger -and (Test-Path -LiteralPath $SeedLedger)) {
-	$ledgerFiles.Add($SeedLedger)
-}
-elseif ($previous.PatchKey) {
-	throw "Published patch $($previous.PatchKey) has no matching ledger, and the bootstrap ledger '$SeedLedger' is unavailable."
 }
 
 $previousLedger = Read-ComponentLedger -Path $ledgerFiles.ToArray()

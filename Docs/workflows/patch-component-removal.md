@@ -12,10 +12,10 @@ The check compares the new Update MSI with the union of:
 - the components in the Master/base MSI; and
 - the complete update-minus-base ledger published beside the immediately previous MSP.
 
-The committed `FLExInstaller/PatchComponentLedger/b1452.tsv` file bootstraps base 1452
-until a previous published MSP has a ledger. After a ledger-bearing patch exists, the
-immediately previous MSP must have its matching `*_components.tsv` file. Version filtering
-keeps a release branch from consuming a ledger for a later patch.
+The first published patch on a patch line creates the initial S3 ledger. After a
+ledger-bearing patch exists, the immediately previous MSP must have its matching
+`*_components.tsv` file. Version filtering keeps a release branch from consuming a ledger
+for a later patch. Ledgers are release artifacts in S3 and are not stored in this repository.
 
 Each successful patch writes its complete update-minus-base component set to a ledger beside
 the MSP. A later patch uses the ledger beside its immediately previous MSP.
@@ -57,5 +57,5 @@ set that future patches must preserve.
 ```powershell
 .\scripts\Installer\Test-PatchComponentLedger.ps1 -MasterMsi <base.msi> -UpdateMsi <update.msi> `
     -BaseBuildNumber 1452 -PatchVersion 9.3.12.2761 `
-    -SeedLedger FLExInstaller\PatchComponentLedger\b1452.tsv -OutLedger out.tsv
+    -OutLedger out.tsv
 ```
