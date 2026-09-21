@@ -517,7 +517,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			return true;    //we handled this.
 		}
 
-		public bool OnDisplayParseWordsInCurrentText(object commandObject, ref UIItemDisplayProperties display)
+		public bool OnDisplayParseWordsInTextMenu(object commandObject, ref UIItemDisplayProperties display)
 		{
 			CheckDisposed();
 
@@ -528,7 +528,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			return true;    //we handled this.
 		}
 
-		public bool OnDisplayParseUnapprovedWordsInCurrentText(object commandObject, ref UIItemDisplayProperties display)
+		public bool OnDisplayParseAllWordsInCurrentText(object commandObject, ref UIItemDisplayProperties display)
 		{
 			CheckDisposed();
 
@@ -539,7 +539,18 @@ namespace SIL.FieldWorks.LexText.Controls
 			return true;    //we handled this.
 		}
 
-		public bool OnParseWordsInCurrentText(object argument)
+		public bool OnDisplayParseWordsWithoutApprovedAnalysis(object commandObject, ref UIItemDisplayProperties display)
+		{
+			CheckDisposed();
+
+			bool enable = CurrentText != null;
+			display.Visible = enable;
+			display.Enabled = enable;
+
+			return true;    //we handled this.
+		}
+
+		public bool OnParseAllWordsInCurrentText(object argument)
 		{
 			CheckDisposed();
 
@@ -553,23 +564,23 @@ namespace SIL.FieldWorks.LexText.Controls
 			return true;    //we handled this.
 		}
 
-		public bool OnParseUnapprovedWordsInCurrentText(object argument)
+		public bool OnParseWordsWithoutApprovedAnalysis(object argument)
 		{
 			CheckDisposed();
 
 			if (CurrentText != null && ConnectToParser())
 			{
 				IStText text = CurrentText;
-				IEnumerable<IWfiWordform> wordforms = GetUnapprovedWordforms(text);
+				IEnumerable<IWfiWordform> wordforms = GetWordformsWithoutApprovedAnalysis(text);
 				UpdateWordforms(wordforms, ParserPriority.Medium);
 			}
 
 			return true;    //we handled this.
 		}
 
-		private IEnumerable<IWfiWordform> GetUnapprovedWordforms(IStText text)
+		private IEnumerable<IWfiWordform> GetWordformsWithoutApprovedAnalysis(IStText text)
 		{
-			HashSet<IWfiWordform> unapprovedWordforms = new HashSet<IWfiWordform>();
+			HashSet<IWfiWordform> wordformsWithoutApprovedAnalysis = new HashSet<IWfiWordform>();
 			foreach (IStTxtPara para in text.ParagraphsOS)
 			{
 				foreach (ISegment seg in para.SegmentsOS)
@@ -590,13 +601,13 @@ namespace SIL.FieldWorks.LexText.Controls
 							}
 							if (!approved)
 							{
-								unapprovedWordforms.Add(wordform);
+								wordformsWithoutApprovedAnalysis.Add(wordform);
 							}
 						}
 					}
 				}
 			}
-			return unapprovedWordforms;
+			return wordformsWithoutApprovedAnalysis;
 		}
 
 		private bool HasApprovedAnalysis(IWfiWordform wordform)
