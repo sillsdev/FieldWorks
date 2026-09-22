@@ -1544,10 +1544,60 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				return;
 			}
 
-			// The legacy empty add slot: a trailing bar (added above for the last item; one leads
-			// the launcher when the vector is empty) plus the chooser launcher.
+			// A trailing bar (added above for the last item; one leads the launcher when the
+			// vector is empty) plus the chooser launcher.
 			if (field.Items.Count == 0)
 				AddSeparatorBar();
+
+			var canCreate = textEditing != null && textEditing.CanCreateReferenceItem(field);
+			if (canCreate)
+			{
+				// Typing a new one never has to go through the chooser:
+				// PhoneEnvReferenceView keeps an always-present empty line at the end for
+				// exactly this, and it is where an empty row offers somewhere to start.
+				var newItem = new TextBox
+				{
+					VerticalAlignment = VerticalAlignment.Center,
+					Margin = FwAvaloniaDensity.TrailingItemGap,
+					Padding = FwAvaloniaDensity.EditorPadding,
+					MinWidth = FwAvaloniaDensity.PickerMinWidth,
+					MinHeight = 0,
+					Watermark = FwAvaloniaStrings.AddItem
+				};
+				AutomationProperties.SetAutomationId(newItem, automationId + ".New");
+				AutomationProperties.SetName(newItem, FwAvaloniaStrings.AddItem);
+				Action commitNew = () =>
+				{
+					var typed = newItem.Text;
+					if (string.IsNullOrWhiteSpace(typed))
+						return;
+					if (textEditing.TryCreateAndAddReferenceItem(field, typed))
+						gestureCompleted?.Invoke();
+				};
+				EventHandler<Avalonia.Interactivity.RoutedEventArgs> newOnBlur =
+					(s2, e2) => commitNew();
+				newItem.LostFocus += newOnBlur;
+				EventHandler<KeyEventArgs> newOnEnter = (s2, e2) =>
+				{
+					if (e2.Key != Key.Enter)
+						return;
+					e2.Handled = true;
+					commitNew();
+				};
+				newItem.KeyDown += newOnEnter;
+				// This slot names no item, so it must not leave a stale one current: a menu
+				// request from here would otherwise act on whichever item was clicked before.
+				EventHandler<GotFocusEventArgs> newClearsSelection = (s2, e2) => ClearSelection();
+				newItem.GotFocus += newClearsSelection;
+				_teardown.Add(() =>
+				{
+					newItem.LostFocus -= newOnBlur;
+					newItem.KeyDown -= newOnEnter;
+					newItem.GotFocus -= newClearsSelection;
+				});
+				Children.Add(newItem);
+				AddSeparatorBar();
+			}
 
 			var addButton = new Button
 			{
@@ -1576,8 +1626,6 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			// object offers it (environments find-or-create a PhEnvironment from the typed
 			// string). Every other vector row passes allowCreate: false and behaves exactly as
 			// before.
-			var creation = editContext as IReferenceTextEditing;
-			var canCreate = creation != null && creation.CanCreateReferenceItem(field);
 			var picker = new FwOptionChooser(field.Options, field.SearchOptions, automationId,
 				field.Items.Select(i => i.Key), multiSelect: true, allowCreate: canCreate,
 				normalizeName: field.NormalizeOptionName);
@@ -1609,7 +1657,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			// and a failed create leaves the row untouched rather than completing the gesture.
 			Action<string> created = text =>
 			{
-				var added = canCreate && creation.TryCreateAndAddReferenceItem(field, text);
+				var added = canCreate && textEditing.TryCreateAndAddReferenceItem(field, text);
 				flyout.Hide();
 				addButton.Focus();
 				if (added)

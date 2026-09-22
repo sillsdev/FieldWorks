@@ -39,8 +39,17 @@ namespace FwAvaloniaTests.Detail
 				return SetResult;
 			}
 
-			public bool CanCreateReferenceItem(DetailField field) => false;
-			public bool TryCreateAndAddReferenceItem(DetailField field, string text) => false;
+			public bool Creatable;
+			public bool CreateResult = true;
+			public readonly List<string> Created = new List<string>();
+
+			public bool CanCreateReferenceItem(DetailField field) => Creatable;
+
+			public bool TryCreateAndAddReferenceItem(DetailField field, string text)
+			{
+				Created.Add(text);
+				return CreateResult;
+			}
 
 			public bool IsOpen => false;
 			public bool TrySetText(DetailField f, string ws, string v) => false;
@@ -76,6 +85,20 @@ namespace FwAvaloniaTests.Detail
 
 		// Fails with the reason rather than handing back null, so a row that rendered labels
 		// says so instead of surfacing as a NullReferenceException three lines later.
+		private static TextBox NewItemSlot(FwReferenceVectorField row)
+			=> row.GetVisualDescendants().OfType<TextBox>().FirstOrDefault(
+				b => AutomationProperties.GetAutomationId(b) == "PhoneEnv.New");
+
+		private static void PressEnter(TextBox box)
+		{
+			box.RaiseEvent(new KeyEventArgs
+			{
+				RoutedEvent = InputElement.KeyDownEvent,
+				Key = Key.Enter
+			});
+			Dispatcher.UIThread.RunJobs();
+		}
+
 		private static TextBox Editor(FwReferenceVectorField row, string key)
 		{
 			var box = row.GetVisualDescendants().OfType<TextBox>().FirstOrDefault(
@@ -152,6 +175,82 @@ namespace FwAvaloniaTests.Detail
 			Assert.That(context.Edits, Is.Empty,
 				"text that did not change must not reconcile, which would rewrite the shared "
 				+ "environment for every field referencing it");
+		}
+
+		/// <summary>
+		/// PhoneEnvReferenceView keeps an always-present empty line at the end, so a new
+		/// environment can be typed without going near the chooser. The "+" picker stays: it is
+		/// the other route, not the only one.
+		/// </summary>
+		[AvaloniaTest]
+		public void ARowThatCanCreate_OffersATypedSlot_AlongsideThePicker()
+		{
+			var (row, _) = Show(new FakeTextEditing { Creatable = true });
+
+			Assert.That(NewItemSlot(row), Is.Not.Null,
+				"adding by typing must not require the chooser");
+			Assert.That(row.GetVisualDescendants().OfType<Button>()
+					.Any(b => AutomationProperties.GetAutomationId(b) == "PhoneEnv.Add"),
+				Is.True, "and the picker is still there -- this adds a route, it replaces none");
+		}
+
+		[AvaloniaTest]
+		public void ARowThatCannotCreate_OffersNoTypedSlot()
+		{
+			var (row, _) = Show(new FakeTextEditing { Creatable = false });
+
+			Assert.That(NewItemSlot(row), Is.Null,
+				"a row that cannot mint a target has nothing to type into");
+		}
+
+		[AvaloniaTest]
+		public void TypingIntoTheSlot_CreatesOnlyWhenTheEditFinishes()
+		{
+			var context = new FakeTextEditing { Creatable = true };
+			var (row, _) = Show(context);
+			var slot = NewItemSlot(row);
+
+			slot.Text = "/_zz";
+			Dispatcher.UIThread.RunJobs();
+			Assert.That(context.Created, Is.Empty,
+				"creating per keystroke would mint an environment per keystroke");
+
+			PressEnter(slot);
+
+			Assert.That(context.Created, Is.EqualTo(new[] { "/_zz" }),
+				"finishing the edit creates once, through the same seam the picker's create row "
+				+ "uses");
+		}
+
+		[AvaloniaTest]
+		public void FinishingAnEmptySlot_CreatesNothing()
+		{
+			var context = new FakeTextEditing { Creatable = true };
+			var (row, _) = Show(context);
+
+			PressEnter(NewItemSlot(row));
+
+			Assert.That(context.Created, Is.Empty,
+				"an untouched slot is how the row always looks; leaving it must mint nothing");
+		}
+
+		/// <summary>
+		/// The slot names no item. Without clearing the row's current item, a menu request from
+		/// here would carry whichever item was clicked before and act on that one instead.
+		/// </summary>
+		[AvaloniaTest]
+		public void FocusingTheSlot_ClearsTheRowsCurrentItem()
+		{
+			var (row, _) = Show(new FakeTextEditing { Creatable = true });
+			row.SelectItem("e1");
+			Assert.That(row.SelectedItemKey, Is.EqualTo("e1"), "precondition: an item is current");
+
+			NewItemSlot(row).Focus();
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(row.SelectedItemKey, Is.Null,
+				"no item is current while the caret is in the slot, so a menu request from here "
+				+ "carries none rather than a stale one");
 		}
 
 		[AvaloniaTest]
