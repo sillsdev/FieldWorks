@@ -1386,6 +1386,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				Control text;
 				if (retypable)
 				{
+					// Flat, like every other editor in this view: an item must not cost more
+					// room than the label it replaces, or a row that fitted starts clipping.
 					var box = new TextBox
 					{
 						Text = item.Name,
@@ -1393,7 +1395,9 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 						Margin = FwAvaloniaDensity.TrailingItemGap,
 						Padding = FwAvaloniaDensity.EditorPadding,
 						MinWidth = 0,
-						MinHeight = 0
+						MinHeight = 0,
+						BorderThickness = new Thickness(0),
+						Background = FwAvaloniaDensity.TransparentBrush
 					};
 					var itemKey = item.Key;
 					// Staged when the edit FINISHES, not per keystroke: each stage reconciles
@@ -1562,6 +1566,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 					Padding = FwAvaloniaDensity.EditorPadding,
 					MinWidth = FwAvaloniaDensity.NewItemSlotMinWidth,
 					MinHeight = 0,
+					BorderThickness = new Thickness(0),
+					Background = FwAvaloniaDensity.TransparentBrush,
 					Watermark = FwAvaloniaStrings.AddItem
 				};
 				AutomationProperties.SetAutomationId(newItem, automationId + ".New");
