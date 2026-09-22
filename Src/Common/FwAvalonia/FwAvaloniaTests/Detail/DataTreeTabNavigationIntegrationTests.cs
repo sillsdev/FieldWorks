@@ -20,11 +20,13 @@ using FwAvaloniaTests.VisualChecks; // DialogSnapshot -- the PNG harness
 namespace FwAvaloniaTests.Detail
 {
 	/// <summary>
-	/// Headless proof for LT-22688's DataTree Tab/Shift+Tab row navigation, one test per item of
-	/// DataTree-TabNavigation-integration-test-plan.md. Every test drives Tab/Shift+Tab through
-	/// the real headless input pipeline (never by calling internal handlers directly), so a
-	/// regression in Avalonia's own tab-walk or in the host's key-claiming would fail these the
-	/// same way a live user would notice it.
+	/// Headless proof for LT-22688's DataTree Tab/Shift+Tab row navigation, one test per
+	/// navigation scenario: tab order, row-boundary containment, collapsed-row skipping, kebab
+	/// exclusion, scroll-into-view, native focus state, multi-writing-system rows, and rich
+	/// structured-text paragraphs. Every test drives Tab/Shift+Tab through the real headless
+	/// input pipeline (never by calling internal handlers directly), so a regression in
+	/// Avalonia's own tab-walk or in the host's key-claiming would fail these the same way a
+	/// live user would notice it.
 	/// </summary>
 	[TestFixture]
 	public class DataTreeTabNavigationIntegrationTests
@@ -56,9 +58,8 @@ namespace FwAvaloniaTests.Detail
 			return (window, view);
 		}
 
-		// Same as Show(), but threads a real edit context through -- needed for a
-		// structured-text row, where paragraph editing (and so the per-run-font
-		// display's keyboard focus-swap) only wires up with a non-null context (LT-22688).
+		// Same as Show(), but threads a real edit context through -- a structured-text row
+		// only wires up paragraph editing, and so the focus-swap, with one (LT-22688).
 		private static (Window Window, DataTree View) ShowWithEditContext(double width, double height,
 			IDetailEditContext editContext, params DetailField[] fields)
 		{
@@ -287,7 +288,7 @@ namespace FwAvaloniaTests.Detail
 		public void TabIntoARichStructuredTextParagraph_FocusesItsEditor()
 		{
 			// Two runs in different fonts force the per-run-font display path (LT-22688) --
-			// the same swap-on-focus pattern FwMultiWsTextField already covers.
+			// the same swap-on-focus pattern used by FwMultiWsTextField.
 			var richParagraph = new DetailParagraph(DetailRichTextEditAlgorithms.FromRuns(
 				"OneTwo", new List<DetailTextRun>
 				{
