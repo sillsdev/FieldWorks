@@ -141,7 +141,10 @@ namespace SIL.FieldWorks.XWorks
 		private void TearDownAvaloniaEntryForm()
 		{
 			if (m_avaloniaEntryForm != null)
+			{
 				m_avaloniaEntryForm.DetailEditCompleted -= OnAvaloniaDetailEditCompleted;
+				m_avaloniaEntryForm.DetailInteractionCompleted -= OnAvaloniaInteractionCompleted;
+			}
 			m_detailEditContext.DetachDeactivateHook();
 			m_detailEditContext.DetachUndoGuard();
 			m_detailEditContext.InvalidEditRolledBack = null;
@@ -208,6 +211,7 @@ namespace SIL.FieldWorks.XWorks
 			m_avaloniaEntryForm = (DetailHostControl)m_lexicalEditControlFactory.Create(UIFramework.Avalonia);
 			m_avaloniaEntryForm.Dock = DockStyle.Fill;
 			m_avaloniaEntryForm.DetailEditCompleted += OnAvaloniaDetailEditCompleted;
+			m_avaloniaEntryForm.DetailInteractionCompleted += OnAvaloniaInteractionCompleted;
 			if (!m_panel.Controls.Contains(m_avaloniaEntryForm))
 				m_panel.Controls.Add(m_avaloniaEntryForm);
 		}
@@ -229,7 +233,11 @@ namespace SIL.FieldWorks.XWorks
 			m_avaloniaRefreshController = new AvaloniaDetailRefreshController(
 				Cache,
 				() => Clerk?.CurrentObject,
-				() => m_detailEditContext.Current?.IsOpen == true,
+				// "Busy" means an open session OR a click in flight: Commit clears IsOpen BEFORE
+				// EndUndoTask raises PropChanged, so its own notification would recompose
+				// midclick.
+				() => m_detailEditContext.Current?.IsOpen == true
+					|| m_avaloniaEntryForm?.IsDetailInteractionInFlight == true,
 				RefreshAvaloniaDetail,
 				new RefreshCoordinator(),
 				ScheduleOnUiThread,
@@ -813,20 +821,22 @@ namespace SIL.FieldWorks.XWorks
 			MutateOverrideAndRefresh(field, op);
 		}
 
-		// Writes a ReorderChildren op on the field's PARENT (the sibling order with this field swapped one
-		// position) into the project override and recomposes. A no-op when the move is not possible.
+		// Writes a ReorderChildren op on the field's PARENT into the project override, then
+		// recomposes. A top-level row has no parent id; the applier keys the root list on an
+		// empty id.
 		private void ApplyMoveField(DetailField field, ViewNodeLocation location, bool up)
 		{
 			var moved = ViewDefinitionOverrideEditor.ComputeMovedOrder(location.SiblingOrder, location.Index, up);
-			if (moved == null || string.IsNullOrEmpty(location.ParentStableId))
-				return; // first/last/only sibling, or a root-level row with no parent to reorder.
+			if (moved == null)
+				return; // first, last or only sibling.
 			var op = new ViewOverrideOperation(ViewOverrideOperationKind.ReorderChildren,
-				location.ParentStableId, childOrder: moved);
+				location.ParentStableId ?? string.Empty, childOrder: moved);
 			MutateOverrideAndRefresh(field, op);
 		}
 
-		// Loads-or-creates the (class, layout) override, folds the op in, saves it, and recomposes the
-		// Avalonia detail view so the change is visible immediately. The legacy DataTree/Inventory is untouched.
+		// Loads-or-creates the (class, layout) override, folds the op in, saves it, and
+		// recomposes the Avalonia detail view. Only the override file is written -- not the
+		// shipped XML or the part-ref inventory.
 		private void MutateOverrideAndRefresh(DetailField field, ViewOverrideOperation op)
 		{
 			if (TryMutateOverride(field, op))
@@ -1124,6 +1134,12 @@ namespace SIL.FieldWorks.XWorks
 				return;
 
 			ShowAvaloniaEntry(current);
+		}
+
+		// The view is idle again, so anything held for the interaction can land now.
+		private void OnAvaloniaInteractionCompleted(object sender, EventArgs e)
+		{
+			m_avaloniaRefreshController?.ReleaseHeldRefresh();
 		}
 
 		private void OnAvaloniaDetailEditCompleted(object sender, EventArgs e)

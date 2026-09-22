@@ -222,6 +222,8 @@ People we know well might be asked to join the core development team. Core devel
 ## Getting Help
 
 - **Documentation**: Check the [docs/](.) folder for additional guides
+- **Support**: Chat with our [support chatbot](https://flexsupport-10001756.chipp.ai/w/chat/)
+- **DeepWiki**: Ask [Devin](https://deepwiki.com/sillsdev/FieldWorks) about the code
 - **Issues**: Search or file issues on [Jira](https://jira.sil.org/issues/?jql=project%20%3D%20LT)
 - **Wiki**: Historical documentation at [FwDocumentation wiki](https://github.com/sillsdev/FwDocumentation/wiki) (being migrated to this repository)
 

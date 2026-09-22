@@ -30,11 +30,17 @@ namespace FwAvaloniaTests
 			null, null, HostRouting.Inherit, null, null, null,
 			isEditable: false, indent: indent, isCollapsible: true, isInitiallyExpanded: expanded);
 
+		// A multistring row, so the per-writing-system abbreviation gutter renders: the view
+		// draws it only for a MultiStringSlice row, as legacy does.
 		private static DetailField Text(string id, string label, int indent)
-			=> new DetailField(id, label, label, null, DetailFieldKind.Text,
+		{
+			var field = new DetailField(id, label, label, null, DetailFieldKind.Text,
 				EditorClassification.Known, id, null, HostRouting.Inherit,
 				new List<DetailWsValue> { new DetailWsValue("en", "value") }, null, null,
 				isEditable: true, indent: indent);
+			field.IsMultiStringRow = true;
+			return field;
+		}
 
 		private static DataTree Show(params DetailField[] fields)
 		{
@@ -375,9 +381,12 @@ namespace FwAvaloniaTests
 			var wsValues = new List<DetailWsValue>();
 			foreach (var v in values)
 				wsValues.Add(new DetailWsValue(v.abbrev, v.value, wsTag: v.abbrev));
-			return new DetailField(id, label, label, null, DetailFieldKind.Text,
+			var field = new DetailField(id, label, label, null, DetailFieldKind.Text,
 				EditorClassification.Known, id, null, HostRouting.Product, wsValues, null, null,
 				isEditable: true);
+			// A multi-alternative row is a multistring row, which is what earns the gutter.
+			field.IsMultiStringRow = true;
+			return field;
 		}
 	}
 }

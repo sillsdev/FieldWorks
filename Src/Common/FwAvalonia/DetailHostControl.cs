@@ -22,6 +22,10 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 		// also survives across SESSIONS, mirroring legacy slice-splitter persistence.
 		private double? _rememberedLabelColumnWidth;
 
+		/// <inheritdoc />
+		public override bool IsDetailInteractionInFlight
+			=> (CurrentContent as DataTree)?.IsInteractionInFlight == true;
+
 		public DetailHostControl()
 		{
 			Name = "DetailHostControl";
@@ -55,6 +59,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 					labelColumnWidthChanged?.Invoke(w);
 				});
 			view.EditCompleted += (s, e) => RaiseDetailEditCompleted();
+			view.InteractionCompleted += (s, e) => RaiseDetailInteractionCompleted();
 
 			// Continuity across the re-show, applied once the new view lays out. Focus leaves the
 			// old view first: detaching a focused editor makes Avalonia refocus and scroll away.

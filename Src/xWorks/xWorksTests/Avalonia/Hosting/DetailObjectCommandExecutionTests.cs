@@ -154,6 +154,37 @@ namespace SIL.FieldWorks.XWorks
 				"the host can re-show the detail view after a hotlink-create");
 		}
 
+		// --------------------------------------------------------------------------------------
+		// Insert Allomorph
+		// --------------------------------------------------------------------------------------
+
+		// The Allomorphs section binds its commands to the ENTRY, not to an allomorph:
+		// AlternateForms is a LexEntry field, so the section header's bound object is the entry.
+		[Test]
+		public void InsertAllomorph_ViaHotlinks_AddsAllomorph_EndToEndThroughXCoreMenuBridge()
+		{
+			var allomorphsBefore = m_entry.AlternateFormsOS.Count;
+
+			InvokeHotlinksCommand(m_entry.Hvo, "mnuDataTree-AlternateForms-Hotlinks",
+				"Insert Allomorph");
+
+			Assert.That(m_entry.AlternateFormsOS.Count, Is.EqualTo(allomorphsBefore + 1),
+				"Insert Allomorph via hotlinks mutates the model through XCoreMenuBridge");
+			Assert.That(RefreshedDetailFieldCount(), Is.GreaterThan(0),
+				"the host can re-show the detail view after a hotlink-create");
+		}
+
+		[Test]
+		public void InsertAllomorph_FromSectionMenu_AddsAllomorphToModel()
+		{
+			var allomorphsBefore = m_entry.AlternateFormsOS.Count;
+
+			InvokeSliceMenuCommand(m_entry.Hvo, "mnuDataTree-AlternateForms", "Insert Allomorph");
+
+			Assert.That(m_entry.AlternateFormsOS.Count, Is.EqualTo(allomorphsBefore + 1),
+				"Insert Allomorph from the section menu adds an allomorph via the real command + UOW");
+		}
+
 		// ===== Reference-vector rows: the per-item menu and Move Left / Move Right =====
 
 		private sealed class ItemSelection : IDetailItemSelection
@@ -755,6 +786,91 @@ namespace SIL.FieldWorks.XWorks
 				NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
 					Cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems.Remove(second));
 			}
+		}
+
+		// -----------------------------------------------------------------
+		// Move Field
+		// -----------------------------------------------------------------
+
+		// A row at the TOP LEVEL of its own layout has no parent StableId, but move
+		// enablement reads only the sibling order, so the item enables. The write must
+		// then reorder the ROOT list, keyed on an empty id.
+		[Test]
+		public void MoveField_OnATopLevelRow_ReordersTheRootList()
+		{
+			// Chosen by SHAPE, not by name: a named row that stops being movable would leave this
+			// test passing on a move it never made.
+			var field = FindTopLevelMovableRow(out var location);
+			Assert.That(field, Is.Not.Null,
+				"the entry layout must still compose at least one movable top-level row");
+			// The subject was located in the SHIPPED model; clear any stored override so the
+			// menu's own location, which compiles with overrides applied, agrees with it.
+			DeleteOverrideFor(field);
+			var up = location.CanMoveUp;
+			var expected = ViewDefinitionOverrideEditor.ComputeMovedOrder(
+				location.SiblingOrder, location.Index, up);
+			TestContext.WriteLine($"class={field.ClassName} layout={field.LayoutName} "
+				+ $"template={ViewDefinitionOverrideEditor.StripRuntimeSuffix(field.StableId)} "
+				+ $"index={location.Index} up={up}");
+			try
+			{
+				EnsureAdapter(field.ObjectHvo);
+				var items = BuildItemsWithOverrideInterceptor(
+					new[] { "mnuDataTree-Object" }, field);
+				var item = FindItem(items, up ? "Move Up" : "Move Down");
+				Assert.That(item, Is.Not.Null, "the Move Field submenu must offer the item");
+				Assert.That(item.IsEnabled, Is.True,
+					"a row with somewhere to move must enable its Move item");
+
+				item.Execute();
+				DrainMediatorAndIdleQueues();
+
+				var stored = ReadOverrideFor(field);
+				Assert.That(stored, Is.Not.Null,
+					"an enabled Move must write a project override, not silently do nothing");
+				var op = stored.Operations.Single(o =>
+					o.Kind == ViewOverrideOperationKind.ReorderChildren);
+				Assert.That(op.StableId, Is.Empty,
+					"a top-level move reorders the root list, keyed on the empty id");
+				Assert.That(op.ChildOrder, Is.EqualTo(expected),
+					"the stored order must be the siblings with this row swapped one position");
+			}
+			finally
+			{
+				DeleteOverrideFor(field);
+			}
+		}
+
+		// The first composed row its own layout places at the top level (LocateTarget
+		// reports no parent) and that can move, found through the compile + locate pair
+		// AddOverrideCommands uses.
+		private DetailField FindTopLevelMovableRow(out ViewNodeLocation location)
+		{
+			foreach (var field in DetailComposer.Compose(m_entry, Cache).Model.Fields)
+			{
+				if (string.IsNullOrEmpty(field.ClassName)
+					|| string.IsNullOrEmpty(field.LayoutName)
+					|| !Cache.ServiceLocator.ObjectRepository.TryGetObject(
+						field.ObjectHvo, out var obj))
+				{
+					continue;
+				}
+
+				var model = DetailComposer.CompileForObject(Cache, obj, field.LayoutName);
+				var located = model == null
+					? null
+					: ViewDefinitionOverrideEditor.LocateTarget(model,
+						ViewDefinitionOverrideEditor.StripRuntimeSuffix(field.StableId));
+				if (located != null && located.ParentStableId == null
+					&& (located.CanMoveUp || located.CanMoveDown))
+				{
+					location = located;
+					return field;
+				}
+			}
+
+			location = null;
+			return null;
 		}
 
 		// The host's transient reveal set, read through the same seam the production compose

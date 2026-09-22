@@ -55,8 +55,8 @@ namespace SIL.FieldWorks.XWorks
 			// The full non-headed compound detail composes editably.
 			Assert.That(composed.Model.Fields.Count(f => f.Kind == DetailFieldKind.Text), Is.GreaterThanOrEqualTo(2),
 				"Name and Description compose as editable text rows (the <if Disabled> active branch now imports)");
-			Assert.That(composed.Model.Fields.Any(f => f.Kind == DetailFieldKind.Unsupported),
-				"the Active boolean flag composes as a labeled Unsupported worklist row (checkbox editing dropped)");
+			Assert.That(composed.Model.Fields.Any(f => f.Kind == DetailFieldKind.Boolean),
+				"the Active boolean flag composes as an editable checkbox row");
 			Assert.That(composed.Model.Fields.Count(f => f.Kind == DetailFieldKind.Chooser), Is.GreaterThanOrEqualTo(3),
 				"the Left Member / Right Member / Result CATEGORY pickers compose as editable choosers");
 		}
