@@ -322,6 +322,13 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 		public static double PickerMinWidth => FwThemeResources.RequireDouble(GeneratedTokenKeys.DataTree_PickerMinWidth);
 
 		/// <summary>
+		/// Empty width of the slot that types a NEW reference-vector item. It sits inline among
+		/// the existing items and grows with what is typed, so this is only how much of a target
+		/// it offers when empty.
+		/// </summary>
+		public static double NewItemSlotMinWidth => FwThemeResources.RequireDouble(GeneratedTokenKeys.DataTree_NewItemSlotMinWidth);
+
+		/// <summary>
 		/// The DETERMINISTIC, GLOBAL small-glyph icon size (px), the gear/kebab counterpart of
 		/// <see cref="CheckboxBoxSize"/> -- the same 14px so every small glyph (checkbox, radio,
 		/// gear, kebab) reads at one density and none inflates a row past the text-row height.

@@ -1560,7 +1560,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 					VerticalAlignment = VerticalAlignment.Center,
 					Margin = FwAvaloniaDensity.TrailingItemGap,
 					Padding = FwAvaloniaDensity.EditorPadding,
-					MinWidth = FwAvaloniaDensity.PickerMinWidth,
+					MinWidth = FwAvaloniaDensity.NewItemSlotMinWidth,
 					MinHeight = 0,
 					Watermark = FwAvaloniaStrings.AddItem
 				};
