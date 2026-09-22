@@ -8,12 +8,12 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 using System.Xml;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework.DetailControls.Resources;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.Common.DetailRules;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FdoUi;
 using SIL.FieldWorks.LexText.Controls;
@@ -1398,145 +1398,31 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			return GetHelpTopicID(ChooserDlgHelpTopicID, "khtpChoose");
 		}
 
-		private String GetHelpTopicID(String xmlHelpTopicID, String generatedIDPrefix)
+		// An authored id returns at once; the subject is described only when generating.
+		private string GetHelpTopicID(string xmlHelpTopicID, string generatedIDPrefix)
+			=> FieldHelpTopics.Resolve(xmlHelpTopicID, generatedIDPrefix, DescribeHelpTopicSubject, helpTopicIsValid);
+
+		private HelpTopicSubject DescribeHelpTopicSubject()
 		{
-			String helpTopicID;
-
-			if (xmlHelpTopicID == "khtpField-PhRegularRule-RuleFormula")
-				xmlHelpTopicID = "khtpChoose-Environment";
-
-			if (!String.IsNullOrEmpty(xmlHelpTopicID))
-				helpTopicID = xmlHelpTopicID;
-			else
+			var fieldName = XmlUtils.GetOptionalAttributeValue(ConfigurationNode, "field");
+			var subject = new HelpTopicSubject
 			{
-				helpTopicID = GenerateHelpTopicId(generatedIDPrefix);
-			}
-			return helpTopicID;
-		}
-
-		private string GenerateHelpTopicId(string helpTopicPrefix)
-		{
-			String generatedHelpTopicID;
-
-			String tempfieldName = XmlUtils.GetOptionalAttributeValue(ConfigurationNode, "field");
-			String templabelName = XmlUtils.GetOptionalAttributeValue(ConfigurationNode, "label");
-			String areaName = m_propertyTable.GetStringProperty("areaChoice", null);
-			string toolName = m_propertyTable.GetStringProperty("currentContentControl", null);
-			int parentHvo = Convert.ToInt32(XmlUtils.GetOptionalAttributeValue(ConfigurationNode, "hvoDisplayParent"));
-
-			if (tempfieldName == "Targets" && parentHvo != 0)
-				// Ceoss Reference (entry level) or lexical relation (sense level) subitems
+				FieldName = fieldName,
+				Label = XmlUtils.GetOptionalAttributeValue(ConfigurationNode, "label"),
+				ClassName = Cache.DomainDataByFlid.MetaDataCache.GetClassName(Object.ClassID),
+				OwnerClassName = Object.Owner?.ClassName,
+				SortKey = Object is ICmPossibility ? Object.SortKey : null,
+				AreaName = m_propertyTable.GetStringProperty("areaChoice", null),
+				ToolName = m_propertyTable.GetStringProperty("currentContentControl", null)
+			};
+			// A lexical-relation Targets slice carries the entry or sense it is shown under.
+			var parentHvo = Convert.ToInt32(XmlUtils.GetOptionalAttributeValue(ConfigurationNode, "hvoDisplayParent"));
+			if (fieldName == "Targets" && parentHvo != 0)
 			{
-				var repo = m_cache.ServiceLocator.GetInstance<ILexEntryRepository>();
-				ILexEntry lex;
-				repo.TryGetObject(parentHvo, out lex);
-
-				if (lex != null) // It must be the entry level
-				{
-					generatedHelpTopicID = helpTopicPrefix + "-" + toolName + "-CrossReferenceSubitem";
-				}
-				else // It must be the sense level
-				{
-					generatedHelpTopicID = helpTopicPrefix + "-" + toolName + "-LexicalRelationSubitem";
-
-				}
+				subject.TargetsParentIsEntry = m_cache.ServiceLocator.GetInstance<ILexEntryRepository>()
+					.TryGetObject(parentHvo, out _);
 			}
-			else
-			{
-				templabelName = getAlphaNumeric(templabelName);
-				if (String.IsNullOrEmpty(tempfieldName))
-				{
-					// try to use the slice label, without spaces.
-					tempfieldName = templabelName;
-				}
-				generatedHelpTopicID = GetGeneratedHelpTopicId(helpTopicPrefix, tempfieldName);
-				if (!helpTopicIsValid(generatedHelpTopicID))
-				{
-					// try to use the slice label, without spaces if the helpTopicID does not work for the field xml attribute.
-					generatedHelpTopicID = GetGeneratedHelpTopicId(helpTopicPrefix, templabelName);
-					if (!helpTopicIsValid(generatedHelpTopicID))
-					{
-						if (helpTopicPrefix.Equals("khtpChoose"))
-							generatedHelpTopicID = "khtpChoose-CmPossibility";
-						else if (areaName == "lists")
-						{
-							generatedHelpTopicID = "khtp-CustomListField"; // If the list isn't defined, use the generic list help topic
-
-						}
-						else
-						{
-							generatedHelpTopicID = "khtpNoHelpTopic"; // else use the generic no help topic
-						}
-					}
-				}
-			}
-
-		return generatedHelpTopicID;
-		}
-
-		private string GetGeneratedHelpTopicId(string helpTopicPrefix, String fieldName)
-		{
-			var ownerClassName = Object.Owner == null ? null : Object.Owner.ClassName;
-			var className = Cache.DomainDataByFlid.MetaDataCache.GetClassName(Object.ClassID);
-			// Distinguish the Example (sense) field and the expanded example (LexExtendedNote) field
-			className = (fieldName == "Example" && ownerClassName == "LexExtendedNote") ? "LexExtendedNote" : className;
-			// Distinguish the Translation (sense) field and the expanded example (LexExtendedNote) field
-			className = fieldName.StartsWith("Translation")&& (ownerClassName == "LexExtendedNote" || (Object.Owner != null && Object.Owner.ClassName == "LexExtendedNote")) ? "LexExtendedNote" : className;
-			var toolName = m_propertyTable.GetStringProperty("currentContentControl", null);
-
-			String generatedHelpTopicID;
-
-			generatedHelpTopicID = helpTopicPrefix + "-" + toolName + "-" + className + "-" + fieldName;
-
-			if (!helpTopicIsValid(generatedHelpTopicID))
-			{
-				if (String.Equals(className, "CmPossibility"))
-					generatedHelpTopicID = helpTopicPrefix + "-" + toolName + "-" + Object.SortKey + "-" + fieldName;
-
-				if (!helpTopicIsValid(generatedHelpTopicID))
-				{
-					generatedHelpTopicID = helpTopicPrefix + "-" + toolName + "-" + fieldName;
-					if (!helpTopicIsValid(generatedHelpTopicID))
-					{
-						generatedHelpTopicID = helpTopicPrefix + "-" + className + "-" + fieldName;
-						if (!helpTopicIsValid(generatedHelpTopicID))
-						{
-							generatedHelpTopicID = helpTopicPrefix + "-" + fieldName;
-						}
-					}
-				}
-			}
-			return generatedHelpTopicID;
-		}
-
-		/// <summary>
-		/// Generates a possible help topic id from the field name, but does NOT check it for validity!
-		/// </summary>
-		private static string getAlphaNumeric(string fromStr)
-		{
-			var candidateID = new StringBuilder("");
-
-			if (String.IsNullOrEmpty(fromStr))
-				return candidateID.ToString();
-
-			// Should we capitalize the next letter?
-			bool nextCapital = true;
-
-			// Lets turn our field into a candidate help page!
-			foreach (char ch in fromStr)
-			{
-				if (Char.IsLetterOrDigit(ch)) // might we include numbers someday?
-				{
-					if (nextCapital)
-						candidateID.Append(Char.ToUpper(ch));
-					else
-						candidateID.Append(ch);
-					nextCapital = false;
-				}
-				else // unrecognized character... exclude it
-					nextCapital = true; // next letter should be a capital
-			}
-			return candidateID.ToString();
+			return subject;
 		}
 
 		/// <summary>
@@ -1546,9 +1432,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		{
 			if (m_mediator == null)
 				return false;
-			var helpTopicProvider = m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider");
-			return (helpTopicProvider != null && !String.IsNullOrEmpty(helpStr))
-				&& (helpTopicProvider.GetHelpString(helpStr) != null);
+			return FieldHelpTopics.KnownBy(m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"))(helpStr);
 		}
 
 		/// <summary></summary>

@@ -386,8 +386,10 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 			ViewStringList enumStringList = null,
 			IReadOnlyList<string> visibleWritingSystems = null,
 			bool toggleValue = false,
-			bool reorder = false)
+			bool reorder = false,
+			string helpTopicId = null)
 		{
+			HelpTopicId = helpTopicId;
 			Reorder = reorder;
 			ToggleValue = toggleValue;
 			VisibleWritingSystems = visibleWritingSystems;
@@ -565,6 +567,12 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 		/// even when the property is virtual; the order persists as a virtual ordering.
 		/// </summary>
 		public bool Reorder { get; }
+
+		/// <summary>
+		/// The slice's authored <c>helpTopicID</c>; null when the layout has none and the
+		/// topic is generated from the field, its object and the tool.
+		/// </summary>
+		public string HelpTopicId { get; }
 	}
 
 	/// <summary>

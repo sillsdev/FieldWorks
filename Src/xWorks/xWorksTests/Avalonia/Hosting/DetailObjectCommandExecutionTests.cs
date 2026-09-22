@@ -299,6 +299,90 @@ namespace SIL.FieldWorks.XWorks
 				"the host re-shows the record after the coalesced completion");
 		}
 
+		// Help topics: every composed row that has a WinForms slice twin must resolve the SAME
+		// topic id the slice generates, with the provider knowing nothing and knowing much.
+
+		private sealed class PatternHelpTopicProvider : IHelpTopicProvider
+		{
+			private readonly Func<string, bool> _knows;
+			public PatternHelpTopicProvider(Func<string, bool> knows) { _knows = knows; }
+			public string GetHelpString(string id) => id != null && _knows(id) ? id : null;
+			public string HelpFile => string.Empty;
+		}
+
+		// A lexical relation from the test entry to another, so the entry composes a relation
+		// row whose WinForms twin is a Targets slice.
+		private void MakeLexicalRelation()
+		{
+			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
+			{
+				var stem = GetMorphTypeOrCreateOne("stem");
+				var noun = GetGrammaticalCategoryOrCreateOne("noun", Cache.LangProject.PartsOfSpeechOA);
+				var other = AddLexeme(m_createdObjects, "command-entry-synonym", stem, "synonym", noun);
+				var lexDb = Cache.LangProject.LexDbOA;
+				if (lexDb.ReferencesOA == null)
+					lexDb.ReferencesOA = Cache.ServiceLocator.GetInstance<ICmPossibilityListFactory>().Create();
+				var type = Cache.ServiceLocator.GetInstance<ILexRefTypeFactory>().Create();
+				lexDb.ReferencesOA.PossibilitiesOS.Add(type);
+				type.MappingType = (int)LexRefTypeTags.MappingTypes.kmtEntryCollection;
+				type.Name.set_String(Cache.DefaultAnalWs, "Synonyms");
+				var reference = Cache.ServiceLocator.GetInstance<ILexReferenceFactory>().Create();
+				type.MembersOC.Add(reference);
+				reference.TargetsRS.Add(m_entry);
+				reference.TargetsRS.Add(other);
+			});
+			DrainMediatorAndIdleQueues();
+		}
+
+		[TestCase(false)]
+		[TestCase(true)]
+		public void HelpTopics_ResolveLikeTheWinFormsSlices_ForEveryTwinnedRow(bool providerKnowsToolTopics)
+		{
+			AddSense("second gloss");
+			MakeTwoSubentries();
+			MakeLexicalRelation();
+			// The provider decides which generated candidate wins; both sides read the same one.
+			m_propertyTable.SetProperty("HelpTopicProvider",
+				new PatternHelpTopicProvider(id => providerKnowsToolTopics && id.Contains("-lexiconEdit-")), false);
+			m_propertyTable.SetPropertyPersistence("HelpTopicProvider", false);
+			EnsureAdapter(m_entry.Hvo);
+			var dataTree = (LegacyDataTree)GetField(m_view, "m_dataEntryForm");
+			var fields = DetailComposer.Compose(m_entry, Cache).Model.Fields;
+
+			var compared = 0;
+			var relationsCompared = 0;
+			var mismatches = new List<string>();
+			foreach (var sliceObj in dataTree.Slices)
+			{
+				if (!(sliceObj is Slice slice) || slice.Object == null || slice.IsLazyPlaceholder || slice.Flid == 0)
+					continue;
+				var mdc = (IFwMetaDataCacheManaged)Cache.MetaDataCacheAccessor;
+				var sliceField = mdc.FieldExists(slice.Flid) ? mdc.GetFieldName(slice.Flid) : null;
+				if (sliceField == null)
+					continue;
+				// A relation's WinForms twin is a Targets slice on the relation; the row keeps
+				// the
+				// relations property as its field and names Targets in its help-topic source.
+				var twin = sliceField == "Targets"
+					? fields.FirstOrDefault(f => f.ObjectHvo == slice.Object.Hvo
+						&& f.HelpTopicSource?.FieldName == "Targets")
+					: fields.FirstOrDefault(f => f.ObjectHvo == slice.Object.Hvo
+						&& string.Equals(f.Field, sliceField, StringComparison.Ordinal));
+				if (twin == null)
+					continue;
+				compared++;
+				if (sliceField == "Targets")
+					relationsCompared++;
+				var expected = slice.GetSliceHelpTopicID();
+				var actual = m_view.ResolveHelpTopic(twin);
+				if (!string.Equals(expected, actual, StringComparison.Ordinal))
+					mismatches.Add($"{sliceField} on {slice.Object.ClassName}: slice '{expected}', row '{actual}'");
+			}
+			Assert.That(compared, Is.GreaterThan(5), "enough rows have a WinForms twin to make the comparison meaningful");
+			Assert.That(relationsCompared, Is.GreaterThan(0), "the lexical relation's Targets slice found its row");
+			Assert.That(mismatches, Is.Empty);
+		}
+
 		// ----------------------------------------------------------------------------------------
 		// Delete Sense / Delete object
 		// ----------------------------------------------------------------------------------------
