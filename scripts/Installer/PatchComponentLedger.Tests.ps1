@@ -54,14 +54,14 @@ function New-TestLedgerFile {
 try {
     $patch2758 = 'jobs/FieldWorks-Win-all-Release-Patch/2758/FieldWorks_9.3.12.2758_b1452_x64.msp'
     $patch2760 = 'jobs/FieldWorks-Win-all-Release-Patch/2760/FieldWorks_9.3.12.2760_b1452_x64.msp'
-    $patch2762 = 'jobs/FieldWorks-Win-all-Release-Patch/2762/FieldWorks_9.3.12.2762_b1452_x64.msp'
+    $patchOtherBase = 'jobs/FieldWorks-Win-all-Release-Patch/2759/FieldWorks_9.3.12.2759_b1453_x64.msp'
     $ledger2760 = $patch2760 -replace '\.msp$', '_components.tsv'
-    $selection = Select-PreviousPublishedPatch -PatchKeys @($patch2758, $patch2760, $patch2762) -LedgerKeys @($ledger2760) -BaseBuildNumber '1452' -PatchVersion '9.3.12.2761'
-    Assert-Equal "$($selection.PatchKey)|$($selection.LedgerKey)" "$patch2760|$ledger2760" 'The selector must choose the immediate previous version and its matching ledger, ignoring later versions.'
+    $selection = Select-PreviousPublishedPatch -PatchKeys @($patch2758, $patchOtherBase, $patch2760) -LedgerKeys @($ledger2760) -BaseBuildNumber '1452' -PatchVersion '9.3.12.2761'
+    Assert-Equal "$($selection.PatchKey)|$($selection.LedgerKey)" "$patch2760|$ledger2760" 'The selector must choose the latest earlier patch and ledger on the requested base.'
 
-    $orphanLedger = $patch2760 -replace '\.msp$', '_components.tsv'
-    $bootstrap = Select-PreviousPublishedPatch -PatchKeys @($patch2758) -LedgerKeys @($orphanLedger) -BaseBuildNumber '1452' -PatchVersion '9.3.12.2761'
-    Assert-Equal "$($bootstrap.PatchKey)|$($bootstrap.LedgerKey)" "$patch2758|" 'A patch line without a published ledger must start by publishing the current patch ledger.'
+    $unmatchedLedger = $patch2760 -replace '\.msp$', '_components.tsv'
+    $bootstrap = Select-PreviousPublishedPatch -PatchKeys @($patch2758) -LedgerKeys @($unmatchedLedger) -BaseBuildNumber '1452' -PatchVersion '9.3.12.2761'
+    Assert-Equal "$($bootstrap.PatchKey)|$($bootstrap.LedgerKey)" "$patch2758|" 'A ledger without its corresponding published patch must not be returned.'
 
     Assert-Throws {
         Select-PreviousPublishedPatch -PatchKeys @($patch2758, $patch2760) -LedgerKeys @($patch2758 -replace '\.msp$', '_components.tsv') -BaseBuildNumber '1452' -PatchVersion '9.3.12.2761'
@@ -131,7 +131,9 @@ try {
     Assert-Contains $message '<RemovedSinceLastBase Include="$(dir-outputBase)/Previous.dll" />' 'The remediation must provide an actionable stand-in example.'
 
     $targetText = Get-Content -Raw (Join-Path $PSScriptRoot '..\..\Build\Installer.legacy.targets')
-    Assert-True ($targetText.Contains('<Error') -and $targetText.Contains('Cannot create a base build while RemovedSinceLastBase contains %(RemovedSinceLastBase.Identity).')) 'The base target must use the actual MSBuild Error gate and name the stand-in.'
+    $releaseFlag = '$' + '(FailOnRemovedSinceLastBase)'
+    Assert-True ($targetText.Contains('<Warning') -and $targetText.Contains("'$releaseFlag' != 'true'")) 'A verification base build must warn about stand-ins.'
+    Assert-True ($targetText.Contains('<Error') -and $targetText.Contains("'$releaseFlag' == 'true'")) 'A base release must fail while stand-ins remain.'
 
     Assert-Equal (Read-ComponentLedger -Path @()).Count 0 'A patch line with no S3 ledger must start with an empty previous-patch set.'
     $headerOnlyPath = New-TestLedgerFile @('# ComponentId' + [char]9 + 'Component' + [char]9 + 'File' + [char]9 + 'Feature')

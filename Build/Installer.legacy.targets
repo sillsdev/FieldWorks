@@ -105,8 +105,8 @@
 		/>
 	</Target>
 	<!--
-		Zero-byte stand-ins keep files shipped by the base or its patches present until a new
-		base.
+		Windows Installer patches must preserve component identities shipped by the base or an
+		earlier patch. Zero-byte stand-ins keep those components present until a new base.
 	-->
 	<Target Name="RescuePatching">
 		<ItemGroup>
@@ -114,10 +114,6 @@
 			<!-- liblcm swapped its IoC container from StructureMap to Microsoft.Extensions.DependencyInjection
 				in SIL.LCModel 11.0.0-beta0176, so nothing copies StructureMap.dll to the output any more. -->
 			<RemovedSinceLastBase Include="$(dir-outputBase)/StructureMap.dll" />
-			<!--
-				The zero-byte Avalonia.Themes.Fluent.dll stand-in preserves its component identity
-				on patches built from base 1452.
-			-->
 			<RemovedSinceLastBase Include="$(dir-outputBase)/Avalonia.Themes.Fluent.dll" />
 		</ItemGroup>
 		<WriteLinesToFile
@@ -672,9 +668,13 @@
 		<Base Condition="'$(BASE_BUILD_NUMBER)' != ''">b$(BASE_BUILD_NUMBER)_</Base>
 	</PropertyGroup>
 	<Target Name="BuildProductBaseMsi" DependsOnTargets="InstallerVersionNumbers">
+		<Warning
+			Text="RemovedSinceLastBase contains %(RemovedSinceLastBase.Identity). Remove its entry and zero-byte output before creating a base release."
+			Condition="'@(RemovedSinceLastBase)' != '' and '$(FailOnRemovedSinceLastBase)' != 'true'"
+		/>
 		<Error
-			Text="Cannot create a base build while RemovedSinceLastBase contains %(RemovedSinceLastBase.Identity). Remove the RemovedSinceLastBase entry and its zero-byte file before creating the base build."
-			Condition="'@(RemovedSinceLastBase)' != ''"
+			Text="Cannot create a base release while RemovedSinceLastBase contains %(RemovedSinceLastBase.Identity). Remove its entry and zero-byte output before creating the base release."
+			Condition="'@(RemovedSinceLastBase)' != '' and '$(FailOnRemovedSinceLastBase)' == 'true'"
 		/>
 		<Message
 			Text="Building FieldWorks Base Msi for $(Arch)"

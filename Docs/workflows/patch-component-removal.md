@@ -39,13 +39,13 @@ Create an issue to remove the placeholder before the next base build.
 
 The `RemovedSinceLastBase` entry makes the build write a zero-byte stand-in at that path.
 That file-backed component remains in the patch, so machines that already have the real file keep
-working while the removal issue is completed. Keep
-`Avalonia.Themes.Fluent.dll` in this list for base 1452.
+working while the removal issue is completed.
 
-## Before creating a base
+## Before publishing a base
 
-A base build fails while any `RemovedSinceLastBase` entries remain. The error lists the
-stand-in paths and requires both cleanup actions:
+A scheduled base verification build warns while any `RemovedSinceLastBase` entries remain.
+A base release build fails. Both messages list the stand-in paths and require two cleanup
+actions:
 
 1. Remove each `RemovedSinceLastBase` entry from `Build/Installer.legacy.targets`.
 2. Remove each corresponding zero-byte file from the build output.

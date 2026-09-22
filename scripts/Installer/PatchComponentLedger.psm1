@@ -1,7 +1,7 @@
 Set-StrictMode -Version Latest
 
-# File-backed components under MSI APPFOLDER must remain present across the base
-# and immediate previous patch.
+# A new patch must retain file-backed MSI APPFOLDER components from its base and
+# immediately previous published patch.
 
 $script:UpdateBucket = 'https://flex-updates.s3.amazonaws.com'
 $script:PatchPrefix = 'jobs/FieldWorks-Win-all-Release-Patch/'
