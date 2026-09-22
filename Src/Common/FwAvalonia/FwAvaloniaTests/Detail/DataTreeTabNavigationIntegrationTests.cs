@@ -56,6 +56,20 @@ namespace FwAvaloniaTests.Detail
 			return (window, view);
 		}
 
+		// Same as Show(), but threads a real edit context through -- needed for a
+		// structured-text row, where paragraph editing (and so the per-run-font
+		// display's keyboard focus-swap) only wires up with a non-null context (LT-22688).
+		private static (Window Window, DataTree View) ShowWithEditContext(double width, double height,
+			IDetailEditContext editContext, params DetailField[] fields)
+		{
+			var model = new DetailModel("LexEntry", "Normal", fields.ToList(), new List<ViewDiagnostic>());
+			var view = new DataTree(model, editContext: editContext, menuRequested: request => { });
+			var window = new Window { Content = view, Width = width, Height = height };
+			window.Show();
+			Dispatcher.UIThread.RunJobs();
+			return (window, view);
+		}
+
 		private static T Find<T>(Visual root, string automationId) where T : Visual
 			=> root.GetVisualDescendants().OfType<T>()
 				.First(c => AutomationProperties.GetAutomationId(c) == automationId);
@@ -267,6 +281,39 @@ namespace FwAvaloniaTests.Detail
 			Assert.That(FocusedAutomationId(view), Is.EqualTo("After.vern"),
 				"once every writing system in the row is visited, Tab advances to the next row");
 			DialogSnapshot.Capture(window, "DataTree-TabNavigation-09-multi-ws-internal-tab-regression");
+		}
+
+		[AvaloniaTest]
+		public void TabIntoARichStructuredTextParagraph_FocusesItsEditor()
+		{
+			// Two runs in different fonts force the per-run-font display path (LT-22688) --
+			// the same swap-on-focus pattern FwMultiWsTextField already covers.
+			var richParagraph = new DetailParagraph(DetailRichTextEditAlgorithms.FromRuns(
+				"OneTwo", new List<DetailTextRun>
+				{
+					new DetailTextRun("One", fontFamily: "Arial"),
+					new DetailTextRun("Two", fontFamily: "Times New Roman")
+				}));
+
+			var structuredField = new DetailField("Multi", "Multi", "Multi", null,
+				DetailFieldKind.StructuredText, EditorClassification.Known, "Multi", null,
+				HostRouting.Inherit, null, null, null, isEditable: true, objectHvo: 1234,
+				paragraphs: new List<DetailParagraph> { richParagraph });
+
+			var (window, view) = ShowWithEditContext(480, 300, new FakeDetailEditContext(),
+				Field("Before"), structuredField, Field("After"));
+
+			Find<TextBox>(view, "Before.vern").Focus();
+			Dispatcher.UIThread.RunJobs();
+
+			Tab(window);
+			Assert.That(FocusedAutomationId(view), Is.EqualTo("Multi.Para.0"),
+				"Tab reaches the rich paragraph's editable box, not its per-run-font display");
+
+			Tab(window);
+			Assert.That(FocusedAutomationId(view), Is.EqualTo("After.vern"),
+				"once the paragraph is visited, Tab advances to the next row");
+			DialogSnapshot.Capture(window, "DataTree-TabNavigation-10-rich-structured-text-tab");
 		}
 	}
 }
