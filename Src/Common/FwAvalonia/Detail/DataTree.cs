@@ -37,10 +37,6 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 	{
 		private readonly IDetailEditContext _editContext;
 		private readonly Action<string> _writingSystemFocused;
-		// Collapsible section toggles, keyed by field stable id, captured at build
-		// time: WireCollapsibleHeaders finds them since the header now wraps in
-		// the field-menu gutter, where the kebab is also a Button.
-		private readonly Dictionary<string, Button> _collapsibleToggles = new Dictionary<string, Button>();
 		private readonly Action<double> _labelColumnWidthChanged;
 		private TextBlock _validationBlock;
 
@@ -572,7 +568,6 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 						RebuildItems();
 					};
 					header = button;
-					_collapsibleToggles[field.StableId] = button;
 					// Chrome, not a field, same reasoning as the field-menu kebab (LT-22688).
 					Avalonia.Input.KeyboardNavigation.SetIsTabStop(button, false);
 				}
