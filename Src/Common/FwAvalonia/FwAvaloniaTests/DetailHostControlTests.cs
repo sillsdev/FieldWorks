@@ -27,11 +27,17 @@ namespace FwAvaloniaTests
 		}
 
 		[Test]
+		public void TabKey_Bypassed_WhenAvaloniaHostContainsFocus()
+		{
+			Assert.That(ShouldBypass(true, 0x09), Is.True);
+		}
+
+		[Test]
 		public void NonDirectionalKeys_AndUnfocusedHost_AreNotBypassed()
 		{
 			Assert.That(ShouldBypass(false, 0x26), Is.False);
+			Assert.That(ShouldBypass(false, 0x09), Is.False);
 			Assert.That(ShouldBypass(true, 0x0D), Is.False);
-			Assert.That(ShouldBypass(true, 0x09), Is.False);
 		}
 	}
 }
