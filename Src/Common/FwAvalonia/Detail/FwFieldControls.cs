@@ -1342,7 +1342,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		// gear click, and the option flyout, so a recycled vector cell releases every closure.
 		private readonly List<Action> _teardown = new List<Action>();
 		private readonly IReadOnlyList<DetailChoiceOption> _items;
-		private readonly List<TextBlock> _itemBlocks = new List<TextBlock>();
+		private readonly List<Control> _itemBlocks = new List<Control>();
 		private int _selectedIndex = -1;
 		private bool _disposed;
 
@@ -1375,25 +1375,74 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 
 			_items = field.Items;
 			var editable = editContext != null && field.IsEditable;
+			// A row whose domain can reconcile typed text renders its items as editors rather
+			// than labels, so an item already on the field can be changed and not only replaced.
+			var textEditing = editContext as IReferenceTextEditing;
+			var retypable = editable && textEditing != null
+				&& textEditing.CanEditReferenceItemText(field);
 			for (var index = 0; index < field.Items.Count; index++)
 			{
 				var item = field.Items[index];
-				var text = new TextBlock
+				Control text;
+				if (retypable)
 				{
-					Text = item.Name,
-					VerticalAlignment = VerticalAlignment.Center,
-					Margin = FwAvaloniaDensity.TrailingItemGap,
-					// 14.2: a null background only hit-tests the glyphs -- the whole item must
-					// take
-					// the right-click or the Remove flyout only opens over ink.
-					Background = FwAvaloniaDensity.TransparentBrush
-				};
+					var box = new TextBox
+					{
+						Text = item.Name,
+						VerticalAlignment = VerticalAlignment.Center,
+						Margin = FwAvaloniaDensity.TrailingItemGap,
+						Padding = FwAvaloniaDensity.EditorPadding,
+						MinWidth = 0,
+						MinHeight = 0
+					};
+					var itemKey = item.Key;
+					// Staged when the edit FINISHES, not per keystroke: each stage reconciles
+					// against the project, so "/", "/_", "/_a" would leave two junk objects
+					// behind. This handler runs before the view's autosave.
+					var original = item.Name;
+					Action commitText = () =>
+					{
+						if (box.Text == original)
+							return;
+						if (textEditing.TrySetReferenceItemText(field, itemKey, box.Text))
+							gestureCompleted?.Invoke();
+					};
+					EventHandler<Avalonia.Interactivity.RoutedEventArgs> commitOnBlur =
+						(s2, e2) => commitText();
+					box.LostFocus += commitOnBlur;
+					EventHandler<KeyEventArgs> commitOnEnter = (s2, e2) =>
+					{
+						if (e2.Key != Key.Enter)
+							return;
+						e2.Handled = true;
+						commitText();
+					};
+					box.KeyDown += commitOnEnter;
+					_teardown.Add(() =>
+					{
+						box.LostFocus -= commitOnBlur;
+						box.KeyDown -= commitOnEnter;
+					});
+					text = box;
+				}
+				else
+				{
+					text = new TextBlock
+					{
+						Text = item.Name,
+						VerticalAlignment = VerticalAlignment.Center,
+						Margin = FwAvaloniaDensity.TrailingItemGap,
+						// 14.2: a null background only hit-tests the glyphs -- the whole item
+						// must take the right-click, or the Remove flyout only opens over ink.
+						Background = FwAvaloniaDensity.TransparentBrush
+					};
+				}
 				AutomationProperties.SetAutomationId(text, ItemAutomationId(automationId, item.Key));
 				// Any button selects, so a right-click's menu acts on the item under the pointer;
 				// focus selects too. Items are focusable (a click focuses one) but not tab stops.
 				var itemIndex = index;
 				text.Focusable = true;
-				KeyboardNavigation.SetIsTabStop(text, false);
+				KeyboardNavigation.SetIsTabStop(text, retypable);
 				EventHandler<GotFocusEventArgs> focusSelect = (s, e) => SelectItem(itemIndex);
 				text.GotFocus += focusSelect;
 				EventHandler<PointerPressedEventArgs> select = (s, e) =>
@@ -1417,16 +1466,26 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				});
 				if (item.HasValidationMessage)
 				{
-					// Legacy draws a red squiggle. Avalonia has no wavy decoration, so this is
-					// colour PLUS an underline -- colour alone would carry the whole signal.
-					text.Foreground = FwAvaloniaDensity.ValidationErrorBrush;
-					text.TextDecorations = TextDecorations.Underline;
+					// No wavy underline exists here, so this is colour PLUS an underline --
+					// colour alone would carry the whole signal. An editor takes the colour
+					// only; its chrome owns the rest.
+					if (text is TextBlock label)
+					{
+						label.Foreground = FwAvaloniaDensity.ValidationErrorBrush;
+						label.TextDecorations = TextDecorations.Underline;
+					}
+					else if (text is TextBox editor)
+					{
+						editor.Foreground = FwAvaloniaDensity.ValidationErrorBrush;
+					}
+
 					ToolTip.SetTip(text, item.ValidationMessage);
 					AutomationProperties.SetHelpText(text, item.ValidationMessage);
 				}
-				if (editable)
+				// Backspace and Delete remove the focused item -- but on an editor those keys
+				// are text editing, and removal stays on the item menu.
+				if (editable && !retypable)
 				{
-					// Backspace or Delete removes the focused item.
 					EventHandler<KeyEventArgs> keyRemove = (s, e) =>
 					{
 						if (e.Key != Key.Back && e.Key != Key.Delete)
@@ -1655,11 +1714,12 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		{
 			if (index == _selectedIndex)
 				return;
-			if (_selectedIndex >= 0)
-				_itemBlocks[_selectedIndex].Background = FwAvaloniaDensity.TransparentBrush;
+			// An editable item shows its own focus, so only a read-only one is painted.
+			if (_selectedIndex >= 0 && _itemBlocks[_selectedIndex] is TextBlock previous)
+				previous.Background = FwAvaloniaDensity.TransparentBrush;
 			_selectedIndex = index;
-			if (index >= 0)
-				_itemBlocks[index].Background = FwAvaloniaDensity.SelectedRowBrush;
+			if (index >= 0 && _itemBlocks[index] is TextBlock current)
+				current.Background = FwAvaloniaDensity.SelectedRowBrush;
 			SelectionChanged?.Invoke(this, EventArgs.Empty);
 		}
 

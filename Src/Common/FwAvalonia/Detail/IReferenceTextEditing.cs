@@ -44,6 +44,13 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		bool TryCreateAndAddReferenceItem(DetailField field, string text);
 
 		/// <summary>
+		/// Whether <paramref name="field"/> lets its existing items be retyped, which decides
+		/// whether the row renders them as editable text at all. Independent of any particular
+		/// item, and of what the user has typed.
+		/// </summary>
+		bool CanEditReferenceItemText(DetailField field);
+
+		/// <summary>
 		/// Re-points the item named by <paramref name="itemKey"/> at whatever
 		/// <paramref name="text"/> names, staging the change. Returns false -- without opening
 		/// the session -- for a field that cannot do this, or a key the field does not carry.

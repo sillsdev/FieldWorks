@@ -118,6 +118,9 @@ namespace SIL.FieldWorks.XWorks
 			return Stage(() => creator(text), FieldLabelFor(field));
 		}
 
+		public bool CanEditReferenceItemText(DetailField field)
+			=> Handler(field)?.ReferenceSetText != null;
+
 		public bool TrySetReferenceItemText(DetailField field, string itemKey, string text)
 		{
 			var setter = Handler(field)?.ReferenceSetText;
