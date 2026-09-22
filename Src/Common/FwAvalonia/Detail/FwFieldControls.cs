@@ -1328,7 +1328,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 	/// legacy STORES an invalid environment and marks it rather than refusing it.
 	///
 	/// CREATE-ON-TYPE (opt-in): a row whose edit context implements <see
-	/// cref="IReferenceItemCreation"/> for it also lets the user mint a target object by typing
+	/// cref="IReferenceTextEditing"/> for it also lets the user mint a target object by typing
 	/// into the picker's filter box -- the list offers a create row when the text matches
 	/// nothing. This is what makes an environments row reach an environment the project does not
 	/// own yet, which the picker alone cannot do. Every other vector row passes allowCreate:
@@ -1517,7 +1517,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			// object offers it (environments find-or-create a PhEnvironment from the typed
 			// string). Every other vector row passes allowCreate: false and behaves exactly as
 			// before.
-			var creation = editContext as IReferenceItemCreation;
+			var creation = editContext as IReferenceTextEditing;
 			var canCreate = creation != null && creation.CanCreateReferenceItem(field);
 			var picker = new FwOptionChooser(field.Options, field.SearchOptions, automationId,
 				field.Items.Select(i => i.Key), multiSelect: true, allowCreate: canCreate,

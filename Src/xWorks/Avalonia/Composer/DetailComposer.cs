@@ -1692,7 +1692,97 @@ namespace SIL.FieldWorks.XWorks
 						_sda.Replace(hvo, flid, size, size, new[] { env.Hvo }, 1);
 						return true;
 					};
+
+					HandlerFor(stableId).ReferenceSetText = (itemKey, text) =>
+					{
+						var position = PositionOfItem(hvo, flid, itemKey);
+						if (position < 0)
+							return false;
+
+						var target = ResolveEnvironmentForItem(hvo, flid, position, StripSpaces(text))
+							?? FindOrCreateEnvironment(text);
+						if (target == null)
+							return false;
+
+						// The typed string is written onto the resolved environment whether or
+						// not
+						// it moved, so a re-spelling reaches every field referencing it --
+						// writing system as much as spelling.
+						target.StringRepresentation =
+							TsStringUtils.MakeString(text, _cache.DefaultVernWs);
+
+						var current = _sda.get_VecItem(hvo, flid, position);
+						if (target.Hvo != current)
+							_sda.Replace(hvo, flid, position, position + 1, new[] { target.Hvo }, 1);
+						return true;
+					};
 				}
+			}
+
+			// Where the item this key names currently sits. These rows are reference
+			// COLLECTIONS, so a position is only meaningful for the length of one write.
+			private int PositionOfItem(int hvo, int flid, string itemKey)
+			{
+				if (!Guid.TryParse(itemKey, out var guid))
+					return -1;
+				var size = _sda.get_VecSize(hvo, flid);
+				for (var i = 0; i < size; i++)
+				{
+					var item = _cache.ServiceLocator.ObjectRepository.GetObject(
+						_sda.get_VecItem(hvo, flid, i));
+					if (item.Guid == guid)
+						return i;
+				}
+
+				return -1;
+			}
+
+			/// <summary>
+			/// The environment an item should point at once its text becomes
+			/// <paramref name="wanted"/> (already space-stripped): one this field already
+			/// references and no OTHER item claims, else one from the project inventory, else
+			/// the first match regardless of who claims it. Null when the project has no match
+			/// at all, which is the caller's signal to create one.
+			///
+			/// Preferring what the field already references is what stops retyping one item from
+			/// stealing the environment another item is using.
+			/// </summary>
+			private IPhEnvironment ResolveEnvironmentForItem(int hvo, int flid, int index,
+				string wanted)
+			{
+				var size = _sda.get_VecSize(hvo, flid);
+				var claimedByOthers = new HashSet<int>();
+				for (var i = 0; i < size; i++)
+					if (i != index)
+						claimedByOthers.Add(_sda.get_VecItem(hvo, flid, i));
+
+				for (var i = 0; i < size; i++)
+				{
+					var itemHvo = _sda.get_VecItem(hvo, flid, i);
+					if (claimedByOthers.Contains(itemHvo))
+						continue;
+					if (_cache.ServiceLocator.ObjectRepository.GetObject(itemHvo) is IPhEnvironment env
+						&& StripSpaces(env.StringRepresentation?.Text) == wanted)
+					{
+						return env;
+					}
+				}
+
+				var inventory = _cache.LanguageProject.PhonologicalDataOA?.EnvironmentsOS;
+				if (inventory == null)
+					return null;
+				IPhEnvironment firstMatch = null;
+				foreach (var env in inventory)
+				{
+					if (StripSpaces(env.StringRepresentation?.Text) != wanted)
+						continue;
+					if (firstMatch == null)
+						firstMatch = env;
+					if (!claimedByOthers.Contains(env.Hvo))
+						return env;
+				}
+
+				return firstMatch;
 			}
 
 			/// <summary>

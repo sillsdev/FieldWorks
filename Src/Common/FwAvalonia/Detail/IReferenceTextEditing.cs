@@ -5,11 +5,12 @@
 namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 {
 	/// <summary>
-	/// The optional create-from-typed-text capability of a reference field, kept off the core
-	/// <see cref="IDetailEditContext"/> so only a context that can actually mint a target object
-	/// carries it. A caller acquires it with <c>ctx as IReferenceItemCreation</c> and treats a
-	/// null result as "this row picks from the list only", exactly as <see
-	/// cref="IStructuredTextEditing"/> is acquired.
+	/// The optional typed-text capability of a reference field -- creating a target object from
+	/// what the user types, and re-pointing an existing item at what they type over it. Kept off
+	/// the core <see cref="IDetailEditContext"/> so only a context that can actually reconcile
+	/// text against the domain carries it. A caller acquires it with
+	/// <c>ctx as IReferenceTextEditing</c> and treats a null result as "this row picks from the
+	/// list only", exactly as <see cref="IStructuredTextEditing"/> is acquired.
 	///
 	/// It exists because some legacy reference slices are BOTH a chooser and a typed editor.
 	/// Environments is the case in hand: <c>PhoneEnvReferenceLauncher</c> opens a
@@ -19,7 +20,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 	/// <c>PhEnvironment</c> or creating one. A picker alone cannot reach an environment the
 	/// project does not have yet.
 	/// </summary>
-	public interface IReferenceItemCreation
+	public interface IReferenceTextEditing
 	{
 		/// <summary>
 		/// Whether <paramref name="field"/> accepts creation from typed text. Drives whether the
@@ -41,5 +42,24 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		/// discard what the user typed.
 		/// </summary>
 		bool TryCreateAndAddReferenceItem(DetailField field, string text);
+
+		/// <summary>
+		/// Re-points the item named by <paramref name="itemKey"/> at whatever
+		/// <paramref name="text"/> names, staging the change. Returns false -- without opening
+		/// the session -- for a field that cannot do this, or a key the field does not carry.
+		///
+		/// Addressed by key rather than position because these rows are reference COLLECTIONS.
+		/// PhoneEnv is unordered, so an index means only "wherever it sat when composed".
+		///
+		/// Reconciliation belongs to the domain, and is NOT simply "find or create". An
+		/// environment is identified by its text with spaces stripped. Text stripping to what
+		/// the item already names leaves the reference alone and RENAMES the shared object,
+		/// which every field referencing it then shows. Text stripping differently re-points
+		/// the item, creating the target only when the project has none.
+		///
+		/// Validity is not a precondition, for the same reason it is not on creation: the
+		/// value is staged and annotated, never corrected or discarded.
+		/// </summary>
+		bool TrySetReferenceItemText(DetailField field, string itemKey, string text);
 	}
 }
