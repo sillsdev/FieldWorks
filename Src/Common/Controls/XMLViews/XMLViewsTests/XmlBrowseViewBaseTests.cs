@@ -9,6 +9,7 @@ using NUnit.Framework;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.Controls;
 using SIL.LCModel;
+using SIL.LCModel.Application;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Utils;
 
@@ -67,6 +68,62 @@ namespace XMLViewsTests
 		public Size GetScrollRange()
 		{
 			return ScrollRange;
+		}
+
+		/// <summary>How many times the view asked to make a selection visible.</summary>
+		public int MakeSelectionVisibleCalls;
+
+		/// <summary>Unit test helper: publish the rows the view reads.</summary>
+		public void SetList(ISilDataAccessManaged sda, int hvoRoot, int flid)
+		{
+			m_sda = sda;
+			m_hvoRoot = hvoRoot;
+			m_fakeFlid = flid;
+		}
+
+		/// <summary>Unit test helper: make a row current, bypassing the setter.</summary>
+		public void SetSelectedRow(int index, int hvo)
+		{
+			m_selectedIndex = index;
+			m_hvoOldSel = hvo;
+		}
+
+		/// <summary>Unit test helper</summary>
+		public void CallSaveSelectionInfo(Rectangle rcIdeal, int ydTop)
+		{
+			SaveSelectionInfo(rcIdeal, ydTop);
+		}
+
+		/// <summary>Unit test helper</summary>
+		public bool CallAdjustScrollRange(int dxdSize, int dxdPosition, int dydSize, int dydPosition)
+		{
+			return AdjustScrollRange1(dxdSize, dxdPosition, dydSize, dydPosition);
+		}
+
+		/// <summary>Unit test helper</summary>
+		public bool CallMakeSelectionVisible(IVwSelection sel)
+		{
+			return MakeSelectionVisible(sel, true, true, true);
+		}
+
+		/// <summary>
+		/// The fake root box cannot supply a selection, so only record the request.
+		/// </summary>
+		protected override bool MakeSelectionVisible(IVwSelection sel, bool fWantOneLineSpace)
+		{
+			MakeSelectionVisibleCalls++;
+			return true;
+		}
+
+		/// <summary>
+		/// Record the request, then let the product code run (and clear its anchor) on the null
+		/// selection the fake root box yields.
+		/// </summary>
+		protected override bool MakeSelectionVisible(IVwSelection vwsel, bool fWantOneLineSpace,
+			bool fWantBothEnds, bool fForcePrepareToDraw)
+		{
+			MakeSelectionVisibleCalls++;
+			return base.MakeSelectionVisible(vwsel, fWantOneLineSpace, fWantBothEnds, fForcePrepareToDraw);
 		}
 
 		/// <summary/>
@@ -934,6 +991,106 @@ namespace XMLViewsTests
 			int height = 456;
 			m_view.ScrollMinSize = new Size(123, height);
 			Assert.That(m_view.m_bv.ScrollBar.Maximum, Is.EqualTo(height));
+		}
+
+		private const int kRowListFlid = ObjectListPublisher.MinFakeFlid;
+		private const int kHvoRowList = 1;
+		/// <summary>Where the third row sits in a fully expanded 25-pixel-row view.</summary>
+		private static readonly Rectangle s_thirdRowRect = new Rectangle(0, 56, 100, 26);
+
+		private ObjectListPublisher PublishRows(params int[] hvos)
+		{
+			var publisher = new ObjectListPublisher(Cache.MainCacheAccessor as ISilDataAccessManaged, kRowListFlid);
+			publisher.CacheVecProp(kHvoRowList, hvos, false);
+			m_view.SetList(publisher, kHvoRowList, kRowListFlid);
+			return publisher;
+		}
+
+		private void ScrollTo(int y)
+		{
+			m_view.ScrollPosition = new Point(0, y);
+			Assert.That(-m_view.ScrollPosition.Y, Is.EqualTo(y), "Unit test bad assumption");
+		}
+
+		/// <summary>
+		/// LT-22676: after MakeSelectionVisible returns, a lazy-box expansion caused by user
+		/// scrolling must not use its stale row rectangle to drag the selected row back.
+		/// </summary>
+		[Test]
+		public void AdjustScrollRange_AfterMakeSelectionVisible_DoesNotDragSelectedRowBack()
+		{
+			m_view.m_rowCount = 100;
+			ConfigureScrollBars();
+			m_view.SetSelectedRow(2, 103);
+			m_view.CallSaveSelectionInfo(s_thirdRowRect, 0);
+			m_view.CallMakeSelectionVisible(null);
+			ScrollTo(600);
+
+			m_view.CallAdjustScrollRange(0, 0, 48, 1143);
+
+			Assert.That(-m_view.ScrollPosition.Y, Is.EqualTo(600));
+		}
+
+		/// <summary>
+		/// LT-3607: while MakeSelectionVisible is expanding lazy boxes, an expansion must
+		/// keep the row it is scrolling to in view.
+		/// </summary>
+		[Test]
+		public void AdjustScrollRange_WhileMakingSelectionVisible_KeepsSelectedRowInView()
+		{
+			m_view.m_rowCount = 100;
+			ConfigureScrollBars();
+			m_view.SetSelectedRow(2, 103);
+			ScrollTo(600);
+			m_view.CallSaveSelectionInfo(s_thirdRowRect, 600);
+
+			m_view.CallAdjustScrollRange(0, 0, 48, 1143);
+
+			Assert.That(-m_view.ScrollPosition.Y, Is.EqualTo(s_thirdRowRect.Top));
+		}
+
+		/// <summary/>
+		[Test]
+		public void SelectedIndex_ReassertSameRowSameObject_DoesNotScroll()
+		{
+			m_view.m_rowCount = 100;
+			ConfigureScrollBars();
+			PublishRows(101, 102, 103, 104, 105);
+			m_view.SetSelectedRow(2, 103);
+			ScrollTo(600);
+
+			m_view.SelectedIndex = 2;
+
+			Assert.That(m_view.MakeSelectionVisibleCalls, Is.EqualTo(0));
+			Assert.That(-m_view.ScrollPosition.Y, Is.EqualTo(600));
+		}
+
+		/// <summary/>
+		[Test]
+		public void SelectedIndex_ReassertSameRowDifferentObject_ScrollsRowIntoView()
+		{
+			m_view.m_rowCount = 100;
+			ConfigureScrollBars();
+			var rows = PublishRows(101, 102, 103, 104, 105);
+			m_view.SetSelectedRow(2, 103);
+			// The list was re-sorted under the fixed index, so row 2 now shows another object.
+			rows.CacheVecProp(kHvoRowList, new[] { 101, 102, 999, 104, 105 }, false);
+
+			m_view.SelectedIndex = 2;
+
+			Assert.That(m_view.MakeSelectionVisibleCalls, Is.EqualTo(1));
+		}
+
+		/// <summary/>
+		[Test]
+		public void ScrollSelectedRowIntoView_RequestsTheSelectedRow()
+		{
+			PublishRows(101, 102, 103);
+			m_view.SetSelectedRow(2, 103);
+
+			m_view.ScrollSelectedRowIntoView();
+
+			Assert.That(m_view.MakeSelectionVisibleCalls, Is.EqualTo(1));
 		}
 	}
 }
