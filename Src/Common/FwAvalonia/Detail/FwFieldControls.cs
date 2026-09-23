@@ -1388,8 +1388,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				Control text;
 				if (retypable)
 				{
-					// Flat, like every other editor in this view: an item must not cost more
-					// room than the label it replaces, or a row that fitted starts clipping.
+					// Flat -- no border, no fill -- because every other editor in this view
+					// is, and an item reads as part of the row rather than a control in it.
 					var box = new TextBox
 					{
 						Text = item.Name,
