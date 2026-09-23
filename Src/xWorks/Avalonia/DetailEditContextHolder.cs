@@ -21,7 +21,7 @@ namespace SIL.FieldWorks.XWorks
 	/// fresh context and the displaced one is cancelled first (an orphaned open undo task makes
 	/// every later <c>IUndoStackManager.Save()</c> throw "Commit at wrong place.", which is fatal
 	/// at shutdown);
-	/// (2) <see cref="Settle"/> is the single auto-save policy (14.4) every host path shares:
+	/// (2) <see cref="Settle"/> is the single auto-save policy every host path shares:
 	/// commit when validation is clean, roll back otherwise -- navigation, go-away, undo and
 	/// dispose all settle the same way;
 	/// (3) the undo guard intercepts global Undo/Redo while a session is open: LCModel's
@@ -70,7 +70,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
-		/// Auto-save (14.4): closes any open session -- committing when validation is clean,
+		/// Auto-save: closes any open session -- committing when validation is clean,
 		/// rolling back otherwise (an invalid state is never silently persisted). No-op when
 		/// nothing is open.
 		/// ITEM 2: when the close is a rollback FORCED BY a validation failure, the validation

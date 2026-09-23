@@ -12,7 +12,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 	/// <c>ctx as IReferenceTextEditing</c> and treats a null result as "this row picks from the
 	/// list only", exactly as <see cref="IStructuredTextEditing"/> is acquired.
 	///
-	/// It exists because some legacy reference slices are BOTH a chooser and a typed editor.
+	/// It exists because some reference rows are BOTH a chooser and a typed editor.
 	/// Environments is the case in hand: <c>PhoneEnvReferenceLauncher</c> opens a
 	/// <c>SimpleListChooser</c> over the existing environments, while its inline
 	/// <c>PhoneEnvReferenceView</c> lets the user type a new environment string that
@@ -34,10 +34,10 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		/// field that cannot create, or for text the domain cannot turn into an object at all.
 		///
 		/// Matching is the domain's business, not the caller's: environments match with spaces
-		/// stripped (legacy's <c>RemoveSpaces</c>), so "/ # _" and "/#_" must resolve to the SAME
-		/// object rather than creating a second one.
+		/// stripped (<c>PhoneEnvReferenceView.RemoveSpaces</c>), so "/ # _" and "/#_" must
+		/// resolve to the SAME object rather than creating a second one.
 		///
-		/// Validity is NOT a precondition. Legacy creates the object whether or not it passes
+		/// Validity is NOT a precondition. The object is created whether or not it passes
 		/// domain validation and annotates the invalid one instead; rejecting it here would
 		/// discard what the user typed.
 		/// </summary>

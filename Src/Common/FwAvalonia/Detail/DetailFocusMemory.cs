@@ -13,7 +13,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 	/// <summary>
 	/// Keeps keyboard focus stable across detail-view re-shows. The host re-resolves and REPLACES the
 	/// whole detail view after every committed edit and every delivered external refresh; without
-	/// this, tabbing out of a field (which auto-commits, 14.4) would tear down the editor the user
+	/// this, tabbing out of a field (which auto-commits) would tear down the editor the user
 	/// just moved into and dump focus on the floor. Capture reads the focused editor's stable
 	/// automation id (and caret) from the outgoing view; restore finds the same id in the incoming
 	/// view and gives it focus -- automation ids are stable per field/writing system by design,

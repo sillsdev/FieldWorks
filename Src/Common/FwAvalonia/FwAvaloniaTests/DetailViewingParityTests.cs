@@ -53,8 +53,8 @@ namespace FwAvaloniaTests
 			return view;
 		}
 
-		// 14.3/14.5 -- the 1px rule underlines only the value side (the label panel stays clean,
-		// like legacy lines between entries), and long values wrap so the row grows vertically.
+		// The 1px rule underlines only the value side, leaving the label panel clean, and
+		// long values wrap so the row grows vertically.
 		[AvaloniaTest]
 		public void Rules_UnderlineOnlyTheValueColumn_AndValuesWrap()
 		{
@@ -216,7 +216,7 @@ namespace FwAvaloniaTests
 		[AvaloniaTest]
 		public void ExpansionState_PersistsThroughTheSuppliedStore_AndAppliesOnRebuild()
 		{
-			// 11.8: toggles record into the store; a new view (re-show/record switch) applies them.
+			// Toggles record into the store; a new view (re-show/record switch) applies them.
 			var store = new Dictionary<string, bool>();
 			var model = new DetailModel("LexEntry", "Normal",
 				new List<DetailField> { Header("h1", "Senses", 0), Text("g1", "Gloss", 1) },
@@ -280,19 +280,19 @@ namespace FwAvaloniaTests
 		{
 			var view = Show(Text("f1", "Lexeme Form", 0), Text("f2", "Citation Form", 0));
 
-			// 12.2: values are flat like RootSite views -- no box.
+			// Values are flat, as RootSite views are -- no box.
 			var box = view.GetVisualDescendants().OfType<TextBox>().First();
 			Assert.That(box.BorderThickness, Is.EqualTo(new Avalonia.Thickness(0)));
 			Assert.That(box.Background, Is.EqualTo(Avalonia.Media.Brushes.Transparent));
 
-			// 12.1: a 1px LightGray rule under the slice row (and none inside multistring rows --
+			// A 1px LightGray rule under the slice row (and none inside multistring rows --
 			// FwMultiWsTextField stacks rows with no rule elements at all).
 			var rule = view.GetVisualDescendants().OfType<Border>()
 				.FirstOrDefault(b => AutomationProperties.GetAutomationId(b) == "SliceRule.0");
 			Assert.That(rule, Is.Not.Null);
 			Assert.That(rule.Background, Is.EqualTo(SIL.FieldWorks.Common.FwAvalonia.FwAvaloniaDensity.SliceRuleBrush));
 
-			// 12.3/12.4: WS abbreviation + label use the legacy-sampled tokens.
+			// The WS abbreviation and label use the sampled tokens.
 			var abbrev = view.GetVisualDescendants().OfType<TextBlock>().First(t => t.Text == "en");
 			Assert.That(abbrev.Foreground, Is.EqualTo(SIL.FieldWorks.Common.FwAvalonia.FwAvaloniaDensity.WsAbbrevBrush));
 			Assert.That(abbrev.FontSize, Is.EqualTo(SIL.FieldWorks.Common.FwAvalonia.FwAvaloniaDensity.WsAbbrevFontSize));

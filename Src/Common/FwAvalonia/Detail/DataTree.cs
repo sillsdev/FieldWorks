@@ -87,12 +87,12 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			new List<(TextBlock Label, double Reserved)>();
 
 		/// <summary>
-		/// Optional expansion-state hooks (11.8): <paramref name="getExpansionState"/> supplies the
+		/// Optional expansion-state hooks: <paramref name="getExpansionState"/> supplies the
 		/// persisted state per header stable id (overriding the layout's initial state) and
 		/// <paramref name="expansionChanged"/> records toggles, so collapse state survives record
-		/// switches/re-shows -- the legacy PropertyTable expansion persistence.
+		/// switches and re-shows.
 		/// <paramref name="getLabelColumnWidth"/>/<paramref name="labelColumnWidthChanged"/> persist
-		/// the splitter position the same way (11.15): the host owns the remembered width so it
+		/// the splitter position the same way: the host owns the remembered width so it
 		/// survives re-shows WITHOUT a process-global field -- each host/window keeps its own.
 		/// </summary>
 		public DataTree(DetailModel model, IDetailEditContext editContext = null,
@@ -162,7 +162,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			var splitter = new GridSplitter
 			{
 				ResizeDirection = GridResizeDirection.Columns,
-				Background = FwAvaloniaDensity.TransparentBrush, // legacy splitter is window-colored/invisible (12.6)
+				Background = FwAvaloniaDensity.TransparentBrush, // the splitter is invisible, not chrome
 				Width = FwAvaloniaDensity.SplitterWidth
 			};
 			AutomationProperties.SetAutomationId(splitter, "DataTree.Splitter");
@@ -219,8 +219,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			AddHandler(Avalonia.Input.InputElement.KeyDownEvent, OnViewKeyDown,
 				Avalonia.Interactivity.RoutingStrategies.Bubble);
 
-			// Auto-save (14.4): legacy slices commit as the user moves on -- any editor losing
-			// focus
+			// Auto-save: the view commits as the user moves on, so any editor losing focus
 			// while a session is open commits it (validation-gated; one undo step per field).
 			AddHandler(Avalonia.Input.InputElement.LostFocusEvent, (s, e) =>
 			{
@@ -354,8 +353,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		/// </summary>
 		public event EventHandler InteractionCompleted;
 
-		// 14.4: no Save/Cancel buttons -- the legacy view saves as you go. The footer carries
-		// only the inline validation messages (a failed autosave is never silent).
+		// No Save/Cancel buttons: the view saves as you go. The footer carries only the
+		// inline validation messages (a failed autosave is never silent).
 		private Control CreateEditFooter()
 		{
 			_validationBlock = new TextBlock
@@ -482,7 +481,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		}
 
 		// A header's recorded expansion state prefers this session's own toggles over the
-		// host-supplied persisted state (11.8), so a toggle applies immediately rather than
+		// host-supplied persisted state, so a toggle applies immediately rather than
 		// waiting on the host's round-trip.
 		private bool? GetRecordedExpansion(string stableId) =>
 			_expansionState.TryGetValue(stableId, out var v) ? (bool?)v : _getExpansionState?.Invoke(stableId);
@@ -503,8 +502,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			return content;
 		}
 
-		// 12.1: the legacy 1px inter-slice rule renders as a per-item bottom border; the last
-		// field gets none.
+		// The 1px inter-slice rule renders as a per-item bottom border; the last field
+		// gets none.
 		private Control ApplyRule(Control content, int index)
 		{
 			if (index >= Model.Fields.Count - 1)
@@ -578,7 +577,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 						Text = field.Label ?? field.Field ?? string.Empty,
 						FontWeight = FontWeight.Bold,
 						Margin = new Thickness(indent.Left, 4, 0, FwAvaloniaDensity.FieldSpacing),
-						// 14.2: a null background only hit-tests the glyphs; the whole header area
+						// A null background only hit-tests the glyphs; the whole header area
 						// must take the right-click.
 						Background = FwAvaloniaDensity.TransparentBrush
 					};
@@ -586,7 +585,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 
 				AutomationProperties.SetAutomationId(header, automationId);
 				AutomationProperties.SetName(header, field.Label ?? string.Empty);
-				// 13.3/13.5: the header answers right-click with its slice menu; the hover
+				// The header answers right-click with its slice menu; the hover
 				// "..." field-menu button (in a thin gutter to the left of the header)
 				// opens the section menu/hotlinks.
 				var headerCell = WrapWithFieldMenu(header, field, automationId, out var headerKebab);
@@ -599,9 +598,9 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				// through the existing host bridge identically.
 				var hotlinkStrip = CreateHotlinkStrip(field, automationId, indent);
 
-				// Viewing parity (11.15): top-level sections get the legacy heavy-weight separator rule.
-				// The header cell and its inline hotlink strip always travel together (the strip is part of
-				// the header row, hidden/shown with it by the collapse logic).
+				// Top-level sections get the heavy-weight separator rule. The header cell and
+				// its hotlink strip travel together: the strip is part of the header row,
+				// hidden and shown with it.
 				Control headerControl;
 				if (field.Indent == 0 && row > 0)
 				{
@@ -658,15 +657,14 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				// this
 				// local value wins for our own TextBlock and keeps labels regular, like legacy.
 				FontWeight = FontWeight.Normal,
-				// 14.2: a null background only hit-tests the glyphs; the whole label area must
-				// take
-				// the right-click for the slice menu.
+				// A null background only hit-tests the glyphs; the whole label area must
+				// take the right-click for the slice menu.
 				Background = FwAvaloniaDensity.TransparentBrush
 			};
 			_labelBlocks.Add((labelBlock, labelReserved));
 			AutomationProperties.SetAutomationId(labelBlock, automationId + ".Label");
 			AutomationProperties.SetName(labelBlock, field.Label ?? field.Field ?? string.Empty);
-			ToolTip.SetTip(labelBlock, field.Label ?? field.Field); // 11.17: legacy label tooltips
+			ToolTip.SetTip(labelBlock, field.Label ?? field.Field); // the label text is its own tip
 			var editor = CreateEditor(field, automationId);
 			editor.Margin = new Thickness(0, 0, 0, FwAvaloniaDensity.FieldSpacing);
 
@@ -680,7 +678,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				vector.SelectionChanged += OnVectorSelectionChanged;
 			}
 
-			// 13.3: the field's slice menu opens from the label cell's right-click or the
+			// The field's slice menu opens from the label cell's right-click or the
 			// gutter "..." button; the editor's current item rides each request it raises.
 			var labelCell = WrapWithFieldMenu(labelBlock, field, automationId, out var labelKebab,
 				editor as IDetailItemSelection);

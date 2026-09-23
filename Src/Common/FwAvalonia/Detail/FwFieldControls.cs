@@ -753,7 +753,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				Children.Add(rowPanel);
 		}
 
-		// Legacy look (12.3): small raised blue abbreviation, a superscript-style label kept in its
+		// A small raised blue abbreviation, a superscript-style label kept in its
 		// own fixed gutter column (see the row Grid below) so a bold vernacular value can never crowd
 		// or overlap it. ClipToBounds keeps an unusually long abbreviation inside the gutter width
 		// rather than bleeding into the value column.
@@ -788,7 +788,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				FlowDirection = value.RightToLeft ? FlowDirection.RightToLeft : FlowDirection.LeftToRight,
 				BorderThickness = new Thickness(0),
 				Background = FwAvaloniaDensity.TransparentBrush,
-				TextWrapping = TextWrapping.Wrap // 14.5: long values wrap; the row grows vertically
+				TextWrapping = TextWrapping.Wrap // long values wrap; the row grows vertically
 			};
 			// A voice/audio writing system has no sound player in this view yet, so the row
 			// is read-only and says why (a distinct message from the rich-content read-only case).
@@ -801,7 +801,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			if (value.FontSize > 0)
 				box.FontSize = value.FontSize;
 			if (value.Bold)
-				box.FontWeight = FontWeight.Bold; // legacy <properties><bold value='on'/> (11.15)
+				box.FontWeight = FontWeight.Bold; // the value's own metadata asked for bold
 			return box;
 		}
 
@@ -809,9 +809,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		{
 			if (!string.IsNullOrEmpty(field.GhostPrompt))
 			{
-				// 14.1: the legacy ghost add-prompt is a watermark -- it disappears the moment
-				// the
-				// user clicks in (focus), and reappears only if they leave without typing.
+				// The ghost add-prompt is a watermark: it disappears the moment the user
+				// clicks in, and reappears only if they leave without typing.
 				box.Watermark = field.GhostPrompt;
 				EventHandler<GotFocusEventArgs> ghostGot = (s2, e2) => box.Watermark = string.Empty;
 				EventHandler<Avalonia.Interactivity.RoutedEventArgs> ghostLost = (s2, e2) =>
@@ -836,7 +835,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			var hasBridge = menuRequested != null && !string.IsNullOrEmpty(field.ContextMenuId);
 			if (hasBridge)
 			{
-				// 15.2: exactly ONE menu -- drop the TextBox flyout (Cut/Copy/Paste) so
+				// Exactly ONE menu -- drop the TextBox flyout (Cut/Copy/Paste) so
 				// only the bridged menu shows. Tunnelling puts this handler ahead of
 				// anything the box or the whole-row handler would open.
 				box.ContextFlyout = null;
@@ -892,7 +891,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		{
 			var rowPanel = new Grid
 			{
-				// 14.2: a null background only hit-tests the glyphs -- the whole row must
+				// A null background only hit-tests the glyphs -- the whole row must
 				// receive hover/right-click over the gaps too.
 				Background = FwAvaloniaDensity.TransparentBrush
 			};
@@ -1380,9 +1379,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			// Wraps, like the one Views paragraph PhoneEnvReferenceView puts its items in:
 			// a stack runs off the right edge, cutting the item the width ran out in.
 			Orientation = Orientation.Horizontal;
-			// 14.2-style hit-testing rule: a null background only hit-tests the glyphs -- the
-			// WHOLE
-			// row must receive hover so the reveal affordances work over the gaps between items.
+			// A null background only hit-tests the glyphs -- the WHOLE row must receive
+			// hover so the reveal affordances work over the gaps between items.
 			Background = FwAvaloniaDensity.TransparentBrush;
 			AutomationProperties.SetAutomationId(this, automationId);
 			AutomationProperties.SetName(this, field.Label ?? field.Field ?? automationId);
@@ -1905,7 +1903,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				VerticalAlignment = VerticalAlignment.Center,
 				TextWrapping = TextWrapping.Wrap,
 				Margin = FwAvaloniaDensity.TrailingGap,
-				Background = FwAvaloniaDensity.TransparentBrush // 14.2 again: the value text is the hover surface
+				Background = FwAvaloniaDensity.TransparentBrush // the value text is the hover surface
 			};
 			AutomationProperties.SetName(text, label ?? string.Empty);
 

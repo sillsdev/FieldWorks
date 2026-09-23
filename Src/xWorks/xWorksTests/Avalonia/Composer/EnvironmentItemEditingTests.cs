@@ -261,8 +261,9 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
-		/// Case 5: malformed text is staged and kept verbatim. Legacy annotates rather than
-		/// blocking, so nothing here may correct or discard what the user typed.
+		/// Case 5: malformed text is staged and kept verbatim. PhoneEnvReferenceView
+		/// annotates rather than blocking, so nothing here may correct or discard what the
+		/// user typed.
 		/// </summary>
 		[Test]
 		public void RetypingToAMalformedEnvironment_IsAcceptedAndKeptVerbatim()
