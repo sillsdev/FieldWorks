@@ -387,6 +387,17 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				};
 				display.AddHandler(InputElement.PointerPressedEvent, displayPressed,
 					Avalonia.Interactivity.RoutingStrategies.Tunnel);
+				// Makes `display` an ordinary tab stop; GotFocus swaps in the editable
+				// `box` the same way the pointer-press handler above does, matching a
+				// mouse click's entry point (LT-22688).
+				display.Focusable = true;
+				EventHandler<GotFocusEventArgs> displayGotFocus = (s, e) =>
+				{
+					box.IsVisible = true;
+					display.IsVisible = false;
+					box.Focus();
+				};
+				display.GotFocus += displayGotFocus;
 				EventHandler<Avalonia.Interactivity.RoutedEventArgs> lost = (s, e) =>
 				{
 					box.IsVisible = false;
@@ -396,6 +407,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				_teardown.Add(() =>
 				{
 					display.RemoveHandler(InputElement.PointerPressedEvent, displayPressed);
+					display.GotFocus -= displayGotFocus;
 					box.LostFocus -= lost;
 				});
 			}
@@ -537,7 +549,11 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				Background = FwAvaloniaDensity.TransparentBrush,
 				BorderThickness = new Thickness(0),
 				Foreground = FwAvaloniaDensity.WsAbbrevBrush,
-				VerticalAlignment = VerticalAlignment.Top
+				VerticalAlignment = VerticalAlignment.Top,
+				// The trigger must NOT take focus, matching every other per-row picker/style
+				// button in this file: Tab reaches the paragraph editor directly instead of
+				// stopping on Add/Delete first (LT-22688).
+				Focusable = false
 			};
 			AutomationProperties.SetAutomationId(button, automationId);
 			AutomationProperties.SetName(button, accessibleName);

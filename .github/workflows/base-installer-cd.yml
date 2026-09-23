@@ -161,7 +161,7 @@ jobs:
         id: build
         shell: powershell
         run: |
-          .\build.ps1 -BuildInstaller -Configuration Release -Verbosity detailed -BuildTests -MsBuildArgs @("/bl") *>&1 | Tee-Object -FilePath build.log
+          .\build.ps1 -BuildInstaller -Configuration Release -Verbosity detailed -BuildTests -MsBuildArgs @("/bl", "/p:FailOnRemovedSinceLastBase=${{ inputs.make_release == 'true' }}") *>&1 | Tee-Object -FilePath build.log
 
       - name: Run tests
         shell: powershell
