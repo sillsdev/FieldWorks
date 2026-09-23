@@ -34,7 +34,7 @@ Remediation:
 Add each missing file's output path to RemovedSinceLastBase in Build/Installer.legacy.targets,
 preserving its relative output path:
   <RemovedSinceLastBase Include="$(dir-outputBase)/Avalonia.Themes.Fluent.dll" />
-Create an issue to remove the placeholder before the next base build.
+Create an issue to remove the placeholder before the next base build, unless one already exists for the current base.
 ```
 
 The `RemovedSinceLastBase` entry makes the build write a zero-byte stand-in at that path.
@@ -44,11 +44,9 @@ working while the removal issue is completed.
 ## Before publishing a base
 
 A scheduled base verification build warns while any `RemovedSinceLastBase` entries remain.
-A base release build fails. Both messages list the stand-in paths and require two cleanup
-actions:
-
-1. Remove each `RemovedSinceLastBase` entry from `Build/Installer.legacy.targets`.
-2. Remove each corresponding zero-byte file from the build output.
+A base release build fails. Both messages list the stand-in paths. Remove each
+`RemovedSinceLastBase` entry from `Build/Installer.legacy.targets`. CI builds start clean;
+a dirty local build must also delete each corresponding zero-byte file from the build output.
 
 Complete the removal issue before creating the base. A new base establishes the file-backed component
 set under MSI APPFOLDER that future patches must preserve.
@@ -56,7 +54,7 @@ set under MSI APPFOLDER that future patches must preserve.
 ## Running the check locally
 
 ```powershell
-.\scripts\Installer\Test-PatchComponentLedger.ps1 -MasterMsi <base.msi> -UpdateMsi <update.msi> `
+.\scripts\Installer\Check-PatchComponentLedger.ps1 -MasterMsi <base.msi> -UpdateMsi <update.msi> `
     -BaseBuildNumber 1452 -PatchVersion 9.3.12.2761 `
     -OutLedger out.tsv
 ```

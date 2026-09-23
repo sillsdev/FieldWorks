@@ -111,7 +111,7 @@ try {
     Write-ComponentLedger -Path $ledgerPath -Entries $newLedgerEntries -Heading 'test'
     $writtenLines = Get-Content -LiteralPath $ledgerPath
     Assert-Equal $writtenLines[1] ('# ComponentId' + [char]9 + 'Component' + [char]9 + 'File' + [char]9 + 'Feature') 'Ledgers must contain only the four component fields.'
-    $roundTrip = Read-ComponentLedger -Path $ledgerPath
+    $roundTrip = Read-ComponentLedger -LedgerFiles $ledgerPath
     Assert-Equal (($roundTrip.Values | Sort-Object File | ForEach-Object File) -join ',') 'New.dll,Other.dll' 'The complete generated ledger must be readable.'
 
     $previous = [pscustomobject]@{
@@ -135,16 +135,16 @@ try {
     Assert-True ($targetText.Contains('<Warning') -and $targetText.Contains("'$releaseFlag' != 'true'")) 'A verification base build must warn about stand-ins.'
     Assert-True ($targetText.Contains('<Error') -and $targetText.Contains("'$releaseFlag' == 'true'")) 'A base release must fail while stand-ins remain.'
 
-    Assert-Equal (Read-ComponentLedger -Path @()).Count 0 'A patch line with no S3 ledger must start with an empty previous-patch set.'
+    Assert-Equal (Read-ComponentLedger -LedgerFiles @()).Count 0 'A patch line with no S3 ledger must start with an empty previous-patch set.'
     $headerOnlyPath = New-TestLedgerFile @('# ComponentId' + [char]9 + 'Component' + [char]9 + 'File' + [char]9 + 'Feature')
-    Assert-Equal (Read-ComponentLedger -Path $headerOnlyPath).Count 0 'A valid header-only ledger must be accepted.'
+    Assert-Equal (Read-ComponentLedger -LedgerFiles $headerOnlyPath).Count 0 'A valid header-only ledger must be accepted.'
     $malformedPath = New-TestLedgerFile @(
         ('# ComponentId' + [char]9 + 'Component' + [char]9 + 'File' + [char]9 + 'Feature'),
         ('id' + [char]9 + 'component' + [char]9 + 'file')
     )
-    Assert-Throws { Read-ComponentLedger -Path $malformedPath } 'Malformed component ledger row'
+    Assert-Throws { Read-ComponentLedger -LedgerFiles $malformedPath } 'Malformed component ledger row'
     $missingPath = Join-Path ([IO.Path]::GetTempPath()) "missing-ledger-$([guid]::NewGuid()).tsv"
-    Assert-Throws { Read-ComponentLedger -Path $missingPath } 'Component ledger file not found'
+    Assert-Throws { Read-ComponentLedger -LedgerFiles $missingPath } 'Component ledger file not found'
 
     Write-Output "[OK] $script:AssertionCount patch-component-ledger assertions passed."
 }

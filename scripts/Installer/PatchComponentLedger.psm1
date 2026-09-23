@@ -121,10 +121,10 @@ function Read-ComponentLedger {
 	.SYNOPSIS
 	Reads a ledger of file-backed components under MSI APPFOLDER keyed by ComponentId.
 	#>
-	param([Parameter(Mandatory = $true)][AllowEmptyCollection()][string[]]$Path)
+	param([Parameter(Mandatory = $true)][AllowEmptyCollection()][string[]]$LedgerFiles)
 
 	$ledger = @{}
-	foreach ($file in $Path) {
+	foreach ($file in $LedgerFiles) {
 		if (-not (Test-Path -LiteralPath $file -PathType Leaf)) {
 			throw "Component ledger file not found: $file"
 		}
@@ -264,26 +264,23 @@ function Select-PreviousPublishedPatch {
 	$expectedLedgerKey = $previous.Key -replace '\.msp$', '_components.tsv'
 	$matchingLedger = @($LedgerKeys | Where-Object { $_ -eq $expectedLedgerKey })
 	if ($matchingLedger.Count -gt 0) {
-		return [pscustomobject]@{
-			PatchKey       = $previous.Key
-			LedgerKey      = $matchingLedger[0]
-		}
+		$ledgerKey = $matchingLedger[0]
 	}
-	$earlierLedgerPair = $false
-	foreach ($candidate in $orderedPatches) {
-		if ($candidate.Version -ge $previous.Version) { continue }
-		$candidateLedger = $candidate.Key -replace '\.msp$', '_components.tsv'
-		if (@($LedgerKeys | Where-Object { $_ -eq $candidateLedger }).Count -gt 0) {
-			$earlierLedgerPair = $true
-			break
+	else {
+		# No ledger beside the previous patch is expected only before the first ledger-bearing
+		# patch.
+		foreach ($candidate in $orderedPatches) {
+			if ($candidate.Version -ge $previous.Version) { continue }
+			$candidateLedger = $candidate.Key -replace '\.msp$', '_components.tsv'
+			if (@($LedgerKeys | Where-Object { $_ -eq $candidateLedger }).Count -gt 0) {
+				throw "Bootstrap has ended: published patch $($previous.Key) has no matching ledger $expectedLedgerKey. Build a new base, or reconstruct that ledger by applying the published patch to its base MSI and publish it beside the patch, before building another patch."
+			}
 		}
-	}
-	if ($earlierLedgerPair) {
-		throw "Bootstrap has ended: published patch $($previous.Key) has no matching ledger $expectedLedgerKey. Publish the ledger beside that patch before building another patch."
+		$ledgerKey = $null
 	}
 	return [pscustomobject]@{
 		PatchKey       = $previous.Key
-		LedgerKey      = $null
+		LedgerKey      = $ledgerKey
 	}
 }
 
@@ -300,7 +297,7 @@ function Format-RemovedComponentRemediation {
 		$path = '$(dir-outputBase)/' + $entry.File
 		$lines.Add(('  <RemovedSinceLastBase Include="' + $path + '" />'))
 	}
-	$lines.Add('Create an issue to remove the placeholder before the next base build.')
+	$lines.Add('Create an issue to remove the placeholder before the next base build, unless one already exists for the current base.')
 	return ($lines -join [Environment]::NewLine)
 }
 
@@ -316,13 +313,7 @@ function Get-UpdateMinusBaseLedgerEntries {
 	$entries = New-Object System.Collections.Generic.List[object]
 	foreach ($id in $Update.Keys) {
 		if ($Master.ContainsKey($id)) { continue }
-		$entry = $Update[$id]
-		$entries.Add([pscustomobject]@{
-			ComponentId = $entry.ComponentId
-			Component   = $entry.Component
-			File        = $entry.File
-			Feature     = $entry.Feature
-		})
+		$entries.Add($Update[$id])
 	}
 	return $entries.ToArray()
 }

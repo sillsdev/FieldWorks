@@ -669,11 +669,11 @@
 	</PropertyGroup>
 	<Target Name="BuildProductBaseMsi" DependsOnTargets="InstallerVersionNumbers">
 		<Warning
-			Text="RemovedSinceLastBase contains %(RemovedSinceLastBase.Identity). Remove its entry and zero-byte output before creating a base release."
+			Text="RemovedSinceLastBase contains %(RemovedSinceLastBase.Identity). Remove its entry before creating a base release."
 			Condition="'@(RemovedSinceLastBase)' != '' and '$(FailOnRemovedSinceLastBase)' != 'true'"
 		/>
 		<Error
-			Text="Cannot create a base release while RemovedSinceLastBase contains %(RemovedSinceLastBase.Identity). Remove its entry and zero-byte output before creating the base release."
+			Text="Cannot create a base release while RemovedSinceLastBase contains %(RemovedSinceLastBase.Identity). Remove its entry before creating the base release."
 			Condition="'@(RemovedSinceLastBase)' != '' and '$(FailOnRemovedSinceLastBase)' == 'true'"
 		/>
 		<Message

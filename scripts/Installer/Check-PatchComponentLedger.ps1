@@ -52,7 +52,7 @@ if ($previous.LedgerKey) {
 	$ledgerFiles.Add((Save-PublishedFile -Key $previous.LedgerKey -Directory $downloads))
 }
 
-$previousLedger = Read-ComponentLedger -Path $ledgerFiles.ToArray()
+$previousLedger = Read-ComponentLedger -LedgerFiles $ledgerFiles.ToArray()
 $required = @{}
 foreach ($entry in $master.Values) { $required[$entry.ComponentId] = $entry }
 foreach ($entry in $previousLedger.Values) {

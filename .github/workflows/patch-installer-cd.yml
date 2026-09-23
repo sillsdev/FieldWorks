@@ -268,7 +268,7 @@ jobs:
       - name: Check patch keeps base and previous-patch components
         shell: pwsh
         run: |
-          .\scripts\Installer\Test-PatchComponentLedger.ps1 `
+          .\scripts\Installer\Check-PatchComponentLedger.ps1 `
             -MasterMsi "${{ steps.find_patch.outputs.master_msi }}" `
             -UpdateMsi "${{ steps.find_patch.outputs.update_msi }}" `
             -BaseBuildNumber $env:BASE_BUILD_NUMBER `
