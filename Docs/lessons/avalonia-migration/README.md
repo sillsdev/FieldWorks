@@ -15,7 +15,6 @@ tree and the live legacy behavior.
 | Browse virtualization; stable selection; clerk sorting/filtering; bulk edit; RDE; accessibility; activation breadth | [Browse-table activation](browse-table-activation.md) |
 | Picture editing; properties dialog; dormant view-models; localization pair removal; exchange DTO lifetime | [Avalonia picture editing](avalonia-picture-editing.md) |
 | Options-only utilities; features with no WinForms counterpart; parity divergence cost; entry-point unwinding | [Lexicon feature manager](lexicon-feature-manager.md) |
-| Inline editing of reference-vector items; gesture characterization beyond the write-back path; blank input as removal; input guards masking defects; shared-object edits; text-metric and wrapping defects | [Reference-row inline editing](reference-row-inline-editing.md) |
 
 ## How to use these records
 
