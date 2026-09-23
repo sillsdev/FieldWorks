@@ -79,35 +79,14 @@ if (-not $SkipVSCheck) {
 
 #endregion
 
-#region Tool Installation
-
-Write-Host "`n--- Installing Development Tools ---" -ForegroundColor Yellow
-
-# Determine install locations (use standard paths, not C:\ root for dev machines)
-$toolsBase = "$env:LOCALAPPDATA\FieldWorksTools"
-if (-not (Test-Path $toolsBase)) {
-	New-Item -ItemType Directory -Path $toolsBase -Force | Out-Null
-}
-
-# Check what's already installed
-
-# WiX Toolset
-Write-Host "[INFO] WiX Toolset v6 is restored via NuGet during build." -ForegroundColor Gray
-Write-Host "[INFO] WiX Toolset v3 installation is your responsilbility." -ForegroundColor Yellow
-
-# Note: Serena MCP language servers auto-download on first use:
-# - C# (csharp): Microsoft.CodeAnalysis.LanguageServer (Roslyn) from Azure NuGet
-# - C++ (cpp): clangd from GitHub releases
-# No manual installation needed!
-Write-Host ""
-Write-Host "[INFO] Serena language servers (C# Roslyn, clangd) auto-download on first use" -ForegroundColor Gray
-
-#endregion
-
 #region Installer Dependencies (Optional)
 
 if ($InstallerDeps) {
 	Write-Host "`n--- Setting Up Installer Dependencies ---" -ForegroundColor Yellow
+
+	# WiX Toolset
+	Write-Host "[INFO] WiX Toolset v6 is restored via NuGet during build." -ForegroundColor Gray
+	Write-Host "[INFO] WiX Toolset v3 installation is your responsibility." -ForegroundColor Yellow
 
 	# Detect if we're in a git worktree
 	$gitDir = git rev-parse --git-dir 2>$null
