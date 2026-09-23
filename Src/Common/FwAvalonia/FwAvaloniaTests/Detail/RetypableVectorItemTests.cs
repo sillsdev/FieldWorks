@@ -157,6 +157,24 @@ namespace FwAvaloniaTests.Detail
 				+ "it can only be removed and re-added");
 		}
 
+		/// <summary>
+		/// A TextBox measures its own text short of what it draws, so the last character was
+		/// cut off. The editor is held to the width the text actually measures.
+		/// </summary>
+		[AvaloniaTest]
+		public void AnItemEditor_IsNeverNarrowerThanItsOwnText()
+		{
+			var (row, _) = Show(new FakeTextEditing());
+			var box = Editor(row, "e1");
+
+			var label = new TextBlock { Text = box.Text, FontSize = box.FontSize };
+			label.Measure(new Avalonia.Size(double.PositiveInfinity, double.PositiveInfinity));
+
+			Assert.That(box.MinWidth, Is.GreaterThanOrEqualTo(label.DesiredSize.Width),
+				"an editor narrower than its own text cuts the end off it; text '" + box.Text
+				+ "' measures " + label.DesiredSize.Width.ToString("F1"));
+		}
+
 		[AvaloniaTest]
 		public void ARowThatCannotRetype_KeepsReadOnlyItems()
 		{

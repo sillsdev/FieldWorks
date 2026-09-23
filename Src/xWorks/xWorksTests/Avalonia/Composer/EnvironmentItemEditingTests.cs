@@ -100,6 +100,24 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
+		/// The row shows what the user typed. The item's display text comes from ShortName,
+		/// which is not always the whole of an object's text.
+		/// </summary>
+		[Test]
+		public void AnEnvironmentItem_ShowsItsWholeStringRepresentation()
+		{
+			var env = GiveProjectAnEnvironment("/ _ zt");
+			Attach(m_allomorph, env);
+
+			var composed = DetailComposer.Compose(m_entry, Cache, showHiddenFields: true);
+			var row = composed.Model.Fields.Single(
+				f => f.Field == "PhoneEnv" && f.ObjectHvo == m_allomorph.Hvo);
+
+			Assert.That(row.Items.Single().Name, Is.EqualTo("/ _ zt"),
+				"the item must display the whole environment, not an abbreviated form of it");
+		}
+
+		/// <summary>
 		/// Case 1, the surprising one. Respacing makes no new environment and does not move the
 		/// reference -- it renames the shared object, so every OTHER allomorph referencing it
 		/// shows the new spelling too. Asserted from the second allomorph, which is what makes

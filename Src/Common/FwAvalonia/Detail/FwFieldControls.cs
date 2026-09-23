@@ -1401,6 +1401,9 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 						BorderThickness = new Thickness(0),
 						Background = FwAvaloniaDensity.TransparentBrush
 					};
+					// Held to the width its text measures, so the last character is not
+					// cut, and kept in step while typing.
+					FloorWidthToText(box);
 					var itemKey = item.Key;
 					// Staged when the edit FINISHES, not per keystroke: each stage reconciles
 					// against the project, so "/", "/_", "/_a" would leave two junk objects
@@ -1572,6 +1575,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 					Background = FwAvaloniaDensity.TransparentBrush,
 					Watermark = FwAvaloniaStrings.AddItem
 				};
+				// Keeps its empty width until what is typed needs more than that.
+				FloorWidthToText(newItem, FwAvaloniaDensity.NewItemSlotMinWidth);
 				AutomationProperties.SetAutomationId(newItem, automationId + ".New");
 				AutomationProperties.SetName(newItem, FwAvaloniaStrings.AddItem);
 				Action commitNew = () =>
@@ -1800,6 +1805,33 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			foreach (var detach in _teardown)
 				detach();
 			_teardown.Clear();
+		}
+
+		// The width a TextBox derives from its own content falls short of what it draws,
+		// cutting the end off. This is the width the text measures.
+		private void FloorWidthToText(TextBox box, double emptyWidth = 0)
+		{
+			Action measure = () =>
+			{
+				var text = box.Text ?? string.Empty;
+				var typeface = new Typeface(box.FontFamily, box.FontStyle, box.FontWeight);
+				var measured = new FormattedText(text, CultureInfo.CurrentCulture,
+					FlowDirection.LeftToRight, typeface, box.FontSize, null);
+				box.MinWidth = Math.Max(emptyWidth,
+					measured.WidthIncludingTrailingWhitespace
+						+ box.Padding.Left + box.Padding.Right);
+			};
+			// Font size and family arrive with the theme, so the first measure waits for
+			// the box to be in the tree.
+			EventHandler<VisualTreeAttachmentEventArgs> onAttached = (s, e) => measure();
+			EventHandler<TextChangedEventArgs> onTextChanged = (s, e) => measure();
+			box.AttachedToVisualTree += onAttached;
+			box.TextChanged += onTextChanged;
+			_teardown.Add(() =>
+			{
+				box.AttachedToVisualTree -= onAttached;
+				box.TextChanged -= onTextChanged;
+			});
 		}
 
 		// The legacy VwSeparatorBox: a ~2px, font-height, light grey vertical bar after each item
