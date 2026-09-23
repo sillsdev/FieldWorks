@@ -188,7 +188,7 @@
 		     can reference it with IncludeAssets="none": its analyzers must not run where
 		     warnings are errors. -->
 		<PackageVersion Include="Avalonia.BuildServices" Version="11.3.2" />
-		<PackageVersion Include="Avalonia.Desktop" Version="11.3.17" />
+		<PackageVersion Include="Avalonia.Desktop" Version="11.3.22" />
 		<PackageVersion Include="Avalonia.Win32.Interoperability" Version="11.3.22" />
 		<PackageVersion Include="Avalonia.Headless" Version="11.3.22" />
 		<PackageVersion Include="Avalonia.Headless.NUnit" Version="11.3.22" />
