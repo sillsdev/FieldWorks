@@ -27,6 +27,15 @@ namespace FwAvaloniaTests
 				Is.True, "arrow keys are always claimed while the host holds focus");
 		}
 
+		[Test]
+		public void TabKeys_AreClaimedWhenFocused()
+		{
+			Assert.That(InputKeyClaimPolicy.ShouldClaimKey(Keys.Tab, hostContainsFocus: true, claimEnterKey: false),
+				Is.True, "Tab is claimed while the host holds focus, so Avalonia's own navigation sees it");
+			Assert.That(InputKeyClaimPolicy.ShouldClaimKey(Keys.Tab | Keys.Control, hostContainsFocus: true, claimEnterKey: false),
+				Is.False, "Ctrl+Tab is excluded so the surrounding application keeps it for its own tab/window switching");
+		}
+
 		[TestCase(Keys.Up)]
 		[TestCase(Keys.Down)]
 		[TestCase(Keys.Left)]
@@ -47,7 +56,6 @@ namespace FwAvaloniaTests
 				Is.False, "a detail pane host leaves Enter to WinForms");
 		}
 
-		[TestCase(Keys.Tab)]
 		[TestCase(Keys.A)]
 		[TestCase(Keys.Escape)]
 		public void OtherKeys_AreNeverClaimed(Keys key)

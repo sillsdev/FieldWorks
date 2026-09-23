@@ -21,9 +21,6 @@ namespace SIL.FieldWorks.XWorks
 	/// </summary>
 	public partial class RecordEditView
 	{
-		private const string MoveLeftCommandId = "CmdMoveTargetToPreviousInSequence";
-		private const string MoveRightCommandId = "CmdMoveTargetToNextInSequence";
-
 		/// <summary>
 		/// Shows the per-item menu of a reference-vector row, or for a Ctrl+click runs its
 		/// default jump command. Never throws: failures are logged.
@@ -198,25 +195,25 @@ namespace SIL.FieldWorks.XWorks
 		{
 			if (request?.Field == null || request.Field.Kind != DetailFieldKind.ReferenceVector)
 				return;
-			registry.Add(MoveLeftCommandId, (choice, display) => MoveCommandItem(request, display, forward: false));
-			registry.Add(MoveRightCommandId, (choice, display) => MoveCommandItem(request, display, forward: true));
+			registry.Add(ReorderVectorMenuAuthority.MoveLeftCommandId,
+				(choice, display) => MoveCommandItem(request, display, forward: false));
+			registry.Add(ReorderVectorMenuAuthority.MoveRightCommandId,
+				(choice, display) => MoveCommandItem(request, display, forward: true));
 		}
 
-		// A Move Left / Move Right item for the request's current item, enabled only when the
-		// row can be reordered and the item is not at that end.
+		// The item menu's Move Left / Move Right, built by the same rule as the label menu's.
 		private DetailMenuItem MoveCommandItem(DetailMenuRequest request, UIItemDisplayProperties display,
 			bool forward)
-		{
-			var field = request.Field;
-			var index = request.SelectedItemIndex;
-			var canMove = field.Kind == DetailFieldKind.ReferenceVector && field.IsEditable
-				&& field.CanReorderItems
-				&& index >= 0 && (forward ? index < field.Items.Count - 1 : index > 0);
-			var key = request.SelectedItemKey;
-			return new DetailMenuItem(XCoreMenuBridge.StripAccelerator(display.Text), isEnabled: canMove,
-				isChecked: false, children: null,
-				execute: canMove ? (Action)(() => MoveReferenceItem(field, key, forward)) : null);
-		}
+			=> ReorderVectorMenuAuthority.BuildMoveItem(request, XCoreMenuBridge.StripAccelerator(display.Text),
+				forward, MoveReferenceItem);
+
+		/// <summary>
+		/// The native authority for the reorder-vector menu of the request's row: it answers
+		/// Move Left, Move Right and Alphabetical Order from the row itself, so a label menu
+		/// carrying that id needs nothing from the hidden command adapter for those leaves.
+		/// </summary>
+		internal IDetailMenuAuthority CreateReorderVectorAuthority(DetailMenuRequest request)
+			=> new ReorderVectorMenuAuthority(request, MoveReferenceItem, ResetReferenceOrder);
 
 		/// <summary>
 		/// Moves a reference-vector item one place through the detail edit context and completes
@@ -224,19 +221,28 @@ namespace SIL.FieldWorks.XWorks
 		/// coalesced re-show, through which the moved item stays current.
 		/// </summary>
 		internal void MoveReferenceItem(DetailField field, string key, bool forward)
+			=> CompleteReferenceEdit(context => context.TryMoveReferenceItem(field, key, forward));
+
+		/// <summary>
+		/// Discards a reference-vector row's stored item order (Alphabetical Order) through the
+		/// detail edit context, completing the gesture like <see cref="MoveReferenceItem"/>.
+		/// </summary>
+		internal void ResetReferenceOrder(DetailField field)
+			=> CompleteReferenceEdit(context => context.TryResetReferenceOrder(field));
+
+		// One row-menu edit: settle pending edits first (so the edit is its own undo step),
+		// stage it, validate-and-commit, then request one coalesced re-show.
+		private void CompleteReferenceEdit(Func<IDetailEditContext, bool> stage)
 		{
-			// Pending edits settle first, so the move is its own undo step and an invalid
-			// pending edit rolls back with its own warning instead of taking the move with it.
 			m_detailEditContext.Settle();
 			var context = m_detailEditContext.Current;
-			if (context == null || !context.TryMoveReferenceItem(field, key, forward))
+			if (context == null || !stage(context))
 				return;
-			// A move that fails validation rolls back and never re-shows, so the focus
-			// request is made only once the commit is known to have succeeded; nothing
-			// clears a request the re-show does not consume.
+			// A failed validation rolls back and never re-shows, so the focus request is made
+			// only once the commit is known to have succeeded.
 			if (m_detailEditContext.Settle().Count != 0)
 				return;
-			// The menu took keyboard focus; the re-show hands it to the moved item.
+			// The menu took keyboard focus; the re-show hands it to the row's current item.
 			m_avaloniaEntryForm?.FocusVectorItemOnNextShow();
 			OnAvaloniaDetailEditCompleted(this, EventArgs.Empty);
 		}

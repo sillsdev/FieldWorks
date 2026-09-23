@@ -84,7 +84,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 		}
 
 		/// <summary>The current Avalonia content, or null.</summary>
-		protected Avalonia.Controls.Control CurrentContent => Host.Content as Avalonia.Controls.Control;
+		protected Avalonia.Controls.Control CurrentContent =>
+			Host.Content as Avalonia.Controls.Control;
 
 		public void SetCompanionControls(IReadOnlyList<Control> controls)
 		{

@@ -6,14 +6,14 @@
 .DESCRIPTION
 	A FieldWorks dev build resolves its code/config (DistFiles: parts, layouts, configuration) from
 	HKCU\SOFTWARE\SIL\FieldWorks\9 RootCodeDir/RootDataDir. When those point at a DIFFERENT worktree than
-	the exe being launched, the main window can fail to build (blank window, empty UIA tree) — so this
+	the exe launched, the main window can fail to build (blank window, empty UIA tree), so this
 	skill aligns them to the running worktree before launch.
 
 	Because that registry is shared across all worktrees, this script will NOT clobber it if the other
 	worktree is actively relying on it. "Actively using it" =
 	  (a) a FieldWorks.exe process is currently running from the other worktree's tree, OR
 	  (b) the FieldWorks registry key was last written within the last 24 hours (FieldWorks writes these
-	      dirs on startup, so a recent write ≈ a recent launch from some worktree).
+	      dirs on startup, so a recent write ~= a recent launch from some worktree).
 	If neither holds, the script realigns the registry to this worktree automatically. If either holds,
 	it prints `RESULT=ASK_USER` and changes nothing, so the caller can ask the user before realigning.
 
@@ -110,5 +110,5 @@ if ($recent) {
 }
 
 Set-DevDirs $thisDist
-Write-Host "[OK] Other worktree not active and not used in 24h — realigned the dev registry to this worktree." -ForegroundColor Green
+Write-Host "[OK] Other worktree not active and not used in 24h -- realigned the dev registry to this worktree." -ForegroundColor Green
 Write-Host "RESULT=REALIGNED"

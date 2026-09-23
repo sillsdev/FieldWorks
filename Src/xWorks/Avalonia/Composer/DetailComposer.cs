@@ -1609,10 +1609,10 @@ namespace SIL.FieldWorks.XWorks
 					isEditable: true, indent: depth, menuId: node.MenuId, contextMenuId: node.ContextMenuId,
 					hotlinksId: node.HotlinksId, objectHvo: obj.Hvo, items: items,
 					chooserLinks: CreateChooserLinks(node, list),
-					canReorderItems: canReorder));
+					canReorderItems: canReorder, canResetItemOrder: node.Reorder));
 
 				var hvo = obj.Hvo;
-				RegisterReferenceMove(stableId, canReorder, obj, flid);
+				RegisterReferenceReorder(stableId, canReorder, node.Reorder, obj, flid);
 				HandlerFor(stableId).ReferenceAdd = key =>
 				{
 					var possibility = ResolvePossibilityInList(list, key);
@@ -1679,7 +1679,8 @@ namespace SIL.FieldWorks.XWorks
 					node.AutomationId, node.LocalizationKey, node.Routing, null, options, null,
 					isEditable: true, indent: depth, menuId: node.MenuId, contextMenuId: node.ContextMenuId,
 					hotlinksId: node.HotlinksId, objectHvo: obj.Hvo, items: items,
-					chooserLinks: CreateChooserLinks(node), canReorderItems: canReorder);
+					chooserLinks: CreateChooserLinks(node), canReorderItems: canReorder,
+					canResetItemOrder: node.Reorder);
 				if (createsFromText)
 				{
 					// The picker compares names the way FindOrCreateEnvironment does, so the
@@ -1691,7 +1692,7 @@ namespace SIL.FieldWorks.XWorks
 				AddField(row);
 
 				var hvo = obj.Hvo;
-				RegisterReferenceMove(stableId, canReorder, obj, flid);
+				RegisterReferenceReorder(stableId, canReorder, node.Reorder, obj, flid);
 				HandlerFor(stableId).ReferenceAdd = key =>
 				{
 					if (!Guid.TryParse(key, out var guid) || !candidateHvoByGuid.TryGetValue(guid, out var targetHvo))
@@ -2260,9 +2261,9 @@ namespace SIL.FieldWorks.XWorks
 					hotlinksId: node.HotlinksId, objectHvo: obj.Hvo, items: items,
 					searchOptions: query => SearchLexicon(query, hvo, flid, owningEntry),
 					chooserLinks: CreateChooserLinks(node),
-					canReorderItems: canReorder));
+					canReorderItems: canReorder, canResetItemOrder: node.Reorder));
 
-				RegisterReferenceMove(stableId, canReorder, obj, flid);
+				RegisterReferenceReorder(stableId, canReorder, node.Reorder, obj, flid);
 				HandlerFor(stableId).ReferenceAdd = key =>
 				{
 					var target = ResolveEntryOrSense(key);
@@ -2400,13 +2401,13 @@ namespace SIL.FieldWorks.XWorks
 					hotlinksId: node.HotlinksId, objectHvo: obj.Hvo, items: items,
 					searchOptions: query => SearchBackRefCandidates(query, obj),
 					chooserLinks: CreateChooserLinks(node),
-					canReorderItems: canReorder));
+					canReorderItems: canReorder, canResetItemOrder: node.Reorder));
 
 				HandlerFor(stableId).ReferenceAdd = key => TryAddBackRef(obj, kind, key);
 				HandlerFor(stableId).ReferenceRemove = key => TryRemoveBackRef(obj, flid, kind, key);
 				// Items are keyed on their owning complex-form entry, so the move resolves keys
 				// the same way.
-				RegisterReferenceMove(stableId, canReorder, obj, flid,
+				RegisterReferenceReorder(stableId, canReorder, node.Reorder, obj, flid,
 					itemHvo => BackRefItemOwningEntry(
 						_cache.ServiceLocator.ObjectRepository.GetObject(itemHvo)).Guid.ToString());
 			}
@@ -2422,11 +2423,20 @@ namespace SIL.FieldWorks.XWorks
 
 			// The one-place move of a vector item: a real reference sequence rewrites the whole
 			// vector, a virtual one records the new order as a virtual ordering. Rejects unknown
-			// items and moves past either end.
+			// items and moves past either end. A reorder="true" row also gets the reset that
+			// discards its virtual ordering (Alphabetical Order).
 			// keyOfItem maps a vector item to the option key its row shows (default: its guid).
-			private void RegisterReferenceMove(string stableId, bool canReorder, ICmObject obj, int flid,
-				Func<int, string> keyOfItem = null)
+			private void RegisterReferenceReorder(string stableId, bool canReorder, bool canResetOrder,
+				ICmObject obj, int flid, Func<int, string> keyOfItem = null)
 			{
+				if (canResetOrder)
+				{
+					HandlerFor(stableId).ReferenceResetOrder = () =>
+					{
+						VirtualOrderingServices.ResetVO(obj, flid);
+						return true;
+					};
+				}
 				if (!canReorder)
 					return;
 				keyOfItem = keyOfItem
@@ -2875,7 +2885,10 @@ namespace SIL.FieldWorks.XWorks
 				var names = new List<string>();
 				for (var i = 0; i < count; i++)
 					names.Add(ResolveShortName(_sda.get_VecItem(obj.Hvo, flid, i)));
-				AddReadOnlyRow(node, obj, depth, string.Join("; ", names));
+				// A read-only row has no items to move, but a reorder="true" order can still be
+				// reset (Alphabetical Order), as the WinForms slice offers.
+				AddReadOnlyRow(node, obj, depth, string.Join("; ", names), canResetItemOrder: node.Reorder);
+				RegisterReferenceReorder(StableId(node, obj), canReorder: false, node.Reorder, obj, flid);
 			}
 
 			// A literal/"lit" slice (legacy MessageSlice) -- the slice's label/message text is
@@ -2896,14 +2909,16 @@ namespace SIL.FieldWorks.XWorks
 					isEditable: false, indent: depth, objectHvo: obj.Hvo));
 			}
 
-			private void AddReadOnlyRow(ViewNode node, ICmObject obj, int depth, string display)
+			private void AddReadOnlyRow(ViewNode node, ICmObject obj, int depth, string display,
+				bool canResetItemOrder = false)
 			{
 				AddField(new DetailField(StableId(node, obj), Localize(node.Label) ?? node.Field,
 					node.Field, node.WritingSystem, DetailFieldKind.Text, node.EditorClassification,
 					node.AutomationId, node.LocalizationKey, node.Routing,
 					new List<DetailWsValue> { new DetailWsValue("", display ?? string.Empty) }, null, null,
 					isEditable: false, indent: depth,
-					menuId: node.MenuId, contextMenuId: node.ContextMenuId, objectHvo: obj.Hvo));
+					menuId: node.MenuId, contextMenuId: node.ContextMenuId, objectHvo: obj.Hvo,
+					canResetItemOrder: canResetItemOrder));
 			}
 
 			// The editable multi-paragraph structured-text (StText) row (legacy StTextSlice).

@@ -495,18 +495,6 @@ namespace SIL.FieldWorks.XWorks
 					return;
 				}
 
-				// An adapter failure must not suppress the menu itself: items that need the hidden
-				// colleague chain disable, everything else still works (and the failure is logged).
-				try
-				{
-					EnsureMenuCommandAdapter(request.Field.ObjectHvo, request.Field.Field);
-				}
-				catch (Exception adapterError)
-				{
-					Logger.WriteError("Detail menu command adapter failed; menu items that need "
-						+ "the hidden colleague chain will be disabled.", adapterError);
-				}
-
 				var ids = new List<string>();
 				switch (request.Kind)
 				{
@@ -525,17 +513,33 @@ namespace SIL.FieldWorks.XWorks
 				var idArray = ids.Where(id => !string.IsNullOrEmpty(id)).ToArray();
 				var window = m_propertyTable.GetValue<XWindow>("window");
 
+				// Only ids without a native authority need the hidden command adapter. An adapter
+				// failure must not suppress the menu: its items disable, the rest still works.
+				var authority = CreateReorderVectorAuthority(request);
+				if (!XCoreMenuBridge.OwnsAll(authority, idArray))
+				{
+					try
+					{
+						EnsureMenuCommandAdapter(request.Field.ObjectHvo, request.Field.Field);
+					}
+					catch (Exception adapterError)
+					{
+						Logger.WriteError("Detail menu command adapter failed; menu items that need "
+							+ "the hidden colleague chain will be disabled.", adapterError);
+					}
+				}
+
 				// Render the SAME xCore menu natively in Avalonia -- identical items,
 				// enablement, and mediator dispatch; only rendering changes. The WinForms
 				// adapter menu remains the fallback if materialization fails.
 				try
 				{
-					// Field Visibility / Move Field retarget to the override layer, the reorder
-					// commands to the row's current item; other commands keep their dispatch.
+					// Field Visibility / Move Field retarget to the override layer; other
+					// mediator-answered commands keep their dispatch.
 					var registry = new OverrideCommandRegistry();
 					AddOverrideCommands(registry, request.Field);
-					AddMoveCommands(registry, request);
-					var items = XCoreMenuBridge.CreateMenuItems(window, idArray, registry.TryBuild);
+					var items = XCoreMenuBridge.CreateMenuItems(window, idArray, registry.TryBuild, null,
+						authority);
 					if (items.Count > 0)
 					{
 						// A keyboard-opened menu anchors under the row it came from; a
