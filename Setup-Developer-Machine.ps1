@@ -92,9 +92,8 @@ if (-not (Test-Path $toolsBase)) {
 # Check what's already installed
 
 # WiX Toolset
-# This worktree builds installers with WiX v6 via NuGet PackageReference (restored during build).
-# No separate WiX 3.x installation (candle/light) is required.
-Write-Host "[INFO] WiX Toolset v6 is restored via NuGet during build (no WiX 3 install needed)" -ForegroundColor Gray
+Write-Host "[INFO] WiX Toolset v6 is restored via NuGet during build." -ForegroundColor Gray
+Write-Host "[INFO] WiX Toolset v3 installation is your responsilbility." -ForegroundColor Yellow
 
 # Note: Serena MCP language servers auto-download on first use:
 # - C# (csharp): Microsoft.CodeAnalysis.LanguageServer (Roslyn) from Azure NuGet

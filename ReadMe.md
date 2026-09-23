@@ -47,7 +47,10 @@ Installer builds default to **WiX 3** (legacy batch pipeline) using inputs in `F
 
 ### WiX 3.11 setup (required for WiX 3 installer builds)
 
-WiX 3.11 may be installable with Chocolatey.
+WiX 3.11 can be installed with Chocolatey:
+```
+choco install wixtoolset --version 3.11.2
+```
 - Ensure tools (`heat.exe` etc.) are available in `%WIX%\bin` or on the PATH.
 - Install the **Visual Studio WiX Toolset v3 extension** so `Wix.CA.targets` is available to MSBuild.
 
