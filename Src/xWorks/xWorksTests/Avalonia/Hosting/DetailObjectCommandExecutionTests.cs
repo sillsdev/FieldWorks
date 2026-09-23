@@ -360,6 +360,26 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(adapter, Does.Contain("Alphabetical Order [enabled=True"), "reorder='true': Alphabetical Order offered and enabled");
 		}
 
+		// Both sides of the equivalence tests render through the bridge, so a rendering change
+		// they share passes them; this pins the merge itself.
+		[Test]
+		public void ReorderVectorLabelMenu_KeepsTheSeparator_BetweenTheReorderMenu_AndTheObjectMenu()
+		{
+			MakeTwoSubentries();
+			var field = SubentriesField();
+			var ids = LabelMenuIds(field);
+			EnsureAdapter(field.ObjectHvo, field.Field);
+
+			var items = BuildItems(ids, m_view.CreateReorderVectorAuthority(LabelMenuRequest(field, NoItem))).ToList();
+
+			var alphabetical = items.FindIndex(i => i.Label == "Alphabetical Order");
+			var visibility = items.FindIndex(i => i.Label == "Field Visibility");
+			Assert.That(alphabetical, Is.GreaterThanOrEqualTo(0), "the row's own menu ends with Alphabetical Order");
+			Assert.That(visibility, Is.EqualTo(alphabetical + 2), "exactly one item lies between the two source menus");
+			Assert.That(items[alphabetical + 1].IsSeparator, Is.True,
+				"mnuDataTree-Object's leading separator divides it from the row's own menu");
+		}
+
 		[Test]
 		public void ReorderVectorLabelMenu_ReadOnlyComplexFormsRow_RendersTheSameTreeAsTheAdapter()
 		{
@@ -519,6 +539,106 @@ namespace SIL.FieldWorks.XWorks
 			Cache.ActionHandlerAccessor.Undo();
 			Assert.That(SubentriesField().Items.Select(i => i.Key), Is.EqualTo(new[] { defaultOrder[1], defaultOrder[0] }),
 				"the reset is its own undo step");
+		}
+
+		// The bridge's owned-menu path: an owned id is populated and converted without the
+		// mediator, submenus included.
+
+		// Answers every leaf of the ids it owns with the leaf's own label, hiding the command
+		// ids it is told to hide.
+		private sealed class EchoAuthority : IDetailMenuAuthority
+		{
+			private readonly HashSet<string> _owned;
+			private readonly HashSet<string> _hidden;
+			public EchoAuthority(IEnumerable<string> owned, params string[] hidden)
+			{
+				_owned = new HashSet<string>(owned, StringComparer.Ordinal);
+				_hidden = new HashSet<string>(hidden, StringComparer.Ordinal);
+			}
+			public bool Owns(string menuId) => _owned.Contains(menuId);
+			public DetailMenuItem Build(string menuId, ChoiceBase leaf)
+				=> _hidden.Contains(leaf.HelpId) ? null
+					: new DetailMenuItem(XCoreMenuBridge.StripAccelerator(leaf.Label), isEnabled: true);
+		}
+
+		// Records whether the mediator asked anyone to display the Always-visible command.
+		private sealed class DisplaySpyColleague : IxCoreColleague
+		{
+			public bool Asked { get; private set; }
+			public void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters) { }
+			public IxCoreColleague[] GetMessageTargets() => new IxCoreColleague[] { this };
+			public bool ShouldNotCall => false;
+			public int Priority => (int)ColleaguePriority.High;
+			public bool OnDisplayShowFieldAlwaysVisible(object commandObject, ref UIItemDisplayProperties display)
+			{
+				Asked = true;
+				return false;
+			}
+		}
+
+		private IReadOnlyList<DetailMenuItem> BuildWithSpy(string[] ids, IDetailMenuAuthority authority,
+			out bool mediatorAsked)
+		{
+			var window = m_propertyTable.GetValue<XWindow>("window");
+			var spy = new DisplaySpyColleague();
+			window.Mediator.AddColleague(spy);
+			try
+			{
+				var items = XCoreMenuBridge.CreateMenuItems(window, ids, null, null, authority);
+				mediatorAsked = spy.Asked;
+				return items;
+			}
+			finally
+			{
+				window.Mediator.RemoveColleague(spy);
+			}
+		}
+
+		[Test]
+		public void OwnedMenu_WithSubmenus_IsBuiltWithoutAskingTheMediator()
+		{
+			var ids = new[] { RecordEditView.ObjectMenuId };
+			// No EnsureAdapter: the hidden tree never exists.
+
+			var items = BuildWithSpy(ids, new EchoAuthority(ids), out var asked);
+
+			Assert.That(asked, Is.False, "an owned id never reaches the mediator, submenu leaves included");
+			var visibility = FindItem(items, "Field Visibility");
+			var move = FindItem(items, "Move Field");
+			Assert.That(visibility, Is.Not.Null, "the Field Visibility submenu is built from its configuration");
+			Assert.That(visibility.Children.Select(c => c.Label),
+				Is.EqualTo(new[] { "Always visible", "Normally hidden, unless non-empty", "Normally hidden" }));
+			Assert.That(move?.Children.Select(c => c.Label), Is.EqualTo(new[] { "Move Up", "Move Down" }));
+			Assert.That(FindItem(items, "Help..."), Is.Not.Null);
+			Assert.That(items[0].IsSeparator, Is.False, "the menu's leading separator is trimmed");
+		}
+
+		[Test]
+		public void UnownedMenu_StillAsksTheMediator_ForSubmenuLeaves()
+		{
+			BuildWithSpy(new[] { RecordEditView.ObjectMenuId }, null, out var asked);
+			Assert.That(asked, Is.True, "the mediator path decides submenu visibility by asking colleagues");
+		}
+
+		[Test]
+		public void OwnedSubmenu_WhoseLeavesAreAllHidden_IsOmitted()
+		{
+			var ids = new[] { RecordEditView.ObjectMenuId };
+			var authority = new EchoAuthority(ids, "CmdAlwaysVisible", "CmdIfData", "CmdNormallyHidden");
+
+			var items = BuildWithSpy(ids, authority, out _);
+
+			Assert.That(FindItem(items, "Field Visibility"), Is.Null, "a submenu with no visible leaf is dropped");
+			Assert.That(FindItem(items, "Move Field"), Is.Not.Null);
+		}
+
+		[Test]
+		public void OwnedMenu_WithAListSubmenu_IsRefused()
+		{
+			var ids = new[] { RecordEditView.MultiStringSliceMenuId };
+			Assert.That(() => BuildWithSpy(ids, new EchoAuthority(ids), out _),
+				Throws.TypeOf<NotSupportedException>().With.Message.Contains("WritingSystemOptionsForSlice"),
+				"a list-populated submenu has no configured leaves an authority could answer");
 		}
 
 		// ----------------------------------------------------------------------------------------

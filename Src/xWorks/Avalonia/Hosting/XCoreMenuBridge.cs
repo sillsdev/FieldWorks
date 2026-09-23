@@ -10,14 +10,13 @@ using XCore;
 namespace SIL.FieldWorks.XWorks
 {
 	/// <summary>
-	/// Converts an xCore context-menu <see cref="ChoiceGroup"/> into the neutral
-	/// <see cref="DetailMenuItem"/> model the Avalonia detail view renders as a native MenuFlyout.
-	/// Labels, enablement, checkmarks, submenus, and execution all run through the SAME xCore
-	/// machinery the WinForms adapter uses (GetDisplayProperties -> mediator Display* round-trip;
-	/// OnClick -> mediator command dispatch) -- only the rendering changes. Because this consumes
-	/// the
-	/// shared engine, it serves every DTMenuHandler-hosting tool (Grammar, Notebook, Lists,
-	/// Words), not just the Lexicon.
+	/// Converts xCore context menus into the neutral <see cref="DetailMenuItem"/> model the
+	/// Avalonia detail view renders as a native MenuFlyout. A menu id without a native
+	/// authority runs through the SAME xCore machinery the WinForms adapter uses
+	/// (GetDisplayProperties -> mediator Display* round-trip; OnClick -> mediator command
+	/// dispatch), only the rendering changes; an owned id is answered by its authority alone.
+	/// Because this consumes the shared engine, it serves every DTMenuHandler-hosting tool
+	/// (Grammar, Notebook, Lists, Words), not just the Lexicon.
 	/// </summary>
 	public static class XCoreMenuBridge
 	{
@@ -58,23 +57,47 @@ namespace SIL.FieldWorks.XWorks
 			=> CreateMenuItems(window, menuIds, interceptor, temporaryColleague, null);
 
 		/// <summary>
-		/// As the interceptor overload, plus a native <paramref name="authority"/> that answers
-		/// every leaf under the menu ids it owns BEFORE the mediator is asked: those leaves get
-		/// no Display* round trip and no interceptor call, so nothing on the mediator (the
-		/// hidden DataTree adapter included) takes part in them. Leaves under other ids keep
-		/// the mediator path.
+		/// As the interceptor overload, plus a native <paramref name="authority"/>. A menu id it
+		/// owns is populated without any mediator display query and every leaf under it,
+		/// submenus included, is answered by the authority, so nothing on the mediator (the
+		/// hidden DataTree adapter included) takes part in it. Other ids keep the mediator path.
 		/// </summary>
+		/// <exception cref="NotSupportedException">An owned id contains a list-populated
+		/// submenu, which no authority can answer yet.</exception>
 		public static IReadOnlyList<DetailMenuItem> CreateMenuItems(XWindow window, string[] menuIds,
 			Func<ChoiceBase, UIItemDisplayProperties, DetailMenuItem> interceptor,
 			IxCoreColleague temporaryColleague, IDetailMenuAuthority authority)
 		{
-			var group = window?.GetContextMenuChoiceGroup(menuIds);
-			if (group == null)
-				return new List<DetailMenuItem>();
+			var items = new List<DetailMenuItem>();
+			if (window == null || menuIds == null)
+				return items;
+
+			// One group per id keeps each id's ownership known; the source menus contribute
+			// their items in order, as the merged group's population did.
+			var groups = new List<(ChoiceGroup Group, string OwnedId)>();
+			foreach (var id in menuIds)
+			{
+				if (string.IsNullOrEmpty(id))
+					continue;
+				var group = window.GetContextMenuChoiceGroup(new[] { id });
+				if (group != null)
+					groups.Add((group, authority != null && authority.Owns(id) ? id : null));
+			}
+			if (groups.Count == 0)
+				return items;
+
 			if (temporaryColleague != null)
 				window.Mediator.AddTemporaryColleague(temporaryColleague);
-			group.PopulateNow();
-			return Convert(group, interceptor, authority);
+			foreach (var (group, ownedId) in groups)
+			{
+				// An owned group keeps its submenus regardless of what colleagues would say;
+				// Convert drops a submenu only when the authority hides every leaf in it.
+				group.PopulateNow(querySubmenuVisibility: ownedId == null);
+				items.AddRange(Convert(group, interceptor, authority, ownedId));
+			}
+
+			TrimSeparators(items);
+			return items;
 		}
 
 		/// <summary>
@@ -94,26 +117,11 @@ namespace SIL.FieldWorks.XWorks
 			return true;
 		}
 
-		// The owned menu id a leaf belongs to, or null. A merged group flattens its source
-		// menus, so ownership comes from the nearest enclosing menu element the authority owns.
-		private static string OwnedMenuIdOf(ChoiceBase leaf, IDetailMenuAuthority authority)
-		{
-			if (authority == null)
-				return null;
-			for (var node = leaf.ConfigurationNode?.ParentNode; node != null; node = node.ParentNode)
-			{
-				if (node.Name != "menu")
-					continue;
-				var id = node.Attributes?["id"]?.Value;
-				if (!string.IsNullOrEmpty(id) && authority.Owns(id))
-					return id;
-			}
-			return null;
-		}
-
+		// ownedId: the menu id the authority answers for this group and its submenus, or
+		// null on the mediator path. Edge separators stay: they divide merged groups.
 		private static List<DetailMenuItem> Convert(ChoiceGroup group,
 			Func<ChoiceBase, UIItemDisplayProperties, DetailMenuItem> interceptor,
-			IDetailMenuAuthority authority)
+			IDetailMenuAuthority authority, string ownedId)
 		{
 			var items = new List<DetailMenuItem>();
 			foreach (var member in group)
@@ -125,8 +133,14 @@ namespace SIL.FieldWorks.XWorks
 				}
 				else if (member is ChoiceGroup submenu)
 				{
+					if (ownedId != null)
+					{
+						items.AddRange(ConvertOwnedSubmenu(submenu, authority, ownedId));
+						continue;
+					}
+
 					submenu.PopulateNow();
-					var children = Convert(submenu, interceptor, authority);
+					var children = ConvertChildren(submenu, interceptor, authority, null);
 					if (children.Count == 0)
 						continue;
 
@@ -146,11 +160,9 @@ namespace SIL.FieldWorks.XWorks
 				}
 				else if (member is ChoiceBase choice)
 				{
-					// A natively owned leaf is answered whole (hidden, or label/state/execute)
-					// with no mediator round trip.
-					var ownedId = OwnedMenuIdOf(choice, authority);
 					if (ownedId != null)
 					{
+						// The authority answers the leaf whole: hidden, or label/state/execute.
 						var native = authority.Build(ownedId, choice);
 						if (native != null)
 							items.Add(WithoutExecuteWhenDisabled(native));
@@ -177,9 +189,38 @@ namespace SIL.FieldWorks.XWorks
 						display.Enabled ? (Action)(() => captured.OnClick(null, EventArgs.Empty)) : null));
 				}
 			}
-
-			TrimSeparators(items);
 			return items;
+		}
+
+		// A submenu's children. Hiding items can leave a separator first or last; those go.
+		private static List<DetailMenuItem> ConvertChildren(ChoiceGroup submenu,
+			Func<ChoiceBase, UIItemDisplayProperties, DetailMenuItem> interceptor,
+			IDetailMenuAuthority authority, string ownedId)
+		{
+			var children = Convert(submenu, interceptor, authority, ownedId);
+			TrimSeparators(children);
+			return children;
+		}
+
+		// An owned submenu takes its label from the configuration and its children from the
+		// authority. Omitted when no child is visible, spliced when inline. A list submenu is
+		// refused, not left to the mediator.
+		private static IEnumerable<DetailMenuItem> ConvertOwnedSubmenu(ChoiceGroup submenu,
+			IDetailMenuAuthority authority, string ownedId)
+		{
+			if (!string.IsNullOrEmpty(submenu.ListId))
+			{
+				throw new NotSupportedException(string.Format(
+					"Menu '{0}' has a list-populated submenu '{1}' that no native authority can answer yet.",
+					ownedId, submenu.ListId));
+			}
+			var children = ConvertChildren(submenu, null, authority, ownedId);
+			if (children.Count == 0 || submenu.IsInlineChoiceList)
+				return children;
+			return new[]
+			{
+				new DetailMenuItem(StripAccelerator(submenu.Label), isEnabled: true, isChecked: false, children)
+			};
 		}
 
 		// A disabled leaf carries no execute action, so "Execute != null" means invokable for

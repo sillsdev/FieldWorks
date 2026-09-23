@@ -624,12 +624,44 @@ namespace SIL.FieldWorks.XWorks
 			// Show all right now never dispatches or persists: it only marks the row for the
 			// host's transient reveal.
 			registry.Add("CmdDataTree-WritingSystemMenu-ShowAllRightNow",
-				(c, d) => ShowAllWritingSystemsItem(d, field));
+				(c, d) => ShowAllWritingSystemsItem(XCoreMenuBridge.StripAccelerator(d.Text), field));
 
-			var templateId = ViewDefinitionOverrideEditor.StripRuntimeSuffix(field.StableId);
-			// Locate the clicked node in the field's OWN compiled model (with any current override
-			// already applied), so visibility checkmarks and move enablement reflect the live state.
-			ViewNodeLocation location = null;
+			// Unknown/stale target: leave the field commands on mediator dispatch rather than
+			// guess.
+			if (!TryLocateOverrideTarget(field, out var templateId, out var location))
+				return;
+			registry.Add("CmdAlwaysVisible",
+				(c, d) => VisibilityItem(LabelOf(d), field, templateId, location, ViewVisibility.Always));
+			registry.Add("CmdIfData",
+				(c, d) => VisibilityItem(LabelOf(d), field, templateId, location, ViewVisibility.IfData));
+			registry.Add("CmdNormallyHidden",
+				(c, d) => VisibilityItem(LabelOf(d), field, templateId, location, ViewVisibility.Never));
+			registry.Add("CmdDataTree-MoveFieldUp",
+				(c, d) => MoveItem(LabelOf(d), field, location, up: true));
+			registry.Add("CmdDataTree-MoveFieldDown",
+				(c, d) => MoveItem(LabelOf(d), field, location, up: false));
+		}
+
+		private static string LabelOf(UIItemDisplayProperties display)
+			=> XCoreMenuBridge.StripAccelerator(display.Text);
+
+		/// <summary>
+		/// Locates the row's node in its own compiled model, with the current override applied,
+		/// so visibility checkmarks and move enablement reflect the live state. False, with the
+		/// reason logged, when the row lacks class or layout context or an override store, when
+		/// the compile fails, or when the model has no node for the row's template id.
+		/// </summary>
+		internal bool TryLocateOverrideTarget(DetailField field, out string templateId,
+			out ViewNodeLocation location)
+		{
+			templateId = null;
+			location = null;
+			if (field == null || string.IsNullOrEmpty(field.ClassName) || string.IsNullOrEmpty(field.LayoutName)
+				|| ViewOverrideStore == null)
+			{
+				return false;
+			}
+			templateId = ViewDefinitionOverrideEditor.StripRuntimeSuffix(field.StableId);
 			try
 			{
 				if (Cache.ServiceLocator.ObjectRepository.TryGetObject(field.ObjectHvo, out var fieldObj))
@@ -642,45 +674,34 @@ namespace SIL.FieldWorks.XWorks
 			}
 			catch (Exception e)
 			{
-				Logger.WriteError("Resolving the field's override target failed; this row's "
-					+ "menu-button commands fall back to ordinary command dispatch.", e);
-				return;
+				Logger.WriteError("Resolving the field's override target failed; its Field Visibility "
+					+ "and Move Field commands are not retargeted to the override layer.", e);
+				return false;
 			}
-
-			// Unknown/stale target: leave the field commands on the legacy path rather than
-			// guess.
-			if (location != null)
+			if (location == null)
 			{
-				registry.Add("CmdAlwaysVisible",
-					(c, d) => VisibilityItem(d, field, templateId, location, ViewVisibility.Always));
-				registry.Add("CmdIfData",
-					(c, d) => VisibilityItem(d, field, templateId, location, ViewVisibility.IfData));
-				registry.Add("CmdNormallyHidden",
-					(c, d) => VisibilityItem(d, field, templateId, location, ViewVisibility.Never));
-				registry.Add("CmdDataTree-MoveFieldUp",
-					(c, d) => MoveItem(d, field, location, up: true));
-				registry.Add("CmdDataTree-MoveFieldDown",
-					(c, d) => MoveItem(d, field, location, up: false));
+				Logger.WriteEvent(string.Format("Detail row '{0}' has no node in its compiled model; its "
+					+ "Field Visibility and Move Field commands are not retargeted to the override layer.",
+					templateId));
+				return false;
 			}
+			return true;
 		}
 
 		// A Field Visibility menu item: checked when it is the field's current visibility, executes the
 		// SetVisibility override mutation (idempotent -- re-choosing the current value is a
 		// harmless write).
-		private DetailMenuItem VisibilityItem(UIItemDisplayProperties display, DetailField field,
+		private DetailMenuItem VisibilityItem(string label, DetailField field,
 			string templateId, ViewNodeLocation location, ViewVisibility target)
 		{
-			var label = XCoreMenuBridge.StripAccelerator(display.Text);
 			var isChecked = location.Visibility == target;
 			return new DetailMenuItem(label, isEnabled: true, isChecked: isChecked, children: null,
 				execute: () => ApplyFieldVisibility(field, templateId, target));
 		}
 
 		// A Move Field item: disabled at the first sibling (up) / last sibling (down) / when alone.
-		private DetailMenuItem MoveItem(UIItemDisplayProperties display, DetailField field,
-			ViewNodeLocation location, bool up)
+		private DetailMenuItem MoveItem(string label, DetailField field, ViewNodeLocation location, bool up)
 		{
-			var label = XCoreMenuBridge.StripAccelerator(display.Text);
 			var canMove = up ? location.CanMoveUp : location.CanMoveDown;
 			return new DetailMenuItem(label, isEnabled: canMove, isChecked: false, children: null,
 				execute: canMove ? (Action)(() => ApplyMoveField(field, location, up)) : null);
@@ -692,9 +713,8 @@ namespace SIL.FieldWorks.XWorks
 		/// record) and recomposes. The reveal is view state, not a command, so the item
 		/// dispatches nothing and never writes the override.
 		/// </summary>
-		private DetailMenuItem ShowAllWritingSystemsItem(UIItemDisplayProperties display, DetailField field)
-			=> new DetailMenuItem(XCoreMenuBridge.StripAccelerator(display.Text), isEnabled: true,
-				isChecked: false, children: null, execute: () =>
+		private DetailMenuItem ShowAllWritingSystemsItem(string label, DetailField field)
+			=> new DetailMenuItem(label, isEnabled: true, isChecked: false, children: null, execute: () =>
 				{
 					m_showAllWsFields.Add(ViewDefinitionOverrideEditor.StripRuntimeSuffix(field.StableId));
 					RefreshAvaloniaDetail();
