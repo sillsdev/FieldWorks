@@ -58,6 +58,7 @@ namespace FwAvaloniaTests.Detail
 			public bool TryAddReferenceItem(DetailField f, string key) => false;
 			public bool TryRemoveReferenceItem(DetailField f, string key) => true;
 			public bool TryMoveReferenceItem(DetailField f, string key, bool forward) => false;
+			public bool TryResetReferenceOrder(DetailField f) => false;
 			public IReadOnlyList<string> Validate() => new List<string>();
 			public void Commit() { }
 			public void Cancel() { }
