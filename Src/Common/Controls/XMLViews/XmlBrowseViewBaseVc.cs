@@ -67,6 +67,11 @@ namespace SIL.FieldWorks.Common.Controls
 		protected int m_dxmpCheckWidth;
 		/// <summary>Roughly 1-pixel border.</summary>
 		protected int m_dxmpCheckBorderWidth = 72000 / 96;
+		/// <summary>
+		/// Thickness of the rule between rows. The selected row's highlight border uses the same
+		/// thickness so that selecting a row never changes its height (LT-22489).
+		/// </summary>
+		private const int kdmpRowBorder = 72000 / 96;
 		/// <summary></summary>
 		protected XmlBrowseViewBase m_xbv;
 
@@ -927,7 +932,7 @@ namespace SIL.FieldWorks.Common.Controls
 				{
 					vwenv.set_IntProperty((int)FwTextPropType.ktptBorderTop,
 						(int)FwTextPropVar.ktpvMilliPoint,
-						3000);
+						kdmpRowBorder);
 					vwenv.set_IntProperty((int)FwTextPropType.ktptBorderColor,
 						(int)FwTextPropVar.ktpvDefault,
 						(int)RGB(Color.FromKnownColor(KnownColor.Highlight)));
@@ -970,7 +975,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 			vwenv.OpenTable(colCount, // this many columns
 				vl100, // using 100% of available space
-				72000 / 96, //0, // no border
+				kdmpRowBorder,
 				VwAlignment.kvaLeft, // cells by default left aligned
 				//	VwFramePosition.kvfpBelow, //.kvfpBox, //.kvfpVoid, // no frame
 				VwFramePosition.kvfpBelow | VwFramePosition.kvfpRhs,
