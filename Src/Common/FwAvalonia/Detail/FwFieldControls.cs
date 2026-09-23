@@ -1334,7 +1334,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 	/// own yet, which the picker alone cannot do. Every other vector row passes allowCreate:
 	/// false and is unaffected.
 	/// </summary>
-	public sealed class FwReferenceVectorField : StackPanel, IHoverAffordanceProvider,
+	public sealed class FwReferenceVectorField : WrapPanel, IHoverAffordanceProvider,
 		IDetailItemSelection, IDisposable
 	{
 		private readonly List<Control> _affordances = new List<Control>();
@@ -1365,6 +1365,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			Action<DetailLinkRequest> linkRequested = null,
 			Action<DetailMenuRequest> menuRequested = null)
 		{
+			// Wraps, like the one Views paragraph PhoneEnvReferenceView puts its items in:
+			// a stack runs off the right edge, cutting the item the width ran out in.
 			Orientation = Orientation.Horizontal;
 			// 14.2-style hit-testing rule: a null background only hit-tests the glyphs -- the
 			// WHOLE

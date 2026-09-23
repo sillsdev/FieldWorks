@@ -73,6 +73,12 @@ namespace FwAvaloniaTests.Detail
 				new DetailChoiceOption("e2", "/_a")
 			});
 
+		private static DetailField RowOf(params string[] names) => new DetailField(
+			"MoStemAllomorph/x/#0", "Environments", "PhoneEnv", null,
+			DetailFieldKind.ReferenceVector, EditorClassification.Known, "PhoneEnv", null,
+			HostRouting.Inherit, null, null, null, isEditable: true,
+			items: names.Select((n, i) => new DetailChoiceOption("e" + i, n)).ToList());
+
 		private static (FwReferenceVectorField Row, Window Window) Show(
 			FakeTextEditing context, System.Action gestureCompleted = null)
 		{
@@ -106,6 +112,39 @@ namespace FwAvaloniaTests.Detail
 					== FwReferenceVectorField.ItemAutomationId("PhoneEnv", key));
 			Assert.That(box, Is.Not.Null, "the row rendered no editor for item '" + key + "'");
 			return box;
+		}
+
+		/// <summary>
+		/// PhoneEnvReferenceView puts every item in one Views paragraph, which breaks to a new
+		/// line when it runs out of width. A horizontal stack ran off the right edge instead,
+		/// cutting whichever item the width ran out in -- the end of an environment simply
+		/// disappeared.
+		/// </summary>
+		[AvaloniaTest]
+		public void ARowNarrowerThanItsItems_WrapsThemRatherThanCuttingOne()
+		{
+			var row = new FwReferenceVectorField(
+				RowOf("/_#", "/_a", "/ _ zt", "/_[V]", "/_[C]"), "PhoneEnv",
+				new FakeTextEditing(), null);
+			var host = new Border { Child = row, Width = 150 };
+			var window = new Window { Content = host, Width = 200, Height = 300 };
+			window.Show();
+			Dispatcher.UIThread.RunJobs();
+			window.UpdateLayout();
+			Dispatcher.UIThread.RunJobs();
+
+			var overhang = row.Children
+				.Where(c => c.Bounds.Right > row.Bounds.Width + 0.5)
+				.Select(c => $"{c.GetType().Name} right={c.Bounds.Right:F1}")
+				.ToList();
+
+			Assert.That(overhang, Is.Empty,
+				"an item arranged past the row's own width is cut off at the edge, which is "
+				+ "how the end of an environment went missing; row width "
+				+ row.Bounds.Width.ToString("F1"));
+			Assert.That(row.Children.Any(c => c.Bounds.Y > 0.5), Is.True,
+				"and they must actually have wrapped -- if everything still sits on one line "
+				+ "the row was wide enough and this test proves nothing");
 		}
 
 		[AvaloniaTest]
