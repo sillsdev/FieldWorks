@@ -1699,15 +1699,23 @@ namespace SIL.FieldWorks.XWorks
 						if (position < 0)
 							return false;
 
+						// Clearing the text drops the item, as
+						// EnvsBeingRequestedForThisEntry does. Whitespace alone counts as
+						// cleared, and the environment itself stays in the project.
+						if (string.IsNullOrWhiteSpace(text))
+						{
+							_sda.Replace(hvo, flid, position, position + 1, new int[0], 0);
+							return true;
+						}
+
 						var target = ResolveEnvironmentForItem(hvo, flid, position, StripSpaces(text))
 							?? FindOrCreateEnvironment(text);
 						if (target == null)
 							return false;
 
-						// The typed string is written onto the resolved environment whether or
-						// not
-						// it moved, so a re-spelling reaches every field referencing it --
-						// writing system as much as spelling.
+						// The typed string is written onto the resolved environment whether
+						// or not it moved, so a re-spelling reaches every field referencing
+						// it -- writing system as much as spelling.
 						target.StringRepresentation =
 							TsStringUtils.MakeString(text, _cache.DefaultVernWs);
 

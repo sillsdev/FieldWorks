@@ -64,6 +64,9 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		/// which every field referencing it then shows. Text stripping differently re-points
 		/// the item, creating the target only when the project has none.
 		///
+		/// Blank text is a REMOVAL, not a rejected edit: emptying an item takes it off the
+		/// field and creates nothing. Whitespace alone counts as blank.
+		///
 		/// Validity is not a precondition, for the same reason it is not on creation: the
 		/// value is staged and annotated, never corrected or discarded.
 		/// </summary>

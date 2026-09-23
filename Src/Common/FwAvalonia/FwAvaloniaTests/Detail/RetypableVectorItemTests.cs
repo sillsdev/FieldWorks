@@ -215,6 +215,27 @@ namespace FwAvaloniaTests.Detail
 				"finishing the edit stages it once, against the item's own key");
 		}
 
+		/// <summary>
+		/// Emptying an item is how the user removes it, so the row must pass the blank text
+		/// through to the domain rather than treating it as nothing to do.
+		/// </summary>
+		[AvaloniaTest]
+		public void EmptyingAnItemEditor_StagesTheBlankText()
+		{
+			var context = new FakeTextEditing();
+			var (row, _) = Show(context);
+			var box = Editor(row, "e1");
+
+			box.Text = string.Empty;
+			PressEnter(box);
+
+			Assert.That(context.Edits.Count, Is.EqualTo(1),
+				"a cleared item must reach the domain, which is what removes it");
+			Assert.That(context.Edits[0].Key, Is.EqualTo("e1"));
+			Assert.That(string.IsNullOrEmpty(context.Edits[0].Text), Is.True,
+				"and it must arrive blank, not filtered out on the way");
+		}
+
 		[AvaloniaTest]
 		public void FinishingAnUnchangedEdit_StagesNothing()
 		{

@@ -118,6 +118,63 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
+		/// Clearing an item's text removes it, which is what
+		/// EnvsBeingRequestedForThisEntry does with a blank line. The environment itself
+		/// survives: it is shared, and other allomorphs may still be using it.
+		/// </summary>
+		[Test]
+		public void ClearingAnItemsText_RemovesTheItem_AndKeepsTheEnvironment()
+		{
+			var shared = GiveProjectAnEnvironment("/_#");
+			Attach(m_allomorph, shared);
+			Attach(m_otherAllomorph, shared);
+			var before = EnvironmentCount;
+
+			Assert.That(Retype(shared, string.Empty), Is.True, "the edit staged");
+
+			Assert.That(m_allomorph.PhoneEnvRC, Is.Empty,
+				"an environment whose text the user cleared is no longer on the allomorph");
+			Assert.That(EnvironmentCount, Is.EqualTo(before),
+				"and clearing creates nothing -- the old path minted an empty environment");
+			Assert.That(shared.IsValidObject, Is.True);
+			Assert.That(m_otherAllomorph.PhoneEnvRC.Single(), Is.EqualTo(shared),
+				"the environment is shared, so removing this reference must not disturb it");
+		}
+
+		/// <summary>Trim, not Length: spaces alone are as blank as nothing at all.</summary>
+		[Test]
+		public void ClearingAnItemToWhitespace_CountsAsCleared()
+		{
+			var env = GiveProjectAnEnvironment("/_#");
+			Attach(m_allomorph, env);
+			var before = EnvironmentCount;
+
+			Assert.That(Retype(env, "   "), Is.True);
+
+			Assert.That(m_allomorph.PhoneEnvRC, Is.Empty,
+				"whitespace is not an environment; it removes the item like an empty string");
+			Assert.That(EnvironmentCount, Is.EqualTo(before),
+				"and must not mint an environment whose whole text is spaces");
+		}
+
+		/// <summary>
+		/// Only the cleared item goes. A row-wide rebuild would drop the others with it.
+		/// </summary>
+		[Test]
+		public void ClearingOneItem_LeavesTheOtherItemsAlone()
+		{
+			var first = GiveProjectAnEnvironment("/_#");
+			var second = GiveProjectAnEnvironment("/_a");
+			Attach(m_allomorph, first);
+			Attach(m_allomorph, second);
+
+			Assert.That(Retype(first, string.Empty), Is.True);
+
+			Assert.That(m_allomorph.PhoneEnvRC.Single(), Is.EqualTo(second),
+				"the item that was not cleared keeps its environment");
+		}
+
+		/// <summary>
 		/// Case 1, the surprising one. Respacing makes no new environment and does not move the
 		/// reference -- it renames the shared object, so every OTHER allomorph referencing it
 		/// shows the new spelling too. Asserted from the second allomorph, which is what makes

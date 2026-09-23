@@ -124,11 +124,10 @@ namespace SIL.FieldWorks.XWorks
 		public bool TrySetReferenceItemText(DetailField field, string itemKey, string text)
 		{
 			var setter = Handler(field)?.ReferenceSetText;
-			if (setter == null || string.IsNullOrWhiteSpace(itemKey)
-				|| string.IsNullOrWhiteSpace(text))
-			{
+			// Blank text is not rejected here: it is how the user removes an item, so the
+			// handler is the one that decides what an emptied item means.
+			if (setter == null || string.IsNullOrWhiteSpace(itemKey))
 				return false;
-			}
 			return Stage(() => setter(itemKey, text), FieldLabelFor(field));
 		}
 
