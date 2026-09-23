@@ -1504,6 +1504,40 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 	}
 
 	/// <summary>
+	/// The inputs for generating a row's help topic when the row has no
+	/// <see cref="DetailField.HelpTopicId"/>. Plain strings only, so this layer stays free of
+	/// the domain model.
+	/// </summary>
+	public sealed class DetailHelpTopicSource
+	{
+		/// <summary>Captures the generator's inputs for one row.</summary>
+		/// <param name="fieldName">The layout field name; may be null.</param>
+		/// <param name="label">The raw, unlocalized layout label; may be null.</param>
+		/// <param name="className">The class of the row's object.</param>
+		/// <param name="ownerClassName">The owner's class; null when unowned.</param>
+		/// <param name="sortKey">The object's sort key.</param>
+		/// <param name="targetsParentIsEntry">For a lexical-relation row: true under an entry,
+		/// false under a sense; null for other rows.</param>
+		public DetailHelpTopicSource(string fieldName, string label, string className,
+			string ownerClassName, string sortKey, bool? targetsParentIsEntry = null)
+		{
+			FieldName = fieldName;
+			Label = label;
+			ClassName = className;
+			OwnerClassName = ownerClassName;
+			SortKey = sortKey;
+			TargetsParentIsEntry = targetsParentIsEntry;
+		}
+
+		public string FieldName { get; }
+		public string Label { get; }
+		public string ClassName { get; }
+		public string OwnerClassName { get; }
+		public string SortKey { get; }
+		public bool? TargetsParentIsEntry { get; }
+	}
+
+	/// <summary>
 	/// A field on a lexical-edit detail view, projected from a typed <see cref="ViewNode"/> and bound to live
 	/// values by an <see cref="IDetailValueProvider"/>. This is the product contract that replaces the
 	/// old detached preview DTO path: structure comes from the typed view definition, values from the
@@ -1609,6 +1643,18 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		/// resets to the property's default order. False for other kinds.
 		/// </summary>
 		public bool CanResetItemOrder { get; }
+
+		/// <summary>
+		/// The layout's authored help topic id, or null when the host generates one from
+		/// <see cref="HelpTopicSource"/>. Settable so the composer can stamp it from the node.
+		/// </summary>
+		public string HelpTopicId { get; set; }
+
+		/// <summary>
+		/// What the host needs to generate this row's help topic when the layout authors
+		/// none; null on rows that have no object. Stamped by the composer.
+		/// </summary>
+		public DetailHelpTopicSource HelpTopicSource { get; set; }
 
 		/// <summary>False for display-only fields (e.g. reference fields without chooser write-back yet).</summary>
 		public bool IsEditable { get; }

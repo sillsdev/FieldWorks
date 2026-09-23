@@ -385,8 +385,37 @@ namespace SIL.FieldWorks.XWorks
 					field.ClassName = ctx.ClassName;
 					field.LayoutName = ctx.LayoutName;
 				}
+				StampHelpTopic(field);
 
 				Fields.Add(field);
+			}
+
+			// The node whose walk is adding rows right now (see Walk).
+			private readonly Stack<ViewNode> _walkNodes = new Stack<ViewNode>();
+
+			// A row takes its help-topic inputs from the node being walked unless the site set
+			// them itself (the lexical-relation rows).
+			private void StampHelpTopic(DetailField field)
+			{
+				if (_walkNodes.Count == 0)
+					return;
+				var node = _walkNodes.Peek();
+				if (field.HelpTopicId == null)
+					field.HelpTopicId = node.HelpTopicId;
+				if (field.HelpTopicSource == null)
+					field.HelpTopicSource = HelpTopicSourceFor(node.Field, node.Label, field.ObjectHvo);
+			}
+
+			// The object-derived half of the help-topic inputs; null when the row has no object.
+			private DetailHelpTopicSource HelpTopicSourceFor(string fieldName, string label, int hvo,
+				bool? targetsParentIsEntry = null)
+			{
+				if (hvo == 0 || !_cache.ServiceLocator.ObjectRepository.TryGetObject(hvo, out var obj))
+					return null;
+				// Only a possibility's topic can use the sort key, and computing it is not free.
+				var sortKey = obj is ICmPossibility ? obj.SortKey : null;
+				return new DetailHelpTopicSource(fieldName, label, _mdc.GetClassName(obj.ClassID),
+					obj.Owner?.ClassName, sortKey, targetsParentIsEntry);
 			}
 
 			// The project's character-type style names, sourced from
@@ -577,6 +606,20 @@ namespace SIL.FieldWorks.XWorks
 				if (IsHidden(node) || depth > MaxDepth || IsIrrelevantForObject(node, obj))
 					return;
 
+				// Rows added while this node walks are stamped with its help-topic inputs.
+				_walkNodes.Push(node);
+				try
+				{
+					WalkByKind(node, obj, depth);
+				}
+				finally
+				{
+					_walkNodes.Pop();
+				}
+			}
+
+			private void WalkByKind(ViewNode node, ICmObject obj, int depth)
+			{
 				switch (node.Kind)
 				{
 					case ViewNodeKind.Field:
@@ -1831,13 +1874,18 @@ namespace SIL.FieldWorks.XWorks
 					if (row.IsEditable)
 						searchOptions = query => SearchLexicalRelationTargets(query, obj, relation, row.MappingType);
 
-					AddField(new DetailField(stableId, row.Label, node.Field, node.WritingSystem,
+					var relationRow = new DetailField(stableId, row.Label, node.Field, node.WritingSystem,
 						DetailFieldKind.ReferenceVector, node.EditorClassification, node.AutomationId,
 						node.LocalizationKey, node.Routing, null, null, null,
 						isEditable: row.IsEditable, indent: depth, menuId: row.MenuId,
 						contextMenuId: node.ContextMenuId, hotlinksId: node.HotlinksId,
 						objectHvo: relation.Hvo, items: items,
-						searchOptions: searchOptions));
+						searchOptions: searchOptions);
+					// WinForms shows a relation as a Targets slice under the entry or sense, and
+					// keys its help topic on that.
+					relationRow.HelpTopicSource = HelpTopicSourceFor("Targets", row.Label, relation.Hvo,
+						targetsParentIsEntry: obj is ILexEntry);
+					AddField(relationRow);
 
 					if (!row.IsEditable)
 						continue;

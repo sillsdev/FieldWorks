@@ -9,6 +9,7 @@ using System.Drawing.Printing;
 using System.Linq;
 using System.Windows.Forms;
 using System.Xml;
+using SIL.FieldWorks.Common.DetailRules;
 using SIL.FieldWorks.Common.FwAvalonia;
 using SIL.FieldWorks.Common.FwAvalonia.Detail;
 using SIL.FieldWorks.Common.FwAvalonia.Seams;
@@ -592,6 +593,34 @@ namespace SIL.FieldWorks.XWorks
 
 				return m_viewOverrideStore;
 			}
+		}
+
+		/// <summary>
+		/// The help topic of a detail row: its <see cref="DetailField.HelpTopicId"/> when set,
+		/// else one generated from the row's field and object and the current tool. Null when
+		/// the row carries nothing to generate from.
+		/// </summary>
+		internal string ResolveHelpTopic(DetailField field)
+		{
+			if (field == null)
+				return null;
+			var source = field.HelpTopicSource;
+			if (string.IsNullOrEmpty(field.HelpTopicId) && source == null)
+				return null;
+			var provider = m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider");
+			var subject = new HelpTopicSubject
+			{
+				FieldName = source?.FieldName,
+				Label = source?.Label,
+				ClassName = source?.ClassName,
+				OwnerClassName = source?.OwnerClassName,
+				SortKey = source?.SortKey,
+				TargetsParentIsEntry = source?.TargetsParentIsEntry,
+				AreaName = m_propertyTable.GetStringProperty("areaChoice", null),
+				ToolName = m_propertyTable.GetStringProperty("currentContentControl", null)
+			};
+			return FieldHelpTopics.Resolve(field.HelpTopicId, FieldHelpTopics.FieldPrefix, subject,
+				FieldHelpTopics.KnownBy(provider));
 		}
 
 		// The resolver the composer calls for each compiled (class, layout); null result = shipped
