@@ -1453,8 +1453,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 						Text = item.Name,
 						VerticalAlignment = VerticalAlignment.Center,
 						Margin = FwAvaloniaDensity.TrailingItemGap,
-						// 14.2: a null background only hit-tests the glyphs -- the whole item
-						// must take the right-click, or the Remove flyout only opens over ink.
+						// A null background only hit-tests the glyphs -- the whole item must
+						// take the right-click, or the Remove flyout only opens over ink.
 						Background = FwAvaloniaDensity.TransparentBrush
 					};
 				}
