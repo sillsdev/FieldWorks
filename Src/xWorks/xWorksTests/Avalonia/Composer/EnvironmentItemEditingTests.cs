@@ -231,8 +231,8 @@ namespace SIL.FieldWorks.XWorks
 		/// every allomorph referencing it. PhoneEnvReferenceView does the same: it assigns the
 		/// edited line's string to whatever FindPhoneEnv resolved, moved reference or not.
 		///
-		/// Pinned so that changing it is a deliberate act rather than an accident. It is a
-		/// surprising rule to inherit, and a user who hits it will report it as a bug.
+		/// Only spacing and writing system can differ: resolution matches on text with spaces
+		/// stripped, so an environment that strips differently is never the target.
 		/// </summary>
 		[Test]
 		public void RetypingOntoAnExistingEnvironment_RewritesThatSharedTarget()
