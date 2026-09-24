@@ -12,17 +12,17 @@ namespace SIL.FieldWorks.XWorks
 {
 	/// <summary>
 	/// The composer asks the DOMAIN whether a field applies to an object before emitting a row,
-	/// through ICmObject.IsFieldRelevant -- the second of the two gates legacy's
-	/// SliceFilter.IncludeSlice applies (the id/filter-list gate is LT-22802).
+	/// through ICmObject.IsFieldRelevant -- the relevance gate of the two
+	/// <c>SliceFilter.IncludeSlice</c> applies, the id/filter-list one being LT-22802.
 	///
 	/// Five classes override it in liblcm. MoStemAllomorph.StemName is covered by
 	/// AllomorphSectionCompositionTests; VirtualOrdering is not shown in a detail view, so there
 	/// is nothing to gate. The rest are here, EXCEPT the InflectionClass limb that withholds the
 	/// row from a compound rule's left/right MSA, which no test reaches.
 	///
-	/// Every test runs with showHiddenFields TRUE. Relevance is not a hidden field -- legacy
-	/// withholds an irrelevant row even with Show Hidden Fields on -- and the flag also keeps an
-	/// ifdata row from disappearing for the WRONG reason and passing the test by accident.
+	/// Every test runs with showHiddenFields TRUE. Relevance is not a hidden field -- an
+	/// irrelevant row stays withheld even with Show Hidden Fields on -- and the flag also keeps
+	/// an ifdata row from disappearing for the WRONG reason and passing the test by accident.
 	/// </summary>
 	[TestFixture]
 	public class DetailFieldRelevanceTests : MemoryOnlyBackendProviderTestBase

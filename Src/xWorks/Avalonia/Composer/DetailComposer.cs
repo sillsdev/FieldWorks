@@ -535,32 +535,27 @@ namespace SIL.FieldWorks.XWorks
 
 			private bool HideWhenEmpty(ViewNode node) => node.Visibility == ViewVisibility.IfData && !_showHidden;
 
+			private readonly HashSet<Tuple<int, int>> _propsToMonitor
+				= new HashSet<Tuple<int, int>>();
+
 			/// <summary>
 			/// Whether the DOMAIN says this field does not apply to this object. StemName is
 			/// irrelevant on a clitic or particle, Position on a non-infix, InflectionClasses on
 			/// some affix forms, FromPartsOfSpeech on an entry with no clitic.
 			///
-			/// This is the SECOND of the two gates legacy's SliceFilter.IncludeSlice applies, not
-			/// the whole of it. The first looks the slice's id up in the tool's filter list and
-			/// withholds the row when it is listed; that one is NOT implemented here, because
-			/// the id never reaches the composer -- the importer does not carry it, and
-			/// ViewNode has no Id. Tracked as LT-22802.
+			/// The relevance gate of the two <c>SliceFilter.IncludeSlice</c> applies. The other
+			/// looks the slice's id up in the tool's filter list, and LT-22802 covers it.
 			///
-			/// Not the same as hidden: show-hidden-fields does NOT reveal an irrelevant field, so
-			/// this is checked whatever _showHidden says. Legacy's propsToMonitor set is
-			/// discarded -- it exists so a live slice can re-evaluate when the property it
-			/// depends on changes, and this view recomposes on PropChanged instead.
+			/// Not the same as hidden: show-hidden-fields leaves an irrelevant field withheld,
+			/// so this is asked whatever <c>_showHidden</c> says.
 			/// </summary>
-			private readonly HashSet<Tuple<int, int>> _propsToMonitor
-				= new HashSet<Tuple<int, int>>();
-
 			private bool IsIrrelevantForObject(ViewNode node, ICmObject obj)
 			{
 				if (obj == null || string.IsNullOrEmpty(node?.Field))
 					return false;
 				// A condition aimed at another object names a field of THAT object's class,
-				// so there is nothing here to ask about. Legacy resolves no flid for one
-				// either, and lets the node through.
+				// so there is nothing here to ask about: no flid resolves, and the node
+				// goes through.
 				var conditionTarget = node.Condition?.Target;
 				if (!string.IsNullOrEmpty(conditionTarget)
 					&& !string.Equals(conditionTarget, "this", StringComparison.OrdinalIgnoreCase))
