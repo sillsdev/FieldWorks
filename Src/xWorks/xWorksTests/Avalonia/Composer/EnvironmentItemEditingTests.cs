@@ -225,6 +225,36 @@ namespace SIL.FieldWorks.XWorks
 				+ "is the project-wide reach of an edit that looks local");
 		}
 
+		/// <summary>
+		/// Re-pointing an item at an environment the project already has rewrites that
+		/// environment with what was typed -- its spelling and its writing system both, for
+		/// every allomorph referencing it. PhoneEnvReferenceView does the same: it assigns the
+		/// edited line's string to whatever FindPhoneEnv resolved, moved reference or not.
+		///
+		/// Pinned so that changing it is a deliberate act rather than an accident. It is a
+		/// surprising rule to inherit, and a user who hits it will report it as a bug.
+		/// </summary>
+		[Test]
+		public void RetypingOntoAnExistingEnvironment_RewritesThatSharedTarget()
+		{
+			Assume.That(Cache.DefaultAnalWs, Is.Not.EqualTo(Cache.DefaultVernWs),
+				"the fixture needs two distinct writing systems or the tagging half is moot");
+			var edited = GiveProjectAnEnvironment("/_#", Cache.DefaultAnalWs);
+			var target = GiveProjectAnEnvironment("/_a", Cache.DefaultVernWs);
+			Attach(m_allomorph, edited);
+			Attach(m_otherAllomorph, target);
+
+			Assert.That(Retype(edited, "/ _ a"), Is.True);
+
+			Assert.That(m_allomorph.PhoneEnvRC.Single(), Is.EqualTo(target),
+				"the reference moved to the environment the typed text names");
+			var shared = m_otherAllomorph.PhoneEnvRC.Single().StringRepresentation;
+			Assert.That(shared.Text, Is.EqualTo("/ _ a"),
+				"the other allomorph sees the typed spelling, not the one it had");
+			Assert.That(shared.get_WritingSystem(0), Is.EqualTo(Cache.DefaultAnalWs),
+				"and the edited item's writing system, not the target's own");
+		}
+
 		/// <summary>Case 2: a different identity that the project already has.</summary>
 		[Test]
 		public void RetypingToAnExistingEnvironment_MovesTheReference_AndKeepsTheOldOne()
