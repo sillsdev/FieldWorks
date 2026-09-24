@@ -309,7 +309,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 				n.LocalizationKey, n.AutomationId, n.Routing, n.BoldEmphasis, n.FontScalePercent, n.MenuId,
 				n.ContextMenuId, n.HotlinksId, n.GhostField, n.GhostWs, n.GhostClass, n.GhostLabel,
 				n.ForVariant, n.CustomEditorClass, n.CustomEditorAssembly, n.GhostInitMethod, n.Condition,
-				n.ChooserLinks, n.EnumStringList, visibleWritingSystems, n.ToggleValue, n.Reorder);
+				n.ChooserLinks, n.EnumStringList, visibleWritingSystems, n.ToggleValue, n.Reorder,
+				n.HelpTopicId);
 
 		// Copy a (leaf) node under a new StableId; AutomationId is dropped so the duplicate gets a fresh,
 		// non-colliding identity (the renderer derives one from the new StableId by convention).
@@ -320,6 +321,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 				n.LocalizationKey, null, n.Routing, n.BoldEmphasis, n.FontScalePercent, n.MenuId,
 				n.ContextMenuId, n.HotlinksId, n.GhostField, n.GhostWs, n.GhostClass, n.GhostLabel,
 				n.ForVariant, n.CustomEditorClass, n.CustomEditorAssembly, n.GhostInitMethod, n.Condition,
-				n.ChooserLinks, n.EnumStringList, n.VisibleWritingSystems, n.ToggleValue, n.Reorder);
+				n.ChooserLinks, n.EnumStringList, n.VisibleWritingSystems, n.ToggleValue, n.Reorder,
+				n.HelpTopicId);
 	}
 }

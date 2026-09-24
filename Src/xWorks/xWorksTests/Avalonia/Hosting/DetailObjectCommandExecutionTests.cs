@@ -299,6 +299,312 @@ namespace SIL.FieldWorks.XWorks
 				"the host re-shows the record after the coalesced completion");
 		}
 
+		// Help topics: every composed row that has a WinForms slice twin must resolve the SAME
+		// topic id the slice generates, with the provider knowing nothing and knowing much.
+
+		private sealed class PatternHelpTopicProvider : IHelpTopicProvider
+		{
+			private readonly Func<string, bool> _knows;
+			public PatternHelpTopicProvider(Func<string, bool> knows) { _knows = knows; }
+			public string GetHelpString(string id) => id != null && _knows(id) ? id : null;
+			public string HelpFile => string.Empty;
+		}
+
+		// A lexical relation from the test entry to another, so the entry composes a relation
+		// row whose WinForms twin is a Targets slice.
+		private void MakeLexicalRelation()
+		{
+			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
+			{
+				var stem = GetMorphTypeOrCreateOne("stem");
+				var noun = GetGrammaticalCategoryOrCreateOne("noun", Cache.LangProject.PartsOfSpeechOA);
+				var other = AddLexeme(m_createdObjects, "command-entry-synonym", stem, "synonym", noun);
+				var lexDb = Cache.LangProject.LexDbOA;
+				if (lexDb.ReferencesOA == null)
+					lexDb.ReferencesOA = Cache.ServiceLocator.GetInstance<ICmPossibilityListFactory>().Create();
+				var type = Cache.ServiceLocator.GetInstance<ILexRefTypeFactory>().Create();
+				lexDb.ReferencesOA.PossibilitiesOS.Add(type);
+				type.MappingType = (int)LexRefTypeTags.MappingTypes.kmtEntryCollection;
+				type.Name.set_String(Cache.DefaultAnalWs, "Synonyms");
+				var reference = Cache.ServiceLocator.GetInstance<ILexReferenceFactory>().Create();
+				type.MembersOC.Add(reference);
+				reference.TargetsRS.Add(m_entry);
+				reference.TargetsRS.Add(other);
+			});
+			DrainMediatorAndIdleQueues();
+		}
+
+		[TestCase(false)]
+		[TestCase(true)]
+		public void HelpTopics_ResolveLikeTheWinFormsSlices_ForEveryTwinnedRow(bool providerKnowsToolTopics)
+		{
+			AddSense("second gloss");
+			MakeTwoSubentries();
+			MakeLexicalRelation();
+			// The provider decides which generated candidate wins; both sides read the same one.
+			m_propertyTable.SetProperty("HelpTopicProvider",
+				new PatternHelpTopicProvider(id => providerKnowsToolTopics && id.Contains("-lexiconEdit-")), false);
+			m_propertyTable.SetPropertyPersistence("HelpTopicProvider", false);
+			EnsureAdapter(m_entry.Hvo);
+			var dataTree = (LegacyDataTree)GetField(m_view, "m_dataEntryForm");
+			var fields = DetailComposer.Compose(m_entry, Cache).Model.Fields;
+
+			var compared = 0;
+			var relationsCompared = 0;
+			var mismatches = new List<string>();
+			foreach (var sliceObj in dataTree.Slices)
+			{
+				if (!(sliceObj is Slice slice) || slice.Object == null || slice.IsLazyPlaceholder || slice.Flid == 0)
+					continue;
+				var mdc = (IFwMetaDataCacheManaged)Cache.MetaDataCacheAccessor;
+				var sliceField = mdc.FieldExists(slice.Flid) ? mdc.GetFieldName(slice.Flid) : null;
+				if (sliceField == null)
+					continue;
+				// A relation's WinForms twin is a Targets slice on the relation; the row keeps
+				// the
+				// relations property as its field and names Targets in its help-topic source.
+				var twin = sliceField == "Targets"
+					? fields.FirstOrDefault(f => f.ObjectHvo == slice.Object.Hvo
+						&& f.HelpTopicSource?.FieldName == "Targets")
+					: fields.FirstOrDefault(f => f.ObjectHvo == slice.Object.Hvo
+						&& string.Equals(f.Field, sliceField, StringComparison.Ordinal));
+				if (twin == null)
+					continue;
+				compared++;
+				if (sliceField == "Targets")
+					relationsCompared++;
+				var expected = slice.GetSliceHelpTopicID();
+				var actual = m_view.ResolveHelpTopic(twin);
+				if (!string.Equals(expected, actual, StringComparison.Ordinal))
+					mismatches.Add($"{sliceField} on {slice.Object.ClassName}: slice '{expected}', row '{actual}'");
+			}
+			Assert.That(compared, Is.GreaterThan(5), "enough rows have a WinForms twin to make the comparison meaningful");
+			Assert.That(relationsCompared, Is.GreaterThan(0), "the lexical relation's Targets slice found its row");
+			Assert.That(mismatches, Is.Empty);
+		}
+
+		// The reorder-vector menu's native authority and its equivalence net: the rendered tree
+		// must match the adapter's for every state a row can be in.
+
+		private static readonly ItemSelection NoItem = new ItemSelection { SelectedItemKey = null, SelectedItemIndex = -1 };
+
+		private static DetailMenuRequest LabelMenuRequest(DetailField field, IDetailItemSelection selection)
+			=> DetailMenuRequest.FromAnchor(null, field, DetailMenuKind.SliceMenu, selection);
+
+		private static string[] LabelMenuIds(DetailField field)
+			=> RecordEditView.ComposeSliceMenuIds(field.MenuId, field.IsMultiStringRow).ToArray();
+
+		// The entry's read-only Complex Forms row: it binds the reorder menu but composes as
+		// text, so it is the row where the adapter and the authority most easily disagree.
+		private DetailField ComplexFormsField()
+		{
+			var field = DetailComposer.Compose(m_entry, Cache).Model.Fields
+				.SingleOrDefault(f => f.Field == "ComplexFormEntries");
+			Assert.That(field, Is.Not.Null, "the entry composes a Complex Forms row");
+			Assert.That(field.Kind, Is.EqualTo(DetailFieldKind.Text), "precondition: the row is read-only text");
+			Assert.That(field.MenuId, Is.EqualTo(ReorderVectorMenuAuthority.MenuId));
+			return field;
+		}
+
+		// One line per item -- label, enabled, checked, whether it can execute -- children
+		// indented, so two trees compare as text and a mismatch reads at a glance.
+		private static string Describe(IReadOnlyList<DetailMenuItem> items, string indent = "")
+		{
+			var lines = new List<string>();
+			foreach (var item in items)
+			{
+				if (item.IsSeparator)
+				{
+					lines.Add(indent + "---");
+					continue;
+				}
+				lines.Add(string.Format("{0}{1} [enabled={2} checked={3} executes={4}]", indent, item.Label,
+					item.IsEnabled, item.IsChecked, item.Execute != null));
+				if (item.Children.Count > 0)
+					lines.Add(Describe(item.Children, indent + "  "));
+			}
+			return string.Join(Environment.NewLine, lines);
+		}
+
+		[Test]
+		public void ReorderVectorLabelMenu_NativeAuthority_RendersTheSameTreeAsTheAdapter_WithNoCurrentItem()
+		{
+			MakeTwoSubentries();
+			var field = SubentriesField();
+			Assert.That(field.MenuId, Is.EqualTo(ReorderVectorMenuAuthority.MenuId), "precondition: Subentries binds the reorder menu");
+			var ids = LabelMenuIds(field);
+			EnsureAdapter(field.ObjectHvo, field.Field);
+
+			var adapter = Describe(BuildItems(ids));
+			var native = Describe(BuildItems(ids, m_view.CreateReorderVectorAuthority(LabelMenuRequest(field, NoItem))));
+
+			Assert.That(native, Is.EqualTo(adapter), "the native authority must render exactly what the adapter renders");
+			Assert.That(adapter, Does.Contain("Move Left [enabled=False"), "no current item: Move Left offered, disabled");
+			Assert.That(adapter, Does.Contain("Move Right [enabled=False"), "no current item: Move Right offered, disabled");
+			Assert.That(adapter, Does.Contain("Alphabetical Order [enabled=True"), "reorder='true': Alphabetical Order offered and enabled");
+		}
+
+		[Test]
+		public void ReorderVectorLabelMenu_ReadOnlyComplexFormsRow_RendersTheSameTreeAsTheAdapter()
+		{
+			MakeTwoSubentries();
+			var field = ComplexFormsField();
+			var ids = LabelMenuIds(field);
+			EnsureAdapter(field.ObjectHvo, field.Field);
+
+			var adapter = Describe(BuildItems(ids));
+			var native = Describe(BuildItems(ids, m_view.CreateReorderVectorAuthority(LabelMenuRequest(field, NoItem))));
+
+			Assert.That(native, Is.EqualTo(adapter), "a read-only row keeps the menu the adapter gave it");
+			Assert.That(adapter, Does.Not.Contain("Move Left"), "WinForms hides the moves on this row by its label");
+			Assert.That(adapter, Does.Contain("Alphabetical Order [enabled=True"), "reorder='true': the order can still be reset");
+		}
+
+		[Test]
+		public void ReorderVectorLabelMenu_NativeAuthority_ForTheFirstItem_EnablesOnlyMoveRight()
+		{
+			MakeTwoSubentries();
+			var field = SubentriesField();
+			var first = new ItemSelection { SelectedItemKey = field.Items[0].Key, SelectedItemIndex = 0 };
+
+			var items = BuildItems(LabelMenuIds(field), m_view.CreateReorderVectorAuthority(LabelMenuRequest(field, first)));
+
+			Assert.That(FindItem(items, "Move Left").IsEnabled, Is.False, "the first item cannot move left");
+			Assert.That(FindItem(items, "Move Right").IsEnabled, Is.True, "the first item can move right");
+			Assert.That(FindItem(items, "Alphabetical Order").IsEnabled, Is.True);
+		}
+
+		[Test]
+		public void ReorderVectorMenu_WithoutTheAdapter_TheNativeAuthorityAnswers_WhereTheMediatorLeaksDisabledItems()
+		{
+			MakeTwoSubentries();
+			var field = SubentriesField();
+			var ids = new[] { ReorderVectorMenuAuthority.MenuId };
+			// No EnsureAdapter: the hidden tree never exists, so nothing on the mediator answers.
+
+			var mediatorOnly = BuildItems(ids);
+			var native = BuildItems(ids, m_view.CreateReorderVectorAuthority(LabelMenuRequest(field, NoItem)));
+
+			Assert.That(FindItem(mediatorOnly, "Alphabetical Order")?.IsEnabled, Is.False,
+				"without the adapter the mediator path leaks the item as visible-but-disabled");
+			Assert.That(FindItem(native, "Alphabetical Order")?.IsEnabled, Is.True,
+				"the authority answers from the row and needs no adapter");
+			Assert.That(native.Count(i => !i.IsSeparator), Is.EqualTo(3));
+		}
+
+		[Test]
+		public void ReorderVectorMenu_RealSequenceRow_OffersTheMoves_ButNoAlphabeticalOrder()
+		{
+			// A real reference sequence reorders but has no virtual ordering to discard.
+			var field = new DetailField("Components", "Components", "ComponentLexemes", null,
+				DetailFieldKind.ReferenceVector, EditorClassification.Known, "Components", null, HostRouting.Inherit,
+				null, null, null, isEditable: true, menuId: ReorderVectorMenuAuthority.MenuId, objectHvo: m_entry.Hvo,
+				items: new[] { new DetailChoiceOption("a", "A"), new DetailChoiceOption("b", "B") },
+				canReorderItems: true, canResetItemOrder: false);
+			var second = new ItemSelection { SelectedItemKey = "b", SelectedItemIndex = 1 };
+
+			var items = BuildItems(new[] { ReorderVectorMenuAuthority.MenuId },
+				m_view.CreateReorderVectorAuthority(LabelMenuRequest(field, second)));
+
+			Assert.That(FindItem(items, "Move Left").IsEnabled, Is.True);
+			Assert.That(FindItem(items, "Move Right").IsEnabled, Is.False, "the last item cannot move right");
+			Assert.That(FindItem(items, "Alphabetical Order"), Is.Null, "no reorder='true', no Alphabetical Order");
+		}
+
+		// Every leaf under the owned menu, submenus included, must be one the authority knows
+		// and must carry the configuration node ownership is read from.
+		[Test]
+		public void ReorderVectorAuthority_AnswersEveryLeafOfItsMenu()
+		{
+			var field = new DetailField("Row", "Row", "Subentries", null, DetailFieldKind.ReferenceVector,
+				EditorClassification.Known, "Row", null, HostRouting.Inherit, null, null, null,
+				menuId: ReorderVectorMenuAuthority.MenuId, objectHvo: m_entry.Hvo,
+				items: new[] { new DetailChoiceOption("a", "A") }, canReorderItems: true, canResetItemOrder: true);
+			var authority = m_view.CreateReorderVectorAuthority(LabelMenuRequest(field, NoItem));
+			var window = m_propertyTable.GetValue<XWindow>("window");
+			var menu = window.GetContextMenuChoiceGroup(new[] { ReorderVectorMenuAuthority.MenuId });
+			menu.PopulateNow();
+
+			var leaves = Leaves(menu).ToList();
+			Assert.That(leaves, Is.Not.Empty, "the menu must define at least one leaf");
+			foreach (var leaf in leaves)
+			{
+				Assert.That(leaf.ConfigurationNode, Is.Not.Null,
+					"leaf '{0}' has no configuration node, so no authority can claim it", leaf.Label);
+				Assert.That(() => authority.Build(ReorderVectorMenuAuthority.MenuId, leaf), Throws.Nothing,
+					"the authority does not answer leaf '{0}'", leaf.HelpId);
+			}
+		}
+
+		// Every non-separator leaf of a choice group, descending into submenus.
+		private static IEnumerable<ChoiceBase> Leaves(ChoiceGroup group)
+		{
+			foreach (var member in group)
+			{
+				if (member is SeparatorChoice)
+					continue;
+				if (member is ChoiceGroup submenu)
+				{
+					submenu.PopulateNow();
+					foreach (var leaf in Leaves(submenu))
+						yield return leaf;
+				}
+				else if (member is ChoiceBase leaf)
+				{
+					yield return leaf;
+				}
+			}
+		}
+
+		[Test]
+		public void ReorderVectorAuthority_RejectsALeafItDoesNotAnswer()
+		{
+			MakeTwoSubentries();
+			var authority = m_view.CreateReorderVectorAuthority(LabelMenuRequest(SubentriesField(), NoItem));
+			var window = m_propertyTable.GetValue<XWindow>("window");
+			var objectMenu = window.GetContextMenuChoiceGroup(new[] { RecordEditView.ObjectMenuId });
+			objectMenu.PopulateNow();
+			var foreignLeaf = objectMenu.OfType<ChoiceBase>().First(c => c.HelpId == "CmdDataTree-Help");
+
+			Assert.That(() => authority.Build(ReorderVectorMenuAuthority.MenuId, foreignLeaf),
+				Throws.InvalidOperationException, "an owned id must be answered in full, never partially");
+		}
+
+		[Test]
+		public void LabelMenu_StillNeedsTheAdapter_WhileTheSharedObjectMenuHasNoAuthority()
+		{
+			MakeTwoSubentries();
+			var field = SubentriesField();
+			var authority = m_view.CreateReorderVectorAuthority(LabelMenuRequest(field, NoItem));
+
+			Assert.That(XCoreMenuBridge.OwnsAll(authority, new[] { ReorderVectorMenuAuthority.MenuId }), Is.True);
+			Assert.That(XCoreMenuBridge.OwnsAll(authority, LabelMenuIds(field)), Is.False,
+				"the label menu merges mnuDataTree-Object, which the mediator still answers");
+			Assert.That(XCoreMenuBridge.OwnsAll(null, new[] { ReorderVectorMenuAuthority.MenuId }), Is.False);
+		}
+
+		[Test]
+		public void AlphabeticalOrder_ThroughTheHost_DiscardsTheVirtualOrdering()
+		{
+			MakeTwoSubentries();
+			var field = SubentriesField();
+			Assert.That(field.CanResetItemOrder, Is.True, "reorder='true' composes as a resettable order");
+			var defaultOrder = field.Items.Select(i => i.Key).ToList();
+			m_view.MoveReferenceItem(field, defaultOrder[0], forward: true);
+			DrainMediatorAndIdleQueues();
+			Assert.That(SubentriesField().Items.Select(i => i.Key), Is.EqualTo(new[] { defaultOrder[1], defaultOrder[0] }),
+				"precondition: a virtual ordering now overrides the default order");
+
+			m_view.ResetReferenceOrder(SubentriesField());
+			DrainMediatorAndIdleQueues();
+
+			Assert.That(SubentriesField().Items.Select(i => i.Key), Is.EqualTo(defaultOrder),
+				"the stored ordering is gone; the items are back in the property's default order");
+			Cache.ActionHandlerAccessor.Undo();
+			Assert.That(SubentriesField().Items.Select(i => i.Key), Is.EqualTo(new[] { defaultOrder[1], defaultOrder[0] }),
+				"the reset is its own undo step");
+		}
+
 		// ----------------------------------------------------------------------------------------
 		// Delete Sense / Delete object
 		// ----------------------------------------------------------------------------------------
@@ -995,11 +1301,12 @@ namespace SIL.FieldWorks.XWorks
 			method.Invoke(m_view, new object[] { targetHvo, fieldName });
 		}
 
-		private IReadOnlyList<DetailMenuItem> BuildItems(string[] menuIds)
+		// Without an authority every leaf takes the mediator path, as the adapter menu does.
+		private IReadOnlyList<DetailMenuItem> BuildItems(string[] menuIds, IDetailMenuAuthority authority = null)
 		{
 			var window = m_propertyTable.GetValue<XWindow>("window");
 			Assert.That(window, Is.Not.Null);
-			return XCoreMenuBridge.CreateMenuItems(window, menuIds);
+			return XCoreMenuBridge.CreateMenuItems(window, menuIds, null, null, authority);
 		}
 
 		private void InvokeItem(IReadOnlyList<DetailMenuItem> items, string label)

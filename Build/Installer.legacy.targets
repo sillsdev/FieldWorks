@@ -105,10 +105,8 @@
 		/>
 	</Target>
 	<!--
-		Removing files breaks the ability to patch and requires a new Base build to update.
-		To improve our user experience we may want to delay making a new Base build so this target adds zero byte files to
-		replace files that were removed (for instance during a library update).
-		A base build should warn if we have 'RemovedSinceLastBase' items to help us remember to clear these out.
+		Windows Installer patches must preserve component identities shipped by the base or an
+		earlier patch. Zero-byte stand-ins keep those components present until a new base.
 	-->
 	<Target Name="RescuePatching">
 		<ItemGroup>
@@ -116,6 +114,7 @@
 			<!-- liblcm swapped its IoC container from StructureMap to Microsoft.Extensions.DependencyInjection
 				in SIL.LCModel 11.0.0-beta0176, so nothing copies StructureMap.dll to the output any more. -->
 			<RemovedSinceLastBase Include="$(dir-outputBase)/StructureMap.dll" />
+			<RemovedSinceLastBase Include="$(dir-outputBase)/Avalonia.Themes.Fluent.dll" />
 		</ItemGroup>
 		<WriteLinesToFile
 			File="%(RemovedSinceLastBase.FullPath)"
@@ -670,8 +669,12 @@
 	</PropertyGroup>
 	<Target Name="BuildProductBaseMsi" DependsOnTargets="InstallerVersionNumbers">
 		<Warning
-			Text="RemovedSinceLastBase should be cleared out before making a new base build."
-			Condition="'@(RemovedSinceLastBase)' != ''"
+			Text="RemovedSinceLastBase contains %(RemovedSinceLastBase.Identity). Remove its entry before creating a base release."
+			Condition="'@(RemovedSinceLastBase)' != '' and '$(FailOnRemovedSinceLastBase)' != 'true'"
+		/>
+		<Error
+			Text="Cannot create a base release while RemovedSinceLastBase contains %(RemovedSinceLastBase.Identity). Remove its entry before creating the base release."
+			Condition="'@(RemovedSinceLastBase)' != '' and '$(FailOnRemovedSinceLastBase)' == 'true'"
 		/>
 		<Message
 			Text="Building FieldWorks Base Msi for $(Arch)"

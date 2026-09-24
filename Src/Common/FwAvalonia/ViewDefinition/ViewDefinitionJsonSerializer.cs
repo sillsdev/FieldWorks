@@ -89,6 +89,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 			AddIfPresent(o, "menu", node.MenuId);
 			AddIfPresent(o, "contextMenu", node.ContextMenuId);
 			AddIfPresent(o, "hotlinks", node.HotlinksId);
+			AddIfPresent(o, "helpTopicID", node.HelpTopicId);
 			AddIfPresent(o, "ghost", node.GhostField);
 			AddIfPresent(o, "ghostWs", node.GhostWs);
 			AddIfPresent(o, "ghostClass", node.GhostClass);
@@ -212,7 +213,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 				(bool?)o["forVariant"] ?? false,
 				ghostInitMethod: (string)o["ghostInitMethod"],
 				condition: ReadCondition((JObject)o["condition"]),
-				chooserLinks: ((JArray)o["chooserLinks"])?.Select(ReadChooserLink).ToList());
+				chooserLinks: ((JArray)o["chooserLinks"])?.Select(ReadChooserLink).ToList(),
+				helpTopicId: (string)o["helpTopicID"]);
 		}
 
 		private static T ParseEnum<T>(JObject o, string name, T fallback) where T : struct

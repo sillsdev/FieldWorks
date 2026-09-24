@@ -39,7 +39,7 @@ on:
 # on Jenkins-built bases.
       base_release:
         description: 'The github release for the base build artifacts (separate only for bootstrapping; should be removed after 9.3 is the stable)'
-        default: 'build-1452' # When updating this, update base_build_number and their fallbacks below, too.
+        default: 'build-1452' # Must match base_build_number and its fallbacks.
       base_build_number:
         description: 'The base build number'
         required: false
@@ -61,6 +61,7 @@ jobs:
       CROWDIN_API_KEY: ${{ secrets.FLEX_CROWDIN_API }}
       LcmRootDir: ${{ github.workspace }}/Localizations/LCMRepo
       FILESTOSIGNLATER: ./signExternally
+      KEEP_INTERMEDIATE_MSI: true
       GH_TOKEN: ${{ github.token }}
       BASE_BUILD_NUMBER: ${{ inputs.base_build_number || '1452' }}
     name: Upload strings for l10n, Build, and run Tests
@@ -258,6 +259,21 @@ jobs:
 
             $patchPath = $patch.FullName
             "patch_file=$patchPath" >> $env:GITHUB_OUTPUT
+            "patch_version=$(($patch.Name -split '_')[1])" >> $env:GITHUB_OUTPUT
+            "ledger_file=$($patchPath -replace '\.msp$', '_components.tsv')" >> $env:GITHUB_OUTPUT
+            "update_msi=$((Get-ChildItem PatchableInstaller/CreateUpdatePatch/Update -Filter '*.msi' | Select-Object -First 1).FullName)" >> $env:GITHUB_OUTPUT
+            "master_msi=$((Get-ChildItem PatchableInstaller/CreateUpdatePatch/Master -Filter '*.msi' | Select-Object -First 1).FullName)" >> $env:GITHUB_OUTPUT
+
+      # Patch component identity must remain stable across the base and previous patch.
+      - name: Check patch keeps base and previous-patch components
+        shell: pwsh
+        run: |
+          .\scripts\Installer\Check-PatchComponentLedger.ps1 `
+            -MasterMsi "${{ steps.find_patch.outputs.master_msi }}" `
+            -UpdateMsi "${{ steps.find_patch.outputs.update_msi }}" `
+            -BaseBuildNumber $env:BASE_BUILD_NUMBER `
+            -PatchVersion "${{ steps.find_patch.outputs.patch_version }}" `
+            -OutLedger "${{ steps.find_patch.outputs.ledger_file }}"
 
       - name: Sign Patch
         if: github.event_name != 'pull_request'
@@ -287,9 +303,22 @@ jobs:
           if (-not (Test-Path $patchPath)) {
             throw "Patch file not found at $patchPath"
           }
+          $ledgerPath = "${{ steps.find_patch.outputs.ledger_file }}"
+          if (-not (Test-Path $ledgerPath)) {
+            throw "Ledger file not found at $ledgerPath"
+          }
           $patchFile = Split-Path $patchPath -Leaf
           $s3Key = "jobs/FieldWorks-Win-all-Release-Patch/$($env:FW_BUILD_NUMBER)/$patchFile"
+          $ledgerKey = "jobs/FieldWorks-Win-all-Release-Patch/$($env:FW_BUILD_NUMBER)/$(Split-Path $ledgerPath -Leaf)"
+          aws s3 cp $ledgerPath "s3://flex-updates/$ledgerKey"
+          if ($LASTEXITCODE -ne 0) {
+            throw "Ledger upload failed with exit code $LASTEXITCODE"
+          }
+          Write-Host "Uploaded to s3://flex-updates/$ledgerKey"
           aws s3 cp $patchPath "s3://flex-updates/$s3Key"
+          if ($LASTEXITCODE -ne 0) {
+            throw "Patch upload failed with exit code $LASTEXITCODE"
+          }
           Write-Host "Uploaded to s3://flex-updates/$s3Key"
 
       - name: Upload Build Logs
