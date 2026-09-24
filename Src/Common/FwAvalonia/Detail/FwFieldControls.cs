@@ -1469,10 +1469,11 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				}
 				AutomationProperties.SetAutomationId(text, ItemAutomationId(automationId, item.Key));
 				// Any button selects, so a right-click's menu acts on the item under the pointer;
-				// focus selects too. Items are focusable (a click focuses one) but not tab stops.
+				// focus selects too. The first item is a chip row's one Tab stop; the editors of
+				// a retypable row are each a stop.
 				var itemIndex = index;
 				text.Focusable = true;
-				KeyboardNavigation.SetIsTabStop(text, retypable);
+				KeyboardNavigation.SetIsTabStop(text, retypable || index == 0);
 				EventHandler<GotFocusEventArgs> focusSelect = (s, e) => SelectItem(itemIndex);
 				text.GotFocus += focusSelect;
 				EventHandler<PointerPressedEventArgs> select = (s, e) =>
@@ -1569,6 +1570,44 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				Children.Add(text);
 				AddSeparatorBar();
 			}
+
+			// Keyboard reach of the items: Left/Right step between them, Home/End jump to the
+			// ends, Ctrl+Left/Right move the current item when the row can reorder.
+			var canReorder = editable && field.CanReorderItems;
+			EventHandler<KeyEventArgs> itemKeys = (s, e) =>
+			{
+				// Only a focused item answers; the launcher and gear keep their own keys.
+				var index = _itemBlocks.FindIndex(block => ReferenceEquals(block, e.Source));
+				if (index < 0)
+					return;
+				var arrow = e.Key == Key.Left || e.Key == Key.Right;
+				// The physical key resolved along the vector, so a mirrored row still moves
+				// toward the side the key names.
+				var forward = (e.Key == Key.Right) != (FlowDirection == FlowDirection.RightToLeft);
+				if (arrow && canReorder && e.KeyModifiers == KeyModifiers.Control)
+				{
+					// Only a successful stage completes the gesture (commit + host re-show).
+					if (editContext.TryMoveReferenceItem(field, _items[index].Key, forward))
+						gestureCompleted?.Invoke();
+					e.Handled = true;
+					return;
+				}
+				if (e.KeyModifiers != KeyModifiers.None)
+					return;
+				int target;
+				if (arrow)
+					target = forward ? index + 1 : index - 1;
+				else if (e.Key == Key.Home)
+					target = 0;
+				else if (e.Key == Key.End)
+					target = _itemBlocks.Count - 1;
+				else
+					return;
+				FocusItemAt(target);
+				e.Handled = true;
+			};
+			AddHandler(KeyDownEvent, itemKeys);
+			_teardown.Add(() => RemoveHandler(KeyDownEvent, itemKeys));
 
 			if (!editable)
 			{
