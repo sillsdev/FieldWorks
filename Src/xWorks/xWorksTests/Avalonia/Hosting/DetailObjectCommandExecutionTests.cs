@@ -11,6 +11,7 @@ using System.Windows.Forms;
 using System.Xml;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.Controls;
+using SIL.FieldWorks.Common.DetailRules;
 using SIL.FieldWorks.Common.FwAvalonia;
 using SIL.FieldWorks.Common.FwAvalonia.Detail;
 using SIL.FieldWorks.Common.FwAvalonia.ViewDefinition;
@@ -652,15 +653,20 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
-		public void LabelMenu_StillNeedsTheAdapter_WhileTheSharedObjectMenuHasNoAuthority()
+		public void LabelMenu_IsFullyOwned_UnlessItCarriesTheWritingSystemsList()
 		{
 			MakeTwoSubentries();
-			var field = SubentriesField();
-			var authority = m_view.CreateReorderVectorAuthority(LabelMenuRequest(field, NoItem));
+			var subentries = SubentriesField();
+			var authority = m_view.CreateMenuAuthority(LabelMenuRequest(subentries, NoItem));
 
-			Assert.That(XCoreMenuBridge.OwnsAll(authority, new[] { ReorderVectorMenuAuthority.MenuId }), Is.True);
-			Assert.That(XCoreMenuBridge.OwnsAll(authority, LabelMenuIds(field)), Is.False,
-				"the label menu merges mnuDataTree-Object, which the mediator still answers");
+			Assert.That(XCoreMenuBridge.OwnsAll(authority, LabelMenuIds(subentries)), Is.True,
+				"the reorder menu and the shared object menu are both answered natively");
+			var helpBound = DetailComposer.Compose(m_entry, Cache).Model.Fields
+				.First(f => f.MenuId == ObjectMenuAuthority.HelpMenuId);
+			Assert.That(XCoreMenuBridge.OwnsAll(authority, LabelMenuIds(helpBound)), Is.True,
+				"a row bound to the empty Help menu merges only owned ids");
+			Assert.That(XCoreMenuBridge.OwnsAll(authority, LabelMenuIds(LexemeFormField())), Is.False,
+				"the multi-string menu's writing-system list still needs the mediator");
 			Assert.That(XCoreMenuBridge.OwnsAll(null, new[] { ReorderVectorMenuAuthority.MenuId }), Is.False);
 		}
 
@@ -808,6 +814,277 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(() => BuildWithSpy(ids, new EchoAuthority(ids), out _),
 				Throws.TypeOf<NotSupportedException>().With.Message.Contains("WritingSystemOptionsForSlice"),
 				"a list-populated submenu has no configured leaves an authority could answer");
+		}
+
+		// The per-object menu's native authority: Field Visibility, Move Field and Help answered
+		// from the row and the override layer, so an ordinary row's label menu needs no adapter.
+
+		private static IHelpTopicProvider KnowsEveryTopic => new PatternHelpTopicProvider(id => true);
+
+		private void UseHelpProvider(IHelpTopicProvider provider)
+		{
+			m_propertyTable.SetProperty("HelpTopicProvider", provider, false);
+			m_propertyTable.SetPropertyPersistence("HelpTopicProvider", false);
+		}
+
+		private LegacyDataTree AdapterTree => (LegacyDataTree)GetField(m_view, "m_dataEntryForm");
+
+		// The label menu exactly as OnDetailMenuRequested builds it: the row's authorities for
+		// the ids they own, the override interceptor for the rest.
+		private IReadOnlyList<DetailMenuItem> BuildAsTheHostDoes(string[] ids, DetailField field)
+		{
+			var registry = new OverrideCommandRegistry();
+			m_view.AddOverrideCommands(registry, field);
+			var window = m_propertyTable.GetValue<XWindow>("window");
+			return XCoreMenuBridge.CreateMenuItems(window, ids, registry.TryBuild, null,
+				m_view.CreateMenuAuthority(LabelMenuRequest(field, NoItem)));
+		}
+
+		// Whether the adapter's current slice is the WinForms twin of the row: same object and
+		// same field.
+		private bool AdapterTargets(DetailField field)
+		{
+			var slice = AdapterTree.CurrentSlice;
+			if (slice?.Object == null || slice.Object.Hvo != field.ObjectHvo || slice.Flid == 0)
+				return false;
+			var mdc = (IFwMetaDataCacheManaged)Cache.MetaDataCacheAccessor;
+			return mdc.FieldExists(slice.Flid)
+				&& string.Equals(mdc.GetFieldName(slice.Flid), field.Field, StringComparison.Ordinal);
+		}
+
+		[Test]
+		public void ObjectMenuAuthority_AnswersEveryLeafOfItsMenus()
+		{
+			var authority = m_view.CreateObjectMenuAuthority(LexemeFormField());
+			var window = m_propertyTable.GetValue<XWindow>("window");
+			var menu = window.GetContextMenuChoiceGroup(new[] { ObjectMenuAuthority.MenuId });
+			menu.PopulateNow(querySubmenuVisibility: false);
+
+			var leaves = Leaves(menu).ToList();
+			Assert.That(leaves.Select(l => l.HelpId), Is.EquivalentTo(new[]
+			{
+				ObjectMenuAuthority.AlwaysVisibleCommandId, ObjectMenuAuthority.IfDataCommandId,
+				ObjectMenuAuthority.NormallyHiddenCommandId, ObjectMenuAuthority.MoveFieldUpCommandId,
+				ObjectMenuAuthority.MoveFieldDownCommandId, ObjectMenuAuthority.HelpCommandId
+			}), "the shipped menu defines exactly the leaves the authority knows");
+			foreach (var leaf in leaves)
+			{
+				Assert.That(() => authority.Build(ObjectMenuAuthority.MenuId, leaf), Throws.Nothing,
+					"the authority does not answer leaf '{0}'", leaf.HelpId);
+			}
+
+			var help = window.GetContextMenuChoiceGroup(new[] { ObjectMenuAuthority.HelpMenuId });
+			help.PopulateNow(querySubmenuVisibility: false);
+			Assert.That(Leaves(help), Is.Empty, "mnuDataTree-Help defines no leaf of its own");
+			Assert.That(authority.Owns(ObjectMenuAuthority.HelpMenuId), Is.True);
+		}
+
+		[Test]
+		public void ObjectMenu_OfAnOrdinaryRow_IsBuiltWithoutTheAdapterOrTheMediator()
+		{
+			MakeTwoSubentries();
+			UseHelpProvider(KnowsEveryTopic);
+			var field = SubentriesField();
+			var ids = LabelMenuIds(field);
+			// No EnsureAdapter: the hidden tree never exists.
+
+			var items = BuildWithSpy(ids, m_view.CreateMenuAuthority(LabelMenuRequest(field, NoItem)), out var asked);
+
+			Assert.That(asked, Is.False, "nothing in the label menu reaches the mediator");
+			var visibility = FindItem(items, "Field Visibility");
+			Assert.That(visibility, Is.Not.Null);
+			Assert.That(visibility.Children.Count(c => c.IsChecked), Is.EqualTo(1),
+				"exactly one visibility is the row's current one");
+			Assert.That(visibility.Children.Select(c => c.Execute), Is.All.Not.Null,
+				"a located row's visibility items all execute");
+			var move = FindItem(items, "Move Field");
+			Assert.That(move?.Children.Select(c => c.Label), Is.EqualTo(new[] { "Move Up", "Move Down" }));
+			Assert.That(FindItem(items, "Help...")?.Execute, Is.Not.Null, "Help opens the row's own topic");
+		}
+
+		// Baseline = the path this replaces: mediator through the adapter, interceptor for the
+		// field commands. An unlocatable row is the agreed exception: its commands disable.
+		[Test]
+		public void ObjectMenu_NativeAuthority_RendersWhatTheInterceptorPathRendered_ForEveryRowTheAdapterCanTarget()
+		{
+			AddSense("second gloss");
+			MakeTwoSubentries();
+			UseHelpProvider(KnowsEveryTopic);
+			var fields = DetailComposer.Compose(m_entry, Cache).Model.Fields
+				.Where(f => f.ObjectHvo != 0 && !string.IsNullOrEmpty(f.Field)).ToList();
+
+			var compared = 0;
+			var untargeted = new List<string>();
+			var unlocatable = new List<string>();
+			var mismatches = new List<string>();
+			foreach (var field in fields)
+			{
+				var ids = LabelMenuIds(field);
+				EnsureAdapter(field.ObjectHvo, field.Field);
+				if (!AdapterTargets(field))
+				{
+					untargeted.Add(field.Label + " (" + field.Field + ")");
+					continue;
+				}
+				var native = BuildAsTheHostDoes(ids, field);
+				if (!m_view.TryLocateOverrideTarget(field, out _, out _))
+				{
+					unlocatable.Add(string.Format("{0} ({1}) stableId={2} class={3} layout={4}", field.Label,
+						field.Field, field.StableId, field.ClassName, field.LayoutName));
+					var fieldItems = FindItem(native, "Field Visibility").Children
+						.Concat(FindItem(native, "Move Field").Children).ToList();
+					Assert.That(fieldItems.Select(i => i.IsEnabled), Is.All.False,
+						"an unlocatable row disables its field commands: " + field.Label);
+					continue;
+				}
+				compared++;
+				var before = Describe(BuildItemsWithOverrideInterceptor(ids, field));
+				var after = Describe(native);
+				if (!string.Equals(before, after, StringComparison.Ordinal))
+				{
+					mismatches.Add(string.Format("{0} ({1}):{2}--- interceptor path{2}{3}{2}--- authority{2}{4}",
+						field.Label, field.Field, Environment.NewLine, before, after));
+				}
+			}
+			TestContext.WriteLine("Rows the adapter could not target: " + string.Join(", ", untargeted));
+			TestContext.WriteLine("Rows with no override target:" + Environment.NewLine
+				+ string.Join(Environment.NewLine, unlocatable));
+			Assert.That(compared, Is.GreaterThan(10), "enough rows have an adapter twin to make the comparison meaningful");
+			Assert.That(mismatches, Is.Empty, string.Join(Environment.NewLine, mismatches));
+		}
+
+		// The adapter finds no slice for the sense's Publish In row and answers Help from another
+		// slice; the authority resolves the row's own topic.
+		[Test]
+		public void Help_OnPublishSenseIn_OpensTheRowsOwnTopic()
+		{
+			UseHelpProvider(KnowsEveryTopic);
+			var sense = m_entry.SensesOS[0];
+			var field = DetailComposer.Compose(m_entry, Cache).Model.Fields
+				.Single(f => f.ObjectHvo == sense.Hvo && f.Field == "PublishIn");
+			EnsureAdapter(field.ObjectHvo, field.Field);
+			TestContext.WriteLine("adapter topic: " + AdapterTree.CurrentSlice?.GetSliceHelpTopicID());
+
+			var topic = m_view.KnownHelpTopic(field);
+
+			Assert.That(topic, Does.Contain("PublishIn"), "the row's help topic names the row's field");
+			var items = BuildItems(new[] { ObjectMenuAuthority.MenuId }, m_view.CreateObjectMenuAuthority(field));
+			Assert.That(FindItem(items, "Help...")?.IsEnabled, Is.True);
+		}
+
+		[Test]
+		public void ObjectMenu_HidesHelp_WhenTheProviderHasNoTopic()
+		{
+			// The fixture's default provider knows no topic; WinForms hides Help for that too.
+			var items = BuildItems(new[] { ObjectMenuAuthority.MenuId }, m_view.CreateObjectMenuAuthority(LexemeFormField()));
+
+			Assert.That(FindItem(items, "Help..."), Is.Null, "no known topic, no Help item");
+			Assert.That(FindItem(items, "Field Visibility"), Is.Not.Null);
+		}
+
+		// A WinForms slice always ends at a topic, the generic one at worst; so does a row that
+		// has no object to generate from.
+		[Test]
+		public void Help_OnARowWithoutAnObject_OffersTheGenericTopic()
+		{
+			UseHelpProvider(new PatternHelpTopicProvider(id => id == FieldHelpTopics.NoHelpTopic));
+			var field = new DetailField("Row", "Row", "Nothing", null, DetailFieldKind.Text,
+				EditorClassification.Known, "Row", null, HostRouting.Inherit, null, null, null);
+			Assert.That(field.ObjectHvo, Is.EqualTo(0), "precondition: no object, no help source");
+
+			Assert.That(m_view.ResolveHelpTopic(field), Is.EqualTo(FieldHelpTopics.NoHelpTopic));
+			var items = BuildItems(new[] { ObjectMenuAuthority.MenuId }, m_view.CreateObjectMenuAuthority(field));
+			Assert.That(FindItem(items, "Help...")?.IsEnabled, Is.True, "the generic topic is still a topic");
+		}
+
+		[Test]
+		public void ObjectMenu_OnARowWithoutOverrideContext_DisablesVisibilityAndMove_AndKeepsHelp()
+		{
+			UseHelpProvider(KnowsEveryTopic);
+			// No class or layout: the row's override target cannot be located.
+			var field = new DetailField("Row", "Row", "Subentries", null, DetailFieldKind.Text,
+				EditorClassification.Known, "Row", null, HostRouting.Inherit, null, null, null,
+				objectHvo: m_entry.Hvo) { HelpTopicId = "khtpTest-Row" };
+
+			var items = BuildItems(new[] { ObjectMenuAuthority.MenuId }, m_view.CreateObjectMenuAuthority(field));
+
+			var visibility = FindItem(items, "Field Visibility");
+			Assert.That(visibility.Children.Select(c => c.IsEnabled), Is.All.False, "nothing to act on: disabled, never guessed");
+			Assert.That(visibility.Children.Select(c => c.Execute), Is.All.Null);
+			Assert.That(FindItem(items, "Move Field").Children.Select(c => c.IsEnabled), Is.All.False);
+			Assert.That(FindItem(items, "Help...")?.IsEnabled, Is.True, "Help needs no override target");
+		}
+
+		[Test]
+		public void FieldVisibility_ThroughTheAuthority_WritesTheOverride()
+		{
+			var field = LexemeFormField();
+			DeleteOverrideFor(field);
+			try
+			{
+				var items = BuildItems(new[] { ObjectMenuAuthority.MenuId }, m_view.CreateObjectMenuAuthority(field));
+				var item = FindItem(items, "Normally hidden");
+				Assert.That(item?.IsEnabled, Is.True);
+
+				item.Execute();
+				DrainMediatorAndIdleQueues();
+
+				var stored = ReadOverrideFor(field);
+				Assert.That(stored, Is.Not.Null, "choosing a visibility writes a project override");
+				var op = stored.Operations.Single(o => o.Kind == ViewOverrideOperationKind.SetVisibility);
+				Assert.That(op.StableId, Is.EqualTo(ViewDefinitionOverrideEditor.StripRuntimeSuffix(field.StableId)));
+			}
+			finally
+			{
+				DeleteOverrideFor(field);
+			}
+		}
+
+		// A sense with no examples composes a ghost Example prompt whose stable id carries the
+		// ghost marker; its field commands act on the Examples sequence node itself.
+		[Test]
+		public void GhostRow_LocatesItsSequenceNode_AndItsVisibilityWritesThatNode()
+		{
+			var sense = m_entry.SensesOS[0];
+			Assert.That(sense.ExamplesOS, Is.Empty, "precondition: the sense composes a ghost Example row");
+			var field = DetailComposer.Compose(m_entry, Cache).Model.Fields.Single(f =>
+				f.ObjectHvo == sense.Hvo && f.Field == "Examples"
+				&& f.StableId.EndsWith(DetailField.GhostStableIdSuffix, StringComparison.Ordinal));
+			DeleteOverrideFor(field);
+			var nodeId = ViewDefinitionOverrideEditor.StripRuntimeSuffix(field.StableId);
+			nodeId = nodeId.Substring(0, nodeId.Length - DetailField.GhostStableIdSuffix.Length);
+
+			Assert.That(m_view.TryLocateOverrideTarget(field, out var templateId, out _), Is.True,
+				"the ghost row locates the node it stands in for");
+			Assert.That(templateId, Is.EqualTo(nodeId));
+
+			try
+			{
+				var items = BuildItems(new[] { ObjectMenuAuthority.MenuId }, m_view.CreateObjectMenuAuthority(field));
+				FindItem(items, "Normally hidden").Execute();
+				DrainMediatorAndIdleQueues();
+
+				var op = ReadOverrideFor(field).Operations.Single(o => o.Kind == ViewOverrideOperationKind.SetVisibility);
+				Assert.That(op.StableId, Is.EqualTo(nodeId), "the override names the sequence node, not the ghost");
+			}
+			finally
+			{
+				DeleteOverrideFor(field);
+			}
+		}
+
+		[Test]
+		public void ObjectMenuAuthority_RejectsALeafItDoesNotAnswer()
+		{
+			var authority = m_view.CreateObjectMenuAuthority(LexemeFormField());
+			var window = m_propertyTable.GetValue<XWindow>("window");
+			var reorderMenu = window.GetContextMenuChoiceGroup(new[] { ReorderVectorMenuAuthority.MenuId });
+			reorderMenu.PopulateNow();
+			var foreignLeaf = reorderMenu.OfType<ChoiceBase>()
+				.First(c => c.HelpId == ReorderVectorMenuAuthority.AlphabeticalOrderCommandId);
+
+			Assert.That(() => authority.Build(ObjectMenuAuthority.MenuId, foreignLeaf),
+				Throws.InvalidOperationException, "an owned id must be answered in full, never partially");
 		}
 
 		// ----------------------------------------------------------------------------------------
@@ -1325,9 +1602,8 @@ namespace SIL.FieldWorks.XWorks
 				+ $"index={location.Index} up={up}");
 			try
 			{
-				EnsureAdapter(field.ObjectHvo);
-				var items = BuildItemsWithOverrideInterceptor(
-					new[] { "mnuDataTree-Object" }, field);
+				// No EnsureAdapter: the authority answers Move Field from the row alone.
+				var items = BuildAsTheHostDoes(new[] { ObjectMenuAuthority.MenuId }, field);
 				var item = FindItem(items, up ? "Move Up" : "Move Down");
 				Assert.That(item, Is.Not.Null, "the Move Field submenu must offer the item");
 				Assert.That(item.IsEnabled, Is.True,
