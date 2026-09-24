@@ -216,7 +216,6 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				FlowDirection = group.RightToLeft ? FlowDirection.RightToLeft : FlowDirection.LeftToRight,
 				BorderThickness = new Thickness(0),
 				Background = FwAvaloniaDensity.TransparentBrush,
-				TextWrapping = TextWrapping.Wrap
 				TextWrapping = TextWrapping.NoWrap
 			};
 			box = editor;
