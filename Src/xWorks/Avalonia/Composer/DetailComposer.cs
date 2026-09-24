@@ -870,7 +870,7 @@ namespace SIL.FieldWorks.XWorks
 						break;
 				}
 
-				return new ViewNode($"{placeholder.StableId}/custom:{fieldName}", ViewNodeKind.Field,
+				return new ViewNode(placeholder.StableId + DetailField.CustomFieldStableIdMarker + fieldName, ViewNodeKind.Field,
 					_mdc.GetFieldLabel(flid), null, fieldName, rawEditor, EditorClassification.Known,
 					wsSpec, ViewVisibility.Always, ViewExpansion.NotApplicable, placeholder.Indented,
 					null, null, menuId: "mnuDataTree-Help");
@@ -3017,7 +3017,7 @@ namespace SIL.FieldWorks.XWorks
 				var prompt = string.Format(
 					SIL.FieldWorks.Common.FwAvalonia.FwAvaloniaStrings.GhostAddPromptFormat, label);
 
-				var stableId = $"{StableId(node, obj)}/ghost";
+				var stableId = StableId(node, obj) + DetailField.GhostStableIdSuffix;
 				var ghost = ResolveGhostCreation(node, obj);
 				AddField(new DetailField(stableId, label, node.Field,
 					node.WritingSystem, DetailFieldKind.Text, node.EditorClassification,

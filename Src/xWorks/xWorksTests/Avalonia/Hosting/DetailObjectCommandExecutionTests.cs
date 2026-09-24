@@ -632,6 +632,30 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(FindItem(items, "Move Field"), Is.Not.Null);
 		}
 
+		// A sequence item header has no node of its own, so the locator answers false without
+		// compiling or logging; a ghost row stands in for its empty sequence node.
+		[Test]
+		public void TryLocateOverrideTarget_SkipsASequenceItemHeader_AndMapsAGhostRowToItsNode()
+		{
+			var sense = m_entry.SensesOS[0];
+			Assert.That(sense.ExamplesOS, Is.Empty, "precondition: the sense composes a ghost Example row");
+			var fields = DetailComposer.Compose(m_entry, Cache).Model.Fields;
+			var senseHeader = fields.First(f => f.ObjectHvo == sense.Hvo && f.Field == "Senses");
+			Assert.That(senseHeader.StableId, Does.Contain("@").And.Contain("/item"),
+				"precondition: the header carries the composer's item path after the hvo");
+			var ghost = fields.Single(f => f.ObjectHvo == sense.Hvo && f.Field == "Examples"
+				&& f.StableId.EndsWith(DetailField.GhostStableIdSuffix, StringComparison.Ordinal));
+			var nodeId = ViewDefinitionOverrideEditor.StripRuntimeSuffix(ghost.StableId);
+			nodeId = nodeId.Substring(0, nodeId.Length - DetailField.GhostStableIdSuffix.Length);
+
+			Assert.That(m_view.TryLocateOverrideTarget(senseHeader, out _, out _), Is.False,
+				"a sequence item header is never an override target");
+			Assert.That(m_view.TryLocateOverrideTarget(ghost, out var templateId, out var location), Is.True,
+				"the ghost row locates the node it stands in for");
+			Assert.That(templateId, Is.EqualTo(nodeId));
+			Assert.That(location, Is.Not.Null);
+		}
+
 		[Test]
 		public void OwnedMenu_WithAListSubmenu_IsRefused()
 		{

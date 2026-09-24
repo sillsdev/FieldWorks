@@ -73,7 +73,7 @@ namespace SIL.FieldWorks.XWorks
 				return items;
 
 			// One group per id keeps each id's ownership known; the source menus contribute
-			// their items in order, as the merged group's population did.
+			// their items in order.
 			var groups = new List<(ChoiceGroup Group, string OwnedId)>();
 			foreach (var id in menuIds)
 			{

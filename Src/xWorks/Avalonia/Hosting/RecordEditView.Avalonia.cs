@@ -624,7 +624,7 @@ namespace SIL.FieldWorks.XWorks
 			// Show all right now never dispatches or persists: it only marks the row for the
 			// host's transient reveal.
 			registry.Add("CmdDataTree-WritingSystemMenu-ShowAllRightNow",
-				(c, d) => ShowAllWritingSystemsItem(XCoreMenuBridge.StripAccelerator(d.Text), field));
+				(c, d) => ShowAllWritingSystemsItem(LabelOf(d), field));
 
 			// Unknown/stale target: leave the field commands on mediator dispatch rather than
 			// guess.
@@ -647,9 +647,10 @@ namespace SIL.FieldWorks.XWorks
 
 		/// <summary>
 		/// Locates the row's node in its own compiled model, with the current override applied,
-		/// so visibility checkmarks and move enablement reflect the live state. False, with the
-		/// reason logged, when the row lacks class or layout context or an override store, when
-		/// the compile fails, or when the model has no node for the row's template id.
+		/// so visibility checkmarks and move enablement reflect the live state. False without a
+		/// log when the row can never be a target: no class, layout or override store, or a row
+		/// the composer synthesized with no node of its own. False with the reason logged when
+		/// the compile fails or the model has no node for the row's template id.
 		/// </summary>
 		internal bool TryLocateOverrideTarget(DetailField field, out string templateId,
 			out ViewNodeLocation location)
@@ -657,11 +658,10 @@ namespace SIL.FieldWorks.XWorks
 			templateId = null;
 			location = null;
 			if (field == null || string.IsNullOrEmpty(field.ClassName) || string.IsNullOrEmpty(field.LayoutName)
-				|| ViewOverrideStore == null)
+				|| ViewOverrideStore == null || !TryTemplateIdOf(field.StableId, out templateId))
 			{
 				return false;
 			}
-			templateId = ViewDefinitionOverrideEditor.StripRuntimeSuffix(field.StableId);
 			try
 			{
 				if (Cache.ServiceLocator.ObjectRepository.TryGetObject(field.ObjectHvo, out var fieldObj))
@@ -685,6 +685,24 @@ namespace SIL.FieldWorks.XWorks
 					templateId));
 				return false;
 			}
+			return true;
+		}
+
+		// The node a row's stable id names; false for a synthesized row with no node of its
+		// own (an item or relation path after the hvo, or a custom field). A ghost row stands
+		// in for its empty sequence node.
+		private static bool TryTemplateIdOf(string stableId, out string templateId)
+		{
+			templateId = ViewDefinitionOverrideEditor.StripRuntimeSuffix(stableId);
+			if (templateId.Contains(DetailField.CustomFieldStableIdMarker))
+				return false;
+			var at = stableId.IndexOf('@');
+			var path = at < 0 ? -1 : stableId.IndexOf('/', at);
+			if (path < 0)
+				return true;
+			if (!stableId.Substring(path).StartsWith(DetailField.GhostStableIdSuffix, StringComparison.Ordinal))
+				return false;
+			templateId = stableId.Substring(0, at);
 			return true;
 		}
 
