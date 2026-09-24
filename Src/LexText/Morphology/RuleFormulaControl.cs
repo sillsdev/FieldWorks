@@ -1001,9 +1001,9 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		}
 
 		/// <summary>
-		/// Reports whether a feature-based natural class carries a name the user gave it, as opposed
-		/// to no name or the name generated when phonological features are inserted directly into a
-		/// rule. Returns false when <paramref name="natClass"/> is null.
+		/// Reports whether a feature-based natural class carries a name the user gave it,
+		/// as opposed to no name or the name generated when phonological features are inserted
+		/// directly into a rule. Returns false when <paramref name="natClass"/> is null.
 		/// </summary>
 		public static bool IsFeatureBasedNCNameUserDefined(IPhNCFeatures natClass)
 		{

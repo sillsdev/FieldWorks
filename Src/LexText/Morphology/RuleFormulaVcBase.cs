@@ -82,13 +82,9 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		{
 			switch (frag)
 			{
-				// If there is no writing system for the abbreviation, or the abbreviation is empty,
-				// display kfragStars as fallback.
+				// If there is no writing system for the abbreviation,
+				// or the abbreviation is empty, display kfragStars as fallback.
 				case kfragNCAbbreviation:
-					// This dependency ensures changing the abbreviation rebuilds the cell so if an entered abbreviation is deleted,
-					// the stars will be displayed
-					vwenv.NoteDependency(new[] { hvo }, new[] { PhNaturalClassTags.kflidAbbreviation }, 1);
-
 					int abbrWs = WritingSystemServices.ActualWs(m_cache, WritingSystemServices.kwsFirstAnal, hvo,
 						PhNaturalClassTags.kflidAbbreviation);
 					ITsString abbr = abbrWs != 0
@@ -137,7 +133,8 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 								// Natural class simple context with a feature-based natural class
 								var natClass = (IPhNCFeatures) ncCtxt.FeatureStructureRA;
 
-								// User-defined feature-based natural classes should display only the abbreviation.
+								// User-defined feature-based natural classes should display
+								// only the abbreviation.
 								if (RuleFormulaControl.IsFeatureBasedNCNameUserDefined(natClass))
 								{
 									if (!isOuterIterCtxt)
@@ -467,6 +464,51 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		}
 
 		/// <summary>
+		/// Makes the fragment being displayed depend on the name and abbreviation of every
+		/// feature-based natural class in the given contexts, including those nested in sequence
+		/// and iteration contexts. Changing either property then rebuilds the whole fragment, so
+		/// the choice between abbreviation and feature list, line counts and cell widths are all
+		/// recomputed. Null contexts are ignored.
+		/// </summary>
+		protected static void NoteNaturalClassDependencies(IVwEnv vwenv,
+			params IEnumerable<IPhContextOrVar>[] contextGroups)
+		{
+			var hvos = new List<int>();
+			var tags = new List<int>();
+			foreach (IEnumerable<IPhContextOrVar> group in contextGroups)
+			{
+				foreach (IPhContextOrVar ctxtOrVar in group)
+					CollectFeatureNaturalClasses(ctxtOrVar, hvos, tags);
+			}
+			if (hvos.Count > 0)
+				vwenv.NoteDependency(hvos.ToArray(), tags.ToArray(), hvos.Count);
+		}
+
+		private static void CollectFeatureNaturalClasses(IPhContextOrVar ctxtOrVar,
+			List<int> hvos, List<int> tags)
+		{
+			switch (ctxtOrVar)
+			{
+				case IPhSequenceContext seqCtxt:
+					foreach (IPhPhonContext member in seqCtxt.MembersRS)
+						CollectFeatureNaturalClasses(member, hvos, tags);
+					break;
+
+				case IPhIterationContext iterCtxt:
+					CollectFeatureNaturalClasses(iterCtxt.MemberRA, hvos, tags);
+					break;
+
+				case IPhSimpleContextNC ncCtxt
+					when ncCtxt.FeatureStructureRA is IPhNCFeatures natClass:
+					hvos.Add(natClass.Hvo);
+					tags.Add(PhNaturalClassTags.kflidName);
+					hvos.Add(natClass.Hvo);
+					tags.Add(PhNaturalClassTags.kflidAbbreviation);
+					break;
+			}
+		}
+
+		/// <summary>
 		/// Gets the maximum number of lines to display the specified sequence of simple contexts.
 		/// </summary>
 		/// <param name="seq">The sequence.</param>
@@ -517,8 +559,8 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 					{
 						var natClass = (IPhNCFeatures) ncCtxt.FeatureStructureRA;
 
-						// User-defined, feature-based natural classes should display only the abbreviation,
-						// which is a single line.
+						// User-defined, feature-based natural classes should display
+						// only the abbreviation, which is a single line.
 						if (RuleFormulaControl.IsFeatureBasedNCNameUserDefined(natClass))
 							return 1;
 
