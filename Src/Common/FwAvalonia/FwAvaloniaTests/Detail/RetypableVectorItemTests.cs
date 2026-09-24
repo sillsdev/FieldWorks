@@ -254,6 +254,48 @@ namespace FwAvaloniaTests.Detail
 				"the domain refused it, and there is nothing further the row can do");
 		}
 
+		/// <summary>
+		/// Cancelling must leave nothing behind. The editor stages on focus loss, so text left
+		/// in it after a cancel would be staged by the next Tab -- saving the edit the user
+		/// just discarded.
+		/// </summary>
+		[AvaloniaTest]
+		public void DiscardingUnstagedText_RestoresTheEditor_AndStagesNothingOnLeaving()
+		{
+			var context = new FakeTextEditing();
+			var (row, _) = Show(context);
+			var box = Editor(row, "e1");
+			box.Text = "/_zz";
+			Dispatcher.UIThread.RunJobs();
+
+			row.DiscardUnstagedText();
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(box.Text, Is.EqualTo("/_#"), "the editor shows what it showed before");
+			Assert.That(row.HasUnstagedText, Is.False, "and holds nothing the host must wait for");
+
+			PressEnter(box);
+
+			Assert.That(context.Edits, Is.Empty,
+				"leaving the editor after a discard must not stage the cancelled text");
+		}
+
+		[AvaloniaTest]
+		public void DiscardingUnstagedText_ClearsTheTypedSlot()
+		{
+			var context = new FakeTextEditing { Creatable = true };
+			var (row, _) = Show(context);
+			var slot = NewItemSlot(row);
+			slot.Text = "/_zz";
+			Dispatcher.UIThread.RunJobs();
+
+			row.DiscardUnstagedText();
+			PressEnter(slot);
+
+			Assert.That(context.Created, Is.Empty,
+				"a cancelled new environment must not be created by leaving the slot");
+		}
+
 		[AvaloniaTest]
 		public void ARowThatCannotRetype_KeepsReadOnlyItems()
 		{

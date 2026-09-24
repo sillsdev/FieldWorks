@@ -1355,6 +1355,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		private readonly IReadOnlyList<DetailChoiceOption> _items;
 		private readonly List<Control> _itemBlocks = new List<Control>();
 		private readonly List<Func<bool>> _unstaged = new List<Func<bool>>();
+		private readonly List<Action> _discardUnstaged = new List<Action>();
 		private int _selectedIndex = -1;
 		private bool _disposed;
 
@@ -1425,6 +1426,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 					// would block every later refresh.
 					var submitted = original;
 					_unstaged.Add(() => box.Text != submitted);
+					_discardUnstaged.Add(() => box.Text = submitted);
 					Action commitText = () =>
 					{
 						var typed = box.Text;
@@ -1599,6 +1601,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				AutomationProperties.SetName(newItem, FwAvaloniaStrings.AddItem);
 				var submittedNew = string.Empty;
 				_unstaged.Add(() => (newItem.Text ?? string.Empty) != submittedNew);
+				_discardUnstaged.Add(() => newItem.Text = submittedNew);
 				Action commitNew = () =>
 				{
 					var typed = newItem.Text;
@@ -1863,6 +1866,17 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		/// finish a rebuild would discard what was typed.
 		/// </summary>
 		public bool HasUnstagedText => _unstaged.Any(dirty => dirty());
+
+		/// <summary>
+		/// Drops text an editor holds but has not offered to the domain, restoring what it
+		/// last showed. A cancelled edit must leave nothing behind for the next focus change
+		/// to stage.
+		/// </summary>
+		public void DiscardUnstagedText()
+		{
+			foreach (var discard in _discardUnstaged)
+				discard();
+		}
 
 		private void AddSeparatorBar()
 		{

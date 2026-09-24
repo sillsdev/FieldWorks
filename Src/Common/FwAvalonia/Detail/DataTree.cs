@@ -341,12 +341,18 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		public event EventHandler EditCompleted;
 
 		/// <summary>
-		/// Whether rebuilding this view now would destroy something the user is in the middle
-		/// of: a pointer press whose release would reach a detached control, a picker still
-		/// up, or an editor holding text that has not reached the domain yet.
+		/// Whether a pointer press is in flight anywhere in this view. A host must not rebuild
+		/// these controls while it is true: the release would reach a detached control and the
+		/// click would do nothing.
 		/// </summary>
-		public bool IsInteractionInFlight => _pointerGestureActive || _openPickers > 0
-			|| _vectors.Any(vector => vector.HasUnstagedText);
+		public bool IsInteractionInFlight => _pointerGestureActive || _openPickers > 0;
+
+		/// <summary>
+		/// Whether an editor holds text the domain has not been told about. A separate
+		/// question from <see cref="IsInteractionInFlight"/>: this one must not defer the
+		/// view's own completion, which is what discards the text, only an external refresh.
+		/// </summary>
+		public bool HasUnsubmittedText => _vectors.Any(vector => vector.HasUnstagedText);
 
 		/// <summary>
 		/// Raised when the view goes idle again -- the click finished and no picker it
@@ -392,6 +398,10 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		private void OnCancel()
 		{
 			_validationBlock.IsVisible = false;
+			// Text that was typed but never offered goes with the cancelled session. Left in
+			// the editor, the next focus change would stage the very edit just cancelled.
+			foreach (var vector in _vectors)
+				vector.DiscardUnstagedText();
 			_editContext.Cancel();
 			RaiseOrDeferEditCompleted();
 		}
