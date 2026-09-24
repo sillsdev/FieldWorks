@@ -1354,6 +1354,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		private readonly List<Action> _teardown = new List<Action>();
 		private readonly IReadOnlyList<DetailChoiceOption> _items;
 		private readonly List<Control> _itemBlocks = new List<Control>();
+		private readonly List<Func<bool>> _unstaged = new List<Func<bool>>();
 		private int _selectedIndex = -1;
 		private bool _disposed;
 
@@ -1419,11 +1420,18 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 					// against the project, so "/", "/_", "/_a" would leave two junk objects
 					// behind. This handler runs before the view's autosave.
 					var original = item.Name;
+					// What the domain has been offered, which is not what it accepted: a
+					// refused edit is still finished, and holding the host open for one
+					// would block every later refresh.
+					var submitted = original;
+					_unstaged.Add(() => box.Text != submitted);
 					Action commitText = () =>
 					{
-						if (box.Text == original)
+						var typed = box.Text;
+						submitted = typed;
+						if (typed == original)
 							return;
-						if (textEditing.TrySetReferenceItemText(field, itemKey, box.Text))
+						if (textEditing.TrySetReferenceItemText(field, itemKey, typed))
 							gestureCompleted?.Invoke();
 					};
 					EventHandler<Avalonia.Interactivity.RoutedEventArgs> commitOnBlur =
@@ -1589,9 +1597,12 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				FloorWidthToText(newItem, FwAvaloniaDensity.NewItemSlotMinWidth);
 				AutomationProperties.SetAutomationId(newItem, automationId + ".New");
 				AutomationProperties.SetName(newItem, FwAvaloniaStrings.AddItem);
+				var submittedNew = string.Empty;
+				_unstaged.Add(() => (newItem.Text ?? string.Empty) != submittedNew);
 				Action commitNew = () =>
 				{
 					var typed = newItem.Text;
+					submittedNew = typed ?? string.Empty;
 					if (string.IsNullOrWhiteSpace(typed))
 						return;
 					if (textEditing.TryCreateAndAddReferenceItem(field, typed))
@@ -1846,6 +1857,13 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 
 		// The legacy VwSeparatorBox: a ~2px, font-height, light grey vertical bar after each item
 		// (and fronting the add slot) -- the affordance that marks where content can be added.
+		/// <summary>
+		/// Whether an editor on this row holds text the domain has not been told about.
+		/// Staging waits for the edit to finish, so between the first keystroke and that
+		/// finish a rebuild would discard what was typed.
+		/// </summary>
+		public bool HasUnstagedText => _unstaged.Any(dirty => dirty());
+
 		private void AddSeparatorBar()
 		{
 			var bar = new Border

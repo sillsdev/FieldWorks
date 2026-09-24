@@ -176,6 +176,84 @@ namespace FwAvaloniaTests.Detail
 				+ "' measures " + label.DesiredSize.Width.ToString("F1"));
 		}
 
+		/// <summary>
+		/// Staging waits for the edit to finish, so between the first keystroke and that finish
+		/// the domain knows nothing about the text. A host that rebuilds the view in that window
+		/// -- an external change arriving while the user types -- would discard it, so the row
+		/// has to report itself busy for as long as it holds text nobody else has.
+		/// </summary>
+		[AvaloniaTest]
+		public void AnEditorHoldingTypedText_ReportsTheRowBusy_UntilTheEditFinishes()
+		{
+			var context = new FakeTextEditing();
+			var (row, _) = Show(context);
+			var box = Editor(row, "e1");
+			Assert.That(row.HasUnstagedText, Is.False, "precondition: nothing typed yet");
+
+			box.Text = "/_zz";
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(row.HasUnstagedText, Is.True,
+				"the domain has not been told, so a rebuild now would lose what was typed");
+
+			PressEnter(box);
+
+			Assert.That(row.HasUnstagedText, Is.False,
+				"the edit finished and staged, so the row is no longer holding anything");
+		}
+
+		[AvaloniaTest]
+		public void TypingIntoTheSlot_ReportsTheRowBusy()
+		{
+			var (row, _) = Show(new FakeTextEditing { Creatable = true });
+			var slot = NewItemSlot(row);
+
+			slot.Text = "/_zz";
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(row.HasUnstagedText, Is.True,
+				"a new environment being typed is as losable as a retyped one");
+		}
+
+		/// <summary>
+		/// Restoring the original text leaves nothing to lose, so the row must stop holding the
+		/// host: otherwise an abandoned edit would block refreshes indefinitely.
+		/// </summary>
+		[AvaloniaTest]
+		public void RetypingBackToTheOriginal_StopsReportingBusy()
+		{
+			var (row, _) = Show(new FakeTextEditing());
+			var box = Editor(row, "e1");
+
+			box.Text = "/_zz";
+			Dispatcher.UIThread.RunJobs();
+			box.Text = "/_#";
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(row.HasUnstagedText, Is.False);
+		}
+
+		/// <summary>
+		/// A refused edit is still a finished one. Holding the host busy for it would block
+		/// every later refresh, and the row can do nothing more about text the domain
+		/// declined.
+		/// </summary>
+		[AvaloniaTest]
+		public void ARefusedEdit_StopsReportingBusy()
+		{
+			var context = new FakeTextEditing { SetResult = false };
+			var (row, _) = Show(context);
+			var box = Editor(row, "e1");
+
+			box.Text = "/_zz";
+			Dispatcher.UIThread.RunJobs();
+			PressEnter(box);
+
+			Assert.That(context.Edits.Count, Is.EqualTo(1), "precondition: the edit was offered");
+			Assert.That(row.HasUnstagedText, Is.False,
+				"the domain refused it, and there is nothing further the row can do");
+		}
+
 		[AvaloniaTest]
 		public void ARowThatCannotRetype_KeepsReadOnlyItems()
 		{

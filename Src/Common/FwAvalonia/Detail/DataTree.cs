@@ -341,11 +341,12 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		public event EventHandler EditCompleted;
 
 		/// <summary>
-		/// Whether a pointer press is in flight anywhere in this view. A host must not rebuild
-		/// these controls while it is true: the release would reach a detached control and the
-		/// click would do nothing.
+		/// Whether rebuilding this view now would destroy something the user is in the middle
+		/// of: a pointer press whose release would reach a detached control, a picker still
+		/// up, or an editor holding text that has not reached the domain yet.
 		/// </summary>
-		public bool IsInteractionInFlight => _pointerGestureActive || _openPickers > 0;
+		public bool IsInteractionInFlight => _pointerGestureActive || _openPickers > 0
+			|| _vectors.Any(vector => vector.HasUnstagedText);
 
 		/// <summary>
 		/// Raised when the view goes idle again -- the click finished and no picker it
