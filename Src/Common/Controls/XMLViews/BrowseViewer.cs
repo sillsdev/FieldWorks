@@ -614,6 +614,15 @@ namespace SIL.FieldWorks.Common.Controls
 		}
 
 		/// <summary>
+		/// Scroll the selected row into view without changing which row is selected.
+		/// </summary>
+		public void ScrollSelectedRowIntoView()
+		{
+			CheckDisposed();
+			m_xbv.ScrollSelectedRowIntoView();
+		}
+
+		/// <summary>
 		/// Gets the column count. This count does not include the check box column.
 		/// </summary>
 		/// <value>The column count.</value>

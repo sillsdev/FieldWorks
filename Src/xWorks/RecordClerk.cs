@@ -1130,7 +1130,7 @@ namespace SIL.FieldWorks.XWorks
 						return false;
 					}
 				}
-				JumpToIndex(index);
+				JumpToIndex(index, false, true);
 				return true;	//we handled this.
 			}
 			finally
@@ -2347,7 +2347,7 @@ namespace SIL.FieldWorks.XWorks
 			var index = m_list.IndexOf(jumpToHvo);
 			if (index < 0)
 				return; // not found (maybe suppressed by filter?)
-			JumpToIndex(index, suppressFocusChange);
+			JumpToIndex(index, suppressFocusChange, true);
 		}
 
 		public void JumpToIndex(int index)
@@ -2362,6 +2362,16 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="suppressFocusChange">if set to <c>true</c> focus changes will be suppressed.</param>
 		public void JumpToIndex(int index, bool suppressFocusChange)
 		{
+			JumpToIndex(index, suppressFocusChange, false);
+		}
+
+		/// <summary>
+		/// Jump to the specified index. <paramref name="jumpedToRecord"/> is true when a
+		/// JumpToRecord asked for this record by object, so a view can tell that request apart
+		/// from a refresh that re-asserts the current index.
+		/// </summary>
+		private void JumpToIndex(int index, bool suppressFocusChange, bool jumpedToRecord)
+		{
 			CheckDisposed();
 			//if we aren't changing the index, just bail out. (Fixes, LT-11401)
 			if (m_list.CurrentIndex == index)
@@ -2374,7 +2384,8 @@ namespace SIL.FieldWorks.XWorks
 				//RecordBrowseView line 483 and elsewhere that we rely on the re-broadcasting.
 				//in order to maintain the LT-11401 fix we directly use the mediator here and pass true in the
 				//second parameter so that we don't save the record and lose the undo history. -naylor 2011-11-03
-				var rni = new RecordNavigationInfo(this, true, SkipShowRecord, suppressFocusChange);
+				var rni = new RecordNavigationInfo(this, true, SkipShowRecord, suppressFocusChange,
+					jumpedToRecord);
 #pragma warning disable 618 // suppress obsolete warning
 				m_mediator.BroadcastMessage("RecordNavigation", rni);
 #pragma warning restore 618
@@ -3667,12 +3678,33 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="skipShowRecord"></param>
 		/// <param name="suppressFocusChange"></param>
 		public RecordNavigationInfo(RecordClerk clerk, bool suppressSaveOnChangeRecord, bool skipShowRecord, bool suppressFocusChange)
+			: this(clerk, suppressSaveOnChangeRecord, skipShowRecord, suppressFocusChange, false)
+		{
+		}
+
+		/// <summary>
+		/// Make one, recording whether a JumpToRecord asked for the record that was already
+		/// current.
+		/// </summary>
+		public RecordNavigationInfo(RecordClerk clerk, bool suppressSaveOnChangeRecord, bool skipShowRecord,
+			bool suppressFocusChange, bool jumpedToCurrentRecord)
 		{
 			Clerk = clerk;
 			HvoOfCurrentObjAtTimeOfNavigation = Clerk != null && Clerk.CurrentObjectHvo != 0 ? Clerk.CurrentObjectHvo : 0;
 			SuppressSaveOnChangeRecord = suppressSaveOnChangeRecord;
 			SkipShowRecord = skipShowRecord;
 			SuppressFocusChange = suppressFocusChange;
+			JumpedToCurrentRecord = jumpedToCurrentRecord;
+		}
+
+		/// <summary>
+		/// True when a JumpToRecord asked for the record that was already current, so the index
+		/// did not change. A view that leaves its scroll position alone when the current record
+		/// is merely re-asserted should still bring the record into view for this navigation.
+		/// </summary>
+		public bool JumpedToCurrentRecord
+		{
+			get; private set;
 		}
 
 		/// <summary>

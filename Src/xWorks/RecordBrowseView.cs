@@ -580,6 +580,10 @@ namespace SIL.FieldWorks.XWorks
 				if (clerk != null && sendingClerk == clerk && clerk.IsActiveInGui)
 				{
 					m_browseViewer.SelectedIndex = clerk.CurrentIndex;
+					// The index did not change, so the setter left the scroll position alone; the
+					// user asked for this record, so bring it back on screen (LT-22676).
+					if (rni.JumpedToCurrentRecord)
+						m_browseViewer.ScrollSelectedRowIntoView();
 					// go ahead and SetInfoBarText even if we didn't change indices
 					// we may have changed objects or root object classes (from Entries to Senses)
 					SetInfoBarText();
