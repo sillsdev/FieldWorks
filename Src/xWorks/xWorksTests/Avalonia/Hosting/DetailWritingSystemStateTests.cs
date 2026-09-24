@@ -150,10 +150,11 @@ namespace SIL.FieldWorks.XWorks
 			{
 				window.Show();
 				Dispatcher.UIThread.RunJobs();
-				// The plugin stamps <row automation id>.<ws tag> on each of its value boxes.
+				// The plugin stamps <row automation id>.<ws tag>.<row index> on each entry's box.
 				var row = composed.Model.Fields.First(f => f.Kind == DetailFieldKind.Custom
 					&& f.ObjectHvo == sense.Hvo);
-				var boxId = (row.AutomationId ?? ReversalIndexEntryPlugin.DefaultAutomationId) + "." + analysis.Id;
+				var boxId = (row.AutomationId ?? ReversalIndexEntryPlugin.DefaultAutomationId) + "." + analysis.Id
+					+ ".0";
 				var reversalBox = view.GetVisualDescendants().OfType<TextBox>()
 					.FirstOrDefault(box => AutomationProperties.GetAutomationId(box) == boxId);
 				Assert.That(reversalBox, Is.Not.Null,

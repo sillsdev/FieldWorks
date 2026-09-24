@@ -26,7 +26,7 @@ namespace FwAvaloniaTests
 	public class SliceFactoryTests
 	{
 		private static DetailField Field(DetailFieldKind kind, string selectedOption = null,
-			System.Func<Control> controlFactory = null)
+			System.Func<SliceFactoryContext, Control> controlFactory = null)
 			=> new DetailField(
 				stableId: "f1", label: "Label", field: "Field", writingSystem: "en", kind: kind,
 				editorClassification: EditorClassification.Known, automationId: "Auto.Id",
@@ -80,8 +80,33 @@ namespace FwAvaloniaTests
 		{
 			var marker = new Border();
 			var control = SliceFactory.Build(
-				Field(DetailFieldKind.Custom, controlFactory: () => marker), "Auto.Id", null);
+				Field(DetailFieldKind.Custom, controlFactory: _ => marker), "Auto.Id", null);
 			Assert.That(control, Is.SameAs(marker));
+		}
+
+		[AvaloniaTest]
+		public void CustomKind_FactoryReceivesTheRenderContext()
+		{
+			var context = new SliceFactoryContext(linkRequested: request => { });
+			SliceFactoryContext received = null;
+			SliceFactory.Build(Field(DetailFieldKind.Custom, controlFactory: render =>
+			{
+				received = render;
+				return new Border();
+			}), "Auto.Id", context);
+			Assert.That(received, Is.SameAs(context));
+		}
+
+		[AvaloniaTest]
+		public void CustomKind_WithoutAContext_FactoryStillReceivesOne()
+		{
+			SliceFactoryContext received = null;
+			SliceFactory.Build(Field(DetailFieldKind.Custom, controlFactory: render =>
+			{
+				received = render;
+				return new Border();
+			}), "Auto.Id", null);
+			Assert.That(received, Is.Not.Null, "a factory can read its render context without a null check");
 		}
 
 		[AvaloniaTest]

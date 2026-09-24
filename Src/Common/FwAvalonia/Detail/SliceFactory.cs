@@ -100,7 +100,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			switch (field.Kind)
 			{
 				case DetailFieldKind.Custom:
-					return CreateCustom(field, automationId);
+					return CreateCustom(field, automationId, context);
 				case DetailFieldKind.ReferenceVector:
 					// Reference add/remove gestures commit immediately (legacy chooser-dialog behavior): the
 					// staged session would otherwise sit open -- LCModel broadcasts PropChanged
@@ -164,7 +164,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		// the value column. A missing, null-returning, or throwing factory
 		// degrades to the unsupported row -- never a crash, never silently
 		// blank.
-		private static Control CreateCustom(DetailField field, string automationId)
+		private static Control CreateCustom(DetailField field, string automationId,
+			SliceFactoryContext context)
 		{
 			if (field.ControlFactory == null)
 			{
@@ -175,7 +176,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 
 			try
 			{
-				var control = field.ControlFactory();
+				var control = field.ControlFactory(context);
 				if (control == null)
 				{
 					System.Diagnostics.Debug.WriteLine(

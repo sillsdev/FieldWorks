@@ -27,7 +27,7 @@ namespace FwAvaloniaTests
 	[TestFixture]
 	public class DetailCustomFieldRenderingTests
 	{
-		private static DetailModel Model(Func<Control> factory)
+		private static DetailModel Model(Func<SliceFactoryContext, Control> factory)
 			=> new DetailModel("LexEntry", "Normal",
 				new List<DetailField>
 				{
@@ -38,9 +38,9 @@ namespace FwAvaloniaTests
 				},
 				new List<ViewDiagnostic>());
 
-		private static DataTree Show(DetailModel model)
+		private static DataTree Show(DetailModel model, Action<DetailLinkRequest> linkRequested = null)
 		{
-			var view = new DataTree(model);
+			var view = new DataTree(model, linkRequested: linkRequested);
 			var window = new Window { Content = view, Width = 420, Height = 200 };
 			window.Show();
 			Dispatcher.UIThread.RunJobs();
@@ -57,7 +57,7 @@ namespace FwAvaloniaTests
 			var pluginControl = new TextBlock { Text = "plugin notes bar" };
 			AutomationProperties.SetAutomationId(pluginControl, "PluginNotesBar");
 
-			var view = Show(Model(() => pluginControl));
+			var view = Show(Model(_ => pluginControl));
 
 			var rendered = view.GetVisualDescendants().OfType<TextBlock>()
 				.FirstOrDefault(t => AutomationProperties.GetAutomationId(t) == "PluginNotesBar");
@@ -79,7 +79,7 @@ namespace FwAvaloniaTests
 		[AvaloniaTest]
 		public void CustomField_WithThrowingFactory_FallsBackToTheUnsupportedRow()
 		{
-			var view = Show(Model(() => throw new InvalidOperationException("plugin exploded")));
+			var view = Show(Model(_ => throw new InvalidOperationException("plugin exploded")));
 
 			Assert.That(FindUnsupportedBlock(view), Is.Not.Null,
 				"a throwing factory degrades to the explicit unsupported row");
@@ -97,10 +97,27 @@ namespace FwAvaloniaTests
 		[AvaloniaTest]
 		public void CustomField_WithNullReturningFactory_FallsBackToTheUnsupportedRow()
 		{
-			var view = Show(Model(() => null));
+			var view = Show(Model(_ => null));
 
 			Assert.That(FindUnsupportedBlock(view), Is.Not.Null,
 				"a null-returning factory degrades to the explicit unsupported row");
+		}
+
+		[AvaloniaTest]
+		public void CustomField_FactoryReceivesTheViewsLinkCallback()
+		{
+			var requests = new List<DetailLinkRequest>();
+			Action<DetailLinkRequest> received = null;
+			var model = Model(render =>
+			{
+				received = render.LinkRequested;
+				return new TextBlock { Text = "plugin" };
+			});
+			Show(model, requests.Add);
+
+			Assert.That(received, Is.Not.Null, "the plugin can reach the host's jump");
+			received(new DetailLinkRequest(null, new DetailChooserLink("Show", "someTool")));
+			Assert.That(requests, Has.Count.EqualTo(1), "the callback is the one the view was given");
 		}
 	}
 }

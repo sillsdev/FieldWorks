@@ -42,7 +42,8 @@ namespace SIL.FieldWorks.XWorks
 	/// the row's object and typed node, the detail view's edit context (resolved lazily through the
 	/// composer's deferred accessor -- the context object is created during compose, BEFORE the
 	/// edit context exists; plugin factories run at render time, after), the cache, and the
-	/// host's writing-system focus callback.
+	/// host's writing-system focus and link callbacks, the view's abbreviation-column width,
+	/// and the row's writing-system restriction.
 	/// </summary>
 	public sealed class SlicePluginBuildContext
 	{
@@ -50,13 +51,19 @@ namespace SIL.FieldWorks.XWorks
 
 		public SlicePluginBuildContext(ICmObject target, ViewNode node,
 			Func<IDetailEditContext> editContextAccessor, LcmCache cache,
-			Action<string> writingSystemFocused = null)
+			Action<string> writingSystemFocused = null,
+			Action<DetailLinkRequest> linkRequested = null,
+			double? wsAbbrevColumnWidth = null,
+			IReadOnlyList<string> visibleWritingSystems = null)
 		{
 			Target = target;
 			Node = node;
 			_editContextAccessor = editContextAccessor;
 			Cache = cache;
 			WritingSystemFocused = writingSystemFocused;
+			LinkRequested = linkRequested;
+			WsAbbrevColumnWidth = wsAbbrevColumnWidth;
+			VisibleWritingSystems = visibleWritingSystems;
 		}
 
 		/// <summary>The composed row's own object (the slice's object in legacy terms).</summary>
@@ -75,6 +82,24 @@ namespace SIL.FieldWorks.XWorks
 		/// editor that gained focus. Null when the host supplies none.
 		/// </summary>
 		public Action<string> WritingSystemFocused { get; }
+
+		/// <summary>
+		/// The host's jump callback, the same one chooser links use: the host settles the
+		/// open edit session, then follows the link. Null when the host supplies none.
+		/// </summary>
+		public Action<DetailLinkRequest> LinkRequested { get; }
+
+		/// <summary>
+		/// The width the view gives its writing-system abbreviation column, so a plugin's own
+		/// abbreviations line up with the other rows. Null when the host supplies none.
+		/// </summary>
+		public double? WsAbbrevColumnWidth { get; }
+
+		/// <summary>
+		/// The writing-system ids the row is restricted to, in order. Null or empty means no
+		/// restriction, which is also the case while the user has asked to see all of them.
+		/// </summary>
+		public IReadOnlyList<string> VisibleWritingSystems { get; }
 	}
 
 	/// <summary>
@@ -144,10 +169,8 @@ namespace SIL.FieldWorks.XWorks
 			return registry;
 		}
 
-		// The builtin plugin list. The Reversal Entries slice
-		// (ReversalIndexEntrySlice) composes as a native Avalonia editable multi-WS text field through
-		// the plugin route. Every OTHER custom slice not absorbed by a composer route resolves to the
-		// labeled Unsupported worklist row.
+		// The builtin plugin list: the Reversal Entries slice (ReversalIndexEntrySlice).
+		// Every other custom slice not absorbed by a composer route renders Unsupported.
 		internal static void RegisterBuiltins(SlicePluginRegistry registry)
 		{
 			registry.Register(new ReversalIndexEntryPlugin());

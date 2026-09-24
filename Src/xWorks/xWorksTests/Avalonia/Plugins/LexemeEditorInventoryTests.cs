@@ -229,6 +229,8 @@ namespace SIL.FieldWorks.XWorks
 			public SIL.FieldWorks.Common.FwAvalonia.ViewDefinition.ViewNode LastNode;
 			public IDetailEditContext LastEditContext;
 			public LcmCache LastCache;
+			public Action<DetailLinkRequest> LastLinkRequested;
+			public double? LastWsAbbrevColumnWidth;
 
 			public string LegacyClassName => MessageSliceClassName;
 
@@ -239,6 +241,8 @@ namespace SIL.FieldWorks.XWorks
 				LastNode = context.Node;
 				LastEditContext = context.EditContext;
 				LastCache = context.Cache;
+				LastLinkRequested = context.LinkRequested;
+				LastWsAbbrevColumnWidth = context.WsAbbrevColumnWidth;
 				return null; // never rendered in this fixture; the view's null guard covers this
 			}
 		}
@@ -292,7 +296,7 @@ namespace SIL.FieldWorks.XWorks
 			var composed = DetailComposer.Compose(m_entry, Cache, plugins: registry);
 			var row = composed.Model.Fields.Single(f => f.Kind == DetailFieldKind.Custom);
 
-			row.ControlFactory();
+			row.ControlFactory(null);
 
 			Assert.That(plugin.BuildCalls, Is.EqualTo(1));
 			Assert.That(plugin.LastObject?.Hvo, Is.EqualTo(m_entry.Hvo));
@@ -300,6 +304,24 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(plugin.LastCache, Is.SameAs(Cache));
 			Assert.That(plugin.LastEditContext, Is.SameAs(composed.EditContext),
 				"the deferred accessor resolves to the detail view's own composed edit context");
+		}
+
+		[Test]
+		public void PluginRowFactory_PassesTheRenderContextsLinkCallbackAndColumnWidth()
+		{
+			var registry = new SlicePluginRegistry();
+			var plugin = new FakeMessagesPlugin();
+			registry.Register(plugin);
+			var composed = DetailComposer.Compose(m_entry, Cache, plugins: registry);
+			var row = composed.Model.Fields.Single(f => f.Kind == DetailFieldKind.Custom);
+			Action<DetailLinkRequest> linkRequested = request => { };
+
+			row.ControlFactory(new SliceFactoryContext(linkRequested: linkRequested,
+				wsAbbrevColumnWidth: 37));
+
+			Assert.That(plugin.LastLinkRequested, Is.SameAs(linkRequested),
+				"the plugin reaches the host's jump through the render context");
+			Assert.That(plugin.LastWsAbbrevColumnWidth, Is.EqualTo(37));
 		}
 	}
 }

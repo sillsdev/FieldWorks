@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2026 SIL International
+// Copyright (c) 2026 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -6,41 +6,36 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Avalonia.Controls;
+using SIL.FieldWorks.Common.FwAvalonia;
 using SIL.FieldWorks.Common.FwAvalonia.Detail;
+using SIL.FieldWorks.Common.FwAvalonia.ViewDefinition;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
-using SIL.LCModel.Core.KernelInterfaces;
-using SIL.LCModel.Core.Text;
+using SIL.LCModel.DomainServices;
 using SIL.Reporting;
 
 namespace SIL.FieldWorks.XWorks
 {
 	/// <summary>
-	/// The native Avalonia Reversal Entries editor: claims the legacy
-	/// <c>SIL.FieldWorks.XWorks.LexEd.ReversalIndexEntrySlice</c> layout identity through the plugin
-	/// contract and renders the sense's reversal-entry forms as an editable multi-writing-system text
-	/// field (<see cref="FwMultiWsTextField"/>) at the slice's real in-tree position, rather than an
-	/// "Unsupported" placeholder row.
-	/// <para>A sense's reversal entries (<c>ILexSense.ReferringReversalIndexEntries</c>) are a set of
-	/// <c>IReversalIndexEntry</c>, each storing its form (<c>ReversalForm</c>, a multi-unicode string)
-	/// under its owning reversal index's writing system. The editor renders one row per EXISTING
-	/// reversal entry -- the entry's form in its index's writing system -- reusing the same
-	/// plain-text-over-preserved-runs <c>TrySetRichText</c> staging every other text row uses, so the
-	/// edit rides the detail view's SAME fenced undo step.</para>
-	/// <para>DATA-SAFE SCOPE: this editor edits the form text of EXISTING reversal entries only.
-	/// Creating a new reversal index entry (typing a new form on an empty row) and deleting one
-	/// (clearing a form) are the legacy slice's risky parses-of-semicolon-separated-lists +
-	/// find-or-create path (ReversalIndexEntrySlice.ReplaceReversalIndexEntries) and are not supported here:
-	/// a sense with no reversal entry for a given index simply shows no row for it, and clearing a
-	/// form to empty stores an empty form (it does not delete the entry).</para>
+	/// The Avalonia Reversal Entries editor for a sense: claims the
+	/// <c>SIL.FieldWorks.XWorks.LexEd.ReversalIndexEntrySlice</c> layout identity and renders an
+	/// <see cref="FwReversalEntriesField"/>. Each reversal index whose writing system the row
+	/// shows is a group listing the sense's entries in it, then an add row; an index that does
+	/// not exist is never created just to show a group (LT-4480). Typing links, relinks, or
+	/// unlinks entries, with colons marking subentries (LT-4665), and a row can jump to its
+	/// entry in the Reversal Index tool. A build failure degrades to the Unsupported row.
 	/// </summary>
 	public sealed class ReversalIndexEntryPlugin : ISlicePlugin
 	{
-		/// <summary>The legacy slice class this plugin claims (LexSenseParts.xml reversal entries slice).</summary>
+		/// <summary>The layout class this plugin claims: the sense's Reversal Entries.</summary>
 		public const string ReversalIndexEntrySliceClassName =
 			"SIL.FieldWorks.XWorks.LexEd.ReversalIndexEntrySlice";
 
 		/// <summary>The editor's automation id when the layout node declares none.</summary>
 		public const string DefaultAutomationId = "ReversalEntriesEditor";
+
+		/// <summary>The tool a row's jump opens, showing the entry.</summary>
+		public const string ReversalIndexTool = "reversalToolEditComplete";
 
 		public string LegacyClassName => ReversalIndexEntrySliceClassName;
 
@@ -54,145 +49,314 @@ namespace SIL.FieldWorks.XWorks
 			try
 			{
 				var node = context.Node;
-				var rows = CreateReversalRows(sense, cache, out var entryByWsKey);
-				if (rows.Count == 0)
-					return null; // no existing reversal entry: nothing editable (creation is not supported)
-
-				var field = new DetailField(
-					stableId: "reversal/" + sense.Hvo,
-					label: node?.Label ?? "Reversal Entries",
-					field: node?.Field ?? "ReferringReversalIndexEntries",
-					writingSystem: node?.WritingSystem,
-					kind: DetailFieldKind.Text,
-					editorClassification: node?.EditorClassification
-						?? SIL.FieldWorks.Common.FwAvalonia.ViewDefinition.EditorClassification.Known,
-					automationId: node?.AutomationId ?? DefaultAutomationId,
-					localizationKey: node?.LocalizationKey,
-					routing: node?.Routing ?? SIL.FieldWorks.Common.FwAvalonia.ViewDefinition.HostRouting.Product,
-					values: rows,
-					options: null,
-					selectedOptionKey: null,
-					isEditable: true,
-					objectHvo: sense.Hvo);
-
-				var reversalContext = new ReversalDetailEditContext(cache, context.EditContext, entryByWsKey);
+				var label = string.IsNullOrEmpty(node?.Label)
+					? node?.Field ?? DefaultAutomationId
+					: StringTable.Table.LocalizeAttributeValue(node.Label);
 				var automationId = node?.AutomationId ?? DefaultAutomationId;
-				return new FwMultiWsTextField(field, automationId, reversalContext,
-					writingSystemFocused: context.WritingSystemFocused);
+				var host = context.EditContext;
+				var editing = new ReversalDetailEditContext(cache, host, sense, label);
+				var groups = editing.CreateGroups(context.VisibleWritingSystems);
+
+				Action<string> navigate = null;
+				var linkRequested = context.LinkRequested;
+				if (linkRequested != null)
+				{
+					var field = new DetailField(
+						stableId: "reversal/" + sense.Hvo,
+						label: label,
+						field: node?.Field,
+						writingSystem: node?.WritingSystem,
+						kind: DetailFieldKind.Custom,
+						editorClassification: node?.EditorClassification ?? EditorClassification.Known,
+						automationId: automationId,
+						localizationKey: node?.LocalizationKey,
+						routing: node?.Routing ?? HostRouting.Product,
+						values: null,
+						options: null,
+						selectedOptionKey: null,
+						isEditable: true,
+						objectHvo: sense.Hvo);
+					navigate = rowKey =>
+					{
+						var target = editing.TryResolveMainEntryGuid(rowKey);
+						if (target.HasValue)
+							RequestShowInReversalIndex(linkRequested, field, target.Value);
+					};
+				}
+
+				return new FwReversalEntriesField(label, automationId, groups,
+					host == null ? null : editing, context.WritingSystemFocused, navigate,
+					context.WsAbbrevColumnWidth);
 			}
 			catch (Exception e)
 			{
-				// Graceful degradation, same policy as the other plugins: a broken reversal read/build
-				// degrades to the unsupported row (the view's null-factory guard), never the whole pane.
 				Logger.WriteEvent($"ReversalIndexEntryPlugin: reversal editor unavailable for sense '{sense.Guid}': {e}");
 				return null;
 			}
 		}
 
-		// One editable row per EXISTING reversal entry: ReversalForm in its index's
-		// writing system. WsTag (what wsKey routes on) is the index's ws tag --
-		// unique since a sense has at most one entry per index.
-		private static IReadOnlyList<DetailWsValue> CreateReversalRows(ILexSense sense, LcmCache cache,
-			out IReadOnlyDictionary<string, IReversalIndexEntry> entryByWsKey)
+		/// <summary>Asks the host to show the entry with guid <paramref name="target"/> in the
+		/// Reversal Index tool.</summary>
+		internal static void RequestShowInReversalIndex(Action<DetailLinkRequest> linkRequested,
+			DetailField field, Guid target)
 		{
-			var values = new List<DetailWsValue>();
-			var map = new Dictionary<string, IReversalIndexEntry>(StringComparer.Ordinal);
-			var wsManager = cache.ServiceLocator.WritingSystemManager;
-			var factory = cache.WritingSystemFactory;
-
-			foreach (var entry in sense.ReferringReversalIndexEntries)
-			{
-				var wsTag = entry.ReversalIndex?.WritingSystem;
-				if (string.IsNullOrEmpty(wsTag) || map.ContainsKey(wsTag))
-					continue;
-				var wsHandle = wsManager.GetWsFromStr(wsTag);
-				if (wsHandle <= 0)
-					continue;
-
-				var ws = wsManager.Get(wsHandle);
-				var tss = entry.ReversalForm.get_String(wsHandle);
-				var richText = DetailRichTextAdapter.FromTsString(tss, factory);
-				values.Add(new DetailWsValue(ws.Abbreviation, tss?.Text ?? string.Empty,
-					ws.DefaultFontName, 0, ws.RightToLeftScript, ws.Id, false, richText));
-				map[ws.Id] = entry;
-			}
-
-			entryByWsKey = map;
-			return values;
+			linkRequested(new DetailLinkRequest(field, new DetailChooserLink(
+				FwAvaloniaStrings.ReversalShowInReversalIndex, ReversalIndexTool, target.ToString())));
 		}
 	}
 
 	/// <summary>
-	/// The Reversal Entries plugin's edit context: routes <see cref="TrySetText"/>/<see cref="TrySetRichText"/>
-	/// to the matching reversal entry's <c>ReversalForm</c> (data-safe: edits existing forms only), staging
-	/// through the detail view's SHARED <see cref="DetailEditContextBase"/> session so a reversal edit lands as
-	/// ONE step on the same undoable fence as every other row. Session lifecycle (IsOpen/Commit/Cancel) and
-	/// validation delegate to the host context, so the host view's Save/Cancel commit reversal edits too.
+	/// The Reversal Entries edit context: projects a sense's reversal entries into
+	/// <see cref="DetailReversalGroup"/> rows and applies row commits to them. Every write
+	/// stages on the host's shared fenced session, so a commit is one undo step with the view's
+	/// other edits; session lifecycle and validation delegate to the host.
 	/// </summary>
-	internal sealed class ReversalDetailEditContext : IDetailEditContext
+	internal sealed class ReversalDetailEditContext : IDetailEditContext, IReversalEntryEditing
 	{
 		private readonly LcmCache _cache;
 		private readonly IDetailEditContext _host;
-		private readonly IReadOnlyDictionary<string, IReversalIndexEntry> _entryByWsKey;
+		private readonly ILexSense _sense;
+		private readonly string _fieldLabel;
+		private readonly Dictionary<string, RowBinding> _rows =
+			new Dictionary<string, RowBinding>(StringComparer.Ordinal);
+		private int _nextRowKey;
 
-		public ReversalDetailEditContext(LcmCache cache, IDetailEditContext host,
-			IReadOnlyDictionary<string, IReversalIndexEntry> entryByWsKey)
+		public ReversalDetailEditContext(LcmCache cache, IDetailEditContext host, ILexSense sense,
+			string fieldLabel)
 		{
 			_cache = cache ?? throw new ArgumentNullException(nameof(cache));
+			_sense = sense ?? throw new ArgumentNullException(nameof(sense));
 			_host = host;
-			_entryByWsKey = entryByWsKey ?? new Dictionary<string, IReversalIndexEntry>();
+			_fieldLabel = fieldLabel;
+		}
+
+		// The reversal index a row belongs to and the entry it shows; null is an add row.
+		private sealed class RowBinding
+		{
+			public RowBinding(IReversalIndex index, IReversalIndexEntry entry)
+			{
+				Index = index;
+				Entry = entry;
+			}
+
+			public IReversalIndex Index { get; }
+
+			public IReversalIndexEntry Entry { get; set; }
+		}
+
+		/// <summary>
+		/// The groups to show, one per analysis writing system allowed by
+		/// <paramref name="visibleWritingSystems"/> (null or empty allows all) that has a
+		/// reversal index. A writing system that is not a current analysis one shows only when
+		/// the sense has entries in it. Issues fresh row keys and forgets the previous ones.
+		/// </summary>
+		internal IReadOnlyList<DetailReversalGroup> CreateGroups(IReadOnlyList<string> visibleWritingSystems)
+		{
+			_rows.Clear();
+			var linked = _sense.ReferringReversalIndexEntries.ToList();
+			var current = new HashSet<string>(
+				_cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems.Select(ws => ws.Id));
+			var systems = DetailComposer.ApplyVisibleWritingSystems(
+				_cache.LanguageProject.AnalysisWritingSystems.ToList(), visibleWritingSystems);
+
+			var groups = new List<DetailReversalGroup>();
+			foreach (var ws in systems)
+			{
+				var index = _cache.LanguageProject.LexDbOA.ReversalIndexesOC
+					.FirstOrDefault(ri => ri.WritingSystem == ws.Id);
+				if (index == null)
+					continue;
+				var entries = index.EntriesForSense(linked).ToList();
+				if (entries.Count == 0 && !current.Contains(ws.Id))
+					continue;
+
+				var rows = new List<DetailReversalRow>();
+				foreach (var entry in entries)
+				{
+					rows.Add(new DetailReversalRow(Bind(index, entry), ChainText(entry, ws.Handle), false,
+						OtherWsForms(entry, ws.Handle)));
+				}
+				rows.Add(new DetailReversalRow(Bind(index, null), string.Empty, true));
+				groups.Add(new DetailReversalGroup(ws.Id, ws.Abbreviation, ws.DefaultFontName,
+					ws.RightToLeftScript, rows));
+			}
+			return groups;
+		}
+
+		private string Bind(IReversalIndex index, IReversalIndexEntry entry)
+		{
+			var key = "row" + _nextRowKey++;
+			_rows[key] = new RowBinding(index, entry);
+			return key;
+		}
+
+		// A subentry shows its ancestors' forms before its own, joined by ": ".
+		private static string ChainText(IReversalIndexEntry entry, int ws)
+		{
+			var forms = new List<string>();
+			for (var level = entry; level != null; level = level.OwningEntry)
+				forms.Insert(0, level.ReversalForm.get_String(ws).Text ?? string.Empty);
+			return string.Join(": ", forms);
+		}
+
+		private IReadOnlyList<DetailReversalAlternative> OtherWsForms(IReversalIndexEntry entry, int indexWs)
+		{
+			var result = new List<DetailReversalAlternative>();
+			foreach (var ws in WritingSystemServices.GetReversalIndexWritingSystems(_cache, entry.Hvo, false))
+			{
+				if (ws.Handle == indexWs)
+					continue;
+				var text = entry.ReversalForm.get_String(ws.Handle).Text;
+				if (!string.IsNullOrEmpty(text))
+					result.Add(new DetailReversalAlternative(ws.Abbreviation, text, ws.DefaultFontName));
+			}
+			return result;
+		}
+
+		/// <inheritdoc />
+		public bool TryCommitRow(string rowKey, string typedText)
+		{
+			RowBinding binding;
+			if (string.IsNullOrEmpty(rowKey) || !_rows.TryGetValue(rowKey, out binding))
+				return false;
+			var ws = _cache.ServiceLocator.WritingSystemManager.GetWsFromStr(binding.Index.WritingSystem);
+			if (ws <= 0)
+				return false;
+
+			var forms = SplitForms(typedText);
+			var current = binding.Entry;
+			if (current != null && !current.IsValidObject)
+				current = binding.Entry = null;
+			if (current == null && forms.Count == 0)
+				return false;
+			if (current != null && ChainMatches(current, forms, ws))
+				return false;
+
+			return StageOnHost(() =>
+			{
+				IReversalIndexEntry target = null;
+				if (forms.Count > 0)
+				{
+					target = FindOrCreateEntry(binding.Index, forms, ws);
+					if (!target.SensesRS.Contains(_sense))
+						target.SensesRS.Add(_sense);
+				}
+				if (current != null && current != target)
+					Unlink(current);
+				binding.Entry = target;
+				return true;
+			});
+		}
+
+		/// <inheritdoc />
+		public Guid? TryResolveMainEntryGuid(string rowKey)
+		{
+			RowBinding binding;
+			if (string.IsNullOrEmpty(rowKey) || !_rows.TryGetValue(rowKey, out binding))
+				return null;
+			var entry = binding.Entry;
+			if (entry == null || !entry.IsValidObject)
+				return null;
+			return entry.MainEntry.Guid;
+		}
+
+		/// <summary>
+		/// The forms of an entry chain, top level first: the text split on colons, each part
+		/// trimmed, and empty parts dropped (LT-4665).
+		/// </summary>
+		internal static IList<string> SplitForms(string text)
+		{
+			return (text ?? string.Empty)
+				.Split(new[] { ':' }, StringSplitOptions.RemoveEmptyEntries)
+				.Select(part => part.Trim())
+				.Where(part => part.Length > 0)
+				.ToList();
+		}
+
+		// True when the entry and its ancestors, top level first, are exactly the given forms.
+		private static bool ChainMatches(IReversalIndexEntry entry, IList<string> forms, int ws)
+		{
+			var level = entry;
+			for (var i = forms.Count - 1; i >= 0; i--)
+			{
+				if (level == null || level.ReversalForm.get_String(ws).Text != forms[i])
+					return false;
+				level = level.OwningEntry;
+			}
+			return level == null;
+		}
+
+		// Reuses the deepest existing entry matching a prefix of the chain and creates the
+		// levels below it. An existing entry is never renamed.
+		private IReversalIndexEntry FindOrCreateEntry(IReversalIndex index, IList<string> forms, int ws)
+		{
+			IReversalIndexEntry deepest = null;
+			var depth = 0;
+			FindDeepest(index.EntriesOC, forms, 0, ws, ref deepest, ref depth);
+			if (depth == forms.Count)
+				return deepest;
+
+			var factory = _cache.ServiceLocator.GetInstance<IReversalIndexEntryFactory>();
+			var owner = deepest;
+			for (var level = depth; level < forms.Count; level++)
+			{
+				var created = factory.Create();
+				if (owner == null)
+					index.EntriesOC.Add(created);
+				else
+					owner.SubentriesOS.Add(created);
+				created.ReversalForm.set_String(ws, forms[level]);
+				owner = created;
+			}
+			return owner;
+		}
+
+		// Depth-first, so a chain is found under whichever same-form homograph has it. The
+		// first entry to reach a new depth is kept; a full match ends the search.
+		private static void FindDeepest(IEnumerable<IReversalIndexEntry> candidates, IList<string> forms,
+			int level, int ws, ref IReversalIndexEntry deepest, ref int depth)
+		{
+			foreach (var candidate in candidates)
+			{
+				if (candidate.ReversalForm.get_String(ws).Text != forms[level])
+					continue;
+				if (level + 1 > depth)
+				{
+					deepest = candidate;
+					depth = level + 1;
+				}
+				if (depth == forms.Count)
+					return;
+				if (level + 1 < forms.Count)
+				{
+					FindDeepest(candidate.SubentriesOS, forms, level + 1, ws, ref deepest, ref depth);
+					if (depth == forms.Count)
+						return;
+				}
+			}
+		}
+
+		// An entry left with no senses and no subentries is deleted.
+		private void Unlink(IReversalIndexEntry entry)
+		{
+			entry.SensesRS.Remove(_sense);
+			if (entry.SensesRS.Count == 0 && entry.SubentriesOS.Count == 0)
+				entry.Delete();
+		}
+
+		// A host that is not the fenced detail context (a test fake) applies the write directly.
+		private bool StageOnHost(Func<bool> setter)
+		{
+			var fenced = _host as DetailEditContextBase;
+			return fenced != null ? fenced.Stage(setter, _fieldLabel) : setter();
 		}
 
 		public bool IsOpen => _host != null && _host.IsOpen;
 
-		public bool TrySetText(DetailField field, string ws, string value)
-		{
-			if (string.IsNullOrEmpty(ws) || !_entryByWsKey.TryGetValue(ws, out var entry))
-				return false;
-			var wsHandle = _cache.ServiceLocator.WritingSystemManager.GetWsFromStr(ws);
-			if (wsHandle <= 0)
-				return false;
-			return StageOnHost(() =>
-			{
-				entry.ReversalForm.set_String(wsHandle,
-					TsStringUtils.MakeString(value ?? string.Empty, wsHandle));
-				return true;
-			});
-		}
+		public bool TrySetText(DetailField field, string ws, string value) => false;
 
-		public bool TrySetRichText(DetailField field, string ws, DetailRichTextValue value)
-		{
-			if (value == null || string.IsNullOrEmpty(ws) || !_entryByWsKey.TryGetValue(ws, out var entry))
-				return false;
-			var wsHandle = _cache.ServiceLocator.WritingSystemManager.GetWsFromStr(ws);
-			if (wsHandle <= 0)
-				return false;
-			return StageOnHost(() =>
-			{
-				// ReversalForm is multi-unicode (plain text): re-emit the run-replay as a plain string in
-				// the row's writing system. The per-run rich projection still drives display/formatting,
-				// but the stored property carries no run structure.
-				var tss = DetailRichTextAdapter.ToTsString(value, _cache.WritingSystemFactory, wsHandle);
-				entry.ReversalForm.set_String(wsHandle,
-					TsStringUtils.MakeString(tss?.Text ?? string.Empty, wsHandle));
-				return true;
-			});
-		}
+		public bool TrySetRichText(DetailField field, string ws, DetailRichTextValue value) => false;
 
-		// Stage on the host's shared fenced session when present (the detail
-		// view's own context); fall back to a self-contained non-undoable write
-		// only when no host context exists.
-		private bool StageOnHost(Func<bool> setter)
-		{
-			if (_host is DetailEditContextBase fenced)
-				return fenced.Stage(setter);
-			if (_host != null)
-				return setter(); // a non-fenced host (a test fake): apply directly
-			return setter();
-		}
-
-		// Chooser / reference-vector / validation are not part of the reversal text editor; delegate
-		// the session boundary to the host so the view's Save/Cancel still drive commit/rollback.
 		public bool TrySetOption(DetailField field, string optionKey) => false;
 
 		public bool TryAddReferenceItem(DetailField field, string optionKey) => false;
@@ -202,9 +366,6 @@ namespace SIL.FieldWorks.XWorks
 		public bool TryMoveReferenceItem(DetailField field, string optionKey, bool forward) => false;
 
 		public bool TryResetReferenceOrder(DetailField field) => false;
-
-		// The Reversal Entries plugin edits multi-unicode reversal forms only; it implements neither
-		// IStructuredTextEditing (no StText rows are composed for it) nor picture editing.
 
 		public IReadOnlyList<string> Validate() => _host?.Validate() ?? Array.Empty<string>();
 

@@ -114,7 +114,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			bool showWritingSystemAbbreviation, DetailWsValue value, double wsAbbrevColumnWidth)
 		{
 				var currentRich = value.RichText;
-				var abbrev = CreateWsAbbrev(value, wsAbbrevColumnWidth);
+				var abbrev = CreateWsAbbrev(value.WsAbbrev, wsAbbrevColumnWidth);
 
 				// Values render flat with no box/fill, and go read-only with a tooltip
 				// -- instead of corrupting on the first keystroke -- when a run carries
@@ -758,11 +758,11 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		// own fixed gutter column (see the row Grid below) so a bold vernacular value can never crowd
 		// or overlap it. ClipToBounds keeps an unusually long abbreviation inside the gutter width
 		// rather than bleeding into the value column.
-		private static TextBlock CreateWsAbbrev(DetailWsValue value, double wsAbbrevColumnWidth)
+		internal static TextBlock CreateWsAbbrev(string wsAbbrev, double wsAbbrevColumnWidth)
 		{
 			var abbrev = new TextBlock
 			{
-				Text = value.WsAbbrev,
+				Text = wsAbbrev,
 				MinWidth = wsAbbrevColumnWidth,
 				VerticalAlignment = VerticalAlignment.Top,
 				Margin = new Thickness(0, 1, FwAvaloniaDensity.WsAbbrevGutter, 0),
@@ -771,7 +771,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				ClipToBounds = true
 			};
 			// The gutter clips a long abbreviation, so the full text stays discoverable on hover.
-			ToolTip.SetTip(abbrev, value.WsAbbrev);
+			ToolTip.SetTip(abbrev, wsAbbrev);
 			return abbrev;
 		}
 
@@ -1884,7 +1884,15 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 
 		private void AddSeparatorBar()
 		{
-			var bar = new Border
+			var bar = CreateSeparatorBar();
+			Children.Add(bar);
+			_affordances.Add(bar);
+		}
+
+		/// <summary>The thin vertical bar drawn between the items of an inline list.</summary>
+		internal static Border CreateSeparatorBar()
+		{
+			return new Border
 			{
 				Width = FwAvaloniaDensity.SeparatorBarWidth,
 				Height = FwAvaloniaDensity.IconGlyphSize,
@@ -1892,8 +1900,6 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				Margin = FwAvaloniaDensity.SeparatorBarMargin,
 				VerticalAlignment = VerticalAlignment.Center
 			};
-			Children.Add(bar);
-			_affordances.Add(bar);
 		}
 	}
 
