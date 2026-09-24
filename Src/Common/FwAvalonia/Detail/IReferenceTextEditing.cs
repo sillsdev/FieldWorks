@@ -9,8 +9,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 	/// what the user types, and re-pointing an existing item at what they type over it. Kept off
 	/// the core <see cref="IDetailEditContext"/> so only a context that can actually reconcile
 	/// text against the domain carries it. A caller acquires it with
-	/// <c>ctx as IReferenceTextEditing</c> and treats a null result as "this row picks from the
-	/// list only", exactly as <see cref="IStructuredTextEditing"/> is acquired.
+	/// <c>editContext as IReferenceTextEditing</c> and treats a null result as "this row
+	/// picks from the list only", exactly as <see cref="IStructuredTextEditing"/> is acquired.
 	///
 	/// It exists because some reference rows are BOTH a chooser and a typed editor.
 	/// Environments is the case in hand: <c>PhoneEnvReferenceLauncher</c> opens a

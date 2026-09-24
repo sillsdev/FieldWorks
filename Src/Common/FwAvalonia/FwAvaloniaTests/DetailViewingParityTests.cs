@@ -292,7 +292,7 @@ namespace FwAvaloniaTests
 			Assert.That(rule, Is.Not.Null);
 			Assert.That(rule.Background, Is.EqualTo(SIL.FieldWorks.Common.FwAvalonia.FwAvaloniaDensity.SliceRuleBrush));
 
-			// The WS abbreviation and label use the sampled tokens.
+			// The writing-system abbreviation and label use the sampled tokens.
 			var abbrev = view.GetVisualDescendants().OfType<TextBlock>().First(t => t.Text == "en");
 			Assert.That(abbrev.Foreground, Is.EqualTo(SIL.FieldWorks.Common.FwAvalonia.FwAvaloniaDensity.WsAbbrevBrush));
 			Assert.That(abbrev.FontSize, Is.EqualTo(SIL.FieldWorks.Common.FwAvalonia.FwAvaloniaDensity.WsAbbrevFontSize));
