@@ -66,14 +66,16 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		private IPhEnvironment GiveProjectAnEnvironment(string representation)
+			=> GiveProjectAnEnvironment(representation, Cache.DefaultVernWs);
+
+		private IPhEnvironment GiveProjectAnEnvironment(string representation, int ws)
 		{
 			IPhEnvironment env = null;
 			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
 			{
 				env = Cache.ServiceLocator.GetInstance<IPhEnvironmentFactory>().Create();
 				Cache.LanguageProject.PhonologicalDataOA.EnvironmentsOS.Add(env);
-				env.StringRepresentation = TsStringUtils.MakeString(
-					representation, Cache.DefaultVernWs);
+				env.StringRepresentation = TsStringUtils.MakeString(representation, ws);
 			});
 			return env;
 		}
@@ -115,6 +117,29 @@ namespace SIL.FieldWorks.XWorks
 
 			Assert.That(row.Items.Single().Name, Is.EqualTo("/ _ zt"),
 				"the item must display the whole environment, not an abbreviated form of it");
+		}
+
+		/// <summary>
+		/// Environments are commonly stored in an analysis writing system rather than the
+		/// vernacular. Retyping one must not retag it: the string is shared, so its font
+		/// would change for every allomorph using it and in the dictionary export, while
+		/// the row that was edited shows nothing different.
+		/// </summary>
+		[Test]
+		public void RetypingAnEnvironment_KeepsTheWritingSystemItWasStoredIn()
+		{
+			Assume.That(Cache.DefaultAnalWs, Is.Not.EqualTo(Cache.DefaultVernWs),
+				"the fixture needs two distinct writing systems or this cannot fail");
+			var stored = GiveProjectAnEnvironment("/_#", Cache.DefaultAnalWs);
+			Attach(m_allomorph, stored);
+
+			Assert.That(Retype(stored, "/ _ #"), Is.True);
+
+			var rep = m_allomorph.PhoneEnvRC.Single().StringRepresentation;
+			Assert.That(rep.Text, Is.EqualTo("/ _ #"), "precondition: the text was retyped");
+			Assert.That(rep.get_WritingSystem(0), Is.EqualTo(Cache.DefaultAnalWs),
+				"the environment keeps the writing system it was stored in; forcing the "
+				+ "vernacular here changes its font everywhere it is shown");
 		}
 
 		/// <summary>

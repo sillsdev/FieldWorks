@@ -1709,16 +1709,18 @@ namespace SIL.FieldWorks.XWorks
 							return true;
 						}
 
+						// Read before the vector moves: after a re-point this position
+						// names the target, not the environment being edited.
+						var ws = WritingSystemOfItem(hvo, flid, position);
 						var target = ResolveEnvironmentForItem(hvo, flid, position, StripSpaces(text))
 							?? FindOrCreateEnvironment(text);
 						if (target == null)
 							return false;
 
-						// The typed string is written onto the resolved environment whether
-						// or not it moved, so a re-spelling reaches every field referencing
-						// it -- writing system as much as spelling.
-						target.StringRepresentation =
-							TsStringUtils.MakeString(text, _cache.DefaultVernWs);
+						// Written onto the resolved environment whether or not it moved, so
+						// a re-spelling reaches every field referencing it, and in the
+						// writing system the edited item was stored in.
+						target.StringRepresentation = TsStringUtils.MakeString(text, ws);
 
 						var current = _sda.get_VecItem(hvo, flid, position);
 						if (target.Hvo != current)
@@ -1837,6 +1839,18 @@ namespace SIL.FieldWorks.XWorks
 				// the string the wrong font wherever a view renders its own writing system.
 				created.StringRepresentation = TsStringUtils.MakeString(text, _cache.DefaultVernWs);
 				return created;
+			}
+
+			// The writing system an item's environment is stored in, read from its first
+			// run. An emptied environment has none to read, so vernacular stands in.
+			private int WritingSystemOfItem(int hvo, int flid, int position)
+			{
+				var stored = (_cache.ServiceLocator.ObjectRepository.GetObject(
+						_sda.get_VecItem(hvo, flid, position)) as IPhEnvironment)
+					?.StringRepresentation;
+				return stored != null && stored.Length > 0
+					? stored.get_WritingSystem(0)
+					: _cache.DefaultVernWs;
 			}
 
 			private static string StripSpaces(string s) => s?.Replace(" ", null) ?? string.Empty;
