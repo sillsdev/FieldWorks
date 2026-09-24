@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Avalonia.Automation;
 using Avalonia.Controls;
+using Avalonia.Headless;
 using Avalonia.Headless.NUnit;
 using Avalonia.Input;
 using Avalonia.Threading;
@@ -294,6 +295,49 @@ namespace FwAvaloniaTests.Detail
 
 			Assert.That(context.Created, Is.Empty,
 				"a cancelled new environment must not be created by leaving the slot");
+		}
+
+		/// <summary>
+		/// Right-clicking an item makes it current, which is what the menu it raises acts on.
+		/// An editor marks the press handled to place its caret, so a handler added the ordinary
+		/// way never sees it -- the item menu would then resolve no object and open empty.
+		/// Asserted for an editor AND a read-only item, because the two must not diverge here.
+		/// </summary>
+		[AvaloniaTest]
+		[TestCase(true, TestName = "RightClickingAnItemEditor_MakesItCurrentForItsMenu")]
+		[TestCase(false, TestName = "RightClickingAReadOnlyItem_MakesItCurrentForItsMenu")]
+		public void RightClickingAnItem_MakesItCurrentForItsMenu(bool retypable)
+		{
+			var requests = new List<DetailMenuRequest>();
+			var row = new FwReferenceVectorField(Row(), "PhoneEnv",
+				new FakeTextEditing { Retypable = retypable }, null, null, r => requests.Add(r));
+			var window = new Window { Content = row, Width = 480, Height = 200 };
+			window.Show();
+			Dispatcher.UIThread.RunJobs();
+			window.UpdateLayout();
+			Dispatcher.UIThread.RunJobs();
+
+			var item = row.GetVisualDescendants().OfType<Control>().FirstOrDefault(
+				c => AutomationProperties.GetAutomationId(c)
+					== FwReferenceVectorField.ItemAutomationId("PhoneEnv", "e1"));
+			Assert.That(item, Is.Not.Null, "precondition: the row rendered item e1");
+			var centre = new Avalonia.Point(
+				item.Bounds.X + item.Bounds.Width / 2,
+				item.Bounds.Y + item.Bounds.Height / 2);
+
+			window.MouseDown(centre, MouseButton.Right);
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(row.SelectedItemKey, Is.EqualTo("e1"),
+				"a right-click press must make the item under the pointer current");
+
+			window.MouseUp(centre, MouseButton.Right);
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(requests, Is.Not.Empty, "the right-click raised a menu request");
+			Assert.That(requests[requests.Count - 1].SelectedItemKey, Is.EqualTo("e1"),
+				"and the request names the item, or the host resolves no object and the menu "
+				+ "opens empty -- which reads as the right-click doing nothing at all");
 		}
 
 		[AvaloniaTest]

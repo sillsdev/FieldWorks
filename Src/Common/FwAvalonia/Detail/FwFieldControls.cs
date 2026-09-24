@@ -11,6 +11,7 @@ using Avalonia.Automation;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Input;
+using Avalonia.Interactivity;
 using Avalonia.Layout;
 using Avalonia.Media;
 using Avalonia.VisualTree;
@@ -1486,11 +1487,14 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 						e.Handled = true;
 					}
 				};
-				text.PointerPressed += select;
+				// handledEventsToo: an editor marks the press handled to place its caret, so
+				// an ordinary handler never runs and the press would select no item.
+				text.AddHandler(InputElement.PointerPressedEvent, select,
+					RoutingStrategies.Bubble, handledEventsToo: true);
 				_itemBlocks.Add(text);
 				_teardown.Add(() =>
 				{
-					text.PointerPressed -= select;
+					text.RemoveHandler(InputElement.PointerPressedEvent, select);
 					text.GotFocus -= focusSelect;
 				});
 				if (item.HasValidationMessage)
