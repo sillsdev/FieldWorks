@@ -997,7 +997,18 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			if (!IsFeatsNCContextCurrent){ return false; }
 
 			var ctxt = (IPhSimpleContextNC) CurrentContext;
-			var natClass = (IPhNCFeatures)ctxt.FeatureStructureRA;
+			return IsFeatureBasedNCNameUserDefined((IPhNCFeatures)ctxt.FeatureStructureRA);
+		}
+
+		/// <summary>
+		/// Reports whether a feature-based natural class carries a name the user gave it, as opposed
+		/// to no name or the name generated when phonological features are inserted directly into a
+		/// rule. Returns false when <paramref name="natClass"/> is null.
+		/// </summary>
+		public static bool IsFeatureBasedNCNameUserDefined(IPhNCFeatures natClass)
+		{
+			if (natClass == null)
+				return false;
 
 			// Get the auto-generated text that precedes the rulename. (e.g. extracting "Created automatically for rule "" from "Created automatically for rule "{0}"")
 			// Note that the generated rulename following the stubtext is different for "regular" vs affix rules, but in all cases the auto-generated stub is the same.

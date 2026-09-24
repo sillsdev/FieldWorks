@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015 SIL International
+// Copyright (c) 2015 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -39,6 +39,9 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		// variant frags
 		public const int kfragXVariable = 113;
 
+		public const int kfragNCAbbreviation = 114;
+		public const int kfragStars = 115;
+
 		// fake flids
 		public const int ktagFeature = -200;
 		public const int ktagVariable = -201;
@@ -49,6 +52,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 		protected ITsString m_infinity;
 		protected ITsString m_x;
+		protected ITsString m_stars;
 
 		protected RuleFormulaVcBase(LcmCache cache, PropertyTable propertyTable)
 			: base(cache, propertyTable)
@@ -57,6 +61,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			m_propertyTable = propertyTable;
 			m_infinity = TsStringUtils.MakeString("\u221e", userWs);
 			m_x = TsStringUtils.MakeString("X", userWs);
+			m_stars = TsStringUtils.MakeString("***", userWs);
 		}
 
 		/// <summary>
@@ -77,6 +82,24 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		{
 			switch (frag)
 			{
+				// If there is no writing system for the abbreviation, or the abbreviation is empty,
+				// display kfragStars as fallback.
+				case kfragNCAbbreviation:
+					// This dependency ensures changing the abbreviation rebuilds the cell so if an entered abbreviation is deleted,
+					// the stars will be displayed
+					vwenv.NoteDependency(new[] { hvo }, new[] { PhNaturalClassTags.kflidAbbreviation }, 1);
+
+					int abbrWs = WritingSystemServices.ActualWs(m_cache, WritingSystemServices.kwsFirstAnal, hvo,
+						PhNaturalClassTags.kflidAbbreviation);
+					ITsString abbr = abbrWs != 0
+						? m_cache.MainCacheAccessor.get_MultiStringAlt(hvo, PhNaturalClassTags.kflidAbbreviation, abbrWs)
+						: null;
+					if (abbr != null && abbr.Length > 0)
+						vwenv.AddStringAltMember(PhNaturalClassTags.kflidAbbreviation, abbrWs, this);
+					else
+						vwenv.AddProp(PhNaturalClassTags.kflidAbbreviation, this, kfragStars);
+					break;
+
 				case kfragContext:
 					var ctxtOrVar = m_cache.ServiceLocator.GetInstance<IPhContextOrVarRepository>().GetObject(hvo);
 					bool isOuterIterCtxt = false;
@@ -114,42 +137,17 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 								// Natural class simple context with a feature-based natural class
 								var natClass = (IPhNCFeatures) ncCtxt.FeatureStructureRA;
 
-								int numLines = GetNumLines(ncCtxt);
-								if (numLines == 0)
+								// User-defined feature-based natural classes should display only the abbreviation.
+								if (RuleFormulaControl.IsFeatureBasedNCNameUserDefined(natClass))
 								{
 									if (!isOuterIterCtxt)
 										OpenSingleLinePile(vwenv, GetMaxNumLines());
 
-									vwenv.AddProp(ktagInnerNonBoundary, this, kfragLeftBracket);
-									vwenv.AddProp(PhSimpleContextNCTags.kflidFeatureStructure, this, kfragQuestions);
-									vwenv.AddProp(ktagInnerNonBoundary, this, kfragRightBracket);
-
-									if (!isOuterIterCtxt)
-										CloseSingleLinePile(vwenv);
-								}
-								else if (numLines == 1)
-								{
-									if (!isOuterIterCtxt)
-										OpenSingleLinePile(vwenv, GetMaxNumLines());
-
-									// use normal brackets for a single line context
+									// use normal brackets around abbreviation
 									vwenv.AddProp(ktagInnerNonBoundary, this, kfragLeftBracket);
 
-									// special consonant and vowel natural classes only display the abbreviation
-									if (natClass.Abbreviation.AnalysisDefaultWritingSystem.Text == "C"
-										|| natClass.Abbreviation.AnalysisDefaultWritingSystem.Text == "V")
-									{
-										vwenv.AddObjProp(PhSimpleContextNCTags.kflidFeatureStructure, this, kfragNC);
-									}
-									else
-									{
-										if (natClass.FeaturesOA != null && natClass.FeaturesOA.FeatureSpecsOC.Count > 0)
-											vwenv.AddObjProp(PhSimpleContextNCTags.kflidFeatureStructure, this, kfragFeatNC);
-										else if (ncCtxt.PlusConstrRS.Count > 0)
-											vwenv.AddObjVecItems(PhSimpleContextNCTags.kflidPlusConstr, this, kfragPlusVariable);
-										else
-											vwenv.AddObjVecItems(PhSimpleContextNCTags.kflidMinusConstr, this, kfragMinusVariable);
-									}
+									vwenv.AddObjProp(PhSimpleContextNCTags.kflidFeatureStructure, this, kfragNCAbbreviation);
+
 									vwenv.AddProp(ktagInnerNonBoundary, this, kfragRightBracket);
 
 									if (!isOuterIterCtxt)
@@ -157,40 +155,76 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 								}
 								else
 								{
-									// multiline context
+									int numLines = GetNumLines(ncCtxt);
+									if (numLines == 0)
+									{
+										if (!isOuterIterCtxt)
+											OpenSingleLinePile(vwenv, GetMaxNumLines());
 
-									// left bracket pile
-									int maxNumLines = GetMaxNumLines();
-									vwenv.Props = m_bracketProps;
-									vwenv.set_IntProperty((int)FwTextPropType.ktptMarginLeading, (int)FwTextPropVar.ktpvMilliPoint, PileMargin);
-									vwenv.OpenInnerPile();
-									AddExtraLines(maxNumLines - numLines, ktagLeftNonBoundary, vwenv);
-									vwenv.AddProp(ktagLeftNonBoundary, this, kfragLeftBracketUpHook);
-									for (int i = 1; i < numLines - 1; i++)
-										vwenv.AddProp(ktagLeftNonBoundary, this, kfragLeftBracketExt);
-									vwenv.AddProp(ktagLeftBoundary, this, kfragLeftBracketLowHook);
-									vwenv.CloseInnerPile();
+										vwenv.AddProp(ktagInnerNonBoundary, this, kfragLeftBracket);
+										vwenv.AddProp(PhSimpleContextNCTags.kflidFeatureStructure, this, kfragQuestions);
+										vwenv.AddProp(ktagInnerNonBoundary, this, kfragRightBracket);
 
-									// feature and variable pile
-									vwenv.set_IntProperty((int)FwTextPropType.ktptAlign, (int)FwTextPropVar.ktpvEnum, (int)FwTextAlign.ktalLeft);
-									vwenv.OpenInnerPile();
-									AddExtraLines(maxNumLines - numLines, vwenv);
-									vwenv.AddObjProp(PhSimpleContextNCTags.kflidFeatureStructure, this, kfragFeatNC);
-									vwenv.AddObjVecItems(PhSimpleContextNCTags.kflidPlusConstr, this, kfragPlusVariable);
-									vwenv.AddObjVecItems(PhSimpleContextNCTags.kflidMinusConstr, this, kfragMinusVariable);
-									vwenv.CloseInnerPile();
+										if (!isOuterIterCtxt)
+											CloseSingleLinePile(vwenv);
+									}
+									else if (numLines == 1)
+									{
+										if (!isOuterIterCtxt)
+											OpenSingleLinePile(vwenv, GetMaxNumLines());
 
-									// right bracket pile
-									vwenv.Props = m_bracketProps;
-									if (!isOuterIterCtxt)
-										vwenv.set_IntProperty((int)FwTextPropType.ktptMarginTrailing, (int)FwTextPropVar.ktpvMilliPoint, PileMargin);
-									vwenv.OpenInnerPile();
-									AddExtraLines(maxNumLines - numLines, ktagRightNonBoundary, vwenv);
-									vwenv.AddProp(ktagRightNonBoundary, this, kfragRightBracketUpHook);
-									for (int i = 1; i < numLines - 1; i++)
-										vwenv.AddProp(ktagRightNonBoundary, this, kfragRightBracketExt);
-									vwenv.AddProp(ktagRightBoundary, this, kfragRightBracketLowHook);
-									vwenv.CloseInnerPile();
+										// use normal brackets for a single line context
+										vwenv.AddProp(ktagInnerNonBoundary, this, kfragLeftBracket);
+
+										if (natClass.FeaturesOA != null && natClass.FeaturesOA.FeatureSpecsOC.Count > 0)
+											vwenv.AddObjProp(PhSimpleContextNCTags.kflidFeatureStructure, this, kfragFeatNC);
+										else if (ncCtxt.PlusConstrRS.Count > 0)
+											vwenv.AddObjVecItems(PhSimpleContextNCTags.kflidPlusConstr, this, kfragPlusVariable);
+										else
+											vwenv.AddObjVecItems(PhSimpleContextNCTags.kflidMinusConstr, this, kfragMinusVariable);
+
+										vwenv.AddProp(ktagInnerNonBoundary, this, kfragRightBracket);
+
+										if (!isOuterIterCtxt)
+											CloseSingleLinePile(vwenv);
+									}
+									else
+									{
+										// multiline context
+
+										// left bracket pile
+										int maxNumLines = GetMaxNumLines();
+										vwenv.Props = m_bracketProps;
+										vwenv.set_IntProperty((int)FwTextPropType.ktptMarginLeading, (int)FwTextPropVar.ktpvMilliPoint, PileMargin);
+										vwenv.OpenInnerPile();
+										AddExtraLines(maxNumLines - numLines, ktagLeftNonBoundary, vwenv);
+										vwenv.AddProp(ktagLeftNonBoundary, this, kfragLeftBracketUpHook);
+										for (int i = 1; i < numLines - 1; i++)
+											vwenv.AddProp(ktagLeftNonBoundary, this, kfragLeftBracketExt);
+										vwenv.AddProp(ktagLeftBoundary, this, kfragLeftBracketLowHook);
+										vwenv.CloseInnerPile();
+
+										// feature and variable pile
+										vwenv.set_IntProperty((int)FwTextPropType.ktptAlign, (int)FwTextPropVar.ktpvEnum, (int)FwTextAlign.ktalLeft);
+										vwenv.OpenInnerPile();
+										AddExtraLines(maxNumLines - numLines, vwenv);
+										vwenv.AddObjProp(PhSimpleContextNCTags.kflidFeatureStructure, this, kfragFeatNC);
+										vwenv.AddObjVecItems(PhSimpleContextNCTags.kflidPlusConstr, this, kfragPlusVariable);
+										vwenv.AddObjVecItems(PhSimpleContextNCTags.kflidMinusConstr, this, kfragMinusVariable);
+										vwenv.CloseInnerPile();
+
+										// right bracket pile
+										vwenv.Props = m_bracketProps;
+										if (!isOuterIterCtxt)
+											vwenv.set_IntProperty((int)FwTextPropType.ktptMarginTrailing, (int)FwTextPropVar.ktpvMilliPoint, PileMargin);
+										vwenv.OpenInnerPile();
+										AddExtraLines(maxNumLines - numLines, ktagRightNonBoundary, vwenv);
+										vwenv.AddProp(ktagRightNonBoundary, this, kfragRightBracketUpHook);
+										for (int i = 1; i < numLines - 1; i++)
+											vwenv.AddProp(ktagRightNonBoundary, this, kfragRightBracketExt);
+										vwenv.AddProp(ktagRightBoundary, this, kfragRightBracketLowHook);
+										vwenv.CloseInnerPile();
+									}
 								}
 							}
 							else
@@ -360,6 +394,10 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 					tss = m_x;
 					break;
 
+				case kfragStars:
+					tss = m_stars;
+					break;
+
 				default:
 					tss = base.DisplayVariant(vwenv, tag, frag);
 					break;
@@ -478,6 +516,13 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 					if (ncCtxt.FeatureStructureRA != null && ncCtxt.FeatureStructureRA.ClassID == PhNCFeaturesTags.kClassId)
 					{
 						var natClass = (IPhNCFeatures) ncCtxt.FeatureStructureRA;
+
+						// User-defined, feature-based natural classes should display only the abbreviation,
+						// which is a single line.
+						if (RuleFormulaControl.IsFeatureBasedNCNameUserDefined(natClass))
+							return 1;
+
+						// Otherwise, the list of features is displayed.
 						if (natClass.FeaturesOA != null)
 							numFeats = natClass.FeaturesOA.FeatureSpecsOC.Count;
 					}
@@ -589,19 +634,22 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		{
 			if (ctxt.FeatureStructureRA != null && ctxt.FeatureStructureRA.ClassID == PhNCFeaturesTags.kClassId)
 			{
+				// User-defined feature-based natural classes display only the abbreviation,
+				// so get width of the abbreviation.
+				var natClass = (IPhNCFeatures)ctxt.FeatureStructureRA;
+				if (RuleFormulaControl.IsFeatureBasedNCNameUserDefined(natClass))
+				{
+					int len = GetStrWidth(ctxt.FeatureStructureRA.Abbreviation.BestAnalysisAlternative, null, vwenv);
+					len += GetStrWidth(m_leftBracket, null, vwenv);
+					len += GetStrWidth(m_rightBracket, null, vwenv);
+					return len;
+				}
+
 				int numLines = GetNumLines(ctxt);
 				if (numLines == 1)
 				{
 					int len;
-					if (ctxt.FeatureStructureRA.Abbreviation.UserDefaultWritingSystem.Text == "C"
-						|| ctxt.FeatureStructureRA.Abbreviation.UserDefaultWritingSystem.Text == "V")
-					{
-						len = GetStrWidth(ctxt.FeatureStructureRA.Abbreviation.BestAnalysisAlternative, null, vwenv);
-					}
-					else
-					{
-						len = GetNCFeatsWidth(ctxt, vwenv);
-					}
+					len = GetNCFeatsWidth(ctxt, vwenv);
 					len += GetStrWidth(m_leftBracket, null, vwenv);
 					len += GetStrWidth(m_rightBracket, null, vwenv);
 					return len;
