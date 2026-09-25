@@ -17,6 +17,7 @@ using SIL.FieldWorks.Common.FwAvalonia.ViewDefinition;
 using SIL.FieldWorks.Common.Framework.DetailControls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
+using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.Infrastructure;
 using XCore;
@@ -249,6 +250,66 @@ namespace SIL.FieldWorks.XWorks
 				Assert.That(right, Is.Not.Null, "Move Right materializes on the item menu");
 				Assert.That(left.IsEnabled, Is.False, "the first item cannot move left");
 				Assert.That(right.IsEnabled, Is.True, "the first item can move right");
+			}
+			finally
+			{
+				colleague?.Dispose();
+			}
+		}
+
+		// An allomorph carrying one environment: PhoneEnv is a reference COLLECTION, which
+		// resolves to a different object UI, and so to a different menu, than a sequence.
+		private DetailField EnvironmentsFieldWithOneItem()
+		{
+			IMoStemAllomorph allomorph = null;
+			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
+			{
+				allomorph = Cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>().Create();
+				m_entry.AlternateFormsOS.Add(allomorph);
+				allomorph.Form.set_String(Cache.DefaultVernWs,
+					TsStringUtils.MakeString("command-allomorph", Cache.DefaultVernWs));
+				var env = Cache.ServiceLocator.GetInstance<IPhEnvironmentFactory>().Create();
+				Cache.LanguageProject.PhonologicalDataOA.EnvironmentsOS.Add(env);
+				env.StringRepresentation =
+					TsStringUtils.MakeString("/_#", Cache.DefaultVernWs);
+				allomorph.PhoneEnvRC.Add(env);
+			});
+			DrainMediatorAndIdleQueues();
+			RefreshedDetailFieldCount();
+
+			var field = DetailComposer.Compose(m_entry, Cache).Model.Fields
+				.SingleOrDefault(f => f.Field == "PhoneEnv" && f.ObjectHvo == allomorph.Hvo);
+			Assert.That(field, Is.Not.Null, "the allomorph composes an environments row");
+			Assert.That(field.Items, Has.Count.EqualTo(1));
+			return field;
+		}
+
+		/// <summary>
+		/// A reference collection resolves to the collection object UI, which is the only one
+		/// that names the environments menu. The base UI names the generic menu, whose commands
+		/// are all gated to other classes -- so it builds nothing and the right-click shows no
+		/// menu at all.
+		/// </summary>
+		[Test]
+		public void AnEnvironmentItem_ResolvesToTheMenuThatCarriesItsCommands()
+		{
+			var field = EnvironmentsFieldWithOneItem();
+			var request = DetailMenuRequest.FromAnchor(null, field, DetailMenuKind.ItemMenu,
+				new ItemSelection { SelectedItemKey = field.Items[0].Key, SelectedItemIndex = 0 });
+
+			using (var ui = m_view.ResolveItemUi(request))
+			{
+				Assert.That(ui, Is.Not.Null, "the clicked environment resolves to an object UI");
+				Assert.That(((SIL.FieldWorks.FdoUi.ReferenceBaseUi)ui).ContextMenuId,
+					Is.EqualTo("mnuEnvReferenceChoices"),
+					"the generic menu carries no environment command, so it would build empty");
+			}
+
+			var items = m_view.BuildReferenceItemMenu(request, out var colleague);
+			try
+			{
+				Assert.That(items, Is.Not.Empty,
+					"an empty menu is indistinguishable from the right-click doing nothing");
 			}
 			finally
 			{

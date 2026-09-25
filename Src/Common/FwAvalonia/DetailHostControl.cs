@@ -24,7 +24,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 
 		/// <inheritdoc />
 		public override bool IsDetailInteractionInFlight
-			=> (CurrentContent as DataTree)?.IsInteractionInFlight == true;
+			=> CurrentContent is DataTree tree
+				&& (tree.IsInteractionInFlight || tree.HasUnsubmittedText);
 
 		public DetailHostControl()
 		{

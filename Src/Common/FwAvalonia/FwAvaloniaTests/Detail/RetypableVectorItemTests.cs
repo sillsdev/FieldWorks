@@ -1,0 +1,530 @@
+// Copyright (c) 2026 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
+using System.Collections.Generic;
+using System.Linq;
+using Avalonia.Automation;
+using Avalonia.Controls;
+using Avalonia.Headless;
+using Avalonia.Headless.NUnit;
+using Avalonia.Input;
+using Avalonia.Threading;
+using Avalonia.VisualTree;
+using NUnit.Framework;
+using SIL.FieldWorks.Common.FwAvalonia.Detail;
+using SIL.FieldWorks.Common.FwAvalonia.ViewDefinition;
+
+namespace FwAvaloniaTests.Detail
+{
+	/// <summary>
+	/// A reference-vector row whose domain can reconcile typed text renders its items as editors,
+	/// so an item already on the field can be changed rather than only added and removed. Every
+	/// other vector row keeps the read-only items it has always had, which most of these pin.
+	/// </summary>
+	[TestFixture]
+	public class RetypableVectorItemTests
+	{
+		/// <summary>Records what the row stages, and whether it claims the capability.</summary>
+		private sealed class FakeTextEditing : IDetailEditContext, IReferenceTextEditing
+		{
+			public bool Retypable = true;
+			public bool SetResult = true;
+			public readonly List<(string Key, string Text)> Edits = new List<(string, string)>();
+
+			public bool CanEditReferenceItemText(DetailField field) => Retypable;
+
+			public bool TrySetReferenceItemText(DetailField field, string itemKey, string text)
+			{
+				Edits.Add((itemKey, text));
+				return SetResult;
+			}
+
+			public bool Creatable;
+			public bool CreateResult = true;
+			public readonly List<string> Created = new List<string>();
+
+			public bool CanCreateReferenceItem(DetailField field) => Creatable;
+
+			public bool TryCreateAndAddReferenceItem(DetailField field, string text)
+			{
+				Created.Add(text);
+				return CreateResult;
+			}
+
+			public bool IsOpen => false;
+			public bool TrySetText(DetailField f, string ws, string v) => false;
+			public bool TrySetRichText(DetailField f, string ws, DetailRichTextValue v) => false;
+			public bool TrySetOption(DetailField f, string key) => false;
+			public bool TryAddReferenceItem(DetailField f, string key) => false;
+			public bool TryRemoveReferenceItem(DetailField f, string key) => true;
+			public bool TryMoveReferenceItem(DetailField f, string key, bool forward) => false;
+			public bool TryResetReferenceOrder(DetailField f) => false;
+			public IReadOnlyList<string> Validate() => new List<string>();
+			public void Commit() { }
+			public void Cancel() { }
+		}
+
+		private static DetailField Row() => new DetailField(
+			"MoStemAllomorph/x/#0", "Environments", "PhoneEnv", null,
+			DetailFieldKind.ReferenceVector, EditorClassification.Known, "PhoneEnv", null,
+			HostRouting.Inherit, null, null, null, isEditable: true,
+			items: new List<DetailChoiceOption>
+			{
+				new DetailChoiceOption("e1", "/_#"),
+				new DetailChoiceOption("e2", "/_a")
+			});
+
+		private static DetailField RowOf(params string[] names) => new DetailField(
+			"MoStemAllomorph/x/#0", "Environments", "PhoneEnv", null,
+			DetailFieldKind.ReferenceVector, EditorClassification.Known, "PhoneEnv", null,
+			HostRouting.Inherit, null, null, null, isEditable: true,
+			items: names.Select((n, i) => new DetailChoiceOption("e" + i, n)).ToList());
+
+		private static (FwReferenceVectorField Row, Window Window) Show(
+			FakeTextEditing context, System.Action gestureCompleted = null)
+		{
+			var row = new FwReferenceVectorField(Row(), "PhoneEnv", context, gestureCompleted);
+			var window = new Window { Content = row, Width = 480, Height = 200 };
+			window.Show();
+			Dispatcher.UIThread.RunJobs();
+			return (row, window);
+		}
+
+		// Fails with the reason rather than handing back null, so a row that rendered labels
+		// says so instead of surfacing as a NullReferenceException three lines later.
+		private static TextBox NewItemSlot(FwReferenceVectorField row)
+			=> row.GetVisualDescendants().OfType<TextBox>().FirstOrDefault(
+				b => AutomationProperties.GetAutomationId(b) == "PhoneEnv.New");
+
+		private static void PressEnter(TextBox box)
+		{
+			box.RaiseEvent(new KeyEventArgs
+			{
+				RoutedEvent = InputElement.KeyDownEvent,
+				Key = Key.Enter
+			});
+			Dispatcher.UIThread.RunJobs();
+		}
+
+		private static TextBox Editor(FwReferenceVectorField row, string key)
+		{
+			var box = row.GetVisualDescendants().OfType<TextBox>().FirstOrDefault(
+				b => AutomationProperties.GetAutomationId(b)
+					== FwReferenceVectorField.ItemAutomationId("PhoneEnv", key));
+			Assert.That(box, Is.Not.Null, "the row rendered no editor for item '" + key + "'");
+			return box;
+		}
+
+		/// <summary>
+		/// PhoneEnvReferenceView puts every item in one Views paragraph, which breaks to a new
+		/// line when it runs out of width. A horizontal stack ran off the right edge instead,
+		/// cutting whichever item the width ran out in -- the end of an environment simply
+		/// disappeared.
+		/// </summary>
+		[AvaloniaTest]
+		public void ARowNarrowerThanItsItems_WrapsThemRatherThanCuttingOne()
+		{
+			var row = new FwReferenceVectorField(
+				RowOf("/_#", "/_a", "/ _ zt", "/_[V]", "/_[C]"), "PhoneEnv",
+				new FakeTextEditing(), null);
+			var host = new Border { Child = row, Width = 150 };
+			var window = new Window { Content = host, Width = 200, Height = 300 };
+			window.Show();
+			Dispatcher.UIThread.RunJobs();
+			window.UpdateLayout();
+			Dispatcher.UIThread.RunJobs();
+
+			var overhang = row.Children
+				.Where(c => c.Bounds.Right > row.Bounds.Width + 0.5)
+				.Select(c => $"{c.GetType().Name} right={c.Bounds.Right:F1}")
+				.ToList();
+
+			Assert.That(overhang, Is.Empty,
+				"an item arranged past the row's own width is cut off at the edge, which is "
+				+ "how the end of an environment went missing; row width "
+				+ row.Bounds.Width.ToString("F1"));
+			Assert.That(row.Children.Any(c => c.Bounds.Y > 0.5), Is.True,
+				"and they must actually have wrapped -- if everything still sits on one line "
+				+ "the row was wide enough and this test proves nothing");
+		}
+
+		[AvaloniaTest]
+		public void ARetypableRow_RendersItsItemsAsEditors()
+		{
+			var (row, _) = Show(new FakeTextEditing());
+
+			Assert.That(Editor(row, "e1").Text, Is.EqualTo("/_#"),
+				"an item the domain can reconcile has to be typeable and show its own text, or "
+				+ "it can only be removed and re-added");
+		}
+
+		/// <summary>
+		/// A TextBox measures its own text short of what it draws, so the last character was
+		/// cut off. The editor is held to the width the text actually measures.
+		/// </summary>
+		[AvaloniaTest]
+		public void AnItemEditor_IsNeverNarrowerThanItsOwnText()
+		{
+			var (row, _) = Show(new FakeTextEditing());
+			var box = Editor(row, "e1");
+
+			var label = new TextBlock { Text = box.Text, FontSize = box.FontSize };
+			label.Measure(new Avalonia.Size(double.PositiveInfinity, double.PositiveInfinity));
+
+			Assert.That(box.MinWidth, Is.GreaterThanOrEqualTo(label.DesiredSize.Width),
+				"an editor narrower than its own text cuts the end off it; text '" + box.Text
+				+ "' measures " + label.DesiredSize.Width.ToString("F1"));
+		}
+
+		/// <summary>
+		/// Staging waits for the edit to finish, so between the first keystroke and that finish
+		/// the domain knows nothing about the text. A host that rebuilds the view in that window
+		/// -- an external change arriving while the user types -- would discard it, so the row
+		/// has to report itself busy for as long as it holds text nobody else has.
+		/// </summary>
+		[AvaloniaTest]
+		public void AnEditorHoldingTypedText_ReportsTheRowBusy_UntilTheEditFinishes()
+		{
+			var context = new FakeTextEditing();
+			var (row, _) = Show(context);
+			var box = Editor(row, "e1");
+			Assert.That(row.HasUnstagedText, Is.False, "precondition: nothing typed yet");
+
+			box.Text = "/_zz";
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(row.HasUnstagedText, Is.True,
+				"the domain has not been told, so a rebuild now would lose what was typed");
+
+			PressEnter(box);
+
+			Assert.That(row.HasUnstagedText, Is.False,
+				"the edit finished and staged, so the row is no longer holding anything");
+		}
+
+		[AvaloniaTest]
+		public void TypingIntoTheSlot_ReportsTheRowBusy()
+		{
+			var (row, _) = Show(new FakeTextEditing { Creatable = true });
+			var slot = NewItemSlot(row);
+
+			slot.Text = "/_zz";
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(row.HasUnstagedText, Is.True,
+				"a new environment being typed is as losable as a retyped one");
+		}
+
+		/// <summary>
+		/// Restoring the original text leaves nothing to lose, so the row must stop holding the
+		/// host: otherwise an abandoned edit would block refreshes indefinitely.
+		/// </summary>
+		[AvaloniaTest]
+		public void RetypingBackToTheOriginal_StopsReportingBusy()
+		{
+			var (row, _) = Show(new FakeTextEditing());
+			var box = Editor(row, "e1");
+
+			box.Text = "/_zz";
+			Dispatcher.UIThread.RunJobs();
+			box.Text = "/_#";
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(row.HasUnstagedText, Is.False);
+		}
+
+		/// <summary>
+		/// A refused edit is still a finished one. Holding the host busy for it would block
+		/// every later refresh, and the row can do nothing more about text the domain
+		/// declined.
+		/// </summary>
+		[AvaloniaTest]
+		public void ARefusedEdit_StopsReportingBusy()
+		{
+			var context = new FakeTextEditing { SetResult = false };
+			var (row, _) = Show(context);
+			var box = Editor(row, "e1");
+
+			box.Text = "/_zz";
+			Dispatcher.UIThread.RunJobs();
+			PressEnter(box);
+
+			Assert.That(context.Edits.Count, Is.EqualTo(1), "precondition: the edit was offered");
+			Assert.That(row.HasUnstagedText, Is.False,
+				"the domain refused it, and there is nothing further the row can do");
+		}
+
+		/// <summary>
+		/// Cancelling must leave nothing behind. The editor stages on focus loss, so text left
+		/// in it after a cancel would be staged by the next Tab -- saving the edit the user
+		/// just discarded.
+		/// </summary>
+		[AvaloniaTest]
+		public void DiscardingUnstagedText_RestoresTheEditor_AndStagesNothingOnLeaving()
+		{
+			var context = new FakeTextEditing();
+			var (row, _) = Show(context);
+			var box = Editor(row, "e1");
+			box.Text = "/_zz";
+			Dispatcher.UIThread.RunJobs();
+
+			row.DiscardUnstagedText();
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(box.Text, Is.EqualTo("/_#"), "the editor shows what it showed before");
+			Assert.That(row.HasUnstagedText, Is.False, "and holds nothing the host must wait for");
+
+			PressEnter(box);
+
+			Assert.That(context.Edits, Is.Empty,
+				"leaving the editor after a discard must not stage the cancelled text");
+		}
+
+		[AvaloniaTest]
+		public void DiscardingUnstagedText_ClearsTheTypedSlot()
+		{
+			var context = new FakeTextEditing { Creatable = true };
+			var (row, _) = Show(context);
+			var slot = NewItemSlot(row);
+			slot.Text = "/_zz";
+			Dispatcher.UIThread.RunJobs();
+
+			row.DiscardUnstagedText();
+			PressEnter(slot);
+
+			Assert.That(context.Created, Is.Empty,
+				"a cancelled new environment must not be created by leaving the slot");
+		}
+
+		/// <summary>
+		/// Right-clicking an item makes it current, which is what the menu it raises acts on.
+		/// An editor marks the press handled to place its caret, so a handler added the ordinary
+		/// way never sees it -- the item menu would then resolve no object and open empty.
+		/// Asserted for an editor AND a read-only item, because the two must not diverge here.
+		/// </summary>
+		[AvaloniaTest]
+		[TestCase(true, TestName = "RightClickingAnItemEditor_MakesItCurrentForItsMenu")]
+		[TestCase(false, TestName = "RightClickingAReadOnlyItem_MakesItCurrentForItsMenu")]
+		public void RightClickingAnItem_MakesItCurrentForItsMenu(bool retypable)
+		{
+			var requests = new List<DetailMenuRequest>();
+			var row = new FwReferenceVectorField(Row(), "PhoneEnv",
+				new FakeTextEditing { Retypable = retypable }, null, null, r => requests.Add(r));
+			var window = new Window { Content = row, Width = 480, Height = 200 };
+			window.Show();
+			Dispatcher.UIThread.RunJobs();
+			window.UpdateLayout();
+			Dispatcher.UIThread.RunJobs();
+
+			var item = row.GetVisualDescendants().OfType<Control>().FirstOrDefault(
+				c => AutomationProperties.GetAutomationId(c)
+					== FwReferenceVectorField.ItemAutomationId("PhoneEnv", "e1"));
+			Assert.That(item, Is.Not.Null, "precondition: the row rendered item e1");
+			var centre = new Avalonia.Point(
+				item.Bounds.X + item.Bounds.Width / 2,
+				item.Bounds.Y + item.Bounds.Height / 2);
+
+			window.MouseDown(centre, MouseButton.Right);
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(row.SelectedItemKey, Is.EqualTo("e1"),
+				"a right-click press must make the item under the pointer current");
+
+			window.MouseUp(centre, MouseButton.Right);
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(requests, Is.Not.Empty, "the right-click raised a menu request");
+			Assert.That(requests[requests.Count - 1].SelectedItemKey, Is.EqualTo("e1"),
+				"and the request names the item, or the host resolves no object and the menu "
+				+ "opens empty -- which reads as the right-click doing nothing at all");
+		}
+
+		[AvaloniaTest]
+		public void ARowThatCannotRetype_KeepsReadOnlyItems()
+		{
+			var (row, _) = Show(new FakeTextEditing { Retypable = false });
+
+			Assert.That(row.GetVisualDescendants().OfType<TextBox>(), Is.Empty,
+				"every other vector row in the app must be untouched by this");
+			Assert.That(row.GetVisualDescendants().OfType<TextBlock>().Select(t => t.Text),
+				Does.Contain("/_#"));
+		}
+
+		/// <summary>
+		/// Staged when the edit FINISHES, not per keystroke. Each stage reconciles the text
+		/// against the project, so staging every keystroke of "/_zz" would leave junk
+		/// environments behind for "/", "/_" and "/_z".
+		/// </summary>
+		[AvaloniaTest]
+		public void TypingAlone_StagesNothing_UntilTheEditIsFinished()
+		{
+			var context = new FakeTextEditing();
+			var (row, _) = Show(context);
+			var box = Editor(row, "e1");
+
+			box.Text = "/_zz";
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(context.Edits, Is.Empty,
+				"a stage per keystroke would mint an environment per keystroke");
+
+			box.RaiseEvent(new KeyEventArgs
+			{
+				RoutedEvent = InputElement.KeyDownEvent,
+				Key = Key.Enter
+			});
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(context.Edits, Is.EqualTo(new[] { ("e1", "/_zz") }),
+				"finishing the edit stages it once, against the item's own key");
+		}
+
+		/// <summary>
+		/// Emptying an item is how the user removes it, so the row must pass the blank text
+		/// through to the domain rather than treating it as nothing to do.
+		/// </summary>
+		[AvaloniaTest]
+		public void EmptyingAnItemEditor_StagesTheBlankText()
+		{
+			var context = new FakeTextEditing();
+			var (row, _) = Show(context);
+			var box = Editor(row, "e1");
+
+			box.Text = string.Empty;
+			PressEnter(box);
+
+			Assert.That(context.Edits.Count, Is.EqualTo(1),
+				"a cleared item must reach the domain, which is what removes it");
+			Assert.That(context.Edits[0].Key, Is.EqualTo("e1"));
+			Assert.That(string.IsNullOrEmpty(context.Edits[0].Text), Is.True,
+				"and it must arrive blank, not filtered out on the way");
+		}
+
+		[AvaloniaTest]
+		public void FinishingAnUnchangedEdit_StagesNothing()
+		{
+			var context = new FakeTextEditing();
+			var (row, _) = Show(context);
+			var box = Editor(row, "e1");
+
+			box.RaiseEvent(new KeyEventArgs
+			{
+				RoutedEvent = InputElement.KeyDownEvent,
+				Key = Key.Enter
+			});
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(context.Edits, Is.Empty,
+				"text that did not change must not reconcile, which would rewrite the shared "
+				+ "environment for every field referencing it");
+		}
+
+		/// <summary>
+		/// PhoneEnvReferenceView keeps an always-present empty line at the end, so a new
+		/// environment can be typed without going near the chooser. The "+" picker stays: it is
+		/// the other route, not the only one.
+		/// </summary>
+		[AvaloniaTest]
+		public void ARowThatCanCreate_OffersATypedSlot_AlongsideThePicker()
+		{
+			var (row, _) = Show(new FakeTextEditing { Creatable = true });
+
+			Assert.That(NewItemSlot(row), Is.Not.Null,
+				"adding by typing must not require the chooser");
+			Assert.That(row.GetVisualDescendants().OfType<Button>()
+					.Any(b => AutomationProperties.GetAutomationId(b) == "PhoneEnv.Add"),
+				Is.True, "and the picker is still there -- this adds a route, it replaces none");
+		}
+
+		[AvaloniaTest]
+		public void ARowThatCannotCreate_OffersNoTypedSlot()
+		{
+			var (row, _) = Show(new FakeTextEditing { Creatable = false });
+
+			Assert.That(NewItemSlot(row), Is.Null,
+				"a row that cannot mint a target has nothing to type into");
+		}
+
+		[AvaloniaTest]
+		public void TypingIntoTheSlot_CreatesOnlyWhenTheEditFinishes()
+		{
+			var context = new FakeTextEditing { Creatable = true };
+			var (row, _) = Show(context);
+			var slot = NewItemSlot(row);
+
+			slot.Text = "/_zz";
+			Dispatcher.UIThread.RunJobs();
+			Assert.That(context.Created, Is.Empty,
+				"creating per keystroke would mint an environment per keystroke");
+
+			PressEnter(slot);
+
+			Assert.That(context.Created, Is.EqualTo(new[] { "/_zz" }),
+				"finishing the edit creates once, through the same seam the picker's create row "
+				+ "uses");
+		}
+
+		[AvaloniaTest]
+		public void FinishingAnEmptySlot_CreatesNothing()
+		{
+			var context = new FakeTextEditing { Creatable = true };
+			var (row, _) = Show(context);
+
+			PressEnter(NewItemSlot(row));
+
+			Assert.That(context.Created, Is.Empty,
+				"an untouched slot is how the row always looks; leaving it must mint nothing");
+		}
+
+		/// <summary>
+		/// The slot names no item. Without clearing the row's current item, a menu request from
+		/// here would carry whichever item was clicked before and act on that one instead.
+		/// </summary>
+		[AvaloniaTest]
+		public void FocusingTheSlot_ClearsTheRowsCurrentItem()
+		{
+			var (row, _) = Show(new FakeTextEditing { Creatable = true });
+			row.SelectItem("e1");
+			Assert.That(row.SelectedItemKey, Is.EqualTo("e1"), "precondition: an item is current");
+
+			NewItemSlot(row).Focus();
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(row.SelectedItemKey, Is.Null,
+				"no item is current while the caret is in the slot, so a menu request from here "
+				+ "carries none rather than a stale one");
+		}
+
+		[AvaloniaTest]
+		public void AStagedEdit_CompletesTheGesture_AndARefusedOneDoesNot()
+		{
+			var gestures = 0;
+			var context = new FakeTextEditing();
+			var (row, _) = Show(context, () => gestures++);
+			Editor(row, "e1").Text = "/_zz";
+			Editor(row, "e1").RaiseEvent(new KeyEventArgs
+			{
+				RoutedEvent = InputElement.KeyDownEvent,
+				Key = Key.Enter
+			});
+			Dispatcher.UIThread.RunJobs();
+			Assert.That(gestures, Is.EqualTo(1), "a staged edit commits and re-shows");
+
+			context.SetResult = false;
+			var refused = new FakeTextEditing { SetResult = false };
+			var (other, _) = Show(refused, () => gestures++);
+			Editor(other, "e2").Text = "/_yy";
+			Editor(other, "e2").RaiseEvent(new KeyEventArgs
+			{
+				RoutedEvent = InputElement.KeyDownEvent,
+				Key = Key.Enter
+			});
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(gestures, Is.EqualTo(1),
+				"a refused edit completes no gesture, so the row is not re-shown over an edit "
+				+ "the domain did not take");
+		}
+	}
+}
