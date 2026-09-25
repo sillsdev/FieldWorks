@@ -5,6 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Avalonia.LogicalTree;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwAvalonia;
 using SIL.FieldWorks.Common.FwAvalonia.Detail;
@@ -103,7 +104,9 @@ namespace SIL.FieldWorks.XWorks
 			{
 				WritingSystemServices.FindOrCreateWritingSystem(Cache, null, tag, false, false, out ws);
 				ws.RightToLeftScript = rightToLeft;
-				Cache.LangProject.AddToCurrentAnalysisWritingSystems(ws);
+				// The project outlives each test, so a writing system may already be current.
+				if (!Cache.LangProject.CurrentAnalysisWritingSystems.Contains(ws))
+					Cache.LangProject.AddToCurrentAnalysisWritingSystems(ws);
 			});
 			return ws;
 		}
@@ -523,6 +526,117 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(m_sense.ReferringReversalIndexEntries.Select(e => e.ReversalForm.get_String(EnWs).Text),
 				Is.EquivalentTo(new[] { "one", "two" }), "the second slot adds, it does not replace the first");
 			Assert.That(editing.IssueAddRowKey("no-such-key"), Is.Null);
+		}
+
+		[Test]
+		public void SwappingTwoRows_KeepsBothEntriesLinked()
+		{
+			var dwelling = AddEntry(m_enIndex, "dwelling", m_sense);
+			var abode = AddEntry(m_enIndex, "abode", m_sense);
+			var (editing, host) = NewContext();
+			var rows = Group(editing.CreateGroups(null), EnTag).Rows.Where(r => !r.IsAddSlot).ToList();
+			var first = rows.Single(r => r.Text == "dwelling");
+			var second = rows.Single(r => r.Text == "abode");
+
+			Assert.That(editing.TryCommitRows(new[]
+			{
+				new KeyValuePair<string, string>(first.RowKey, "abode"),
+				new KeyValuePair<string, string>(second.RowKey, "dwelling")
+			}), Is.True);
+			host.Commit();
+
+			Assert.That(dwelling.IsValidObject && abode.IsValidObject, Is.True,
+				"an entry one row lets go and another takes is never deleted");
+			Assert.That(m_sense.ReferringReversalIndexEntries, Is.EquivalentTo(new[] { dwelling, abode }));
+		}
+
+		[Test]
+		public void ShiftingTextUpARow_DeletesOnlyTheEntryNoRowKeeps()
+		{
+			var one = AddEntry(m_enIndex, "one", m_sense);
+			var two = AddEntry(m_enIndex, "two", m_sense);
+			var (editing, host) = NewContext();
+			var rows = Group(editing.CreateGroups(null), EnTag).Rows.Where(r => !r.IsAddSlot).ToList();
+
+			editing.TryCommitRows(new[]
+			{
+				new KeyValuePair<string, string>(rows.Single(r => r.Text == "one").RowKey, "two"),
+				new KeyValuePair<string, string>(rows.Single(r => r.Text == "two").RowKey, string.Empty)
+			});
+			host.Commit();
+
+			Assert.That(one.IsValidObject, Is.False, "no row shows the first entry any more");
+			Assert.That(m_sense.ReferringReversalIndexEntries, Is.EqualTo(new[] { two }));
+		}
+
+		[Test]
+		public void AnUnchangedRow_KeepsItsEntrysOtherWritingSystemForms()
+		{
+			var enGb = AddAnalysisWs("en-GB");
+			var entry = AddEntry(m_enIndex, "house", m_sense);
+			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor,
+				() => entry.ReversalForm.set_String(enGb.Handle, "houze"));
+			var (editing, host) = NewContext();
+			var row = Group(editing.CreateGroups(null), EnTag).Rows.Single(r => !r.IsAddSlot);
+
+			Assert.That(editing.TryCommitRow(row.RowKey, "house"), Is.False,
+				"the alternative is not part of the row's text, so the row is unchanged");
+			Assert.That(host.IsOpen, Is.False);
+			Assert.That(entry.ReversalForm.get_String(enGb.Handle).Text, Is.EqualTo("houze"));
+		}
+
+		[Test]
+		public void PrecomposedTyping_MatchesADecomposedStoredForm()
+		{
+			const string decomposed = "café";
+			const string precomposed = "café";
+			var entry = AddEntry(m_enIndex, decomposed, m_sense);
+			var (editing, host) = NewContext();
+			var group = Group(editing.CreateGroups(null), EnTag);
+
+			Assert.That(editing.TryCommitRow(group.Rows.Single(r => !r.IsAddSlot).RowKey, precomposed),
+				Is.False, "the same text in another normalization is no change");
+			var other = AddOtherSense();
+			var (otherEditing, otherHost) = NewContext(other);
+			otherEditing.TryCommitRow(AddRow(Group(otherEditing.CreateGroups(null), EnTag)).RowKey, precomposed);
+			otherHost.Commit();
+
+			Assert.That(m_enIndex.EntriesOC, Is.EqualTo(new[] { entry }), "the existing entry is reused");
+			Assert.That(entry.SensesRS, Does.Contain(other));
+		}
+
+		[Test]
+		public void ACommitForADeletedSense_ChangesNothing()
+		{
+			var entry = AddEntry(m_enIndex, "dwelling", m_sense);
+			var (editing, host) = NewContext();
+			var row = Group(editing.CreateGroups(null), EnTag).Rows.Single(r => !r.IsAddSlot);
+			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () => m_entry.SensesOS.Remove(m_sense));
+
+			Assert.That(editing.TryCommitRow(row.RowKey, "abode"), Is.False);
+			Assert.That(editing.TryResolveMainEntryGuid(row.RowKey), Is.Null);
+			Assert.That(host.IsOpen, Is.False);
+			Assert.That(entry.ReversalForm.get_String(EnWs).Text, Is.EqualTo("dwelling"));
+		}
+
+		[Test]
+		public void Settling_SavesWhatTheFieldHolds_WhileFocusIsStillInIt()
+		{
+			AddEntry(m_enIndex, "dwelling", m_sense);
+			var host = DetailComposer.Compose(m_entry, Cache).EditContext;
+			var holder = new DetailEditContextHolder();
+			holder.Replace(host);
+			var field = (FwReversalEntriesField)new ReversalIndexEntryPlugin().BuildControl(
+				new SlicePluginBuildContext(m_sense, null, () => host, Cache));
+			var slot = field.GetLogicalDescendants().OfType<Avalonia.Controls.TextBox>()
+				.Single(box => box.Text == "dwelling");
+			slot.Text = "abode";
+
+			holder.Settle();
+
+			Assert.That(host.IsOpen, Is.False, "the settle committed the edit it flushed");
+			Assert.That(m_sense.ReferringReversalIndexEntries.Single().ReversalForm.get_String(EnWs).Text,
+				Is.EqualTo("abode"));
 		}
 
 		[Test]

@@ -3145,11 +3145,10 @@ namespace SIL.FieldWorks.XWorks
 				var visible = _showAllWsFields != null && _showAllWsFields.Contains(node.StableId)
 					? null
 					: node.VisibleWritingSystems;
-				// Built at render time: the link callback and column width exist only in the
-				// render context.
+				// Built at render time, since the view's services exist only then.
 				Func<SliceFactoryContext, Avalonia.Controls.Control> factory = render =>
 					plugin.BuildControl(new SlicePluginBuildContext(obj, node, _editContextAccessor, _cache,
-						_writingSystemFocused, render?.LinkRequested, render?.WsAbbrevColumnWidth, visible));
+						_writingSystemFocused, render, visible));
 				AddField(new DetailField(StableId(node, obj), Localize(node.Label) ?? node.Field,
 					node.Field, node.WritingSystem, DetailFieldKind.Custom, node.EditorClassification,
 					node.AutomationId, node.LocalizationKey, node.Routing, null, null, null,

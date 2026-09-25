@@ -36,11 +36,18 @@ namespace FwAvaloniaTests.Detail
 		{
 			public readonly List<string> Events = new List<string>();
 
-			public bool TryCommitRow(string rowKey, string typedText)
+			public int Batches;
+
+			public bool TryCommitRows(IReadOnlyList<KeyValuePair<string, string>> edits)
 			{
-				Events.Add("commit " + rowKey + "=" + typedText);
+				Batches++;
+				foreach (var edit in edits)
+					Events.Add("commit " + edit.Key + "=" + edit.Value);
 				return true;
 			}
+
+			public bool TryCommitRow(string rowKey, string typedText)
+				=> TryCommitRows(new[] { new KeyValuePair<string, string>(rowKey, typedText) });
 
 			private int _issued;
 
@@ -61,6 +68,8 @@ namespace FwAvaloniaTests.Detail
 			public bool TryRemoveReferenceItem(DetailField field, string optionKey) => false;
 
 			public bool TryMoveReferenceItem(DetailField field, string optionKey, bool forward) => false;
+
+			public bool TryResetReferenceOrder(DetailField field) => false;
 
 			public IReadOnlyList<string> Validate() => Array.Empty<string>();
 
@@ -135,7 +144,7 @@ namespace FwAvaloniaTests.Detail
 		public void AGroupsSlots_ShareOneLine_WithABarBetweenEachPair()
 		{
 			var (field, _, window) = Show(new RecordingReversalContext(), null, English("dwelling", "abode"));
-			var group = Find<WrapPanel>(field, "Reversal.en");
+			var group = Find<Panel>(field, "Reversal.en");
 			var first = Find<TextBox>(field, "Reversal.en.0");
 			var second = Find<TextBox>(field, "Reversal.en.1");
 			var add = Find<TextBox>(field, "Reversal.en.Add");
@@ -181,18 +190,60 @@ namespace FwAvaloniaTests.Detail
 		}
 
 		[AvaloniaTest]
+		public void TheAddSlot_FillsTheRestOfItsLine_AndEntrySlotsDoNot()
+		{
+			var (field, _, window) = Show(new RecordingReversalContext(), null, English("dwelling"));
+			var group = Find<Panel>(field, "Reversal.en");
+			var entry = Find<TextBox>(field, "Reversal.en.0");
+			var add = Find<TextBox>(field, "Reversal.en.Add");
+
+			Assert.That(add.Bounds.Right, Is.EqualTo(group.Bounds.Width).Within(0.5),
+				"the add slot reaches the end of its line");
+			Assert.That(add.Bounds.Width, Is.GreaterThan(add.DesiredSize.Width));
+			Assert.That(entry.Bounds.Width, Is.EqualTo(entry.DesiredSize.Width).Within(0.5),
+				"an entry slot stays as wide as its text");
+		}
+
+		[AvaloniaTest]
+		public void ALoneAddSlot_FillsTheWholeLine()
+		{
+			var (field, _, _) = Show(new RecordingReversalContext(), null, English());
+			var group = Find<Panel>(field, "Reversal.en");
+			var add = Find<TextBox>(field, "Reversal.en.Add");
+
+			Assert.That(add.Bounds.X, Is.Zero);
+			Assert.That(add.Bounds.Width, Is.EqualTo(group.Bounds.Width).Within(0.5));
+		}
+
+		[AvaloniaTest]
+		public void AfterGrowth_OnlyTheNewLastSlotStretches()
+		{
+			var (field, _, _) = Show(new RecordingReversalContext(), null, English());
+			var group = Find<Panel>(field, "Reversal.en");
+			var typed = Find<TextBox>(field, "Reversal.en.Add");
+
+			typed.Focus();
+			typed.Text = "home";
+			Dispatcher.UIThread.RunJobs();
+			var fresh = Find<TextBox>(field, "Reversal.en.Add1");
+
+			Assert.That(typed.Bounds.Width, Is.EqualTo(typed.DesiredSize.Width).Within(0.5));
+			Assert.That(fresh.Bounds.Right, Is.EqualTo(group.Bounds.Width).Within(0.5));
+		}
+
+		[AvaloniaTest]
 		public void ALoneAddSlot_HasNoBar()
 		{
 			var (field, _, _) = Show(new RecordingReversalContext(), null, English());
 
-			Assert.That(Find<WrapPanel>(field, "Reversal.en").Children.OfType<Border>(), Is.Empty);
+			Assert.That(Find<Panel>(field, "Reversal.en").Children.OfType<Border>(), Is.Empty);
 		}
 
 		[AvaloniaTest]
 		public void ClickingAGroupsFreeSpace_StartsTypingInItsAddSlot()
 		{
 			var (field, _, window) = Show(new RecordingReversalContext(), null, English("dwelling"));
-			var group = Find<WrapPanel>(field, "Reversal.en");
+			var group = Find<Panel>(field, "Reversal.en");
 			var point = group.TranslatePoint(new Point(group.Bounds.Width - 2, 2), window);
 
 			window.MouseDown(point.Value, MouseButton.Left);
@@ -210,8 +261,8 @@ namespace FwAvaloniaTests.Detail
 
 			var (field, _, _) = Show(new RecordingReversalContext(), null, English("house"), french);
 
-			Assert.That(Find<WrapPanel>(field, "Reversal.en"), Is.Not.Null);
-			Assert.That(Find<WrapPanel>(field, "Reversal.fr"), Is.Not.Null);
+			Assert.That(Find<Panel>(field, "Reversal.en"), Is.Not.Null);
+			Assert.That(Find<Panel>(field, "Reversal.fr"), Is.Not.Null);
 			Assert.That(Find<TextBox>(field, "Reversal.fr.0").Text, Is.EqualTo("maison"));
 		}
 
@@ -280,6 +331,48 @@ namespace FwAvaloniaTests.Detail
 			Dispatcher.UIThread.RunJobs();
 			Assert.That(context.Events, Is.EqualTo(new[] { "commit en0=abode", "commit en-add=home" }),
 				"leaving the field commits every changed slot, in order");
+			Assert.That(context.Batches, Is.EqualTo(1), "the changed slots are saved as one change");
+		}
+
+		[AvaloniaTest]
+		public void Escape_RestoresEverySlotsSavedText_AndSavesNothing()
+		{
+			var context = new RecordingReversalContext();
+			var (field, other, _) = Show(context, null, English("dwelling", "abode"));
+			var first = Find<TextBox>(field, "Reversal.en.0");
+			var second = Find<TextBox>(field, "Reversal.en.1");
+			TypeAndLeave(first, "house", other);
+			first.Focus();
+			first.Text = "home";
+			second.Focus();
+			second.Text = "hut";
+
+			Press(second, Key.Escape);
+			other.Focus();
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(first.Text, Is.EqualTo("house"), "the text saved earlier stays");
+			Assert.That(second.Text, Is.EqualTo("abode"));
+			Assert.That(context.Events, Is.EqualTo(new[] { "commit en0=house" }),
+				"nothing typed since the last save is saved");
+		}
+
+		[AvaloniaTest]
+		public void CommitPendingEdits_SavesWhileFocusIsStillInside()
+		{
+			var context = new RecordingReversalContext();
+			var (field, other, _) = Show(context, null, English("dwelling"));
+			var entry = Find<TextBox>(field, "Reversal.en.0");
+			entry.Focus();
+			entry.Text = "house";
+
+			field.CommitPendingEdits();
+			Assert.That(entry.IsFocused, Is.True);
+			other.Focus();
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(context.Events, Is.EqualTo(new[] { "commit en0=house" }),
+				"leaving afterwards saves nothing more");
 		}
 
 		[AvaloniaTest]
@@ -296,7 +389,7 @@ namespace FwAvaloniaTests.Detail
 			var fresh = Find<TextBox>(field, "Reversal.en.Add1");
 			Assert.That(fresh, Is.Not.Null, "the first keystroke opens another empty slot");
 			Assert.That(fresh.Text, Is.Empty);
-			Assert.That(Find<WrapPanel>(field, "Reversal.en").Children.OfType<Border>().Count(), Is.EqualTo(2),
+			Assert.That(Find<Panel>(field, "Reversal.en").Children.OfType<Border>().Count(), Is.EqualTo(2),
 				"the new slot is joined to the line by a bar");
 			Assert.That(add.IsFocused, Is.True, "typing continues in the same slot");
 			Assert.That(context.Events, Is.Empty, "nothing is saved while typing");
@@ -359,7 +452,7 @@ namespace FwAvaloniaTests.Detail
 			Dispatcher.UIThread.RunJobs();
 
 			Assert.That(Find<TextBox>(field, "Reversal.en.Add"), Is.Null);
-			Assert.That(Find<WrapPanel>(field, "Reversal.en").Children.OfType<Border>().Count(), Is.EqualTo(1),
+			Assert.That(Find<Panel>(field, "Reversal.en").Children.OfType<Border>().Count(), Is.EqualTo(1),
 				"the removed slot takes its bar with it");
 			Assert.That(context.Events, Is.Empty);
 		}
@@ -471,7 +564,7 @@ namespace FwAvaloniaTests.Detail
 			var (field, _, _) = Show(new RecordingReversalContext(), null, English(forms));
 			var boxes = Enumerable.Range(0, forms.Length)
 				.Select(i => Find<TextBox>(field, "Reversal.en." + i)).ToList();
-			var group = Find<WrapPanel>(field, "Reversal.en");
+			var group = Find<Panel>(field, "Reversal.en");
 			double Top(TextBox box) => box.TranslatePoint(new Point(0, 0), group).Value.Y;
 			var firstLineTop = Top(boxes[0]);
 			var onSecondLine = boxes.Where(b => Top(b) > firstLineTop).ToList();

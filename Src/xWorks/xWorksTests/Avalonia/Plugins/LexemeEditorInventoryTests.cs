@@ -229,8 +229,7 @@ namespace SIL.FieldWorks.XWorks
 			public SIL.FieldWorks.Common.FwAvalonia.ViewDefinition.ViewNode LastNode;
 			public IDetailEditContext LastEditContext;
 			public LcmCache LastCache;
-			public Action<DetailLinkRequest> LastLinkRequested;
-			public double? LastWsAbbrevColumnWidth;
+			public SliceFactoryContext LastRender;
 
 			public string LegacyClassName => MessageSliceClassName;
 
@@ -241,8 +240,7 @@ namespace SIL.FieldWorks.XWorks
 				LastNode = context.Node;
 				LastEditContext = context.EditContext;
 				LastCache = context.Cache;
-				LastLinkRequested = context.LinkRequested;
-				LastWsAbbrevColumnWidth = context.WsAbbrevColumnWidth;
+				LastRender = context.Render;
 				return null; // never rendered in this fixture; the view's null guard covers this
 			}
 		}
@@ -307,7 +305,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
-		public void PluginRowFactory_PassesTheRenderContextsLinkCallbackAndColumnWidth()
+		public void PluginRowFactory_PassesTheRenderContextThrough()
 		{
 			var registry = new SlicePluginRegistry();
 			var plugin = new FakeMessagesPlugin();
@@ -315,13 +313,13 @@ namespace SIL.FieldWorks.XWorks
 			var composed = DetailComposer.Compose(m_entry, Cache, plugins: registry);
 			var row = composed.Model.Fields.Single(f => f.Kind == DetailFieldKind.Custom);
 			Action<DetailLinkRequest> linkRequested = request => { };
+			var render = new SliceFactoryContext(linkRequested: linkRequested,
+				wsAbbrevColumnWidth: 37);
 
-			row.ControlFactory(new SliceFactoryContext(linkRequested: linkRequested,
-				wsAbbrevColumnWidth: 37));
+			row.ControlFactory(render);
 
-			Assert.That(plugin.LastLinkRequested, Is.SameAs(linkRequested),
-				"the plugin reaches the host's jump through the render context");
-			Assert.That(plugin.LastWsAbbrevColumnWidth, Is.EqualTo(37));
+			Assert.That(plugin.LastRender, Is.SameAs(render),
+				"the plugin reaches the host's jump and column width through the render context");
 		}
 	}
 }

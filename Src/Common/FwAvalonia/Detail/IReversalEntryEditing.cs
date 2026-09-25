@@ -3,6 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Collections.Generic;
 
 namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 {
@@ -17,18 +18,24 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 	public interface IReversalEntryEditing
 	{
 		/// <summary>
-		/// Stages the text of one row, opening the edit session only when something changes.
-		/// Text equal to what the row already shows changes nothing; empty text on an entry
-		/// row unlinks that entry. Other text is split on colons into a chain of entry and
-		/// subentry forms, and the sense is linked to the deepest entry of that chain, found or
-		/// created -- an existing entry is never renamed -- in place of the row's old entry.
-		/// An unlinked entry left with no senses and no subentries is deleted, and so is each
-		/// parent that deletion leaves with neither. Afterwards the key names the row's new
-		/// entry, or an add row again after an unlink, so a second commit on the same row edits
-		/// what the first one produced.
+		/// Stages the text of several rows as one change, opening the edit session only when
+		/// something changes. Per row: text equal to what the row already shows changes nothing;
+		/// empty text on an entry row unlinks that entry; other text is split on colons into a
+		/// chain of entry and subentry forms, and the sense is linked to the deepest entry of
+		/// that chain, found or created -- an existing entry is never renamed -- in place of the
+		/// row's old entry. Every row takes its new entry before any old one is let go, and an
+		/// old entry another row still shows stays linked. An unlinked entry left with no senses
+		/// and no subentries is deleted, and so is each parent that deletion leaves with
+		/// neither. Afterwards each key names its row's new entry, or an add row again after an
+		/// unlink, so a later commit on the same row edits what this one produced.
 		/// </summary>
-		/// <returns>False, without opening the session, for an unknown key, an empty add
-		/// row, or unchanged text.</returns>
+		/// <param name="edits">Row key to typed text, one pair per changed row.</param>
+		/// <returns>False, without opening the session, when no row changes or the sense no
+		/// longer exists; also false, after logging, when the write fails.</returns>
+		bool TryCommitRows(IReadOnlyList<KeyValuePair<string, string>> edits);
+
+		/// <summary>Stages one row's text: a <see cref="TryCommitRows"/> of that single
+		/// row.</summary>
 		bool TryCommitRow(string rowKey, string typedText);
 
 		/// <summary>

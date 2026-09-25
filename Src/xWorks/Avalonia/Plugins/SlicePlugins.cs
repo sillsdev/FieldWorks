@@ -41,9 +41,9 @@ namespace SIL.FieldWorks.XWorks
 	/// Everything the composer hands a plugin factory, bundled into one contract:
 	/// the row's object and typed node, the detail view's edit context (resolved lazily through the
 	/// composer's deferred accessor -- the context object is created during compose, BEFORE the
-	/// edit context exists; plugin factories run at render time, after), the cache, and the
-	/// host's writing-system focus and link callbacks, the view's abbreviation-column width,
-	/// and the row's writing-system restriction.
+	/// edit context exists; plugin factories run at render time, after), the cache, the
+	/// host's writing-system focus callback, the view's render-time services, and the row's
+	/// writing-system restriction.
 	/// </summary>
 	public sealed class SlicePluginBuildContext
 	{
@@ -52,8 +52,7 @@ namespace SIL.FieldWorks.XWorks
 		public SlicePluginBuildContext(ICmObject target, ViewNode node,
 			Func<IDetailEditContext> editContextAccessor, LcmCache cache,
 			Action<string> writingSystemFocused = null,
-			Action<DetailLinkRequest> linkRequested = null,
-			double? wsAbbrevColumnWidth = null,
+			SliceFactoryContext render = null,
 			IReadOnlyList<string> visibleWritingSystems = null)
 		{
 			Target = target;
@@ -61,8 +60,7 @@ namespace SIL.FieldWorks.XWorks
 			_editContextAccessor = editContextAccessor;
 			Cache = cache;
 			WritingSystemFocused = writingSystemFocused;
-			LinkRequested = linkRequested;
-			WsAbbrevColumnWidth = wsAbbrevColumnWidth;
+			Render = render;
 			VisibleWritingSystems = visibleWritingSystems;
 		}
 
@@ -84,16 +82,11 @@ namespace SIL.FieldWorks.XWorks
 		public Action<string> WritingSystemFocused { get; }
 
 		/// <summary>
-		/// The host's jump callback, the same one chooser links use: the host settles the
-		/// open edit session, then follows the link. Null when the host supplies none.
+		/// The services the view hands every row it renders, such as the jump callback chooser
+		/// links use and the width of the writing-system abbreviation column. Null when the
+		/// control is built outside a rendering view.
 		/// </summary>
-		public Action<DetailLinkRequest> LinkRequested { get; }
-
-		/// <summary>
-		/// The width the view gives its writing-system abbreviation column, so a plugin's own
-		/// abbreviations line up with the other rows. Null when the host supplies none.
-		/// </summary>
-		public double? WsAbbrevColumnWidth { get; }
+		public SliceFactoryContext Render { get; }
 
 		/// <summary>
 		/// The writing-system ids the row is restricted to, in order. Null or empty means no

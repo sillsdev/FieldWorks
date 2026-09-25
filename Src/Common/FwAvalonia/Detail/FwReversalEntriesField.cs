@@ -124,7 +124,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 	public sealed class FwReversalEntriesField : StackPanel, IDisposable
 	{
 		private readonly List<Action> _teardown = new List<Action>();
-		private readonly List<Action> _rowCommits = new List<Action>();
+		private readonly List<SlotState> _slots = new List<SlotState>();
 		private readonly List<GroupState> _groups = new List<GroupState>();
 		private readonly IReversalEntryEditing _editing;
 		private readonly Action<string> _navigationRequested;
@@ -173,6 +173,72 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			}
 		}
 
+		// Wraps its children onto lines the way a horizontal WrapPanel does, then widens the last
+		// child, the group's add slot, across whatever its line has left.
+		private sealed class SlotLinePanel : Panel
+		{
+			protected override Size MeasureOverride(Size availableSize)
+			{
+				double width = 0, height = 0, lineWidth = 0, lineHeight = 0;
+				foreach (var child in Children)
+				{
+					child.Measure(availableSize);
+					var size = child.DesiredSize;
+					if (lineWidth > 0 && lineWidth + size.Width > availableSize.Width)
+					{
+						width = Math.Max(width, lineWidth);
+						height += lineHeight;
+						lineWidth = 0;
+						lineHeight = 0;
+					}
+					lineWidth += size.Width;
+					lineHeight = Math.Max(lineHeight, size.Height);
+				}
+				width = Math.Max(width, lineWidth);
+				height += lineHeight;
+				return new Size(double.IsInfinity(availableSize.Width) ? width : availableSize.Width, height);
+			}
+
+			protected override Size ArrangeOverride(Size finalSize)
+			{
+				var lines = new List<List<Control>>();
+				var line = new List<Control>();
+				double lineWidth = 0;
+				foreach (var child in Children)
+				{
+					var childWidth = child.DesiredSize.Width;
+					if (line.Count > 0 && lineWidth + childWidth > finalSize.Width)
+					{
+						lines.Add(line);
+						line = new List<Control>();
+						lineWidth = 0;
+					}
+					line.Add(child);
+					lineWidth += childWidth;
+				}
+				if (line.Count > 0)
+					lines.Add(line);
+
+				var last = Children.Count > 0 ? Children[Children.Count - 1] : null;
+				double y = 0;
+				foreach (var current in lines)
+				{
+					var lineHeight = current.Max(child => child.DesiredSize.Height);
+					double x = 0;
+					foreach (var child in current)
+					{
+						var childWidth = child.DesiredSize.Width;
+						if (ReferenceEquals(child, last))
+							childWidth = Math.Max(childWidth, finalSize.Width - x);
+						child.Arrange(new Rect(x, y, childWidth, lineHeight));
+						x += childWidth;
+					}
+					y += lineHeight;
+				}
+				return finalSize;
+			}
+		}
+
 		// One group's live line of slots, which grows as the user types into its last one.
 		private sealed class GroupState
 		{
@@ -180,7 +246,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			public string GroupId;
 			public string Label;
 			public Action<string> WritingSystemFocused;
-			public WrapPanel Slots;
+			public SlotLinePanel Slots;
 			public TextBox TrailingAdd;
 			public int AddedSlots;
 		}
@@ -196,9 +262,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				WritingSystemFocused = writingSystemFocused,
 				// The group's slots run together on one wrapping line, a bar between each pair,
 				// the add slot last.
-				Slots = new WrapPanel
+				Slots = new SlotLinePanel
 				{
-					Orientation = Orientation.Horizontal,
 					Background = FwAvaloniaDensity.TransparentBrush,
 					FlowDirection = group.RightToLeft ? FlowDirection.RightToLeft : FlowDirection.LeftToRight
 				}
@@ -298,26 +363,19 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				? FwAvaloniaStrings.ReversalAddEntryName(label, group.WsAbbrev)
 				: label + " " + group.WsAbbrev);
 
-			// Tracks what the model holds for this row, so an unchanged row never stages.
-			var committed = row.Text;
-			Action commit = () =>
-			{
-				var text = editor.Text ?? string.Empty;
-				if (_editing != null && text != committed && _editing.TryCommitRow(row.RowKey, text))
-					committed = text;
-			};
+			var slotState = new SlotState(row, editor);
+			_slots.Add(slotState);
 
 			// The control this method returns; the slot removal below needs it.
 			Control slot = null;
 			if (_editing != null)
 			{
-				_rowCommits.Add(commit);
 				// Runs before the host's own focus-loss save, which bubbles up from this box.
 				// Moving between slots stages nothing, so the host saves only once focus leaves.
 				EventHandler<RoutedEventArgs> lost = (s, e) =>
 				{
 					if (row.IsAddSlot && !ReferenceEquals(editor, state.TrailingAdd)
-						&& string.IsNullOrEmpty(editor.Text) && string.IsNullOrEmpty(committed))
+						&& string.IsNullOrEmpty(editor.Text) && string.IsNullOrEmpty(slotState.Committed))
 					{
 						RemoveSlot(state, slot);
 					}
@@ -379,6 +437,13 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				if (e.Key == Key.Enter)
 				{
 					e.Handled = true;
+					return;
+				}
+				if (e.Key == Key.Escape)
+				{
+					// Left unhandled, so the view still cancels; its re-show then finds nothing
+					// to save.
+					RevertPendingEdits();
 					return;
 				}
 				if ((e.Key == Key.Home || e.Key == Key.End) && e.KeyModifiers == KeyModifiers.None)
@@ -458,11 +523,59 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			return editors;
 		}
 
-		// Every changed slot commits in order, joining the host's one open edit session.
+		// A slot's row, its editor, and the text the model holds for it, so an unchanged slot
+		// never stages.
+		private sealed class SlotState
+		{
+			public SlotState(DetailReversalRow row, TextBox editor)
+			{
+				Row = row;
+				Editor = editor;
+				Committed = row.Text;
+			}
+
+			public DetailReversalRow Row { get; }
+
+			public TextBox Editor { get; }
+
+			public string Committed { get; set; }
+
+			public string Text => Editor.Text ?? string.Empty;
+		}
+
+		/// <summary>
+		/// Stages every slot changed since the last save, as one change on the host's edit
+		/// session. The field otherwise stages only when focus leaves it, so a host that saves
+		/// while focus is still inside (on navigation, a refresh, or a tool switch) calls this
+		/// first. Does nothing when read-only, disposed, or unchanged.
+		/// </summary>
+		public void CommitPendingEdits() => CommitAll();
+
 		private void CommitAll()
 		{
-			foreach (var commit in _rowCommits)
-				commit();
+			if (_editing == null || _disposed)
+				return;
+			var changed = _slots.Where(slot => slot.Text != slot.Committed).ToList();
+			if (changed.Count == 0)
+				return;
+			var edits = changed
+				.Select(slot => new KeyValuePair<string, string>(slot.Row.RowKey, slot.Text))
+				.ToList();
+			if (_editing.TryCommitRows(edits))
+			{
+				foreach (var slot in changed)
+					slot.Committed = slot.Text;
+			}
+		}
+
+		// Puts every slot back to the text the model holds, dropping what was typed.
+		private void RevertPendingEdits()
+		{
+			foreach (var slot in _slots)
+			{
+				if (slot.Text != slot.Committed)
+					slot.Editor.Text = slot.Committed;
+			}
 		}
 
 		// Focus has already moved when a slot's LostFocus runs, so this tells a move to another

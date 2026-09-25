@@ -11,6 +11,8 @@ using SIL.FieldWorks.Common.FwAvalonia.Detail;
 using SIL.FieldWorks.Common.FwAvalonia.ViewDefinition;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Core.Text;
 using SIL.LCModel.DomainServices;
 using SIL.Reporting;
 
@@ -58,7 +60,7 @@ namespace SIL.FieldWorks.XWorks
 				var groups = editing.CreateGroups(context.VisibleWritingSystems);
 
 				Action<string> navigate = null;
-				var linkRequested = context.LinkRequested;
+				var linkRequested = context.Render?.LinkRequested;
 				if (linkRequested != null)
 				{
 					var field = new DetailField(
@@ -84,9 +86,13 @@ namespace SIL.FieldWorks.XWorks
 					};
 				}
 
-				return new FwReversalEntriesField(label, automationId, groups,
+				var control = new FwReversalEntriesField(label, automationId, groups,
 					host == null ? null : editing, context.WritingSystemFocused, navigate,
-					context.WsAbbrevColumnWidth);
+					context.Render?.WsAbbrevColumnWidth);
+				// The field stages only when focus leaves it, so the host's save must ask for its
+				// edits when it runs with focus still inside.
+				(host as DetailEditContextBase)?.AddPendingEditFlush(control.CommitPendingEdits);
+				return control;
 			}
 			catch (Exception e)
 			{
@@ -213,39 +219,92 @@ namespace SIL.FieldWorks.XWorks
 			return result;
 		}
 
+		// One row's staged change: its binding, its new chain of forms, and its index's ws.
+		private sealed class RowChange
+		{
+			public RowChange(RowBinding binding, IList<string> forms, int ws)
+			{
+				Binding = binding;
+				Forms = forms;
+				Ws = ws;
+			}
+
+			public RowBinding Binding { get; }
+
+			public IList<string> Forms { get; }
+
+			public int Ws { get; }
+		}
+
 		/// <inheritdoc />
 		public bool TryCommitRow(string rowKey, string typedText)
+			=> TryCommitRows(new[] { new KeyValuePair<string, string>(rowKey, typedText) });
+
+		/// <inheritdoc />
+		public bool TryCommitRows(IReadOnlyList<KeyValuePair<string, string>> edits)
 		{
-			RowBinding binding;
-			if (string.IsNullOrEmpty(rowKey) || !_rows.TryGetValue(rowKey, out binding))
-				return false;
-			var ws = _cache.ServiceLocator.WritingSystemManager.GetWsFromStr(binding.Index.WritingSystem);
-			if (ws <= 0)
+			if (edits == null || !_sense.IsValidObject)
 				return false;
 
-			var forms = SplitForms(typedText);
-			var current = binding.Entry;
-			if (current != null && !current.IsValidObject)
-				current = binding.Entry = null;
-			if (current == null && forms.Count == 0)
-				return false;
-			if (current != null && ChainMatches(current, forms, ws))
-				return false;
-
-			return StageOnHost(() =>
+			var changes = new List<RowChange>();
+			foreach (var edit in edits)
 			{
-				IReversalIndexEntry target = null;
-				if (forms.Count > 0)
+				RowBinding binding;
+				if (string.IsNullOrEmpty(edit.Key) || !_rows.TryGetValue(edit.Key, out binding))
+					continue;
+				var ws = _cache.ServiceLocator.WritingSystemManager.GetWsFromStr(binding.Index.WritingSystem);
+				if (ws <= 0)
+					continue;
+				if (binding.Entry != null && !binding.Entry.IsValidObject)
+					binding.Entry = null;
+				var forms = SplitForms(edit.Value);
+				if (binding.Entry == null ? forms.Count == 0 : ChainMatches(binding.Entry, forms, ws))
+					continue;
+				changes.Add(new RowChange(binding, forms, ws));
+			}
+			if (changes.Count == 0)
+				return false;
+
+			var previous = changes.Select(change => change.Binding.Entry).ToList();
+			try
+			{
+				return StageOnHost(() =>
 				{
-					target = FindOrCreateEntry(binding.Index, forms, ws);
-					if (!target.SensesRS.Contains(_sense))
-						target.SensesRS.Add(_sense);
-				}
-				if (current != null && current != target)
-					Unlink(current);
-				binding.Entry = target;
-				return true;
-			});
+					// Every row takes its new entry before any entry is let go, so an entry
+					// one row gives up and another takes over is never deleted in between.
+					var released = new List<IReversalIndexEntry>();
+					foreach (var change in changes)
+					{
+						IReversalIndexEntry target = null;
+						if (change.Forms.Count > 0)
+						{
+							target = FindOrCreateEntry(change.Binding.Index, change.Forms, change.Ws);
+							if (!target.SensesRS.Contains(_sense))
+								target.SensesRS.Add(_sense);
+						}
+						if (change.Binding.Entry != null && change.Binding.Entry != target)
+							released.Add(change.Binding.Entry);
+						change.Binding.Entry = target;
+					}
+
+					var stillWanted = new HashSet<IReversalIndexEntry>(
+						_rows.Values.Select(binding => binding.Entry).Where(entry => entry != null));
+					foreach (var entry in released.Distinct())
+					{
+						if (entry.IsValidObject && !stillWanted.Contains(entry))
+							Unlink(entry);
+					}
+					return true;
+				});
+			}
+			catch (Exception e)
+			{
+				// The write rolled back or never ran, so the rows keep the entries they showed.
+				for (var i = 0; i < changes.Count; i++)
+					changes[i].Binding.Entry = previous[i];
+				Logger.WriteError(e);
+				return false;
+			}
 		}
 
 		/// <inheritdoc />
@@ -261,7 +320,7 @@ namespace SIL.FieldWorks.XWorks
 		public Guid? TryResolveMainEntryGuid(string rowKey)
 		{
 			RowBinding binding;
-			if (string.IsNullOrEmpty(rowKey) || !_rows.TryGetValue(rowKey, out binding))
+			if (!_sense.IsValidObject || string.IsNullOrEmpty(rowKey) || !_rows.TryGetValue(rowKey, out binding))
 				return null;
 			var entry = binding.Entry;
 			if (entry == null || !entry.IsValidObject)
@@ -271,7 +330,7 @@ namespace SIL.FieldWorks.XWorks
 
 		/// <summary>
 		/// The forms of an entry chain, top level first: the text split on colons, each part
-		/// trimmed, and empty parts dropped (LT-4665).
+		/// trimmed and decomposed (NFD, as stored forms are), and empty parts dropped (LT-4665).
 		/// </summary>
 		internal static IList<string> SplitForms(string text)
 		{
@@ -279,8 +338,17 @@ namespace SIL.FieldWorks.XWorks
 				.Split(new[] { ':' }, StringSplitOptions.RemoveEmptyEntries)
 				.Select(part => part.Trim())
 				.Where(part => part.Length > 0)
+				.Select(Decomposed)
 				.ToList();
 		}
+
+		// Typed text arrives precomposed while stored forms are decomposed, so both sides of a
+		// comparison go through NFD first.
+		private static string Decomposed(string text)
+			=> CustomIcu.GetIcuNormalizer(FwNormalizationMode.knmNFD).Normalize(text ?? string.Empty);
+
+		private static string StoredForm(IReversalIndexEntry entry, int ws)
+			=> Decomposed(entry.ReversalForm.get_String(ws).Text);
 
 		// True when the entry and its ancestors, top level first, are exactly the given forms.
 		private static bool ChainMatches(IReversalIndexEntry entry, IList<string> forms, int ws)
@@ -288,7 +356,7 @@ namespace SIL.FieldWorks.XWorks
 			var level = entry;
 			for (var i = forms.Count - 1; i >= 0; i--)
 			{
-				if (level == null || level.ReversalForm.get_String(ws).Text != forms[i])
+				if (level == null || StoredForm(level, ws) != forms[i])
 					return false;
 				level = level.OwningEntry;
 			}
@@ -327,7 +395,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			foreach (var candidate in candidates)
 			{
-				if (candidate.ReversalForm.get_String(ws).Text != forms[level])
+				if (StoredForm(candidate, ws) != forms[level])
 					continue;
 				if (level + 1 > depth)
 				{

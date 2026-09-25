@@ -86,6 +86,7 @@ namespace SIL.FieldWorks.XWorks
 		public IReadOnlyList<string> Settle()
 		{
 			var current = Current;
+			FlushPendingEdits(current);
 			if (current == null || !current.IsOpen)
 				return System.Array.Empty<string>();
 			try
@@ -114,6 +115,20 @@ namespace SIL.FieldWorks.XWorks
 				if (current.IsOpen)
 					current.Cancel();
 				return System.Array.Empty<string>();
+			}
+		}
+
+		// An editor that stages only on focus loss still holds its edits when a save runs with
+		// focus inside it; staging them first lets the settle below commit them.
+		private static void FlushPendingEdits(IDetailEditContext current)
+		{
+			try
+			{
+				(current as DetailEditContextBase)?.FlushPendingEdits();
+			}
+			catch (System.Exception e)
+			{
+				SIL.Reporting.Logger.WriteError(e);
 			}
 		}
 

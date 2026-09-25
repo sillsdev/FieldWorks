@@ -21,6 +21,7 @@ namespace SIL.FieldWorks.XWorks
 	public abstract class DetailEditContextBase : IDetailEditContext
 	{
 		private LcmDetailEditSession _session;
+		private readonly List<Action> _pendingEditFlushes = new List<Action>();
 
 		protected DetailEditContextBase(LcmCache cache, ICmObject root)
 		{
@@ -98,6 +99,27 @@ namespace SIL.FieldWorks.XWorks
 					errors.Add(FwAvaloniaStrings.PossibilityNameOrAbbreviationRequired);
 			}
 			return errors;
+		}
+
+		/// <summary>
+		/// Registers <paramref name="flush"/>, which stages the edits an editor holds back until
+		/// focus leaves it. <see cref="FlushPendingEdits"/> runs every registered flush, so a
+		/// save made while focus is still inside such an editor includes what it holds.
+		/// </summary>
+		public void AddPendingEditFlush(Action flush)
+		{
+			if (flush != null)
+				_pendingEditFlushes.Add(flush);
+		}
+
+		/// <summary>
+		/// Stages whatever the registered editors are holding back, possibly opening the session.
+		/// A save calls this first, before it checks whether a session is open.
+		/// </summary>
+		public void FlushPendingEdits()
+		{
+			foreach (var flush in _pendingEditFlushes.ToArray())
+				flush();
 		}
 
 		/// <inheritdoc />
