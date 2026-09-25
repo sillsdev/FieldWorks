@@ -9,6 +9,7 @@ using System.Drawing.Printing;
 using System.Linq;
 using System.Windows.Forms;
 using System.Xml;
+using SIL.FieldWorks.Common.DetailRules;
 using SIL.FieldWorks.Common.FwAvalonia;
 using SIL.FieldWorks.Common.FwAvalonia.Detail;
 using SIL.FieldWorks.Common.FwAvalonia.Seams;
@@ -539,18 +540,6 @@ namespace SIL.FieldWorks.XWorks
 					return;
 				}
 
-				// An adapter failure must not suppress the menu itself: items that need the hidden
-				// colleague chain disable, everything else still works (and the failure is logged).
-				try
-				{
-					EnsureMenuCommandAdapter(request.Field.ObjectHvo, request.Field.Field);
-				}
-				catch (Exception adapterError)
-				{
-					Logger.WriteError("Detail menu command adapter failed; menu items that need "
-						+ "the hidden colleague chain will be disabled.", adapterError);
-				}
-
 				var ids = new List<string>();
 				switch (request.Kind)
 				{
@@ -569,17 +558,33 @@ namespace SIL.FieldWorks.XWorks
 				var idArray = ids.Where(id => !string.IsNullOrEmpty(id)).ToArray();
 				var window = m_propertyTable.GetValue<XWindow>("window");
 
+				// Only ids without a native authority need the hidden command adapter. An adapter
+				// failure must not suppress the menu: its items disable, the rest still works.
+				var authority = CreateReorderVectorAuthority(request);
+				if (!XCoreMenuBridge.OwnsAll(authority, idArray))
+				{
+					try
+					{
+						EnsureMenuCommandAdapter(request.Field.ObjectHvo, request.Field.Field);
+					}
+					catch (Exception adapterError)
+					{
+						Logger.WriteError("Detail menu command adapter failed; menu items that need "
+							+ "the hidden colleague chain will be disabled.", adapterError);
+					}
+				}
+
 				// Render the SAME xCore menu natively in Avalonia -- identical items,
 				// enablement, and mediator dispatch; only rendering changes. The WinForms
 				// adapter menu remains the fallback if materialization fails.
 				try
 				{
-					// Field Visibility / Move Field retarget to the override layer, the reorder
-					// commands to the row's current item; other commands keep their dispatch.
+					// Field Visibility / Move Field retarget to the override layer; other
+					// mediator-answered commands keep their dispatch.
 					var registry = new OverrideCommandRegistry();
 					AddOverrideCommands(registry, request.Field);
-					AddMoveCommands(registry, request);
-					var items = XCoreMenuBridge.CreateMenuItems(window, idArray, registry.TryBuild);
+					var items = XCoreMenuBridge.CreateMenuItems(window, idArray, registry.TryBuild, null,
+						authority);
 					if (items.Count > 0)
 					{
 						// A keyboard-opened menu anchors under the row it came from; a
@@ -633,6 +638,34 @@ namespace SIL.FieldWorks.XWorks
 
 				return m_viewOverrideStore;
 			}
+		}
+
+		/// <summary>
+		/// The help topic of a detail row: its <see cref="DetailField.HelpTopicId"/> when set,
+		/// else one generated from the row's field and object and the current tool. Null when
+		/// the row carries nothing to generate from.
+		/// </summary>
+		internal string ResolveHelpTopic(DetailField field)
+		{
+			if (field == null)
+				return null;
+			var source = field.HelpTopicSource;
+			if (string.IsNullOrEmpty(field.HelpTopicId) && source == null)
+				return null;
+			var provider = m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider");
+			var subject = new HelpTopicSubject
+			{
+				FieldName = source?.FieldName,
+				Label = source?.Label,
+				ClassName = source?.ClassName,
+				OwnerClassName = source?.OwnerClassName,
+				SortKey = source?.SortKey,
+				TargetsParentIsEntry = source?.TargetsParentIsEntry,
+				AreaName = m_propertyTable.GetStringProperty("areaChoice", null),
+				ToolName = m_propertyTable.GetStringProperty("currentContentControl", null)
+			};
+			return FieldHelpTopics.Resolve(field.HelpTopicId, FieldHelpTopics.FieldPrefix, subject,
+				FieldHelpTopics.KnownBy(provider));
 		}
 
 		// The resolver the composer calls for each compiled (class, layout); null result = shipped

@@ -21,26 +21,20 @@ Use the installer setup script to validate your environment:
 ### Required Software
 
 1. **Visual Studio 2026 or 2022** with Desktop workloads (C++ and .NET). Official installers are produced from Visual Studio 2022 (v143) builds; a v145 build gets a warning because the bundled VC++ redistributables predate that toolset.
-2. **WiX Toolset v3.14** for the legacy WiX 3 build (default), plus the **Visual Studio WiX Toolset v3 extension** so `Wix.CA.targets` is available under MSBuild
+2. **WiX Toolset v3.11** for the legacy WiX 3 build (default), plus the **Visual Studio WiX Toolset v3 extension** so `Wix.CA.targets` is available under MSBuild (see [ReadMe](../ReadMe.md) for instructions)
 3. **WiX Toolset v6** via `WixToolset.Sdk` for the opt-in WiX 6 build (restored via NuGet as part of the build)
 4. **MSBuild** (included with Visual Studio)
 5. **.NET Framework 4.8 SDK** (included with Visual Studio)
 
 ### One-Time Setup
 
-Run the developer machine setup script to install WiX and configure your environment:
+Run the developer machine setup script to clone additional repositories:
 
 ```powershell
-# Install WiX and configure PATH/environment variables (including WiX 3 VS extension)
-.\Setup-Developer-Machine.ps1
-
-# Also clone installer helper repositories
 .\Setup-Developer-Machine.ps1 -InstallerDeps
 ```
 
-### Repository Setup
-
-If not using `Setup-Developer-Machine.ps1 -InstallerDeps`, clone manually:
+Alternatively, clone manually:
 
 ```powershell
 # Clone main repository
@@ -50,6 +44,7 @@ cd fieldworks
 # Clone required helper repositories
 git clone https://github.com/sillsdev/FwHelps.git DistFiles/Helps
 git clone https://github.com/sillsdev/FwLocalizations.git Localizations
+git clone https://github.com/sillsdev/genericinstaller.git PatchableInstaller
 git clone https://github.com/sillsdev/liblcm.git Localizations/LCMRepo
 ```
 

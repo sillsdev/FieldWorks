@@ -11,6 +11,7 @@ using Avalonia.Automation;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Input;
+using Avalonia.Interactivity;
 using Avalonia.Layout;
 using Avalonia.Media;
 using Avalonia.VisualTree;
@@ -753,7 +754,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				Children.Add(rowPanel);
 		}
 
-		// Legacy look (12.3): small raised blue abbreviation, a superscript-style label kept in its
+		// A small raised blue abbreviation, a superscript-style label kept in its
 		// own fixed gutter column (see the row Grid below) so a bold vernacular value can never crowd
 		// or overlap it. ClipToBounds keeps an unusually long abbreviation inside the gutter width
 		// rather than bleeding into the value column.
@@ -788,7 +789,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				FlowDirection = value.RightToLeft ? FlowDirection.RightToLeft : FlowDirection.LeftToRight,
 				BorderThickness = new Thickness(0),
 				Background = FwAvaloniaDensity.TransparentBrush,
-				TextWrapping = TextWrapping.Wrap // 14.5: long values wrap; the row grows vertically
+				TextWrapping = TextWrapping.Wrap // long values wrap; the row grows vertically
 			};
 			// A voice/audio writing system has no sound player in this view yet, so the row
 			// is read-only and says why (a distinct message from the rich-content read-only case).
@@ -801,7 +802,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			if (value.FontSize > 0)
 				box.FontSize = value.FontSize;
 			if (value.Bold)
-				box.FontWeight = FontWeight.Bold; // legacy <properties><bold value='on'/> (11.15)
+				box.FontWeight = FontWeight.Bold; // the value's own metadata asked for bold
 			return box;
 		}
 
@@ -809,9 +810,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		{
 			if (!string.IsNullOrEmpty(field.GhostPrompt))
 			{
-				// 14.1: the legacy ghost add-prompt is a watermark -- it disappears the moment
-				// the
-				// user clicks in (focus), and reappears only if they leave without typing.
+				// The ghost add-prompt is a watermark: it disappears the moment the user
+				// clicks in, and reappears only if they leave without typing.
 				box.Watermark = field.GhostPrompt;
 				EventHandler<GotFocusEventArgs> ghostGot = (s2, e2) => box.Watermark = string.Empty;
 				EventHandler<Avalonia.Interactivity.RoutedEventArgs> ghostLost = (s2, e2) =>
@@ -836,7 +836,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			var hasBridge = menuRequested != null && !string.IsNullOrEmpty(field.ContextMenuId);
 			if (hasBridge)
 			{
-				// 15.2: exactly ONE menu -- drop the TextBox flyout (Cut/Copy/Paste) so
+				// Exactly ONE menu -- drop the TextBox flyout (Cut/Copy/Paste) so
 				// only the bridged menu shows. Tunnelling puts this handler ahead of
 				// anything the box or the whole-row handler would open.
 				box.ContextFlyout = null;
@@ -892,7 +892,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		{
 			var rowPanel = new Grid
 			{
-				// 14.2: a null background only hit-tests the glyphs -- the whole row must
+				// A null background only hit-tests the glyphs -- the whole row must
 				// receive hover/right-click over the gaps too.
 				Background = FwAvaloniaDensity.TransparentBrush
 			};
@@ -948,6 +948,17 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				};
 				display.AddHandler(InputElement.PointerPressedEvent, displayPressed,
 					Avalonia.Interactivity.RoutingStrategies.Tunnel);
+				// Makes `display` an ordinary tab stop; GotFocus swaps in the editable
+				// `box` the same way the pointer-press handler above does, matching a
+				// mouse click's entry point (LT-22688).
+				display.Focusable = true;
+				EventHandler<GotFocusEventArgs> displayGotFocus = (s, e) =>
+				{
+					box.IsVisible = true;
+					display.IsVisible = false;
+					box.Focus();
+				};
+				display.GotFocus += displayGotFocus;
 				EventHandler<Avalonia.Interactivity.RoutedEventArgs> lost = (s, e) =>
 				{
 					box.IsVisible = false;
@@ -957,6 +968,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				_teardown.Add(() =>
 				{
 					display.RemoveHandler(InputElement.PointerPressedEvent, displayPressed);
+					display.GotFocus -= displayGotFocus;
 					box.LostFocus -= lost;
 				});
 			}
@@ -1328,13 +1340,13 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 	/// legacy STORES an invalid environment and marks it rather than refusing it.
 	///
 	/// CREATE-ON-TYPE (opt-in): a row whose edit context implements <see
-	/// cref="IReferenceItemCreation"/> for it also lets the user mint a target object by typing
+	/// cref="IReferenceTextEditing"/> for it also lets the user mint a target object by typing
 	/// into the picker's filter box -- the list offers a create row when the text matches
 	/// nothing. This is what makes an environments row reach an environment the project does not
 	/// own yet, which the picker alone cannot do. Every other vector row passes allowCreate:
 	/// false and is unaffected.
 	/// </summary>
-	public sealed class FwReferenceVectorField : StackPanel, IHoverAffordanceProvider,
+	public sealed class FwReferenceVectorField : WrapPanel, IHoverAffordanceProvider,
 		IDetailItemSelection, IDisposable
 	{
 		private readonly List<Control> _affordances = new List<Control>();
@@ -1342,7 +1354,9 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		// gear click, and the option flyout, so a recycled vector cell releases every closure.
 		private readonly List<Action> _teardown = new List<Action>();
 		private readonly IReadOnlyList<DetailChoiceOption> _items;
-		private readonly List<TextBlock> _itemBlocks = new List<TextBlock>();
+		private readonly List<Control> _itemBlocks = new List<Control>();
+		private readonly List<Func<bool>> _unstaged = new List<Func<bool>>();
+		private readonly List<Action> _discardUnstaged = new List<Action>();
 		private int _selectedIndex = -1;
 		private bool _disposed;
 
@@ -1365,35 +1379,100 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			Action<DetailLinkRequest> linkRequested = null,
 			Action<DetailMenuRequest> menuRequested = null)
 		{
+			// Wraps, like the one Views paragraph PhoneEnvReferenceView puts its items in:
+			// a stack runs off the right edge, cutting the item the width ran out in.
 			Orientation = Orientation.Horizontal;
-			// 14.2-style hit-testing rule: a null background only hit-tests the glyphs -- the
-			// WHOLE
-			// row must receive hover so the reveal affordances work over the gaps between items.
+			// A null background only hit-tests the glyphs -- the WHOLE row must receive
+			// hover so the reveal affordances work over the gaps between items.
 			Background = FwAvaloniaDensity.TransparentBrush;
 			AutomationProperties.SetAutomationId(this, automationId);
 			AutomationProperties.SetName(this, field.Label ?? field.Field ?? automationId);
 
 			_items = field.Items;
 			var editable = editContext != null && field.IsEditable;
+			// A row whose domain can reconcile typed text renders its items as editors rather
+			// than labels, so an item already on the field can be changed and not only replaced.
+			var textEditing = editContext as IReferenceTextEditing;
+			var retypable = editable && textEditing != null
+				&& textEditing.CanEditReferenceItemText(field);
 			for (var index = 0; index < field.Items.Count; index++)
 			{
 				var item = field.Items[index];
-				var text = new TextBlock
+				Control text;
+				if (retypable)
 				{
-					Text = item.Name,
-					VerticalAlignment = VerticalAlignment.Center,
-					Margin = FwAvaloniaDensity.TrailingItemGap,
-					// 14.2: a null background only hit-tests the glyphs -- the whole item must
-					// take
-					// the right-click or the Remove flyout only opens over ink.
-					Background = FwAvaloniaDensity.TransparentBrush
-				};
+					// Flat -- no border, no fill -- because every other editor in this view
+					// is, and an item reads as part of the row rather than a control in it.
+					var box = new TextBox
+					{
+						Text = item.Name,
+						VerticalAlignment = VerticalAlignment.Center,
+						Margin = FwAvaloniaDensity.TrailingItemGap,
+						Padding = FwAvaloniaDensity.EditorPadding,
+						MinWidth = 0,
+						MinHeight = 0,
+						BorderThickness = new Thickness(0),
+						Background = FwAvaloniaDensity.TransparentBrush
+					};
+					// Held to the width its text measures, so the last character is not
+					// cut, and kept in step while typing.
+					FloorWidthToText(box);
+					var itemKey = item.Key;
+					// Staged when the edit FINISHES, not per keystroke: each stage reconciles
+					// against the project, so "/", "/_", "/_a" would leave two junk objects
+					// behind. This handler runs before the view's autosave.
+					var original = item.Name;
+					// What the domain has been offered, which is not what it accepted: a
+					// refused edit is still finished, and holding the host open for one
+					// would block every later refresh.
+					var submitted = original;
+					_unstaged.Add(() => box.Text != submitted);
+					_discardUnstaged.Add(() => box.Text = submitted);
+					Action commitText = () =>
+					{
+						var typed = box.Text;
+						submitted = typed;
+						if (typed == original)
+							return;
+						if (textEditing.TrySetReferenceItemText(field, itemKey, typed))
+							gestureCompleted?.Invoke();
+					};
+					EventHandler<Avalonia.Interactivity.RoutedEventArgs> commitOnBlur =
+						(s2, e2) => commitText();
+					box.LostFocus += commitOnBlur;
+					EventHandler<KeyEventArgs> commitOnEnter = (s2, e2) =>
+					{
+						if (e2.Key != Key.Enter)
+							return;
+						e2.Handled = true;
+						commitText();
+					};
+					box.KeyDown += commitOnEnter;
+					_teardown.Add(() =>
+					{
+						box.LostFocus -= commitOnBlur;
+						box.KeyDown -= commitOnEnter;
+					});
+					text = box;
+				}
+				else
+				{
+					text = new TextBlock
+					{
+						Text = item.Name,
+						VerticalAlignment = VerticalAlignment.Center,
+						Margin = FwAvaloniaDensity.TrailingItemGap,
+						// A null background only hit-tests the glyphs -- the whole item must
+						// take the right-click, or the Remove flyout only opens over ink.
+						Background = FwAvaloniaDensity.TransparentBrush
+					};
+				}
 				AutomationProperties.SetAutomationId(text, ItemAutomationId(automationId, item.Key));
 				// Any button selects, so a right-click's menu acts on the item under the pointer;
 				// focus selects too. Items are focusable (a click focuses one) but not tab stops.
 				var itemIndex = index;
 				text.Focusable = true;
-				KeyboardNavigation.SetIsTabStop(text, false);
+				KeyboardNavigation.SetIsTabStop(text, retypable);
 				EventHandler<GotFocusEventArgs> focusSelect = (s, e) => SelectItem(itemIndex);
 				text.GotFocus += focusSelect;
 				EventHandler<PointerPressedEventArgs> select = (s, e) =>
@@ -1408,25 +1487,38 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 						e.Handled = true;
 					}
 				};
-				text.PointerPressed += select;
+				// handledEventsToo: an editor marks the press handled to place its caret, so
+				// an ordinary handler never runs and the press would select no item.
+				text.AddHandler(InputElement.PointerPressedEvent, select,
+					RoutingStrategies.Bubble, handledEventsToo: true);
 				_itemBlocks.Add(text);
 				_teardown.Add(() =>
 				{
-					text.PointerPressed -= select;
+					text.RemoveHandler(InputElement.PointerPressedEvent, select);
 					text.GotFocus -= focusSelect;
 				});
 				if (item.HasValidationMessage)
 				{
-					// Legacy draws a red squiggle. Avalonia has no wavy decoration, so this is
-					// colour PLUS an underline -- colour alone would carry the whole signal.
-					text.Foreground = FwAvaloniaDensity.ValidationErrorBrush;
-					text.TextDecorations = TextDecorations.Underline;
+					// No wavy underline exists here, so this is colour PLUS an underline --
+					// colour alone would carry the whole signal. An editor takes the colour
+					// only; its chrome owns the rest.
+					if (text is TextBlock label)
+					{
+						label.Foreground = FwAvaloniaDensity.ValidationErrorBrush;
+						label.TextDecorations = TextDecorations.Underline;
+					}
+					else if (text is TextBox editor)
+					{
+						editor.Foreground = FwAvaloniaDensity.ValidationErrorBrush;
+					}
+
 					ToolTip.SetTip(text, item.ValidationMessage);
 					AutomationProperties.SetHelpText(text, item.ValidationMessage);
 				}
-				if (editable)
+				// Backspace and Delete remove the focused item -- but on an editor those keys
+				// are text editing, and removal stays on the item menu.
+				if (editable && !retypable)
 				{
-					// Backspace or Delete removes the focused item.
 					EventHandler<KeyEventArgs> keyRemove = (s, e) =>
 					{
 						if (e.Key != Key.Back && e.Key != Key.Delete)
@@ -1485,10 +1577,68 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				return;
 			}
 
-			// The legacy empty add slot: a trailing bar (added above for the last item; one leads
-			// the launcher when the vector is empty) plus the chooser launcher.
+			// A trailing bar (added above for the last item; one leads the launcher when the
+			// vector is empty) plus the chooser launcher.
 			if (field.Items.Count == 0)
 				AddSeparatorBar();
+
+			var canCreate = textEditing != null && textEditing.CanCreateReferenceItem(field);
+			if (canCreate)
+			{
+				// Typing a new one never has to go through the chooser:
+				// PhoneEnvReferenceView keeps an always-present empty line at the end for
+				// exactly this, and it is where an empty row offers somewhere to start.
+				var newItem = new TextBox
+				{
+					VerticalAlignment = VerticalAlignment.Center,
+					Margin = FwAvaloniaDensity.TrailingItemGap,
+					Padding = FwAvaloniaDensity.EditorPadding,
+					MinWidth = FwAvaloniaDensity.NewItemSlotMinWidth,
+					MinHeight = 0,
+					BorderThickness = new Thickness(0),
+					Background = FwAvaloniaDensity.TransparentBrush,
+					Watermark = FwAvaloniaStrings.AddItem
+				};
+				// Keeps its empty width until what is typed needs more than that.
+				FloorWidthToText(newItem, FwAvaloniaDensity.NewItemSlotMinWidth);
+				AutomationProperties.SetAutomationId(newItem, automationId + ".New");
+				AutomationProperties.SetName(newItem, FwAvaloniaStrings.AddItem);
+				var submittedNew = string.Empty;
+				_unstaged.Add(() => (newItem.Text ?? string.Empty) != submittedNew);
+				_discardUnstaged.Add(() => newItem.Text = submittedNew);
+				Action commitNew = () =>
+				{
+					var typed = newItem.Text;
+					submittedNew = typed ?? string.Empty;
+					if (string.IsNullOrWhiteSpace(typed))
+						return;
+					if (textEditing.TryCreateAndAddReferenceItem(field, typed))
+						gestureCompleted?.Invoke();
+				};
+				EventHandler<Avalonia.Interactivity.RoutedEventArgs> newOnBlur =
+					(s2, e2) => commitNew();
+				newItem.LostFocus += newOnBlur;
+				EventHandler<KeyEventArgs> newOnEnter = (s2, e2) =>
+				{
+					if (e2.Key != Key.Enter)
+						return;
+					e2.Handled = true;
+					commitNew();
+				};
+				newItem.KeyDown += newOnEnter;
+				// This slot names no item, so it must not leave a stale one current: a menu
+				// request from here would otherwise act on whichever item was clicked before.
+				EventHandler<GotFocusEventArgs> newClearsSelection = (s2, e2) => ClearSelection();
+				newItem.GotFocus += newClearsSelection;
+				_teardown.Add(() =>
+				{
+					newItem.LostFocus -= newOnBlur;
+					newItem.KeyDown -= newOnEnter;
+					newItem.GotFocus -= newClearsSelection;
+				});
+				Children.Add(newItem);
+				AddSeparatorBar();
+			}
 
 			var addButton = new Button
 			{
@@ -1517,8 +1667,6 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			// object offers it (environments find-or-create a PhEnvironment from the typed
 			// string). Every other vector row passes allowCreate: false and behaves exactly as
 			// before.
-			var creation = editContext as IReferenceItemCreation;
-			var canCreate = creation != null && creation.CanCreateReferenceItem(field);
 			var picker = new FwOptionChooser(field.Options, field.SearchOptions, automationId,
 				field.Items.Select(i => i.Key), multiSelect: true, allowCreate: canCreate,
 				normalizeName: field.NormalizeOptionName);
@@ -1550,7 +1698,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			// and a failed create leaves the row untouched rather than completing the gesture.
 			Action<string> created = text =>
 			{
-				var added = canCreate && creation.TryCreateAndAddReferenceItem(field, text);
+				var added = canCreate && textEditing.TryCreateAndAddReferenceItem(field, text);
 				flyout.Hide();
 				addButton.Focus();
 				if (added)
@@ -1655,11 +1803,12 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		{
 			if (index == _selectedIndex)
 				return;
-			if (_selectedIndex >= 0)
-				_itemBlocks[_selectedIndex].Background = FwAvaloniaDensity.TransparentBrush;
+			// An editable item shows its own focus, so only a read-only one is painted.
+			if (_selectedIndex >= 0 && _itemBlocks[_selectedIndex] is TextBlock previous)
+				previous.Background = FwAvaloniaDensity.TransparentBrush;
 			_selectedIndex = index;
-			if (index >= 0)
-				_itemBlocks[index].Background = FwAvaloniaDensity.SelectedRowBrush;
+			if (index >= 0 && _itemBlocks[index] is TextBlock current)
+				current.Background = FwAvaloniaDensity.SelectedRowBrush;
 			SelectionChanged?.Invoke(this, EventArgs.Empty);
 		}
 
@@ -1686,8 +1835,53 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			_teardown.Clear();
 		}
 
+		// The width a TextBox derives from its own content falls short of what it draws,
+		// cutting the end off. This is the width the text measures.
+		private void FloorWidthToText(TextBox box, double emptyWidth = 0)
+		{
+			Action measure = () =>
+			{
+				var text = box.Text ?? string.Empty;
+				var typeface = new Typeface(box.FontFamily, box.FontStyle, box.FontWeight);
+				var measured = new FormattedText(text, CultureInfo.CurrentCulture,
+					FlowDirection.LeftToRight, typeface, box.FontSize, null);
+				box.MinWidth = Math.Max(emptyWidth,
+					measured.WidthIncludingTrailingWhitespace
+						+ box.Padding.Left + box.Padding.Right);
+			};
+			// Font size and family arrive with the theme, so the first measure waits for
+			// the box to be in the tree.
+			EventHandler<VisualTreeAttachmentEventArgs> onAttached = (s, e) => measure();
+			EventHandler<TextChangedEventArgs> onTextChanged = (s, e) => measure();
+			box.AttachedToVisualTree += onAttached;
+			box.TextChanged += onTextChanged;
+			_teardown.Add(() =>
+			{
+				box.AttachedToVisualTree -= onAttached;
+				box.TextChanged -= onTextChanged;
+			});
+		}
+
 		// The legacy VwSeparatorBox: a ~2px, font-height, light grey vertical bar after each item
 		// (and fronting the add slot) -- the affordance that marks where content can be added.
+		/// <summary>
+		/// Whether an editor on this row holds text the domain has not been told about.
+		/// Staging waits for the edit to finish, so between the first keystroke and that
+		/// finish a rebuild would discard what was typed.
+		/// </summary>
+		public bool HasUnstagedText => _unstaged.Any(dirty => dirty());
+
+		/// <summary>
+		/// Drops text an editor holds but has not offered to the domain, restoring what it
+		/// last showed. A cancelled edit must leave nothing behind for the next focus change
+		/// to stage.
+		/// </summary>
+		public void DiscardUnstagedText()
+		{
+			foreach (var discard in _discardUnstaged)
+				discard();
+		}
+
 		private void AddSeparatorBar()
 		{
 			var bar = new Border
@@ -1745,7 +1939,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				VerticalAlignment = VerticalAlignment.Center,
 				TextWrapping = TextWrapping.Wrap,
 				Margin = FwAvaloniaDensity.TrailingGap,
-				Background = FwAvaloniaDensity.TransparentBrush // 14.2 again: the value text is the hover surface
+				Background = FwAvaloniaDensity.TransparentBrush // the value text is the hover surface
 			};
 			AutomationProperties.SetName(text, label ?? string.Empty);
 

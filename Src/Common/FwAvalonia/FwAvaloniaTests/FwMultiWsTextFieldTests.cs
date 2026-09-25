@@ -20,8 +20,7 @@ namespace FwAvaloniaTests
 	/// <summary>
 	/// The per-writing-system multistring editor (<see cref="FwMultiWsTextField"/>): the owned detail-view
 	/// control behind every multistring field. It renders ONE row per writing system -- a small
-	/// raised WS
-	/// abbreviation hanging at the value start (the legacy 12.3 look) plus a flat, borderless value editor
+	/// raised writing-system abbreviation at the value start, plus a flat, borderless editor
 	/// (RootSite parity: no per-value box). These pin the structure (one row per WS, the WS label, empty vs
 	/// populated, single- vs multi-WS) and emit a PNG per stage for subjective review, paired with the
 	/// AssertNoCrowding tripwire. The editing/commit/teardown behavior itself lives in the Detail tests.

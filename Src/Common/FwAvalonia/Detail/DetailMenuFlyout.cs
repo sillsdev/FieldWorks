@@ -9,7 +9,7 @@ using Avalonia.Controls;
 namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 {
 	/// <summary>
-	/// Framework-neutral context-menu item (15.1): what the host resolved from its menu system
+	/// Framework-neutral context-menu item: what the host resolved from its menu system
 	/// (for FieldWorks, the xCore ChoiceGroup -- labels, enablement, checkmarks, submenus, and an
 	/// execute action that dispatches through the mediator). FwAvalonia renders these natively;
 	/// it knows nothing about xCore, preserving the engine-isolation boundary.
@@ -45,10 +45,9 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 
 	/// <summary>
 	/// Renders host-built <see cref="DetailMenuItem"/> trees as a native Avalonia
-	/// <see cref="MenuFlyout"/> (15.1) -- the same items, enablement, checkmarks, and submenus
-	/// the
-	/// legacy WinForms adapter menu shows, rendered with native Avalonia controls. Density: every item carries the
-	/// explicit compact padding/height of the legacy WinForms menus
+	/// <see cref="MenuFlyout"/> -- the same items, enablement, checkmarks and submenus the
+	/// host resolved, rendered with native Avalonia controls. Density: every item carries
+	/// explicit compact padding and height
 	/// (<see cref="FwAvaloniaDensity.MenuItemPadding"/>/<see cref="FwAvaloniaDensity.MenuItemMinHeight"/>,
 	/// not the Fluent theme defaults); long menus keep the presenter's scrolling.
 	/// </summary>

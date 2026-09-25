@@ -21,8 +21,8 @@ namespace SIL.FieldWorks.XWorks
 	/// project's existing environments, and its inline PhoneEnvReferenceView lets the user type a
 	/// new environment string that ConnectToRealCache reconciles into the project
 	/// (find-or-create, matching with spaces stripped). So the Avalonia row composes as an
-	/// ordinary reference vector -- the chooser half -- whose edit context also offers
-	/// IReferenceItemCreation.
+	/// ordinary reference vector -- the chooser half -- whose edit context also offers the
+	/// IReferenceTextEditing capability.
 	///
 	/// Both data states are covered: the empty project and the populated one compose through
 	/// different branches, so a fixture without environments can pass for the wrong reason.
@@ -296,7 +296,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			public DetailField Row;
 			public IDetailEditContext Context;
-			public IReferenceItemCreation Creation;
+			public IReferenceTextEditing Creation;
 		}
 
 		private ComposedEnvironments ComposeEnvironments()
@@ -307,7 +307,7 @@ namespace SIL.FieldWorks.XWorks
 				Row = composed.Model.Fields.FirstOrDefault(
 					f => f.Field == "PhoneEnv" && f.ObjectHvo == m_allomorph.Hvo),
 				Context = composed.EditContext,
-				Creation = composed.EditContext as IReferenceItemCreation
+				Creation = composed.EditContext as IReferenceTextEditing
 			};
 		}
 

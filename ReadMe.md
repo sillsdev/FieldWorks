@@ -43,19 +43,15 @@ You can tag lock ownership for diagnostics with `FW_BUILD_STARTED_BY=user|agent`
 
 ## Building Installers (WiX 3 default, WiX 6 opt-in)
 
-Installer builds default to **WiX 3** (legacy batch pipeline) using inputs in `FLExInstaller/` and `PatchableInstaller/`. The **Visual Studio WiX Toolset v3 extension** is required so `Wix.CA.targets` is available under the MSBuild extensions path. Use `-InstallerToolset Wix6` to opt into the WiX 6 SDK-style path (restored via NuGet).
+Installer builds default to **WiX 3** (legacy batch pipeline) using inputs in `FLExInstaller/` and `PatchableInstaller/`. Use `-InstallerToolset Wix6` to opt into the WiX 6 SDK-style path (restored via NuGet; no setup required).
 
-### WiX 3.14 setup (required for WiX 3 installer builds)
+### WiX 3.11 setup (required for WiX 3 installer builds)
 
-We expect the WiX 3.14 toolset to be installed under:
-
-- `%LOCALAPPDATA%\FieldWorksTools\Wix314`
-
-Required:
-
-- Ensure `candle.exe`, `light.exe`, `heat.exe`, and `insignia.exe` are available. The WiX 3.14 tools are in the **root** of that folder (not a `bin` subfolder).
-- Set the `WIX` environment variable to the toolset root (e.g., `%LOCALAPPDATA%\FieldWorksTools\Wix314`).
-- Add the toolset root to `PATH` (or rerun `Setup-Developer-Machine.ps1` to do it for you).
+WiX 3.11 can be installed with Chocolatey:
+```
+choco install wixtoolset --version 3.11.2
+```
+- Ensure tools (`heat.exe` etc.) are available in `%WIX%\bin` or on the PATH.
 - Install the **Visual Studio WiX Toolset v3 extension** so `Wix.CA.targets` is available to MSBuild.
 
 ### Running installer builds

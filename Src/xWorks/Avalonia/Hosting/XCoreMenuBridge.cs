@@ -55,6 +55,18 @@ namespace SIL.FieldWorks.XWorks
 		public static IReadOnlyList<DetailMenuItem> CreateMenuItems(XWindow window, string[] menuIds,
 			Func<ChoiceBase, UIItemDisplayProperties, DetailMenuItem> interceptor,
 			IxCoreColleague temporaryColleague)
+			=> CreateMenuItems(window, menuIds, interceptor, temporaryColleague, null);
+
+		/// <summary>
+		/// As the interceptor overload, plus a native <paramref name="authority"/> that answers
+		/// every leaf under the menu ids it owns BEFORE the mediator is asked: those leaves get
+		/// no Display* round trip and no interceptor call, so nothing on the mediator (the
+		/// hidden DataTree adapter included) takes part in them. Leaves under other ids keep
+		/// the mediator path.
+		/// </summary>
+		public static IReadOnlyList<DetailMenuItem> CreateMenuItems(XWindow window, string[] menuIds,
+			Func<ChoiceBase, UIItemDisplayProperties, DetailMenuItem> interceptor,
+			IxCoreColleague temporaryColleague, IDetailMenuAuthority authority)
 		{
 			var group = window?.GetContextMenuChoiceGroup(menuIds);
 			if (group == null)
@@ -62,11 +74,46 @@ namespace SIL.FieldWorks.XWorks
 			if (temporaryColleague != null)
 				window.Mediator.AddTemporaryColleague(temporaryColleague);
 			group.PopulateNow();
-			return Convert(group, interceptor);
+			return Convert(group, interceptor, authority);
+		}
+
+		/// <summary>
+		/// Whether <paramref name="authority"/> owns every one of <paramref name="menuIds"/>,
+		/// so a menu built from them needs nothing from the mediator. Null or empty ids count
+		/// as owned; a null authority owns nothing.
+		/// </summary>
+		public static bool OwnsAll(IDetailMenuAuthority authority, IEnumerable<string> menuIds)
+		{
+			if (menuIds == null)
+				return true;
+			foreach (var id in menuIds)
+			{
+				if (!string.IsNullOrEmpty(id) && (authority == null || !authority.Owns(id)))
+					return false;
+			}
+			return true;
+		}
+
+		// The owned menu id a leaf belongs to, or null. A merged group flattens its source
+		// menus, so ownership comes from the nearest enclosing menu element the authority owns.
+		private static string OwnedMenuIdOf(ChoiceBase leaf, IDetailMenuAuthority authority)
+		{
+			if (authority == null)
+				return null;
+			for (var node = leaf.ConfigurationNode?.ParentNode; node != null; node = node.ParentNode)
+			{
+				if (node.Name != "menu")
+					continue;
+				var id = node.Attributes?["id"]?.Value;
+				if (!string.IsNullOrEmpty(id) && authority.Owns(id))
+					return id;
+			}
+			return null;
 		}
 
 		private static List<DetailMenuItem> Convert(ChoiceGroup group,
-			Func<ChoiceBase, UIItemDisplayProperties, DetailMenuItem> interceptor)
+			Func<ChoiceBase, UIItemDisplayProperties, DetailMenuItem> interceptor,
+			IDetailMenuAuthority authority)
 		{
 			var items = new List<DetailMenuItem>();
 			foreach (var member in group)
@@ -79,7 +126,7 @@ namespace SIL.FieldWorks.XWorks
 				else if (member is ChoiceGroup submenu)
 				{
 					submenu.PopulateNow();
-					var children = Convert(submenu, interceptor);
+					var children = Convert(submenu, interceptor, authority);
 					if (children.Count == 0)
 						continue;
 
@@ -99,6 +146,17 @@ namespace SIL.FieldWorks.XWorks
 				}
 				else if (member is ChoiceBase choice)
 				{
+					// A natively owned leaf is answered whole (hidden, or label/state/execute)
+					// with no mediator round trip.
+					var ownedId = OwnedMenuIdOf(choice, authority);
+					if (ownedId != null)
+					{
+						var native = authority.Build(ownedId, choice);
+						if (native != null)
+							items.Add(WithoutExecuteWhenDisabled(native));
+						continue;
+					}
+
 					var display = choice.GetDisplayProperties();
 					if (!display.Visible)
 						continue;

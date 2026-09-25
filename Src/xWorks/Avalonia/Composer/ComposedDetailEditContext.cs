@@ -29,9 +29,16 @@ namespace SIL.FieldWorks.XWorks
 		// presence is what makes the picker offer a create row.
 		public Func<string, bool> ReferenceCreate;
 
+		// Set only by a field whose items can be retyped in place (environments); (item key,
+		// text) -> staged. Reconciliation lives in the handler, not here.
+		public Func<string, string, bool> ReferenceSetText;
+
 		/// <summary>(item key, forward) -> moved; null on rows whose items cannot be
 		/// reordered.</summary>
 		public Func<string, bool, bool> ReferenceMove;
+		/// <summary>Discards the row's stored item order; null unless the layout marks the
+		/// row reorderable.</summary>
+		public Func<bool> ReferenceResetOrder;
 		public Func<int, DetailRichTextValue, bool> ParagraphText;
 		public Func<int, string, bool> ParagraphStyle;
 		public Func<int, bool> ParagraphInsert;
@@ -45,7 +52,7 @@ namespace SIL.FieldWorks.XWorks
 	/// (one shared session lifecycle + required-lexeme validation).
 	/// </summary>
 	public sealed class ComposedDetailEditContext : DetailEditContextBase, IStructuredTextEditing,
-		IReferenceItemCreation
+		IReferenceTextEditing
 	{
 		// One handler per composed field, keyed by StableId; a null delegate slot means the field's kind
 		// does not support that gesture (rejected like an unknown field). Replaces the former nine parallel
@@ -114,6 +121,19 @@ namespace SIL.FieldWorks.XWorks
 			return Stage(() => creator(text), FieldLabelFor(field));
 		}
 
+		public bool CanEditReferenceItemText(DetailField field)
+			=> Handler(field)?.ReferenceSetText != null;
+
+		public bool TrySetReferenceItemText(DetailField field, string itemKey, string text)
+		{
+			var setter = Handler(field)?.ReferenceSetText;
+			// Blank text is not rejected here: it is how the user removes an item, so the
+			// handler is the one that decides what an emptied item means.
+			if (setter == null || string.IsNullOrWhiteSpace(itemKey))
+				return false;
+			return Stage(() => setter(itemKey, text), FieldLabelFor(field));
+		}
+
 		public override bool TryAddReferenceItem(DetailField field, string optionKey)
 		{
 			var setter = Handler(field)?.ReferenceAdd;
@@ -136,6 +156,14 @@ namespace SIL.FieldWorks.XWorks
 			if (setter == null)
 				return false;
 			return Stage(() => setter(optionKey, forward), FieldLabelFor(field));
+		}
+
+		public override bool TryResetReferenceOrder(DetailField field)
+		{
+			var setter = Handler(field)?.ReferenceResetOrder;
+			if (setter == null)
+				return false;
+			return Stage(setter, FieldLabelFor(field));
 		}
 
 		public bool TrySetParagraphText(DetailField field, int paragraphIndex,
