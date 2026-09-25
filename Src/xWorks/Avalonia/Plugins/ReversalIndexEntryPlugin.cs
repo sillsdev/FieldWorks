@@ -249,6 +249,15 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <inheritdoc />
+		public string IssueAddRowKey(string rowKey)
+		{
+			RowBinding binding;
+			if (string.IsNullOrEmpty(rowKey) || !_rows.TryGetValue(rowKey, out binding))
+				return null;
+			return Bind(binding.Index, null);
+		}
+
+		/// <inheritdoc />
 		public Guid? TryResolveMainEntryGuid(string rowKey)
 		{
 			RowBinding binding;
@@ -336,12 +345,18 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		// An entry left with no senses and no subentries is deleted.
+		// An entry left with no senses and no subentries is deleted, and so is each ancestor the
+		// deletion leaves with neither.
 		private void Unlink(IReversalIndexEntry entry)
 		{
 			entry.SensesRS.Remove(_sense);
-			if (entry.SensesRS.Count == 0 && entry.SubentriesOS.Count == 0)
-				entry.Delete();
+			var level = entry;
+			while (level != null && level.SensesRS.Count == 0 && level.SubentriesOS.Count == 0)
+			{
+				var parent = level.OwningEntry;
+				level.Delete();
+				level = parent;
+			}
 		}
 
 		// A host that is not the fenced detail context (a test fake) applies the write directly.

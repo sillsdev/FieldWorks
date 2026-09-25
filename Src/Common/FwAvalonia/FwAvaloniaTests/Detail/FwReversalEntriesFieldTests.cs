@@ -42,6 +42,10 @@ namespace FwAvaloniaTests.Detail
 				return true;
 			}
 
+			private int _issued;
+
+			public string IssueAddRowKey(string rowKey) => "en-add" + ++_issued;
+
 			public Guid? TryResolveMainEntryGuid(string rowKey) => Guid.Empty;
 
 			public bool IsOpen => false;
@@ -144,6 +148,27 @@ namespace FwAvaloniaTests.Detail
 				Is.GreaterThan(second.TranslatePoint(new Point(0, 0), window).Value.X), "the add slot comes last");
 		}
 
+		// A text-sized editor clips a caret at the end of its text, and an empty one has no room
+		// for a caret at all, so each slot's text area must be wider than its text.
+		[AvaloniaTest]
+		public void EverySlot_LeavesRoomForTheCaretAfterItsText()
+		{
+			var (field, _, _) = Show(new RecordingReversalContext(), null, English("Antarctica"));
+
+			foreach (var id in new[] { "Reversal.en.0", "Reversal.en.Add" })
+			{
+				var box = Find<TextBox>(field, id);
+				box.Focus();
+				box.CaretIndex = box.Text?.Length ?? 0;
+				Dispatcher.UIThread.RunJobs();
+				var presenter = box.GetVisualDescendants()
+					.OfType<Avalonia.Controls.Presenters.TextPresenter>().Single();
+
+				Assert.That(presenter.Bounds.Width,
+					Is.GreaterThanOrEqualTo(presenter.DesiredSize.Width + FwAvaloniaDensity.CaretAllowance), id);
+			}
+		}
+
 		[AvaloniaTest]
 		public void ALongEntry_StaysOnOneLine_InsideItsSlot()
 		{
@@ -233,6 +258,356 @@ namespace FwAvaloniaTests.Detail
 			other.Focus();
 			Dispatcher.UIThread.RunJobs();
 			Assert.That(context.Events, Has.Count.EqualTo(1), "leaving again without a change commits nothing more");
+		}
+
+		[AvaloniaTest]
+		public void MovingBetweenSlots_CommitsNothing_UntilFocusLeavesTheField()
+		{
+			var context = new RecordingReversalContext();
+			var (field, other, _) = Show(context, null, English("dwelling"));
+			var entry = Find<TextBox>(field, "Reversal.en.0");
+			var add = Find<TextBox>(field, "Reversal.en.Add");
+
+			entry.Focus();
+			entry.Text = "abode";
+			add.Focus();
+			add.Text = "home";
+			entry.Focus();
+			Dispatcher.UIThread.RunJobs();
+			Assert.That(context.Events, Is.Empty, "focus is still inside the field");
+
+			other.Focus();
+			Dispatcher.UIThread.RunJobs();
+			Assert.That(context.Events, Is.EqualTo(new[] { "commit en0=abode", "commit en-add=home" }),
+				"leaving the field commits every changed slot, in order");
+		}
+
+		[AvaloniaTest]
+		public void TypingIntoTheAddSlot_OpensAFreshOne_WithoutSaving()
+		{
+			var context = new RecordingReversalContext();
+			var (field, _, _) = Show(context, null, English("dwelling"));
+			var add = Find<TextBox>(field, "Reversal.en.Add");
+
+			add.Focus();
+			add.Text = "h";
+			Dispatcher.UIThread.RunJobs();
+
+			var fresh = Find<TextBox>(field, "Reversal.en.Add1");
+			Assert.That(fresh, Is.Not.Null, "the first keystroke opens another empty slot");
+			Assert.That(fresh.Text, Is.Empty);
+			Assert.That(Find<WrapPanel>(field, "Reversal.en").Children.OfType<Border>().Count(), Is.EqualTo(2),
+				"the new slot is joined to the line by a bar");
+			Assert.That(add.IsFocused, Is.True, "typing continues in the same slot");
+			Assert.That(context.Events, Is.Empty, "nothing is saved while typing");
+		}
+
+		[AvaloniaTest]
+		public void FurtherKeystrokes_OpenNoMoreSlots()
+		{
+			var (field, _, _) = Show(new RecordingReversalContext(), null, English());
+			var add = Find<TextBox>(field, "Reversal.en.Add");
+
+			add.Focus();
+			add.Text = "h";
+			add.Text = "ho";
+			add.Text = "home";
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(field.GetVisualDescendants().OfType<TextBox>().Count(), Is.EqualTo(2));
+		}
+
+		[AvaloniaTest]
+		public void EachNewSlot_SavesWithItsOwnKey_WhenFocusLeaves()
+		{
+			var context = new RecordingReversalContext();
+			var (field, other, _) = Show(context, null, English());
+
+			// TextChanged arrives through the dispatcher, so each keystroke is run before the
+			// next step.
+			var add = Find<TextBox>(field, "Reversal.en.Add");
+			add.Focus();
+			add.Text = "one";
+			Dispatcher.UIThread.RunJobs();
+			var second = Find<TextBox>(field, "Reversal.en.Add1");
+			second.Focus();
+			second.Text = "two";
+			Dispatcher.UIThread.RunJobs();
+			Assert.That(Find<TextBox>(field, "Reversal.en.Add2"), Is.Not.Null, "typing in the new slot opens a third");
+			Assert.That(context.Events, Is.Empty);
+
+			other.Focus();
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(context.Events, Is.EqualTo(new[] { "commit en-add=one", "commit en-add1=two" }),
+				"each typed slot saves under its own key; the empty last slot saves nothing");
+		}
+
+		[AvaloniaTest]
+		public void AnAddSlotEmptiedAgain_IsRemovedWhenTheUserMovesOn()
+		{
+			var context = new RecordingReversalContext();
+			var (field, _, _) = Show(context, null, English("dwelling"));
+			var add = Find<TextBox>(field, "Reversal.en.Add");
+
+			add.Focus();
+			add.Text = "h";
+			Dispatcher.UIThread.RunJobs();
+			add.Text = string.Empty;
+			Dispatcher.UIThread.RunJobs();
+			Find<TextBox>(field, "Reversal.en.Add1").Focus();
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(Find<TextBox>(field, "Reversal.en.Add"), Is.Null);
+			Assert.That(Find<WrapPanel>(field, "Reversal.en").Children.OfType<Border>().Count(), Is.EqualTo(1),
+				"the removed slot takes its bar with it");
+			Assert.That(context.Events, Is.Empty);
+		}
+
+		private static void Press(TextBox box, Key key, KeyModifiers modifiers = KeyModifiers.None)
+		{
+			box.RaiseEvent(new KeyEventArgs
+			{
+				RoutedEvent = InputElement.KeyDownEvent,
+				Key = key,
+				KeyModifiers = modifiers,
+				Source = box
+			});
+			Dispatcher.UIThread.RunJobs();
+		}
+
+		private static void PlaceCaret(TextBox box, int caret)
+		{
+			box.Focus();
+			box.CaretIndex = caret;
+			box.SelectionStart = caret;
+			box.SelectionEnd = caret;
+		}
+
+		private static DetailReversalGroup French(params string[] forms)
+		{
+			var rows = forms.Select((f, i) => new DetailReversalRow("fr" + i, f, false)).ToList();
+			rows.Add(new DetailReversalRow("fr-add", string.Empty, true));
+			return new DetailReversalGroup("fr", "Fre", null, false, rows);
+		}
+
+		[AvaloniaTest]
+		public void LeftAtASlotsStart_MovesToTheEndOfThePreviousSlot()
+		{
+			var (field, _, _) = Show(new RecordingReversalContext(), null, English("dwelling", "abode"));
+			var first = Find<TextBox>(field, "Reversal.en.0");
+			PlaceCaret(Find<TextBox>(field, "Reversal.en.1"), 0);
+
+			Press(Find<TextBox>(field, "Reversal.en.1"), Key.Left);
+
+			Assert.That(first.IsFocused, Is.True);
+			Assert.That(first.CaretIndex, Is.EqualTo("dwelling".Length));
+		}
+
+		[AvaloniaTest]
+		public void RightAtASlotsEnd_MovesToTheStartOfTheNextSlot()
+		{
+			var (field, _, _) = Show(new RecordingReversalContext(), null, English("dwelling", "abode"));
+			var second = Find<TextBox>(field, "Reversal.en.1");
+			var first = Find<TextBox>(field, "Reversal.en.0");
+			PlaceCaret(first, "dwelling".Length);
+
+			Press(first, Key.Right);
+
+			Assert.That(second.IsFocused, Is.True);
+			Assert.That(second.CaretIndex, Is.Zero);
+		}
+
+		[AvaloniaTest]
+		public void Enter_DoesNothing()
+		{
+			var context = new RecordingReversalContext();
+			var (field, _, window) = Show(context, null, English("dwelling"));
+			var box = Find<TextBox>(field, "Reversal.en.0");
+			var reachedHost = 0;
+			window.AddHandler(InputElement.KeyDownEvent, (s, e) => reachedHost++, RoutingStrategies.Bubble);
+			box.Focus();
+			box.Text = "house";
+			PlaceCaret(box, 2);
+
+			Press(box, Key.Enter);
+			Press(box, Key.Enter, KeyModifiers.Control);
+
+			Assert.That(reachedHost, Is.Zero, "Enter never reaches the view, so it saves nothing");
+			Assert.That(box.Text, Is.EqualTo("house"));
+			Assert.That(box.IsFocused, Is.True);
+			Assert.That(context.Events, Is.Empty);
+		}
+
+		[AvaloniaTest]
+		public void HomeAndEnd_GoToTheEdgesOfTheLine_AcrossSlots()
+		{
+			var (field, _, _) = Show(new RecordingReversalContext(), null, English("dwelling", "abode"));
+			var first = Find<TextBox>(field, "Reversal.en.0");
+			var middle = Find<TextBox>(field, "Reversal.en.1");
+			var add = Find<TextBox>(field, "Reversal.en.Add");
+
+			PlaceCaret(middle, 2);
+			Press(middle, Key.Home);
+			Assert.That(first.IsFocused, Is.True);
+			Assert.That(first.CaretIndex, Is.Zero);
+
+			PlaceCaret(middle, 2);
+			Press(middle, Key.End);
+			Assert.That(add.IsFocused, Is.True, "the line ends with the add slot");
+			Assert.That(add.CaretIndex, Is.Zero);
+
+			PlaceCaret(first, 3);
+			Press(first, Key.End);
+			PlaceCaret(add, 0);
+			Press(add, Key.Home);
+			Assert.That(first.IsFocused, Is.True);
+		}
+
+		[AvaloniaTest]
+		public void HomeAndEnd_StayOnTheirOwnLine_WhenTheGroupWraps()
+		{
+			var forms = Enumerable.Range(0, 12).Select(i => "dwellingplace" + i).ToArray();
+			var (field, _, _) = Show(new RecordingReversalContext(), null, English(forms));
+			var boxes = Enumerable.Range(0, forms.Length)
+				.Select(i => Find<TextBox>(field, "Reversal.en." + i)).ToList();
+			var group = Find<WrapPanel>(field, "Reversal.en");
+			double Top(TextBox box) => box.TranslatePoint(new Point(0, 0), group).Value.Y;
+			var firstLineTop = Top(boxes[0]);
+			var onSecondLine = boxes.Where(b => Top(b) > firstLineTop).ToList();
+			Assert.That(onSecondLine, Is.Not.Empty, "precondition: the group wraps");
+			var secondLine = onSecondLine.Where(b => Top(b).Equals(Top(onSecondLine[0]))).ToList();
+
+			var current = secondLine.Last();
+			PlaceCaret(current, 1);
+			Press(current, Key.Home);
+			Assert.That(secondLine[0].IsFocused, Is.True, "Home goes to the start of this line, not the group");
+
+			PlaceCaret(boxes[0], 1);
+			Press(boxes[0], Key.End);
+			var firstLine = boxes.Where(b => Top(b).Equals(firstLineTop)).ToList();
+			Assert.That(firstLine.Last().IsFocused, Is.True, "End goes to the end of this line");
+			Assert.That(firstLine.Last().CaretIndex, Is.EqualTo(firstLine.Last().Text.Length));
+		}
+
+		[AvaloniaTest]
+		public void ModifiedHomeAndEnd_StayInTheSlot()
+		{
+			var (field, _, _) = Show(new RecordingReversalContext(), null, English("dwelling", "abode"));
+			var middle = Find<TextBox>(field, "Reversal.en.1");
+
+			PlaceCaret(middle, 2);
+			Press(middle, Key.Home, KeyModifiers.Shift);
+
+			Assert.That(middle.IsFocused, Is.True);
+		}
+
+		[AvaloniaTest]
+		public void CtrlArrows_AtASlotsEdge_MoveBetweenSlotsToo()
+		{
+			var (field, _, _) = Show(new RecordingReversalContext(), null, English("dwelling", "abode"));
+			var first = Find<TextBox>(field, "Reversal.en.0");
+			var second = Find<TextBox>(field, "Reversal.en.1");
+
+			PlaceCaret(second, 0);
+			Press(second, Key.Left, KeyModifiers.Control);
+			Assert.That(first.IsFocused, Is.True);
+			Assert.That(first.CaretIndex, Is.EqualTo("dwelling".Length));
+
+			PlaceCaret(first, "dwelling".Length);
+			Press(first, Key.Right, KeyModifiers.Control);
+			Assert.That(second.IsFocused, Is.True);
+			Assert.That(second.CaretIndex, Is.Zero);
+		}
+
+		[AvaloniaTest]
+		public void ArrowsInsideASlot_StayInIt()
+		{
+			var (field, _, _) = Show(new RecordingReversalContext(), null, English("dwelling", "abode"));
+			var second = Find<TextBox>(field, "Reversal.en.1");
+
+			PlaceCaret(second, 2);
+			Press(second, Key.Left);
+			Assert.That(second.IsFocused, Is.True, "the caret is not at the start");
+
+			PlaceCaret(second, 0);
+			Press(second, Key.Left, KeyModifiers.Shift);
+			Assert.That(second.IsFocused, Is.True, "a selecting arrow keeps its text behavior");
+
+			PlaceCaret(second, 2);
+			Press(second, Key.Left, KeyModifiers.Control);
+			Assert.That(second.IsFocused, Is.True, "Ctrl+Left inside the text moves within the slot");
+
+			second.Focus();
+			second.SelectionStart = 0;
+			second.SelectionEnd = 3;
+			Press(second, Key.Left);
+			Assert.That(second.IsFocused, Is.True, "an arrow with a selection keeps its text behavior");
+		}
+
+		[AvaloniaTest]
+		public void ArrowsAtTheFieldsEnds_GoNowhere()
+		{
+			var (field, _, _) = Show(new RecordingReversalContext(), null, English("dwelling"));
+			var first = Find<TextBox>(field, "Reversal.en.0");
+			var add = Find<TextBox>(field, "Reversal.en.Add");
+
+			PlaceCaret(first, 0);
+			Press(first, Key.Left);
+			Assert.That(first.IsFocused, Is.True);
+
+			PlaceCaret(add, 0);
+			Press(add, Key.Right);
+			Assert.That(add.IsFocused, Is.True);
+		}
+
+		[AvaloniaTest]
+		public void RightAtAGroupsLastSlot_MovesIntoTheNextGroup()
+		{
+			var (field, _, _) = Show(new RecordingReversalContext(), null, English("dwelling"), French("maison"));
+			var add = Find<TextBox>(field, "Reversal.en.Add");
+			PlaceCaret(add, 0);
+
+			Press(add, Key.Right);
+
+			Assert.That(Find<TextBox>(field, "Reversal.fr.0").IsFocused, Is.True);
+		}
+
+		[AvaloniaTest]
+		public void InARightToLeftGroup_TheArrowsMirror()
+		{
+			var arabic = new DetailReversalGroup("ar", "Ara", null, true, new[]
+			{
+				new DetailReversalRow("ar0", "بيت", false),
+				new DetailReversalRow("ar1", "دار", false),
+				new DetailReversalRow("ar-add", "", true)
+			});
+			var (field, _, _) = Show(new RecordingReversalContext(), null, arabic);
+			var first = Find<TextBox>(field, "Reversal.ar.0");
+			var second = Find<TextBox>(field, "Reversal.ar.1");
+
+			PlaceCaret(second, 0);
+			Press(second, Key.Right);
+			Assert.That(first.IsFocused, Is.True, "Right at the start moves back, since the start is on the right");
+
+			PlaceCaret(first, first.Text.Length);
+			Press(first, Key.Left);
+			Assert.That(second.IsFocused, Is.True, "Left at the end moves on");
+		}
+
+		[AvaloniaTest]
+		public void MovingBetweenSlotsByArrow_SavesNothing()
+		{
+			var context = new RecordingReversalContext();
+			var (field, _, _) = Show(context, null, English("dwelling", "abode"));
+			var first = Find<TextBox>(field, "Reversal.en.0");
+			first.Focus();
+			first.Text = "house";
+			PlaceCaret(first, first.Text.Length);
+
+			Press(first, Key.Right);
+
+			Assert.That(context.Events, Is.Empty);
 		}
 
 		[AvaloniaTest]

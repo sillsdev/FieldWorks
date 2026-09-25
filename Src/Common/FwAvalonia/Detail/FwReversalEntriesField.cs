@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Avalonia;
 using Avalonia.Automation;
 using Avalonia.Controls;
@@ -12,6 +13,7 @@ using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Layout;
 using Avalonia.Media;
+using Avalonia.VisualTree;
 
 namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 {
@@ -111,15 +113,19 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 	/// FieldWorks-owned editor for a sense's reversal entries. Each reversal index is a group
 	/// labeled with its writing system abbreviation: one wrapping line of editable slots, one
 	/// per linked entry and a final empty one for adding, with a bar between neighboring
-	/// slots. A row commits once, when it loses focus,
-	/// through <see cref="IReversalEntryEditing"/>; the rows are a snapshot that the host
-	/// rebuilds after its save. Right-clicking a row offers "Show in Reversal Index", and
-	/// Ctrl+click runs it directly. An edit context without
+	/// slots. Typing into the empty slot opens a fresh one after it, and an add slot emptied
+	/// again disappears once the user moves on. Moving between slots commits nothing; when
+	/// focus leaves the field, every changed
+	/// slot commits through <see cref="IReversalEntryEditing"/>, as one edit. The rows are a
+	/// snapshot that the host rebuilds after its save. Right-clicking a row offers "Show in
+	/// Reversal Index", and Ctrl+click runs it directly. An edit context without
 	/// <see cref="IReversalEntryEditing"/> shows the rows read-only.
 	/// </summary>
 	public sealed class FwReversalEntriesField : StackPanel, IDisposable
 	{
 		private readonly List<Action> _teardown = new List<Action>();
+		private readonly List<Action> _rowCommits = new List<Action>();
+		private readonly List<GroupState> _groups = new List<GroupState>();
 		private readonly IReversalEntryEditing _editing;
 		private readonly Action<string> _navigationRequested;
 		private bool _disposed;
@@ -154,39 +160,67 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				Children.Add(CreateGroup(name, automationId, group, writingSystemFocused, abbrevWidth));
 		}
 
+		// A text-sized editor clips its own caret at the end, and fits none at all when empty, so
+		// a slot measures a little wider than its text.
+		private sealed class SlotTextBox : TextBox
+		{
+			protected override Type StyleKeyOverride => typeof(TextBox);
+
+			protected override Size MeasureOverride(Size availableSize)
+			{
+				var size = base.MeasureOverride(availableSize);
+				return new Size(size.Width + FwAvaloniaDensity.CaretAllowance, size.Height);
+			}
+		}
+
+		// One group's live line of slots, which grows as the user types into its last one.
+		private sealed class GroupState
+		{
+			public DetailReversalGroup Group;
+			public string GroupId;
+			public string Label;
+			public Action<string> WritingSystemFocused;
+			public WrapPanel Slots;
+			public TextBox TrailingAdd;
+			public int AddedSlots;
+		}
+
 		private Control CreateGroup(string label, string automationId, DetailReversalGroup group,
 			Action<string> writingSystemFocused, double abbrevWidth)
 		{
-			var groupId = automationId + "." + group.WsTag;
-			// The group's entries run together on one wrapping line, a bar between each pair,
-			// the add row last.
-			var rows = new WrapPanel
+			var state = new GroupState
 			{
-				Orientation = Orientation.Horizontal,
-				Background = FwAvaloniaDensity.TransparentBrush,
-				FlowDirection = group.RightToLeft ? FlowDirection.RightToLeft : FlowDirection.LeftToRight
+				Group = group,
+				GroupId = automationId + "." + group.WsTag,
+				Label = label,
+				WritingSystemFocused = writingSystemFocused,
+				// The group's slots run together on one wrapping line, a bar between each pair,
+				// the add slot last.
+				Slots = new WrapPanel
+				{
+					Orientation = Orientation.Horizontal,
+					Background = FwAvaloniaDensity.TransparentBrush,
+					FlowDirection = group.RightToLeft ? FlowDirection.RightToLeft : FlowDirection.LeftToRight
+				}
 			};
-			AutomationProperties.SetAutomationId(rows, groupId);
-			TextBox addBox = null;
+			_groups.Add(state);
+			var rows = state.Slots;
+			AutomationProperties.SetAutomationId(rows, state.GroupId);
 			for (var i = 0; i < group.Rows.Count; i++)
 			{
-				if (i > 0)
-					rows.Children.Add(FwReferenceVectorField.CreateSeparatorBar());
 				var row = group.Rows[i];
-				rows.Children.Add(CreateRow(label, groupId, group, row, i, writingSystemFocused, out var box));
-				if (row.IsAddSlot)
-					addBox = box;
+				AppendSlot(state, row, row.IsAddSlot ? state.GroupId + ".Add" : state.GroupId + "." + i);
 			}
 
-			if (_editing != null && addBox != null)
+			if (_editing != null)
 			{
-				// An empty add row is barely wider than its caret, so a click anywhere on the
+				// An empty add slot is barely wider than its caret, so a click anywhere on the
 				// group's free space starts typing there.
 				EventHandler<PointerPressedEventArgs> pressed = (s, e) =>
 				{
-					if (!ReferenceEquals(e.Source, rows))
+					if (!ReferenceEquals(e.Source, rows) || state.TrailingAdd == null)
 						return;
-					addBox.Focus();
+					state.TrailingAdd.Focus();
 					e.Handled = true;
 				};
 				rows.PointerPressed += pressed;
@@ -202,11 +236,49 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			return grid;
 		}
 
-		private Control CreateRow(string label, string groupId, DetailReversalGroup group,
-			DetailReversalRow row, int index, Action<string> writingSystemFocused, out TextBox box)
+		// Adds a slot to the end of the group's line, after a bar when the line is not empty.
+		private void AppendSlot(GroupState state, DetailReversalRow row, string rowId)
 		{
-			var rowId = row.IsAddSlot ? groupId + ".Add" : groupId + "." + index;
-			var editor = new TextBox
+			if (state.Slots.Children.Count > 0)
+				state.Slots.Children.Add(FwReferenceVectorField.CreateSeparatorBar());
+			state.Slots.Children.Add(CreateRow(state, row, rowId, out var box));
+			if (row.IsAddSlot)
+				state.TrailingAdd = box;
+		}
+
+		// The first keystroke in the last add slot opens a fresh one after it, so several entries
+		// can be typed in one visit. Nothing is saved until focus leaves the field.
+		private void Grow(GroupState state, string addRowKey)
+		{
+			var key = _editing.IssueAddRowKey(addRowKey);
+			if (key == null)
+				return;
+			state.AddedSlots++;
+			AppendSlot(state, new DetailReversalRow(key, string.Empty, true),
+				state.GroupId + ".Add" + state.AddedSlots);
+		}
+
+		// Drops an add slot the user emptied again before it was saved, with the bar that joined
+		// it to the line.
+		private static void RemoveSlot(GroupState state, Control slot)
+		{
+			var children = state.Slots.Children;
+			var index = children.IndexOf(slot);
+			if (index < 0)
+				return;
+			children.RemoveAt(index);
+			if (index > 0)
+				children.RemoveAt(index - 1);
+			else if (children.Count > 0)
+				children.RemoveAt(0);
+		}
+
+		private Control CreateRow(GroupState state, DetailReversalRow row, string rowId, out TextBox box)
+		{
+			var group = state.Group;
+			var label = state.Label;
+			var writingSystemFocused = state.WritingSystemFocused;
+			var editor = new SlotTextBox
 			{
 				Text = row.Text,
 				Padding = FwAvaloniaDensity.EditorPadding,
@@ -235,13 +307,39 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 					committed = text;
 			};
 
+			// The control this method returns; the slot removal below needs it.
+			Control slot = null;
 			if (_editing != null)
 			{
+				_rowCommits.Add(commit);
 				// Runs before the host's own focus-loss save, which bubbles up from this box.
-				EventHandler<RoutedEventArgs> lost = (s, e) => commit();
+				// Moving between slots stages nothing, so the host saves only once focus leaves.
+				EventHandler<RoutedEventArgs> lost = (s, e) =>
+				{
+					if (row.IsAddSlot && !ReferenceEquals(editor, state.TrailingAdd)
+						&& string.IsNullOrEmpty(editor.Text) && string.IsNullOrEmpty(committed))
+					{
+						RemoveSlot(state, slot);
+					}
+					if (!FocusIsInside())
+						CommitAll();
+				};
 				editor.LostFocus += lost;
 				_teardown.Add(() => editor.LostFocus -= lost);
+
+				if (row.IsAddSlot)
+				{
+					EventHandler<TextChangedEventArgs> grow = (s, e) =>
+					{
+						if (ReferenceEquals(editor, state.TrailingAdd) && !string.IsNullOrEmpty(editor.Text))
+							Grow(state, row.RowKey);
+					};
+					editor.TextChanged += grow;
+					_teardown.Add(() => editor.TextChanged -= grow);
+				}
 			}
+
+			WireSlotNavigation(editor, group.RightToLeft);
 
 			if (writingSystemFocused != null && !string.IsNullOrEmpty(group.WsTag))
 			{
@@ -251,11 +349,14 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			}
 
 			if (_navigationRequested != null)
-				WireNavigation(editor, row, commit);
+				WireNavigation(editor, row);
 
 			var suffix = CreateOtherWsSuffix(row, rowId + ".OtherWs");
 			if (suffix == null)
-				return editor;
+			{
+				slot = editor;
+				return slot;
+			}
 			var panel = new StackPanel
 			{
 				Orientation = Orientation.Horizontal,
@@ -263,15 +364,121 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			};
 			panel.Children.Add(editor);
 			panel.Children.Add(suffix);
-			return panel;
+			slot = panel;
+			return slot;
 		}
 
-		// The jump commits the row first, so a form typed into the add row exists when shown.
-		private void WireNavigation(TextBox box, DetailReversalRow row, Action commit)
+		// Keys that treat the field's slots as one text. Enter does nothing. An arrow, alone or
+		// with Ctrl, at a slot's edge moves into the neighboring slot, across groups (in a
+		// right-to-left group the start is on the right). Plain Home and End go to the edges of
+		// the current visual line.
+		private void WireSlotNavigation(TextBox editor, bool rightToLeft)
+		{
+			EventHandler<KeyEventArgs> keyDown = (s, e) =>
+			{
+				if (e.Key == Key.Enter)
+				{
+					e.Handled = true;
+					return;
+				}
+				if ((e.Key == Key.Home || e.Key == Key.End) && e.KeyModifiers == KeyModifiers.None)
+				{
+					MoveToLineEdge(editor, e.Key == Key.Home);
+					e.Handled = true;
+					return;
+				}
+				if ((e.KeyModifiers & ~KeyModifiers.Control) != KeyModifiers.None
+					|| (e.Key != Key.Left && e.Key != Key.Right))
+				{
+					return;
+				}
+				if (editor.SelectionStart != editor.SelectionEnd)
+					return;
+				var toward = (e.Key == Key.Left) != rightToLeft ? -1 : 1;
+				var length = (editor.Text ?? string.Empty).Length;
+				if (toward < 0 ? editor.CaretIndex != 0 : editor.CaretIndex != length)
+					return;
+
+				var slots = SlotEditors();
+				var index = slots.IndexOf(editor) + toward;
+				if (index < 0 || index >= slots.Count)
+					return;
+				PlaceCaret(slots[index], toward < 0);
+				e.Handled = true;
+			};
+			editor.AddHandler(InputElement.KeyDownEvent, keyDown, RoutingStrategies.Tunnel);
+			_teardown.Add(() => editor.RemoveHandler(InputElement.KeyDownEvent, keyDown));
+		}
+
+		// Home goes to the start of the first slot on the editor's visual line, End to the end of
+		// the last; the group's wrap panel puts every slot of one line at the same top.
+		private void MoveToLineEdge(TextBox editor, bool toStart)
+		{
+			foreach (var state in _groups)
+			{
+				var slots = state.Slots.Children
+					.Select(child => new { Slot = child, Editor = SlotEditor(child) })
+					.Where(pair => pair.Editor != null)
+					.ToList();
+				var current = slots.FirstOrDefault(pair => ReferenceEquals(pair.Editor, editor));
+				if (current == null)
+					continue;
+				var line = slots.Where(pair => pair.Slot.Bounds.Y.Equals(current.Slot.Bounds.Y)).ToList();
+				PlaceCaret((toStart ? line.First() : line.Last()).Editor, !toStart);
+				return;
+			}
+		}
+
+		private static void PlaceCaret(TextBox target, bool atEnd)
+		{
+			target.Focus();
+			var caret = atEnd ? (target.Text ?? string.Empty).Length : 0;
+			target.CaretIndex = caret;
+			target.SelectionStart = caret;
+			target.SelectionEnd = caret;
+		}
+
+		// A slot is its editor, or a panel holding the editor and its read-only suffix.
+		private static TextBox SlotEditor(Control slot)
+			=> slot as TextBox ?? (slot as Panel)?.Children.OfType<TextBox>().FirstOrDefault();
+
+		// The slot editors in reading order: group by group, each line from its first slot.
+		private List<TextBox> SlotEditors()
+		{
+			var editors = new List<TextBox>();
+			foreach (var state in _groups)
+			{
+				foreach (var child in state.Slots.Children)
+				{
+					var editor = SlotEditor(child);
+					if (editor != null)
+						editors.Add(editor);
+				}
+			}
+			return editors;
+		}
+
+		// Every changed slot commits in order, joining the host's one open edit session.
+		private void CommitAll()
+		{
+			foreach (var commit in _rowCommits)
+				commit();
+		}
+
+		// Focus has already moved when a slot's LostFocus runs, so this tells a move to another
+		// slot from leaving the field.
+		private bool FocusIsInside()
+		{
+			var focused = TopLevel.GetTopLevel(this)?.FocusManager?.GetFocusedElement() as Visual;
+			return focused != null && (ReferenceEquals(focused, this) || this.IsVisualAncestorOf(focused));
+		}
+
+		// The jump commits every slot first, so a form typed into the add row exists when shown.
+		private void WireNavigation(TextBox box, DetailReversalRow row)
 		{
 			Action jump = () =>
 			{
-				commit();
+				CommitAll();
 				_navigationRequested(row.RowKey);
 			};
 

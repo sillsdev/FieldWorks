@@ -19,16 +19,25 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		/// <summary>
 		/// Stages the text of one row, opening the edit session only when something changes.
 		/// Text equal to what the row already shows changes nothing; empty text on an entry
-		/// row unlinks that entry (an entry left with no senses and no subentries is
-		/// deleted). Other text is split on colons into a chain of entry and subentry forms,
-		/// and the sense is linked to the deepest entry of that chain, found or created -- an
-		/// existing entry is never renamed. Afterwards the key names the row's new entry, or
-		/// an add row again after an unlink, so a second commit on the same row edits what
-		/// the first one produced.
+		/// row unlinks that entry. Other text is split on colons into a chain of entry and
+		/// subentry forms, and the sense is linked to the deepest entry of that chain, found or
+		/// created -- an existing entry is never renamed -- in place of the row's old entry.
+		/// An unlinked entry left with no senses and no subentries is deleted, and so is each
+		/// parent that deletion leaves with neither. Afterwards the key names the row's new
+		/// entry, or an add row again after an unlink, so a second commit on the same row edits
+		/// what the first one produced.
 		/// </summary>
 		/// <returns>False, without opening the session, for an unknown key, an empty add
 		/// row, or unchanged text.</returns>
 		bool TryCommitRow(string rowKey, string typedText);
+
+		/// <summary>
+		/// Issues the key of another add row in the same reversal index as
+		/// <paramref name="rowKey"/>, for a slot the editor opens while the user types. Each add
+		/// row needs its own key, since a commit rebinds the key to the entry it produced.
+		/// </summary>
+		/// <returns>The new key, or null for an unknown key.</returns>
+		string IssueAddRowKey(string rowKey);
 
 		/// <summary>
 		/// The guid of the top-level entry to show for a row: the row's own entry, or for a

@@ -385,6 +385,61 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
+		public void ShorteningAChain_DeletesTheAncestorsItLeavesEmpty()
+		{
+			var (editing, host) = NewContext();
+			var key = AddRow(Group(editing.CreateGroups(null), EnTag)).RowKey;
+			editing.TryCommitRow(key, "arm: hand: finger");
+			host.Commit();
+			var finger = m_sense.ReferringReversalIndexEntries.Single();
+			var hand = finger.OwningEntry;
+			var arm = hand.OwningEntry;
+
+			editing.TryCommitRow(key, "arm");
+			host.Commit();
+
+			Assert.That(m_sense.ReferringReversalIndexEntries.Single(), Is.SameAs(arm));
+			Assert.That(finger.IsValidObject, Is.False);
+			Assert.That(hand.IsValidObject, Is.False, "the parent left with no senses and no subentries goes too");
+		}
+
+		[Test]
+		public void ClearingAChain_DeletesEveryLevelLeftEmpty()
+		{
+			var (editing, host) = NewContext();
+			var key = AddRow(Group(editing.CreateGroups(null), EnTag)).RowKey;
+			editing.TryCommitRow(key, "arm: hand: finger");
+			host.Commit();
+			var finger = m_sense.ReferringReversalIndexEntries.Single();
+			var hand = finger.OwningEntry;
+			var arm = hand.OwningEntry;
+
+			editing.TryCommitRow(key, string.Empty);
+			host.Commit();
+
+			Assert.That(new[] { finger, hand, arm }.Any(e => e.IsValidObject), Is.False);
+		}
+
+		[Test]
+		public void TheCascade_StopsAtAnAncestorStillInUse()
+		{
+			var other = AddOtherSense();
+			var arm = AddEntry(m_enIndex, "arm", other);
+			var hand = AddSubentry(arm, "hand");
+			AddSubentry(hand, "palm", other);
+			var finger = AddSubentry(hand, "finger", m_sense);
+			var (editing, host) = NewContext();
+			var row = Group(editing.CreateGroups(null), EnTag).Rows.First(r => !r.IsAddSlot);
+
+			editing.TryCommitRow(row.RowKey, string.Empty);
+			host.Commit();
+
+			Assert.That(finger.IsValidObject, Is.False);
+			Assert.That(hand.IsValidObject, Is.True, "hand still has the subentry palm");
+			Assert.That(arm.IsValidObject, Is.True, "arm still has another sense");
+		}
+
+		[Test]
 		public void EditingASharedEntrysRow_RelinksWithoutRenaming()
 		{
 			var other = AddOtherSense();
@@ -429,6 +484,45 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(m_sense.ReferringReversalIndexEntries.Select(e => e.ReversalForm.get_String(EnWs).Text),
 				Is.EqualTo(new[] { "two" }), "the row's second commit replaced its own entry");
 			Assert.That(first.IsValidObject, Is.False, "the replaced entry was orphaned, so it is gone");
+		}
+
+		[Test]
+		public void EditsToSeveralSlots_InOneFieldVisit_AreOneUndoStep()
+		{
+			AddEntry(m_enIndex, "dwelling", m_sense);
+			var (editing, host) = NewContext();
+			var group = Group(editing.CreateGroups(null), EnTag);
+			var before = UndoCount;
+
+			editing.TryCommitRow(group.Rows.First(r => !r.IsAddSlot).RowKey, "abode");
+			editing.TryCommitRow(AddRow(group).RowKey, "home");
+			host.Commit();
+
+			Assert.That(UndoCount - before, Is.EqualTo(1), "the field's edits share one undo step");
+			Assert.That(m_sense.ReferringReversalIndexEntries.Select(e => e.ReversalForm.get_String(EnWs).Text),
+				Is.EquivalentTo(new[] { "abode", "home" }));
+			Cache.ActionHandlerAccessor.Undo();
+			Assert.That(m_sense.ReferringReversalIndexEntries.Select(e => e.ReversalForm.get_String(EnWs).Text),
+				Is.EquivalentTo(new[] { "dwelling" }), "one Ctrl+Z undoes the whole visit");
+		}
+
+		[Test]
+		public void IssuedAddKeys_AddSeparateEntries_InOneUndoStep()
+		{
+			var (editing, host) = NewContext();
+			var add = AddRow(Group(editing.CreateGroups(null), EnTag));
+			var second = editing.IssueAddRowKey(add.RowKey);
+			var before = UndoCount;
+
+			Assert.That(second, Is.Not.Null.And.Not.EqualTo(add.RowKey));
+			editing.TryCommitRow(add.RowKey, "one");
+			editing.TryCommitRow(second, "two");
+			host.Commit();
+
+			Assert.That(UndoCount - before, Is.EqualTo(1));
+			Assert.That(m_sense.ReferringReversalIndexEntries.Select(e => e.ReversalForm.get_String(EnWs).Text),
+				Is.EquivalentTo(new[] { "one", "two" }), "the second slot adds, it does not replace the first");
+			Assert.That(editing.IssueAddRowKey("no-such-key"), Is.Null);
 		}
 
 		[Test]
