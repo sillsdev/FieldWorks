@@ -170,4 +170,8 @@
 	     DataTree.DropdownMinWidth, which sizes the COLLAPSED dropdown chooser. -->
 	<x:Double x:Key="DataTree.PickerMinWidth">180</x:Double>
 
+	<!-- Empty width of the slot that types a NEW reference-vector item. It sits inline among
+	     the items and grows with what is typed, so this is only its empty target size. -->
+	<x:Double x:Key="DataTree.NewItemSlotMinWidth">70</x:Double>
+
 </ResourceDictionary>

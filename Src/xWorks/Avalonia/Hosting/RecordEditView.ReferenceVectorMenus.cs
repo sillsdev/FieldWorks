@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using SIL.FieldWorks.Common.FwAvalonia.Detail;
 using SIL.FieldWorks.FdoUi;
 using SIL.LCModel;
+using SIL.LCModel.Core.Cellar;
 using SIL.LCModel.Infrastructure;
 using SIL.Reporting;
 using XCore;
@@ -156,7 +157,13 @@ namespace SIL.FieldWorks.XWorks
 			var targetHvo = ResolveVectorItem(rootObj, flid, request.SelectedItemKey);
 			if (targetHvo == 0)
 				return null;
-			var ui = ReferenceBaseUi.MakeUi(Cache, rootObj, flid, targetHvo);
+			// MakeUi gives a collection the base UI, which names the generic menu, and that
+			// drops every command for an environment. Only the collection UI names the
+			// environments menu.
+			var mdcType = (CellarPropertyType)mdc.GetFieldType(flid);
+			var ui = mdcType == CellarPropertyType.ReferenceCollection
+				? new ReferenceCollectionUi(Cache, rootObj, flid, targetHvo)
+				: ReferenceBaseUi.MakeUi(Cache, rootObj, flid, targetHvo);
 			if (ui == null)
 				return null;
 			ui.Mediator = m_mediator;
