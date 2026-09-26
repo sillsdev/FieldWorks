@@ -515,31 +515,27 @@ namespace SIL.FieldWorks.XWorks
 
 				// Only ids without a native authority need the hidden command adapter. An adapter
 				// failure must not suppress the menu: its items disable, the rest still works.
-				var authority = CreateReorderVectorAuthority(request);
-				if (!XCoreMenuBridge.OwnsAll(authority, idArray))
-				{
-					try
-					{
-						EnsureMenuCommandAdapter(request.Field.ObjectHvo, request.Field.Field);
-					}
-					catch (Exception adapterError)
-					{
-						Logger.WriteError("Detail menu command adapter failed; menu items that need "
-							+ "the hidden colleague chain will be disabled.", adapterError);
-					}
-				}
+				var authority = CreateMenuAuthority(request);
+				var ownsAll = XCoreMenuBridge.OwnsAll(authority, idArray);
+				if (!ownsAll)
+					SyncMenuCommandAdapter(request.Field);
 
 				// Render the SAME xCore menu natively in Avalonia -- identical items,
 				// enablement, and mediator dispatch; only rendering changes. The WinForms
 				// adapter menu remains the fallback if materialization fails.
 				try
 				{
-					// Field Visibility / Move Field retarget to the override layer; other
-					// mediator-answered commands keep their dispatch.
-					var registry = new OverrideCommandRegistry();
-					AddOverrideCommands(registry, request.Field);
-					var items = XCoreMenuBridge.CreateMenuItems(window, idArray, registry.TryBuild, null,
-						authority);
+					// On the mediator path Field Visibility / Move Field retarget to the override
+					// layer; other mediator-answered commands keep their dispatch. An owned menu
+					// never consults the interceptor, so it is not built.
+					Func<ChoiceBase, UIItemDisplayProperties, DetailMenuItem> interceptor = null;
+					if (!ownsAll)
+					{
+						var registry = new OverrideCommandRegistry();
+						AddOverrideCommands(registry, request.Field);
+						interceptor = registry.TryBuild;
+					}
+					var items = XCoreMenuBridge.CreateMenuItems(window, idArray, interceptor, null, authority);
 					if (items.Count > 0)
 					{
 						// A keyboard-opened menu anchors under the row it came from; a
@@ -555,6 +551,10 @@ namespace SIL.FieldWorks.XWorks
 						nativeMenuError);
 				}
 
+				// The adapter menu answers from the hidden tree's current slice, which an owned
+				// menu never pointed at this row.
+				if (ownsAll)
+					SyncMenuCommandAdapter(request.Field);
 				window.ShowContextMenu(idArray, AdapterMenuScreenPoint(request), null, null);
 			}
 			catch (Exception e)
@@ -597,21 +597,20 @@ namespace SIL.FieldWorks.XWorks
 
 		/// <summary>
 		/// The help topic of a detail row: its <see cref="DetailField.HelpTopicId"/> when set,
-		/// else one generated from the row's field and object and the current tool. Null when
-		/// the row carries nothing to generate from.
+		/// else one generated from the row's field and object and the current tool. A row with
+		/// no object generates from its field and label alone, so every row ends at a topic,
+		/// the generic one at worst.
 		/// </summary>
 		internal string ResolveHelpTopic(DetailField field)
 		{
 			if (field == null)
 				return null;
 			var source = field.HelpTopicSource;
-			if (string.IsNullOrEmpty(field.HelpTopicId) && source == null)
-				return null;
 			var provider = m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider");
 			var subject = new HelpTopicSubject
 			{
-				FieldName = source?.FieldName,
-				Label = source?.Label,
+				FieldName = source?.FieldName ?? field.Field,
+				Label = source?.Label ?? field.Label,
 				ClassName = source?.ClassName,
 				OwnerClassName = source?.OwnerClassName,
 				SortKey = source?.SortKey,
@@ -673,6 +672,66 @@ namespace SIL.FieldWorks.XWorks
 
 		private static string LabelOf(UIItemDisplayProperties display)
 			=> XCoreMenuBridge.StripAccelerator(display.Text);
+
+		/// <summary>
+		/// The native authorities for the request's row: the reorder-vector menu and the shared
+		/// per-object and Help menus, so a label menu made only of those ids needs nothing from
+		/// the hidden command adapter.
+		/// </summary>
+		internal IDetailMenuAuthority CreateMenuAuthority(DetailMenuRequest request)
+			=> new CompositeMenuAuthority(CreateReorderVectorAuthority(request),
+				CreateObjectMenuAuthority(request.Field));
+
+		/// <summary>The native authority for the row's per-object and Help menus.</summary>
+		internal IDetailMenuAuthority CreateObjectMenuAuthority(DetailField field)
+			=> new ObjectMenuAuthority(field, LocateOverrideTarget,
+				fieldVisibility: (label, target, visibility) =>
+					VisibilityItem(label, field, target.TemplateId, target.Location, visibility),
+				moveField: (label, target, up) => MoveItem(label, field, target.Location, up),
+				helpTopic: KnownHelpTopic,
+				showHelp: ShowDetailHelp);
+
+		// The row's override target, or null (with the reason logged) when it cannot be located.
+		// A failure disables the row's field commands rather than failing the whole menu.
+		private OverrideTarget LocateOverrideTarget(DetailField field)
+		{
+			try
+			{
+				return TryLocateOverrideTarget(field, out var templateId, out var location)
+					? new OverrideTarget(templateId, location)
+					: null;
+			}
+			catch (Exception e)
+			{
+				Logger.WriteError("Locating the row's override target failed; its Field Visibility and "
+					+ "Move Field commands are disabled.", e);
+				return null;
+			}
+		}
+
+		/// <summary>
+		/// The row's help topic when the help provider has it, else null. A failure hides Help
+		/// rather than failing the whole menu.
+		/// </summary>
+		internal string KnownHelpTopic(DetailField field)
+		{
+			try
+			{
+				var topic = ResolveHelpTopic(field);
+				if (topic == null)
+					return null;
+				var provider = m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider");
+				return provider?.GetHelpString(topic) != null ? topic : null;
+			}
+			catch (Exception e)
+			{
+				Logger.WriteError("Resolving the row's help topic failed; Help is hidden.", e);
+				return null;
+			}
+		}
+
+		private void ShowDetailHelp(string topic)
+			=> ShowHelp.ShowHelpTopic(m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), topic);
 
 		/// <summary>
 		/// Locates the row's node in its own compiled model, with the current override applied,
