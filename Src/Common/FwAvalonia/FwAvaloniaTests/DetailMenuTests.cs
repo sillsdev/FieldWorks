@@ -835,17 +835,25 @@ namespace FwAvaloniaTests
 			Assert.That(ReferenceEquals(requests[0].AnchorControl, second), Is.True);
 		}
 
-		// Items take focus from a click (so the keys and the context-menu key reach them) but
-		// add no Tab stops to the detail view.
+		// Items take focus from a click (so the keys and the context-menu key reach them), and
+		// only the first is a Tab stop: Tab always enters a row at its first item, whatever is
+		// current.
 		[AvaloniaTest]
-		public void VectorItems_AreFocusable_ButNotTabStops()
+		public void VectorItems_AreFocusable_AndOnlyTheFirstIsATabStop()
 		{
 			var (_, view, _) = Show(VectorField("Subentries", "a", "b"));
 			var vector = Find<FwReferenceVectorField>(view, "Subentries");
 			var first = Find<TextBlock>(view, "Subentries.Item.a");
+			var second = Find<TextBlock>(view, "Subentries.Item.b");
 			Assert.That(first.Focusable, Is.True);
-			Assert.That(KeyboardNavigation.GetIsTabStop(first), Is.False, "items are not tab stops");
+			Assert.That(KeyboardNavigation.GetIsTabStop(first), Is.True, "the first item is the stop");
+			Assert.That(KeyboardNavigation.GetIsTabStop(second), Is.False, "the others are not");
 			Assert.That(vector.Focusable, Is.False, "nor is the row");
+
+			vector.SelectItem("b");
+			Assert.That(KeyboardNavigation.GetIsTabStop(first), Is.True,
+				"making another item current does not move the stop");
+			Assert.That(KeyboardNavigation.GetIsTabStop(second), Is.False);
 		}
 
 		// Backspace or Delete on a focused item removes it, staging through the edit context
