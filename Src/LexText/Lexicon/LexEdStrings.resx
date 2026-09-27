@@ -631,6 +631,50 @@
   <data name="SortReversalSubEntries_CompletedTitle" xml:space="preserve">
     <value>Reversal subentry sorting is completed</value>
   </data>
+  <data name="ksApplyMotifChangesTitle" xml:space="preserve">
+    <value>Apply Motif changes</value>
+    <comment>Title for messages shown while applying changes from Motif to the open FieldWorks project.</comment>
+  </data>
+  <data name="ksApplyMotifConfirmation" xml:space="preserve">
+    <value>Save this project and apply the changes you approved in Motif? FieldWorks may reload the project afterward.</value>
+    <comment>Confirmation shown before FieldWorks saves, unlocks, and passes the current project to Motif.</comment>
+  </data>
+  <data name="ksApplyMotifNoChanges" xml:space="preserve">
+    <value>There are no Motif changes waiting to be applied.</value>
+    <comment>Shown when Motif reports that it had no approved changes for this project.</comment>
+  </data>
+  <data name="ksApplyMotifSuccess" xml:space="preserve">
+    <value>Motif changes were applied. FieldWorks has reloaded the project.</value>
+    <comment>Shown after Motif applies changes and FieldWorks successfully reopens the project.</comment>
+  </data>
+  <data name="ksApplyMotifSuccessWithSummary" xml:space="preserve">
+    <value>Motif changes were applied. FieldWorks has reloaded the project. {0}</value>
+    <comment>Shown after a successful apply when Motif provides a concise summary. The placeholder {0} is Motif's English text.</comment>
+  </data>
+  <data name="ksApplyMotifRefused" xml:space="preserve">
+    <value>Some Motif changes no longer fit this project. No changes were applied. Open Motif to review them, then try again.</value>
+    <comment>Shown when Motif refuses the apply without changing the project because approved changes no longer fit.</comment>
+  </data>
+  <data name="ksApplyMotifBusy" xml:space="preserve">
+    <value>This project is in use by another FieldWorks window or a transfer. Finish the other work, then try again.</value>
+    <comment>Shown when another FieldWorks window or a transfer prevents Motif from safely using the project.</comment>
+  </data>
+  <data name="ksMotifBusy" xml:space="preserve">
+    <value>Motif is busy with this project.</value>
+    <comment>Shown when Motif cannot apply changes because the project is in use by another process.</comment>
+  </data>
+  <data name="ksApplyMotifReconciliation" xml:space="preserve">
+    <value>Motif could not confirm whether the changes were applied. FieldWorks has reloaded the project. Open Motif to see what happened before you try again.</value>
+    <comment>Shown when Motif may have changed the project but FieldWorks cannot confirm the outcome.</comment>
+  </data>
+  <data name="ksMotifNotFound" xml:space="preserve">
+    <value>Motif is not installed on this computer.</value>
+    <comment>Shown when FieldWorks cannot find the Motif executable in its configured installation location.</comment>
+  </data>
+  <data name="ksMotifCouldNotStart" xml:space="preserve">
+    <value>Motif could not be started. Check the installation and try again.</value>
+    <comment>Shown when Windows cannot start the configured Motif executable.</comment>
+  </data>
   <data name="ksBreakCircularRefs" xml:space="preserve">
     <value>Remove circular references to complex forms</value>
   </data>

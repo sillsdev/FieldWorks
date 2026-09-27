@@ -31,6 +31,7 @@
 		<command id="CmdChooseLangProject" label="_Open..." message="ChooseLangProject" icon="OpenProject" shortcut="Ctrl+O"/>
 		<!-- Send/Receive commands. See "ContextHelp.xml" file for corresponding tooltips. -->
 		<command id="CmdFLExBridge" label="Send/Receive _Project (with other FLEx users)..." icon="syncSendReceive" message="FLExBridge" />
+		<command id="CmdApplyMotifChanges" label="_Apply Motif changes..." message="ApplyMotifChanges"/>
 		<command id="CmdViewMessages" label="_View Project Messages..." message="ViewMessages" />
 		<command id="CmdLiftBridge" label="Send/Receive _Lexicon (WeSay)..."  icon="syncSendReceive" message="LiftBridge" />
 		<command id="CmdViewLiftMessages" label="Vie_w Lexicon Messages..." message="ViewLiftMessages" />
@@ -566,6 +567,7 @@
 			<include path="Lists/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Tools']/*"/>
 			<!-- Non-area-specific Tools go here. -->
 			<item label="-" translate="do not translate"/>
+			<item command="CmdApplyMotifChanges"/>
 			<menu label="Spelling">
 				<item command="CmdEditSpellingStatus" defaultVisible="false"/>
 				<item command="CmdViewIncorrectWords" defaultVisible="false"/>
