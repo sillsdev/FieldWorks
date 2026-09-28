@@ -319,8 +319,12 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			if (key == null)
 				return;
 			state.AddedSlots++;
+			// The view gives a row's controls its tab index when it builds the row, so a slot
+			// opened later takes the index from the slot before it, or Tab could not leave it.
+			var tabIndex = KeyboardNavigation.GetTabIndex(state.TrailingAdd);
 			AppendSlot(state, new DetailReversalRow(key, string.Empty, true),
 				state.GroupId + ".Add" + state.AddedSlots);
+			KeyboardNavigation.SetTabIndex(state.TrailingAdd, tabIndex);
 		}
 
 		// Drops an add slot the user emptied again before it was saved, with the bar that joined
@@ -426,16 +430,29 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			return slot;
 		}
 
-		// Keys that treat the field's slots as one text. Enter does nothing. An arrow, alone or
-		// with Ctrl, at a slot's edge moves into the neighboring slot, across groups (in a
-		// right-to-left group the start is on the right). Plain Home and End go to the edges of
-		// the current visual line.
+		// Keys that treat the field's slots as one text. Enter does nothing. Tab and Shift+Tab
+		// visit every slot in reading order, add slots included, and leave the field only from
+		// its last or first slot. An arrow, alone or with Ctrl, at a slot's edge moves into the
+		// neighboring slot, across groups (in a right-to-left group the start is on the right).
+		// Plain Home and End go to the edges of the current visual line.
 		private void WireSlotNavigation(TextBox editor, bool rightToLeft)
 		{
 			EventHandler<KeyEventArgs> keyDown = (s, e) =>
 			{
 				if (e.Key == Key.Enter)
 				{
+					e.Handled = true;
+					return;
+				}
+				if (e.Key == Key.Tab && (e.KeyModifiers & ~KeyModifiers.Shift) == KeyModifiers.None)
+				{
+					var editors = SlotEditors();
+					var next = editors.IndexOf(editor)
+						+ (e.KeyModifiers == KeyModifiers.Shift ? -1 : 1);
+					// Past either end the view's own tab order moves on to the neighboring row.
+					if (next < 0 || next >= editors.Count)
+						return;
+					editors[next].Focus(NavigationMethod.Tab, e.KeyModifiers);
 					e.Handled = true;
 					return;
 				}

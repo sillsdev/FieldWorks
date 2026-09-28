@@ -18,6 +18,7 @@ using Avalonia.VisualTree;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwAvalonia;
 using SIL.FieldWorks.Common.FwAvalonia.Detail;
+using SIL.FieldWorks.Common.FwAvalonia.ViewDefinition;
 
 namespace FwAvaloniaTests.Detail
 {
@@ -509,6 +510,139 @@ namespace FwAvaloniaTests.Detail
 
 			Assert.That(second.IsFocused, Is.True);
 			Assert.That(second.CaretIndex, Is.Zero);
+		}
+
+		private static void Tab(Window window, bool shift = false)
+		{
+			window.KeyPressQwerty(PhysicalKey.Tab, shift ? RawInputModifiers.Shift : RawInputModifiers.None);
+			Dispatcher.UIThread.RunJobs();
+		}
+
+		private static string FocusedId(Window window)
+			=> window.FocusManager?.GetFocusedElement() is Control focused
+				? AutomationProperties.GetAutomationId(focused)
+				: null;
+
+		[AvaloniaTest]
+		public void Tab_VisitsEverySlotInOrder_IncludingAddSlotsOpenedWhileTyping()
+		{
+			var (field, _, window) = Show(new RecordingReversalContext(), null,
+				English("dwelling"), French("maison"));
+			var add = Find<TextBox>(field, "Reversal.en.Add");
+			add.Focus();
+			add.Text = "home";
+			Dispatcher.UIThread.RunJobs();
+			Find<TextBox>(field, "Reversal.en.0").Focus();
+
+			var visited = new List<string>();
+			for (var i = 0; i < 4; i++)
+			{
+				Tab(window);
+				visited.Add(FocusedId(window));
+			}
+
+			Assert.That(visited, Is.EqualTo(new[]
+			{
+				"Reversal.en.Add", "Reversal.en.Add1", "Reversal.fr.0", "Reversal.fr.Add"
+			}));
+		}
+
+		[AvaloniaTest]
+		public void ShiftTab_VisitsTheSlotsInReverse()
+		{
+			var (field, _, window) = Show(new RecordingReversalContext(), null,
+				English("dwelling"), French("maison"));
+			Find<TextBox>(field, "Reversal.fr.Add").Focus();
+
+			var visited = new List<string>();
+			for (var i = 0; i < 3; i++)
+			{
+				Tab(window, shift: true);
+				visited.Add(FocusedId(window));
+			}
+
+			Assert.That(visited, Is.EqualTo(new[] { "Reversal.fr.0", "Reversal.en.Add", "Reversal.en.0" }));
+		}
+
+		[AvaloniaTest]
+		public void Tab_MovesMidText_WithoutEditingTheSlot()
+		{
+			var (field, _, window) = Show(new RecordingReversalContext(), null, English("dwelling", "abode"));
+			var first = Find<TextBox>(field, "Reversal.en.0");
+			PlaceCaret(first, 3);
+
+			Tab(window);
+
+			Assert.That(FocusedId(window), Is.EqualTo("Reversal.en.1"));
+			Assert.That(first.Text, Is.EqualTo("dwelling"), "Tab is navigation, never typed text");
+		}
+
+		[AvaloniaTest]
+		public void TabFromTheLastSlot_LeavesTheField_AndSavesIt()
+		{
+			var context = new RecordingReversalContext();
+			var (field, other, window) = Show(context, null, English("dwelling"));
+			var entry = Find<TextBox>(field, "Reversal.en.0");
+			entry.Focus();
+			entry.Text = "house";
+			Tab(window);
+			Assert.That(context.Events, Is.Empty, "moving to the add slot stays inside the field");
+
+			Tab(window);
+
+			Assert.That(other.IsFocused, Is.True, "Tab from the final add slot goes to the next control");
+			Assert.That(context.Events, Is.EqualTo(new[] { "commit en0=house" }));
+		}
+
+		[AvaloniaTest]
+		public void ShiftTabFromTheFirstSlot_LeavesTheField()
+		{
+			var field = new FwReversalEntriesField("Reversal Entries", FieldId,
+				new[] { English("dwelling") }, new RecordingReversalContext());
+			var before = new TextBox();
+			var panel = new StackPanel();
+			panel.Children.Add(before);
+			panel.Children.Add(field);
+			var window = new Window { Content = panel, Width = 420, Height = 300 };
+			window.Show();
+			Dispatcher.UIThread.RunJobs();
+			Find<TextBox>(field, "Reversal.en.0").Focus();
+
+			Tab(window, shift: true);
+
+			Assert.That(before.IsFocused, Is.True);
+		}
+
+		// The detail view orders Tab by row, so a slot opened after the view built the row must
+		// still sort with its row.
+		[AvaloniaTest]
+		public void InTheDetailView_TabFromAnAddSlotOpenedWhileTyping_MovesToTheNextRow()
+		{
+			var context = new RecordingReversalContext();
+			var reversal = new DetailField("Reversal", "Reversal Entries", "ReferringReversalIndexEntries",
+				null, DetailFieldKind.Custom, EditorClassification.Known, FieldId, null, HostRouting.Inherit,
+				null, null, null, objectHvo: 1,
+				controlFactory: render => new FwReversalEntriesField("Reversal Entries", FieldId,
+					new[] { English("dwelling") }, context));
+			var next = new DetailField("Next", "Next", "Next", null, DetailFieldKind.Text,
+				EditorClassification.Known, "Next", null, HostRouting.Inherit,
+				new List<DetailWsValue> { new DetailWsValue("vern", "value") }, null, null, objectHvo: 1);
+			var model = new DetailModel("LexSense", "Normal", new List<DetailField> { reversal, next },
+				new List<ViewDiagnostic>());
+			var view = new DataTree(model, editContext: context);
+			var window = new Window { Content = view, Width = 480, Height = 300 };
+			window.Show();
+			Dispatcher.UIThread.RunJobs();
+			var add = Find<TextBox>(view, "Reversal.en.Add");
+			add.Focus();
+			add.Text = "home";
+			Dispatcher.UIThread.RunJobs();
+
+			Tab(window);
+			Assert.That(FocusedId(window), Is.EqualTo("Reversal.en.Add1"));
+			Tab(window);
+
+			Assert.That(FocusedId(window), Is.EqualTo("Next.vern"));
 		}
 
 		[AvaloniaTest]
