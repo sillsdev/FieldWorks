@@ -34,6 +34,17 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			return loader.m_language;
 		}
 
+		public static Language Load(
+			LcmCache cache,
+			IHCLoadErrorLogger logger,
+			out Dictionary<IMoMorphSynAnalysis, IMoMorphSynAnalysis> representativeMSAs)
+		{
+			var loader = new HCLoader(cache, logger);
+			loader.LoadLanguage();
+			representativeMSAs = loader.m_representativeMSAs;
+			return loader.m_language;
+		}
+
 		private static readonly string[] VariableNames =
 		{
 			"α", "β", "γ", "δ", "ε", "ζ", "η", "θ", "ι", "κ", "λ", "μ", "ν", "ξ",
@@ -43,6 +54,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		private readonly LcmCache m_cache;
 		protected readonly Dictionary<IMoForm, List<Allomorph>> m_allomorphs;
 		private readonly Dictionary<IMoMorphSynAnalysis, List<Morpheme>> m_morphemes;
+		protected readonly Dictionary<IMoMorphSynAnalysis, IMoMorphSynAnalysis> m_representativeMSAs;
 		private readonly Dictionary<IMoStemName, StemName> m_stemNames;
 		protected readonly Dictionary<ICmObject, MprFeature> m_mprFeatures;
 
@@ -78,6 +90,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			m_logger = logger;
 			m_allomorphs = new Dictionary<IMoForm, List<Allomorph>>();
 			m_morphemes = new Dictionary<IMoMorphSynAnalysis, List<Morpheme>>();
+			m_representativeMSAs = new Dictionary<IMoMorphSynAnalysis, IMoMorphSynAnalysis>();
 			m_stemNames = new Dictionary<IMoStemName, StemName>();
 			m_mprFeatures = new Dictionary<ICmObject, MprFeature>();
 
@@ -643,7 +656,12 @@ namespace SIL.FieldWorks.WordWorks.Parser
 							{
 								ILexSense sense = (ILexSense)component;
 								if (sense != null && sense.MorphoSyntaxAnalysisRA is IMoStemMsa)
-									LoadLexEntryOfVariant(stratum, inflType, (IMoStemMsa)sense.MorphoSyntaxAnalysisRA, allos, entry.ShortName);
+									LoadLexEntryOfVariant(
+										stratum,
+										inflType,
+										(IMoStemMsa)RepresentativeMSA(sense.MorphoSyntaxAnalysisRA),
+										allos,
+										entry.ShortName);
 							}
 						}
 					}
@@ -654,24 +672,40 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				LoadLexEntry(stratum, msa, allos, entry.ShortName);
 		}
 
+		IMoMorphSynAnalysis RepresentativeMSA(IMoMorphSynAnalysis msa)
+		{
+			if (m_representativeMSAs.TryGetValue(msa, out IMoMorphSynAnalysis representativeMSA))
+			{
+				return representativeMSA;
+			}
+			ILexEntry entry = msa.OwnerOfClass<ILexEntry>();
+			foreach (var msa2 in entry.MorphoSyntaxAnalysesOC)
+			{
+				if (msa2.EqualsMsa(msa) && entry.SenseWithMsa(msa2) != null)
+				{
+					m_representativeMSAs[msa] = msa2;
+					return msa2;
+				}
+			}
+			return msa;
+		}
+
 		IEnumerable<IMoStemMsa> UniqueStemMSAs(IEnumerable<IMoStemMsa> msas)
 		{
-			IList<IMoStemMsa> newMsas = new List<IMoStemMsa>();
+			HashSet<IMoStemMsa> newMsas = new HashSet<IMoStemMsa>();
 			foreach (var msa in msas)
 			{
-				bool found = false;
-				foreach (var newMsa in newMsas)
-				{
-					if (newMsa.EqualsMsa(msa))
-					{
-						found = true;
-						break;
-					}
-				}
-				if (!found)
-				{
-					newMsas.Add(msa);
-				}
+				newMsas.Add((IMoStemMsa)RepresentativeMSA(msa));
+			}
+			return newMsas;
+		}
+
+		IEnumerable<IMoMorphSynAnalysis> UniqueMSAs(IEnumerable<IMoMorphSynAnalysis> msas)
+		{
+			HashSet<IMoMorphSynAnalysis> newMsas = new HashSet<IMoMorphSynAnalysis>();
+			foreach (var msa in msas)
+			{
+				newMsas.Add(RepresentativeMSA(msa));
 			}
 			return newMsas;
 		}
@@ -880,19 +914,19 @@ namespace SIL.FieldWorks.WordWorks.Parser
 						var mainEntry = component as ILexEntry;
 						if (mainEntry != null)
 						{
-							foreach (IMoMorphSynAnalysis msa in mainEntry.MorphoSyntaxAnalysesOC)
+							foreach (IMoMorphSynAnalysis msa in UniqueMSAs(mainEntry.MorphoSyntaxAnalysesOC))
 								LoadMorphologicalRule(stratum, entry, allos, msa);
 						}
 						else
 						{
 							var sense = (ILexSense)component;
-							LoadMorphologicalRule(stratum, entry, allos, sense.MorphoSyntaxAnalysisRA);
+							LoadMorphologicalRule(stratum, entry, allos, RepresentativeMSA(sense.MorphoSyntaxAnalysisRA));
 						}
 					}
 				}
 			}
 
-			foreach (IMoMorphSynAnalysis msa in entry.MorphoSyntaxAnalysesOC)
+			foreach (IMoMorphSynAnalysis msa in UniqueMSAs(entry.MorphoSyntaxAnalysesOC))
 				LoadMorphologicalRule(stratum, entry, allos, msa);
 		}
 
@@ -2238,7 +2272,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			if (m_morphemes.TryGetValue(morphAdhocProhib.FirstMorphemeRA, out firstMorphemes))
 			{
 				var allOthers = new List<List<Morpheme>>();
-				foreach (IMoMorphSynAnalysis msa in morphAdhocProhib.RestOfMorphsRS)
+				foreach (IMoMorphSynAnalysis msa in UniqueMSAs(morphAdhocProhib.RestOfMorphsRS))
 				{
 					List<Morpheme> hcMorphemes;
 					if (m_morphemes.TryGetValue(msa, out hcMorphemes))

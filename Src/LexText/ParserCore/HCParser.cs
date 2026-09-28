@@ -25,6 +25,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		private readonly LcmCache m_cache;
 		private Morpher m_morpher;
 		private Language m_language;
+		private Dictionary<IMoMorphSynAnalysis, IMoMorphSynAnalysis> m_representativeMSAs;
 		private readonly FwXmlTraceManager m_traceManager;
 		private readonly string m_outputDirectory;
 		private ParserModelChangeListener m_changeListener;
@@ -109,7 +110,8 @@ namespace SIL.FieldWorks.WordWorks.Parser
 					if (GetMorphs(wordAnalysis, out morphs))
 					{
 						analyses.Add(new ParseAnalysis(morphs.Select(mi =>
-							new ParseMorph(mi.Form, mi.Msa, mi.InflType, mi.GuessedString))));
+							new ParseMorph(mi.Form, mi.Msa, mi.InflType, mi.GuessedString)),
+							m_representativeMSAs));
 					}
 				}
 				result = new ParseResult(analyses);
@@ -156,7 +158,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			using (new WorkerThreadReadHelper(m_cache.ServiceLocator.GetInstance<IWorkerThreadReadHandler>()))
 			{
 				writer.WriteStartElement("LoadErrors");
-				m_language = HCLoader.Load(m_cache, new XmlHCLoadErrorLogger(writer));
+				m_language = HCLoader.Load(m_cache, new XmlHCLoadErrorLogger(writer), out m_representativeMSAs);
 				writer.WriteEndElement();
 				XElement parserParamsElem = XElement.Parse(m_cache.LanguageProject.MorphologicalDataOA.ParserParameters);
 				XElement delReappsElem = parserParamsElem.Elements("HC").Elements("DelReapps").FirstOrDefault();
