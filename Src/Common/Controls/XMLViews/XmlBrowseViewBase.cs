@@ -277,9 +277,9 @@ namespace SIL.FieldWorks.Common.Controls
 					throw new ArgumentOutOfRangeException("XmlBrowseViewBase.SelectedIndex", value.ToString(), "Index cannot be set to less than -1.");
 				if (m_selectedIndex == value)
 				{
-					// It's useful to check this anyway, since the width of the window or something else
-					// that affects visibility may have changed...but don't CHANGE the selection, the user may be editing...(LT-12092)
-					if (value >= 0 && m_wantScrollIntoView)
+					// Never touch the editing selection here (LT-12092). Scroll only when the
+					// row now shows a different object, e.g. after a re-sort (LT-22676).
+					if (value >= 0 && m_wantScrollIntoView && GetNewSelectionObject(value) != m_hvoOldSel)
 						MakeSelectionVisible(GetRowSelection(value));
 					return;
 				}
@@ -491,6 +491,36 @@ namespace SIL.FieldWorks.Common.Controls
 		protected int m_ydSelScrollPos = 0;
 		/// <summary></summary>
 		protected int m_iSelIndex = 0;
+
+		/// <summary>
+		/// Forget the row rectangle SaveSelectionInfo stored for AdjustScrollRange1.
+		/// </summary>
+		private void ClearSelectionAnchor()
+		{
+			m_iSelIndex = 0;
+			m_ydSelBottom = 0;
+			m_ydSelScrollPos = 0;
+			m_ydSelTop = 0;
+		}
+
+		/// <summary>
+		/// Make the selection visible, then forget the row rectangle so it only steers
+		/// AdjustScrollRange1 during this call's own lazy-box expansion. Left in place, an
+		/// expansion caused by user scrolling would drag the row back on screen (LT-22676).
+		/// </summary>
+		protected override bool MakeSelectionVisible(IVwSelection vwsel, bool fWantOneLineSpace,
+			bool fWantBothEnds, bool fForcePrepareToDraw)
+		{
+			try
+			{
+				return base.MakeSelectionVisible(vwsel, fWantOneLineSpace, fWantBothEnds, fForcePrepareToDraw);
+			}
+			finally
+			{
+				ClearSelectionAnchor();
+			}
+		}
+
 		/// <summary>
 		/// Handle the special aspects of adjusting the scroll position for a table of cells
 		/// like we have in the browse view.  See LT-3607 for details of what can go wrong
@@ -1683,10 +1713,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// ------------------------------------------------------------------------------------
 		protected virtual void DoSelectAndScroll(int hvo, int index)
 		{
-			m_iSelIndex = 0;
-			m_ydSelBottom = 0;
-			m_ydSelScrollPos = 0;
-			m_ydSelTop = 0;
+			ClearSelectionAnchor();
 			if (m_rootb == null)
 				return;
 			IVwSelection selRow = GetRowSelection(index);
@@ -1966,8 +1993,15 @@ namespace SIL.FieldWorks.Common.Controls
 		protected override void HandleSelectionChange(IVwRootBox prootb, IVwSelection vwselNew)
 		{
 			base.HandleSelectionChange(prootb, vwselNew);
-			m_mediator.IdleQueue.Add(IdleQueuePriority.Medium, RemoveRootBoxSelectionOnIdle);
+			if (!m_fReplacingIdleSelection)
+				m_mediator.IdleQueue.Add(IdleQueuePriority.Medium, RemoveRootBoxSelectionOnIdle);
 		}
+
+		/// <summary>
+		/// True while RemoveRootBoxSelectionOnIdle installs its replacement insertion point, so
+		/// the selection change that raises does not queue another cleanup pass.
+		/// </summary>
+		private bool m_fReplacingIdleSelection;
 
 		bool RemoveRootBoxSelectionOnIdle(object parameter)
 		{
@@ -1992,7 +2026,19 @@ namespace SIL.FieldWorks.Common.Controls
 				{
 					m_rootb.DestroySelection();
 					if (idxFromSel == m_selectedIndex)
-						SetDefaultInsertionPointInRow(idxFromSel);
+					{
+						// A non-editable replacement must not queue another pass, or it gets
+						// destroyed and re-created on every idle tick (LT-22676).
+						m_fReplacingIdleSelection = true;
+						try
+						{
+							SetDefaultInsertionPointInRow(idxFromSel);
+						}
+						finally
+						{
+							m_fReplacingIdleSelection = false;
+						}
+					}
 				}
 			}
 			return true;
@@ -2205,6 +2251,15 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		public void PostLayoutInit()
 		{
+			ScrollSelectedRowIntoView();
+		}
+
+		/// <summary>
+		/// Scroll the selected row into view without changing which row is selected.
+		/// </summary>
+		internal void ScrollSelectedRowIntoView()
+		{
+			CheckDisposed();
 			if (m_rootb == null || SelectedIndex < 0)
 				return;
 			MakeSelectionVisible(GetRowSelection(SelectedIndex), true, true, true);

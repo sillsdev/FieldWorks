@@ -428,6 +428,11 @@ namespace XCore
 		}
 		protected override void Populate()
 		{
+			Populate(querySubmenuVisibility: true);
+		}
+
+		private void Populate(bool querySubmenuVisibility)
+		{
 			Clear();
 			if (IsAListGroup)
 			{
@@ -437,12 +442,12 @@ namespace XCore
 			{
 				foreach (XmlNode n in m_configurationNodes)
 				{
-					Populate(n);
+					Populate(n, querySubmenuVisibility);
 				}
 			}
 			else
 			{
-				Populate(m_configurationNode);
+				Populate(m_configurationNode, querySubmenuVisibility);
 			}
 		}
 
@@ -453,6 +458,16 @@ namespace XCore
 		public void PopulateNow()
 		{
 			Populate();
+		}
+
+		/// <summary>
+		/// Populates the group, keeping every nested submenu when
+		/// <paramref name="querySubmenuVisibility"/> is false instead of asking the colleagues
+		/// whether one of its items is visible; the caller then decides the submenu's fate.
+		/// </summary>
+		public void PopulateNow(bool querySubmenuVisibility)
+		{
+			Populate(querySubmenuVisibility);
 		}
 
 		protected void PopulateFromList()
@@ -522,6 +537,11 @@ namespace XCore
 
 		protected void Populate(XmlNode node)
 		{
+			Populate(node, querySubmenuVisibility: true);
+		}
+
+		private void Populate(XmlNode node, bool querySubmenuVisibility)
+		{
 			Debug.Assert( node != null);
 			XmlNodeList items = node.SelectNodes("item | menu | group");
 			foreach (XmlNode childNode in items)
@@ -534,11 +554,11 @@ namespace XCore
 						break;
 					case "menu":
 						ChoiceGroup group = new ChoiceGroup(m_mediator, m_propertyTable, m_adapter, childNode, this);
-						group.Populate(childNode);
+						group.Populate(childNode, querySubmenuVisibility);
 						//Only add the submenu if it contains a list of items what will be visible.
 						//We do not want an empty submenu  LT-8791.
 						string hasList = XmlUtils.GetAttributeValue(childNode, "list");
-						if (hasList != null || ASubmenuItemIsVisible(group))
+						if (hasList != null || !querySubmenuVisibility || ASubmenuItemIsVisible(group))
 							this.Add(group);
 						break;
 					case "group":	//for tree views in the sidebar

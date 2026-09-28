@@ -560,31 +560,27 @@ namespace SIL.FieldWorks.XWorks
 
 				// Only ids without a native authority need the hidden command adapter. An adapter
 				// failure must not suppress the menu: its items disable, the rest still works.
-				var authority = CreateReorderVectorAuthority(request);
-				if (!XCoreMenuBridge.OwnsAll(authority, idArray))
-				{
-					try
-					{
-						EnsureMenuCommandAdapter(request.Field.ObjectHvo, request.Field.Field);
-					}
-					catch (Exception adapterError)
-					{
-						Logger.WriteError("Detail menu command adapter failed; menu items that need "
-							+ "the hidden colleague chain will be disabled.", adapterError);
-					}
-				}
+				var authority = CreateMenuAuthority(request);
+				var ownsAll = XCoreMenuBridge.OwnsAll(authority, idArray);
+				if (!ownsAll)
+					SyncMenuCommandAdapter(request.Field);
 
 				// Render the SAME xCore menu natively in Avalonia -- identical items,
 				// enablement, and mediator dispatch; only rendering changes. The WinForms
 				// adapter menu remains the fallback if materialization fails.
 				try
 				{
-					// Field Visibility / Move Field retarget to the override layer; other
-					// mediator-answered commands keep their dispatch.
-					var registry = new OverrideCommandRegistry();
-					AddOverrideCommands(registry, request.Field);
-					var items = XCoreMenuBridge.CreateMenuItems(window, idArray, registry.TryBuild, null,
-						authority);
+					// On the mediator path Field Visibility / Move Field retarget to the override
+					// layer; other mediator-answered commands keep their dispatch. An owned menu
+					// never consults the interceptor, so it is not built.
+					Func<ChoiceBase, UIItemDisplayProperties, DetailMenuItem> interceptor = null;
+					if (!ownsAll)
+					{
+						var registry = new OverrideCommandRegistry();
+						AddOverrideCommands(registry, request.Field);
+						interceptor = registry.TryBuild;
+					}
+					var items = XCoreMenuBridge.CreateMenuItems(window, idArray, interceptor, null, authority);
 					if (items.Count > 0)
 					{
 						// A keyboard-opened menu anchors under the row it came from; a
@@ -600,6 +596,10 @@ namespace SIL.FieldWorks.XWorks
 						nativeMenuError);
 				}
 
+				// The adapter menu answers from the hidden tree's current slice, which an owned
+				// menu never pointed at this row.
+				if (ownsAll)
+					SyncMenuCommandAdapter(request.Field);
 				window.ShowContextMenu(idArray, AdapterMenuScreenPoint(request), null, null);
 			}
 			catch (Exception e)
@@ -642,21 +642,20 @@ namespace SIL.FieldWorks.XWorks
 
 		/// <summary>
 		/// The help topic of a detail row: its <see cref="DetailField.HelpTopicId"/> when set,
-		/// else one generated from the row's field and object and the current tool. Null when
-		/// the row carries nothing to generate from.
+		/// else one generated from the row's field and object and the current tool. A row with
+		/// no object generates from its field and label alone, so every row ends at a topic,
+		/// the generic one at worst.
 		/// </summary>
 		internal string ResolveHelpTopic(DetailField field)
 		{
 			if (field == null)
 				return null;
 			var source = field.HelpTopicSource;
-			if (string.IsNullOrEmpty(field.HelpTopicId) && source == null)
-				return null;
 			var provider = m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider");
 			var subject = new HelpTopicSubject
 			{
-				FieldName = source?.FieldName,
-				Label = source?.Label,
+				FieldName = source?.FieldName ?? field.Field,
+				Label = source?.Label ?? field.Label,
 				ClassName = source?.ClassName,
 				OwnerClassName = source?.OwnerClassName,
 				SortKey = source?.SortKey,
@@ -698,12 +697,104 @@ namespace SIL.FieldWorks.XWorks
 			// Show all right now never dispatches or persists: it only marks the row for the
 			// host's transient reveal.
 			registry.Add("CmdDataTree-WritingSystemMenu-ShowAllRightNow",
-				(c, d) => ShowAllWritingSystemsItem(d, field));
+				(c, d) => ShowAllWritingSystemsItem(LabelOf(d), field));
 
-			var templateId = ViewDefinitionOverrideEditor.StripRuntimeSuffix(field.StableId);
-			// Locate the clicked node in the field's OWN compiled model (with any current override
-			// already applied), so visibility checkmarks and move enablement reflect the live state.
-			ViewNodeLocation location = null;
+			// Unknown/stale target: leave the field commands on mediator dispatch rather than
+			// guess.
+			if (!TryLocateOverrideTarget(field, out var templateId, out var location))
+				return;
+			registry.Add("CmdAlwaysVisible",
+				(c, d) => VisibilityItem(LabelOf(d), field, templateId, location, ViewVisibility.Always));
+			registry.Add("CmdIfData",
+				(c, d) => VisibilityItem(LabelOf(d), field, templateId, location, ViewVisibility.IfData));
+			registry.Add("CmdNormallyHidden",
+				(c, d) => VisibilityItem(LabelOf(d), field, templateId, location, ViewVisibility.Never));
+			registry.Add("CmdDataTree-MoveFieldUp",
+				(c, d) => MoveItem(LabelOf(d), field, location, up: true));
+			registry.Add("CmdDataTree-MoveFieldDown",
+				(c, d) => MoveItem(LabelOf(d), field, location, up: false));
+		}
+
+		private static string LabelOf(UIItemDisplayProperties display)
+			=> XCoreMenuBridge.StripAccelerator(display.Text);
+
+		/// <summary>
+		/// The native authorities for the request's row: the reorder-vector menu and the shared
+		/// per-object and Help menus, so a label menu made only of those ids needs nothing from
+		/// the hidden command adapter.
+		/// </summary>
+		internal IDetailMenuAuthority CreateMenuAuthority(DetailMenuRequest request)
+			=> new CompositeMenuAuthority(CreateReorderVectorAuthority(request),
+				CreateObjectMenuAuthority(request.Field));
+
+		/// <summary>The native authority for the row's per-object and Help menus.</summary>
+		internal IDetailMenuAuthority CreateObjectMenuAuthority(DetailField field)
+			=> new ObjectMenuAuthority(field, LocateOverrideTarget,
+				fieldVisibility: (label, target, visibility) =>
+					VisibilityItem(label, field, target.TemplateId, target.Location, visibility),
+				moveField: (label, target, up) => MoveItem(label, field, target.Location, up),
+				helpTopic: KnownHelpTopic,
+				showHelp: ShowDetailHelp);
+
+		// The row's override target, or null (with the reason logged) when it cannot be located.
+		// A failure disables the row's field commands rather than failing the whole menu.
+		private OverrideTarget LocateOverrideTarget(DetailField field)
+		{
+			try
+			{
+				return TryLocateOverrideTarget(field, out var templateId, out var location)
+					? new OverrideTarget(templateId, location)
+					: null;
+			}
+			catch (Exception e)
+			{
+				Logger.WriteError("Locating the row's override target failed; its Field Visibility and "
+					+ "Move Field commands are disabled.", e);
+				return null;
+			}
+		}
+
+		/// <summary>
+		/// The row's help topic when the help provider has it, else null. A failure hides Help
+		/// rather than failing the whole menu.
+		/// </summary>
+		internal string KnownHelpTopic(DetailField field)
+		{
+			try
+			{
+				var topic = ResolveHelpTopic(field);
+				if (topic == null)
+					return null;
+				var provider = m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider");
+				return provider?.GetHelpString(topic) != null ? topic : null;
+			}
+			catch (Exception e)
+			{
+				Logger.WriteError("Resolving the row's help topic failed; Help is hidden.", e);
+				return null;
+			}
+		}
+
+		private void ShowDetailHelp(string topic)
+			=> ShowHelp.ShowHelpTopic(m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), topic);
+
+		/// <summary>
+		/// Locates the row's node in its own compiled model, with the current override applied,
+		/// so visibility checkmarks and move enablement reflect the live state. False without a
+		/// log when the row can never be a target: no class, layout or override store, or a row
+		/// the composer synthesized with no node of its own. False with the reason logged when
+		/// the compile fails or the model has no node for the row's template id.
+		/// </summary>
+		internal bool TryLocateOverrideTarget(DetailField field, out string templateId,
+			out ViewNodeLocation location)
+		{
+			templateId = null;
+			location = null;
+			if (field == null || string.IsNullOrEmpty(field.ClassName) || string.IsNullOrEmpty(field.LayoutName)
+				|| ViewOverrideStore == null || !TryTemplateIdOf(field.StableId, out templateId))
+			{
+				return false;
+			}
 			try
 			{
 				if (Cache.ServiceLocator.ObjectRepository.TryGetObject(field.ObjectHvo, out var fieldObj))
@@ -716,45 +807,52 @@ namespace SIL.FieldWorks.XWorks
 			}
 			catch (Exception e)
 			{
-				Logger.WriteError("Resolving the field's override target failed; this row's "
-					+ "menu-button commands fall back to ordinary command dispatch.", e);
-				return;
+				Logger.WriteError("Resolving the field's override target failed; its Field Visibility "
+					+ "and Move Field commands are not retargeted to the override layer.", e);
+				return false;
 			}
-
-			// Unknown/stale target: leave the field commands on the legacy path rather than
-			// guess.
-			if (location != null)
+			if (location == null)
 			{
-				registry.Add("CmdAlwaysVisible",
-					(c, d) => VisibilityItem(d, field, templateId, location, ViewVisibility.Always));
-				registry.Add("CmdIfData",
-					(c, d) => VisibilityItem(d, field, templateId, location, ViewVisibility.IfData));
-				registry.Add("CmdNormallyHidden",
-					(c, d) => VisibilityItem(d, field, templateId, location, ViewVisibility.Never));
-				registry.Add("CmdDataTree-MoveFieldUp",
-					(c, d) => MoveItem(d, field, location, up: true));
-				registry.Add("CmdDataTree-MoveFieldDown",
-					(c, d) => MoveItem(d, field, location, up: false));
+				Logger.WriteEvent(string.Format("Detail row '{0}' has no node in its compiled model; its "
+					+ "Field Visibility and Move Field commands are not retargeted to the override layer.",
+					templateId));
+				return false;
 			}
+			return true;
+		}
+
+		// The node a row's stable id names; false for a synthesized row with no node of its
+		// own (an item or relation path after the hvo, or a custom field). A ghost row stands
+		// in for its empty sequence node.
+		private static bool TryTemplateIdOf(string stableId, out string templateId)
+		{
+			templateId = ViewDefinitionOverrideEditor.StripRuntimeSuffix(stableId);
+			if (templateId.Contains(DetailField.CustomFieldStableIdMarker))
+				return false;
+			var at = stableId.IndexOf('@');
+			var path = at < 0 ? -1 : stableId.IndexOf('/', at);
+			if (path < 0)
+				return true;
+			if (!stableId.Substring(path).StartsWith(DetailField.GhostStableIdSuffix, StringComparison.Ordinal))
+				return false;
+			templateId = stableId.Substring(0, at);
+			return true;
 		}
 
 		// A Field Visibility menu item: checked when it is the field's current visibility, executes the
 		// SetVisibility override mutation (idempotent -- re-choosing the current value is a
 		// harmless write).
-		private DetailMenuItem VisibilityItem(UIItemDisplayProperties display, DetailField field,
+		private DetailMenuItem VisibilityItem(string label, DetailField field,
 			string templateId, ViewNodeLocation location, ViewVisibility target)
 		{
-			var label = XCoreMenuBridge.StripAccelerator(display.Text);
 			var isChecked = location.Visibility == target;
 			return new DetailMenuItem(label, isEnabled: true, isChecked: isChecked, children: null,
 				execute: () => ApplyFieldVisibility(field, templateId, target));
 		}
 
 		// A Move Field item: disabled at the first sibling (up) / last sibling (down) / when alone.
-		private DetailMenuItem MoveItem(UIItemDisplayProperties display, DetailField field,
-			ViewNodeLocation location, bool up)
+		private DetailMenuItem MoveItem(string label, DetailField field, ViewNodeLocation location, bool up)
 		{
-			var label = XCoreMenuBridge.StripAccelerator(display.Text);
 			var canMove = up ? location.CanMoveUp : location.CanMoveDown;
 			return new DetailMenuItem(label, isEnabled: canMove, isChecked: false, children: null,
 				execute: canMove ? (Action)(() => ApplyMoveField(field, location, up)) : null);
@@ -766,9 +864,8 @@ namespace SIL.FieldWorks.XWorks
 		/// record) and recomposes. The reveal is view state, not a command, so the item
 		/// dispatches nothing and never writes the override.
 		/// </summary>
-		private DetailMenuItem ShowAllWritingSystemsItem(UIItemDisplayProperties display, DetailField field)
-			=> new DetailMenuItem(XCoreMenuBridge.StripAccelerator(display.Text), isEnabled: true,
-				isChecked: false, children: null, execute: () =>
+		private DetailMenuItem ShowAllWritingSystemsItem(string label, DetailField field)
+			=> new DetailMenuItem(label, isEnabled: true, isChecked: false, children: null, execute: () =>
 				{
 					m_showAllWsFields.Add(ViewDefinitionOverrideEditor.StripRuntimeSuffix(field.StableId));
 					RefreshAvaloniaDetail();

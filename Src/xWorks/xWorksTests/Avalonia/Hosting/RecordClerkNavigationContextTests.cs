@@ -144,6 +144,56 @@ namespace SIL.FieldWorks.XWorks
 				"unknown key shapes are rejected, not guessed");
 		}
 
+		/// <summary>
+		/// LT-22676: both ways of re-asserting the current record broadcast RecordNavigation
+		/// with the same index, and only the JumpToRecord one says so.
+		/// </summary>
+		[Test]
+		public void JumpToCurrentRecord_MarksTheBroadcast_ButReassertingTheIndexDoesNot()
+		{
+			LoadRecordEditView("lexiconEdit");
+			DrainMediatorAndIdleQueues();
+			var control = m_propertyTable.GetValue<object>("currentContentControlObject", null) as RecordEditView;
+			Assert.That(control, Is.Not.Null);
+			EnsureCurrentRecord(control);
+			var clerk = control.Clerk;
+			var mediator = m_propertyTable.GetValue<XWindow>("window").Mediator;
+			var spy = new RecordNavigationSpy();
+			mediator.AddColleague(spy);
+			try
+			{
+				clerk.JumpToRecord(clerk.CurrentObjectHvo);
+				DrainMediatorAndIdleQueues();
+				Assert.That(spy.Last, Is.Not.Null, "JumpToRecord on the current record still broadcasts");
+				Assert.That(spy.Last.JumpedToCurrentRecord, Is.True);
+
+				spy.Last = null;
+				clerk.JumpToIndex(clerk.CurrentIndex);
+				DrainMediatorAndIdleQueues();
+				Assert.That(spy.Last, Is.Not.Null, "JumpToIndex on the current index still broadcasts");
+				Assert.That(spy.Last.JumpedToCurrentRecord, Is.False);
+			}
+			finally
+			{
+				mediator.RemoveColleague(spy);
+			}
+		}
+
+		// Keeps the most recent RecordNavigation payload the mediator delivered.
+		private sealed class RecordNavigationSpy : IxCoreColleague
+		{
+			public RecordNavigationInfo Last { get; set; }
+			public void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters) { }
+			public IxCoreColleague[] GetMessageTargets() => new IxCoreColleague[] { this };
+			public bool ShouldNotCall => false;
+			public int Priority => (int)ColleaguePriority.High;
+			public bool OnRecordNavigation(object argument)
+			{
+				Last = argument as RecordNavigationInfo;
+				return false;
+			}
+		}
+
 		private void LoadRecordEditView(string toolValue)
 		{
 			var windowConfiguration = m_propertyTable.GetValue<XmlNode>("WindowConfiguration");

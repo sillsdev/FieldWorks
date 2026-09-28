@@ -1545,6 +1545,18 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 	/// </summary>
 	public sealed class DetailField
 	{
+		/// <summary>
+		/// The marker the composer appends to the stable id of a ghost row, the prompt that
+		/// stands in for an empty sequence. The row's node is the id without it.
+		/// </summary>
+		public const string GhostStableIdSuffix = "/ghost";
+
+		/// <summary>
+		/// The marker the composer puts in the stable id of a custom-field row, which it
+		/// builds while walking an object rather than from the compiled model.
+		/// </summary>
+		public const string CustomFieldStableIdMarker = "/custom:";
+
 		public DetailField(
 			string stableId,
 			string label,

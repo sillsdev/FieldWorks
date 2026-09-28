@@ -310,7 +310,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			if (string.IsNullOrEmpty(ghostAutomationId))
 				return null;
 
-			const string marker = "/ghost";
+			const string marker = DetailField.GhostStableIdSuffix;
 			var markerIndex = ghostAutomationId.IndexOf(marker, StringComparison.Ordinal);
 			if (markerIndex < 0)
 				return null;
