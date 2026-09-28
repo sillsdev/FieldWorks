@@ -578,7 +578,8 @@ namespace SIL.FieldWorks.XWorks
 			/// some affix forms, FromPartsOfSpeech on an entry with no clitic.
 			///
 			/// The relevance gate of the two <c>SliceFilter.IncludeSlice</c> applies. The other,
-			/// <see cref="IsFilteredOutByTool"/>, looks the slice's id up in the tool's filter list.
+			/// <see cref="IsFilteredOutByTool"/>, looks the slice's id up in the tool's
+			/// filter list.
 			///
 			/// Not the same as hidden: show-hidden-fields leaves an irrelevant field withheld,
 			/// so this is asked whatever <c>_showHidden</c> says.
