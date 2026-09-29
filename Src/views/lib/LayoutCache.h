@@ -2,8 +2,10 @@
 #ifndef LAYOUTCACHE_INCLUDED
 #define LAYOUTCACHE_INCLUDED
 
-// Itemization of a text range that NFC normalization leaves unchanged, so an offset into
-// m_vchText is the same offset into the source text (LT-22674).
+#include "NfcOffsetMap.h"
+
+// Itemization of a text range and its NFC form. With m_fTextIsNfc set, m_vchText equals the
+// source text; otherwise offsets into it translate through the pass's NfcOffsetMap.
 class TextAnalysisEntry
 {
 public:
@@ -13,6 +15,7 @@ public:
 		m_cch(0),
 		m_ws(0),
 		m_fWsRtl(false),
+		m_fTextIsNfc(true),
 		m_citem(0)
 	{
 	}
@@ -39,7 +42,11 @@ public:
 	int m_cch;
 	int m_ws;
 	bool m_fWsRtl;
+	// True when NFC normalization leaves the source text unchanged, so m_vchText equals it and
+	// offsets into m_vchText are source offsets.
+	bool m_fTextIsNfc;
 	int m_citem;
+	// The NFC form of the range.
 	Vector<OLECHAR> m_vchText;
 	Vector<SCRIPT_ITEM> m_vscri;
 };
@@ -149,7 +156,8 @@ public:
 	}
 
 	TextAnalysisEntry * Store(IVwTextSource * pts, int ichMin, int cch, int ws, bool fWsRtl,
-		const OLECHAR * prgch, const SCRIPT_ITEM * prgscri, int citem)
+		const OLECHAR * prgchNfc, int cchNfc, bool fTextIsNfc, const SCRIPT_ITEM * prgscri,
+		int citem)
 	{
 		TextAnalysisEntry * pentry = NULL;
 		for (int ientry = 0; ientry < m_ventry.Size(); ++ientry)
@@ -184,11 +192,12 @@ public:
 		pentry->m_cch = cch;
 		pentry->m_ws = ws;
 		pentry->m_fWsRtl = fWsRtl;
+		pentry->m_fTextIsNfc = fTextIsNfc;
 		pentry->m_citem = citem;
 
-		pentry->m_vchText.Resize(cch);
-		if (cch > 0)
-			::memcpy(pentry->m_vchText.Begin(), prgch, cch * isizeof(OLECHAR));
+		pentry->m_vchText.Resize(cchNfc);
+		if (cchNfc > 0)
+			::memcpy(pentry->m_vchText.Begin(), prgchNfc, cchNfc * isizeof(OLECHAR));
 
 		int cscri = citem + 1;
 		if (cscri < 2)
@@ -354,11 +363,20 @@ public:
 	{
 		m_analysisCache.Reset();
 		m_shapeRunCache.Reset();
+		m_nfcOffsets.Clear();
 	}
 
 	TextAnalysisCache & AnalysisCache()
 	{
 		return m_analysisCache;
+	}
+
+	// The offset map for pts. The pass keeps one map, so asking for a different text source
+	// than the last call discards the table and the next lookup rebuilds it.
+	NfcOffsetMap & NfcOffsetsFor(IVwTextSource * pts)
+	{
+		m_nfcOffsets.Reset(pts);
+		return m_nfcOffsets;
 	}
 
 	ShapeRunCache & ShapeCache()
@@ -369,6 +387,7 @@ public:
 private:
 	TextAnalysisCache m_analysisCache;
 	ShapeRunCache m_shapeRunCache;
+	NfcOffsetMap m_nfcOffsets;
 };
 
 extern __declspec(thread) LayoutPassCache * g_pCurrentLayoutPassCache;
@@ -391,6 +410,7 @@ inline bool IsPath1ShapeCacheEnabled()
 	return s_nEnabled == 1;
 }
 
+// Also governs the NfcOffsetMap, which exists to serve the analysis cache's decomposed entries.
 inline bool IsPath2AnalysisCacheEnabled()
 {
 	static int s_nEnabled = -1;

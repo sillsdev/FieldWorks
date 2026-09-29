@@ -475,14 +475,13 @@ namespace TestViews
 #endif
 		}
 
-		void testTextNfcRewritesIsNotCached()
+		void testDecomposedTextAnalysisIsReusedWithinLayoutPass()
 		{
 #if defined(WIN32) || defined(_M_X64)
 			int cHit, cMiss;
 			// Decomposed e-acute and a-grave, which NFC composes.
 			BreakTwiceInOneLayoutPass(L"cafe\u0301 de\u0301ja\u0300 vu", &cHit, &cMiss);
-			unitpp::assert_eq("text NFC rewrites should never be served from the cache", 0, cHit);
-			unitpp::assert_true("every break should still have looked in the cache", cMiss >= 2);
+			unitpp::assert_true("text NFC rewrites should be reused on the second break", cHit > 0);
 #endif
 		}
 

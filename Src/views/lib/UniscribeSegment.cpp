@@ -1629,7 +1629,21 @@ int UniscribeSegment::OffsetInNfc(int ich, int ichBase, IVwTextSource * pts, boo
 	Assert(ich >= ichBase);
 	if (fTextIsNfc)
 		return ich - ichBase;
+	int ichNfc;
+	NfcOffsetMap * pmap = CurrentNfcOffsetMap(pts);
+	if (pmap && pmap->TryOffsetInNfc(ich, ichBase, &ichNfc))
+		return ichNfc;
 	return OffsetInNfc(ich, ichBase, pts);
+}
+
+// The layout pass's offset map for pts, or NULL outside a layout pass. FW_PERF_P125_PATH2=0
+// turns the map off together with the analysis cache it serves.
+NfcOffsetMap * UniscribeSegment::CurrentNfcOffsetMap(IVwTextSource * pts)
+{
+	if (!IsPath2AnalysisCacheEnabled())
+		return NULL;
+	LayoutPassCache * pLayoutPassCache = GetCurrentLayoutPassCache();
+	return pLayoutPassCache ? &pLayoutPassCache->NfcOffsetsFor(pts) : NULL;
 }
 
 // ich is an offset into the (NFC normalized) characters of this segment.
@@ -1676,6 +1690,10 @@ int UniscribeSegment::OffsetToOrig(int ich, int ichBase, IVwTextSource * pts, bo
 {
 	if (fTextIsNfc)
 		return ich + ichBase;
+	int ichOrig;
+	NfcOffsetMap * pmap = CurrentNfcOffsetMap(pts);
+	if (pmap && pmap->TryOffsetToOrig(ich, ichBase, &ichOrig))
+		return ichOrig;
 	return OffsetToOrig(ich, ichBase, pts);
 }
 
@@ -3065,10 +3083,25 @@ int UniscribeSegment::CallScriptItemize(OLECHAR * prgchDefBuf, int cchBuf,
 		ws = chrp.ws;
 		fWsRtl = chrp.fWsRtl;
 		pCachedAnalysis = pLayoutPassCache->AnalysisCache().Find(pts, ichMin, cchOrig, ws, fWsRtl);
+		int cchNfcHit = cchOrig;
+		if (pCachedAnalysis && !pCachedAnalysis->m_fTextIsNfc)
+		{
+			// A shorter request is served from a longer entry only when its end is a
+			// normalization boundary; otherwise the entry's NFC form is not a prefix of the
+			// request's own NFC form.
+			NfcOffsetMap & map = pLayoutPassCache->NfcOffsetsFor(pts);
+			if (cchOrig == pCachedAnalysis->m_cch)
+				cchNfcHit = pCachedAnalysis->m_vchText.Size();
+			else if (!map.IsBoundary(ichMin + cchOrig) ||
+				!map.TryOffsetInNfc(ichMin + cchOrig, ichMin, &cchNfcHit))
+			{
+				pCachedAnalysis = NULL;
+			}
+		}
 		if (pCachedAnalysis)
 		{
 			if (pfTextIsNfc)
-				*pfTextIsNfc = true;
+				*pfTextIsNfc = pCachedAnalysis->m_fTextIsNfc;
 			*pprgchBuf = pCachedAnalysis->m_vchText.Size() > 0 ? pCachedAnalysis->m_vchText.Begin() : prgchDefBuf;
 			pCachedAnalysis->CopyScriptItemsTo(g_vscri, citem);
 			if (g_votScriptTags.Size() < citem)
@@ -3076,15 +3109,15 @@ int UniscribeSegment::CallScriptItemize(OLECHAR * prgchDefBuf, int cchBuf,
 			for (int itag = 0; itag < citem; ++itag)
 				g_votScriptTags[itag] = 0;
 			g_cscri = citem;
-			return cchOrig;
+			return cchNfcHit;
 		}
 	}
 	if (pLayoutPassCache && !pCachedAnalysis)
 		dwStartMs = ::GetTickCount();
 
-	// Text that NFC normalization rewrites is not cached, because offsets into it would
-	// need a map back to the source text for every analysed range (LT-22674).
-	bool fTextEligibleForCache = true;
+	// True when NFC normalization leaves the fetched text unchanged, so offsets into the NFC
+	// buffer are source offsets.
+	bool fTextIsNfc = true;
 
 #ifdef UNISCRIBE_NFC
 	if (cch)
@@ -3104,7 +3137,7 @@ int UniscribeSegment::CallScriptItemize(OLECHAR * prgchDefBuf, int cchBuf,
 		bool fComputedTextIsNfc = (stu == stuOrig);
 		if (pfTextIsNfc)
 			*pfTextIsNfc = fComputedTextIsNfc;
-		fTextEligibleForCache = fComputedTextIsNfc;
+		fTextIsNfc = fComputedTextIsNfc;
 		if (cch > cchBuf)
 		{
 			cchBuf = cch;
@@ -3259,11 +3292,8 @@ typedef struct tag_SCRIPT_STATE {
 	if (pLayoutPassCache)
 	{
 		pLayoutPassCache->AnalysisCache().AddComputeMs(::GetTickCount() - dwStartMs);
-		if (fTextEligibleForCache)
-		{
-			pLayoutPassCache->AnalysisCache().Store(pts, ichMin, cchOrig, ws, fWsRtl, *pprgchBuf,
-				g_vscri.Begin(), citem);
-		}
+		pLayoutPassCache->AnalysisCache().Store(pts, ichMin, cchOrig, ws, fWsRtl, *pprgchBuf, cch,
+			fTextIsNfc, g_vscri.Begin(), citem);
 	}
 	return cch;
 }

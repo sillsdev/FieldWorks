@@ -30,6 +30,8 @@ typedef Vector<SCRIPT_ITEM> ScrItemVec; // Hungarian vscri;
 typedef Vector<SCRIPT_LOGATTR> ScrLogAttrVec; // Hungarian vsla.
 typedef Vector<ULONG> OpenTypeTagVec; // Hungarian vot.
 
+class NfcOffsetMap;
+
 /*----------------------------------------------------------------------------------------------
 Class: UniscribeRunInfo
 Description: This is the block of information that is passed to all our functors.
@@ -235,6 +237,7 @@ public:
 
 	static int OffsetInNfc(int ich, int ichBase, IVwTextSource * pts);
 	static int OffsetInNfc(int ich, int ichBase, IVwTextSource * pts, bool fTextIsNfc);
+	static NfcOffsetMap * CurrentNfcOffsetMap(IVwTextSource * pts);
 	static int OffsetToOrig(int ich, int ichBase, IVwTextSource * pts);
 	static int OffsetToOrig(int ich, int ichBase, IVwTextSource * pts, bool fTextIsNfc);
 

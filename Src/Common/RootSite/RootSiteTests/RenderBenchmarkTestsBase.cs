@@ -976,10 +976,13 @@ namespace SIL.FieldWorks.Common.RootSites.RenderBenchmark
 		}
 
 		/// <summary>
-		/// Adds one paragraph of short decomposed sentences whose runs alternate between two
-		/// writing systems and two font families.
+		/// Adds a section whose content is one paragraph of <paramref name="sentenceCount"/>
+		/// sentences. Each sentence's text and run properties come from the two callbacks, which
+		/// receive the sentence index. With <paramref name="withChapterNumber"/> the paragraph
+		/// opens with a chapter-number run.
 		/// </summary>
-		protected void AddSingleMixedWsParagraph(IScrBook book, int sentenceCount)
+		private void AddSingleParagraphSection(IScrBook book, string heading, int sentenceCount,
+			Func<int, string> sentence, Func<int, ITsTextProps> runProps, bool withChapterNumber = false)
 		{
 			var section = Cache.ServiceLocator.GetInstance<IScrSectionFactory>().Create();
 			book.SectionsOS.Add(section);
@@ -988,10 +991,26 @@ namespace SIL.FieldWorks.Common.RootSites.RenderBenchmark
 
 			section.HeadingOA = stTextFactory.Create();
 			var headingBldr = new StTxtParaBldr(Cache) { ParaStyleName = ScrStyleNames.SectionHead };
-			headingBldr.AppendRun("Single Paragraph, Mixed Writing Systems",
-				StyleUtils.CharStyleTextProps(null, m_wsEng));
+			headingBldr.AppendRun(heading, StyleUtils.CharStyleTextProps(null, m_wsEng));
 			headingBldr.CreateParagraph(section.HeadingOA);
 
+			section.ContentOA = stTextFactory.Create();
+			var paraBldr = new StTxtParaBldr(Cache) { ParaStyleName = ScrStyleNames.NormalParagraph };
+			if (withChapterNumber)
+				paraBldr.AppendRun("1", StyleUtils.CharStyleTextProps(ScrStyleNames.ChapterNumber, m_wsEng));
+
+			for (int i = 0; i < sentenceCount; i++)
+				paraBldr.AppendRun(sentence(i), runProps(i));
+
+			paraBldr.CreateParagraph(section.ContentOA);
+		}
+
+		/// <summary>
+		/// Adds one paragraph of short decomposed sentences whose runs alternate between two
+		/// writing systems and two font families.
+		/// </summary>
+		protected void AddSingleMixedWsParagraph(IScrBook book, int sentenceCount)
+		{
 			string[] subjects =
 			{
 				"the \u00E9lder",
@@ -1011,18 +1030,10 @@ namespace SIL.FieldWorks.Common.RootSites.RenderBenchmark
 				"asked for a bless\u0129ng"
 			};
 
-			section.ContentOA = stTextFactory.Create();
-			var paraBldr = new StTxtParaBldr(Cache) { ParaStyleName = ScrStyleNames.NormalParagraph };
-			paraBldr.AppendRun("1", StyleUtils.CharStyleTextProps(ScrStyleNames.ChapterNumber, m_wsEng));
-
-			for (int i = 0; i < sentenceCount; i++)
-			{
-				string sentence = Decomposed(
-					$"{subjects[i % subjects.Length]} {predicates[i % predicates.Length]} {i + 1}. ");
-				paraBldr.AppendRun(sentence, AlternatingFontRunProps(i % 2 == 0));
-			}
-
-			paraBldr.CreateParagraph(section.ContentOA);
+			AddSingleParagraphSection(book, "Single Paragraph, Mixed Writing Systems", sentenceCount,
+				i => Decomposed($"{subjects[i % subjects.Length]} {predicates[i % predicates.Length]} {i + 1}. "),
+				i => AlternatingFontRunProps(i % 2 == 0),
+				withChapterNumber: true);
 		}
 
 		private ITsTextProps AlternatingFontRunProps(bool first)
@@ -1041,17 +1052,6 @@ namespace SIL.FieldWorks.Common.RootSites.RenderBenchmark
 		/// </summary>
 		protected void AddNfcComposableDiacriticsParagraph(IScrBook book, int wordCount)
 		{
-			var section = Cache.ServiceLocator.GetInstance<IScrSectionFactory>().Create();
-			book.SectionsOS.Add(section);
-
-			var stTextFactory = Cache.ServiceLocator.GetInstance<IStTextFactory>();
-
-			section.HeadingOA = stTextFactory.Create();
-			var headingBldr = new StTxtParaBldr(Cache) { ParaStyleName = ScrStyleNames.SectionHead };
-			headingBldr.AppendRun("Decomposed Diacritics Microbenchmark",
-				StyleUtils.CharStyleTextProps(null, m_wsEng));
-			headingBldr.CreateParagraph(section.HeadingOA);
-
 			string[] words =
 			{
 				"caf\u00E9",
@@ -1066,17 +1066,9 @@ namespace SIL.FieldWorks.Common.RootSites.RenderBenchmark
 				"fa\u00E7ade"
 			};
 
-			section.ContentOA = stTextFactory.Create();
-			var paraBldr = new StTxtParaBldr(Cache) { ParaStyleName = ScrStyleNames.NormalParagraph };
-
-			for (int i = 0; i < wordCount; i++)
-			{
-				string sentence = Decomposed(
-					$"The {words[i % words.Length]} recorded here is entry {i + 1}. ");
-				paraBldr.AppendRun(sentence, StyleUtils.CharStyleTextProps(null, m_wsEng));
-			}
-
-			paraBldr.CreateParagraph(section.ContentOA);
+			AddSingleParagraphSection(book, "Decomposed Diacritics Microbenchmark", wordCount,
+				i => Decomposed($"The {words[i % words.Length]} recorded here is entry {i + 1}. "),
+				i => StyleUtils.CharStyleTextProps(null, m_wsEng));
 		}
 
 		/// <summary>
@@ -1085,17 +1077,6 @@ namespace SIL.FieldWorks.Common.RootSites.RenderBenchmark
 		/// </summary>
 		protected void AddSingleWsProseParagraph(IScrBook book, int sentenceCount)
 		{
-			var section = Cache.ServiceLocator.GetInstance<IScrSectionFactory>().Create();
-			book.SectionsOS.Add(section);
-
-			var stTextFactory = Cache.ServiceLocator.GetInstance<IStTextFactory>();
-
-			section.HeadingOA = stTextFactory.Create();
-			var headingBldr = new StTxtParaBldr(Cache) { ParaStyleName = ScrStyleNames.SectionHead };
-			headingBldr.AppendRun("Single Writing-System Line-Wrap Microbenchmark",
-				StyleUtils.CharStyleTextProps(null, m_wsEng));
-			headingBldr.CreateParagraph(section.HeadingOA);
-
 			string[] subjects =
 			{
 				"the mer\u00E7hant",
@@ -1115,17 +1096,9 @@ namespace SIL.FieldWorks.Common.RootSites.RenderBenchmark
 				"shaped the jar on the slow whe\u00EBl"
 			};
 
-			section.ContentOA = stTextFactory.Create();
-			var paraBldr = new StTxtParaBldr(Cache) { ParaStyleName = ScrStyleNames.NormalParagraph };
-
-			for (int i = 0; i < sentenceCount; i++)
-			{
-				string sentence = Decomposed(
-					$"{subjects[i % subjects.Length]} {predicates[i % predicates.Length]} on day {i + 1}. ");
-				paraBldr.AppendRun(sentence, StyleUtils.CharStyleTextProps(null, m_wsEng));
-			}
-
-			paraBldr.CreateParagraph(section.ContentOA);
+			AddSingleParagraphSection(book, "Single Writing-System Line-Wrap Microbenchmark", sentenceCount,
+				i => Decomposed($"{subjects[i % subjects.Length]} {predicates[i % predicates.Length]} on day {i + 1}. "),
+				i => StyleUtils.CharStyleTextProps(null, m_wsEng));
 		}
 
 		#endregion
