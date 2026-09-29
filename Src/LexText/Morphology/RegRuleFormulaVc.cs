@@ -85,6 +85,8 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 				case kfragRHS:
 					m_rhs = m_cache.ServiceLocator.GetInstance<IPhSegRuleRHSRepository>().GetObject(hvo);
 					var rule = m_rhs.OwningRule;
+					NoteNaturalClassDependencies(vwenv, rule.StrucDescOS, m_rhs.StrucChangeOS,
+						new IPhContextOrVar[] { m_rhs.LeftContextOA, m_rhs.RightContextOA });
 					if (rule.Disabled)
 					{
 						vwenv.set_StringProperty((int)FwTextPropType.ktptNamedStyle, "Disabled Text");
