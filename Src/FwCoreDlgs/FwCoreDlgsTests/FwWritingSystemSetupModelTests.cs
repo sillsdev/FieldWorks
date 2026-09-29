@@ -782,6 +782,27 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		}
 
 		[Test]
+		public void Model_WritingSystemChanged_CalledOnInPlaceFontFeaturesChange()
+		{
+			var writingSystemChanged = false;
+			var mockWsManager = new Mock<IWritingSystemManager>();
+
+			var container = new TestWSContainer(new[] { "fr" });
+			var testModel = new FwWritingSystemSetupModel(container,
+				FwWritingSystemSetupModel.ListType.Vernacular, mockWsManager.Object);
+			testModel.CurrentDefaultFont = new FontDefinition("Charis SIL");
+			testModel.Save();
+			testModel.WritingSystemUpdated += (sender, args) =>
+			{
+				writingSystemChanged = true;
+			};
+			// The font dialog edits the existing definition rather than replacing it.
+			testModel.CurrentDefaultFont.Features = "cv43=1";
+			testModel.Save();
+			Assert.That(writingSystemChanged, Is.True, "WritingSystemUpdated should have been called after this change");
+		}
+
+		[Test]
 		public void Model_WritingSystemChanged_CalledOnGraphiteToggle()
 		{
 			var writingSystemChanged = false;
