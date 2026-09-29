@@ -39,7 +39,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			IHCLoadErrorLogger logger,
 			out Dictionary<IMoMorphSynAnalysis, IMoMorphSynAnalysis> representativeMSAs)
 		{
-			var loader = new HCLoader(cache, logger);
+			var loader = new HCLoader(cache, logger, true);
 			loader.LoadLanguage();
 			representativeMSAs = loader.m_representativeMSAs;
 			return loader.m_language;
@@ -84,13 +84,13 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		private CharacterDefinition m_morphBdry;
 		protected static char m_ReplaceSpaceChar = '.';
 
-		protected HCLoader(LcmCache cache, IHCLoadErrorLogger logger)
+		protected HCLoader(LcmCache cache, IHCLoadErrorLogger logger, bool mergeMSAs = false)
 		{
 			m_cache = cache;
 			m_logger = logger;
 			m_allomorphs = new Dictionary<IMoForm, List<Allomorph>>();
 			m_morphemes = new Dictionary<IMoMorphSynAnalysis, List<Morpheme>>();
-			m_representativeMSAs = new Dictionary<IMoMorphSynAnalysis, IMoMorphSynAnalysis>();
+			m_representativeMSAs = mergeMSAs ? new Dictionary<IMoMorphSynAnalysis, IMoMorphSynAnalysis>() : null;
 			m_stemNames = new Dictionary<IMoStemName, StemName>();
 			m_mprFeatures = new Dictionary<ICmObject, MprFeature>();
 
@@ -674,6 +674,10 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 		IMoMorphSynAnalysis RepresentativeMSA(IMoMorphSynAnalysis msa)
 		{
+			if (m_representativeMSAs == null)
+			{
+				return msa;
+			}
 			if (m_representativeMSAs.TryGetValue(msa, out IMoMorphSynAnalysis representativeMSA))
 			{
 				return representativeMSA;

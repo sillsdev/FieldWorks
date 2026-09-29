@@ -32,6 +32,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		private bool m_forceUpdate;
 		private bool m_guessRoots;
 		private bool m_mergeAnalyses;
+		private bool m_mergeMSAs = true;
 
 		// the public const strings are for GenerateHCConfigForFLExTrans and HCSynthByGlossLib
 		internal const string CRuleID = "ID";
@@ -157,13 +158,11 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			using (XmlWriter writer = XmlWriter.Create(loadErrorsFile))
 			using (new WorkerThreadReadHelper(m_cache.ServiceLocator.GetInstance<IWorkerThreadReadHandler>()))
 			{
-				writer.WriteStartElement("LoadErrors");
-				m_language = HCLoader.Load(m_cache, new XmlHCLoadErrorLogger(writer), out m_representativeMSAs);
-				writer.WriteEndElement();
 				XElement parserParamsElem = XElement.Parse(m_cache.LanguageProject.MorphologicalDataOA.ParserParameters);
 				XElement delReappsElem = parserParamsElem.Elements("HC").Elements("DelReapps").FirstOrDefault();
 				XElement guessRootsElem = parserParamsElem.Elements("HC").Elements("GuessRoots").FirstOrDefault();
 				XElement mergeAnalysesElem = parserParamsElem.Elements("HC").Elements("MergeAnalyses").FirstOrDefault();
+				XElement mergeMSAsElem = parserParamsElem.Elements("HC").Elements("MergeMSAs").FirstOrDefault();
 				XElement maxRootsElem = parserParamsElem.Elements("HC").Elements("MaxRoots").FirstOrDefault();
 				XElement maxAlternativesElem = parserParamsElem.Elements("HC").Elements("MaxAlternatives").FirstOrDefault();
 				if (delReappsElem != null)
@@ -171,11 +170,23 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				if (guessRootsElem != null)
 					m_guessRoots = (bool) guessRootsElem;
 				if (mergeAnalysesElem != null)
-					m_mergeAnalyses = (bool) mergeAnalysesElem;
+					m_mergeAnalyses = (bool)mergeAnalysesElem;
+				if (mergeMSAsElem != null)
+					m_mergeMSAs = (bool)mergeMSAsElem;
 				if (maxRootsElem != null)
 					maxStemCount = int.Parse(maxRootsElem.Value);
 				if (maxAlternativesElem != null)
 					maxAlternatives = int.Parse(maxAlternativesElem.Value);
+				writer.WriteStartElement("LoadErrors");
+				if (m_mergeMSAs)
+				{
+					m_language = HCLoader.Load(m_cache, new XmlHCLoadErrorLogger(writer), out m_representativeMSAs);
+				}
+				else
+				{
+					m_language = HCLoader.Load(m_cache, new XmlHCLoadErrorLogger(writer));
+				}
+				writer.WriteEndElement();
 			}
 			m_morpher = new Morpher(m_traceManager, m_language) { DeletionReapplications = delReapps };
 			m_morpher.MaxStemCount = maxStemCount;
