@@ -9,9 +9,9 @@ using NUnit.Framework;
 namespace SIL.FieldWorks.XWorks
 {
 	/// <summary>
-	/// Reading a tool's filter list off its configuration: the step between the file on disk and
-	/// the ids the composer withholds rows by. Every other test in this area supplies that set by
-	/// hand, so without these the whole feature could be a silent no-op and still look green.
+	/// Reading a tool's filter list off its configuration: the filterPath attribute names a file
+	/// under the code directory, and each of its SliceFilter/node ids becomes a row the composer
+	/// withholds. A missing path, file or configuration yields no ids.
 	/// </summary>
 	[TestFixture]
 	public class SliceFilterListReadingTests

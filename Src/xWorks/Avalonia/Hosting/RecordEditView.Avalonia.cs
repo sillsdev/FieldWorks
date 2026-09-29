@@ -86,7 +86,8 @@ namespace SIL.FieldWorks.XWorks
 			get { return m_activeUIFramework == UIFramework.Avalonia; }
 		}
 
-		// Memoized: the tool's configuration cannot change while the view lives.
+		// Memoized, a failed read included: a missing filter file is an install fault, and
+		// re-reading it would log the failure for every record shown.
 		private ISet<string> m_hiddenSliceIds;
 
 		/// <summary>The slice ids this tool's filter list withholds.</summary>
@@ -349,11 +350,6 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
-		/// Shows the Avalonia detail view for a record: the composed full-entry view when the record is a
-		/// lexical entry (first-slice fallback if composition fails), or the resource-backed
-		/// unsupported state otherwise.
-		/// </summary>
-		/// <summary>
 		/// The detail this view composes for <paramref name="obj"/>, under the tool's own
 		/// configuration: its layout, its view overrides and its slice filter list.
 		/// </summary>
@@ -378,6 +374,11 @@ namespace SIL.FieldWorks.XWorks
 					hiddenSliceIds: HiddenSliceIds);
 		}
 
+		/// <summary>
+		/// Shows the Avalonia detail view for a record: the composed full-entry view when the record is a
+		/// lexical entry (first-slice fallback if composition fails), or the resource-backed
+		/// unsupported state otherwise.
+		/// </summary>
 		private void ShowAvaloniaEntry(ICmObject obj)
 		{
 			// Auto-save: a session still open from the previous record/edit settles (commit
