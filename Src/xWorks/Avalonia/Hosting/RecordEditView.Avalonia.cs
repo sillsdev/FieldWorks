@@ -86,6 +86,50 @@ namespace SIL.FieldWorks.XWorks
 			get { return m_activeUIFramework == UIFramework.Avalonia; }
 		}
 
+		// Memoized, a failed read included: a missing filter file is an install fault, and
+		// re-reading it would log the failure for every record shown.
+		private ISet<string> m_hiddenSliceIds;
+
+		/// <summary>The slice ids this tool's filter list withholds.</summary>
+		private ISet<string> HiddenSliceIds
+			=> m_hiddenSliceIds ?? (m_hiddenSliceIds = ReadSliceFilterIds(m_configurationParameters));
+
+		/// <summary>
+		/// The slice ids named by the filter list a tool's configuration points at through its
+		/// filterPath. Empty for a configuration that names none, and empty when the file cannot
+		/// be read: a detail view showing an extra row beats one that will not open.
+		/// </summary>
+		/// <param name="configuration">The tool's configuration parameters; null yields an empty
+		/// set.</param>
+		internal static ISet<string> ReadSliceFilterIds(XmlNode configuration)
+		{
+			var ids = new HashSet<string>(StringComparer.Ordinal);
+			try
+			{
+				var filterPath = XmlUtils.GetOptionalAttributeValue(configuration, "filterPath");
+				if (string.IsNullOrEmpty(filterPath))
+					return ids;
+				if (!Platform.IsWindows)
+					filterPath = filterPath.Replace(@"\", "/");
+
+				var document = new XmlDocument();
+				document.Load(FwDirectoryFinder.GetCodeFile(filterPath));
+				foreach (XmlNode node in document.SelectNodes("SliceFilter/node"))
+				{
+					var id = XmlUtils.GetOptionalAttributeValue(node, "id");
+					if (!string.IsNullOrEmpty(id))
+						ids.Add(id);
+				}
+			}
+			catch (Exception e)
+			{
+				Logger.WriteError("Reading the tool's slice filter failed; no row is withheld "
+					+ "by it.", e);
+			}
+
+			return ids;
+		}
+
 		/// <summary>
 		/// Auto-save: settles any open fenced edit session -- commit when validation is
 		/// clean, roll back otherwise. The holder guards internally (no-op when nothing is open),
@@ -306,6 +350,31 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
+		/// The detail this view composes for <paramref name="obj"/>, under the tool's own
+		/// configuration: its layout, its view overrides and its slice filter list.
+		/// </summary>
+		internal ComposedDetail ComposeDetail(ICmObject obj, bool showHidden)
+		{
+			var lexEntry = obj as ILexEntry;
+			return lexEntry != null
+				? DetailComposer.Compose(lexEntry, Cache, showHidden,
+					overrides: ResolveViewOverride,
+					showAllWritingSystemsFields: m_showAllWsFields,
+					writingSystemFocused: OnDetailWritingSystemFocused,
+					hiddenSliceIds: HiddenSliceIds)
+				// Other roots use the tool's layout (m_layoutName, default "Normal");
+				// a type-selected one, such as RnGenericRec keyed on "Type", resolves
+				// inside Compose.
+				: DetailComposer.Compose(obj, Cache,
+					string.IsNullOrEmpty(m_layoutName) ? "Normal" : m_layoutName, showHidden,
+					overrides: ResolveViewOverride,
+					layoutChoiceField: m_layoutChoiceField,
+					showAllWritingSystemsFields: m_showAllWsFields,
+					writingSystemFocused: OnDetailWritingSystemFocused,
+					hiddenSliceIds: HiddenSliceIds);
+		}
+
+		/// <summary>
 		/// Shows the Avalonia detail view for a record: the composed full-entry view when the record is a
 		/// lexical entry (first-slice fallback if composition fails), or the resource-backed
 		/// unsupported state otherwise.
@@ -357,20 +426,7 @@ namespace SIL.FieldWorks.XWorks
 			ComposedDetail composed = null;
 			try
 			{
-				composed = lexEntry != null
-					? DetailComposer.Compose(lexEntry, Cache, showHidden,
-						overrides: ResolveViewOverride,
-						showAllWritingSystemsFields: m_showAllWsFields,
-						writingSystemFocused: OnDetailWritingSystemFocused)
-					// Non-entry roots compose against the tool's configured layout
-					// (m_layoutName, default "Normal"); a type-selected layout (m_layoutChoiceField, e.g.
-					// Notebook RnGenericRec keyed on "Type") resolves to the right variant inside Compose.
-					: DetailComposer.Compose(obj, Cache,
-						string.IsNullOrEmpty(m_layoutName) ? "Normal" : m_layoutName, showHidden,
-						overrides: ResolveViewOverride,
-						layoutChoiceField: m_layoutChoiceField,
-						showAllWritingSystemsFields: m_showAllWsFields,
-						writingSystemFocused: OnDetailWritingSystemFocused);
+				composed = ComposeDetail(obj, showHidden);
 				if (composed != null)
 				{
 					detail = composed.Model;
