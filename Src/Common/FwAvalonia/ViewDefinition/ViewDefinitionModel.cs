@@ -387,8 +387,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 			IReadOnlyList<string> visibleWritingSystems = null,
 			bool toggleValue = false,
 			bool reorder = false,
-			string sliceId = null,
-			string helpTopicId = null)
+			string helpTopicId = null,
+			string sliceId = null)
 		{
 			SliceId = sliceId;
 			HelpTopicId = helpTopicId;

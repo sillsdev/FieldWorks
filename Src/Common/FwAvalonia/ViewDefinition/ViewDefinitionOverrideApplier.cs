@@ -299,8 +299,9 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 			return map;
 		}
 
-		// Reconstruct an immutable node with the overridden fields, copying every other one.
-		// Every trailing optional constructor argument must be passed, or that field is stripped.
+		// Rebuild an immutable node with the overridden fields, copying every other one. Pass
+		// every trailing optional argument, by name, or that field is stripped or shifted into
+		// its neighbour.
 		private static ViewNode CloneWith(ViewNode n, ViewVisibility visibility, string label,
 			IReadOnlyList<ViewNode> children, IReadOnlyList<string> visibleWritingSystems)
 			=> new ViewNode(
@@ -310,7 +311,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 				n.ContextMenuId, n.HotlinksId, n.GhostField, n.GhostWs, n.GhostClass, n.GhostLabel,
 				n.ForVariant, n.CustomEditorClass, n.CustomEditorAssembly, n.GhostInitMethod, n.Condition,
 				n.ChooserLinks, n.EnumStringList, visibleWritingSystems, n.ToggleValue, n.Reorder,
-				n.HelpTopicId);
+				helpTopicId: n.HelpTopicId, sliceId: n.SliceId);
 
 		// Copy a (leaf) node under a new StableId; AutomationId is dropped so the duplicate gets a fresh,
 		// non-colliding identity (the renderer derives one from the new StableId by convention).
@@ -322,6 +323,6 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 				n.ContextMenuId, n.HotlinksId, n.GhostField, n.GhostWs, n.GhostClass, n.GhostLabel,
 				n.ForVariant, n.CustomEditorClass, n.CustomEditorAssembly, n.GhostInitMethod, n.Condition,
 				n.ChooserLinks, n.EnumStringList, n.VisibleWritingSystems, n.ToggleValue, n.Reorder,
-				n.HelpTopicId);
+				helpTopicId: n.HelpTopicId, sliceId: n.SliceId);
 	}
 }
