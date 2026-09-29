@@ -154,6 +154,7 @@ $(VIEWSTEST_SRC)\Collection.cpp: $(VIEWSTEST_SRC)\DummyBaseVc.h $(VIEWSTEST_SRC)
  $(VIEWSTEST_SRC)\TestTsStrBldr.h\
  $(VIEWSTEST_SRC)\TestTsString.h\
  $(VIEWSTEST_SRC)\TestTsPropsBldr.h\
- $(VIEWSTEST_SRC)\TestTsTextProps.h
+ $(VIEWSTEST_SRC)\TestTsTextProps.h\
+ $(VIEWSTEST_SRC)\TestViewCaches.h
 	$(DISPLAY) Collecting tests for $(BUILD_PRODUCT).$(BUILD_EXTENSION)
 	$(COLLECT) $** $(VIEWSTEST_SRC)\Collection.cpp

@@ -218,6 +218,75 @@ namespace TestViews
 	public:
 		TestShapeRunCache();
 	};
+
+	class TestTextAnalysisCache : public unitpp::suite
+	{
+		static IVwTextSource * FakeSource(int n)
+		{
+			return reinterpret_cast<IVwTextSource *>(static_cast<uintptr_t>(0x1000 + n));
+		}
+
+		void StoreTenChars(TextAnalysisCache & cache, IVwTextSource * pts, int ichMin, int ws)
+		{
+			SCRIPT_ITEM rgscri[2];
+			ZeroMemory(rgscri, sizeof(rgscri));
+			rgscri[1].iCharPos = 10;
+			cache.Store(pts, ichMin, 10, ws, false, L"abcdefghij", rgscri, 1);
+		}
+
+		void testStoredRangeIsFound()
+		{
+			TextAnalysisCache cache;
+			StoreTenChars(cache, FakeSource(1), 0, 1);
+			TextAnalysisEntry * pentry = cache.Find(FakeSource(1), 0, 10, 1, false);
+			unitpp::assert_true("an identical request should hit", pentry != NULL);
+			unitpp::assert_eq("the hit should carry the stored text length", 10,
+				pentry->m_vchText.Size());
+			unitpp::assert_true("the hit should carry the stored text",
+				::memcmp(pentry->m_vchText.Begin(), L"abcdefghij", 10 * isizeof(OLECHAR)) == 0);
+			unitpp::assert_eq("the hit should carry the stored item count", 1, pentry->m_citem);
+		}
+
+		void testShorterRequestFromSameStartIsCovered()
+		{
+			TextAnalysisCache cache;
+			StoreTenChars(cache, FakeSource(1), 0, 1);
+			unitpp::assert_true("a shorter request from the same start should hit",
+				cache.Find(FakeSource(1), 0, 4, 1, false) != NULL);
+			unitpp::assert_true("a longer request from the same start should miss",
+				cache.Find(FakeSource(1), 0, 11, 1, false) == NULL);
+		}
+
+		void testKeyMismatchMisses()
+		{
+			TextAnalysisCache cache;
+			StoreTenChars(cache, FakeSource(1), 0, 1);
+			unitpp::assert_true("a different start offset should miss",
+				cache.Find(FakeSource(1), 1, 4, 1, false) == NULL);
+			unitpp::assert_true("a different text source should miss",
+				cache.Find(FakeSource(2), 0, 4, 1, false) == NULL);
+			unitpp::assert_true("a different writing system should miss",
+				cache.Find(FakeSource(1), 0, 4, 2, false) == NULL);
+			unitpp::assert_true("a different direction should miss",
+				cache.Find(FakeSource(1), 0, 4, 1, true) == NULL);
+		}
+
+		void testEvictionIsBounded()
+		{
+			TextAnalysisCache cache(2);
+			StoreTenChars(cache, FakeSource(1), 0, 1);
+			StoreTenChars(cache, FakeSource(2), 0, 1);
+			StoreTenChars(cache, FakeSource(3), 0, 1);
+			unitpp::assert_eq("storing past capacity should evict", 1, cache.EvictionCount());
+			unitpp::assert_true("the oldest entry should be the one evicted",
+				cache.Find(FakeSource(1), 0, 10, 1, false) == NULL);
+			unitpp::assert_true("the newest entry should survive",
+				cache.Find(FakeSource(3), 0, 10, 1, false) != NULL);
+		}
+
+	public:
+		TestTextAnalysisCache();
+	};
 }
 
 #endif // TESTVIEWCACHES_H_INCLUDED

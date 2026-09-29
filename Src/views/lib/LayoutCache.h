@@ -2,6 +2,8 @@
 #ifndef LAYOUTCACHE_INCLUDED
 #define LAYOUTCACHE_INCLUDED
 
+// Itemization of a text range that NFC normalization leaves unchanged, so an offset into
+// m_vchText is the same offset into the source text (LT-22674).
 class TextAnalysisEntry
 {
 public:
@@ -11,8 +13,6 @@ public:
 		m_cch(0),
 		m_ws(0),
 		m_fWsRtl(false),
-		m_fTextIsNfc(true),
-		m_cchNfc(0),
 		m_citem(0)
 	{
 	}
@@ -20,47 +20,6 @@ public:
 	bool Covers(IVwTextSource * pts, int ichMin, int cch, int ws, bool fWsRtl) const
 	{
 		return m_pts == pts && m_ichMin == ichMin && m_cch >= cch && m_ws == ws && m_fWsRtl == fWsRtl;
-	}
-
-	int RequestedNfcLength(int cchRequested) const
-	{
-		if (cchRequested <= 0)
-			return 0;
-		if (m_fTextIsNfc)
-			return cchRequested;
-		if (m_vichOrigToNfc.Size() == 0)
-			return cchRequested;
-		if (cchRequested >= m_vichOrigToNfc.Size())
-			return m_vichOrigToNfc[m_vichOrigToNfc.Size() - 1];
-		return m_vichOrigToNfc[cchRequested];
-	}
-
-	int OffsetInNfc(int ich, int ichBase) const
-	{
-		Assert(ich >= ichBase);
-		if (m_fTextIsNfc)
-			return ich - ichBase;
-		int ichRelative = ich - ichBase;
-		if (ichRelative <= 0)
-			return 0;
-		if (m_vichOrigToNfc.Size() == 0)
-			return ichRelative;
-		if (ichRelative >= m_vichOrigToNfc.Size())
-			return m_vichOrigToNfc[m_vichOrigToNfc.Size() - 1];
-		return m_vichOrigToNfc[ichRelative];
-	}
-
-	int OffsetToOrig(int ich, int ichBase) const
-	{
-		if (m_fTextIsNfc)
-			return ich + ichBase;
-		if (ich <= 0)
-			return ichBase;
-		if (m_vichNfcToOrig.Size() == 0)
-			return ich + ichBase;
-		if (ich >= m_vichNfcToOrig.Size())
-			return m_cch + ichBase;
-		return m_vichNfcToOrig[ich] + ichBase;
 	}
 
 	void CopyScriptItemsTo(Vector<SCRIPT_ITEM> & vscri, int & citem) const
@@ -80,13 +39,9 @@ public:
 	int m_cch;
 	int m_ws;
 	bool m_fWsRtl;
-	bool m_fTextIsNfc;
-	int m_cchNfc;
 	int m_citem;
-	Vector<OLECHAR> m_vchNfc;
+	Vector<OLECHAR> m_vchText;
 	Vector<SCRIPT_ITEM> m_vscri;
-	Vector<int> m_vichOrigToNfc;
-	Vector<int> m_vichNfcToOrig;
 };
 
 class ShapeRunEntry
@@ -194,8 +149,7 @@ public:
 	}
 
 	TextAnalysisEntry * Store(IVwTextSource * pts, int ichMin, int cch, int ws, bool fWsRtl,
-		const OLECHAR * prgchNfc, int cchNfc, bool fTextIsNfc, const SCRIPT_ITEM * prgscri,
-		int citem, const Vector<int> * pvichOrigToNfc, const Vector<int> * pvichNfcToOrig)
+		const OLECHAR * prgch, const SCRIPT_ITEM * prgscri, int citem)
 	{
 		TextAnalysisEntry * pentry = NULL;
 		for (int ientry = 0; ientry < m_ventry.Size(); ++ientry)
@@ -230,13 +184,11 @@ public:
 		pentry->m_cch = cch;
 		pentry->m_ws = ws;
 		pentry->m_fWsRtl = fWsRtl;
-		pentry->m_fTextIsNfc = fTextIsNfc;
-		pentry->m_cchNfc = cchNfc;
 		pentry->m_citem = citem;
 
-		pentry->m_vchNfc.Resize(cchNfc);
-		if (cchNfc > 0)
-			::memcpy(pentry->m_vchNfc.Begin(), prgchNfc, cchNfc * isizeof(OLECHAR));
+		pentry->m_vchText.Resize(cch);
+		if (cch > 0)
+			::memcpy(pentry->m_vchText.Begin(), prgch, cch * isizeof(OLECHAR));
 
 		int cscri = citem + 1;
 		if (cscri < 2)
@@ -244,24 +196,6 @@ public:
 		pentry->m_vscri.Resize(cscri);
 		if (cscri > 0)
 			::memcpy(pentry->m_vscri.Begin(), prgscri, cscri * isizeof(SCRIPT_ITEM));
-
-		if (pvichOrigToNfc)
-		{
-			pentry->m_vichOrigToNfc.Resize(pvichOrigToNfc->Size());
-			for (int i = 0; i < pvichOrigToNfc->Size(); ++i)
-				pentry->m_vichOrigToNfc[i] = (*pvichOrigToNfc)[i];
-		}
-		else
-			pentry->m_vichOrigToNfc.Delete(0, pentry->m_vichOrigToNfc.Size());
-
-		if (pvichNfcToOrig)
-		{
-			pentry->m_vichNfcToOrig.Resize(pvichNfcToOrig->Size());
-			for (int i = 0; i < pvichNfcToOrig->Size(); ++i)
-				pentry->m_vichNfcToOrig[i] = (*pvichNfcToOrig)[i];
-		}
-		else
-			pentry->m_vichNfcToOrig.Delete(0, pentry->m_vichNfcToOrig.Size());
 
 		return pentry;
 	}

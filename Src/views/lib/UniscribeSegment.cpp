@@ -29,8 +29,6 @@ DEFINE_THIS_FILE
 //:>********************************************************************************************
 //:>	   Forward declarations
 //:>********************************************************************************************
-static void BuildNfcOffsetMaps(const StrUni & stuOrig, Vector<int> & vichOrigToNfc,
-	Vector<int> & vichNfcToOrig);
 static void ApplyShapeRunCacheEntry(ShapeRunEntry & entry, UniscribeRunInfo & uri);
 
 //:>********************************************************************************************
@@ -1634,17 +1632,6 @@ int UniscribeSegment::OffsetInNfc(int ich, int ichBase, IVwTextSource * pts, boo
 	return OffsetInNfc(ich, ichBase, pts);
 }
 
-int UniscribeSegment::OffsetInNfc(int ich, int ichBase, IVwTextSource * pts, bool fTextIsNfc,
-	const TextAnalysisEntry * pAnalysis)
-{
-	Assert(ich >= ichBase);
-	if (fTextIsNfc)
-		return ich - ichBase;
-	if (pAnalysis)
-		return pAnalysis->OffsetInNfc(ich, ichBase);
-	return OffsetInNfc(ich, ichBase, pts, fTextIsNfc);
-}
-
 // ich is an offset into the (NFC normalized) characters of this segment.
 // convert it into a (typically NFD) position in the original paragraph.
 // This is complicated because it isn't absolutely guaranteed that the original is
@@ -1690,40 +1677,6 @@ int UniscribeSegment::OffsetToOrig(int ich, int ichBase, IVwTextSource * pts, bo
 	if (fTextIsNfc)
 		return ich + ichBase;
 	return OffsetToOrig(ich, ichBase, pts);
-}
-
-int UniscribeSegment::OffsetToOrig(int ich, int ichBase, IVwTextSource * pts, bool fTextIsNfc,
-	const TextAnalysisEntry * pAnalysis)
-{
-	if (fTextIsNfc)
-		return ich + ichBase;
-	if (pAnalysis)
-		return pAnalysis->OffsetToOrig(ich, ichBase);
-	return OffsetToOrig(ich, ichBase, pts, fTextIsNfc);
-}
-
-static void BuildNfcOffsetMaps(const StrUni & stuOrig, Vector<int> & vichOrigToNfc,
-	Vector<int> & vichNfcToOrig)
-{
-	int cchOrig = stuOrig.Length();
-	vichOrigToNfc.Resize(cchOrig + 1);
-	vichOrigToNfc[0] = 0;
-	for (int ich = 1; ich <= cchOrig; ++ich)
-	{
-		StrUni stuPrefix(stuOrig.Chars(), ich);
-		StrUtil::NormalizeStrUni(stuPrefix, UNORM_NFC);
-		vichOrigToNfc[ich] = stuPrefix.Length();
-	}
-
-	int cchNfc = vichOrigToNfc[cchOrig];
-	vichNfcToOrig.Resize(cchNfc + 1);
-	int ichOrig = 0;
-	for (int ichNfc = 0; ichNfc <= cchNfc; ++ichNfc)
-	{
-		while (ichOrig + 1 <= cchOrig && vichOrigToNfc[ichOrig + 1] <= ichNfc)
-			++ichOrig;
-		vichNfcToOrig[ichNfc] = ichOrig;
-	}
 }
 
 static void ApplyShapeRunCacheEntry(ShapeRunEntry & entry, UniscribeRunInfo & uri)
@@ -3092,11 +3045,9 @@ ExitBothLoops:
 ----------------------------------------------------------------------------------------------*/
 int UniscribeSegment::CallScriptItemize(OLECHAR * prgchDefBuf, int cchBuf,
 	Vector<OLECHAR> & vch, IVwTextSource * pts, int ichMin, int cch, OLECHAR ** pprgchBuf,
-	int & citem, bool fParaRTL, bool * pfTextIsNfc, const TextAnalysisEntry ** ppAnalysis)
+	int & citem, bool fParaRTL, bool * pfTextIsNfc)
 {
 	* pprgchBuf = prgchDefBuf; // Use on-stack variable if big enough
-	if (ppAnalysis)
-		*ppAnalysis = NULL;
 
 	bool fNeedOpenTypeScriptTags = cch > 0 && TextRangeHasOpenTypeFeatures(pts, ichMin, cch);
 	LayoutPassCache * pLayoutPassCache = (!fNeedOpenTypeScriptTags && IsPath2AnalysisCacheEnabled()) ?
@@ -3117,24 +3068,23 @@ int UniscribeSegment::CallScriptItemize(OLECHAR * prgchDefBuf, int cchBuf,
 		if (pCachedAnalysis)
 		{
 			if (pfTextIsNfc)
-				*pfTextIsNfc = pCachedAnalysis->m_fTextIsNfc;
-			*pprgchBuf = pCachedAnalysis->m_vchNfc.Size() > 0 ? pCachedAnalysis->m_vchNfc.Begin() : prgchDefBuf;
+				*pfTextIsNfc = true;
+			*pprgchBuf = pCachedAnalysis->m_vchText.Size() > 0 ? pCachedAnalysis->m_vchText.Begin() : prgchDefBuf;
 			pCachedAnalysis->CopyScriptItemsTo(g_vscri, citem);
 			if (g_votScriptTags.Size() < citem)
 				g_votScriptTags.Resize(citem);
 			for (int itag = 0; itag < citem; ++itag)
 				g_votScriptTags[itag] = 0;
 			g_cscri = citem;
-			if (ppAnalysis)
-				*ppAnalysis = pCachedAnalysis;
-			return pCachedAnalysis->RequestedNfcLength(cchOrig);
+			return cchOrig;
 		}
 	}
 	if (pLayoutPassCache && !pCachedAnalysis)
 		dwStartMs = ::GetTickCount();
 
-	Vector<int> vichOrigToNfc;
-	Vector<int> vichNfcToOrig;
+	// Text that NFC normalization rewrites is not cached, because offsets into it would
+	// need a map back to the source text for every analysed range (LT-22674).
+	bool fTextEligibleForCache = true;
 
 #ifdef UNISCRIBE_NFC
 	if (cch)
@@ -3154,8 +3104,7 @@ int UniscribeSegment::CallScriptItemize(OLECHAR * prgchDefBuf, int cchBuf,
 		bool fComputedTextIsNfc = (stu == stuOrig);
 		if (pfTextIsNfc)
 			*pfTextIsNfc = fComputedTextIsNfc;
-		if (!fComputedTextIsNfc && pLayoutPassCache)
-			BuildNfcOffsetMaps(stuOrig, vichOrigToNfc, vichNfcToOrig);
+		fTextEligibleForCache = fComputedTextIsNfc;
 		if (cch > cchBuf)
 		{
 			cchBuf = cch;
@@ -3168,13 +3117,6 @@ int UniscribeSegment::CallScriptItemize(OLECHAR * prgchDefBuf, int cchBuf,
 	{
 		if (pfTextIsNfc)
 			*pfTextIsNfc = true; // Empty text is trivially NFC
-		if (pLayoutPassCache)
-		{
-			vichOrigToNfc.Resize(1);
-			vichOrigToNfc[0] = 0;
-			vichNfcToOrig.Resize(1);
-			vichNfcToOrig[0] = 0;
-		}
 	}
 #else
 	if (pfTextIsNfc)
@@ -3317,12 +3259,11 @@ typedef struct tag_SCRIPT_STATE {
 	if (pLayoutPassCache)
 	{
 		pLayoutPassCache->AnalysisCache().AddComputeMs(::GetTickCount() - dwStartMs);
-		TextAnalysisEntry * pStoredAnalysis = pLayoutPassCache->AnalysisCache().Store(pts, ichMin,
-			cchOrig, ws, fWsRtl, *pprgchBuf, cch, pfTextIsNfc ? *pfTextIsNfc : true,
-			g_vscri.Begin(), citem, vichOrigToNfc.Size() ? &vichOrigToNfc : NULL,
-			vichNfcToOrig.Size() ? &vichNfcToOrig : NULL);
-		if (ppAnalysis)
-			*ppAnalysis = pStoredAnalysis;
+		if (fTextEligibleForCache)
+		{
+			pLayoutPassCache->AnalysisCache().Store(pts, ichMin, cchOrig, ws, fWsRtl, *pprgchBuf,
+				g_vscri.Begin(), citem);
+		}
 	}
 	return cch;
 }
@@ -3391,9 +3332,8 @@ template<class Op> int UniscribeSegment::DoAllRuns(int ichBase, IVwGraphics * pv
 	OLECHAR * prgchBuf; // Where text actually goes.
 	// PATH-N1: Get NFC flag from CallScriptItemize to skip redundant OffsetInNfc calls below.
 	bool fTextIsNfc = false;
-	const TextAnalysisEntry * pAnalysis = NULL;
 	int cchNfc = CallScriptItemize(rgchBuf, INIT_BUF_SIZE, vch, m_qts, ichBase, m_dichLim, &prgchBuf,
-		citem, m_fParaRTL, &fTextIsNfc, &pAnalysis);
+		citem, m_fParaRTL, &fTextIsNfc);
 
 	// If dxdExpectedWidth is not 0, then the segment will try its best to stretch to the
 	// specified size.
@@ -3453,7 +3393,7 @@ template<class Op> int UniscribeSegment::DoAllRuns(int ichBase, IVwGraphics * pv
 
 			if (ichLim - ichBase > m_dichLim)
 				ichLim = ichBase + m_dichLim;
-			ichLimNfc = OffsetInNfc(ichLim, ichBase, m_qts, fTextIsNfc, pAnalysis);
+			ichLimNfc = OffsetInNfc(ichLim, ichBase, m_qts, fTextIsNfc);
 			if (ichLimNfc == ichMinNfc && m_dichLim > 0)
 			{
 				// This can happen pathologically where later characters in a composition have different
