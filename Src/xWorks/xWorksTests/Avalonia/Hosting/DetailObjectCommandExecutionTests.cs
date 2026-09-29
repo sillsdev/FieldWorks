@@ -318,6 +318,91 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
+		/// <summary>
+		/// A tool's filter list reaches the composer through the view. The shipped Exception
+		/// "Features" configuration (ProdRestrictEdit) names basicPlusFilter.xml, which withholds
+		/// Status; composing through the view's own configuration, rather than a hand-built id
+		/// set, is what shows the file, the property and the composer are joined.
+		/// </summary>
+		[Test]
+		public void AToolsFilterList_ReachesTheComposer_ThroughTheView()
+		{
+			ICmPossibility restriction = null;
+			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
+			{
+				restriction = Cache.ServiceLocator.GetInstance<ICmPossibilityFactory>().Create();
+				Cache.LangProject.MorphologicalDataOA.ProdRestrictOA.PossibilitiesOS.Add(restriction);
+				restriction.Name.set_String(Cache.DefaultAnalWs,
+					TsStringUtils.MakeString("restriction", Cache.DefaultAnalWs));
+			});
+			var original = SwapToolConfiguration(null);
+			try
+			{
+				var shipped = ProdRestrictEditParameters();
+				Assert.That(shipped.Attributes["filterPath"], Is.Not.Null,
+					"precondition: the shipped configuration names a filter list");
+
+				var unfiltered = (XmlElement)shipped.Clone();
+				unfiltered.RemoveAttribute("filterPath");
+				SwapToolConfiguration(unfiltered);
+				Assert.That(ComposedFields(restriction), Does.Contain("Status"),
+					"control: without the filter list, the same view composes the Status row");
+
+				SwapToolConfiguration(shipped);
+				Assert.That(ComposedFields(restriction), Does.Not.Contain("Status"),
+					"the view's filter list reached the composer and withheld the row");
+			}
+			finally
+			{
+				SwapToolConfiguration(original);
+				NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
+				{
+					if (restriction != null && restriction.IsValidObject)
+						restriction.Delete();
+				});
+			}
+		}
+
+		private IReadOnlyList<string> ComposedFields(ICmObject obj)
+			=> m_view.ComposeDetail(obj, showHidden: true).Model.Fields.Select(f => f.Field).ToList();
+
+		// The record-edit parameters of the shipped ProdRestrictEdit tool: the node that carries
+		// its filterPath and its layout.
+		private static XmlElement ProdRestrictEditParameters()
+		{
+			var document = new XmlDocument();
+			document.Load(Path.Combine(FwDirectoryFinder.CodeDirectory, "Language Explorer",
+				"Configuration", "Grammar", "Edit", "toolConfiguration.xml"));
+			var node = (XmlElement)document.SelectSingleNode(
+				"//tool[@value='ProdRestrictEdit']//parameters[@filterPath]");
+			Assert.That(node, Is.Not.Null, "precondition: the shipped ProdRestrictEdit parameters");
+			return node;
+		}
+
+		// Installs a tool configuration on the view the way ReadParameters does, layout
+		// included, and clears the memoized filter list. Returns the one it replaced; null
+		// changes nothing.
+		private XmlNode SwapToolConfiguration(XmlNode configuration)
+		{
+			var parameters = typeof(XCoreUserControl).GetField("m_configurationParameters",
+				BindingFlags.Instance | BindingFlags.NonPublic);
+			var layout = typeof(RecordEditView).GetField("m_layoutName",
+				BindingFlags.Instance | BindingFlags.NonPublic);
+			var memo = typeof(RecordEditView).GetField("m_hiddenSliceIds",
+				BindingFlags.Instance | BindingFlags.NonPublic);
+			Assert.That(parameters, Is.Not.Null);
+			Assert.That(layout, Is.Not.Null);
+			Assert.That(memo, Is.Not.Null);
+			var previous = (XmlNode)parameters.GetValue(m_view);
+			if (configuration != null)
+			{
+				parameters.SetValue(m_view, configuration);
+				layout.SetValue(m_view, configuration.Attributes?["layout"]?.Value);
+				memo.SetValue(m_view, null);
+			}
+			return previous;
+		}
+
 		[Test]
 		public void SubentriesCtrlClick_ResolvesTheClickedEntry_AndRunsTheDefaultJumpPath()
 		{

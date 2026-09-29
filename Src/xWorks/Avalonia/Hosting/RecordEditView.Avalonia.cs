@@ -353,6 +353,31 @@ namespace SIL.FieldWorks.XWorks
 		/// lexical entry (first-slice fallback if composition fails), or the resource-backed
 		/// unsupported state otherwise.
 		/// </summary>
+		/// <summary>
+		/// The detail this view composes for <paramref name="obj"/>, under the tool's own
+		/// configuration: its layout, its view overrides and its slice filter list.
+		/// </summary>
+		internal ComposedDetail ComposeDetail(ICmObject obj, bool showHidden)
+		{
+			var lexEntry = obj as ILexEntry;
+			return lexEntry != null
+				? DetailComposer.Compose(lexEntry, Cache, showHidden,
+					overrides: ResolveViewOverride,
+					showAllWritingSystemsFields: m_showAllWsFields,
+					writingSystemFocused: OnDetailWritingSystemFocused,
+					hiddenSliceIds: HiddenSliceIds)
+				// Other roots use the tool's layout (m_layoutName, default "Normal");
+				// a type-selected one, such as RnGenericRec keyed on "Type", resolves
+				// inside Compose.
+				: DetailComposer.Compose(obj, Cache,
+					string.IsNullOrEmpty(m_layoutName) ? "Normal" : m_layoutName, showHidden,
+					overrides: ResolveViewOverride,
+					layoutChoiceField: m_layoutChoiceField,
+					showAllWritingSystemsFields: m_showAllWsFields,
+					writingSystemFocused: OnDetailWritingSystemFocused,
+					hiddenSliceIds: HiddenSliceIds);
+		}
+
 		private void ShowAvaloniaEntry(ICmObject obj)
 		{
 			// Auto-save: a session still open from the previous record/edit settles (commit
@@ -400,22 +425,7 @@ namespace SIL.FieldWorks.XWorks
 			ComposedDetail composed = null;
 			try
 			{
-				composed = lexEntry != null
-					? DetailComposer.Compose(lexEntry, Cache, showHidden,
-						overrides: ResolveViewOverride,
-						showAllWritingSystemsFields: m_showAllWsFields,
-						writingSystemFocused: OnDetailWritingSystemFocused,
-						hiddenSliceIds: HiddenSliceIds)
-					// Non-entry roots compose against the tool's configured layout
-					// (m_layoutName, default "Normal"); a type-selected layout (m_layoutChoiceField, e.g.
-					// Notebook RnGenericRec keyed on "Type") resolves to the right variant inside Compose.
-					: DetailComposer.Compose(obj, Cache,
-						string.IsNullOrEmpty(m_layoutName) ? "Normal" : m_layoutName, showHidden,
-						overrides: ResolveViewOverride,
-						layoutChoiceField: m_layoutChoiceField,
-						showAllWritingSystemsFields: m_showAllWsFields,
-						writingSystemFocused: OnDetailWritingSystemFocused,
-						hiddenSliceIds: HiddenSliceIds);
+				composed = ComposeDetail(obj, showHidden);
 				if (composed != null)
 				{
 					detail = composed.Model;
