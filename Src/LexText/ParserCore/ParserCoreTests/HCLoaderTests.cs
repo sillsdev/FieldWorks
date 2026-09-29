@@ -674,7 +674,8 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			lexSense.MorphoSyntaxAnalysisRA = msa;
 			msa.PartOfSpeechRA = m_verb;
 
-			LoadLanguage();
+			m_loadErrors.Clear();
+			m_lang = HCLoader.Load(Cache, new TestHCLoadErrorLogger(m_loadErrors), out _);
 
 			Assert.That(m_lang.Strata[0].MorphologicalRules.Count, Is.EqualTo(1));
 			var rule = (AffixProcessRule)m_lang.Strata[0].MorphologicalRules[0];
