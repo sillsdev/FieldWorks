@@ -98,11 +98,17 @@ public:
 			else
 				iHigh = iMid - 1;
 		}
-		int ich = max(m_vichBoundary[iLow], ichBase);
+		// Prefix lengths need not grow inside a chunk: a mark that reorders ahead of another can
+		// compose with the base and shorten the form, so the walk keeps the last offset that
+		// fits.
+		int ichFit = max(m_vichBoundary[iLow], ichBase);
 		int ichChunkLim = iLow + 1 < m_vichBoundary.Size() ? m_vichBoundary[iLow + 1] : m_cchText;
-		while (ich < ichChunkLim && NfcLengthOfPrefix(ich + 1) - cchNfcBase <= ichNfc)
-			++ich;
-		*pichOrig = ich;
+		for (int ich = ichFit; ich < ichChunkLim; ++ich)
+		{
+			if (NfcLengthOfPrefix(ich + 1) - cchNfcBase <= ichNfc)
+				ichFit = ich + 1;
+		}
+		*pichOrig = ichFit;
 		return true;
 	}
 

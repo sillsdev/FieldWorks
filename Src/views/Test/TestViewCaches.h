@@ -359,6 +359,7 @@ namespace TestViews
 			VerifyAgainstOracle(L"cafe\u0301 de\u0301ja\u0300 vu no\u0308el", "decomposed latin");
 			VerifyAgainstOracle(L"caf\u00E9 d\u00E9j\u00E0 vu", "precomposed latin");
 			VerifyAgainstOracle(L"a\u0301\u0327b a\u0327\u0301c", "non-canonical mark order");
+			VerifyAgainstOracle(L"\u1e38 L\u0323\u0304 L\u0304\u0323\u0323 x L\u0304\u0323", "marks that reorder and shorten the form");
 			VerifyAgainstOracle(L"\u0301\u0300abc", "marks with no base");
 			VerifyAgainstOracle(L"\u0628\u064E\u0651 \u0644\u0651\u064E", "arabic harakat");
 			VerifyAgainstOracle(L"\u1112\u1161\u11AB \u1100\u1161", "hangul jamo");
