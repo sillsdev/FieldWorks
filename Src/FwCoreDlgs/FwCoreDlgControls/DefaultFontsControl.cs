@@ -250,9 +250,8 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 			bool isGraphiteFont = m_defaultFontFeaturesButton.IsGraphiteFont;
 			m_graphiteGroupBox.Enabled = isGraphiteFont || m_defaultFontFeaturesButton.HasFontFeatures;
 			m_enableGraphiteCheckBox.Enabled = isGraphiteFont;
-			if (!isGraphiteFont)
-				m_ws.IsGraphiteEnabled = false;
-			m_enableGraphiteCheckBox.Checked = m_ws.IsGraphiteEnabled;
+			// Display only; writing the flag here would mark an untouched writing system changed.
+			m_enableGraphiteCheckBox.Checked = isGraphiteFont && m_ws.IsGraphiteEnabled;
 		}
 
 		/// <summary>
