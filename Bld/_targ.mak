@@ -306,3 +306,16 @@ $(INT_DIR)\usepch: $(INT_DIR); if not exist "$@/$(NUL)" $(MD) "$@"
 $(INT_DIR)\autopch: $(INT_DIR); if not exist "$@/$(NUL)" $(MD) "$@"
 
 $(INT_DIR)\nopch: $(INT_DIR); if not exist "$@/$(NUL)" $(MD) "$@"
+
+# Inference rules make an object depend on its source file only. The helper turns the
+# /sourceDependencies sidecars that _rule.mak writes into object-to-header edges, so a
+# header edit rebuilds every object that includes it. This stays last: nmake's default
+# goal is the first target it reads, and the edges must not come before "build".
+!IF "$(INT_DIR)"!=""
+!IF [powershell.exe -NoLogo -NoProfile -NonInteractive -ExecutionPolicy Bypass -File "$(BUILD_ROOT)\Bld\Write-NmakeHeaderDependencies.ps1" -RepositoryRoot "$(BUILD_ROOT)" -IntermediateDirectory "$(INT_DIR)"] != 0
+!ERROR Failed to generate native header dependencies.
+!ENDIF
+!IF EXIST("$(INT_DIR)\header-dependencies.mak")
+!INCLUDE "$(INT_DIR)\header-dependencies.mak"
+!ENDIF
+!ENDIF
