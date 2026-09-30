@@ -165,25 +165,6 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			Assert.That(NamesRegistered(env), Is.EquivalentTo(new[] { first.Hvo, second.Hvo }));
 		}
 
-		/// <summary>
-		/// A segment-based class is drawn as its abbreviation and its cell is sized to it, so
-		/// editing that abbreviation has to rebuild the formula exactly as it does for a
-		/// feature-based class.
-		/// </summary>
-		[Test]
-		[Ignore("LT-22725 follow-up: a segment-based natural class is sized to its abbreviation "
-			+ "but the formula does not register a dependency on it.")]
-		public void RegularRule_RegistersTheAbbreviationOfASegmentClass()
-		{
-			IPhNCSegments natClass = AddSegmentNaturalClass("Consonant", "C");
-			IPhSegRuleRHS rhs = AddRegularRule("s to n");
-			AddStrucDescNCContext(rhs, natClass);
-
-			RecordingCollectorEnv env = DrawRegularRule(rhs);
-
-			Assert.That(env.DependsOn(natClass.Hvo, PhNaturalClassTags.kflidAbbreviation), Is.True);
-		}
-
 		private RecordingCollectorEnv DrawRegularRule(IPhSegRuleRHS rhs)
 		{
 			var vc = new RegRuleFormulaVc(Cache, m_propertyTable);

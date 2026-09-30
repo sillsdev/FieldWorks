@@ -24,6 +24,11 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			Assert.That(RuleFormulaControl.IsFeatureBasedNCNameUserDefined(null), Is.False);
 		}
 
+		/// <summary>
+		/// The check answers whether a class carries a name the user gave it, and an unnamed
+		/// class carries none. Set Phonological Features relies on that answer to keep
+		/// offering feature edits on unnamed classes (LT-22576).
+		/// </summary>
 		[Test]
 		public void ClassWithNoName_IsNotUserDefined()
 		{
@@ -31,7 +36,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 				new FeatVals { { "vd", "+" } });
 
 			Assert.That(RuleFormulaControl.IsFeatureBasedNCNameUserDefined(natClass), Is.False,
-				"an unnamed class reads back as a placeholder rather than as empty text");
+				"an unnamed class carries no name the user gave it");
 		}
 
 		[Test]
@@ -40,7 +45,8 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			IPhNCFeatures natClass = AddFeatureNaturalClass(string.Empty, "Vd",
 				new FeatVals { { "vd", "+" } });
 
-			Assert.That(RuleFormulaControl.IsFeatureBasedNCNameUserDefined(natClass), Is.False);
+			Assert.That(RuleFormulaControl.IsFeatureBasedNCNameUserDefined(natClass), Is.False,
+				"an empty name is not a name the user gave the class");
 		}
 
 		[Test]
