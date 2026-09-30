@@ -16,6 +16,7 @@ Last reviewed:
 
 #include "testViews.h"
 #include "RenderEngineTestBase.h"
+#include "LayoutCache.h"
 
 namespace TestViews
 {
@@ -393,6 +394,94 @@ namespace TestViews
 				defaultLocale.cNonWhitePixels > 0 && serbianLocale.cNonWhitePixels > 0);
 			unitpp::assert_true("Charis SIL Serbian locl feature should change rendered pixels",
 				CountDifferentPixels(defaultLocale, serbianLocale) > 0);
+#endif
+		}
+
+		// Installs a fresh layout-pass cache for the lifetime of the object, restoring the
+		// previous one even when a test assertion throws.
+		class ScopedLayoutPassCache
+		{
+		public:
+			ScopedLayoutPassCache() : m_pPrev(SetCurrentLayoutPassCache(&m_cache)) {}
+			~ScopedLayoutPassCache() { SetCurrentLayoutPassCache(m_pPrev); }
+			LayoutPassCache & Cache() { return m_cache; }
+
+		private:
+			LayoutPassCache m_cache;
+			LayoutPassCache * m_pPrev;
+		};
+
+		// Breaks one text source twice in one layout pass and reports cache hits and misses.
+		// The engine is built here, not via COM, so it sees the cache this module installs.
+		void BreakTwiceInOneLayoutPass(const wchar_t * pszText, int * pcHit, int * pcMiss)
+		{
+			*pcHit = *pcMiss = 0;
+#if defined(WIN32) || defined(_M_X64)
+			HWND hwndDesktop = ::GetDesktopWindow();
+			HDC hdcDesktop = ::GetDC(hwndDesktop);
+			HDC hdc = ::CreateCompatibleDC(hdcDesktop);
+			HBITMAP hbm = ::CreateCompatibleBitmap(hdcDesktop, 100, 100);
+			HGDIOBJ hbmOld = ::SelectObject(hdc, hbm);
+
+			IVwGraphicsWin32Ptr qvg;
+			qvg.CreateInstance(CLSID_VwGraphicsWin32);
+			qvg->Initialize(hdc);
+
+			ILgWritingSystemFactoryPtr qwsf;
+			m_qre->get_WritingSystemFactory(&qwsf);
+			IRenderEnginePtr qre;
+			UniscribeEngine::CreateCom(NULL, IID_IRenderEngine, (void **)&qre);
+			CheckHr(qre->putref_WritingSystemFactory(qwsf));
+			CheckHr(qre->putref_RenderEngineFactory(m_qref));
+			TxtSrc ts(pszText, qwsf);
+			IVwTextSourcePtr qts;
+			ts.QueryInterface(IID_IVwTextSource, (void **)&qts);
+			int cch;
+			CheckHr(qts->get_Length(&cch));
+
+			{
+				ScopedLayoutPassCache scope;
+				for (int ibreak = 0; ibreak < 2; ++ibreak)
+				{
+					ILgSegmentPtr qseg;
+					int dichLimSeg;
+					int dxWidth;
+					LgEndSegmentType est;
+					CheckHr(qre->FindBreakPoint(qvg, qts, NULL, 0, cch, cch, TRUE, TRUE, 4000,
+						klbWordBreak, klbLetterBreak, ktwshAll, FALSE, &qseg, &dichLimSeg,
+						&dxWidth, &est, NULL));
+				}
+				*pcHit = scope.Cache().AnalysisCache().HitCount();
+				*pcMiss = scope.Cache().AnalysisCache().MissCount();
+			}
+
+			qts.Clear();
+			qre.Clear();
+			qvg.Clear();
+			::SelectObject(hdc, hbmOld);
+			::DeleteObject(hbm);
+			::DeleteDC(hdc);
+			::ReleaseDC(hwndDesktop, hdcDesktop);
+#endif
+		}
+
+		void testNfcTextAnalysisIsReusedWithinLayoutPass()
+		{
+#if defined(WIN32) || defined(_M_X64)
+			int cHit, cMiss;
+			BreakTwiceInOneLayoutPass(L"cafe deja vu", &cHit, &cMiss);
+			unitpp::assert_true("text NFC leaves unchanged should be reused on the second break",
+				cHit > 0);
+#endif
+		}
+
+		void testDecomposedTextAnalysisIsReusedWithinLayoutPass()
+		{
+#if defined(WIN32) || defined(_M_X64)
+			int cHit, cMiss;
+			// Decomposed e-acute and a-grave, which NFC composes.
+			BreakTwiceInOneLayoutPass(L"cafe\u0301 de\u0301ja\u0300 vu", &cHit, &cMiss);
+			unitpp::assert_true("text NFC rewrites should be reused on the second break", cHit > 0);
 #endif
 		}
 
