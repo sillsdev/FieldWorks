@@ -127,8 +127,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		}
 
 		/// <summary>
-		/// Adds a metathesis rule. Its structural change indices are left unset, so it holds
-		/// contexts without assigning any of them to a switch or environment cell.
+		/// Adds a metathesis rule with no contexts.
 		/// </summary>
 		protected IPhMetathesisRule AddMetathesisRule(string name)
 		{
@@ -139,14 +138,21 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		}
 
 		/// <summary>
-		/// Adds a natural class simple context to a metathesis rule's structural description,
-		/// assigning the class once the context is owned.
+		/// Adds a natural class simple context to one cell of a metathesis rule the way the
+		/// formula editor does: into the structural description, then into the structural change
+		/// for that cell. The context is appended, so cells must be filled from left to right.
 		/// </summary>
-		protected IPhSimpleContextNC AddStrucDescNCContext(IPhMetathesisRule rule, IPhNaturalClass natClass)
+		/// <param name="rule">The rule to add the context to.</param>
+		/// <param name="cellId">The cell, as a <c>PhMetathesisRuleTags.kidx</c> constant.</param>
+		/// <param name="natClass">The class the context refers to.</param>
+		protected IPhSimpleContextNC AddMetathesisNCContext(IPhMetathesisRule rule, int cellId,
+			IPhNaturalClass natClass)
 		{
 			IPhSimpleContextNC ctxt = Cache.ServiceLocator.GetInstance<IPhSimpleContextNCFactory>().Create();
-			rule.StrucDescOS.Add(ctxt);
+			int index = rule.StrucDescOS.Count;
+			rule.StrucDescOS.Insert(index, ctxt);
 			ctxt.FeatureStructureRA = natClass;
+			rule.UpdateStrucChange(cellId, index, true);
 			return ctxt;
 		}
 

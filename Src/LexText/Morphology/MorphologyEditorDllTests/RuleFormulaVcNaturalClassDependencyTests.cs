@@ -141,10 +141,11 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			IPhNCFeatures natClass = AddFeatureNaturalClass("Voiced", "Vd",
 				new FeatVals { { "vd", "+" } });
 			IPhMetathesisRule rule = AddMetathesisRule("t s to s t");
-			AddStrucDescNCContext(rule, natClass);
+			AddMetathesisNCContext(rule, PhMetathesisRuleTags.kidxLeftSwitch, natClass);
 
 			RecordingCollectorEnv env = DrawMetathesisRule(rule);
 
+			Assert.That(env.Text, Does.Contain("[Vd]"), "the class is drawn in its switch cell");
 			Assert.That(env.DependsOn(natClass.Hvo, PhNaturalClassTags.kflidName), Is.True);
 			Assert.That(env.DependsOn(natClass.Hvo, PhNaturalClassTags.kflidAbbreviation), Is.True);
 		}
@@ -157,11 +158,13 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			IPhNCFeatures second = AddFeatureNaturalClass("Nasal", "N",
 				new FeatVals { { "nasal", "+" } });
 			IPhMetathesisRule rule = AddMetathesisRule("t s to s t");
-			AddStrucDescNCContext(rule, first);
-			AddStrucDescNCContext(rule, second);
+			AddMetathesisNCContext(rule, PhMetathesisRuleTags.kidxLeftSwitch, first);
+			AddMetathesisNCContext(rule, PhMetathesisRuleTags.kidxRightSwitch, second);
 
 			RecordingCollectorEnv env = DrawMetathesisRule(rule);
 
+			Assert.That(env.Text, Does.Contain("[Vd]"), "the left switch is drawn");
+			Assert.That(env.Text, Does.Contain("[N]"), "the right switch is drawn");
 			Assert.That(NamesRegistered(env), Is.EquivalentTo(new[] { first.Hvo, second.Hvo }));
 		}
 
