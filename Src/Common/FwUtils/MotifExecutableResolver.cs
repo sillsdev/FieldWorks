@@ -13,29 +13,29 @@ namespace SIL.FieldWorks.Common.FwUtils
 	public sealed class MotifExecutableResolver
 	{
 		private const string MotifDirectoryVariable = "MOTIF_DIR";
-		private const string MotifRegistryPath = @"SOFTWARE\SIL\Motif";
+		private const string MotifRegistryPath = @"Software\SIL\Motif";
 		private const string MotifExecutableName = "motif.exe";
 		private readonly Func<string> _getEnvironmentDirectory;
-		private readonly Func<RegistryView, string> _getRegisteredDirectory;
+		private readonly Func<string> _getRegisteredExecutable;
 		private readonly Func<string, bool> _fileExists;
 
 		/// <summary>Creates a resolver for the current machine.</summary>
 		public MotifExecutableResolver()
 			: this(() => Environment.GetEnvironmentVariable(MotifDirectoryVariable),
-				ReadRegisteredDirectory, File.Exists)
+				ReadRegisteredExecutable, File.Exists)
 		{
 		}
 
 		/// <summary>Creates a resolver with injectable machine discovery.</summary>
 		/// <param name="getEnvironmentDirectory">Returns the configured Motif directory.</param>
-		/// <param name="getRegisteredDirectory">Returns an install directory for a registry
-		/// view.</param>
+		/// <param name="getRegisteredExecutable">Returns the executable path in Motif's per-user
+		/// install record.</param>
 		/// <param name="fileExists">Checks whether a candidate executable exists.</param>
 		public MotifExecutableResolver(Func<string> getEnvironmentDirectory,
-			Func<RegistryView, string> getRegisteredDirectory, Func<string, bool> fileExists)
+			Func<string> getRegisteredExecutable, Func<string, bool> fileExists)
 		{
 			_getEnvironmentDirectory = getEnvironmentDirectory ?? throw new ArgumentNullException(nameof(getEnvironmentDirectory));
-			_getRegisteredDirectory = getRegisteredDirectory ?? throw new ArgumentNullException(nameof(getRegisteredDirectory));
+			_getRegisteredExecutable = getRegisteredExecutable ?? throw new ArgumentNullException(nameof(getRegisteredExecutable));
 			_fileExists = fileExists ?? throw new ArgumentNullException(nameof(fileExists));
 		}
 
@@ -47,14 +47,10 @@ namespace SIL.FieldWorks.Common.FwUtils
 			if (executable != null)
 				return executable;
 
-			foreach (var view in new[] { RegistryView.Registry64, RegistryView.Registry32 })
-			{
-				executable = FindInDirectory(_getRegisteredDirectory(view));
-				if (executable != null)
-					return executable;
-			}
-
-			return null;
+			var registered = _getRegisteredExecutable();
+			if (string.IsNullOrWhiteSpace(registered) || !_fileExists(registered))
+				return null;
+			return Path.GetFullPath(registered);
 		}
 
 		private string FindInDirectory(string directory)
@@ -66,17 +62,17 @@ namespace SIL.FieldWorks.Common.FwUtils
 			return _fileExists(candidate) ? Path.GetFullPath(candidate) : null;
 		}
 
-		private static string ReadRegisteredDirectory(RegistryView view)
+		// Motif installs per user, so its install hook writes this record under HKCU, never HKLM.
+		private static string ReadRegisteredExecutable()
 		{
 			if (!Platform.IsWindows)
 				return null;
 
 			try
 			{
-				using (var localMachine = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, view))
-				using (var motifKey = localMachine.OpenSubKey(MotifRegistryPath))
+				using (var motifKey = Registry.CurrentUser.OpenSubKey(MotifRegistryPath))
 				{
-					return motifKey?.GetValue("InstallationDir") as string;
+					return motifKey?.GetValue("CliPath") as string;
 				}
 			}
 			catch (Exception error) when (error is IOException ||

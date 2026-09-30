@@ -133,7 +133,7 @@ namespace LexEdDllTests
 		{
 			var resolver = new MotifExecutableResolver(
 				() => executableAvailable ? @"C:\Motif" : null,
-				view => null,
+				() => null,
 				path => executableAvailable && path == @"C:\Motif\motif.exe");
 			var runner = new MotifApplyRunner(resolver,
 				info => new MotifProcessOutput(started, exitCode, json, ""));
