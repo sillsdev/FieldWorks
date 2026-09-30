@@ -2,14 +2,7 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Xml;
-using System.Xml.Linq;
+using SIL.Data;
 using SIL.LCModel;
 using SIL.LCModel.Infrastructure;
 using SIL.Machine.Annotations;
@@ -17,6 +10,15 @@ using SIL.Machine.Morphology.HermitCrab;
 using SIL.Machine.Morphology.HermitCrab.MorphologicalRules;
 using SIL.Machine.Rules;
 using SIL.ObjectModel;
+using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
+using System.Linq;
+using System.Text;
+using System.Web.Caching;
+using System.Xml;
+using System.Xml.Linq;
 
 namespace SIL.FieldWorks.WordWorks.Parser
 {
@@ -185,6 +187,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				else
 				{
 					m_language = HCLoader.Load(m_cache, new XmlHCLoadErrorLogger(writer));
+					m_representativeMSAs = null;
 				}
 				writer.WriteEndElement();
 			}
@@ -204,7 +207,27 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			{
 				if (selectTraceMorphs != null)
 				{
-					var selectTraceMorphsSet = new HashSet<int>(selectTraceMorphs);
+					HashSet<int> selectTraceMorphsSet;
+					if (m_representativeMSAs == null)
+					{
+						selectTraceMorphsSet = new HashSet<int>(selectTraceMorphs);
+					}
+					else
+					{
+						selectTraceMorphsSet = new HashSet<int>();
+						IMoMorphSynAnalysisRepository repository = m_cache.LangProject.Services.GetInstance<IMoMorphSynAnalysisRepository>();
+						foreach (int selectTraceMorph in selectTraceMorphs)
+						{
+							if (repository.TryGetObject(selectTraceMorph, out IMoMorphSynAnalysis msa) && m_representativeMSAs.ContainsKey(msa))
+							{
+								selectTraceMorphsSet.Add(m_representativeMSAs[msa].Hvo);
+							}
+							else
+							{
+								selectTraceMorphsSet.Add(selectTraceMorph);
+							}
+						}
+					}
 					m_morpher.LexEntrySelector = entry => selectTraceMorphsSet.Contains((int) entry.Properties[MsaID]);
 					m_morpher.RuleSelector = rule =>
 					{

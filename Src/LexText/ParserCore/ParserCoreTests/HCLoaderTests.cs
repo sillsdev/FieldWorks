@@ -683,6 +683,10 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			Assert.That(rule.RequiredSyntacticFeatureStruct.ToString(), Is.EqualTo("[POS:V]"));
 			Assert.That(rule.Gloss, Is.EqualTo("gloss"));
 			Assert.That(rule.IsPartial, Is.True);
+
+			m_loadErrors.Clear();
+			m_lang = HCLoader.Load(Cache, new TestHCLoadErrorLogger(m_loadErrors));
+			Assert.That(m_lang.Strata[0].MorphologicalRules.Count, Is.EqualTo(2));
 		}
 
 		[Test]

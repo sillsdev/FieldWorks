@@ -649,7 +649,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 							var mainEntry = component as ILexEntry;
 							if (mainEntry != null)
 							{
-								foreach (IMoStemMsa msa in UniqueStemMSAs(mainEntry.MorphoSyntaxAnalysesOC.OfType<IMoStemMsa>()))
+								foreach (IMoStemMsa msa in UniqueMSAs(mainEntry.MorphoSyntaxAnalysesOC.OfType<IMoStemMsa>()))
 									LoadLexEntryOfVariant(stratum, inflType, msa, allos, entry.ShortName);
 							}
 							else
@@ -668,7 +668,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				}
 			}
 
-			foreach (IMoStemMsa msa in UniqueStemMSAs(entry.MorphoSyntaxAnalysesOC.OfType<IMoStemMsa>()))
+			foreach (IMoStemMsa msa in UniqueMSAs(entry.MorphoSyntaxAnalysesOC.OfType<IMoStemMsa>()))
 				LoadLexEntry(stratum, msa, allos, entry.ShortName);
 		}
 
@@ -694,24 +694,9 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			return msa;
 		}
 
-		IEnumerable<IMoStemMsa> UniqueStemMSAs(IEnumerable<IMoStemMsa> msas)
+		private IEnumerable<T> UniqueMSAs<T>(IEnumerable<T> msas) where T : class, IMoMorphSynAnalysis
 		{
-			HashSet<IMoStemMsa> newMsas = new HashSet<IMoStemMsa>();
-			foreach (var msa in msas)
-			{
-				newMsas.Add((IMoStemMsa)RepresentativeMSA(msa));
-			}
-			return newMsas;
-		}
-
-		IEnumerable<IMoMorphSynAnalysis> UniqueMSAs(IEnumerable<IMoMorphSynAnalysis> msas)
-		{
-			HashSet<IMoMorphSynAnalysis> newMsas = new HashSet<IMoMorphSynAnalysis>();
-			foreach (var msa in msas)
-			{
-				newMsas.Add(RepresentativeMSA(msa));
-			}
-			return newMsas;
+			return msas.Select(msa => (T)RepresentativeMSA(msa)).Distinct();
 		}
 
 		protected IEnumerable<ILexEntryInflType> GetInflTypes(ILexEntryRef lexEntryRef)
@@ -2273,7 +2258,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		private void LoadMorphemeCoOccurrenceRules(IMoMorphAdhocProhib morphAdhocProhib)
 		{
 			List<Morpheme> firstMorphemes;
-			if (m_morphemes.TryGetValue(morphAdhocProhib.FirstMorphemeRA, out firstMorphemes))
+			if (m_morphemes.TryGetValue(RepresentativeMSA(morphAdhocProhib.FirstMorphemeRA), out firstMorphemes))
 			{
 				var allOthers = new List<List<Morpheme>>();
 				foreach (IMoMorphSynAnalysis msa in UniqueMSAs(morphAdhocProhib.RestOfMorphsRS))
