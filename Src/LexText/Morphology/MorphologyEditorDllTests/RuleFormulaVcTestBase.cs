@@ -76,8 +76,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		/// <summary>
 		/// Adds a feature-based natural class carrying the given feature values. The name and
 		/// abbreviation are set in the default analysis writing system, which is where the
-		/// natural
-		/// class editor puts them; either may be null to leave it unset.
+		/// natural class editor puts them; either may be null to leave it unset.
 		/// </summary>
 		protected IPhNCFeatures AddFeatureNaturalClass(string name, string abbreviation, FeatVals featVals)
 		{

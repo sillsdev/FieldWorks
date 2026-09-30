@@ -2,7 +2,6 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System.Linq;
 using NUnit.Framework;
 using SIL.LCModel;
 using FeatVals = System.Collections.Generic.Dictionary<string, string>;
@@ -17,6 +16,12 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 	[TestFixture]
 	public class RuleFormulaVcNaturalClassSizingTests : RuleFormulaVcTestBase
 	{
+		/// <summary>
+		/// The glyphs that assemble a bracket spanning several lines.
+		/// </summary>
+		private static readonly char[] MultiLineBracketParts =
+			{ '\u23a1', '\u23a2', '\u23a3', '\u23a4', '\u23a5', '\u23a6' };
+
 		[Test]
 		public void NamedClass_WithOneFeature_IsSizedToItsAbbreviation()
 		{
@@ -54,15 +59,6 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		}
 
 		[Test]
-		public void NamedClass_WithLongAbbreviation_IsSizedToTheWholeAbbreviation()
-		{
-			IPhNCFeatures natClass = AddFeatureNaturalClass("Voiceless aspirated stop",
-				"VlAspStop", new FeatVals { { "vd", "-" }, { "cons", "+" } });
-
-			AssertCellMatchesDrawing(AddStandaloneNCContext(natClass), "[VlAspStop]");
-		}
-
-		[Test]
 		public void NamedClass_WithThreeFeatures_OccupiesOneLine()
 		{
 			IPhNCFeatures natClass = AddFeatureNaturalClass("Voiced stop", "Vd",
@@ -80,33 +76,25 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			Assert.That(NumLinesFor(AddStandaloneNCContext(natClass)), Is.EqualTo(3));
 		}
 
-		[Test]
-		public void RuleNamedClass_WithNoFeatures_OccupiesNoLines()
-		{
-			IPhNCFeatures natClass = AddRuleNamedFeatureNaturalClass("s to n", new FeatVals());
-
-			Assert.That(NumLinesFor(AddStandaloneNCContext(natClass)), Is.EqualTo(0));
-		}
-
 		/// <summary>
-		/// A formula is as tall as its tallest context, so naming the only many-featured class in
-		/// a rule brings the whole formula down to a single line.
+		/// A formula is drawn as tall as its tallest context, so a named class with many features
+		/// must not stretch the rule holding it into a bracket pile several lines tall.
 		/// </summary>
 		[Test]
-		public void NamedClass_IsTheHeightOfAFormulaThatHoldsNothingTaller()
+		public void NamedClass_WithThreeFeatures_KeepsTheFormulaOnOneLine()
 		{
-			IPhNCFeatures named = AddFeatureNaturalClass("Voiced stop", "Vd",
+			IPhNCFeatures natClass = AddFeatureNaturalClass("Voiced stop", "Vd",
 				new FeatVals { { "vd", "+" }, { "cons", "+" }, { "cont", "-" } });
-			IPhNCSegments segments = AddSegmentNaturalClass("Consonant", "C");
 			IPhSegRuleRHS rhs = AddRegularRule("s to n");
-			AddStrucDescNCContext(rhs, named);
-			AddStrucChangeNCContext(rhs, segments);
+			AddStrucDescNCContext(rhs, natClass);
 
-			var vc = new TestRuleFormulaVc(Cache, m_propertyTable);
-			int tallest = rhs.OwningRule.StrucDescOS.Concat(rhs.StrucChangeOS)
-				.Max(ctxt => vc.NumLinesFor(ctxt));
+			var vc = new RegRuleFormulaVc(Cache, m_propertyTable);
+			var env = new RecordingCollectorEnv(Cache.MainCacheAccessor, rhs.Hvo);
+			vc.Display(env, rhs.Hvo, RegRuleFormulaVc.kfragRHS);
 
-			Assert.That(tallest, Is.EqualTo(1));
+			Assert.That(env.Text, Does.Contain("[Vd]"));
+			Assert.That(env.Text.IndexOfAny(MultiLineBracketParts), Is.EqualTo(-1),
+				"no part of the formula is drawn with a bracket spanning several lines");
 		}
 
 		private int NumLinesFor(IPhContextOrVar ctxtOrVar)

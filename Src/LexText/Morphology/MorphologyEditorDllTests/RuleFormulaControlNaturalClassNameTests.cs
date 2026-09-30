@@ -4,6 +4,8 @@
 
 using NUnit.Framework;
 using SIL.LCModel;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
 using FeatVals = System.Collections.Generic.Dictionary<string, string>;
 
 namespace SIL.FieldWorks.XWorks.MorphologyEditor
@@ -76,15 +78,22 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 		/// <summary>
 		/// The natural class editor writes a name into the analysis writing systems while the
-		/// check reads the user writing system, so the name has to be found across writing
-		/// systems for a named class to qualify.
+		/// check reads the user writing system. A project whose analysis language differs from
+		/// its interface language must still have its named classes qualify.
 		/// </summary>
 		[Test]
-		public void ClassNamedInTheVernacularWritingSystemOnly_IsUserDefined()
+		public void ClassNamedInAnAnalysisWritingSystemOtherThanTheUserOne_IsUserDefined()
 		{
+			Cache.ServiceLocator.WritingSystemManager.GetOrSet("de",
+				out CoreWritingSystemDefinition german);
+			Cache.LanguageProject.AddToCurrentAnalysisWritingSystems(german);
 			IPhNCFeatures natClass = AddFeatureNaturalClass(null, "Vd",
 				new FeatVals { { "vd", "+" } });
-			natClass.Name.SetVernacularDefaultWritingSystem("Voiced");
+			natClass.Name.set_String(german.Handle,
+				TsStringUtils.MakeString("Stimmhaft", german.Handle));
+			Assert.That(natClass.Name.UserDefaultWritingSystem.Text, Is.EqualTo("Stimmhaft"),
+				"the name must reach the check through the analysis writing system, "
+				+ "not through a placeholder");
 
 			Assert.That(RuleFormulaControl.IsFeatureBasedNCNameUserDefined(natClass), Is.True);
 		}

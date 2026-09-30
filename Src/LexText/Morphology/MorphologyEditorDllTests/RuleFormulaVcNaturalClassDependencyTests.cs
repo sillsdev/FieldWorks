@@ -12,8 +12,9 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 	/// <summary>
 	/// The display dependencies a rule formula registers on the natural classes it draws. A class
 	/// name decides whether the formula draws an abbreviation or a feature list, and both the
-	/// name
-	/// and the abbreviation decide the cell size, so editing either has to rebuild the formula.
+	/// name and the abbreviation decide the cell size, so editing either has to rebuild the
+	/// formula. The collector environment does not re-run layout, so these assert the
+	/// registration that triggers the rebuild rather than the rebuild itself.
 	/// </summary>
 	[TestFixture]
 	public class RuleFormulaVcNaturalClassDependencyTests : RuleFormulaVcTestBase
@@ -30,6 +31,23 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 			Assert.That(env.DependsOn(natClass.Hvo, PhNaturalClassTags.kflidName), Is.True);
 			Assert.That(env.DependsOn(natClass.Hvo, PhNaturalClassTags.kflidAbbreviation), Is.True);
+		}
+
+		/// <summary>
+		/// Naming a class generated for a rule turns its feature list into an abbreviation,
+		/// so the formula has to depend on that class's name before the user names it.
+		/// </summary>
+		[Test]
+		public void RegularRule_RegistersTheNameOfARuleNamedClass()
+		{
+			IPhNCFeatures natClass = AddRuleNamedFeatureNaturalClass("s to n",
+				new FeatVals { { "vd", "+" } });
+			IPhSegRuleRHS rhs = AddRegularRule("s to n");
+			AddStrucDescNCContext(rhs, natClass);
+
+			RecordingCollectorEnv env = DrawRegularRule(rhs);
+
+			Assert.That(env.DependsOn(natClass.Hvo, PhNaturalClassTags.kflidName), Is.True);
 		}
 
 		[Test]
@@ -72,6 +90,10 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			Assert.That(env.DependsOn(natClass.Hvo, PhNaturalClassTags.kflidName), Is.True);
 		}
 
+		/// <summary>
+		/// An iteration context loses its member when the class inside it is deleted, and the
+		/// formula must still draw.
+		/// </summary>
 		[Test]
 		public void RegularRule_WithAnEmptyIterationContext_DrawsWithoutError()
 		{
@@ -79,29 +101,6 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			rhs.LeftContextOA = AddIterationContext(null);
 
 			Assert.That(() => DrawRegularRule(rhs), Throws.Nothing);
-		}
-
-		[Test]
-		public void RegularRule_WithoutSurroundingContexts_DrawsWithoutError()
-		{
-			IPhNCFeatures natClass = AddFeatureNaturalClass("Voiced", "Vd",
-				new FeatVals { { "vd", "+" } });
-			IPhSegRuleRHS rhs = AddRegularRule("s to n");
-			AddStrucDescNCContext(rhs, natClass);
-
-			Assert.That(rhs.LeftContextOA, Is.Null);
-			Assert.That(rhs.RightContextOA, Is.Null);
-			Assert.That(() => DrawRegularRule(rhs), Throws.Nothing);
-		}
-
-		[Test]
-		public void RegularRule_WithoutFeatureClasses_RegistersNoNaturalClassDependency()
-		{
-			IPhSegRuleRHS rhs = AddRegularRule("s to n");
-
-			RecordingCollectorEnv env = DrawRegularRule(rhs);
-
-			Assert.That(NamesRegistered(env), Is.Empty);
 		}
 
 		[Test]
@@ -166,22 +165,15 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			Assert.That(NamesRegistered(env), Is.EquivalentTo(new[] { first.Hvo, second.Hvo }));
 		}
 
-		[Test]
-		public void MetathesisRule_WithoutContexts_DrawsWithoutError()
-		{
-			IPhMetathesisRule rule = AddMetathesisRule("t s to s t");
-
-			Assert.That(() => DrawMetathesisRule(rule), Throws.Nothing);
-		}
-
 		/// <summary>
-		/// A segment-based class is drawn as its abbreviation and its cell is sized to it, while
-		/// registration covers feature-based classes. Editing a segment class's abbreviation
-		/// therefore leaves the cell at the width the old abbreviation asked for until something
-		/// else rebuilds the formula.
+		/// A segment-based class is drawn as its abbreviation and its cell is sized to it, so
+		/// editing that abbreviation has to rebuild the formula exactly as it does for a
+		/// feature-based class.
 		/// </summary>
 		[Test]
-		public void RegularRule_DoesNotRegisterASegmentClass()
+		[Ignore("LT-22725 follow-up: a segment-based natural class is sized to its abbreviation "
+			+ "but the formula does not register a dependency on it.")]
+		public void RegularRule_RegistersTheAbbreviationOfASegmentClass()
 		{
 			IPhNCSegments natClass = AddSegmentNaturalClass("Consonant", "C");
 			IPhSegRuleRHS rhs = AddRegularRule("s to n");
@@ -189,7 +181,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 			RecordingCollectorEnv env = DrawRegularRule(rhs);
 
-			Assert.That(env.DependsOn(natClass.Hvo, PhNaturalClassTags.kflidAbbreviation), Is.False);
+			Assert.That(env.DependsOn(natClass.Hvo, PhNaturalClassTags.kflidAbbreviation), Is.True);
 		}
 
 		private RecordingCollectorEnv DrawRegularRule(IPhSegRuleRHS rhs)

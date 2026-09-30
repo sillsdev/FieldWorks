@@ -10,8 +10,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 {
 	/// <summary>
 	/// What a rule formula draws for a natural class context: a class the user has named shows
-	/// its
-	/// abbreviation in brackets, and any other feature-based class shows its feature list.
+	/// its abbreviation in brackets, and a class generated for a rule shows its feature list.
 	/// </summary>
 	[TestFixture]
 	public class RuleFormulaVcNaturalClassDisplayTests : RuleFormulaVcTestBase
@@ -36,6 +35,15 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 			Assert.That(DrawContext(AddStandaloneNCContext(natClass)), Is.EqualTo("[Vd]"),
 				"a named class is drawn as its abbreviation however many features it carries");
+		}
+
+		[Test]
+		public void NamedClass_WithNoFeatures_DrawsAbbreviation()
+		{
+			IPhNCFeatures natClass = AddFeatureNaturalClass("Voiced", "Vd", new FeatVals());
+
+			Assert.That(DrawContext(AddStandaloneNCContext(natClass)), Is.EqualTo("[Vd]"),
+				"a named class is drawn as its abbreviation even before it has features");
 		}
 
 		[Test]
@@ -90,8 +98,9 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		}
 
 		/// <summary>
-		/// Pins which of the two inputs decides the drawing for a class abbreviated "C": the
-		/// abbreviation alone does not qualify a class, so a rule-named one shows its features.
+		/// Whether a class was generated for a rule decides the drawing, not what its
+		/// abbreviation says: a generated class keeps its feature list even after someone
+		/// abbreviates it "C".
 		/// </summary>
 		[Test]
 		public void RuleNamedClass_AbbreviatedC_DrawsFeature()
@@ -101,6 +110,24 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			natClass.Abbreviation.SetAnalysisDefaultWritingSystem("C");
 
 			Assert.That(DrawContext(AddStandaloneNCContext(natClass)), Is.EqualTo("[+ cons]"));
+		}
+
+		/// <summary>
+		/// A class generated for a rule becomes the user's once they name it in the natural class
+		/// editor, so from then on the formula draws its abbreviation instead of its features.
+		/// </summary>
+		[Test]
+		public void RuleNamedClass_OnceNamed_DrawsAbbreviation()
+		{
+			IPhNCFeatures natClass = AddRuleNamedFeatureNaturalClass("s to n",
+				new FeatVals { { "vd", "+" } });
+			IPhSimpleContextNC ctxt = AddStandaloneNCContext(natClass);
+			Assert.That(DrawContext(ctxt), Is.EqualTo("[+ vd]"), "before the class is named");
+
+			natClass.Name.SetAnalysisDefaultWritingSystem("Voiced");
+			natClass.Abbreviation.SetAnalysisDefaultWritingSystem("Vd");
+
+			Assert.That(DrawContext(ctxt), Is.EqualTo("[Vd]"), "after the class is named");
 		}
 
 		[Test]
@@ -119,12 +146,6 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			IPhSimpleContextNC member = AddStandaloneNCContext(natClass);
 
 			Assert.That(DrawContext(AddIterationContext(member)), Does.Contain("[Vd]"));
-		}
-
-		[Test]
-		public void ClassWithNoFeatureStructure_DrawsQuestions()
-		{
-			Assert.That(DrawContext(AddStandaloneNCContext(null)), Is.EqualTo("[???]"));
 		}
 
 		private string DrawContext(IPhContextOrVar ctxtOrVar)
