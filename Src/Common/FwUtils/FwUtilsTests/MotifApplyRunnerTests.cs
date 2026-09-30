@@ -4,7 +4,6 @@
 
 using System.Diagnostics;
 using System.IO;
-using Microsoft.Win32;
 using NUnit.Framework;
 
 namespace SIL.FieldWorks.Common.FwUtils
@@ -17,22 +16,22 @@ namespace SIL.FieldWorks.Common.FwUtils
 		{
 			var resolver = new MotifExecutableResolver(
 				() => @"C:\Motif Dev",
-				view => @"C:\Motif Registered",
+				() => @"C:\Motif Registered\motif.exe",
 				path => path == @"C:\Motif Dev\motif.exe" || path == @"C:\Motif Registered\motif.exe");
 
 			Assert.That(resolver.FindExecutable(), Is.EqualTo(@"C:\Motif Dev\motif.exe"));
 		}
 
-		[TestCase(RegistryView.Registry64)]
-		[TestCase(RegistryView.Registry32)]
-		public void ResolverChecksBothRegistryViewsWhenEnvironmentIsMissing(RegistryView installedView)
+		[Test]
+		public void ResolverUsesRegisteredCliPathWhenEnvironmentIsMissing()
 		{
+			const string registered = @"C:\Users\linguist\AppData\Local\SIL.Motif\current\motif.exe";
 			var resolver = new MotifExecutableResolver(
 				() => null,
-				view => view == installedView ? @"C:\Motif Registered" : null,
-				path => path == @"C:\Motif Registered\motif.exe");
+				() => registered,
+				path => path == registered);
 
-			Assert.That(resolver.FindExecutable(), Is.EqualTo(@"C:\Motif Registered\motif.exe"));
+			Assert.That(resolver.FindExecutable(), Is.EqualTo(registered));
 		}
 
 		[Test]
@@ -40,16 +39,25 @@ namespace SIL.FieldWorks.Common.FwUtils
 		{
 			var resolver = new MotifExecutableResolver(
 				() => @"C:\Motif Dev",
-				view => @"C:\Motif Registered",
+				() => @"C:\Motif Registered\motif.exe",
 				path => path == @"C:\Motif Registered\motif.exe");
 
 			Assert.That(resolver.FindExecutable(), Is.EqualTo(@"C:\Motif Registered\motif.exe"));
 		}
 
 		[Test]
+		public void ResolverIgnoresRegisteredCliPathThatNoLongerExists()
+		{
+			var resolver = new MotifExecutableResolver(
+				() => null, () => @"C:\Motif Removed\motif.exe", path => false);
+
+			Assert.That(resolver.FindExecutable(), Is.Null);
+		}
+
+		[Test]
 		public void ResolverReturnsNullWhenMotifIsNotInstalled()
 		{
-			var resolver = new MotifExecutableResolver(() => null, view => null, path => false);
+			var resolver = new MotifExecutableResolver(() => null, () => null, path => false);
 
 			Assert.That(resolver.FindExecutable(), Is.Null);
 		}
@@ -157,7 +165,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public void ProcessRunnerExceptionIsAmbiguous()
 		{
 			var resolver = new MotifExecutableResolver(
-				() => @"C:\Motif", view => null, path => path == @"C:\Motif\motif.exe");
+				() => @"C:\Motif", () => null, path => path == @"C:\Motif\motif.exe");
 			var runner = new MotifApplyRunner(resolver,
 				_ => throw new System.InvalidOperationException("process failed"));
 
@@ -243,7 +251,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public void MissingExecutableDoesNotCreateProcess()
 		{
 			var processCalled = false;
-			var resolver = new MotifExecutableResolver(() => null, view => null, path => false);
+			var resolver = new MotifExecutableResolver(() => null, () => null, path => false);
 			var runner = new MotifApplyRunner(resolver, info =>
 			{
 				processCalled = true;
@@ -260,7 +268,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		{
 			var resolver = new MotifExecutableResolver(
 				() => @"C:\Motif",
-				view => null,
+				() => null,
 				path => path == @"C:\Motif\motif.exe");
 			return new MotifApplyRunner(resolver, info =>
 			{
