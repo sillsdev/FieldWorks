@@ -7,8 +7,8 @@ using NUnit.Framework;
 namespace SIL.FieldWorks.Common.FwUtils
 {
 	/// <summary>
-	/// Covers which FW_AVALONIA values count as opting in to the New UI. The rule is a pure function,
-	/// so nothing here reads or writes the process environment.
+	/// Covers which FW_AVALONIA values count as opting in to the New UI. The rule is a pure
+	/// function, so nothing here reads or writes the process environment.
 	/// </summary>
 	[TestFixture]
 	public class UIModeGatesTests
