@@ -729,6 +729,137 @@ namespace FwAvaloniaTests.Detail
 			Assert.That(middle.IsFocused, Is.True);
 		}
 
+		// Every slot of the field, in build order; a row's read-only suffix is a TextBlock, so
+		// the text boxes are exactly the slots.
+		private static List<TextBox> Slots(Control field)
+			=> field.GetVisualDescendants().OfType<TextBox>().ToList();
+
+		private static TextBox FocusedSlot(Window window)
+			=> window.FocusManager?.GetFocusedElement() as TextBox;
+
+		private static void Click(Window window, Control control)
+		{
+			var point = control.TranslatePoint(new Point(2, 2), window);
+			Assert.That(point, Is.Not.Null, "the click target must be attached and laid out");
+			window.MouseDown(point.Value, MouseButton.Left);
+			window.MouseUp(point.Value, MouseButton.Left);
+			Dispatcher.UIThread.RunJobs();
+		}
+
+		// A group wide enough to wrap, so the field has more than one visual line.
+		private static (FwReversalEntriesField Field, Window Window, List<TextBox> FirstLine,
+			List<TextBox> SecondLine) ShowWrappingGroup()
+		{
+			var forms = Enumerable.Range(0, 12).Select(i => "dwellingplace" + i).ToArray();
+			var (field, _, window) = Show(new RecordingReversalContext(), null, English(forms));
+			var group = Find<Panel>(field, "Reversal.en");
+			var slots = Slots(field);
+			double Top(TextBox box) => box.TranslatePoint(new Point(0, 0), group).Value.Y;
+			var firstTop = Top(slots[0]);
+			var below = slots.Where(box => Top(box) > firstTop).ToList();
+			Assert.That(below, Is.Not.Empty, "precondition: the group wraps");
+			var secondTop = Top(below[0]);
+			return (field, window,
+				slots.Where(box => Top(box).Equals(firstTop)).ToList(),
+				slots.Where(box => Top(box).Equals(secondTop)).ToList());
+		}
+
+		[AvaloniaTest]
+		public void UpAndDown_MoveBetweenTheLinesOfAWrappingGroup()
+		{
+			var (_, window, firstLine, secondLine) = ShowWrappingGroup();
+			var start = secondLine[0];
+
+			PlaceCaret(start, 1);
+			Press(start, Key.Up);
+			Assert.That(firstLine, Does.Contain(FocusedSlot(window)), "Up moves to the line above");
+
+			Press(FocusedSlot(window), Key.Down);
+			Assert.That(secondLine, Does.Contain(FocusedSlot(window)), "Down moves back down");
+		}
+
+		[AvaloniaTest]
+		public void Down_MovesIntoTheNextGroup_AndUpComesBack()
+		{
+			var (field, _, window) = Show(new RecordingReversalContext(), null,
+				English("dwelling"), French("maison"));
+			var start = Find<TextBox>(field, "Reversal.en.0");
+
+			PlaceCaret(start, 2);
+			Press(start, Key.Down);
+			Assert.That(FocusedId(window), Does.StartWith("Reversal.fr."),
+				"the next line is the next group's");
+
+			Press(FocusedSlot(window), Key.Up);
+			Assert.That(FocusedId(window), Does.StartWith("Reversal.en."));
+		}
+
+		[AvaloniaTest]
+		public void ARunOfUpAndDown_KeepsTheHorizontalPositionItStartedFrom()
+		{
+			var (_, window, firstLine, _) = ShowWrappingGroup();
+			var start = firstLine.Last();
+			PlaceCaret(start, start.Text.Length);
+
+			Press(start, Key.Down);
+			Press(FocusedSlot(window), Key.Up);
+
+			Assert.That(FocusedSlot(window), Is.SameAs(start),
+				"the caret returns to where the run started, not to the slot under the line below");
+			Assert.That(start.CaretIndex, Is.EqualTo(start.Text.Length));
+		}
+
+		[AvaloniaTest]
+		public void AClick_RestartsThePositionUpAndDownNavigateBy()
+		{
+			var (_, window, firstLine, secondLine) = ShowWrappingGroup();
+			var start = firstLine.Last();
+			PlaceCaret(start, start.Text.Length);
+			Press(start, Key.Down);
+
+			Click(window, secondLine[0]);
+			Press(secondLine[0], Key.Up);
+
+			Assert.That(FocusedSlot(window), Is.SameAs(firstLine[0]),
+				"Up follows the click's own position, not the run it interrupted");
+		}
+
+		[AvaloniaTest]
+		public void UpAtTheTopLine_AndDownAtTheBottom_StayPut()
+		{
+			var (field, _, _) = Show(new RecordingReversalContext(), null, English("dwelling"));
+			var first = Find<TextBox>(field, "Reversal.en.0");
+			var add = Find<TextBox>(field, "Reversal.en.Add");
+
+			PlaceCaret(first, 2);
+			Press(first, Key.Up);
+			Assert.That(first.IsFocused, Is.True);
+
+			PlaceCaret(add, 0);
+			Press(add, Key.Down);
+			Assert.That(add.IsFocused, Is.True);
+		}
+
+		[AvaloniaTest]
+		public void CtrlHomeAndCtrlEnd_GoToTheEndsOfTheWholeField()
+		{
+			var (field, _, _) = Show(new RecordingReversalContext(), null,
+				English("dwelling", "abode"), French("maison"));
+			var first = Find<TextBox>(field, "Reversal.en.0");
+			var last = Find<TextBox>(field, "Reversal.fr.Add");
+			var middle = Find<TextBox>(field, "Reversal.fr.0");
+
+			PlaceCaret(middle, 1);
+			Press(middle, Key.Home, KeyModifiers.Control);
+			Assert.That(first.IsFocused, Is.True, "Ctrl+Home goes to the field's own first slot");
+			Assert.That(first.CaretIndex, Is.Zero);
+
+			PlaceCaret(first, 2);
+			Press(first, Key.End, KeyModifiers.Control);
+			Assert.That(last.IsFocused, Is.True, "Ctrl+End goes to the field's own last slot");
+			Assert.That(last.CaretIndex, Is.EqualTo(last.Text.Length));
+		}
+
 		[AvaloniaTest]
 		public void CtrlArrows_AtASlotsEdge_MoveBetweenSlotsToo()
 		{

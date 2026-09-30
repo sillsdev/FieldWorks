@@ -9,6 +9,7 @@ using Avalonia;
 using Avalonia.Automation;
 using Avalonia.Controls;
 using Avalonia.Controls.Documents;
+using Avalonia.Controls.Presenters;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Layout;
@@ -129,6 +130,9 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		private readonly IReversalEntryEditing _editing;
 		private readonly Action<string> _navigationRequested;
 		private bool _disposed;
+		// The horizontal position a run of Up/Down navigates by, so ragged lines do not walk
+		// the caret sideways; null until one starts, and again as soon as anything else moves it.
+		private double? _lineNavigationX;
 
 		/// <summary>Builds the editor.</summary>
 		/// <param name="label">The field label, used in accessible names.</param>
@@ -158,6 +162,13 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			var abbrevWidth = wsAbbrevColumnWidth ?? FwAvaloniaDensity.WsAbbrevWidth;
 			foreach (var group in groups ?? Array.Empty<DetailReversalGroup>())
 				Children.Add(CreateGroup(name, automationId, group, writingSystemFocused, abbrevWidth));
+
+			// A click puts the caret somewhere of its own, so the next Up or Down starts from
+			// there rather than from wherever the last one was heading.
+			EventHandler<PointerPressedEventArgs> pressed = (s, e) => _lineNavigationX = null;
+			AddHandler(InputElement.PointerPressedEvent, pressed, RoutingStrategies.Tunnel,
+				handledEventsToo: true);
+			_teardown.Add(() => RemoveHandler(InputElement.PointerPressedEvent, pressed));
 		}
 
 		// A text-sized editor clips its own caret at the end, and fits none at all when empty, so
@@ -432,13 +443,18 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 
 		// Keys that treat the field's slots as one text. Enter does nothing. Tab and Shift+Tab
 		// visit every slot in reading order, add slots included, and leave the field only from
-		// its last or first slot. An arrow, alone or with Ctrl, at a slot's edge moves into the
-		// neighboring slot, across groups (in a right-to-left group the start is on the right).
-		// Plain Home and End go to the edges of the current visual line.
+		// its last or first slot. Left and Right, alone or with Ctrl, at a slot's edge move into
+		// the neighboring slot, across groups (in a right-to-left group the start is on the
+		// right). Up and Down move between visual lines at the same horizontal position. Home
+		// and End go to the edges of the current visual line, and with Ctrl to the ends of the
+		// whole field.
 		private void WireSlotNavigation(TextBox editor, bool rightToLeft)
 		{
 			EventHandler<KeyEventArgs> keyDown = (s, e) =>
 			{
+				// Only an unbroken run of Up/Down keeps the position it navigates by.
+				if (e.Key != Key.Up && e.Key != Key.Down)
+					_lineNavigationX = null;
 				if (e.Key == Key.Enter)
 				{
 					e.Handled = true;
@@ -463,10 +479,22 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 					RevertPendingEdits();
 					return;
 				}
-				if ((e.Key == Key.Home || e.Key == Key.End) && e.KeyModifiers == KeyModifiers.None)
+				if ((e.Key == Key.Home || e.Key == Key.End)
+					&& (e.KeyModifiers == KeyModifiers.None || e.KeyModifiers == KeyModifiers.Control))
 				{
-					MoveToLineEdge(editor, e.Key == Key.Home);
+					var toStart = e.Key == Key.Home;
+					if (e.KeyModifiers == KeyModifiers.Control)
+						MoveToFieldEdge(toStart);
+					else
+						MoveToLineEdge(editor, toStart);
 					e.Handled = true;
+					return;
+				}
+				if ((e.Key == Key.Up || e.Key == Key.Down) && e.KeyModifiers == KeyModifiers.None)
+				{
+					// Past the first or last line the key is left alone, for the view to answer.
+					if (MoveToNeighboringLine(editor, e.Key == Key.Up))
+						e.Handled = true;
 					return;
 				}
 				if ((e.KeyModifiers & ~KeyModifiers.Control) != KeyModifiers.None
@@ -492,6 +520,112 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			_teardown.Add(() => editor.RemoveHandler(InputElement.KeyDownEvent, keyDown));
 		}
 
+		// Ctrl+Home and Ctrl+End treat the whole field as one text: its very first slot and its
+		// very last, whichever group they are in.
+		private void MoveToFieldEdge(bool toStart)
+		{
+			var slots = SlotEditors();
+			if (slots.Count > 0)
+				PlaceCaret(toStart ? slots[0] : slots[slots.Count - 1], !toStart);
+		}
+
+		// Up and Down move to the neighboring visual line, keeping the caret's horizontal
+		// position: the slot under it takes the caret. False at the field's first or last line.
+		private bool MoveToNeighboringLine(TextBox editor, bool up)
+		{
+			var lines = SlotLines();
+			var index = lines.FindIndex(line =>
+				line.Any(slot => ReferenceEquals(SlotEditor(slot), editor)));
+			var target = index + (up ? -1 : 1);
+			if (index < 0 || target < 0 || target >= lines.Count)
+				return false;
+			_lineNavigationX = _lineNavigationX ?? CaretX(editor);
+			var slot = NearestSlot(lines[target], _lineNavigationX);
+			if (slot == null)
+				return false;
+			PlaceCaretAtX(SlotEditor(slot), _lineNavigationX);
+			return true;
+		}
+
+		// The field's slots grouped into visual lines, top line first and each line in
+		// left-to-right order: a group's panel puts one line's slots at the same top, and the
+		// groups stack in order.
+		private List<List<Control>> SlotLines()
+		{
+			var lines = new List<List<Control>>();
+			foreach (var state in _groups)
+			{
+				var slots = state.Slots.Children.Where(child => SlotEditor(child) != null);
+				foreach (var line in slots.GroupBy(child => child.Bounds.Y).OrderBy(line => line.Key))
+					lines.Add(line.OrderBy(child => child.Bounds.X).ToList());
+			}
+			return lines;
+		}
+
+		// The line's slot at horizontal position x, or the nearest one when x falls on a bar
+		// between slots or past the line's end. The first slot when there is no position to
+		// match, null for a line without slots.
+		private Control NearestSlot(IReadOnlyList<Control> line, double? x)
+		{
+			if (!x.HasValue)
+				return line.FirstOrDefault();
+			Control nearest = null;
+			var shortest = double.MaxValue;
+			foreach (var slot in line)
+			{
+				var left = slot.TranslatePoint(new Point(0, 0), this)?.X;
+				if (!left.HasValue)
+					continue;
+				var right = left.Value + slot.Bounds.Width;
+				var distance = x.Value < left.Value
+					? left.Value - x.Value
+					: x.Value > right ? x.Value - right : 0;
+				if (distance < shortest)
+				{
+					nearest = slot;
+					shortest = distance;
+				}
+			}
+			return nearest ?? line.FirstOrDefault();
+		}
+
+		// The caret's horizontal position in the field's own coordinates, or null while the
+		// slot has no laid-out text to measure it against.
+		private double? CaretX(TextBox editor)
+		{
+			var presenter = SlotPresenter(editor);
+			var layout = presenter?.TextLayout;
+			if (layout == null)
+				return null;
+			var length = (editor.Text ?? string.Empty).Length;
+			var caret = layout.HitTestTextPosition(Math.Min(Math.Max(editor.CaretIndex, 0), length));
+			return presenter.TranslatePoint(new Point(caret.X, 0), this)?.X;
+		}
+
+		// Puts the caret on the character nearest horizontal position x, or at the slot's end
+		// when there is no position to match or no laid-out text to match it against.
+		private void PlaceCaretAtX(TextBox target, double? x)
+		{
+			target.Focus();
+			var end = (target.Text ?? string.Empty).Length;
+			var caret = end;
+			var presenter = SlotPresenter(target);
+			var layout = presenter?.TextLayout;
+			if (x.HasValue && layout != null)
+			{
+				var local = this.TranslatePoint(new Point(x.Value, 0), presenter);
+				if (local.HasValue)
+				{
+					var hit = layout.HitTestPoint(new Point(local.Value.X, 0));
+					caret = Math.Min(hit.TextPosition + (hit.IsTrailing ? 1 : 0), end);
+				}
+			}
+			SetCaret(target, caret);
+		}
+
+		private static TextPresenter SlotPresenter(TextBox editor)
+			=> editor?.GetVisualDescendants().OfType<TextPresenter>().FirstOrDefault();
+
 		// Home goes to the start of the first slot on the editor's visual line, End to the end of
 		// the last; the group's wrap panel puts every slot of one line at the same top.
 		private void MoveToLineEdge(TextBox editor, bool toStart)
@@ -514,7 +648,11 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		private static void PlaceCaret(TextBox target, bool atEnd)
 		{
 			target.Focus();
-			var caret = atEnd ? (target.Text ?? string.Empty).Length : 0;
+			SetCaret(target, atEnd ? (target.Text ?? string.Empty).Length : 0);
+		}
+
+		private static void SetCaret(TextBox target, int caret)
+		{
 			target.CaretIndex = caret;
 			target.SelectionStart = caret;
 			target.SelectionEnd = caret;
