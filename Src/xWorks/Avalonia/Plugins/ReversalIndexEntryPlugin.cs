@@ -246,28 +246,30 @@ namespace SIL.FieldWorks.XWorks
 			if (edits == null || !_sense.IsValidObject)
 				return false;
 
-			var changes = new List<RowChange>();
-			foreach (var edit in edits)
-			{
-				RowBinding binding;
-				if (string.IsNullOrEmpty(edit.Key) || !_rows.TryGetValue(edit.Key, out binding))
-					continue;
-				var ws = _cache.ServiceLocator.WritingSystemManager.GetWsFromStr(binding.Index.WritingSystem);
-				if (ws <= 0)
-					continue;
-				if (binding.Entry != null && !binding.Entry.IsValidObject)
-					binding.Entry = null;
-				var forms = SplitForms(edit.Value);
-				if (binding.Entry == null ? forms.Count == 0 : ChainMatches(binding.Entry, forms, ws))
-					continue;
-				changes.Add(new RowChange(binding, forms, ws));
-			}
-			if (changes.Count == 0)
-				return false;
-
-			var previous = changes.Select(change => change.Binding.Entry).ToList();
+			List<RowChange> changes = null;
+			List<IReversalIndexEntry> previous = null;
 			try
 			{
+				changes = new List<RowChange>();
+				foreach (var edit in edits)
+				{
+					RowBinding binding;
+					if (string.IsNullOrEmpty(edit.Key) || !_rows.TryGetValue(edit.Key, out binding))
+						continue;
+					var ws = _cache.ServiceLocator.WritingSystemManager.GetWsFromStr(binding.Index.WritingSystem);
+					if (ws <= 0)
+						continue;
+					if (binding.Entry != null && !binding.Entry.IsValidObject)
+						binding.Entry = null;
+					var forms = SplitForms(edit.Value);
+					if (binding.Entry == null ? forms.Count == 0 : ChainMatches(binding.Entry, forms, ws))
+						continue;
+					changes.Add(new RowChange(binding, forms, ws));
+				}
+				if (changes.Count == 0)
+					return false;
+
+				previous = changes.Select(change => change.Binding.Entry).ToList();
 				return StageOnHost(() =>
 				{
 					// Every row takes its new entry before any entry is let go, so an entry
@@ -299,8 +301,12 @@ namespace SIL.FieldWorks.XWorks
 			}
 			catch (Exception e)
 			{
-				// The write rolled back or never ran, so the rows keep the entries they showed.
-				for (var i = 0; i < changes.Count; i++)
+				// A session this call did not open keeps whatever the batch wrote before it
+				// threw, so the whole step closes rather than reaching the next save
+				// half-linked. The rows go back to the entries they showed.
+				if (_host != null && _host.IsOpen)
+					_host.Cancel();
+				for (var i = 0; previous != null && i < changes.Count; i++)
 					changes[i].Binding.Entry = previous[i];
 				Logger.WriteError(e);
 				return false;

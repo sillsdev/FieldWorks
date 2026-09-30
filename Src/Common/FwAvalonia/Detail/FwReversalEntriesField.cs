@@ -452,8 +452,9 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		{
 			EventHandler<KeyEventArgs> keyDown = (s, e) =>
 			{
-				// Only an unbroken run of Up/Down keeps the position it navigates by.
-				if (e.Key != Key.Up && e.Key != Key.Down)
+				// Modified arrows can move the caret without joining a plain Up/Down run.
+				if ((e.Key != Key.Up && e.Key != Key.Down)
+					|| e.KeyModifiers != KeyModifiers.None)
 					_lineNavigationX = null;
 				if (e.Key == Key.Enter)
 				{
@@ -490,6 +491,16 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 					e.Handled = true;
 					return;
 				}
+				// An arrow that is not extending a selection collapses it and goes no further,
+				// the way a text box does; the position a run navigated by goes with it.
+				if (IsArrow(e.Key) && (e.KeyModifiers & KeyModifiers.Shift) == KeyModifiers.None
+					&& editor.SelectionStart != editor.SelectionEnd)
+				{
+					CollapseSelection(editor, e.Key, rightToLeft);
+					_lineNavigationX = null;
+					e.Handled = true;
+					return;
+				}
 				if ((e.Key == Key.Up || e.Key == Key.Down) && e.KeyModifiers == KeyModifiers.None)
 				{
 					// Past the first or last line the key is left alone, for the view to answer.
@@ -502,8 +513,6 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				{
 					return;
 				}
-				if (editor.SelectionStart != editor.SelectionEnd)
-					return;
 				var toward = (e.Key == Key.Left) != rightToLeft ? -1 : 1;
 				var length = (editor.Text ?? string.Empty).Length;
 				if (toward < 0 ? editor.CaretIndex != 0 : editor.CaretIndex != length)
@@ -649,6 +658,21 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		{
 			target.Focus();
 			SetCaret(target, atEnd ? (target.Text ?? string.Empty).Length : 0);
+		}
+
+		private static bool IsArrow(Key key)
+			=> key == Key.Left || key == Key.Right || key == Key.Up || key == Key.Down;
+
+		// The caret lands at the end of the selection the arrow points at: its start for Up
+		// and Left, its end for Down and Right, mirrored in a right-to-left group.
+		private static void CollapseSelection(TextBox editor, Key key, bool rightToLeft)
+		{
+			var toStart = key == Key.Up || key == Key.Down
+				? key == Key.Up
+				: (key == Key.Left) != rightToLeft;
+			SetCaret(editor, toStart
+				? Math.Min(editor.SelectionStart, editor.SelectionEnd)
+				: Math.Max(editor.SelectionStart, editor.SelectionEnd));
 		}
 
 		private static void SetCaret(TextBox target, int caret)

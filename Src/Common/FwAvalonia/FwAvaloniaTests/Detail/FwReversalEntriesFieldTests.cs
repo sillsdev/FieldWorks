@@ -824,6 +824,103 @@ namespace FwAvaloniaTests.Detail
 				"Up follows the click's own position, not the run it interrupted");
 		}
 
+		// A mouse-drag selection cannot be driven headlessly, and a key-made one would clear the
+		// run by itself. The caret goes at the selection's start, where it does not collapse it.
+		private static void PlaceSelection(TextBox box, int caret, int start, int end)
+		{
+			box.Focus();
+			box.SelectionStart = start;
+			box.SelectionEnd = end;
+			box.CaretIndex = caret;
+			Assert.That(box.SelectionStart, Is.Not.EqualTo(box.SelectionEnd),
+				"precondition: the slot holds a selection");
+			Assert.That(box.CaretIndex, Is.EqualTo(caret), "precondition: the caret is where it was put");
+		}
+
+		[AvaloniaTest]
+		public void AnArrowWithASelection_OnlyCollapsesIt_AndTheNextPressMoves()
+		{
+			var (field, _, _) = Show(new RecordingReversalContext(), null, English("dwelling", "abode"));
+			var first = Find<TextBox>(field, "Reversal.en.0");
+			var second = Find<TextBox>(field, "Reversal.en.1");
+			PlaceSelection(second, 0, 0, "abode".Length);
+
+			Press(second, Key.Left);
+
+			Assert.That(second.SelectionStart, Is.EqualTo(second.SelectionEnd), "the selection is gone");
+			Assert.That(second.IsFocused, Is.True, "the first press collapses and goes no further");
+			Assert.That(second.CaretIndex, Is.Zero, "Left collapses to the selection's start");
+
+			Press(second, Key.Left);
+
+			Assert.That(first.IsFocused, Is.True, "the next press moves as usual");
+			Assert.That(first.CaretIndex, Is.EqualTo("dwelling".Length));
+		}
+
+		[AvaloniaTest]
+		public void RightWithASelection_CollapsesToItsEnd()
+		{
+			var (field, _, _) = Show(new RecordingReversalContext(), null, English("dwelling", "abode"));
+			var second = Find<TextBox>(field, "Reversal.en.1");
+			PlaceSelection(second, 0, 0, "abode".Length);
+
+			Press(second, Key.Right);
+
+			Assert.That(second.IsFocused, Is.True);
+			Assert.That(second.CaretIndex, Is.EqualTo("abode".Length));
+			Assert.That(second.SelectionStart, Is.EqualTo(second.SelectionEnd));
+		}
+
+		[AvaloniaTest]
+		public void ASelection_RestartsThePositionUpAndDownNavigateBy()
+		{
+			var (_, window, firstLine, secondLine) = ShowWrappingGroup();
+			var start = firstLine.Last();
+			PlaceCaret(start, start.Text.Length);
+			Press(start, Key.Down);
+			var target = secondLine[0];
+			PlaceSelection(target, 0, 0, target.Text.Length);
+
+			Press(target, Key.Up);
+			Assert.That(target.SelectionStart, Is.EqualTo(target.SelectionEnd), "the selection is gone");
+			Assert.That(FocusedSlot(window), Is.SameAs(target), "the first press only collapses");
+
+			Press(target, Key.Up);
+
+			Assert.That(FocusedSlot(window), Is.SameAs(firstLine[0]),
+				"the selection ended the run, so Up follows the caret's own position");
+		}
+
+		[AvaloniaTest]
+		public void ShiftArrows_StillExtendTheSelection()
+		{
+			var (field, _, _) = Show(new RecordingReversalContext(), null, English("dwelling", "abode"));
+			var box = Find<TextBox>(field, "Reversal.en.0");
+			PlaceSelection(box, 0, 0, 3);
+
+			Press(box, Key.Right, KeyModifiers.Shift);
+
+			Assert.That(box.SelectionStart, Is.Not.EqualTo(box.SelectionEnd),
+				"a selection gesture is not a navigation one, so it is left alone");
+			Assert.That(box.IsFocused, Is.True);
+		}
+
+		[AvaloniaTest]
+		public void AModifiedArrow_RestartsThePositionUpAndDownNavigateBy()
+		{
+			var (_, window, firstLine, secondLine) = ShowWrappingGroup();
+			var start = firstLine.Last();
+			PlaceCaret(start, start.Text.Length);
+			Press(start, Key.Down);
+			PlaceCaret(secondLine[0], 0);
+
+			Press(secondLine[0], Key.Up, KeyModifiers.Shift);
+			Press(secondLine[0], Key.Up);
+
+			Assert.That(FocusedSlot(window), Is.SameAs(firstLine[0]),
+				"the modified arrow ended the run, so Up follows the caret's own position");
+		}
+
 		[AvaloniaTest]
 		public void UpAtTheTopLine_AndDownAtTheBottom_StayPut()
 		{
@@ -895,12 +992,6 @@ namespace FwAvaloniaTests.Detail
 			PlaceCaret(second, 2);
 			Press(second, Key.Left, KeyModifiers.Control);
 			Assert.That(second.IsFocused, Is.True, "Ctrl+Left inside the text moves within the slot");
-
-			second.Focus();
-			second.SelectionStart = 0;
-			second.SelectionEnd = 3;
-			Press(second, Key.Left);
-			Assert.That(second.IsFocused, Is.True, "an arrow with a selection keeps its text behavior");
 		}
 
 		[AvaloniaTest]

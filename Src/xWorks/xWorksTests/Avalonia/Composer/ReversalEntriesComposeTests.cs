@@ -639,6 +639,41 @@ namespace SIL.FieldWorks.XWorks
 				Is.EqualTo("abode"));
 		}
 
+		// A failed batch closes the session it wrote into, at the cost of the edit that opened
+		// it, rather than carrying half a batch to the next save.
+		[Test]
+		public void AFailedBatch_ClosesTheSession_LeavingNothingToSave()
+		{
+			var es = AddAnalysisWs("es");
+			var esIndex = AddIndex(es);
+			var (editing, host) = NewContext();
+			var groups = editing.CreateGroups(null);
+			var enAdd = AddRow(Group(groups, EnTag));
+			var esAdd = AddRow(Group(groups, es.Id));
+			// The second row still points at this index, which is gone by the time it writes.
+			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor,
+				() => Cache.LanguageProject.LexDbOA.ReversalIndexesOC.Remove(esIndex));
+			((DetailEditContextBase)host).Stage(() =>
+			{
+				m_sense.Gloss.set_String(EnWs, "seed");
+				return true;
+			}, "Gloss");
+			Assert.That(host.IsOpen, Is.True, "precondition: another field's edit opened the session");
+
+			var staged = editing.TryCommitRows(new[]
+			{
+				new KeyValuePair<string, string>(enAdd.RowKey, "home"),
+				new KeyValuePair<string, string>(esAdd.RowKey, "casa")
+			});
+
+			Assert.That(staged, Is.False);
+			Assert.That(host.IsOpen, Is.False, "the failed batch closed the session");
+			Assert.That(m_sense.ReferringReversalIndexEntries, Is.Empty,
+				"neither row was written, the one before the failure included");
+			Assert.That(m_sense.Gloss.get_String(EnWs).Text, Is.Null,
+				"the edit that opened the session went with it");
+		}
+
 		[Test]
 		public void AnAddedEntry_PersistsIntoTheNextCompose()
 		{
