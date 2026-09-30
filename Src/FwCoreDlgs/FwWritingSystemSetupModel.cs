@@ -80,7 +80,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		public event EventHandler WritingSystemListUpdated;
 
 		/// <summary>
-		/// This event is fired only when the id or abbreviation for a writing system changes
+		/// Raised once after a save when an existing writing system's id, abbreviation, or
+		/// rendering settings changed. Not raised when WritingSystemListUpdated is.
 		/// </summary>
 		public event EventHandler WritingSystemUpdated;
 
@@ -663,6 +664,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			{
 				uowHelper = new NonUndoableUnitOfWorkHelper(Cache.ActionHandlerAccessor);
 			}
+			// Listeners refresh every window, so notify once, after the unit of work has closed.
+			var needsRefresh = false;
+			var listChanged = false;
 
 			try
 			{
@@ -715,6 +719,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					else if (workingWs.IsChanged)
 					{
 						var didAbbrevOrIdChange = origWs.Abbreviation != workingWs.Abbreviation;
+						var didRenderingChange = RenderingChanged(origWs, workingWs);
 						var oldId = origWs.Id;
 						var oldHandle = origWs.Handle;
 						// copy the working writing system content into the original writing system
@@ -729,9 +734,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 							}
 							didAbbrevOrIdChange = true;
 						}
-						if (didAbbrevOrIdChange)
+						if (didAbbrevOrIdChange || didRenderingChange)
 						{
-							WritingSystemUpdated?.Invoke(this, EventArgs.Empty);
+							needsRefresh = true;
 						}
 					}
 
@@ -767,13 +772,35 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			}
 			finally
 			{
-				if (CurrentWsListChanged)
+				listChanged = CurrentWsListChanged;
+				if (uowHelper != null)
+					uowHelper.Dispose();
+				if (listChanged)
 				{
 					WritingSystemListUpdated?.Invoke(this, EventArgs.Empty);
 				}
-				if (uowHelper != null)
-					uowHelper.Dispose();
 			}
+			if (needsRefresh && !listChanged)
+			{
+				WritingSystemUpdated?.Invoke(this, EventArgs.Empty);
+			}
+		}
+
+		/// <summary>
+		/// Returns whether the two definitions would render text differently: another default
+		/// font, other font features once normalized, or a different Graphite setting, text
+		/// direction, or numbering system.
+		/// </summary>
+		private static bool RenderingChanged(CoreWritingSystemDefinition origWs, CoreWritingSystemDefinition workingWs)
+		{
+			if (origWs.DefaultFontName != workingWs.DefaultFontName)
+				return true;
+			if (FontFeatureSettings.NormalizePreservingLegacy(origWs.DefaultFontFeatures)
+				!= FontFeatureSettings.NormalizePreservingLegacy(workingWs.DefaultFontFeatures))
+				return true;
+			return origWs.IsGraphiteEnabled != workingWs.IsGraphiteEnabled
+				|| origWs.RightToLeftScript != workingWs.RightToLeftScript
+				|| !Equals(origWs.NumberingSystem, workingWs.NumberingSystem);
 		}
 
 		private static void AddOrMoveInList(ICollection<CoreWritingSystemDefinition> allWritingSystems, int desiredIndex, CoreWritingSystemDefinition workingWs)

@@ -45,6 +45,7 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 		private bool m_fIgnoreWsSelectedIndexChange = false;
 		private StyleInfo m_currentStyleInfo;
 		private int m_currentWs = -1;
+		private ILgWritingSystemFactory m_wsf;
 
 		private bool m_fFontListIncludesRealNames = false;
 
@@ -81,7 +82,12 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 		/// ------------------------------------------------------------------------------------
 		public ILgWritingSystemFactory WritingSystemFactory
 		{
-			set { CheckDisposed(); m_FontAttributes.WritingSystemFactory = value; }
+			set
+			{
+				CheckDisposed();
+				m_wsf = value;
+				m_FontAttributes.WritingSystemFactory = value;
+			}
 		}
 		#endregion
 
@@ -302,6 +308,8 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 			// only include the magic font names, not the real ones.
 			FillFontNames(ws > -1);
 
+			m_FontAttributes.UseGraphiteFeatures = IsGraphiteEnabled(ws);
+
 			m_FontAttributes.ShowingInheritedProperties = true; // Always allow re-setting to unspecified for font attributes
 
 			// Initialize controls based on whether or not this style inherits from another style.
@@ -418,6 +426,18 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 		}
 
 		#region private methods
+		/// <summary>
+		/// Returns whether Graphite rendering is enabled for the given writing system. The
+		/// default row (-1) covers every writing system, so it reports false.
+		/// </summary>
+		private bool IsGraphiteEnabled(int ws)
+		{
+			if (ws <= 0 || m_wsf == null)
+				return false;
+			var writingSystem = m_wsf.get_EngineOrNull(ws);
+			return writingSystem != null && writingSystem.IsGraphiteEnabled;
+		}
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Fills the font names.
