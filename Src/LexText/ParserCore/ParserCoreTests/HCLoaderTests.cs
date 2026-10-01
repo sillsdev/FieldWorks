@@ -674,9 +674,17 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			lexSense.MorphoSyntaxAnalysisRA = msa;
 			msa.PartOfSpeechRA = m_verb;
 
+			ILexEntry stemEntry = AddEntry(MoMorphTypeTags.kguidMorphStem, "a", "gloss", new SandboxGenericMSA { MsaType = MsaType.kStem });
+			var stemSense = senseFactory.Create();
+			stemEntry.SensesOS.Add(stemSense);
+			IMoStemMsa stemMsa = Cache.ServiceLocator.GetInstance<IMoStemMsaFactory>().Create();
+			stemEntry.MorphoSyntaxAnalysesOC.Add(stemMsa);
+			stemSense.MorphoSyntaxAnalysisRA = stemMsa;
+
 			m_loadErrors.Clear();
 			m_lang = HCLoader.Load(Cache, new TestHCLoadErrorLogger(m_loadErrors), out _);
 
+			Assert.That(m_lang.Strata[0].Entries.Count, Is.EqualTo(1));
 			Assert.That(m_lang.Strata[0].MorphologicalRules.Count, Is.EqualTo(1));
 			var rule = (AffixProcessRule)m_lang.Strata[0].MorphologicalRules[0];
 
@@ -686,6 +694,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 			m_loadErrors.Clear();
 			m_lang = HCLoader.Load(Cache, new TestHCLoadErrorLogger(m_loadErrors));
+			Assert.That(m_lang.Strata[0].Entries.Count, Is.EqualTo(2));
 			Assert.That(m_lang.Strata[0].MorphologicalRules.Count, Is.EqualTo(2));
 		}
 
