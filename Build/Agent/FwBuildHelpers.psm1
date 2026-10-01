@@ -703,7 +703,19 @@ function Remove-NativeObjDirsWithStaleInputs {
 		$objLabel = $oldestObj.FullName.Substring($objDir.TrimEnd('\').Length + 1)
 		Write-Host ("[INFO] {0}: {1} ({2:yyyy-MM-dd HH:mm}) is newer than {3} ({4:yyyy-MM-dd HH:mm}); removing Obj\{5}\{0} so it rebuilds completely." -f `
 			$module.Name, $inputLabel, $newestInput.LastWriteTime, $objLabel, $oldestObj.LastWriteTime, $Configuration) -ForegroundColor Yellow
-		Remove-Item -LiteralPath $objDir -Recurse -Force -ErrorAction Stop
+		$deleteErrors = @()
+		Remove-Item -LiteralPath $objDir -Recurse -Force -ErrorAction SilentlyContinue -ErrorVariable deleteErrors
+		if (Test-Path -LiteralPath $objDir) {
+			# The compiler's program-database server can hold a .pdb open between builds, and a
+			# leftover debug database does not affect what gets compiled.
+			$blocking = @(([System.IO.DirectoryInfo]$objDir).EnumerateFiles('*', [System.IO.SearchOption]::AllDirectories) |
+				Where-Object { $_.Extension -notin @('.pdb', '.idb') })
+			if ($blocking.Count -gt 0) {
+				$reason = if ($deleteErrors.Count -gt 0) { $deleteErrors[0].Exception.Message } else { 'unknown error' }
+				throw "Could not remove $($blocking[0].FullName) while clearing stale native objects: $reason"
+			}
+			Write-Host "[WARN] $($module.Name): a debug database in Obj\$Configuration\$($module.Name) is in use and was left in place; every object was removed, so the module still rebuilds completely." -ForegroundColor Yellow
+		}
 		$removed.Add($module.Name)
 	}
 

@@ -108,6 +108,46 @@ Assert-Removal 'object-folder-without-objects' {
 	Set-FixtureFile $r 'Src\mod\Layout.h' $new
 } $false
 
+function Invoke-WithLockedFile {
+	param([string] $Name, [string] $LockedRelativePath, [bool] $ExpectThrow)
+
+	$root = New-Fixture
+	$stream = $null
+	try {
+		Set-FixtureFile $root 'Obj\Debug\Mod\autopch\A.obj' $old
+		Set-FixtureFile $root 'Obj\Debug\Mod\autopch\B.obj' $old
+		Set-FixtureFile $root $LockedRelativePath $old
+		Set-FixtureFile $root 'Src\mod\Layout.h' $new
+		$stream = [System.IO.File]::Open((Join-Path $root $LockedRelativePath), 'Open', 'Read', 'None')
+
+		$threw = $false
+		$removed = @()
+		try {
+			$removed = Remove-NativeObjDirsWithStaleInputs -RepoRoot $root -Configuration 'Debug' -Modules $modules 6>$null
+		}
+		catch {
+			$threw = $true
+		}
+
+		$objDir = Join-Path $root 'Obj\Debug\Mod'
+		$objsLeft = @(Get-ChildItem -LiteralPath $objDir -Recurse -Filter '*.obj' -ErrorAction SilentlyContinue |
+			Where-Object { $_.FullName -ne (Join-Path $root $LockedRelativePath) })
+		if ($ExpectThrow -and -not $threw) {
+			[void]$script:failures.Add("FAIL [$Name]: expected a locked object file to fail the build")
+		}
+		if (-not $ExpectThrow -and ($threw -or -not ($removed -contains 'Mod') -or $objsLeft.Count -gt 0)) {
+			[void]$script:failures.Add("FAIL [$Name]: expected a locked debug database to be skipped with every object removed")
+		}
+	}
+	finally {
+		if ($stream) { $stream.Dispose() }
+		Remove-Item -LiteralPath $root -Recurse -Force -ErrorAction SilentlyContinue
+	}
+}
+
+Invoke-WithLockedFile 'locked-debug-database-is-skipped' 'Obj\Debug\Mod\vc140.pdb' $false
+Invoke-WithLockedFile 'locked-object-fails-the-build' 'Obj\Debug\Mod\autopch\Locked.obj' $true
+
 # Each real module's input folders must exist, or a typo would silently skip them.
 $repoRoot = (Resolve-Path (Join-Path $PSScriptRoot '../..')).Path
 foreach ($module in (Get-NativeMakefileModules)) {
