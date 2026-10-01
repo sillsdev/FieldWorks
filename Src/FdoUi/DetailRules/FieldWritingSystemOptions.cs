@@ -158,8 +158,8 @@ namespace SIL.FieldWorks.Common.DetailRules
 		}
 
 		/// <summary>
-		/// The writing systems the field shows: the stored selection, in its own order,
-		/// restricted to the ids that are still options; <see cref="DefaultShown"/> when
+		/// The writing systems the field shows: the stored selection, restricted to the ids
+		/// that are still options and in the options' order; <see cref="DefaultShown"/> when
 		/// none of them is.
 		/// </summary>
 		/// <param name="storedSelection">The field's persisted selection, or null for
@@ -198,24 +198,20 @@ namespace SIL.FieldWorks.Common.DetailRules
 				.ToList();
 		}
 
-		// The stored ids that are still options, in the STORED order and deduplicated: that is
-		// the order the field renders them in.
+		// The options the stored selection names, in OPTION order: a re-checked writing system
+		// lands at the end of the stored list, and the rows must not reorder on a rebuild.
 		private static IReadOnlyList<CoreWritingSystemDefinition> Select(
 			IReadOnlyList<CoreWritingSystemDefinition> options, IReadOnlyList<string> stored)
 		{
 			if (stored == null || stored.Count == 0)
 				return Array.Empty<CoreWritingSystemDefinition>();
-			var byId = new Dictionary<string, CoreWritingSystemDefinition>(StringComparer.OrdinalIgnoreCase);
-			foreach (var ws in options)
-			{
-				if (!byId.ContainsKey(ws.Id))
-					byId.Add(ws.Id, ws);
-			}
+			var wanted = new HashSet<string>(stored.Where(id => !string.IsNullOrEmpty(id)),
+				StringComparer.OrdinalIgnoreCase);
 			var result = new List<CoreWritingSystemDefinition>();
 			var seen = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-			foreach (var id in stored)
+			foreach (var ws in options)
 			{
-				if (!string.IsNullOrEmpty(id) && byId.TryGetValue(id, out var ws) && seen.Add(ws.Id))
+				if (wanted.Contains(ws.Id) && seen.Add(ws.Id))
 					result.Add(ws);
 			}
 			return result;

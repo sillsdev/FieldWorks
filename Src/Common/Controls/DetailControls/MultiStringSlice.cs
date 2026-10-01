@@ -227,7 +227,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			using (var dlg = new ConfigureWritingSystemsDlg(WritingSystemOptionsForDisplay, WritingSystemsSelectedForDisplay,
 				m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider")))
 			{
-				dlg.Text = String.Format(DetailControlsStrings.ksSliceConfigureWssDlgTitle, Label);
+				dlg.Text = ConfigureWritingSystemsDlg.TitleFor(Label);
 				if (dlg.ShowDialog() == DialogResult.OK)
 					PersistAndRedisplayWssToDisplayForPart(dlg.SelectedWritingSystems);
 			}
@@ -330,18 +330,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// Get the language project's list of pronunciation writing systems into sync with the supplied list.
 		/// </summary>
 		private void UpdatePronunciationWritingSystems(IEnumerable<CoreWritingSystemDefinition> newValues)
-		{
-			if (newValues.Count() != m_cache.ServiceLocator.WritingSystems.CurrentPronunciationWritingSystems.Count
-				|| !m_cache.ServiceLocator.WritingSystems.CurrentPronunciationWritingSystems.SequenceEqual(newValues))
-			{
-				NonUndoableUnitOfWorkHelper.Do(m_cache.ServiceLocator.GetInstance<IActionHandler>(), () =>
-				{
-					m_cache.ServiceLocator.WritingSystems.CurrentPronunciationWritingSystems.Clear();
-					foreach (CoreWritingSystemDefinition ws in newValues)
-						m_cache.ServiceLocator.WritingSystems.CurrentPronunciationWritingSystems.Add(ws);
-				});
-			}
-		}
+			=> PronunciationWritingSystems.Sync(m_cache, newValues);
 
 		/// <summary>
 		/// go through all the data tree slices, finding the slices that refer to the same part as this slice

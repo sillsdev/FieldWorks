@@ -113,16 +113,17 @@ namespace SIL.FieldWorks.FdoUi
 		}
 
 		[Test]
-		public void Shown_IsTheStoredSelection_InItsOwnOrder()
+		public void Shown_IsTheStoredSelection_InOptionOrder()
 		{
 			var second = AddUncheckedAnalysisWs("de");
 			var first = Cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem;
 
+			// Stored with the re-checked one appended, as a menu toggle leaves it.
 			var shown = Ids(FieldWritingSystemOptions.Shown(Cache, Analysis(),
 				new[] { second.Id, first.Id }));
 
-			Assert.That(shown, Is.EqualTo(new[] { second.Id, first.Id }),
-				"the stored order is the order the field renders them in");
+			Assert.That(shown, Is.EqualTo(new[] { first.Id, second.Id }),
+				"the field renders its selection in option order, whatever order it was stored in");
 		}
 
 		[Test]

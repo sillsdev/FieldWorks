@@ -61,9 +61,9 @@ namespace SIL.FieldWorks.XWorks
 		/// owns is populated without any mediator display query and every leaf under it,
 		/// submenus included, is answered by the authority, so nothing on the mediator (the
 		/// hidden DataTree adapter included) takes part in it. Other ids keep the mediator path.
+		/// A list-populated submenu is answered too: the authority supplies its items, so the
+		/// group is never populated through the mediator.
 		/// </summary>
-		/// <exception cref="NotSupportedException">An owned id contains a list-populated
-		/// submenu, which no authority can answer yet.</exception>
 		public static IReadOnlyList<DetailMenuItem> CreateMenuItems(XWindow window, string[] menuIds,
 			Func<ChoiceBase, UIItemDisplayProperties, DetailMenuItem> interceptor,
 			IxCoreColleague temporaryColleague, IDetailMenuAuthority authority)
@@ -203,24 +203,30 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		// An owned submenu takes its label from the configuration and its children from the
-		// authority. Omitted when no child is visible, spliced when inline. A list submenu is
-		// refused, not left to the mediator.
+		// authority, a list-populated one included. Omitted when empty, spliced when inline.
 		private static IEnumerable<DetailMenuItem> ConvertOwnedSubmenu(ChoiceGroup submenu,
 			IDetailMenuAuthority authority, string ownedId)
 		{
-			if (!string.IsNullOrEmpty(submenu.ListId))
-			{
-				throw new NotSupportedException(string.Format(
-					"Menu '{0}' has a list-populated submenu '{1}' that no native authority can answer yet.",
-					ownedId, submenu.ListId));
-			}
-			var children = ConvertChildren(submenu, null, authority, ownedId);
+			var children = string.IsNullOrEmpty(submenu.ListId)
+				? ConvertChildren(submenu, null, authority, ownedId)
+				: Normalized(authority.BuildList(ownedId, submenu.ListId));
 			if (children.Count == 0 || submenu.IsInlineChoiceList)
 				return children;
 			return new[]
 			{
 				new DetailMenuItem(StripAccelerator(submenu.Label), isEnabled: true, isChecked: false, children)
 			};
+		}
+
+		// The authority's list items as the renderer needs them: disabled items lose their
+		// execute action like any other leaf, and stranded separators go.
+		private static List<DetailMenuItem> Normalized(IReadOnlyList<DetailMenuItem> items)
+		{
+			var result = new List<DetailMenuItem>();
+			foreach (var item in items ?? Array.Empty<DetailMenuItem>())
+				result.Add(item.IsSeparator ? item : WithoutExecuteWhenDisabled(item));
+			TrimSeparators(result);
+			return result;
 		}
 
 		// A disabled leaf carries no execute action, so "Execute != null" means invokable for

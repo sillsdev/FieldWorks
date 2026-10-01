@@ -738,7 +738,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
-		public void LabelMenu_IsFullyOwned_UnlessItCarriesTheWritingSystemsList()
+		public void LabelMenu_IsFullyOwned_OnEveryRowKind()
 		{
 			MakeTwoSubentries();
 			var subentries = SubentriesField();
@@ -750,8 +750,18 @@ namespace SIL.FieldWorks.XWorks
 				.First(f => f.MenuId == ObjectMenuAuthority.HelpMenuId);
 			Assert.That(XCoreMenuBridge.OwnsAll(authority, LabelMenuIds(helpBound)), Is.True,
 				"a row bound to the empty Help menu merges only owned ids");
-			Assert.That(XCoreMenuBridge.OwnsAll(authority, LabelMenuIds(LexemeFormField())), Is.False,
-				"the multi-string menu's writing-system list still needs the mediator");
+			var multiString = OwnedMultiStringField();
+			Assert.That(XCoreMenuBridge.OwnsAll(m_view.CreateMenuAuthority(LabelMenuRequest(multiString, NoItem)),
+				LabelMenuIds(multiString)), Is.True,
+				"a multi-string row's menu, writing-system list included, is answered natively");
+			var lexemeForm = LexemeFormField();
+			Assert.That(m_view.CreateMultiStringMenuAuthority(lexemeForm).Owns(MultiStringMenuAuthority.MenuId),
+				Is.True, "the shared multi-string group is owned even on a row whose own menu id is not yet");
+			Assert.That(XCoreMenuBridge.OwnsAll(m_view.CreateMenuAuthority(LabelMenuRequest(lexemeForm, NoItem)),
+				LabelMenuIds(lexemeForm)), Is.False,
+				"the Lexeme Form row still needs the adapter for mnuDataTree-LexemeForm, not for its writing systems");
+			Assert.That(m_view.CreateMultiStringMenuAuthority(subentries).Owns(MultiStringMenuAuthority.MenuId),
+				Is.False, "a row that is not multi-string never claims the multi-string menu");
 			Assert.That(XCoreMenuBridge.OwnsAll(null, new[] { ReorderVectorMenuAuthority.MenuId }), Is.False);
 		}
 
@@ -795,6 +805,10 @@ namespace SIL.FieldWorks.XWorks
 			public DetailMenuItem Build(string menuId, ChoiceBase leaf)
 				=> _hidden.Contains(leaf.HelpId) ? null
 					: new DetailMenuItem(XCoreMenuBridge.StripAccelerator(leaf.Label), isEnabled: true);
+
+			// Echoes the list's id as one item, so a test can see where it spliced in.
+			public IReadOnlyList<DetailMenuItem> BuildList(string menuId, string listId)
+				=> new[] { new DetailMenuItem("list:" + listId, isEnabled: true) };
 		}
 
 		// Records whether the mediator asked anyone to display the Always-visible command.
@@ -893,12 +907,105 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
-		public void OwnedMenu_WithAListSubmenu_IsRefused()
+		public void OwnedMenu_WithAListSubmenu_TakesItsItemsFromTheAuthority()
 		{
+			// The writing-system list is the one list-populated submenu under an owned id.
+			// Populating it through the mediator would need the hidden adapter's slice.
 			var ids = new[] { RecordEditView.MultiStringSliceMenuId };
-			Assert.That(() => BuildWithSpy(ids, new EchoAuthority(ids), out _),
-				Throws.TypeOf<NotSupportedException>().With.Message.Contains("WritingSystemOptionsForSlice"),
-				"a list-populated submenu has no configured leaves an authority could answer");
+			var items = BuildWithSpy(ids, new EchoAuthority(ids), out var askedMediator);
+
+			var writingSystems = FindItem(items, "Writing Systems");
+			Assert.That(writingSystems, Is.Not.Null, "the owned submenu survives");
+			Assert.That(writingSystems.Children.Select(c => c.Label),
+				Does.Contain("list:WritingSystemOptionsForSlice"),
+				"the authority's list items splice in where the list submenu sat");
+			Assert.That(askedMediator, Is.False,
+				"an owned id asks the mediator nothing, the list submenu included");
+		}
+
+		// The multi-string menu's native authority: the Writing Systems submenu answered from
+		// the row and the shared rule, the rest delegated to the per-object authority.
+
+		[Test]
+		public void MultiStringMenuAuthority_AnswersEveryLeafOfItsMenu()
+		{
+			var authority = m_view.CreateMultiStringMenuAuthority(LexemeFormField());
+			var window = m_propertyTable.GetValue<XWindow>("window");
+			var menu = window.GetContextMenuChoiceGroup(new[] { MultiStringMenuAuthority.MenuId });
+			menu.PopulateNow(querySubmenuVisibility: false);
+
+			var leaves = Leaves(menu).ToList();
+			Assert.That(leaves.Select(l => l.HelpId), Is.EquivalentTo(new[]
+			{
+				MultiStringMenuAuthority.ShowAllCommandId, MultiStringMenuAuthority.ConfigureCommandId,
+				ObjectMenuAuthority.AlwaysVisibleCommandId, ObjectMenuAuthority.IfDataCommandId,
+				ObjectMenuAuthority.NormallyHiddenCommandId, ObjectMenuAuthority.MoveFieldUpCommandId,
+				ObjectMenuAuthority.MoveFieldDownCommandId, ObjectMenuAuthority.HelpCommandId
+			}), "the shipped menu defines exactly the leaves the authority knows");
+			foreach (var leaf in leaves)
+			{
+				Assert.That(() => authority.Build(MultiStringMenuAuthority.MenuId, leaf), Throws.Nothing,
+					"the authority does not answer leaf '{0}'", leaf.HelpId);
+			}
+			// The list submenu has no configured leaves; the authority supplies its items.
+			Assert.That(authority.BuildList(MultiStringMenuAuthority.MenuId,
+				MultiStringMenuAuthority.WritingSystemListId), Is.Not.Empty,
+				"the writing-system list offers the row's options");
+		}
+
+		[Test]
+		public void MultiStringMenuAuthority_RejectsWhatItDoesNotAnswer()
+		{
+			var authority = m_view.CreateMultiStringMenuAuthority(LexemeFormField());
+			var window = m_propertyTable.GetValue<XWindow>("window");
+			var reorderMenu = window.GetContextMenuChoiceGroup(new[] { ReorderVectorMenuAuthority.MenuId });
+			reorderMenu.PopulateNow();
+			var foreignLeaf = reorderMenu.OfType<ChoiceBase>()
+				.First(c => c.HelpId == ReorderVectorMenuAuthority.AlphabeticalOrderCommandId);
+
+			Assert.That(() => authority.Build(MultiStringMenuAuthority.MenuId, foreignLeaf),
+				Throws.InvalidOperationException, "a foreign leaf is refused, never left to the mediator");
+			Assert.That(() => authority.BuildList(MultiStringMenuAuthority.MenuId, "SomeOtherList"),
+				Throws.InvalidOperationException, "a foreign list is refused too");
+		}
+
+		[Test]
+		public void MultiStringMenu_NativeAuthority_RendersWhatTheInterceptorPathRendered()
+		{
+			UseHelpProvider(KnowsEveryTopic);
+			var field = LexemeFormField();
+			var ids = LabelMenuIds(field);
+			EnsureAdapter(field.ObjectHvo, field.Field);
+			Assume.That(AdapterTargets(field), "precondition: the adapter twin is the Lexeme Form row");
+
+			var before = Describe(BuildItemsWithOverrideInterceptor(ids, field));
+			var after = Describe(BuildAsTheHostDoes(ids, field));
+
+			Assert.That(after, Is.EqualTo(before),
+				"the native menu renders what the mediator path rendered, writing systems included");
+		}
+
+		[Test]
+		public void MultiStringMenu_IsBuiltWithoutTheAdapterOrTheMediator()
+		{
+			UseHelpProvider(KnowsEveryTopic);
+			var field = OwnedMultiStringField();
+			// No EnsureAdapter: the hidden tree never exists.
+
+			var items = BuildWithSpy(LabelMenuIds(field),
+				m_view.CreateMenuAuthority(LabelMenuRequest(field, NoItem)), out var asked);
+
+			Assert.That(asked, Is.False, "nothing in a multi-string row's label menu reaches the mediator");
+			var writingSystems = FindItem(items, "Writing Systems");
+			Assert.That(writingSystems, Is.Not.Null);
+			var toggles = writingSystems.Children
+				.Where(c => c.Label != "Show all right now" && c.Label != "Configure...").ToList();
+			Assert.That(toggles, Is.Not.Empty, "the row's writing systems are offered");
+			Assert.That(toggles.Count(c => c.IsChecked), Is.GreaterThan(0), "the shown ones are checked");
+			Assert.That(toggles.Where(c => c.IsEnabled).Select(c => c.Execute), Is.All.Not.Null,
+				"an enabled toggle executes");
+			Assert.That(FindItem(items, "Show all right now")?.Execute, Is.Not.Null);
+			Assert.That(FindItem(items, "Configure...")?.Execute, Is.Not.Null);
 		}
 
 		// The per-object menu's native authority: Field Visibility, Move Field and Help answered
@@ -1417,6 +1524,9 @@ namespace SIL.FieldWorks.XWorks
 					"the stored op holds the set AFTER the uncheck, not the pre-click set");
 
 				// Re-check the same writing system on a freshly built menu: the ADD direction.
+				// The menu reads the row's stored selection, so take the row as the host's
+				// refresh recomposed it, override applied.
+				field = LexemeFormFieldWithOverrides();
 				writingSystems = BuildWritingSystemsSubmenu(field);
 				var reAdd = writingSystems.Children.Single(c => !c.IsSeparator && c.Label == toggled);
 				Assert.That(reAdd.IsChecked, Is.False, "the unchecked toggle stays unchecked");
@@ -1426,8 +1536,8 @@ namespace SIL.FieldWorks.XWorks
 
 				var restored = StoredWritingSystems(field);
 				TestContext.WriteLine("restored: " + string.Join(",", restored));
-				// Exact order matters: the property appends the re-checked writing system at the
-				// end, but the copy canonicalizes to option order so rows never reorder.
+				// Exact order matters: a toggle stores the set in option order, so rows never
+				// reorder when a writing system is re-checked.
 				Assert.That(restored, Is.EqualTo(new[] { "fr", "es" }),
 					"re-checking stores the restored set in option order");
 			}
@@ -1597,7 +1707,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			EnsureAdapter(field.ObjectHvo, field.Field);
 			var showAll = FindItem(BuildWritingSystemsSubmenu(field).Children, "Show all right now");
-			Assert.That(showAll, Is.Not.Null, "the intercepted reveal item must materialize");
+			Assert.That(showAll, Is.Not.Null, "the reveal item must materialize");
 			Assert.That(showAll.IsEnabled, Is.True);
 			Assert.That(showAll.Execute, Is.Not.Null);
 			showAll.Execute();
@@ -1767,6 +1877,22 @@ namespace SIL.FieldWorks.XWorks
 		private DetailField LexemeFormField()
 			=> FindLexemeFormRow(DetailComposer.Compose(m_entry, Cache).Model);
 
+		// The same row as the host composes it after a refresh: the project override applied.
+		private DetailField LexemeFormFieldWithOverrides()
+			=> FindLexemeFormRow(DetailComposer.Compose(m_entry, Cache,
+				overrides: (cls, layout) => GetOverrideStore().TryGet(cls, layout)).Model);
+
+		// A multi-string row bound to no menu of its own, or to the empty Help menu, so every id
+		// its label menu merges is owned once the multi-string group is.
+		private DetailField OwnedMultiStringField()
+		{
+			var field = DetailComposer.Compose(m_entry, Cache).Model.Fields.FirstOrDefault(f =>
+				f.IsMultiStringRow && f.ObjectHvo != 0
+				&& (string.IsNullOrEmpty(f.MenuId) || f.MenuId == ObjectMenuAuthority.HelpMenuId));
+			Assume.That(field, Is.Not.Null, "the fixture composes a multi-string row with an owned binding");
+			return field;
+		}
+
 		// The one locator for the Lexeme Form row (the MoForm's own Form field) in a composed
 		// model.
 		private DetailField FindLexemeFormRow(DetailModel model)
@@ -1797,9 +1923,11 @@ namespace SIL.FieldWorks.XWorks
 		private ViewDefinitionOverride ReadOverrideFor(DetailField field)
 			=> GetOverrideStore().TryGet(field.ClassName, field.LayoutName);
 
+		// The Writing Systems submenu as the host builds it: the multi-string group comes from
+		// its native authority, whatever the row's own menu id still needs.
 		private DetailMenuItem BuildWritingSystemsSubmenu(DetailField field)
 		{
-			var items = BuildItemsWithOverrideInterceptor(
+			var items = BuildAsTheHostDoes(
 				new[] { "mnuDataTree-LexemeForm", "mnuDataTree-MultiStringSlice" }, field);
 			var writingSystems = FindItem(items, "Writing Systems");
 			Assert.That(writingSystems, Is.Not.Null,

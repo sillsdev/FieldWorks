@@ -10,6 +10,7 @@ using System.Windows.Forms;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.FieldWorks.Common.FwUtils;
 using XCore;
+using SIL.FieldWorks.Common.Framework.DetailControls.Resources;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
 {
@@ -65,6 +66,10 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + " ******");
 			base.Dispose(disposing);
 		}
+
+		/// <summary>The dialog title for the field named <paramref name="fieldLabel"/>.</summary>
+		public static string TitleFor(string fieldLabel)
+			=> string.Format(DetailControlsStrings.ksSliceConfigureWssDlgTitle, fieldLabel);
 
 		/// <summary>
 		/// Gets the selected writing system.
