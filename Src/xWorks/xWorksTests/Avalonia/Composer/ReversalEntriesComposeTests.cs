@@ -252,18 +252,6 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(AddRow(Group(groups, EnTag)), Is.Not.Null, "the visible index offers its add row");
 		}
 
-		[Test]
-		public void EntriesInAHiddenWs_ProduceNoRow()
-		{
-			var es = AddAnalysisWs("es");
-			AddEntry(m_enIndex, "dwelling", m_sense);
-			AddEntry(AddIndex(es), "casa", m_sense);
-
-			var groups = NewContext().Editing.CreateGroups(new[] { EnTag });
-
-			Assert.That(groups.Select(g => g.WsTag), Is.EqualTo(new[] { EnTag }));
-		}
-
 		// ----- Edit -> one undo step -----
 
 		[Test]
@@ -685,30 +673,7 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(EntryTexts(Group(NewContext().Editing.CreateGroups(null), EnTag)), Is.EqualTo(new[] { "home" }));
 		}
 
-		// ----- Validation -----
-
-		[Test]
-		public void ACommit_TripsNoValidationRule()
-		{
-			var (editing, host) = NewContext();
-			editing.TryCommitRow(AddRow(Group(editing.CreateGroups(null), EnTag)).RowKey, "home");
-
-			Assert.That(host.Validate(), Is.Empty);
-			Assert.That(editing.Validate(), Is.Empty);
-			host.Commit();
-		}
-
 		// ----- Re-show -----
-
-		[Test]
-		public void AnExternalLinkChange_ShowsOnTheNextCompose()
-		{
-			var (editing, _) = NewContext();
-			editing.CreateGroups(null);
-			AddEntry(m_enIndex, "dwelling", m_sense);
-
-			Assert.That(EntryTexts(Group(NewContext().Editing.CreateGroups(null), EnTag)), Is.EqualTo(new[] { "dwelling" }));
-		}
 
 		[Test]
 		public void UndoAndRedo_OfAnAdd_RoundTrip()

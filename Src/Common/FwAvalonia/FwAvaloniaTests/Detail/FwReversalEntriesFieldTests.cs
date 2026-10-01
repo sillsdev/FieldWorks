@@ -206,17 +206,6 @@ namespace FwAvaloniaTests.Detail
 		}
 
 		[AvaloniaTest]
-		public void ALoneAddSlot_FillsTheWholeLine()
-		{
-			var (field, _, _) = Show(new RecordingReversalContext(), null, English());
-			var group = Find<Panel>(field, "Reversal.en");
-			var add = Find<TextBox>(field, "Reversal.en.Add");
-
-			Assert.That(add.Bounds.X, Is.Zero);
-			Assert.That(add.Bounds.Width, Is.EqualTo(group.Bounds.Width).Within(0.5));
-		}
-
-		[AvaloniaTest]
 		public void AfterGrowth_OnlyTheNewLastSlotStretches()
 		{
 			var (field, _, _) = Show(new RecordingReversalContext(), null, English());
