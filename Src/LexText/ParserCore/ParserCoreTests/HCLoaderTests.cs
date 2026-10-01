@@ -663,6 +663,42 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		}
 
 		[Test]
+		public void RepresentativeMSAs()
+		{
+			ILexEntry lexEntry = AddEntry(MoMorphTypeTags.kguidMorphSuffix, "ɯd", "gloss", new SandboxGenericMSA { MsaType = MsaType.kUnclassified, MainPOS = m_verb });
+			var senseFactory = Cache.ServiceLocator.GetInstance<ILexSenseFactory>();
+			var lexSense = senseFactory.Create();
+			lexEntry.SensesOS.Add(lexSense);
+			IMoUnclassifiedAffixMsa msa = Cache.ServiceLocator.GetInstance<IMoUnclassifiedAffixMsaFactory>().Create();
+			lexEntry.MorphoSyntaxAnalysesOC.Add(msa);
+			lexSense.MorphoSyntaxAnalysisRA = msa;
+			msa.PartOfSpeechRA = m_verb;
+
+			ILexEntry stemEntry = AddEntry(MoMorphTypeTags.kguidMorphStem, "a", "gloss", new SandboxGenericMSA { MsaType = MsaType.kStem });
+			var stemSense = senseFactory.Create();
+			stemEntry.SensesOS.Add(stemSense);
+			IMoStemMsa stemMsa = Cache.ServiceLocator.GetInstance<IMoStemMsaFactory>().Create();
+			stemEntry.MorphoSyntaxAnalysesOC.Add(stemMsa);
+			stemSense.MorphoSyntaxAnalysisRA = stemMsa;
+
+			m_loadErrors.Clear();
+			m_lang = HCLoader.Load(Cache, new TestHCLoadErrorLogger(m_loadErrors), out _);
+
+			Assert.That(m_lang.Strata[0].Entries.Count, Is.EqualTo(1));
+			Assert.That(m_lang.Strata[0].MorphologicalRules.Count, Is.EqualTo(1));
+			var rule = (AffixProcessRule)m_lang.Strata[0].MorphologicalRules[0];
+
+			Assert.That(rule.RequiredSyntacticFeatureStruct.ToString(), Is.EqualTo("[POS:V]"));
+			Assert.That(rule.Gloss, Is.EqualTo("gloss"));
+			Assert.That(rule.IsPartial, Is.True);
+
+			m_loadErrors.Clear();
+			m_lang = HCLoader.Load(Cache, new TestHCLoadErrorLogger(m_loadErrors));
+			Assert.That(m_lang.Strata[0].Entries.Count, Is.EqualTo(2));
+			Assert.That(m_lang.Strata[0].MorphologicalRules.Count, Is.EqualTo(2));
+		}
+
+		[Test]
 		public void AffixNoMorphTypeSet()
 		{
 			ILexEntry entry = AddEntry(MoMorphTypeTags.kguidMorphSuffix, "ɯd", "gloss", new SandboxGenericMSA { MsaType = MsaType.kUnclassified, MainPOS = m_verb });
