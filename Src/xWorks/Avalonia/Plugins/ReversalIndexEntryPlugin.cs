@@ -56,7 +56,8 @@ namespace SIL.FieldWorks.XWorks
 					: StringTable.Table.LocalizeAttributeValue(node.Label);
 				var automationId = node?.AutomationId ?? DefaultAutomationId;
 				var host = context.EditContext;
-				var editing = new ReversalDetailEditContext(cache, host, sense, label);
+				var editing = new ReversalDetailEditContext(cache, host, sense, label,
+					context.Render?.Cancel);
 				var groups = editing.CreateGroups(context.VisibleWritingSystems);
 				// The row's identity, which every rebuild of it shares.
 				var fieldId = "reversal/" + sense.Hvo;
@@ -125,17 +126,22 @@ namespace SIL.FieldWorks.XWorks
 		private readonly IDetailEditContext _host;
 		private readonly ILexSense _sense;
 		private readonly string _fieldLabel;
+		private readonly Action _cancelView;
 		private readonly Dictionary<string, RowBinding> _rows =
 			new Dictionary<string, RowBinding>(StringComparer.Ordinal);
 		private int _nextRowKey;
 
+		/// <param name="cancelView">The view's own cancel, which also re-shows it from the
+		/// model; null when there is no view, and a failed write then cancels the host's session
+		/// directly.</param>
 		public ReversalDetailEditContext(LcmCache cache, IDetailEditContext host, ILexSense sense,
-			string fieldLabel)
+			string fieldLabel, Action cancelView = null)
 		{
 			_cache = cache ?? throw new ArgumentNullException(nameof(cache));
 			_sense = sense ?? throw new ArgumentNullException(nameof(sense));
 			_host = host;
 			_fieldLabel = fieldLabel;
+			_cancelView = cancelView;
 		}
 
 		// The reversal index a row belongs to and the entry it shows; null is an add row.
@@ -303,11 +309,15 @@ namespace SIL.FieldWorks.XWorks
 			}
 			catch (Exception e)
 			{
-				// A session this call did not open keeps whatever the batch wrote before it
-				// threw, so the whole step closes rather than reaching the next save
-				// half-linked. The rows go back to the entries they showed.
+				// A session still open holds what the batch wrote before it threw. Cancelling it
+				// through the view also re-shows every field, none left showing rolled-back text.
 				if (_host != null && _host.IsOpen)
-					_host.Cancel();
+				{
+					if (_cancelView != null)
+						_cancelView();
+					else
+						_host.Cancel();
+				}
 				for (var i = 0; previous != null && i < changes.Count; i++)
 					changes[i].Binding.Entry = previous[i];
 				Logger.WriteError(e);

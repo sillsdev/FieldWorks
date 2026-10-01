@@ -31,9 +31,9 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		/// </summary>
 		/// <param name="edits">Row key to typed text, one pair per changed row.</param>
 		/// <returns>False, without opening the session, when no row changes or the sense no
-		/// longer exists; also false when the write fails, which is logged and closes the
-		/// session, edits and all, rather than leaving a half-written batch to be
-		/// saved.</returns>
+		/// longer exists; also false when the write fails, which is logged and cancels the
+		/// session, edits and all, the way the view's own cancel does, rather than leaving a
+		/// half-written batch to be saved.</returns>
 		bool TryCommitRows(IReadOnlyList<KeyValuePair<string, string>> edits);
 
 		/// <summary>Stages one row's text: a <see cref="TryCommitRows"/> of that single

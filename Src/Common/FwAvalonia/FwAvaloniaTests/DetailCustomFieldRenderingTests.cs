@@ -119,5 +119,31 @@ namespace FwAvaloniaTests
 			received(new DetailLinkRequest(null, new DetailChooserLink("Show", "someTool")));
 			Assert.That(requests, Has.Count.EqualTo(1), "the callback is the one the view was given");
 		}
+
+		// A plugin that cannot finish a write cancels through the view, not the session itself,
+		// so the host re-shows every field from the domain.
+		[AvaloniaTest]
+		public void CustomField_FactoryReceivesTheViewsCancel_WhichAlsoCompletesTheEdit()
+		{
+			Action cancel = null;
+			var model = Model(render =>
+			{
+				cancel = render.Cancel;
+				return new TextBlock { Text = "plugin" };
+			});
+			var context = new FakeDetailEditContext();
+			var view = new DataTree(model, editContext: context);
+			var completed = 0;
+			view.EditCompleted += (s, e) => completed++;
+			var window = new Window { Content = view, Width = 420, Height = 200 };
+			window.Show();
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(cancel, Is.Not.Null, "an editable view hands its controls a cancel");
+			cancel();
+
+			Assert.That(context.CancelCount, Is.EqualTo(1), "the view's session was cancelled");
+			Assert.That(completed, Is.EqualTo(1), "and the host is told to re-show");
+		}
 	}
 }

@@ -655,6 +655,57 @@ namespace SIL.FieldWorks.XWorks
 			=> field.GetLogicalDescendants().OfType<Avalonia.Controls.TextBox>()
 				.Single(box => box.Text == text);
 
+		// A context on the composed host whose view cancel is counted, and an add row in an index
+		// that is deleted before the row writes, so any batch through it fails.
+		private (ReversalDetailEditContext Editing, IDetailEditContext Host, string DoomedRow,
+			Func<int> ViewCancels) ContextWithADoomedRow()
+		{
+			var es = AddAnalysisWs("es");
+			var esIndex = AddIndex(es);
+			var host = DetailComposer.Compose(m_entry, Cache).EditContext;
+			var cancels = 0;
+			var editing = new ReversalDetailEditContext(Cache, host, m_sense, "Reversal Entries", () =>
+			{
+				cancels++;
+				host.Cancel();
+			});
+			var doomed = AddRow(Group(editing.CreateGroups(null), es.Id)).RowKey;
+			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor,
+				() => Cache.LanguageProject.LexDbOA.ReversalIndexesOC.Remove(esIndex));
+			return (editing, host, doomed, () => cancels);
+		}
+
+		// Cancelling through the view re-shows it, so no other field keeps showing text the
+		// cancel rolled back.
+		[Test]
+		public void AFailedBatch_InAnotherFieldsSession_CancelsThroughTheView()
+		{
+			var (editing, host, doomed, viewCancels) = ContextWithADoomedRow();
+			((DetailEditContextBase)host).Stage(() =>
+			{
+				m_sense.Gloss.set_String(EnWs, "seed");
+				return true;
+			}, "Gloss");
+
+			Assert.That(editing.TryCommitRow(doomed, "casa"), Is.False);
+
+			Assert.That(viewCancels(), Is.EqualTo(1), "the view cancelled, so it re-shows");
+			Assert.That(host.IsOpen, Is.False);
+		}
+
+		// With nothing else staged there is nothing stale to re-show, and a view cancel would
+		// only throw away whatever the user is still typing.
+		[Test]
+		public void AFailedBatch_WithNothingElseStaged_LeavesTheViewAlone()
+		{
+			var (editing, host, doomed, viewCancels) = ContextWithADoomedRow();
+
+			Assert.That(editing.TryCommitRow(doomed, "casa"), Is.False);
+
+			Assert.That(viewCancels(), Is.Zero);
+			Assert.That(host.IsOpen, Is.False, "no session is left open either way");
+		}
+
 		// A failed batch closes the session it wrote into, at the cost of the edit that opened
 		// it, rather than carrying half a batch to the next save.
 		[Test]

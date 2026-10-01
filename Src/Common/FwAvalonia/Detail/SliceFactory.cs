@@ -31,7 +31,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			IFwClipboard clipboard = null,
 			Action save = null,
 			bool showWritingSystemAbbreviation = true,
-			double? wsAbbrevColumnWidth = null)
+			double? wsAbbrevColumnWidth = null,
+			Action cancel = null)
 		{
 			EditContext = editContext;
 			WritingSystemFocused = writingSystemFocused;
@@ -39,6 +40,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			LinkRequested = linkRequested;
 			Clipboard = clipboard;
 			Save = save;
+			Cancel = cancel;
 			ShowWritingSystemAbbreviation = showWritingSystemAbbreviation;
 			WsAbbrevColumnWidth = wsAbbrevColumnWidth ?? FwAvaloniaDensity.WsAbbrevWidth;
 		}
@@ -67,6 +69,14 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		/// Enter/Tab through its own active-cell session), in which case the vector field just stages.
 		/// </summary>
 		public Action Save { get; }
+
+		/// <summary>
+		/// Cancels the view's open edit session and has the host re-show the view from the
+		/// domain, as Escape does. An editor that cannot finish a write calls this rather than
+		/// cancelling the session itself, so no field is left showing text the cancel rolled
+		/// back. Null on hosts that drive their own sessions.
+		/// </summary>
+		public Action Cancel { get; }
 
 		/// <summary>
 		/// Whether a multi-WS text field shows its per-WS abbreviation gutter. The detail pane shows it;
