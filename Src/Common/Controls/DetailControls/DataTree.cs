@@ -3,6 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using SIL.FieldWorks.Common.Controls;
+using SIL.FieldWorks.Common.DetailRules;
 using SIL.FieldWorks.Common.Framework.DetailControls.Resources;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
@@ -22,7 +23,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
-using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
@@ -4534,8 +4534,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				return false;
 			}
 
-			var fieldName = XmlUtils.GetOptionalAttributeValue(CurrentSlice.ConfigurationNode, "field");
-			if (String.IsNullOrEmpty(fieldName) || !fieldName.Equals("AnthroCodes"))
+			var fieldName = XmlUtils.GetOptionalAttributeValue(CurrentSlice?.ConfigurationNode, "field");
+			if (!AnthroItemFilterLink.Applies(fieldName))
 			{
 				display.Enabled = display.Visible = false;
 				return true;
@@ -4605,7 +4605,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// </summary>
 		public virtual bool OnJumpToLexiconEditFilterAnthroItems(object commandObject)
 		{
-			OnJumpToToolAndFilterAnthroItem("FilterAnthroItems", "lexiconEdit");
+			OnJumpToToolAndFilterAnthroItem("lexiconEdit");
 			return true;
 		}
 
@@ -4615,24 +4615,18 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// </summary>
 		public virtual bool OnJumpToNotebookEditFilterAnthroItems(object commandObject)
 		{
-			OnJumpToToolAndFilterAnthroItem("FilterAnthroItems", "notebookEdit");
+			OnJumpToToolAndFilterAnthroItem("notebookEdit");
 			return true;
 		}
 
-		private void OnJumpToToolAndFilterAnthroItem(string linkSetupInfo, string toolToJumpTo)
+		private void OnJumpToToolAndFilterAnthroItem(string toolToJumpTo)
 		{
 			var obj = ((CurrentSlice.Control as VectorReferenceLauncher).MainControl as VectorReferenceView).SelectedObject;
 			if (obj == null)
 				return;
-			var hvo = obj.Hvo;
-
-			FwLinkArgs link = new FwAppArgs(Cache.ProjectId.Handle, toolToJumpTo, Guid.Empty);
-			List<Property> additionalProps = link.PropertyTableEntries;
-			additionalProps.Add(new Property("SuspendLoadListUntilOnChangeFilter", link.ToolName));
-			additionalProps.Add(new Property("LinkSetupInfo", linkSetupInfo));
-			additionalProps.Add(new Property("HvoOfAnthroItem", hvo.ToString(CultureInfo.InvariantCulture)));
 #pragma warning disable 618 // suppress obsolete warning
-			m_mediator.PostMessage("FollowLink", link);
+			m_mediator.PostMessage("FollowLink",
+				AnthroItemFilterLink.Create(Cache.ProjectId.Handle, toolToJumpTo, obj.Hvo));
 #pragma warning restore 618
 		}
 
