@@ -894,6 +894,56 @@ namespace FwAvaloniaTests.Detail
 			Assert.That(box.IsFocused, Is.True);
 		}
 
+		private static void PressKey(Window window, PhysicalKey key,
+			RawInputModifiers modifiers = RawInputModifiers.None)
+		{
+			window.KeyPressQwerty(key, modifiers);
+			Dispatcher.UIThread.RunJobs();
+		}
+
+		private static int DrawnCaret(TextBox box)
+			=> box.GetVisualDescendants().OfType<Avalonia.Controls.Presenters.TextPresenter>().First().CaretIndex;
+
+		private static void AssertCaret(TextBox box, int caret, string because)
+		{
+			var state = $"{because} (caret {box.CaretIndex}, drawn {DrawnCaret(box)}, "
+				+ $"selection {box.SelectionStart}..{box.SelectionEnd}, focused {box.IsFocused})";
+			Assert.That(box.IsFocused, Is.True, state);
+			Assert.That(DrawnCaret(box), Is.EqualTo(caret), state);
+			Assert.That(box.CaretIndex, Is.EqualTo(caret), state);
+			Assert.That(box.SelectionStart, Is.EqualTo(box.SelectionEnd), state);
+		}
+
+		// A keyboard selection draws the caret at its moving end, and the arrows that follow
+		// must work from there, wherever the text box keeps its own caret index meanwhile.
+		[AvaloniaTest]
+		public void AfterAKeyboardSelection_ArrowsMoveFromWhereTheCaretIsDrawn()
+		{
+			var (field, _, window) = Show(new RecordingReversalContext(), null,
+				English("dwelling"), French("maison"));
+			var word = Find<TextBox>(field, "Reversal.en.0");
+			var below = Find<TextBox>(field, "Reversal.fr.0");
+			PlaceCaret(word, "dwelling".Length);
+
+			PressKey(window, PhysicalKey.ArrowLeft, RawInputModifiers.Control | RawInputModifiers.Shift);
+			Assert.That(word.SelectedText, Is.EqualTo("dwelling"), "precondition: the word is selected");
+
+			PressKey(window, PhysicalKey.ArrowDown);
+			AssertCaret(word, 0, "Down collapses the selection where the caret is drawn, and stays");
+
+			PressKey(window, PhysicalKey.ArrowDown);
+			AssertCaret(below, 0, "the line below is entered under the caret, not under the word's end");
+
+			PressKey(window, PhysicalKey.ArrowUp);
+			AssertCaret(word, 0, "Up comes back to the same place");
+
+			PressKey(window, PhysicalKey.ArrowRight);
+			AssertCaret(word, 1, "Right moves within the word, since the caret is at its start");
+
+			PressKey(window, PhysicalKey.ArrowLeft);
+			AssertCaret(word, 0, "Left moves back within the word");
+		}
+
 		[AvaloniaTest]
 		public void AModifiedArrow_RestartsThePositionUpAndDownNavigateBy()
 		{

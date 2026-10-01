@@ -515,7 +515,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				}
 				var toward = (e.Key == Key.Left) != rightToLeft ? -1 : 1;
 				var length = (editor.Text ?? string.Empty).Length;
-				if (toward < 0 ? editor.CaretIndex != 0 : editor.CaretIndex != length)
+				var caret = DrawnCaret(editor);
+				if (toward < 0 ? caret != 0 : caret != length)
 					return;
 
 				var slots = SlotEditors();
@@ -607,7 +608,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			if (layout == null)
 				return null;
 			var length = (editor.Text ?? string.Empty).Length;
-			var caret = layout.HitTestTextPosition(Math.Min(Math.Max(editor.CaretIndex, 0), length));
+			var caret = layout.HitTestTextPosition(Math.Min(Math.Max(DrawnCaret(editor), 0), length));
 			return presenter.TranslatePoint(new Point(caret.X, 0), this)?.X;
 		}
 
@@ -634,6 +635,11 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 
 		private static TextPresenter SlotPresenter(TextBox editor)
 			=> editor?.GetVisualDescendants().OfType<TextPresenter>().FirstOrDefault();
+
+		// Where the caret is drawn. A keyboard selection draws it at its moving end but leaves
+		// the text box's own caret index at the anchor, so that index can lag behind.
+		private static int DrawnCaret(TextBox editor)
+			=> SlotPresenter(editor)?.CaretIndex ?? editor.CaretIndex;
 
 		// Home goes to the start of the first slot on the editor's visual line, End to the end of
 		// the last; the group's wrap panel puts every slot of one line at the same top.
@@ -663,14 +669,16 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		private static bool IsArrow(Key key)
 			=> key == Key.Left || key == Key.Right || key == Key.Up || key == Key.Down;
 
-		// The caret lands at the end of the selection the arrow points at: its start for Up
-		// and Left, its end for Down and Right, mirrored in a right-to-left group.
+		// Up and Down leave the caret where it is drawn, so the next press moves from there. Left
+		// and Right land on the end they point at, mirrored in a right-to-left group.
 		private static void CollapseSelection(TextBox editor, Key key, bool rightToLeft)
 		{
-			var toStart = key == Key.Up || key == Key.Down
-				? key == Key.Up
-				: (key == Key.Left) != rightToLeft;
-			SetCaret(editor, toStart
+			if (key == Key.Up || key == Key.Down)
+			{
+				SetCaret(editor, DrawnCaret(editor));
+				return;
+			}
+			SetCaret(editor, (key == Key.Left) != rightToLeft
 				? Math.Min(editor.SelectionStart, editor.SelectionEnd)
 				: Math.Max(editor.SelectionStart, editor.SelectionEnd));
 		}
@@ -680,6 +688,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			target.CaretIndex = caret;
 			target.SelectionStart = caret;
 			target.SelectionEnd = caret;
+			// Setting the index the text box already holds leaves the drawn caret where it was.
+			SlotPresenter(target)?.MoveCaretToTextPosition(caret, false);
 		}
 
 		// A slot is its editor, or a panel holding the editor and its read-only suffix.
