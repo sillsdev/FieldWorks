@@ -586,11 +586,6 @@ try {
 		# Clean stale per-project obj/ folders
 		Remove-StaleObjFolders -RepoRoot $PSScriptRoot
 
-		# nmake rebuilds objects only for changed source files, never for changed headers.
-		if (-not $SkipNative -and -not $InstallerOnly) {
-			[void](Remove-NativeObjDirsWithStaleInputs -RepoRoot $PSScriptRoot -Configuration $Configuration)
-		}
-
 		$normalizedProjectPath = [System.IO.Path]::GetFullPath($projectPath)
 		$testViewsProjectPath = [System.IO.Path]::GetFullPath((Join-Path $PSScriptRoot 'Src\views\Test\TestViews.vcxproj'))
 		if (-not $SkipNative -and ($normalizedProjectPath -eq $testViewsProjectPath) -and (Test-ViewsNativeArtifactsStale -RepoRoot $PSScriptRoot -Configuration $Configuration)) {

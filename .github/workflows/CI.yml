@@ -65,7 +65,8 @@ jobs:
           Build\Agent\TokenHygiene.Tests.ps1
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
-      # build.ps1 runs this native-object staleness check under either engine.
+      # The native build runs this staleness check under Windows PowerShell 5.1;
+      # FwBuildHelpers.psm1 itself loads under either engine.
       - name: Native object staleness tests (PowerShell 7)
         id: native-obj-staleness-tests-pwsh
         shell: pwsh

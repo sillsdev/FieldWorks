@@ -69,7 +69,19 @@
 			ExcludedClsids="@(ExcludedClsids)"
 		/>
 	</Target>
-	<Target Name="DebugProcs" DependsOnTargets="initWindows;CopyDlls">
+	<!-- nmake rebuilds objects only for changed source files, never for changed headers.
+		Runs after CopyDlls has copied restored headers into the tree. -->
+	<Target
+		Name="RemoveStaleNativeObjects"
+		DependsOnTargets="initWindows;CopyDlls"
+		Condition="'$(OS)'=='Windows_NT' AND '$(SkipNative)'!='true'"
+	>
+		<Exec
+			Command="powershell -NoProfile -ExecutionPolicy Bypass -File &quot;$(fwrt)\Build\Agent\Remove-StaleNativeObjects.ps1&quot; -RepoRoot &quot;$(fwrt)&quot; -Configuration &quot;$(config-capital)&quot;"
+			StandardOutputImportance="high"
+		/>
+	</Target>
+	<Target Name="DebugProcs" DependsOnTargets="initWindows;CopyDlls;RemoveStaleNativeObjects">
 		<Make
 			Condition="'$(OS)'=='Windows_NT' AND '$(SkipNative)'!='true'"
 			Makefile="$(fwrt)\Src\DebugProcs\DebugProcs.mak"
