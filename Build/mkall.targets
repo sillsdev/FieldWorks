@@ -70,10 +70,10 @@
 		/>
 	</Target>
 	<!-- nmake rebuilds objects only for changed source files, never for changed headers.
-		Runs after CopyDlls has copied restored headers into the tree. -->
+		Runs after restored and generated headers are in place. -->
 	<Target
 		Name="RemoveStaleNativeObjects"
-		DependsOnTargets="initWindows;CopyDlls"
+		DependsOnTargets="initWindows;CopyDlls;GenerateCellarConstants"
 		Condition="'$(OS)'=='Windows_NT' AND '$(SkipNative)'!='true'"
 	>
 		<Exec
@@ -205,25 +205,33 @@
 		TaskName="LcmGenerate"
 		AssemblyFile="$(LcmBuildTasksDir)/SIL.LCModel.Build.Tasks.dll"
 	/>
-	<ItemGroup>
-		<CellarConstantsInputs Include="$(LcmModelArtifactsDir)/MasterLCModel.xml" />
-		<CellarConstantsInputs Include="$(fwrt)/Src/Kernel/CellarConstants.vm.h" />
-		<CellarConstantsOutputs Include="$(dir-fwoutputCommon)/CellarConstants.h" />
-	</ItemGroup>
+	<!-- Regenerates every build: NuGet keeps package file dates, so a newer model can look older
+		than the header. Copying only changed content keeps the header date meaningful. -->
 	<Target
 		Name="GenerateCellarConstants"
 		DependsOnTargets="CopyCellarBaseConstants;CopyDlls"
-		Inputs="@(CellarConstantsInputs)"
-		Outputs="@(CellarConstantsOutputs)"
 	>
-		<MakeDir Directories="$(dir-fwoutputCommon)" Condition="'$(action)'!='clean'" />
+		<PropertyGroup>
+			<CellarConstantsStagingDir>$(dir-fwobj)\$(config-capital)\CellarConstants</CellarConstantsStagingDir>
+			<CellarConstantsStaged>$(CellarConstantsStagingDir)\CellarConstants.h</CellarConstantsStaged>
+			<CellarConstantsHeader>$(dir-fwoutputCommon)\CellarConstants.h</CellarConstantsHeader>
+		</PropertyGroup>
+		<MakeDir
+			Directories="$(dir-fwoutputCommon);$(CellarConstantsStagingDir)"
+			Condition="'$(action)'!='clean'"
+		/>
 		<LcmGenerate
 			XmlFile="$(LcmModelArtifactsDir)/MasterLCModel.xml"
-			OutputDir="$(dir-fwoutputCommon)"
+			OutputDir="$(CellarConstantsStagingDir)"
 			OutputFile="CellarConstants.h"
 			TemplateFile="$(fwrt)/Src/Kernel/CellarConstants.vm.h"
 			WorkingDirectory="$(LcmModelArtifactsDir)/"
 			Condition="'$(action)'!='clean'"
+		/>
+		<Copy
+			SourceFiles="$(CellarConstantsStaged)"
+			DestinationFolder="$(dir-fwoutputCommon)"
+			Condition="'$(action)'!='clean' AND (!Exists('$(CellarConstantsHeader)') OR '$([System.IO.File]::ReadAllText($(CellarConstantsStaged)))' != '$([System.IO.File]::ReadAllText($(CellarConstantsHeader)))')"
 		/>
 	</Target>
 	<Target

@@ -609,29 +609,37 @@ function Get-NativeMakefileModules {
 	.DESCRIPTION
 		Each entry names the module's folder under Obj\<Configuration> and the repo-relative
 		directories, scanned without recursion, whose headers and makefiles feed its
-		objects. The directories mirror the module makefile's UI include list plus the
-		shared Include and Bld folders; a directory missing here leaves edits to its
-		headers undetected for that module.
+		objects. InputDirs covers the module makefile's UI include list, the folders its
+		sources reach through path-qualified includes, and the shared Include and Bld
+		folders. GeneratedDirs holds build-output folders as format strings taking the
+		configuration name; they exist only after a build. A directory missing from either
+		list leaves edits to its headers undetected for that module.
 	#>
 	$shared = @('Include', 'Include\unicode', 'Bld')
+	$generated = @('Output\{0}\Common')
 	return @(
 		[pscustomobject]@{
 			Name = 'Views'
 			InputDirs = @('Src\views', 'Src\views\lib', 'Src\Generic', 'Src\AppCore',
-				'Src\DebugProcs', 'Src\Kernel', 'Lib\src\graphite2\include\graphite2') + $shared
+				'Src\AppCore\Res', 'Src\Cellar', 'Src\DebugProcs', 'Src\Kernel',
+				'Lib\src\graphite2\include\graphite2') + $shared
+			GeneratedDirs = $generated
 		},
 		[pscustomobject]@{
 			Name = 'FwKernel'
 			InputDirs = @('Src\Kernel', 'Src\Generic', 'Src\AppCore', 'Src\DebugProcs',
 				'Src\Cellar') + $shared
+			GeneratedDirs = $generated
 		},
 		[pscustomobject]@{
 			Name = 'Generic'
 			InputDirs = @('Src\Generic') + $shared
+			GeneratedDirs = $generated
 		},
 		[pscustomobject]@{
 			Name = 'DebugProcs'
 			InputDirs = @('Src\DebugProcs') + $shared
+			GeneratedDirs = @()
 		}
 	)
 }
@@ -662,6 +670,9 @@ function Remove-NativeObjDirsWithStaleInputs {
 	)
 
 	$inputPatterns = @('*.h', '*.hpp', '*.inl', '*.idh', '*.mak')
+	# bldinc.h holds only version stamps that local builds regenerate daily; a stale copy in
+	# an object changes no layout.
+	$ignoredInputs = @('bldinc.h')
 	$removed = New-Object System.Collections.Generic.List[string]
 
 	foreach ($module in $Modules) {
@@ -680,14 +691,24 @@ function Remove-NativeObjDirsWithStaleInputs {
 			continue
 		}
 
+		$relativeDirs = @($module.InputDirs)
+		if ($module.PSObject.Properties['GeneratedDirs']) {
+			foreach ($format in $module.GeneratedDirs) {
+				$relativeDirs += ($format -f $Configuration)
+			}
+		}
+
 		$newestInput = $null
-		foreach ($relativeDir in $module.InputDirs) {
+		foreach ($relativeDir in $relativeDirs) {
 			$inputDir = Join-Path $RepoRoot $relativeDir
 			if (-not (Test-Path -LiteralPath $inputDir -PathType Container)) {
 				continue
 			}
 			foreach ($pattern in $inputPatterns) {
 				foreach ($file in ([System.IO.DirectoryInfo]$inputDir).EnumerateFiles($pattern, [System.IO.SearchOption]::TopDirectoryOnly)) {
+					if ($ignoredInputs -contains $file.Name) {
+						continue
+					}
 					if ($null -eq $newestInput -or $file.LastWriteTimeUtc -gt $newestInput.LastWriteTimeUtc) {
 						$newestInput = $file
 					}

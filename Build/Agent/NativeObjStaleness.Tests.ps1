@@ -16,7 +16,11 @@ Import-Module (Join-Path $PSScriptRoot 'FwBuildHelpers.psm1') -Force
 $failures = New-Object System.Collections.ArrayList
 $old = [datetime]::new(2026, 9, 2, 12, 0, 0, [System.DateTimeKind]::Utc)
 $new = $old.AddDays(28)
-$modules = @([pscustomobject]@{ Name = 'Mod'; InputDirs = @('Src\mod', 'Include') })
+$modules = @([pscustomobject]@{
+	Name = 'Mod'
+	InputDirs = @('Src\mod', 'Include')
+	GeneratedDirs = @('Output\{0}\Common')
+})
 
 function New-Fixture {
 	$root = Join-Path ([System.IO.Path]::GetTempPath()) ("NativeObjFixture_" + [System.Guid]::NewGuid().ToString('N'))
@@ -108,6 +112,25 @@ Assert-Removal 'object-folder-without-objects' {
 	Set-FixtureFile $r 'Src\mod\Layout.h' $new
 } $false
 
+Assert-Removal 'generated-header-newer' {
+	param($r)
+	Set-FixtureFile $r 'Obj\Debug\Mod\autopch\A.obj' $old
+	Set-FixtureFile $r 'Output\Debug\Common\CellarConstants.h' $new
+} $true
+
+# Generated folders are per configuration; another configuration's output must not count.
+Assert-Removal 'other-configuration-generated-header-newer' {
+	param($r)
+	Set-FixtureFile $r 'Obj\Debug\Mod\autopch\A.obj' $old
+	Set-FixtureFile $r 'Output\Release\Common\CellarConstants.h' $new
+} $false
+
+Assert-Removal 'only-version-stamp-header-newer' {
+	param($r)
+	Set-FixtureFile $r 'Obj\Debug\Mod\autopch\A.obj' $old
+	Set-FixtureFile $r 'Output\Debug\Common\bldinc.h' $new
+} $false
+
 function Invoke-WithLockedFile {
 	param([string] $Name, [string] $LockedRelativePath, [bool] $ExpectThrow)
 
@@ -154,6 +177,34 @@ foreach ($module in (Get-NativeMakefileModules)) {
 	foreach ($dir in $module.InputDirs) {
 		if (-not (Test-Path -LiteralPath (Join-Path $repoRoot $dir) -PathType Container)) {
 			[void]$failures.Add("FAIL [real-module-dirs]: $($module.Name) lists missing folder '$dir'")
+		}
+	}
+}
+
+# A path-qualified include such as "../Cellar/FwXml.h" bypasses the makefile's include list, so
+# the folder it reaches must be listed for every module that scans the including file.
+foreach ($module in (Get-NativeMakefileModules)) {
+	$listed = @($module.InputDirs | ForEach-Object { [System.IO.Path]::GetFullPath((Join-Path $repoRoot $_)).TrimEnd('\') })
+	foreach ($dir in $module.InputDirs) {
+		$fullDir = Join-Path $repoRoot $dir
+		foreach ($source in (Get-ChildItem -LiteralPath $fullDir -File -ErrorAction SilentlyContinue |
+				Where-Object { $_.Extension -in @('.cpp', '.c', '.h', '.hpp', '.inl') })) {
+			foreach ($match in (Select-String -LiteralPath $source.FullName -Pattern '^\s*#\s*include\s+"([^"]*[\\/][^"]*)"' -AllMatches)) {
+				$includePath = $match.Matches[0].Groups[1].Value
+				$target = Join-Path $source.DirectoryName $includePath
+				if (-not (Test-Path -LiteralPath $target -PathType Leaf)) {
+					# Leading ..\ segments may climb from a deeper include folder.
+					$target = Join-Path $repoRoot ($includePath -replace '^([.][.][\\/])+', '')
+				}
+				if (-not (Test-Path -LiteralPath $target -PathType Leaf)) {
+					continue
+				}
+				$targetDir = [System.IO.Path]::GetDirectoryName([System.IO.Path]::GetFullPath($target)).TrimEnd('\')
+				if ($listed -notcontains $targetDir) {
+					$relativeSource = $source.FullName.Substring($repoRoot.Length + 1)
+					[void]$failures.Add("FAIL [real-module-includes]: $($module.Name) scans $relativeSource, which includes a header in unlisted folder '$targetDir'")
+				}
+			}
 		}
 	}
 }
