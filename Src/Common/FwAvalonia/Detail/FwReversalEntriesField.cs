@@ -858,6 +858,13 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			foreach (var detach in _teardown)
 				detach();
 			_teardown.Clear();
+			Disposed?.Invoke(this, EventArgs.Empty);
 		}
+
+		/// <summary>
+		/// Raised once, when the field is disposed, so anything that registered it elsewhere,
+		/// such as a pending-edit flush on the host, can let it go.
+		/// </summary>
+		public event EventHandler Disposed;
 	}
 }

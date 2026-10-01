@@ -647,6 +647,23 @@ namespace SIL.FieldWorks.XWorks
 				Is.EqualTo(new[] { "abode" }), "only the control the row shows now writes its text");
 		}
 
+		// Collapsing a section disposes the row's control without building a replacement, so its
+		// registration goes with it -- but never one a rebuild has since put in its place.
+		[Test]
+		public void ADisposedField_LetsGoOfOnlyItsOwnRegistration()
+		{
+			AddEntry(m_enIndex, "dwelling", m_sense);
+			var host = (DetailEditContextBase)DetailComposer.Compose(m_entry, Cache).EditContext;
+			var replaced = BuildReversalField(host);
+			var live = BuildReversalField(host);
+
+			replaced.Dispose();
+			Assert.That(host.PendingEditFlushCount, Is.EqualTo(1), "the live control's registration stays");
+
+			live.Dispose();
+			Assert.That(host.PendingEditFlushCount, Is.Zero, "a disposed control leaves nothing behind");
+		}
+
 		private FwReversalEntriesField BuildReversalField(IDetailEditContext host)
 			=> (FwReversalEntriesField)new ReversalIndexEntryPlugin().BuildControl(
 				new SlicePluginBuildContext(m_sense, null, () => host, Cache));

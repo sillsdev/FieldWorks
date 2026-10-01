@@ -94,7 +94,14 @@ namespace SIL.FieldWorks.XWorks
 					context.Render?.WsAbbrevColumnWidth);
 				// The field stages only when focus leaves it, so the host's save asks it for what
 				// it holds. The row's own id as the key drops the control a rebuild replaced.
-				(host as DetailEditContextBase)?.AddPendingEditFlush(fieldId, control.CommitPendingEdits);
+				var fenced = host as DetailEditContextBase;
+				if (fenced != null)
+				{
+					Action flush = control.CommitPendingEdits;
+					fenced.AddPendingEditFlush(fieldId, flush);
+					// Collapsing the row's section disposes the control without a replacement.
+					control.Disposed += (s, e) => fenced.RemovePendingEditFlush(fieldId, flush);
+				}
 				return control;
 			}
 			catch (Exception e)

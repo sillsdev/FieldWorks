@@ -79,8 +79,18 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 		/// <summary>Swaps the hosted Avalonia content and shows the control.</summary>
 		protected void SetHostContent(Avalonia.Controls.Control content)
 		{
-			Host.Content = content;
+			ReplaceContent(content);
 			Show();
+		}
+
+		// Every swap builds new content, so the outgoing content is never shown again. It is
+		// disposed only once out of the host, so a focus loss its removal raises still lands.
+		private void ReplaceContent(Avalonia.Controls.Control content)
+		{
+			var outgoing = Host.Content;
+			Host.Content = content;
+			if (!ReferenceEquals(outgoing, content))
+				(outgoing as IDisposable)?.Dispose();
 		}
 
 		/// <summary>The current Avalonia content, or null.</summary>
@@ -126,6 +136,10 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 					_companionStrip.Controls.RemoveAt(i);
 				}
 			}
+			// An owner settles its edit session before disposing this control, so disposing the
+			// content only releases its editors.
+			if (disposing)
+				(Host?.Content as IDisposable)?.Dispose();
 			base.Dispose(disposing);
 		}
 
@@ -180,7 +194,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 
 		public void ShowMessage(string message)
 		{
-			Host.Content = new Avalonia.Controls.TextBlock { Text = message ?? string.Empty };
+			ReplaceContent(new Avalonia.Controls.TextBlock { Text = message ?? string.Empty });
 			Show();
 		}
 

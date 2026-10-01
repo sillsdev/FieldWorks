@@ -8,6 +8,7 @@ using System.Linq;
 using Avalonia.Automation;
 using Avalonia.Controls;
 using Avalonia.Headless.NUnit;
+using Avalonia.Interactivity;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
 using NUnit.Framework;
@@ -118,6 +119,53 @@ namespace FwAvaloniaTests
 			Assert.That(received, Is.Not.Null, "the plugin can reach the host's jump");
 			received(new DetailLinkRequest(null, new DetailChooserLink("Show", "someTool")));
 			Assert.That(requests, Has.Count.EqualTo(1), "the callback is the one the view was given");
+		}
+
+		// A collapse rebuilds the rows with new editors, so the ones it removes are disposed, and
+		// expanding again builds fresh ones rather than reviving them.
+		[AvaloniaTest]
+		public void CollapsingASection_DisposesTheEditorsItRemoves()
+		{
+			var built = new List<DisposalSpy>();
+			var model = new DetailModel("LexEntry", "Normal", new List<DetailField>
+				{
+					new DetailField("h", "Sense 1", null, null, DetailFieldKind.Header,
+						EditorClassification.GroupingNone, null, null, HostRouting.Inherit, null, null, null,
+						isEditable: false, indent: 0, isCollapsible: true, isInitiallyExpanded: true),
+					new DetailField("c", "Messages", "Self", null, DetailFieldKind.Custom,
+						EditorClassification.Dynamic, null, null, HostRouting.Product, null, null, null,
+						isEditable: true, indent: 1, controlFactory: _ =>
+						{
+							var spy = new DisposalSpy();
+							built.Add(spy);
+							return spy;
+						})
+				},
+				new List<ViewDiagnostic>());
+			var view = Show(model);
+			var header = view.GetVisualDescendants().OfType<Button>()
+				.First(b => AutomationProperties.GetAutomationId(b) == "h");
+
+			header.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+			Dispatcher.UIThread.RunJobs();
+			Assert.That(built.Single().Disposals, Is.EqualTo(1), "the collapse disposed the editor it removed");
+
+			header.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+			Dispatcher.UIThread.RunJobs();
+			Assert.That(built, Has.Count.EqualTo(2), "expanding builds a fresh editor");
+			Assert.That(built[1].Disposals, Is.Zero, "and leaves the one it shows alone");
+		}
+
+		[AvaloniaTest]
+		public void DisposingTheView_DisposesEachOfItsEditorsOnce()
+		{
+			var spy = new DisposalSpy();
+			var view = Show(Model(_ => spy));
+
+			view.Dispose();
+			view.Dispose();
+
+			Assert.That(spy.Disposals, Is.EqualTo(1));
 		}
 
 		// A plugin that cannot finish a write cancels through the view, not the session itself,

@@ -119,6 +119,24 @@ namespace SIL.FieldWorks.XWorks
 			_pendingEditFlushes[ownerKey] = flush;
 		}
 
+		/// <summary>The count of registered pending-edit flushes, one per live row.</summary>
+		internal int PendingEditFlushCount => _pendingEditFlushes.Count;
+
+		/// <summary>
+		/// Drops <paramref name="flush"/> from <paramref name="ownerKey"/>, for an editor that is
+		/// gone. A later registration under the same key -- the rebuild that replaced the
+		/// editor -- is left in place.
+		/// </summary>
+		public void RemovePendingEditFlush(string ownerKey, Action flush)
+		{
+			Action registered;
+			if (!string.IsNullOrEmpty(ownerKey) && _pendingEditFlushes.TryGetValue(ownerKey, out registered)
+				&& registered == flush)
+			{
+				_pendingEditFlushes.Remove(ownerKey);
+			}
+		}
+
 		/// <summary>
 		/// Stages whatever the registered editors are holding back, possibly opening the session.
 		/// A save calls this first, before it checks whether a session is open.
