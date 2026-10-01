@@ -97,15 +97,18 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			var trace = new XElement("CompoundingRuleAnalysisTrace",
 				CreateMorphologicalRuleElement(rule));
 			var crule = rule as CompoundingRule;
-			if (crule != null)
+			var stemProdRestricts = obj as MprFeatureSet;
+			if (reason == FailureReason.NonHeadProdRestrictMprFeatures
+				&& crule != null && stemProdRestricts != null)
 			{
-				var stremProdRestricts = obj as MprFeatureSet;
-				if (stremProdRestricts != null)
-				{
-					trace.Add(new XElement("FailureReason", new XAttribute("type", "missingProdRestrict"),
-						new XElement("StemProdRestricts", stremProdRestricts.Select(f => new XElement("MprFeature", f))),
-						new XElement("RuleProdRestricts", crule.NonHeadProdRestrictionsMprFeatures.Select(f => new XElement("MprFeature", f)))));
-				}
+				trace.Add(new XElement("FailureReason", new XAttribute("type", "missingProdRestrict"),
+					new XElement("StemProdRestricts", stemProdRestricts.Select(f => new XElement("MprFeature", f))),
+					new XElement("RuleProdRestricts", crule.NonHeadProdRestrictionsMprFeatures.Select(f => new XElement("MprFeature", f)))));
+			}
+			else
+			{
+				trace.Add(new XElement("FailureReason", new XAttribute("type", "unknown"),
+					new XElement("Code", reason)));
 			}
 			trace.Add(new XElement("Output", "*None*"));
 			((XElement)input.CurrentTrace).Add(trace);
@@ -297,9 +300,9 @@ namespace SIL.FieldWorks.WordWorks.Parser
 						if (env != null)
 							reasonElem.Add(new XElement("Environment", env));
 						if (prefixEnv != null)
-							reasonElem.Add(new XElement("Environment", env));
+							reasonElem.Add(new XElement("Environment", prefixEnv));
 						if (suffixEnv != null)
-							reasonElem.Add(new XElement("Environment", env));
+							reasonElem.Add(new XElement("Environment", suffixEnv));
 						trace.Add(reasonElem);
 					}
 					else
@@ -328,6 +331,10 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 		public void Blocked(IHCRule rule, Word output)
 		{
+			((XElement) output.CurrentTrace).Add(new XElement("BlockedTrace",
+				CreateHCRuleElement("Rule", rule),
+				new XElement("BlockingEntry", CreateAllomorphElement(output.RootAllomorph)),
+				CreateWordElement("Output", output, false)));
 		}
 
 		public void Successful(Language lang, Word word)
@@ -365,7 +372,8 @@ namespace SIL.FieldWorks.WordWorks.Parser
 					trace = CreateParseCompleteElement(word,
 						new XElement("FailureReason", new XAttribute("type", "environment"),
 							CreateAllomorphElement(allomorph),
-							new XElement("Environment", failureObj)));
+							((IEnumerable<AllomorphEnvironment>) failureObj)
+								.Select(env => new XElement("Environment", env))));
 					break;
 
 				case FailureReason.SurfaceFormMismatch:
