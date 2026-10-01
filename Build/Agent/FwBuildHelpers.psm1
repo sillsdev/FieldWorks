@@ -601,6 +601,115 @@ function Test-ViewsNativeArtifactsStale {
     return $latestSource -gt $oldestArtifact
 }
 
+function Get-NativeMakefileModules {
+	<#
+	.SYNOPSIS
+		Returns the nmake-built native modules with the directories whose headers each one
+		compiles against.
+	.DESCRIPTION
+		Each entry names the module's folder under Obj\<Configuration> and the repo-relative
+		directories, scanned without recursion, whose headers and makefiles feed its
+		objects. The directories mirror the module makefile's UI include list plus the
+		shared Include and Bld folders; a directory missing here leaves edits to its
+		headers undetected for that module.
+	#>
+	$shared = @('Include', 'Include\unicode', 'Bld')
+	return @(
+		[pscustomobject]@{
+			Name = 'Views'
+			InputDirs = @('Src\views', 'Src\views\lib', 'Src\Generic', 'Src\AppCore',
+				'Src\DebugProcs', 'Src\Kernel', 'Lib\src\graphite2\include\graphite2') + $shared
+		},
+		[pscustomobject]@{
+			Name = 'FwKernel'
+			InputDirs = @('Src\Kernel', 'Src\Generic', 'Src\AppCore', 'Src\DebugProcs',
+				'Src\Cellar') + $shared
+		},
+		[pscustomobject]@{
+			Name = 'Generic'
+			InputDirs = @('Src\Generic') + $shared
+		},
+		[pscustomobject]@{
+			Name = 'DebugProcs'
+			InputDirs = @('Src\DebugProcs') + $shared
+		}
+	)
+}
+
+function Remove-NativeObjDirsWithStaleInputs {
+	<#
+	.SYNOPSIS
+		Deletes a native module's intermediate folder when any header or makefile it builds
+		from is newer than its oldest object file.
+	.DESCRIPTION
+		The nmake rules in Bld rebuild an object only when its own source file changes, so a
+		header edit leaves every unedited file that includes it compiled against the old
+		header. When a class changes size that way, objects disagree about its layout and the
+		program corrupts memory at runtime. Deleting the module's Obj folder makes the next
+		native build compile all of it.
+
+		The check is coarse by design: any newer input rebuilds the whole module, including
+		files that never include the changed header.
+	.PARAMETER Modules
+		Module entries shaped like Get-NativeMakefileModules output. Defaults to that list.
+	.OUTPUTS
+		The names of the modules whose folders were removed.
+	#>
+	param(
+		[Parameter(Mandatory)][string]$RepoRoot,
+		[Parameter(Mandatory)][string]$Configuration,
+		[object[]]$Modules = (Get-NativeMakefileModules)
+	)
+
+	$inputPatterns = @('*.h', '*.hpp', '*.inl', '*.idh', '*.mak')
+	$removed = New-Object System.Collections.Generic.List[string]
+
+	foreach ($module in $Modules) {
+		$objDir = Join-Path $RepoRoot (Join-Path "Obj\$Configuration" $module.Name)
+		if (-not (Test-Path -LiteralPath $objDir -PathType Container)) {
+			continue
+		}
+
+		$oldestObj = $null
+		foreach ($obj in ([System.IO.DirectoryInfo]$objDir).EnumerateFiles('*.obj', [System.IO.SearchOption]::AllDirectories)) {
+			if ($null -eq $oldestObj -or $obj.LastWriteTimeUtc -lt $oldestObj.LastWriteTimeUtc) {
+				$oldestObj = $obj
+			}
+		}
+		if ($null -eq $oldestObj) {
+			continue
+		}
+
+		$newestInput = $null
+		foreach ($relativeDir in $module.InputDirs) {
+			$inputDir = Join-Path $RepoRoot $relativeDir
+			if (-not (Test-Path -LiteralPath $inputDir -PathType Container)) {
+				continue
+			}
+			foreach ($pattern in $inputPatterns) {
+				foreach ($file in ([System.IO.DirectoryInfo]$inputDir).EnumerateFiles($pattern, [System.IO.SearchOption]::TopDirectoryOnly)) {
+					if ($null -eq $newestInput -or $file.LastWriteTimeUtc -gt $newestInput.LastWriteTimeUtc) {
+						$newestInput = $file
+					}
+				}
+			}
+		}
+
+		if ($null -eq $newestInput -or $newestInput.LastWriteTimeUtc -le $oldestObj.LastWriteTimeUtc) {
+			continue
+		}
+
+		$inputLabel = $newestInput.FullName.Substring($RepoRoot.TrimEnd('\').Length + 1)
+		$objLabel = $oldestObj.FullName.Substring($objDir.TrimEnd('\').Length + 1)
+		Write-Host ("[INFO] {0}: {1} ({2:yyyy-MM-dd HH:mm}) is newer than {3} ({4:yyyy-MM-dd HH:mm}); removing Obj\{5}\{0} so it rebuilds completely." -f `
+			$module.Name, $inputLabel, $newestInput.LastWriteTime, $objLabel, $oldestObj.LastWriteTime, $Configuration) -ForegroundColor Yellow
+		Remove-Item -LiteralPath $objDir -Recurse -Force -ErrorAction Stop
+		$removed.Add($module.Name)
+	}
+
+	return ,$removed.ToArray()
+}
+
 function Set-TestAssertDialogEnvironment {
 	<#!
 	.SYNOPSIS
@@ -765,6 +874,8 @@ Export-ModuleMember -Function @(
 	'Get-NewestWriteTimeUtc',
 	'Get-OldestWriteTimeUtc',
 	'Test-ViewsNativeArtifactsStale',
+	'Get-NativeMakefileModules',
+	'Remove-NativeObjDirsWithStaleInputs',
 	'Set-TestAssertDialogEnvironment',
 	'Disable-CrashDialog',
 	'Get-UnitppSummary',

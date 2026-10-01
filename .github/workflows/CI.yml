@@ -65,6 +65,21 @@ jobs:
           Build\Agent\TokenHygiene.Tests.ps1
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
+      # build.ps1 runs this native-object staleness check under either engine.
+      - name: Native object staleness tests (PowerShell 7)
+        id: native-obj-staleness-tests-pwsh
+        shell: pwsh
+        run: |
+          Build/Agent/NativeObjStaleness.Tests.ps1
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+      - name: Native object staleness tests (Windows PowerShell 5.1)
+        id: native-obj-staleness-tests-winps
+        shell: powershell
+        run: |
+          Build\Agent\NativeObjStaleness.Tests.ps1
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
       # -TokenHygiene fails CI on any hardcoded color/spacing literal in the Avalonia
       # surface (full-tree, no grandfathering -- unlike -CommentHygiene, which stays
       # advisory-only for humans here and only blocks agents locally).
