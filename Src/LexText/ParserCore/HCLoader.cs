@@ -678,6 +678,10 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			{
 				return msa;
 			}
+			if (msa is IMoDerivStepMsa)
+			{
+				return msa;
+			}
 			if (m_representativeMSAs.TryGetValue(msa, out IMoMorphSynAnalysis representativeMSA))
 			{
 				return representativeMSA;
@@ -685,7 +689,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			ILexEntry entry = msa.OwnerOfClass<ILexEntry>();
 			foreach (var msa2 in entry.MorphoSyntaxAnalysesOC)
 			{
-				if (msa2.EqualsMsa(msa) && entry.SenseWithMsa(msa2) != null)
+				if (msa2.ClassID == msa.ClassID && msa2.EqualsMsa(msa) && entry.SenseWithMsa(msa2) != null)
 				{
 					m_representativeMSAs[msa] = msa2;
 					return msa2;

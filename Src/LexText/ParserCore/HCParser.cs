@@ -16,7 +16,6 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Web.Caching;
 using System.Xml;
 using System.Xml.Linq;
 
@@ -207,27 +206,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			{
 				if (selectTraceMorphs != null)
 				{
-					HashSet<int> selectTraceMorphsSet;
-					if (m_representativeMSAs == null)
-					{
-						selectTraceMorphsSet = new HashSet<int>(selectTraceMorphs);
-					}
-					else
-					{
-						selectTraceMorphsSet = new HashSet<int>();
-						IMoMorphSynAnalysisRepository repository = m_cache.LangProject.Services.GetInstance<IMoMorphSynAnalysisRepository>();
-						foreach (int selectTraceMorph in selectTraceMorphs)
-						{
-							if (repository.TryGetObject(selectTraceMorph, out IMoMorphSynAnalysis msa) && m_representativeMSAs.ContainsKey(msa))
-							{
-								selectTraceMorphsSet.Add(m_representativeMSAs[msa].Hvo);
-							}
-							else
-							{
-								selectTraceMorphsSet.Add(selectTraceMorph);
-							}
-						}
-					}
+					HashSet<int> selectTraceMorphsSet = new HashSet<int>(selectTraceMorphs.Select(hvo => RepresentativeMSAHvo(hvo)).Distinct());
 					m_morpher.LexEntrySelector = entry => selectTraceMorphsSet.Contains((int) entry.Properties[MsaID]);
 					m_morpher.RuleSelector = rule =>
 					{
@@ -267,6 +246,24 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				doc.Add(wordformElem);
 			}
 			return doc;
+		}
+
+		private int RepresentativeMSAHvo(int hvo)
+		{
+			if (m_representativeMSAs == null)
+			{
+				return hvo;
+			}
+			IMoMorphSynAnalysisRepository repository = m_cache.LangProject.Services.GetInstance<IMoMorphSynAnalysisRepository>();
+			if (repository.TryGetObject(hvo, out IMoMorphSynAnalysis msa) && m_representativeMSAs.ContainsKey(msa))
+			{
+				return m_representativeMSAs[msa].Hvo;
+			}
+			else
+			{
+				return hvo;
+			}
+
 		}
 
 		/// <summary>
