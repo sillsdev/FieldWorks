@@ -58,13 +58,15 @@ namespace SIL.FieldWorks.XWorks
 				var host = context.EditContext;
 				var editing = new ReversalDetailEditContext(cache, host, sense, label);
 				var groups = editing.CreateGroups(context.VisibleWritingSystems);
+				// The row's identity, which every rebuild of it shares.
+				var fieldId = "reversal/" + sense.Hvo;
 
 				Action<string> navigate = null;
 				var linkRequested = context.Render?.LinkRequested;
 				if (linkRequested != null)
 				{
 					var field = new DetailField(
-						stableId: "reversal/" + sense.Hvo,
+						stableId: fieldId,
 						label: label,
 						field: node?.Field,
 						writingSystem: node?.WritingSystem,
@@ -89,9 +91,9 @@ namespace SIL.FieldWorks.XWorks
 				var control = new FwReversalEntriesField(label, automationId, groups,
 					host == null ? null : editing, context.WritingSystemFocused, navigate,
 					context.Render?.WsAbbrevColumnWidth);
-				// The field stages only when focus leaves it, so the host's save must ask for its
-				// edits when it runs with focus still inside.
-				(host as DetailEditContextBase)?.AddPendingEditFlush(control.CommitPendingEdits);
+				// The field stages only when focus leaves it, so the host's save asks it for what
+				// it holds. The row's own id as the key drops the control a rebuild replaced.
+				(host as DetailEditContextBase)?.AddPendingEditFlush(fieldId, control.CommitPendingEdits);
 				return control;
 			}
 			catch (Exception e)

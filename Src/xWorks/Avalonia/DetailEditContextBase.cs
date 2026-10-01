@@ -21,7 +21,8 @@ namespace SIL.FieldWorks.XWorks
 	public abstract class DetailEditContextBase : IDetailEditContext
 	{
 		private LcmDetailEditSession _session;
-		private readonly List<Action> _pendingEditFlushes = new List<Action>();
+		private readonly Dictionary<string, Action> _pendingEditFlushes =
+			new Dictionary<string, Action>(StringComparer.Ordinal);
 
 		protected DetailEditContextBase(LcmCache cache, ICmObject root)
 		{
@@ -106,10 +107,16 @@ namespace SIL.FieldWorks.XWorks
 		/// focus leaves it. <see cref="FlushPendingEdits"/> runs every registered flush, so a
 		/// save made while focus is still inside such an editor includes what it holds.
 		/// </summary>
-		public void AddPendingEditFlush(Action flush)
+		/// <param name="ownerKey">Identifies the row the editor belongs to, the same across
+		/// rebuilds of it. The view rebuilds a row's controls on a section toggle without
+		/// building a new context, so a later registration under the same key replaces the
+		/// earlier one and the context holds only the live editor.</param>
+		/// <param name="flush">Stages what that editor holds; null registers nothing.</param>
+		public void AddPendingEditFlush(string ownerKey, Action flush)
 		{
-			if (flush != null)
-				_pendingEditFlushes.Add(flush);
+			if (string.IsNullOrEmpty(ownerKey) || flush == null)
+				return;
+			_pendingEditFlushes[ownerKey] = flush;
 		}
 
 		/// <summary>
@@ -118,7 +125,7 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		public void FlushPendingEdits()
 		{
-			foreach (var flush in _pendingEditFlushes.ToArray())
+			foreach (var flush in new List<Action>(_pendingEditFlushes.Values))
 				flush();
 		}
 

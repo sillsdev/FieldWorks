@@ -627,6 +627,34 @@ namespace SIL.FieldWorks.XWorks
 				Is.EqualTo("abode"));
 		}
 
+		// A section toggle rebuilds a row's controls without building a new edit context, so the
+		// control a rebuild replaced must not still be asked for the text it was holding.
+		[Test]
+		public void ARebuiltRow_LeavesOnlyTheLiveControlHoldingEdits()
+		{
+			AddEntry(m_enIndex, "dwelling", m_sense);
+			var host = DetailComposer.Compose(m_entry, Cache).EditContext;
+			var holder = new DetailEditContextHolder();
+			holder.Replace(host);
+			var replaced = BuildReversalField(host);
+			var live = BuildReversalField(host);
+			Slot(replaced, "dwelling").Text = "replaced";
+			Slot(live, "dwelling").Text = "abode";
+
+			holder.Settle();
+
+			Assert.That(m_sense.ReferringReversalIndexEntries.Select(e => e.ReversalForm.get_String(EnWs).Text),
+				Is.EqualTo(new[] { "abode" }), "only the control the row shows now writes its text");
+		}
+
+		private FwReversalEntriesField BuildReversalField(IDetailEditContext host)
+			=> (FwReversalEntriesField)new ReversalIndexEntryPlugin().BuildControl(
+				new SlicePluginBuildContext(m_sense, null, () => host, Cache));
+
+		private static Avalonia.Controls.TextBox Slot(FwReversalEntriesField field, string text)
+			=> field.GetLogicalDescendants().OfType<Avalonia.Controls.TextBox>()
+				.Single(box => box.Text == text);
+
 		// A failed batch closes the session it wrote into, at the cost of the edit that opened
 		// it, rather than carrying half a batch to the next save.
 		[Test]
