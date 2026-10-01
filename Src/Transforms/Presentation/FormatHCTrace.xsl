@@ -107,7 +107,7 @@ Main template
 				<xsl:variable name="synthesizedWords" select="$traceRoot/LexLookupTrace/WordSynthesisTrace"/>
 				<xsl:variable name="parseCompleteTraces" select="$traceRoot/ParseCompleteTrace"/>
 				<xsl:variable name="templateFailures" select="$traceRoot/TemplateAnalysisTraceOut[FailureReason]"/>
-				<xsl:variable name="parseNodes" select="$analysisAffixes | $synthesisAffixes | $analysisCompoundRules | $synthesisCompoundRules | $synthesizedWords | $parseCompleteTraces | $templateFailures"/>
+				<xsl:variable name="parseNodes" select="$analysisAffixes | $synthesisAffixes | $analysisCompoundRules | $synthesisCompoundRules | $synthesizedWords | $parseCompleteTraces | $templateFailures | $traceRoot/BlockedTrace"/>
 				<xsl:if test="$parseNodes">
 					<xsl:text>Y</xsl:text>
 				</xsl:if>
@@ -622,7 +622,7 @@ ShowMsaInfo
 										</xsl:attribute>
 										<xsl:value-of select="."/>
 									</span>
-									<xsl:if test="count(following-sibling::*)!=0">
+									<xsl:if test="position() != last()">
 										<xsl:text>, </xsl:text>
 									</xsl:if>
 								</xsl:for-each>
@@ -684,6 +684,9 @@ ShowMsaInfo
 							<xsl:when test="@type = 'maxAppCount'">
 								<xsl:text>An affix cannot be applied more than once.</xsl:text>
 							</xsl:when>
+							<xsl:otherwise>
+								<xsl:text>Unknown reason.</xsl:text>
+							</xsl:otherwise>
 						</xsl:choose>
 						<xsl:text>)</xsl:text>
 					</span>
@@ -1155,7 +1158,7 @@ ShowMorph
 				<xsl:text>The stem has the following </xsl:text>
 				<xsl:value-of select="$featureTypeStr"/>
 				<xsl:text>: </xsl:text>
-				<xsl:for-each select="$reason/StemProdRestricts">
+				<xsl:for-each select="$reason/StemProdRestricts/MprFeature">
 					<xsl:value-of select="."/>
 					<xsl:call-template name="OutputListPunctuation">
 						<xsl:with-param name="sConjunction" select="' and '"/>
@@ -1172,19 +1175,10 @@ ShowMorph
 		<xsl:text> but this rule only applies when the stem has at least one of the following </xsl:text>
 		<xsl:value-of select="$featureTypeStr"/>
 		<xsl:text>: </xsl:text>
-		<xsl:for-each select="$reason/RuleProdRestricts">
+		<xsl:for-each select="$reason/RuleProdRestricts/MprFeature">
 			<xsl:value-of select="."/>
 			<xsl:call-template name="OutputListPunctuation">
-				<xsl:with-param name="sConjunction">
-					<xsl:choose>
-						<xsl:when test="$reason/MatchType = 'required'">
-							<xsl:text> and </xsl:text>
-						</xsl:when>
-						<xsl:when test="$reason/MatchType = 'excluded'">
-							<xsl:text> or </xsl:text>
-						</xsl:when>
-					</xsl:choose>
-				</xsl:with-param>
+				<xsl:with-param name="sConjunction" select="' or '"/>
 				<xsl:with-param name="sFinalPunctuation" select="'.'"/>
 			</xsl:call-template>
 		</xsl:for-each>
@@ -1247,7 +1241,7 @@ ShowMorph
 		<xsl:variable name="parseCompleteTraces" select="$traceRoot/ParseCompleteTrace"/>
 		<xsl:variable name="templateFailures" select="$traceRoot/TemplateAnalysisTraceOut[FailureReason]"/>
 
-		<xsl:variable name="parseNodes" select="$analysisAffixes | $synthesisAffixes | $analysisCompoundRules | $synthesisCompoundRules | $synthesizedWords | $parseCompleteTraces | $templateFailures"/>
+		<xsl:variable name="parseNodes" select="$analysisAffixes | $synthesisAffixes | $analysisCompoundRules | $synthesisCompoundRules | $synthesizedWords | $parseCompleteTraces | $templateFailures | $traceRoot/BlockedTrace"/>
 		<xsl:if test="$parseNodes">
 			<xsl:for-each select="$parseNodes">
 				<xsl:variable name="lastTemplateTrace" select="(preceding-sibling::*[name()='TemplateAnalysisTraceIn' or name()='TemplateSynthesisTraceIn' or name()='TemplateAnalysisTraceOut' or name()='TemplateSynthesisTraceOut'])[position() = last()]"/>
@@ -1272,6 +1266,46 @@ ShowMorph
 								<xsl:call-template name="ShowIcon"/>
 								<table cellpadding="0pt" cellspacing="0pt">
 									<xsl:choose>
+										<xsl:when test="name() = 'BlockedTrace'">
+											<tr>
+												<td>
+													<xsl:attribute name="style">
+														<xsl:call-template name="GetAnalysisFont"/>
+													</xsl:attribute>
+													<xsl:text>Blocked: </xsl:text>
+													<xsl:value-of select="Rule"/>
+													<xsl:text>. Blocking entry = </xsl:text>
+													<xsl:choose>
+														<xsl:when test="BlockingEntry/Allomorph/Morpheme">
+															<span>
+																<xsl:attribute name="style">
+																	<xsl:text>cursor:pointer</xsl:text>
+																	<xsl:call-template name="GetVernacularFont"/>
+																</xsl:attribute>
+																<xsl:attribute name="id">
+																	<xsl:value-of select="BlockingEntry/Allomorph/Morpheme/@id"/>
+																</xsl:attribute>
+																<xsl:value-of select="BlockingEntry/Allomorph/Morpheme/HeadWord"/>
+															</span>
+														</xsl:when>
+														<xsl:otherwise>
+															<xsl:text>Unknown blocking entry</xsl:text>
+														</xsl:otherwise>
+													</xsl:choose>
+												</td>
+											</tr>
+											<tr>
+												<td>
+													<xsl:text>Output = </xsl:text>
+													<span>
+														<xsl:attribute name="style">
+															<xsl:call-template name="GetVernacularFont"/>
+														</xsl:attribute>
+														<xsl:value-of select="Output"/>
+													</span>
+												</td>
+											</tr>
+										</xsl:when>
 										<xsl:when test="name() = 'ParseCompleteTrace'">
 											<xsl:if test="../PhonologicalRuleSynthesisTrace">
 												<tr>
