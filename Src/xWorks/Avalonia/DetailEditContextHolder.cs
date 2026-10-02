@@ -24,6 +24,9 @@ namespace SIL.FieldWorks.XWorks
 	/// (2) <see cref="Settle"/> is the single auto-save policy every host path shares:
 	/// commit when validation is clean, roll back otherwise -- navigation, go-away, undo and
 	/// dispose all settle the same way;
+	/// (2a) an editor that stages only when focus leaves it is asked for what it holds before
+	/// any save or undo decision, so the user's last edit is part of the step being closed
+	/// rather than text left to be written over the result;
 	/// (3) the undo guard intercepts global Undo/Redo while a session is open: LCModel's
 	/// <c>UndoStack.Undo()</c> re-enters the non-recursive UOW write lock the open task's thread
 	/// already holds (LockRecursionException), so the guard settles the pending edit and cancels
@@ -86,6 +89,7 @@ namespace SIL.FieldWorks.XWorks
 		public IReadOnlyList<string> Settle()
 		{
 			var current = Current;
+			FlushPendingEdits(current);
 			if (current == null || !current.IsOpen)
 				return System.Array.Empty<string>();
 			try
@@ -114,6 +118,21 @@ namespace SIL.FieldWorks.XWorks
 				if (current.IsOpen)
 					current.Cancel();
 				return System.Array.Empty<string>();
+			}
+		}
+
+		// Stages what editors hold back until focus leaves them, so the settle below commits
+		// it. True when an editor held something, or when a flush threw.
+		private static bool FlushPendingEdits(IDetailEditContext current)
+		{
+			try
+			{
+				return (current as DetailEditContextBase)?.FlushPendingEdits() ?? false;
+			}
+			catch (System.Exception e)
+			{
+				SIL.Reporting.Logger.WriteError(e);
+				return true;
 			}
 		}
 
@@ -173,8 +192,17 @@ namespace SIL.FieldWorks.XWorks
 
 		private void OnDoingUndoOrRedo(CancelEventArgs e)
 		{
+			// The editor the gesture came from may still hold the user's last edit. Staging it
+			// first makes this gesture close that edit, not the step before it.
+			var held = FlushPendingEdits(Current);
 			if (Current?.IsOpen != true)
+			{
+				// A held edit that could not be saved still takes this gesture; undoing the step
+				// before it too would lose two things instead of one.
+				if (held)
+					e.Cancel = true;
 				return;
+			}
 			// Settling closes the task and releases the write lock; cancelling the gesture keeps
 			// its meaning predictable -- this press closed the pending edit, the next one undoes
 			// it.

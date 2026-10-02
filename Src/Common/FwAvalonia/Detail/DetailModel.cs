@@ -1580,7 +1580,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			int objectHvo = 0,
 			string ghostPrompt = null,
 			IReadOnlyList<DetailChoiceOption> items = null,
-			Func<Control> controlFactory = null,
+			Func<SliceFactoryContext, Control> controlFactory = null,
 			Func<string, IReadOnlyList<DetailChoiceOption>> searchOptions = null,
 			IReadOnlyList<DetailChooserLink> chooserLinks = null,
 			IReadOnlyList<DetailParagraph> paragraphs = null,
@@ -1795,10 +1795,11 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		/// <summary>
 		/// For a <see cref="DetailFieldKind.Custom"/> row: the
 		/// deferred control factory the claiming plugin supplied via the composer. The view invokes
-		/// it at render time and places the returned control in the value column; null (or a
-		/// failing factory) renders the unsupported row instead. Null for every other kind.
+		/// it at render time with the host's render context (edit context and callbacks, never
+		/// null) and places the returned control in the value column; null (or a failing
+		/// factory) renders the unsupported row instead. Null for every other kind.
 		/// </summary>
-		public Func<Control> ControlFactory { get; }
+		public Func<SliceFactoryContext, Control> ControlFactory { get; }
 
 		/// <summary>
 		/// For a <see cref="DetailFieldKind.ReferenceVector"/> row whose targets are searched rather

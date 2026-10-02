@@ -21,6 +21,8 @@ namespace SIL.FieldWorks.XWorks
 	public abstract class DetailEditContextBase : IDetailEditContext
 	{
 		private LcmDetailEditSession _session;
+		private readonly Dictionary<string, Func<bool>> _pendingEditFlushes =
+			new Dictionary<string, Func<bool>>(StringComparer.Ordinal);
 
 		protected DetailEditContextBase(LcmCache cache, ICmObject root)
 		{
@@ -98,6 +100,55 @@ namespace SIL.FieldWorks.XWorks
 					errors.Add(FwAvaloniaStrings.PossibilityNameOrAbbreviationRequired);
 			}
 			return errors;
+		}
+
+		/// <summary>
+		/// Registers <paramref name="flush"/>, which stages the edits an editor holds back until
+		/// focus leaves it. <see cref="FlushPendingEdits"/> runs every registered flush, so a
+		/// save made while focus is still inside such an editor includes what it holds.
+		/// </summary>
+		/// <param name="ownerKey">Identifies the row the editor belongs to, the same across
+		/// rebuilds of it. The view rebuilds a row's controls on a section toggle without
+		/// building a new context, so a later registration under the same key replaces the
+		/// earlier one and the context holds only the live editor.</param>
+		/// <param name="flush">Stages what that editor holds, and returns whether it held
+		/// anything, saved or not; null registers nothing.</param>
+		public void AddPendingEditFlush(string ownerKey, Func<bool> flush)
+		{
+			if (string.IsNullOrEmpty(ownerKey) || flush == null)
+				return;
+			_pendingEditFlushes[ownerKey] = flush;
+		}
+
+		/// <summary>The count of registered pending-edit flushes, one per live row.</summary>
+		internal int PendingEditFlushCount => _pendingEditFlushes.Count;
+
+		/// <summary>
+		/// Drops <paramref name="flush"/> from <paramref name="ownerKey"/>, for an editor that is
+		/// gone. A later registration under the same key -- the rebuild that replaced the
+		/// editor -- is left in place.
+		/// </summary>
+		public void RemovePendingEditFlush(string ownerKey, Func<bool> flush)
+		{
+			Func<bool> registered;
+			if (!string.IsNullOrEmpty(ownerKey) && _pendingEditFlushes.TryGetValue(ownerKey, out registered)
+				&& registered == flush)
+			{
+				_pendingEditFlushes.Remove(ownerKey);
+			}
+		}
+
+		/// <summary>
+		/// Stages whatever the registered editors are holding back, possibly opening the session.
+		/// A save calls this first, before it checks whether a session is open.
+		/// </summary>
+		/// <returns>Whether any editor held an edit, whether or not it could be staged.</returns>
+		public bool FlushPendingEdits()
+		{
+			var held = false;
+			foreach (var flush in new List<Func<bool>>(_pendingEditFlushes.Values))
+				held |= flush();
+			return held;
 		}
 
 		/// <inheritdoc />

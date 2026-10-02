@@ -238,4 +238,11 @@
   <data name="FwAvalonia.Chooser.EmptyItemLabel" xml:space="preserve">
     <value>&lt;Empty&gt;</value>
   </data>
+  <data name="FwAvalonia.Reversal.ShowInReversalIndex" xml:space="preserve">
+    <value>Show in Reversal Index (Ctrl-Click)</value>
+  </data>
+  <data name="FwAvalonia.Reversal.AddEntryName" xml:space="preserve">
+    <value>{0} {1} new entry</value>
+    <comment>{0} = the field label, {1} = the writing system abbreviation</comment>
+  </data>
 </root>

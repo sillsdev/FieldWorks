@@ -162,6 +162,10 @@
 	     (pairs with DataTree.SeparatorBarMargin). -->
 	<x:Double x:Key="DataTree.SeparatorBarWidth">2</x:Double>
 
+	<!-- Room a text-sized editor keeps past its text, so the caret at the end, and a final
+		glyph that overhangs its advance, are drawn instead of clipped. -->
+	<x:Double x:Key="DataTree.CaretAllowance">3</x:Double>
+
 	<!-- Corner radius for a compact bordered host; pairs with HairlineBorderThickness and
 	     TightPadding. Matches Semi's own Small radius step exactly. -->
 	<StaticResource x:Key="DataTree.PickerCornerRadius" ResourceKey="SemiBorderRadiusSmall"/>
