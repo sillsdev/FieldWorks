@@ -510,6 +510,12 @@ namespace SIL.FieldWorks.XWorks
 		internal const string MultiStringSliceMenuId = "mnuDataTree-MultiStringSlice";
 
 		/// <summary>
+		/// The Pronunciation form's menu: a row bound to it also sets the project's current
+		/// pronunciation writing systems when its shown set changes (LT-9620).
+		/// </summary>
+		internal const string PronunciationMenuId = "mnuDataTree-Pronunciation";
+
+		/// <summary>
 		/// Composes the ordered menu-id list for a row's SLICE menu (label right-click and the
 		/// field-options button): the row's own <c>menu=</c> binding, then exactly ONE shared
 		/// trailing group. Both shared menus define Field Visibility / Move Field / Help, so
@@ -687,8 +693,8 @@ namespace SIL.FieldWorks.XWorks
 					+ "'; using the shipped definition.", error));
 
 		/// <summary>
-		/// Registers the per-field Field Visibility, Move Field, and writing-system commands that
-		/// retarget to the project override layer for the Avalonia detail view. Registers nothing
+		/// Registers the per-field Field Visibility and Move Field commands that retarget to
+		/// the project override layer for the Avalonia detail view. Registers nothing
 		/// (every command keeps its normal mediator dispatch) when the clicked row carries no
 		/// (class, layout) context, e.g. the first-slice fallback rows, so ordinary dispatch
 		/// stays in force when the override layer cannot be addressed.
@@ -700,15 +706,6 @@ namespace SIL.FieldWorks.XWorks
 			{
 				return;
 			}
-
-			// Writing-system items dispatch normally; the resulting selection is then copied
-			// into the override. They need no located template node, so they stay registered
-			// even when locating fails.
-			registry.Add(IsWritingSystemVisibilityChoice, (c, d) => WritingSystemItem(c, d, field));
-			// Show all right now never dispatches or persists: it only marks the row for the
-			// host's transient reveal.
-			registry.Add("CmdDataTree-WritingSystemMenu-ShowAllRightNow",
-				(c, d) => ShowAllWritingSystemsItem(LabelOf(d), field));
 
 			// Unknown/stale target: leave the field commands on mediator dispatch rather than
 			// guess.
@@ -735,8 +732,25 @@ namespace SIL.FieldWorks.XWorks
 		/// the hidden command adapter.
 		/// </summary>
 		internal IDetailMenuAuthority CreateMenuAuthority(DetailMenuRequest request)
-			=> new CompositeMenuAuthority(CreateReorderVectorAuthority(request),
-				CreateObjectMenuAuthority(request.Field));
+		{
+			// One per-object authority serves both, so the row's override target is located
+			// once per menu, not once per authority that asks.
+			var objectMenu = CreateObjectMenuAuthority(request.Field);
+			return new CompositeMenuAuthority(CreateReorderVectorAuthority(request),
+				CreateMultiStringMenuAuthority(request.Field, objectMenu), objectMenu);
+		}
+
+		/// <summary>The native authority for a multi-writing-system row's label menu.</summary>
+		internal IDetailMenuAuthority CreateMultiStringMenuAuthority(DetailField field)
+			=> CreateMultiStringMenuAuthority(field, CreateObjectMenuAuthority(field));
+
+		private IDetailMenuAuthority CreateMultiStringMenuAuthority(DetailField field,
+			IDetailMenuAuthority sharedLeaves)
+			=> new MultiStringMenuAuthority(field, sharedLeaves,
+				menu: WritingSystemMenuOf,
+				show: ShowWritingSystems,
+				showAll: ShowAllWritingSystemsItem,
+				configure: ConfigureWritingSystemsItem);
 
 		/// <summary>The native authority for the row's per-object and Help menus.</summary>
 		internal IDetailMenuAuthority CreateObjectMenuAuthority(DetailField field)
@@ -882,122 +896,82 @@ namespace SIL.FieldWorks.XWorks
 					RefreshAvaloniaDetail();
 				});
 
-		/// <summary>
-		/// Whether this menu item makes a persistent change to which writing systems a
-		/// multi-writing-system field shows: a per-writing-system toggle (recognized by the
-		/// property its group drives -- the toggles carry no command id) or the Configure
-		/// dialog. Show all right now is not one of these: it is the transient reveal
-		/// (<see cref="ShowAllWritingSystemsItem"/>), not a configuration change to persist.
-		/// </summary>
-		private static bool IsWritingSystemVisibilityChoice(ChoiceBase choice)
-		{
-			if (choice is ListPropertyChoice list)
-			{
-				return string.Equals(list.ParentProperty,
-					PropertyConstants.CurrentContextMenuSelectedWsIds, StringComparison.Ordinal);
-			}
+		// The row's Writing Systems menu, from the shared rule and the row's own layout facts.
+		private IReadOnlyList<WritingSystemMenuOption> WritingSystemMenuOf(DetailField field)
+			=> FieldWritingSystemOptions.Menu(Cache, WritingSystemSpecOf(field), field.VisibleWritingSystems);
 
-			return string.Equals(choice.HelpId, "CmdDataTree-WritingSystemMenu-Configure",
-				StringComparison.Ordinal);
-		}
+		private static WritingSystemFieldSpec WritingSystemSpecOf(DetailField field)
+			=> WritingSystemFieldSpec.FromLayout(field.ObjectHvo, field.WritingSystem,
+				field.OptionalWritingSystem, field.ForceIncludeEnglish);
 
 		/// <summary>
-		/// A writing-system item that dispatches normally and then copies the resulting
-		/// selection into the override: the hidden adapter slice owns the picker and the
-		/// Configure dialog, while the Avalonia detail view composes from its own override
-		/// store.
+		/// Makes the row show exactly the given writing systems: stores the selection in the
+		/// row's view override, keeps the project's pronunciation writing systems in step on a
+		/// Pronunciation row, and recomposes. Nothing here reaches the mediator.
 		/// </summary>
-		private DetailMenuItem WritingSystemItem(ChoiceBase choice, UIItemDisplayProperties display,
-			DetailField field)
-		{
-			var isListToggle = choice is ListPropertyChoice;
-			// The bridge strips execute from disabled items, so the last checked toggle
-			// (disabled) can never be invoked to EMPTY the set.
-			return new DetailMenuItem(XCoreMenuBridge.StripAccelerator(display.Text), display.Enabled,
-				display.Checked, children: null, execute: () =>
-				{
-					// Snapshot first, so a dialog that changes nothing (e.g. Cancel) copies
-					// nothing.
-					var before = isListToggle ? null : CurrentSliceSelectedWritingSystems();
-					choice.OnClick(null, EventArgs.Empty);
-					CopyWritingSystemSelectionToOverride(field, isListToggle, before);
-				});
-		}
-
-		// Copies the click's selection into the row's override and recomposes. A toggle
-		// updates its property BEFORE the slice: read the property, in option order;
-		// Configure reads the slice.
-		private void CopyWritingSystemSelectionToOverride(DetailField field, bool fromListToggle,
-			IReadOnlyList<string> sliceSetBeforeClick)
+		private void ShowWritingSystems(DetailField field, IReadOnlyList<string> writingSystems)
 		{
 			try
 			{
-				var slice = m_dataEntryForm?.CurrentSlice as MultiStringSlice;
-				if (slice == null)
-				{
-					// The command dispatched, but the result is unreadable: say so, or the
-					// symptom is "the menu did nothing" with no trail.
-					Logger.WriteEvent("Writing-system selection was not copied: the adapter "
-						+ "slice is unreadable; the view override was not updated.");
+				// The menu never offers an empty set, so empty means nothing to store -- and an
+				// empty op would CLEAR the restriction rather than narrow it.
+				if (writingSystems == null || writingSystems.Count == 0)
 					return;
-				}
-
-				// A stale adapter target would store another row's set under this row's id.
-				if (slice.Object == null || slice.Object.Hvo != field.ObjectHvo)
-				{
-					Logger.WriteEvent("Writing-system selection was not copied: the adapter "
-						+ "slice is not the clicked row's; the view override was not updated.");
-					return;
-				}
-
-				List<string> selected;
-				if (fromListToggle)
-				{
-					var ids = m_propertyTable.GetStringProperty(
-						PropertyConstants.CurrentContextMenuSelectedWsIds, null);
-					// Canonicalize: option order, junk tokens dropped -- the stored order is the
-					// render order.
-					selected = string.IsNullOrEmpty(ids)
-						? null
-						: StringSliceUtils.GetVisibleWritingSystems(ids,
-							slice.WritingSystemOptionsForDisplay).Select(ws => ws.Id).ToList();
-				}
-				else
-				{
-					selected = slice.WritingSystemsSelectedForDisplay?.Select(ws => ws.Id).ToList();
-					if (selected != null && sliceSetBeforeClick != null
-						&& selected.SequenceEqual(sliceSetBeforeClick, StringComparer.Ordinal))
-					{
-						return; // the dialog changed nothing (e.g. Cancel): no override write.
-					}
-				}
-
-				// The menu disables the last checked toggle, so an empty set only means "nothing
-				// to copy" -- and an empty op would CLEAR the restriction, so bail instead.
-				if (selected == null || selected.Count == 0)
-					return;
-
 				var templateId = ViewDefinitionOverrideEditor.StripRuntimeSuffix(field.StableId);
 				var op = new ViewOverrideOperation(ViewOverrideOperationKind.SetVisibleWritingSystems,
-					templateId, writingSystems: selected);
+					templateId, writingSystems: writingSystems.ToList());
 				if (!TryMutateOverride(field, op))
 					return;
-
-				// A successful configuration write replaces any transient reveal on the part:
-				// a newly persisted display set supersedes the reveal on every row sharing it.
+				if (string.Equals(field.MenuId, PronunciationMenuId, StringComparison.Ordinal))
+				{
+					// Exactly the chosen writing systems, never a fallback set: a stale id
+					// must not rewrite the project's list to the defaults.
+					var chosen = new HashSet<string>(writingSystems, StringComparer.OrdinalIgnoreCase);
+					var resolved = FieldWritingSystemOptions.Options(Cache, WritingSystemSpecOf(field))
+						.Where(ws => chosen.Contains(ws.Id)).ToList();
+					if (resolved.Count == chosen.Count)
+						PronunciationWritingSystems.Sync(Cache, resolved);
+				}
+				// A persisted set supersedes any transient reveal on the part.
 				m_showAllWsFields.Remove(templateId);
 				RefreshAvaloniaDetail();
 			}
 			catch (Exception e)
 			{
-				Logger.WriteError("Copying the writing-system selection into the view override failed.", e);
+				Logger.WriteError("Storing the row's writing-system selection failed.", e);
 			}
 		}
 
-		// The adapter slice's current selection, or null when it cannot be read.
-		private IReadOnlyList<string> CurrentSliceSelectedWritingSystems()
-			=> (m_dataEntryForm?.CurrentSlice as MultiStringSlice)
-				?.WritingSystemsSelectedForDisplay?.Select(ws => ws.Id).ToList();
+		// Opens the per-field Configure dialog on the row's own options and shown set, and
+		// applies the result.
+		private DetailMenuItem ConfigureWritingSystemsItem(string label, DetailField field)
+			=> new DetailMenuItem(label, isEnabled: true, isChecked: false, children: null, execute: () =>
+				{
+					try
+					{
+						var spec = WritingSystemSpecOf(field);
+						var shown = FieldWritingSystemOptions.Shown(Cache, spec, field.VisibleWritingSystems);
+						using (var dlg = new ConfigureWritingSystemsDlg(
+							FieldWritingSystemOptions.Options(Cache, spec), shown,
+							m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider")))
+						{
+							dlg.Text = ConfigureWritingSystemsDlg.TitleFor(field.Label);
+							if (dlg.ShowDialog() != System.Windows.Forms.DialogResult.OK)
+								return;
+							var chosen = dlg.SelectedWritingSystems.Select(ws => ws.Id).ToList();
+							// The dialog answers in option order, the stored set may not:
+							// same set means nothing changed.
+							if (new HashSet<string>(chosen, StringComparer.Ordinal)
+								.SetEquals(shown.Select(ws => ws.Id)))
+								return; // nothing changed: no override write.
+							ShowWritingSystems(field, chosen);
+						}
+					}
+					catch (Exception e)
+					{
+						Logger.WriteError("Configuring the row's writing systems failed.", e);
+					}
+				});
 
 		// Writes a SetVisibility op for the field's template id into the project override and recomposes.
 		private void ApplyFieldVisibility(DetailField field, string templateId, ViewVisibility target)

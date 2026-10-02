@@ -91,6 +91,13 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 			AddIfPresent(o, "hotlinks", node.HotlinksId);
 			AddIfPresent(o, "helpTopicID", node.HelpTopicId);
 			AddIfPresent(o, "sliceId", node.SliceId);
+			AddIfPresent(o, "optionalWs", node.OptionalWritingSystem);
+			if (node.ForceIncludeEnglish)
+				o["forceIncludeEnglish"] = true;
+			// The stored selection travels with the two facts above: options without the
+			// checked set would round-trip a field into the wrong checkmarks.
+			if (node.VisibleWritingSystems != null && node.VisibleWritingSystems.Count > 0)
+				o["visibleWritingSystems"] = new JArray(node.VisibleWritingSystems);
 			AddIfPresent(o, "ghost", node.GhostField);
 			AddIfPresent(o, "ghostWs", node.GhostWs);
 			AddIfPresent(o, "ghostClass", node.GhostClass);
@@ -216,7 +223,10 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 				condition: ReadCondition((JObject)o["condition"]),
 				chooserLinks: ((JArray)o["chooserLinks"])?.Select(ReadChooserLink).ToList(),
 				helpTopicId: (string)o["helpTopicID"],
-				sliceId: (string)o["sliceId"]);
+				sliceId: (string)o["sliceId"],
+				optionalWritingSystem: (string)o["optionalWs"],
+				forceIncludeEnglish: (bool?)o["forceIncludeEnglish"] ?? false,
+				visibleWritingSystems: ((JArray)o["visibleWritingSystems"])?.Select(t => (string)t).ToList());
 		}
 
 		private static T ParseEnum<T>(JObject o, string name, T fallback) where T : struct

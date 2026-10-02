@@ -3,6 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Collections.Generic;
 using SIL.FieldWorks.Common.FwAvalonia.Detail;
 using XCore;
 
@@ -25,12 +26,14 @@ namespace SIL.FieldWorks.XWorks
 		public bool Owns(string menuId) => Owner(menuId) != null;
 
 		public DetailMenuItem Build(string menuId, ChoiceBase leaf)
-		{
-			var owner = Owner(menuId);
-			if (owner == null)
-				throw new InvalidOperationException(string.Format("No authority owns menu '{0}'.", menuId));
-			return owner.Build(menuId, leaf);
-		}
+			=> Owning(menuId).Build(menuId, leaf);
+
+		public IReadOnlyList<DetailMenuItem> BuildList(string menuId, string listId)
+			=> Owning(menuId).BuildList(menuId, listId);
+
+		private IDetailMenuAuthority Owning(string menuId)
+			=> Owner(menuId) ?? throw new InvalidOperationException(
+				string.Format("No authority owns menu '{0}'.", menuId));
 
 		private IDetailMenuAuthority Owner(string menuId)
 		{

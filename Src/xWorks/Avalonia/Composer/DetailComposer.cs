@@ -9,6 +9,7 @@ using System.Globalization;
 using System.Linq;
 using System.Threading;
 using System.Xml.Linq;
+using SIL.FieldWorks.Common.DetailRules;
 using SIL.FieldWorks.Common.FwAvalonia;
 using SIL.FieldWorks.Common.FwAvalonia.Detail;
 using SIL.FieldWorks.Common.FwAvalonia.ViewDefinition;
@@ -1188,8 +1189,12 @@ namespace SIL.FieldWorks.XWorks
 				// A multistring editor is the legacy MultiStringSlice; its in-string context menu adds the
 				// shared mnuDataTree-MultiStringSlice group (Writing Systems submenu), a single-ws string
 				// editor does not. Carry that so the menu composition mirrors the legacy slice test.
-				textField.IsMultiStringRow = string.Equals(node.RawEditor,
-					EditorKindMap.MultiStringEditor, StringComparison.OrdinalIgnoreCase);
+				textField.IsMultiStringRow = IsMultiStringEditor(node);
+				// The Writing Systems menu offers more than the row renders, so carry the three
+				// layout facts that decide its option list (FieldWritingSystemOptions).
+				textField.OptionalWritingSystem = node.OptionalWritingSystem;
+				textField.ForceIncludeEnglish = node.ForceIncludeEnglish;
+				textField.VisibleWritingSystems = node.VisibleWritingSystems;
 				if (editable)
 				{
 					// An editable text row over a run-bearing TsString property (String/MultiString)
@@ -1211,20 +1216,49 @@ namespace SIL.FieldWorks.XWorks
 				RegisterTextRowEditHandler(stableId, hvo, flid, type, systems);
 			}
 
+			// The multistring editor is the one whose rows carry a Writing Systems menu.
+			private static bool IsMultiStringEditor(ViewNode node)
+				=> string.Equals(node.RawEditor, EditorKindMap.MultiStringEditor,
+					StringComparison.OrdinalIgnoreCase);
+
+			// The layout facts that decide a multistring row's writing systems, as the shared
+			// rule takes them.
+			private WritingSystemFieldSpec WritingSystemSpecOf(ViewNode node, int hvo)
+			{
+				var spec = WritingSystemFieldSpec.FromLayout(hvo, node.WritingSystem,
+					node.OptionalWritingSystem, node.ForceIncludeEnglish);
+				// Seeding the project's pronunciation list belongs to the caller: the shared
+				// rule only reads the model. This keeps what ResolveWritingSystems does.
+				if (spec.WritingSystems == WritingSystemServices.kwsPronunciations)
+					WritingSystemServices.InitializePronunciationWritingSystems(_cache);
+				return spec;
+			}
+
 			// A text row's writing systems: the layout set, restricted by visibleWritingSystems
 			// unless the row's part is under the Show-all reveal, then collapsed to one ws for
 			// String/Unicode props.
 			private IReadOnlyList<CoreWritingSystemDefinition> ResolveTextRowWritingSystems(int hvo, int flid,
 				CellarPropertyType type, ViewNode node)
 			{
-				IReadOnlyList<CoreWritingSystemDefinition> systems = ResolveWritingSystems(_cache, node.WritingSystem);
-				// A per-field writing-system visibility override (legacy visibleWritingSystems) restricts
-				// the resolved set to the authored subset (in the override's order), intersected with the
-				// field's valid writing systems. An empty intersection keeps the full set rather than hiding
-				// the field entirely (defensive -- a stale override must never blank a real
-				// field).
-				if (_showAllWsFields == null || !_showAllWsFields.Contains(node.StableId))
-					systems = ApplyVisibleWritingSystems(systems, node.VisibleWritingSystems);
+				var revealed = _showAllWsFields != null && _showAllWsFields.Contains(node.StableId);
+				IReadOnlyList<CoreWritingSystemDefinition> systems;
+				if (IsMultiStringEditor(node))
+				{
+					// The Writing Systems menu offers writing systems the project has not
+					// checked. Render from the SAME rule, or a chosen one cannot appear.
+					var spec = WritingSystemSpecOf(node, hvo);
+					systems = revealed
+						? FieldWritingSystemOptions.Options(_cache, spec)
+						: FieldWritingSystemOptions.Shown(_cache, spec, node.VisibleWritingSystems);
+				}
+				else
+				{
+					systems = ResolveWritingSystems(_cache, node.WritingSystem);
+					// A stored selection restricts the resolved set, in its own order. An empty
+					// intersection keeps the full set rather than blanking a real field.
+					if (!revealed)
+						systems = ApplyVisibleWritingSystems(systems, node.VisibleWritingSystems);
+				}
 				if ((type == CellarPropertyType.String || type == CellarPropertyType.Unicode)
 					&& systems.Count > 0)
 				{
