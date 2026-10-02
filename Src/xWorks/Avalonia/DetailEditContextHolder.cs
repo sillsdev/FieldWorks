@@ -24,6 +24,9 @@ namespace SIL.FieldWorks.XWorks
 	/// (2) <see cref="Settle"/> is the single auto-save policy every host path shares:
 	/// commit when validation is clean, roll back otherwise -- navigation, go-away, undo and
 	/// dispose all settle the same way;
+	/// (2a) an editor that stages only when focus leaves it is asked for what it holds before
+	/// any save or undo decision, so the user's last edit is part of the step being closed
+	/// rather than text left to be written over the result;
 	/// (3) the undo guard intercepts global Undo/Redo while a session is open: LCModel's
 	/// <c>UndoStack.Undo()</c> re-enters the non-recursive UOW write lock the open task's thread
 	/// already holds (LockRecursionException), so the guard settles the pending edit and cancels
@@ -188,6 +191,9 @@ namespace SIL.FieldWorks.XWorks
 
 		private void OnDoingUndoOrRedo(CancelEventArgs e)
 		{
+			// The editor the gesture came from may still hold the user's last edit. Staging it
+			// first makes this gesture close that edit, not the step before it.
+			FlushPendingEdits(Current);
 			if (Current?.IsOpen != true)
 				return;
 			// Settling closes the task and releases the write lock; cancelling the gesture keeps

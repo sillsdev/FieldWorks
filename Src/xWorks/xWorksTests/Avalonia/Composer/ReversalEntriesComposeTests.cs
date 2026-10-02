@@ -131,6 +131,10 @@ namespace SIL.FieldWorks.XWorks
 
 		private static DetailReversalRow AddRow(DetailReversalGroup group) => group.Rows.Single(r => r.IsAddSlot);
 
+		private List<string> LinkedForms()
+			=> m_sense.ReferringReversalIndexEntries
+				.Select(e => e.ReversalForm.get_String(EnWs).Text).ToList();
+
 		private static List<string> EntryTexts(DetailReversalGroup group)
 			=> group.Rows.Where(r => !r.IsAddSlot).Select(r => r.Text).ToList();
 
@@ -756,6 +760,43 @@ namespace SIL.FieldWorks.XWorks
 				"neither row was written, the one before the failure included");
 			Assert.That(m_sense.Gloss.get_String(EnWs).Text, Is.Null,
 				"the edit that opened the session went with it");
+		}
+
+		// Undo and Redo reach the field as global gestures, not keys it sees, so the host's guard
+		// is what asks the field for the text it is holding.
+		[Test]
+		public void AnUndoGesture_SavesWhatTheFieldHolds_BeforeItRuns()
+		{
+			UndoableUnitOfWorkHelper.Do("Undo seed", "Redo seed", Cache.ActionHandlerAccessor,
+				() => m_sense.Gloss.set_String(EnWs, "seed"));
+			AddEntry(m_enIndex, "dwelling", m_sense);
+			var host = DetailComposer.Compose(m_entry, Cache).EditContext;
+			var holder = new DetailEditContextHolder();
+			holder.AttachUndoGuard(Cache.ActionHandlerAccessor);
+			try
+			{
+				holder.Replace(host);
+				var field = (FwReversalEntriesField)new ReversalIndexEntryPlugin().BuildControl(
+					new SlicePluginBuildContext(m_sense, null, () => host, Cache));
+				field.GetLogicalDescendants().OfType<Avalonia.Controls.TextBox>()
+					.Single(box => box.Text == "dwelling").Text = "abode";
+
+				Cache.ActionHandlerAccessor.Undo();
+
+				Assert.That(LinkedForms(), Is.EqualTo(new[] { "abode" }),
+					"the typed text was saved as its own step, not left behind by the undo");
+				Assert.That(m_sense.Gloss.get_String(EnWs).Text, Is.EqualTo("seed"),
+					"the step before it is left alone");
+
+				Cache.ActionHandlerAccessor.Undo();
+				Assert.That(LinkedForms(), Is.EqualTo(new[] { "dwelling" }),
+					"the next undo reverts what the first one saved");
+			}
+			finally
+			{
+				holder.DetachUndoGuard();
+				holder.Clear();
+			}
 		}
 
 		[Test]
