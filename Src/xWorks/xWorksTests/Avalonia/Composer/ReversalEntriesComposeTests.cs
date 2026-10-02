@@ -530,11 +530,11 @@ namespace SIL.FieldWorks.XWorks
 			var first = rows.Single(r => r.Text == "dwelling");
 			var second = rows.Single(r => r.Text == "abode");
 
-			Assert.That(editing.TryCommitRows(new[]
+			Assert.That(editing.CommitRows(new[]
 			{
 				new KeyValuePair<string, string>(first.RowKey, "abode"),
 				new KeyValuePair<string, string>(second.RowKey, "dwelling")
-			}), Is.True);
+			}), Is.EqualTo(ReversalCommitOutcome.Staged));
 			host.Commit();
 
 			Assert.That(dwelling.IsValidObject && abode.IsValidObject, Is.True,
@@ -550,7 +550,7 @@ namespace SIL.FieldWorks.XWorks
 			var (editing, host) = NewContext();
 			var rows = Group(editing.CreateGroups(null), EnTag).Rows.Where(r => !r.IsAddSlot).ToList();
 
-			editing.TryCommitRows(new[]
+			editing.CommitRows(new[]
 			{
 				new KeyValuePair<string, string>(rows.Single(r => r.Text == "one").RowKey, "two"),
 				new KeyValuePair<string, string>(rows.Single(r => r.Text == "two").RowKey, string.Empty)
@@ -676,6 +676,11 @@ namespace SIL.FieldWorks.XWorks
 			=> field.GetLogicalDescendants().OfType<Avalonia.Controls.TextBox>()
 				.Single(box => box.Text == text);
 
+		private static Avalonia.Controls.TextBox AddSlot(FwReversalEntriesField field, string wsTag)
+			=> field.GetLogicalDescendants().OfType<Avalonia.Controls.TextBox>()
+				.Single(box => Avalonia.Automation.AutomationProperties.GetAutomationId(box)
+					== ReversalIndexEntryPlugin.DefaultAutomationId + "." + wsTag + ".Add");
+
 		// A context on the composed host whose view cancel is counted, and an add row in an index
 		// that is deleted before the row writes, so any batch through it fails.
 		private (ReversalDetailEditContext Editing, IDetailEditContext Host, string DoomedRow,
@@ -748,13 +753,13 @@ namespace SIL.FieldWorks.XWorks
 			}, "Gloss");
 			Assert.That(host.IsOpen, Is.True, "precondition: another field's edit opened the session");
 
-			var staged = editing.TryCommitRows(new[]
+			var outcome = editing.CommitRows(new[]
 			{
 				new KeyValuePair<string, string>(enAdd.RowKey, "home"),
 				new KeyValuePair<string, string>(esAdd.RowKey, "casa")
 			});
 
-			Assert.That(staged, Is.False);
+			Assert.That(outcome, Is.EqualTo(ReversalCommitOutcome.Failed));
 			Assert.That(host.IsOpen, Is.False, "the failed batch closed the session");
 			Assert.That(m_sense.ReferringReversalIndexEntries, Is.Empty,
 				"neither row was written, the one before the failure included");
@@ -814,10 +819,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				holder.Replace(host);
 				var field = BuildReversalField(host);
-				field.GetLogicalDescendants().OfType<Avalonia.Controls.TextBox>()
-					.Single(box => Avalonia.Automation.AutomationProperties.GetAutomationId(box)
-						== ReversalIndexEntryPlugin.DefaultAutomationId + "." + es.Id + ".Add")
-					.Text = "casa";
+				AddSlot(field, es.Id).Text = "casa";
 				NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor,
 					() => Cache.LanguageProject.LexDbOA.ReversalIndexesOC.Remove(esIndex));
 				if (anotherFieldsEditIsOpen)
@@ -834,6 +836,10 @@ namespace SIL.FieldWorks.XWorks
 				Assert.That(m_sense.Gloss.get_String(EnWs).Text, Is.EqualTo("seed"),
 					"the failed save took the Undo, so the step before it stands");
 				Assert.That(host.IsOpen, Is.False);
+
+				Cache.ActionHandlerAccessor.Undo();
+				Assert.That(m_sense.Gloss.get_String(EnWs).Text, Is.Not.EqualTo("seed"),
+					"the lost edit took only that one Undo; the next reaches the step before");
 			}
 			finally
 			{
@@ -853,6 +859,34 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void AnUndo_WhoseHeldEditFailsInAnotherFieldsSession_LeavesTheStepBeforeAlone()
 			=> AssertAFailedHeldEditTakesTheUndo(anotherFieldsEditIsOpen: true);
+
+		// Spaces in an empty add slot change nothing, so they hold no edit, and the Undo
+		// reaches the step before.
+		[Test]
+		public void AnUndo_WithOnlySpacesInAnAddSlot_UndoesTheStepBefore()
+		{
+			UndoableUnitOfWorkHelper.Do("Undo seed", "Redo seed", Cache.ActionHandlerAccessor,
+				() => m_sense.Gloss.set_String(EnWs, "seed"));
+			var host = DetailComposer.Compose(m_entry, Cache).EditContext;
+			var holder = new DetailEditContextHolder();
+			holder.AttachUndoGuard(Cache.ActionHandlerAccessor);
+			try
+			{
+				holder.Replace(host);
+				AddSlot(BuildReversalField(host), EnTag).Text = "   ";
+
+				Cache.ActionHandlerAccessor.Undo();
+
+				Assert.That(m_sense.Gloss.get_String(EnWs).Text, Is.Not.EqualTo("seed"),
+					"nothing was held, so the Undo went through");
+				Assert.That(m_sense.ReferringReversalIndexEntries, Is.Empty);
+			}
+			finally
+			{
+				holder.DetachUndoGuard();
+				holder.Clear();
+			}
+		}
 
 		[Test]
 		public void AnAddedEntry_PersistsIntoTheNextCompose()

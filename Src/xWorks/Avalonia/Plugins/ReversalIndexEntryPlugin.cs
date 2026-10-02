@@ -253,13 +253,16 @@ namespace SIL.FieldWorks.XWorks
 
 		/// <inheritdoc />
 		public bool TryCommitRow(string rowKey, string typedText)
-			=> TryCommitRows(new[] { new KeyValuePair<string, string>(rowKey, typedText) });
+			=> CommitRows(new[] { new KeyValuePair<string, string>(rowKey, typedText) })
+				== ReversalCommitOutcome.Staged;
 
 		/// <inheritdoc />
-		public bool TryCommitRows(IReadOnlyList<KeyValuePair<string, string>> edits)
+		public ReversalCommitOutcome CommitRows(IReadOnlyList<KeyValuePair<string, string>> edits)
 		{
-			if (edits == null || !_sense.IsValidObject)
-				return false;
+			if (edits == null)
+				return ReversalCommitOutcome.Unchanged;
+			if (!_sense.IsValidObject)
+				return ReversalCommitOutcome.Failed;
 
 			List<RowChange> changes = null;
 			List<IReversalIndexEntry> previous = null;
@@ -282,10 +285,10 @@ namespace SIL.FieldWorks.XWorks
 					changes.Add(new RowChange(binding, forms, ws));
 				}
 				if (changes.Count == 0)
-					return false;
+					return ReversalCommitOutcome.Unchanged;
 
 				previous = changes.Select(change => change.Binding.Entry).ToList();
-				return StageOnHost(() =>
+				var staged = StageOnHost(() =>
 				{
 					// Every row takes its new entry before any entry is let go, so an entry
 					// one row gives up and another takes over is never deleted in between.
@@ -313,6 +316,7 @@ namespace SIL.FieldWorks.XWorks
 					}
 					return true;
 				});
+				return staged ? ReversalCommitOutcome.Staged : ReversalCommitOutcome.Failed;
 			}
 			catch (Exception e)
 			{
@@ -328,7 +332,7 @@ namespace SIL.FieldWorks.XWorks
 				for (var i = 0; previous != null && i < changes.Count; i++)
 					changes[i].Binding.Entry = previous[i];
 				Logger.WriteError(e);
-				return false;
+				return ReversalCommitOutcome.Failed;
 			}
 		}
 

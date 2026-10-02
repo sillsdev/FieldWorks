@@ -736,10 +736,11 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		/// Stages every slot changed since the last save, as one change on the host's edit
 		/// session. The field otherwise stages only when focus leaves it, so a host that saves
 		/// while focus is still inside (on navigation, a refresh, or a tool switch) calls this
-		/// first. Does nothing when read-only, disposed, or unchanged.
+		/// first. Does nothing when read-only, disposed, or unchanged. A slot whose text fails
+		/// to save goes back to its saved text, so the field never shows an edit it lost.
 		/// </summary>
-		/// <returns>Whether any slot held text unlike its saved text, staged or not, so a
-		/// host can tell an edit it lost from no edit at all.</returns>
+		/// <returns>Whether a slot held an edit to save, staged or lost; false when no slot
+		/// differed, or when what they held already matches what is saved.</returns>
 		public bool CommitPendingEdits() => CommitAll();
 
 		private bool CommitAll()
@@ -752,12 +753,24 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			var edits = changed
 				.Select(slot => new KeyValuePair<string, string>(slot.Row.RowKey, slot.Text))
 				.ToList();
-			if (_editing.TryCommitRows(edits))
+			switch (_editing.CommitRows(edits))
 			{
-				foreach (var slot in changed)
-					slot.Committed = slot.Text;
+				case ReversalCommitOutcome.Staged:
+					foreach (var slot in changed)
+						slot.Committed = slot.Text;
+					return true;
+				case ReversalCommitOutcome.Unchanged:
+					// Spaces, or a form already saved in another spelling: nothing is held.
+					foreach (var slot in changed)
+						slot.Committed = slot.Text;
+					return false;
+				default:
+					// Kept, the text would be held again on every later save and Undo, and fail
+					// the same way each time.
+					foreach (var slot in changed)
+						slot.Editor.Text = slot.Committed;
+					return true;
 			}
-			return true;
 		}
 
 		// Puts every slot back to the text the model holds, dropping what was typed.

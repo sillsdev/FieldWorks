@@ -7,6 +7,20 @@ using System.Collections.Generic;
 
 namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 {
+	/// <summary>What <see cref="IReversalEntryEditing.CommitRows"/> did with its rows.</summary>
+	public enum ReversalCommitOutcome
+	{
+		/// <summary>A row changed, and the change is staged on the edit session.</summary>
+		Staged,
+
+		/// <summary>Every row already shows what it was given, so nothing was staged.</summary>
+		Unchanged,
+
+		/// <summary>The rows could not be written: the sense is gone or the write failed.
+		/// Whatever the failure left staged has been cancelled.</summary>
+		Failed
+	}
+
 	/// <summary>
 	/// The row-level editing capability behind <see cref="FwReversalEntriesField"/>, kept off
 	/// the core <see cref="IDetailEditContext"/> so only a context that edits a sense's
@@ -30,14 +44,15 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		/// unlink, so a later commit on the same row edits what this one produced.
 		/// </summary>
 		/// <param name="edits">Row key to typed text, one pair per changed row.</param>
-		/// <returns>False, without opening the session, when no row changes or the sense no
-		/// longer exists; also false when the write fails, which is logged and cancels the
-		/// session, edits and all, the way the view's own cancel does, rather than leaving a
-		/// half-written batch to be saved.</returns>
-		bool TryCommitRows(IReadOnlyList<KeyValuePair<string, string>> edits);
+		/// <returns><see cref="ReversalCommitOutcome.Unchanged"/>, without opening the session,
+		/// when no row changes; <see cref="ReversalCommitOutcome.Failed"/> when the sense no
+		/// longer exists or the write fails, which is logged and cancels the session, edits and
+		/// all, the way the view's own cancel does, rather than leaving a half-written batch to
+		/// be saved.</returns>
+		ReversalCommitOutcome CommitRows(IReadOnlyList<KeyValuePair<string, string>> edits);
 
-		/// <summary>Stages one row's text: a <see cref="TryCommitRows"/> of that single
-		/// row.</summary>
+		/// <summary>Stages one row's text: a <see cref="CommitRows"/> of that single row,
+		/// true only when it staged.</summary>
 		bool TryCommitRow(string rowKey, string typedText);
 
 		/// <summary>

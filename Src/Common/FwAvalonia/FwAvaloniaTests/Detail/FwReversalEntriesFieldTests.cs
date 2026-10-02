@@ -39,16 +39,20 @@ namespace FwAvaloniaTests.Detail
 
 			public int Batches;
 
-			public bool TryCommitRows(IReadOnlyList<KeyValuePair<string, string>> edits)
+			// What every commit reports, so a test can play the context's other answers.
+			public ReversalCommitOutcome Outcome = ReversalCommitOutcome.Staged;
+
+			public ReversalCommitOutcome CommitRows(IReadOnlyList<KeyValuePair<string, string>> edits)
 			{
 				Batches++;
 				foreach (var edit in edits)
 					Events.Add("commit " + edit.Key + "=" + edit.Value);
-				return true;
+				return Outcome;
 			}
 
 			public bool TryCommitRow(string rowKey, string typedText)
-				=> TryCommitRows(new[] { new KeyValuePair<string, string>(rowKey, typedText) });
+				=> CommitRows(new[] { new KeyValuePair<string, string>(rowKey, typedText) })
+					== ReversalCommitOutcome.Staged;
 
 			private int _issued;
 
@@ -345,6 +349,38 @@ namespace FwAvaloniaTests.Detail
 			Assert.That(second.Text, Is.EqualTo("abode"));
 			Assert.That(context.Events, Is.EqualTo(new[] { "commit en0=house" }),
 				"nothing typed since the last save is saved");
+		}
+
+		// Text that changes nothing is not an edit: reporting it as held would let it take
+		// every Undo while the slot keeps it.
+		[AvaloniaTest]
+		public void TextThatChangesNothing_IsNotHeld_AndIsNotOfferedAgain()
+		{
+			var context = new RecordingReversalContext { Outcome = ReversalCommitOutcome.Unchanged };
+			var (field, _, _) = Show(context, null, English("dwelling"));
+			var add = Find<TextBox>(field, "Reversal.en.Add");
+			add.Text = "   ";
+
+			Assert.That(field.CommitPendingEdits(), Is.False, "nothing differs from what is saved");
+			Assert.That(field.CommitPendingEdits(), Is.False);
+			Assert.That(context.Batches, Is.EqualTo(1), "the text is offered once, not on every save");
+			Assert.That(add.Text, Is.EqualTo("   "), "what was typed stays in the slot");
+		}
+
+		// A failed save spends one gesture on the edit it lost, then the slot shows what is
+		// saved, so later saves and Undos do not keep failing on it.
+		[AvaloniaTest]
+		public void AFailedSave_IsHeldOnce_ThenTheSlotShowsWhatIsSaved()
+		{
+			var context = new RecordingReversalContext { Outcome = ReversalCommitOutcome.Failed };
+			var (field, _, _) = Show(context, null, English("dwelling"));
+			var entry = Find<TextBox>(field, "Reversal.en.0");
+			entry.Text = "abode";
+
+			Assert.That(field.CommitPendingEdits(), Is.True, "the lost edit was held");
+			Assert.That(entry.Text, Is.EqualTo("dwelling"), "the slot shows what is saved again");
+			Assert.That(field.CommitPendingEdits(), Is.False, "and holds nothing after that");
+			Assert.That(context.Batches, Is.EqualTo(1));
 		}
 
 		[AvaloniaTest]
