@@ -195,9 +195,10 @@ namespace SIL.FieldWorks.XWorks
 			context.AddPendingEditFlush("Form", () =>
 			{
 				if (held == null)
-					return;
+					return false;
 				context.TrySetText(DetailEditContextEditingTests.F("Form"), "vern", held);
 				held = null;
+				return true;
 			});
 			var holder = new DetailEditContextHolder();
 			holder.AttachUndoGuard(Cache.ActionHandlerAccessor);

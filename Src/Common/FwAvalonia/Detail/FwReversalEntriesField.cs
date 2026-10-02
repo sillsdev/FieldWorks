@@ -738,15 +738,17 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		/// while focus is still inside (on navigation, a refresh, or a tool switch) calls this
 		/// first. Does nothing when read-only, disposed, or unchanged.
 		/// </summary>
-		public void CommitPendingEdits() => CommitAll();
+		/// <returns>Whether any slot held text unlike its saved text, staged or not, so a
+		/// host can tell an edit it lost from no edit at all.</returns>
+		public bool CommitPendingEdits() => CommitAll();
 
-		private void CommitAll()
+		private bool CommitAll()
 		{
 			if (_editing == null || _disposed)
-				return;
+				return false;
 			var changed = _slots.Where(slot => slot.Text != slot.Committed).ToList();
 			if (changed.Count == 0)
-				return;
+				return false;
 			var edits = changed
 				.Select(slot => new KeyValuePair<string, string>(slot.Row.RowKey, slot.Text))
 				.ToList();
@@ -755,6 +757,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				foreach (var slot in changed)
 					slot.Committed = slot.Text;
 			}
+			return true;
 		}
 
 		// Puts every slot back to the text the model holds, dropping what was typed.

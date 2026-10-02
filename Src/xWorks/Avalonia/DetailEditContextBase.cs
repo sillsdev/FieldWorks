@@ -21,8 +21,8 @@ namespace SIL.FieldWorks.XWorks
 	public abstract class DetailEditContextBase : IDetailEditContext
 	{
 		private LcmDetailEditSession _session;
-		private readonly Dictionary<string, Action> _pendingEditFlushes =
-			new Dictionary<string, Action>(StringComparer.Ordinal);
+		private readonly Dictionary<string, Func<bool>> _pendingEditFlushes =
+			new Dictionary<string, Func<bool>>(StringComparer.Ordinal);
 
 		protected DetailEditContextBase(LcmCache cache, ICmObject root)
 		{
@@ -111,8 +111,9 @@ namespace SIL.FieldWorks.XWorks
 		/// rebuilds of it. The view rebuilds a row's controls on a section toggle without
 		/// building a new context, so a later registration under the same key replaces the
 		/// earlier one and the context holds only the live editor.</param>
-		/// <param name="flush">Stages what that editor holds; null registers nothing.</param>
-		public void AddPendingEditFlush(string ownerKey, Action flush)
+		/// <param name="flush">Stages what that editor holds, and returns whether it held
+		/// anything, saved or not; null registers nothing.</param>
+		public void AddPendingEditFlush(string ownerKey, Func<bool> flush)
 		{
 			if (string.IsNullOrEmpty(ownerKey) || flush == null)
 				return;
@@ -127,9 +128,9 @@ namespace SIL.FieldWorks.XWorks
 		/// gone. A later registration under the same key -- the rebuild that replaced the
 		/// editor -- is left in place.
 		/// </summary>
-		public void RemovePendingEditFlush(string ownerKey, Action flush)
+		public void RemovePendingEditFlush(string ownerKey, Func<bool> flush)
 		{
-			Action registered;
+			Func<bool> registered;
 			if (!string.IsNullOrEmpty(ownerKey) && _pendingEditFlushes.TryGetValue(ownerKey, out registered)
 				&& registered == flush)
 			{
@@ -141,10 +142,13 @@ namespace SIL.FieldWorks.XWorks
 		/// Stages whatever the registered editors are holding back, possibly opening the session.
 		/// A save calls this first, before it checks whether a session is open.
 		/// </summary>
-		public void FlushPendingEdits()
+		/// <returns>Whether any editor held an edit, whether or not it could be staged.</returns>
+		public bool FlushPendingEdits()
 		{
-			foreach (var flush in new List<Action>(_pendingEditFlushes.Values))
-				flush();
+			var held = false;
+			foreach (var flush in new List<Func<bool>>(_pendingEditFlushes.Values))
+				held |= flush();
+			return held;
 		}
 
 		/// <inheritdoc />

@@ -121,17 +121,18 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		// An editor that stages only on focus loss still holds its edits when a save runs with
-		// focus inside it; staging them first lets the settle below commit them.
-		private static void FlushPendingEdits(IDetailEditContext current)
+		// Stages what editors hold back until focus leaves them, so the settle below commits
+		// it. True when an editor held something, or when a flush threw.
+		private static bool FlushPendingEdits(IDetailEditContext current)
 		{
 			try
 			{
-				(current as DetailEditContextBase)?.FlushPendingEdits();
+				return (current as DetailEditContextBase)?.FlushPendingEdits() ?? false;
 			}
 			catch (System.Exception e)
 			{
 				SIL.Reporting.Logger.WriteError(e);
+				return true;
 			}
 		}
 
@@ -193,9 +194,15 @@ namespace SIL.FieldWorks.XWorks
 		{
 			// The editor the gesture came from may still hold the user's last edit. Staging it
 			// first makes this gesture close that edit, not the step before it.
-			FlushPendingEdits(Current);
+			var held = FlushPendingEdits(Current);
 			if (Current?.IsOpen != true)
+			{
+				// A held edit that could not be saved still takes this gesture; undoing the step
+				// before it too would lose two things instead of one.
+				if (held)
+					e.Cancel = true;
 				return;
+			}
 			// Settling closes the task and releases the write lock; cancelling the gesture keeps
 			// its meaning predictable -- this press closed the pending edit, the next one undoes
 			// it.

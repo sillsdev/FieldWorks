@@ -799,6 +799,61 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
+		// Text held for an index deleted under the field cannot be saved, yet the Undo that asked
+		// for it is still spent on it, so the step before -- the seed -- is left alone.
+		private void AssertAFailedHeldEditTakesTheUndo(bool anotherFieldsEditIsOpen)
+		{
+			UndoableUnitOfWorkHelper.Do("Undo seed", "Redo seed", Cache.ActionHandlerAccessor,
+				() => m_sense.Gloss.set_String(EnWs, "seed"));
+			var es = AddAnalysisWs("es");
+			var esIndex = AddIndex(es);
+			var host = DetailComposer.Compose(m_entry, Cache).EditContext;
+			var holder = new DetailEditContextHolder();
+			holder.AttachUndoGuard(Cache.ActionHandlerAccessor);
+			try
+			{
+				holder.Replace(host);
+				var field = BuildReversalField(host);
+				field.GetLogicalDescendants().OfType<Avalonia.Controls.TextBox>()
+					.Single(box => Avalonia.Automation.AutomationProperties.GetAutomationId(box)
+						== ReversalIndexEntryPlugin.DefaultAutomationId + "." + es.Id + ".Add")
+					.Text = "casa";
+				NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor,
+					() => Cache.LanguageProject.LexDbOA.ReversalIndexesOC.Remove(esIndex));
+				if (anotherFieldsEditIsOpen)
+				{
+					((DetailEditContextBase)host).Stage(() =>
+					{
+						m_sense.Gloss.set_String(EnWs, "staged");
+						return true;
+					}, "Gloss");
+				}
+
+				Cache.ActionHandlerAccessor.Undo();
+
+				Assert.That(m_sense.Gloss.get_String(EnWs).Text, Is.EqualTo("seed"),
+					"the failed save took the Undo, so the step before it stands");
+				Assert.That(host.IsOpen, Is.False);
+			}
+			finally
+			{
+				holder.DetachUndoGuard();
+				holder.Clear();
+			}
+		}
+
+		// Here the failing batch opens the session itself and closes it again, so no session
+		// is open before the Undo or after it; only the field can say it was holding text.
+		[Test]
+		public void AnUndo_WhoseHeldEditFailsToSave_LeavesTheStepBeforeAlone()
+			=> AssertAFailedHeldEditTakesTheUndo(anotherFieldsEditIsOpen: false);
+
+		// Here the failed save also cancels the other field's edit, closing a session that was
+		// open before the Undo.
+		[Test]
+		public void AnUndo_WhoseHeldEditFailsInAnotherFieldsSession_LeavesTheStepBeforeAlone()
+			=> AssertAFailedHeldEditTakesTheUndo(anotherFieldsEditIsOpen: true);
+
 		[Test]
 		public void AnAddedEntry_PersistsIntoTheNextCompose()
 		{

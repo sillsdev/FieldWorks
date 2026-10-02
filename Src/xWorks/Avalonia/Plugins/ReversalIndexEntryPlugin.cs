@@ -97,7 +97,7 @@ namespace SIL.FieldWorks.XWorks
 				var fenced = host as DetailEditContextBase;
 				if (fenced != null)
 				{
-					Action flush = control.CommitPendingEdits;
+					Func<bool> flush = control.CommitPendingEdits;
 					fenced.AddPendingEditFlush(fieldId, flush);
 					// Collapsing the row's section disposes the control without a replacement.
 					control.Disposed += (s, e) => fenced.RemovePendingEditFlush(fieldId, flush);
