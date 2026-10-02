@@ -897,10 +897,8 @@ namespace SIL.FieldWorks.LexText.Controls
 		}
 
 		/// <summary>
-		/// Suppress this parse result if it is an uppercase wordform whose analyses all came from its lowercase version.
-		/// This only happens in projects that were parsed before we decided that the case of wordforms in analyses
-		/// should be determined by the case of the word that was parsed rather than the case of the surface form.
-		/// So, the wordform for "The" should be "the" rather than "The" because "The" is parsed as the determiner "the".
+		/// Suppress this parse result if it is an uppercase wordform with no analyses
+		/// that has a lowercase wordform in the same corpus.
 		/// </summary>
 		/// <param name="wordform"></param>
 		/// <returns></returns>
@@ -923,25 +921,6 @@ namespace SIL.FieldWorks.LexText.Controls
 				{
 					if (m_checkParserResults.ContainsKey(lcWordform))
 					{
-						var lcResult = m_checkParserResults[lcWordform];
-						// See if lcResult covers wordform's approved analyses.
-						var userAgent = wordform.Cache.LanguageProject.DefaultUserAgent;
-						foreach (IWfiAnalysis wfAnalysis in wordform.AnalysesOC)
-						{
-							var wfOpinion = wfAnalysis.GetAgentOpinion(userAgent);
-							if (wfOpinion == Opinions.approves)
-							{
-								foreach (ParseAnalysis lcWfAnalysis in lcResult.Analyses)
-								{
-									if (!lcWfAnalysis.MatchesIWfiAnalysis(wfAnalysis))
-									{
-										return false;
-									}
-								}
-							}
-						}
-						// All approved analyses are covered.
-						// Suppress the parse results for wordform.
 						return true;
 					}
 				}

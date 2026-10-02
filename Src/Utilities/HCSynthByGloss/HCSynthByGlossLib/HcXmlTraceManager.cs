@@ -97,15 +97,20 @@ namespace HCSynthByGloss
 			);
 		}
 
-		public void EndUnapplyTemplate(AffixTemplate template, Word output, bool unapplied)
+		public void EndUnapplyTemplate(AffixTemplate template, Word output, bool unapplied, FailureReason reason)
 		{
-			((XElement)output.CurrentTrace).Add(
-				new XElement(
-					"TemplateAnalysisTraceOut",
-					CreateHCRuleElement("AffixTemplate", template),
-					CreateWordElement("Output", unapplied ? output : null, true)
-				)
+			var trace = new XElement(
+				"TemplateAnalysisTraceOut",
+				CreateHCRuleElement("AffixTemplate", template),
+				CreateWordElement("Output", unapplied ? output : null, true)
 			);
+			if (reason == FailureReason.NonPartialRuleProhibitedAfterFinalTemplate)
+			{
+				trace.Add(
+					new XElement("FailureReason", new XAttribute("type", "nonPartialRuleAfterFinalTemplate"))
+				);
+			}
+			((XElement)output.CurrentTrace).Add(trace);
 		}
 
 		public void MorphologicalRuleUnapplied(

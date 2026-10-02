@@ -248,6 +248,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 			// The following must go after AddParserReport is called.
 			diff.IsDiff = true;
+			diff.ChangesRecorded = ChangesRecorded || other.ChangesRecorded;
 			diff.ProjectName = DiffNames(ProjectName, other.ProjectName);
 			diff.SourceText = DiffNames(SourceText, other.SourceText);
 			diff.MachineName = DiffNames(MachineName, other.MachineName);
