@@ -16,8 +16,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		/// <summary>Every row already shows what it was given, so nothing was staged.</summary>
 		Unchanged,
 
-		/// <summary>The rows could not be written: the sense is gone or the write failed.
-		/// Whatever the failure left staged has been cancelled.</summary>
+		/// <summary>The rows could not be written: the sense is gone, a row cannot be resolved,
+		/// or the write failed. Nothing this commit wrote is left staged.</summary>
 		Failed
 	}
 
@@ -45,10 +45,11 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		/// </summary>
 		/// <param name="edits">Row key to typed text, one pair per changed row.</param>
 		/// <returns><see cref="ReversalCommitOutcome.Unchanged"/>, without opening the session,
-		/// when no row changes; <see cref="ReversalCommitOutcome.Failed"/> when the sense no
-		/// longer exists or the write fails, which is logged and cancels the session, edits and
-		/// all, the way the view's own cancel does, rather than leaving a half-written batch to
-		/// be saved.</returns>
+		/// when no row changes; <see cref="ReversalCommitOutcome.Failed"/>, without writing
+		/// anything, when the sense is gone or a row cannot be resolved; and also
+		/// <see cref="ReversalCommitOutcome.Failed"/> when the write fails, which is logged and
+		/// cancels the session, edits and all, the way the view's own cancel does, rather than
+		/// leaving a half-written batch to be saved.</returns>
 		ReversalCommitOutcome CommitRows(IReadOnlyList<KeyValuePair<string, string>> edits);
 
 		/// <summary>Stages one row's text: a <see cref="CommitRows"/> of that single row,

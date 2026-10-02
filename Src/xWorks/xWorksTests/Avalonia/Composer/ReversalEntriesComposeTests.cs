@@ -732,6 +732,29 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(host.IsOpen, Is.False, "no session is left open either way");
 		}
 
+		// A row the context cannot resolve must not pass as unchanged: the field would then
+		// show the text as saved when nothing was written.
+		[Test]
+		public void ARowThatCannotBeResolved_FailsTheBatch_WritingNothing()
+		{
+			var (editing, host) = NewContext();
+			var enAdd = AddRow(Group(editing.CreateGroups(null), EnTag));
+
+			Assert.That(editing.CommitRows(new[]
+			{
+				new KeyValuePair<string, string>(enAdd.RowKey, "home"),
+				new KeyValuePair<string, string>("no-such-key", "casa")
+			}), Is.EqualTo(ReversalCommitOutcome.Failed), "a key the context never issued");
+			Assert.That(host.IsOpen, Is.False, "nothing was written, the valid row included");
+			Assert.That(m_sense.ReferringReversalIndexEntries, Is.Empty);
+
+			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor,
+				() => m_enIndex.WritingSystem = "qaa-x-gone");
+			Assert.That(editing.CommitRows(new[] { new KeyValuePair<string, string>(enAdd.RowKey, "home") }),
+				Is.EqualTo(ReversalCommitOutcome.Failed), "an index whose writing system is gone");
+			Assert.That(host.IsOpen, Is.False);
+		}
+
 		// A failed batch closes the session it wrote into, at the cost of the edit that opened
 		// it, rather than carrying half a batch to the next save.
 		[Test]

@@ -271,12 +271,20 @@ namespace SIL.FieldWorks.XWorks
 				changes = new List<RowChange>();
 				foreach (var edit in edits)
 				{
+					// A row that cannot be resolved can be neither compared nor written, so the
+					// batch fails before writing anything rather than calling the row unchanged.
 					RowBinding binding;
-					if (string.IsNullOrEmpty(edit.Key) || !_rows.TryGetValue(edit.Key, out binding))
-						continue;
-					var ws = _cache.ServiceLocator.WritingSystemManager.GetWsFromStr(binding.Index.WritingSystem);
+					var ws = 0;
+					if (!string.IsNullOrEmpty(edit.Key) && _rows.TryGetValue(edit.Key, out binding))
+						ws = _cache.ServiceLocator.WritingSystemManager.GetWsFromStr(binding.Index.WritingSystem);
+					else
+						binding = null;
 					if (ws <= 0)
-						continue;
+					{
+						Logger.WriteEvent("ReversalDetailEditContext: row '" + edit.Key
+							+ "' cannot be resolved; nothing was saved.");
+						return ReversalCommitOutcome.Failed;
+					}
 					if (binding.Entry != null && !binding.Entry.IsValidObject)
 						binding.Entry = null;
 					var forms = SplitForms(edit.Value);
