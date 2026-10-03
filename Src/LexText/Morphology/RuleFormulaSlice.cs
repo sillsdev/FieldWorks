@@ -154,7 +154,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			if (RuleFormulaControl.IsFeatsNCContextCurrent)
 			{
 				bool isUserDefinedNC = RuleFormulaControl.IsFeatureBasedNCNameUserDefined();
-				enable = !isUserDefinedNC; //enable is true iff IsFeatsNCContextCurrent is true and IsNCNameUserDefined is false
+				enable = !isUserDefinedNC;
 			}
 
 			display.Enabled = enable;
