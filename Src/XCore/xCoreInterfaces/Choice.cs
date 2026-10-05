@@ -196,7 +196,10 @@ namespace XCore
 			}
 		}
 
-		private Command CommandObject
+		/// <summary>The command this choice invokes.</summary>
+		/// <exception cref="ConfigurationException">No command with the configured id is
+		/// defined.</exception>
+		public Command CommandObject
 		{
 			get
 			{

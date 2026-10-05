@@ -12,6 +12,7 @@ using System.Xml;
 using SIL.LCModel.Core.Cellar;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.FieldWorks.Common.Controls.FileDialog;
+using SIL.FieldWorks.Common.DetailRules;
 using SIL.FieldWorks.Common.Framework.DetailControls;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
@@ -1443,11 +1444,10 @@ namespace SIL.FieldWorks.XWorks
 					if (hvo != 0)
 					{
 						ICmObject target = Cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvo);
-						if (ler != null && ler.RefType == LexEntryRefTags.krtComplexForm &&
-							(target is ILexEntry || target is ILexSense))
+						if (ComplexFormVisibility.CanShowSubentryUnderComponent(ler, target))
 						{
 							fEnable = true;
-							fChecked = ler.PrimaryLexemesRS.Contains(target); // LT-11292
+							fChecked = ComplexFormVisibility.ShowsSubentryUnderComponent(ler, target); // LT-11292
 						}
 					}
 				}
@@ -1468,40 +1468,8 @@ namespace SIL.FieldWorks.XWorks
 
 			var ler = current.Object as ILexEntryRef;
 			var objForHvo = Cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvo);
-			if (ler.PrimaryLexemesRS.Contains(objForHvo))
-			{   // Remove from visibility array
-				using (UndoableUnitOfWorkHelper helper = new UndoableUnitOfWorkHelper(
-					Cache.ActionHandlerAccessor,
-					xWorksStrings.ksUndoShowSubentryForComponent,
-					xWorksStrings.ksRedoShowSubentryForComponent))
-				{
-					ler.PrimaryLexemesRS.Remove(objForHvo);
-					helper.RollBack = false;
-				}
-				return true;
-			}
-			// Otherwise, continue and add it
-			int idx = 0;
-			foreach (var obj in ler.ComponentLexemesRS)
-			{ // looping preserves the order of the components
-				if (obj == objForHvo)
-				{
-					using (UndoableUnitOfWorkHelper helper = new UndoableUnitOfWorkHelper(
-						Cache.ActionHandlerAccessor,
-						xWorksStrings.ksUndoShowSubentryForComponent,
-						xWorksStrings.ksRedoShowSubentryForComponent))
-					{
-						ler.PrimaryLexemesRS.Insert(idx, objForHvo);
-						helper.RollBack = false;
-					}
-					break;
-				}
-
-				if (ler.PrimaryLexemesRS.Contains(obj))
-				{
-					++idx;
-				}
-			}
+			ComplexFormVisibility.ToggleSubentryUnderComponent(ler, objForHvo,
+				xWorksStrings.ksUndoShowSubentryForComponent, xWorksStrings.ksRedoShowSubentryForComponent);
 			return true;
 		}
 
@@ -1553,42 +1521,12 @@ namespace SIL.FieldWorks.XWorks
 
 			ICmObject le = current.Object; // can be ILexEntry or ILexSense
 			var cplxForm = Cache.ServiceLocator.GetInstance<ILexEntryRepository>().GetObject(hvo);
-			ILexEntryRef cfRef;
-			if (ComponentShowsComplexForm(le, cplxForm, out cfRef))
-			{
-				// Remove from visibility array
-				using (var helper = new UndoableUnitOfWorkHelper(
-					Cache.ActionHandlerAccessor,
-					xWorksStrings.ksUndoVisibleComplexForm,
-					xWorksStrings.ksRedoVisibleComplexForm))
-				{
-					cfRef.ShowComplexFormsInRS.Remove(le);
-					helper.RollBack = false;
-				}
+			var cfRef = ComplexFormVisibility.ComplexFormRefOf(cplxForm);
+			Debug.Assert(cfRef != null, "A component of a complex form has no reference to its complex form");
+			if (cfRef == null)
 				return true;
-			}
-			// Otherwise, continue and add it
-			int idx = 0;
-			foreach (var obj in cfRef.ComponentLexemesRS)
-			{
-				// looping preserves the order of the components
-				if (obj == le)
-				{
-					using (var helper = new UndoableUnitOfWorkHelper(
-						Cache.ActionHandlerAccessor,
-						xWorksStrings.ksUndoVisibleComplexForm,
-						xWorksStrings.ksRedoVisibleComplexForm))
-					{
-						cfRef.ShowComplexFormsInRS.Insert(idx, le);
-						helper.RollBack = false;
-					}
-					break;
-				}
-				if (cfRef.ShowComplexFormsInRS.Contains(obj))
-				{
-					++idx;
-				}
-			}
+			ComplexFormVisibility.ToggleShowComplexFormIn(cfRef, le,
+				xWorksStrings.ksUndoVisibleComplexForm, xWorksStrings.ksRedoVisibleComplexForm);
 			return true;
 		}
 
@@ -1603,9 +1541,9 @@ namespace SIL.FieldWorks.XWorks
 		/// <returns>true if cplxForm "contains" component (it has a reference to it).</returns>
 		private bool ComponentShowsComplexForm(ICmObject component, ILexEntry cplxForm, out ILexEntryRef cfRef)
 		{
-			cfRef = (from item in cplxForm.EntryRefsOS where item.RefType == LexEntryRefTags.krtComplexForm select item).FirstOrDefault();
+			cfRef = ComplexFormVisibility.ComplexFormRefOf(cplxForm);
 			Debug.Assert(cfRef != null,"A component of a complex form has no reference to its complex form");
-			return cfRef.ShowComplexFormsInRS.Contains(component);
+			return ComplexFormVisibility.ShowsComplexFormIn(cfRef, component);
 		}
 
 		/// <summary>
