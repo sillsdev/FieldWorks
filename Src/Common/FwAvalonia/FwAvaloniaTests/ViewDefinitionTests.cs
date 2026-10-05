@@ -202,7 +202,7 @@ namespace FwAvaloniaTests
 		[Test]
 		public void Import_OptionalWsAndForceIncludeEnglish_RideTheNode()
 		{
-			// Both widen what the field's Writing Systems menu may OFFER without changing what
+			// Both expand what the field's Writing Systems menu may OFFER without changing what
 			// the field shows. Only the Pronunciation form uses optionalWs in the shipped parts.
 			var model = Import(@"
 <layout class='LexEntry' type='detail' name='OWs'>
@@ -216,7 +216,7 @@ namespace FwAvaloniaTests
 		}
 
 		[Test]
-		public void Import_NoOptionalWs_LeavesTheWideningFactsUnset()
+		public void Import_WithoutOptionalWs_LeavesBothPropertiesUnset()
 		{
 			var model = Import(@"
 <layout class='LexEntry' type='detail' name='PFW'>

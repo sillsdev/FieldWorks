@@ -50,9 +50,9 @@ namespace SIL.FieldWorks.FdoUi
 			var shown = Ids(FieldWritingSystemOptions.DefaultShown(Cache, Analysis()));
 
 			Assert.That(options, Does.Contain(offered.Id),
-				"the menu offers an active writing system the project has not checked");
+				"the menu should offer an active writing system the project has not checked");
 			Assert.That(shown, Does.Not.Contain(offered.Id),
-				"but the field does not show it until the user chooses it");
+				"but the field should not show it until the user chooses it");
 			Assert.That(shown, Is.SubsetOf(options), "everything shown must be offerable");
 		}
 
@@ -78,7 +78,7 @@ namespace SIL.FieldWorks.FdoUi
 			var shown = Ids(FieldWritingSystemOptions.DefaultShown(Cache, Analysis(AllVernacular)));
 
 			Assert.That(shown, Does.Not.Contain(vernacular),
-				"the optional spec widens what can be chosen, never what is shown unasked");
+				"the optional spec expands what can be chosen, never what is shown unasked");
 		}
 
 		[Test]
@@ -93,7 +93,7 @@ namespace SIL.FieldWorks.FdoUi
 			var options = Ids(FieldWritingSystemOptions.Options(Cache, vernacularField));
 
 			Assert.That(options, Does.Not.Contain(analysisWs),
-				"a null optional spec must widen the options by nothing at all");
+				"a part with no optionalWs should not offer the analysis writing systems");
 			Assert.That(options,
 				Is.EqualTo(Ids(FieldWritingSystemOptions.Options(Cache,
 					WritingSystemFieldSpec.FromLayout(0, AllVernacular, null, false)))));

@@ -108,8 +108,7 @@ namespace SIL.FieldWorks.XWorks
 				Assert.That(restricted.Values.Select(v => v.WsTag), Is.EqualTo(new[] { offered.Id }),
 					"the row shows exactly the writing system chosen, not every writing system");
 
-				// Show all right now reveals every OPTION, unchecked ones included, as the
-				// WinForms slice does.
+				// Show all right now reveals every OPTION, unchecked ones included.
 				var templateId = ViewDefinitionOverrideEditor.StripRuntimeSuffix(form.StableId);
 				var revealed = ComposedFormRow(null, new HashSet<string> { templateId });
 				Assert.That(revealed.Values.Select(v => v.WsTag), Does.Contain(offered.Id),
@@ -130,7 +129,7 @@ namespace SIL.FieldWorks.XWorks
 			var expected = DetailComposer.ResolveWritingSystems(Cache, "all vernacular").Select(w => w.Id);
 
 			Assert.That(ComposedFormRow(null, null).Values.Select(v => v.WsTag), Is.EqualTo(expected),
-				"a row with no stored selection composes the set it composed before the shared rule");
+				"a row with no stored selection should compose its full configured set");
 		}
 
 		// An override restricting the Form row to one writing system.

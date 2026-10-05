@@ -89,14 +89,18 @@ namespace SIL.FieldWorks.XWorks
 		private DetailMenuItem ToggleItem(WritingSystemMenuOption option,
 			IReadOnlyList<WritingSystemMenuOption> all)
 		{
-			var toggled = all
+			return new DetailMenuItem(option.Label, option.CanUncheck, option.IsChecked, children: null,
+				execute: option.CanUncheck ? (Action)(() => _show(_field, Toggled(option, all))) : null);
+		}
+
+		// The shown set with one writing system flipped, computed only when its item is clicked.
+		private static IReadOnlyList<string> Toggled(WritingSystemMenuOption option,
+			IReadOnlyList<WritingSystemMenuOption> all)
+			=> all
 				.Where(o => string.Equals(o.Id, option.Id, StringComparison.OrdinalIgnoreCase)
 					? !o.IsChecked
 					: o.IsChecked)
 				.Select(o => o.Id)
 				.ToList();
-			return new DetailMenuItem(option.Label, option.CanUncheck, option.IsChecked, children: null,
-				execute: option.CanUncheck ? (Action)(() => _show(_field, toggled)) : null);
-		}
 	}
 }

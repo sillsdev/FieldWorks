@@ -969,6 +969,8 @@ namespace SIL.FieldWorks.XWorks
 				Throws.InvalidOperationException, "a foreign list is refused too");
 		}
 
+		// A transition contract: it compares the native menu with the mediator path and is
+		// deleted with that path. The standalone contracts above carry the behaviour after.
 		[Test]
 		public void MultiStringMenu_NativeAuthority_RendersWhatTheInterceptorPathRendered()
 		{
