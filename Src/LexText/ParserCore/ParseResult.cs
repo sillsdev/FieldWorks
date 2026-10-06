@@ -72,10 +72,17 @@ namespace SIL.FieldWorks.WordWorks.Parser
 	public class ParseAnalysis : IEquatable<ParseAnalysis>
 	{
 		private readonly ReadOnlyCollection<ParseMorph> m_morphs;
+		private readonly Dictionary<IMoMorphSynAnalysis, IMoMorphSynAnalysis> m_representativeMSAs;
 
 		public ParseAnalysis(IEnumerable<ParseMorph> morphs)
 		{
 			m_morphs = new ReadOnlyCollection<ParseMorph>(morphs.ToArray());
+		}
+
+		public ParseAnalysis(IEnumerable<ParseMorph> morphs, Dictionary<IMoMorphSynAnalysis, IMoMorphSynAnalysis> representativeMSAs)
+		{
+			m_morphs = new ReadOnlyCollection<ParseMorph>(morphs.ToArray());
+			m_representativeMSAs = representativeMSAs;
 		}
 
 		public ReadOnlyCollection<ParseMorph> Morphs
@@ -115,7 +122,8 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				foreach (IWfiMorphBundle mb in analysis.MorphBundlesOS)
 				{
 					var current = this.Morphs[i++];
-					if (mb.MorphRA == current.Form && mb.MsaRA == current.Msa && mb.InflTypeRA == current.InflType &&
+					var mbMSA = RepresentativeMSA(mb.MsaRA);
+					if (mb.MorphRA == current.Form && mbMSA == current.Msa && mb.InflTypeRA == current.InflType &&
 						(current.GuessedString == null || EquivalentFormString(mb.Form, current.GuessedString)))
 					{
 						// Possibly matches condition (2), above.
@@ -130,6 +138,15 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				return mbMatch;
 			}
 			return false;
+		}
+
+		private IMoMorphSynAnalysis RepresentativeMSA(IMoMorphSynAnalysis msa)
+		{
+			if (msa != null && m_representativeMSAs != null && m_representativeMSAs.TryGetValue(msa, out IMoMorphSynAnalysis repMSA))
+			{
+				return repMSA;
+			}
+			return msa;
 		}
 
 		private bool EquivalentFormString(IMultiString multiString, string formString)

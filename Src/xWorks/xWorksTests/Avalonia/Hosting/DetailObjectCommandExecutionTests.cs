@@ -230,14 +230,12 @@ namespace SIL.FieldWorks.XWorks
 		public void SubentriesItemMenu_OffersTheJumpAsCtrlClickDefault_AndTheMoveCommands_ForTheClickedItem()
 		{
 			MakeTwoSubentries();
-			var field = SubentriesField();
-			var request = DetailMenuRequest.FromAnchor(null, field, DetailMenuKind.ItemMenu,
-				new ItemSelection { SelectedItemKey = field.Items[0].Key, SelectedItemIndex = 0 });
+			var request = ItemRequest(SubentriesField(), 0);
 
-			var items = m_view.BuildReferenceItemMenu(request, out var colleague);
+			var items = m_view.BuildReferenceItemMenu(request, out var itemUi);
 			try
 			{
-				Assert.That(colleague, Is.Not.Null, "the clicked item's object UI joins as the temporary colleague");
+				Assert.That(itemUi, Is.Not.Null, "the clicked item's object UI answers the jumps");
 				var jump = items.FirstOrDefault(i => !i.IsSeparator
 					&& i.Label.StartsWith("Show Entry in Lexicon", StringComparison.Ordinal));
 				Assert.That(jump, Is.Not.Null, "the clicked entry's jump command materializes");
@@ -254,8 +252,278 @@ namespace SIL.FieldWorks.XWorks
 			}
 			finally
 			{
-				colleague?.Dispose();
+				itemUi?.Dispose();
 			}
+		}
+
+		private static DetailMenuRequest ItemRequest(DetailField field, int index)
+			=> DetailMenuRequest.FromAnchor(null, field, DetailMenuKind.ItemMenu,
+				new ItemSelection { SelectedItemKey = field.Items[index].Key, SelectedItemIndex = index });
+
+		// Whether the hidden command adapter tree has been built for this view.
+		private bool HiddenTreeExists => (bool)GetField(m_view, "m_dataTreeInitialized");
+
+		// The item menu's native authority answers the reference-choices menu, so an item menu
+		// is built from the row and the item alone.
+
+		[Test]
+		public void ReferenceItemAuthority_AnswersEveryLeafOfItsMenu()
+		{
+			MakeTwoSubentries();
+			var authority = m_view.CreateReferenceItemAuthority(ItemRequest(SubentriesField(), 0), out var itemUi);
+			using (itemUi)
+			{
+				var window = m_propertyTable.GetValue<XWindow>("window");
+				var menu = window.GetContextMenuChoiceGroup(new[] { ReferenceItemMenuAuthority.MenuId });
+				menu.PopulateNow(querySubmenuVisibility: false);
+
+				var leaves = Leaves(menu).ToList();
+				Assert.That(leaves.Count, Is.GreaterThanOrEqualTo(40),
+					"the shipped menu carries the jumps, the filters, the two marks and the moves");
+				foreach (var leaf in leaves)
+				{
+					Assert.That(leaf.ConfigurationNode, Is.Not.Null,
+						"leaf '{0}' has no configuration node, so no authority can claim it", leaf.Label);
+					Assert.That(() => authority.Build(ReferenceItemMenuAuthority.MenuId, leaf), Throws.Nothing,
+						"the authority does not answer leaf '{0}'", leaf.HelpId);
+				}
+				Assert.That(() => XCoreMenuBridge.CreateMenuItems(window, new[] { ReferenceItemMenuAuthority.MenuId },
+					null, null, authority), Throws.Nothing, "the whole menu builds through the bridge");
+				var targets = leaves.OfType<CommandChoice>()
+					.Where(c => c.Message == SIL.FieldWorks.FdoUi.CmObjectUi.JumpToToolMessage)
+					.Select(c => c.CommandObject.TargetId).Distinct().ToList();
+				Assert.That(targets, Is.EqualTo(new[] { Guid.Empty }),
+					"building the menu leaves no jump command carrying a target for a later menu");
+			}
+		}
+
+		[Test]
+		public void ReferenceItemAuthority_RejectsALeafItDoesNotAnswer()
+		{
+			MakeTwoSubentries();
+			var authority = m_view.CreateReferenceItemAuthority(ItemRequest(SubentriesField(), 0), out var itemUi);
+			using (itemUi)
+			{
+				var window = m_propertyTable.GetValue<XWindow>("window");
+				var objectMenu = window.GetContextMenuChoiceGroup(new[] { RecordEditView.ObjectMenuId });
+				objectMenu.PopulateNow();
+				var foreignLeaf = objectMenu.OfType<ChoiceBase>().First(c => c.HelpId == ObjectMenuAuthority.HelpCommandId);
+
+				Assert.That(() => authority.Build(ReferenceItemMenuAuthority.MenuId, foreignLeaf),
+					Throws.InvalidOperationException, "an owned id must be answered in full, never partially");
+			}
+		}
+
+		[Test]
+		public void ItemMenu_IsOwned_ForReferenceChoices_ButNotForEnvironments()
+		{
+			MakeTwoSubentries();
+			var authority = m_view.CreateReferenceItemAuthority(ItemRequest(SubentriesField(), 0), out var itemUi);
+			using (itemUi)
+			{
+				Assert.That(authority.Owns(itemUi.ContextMenuId), Is.True, "a subentry's item menu is answered natively");
+				Assert.That(authority.Owns(RecordEditView.ObjectMenuId), Is.False);
+			}
+			var envAuthority = m_view.CreateReferenceItemAuthority(ItemRequest(EnvironmentsFieldWithOneItem(), 0),
+				out var envUi);
+			using (envUi)
+			{
+				Assert.That(envAuthority.Owns(envUi.ContextMenuId), Is.False,
+					"the environments menu still takes the colleague path");
+			}
+		}
+
+		[Test]
+		public void ReferenceItemMenu_OfASubentry_IsBuiltWithoutTheAdapterOrTheMediator()
+		{
+			MakeTwoSubentries();
+			var request = ItemRequest(SubentriesField(), 0);
+			Assert.That(HiddenTreeExists, Is.False, "precondition: no hidden tree exists yet");
+			var window = m_propertyTable.GetValue<XWindow>("window");
+			var spy = new DisplaySpyColleague();
+			window.Mediator.AddColleague(spy);
+			try
+			{
+				var items = m_view.BuildReferenceItemMenu(request, out var itemUi);
+				using (itemUi)
+				{
+					Assert.That(spy.Asked, Is.False, "no leaf of an owned item menu reaches the mediator");
+					Assert.That(HiddenTreeExists, Is.False, "an owned item menu never builds the hidden tree");
+					var jump = FindItem(items, "Show Entry in Lexicon" + SIL.FieldWorks.FdoUi.CmObjectUi.CtrlClickSuffix);
+					Assert.That(jump?.Execute, Is.Not.Null, "the item's object UI answers the jump directly");
+					Assert.That(FindItem(items, "Move Right")?.IsEnabled, Is.True);
+				}
+			}
+			finally
+			{
+				window.Mediator.RemoveColleague(spy);
+			}
+		}
+
+		// Baseline = the path this replaces: the item's object UI as a temporary colleague, the
+		// adapter pointed at the row, the jump marker and the moves on the interceptor.
+		[Test]
+		public void ReferenceItemMenu_NativeAuthority_RendersWhatTheColleaguePathRendered_ForEveryItem()
+		{
+			MakeTwoSubentries();
+			AddAnthropologyCategoryToSense();
+			var fields = DetailComposer.Compose(m_entry, Cache).Model.Fields
+				.Where(f => f.Kind == DetailFieldKind.ReferenceVector && f.Items.Count > 0).ToList();
+
+			var compared = 0;
+			var mismatches = new List<string>();
+			var leaks = new List<string>();
+			foreach (var field in fields)
+			{
+				for (var index = 0; index < field.Items.Count; index++)
+				{
+					var request = ItemRequest(field, index);
+					var ui = m_view.ResolveItemUi(request);
+					if (ui == null)
+						continue;
+					string before;
+					using (ui)
+					{
+						if (!string.Equals(ui.ContextMenuId, ReferenceItemMenuAuthority.MenuId, StringComparison.Ordinal))
+							continue;
+						before = Describe(WithoutLeakedSubentryMark(
+							m_view.BuildItemMenuThroughTheColleague(request, ui), field, leaks));
+					}
+					var native = m_view.BuildReferenceItemMenu(request, out var itemUi);
+					itemUi.Dispose();
+					compared++;
+					var after = Describe(native);
+					if (!string.Equals(before, after, StringComparison.Ordinal))
+					{
+						var slice = AdapterTree?.CurrentSlice;
+						var target = slice?.Object == null ? "none" : string.Format("{0} flid {1} selection {2}",
+							slice.Object.ClassName, slice.Flid, slice.Object.Hvo);
+						mismatches.Add(string.Format("{0} ({1}) item {2} [adapter slice: {6}]:{3}--- colleague path{3}{4}{3}--- authority{3}{5}",
+							field.Label, field.Field, index, Environment.NewLine, before, after, target));
+					}
+				}
+			}
+			Assert.That(leaks, Is.EqualTo(new[] { "Publish Sense In" }),
+				"the baseline drops the adapter's leak on exactly one row");
+			Assert.That(compared, Is.GreaterThanOrEqualTo(3), "subentries and a category are compared");
+			Assert.That(mismatches, Is.Empty, string.Join(Environment.NewLine, mismatches));
+		}
+
+		// The adapter leaks this mark as enabled when it lands on a field-less slice (its
+		// display handler returns before setting state); the native path hides it off a
+		// Components row.
+		private static IReadOnlyList<DetailMenuItem> WithoutLeakedSubentryMark(IReadOnlyList<DetailMenuItem> items,
+			DetailField field, List<string> leaks)
+		{
+			if (string.Equals(field.Field, ReferenceItemMenuAuthority.ComponentLexemesField, StringComparison.Ordinal))
+				return items;
+			var kept = items.Where(i => i.IsSeparator
+				|| !string.Equals(i.Label, "Show Subentry under this Component", StringComparison.Ordinal)).ToList();
+			if (kept.Count == items.Count)
+				return items;
+			leaks.Add(field.Label);
+			while (kept.Count > 0 && kept[kept.Count - 1].IsSeparator)
+				kept.RemoveAt(kept.Count - 1);
+			return kept;
+		}
+
+		// The one divergence from the colleague path, by design: the mark reads the clicked
+		// item, where the hidden tree has no selection and so never offers it.
+		[Test]
+		public void ShowSubentryUnderComponent_OnAComplexFormsComponentsRow_TogglesThePrimaryLexeme()
+		{
+			MakeTwoSubentries();
+			var complexForm = m_entry.ComplexFormEntries.First();
+			var complexFormRef = complexForm.EntryRefsOS.Single();
+			var field = DetailComposer.Compose(complexForm, Cache).Model.Fields.Single(f =>
+				f.Field == ReferenceItemMenuAuthority.ComponentLexemesField && f.ObjectHvo == complexFormRef.Hvo);
+			var request = ItemRequest(field, field.Items.ToList().FindIndex(i => i.Key == m_entry.Guid.ToString()));
+			const string label = "Show Subentry under this Component";
+
+			var items = m_view.BuildReferenceItemMenu(request, out var itemUi);
+			using (itemUi)
+			{
+				var show = FindItem(items, label);
+				Assert.That(show, Is.Not.Null, "the mark is offered for a component of a complex form");
+				Assert.That(show.IsChecked, Is.True, "the component is a primary lexeme");
+				show.Execute();
+				DrainMediatorAndIdleQueues();
+				Assert.That(complexFormRef.PrimaryLexemesRS, Does.Not.Contain(m_entry));
+			}
+			items = m_view.BuildReferenceItemMenu(request, out itemUi);
+			using (itemUi)
+			{
+				var show = FindItem(items, label);
+				Assert.That(show.IsChecked, Is.False);
+				show.Execute();
+				DrainMediatorAndIdleQueues();
+				Assert.That(complexFormRef.PrimaryLexemesRS, Is.EqualTo(new ICmObject[] { m_entry }));
+			}
+
+			// The colleague path needs the hidden tree to show the complex form, as it would when
+			// its Components row is on screen.
+			m_view.Clerk.JumpToRecord(complexForm.Hvo);
+			DrainMediatorAndIdleQueues();
+			var colleague = m_view.ResolveItemUi(request);
+			using (colleague)
+			{
+				Assert.That(FindItem(m_view.BuildItemMenuThroughTheColleague(request, colleague), label), Is.Null,
+					"the colleague path reads a selection the hidden tree does not have");
+			}
+		}
+
+		[Test]
+		public void AnthropologyCategoryItem_OffersTheFilterJumps_AndItsListJumpAsTheDefault()
+		{
+			var sense = AddAnthropologyCategoryToSense();
+			var field = DetailComposer.Compose(m_entry, Cache).Model.Fields.Single(f =>
+				f.Field == AnthroItemFilterLink.FieldName && f.ObjectHvo == sense.Hvo);
+
+			var category = sense.AnthroCodesRC.First();
+			var items = m_view.BuildReferenceItemMenu(ItemRequest(field, 0), out var itemUi);
+			using (itemUi)
+			{
+				var lexicon = FindItem(items, "Filter for Lexical Entries with this category");
+				var notebook = FindItem(items, "Filter for Notebook Records with this category");
+				Assert.That(lexicon?.Execute, Is.Not.Null, "the lexicon filter jump is offered and runs");
+				Assert.That(notebook?.Execute, Is.Not.Null, "the notebook filter jump is offered and runs");
+				var link = CaptureFollowLink(lexicon.Execute);
+				Assert.That(link, Is.Not.Null, "the filter jump posts a link");
+				Assert.That(link.ToolName, Is.EqualTo("lexiconEdit"));
+				Assert.That(link.PropertyTableEntries.Single(p => p.name == "HvoOfAnthroItem").value,
+					Is.EqualTo(category.Hvo.ToString()), "the link filters on the clicked category");
+				var listJump = items.FirstOrDefault(i => !i.IsSeparator
+					&& i.Label.StartsWith("Show in ", StringComparison.Ordinal));
+				Assert.That(listJump?.Label, Does.EndWith(SIL.FieldWorks.FdoUi.CmObjectUi.CtrlClickSuffix),
+					"the category's own list jump is the Ctrl+click default");
+				Assert.That(FindItem(items, "Move Right"), Is.Null, "a category collection has no order to move in");
+			}
+
+			MakeTwoSubentries();
+			items = m_view.BuildReferenceItemMenu(ItemRequest(SubentriesField(), 0), out itemUi);
+			using (itemUi)
+			{
+				Assert.That(FindItem(items, "Filter for Lexical Entries with this category"), Is.Null,
+					"the filter jumps belong to the Anthropology Categories row alone");
+			}
+		}
+
+		// The first sense gains one anthropology category, so the entry composes an Anthropology
+		// Categories row with one item.
+		private ILexSense AddAnthropologyCategoryToSense()
+		{
+			var sense = m_entry.SensesOS[0];
+			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
+			{
+				if (Cache.LangProject.AnthroListOA == null)
+					Cache.LangProject.AnthroListOA = Cache.ServiceLocator.GetInstance<ICmPossibilityListFactory>().Create();
+				var category = Cache.ServiceLocator.GetInstance<ICmAnthroItemFactory>().Create();
+				Cache.LangProject.AnthroListOA.PossibilitiesOS.Add(category);
+				category.Name.SetAnalysisDefaultWritingSystem("Kinship");
+				sense.AnthroCodesRC.Add(category);
+			});
+			DrainMediatorAndIdleQueues();
+			return sense;
 		}
 
 		// An allomorph carrying one environment: PhoneEnv is a reference COLLECTION, which
@@ -294,9 +562,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void AnEnvironmentItem_ResolvesToTheMenuThatCarriesItsCommands()
 		{
-			var field = EnvironmentsFieldWithOneItem();
-			var request = DetailMenuRequest.FromAnchor(null, field, DetailMenuKind.ItemMenu,
-				new ItemSelection { SelectedItemKey = field.Items[0].Key, SelectedItemIndex = 0 });
+			var request = ItemRequest(EnvironmentsFieldWithOneItem(), 0);
 
 			using (var ui = m_view.ResolveItemUi(request))
 			{
@@ -424,10 +690,47 @@ namespace SIL.FieldWorks.XWorks
 			}
 			Assert.That(Cache.ServiceLocator.ObjectRepository.IsValidObjectId(targetHvo), Is.True);
 
-			// The default activation runs the object UI's Ctrl-click path end to end without
-			// faulting (the jump is a mediator FollowLink this headless window does not service).
-			Assert.DoesNotThrow(() => m_view.OnDetailItemMenuRequested(request));
-			DrainMediatorAndIdleQueues();
+			// The default activation posts the first enabled jump's link for the clicked
+			// subentry and builds no hidden tree on the way.
+			var link = CaptureFollowLink(() => m_view.OnDetailItemMenuRequested(request));
+			Assert.That(link, Is.Not.Null, "the Ctrl+click default runs a jump");
+			Assert.That(link.ToolName, Is.EqualTo("lexiconEdit"), "Show Entry in Lexicon is the first enabled jump");
+			Assert.That(link.TargetGuid, Is.EqualTo(new Guid(field.Items[1].Key)), "the jump targets the clicked subentry");
+			Assert.That(HiddenTreeExists, Is.False, "a native Ctrl+click never points the adapter at the row");
+		}
+
+		// Runs an action and returns the link it posts, once the post has been delivered.
+		private FwLinkArgs CaptureFollowLink(Action action)
+		{
+			var window = m_propertyTable.GetValue<XWindow>("window");
+			var spy = new FollowLinkSpy();
+			window.Mediator.AddColleague(spy);
+			try
+			{
+				action();
+				DrainMediatorAndIdleQueues();
+				return spy.Link;
+			}
+			finally
+			{
+				window.Mediator.RemoveColleague(spy);
+			}
+		}
+
+		// Captures the link a jump posts. It sorts ahead of the window's own link listener,
+		// which shares the High priority and was registered first, so it sees the link first.
+		private sealed class FollowLinkSpy : IxCoreColleague
+		{
+			public FwLinkArgs Link { get; private set; }
+			public void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters) { }
+			public IxCoreColleague[] GetMessageTargets() => new IxCoreColleague[] { this };
+			public bool ShouldNotCall => false;
+			public int Priority => (int)ColleaguePriority.High - 1;
+			public bool OnFollowLink(object args)
+			{
+				Link = args as FwLinkArgs;
+				return true;
+			}
 		}
 
 		[Test]
@@ -811,7 +1114,8 @@ namespace SIL.FieldWorks.XWorks
 				=> new[] { new DetailMenuItem("list:" + listId, isEnabled: true) };
 		}
 
-		// Records whether the mediator asked anyone to display the Always-visible command.
+		// Records whether the mediator asked anyone to display the Always-visible command or a
+		// Show-in-tool jump.
 		private sealed class DisplaySpyColleague : IxCoreColleague
 		{
 			public bool Asked { get; private set; }
@@ -820,6 +1124,11 @@ namespace SIL.FieldWorks.XWorks
 			public bool ShouldNotCall => false;
 			public int Priority => (int)ColleaguePriority.High;
 			public bool OnDisplayShowFieldAlwaysVisible(object commandObject, ref UIItemDisplayProperties display)
+			{
+				Asked = true;
+				return false;
+			}
+			public bool OnDisplayJumpToTool(object commandObject, ref UIItemDisplayProperties display)
 			{
 				Asked = true;
 				return false;

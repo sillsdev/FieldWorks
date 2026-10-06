@@ -2,6 +2,14 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using SIL.Data;
+using SIL.LCModel;
+using SIL.LCModel.Infrastructure;
+using SIL.Machine.Annotations;
+using SIL.Machine.Morphology.HermitCrab;
+using SIL.Machine.Morphology.HermitCrab.MorphologicalRules;
+using SIL.Machine.Rules;
+using SIL.ObjectModel;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -10,13 +18,6 @@ using System.Linq;
 using System.Text;
 using System.Xml;
 using System.Xml.Linq;
-using SIL.LCModel;
-using SIL.LCModel.Infrastructure;
-using SIL.Machine.Annotations;
-using SIL.Machine.Morphology.HermitCrab;
-using SIL.Machine.Morphology.HermitCrab.MorphologicalRules;
-using SIL.Machine.Rules;
-using SIL.ObjectModel;
 
 namespace SIL.FieldWorks.WordWorks.Parser
 {
@@ -25,12 +26,14 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		private readonly LcmCache m_cache;
 		private Morpher m_morpher;
 		private Language m_language;
+		private Dictionary<IMoMorphSynAnalysis, IMoMorphSynAnalysis> m_representativeMSAs;
 		private readonly FwXmlTraceManager m_traceManager;
 		private readonly string m_outputDirectory;
 		private ParserModelChangeListener m_changeListener;
 		private bool m_forceUpdate;
 		private bool m_guessRoots;
 		private bool m_mergeAnalyses;
+		private bool m_mergeMSAs = true;
 
 		// the public const strings are for GenerateHCConfigForFLExTrans and HCSynthByGlossLib
 		internal const string CRuleID = "ID";
@@ -109,7 +112,8 @@ namespace SIL.FieldWorks.WordWorks.Parser
 					if (GetMorphs(wordAnalysis, out morphs))
 					{
 						analyses.Add(new ParseAnalysis(morphs.Select(mi =>
-							new ParseMorph(mi.Form, mi.Msa, mi.InflType, mi.GuessedString))));
+							new ParseMorph(mi.Form, mi.Msa, mi.InflType, mi.GuessedString)),
+							m_representativeMSAs));
 					}
 				}
 				result = new ParseResult(analyses);
@@ -155,13 +159,11 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			using (XmlWriter writer = XmlWriter.Create(loadErrorsFile))
 			using (new WorkerThreadReadHelper(m_cache.ServiceLocator.GetInstance<IWorkerThreadReadHandler>()))
 			{
-				writer.WriteStartElement("LoadErrors");
-				m_language = HCLoader.Load(m_cache, new XmlHCLoadErrorLogger(writer));
-				writer.WriteEndElement();
 				XElement parserParamsElem = XElement.Parse(m_cache.LanguageProject.MorphologicalDataOA.ParserParameters);
 				XElement delReappsElem = parserParamsElem.Elements("HC").Elements("DelReapps").FirstOrDefault();
 				XElement guessRootsElem = parserParamsElem.Elements("HC").Elements("GuessRoots").FirstOrDefault();
 				XElement mergeAnalysesElem = parserParamsElem.Elements("HC").Elements("MergeAnalyses").FirstOrDefault();
+				XElement mergeMSAsElem = parserParamsElem.Elements("HC").Elements("MergeMSAs").FirstOrDefault();
 				XElement maxRootsElem = parserParamsElem.Elements("HC").Elements("MaxRoots").FirstOrDefault();
 				XElement maxAlternativesElem = parserParamsElem.Elements("HC").Elements("MaxAlternatives").FirstOrDefault();
 				if (delReappsElem != null)
@@ -169,11 +171,24 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				if (guessRootsElem != null)
 					m_guessRoots = (bool) guessRootsElem;
 				if (mergeAnalysesElem != null)
-					m_mergeAnalyses = (bool) mergeAnalysesElem;
+					m_mergeAnalyses = (bool)mergeAnalysesElem;
+				if (mergeMSAsElem != null)
+					m_mergeMSAs = (bool)mergeMSAsElem;
 				if (maxRootsElem != null)
 					maxStemCount = int.Parse(maxRootsElem.Value);
 				if (maxAlternativesElem != null)
 					maxAlternatives = int.Parse(maxAlternativesElem.Value);
+				writer.WriteStartElement("LoadErrors");
+				if (m_mergeMSAs)
+				{
+					m_language = HCLoader.Load(m_cache, new XmlHCLoadErrorLogger(writer), out m_representativeMSAs);
+				}
+				else
+				{
+					m_language = HCLoader.Load(m_cache, new XmlHCLoadErrorLogger(writer));
+					m_representativeMSAs = null;
+				}
+				writer.WriteEndElement();
 			}
 			m_morpher = new Morpher(m_traceManager, m_language) { DeletionReapplications = delReapps };
 			m_morpher.MaxStemCount = maxStemCount;
@@ -191,7 +206,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			{
 				if (selectTraceMorphs != null)
 				{
-					var selectTraceMorphsSet = new HashSet<int>(selectTraceMorphs);
+					HashSet<int> selectTraceMorphsSet = new HashSet<int>(selectTraceMorphs.Select(hvo => RepresentativeMSAHvo(hvo)).Distinct());
 					m_morpher.LexEntrySelector = entry => selectTraceMorphsSet.Contains((int) entry.Properties[MsaID]);
 					m_morpher.RuleSelector = rule =>
 					{
@@ -231,6 +246,24 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				doc.Add(wordformElem);
 			}
 			return doc;
+		}
+
+		private int RepresentativeMSAHvo(int hvo)
+		{
+			if (m_representativeMSAs == null)
+			{
+				return hvo;
+			}
+			IMoMorphSynAnalysisRepository repository = m_cache.LangProject.Services.GetInstance<IMoMorphSynAnalysisRepository>();
+			if (repository.TryGetObject(hvo, out IMoMorphSynAnalysis msa) && m_representativeMSAs.ContainsKey(msa))
+			{
+				return m_representativeMSAs[msa].Hvo;
+			}
+			else
+			{
+				return hvo;
+			}
+
 		}
 
 		/// <summary>
