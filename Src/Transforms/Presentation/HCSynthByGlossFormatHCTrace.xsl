@@ -115,7 +115,8 @@ Main template
 				<xsl:variable name="synthesisCompoundRules" select="$traceRoot/MorphologicalRuleSynthesisTrace[MorphologicalRule/@type = 'compound']"/>
 				<xsl:variable name="synthesizedWords" select="$traceRoot/LexLookupTrace/WordSynthesisTrace"/>
 				<xsl:variable name="parseCompleteTraces" select="$traceRoot/ParseCompleteTrace"/>
-				<xsl:variable name="parseNodes" select="$synthesisAffixes | $synthesisCompoundRules | $synthesizedWords | $parseCompleteTraces"/>
+				<xsl:variable name="templateFailures" select="$traceRoot/TemplateAnalysisTraceOut[FailureReason]"/>
+				<xsl:variable name="parseNodes" select="$synthesisAffixes | $synthesisCompoundRules | $synthesizedWords | $parseCompleteTraces | $templateFailures"/>
 				<xsl:if test="$parseNodes">
 					<xsl:text>Y</xsl:text>
 				</xsl:if>
@@ -1359,8 +1360,8 @@ ShowMorph
 		<xsl:variable name="synthesisCompoundRules" select="$traceRoot/MorphologicalRuleSynthesisTrace[MorphologicalRule/@type = 'compound']"/>
 		<xsl:variable name="synthesizedWords" select="$traceRoot/LexLookupTrace/WordSynthesisTrace"/>
 		<xsl:variable name="parseCompleteTraces" select="$traceRoot/ParseCompleteTrace"/>
-
-		<xsl:variable name="parseNodes" select="$synthesisAffixes | $synthesisCompoundRules | $synthesizedWords | $parseCompleteTraces"/>
+		<xsl:variable name="templateFailures" select="$traceRoot/TemplateAnalysisTraceOut[FailureReason]"/>
+		<xsl:variable name="parseNodes" select="$synthesisAffixes | $synthesisCompoundRules | $synthesizedWords | $parseCompleteTraces | $templateFailures"/>
 		<xsl:if test="$parseNodes">
 			<xsl:for-each select="$parseNodes">
 				<xsl:variable name="lastTemplateTrace" select="(preceding-sibling::*[name()='TemplateSynthesisTraceIn' or name()='TemplateSynthesisTraceOut'])[position() = last()]"/>
@@ -1460,6 +1461,29 @@ ShowMorph
 															</xsl:if>
 														</table>
 													</span>
+												</td>
+												<td valign="top">
+													<xsl:call-template name="ShowAnyFailure"/>
+												</td>
+											</tr>
+										</xsl:when>
+										<xsl:when test="name() = 'TemplateAnalysisTraceOut'">
+											<tr>
+												<td valign="top">
+													<xsl:attribute name="style">
+														<xsl:text>color:</xsl:text>
+														<xsl:value-of select="$sFailureColor"/>
+													</xsl:attribute>
+													<xsl:text>Template </xsl:text>
+													<xsl:if test="string-length(normalize-space($template)) > 0">
+														<span>
+															<xsl:attribute name="style">
+																<xsl:call-template name="GetAnalysisFont"/>
+															</xsl:attribute>
+															<xsl:value-of select="normalize-space($template)"/>
+														</span>
+													</xsl:if>
+													<xsl:text> failed.</xsl:text>
 												</td>
 												<td valign="top">
 													<xsl:call-template name="ShowAnyFailure"/>

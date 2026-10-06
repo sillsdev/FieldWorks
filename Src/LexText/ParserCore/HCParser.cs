@@ -35,6 +35,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		private bool m_mergeAnalyses;
 		private bool m_mergeMSAs = true;
 		private bool m_makePartialsFinal = false;
+		private string m_parserParameters;
 
 		// the public const strings are for GenerateHCConfigForFLExTrans and HCSynthByGlossLib
 		internal const string CRuleID = "ID";
@@ -72,7 +73,9 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		public void Update()
 		{
 			CheckDisposed();
-			if (m_changeListener.Reset() || m_forceUpdate)
+			if (m_changeListener.Reset()
+				|| m_forceUpdate
+				|| m_parserParameters != m_cache.LanguageProject.MorphologicalDataOA.ParserParameters)
 			{
 				LoadParser();
 				m_forceUpdate = false;
@@ -160,7 +163,8 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			using (XmlWriter writer = XmlWriter.Create(loadErrorsFile))
 			using (new WorkerThreadReadHelper(m_cache.ServiceLocator.GetInstance<IWorkerThreadReadHandler>()))
 			{
-				XElement parserParamsElem = XElement.Parse(m_cache.LanguageProject.MorphologicalDataOA.ParserParameters);
+				m_parserParameters = m_cache.LanguageProject.MorphologicalDataOA.ParserParameters;
+				XElement parserParamsElem = XElement.Parse(m_parserParameters);
 				XElement delReappsElem = parserParamsElem.Elements("HC").Elements("DelReapps").FirstOrDefault();
 				XElement guessRootsElem = parserParamsElem.Elements("HC").Elements("GuessRoots").FirstOrDefault();
 				XElement mergeAnalysesElem = parserParamsElem.Elements("HC").Elements("MergeAnalyses").FirstOrDefault();

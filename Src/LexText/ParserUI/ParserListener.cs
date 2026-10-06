@@ -905,7 +905,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		private bool SuppressableParseResult(IWfiWordform wordform)
 		{
 			var result = m_checkParserResults[wordform];
-			if (result.Analyses.Count > 0)
+			if (result.Analyses.Count > 0 || !String.IsNullOrEmpty(result.ErrorMessage))
 				return false;
 			// See if there is a lowercase version of wordform in the parse results.
 			ITsString itsString = wordform.Form.VernacularDefaultWritingSystem;
