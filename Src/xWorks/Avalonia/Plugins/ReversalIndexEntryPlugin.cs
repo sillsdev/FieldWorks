@@ -57,13 +57,13 @@ namespace SIL.FieldWorks.XWorks
 				var automationId = node?.AutomationId ?? DefaultAutomationId;
 				var host = context.EditContext;
 				var editing = new ReversalDetailEditContext(cache, host, sense, label,
-					context.Render?.Cancel);
+					context.RenderContext?.Cancel);
 				var groups = editing.CreateGroups(context.VisibleWritingSystems);
 				// The row's identity, which every rebuild of it shares.
 				var fieldId = "reversal/" + sense.Hvo;
 
 				Action<string> navigate = null;
-				var linkRequested = context.Render?.LinkRequested;
+				var linkRequested = context.RenderContext?.LinkRequested;
 				if (linkRequested != null)
 				{
 					var field = new DetailField(
@@ -91,7 +91,7 @@ namespace SIL.FieldWorks.XWorks
 
 				var control = new FwReversalEntriesField(label, automationId, groups,
 					host == null ? null : editing, context.WritingSystemFocused, navigate,
-					context.Render?.WsAbbrevColumnWidth);
+					context.RenderContext?.WsAbbrevColumnWidth);
 				// The field stages only when focus leaves it, so the host's save asks it for what
 				// it holds. The row's own id as the key drops the control a rebuild replaced.
 				var fenced = host as DetailEditContextBase;

@@ -229,7 +229,7 @@ namespace SIL.FieldWorks.XWorks
 			public SIL.FieldWorks.Common.FwAvalonia.ViewDefinition.ViewNode LastNode;
 			public IDetailEditContext LastEditContext;
 			public LcmCache LastCache;
-			public SliceFactoryContext LastRender;
+			public SliceFactoryContext LastRenderContext;
 
 			public string LegacyClassName => MessageSliceClassName;
 
@@ -240,7 +240,7 @@ namespace SIL.FieldWorks.XWorks
 				LastNode = context.Node;
 				LastEditContext = context.EditContext;
 				LastCache = context.Cache;
-				LastRender = context.Render;
+				LastRenderContext = context.RenderContext;
 				return null; // never rendered in this fixture; the view's null guard covers this
 			}
 		}
@@ -318,7 +318,7 @@ namespace SIL.FieldWorks.XWorks
 
 			row.ControlFactory(render);
 
-			Assert.That(plugin.LastRender, Is.SameAs(render),
+			Assert.That(plugin.LastRenderContext, Is.SameAs(render),
 				"the plugin reaches the host's jump and column width through the render context");
 		}
 	}

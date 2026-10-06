@@ -52,7 +52,7 @@ namespace SIL.FieldWorks.XWorks
 		public SlicePluginBuildContext(ICmObject target, ViewNode node,
 			Func<IDetailEditContext> editContextAccessor, LcmCache cache,
 			Action<string> writingSystemFocused = null,
-			SliceFactoryContext render = null,
+			SliceFactoryContext renderContext = null,
 			IReadOnlyList<string> visibleWritingSystems = null)
 		{
 			Target = target;
@@ -60,7 +60,7 @@ namespace SIL.FieldWorks.XWorks
 			_editContextAccessor = editContextAccessor;
 			Cache = cache;
 			WritingSystemFocused = writingSystemFocused;
-			Render = render;
+			RenderContext = renderContext;
 			VisibleWritingSystems = visibleWritingSystems;
 		}
 
@@ -86,7 +86,7 @@ namespace SIL.FieldWorks.XWorks
 		/// links use and the width of the writing-system abbreviation column. Null when the
 		/// control is built outside a rendering view.
 		/// </summary>
-		public SliceFactoryContext Render { get; }
+		public SliceFactoryContext RenderContext { get; }
 
 		/// <summary>
 		/// The writing-system ids the row is restricted to, in order. Null or empty means no
