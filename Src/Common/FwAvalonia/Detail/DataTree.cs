@@ -229,6 +229,10 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			{
 				if (_editContext != null && _editContext.IsOpen)
 					OnSave();
+				// An edit that changed nothing opens no session, so no completion releases a
+				// refresh held while its text was unsubmitted.
+				else if (!HasUnsubmittedText)
+					DeliverWhenIdle();
 			}, Avalonia.Interactivity.RoutingStrategies.Bubble);
 
 			// A click on another row autosaves and re-shows, rebuilding controls between press

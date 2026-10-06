@@ -704,6 +704,44 @@ namespace FwAvaloniaTests.Detail
 			Assert.That(view.HasUnsubmittedText, Is.False, "leaving the field offered the text");
 		}
 
+		// Text that changes nothing opens no session, so no edit completes to release a refresh
+		// held while the slot held it; leaving the field must release it instead.
+		[AvaloniaTest]
+		public void InTheDetailView_LeavingWithTextThatChangesNothing_ReleasesAHeldRefresh()
+		{
+			var context = new RecordingReversalContext { Outcome = ReversalCommitOutcome.Unchanged };
+			var reversal = new DetailField("Reversal", "Reversal Entries", "ReferringReversalIndexEntries",
+				null, DetailFieldKind.Custom, EditorClassification.Known, FieldId, null, HostRouting.Inherit,
+				null, null, null, objectHvo: 1,
+				controlFactory: render => new FwReversalEntriesField("Reversal Entries", FieldId,
+					new[] { English("dwelling") }, context));
+			var next = new DetailField("Next", "Next", "Next", null, DetailFieldKind.Text,
+				EditorClassification.Known, "Next", null, HostRouting.Inherit,
+				new List<DetailWsValue> { new DetailWsValue("vern", "value") }, null, null, objectHvo: 1);
+			var model = new DetailModel("LexSense", "Normal", new List<DetailField> { reversal, next },
+				new List<ViewDiagnostic>());
+			var view = new DataTree(model, editContext: context);
+			var window = new Window { Content = view, Width = 480, Height = 300 };
+			window.Show();
+			Dispatcher.UIThread.RunJobs();
+			var released = 0;
+			view.InteractionCompleted += (s, e) => released++;
+			var entry = Find<TextBox>(view, "Reversal.en.0");
+			var add = Find<TextBox>(view, "Reversal.en.Add");
+
+			add.Focus();
+			add.Text = "   ";
+			entry.Focus();
+			Dispatcher.UIThread.RunJobs();
+			Assert.That(released, Is.Zero, "moving between slots keeps the text held");
+
+			Find<TextBox>(view, "Next.vern").Focus();
+			Dispatcher.UIThread.RunJobs();
+			Assert.That(context.Batches, Is.EqualTo(1), "precondition: the text was offered");
+			Assert.That(view.HasUnsubmittedText, Is.False);
+			Assert.That(released, Is.GreaterThan(0), "the view reports itself idle again");
+		}
+
 		[AvaloniaTest]
 		public void Enter_DoesNothing()
 		{
