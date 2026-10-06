@@ -35,6 +35,10 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 
 		public static DetailMenuItem Separator() => new DetailMenuItem();
 
+		/// <summary>A leaf that is shown but cannot run.</summary>
+		public static DetailMenuItem Disabled(string label)
+			=> new DetailMenuItem(label, isEnabled: false, isChecked: false, children: null, execute: null);
+
 		public string Label { get; }
 		public bool IsEnabled { get; }
 		public bool IsChecked { get; }

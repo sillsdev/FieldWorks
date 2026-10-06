@@ -526,5 +526,297 @@ namespace FwAvaloniaTests.Detail
 				"a refused edit completes no gesture, so the row is not re-shown over an edit "
 				+ "the domain did not take");
 		}
+
+		// ===== The text editor the row's menus act on =====
+
+		private static DetailMenuRequest LabelMenuRequest(FwReferenceVectorField row)
+			=> DetailMenuRequest.FromAnchor(null, Row(), DetailMenuKind.SliceMenu, row);
+
+		[AvaloniaTest]
+		public void ARowOfReadOnlyItems_HasNoTextEditor()
+		{
+			var (row, _) = Show(new FakeTextEditing { Retypable = false });
+			row.SelectItem("e1");
+
+			Assert.That(row.HasTextEditor, Is.False);
+			var request = LabelMenuRequest(row);
+			Assert.That(request.HasTextEditor, Is.False);
+			Assert.That(request.EditorSelectionEnd, Is.EqualTo(-1));
+			Assert.That(request.ReplaceEditorSelection("/", 0), Is.False, "nothing to type into");
+		}
+
+		[AvaloniaTest]
+		public void AMenuRequest_SnapshotsTheFocusedEditorsTextAndSelection()
+		{
+			var (row, _) = Show(new FakeTextEditing());
+			var editor = Editor(row, "e2");
+			editor.Focus();
+			editor.CaretIndex = 1;
+			Dispatcher.UIThread.RunJobs();
+
+			var request = LabelMenuRequest(row);
+
+			Assert.That(request.SelectedItemKey, Is.EqualTo("e2"), "focus made the item current");
+			Assert.That(request.HasTextEditor, Is.True);
+			Assert.That(request.EditorText, Is.EqualTo("/_a"));
+			Assert.That(request.EditorSelectionAnchor, Is.EqualTo(1));
+			Assert.That(request.EditorSelectionEnd, Is.EqualTo(1));
+		}
+
+		/// <summary>
+		/// A right press does not focus an editor, so the press itself must make the item under
+		/// the pointer the one the item menu's inserts type into.
+		/// </summary>
+		[AvaloniaTest]
+		public void RightClickingAnItemEditor_MakesItTheEditorTheMenuActsOn()
+		{
+			var requests = new List<DetailMenuRequest>();
+			var row = new FwReferenceVectorField(Row(), "PhoneEnv", new FakeTextEditing(), null, null,
+				r => requests.Add(r));
+			var window = new Window { Content = row, Width = 480, Height = 200 };
+			window.Show();
+			Dispatcher.UIThread.RunJobs();
+			window.UpdateLayout();
+			Dispatcher.UIThread.RunJobs();
+			var item = Editor(row, "e1");
+			// Just inside the right edge of the text, past the last character.
+			var nearTheEnd = new Avalonia.Point(item.Bounds.X + item.Bounds.Width - 2,
+				item.Bounds.Y + item.Bounds.Height / 2);
+
+			window.MouseDown(nearTheEnd, MouseButton.Right);
+			window.MouseUp(nearTheEnd, MouseButton.Right);
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(requests, Has.Count.EqualTo(1));
+			Assert.That(requests[0].HasTextEditor, Is.True);
+			Assert.That(requests[0].EditorText, Is.EqualTo("/_#"));
+			Assert.That(item.IsFocused, Is.True,
+				"the right press focused the editor, so the menu's gesture returns focus to it");
+			Assert.That(item.CaretIndex, Is.EqualTo(3),
+				"the right press put the caret under the pointer, as PhoneEnvReferenceView does");
+			Assert.That(requests[0].EditorSelectionAnchor, Is.EqualTo(3),
+				"the snapshot is the editor's selection at request time");
+			Assert.That(requests[0].EditorSelectionEnd, Is.EqualTo(3));
+		}
+
+		/// <summary>
+		/// A right press inside a range selection keeps the range, as SimpleRootSite does, so
+		/// the item menu's inserts replace what the user selected.
+		/// </summary>
+		[AvaloniaTest]
+		public void RightClickingInsideASelection_KeepsIt_ForTheMenu()
+		{
+			var requests = new List<DetailMenuRequest>();
+			var row = new FwReferenceVectorField(Row(), "PhoneEnv", new FakeTextEditing(), null, null,
+				r => requests.Add(r));
+			var window = new Window { Content = row, Width = 480, Height = 200 };
+			window.Show();
+			Dispatcher.UIThread.RunJobs();
+			window.UpdateLayout();
+			Dispatcher.UIThread.RunJobs();
+			var item = Editor(row, "e1");
+			item.Focus();
+			item.SelectionStart = 0;
+			item.SelectionEnd = 3; // the whole of "/_#"
+			Dispatcher.UIThread.RunJobs();
+			var nearTheEnd = new Avalonia.Point(item.Bounds.X + item.Bounds.Width - 2,
+				item.Bounds.Y + item.Bounds.Height / 2);
+
+			window.MouseDown(nearTheEnd, MouseButton.Right);
+			window.MouseUp(nearTheEnd, MouseButton.Right);
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(requests, Has.Count.EqualTo(1));
+			Assert.That(requests[0].EditorSelectionAnchor, Is.EqualTo(0), "the press landed inside the range");
+			Assert.That(requests[0].EditorSelectionEnd, Is.EqualTo(3));
+			Assert.That(item.ContextFlyout, Is.Null,
+				"the theme's Cut/Copy/Paste flyout is gone, so only the bridged menu can show");
+		}
+
+		/// <summary>
+		/// The slot is where a new environment is typed, as the empty last line of
+		/// PhoneEnvReferenceView is, so with the caret there a label menu's inserts type into it
+		/// while no item is current.
+		/// </summary>
+		[AvaloniaTest]
+		public void TheSlot_IsTheEditorTheLabelMenuActsOn_WhileItHasTheCaret()
+		{
+			var (row, _) = Show(new FakeTextEditing { Creatable = true });
+			row.SelectItem("e1");
+			var slot = NewItemSlot(row);
+			slot.Focus();
+			Dispatcher.UIThread.RunJobs();
+
+			var request = LabelMenuRequest(row);
+
+			Assert.That(request.SelectedItemKey, Is.Null, "no item is current");
+			Assert.That(request.HasTextEditor, Is.True, "but the slot is the editor");
+			Assert.That(request.EditorText, Is.EqualTo(string.Empty));
+			Assert.That(request.EditorSelectionEnd, Is.EqualTo(0));
+		}
+
+		/// <summary>
+		/// The slot has no item of its own, so a right-click on it raises the row's label menu
+		/// with the slot as the editor, and nothing commits the typed text on the way.
+		/// </summary>
+		[AvaloniaTest]
+		public void RightClickingTheSlot_RaisesTheLabelMenu_WithTheSlotAsEditor_AndCommitsNothing()
+		{
+			var requests = new List<DetailMenuRequest>();
+			var context = new FakeTextEditing { Creatable = true };
+			var row = new FwReferenceVectorField(Row(), "PhoneEnv", context, null, null, r => requests.Add(r));
+			var window = new Window { Content = row, Width = 480, Height = 200 };
+			window.Show();
+			Dispatcher.UIThread.RunJobs();
+			window.UpdateLayout();
+			Dispatcher.UIThread.RunJobs();
+			var slot = NewItemSlot(row);
+			slot.Focus();
+			slot.Text = "/#f";
+			slot.CaretIndex = 3;
+			Dispatcher.UIThread.RunJobs();
+			var centre = new Avalonia.Point(slot.Bounds.X + slot.Bounds.Width / 2,
+				slot.Bounds.Y + slot.Bounds.Height / 2);
+
+			window.MouseDown(centre, MouseButton.Right);
+			window.MouseUp(centre, MouseButton.Right);
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(slot.ContextFlyout, Is.Null, "no theme flyout to take focus from the slot");
+			Assert.That(requests, Has.Count.EqualTo(1));
+			Assert.That(requests[0].Kind, Is.EqualTo(DetailMenuKind.SliceMenu), "the row's label menu");
+			Assert.That(requests[0].SelectedItemKey, Is.Null, "no item is current");
+			Assert.That(requests[0].HasTextEditor, Is.True);
+			Assert.That(requests[0].EditorText, Is.EqualTo("/#f"));
+			Assert.That(context.Created, Is.Empty, "the typed text is still pending");
+		}
+
+		[AvaloniaTest]
+		public void ReplaceEditorSelection_TypesAtTheCaret_AndStagesNothingYet()
+		{
+			var context = new FakeTextEditing();
+			var (row, _) = Show(context);
+			var editor = Editor(row, "e1");
+			editor.Focus();
+			editor.CaretIndex = 1;
+			Dispatcher.UIThread.RunJobs();
+			var request = LabelMenuRequest(row);
+
+			Assert.That(request.ReplaceEditorSelection("()", caretBack: 1), Is.True);
+
+			Assert.That(editor.Text, Is.EqualTo("/()_#"));
+			Assert.That(editor.CaretIndex, Is.EqualTo(2), "the caret sits between the parentheses");
+			Assert.That(editor.SelectionStart, Is.EqualTo(editor.SelectionEnd), "nothing is selected");
+			Assert.That(context.Edits, Is.Empty, "typing through the menu commits as typing does: later");
+			Assert.That(row.HasUnstagedText, Is.True);
+		}
+
+		[AvaloniaTest]
+		public void ReplaceEditorSelection_ReplacesASelectedSpan()
+		{
+			var (row, _) = Show(new FakeTextEditing());
+			var editor = Editor(row, "e1");
+			editor.Focus();
+			editor.SelectionStart = 2;
+			editor.SelectionEnd = 3;
+			Dispatcher.UIThread.RunJobs();
+
+			LabelMenuRequest(row).ReplaceEditorSelection("_", 0);
+
+			Assert.That(editor.Text, Is.EqualTo("/__"));
+			Assert.That(editor.CaretIndex, Is.EqualTo(3));
+		}
+
+		/// <summary>
+		/// A TextBox collapses its selection when it loses focus, which opening the menu can
+		/// cause. The insert replaces the span the request snapshotted, not what is left.
+		/// </summary>
+		[AvaloniaTest]
+		public void ReplaceEditorSelection_ReplacesTheSnapshottedSpan_AfterTheEditorCollapsedIts()
+		{
+			var (row, _) = Show(new FakeTextEditing());
+			var editor = Editor(row, "e1");
+			editor.Focus();
+			editor.SelectionStart = 1;
+			editor.SelectionEnd = 2;
+			Dispatcher.UIThread.RunJobs();
+			var request = LabelMenuRequest(row);
+			Assert.That(request.EditorSelectionAnchor, Is.EqualTo(1), "precondition: the span is snapshotted");
+			Assert.That(request.EditorSelectionEnd, Is.EqualTo(2));
+
+			editor.ClearSelection(); // what the menu taking focus does to the editor
+			Dispatcher.UIThread.RunJobs();
+			request.ReplaceEditorSelection("#", 0);
+
+			Assert.That(editor.Text, Is.EqualTo("/##"), "the selected bar was replaced, not kept");
+			Assert.That(editor.CaretIndex, Is.EqualTo(2));
+		}
+
+		/// <summary>
+		/// Opening a menu can move keyboard focus off the editor. That blur is not the user
+		/// leaving the item, so the commit waits, and the gesture's end puts focus back.
+		/// </summary>
+		[AvaloniaTest]
+		public void AMenuGesture_HoldsTheCommit_WhileTheMenuHasFocus_AndReturnsFocusAfter()
+		{
+			var context = new FakeTextEditing();
+			var row = new FwReferenceVectorField(Row(), "PhoneEnv", context);
+			var elsewhere = new TextBox();
+			var window = new Window
+			{
+				Content = new StackPanel { Children = { row, elsewhere } },
+				Width = 480,
+				Height = 200
+			};
+			window.Show();
+			Dispatcher.UIThread.RunJobs();
+			var editor = Editor(row, "e1");
+			editor.Focus();
+			editor.Text = "/_#x";
+			editor.CaretIndex = editor.Text.Length;
+			Dispatcher.UIThread.RunJobs();
+			var request = LabelMenuRequest(row);
+
+			request.BeginMenuGesture();
+			elsewhere.Focus(); // the menu taking focus
+			Dispatcher.UIThread.RunJobs();
+			Assert.That(context.Edits, Is.Empty, "the blur during the gesture commits nothing");
+
+			request.ReplaceEditorSelection("_", 0);
+			request.EndMenuGesture();
+			Dispatcher.UIThread.RunJobs();
+			Assert.That(editor.IsFocused, Is.True, "the gesture's end returns focus to the editor");
+			Assert.That(context.Edits, Is.Empty, "and still commits nothing");
+
+			elsewhere.Focus(); // the user leaving the item
+			Dispatcher.UIThread.RunJobs();
+			Assert.That(context.Edits, Is.EqualTo(new[] { ("e1", "/_#x_") }),
+				"leaving the editor commits the typed and inserted text once");
+		}
+
+		[AvaloniaTest]
+		public void AMenuGesture_ThatNeverTookFocus_LeavesFocusWhereItWas()
+		{
+			var row = new FwReferenceVectorField(Row(), "PhoneEnv", new FakeTextEditing());
+			var elsewhere = new TextBox();
+			var window = new Window
+			{
+				Content = new StackPanel { Children = { row, elsewhere } },
+				Width = 480,
+				Height = 200
+			};
+			window.Show();
+			Dispatcher.UIThread.RunJobs();
+			row.SelectItem("e1");
+			elsewhere.Focus();
+			Dispatcher.UIThread.RunJobs();
+			var request = LabelMenuRequest(row);
+
+			request.BeginMenuGesture();
+			request.EndMenuGesture();
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(elsewhere.IsFocused, Is.True, "nothing moved focus, so nothing restores it");
+		}
 	}
 }

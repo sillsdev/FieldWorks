@@ -12,6 +12,7 @@ using System.Xml;
 using SIL.LCModel.Core.Cellar;
 using SIL.LCModel.Core.Phonology;
 using SIL.LCModel.Core.Text;
+using SIL.FieldWorks.Common.DetailRules;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.Framework.DetailControls.Resources;
 using SIL.LCModel.Core.KernelInterfaces;
@@ -995,6 +996,9 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			return true;
 		}
 
+		// The insert rules live in EnvironmentInsertRules, shared with the Avalonia row; this
+		// view supplies the selected environment's text and selection.
+
 		internal bool CanInsertSlash()
 		{
 			CheckDisposed();
@@ -1005,12 +1009,10 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			IVwSelection vwsel;
 			if (!GetSelectedStringRep(out tss, out vwsel, out hvoDummyObj, out ichAnchor, out ichEnd))
 				return false;
+			// A selection off every environment (the empty line at the end) starts a new one.
 			if (tss == null || hvoDummyObj == 0)
 				return true;
-			string s = tss.Text;
-			if (s == null || s == String.Empty)
-				return true;
-			return s.IndexOf('/') < 0;
+			return EnvironmentInsertRules.CanInsertSlash(tss.Text);
 		}
 
 		internal bool CanInsertEnvBar()
@@ -1025,12 +1027,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				return false;
 			if (tss == null || hvoDummyObj == 0)
 				return false;
-			string s = tss.Text;
-			if (s == null || s == String.Empty)
-				return false;
-			int ichSlash = s.IndexOf('/');
-			return (ichSlash >= 0) && (ichEnd > ichSlash) && (ichAnchor > ichSlash) &&
-				(s.IndexOf('_') < 0);
+			return EnvironmentInsertRules.CanInsertBar(tss.Text, ichAnchor, ichEnd);
 		}
 
 		internal bool CanInsertItem()
@@ -1045,10 +1042,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				return false;
 			if (tss == null || hvoDummyObj == 0)
 				return false;
-			string s = tss.Text;
-			if (s == null || s == String.Empty)
-				return false;
-			return PhonEnvRecognizer.CanInsertItem(s, ichEnd, ichAnchor);
+			return EnvironmentInsertRules.CanInsertItem(tss.Text, ichAnchor, ichEnd);
 		}
 
 		internal bool CanInsertHashMark()
@@ -1063,10 +1057,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				return false;
 			if (tss == null || hvoDummyObj == 0)
 				return false;
-			string s = tss.Text;
-			if (s == null || s == String.Empty)
-				return false;
-			return PhonEnvRecognizer.CanInsertHashMark(s, ichEnd, ichAnchor);
+			return EnvironmentInsertRules.CanInsertHashMark(tss.Text, ichAnchor, ichEnd);
 		}
 		#endregion
 

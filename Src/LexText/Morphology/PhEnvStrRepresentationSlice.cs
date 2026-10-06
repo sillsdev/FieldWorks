@@ -6,6 +6,7 @@ using System;
 using System.Diagnostics;
 using System.Windows.Forms;
 using SIL.LCModel.Core.Phonology;
+using SIL.FieldWorks.Common.DetailRules;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.Framework.DetailControls;
 using SIL.LCModel.Core.KernelInterfaces;
@@ -388,14 +389,14 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 				}
 			}
 
+			// The insert rules live in EnvironmentInsertRules, shared with the Avalonia row;
+			// this view supplies the environment's text and the rootbox selection.
+
 			internal bool CanInsertSlash()
 			{
 				CheckDisposed();
 
-				string s = m_env.StringRepresentation.Text;
-				if (s == null || s == String.Empty)
-					return true;
-				return s.IndexOf('/') < 0;
+				return EnvironmentInsertRules.CanInsertSlash(m_env.StringRepresentation.Text);
 			}
 
 			private int GetSelectionEndPoint(bool fEnd)
@@ -420,43 +421,24 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			{
 				CheckDisposed();
 
-				string s = m_env.StringRepresentation.Text;
-				if (s == null || s == String.Empty)
-					return false;
-				int ichSlash = s.IndexOf('/');
-				if (ichSlash < 0)
-					return false;
-				int ichEnd = GetSelectionEndPoint(true);
-				if (ichEnd < 0)
-					return false;
-				int ichAnchor = GetSelectionEndPoint(false);
-				if (ichAnchor < 0)
-					return false;
-				return (ichEnd > ichSlash) && (ichAnchor > ichSlash) && (s.IndexOf('_') < 0);
+				return EnvironmentInsertRules.CanInsertBar(m_env.StringRepresentation.Text,
+					GetSelectionEndPoint(false), GetSelectionEndPoint(true));
 			}
 
 			internal bool CanInsertItem()
 			{
 				CheckDisposed();
 
-				string s = m_env.StringRepresentation.Text;
-				if (s == null || s == String.Empty)
-					return false;
-				int ichEnd = GetSelectionEndPoint(true);
-				int ichAnchor = GetSelectionEndPoint(false);
-				return PhonEnvRecognizer.CanInsertItem(s, ichEnd, ichAnchor);
+				return EnvironmentInsertRules.CanInsertItem(m_env.StringRepresentation.Text,
+					GetSelectionEndPoint(false), GetSelectionEndPoint(true));
 			}
 
 			internal bool CanInsertHashMark()
 			{
 				CheckDisposed();
 
-				string s = m_env.StringRepresentation.Text;
-				if (s == null || s == String.Empty)
-					return false;
-				int ichEnd = GetSelectionEndPoint(true);
-				int ichAnchor = GetSelectionEndPoint(false);
-				return PhonEnvRecognizer.CanInsertHashMark(s, ichEnd, ichAnchor);
+				return EnvironmentInsertRules.CanInsertHashMark(m_env.StringRepresentation.Text,
+					GetSelectionEndPoint(false), GetSelectionEndPoint(true));
 			}
 
 			#region Handle right click menu

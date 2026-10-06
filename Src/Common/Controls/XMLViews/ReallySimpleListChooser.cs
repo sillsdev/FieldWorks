@@ -2597,6 +2597,30 @@ namespace SIL.FieldWorks.Common.Controls
 		public static bool ChooseNaturalClass(IVwRootBox rootb, LcmCache cache,
 			IPersistenceProvider persistenceProvider, Mediator mediator, PropertyTable propertyTable)
 		{
+			var pnc = ChooseNaturalClass(cache, persistenceProvider, mediator, propertyTable);
+			if (pnc != null)
+			{
+				ITsString tss = pnc.Abbreviation.BestAnalysisVernacularAlternative;
+				string sIns = String.Format("[{0}]", tss.Text);
+				int wsPending = cache.DefaultVernWs;
+				IVwRootSite site = rootb.Site;
+				IVwGraphics vg = null;
+				if (site != null)
+					vg = site.get_ScreenGraphics(rootb);
+				rootb.OnTyping(vg, sIns, VwShiftStatus.kfssNone, ref wsPending);
+			}
+			return true;
+		}
+
+		/// <summary>
+		/// Bring up a chooser for selecting a natural class. The Avalonia environment menus
+		/// insert the chosen class into their own editor.
+		/// </summary>
+		/// <returns>The chosen class; null when the user cancelled or took the chooser's jump
+		/// link.</returns>
+		public static IPhNaturalClass ChooseNaturalClass(LcmCache cache,
+			IPersistenceProvider persistenceProvider, Mediator mediator, PropertyTable propertyTable)
+		{
 			IEnumerable<ObjectLabel> labels = ObjectLabel.CreateObjectLabels(cache,
 				cache.LanguageProject.PhonologicalDataOA.NaturalClassesOS, "",
 				cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Id);
@@ -2627,24 +2651,11 @@ namespace SIL.FieldWorks.Common.Controls
 
 				DialogResult res = chooser.ShowDialog();
 				if (DialogResult.Cancel == res)
-					return true;
+					return null;
 				if (chooser.HandleAnyJump())
-					return true;
-				if (chooser.ChosenOne != null)
-				{
-					var pnc = (IPhNaturalClass) chooser.ChosenOne.Object;
-					ITsString tss = pnc.Abbreviation.BestAnalysisVernacularAlternative;
-					string sName = tss.Text;
-					string sIns = String.Format("[{0}]", sName);
-					int wsPending = cache.DefaultVernWs;
-					IVwRootSite site = rootb.Site;
-					IVwGraphics vg = null;
-					if (site != null)
-						vg = site.get_ScreenGraphics(rootb);
-					rootb.OnTyping(vg, sIns, VwShiftStatus.kfssNone, ref wsPending);
-				}
+					return null;
+				return chooser.ChosenOne?.Object as IPhNaturalClass;
 			}
-			return true;
 		}
 
 		/// <summary>

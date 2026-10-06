@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.DetailRules;
 using SIL.FieldWorks.Common.FwAvalonia.Detail;
 using SIL.FieldWorks.FdoUi;
@@ -17,10 +18,9 @@ namespace SIL.FieldWorks.XWorks
 {
 	/// <summary>
 	/// The reference-vector row menus of the Avalonia detail view: the per-item menu of the
-	/// clicked item, answered natively by <see cref="ReferenceItemMenuAuthority"/> when it owns
-	/// the item's menu id and otherwise by the item's object UI as a temporary colleague, and
-	/// the Move Left / Move Right commands, which act on the row's current item through the
-	/// detail edit context.
+	/// clicked item, answered natively by <see cref="ReferenceItemMenuAuthority"/> from the row,
+	/// the item and the item's object UI, and the Move Left / Move Right commands, which act on
+	/// the row's current item through the detail edit context.
 	/// </summary>
 	public partial class RecordEditView : IReferenceItemMenuHost
 	{
@@ -48,16 +48,22 @@ namespace SIL.FieldWorks.XWorks
 					itemUi.Dispose();
 					return;
 				}
-				// The item's object UI answers the clicked command, which runs as the menu
-				// closes, so its disposal is queued behind the close.
+				// The editor holds its commit while the menu may hold focus; the object UI
+				// answers the clicked command as the menu closes, so it is disposed after.
+				request.BeginMenuGesture();
 				try
 				{
 					m_avaloniaEntryForm.ShowContextMenu(items, request.AnchorControl, request.OpenAtPointer,
-						() => Avalonia.Threading.Dispatcher.UIThread.Post(itemUi.Dispose,
-							Avalonia.Threading.DispatcherPriority.Background));
+						() =>
+						{
+							request.EndMenuGesture();
+							Avalonia.Threading.Dispatcher.UIThread.Post(itemUi.Dispose,
+								Avalonia.Threading.DispatcherPriority.Background);
+						});
 				}
 				catch
 				{
+					request.EndMenuGesture();
 					itemUi.Dispose();
 					throw;
 				}
@@ -68,8 +74,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		// A Ctrl+click runs the item menu's first enabled jump: taken from the authority for an
-		// owned menu, else from the object UI's own Ctrl+click, which needs the adapter.
+		// A Ctrl+click runs the item menu's first enabled jump, taken from the authority.
 		private void RunDefaultItemActivation(DetailMenuRequest request)
 		{
 			var authority = CreateReferenceItemAuthority(request, out var itemUi);
@@ -77,27 +82,25 @@ namespace SIL.FieldWorks.XWorks
 				return;
 			using (itemUi)
 			{
-				if (authority.Owns(itemUi.ContextMenuId))
+				if (!authority.Owns(itemUi.ContextMenuId))
 				{
-					var window = m_propertyTable.GetValue<XWindow>("window");
-					XCoreMenuBridge.CreateMenuItems(window, new[] { itemUi.ContextMenuId }, null, null, authority);
-					authority.DefaultActivation?.Invoke();
+					LogUnownedItemMenu(itemUi.ContextMenuId);
 					return;
 				}
-				SyncMenuCommandAdapter(request.Field);
-				itemUi.HandleCtrlClick(this);
+				var window = m_propertyTable.GetValue<XWindow>("window");
+				XCoreMenuBridge.CreateMenuItems(window, new[] { itemUi.ContextMenuId }, null, null, authority);
+				authority.DefaultActivation?.Invoke();
 			}
 		}
 
 		/// <summary>
-		/// Materializes the item menu for the request's selected item. A menu id the native
-		/// authority owns is answered from the row and the item alone, with nothing on the
-		/// mediator taking part; any other id is built through the item's object UI as a
-		/// temporary colleague. Empty, with a null <paramref name="itemUi"/>, when the item
-		/// cannot be resolved.
+		/// Materializes the item menu for the request's selected item, answered from the row and
+		/// the item alone by the native authority, with nothing on the mediator taking part.
+		/// Empty, with a null <paramref name="itemUi"/>, when the item cannot be resolved or its
+		/// menu id has no authority.
 		/// </summary>
 		/// <param name="request">The item-menu request; its selected item is the target.</param>
-		/// <param name="itemUi">The item's object UI, which the menu's commands run through; the
+		/// <param name="itemUi">The item's object UI, which the menu's jumps run through; the
 		/// caller disposes it once the menu has closed.</param>
 		internal IReadOnlyList<DetailMenuItem> BuildReferenceItemMenu(DetailMenuRequest request,
 			out CmObjectUi itemUi)
@@ -106,64 +109,33 @@ namespace SIL.FieldWorks.XWorks
 			var authority = CreateReferenceItemAuthority(request, out var ui);
 			if (ui == null)
 				return Array.Empty<DetailMenuItem>();
+			if (!authority.Owns(ui.ContextMenuId))
+			{
+				LogUnownedItemMenu(ui.ContextMenuId);
+				ui.Dispose();
+				return Array.Empty<DetailMenuItem>();
+			}
 
 			IReadOnlyList<DetailMenuItem> items;
 			try
 			{
-				if (authority.Owns(ui.ContextMenuId))
-				{
-					var window = m_propertyTable.GetValue<XWindow>("window");
-					items = XCoreMenuBridge.CreateMenuItems(window, new[] { ui.ContextMenuId }, null, null, authority);
-				}
-				else
-				{
-					items = BuildItemMenuThroughTheColleague(request, ui);
-				}
+				var window = m_propertyTable.GetValue<XWindow>("window");
+				items = XCoreMenuBridge.CreateMenuItems(window, new[] { ui.ContextMenuId }, null, null, authority);
 			}
 			catch
 			{
-				ui.Dispose(); // a failed menu must not leave the object UI on the mediator
+				ui.Dispose();
 				throw;
 			}
 			itemUi = ui;
 			return items;
 		}
 
-		/// <summary>
-		/// The item menu built through the mediator: the hidden command adapter is pointed at
-		/// the row, the item's object UI joins the mediator as a temporary colleague to answer
-		/// the Show-in-tool jumps, the first enabled jump is labeled as the Ctrl+click default,
-		/// and the Move commands are retargeted to the row's current item.
-		/// </summary>
-		/// <param name="request">The item-menu request.</param>
-		/// <param name="ui">The item's object UI; registered on the mediator by this call, and
-		/// disposed by the caller.</param>
-		internal IReadOnlyList<DetailMenuItem> BuildItemMenuThroughTheColleague(DetailMenuRequest request,
-			CmObjectUi ui)
-		{
-			SyncMenuCommandAdapter(request.Field);
-
-			var registry = new OverrideCommandRegistry();
-			var marked = false;
-			// The first enabled jump is the Ctrl+click default; its label says so.
-			registry.Add(
-				choice => choice is CommandChoice command && string.Equals(command.Message,
-					CmObjectUi.JumpToToolMessage, StringComparison.Ordinal),
-				(choice, display) =>
-				{
-					if (marked || !display.Enabled)
-						return null;
-					marked = true;
-					return new DetailMenuItem(
-						XCoreMenuBridge.StripAccelerator(display.Text) + CmObjectUi.CtrlClickSuffix,
-						isEnabled: true, isChecked: display.Checked, children: null,
-						execute: () => choice.OnClick(null, EventArgs.Empty));
-				});
-			AddMoveCommands(registry, request);
-
-			var window = m_propertyTable.GetValue<XWindow>("window");
-			return XCoreMenuBridge.CreateMenuItems(window, new[] { ui.ContextMenuId }, registry.TryBuild, ui);
-		}
+		// Every id an item's object UI can name is owned; a new one shows no menu rather than
+		// reaching for the hidden adapter.
+		private static void LogUnownedItemMenu(string menuId)
+			=> Logger.WriteEvent(string.Format("Detail item menu '{0}' has no native authority; nothing shown.",
+				menuId));
 
 		// Points the hidden command adapter at the row, so the row's own slice answers the
 		// commands that need slice context; when that fails, those commands stay hidden.
@@ -175,7 +147,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 			catch (Exception adapterError)
 			{
-				Logger.WriteError("Detail item menu command adapter failed; the commands that need "
+				Logger.WriteError("Detail menu command adapter failed; the commands that need "
 					+ "the hidden colleague chain stay hidden.", adapterError);
 			}
 		}
@@ -258,26 +230,6 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
-		/// Registers Move Left / Move Right retargeted to the request's current item; registers
-		/// nothing for a row that is not a reference vector.
-		/// </summary>
-		internal void AddMoveCommands(OverrideCommandRegistry registry, DetailMenuRequest request)
-		{
-			if (request?.Field == null || request.Field.Kind != DetailFieldKind.ReferenceVector)
-				return;
-			registry.Add(ReorderVectorMenuAuthority.MoveLeftCommandId,
-				(choice, display) => MoveCommandItem(request, display, forward: false));
-			registry.Add(ReorderVectorMenuAuthority.MoveRightCommandId,
-				(choice, display) => MoveCommandItem(request, display, forward: true));
-		}
-
-		// The item menu's Move Left / Move Right, built by the same rule as the label menu's.
-		private DetailMenuItem MoveCommandItem(DetailMenuRequest request, UIItemDisplayProperties display,
-			bool forward)
-			=> ReorderVectorMenuAuthority.BuildMoveItem(request, XCoreMenuBridge.StripAccelerator(display.Text),
-				forward, MoveReferenceItem);
-
-		/// <summary>
 		/// The native authority for the reorder-vector menu of the request's row: it answers
 		/// Move Left, Move Right and Alphabetical Order from the row itself, so a label menu
 		/// carrying that id needs nothing from the hidden command adapter for those leaves.
@@ -355,6 +307,19 @@ namespace SIL.FieldWorks.XWorks
 				return;
 			ComplexFormVisibility.ToggleShowComplexFormIn(complexFormRef, component,
 				xWorksStrings.ksUndoVisibleComplexForm, xWorksStrings.ksRedoVisibleComplexForm);
+		}
+
+		// The same chooser the WinForms environment slices open, persisted under the same key.
+		IPhNaturalClass IEnvironmentMenuHost.ChooseNaturalClass()
+		{
+			var persistence = new PersistenceProvider(m_mediator, m_propertyTable, DataTreePersistContext);
+			return ReallySimpleListChooser.ChooseNaturalClass(Cache, persistence, m_mediator, m_propertyTable);
+		}
+
+		void IEnvironmentMenuHost.ShowEnvironmentError(string message)
+		{
+			System.Windows.Forms.MessageBox.Show(FindForm(), message, xWorksStrings.ksEnvironmentErrorTitle,
+				System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Information);
 		}
 	}
 }

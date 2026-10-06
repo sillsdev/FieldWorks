@@ -3357,5 +3357,14 @@ namespace SIL.FieldWorks.XWorks {
                 return ResourceManager.GetString("YouAreResettingReversal", resourceCulture);
             }
         }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Error in Environment.
+        /// </summary>
+        internal static string ksEnvironmentErrorTitle {
+            get {
+                return ResourceManager.GetString("ksEnvironmentErrorTitle", resourceCulture);
+            }
+        }
     }
 }

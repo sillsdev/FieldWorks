@@ -692,7 +692,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			// The field's slice menu opens from the label cell's right-click or the
 			// gutter "..." button; the editor's current item rides each request it raises.
 			var labelCell = WrapWithFieldMenu(labelBlock, field, automationId, out var labelKebab,
-				editor as IDetailItemSelection);
+				editor as IDetailItemSelection, editor);
 
 			// Hover-reveal: the WHOLE row (label cell + editor) is the hover/focus
 			// surface for the field-options "..." and any editor affordance (chooser
@@ -738,7 +738,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		// The label cell answers context-menu requests with the row's slice menu; the
 		// kebab opens its own menu or hotlinks. With no host bridge, content is unwrapped.
 		private Control WrapWithFieldMenu(Control inner, DetailField field, string automationId,
-			out Control kebab, IDetailItemSelection selection = null)
+			out Control kebab, IDetailItemSelection selection = null, Control editor = null)
 		{
 			kebab = null;
 			if (_menuRequested == null)
@@ -765,14 +765,36 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				AutomationProperties.SetName(button, FwAvaloniaStrings.FieldOptionsMenu);
 				ToolTip.SetTip(button, FwAvaloniaStrings.FieldOptionsMenu);
 				var kind = hasMenu ? DetailMenuKind.SliceMenu : DetailMenuKind.Hotlinks;
-				// Button.Click fires for both a mouse click and keyboard activation (Enter/Space), so the
-				// affordance is fully keyboard-operable once Tab focus reveals it.
+				// Click fires for keyboard activation (Enter/Space) once Tab focus reveals the
+				// button; a pointer click is answered by the rail handlers below instead.
 				button.Click += (s, e) =>
 				{
 					// No pointer position is available here, so the menu drops from the
 					// icon rather than from wherever the mouse sits.
 					_menuRequested(DetailMenuRequest.FromAnchor(button, field, kind, selection));
 				};
+				// The press is swallowed before the button can take focus from the row's
+				// editor (as under SliceTreeNode's icon); the release raises the menu.
+				var pressedOnButton = false;
+				rail.AddHandler(Avalonia.Input.InputElement.PointerPressedEvent, (s, e) =>
+				{
+					if (!IsOn(button, e.Source) || !e.GetCurrentPoint(button).Properties.IsLeftButtonPressed)
+						return;
+					pressedOnButton = true;
+					e.Handled = true;
+					TakeRowFocus(rail, editor, button);
+				}, Avalonia.Interactivity.RoutingStrategies.Tunnel);
+				rail.AddHandler(Avalonia.Input.InputElement.PointerReleasedEvent, (s, e) =>
+				{
+					if (!pressedOnButton)
+						return;
+					pressedOnButton = false;
+					e.Handled = true;
+					_menuRequested(DetailMenuRequest.FromAnchor(button, field, kind, selection));
+				}, Avalonia.Interactivity.RoutingStrategies.Tunnel);
+				// A press whose release never arrives (capture lost mid-press) opens nothing.
+				rail.AddHandler(Avalonia.Input.InputElement.PointerCaptureLostEvent,
+					(s, e) => pressedOnButton = false, Avalonia.Interactivity.RoutingStrategies.Tunnel);
 				rail.Child = button;
 				kebab = button;
 			}
@@ -781,19 +803,48 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			DockPanel.SetDock(rail, Dock.Left);
 			wrapper.Children.Add(rail);
 			wrapper.Children.Add(inner); // fills the width remaining after the gutter
-			WireLabelContextMenu(wrapper, field, selection);
+			WireLabelContextMenu(wrapper, field, selection, editor, kebab);
 			return wrapper;
+		}
+
+		// Whether an event source is the control or something drawn inside it.
+		private static bool IsOn(Control control, object source)
+			=> source is Visual visual
+				&& (ReferenceEquals(visual, control)
+					|| Avalonia.VisualTree.VisualExtensions.IsVisualAncestorOf(control, visual));
+
+		// A label gesture focuses its row (Slice.TakeFocus), so the menu closes back onto it;
+		// a vector row takes it on its button, since focusing an item would make it current.
+		private static void TakeRowFocus(Control cell, Control editor, Control kebab)
+		{
+			if (editor == null)
+				return;
+			var focused = TopLevel.GetTopLevel(cell)?.FocusManager?.GetFocusedElement();
+			if (IsOn(cell, focused) || IsOn(editor, focused))
+				return;
+			Control target;
+			if (editor is IDetailItemSelection)
+				target = kebab;
+			else if (editor.Focusable)
+				target = editor;
+			else
+			{
+				target = Avalonia.VisualTree.VisualExtensions.GetVisualDescendants(editor).OfType<Control>()
+					.FirstOrDefault(c => c.Focusable && c.IsEffectivelyEnabled && c.IsEffectivelyVisible);
+			}
+			target?.Focus();
 		}
 
 		/// <summary>
 		/// Wires up the Label context menu for a slice; the request carries the row editor's
-		/// current item when it keeps one.
+		/// current item when it keeps one, and the row takes focus first.
 		/// </summary>
 		private void WireLabelContextMenu(Control cell, DetailField field,
-			IDetailItemSelection selection)
+			IDetailItemSelection selection, Control editor, Control kebab)
 		{
 			cell.AddHandler(Control.ContextRequestedEvent, (s, e) =>
 			{
+				TakeRowFocus(cell, editor, kebab);
 				_menuRequested(DetailMenuRequest.FromContextRequested(cell, e, field,
 					DetailMenuKind.SliceMenu, selection));
 				e.Handled = true;

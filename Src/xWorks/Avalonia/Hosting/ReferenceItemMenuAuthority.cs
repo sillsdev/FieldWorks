@@ -14,9 +14,10 @@ namespace SIL.FieldWorks.XWorks
 {
 	/// <summary>
 	/// What the host does for the per-item menu of a reference-vector row: the commands that
-	/// change the model or navigate, and the tool the row is shown in.
+	/// change the model or navigate, the tool the row is shown in, and the environment
+	/// commands' chooser and error report.
 	/// </summary>
-	internal interface IReferenceItemMenuHost
+	internal interface IReferenceItemMenuHost : IEnvironmentMenuHost
 	{
 		/// <summary>The current tool, e.g. "lexiconEdit"; null when none is current.</summary>
 		string CurrentTool { get; }
@@ -48,14 +49,16 @@ namespace SIL.FieldWorks.XWorks
 	/// <summary>
 	/// The native authority for the per-item menu of a reference-vector row: the Show-in-tool
 	/// jumps of the clicked item, the two anthropology-category filter jumps, the two
-	/// dictionary-visibility marks of a complex form, and Move Left / Move Right. Every answer
-	/// comes from the row, the clicked item and the item's object UI, which is called directly
-	/// rather than registered on the mediator, so the menu needs neither the hidden DataTree
-	/// adapter nor a colleague.
+	/// dictionary-visibility marks of a complex form, and Move Left / Move Right; on an
+	/// environment item, the jump, Describe Error and the five inserts into the item's editor.
+	/// Every answer comes from the row, the clicked item and the item's object UI, which is
+	/// called directly rather than registered on the mediator, so the menu needs neither the
+	/// hidden DataTree adapter nor a colleague.
 	/// </summary>
 	internal sealed class ReferenceItemMenuAuthority : IDetailMenuAuthority
 	{
 		internal const string MenuId = "mnuReferenceChoices";
+		internal const string EnvironmentMenuId = "mnuEnvReferenceChoices";
 		internal const string ShowSubentryUnderComponentCommandId = "CmdShowSubentryUnderComponent";
 		internal const string VisibleComplexFormCommandId = "CmdVisibleComplexForm";
 		internal const string FilterLexiconCommandId = "CmdJumpToLexiconEditWithFilter";
@@ -94,7 +97,9 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		public Action DefaultActivation { get; private set; }
 
-		public bool Owns(string menuId) => string.Equals(menuId, MenuId, StringComparison.Ordinal);
+		public bool Owns(string menuId)
+			=> string.Equals(menuId, MenuId, StringComparison.Ordinal)
+				|| string.Equals(menuId, EnvironmentMenuId, StringComparison.Ordinal);
 
 		public DetailMenuItem Build(string menuId, ChoiceBase leaf)
 		{
@@ -121,9 +126,30 @@ namespace SIL.FieldWorks.XWorks
 					{
 						return JumpItem(command);
 					}
+					if (command != null && string.Equals(command.Message, EnvironmentMenuLeaves.ShowErrorMessage,
+						StringComparison.Ordinal))
+					{
+						return EnvironmentMenuLeaves.BuildDescribeError(label, ClickedItem(), _host);
+					}
+					if (command != null && EnvironmentMenuLeaves.IsInsertMessage(command.Message))
+						return EnvironmentMenuLeaves.BuildInsert(command.Message, label, _request, _host);
 					throw new InvalidOperationException(string.Format(
 						"Menu '{0}' has a leaf '{1}' this authority does not answer.", menuId, leaf.HelpId));
 			}
+		}
+
+		// The row's option for the clicked item, which carries the domain's verdict on it.
+		private DetailChoiceOption ClickedItem()
+		{
+			var items = _request.Field?.Items;
+			if (items == null || _request.SelectedItemKey == null)
+				return null;
+			foreach (var item in items)
+			{
+				if (string.Equals(item.Key, _request.SelectedItemKey, StringComparison.Ordinal))
+					return item;
+			}
+			return null;
 		}
 
 		// The tool a command's parameters name, or null.
