@@ -372,7 +372,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		/// question from <see cref="IsInteractionInFlight"/>: this one must not defer the
 		/// view's own completion, which is what discards the text, only an external refresh.
 		/// </summary>
-		public bool HasUnsubmittedText => _vectors.Any(vector => vector.HasUnstagedText);
+		public bool HasUnsubmittedText
+			=> _editors.OfType<IUnstagedTextHolder>().Any(editor => editor.HasUnstagedText);
 
 		/// <summary>
 		/// Raised when the view goes idle again -- the click finished and no picker it

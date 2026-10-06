@@ -122,7 +122,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 	/// Reversal Index", and Ctrl+click runs it directly. An edit context without
 	/// <see cref="IReversalEntryEditing"/> shows the rows read-only.
 	/// </summary>
-	public sealed class FwReversalEntriesField : StackPanel, IDisposable
+	public sealed class FwReversalEntriesField : StackPanel, IUnstagedTextHolder, IDisposable
 	{
 		private readonly List<Action> _teardown = new List<Action>();
 		private readonly List<SlotState> _slots = new List<SlotState>();
@@ -742,6 +742,13 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		/// <returns>Whether a slot held an edit to save, staged or lost; false when no slot
 		/// differed, or when what they held already matches what is saved.</returns>
 		public bool CommitPendingEdits() => CommitAll();
+
+		/// <summary>
+		/// Whether a slot holds text not yet offered to the domain. Slots stage only when focus
+		/// leaves the field, so a rebuild before then would save the half-typed text.
+		/// </summary>
+		public bool HasUnstagedText
+			=> _editing != null && !_disposed && _slots.Any(slot => slot.Text != slot.Committed);
 
 		private bool CommitAll()
 		{

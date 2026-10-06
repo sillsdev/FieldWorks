@@ -1347,7 +1347,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 	/// false and is unaffected.
 	/// </summary>
 	public sealed class FwReferenceVectorField : WrapPanel, IHoverAffordanceProvider,
-		IDetailItemSelection, IDisposable
+		IDetailItemSelection, IUnstagedTextHolder, IDisposable
 	{
 		private readonly List<Control> _affordances = new List<Control>();
 		// Teardown for the per-item select/Remove handlers, the add picker's subscriptions, the

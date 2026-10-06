@@ -670,6 +670,40 @@ namespace FwAvaloniaTests.Detail
 			Assert.That(FocusedId(window), Is.EqualTo("Next.vern"));
 		}
 
+		// A slot holds what is typed with no session open, so only this tells the host to hold
+		// a refresh that would save the half-typed text and rebuild under the caret.
+		[AvaloniaTest]
+		public void InTheDetailView_TextTypedIntoASlot_IsUnsubmittedUntilFocusLeavesTheField()
+		{
+			var context = new RecordingReversalContext();
+			var reversal = new DetailField("Reversal", "Reversal Entries", "ReferringReversalIndexEntries",
+				null, DetailFieldKind.Custom, EditorClassification.Known, FieldId, null, HostRouting.Inherit,
+				null, null, null, objectHvo: 1,
+				controlFactory: render => new FwReversalEntriesField("Reversal Entries", FieldId,
+					new[] { English("dwelling") }, context));
+			var next = new DetailField("Next", "Next", "Next", null, DetailFieldKind.Text,
+				EditorClassification.Known, "Next", null, HostRouting.Inherit,
+				new List<DetailWsValue> { new DetailWsValue("vern", "value") }, null, null, objectHvo: 1);
+			var model = new DetailModel("LexSense", "Normal", new List<DetailField> { reversal, next },
+				new List<ViewDiagnostic>());
+			var view = new DataTree(model, editContext: context);
+			var window = new Window { Content = view, Width = 480, Height = 300 };
+			window.Show();
+			Dispatcher.UIThread.RunJobs();
+			var entry = Find<TextBox>(view, "Reversal.en.0");
+			Assert.That(view.HasUnsubmittedText, Is.False, "precondition: nothing typed yet");
+
+			entry.Focus();
+			entry.Text = "dwel";
+			Dispatcher.UIThread.RunJobs();
+			Assert.That(view.HasUnsubmittedText, Is.True, "the slot holds text no session has seen");
+
+			Find<TextBox>(view, "Next.vern").Focus();
+			Dispatcher.UIThread.RunJobs();
+			Assert.That(context.Events, Is.EqualTo(new[] { "commit en0=dwel" }));
+			Assert.That(view.HasUnsubmittedText, Is.False, "leaving the field offered the text");
+		}
+
 		[AvaloniaTest]
 		public void Enter_DoesNothing()
 		{
