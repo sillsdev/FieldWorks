@@ -508,7 +508,7 @@ namespace SIL.FieldWorks.XWorks
 
 		// An allomorph carrying one environment: PhoneEnv is a reference COLLECTION, which
 		// resolves to a different object UI, and so to a different menu, than a sequence.
-		private DetailField EnvironmentsFieldWithOneItem()
+		private DetailField EnvironmentsFieldWithOneItem(string saved = "/_#")
 		{
 			IMoStemAllomorph allomorph = null;
 			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
@@ -520,7 +520,7 @@ namespace SIL.FieldWorks.XWorks
 				var env = Cache.ServiceLocator.GetInstance<IPhEnvironmentFactory>().Create();
 				Cache.LanguageProject.PhonologicalDataOA.EnvironmentsOS.Add(env);
 				env.StringRepresentation =
-					TsStringUtils.MakeString("/_#", Cache.DefaultVernWs);
+					TsStringUtils.MakeString(saved, Cache.DefaultVernWs);
 				allomorph.PhoneEnvRC.Add(env);
 			});
 			DrainMediatorAndIdleQueues();
@@ -794,9 +794,9 @@ namespace SIL.FieldWorks.XWorks
 		/// WinForms view judges the text in its view; the inserts in the same menu do too.
 		/// </summary>
 		[Test]
-		public void DescribeError_JudgesTheEditorsUnsavedText_NotTheSavedEnvironment()
+		public void DescribeError_IsEnabled_WhenAnUnsavedEditBreaksAWellFormedEnvironment()
 		{
-			var field = EnvironmentsFieldWithOneItem(); // saved as "/_#", well formed
+			var field = EnvironmentsFieldWithOneItem("/_#");
 
 			var broken = new TextEditorStub { EditorText = "/#", Caret = 2 };
 			var items = m_view.BuildReferenceItemMenu(ItemRequest(field, 0, broken), out var itemUi);
@@ -805,12 +805,24 @@ namespace SIL.FieldWorks.XWorks
 				Assert.That(FindItem(items, DescribeErrorLabel)?.IsEnabled, Is.True,
 					"the editor's text has lost its bar, so there is an error to describe");
 			}
+		}
 
-			var fixedText = new TextEditorStub { EditorText = "/_#", Caret = 3 };
-			items = m_view.BuildReferenceItemMenu(ItemRequest(field, 0, fixedText), out itemUi);
+		/// <summary>
+		/// The saved environment is malformed but the editor holds the fix, so the saved verdict
+		/// must not reach the menu: a stale error is worse than none.
+		/// </summary>
+		[Test]
+		public void DescribeError_IsDisabled_WhenAnUnsavedEditFixesAMalformedEnvironment()
+		{
+			var field = EnvironmentsFieldWithOneItem("/#");
+			Assert.That(field.Items[0].HasValidationMessage, Is.True, "precondition: the saved text is malformed");
+
+			var fixedText = new TextEditorStub { EditorText = "/#_", Caret = 3 };
+			var items = m_view.BuildReferenceItemMenu(ItemRequest(field, 0, fixedText), out var itemUi);
 			using (itemUi)
 			{
-				Assert.That(FindItem(items, DescribeErrorLabel)?.IsEnabled, Is.False);
+				Assert.That(FindItem(items, DescribeErrorLabel)?.IsEnabled, Is.False,
+					"the editor's text has its bar back, so there is no error to describe");
 			}
 		}
 
