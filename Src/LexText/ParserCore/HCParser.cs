@@ -35,7 +35,6 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		private bool m_mergeAnalyses;
 		private bool m_mergeMSAs = true;
 		private bool m_makePartialsFinal = false;
-		private string m_parserParameters;
 
 		// the public const strings are for GenerateHCConfigForFLExTrans and HCSynthByGlossLib
 		internal const string CRuleID = "ID";
@@ -73,9 +72,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		public void Update()
 		{
 			CheckDisposed();
-			if (m_changeListener.Reset()
-				|| m_forceUpdate
-				|| m_parserParameters != m_cache.LanguageProject.MorphologicalDataOA.ParserParameters)
+			if (m_changeListener.Reset() || m_forceUpdate)
 			{
 				LoadParser();
 				m_forceUpdate = false;
@@ -163,8 +160,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			using (XmlWriter writer = XmlWriter.Create(loadErrorsFile))
 			using (new WorkerThreadReadHelper(m_cache.ServiceLocator.GetInstance<IWorkerThreadReadHandler>()))
 			{
-				m_parserParameters = m_cache.LanguageProject.MorphologicalDataOA.ParserParameters;
-				XElement parserParamsElem = XElement.Parse(m_parserParameters);
+				XElement parserParamsElem = XElement.Parse(m_cache.LanguageProject.MorphologicalDataOA.ParserParameters);
 				XElement delReappsElem = parserParamsElem.Elements("HC").Elements("DelReapps").FirstOrDefault();
 				XElement guessRootsElem = parserParamsElem.Elements("HC").Elements("GuessRoots").FirstOrDefault();
 				XElement mergeAnalysesElem = parserParamsElem.Elements("HC").Elements("MergeAnalyses").FirstOrDefault();
@@ -178,14 +174,12 @@ namespace SIL.FieldWorks.WordWorks.Parser
 					m_guessRoots = (bool) guessRootsElem;
 				if (mergeAnalysesElem != null)
 					m_mergeAnalyses = (bool)mergeAnalysesElem;
-				if (mergeMSAsElem != null)
-					m_mergeMSAs = (bool)mergeMSAsElem;
-				if (makePartialsFinalElem != null)
-					m_makePartialsFinal = (bool)makePartialsFinalElem;
 				if (maxRootsElem != null)
 					maxStemCount = int.Parse(maxRootsElem.Value);
 				if (maxAlternativesElem != null)
 					maxAlternatives = int.Parse(maxAlternativesElem.Value);
+				m_mergeMSAs = mergeMSAsElem != null ? (bool)mergeMSAsElem : true;
+				m_makePartialsFinal = makePartialsFinalElem != null ? (bool)makePartialsFinalElem : false;
 				writer.WriteStartElement("LoadErrors");
 				if (m_mergeMSAs)
 				{
