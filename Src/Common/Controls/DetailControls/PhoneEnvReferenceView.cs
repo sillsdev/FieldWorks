@@ -12,6 +12,7 @@ using System.Xml;
 using SIL.LCModel.Core.Cellar;
 using SIL.LCModel.Core.Phonology;
 using SIL.LCModel.Core.Text;
+using SIL.FieldWorks.Common.DetailRules;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.Framework.DetailControls.Resources;
 using SIL.LCModel.Core.KernelInterfaces;
@@ -350,9 +351,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		public void ResetValidator()
 		{
 			CheckDisposed();
-			m_validator = new PhonEnvRecognizer(
-				m_cache.LangProject.PhonologicalDataOA.AllPhonemes().ToArray(),
-				m_cache.LangProject.PhonologicalDataOA.AllNaturalClassAbbrs().ToArray());
+			m_validator = EnvironmentErrors.CreateRecognizer(m_cache);
 		}
 
 		/// <summary>
@@ -953,16 +952,13 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		{
 			CheckDisposed();
 			string s;
-			if (CanGetEnvironmentStringRep(out s))
+			if (!CanGetEnvironmentStringRep(out s))
+				return;
+			var message = EnvironmentErrors.Describe(m_validator, s);
+			if (message != null)
 			{
-				if (!m_validator.Recognize(s))
-				{
-					string sMsg;
-					int pos;
-					StringServices.CreateErrorMessageFromXml(s, m_validator.ErrorMessage, out pos, out sMsg);
-					MessageBox.Show(sMsg, DetailControlsStrings.ksBadEnv,
-						MessageBoxButtons.OK, MessageBoxIcon.Information);
-				}
+				MessageBox.Show(message, DetailControlsStrings.ksBadEnv,
+					MessageBoxButtons.OK, MessageBoxIcon.Information);
 			}
 		}
 
@@ -971,10 +967,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		{
 			CheckDisposed();
 			string s;
-			if (CanGetEnvironmentStringRep(out s))
-				return (!m_validator.Recognize(s));
-			else
-				return false;
+			return CanGetEnvironmentStringRep(out s) && EnvironmentErrors.Describe(m_validator, s) != null;
 		}
 
 		private bool CanGetEnvironmentStringRep(out string s)
@@ -995,6 +988,9 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			return true;
 		}
 
+		// The insert rules live in EnvironmentInsertRules, shared with the Avalonia row; this
+		// view supplies the selected environment's text and selection.
+
 		internal bool CanInsertSlash()
 		{
 			CheckDisposed();
@@ -1005,12 +1001,10 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			IVwSelection vwsel;
 			if (!GetSelectedStringRep(out tss, out vwsel, out hvoDummyObj, out ichAnchor, out ichEnd))
 				return false;
+			// A selection off every environment (the empty line at the end) starts a new one.
 			if (tss == null || hvoDummyObj == 0)
 				return true;
-			string s = tss.Text;
-			if (s == null || s == String.Empty)
-				return true;
-			return s.IndexOf('/') < 0;
+			return EnvironmentInsertRules.CanInsertSlash(tss.Text);
 		}
 
 		internal bool CanInsertEnvBar()
@@ -1025,12 +1019,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				return false;
 			if (tss == null || hvoDummyObj == 0)
 				return false;
-			string s = tss.Text;
-			if (s == null || s == String.Empty)
-				return false;
-			int ichSlash = s.IndexOf('/');
-			return (ichSlash >= 0) && (ichEnd > ichSlash) && (ichAnchor > ichSlash) &&
-				(s.IndexOf('_') < 0);
+			return EnvironmentInsertRules.CanInsertBar(tss.Text, ichAnchor, ichEnd);
 		}
 
 		internal bool CanInsertItem()
@@ -1045,10 +1034,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				return false;
 			if (tss == null || hvoDummyObj == 0)
 				return false;
-			string s = tss.Text;
-			if (s == null || s == String.Empty)
-				return false;
-			return PhonEnvRecognizer.CanInsertItem(s, ichEnd, ichAnchor);
+			return EnvironmentInsertRules.CanInsertItem(tss.Text, ichAnchor, ichEnd);
 		}
 
 		internal bool CanInsertHashMark()
@@ -1063,10 +1049,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				return false;
 			if (tss == null || hvoDummyObj == 0)
 				return false;
-			string s = tss.Text;
-			if (s == null || s == String.Empty)
-				return false;
-			return PhonEnvRecognizer.CanInsertHashMark(s, ichEnd, ichAnchor);
+			return EnvironmentInsertRules.CanInsertHashMark(tss.Text, ichAnchor, ichEnd);
 		}
 		#endregion
 

@@ -20,10 +20,12 @@ using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
 using XCore;
 // Both namespaces above define DataTree; the adapter tests mean the legacy WinForms one.
 using LegacyDataTree = SIL.FieldWorks.Common.Framework.DetailControls.DataTree;
+using PhonEnvRecognizer = SIL.LCModel.Core.Phonology.PhonEnvRecognizer;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -195,6 +197,13 @@ namespace SIL.FieldWorks.XWorks
 			public int SelectedItemIndex { get; set; }
 		}
 
+		private static DetailMenuRequest ItemRequest(DetailField field, int index, TextEditorStub editor)
+		{
+			editor.SelectedItemKey = field.Items[index].Key;
+			editor.SelectedItemIndex = index;
+			return DetailMenuRequest.FromAnchor(null, field, DetailMenuKind.ItemMenu, editor);
+		}
+
 		// Two complex forms whose primary lexeme is the test entry, so its Subentries row shows
 		// two items; then the host re-shows the record so its edit context knows the row.
 		private void MakeTwoSubentries()
@@ -315,7 +324,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
-		public void ItemMenu_IsOwned_ForReferenceChoices_ButNotForEnvironments()
+		public void ItemMenu_IsOwned_ForReferenceChoices_AndForEnvironments()
 		{
 			MakeTwoSubentries();
 			var authority = m_view.CreateReferenceItemAuthority(ItemRequest(SubentriesField(), 0), out var itemUi);
@@ -328,8 +337,9 @@ namespace SIL.FieldWorks.XWorks
 				out var envUi);
 			using (envUi)
 			{
-				Assert.That(envAuthority.Owns(envUi.ContextMenuId), Is.False,
-					"the environments menu still takes the colleague path");
+				Assert.That(envUi.ContextMenuId, Is.EqualTo(ReferenceItemMenuAuthority.EnvironmentMenuId));
+				Assert.That(envAuthority.Owns(envUi.ContextMenuId), Is.True,
+					"an environment's item menu is answered natively too, so no item menu needs the adapter");
 			}
 		}
 
@@ -360,72 +370,53 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		// Baseline = the path this replaces: the item's object UI as a temporary colleague, the
-		// adapter pointed at the row, the jump marker and the moves on the interceptor.
+		// The item menus the authority renders, pinned per row kind; the trees were captured
+		// from the mediator path the authority replaced, once the two were proved equivalent.
 		[Test]
-		public void ReferenceItemMenu_NativeAuthority_RendersWhatTheColleaguePathRendered_ForEveryItem()
+		public void ReferenceItemMenu_RendersThePinnedTree_ForEachRowKind()
 		{
 			MakeTwoSubentries();
 			AddAnthropologyCategoryToSense();
 			var fields = DetailComposer.Compose(m_entry, Cache).Model.Fields
 				.Where(f => f.Kind == DetailFieldKind.ReferenceVector && f.Items.Count > 0).ToList();
 
-			var compared = 0;
-			var mismatches = new List<string>();
-			var leaks = new List<string>();
+			var rendered = new Dictionary<string, string>();
 			foreach (var field in fields)
 			{
-				for (var index = 0; index < field.Items.Count; index++)
-				{
-					var request = ItemRequest(field, index);
-					var ui = m_view.ResolveItemUi(request);
-					if (ui == null)
-						continue;
-					string before;
-					using (ui)
-					{
-						if (!string.Equals(ui.ContextMenuId, ReferenceItemMenuAuthority.MenuId, StringComparison.Ordinal))
-							continue;
-						before = Describe(WithoutLeakedSubentryMark(
-							m_view.BuildItemMenuThroughTheColleague(request, ui), field, leaks));
-					}
-					var native = m_view.BuildReferenceItemMenu(request, out var itemUi);
-					itemUi.Dispose();
-					compared++;
-					var after = Describe(native);
-					if (!string.Equals(before, after, StringComparison.Ordinal))
-					{
-						var slice = AdapterTree?.CurrentSlice;
-						var target = slice?.Object == null ? "none" : string.Format("{0} flid {1} selection {2}",
-							slice.Object.ClassName, slice.Flid, slice.Object.Hvo);
-						mismatches.Add(string.Format("{0} ({1}) item {2} [adapter slice: {6}]:{3}--- colleague path{3}{4}{3}--- authority{3}{5}",
-							field.Label, field.Field, index, Environment.NewLine, before, after, target));
-					}
-				}
+				var request = ItemRequest(field, 0);
+				var items = m_view.BuildReferenceItemMenu(request, out var itemUi);
+				if (itemUi == null)
+					continue;
+				itemUi.Dispose();
+				rendered[field.Field] = Describe(items);
 			}
-			Assert.That(leaks, Is.EqualTo(new[] { "Publish Sense In" }),
-				"the baseline drops the adapter's leak on exactly one row");
-			Assert.That(compared, Is.GreaterThanOrEqualTo(3), "subentries and a category are compared");
-			Assert.That(mismatches, Is.Empty, string.Join(Environment.NewLine, mismatches));
+			foreach (var pair in rendered)
+				TestContext.WriteLine("=== " + pair.Key + Environment.NewLine + pair.Value);
+
+			Assert.That(rendered.Keys, Is.SupersetOf(new[] { "Subentries", "AnthroCodes" }));
+			Assert.That(rendered["Subentries"], Is.EqualTo(PinnedSubentriesItemMenu));
+			Assert.That(rendered["AnthroCodes"], Is.EqualTo(PinnedAnthroCodesItemMenu));
 		}
 
-		// The adapter leaks this mark as enabled when it lands on a field-less slice (its
-		// display handler returns before setting state); the native path hides it off a
-		// Components row.
-		private static IReadOnlyList<DetailMenuItem> WithoutLeakedSubentryMark(IReadOnlyList<DetailMenuItem> items,
-			DetailField field, List<string> leaks)
+		private const string Enabled = " [enabled=True checked=False executes=True]";
+		private const string Disabled = " [enabled=False checked=False executes=False]";
+
+		private static readonly string PinnedSubentriesItemMenu = string.Join(Environment.NewLine, new[]
 		{
-			if (string.Equals(field.Field, ReferenceItemMenuAuthority.ComponentLexemesField, StringComparison.Ordinal))
-				return items;
-			var kept = items.Where(i => i.IsSeparator
-				|| !string.Equals(i.Label, "Show Subentry under this Component", StringComparison.Ordinal)).ToList();
-			if (kept.Count == items.Count)
-				return items;
-			leaks.Add(field.Label);
-			while (kept.Count > 0 && kept[kept.Count - 1].IsSeparator)
-				kept.RemoveAt(kept.Count - 1);
-			return kept;
-		}
+			"Show Entry in Lexicon" + SIL.FieldWorks.FdoUi.CmObjectUi.CtrlClickSuffix + Enabled,
+			"---",
+			"Show Entry in Concordance" + Enabled,
+			"---",
+			"Move Left" + Disabled,
+			"Move Right" + Enabled
+		});
+
+		private static readonly string PinnedAnthroCodesItemMenu = string.Join(Environment.NewLine, new[]
+		{
+			"Show in Anthropology Category list" + SIL.FieldWorks.FdoUi.CmObjectUi.CtrlClickSuffix + Enabled,
+			"Filter for Lexical Entries with this category" + Enabled,
+			"Filter for Notebook Records with this category" + Enabled
+		});
 
 		// The one divergence from the colleague path, by design: the mark reads the clicked
 		// item, where the hidden tree has no selection and so never offers it.
@@ -458,17 +449,6 @@ namespace SIL.FieldWorks.XWorks
 				show.Execute();
 				DrainMediatorAndIdleQueues();
 				Assert.That(complexFormRef.PrimaryLexemesRS, Is.EqualTo(new ICmObject[] { m_entry }));
-			}
-
-			// The colleague path needs the hidden tree to show the complex form, as it would when
-			// its Components row is on screen.
-			m_view.Clerk.JumpToRecord(complexForm.Hvo);
-			DrainMediatorAndIdleQueues();
-			var colleague = m_view.ResolveItemUi(request);
-			using (colleague)
-			{
-				Assert.That(FindItem(m_view.BuildItemMenuThroughTheColleague(request, colleague), label), Is.Null,
-					"the colleague path reads a selection the hidden tree does not have");
 			}
 		}
 
@@ -528,7 +508,7 @@ namespace SIL.FieldWorks.XWorks
 
 		// An allomorph carrying one environment: PhoneEnv is a reference COLLECTION, which
 		// resolves to a different object UI, and so to a different menu, than a sequence.
-		private DetailField EnvironmentsFieldWithOneItem()
+		private DetailField EnvironmentsFieldWithOneItem(string saved = "/_#")
 		{
 			IMoStemAllomorph allomorph = null;
 			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
@@ -540,7 +520,7 @@ namespace SIL.FieldWorks.XWorks
 				var env = Cache.ServiceLocator.GetInstance<IPhEnvironmentFactory>().Create();
 				Cache.LanguageProject.PhonologicalDataOA.EnvironmentsOS.Add(env);
 				env.StringRepresentation =
-					TsStringUtils.MakeString("/_#", Cache.DefaultVernWs);
+					TsStringUtils.MakeString(saved, Cache.DefaultVernWs);
 				allomorph.PhoneEnvRC.Add(env);
 			});
 			DrainMediatorAndIdleQueues();
@@ -581,6 +561,268 @@ namespace SIL.FieldWorks.XWorks
 			finally
 			{
 				colleague?.Dispose();
+			}
+		}
+
+		// ===== Environment rows: the item menu and the two insert label menus =====
+
+		private const string JumpToEnvironmentsLabel = "Show in Environments list";
+		private const string DescribeErrorLabel = "Describe Error in Environment";
+		private const string InsertSlashLabel = "Insert Environment slash";
+		private const string InsertBarLabel = "Insert Environment bar";
+		private const string InsertNaturalClassLabel = "Insert Natural Class";
+		private const string InsertOptionalItemLabel = "Insert Optional Item";
+		private const string InsertHashMarkLabel = "Insert Word Boundary";
+		private static readonly string[] InsertLabels =
+		{
+			InsertSlashLabel, InsertBarLabel, InsertNaturalClassLabel, InsertOptionalItemLabel, InsertHashMarkLabel
+		};
+
+		private static void AssertInsertsEnabled(IReadOnlyList<DetailMenuItem> items, params string[] enabled)
+		{
+			foreach (var label in InsertLabels)
+			{
+				var item = FindItem(items, label);
+				Assert.That(item, Is.Not.Null, "'{0}' is offered", label);
+				var expected = Array.IndexOf(enabled, label) >= 0;
+				Assert.That(item.IsEnabled, Is.EqualTo(expected), "'{0}' enabled", label);
+				Assert.That(item.Execute != null, Is.EqualTo(expected), "'{0}' executes iff enabled", label);
+			}
+		}
+
+		[Test]
+		public void EnvironmentItemAuthority_AnswersEveryLeafOfItsMenu_AndTakesTheJumpAsDefault()
+		{
+			var field = EnvironmentsFieldWithOneItem();
+			var authority = m_view.CreateReferenceItemAuthority(ItemRequest(field, 0), out var itemUi);
+			using (itemUi)
+			{
+				var window = m_propertyTable.GetValue<XWindow>("window");
+				var menu = window.GetContextMenuChoiceGroup(new[] { ReferenceItemMenuAuthority.EnvironmentMenuId });
+				menu.PopulateNow(querySubmenuVisibility: false);
+
+				var leaves = Leaves(menu).ToList();
+				Assert.That(leaves.Count, Is.EqualTo(7), "the jump, Describe Error and the five inserts");
+				foreach (var leaf in leaves)
+				{
+					Assert.That(leaf.ConfigurationNode, Is.Not.Null,
+						"leaf '{0}' has no configuration node, so no authority can claim it", leaf.Label);
+					Assert.That(() => authority.Build(ReferenceItemMenuAuthority.EnvironmentMenuId, leaf),
+						Throws.Nothing, "the authority does not answer leaf '{0}'", leaf.HelpId);
+				}
+				var items = XCoreMenuBridge.CreateMenuItems(window,
+					new[] { ReferenceItemMenuAuthority.EnvironmentMenuId }, null, null, authority);
+				Assert.That(items, Is.Not.Empty, "the whole menu builds through the bridge");
+				Assert.That(authority.DefaultActivation, Is.Not.Null, "Ctrl+click runs the jump");
+			}
+		}
+
+		[Test]
+		public void EnvironmentItemMenu_IsBuiltWithoutTheAdapterOrTheMediator()
+		{
+			var field = EnvironmentsFieldWithOneItem();
+			Assert.That(HiddenTreeExists, Is.False, "precondition: no hidden tree exists yet");
+			var window = m_propertyTable.GetValue<XWindow>("window");
+			var spy = new DisplaySpyColleague();
+			window.Mediator.AddColleague(spy);
+			try
+			{
+				var items = m_view.BuildReferenceItemMenu(ItemRequest(field, 0), out var itemUi);
+				using (itemUi)
+				{
+					Assert.That(spy.Asked, Is.False, "no leaf of the environment item menu reaches the mediator");
+					Assert.That(HiddenTreeExists, Is.False, "the environment item menu never builds the hidden tree");
+					var jump = FindItem(items, JumpToEnvironmentsLabel + SIL.FieldWorks.FdoUi.CmObjectUi.CtrlClickSuffix);
+					Assert.That(jump?.IsEnabled, Is.True, "the item's object UI answers the jump directly");
+					var describe = FindItem(items, DescribeErrorLabel);
+					Assert.That(describe, Is.Not.Null);
+					Assert.That(describe.IsEnabled, Is.False, "a well-formed environment has no error to describe");
+					// The request carried no text editor, so nothing can be typed into.
+					AssertInsertsEnabled(items);
+				}
+			}
+			finally
+			{
+				window.Mediator.RemoveColleague(spy);
+			}
+		}
+
+		[Test]
+		public void EnvironmentItemMenu_EnablesTheInserts_ByTheEditorsCaret_AndTypesIntoIt()
+		{
+			var field = EnvironmentsFieldWithOneItem(); // its item reads "/_#"
+			var afterSlash = new TextEditorStub { EditorText = "/_#", Caret = 1 };
+			var items = m_view.BuildReferenceItemMenu(ItemRequest(field, 0, afterSlash), out var itemUi);
+			using (itemUi)
+			{
+				AssertInsertsEnabled(items, InsertNaturalClassLabel, InsertOptionalItemLabel, InsertHashMarkLabel);
+				FindItem(items, InsertOptionalItemLabel).Execute();
+				Assert.That(afterSlash.Typed, Is.EqualTo(new[] { (1, 1, "()", 1) }),
+					"the optional item is typed at the snapshotted caret, which lands between its parentheses");
+			}
+
+			var beforeSlash = new TextEditorStub { EditorText = "/_#", Caret = 0 };
+			items = m_view.BuildReferenceItemMenu(ItemRequest(field, 0, beforeSlash), out itemUi);
+			using (itemUi)
+			{
+				AssertInsertsEnabled(items);
+			}
+
+			var noSlashYet = new TextEditorStub { EditorText = "a", Caret = 1 };
+			items = m_view.BuildReferenceItemMenu(ItemRequest(field, 0, noSlashYet), out itemUi);
+			using (itemUi)
+			{
+				AssertInsertsEnabled(items, InsertSlashLabel);
+				FindItem(items, InsertSlashLabel).Execute();
+				Assert.That(noSlashYet.Typed, Is.EqualTo(new[] { (1, 1, "/", 0) }));
+			}
+		}
+
+		[Test]
+		public void EnvironmentsLabelMenu_IsFullyOwned_AndItsInsertsTypeIntoTheSlot()
+		{
+			var field = EnvironmentsFieldWithOneItem();
+			var ids = LabelMenuIds(field);
+			Assert.That(ids, Does.Contain(EnvironmentInsertMenuAuthority.EnvironmentsMenuId));
+			Assert.That(HiddenTreeExists, Is.False, "precondition: no hidden tree exists yet");
+
+			// The caret sits in the empty slot for a new environment: no item is current.
+			var slot = new TextEditorStub { EditorText = string.Empty, Caret = 0 };
+			var authority = m_view.CreateMenuAuthority(LabelMenuRequest(field, slot));
+			Assert.That(XCoreMenuBridge.OwnsAll(authority, ids), Is.True,
+				"every id of the Environments label menu is answered natively");
+			var items = BuildWithSpy(ids, authority, out var asked);
+			Assert.That(asked, Is.False, "no leaf reaches the mediator");
+			Assert.That(HiddenTreeExists, Is.False, "the owned label menu never builds the hidden tree");
+			AssertInsertsEnabled(items, InsertSlashLabel);
+			FindItem(items, InsertSlashLabel).Execute();
+			Assert.That(slot.Typed, Is.EqualTo(new[] { (0, 0, "/", 0) }), "the slash starts the new environment");
+			Assert.That(FindItem(items, "Always visible"), Is.Not.Null, "the per-object group rides along");
+
+			// No current item and no editor: nothing to type into.
+			items = BuildWithSpy(ids, m_view.CreateMenuAuthority(LabelMenuRequest(field, NoItem)), out _);
+			AssertInsertsEnabled(items);
+		}
+
+		/// <summary>
+		/// The String Representation row of an environment composes as Unsupported (its editor
+		/// is a WinForms plugin slice) on a tool that is not in the Avalonia catalog yet. Its
+		/// menu is owned all the same, with its inserts disabled, so the day either changes the
+		/// hidden adapter is already out of the picture.
+		/// </summary>
+		[Test]
+		public void StringRepresentationLabelMenu_IsOwned_WithItsInsertsDisabled()
+		{
+			EnvironmentsFieldWithOneItem();
+			var environment = Cache.LanguageProject.PhonologicalDataOA.EnvironmentsOS.Last();
+			var field = DetailComposer.Compose(environment, Cache, layoutName: "Edit").Model.Fields
+				.SingleOrDefault(f => f.Field == "StringRepresentation");
+			Assert.That(field, Is.Not.Null, "the environment composes its String Representation row");
+			Assert.That(field.Kind, Is.EqualTo(DetailFieldKind.Unsupported));
+			Assert.That(field.MenuId, Is.EqualTo(EnvironmentInsertMenuAuthority.StringRepresentationMenuId));
+
+			var ids = LabelMenuIds(field);
+			var authority = m_view.CreateMenuAuthority(LabelMenuRequest(field, NoItem));
+			Assert.That(XCoreMenuBridge.OwnsAll(authority, ids), Is.True);
+			var items = BuildWithSpy(ids, authority, out var asked);
+			Assert.That(asked, Is.False);
+			AssertInsertsEnabled(items);
+		}
+
+		[Test]
+		public void EnvironmentInsertAuthority_RejectsALeafItDoesNotAnswer()
+		{
+			var field = EnvironmentsFieldWithOneItem();
+			var authority = new EnvironmentInsertMenuAuthority(LabelMenuRequest(field, NoItem), m_view);
+			var window = m_propertyTable.GetValue<XWindow>("window");
+			var objectMenu = window.GetContextMenuChoiceGroup(new[] { RecordEditView.ObjectMenuId });
+			objectMenu.PopulateNow();
+			var foreignLeaf = objectMenu.OfType<ChoiceBase>().First(c => c.HelpId == ObjectMenuAuthority.HelpCommandId);
+
+			Assert.That(() => authority.Build(EnvironmentInsertMenuAuthority.EnvironmentsMenuId, foreignLeaf),
+				Throws.InvalidOperationException, "an owned id must be answered in full, never partially");
+			Assert.That(() => authority.BuildList(EnvironmentInsertMenuAuthority.EnvironmentsMenuId,
+				"WritingSystemOptionsForSlice"), Throws.InvalidOperationException,
+				"neither owned id has a list submenu, so any list is refused");
+		}
+
+		[Test]
+		public void DescribeError_IsEnabledForAMalformedEnvironment_WithTheExplanationWinFormsShows()
+		{
+			const string malformed = "/ _ [";
+			var valid = EnvironmentsFieldWithOneItem();
+			var allomorph = (IMoStemAllomorph)Cache.ServiceLocator.ObjectRepository.GetObject(valid.ObjectHvo);
+			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
+			{
+				var bad = Cache.ServiceLocator.GetInstance<IPhEnvironmentFactory>().Create();
+				Cache.LanguageProject.PhonologicalDataOA.EnvironmentsOS.Add(bad);
+				bad.StringRepresentation = TsStringUtils.MakeString(malformed, Cache.DefaultVernWs);
+				allomorph.PhoneEnvRC.Add(bad);
+			});
+			DrainMediatorAndIdleQueues();
+			RefreshedDetailFieldCount();
+			var field = DetailComposer.Compose(m_entry, Cache).Model.Fields
+				.Single(f => f.Field == "PhoneEnv" && f.ObjectHvo == allomorph.Hvo);
+			var badIndex = field.Items.ToList().FindIndex(i => i.Name.Contains("["));
+			Assert.That(badIndex, Is.GreaterThanOrEqualTo(0));
+			Assert.That(field.Items[badIndex].HasValidationMessage, Is.True, "precondition: the domain flags it");
+
+			var items = m_view.BuildReferenceItemMenu(ItemRequest(field, badIndex), out var itemUi);
+			using (itemUi)
+			{
+				var describe = FindItem(items, DescribeErrorLabel);
+				Assert.That(describe?.IsEnabled, Is.True, "a malformed environment has an error to describe");
+				Assert.That(describe.Execute, Is.Not.Null);
+			}
+
+			// What PhoneEnvReferenceView.ShowEnvironmentError would show for the same string,
+			// built the way that view built it before the rule moved to EnvironmentErrors.
+			var recognizer = new PhonEnvRecognizer(Cache.LangProject.PhonologicalDataOA.AllPhonemes().ToArray(),
+				Cache.LangProject.PhonologicalDataOA.AllNaturalClassAbbrs().ToArray());
+			Assert.That(recognizer.Recognize(malformed), Is.False);
+			StringServices.CreateErrorMessageFromXml(malformed, recognizer.ErrorMessage, out _, out var winFormsMessage);
+			var shown = ((IEnvironmentMenuHost)m_view).DescribeEnvironmentError(malformed);
+			TestContext.WriteLine("WinForms: " + winFormsMessage);
+			TestContext.WriteLine("Avalonia: " + shown);
+			Assert.That(shown, Is.EqualTo(winFormsMessage), "Describe Error shows the same explanation on both stacks");
+			Assert.That(field.Items[badIndex].ValidationMessage, Is.EqualTo(winFormsMessage),
+				"and the item's tooltip agrees");
+		}
+
+		/// <summary>
+		/// Describe Error judges the text in the item's editor, unsaved edits included, as the
+		/// WinForms view judges the text in its view; the inserts in the same menu do too.
+		/// </summary>
+		[Test]
+		public void DescribeError_IsEnabled_WhenAnUnsavedEditBreaksAWellFormedEnvironment()
+		{
+			var field = EnvironmentsFieldWithOneItem("/_#");
+
+			var broken = new TextEditorStub { EditorText = "/#", Caret = 2 };
+			var items = m_view.BuildReferenceItemMenu(ItemRequest(field, 0, broken), out var itemUi);
+			using (itemUi)
+			{
+				Assert.That(FindItem(items, DescribeErrorLabel)?.IsEnabled, Is.True,
+					"the editor's text has lost its bar, so there is an error to describe");
+			}
+		}
+
+		/// <summary>
+		/// The saved environment is malformed but the editor holds the fix, so the saved verdict
+		/// must not reach the menu: a stale error is worse than none.
+		/// </summary>
+		[Test]
+		public void DescribeError_IsDisabled_WhenAnUnsavedEditFixesAMalformedEnvironment()
+		{
+			var field = EnvironmentsFieldWithOneItem("/#");
+			Assert.That(field.Items[0].HasValidationMessage, Is.True, "precondition: the saved text is malformed");
+
+			var fixedText = new TextEditorStub { EditorText = "/#_", Caret = 3 };
+			var items = m_view.BuildReferenceItemMenu(ItemRequest(field, 0, fixedText), out var itemUi);
+			using (itemUi)
+			{
+				Assert.That(FindItem(items, DescribeErrorLabel)?.IsEnabled, Is.False,
+					"the editor's text has its bar back, so there is no error to describe");
 			}
 		}
 

@@ -1373,4 +1373,8 @@ See USFM documentation for help.</value>
   <data name="ksJumpToField" xml:space="preserve">
     <value>Jump to field</value>
   </data>
+  <data name="ksEnvironmentErrorTitle" xml:space="preserve">
+    <value>Error in Environment</value>
+    <comment>Title of the message box that explains why an environment is not well formed</comment>
+  </data>
 </root>

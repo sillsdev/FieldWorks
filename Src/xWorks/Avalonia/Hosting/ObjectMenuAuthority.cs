@@ -98,10 +98,12 @@ namespace SIL.FieldWorks.XWorks
 
 		// Offered on every row; without a located target it is disabled rather than guessed.
 		private DetailMenuItem VisibilityItem(string label, ViewVisibility visibility)
-			=> _target.Value == null ? Disabled(label) : _fieldVisibility(label, _target.Value, visibility);
+			=> _target.Value == null
+				? DetailMenuItem.Disabled(label)
+				: _fieldVisibility(label, _target.Value, visibility);
 
 		private DetailMenuItem MoveItem(string label, bool up)
-			=> _target.Value == null ? Disabled(label) : _moveField(label, _target.Value, up);
+			=> _target.Value == null ? DetailMenuItem.Disabled(label) : _moveField(label, _target.Value, up);
 
 		// Hidden when the help provider has no topic for the row, as WinForms hides it.
 		private DetailMenuItem HelpItem(string label)
@@ -112,9 +114,6 @@ namespace SIL.FieldWorks.XWorks
 			return new DetailMenuItem(label, isEnabled: true, isChecked: false, children: null,
 				execute: () => _showHelp(topic));
 		}
-
-		private static DetailMenuItem Disabled(string label)
-			=> new DetailMenuItem(label, isEnabled: false, isChecked: false, children: null, execute: null);
 	}
 
 	/// <summary>

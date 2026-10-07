@@ -601,9 +601,19 @@ namespace SIL.FieldWorks.XWorks
 					if (items.Count > 0)
 					{
 						// A keyboard-opened menu anchors under the row it came from; a
-						// right-click opens it at the pointer.
-						m_avaloniaEntryForm.ShowContextMenu(items, request.AnchorControl,
-							request.OpenAtPointer);
+						// right-click opens it at the pointer. The menu may take focus from the
+						// row's editor, which holds its commit until the menu closes.
+						request.BeginMenuGesture();
+						try
+						{
+							m_avaloniaEntryForm.ShowContextMenu(items, request.AnchorControl,
+								request.OpenAtPointer, request.EndMenuGesture);
+						}
+						catch
+						{
+							request.EndMenuGesture();
+							throw;
+						}
 						return;
 					}
 				}
@@ -737,6 +747,7 @@ namespace SIL.FieldWorks.XWorks
 			// once per menu, not once per authority that asks.
 			var objectMenu = CreateObjectMenuAuthority(request.Field);
 			return new CompositeMenuAuthority(CreateReorderVectorAuthority(request),
+				new EnvironmentInsertMenuAuthority(request, this),
 				CreateMultiStringMenuAuthority(request.Field, objectMenu), objectMenu);
 		}
 
