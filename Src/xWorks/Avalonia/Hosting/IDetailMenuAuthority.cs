@@ -2,6 +2,7 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System.Collections.Generic;
 using SIL.FieldWorks.Common.FwAvalonia.Detail;
 using XCore;
 
@@ -33,5 +34,16 @@ namespace SIL.FieldWorks.XWorks
 		/// authority answers: an owned id must be answered in full, or a leaf would leak as
 		/// visible-but-disabled.</exception>
 		DetailMenuItem Build(string menuId, ChoiceBase leaf);
+
+		/// <summary>
+		/// The items of a list-populated submenu under an owned menu id, in display order, each
+		/// already carrying its label, state and execute action. Empty hides the submenu.
+		/// </summary>
+		/// <param name="menuId">The owned menu id the submenu belongs to.</param>
+		/// <param name="listId">The submenu's <c>list</c> attribute: the id xCore would
+		/// otherwise have asked the mediator to populate.</param>
+		/// <exception cref="System.InvalidOperationException">The list is not one this authority
+		/// answers: an owned id must be answered in full.</exception>
+		IReadOnlyList<DetailMenuItem> BuildList(string menuId, string listId);
 	}
 }

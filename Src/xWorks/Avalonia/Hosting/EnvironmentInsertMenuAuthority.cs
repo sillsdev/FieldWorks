@@ -3,6 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Collections.Generic;
 using SIL.FieldWorks.Common.FwAvalonia.Detail;
 using SIL.Reporting;
 using XCore;
@@ -50,6 +51,12 @@ namespace SIL.FieldWorks.XWorks
 			return EnvironmentMenuLeaves.BuildInsert(command.Message, XCoreMenuBridge.StripAccelerator(leaf.Label),
 				_request, _host);
 		}
+
+		// Neither owned id carries a list-populated submenu.
+		public IReadOnlyList<DetailMenuItem> BuildList(string menuId, string listId)
+			=> throw new InvalidOperationException(string.Format(
+				"Menu '{0}' has a list submenu '{1}' this authority does not answer.",
+				menuId, listId));
 
 		// The String Representation row has no Avalonia editor yet, so its inserts cannot act;
 		// said once per menu rather than per leaf.

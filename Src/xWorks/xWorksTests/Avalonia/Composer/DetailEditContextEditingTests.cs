@@ -2183,6 +2183,26 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
+		public void Compose_MultiStringRow_CarriesTheLayoutFactsItsWritingSystemMenuNeeds()
+		{
+			var fields = Compose(showHidden: true).ToList();
+
+			// The Pronunciation form is the ONE shipped part with optionalWs: its menu offers the
+			// vernacular writing systems as well, though the row shows only pronunciation ones.
+			var pronunciation = fields.First(f => f.Field == "Form" && f.ObjectHvo == m_pronunciation.Hvo);
+			Assert.That(pronunciation.IsMultiStringRow, Is.True, "precondition: a multistring row");
+			Assert.That(pronunciation.WritingSystem, Is.EqualTo("all pronunciation"));
+			Assert.That(pronunciation.OptionalWritingSystem, Is.EqualTo("all vernacular"),
+				"the widening spec must reach the row, or its menu offers too few writing systems");
+
+			var citation = fields.First(f => f.Field == "CitationForm" && f.ObjectHvo == m_entry.Hvo);
+			Assert.That(citation.IsMultiStringRow, Is.True, "precondition: a multistring row");
+			Assert.That(citation.OptionalWritingSystem, Is.Null,
+				"an ordinary multistring row offers only its own writing systems");
+			Assert.That(citation.ForceIncludeEnglish, Is.False);
+		}
+
+		[Test]
 		public void Compose_CustomFields_SitAtTheLegacyPlaceholderPosition()
 		{
 			// The LexEntry placeholder sits after the authored entry fields (CitationForm etc.) and

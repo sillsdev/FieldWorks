@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2017 SIL International
+﻿// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -10,6 +10,7 @@ using System.Windows.Forms;
 using System.Xml;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.FieldWorks.Common.Controls;
+using SIL.FieldWorks.Common.DetailRules;
 using SIL.FieldWorks.Common.Framework.DetailControls.Resources;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
@@ -28,8 +29,17 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 	/// </summary>
 	public class MultiStringSlice : ViewPropertySlice, IWritingSystemChooser
 	{
+		// The writing-system sets this slice was built for, kept so the Writing Systems menu can
+		// be answered by the rule both detail views share.
+		private int m_wsMagic;
+		private int m_wsMagicOptional;
+		private bool m_forceIncludeEnglish;
+
 		public MultiStringSlice(ICmObject obj, int flid, int ws, int wsOptional, bool forceIncludeEnglish, bool editable, bool spellCheck)
 		{
+			m_wsMagic = ws;
+			m_wsMagicOptional = wsOptional;
+			m_forceIncludeEnglish = forceIncludeEnglish;
 			var view = new LabeledMultiStringView(obj.Hvo, flid, ws, wsOptional, forceIncludeEnglish, editable, spellCheck);
 			Control = view;
 #if _DEBUG
@@ -63,6 +73,9 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// </summary>
 		public void Reuse(ICmObject obj, int flid, int ws, int wsOptional, bool forceIncludeEnglish, bool editable, bool spellCheck)
 		{
+			m_wsMagic = ws;
+			m_wsMagicOptional = wsOptional;
+			m_forceIncludeEnglish = forceIncludeEnglish;
 			var view = (LabeledMultiStringView)Control;
 			Label = null; // new slice normally has this
 			SetupWssToDisplay();
@@ -109,10 +122,19 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// </summary>
 		/// <returns></returns>
 		public IEnumerable<CoreWritingSystemDefinition> GetVisibleWritingSystems()
+			=> FieldWritingSystemOptions.Shown(m_cache, WritingSystemSpec(), StoredWritingSystems());
+
+		// The sets this field draws on, as the shared rule takes them.
+		private WritingSystemFieldSpec WritingSystemSpec()
+			=> WritingSystemFieldSpec.FromMagicIds(Object?.Hvo ?? 0, m_wsMagic,
+				m_wsMagicOptional, m_forceIncludeEnglish);
+
+		// The selection persisted on this field's part ref, or null when it has none and the
+		// field shows its default set.
+		private IReadOnlyList<string> StoredWritingSystems()
 		{
-			var singlePropertySequenceValue = StringSliceUtils.GetVisibleWSSPropertyValue(PartRef(),
-				((LabeledMultiStringView) Control).GetWritingSystemOptions(false));
-			return StringSliceUtils.GetVisibleWritingSystems(singlePropertySequenceValue, WritingSystemOptionsForDisplay);
+			var stored = XmlUtils.GetOptionalAttributeValue(PartRef(), "visibleWritingSystems", null);
+			return stored == null ? null : ChoiceGroup.DecodeSinglePropertySequenceValue(stored);
 		}
 
 		public override void Install(DataTree parent)
@@ -205,7 +227,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			using (var dlg = new ConfigureWritingSystemsDlg(WritingSystemOptionsForDisplay, WritingSystemsSelectedForDisplay,
 				m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider")))
 			{
-				dlg.Text = String.Format(DetailControlsStrings.ksSliceConfigureWssDlgTitle, Label);
+				dlg.Text = ConfigureWritingSystemsDlg.TitleFor(Label);
 				if (dlg.ShowDialog() == DialogResult.OK)
 					PersistAndRedisplayWssToDisplayForPart(dlg.SelectedWritingSystems);
 			}
@@ -251,28 +273,16 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		{
 			CheckDisposed();
 			display.List.Clear();
-			m_propertyTable.SetProperty(display.PropertyName, StringSliceUtils.GetVisibleWSSPropertyValue(PartRef(),
-				((LabeledMultiStringView) Control).GetWritingSystemOptions(false)), false);
-			AddWritingSystemListWithIcuLocales(display, WritingSystemOptionsForDisplay);
+			// Options, checkmarks and the cannot-empty-the-set rule all come from the shared
+			// rule, so this menu and the Avalonia one offer the same list.
+			var options = FieldWritingSystemOptions.Menu(m_cache, WritingSystemSpec(),
+				StoredWritingSystems());
+			m_propertyTable.SetProperty(display.PropertyName,
+				ChoiceGroup.EncodeSinglePropertySequenceValue(
+					options.Where(o => o.IsChecked).Select(o => o.Id).ToArray()), false);
+			foreach (var option in options)
+				display.List.Add(option.Label, option.Id, null, null, option.CanUncheck);
 			return true;//we handled this, no need to ask anyone else.
-		}
-
-		/// <summary>
-		/// stores the list values in terms of icu locale
-		/// </summary>
-		/// <param name="display"></param>
-		/// <param name="list"></param>
-		private void AddWritingSystemListWithIcuLocales(UIListDisplayProperties display, IEnumerable<CoreWritingSystemDefinition> list)
-		{
-			var active = StringSliceUtils.GetVisibleWSSPropertyValue(PartRef(),
-				((LabeledMultiStringView) Control).GetWritingSystemOptions(false)).Split(',');
-			foreach (var ws in list)
-			{
-				// generally enable all items, but if only one is checked that one is disabled;
-				// it can't be turned off.
-				bool enabled = (active.Length != 1 || ws.Id != active[0]);
-				display.List.Add(ws.DisplayLabel, ws.Id, null, null, enabled);
-			}
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -320,18 +330,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// Get the language project's list of pronunciation writing systems into sync with the supplied list.
 		/// </summary>
 		private void UpdatePronunciationWritingSystems(IEnumerable<CoreWritingSystemDefinition> newValues)
-		{
-			if (newValues.Count() != m_cache.ServiceLocator.WritingSystems.CurrentPronunciationWritingSystems.Count
-				|| !m_cache.ServiceLocator.WritingSystems.CurrentPronunciationWritingSystems.SequenceEqual(newValues))
-			{
-				NonUndoableUnitOfWorkHelper.Do(m_cache.ServiceLocator.GetInstance<IActionHandler>(), () =>
-				{
-					m_cache.ServiceLocator.WritingSystems.CurrentPronunciationWritingSystems.Clear();
-					foreach (CoreWritingSystemDefinition ws in newValues)
-						m_cache.ServiceLocator.WritingSystems.CurrentPronunciationWritingSystems.Add(ws);
-				});
-			}
-		}
+			=> PronunciationWritingSystems.Sync(m_cache, newValues);
 
 		/// <summary>
 		/// go through all the data tree slices, finding the slices that refer to the same part as this slice

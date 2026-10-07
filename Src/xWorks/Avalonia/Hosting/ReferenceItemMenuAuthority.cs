@@ -3,6 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Collections.Generic;
 using SIL.FieldWorks.Common.DetailRules;
 using SIL.FieldWorks.Common.FwAvalonia.Detail;
 using SIL.FieldWorks.FdoUi;
@@ -137,6 +138,12 @@ namespace SIL.FieldWorks.XWorks
 						"Menu '{0}' has a leaf '{1}' this authority does not answer.", menuId, leaf.HelpId));
 			}
 		}
+
+		// Neither owned id carries a list-populated submenu.
+		public IReadOnlyList<DetailMenuItem> BuildList(string menuId, string listId)
+			=> throw new InvalidOperationException(string.Format(
+				"Menu '{0}' has a list submenu '{1}' this authority does not answer.",
+				menuId, listId));
 
 		// The row's option for the clicked item, which carries the domain's verdict on it.
 		private DetailChoiceOption ClickedItem()

@@ -1708,6 +1708,27 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		public bool IsMultiStringRow { get; set; }
 
 		/// <summary>
+		/// The layout's <c>optionalWs</c> spec: writing systems this row can be asked to show
+		/// beyond its <see cref="WritingSystem"/> set, but never shows by default. Null on every
+		/// shipped row but the Pronunciation form. Only the Writing Systems menu reads it.
+		/// </summary>
+		public string OptionalWritingSystem { get; set; }
+
+		/// <summary>
+		/// The layout's <c>forceIncludeEnglish</c> flag: English joins this row's writing-system
+		/// options even when the project has not checked it. Only the Writing Systems menu
+		/// reads it.
+		/// </summary>
+		public bool ForceIncludeEnglish { get; set; }
+
+		/// <summary>
+		/// The row's stored per-writing-system selection (the layout's
+		/// <c>visibleWritingSystems</c>, as the project override holds it), or null when the row
+		/// stores none and shows its default set. The Writing Systems menu checks these.
+		/// </summary>
+		public IReadOnlyList<string> VisibleWritingSystems { get; set; }
+
+		/// <summary>
 		/// How this row's domain decides two option names are the same name, for rows that mint
 		/// items from typed text. Environments compare with spaces stripped, so the picker must
 		/// too, or it filters out the very option the typed text resolves to and then offers to
