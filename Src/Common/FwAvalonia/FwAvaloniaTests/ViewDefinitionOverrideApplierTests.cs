@@ -48,8 +48,8 @@ namespace FwAvaloniaTests
 		}
 
 		// Every node is rebuilt on apply, so a clone that omits a field strips it tree-wide once
-		// any override exists. These three fields are outside ToSnapshot() and aren't covered by
-		// the EmptyPatch test.
+		// any override exists. These fields are outside ToSnapshot() and aren't covered by the
+		// EmptyPatch test.
 		[Test]
 		public void Apply_PreservesNodeFieldsNoOperationTouches()
 		{
@@ -59,7 +59,8 @@ namespace FwAvaloniaTests
 				new ViewNode("g/a", ViewNodeKind.Field, "A", null, "F", "multistring",
 					EditorClassification.Known, "vern", ViewVisibility.Always,
 					ViewExpansion.NotApplicable, false, null, null,
-					enumStringList: options, visibleWritingSystems: writingSystems, toggleValue: true)));
+					enumStringList: options, visibleWritingSystems: writingSystems, toggleValue: true,
+					helpTopicId: "khtpField-LexEntry-Form", sliceId: "CmPossibilityStatus")));
 			var patch = new ViewDefinitionOverride("LexEntry", "detail", "jtview",
 				new[]
 				{
@@ -76,6 +77,11 @@ namespace FwAvaloniaTests
 			Assert.That(rebuilt.ToggleValue, Is.True, "a toggle value survives the rebuild");
 			Assert.That(rebuilt.EnumStringList?.Ids, Is.EqualTo(options.Ids),
 				"an enum option list survives the rebuild");
+			Assert.That(rebuilt.HelpTopicId, Is.EqualTo("khtpField-LexEntry-Form"),
+				"an authored help topic survives the rebuild");
+			Assert.That(rebuilt.SliceId, Is.EqualTo("CmPossibilityStatus"),
+				"and so does the slice id a tool's filter list names; losing it would show a "
+				+ "withheld row in every layout carrying an override");
 		}
 
 		// The writing-system subset a user picks for one field, recorded against its stable id.
@@ -153,6 +159,30 @@ namespace FwAvaloniaTests
 			Assert.That(children.Select(c => c.StableId), Is.EqualTo(new[] { "g/a", "g/a-copy" }));
 			Assert.That(children[1].Label, Is.EqualTo("A"), "the duplicate copies the source's content");
 			Assert.That(children[1].Field, Is.EqualTo("F"));
+		}
+
+		// A duplicate is the same authored part, so a filter list that withholds the source
+		// withholds the copy, and its help is the source's.
+		[Test]
+		public void Apply_DuplicateNode_KeepsTheSourcesSliceIdAndHelpTopic()
+		{
+			var shipped = Model(GroupNode("g", "Group",
+				new ViewNode("g/a", ViewNodeKind.Field, "A", null, "F", "string",
+					EditorClassification.Known, "vern", ViewVisibility.Always,
+					ViewExpansion.NotApplicable, false, null, null,
+					helpTopicId: "khtpField-LexEntry-Form", sliceId: "CmPossibilityStatus")));
+			var patch = new ViewDefinitionOverride("LexEntry", "detail", "jtview",
+				new[]
+				{
+					new ViewOverrideOperation(ViewOverrideOperationKind.DuplicateNode, "g/a-copy",
+						parentStableId: "g", index: 1, sourceStableId: "g/a")
+				}, null);
+
+			var copy = ViewDefinitionOverrideApplier.Apply(shipped, patch).Roots[0].Children[1];
+
+			Assert.That(copy.StableId, Is.EqualTo("g/a-copy"), "precondition: this is the copy");
+			Assert.That(copy.SliceId, Is.EqualTo("CmPossibilityStatus"));
+			Assert.That(copy.HelpTopicId, Is.EqualTo("khtpField-LexEntry-Form"));
 		}
 
 		[Test]

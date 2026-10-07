@@ -1708,6 +1708,27 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		public bool IsMultiStringRow { get; set; }
 
 		/// <summary>
+		/// The layout's <c>optionalWs</c> spec: writing systems this row can be asked to show
+		/// beyond its <see cref="WritingSystem"/> set, but never shows by default. Null on every
+		/// shipped row but the Pronunciation form. Only the Writing Systems menu reads it.
+		/// </summary>
+		public string OptionalWritingSystem { get; set; }
+
+		/// <summary>
+		/// The layout's <c>forceIncludeEnglish</c> flag: English joins this row's writing-system
+		/// options even when the project has not checked it. Only the Writing Systems menu
+		/// reads it.
+		/// </summary>
+		public bool ForceIncludeEnglish { get; set; }
+
+		/// <summary>
+		/// The row's stored per-writing-system selection (the layout's
+		/// <c>visibleWritingSystems</c>, as the project override holds it), or null when the row
+		/// stores none and shows its default set. The Writing Systems menu checks these.
+		/// </summary>
+		public IReadOnlyList<string> VisibleWritingSystems { get; set; }
+
+		/// <summary>
 		/// How this row's domain decides two option names are the same name, for rows that mint
 		/// items from typed text. Environments compare with spaces stripped, so the picker must
 		/// too, or it filters out the very option the typed text resolves to and then offers to
@@ -1836,6 +1857,51 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		int SelectedItemIndex { get; }
 	}
 
+	/// <summary>
+	/// A field editor whose current text editor a row's menus act on: a retypable
+	/// reference-vector row's item editor or its typed slot for a new item. A menu request
+	/// snapshots the text and selection when it is raised, before the menu takes focus, and a
+	/// text command writes back through <see cref="ReplaceEditorSelection"/>.
+	/// </summary>
+	public interface IDetailTextSelection
+	{
+		/// <summary>Whether a text editor is current; false for a row of read-only
+		/// items.</summary>
+		bool HasTextEditor { get; }
+
+		/// <summary>The current editor's text; null without an editor.</summary>
+		string EditorText { get; }
+
+		/// <summary>The current editor's selection anchor; -1 without an editor.</summary>
+		int EditorSelectionAnchor { get; }
+
+		/// <summary>The current editor's selection end, which is the caret; -1 without an
+		/// editor.</summary>
+		int EditorSelectionEnd { get; }
+
+		/// <summary>
+		/// Replaces the span <paramref name="selectionAnchor"/>..<paramref name="selectionEnd"/>
+		/// of the current editor's text with <paramref name="text"/>, leaving the caret
+		/// <paramref name="caretBack"/> characters before the end of the inserted text; false
+		/// without an editor. The span is the one a request snapshotted, since the editor's
+		/// own selection collapses when the menu takes focus. The editor commits as it would
+		/// after typing.
+		/// </summary>
+		bool ReplaceEditorText(int selectionAnchor, int selectionEnd, string text, int caretBack);
+
+		/// <summary>
+		/// Marks a menu gesture in progress on the editor: its commit-on-blur waits, since the
+		/// menu itself may take focus, until <see cref="EndMenuGesture"/>.
+		/// </summary>
+		void BeginMenuGesture();
+
+		/// <summary>
+		/// Ends the gesture begun by <see cref="BeginMenuGesture"/>, returning focus to the
+		/// editor when the menu took it or a command wrote to it.
+		/// </summary>
+		void EndMenuGesture();
+	}
+
 	/// <summary>Which configured menu a context-menu request maps to.</summary>
 	public enum DetailMenuKind
 	{
@@ -1876,7 +1942,22 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			SelectedItemKey = selection?.SelectedItemKey;
 			SelectedItemIndex = selection?.SelectedItemIndex ?? -1;
 			IsDefaultActivation = isDefaultActivation;
+			// Snapshotted now, before the menu can take focus or move the selection.
+			if (selection is IDetailTextSelection text && text.HasTextEditor)
+			{
+				_textSelection = text;
+				EditorText = text.EditorText;
+				EditorSelectionAnchor = text.EditorSelectionAnchor;
+				EditorSelectionEnd = text.EditorSelectionEnd;
+			}
+			else
+			{
+				EditorSelectionAnchor = -1;
+				EditorSelectionEnd = -1;
+			}
 		}
+
+		private readonly IDetailTextSelection _textSelection;
 
 		/// <summary>
 		/// The request for an item's default activation (Ctrl+click on a reference-vector
@@ -1950,6 +2031,41 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		/// <see cref="AnchorControl"/> rather than opening at the pointer.
 		/// </summary>
 		public bool OpenAtPointer { get; }
+
+		/// <summary>
+		/// Whether the row had a text editor current when the menu was requested (a retypable
+		/// item's editor or the typed slot), which the menu's text commands act on.
+		/// </summary>
+		public bool HasTextEditor => _textSelection != null;
+
+		/// <summary>The editor's text at request time; null without an editor.</summary>
+		public string EditorText { get; }
+
+		/// <summary>The editor's selection anchor at request time; -1 without an
+		/// editor.</summary>
+		public int EditorSelectionAnchor { get; }
+
+		/// <summary>The editor's selection end (the caret) at request time; -1 without an
+		/// editor.</summary>
+		public int EditorSelectionEnd { get; }
+
+		/// <summary>
+		/// Replaces the selection the request snapshotted with <paramref name="text"/>, leaving
+		/// the caret <paramref name="caretBack"/> characters before the end of it; false without
+		/// an editor.
+		/// </summary>
+		public bool ReplaceEditorSelection(string text, int caretBack)
+			=> _textSelection != null
+				&& _textSelection.ReplaceEditorText(EditorSelectionAnchor, EditorSelectionEnd, text, caretBack);
+
+		/// <summary>
+		/// Tells the editor a menu gesture is in progress, so it does not commit when the menu
+		/// takes focus. Nothing happens without an editor.
+		/// </summary>
+		public void BeginMenuGesture() => _textSelection?.BeginMenuGesture();
+
+		/// <summary>Ends the gesture begun by <see cref="BeginMenuGesture"/>.</summary>
+		public void EndMenuGesture() => _textSelection?.EndMenuGesture();
 	}
 
 	/// <summary>

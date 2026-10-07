@@ -34,9 +34,10 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 		public static readonly HashSet<string> HandledSliceAttributes =
 			new HashSet<string>(System.StringComparer.Ordinal)
 			{
-				"label", "abbr", "field", "ws", "editor", "visibility", "expansion",
+				"id", "label", "abbr", "field", "ws", "editor", "visibility", "expansion",
 				"localizationKey", "labelId", "automationId", "routing", "menu", "contextMenu", "hotlinks",
-				"forVariant", "visibleWritingSystems", "reorder", "helpTopicID"
+				"forVariant", "visibleWritingSystems", "reorder", "helpTopicID",
+				"optionalWs", "forceIncludeEnglish"
 			};
 
 		public static readonly HashSet<string> HandledObjSeqAttributes =
@@ -362,6 +363,11 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 					var visibleWss = ParseWsList(Attr(callerEl, "visibleWritingSystems")
 						?? Attr(contentEl, "visibleWritingSystems"));
 
+					// optionalWs and forceIncludeEnglish widen what the field's Writing Systems
+					// menu may offer, never what the field shows.
+					var optionalWs = Attr(contentEl, "optionalWs");
+					var forceEnglish = ParseOptionalBool(Attr(contentEl, "forceIncludeEnglish")) ?? false;
+
 					// Caller children under a slice-content part (<indent>/<part> wrappers on a section
 					// part, e.g. AsLexemeForm's MorphTypeBasic) become child nodes, mirroring how
 					// DataTree.ProcessPartRefNode realizes them as indented child slices. Other caller
@@ -395,7 +401,10 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 							menuId, contextMenuId, hotlinksId,
 							chooserLinks: chooserLinks.Count > 0 ? chooserLinks : null,
 							visibleWritingSystems: visibleWss,
-							helpTopicId: Attr(contentEl, "helpTopicID"));
+							sliceId: Attr(contentEl, "id"),
+							helpTopicId: Attr(contentEl, "helpTopicID"),
+							optionalWritingSystem: optionalWs,
+							forceIncludeEnglish: forceEnglish);
 					}
 
 					// Dynamic custom slices keep their legacy class/assembly identity so the host can
@@ -412,13 +421,17 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 						chooserLinks: chooserLinks.Count > 0 ? chooserLinks : null,
 						enumStringList: enumStringList,
 						visibleWritingSystems: visibleWss,
+						// A tool's filter list withholds rows by this authored id.
+						sliceId: Attr(contentEl, "id"),
 						// Legacy toggleValue= on a boolean slice (the displayed checkbox is the
 						// logical inverse of the stored property); carried so the composer inverts read+write.
 						toggleValue: ParseOptionalBool(Attr(contentEl, "toggleValue")) ?? false,
 						// The slice's reorder= attribute: its items may be reordered
 						// even when the property is virtual.
 						reorder: ParseOptionalBool(Attr(contentEl, "reorder")) ?? false,
-						helpTopicId: Attr(contentEl, "helpTopicID"));
+						helpTopicId: Attr(contentEl, "helpTopicID"),
+						optionalWritingSystem: optionalWs,
+						forceIncludeEnglish: forceEnglish);
 				}
 				case "obj":
 				case "seq":

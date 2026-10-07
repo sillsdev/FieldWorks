@@ -1347,9 +1347,16 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 	/// false and is unaffected.
 	/// </summary>
 	public sealed class FwReferenceVectorField : WrapPanel, IHoverAffordanceProvider,
-		IDetailItemSelection, IUnstagedTextHolder, IDisposable
+		IDetailItemSelection, IDetailTextSelection, IUnstagedTextHolder, IDisposable
 	{
 		private readonly List<Control> _affordances = new List<Control>();
+		// The editor the row's text commands act on: the current item's editor or the typed
+		// slot, whichever was last pressed or focused; null on a row of read-only items.
+		private TextBox _currentEditor;
+		// While a menu gesture is in progress the editors do not commit on losing focus, since
+		// the menu itself takes it; the gesture's end returns focus when that happened.
+		private bool _menuGestureActive;
+		private bool _refocusAfterGesture;
 		// Teardown for the per-item select/Remove handlers, the add picker's subscriptions, the
 		// gear click, and the option flyout, so a recycled vector cell releases every closure.
 		private readonly List<Action> _teardown = new List<Action>();
@@ -1438,7 +1445,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 							gestureCompleted?.Invoke();
 					};
 					EventHandler<Avalonia.Interactivity.RoutedEventArgs> commitOnBlur =
-						(s2, e2) => commitText();
+						(s2, e2) => CommitUnlessMenuGesture(commitText);
 					box.LostFocus += commitOnBlur;
 					EventHandler<KeyEventArgs> commitOnEnter = (s2, e2) =>
 					{
@@ -1469,15 +1476,23 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				}
 				AutomationProperties.SetAutomationId(text, ItemAutomationId(automationId, item.Key));
 				// Any button selects, so a right-click's menu acts on the item under the pointer;
-				// focus selects too. Items are focusable (a click focuses one) but not tab stops.
+				// focus selects too. The first item is a chip row's one Tab stop; the editors of
+				// a retypable row are each a stop.
 				var itemIndex = index;
 				text.Focusable = true;
-				KeyboardNavigation.SetIsTabStop(text, retypable);
-				EventHandler<GotFocusEventArgs> focusSelect = (s, e) => SelectItem(itemIndex);
+				KeyboardNavigation.SetIsTabStop(text, retypable || index == 0);
+				EventHandler<GotFocusEventArgs> focusSelect = (s, e) =>
+				{
+					SelectItem(itemIndex);
+					_currentEditor = text as TextBox;
+				};
 				text.GotFocus += focusSelect;
 				EventHandler<PointerPressedEventArgs> select = (s, e) =>
 				{
 					SelectItem(itemIndex);
+					_currentEditor = text as TextBox;
+					if (_currentEditor != null)
+						TakeEditorOnRightPress(_currentEditor, e);
 					// Ctrl+click runs the item menu's default jump without showing the menu.
 					if (menuRequested != null
 						&& e.GetCurrentPoint(text).Properties.IsLeftButtonPressed
@@ -1534,14 +1549,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				{
 					// The press above already made this the current item, so the request's
 					// selected item is the one under the pointer.
-					EventHandler<ContextRequestedEventArgs> itemMenu = (s, e) =>
-					{
-						menuRequested(DetailMenuRequest.FromContextRequested(text, e, field,
-							DetailMenuKind.ItemMenu, this));
-						e.Handled = true;
-					};
-					text.AddHandler(ContextRequestedEvent, itemMenu);
-					_teardown.Add(() => text.RemoveHandler(ContextRequestedEvent, itemMenu));
+					WireBridgedMenu(text, DetailMenuKind.ItemMenu, field, menuRequested);
 				}
 				else if (editable)
 				{
@@ -1569,6 +1577,44 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				Children.Add(text);
 				AddSeparatorBar();
 			}
+
+			// Keyboard reach of the items: Left/Right step between them, Home/End jump to the
+			// ends, Ctrl+Left/Right move the current item when the row can reorder.
+			var canReorder = editable && field.CanReorderItems;
+			EventHandler<KeyEventArgs> itemKeys = (s, e) =>
+			{
+				// Only a focused item answers; the launcher and gear keep their own keys.
+				var index = _itemBlocks.FindIndex(block => ReferenceEquals(block, e.Source));
+				if (index < 0)
+					return;
+				var arrow = e.Key == Key.Left || e.Key == Key.Right;
+				// The physical key resolved along the vector, so a mirrored row still moves
+				// toward the side the key names.
+				var forward = (e.Key == Key.Right) != (FlowDirection == FlowDirection.RightToLeft);
+				if (arrow && canReorder && e.KeyModifiers == KeyModifiers.Control)
+				{
+					// Only a successful stage completes the gesture (commit + host re-show).
+					if (editContext.TryMoveReferenceItem(field, _items[index].Key, forward))
+						gestureCompleted?.Invoke();
+					e.Handled = true;
+					return;
+				}
+				if (e.KeyModifiers != KeyModifiers.None)
+					return;
+				int target;
+				if (arrow)
+					target = forward ? index + 1 : index - 1;
+				else if (e.Key == Key.Home)
+					target = 0;
+				else if (e.Key == Key.End)
+					target = _itemBlocks.Count - 1;
+				else
+					return;
+				FocusItemAt(target);
+				e.Handled = true;
+			};
+			AddHandler(KeyDownEvent, itemKeys);
+			_teardown.Add(() => RemoveHandler(KeyDownEvent, itemKeys));
 
 			if (!editable)
 			{
@@ -1616,7 +1662,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 						gestureCompleted?.Invoke();
 				};
 				EventHandler<Avalonia.Interactivity.RoutedEventArgs> newOnBlur =
-					(s2, e2) => commitNew();
+					(s2, e2) => CommitUnlessMenuGesture(commitNew);
 				newItem.LostFocus += newOnBlur;
 				EventHandler<KeyEventArgs> newOnEnter = (s2, e2) =>
 				{
@@ -1626,16 +1672,38 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 					commitNew();
 				};
 				newItem.KeyDown += newOnEnter;
-				// This slot names no item, so it must not leave a stale one current: a menu
-				// request from here would otherwise act on whichever item was clicked before.
-				EventHandler<GotFocusEventArgs> newClearsSelection = (s2, e2) => ClearSelection();
+				// The slot names no item, so none stays current; it is still the editor the
+				// menu's text commands act on, like PhoneEnvReferenceView's empty last line.
+				EventHandler<GotFocusEventArgs> newClearsSelection = (s2, e2) =>
+				{
+					ClearSelection();
+					_currentEditor = newItem;
+				};
 				newItem.GotFocus += newClearsSelection;
+				// A right press names the slot as the menu's editor itself, rather than relying
+				// on the focus change, so the request is right even if focus does not move.
+				EventHandler<PointerPressedEventArgs> newOnRightPress = (s2, e2) =>
+				{
+					if (!e2.GetCurrentPoint(newItem).Properties.IsRightButtonPressed)
+						return;
+					ClearSelection();
+					TakeEditorOnRightPress(newItem, e2);
+				};
+				newItem.AddHandler(InputElement.PointerPressedEvent, newOnRightPress,
+					RoutingStrategies.Bubble, handledEventsToo: true);
 				_teardown.Add(() =>
 				{
 					newItem.LostFocus -= newOnBlur;
 					newItem.KeyDown -= newOnEnter;
 					newItem.GotFocus -= newClearsSelection;
+					newItem.RemoveHandler(InputElement.PointerPressedEvent, newOnRightPress);
 				});
+				if (menuRequested != null)
+				{
+					// A right-click on the slot opens the row's label menu, whose inserts type
+					// into it, like PhoneEnvReferenceView's empty last line.
+					WireBridgedMenu(newItem, DetailMenuKind.SliceMenu, field, menuRequested);
+				}
 				Children.Add(newItem);
 				AddSeparatorBar();
 			}
@@ -1752,6 +1820,132 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 
 		/// <summary>The index of the selected item in the field's Items; -1 when none.</summary>
 		public int SelectedItemIndex => _selectedIndex;
+
+		/// <summary>Whether an item editor or the typed slot is current.</summary>
+		public bool HasTextEditor => !_disposed && _currentEditor != null;
+
+		/// <summary>The current editor's text; null without an editor.</summary>
+		public string EditorText => HasTextEditor ? _currentEditor.Text ?? string.Empty : null;
+
+		/// <summary>The current editor's selection anchor; -1 without an editor.</summary>
+		public int EditorSelectionAnchor => HasTextEditor ? _currentEditor.SelectionStart : -1;
+
+		/// <summary>The current editor's selection end, the caret; -1 without an
+		/// editor.</summary>
+		public int EditorSelectionEnd => HasTextEditor ? _currentEditor.SelectionEnd : -1;
+
+		/// <summary>
+		/// Replaces the span <paramref name="selectionAnchor"/>..<paramref name="selectionEnd"/>
+		/// of the current editor's text with <paramref name="text"/> and leaves the caret
+		/// <paramref name="caretBack"/> characters before the end of it. The editor commits
+		/// later, as it does after typing; false without an editor.
+		/// </summary>
+		public bool ReplaceEditorText(int selectionAnchor, int selectionEnd, string text, int caretBack)
+		{
+			if (!HasTextEditor || text == null)
+				return false;
+			var box = _currentEditor;
+			var current = box.Text ?? string.Empty;
+			var start = Math.Max(0, Math.Min(Math.Min(selectionAnchor, selectionEnd), current.Length));
+			var end = Math.Max(start, Math.Min(Math.Max(selectionAnchor, selectionEnd), current.Length));
+			box.Text = current.Substring(0, start) + text + current.Substring(end);
+			var caret = Math.Max(start, start + text.Length - caretBack);
+			// The CaretIndex setter collapses the selection; the ends are then set to match.
+			box.CaretIndex = caret;
+			box.SelectionStart = caret;
+			box.SelectionEnd = caret;
+			// The editor now holds pending text, so focus returns to it: at the gesture's end,
+			// or now when the menu has already closed, as it does under a modal chooser.
+			if (_menuGestureActive)
+				_refocusAfterGesture = true;
+			else if (!box.IsFocused)
+				box.Focus();
+			return true;
+		}
+
+		/// <summary>Holds the editors' commit-on-blur while a menu gesture is in
+		/// progress.</summary>
+		public void BeginMenuGesture()
+		{
+			_menuGestureActive = true;
+			_refocusAfterGesture = HasTextEditor && _currentEditor.IsFocused;
+		}
+
+		/// <summary>
+		/// Ends the menu gesture; focus returns to the editor when the menu took it, it held
+		/// focus when the gesture began, or a command wrote to it. That holds for a menu
+		/// dismissed by a click elsewhere too: the dismissing click reaches nothing, as under a
+		/// WinForms context menu, so the editor is still where the user was.
+		/// </summary>
+		public void EndMenuGesture()
+		{
+			if (!_menuGestureActive)
+				return;
+			_menuGestureActive = false;
+			var refocus = _refocusAfterGesture;
+			_refocusAfterGesture = false;
+			if (refocus && HasTextEditor)
+				_currentEditor.Focus();
+		}
+
+		// A right press does not focus a TextBox by itself, so the press makes it the current
+		// editor, focuses it and puts the caret at the pointer, as PhoneEnvReferenceView does.
+		private void TakeEditorOnRightPress(TextBox box, PointerPressedEventArgs e)
+		{
+			if (!e.GetCurrentPoint(box).Properties.IsRightButtonPressed)
+				return;
+			_currentEditor = box;
+			if (!box.IsFocused)
+				box.Focus();
+			PlaceCaretAtPointer(box, e);
+		}
+
+		// TextBox applies this rule on the right RELEASE, after the request has snapshotted the
+		// selection, so it is applied on the press; a press inside a range keeps the range.
+		private static void PlaceCaretAtPointer(TextBox box, PointerPressedEventArgs e)
+		{
+			var presenter = Avalonia.VisualTree.VisualExtensions.GetVisualDescendants(box)
+				.OfType<Avalonia.Controls.Presenters.TextPresenter>().FirstOrDefault();
+			if (presenter == null)
+				return;
+			var anchor = box.SelectionStart;
+			var end = box.SelectionEnd;
+			presenter.MoveCaretToPoint(e.GetPosition(presenter));
+			var hit = presenter.CaretIndex;
+			var insideRange = anchor != end && hit >= Math.Min(anchor, end) && hit <= Math.Max(anchor, end);
+			var newAnchor = insideRange ? anchor : hit;
+			var newEnd = insideRange ? end : hit;
+			box.CaretIndex = newEnd;
+			box.SelectionStart = newAnchor;
+			box.SelectionEnd = newEnd;
+		}
+
+		// Exactly one menu on an editor: the theme's Cut/Copy/Paste flyout is dropped, as the
+		// in-string editors drop it, and a right-click raises the host's menu for the row.
+		private void WireBridgedMenu(Control editor, DetailMenuKind kind, DetailField field,
+			Action<DetailMenuRequest> menuRequested)
+		{
+			editor.ContextFlyout = null;
+			EventHandler<ContextRequestedEventArgs> bridged = (s, e) =>
+			{
+				menuRequested(DetailMenuRequest.FromContextRequested(editor, e, field, kind, this));
+				e.Handled = true;
+			};
+			editor.AddHandler(ContextRequestedEvent, bridged);
+			_teardown.Add(() => editor.RemoveHandler(ContextRequestedEvent, bridged));
+		}
+
+		// An editor's blur during a menu gesture is the menu taking focus, not the user leaving
+		// the editor, so the commit waits and the gesture's end brings focus back.
+		private void CommitUnlessMenuGesture(Action commit)
+		{
+			if (_menuGestureActive)
+			{
+				_refocusAfterGesture = true;
+				return;
+			}
+			commit();
+		}
 
 		/// <summary>Makes the item with this option key current; false when no item has
 		/// it.</summary>

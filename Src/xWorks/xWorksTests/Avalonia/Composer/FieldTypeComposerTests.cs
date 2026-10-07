@@ -84,6 +84,68 @@ namespace SIL.FieldWorks.XWorks
 				Is.SameAs(all), "a stale override that matches nothing keeps the full set, never blanks the field");
 		}
 
+		[Test]
+		public void PerFieldWs_ShowsAWritingSystemTheProjectHasNotChecked()
+		{
+			// The menu offers active-but-unchecked writing systems, so a row must render one.
+			// Before the shared rule, choosing German alone matched nothing and the row fell
+			// back to showing them ALL.
+			CoreWritingSystemDefinition offered = null;
+			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
+			{
+				Cache.ServiceLocator.WritingSystemManager.GetOrSet("de", out offered);
+				Cache.ServiceLocator.WritingSystems.VernacularWritingSystems.Add(offered);
+			});
+
+			try
+			{
+				var form = ComposedFormRow(null, null);
+				Assume.That(form.Values.Select(v => v.WsTag), Does.Not.Contain(offered.Id),
+					"precondition: an unchecked writing system is not shown unasked");
+
+				var restricted = ComposedFormRow(RestrictFormRowTo(form, offered.Id), null);
+
+				Assert.That(restricted.Values.Select(v => v.WsTag), Is.EqualTo(new[] { offered.Id }),
+					"the row shows exactly the writing system chosen, not every writing system");
+
+				// Show all right now reveals every OPTION, unchecked ones included.
+				var templateId = ViewDefinitionOverrideEditor.StripRuntimeSuffix(form.StableId);
+				var revealed = ComposedFormRow(null, new HashSet<string> { templateId });
+				Assert.That(revealed.Values.Select(v => v.WsTag), Does.Contain(offered.Id),
+					"the reveal shows what the menu offers, not just what the project has checked");
+			}
+			finally
+			{
+				// The fixture is shared across tests: an extra writing system would change what
+				// every later row composes.
+				NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
+					Cache.ServiceLocator.WritingSystems.VernacularWritingSystems.Remove(offered));
+			}
+		}
+
+		[Test]
+		public void PerFieldWs_WithNothingStored_ShowsWhatItAlwaysShowed()
+		{
+			var expected = DetailComposer.ResolveWritingSystems(Cache, "all vernacular").Select(w => w.Id);
+
+			Assert.That(ComposedFormRow(null, null).Values.Select(v => v.WsTag), Is.EqualTo(expected),
+				"a row with no stored selection should compose its full configured set");
+		}
+
+		// An override restricting the Form row to one writing system.
+		private static ViewDefinitionOverrideResolver RestrictFormRowTo(DetailField form, string wsTag)
+		{
+			var restriction = new ViewDefinitionOverride(form.ClassName, form.LayoutName, "detail",
+				new[]
+				{
+					new ViewOverrideOperation(ViewOverrideOperationKind.SetVisibleWritingSystems,
+						ViewDefinitionOverrideEditor.StripRuntimeSuffix(form.StableId),
+						writingSystems: new[] { wsTag })
+				}, null);
+			return (cls, layout) =>
+				cls == form.ClassName && layout == form.LayoutName ? restriction : null;
+		}
+
 		// ---- Transient "Show all right now" reveal ----
 
 		// The reveal bypasses the ws restriction for EXACTLY the revealed part: Compose

@@ -760,6 +760,160 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			Assert.That(writingSystemChanged, Is.False, "WritingSystemUpdated should not have been called after this change");
 		}
 
+		[Test]
+		public void Model_WritingSystemChanged_CalledOnDefaultFontFeaturesChange()
+		{
+			var writingSystemChanged = false;
+			var mockWsManager = new Mock<IWritingSystemManager>();
+
+			var container = new TestWSContainer(new[] { "fr" });
+			var testModel = new FwWritingSystemSetupModel(container,
+				FwWritingSystemSetupModel.ListType.Vernacular, mockWsManager.Object);
+			testModel.CurrentDefaultFont = new FontDefinition("Charis SIL");
+			testModel.Save();
+			testModel.WritingSystemUpdated += (sender, args) =>
+			{
+				writingSystemChanged = true;
+			};
+			// Changing only the font features must refresh views that cache rendered output.
+			testModel.CurrentDefaultFont = new FontDefinition("Charis SIL") { Features = "cv43=1,smcp=1" };
+			testModel.Save();
+			Assert.That(writingSystemChanged, Is.True, "WritingSystemUpdated should have been called after this change");
+		}
+
+		[Test]
+		public void Model_WritingSystemChanged_CalledOnInPlaceFontFeaturesChange()
+		{
+			var writingSystemChanged = false;
+			var mockWsManager = new Mock<IWritingSystemManager>();
+
+			var container = new TestWSContainer(new[] { "fr" });
+			var testModel = new FwWritingSystemSetupModel(container,
+				FwWritingSystemSetupModel.ListType.Vernacular, mockWsManager.Object);
+			testModel.CurrentDefaultFont = new FontDefinition("Charis SIL");
+			testModel.Save();
+			testModel.WritingSystemUpdated += (sender, args) =>
+			{
+				writingSystemChanged = true;
+			};
+			// The font dialog edits the existing definition rather than replacing it.
+			testModel.CurrentDefaultFont.Features = "cv43=1";
+			testModel.Save();
+			Assert.That(writingSystemChanged, Is.True, "WritingSystemUpdated should have been called after this change");
+		}
+
+		[Test]
+		public void Model_WritingSystemChanged_CalledOnGraphiteToggle()
+		{
+			var writingSystemChanged = false;
+			var mockWsManager = new Mock<IWritingSystemManager>();
+
+			var container = new TestWSContainer(new[] { "fr" });
+			var testModel = new FwWritingSystemSetupModel(container,
+				FwWritingSystemSetupModel.ListType.Vernacular, mockWsManager.Object);
+			testModel.CurrentDefaultFont = new FontDefinition("Charis SIL");
+			testModel.IsGraphiteEnabled = false;
+			testModel.Save();
+			testModel.WritingSystemUpdated += (sender, args) =>
+			{
+				writingSystemChanged = true;
+			};
+			testModel.IsGraphiteEnabled = true;
+			testModel.Save();
+			Assert.That(writingSystemChanged, Is.True, "WritingSystemUpdated should have been called after this change");
+		}
+
+		[Test]
+		public void Model_WritingSystemChanged_CalledOnRightToLeftChange()
+		{
+			var writingSystemChanged = false;
+			var mockWsManager = new Mock<IWritingSystemManager>();
+
+			var container = new TestWSContainer(new[] { "fr" });
+			var testModel = new FwWritingSystemSetupModel(container,
+				FwWritingSystemSetupModel.ListType.Vernacular, mockWsManager.Object);
+			testModel.WritingSystemUpdated += (sender, args) =>
+			{
+				writingSystemChanged = true;
+			};
+			testModel.CurrentWsSetupModel.CurrentRightToLeftScript = true;
+			testModel.Save();
+			Assert.That(writingSystemChanged, Is.True, "WritingSystemUpdated should have been called after this change");
+		}
+
+		[Test]
+		public void Model_WritingSystemChanged_CalledOnNumberingSystemChange()
+		{
+			var writingSystemChanged = false;
+			var mockWsManager = new Mock<IWritingSystemManager>();
+
+			var container = new TestWSContainer(new[] { "fr" });
+			var testModel = new FwWritingSystemSetupModel(container,
+				FwWritingSystemSetupModel.ListType.Vernacular, mockWsManager.Object);
+			testModel.WritingSystemUpdated += (sender, args) =>
+			{
+				writingSystemChanged = true;
+			};
+			testModel.CurrentWsSetupModel.CurrentNumberingSystemDefinition = NumberingSystemDefinition.CreateCustomSystem("abcdefghij");
+			testModel.Save();
+			Assert.That(writingSystemChanged, Is.True, "WritingSystemUpdated should have been called after this change");
+		}
+
+		[Test]
+		public void Model_WritingSystemChanged_NotCalledOnReorderedFontFeatures()
+		{
+			var writingSystemChanged = false;
+			var mockWsManager = new Mock<IWritingSystemManager>();
+
+			var container = new TestWSContainer(new[] { "fr" });
+			var testModel = new FwWritingSystemSetupModel(container,
+				FwWritingSystemSetupModel.ListType.Vernacular, mockWsManager.Object);
+			testModel.CurrentDefaultFont = new FontDefinition("Charis SIL") { Features = "smcp=1,cv43=1" };
+			testModel.Save();
+			testModel.WritingSystemUpdated += (sender, args) =>
+			{
+				writingSystemChanged = true;
+			};
+			testModel.CurrentDefaultFont = new FontDefinition("Charis SIL") { Features = "cv43=1,smcp=1" };
+			testModel.Save();
+			Assert.That(writingSystemChanged, Is.False, "Reordering the same features is not a rendering change");
+		}
+
+		[Test]
+		public void Model_WritingSystemChanged_NotCalledWhenListAlsoChanged()
+		{
+			var writingSystemChanged = false;
+			var listChanged = false;
+			var mockWsManager = new Mock<IWritingSystemManager>();
+
+			var container = new TestWSContainer(new[] { "fr", "en" });
+			var testModel = new FwWritingSystemSetupModel(container,
+				FwWritingSystemSetupModel.ListType.Vernacular, mockWsManager.Object);
+			testModel.WritingSystemUpdated += (sender, args) => { writingSystemChanged = true; };
+			testModel.WritingSystemListUpdated += (sender, args) => { listChanged = true; };
+			testModel.CurrentDefaultFont = new FontDefinition("Charis SIL");
+			testModel.MoveDown();
+			testModel.Save();
+			Assert.That(listChanged, Is.True, "WritingSystemListUpdated should have been called after this change");
+			Assert.That(writingSystemChanged, Is.False, "One refresh is enough when the list update already refreshes");
+		}
+
+		[Test]
+		public void Model_WritingSystemChanged_RaisedAfterUnitOfWorkCloses()
+		{
+			Cache.ActionHandlerAccessor.EndUndoTask();
+			var testModel = new FwWritingSystemSetupModel(Cache.LangProject, FwWritingSystemSetupModel.ListType.Vernacular,
+				Cache.ServiceLocator.WritingSystemManager, Cache);
+			var depthWhenRaised = -1;
+			testModel.WritingSystemUpdated += (sender, args) =>
+			{
+				depthWhenRaised = Cache.ActionHandlerAccessor.CurrentDepth;
+			};
+			testModel.CurrentDefaultFont = new FontDefinition("Charis SIL") { Features = "cv43=1,smcp=1" };
+			testModel.Save();
+			Assert.That(depthWhenRaised, Is.EqualTo(0), "Listeners refresh views, which must not run inside the save's unit of work");
+		}
+
 		[TestCase(FwWritingSystemSetupModel.ListType.Vernacular)]
 		[TestCase(FwWritingSystemSetupModel.ListType.Analysis)]
 		public void WritingSystemTitle_ChangesByType(FwWritingSystemSetupModel.ListType type)

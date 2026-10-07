@@ -2,6 +2,10 @@
 #ifndef LAYOUTCACHE_INCLUDED
 #define LAYOUTCACHE_INCLUDED
 
+#include "NfcOffsetMap.h"
+
+// Itemization of a text range and its NFC form. With m_fTextIsNfc set, m_vchText equals the
+// source text; otherwise offsets into it translate through the pass's NfcOffsetMap.
 class TextAnalysisEntry
 {
 public:
@@ -12,7 +16,6 @@ public:
 		m_ws(0),
 		m_fWsRtl(false),
 		m_fTextIsNfc(true),
-		m_cchNfc(0),
 		m_citem(0)
 	{
 	}
@@ -20,47 +23,6 @@ public:
 	bool Covers(IVwTextSource * pts, int ichMin, int cch, int ws, bool fWsRtl) const
 	{
 		return m_pts == pts && m_ichMin == ichMin && m_cch >= cch && m_ws == ws && m_fWsRtl == fWsRtl;
-	}
-
-	int RequestedNfcLength(int cchRequested) const
-	{
-		if (cchRequested <= 0)
-			return 0;
-		if (m_fTextIsNfc)
-			return cchRequested;
-		if (m_vichOrigToNfc.Size() == 0)
-			return cchRequested;
-		if (cchRequested >= m_vichOrigToNfc.Size())
-			return m_vichOrigToNfc[m_vichOrigToNfc.Size() - 1];
-		return m_vichOrigToNfc[cchRequested];
-	}
-
-	int OffsetInNfc(int ich, int ichBase) const
-	{
-		Assert(ich >= ichBase);
-		if (m_fTextIsNfc)
-			return ich - ichBase;
-		int ichRelative = ich - ichBase;
-		if (ichRelative <= 0)
-			return 0;
-		if (m_vichOrigToNfc.Size() == 0)
-			return ichRelative;
-		if (ichRelative >= m_vichOrigToNfc.Size())
-			return m_vichOrigToNfc[m_vichOrigToNfc.Size() - 1];
-		return m_vichOrigToNfc[ichRelative];
-	}
-
-	int OffsetToOrig(int ich, int ichBase) const
-	{
-		if (m_fTextIsNfc)
-			return ich + ichBase;
-		if (ich <= 0)
-			return ichBase;
-		if (m_vichNfcToOrig.Size() == 0)
-			return ich + ichBase;
-		if (ich >= m_vichNfcToOrig.Size())
-			return m_cch + ichBase;
-		return m_vichNfcToOrig[ich] + ichBase;
 	}
 
 	void CopyScriptItemsTo(Vector<SCRIPT_ITEM> & vscri, int & citem) const
@@ -80,13 +42,13 @@ public:
 	int m_cch;
 	int m_ws;
 	bool m_fWsRtl;
+	// True when NFC normalization leaves the source text unchanged, so m_vchText equals it and
+	// offsets into m_vchText are source offsets.
 	bool m_fTextIsNfc;
-	int m_cchNfc;
 	int m_citem;
-	Vector<OLECHAR> m_vchNfc;
+	// The NFC form of the range.
+	Vector<OLECHAR> m_vchText;
 	Vector<SCRIPT_ITEM> m_vscri;
-	Vector<int> m_vichOrigToNfc;
-	Vector<int> m_vichNfcToOrig;
 };
 
 class ShapeRunEntry
@@ -195,7 +157,7 @@ public:
 
 	TextAnalysisEntry * Store(IVwTextSource * pts, int ichMin, int cch, int ws, bool fWsRtl,
 		const OLECHAR * prgchNfc, int cchNfc, bool fTextIsNfc, const SCRIPT_ITEM * prgscri,
-		int citem, const Vector<int> * pvichOrigToNfc, const Vector<int> * pvichNfcToOrig)
+		int citem)
 	{
 		TextAnalysisEntry * pentry = NULL;
 		for (int ientry = 0; ientry < m_ventry.Size(); ++ientry)
@@ -231,12 +193,11 @@ public:
 		pentry->m_ws = ws;
 		pentry->m_fWsRtl = fWsRtl;
 		pentry->m_fTextIsNfc = fTextIsNfc;
-		pentry->m_cchNfc = cchNfc;
 		pentry->m_citem = citem;
 
-		pentry->m_vchNfc.Resize(cchNfc);
+		pentry->m_vchText.Resize(cchNfc);
 		if (cchNfc > 0)
-			::memcpy(pentry->m_vchNfc.Begin(), prgchNfc, cchNfc * isizeof(OLECHAR));
+			::memcpy(pentry->m_vchText.Begin(), prgchNfc, cchNfc * isizeof(OLECHAR));
 
 		int cscri = citem + 1;
 		if (cscri < 2)
@@ -244,24 +205,6 @@ public:
 		pentry->m_vscri.Resize(cscri);
 		if (cscri > 0)
 			::memcpy(pentry->m_vscri.Begin(), prgscri, cscri * isizeof(SCRIPT_ITEM));
-
-		if (pvichOrigToNfc)
-		{
-			pentry->m_vichOrigToNfc.Resize(pvichOrigToNfc->Size());
-			for (int i = 0; i < pvichOrigToNfc->Size(); ++i)
-				pentry->m_vichOrigToNfc[i] = (*pvichOrigToNfc)[i];
-		}
-		else
-			pentry->m_vichOrigToNfc.Delete(0, pentry->m_vichOrigToNfc.Size());
-
-		if (pvichNfcToOrig)
-		{
-			pentry->m_vichNfcToOrig.Resize(pvichNfcToOrig->Size());
-			for (int i = 0; i < pvichNfcToOrig->Size(); ++i)
-				pentry->m_vichNfcToOrig[i] = (*pvichNfcToOrig)[i];
-		}
-		else
-			pentry->m_vichNfcToOrig.Delete(0, pentry->m_vichNfcToOrig.Size());
 
 		return pentry;
 	}
@@ -420,11 +363,20 @@ public:
 	{
 		m_analysisCache.Reset();
 		m_shapeRunCache.Reset();
+		m_nfcOffsets.Clear();
 	}
 
 	TextAnalysisCache & AnalysisCache()
 	{
 		return m_analysisCache;
+	}
+
+	// The offset map for pts. The pass keeps one map, so asking for a different text source
+	// than the last call discards the table and the next lookup rebuilds it.
+	NfcOffsetMap & NfcOffsetsFor(IVwTextSource * pts)
+	{
+		m_nfcOffsets.Reset(pts);
+		return m_nfcOffsets;
 	}
 
 	ShapeRunCache & ShapeCache()
@@ -435,6 +387,7 @@ public:
 private:
 	TextAnalysisCache m_analysisCache;
 	ShapeRunCache m_shapeRunCache;
+	NfcOffsetMap m_nfcOffsets;
 };
 
 extern __declspec(thread) LayoutPassCache * g_pCurrentLayoutPassCache;
@@ -457,6 +410,7 @@ inline bool IsPath1ShapeCacheEnabled()
 	return s_nEnabled == 1;
 }
 
+// Also governs the NfcOffsetMap, which exists to serve the analysis cache's decomposed entries.
 inline bool IsPath2AnalysisCacheEnabled()
 {
 	static int s_nEnabled = -1;

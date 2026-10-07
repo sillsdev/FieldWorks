@@ -86,6 +86,50 @@ namespace SIL.FieldWorks.XWorks
 			get { return m_activeUIFramework == UIFramework.Avalonia; }
 		}
 
+		// Memoized, a failed read included: a missing filter file is an install fault, and
+		// re-reading it would log the failure for every record shown.
+		private ISet<string> m_hiddenSliceIds;
+
+		/// <summary>The slice ids this tool's filter list withholds.</summary>
+		private ISet<string> HiddenSliceIds
+			=> m_hiddenSliceIds ?? (m_hiddenSliceIds = ReadSliceFilterIds(m_configurationParameters));
+
+		/// <summary>
+		/// The slice ids named by the filter list a tool's configuration points at through its
+		/// filterPath. Empty for a configuration that names none, and empty when the file cannot
+		/// be read: a detail view showing an extra row beats one that will not open.
+		/// </summary>
+		/// <param name="configuration">The tool's configuration parameters; null yields an empty
+		/// set.</param>
+		internal static ISet<string> ReadSliceFilterIds(XmlNode configuration)
+		{
+			var ids = new HashSet<string>(StringComparer.Ordinal);
+			try
+			{
+				var filterPath = XmlUtils.GetOptionalAttributeValue(configuration, "filterPath");
+				if (string.IsNullOrEmpty(filterPath))
+					return ids;
+				if (!Platform.IsWindows)
+					filterPath = filterPath.Replace(@"\", "/");
+
+				var document = new XmlDocument();
+				document.Load(FwDirectoryFinder.GetCodeFile(filterPath));
+				foreach (XmlNode node in document.SelectNodes("SliceFilter/node"))
+				{
+					var id = XmlUtils.GetOptionalAttributeValue(node, "id");
+					if (!string.IsNullOrEmpty(id))
+						ids.Add(id);
+				}
+			}
+			catch (Exception e)
+			{
+				Logger.WriteError("Reading the tool's slice filter failed; no row is withheld "
+					+ "by it.", e);
+			}
+
+			return ids;
+		}
+
 		/// <summary>
 		/// Auto-save: settles any open fenced edit session -- commit when validation is
 		/// clean, roll back otherwise. The holder guards internally (no-op when nothing is open),
@@ -306,6 +350,31 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
+		/// The detail this view composes for <paramref name="obj"/>, under the tool's own
+		/// configuration: its layout, its view overrides and its slice filter list.
+		/// </summary>
+		internal ComposedDetail ComposeDetail(ICmObject obj, bool showHidden)
+		{
+			var lexEntry = obj as ILexEntry;
+			return lexEntry != null
+				? DetailComposer.Compose(lexEntry, Cache, showHidden,
+					overrides: ResolveViewOverride,
+					showAllWritingSystemsFields: m_showAllWsFields,
+					writingSystemFocused: OnDetailWritingSystemFocused,
+					hiddenSliceIds: HiddenSliceIds)
+				// Other roots use the tool's layout (m_layoutName, default "Normal");
+				// a type-selected one, such as RnGenericRec keyed on "Type", resolves
+				// inside Compose.
+				: DetailComposer.Compose(obj, Cache,
+					string.IsNullOrEmpty(m_layoutName) ? "Normal" : m_layoutName, showHidden,
+					overrides: ResolveViewOverride,
+					layoutChoiceField: m_layoutChoiceField,
+					showAllWritingSystemsFields: m_showAllWsFields,
+					writingSystemFocused: OnDetailWritingSystemFocused,
+					hiddenSliceIds: HiddenSliceIds);
+		}
+
+		/// <summary>
 		/// Shows the Avalonia detail view for a record: the composed full-entry view when the record is a
 		/// lexical entry (first-slice fallback if composition fails), or the resource-backed
 		/// unsupported state otherwise.
@@ -357,20 +426,7 @@ namespace SIL.FieldWorks.XWorks
 			ComposedDetail composed = null;
 			try
 			{
-				composed = lexEntry != null
-					? DetailComposer.Compose(lexEntry, Cache, showHidden,
-						overrides: ResolveViewOverride,
-						showAllWritingSystemsFields: m_showAllWsFields,
-						writingSystemFocused: OnDetailWritingSystemFocused)
-					// Non-entry roots compose against the tool's configured layout
-					// (m_layoutName, default "Normal"); a type-selected layout (m_layoutChoiceField, e.g.
-					// Notebook RnGenericRec keyed on "Type") resolves to the right variant inside Compose.
-					: DetailComposer.Compose(obj, Cache,
-						string.IsNullOrEmpty(m_layoutName) ? "Normal" : m_layoutName, showHidden,
-						overrides: ResolveViewOverride,
-						layoutChoiceField: m_layoutChoiceField,
-						showAllWritingSystemsFields: m_showAllWsFields,
-						writingSystemFocused: OnDetailWritingSystemFocused);
+				composed = ComposeDetail(obj, showHidden);
 				if (composed != null)
 				{
 					detail = composed.Model;
@@ -454,6 +510,12 @@ namespace SIL.FieldWorks.XWorks
 		internal const string MultiStringSliceMenuId = "mnuDataTree-MultiStringSlice";
 
 		/// <summary>
+		/// The Pronunciation form's menu: a row bound to it also sets the project's current
+		/// pronunciation writing systems when its shown set changes (LT-9620).
+		/// </summary>
+		internal const string PronunciationMenuId = "mnuDataTree-Pronunciation";
+
+		/// <summary>
 		/// Composes the ordered menu-id list for a row's SLICE menu (label right-click and the
 		/// field-options button): the row's own <c>menu=</c> binding, then exactly ONE shared
 		/// trailing group. Both shared menus define Field Visibility / Move Field / Help, so
@@ -515,37 +577,43 @@ namespace SIL.FieldWorks.XWorks
 
 				// Only ids without a native authority need the hidden command adapter. An adapter
 				// failure must not suppress the menu: its items disable, the rest still works.
-				var authority = CreateReorderVectorAuthority(request);
-				if (!XCoreMenuBridge.OwnsAll(authority, idArray))
-				{
-					try
-					{
-						EnsureMenuCommandAdapter(request.Field.ObjectHvo, request.Field.Field);
-					}
-					catch (Exception adapterError)
-					{
-						Logger.WriteError("Detail menu command adapter failed; menu items that need "
-							+ "the hidden colleague chain will be disabled.", adapterError);
-					}
-				}
+				var authority = CreateMenuAuthority(request);
+				var ownsAll = XCoreMenuBridge.OwnsAll(authority, idArray);
+				if (!ownsAll)
+					SyncMenuCommandAdapter(request.Field);
 
 				// Render the SAME xCore menu natively in Avalonia -- identical items,
 				// enablement, and mediator dispatch; only rendering changes. The WinForms
 				// adapter menu remains the fallback if materialization fails.
 				try
 				{
-					// Field Visibility / Move Field retarget to the override layer; other
-					// mediator-answered commands keep their dispatch.
-					var registry = new OverrideCommandRegistry();
-					AddOverrideCommands(registry, request.Field);
-					var items = XCoreMenuBridge.CreateMenuItems(window, idArray, registry.TryBuild, null,
-						authority);
+					// On the mediator path Field Visibility / Move Field retarget to the override
+					// layer; other mediator-answered commands keep their dispatch. An owned menu
+					// never consults the interceptor, so it is not built.
+					Func<ChoiceBase, UIItemDisplayProperties, DetailMenuItem> interceptor = null;
+					if (!ownsAll)
+					{
+						var registry = new OverrideCommandRegistry();
+						AddOverrideCommands(registry, request.Field);
+						interceptor = registry.TryBuild;
+					}
+					var items = XCoreMenuBridge.CreateMenuItems(window, idArray, interceptor, null, authority);
 					if (items.Count > 0)
 					{
 						// A keyboard-opened menu anchors under the row it came from; a
-						// right-click opens it at the pointer.
-						m_avaloniaEntryForm.ShowContextMenu(items, request.AnchorControl,
-							request.OpenAtPointer);
+						// right-click opens it at the pointer. The menu may take focus from the
+						// row's editor, which holds its commit until the menu closes.
+						request.BeginMenuGesture();
+						try
+						{
+							m_avaloniaEntryForm.ShowContextMenu(items, request.AnchorControl,
+								request.OpenAtPointer, request.EndMenuGesture);
+						}
+						catch
+						{
+							request.EndMenuGesture();
+							throw;
+						}
 						return;
 					}
 				}
@@ -555,6 +623,10 @@ namespace SIL.FieldWorks.XWorks
 						nativeMenuError);
 				}
 
+				// The adapter menu answers from the hidden tree's current slice, which an owned
+				// menu never pointed at this row.
+				if (ownsAll)
+					SyncMenuCommandAdapter(request.Field);
 				window.ShowContextMenu(idArray, AdapterMenuScreenPoint(request), null, null);
 			}
 			catch (Exception e)
@@ -597,21 +669,20 @@ namespace SIL.FieldWorks.XWorks
 
 		/// <summary>
 		/// The help topic of a detail row: its <see cref="DetailField.HelpTopicId"/> when set,
-		/// else one generated from the row's field and object and the current tool. Null when
-		/// the row carries nothing to generate from.
+		/// else one generated from the row's field and object and the current tool. A row with
+		/// no object generates from its field and label alone, so every row ends at a topic,
+		/// the generic one at worst.
 		/// </summary>
 		internal string ResolveHelpTopic(DetailField field)
 		{
 			if (field == null)
 				return null;
 			var source = field.HelpTopicSource;
-			if (string.IsNullOrEmpty(field.HelpTopicId) && source == null)
-				return null;
 			var provider = m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider");
 			var subject = new HelpTopicSubject
 			{
-				FieldName = source?.FieldName,
-				Label = source?.Label,
+				FieldName = source?.FieldName ?? field.Field,
+				Label = source?.Label ?? field.Label,
 				ClassName = source?.ClassName,
 				OwnerClassName = source?.OwnerClassName,
 				SortKey = source?.SortKey,
@@ -632,8 +703,8 @@ namespace SIL.FieldWorks.XWorks
 					+ "'; using the shipped definition.", error));
 
 		/// <summary>
-		/// Registers the per-field Field Visibility, Move Field, and writing-system commands that
-		/// retarget to the project override layer for the Avalonia detail view. Registers nothing
+		/// Registers the per-field Field Visibility and Move Field commands that retarget to
+		/// the project override layer for the Avalonia detail view. Registers nothing
 		/// (every command keeps its normal mediator dispatch) when the clicked row carries no
 		/// (class, layout) context, e.g. the first-slice fallback rows, so ordinary dispatch
 		/// stays in force when the override layer cannot be addressed.
@@ -645,15 +716,6 @@ namespace SIL.FieldWorks.XWorks
 			{
 				return;
 			}
-
-			// Writing-system items dispatch normally; the resulting selection is then copied
-			// into the override. They need no located template node, so they stay registered
-			// even when locating fails.
-			registry.Add(IsWritingSystemVisibilityChoice, (c, d) => WritingSystemItem(c, d, field));
-			// Show all right now never dispatches or persists: it only marks the row for the
-			// host's transient reveal.
-			registry.Add("CmdDataTree-WritingSystemMenu-ShowAllRightNow",
-				(c, d) => ShowAllWritingSystemsItem(LabelOf(d), field));
 
 			// Unknown/stale target: leave the field commands on mediator dispatch rather than
 			// guess.
@@ -673,6 +735,84 @@ namespace SIL.FieldWorks.XWorks
 
 		private static string LabelOf(UIItemDisplayProperties display)
 			=> XCoreMenuBridge.StripAccelerator(display.Text);
+
+		/// <summary>
+		/// The native authorities for the request's row: the reorder-vector menu and the shared
+		/// per-object and Help menus, so a label menu made only of those ids needs nothing from
+		/// the hidden command adapter.
+		/// </summary>
+		internal IDetailMenuAuthority CreateMenuAuthority(DetailMenuRequest request)
+		{
+			// One per-object authority serves both, so the row's override target is located
+			// once per menu, not once per authority that asks.
+			var objectMenu = CreateObjectMenuAuthority(request.Field);
+			return new CompositeMenuAuthority(CreateReorderVectorAuthority(request),
+				new EnvironmentInsertMenuAuthority(request, this),
+				CreateMultiStringMenuAuthority(request.Field, objectMenu), objectMenu);
+		}
+
+		/// <summary>The native authority for a multi-writing-system row's label menu.</summary>
+		internal IDetailMenuAuthority CreateMultiStringMenuAuthority(DetailField field)
+			=> CreateMultiStringMenuAuthority(field, CreateObjectMenuAuthority(field));
+
+		private IDetailMenuAuthority CreateMultiStringMenuAuthority(DetailField field,
+			IDetailMenuAuthority sharedLeaves)
+			=> new MultiStringMenuAuthority(field, sharedLeaves,
+				menu: WritingSystemMenuOf,
+				show: ShowWritingSystems,
+				showAll: ShowAllWritingSystemsItem,
+				configure: ConfigureWritingSystemsItem);
+
+		/// <summary>The native authority for the row's per-object and Help menus.</summary>
+		internal IDetailMenuAuthority CreateObjectMenuAuthority(DetailField field)
+			=> new ObjectMenuAuthority(field, LocateOverrideTarget,
+				fieldVisibility: (label, target, visibility) =>
+					VisibilityItem(label, field, target.TemplateId, target.Location, visibility),
+				moveField: (label, target, up) => MoveItem(label, field, target.Location, up),
+				helpTopic: KnownHelpTopic,
+				showHelp: ShowDetailHelp);
+
+		// The row's override target, or null (with the reason logged) when it cannot be located.
+		// A failure disables the row's field commands rather than failing the whole menu.
+		private OverrideTarget LocateOverrideTarget(DetailField field)
+		{
+			try
+			{
+				return TryLocateOverrideTarget(field, out var templateId, out var location)
+					? new OverrideTarget(templateId, location)
+					: null;
+			}
+			catch (Exception e)
+			{
+				Logger.WriteError("Locating the row's override target failed; its Field Visibility and "
+					+ "Move Field commands are disabled.", e);
+				return null;
+			}
+		}
+
+		/// <summary>
+		/// The row's help topic when the help provider has it, else null. A failure hides Help
+		/// rather than failing the whole menu.
+		/// </summary>
+		internal string KnownHelpTopic(DetailField field)
+		{
+			try
+			{
+				var topic = ResolveHelpTopic(field);
+				if (topic == null)
+					return null;
+				var provider = m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider");
+				return provider?.GetHelpString(topic) != null ? topic : null;
+			}
+			catch (Exception e)
+			{
+				Logger.WriteError("Resolving the row's help topic failed; Help is hidden.", e);
+				return null;
+			}
+		}
+
+		private void ShowDetailHelp(string topic)
+			=> ShowHelp.ShowHelpTopic(m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), topic);
 
 		/// <summary>
 		/// Locates the row's node in its own compiled model, with the current override applied,
@@ -767,122 +907,82 @@ namespace SIL.FieldWorks.XWorks
 					RefreshAvaloniaDetail();
 				});
 
-		/// <summary>
-		/// Whether this menu item makes a persistent change to which writing systems a
-		/// multi-writing-system field shows: a per-writing-system toggle (recognized by the
-		/// property its group drives -- the toggles carry no command id) or the Configure
-		/// dialog. Show all right now is not one of these: it is the transient reveal
-		/// (<see cref="ShowAllWritingSystemsItem"/>), not a configuration change to persist.
-		/// </summary>
-		private static bool IsWritingSystemVisibilityChoice(ChoiceBase choice)
-		{
-			if (choice is ListPropertyChoice list)
-			{
-				return string.Equals(list.ParentProperty,
-					PropertyConstants.CurrentContextMenuSelectedWsIds, StringComparison.Ordinal);
-			}
+		// The row's Writing Systems menu, from the shared rule and the row's own layout facts.
+		private IReadOnlyList<WritingSystemMenuOption> WritingSystemMenuOf(DetailField field)
+			=> FieldWritingSystemOptions.Menu(Cache, WritingSystemSpecOf(field), field.VisibleWritingSystems);
 
-			return string.Equals(choice.HelpId, "CmdDataTree-WritingSystemMenu-Configure",
-				StringComparison.Ordinal);
-		}
+		private static WritingSystemFieldSpec WritingSystemSpecOf(DetailField field)
+			=> WritingSystemFieldSpec.FromLayout(field.ObjectHvo, field.WritingSystem,
+				field.OptionalWritingSystem, field.ForceIncludeEnglish);
 
 		/// <summary>
-		/// A writing-system item that dispatches normally and then copies the resulting
-		/// selection into the override: the hidden adapter slice owns the picker and the
-		/// Configure dialog, while the Avalonia detail view composes from its own override
-		/// store.
+		/// Makes the row show exactly the given writing systems: stores the selection in the
+		/// row's view override, keeps the project's pronunciation writing systems in step on a
+		/// Pronunciation row, and recomposes. Nothing here reaches the mediator.
 		/// </summary>
-		private DetailMenuItem WritingSystemItem(ChoiceBase choice, UIItemDisplayProperties display,
-			DetailField field)
-		{
-			var isListToggle = choice is ListPropertyChoice;
-			// The bridge strips execute from disabled items, so the last checked toggle
-			// (disabled) can never be invoked to EMPTY the set.
-			return new DetailMenuItem(XCoreMenuBridge.StripAccelerator(display.Text), display.Enabled,
-				display.Checked, children: null, execute: () =>
-				{
-					// Snapshot first, so a dialog that changes nothing (e.g. Cancel) copies
-					// nothing.
-					var before = isListToggle ? null : CurrentSliceSelectedWritingSystems();
-					choice.OnClick(null, EventArgs.Empty);
-					CopyWritingSystemSelectionToOverride(field, isListToggle, before);
-				});
-		}
-
-		// Copies the click's selection into the row's override and recomposes. A toggle
-		// updates its property BEFORE the slice: read the property, in option order;
-		// Configure reads the slice.
-		private void CopyWritingSystemSelectionToOverride(DetailField field, bool fromListToggle,
-			IReadOnlyList<string> sliceSetBeforeClick)
+		private void ShowWritingSystems(DetailField field, IReadOnlyList<string> writingSystems)
 		{
 			try
 			{
-				var slice = m_dataEntryForm?.CurrentSlice as MultiStringSlice;
-				if (slice == null)
-				{
-					// The command dispatched, but the result is unreadable: say so, or the
-					// symptom is "the menu did nothing" with no trail.
-					Logger.WriteEvent("Writing-system selection was not copied: the adapter "
-						+ "slice is unreadable; the view override was not updated.");
+				// The menu never offers an empty set, so empty means nothing to store -- and an
+				// empty op would CLEAR the restriction rather than narrow it.
+				if (writingSystems == null || writingSystems.Count == 0)
 					return;
-				}
-
-				// A stale adapter target would store another row's set under this row's id.
-				if (slice.Object == null || slice.Object.Hvo != field.ObjectHvo)
-				{
-					Logger.WriteEvent("Writing-system selection was not copied: the adapter "
-						+ "slice is not the clicked row's; the view override was not updated.");
-					return;
-				}
-
-				List<string> selected;
-				if (fromListToggle)
-				{
-					var ids = m_propertyTable.GetStringProperty(
-						PropertyConstants.CurrentContextMenuSelectedWsIds, null);
-					// Canonicalize: option order, junk tokens dropped -- the stored order is the
-					// render order.
-					selected = string.IsNullOrEmpty(ids)
-						? null
-						: StringSliceUtils.GetVisibleWritingSystems(ids,
-							slice.WritingSystemOptionsForDisplay).Select(ws => ws.Id).ToList();
-				}
-				else
-				{
-					selected = slice.WritingSystemsSelectedForDisplay?.Select(ws => ws.Id).ToList();
-					if (selected != null && sliceSetBeforeClick != null
-						&& selected.SequenceEqual(sliceSetBeforeClick, StringComparer.Ordinal))
-					{
-						return; // the dialog changed nothing (e.g. Cancel): no override write.
-					}
-				}
-
-				// The menu disables the last checked toggle, so an empty set only means "nothing
-				// to copy" -- and an empty op would CLEAR the restriction, so bail instead.
-				if (selected == null || selected.Count == 0)
-					return;
-
 				var templateId = ViewDefinitionOverrideEditor.StripRuntimeSuffix(field.StableId);
 				var op = new ViewOverrideOperation(ViewOverrideOperationKind.SetVisibleWritingSystems,
-					templateId, writingSystems: selected);
+					templateId, writingSystems: writingSystems.ToList());
 				if (!TryMutateOverride(field, op))
 					return;
-
-				// A successful configuration write replaces any transient reveal on the part:
-				// a newly persisted display set supersedes the reveal on every row sharing it.
+				if (string.Equals(field.MenuId, PronunciationMenuId, StringComparison.Ordinal))
+				{
+					// Exactly the chosen writing systems, never a fallback set: a stale id
+					// must not rewrite the project's list to the defaults.
+					var chosen = new HashSet<string>(writingSystems, StringComparer.OrdinalIgnoreCase);
+					var resolved = FieldWritingSystemOptions.Options(Cache, WritingSystemSpecOf(field))
+						.Where(ws => chosen.Contains(ws.Id)).ToList();
+					if (resolved.Count == chosen.Count)
+						PronunciationWritingSystems.Sync(Cache, resolved);
+				}
+				// A persisted set supersedes any transient reveal on the part.
 				m_showAllWsFields.Remove(templateId);
 				RefreshAvaloniaDetail();
 			}
 			catch (Exception e)
 			{
-				Logger.WriteError("Copying the writing-system selection into the view override failed.", e);
+				Logger.WriteError("Storing the row's writing-system selection failed.", e);
 			}
 		}
 
-		// The adapter slice's current selection, or null when it cannot be read.
-		private IReadOnlyList<string> CurrentSliceSelectedWritingSystems()
-			=> (m_dataEntryForm?.CurrentSlice as MultiStringSlice)
-				?.WritingSystemsSelectedForDisplay?.Select(ws => ws.Id).ToList();
+		// Opens the per-field Configure dialog on the row's own options and shown set, and
+		// applies the result.
+		private DetailMenuItem ConfigureWritingSystemsItem(string label, DetailField field)
+			=> new DetailMenuItem(label, isEnabled: true, isChecked: false, children: null, execute: () =>
+				{
+					try
+					{
+						var spec = WritingSystemSpecOf(field);
+						var shown = FieldWritingSystemOptions.Shown(Cache, spec, field.VisibleWritingSystems);
+						using (var dlg = new ConfigureWritingSystemsDlg(
+							FieldWritingSystemOptions.Options(Cache, spec), shown,
+							m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider")))
+						{
+							dlg.Text = ConfigureWritingSystemsDlg.TitleFor(field.Label);
+							if (dlg.ShowDialog() != System.Windows.Forms.DialogResult.OK)
+								return;
+							var chosen = dlg.SelectedWritingSystems.Select(ws => ws.Id).ToList();
+							// The dialog answers in option order, the stored set may not:
+							// same set means nothing changed.
+							if (new HashSet<string>(chosen, StringComparer.Ordinal)
+								.SetEquals(shown.Select(ws => ws.Id)))
+								return; // nothing changed: no override write.
+							ShowWritingSystems(field, chosen);
+						}
+					}
+					catch (Exception e)
+					{
+						Logger.WriteError("Configuring the row's writing systems failed.", e);
+					}
+				});
 
 		// Writes a SetVisibility op for the field's template id into the project override and recomposes.
 		private void ApplyFieldVisibility(DetailField field, string templateId, ViewVisibility target)

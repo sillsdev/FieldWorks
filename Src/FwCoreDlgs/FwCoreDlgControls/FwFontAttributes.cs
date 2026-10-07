@@ -107,6 +107,18 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
+		/// Gets or sets whether the Font Features button offers Graphite features ahead of
+		/// OpenType features when the current font supports both.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		public bool UseGraphiteFeatures
+		{
+			get { CheckDisposed(); return m_btnFontFeatures.UseGraphiteFeatures; }
+			set { CheckDisposed(); m_btnFontFeatures.UseGraphiteFeatures = value; }
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
 		/// Gets or sets a value indicating whether the controls for super/subscript are enabled or not.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------

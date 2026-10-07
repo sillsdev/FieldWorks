@@ -160,6 +160,8 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 					var ctxtLens = new VwLength[m_rule.InputOS.Count];
 					vwenv.NoteDependency(new[] {m_rule.Hvo}, new[] {MoAffixProcessTags.kflidInput}, 1 );
+					// Column widths below are fixed from each input natural class.
+					NoteNaturalClassDependencies(vwenv, m_rule.InputOS);
 					for (int i = 0; i < m_rule.InputOS.Count; i++)
 					{
 						int idxWidth = GetStrWidth(TsStringUtils.MakeString(Convert.ToString(i + 1), userWs), m_indexProps, vwenv);

@@ -1,40 +1,42 @@
 # === C Source ===
+# Every compile also writes a /sourceDependencies sidecar; the end of _targ.mak turns this
+# product's sidecars into object-to-header edges.
 {$(ARG_SRCDIR)}.cpp{$(INT_DIR)}.obj:
 	$(DISPLAY) Compiling $<
 	$(CL) @<<
-/c /Fo"$(INT_DIR)/" $(CL_OPTS) $(DEFS) $<
+/c /Fo"$(INT_DIR)/" /sourceDependencies "$@.source-dependencies.json" $(CL_OPTS) $(DEFS) $<
 <<NOKEEP
 
 {$(ARG_SRCDIR)}.c{$(INT_DIR)}.obj:
 	$(DISPLAY) Compiling $<
 	$(CL) @<<
-/c /Fo"$(INT_DIR)/" $(CL_OPTS) $(DEFS) $<
+/c /Fo"$(INT_DIR)/" /sourceDependencies "$@.source-dependencies.json" $(CL_OPTS) $(DEFS) $<
 <<NOKEEP
 
 # === GenPch ===
 {$(ARG_SRCDIR)}.c{$(INT_DIR)\genpch}.obj:
 	$(DISPLAY) Compiling $<
 	$(CL) @<<
-/c /Fo"$(INT_DIR)\genpch/" /Fp"$(INT_DIR)\$(PCHNAME).pch" /Yc$(PCHNAME).h $(CL_OPTS) $(DEFS) $<
+/c /Fo"$(INT_DIR)\genpch/" /Fp"$(INT_DIR)\$(PCHNAME).pch" /Yc$(PCHNAME).h /sourceDependencies "$@.source-dependencies.json" $(CL_OPTS) $(DEFS) $<
 <<NOKEEP
 
 {$(ARG_SRCDIR)}.cpp{$(INT_DIR)\genpch}.obj:
 	$(DISPLAY) Compiling $<
 	$(CL) @<<
-/c /Fo"$(INT_DIR)\genpch/" /Fp"$(INT_DIR)\$(PCHNAME).pch" /Yc$(PCHNAME).h $(CL_OPTS) $(DEFS) $<
+/c /Fo"$(INT_DIR)\genpch/" /Fp"$(INT_DIR)\$(PCHNAME).pch" /Yc$(PCHNAME).h /sourceDependencies "$@.source-dependencies.json" $(CL_OPTS) $(DEFS) $<
 <<NOKEEP
 
 # === UsePch ===
 {$(ARG_SRCDIR)}.c{$(INT_DIR)\usepch}.obj:
 	$(DISPLAY) Compiling $<
 	$(CL) @<<
-/c /Fo"$(INT_DIR)\usepch/" /Fp"$(INT_DIR)\$(PCHNAME).pch" /Yu$(PCHNAME).h $(CL_OPTS) $(DEFS) $<
+/c /Fo"$(INT_DIR)\usepch/" /Fp"$(INT_DIR)\$(PCHNAME).pch" /Yu$(PCHNAME).h /sourceDependencies "$@.source-dependencies.json" $(CL_OPTS) $(DEFS) $<
 <<NOKEEP
 
 {$(ARG_SRCDIR)}.cpp{$(INT_DIR)\usepch}.obj:
 	$(DISPLAY) Compiling $<
 	$(CL) @<<
-/c /Fo"$(INT_DIR)\usepch/" /Fp"$(INT_DIR)\$(PCHNAME).pch" /Yu$(PCHNAME).h $(CL_OPTS) $(DEFS) $<
+/c /Fo"$(INT_DIR)\usepch/" /Fp"$(INT_DIR)\$(PCHNAME).pch" /Yu$(PCHNAME).h /sourceDependencies "$@.source-dependencies.json" $(CL_OPTS) $(DEFS) $<
 <<NOKEEP
 
 
@@ -44,13 +46,13 @@
 {$(ARG_SRCDIR)}.c{$(INT_DIR)\autopch}.obj:
 	$(DISPLAY) Compiling $<
 	$(CL) @<<
-/c /Fo"$(INT_DIR)\autopch/" /Fp"$(INT_DIR)\$(PCHNAME).pch" $(CL_OPTS) $(DEFS) $<
+/c /Fo"$(INT_DIR)\autopch/" /Fp"$(INT_DIR)\$(PCHNAME).pch" /sourceDependencies "$@.source-dependencies.json" $(CL_OPTS) $(DEFS) $<
 <<NOKEEP
 
 {$(ARG_SRCDIR)}.cpp{$(INT_DIR)\autopch}.obj:
 	$(DISPLAY) Compiling $<
 	$(CL) @<<
-/c /Fo"$(INT_DIR)\autopch/" /Fp"$(INT_DIR)\$(PCHNAME).pch" $(CL_OPTS) $(DEFS) $<
+/c /Fo"$(INT_DIR)\autopch/" /Fp"$(INT_DIR)\$(PCHNAME).pch" /sourceDependencies "$@.source-dependencies.json" $(CL_OPTS) $(DEFS) $<
 <<NOKEEP
 
 !ELSEIF "$(PCHVER)"=="0"
@@ -58,13 +60,13 @@
 {$(ARG_SRCDIR)}.c{$(INT_DIR)\autopch}.obj:
 	$(DISPLAY) Compiling $<
 	$(CL) @<<
-/c /Fo"$(INT_DIR)\autopch/" /Fp"$(INT_DIR)\$(PCHNAME0).pch" $(CL_OPTS) $(DEFS) $<
+/c /Fo"$(INT_DIR)\autopch/" /Fp"$(INT_DIR)\$(PCHNAME0).pch" /sourceDependencies "$@.source-dependencies.json" $(CL_OPTS) $(DEFS) $<
 <<NOKEEP
 
 {$(ARG_SRCDIR)}.cpp{$(INT_DIR)\autopch}.obj:
 	$(DISPLAY) Compiling $<
 	$(CL) @<<
-/c /Fo"$(INT_DIR)\autopch/" /Fp"$(INT_DIR)\$(PCHNAME0).pch" $(CL_OPTS) $(DEFS) $<
+/c /Fo"$(INT_DIR)\autopch/" /Fp"$(INT_DIR)\$(PCHNAME0).pch" /sourceDependencies "$@.source-dependencies.json" $(CL_OPTS) $(DEFS) $<
 <<NOKEEP
 
 !ELSEIF "$(PCHVER)"=="1"
@@ -72,13 +74,13 @@
 {$(ARG_SRCDIR)}.c{$(INT_DIR)\autopch}.obj:
 	$(DISPLAY) Compiling $<
 	$(CL) @<<
-/c /Fo"$(INT_DIR)\autopch/" /Fp"$(INT_DIR)\$(PCHNAME1).pch" $(CL_OPTS) $(DEFS) $<
+/c /Fo"$(INT_DIR)\autopch/" /Fp"$(INT_DIR)\$(PCHNAME1).pch" /sourceDependencies "$@.source-dependencies.json" $(CL_OPTS) $(DEFS) $<
 <<NOKEEP
 
 {$(ARG_SRCDIR)}.cpp{$(INT_DIR)\autopch}.obj:
 	$(DISPLAY) Compiling $<
 	$(CL) @<<
-/c /Fo"$(INT_DIR)\autopch/" /Fp"$(INT_DIR)\$(PCHNAME1).pch" $(CL_OPTS) $(DEFS) $<
+/c /Fo"$(INT_DIR)\autopch/" /Fp"$(INT_DIR)\$(PCHNAME1).pch" /sourceDependencies "$@.source-dependencies.json" $(CL_OPTS) $(DEFS) $<
 <<NOKEEP
 
 !ELSEIF "$(PCHVER)"=="2"
@@ -86,13 +88,13 @@
 {$(ARG_SRCDIR)}.c{$(INT_DIR)\autopch}.obj:
 	$(DISPLAY) Compiling $<
 	$(CL) @<<
-/c /Fo"$(INT_DIR)\autopch/" /Fp"$(INT_DIR)\$(PCHNAME2).pch" $(CL_OPTS) $(DEFS) $<
+/c /Fo"$(INT_DIR)\autopch/" /Fp"$(INT_DIR)\$(PCHNAME2).pch" /sourceDependencies "$@.source-dependencies.json" $(CL_OPTS) $(DEFS) $<
 <<NOKEEP
 
 {$(ARG_SRCDIR)}.cpp{$(INT_DIR)\autopch}.obj:
 	$(DISPLAY) Compiling $<
 	$(CL) @<<
-/c /Fo"$(INT_DIR)\autopch/" /Fp"$(INT_DIR)\$(PCHNAME2).pch" $(CL_OPTS) $(DEFS) $<
+/c /Fo"$(INT_DIR)\autopch/" /Fp"$(INT_DIR)\$(PCHNAME2).pch" /sourceDependencies "$@.source-dependencies.json" $(CL_OPTS) $(DEFS) $<
 <<NOKEEP
 
 !ELSEIF "$(PCHVER)"=="3"
@@ -100,13 +102,13 @@
 {$(ARG_SRCDIR)}.c{$(INT_DIR)\autopch}.obj:
 	$(DISPLAY) Compiling $<
 	$(CL) @<<
-/c /Fo"$(INT_DIR)\autopch/" /Fp"$(INT_DIR)\$(PCHNAME3).pch" $(CL_OPTS) $(DEFS) $<
+/c /Fo"$(INT_DIR)\autopch/" /Fp"$(INT_DIR)\$(PCHNAME3).pch" /sourceDependencies "$@.source-dependencies.json" $(CL_OPTS) $(DEFS) $<
 <<NOKEEP
 
 {$(ARG_SRCDIR)}.cpp{$(INT_DIR)\autopch}.obj:
 	$(DISPLAY) Compiling $<
 	$(CL) @<<
-/c /Fo"$(INT_DIR)\autopch/" /Fp"$(INT_DIR)\$(PCHNAME3).pch" $(CL_OPTS) $(DEFS) $<
+/c /Fo"$(INT_DIR)\autopch/" /Fp"$(INT_DIR)\$(PCHNAME3).pch" /sourceDependencies "$@.source-dependencies.json" $(CL_OPTS) $(DEFS) $<
 <<NOKEEP
 
 !ELSEIF "$(PCHVER)"=="4"
@@ -114,13 +116,13 @@
 {$(ARG_SRCDIR)}.c{$(INT_DIR)\autopch}.obj:
 	$(DISPLAY) Compiling $<
 	$(CL) @<<
-/c /Fo"$(INT_DIR)\autopch/" /Fp"$(INT_DIR)\$(PCHNAME4).pch" $(CL_OPTS) $(DEFS) $<
+/c /Fo"$(INT_DIR)\autopch/" /Fp"$(INT_DIR)\$(PCHNAME4).pch" /sourceDependencies "$@.source-dependencies.json" $(CL_OPTS) $(DEFS) $<
 <<NOKEEP
 
 {$(ARG_SRCDIR)}.cpp{$(INT_DIR)\autopch}.obj:
 	$(DISPLAY) Compiling $<
 	$(CL) @<<
-/c /Fo"$(INT_DIR)\autopch/" /Fp"$(INT_DIR)\$(PCHNAME4).pch" $(CL_OPTS) $(DEFS) $<
+/c /Fo"$(INT_DIR)\autopch/" /Fp"$(INT_DIR)\$(PCHNAME4).pch" /sourceDependencies "$@.source-dependencies.json" $(CL_OPTS) $(DEFS) $<
 <<NOKEEP
 
 !ELSEIF "$(PCHVER)"=="5"
@@ -128,13 +130,13 @@
 {$(ARG_SRCDIR)}.c{$(INT_DIR)\autopch}.obj:
 	$(DISPLAY) Compiling $<
 	$(CL) @<<
-/c /Fo"$(INT_DIR)\autopch/" /Fp"$(INT_DIR)\$(PCHNAME5).pch" $(CL_OPTS) $(DEFS) $<
+/c /Fo"$(INT_DIR)\autopch/" /Fp"$(INT_DIR)\$(PCHNAME5).pch" /sourceDependencies "$@.source-dependencies.json" $(CL_OPTS) $(DEFS) $<
 <<NOKEEP
 
 {$(ARG_SRCDIR)}.cpp{$(INT_DIR)\autopch}.obj:
 	$(DISPLAY) Compiling $<
 	$(CL) @<<
-/c /Fo"$(INT_DIR)\autopch/" /Fp"$(INT_DIR)\$(PCHNAME5).pch" $(CL_OPTS) $(DEFS) $<
+/c /Fo"$(INT_DIR)\autopch/" /Fp"$(INT_DIR)\$(PCHNAME5).pch" /sourceDependencies "$@.source-dependencies.json" $(CL_OPTS) $(DEFS) $<
 <<NOKEEP
 
 !ELSEIF "$(PCHVER)"=="6"
@@ -142,13 +144,13 @@
 {$(ARG_SRCDIR)}.c{$(INT_DIR)\autopch}.obj:
 	$(DISPLAY) Compiling $<
 	$(CL) @<<
-/c /Fo"$(INT_DIR)\autopch/" /Fp"$(INT_DIR)\$(PCHNAME6).pch" $(CL_OPTS) $(DEFS) $<
+/c /Fo"$(INT_DIR)\autopch/" /Fp"$(INT_DIR)\$(PCHNAME6).pch" /sourceDependencies "$@.source-dependencies.json" $(CL_OPTS) $(DEFS) $<
 <<NOKEEP
 
 {$(ARG_SRCDIR)}.cpp{$(INT_DIR)\autopch}.obj:
 	$(DISPLAY) Compiling $<
 	$(CL) @<<
-/c /Fo"$(INT_DIR)\autopch/" /Fp"$(INT_DIR)\$(PCHNAME6).pch" $(CL_OPTS) $(DEFS) $<
+/c /Fo"$(INT_DIR)\autopch/" /Fp"$(INT_DIR)\$(PCHNAME6).pch" /sourceDependencies "$@.source-dependencies.json" $(CL_OPTS) $(DEFS) $<
 <<NOKEEP
 
 !ELSEIF "$(PCHVER)"=="7"
@@ -156,13 +158,13 @@
 {$(ARG_SRCDIR)}.c{$(INT_DIR)\autopch}.obj:
 	$(DISPLAY) Compiling $<
 	$(CL) @<<
-/c /Fo"$(INT_DIR)\autopch/" /Fp"$(INT_DIR)\$(PCHNAME7).pch" $(CL_OPTS) $(DEFS) $<
+/c /Fo"$(INT_DIR)\autopch/" /Fp"$(INT_DIR)\$(PCHNAME7).pch" /sourceDependencies "$@.source-dependencies.json" $(CL_OPTS) $(DEFS) $<
 <<NOKEEP
 
 {$(ARG_SRCDIR)}.cpp{$(INT_DIR)\autopch}.obj:
 	$(DISPLAY) Compiling $<
 	$(CL) @<<
-/c /Fo"$(INT_DIR)\autopch/" /Fp"$(INT_DIR)\$(PCHNAME7).pch" $(CL_OPTS) $(DEFS) $<
+/c /Fo"$(INT_DIR)\autopch/" /Fp"$(INT_DIR)\$(PCHNAME7).pch" /sourceDependencies "$@.source-dependencies.json" $(CL_OPTS) $(DEFS) $<
 <<NOKEEP
 
 !ELSEIF "$(PCHVER)"=="8"
@@ -170,13 +172,13 @@
 {$(ARG_SRCDIR)}.c{$(INT_DIR)\autopch}.obj:
 	$(DISPLAY) Compiling $<
 	$(CL) @<<
-/c /Fo"$(INT_DIR)\autopch/" /Fp"$(INT_DIR)\$(PCHNAME8).pch" $(CL_OPTS) $(DEFS) $<
+/c /Fo"$(INT_DIR)\autopch/" /Fp"$(INT_DIR)\$(PCHNAME8).pch" /sourceDependencies "$@.source-dependencies.json" $(CL_OPTS) $(DEFS) $<
 <<NOKEEP
 
 {$(ARG_SRCDIR)}.cpp{$(INT_DIR)\autopch}.obj:
 	$(DISPLAY) Compiling $<
 	$(CL) @<<
-/c /Fo"$(INT_DIR)\autopch/" /Fp"$(INT_DIR)\$(PCHNAME8).pch" $(CL_OPTS) $(DEFS) $<
+/c /Fo"$(INT_DIR)\autopch/" /Fp"$(INT_DIR)\$(PCHNAME8).pch" /sourceDependencies "$@.source-dependencies.json" $(CL_OPTS) $(DEFS) $<
 <<NOKEEP
 
 !ELSEIF "$(PCHVER)"=="9"
@@ -184,13 +186,13 @@
 {$(ARG_SRCDIR)}.c{$(INT_DIR)\autopch}.obj:
 	$(DISPLAY) Compiling $<
 	$(CL) @<<
-/c /Fo"$(INT_DIR)\autopch/" /Fp"$(INT_DIR)\$(PCHNAME9).pch" $(CL_OPTS) $(DEFS) $<
+/c /Fo"$(INT_DIR)\autopch/" /Fp"$(INT_DIR)\$(PCHNAME9).pch" /sourceDependencies "$@.source-dependencies.json" $(CL_OPTS) $(DEFS) $<
 <<NOKEEP
 
 {$(ARG_SRCDIR)}.cpp{$(INT_DIR)\autopch}.obj:
 	$(DISPLAY) Compiling $<
 	$(CL) @<<
-/c /Fo"$(INT_DIR)\autopch/" /Fp"$(INT_DIR)\$(PCHNAME9).pch" $(CL_OPTS) $(DEFS) $<
+/c /Fo"$(INT_DIR)\autopch/" /Fp"$(INT_DIR)\$(PCHNAME9).pch" /sourceDependencies "$@.source-dependencies.json" $(CL_OPTS) $(DEFS) $<
 <<NOKEEP
 
 !ENDIF
@@ -199,13 +201,13 @@
 {$(ARG_SRCDIR)}.cpp{$(INT_DIR)\nopch}.obj:
 	$(DISPLAY) Compiling $<
 	$(CL) @<<
-/c /Fo"$(INT_DIR)\nopch/" $(CL_OPTS) $(DEFS) $<
+/c /Fo"$(INT_DIR)\nopch/" /sourceDependencies "$@.source-dependencies.json" $(CL_OPTS) $(DEFS) $<
 <<NOKEEP
 
 {$(ARG_SRCDIR)}.c{$(INT_DIR)\nopch}.obj:
 	$(DISPLAY) Compiling $<
 	$(CL) @<<
-/c /Fo"$(INT_DIR)\nopch/" $(CL_OPTS) $(DEFS) $<
+/c /Fo"$(INT_DIR)\nopch/" /sourceDependencies "$@.source-dependencies.json" $(CL_OPTS) $(DEFS) $<
 <<NOKEEP
 
 

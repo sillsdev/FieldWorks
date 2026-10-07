@@ -193,16 +193,13 @@
 		TaskName="LcmGenerate"
 		AssemblyFile="$(LcmBuildTasksDir)/SIL.LCModel.Build.Tasks.dll"
 	/>
-	<ItemGroup>
-		<CellarConstantsInputs Include="$(LcmModelArtifactsDir)/MasterLCModel.xml" />
-		<CellarConstantsInputs Include="$(fwrt)/Src/Kernel/CellarConstants.vm.h" />
-		<CellarConstantsOutputs Include="$(dir-fwoutputCommon)/CellarConstants.h" />
-	</ItemGroup>
+	<!-- dir-fwoutputCommon is set by the Setup target, so it is empty when top-level
+		 items are evaluated. Target attributes expand at run time and see the real path. -->
 	<Target
 		Name="GenerateCellarConstants"
 		DependsOnTargets="CopyCellarBaseConstants;CopyDlls"
-		Inputs="@(CellarConstantsInputs)"
-		Outputs="@(CellarConstantsOutputs)"
+		Inputs="$(LcmModelArtifactsDir)/MasterLCModel.xml;$(fwrt)/Src/Kernel/CellarConstants.vm.h"
+		Outputs="$(dir-fwoutputCommon)/CellarConstants.h"
 	>
 		<MakeDir Directories="$(dir-fwoutputCommon)" Condition="'$(action)'!='clean'" />
 		<LcmGenerate

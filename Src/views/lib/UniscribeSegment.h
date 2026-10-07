@@ -30,7 +30,7 @@ typedef Vector<SCRIPT_ITEM> ScrItemVec; // Hungarian vscri;
 typedef Vector<SCRIPT_LOGATTR> ScrLogAttrVec; // Hungarian vsla.
 typedef Vector<ULONG> OpenTypeTagVec; // Hungarian vot.
 
-class TextAnalysisEntry;
+class NfcOffsetMap;
 
 /*----------------------------------------------------------------------------------------------
 Class: UniscribeRunInfo
@@ -237,12 +237,9 @@ public:
 
 	static int OffsetInNfc(int ich, int ichBase, IVwTextSource * pts);
 	static int OffsetInNfc(int ich, int ichBase, IVwTextSource * pts, bool fTextIsNfc);
-	static int OffsetInNfc(int ich, int ichBase, IVwTextSource * pts, bool fTextIsNfc,
-		const TextAnalysisEntry * pAnalysis);
+	static NfcOffsetMap * CurrentNfcOffsetMap(IVwTextSource * pts);
 	static int OffsetToOrig(int ich, int ichBase, IVwTextSource * pts);
 	static int OffsetToOrig(int ich, int ichBase, IVwTextSource * pts, bool fTextIsNfc);
-	static int OffsetToOrig(int ich, int ichBase, IVwTextSource * pts, bool fTextIsNfc,
-		const TextAnalysisEntry * pAnalysis);
 
 protected:
 	// Static variables
@@ -310,7 +307,7 @@ protected:
 	static void ShapePlaceRun(UniscribeRunInfo& uri, bool fCreatingSeg = false);
 	static int CallScriptItemize(OLECHAR * prgchDefBuf, int cchBuf, Vector<OLECHAR> & vch,
 		IVwTextSource * pts, int ichMin, int cch, OLECHAR ** pprgchBuf, int & citem,
-		bool fParaRTL, bool * pfTextIsNfc = NULL, const TextAnalysisEntry ** ppAnalysis = NULL);
+		bool fParaRTL, bool * pfTextIsNfc = NULL);
 
 	int NumStretchableGlyphs();
 	int StretchGlyphs(UniscribeRunInfo & uri,

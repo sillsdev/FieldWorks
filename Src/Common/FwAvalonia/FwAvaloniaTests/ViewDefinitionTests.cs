@@ -1,4 +1,4 @@
-// Copyright (c) 2026 SIL International
+﻿// Copyright (c) 2026 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -48,6 +48,10 @@ namespace FwAvaloniaTests
   </part>
   <part id='LexEntry-Detail-PerFieldWs'>
     <slice label='Form' editor='multistring' field='CitationForm' ws='all analysis'/>
+  </part>
+  <part id='LexEntry-Detail-OptionalWs'>
+   <slice label='Pronunciation' editor='multistring' field='Form'
+   ws='all pronunciation' optionalWs='all vernacular' forceIncludeEnglish='true'/>
   </part>
 </bin></PartInventory>";
 
@@ -193,6 +197,35 @@ namespace FwAvaloniaTests
 </layout>");
 			Assert.That(model.Roots[0].VisibleWritingSystems, Is.Null,
 				"a field with no override shows the full configured set (null = no restriction)");
+		}
+
+		[Test]
+		public void Import_OptionalWsAndForceIncludeEnglish_RideTheNode()
+		{
+			// Both expand what the field's Writing Systems menu may OFFER without changing what
+			// the field shows. Only the Pronunciation form uses optionalWs in the shipped parts.
+			var model = Import(@"
+<layout class='LexEntry' type='detail' name='OWs'>
+  <part ref='OptionalWs'/>
+</layout>");
+
+			var field = model.Roots[0];
+			Assert.That(field.WritingSystem, Is.EqualTo("all pronunciation"));
+			Assert.That(field.OptionalWritingSystem, Is.EqualTo("all vernacular"));
+			Assert.That(field.ForceIncludeEnglish, Is.True);
+		}
+
+		[Test]
+		public void Import_WithoutOptionalWs_LeavesBothPropertiesUnset()
+		{
+			var model = Import(@"
+<layout class='LexEntry' type='detail' name='PFW'>
+  <part ref='PerFieldWs'/>
+</layout>");
+
+			Assert.That(model.Roots[0].OptionalWritingSystem, Is.Null,
+				"a part with no optionalWs offers only its own writing systems");
+			Assert.That(model.Roots[0].ForceIncludeEnglish, Is.False);
 		}
 
 		[Test]

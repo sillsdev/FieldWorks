@@ -387,8 +387,14 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 			IReadOnlyList<string> visibleWritingSystems = null,
 			bool toggleValue = false,
 			bool reorder = false,
-			string helpTopicId = null)
+			string helpTopicId = null,
+			string sliceId = null,
+			string optionalWritingSystem = null,
+			bool forceIncludeEnglish = false)
 		{
+			OptionalWritingSystem = optionalWritingSystem;
+			ForceIncludeEnglish = forceIncludeEnglish;
+			SliceId = sliceId;
 			HelpTopicId = helpTopicId;
 			Reorder = reorder;
 			ToggleValue = toggleValue;
@@ -432,6 +438,13 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 
 		public ViewNodeKind Kind { get; }
 
+		/// <summary>
+		/// The slice's authored <c>id=</c>, the name a tool's filter list uses to withhold the
+		/// row. Null on the nodes that author none, which is most of them. NOT
+		/// <see cref="StableId"/>, which is synthesized and always present.
+		/// </summary>
+		public string SliceId { get; }
+
 		public string Label { get; }
 
 		public string Abbreviation { get; }
@@ -463,6 +476,20 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 		/// systems by the composer.
 		/// </summary>
 		public IReadOnlyList<string> VisibleWritingSystems { get; }
+
+		/// <summary>
+		/// The part's <c>optionalWs</c> attribute: writing systems a multistring field can be
+		/// asked to show beyond its <see cref="WritingSystem"/> set, but never shows by default.
+		/// Null when the part has none, which is every shipped part but the Pronunciation form.
+		/// </summary>
+		public string OptionalWritingSystem { get; }
+
+		/// <summary>
+		/// The part's <c>forceIncludeEnglish</c> attribute: English joins this field's
+		/// writing-system options even when the project has not checked it. Set on the reversal
+		/// name and abbreviation parts.
+		/// </summary>
+		public bool ForceIncludeEnglish { get; }
 
 		public IReadOnlyList<ViewNode> Children { get; }
 

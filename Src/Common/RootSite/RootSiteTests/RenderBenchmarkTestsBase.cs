@@ -25,6 +25,8 @@ namespace SIL.FieldWorks.Common.RootSites.RenderBenchmark
 	public abstract class RenderBenchmarkTestsBase : RealDataTestsBase
 	{
 		protected const string DeterministicRenderFontFamily = "Segoe UI";
+		// Second Latin font for scenarios whose runs alternate font family.
+		protected const string SecondaryRenderFontFamily = "Times New Roman";
 		// Pinned Arabic font (loaded privately by RenderTestAssemblySetup). Used for Arabic runs so
 		// they don't depend on the host's Segoe UI Arabic version / font fallback.
 		protected const string ArabicRenderFontFamily = "Scheherazade New";
@@ -320,6 +322,15 @@ namespace SIL.FieldWorks.Common.RootSites.RenderBenchmark
 				case "multi-ws":
 					CreateMultiWsScenario();
 					break;
+				case "single-para-mixed-ws":
+					CreateSingleParaMixedWsScenario();
+					break;
+				case "nfc-composable-diacritics":
+					CreateNfcComposableDiacriticsScenario();
+					break;
+				case "multi-line-wrap-single-ws":
+					CreateMultiLineWrapSingleWsScenario();
+					break;
 				case "lex-shallow":
 					CreateLexEntryScenario(depth: 2, breadth: 3);
 					break;
@@ -537,6 +548,27 @@ namespace SIL.FieldWorks.Common.RootSites.RenderBenchmark
 			var book = CreateBook(14); // 2CH
 			m_hvoRoot = book.Hvo;
 			AddMultiWsSections(book, 5, versesPerSection: 8, chapterStart: 1);
+		}
+
+		private void CreateSingleParaMixedWsScenario()
+		{
+			var book = CreateBook(19); // PSA
+			m_hvoRoot = book.Hvo;
+			AddSingleMixedWsParagraph(book, sentenceCount: 236);
+		}
+
+		private void CreateNfcComposableDiacriticsScenario()
+		{
+			var book = CreateBook(15); // EZR
+			m_hvoRoot = book.Hvo;
+			AddNfcComposableDiacriticsParagraph(book, wordCount: 80);
+		}
+
+		private void CreateMultiLineWrapSingleWsScenario()
+		{
+			var book = CreateBook(17); // EST
+			m_hvoRoot = book.Hvo;
+			AddSingleWsProseParagraph(book, sentenceCount: 200);
 		}
 
 		#region Rich Data Factories
@@ -926,6 +958,147 @@ namespace SIL.FieldWorks.Common.RootSites.RenderBenchmark
 
 				paraBldr.CreateParagraph(section.ContentOA);
 			}
+		}
+
+		/// <summary>
+		/// Returns the canonical decomposition (NFD) of <paramref name="text"/>, and fails the
+		/// fixture unless the result contains combining marks that NFC would compose. A scenario
+		/// built from it therefore always exercises text that normalization rewrites, whatever
+		/// normalization form the source file itself is stored in.
+		/// </summary>
+		protected static string Decomposed(string text)
+		{
+			string nfd = CustomIcu.GetIcuNormalizer(FwNormalizationMode.knmNFD).Normalize(text);
+			string nfc = CustomIcu.GetIcuNormalizer(FwNormalizationMode.knmNFC).Normalize(text);
+			Assert.That(nfd, Is.Not.EqualTo(nfc),
+				$"Scenario text '{text}' must contain characters that decompose.");
+			return nfd;
+		}
+
+		/// <summary>
+		/// Adds a section whose content is one paragraph of <paramref name="sentenceCount"/>
+		/// sentences. Each sentence's text and run properties come from the two callbacks, which
+		/// receive the sentence index. With <paramref name="withChapterNumber"/> the paragraph
+		/// opens with a chapter-number run.
+		/// </summary>
+		private void AddSingleParagraphSection(IScrBook book, string heading, int sentenceCount,
+			Func<int, string> sentence, Func<int, ITsTextProps> runProps, bool withChapterNumber = false)
+		{
+			var section = Cache.ServiceLocator.GetInstance<IScrSectionFactory>().Create();
+			book.SectionsOS.Add(section);
+
+			var stTextFactory = Cache.ServiceLocator.GetInstance<IStTextFactory>();
+
+			section.HeadingOA = stTextFactory.Create();
+			var headingBldr = new StTxtParaBldr(Cache) { ParaStyleName = ScrStyleNames.SectionHead };
+			headingBldr.AppendRun(heading, StyleUtils.CharStyleTextProps(null, m_wsEng));
+			headingBldr.CreateParagraph(section.HeadingOA);
+
+			section.ContentOA = stTextFactory.Create();
+			var paraBldr = new StTxtParaBldr(Cache) { ParaStyleName = ScrStyleNames.NormalParagraph };
+			if (withChapterNumber)
+				paraBldr.AppendRun("1", StyleUtils.CharStyleTextProps(ScrStyleNames.ChapterNumber, m_wsEng));
+
+			for (int i = 0; i < sentenceCount; i++)
+				paraBldr.AppendRun(sentence(i), runProps(i));
+
+			paraBldr.CreateParagraph(section.ContentOA);
+		}
+
+		/// <summary>
+		/// Adds one paragraph of short decomposed sentences whose runs alternate between two
+		/// writing systems and two font families.
+		/// </summary>
+		protected void AddSingleMixedWsParagraph(IScrBook book, int sentenceCount)
+		{
+			string[] subjects =
+			{
+				"the \u00E9lder",
+				"the h\u00E8rder",
+				"the s\u00EFnger",
+				"the tea\u00E7her",
+				"the trav\u00EAler",
+				"the wom\u00E3n"
+			};
+			string[] predicates =
+			{
+				"spoke of the l\u00F3ng rains",
+				"walked to the f\u00E0r well",
+				"named the sev\u00EBn hills",
+				"counted the cattl\u00E9 at dusk",
+				"kept the \u00F4ld story",
+				"asked for a bless\u0129ng"
+			};
+
+			AddSingleParagraphSection(book, "Single Paragraph, Mixed Writing Systems", sentenceCount,
+				i => Decomposed($"{subjects[i % subjects.Length]} {predicates[i % predicates.Length]} {i + 1}. "),
+				i => AlternatingFontRunProps(i % 2 == 0),
+				withChapterNumber: true);
+		}
+
+		private ITsTextProps AlternatingFontRunProps(bool first)
+		{
+			var bldr = TsStringUtils.MakePropsBldr();
+			bldr.SetIntPropValues((int)FwTextPropType.ktptWs, (int)FwTextPropVar.ktpvDefault,
+				first ? m_wsEng : m_wsFr);
+			bldr.SetStrPropValue((int)FwTextPropType.ktptFontFamily,
+				first ? DeterministicRenderFontFamily : SecondaryRenderFontFamily);
+			return bldr.GetTextProps();
+		}
+
+		/// <summary>
+		/// Adds one wrapped paragraph of Latin sentences, each naming a word spelled with
+		/// decomposed diacritics.
+		/// </summary>
+		protected void AddNfcComposableDiacriticsParagraph(IScrBook book, int wordCount)
+		{
+			string[] words =
+			{
+				"caf\u00E9",
+				"d\u00E9j\u00E0",
+				"no\u00EBl",
+				"fran\u00E7ais",
+				"gar\u00E7on",
+				"h\u00F4tel",
+				"a\u00F1o",
+				"cr\u00E9\u00E9e",
+				"\u00E9l\u00E9gant",
+				"fa\u00E7ade"
+			};
+
+			AddSingleParagraphSection(book, "Decomposed Diacritics Microbenchmark", wordCount,
+				i => Decomposed($"The {words[i % words.Length]} recorded here is entry {i + 1}. "),
+				i => StyleUtils.CharStyleTextProps(null, m_wsEng));
+		}
+
+		/// <summary>
+		/// Adds one long wrapped paragraph of decomposed sentences in a single writing system
+		/// and font.
+		/// </summary>
+		protected void AddSingleWsProseParagraph(IScrBook book, int sentenceCount)
+		{
+			string[] subjects =
+			{
+				"the mer\u00E7hant",
+				"the mas\u00F3n",
+				"the scrib\u00EB",
+				"the sheph\u00E8rd",
+				"the weav\u00EAr",
+				"the pott\u00E9r"
+			};
+			string[] predicates =
+			{
+				"measured the grain by the riv\u00E9r",
+				"repaired the east\u00E8rn wall before dusk",
+				"copied the ledger onto fresh parchm\u00EBnt",
+				"counted the flock past the old gat\u00EA",
+				"dyed the cloth a deep saffr\u00F5n",
+				"shaped the jar on the slow whe\u00EBl"
+			};
+
+			AddSingleParagraphSection(book, "Single Writing-System Line-Wrap Microbenchmark", sentenceCount,
+				i => Decomposed($"{subjects[i % subjects.Length]} {predicates[i % predicates.Length]} on day {i + 1}. "),
+				i => StyleUtils.CharStyleTextProps(null, m_wsEng));
 		}
 
 		#endregion

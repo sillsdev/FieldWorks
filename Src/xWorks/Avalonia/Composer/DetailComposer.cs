@@ -9,6 +9,7 @@ using System.Globalization;
 using System.Linq;
 using System.Threading;
 using System.Xml.Linq;
+using SIL.FieldWorks.Common.DetailRules;
 using SIL.FieldWorks.Common.FwAvalonia;
 using SIL.FieldWorks.Common.FwAvalonia.Detail;
 using SIL.FieldWorks.Common.FwAvalonia.ViewDefinition;
@@ -117,10 +118,12 @@ namespace SIL.FieldWorks.XWorks
 			SlicePluginRegistry plugins = null,
 			ViewDefinitionOverrideResolver overrides = null,
 			ISet<string> showAllWritingSystemsFields = null,
-			Action<string> writingSystemFocused = null)
+			Action<string> writingSystemFocused = null,
+			ISet<string> hiddenSliceIds = null)
 			=> Compose((ICmObject)entry, cache, "Normal", showHiddenFields, plugins, overrides,
 				showAllWritingSystemsFields: showAllWritingSystemsFields,
-				writingSystemFocused: writingSystemFocused);
+				writingSystemFocused: writingSystemFocused,
+				hiddenSliceIds: hiddenSliceIds);
 
 		/// <summary>
 		/// Compose the structured detail view for ANY record root + starting layout -- the
@@ -141,7 +144,8 @@ namespace SIL.FieldWorks.XWorks
 			ViewDefinitionOverrideResolver overrides = null,
 			string layoutChoiceField = null,
 			ISet<string> showAllWritingSystemsFields = null,
-			Action<string> writingSystemFocused = null)
+			Action<string> writingSystemFocused = null,
+			ISet<string> hiddenSliceIds = null)
 		{
 			if (obj == null) throw new ArgumentNullException(nameof(obj));
 			if (cache == null) throw new ArgumentNullException(nameof(cache));
@@ -162,7 +166,7 @@ namespace SIL.FieldWorks.XWorks
 			IDetailEditContext composedContext = null;
 			var state = new ComposeState(cache, showHiddenFields,
 				plugins ?? SlicePluginRegistry.Default, () => composedContext, overrides,
-				showAllWritingSystemsFields, writingSystemFocused);
+				showAllWritingSystemsFields, writingSystemFocused, hiddenSliceIds);
 			state.EnterModel(root);
 			foreach (var node in root.Roots)
 				state.Walk(node, obj, 0);
@@ -352,8 +356,10 @@ namespace SIL.FieldWorks.XWorks
 				SlicePluginRegistry plugins, Func<IDetailEditContext> editContextAccessor,
 				ViewDefinitionOverrideResolver overrides = null,
 				ISet<string> showAllWritingSystemsFields = null,
-				Action<string> writingSystemFocused = null)
+				Action<string> writingSystemFocused = null,
+				ISet<string> hiddenSliceIds = null)
 			{
+				_hiddenSliceIds = hiddenSliceIds;
 				_cache = cache;
 				_showHidden = showHiddenFields;
 				_plugins = plugins;
@@ -564,27 +570,28 @@ namespace SIL.FieldWorks.XWorks
 
 			private bool HideWhenEmpty(ViewNode node) => node.Visibility == ViewVisibility.IfData && !_showHidden;
 
-			/// <summary>
-			/// Whether the DOMAIN says this field does not apply to this object, which legacy
-			/// asks before building a slice (SliceFilter -> ICmObject.IsFieldRelevant). StemName
-			/// is irrelevant on a clitic or particle, Position on a non-infix, InflectionClasses
-			/// on some affix forms.
-			///
-			/// Not the same as hidden: show-hidden-fields does NOT reveal an irrelevant field, so
-			/// this is checked whatever _showHidden says. Legacy's propsToMonitor set is
-			/// discarded -- it exists so a live slice can re-evaluate when the property it
-			/// depends on changes, and this view recomposes on PropChanged instead.
-			/// </summary>
 			private readonly HashSet<Tuple<int, int>> _propsToMonitor
 				= new HashSet<Tuple<int, int>>();
 
+			/// <summary>
+			/// Whether the DOMAIN says this field does not apply to this object. StemName is
+			/// irrelevant on a clitic or particle, Position on a non-infix, InflectionClasses on
+			/// some affix forms, FromPartsOfSpeech on an entry with no clitic.
+			///
+			/// The relevance gate of the two <c>SliceFilter.IncludeSlice</c> applies. The other,
+			/// <see cref="IsFilteredOutByTool"/>, looks the slice's id up in the tool's
+			/// filter list.
+			///
+			/// Not the same as hidden: show-hidden-fields leaves an irrelevant field withheld,
+			/// so this is asked whatever <c>_showHidden</c> says.
+			/// </summary>
 			private bool IsIrrelevantForObject(ViewNode node, ICmObject obj)
 			{
 				if (obj == null || string.IsNullOrEmpty(node?.Field))
 					return false;
 				// A condition aimed at another object names a field of THAT object's class,
-				// so there is nothing here to ask about. Legacy resolves no flid for one
-				// either, and lets the node through.
+				// so there is nothing here to ask about: no flid resolves, and the node
+				// goes through.
 				var conditionTarget = node.Condition?.Target;
 				if (!string.IsNullOrEmpty(conditionTarget)
 					&& !string.Equals(conditionTarget, "this", StringComparison.OrdinalIgnoreCase))
@@ -601,10 +608,26 @@ namespace SIL.FieldWorks.XWorks
 				return !obj.IsFieldRelevant(flid, _propsToMonitor);
 			}
 
+			// The tool's filter list, by authored slice id; null when the tool configures none.
+			private readonly ISet<string> _hiddenSliceIds;
+
+			/// <summary>
+			/// Whether the TOOL withholds this row: a tool's configuration can name slice ids
+			/// to leave out, and a node carrying one of them is dropped. Checked before the
+			/// node kind is dispatched, so a withheld node takes its subtree with it.
+			/// </summary>
+			private bool IsFilteredOutByTool(ViewNode node)
+				=> _hiddenSliceIds != null
+					&& !string.IsNullOrEmpty(node?.SliceId)
+					&& _hiddenSliceIds.Contains(node.SliceId);
+
 			public void Walk(ViewNode node, ICmObject obj, int depth)
 			{
-				if (IsHidden(node) || depth > MaxDepth || IsIrrelevantForObject(node, obj))
+				if (IsHidden(node) || depth > MaxDepth || IsFilteredOutByTool(node)
+					|| IsIrrelevantForObject(node, obj))
+				{
 					return;
+				}
 
 				// Rows added while this node walks are stamped with its help-topic inputs.
 				_walkNodes.Push(node);
@@ -1168,8 +1191,12 @@ namespace SIL.FieldWorks.XWorks
 				// A multistring editor is the legacy MultiStringSlice; its in-string context menu adds the
 				// shared mnuDataTree-MultiStringSlice group (Writing Systems submenu), a single-ws string
 				// editor does not. Carry that so the menu composition mirrors the legacy slice test.
-				textField.IsMultiStringRow = string.Equals(node.RawEditor,
-					EditorKindMap.MultiStringEditor, StringComparison.OrdinalIgnoreCase);
+				textField.IsMultiStringRow = IsMultiStringEditor(node);
+				// The Writing Systems menu offers more than the row renders, so carry the three
+				// layout facts that decide its option list (FieldWritingSystemOptions).
+				textField.OptionalWritingSystem = node.OptionalWritingSystem;
+				textField.ForceIncludeEnglish = node.ForceIncludeEnglish;
+				textField.VisibleWritingSystems = node.VisibleWritingSystems;
 				if (editable)
 				{
 					// An editable text row over a run-bearing TsString property (String/MultiString)
@@ -1191,20 +1218,49 @@ namespace SIL.FieldWorks.XWorks
 				RegisterTextRowEditHandler(stableId, hvo, flid, type, systems);
 			}
 
+			// The multistring editor is the one whose rows carry a Writing Systems menu.
+			private static bool IsMultiStringEditor(ViewNode node)
+				=> string.Equals(node.RawEditor, EditorKindMap.MultiStringEditor,
+					StringComparison.OrdinalIgnoreCase);
+
+			// The layout facts that decide a multistring row's writing systems, as the shared
+			// rule takes them.
+			private WritingSystemFieldSpec WritingSystemSpecOf(ViewNode node, int hvo)
+			{
+				var spec = WritingSystemFieldSpec.FromLayout(hvo, node.WritingSystem,
+					node.OptionalWritingSystem, node.ForceIncludeEnglish);
+				// Seeding the project's pronunciation list belongs to the caller: the shared
+				// rule only reads the model. This keeps what ResolveWritingSystems does.
+				if (spec.WritingSystems == WritingSystemServices.kwsPronunciations)
+					WritingSystemServices.InitializePronunciationWritingSystems(_cache);
+				return spec;
+			}
+
 			// A text row's writing systems: the layout set, restricted by visibleWritingSystems
 			// unless the row's part is under the Show-all reveal, then collapsed to one ws for
 			// String/Unicode props.
 			private IReadOnlyList<CoreWritingSystemDefinition> ResolveTextRowWritingSystems(int hvo, int flid,
 				CellarPropertyType type, ViewNode node)
 			{
-				IReadOnlyList<CoreWritingSystemDefinition> systems = ResolveWritingSystems(_cache, node.WritingSystem);
-				// A per-field writing-system visibility override (legacy visibleWritingSystems) restricts
-				// the resolved set to the authored subset (in the override's order), intersected with the
-				// field's valid writing systems. An empty intersection keeps the full set rather than hiding
-				// the field entirely (defensive -- a stale override must never blank a real
-				// field).
-				if (_showAllWsFields == null || !_showAllWsFields.Contains(node.StableId))
-					systems = ApplyVisibleWritingSystems(systems, node.VisibleWritingSystems);
+				var revealed = _showAllWsFields != null && _showAllWsFields.Contains(node.StableId);
+				IReadOnlyList<CoreWritingSystemDefinition> systems;
+				if (IsMultiStringEditor(node))
+				{
+					// The Writing Systems menu offers writing systems the project has not
+					// checked. Render from the SAME rule, or a chosen one cannot appear.
+					var spec = WritingSystemSpecOf(node, hvo);
+					systems = revealed
+						? FieldWritingSystemOptions.Options(_cache, spec)
+						: FieldWritingSystemOptions.Shown(_cache, spec, node.VisibleWritingSystems);
+				}
+				else
+				{
+					systems = ResolveWritingSystems(_cache, node.WritingSystem);
+					// A stored selection restricts the resolved set, in its own order. An empty
+					// intersection keeps the full set rather than blanking a real field.
+					if (!revealed)
+						systems = ApplyVisibleWritingSystems(systems, node.VisibleWritingSystems);
+				}
 				if ((type == CellarPropertyType.String || type == CellarPropertyType.Unicode)
 					&& systems.Count > 0)
 				{

@@ -211,6 +211,110 @@ namespace FwAvaloniaTests
 			Dispatcher.UIThread.RunJobs();
 		}
 
+		/// <summary>
+		/// A press on the field-options button must not take focus from the row's editor:
+		/// the editor would commit its pending text before the menu even opens. SliceTreeNode's
+		/// menu icon never took focus either.
+		/// </summary>
+		[AvaloniaTest]
+		public void FieldMenuButton_DoesNotTakeFocus_FromTheRowsEditor_OnAPointerClick()
+		{
+			var (window, view, requests) = Show(Field("Gloss", DetailFieldKind.Text, menuId: "mnuDataTree-Help"));
+			var editor = view.GetVisualDescendants().OfType<TextBox>().First();
+			editor.Focus();
+			Dispatcher.UIThread.RunJobs();
+			var kebab = Find<Button>(view, "Gloss.FieldMenu");
+			// Hovering the row reveals the button, as a user's pointer would on the way to it.
+			var point = kebab.TranslatePoint(new Point(2, 2), window);
+			Assert.That(point, Is.Not.Null);
+			window.MouseMove(point.Value);
+			Dispatcher.UIThread.RunJobs();
+			Assert.That(kebab.IsHitTestVisible, Is.True, "precondition: the hover revealed the button");
+
+			window.MouseDown(point.Value, MouseButton.Left);
+			Dispatcher.UIThread.RunJobs();
+			Assert.That(editor.IsFocused, Is.True, "the press does not move focus to the button");
+			window.MouseUp(point.Value, MouseButton.Left);
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(editor.IsFocused, Is.True, "the editor keeps focus across the click");
+			Assert.That(requests, Has.Count.EqualTo(1), "and the click still raises the menu");
+			Assert.That(requests[0].Kind, Is.EqualTo(DetailMenuKind.SliceMenu));
+			Assert.That(requests[0].AnchorControl, Is.SameAs(kebab));
+		}
+
+		/// <summary>
+		/// A menu gesture on another row's label moves focus to that row first, as
+		/// Slice.TakeFocus does on a tree-node click; otherwise the menu would close back onto
+		/// the old row, scrolling the view away from the one the user is on.
+		/// </summary>
+		[AvaloniaTest]
+		public void FieldMenuButton_OnAnotherRow_MovesFocusToThatRowsEditor()
+		{
+			var (window, view, requests) = Show(
+				Field("Gloss", DetailFieldKind.Text, menuId: "mnuDataTree-Help"),
+				Field("Comment", DetailFieldKind.Text, menuId: "mnuDataTree-Help"));
+			var editors = view.GetVisualDescendants().OfType<TextBox>().ToList();
+			var gloss = editors[0];
+			var comment = editors[1];
+			gloss.Focus();
+			Dispatcher.UIThread.RunJobs();
+			var kebab = Find<Button>(view, "Comment.FieldMenu");
+			var point = kebab.TranslatePoint(new Point(2, 2), window);
+			Assert.That(point, Is.Not.Null);
+			window.MouseMove(point.Value);
+			Dispatcher.UIThread.RunJobs();
+
+			window.MouseDown(point.Value, MouseButton.Left);
+			window.MouseUp(point.Value, MouseButton.Left);
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(comment.IsFocused, Is.True, "the row the menu belongs to takes focus");
+			Assert.That(gloss.IsFocused, Is.False);
+			Assert.That(requests, Has.Count.EqualTo(1));
+			Assert.That(requests[0].Field.Field, Is.EqualTo("Comment"));
+		}
+
+		/// <summary>
+		/// A vector row's items are its selection, so taking the row's focus must not make one
+		/// current: the focus goes to the field-options button instead.
+		/// </summary>
+		[AvaloniaTest]
+		public void RightClick_OnAVectorRowsLabel_FromAnotherRow_FocusesItsButton_NotAnItem()
+		{
+			var (window, view, requests) = Show(
+				Field("Gloss", DetailFieldKind.Text, menuId: "mnuDataTree-Help"),
+				VectorField("Subentries", "a", "b"));
+			view.GetVisualDescendants().OfType<TextBox>().First().Focus();
+			Dispatcher.UIThread.RunJobs();
+
+			RightClick(window, Find<TextBlock>(view, "Subentries.Label"));
+
+			Assert.That(Find<Button>(view, "Subentries.FieldMenu").IsFocused, Is.True,
+				"the row has focus, on its button");
+			Assert.That(requests, Has.Count.EqualTo(1));
+			Assert.That(requests[0].SelectedItemKey, Is.Null, "no item was made current");
+		}
+
+		[AvaloniaTest]
+		public void RightClick_OnAnotherRowsLabel_MovesFocusToThatRowsEditor()
+		{
+			var (window, view, requests) = Show(
+				Field("Gloss", DetailFieldKind.Text, menuId: "mnuDataTree-Help"),
+				Field("Comment", DetailFieldKind.Text, menuId: "mnuDataTree-Help"));
+			var editors = view.GetVisualDescendants().OfType<TextBox>().ToList();
+			var gloss = editors[0];
+			var comment = editors[1];
+			gloss.Focus();
+			Dispatcher.UIThread.RunJobs();
+
+			RightClick(window, Find<TextBlock>(view, "Comment.Label"));
+
+			Assert.That(comment.IsFocused, Is.True, "the row the menu belongs to takes focus");
+			Assert.That(requests, Has.Count.EqualTo(1));
+			Assert.That(requests[0].Field.Field, Is.EqualTo("Comment"));
+		}
+
 		[AvaloniaTest]
 		public void FieldMenuButton_OnLabelRow_RaisesTheSliceMenuRequest_WithTheLegacyMenuId()
 		{
@@ -835,17 +939,25 @@ namespace FwAvaloniaTests
 			Assert.That(ReferenceEquals(requests[0].AnchorControl, second), Is.True);
 		}
 
-		// Items take focus from a click (so the keys and the context-menu key reach them) but
-		// add no Tab stops to the detail view.
+		// Items take focus from a click (so the keys and the context-menu key reach them), and
+		// only the first is a Tab stop: Tab always enters a row at its first item, whatever is
+		// current.
 		[AvaloniaTest]
-		public void VectorItems_AreFocusable_ButNotTabStops()
+		public void VectorItems_AreFocusable_AndOnlyTheFirstIsATabStop()
 		{
 			var (_, view, _) = Show(VectorField("Subentries", "a", "b"));
 			var vector = Find<FwReferenceVectorField>(view, "Subentries");
 			var first = Find<TextBlock>(view, "Subentries.Item.a");
+			var second = Find<TextBlock>(view, "Subentries.Item.b");
 			Assert.That(first.Focusable, Is.True);
-			Assert.That(KeyboardNavigation.GetIsTabStop(first), Is.False, "items are not tab stops");
+			Assert.That(KeyboardNavigation.GetIsTabStop(first), Is.True, "the first item is the stop");
+			Assert.That(KeyboardNavigation.GetIsTabStop(second), Is.False, "the others are not");
 			Assert.That(vector.Focusable, Is.False, "nor is the row");
+
+			vector.SelectItem("b");
+			Assert.That(KeyboardNavigation.GetIsTabStop(first), Is.True,
+				"making another item current does not move the stop");
+			Assert.That(KeyboardNavigation.GetIsTabStop(second), Is.False);
 		}
 
 		// Backspace or Delete on a focused item removes it, staging through the edit context

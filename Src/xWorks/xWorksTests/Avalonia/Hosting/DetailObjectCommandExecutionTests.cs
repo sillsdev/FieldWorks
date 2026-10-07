@@ -11,6 +11,7 @@ using System.Windows.Forms;
 using System.Xml;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.Controls;
+using SIL.FieldWorks.Common.DetailRules;
 using SIL.FieldWorks.Common.FwAvalonia;
 using SIL.FieldWorks.Common.FwAvalonia.Detail;
 using SIL.FieldWorks.Common.FwAvalonia.ViewDefinition;
@@ -19,10 +20,12 @@ using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
 using XCore;
 // Both namespaces above define DataTree; the adapter tests mean the legacy WinForms one.
 using LegacyDataTree = SIL.FieldWorks.Common.Framework.DetailControls.DataTree;
+using PhonEnvRecognizer = SIL.LCModel.Core.Phonology.PhonEnvRecognizer;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -194,6 +197,13 @@ namespace SIL.FieldWorks.XWorks
 			public int SelectedItemIndex { get; set; }
 		}
 
+		private static DetailMenuRequest ItemRequest(DetailField field, int index, TextEditorStub editor)
+		{
+			editor.SelectedItemKey = field.Items[index].Key;
+			editor.SelectedItemIndex = index;
+			return DetailMenuRequest.FromAnchor(null, field, DetailMenuKind.ItemMenu, editor);
+		}
+
 		// Two complex forms whose primary lexeme is the test entry, so its Subentries row shows
 		// two items; then the host re-shows the record so its edit context knows the row.
 		private void MakeTwoSubentries()
@@ -229,14 +239,12 @@ namespace SIL.FieldWorks.XWorks
 		public void SubentriesItemMenu_OffersTheJumpAsCtrlClickDefault_AndTheMoveCommands_ForTheClickedItem()
 		{
 			MakeTwoSubentries();
-			var field = SubentriesField();
-			var request = DetailMenuRequest.FromAnchor(null, field, DetailMenuKind.ItemMenu,
-				new ItemSelection { SelectedItemKey = field.Items[0].Key, SelectedItemIndex = 0 });
+			var request = ItemRequest(SubentriesField(), 0);
 
-			var items = m_view.BuildReferenceItemMenu(request, out var colleague);
+			var items = m_view.BuildReferenceItemMenu(request, out var itemUi);
 			try
 			{
-				Assert.That(colleague, Is.Not.Null, "the clicked item's object UI joins as the temporary colleague");
+				Assert.That(itemUi, Is.Not.Null, "the clicked item's object UI answers the jumps");
 				var jump = items.FirstOrDefault(i => !i.IsSeparator
 					&& i.Label.StartsWith("Show Entry in Lexicon", StringComparison.Ordinal));
 				Assert.That(jump, Is.Not.Null, "the clicked entry's jump command materializes");
@@ -253,13 +261,254 @@ namespace SIL.FieldWorks.XWorks
 			}
 			finally
 			{
-				colleague?.Dispose();
+				itemUi?.Dispose();
 			}
+		}
+
+		private static DetailMenuRequest ItemRequest(DetailField field, int index)
+			=> DetailMenuRequest.FromAnchor(null, field, DetailMenuKind.ItemMenu,
+				new ItemSelection { SelectedItemKey = field.Items[index].Key, SelectedItemIndex = index });
+
+		// Whether the hidden command adapter tree has been built for this view.
+		private bool HiddenTreeExists => (bool)GetField(m_view, "m_dataTreeInitialized");
+
+		// The item menu's native authority answers the reference-choices menu, so an item menu
+		// is built from the row and the item alone.
+
+		[Test]
+		public void ReferenceItemAuthority_AnswersEveryLeafOfItsMenu()
+		{
+			MakeTwoSubentries();
+			var authority = m_view.CreateReferenceItemAuthority(ItemRequest(SubentriesField(), 0), out var itemUi);
+			using (itemUi)
+			{
+				var window = m_propertyTable.GetValue<XWindow>("window");
+				var menu = window.GetContextMenuChoiceGroup(new[] { ReferenceItemMenuAuthority.MenuId });
+				menu.PopulateNow(querySubmenuVisibility: false);
+
+				var leaves = Leaves(menu).ToList();
+				Assert.That(leaves.Count, Is.GreaterThanOrEqualTo(40),
+					"the shipped menu carries the jumps, the filters, the two marks and the moves");
+				foreach (var leaf in leaves)
+				{
+					Assert.That(leaf.ConfigurationNode, Is.Not.Null,
+						"leaf '{0}' has no configuration node, so no authority can claim it", leaf.Label);
+					Assert.That(() => authority.Build(ReferenceItemMenuAuthority.MenuId, leaf), Throws.Nothing,
+						"the authority does not answer leaf '{0}'", leaf.HelpId);
+				}
+				Assert.That(() => XCoreMenuBridge.CreateMenuItems(window, new[] { ReferenceItemMenuAuthority.MenuId },
+					null, null, authority), Throws.Nothing, "the whole menu builds through the bridge");
+				var targets = leaves.OfType<CommandChoice>()
+					.Where(c => c.Message == SIL.FieldWorks.FdoUi.CmObjectUi.JumpToToolMessage)
+					.Select(c => c.CommandObject.TargetId).Distinct().ToList();
+				Assert.That(targets, Is.EqualTo(new[] { Guid.Empty }),
+					"building the menu leaves no jump command carrying a target for a later menu");
+			}
+		}
+
+		[Test]
+		public void ReferenceItemAuthority_RejectsALeafItDoesNotAnswer()
+		{
+			MakeTwoSubentries();
+			var authority = m_view.CreateReferenceItemAuthority(ItemRequest(SubentriesField(), 0), out var itemUi);
+			using (itemUi)
+			{
+				var window = m_propertyTable.GetValue<XWindow>("window");
+				var objectMenu = window.GetContextMenuChoiceGroup(new[] { RecordEditView.ObjectMenuId });
+				objectMenu.PopulateNow();
+				var foreignLeaf = objectMenu.OfType<ChoiceBase>().First(c => c.HelpId == ObjectMenuAuthority.HelpCommandId);
+
+				Assert.That(() => authority.Build(ReferenceItemMenuAuthority.MenuId, foreignLeaf),
+					Throws.InvalidOperationException, "an owned id must be answered in full, never partially");
+			}
+		}
+
+		[Test]
+		public void ItemMenu_IsOwned_ForReferenceChoices_AndForEnvironments()
+		{
+			MakeTwoSubentries();
+			var authority = m_view.CreateReferenceItemAuthority(ItemRequest(SubentriesField(), 0), out var itemUi);
+			using (itemUi)
+			{
+				Assert.That(authority.Owns(itemUi.ContextMenuId), Is.True, "a subentry's item menu is answered natively");
+				Assert.That(authority.Owns(RecordEditView.ObjectMenuId), Is.False);
+			}
+			var envAuthority = m_view.CreateReferenceItemAuthority(ItemRequest(EnvironmentsFieldWithOneItem(), 0),
+				out var envUi);
+			using (envUi)
+			{
+				Assert.That(envUi.ContextMenuId, Is.EqualTo(ReferenceItemMenuAuthority.EnvironmentMenuId));
+				Assert.That(envAuthority.Owns(envUi.ContextMenuId), Is.True,
+					"an environment's item menu is answered natively too, so no item menu needs the adapter");
+			}
+		}
+
+		[Test]
+		public void ReferenceItemMenu_OfASubentry_IsBuiltWithoutTheAdapterOrTheMediator()
+		{
+			MakeTwoSubentries();
+			var request = ItemRequest(SubentriesField(), 0);
+			Assert.That(HiddenTreeExists, Is.False, "precondition: no hidden tree exists yet");
+			var window = m_propertyTable.GetValue<XWindow>("window");
+			var spy = new DisplaySpyColleague();
+			window.Mediator.AddColleague(spy);
+			try
+			{
+				var items = m_view.BuildReferenceItemMenu(request, out var itemUi);
+				using (itemUi)
+				{
+					Assert.That(spy.Asked, Is.False, "no leaf of an owned item menu reaches the mediator");
+					Assert.That(HiddenTreeExists, Is.False, "an owned item menu never builds the hidden tree");
+					var jump = FindItem(items, "Show Entry in Lexicon" + SIL.FieldWorks.FdoUi.CmObjectUi.CtrlClickSuffix);
+					Assert.That(jump?.Execute, Is.Not.Null, "the item's object UI answers the jump directly");
+					Assert.That(FindItem(items, "Move Right")?.IsEnabled, Is.True);
+				}
+			}
+			finally
+			{
+				window.Mediator.RemoveColleague(spy);
+			}
+		}
+
+		// The item menus the authority renders, pinned per row kind; the trees were captured
+		// from the mediator path the authority replaced, once the two were proved equivalent.
+		[Test]
+		public void ReferenceItemMenu_RendersThePinnedTree_ForEachRowKind()
+		{
+			MakeTwoSubentries();
+			AddAnthropologyCategoryToSense();
+			var fields = DetailComposer.Compose(m_entry, Cache).Model.Fields
+				.Where(f => f.Kind == DetailFieldKind.ReferenceVector && f.Items.Count > 0).ToList();
+
+			var rendered = new Dictionary<string, string>();
+			foreach (var field in fields)
+			{
+				var request = ItemRequest(field, 0);
+				var items = m_view.BuildReferenceItemMenu(request, out var itemUi);
+				if (itemUi == null)
+					continue;
+				itemUi.Dispose();
+				rendered[field.Field] = Describe(items);
+			}
+			foreach (var pair in rendered)
+				TestContext.WriteLine("=== " + pair.Key + Environment.NewLine + pair.Value);
+
+			Assert.That(rendered.Keys, Is.SupersetOf(new[] { "Subentries", "AnthroCodes" }));
+			Assert.That(rendered["Subentries"], Is.EqualTo(PinnedSubentriesItemMenu));
+			Assert.That(rendered["AnthroCodes"], Is.EqualTo(PinnedAnthroCodesItemMenu));
+		}
+
+		private const string Enabled = " [enabled=True checked=False executes=True]";
+		private const string Disabled = " [enabled=False checked=False executes=False]";
+
+		private static readonly string PinnedSubentriesItemMenu = string.Join(Environment.NewLine, new[]
+		{
+			"Show Entry in Lexicon" + SIL.FieldWorks.FdoUi.CmObjectUi.CtrlClickSuffix + Enabled,
+			"---",
+			"Show Entry in Concordance" + Enabled,
+			"---",
+			"Move Left" + Disabled,
+			"Move Right" + Enabled
+		});
+
+		private static readonly string PinnedAnthroCodesItemMenu = string.Join(Environment.NewLine, new[]
+		{
+			"Show in Anthropology Category list" + SIL.FieldWorks.FdoUi.CmObjectUi.CtrlClickSuffix + Enabled,
+			"Filter for Lexical Entries with this category" + Enabled,
+			"Filter for Notebook Records with this category" + Enabled
+		});
+
+		// The one divergence from the colleague path, by design: the mark reads the clicked
+		// item, where the hidden tree has no selection and so never offers it.
+		[Test]
+		public void ShowSubentryUnderComponent_OnAComplexFormsComponentsRow_TogglesThePrimaryLexeme()
+		{
+			MakeTwoSubentries();
+			var complexForm = m_entry.ComplexFormEntries.First();
+			var complexFormRef = complexForm.EntryRefsOS.Single();
+			var field = DetailComposer.Compose(complexForm, Cache).Model.Fields.Single(f =>
+				f.Field == ReferenceItemMenuAuthority.ComponentLexemesField && f.ObjectHvo == complexFormRef.Hvo);
+			var request = ItemRequest(field, field.Items.ToList().FindIndex(i => i.Key == m_entry.Guid.ToString()));
+			const string label = "Show Subentry under this Component";
+
+			var items = m_view.BuildReferenceItemMenu(request, out var itemUi);
+			using (itemUi)
+			{
+				var show = FindItem(items, label);
+				Assert.That(show, Is.Not.Null, "the mark is offered for a component of a complex form");
+				Assert.That(show.IsChecked, Is.True, "the component is a primary lexeme");
+				show.Execute();
+				DrainMediatorAndIdleQueues();
+				Assert.That(complexFormRef.PrimaryLexemesRS, Does.Not.Contain(m_entry));
+			}
+			items = m_view.BuildReferenceItemMenu(request, out itemUi);
+			using (itemUi)
+			{
+				var show = FindItem(items, label);
+				Assert.That(show.IsChecked, Is.False);
+				show.Execute();
+				DrainMediatorAndIdleQueues();
+				Assert.That(complexFormRef.PrimaryLexemesRS, Is.EqualTo(new ICmObject[] { m_entry }));
+			}
+		}
+
+		[Test]
+		public void AnthropologyCategoryItem_OffersTheFilterJumps_AndItsListJumpAsTheDefault()
+		{
+			var sense = AddAnthropologyCategoryToSense();
+			var field = DetailComposer.Compose(m_entry, Cache).Model.Fields.Single(f =>
+				f.Field == AnthroItemFilterLink.FieldName && f.ObjectHvo == sense.Hvo);
+
+			var category = sense.AnthroCodesRC.First();
+			var items = m_view.BuildReferenceItemMenu(ItemRequest(field, 0), out var itemUi);
+			using (itemUi)
+			{
+				var lexicon = FindItem(items, "Filter for Lexical Entries with this category");
+				var notebook = FindItem(items, "Filter for Notebook Records with this category");
+				Assert.That(lexicon?.Execute, Is.Not.Null, "the lexicon filter jump is offered and runs");
+				Assert.That(notebook?.Execute, Is.Not.Null, "the notebook filter jump is offered and runs");
+				var link = CaptureFollowLink(lexicon.Execute);
+				Assert.That(link, Is.Not.Null, "the filter jump posts a link");
+				Assert.That(link.ToolName, Is.EqualTo("lexiconEdit"));
+				Assert.That(link.PropertyTableEntries.Single(p => p.name == "HvoOfAnthroItem").value,
+					Is.EqualTo(category.Hvo.ToString()), "the link filters on the clicked category");
+				var listJump = items.FirstOrDefault(i => !i.IsSeparator
+					&& i.Label.StartsWith("Show in ", StringComparison.Ordinal));
+				Assert.That(listJump?.Label, Does.EndWith(SIL.FieldWorks.FdoUi.CmObjectUi.CtrlClickSuffix),
+					"the category's own list jump is the Ctrl+click default");
+				Assert.That(FindItem(items, "Move Right"), Is.Null, "a category collection has no order to move in");
+			}
+
+			MakeTwoSubentries();
+			items = m_view.BuildReferenceItemMenu(ItemRequest(SubentriesField(), 0), out itemUi);
+			using (itemUi)
+			{
+				Assert.That(FindItem(items, "Filter for Lexical Entries with this category"), Is.Null,
+					"the filter jumps belong to the Anthropology Categories row alone");
+			}
+		}
+
+		// The first sense gains one anthropology category, so the entry composes an Anthropology
+		// Categories row with one item.
+		private ILexSense AddAnthropologyCategoryToSense()
+		{
+			var sense = m_entry.SensesOS[0];
+			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
+			{
+				if (Cache.LangProject.AnthroListOA == null)
+					Cache.LangProject.AnthroListOA = Cache.ServiceLocator.GetInstance<ICmPossibilityListFactory>().Create();
+				var category = Cache.ServiceLocator.GetInstance<ICmAnthroItemFactory>().Create();
+				Cache.LangProject.AnthroListOA.PossibilitiesOS.Add(category);
+				category.Name.SetAnalysisDefaultWritingSystem("Kinship");
+				sense.AnthroCodesRC.Add(category);
+			});
+			DrainMediatorAndIdleQueues();
+			return sense;
 		}
 
 		// An allomorph carrying one environment: PhoneEnv is a reference COLLECTION, which
 		// resolves to a different object UI, and so to a different menu, than a sequence.
-		private DetailField EnvironmentsFieldWithOneItem()
+		private DetailField EnvironmentsFieldWithOneItem(string saved = "/_#")
 		{
 			IMoStemAllomorph allomorph = null;
 			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
@@ -271,7 +520,7 @@ namespace SIL.FieldWorks.XWorks
 				var env = Cache.ServiceLocator.GetInstance<IPhEnvironmentFactory>().Create();
 				Cache.LanguageProject.PhonologicalDataOA.EnvironmentsOS.Add(env);
 				env.StringRepresentation =
-					TsStringUtils.MakeString("/_#", Cache.DefaultVernWs);
+					TsStringUtils.MakeString(saved, Cache.DefaultVernWs);
 				allomorph.PhoneEnvRC.Add(env);
 			});
 			DrainMediatorAndIdleQueues();
@@ -293,9 +542,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void AnEnvironmentItem_ResolvesToTheMenuThatCarriesItsCommands()
 		{
-			var field = EnvironmentsFieldWithOneItem();
-			var request = DetailMenuRequest.FromAnchor(null, field, DetailMenuKind.ItemMenu,
-				new ItemSelection { SelectedItemKey = field.Items[0].Key, SelectedItemIndex = 0 });
+			var request = ItemRequest(EnvironmentsFieldWithOneItem(), 0);
 
 			using (var ui = m_view.ResolveItemUi(request))
 			{
@@ -315,6 +562,353 @@ namespace SIL.FieldWorks.XWorks
 			{
 				colleague?.Dispose();
 			}
+		}
+
+		// ===== Environment rows: the item menu and the two insert label menus =====
+
+		private const string JumpToEnvironmentsLabel = "Show in Environments list";
+		private const string DescribeErrorLabel = "Describe Error in Environment";
+		private const string InsertSlashLabel = "Insert Environment slash";
+		private const string InsertBarLabel = "Insert Environment bar";
+		private const string InsertNaturalClassLabel = "Insert Natural Class";
+		private const string InsertOptionalItemLabel = "Insert Optional Item";
+		private const string InsertHashMarkLabel = "Insert Word Boundary";
+		private static readonly string[] InsertLabels =
+		{
+			InsertSlashLabel, InsertBarLabel, InsertNaturalClassLabel, InsertOptionalItemLabel, InsertHashMarkLabel
+		};
+
+		private static void AssertInsertsEnabled(IReadOnlyList<DetailMenuItem> items, params string[] enabled)
+		{
+			foreach (var label in InsertLabels)
+			{
+				var item = FindItem(items, label);
+				Assert.That(item, Is.Not.Null, "'{0}' is offered", label);
+				var expected = Array.IndexOf(enabled, label) >= 0;
+				Assert.That(item.IsEnabled, Is.EqualTo(expected), "'{0}' enabled", label);
+				Assert.That(item.Execute != null, Is.EqualTo(expected), "'{0}' executes iff enabled", label);
+			}
+		}
+
+		[Test]
+		public void EnvironmentItemAuthority_AnswersEveryLeafOfItsMenu_AndTakesTheJumpAsDefault()
+		{
+			var field = EnvironmentsFieldWithOneItem();
+			var authority = m_view.CreateReferenceItemAuthority(ItemRequest(field, 0), out var itemUi);
+			using (itemUi)
+			{
+				var window = m_propertyTable.GetValue<XWindow>("window");
+				var menu = window.GetContextMenuChoiceGroup(new[] { ReferenceItemMenuAuthority.EnvironmentMenuId });
+				menu.PopulateNow(querySubmenuVisibility: false);
+
+				var leaves = Leaves(menu).ToList();
+				Assert.That(leaves.Count, Is.EqualTo(7), "the jump, Describe Error and the five inserts");
+				foreach (var leaf in leaves)
+				{
+					Assert.That(leaf.ConfigurationNode, Is.Not.Null,
+						"leaf '{0}' has no configuration node, so no authority can claim it", leaf.Label);
+					Assert.That(() => authority.Build(ReferenceItemMenuAuthority.EnvironmentMenuId, leaf),
+						Throws.Nothing, "the authority does not answer leaf '{0}'", leaf.HelpId);
+				}
+				var items = XCoreMenuBridge.CreateMenuItems(window,
+					new[] { ReferenceItemMenuAuthority.EnvironmentMenuId }, null, null, authority);
+				Assert.That(items, Is.Not.Empty, "the whole menu builds through the bridge");
+				Assert.That(authority.DefaultActivation, Is.Not.Null, "Ctrl+click runs the jump");
+			}
+		}
+
+		[Test]
+		public void EnvironmentItemMenu_IsBuiltWithoutTheAdapterOrTheMediator()
+		{
+			var field = EnvironmentsFieldWithOneItem();
+			Assert.That(HiddenTreeExists, Is.False, "precondition: no hidden tree exists yet");
+			var window = m_propertyTable.GetValue<XWindow>("window");
+			var spy = new DisplaySpyColleague();
+			window.Mediator.AddColleague(spy);
+			try
+			{
+				var items = m_view.BuildReferenceItemMenu(ItemRequest(field, 0), out var itemUi);
+				using (itemUi)
+				{
+					Assert.That(spy.Asked, Is.False, "no leaf of the environment item menu reaches the mediator");
+					Assert.That(HiddenTreeExists, Is.False, "the environment item menu never builds the hidden tree");
+					var jump = FindItem(items, JumpToEnvironmentsLabel + SIL.FieldWorks.FdoUi.CmObjectUi.CtrlClickSuffix);
+					Assert.That(jump?.IsEnabled, Is.True, "the item's object UI answers the jump directly");
+					var describe = FindItem(items, DescribeErrorLabel);
+					Assert.That(describe, Is.Not.Null);
+					Assert.That(describe.IsEnabled, Is.False, "a well-formed environment has no error to describe");
+					// The request carried no text editor, so nothing can be typed into.
+					AssertInsertsEnabled(items);
+				}
+			}
+			finally
+			{
+				window.Mediator.RemoveColleague(spy);
+			}
+		}
+
+		[Test]
+		public void EnvironmentItemMenu_EnablesTheInserts_ByTheEditorsCaret_AndTypesIntoIt()
+		{
+			var field = EnvironmentsFieldWithOneItem(); // its item reads "/_#"
+			var afterSlash = new TextEditorStub { EditorText = "/_#", Caret = 1 };
+			var items = m_view.BuildReferenceItemMenu(ItemRequest(field, 0, afterSlash), out var itemUi);
+			using (itemUi)
+			{
+				AssertInsertsEnabled(items, InsertNaturalClassLabel, InsertOptionalItemLabel, InsertHashMarkLabel);
+				FindItem(items, InsertOptionalItemLabel).Execute();
+				Assert.That(afterSlash.Typed, Is.EqualTo(new[] { (1, 1, "()", 1) }),
+					"the optional item is typed at the snapshotted caret, which lands between its parentheses");
+			}
+
+			var beforeSlash = new TextEditorStub { EditorText = "/_#", Caret = 0 };
+			items = m_view.BuildReferenceItemMenu(ItemRequest(field, 0, beforeSlash), out itemUi);
+			using (itemUi)
+			{
+				AssertInsertsEnabled(items);
+			}
+
+			var noSlashYet = new TextEditorStub { EditorText = "a", Caret = 1 };
+			items = m_view.BuildReferenceItemMenu(ItemRequest(field, 0, noSlashYet), out itemUi);
+			using (itemUi)
+			{
+				AssertInsertsEnabled(items, InsertSlashLabel);
+				FindItem(items, InsertSlashLabel).Execute();
+				Assert.That(noSlashYet.Typed, Is.EqualTo(new[] { (1, 1, "/", 0) }));
+			}
+		}
+
+		[Test]
+		public void EnvironmentsLabelMenu_IsFullyOwned_AndItsInsertsTypeIntoTheSlot()
+		{
+			var field = EnvironmentsFieldWithOneItem();
+			var ids = LabelMenuIds(field);
+			Assert.That(ids, Does.Contain(EnvironmentInsertMenuAuthority.EnvironmentsMenuId));
+			Assert.That(HiddenTreeExists, Is.False, "precondition: no hidden tree exists yet");
+
+			// The caret sits in the empty slot for a new environment: no item is current.
+			var slot = new TextEditorStub { EditorText = string.Empty, Caret = 0 };
+			var authority = m_view.CreateMenuAuthority(LabelMenuRequest(field, slot));
+			Assert.That(XCoreMenuBridge.OwnsAll(authority, ids), Is.True,
+				"every id of the Environments label menu is answered natively");
+			var items = BuildWithSpy(ids, authority, out var asked);
+			Assert.That(asked, Is.False, "no leaf reaches the mediator");
+			Assert.That(HiddenTreeExists, Is.False, "the owned label menu never builds the hidden tree");
+			AssertInsertsEnabled(items, InsertSlashLabel);
+			FindItem(items, InsertSlashLabel).Execute();
+			Assert.That(slot.Typed, Is.EqualTo(new[] { (0, 0, "/", 0) }), "the slash starts the new environment");
+			Assert.That(FindItem(items, "Always visible"), Is.Not.Null, "the per-object group rides along");
+
+			// No current item and no editor: nothing to type into.
+			items = BuildWithSpy(ids, m_view.CreateMenuAuthority(LabelMenuRequest(field, NoItem)), out _);
+			AssertInsertsEnabled(items);
+		}
+
+		/// <summary>
+		/// The String Representation row of an environment composes as Unsupported (its editor
+		/// is a WinForms plugin slice) on a tool that is not in the Avalonia catalog yet. Its
+		/// menu is owned all the same, with its inserts disabled, so the day either changes the
+		/// hidden adapter is already out of the picture.
+		/// </summary>
+		[Test]
+		public void StringRepresentationLabelMenu_IsOwned_WithItsInsertsDisabled()
+		{
+			EnvironmentsFieldWithOneItem();
+			var environment = Cache.LanguageProject.PhonologicalDataOA.EnvironmentsOS.Last();
+			var field = DetailComposer.Compose(environment, Cache, layoutName: "Edit").Model.Fields
+				.SingleOrDefault(f => f.Field == "StringRepresentation");
+			Assert.That(field, Is.Not.Null, "the environment composes its String Representation row");
+			Assert.That(field.Kind, Is.EqualTo(DetailFieldKind.Unsupported));
+			Assert.That(field.MenuId, Is.EqualTo(EnvironmentInsertMenuAuthority.StringRepresentationMenuId));
+
+			var ids = LabelMenuIds(field);
+			var authority = m_view.CreateMenuAuthority(LabelMenuRequest(field, NoItem));
+			Assert.That(XCoreMenuBridge.OwnsAll(authority, ids), Is.True);
+			var items = BuildWithSpy(ids, authority, out var asked);
+			Assert.That(asked, Is.False);
+			AssertInsertsEnabled(items);
+		}
+
+		[Test]
+		public void EnvironmentInsertAuthority_RejectsALeafItDoesNotAnswer()
+		{
+			var field = EnvironmentsFieldWithOneItem();
+			var authority = new EnvironmentInsertMenuAuthority(LabelMenuRequest(field, NoItem), m_view);
+			var window = m_propertyTable.GetValue<XWindow>("window");
+			var objectMenu = window.GetContextMenuChoiceGroup(new[] { RecordEditView.ObjectMenuId });
+			objectMenu.PopulateNow();
+			var foreignLeaf = objectMenu.OfType<ChoiceBase>().First(c => c.HelpId == ObjectMenuAuthority.HelpCommandId);
+
+			Assert.That(() => authority.Build(EnvironmentInsertMenuAuthority.EnvironmentsMenuId, foreignLeaf),
+				Throws.InvalidOperationException, "an owned id must be answered in full, never partially");
+			Assert.That(() => authority.BuildList(EnvironmentInsertMenuAuthority.EnvironmentsMenuId,
+				"WritingSystemOptionsForSlice"), Throws.InvalidOperationException,
+				"neither owned id has a list submenu, so any list is refused");
+		}
+
+		[Test]
+		public void DescribeError_IsEnabledForAMalformedEnvironment_WithTheExplanationWinFormsShows()
+		{
+			const string malformed = "/ _ [";
+			var valid = EnvironmentsFieldWithOneItem();
+			var allomorph = (IMoStemAllomorph)Cache.ServiceLocator.ObjectRepository.GetObject(valid.ObjectHvo);
+			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
+			{
+				var bad = Cache.ServiceLocator.GetInstance<IPhEnvironmentFactory>().Create();
+				Cache.LanguageProject.PhonologicalDataOA.EnvironmentsOS.Add(bad);
+				bad.StringRepresentation = TsStringUtils.MakeString(malformed, Cache.DefaultVernWs);
+				allomorph.PhoneEnvRC.Add(bad);
+			});
+			DrainMediatorAndIdleQueues();
+			RefreshedDetailFieldCount();
+			var field = DetailComposer.Compose(m_entry, Cache).Model.Fields
+				.Single(f => f.Field == "PhoneEnv" && f.ObjectHvo == allomorph.Hvo);
+			var badIndex = field.Items.ToList().FindIndex(i => i.Name.Contains("["));
+			Assert.That(badIndex, Is.GreaterThanOrEqualTo(0));
+			Assert.That(field.Items[badIndex].HasValidationMessage, Is.True, "precondition: the domain flags it");
+
+			var items = m_view.BuildReferenceItemMenu(ItemRequest(field, badIndex), out var itemUi);
+			using (itemUi)
+			{
+				var describe = FindItem(items, DescribeErrorLabel);
+				Assert.That(describe?.IsEnabled, Is.True, "a malformed environment has an error to describe");
+				Assert.That(describe.Execute, Is.Not.Null);
+			}
+
+			// What PhoneEnvReferenceView.ShowEnvironmentError would show for the same string,
+			// built the way that view built it before the rule moved to EnvironmentErrors.
+			var recognizer = new PhonEnvRecognizer(Cache.LangProject.PhonologicalDataOA.AllPhonemes().ToArray(),
+				Cache.LangProject.PhonologicalDataOA.AllNaturalClassAbbrs().ToArray());
+			Assert.That(recognizer.Recognize(malformed), Is.False);
+			StringServices.CreateErrorMessageFromXml(malformed, recognizer.ErrorMessage, out _, out var winFormsMessage);
+			var shown = ((IEnvironmentMenuHost)m_view).DescribeEnvironmentError(malformed);
+			TestContext.WriteLine("WinForms: " + winFormsMessage);
+			TestContext.WriteLine("Avalonia: " + shown);
+			Assert.That(shown, Is.EqualTo(winFormsMessage), "Describe Error shows the same explanation on both stacks");
+			Assert.That(field.Items[badIndex].ValidationMessage, Is.EqualTo(winFormsMessage),
+				"and the item's tooltip agrees");
+		}
+
+		/// <summary>
+		/// Describe Error judges the text in the item's editor, unsaved edits included, as the
+		/// WinForms view judges the text in its view; the inserts in the same menu do too.
+		/// </summary>
+		[Test]
+		public void DescribeError_IsEnabled_WhenAnUnsavedEditBreaksAWellFormedEnvironment()
+		{
+			var field = EnvironmentsFieldWithOneItem("/_#");
+
+			var broken = new TextEditorStub { EditorText = "/#", Caret = 2 };
+			var items = m_view.BuildReferenceItemMenu(ItemRequest(field, 0, broken), out var itemUi);
+			using (itemUi)
+			{
+				Assert.That(FindItem(items, DescribeErrorLabel)?.IsEnabled, Is.True,
+					"the editor's text has lost its bar, so there is an error to describe");
+			}
+		}
+
+		/// <summary>
+		/// The saved environment is malformed but the editor holds the fix, so the saved verdict
+		/// must not reach the menu: a stale error is worse than none.
+		/// </summary>
+		[Test]
+		public void DescribeError_IsDisabled_WhenAnUnsavedEditFixesAMalformedEnvironment()
+		{
+			var field = EnvironmentsFieldWithOneItem("/#");
+			Assert.That(field.Items[0].HasValidationMessage, Is.True, "precondition: the saved text is malformed");
+
+			var fixedText = new TextEditorStub { EditorText = "/#_", Caret = 3 };
+			var items = m_view.BuildReferenceItemMenu(ItemRequest(field, 0, fixedText), out var itemUi);
+			using (itemUi)
+			{
+				Assert.That(FindItem(items, DescribeErrorLabel)?.IsEnabled, Is.False,
+					"the editor's text has its bar back, so there is no error to describe");
+			}
+		}
+
+		/// <summary>
+		/// A tool's filter list reaches the composer through the view. The shipped Exception
+		/// "Features" configuration (ProdRestrictEdit) names basicPlusFilter.xml, which withholds
+		/// Status; composing through the view's own configuration, rather than a hand-built id
+		/// set, is what shows the file, the property and the composer are joined.
+		/// </summary>
+		[Test]
+		public void AToolsFilterList_ReachesTheComposer_ThroughTheView()
+		{
+			ICmPossibility restriction = null;
+			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
+			{
+				restriction = Cache.ServiceLocator.GetInstance<ICmPossibilityFactory>().Create();
+				Cache.LangProject.MorphologicalDataOA.ProdRestrictOA.PossibilitiesOS.Add(restriction);
+				restriction.Name.set_String(Cache.DefaultAnalWs,
+					TsStringUtils.MakeString("restriction", Cache.DefaultAnalWs));
+			});
+			var original = SwapToolConfiguration(null);
+			try
+			{
+				var shipped = ProdRestrictEditParameters();
+				Assert.That(shipped.Attributes["filterPath"], Is.Not.Null,
+					"precondition: the shipped configuration names a filter list");
+
+				var unfiltered = (XmlElement)shipped.Clone();
+				unfiltered.RemoveAttribute("filterPath");
+				SwapToolConfiguration(unfiltered);
+				Assert.That(ComposedFields(restriction), Does.Contain("Status"),
+					"control: without the filter list, the same view composes the Status row");
+
+				SwapToolConfiguration(shipped);
+				Assert.That(ComposedFields(restriction), Does.Not.Contain("Status"),
+					"the view's filter list reached the composer and withheld the row");
+			}
+			finally
+			{
+				SwapToolConfiguration(original);
+				NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
+				{
+					if (restriction != null && restriction.IsValidObject)
+						restriction.Delete();
+				});
+			}
+		}
+
+		private IReadOnlyList<string> ComposedFields(ICmObject obj)
+			=> m_view.ComposeDetail(obj, showHidden: true).Model.Fields.Select(f => f.Field).ToList();
+
+		// The record-edit parameters of the shipped ProdRestrictEdit tool: the node that carries
+		// its filterPath and its layout.
+		private static XmlElement ProdRestrictEditParameters()
+		{
+			var document = new XmlDocument();
+			document.Load(Path.Combine(FwDirectoryFinder.CodeDirectory, "Language Explorer",
+				"Configuration", "Grammar", "Edit", "toolConfiguration.xml"));
+			var node = (XmlElement)document.SelectSingleNode(
+				"//tool[@value='ProdRestrictEdit']//parameters[@filterPath]");
+			Assert.That(node, Is.Not.Null, "precondition: the shipped ProdRestrictEdit parameters");
+			return node;
+		}
+
+		// Installs a tool configuration on the view the way ReadParameters does, layout
+		// included, and clears the memoized filter list. Returns the one it replaced; null
+		// changes nothing.
+		private XmlNode SwapToolConfiguration(XmlNode configuration)
+		{
+			var parameters = typeof(XCoreUserControl).GetField("m_configurationParameters",
+				BindingFlags.Instance | BindingFlags.NonPublic);
+			var layout = typeof(RecordEditView).GetField("m_layoutName",
+				BindingFlags.Instance | BindingFlags.NonPublic);
+			var memo = typeof(RecordEditView).GetField("m_hiddenSliceIds",
+				BindingFlags.Instance | BindingFlags.NonPublic);
+			Assert.That(parameters, Is.Not.Null);
+			Assert.That(layout, Is.Not.Null);
+			Assert.That(memo, Is.Not.Null);
+			var previous = (XmlNode)parameters.GetValue(m_view);
+			if (configuration != null)
+			{
+				parameters.SetValue(m_view, configuration);
+				layout.SetValue(m_view, configuration.Attributes?["layout"]?.Value);
+				memo.SetValue(m_view, null);
+			}
+			return previous;
 		}
 
 		[Test]
@@ -338,10 +932,47 @@ namespace SIL.FieldWorks.XWorks
 			}
 			Assert.That(Cache.ServiceLocator.ObjectRepository.IsValidObjectId(targetHvo), Is.True);
 
-			// The default activation runs the object UI's Ctrl-click path end to end without
-			// faulting (the jump is a mediator FollowLink this headless window does not service).
-			Assert.DoesNotThrow(() => m_view.OnDetailItemMenuRequested(request));
-			DrainMediatorAndIdleQueues();
+			// The default activation posts the first enabled jump's link for the clicked
+			// subentry and builds no hidden tree on the way.
+			var link = CaptureFollowLink(() => m_view.OnDetailItemMenuRequested(request));
+			Assert.That(link, Is.Not.Null, "the Ctrl+click default runs a jump");
+			Assert.That(link.ToolName, Is.EqualTo("lexiconEdit"), "Show Entry in Lexicon is the first enabled jump");
+			Assert.That(link.TargetGuid, Is.EqualTo(new Guid(field.Items[1].Key)), "the jump targets the clicked subentry");
+			Assert.That(HiddenTreeExists, Is.False, "a native Ctrl+click never points the adapter at the row");
+		}
+
+		// Runs an action and returns the link it posts, once the post has been delivered.
+		private FwLinkArgs CaptureFollowLink(Action action)
+		{
+			var window = m_propertyTable.GetValue<XWindow>("window");
+			var spy = new FollowLinkSpy();
+			window.Mediator.AddColleague(spy);
+			try
+			{
+				action();
+				DrainMediatorAndIdleQueues();
+				return spy.Link;
+			}
+			finally
+			{
+				window.Mediator.RemoveColleague(spy);
+			}
+		}
+
+		// Captures the link a jump posts. It sorts ahead of the window's own link listener,
+		// which shares the High priority and was registered first, so it sees the link first.
+		private sealed class FollowLinkSpy : IxCoreColleague
+		{
+			public FwLinkArgs Link { get; private set; }
+			public void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters) { }
+			public IxCoreColleague[] GetMessageTargets() => new IxCoreColleague[] { this };
+			public bool ShouldNotCall => false;
+			public int Priority => (int)ColleaguePriority.High - 1;
+			public bool OnFollowLink(object args)
+			{
+				Link = args as FwLinkArgs;
+				return true;
+			}
 		}
 
 		[Test]
@@ -652,15 +1283,30 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
-		public void LabelMenu_StillNeedsTheAdapter_WhileTheSharedObjectMenuHasNoAuthority()
+		public void LabelMenu_IsFullyOwned_OnEveryRowKind()
 		{
 			MakeTwoSubentries();
-			var field = SubentriesField();
-			var authority = m_view.CreateReorderVectorAuthority(LabelMenuRequest(field, NoItem));
+			var subentries = SubentriesField();
+			var authority = m_view.CreateMenuAuthority(LabelMenuRequest(subentries, NoItem));
 
-			Assert.That(XCoreMenuBridge.OwnsAll(authority, new[] { ReorderVectorMenuAuthority.MenuId }), Is.True);
-			Assert.That(XCoreMenuBridge.OwnsAll(authority, LabelMenuIds(field)), Is.False,
-				"the label menu merges mnuDataTree-Object, which the mediator still answers");
+			Assert.That(XCoreMenuBridge.OwnsAll(authority, LabelMenuIds(subentries)), Is.True,
+				"the reorder menu and the shared object menu are both answered natively");
+			var helpBound = DetailComposer.Compose(m_entry, Cache).Model.Fields
+				.First(f => f.MenuId == ObjectMenuAuthority.HelpMenuId);
+			Assert.That(XCoreMenuBridge.OwnsAll(authority, LabelMenuIds(helpBound)), Is.True,
+				"a row bound to the empty Help menu merges only owned ids");
+			var multiString = OwnedMultiStringField();
+			Assert.That(XCoreMenuBridge.OwnsAll(m_view.CreateMenuAuthority(LabelMenuRequest(multiString, NoItem)),
+				LabelMenuIds(multiString)), Is.True,
+				"a multi-string row's menu, writing-system list included, is answered natively");
+			var lexemeForm = LexemeFormField();
+			Assert.That(m_view.CreateMultiStringMenuAuthority(lexemeForm).Owns(MultiStringMenuAuthority.MenuId),
+				Is.True, "the shared multi-string group is owned even on a row whose own menu id is not yet");
+			Assert.That(XCoreMenuBridge.OwnsAll(m_view.CreateMenuAuthority(LabelMenuRequest(lexemeForm, NoItem)),
+				LabelMenuIds(lexemeForm)), Is.False,
+				"the Lexeme Form row still needs the adapter for mnuDataTree-LexemeForm, not for its writing systems");
+			Assert.That(m_view.CreateMultiStringMenuAuthority(subentries).Owns(MultiStringMenuAuthority.MenuId),
+				Is.False, "a row that is not multi-string never claims the multi-string menu");
 			Assert.That(XCoreMenuBridge.OwnsAll(null, new[] { ReorderVectorMenuAuthority.MenuId }), Is.False);
 		}
 
@@ -704,9 +1350,14 @@ namespace SIL.FieldWorks.XWorks
 			public DetailMenuItem Build(string menuId, ChoiceBase leaf)
 				=> _hidden.Contains(leaf.HelpId) ? null
 					: new DetailMenuItem(XCoreMenuBridge.StripAccelerator(leaf.Label), isEnabled: true);
+
+			// Echoes the list's id as one item, so a test can see where it spliced in.
+			public IReadOnlyList<DetailMenuItem> BuildList(string menuId, string listId)
+				=> new[] { new DetailMenuItem("list:" + listId, isEnabled: true) };
 		}
 
-		// Records whether the mediator asked anyone to display the Always-visible command.
+		// Records whether the mediator asked anyone to display the Always-visible command or a
+		// Show-in-tool jump.
 		private sealed class DisplaySpyColleague : IxCoreColleague
 		{
 			public bool Asked { get; private set; }
@@ -715,6 +1366,11 @@ namespace SIL.FieldWorks.XWorks
 			public bool ShouldNotCall => false;
 			public int Priority => (int)ColleaguePriority.High;
 			public bool OnDisplayShowFieldAlwaysVisible(object commandObject, ref UIItemDisplayProperties display)
+			{
+				Asked = true;
+				return false;
+			}
+			public bool OnDisplayJumpToTool(object commandObject, ref UIItemDisplayProperties display)
 			{
 				Asked = true;
 				return false;
@@ -802,12 +1458,378 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
-		public void OwnedMenu_WithAListSubmenu_IsRefused()
+		public void OwnedMenu_WithAListSubmenu_TakesItsItemsFromTheAuthority()
 		{
+			// The writing-system list is the one list-populated submenu under an owned id.
+			// Populating it through the mediator would need the hidden adapter's slice.
 			var ids = new[] { RecordEditView.MultiStringSliceMenuId };
-			Assert.That(() => BuildWithSpy(ids, new EchoAuthority(ids), out _),
-				Throws.TypeOf<NotSupportedException>().With.Message.Contains("WritingSystemOptionsForSlice"),
-				"a list-populated submenu has no configured leaves an authority could answer");
+			var items = BuildWithSpy(ids, new EchoAuthority(ids), out var askedMediator);
+
+			var writingSystems = FindItem(items, "Writing Systems");
+			Assert.That(writingSystems, Is.Not.Null, "the owned submenu survives");
+			Assert.That(writingSystems.Children.Select(c => c.Label),
+				Does.Contain("list:WritingSystemOptionsForSlice"),
+				"the authority's list items splice in where the list submenu sat");
+			Assert.That(askedMediator, Is.False,
+				"an owned id asks the mediator nothing, the list submenu included");
+		}
+
+		// The multi-string menu's native authority: the Writing Systems submenu answered from
+		// the row and the shared rule, the rest delegated to the per-object authority.
+
+		[Test]
+		public void MultiStringMenuAuthority_AnswersEveryLeafOfItsMenu()
+		{
+			var authority = m_view.CreateMultiStringMenuAuthority(LexemeFormField());
+			var window = m_propertyTable.GetValue<XWindow>("window");
+			var menu = window.GetContextMenuChoiceGroup(new[] { MultiStringMenuAuthority.MenuId });
+			menu.PopulateNow(querySubmenuVisibility: false);
+
+			var leaves = Leaves(menu).ToList();
+			Assert.That(leaves.Select(l => l.HelpId), Is.EquivalentTo(new[]
+			{
+				MultiStringMenuAuthority.ShowAllCommandId, MultiStringMenuAuthority.ConfigureCommandId,
+				ObjectMenuAuthority.AlwaysVisibleCommandId, ObjectMenuAuthority.IfDataCommandId,
+				ObjectMenuAuthority.NormallyHiddenCommandId, ObjectMenuAuthority.MoveFieldUpCommandId,
+				ObjectMenuAuthority.MoveFieldDownCommandId, ObjectMenuAuthority.HelpCommandId
+			}), "the shipped menu defines exactly the leaves the authority knows");
+			foreach (var leaf in leaves)
+			{
+				Assert.That(() => authority.Build(MultiStringMenuAuthority.MenuId, leaf), Throws.Nothing,
+					"the authority does not answer leaf '{0}'", leaf.HelpId);
+			}
+			// The list submenu has no configured leaves; the authority supplies its items.
+			Assert.That(authority.BuildList(MultiStringMenuAuthority.MenuId,
+				MultiStringMenuAuthority.WritingSystemListId), Is.Not.Empty,
+				"the writing-system list offers the row's options");
+		}
+
+		[Test]
+		public void MultiStringMenuAuthority_RejectsWhatItDoesNotAnswer()
+		{
+			var authority = m_view.CreateMultiStringMenuAuthority(LexemeFormField());
+			var window = m_propertyTable.GetValue<XWindow>("window");
+			var reorderMenu = window.GetContextMenuChoiceGroup(new[] { ReorderVectorMenuAuthority.MenuId });
+			reorderMenu.PopulateNow();
+			var foreignLeaf = reorderMenu.OfType<ChoiceBase>()
+				.First(c => c.HelpId == ReorderVectorMenuAuthority.AlphabeticalOrderCommandId);
+
+			Assert.That(() => authority.Build(MultiStringMenuAuthority.MenuId, foreignLeaf),
+				Throws.InvalidOperationException, "a foreign leaf is refused, never left to the mediator");
+			Assert.That(() => authority.BuildList(MultiStringMenuAuthority.MenuId, "SomeOtherList"),
+				Throws.InvalidOperationException, "a foreign list is refused too");
+		}
+
+		// A transition contract: it compares the native menu with the mediator path and is
+		// deleted with that path. The standalone contracts above carry the behaviour after.
+		[Test]
+		public void MultiStringMenu_NativeAuthority_RendersWhatTheInterceptorPathRendered()
+		{
+			UseHelpProvider(KnowsEveryTopic);
+			var field = LexemeFormField();
+			var ids = LabelMenuIds(field);
+			EnsureAdapter(field.ObjectHvo, field.Field);
+			Assume.That(AdapterTargets(field), "precondition: the adapter twin is the Lexeme Form row");
+
+			var before = Describe(BuildItemsWithOverrideInterceptor(ids, field));
+			var after = Describe(BuildAsTheHostDoes(ids, field));
+
+			Assert.That(after, Is.EqualTo(before),
+				"the native menu renders what the mediator path rendered, writing systems included");
+		}
+
+		[Test]
+		public void MultiStringMenu_IsBuiltWithoutTheAdapterOrTheMediator()
+		{
+			UseHelpProvider(KnowsEveryTopic);
+			var field = OwnedMultiStringField();
+			// No EnsureAdapter: the hidden tree never exists.
+
+			var items = BuildWithSpy(LabelMenuIds(field),
+				m_view.CreateMenuAuthority(LabelMenuRequest(field, NoItem)), out var asked);
+
+			Assert.That(asked, Is.False, "nothing in a multi-string row's label menu reaches the mediator");
+			var writingSystems = FindItem(items, "Writing Systems");
+			Assert.That(writingSystems, Is.Not.Null);
+			var toggles = writingSystems.Children
+				.Where(c => c.Label != "Show all right now" && c.Label != "Configure...").ToList();
+			Assert.That(toggles, Is.Not.Empty, "the row's writing systems are offered");
+			Assert.That(toggles.Count(c => c.IsChecked), Is.GreaterThan(0), "the shown ones are checked");
+			Assert.That(toggles.Where(c => c.IsEnabled).Select(c => c.Execute), Is.All.Not.Null,
+				"an enabled toggle executes");
+			Assert.That(FindItem(items, "Show all right now")?.Execute, Is.Not.Null);
+			Assert.That(FindItem(items, "Configure...")?.Execute, Is.Not.Null);
+		}
+
+		// The per-object menu's native authority: Field Visibility, Move Field and Help answered
+		// from the row and the override layer, so an ordinary row's label menu needs no adapter.
+
+		private static IHelpTopicProvider KnowsEveryTopic => new PatternHelpTopicProvider(id => true);
+
+		private void UseHelpProvider(IHelpTopicProvider provider)
+		{
+			m_propertyTable.SetProperty("HelpTopicProvider", provider, false);
+			m_propertyTable.SetPropertyPersistence("HelpTopicProvider", false);
+		}
+
+		private LegacyDataTree AdapterTree => (LegacyDataTree)GetField(m_view, "m_dataEntryForm");
+
+		// The label menu exactly as OnDetailMenuRequested builds it: the row's authorities for
+		// the ids they own, the override interceptor for the rest.
+		private IReadOnlyList<DetailMenuItem> BuildAsTheHostDoes(string[] ids, DetailField field)
+		{
+			var registry = new OverrideCommandRegistry();
+			m_view.AddOverrideCommands(registry, field);
+			var window = m_propertyTable.GetValue<XWindow>("window");
+			return XCoreMenuBridge.CreateMenuItems(window, ids, registry.TryBuild, null,
+				m_view.CreateMenuAuthority(LabelMenuRequest(field, NoItem)));
+		}
+
+		// Whether the adapter's current slice is the WinForms twin of the row: same object and
+		// same field.
+		private bool AdapterTargets(DetailField field)
+		{
+			var slice = AdapterTree.CurrentSlice;
+			if (slice?.Object == null || slice.Object.Hvo != field.ObjectHvo || slice.Flid == 0)
+				return false;
+			var mdc = (IFwMetaDataCacheManaged)Cache.MetaDataCacheAccessor;
+			return mdc.FieldExists(slice.Flid)
+				&& string.Equals(mdc.GetFieldName(slice.Flid), field.Field, StringComparison.Ordinal);
+		}
+
+		[Test]
+		public void ObjectMenuAuthority_AnswersEveryLeafOfItsMenus()
+		{
+			var authority = m_view.CreateObjectMenuAuthority(LexemeFormField());
+			var window = m_propertyTable.GetValue<XWindow>("window");
+			var menu = window.GetContextMenuChoiceGroup(new[] { ObjectMenuAuthority.MenuId });
+			menu.PopulateNow(querySubmenuVisibility: false);
+
+			var leaves = Leaves(menu).ToList();
+			Assert.That(leaves.Select(l => l.HelpId), Is.EquivalentTo(new[]
+			{
+				ObjectMenuAuthority.AlwaysVisibleCommandId, ObjectMenuAuthority.IfDataCommandId,
+				ObjectMenuAuthority.NormallyHiddenCommandId, ObjectMenuAuthority.MoveFieldUpCommandId,
+				ObjectMenuAuthority.MoveFieldDownCommandId, ObjectMenuAuthority.HelpCommandId
+			}), "the shipped menu defines exactly the leaves the authority knows");
+			foreach (var leaf in leaves)
+			{
+				Assert.That(() => authority.Build(ObjectMenuAuthority.MenuId, leaf), Throws.Nothing,
+					"the authority does not answer leaf '{0}'", leaf.HelpId);
+			}
+
+			var help = window.GetContextMenuChoiceGroup(new[] { ObjectMenuAuthority.HelpMenuId });
+			help.PopulateNow(querySubmenuVisibility: false);
+			Assert.That(Leaves(help), Is.Empty, "mnuDataTree-Help defines no leaf of its own");
+			Assert.That(authority.Owns(ObjectMenuAuthority.HelpMenuId), Is.True);
+		}
+
+		[Test]
+		public void ObjectMenu_OfAnOrdinaryRow_IsBuiltWithoutTheAdapterOrTheMediator()
+		{
+			MakeTwoSubentries();
+			UseHelpProvider(KnowsEveryTopic);
+			var field = SubentriesField();
+			var ids = LabelMenuIds(field);
+			// No EnsureAdapter: the hidden tree never exists.
+
+			var items = BuildWithSpy(ids, m_view.CreateMenuAuthority(LabelMenuRequest(field, NoItem)), out var asked);
+
+			Assert.That(asked, Is.False, "nothing in the label menu reaches the mediator");
+			var visibility = FindItem(items, "Field Visibility");
+			Assert.That(visibility, Is.Not.Null);
+			Assert.That(visibility.Children.Count(c => c.IsChecked), Is.EqualTo(1),
+				"exactly one visibility is the row's current one");
+			Assert.That(visibility.Children.Select(c => c.Execute), Is.All.Not.Null,
+				"a located row's visibility items all execute");
+			var move = FindItem(items, "Move Field");
+			Assert.That(move?.Children.Select(c => c.Label), Is.EqualTo(new[] { "Move Up", "Move Down" }));
+			Assert.That(FindItem(items, "Help...")?.Execute, Is.Not.Null, "Help opens the row's own topic");
+		}
+
+		// Baseline = the path this replaces: mediator through the adapter, interceptor for the
+		// field commands. An unlocatable row is the agreed exception: its commands disable.
+		[Test]
+		public void ObjectMenu_NativeAuthority_RendersWhatTheInterceptorPathRendered_ForEveryRowTheAdapterCanTarget()
+		{
+			AddSense("second gloss");
+			MakeTwoSubentries();
+			UseHelpProvider(KnowsEveryTopic);
+			var fields = DetailComposer.Compose(m_entry, Cache).Model.Fields
+				.Where(f => f.ObjectHvo != 0 && !string.IsNullOrEmpty(f.Field)).ToList();
+
+			var compared = 0;
+			var untargeted = new List<string>();
+			var unlocatable = new List<string>();
+			var mismatches = new List<string>();
+			foreach (var field in fields)
+			{
+				var ids = LabelMenuIds(field);
+				EnsureAdapter(field.ObjectHvo, field.Field);
+				if (!AdapterTargets(field))
+				{
+					untargeted.Add(field.Label + " (" + field.Field + ")");
+					continue;
+				}
+				var native = BuildAsTheHostDoes(ids, field);
+				if (!m_view.TryLocateOverrideTarget(field, out _, out _))
+				{
+					unlocatable.Add(string.Format("{0} ({1}) stableId={2} class={3} layout={4}", field.Label,
+						field.Field, field.StableId, field.ClassName, field.LayoutName));
+					var fieldItems = FindItem(native, "Field Visibility").Children
+						.Concat(FindItem(native, "Move Field").Children).ToList();
+					Assert.That(fieldItems.Select(i => i.IsEnabled), Is.All.False,
+						"an unlocatable row disables its field commands: " + field.Label);
+					continue;
+				}
+				compared++;
+				var before = Describe(BuildItemsWithOverrideInterceptor(ids, field));
+				var after = Describe(native);
+				if (!string.Equals(before, after, StringComparison.Ordinal))
+				{
+					mismatches.Add(string.Format("{0} ({1}):{2}--- interceptor path{2}{3}{2}--- authority{2}{4}",
+						field.Label, field.Field, Environment.NewLine, before, after));
+				}
+			}
+			TestContext.WriteLine("Rows the adapter could not target: " + string.Join(", ", untargeted));
+			TestContext.WriteLine("Rows with no override target:" + Environment.NewLine
+				+ string.Join(Environment.NewLine, unlocatable));
+			Assert.That(compared, Is.GreaterThan(10), "enough rows have an adapter twin to make the comparison meaningful");
+			Assert.That(mismatches, Is.Empty, string.Join(Environment.NewLine, mismatches));
+		}
+
+		// The adapter finds no slice for the sense's Publish In row and answers Help from another
+		// slice; the authority resolves the row's own topic.
+		[Test]
+		public void Help_OnPublishSenseIn_OpensTheRowsOwnTopic()
+		{
+			UseHelpProvider(KnowsEveryTopic);
+			var sense = m_entry.SensesOS[0];
+			var field = DetailComposer.Compose(m_entry, Cache).Model.Fields
+				.Single(f => f.ObjectHvo == sense.Hvo && f.Field == "PublishIn");
+			EnsureAdapter(field.ObjectHvo, field.Field);
+			TestContext.WriteLine("adapter topic: " + AdapterTree.CurrentSlice?.GetSliceHelpTopicID());
+
+			var topic = m_view.KnownHelpTopic(field);
+
+			Assert.That(topic, Does.Contain("PublishIn"), "the row's help topic names the row's field");
+			var items = BuildItems(new[] { ObjectMenuAuthority.MenuId }, m_view.CreateObjectMenuAuthority(field));
+			Assert.That(FindItem(items, "Help...")?.IsEnabled, Is.True);
+		}
+
+		[Test]
+		public void ObjectMenu_HidesHelp_WhenTheProviderHasNoTopic()
+		{
+			// The fixture's default provider knows no topic; WinForms hides Help for that too.
+			var items = BuildItems(new[] { ObjectMenuAuthority.MenuId }, m_view.CreateObjectMenuAuthority(LexemeFormField()));
+
+			Assert.That(FindItem(items, "Help..."), Is.Null, "no known topic, no Help item");
+			Assert.That(FindItem(items, "Field Visibility"), Is.Not.Null);
+		}
+
+		// A WinForms slice always ends at a topic, the generic one at worst; so does a row that
+		// has no object to generate from.
+		[Test]
+		public void Help_OnARowWithoutAnObject_OffersTheGenericTopic()
+		{
+			UseHelpProvider(new PatternHelpTopicProvider(id => id == FieldHelpTopics.NoHelpTopic));
+			var field = new DetailField("Row", "Row", "Nothing", null, DetailFieldKind.Text,
+				EditorClassification.Known, "Row", null, HostRouting.Inherit, null, null, null);
+			Assert.That(field.ObjectHvo, Is.EqualTo(0), "precondition: no object, no help source");
+
+			Assert.That(m_view.ResolveHelpTopic(field), Is.EqualTo(FieldHelpTopics.NoHelpTopic));
+			var items = BuildItems(new[] { ObjectMenuAuthority.MenuId }, m_view.CreateObjectMenuAuthority(field));
+			Assert.That(FindItem(items, "Help...")?.IsEnabled, Is.True, "the generic topic is still a topic");
+		}
+
+		[Test]
+		public void ObjectMenu_OnARowWithoutOverrideContext_DisablesVisibilityAndMove_AndKeepsHelp()
+		{
+			UseHelpProvider(KnowsEveryTopic);
+			// No class or layout: the row's override target cannot be located.
+			var field = new DetailField("Row", "Row", "Subentries", null, DetailFieldKind.Text,
+				EditorClassification.Known, "Row", null, HostRouting.Inherit, null, null, null,
+				objectHvo: m_entry.Hvo) { HelpTopicId = "khtpTest-Row" };
+
+			var items = BuildItems(new[] { ObjectMenuAuthority.MenuId }, m_view.CreateObjectMenuAuthority(field));
+
+			var visibility = FindItem(items, "Field Visibility");
+			Assert.That(visibility.Children.Select(c => c.IsEnabled), Is.All.False, "nothing to act on: disabled, never guessed");
+			Assert.That(visibility.Children.Select(c => c.Execute), Is.All.Null);
+			Assert.That(FindItem(items, "Move Field").Children.Select(c => c.IsEnabled), Is.All.False);
+			Assert.That(FindItem(items, "Help...")?.IsEnabled, Is.True, "Help needs no override target");
+		}
+
+		[Test]
+		public void FieldVisibility_ThroughTheAuthority_WritesTheOverride()
+		{
+			var field = LexemeFormField();
+			DeleteOverrideFor(field);
+			try
+			{
+				var items = BuildItems(new[] { ObjectMenuAuthority.MenuId }, m_view.CreateObjectMenuAuthority(field));
+				var item = FindItem(items, "Normally hidden");
+				Assert.That(item?.IsEnabled, Is.True);
+
+				item.Execute();
+				DrainMediatorAndIdleQueues();
+
+				var stored = ReadOverrideFor(field);
+				Assert.That(stored, Is.Not.Null, "choosing a visibility writes a project override");
+				var op = stored.Operations.Single(o => o.Kind == ViewOverrideOperationKind.SetVisibility);
+				Assert.That(op.StableId, Is.EqualTo(ViewDefinitionOverrideEditor.StripRuntimeSuffix(field.StableId)));
+			}
+			finally
+			{
+				DeleteOverrideFor(field);
+			}
+		}
+
+		// A sense with no examples composes a ghost Example prompt whose stable id carries the
+		// ghost marker; its field commands act on the Examples sequence node itself.
+		[Test]
+		public void GhostRow_LocatesItsSequenceNode_AndItsVisibilityWritesThatNode()
+		{
+			var sense = m_entry.SensesOS[0];
+			Assert.That(sense.ExamplesOS, Is.Empty, "precondition: the sense composes a ghost Example row");
+			var field = DetailComposer.Compose(m_entry, Cache).Model.Fields.Single(f =>
+				f.ObjectHvo == sense.Hvo && f.Field == "Examples"
+				&& f.StableId.EndsWith(DetailField.GhostStableIdSuffix, StringComparison.Ordinal));
+			DeleteOverrideFor(field);
+			var nodeId = ViewDefinitionOverrideEditor.StripRuntimeSuffix(field.StableId);
+			nodeId = nodeId.Substring(0, nodeId.Length - DetailField.GhostStableIdSuffix.Length);
+
+			Assert.That(m_view.TryLocateOverrideTarget(field, out var templateId, out _), Is.True,
+				"the ghost row locates the node it stands in for");
+			Assert.That(templateId, Is.EqualTo(nodeId));
+
+			try
+			{
+				var items = BuildItems(new[] { ObjectMenuAuthority.MenuId }, m_view.CreateObjectMenuAuthority(field));
+				FindItem(items, "Normally hidden").Execute();
+				DrainMediatorAndIdleQueues();
+
+				var op = ReadOverrideFor(field).Operations.Single(o => o.Kind == ViewOverrideOperationKind.SetVisibility);
+				Assert.That(op.StableId, Is.EqualTo(nodeId), "the override names the sequence node, not the ghost");
+			}
+			finally
+			{
+				DeleteOverrideFor(field);
+			}
+		}
+
+		[Test]
+		public void ObjectMenuAuthority_RejectsALeafItDoesNotAnswer()
+		{
+			var authority = m_view.CreateObjectMenuAuthority(LexemeFormField());
+			var window = m_propertyTable.GetValue<XWindow>("window");
+			var reorderMenu = window.GetContextMenuChoiceGroup(new[] { ReorderVectorMenuAuthority.MenuId });
+			reorderMenu.PopulateNow();
+			var foreignLeaf = reorderMenu.OfType<ChoiceBase>()
+				.First(c => c.HelpId == ReorderVectorMenuAuthority.AlphabeticalOrderCommandId);
+
+			Assert.That(() => authority.Build(ObjectMenuAuthority.MenuId, foreignLeaf),
+				Throws.InvalidOperationException, "an owned id must be answered in full, never partially");
 		}
 
 		// ----------------------------------------------------------------------------------------
@@ -1055,6 +2077,9 @@ namespace SIL.FieldWorks.XWorks
 					"the stored op holds the set AFTER the uncheck, not the pre-click set");
 
 				// Re-check the same writing system on a freshly built menu: the ADD direction.
+				// The menu reads the row's stored selection, so take the row as the host's
+				// refresh recomposed it, override applied.
+				field = LexemeFormFieldWithOverrides();
 				writingSystems = BuildWritingSystemsSubmenu(field);
 				var reAdd = writingSystems.Children.Single(c => !c.IsSeparator && c.Label == toggled);
 				Assert.That(reAdd.IsChecked, Is.False, "the unchecked toggle stays unchecked");
@@ -1064,8 +2089,8 @@ namespace SIL.FieldWorks.XWorks
 
 				var restored = StoredWritingSystems(field);
 				TestContext.WriteLine("restored: " + string.Join(",", restored));
-				// Exact order matters: the property appends the re-checked writing system at the
-				// end, but the copy canonicalizes to option order so rows never reorder.
+				// Exact order matters: a toggle stores the set in option order, so rows never
+				// reorder when a writing system is re-checked.
 				Assert.That(restored, Is.EqualTo(new[] { "fr", "es" }),
 					"re-checking stores the restored set in option order");
 			}
@@ -1235,7 +2260,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			EnsureAdapter(field.ObjectHvo, field.Field);
 			var showAll = FindItem(BuildWritingSystemsSubmenu(field).Children, "Show all right now");
-			Assert.That(showAll, Is.Not.Null, "the intercepted reveal item must materialize");
+			Assert.That(showAll, Is.Not.Null, "the reveal item must materialize");
 			Assert.That(showAll.IsEnabled, Is.True);
 			Assert.That(showAll.Execute, Is.Not.Null);
 			showAll.Execute();
@@ -1325,9 +2350,8 @@ namespace SIL.FieldWorks.XWorks
 				+ $"index={location.Index} up={up}");
 			try
 			{
-				EnsureAdapter(field.ObjectHvo);
-				var items = BuildItemsWithOverrideInterceptor(
-					new[] { "mnuDataTree-Object" }, field);
+				// No EnsureAdapter: the authority answers Move Field from the row alone.
+				var items = BuildAsTheHostDoes(new[] { ObjectMenuAuthority.MenuId }, field);
 				var item = FindItem(items, up ? "Move Up" : "Move Down");
 				Assert.That(item, Is.Not.Null, "the Move Field submenu must offer the item");
 				Assert.That(item.IsEnabled, Is.True,
@@ -1406,6 +2430,22 @@ namespace SIL.FieldWorks.XWorks
 		private DetailField LexemeFormField()
 			=> FindLexemeFormRow(DetailComposer.Compose(m_entry, Cache).Model);
 
+		// The same row as the host composes it after a refresh: the project override applied.
+		private DetailField LexemeFormFieldWithOverrides()
+			=> FindLexemeFormRow(DetailComposer.Compose(m_entry, Cache,
+				overrides: (cls, layout) => GetOverrideStore().TryGet(cls, layout)).Model);
+
+		// A multi-string row bound to no menu of its own, or to the empty Help menu, so every id
+		// its label menu merges is owned once the multi-string group is.
+		private DetailField OwnedMultiStringField()
+		{
+			var field = DetailComposer.Compose(m_entry, Cache).Model.Fields.FirstOrDefault(f =>
+				f.IsMultiStringRow && f.ObjectHvo != 0
+				&& (string.IsNullOrEmpty(f.MenuId) || f.MenuId == ObjectMenuAuthority.HelpMenuId));
+			Assume.That(field, Is.Not.Null, "the fixture composes a multi-string row with an owned binding");
+			return field;
+		}
+
 		// The one locator for the Lexeme Form row (the MoForm's own Form field) in a composed
 		// model.
 		private DetailField FindLexemeFormRow(DetailModel model)
@@ -1436,9 +2476,11 @@ namespace SIL.FieldWorks.XWorks
 		private ViewDefinitionOverride ReadOverrideFor(DetailField field)
 			=> GetOverrideStore().TryGet(field.ClassName, field.LayoutName);
 
+		// The Writing Systems submenu as the host builds it: the multi-string group comes from
+		// its native authority, whatever the row's own menu id still needs.
 		private DetailMenuItem BuildWritingSystemsSubmenu(DetailField field)
 		{
-			var items = BuildItemsWithOverrideInterceptor(
+			var items = BuildAsTheHostDoes(
 				new[] { "mnuDataTree-LexemeForm", "mnuDataTree-MultiStringSlice" }, field);
 			var writingSystems = FindItem(items, "Writing Systems");
 			Assert.That(writingSystems, Is.Not.Null,

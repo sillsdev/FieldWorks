@@ -111,7 +111,9 @@ namespace FwAvaloniaTests
 				{
 					new ViewChooserLink("goto", "Edit the Publications list", "publicationsEdit"),
 					new ViewChooserLink("simple", "Add a slot", "MakeInflAffixSlotChooserCommand", "TopPOS")
-				});
+				},
+				helpTopicId: "khtpField-LexEntry-Senses",
+				sliceId: "CmPossibilityStatus");
 			var model = new ViewDefinitionModel("LexEntry", "Normal", "detail",
 				new List<ViewNode> { node }, new List<ViewDiagnostic>());
 
@@ -172,6 +174,10 @@ namespace FwAvaloniaTests
 				Assert.That(r.ChooserLinks[0].Target, Is.Null, "ChooserLinks[0].Target");
 				Assert.That(r.ChooserLinks[1].Type, Is.EqualTo("simple"), "ChooserLinks[1].Type");
 				Assert.That(r.ChooserLinks[1].Target, Is.EqualTo("TopPOS"), "ChooserLinks[1].Target");
+				Assert.That(r.HelpTopicId, Is.EqualTo("khtpField-LexEntry-Senses"), nameof(r.HelpTopicId));
+				Assert.That(r.SliceId, Is.EqualTo("CmPossibilityStatus"), nameof(r.SliceId));
+				Assert.That(r.StableId, Is.Not.EqualTo(r.SliceId),
+					"both are written as ids, and one must not overwrite the other");
 			});
 		}
 	}

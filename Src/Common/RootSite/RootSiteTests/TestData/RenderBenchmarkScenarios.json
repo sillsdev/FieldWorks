@@ -89,6 +89,21 @@
       "description": "Lex entry with senses nested 6 levels deep, 2-wide (depth 6, breadth 2 = 126 senses)",
       "tags": ["lex-entry", "nested-senses", "exponential-cost", "stress"],
       "viewType": "LexEntry"
+    },
+    {
+      "id": "single-para-mixed-ws",
+      "description": "One paragraph of 236 short decomposed (NFD) sentences whose runs alternate two writing systems and two font families",
+      "tags": ["stress", "layout-stress", "multi-ws", "single-paragraph", "nfd"]
+    },
+    {
+      "id": "nfc-composable-diacritics",
+      "description": "One wrapped paragraph of Latin prose spelled with decomposed (NFD) diacritics that NFC composes",
+      "tags": ["stress", "layout-stress", "nfd", "diacritics", "line-breaking"]
+    },
+    {
+      "id": "multi-line-wrap-single-ws",
+      "description": "One long paragraph of 200 decomposed (NFD) sentences in one writing system and font, wrapping over many lines",
+      "tags": ["stress", "layout-stress", "single-paragraph", "line-breaking", "nfd"]
     }
   ]
 }
