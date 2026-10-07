@@ -32,6 +32,16 @@ namespace SIL.FieldWorks.XWorks
 				return Chosen;
 			}
 
+			// Text judged malformed, with its explanation; anything else is well formed.
+			public readonly Dictionary<string, string> Errors = new Dictionary<string, string>();
+			public readonly List<string> Judged = new List<string>();
+
+			public string DescribeEnvironmentError(string text)
+			{
+				Judged.Add(text);
+				return Errors.TryGetValue(text, out var message) ? message : null;
+			}
+
 			public void ShowEnvironmentError(string message) => Shown.Add(message);
 		}
 
@@ -116,23 +126,25 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
-		public void DescribeError_ShowsTheItemsExplanation_AndIsDisabledWithoutOne()
+		public void DescribeError_ShowsTheTextsExplanation_AndIsDisabledWithoutOne()
 		{
 			var host = new FakeHost();
-			const string explanation = "There is a problem with this environment string";
+			const string explanation = "There is a problem with this environment string '/#'";
+			host.Errors["/#"] = explanation;
 
-			var described = EnvironmentMenuLeaves.BuildDescribeError("Describe Error",
-				Row(explanation).Items[0], host);
+			var described = EnvironmentMenuLeaves.BuildDescribeError("Describe Error", "/#", host);
 			Assert.That(described.IsEnabled, Is.True);
 			described.Execute();
 			Assert.That(host.Shown, Is.EqualTo(new[] { explanation }));
 
-			var clean = EnvironmentMenuLeaves.BuildDescribeError("Describe Error", Row(null).Items[0], host);
+			var clean = EnvironmentMenuLeaves.BuildDescribeError("Describe Error", "/#_", host);
 			Assert.That(clean.IsEnabled, Is.False);
 			Assert.That(clean.Execute, Is.Null);
 
-			var noItem = EnvironmentMenuLeaves.BuildDescribeError("Describe Error", null, host);
-			Assert.That(noItem.IsEnabled, Is.False);
+			host.Judged.Clear();
+			Assert.That(EnvironmentMenuLeaves.BuildDescribeError("Describe Error", null, host).IsEnabled, Is.False);
+			Assert.That(EnvironmentMenuLeaves.BuildDescribeError("Describe Error", "", host).IsEnabled, Is.False);
+			Assert.That(host.Judged, Is.Empty, "no text, nothing to judge");
 		}
 	}
 }

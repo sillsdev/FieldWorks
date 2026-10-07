@@ -17,6 +17,11 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>Lets the user choose a natural class; null when they choose none.</summary>
 		IPhNaturalClass ChooseNaturalClass();
 
+		/// <summary>
+		/// Why <paramref name="text"/> is not a well-formed environment; null when it is.
+		/// </summary>
+		string DescribeEnvironmentError(string text);
+
 		/// <summary>Shows why an environment is not well formed.</summary>
 		void ShowEnvironmentError(string message);
 	}
@@ -25,7 +30,7 @@ namespace SIL.FieldWorks.XWorks
 	/// The leaves the environment menus share. The five inserts type into the row's current
 	/// text editor at its caret, enabled by <see cref="EnvironmentInsertRules"/> over the text
 	/// and selection the request snapshotted; without an editor they are disabled. Describe
-	/// Error reports what the domain found wrong with an item. Leaves are routed by the
+	/// Error judges the same text, so it agrees with the inserts. Leaves are routed by the
 	/// command's message rather than its id: the three menus are configured in three files,
 	/// each declaring its own command ids for the same five messages.
 	/// </summary>
@@ -99,20 +104,21 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
-		/// The Describe Error leaf for an item: enabled when the domain reports the item
-		/// malformed, showing its explanation.
+		/// The Describe Error leaf: enabled when the text is not a well-formed environment,
+		/// showing why.
 		/// </summary>
 		/// <param name="label">The menu text.</param>
-		/// <param name="item">The clicked item; null disables the leaf.</param>
-		/// <param name="host">Shows the explanation.</param>
-		internal static DetailMenuItem BuildDescribeError(string label, DetailChoiceOption item,
-			IEnvironmentMenuHost host)
+		/// <param name="text">The environment as the user sees it: the editor's text when the
+		/// request has one, unsaved edits included, else the saved item's; null disables the
+		/// leaf.</param>
+		/// <param name="host">Judges the text and shows the explanation.</param>
+		internal static DetailMenuItem BuildDescribeError(string label, string text, IEnvironmentMenuHost host)
 		{
 			if (host == null)
 				throw new ArgumentNullException(nameof(host));
-			if (item == null || !item.HasValidationMessage)
+			var message = string.IsNullOrEmpty(text) ? null : host.DescribeEnvironmentError(text);
+			if (message == null)
 				return DetailMenuItem.Disabled(label);
-			var message = item.ValidationMessage;
 			return new DetailMenuItem(label, isEnabled: true, isChecked: false, children: null,
 				execute: () => host.ShowEnvironmentError(message));
 		}

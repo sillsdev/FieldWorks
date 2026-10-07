@@ -775,15 +775,43 @@ namespace SIL.FieldWorks.XWorks
 				Assert.That(describe.Execute, Is.Not.Null);
 			}
 
-			// What PhoneEnvReferenceView.ShowEnvironmentError would show for the same string.
+			// What PhoneEnvReferenceView.ShowEnvironmentError would show for the same string,
+			// built the way that view built it before the rule moved to EnvironmentErrors.
 			var recognizer = new PhonEnvRecognizer(Cache.LangProject.PhonologicalDataOA.AllPhonemes().ToArray(),
 				Cache.LangProject.PhonologicalDataOA.AllNaturalClassAbbrs().ToArray());
 			Assert.That(recognizer.Recognize(malformed), Is.False);
 			StringServices.CreateErrorMessageFromXml(malformed, recognizer.ErrorMessage, out _, out var winFormsMessage);
+			var shown = ((IEnvironmentMenuHost)m_view).DescribeEnvironmentError(malformed);
 			TestContext.WriteLine("WinForms: " + winFormsMessage);
-			TestContext.WriteLine("Domain:   " + field.Items[badIndex].ValidationMessage);
+			TestContext.WriteLine("Avalonia: " + shown);
+			Assert.That(shown, Is.EqualTo(winFormsMessage), "Describe Error shows the same explanation on both stacks");
 			Assert.That(field.Items[badIndex].ValidationMessage, Is.EqualTo(winFormsMessage),
-				"Describe Error shows the same explanation on both stacks");
+				"and the item's tooltip agrees");
+		}
+
+		/// <summary>
+		/// Describe Error judges the text in the item's editor, unsaved edits included, as the
+		/// WinForms view judges the text in its view; the inserts in the same menu do too.
+		/// </summary>
+		[Test]
+		public void DescribeError_JudgesTheEditorsUnsavedText_NotTheSavedEnvironment()
+		{
+			var field = EnvironmentsFieldWithOneItem(); // saved as "/_#", well formed
+
+			var broken = new TextEditorStub { EditorText = "/#", Caret = 2 };
+			var items = m_view.BuildReferenceItemMenu(ItemRequest(field, 0, broken), out var itemUi);
+			using (itemUi)
+			{
+				Assert.That(FindItem(items, DescribeErrorLabel)?.IsEnabled, Is.True,
+					"the editor's text has lost its bar, so there is an error to describe");
+			}
+
+			var fixedText = new TextEditorStub { EditorText = "/_#", Caret = 3 };
+			items = m_view.BuildReferenceItemMenu(ItemRequest(field, 0, fixedText), out itemUi);
+			using (itemUi)
+			{
+				Assert.That(FindItem(items, DescribeErrorLabel)?.IsEnabled, Is.False);
+			}
 		}
 
 		/// <summary>

@@ -316,6 +316,9 @@ namespace SIL.FieldWorks.XWorks
 			return ReallySimpleListChooser.ChooseNaturalClass(Cache, persistence, m_mediator, m_propertyTable);
 		}
 
+		string IEnvironmentMenuHost.DescribeEnvironmentError(string text)
+			=> EnvironmentErrors.Describe(EnvironmentErrors.CreateRecognizer(Cache), text);
+
 		void IEnvironmentMenuHost.ShowEnvironmentError(string message)
 		{
 			System.Windows.Forms.MessageBox.Show(FindForm(), message, xWorksStrings.ksEnvironmentErrorTitle,

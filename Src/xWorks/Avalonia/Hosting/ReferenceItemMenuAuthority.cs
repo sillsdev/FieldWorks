@@ -130,7 +130,7 @@ namespace SIL.FieldWorks.XWorks
 					if (command != null && string.Equals(command.Message, EnvironmentMenuLeaves.ShowErrorMessage,
 						StringComparison.Ordinal))
 					{
-						return EnvironmentMenuLeaves.BuildDescribeError(label, ClickedItem(), _host);
+						return EnvironmentMenuLeaves.BuildDescribeError(label, ClickedItemText(), _host);
 					}
 					if (command != null && EnvironmentMenuLeaves.IsInsertMessage(command.Message))
 						return EnvironmentMenuLeaves.BuildInsert(command.Message, label, _request, _host);
@@ -145,16 +145,19 @@ namespace SIL.FieldWorks.XWorks
 				"Menu '{0}' has a list submenu '{1}' this authority does not answer.",
 				menuId, listId));
 
-		// The row's option for the clicked item, which carries the domain's verdict on it.
-		private DetailChoiceOption ClickedItem()
+		// The clicked item's text as the user sees it: its editor's, unsaved edits included,
+		// since the press that raised the menu made it the current editor; else the saved name.
+		private string ClickedItemText()
 		{
+			if (_request.HasTextEditor)
+				return _request.EditorText;
 			var items = _request.Field?.Items;
 			if (items == null || _request.SelectedItemKey == null)
 				return null;
 			foreach (var item in items)
 			{
 				if (string.Equals(item.Key, _request.SelectedItemKey, StringComparison.Ordinal))
-					return item;
+					return item.Name;
 			}
 			return null;
 		}

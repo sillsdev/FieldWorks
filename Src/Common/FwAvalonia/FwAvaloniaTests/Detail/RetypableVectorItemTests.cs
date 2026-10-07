@@ -691,6 +691,113 @@ namespace FwAvaloniaTests.Detail
 			Assert.That(context.Created, Is.Empty, "the typed text is still pending");
 		}
 
+		// A row that raises menu requests, laid out so a pointer can reach its parts.
+		private static (FwReferenceVectorField Row, Window Window, List<DetailMenuRequest> Requests)
+			ShowWithMenu(FakeTextEditing context)
+		{
+			var requests = new List<DetailMenuRequest>();
+			var row = new FwReferenceVectorField(Row(), "PhoneEnv", context, null, null, r => requests.Add(r));
+			var window = new Window { Content = row, Width = 480, Height = 200 };
+			window.Show();
+			Dispatcher.UIThread.RunJobs();
+			window.UpdateLayout();
+			Dispatcher.UIThread.RunJobs();
+			return (row, window, requests);
+		}
+
+		// The row is the window's content, so a part's bounds are window coordinates.
+		private static void RightClick(Window window, Control control)
+		{
+			var point = new Avalonia.Point(control.Bounds.X + control.Bounds.Width / 2,
+				control.Bounds.Y + control.Bounds.Height / 2);
+			window.MouseDown(point, MouseButton.Right);
+			window.MouseUp(point, MouseButton.Right);
+			Dispatcher.UIThread.RunJobs();
+		}
+
+		/// <summary>
+		/// A right press on the slot makes it the menu's editor even though an item had focus:
+		/// otherwise the insert lands in that item.
+		/// </summary>
+		[AvaloniaTest]
+		public void RightClickingTheSlot_WhileAnItemHasFocus_MakesTheSlotTheEditor()
+		{
+			var (row, window, requests) = ShowWithMenu(new FakeTextEditing { Creatable = true });
+			var item = Editor(row, "e1");
+			item.Focus();
+			item.CaretIndex = 1;
+			Dispatcher.UIThread.RunJobs();
+
+			RightClick(window, NewItemSlot(row));
+
+			Assert.That(requests, Has.Count.EqualTo(1));
+			var request = requests[0];
+			Assert.That(request.HasTextEditor, Is.True);
+			Assert.That(request.EditorText, Is.EqualTo(string.Empty), "the slot, not the item");
+			Assert.That(request.SelectedItemKey, Is.Null, "no item is current");
+			Assert.That(request.ReplaceEditorSelection("()", 1), Is.True);
+			Assert.That(NewItemSlot(row).Text, Is.EqualTo("()"));
+			Assert.That(item.Text, Is.EqualTo("/_#"), "the item is untouched");
+		}
+
+		[AvaloniaTest]
+		public void RightClickingTheSlot_OnARowNotYetClickedInto_MakesTheSlotTheEditor()
+		{
+			var (row, window, requests) = ShowWithMenu(new FakeTextEditing { Creatable = true });
+
+			RightClick(window, NewItemSlot(row));
+
+			Assert.That(requests, Has.Count.EqualTo(1));
+			Assert.That(requests[0].HasTextEditor, Is.True, "so Insert Environment slash is enabled");
+			Assert.That(requests[0].EditorText, Is.EqualTo(string.Empty));
+			Assert.That(requests[0].EditorSelectionEnd, Is.EqualTo(0));
+		}
+
+		/// <summary>
+		/// Right-clicking the slot moves focus off an item holding unsaved text, which stages
+		/// that text; then the insert leaves the slot holding unsaved text of its own, which is
+		/// what keeps the host from rebuilding the row until the slot is left.
+		/// </summary>
+		[AvaloniaTest]
+		public void RightClickingTheSlot_StagesAnItemsUnsavedText_AndTheInsertStaysPending()
+		{
+			var context = new FakeTextEditing { Creatable = true };
+			var (row, window, requests) = ShowWithMenu(context);
+			var item = Editor(row, "e1");
+			item.Focus();
+			item.Text = "/_#x";
+			Dispatcher.UIThread.RunJobs();
+
+			RightClick(window, NewItemSlot(row));
+			var request = requests.Single();
+			request.BeginMenuGesture();
+			request.ReplaceEditorSelection("/", 0);
+			request.EndMenuGesture();
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(context.Edits, Is.EqualTo(new[] { ("e1", "/_#x") }), "the item's text was staged");
+			Assert.That(NewItemSlot(row).Text, Is.EqualTo("/"));
+			Assert.That(context.Created, Is.Empty, "the slot's text waits for the slot to be left");
+			Assert.That(row.HasUnstagedText, Is.True, "which holds the host's refresh");
+		}
+
+		[AvaloniaTest]
+		public void RightClickingAnotherItem_StagesTheFirstItemsUnsavedText()
+		{
+			var context = new FakeTextEditing();
+			var (row, window, requests) = ShowWithMenu(context);
+			var first = Editor(row, "e1");
+			first.Focus();
+			first.Text = "/_#x";
+			Dispatcher.UIThread.RunJobs();
+
+			RightClick(window, Editor(row, "e2"));
+
+			Assert.That(context.Edits, Is.EqualTo(new[] { ("e1", "/_#x") }));
+			Assert.That(requests.Single().SelectedItemKey, Is.EqualTo("e2"));
+			Assert.That(requests.Single().EditorText, Is.EqualTo("/_a"));
+		}
+
 		[AvaloniaTest]
 		public void ReplaceEditorSelection_TypesAtTheCaret_AndStagesNothingYet()
 		{

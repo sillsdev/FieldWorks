@@ -351,9 +351,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		public void ResetValidator()
 		{
 			CheckDisposed();
-			m_validator = new PhonEnvRecognizer(
-				m_cache.LangProject.PhonologicalDataOA.AllPhonemes().ToArray(),
-				m_cache.LangProject.PhonologicalDataOA.AllNaturalClassAbbrs().ToArray());
+			m_validator = EnvironmentErrors.CreateRecognizer(m_cache);
 		}
 
 		/// <summary>
@@ -954,16 +952,13 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		{
 			CheckDisposed();
 			string s;
-			if (CanGetEnvironmentStringRep(out s))
+			if (!CanGetEnvironmentStringRep(out s))
+				return;
+			var message = EnvironmentErrors.Describe(m_validator, s);
+			if (message != null)
 			{
-				if (!m_validator.Recognize(s))
-				{
-					string sMsg;
-					int pos;
-					StringServices.CreateErrorMessageFromXml(s, m_validator.ErrorMessage, out pos, out sMsg);
-					MessageBox.Show(sMsg, DetailControlsStrings.ksBadEnv,
-						MessageBoxButtons.OK, MessageBoxIcon.Information);
-				}
+				MessageBox.Show(message, DetailControlsStrings.ksBadEnv,
+					MessageBoxButtons.OK, MessageBoxIcon.Information);
 			}
 		}
 
@@ -972,10 +967,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		{
 			CheckDisposed();
 			string s;
-			if (CanGetEnvironmentStringRep(out s))
-				return (!m_validator.Recognize(s));
-			else
-				return false;
+			return CanGetEnvironmentStringRep(out s) && EnvironmentErrors.Describe(m_validator, s) != null;
 		}
 
 		private bool CanGetEnvironmentStringRep(out string s)

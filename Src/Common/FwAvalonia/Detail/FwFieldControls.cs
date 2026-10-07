@@ -1490,16 +1490,9 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				EventHandler<PointerPressedEventArgs> select = (s, e) =>
 				{
 					SelectItem(itemIndex);
-					// A right press does not focus the editor by itself, so the press focuses it
-					// and puts the caret at the pointer, as a right-click in
-					// PhoneEnvReferenceView does.
 					_currentEditor = text as TextBox;
-					if (_currentEditor != null && e.GetCurrentPoint(text).Properties.IsRightButtonPressed)
-					{
-						if (!_currentEditor.IsFocused)
-							_currentEditor.Focus();
-						PlaceCaretAtPointer(_currentEditor, e);
-					}
+					if (_currentEditor != null)
+						TakeEditorOnRightPress(_currentEditor, e);
 					// Ctrl+click runs the item menu's default jump without showing the menu.
 					if (menuRequested != null
 						&& e.GetCurrentPoint(text).Properties.IsLeftButtonPressed
@@ -1687,11 +1680,23 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 					_currentEditor = newItem;
 				};
 				newItem.GotFocus += newClearsSelection;
+				// A right press names the slot as the menu's editor itself, rather than relying
+				// on the focus change, so the request is right even if focus does not move.
+				EventHandler<PointerPressedEventArgs> newOnRightPress = (s2, e2) =>
+				{
+					if (!e2.GetCurrentPoint(newItem).Properties.IsRightButtonPressed)
+						return;
+					ClearSelection();
+					TakeEditorOnRightPress(newItem, e2);
+				};
+				newItem.AddHandler(InputElement.PointerPressedEvent, newOnRightPress,
+					RoutingStrategies.Bubble, handledEventsToo: true);
 				_teardown.Add(() =>
 				{
 					newItem.LostFocus -= newOnBlur;
 					newItem.KeyDown -= newOnEnter;
 					newItem.GotFocus -= newClearsSelection;
+					newItem.RemoveHandler(InputElement.PointerPressedEvent, newOnRightPress);
 				});
 				if (menuRequested != null)
 				{
@@ -1881,6 +1886,18 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			_refocusAfterGesture = false;
 			if (refocus && HasTextEditor)
 				_currentEditor.Focus();
+		}
+
+		// A right press does not focus a TextBox by itself, so the press makes it the current
+		// editor, focuses it and puts the caret at the pointer, as PhoneEnvReferenceView does.
+		private void TakeEditorOnRightPress(TextBox box, PointerPressedEventArgs e)
+		{
+			if (!e.GetCurrentPoint(box).Properties.IsRightButtonPressed)
+				return;
+			_currentEditor = box;
+			if (!box.IsFocused)
+				box.Focus();
+			PlaceCaretAtPointer(box, e);
 		}
 
 		// TextBox applies this rule on the right RELEASE, after the request has snapshotted the

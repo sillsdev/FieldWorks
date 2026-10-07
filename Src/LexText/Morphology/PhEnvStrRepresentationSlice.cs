@@ -250,9 +250,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			{
 				CheckDisposed();
 
-				m_validator = new PhonEnvRecognizer(
-					m_cache.LangProject.PhonologicalDataOA.AllPhonemes().ToArray(),
-					m_cache.LangProject.PhonologicalDataOA.AllNaturalClassAbbrs().ToArray());
+				m_validator = EnvironmentErrors.CreateRecognizer(m_cache);
 			}
 
 			/// <summary>
@@ -366,25 +364,17 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			{
 				CheckDisposed();
 
-				string s = m_env.StringRepresentation.Text;
-				if (s == null || s == String.Empty)
-					return false;
-				return (!m_validator.Recognize(s));
+				return EnvironmentErrors.Describe(m_validator, m_env.StringRepresentation.Text) != null;
 			}
 
 			internal void ShowEnvironmentError()
 			{
 				CheckDisposed();
 
-				string s = m_env.StringRepresentation.Text; ;
-				if (s == null || s == String.Empty)
-					return;
-				if (!m_validator.Recognize(s))
+				var message = EnvironmentErrors.Describe(m_validator, m_env.StringRepresentation.Text);
+				if (message != null)
 				{
-					string sMsg;
-					int pos = 0;
-					PhonEnvRecognizer.CreateErrorMessageFromXml(s, m_validator.ErrorMessage, out pos, out sMsg);
-					MessageBox.Show(sMsg, MEStrings.ksErrorInEnvironment,
+					MessageBox.Show(message, MEStrings.ksErrorInEnvironment,
 						MessageBoxButtons.OK, MessageBoxIcon.Information);
 				}
 			}
