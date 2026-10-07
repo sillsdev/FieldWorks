@@ -194,7 +194,7 @@
 		AssemblyFile="$(LcmBuildTasksDir)/SIL.LCModel.Build.Tasks.dll"
 	/>
 	<!-- dir-fwoutputCommon is set by the Setup target, so it is empty when top-level
-	     items are evaluated. Target attributes expand at run time and see the real path. -->
+		 items are evaluated. Target attributes expand at run time and see the real path. -->
 	<Target
 		Name="GenerateCellarConstants"
 		DependsOnTargets="CopyCellarBaseConstants;CopyDlls"

@@ -1072,6 +1072,8 @@ namespace SIL.FieldWorks.XWorks
 					var plugin = _plugins?.Resolve(node.CustomEditorClass);
 					if (plugin != null)
 					{
+						if (HideWhenEmpty(node) && !PluginFieldHasData(node, obj))
+							return;
 						AddPluginRow(node, obj, depth, plugin);
 						foreach (var pluginChild in node.Children)
 							Walk(pluginChild, obj, depth + 1);
@@ -3196,9 +3198,13 @@ namespace SIL.FieldWorks.XWorks
 				// ONE plugin contract -- the build context bundles everything a
 				// plugin can need (object, node, deferred edit-context accessor, cache, focus
 				// callback); there is no service-aware marker type test.
-				var context = new SlicePluginBuildContext(obj, node, _editContextAccessor, _cache,
-					_writingSystemFocused);
-				Func<Avalonia.Controls.Control> factory = () => plugin.BuildControl(context);
+				var visible = _showAllWsFields != null && _showAllWsFields.Contains(node.StableId)
+					? null
+					: node.VisibleWritingSystems;
+				// Built at render time, since the view's services exist only then.
+				Func<SliceFactoryContext, Avalonia.Controls.Control> factory = render =>
+					plugin.BuildControl(new SlicePluginBuildContext(obj, node, _editContextAccessor, _cache,
+						_writingSystemFocused, render, visible));
 				AddField(new DetailField(StableId(node, obj), Localize(node.Label) ?? node.Field,
 					node.Field, node.WritingSystem, DetailFieldKind.Custom, node.EditorClassification,
 					node.AutomationId, node.LocalizationKey, node.Routing, null, null, null,
@@ -3206,6 +3212,26 @@ namespace SIL.FieldWorks.XWorks
 					menuId: node.MenuId, contextMenuId: node.ContextMenuId, hotlinksId: node.HotlinksId,
 					objectHvo: obj.Hvo,
 					controlFactory: factory));
+			}
+
+			// An ifdata custom row hides when its own field is an empty vector. Any other
+			// field type, or a field that does not resolve, counts as having data.
+			private bool PluginFieldHasData(ViewNode node, ICmObject obj)
+			{
+				var flid = GetFlid(obj, node.Field);
+				if (flid == 0)
+					return true;
+				var type = (CellarPropertyType)(_mdc.GetFieldType(flid) & (int)CellarPropertyTypeFilter.VirtualMask);
+				switch (type)
+				{
+					case CellarPropertyType.OwningCollection:
+					case CellarPropertyType.OwningSequence:
+					case CellarPropertyType.ReferenceCollection:
+					case CellarPropertyType.ReferenceSequence:
+						return _sda.get_VecSize(obj.Hvo, flid) > 0;
+					default:
+						return true;
+				}
 			}
 
 			private void WalkUnsupported(ViewNode node, ICmObject obj, int depth)

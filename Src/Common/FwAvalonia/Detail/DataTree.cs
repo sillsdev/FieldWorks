@@ -33,7 +33,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 	/// undo step per field, no Save/Cancel buttons. Validation failures show inline and block the
 	/// commit; Escape rolls the session back. Without a context the view is read-only display.
 	/// </summary>
-	public sealed class DataTree : UserControl, IDetailPopupSink
+	public sealed class DataTree : UserControl, IDetailPopupSink, IDisposable
 	{
 		private readonly IDetailEditContext _editContext;
 		private readonly Action<string> _writingSystemFocused;
@@ -58,6 +58,10 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		// The vector rows of the shown fields, and the one whose item is current (at most one
 		// per view), so re-show continuity can read and restore that selection cheaply.
 		private readonly List<FwReferenceVectorField> _vectors = new List<FwReferenceVectorField>();
+		// The editors the shown rows hold that attach handlers of their own, disposed when a
+		// rebuild replaces them or the view itself is disposed.
+		private readonly List<IDisposable> _editors = new List<IDisposable>();
+		private bool _disposed;
 
 		/// <summary>The reference-vector row that has a current item; null when none
 		/// does.</summary>
@@ -225,6 +229,10 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			{
 				if (_editContext != null && _editContext.IsOpen)
 					OnSave();
+				// An edit that changed nothing opens no session, so no completion releases a
+				// refresh held while its text was unsubmitted.
+				else if (!HasUnsubmittedText)
+					DeliverWhenIdle();
 			}, Avalonia.Interactivity.RoutingStrategies.Bubble);
 
 			// A click on another row autosaves and re-shows, rebuilding controls between press
@@ -335,6 +343,22 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		public DetailModel Model { get; }
 
 		/// <summary>
+		/// Disposes the editors the view holds, detaching every handler they attached. The host
+		/// calls this once the view is out of its window and never shown again, since a
+		/// disposed editor ignores what is typed into it.
+		/// </summary>
+		public void Dispose()
+		{
+			if (_disposed)
+				return;
+			_disposed = true;
+			var editors = _editors.ToArray();
+			_editors.Clear();
+			foreach (var editor in editors)
+				editor.Dispose();
+		}
+
+		/// <summary>
 		/// Raised after a commit or cancel completed, so the host can re-resolve and re-show the
 		/// detail view from current domain state.
 		/// </summary>
@@ -352,7 +376,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		/// question from <see cref="IsInteractionInFlight"/>: this one must not defer the
 		/// view's own completion, which is what discards the text, only an external refresh.
 		/// </summary>
-		public bool HasUnsubmittedText => _vectors.Any(vector => vector.HasUnstagedText);
+		public bool HasUnsubmittedText
+			=> _editors.OfType<IUnstagedTextHolder>().Any(editor => editor.HasUnstagedText);
 
 		/// <summary>
 		/// Raised when the view goes idle again -- the click finished and no picker it
@@ -479,7 +504,13 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		// expanded.
 		private void RebuildItems()
 		{
+			var replaced = _editors.ToArray();
+			_editors.Clear();
 			_form.Items.Clear();
+			// Only once the form has let go of them, so a focus loss their removal raises still
+			// reaches their own handlers and stages what they hold.
+			foreach (var editor in replaced)
+				editor.Dispose();
 			_vectors.Clear();
 			_labelBlocks.Clear();
 			SelectedVector = null;
@@ -677,6 +708,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			AutomationProperties.SetName(labelBlock, field.Label ?? field.Field ?? string.Empty);
 			ToolTip.SetTip(labelBlock, field.Label ?? field.Field); // the label text is its own tip
 			var editor = CreateEditor(field, automationId);
+			if (editor is IDisposable disposable)
+				_editors.Add(disposable);
 			editor.Margin = new Thickness(0, 0, 0, FwAvaloniaDensity.FieldSpacing);
 
 			// Every reachable control in a row shares its TabIndex, so Avalonia visits them in
@@ -902,6 +935,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				// Legacy labels each alternative of a MultiStringSlice and leaves a StringSlice's
 				// single value unlabelled, so the gutter follows the row's own kind.
 				showWritingSystemAbbreviation: field.IsMultiStringRow,
-				wsAbbrevColumnWidth: _wsAbbrevColumnWidth));
+				wsAbbrevColumnWidth: _wsAbbrevColumnWidth,
+				cancel: _editContext == null ? (Action)null : OnCancel));
 	}
 }

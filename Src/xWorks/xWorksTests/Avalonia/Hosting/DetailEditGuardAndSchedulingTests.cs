@@ -44,6 +44,8 @@ namespace SIL.FieldWorks.XWorks
 
 		private string LexemeText => m_entry.LexemeFormOA.Form.get_String(Cache.DefaultVernWs).Text;
 
+		private string CitationText => m_entry.CitationForm.get_String(Cache.DefaultVernWs).Text;
+
 		private LexiconFirstSliceEditContext OpenSessionWith(string text)
 		{
 			var context = new LexiconFirstSliceEditContext(m_entry, Cache);
@@ -176,6 +178,50 @@ namespace SIL.FieldWorks.XWorks
 					holder.DetachUndoGuard();
 				}
 			});
+		}
+
+		// An editor that stages only when focus leaves it holds the user's last edit with
+		// nothing open. Undo must save that, not work on the step before it.
+		[Test]
+		public void UndoGuard_WithAnEditorHoldingAnEdit_SavesItInsteadOfUndoingTheStepBefore()
+		{
+			UndoableUnitOfWorkHelper.Do("Undo seed", "Redo seed", Cache.ActionHandlerAccessor, () =>
+				m_entry.CitationForm.set_String(Cache.DefaultVernWs,
+					TsStringUtils.MakeString("seed", Cache.DefaultVernWs)));
+			var context = new LexiconFirstSliceEditContext(m_entry, Cache);
+			// A real editor stages what it holds and then holds nothing, so a later flush is a
+			// no-op; one that staged unconditionally would answer every undo with a new step.
+			var held = "perro";
+			context.AddPendingEditFlush("Form", () =>
+			{
+				if (held == null)
+					return false;
+				context.TrySetText(DetailEditContextEditingTests.F("Form"), "vern", held);
+				held = null;
+				return true;
+			});
+			var holder = new DetailEditContextHolder();
+			holder.AttachUndoGuard(Cache.ActionHandlerAccessor);
+			try
+			{
+				holder.Replace(context);
+				Assert.That(context.IsOpen, Is.False, "precondition: the editor has staged nothing yet");
+
+				Cache.ActionHandlerAccessor.Undo();
+
+				Assert.That(LexemeText, Is.EqualTo("perro"), "the held edit was saved, as its own step");
+				Assert.That(CitationText, Is.EqualTo("seed"), "the step before it is left alone");
+				Assert.That(Cache.ActionHandlerAccessor.CurrentDepth, Is.EqualTo(0));
+
+				Cache.ActionHandlerAccessor.Undo();
+				Assert.That(LexemeText, Is.EqualTo("casa"), "the next undo reverts the saved edit");
+			}
+			finally
+			{
+				holder.DetachUndoGuard();
+				if (context.IsOpen)
+					context.Cancel();
+			}
 		}
 
 		[Test]

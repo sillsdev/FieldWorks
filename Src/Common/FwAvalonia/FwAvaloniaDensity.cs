@@ -308,6 +308,10 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 		/// reference-vector items.</summary>
 		public static double SeparatorBarWidth => FwThemeResources.RequireDouble(GeneratedTokenKeys.DataTree_SeparatorBarWidth);
 
+		/// <summary>Room a text-sized editor keeps past its text for the caret and a final
+		/// glyph's overhang.</summary>
+		public static double CaretAllowance => FwThemeResources.RequireDouble(GeneratedTokenKeys.DataTree_CaretAllowance);
+
 		/// <summary>
 		/// Corner radius for a compact bordered host (option/POS picker frame, MSA/feature group
 		/// box); pairs with <see cref="HairlineBorderThickness"/> and <see cref="TightPadding"/>

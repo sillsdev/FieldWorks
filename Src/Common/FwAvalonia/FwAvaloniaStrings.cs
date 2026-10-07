@@ -302,5 +302,16 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 		/// <summary>The empty-choice label a list chooser leads with when the field allows no value.
 		/// English must match the legacy launchers' <c>ksNullLabel</c> so both frameworks show the same word.</summary>
 		public static string ChooserEmptyItemLabel => Text("FwAvalonia.Chooser.EmptyItemLabel");
+
+		// ----- Reversal Entries field. APPEND-ONLY. -----
+
+		/// <summary>The row menu command that jumps to the row's entry in the Reversal Index
+		/// tool.</summary>
+		public static string ReversalShowInReversalIndex => Text("FwAvalonia.Reversal.ShowInReversalIndex");
+
+		/// <summary>Screen-reader name for a writing system's empty add row.
+		/// {0} = the field label, {1} = the writing system abbreviation.</summary>
+		public static string ReversalAddEntryName(string fieldLabel, string wsAbbrev)
+			=> string.Format(Text("FwAvalonia.Reversal.AddEntryName"), fieldLabel, wsAbbrev);
 	}
 }
