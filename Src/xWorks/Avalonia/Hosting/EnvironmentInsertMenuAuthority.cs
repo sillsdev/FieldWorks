@@ -6,7 +6,6 @@ using System;
 using System.Collections.Generic;
 using SIL.FieldWorks.Common.FwAvalonia.Detail;
 using SIL.Reporting;
-using XCore;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -38,17 +37,17 @@ namespace SIL.FieldWorks.XWorks
 			=> string.Equals(menuId, EnvironmentsMenuId, StringComparison.Ordinal)
 				|| string.Equals(menuId, StringRepresentationMenuId, StringComparison.Ordinal);
 
-		public DetailMenuItem Build(string menuId, ChoiceBase leaf)
+		public DetailMenuItem Build(string menuId, DetailMenuLeaf leaf)
 		{
 			if (leaf == null)
 				throw new ArgumentNullException(nameof(leaf));
-			if (!(leaf is CommandChoice command) || !EnvironmentMenuLeaves.IsInsertMessage(command.Message))
+			if (!EnvironmentMenuLeaves.IsInsertMessage(leaf.Message))
 			{
 				throw new InvalidOperationException(string.Format(
-					"Menu '{0}' has a leaf '{1}' this authority does not answer.", menuId, leaf.HelpId));
+					"Menu '{0}' has a leaf '{1}' this authority does not answer.", menuId, leaf.CommandId));
 			}
 			LogUnsupportedRowOnce();
-			return EnvironmentMenuLeaves.BuildInsert(command.Message, XCoreMenuBridge.StripAccelerator(leaf.Label),
+			return EnvironmentMenuLeaves.BuildInsert(leaf.Message, XCoreMenuBridge.StripAccelerator(leaf.Label),
 				_request, _host);
 		}
 

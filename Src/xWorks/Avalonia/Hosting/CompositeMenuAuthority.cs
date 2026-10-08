@@ -5,7 +5,6 @@
 using System;
 using System.Collections.Generic;
 using SIL.FieldWorks.Common.FwAvalonia.Detail;
-using XCore;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -25,7 +24,7 @@ namespace SIL.FieldWorks.XWorks
 
 		public bool Owns(string menuId) => Owner(menuId) != null;
 
-		public DetailMenuItem Build(string menuId, ChoiceBase leaf)
+		public DetailMenuItem Build(string menuId, DetailMenuLeaf leaf)
 			=> Owning(menuId).Build(menuId, leaf);
 
 		public IReadOnlyList<DetailMenuItem> BuildList(string menuId, string listId)
