@@ -144,12 +144,12 @@ namespace SIL.FieldWorks.XWorks
 			if (string.IsNullOrEmpty(menuId))
 				throw new ArgumentException("A menu id is required.", nameof(menuId));
 			var node = window.GetContextMenuNodeFromMenuId(menuId);
-			// A list-populated root is one list, as ChoiceGroup.IsAListGroup reads it.
+			// A list-populated root shows its items flat, as ChoiceGroup.PopulateFromList does.
 			var listId = XmlUtils.GetOptionalAttributeValue(node, "list");
 			var entries = listId != null
 				? new List<DetailMenuEntry>
 				{
-					DetailMenuEntry.ForList(XmlUtils.GetLocalizedAttributeValue(node, "label", null), false, listId)
+					DetailMenuEntry.ForList(XmlUtils.GetLocalizedAttributeValue(node, "label", null), isInline: true, listId)
 				}
 				: ResolveEntries(node, window.Mediator.CommandSet);
 			return new DetailMenuDefinition(menuId, entries);
