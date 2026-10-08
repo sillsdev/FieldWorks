@@ -41,6 +41,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		private Form _parentForm;
 		private string _liftPathname;
 		private IProgress _progressDlg;
+		private bool? _motifAvailable;
 		private LcmCache Cache { get; set; }
 
 		/// <summary>
@@ -108,6 +109,122 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		#endregion
 
 		#region XCore message handlers
+
+		/// <summary>Controls whether the Motif apply command is available.</summary>
+		/// <param name="parameters">The XCore command parameters.</param>
+		/// <param name="display">The command's display properties.</param>
+		/// <returns>True when the command has been handled.</returns>
+		public bool OnDisplayApplyMotifChanges(object parameters, ref UIItemDisplayProperties display)
+		{
+			display.Visible = true;
+			display.Enabled = IsMotifAvailable();
+			return true;
+		}
+
+		/// <summary>Applies approved pending Motif changes to the open project.</summary>
+		/// <param name="commandObject">The XCore command object.</param>
+		/// <returns>True when the command has been handled.</returns>
+		public bool OnApplyMotifChanges(object commandObject)
+		{
+			Application.DoEvents();
+			var runner = new MotifApplyRunner();
+			var motifAvailable = IsMotifAvailable();
+			var precheckMessage = MotifApplyWorkflow.GetPrecheckMessage(motifAvailable, false);
+			if (precheckMessage != MotifApplyMessage.None)
+			{
+				ShowMotifApplyMessage(precheckMessage);
+				return true;
+			}
+
+			var fieldWorksBusy = _progressDlg != null || SharedBackendServices.AreMultipleApplicationsConnected(Cache);
+			precheckMessage = MotifApplyWorkflow.GetPrecheckMessage(motifAvailable, fieldWorksBusy);
+			if (precheckMessage != MotifApplyMessage.None)
+			{
+				ShowMotifApplyMessage(precheckMessage);
+				return true;
+			}
+
+			if (MessageBox.Show(_parentForm, LexEdStrings.ksApplyMotifConfirmation,
+				LexEdStrings.ksApplyMotifChangesTitle, MessageBoxButtons.OKCancel,
+				MessageBoxIcon.Question) != DialogResult.OK)
+				return true;
+
+			StopParser();
+			var projectFilePath = Path.GetFullPath(GetFullProjectFileName());
+			var workflow = new MotifApplyWorkflow(ValidatePendingEditorData,
+				() => ProjectLockingService.UnlockCurrentProject(Cache),
+				() => runner.Apply(projectFilePath),
+				() =>
+				{
+					var reopenedWindow = RefreshCacheWindowAndAll(
+						_propertyTable.GetValue<LexTextApp>("App"), projectFilePath);
+					_parentForm = reopenedWindow;
+				},
+				() => ProjectLockingService.LockCurrentProject(Cache));
+			MotifApplyWorkflowResult workflowResult;
+			using (new WaitCursor(_parentForm))
+				workflowResult = workflow.Execute();
+
+			ShowMotifApplyMessage(workflowResult.Message, workflowResult.ApplyResult.Summary);
+			return true;
+		}
+
+		private bool IsMotifAvailable()
+		{
+			if (!_motifAvailable.HasValue)
+				_motifAvailable = new MotifApplyRunner().IsAvailable;
+			return _motifAvailable.Value;
+		}
+
+		private void ShowMotifApplyMessage(MotifApplyMessage message, string summary = null)
+		{
+			string content;
+			MessageBoxIcon icon;
+			switch (message)
+			{
+				case MotifApplyMessage.Applied:
+					content = LexEdStrings.ksApplyMotifSuccess;
+					icon = MessageBoxIcon.Information;
+					break;
+				case MotifApplyMessage.AppliedWithSummary:
+					content = string.Format(LexEdStrings.ksApplyMotifSuccessWithSummary, summary);
+					icon = MessageBoxIcon.Information;
+					break;
+				case MotifApplyMessage.NoChanges:
+					content = LexEdStrings.ksApplyMotifNoChanges;
+					icon = MessageBoxIcon.Information;
+					break;
+				case MotifApplyMessage.Refused:
+					content = LexEdStrings.ksApplyMotifRefused;
+					icon = MessageBoxIcon.Warning;
+					break;
+				case MotifApplyMessage.MotifBusy:
+					content = LexEdStrings.ksMotifBusy;
+					icon = MessageBoxIcon.Warning;
+					break;
+				case MotifApplyMessage.FieldWorksBusy:
+					content = LexEdStrings.ksApplyMotifBusy;
+					icon = MessageBoxIcon.Warning;
+					break;
+				case MotifApplyMessage.NotInstalled:
+					content = LexEdStrings.ksMotifNotFound;
+					icon = MessageBoxIcon.Warning;
+					break;
+				case MotifApplyMessage.CouldNotStart:
+					content = LexEdStrings.ksMotifCouldNotStart;
+					icon = MessageBoxIcon.Error;
+					break;
+				case MotifApplyMessage.Reconciliation:
+					content = LexEdStrings.ksApplyMotifReconciliation;
+					icon = MessageBoxIcon.Error;
+					break;
+				default:
+					return;
+			}
+
+			MessageBox.Show(_parentForm, content, LexEdStrings.ksApplyMotifChangesTitle,
+				MessageBoxButtons.OK, icon);
+		}
 
 		#region FLExLiftBridge Toolbar messages
 		/// <summary>
@@ -526,15 +643,17 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 		private void SaveAllDataToDisk()
 		{
-			//Give all forms the opportunity to save any uncommitted data
-			//(important for analysis sandboxes)
+			ValidatePendingEditorData();
+			ProjectLockingService.UnlockCurrentProject(Cache);
+		}
+
+		private void ValidatePendingEditorData()
+		{
 			var activeForm = _propertyTable.GetValue<Form>("window");
 			if (activeForm != null)
 			{
 				activeForm.ValidateChildren(ValidationConstraints.Enabled);
 			}
-			//Commit all the data in the cache and save to disk
-			ProjectLockingService.UnlockCurrentProject(Cache);
 		}
 
 		#endregion LiftBridge S/R messages
