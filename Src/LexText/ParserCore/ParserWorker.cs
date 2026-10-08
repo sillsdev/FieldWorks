@@ -173,7 +173,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				}
 				stopWatch.Stop();
 				lcResult.ParseTime = stopWatch.ElapsedMilliseconds;
-				if (lcResult.Analyses.Count > 0 || !String.IsNullOrEmpty(lcResult.ErrorMessage))
+				if (lcResult.Analyses.Count > 0 || (checkParser && !String.IsNullOrEmpty(lcResult.ErrorMessage)))
 				{
 					// Don't turn lcText into a wordform here.
 					// This avoids a problem with broadcasting PropChanged (cf. LT-22079).
