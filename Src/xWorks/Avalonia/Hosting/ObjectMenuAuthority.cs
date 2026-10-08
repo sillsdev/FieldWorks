@@ -6,7 +6,6 @@ using System;
 using System.Collections.Generic;
 using SIL.FieldWorks.Common.FwAvalonia.Detail;
 using SIL.FieldWorks.Common.FwAvalonia.ViewDefinition;
-using XCore;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -65,12 +64,12 @@ namespace SIL.FieldWorks.XWorks
 			=> string.Equals(menuId, MenuId, StringComparison.Ordinal)
 				|| string.Equals(menuId, HelpMenuId, StringComparison.Ordinal);
 
-		public DetailMenuItem Build(string menuId, ChoiceBase leaf)
+		public DetailMenuItem Build(string menuId, DetailMenuLeaf leaf)
 		{
 			if (leaf == null)
 				throw new ArgumentNullException(nameof(leaf));
 			var label = XCoreMenuBridge.StripAccelerator(leaf.Label);
-			switch (leaf.HelpId)
+			switch (leaf.CommandId)
 			{
 				case AlwaysVisibleCommandId:
 					return VisibilityItem(label, ViewVisibility.Always);
@@ -86,7 +85,7 @@ namespace SIL.FieldWorks.XWorks
 					return HelpItem(label);
 				default:
 					throw new InvalidOperationException(string.Format(
-						"Menu '{0}' has a leaf '{1}' this authority does not answer.", menuId, leaf.HelpId));
+						"Menu '{0}' has a leaf '{1}' this authority does not answer.", menuId, leaf.CommandId));
 			}
 		}
 

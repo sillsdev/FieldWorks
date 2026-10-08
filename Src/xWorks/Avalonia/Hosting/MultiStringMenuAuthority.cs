@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.Linq;
 using SIL.FieldWorks.Common.DetailRules;
 using SIL.FieldWorks.Common.FwAvalonia.Detail;
-using XCore;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -56,12 +55,12 @@ namespace SIL.FieldWorks.XWorks
 		public bool Owns(string menuId)
 			=> _field.IsMultiStringRow && string.Equals(menuId, MenuId, StringComparison.Ordinal);
 
-		public DetailMenuItem Build(string menuId, ChoiceBase leaf)
+		public DetailMenuItem Build(string menuId, DetailMenuLeaf leaf)
 		{
 			if (leaf == null)
 				throw new ArgumentNullException(nameof(leaf));
 			var label = XCoreMenuBridge.StripAccelerator(leaf.Label);
-			switch (leaf.HelpId)
+			switch (leaf.CommandId)
 			{
 				case ShowAllCommandId:
 					return _showAll(label, _field);

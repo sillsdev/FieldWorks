@@ -737,18 +737,30 @@ namespace SIL.FieldWorks.XWorks
 			=> XCoreMenuBridge.StripAccelerator(display.Text);
 
 		/// <summary>
-		/// The native authorities for the request's row: the reorder-vector menu and the shared
-		/// per-object and Help menus, so a label menu made only of those ids needs nothing from
-		/// the hidden command adapter.
+		/// The native authorities for the request's row, asked in order: the four that own
+		/// their menu ids outright, then the Lexicon authority that owns by predicate. A label
+		/// menu made only of owned ids needs nothing from the hidden command adapter.
 		/// </summary>
 		internal IDetailMenuAuthority CreateMenuAuthority(DetailMenuRequest request)
 		{
-			// One per-object authority serves both, so the row's override target is located
-			// once per menu, not once per authority that asks.
+			// One per-object authority serves both the multi-string menu and the composite, so
+			// the row's override target is located once per menu, not once per authority.
 			var objectMenu = CreateObjectMenuAuthority(request.Field);
-			return new CompositeMenuAuthority(CreateReorderVectorAuthority(request),
+			return new CompositeMenuAuthority(
+				CreateReorderVectorAuthority(request),
 				new EnvironmentInsertMenuAuthority(request, this),
-				CreateMultiStringMenuAuthority(request.Field, objectMenu), objectMenu);
+				CreateMultiStringMenuAuthority(request.Field, objectMenu),
+				objectMenu,
+				CreateLexiconMenuAuthority());
+		}
+
+		/// <summary>
+		/// The message-keyed authority for the Lexicon menus, owning by predicate.
+		/// </summary>
+		internal LexiconMenuAuthority CreateLexiconMenuAuthority()
+		{
+			var window = m_propertyTable.GetValue<XWindow>("window");
+			return new LexiconMenuAuthority(id => XCoreMenuBridge.ResolveMenu(window, id));
 		}
 
 		/// <summary>The native authority for a multi-writing-system row's label menu.</summary>

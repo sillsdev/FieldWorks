@@ -283,24 +283,19 @@ namespace SIL.FieldWorks.XWorks
 			using (itemUi)
 			{
 				var window = m_propertyTable.GetValue<XWindow>("window");
-				var menu = window.GetContextMenuChoiceGroup(new[] { ReferenceItemMenuAuthority.MenuId });
-				menu.PopulateNow(querySubmenuVisibility: false);
-
-				var leaves = Leaves(menu).ToList();
+				var leaves = LeavesOf(ReferenceItemMenuAuthority.MenuId);
 				Assert.That(leaves.Count, Is.GreaterThanOrEqualTo(40),
 					"the shipped menu carries the jumps, the filters, the two marks and the moves");
 				foreach (var leaf in leaves)
 				{
-					Assert.That(leaf.ConfigurationNode, Is.Not.Null,
-						"leaf '{0}' has no configuration node, so no authority can claim it", leaf.Label);
 					Assert.That(() => authority.Build(ReferenceItemMenuAuthority.MenuId, leaf), Throws.Nothing,
-						"the authority does not answer leaf '{0}'", leaf.HelpId);
+						"the authority does not answer leaf '{0}'", leaf.CommandId);
 				}
 				Assert.That(() => XCoreMenuBridge.CreateMenuItems(window, new[] { ReferenceItemMenuAuthority.MenuId },
 					null, null, authority), Throws.Nothing, "the whole menu builds through the bridge");
-				var targets = leaves.OfType<CommandChoice>()
-					.Where(c => c.Message == SIL.FieldWorks.FdoUi.CmObjectUi.JumpToToolMessage)
-					.Select(c => c.CommandObject.TargetId).Distinct().ToList();
+				var targets = leaves
+					.Where(l => l.Message == SIL.FieldWorks.FdoUi.CmObjectUi.JumpToToolMessage)
+					.Select(l => l.Command.TargetId).Distinct().ToList();
 				Assert.That(targets, Is.EqualTo(new[] { Guid.Empty }),
 					"building the menu leaves no jump command carrying a target for a later menu");
 			}
@@ -313,10 +308,7 @@ namespace SIL.FieldWorks.XWorks
 			var authority = m_view.CreateReferenceItemAuthority(ItemRequest(SubentriesField(), 0), out var itemUi);
 			using (itemUi)
 			{
-				var window = m_propertyTable.GetValue<XWindow>("window");
-				var objectMenu = window.GetContextMenuChoiceGroup(new[] { RecordEditView.ObjectMenuId });
-				objectMenu.PopulateNow();
-				var foreignLeaf = objectMenu.OfType<ChoiceBase>().First(c => c.HelpId == ObjectMenuAuthority.HelpCommandId);
+				var foreignLeaf = LeafOf(RecordEditView.ObjectMenuId, ObjectMenuAuthority.HelpCommandId);
 
 				Assert.That(() => authority.Build(ReferenceItemMenuAuthority.MenuId, foreignLeaf),
 					Throws.InvalidOperationException, "an owned id must be answered in full, never partially");
@@ -598,17 +590,12 @@ namespace SIL.FieldWorks.XWorks
 			using (itemUi)
 			{
 				var window = m_propertyTable.GetValue<XWindow>("window");
-				var menu = window.GetContextMenuChoiceGroup(new[] { ReferenceItemMenuAuthority.EnvironmentMenuId });
-				menu.PopulateNow(querySubmenuVisibility: false);
-
-				var leaves = Leaves(menu).ToList();
+				var leaves = LeavesOf(ReferenceItemMenuAuthority.EnvironmentMenuId);
 				Assert.That(leaves.Count, Is.EqualTo(7), "the jump, Describe Error and the five inserts");
 				foreach (var leaf in leaves)
 				{
-					Assert.That(leaf.ConfigurationNode, Is.Not.Null,
-						"leaf '{0}' has no configuration node, so no authority can claim it", leaf.Label);
 					Assert.That(() => authority.Build(ReferenceItemMenuAuthority.EnvironmentMenuId, leaf),
-						Throws.Nothing, "the authority does not answer leaf '{0}'", leaf.HelpId);
+						Throws.Nothing, "the authority does not answer leaf '{0}'", leaf.CommandId);
 				}
 				var items = XCoreMenuBridge.CreateMenuItems(window,
 					new[] { ReferenceItemMenuAuthority.EnvironmentMenuId }, null, null, authority);
@@ -734,10 +721,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var field = EnvironmentsFieldWithOneItem();
 			var authority = new EnvironmentInsertMenuAuthority(LabelMenuRequest(field, NoItem), m_view);
-			var window = m_propertyTable.GetValue<XWindow>("window");
-			var objectMenu = window.GetContextMenuChoiceGroup(new[] { RecordEditView.ObjectMenuId });
-			objectMenu.PopulateNow();
-			var foreignLeaf = objectMenu.OfType<ChoiceBase>().First(c => c.HelpId == ObjectMenuAuthority.HelpCommandId);
+			var foreignLeaf = LeafOf(RecordEditView.ObjectMenuId, ObjectMenuAuthority.HelpCommandId);
 
 			Assert.That(() => authority.Build(EnvironmentInsertMenuAuthority.EnvironmentsMenuId, foreignLeaf),
 				Throws.InvalidOperationException, "an owned id must be answered in full, never partially");
@@ -1223,8 +1207,7 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(FindItem(items, "Alphabetical Order"), Is.Null, "no reorder='true', no Alphabetical Order");
 		}
 
-		// Every leaf under the owned menu, submenus included, must be one the authority knows
-		// and must carry the configuration node ownership is read from.
+		// Every leaf under the owned menu, submenus included, must be one the authority knows.
 		[Test]
 		public void ReorderVectorAuthority_AnswersEveryLeafOfItsMenu()
 		{
@@ -1233,50 +1216,31 @@ namespace SIL.FieldWorks.XWorks
 				menuId: ReorderVectorMenuAuthority.MenuId, objectHvo: m_entry.Hvo,
 				items: new[] { new DetailChoiceOption("a", "A") }, canReorderItems: true, canResetItemOrder: true);
 			var authority = m_view.CreateReorderVectorAuthority(LabelMenuRequest(field, NoItem));
-			var window = m_propertyTable.GetValue<XWindow>("window");
-			var menu = window.GetContextMenuChoiceGroup(new[] { ReorderVectorMenuAuthority.MenuId });
-			menu.PopulateNow();
 
-			var leaves = Leaves(menu).ToList();
+			var leaves = LeavesOf(ReorderVectorMenuAuthority.MenuId);
 			Assert.That(leaves, Is.Not.Empty, "the menu must define at least one leaf");
 			foreach (var leaf in leaves)
 			{
-				Assert.That(leaf.ConfigurationNode, Is.Not.Null,
-					"leaf '{0}' has no configuration node, so no authority can claim it", leaf.Label);
 				Assert.That(() => authority.Build(ReorderVectorMenuAuthority.MenuId, leaf), Throws.Nothing,
-					"the authority does not answer leaf '{0}'", leaf.HelpId);
+					"the authority does not answer leaf '{0}'", leaf.CommandId);
 			}
 		}
 
-		// Every non-separator leaf of a choice group, descending into submenus.
-		private static IEnumerable<ChoiceBase> Leaves(ChoiceGroup group)
-		{
-			foreach (var member in group)
-			{
-				if (member is SeparatorChoice)
-					continue;
-				if (member is ChoiceGroup submenu)
-				{
-					submenu.PopulateNow();
-					foreach (var leaf in Leaves(submenu))
-						yield return leaf;
-				}
-				else if (member is ChoiceBase leaf)
-				{
-					yield return leaf;
-				}
-			}
-		}
+		// Every command leaf of a menu id, submenus included, as the bridge resolves it from
+		// the configuration.
+		private IReadOnlyList<DetailMenuLeaf> LeavesOf(string menuId)
+			=> XCoreMenuBridge.ResolveMenu(m_propertyTable.GetValue<XWindow>("window"), menuId).Leaves;
+
+		// One command leaf of a menu id, by command id.
+		private DetailMenuLeaf LeafOf(string menuId, string commandId)
+			=> LeavesOf(menuId).First(l => l.CommandId == commandId);
 
 		[Test]
 		public void ReorderVectorAuthority_RejectsALeafItDoesNotAnswer()
 		{
 			MakeTwoSubentries();
 			var authority = m_view.CreateReorderVectorAuthority(LabelMenuRequest(SubentriesField(), NoItem));
-			var window = m_propertyTable.GetValue<XWindow>("window");
-			var objectMenu = window.GetContextMenuChoiceGroup(new[] { RecordEditView.ObjectMenuId });
-			objectMenu.PopulateNow();
-			var foreignLeaf = objectMenu.OfType<ChoiceBase>().First(c => c.HelpId == "CmdDataTree-Help");
+			var foreignLeaf = LeafOf(RecordEditView.ObjectMenuId, "CmdDataTree-Help");
 
 			Assert.That(() => authority.Build(ReorderVectorMenuAuthority.MenuId, foreignLeaf),
 				Throws.InvalidOperationException, "an owned id must be answered in full, never partially");
@@ -1347,8 +1311,8 @@ namespace SIL.FieldWorks.XWorks
 				_hidden = new HashSet<string>(hidden, StringComparer.Ordinal);
 			}
 			public bool Owns(string menuId) => _owned.Contains(menuId);
-			public DetailMenuItem Build(string menuId, ChoiceBase leaf)
-				=> _hidden.Contains(leaf.HelpId) ? null
+			public DetailMenuItem Build(string menuId, DetailMenuLeaf leaf)
+				=> _hidden.Contains(leaf.CommandId) ? null
 					: new DetailMenuItem(XCoreMenuBridge.StripAccelerator(leaf.Label), isEnabled: true);
 
 			// Echoes the list's id as one item, so a test can see where it spliced in.
@@ -1421,6 +1385,120 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(asked, Is.True, "the mediator path decides submenu visibility by asking colleagues");
 		}
 
+		// The XML walk must see what ChoiceGroup.Populate sees. The mediator path drops a
+		// submenu no colleague shows, so nested leaves compare as a subset, top-level exactly.
+		[Test]
+		public void ResolveMenu_ReadsWhatChoiceGroupPopulates_ForEveryContextMenuId()
+		{
+			var window = m_propertyTable.GetValue<XWindow>("window");
+			var configuration = m_propertyTable.GetValue<XmlNode>("WindowConfiguration");
+			var ids = configuration.SelectNodes("//contextMenus/menu[@id]").Cast<XmlNode>()
+				.Select(n => n.Attributes["id"].Value).Distinct().ToList();
+			Assert.That(ids.Count, Is.GreaterThan(48), "the window configuration defines the tools' context menus");
+
+			var undefinedCommands = new List<string>();
+			foreach (var id in ids)
+			{
+				var resolved = XCoreMenuBridge.ResolveMenu(window, id);
+				var group = window.GetContextMenuChoiceGroup(new[] { id });
+				group.PopulateNow();
+
+				var groupTopLevel = group.OfType<CommandChoice>().Select(Describe).ToList();
+				var resolvedTopLevel = resolved.Entries.Where(e => e.Leaf != null || IsUndefinedCommand(e))
+					.Select(Describe).ToList();
+				Assert.That(resolvedTopLevel, Is.EqualTo(groupTopLevel), "menu '{0}': top-level leaves", id);
+				var resolvedLeaves = resolved.Leaves.Select(l => Describe(l.CommandId, l.Label))
+					.Concat(AllEntries(resolved.Entries).Where(IsUndefinedCommand).Select(Describe)).ToList();
+				Assert.That(resolvedLeaves, Is.SupersetOf(ChoiceLeaves(group).Select(Describe)),
+					"menu '{0}': nested leaves", id);
+				Assert.That(resolved.ListIds, Is.EquivalentTo(ListIds(group)), "menu '{0}': list submenus", id);
+				undefinedCommands.AddRange(resolved.Unanswerable.Where(u => u.StartsWith("command", StringComparison.Ordinal))
+					.Select(u => id + ": " + u));
+			}
+			TestContext.WriteLine("Context-menu items naming an undefined command (ChoiceGroup fails on them at display time):"
+				+ Environment.NewLine + string.Join(Environment.NewLine, undefinedCommands));
+		}
+
+		// Walks the ChoiceGroup side exactly as the configuration-walk side describes a leaf;
+		// a CommandChoice whose command is undefined has no label to read.
+		private static string Describe(CommandChoice choice)
+		{
+			try
+			{
+				return Describe(choice.HelpId, choice.Label);
+			}
+			catch (SIL.Utils.ConfigurationException)
+			{
+				return Describe(choice.HelpId, null);
+			}
+		}
+
+		private static string Describe(DetailMenuEntry entry)
+			=> entry.Leaf != null
+				? Describe(entry.Leaf.CommandId, entry.Leaf.Label)
+				: Describe(UndefinedCommandId(entry), null);
+
+		private static string Describe(string commandId, string label)
+			=> label == null ? commandId : commandId + " = " + label;
+
+		private static bool IsUndefinedCommand(DetailMenuEntry entry) => UndefinedCommandId(entry) != null;
+
+		// The reason text names the id: "command 'X' is not defined".
+		private static string UndefinedCommandId(DetailMenuEntry entry)
+		{
+			const string prefix = "command '";
+			if (entry.Unanswerable == null || !entry.Unanswerable.StartsWith(prefix, StringComparison.Ordinal))
+				return null;
+			var end = entry.Unanswerable.IndexOf('\'', prefix.Length);
+			return entry.Unanswerable.Substring(prefix.Length, end - prefix.Length);
+		}
+
+		private static IEnumerable<DetailMenuEntry> AllEntries(IReadOnlyList<DetailMenuEntry> entries)
+		{
+			foreach (var entry in entries)
+			{
+				yield return entry;
+				if (entry.Children == null)
+					continue;
+				foreach (var nested in AllEntries(entry.Children))
+					yield return nested;
+			}
+		}
+
+		// Every command leaf of a populated choice group, submenus included.
+		private static IEnumerable<CommandChoice> ChoiceLeaves(ChoiceGroup group)
+		{
+			foreach (var member in group)
+			{
+				if (member is ChoiceGroup submenu)
+				{
+					submenu.PopulateNow();
+					foreach (var leaf in ChoiceLeaves(submenu))
+						yield return leaf;
+				}
+				else if (member is CommandChoice leaf)
+				{
+					yield return leaf;
+				}
+			}
+		}
+
+		private static IEnumerable<string> ListIds(ChoiceGroup group)
+		{
+			foreach (var member in group)
+			{
+				if (!(member is ChoiceGroup submenu))
+					continue;
+				if (!string.IsNullOrEmpty(submenu.ListId))
+				{
+					yield return submenu.ListId;
+					continue;
+				}
+				foreach (var listId in ListIds(submenu))
+					yield return listId;
+			}
+		}
+
 		[Test]
 		public void OwnedSubmenu_WhoseLeavesAreAllHidden_IsOmitted()
 		{
@@ -1482,23 +1560,23 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var authority = m_view.CreateMultiStringMenuAuthority(LexemeFormField());
 			var window = m_propertyTable.GetValue<XWindow>("window");
-			var menu = window.GetContextMenuChoiceGroup(new[] { MultiStringMenuAuthority.MenuId });
-			menu.PopulateNow(querySubmenuVisibility: false);
+			var menu = XCoreMenuBridge.ResolveMenu(window, MultiStringMenuAuthority.MenuId);
 
-			var leaves = Leaves(menu).ToList();
-			Assert.That(leaves.Select(l => l.HelpId), Is.EquivalentTo(new[]
+			Assert.That(menu.Leaves.Select(l => l.CommandId), Is.EquivalentTo(new[]
 			{
 				MultiStringMenuAuthority.ShowAllCommandId, MultiStringMenuAuthority.ConfigureCommandId,
 				ObjectMenuAuthority.AlwaysVisibleCommandId, ObjectMenuAuthority.IfDataCommandId,
 				ObjectMenuAuthority.NormallyHiddenCommandId, ObjectMenuAuthority.MoveFieldUpCommandId,
 				ObjectMenuAuthority.MoveFieldDownCommandId, ObjectMenuAuthority.HelpCommandId
 			}), "the shipped menu defines exactly the leaves the authority knows");
-			foreach (var leaf in leaves)
+			foreach (var leaf in menu.Leaves)
 			{
 				Assert.That(() => authority.Build(MultiStringMenuAuthority.MenuId, leaf), Throws.Nothing,
-					"the authority does not answer leaf '{0}'", leaf.HelpId);
+					"the authority does not answer leaf '{0}'", leaf.CommandId);
 			}
 			// The list submenu has no configured leaves; the authority supplies its items.
+			Assert.That(menu.ListIds, Is.EqualTo(new[] { MultiStringMenuAuthority.WritingSystemListId }),
+				"the writing-system list is the menu's one list submenu");
 			Assert.That(authority.BuildList(MultiStringMenuAuthority.MenuId,
 				MultiStringMenuAuthority.WritingSystemListId), Is.Not.Empty,
 				"the writing-system list offers the row's options");
@@ -1508,11 +1586,7 @@ namespace SIL.FieldWorks.XWorks
 		public void MultiStringMenuAuthority_RejectsWhatItDoesNotAnswer()
 		{
 			var authority = m_view.CreateMultiStringMenuAuthority(LexemeFormField());
-			var window = m_propertyTable.GetValue<XWindow>("window");
-			var reorderMenu = window.GetContextMenuChoiceGroup(new[] { ReorderVectorMenuAuthority.MenuId });
-			reorderMenu.PopulateNow();
-			var foreignLeaf = reorderMenu.OfType<ChoiceBase>()
-				.First(c => c.HelpId == ReorderVectorMenuAuthority.AlphabeticalOrderCommandId);
+			var foreignLeaf = LeafOf(ReorderVectorMenuAuthority.MenuId, ReorderVectorMenuAuthority.AlphabeticalOrderCommandId);
 
 			Assert.That(() => authority.Build(MultiStringMenuAuthority.MenuId, foreignLeaf),
 				Throws.InvalidOperationException, "a foreign leaf is refused, never left to the mediator");
@@ -1601,12 +1675,9 @@ namespace SIL.FieldWorks.XWorks
 		public void ObjectMenuAuthority_AnswersEveryLeafOfItsMenus()
 		{
 			var authority = m_view.CreateObjectMenuAuthority(LexemeFormField());
-			var window = m_propertyTable.GetValue<XWindow>("window");
-			var menu = window.GetContextMenuChoiceGroup(new[] { ObjectMenuAuthority.MenuId });
-			menu.PopulateNow(querySubmenuVisibility: false);
+			var leaves = LeavesOf(ObjectMenuAuthority.MenuId);
 
-			var leaves = Leaves(menu).ToList();
-			Assert.That(leaves.Select(l => l.HelpId), Is.EquivalentTo(new[]
+			Assert.That(leaves.Select(l => l.CommandId), Is.EquivalentTo(new[]
 			{
 				ObjectMenuAuthority.AlwaysVisibleCommandId, ObjectMenuAuthority.IfDataCommandId,
 				ObjectMenuAuthority.NormallyHiddenCommandId, ObjectMenuAuthority.MoveFieldUpCommandId,
@@ -1615,12 +1686,10 @@ namespace SIL.FieldWorks.XWorks
 			foreach (var leaf in leaves)
 			{
 				Assert.That(() => authority.Build(ObjectMenuAuthority.MenuId, leaf), Throws.Nothing,
-					"the authority does not answer leaf '{0}'", leaf.HelpId);
+					"the authority does not answer leaf '{0}'", leaf.CommandId);
 			}
 
-			var help = window.GetContextMenuChoiceGroup(new[] { ObjectMenuAuthority.HelpMenuId });
-			help.PopulateNow(querySubmenuVisibility: false);
-			Assert.That(Leaves(help), Is.Empty, "mnuDataTree-Help defines no leaf of its own");
+			Assert.That(LeavesOf(ObjectMenuAuthority.HelpMenuId), Is.Empty, "mnuDataTree-Help defines no leaf of its own");
 			Assert.That(authority.Owns(ObjectMenuAuthority.HelpMenuId), Is.True);
 		}
 
@@ -1822,11 +1891,7 @@ namespace SIL.FieldWorks.XWorks
 		public void ObjectMenuAuthority_RejectsALeafItDoesNotAnswer()
 		{
 			var authority = m_view.CreateObjectMenuAuthority(LexemeFormField());
-			var window = m_propertyTable.GetValue<XWindow>("window");
-			var reorderMenu = window.GetContextMenuChoiceGroup(new[] { ReorderVectorMenuAuthority.MenuId });
-			reorderMenu.PopulateNow();
-			var foreignLeaf = reorderMenu.OfType<ChoiceBase>()
-				.First(c => c.HelpId == ReorderVectorMenuAuthority.AlphabeticalOrderCommandId);
+			var foreignLeaf = LeafOf(ReorderVectorMenuAuthority.MenuId, ReorderVectorMenuAuthority.AlphabeticalOrderCommandId);
 
 			Assert.That(() => authority.Build(ObjectMenuAuthority.MenuId, foreignLeaf),
 				Throws.InvalidOperationException, "an owned id must be answered in full, never partially");

@@ -102,40 +102,33 @@ namespace SIL.FieldWorks.XWorks
 			=> string.Equals(menuId, MenuId, StringComparison.Ordinal)
 				|| string.Equals(menuId, EnvironmentMenuId, StringComparison.Ordinal);
 
-		public DetailMenuItem Build(string menuId, ChoiceBase leaf)
+		public DetailMenuItem Build(string menuId, DetailMenuLeaf leaf)
 		{
 			if (leaf == null)
 				throw new ArgumentNullException(nameof(leaf));
 			var label = XCoreMenuBridge.StripAccelerator(leaf.Label);
-			var command = leaf as CommandChoice;
-			switch (leaf.HelpId)
+			switch (leaf.CommandId)
 			{
 				case ReorderVectorMenuAuthority.MoveLeftCommandId:
 					return MoveItem(label, forward: false);
 				case ReorderVectorMenuAuthority.MoveRightCommandId:
 					return MoveItem(label, forward: true);
 				case ShowSubentryUnderComponentCommandId:
-					return ShowSubentryItem(label, ToolOf(command));
+					return ShowSubentryItem(label, ToolOf(leaf));
 				case VisibleComplexFormCommandId:
 					return VisibleComplexFormItem(label);
 				case FilterLexiconCommandId:
 				case FilterNotebookCommandId:
-					return FilterItem(label, ToolOf(command));
+					return FilterItem(label, ToolOf(leaf));
 				default:
-					if (command != null && string.Equals(command.Message, CmObjectUi.JumpToToolMessage,
-						StringComparison.Ordinal))
-					{
-						return JumpItem(command);
-					}
-					if (command != null && string.Equals(command.Message, EnvironmentMenuLeaves.ShowErrorMessage,
-						StringComparison.Ordinal))
-					{
+					if (string.Equals(leaf.Message, CmObjectUi.JumpToToolMessage, StringComparison.Ordinal))
+						return JumpItem(leaf);
+					if (string.Equals(leaf.Message, EnvironmentMenuLeaves.ShowErrorMessage, StringComparison.Ordinal))
 						return EnvironmentMenuLeaves.BuildDescribeError(label, ClickedItemText(), _host);
-					}
-					if (command != null && EnvironmentMenuLeaves.IsInsertMessage(command.Message))
-						return EnvironmentMenuLeaves.BuildInsert(command.Message, label, _request, _host);
+					if (EnvironmentMenuLeaves.IsInsertMessage(leaf.Message))
+						return EnvironmentMenuLeaves.BuildInsert(leaf.Message, label, _request, _host);
 					throw new InvalidOperationException(string.Format(
-						"Menu '{0}' has a leaf '{1}' this authority does not answer.", menuId, leaf.HelpId));
+						"Menu '{0}' has a leaf '{1}' this authority does not answer.", menuId, leaf.CommandId));
 			}
 		}
 
@@ -163,15 +156,18 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		// The tool a command's parameters name, or null.
-		private static string ToolOf(CommandChoice command)
-			=> command == null ? null : XmlUtils.GetOptionalAttributeValue(command.CommandObject.Parameters[0], "tool");
+		private static string ToolOf(DetailMenuLeaf leaf)
+		{
+			var parameters = leaf.Command.Parameters[0];
+			return parameters == null ? null : XmlUtils.GetOptionalAttributeValue(parameters, "tool");
+		}
 
 		// The item's object UI decides a jump as it would for any menu; the first enabled jump
 		// is the Ctrl+click default and its label says so.
-		private DetailMenuItem JumpItem(CommandChoice choice)
+		private DetailMenuItem JumpItem(DetailMenuLeaf leaf)
 		{
-			var command = choice.CommandObject;
-			var display = new UIItemDisplayProperties(null, choice.Label, true, command.IconName, true);
+			var command = leaf.Command;
+			var display = new UIItemDisplayProperties(null, leaf.Label, true, command.IconName, true);
 			_itemUi.OnDisplayJumpToTool(command, ref display);
 			// The display sets the shared command's target; the object UI resolves its own on
 			// execute, so clear it here rather than leave it for a later menu to pick up.
@@ -182,9 +178,9 @@ namespace SIL.FieldWorks.XWorks
 			if (!display.Enabled)
 				return new DetailMenuItem(label, isEnabled: false, display.Checked);
 			Action execute = () => _host.RunJump(() => _itemUi.OnJumpToTool(command));
-			if (_defaultCommandId == null || string.Equals(_defaultCommandId, choice.HelpId, StringComparison.Ordinal))
+			if (_defaultCommandId == null || string.Equals(_defaultCommandId, leaf.CommandId, StringComparison.Ordinal))
 			{
-				_defaultCommandId = choice.HelpId;
+				_defaultCommandId = leaf.CommandId;
 				DefaultActivation = execute;
 				label += CmObjectUi.CtrlClickSuffix;
 			}

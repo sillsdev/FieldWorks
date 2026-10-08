@@ -4,7 +4,6 @@
 
 using System.Collections.Generic;
 using SIL.FieldWorks.Common.FwAvalonia.Detail;
-using XCore;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -28,12 +27,11 @@ namespace SIL.FieldWorks.XWorks
 		/// The rendered item for a leaf under an owned menu id, or null when the leaf is hidden.
 		/// </summary>
 		/// <param name="menuId">The owned menu id the leaf belongs to.</param>
-		/// <param name="leaf">The xCore leaf; its label is the menu text, its
-		/// <see cref="ChoiceBase.HelpId"/> the command id.</param>
+		/// <param name="leaf">The configured leaf: its command, message and menu text.</param>
 		/// <exception cref="System.InvalidOperationException">The leaf's command is not one the
 		/// authority answers: an owned id must be answered in full, or a leaf would leak as
 		/// visible-but-disabled.</exception>
-		DetailMenuItem Build(string menuId, ChoiceBase leaf);
+		DetailMenuItem Build(string menuId, DetailMenuLeaf leaf);
 
 		/// <summary>
 		/// The items of a list-populated submenu under an owned menu id, in display order, each
