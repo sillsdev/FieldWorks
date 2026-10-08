@@ -34,6 +34,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		private bool m_guessRoots;
 		private bool m_mergeAnalyses;
 		private bool m_mergeMSAs = true;
+		private bool m_makePartialsFinal = false;
 
 		// the public const strings are for GenerateHCConfigForFLExTrans and HCSynthByGlossLib
 		internal const string CRuleID = "ID";
@@ -164,6 +165,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				XElement guessRootsElem = parserParamsElem.Elements("HC").Elements("GuessRoots").FirstOrDefault();
 				XElement mergeAnalysesElem = parserParamsElem.Elements("HC").Elements("MergeAnalyses").FirstOrDefault();
 				XElement mergeMSAsElem = parserParamsElem.Elements("HC").Elements("MergeMSAs").FirstOrDefault();
+				XElement makePartialsFinalElem = parserParamsElem.Elements("HC").Elements("MakePartialsFinal").FirstOrDefault();
 				XElement maxRootsElem = parserParamsElem.Elements("HC").Elements("MaxRoots").FirstOrDefault();
 				XElement maxAlternativesElem = parserParamsElem.Elements("HC").Elements("MaxAlternatives").FirstOrDefault();
 				if (delReappsElem != null)
@@ -172,12 +174,12 @@ namespace SIL.FieldWorks.WordWorks.Parser
 					m_guessRoots = (bool) guessRootsElem;
 				if (mergeAnalysesElem != null)
 					m_mergeAnalyses = (bool)mergeAnalysesElem;
-				if (mergeMSAsElem != null)
-					m_mergeMSAs = (bool)mergeMSAsElem;
 				if (maxRootsElem != null)
 					maxStemCount = int.Parse(maxRootsElem.Value);
 				if (maxAlternativesElem != null)
 					maxAlternatives = int.Parse(maxAlternativesElem.Value);
+				m_mergeMSAs = mergeMSAsElem != null ? (bool)mergeMSAsElem : true;
+				m_makePartialsFinal = makePartialsFinalElem != null ? (bool)makePartialsFinalElem : false;
 				writer.WriteStartElement("LoadErrors");
 				if (m_mergeMSAs)
 				{
@@ -190,10 +192,14 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				}
 				writer.WriteEndElement();
 			}
-			m_morpher = new Morpher(m_traceManager, m_language) { DeletionReapplications = delReapps };
-			m_morpher.MaxStemCount = maxStemCount;
-			m_morpher.MergeEquivalentAnalyses = m_mergeAnalyses;
-			m_morpher.MaxAlternatives = maxAlternatives;
+			m_morpher = new Morpher(m_traceManager, m_language)
+			{
+				DeletionReapplications = delReapps,
+				MaxStemCount = maxStemCount,
+				MergeEquivalentAnalyses = m_mergeAnalyses,
+				MaxAlternatives = maxAlternatives,
+				AlwaysEnforceFinalTemplates = m_makePartialsFinal,
+			};
 		}
 
 		private XDocument ParseToXml(string form, bool tracing, IEnumerable<int> selectTraceMorphs)

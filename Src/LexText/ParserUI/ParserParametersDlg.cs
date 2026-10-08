@@ -35,6 +35,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		private const string GuessRoots = "GuessRoots";
 		private const string MergeAnalyses = "MergeAnalyses";
 		private const string MergeMSAs = "MergeMSAs";
+		private const string MakePartialsFinal = "MakePartialsFinal";
 		private const string Strata = "Strata";
 
 		private const string XAmple = "XAmple";
@@ -281,11 +282,13 @@ namespace SIL.FieldWorks.LexText.Controls
 			PopulateDataGrid(m_dataGrid1, XAmple);
 			PopulateDataGrid(m_dataGrid2, HC);
 			m_dataGrid2.TableStyles[0].GridColumnStyles[2].Width = 130;
+			m_dataGrid2.TableStyles[0].GridColumnStyles[3].Width = 70;
 			m_dataGrid2.TableStyles[0].GridColumnStyles[4].Width = 160;
 			m_dataGrid2.TableStyles[0].GridColumnStyles[6].Width = 90;
-			m_dataGrid2.TableStyles[0].GridColumnStyles[7].Width = 80;
+			m_dataGrid2.TableStyles[0].GridColumnStyles[7].Width = 70;
 			m_dataGrid2.TableStyles[0].GridColumnStyles[8].Width = 100;
-			m_dataGrid2.TableStyles[0].GridColumnStyles[9].Width = 400;
+			m_dataGrid2.TableStyles[0].GridColumnStyles[9].Width = 100;
+			m_dataGrid2.TableStyles[0].GridColumnStyles[10].Width = 400;
 
 			m_compoundRules = compoundRules;
 			if (m_compoundRules?.Count > 0)
@@ -322,6 +325,8 @@ namespace SIL.FieldWorks.LexText.Controls
 				hcElem.Add(new XElement(MergeAnalyses, true));
 			if (hcElem.Element(MergeMSAs) == null)
 				hcElem.Add(new XElement(MergeMSAs, true));
+			if (hcElem.Element(MakePartialsFinal) == null)
+				hcElem.Add(new XElement(MakePartialsFinal, false));
 			if (hcElem.Element(Strata) == null)
 				hcElem.Add(new XElement(Strata, ""));
 
@@ -377,6 +382,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			tblHC.Columns.Add(GuessRoots, typeof(bool));
 			tblHC.Columns.Add(MergeAnalyses, typeof(bool));
 			tblHC.Columns.Add(MergeMSAs, typeof(bool));
+			tblHC.Columns.Add(MakePartialsFinal, typeof(bool));
 			tblHC.Columns.Add(MaxAlternatives, typeof(int));
 			tblHC.Columns.Add(Strata, typeof(string));
 			return tblHC;
