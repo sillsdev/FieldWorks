@@ -408,27 +408,6 @@ namespace SIL.FieldWorks.XWorks
 			SetupDataContext(false);
 		}
 
-		/// <summary>
-		/// Persist this list for retrieval by RestoreListFrom, if we are a primary Clerk.
-		/// </summary>
-		internal void PersistListOn(string pathname)
-		{
-			if (IsPrimaryClerk)
-				m_list.PersistOn(pathname);
-		}
-
-		/// <summary>
-		/// Returns true if successful, false if some problem reading the file, including
-		/// detecting that part of a key is a deleted object. Return false if this is not
-		/// the primary clerk.
-		/// </summary>
-		internal bool RestoreListFrom(string pathname)
-		{
-			if (!IsPrimaryClerk)
-				return false;
-			return m_list.RestoreFrom(pathname);
-		}
-
 		private string GetSortNamePropertyTableId(DictionaryConfigurationModel dictConfig = null)
 		{
 			CheckDisposed();
@@ -3331,15 +3310,6 @@ namespace SIL.FieldWorks.XWorks
 				set { m_fTriggerPendingReloadOnDispose = value; }
 			}
 
-			/// <summary>
-			/// The list was successfully restored (from a persisted sort sequence).
-			/// We should NOT sort it when disposed, nor restore an original flag indicating it needed sorting.
-			/// </summary>
-			internal void ListWasRestored()
-			{
-				m_fTriggerPendingReloadOnDispose = false;
-				m_fOriginalLoadRequestedWhileSuppressed = false;
-			}
 			#region DisposableBase Members
 
 			protected override void DisposeManagedResources()
