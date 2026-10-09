@@ -72,7 +72,6 @@ namespace SIL.FieldWorks.XWorks
 
 				if (ExistingClerk != null) // ExistingClerk, *not* Clerk (see doc on ExistingClerk)
 				{
-					PersistSortSequence();
 					ExistingClerk.FilterChangedByClerk -= Clerk_FilterChangedByClerk;
 					ExistingClerk.SorterChangedByClerk -= Clerk_SorterChangedByClerk;
 				}
@@ -358,18 +357,6 @@ namespace SIL.FieldWorks.XWorks
 		{
 			SetupLinkScripture();
 			return m_browseViewer.FollowLink(args);
-		}
-
-
-		/// <summary>
-		/// This is the best way I can find to catch when the control is going away.
-		/// </summary>
-		/// <param name="e"></param>
-		protected override void OnParentChanged(EventArgs e)
-		{
-			if (Parent == null)
-				PersistSortSequence();
-			base.OnParentChanged(e);
 		}
 
 		protected virtual BrowseViewer CreateBrowseViewer(XmlNode nodeSpec, int hvoRoot, int fakeFlid, LcmCache cache,

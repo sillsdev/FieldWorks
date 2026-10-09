@@ -10,10 +10,8 @@
 // </remarks>
 // ------------------- -------------------------------------------------------------------------
 using System;
-using System.IO;
 using System.Diagnostics;
 using System.Xml;
-using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using static SIL.FieldWorks.Common.FwUtils.FwUtils;
 using XCore;
@@ -204,7 +202,6 @@ namespace SIL.FieldWorks.XWorks
 
 			RecordClerk clerk = ExistingClerk;
 			bool fClerkAlreadySuppressed = false;
-			bool fClerkWasCreated = false;
 			if (clerk == null)
 			{
 				// We do NOT want to load the list as part of creating the clerk.
@@ -218,7 +215,6 @@ namespace SIL.FieldWorks.XWorks
 				// we want to pass FALSE to the ListUpdateHelper constructor, however, to pretend that the
 				// list was NOT suppressed when the helper was created, so it will duly be sorted when
 				// the helper is disposed.
-				fClerkWasCreated = true;
 				clerk = CreateClerk(false);
 				Debug.Assert(clerk != null);
 			}
@@ -227,7 +223,6 @@ namespace SIL.FieldWorks.XWorks
 			// suspend any loading of the Clerk's list items until after a
 			// subclass (possibly) initializes sorters/filters
 			// in SetupDataContext()
-			bool didRestoreFromPersistence = false;
 			using (var luh = new RecordClerk.ListUpdateHelper(clerk, fClerkAlreadySuppressed))
 			{
 				luh.ClearBrowseListUntilReload = true;
@@ -239,66 +234,12 @@ namespace SIL.FieldWorks.XWorks
 				// view. This is handled by Priority now, RecordView is by default just after RecordClerk in the processing.
 				mediator.AddColleague(this);
 				SetupDataContext();
-				// Only if it was just now created should we try to restore from what we persisted.
-				// Otherwise (e.g., FWR-1128) we may miss changes made to the list in other tools.
-				if (fClerkWasCreated)
-					didRestoreFromPersistence = RestoreSortSequence();
-				if (didRestoreFromPersistence)
-					luh.ListWasRestored();
 			}
 			// In case it hasn't yet been loaded, load it!  See LT-10185.
-			if (!didRestoreFromPersistence && !Clerk.ListLoadingSuppressed && Clerk.RequestedLoadWhileSuppressed)
+			if (!Clerk.ListLoadingSuppressed && Clerk.RequestedLoadWhileSuppressed)
 				Clerk.UpdateList(true, true); // sluggishness culprit for LT-12844 was in here
 			Clerk.SetCurrentFromRelatedClerk(); // See if some other clerk wants to influence our current object.
 			ShowRecord();
-		}
-
-		private string GetClerkPersistPathname()
-		{
-			return GetSortFilePersistPathname(Cache, Clerk.Id);
-		}
-
-		internal static string GetSortFilePersistPathname(LcmCache cache, string clerkId)
-		{
-			var filename = clerkId + "_SortSeq";
-			//(This extension is also known to ProjectRestoreService.RestoreFrom7_0AndNewerBackup.)
-			// Also to FwXWindow.DiscardProperties().
-			var filenameWithExt = Path.ChangeExtension(filename, "fwss");
-			var tempDirectory = Path.Combine(cache.ProjectId.ProjectFolder, LcmFileHelper.ksSortSequenceTempDir);
-			if (!Directory.Exists(tempDirectory))
-				Directory.CreateDirectory(tempDirectory);
-			return Path.Combine(tempDirectory, filenameWithExt);
-		}
-
-		protected virtual void PersistSortSequence()
-		{
-			if (Clerk == null || Clerk.IsDisposed)
-				return; // temporary clerk, such as a concordance in find example dialog.
-			// If we're being disposed because the application is crashing, we do NOT want to save the sort
-			// sequence. It might contain bad objects, or represent a filtered state that is NOT going to
-			// be persisted because of the crash. LT-11446.
-			if (FwApp.InCrashedState || Cache == null || Cache.IsDisposed)
-				return;
-			var pathname = GetClerkPersistPathname();
-			var watch = new Stopwatch();
-			watch.Start();
-			Clerk.PersistListOn(pathname);
-			watch.Stop();
-			Debug.WriteLine("Saving clerk " + pathname + " took " + watch.ElapsedMilliseconds + " ms.");
-		}
-
-		// Enhance JohnT: need to verify that sort sequence is current.
-		private bool RestoreSortSequence()
-		{
-			var pathname = GetClerkPersistPathname();
-			if (!File.Exists(pathname))
-				return false;
-			var watch = new Stopwatch();
-			watch.Start();
-			var result = Clerk.RestoreListFrom(pathname);
-			watch.Stop();
-			Debug.WriteLine("Restoring clerk " + pathname + " took " + watch.ElapsedMilliseconds + " ms.");
-			return result;
 		}
 
 		private void SetTreebarAvailability()

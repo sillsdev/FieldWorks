@@ -604,12 +604,6 @@ namespace SIL.FieldWorks.XWorks
 					mediator, propertyTable,
 					sortItemProvider, sda);
 			}
-
-			protected override void PersistSortSequence()
-			{
-				// Do no persisting.
-			}
-
 		}
 
 	}

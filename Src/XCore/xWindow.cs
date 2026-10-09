@@ -1128,10 +1128,6 @@ namespace XCore
 				RestoreProperties();
 				// nb some subclasses will also reload database-specific properties later.
 			}
-			else
-			{
-				DiscardProperties();
-			}
 
 			if (m_propertyTable.PropertyExists("windowState"))
 			{
@@ -1171,15 +1167,6 @@ namespace XCore
 		protected virtual void RestoreProperties()
 		{
 			m_propertyTable.RestoreFromFile(m_propertyTable.GlobalSettingsId);
-		}
-
-		/// <summary>
-		/// If we don't RestoreProperties we may need to discard some information.
-		/// For example if we are discarding a saved filter we need to discard the saved object sequences.
-		/// </summary>
-		protected virtual void DiscardProperties()
-		{
-			// Default is to do nothing (it's not necessary to actually delete the saved settings file).
 		}
 
 		/// <summary>

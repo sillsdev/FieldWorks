@@ -17,7 +17,6 @@ using SIL.FieldWorks.FwCoreDlgs;
 using SIL.FieldWorks.LexText.Controls;
 using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.XWorks.Archiving;
-using SIL.IO;
 using SIL.LCModel;
 using SIL.LCModel.Application;
 using SIL.LCModel.Core.KernelInterfaces;
@@ -381,21 +380,6 @@ namespace SIL.FieldWorks.XWorks
 			base.RestoreProperties();
 			m_propertyTable.RestoreFromFile(m_propertyTable.LocalSettingsId);
 			GlobalSettingServices.RestoreSettings(Cache.ServiceLocator, m_propertyTable);
-		}
-
-		/// <summary>
-		/// If we are discarding saved settings, we must not keep any saved sort sequences,
-		/// as they may represent a filter we are not restoring (LT-11647)
-		/// </summary>
-		protected override void DiscardProperties()
-		{
-			var tempDirectory = Path.Combine(Cache.ProjectId.ProjectFolder, LcmFileHelper.ksSortSequenceTempDir);
-			RobustIO.DeleteDirectoryAndContents(tempDirectory);
-		}
-
-		public void ClearInvalidatedStoredData()
-		{
-			DiscardProperties();
 		}
 
 		/// -----------------------------------------------------------------------------------
