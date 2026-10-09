@@ -176,7 +176,7 @@ namespace XCore
 			{
 			}
 			//remember now
-			m_propertyTable.SetProperty("PreviousToolbarVersion", currentVersion, true);
+			m_propertyTable.SetProperty("PreviousToolbarVersion", currentVersion, false);
 		}
 
 		/// <summary>

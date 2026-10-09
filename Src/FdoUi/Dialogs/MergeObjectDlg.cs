@@ -403,8 +403,8 @@ namespace SIL.FieldWorks.FdoUi.Dialogs
 		{
 			if (m_propertyTable != null)
 			{
-				m_propertyTable.SetProperty("mergeDlgLocation", Location, true);
-				m_propertyTable.SetProperty("mergeDlgSize", Size, true);
+				m_propertyTable.SetProperty("mergeDlgLocation", Location, false);
+				m_propertyTable.SetProperty("mergeDlgSize", Size, false);
 			}
 		}
 

@@ -398,7 +398,7 @@ namespace SIL.FieldWorks.XWorks
 
 		private void UpdateExcludedCoreTexts(HashSet<Guid> excludedGuids)
 		{
-			m_propertyTable.SetProperty(ExcludeCoreTextPropertyName, MakeIdList(excludedGuids), true);
+			m_propertyTable.SetProperty(ExcludeCoreTextPropertyName, MakeIdList(excludedGuids), false);
 		}
 
 		private void UpdatePropertyTable()
@@ -415,7 +415,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="texts"></param>
 		public static void SetScriptureTextsInPropertyTable(Mediator mediator, PropertyTable propertyTable, IEnumerable<IStText> texts)
 		{
-			propertyTable.SetProperty(PersistPropertyName, MakeIdList(texts), true);
+			propertyTable.SetProperty(PersistPropertyName, MakeIdList(texts), false);
 		}
 
 		/// <summary>

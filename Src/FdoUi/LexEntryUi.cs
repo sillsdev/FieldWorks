@@ -310,7 +310,7 @@ namespace SIL.FieldWorks.FdoUi
 			// (new) mediator.
 			LcmStyleSheet styleSheet = new LcmStyleSheet();
 			styleSheet.Init(cache, cache.LanguageProject.Hvo, LangProjectTags.kflidStyles);
-			propertyTable.SetProperty("LcmStyleSheet", styleSheet, true);
+			propertyTable.SetProperty("LcmStyleSheet", styleSheet, false);
 			propertyTable.SetPropertyPersistence("LcmStyleSheet", false);
 			return styleSheet;
 		}
@@ -325,7 +325,7 @@ namespace SIL.FieldWorks.FdoUi
 				// files (true argument) but just trust that we put enough in the installer to make it work.
 				XmlDocument configuration = XWindow.LoadConfigurationWithIncludes(configFile, true);
 				XmlNode windowConfigurationNode = configuration.SelectSingleNode("window");
-				propertyTable.SetProperty("WindowConfiguration", windowConfigurationNode, true);
+				propertyTable.SetProperty("WindowConfiguration", windowConfigurationNode, false);
 				propertyTable.SetPropertyPersistence("WindowConfiguration", false);
 			}
 		}

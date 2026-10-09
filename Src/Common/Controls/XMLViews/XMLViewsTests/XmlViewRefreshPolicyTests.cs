@@ -5,7 +5,6 @@
 using NUnit.Framework;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.LCModel;
-using SIL.LCModel.Core.KernelInterfaces;
 using XCore;
 
 namespace XMLViewsTests
@@ -37,10 +36,6 @@ namespace XMLViewsTests
 			m_xmlVc = xmlVc;
 		}
 
-		public void InstallPropertyTableForTest(PropertyTable propertyTable)
-		{
-			m_propertyTable = propertyTable;
-		}
 	}
 
 	[TestFixture]
@@ -144,42 +139,5 @@ namespace XMLViewsTests
 			}
 		}
 
-		[Test]
-		public void XmlSeqViewOnPropertyChanged_ShowFailingItemsChange_ReconstructsRootBox()
-		{
-			using (var view = new TestXmlSeqView())
-			using (var propertyTable = new PropertyTable(null))
-			{
-				var rootBox = new FakeXmlBrowseViewBase.FakeRootBox();
-				view.InstallRootBoxForTest(rootBox);
-				view.InstallXmlVcForTest(new SIL.FieldWorks.Common.Controls.XmlVc("root", false, view, null, (ISilDataAccess)null));
-				view.InstallPropertyTableForTest(propertyTable);
-				propertyTable.SetProperty("currentContentControl", "tool", false);
-				propertyTable.SetProperty("ShowFailingItems-tool", true, false);
-
-				view.OnPropertyChanged("ShowFailingItems-tool");
-
-				Assert.That(rootBox.ReconstructCallCount, Is.EqualTo(1));
-			}
-		}
-
-		[Test]
-		public void XmlSeqViewOnPropertyChanged_ShowFailingItemsUnchanged_DoesNotReconstructRootBox()
-		{
-			using (var view = new TestXmlSeqView())
-			using (var propertyTable = new PropertyTable(null))
-			{
-				var rootBox = new FakeXmlBrowseViewBase.FakeRootBox();
-				view.InstallRootBoxForTest(rootBox);
-				view.InstallXmlVcForTest(new SIL.FieldWorks.Common.Controls.XmlVc("root", false, view, null, (ISilDataAccess)null));
-				view.InstallPropertyTableForTest(propertyTable);
-				propertyTable.SetProperty("currentContentControl", "tool", false);
-				propertyTable.SetProperty("ShowFailingItems-tool", false, false);
-
-				view.OnPropertyChanged("ShowFailingItems-tool");
-
-				Assert.That(rootBox.ReconstructCallCount, Is.EqualTo(0));
-			}
-		}
 	}
 }

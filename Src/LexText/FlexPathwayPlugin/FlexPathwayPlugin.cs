@@ -318,7 +318,7 @@ namespace SIL.PublishingSolution
 				File.Delete(filePath);
 			if (!ChangeAreaTool(areaChoice, toolChoice))
 				return;
-			exportDialog.PropTable.SetProperty("ExportDir", Path.GetDirectoryName(filePath), true);
+			exportDialog.PropTable.SetProperty("ExportDir", Path.GetDirectoryName(filePath), false);
 			exportDialog.PropTable.SetPropertyPersistence("ExportDir", true);
 			using (DeExportDialog ed = new DeExportDialog(exportDialog.Mediator, exportDialog.PropTable))
 			{

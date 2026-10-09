@@ -2341,7 +2341,7 @@ namespace SIL.FieldWorks.Common.Controls
 			{
 				if (m_webBrowser != null)
 				{
-					m_propertyTable.SetProperty("SimpleListChooser-HelpBrowserSplitterDistance", m_splitContainer.SplitterDistance, true);
+					m_propertyTable.SetProperty("SimpleListChooser-HelpBrowserSplitterDistance", m_splitContainer.SplitterDistance, false);
 					m_persistProvider.PersistWindowSettings("SimpleListChooser-HelpBrowser", this);
 				}
 				else

@@ -332,7 +332,7 @@ namespace SIL.FieldWorks.Common.Controls
 							goto case 19;
 						case 19:
 							savedCols = savedCols.Replace("root version=\"19\"", "root version=\"20\"");
-							propertyTable.SetProperty(colListId, savedCols, true);
+							propertyTable.SetProperty(colListId, savedCols, false);
 							doc.LoadXml(savedCols);
 							break;
 						default:
@@ -344,7 +344,7 @@ namespace SIL.FieldWorks.Common.Controls
 							doc = null;
 							// Forget the old settings, so we don't keep complaining every time the program runs.
 							// There doesn't seem to be any way to remove the property altogether, so at least, make it empty.
-							propertyTable.SetProperty(colListId, "", PropertyTable.SettingsGroup.LocalSettings, true);
+							propertyTable.SetProperty(colListId, "", PropertyTable.SettingsGroup.LocalSettings, false);
 							break;
 					}
 				}

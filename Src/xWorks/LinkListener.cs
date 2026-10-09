@@ -192,7 +192,7 @@ namespace SIL.FieldWorks.XWorks
 			m_mediator = mediator;
 			m_propertyTable = propertyTable;
 			mediator.AddColleague(this);
-			m_propertyTable.SetProperty("LinkListener", this, true);
+			m_propertyTable.SetProperty("LinkListener", this, false);
 			m_propertyTable.SetPropertyPersistence("LinkListener", false);
 
 			Subscriber.Subscribe(EventConstants.AddContextToHistory, AddContextToHistory, m_propertyTable.GetWindow());
@@ -552,7 +552,7 @@ namespace SIL.FieldWorks.XWorks
 					m_propertyTable.SetProperty("SuspendLoadingRecordUntilOnJumpToRecord",
 						m_lnkActive.ToolName + "," + m_lnkActive.TargetGuid,
 						PropertyTable.SettingsGroup.LocalSettings,
-						true);
+						false);
 					m_propertyTable.SetPropertyPersistence("SuspendLoadingRecordUntilOnJumpToRecord", false);
 				}
 				Publisher.Publish(new PublisherParameterObject(EventConstants.SetToolFromName, m_lnkActive.ToolName, m_propertyTable.GetWindow()));
@@ -595,7 +595,7 @@ namespace SIL.FieldWorks.XWorks
 				// Stop suspension of loading records.
 				m_propertyTable.SetProperty("SuspendLoadingRecordUntilOnJumpToRecord", "",
 					PropertyTable.SettingsGroup.LocalSettings,
-					true);
+					false);
 				m_propertyTable.SetPropertyPersistence("SuspendLoadingRecordUntilOnJumpToRecord", false);
 
 				if (m_lnkActive == null || m_lnkActive.DisplayErrorMsg)

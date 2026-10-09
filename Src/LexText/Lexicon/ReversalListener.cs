@@ -447,7 +447,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 					OnChangeSorter(); // Update the column headers with sort arrows
 					SyncReversalWritingSystem(ri);
 					SetOwningObject(newOwningObj, updateAndNotify); // Reloads and sorts the list.
-					m_propertyTable.SetProperty("ActiveClerkOwningObject", newOwningObj, true);
+					m_propertyTable.SetProperty("ActiveClerkOwningObject", newOwningObj, false);
 					m_propertyTable.SetPropertyPersistence("ActiveClerkOwningObject", false);
 					Publisher.Publish(new PublisherParameterObject(EventConstants.ClerkOwningObjChanged, this, m_propertyTable.GetWindow()));
 				}

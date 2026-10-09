@@ -150,7 +150,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			UpdateButtons();
 			if (btnOK.Enabled)
 			{
-				m_propertyTable.SetProperty(FilePropertyName, tbPath.Text, true);
+				m_propertyTable.SetProperty(FilePropertyName, tbPath.Text, false);
 				m_propertyTable.SetPropertyPersistence(FilePropertyName, true);
 			}
 		}
@@ -464,7 +464,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			m_msImport = ms;
 			m_propertyTable.SetProperty(MergeStylePropertyName,
 				Enum.GetName(typeof(FlexLiftMerger.MergeStyle), m_msImport),
-				true);
+				false);
 			m_propertyTable.SetPropertyPersistence(MergeStylePropertyName, true);
 		}
 

@@ -1218,11 +1218,11 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 
 		private void SaveSettings()
 		{
-			m_propertyTable.SetProperty("DataNotebookImportDb", m_tbDatabaseFileName.Text, true);
+			m_propertyTable.SetProperty("DataNotebookImportDb", m_tbDatabaseFileName.Text, false);
 			m_propertyTable.SetPropertyPersistence("DataNotebookImportDb", true);
-			m_propertyTable.SetProperty("DataNotebookImportPrj", m_tbProjectFileName.Text, true);
+			m_propertyTable.SetProperty("DataNotebookImportPrj", m_tbProjectFileName.Text, false);
 			m_propertyTable.SetPropertyPersistence("DataNotebookImportPrj", true);
-			m_propertyTable.SetProperty("DataNotebookImportMap", m_tbSaveAsFileName.Text, true);
+			m_propertyTable.SetProperty("DataNotebookImportMap", m_tbSaveAsFileName.Text, false);
 			m_propertyTable.SetPropertyPersistence("DataNotebookImportMap", true);
 			using (TextWriter tw = FileUtils.OpenFileForWrite(m_tbSaveAsFileName.Text, Encoding.UTF8))
 			{

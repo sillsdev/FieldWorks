@@ -137,7 +137,7 @@ namespace SIL.FieldWorks.Discourse
 			PropertyTable.SetProperty(ConfigPropName,
 				m_ribbon.Vc.LineChoices.Persist(Cache.LanguageWritingSystemFactoryAccessor),
 				PropertyTable.SettingsGroup.LocalSettings,
-				true);
+				false);
 			UpdateDisplayForNewLineChoices();
 		}
 
@@ -1211,7 +1211,7 @@ namespace SIL.FieldWorks.Discourse
 			}
 			colList.Append("</root>");
 			var cwId = ColWidthId();
-			PropertyTable.SetProperty(cwId, colList.ToString(), true);
+			PropertyTable.SetProperty(cwId, colList.ToString(), false);
 		}
 
 		private string ColWidthId()
