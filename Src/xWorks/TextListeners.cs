@@ -296,7 +296,7 @@ namespace SIL.FieldWorks.XWorks
 				case WritingSystemSet.CurrentPronounciation:
 					AddWritingSystemList(display, cache.ServiceLocator.WritingSystems.CurrentPronunciationWritingSystems);
 					string sValue = DomainObjectServices.JoinIds(cache.ServiceLocator.WritingSystems.CurrentPronunciationWritingSystems.Select(ws => ws.Handle).ToArray(), ",");
-					m_propertyTable.SetProperty("PronunciationWritingSystemHvos", sValue, true);
+					m_propertyTable.SetProperty("PronunciationWritingSystemHvos", sValue, false);
 					break;
 			}
 			return true;//we handled this, no need to ask anyone else.

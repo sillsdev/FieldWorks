@@ -297,11 +297,11 @@ namespace SIL.FieldWorks.XWorks
 			{
 				m_delegate.App = app;
 
-				m_propertyTable.SetProperty("HelpTopicProvider", app, true);
+				m_propertyTable.SetProperty("HelpTopicProvider", app, false);
 				m_propertyTable.SetPropertyPersistence("HelpTopicProvider", false);
-				m_propertyTable.SetProperty("FeedbackInfoProvider", app, true);
+				m_propertyTable.SetProperty("FeedbackInfoProvider", app, false);
 				m_propertyTable.SetPropertyPersistence("FeedbackInfoProvider", false);
-				m_propertyTable.SetProperty("App", app, true);
+				m_propertyTable.SetProperty("App", app, false);
 				m_propertyTable.SetPropertyPersistence("App", false);
 			}
 			Subscriber.Subscribe(EventConstants.JumpToPopupLexEntry, JumpToPopupLexEntry, this);
@@ -526,7 +526,7 @@ namespace SIL.FieldWorks.XWorks
 		protected void InitMediatorValues(LcmCache cache)
 		{
 			m_propertyTable.LocalSettingsId = "local";
-			m_propertyTable.SetProperty("cache", cache, true);
+			m_propertyTable.SetProperty("cache", cache, false);
 			m_propertyTable.SetPropertyPersistence("cache", false);
 			m_propertyTable.SetProperty("DocumentName", GetProjectName(cache), false);
 			m_propertyTable.SetPropertyPersistence("DocumentName", false);

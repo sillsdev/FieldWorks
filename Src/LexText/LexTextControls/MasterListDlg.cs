@@ -517,8 +517,8 @@ namespace SIL.FieldWorks.LexText.Controls
 
 			if (m_propertyTable != null)
 			{
-				m_propertyTable.SetProperty(m_sWindowKeyLocation, Location, true);
-				m_propertyTable.SetProperty(m_sWindowKeySize, Size, true);
+				m_propertyTable.SetProperty(m_sWindowKeyLocation, Location, false);
+				m_propertyTable.SetProperty(m_sWindowKeySize, Size, false);
 			}
 		}
 

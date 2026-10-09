@@ -485,7 +485,7 @@ namespace SIL.FieldWorks.IText
 			IWfiWordform wordform;
 			if (!GetSelectedWordform(vwselNew, out wordform))
 				wordform = null;
-			m_propertyTable.SetProperty("TextSelectedWord", wordform, true);
+			m_propertyTable.SetProperty("TextSelectedWord", wordform, false);
 			m_propertyTable.SetPropertyPersistence("TextSelectedWord", false);
 
 			SelectionHelper helper = SelectionHelper.Create(vwselNew, this);

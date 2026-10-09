@@ -592,7 +592,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 					DestroyOldSelection();
 					// Clear PropertyTable of references to old hvo
 					m_propertyTable.SetProperty("ActiveClerkSelectedObject", newWordform, true);
-					m_propertyTable.SetProperty("TextSelectedWord", newWordform, true);
+					m_propertyTable.SetProperty("TextSelectedWord", newWordform, false);
 					m_propertyTable.SetPropertyPersistence("TextSelectedWord", false);
 				}
 				if (m_previewOn)

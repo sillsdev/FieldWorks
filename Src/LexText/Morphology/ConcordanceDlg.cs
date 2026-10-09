@@ -296,7 +296,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			helpProvider.SetShowHelp(this, true);
 
 
-			m_propertyTable.SetProperty("IgnoreStatusPanel", true, true);
+			m_propertyTable.SetProperty("IgnoreStatusPanel", true, false);
 			m_propertyTable.SetPropertyPersistence("IgnoreStatusPanel", false);
 			m_progAdvInd = new ProgressReporting(m_toolStripProgressBar);
 
@@ -554,7 +554,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		{
 			if (!IsDisposed && m_propertyTable != null)
 			{
-				m_propertyTable.SetProperty("IgnoreStatusPanel", false, true);
+				m_propertyTable.SetProperty("IgnoreStatusPanel", false, false);
 				m_propertyTable.SetPropertyPersistence("IgnoreStatusPanel", false);
 			}
 		}

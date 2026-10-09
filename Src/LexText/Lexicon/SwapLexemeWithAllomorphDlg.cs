@@ -321,7 +321,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		{
 			if (m_propertyTable != null)
 			{
-				m_propertyTable.SetProperty("swapDlgLocation", Location, true);
+				m_propertyTable.SetProperty("swapDlgLocation", Location, false);
 			}
 		}
 

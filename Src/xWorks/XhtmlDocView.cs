@@ -1313,7 +1313,7 @@ namespace SIL.FieldWorks.XWorks
 				{
 					var newConfig = Path.Combine(DictionaryConfigurationListener.GetProjectConfigurationDirectory(m_propertyTable, semanticDomain),
 						ClassifiedDictConfig);
-					m_propertyTable.SetProperty("SemanticDomainListLayout", File.Exists(newConfig) ? newConfig : null, true);
+					m_propertyTable.SetProperty("SemanticDomainListLayout", File.Exists(newConfig) ? newConfig : null, false);
 				}
 				else if (m_updateContentLater)
 				{

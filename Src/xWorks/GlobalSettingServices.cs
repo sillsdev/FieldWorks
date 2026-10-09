@@ -23,7 +23,7 @@ namespace SIL.FieldWorks.XWorks
 		public static void SaveSettings(ILcmServiceLocator services, PropertyTable propertyTable)
 		{
 			var hc = services.GetInstance<HomographConfiguration>();
-			propertyTable.SetProperty(khomographconfiguration, hc.PersistData, true);
+			propertyTable.SetProperty(khomographconfiguration, hc.PersistData, false);
 		}
 
 		/// <summary>

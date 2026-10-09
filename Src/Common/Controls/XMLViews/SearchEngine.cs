@@ -50,7 +50,7 @@ namespace SIL.FieldWorks.Common.Controls
 			if (searchEngine == null)
 			{
 				searchEngine = searchEngineFactory();
-				propertyTable.SetProperty(propName, searchEngine, true);
+				propertyTable.SetProperty(propName, searchEngine, false);
 				propertyTable.SetPropertyDispose(propName, true);
 				propertyTable.SetPropertyPersistence(propName, false);
 			}

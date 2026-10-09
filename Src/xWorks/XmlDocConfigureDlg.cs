@@ -1198,7 +1198,7 @@ namespace SIL.FieldWorks.XWorks
 				m_propertyTable.SetProperty(m_sLayoutPropertyName,
 					((LayoutTypeComboItem)m_cbDictType.SelectedItem).LayoutName,
 					XCore.PropertyTable.SettingsGroup.LocalSettings,
-					true);
+					false);
 				m_propertyTable.SetPropertyPersistence(m_sLayoutPropertyName, true,
 					XCore.PropertyTable.SettingsGroup.LocalSettings);
 				SaveModifiedLayouts();

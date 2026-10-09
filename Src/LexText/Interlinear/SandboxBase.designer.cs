@@ -30,7 +30,7 @@ namespace SIL.FieldWorks.IText
 			{
 				if (m_propertyTable != null)
 				{
-					m_propertyTable.SetProperty("FirstControlToHandleMessages", null, true);
+					m_propertyTable.SetProperty("FirstControlToHandleMessages", null, false);
 				}
 			}
 

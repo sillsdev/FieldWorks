@@ -1220,7 +1220,7 @@ namespace SIL.FieldWorks.XWorks
 					m_cache.MainCacheAccessor as ISilDataAccessManaged, virtualListSpec, m_cache.ServiceLocator);
 				if (key != null)
 				{
-					m_propertyTable.SetProperty(key, result, true);
+					m_propertyTable.SetProperty(key, result, false);
 					m_propertyTable.SetPropertyPersistence(key, false);
 				}
 			}
@@ -2712,7 +2712,7 @@ namespace SIL.FieldWorks.XWorks
 						CurrentIndex = -1;
 						m_propertyTable.SetProperty(Clerk.PersistedIndexProperty, m_indexToRestoreDuringReload,
 							PropertyTable.SettingsGroup.LocalSettings,
-							true);
+							false);
 						m_indexToRestoreDuringReload = -1;
 					}
 					Clerk.UpdateHelper.ClearBrowseListUntilReload = false;

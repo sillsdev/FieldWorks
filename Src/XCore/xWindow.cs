@@ -477,9 +477,9 @@ namespace XCore
 			m_smallImages.AddList(configurationNode.SelectNodes("imageList[@size=null]"));
 
 			//make image list available from the property table
-			PropTable.SetProperty("smallImages", m_smallImages, true);
+			PropTable.SetProperty("smallImages", m_smallImages, false);
 			PropTable.SetPropertyPersistence("smallImages", false);
-			PropTable.SetProperty("largeImages", m_largeImages, true);
+			PropTable.SetProperty("largeImages", m_largeImages, false);
 			PropTable.SetPropertyPersistence("largeImages", false);
 		}
 
@@ -685,7 +685,7 @@ namespace XCore
 
 			m_windowConfigurationNode = configuration.SelectSingleNode("window");
 
-			m_propertyTable.SetProperty("WindowConfiguration", m_windowConfigurationNode, true);
+			m_propertyTable.SetProperty("WindowConfiguration", m_windowConfigurationNode, false);
 			m_propertyTable.SetPropertyPersistence("WindowConfiguration", false);
 
 			SetApplicationName();
@@ -693,7 +693,7 @@ namespace XCore
 			//nb:some things might be sensitive to when this actually happens
 			LoadDefaultProperties(m_windowConfigurationNode.SelectSingleNode("defaultProperties"));
 
-			m_propertyTable.SetProperty("window", this, true);
+			m_propertyTable.SetProperty("window", this, false);
 			m_propertyTable.SetPropertyPersistence("window", false);
 			var st = StringTable.Table; // Makes ure it is loaded.
 			LoadResources(m_windowConfigurationNode.SelectSingleNode("resources"));
@@ -715,7 +715,7 @@ namespace XCore
 			m_mediator.AddColleague(this);
 			Assembly adaptorAssembly = GetAdapterAssembly();
 
-			m_propertyTable.SetProperty("uiAdapter", adaptorAssembly, true);
+			m_propertyTable.SetProperty("uiAdapter", adaptorAssembly, false);
 			m_propertyTable.SetPropertyPersistence("uiAdapter", false);
 
 			//add the menubar
@@ -856,7 +856,7 @@ namespace XCore
 		{
 			string applicationName = XmlUtils.GetAttributeValue(m_windowConfigurationNode, "label", "application name?");
 			ErrorReporter.AddProperty("Application", applicationName);
-			m_propertyTable.SetProperty("applicationName", applicationName, true);
+			m_propertyTable.SetProperty("applicationName", applicationName, false);
 			m_propertyTable.SetPropertyPersistence("applicationName", false);
 			UpdateCaptionBar();
 		}
@@ -1042,7 +1042,7 @@ namespace XCore
 					{
 						panel = new StatusBarPanel();
 					}
-					m_propertyTable.SetProperty(id, panel, true);
+					m_propertyTable.SetProperty(id, panel, false);
 					m_propertyTable.SetPropertyPersistence(id, false);
 
 					string val = XmlUtils.GetOptionalAttributeValue(part, "width");
@@ -2140,8 +2140,8 @@ namespace XCore
 
 		private void SetToolDefaultProperties(XmlNode configurationNode)
 		{
-			m_propertyTable.SetProperty("AllowInsertLinkToFile", true, true);   // default to allowing LinkedFiles links
-			m_propertyTable.SetProperty("AllowShowNormalFields", true, true);
+			m_propertyTable.SetProperty("AllowInsertLinkToFile", true, false);   // default to allowing LinkedFiles links
+			m_propertyTable.SetProperty("AllowShowNormalFields", true, false);
 
 			if (configurationNode == null)
 				return;
@@ -2245,7 +2245,7 @@ namespace XCore
 			//	then switches to the normal state, we would be switching to a bizarre size.
 			if (WindowState == FormWindowState.Normal)
 			{
-				m_propertyTable.SetProperty("windowSize", Size, true);
+				m_propertyTable.SetProperty("windowSize", Size, false);
 			}
 			// We do need to store the window state as well:  see LT-6602.
 			// No broadcast even if it did change.
@@ -2259,7 +2259,7 @@ namespace XCore
 			//	then switches to the normal state, we would be switching to 0,0 or something.
 			if (WindowState == FormWindowState.Normal)
 			{
-				m_propertyTable.SetProperty("windowLocation", Location, true);
+				m_propertyTable.SetProperty("windowLocation", Location, false);
 			}
 		}
 
