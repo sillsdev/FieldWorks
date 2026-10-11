@@ -169,6 +169,26 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(UploadToWebonaryController.NormalizeSiteName(userEntered), Is.EqualTo(expected));
 		}
 
+		[TestCase(null, false)]
+		[TestCase("0", false)]
+		[TestCase("false", false)]
+		[TestCase("off", false)]
+		[TestCase("1", true)]
+		public void UseJsonApiFollowsTheWebonaryApiVariable(string value, bool expected)
+		{
+			var original = Environment.GetEnvironmentVariable("WEBONARY_API");
+			try
+			{
+				Environment.SetEnvironmentVariable("WEBONARY_API", value);
+				using (var controller = new UploadToWebonaryController(Cache, m_propertyTable, m_mediator))
+					Assert.That(controller.UseJsonApi, Is.EqualTo(expected));
+			}
+			finally
+			{
+				Environment.SetEnvironmentVariable("WEBONARY_API", original);
+			}
+		}
+
 		[Test]
 		public void UploadToWebonaryUsesViewConfigAndPub()
 		{
