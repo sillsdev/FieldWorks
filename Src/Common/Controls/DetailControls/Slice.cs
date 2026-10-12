@@ -1547,7 +1547,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				Expansion = DataTree.TreeItemState.ktisExpanded;
 				if (m_propertyTable != null)
 				{
-					m_propertyTable.SetProperty(ExpansionStateKey, true, true);
+					m_propertyTable.SetProperty(ExpansionStateKey, true, false);
 				}
 			}
 			finally
@@ -1601,7 +1601,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				Expansion = DataTree.TreeItemState.ktisCollapsed;
 				if (m_propertyTable != null)
 				{
-					m_propertyTable.SetProperty(ExpansionStateKey, false, true);
+					m_propertyTable.SetProperty(ExpansionStateKey, false, false);
 				}
 			}
 			finally

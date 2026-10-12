@@ -101,7 +101,7 @@ namespace SIL.FieldWorks.IText
 			if (pattern == null)
 			{
 				pattern = new ComplexConcGroupNode();
-				m_propertyTable.SetProperty("ComplexConcPattern", pattern, true);
+				m_propertyTable.SetProperty("ComplexConcPattern", pattern, false);
 				m_propertyTable.SetPropertyPersistence("ComplexConcPattern", false);
 			}
 			m_patternModel = new ComplexConcPatternModel(m_cache, pattern);

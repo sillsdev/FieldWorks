@@ -131,7 +131,6 @@ namespace SIL.FieldWorks.Common.Controls
 		protected XmlVc m_xmlVc;
 		/// <summary></summary>
 		protected IFwMetaDataCache m_mdc;
-		bool m_fShowFailingItems; // display items that fail the condition specified in the view.
 		private IApp m_app;
 
 		/// <summary>
@@ -316,7 +315,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 			bool fEditable = XmlUtils.GetOptionalBooleanAttributeValue(m_xnSpec, "editable", true);
 			string toolName = m_propertyTable.GetStringProperty("currentContentControl", null);
-			m_fShowFailingItems = m_propertyTable.GetBoolProperty("ShowFailingItems-" + toolName, false);
+			bool fShowFailingItems = m_propertyTable.GetBoolProperty("ShowFailingItems-" + toolName, false);
 			//m_xmlVc = new XmlVc(m_xnSpec, Table); // possibly reinstate for old approach?
 			// Note: we want to keep this logic similar to RecordDocView.GetLayoutName(), except that here
 			// we do NOT want to use the layoutSuffix, though it may be specified so that it can be
@@ -329,7 +328,7 @@ namespace SIL.FieldWorks.Common.Controls
 				sLayout = XmlUtils.GetMandatoryAttributeValue(m_xnSpec, "layout");
 			ISilDataAccess sda = GetSda();
 			m_xmlVc = new XmlVc(sLayout, fEditable, this, m_app,
-				m_fShowFailingItems ? null : ItemDisplayCondition, sda) {IdentifySource = true};
+				fShowFailingItems ? null : ItemDisplayCondition, sda) {IdentifySource = true};
 			ReadOnlyView = !fEditable;
 			if (!fEditable)
 				m_rootb.MaxParasToScan = 0;
@@ -356,40 +355,6 @@ namespace SIL.FieldWorks.Common.Controls
 		private XmlNode ItemDisplayCondition
 		{
 			get { return m_xnSpec.SelectSingleNode("elementDisplayCondition"); }
-		}
-
-		/// <summary>
-		/// Receives the broadcast message "PropertyChanged"
-		/// </summary>
-		public override void OnPropertyChanged(string name)
-		{
-			CheckDisposed();
-
-			base.OnPropertyChanged(name);
-			string toolName = m_propertyTable.GetStringProperty("currentContentControl", null);
-			if(name == "ShowFailingItems-" + toolName)
-			{
-				bool fShowFailingItems = m_propertyTable.GetBoolProperty(name, false);
-				if (fShowFailingItems != m_fShowFailingItems)
-				{
-					m_fShowFailingItems = fShowFailingItems;
-					m_xmlVc.MakeRootCommand(this, m_fShowFailingItems ? null : ItemDisplayCondition);
-					try
-					{
-						EditingHelper.DefaultCursor = Cursors.WaitCursor;
-						using (new WaitCursor(TopLevelControl))
-						{
-							m_rootb.Reconstruct();
-							Invalidate();
-							Update(); // most of the time is the painting, we want the watch cursor till it's done.
-						}
-					}
-					finally
-					{
-						EditingHelper.DefaultCursor = null;
-					}
-				}
-			}
 		}
 
 		/// -----------------------------------------------------------------------------------

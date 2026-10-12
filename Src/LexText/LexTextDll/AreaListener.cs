@@ -195,7 +195,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 						break;//this can happen when we use this property very early in the initialization
 
 					//for next startup
-					m_propertyTable.SetProperty("InitialArea", areaName, true);
+					m_propertyTable.SetProperty("InitialArea", areaName, false);
 
 					ActivateToolForArea(areaName);
 					break;
@@ -546,7 +546,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 		private void UpdateMediatorConfig(XmlNode windowConfig)
 		{
 			// We have to update this because other things besides 'tools' need to get set.
-			m_propertyTable.SetProperty("WindowConfiguration", windowConfig, true);
+			m_propertyTable.SetProperty("WindowConfiguration", windowConfig, false);
 			m_propertyTable.SetPropertyPersistence("WindowConfiguration", false);
 		}
 

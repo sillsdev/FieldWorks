@@ -100,7 +100,7 @@ namespace SIL.FieldWorks.IText
 			var activeClerkNew = m_propertyTable.GetValue<RecordClerk>("ActiveClerk");
 			if (toolChoice != "interlinearEdit" && activeClerk != null && activeClerk != activeClerkNew)
 			{
-				m_propertyTable.SetProperty("ActiveClerk", activeClerk, true);
+				m_propertyTable.SetProperty("ActiveClerk", activeClerk, false);
 				activeClerk.ActivateUI(true);
 			}
 		}

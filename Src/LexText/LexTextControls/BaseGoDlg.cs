@@ -836,10 +836,10 @@ namespace SIL.FieldWorks.LexText.Controls
 			if (m_mediator != null)
 			{
 				var propName = PersistenceLabel + "DlgLocation";
-				m_propertyTable.SetProperty(propName, Location, true);
+				m_propertyTable.SetProperty(propName, Location, false);
 				var sz = new Size(0, m_delta);
 				propName = PersistenceLabel + "DlgSize";
-				m_propertyTable.SetProperty(propName, Size - sz, true);
+				m_propertyTable.SetProperty(propName, Size - sz, false);
 			}
 		}
 

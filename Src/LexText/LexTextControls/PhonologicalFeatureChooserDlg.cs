@@ -796,8 +796,8 @@ namespace SIL.FieldWorks.LexText.Controls
 
 			if (m_propertyTable != null)
 			{
-				m_propertyTable.SetProperty("phonFeatListDlgLocation", Location, true);
-				m_propertyTable.SetProperty("phonFeatListDlgSize", Size, true);
+				m_propertyTable.SetProperty("phonFeatListDlgLocation", Location, false);
+				m_propertyTable.SetProperty("phonFeatListDlgSize", Size, false);
 			}
 		}
 

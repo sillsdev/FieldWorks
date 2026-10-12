@@ -85,7 +85,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			_mediator = mediator;
 			_propertyTable = propertyTable;
 			Cache = _propertyTable.GetValue<LcmCache>("cache");
-			_propertyTable.SetProperty("FLExBridgeListener", this, true);
+			_propertyTable.SetProperty("FLExBridgeListener", this, false);
 			_propertyTable.SetPropertyPersistence("FLExBridgeListener", false);
 			_parentForm = _propertyTable.GetValue<Form>("window");
 			mediator.AddColleague(this);
@@ -200,7 +200,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			if (string.IsNullOrEmpty(newprojectPathname))
 				return true; // We dealt with it.
 			_propertyTable.SetProperty("LastBridgeUsed", obtainedProjectType == ObtainedProjectType.Lift ? "LiftBridge" : "FLExBridge",
-				PropertyTable.SettingsGroup.LocalSettings, true);
+				PropertyTable.SettingsGroup.LocalSettings, false);
 
 			FieldWorks.OpenNewProject(new ProjectId(newprojectPathname));
 
@@ -250,7 +250,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			}
 			// Do merciful import.
 			ImportLiftCommon(FlexLiftMerger.MergeStyle.MsKeepBoth);
-			_propertyTable.SetProperty("LastBridgeUsed", "LiftBridge", PropertyTable.SettingsGroup.LocalSettings, true);
+			_propertyTable.SetProperty("LastBridgeUsed", "LiftBridge", PropertyTable.SettingsGroup.LocalSettings, false);
 #pragma warning disable 618 // suppress obsolete warning
 			_mediator.BroadcastMessage("MasterRefresh", null);
 #pragma warning restore 618
@@ -321,7 +321,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			}
 			StopParser();
 			SaveAllDataToDisk();
-			_propertyTable.SetProperty("LastBridgeUsed", "FLExBridge", PropertyTable.SettingsGroup.LocalSettings, true);
+			_propertyTable.SetProperty("LastBridgeUsed", "FLExBridge", PropertyTable.SettingsGroup.LocalSettings, false);
 
 			var projectFolder = Cache.ProjectId.ProjectFolder;
 			var savedState = PrepareToDetectMainConflicts(projectFolder);
@@ -460,7 +460,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		public bool OnLiftBridge(object argument)
 		{
 			SaveAllDataToDisk();
-			_propertyTable.SetProperty("LastBridgeUsed", "LiftBridge", PropertyTable.SettingsGroup.LocalSettings, true);
+			_propertyTable.SetProperty("LastBridgeUsed", "LiftBridge", PropertyTable.SettingsGroup.LocalSettings, false);
 
 			// Step 0. Try to move an extant lift repo from old location to new.
 			if (!MoveOldLiftRepoIfNeeded())

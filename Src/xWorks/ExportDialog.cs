@@ -608,7 +608,7 @@ namespace SIL.FieldWorks.XWorks
 							return;
 						m_selectedTextsForAIExport = textDlg.SelectedTexts.ToList();
 						m_propertyTable.SetProperty("GrammarTextsAIExportSelection",
-							string.Join(",", m_selectedTextsForAIExport.Select(t => t.Guid.ToString())), true);
+							string.Join(",", m_selectedTextsForAIExport.Select(t => t.Guid.ToString())), false);
 						m_propertyTable.SetPropertyPersistence("GrammarTextsAIExportSelection", true);
 					}
 					using (var dlg = new FolderBrowserDialogAdapter())
@@ -695,7 +695,7 @@ namespace SIL.FieldWorks.XWorks
 				}
 				if (sDirectory != null)
 				{
-					m_propertyTable.SetProperty("ExportDir", sDirectory, true);
+					m_propertyTable.SetProperty("ExportDir", sDirectory, false);
 					m_propertyTable.SetPropertyPersistence("ExportDir", true);
 				}
 				if (fLiftExport) // Fixes LT-9437 Crash exporting a discourse chart (or interlinear too!)
@@ -709,12 +709,12 @@ namespace SIL.FieldWorks.XWorks
 				if (m_chkShowInFolder.Checked)
 				{
 					OpenExportFolder(sDirectory, sFileName);
-					m_propertyTable.SetProperty("ExportDlgShowInFolder", "true", true);
+					m_propertyTable.SetProperty("ExportDlgShowInFolder", "true", false);
 					m_propertyTable.SetPropertyPersistence("ExportDlgShowInFolder", true);
 				}
 				else
 				{
-					m_propertyTable.SetProperty("ExportDlgShowInFolder", "false", true);
+					m_propertyTable.SetProperty("ExportDlgShowInFolder", "false", false);
 					m_propertyTable.SetPropertyPersistence("ExportDlgShowInFolder", true);
 				}
 			}
@@ -2045,7 +2045,7 @@ namespace SIL.FieldWorks.XWorks
 
 		private void m_chkExportPictures_CheckedChanged(object sender, EventArgs e)
 		{
-			m_propertyTable.SetProperty(ksLiftExportPicturesPropertyName, m_chkExportPictures.Checked, true);
+			m_propertyTable.SetProperty(ksLiftExportPicturesPropertyName, m_chkExportPictures.Checked, false);
 			m_propertyTable.SetPropertyPersistence(ksLiftExportPicturesPropertyName, true);
 			m_fExportPicturesAndMedia = m_chkExportPictures.Checked;
 		}

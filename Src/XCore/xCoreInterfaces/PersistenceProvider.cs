@@ -91,7 +91,7 @@ namespace XCore
 		protected void Set(string id,string label, object value)
 		{
 			var propertyName = GetPrefix(id) + "-" + label;
-			m_propertyTable.SetProperty(propertyName, value, true);
+			m_propertyTable.SetProperty(propertyName, value, false);
 		}
 
 		public void PersistWindowSettings(string id,Form form)

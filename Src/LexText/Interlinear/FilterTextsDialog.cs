@@ -90,7 +90,7 @@ namespace SIL.FieldWorks.IText
 			if (own != null && OnlyGenresChecked(checkedList))
 			{
 				message = ITextStrings.kOkbtnGenreSelection;
-				own.PropTable.SetProperty("RecordClerk-DelayedGenreAssignment", checkedList, true);
+				own.PropTable.SetProperty("RecordClerk-DelayedGenreAssignment", checkedList, false);
 				showWarning = true;
 			}
 			if (m_treeTexts.GetNodesWithState(TriStateTreeView.CheckState.Checked).Length == 0)
