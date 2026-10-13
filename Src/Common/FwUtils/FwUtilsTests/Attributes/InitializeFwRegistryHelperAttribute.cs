@@ -4,9 +4,9 @@
 
 using System;
 using System.IO;
-using System.Reflection;
 using NUnit.Framework;
 using NUnit.Framework.Interfaces;
+using SIL.Reporting;
 
 namespace SIL.FieldWorks.Common.FwUtils.Attributes
 {
@@ -31,43 +31,22 @@ namespace SIL.FieldWorks.Common.FwUtils.Attributes
 		{
 			base.BeforeTest(test);
 			FwRegistryHelper.Initialize();
-			TrySetTestRootDirs();
+			TryCreateTestRepository();
 		}
 
-		private static void TrySetTestRootDirs()
+		private static void TryCreateTestRepository()
 		{
 			try
 			{
-				// When running tests from Output/<Configuration>, prefer DistFiles in the repo/worktree
-				// over potentially-stale registry paths from a machine install.
-				var codeBase = Assembly.GetExecutingAssembly().CodeBase;
-				var uriBase = new Uri(codeBase);
-				var exeOrDllDir = Path.GetDirectoryName(
-					Uri.UnescapeDataString(uriBase.AbsolutePath)
-				);
-				if (string.IsNullOrEmpty(exeOrDllDir))
-					return;
-
-				var distFiles = Path.GetFullPath(
-					Path.Combine(exeOrDllDir, "..", "..", "DistFiles")
-				);
-				if (!Directory.Exists(distFiles))
-					return;
-
-				using (var userKey = FwRegistryHelper.FieldWorksRegistryKey)
-				{
-					if (userKey != null)
-					{
-						userKey.SetValue("RootCodeDir", distFiles);
-						userKey.SetValue("RootDataDir", distFiles);
-					}
-				}
-
-				Directory.CreateDirectory(Path.Combine(distFiles, "SIL", "Repository"));
+				// Directory lookup already anchors tests to their source tree. Shared registry
+				// paths must remain available to installed FieldWorks.
+				var distFiles = FwDirectoryFinder.FindDevDistFiles(FwDirectoryFinder.ExeOrDllDirectory);
+				if (distFiles != null)
+					Directory.CreateDirectory(Path.Combine(distFiles, "SIL", "Repository"));
 			}
-			catch
+			catch (Exception error)
 			{
-				// Best-effort: tests should still run if we can't update registry or create folders.
+				Logger.WriteError("Could not create the test repository directory", error);
 			}
 		}
 	}

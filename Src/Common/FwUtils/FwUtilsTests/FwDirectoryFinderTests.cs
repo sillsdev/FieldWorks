@@ -220,6 +220,39 @@ namespace SIL.FieldWorks.Common.FwUtils
 			return root;
 		}
 
+		[TestCase("RootCodeDir", false)]
+		[TestCase("RootDataDir", false)]
+		[TestCase("RootCodeDir", true)]
+		[TestCase("RootDataDir", true)]
+		[TestCase("ProjectsDir", true)]
+		public void TestRegistryInitialization_PreservesDirectoryOverrides(
+			string valueName, bool withUserOverride)
+		{
+			using (var userKey = FwRegistryHelper.FieldWorksRegistryKey)
+			{
+				var originalValue = userKey.GetValue(valueName);
+				try
+				{
+					if (withUserOverride)
+						userKey.SetValue(valueName, "InstalledDirectory");
+					else
+						userKey.DeleteValue(valueName, false);
+
+					new Attributes.InitializeFwRegistryHelperAttribute().BeforeTest(null);
+
+					Assert.That(userKey.GetValue(valueName),
+						Is.EqualTo(withUserOverride ? "InstalledDirectory" : null));
+				}
+				finally
+				{
+					if (originalValue == null)
+						userKey.DeleteValue(valueName, false);
+					else
+						userKey.SetValue(valueName, originalValue);
+				}
+			}
+		}
+
 		[TestCase("RootCodeDir", true, true)]
 		[TestCase("RootDataDir", true, true)]
 		[TestCase("RootCodeDir", false, true)]
