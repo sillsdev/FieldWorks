@@ -1012,11 +1012,13 @@ namespace SIL.FieldWorks.XWorks
 			{
 				// Header row construction is shared with the thin mapper -- one construction
 				// site so the two projectors cannot drift. The composer passes its LCModel-enriched values.
-				AddField(DetailStructureRules.CreateHeaderField(
+				var header = DetailStructureRules.CreateHeaderField(
 					StableId(node, obj), label, node.Field, node.WritingSystem, node.EditorClassification,
 					node.AutomationId, node.LocalizationKey, node.Routing, depth,
 					isCollapsible: true, isInitiallyExpanded: node.Expansion != ViewExpansion.Collapsed,
-					menuId: node.MenuId, hotlinksId: node.HotlinksId, objectHvo: obj.Hvo));
+					menuId: node.MenuId, hotlinksId: node.HotlinksId, objectHvo: obj.Hvo);
+				header.ExpansionKey = ExpansionKey(node.StableId, obj);
+				AddField(header);
 			}
 
 			// Empty value in an always-visible row renders blank; an ifdata row hides instead.
@@ -3477,6 +3479,8 @@ namespace SIL.FieldWorks.XWorks
 					// HeavySummary part ref binds mnuDataTree-Sense in LexSense.fwlayout) -- the
 					// sequence node itself usually has none.
 					var itemBinding = ResolveItemMenuBinding(node, item);
+					// Its ExpansionKey names the item, not its position, so expansion state
+					// follows the item through a reorder.
 					AddField(new DetailField($"{StableId(node, obj)}/item{i}",
 						itemLabel, node.Field, null, DetailFieldKind.Header,
 						EditorClassification.GroupingNone, null, null, HostRouting.Inherit,
@@ -3484,7 +3488,10 @@ namespace SIL.FieldWorks.XWorks
 						isCollapsible: true, isInitiallyExpanded: expanded,
 						menuId: itemBinding.MenuId ?? node.MenuId,
 						hotlinksId: itemBinding.HotlinksId ?? node.HotlinksId,
-						objectHvo: item.Hvo));
+						objectHvo: item.Hvo)
+					{
+						ExpansionKey = ExpansionKey(node.StableId + "/item", item)
+					});
 					DescendInto(node, item, depth + 1);
 				}
 			}
@@ -3642,6 +3649,10 @@ namespace SIL.FieldWorks.XWorks
 			}
 
 			private static string StableId(ViewNode node, ICmObject obj) => $"{node.StableId}@{obj.Hvo}";
+
+			// An object's hvo is assigned per session, so a key persisted across sessions names
+			// the object by guid instead.
+			private static string ExpansionKey(string nodeId, ICmObject obj) => $"{nodeId}@{obj.Guid:N}";
 
 			private static string Localize(string label)
 				=> string.IsNullOrEmpty(label) ? label : StringTable.Table.LocalizeAttributeValue(label);

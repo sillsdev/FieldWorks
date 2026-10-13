@@ -152,5 +152,75 @@ namespace FwAvaloniaTests
 
 			Assert.That(result, Is.EqualTo(new[] { h1, h2, g2 }));
 		}
+
+		// LT-22689: state is read by ExpansionKey, so a key naming the object by guid finds the
+		// state recorded in an earlier session even when the row's StableId has changed.
+		[Test]
+		public void ComputeVisibility_ReadsStateByExpansionKey_NotStableId()
+		{
+			var header = Header("Senses@101", "Senses", 0);
+			header.ExpansionKey = "Senses@guid";
+			var fields = new[] { header, Text("g1", "Gloss", 1) };
+
+			var visible = DetailVisibility.ComputeVisibility(fields,
+				key => key == "Senses@guid" ? (bool?)false : null);
+
+			Assert.That(visible, Is.EqualTo(new[] { true, false }));
+		}
+
+		private static DetailField ObjectHeader(string id, int hvo) => new DetailField(
+			id, id, null, null, DetailFieldKind.Header, EditorClassification.GroupingNone,
+			null, null, HostRouting.Inherit, null, null, null,
+			isEditable: false, indent: 0, isCollapsible: true, objectHvo: hvo);
+
+		private static DetailField ObjectRow(string id, int hvo) => new DetailField(
+			id, id, id, null, DetailFieldKind.Text, EditorClassification.Known, id, null,
+			HostRouting.Inherit, null, null, null, indent: 1, objectHvo: hvo);
+
+		[Test]
+		public void GetHeadersHidingNewObjects_ReturnsOnlyCollapsedHeadersOverANewObject()
+		{
+			var previous = new[]
+			{
+				ObjectHeader("senses", 1), ObjectRow("g10", 10),
+				ObjectHeader("allomorphs", 1), ObjectRow("f20", 20),
+				ObjectHeader("variants", 1), ObjectRow("v30", 30)
+			};
+			var current = new[]
+			{
+				ObjectHeader("senses", 1), ObjectRow("g10", 10), ObjectRow("g11", 11),
+				ObjectHeader("allomorphs", 1), ObjectRow("f20", 20),
+				ObjectHeader("variants", 1), ObjectRow("v30", 30), ObjectRow("v31", 31)
+			};
+			var collapsed = new HashSet<string> { "senses", "allomorphs" };
+
+			var headers = DetailVisibility.GetHeadersHidingNewObjects(previous, current,
+				key => collapsed.Contains(key) ? (bool?)false : null);
+
+			Assert.That(headers, Is.EqualTo(new[] { current[0] }),
+				"only Senses is both collapsed and over a new object: Allomorphs gained nothing, "
+				+ "and Variants is already expanded");
+		}
+
+		[Test]
+		public void GetHeadersHidingNewObjects_ExpandsEveryCollapsedAncestorOfTheNewObject()
+		{
+			var outer = ObjectHeader("senses", 1);
+			var item = new DetailField("sense11", "2 gloss", null, null, DetailFieldKind.Header,
+				EditorClassification.GroupingNone, null, null, HostRouting.Inherit, null, null, null,
+				isEditable: false, indent: 1, isCollapsible: true, isInitiallyExpanded: false,
+				objectHvo: 11);
+			var gloss = new DetailField("g11", "Gloss", "Gloss", null, DetailFieldKind.Text,
+				EditorClassification.Known, "g11", null, HostRouting.Inherit, null, null, null,
+				indent: 2, objectHvo: 11);
+			var previous = new[] { outer };
+			var current = new[] { outer, item, gloss };
+
+			var headers = DetailVisibility.GetHeadersHidingNewObjects(previous, current,
+				key => key == "senses" ? (bool?)false : null);
+
+			Assert.That(headers, Is.EqualTo(new[] { outer, item }),
+				"the new item's own collapsed header is expanded too, so its rows show");
+		}
 	}
 }

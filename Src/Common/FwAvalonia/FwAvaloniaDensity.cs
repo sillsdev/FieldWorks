@@ -116,6 +116,17 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 		/// <summary>Slice label size: legacy 10pt (Slice.cs m_fontLabel).</summary>
 		public const double LabelFontSize = 13.0;
 
+		/// <summary>Section header text size, collapsible or not: the same 10pt as a slice
+		/// label.</summary>
+		public const double SectionHeaderFontSize = LabelFontSize;
+
+		/// <summary>Section header text colour, collapsible or not.</summary>
+		public static Avalonia.Media.IBrush SectionHeaderBrush => FwThemeResources.RequireBrush(GeneratedTokenKeys.FwSectionHeaderBrush);
+
+		/// <summary>Size of the command links under a section header ("Field Options"): the same
+		/// 10pt as a slice label.</summary>
+		public const double HotlinkFontSize = LabelFontSize;
+
 		/// <summary>Writing-system abbreviation colour: #404040, measured from the legacy
 		/// baseline.</summary>
 		public static Avalonia.Media.IBrush WsAbbrevBrush => FwThemeResources.RequireBrush(GeneratedTokenKeys.FwWsAbbrevBrush);
@@ -194,6 +205,32 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 		/// tree picker and the option picker's depth-indented rows indent identically.
 		/// </summary>
 		public static double TreeIndentPerLevel => FwThemeResources.RequireDouble(GeneratedTokenKeys.DataTree_TreeIndentPerLevel);
+
+		/// <summary>Outer size of the square +/- box before a collapsible section header's
+		/// label.</summary>
+		public static double TreeBoxSize => FwThemeResources.RequireDouble(GeneratedTokenKeys.DataTree_TreeBoxSize);
+
+		/// <summary>Length of the +/- box's minus bar and of the plus sign's vertical
+		/// bar.</summary>
+		public static double TreeBoxGlyphLength => FwThemeResources.RequireDouble(GeneratedTokenKeys.DataTree_TreeBoxGlyphLength);
+
+		/// <summary>Stroke width of the +/- box's bars.</summary>
+		public static double TreeBoxGlyphThickness => FwThemeResources.RequireDouble(GeneratedTokenKeys.DataTree_TreeBoxGlyphThickness);
+
+		/// <summary>Horizontal gap between the +/- box and the header label.</summary>
+		public static double TreeBoxGap => FwThemeResources.RequireDouble(GeneratedTokenKeys.DataTree_TreeBoxGap);
+
+		/// <summary>The +/- box outline.</summary>
+		public static Avalonia.Media.IBrush TreeBoxBorderBrush => FwThemeResources.RequireBrush(GeneratedTokenKeys.FwTreeBoxBorderBrush);
+
+		/// <summary>The +/- box's minus and plus bars.</summary>
+		public static Avalonia.Media.IBrush TreeBoxGlyphBrush => FwThemeResources.RequireBrush(GeneratedTokenKeys.FwTreeBoxGlyphBrush);
+
+		/// <summary>
+		/// The +/- box fill. Resolves Semi's base-surface role (SemiColorBackground0) directly,
+		/// so the box is opaque on the detail surface it sits on.
+		/// </summary>
+		public static Avalonia.Media.IBrush TreeBoxBackgroundBrush => FwThemeResources.RequireBrush("SemiColorBackground0");
 
 		/// <summary>
 		/// Compact width of the collapsed dropdown chooser (POS picker and similar) so the
