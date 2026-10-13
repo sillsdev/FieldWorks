@@ -202,6 +202,37 @@ namespace FwAvaloniaTests
 				+ "and Variants is already expanded");
 		}
 
+		private static DetailField NestedHeader(string id, int indent, int hvo) => new DetailField(
+			id, id, null, null, DetailFieldKind.Header, EditorClassification.GroupingNone,
+			null, null, HostRouting.Inherit, null, null, null,
+			isEditable: false, indent: indent, isCollapsible: true, objectHvo: hvo);
+
+		private static DetailField NestedRow(string id, int indent, int hvo) => new DetailField(
+			id, id, id, null, DetailFieldKind.Text, EditorClassification.Known, id, null,
+			HostRouting.Inherit, null, null, null, indent: indent, objectHvo: hvo);
+
+		// LT-22689: a new row under a collapsed child of a parent that must stay collapsed stays
+		// hidden, so neither header is expanded; the child keeps its own collapse.
+		[Test]
+		public void GetHeadersHidingNewObjects_SkipsEveryHeaderOverARowAParentKeepsHidden()
+		{
+			var parent = NestedHeader("parent", 0, 1);
+			var child = NestedHeader("child", 1, 2);
+			var other = NestedHeader("other", 0, 3);
+			var previous = new[] { parent, child, other };
+			var current = new[]
+			{
+				parent, child, NestedRow("underChild", 2, 11),
+				other, NestedRow("underOther", 1, 12)
+			};
+
+			var headers = DetailVisibility.GetHeadersHidingNewObjects(previous, current,
+				key => false, header => header.ExpansionKey == "parent");
+
+			Assert.That(headers, Is.EqualTo(new[] { other }),
+				"the row the parent keeps hidden reveals nothing; the other section's row still does");
+		}
+
 		[Test]
 		public void GetHeadersHidingNewObjects_ExpandsEveryCollapsedAncestorOfTheNewObject()
 		{

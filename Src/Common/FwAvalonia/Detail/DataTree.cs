@@ -614,9 +614,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			if (previous == null)
 				return;
 			var headers = DetailVisibility.GetHeadersHidingNewObjects(previous.Model.Fields, Model.Fields,
-					GetRecordedExpansion)
-				.Where(header => !previous._collapsedAfterOwnEdit.Contains(header.ExpansionKey))
-				.ToList();
+				GetRecordedExpansion,
+				header => previous._collapsedAfterOwnEdit.Contains(header.ExpansionKey));
 			if (headers.Count == 0)
 				return;
 			foreach (var header in headers)

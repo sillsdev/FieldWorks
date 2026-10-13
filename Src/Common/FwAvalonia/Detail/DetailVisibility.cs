@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 {
@@ -102,13 +103,17 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		/// <summary>
 		/// The collapsed headers in <paramref name="current"/> that hide a row belonging to an
 		/// object no row of <paramref name="previous"/> belonged to, in field order. Expanding
-		/// them shows an object that was just added to the record. Expansion state is read as in
-		/// <see cref="ComputeVisibility"/>.
+		/// them shows an object that was just added to the record. A row hidden by any header
+		/// <paramref name="mustStayCollapsed"/> accepts contributes none of its headers, since
+		/// that row stays hidden either way. Expansion state is read as in
+		/// <see cref="ComputeVisibility"/>; a null <paramref name="mustStayCollapsed"/> keeps
+		/// no header collapsed.
 		/// </summary>
 		public static IReadOnlyList<DetailField> GetHeadersHidingNewObjects(
 			IReadOnlyList<DetailField> previous,
 			IReadOnlyList<DetailField> current,
-			Func<string, bool?> getExpansionState)
+			Func<string, bool?> getExpansionState,
+			Func<DetailField, bool> mustStayCollapsed = null)
 		{
 			if (previous == null || current == null)
 				return Array.Empty<DetailField>();
@@ -117,23 +122,30 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			foreach (var field in previous)
 				known.Add(field.ObjectHvo);
 
-			var result = new List<DetailField>();
+			var collapsed = new List<DetailHeaderRange>();
 			foreach (var range in GetCollapsibleRanges(current))
 			{
-				var header = current[range.HeaderIndex];
-				if (IsExpanded(header, getExpansionState))
-					continue;
-				for (var i = range.Start; i < range.End; i++)
-				{
-					var hvo = current[i].ObjectHvo;
-					if (hvo != 0 && !known.Contains(hvo))
-					{
-						result.Add(header);
-						break;
-					}
-				}
+				if (!IsExpanded(current[range.HeaderIndex], getExpansionState))
+					collapsed.Add(range);
 			}
-			return result;
+
+			var revealed = new SortedSet<int>();
+			for (var i = 0; i < current.Count; i++)
+			{
+				var hvo = current[i].ObjectHvo;
+				if (hvo == 0 || known.Contains(hvo))
+					continue;
+				var row = i;
+				var hiding = collapsed.Where(range => range.Start <= row && row < range.End).ToList();
+				if (mustStayCollapsed != null
+					&& hiding.Any(range => mustStayCollapsed(current[range.HeaderIndex])))
+				{
+					continue;
+				}
+				foreach (var range in hiding)
+					revealed.Add(range.HeaderIndex);
+			}
+			return revealed.Select(index => current[index]).ToList();
 		}
 
 		private static bool IsExpanded(DetailField header, Func<string, bool?> getExpansionState)
