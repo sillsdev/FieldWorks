@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE HermitCrabInput SYSTEM "HermitCrabInput.dtd">
+<!-- Synthetic data for LT-22836: the root "pit" requires a following "i" or "a", so
+synthesizing it alone fails both environments. -->
+<HermitCrabInput>
+  <Language>
+    <Name>EnvironmentFailureTrace</Name>
+    <PartsOfSpeech>
+      <PartOfSpeech id="pos1">
+        <Name>N</Name>
+      </PartOfSpeech>
+    </PartsOfSpeech>
+    <HeadFeatures />
+    <CharacterDefinitionTable id="table1">
+      <Name>Main phoneme set</Name>
+      <SegmentDefinitions>
+        <SegmentDefinition id="char1">
+          <Representations>
+            <Representation>a</Representation>
+          </Representations>
+        </SegmentDefinition>
+        <SegmentDefinition id="char2">
+          <Representations>
+            <Representation>i</Representation>
+          </Representations>
+        </SegmentDefinition>
+        <SegmentDefinition id="char3">
+          <Representations>
+            <Representation>p</Representation>
+          </Representations>
+        </SegmentDefinition>
+        <SegmentDefinition id="char4">
+          <Representations>
+            <Representation>t</Representation>
+          </Representations>
+        </SegmentDefinition>
+      </SegmentDefinitions>
+      <BoundaryDefinitions>
+        <BoundaryDefinition id="char5">
+          <Representations>
+            <Representation>+</Representation>
+          </Representations>
+        </BoundaryDefinition>
+      </BoundaryDefinitions>
+    </CharacterDefinitionTable>
+    <Strata>
+      <Stratum characterDefinitionTable="table1" morphologicalRuleOrder="unordered">
+        <Name>Morphology</Name>
+        <LexicalEntries>
+          <LexicalEntry id="entry1" partOfSpeech="pos1">
+            <Allomorphs>
+              <Allomorph id="allo1">
+                <PhoneticShape>pit</PhoneticShape>
+                <RequiredEnvironments>
+                  <Environment>
+                    <RightEnvironment>
+                      <PhoneticTemplate>
+                        <PhoneticSequence>
+                          <Segments>
+                            <PhoneticShape>i</PhoneticShape>
+                          </Segments>
+                        </PhoneticSequence>
+                      </PhoneticTemplate>
+                    </RightEnvironment>
+                  </Environment>
+                  <Environment>
+                    <RightEnvironment>
+                      <PhoneticTemplate>
+                        <PhoneticSequence>
+                          <Segments>
+                            <PhoneticShape>a</PhoneticShape>
+                          </Segments>
+                        </PhoneticSequence>
+                      </PhoneticTemplate>
+                    </RightEnvironment>
+                  </Environment>
+                </RequiredEnvironments>
+              </Allomorph>
+            </Allomorphs>
+            <Gloss>pit</Gloss>
+          </LexicalEntry>
+        </LexicalEntries>
+      </Stratum>
+      <Stratum characterDefinitionTable="table1">
+        <Name>Surface</Name>
+      </Stratum>
+    </Strata>
+  </Language>
+</HermitCrabInput>
