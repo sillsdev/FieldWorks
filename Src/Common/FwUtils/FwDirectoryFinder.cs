@@ -241,28 +241,44 @@ namespace SIL.FieldWorks.Common.FwUtils
 			return Path.Combine(CodeDirectory, filename);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Gets a subdirectory of FieldWorks either by reading the
-		/// <paramref name="registryValue"/> or by getting <paramref name="defaultDir"/>.
-		/// Will not return <c>null</c>.
+		/// Resolves a registry directory. Per-user source-tree code/data paths fall back
+		/// to machine settings, then the default directory.
 		/// </summary>
-		/// <param name="registryValue">The name of the registry value to read from the FW root
-		/// key in HKLM.</param>
-		/// <param name="defaultDir">The default directory to use if there is no value in the
-		/// registry.</param>
-		/// <returns>
-		/// The desired subdirectory of FieldWorks (without trailing directory separator).
-		/// </returns>
-		/// ------------------------------------------------------------------------------------
-		private static string GetDirectory(string registryValue, string defaultDir)
+		internal static string GetDirectory(string registryValue, string defaultDir)
 		{
 			using (var userKey = FwRegistryHelper.FieldWorksRegistryKey)
 			{
-				if (userKey == null || userKey.GetValue(registryValue) == null)
+				var userValue = userKey?.GetValue(registryValue);
+				if (userValue == null ||
+					((registryValue == "RootCodeDir" || registryValue == ksRootDataDir)
+						&& IsSourceTreePath(userValue as string)))
 					return GetDirectoryLocalMachine(registryValue, defaultDir);
 				return GetDirectory(userKey, registryValue, defaultDir);
 			}
+		}
+
+		private static bool IsSourceTreePath(string path)
+		{
+			if (string.IsNullOrEmpty(path))
+				return false;
+			try
+			{
+				if (!Path.IsPathRooted(path) ||
+					(Platform.IsWindows && Path.GetPathRoot(path).Length < 3))
+					return false;
+				for (var directory = Path.GetFullPath(path); !string.IsNullOrEmpty(directory);
+					directory = Path.GetDirectoryName(directory.TrimEnd(
+						Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar)))
+				{
+					if (File.Exists(Path.Combine(directory, ksSolutionFilename)))
+						return true;
+				}
+			}
+			catch (ArgumentException) { }
+			catch (NotSupportedException) { }
+			catch (PathTooLongException) { }
+			return false;
 		}
 
 		/// <summary>
