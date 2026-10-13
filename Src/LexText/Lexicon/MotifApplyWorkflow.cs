@@ -3,6 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
 
 namespace SIL.FieldWorks.XWorks.LexEd
@@ -12,11 +13,11 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		private readonly Action _validatePendingEdits;
 		private readonly Action _saveAndUnlockProject;
 		private readonly Func<MotifApplyResult> _runMotif;
-		private readonly Action _reloadProject;
+		private readonly Func<Form> _reloadProject;
 		private readonly Action _relockProject;
 
 		internal MotifApplyWorkflow(Action validatePendingEdits, Action saveAndUnlockProject,
-			Func<MotifApplyResult> runMotif, Action reloadProject, Action relockProject)
+			Func<MotifApplyResult> runMotif, Func<Form> reloadProject, Action relockProject)
 		{
 			_validatePendingEdits = validatePendingEdits ?? throw new ArgumentNullException(nameof(validatePendingEdits));
 			_saveAndUnlockProject = saveAndUnlockProject ?? throw new ArgumentNullException(nameof(saveAndUnlockProject));
@@ -32,9 +33,10 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			var result = _runMotif();
 			var reloaded = false;
 			var relocked = false;
+			Form reopenedWindow = null;
 			if (result.RequiresReload)
 			{
-				_reloadProject();
+				reopenedWindow = _reloadProject();
 				reloaded = true;
 			}
 			else
@@ -46,12 +48,13 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				}
 				catch
 				{
-					_reloadProject();
+					reopenedWindow = _reloadProject();
 					reloaded = true;
 				}
 			}
 
-			return new MotifApplyWorkflowResult(result, reloaded, relocked, SelectMessage(result));
+			return new MotifApplyWorkflowResult(result, reloaded, relocked, SelectMessage(result),
+				reopenedWindow);
 		}
 
 		internal static MotifApplyMessage GetPrecheckMessage(bool motifAvailable, bool fieldWorksBusy)
@@ -102,8 +105,9 @@ namespace SIL.FieldWorks.XWorks.LexEd
 	internal sealed class MotifApplyWorkflowResult
 	{
 		internal MotifApplyWorkflowResult(MotifApplyResult applyResult, bool reloaded, bool relocked,
-			MotifApplyMessage message)
+			MotifApplyMessage message, Form reopenedWindow)
 		{
+			ReopenedWindow = reopenedWindow;
 			ApplyResult = applyResult;
 			Reloaded = reloaded;
 			Relocked = relocked;
@@ -114,5 +118,8 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		internal bool Reloaded { get; }
 		internal bool Relocked { get; }
 		internal MotifApplyMessage Message { get; }
+		/// <summary>The main window that replaced the original one, or null when the project was
+		/// not reopened.</summary>
+		internal Form ReopenedWindow { get; }
 	}
 }

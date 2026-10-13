@@ -7,6 +7,7 @@ using System.Linq;
 using System.Xml.Linq;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.XWorks.LexEd;
 
 namespace LexEdDllTests
 {
@@ -43,9 +44,18 @@ namespace LexEdDllTests
 			Assert.That(main.Descendants("include").Any(element =>
 				(string)element.Attribute("path") == "Lexicon/areaConfiguration.xml" &&
 				((string)element.Attribute("query") ?? string.Empty).Contains("menu[@id='Tools']")), Is.True);
-			Assert.That(main.Descendants("listener").Any(element =>
+			Assert.That(main.Descendants("listener").Count(element =>
 				(string)element.Attribute("assemblyPath") == "LexEdDll.dll" &&
-				(string)element.Attribute("class") == "SIL.FieldWorks.XWorks.LexEd.FLExBridgeListener"), Is.True);
+				(string)element.Attribute("class") == "SIL.FieldWorks.XWorks.LexEd.MotifListener"), Is.EqualTo(1));
+		}
+
+		[Test]
+		public void OnlyTheMotifListenerHandlesTheMotifCommand()
+		{
+			Assert.That(typeof(MotifListener).GetMethod("OnApplyMotifChanges"), Is.Not.Null);
+			Assert.That(typeof(MotifListener).GetMethod("OnDisplayApplyMotifChanges"), Is.Not.Null);
+			Assert.That(typeof(FLExBridgeListener).GetMethod("OnApplyMotifChanges"), Is.Null);
+			Assert.That(typeof(FLExBridgeListener).GetMethod("OnDisplayApplyMotifChanges"), Is.Null);
 		}
 	}
 }

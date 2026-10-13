@@ -27,7 +27,7 @@ namespace LexEdDllTests
 					runCount++;
 					return CreateResult(0, "{\"ok\":true,\"applied\":true}");
 				},
-				() => actions.Add("reload"),
+				() => { actions.Add("reload"); return null; },
 				() => actions.Add("relock"));
 
 			var result = workflow.Execute();
@@ -76,7 +76,7 @@ namespace LexEdDllTests
 					actions.Add("run-motif");
 					return CreateResult(2, "");
 				},
-				() => actions.Add("reload"),
+				() => { actions.Add("reload"); return null; },
 				() =>
 				{
 					actions.Add("relock");
@@ -124,7 +124,7 @@ namespace LexEdDllTests
 				() => actions.Add("validate-edits"),
 				() => actions.Add("save-and-unlock"),
 				apply,
-				() => actions.Add("reload"),
+				() => { actions.Add("reload"); return null; },
 				() => actions.Add("relock"));
 		}
 
