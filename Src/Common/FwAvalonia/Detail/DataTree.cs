@@ -112,6 +112,24 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		public void RequestRowFocusOnRebuild(IReadOnlyList<string> rowAutomationIds)
 			=> RowFocusRequested = rowAutomationIds;
 
+		/// <summary>The object whose first shown row the rebuild that follows should focus;
+		/// 0 when none was requested.</summary>
+		internal int ObjectFocusRequested { get; private set; }
+
+		/// <summary>
+		/// Asks the rebuild that follows to give keyboard focus to the first row showing
+		/// <paramref name="hvo"/>, for a gesture that replaced the focused row's object with
+		/// a new one (its rows have ids the outgoing view cannot know).
+		/// </summary>
+		public void RequestObjectFocusOnRebuild(int hvo) => ObjectFocusRequested = hvo;
+
+		/// <summary>
+		/// Focuses the first shown row of the object with <paramref name="hvo"/> that can
+		/// take focus; false when none can.
+		/// </summary>
+		internal bool FocusFirstRowOf(int hvo)
+			=> hvo != 0 && FocusFirstRow(Model.Fields.Where(f => f.ObjectHvo == hvo).Select(f => f.RowAutomationId));
+
 		/// <summary>
 		/// Focuses the first row of <paramref name="rowAutomationIds"/> that is shown and
 		/// can take focus; false when none can.

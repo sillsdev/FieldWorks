@@ -927,37 +927,8 @@ namespace SIL.FieldWorks.XWorks
 
 		// Runs an action and returns the link it posts, once the post has been delivered.
 		private FwLinkArgs CaptureFollowLink(Action action)
-		{
-			var window = m_propertyTable.GetValue<XWindow>("window");
-			var spy = new FollowLinkSpy();
-			window.Mediator.AddColleague(spy);
-			try
-			{
-				action();
-				DrainMediatorAndIdleQueues();
-				return spy.Link;
-			}
-			finally
-			{
-				window.Mediator.RemoveColleague(spy);
-			}
-		}
-
-		// Captures the link a jump posts. It sorts ahead of the window's own link listener,
-		// which shares the High priority and was registered first, so it sees the link first.
-		private sealed class FollowLinkSpy : IxCoreColleague
-		{
-			public FwLinkArgs Link { get; private set; }
-			public void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters) { }
-			public IxCoreColleague[] GetMessageTargets() => new IxCoreColleague[] { this };
-			public bool ShouldNotCall => false;
-			public int Priority => (int)ColleaguePriority.High - 1;
-			public bool OnFollowLink(object args)
-			{
-				Link = args as FwLinkArgs;
-				return true;
-			}
-		}
+			=> FollowLinkSpy.Capture(m_propertyTable.GetValue<XWindow>("window").Mediator, action,
+				DrainMediatorAndIdleQueues);
 
 		[Test]
 		public void SubentriesMoveRight_ThroughTheHost_ReordersTheRow()
@@ -1265,10 +1236,10 @@ namespace SIL.FieldWorks.XWorks
 				"a multi-string row's menu, writing-system list included, is answered natively");
 			var lexemeForm = LexemeFormField();
 			Assert.That(m_view.CreateMultiStringMenuAuthority(lexemeForm).Owns(MultiStringMenuAuthority.MenuId),
-				Is.True, "the shared multi-string group is owned even on a row whose own menu id is not yet");
+				Is.True, "the shared multi-string group is owned on the Lexeme Form row too");
 			Assert.That(XCoreMenuBridge.OwnsAll(m_view.CreateMenuAuthority(LabelMenuRequest(lexemeForm, NoItem)),
-				LabelMenuIds(lexemeForm)), Is.False,
-				"the Lexeme Form row still needs the adapter for mnuDataTree-LexemeForm, not for its writing systems");
+				LabelMenuIds(lexemeForm)), Is.True,
+				"the Lexeme Form row's menu, its own jump, swap and convert leaves included, is answered natively");
 			Assert.That(m_view.CreateMultiStringMenuAuthority(subentries).Owns(MultiStringMenuAuthority.MenuId),
 				Is.False, "a row that is not multi-string never claims the multi-string menu");
 			Assert.That(XCoreMenuBridge.OwnsAll(null, new[] { ReorderVectorMenuAuthority.MenuId }), Is.False);
