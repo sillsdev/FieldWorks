@@ -10,6 +10,7 @@ using System.Runtime.Serialization;
 using System.Runtime.Serialization.Json;
 using System.Text;
 using System.Threading.Tasks;
+using SIL.Reporting;
 
 namespace SIL.FieldWorks.Common.FwUtils
 {
@@ -204,8 +205,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 			{
 				return Classify(_runProcess(startInfo));
 			}
-			catch
+			catch (Exception error)
 			{
+				Logger.WriteError("Running Motif failed", error);
 				return new MotifApplyResult(MotifApplyOutcome.Ambiguous, null, null, null);
 			}
 		}
@@ -308,30 +310,53 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 			using (process)
 			{
-				var outputTask = process.StandardOutput.ReadToEndAsync();
-				var errorTask = process.StandardError.ReadToEndAsync();
-				if (process.WaitForExit((int)Math.Min(timeout.TotalMilliseconds, int.MaxValue)))
-				{
-					Task.WaitAll(new Task[] { outputTask, errorTask }, StopWaitMilliseconds);
-					return new MotifProcessOutput(true, process.ExitCode, CompletedText(outputTask),
-						CompletedText(errorTask));
-				}
-
 				try
 				{
-					process.Kill();
-				}
-				catch (Exception error) when (error is InvalidOperationException ||
-					error is System.ComponentModel.Win32Exception)
-				{
-					// The wait below decides whether the process stopped.
-				}
+					var outputTask = process.StandardOutput.ReadToEndAsync();
+					var errorTask = process.StandardError.ReadToEndAsync();
+					if (process.WaitForExit((int)Math.Min(timeout.TotalMilliseconds, int.MaxValue)))
+					{
+						Task.WaitAll(new Task[] { outputTask, errorTask }, StopWaitMilliseconds);
+						return new MotifProcessOutput(true, process.ExitCode, CompletedText(outputTask),
+							CompletedText(errorTask));
+					}
 
-				if (!process.WaitForExit(StopWaitMilliseconds))
-					return new MotifProcessOutput(true, null, null, null, true, true);
-				Task.WaitAll(new Task[] { outputTask, errorTask }, StopWaitMilliseconds);
-				return new MotifProcessOutput(true, process.ExitCode, CompletedText(outputTask),
-					CompletedText(errorTask), true, false);
+					if (!Stop(process))
+						return new MotifProcessOutput(true, null, null, null, true, true);
+					Task.WaitAll(new Task[] { outputTask, errorTask }, StopWaitMilliseconds);
+					return new MotifProcessOutput(true, process.ExitCode, CompletedText(outputTask),
+						CompletedText(errorTask), true, false);
+				}
+				catch (Exception error)
+				{
+					// Motif may still be running, so stop it before the project is reopened.
+					Logger.WriteError("Waiting for Motif failed", error);
+					return new MotifProcessOutput(true, null, null, null, false, !Stop(process));
+				}
+			}
+		}
+
+		// Kills the process if it is running and reports whether it has exited.
+		private static bool Stop(Process process)
+		{
+			try
+			{
+				if (!process.HasExited)
+					process.Kill();
+			}
+			catch (Exception error) when (error is InvalidOperationException ||
+				error is System.ComponentModel.Win32Exception || error is NotSupportedException)
+			{
+				// The wait below decides whether the process stopped.
+			}
+
+			try
+			{
+				return process.WaitForExit(StopWaitMilliseconds);
+			}
+			catch (SystemException)
+			{
+				return false;
 			}
 		}
 

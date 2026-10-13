@@ -5,6 +5,7 @@
 using System;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.Reporting;
 
 namespace SIL.FieldWorks.XWorks.LexEd
 {
@@ -52,8 +53,9 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			{
 				result = _runMotif() ?? Ambiguous();
 			}
-			catch
+			catch (Exception error)
 			{
+				Logger.WriteError("Running Motif failed", error);
 				result = Ambiguous();
 			}
 
@@ -61,6 +63,20 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			// programs overwrite each other's changes.
 			if (result.Outcome == MotifApplyOutcome.StillRunning)
 				return new MotifApplyWorkflowResult(result, false, false, MotifApplyMessage.MotifStillRunning,
+					null, null);
+
+			bool projectFileExists;
+			try
+			{
+				projectFileExists = _projectFileExists();
+			}
+			catch (Exception error)
+			{
+				return new MotifApplyWorkflowResult(result, false, false, MotifApplyMessage.RecoveryFailed,
+					null, error);
+			}
+			if (!projectFileExists)
+				return new MotifApplyWorkflowResult(result, false, false, MotifApplyMessage.MissingProjectFile,
 					null, null);
 
 			Exception relockError = null;
@@ -76,20 +92,6 @@ namespace SIL.FieldWorks.XWorks.LexEd
 					relockError = error;
 				}
 			}
-
-			bool projectFileExists;
-			try
-			{
-				projectFileExists = _projectFileExists();
-			}
-			catch (Exception error)
-			{
-				return new MotifApplyWorkflowResult(result, false, false, MotifApplyMessage.RecoveryFailed,
-					null, error);
-			}
-			if (!projectFileExists)
-				return new MotifApplyWorkflowResult(result, false, false, MotifApplyMessage.MissingProjectFile,
-					null, relockError);
 
 			try
 			{

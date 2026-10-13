@@ -2,12 +2,14 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System;
 using System.IO;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.XWorks.LexText;
 using SIL.LCModel;
 using SIL.LCModel.DomainServices;
+using SIL.Reporting;
 using XCore;
 using static SIL.FieldWorks.Common.FwUtils.FwUtils;
 
@@ -23,6 +25,31 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		internal static string GetFullProjectFileName(LcmCache cache)
 		{
 			return Path.Combine(cache.ProjectId.ProjectFolder, cache.ProjectId.Name + LcmFileHelper.ksFwDataXmlFileExtension);
+		}
+
+		/// <summary>
+		/// Saves the project and releases its lock. If that fails, the project is locked again
+		/// before the failure is rethrown, since the lock may already have been released.
+		/// </summary>
+		internal static void SaveAndUnlockProject(LcmCache cache)
+		{
+			try
+			{
+				ProjectLockingService.UnlockCurrentProject(cache);
+			}
+			catch
+			{
+				try
+				{
+					// Locking a project this process already holds succeeds and keeps it locked.
+					ProjectLockingService.LockCurrentProject(cache);
+				}
+				catch (Exception error)
+				{
+					Logger.WriteError("Relocking the project after a failed save failed", error);
+				}
+				throw;
+			}
 		}
 
 		/// <summary>Commits the active window's pending editor changes.</summary>

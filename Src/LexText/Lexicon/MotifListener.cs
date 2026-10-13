@@ -114,7 +114,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			ProjectLifecycle.StopParser(propertyTable);
 			var workflow = new MotifApplyWorkflow(
 				() => ProjectLifecycle.ValidatePendingEditorData(propertyTable),
-				() => ProjectLockingService.UnlockCurrentProject(cache),
+				() => ProjectLifecycle.SaveAndUnlockProject(cache),
 				() => runner.Run(motifCommand),
 				() => ProjectLifecycle.RefreshCacheWindowAndAll(app, projectFilePath),
 				() => ProjectLockingService.LockCurrentProject(cache),

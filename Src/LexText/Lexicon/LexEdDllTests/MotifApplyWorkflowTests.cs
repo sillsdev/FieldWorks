@@ -208,6 +208,19 @@ namespace LexEdDllTests
 		}
 
 		[Test]
+		public void MissingProjectFileIsReportedEvenWhenMotifChangedNothing()
+		{
+			var actions = new List<string>();
+			var workflow = CreateWorkflow(actions, () => CreateResult(2, ""), projectFileExists: () => false);
+
+			var result = workflow.Execute();
+
+			Assert.That(actions, Does.Not.Contain("relock"));
+			Assert.That(actions, Does.Not.Contain("reload"));
+			Assert.That(result.Message, Is.EqualTo(MotifApplyMessage.MissingProjectFile));
+		}
+
+		[Test]
 		public void ReloadReturnsTheReopenedWindow()
 		{
 			using (var reopened = new Form())

@@ -312,6 +312,18 @@ namespace SIL.FieldWorks.Common.FwUtils
 			Assert.That(result.RequiresReload, Is.False);
 		}
 
+		[Test]
+		public void FailureAfterMotifStartsIsAmbiguousOnlyOnceItHasStopped()
+		{
+			var runner = CreateRunner(new MotifProcessOutput(true, null, "", "", false, false));
+			Assert.That(runner.Apply(@"C:\Project\My Project.fwdata").Outcome,
+				Is.EqualTo(MotifApplyOutcome.Ambiguous));
+
+			runner = CreateRunner(new MotifProcessOutput(true, null, "", "", false, true));
+			Assert.That(runner.Apply(@"C:\Project\My Project.fwdata").Outcome,
+				Is.EqualTo(MotifApplyOutcome.StillRunning));
+		}
+
 		[TestCase(null, 600)]
 		[TestCase("", 600)]
 		[TestCase("abc", 600)]
