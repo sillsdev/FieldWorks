@@ -22,7 +22,6 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		private readonly MotifApplyRunner _runner;
 		private Mediator _mediator;
 		private PropertyTable _propertyTable;
-		private bool? _motifAvailable;
 
 		/// <summary>Creates the listener XCore registers from Main.xml.</summary>
 		public MotifListener()
@@ -129,11 +128,11 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			return true;
 		}
 
+		// Checked afresh each time, so installing or removing Motif while FieldWorks is open
+		// shows the next time the Tools menu opens.
 		private bool IsMotifAvailable()
 		{
-			if (!_motifAvailable.HasValue)
-				_motifAvailable = _runner.IsAvailable;
-			return _motifAvailable.Value;
+			return _runner.IsAvailable;
 		}
 
 		private static bool IsFieldWorksBusy(PropertyTable propertyTable, LcmCache cache)
