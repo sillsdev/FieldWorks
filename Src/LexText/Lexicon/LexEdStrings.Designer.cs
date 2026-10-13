@@ -313,11 +313,29 @@ namespace SIL.FieldWorks.XWorks.LexEd {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The project file {0} is missing after Motif ran, so FieldWorks has not reopened the project. A backup may be at {1}. Contact support before you open the project again..
+        /// </summary>
+        internal static string ksApplyMotifMissingProjectFile {
+            get {
+                return ResourceManager.GetString("ksApplyMotifMissingProjectFile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to There are no Motif changes waiting to be applied..
         /// </summary>
         internal static string ksApplyMotifNoChanges {
             get {
                 return ResourceManager.GetString("ksApplyMotifNoChanges", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to FieldWorks could not save the project, so Motif was not started. {0}.
+        /// </summary>
+        internal static string ksApplyMotifPreparationFailed {
+            get {
+                return ResourceManager.GetString("ksApplyMotifPreparationFailed", resourceCulture);
             }
         }
         
@@ -331,11 +349,29 @@ namespace SIL.FieldWorks.XWorks.LexEd {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to FieldWorks could not reopen the project after Motif ran. Close FieldWorks, then open the project again. {0}.
+        /// </summary>
+        internal static string ksApplyMotifRecoveryFailed {
+            get {
+                return ResourceManager.GetString("ksApplyMotifRecoveryFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Some Motif changes no longer fit this project. No changes were applied. Open Motif to review them, then try again..
         /// </summary>
         internal static string ksApplyMotifRefused {
             get {
                 return ResourceManager.GetString("ksApplyMotifRefused", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Motif did not finish in time and could not be stopped. FieldWorks has not reopened the project, so that it does not overwrite Motif's changes. Close FieldWorks, wait for Motif to finish, then open the project again..
+        /// </summary>
+        internal static string ksApplyMotifStillRunning {
+            get {
+                return ResourceManager.GetString("ksApplyMotifStillRunning", resourceCulture);
             }
         }
         
@@ -354,6 +390,15 @@ namespace SIL.FieldWorks.XWorks.LexEd {
         internal static string ksApplyMotifSuccessWithSummary {
             get {
                 return ResourceManager.GetString("ksApplyMotifSuccessWithSummary", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Motif did not finish in time and was stopped. FieldWorks has reloaded the project. Open Motif to see whether the changes were applied before you try again..
+        /// </summary>
+        internal static string ksApplyMotifTimedOut {
+            get {
+                return ResourceManager.GetString("ksApplyMotifTimedOut", resourceCulture);
             }
         }
         

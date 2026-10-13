@@ -8,6 +8,11 @@ using SIL.FieldWorks.Common.FwUtils;
 
 namespace SIL.FieldWorks.XWorks.LexEd
 {
+	/// <summary>
+	/// Saves and unlocks the project, runs Motif once, then either relocks the project or
+	/// reopens it from disk. Once the project is unlocked, every failure is returned as a
+	/// result instead of thrown.
+	/// </summary>
 	internal sealed class MotifApplyWorkflow
 	{
 		private readonly Action _validatePendingEdits;
@@ -15,46 +20,88 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		private readonly Func<MotifApplyResult> _runMotif;
 		private readonly Func<Form> _reloadProject;
 		private readonly Action _relockProject;
+		private readonly Func<bool> _projectFileExists;
 
 		internal MotifApplyWorkflow(Action validatePendingEdits, Action saveAndUnlockProject,
-			Func<MotifApplyResult> runMotif, Func<Form> reloadProject, Action relockProject)
+			Func<MotifApplyResult> runMotif, Func<Form> reloadProject, Action relockProject,
+			Func<bool> projectFileExists)
 		{
 			_validatePendingEdits = validatePendingEdits ?? throw new ArgumentNullException(nameof(validatePendingEdits));
 			_saveAndUnlockProject = saveAndUnlockProject ?? throw new ArgumentNullException(nameof(saveAndUnlockProject));
 			_runMotif = runMotif ?? throw new ArgumentNullException(nameof(runMotif));
 			_reloadProject = reloadProject ?? throw new ArgumentNullException(nameof(reloadProject));
 			_relockProject = relockProject ?? throw new ArgumentNullException(nameof(relockProject));
+			_projectFileExists = projectFileExists ?? throw new ArgumentNullException(nameof(projectFileExists));
 		}
 
 		internal MotifApplyWorkflowResult Execute()
 		{
 			_validatePendingEdits();
-			_saveAndUnlockProject();
-			var result = _runMotif();
-			var reloaded = false;
-			var relocked = false;
-			Form reopenedWindow = null;
-			if (result.RequiresReload)
+			try
 			{
-				reopenedWindow = _reloadProject();
-				reloaded = true;
+				_saveAndUnlockProject();
 			}
-			else
+			catch (Exception error)
+			{
+				return new MotifApplyWorkflowResult(null, false, false, MotifApplyMessage.PreparationFailed,
+					null, error);
+			}
+
+			MotifApplyResult result;
+			try
+			{
+				result = _runMotif() ?? Ambiguous();
+			}
+			catch
+			{
+				result = Ambiguous();
+			}
+
+			// Relocking or reopening while Motif may still write the file would let the two
+			// programs overwrite each other's changes.
+			if (result.Outcome == MotifApplyOutcome.StillRunning)
+				return new MotifApplyWorkflowResult(result, false, false, MotifApplyMessage.MotifStillRunning,
+					null, null);
+
+			Exception relockError = null;
+			if (!result.RequiresReload)
 			{
 				try
 				{
 					_relockProject();
-					relocked = true;
+					return new MotifApplyWorkflowResult(result, false, true, SelectMessage(result), null, null);
 				}
-				catch
+				catch (Exception error)
 				{
-					reopenedWindow = _reloadProject();
-					reloaded = true;
+					relockError = error;
 				}
 			}
 
-			return new MotifApplyWorkflowResult(result, reloaded, relocked, SelectMessage(result),
-				reopenedWindow);
+			bool projectFileExists;
+			try
+			{
+				projectFileExists = _projectFileExists();
+			}
+			catch (Exception error)
+			{
+				return new MotifApplyWorkflowResult(result, false, false, MotifApplyMessage.RecoveryFailed,
+					null, error);
+			}
+			if (!projectFileExists)
+				return new MotifApplyWorkflowResult(result, false, false, MotifApplyMessage.MissingProjectFile,
+					null, relockError);
+
+			try
+			{
+				var reopenedWindow = _reloadProject();
+				return new MotifApplyWorkflowResult(result, true, false, SelectMessage(result),
+					reopenedWindow, relockError);
+			}
+			catch (Exception error)
+			{
+				return new MotifApplyWorkflowResult(result, false, false, MotifApplyMessage.RecoveryFailed,
+					null, error);
+			}
 		}
 
 		internal static MotifApplyMessage GetPrecheckMessage(bool motifAvailable, bool fieldWorksBusy)
@@ -62,6 +109,11 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			if (!motifAvailable)
 				return MotifApplyMessage.NotInstalled;
 			return fieldWorksBusy ? MotifApplyMessage.FieldWorksBusy : MotifApplyMessage.None;
+		}
+
+		private static MotifApplyResult Ambiguous()
+		{
+			return new MotifApplyResult(MotifApplyOutcome.Ambiguous, null, null, null);
 		}
 
 		private static MotifApplyMessage SelectMessage(MotifApplyResult result)
@@ -82,6 +134,8 @@ namespace SIL.FieldWorks.XWorks.LexEd
 					return MotifApplyMessage.NotInstalled;
 				case MotifApplyOutcome.CouldNotStart:
 					return MotifApplyMessage.CouldNotStart;
+				case MotifApplyOutcome.TimedOut:
+					return MotifApplyMessage.TimedOut;
 				default:
 					return MotifApplyMessage.Reconciliation;
 			}
@@ -99,21 +153,28 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		FieldWorksBusy,
 		NotInstalled,
 		CouldNotStart,
-		Reconciliation
+		Reconciliation,
+		TimedOut,
+		PreparationFailed,
+		MotifStillRunning,
+		MissingProjectFile,
+		RecoveryFailed
 	}
 
 	internal sealed class MotifApplyWorkflowResult
 	{
 		internal MotifApplyWorkflowResult(MotifApplyResult applyResult, bool reloaded, bool relocked,
-			MotifApplyMessage message, Form reopenedWindow)
+			MotifApplyMessage message, Form reopenedWindow, Exception error)
 		{
-			ReopenedWindow = reopenedWindow;
 			ApplyResult = applyResult;
 			Reloaded = reloaded;
 			Relocked = relocked;
 			Message = message;
+			ReopenedWindow = reopenedWindow;
+			Error = error;
 		}
 
+		/// <summary>Motif's classified result, or null when Motif was not started.</summary>
 		internal MotifApplyResult ApplyResult { get; }
 		internal bool Reloaded { get; }
 		internal bool Relocked { get; }
@@ -121,5 +182,8 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// <summary>The main window that replaced the original one, or null when the project was
 		/// not reopened.</summary>
 		internal Form ReopenedWindow { get; }
+		/// <summary>The failure that determined the message, or null when there was
+		/// none.</summary>
+		internal Exception Error { get; }
 	}
 }

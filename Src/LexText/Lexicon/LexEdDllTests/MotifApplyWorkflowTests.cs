@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Windows.Forms;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.XWorks.LexEd;
@@ -18,17 +19,12 @@ namespace LexEdDllTests
 		{
 			var actions = new List<string>();
 			var runCount = 0;
-			var workflow = new MotifApplyWorkflow(
-				() => actions.Add("validate-edits"),
-				() => actions.Add("save-and-unlock"),
-				() =>
-				{
-					actions.Add("run-motif");
-					runCount++;
-					return CreateResult(0, "{\"ok\":true,\"applied\":true}");
-				},
-				() => { actions.Add("reload"); return null; },
-				() => actions.Add("relock"));
+			var workflow = CreateWorkflow(actions, () =>
+			{
+				actions.Add("run-motif");
+				runCount++;
+				return CreateResult(0, "{\"ok\":true,\"applied\":true}");
+			});
 
 			var result = workflow.Execute();
 
@@ -68,20 +64,16 @@ namespace LexEdDllTests
 		public void RelockFailureReloadsAndPreservesMotifOutcomeMessage()
 		{
 			var actions = new List<string>();
-			var workflow = new MotifApplyWorkflow(
-				() => actions.Add("validate-edits"),
-				() => actions.Add("save-and-unlock"),
-				() =>
-				{
-					actions.Add("run-motif");
-					return CreateResult(2, "");
-				},
-				() => { actions.Add("reload"); return null; },
-				() =>
-				{
-					actions.Add("relock");
-					throw new InvalidOperationException("lock failed");
-				});
+			var lockError = new InvalidOperationException("lock failed");
+			var workflow = CreateWorkflow(actions, () =>
+			{
+				actions.Add("run-motif");
+				return CreateResult(2, "");
+			}, relock: () =>
+			{
+				actions.Add("relock");
+				throw lockError;
+			});
 
 			var result = workflow.Execute();
 
@@ -91,19 +83,140 @@ namespace LexEdDllTests
 			Assert.That(result.Relocked, Is.False);
 			Assert.That(result.ApplyResult.Outcome, Is.EqualTo(MotifApplyOutcome.Refused));
 			Assert.That(result.Message, Is.EqualTo(MotifApplyMessage.Refused));
+			Assert.That(result.Error, Is.SameAs(lockError));
 		}
 
 		[Test]
-		public void ReloadFailurePropagates()
+		public void ReloadFailureIsReportedInsteadOfThrown()
 		{
-			var workflow = new MotifApplyWorkflow(
-				() => { },
-				() => { },
+			var reloadError = new InvalidOperationException("reload failed");
+			var workflow = CreateWorkflow(new List<string>(),
 				() => CreateResult(0, "{\"ok\":true,\"applied\":true}"),
-				() => throw new InvalidOperationException("reload failed"),
-				() => Assert.Fail("Applied outcome must reload instead of relocking."));
+				reload: () => throw reloadError,
+				relock: () => Assert.Fail("Applied outcome must reload instead of relocking."));
 
-			Assert.Throws<InvalidOperationException>(() => workflow.Execute());
+			var result = workflow.Execute();
+
+			Assert.That(result.Message, Is.EqualTo(MotifApplyMessage.RecoveryFailed));
+			Assert.That(result.Reloaded, Is.False);
+			Assert.That(result.Error, Is.SameAs(reloadError));
+		}
+
+		[Test]
+		public void RelockAndReloadFailureIsReportedInsteadOfThrown()
+		{
+			var reloadError = new InvalidOperationException("reload failed");
+			var workflow = CreateWorkflow(new List<string>(), () => CreateResult(2, ""),
+				reload: () => throw reloadError,
+				relock: () => throw new InvalidOperationException("lock failed"));
+
+			var result = workflow.Execute();
+
+			Assert.That(result.Message, Is.EqualTo(MotifApplyMessage.RecoveryFailed));
+			Assert.That(result.Relocked || result.Reloaded, Is.False);
+			Assert.That(result.Error, Is.SameAs(reloadError));
+		}
+
+		[Test]
+		public void SaveFailureDoesNotStartMotif()
+		{
+			var actions = new List<string>();
+			var saveError = new InvalidOperationException("save failed");
+			var workflow = new MotifApplyWorkflow(
+				() => actions.Add("validate-edits"),
+				() => throw saveError,
+				() =>
+				{
+					actions.Add("run-motif");
+					return CreateResult(0, "{\"ok\":true,\"applied\":true}");
+				},
+				() => { actions.Add("reload"); return null; },
+				() => actions.Add("relock"),
+				() => true);
+
+			var result = workflow.Execute();
+
+			Assert.That(actions, Is.EqualTo(new[] { "validate-edits" }));
+			Assert.That(result.Message, Is.EqualTo(MotifApplyMessage.PreparationFailed));
+			Assert.That(result.ApplyResult, Is.Null);
+			Assert.That(result.Error, Is.SameAs(saveError));
+		}
+
+		[Test]
+		public void MotifRunFailureIsTreatedAsAmbiguousAndReloads()
+		{
+			var actions = new List<string>();
+			var workflow = CreateWorkflow(actions, () => throw new InvalidOperationException("run failed"));
+
+			var result = workflow.Execute();
+
+			Assert.That(result.ApplyResult.Outcome, Is.EqualTo(MotifApplyOutcome.Ambiguous));
+			Assert.That(result.Reloaded, Is.True);
+			Assert.That(result.Message, Is.EqualTo(MotifApplyMessage.Reconciliation));
+		}
+
+		[Test]
+		public void MissingMotifResultIsTreatedAsAmbiguousAndReloads()
+		{
+			var workflow = CreateWorkflow(new List<string>(), () => null);
+
+			var result = workflow.Execute();
+
+			Assert.That(result.ApplyResult.Outcome, Is.EqualTo(MotifApplyOutcome.Ambiguous));
+			Assert.That(result.Reloaded, Is.True);
+		}
+
+		[Test]
+		public void TimedOutMotifReloadsWithTimeoutMessage()
+		{
+			var actions = new List<string>();
+			var workflow = CreateWorkflow(actions, () => CreateResult(
+				new MotifProcessOutput(true, -1, "{\"ok\":true,\"applied\":true}", "", true, false)));
+
+			var result = workflow.Execute();
+
+			Assert.That(result.ApplyResult.Outcome, Is.EqualTo(MotifApplyOutcome.TimedOut));
+			Assert.That(result.Reloaded, Is.True);
+			Assert.That(result.Message, Is.EqualTo(MotifApplyMessage.TimedOut));
+		}
+
+		[Test]
+		public void MotifThatCouldNotBeStoppedIsNeitherRelockedNorReloaded()
+		{
+			var actions = new List<string>();
+			var workflow = CreateWorkflow(actions, () => CreateResult(
+				new MotifProcessOutput(true, null, "", "", true, true)));
+
+			var result = workflow.Execute();
+
+			Assert.That(actions, Is.EqualTo(new[] { "validate-edits", "save-and-unlock" }));
+			Assert.That(result.Message, Is.EqualTo(MotifApplyMessage.MotifStillRunning));
+		}
+
+		[Test]
+		public void MissingProjectFileIsNotReopened()
+		{
+			var actions = new List<string>();
+			var workflow = CreateWorkflow(actions, () => CreateResult(0, "{\"ok\":true,\"applied\":true}"),
+				projectFileExists: () => false);
+
+			var result = workflow.Execute();
+
+			Assert.That(actions, Does.Not.Contain("reload"));
+			Assert.That(result.Reloaded, Is.False);
+			Assert.That(result.Message, Is.EqualTo(MotifApplyMessage.MissingProjectFile));
+		}
+
+		[Test]
+		public void ReloadReturnsTheReopenedWindow()
+		{
+			using (var reopened = new Form())
+			{
+				var workflow = CreateWorkflow(new List<string>(),
+					() => CreateResult(0, "{\"ok\":true,\"applied\":true}"), reload: () => reopened);
+
+				Assert.That(workflow.Execute().ReopenedWindow, Is.SameAs(reopened));
+			}
 		}
 
 		[TestCase(false, false, (int)MotifApplyMessage.NotInstalled)]
@@ -118,14 +231,16 @@ namespace LexEdDllTests
 		}
 
 		private static MotifApplyWorkflow CreateWorkflow(ICollection<string> actions,
-			Func<MotifApplyResult> apply)
+			Func<MotifApplyResult> apply, Func<Form> reload = null, Action relock = null,
+			Func<bool> projectFileExists = null)
 		{
 			return new MotifApplyWorkflow(
 				() => actions.Add("validate-edits"),
 				() => actions.Add("save-and-unlock"),
 				apply,
-				() => { actions.Add("reload"); return null; },
-				() => actions.Add("relock"));
+				reload ?? (() => { actions.Add("reload"); return null; }),
+				relock ?? (() => actions.Add("relock")),
+				projectFileExists ?? (() => true));
 		}
 
 		private static MotifApplyResult CreateResult(int exitCode, string json,
@@ -138,6 +253,13 @@ namespace LexEdDllTests
 			var runner = new MotifApplyRunner(resolver,
 				info => new MotifProcessOutput(started, exitCode, json, ""));
 			return runner.Apply(@"C:\Project\Field Data.fwdata");
+		}
+
+		private static MotifApplyResult CreateResult(MotifProcessOutput output)
+		{
+			var resolver = new MotifExecutableResolver(
+				() => @"C:\Motif", () => null, path => path == @"C:\Motif\motif.exe");
+			return new MotifApplyRunner(resolver, info => output).Apply(@"C:\Project\Field Data.fwdata");
 		}
 	}
 }

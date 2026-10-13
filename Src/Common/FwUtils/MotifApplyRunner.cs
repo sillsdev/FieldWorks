@@ -4,6 +4,7 @@
 
 using System;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Json;
@@ -31,7 +32,12 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <summary>The project may have changed and must be reopened.</summary>
 		ReconciliationRequired,
 		/// <summary>The result could not be classified safely.</summary>
-		Ambiguous
+		Ambiguous,
+		/// <summary>Motif ran past the time limit and was stopped; the project may have
+		/// changed.</summary>
+		TimedOut,
+		/// <summary>Motif ran past the time limit and could not be stopped.</summary>
+		StillRunning
 	}
 
 	/// <summary>The exit code and captured output from a Motif process.</summary>
@@ -43,7 +49,23 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <param name="standardOutput">Text captured from standard output.</param>
 		/// <param name="standardError">Text captured from standard error.</param>
 		public MotifProcessOutput(bool started, int? exitCode, string standardOutput, string standardError)
+			: this(started, exitCode, standardOutput, standardError, false, false)
 		{
+		}
+
+		/// <summary>Creates a process result for a process that may have been stopped.</summary>
+		/// <param name="started">Whether the operating system started the process.</param>
+		/// <param name="exitCode">The process exit code, or null if it did not exit.</param>
+		/// <param name="standardOutput">Text captured from standard output.</param>
+		/// <param name="standardError">Text captured from standard error.</param>
+		/// <param name="timedOut">Whether the process ran past the time limit.</param>
+		/// <param name="stillRunning">Whether the process was still running when the runner
+		/// returned.</param>
+		public MotifProcessOutput(bool started, int? exitCode, string standardOutput, string standardError,
+			bool timedOut, bool stillRunning)
+		{
+			TimedOut = timedOut;
+			StillRunning = stillRunning;
 			Started = started;
 			ExitCode = exitCode;
 			StandardOutput = standardOutput ?? string.Empty;
@@ -58,12 +80,21 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public string StandardOutput { get; }
 		/// <summary>Text captured from standard error.</summary>
 		public string StandardError { get; }
+		/// <summary>Whether the process ran past the time limit.</summary>
+		public bool TimedOut { get; }
+		/// <summary>Whether the process was still running when the runner returned.</summary>
+		public bool StillRunning { get; }
 	}
 
 	/// <summary>The stable result FieldWorks uses to restore the project lifecycle.</summary>
 	public sealed class MotifApplyResult
 	{
-		internal MotifApplyResult(MotifApplyOutcome outcome, int? exitCode, string errorCode,
+		/// <summary>Creates a classified result.</summary>
+		/// <param name="outcome">The result category.</param>
+		/// <param name="exitCode">The process exit code, when Motif started.</param>
+		/// <param name="errorCode">The stable Motif failure code, if any.</param>
+		/// <param name="summary">The optional display summary supplied by Motif.</param>
+		public MotifApplyResult(MotifApplyOutcome outcome, int? exitCode, string errorCode,
 			string summary)
 		{
 			Outcome = outcome;
@@ -84,19 +115,27 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <summary>Whether FieldWorks must reload because the project may have
 		/// changed.</summary>
 		public bool RequiresReload => Outcome == MotifApplyOutcome.Applied ||
-			Outcome == MotifApplyOutcome.ReconciliationRequired || Outcome == MotifApplyOutcome.Ambiguous;
+			Outcome == MotifApplyOutcome.ReconciliationRequired || Outcome == MotifApplyOutcome.Ambiguous ||
+			Outcome == MotifApplyOutcome.TimedOut;
 	}
 
 	/// <summary>Runs Motif once and classifies its stable process response.</summary>
 	public sealed class MotifApplyRunner
 	{
 		private const string ReconciliationCode = "apply.reconciliation-needed";
+		/// <summary>The environment variable that overrides the time limit, in seconds.</summary>
+		public const string TimeoutVariable = "FW_MOTIF_APPLY_TIMEOUT_SECONDS";
+		private const int DefaultTimeoutSeconds = 600;
+		private const int MinimumTimeoutSeconds = 60;
+		private const int MaximumTimeoutSeconds = 7200;
+		private const int StopWaitMilliseconds = 5000;
 		private readonly MotifExecutableResolver _executableResolver;
 		private readonly Func<ProcessStartInfo, MotifProcessOutput> _runProcess;
 
 		/// <summary>Creates a runner that starts Motif through the operating system.</summary>
 		public MotifApplyRunner()
-			: this(new MotifExecutableResolver(), RunProcess)
+			: this(new MotifExecutableResolver(), startInfo => RunProcess(startInfo,
+				ReadTimeout(Environment.GetEnvironmentVariable(TimeoutVariable))))
 		{
 		}
 
@@ -120,15 +159,28 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <param name="projectFilePath">The path to the project's `.fwdata` file.</param>
 		public MotifApplyResult Apply(string projectFilePath)
 		{
+			var startInfo = Prepare(projectFilePath);
+			return startInfo == null
+				? new MotifApplyResult(MotifApplyOutcome.NotInstalled, null, null, null)
+				: Run(startInfo);
+		}
+
+		/// <summary>
+		/// Resolves Motif and builds the apply command for an absolute FieldWorks project path,
+		/// without starting it. Returns null when Motif is not installed.
+		/// </summary>
+		/// <param name="projectFilePath">The path to the project's `.fwdata` file.</param>
+		public ProcessStartInfo Prepare(string projectFilePath)
+		{
 			if (string.IsNullOrWhiteSpace(projectFilePath))
 				throw new ArgumentException("A project file path is required.", nameof(projectFilePath));
 
 			var executable = _executableResolver.FindExecutable();
 			if (executable == null)
-				return new MotifApplyResult(MotifApplyOutcome.NotInstalled, null, null, null);
+				return null;
 
 			var project = Path.GetFullPath(projectFilePath);
-			var startInfo = new ProcessStartInfo
+			return new ProcessStartInfo
 			{
 				FileName = executable,
 				Arguments = "apply --all-pending --project " + QuoteArgument(project) + " --json",
@@ -139,21 +191,48 @@ namespace SIL.FieldWorks.Common.FwUtils
 				StandardOutputEncoding = new UTF8Encoding(false),
 				StandardErrorEncoding = new UTF8Encoding(false)
 			};
+		}
 
-			MotifProcessOutput output;
+		/// <summary>
+		/// Runs a prepared apply command and classifies its response. Never throws; a failure it
+		/// cannot classify is Ambiguous.
+		/// </summary>
+		/// <param name="startInfo">The command from <see cref="Prepare"/>.</param>
+		public MotifApplyResult Run(ProcessStartInfo startInfo)
+		{
 			try
 			{
-				output = _runProcess(startInfo);
+				return Classify(_runProcess(startInfo));
 			}
 			catch
 			{
 				return new MotifApplyResult(MotifApplyOutcome.Ambiguous, null, null, null);
 			}
+		}
 
+		/// <summary>
+		/// Returns the time limit for one apply: the override in seconds when it is a
+		/// whole number from 60 to 7200, otherwise ten minutes.
+		/// </summary>
+		/// <param name="seconds">The value of <see cref="TimeoutVariable"/>, or null.</param>
+		public static TimeSpan ReadTimeout(string seconds)
+		{
+			return int.TryParse(seconds, NumberStyles.Integer, CultureInfo.InvariantCulture, out var value) &&
+				value >= MinimumTimeoutSeconds && value <= MaximumTimeoutSeconds
+				? TimeSpan.FromSeconds(value)
+				: TimeSpan.FromSeconds(DefaultTimeoutSeconds);
+		}
+
+		private static MotifApplyResult Classify(MotifProcessOutput output)
+		{
 			if (output == null)
 				return new MotifApplyResult(MotifApplyOutcome.Ambiguous, null, null, null);
 			if (!output.Started)
 				return new MotifApplyResult(MotifApplyOutcome.CouldNotStart, null, null, null);
+			if (output.StillRunning)
+				return new MotifApplyResult(MotifApplyOutcome.StillRunning, null, null, null);
+			if (output.TimedOut)
+				return new MotifApplyResult(MotifApplyOutcome.TimedOut, output.ExitCode, null, null);
 
 			var response = ReadResponse(output.StandardOutput) ?? ReadResponse(output.StandardError);
 			var errorCode = response?.Code;
@@ -202,6 +281,16 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 		internal static MotifProcessOutput RunProcess(ProcessStartInfo startInfo)
 		{
+			return RunProcess(startInfo, TimeSpan.FromSeconds(DefaultTimeoutSeconds));
+		}
+
+		/// <summary>
+		/// Starts a process and waits up to <paramref name="timeout"/> for it, killing it if
+		/// it is still running then. Output still held open a few seconds after the process
+		/// exits is returned as empty.
+		/// </summary>
+		internal static MotifProcessOutput RunProcess(ProcessStartInfo startInfo, TimeSpan timeout)
+		{
 			Process process;
 			try
 			{
@@ -221,10 +310,34 @@ namespace SIL.FieldWorks.Common.FwUtils
 			{
 				var outputTask = process.StandardOutput.ReadToEndAsync();
 				var errorTask = process.StandardError.ReadToEndAsync();
-				process.WaitForExit();
-				Task.WaitAll(outputTask, errorTask);
-				return new MotifProcessOutput(true, process.ExitCode, outputTask.Result, errorTask.Result);
+				if (process.WaitForExit((int)Math.Min(timeout.TotalMilliseconds, int.MaxValue)))
+				{
+					Task.WaitAll(new Task[] { outputTask, errorTask }, StopWaitMilliseconds);
+					return new MotifProcessOutput(true, process.ExitCode, CompletedText(outputTask),
+						CompletedText(errorTask));
+				}
+
+				try
+				{
+					process.Kill();
+				}
+				catch (Exception error) when (error is InvalidOperationException ||
+					error is System.ComponentModel.Win32Exception)
+				{
+					// The wait below decides whether the process stopped.
+				}
+
+				if (!process.WaitForExit(StopWaitMilliseconds))
+					return new MotifProcessOutput(true, null, null, null, true, true);
+				Task.WaitAll(new Task[] { outputTask, errorTask }, StopWaitMilliseconds);
+				return new MotifProcessOutput(true, process.ExitCode, CompletedText(outputTask),
+					CompletedText(errorTask), true, false);
 			}
+		}
+
+		private static string CompletedText(Task<string> readTask)
+		{
+			return readTask.Status == TaskStatus.RanToCompletion ? readTask.Result : string.Empty;
 		}
 
 		[DataContract]

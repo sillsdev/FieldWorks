@@ -2,6 +2,7 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System;
 using System.Diagnostics;
 using System.IO;
 using NUnit.Framework;
@@ -186,7 +187,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public void RunProcessDrainsLargeStandardOutputAndStandardError()
 		{
 			var commandProcessor = Path.Combine(
-				System.Environment.GetFolderPath(System.Environment.SpecialFolder.System), "cmd.exe");
+				Environment.GetFolderPath(Environment.SpecialFolder.System), "cmd.exe");
 			var startInfo = new ProcessStartInfo
 			{
 				FileName = commandProcessor,
@@ -261,6 +262,111 @@ namespace SIL.FieldWorks.Common.FwUtils
 			Assert.That(runner.Apply(@"C:\Project\My Project.fwdata").Outcome,
 				Is.EqualTo(MotifApplyOutcome.NotInstalled));
 			Assert.That(processCalled, Is.False);
+		}
+
+		[Test]
+		public void ResolverTreatsMalformedMotifDirectoryAsMissing()
+		{
+			const string registered = @"C:\Motif Registered\motif.exe";
+			var resolver = new MotifExecutableResolver(
+				() => @"""C:\Motif Dev""", () => registered, path => path == registered);
+
+			Assert.That(resolver.FindExecutable(), Is.EqualTo(registered));
+		}
+
+		[Test]
+		public void PrepareDoesNotStartMotifAndReturnsNullWhenItIsMissing()
+		{
+			var processCalled = false;
+			var resolver = new MotifExecutableResolver(() => null, () => null, path => false);
+			var runner = new MotifApplyRunner(resolver, info =>
+			{
+				processCalled = true;
+				return new MotifProcessOutput(true, 0, "", "");
+			});
+
+			Assert.That(runner.Prepare(@"C:\Project\My Project.fwdata"), Is.Null);
+			Assert.That(processCalled, Is.False);
+		}
+
+		[Test]
+		public void TimedOutProcessIsTimedOutAndRequiresReload()
+		{
+			var runner = CreateRunner(new MotifProcessOutput(true, -1,
+				"{\"ok\":true,\"applied\":false}", "", true, false));
+
+			var result = runner.Apply(@"C:\Project\My Project.fwdata");
+
+			Assert.That(result.Outcome, Is.EqualTo(MotifApplyOutcome.TimedOut));
+			Assert.That(result.RequiresReload, Is.True);
+		}
+
+		[Test]
+		public void ProcessThatCouldNotBeStoppedIsStillRunningAndDoesNotReload()
+		{
+			var runner = CreateRunner(new MotifProcessOutput(true, null, "", "", true, true));
+
+			var result = runner.Apply(@"C:\Project\My Project.fwdata");
+
+			Assert.That(result.Outcome, Is.EqualTo(MotifApplyOutcome.StillRunning));
+			Assert.That(result.RequiresReload, Is.False);
+		}
+
+		[TestCase(null, 600)]
+		[TestCase("", 600)]
+		[TestCase("abc", 600)]
+		[TestCase("-5", 600)]
+		[TestCase("59", 600)]
+		[TestCase("60", 60)]
+		[TestCase("1800", 1800)]
+		[TestCase("7200", 7200)]
+		[TestCase("7201", 600)]
+		public void ReadTimeoutAcceptsOnlyWholeSecondsInRange(string value, int expectedSeconds)
+		{
+			Assert.That(MotifApplyRunner.ReadTimeout(value), Is.EqualTo(TimeSpan.FromSeconds(expectedSeconds)));
+		}
+
+		[Test]
+		public void RunProcessKillsAProcessThatOutlivesTheTimeout()
+		{
+			var stopwatch = Stopwatch.StartNew();
+
+			var startInfo = CommandProcessor(string.Empty);
+			startInfo.FileName = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.System), "ping.exe");
+			startInfo.Arguments = "-n 30 127.0.0.1";
+
+			var output = MotifApplyRunner.RunProcess(startInfo, TimeSpan.FromSeconds(1));
+
+			Assert.That(output.TimedOut, Is.True);
+			Assert.That(output.StillRunning, Is.False);
+			Assert.That(stopwatch.Elapsed, Is.LessThan(TimeSpan.FromSeconds(10)));
+		}
+
+		[Test]
+		public void RunProcessDoesNotWaitForOutputHeldOpenByAChildProcess()
+		{
+			var stopwatch = Stopwatch.StartNew();
+
+			var output = MotifApplyRunner.RunProcess(
+				CommandProcessor("start /b ping -n 15 127.0.0.1 & echo done"), TimeSpan.FromSeconds(60));
+
+			Assert.That(output.Started, Is.True);
+			Assert.That(output.TimedOut, Is.False);
+			Assert.That(output.ExitCode, Is.EqualTo(0));
+			Assert.That(stopwatch.Elapsed, Is.LessThan(TimeSpan.FromSeconds(12)));
+		}
+
+		private static ProcessStartInfo CommandProcessor(string command)
+		{
+			return new ProcessStartInfo
+			{
+				FileName = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.System), "cmd.exe"),
+				Arguments = "/d /c \"" + command + "\"",
+				UseShellExecute = false,
+				CreateNoWindow = true,
+				RedirectStandardOutput = true,
+				RedirectStandardError = true
+			};
 		}
 
 		private static MotifApplyRunner CreateRunner(MotifProcessOutput output,

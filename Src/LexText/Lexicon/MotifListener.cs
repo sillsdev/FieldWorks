@@ -102,20 +102,30 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				MessageBoxIcon.Question) != DialogResult.OK)
 				return true;
 
-			ProjectLifecycle.StopParser(propertyTable);
 			var projectFilePath = Path.GetFullPath(ProjectLifecycle.GetFullProjectFileName(cache));
+			// Resolving Motif before the project is unlocked means a missing or misconfigured
+			// install never leaves the project unlocked.
+			var motifCommand = runner.Prepare(projectFilePath);
+			if (motifCommand == null)
+			{
+				ShowMotifApplyMessage(owner, MotifApplyMessage.NotInstalled);
+				return true;
+			}
+
+			ProjectLifecycle.StopParser(propertyTable);
 			var workflow = new MotifApplyWorkflow(
 				() => ProjectLifecycle.ValidatePendingEditorData(propertyTable),
 				() => ProjectLockingService.UnlockCurrentProject(cache),
-				() => runner.Apply(projectFilePath),
+				() => runner.Run(motifCommand),
 				() => ProjectLifecycle.RefreshCacheWindowAndAll(app, projectFilePath),
-				() => ProjectLockingService.LockCurrentProject(cache));
+				() => ProjectLockingService.LockCurrentProject(cache),
+				() => File.Exists(projectFilePath));
 			MotifApplyWorkflowResult workflowResult;
 			using (new WaitCursor())
 				workflowResult = workflow.Execute();
 
 			ShowMotifApplyMessage(workflowResult.ReopenedWindow ?? owner, workflowResult.Message,
-				workflowResult.ApplyResult.Summary);
+				workflowResult.ApplyResult?.Summary, workflowResult.Error, projectFilePath);
 			return true;
 		}
 
@@ -133,8 +143,10 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				SharedBackendServices.AreMultipleApplicationsConnected(cache);
 		}
 
-		private static void ShowMotifApplyMessage(Form owner, MotifApplyMessage message, string summary = null)
+		private static void ShowMotifApplyMessage(Form owner, MotifApplyMessage message, string summary = null,
+			Exception error = null, string projectFilePath = null)
 		{
+			var errorText = error?.Message ?? string.Empty;
 			string content;
 			MessageBoxIcon icon;
 			switch (message)
@@ -173,6 +185,27 @@ namespace SIL.FieldWorks.XWorks.LexEd
 					break;
 				case MotifApplyMessage.Reconciliation:
 					content = LexEdStrings.ksApplyMotifReconciliation;
+					icon = MessageBoxIcon.Error;
+					break;
+				case MotifApplyMessage.TimedOut:
+					content = LexEdStrings.ksApplyMotifTimedOut;
+					icon = MessageBoxIcon.Error;
+					break;
+				case MotifApplyMessage.PreparationFailed:
+					content = string.Format(LexEdStrings.ksApplyMotifPreparationFailed, errorText);
+					icon = MessageBoxIcon.Error;
+					break;
+				case MotifApplyMessage.MotifStillRunning:
+					content = LexEdStrings.ksApplyMotifStillRunning;
+					icon = MessageBoxIcon.Error;
+					break;
+				case MotifApplyMessage.MissingProjectFile:
+					content = string.Format(LexEdStrings.ksApplyMotifMissingProjectFile, projectFilePath,
+						Path.ChangeExtension(projectFilePath, "bak"));
+					icon = MessageBoxIcon.Error;
+					break;
+				case MotifApplyMessage.RecoveryFailed:
+					content = string.Format(LexEdStrings.ksApplyMotifRecoveryFailed, errorText);
 					icon = MessageBoxIcon.Error;
 					break;
 				default:

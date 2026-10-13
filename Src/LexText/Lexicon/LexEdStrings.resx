@@ -678,6 +678,26 @@
   <data name="ksBreakCircularRefs" xml:space="preserve">
     <value>Remove circular references to complex forms</value>
   </data>
+  <data name="ksApplyMotifTimedOut" xml:space="preserve">
+    <value>Motif did not finish in time and was stopped. FieldWorks has reloaded the project. Open Motif to see whether the changes were applied before you try again.</value>
+    <comment>Shown when Motif runs past the time limit, FieldWorks stops it, and the project is reopened because it may have changed.</comment>
+  </data>
+  <data name="ksApplyMotifPreparationFailed" xml:space="preserve">
+    <value>FieldWorks could not save the project, so Motif was not started. {0}</value>
+    <comment>Shown when saving the project before running Motif fails. The placeholder {0} is the error message.</comment>
+  </data>
+  <data name="ksApplyMotifStillRunning" xml:space="preserve">
+    <value>Motif did not finish in time and could not be stopped. FieldWorks has not reopened the project, so that it does not overwrite Motif's changes. Close FieldWorks, wait for Motif to finish, then open the project again.</value>
+    <comment>Shown when Motif runs past the time limit and FieldWorks cannot stop it.</comment>
+  </data>
+  <data name="ksApplyMotifMissingProjectFile" xml:space="preserve">
+    <value>The project file {0} is missing after Motif ran, so FieldWorks has not reopened the project. A backup may be at {1}. Contact support before you open the project again.</value>
+    <comment>Shown when the project file is gone after Motif ran. The placeholder {0} is the project file path and {1} is the backup file path.</comment>
+  </data>
+  <data name="ksApplyMotifRecoveryFailed" xml:space="preserve">
+    <value>FieldWorks could not reopen the project after Motif ran. Close FieldWorks, then open the project again. {0}</value>
+    <comment>Shown when reopening the project after Motif ran fails. The placeholder {0} is the error message.</comment>
+  </data>
   <data name="ksTryIfProgramGoesPoof" xml:space="preserve">
     <value>Try this tool if Language Explorer disappears or produces a "FieldWorks has stopped working" dialog when you try to view the Dictionary.</value>
   </data>

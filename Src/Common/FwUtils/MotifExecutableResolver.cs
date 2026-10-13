@@ -47,10 +47,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			if (executable != null)
 				return executable;
 
-			var registered = _getRegisteredExecutable();
-			if (string.IsNullOrWhiteSpace(registered) || !_fileExists(registered))
-				return null;
-			return Path.GetFullPath(registered);
+			return ExistingFullPath(_getRegisteredExecutable());
 		}
 
 		private string FindInDirectory(string directory)
@@ -58,8 +55,31 @@ namespace SIL.FieldWorks.Common.FwUtils
 			if (string.IsNullOrWhiteSpace(directory))
 				return null;
 
-			var candidate = Path.Combine(directory, MotifExecutableName);
-			return _fileExists(candidate) ? Path.GetFullPath(candidate) : null;
+			try
+			{
+				return ExistingFullPath(Path.Combine(directory, MotifExecutableName));
+			}
+			catch (ArgumentException)
+			{
+				return null;
+			}
+		}
+
+		// A configured path that is not a valid path counts as not installed.
+		private string ExistingFullPath(string candidate)
+		{
+			if (string.IsNullOrWhiteSpace(candidate))
+				return null;
+
+			try
+			{
+				return _fileExists(candidate) ? Path.GetFullPath(candidate) : null;
+			}
+			catch (Exception error) when (error is ArgumentException || error is NotSupportedException ||
+				error is PathTooLongException || error is System.Security.SecurityException)
+			{
+				return null;
+			}
 		}
 
 		// Motif installs per user, so its install hook writes this record under HKCU, never HKLM.
