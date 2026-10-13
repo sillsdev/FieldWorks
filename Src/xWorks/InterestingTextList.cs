@@ -10,7 +10,6 @@ using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.LCModel;
 using SIL.LCModel.DomainImpl;
-using SIL.LCModel.Utils;
 using XCore;
 
 namespace SIL.FieldWorks.XWorks
@@ -37,15 +36,10 @@ namespace SIL.FieldWorks.XWorks
 		/// tested efficiently.
 		/// </summary>
 		private HashSet<IStText> m_interestingTests;
-		/// <summary>
-		/// These two RecordClerks both need to respond to InterestingTextList changes EVEN when not loaded.
-		/// (LT-13217)
-		/// So if one changes this list of texts, the other's sort sequence file will be deleted.
-		/// </summary>
-		private static string[] RelatedClerkIds = { "interlinearTexts", "concordanceWords", "OccurrencesOfSelectedUnit", "complexConcOccurrencesOfSelectedUnit"};
 
 		/// <summary>
-		/// Used by InvalidateRelatedSortSequences()
+		/// Read from the property table; PropChanged uses it to recognize the
+		/// LangProjTexts virtual property.
 		/// </summary>
 		public LcmCache Cache { get; set; }
 
@@ -283,41 +277,8 @@ namespace SIL.FieldWorks.XWorks
 		{
 			if (inserted == 0 && deleted == 0)
 				return;
-			InvalidateRelatedSortSequences();
 			if (InterestingTextsChanged != null)
 				InterestingTextsChanged(this, new InterestingTextsChangedArgs(insertAt, inserted, deleted));
-		}
-
-		private void InvalidateRelatedSortSequences()
-		{
-			if (Cache == null)
-				return;
-
-			// We won't keep track of the clerk between calls since it could change from time to time.
-			var clerk = m_propertyTable.GetValue<RecordClerk>("ActiveClerk", null);
-			if (clerk == null)
-				return;
-
-			if (!RelatedClerkIds.Contains(clerk.Id))
-			{
-				Debug.Fail("We may need to add a new RelatedClerkId.");
-				return; // somehow we got in here with the wrong clerk?!
-			}
-			var otherRelatedClerkIds = GetRelatedClerkIds(clerk.Id);
-			foreach (var clerkId in otherRelatedClerkIds)
-			{
-				RemoveSortSequenceFile(RecordView.GetSortFilePersistPathname(Cache, clerkId));
-			}
-		}
-
-		private void RemoveSortSequenceFile(string filename)
-		{
-			FileUtils.Delete(filename);
-		}
-
-		private static IEnumerable<string> GetRelatedClerkIds(string id)
-		{
-			return RelatedClerkIds.Where(clerkId => clerkId != id);
 		}
 
 		//Remove invalid objects from the list. Return true if any were removed.

@@ -1437,8 +1437,6 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				(FwXWindow)manager.ReopenProject(manager.Cache.ProjectId.Name, appArgs).ActiveMainWindow;
 			if (IsVernacularSpellingEnabled(newAppWindow.PropTable))
 				WfiWordformServices.ConformSpellingDictToWordforms(newAppWindow.Cache);
-			//clear out any sort cache files (or whatever else might mess us up) and then refresh
-			newAppWindow.ClearInvalidatedStoredData();
 			newAppWindow.RefreshDisplay();
 			return newAppWindow;
 		}

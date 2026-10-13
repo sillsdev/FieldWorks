@@ -575,11 +575,6 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		{
 			CheckDisposed();
 
-			var window = m_propertyTable.GetValue<FwXWindow>("window");
-			if (window != null)
-			{
-				window.ClearInvalidatedStoredData();
-			}
 			switch (name)
 			{
 				default:

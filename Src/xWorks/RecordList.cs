@@ -6,7 +6,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
@@ -671,15 +670,6 @@ namespace SIL.FieldWorks.XWorks
 				return;
 			}
 			base.ReloadList();
-		}
-
-		internal override bool RestoreFrom(string pathname)
-		{
-			// If we are restoring, presumably the 'previous flid' (which should be the flid from the last complete
-			// ReloadList) should match the flid that is current, which in turn should correspond to the saved list
-			// of sorted objects.
-			m_prevFlid = m_flid;
-			return base.RestoreFrom(pathname);
 		}
 
 		/// <summary>
@@ -3824,83 +3814,6 @@ namespace SIL.FieldWorks.XWorks
 				m_deletingObject = false;
 			}
 		}
-
-		internal void PersistOn(string pathname)
-		{
-			// Ensure that all the items in the sorted list are valid ICmObject references before
-			// actually persisting anything.  Some lists store dummy objects.
-			if (m_sortedObjects == null || m_sortedObjects.Count == 0)
-				return;
-			var repo = Cache.ServiceLocator.ObjectRepository;
-			foreach (var obj in m_sortedObjects)
-			{
-				ManyOnePathSortItem item = obj as ManyOnePathSortItem;
-				if (item == null)
-					return;
-				if (item.KeyObject <= 0 || item.RootObjectHvo <= 0 ||
-					// The object might have been deleted.  See LT-11169.
-					!repo.IsValidObjectId(item.KeyObject) || !repo.IsValidObjectId(item.RootObjectHvo))
-				{
-					return;
-				}
-			}
-			try
-			{
-				using (var stream = new StreamWriter(pathname))
-				{
-					ManyOnePathSortItem.WriteItems(m_sortedObjects, stream, repo);
-					stream.Close();
-				}
-			}
-			// LT-11395 and others: somehow the current list contains a deleted object.
-			// Writing out this file is just an optimization, so if we can't do it, just skip it.
-			catch (KeyNotFoundException)
-			{
-				TryToDelete(pathname);
-			}
-			catch (IOException)
-			{
-				TryToDelete(pathname);
-			}
-		}
-
-		private void TryToDelete(string pathname)
-		{
-			if (File.Exists(pathname))
-			{
-				try
-				{
-					File.Delete(pathname);
-				}
-				catch (IOException)
-				{
-				}
-			}
-		}
-
-		/// <summary>
-		/// Returns true if it successfully set m_sortedObjects to a restored list.
-		/// </summary>
-		internal virtual bool RestoreFrom(string pathname)
-		{
-			// If something has created instances of the class we display, the persisted list may be
-			// missing things. For example, if the program starts up in interlinear text view, and the user
-			// creates entries as a side effect of glossing texts, we shouldn't use the saved list of
-			// lex entries when we switch to the lexicon view.
-			if (Cache.ServiceLocator.ObjectRepository.InstancesCreatedThisSession(ListItemsClass))
-				return false;
-			ArrayList items;
-			using (var stream = new StreamReader(pathname))
-			{
-				items = ManyOnePathSortItem.ReadItems(stream, Cache.ServiceLocator.ObjectRepository);
-				stream.Close();
-			}
-			// This particular cache cannot reliably be used again, since items may be created or deleted
-			// while the program is running. In case a crash occurs, we don't want to reload an obsolete
-			// list the next time we start up.
-			FileUtils.Delete(pathname);
-				return false; // could not restore, bad file or deleted objects or...
-			}
 
 		/// <summary>
 		/// LT-12780:  On reloading FLEX there were situtaions where it reloaded on the first element of a list instead of
