@@ -340,10 +340,6 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 		public void Blocked(IHCRule rule, Word output)
 		{
-			((XElement) output.CurrentTrace).Add(new XElement("BlockedTrace",
-				CreateHCRuleElement("Rule", rule),
-				new XElement("BlockingEntry", CreateAllomorphElement(output.RootAllomorph)),
-				CreateWordElement("Output", output, false)));
 		}
 
 		public void Successful(Language lang, Word word)

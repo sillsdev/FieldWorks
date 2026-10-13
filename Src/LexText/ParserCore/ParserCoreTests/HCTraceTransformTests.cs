@@ -90,49 +90,6 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			Assert.That(Text(Transform(CompoundFailure(type))), Does.Contain("Reason: Unknown reason."));
 		}
 
-		/// <summary>Shows blocking and preserves access to the replacement's successful
-		/// parse.</summary>
-		[TestCase(false)]
-		[TestCase(true)]
-		public void Blocked_DisplaysEntryAndReplacementOutput(bool rtl)
-		{
-			var synthesis = new XElement("WordSynthesisTrace",
-				new XElement("BlockedTrace", new XElement("Rule", "synthetic past"),
-					new XElement("BlockingEntry", Allomorph()), new XElement("Output", "vem")),
-				new XElement("ParseCompleteTrace", new XAttribute("success", true),
-					new XElement("Result", "vem")));
-			var lookup = new XElement("LexLookupTrace", synthesis);
-
-			var html = Transform(lookup, rtl);
-			var text = Text(html);
-
-			Assert.That(text, Does.Contain("Blocked"));
-			Assert.That(text, Does.Contain("synthetic past"));
-			Assert.That(text, Does.Contain("root"));
-			Assert.That(text, Does.Contain("Output = vem"));
-			Assert.That(text, Does.Contain("Parse succeeded"));
-			Assert.That(html, Does.Contain("id=\"43\""));
-			Assert.That(text, Does.Not.Contain("duplicate parse"));
-		}
-
-		/// <summary>Keeps a blocking event expandable when it is the only synthesis
-		/// child.</summary>
-		[Test]
-		public void Blocked_OnlyChildRemainsReachableWithUnknownEntry()
-		{
-			var node = new XElement("MorphologicalRuleSynthesisTrace",
-				new XElement("MorphologicalRule", new XAttribute("type", "affix"), "synthetic past"),
-				new XElement("Output", "a"),
-				new XElement("BlockedTrace", new XElement("Rule", "synthetic past"),
-					new XElement("BlockingEntry"), new XElement("Output", "vem")));
-
-			var text = Text(Transform(node));
-
-			Assert.That(text, Does.Contain("Unknown blocking entry"));
-			Assert.That(text, Does.Contain("Output = vem"));
-			Assert.That(text, Does.Not.Contain("duplicate parse"));
-		}
-
 		private static XElement Allomorph()
 		{
 			return new XElement("Allomorph", new XAttribute("id", 42),

@@ -77,48 +77,6 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				Is.EqualTo((int)root.Properties[HCParser.FormID]));
 		}
 
-		/// <summary>Records the replacement root and output without redirecting the
-		/// trace.</summary>
-		[Test]
-		public void Blocked_PreservesReplacementRootAndOutput()
-		{
-			var root = CreateRoot("blocker");
-			var output = new Word(root, new FeatureStruct()) { CurrentTrace = m_trace };
-			var rule = new AffixProcessRule { Name = "synthetic past" };
-
-			m_manager.Blocked(rule, output);
-			m_manager.Successful(null, output);
-
-			var blocked = m_trace.Element("BlockedTrace");
-			Assert.That(blocked, Is.Not.Null);
-			Assert.That(blocked.Element("Rule").Value, Is.EqualTo("synthetic past"));
-			Assert.That(blocked.Element("BlockingEntry").Element("Allomorph")
-				.Element("Morpheme").Element("HeadWord").Value, Is.EqualTo("blocker"));
-			Assert.That((int)blocked.Descendants("Morpheme").Single().Attribute("id"),
-				Is.EqualTo((int)root.Morpheme.Properties[HCParser.MsaID]));
-			Assert.That(blocked.Element("Output").Value, Is.EqualTo("a"));
-			Assert.That(output.CurrentTrace, Is.SameAs(m_trace));
-			Assert.That(m_trace.Element("ParseCompleteTrace"), Is.Not.Null);
-		}
-
-		/// <summary>Preserves a blocking event when its root cannot be resolved in the
-		/// cache.</summary>
-		[Test]
-		public void Blocked_UnresolvedRootStillRecordsOutput()
-		{
-			var entry = new LexEntry();
-			var root = new RootAllomorph(new Segments(m_stratum.CharacterDefinitionTable, "a"));
-			entry.Allomorphs.Add(root);
-			m_stratum.Entries.Add(entry);
-			var output = new Word(root, new FeatureStruct()) { CurrentTrace = m_trace };
-
-			m_manager.Blocked(m_stratum, output);
-
-			Assert.That(m_trace.Element("BlockedTrace").Element("Output").Value, Is.EqualTo("a"));
-			Assert.That(m_trace.Element("BlockedTrace").Element("BlockingEntry").HasElements,
-				Is.False);
-		}
-
 		/// <summary>Preserves both productivity restriction lists for the recorded
 		/// reason.</summary>
 		[Test]
