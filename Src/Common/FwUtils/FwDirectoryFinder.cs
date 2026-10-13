@@ -18,6 +18,7 @@ using SIL.FieldWorks.Resources;
 using SIL.LCModel;
 using SIL.LCModel.Utils;
 using SIL.PlatformUtilities;
+using SIL.Reporting;
 
 namespace SIL.FieldWorks.Common.FwUtils
 {
@@ -275,9 +276,11 @@ namespace SIL.FieldWorks.Common.FwUtils
 						return true;
 				}
 			}
-			catch (ArgumentException) { }
-			catch (NotSupportedException) { }
-			catch (PathTooLongException) { }
+			catch (Exception error) when (error is ArgumentException ||
+				error is NotSupportedException || error is PathTooLongException)
+			{
+				Logger.WriteError("Could not inspect the FieldWorks registry directory", error);
+			}
 			return false;
 		}
 
