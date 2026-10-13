@@ -42,7 +42,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 		/// and the label column width across. When <paramref name="rootHvo"/> names the same
 		/// object as the previous show, any collapsed section hiding an object that was not in
 		/// the previous view is expanded, so an object inserted into a collapsed section is
-		/// shown; a re-show that follows the previous view's own edit expands nothing. A
+		/// shown, except a section the user collapsed after the previous view's own edit. A
 		/// <paramref name="rootHvo"/> of 0 never matches.
 		/// </summary>
 		public void ShowDetail(DetailModel detail, IDetailEditContext editContext = null,

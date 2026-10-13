@@ -539,21 +539,37 @@ namespace FwAvaloniaTests
 			Assert.That(store["allomorphs"], Is.False);
 		}
 
-		// LT-22689: typing into a section and then clicking its +/- commits the text on the
-		// press and collapses on the release. The re-show that commit causes must not reopen
-		// the section the user just closed.
-		[AvaloniaTest]
-		public void RevealObjectsAddedSince_LeavesSectionsAlone_AfterThePreviousViewsOwnEdit()
+		// A shown view of SensesBefore() that has saved an edit of its own, and then collapsed
+		// the senses section when collapseSensesAfterward is true.
+		private static DataTree PreviousViewThatSavedAnEdit(Dictionary<string, bool> store,
+			bool collapseSensesAfterward)
 		{
 			var context = new FakeDetailEditContext();
-			var previous = new DataTree(SensesBefore(), context);
+			var previous = new DataTree(SensesBefore(), context,
+				getExpansionState: key => store.TryGetValue(key, out var e) ? e : (bool?)null,
+				expansionChanged: (key, e) => store[key] = e);
+			new Window { Content = previous, Width = 480, Height = 300 }.Show();
+			Dispatcher.UIThread.RunJobs();
 			previous.RaiseEvent(new Avalonia.Input.KeyEventArgs
 			{
 				RoutedEvent = Avalonia.Input.InputElement.KeyDownEvent,
 				Key = Avalonia.Input.Key.Enter
 			});
-			Assert.That(context.CommitCount, Is.EqualTo(1), "precondition: the previous view committed");
-			var store = new Dictionary<string, bool> { ["senses"] = false };
+			Assert.That(context.CommitCount, Is.EqualTo(1), "precondition: the previous view saved an edit");
+			if (collapseSensesAfterward)
+				ClickHeader(SectionHeader(previous, "senses"));
+			return previous;
+		}
+
+		// LT-22689: typing into a section and then clicking its +/- commits the text on the
+		// press and collapses on the release. The re-show that commit causes leaves that section
+		// collapsed.
+		[AvaloniaTest]
+		public void RevealObjectsAddedSince_LeavesASectionCollapsedAfterTheOwnEditCollapsed()
+		{
+			var store = new Dictionary<string, bool>();
+			var previous = PreviousViewThatSavedAnEdit(store, collapseSensesAfterward: true);
+			Assert.That(store["senses"], Is.False, "precondition: senses was collapsed after the edit");
 			var view = ShowWithStore(SensesAfterInsert(), store);
 
 			view.RevealObjectsAddedSince(previous);
@@ -561,6 +577,22 @@ namespace FwAvaloniaTests
 
 			Assert.That(TextBoxPresent(view, "g11"), Is.False, "the section stays collapsed");
 			Assert.That(store["senses"], Is.False, "the user's collapse stays recorded");
+		}
+
+		// LT-22689: a re-show after the view's own edit can also carry an insert from another
+		// window or a menu command. A section collapsed before the edit still opens to show it.
+		[AvaloniaTest]
+		public void RevealObjectsAddedSince_ExpandsASectionCollapsedBeforeTheOwnEdit()
+		{
+			var store = new Dictionary<string, bool> { ["senses"] = false };
+			var previous = PreviousViewThatSavedAnEdit(store, collapseSensesAfterward: false);
+			var view = ShowWithStore(SensesAfterInsert(), store);
+
+			view.RevealObjectsAddedSince(previous);
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(TextBoxPresent(view, "g11"), Is.True, "the inserted sense is shown");
+			Assert.That(store["senses"], Is.True);
 		}
 
 		[AvaloniaTest]

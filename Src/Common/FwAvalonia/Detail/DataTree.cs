@@ -462,6 +462,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		// Set once this view commits or cancels an edit of its own. The re-show that follows
 		// replaces the view, so the flag never outlives that edit.
 		private bool _completedOwnEdit;
+		// The expansion keys of the sections the user collapsed after that edit completed.
+		private readonly HashSet<string> _collapsedAfterOwnEdit = new HashSet<string>();
 
 		/// <summary>
 		/// Raises the completion the host re-shows on -- unless a pointer gesture is in flight,
@@ -592,24 +594,29 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		{
 			if (!header.CanToggle)
 				return;
-			RecordExpansion(field, !IsExpanded(field));
+			var expanded = !IsExpanded(field);
+			RecordExpansion(field, expanded);
+			if (!expanded && _completedOwnEdit)
+				_collapsedAfterOwnEdit.Add(field.ExpansionKey);
 			ApplyVisibility();
 		}
 
 		/// <summary>
 		/// Expands every collapsed section that hides a row of an object absent from the view
 		/// <paramref name="previous"/>, recording each through the expansion hooks, so an object
-		/// just inserted into a collapsed section is shown. Does nothing when
-		/// <paramref name="previous"/> is null, or completed an edit of its own: an object that
-		/// edit created was typed where the user could see it, so a section hiding it now was
-		/// collapsed on purpose.
+		/// just inserted into a collapsed section is shown. A section the user collapsed in
+		/// <paramref name="previous"/> after its own edit completed stays collapsed, as when
+		/// typing into a section and then collapsing it. Does nothing when
+		/// <paramref name="previous"/> is null.
 		/// </summary>
 		public void RevealObjectsAddedSince(DataTree previous)
 		{
-			if (previous == null || previous._completedOwnEdit)
+			if (previous == null)
 				return;
 			var headers = DetailVisibility.GetHeadersHidingNewObjects(previous.Model.Fields, Model.Fields,
-				GetRecordedExpansion);
+					GetRecordedExpansion)
+				.Where(header => !previous._collapsedAfterOwnEdit.Contains(header.ExpansionKey))
+				.ToList();
 			if (headers.Count == 0)
 				return;
 			foreach (var header in headers)
