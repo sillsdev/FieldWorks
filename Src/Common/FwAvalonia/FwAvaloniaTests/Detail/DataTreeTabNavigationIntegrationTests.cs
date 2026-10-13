@@ -90,6 +90,12 @@ namespace FwAvaloniaTests.Detail
 			Dispatcher.UIThread.RunJobs();
 		}
 
+		private static void Press(Window window, PhysicalKey key)
+		{
+			window.KeyPressQwerty(key, RawInputModifiers.None);
+			Dispatcher.UIThread.RunJobs();
+		}
+
 		private static void ShiftTab(Window window)
 		{
 			window.KeyPressQwerty(PhysicalKey.Tab, RawInputModifiers.Shift);
@@ -254,34 +260,165 @@ namespace FwAvaloniaTests.Detail
 			DialogSnapshot.Capture(window, "DataTree-TabNavigation-08-focus-visual-native");
 		}
 
+		private static DetailField MultiWsField()
+			=> Field("Multi", values: new List<DetailWsValue>
+			{
+				new DetailWsValue("vern", "one"),
+				new DetailWsValue("en", "two"),
+				new DetailWsValue("fr", "three")
+			});
+
 		[AvaloniaTest]
-		public void TabIntoAMultiWsRow_VisitsBothWritingSystemsBeforeAdvancing()
+		public void TabThroughAMultiWsRow_StopsOnlyAtTheFirstWritingSystem()
 		{
-			var (window, view) = Show(480, 300,
-				Field("Before"),
-				Field("Multi", values: new List<DetailWsValue>
-				{
-					new DetailWsValue("vern", "one"),
-					new DetailWsValue("en", "two")
-				}),
-				Field("After"));
+			var (window, view) = Show(480, 300, Field("Before"), MultiWsField(), Field("After"));
 
 			Find<TextBox>(view, "Before.vern").Focus();
 			Dispatcher.UIThread.RunJobs();
 
 			Tab(window);
 			Assert.That(FocusedAutomationId(view), Is.EqualTo("Multi.vern"),
-				"Tab first reaches the row's own first writing-system sub-editor");
-
-			Tab(window);
-			Assert.That(FocusedAutomationId(view), Is.EqualTo("Multi.en"),
-				"a second Tab stays inside the row, moving to its second writing system, " +
-				"before any DataTree-level row-to-row navigation applies");
+				"Tab first reaches the row's first writing system");
 
 			Tab(window);
 			Assert.That(FocusedAutomationId(view), Is.EqualTo("After.vern"),
-				"once every writing system in the row is visited, Tab advances to the next row");
-			DialogSnapshot.Capture(window, "DataTree-TabNavigation-09-multi-ws-internal-tab-regression");
+				"the other writing systems are not Tab stops, so Tab advances to the next row");
+
+			ShiftTab(window);
+			Assert.That(FocusedAutomationId(view), Is.EqualTo("Multi.vern"),
+				"Shift+Tab re-enters the row at its first writing system");
+
+			ShiftTab(window);
+			Assert.That(FocusedAutomationId(view), Is.EqualTo("Before.vern"),
+				"and the next Shift+Tab leaves the row for the previous one");
+			DialogSnapshot.Capture(window, "DataTree-TabNavigation-09-multi-ws-single-tab-stop");
+		}
+
+		[AvaloniaTest]
+		public void ShiftTabFromALaterWritingSystem_LeavesTheRow()
+		{
+			var (window, view) = Show(480, 300, Field("Before"), MultiWsField(), Field("After"));
+
+			Find<TextBox>(view, "Multi.en").Focus();
+			Dispatcher.UIThread.RunJobs();
+
+			ShiftTab(window);
+			Assert.That(FocusedAutomationId(view), Is.EqualTo("Before.vern"),
+				"Shift+Tab goes to the previous row, not back to the row's first writing system");
+		}
+
+		[AvaloniaTest]
+		public void TabFromALaterWritingSystem_LeavesTheRow()
+		{
+			var (window, view) = Show(480, 300, Field("Before"), MultiWsField(), Field("After"));
+
+			Find<TextBox>(view, "Multi.en").Focus();
+			Dispatcher.UIThread.RunJobs();
+
+			Tab(window);
+			Assert.That(FocusedAutomationId(view), Is.EqualTo("After.vern"),
+				"Tab goes to the next row, not on to the row's last writing system");
+		}
+
+		[AvaloniaTest]
+		public void UpAndDownInAMultiWsRow_MoveBetweenWritingSystems()
+		{
+			var (window, view) = Show(480, 300, Field("Before"), MultiWsField(), Field("After"));
+
+			Find<TextBox>(view, "Multi.vern").Focus();
+			Dispatcher.UIThread.RunJobs();
+
+			Press(window, PhysicalKey.ArrowDown);
+			Assert.That(FocusedAutomationId(view), Is.EqualTo("Multi.en"));
+			Press(window, PhysicalKey.ArrowDown);
+			Assert.That(FocusedAutomationId(view), Is.EqualTo("Multi.fr"));
+			Press(window, PhysicalKey.ArrowDown);
+			Assert.That(FocusedAutomationId(view), Is.EqualTo("Multi.fr"),
+				"Down on the last writing system stays put; it never leaves the row");
+
+			Press(window, PhysicalKey.ArrowUp);
+			Assert.That(FocusedAutomationId(view), Is.EqualTo("Multi.en"));
+			Press(window, PhysicalKey.ArrowUp);
+			Assert.That(FocusedAutomationId(view), Is.EqualTo("Multi.vern"));
+			Press(window, PhysicalKey.ArrowUp);
+			Assert.That(FocusedAutomationId(view), Is.EqualTo("Multi.vern"),
+				"Up on the first writing system stays put; it never leaves the row");
+		}
+
+		[AvaloniaTest]
+		public void LeftAndRightAtTheTextEdges_MoveBetweenWritingSystems()
+		{
+			var (window, view) = Show(480, 300, Field("Before"), MultiWsField(), Field("After"));
+			var vern = Find<TextBox>(view, "Multi.vern");
+			var en = Find<TextBox>(view, "Multi.en");
+
+			vern.Focus();
+			vern.CaretIndex = 1;
+			Dispatcher.UIThread.RunJobs();
+			Press(window, PhysicalKey.ArrowRight);
+			Assert.That(FocusedAutomationId(view), Is.EqualTo("Multi.vern"),
+				"Right inside the text moves the caret and stays in the same writing system");
+
+			vern.CaretIndex = vern.Text.Length;
+			Press(window, PhysicalKey.ArrowRight);
+			Assert.That(FocusedAutomationId(view), Is.EqualTo("Multi.en"),
+				"Right at the end of the text moves on to the next writing system");
+			Assert.That(en.CaretIndex, Is.EqualTo(0), "at its start");
+
+			Press(window, PhysicalKey.ArrowLeft);
+			Assert.That(FocusedAutomationId(view), Is.EqualTo("Multi.vern"),
+				"Left at the start of the text moves back to the previous writing system");
+			Assert.That(vern.CaretIndex, Is.EqualTo(vern.Text.Length), "at its end");
+		}
+
+		[AvaloniaTest]
+		public void LeftAndRightAtTheTextEdges_MoveBetweenWritingSystems_InEditableRows()
+		{
+			var (window, view) = ShowWithEditContext(480, 300, new FakeDetailEditContext(),
+				Field("Before"), MultiWsField(), Field("After"));
+			var vern = Find<TextBox>(view, "Multi.vern");
+			var en = Find<TextBox>(view, "Multi.en");
+
+			vern.Focus();
+			vern.CaretIndex = 1;
+			Dispatcher.UIThread.RunJobs();
+			Press(window, PhysicalKey.ArrowRight);
+			Assert.That(FocusedAutomationId(view), Is.EqualTo("Multi.vern"),
+				"Right inside the text moves the caret within the same writing system");
+			Assert.That(vern.CaretIndex, Is.EqualTo(2));
+
+			vern.CaretIndex = vern.Text.Length;
+			Press(window, PhysicalKey.ArrowRight);
+			Assert.That(FocusedAutomationId(view), Is.EqualTo("Multi.en"),
+				"Right at the end of an editable value moves on to the next writing system");
+			Assert.That(en.CaretIndex, Is.EqualTo(0));
+
+			Press(window, PhysicalKey.ArrowLeft);
+			Assert.That(FocusedAutomationId(view), Is.EqualTo("Multi.vern"),
+				"Left at the start of an editable value moves back");
+			Assert.That(vern.CaretIndex, Is.EqualTo(vern.Text.Length));
+		}
+
+		[AvaloniaTest]
+		public void ArrowsInAMultiWsRow_DoNotLeaveItsFirstOrLastEdge()
+		{
+			var (window, view) = Show(480, 300, Field("Before"), MultiWsField(), Field("After"));
+			var vern = Find<TextBox>(view, "Multi.vern");
+
+			vern.Focus();
+			vern.CaretIndex = 0;
+			Dispatcher.UIThread.RunJobs();
+			Press(window, PhysicalKey.ArrowLeft);
+			Assert.That(FocusedAutomationId(view), Is.EqualTo("Multi.vern"),
+				"Left at the start of the first writing system has nowhere to go");
+
+			var fr = Find<TextBox>(view, "Multi.fr");
+			fr.Focus();
+			fr.CaretIndex = fr.Text.Length;
+			Dispatcher.UIThread.RunJobs();
+			Press(window, PhysicalKey.ArrowRight);
+			Assert.That(FocusedAutomationId(view), Is.EqualTo("Multi.fr"),
+				"Right at the end of the last writing system has nowhere to go");
 		}
 
 		[AvaloniaTest]
@@ -315,6 +452,136 @@ namespace FwAvaloniaTests.Detail
 			Assert.That(FocusedAutomationId(view), Is.EqualTo("After.vern"),
 				"once the paragraph is visited, Tab advances to the next row");
 			DialogSnapshot.Capture(window, "DataTree-TabNavigation-10-rich-structured-text-tab");
+		}
+
+		private static DetailField StructuredField(params DetailParagraph[] paragraphs)
+			=> new DetailField("Multi", "Multi", "Multi", null,
+				DetailFieldKind.StructuredText, EditorClassification.Known, "Multi", null,
+				HostRouting.Inherit, null, null, null, isEditable: true, objectHvo: 1234,
+				paragraphs: paragraphs.ToList());
+
+		private static DetailParagraph RichParagraph()
+			=> new DetailParagraph(DetailRichTextEditAlgorithms.FromRuns(
+				"OneTwo", new List<DetailTextRun>
+				{
+					new DetailTextRun("One", fontFamily: "Arial"),
+					new DetailTextRun("Two", fontFamily: "Times New Roman")
+				}));
+
+		private static DetailParagraph PlainParagraph()
+			=> new DetailParagraph(DetailRichTextEditAlgorithms.FromRuns(
+				"Plain", new List<DetailTextRun> { new DetailTextRun("Plain") }));
+
+		[AvaloniaTest]
+		public void TabThroughStructuredTextParagraphs_StopsOnlyAtTheFirst()
+		{
+			var (window, view) = ShowWithEditContext(480, 300, new FakeDetailEditContext(),
+				Field("Before"), StructuredField(RichParagraph(), PlainParagraph()),
+				Field("After"));
+
+			Find<TextBox>(view, "Before.vern").Focus();
+			Dispatcher.UIThread.RunJobs();
+
+			Tab(window);
+			Assert.That(FocusedAutomationId(view), Is.EqualTo("Multi.Para.0"));
+
+			Tab(window);
+			Assert.That(FocusedAutomationId(view), Is.EqualTo("After.vern"),
+				"later paragraphs are not Tab stops, so Tab advances to the next row");
+
+			ShiftTab(window);
+			Assert.That(FocusedAutomationId(view), Is.EqualTo("Multi.Para.0"));
+			ShiftTab(window);
+			Assert.That(FocusedAutomationId(view), Is.EqualTo("Before.vern"));
+		}
+
+		[AvaloniaTest]
+		public void UpAndDownInStructuredText_MoveBetweenParagraphs()
+		{
+			var (window, view) = ShowWithEditContext(480, 300, new FakeDetailEditContext(),
+				Field("Before"), StructuredField(RichParagraph(), PlainParagraph()),
+				Field("After"));
+
+			Find<TextBox>(view, "Before.vern").Focus();
+			Dispatcher.UIThread.RunJobs();
+			Tab(window);
+			Assert.That(FocusedAutomationId(view), Is.EqualTo("Multi.Para.0"));
+
+			Press(window, PhysicalKey.ArrowDown);
+			Assert.That(FocusedAutomationId(view), Is.EqualTo("Multi.Para.1"));
+
+			Press(window, PhysicalKey.ArrowUp);
+			Assert.That(FocusedAutomationId(view), Is.EqualTo("Multi.Para.0"),
+				"Up re-enters a per-run-font paragraph through its swap, landing in the editor");
+		}
+
+		[AvaloniaTest]
+		public void TabIntoAFieldWithText_PlacesTheCaretAtTheStartWithoutSelecting()
+		{
+			var (window, view) = ShowWithEditContext(480, 300, new FakeDetailEditContext(),
+				Field("Before"), MultiWsField(), Field("After"));
+
+			Find<TextBox>(view, "Before.vern").Focus();
+			Dispatcher.UIThread.RunJobs();
+
+			Tab(window);
+			var box = Find<TextBox>(view, "Multi.vern");
+			Assert.That(FocusedAutomationId(view), Is.EqualTo("Multi.vern"));
+			Assert.That(box.Text, Is.EqualTo("one"));
+			Assert.That(box.SelectionStart, Is.EqualTo(0));
+			Assert.That(box.SelectionEnd, Is.EqualTo(0),
+				"Tab entry leaves a caret at the start, not the whole text selected");
+			Assert.That(box.CaretIndex, Is.EqualTo(0));
+		}
+
+		[AvaloniaTest]
+		public void TabIntoStructuredTextParagraphs_PlacesTheCaretAtTheStart()
+		{
+			var (window, view) = ShowWithEditContext(480, 300, new FakeDetailEditContext(),
+				Field("Before"), StructuredField(PlainParagraph(), RichParagraph()),
+				Field("After"));
+
+			Find<TextBox>(view, "Before.vern").Focus();
+			Dispatcher.UIThread.RunJobs();
+
+			Tab(window);
+			var plain = Find<TextBox>(view, "Multi.Para.0");
+			Assert.That(FocusedAutomationId(view), Is.EqualTo("Multi.Para.0"));
+			Assert.That(plain.SelectionEnd - plain.SelectionStart, Is.EqualTo(0),
+				"a plain paragraph is entered with a caret, not a selection");
+			Assert.That(plain.CaretIndex, Is.EqualTo(0));
+		}
+
+		[AvaloniaTest]
+		public void TabIntoARichStructuredTextParagraph_PlacesTheCaretAtTheStart()
+		{
+			var (window, view) = ShowWithEditContext(480, 300, new FakeDetailEditContext(),
+				Field("Before"), StructuredField(RichParagraph()), Field("After"));
+
+			Find<TextBox>(view, "Before.vern").Focus();
+			Dispatcher.UIThread.RunJobs();
+
+			Tab(window);
+			var rich = Find<TextBox>(view, "Multi.Para.0");
+			Assert.That(FocusedAutomationId(view), Is.EqualTo("Multi.Para.0"));
+			Assert.That(rich.SelectionEnd - rich.SelectionStart, Is.EqualTo(0));
+			Assert.That(rich.CaretIndex, Is.EqualTo(0),
+				"entering through the per-run-font display also lands at the start");
+		}
+
+		[AvaloniaTest]
+		public void ShiftTabFromALaterParagraph_LeavesTheField()
+		{
+			var (window, view) = ShowWithEditContext(480, 300, new FakeDetailEditContext(),
+				Field("Before"), StructuredField(RichParagraph(), PlainParagraph()),
+				Field("After"));
+
+			Find<TextBox>(view, "Multi.Para.1").Focus();
+			Dispatcher.UIThread.RunJobs();
+
+			ShiftTab(window);
+			Assert.That(FocusedAutomationId(view), Is.EqualTo("Before.vern"),
+				"Shift+Tab goes to the previous row, not back to the first paragraph");
 		}
 	}
 }

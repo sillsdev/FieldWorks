@@ -819,6 +819,72 @@ namespace FwAvaloniaTests
 		}
 
 		[AvaloniaTest]
+		public void VectorItemHighlight_FollowsFocusInTheRow_WhileTheItemStaysCurrent()
+		{
+			var (window, view, _) = Show(VectorField("Subentries", "a", "b"));
+			var vector = Find<FwReferenceVectorField>(view, "Subentries");
+			var second = Find<TextBlock>(view, "Subentries.Item.b");
+			LeftClick(window, second);
+			Assert.That(second.Background, Is.SameAs(FwAvaloniaDensity.SelectedRowBrush),
+				"the item is highlighted while focus is in the row");
+
+			window.FocusManager.ClearFocus();
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(second.Background, Is.SameAs(FwAvaloniaDensity.TransparentBrush),
+				"leaving the row removes the highlight");
+			Assert.That(vector.SelectedItemKey, Is.EqualTo("b"),
+				"the item is still current for the row's menus");
+
+			second.Focus();
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(second.Background, Is.SameAs(FwAvaloniaDensity.SelectedRowBrush),
+				"focus returning to the row shows the highlight again");
+		}
+
+		[AvaloniaTest]
+		public void VectorItemHighlight_StaysWhileAMenuGestureIsInProgress()
+		{
+			var (window, view, _) = Show(VectorField("Subentries", "a", "b"));
+			var vector = Find<FwReferenceVectorField>(view, "Subentries");
+			var second = Find<TextBlock>(view, "Subentries.Item.b");
+			LeftClick(window, second);
+			window.FocusManager.ClearFocus();
+			Dispatcher.UIThread.RunJobs();
+			Assert.That(second.Background, Is.SameAs(FwAvaloniaDensity.TransparentBrush));
+
+			vector.BeginMenuGesture();
+			Assert.That(second.Background, Is.SameAs(FwAvaloniaDensity.SelectedRowBrush),
+				"the menu's target item is visible while its menu is open");
+
+			vector.EndMenuGesture();
+			Assert.That(second.Background, Is.SameAs(FwAvaloniaDensity.TransparentBrush),
+				"and the highlight goes when the menu closes with focus elsewhere");
+		}
+
+		[AvaloniaTest]
+		public void MenuGestureOnARequestFromAReadOnlyItem_HighlightsTheItemWhileItIsOpen()
+		{
+			var (window, view, requests) = Show(VectorField("Subentries", "a", "b"));
+			var second = Find<TextBlock>(view, "Subentries.Item.b");
+
+			RightClick(window, second);
+			window.FocusManager.ClearFocus();
+			Dispatcher.UIThread.RunJobs();
+			Assert.That(requests, Has.Count.EqualTo(1));
+			Assert.That(second.Background, Is.SameAs(FwAvaloniaDensity.TransparentBrush),
+				"precondition: focus is outside the row");
+
+			requests[0].BeginMenuGesture();
+			Assert.That(second.Background, Is.SameAs(FwAvaloniaDensity.SelectedRowBrush),
+				"the host's gesture start reaches a row with no text editor too");
+
+			requests[0].EndMenuGesture();
+			Assert.That(second.Background, Is.SameAs(FwAvaloniaDensity.TransparentBrush));
+		}
+
+		[AvaloniaTest]
 		public void SelectingInOneVectorRow_ClearsTheOtherRowsSelection()
 		{
 			var (window, view, _) = Show(VectorField("Subentries", "a", "b"),
