@@ -36,7 +36,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			Background = FwAvaloniaDensity.TransparentBrush;
 			BorderThickness = new Thickness(0);
 			Padding = new Thickness(0);
-			// Semi's Button theme centres its content; a section header hugs the left edge.
+			// A section header hugs the left edge.
 			HorizontalAlignment = HorizontalAlignment.Left;
 			HorizontalContentAlignment = HorizontalAlignment.Left;
 			var text = CreateLabel(label);
@@ -50,9 +50,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		}
 
 		/// <summary>
-		/// The section header label text, for a header that cannot collapse as well as inside
-		/// this one. Its size and colour are its own, so neither the detail view's TextBlock
-		/// style nor the button theme decides them.
+		/// The section header label text, in the section header size, colour and bold weight,
+		/// for a header that cannot collapse as well as inside this one.
 		/// </summary>
 		public static TextBlock CreateLabel(string label) => new TextBlock
 		{

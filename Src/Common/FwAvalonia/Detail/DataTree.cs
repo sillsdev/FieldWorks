@@ -963,7 +963,6 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			{
 				Content = FwAvaloniaStrings.FieldOptionsMenu,
 				Foreground = HotlinkBrush,
-				// Set here, so the button theme's larger semibold text does not apply.
 				FontSize = FwAvaloniaDensity.HotlinkFontSize,
 				FontWeight = FontWeight.Normal,
 				Background = FwAvaloniaDensity.TransparentBrush,

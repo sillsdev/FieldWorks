@@ -255,7 +255,7 @@ namespace FwAvaloniaTests
 				Is.False, "the persisted collapse state applies to the rebuilt view");
 		}
 
-		// Re-queried after every toggle: a toggle rebuilds the rows, header included.
+		// The section header with the given automation id.
 		private static DetailSectionHeader SectionHeader(Control view, string id)
 			=> view.GetVisualDescendants().OfType<DetailSectionHeader>()
 				.First(h => AutomationProperties.GetAutomationId(h) == id);
@@ -306,8 +306,8 @@ namespace FwAvaloniaTests
 			Assert.That(TextBoxPresent(view, "g1"), Is.True);
 		}
 
-		// LT-22689: the header and link text sizes and the header colour are set on the text
-		// itself, so neither the view's TextBlock style nor the button theme decides them.
+		// LT-22689: header and "Field Options" text take the slice label size, and header text
+		// takes the section header colour.
 		[AvaloniaTest]
 		public void SectionHeaderAndFieldOptionsText_TakeTheirOwnSizeAndColour()
 		{
@@ -398,8 +398,7 @@ namespace FwAvaloniaTests
 			Assert.That(TextBoxPresent(view, "g1"), Is.True);
 		}
 
-		// LT-22689: a toggle rebuilds every row, which must not scroll the view; the header the
-		// user clicked stays where it was.
+		// LT-22689: a toggle leaves the clicked header where it was in the viewport.
 		[AvaloniaTest]
 		public void Toggling_KeepsTheHeaderWhereItWasInTheViewport()
 		{

@@ -70,7 +70,7 @@
 	<x:Double x:Key="DataTree.TreeIndentPerLevel">14</x:Double>
 
 	<!-- The square +/- box a collapsible section header shows before its label: the classic
-	     9px tree-view glyph box, sized to read at the compact surface font. -->
+	     9px tree-view glyph box. -->
 	<x:Double x:Key="DataTree.TreeBoxSize">9</x:Double>
 
 	<!-- Length of the box's minus bar (and of the plus sign's vertical bar), leaving a 1px gap

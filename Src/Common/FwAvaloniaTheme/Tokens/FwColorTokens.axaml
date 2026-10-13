@@ -70,18 +70,14 @@
 			     option, so Gray stays for pixel parity. -->
 			<SolidColorBrush x:Key="FwDisabledOptionBrush" Color="Gray"/>
 
-			<!-- The section header's +/- box outline: WinForms SystemColors.ControlDark, the
-			     classic tree-view glyph box. The composited SemiColorBorder (~#EDEDED) is too
-			     faint to read as a 9px box outline. -->
+			<!-- The section header's +/- box outline: WinForms SystemColors.ControlDark. -->
 			<SolidColorBrush x:Key="FwTreeBoxBorderBrush" Color="#A0A0A0"/>
 
-			<!-- The +/- bars inside the box: the same #404040 ink as FwWsAbbrevBrush, dark
-			     enough for a 1px stroke to read at 9px. -->
+			<!-- The +/- bars inside the box: the same #404040 ink as FwWsAbbrevBrush. -->
 			<SolidColorBrush x:Key="FwTreeBoxGlyphBrush" Color="#404040"/>
 
-			<!-- Section header text, collapsible or not: WinForms SystemColors.ControlDarkDark,
-			     the ink of a detail section header. A header that is a button would otherwise
-			     take the button theme's link-blue text. -->
+			<!-- Section header text, collapsible or not: WinForms
+			     SystemColors.ControlDarkDark. -->
 			<SolidColorBrush x:Key="FwSectionHeaderBrush" Color="#696969"/>
 
 		</ResourceDictionary>
