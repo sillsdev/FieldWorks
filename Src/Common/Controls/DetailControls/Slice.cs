@@ -2478,25 +2478,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		{
 			CheckDisposed();
 
-			var obj = GetObjectForMenusToOperateOn();
-			if (obj == null)
-				return false;
-
-			var owner = obj.Owner;
-			if (owner == null) // We can allow unowned objects to be deleted.
-				return true;
-			int flid = obj.OwningFlid;
-			if (!owner.IsFieldRequired(flid))
-				return true;
-
-			//now, if the field is required, then we do not allow this to be deleted if it is atomic
-			//futureTodo: this prevents the user from the deleting something in order to create something
-			//of a different class, or to paste in other object in this field.
-			if (!Cache.IsVectorProperty(flid))
-				return false;
-
-			// still OK to delete so long as it is not the last item.
-			return Cache.DomainDataByFlid.get_VecSize(owner.Hvo, flid) > 1;
+			return DetailObjectDeletion.CanDeleteNow(GetObjectForMenusToOperateOn());
 		}
 
 		/// <summary>

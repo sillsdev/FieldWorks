@@ -3,6 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Collections.Generic;
 using SIL.FieldWorks.Common.FwAvalonia.Detail;
 using SIL.FieldWorks.Common.FwAvalonia.Seams;
 
@@ -75,5 +76,16 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 		/// gesture (a menu-driven move) made while no editor had focus.
 		/// </summary>
 		public void FocusVectorItemOnNextShow() => (CurrentContent as DataTree)?.RequestVectorFocusOnRebuild();
+
+		/// <summary>
+		/// Asks the next re-show to give keyboard focus to the first of
+		/// <paramref name="rowAutomationIds"/> it still shows, for a gesture that removed the
+		/// focused row.
+		/// </summary>
+		public void FocusRowOnNextShow(IReadOnlyList<string> rowAutomationIds)
+			=> (CurrentContent as DataTree)?.RequestRowFocusOnRebuild(rowAutomationIds);
+
+		/// <summary>The detail model shown now; null before the first show.</summary>
+		public DetailModel ShownDetail => (CurrentContent as DataTree)?.Model;
 	}
 }

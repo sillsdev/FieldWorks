@@ -1023,7 +1023,21 @@ namespace SIL.FieldWorks.FdoUi
 		/// </summary>
 		public bool DeleteUnderlyingObject()
 		{
+			return DeleteUnderlyingObject(ConfirmDelete);
+		}
+
+		/// <summary>
+		/// Deletes the object once <paramref name="confirm"/> says so. The clerk's current
+		/// record is instead handed to the DeleteRecord handler, confirmation included.
+		/// </summary>
+		/// <param name="confirm">Asks the user; <see cref="ConfirmDelete"/> in the
+		/// product.</param>
+		/// <returns>True when the object was deleted here.</returns>
+		public bool DeleteUnderlyingObject(Func<bool> confirm)
+		{
 			CheckDisposed();
+			if (confirm == null)
+				throw new ArgumentNullException(nameof(confirm));
 
 			ICmObject cmo = GetCurrentCmObject();
 			if (cmo != null && m_obj != null && cmo.Hvo == m_obj.Hvo)
@@ -1038,22 +1052,32 @@ namespace SIL.FieldWorks.FdoUi
 				var mainWindow = m_propertyTable.GetValue<Form>("window");
 				using (new WaitCursor(mainWindow))
 				{
-					using (var dlg = new ConfirmDeleteObjectDlg(m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider")))
+					if (confirm())
 					{
-						string cannotDeleteMsg;
-						if (CanDelete(out cannotDeleteMsg))
-						dlg.SetDlgInfo(this, m_cache, Mediator, m_propertyTable);
-						else
-							dlg.SetDlgInfo(this, m_cache, Mediator, m_propertyTable, TsStringUtils.MakeString(cannotDeleteMsg, m_cache.DefaultUserWs));
-						if (DialogResult.Yes == dlg.ShowDialog(mainWindow))
-						{
-							ReallyDeleteUnderlyingObject();
-							return true; // deleted it
-						}
+						ReallyDeleteUnderlyingObject();
+						return true; // deleted it
 					}
 				}
 			}
 			return false; // didn't delete it.
+		}
+
+		/// <summary>
+		/// Asks the user to confirm deleting the object, telling them when it cannot be
+		/// deleted; true when they confirm.
+		/// </summary>
+		public bool ConfirmDelete()
+		{
+			var mainWindow = m_propertyTable.GetValue<Form>("window");
+			using (var dlg = new ConfirmDeleteObjectDlg(m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider")))
+			{
+				string cannotDeleteMsg;
+				if (CanDelete(out cannotDeleteMsg))
+					dlg.SetDlgInfo(this, m_cache, Mediator, m_propertyTable);
+				else
+					dlg.SetDlgInfo(this, m_cache, Mediator, m_propertyTable, TsStringUtils.MakeString(cannotDeleteMsg, m_cache.DefaultUserWs));
+				return DialogResult.Yes == dlg.ShowDialog(mainWindow);
+			}
 		}
 
 		/// <summary>
