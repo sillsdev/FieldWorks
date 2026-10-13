@@ -98,6 +98,9 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				MinHeight = 0,
 				AcceptsReturn = false, // Enter inserts a NEW paragraph (handled below), never a line break
 				IsReadOnly = !paraEditable,
+				FlowDirection = IsFirstRunRightToLeft(field, currentRich)
+					? FlowDirection.RightToLeft
+					: FlowDirection.LeftToRight,
 				BorderThickness = new Thickness(0),
 				Background = FwAvaloniaDensity.TransparentBrush,
 				TextWrapping = TextWrapping.Wrap
@@ -249,6 +252,14 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			};
 		}
 
+		// A paragraph flows in the direction of its first run's writing system.
+		private static bool IsFirstRunRightToLeft(DetailField field, DetailRichTextValue rich)
+			=> rich != null && rich.Runs.Count > 0
+				&& !string.IsNullOrEmpty(rich.Runs[0].WritingSystemTag)
+				&& field.WritingSystemFonts != null
+				&& field.WritingSystemFonts.TryGetValue(rich.Runs[0].WritingSystemTag, out var font)
+				&& font != null && font.RightToLeft;
+
 		// The run-aware text-edit wiring shared with FwMultiWsTextField, narrowed to one paragraph editor:
 		// a TextChanged stages a plain-text-over-preserved-runs edit through the paragraph seam. A
 		// last-staged guard keeps the template's initial set and no-op events from staging; the guard
@@ -364,11 +375,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			if (currentRich == null || !DetailRichTextChrome.ShouldRenderPerRunFontDisplay(currentRich))
 				return box;
 
-			var rtl = currentRich.Runs.Count > 0
-				&& !string.IsNullOrEmpty(currentRich.Runs[0].WritingSystemTag)
-				&& field.WritingSystemFonts != null
-				&& field.WritingSystemFonts.TryGetValue(currentRich.Runs[0].WritingSystemTag, out var firstFont)
-				&& firstFont != null && firstFont.RightToLeft;
+			var rtl = box.FlowDirection == FlowDirection.RightToLeft;
 
 			var display = DetailRichTextChrome.CreatePerRunFontDisplay(currentRich, field.WritingSystemFonts,
 				automationId + ".Para." + index + ".Display", rtl);

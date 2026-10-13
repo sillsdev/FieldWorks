@@ -472,6 +472,67 @@ namespace FwAvaloniaTests.Detail
 			=> new DetailParagraph(DetailRichTextEditAlgorithms.FromRuns(
 				"Plain", new List<DetailTextRun> { new DetailTextRun("Plain") }));
 
+		private static DetailField RtlMiddleParagraphField(bool mixedRuns)
+		{
+			var runs = mixedRuns
+				? new List<DetailTextRun>
+				{
+					new DetailTextRun("abc", "ar", fontFamily: "Arial"),
+					new DetailTextRun("de", "ar", fontFamily: "Times New Roman")
+				}
+				: new List<DetailTextRun> { new DetailTextRun("abcde", "ar") };
+			var field = StructuredField(PlainParagraph(),
+				new DetailParagraph(DetailRichTextEditAlgorithms.FromRuns("abcde", runs)),
+				PlainParagraph());
+			field.WritingSystemFonts = new Dictionary<string, DetailRunFont>
+			{
+				["ar"] = new DetailRunFont("Arial", rightToLeft: true)
+			};
+			return field;
+		}
+
+		private static void AssertRtlParagraphCrossesAtItsOwnEdges(bool mixedRuns)
+		{
+			var (window, view) = ShowWithEditContext(480, 300, new FakeDetailEditContext(),
+				Field("Before"), RtlMiddleParagraphField(mixedRuns), Field("After"));
+			Find<TextBox>(view, "Before.vern").Focus();
+			Dispatcher.UIThread.RunJobs();
+			Tab(window);
+			Press(window, PhysicalKey.ArrowDown);
+			Assert.That(FocusedAutomationId(view), Is.EqualTo("Multi.Para.1"));
+			var rtl = Find<TextBox>(view, "Multi.Para.1");
+			Assert.That(rtl.FlowDirection, Is.EqualTo(Avalonia.Media.FlowDirection.RightToLeft),
+				"the editor takes its first run's direction");
+
+			rtl.CaretIndex = 0;
+			Press(window, PhysicalKey.ArrowLeft);
+			Assert.That(FocusedAutomationId(view), Is.EqualTo("Multi.Para.1"),
+				"Left at the logical start of an RTL paragraph does not leave it");
+			rtl.CaretIndex = 0;
+			Press(window, PhysicalKey.ArrowRight);
+			Assert.That(FocusedAutomationId(view), Is.EqualTo("Multi.Para.0"),
+				"Right at the logical start of an RTL paragraph moves to the previous one");
+
+			Press(window, PhysicalKey.ArrowDown);
+			Assert.That(FocusedAutomationId(view), Is.EqualTo("Multi.Para.1"));
+			rtl.CaretIndex = rtl.Text.Length;
+			Press(window, PhysicalKey.ArrowRight);
+			Assert.That(FocusedAutomationId(view), Is.EqualTo("Multi.Para.1"),
+				"Right at the logical end of an RTL paragraph does not leave it");
+			rtl.CaretIndex = rtl.Text.Length;
+			Press(window, PhysicalKey.ArrowLeft);
+			Assert.That(FocusedAutomationId(view), Is.EqualTo("Multi.Para.2"),
+				"Left at the logical end of an RTL paragraph moves to the next one");
+		}
+
+		[AvaloniaTest]
+		public void RtlStructuredTextParagraph_CrossesAtItsOwnEdges()
+			=> AssertRtlParagraphCrossesAtItsOwnEdges(mixedRuns: false);
+
+		[AvaloniaTest]
+		public void RtlStructuredTextParagraphWithDisplay_CrossesAtItsOwnEdges()
+			=> AssertRtlParagraphCrossesAtItsOwnEdges(mixedRuns: true);
+
 		[AvaloniaTest]
 		public void TabThroughStructuredTextParagraphs_StopsOnlyAtTheFirst()
 		{
