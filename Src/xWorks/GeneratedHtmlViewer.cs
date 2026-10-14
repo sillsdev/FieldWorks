@@ -772,8 +772,8 @@ namespace SIL.FieldWorks.XWorks
 			m_configurationParameters = configurationParameters;
 			mediator.AddColleague(this);
 
-			m_propertyTable.SetProperty("StatusPanelRecordNumber", "", true);
-			m_propertyTable.SetPropertyPersistence("StatusPanelRecordNumber", false);
+			// This viewer has no record list, so the record position panel shows nothing.
+			(m_propertyTable.GetWindow() as XWindow)?.SetStatusPanelText("RecordNumber", "");
 
 #if notnow
 			m_htmlControl.Browser.DocumentCompleted += new WebBrowserDocumentCompletedEventHandler(Browser_DocumentCompleted);

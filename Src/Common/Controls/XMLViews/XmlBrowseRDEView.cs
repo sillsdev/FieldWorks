@@ -198,7 +198,6 @@ namespace SIL.FieldWorks.Common.Controls
 			/*
 			 * Starting up with Domains being startup tool.
 			 *	currentContentControlObject
-			 *	StatusPanelProgress
 			 *
 			 * Switching away from Domains to another tool in same area.
 			 *	currentContentControlParameters
@@ -216,21 +215,15 @@ namespace SIL.FieldWorks.Common.Controls
 			 *	currentContentControlObject
 			 *
 			 * Switch to another domain
-			 *	StatusPanelRecordNumber
-			 *	StatusPanelMessage
-			 *	StatusPanelRecordNumber
-			 *	StatusPanelMessage
 			 *	-selected
 			 *	SemanticDomainList-selected
 			 *	ActiveClerkSelectedObject
 			 *	SelectedTreeBarNode
 			 */
 
-			// "currentContentControlObject" occurs in two incoming contexts,
-			// and one switching away context.
-			// We only need to handle the switching away context, but how to tell them apart?
-			// JohnT: don't handle switching to another domain by catching StatusPanelRecordNumber;
-			// too unreliable. Catch that by override of RootObjectHvo below.
+			// "currentContentControlObject" occurs in two incoming contexts and one
+			// switching-away context, which cannot be told apart. Switching domains is
+			// caught by the RootObjectHvo override below.
 			if (propName == "areaChoiceParameters" // Switching to another area
 				|| propName == "currentContentControlParameters") // Switching to another tool in same area
 			{
