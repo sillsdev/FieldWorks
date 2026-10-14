@@ -1068,6 +1068,8 @@ namespace SIL.FieldWorks.FdoUi
 		/// </summary>
 		public bool ConfirmDelete()
 		{
+			CheckDisposed();
+
 			var mainWindow = m_propertyTable.GetValue<Form>("window");
 			using (var dlg = new ConfirmDeleteObjectDlg(m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider")))
 			{
