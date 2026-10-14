@@ -39,6 +39,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 	public sealed class FwStructuredTextField : StackPanel, IDisposable
 	{
 		private readonly List<Action> _teardown = new List<Action>();
+		private readonly DetailValueStopGroup _paragraphStops = new DetailValueStopGroup();
 		private bool _disposed;
 
 		/// <param name="gestureCompleted">Invoked after a SUCCESSFUL structural gesture (add/delete/style)
@@ -59,6 +60,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			// Paragraph CRUD is the optional IStructuredTextEditing capability; a context without it leaves
 			// the rows displayed but inert (each gesture below no-ops), the same rejection the former core
 			// IDetailEditContext paragraph methods returned on a context with no StText rows.
+			_teardown.Add(_paragraphStops.Dispose);
 			var structuredText = editContext as IStructuredTextEditing;
 			var editable = editContext != null && field.IsEditable;
 			var paragraphs = field.Paragraphs;
@@ -76,6 +78,9 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				Children.Add(CreateParagraphRow(field, automationId, structuredText, writingSystemFocused,
 					gestureCompleted, clipboard, new DetailParagraph(null), 0, 1, editable));
 			}
+
+			// One Tab stop for the whole field; arrows move between the paragraphs (LT-22688).
+			_paragraphStops.ApplyTabStops();
 		}
 
 		private Control CreateParagraphRow(
@@ -93,10 +98,14 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				MinHeight = 0,
 				AcceptsReturn = false, // Enter inserts a NEW paragraph (handled below), never a line break
 				IsReadOnly = !paraEditable,
+				FlowDirection = FirstRunRightToLeft(field, currentRich) == true
+					? FlowDirection.RightToLeft
+					: FlowDirection.LeftToRight,
 				BorderThickness = new Thickness(0),
 				Background = FwAvaloniaDensity.TransparentBrush,
 				TextWrapping = TextWrapping.Wrap
 			};
+			var paragraphStop = _paragraphStops.Add(box);
 			AutomationProperties.SetAutomationId(box, automationId + ".Para." + index);
 			AutomationProperties.SetName(box, FwAvaloniaStrings.StructuredTextParagraphName(field.Label ?? automationId, index + 1));
 			// An ORC/lossy paragraph stays read-only and says why (same tooltip as a lossy value).
@@ -199,7 +208,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			// for the editable box on focus / back on blur. The only way to show TRUE per-run fonts in the
 			// unfocused state. A uniform single-run paragraph skips it (the plain box suffices).
 			var valueContent = CreateValueContentWithFontSwap(field, automationId, index, box, currentRich,
-				paraEditable);
+				paraEditable, paragraphStop);
 
 			// Dense bordered paragraph row: a thin left rule marks the paragraph boundary (the legacy
 			// StText paragraph gutter), the style button leads, the value box fills, add/delete trail.
@@ -243,6 +252,20 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			};
 		}
 
+		// A paragraph flows in the direction of its first run's writing system. Null when that
+		// writing system is unknown (no runs, untagged first run, or no font), so callers
+		// keep the direction they have.
+		private static bool? FirstRunRightToLeft(DetailField field, DetailRichTextValue rich)
+		{
+			if (rich == null || rich.Runs.Count == 0 || field.WritingSystemFonts == null)
+				return null;
+			var tag = rich.Runs[0].WritingSystemTag;
+			if (string.IsNullOrEmpty(tag) || !field.WritingSystemFonts.TryGetValue(tag, out var font)
+				|| font == null)
+				return null;
+			return font.RightToLeft;
+		}
+
 		// The run-aware text-edit wiring shared with FwMultiWsTextField, narrowed to one paragraph editor:
 		// a TextChanged stages a plain-text-over-preserved-runs edit through the paragraph seam. A
 		// last-staged guard keeps the template's initial set and no-op events from staging; the guard
@@ -263,6 +286,10 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				{
 					lastStaged = text;
 					currentRich = updatedRich;
+					var rightToLeft = FirstRunRightToLeft(field, updatedRich);
+					if (rightToLeft.HasValue)
+						box.FlowDirection = rightToLeft.Value ? FlowDirection.RightToLeft
+							: FlowDirection.LeftToRight;
 					onStaged(updatedRich);
 				}
 			};
@@ -352,19 +379,17 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		// TextBlock shows (each run in its own ws/style font from the host map) while unfocused, and the
 		// box swaps in on focus. A uniform paragraph returns the bare box (no display layer).
 		private Control CreateValueContentWithFontSwap(DetailField field, string automationId,
-			int index, TextBox box, DetailRichTextValue currentRich, bool paraEditable)
+			int index, TextBox box, DetailRichTextValue currentRich, bool paraEditable,
+			DetailValueStopGroup.Stop paragraphStop)
 		{
 			if (currentRich == null || !DetailRichTextChrome.ShouldRenderPerRunFontDisplay(currentRich))
 				return box;
 
-			var rtl = currentRich.Runs.Count > 0
-				&& !string.IsNullOrEmpty(currentRich.Runs[0].WritingSystemTag)
-				&& field.WritingSystemFonts != null
-				&& field.WritingSystemFonts.TryGetValue(currentRich.Runs[0].WritingSystemTag, out var firstFont)
-				&& firstFont != null && firstFont.RightToLeft;
+			var rtl = box.FlowDirection == FlowDirection.RightToLeft;
 
 			var display = DetailRichTextChrome.CreatePerRunFontDisplay(currentRich, field.WritingSystemFonts,
 				automationId + ".Para." + index + ".Display", rtl);
+			_paragraphStops.AttachDisplay(paragraphStop, display);
 
 			// Exactly ONE of {display, box} occupies the row at a time (IsVisible collapses the other out of
 			// layout, so they never overlap): the read-along per-run-font display shows while unfocused; a

@@ -1963,12 +1963,14 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			SelectedItemIndex = selection?.SelectedItemIndex ?? -1;
 			IsDefaultActivation = isDefaultActivation;
 			// Snapshotted now, before the menu can take focus or move the selection.
-			if (selection is IDetailTextSelection text && text.HasTextEditor)
+			var textSelection = selection as IDetailTextSelection;
+			_gestureTarget = textSelection;
+			if (textSelection != null && textSelection.HasTextEditor)
 			{
-				_textSelection = text;
-				EditorText = text.EditorText;
-				EditorSelectionAnchor = text.EditorSelectionAnchor;
-				EditorSelectionEnd = text.EditorSelectionEnd;
+				_textSelection = textSelection;
+				EditorText = textSelection.EditorText;
+				EditorSelectionAnchor = textSelection.EditorSelectionAnchor;
+				EditorSelectionEnd = textSelection.EditorSelectionEnd;
 			}
 			else
 			{
@@ -1978,6 +1980,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		}
 
 		private readonly IDetailTextSelection _textSelection;
+		private readonly IDetailTextSelection _gestureTarget;
 
 		/// <summary>
 		/// The request for an item's default activation (Ctrl+click on a reference-vector
@@ -2079,13 +2082,14 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				&& _textSelection.ReplaceEditorText(EditorSelectionAnchor, EditorSelectionEnd, text, caretBack);
 
 		/// <summary>
-		/// Tells the editor a menu gesture is in progress, so it does not commit when the menu
-		/// takes focus. Nothing happens without an editor.
+		/// Tells the row a menu gesture is in progress: its text editor does not commit when the
+		/// menu takes focus, and its current item stays highlighted until the gesture ends.
+		/// Nothing happens for a row that is not a reference vector.
 		/// </summary>
-		public void BeginMenuGesture() => _textSelection?.BeginMenuGesture();
+		public void BeginMenuGesture() => _gestureTarget?.BeginMenuGesture();
 
 		/// <summary>Ends the gesture begun by <see cref="BeginMenuGesture"/>.</summary>
-		public void EndMenuGesture() => _textSelection?.EndMenuGesture();
+		public void EndMenuGesture() => _gestureTarget?.EndMenuGesture();
 	}
 
 	/// <summary>

@@ -59,6 +59,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		// on the
 		// editor path when VirtualizingStackPanel discards the container.
 		private readonly CompositeDisposable _teardown = new CompositeDisposable();
+		private readonly DetailValueStopGroup _valueStops = new DetailValueStopGroup();
 		private bool _disposed;
 
 		public FwMultiWsTextField(
@@ -77,9 +78,12 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			AutomationProperties.SetName(this, field.Label ?? field.Field ?? automationId);
 			var resolvedWsAbbrevColumnWidth = wsAbbrevColumnWidth ?? FwAvaloniaDensity.WsAbbrevWidth;
 
+			_teardown.Add(_valueStops);
 			foreach (var value in field.Values)
 				AddValueRow(field, automationId, editContext, writingSystemFocused,
 					menuRequested, clipboard, showWritingSystemAbbreviation, value, resolvedWsAbbrevColumnWidth);
+			// One Tab stop for the field; arrows move between its writing systems (LT-22688).
+			_valueStops.ApplyTabStops();
 		}
 
 		// The widest abbreviation among the rows that DRAW a gutter, clamped to
@@ -122,6 +126,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				var valueIsReadOnly = editContext == null || !field.IsEditable || !value.CanEditRichText
 					|| value.IsAudio;
 				var box = CreateValueBox(field, value, valueIsReadOnly);
+				var valueStop = _valueStops.Add(box);
 
 				WireGhostPrompt(box, field);
 
@@ -150,6 +155,9 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 					int? selectionAnchor = null;
 					EventHandler<KeyEventArgs> navKeyDown = (s, e) =>
 					{
+						_valueStops.OnKeyDown(valueStop, e);
+						if (e.Handled)
+							return;
 						if ((e.KeyModifiers & KeyModifiers.Control) != 0)
 							return;
 
@@ -741,7 +749,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				// Per-run font display: differing runs render a read-along per-run-font TextBlock
 				// swapping to the editable box on focus; a uniform value renders the bare box.
 				var valueContent = CreateValueContentWithFontSwap(field, automationId, wsKey, box,
-					currentRich, !valueIsReadOnly);
+					currentRich, !valueIsReadOnly, valueStop);
 
 				var rowPanel = CreateRowPanel(abbrev, valueContent, showWritingSystemAbbreviation, wsAbbrevColumnWidth);
 				// The whole row opens the in-string menu. The box's tunnelling handler wins
@@ -920,7 +928,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		// Panel: the TextBlock (each run in its own ws/style font from the host map) shows while unfocused;
 		// the box swaps in on focus / out on blur. A uniform value returns the bare box.
 		private Control CreateValueContentWithFontSwap(DetailField field, string automationId,
-			string wsKey, TextBox box, DetailRichTextValue currentRich, bool editable)
+			string wsKey, TextBox box, DetailRichTextValue currentRich, bool editable,
+			DetailValueStopGroup.Stop valueStop)
 		{
 			if (currentRich == null || !DetailRichTextChrome.ShouldRenderPerRunFontDisplay(currentRich))
 				return box;
@@ -928,6 +937,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			var rtl = box.FlowDirection == FlowDirection.RightToLeft;
 			var display = DetailRichTextChrome.CreatePerRunFontDisplay(currentRich, field.WritingSystemFonts,
 				automationId + "." + wsKey + ".Display", rtl);
+			_valueStops.AttachDisplay(valueStop, display);
 
 			// Exactly ONE of {display, box} occupies the row at a time (IsVisible collapses the other out
 			// of layout, so they never overlap): the per-run-font display shows while unfocused; a pointer
@@ -1357,6 +1367,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		// the menu itself takes it; the gesture's end returns focus when that happened.
 		private bool _menuGestureActive;
 		private bool _refocusAfterGesture;
+		// How many item menus are open; the current item stays highlighted while one is.
+		private int _itemMenusOpen;
 		// Teardown for the per-item select/Remove handlers, the add picker's subscriptions, the
 		// gear click, and the option flyout, so a recycled vector cell releases every closure.
 		private readonly List<Action> _teardown = new List<Action>();
@@ -1396,6 +1408,13 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			AutomationProperties.SetName(this, field.Label ?? field.Field ?? automationId);
 
 			_items = field.Items;
+			EventHandler<AvaloniaPropertyChangedEventArgs> focusWithinChanged = (s, e) =>
+			{
+				if (e.Property == IsKeyboardFocusWithinProperty)
+					PaintSelection();
+			};
+			PropertyChanged += focusWithinChanged;
+			_teardown.Add(() => PropertyChanged -= focusWithinChanged);
 			var editable = editContext != null && field.IsEditable;
 			// A row whose domain can reconcile typed text renders its items as editors rather
 			// than labels, so an item already on the field can be changed and not only replaced.
@@ -1567,9 +1586,23 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 					itemText.ContextFlyout = itemMenu;
 					// A rebuild under the Remove menu dismisses it, like any other popup.
 					var itemMenuTeardown = PopupReporting.Wire(itemMenu);
+					EventHandler itemMenuOpened = (s, e) =>
+					{
+						_itemMenusOpen++;
+						PaintSelection();
+					};
+					EventHandler itemMenuClosed = (s, e) =>
+					{
+						_itemMenusOpen = Math.Max(0, _itemMenusOpen - 1);
+						PaintSelection();
+					};
+					itemMenu.Opened += itemMenuOpened;
+					itemMenu.Closed += itemMenuClosed;
 					_teardown.Add(() =>
 					{
 						removeItem.Click -= removeClick;
+						itemMenu.Opened -= itemMenuOpened;
+						itemMenu.Closed -= itemMenuClosed;
 						itemMenuTeardown();
 						itemText.ContextFlyout = null;
 					});
@@ -1869,6 +1902,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		{
 			_menuGestureActive = true;
 			_refocusAfterGesture = HasTextEditor && _currentEditor.IsFocused;
+			PaintSelection();
 		}
 
 		/// <summary>
@@ -1886,6 +1920,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			_refocusAfterGesture = false;
 			if (refocus && HasTextEditor)
 				_currentEditor.Focus();
+			PaintSelection();
 		}
 
 		// A right press does not focus a TextBox by itself, so the press makes it the current
@@ -2001,9 +2036,20 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			if (_selectedIndex >= 0 && _itemBlocks[_selectedIndex] is TextBlock previous)
 				previous.Background = FwAvaloniaDensity.TransparentBrush;
 			_selectedIndex = index;
-			if (index >= 0 && _itemBlocks[index] is TextBlock current)
-				current.Background = FwAvaloniaDensity.SelectedRowBrush;
+			PaintSelection();
 			SelectionChanged?.Invoke(this, EventArgs.Empty);
+		}
+
+		// The current item is highlighted only while the user is working in the row: focus is
+		// inside it, or one of its menus is open. It stays current when the highlight is off.
+		private void PaintSelection()
+		{
+			if (_selectedIndex < 0 || !(_itemBlocks[_selectedIndex] is TextBlock current))
+				return;
+			var shown = IsKeyboardFocusWithin || _menuGestureActive || _itemMenusOpen > 0;
+			current.Background = shown
+				? FwAvaloniaDensity.SelectedRowBrush
+				: FwAvaloniaDensity.TransparentBrush;
 		}
 
 		/// <summary>
