@@ -194,21 +194,20 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 			// Set up for the reversal index combo box or dropdown menu.
 			var reversalIndexGuid = ReversalIndexEntryUi.GetObjectGuidIfValid(m_propertyTable, "ReversalIndexGuid");
+			Guid firstGuid = Guid.Empty;
 			if (reversalIndexGuid == Guid.Empty)
 			{
 				// We haven't established the reversal index yet.  Choose the first one available.
-				Guid firstGuid = Guid.Empty;
 				List<IReversalIndex> reversalIds = cache.LanguageProject.LexDbOA.CurrentReversalIndices;
 				if (reversalIds.Count > 0)
 					firstGuid = reversalIds[0].Guid;
 				else if (cache.LanguageProject.LexDbOA.ReversalIndexesOC.Count > 0)
 					firstGuid = cache.LanguageProject.LexDbOA.ReversalIndexesOC.ToGuidArray()[0];
-				if (firstGuid != Guid.Empty)
-				{
-					SetReversalIndexGuid(firstGuid);
-				}
 			}
 			cache.DomainDataByFlid.EndNonUndoableTask();
+			// Set after the task so the change notification can never run inside it.
+			if (firstGuid != Guid.Empty)
+				SetReversalIndexGuid(firstGuid);
 		}
 
 		/// <summary>
@@ -422,7 +421,9 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				newGuid = Cache.ServiceLocator.GetInstance<IReversalIndexRepository>().AllInstances().First().Guid;
 				if (updateAndNotify)
 				{
-					m_propertyTable.SetProperty("ReversalIndexGuid", newGuid.ToString(), true);
+					// No broadcast: the only listener is a ReversalClerk, and this one
+					// is already changing to that index.
+					m_propertyTable.SetProperty("ReversalIndexGuid", newGuid.ToString(), false);
 				}
 			}
 
