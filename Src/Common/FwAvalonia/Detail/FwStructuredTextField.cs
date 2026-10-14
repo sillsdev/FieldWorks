@@ -98,7 +98,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				MinHeight = 0,
 				AcceptsReturn = false, // Enter inserts a NEW paragraph (handled below), never a line break
 				IsReadOnly = !paraEditable,
-				FlowDirection = IsFirstRunRightToLeft(field, currentRich)
+				FlowDirection = FirstRunRightToLeft(field, currentRich) == true
 					? FlowDirection.RightToLeft
 					: FlowDirection.LeftToRight,
 				BorderThickness = new Thickness(0),
@@ -252,13 +252,19 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			};
 		}
 
-		// A paragraph flows in the direction of its first run's writing system.
-		private static bool IsFirstRunRightToLeft(DetailField field, DetailRichTextValue rich)
-			=> rich != null && rich.Runs.Count > 0
-				&& !string.IsNullOrEmpty(rich.Runs[0].WritingSystemTag)
-				&& field.WritingSystemFonts != null
-				&& field.WritingSystemFonts.TryGetValue(rich.Runs[0].WritingSystemTag, out var font)
-				&& font != null && font.RightToLeft;
+		// A paragraph flows in the direction of its first run's writing system. Null when that
+		// writing system is unknown (no runs, untagged first run, or no font), so callers
+		// keep the direction they have.
+		private static bool? FirstRunRightToLeft(DetailField field, DetailRichTextValue rich)
+		{
+			if (rich == null || rich.Runs.Count == 0 || field.WritingSystemFonts == null)
+				return null;
+			var tag = rich.Runs[0].WritingSystemTag;
+			if (string.IsNullOrEmpty(tag) || !field.WritingSystemFonts.TryGetValue(tag, out var font)
+				|| font == null)
+				return null;
+			return font.RightToLeft;
+		}
 
 		// The run-aware text-edit wiring shared with FwMultiWsTextField, narrowed to one paragraph editor:
 		// a TextChanged stages a plain-text-over-preserved-runs edit through the paragraph seam. A
@@ -280,6 +286,10 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				{
 					lastStaged = text;
 					currentRich = updatedRich;
+					var rightToLeft = FirstRunRightToLeft(field, updatedRich);
+					if (rightToLeft.HasValue)
+						box.FlowDirection = rightToLeft.Value ? FlowDirection.RightToLeft
+							: FlowDirection.LeftToRight;
 					onStaged(updatedRich);
 				}
 			};

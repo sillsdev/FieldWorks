@@ -1,4 +1,4 @@
-// Copyright (c) 2026 SIL International
+﻿// Copyright (c) 2026 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -532,6 +532,80 @@ namespace FwAvaloniaTests.Detail
 		[AvaloniaTest]
 		public void RtlStructuredTextParagraphWithDisplay_CrossesAtItsOwnEdges()
 			=> AssertRtlParagraphCrossesAtItsOwnEdges(mixedRuns: true);
+
+		private static DetailField RtlFirstRunParagraphField(params DetailTextRun[] runs)
+		{
+			var text = string.Concat(runs.Select(r => r.Text));
+			var field = StructuredField(PlainParagraph(),
+				new DetailParagraph(DetailRichTextEditAlgorithms.FromRuns(text, runs.ToList())),
+				PlainParagraph());
+			field.WritingSystemFonts = new Dictionary<string, DetailRunFont>
+			{
+				["ar"] = new DetailRunFont("Arial", rightToLeft: true),
+				["en"] = new DetailRunFont("Arial")
+			};
+			return field;
+		}
+
+		private static (Window Window, DataTree View, TextBox Box) ShowMiddleParagraph(
+			DetailField field)
+		{
+			var (window, view) = ShowWithEditContext(480, 300, new FakeDetailEditContext(),
+				Field("Before"), field, Field("After"));
+			Find<TextBox>(view, "Before.vern").Focus();
+			Dispatcher.UIThread.RunJobs();
+			Tab(window);
+			Press(window, PhysicalKey.ArrowDown);
+			Assert.That(FocusedAutomationId(view), Is.EqualTo("Multi.Para.1"));
+			return (window, view, Find<TextBox>(view, "Multi.Para.1"));
+		}
+
+		[AvaloniaTest]
+		public void EditingAwayTheRtlFirstRun_FlipsTheParagraphToTheNewFirstRunsDirection()
+		{
+			var (window, view, box) = ShowMiddleParagraph(RtlFirstRunParagraphField(
+				new DetailTextRun("abc", "ar"), new DetailTextRun("def", "en")));
+			Assert.That(box.FlowDirection, Is.EqualTo(Avalonia.Media.FlowDirection.RightToLeft));
+
+			box.Text = "def";
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(box.FlowDirection, Is.EqualTo(Avalonia.Media.FlowDirection.LeftToRight),
+				"the paragraph takes the direction of its new first run");
+			box.CaretIndex = 0;
+			Press(window, PhysicalKey.ArrowRight);
+			Assert.That(FocusedAutomationId(view), Is.EqualTo("Multi.Para.1"),
+				"Right at the start of a left-to-right paragraph moves within it");
+		}
+
+		[AvaloniaTest]
+		public void EmptyingAnRtlParagraph_KeepsItsDirection()
+		{
+			var (_, _, box) = ShowMiddleParagraph(
+				RtlFirstRunParagraphField(new DetailTextRun("abcde", "ar")));
+
+			box.Text = string.Empty;
+			Dispatcher.UIThread.RunJobs();
+			Assert.That(box.FlowDirection, Is.EqualTo(Avalonia.Media.FlowDirection.RightToLeft),
+				"an empty paragraph has no first run to take a direction from");
+
+			box.Text = "x";
+			Dispatcher.UIThread.RunJobs();
+			Assert.That(box.FlowDirection, Is.EqualTo(Avalonia.Media.FlowDirection.RightToLeft),
+				"text typed into an emptied paragraph is untagged, so the direction stays");
+		}
+
+		[AvaloniaTest]
+		public void ReplacingTextInAnRtlFirstRun_KeepsTheParagraphRtl()
+		{
+			var (_, _, box) = ShowMiddleParagraph(
+				RtlFirstRunParagraphField(new DetailTextRun("abcde", "ar")));
+
+			box.Text = "abXde";
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(box.FlowDirection, Is.EqualTo(Avalonia.Media.FlowDirection.RightToLeft));
+		}
 
 		[AvaloniaTest]
 		public void TabThroughStructuredTextParagraphs_StopsOnlyAtTheFirst()
