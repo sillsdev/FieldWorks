@@ -372,7 +372,8 @@ namespace FwAvaloniaTests.Detail
 		[AvaloniaTest]
 		public void UpAndDownInWrappedText_MoveWithinTheValueBeforeLeavingIt()
 		{
-			// Window is chosen small enough to force vern and en values to wrap to at least three lines.
+			// Window is chosen small enough to force vern and en values to wrap
+			// to at least three lines.
 			var (window, view) = Show(240, 400, Field("Before"), WrappingMultiWsField(),
 				Field("After"));
 			var vern = Find<TextBox>(view, "Wrap.vern");
@@ -402,8 +403,8 @@ namespace FwAvaloniaTests.Detail
 			Assert.That(LineTopAt(en, en.CaretIndex), Is.EqualTo(LineTopAt(en, 0)).Within(1),
 				"landing on its first line");
 
-			// Check that caret is within 15 px of the horizontal position it left in previous value.
-			// The 15 px allowance is chosen to be roughly one character width.
+			// Check that caret is within 15 px of the horizontal position it left in previous
+			// value. The 15 px allowance is chosen to be roughly one character width.
 			Assert.That(CaretX(view, en), Is.EqualTo(x).Within(15),
 				"near the horizontal position the caret left");
 
@@ -414,8 +415,8 @@ namespace FwAvaloniaTests.Detail
 			Assert.That(LineTopAt(vern, vern.CaretIndex), Is.EqualTo(tops[tops.Count - 1]).Within(1),
 				"landing on its last line");
 
-			// Check that caret is within 15 px of the horizontal position it left in previous value.
-			// The 15 px allowance is chosen to be roughly one character width.
+			// Check that caret is within 15 px of the horizontal position it left in previous
+			// value. The 15 px allowance is chosen to be roughly one character width.
 			Assert.That(CaretX(view, vern), Is.EqualTo(x).Within(15),
 				"near the horizontal position the caret left");
 		}

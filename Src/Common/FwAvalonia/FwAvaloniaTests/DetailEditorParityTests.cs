@@ -104,7 +104,8 @@ namespace FwAvaloniaTests
 		public void ReferenceVector_ReadOnly_WiresOnlyTheItemSelectHandlers()
 		{
 			// A read-only vector (no edit context) wires no edit handlers. Its handlers are:
-			// one select handler per item, the row's item-key handler, and its focus-tracking handler.
+			// one select handler per item, the row's item-key handler,
+			// and its focus-tracking handler.
 			var vector = new FwReferenceVectorField(VectorFieldWithItems(), "PublishIn", editContext: null);
 			Assert.That(vector.AttachedHandlerCount, Is.EqualTo(3),
 				"one item's select handler, the row's key handler, and its focus-tracking handler; "
