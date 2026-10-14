@@ -631,8 +631,8 @@ namespace SIL.FieldWorks.LexText.Controls
 
 			if (m_propertyTable != null)
 			{
-				m_propertyTable.SetProperty("msaInflFeatListDlgLocation", Location, true);
-				m_propertyTable.SetProperty("msaInflFeatListDlgSize", Size, true);
+				m_propertyTable.SetProperty("msaInflFeatListDlgLocation", Location, false);
+				m_propertyTable.SetProperty("msaInflFeatListDlgSize", Size, false);
 			}
 		}
 

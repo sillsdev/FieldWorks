@@ -23,7 +23,5 @@ namespace SIL.FieldWorks.Filters
 		int PathLength { get; }
 		int PathObject(int index);
 		int PathFlid(int index);
-		// This is in the interface only for internal use.
-		string PersistData(ICmObjectRepository repo);
 	}
 }

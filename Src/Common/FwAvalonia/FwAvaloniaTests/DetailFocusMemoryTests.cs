@@ -50,6 +50,63 @@ namespace FwAvaloniaTests
 		private static DataTree NewView()
 			=> new DataTree(DetailModelProjector.FromViewDefinition(Definition(), new Provider()));
 
+		// The same view with its Gloss field gone, as a re-show after deleting that field's
+		// object would build it.
+		private static DataTree NewViewWithoutGloss()
+		{
+			var definition = Definition();
+			var withoutGloss = new ViewDefinitionModel(definition.ClassName, definition.LayoutName,
+				definition.LayoutType, new List<ViewNode> { definition.Roots[0] }, new List<ViewDiagnostic>());
+			return new DataTree(DetailModelProjector.FromViewDefinition(withoutGloss, new Provider()));
+		}
+
+		// A gesture removed the focused row and named its neighbours, nearest first: with the
+		// remembered editor gone from the rebuilt view, the first surviving row takes focus.
+		[AvaloniaTest]
+		public void RequestedRowFocus_FocusesTheFirstSurvivingRow_WhenTheRememberedEditorIsGone()
+		{
+			var first = NewView();
+			var window = new Window { Content = first, Width = 420, Height = 200 };
+			window.Show();
+			Dispatcher.UIThread.RunJobs();
+			FindEditor(first, "GlossEditor.vern").Focus();
+			Dispatcher.UIThread.RunJobs();
+
+			first.RequestRowFocusOnRebuild(new[] { "RowThatAlsoVanishes", "LexemeFormEditor" });
+			var memento = DetailFocusMemory.Capture(first);
+			Assert.That(memento.AutomationId, Is.EqualTo("GlossEditor.vern"), "precondition: the doomed editor had focus");
+			Assert.That(memento.RowAutomationIds, Is.EqualTo(new[] { "RowThatAlsoVanishes", "LexemeFormEditor" }));
+
+			var second = NewViewWithoutGloss();
+			DetailFocusMemory.RestoreAfterLayout(second, memento);
+			window.Content = second;
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(FindEditor(second, "GlossEditor.vern"), Is.Null, "precondition: the remembered editor is gone");
+			Assert.That(FindEditor(second, "LexemeFormEditor.vern").IsFocused, Is.True,
+				"the requested row's editor takes focus");
+		}
+
+		// The remembered editor wins over a requested row when both survive the re-show.
+		[AvaloniaTest]
+		public void RequestedRowFocus_YieldsToTheRememberedEditor_WhenItSurvives()
+		{
+			var first = NewView();
+			var window = new Window { Content = first, Width = 420, Height = 200 };
+			window.Show();
+			Dispatcher.UIThread.RunJobs();
+			FindEditor(first, "GlossEditor.vern").Focus();
+			Dispatcher.UIThread.RunJobs();
+			first.RequestRowFocusOnRebuild(new[] { "LexemeFormEditor" });
+
+			var second = NewView();
+			DetailFocusMemory.RestoreAfterLayout(second, DetailFocusMemory.Capture(first));
+			window.Content = second;
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(FindEditor(second, "GlossEditor.vern").IsFocused, Is.True);
+		}
+
 		private static DataTree NewLongView()
 		{
 			var roots = new List<ViewNode>();

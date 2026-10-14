@@ -17,7 +17,6 @@ using SIL.FieldWorks.FwCoreDlgs;
 using SIL.FieldWorks.LexText.Controls;
 using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.XWorks.Archiving;
-using SIL.IO;
 using SIL.LCModel;
 using SIL.LCModel.Application;
 using SIL.LCModel.Core.KernelInterfaces;
@@ -297,11 +296,11 @@ namespace SIL.FieldWorks.XWorks
 			{
 				m_delegate.App = app;
 
-				m_propertyTable.SetProperty("HelpTopicProvider", app, true);
+				m_propertyTable.SetProperty("HelpTopicProvider", app, false);
 				m_propertyTable.SetPropertyPersistence("HelpTopicProvider", false);
-				m_propertyTable.SetProperty("FeedbackInfoProvider", app, true);
+				m_propertyTable.SetProperty("FeedbackInfoProvider", app, false);
 				m_propertyTable.SetPropertyPersistence("FeedbackInfoProvider", false);
-				m_propertyTable.SetProperty("App", app, true);
+				m_propertyTable.SetProperty("App", app, false);
 				m_propertyTable.SetPropertyPersistence("App", false);
 			}
 			Subscriber.Subscribe(EventConstants.JumpToPopupLexEntry, JumpToPopupLexEntry, this);
@@ -381,21 +380,6 @@ namespace SIL.FieldWorks.XWorks
 			base.RestoreProperties();
 			m_propertyTable.RestoreFromFile(m_propertyTable.LocalSettingsId);
 			GlobalSettingServices.RestoreSettings(Cache.ServiceLocator, m_propertyTable);
-		}
-
-		/// <summary>
-		/// If we are discarding saved settings, we must not keep any saved sort sequences,
-		/// as they may represent a filter we are not restoring (LT-11647)
-		/// </summary>
-		protected override void DiscardProperties()
-		{
-			var tempDirectory = Path.Combine(Cache.ProjectId.ProjectFolder, LcmFileHelper.ksSortSequenceTempDir);
-			RobustIO.DeleteDirectoryAndContents(tempDirectory);
-		}
-
-		public void ClearInvalidatedStoredData()
-		{
-			DiscardProperties();
 		}
 
 		/// -----------------------------------------------------------------------------------
@@ -526,7 +510,7 @@ namespace SIL.FieldWorks.XWorks
 		protected void InitMediatorValues(LcmCache cache)
 		{
 			m_propertyTable.LocalSettingsId = "local";
-			m_propertyTable.SetProperty("cache", cache, true);
+			m_propertyTable.SetProperty("cache", cache, false);
 			m_propertyTable.SetPropertyPersistence("cache", false);
 			m_propertyTable.SetProperty("DocumentName", GetProjectName(cache), false);
 			m_propertyTable.SetPropertyPersistence("DocumentName", false);

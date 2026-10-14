@@ -3,6 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Collections.Generic;
 using Avalonia.Automation;
 using Avalonia.Controls;
 using Avalonia;
@@ -30,7 +31,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		{
 			public Memento(string automationId, int caretIndex, double verticalOffset = 0,
 				string vectorAutomationId = null, string vectorItemKey = null, int vectorItemIndex = -1,
-				bool focusVectorItem = false)
+				bool focusVectorItem = false, IReadOnlyList<string> rowAutomationIds = null)
 			{
 				AutomationId = automationId;
 				CaretIndex = caretIndex;
@@ -39,7 +40,15 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				VectorItemKey = vectorItemKey;
 				VectorItemIndex = vectorItemIndex;
 				FocusVectorItem = focusVectorItem;
+				RowAutomationIds = rowAutomationIds;
 			}
+
+			/// <summary>
+			/// The automation ids of the rows the outgoing view asked to try focusing after
+			/// the rebuild, in order (a gesture removed the focused row and maybe its
+			/// neighbours); null when none.
+			/// </summary>
+			public IReadOnlyList<string> RowAutomationIds { get; }
 
 			/// <summary>
 			/// True when the outgoing view asked for the vector row's current item to take
@@ -84,10 +93,11 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			var vectorKey = selectedVector?.SelectedItemKey;
 			var vectorIndex = selectedVector?.SelectedItemIndex ?? -1;
 			var focusVector = tree?.VectorFocusRequested ?? false;
+			var focusRow = tree?.RowFocusRequested;
 
 			var focusManager = TopLevel.GetTopLevel(root)?.FocusManager;
 			if (!(focusManager?.GetFocusedElement() is Control focused) || !root.IsVisualAncestorOf(focused))
-				return new Memento(null, -1, verticalOffset, vectorId, vectorKey, vectorIndex, focusVector);
+				return new Memento(null, -1, verticalOffset, vectorId, vectorKey, vectorIndex, focusVector, focusRow);
 
 			// The editor itself carries the stable id (e.g. "LexemeFormEditor.vern"); walk up in
 			// case focus landed on an inner template part.
@@ -97,11 +107,11 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				if (!string.IsNullOrEmpty(id))
 				{
 					return new Memento(id, (focused as TextBox)?.CaretIndex ?? -1, verticalOffset,
-						vectorId, vectorKey, vectorIndex, focusVector);
+						vectorId, vectorKey, vectorIndex, focusVector, focusRow);
 				}
 			}
 
-			return new Memento(null, -1, verticalOffset, vectorId, vectorKey, vectorIndex, focusVector);
+			return new Memento(null, -1, verticalOffset, vectorId, vectorKey, vectorIndex, focusVector, focusRow);
 		}
 
 		// Whether the rebuilt view should focus the vector row's current item: the outgoing view
@@ -207,9 +217,10 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		/// <summary>
 		/// Restores the memento once the incoming view has laid out: the scroll offset first (an
 		/// offset set before layout is clamped to zero by the still-empty extent), then the
-		/// vector row's current item, then focus -- the remembered editor, or else that current
-		/// item when the memento asks for it, so a move or removal made from the row keeps the
-		/// keyboard in the row. Safe to call before the view is attached.
+		/// vector row's current item, then focus -- the remembered editor, else that current
+		/// item when the memento asks for it (a move or removal made from the row keeps the
+		/// keyboard in the row), else the first surviving row the outgoing view asked for (a
+		/// gesture removed the focused row). Safe to call before the view is attached.
 		/// </summary>
 		public static void RestoreAfterLayout(Control root, Memento memento)
 		{
@@ -229,8 +240,13 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				if (needsScroll)
 					TryRestoreScroll(root, memento);
 				var vector = RestoreVectorSelection(root, memento);
-				if (!TryRestoreFocus(root, memento) && vector != null && WantsVectorFocus(memento))
-					vector.FocusItemAt(vector.SelectedItemIndex);
+				if (!TryRestoreFocus(root, memento))
+				{
+					if (vector != null && WantsVectorFocus(memento))
+						vector.FocusItemAt(vector.SelectedItemIndex);
+					else if (memento.RowAutomationIds != null)
+						(root as DataTree)?.FocusFirstRow(memento.RowAutomationIds);
+				}
 				// A bring-into-view request queued by a focus change is applied by the next
 				// arrange; the remembered offset is re-asserted after it.
 				if (needsScroll)

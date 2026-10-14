@@ -1452,11 +1452,11 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			if (m_mediator != null && m_propertyTable != null)
 			{
 				string propertyName = kPersistenceLabel + "DlgLocation";
-				m_propertyTable.SetProperty(propertyName, Location, true);
+				m_propertyTable.SetProperty(propertyName, Location, false);
 				propertyName = kPersistenceLabel + "ShowMore";
 				m_propertyTable.SetProperty(propertyName,
 					Height == m_heightDlgMore ? "true" : "false",
-					true);
+					false);
 			}
 			base.OnClosing(e);
 			// If no other handler of this event tried to intervene, the dialog itself will

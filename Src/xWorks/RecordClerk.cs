@@ -408,27 +408,6 @@ namespace SIL.FieldWorks.XWorks
 			SetupDataContext(false);
 		}
 
-		/// <summary>
-		/// Persist this list for retrieval by RestoreListFrom, if we are a primary Clerk.
-		/// </summary>
-		internal void PersistListOn(string pathname)
-		{
-			if (IsPrimaryClerk)
-				m_list.PersistOn(pathname);
-		}
-
-		/// <summary>
-		/// Returns true if successful, false if some problem reading the file, including
-		/// detecting that part of a key is a deleted object. Return false if this is not
-		/// the primary clerk.
-		/// </summary>
-		internal bool RestoreListFrom(string pathname)
-		{
-			if (!IsPrimaryClerk)
-				return false;
-			return m_list.RestoreFrom(pathname);
-		}
-
 		private string GetSortNamePropertyTableId(DictionaryConfigurationModel dictConfig = null)
 		{
 			CheckDisposed();
@@ -596,7 +575,7 @@ namespace SIL.FieldWorks.XWorks
 		protected virtual void StoreClerkInPropertyTable(XmlNode clerkConfiguration)
 		{
 			string property = GetCorrespondingPropertyName(ToolConfiguration.GetIdOfTool(clerkConfiguration));
-			m_propertyTable.SetProperty(property, this, true);
+			m_propertyTable.SetProperty(property, this, false);
 			m_propertyTable.SetPropertyPersistence(property, false);
 			m_propertyTable.SetPropertyDispose(property, true);
 		}
@@ -671,7 +650,7 @@ namespace SIL.FieldWorks.XWorks
 				{
 					// reset this property.
 					m_propertyTable.SetProperty("SuspendLoadListUntilOnChangeFilter", "",
-						PropertyTable.SettingsGroup.LocalSettings, true);
+						PropertyTable.SettingsGroup.LocalSettings, false);
 				}
 			}
 		}
@@ -699,7 +678,7 @@ namespace SIL.FieldWorks.XWorks
 					// reset this property.
 					m_propertyTable.SetProperty("SuspendLoadingRecordUntilOnJumpToRecord", "",
 						PropertyTable.SettingsGroup.LocalSettings,
-						true);
+						false);
 					m_propertyTable.SetPropertyPersistence("SuspendLoadingRecordUntilOnJumpToRecord", false);
 				}
 
@@ -1808,7 +1787,7 @@ namespace SIL.FieldWorks.XWorks
 
 			// save the selected record index.
 			string propName = PersistedIndexProperty;
-			m_propertyTable.SetProperty(propName, CurrentIndex, PropertyTable.SettingsGroup.LocalSettings, true);
+			m_propertyTable.SetProperty(propName, CurrentIndex, PropertyTable.SettingsGroup.LocalSettings, false);
 			m_propertyTable.SetPropertyPersistence(propName, true, PropertyTable.SettingsGroup.LocalSettings);
 
 			if (IsControllingTheRecordTreeBar)
@@ -2001,26 +1980,26 @@ namespace SIL.FieldWorks.XWorks
 				if (oldActiveClerk != this)
 				{
 					var oldUseRecordTreeBar = m_propertyTable.GetValue<Boolean>("UseRecordTreeBar");
-					m_propertyTable.SetProperty("OldUseRecordTreeBar", oldUseRecordTreeBar, true);
+					m_propertyTable.SetProperty("OldUseRecordTreeBar", oldUseRecordTreeBar, false);
 					m_propertyTable.SetPropertyPersistence("OldUseRecordTreeBar", false);
-					m_propertyTable.SetProperty("UseRecordTreeBar", m_useRecordTreeBar, true);
+					m_propertyTable.SetProperty("UseRecordTreeBar", m_useRecordTreeBar, false);
 					m_propertyTable.SetPropertyPersistence("UseRecordTreeBar", false);
 
 					var oldUpdateStatusBar = m_propertyTable.GetValue<Boolean>("UpdateStatusBar");
-					m_propertyTable.SetProperty("OldUpdateStatusBar", oldUpdateStatusBar, true);
+					m_propertyTable.SetProperty("OldUpdateStatusBar", oldUpdateStatusBar, false);
 					m_propertyTable.SetPropertyPersistence("OldUpdateStatusBar", false);
-					m_propertyTable.SetProperty("UpdateStatusBar", m_updateStatusBar, true);
+					m_propertyTable.SetProperty("UpdateStatusBar", m_updateStatusBar, false);
 					m_propertyTable.SetPropertyPersistence("UpdateStatusBar", false);
 
 					oldActiveClerk?.BecomeInactive();
-					m_propertyTable.SetProperty("OldActiveClerk", oldActiveClerk, true);
+					m_propertyTable.SetProperty("OldActiveClerk", oldActiveClerk, false);
 					m_propertyTable.SetPropertyPersistence("OldActiveClerk", false);
 					m_propertyTable.SetProperty("ActiveClerk", this, true);
 					m_propertyTable.SetPropertyPersistence("ActiveClerk", false);
 					// We are adding this property so that EntryDlgListener can get access to the owning object
 					// without first getting a RecordClerk, since getting a RecordClerk at that level causes a
 					// circular dependency in compilation.
-					m_propertyTable.SetProperty("ActiveClerkOwningObject", OwningObject, true);
+					m_propertyTable.SetProperty("ActiveClerkOwningObject", OwningObject, false);
 					m_propertyTable.SetPropertyPersistence("ActiveClerkOwningObject", false);
 					m_propertyTable.SetProperty("ActiveClerkSelectedObject", CurrentObject, true);
 					m_propertyTable.SetPropertyPersistence("ActiveClerkSelectedObject", false);
@@ -2829,7 +2808,7 @@ namespace SIL.FieldWorks.XWorks
 				m_list.OnChangeFilter(args);
 				// Remember the active filter for this list.
 				string persistFilter = DynamicLoader.PersistObject(Filter, "filter");
-				m_propertyTable.SetProperty(GetFilterPropertyTableId(), persistFilter, PropertyTable.SettingsGroup.LocalSettings, true);
+				m_propertyTable.SetProperty(GetFilterPropertyTableId(), persistFilter, PropertyTable.SettingsGroup.LocalSettings, false);
 				// adjust menu bar items according to current state of Filter, where needed.
 #pragma warning disable 618 // suppress obsolete warning
 				m_mediator.BroadcastMessage("AdjustFilterSelection", Filter);
@@ -3041,12 +3020,12 @@ namespace SIL.FieldWorks.XWorks
 			m_isDefaultSort = isDefaultSort;
 
 			SortName = sortName;
-			m_propertyTable.SetProperty(GetSortNamePropertyTableId(), SortName, PropertyTable.SettingsGroup.LocalSettings, true);
+			m_propertyTable.SetProperty(GetSortNamePropertyTableId(), SortName, PropertyTable.SettingsGroup.LocalSettings, false);
 
 			m_list.ChangeSorter(sorter);
 			// Remember how we're sorted.
 			string persistSorter = DynamicLoader.PersistObject(Sorter, "sorter");
-			m_propertyTable.SetProperty(GetSorterPropertyTableId(), persistSorter, PropertyTable.SettingsGroup.LocalSettings, true);
+			m_propertyTable.SetProperty(GetSorterPropertyTableId(), persistSorter, PropertyTable.SettingsGroup.LocalSettings, false);
 
 			UpdateSortStatusBarPanel();
 		}
@@ -3331,15 +3310,6 @@ namespace SIL.FieldWorks.XWorks
 				set { m_fTriggerPendingReloadOnDispose = value; }
 			}
 
-			/// <summary>
-			/// The list was successfully restored (from a persisted sort sequence).
-			/// We should NOT sort it when disposed, nor restore an original flag indicating it needed sorting.
-			/// </summary>
-			internal void ListWasRestored()
-			{
-				m_fTriggerPendingReloadOnDispose = false;
-				m_fOriginalLoadRequestedWhileSuppressed = false;
-			}
 			#region DisposableBase Members
 
 			protected override void DisposeManagedResources()

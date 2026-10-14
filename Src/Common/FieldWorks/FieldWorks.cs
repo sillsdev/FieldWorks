@@ -1830,7 +1830,7 @@ namespace SIL.FieldWorks
 										var activeWindowInterface = (IFwMainWnd)activeWindow;
 										activeWindowInterface.PropTable.SetProperty("LastBridgeUsed",
 											obtainedProjectType == ObtainedProjectType.Lift ? "LiftBridge" : "FLExBridge",
-											PropertyTable.SettingsGroup.LocalSettings, true);
+											PropertyTable.SettingsGroup.LocalSettings, false);
 									}
 								}
 							}
@@ -1912,7 +1912,7 @@ namespace SIL.FieldWorks
 					activeWindowInterface.PropTable.SetProperty("LastBridgeUsed",
 						dlg.ObtainedProjectType == ObtainedProjectType.Lift ? "LiftBridge" : "FLExBridge",
 						PropertyTable.SettingsGroup.LocalSettings,
-						true);
+						false);
 				}
 
 				if (dlg.DialogResult == DialogResult.OK)

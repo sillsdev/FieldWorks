@@ -2195,7 +2195,7 @@ namespace SIL.FieldWorks.Common.Controls
 			{
 				int nNewWidth = m_lvHeader.ColumnsInDisplayOrder[ColumnHeaderIndex(iCol)].Width;
 				string PropName = FormatColumnWidthPropertyName(iCol);
-				m_propertyTable.SetProperty(PropName, nNewWidth, PropertyTable.SettingsGroup.LocalSettings, true);
+				m_propertyTable.SetProperty(PropName, nNewWidth, PropertyTable.SettingsGroup.LocalSettings, false);
 			}
 		}
 
@@ -3080,7 +3080,7 @@ namespace SIL.FieldWorks.Common.Controls
 					colList.Append("<hidden label=\"" + SecurityElement.Escape(label) + "\"/>");
 			}
 			colList.Append("</root>");
-			m_propertyTable.SetProperty(m_xbv.Vc.ColListId, colList.ToString(), PropertyTable.SettingsGroup.LocalSettings, true);
+			m_propertyTable.SetProperty(m_xbv.Vc.ColListId, colList.ToString(), PropertyTable.SettingsGroup.LocalSettings, false);
 		}
 
 		/// <summary>

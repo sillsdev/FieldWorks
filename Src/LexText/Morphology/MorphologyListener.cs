@@ -265,7 +265,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 				OnEnableVernacularSpelling();
 			else
 				WfiWordformServices.DisableVernacularSpellingDictionary(Cache);
-			m_propertyTable.SetProperty("UseVernSpellingDictionary", checking, true);
+			m_propertyTable.SetProperty("UseVernSpellingDictionary", checking, false);
 			m_propertyTable.SetPropertyPersistence("UseVernSpellingDictionary", true);
 			RestartSpellChecking();
 			return true;

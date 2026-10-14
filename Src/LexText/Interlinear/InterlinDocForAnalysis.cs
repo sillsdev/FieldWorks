@@ -813,7 +813,7 @@ namespace SIL.FieldWorks.IText
 				((InterlinDocForAnalysisVc)Vc).FocusBoxOccurrence = value;
 				m_propertyTable.SetProperty("TextSelectedWord",
 					value != null && value.HasWordform ? value.Analysis.Wordform : null,
-					true);
+					false);
 				m_propertyTable.SetPropertyPersistence("TextSelectedWord", false);
 			}
 		}

@@ -1624,6 +1624,13 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		public string GhostPrompt { get; }
 
 		public string StableId { get; }
+
+		/// <summary>
+		/// The automation id of the row built for this field: its own when the layout gives
+		/// one, else its stable id.
+		/// </summary>
+		public string RowAutomationId => string.IsNullOrEmpty(AutomationId) ? StableId : AutomationId;
+
 		public string Label { get; }
 		public string Field { get; }
 		public string WritingSystem { get; }
@@ -1681,6 +1688,19 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 
 		/// <summary>Initial expansion state of a collapsible header (from the layout's expansion attr).</summary>
 		public bool IsInitiallyExpanded { get; }
+
+		private string _expansionKey;
+
+		/// <summary>
+		/// The key a collapsible header's expansion state is recorded and persisted under;
+		/// <see cref="StableId"/> when none is set. Settable so a row can carry a key that names
+		/// its object by guid, which still identifies that object after the project is reopened.
+		/// </summary>
+		public string ExpansionKey
+		{
+			get => _expansionKey ?? StableId;
+			set => _expansionKey = value;
+		}
 
 		/// <summary>Legacy slice menu id (layout `menu=`) for right-click on the row/label (13.x).</summary>
 		public string MenuId { get; }

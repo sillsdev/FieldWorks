@@ -321,7 +321,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			if (m_propertyTable != null)
 			{
-				m_propertyTable.SetProperty("msaCreatorDlgLocation", Location, true);
+				m_propertyTable.SetProperty("msaCreatorDlgLocation", Location, false);
 				//No need, since the dlg isnt; resizable. m_mediator.XCore.PropertyTable.SetProperty("msaCreatorDlgSize", Size);
 			}
 		}

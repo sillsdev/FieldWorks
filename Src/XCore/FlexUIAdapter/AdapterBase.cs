@@ -79,7 +79,7 @@ namespace XCore
 				{
 					manager = new ToolStripManager();
 					m_window.Controls.Add(manager);
-					m_propertyTable.SetProperty("ToolStripManager", manager, true);
+					m_propertyTable.SetProperty("ToolStripManager", manager, false);
 					m_propertyTable.SetPropertyPersistence("ToolStripManager", false);
 				}
 

@@ -112,7 +112,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			UpdateButtons();
 			if (btnOK.Enabled)
 			{
-				m_propertyTable.SetProperty(FilePropertyName, tbPath.Text, true);
+				m_propertyTable.SetProperty(FilePropertyName, tbPath.Text, false);
 				m_propertyTable.SetPropertyPersistence(FilePropertyName, true);
 			}
 		}

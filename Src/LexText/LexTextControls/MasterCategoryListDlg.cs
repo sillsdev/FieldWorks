@@ -498,8 +498,8 @@ namespace SIL.FieldWorks.LexText.Controls
 
 			if (m_mediator != null)
 			{
-				m_propertyTable.SetProperty("masterCatListDlgLocation", Location, true);
-				m_propertyTable.SetProperty("masterCatListDlgSize", Size, true);
+				m_propertyTable.SetProperty("masterCatListDlgLocation", Location, false);
+				m_propertyTable.SetProperty("masterCatListDlgSize", Size, false);
 			}
 		}
 

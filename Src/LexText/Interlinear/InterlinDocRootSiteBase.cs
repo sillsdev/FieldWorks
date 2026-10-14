@@ -900,7 +900,7 @@ namespace SIL.FieldWorks.IText
 			m_propertyTable.SetProperty(ConfigPropName,
 				Vc.LineChoices.Persist(m_cache.LanguageWritingSystemFactoryAccessor),
 				PropertyTable.SettingsGroup.LocalSettings,
-				true);
+				false);
 			UpdateDisplayForNewLineChoices();
 		}
 

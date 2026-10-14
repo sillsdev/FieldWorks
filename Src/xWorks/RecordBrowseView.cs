@@ -72,7 +72,6 @@ namespace SIL.FieldWorks.XWorks
 
 				if (ExistingClerk != null) // ExistingClerk, *not* Clerk (see doc on ExistingClerk)
 				{
-					PersistSortSequence();
 					ExistingClerk.FilterChangedByClerk -= Clerk_FilterChangedByClerk;
 					ExistingClerk.SorterChangedByClerk -= Clerk_SorterChangedByClerk;
 				}
@@ -278,7 +277,7 @@ namespace SIL.FieldWorks.XWorks
 			// to display an out-of-date list containing deleted objects, all kinds of things may go wrong.
 			if (XmlUtils.GetOptionalBooleanAttributeValue(m_configurationParameters, "forceReloadListOnInitOrChangeRoot", false))
 			{
-				m_propertyTable.SetProperty(Clerk.Id + "_AlwaysRecomputeVirtualOnReloadList", true, true);
+				m_propertyTable.SetProperty(Clerk.Id + "_AlwaysRecomputeVirtualOnReloadList", true, false);
 				// (EricP) when called by RecordView.InitBase() in the context of ListUpdateHelper.ClearBrowseListUntilReload
 				// the list does not get reloaded until ListUpdateHelper is disposed, but the views property
 				// will get cleared to prevent these views from accessing invalid objects.
@@ -358,18 +357,6 @@ namespace SIL.FieldWorks.XWorks
 		{
 			SetupLinkScripture();
 			return m_browseViewer.FollowLink(args);
-		}
-
-
-		/// <summary>
-		/// This is the best way I can find to catch when the control is going away.
-		/// </summary>
-		/// <param name="e"></param>
-		protected override void OnParentChanged(EventArgs e)
-		{
-			if (Parent == null)
-				PersistSortSequence();
-			base.OnParentChanged(e);
 		}
 
 		protected virtual BrowseViewer CreateBrowseViewer(XmlNode nodeSpec, int hvoRoot, int fakeFlid, LcmCache cache,
@@ -807,7 +794,7 @@ namespace SIL.FieldWorks.XWorks
 		private void m_browseViewer_SelectedIndexChanged(object sender, EventArgs e)
 		{
 			string propName = Clerk.PersistedIndexProperty;
-			m_propertyTable.SetProperty(propName, Clerk.CurrentIndex, PropertyTable.SettingsGroup.LocalSettings, true);
+			m_propertyTable.SetProperty(propName, Clerk.CurrentIndex, PropertyTable.SettingsGroup.LocalSettings, false);
 			m_propertyTable.SetPropertyPersistence(propName, true, PropertyTable.SettingsGroup.LocalSettings);
 		}
 
