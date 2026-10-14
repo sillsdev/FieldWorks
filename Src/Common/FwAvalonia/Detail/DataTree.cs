@@ -94,6 +94,56 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		/// for a gesture (a menu-driven move) made while no editor had focus.
 		/// </summary>
 		public void RequestVectorFocusOnRebuild() => VectorFocusRequested = true;
+
+		// Each row's focus targets by its automation id (a header row's "editor" is the
+		// header itself), for a focus requested across a rebuild.
+		private readonly Dictionary<string, (Control Editor, Control Kebab)> _rowFocusTargets =
+			new Dictionary<string, (Control Editor, Control Kebab)>(StringComparer.Ordinal);
+
+		/// <summary>The automation ids of the rows the rebuild that follows should try to
+		/// focus, in order; null when none was requested.</summary>
+		internal IReadOnlyList<string> RowFocusRequested { get; private set; }
+
+		/// <summary>
+		/// Asks the rebuild that follows to give keyboard focus to the first of
+		/// <paramref name="rowAutomationIds"/> it shows, for a gesture that removed the
+		/// focused row and may have removed its neighbours with it.
+		/// </summary>
+		public void RequestRowFocusOnRebuild(IReadOnlyList<string> rowAutomationIds)
+			=> RowFocusRequested = rowAutomationIds;
+
+		/// <summary>
+		/// Focuses the first row of <paramref name="rowAutomationIds"/> that is shown and
+		/// can take focus; false when none can.
+		/// </summary>
+		internal bool FocusFirstRow(IEnumerable<string> rowAutomationIds)
+		{
+			if (rowAutomationIds == null)
+				return false;
+			foreach (var id in rowAutomationIds)
+			{
+				if (FocusRow(id))
+					return true;
+			}
+			return false;
+		}
+
+		/// <summary>
+		/// Focuses the row with <paramref name="rowAutomationId"/> as a label gesture does,
+		/// falling back to its field-menu button when the editor is hidden (a collapsed
+		/// section); false when no such row is shown or neither can take focus.
+		/// </summary>
+		internal bool FocusRow(string rowAutomationId)
+		{
+			if (rowAutomationId == null || !_rowFocusTargets.TryGetValue(rowAutomationId, out var row))
+				return false;
+			var target = FocusTargetOf(row.Editor, row.Kebab);
+			if (target == null || !target.IsEffectivelyVisible)
+				target = row.Kebab;
+			if (target == null || !target.IsEffectivelyVisible)
+				return false;
+			return target.Focus();
+		}
 		private readonly IFwClipboard _clipboard;
 
 		// Computed once per view (not per field/row) from the widest WS abbreviation across the
@@ -546,6 +596,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 					{
 						_form.Items.RemoveAt(position);
 						_rows[i] = null;
+						_rowFocusTargets.Remove(Model.Fields[i].RowAutomationId);
 						removed.Add(row);
 					}
 					continue;
@@ -665,7 +716,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 
 		private FieldContent AddField(int row, DetailField field, ShownRow shown)
 		{
-			var automationId = string.IsNullOrEmpty(field.AutomationId) ? field.StableId : field.AutomationId;
+			var automationId = field.RowAutomationId;
 			var indent = new Thickness(field.Indent * 12, 0, 0, 0);
 
 			// Section/group headers from full-layout composition span the full item width
@@ -701,6 +752,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				// "..." field-menu button (in a thin gutter to the left of the header)
 				// opens the section menu/hotlinks.
 				var headerCell = WrapWithFieldMenu(header, field, automationId, out var headerKebab);
+				_rowFocusTargets[automationId] = (header, headerKebab);
 
 				// Discoverability parity (legacy SummaryCommandControl): a section header with hotlinks
 				// shows its commands as an ALWAYS-VISIBLE inline command-link strip directly beneath the
@@ -797,6 +849,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			// gutter "..." button; the editor's current item rides each request it raises.
 			var labelCell = WrapWithFieldMenu(labelBlock, field, automationId, out var labelKebab,
 				editor as IDetailItemSelection, editor);
+			_rowFocusTargets[automationId] = (editor, labelKebab);
 
 			// Hover-reveal: the WHOLE row (label cell + editor) is the hover/focus
 			// surface for the field-options "..." and any editor affordance (chooser
@@ -926,17 +979,21 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			var focused = TopLevel.GetTopLevel(cell)?.FocusManager?.GetFocusedElement();
 			if (IsOn(cell, focused) || IsOn(editor, focused))
 				return;
-			Control target;
+			FocusTargetOf(editor, kebab)?.Focus();
+		}
+
+		// The control a row's gesture focuses: a vector row its button (focusing an item would
+		// make it current), else the editor or its first focusable part; null when none.
+		private static Control FocusTargetOf(Control editor, Control kebab)
+		{
+			if (editor == null)
+				return null;
 			if (editor is IDetailItemSelection)
-				target = kebab;
-			else if (editor.Focusable)
-				target = editor;
-			else
-			{
-				target = Avalonia.VisualTree.VisualExtensions.GetVisualDescendants(editor).OfType<Control>()
-					.FirstOrDefault(c => c.Focusable && c.IsEffectivelyEnabled && c.IsEffectivelyVisible);
-			}
-			target?.Focus();
+				return kebab;
+			if (editor.Focusable)
+				return editor;
+			return Avalonia.VisualTree.VisualExtensions.GetVisualDescendants(editor).OfType<Control>()
+				.FirstOrDefault(c => c.Focusable && c.IsEffectivelyEnabled && c.IsEffectivelyVisible);
 		}
 
 		/// <summary>

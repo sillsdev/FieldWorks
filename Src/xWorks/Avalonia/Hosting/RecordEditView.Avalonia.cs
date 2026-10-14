@@ -754,16 +754,7 @@ namespace SIL.FieldWorks.XWorks
 				new EnvironmentInsertMenuAuthority(request, this),
 				CreateMultiStringMenuAuthority(request.Field, objectMenu),
 				objectMenu,
-				CreateLexiconMenuAuthority());
-		}
-
-		/// <summary>
-		/// The message-keyed authority for the Lexicon menus, owning by predicate.
-		/// </summary>
-		internal LexiconMenuAuthority CreateLexiconMenuAuthority()
-		{
-			var window = m_propertyTable.GetValue<XWindow>("window");
-			return new LexiconMenuAuthority(id => XCoreMenuBridge.ResolveMenu(window, id));
+				CreateLexiconMenuAuthority(request.Field));
 		}
 
 		/// <summary>The native authority for a multi-writing-system row's label menu.</summary>

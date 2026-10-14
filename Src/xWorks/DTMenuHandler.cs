@@ -975,18 +975,8 @@ namespace SIL.FieldWorks.XWorks
 			//				display.Text += Table.GetString("(Programming error: would delete this record.)");
 			//			}
 			//			else
-			if(!display.Enabled)
-				display.Text += StringTable.Table.GetString("(cannot delete this)");
-
-			if (display.Text.Contains("{0}"))
-			{
-				// Insert the class name of the thing we will delete
-				var obj = current.GetObjectForMenusToOperateOn();
-				if (obj != null)
-				{
-					display.Text = string.Format(display.Text, StringTable.Table.GetString(obj.ClassName, "ClassNames"));
-			}
-			}
+			display.Text = DetailObjectDeletion.DeleteLabel(display.Text, current.GetObjectForMenusToOperateOn(),
+				display.Enabled);
 
 			return true;//we handled this, no need to ask anyone else.
 		}

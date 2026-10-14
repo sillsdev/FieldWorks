@@ -1624,6 +1624,13 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		public string GhostPrompt { get; }
 
 		public string StableId { get; }
+
+		/// <summary>
+		/// The automation id of the row built for this field: its own when the layout gives
+		/// one, else its stable id.
+		/// </summary>
+		public string RowAutomationId => string.IsNullOrEmpty(AutomationId) ? StableId : AutomationId;
+
 		public string Label { get; }
 		public string Field { get; }
 		public string WritingSystem { get; }
