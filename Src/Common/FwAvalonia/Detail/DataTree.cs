@@ -40,35 +40,50 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		private readonly Action<double> _labelColumnWidthChanged;
 		private TextBlock _validationBlock;
 
-		// Fields render into this Form's Items, rebuilt each toggle from the model's
-		// visible-field
-		// subsequence -- a virtualizing panel only realizes on-screen containers, so visibility
-		// can't be cached.
+		// Each shown field's row is one of this Form's Items, in field order. A collapse or
+		// expand removes or inserts only the rows it hides or shows.
 		private readonly Form _form;
 
-		// Session-recorded expansion overrides, keyed by header stable id; a toggle writes here
-		// (and
-		// through _expansionChanged for persistence) before RebuildItems() re-reads it.
+		// Session-recorded expansion overrides, keyed by DetailField.ExpansionKey; a toggle
+		// writes here (and through _expansionChanged for persistence) before ApplyVisibility()
+		// re-reads it.
 		private readonly Dictionary<string, bool> _expansionState = new Dictionary<string, bool>();
+
+		// The built row of each field, by field index; null while a collapsed header hides it.
+		private readonly ShownRow[] _rows;
+
+		// The indices of the collapsible headers that own at least one row.
+		private readonly HashSet<int> _toggleableHeaders = new HashSet<int>();
 
 		private readonly Func<string, bool?> _getExpansionState;
 		private readonly Action<string, bool> _expansionChanged;
 		private readonly Action<DetailMenuRequest> _menuRequested;
 		private readonly Action<DetailLinkRequest> _linkRequested;
-		// The vector rows of the shown fields, and the one whose item is current (at most one
-		// per view), so re-show continuity can read and restore that selection cheaply.
-		private readonly List<FwReferenceVectorField> _vectors = new List<FwReferenceVectorField>();
-		// The editors the shown rows hold that attach handlers of their own, disposed when a
-		// rebuild replaces them or the view itself is disposed.
-		private readonly List<IDisposable> _editors = new List<IDisposable>();
 		private bool _disposed;
+
+		// The parts of one shown row the view itself acts on after building it.
+		private sealed class ShownRow
+		{
+			public Control Item;
+			// An editor that attaches handlers of its own, disposed when its row is removed.
+			public IDisposable Editor;
+			public FwReferenceVectorField Vector;
+			// The label, whose wrap cap tracks the label column width, and the width beside it
+			// that the cap leaves out.
+			public TextBlock Label;
+			public double LabelReserved;
+			public DetailSectionHeader Header;
+		}
+
+		private IEnumerable<ShownRow> ShownRows => _rows.Where(row => row != null);
 
 		/// <summary>The reference-vector row that has a current item; null when none
 		/// does.</summary>
 		internal FwReferenceVectorField SelectedVector { get; private set; }
 
-		/// <summary>The reference-vector rows of the shown fields.</summary>
-		internal IReadOnlyList<FwReferenceVectorField> VectorRows => _vectors;
+		/// <summary>The reference-vector rows of the shown fields, in field order.</summary>
+		internal IReadOnlyList<FwReferenceVectorField> VectorRows
+			=> ShownRows.Where(row => row.Vector != null).Select(row => row.Vector).ToList();
 
 		/// <summary>True when the rebuild that follows should give keyboard focus to the vector
 		/// row's current item.</summary>
@@ -84,11 +99,9 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		// Computed once per view (not per field/row) from the widest WS abbreviation across the
 		// whole model, so every multi-WS field's gutter lines up at the same adaptive width.
 		private readonly double _wsAbbrevColumnWidth;
-		// The live label column width, and the labels whose wrap cap tracks it. Capping from
-		// the token instead would ignore both a host-persisted width and a splitter drag.
+		// The live label column width, which each shown row's label wrap cap tracks. Capping
+		// from the token instead would ignore both a host-persisted width and a splitter drag.
 		private double _labelColumnWidth;
-		private readonly List<(TextBlock Label, double Reserved)> _labelBlocks =
-			new List<(TextBlock Label, double Reserved)>();
 
 		/// <summary>
 		/// Optional expansion-state hooks: <paramref name="getExpansionState"/> supplies the
@@ -110,6 +123,9 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			Action<double> labelColumnWidthChanged = null)
 		{
 			Model = model ?? throw new ArgumentNullException(nameof(model));
+			_rows = new ShownRow[Model.Fields.Count];
+			foreach (var range in DetailVisibility.GetCollapsibleRanges(Model.Fields))
+				_toggleableHeaders.Add(range.HeaderIndex);
 			_editContext = editContext;
 			_writingSystemFocused = writingSystemFocused;
 			_getExpansionState = getExpansionState;
@@ -183,7 +199,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 					ApplyLabelColumnWidth(w.Value, notifyHost: true);
 			};
 
-			RebuildItems();
+			ApplyVisibility();
 
 			// Viewing parity (11.x): the whole detail view scrolls, like legacy DataTree's AutoScroll panel.
 			// Equal row height read-only vs editable (layout parity): the field container is
@@ -291,8 +307,12 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			// splitter, which is on top and swallows clicks on it. FormItem honors only an
 			// absolute width.
 			_form.LabelWidth = new GridLength(columnWidth + FwAvaloniaDensity.SplitterWidth);
-			foreach (var entry in _labelBlocks)
-				entry.Label.MaxWidth = Math.Max(0, columnWidth - entry.Reserved);
+			// Runs on every layout pass, so it walks the rows without allocating.
+			foreach (var row in _rows)
+			{
+				if (row?.Label != null)
+					row.Label.MaxWidth = Math.Max(0, columnWidth - row.LabelReserved);
+			}
 			if (notifyHost)
 				// Reports the label column itself, not the form's label+splitter span.
 				_labelColumnWidthChanged?.Invoke(columnWidth);
@@ -352,10 +372,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			if (_disposed)
 				return;
 			_disposed = true;
-			var editors = _editors.ToArray();
-			_editors.Clear();
-			foreach (var editor in editors)
-				editor.Dispose();
+			foreach (var row in ShownRows)
+				row.Editor?.Dispose();
 		}
 
 		/// <summary>
@@ -377,7 +395,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		/// view's own completion, which is what discards the text, only an external refresh.
 		/// </summary>
 		public bool HasUnsubmittedText
-			=> _editors.OfType<IUnstagedTextHolder>().Any(editor => editor.HasUnstagedText);
+			=> ShownRows.Select(row => row.Editor).OfType<IUnstagedTextHolder>()
+				.Any(editor => editor.HasUnstagedText);
 
 		/// <summary>
 		/// Raised when the view goes idle again -- the click finished and no picker it
@@ -425,7 +444,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			_validationBlock.IsVisible = false;
 			// Text that was typed but never offered goes with the cancelled session. Left in
 			// the editor, the next focus change would stage the very edit just cancelled.
-			foreach (var vector in _vectors)
+			foreach (var vector in VectorRows)
 				vector.DiscardUnstagedText();
 			_editContext.Cancel();
 			RaiseOrDeferEditCompleted();
@@ -440,6 +459,11 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		// rebuild destroys the anchor and the picker vanishes mid-choice.
 		private int _openPickers;
 		private bool _editCompletedHeld;
+		// Set once this view commits or cancels an edit of its own. The re-show that follows
+		// replaces the view, so the flag never outlives that edit.
+		private bool _completedOwnEdit;
+		// The expansion keys of the sections the user collapsed after that edit completed.
+		private readonly HashSet<string> _collapsedAfterOwnEdit = new HashSet<string>();
 
 		/// <summary>
 		/// Raises the completion the host re-shows on -- unless a pointer gesture is in flight,
@@ -448,6 +472,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		/// </summary>
 		private void RaiseOrDeferEditCompleted()
 		{
+			_completedOwnEdit = true;
 			if (IsInteractionInFlight)
 			{
 				_editCompletedHeld = true;
@@ -499,49 +524,118 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			InteractionCompleted?.Invoke(this, EventArgs.Empty);
 		}
 
-		// Viewing parity (11.x): a header owns every more-indented row up to the next row at its
-		// own indent or shallower; a row stays visible only while every owning header is
-		// expanded.
-		private void RebuildItems()
+		/// <summary>
+		/// Brings the shown rows in line with the recorded expansion state: builds and inserts
+		/// each row that became visible, removes each row that became hidden, and sets each shown
+		/// header's +/- box. Every other row is left as it is, so a toggle costs only the rows
+		/// it shows or hides. A header owns every more-indented row up to the next row at its
+		/// own indent or shallower, and a row is visible only while every owning header is
+		/// expanded.
+		/// </summary>
+		private void ApplyVisibility()
 		{
-			var replaced = _editors.ToArray();
-			_editors.Clear();
-			_form.Items.Clear();
+			var visible = DetailVisibility.ComputeVisibility(Model.Fields, GetRecordedExpansion);
+			var removed = new List<ShownRow>();
+			var position = 0;
+			for (var i = 0; i < _rows.Length; i++)
+			{
+				var row = _rows[i];
+				if (!visible[i])
+				{
+					if (row != null)
+					{
+						_form.Items.RemoveAt(position);
+						_rows[i] = null;
+						removed.Add(row);
+					}
+					continue;
+				}
+
+				if (row == null)
+				{
+					row = BuildRow(i, Model.Fields[i]);
+					_rows[i] = row;
+					_form.Items.Insert(position, row.Item);
+				}
+				else if (row.Header != null)
+				{
+					row.Header.IsExpanded = IsExpanded(Model.Fields[i]);
+				}
+				position++;
+			}
+
 			// Only once the form has let go of them, so a focus loss their removal raises still
 			// reaches their own handlers and stages what they hold.
-			foreach (var editor in replaced)
-				editor.Dispose();
-			_vectors.Clear();
-			_labelBlocks.Clear();
-			SelectedVector = null;
-			var visible = DetailVisibility.ComputeVisibility(Model.Fields, GetRecordedExpansion);
-			for (var i = 0; i < Model.Fields.Count; i++)
+			foreach (var row in removed)
 			{
-				if (visible[i])
-					_form.Items.Add(BuildItem(i, Model.Fields[i]));
+				row.Editor?.Dispose();
+				if (row.Vector != null && ReferenceEquals(SelectedVector, row.Vector))
+					SelectedVector = null;
 			}
 		}
 
 		// A header's recorded expansion state prefers this session's own toggles over the
 		// host-supplied persisted state, so a toggle applies immediately rather than
 		// waiting on the host's round-trip.
-		private bool? GetRecordedExpansion(string stableId) =>
-			_expansionState.TryGetValue(stableId, out var v) ? (bool?)v : _getExpansionState?.Invoke(stableId);
+		private bool? GetRecordedExpansion(string expansionKey) =>
+			_expansionState.TryGetValue(expansionKey, out var v) ? (bool?)v : _getExpansionState?.Invoke(expansionKey);
 
-		private bool IsExpanded(DetailField field) => GetRecordedExpansion(field.StableId) ?? field.IsInitiallyExpanded;
+		private bool IsExpanded(DetailField field) => GetRecordedExpansion(field.ExpansionKey) ?? field.IsInitiallyExpanded;
 
-		// Wraps one field's content as a Form item: FormItem.Label carries the label cell
-		// (value-side
-		// only fields) or the item goes NoLabel and spans full width (headers).
-		private Control BuildItem(int index, DetailField field)
+		private void RecordExpansion(DetailField header, bool expanded)
 		{
-			var fieldContent = AddField(index, field);
+			_expansionState[header.ExpansionKey] = expanded;
+			_expansionChanged?.Invoke(header.ExpansionKey, expanded);
+		}
+
+		// The header itself stays, so it keeps its focus, its place in the view, and any
+		// click that follows this one.
+		private void ToggleSection(DetailField field, DetailSectionHeader header)
+		{
+			if (!header.CanToggle)
+				return;
+			var expanded = !IsExpanded(field);
+			RecordExpansion(field, expanded);
+			if (!expanded && _completedOwnEdit)
+				_collapsedAfterOwnEdit.Add(field.ExpansionKey);
+			ApplyVisibility();
+		}
+
+		/// <summary>
+		/// Expands every collapsed section that hides a row of an object absent from the view
+		/// <paramref name="previous"/>, recording each through the expansion hooks, so an object
+		/// just inserted into a collapsed section is shown. A section the user collapsed in
+		/// <paramref name="previous"/> after its own edit completed stays collapsed, as when
+		/// typing into a section and then collapsing it. Does nothing when
+		/// <paramref name="previous"/> is null.
+		/// </summary>
+		public void RevealObjectsAddedSince(DataTree previous)
+		{
+			if (previous == null)
+				return;
+			var headers = DetailVisibility.GetHeadersHidingNewObjects(previous.Model.Fields, Model.Fields,
+				GetRecordedExpansion,
+				header => previous._collapsedAfterOwnEdit.Contains(header.ExpansionKey));
+			if (headers.Count == 0)
+				return;
+			foreach (var header in headers)
+				RecordExpansion(header, true);
+			ApplyVisibility();
+		}
+
+		// Builds one field's row. Its Form item carries the label cell in FormItem.Label
+		// (value-side only fields), or goes NoLabel and spans full width (headers).
+		private ShownRow BuildRow(int index, DetailField field)
+		{
+			var row = new ShownRow();
+			var fieldContent = AddField(index, field, row);
 			var content = ApplyRule(fieldContent.Content, index);
 			if (fieldContent.Label != null)
 				FormItem.SetLabel(content, fieldContent.Label);
 			else
 				FormItem.SetNoLabel(content, true);
-			return content;
+			row.Item = content;
+			return row;
 		}
 
 		// The 1px inter-slice rule renders as a per-item bottom border; the last field
@@ -569,7 +663,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			public Control Label;
 		}
 
-		private FieldContent AddField(int row, DetailField field)
+		private FieldContent AddField(int row, DetailField field, ShownRow shown)
 		{
 			var automationId = string.IsNullOrEmpty(field.AutomationId) ? field.StableId : field.AutomationId;
 			var indent = new Thickness(field.Indent * 12, 0, 0, 0);
@@ -579,52 +673,28 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			// the legacy tree's section rows.
 			if (field.Kind == DetailFieldKind.Header)
 			{
+				var headerLabel = field.Label ?? field.Field ?? string.Empty;
 				Control header;
 				if (field.IsCollapsible)
 				{
-					// Legacy SliceTreeNode +/- box equivalent: the header toggles its nested rows.
-					var button = new Button
-					{
-						Content = (IsExpanded(field) ? "\u25bc " : "\u25b6 ") + (field.Label ?? field.Field ?? string.Empty),
-						FontWeight = FontWeight.Bold,
-						Background = FwAvaloniaDensity.TransparentBrush,
-						BorderThickness = new Thickness(0),
-						Padding = new Thickness(0),
-						Margin = new Thickness(indent.Left, 4, 0, FwAvaloniaDensity.FieldSpacing),
-						// Semi's Button ControlTheme centres by default; a section header hugs
-						// the
-						// left edge like the legacy row.
-						HorizontalAlignment = HorizontalAlignment.Left,
-						HorizontalContentAlignment = HorizontalAlignment.Left
-					};
-					// A toggle flips the recorded state and rebuilds the Form's Items from the
-					// new
-					// visible-field subsequence -- there is no realized row to show/hide
-					// directly.
-					button.Click += (s, e) =>
-					{
-						var next = !IsExpanded(field);
-						_expansionState[field.StableId] = next;
-						_expansionChanged?.Invoke(field.StableId, next);
-						RebuildItems();
-					};
+					var button = new DetailSectionHeader(headerLabel, IsExpanded(field),
+						_toggleableHeaders.Contains(row));
+					button.Click += (s, e) => ToggleSection(field, button);
+					shown.Header = button;
 					header = button;
 					// Chrome, not a field, same reasoning as the field-menu kebab (LT-22688).
 					Avalonia.Input.KeyboardNavigation.SetIsTabStop(button, false);
 				}
 				else
 				{
-					header = new TextBlock
-					{
-						Text = field.Label ?? field.Field ?? string.Empty,
-						FontWeight = FontWeight.Bold,
-						Margin = new Thickness(indent.Left, 4, 0, FwAvaloniaDensity.FieldSpacing),
-						// A null background only hit-tests the glyphs; the whole header area
-						// must take the right-click.
-						Background = FwAvaloniaDensity.TransparentBrush
-					};
+					var label = DetailSectionHeader.CreateLabel(headerLabel);
+					// A null background only hit-tests the glyphs; the whole header area must
+					// take the right-click.
+					label.Background = FwAvaloniaDensity.TransparentBrush;
+					header = label;
 				}
 
+				header.Margin = new Thickness(indent.Left, 4, 0, FwAvaloniaDensity.FieldSpacing);
 				AutomationProperties.SetAutomationId(header, automationId);
 				AutomationProperties.SetName(header, field.Label ?? string.Empty);
 				// The header answers right-click with its slice menu; the hover
@@ -703,13 +773,14 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				// take the right-click for the slice menu.
 				Background = FwAvaloniaDensity.TransparentBrush
 			};
-			_labelBlocks.Add((labelBlock, labelReserved));
+			shown.Label = labelBlock;
+			shown.LabelReserved = labelReserved;
 			AutomationProperties.SetAutomationId(labelBlock, automationId + ".Label");
 			AutomationProperties.SetName(labelBlock, field.Label ?? field.Field ?? string.Empty);
 			ToolTip.SetTip(labelBlock, field.Label ?? field.Field); // the label text is its own tip
 			var editor = CreateEditor(field, automationId);
 			if (editor is IDisposable disposable)
-				_editors.Add(disposable);
+				shown.Editor = disposable;
 			editor.Margin = new Thickness(0, 0, 0, FwAvaloniaDensity.FieldSpacing);
 
 			// Every reachable control in a row shares its TabIndex, so Avalonia visits them in
@@ -718,7 +789,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			ApplyRowTabIndex(editor, row);
 			if (editor is FwReferenceVectorField vector)
 			{
-				_vectors.Add(vector);
+				shown.Vector = vector;
 				vector.SelectionChanged += OnVectorSelectionChanged;
 			}
 
@@ -898,6 +969,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			{
 				Content = FwAvaloniaStrings.FieldOptionsMenu,
 				Foreground = HotlinkBrush,
+				FontSize = FwAvaloniaDensity.HotlinkFontSize,
+				FontWeight = FontWeight.Normal,
 				Background = FwAvaloniaDensity.TransparentBrush,
 				BorderThickness = new Thickness(0),
 				Padding = new Thickness(0),

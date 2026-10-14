@@ -211,6 +211,22 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(read.Invoke(m_view, null), Is.Null, "a negative width must not be persisted");
 		}
 
+		// LT-22689: the in-session dictionary is cleared to stand in for a restart, so the read
+		// must come from the PropertyTable local setting.
+		[Test]
+		public void ExpansionState_PersistsToLocalSetting_AndIsReadBackInANewSession()
+		{
+			const string key = "LexEntry/Normal/#12@0123456789abcdef0123456789abcdef";
+			Assert.That(m_view.GetPersistedExpansionState(key), Is.Null, "nothing recorded yet");
+
+			m_view.PersistExpansionState(key, false);
+
+			Assert.That(m_propertyTable.GetStringProperty(RecordEditView.ExpansionSettingPrefix + key,
+				null, PropertyTable.SettingsGroup.LocalSettings), Is.EqualTo("0"));
+			((Dictionary<string, bool>)GetField(m_view, "m_expansionStates")).Clear();
+			Assert.That(m_view.GetPersistedExpansionState(key), Is.False);
+		}
+
 		// ----------------------------------------------------------------------------------------
 		// Bootstrap helpers
 		// ----------------------------------------------------------------------------------------

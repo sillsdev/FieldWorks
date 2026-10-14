@@ -22,6 +22,9 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 		// also survives across SESSIONS, mirroring legacy slice-splitter persistence.
 		private double? _rememberedLabelColumnWidth;
 
+		// The root object of the detail last shown, or 0 when none was given.
+		private int _shownRootHvo;
+
 		/// <inheritdoc />
 		public override bool IsDetailInteractionInFlight
 			=> CurrentContent is DataTree tree
@@ -34,6 +37,14 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 			AccessibleDescription = FwAvaloniaStrings.AvaloniaHostName;
 		}
 
+		/// <summary>
+		/// Replaces the shown detail view with one for <paramref name="detail"/>, carrying focus
+		/// and the label column width across. When <paramref name="rootHvo"/> names the same
+		/// object as the previous show, any collapsed section hiding an object that was not in
+		/// the previous view is expanded, so an object inserted into a collapsed section is
+		/// shown, except a section the user collapsed after the previous view's own edit. A
+		/// <paramref name="rootHvo"/> of 0 never matches.
+		/// </summary>
 		public void ShowDetail(DetailModel detail, IDetailEditContext editContext = null,
 			Action<string> writingSystemFocused = null,
 			Func<string, bool?> getExpansionState = null,
@@ -42,7 +53,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 			Action<DetailLinkRequest> linkRequested = null,
 			IFwClipboard clipboard = null,
 			Func<double?> getLabelColumnWidth = null,
-			Action<double> labelColumnWidthChanged = null)
+			Action<double> labelColumnWidthChanged = null,
+			int rootHvo = 0)
 		{
 			if (detail == null) throw new ArgumentNullException(nameof(detail));
 			// Splitter position persists per-HOST across re-shows: this long-lived host owns
@@ -61,6 +73,10 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 				});
 			view.EditCompleted += (s, e) => RaiseDetailEditCompleted();
 			view.InteractionCompleted += (s, e) => RaiseDetailInteractionCompleted();
+
+			if (rootHvo != 0 && rootHvo == _shownRootHvo && CurrentContent is DataTree previous)
+				view.RevealObjectsAddedSince(previous);
+			_shownRootHvo = rootHvo;
 
 			// Continuity across the re-show, applied once the new view lays out. Focus leaves the
 			// old view first: detaching a focused editor makes Avalonia refocus and scroll away.

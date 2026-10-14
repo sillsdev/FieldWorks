@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 {
@@ -29,11 +30,10 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 	}
 
 	/// <summary>
-	/// Pure, model-level computation of collapsible-header ownership and field visibility. A
-	/// virtualizing items panel only realizes on-screen containers, so (unlike the legacy
-	/// WinForms tree boxes, and unlike DataTree's current captured-control approach) visibility
-	/// cannot live on control references and must be derivable from the field list and expansion
-	/// state alone.
+	/// Pure, model-level computation of collapsible-header ownership and field visibility,
+	/// derived from the field list and expansion state alone. Needing no controls, it answers
+	/// for rows that have none, such as rows a collapsed header hides or an items panel has not
+	/// realized.
 	/// </summary>
 	public static class DetailVisibility
 	{
@@ -74,10 +74,9 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		/// visibility depends only on its ancestors' state, never its own.
 		/// </summary>
 		/// <param name="getExpansionState">
-		/// Returns the recorded expansion state for a header's <see
-		/// cref="DetailField.StableId"/>,
-		/// or null when none is recorded (falls back to <see
-		/// cref="DetailField.IsInitiallyExpanded"/>).
+		/// Returns the recorded expansion state for a header's
+		/// <see cref="DetailField.ExpansionKey"/>, or null when none is recorded (falls back to
+		/// <see cref="DetailField.IsInitiallyExpanded"/>).
 		/// May itself be null, meaning no state is ever recorded.
 		/// </param>
 		public static IReadOnlyList<bool> ComputeVisibility(
@@ -93,15 +92,64 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 
 			foreach (var range in GetCollapsibleRanges(fields))
 			{
-				var header = fields[range.HeaderIndex];
-				var expanded = getExpansionState?.Invoke(header.StableId) ?? header.IsInitiallyExpanded;
-				if (expanded)
+				if (IsExpanded(fields[range.HeaderIndex], getExpansionState))
 					continue;
 				for (var i = range.Start; i < range.End; i++)
 					visible[i] = false;
 			}
 			return visible;
 		}
+
+		/// <summary>
+		/// The collapsed headers in <paramref name="current"/> that hide a row belonging to an
+		/// object no row of <paramref name="previous"/> belonged to, in field order. Expanding
+		/// them shows an object that was just added to the record. A row hidden by any header
+		/// <paramref name="mustStayCollapsed"/> accepts contributes none of its headers, since
+		/// that row stays hidden either way. Expansion state is read as in
+		/// <see cref="ComputeVisibility"/>; a null <paramref name="mustStayCollapsed"/> keeps
+		/// no header collapsed.
+		/// </summary>
+		public static IReadOnlyList<DetailField> GetHeadersHidingNewObjects(
+			IReadOnlyList<DetailField> previous,
+			IReadOnlyList<DetailField> current,
+			Func<string, bool?> getExpansionState,
+			Func<DetailField, bool> mustStayCollapsed = null)
+		{
+			if (previous == null || current == null)
+				return Array.Empty<DetailField>();
+
+			var known = new HashSet<int>();
+			foreach (var field in previous)
+				known.Add(field.ObjectHvo);
+
+			var collapsed = new List<DetailHeaderRange>();
+			foreach (var range in GetCollapsibleRanges(current))
+			{
+				if (!IsExpanded(current[range.HeaderIndex], getExpansionState))
+					collapsed.Add(range);
+			}
+
+			var revealed = new SortedSet<int>();
+			for (var i = 0; i < current.Count; i++)
+			{
+				var hvo = current[i].ObjectHvo;
+				if (hvo == 0 || known.Contains(hvo))
+					continue;
+				var row = i;
+				var hiding = collapsed.Where(range => range.Start <= row && row < range.End).ToList();
+				if (mustStayCollapsed != null
+					&& hiding.Any(range => mustStayCollapsed(current[range.HeaderIndex])))
+				{
+					continue;
+				}
+				foreach (var range in hiding)
+					revealed.Add(range.HeaderIndex);
+			}
+			return revealed.Select(index => current[index]).ToList();
+		}
+
+		private static bool IsExpanded(DetailField header, Func<string, bool?> getExpansionState)
+			=> getExpansionState?.Invoke(header.ExpansionKey) ?? header.IsInitiallyExpanded;
 
 		/// <summary>The subsequence of <paramref name="fields"/> that <see
 		/// cref="ComputeVisibility"/> keeps visible.</summary>

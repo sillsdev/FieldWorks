@@ -34,6 +34,11 @@ namespace FwAvaloniaTests
       <slice label='Bibliography' editor='string' field='Bibliography' ws='analysis'/>
     </slice>
   </part>
+  <part id='LexEntry-Detail-Section'>
+    <slice label='Section'>
+      <slice label='Citation form' editor='string' field='CitationForm' ws='vernacular'/>
+    </slice>
+  </part>
   <part id='LexEntry-Detail-CustomEditor'>
     <slice label='Custom' editor='custom' field='testField' ws='analysis'/>
   </part>
@@ -120,6 +125,24 @@ namespace FwAvaloniaTests
 			Assert.That(header.Children[0].StableId, Is.EqualTo("LexEntry/Nested-Expanded/#0/#0"));
 			Assert.That(header.Children[0].Field, Is.EqualTo("CitationForm"));
 			Assert.That(header.Children[1].Field, Is.EqualTo("Bibliography"));
+		}
+
+		// LT-22689: only "collapsed" on the part reference starts a section collapsed. The
+		// shipped "expanded", no attribute, and Notebook's one "doNotExpand" all leave it open.
+		[TestCase("expansion='expanded'", ViewExpansion.Expanded)]
+		[TestCase("expansion='collapsed'", ViewExpansion.Collapsed)]
+		[TestCase("", ViewExpansion.NotApplicable)]
+		[TestCase("expansion='doNotExpand'", ViewExpansion.NotApplicable)]
+		public void Import_SectionExpansion_ComesFromThePartReference(string attribute, ViewExpansion expected)
+		{
+			var model = Import($@"
+<layout class='LexEntry' type='detail' name='Sectioned'>
+  <part ref='Section' {attribute}/>
+</layout>");
+
+			var section = model.Roots.Single();
+			Assert.That(section.Kind, Is.EqualTo(ViewNodeKind.Group), "precondition: a section with rows");
+			Assert.That(section.Expansion, Is.EqualTo(expected));
 		}
 
 		[Test]
