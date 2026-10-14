@@ -68,11 +68,13 @@ namespace SIL.FieldWorks.XWorks
 		// contract constructed at the assert site from the very id it then asserts could never fail.
 		private ActiveHostContract m_activeHostContract;
 
-		// Viewing parity: expansion state persists per header stable id -- in-session through the
-		// dictionary, across sessions through PropertyTable local settings, the legacy ExpansionStateKey
-		// behavior. Per-instance deliberately: a process-wide static would leak state across
-		// projects/windows for the app lifetime.
+		// Expansion state by DetailField.ExpansionKey for this session; a PropertyTable local
+		// setting carries it across sessions. Per-instance, so no state leaks across windows.
 		private readonly Dictionary<string, bool> m_expansionStates = new Dictionary<string, bool>();
+
+		/// <summary>The PropertyTable local-setting name prefix of a persisted expansion
+		/// state.</summary>
+		internal const string ExpansionSettingPrefix = "LexEditExpansion:";
 
 		// The transient "Show all right now" reveal: template StableIds of parts whose rows
 		// show every writing-system option. Cleared when the shown record changes; never
@@ -471,7 +473,8 @@ namespace SIL.FieldWorks.XWorks
 				GetPersistedExpansionState, PersistExpansionState,
 				OnDetailMenuRequested, OnDetailLinkRequested,
 				new FwTsStringClipboard(Cache.WritingSystemFactory),
-				GetPersistedLabelColumnWidth, PersistLabelColumnWidth);
+				GetPersistedLabelColumnWidth, PersistLabelColumnWidth,
+				rootHvo: obj.Hvo);
 		}
 
 		/// <summary>
@@ -1244,21 +1247,21 @@ namespace SIL.FieldWorks.XWorks
 			return TrySetCurrentSliceForRow(targetHvo, fieldName);
 		}
 
-		private bool? GetPersistedExpansionState(string stableId)
+		internal bool? GetPersistedExpansionState(string expansionKey)
 		{
-			if (m_expansionStates.TryGetValue(stableId, out var expanded))
+			if (m_expansionStates.TryGetValue(expansionKey, out var expanded))
 				return expanded;
-			var stored = m_propertyTable?.GetStringProperty("LexEditExpansion:" + stableId, null,
+			var stored = m_propertyTable?.GetStringProperty(ExpansionSettingPrefix + expansionKey, null,
 				PropertyTable.SettingsGroup.LocalSettings);
 			return stored == null ? (bool?)null : stored == "1";
 		}
 
-		private void PersistExpansionState(string stableId, bool expanded)
+		internal void PersistExpansionState(string expansionKey, bool expanded)
 		{
-			m_expansionStates[stableId] = expanded;
+			m_expansionStates[expansionKey] = expanded;
 			if (m_propertyTable == null)
 				return;
-			var key = "LexEditExpansion:" + stableId;
+			var key = ExpansionSettingPrefix + expansionKey;
 			m_propertyTable.SetProperty(key, expanded ? "1" : "0", PropertyTable.SettingsGroup.LocalSettings, false);
 			m_propertyTable.SetPropertyPersistence(key, true, PropertyTable.SettingsGroup.LocalSettings);
 		}

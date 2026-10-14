@@ -70,6 +70,16 @@
 			     option, so Gray stays for pixel parity. -->
 			<SolidColorBrush x:Key="FwDisabledOptionBrush" Color="Gray"/>
 
+			<!-- The section header's +/- box outline: WinForms SystemColors.ControlDark. -->
+			<SolidColorBrush x:Key="FwTreeBoxBorderBrush" Color="#A0A0A0"/>
+
+			<!-- The +/- bars inside the box: the same #404040 ink as FwWsAbbrevBrush. -->
+			<SolidColorBrush x:Key="FwTreeBoxGlyphBrush" Color="#404040"/>
+
+			<!-- Section header text, collapsible or not: WinForms
+			     SystemColors.ControlDarkDark. -->
+			<SolidColorBrush x:Key="FwSectionHeaderBrush" Color="#696969"/>
+
 		</ResourceDictionary>
 
 		<!-- Dark: unreviewed first-pass placeholders, not design-approved. FieldWorks has no
@@ -88,6 +98,9 @@
 			<SolidColorBrush x:Key="FwDialogGroupSeparatorBrush" Color="#4D4D4D"/>
 			<SolidColorBrush x:Key="FwTransparentBrush" Color="Transparent"/>
 			<SolidColorBrush x:Key="FwDisabledOptionBrush" Color="#909090"/>
+			<SolidColorBrush x:Key="FwTreeBoxBorderBrush" Color="#808080"/>
+			<SolidColorBrush x:Key="FwTreeBoxGlyphBrush" Color="#D0D0D0"/>
+			<SolidColorBrush x:Key="FwSectionHeaderBrush" Color="#B0B0B0"/>
 
 		</ResourceDictionary>
 

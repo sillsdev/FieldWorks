@@ -69,6 +69,20 @@
 	     chooser tree's per-depth inset), so depth-indented rows indent identically. -->
 	<x:Double x:Key="DataTree.TreeIndentPerLevel">14</x:Double>
 
+	<!-- The square +/- box a collapsible section header shows before its label: the classic
+	     9px tree-view glyph box. -->
+	<x:Double x:Key="DataTree.TreeBoxSize">9</x:Double>
+
+	<!-- Length of the box's minus bar (and of the plus sign's vertical bar), leaving a 1px gap
+	     inside the 1px border on each side of the 9px box. -->
+	<x:Double x:Key="DataTree.TreeBoxGlyphLength">5</x:Double>
+
+	<!-- Stroke width of the box's minus and plus bars. -->
+	<x:Double x:Key="DataTree.TreeBoxGlyphThickness">1</x:Double>
+
+	<!-- Horizontal gap between the +/- box and the section header's label. -->
+	<x:Double x:Key="DataTree.TreeBoxGap">4</x:Double>
+
 	<!-- Compact width of the collapsed dropdown chooser (POS picker and similar) so the
 		collapsed control reads as a field-sized box rather than shrinking to its current text.
 		-->

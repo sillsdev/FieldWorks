@@ -6,11 +6,15 @@ using System.Collections.Generic;
 using System.Linq;
 using Avalonia;
 using Avalonia.Automation;
+using Avalonia.Automation.Peers;
+using Avalonia.Automation.Provider;
 using Avalonia.Controls;
+using Avalonia.Headless;
 using Avalonia.Headless.NUnit;
 using Avalonia.Interactivity;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
+using FwAvaloniaTests.VisualChecks;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwAvalonia.Detail;
 using SIL.FieldWorks.Common.FwAvalonia.ViewDefinition;
@@ -249,6 +253,346 @@ namespace FwAvaloniaTests
 			// it.
 			Assert.That(second.HasDescendant<TextBox>(t => (AutomationProperties.GetAutomationId(t) ?? "").StartsWith("g1")),
 				Is.False, "the persisted collapse state applies to the rebuilt view");
+		}
+
+		// The section header with the given automation id.
+		private static DetailSectionHeader SectionHeader(Control view, string id)
+			=> view.GetVisualDescendants().OfType<DetailSectionHeader>()
+				.First(h => AutomationProperties.GetAutomationId(h) == id);
+
+		private static bool TextBoxPresent(Control view, string idPrefix) => view.HasDescendant<TextBox>(
+			t => (AutomationProperties.GetAutomationId(t) ?? "").StartsWith(idPrefix));
+
+		private static void ClickHeader(Button button)
+		{
+			button.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+			Dispatcher.UIThread.RunJobs();
+		}
+
+		private static DataTree ShowWithStore(DetailModel model, Dictionary<string, bool> store)
+		{
+			var view = new DataTree(model, null, null,
+				key => store.TryGetValue(key, out var e) ? e : (bool?)null,
+				(key, e) => store[key] = e);
+			new Window { Content = view, Width = 480, Height = 300 }.Show();
+			Dispatcher.UIThread.RunJobs();
+			return view;
+		}
+
+		[AvaloniaTest]
+		public void CollapsibleHeader_DrawsAPlusMinusBox_ThatFlipsWithTheToggle()
+		{
+			var view = Show(Header("h1", "Sense 1", 0), Text("g1", "Gloss", 1),
+				Header("h2", "Variants", 0));
+			var window = (Window)TopLevel.GetTopLevel(view);
+			DialogSnapshot.Capture(window, "Detail-SectionExpander-01-expanded");
+
+			var header = SectionHeader(view, "h1");
+			Assert.That(header.Box.Opacity, Is.EqualTo(1), "a header with rows under it shows its box");
+			Assert.That(header.Box.IsExpanded, Is.True, "an expanded section shows a minus");
+			Assert.That(header.GetVisualDescendants().OfType<TextBlock>().Select(t => t.Text),
+				Is.EqualTo(new[] { "Sense 1" }), "the label is the header's only text, with no glyph");
+
+			ClickHeader(header);
+
+			var collapsed = SectionHeader(view, "h1");
+			Assert.That(collapsed.IsExpanded, Is.False);
+			Assert.That(collapsed.Box.IsExpanded, Is.False, "a collapsed section shows a plus");
+			Assert.That(TextBoxPresent(view, "g1"), Is.False);
+			DialogSnapshot.Capture(window, "Detail-SectionExpander-02-collapsed");
+
+			ClickHeader(collapsed);
+			Assert.That(SectionHeader(view, "h1").Box.IsExpanded, Is.True);
+			Assert.That(TextBoxPresent(view, "g1"), Is.True);
+		}
+
+		// LT-22689: header and "Field Options" text take the slice label size, and header text
+		// takes the section header colour.
+		[AvaloniaTest]
+		public void SectionHeaderAndFieldOptionsText_TakeTheirOwnSizeAndColour()
+		{
+			var collapsible = new DetailField("hdr", "Allomorphs", null, null, DetailFieldKind.Header,
+				EditorClassification.GroupingNone, null, null, HostRouting.Inherit, null, null, null,
+				isEditable: false, indent: 0, isCollapsible: true, hotlinksId: "mnu-hotlinks");
+			var plain = new DetailField("plain", "Grammatical Info.", null, null, DetailFieldKind.Header,
+				EditorClassification.GroupingNone, null, null, HostRouting.Inherit, null, null, null,
+				isEditable: false, indent: 0, isCollapsible: false);
+			var view = new DataTree(new DetailModel("LexEntry", "Normal",
+				new List<DetailField> { collapsible, Text("f1", "Form", 1), plain }, new List<ViewDiagnostic>()),
+				menuRequested: request => { });
+			var window = new Window { Content = view, Width = 480, Height = 300 };
+			window.Show();
+			Dispatcher.UIThread.RunJobs();
+			DialogSnapshot.Capture(window, "Detail-SectionExpander-03-header-and-link-text");
+
+			TextBlock TextOf(string text) => view.GetVisualDescendants().OfType<TextBlock>().First(t => t.Text == text);
+			var headerSize = SIL.FieldWorks.Common.FwAvalonia.FwAvaloniaDensity.SectionHeaderFontSize;
+			var linkSize = SIL.FieldWorks.Common.FwAvalonia.FwAvaloniaDensity.HotlinkFontSize;
+
+			Assert.That(TextOf("Allomorphs").FontSize, Is.EqualTo(headerSize), "a collapsible header");
+			Assert.That(TextOf("Grammatical Info.").FontSize, Is.EqualTo(headerSize),
+				"a header that cannot collapse matches one that can");
+			var headerInk = SIL.FieldWorks.Common.FwAvalonia.FwAvaloniaDensity.SectionHeaderBrush;
+			Assert.That(TextOf("Allomorphs").Foreground, Is.SameAs(headerInk),
+				"a collapsible header is not the button theme's blue");
+			Assert.That(TextOf("Grammatical Info.").Foreground, Is.SameAs(headerInk));
+			var link = TextOf(SIL.FieldWorks.Common.FwAvalonia.FwAvaloniaStrings.FieldOptionsMenu);
+			Assert.That(link.FontSize, Is.EqualTo(linkSize));
+			Assert.That(link.FontWeight, Is.EqualTo(Avalonia.Media.FontWeight.Normal),
+				"the link is not the button theme's semibold");
+		}
+
+		[AvaloniaTest]
+		public void HeaderWithNothingUnderIt_DrawsNoBox_AndIgnoresClicks()
+		{
+			var store = new Dictionary<string, bool>();
+			var view = ShowWithStore(new DetailModel("LexEntry", "Normal",
+				new List<DetailField> { Header("empty", "Variants", 0), Header("h2", "Allomorphs", 0), Text("a1", "Form", 1) },
+				new List<ViewDiagnostic>()), store);
+
+			var empty = SectionHeader(view, "empty");
+			Assert.That(empty.CanToggle, Is.False);
+			Assert.That(empty.Box.Opacity, Is.EqualTo(0), "nothing to collapse, so no box is drawn");
+			Assert.That(empty.Box.Bounds.Width, Is.GreaterThan(0),
+				"the blank box keeps its width, so the label lines up with its siblings'");
+
+			ClickHeader(empty);
+			Assert.That(store, Is.Empty, "a header with nothing under it records no state");
+			Assert.That(SectionHeader(view, "h2").CanToggle, Is.True);
+		}
+
+		[AvaloniaTest]
+		public void Toggling_KeepsFocusOnTheHeader()
+		{
+			var view = Show(Header("h1", "Sense 1", 0), Text("g1", "Gloss", 1));
+			var header = SectionHeader(view, "h1");
+			header.Focus();
+			Dispatcher.UIThread.RunJobs();
+			Assert.That(header.IsFocused, Is.True, "precondition: the header has focus");
+
+			ClickHeader(header);
+
+			Assert.That(SectionHeader(view, "h1"), Is.SameAs(header),
+				"a toggle adds or removes only the rows under the header, never the header itself");
+			Assert.That(header.IsFocused, Is.True);
+		}
+
+		// LT-22689: each click of a double-click toggles, as each click of the +/- box does in
+		// the WinForms DataTree, so a double-click expands and collapses again.
+		[AvaloniaTest]
+		public void DoubleClickingAHeader_TogglesItTwice()
+		{
+			var view = Show(Header("h1", "Sense 1", 0), Text("g1", "Gloss", 1));
+			var window = (Window)TopLevel.GetTopLevel(view);
+			var point = SectionHeader(view, "h1").TranslatePoint(new Point(4, 4), window);
+			Assert.That(point, Is.Not.Null, "precondition: the header is laid out");
+
+			window.MouseDown(point.Value, Avalonia.Input.MouseButton.Left);
+			window.MouseUp(point.Value, Avalonia.Input.MouseButton.Left);
+			Assert.That(SectionHeader(view, "h1").IsExpanded, Is.False, "the first click collapses");
+			window.MouseDown(point.Value, Avalonia.Input.MouseButton.Left);
+			window.MouseUp(point.Value, Avalonia.Input.MouseButton.Left);
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(SectionHeader(view, "h1").IsExpanded, Is.True, "the second click expands again");
+			Assert.That(TextBoxPresent(view, "g1"), Is.True);
+		}
+
+		// LT-22689: a toggle leaves the clicked header where it was in the viewport.
+		[AvaloniaTest]
+		public void Toggling_KeepsTheHeaderWhereItWasInTheViewport()
+		{
+			var fields = new List<DetailField>();
+			for (var i = 0; i < 30; i++)
+				fields.Add(Text($"above{i}", $"Above {i}", 0));
+			fields.Add(Header("h1", "Sense 9", 0));
+			for (var i = 0; i < 10; i++)
+				fields.Add(Text($"gloss{i}", $"Gloss {i}", 1));
+			for (var i = 0; i < 30; i++)
+				fields.Add(Text($"below{i}", $"Below {i}", 0));
+			var view = Show(fields.ToArray());
+			var scroller = view.GetVisualDescendants().OfType<ScrollViewer>()
+				.First(s => AutomationProperties.GetAutomationId(s) == "DataTree.Scroll");
+			double TopOf(Control control) => control.TranslatePoint(new Point(0, 0), scroller)?.Y ?? double.NaN;
+			void Settle()
+			{
+				view.UpdateLayout();
+				Dispatcher.UIThread.RunJobs();
+			}
+
+			scroller.Offset = new Vector(0, scroller.Offset.Y + TopOf(SectionHeader(view, "h1")) - 100);
+			Settle();
+			var header = SectionHeader(view, "h1");
+			var top = TopOf(header);
+			Assert.That(scroller.Offset.Y, Is.GreaterThan(0), "precondition: the view is scrolled");
+			Assert.That(top, Is.EqualTo(100).Within(1), "precondition: the header is mid-viewport");
+
+			// A mouse press focuses the header before its Click.
+			header.Focus();
+			ClickHeader(header);
+			Settle();
+			Assert.That(TopOf(SectionHeader(view, "h1")), Is.EqualTo(top).Within(1),
+				"collapsing leaves the header where it was");
+
+			ClickHeader(SectionHeader(view, "h1"));
+			Settle();
+			Assert.That(TopOf(SectionHeader(view, "h1")), Is.EqualTo(top).Within(1),
+				"expanding leaves the header where it was");
+		}
+
+		[AvaloniaTest]
+		public void AutomationPeer_ReportsAndDrivesTheExpandCollapseState()
+		{
+			var view = Show(Header("h1", "Sense 1", 0), Text("g1", "Gloss", 1), Header("leaf", "Variants", 0));
+			IExpandCollapseProvider Provider(string id) => ControlAutomationPeer
+				.CreatePeerForElement(SectionHeader(view, id)).GetProvider<IExpandCollapseProvider>();
+
+			Assert.That(Provider("h1"), Is.Not.Null, "the header exposes the ExpandCollapse pattern");
+			Assert.That(Provider("h1").ExpandCollapseState, Is.EqualTo(ExpandCollapseState.Expanded));
+			Assert.That(Provider("leaf").ExpandCollapseState, Is.EqualTo(ExpandCollapseState.LeafNode));
+
+			Provider("h1").Collapse();
+			Dispatcher.UIThread.RunJobs();
+			Assert.That(Provider("h1").ExpandCollapseState, Is.EqualTo(ExpandCollapseState.Collapsed));
+			Assert.That(TextBoxPresent(view, "g1"), Is.False);
+
+			Provider("h1").Collapse();
+			Dispatcher.UIThread.RunJobs();
+			Assert.That(Provider("h1").ExpandCollapseState, Is.EqualTo(ExpandCollapseState.Collapsed),
+				"collapsing a collapsed section leaves it collapsed");
+
+			Provider("h1").Expand();
+			Dispatcher.UIThread.RunJobs();
+			Assert.That(TextBoxPresent(view, "g1"), Is.True);
+		}
+
+		[AvaloniaTest]
+		public void ExpansionState_IsRecordedUnderTheExpansionKey()
+		{
+			var header = Header("h1@101", "Senses", 0);
+			header.ExpansionKey = "h1@guid";
+			var model = new DetailModel("LexEntry", "Normal",
+				new List<DetailField> { header, Text("g1", "Gloss", 1) }, new List<ViewDiagnostic>());
+			var store = new Dictionary<string, bool>();
+
+			ClickHeader(SectionHeader(ShowWithStore(model, store), "h1@101"));
+
+			Assert.That(store, Is.EqualTo(new Dictionary<string, bool> { ["h1@guid"] = false }));
+		}
+
+		private static DetailField ObjectHeader(string id, int hvo) => new DetailField(
+			id, id, null, null, DetailFieldKind.Header, EditorClassification.GroupingNone,
+			id, null, HostRouting.Inherit, null, null, null,
+			isEditable: false, indent: 0, isCollapsible: true, objectHvo: hvo);
+
+		private static DetailField ObjectRow(string id, int hvo) => new DetailField(
+			id, id, id, null, DetailFieldKind.Text, EditorClassification.Known, id, null,
+			HostRouting.Inherit, new List<DetailWsValue> { new DetailWsValue("en", "value") },
+			null, null, indent: 1, objectHvo: hvo);
+
+		// LT-22689: collapsing removes the rows under a header, so a removed reference vector's
+		// current item must not stay the target of the item-relative commands.
+		[AvaloniaTest]
+		public void CollapsingTheSectionOfTheCurrentVectorItem_LeavesNoCurrentItem()
+		{
+			var vectorField = new DetailField("LexEntry/x/#7", "Subentries", "Subentries", null,
+				DetailFieldKind.ReferenceVector, EditorClassification.Known, "Subentries", null,
+				HostRouting.Inherit, null, null, null, isEditable: false, indent: 1,
+				items: new List<DetailChoiceOption> { new DetailChoiceOption("a", "A"), new DetailChoiceOption("b", "B") });
+			var view = Show(Header("h1", "Sense 1", 0), vectorField);
+			var vector = view.GetVisualDescendants().OfType<FwReferenceVectorField>().Single();
+			Assert.That(vector.SelectItem("b"), Is.True);
+			Assert.That(DetailFocusMemory.Capture(view).VectorItemKey, Is.EqualTo("b"),
+				"precondition: the vector row has a current item");
+
+			ClickHeader(SectionHeader(view, "h1"));
+
+			Assert.That(DetailFocusMemory.Capture(view).VectorItemKey, Is.Null);
+		}
+
+		// An entry with one sense, then the same entry after a second sense (hvo 11) was added.
+		private static DetailModel SensesBefore() => new DetailModel("LexEntry", "Normal", new List<DetailField>
+		{
+			ObjectHeader("senses", 1), ObjectRow("g10", 10),
+			ObjectHeader("allomorphs", 1), ObjectRow("f20", 20)
+		}, new List<ViewDiagnostic>());
+
+		private static DetailModel SensesAfterInsert() => new DetailModel("LexEntry", "Normal", new List<DetailField>
+		{
+			ObjectHeader("senses", 1), ObjectRow("g10", 10), ObjectRow("g11", 11),
+			ObjectHeader("allomorphs", 1), ObjectRow("f20", 20)
+		}, new List<ViewDiagnostic>());
+
+		[AvaloniaTest]
+		public void RevealObjectsAddedSince_ExpandsTheCollapsedSectionHidingANewObject()
+		{
+			var store = new Dictionary<string, bool> { ["senses"] = false, ["allomorphs"] = false };
+			var view = ShowWithStore(SensesAfterInsert(), store);
+			Assert.That(TextBoxPresent(view, "g11"), Is.False, "precondition: the new sense is hidden");
+
+			view.RevealObjectsAddedSince(new DataTree(SensesBefore()));
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(TextBoxPresent(view, "g11"), Is.True, "the inserted sense is shown");
+			Assert.That(store["senses"], Is.True, "the expansion is recorded like a click");
+			Assert.That(TextBoxPresent(view, "f20"), Is.False, "a section that gained nothing stays collapsed");
+			Assert.That(store["allomorphs"], Is.False);
+		}
+
+		// A shown view of SensesBefore() that has saved an edit of its own, and then collapsed
+		// the senses section when collapseSensesAfterward is true.
+		private static DataTree PreviousViewThatSavedAnEdit(Dictionary<string, bool> store,
+			bool collapseSensesAfterward)
+		{
+			var context = new FakeDetailEditContext();
+			var previous = new DataTree(SensesBefore(), context,
+				getExpansionState: key => store.TryGetValue(key, out var e) ? e : (bool?)null,
+				expansionChanged: (key, e) => store[key] = e);
+			new Window { Content = previous, Width = 480, Height = 300 }.Show();
+			Dispatcher.UIThread.RunJobs();
+			previous.RaiseEvent(new Avalonia.Input.KeyEventArgs
+			{
+				RoutedEvent = Avalonia.Input.InputElement.KeyDownEvent,
+				Key = Avalonia.Input.Key.Enter
+			});
+			Assert.That(context.CommitCount, Is.EqualTo(1), "precondition: the previous view saved an edit");
+			if (collapseSensesAfterward)
+				ClickHeader(SectionHeader(previous, "senses"));
+			return previous;
+		}
+
+		// LT-22689: typing into a section and then clicking its +/- commits the text on the
+		// press and collapses on the release. The re-show that commit causes leaves that section
+		// collapsed.
+		[AvaloniaTest]
+		public void RevealObjectsAddedSince_LeavesASectionCollapsedAfterTheOwnEditCollapsed()
+		{
+			var store = new Dictionary<string, bool>();
+			var previous = PreviousViewThatSavedAnEdit(store, collapseSensesAfterward: true);
+			Assert.That(store["senses"], Is.False, "precondition: senses was collapsed after the edit");
+			var view = ShowWithStore(SensesAfterInsert(), store);
+
+			view.RevealObjectsAddedSince(previous);
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(TextBoxPresent(view, "g11"), Is.False, "the section stays collapsed");
+			Assert.That(store["senses"], Is.False, "the user's collapse stays recorded");
+		}
+
+		// LT-22689: a re-show after the view's own edit can also carry an insert from another
+		// window or a menu command. A section collapsed before the edit still opens to show it.
+		[AvaloniaTest]
+		public void RevealObjectsAddedSince_ExpandsASectionCollapsedBeforeTheOwnEdit()
+		{
+			var store = new Dictionary<string, bool> { ["senses"] = false };
+			var previous = PreviousViewThatSavedAnEdit(store, collapseSensesAfterward: false);
+			var view = ShowWithStore(SensesAfterInsert(), store);
+
+			view.RevealObjectsAddedSince(previous);
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(TextBoxPresent(view, "g11"), Is.True, "the inserted sense is shown");
+			Assert.That(store["senses"], Is.True);
 		}
 
 		[AvaloniaTest]
