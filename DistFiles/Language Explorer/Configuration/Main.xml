@@ -867,8 +867,7 @@ I (RandyR) brought them into this file, just to keep track of them for the time 
 	<!-- ********************************************************** -->
 
 	<statusbar>
-		<!-- At runtime, put text in these by setting the property 'StatusPanelMessage',
-		'StatusPanelProgress', etc. to something -->
+		<!-- At runtime, XWindow.SetStatusPanelText(id, text) puts text in the panel with that id. -->
 		<panel id="Message" width="Contents" minwidth="40"/>
 		<panel id="Progress" width="Contents" minwidth="40"/>
 		<panel id="Area"/>

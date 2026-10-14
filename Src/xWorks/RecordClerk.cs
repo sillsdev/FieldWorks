@@ -74,7 +74,7 @@ namespace SIL.FieldWorks.XWorks
 		protected RecordBarHandler m_recordBarHandler;
 		protected RecordList m_list;
 
-		private const string StatusBarRecordNumber = "StatusPanelRecordNumber";
+		private const string StatusBarRecordNumber = "RecordNumber";
 
 		/// <summary>
 		/// The record list might need access to this just to check membership of an object quickly.
@@ -1867,7 +1867,7 @@ namespace SIL.FieldWorks.XWorks
 				// deleted objects don't have a cache (and other properties) so it was crashing.  LT-3160, LT-3121,...
 				msg = GetStatusBarMsgForCurrentObject();
 			}
-			ResetStatusBarPanel("StatusPanelMessage", msg);
+			ResetStatusBarPanel("Message", msg);
 		}
 
 		protected virtual string GetStatusBarMsgForCurrentObject()
@@ -1887,10 +1887,10 @@ namespace SIL.FieldWorks.XWorks
 			return msg;
 		}
 
-		private void ResetStatusBarPanel(string panel, string msg)
+		private void ResetStatusBarPanel(string panelId, string text)
 		{
-			m_propertyTable.SetProperty(panel, msg, true);
-			m_propertyTable.SetPropertyPersistence(panel, false);
+			var window = m_propertyTable.GetWindow() as XWindow;
+			window?.SetStatusPanelText(panelId, text);
 		}
 
 		/// <summary>
@@ -2886,7 +2886,9 @@ namespace SIL.FieldWorks.XWorks
 			if (fIgnore)
 			{
 				// Set the value so that it can be picked up by the dialog (or whoever).
-				ResetStatusBarPanel("DialogFilterStatus", FilterStatusContents(m_list.Filter != null && m_list.Filter.IsUserVisible) ?? String.Empty);
+				m_propertyTable.SetProperty("DialogFilterStatus",
+					FilterStatusContents(m_list.Filter != null && m_list.Filter.IsUserVisible) ?? String.Empty, false);
+				m_propertyTable.SetPropertyPersistence("DialogFilterStatus", false);
 				return;
 			}
 			var b = m_propertyTable.GetValue<StatusBarTextBox>("Filter");

@@ -216,9 +216,8 @@ namespace SIL.FieldWorks.LexText.Controls
 		// Now called by timer AND by Idle
 		private void UpdateStatusPanelProgress()
 		{
-			var statusMessage = ParserQueueString + " " + ParserActivityString;
-			m_propertyTable.SetProperty("StatusPanelProgress", statusMessage, true);
-			m_propertyTable.SetPropertyPersistence("StatusPanelProgress", false);
+			var window = m_propertyTable.GetWindow() as XWindow;
+			window?.SetStatusPanelText("Progress", ParserQueueString + " " + ParserActivityString);
 
 			if (m_parserConnection != null)
 			{
