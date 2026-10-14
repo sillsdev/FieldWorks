@@ -1,12 +1,14 @@
-﻿// Copyright (c) 2026 SIL International
+// Copyright (c) 2026 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Avalonia;
 using Avalonia.Automation;
 using Avalonia.Controls;
+using Avalonia.Controls.Presenters;
 using Avalonia.Headless;
 using Avalonia.Headless.NUnit;
 using Avalonia.Input;
@@ -343,6 +345,79 @@ namespace FwAvaloniaTests.Detail
 			Press(window, PhysicalKey.ArrowUp);
 			Assert.That(FocusedAutomationId(view), Is.EqualTo("Multi.vern"),
 				"Up on the first writing system stays put; it never leaves the row");
+		}
+
+		private static DetailField WrappingMultiWsField()
+			=> Field("Wrap", values: new List<DetailWsValue>
+			{
+				new DetailWsValue("vern", string.Join(" ", Enumerable.Repeat("alpha beta gamma", 12))),
+				new DetailWsValue("en", string.Join(" ", Enumerable.Repeat("delta epsilon zeta", 10)))
+			});
+
+		private static TextPresenter PresenterOf(TextBox box)
+			=> box.GetVisualDescendants().OfType<TextPresenter>().First();
+
+		// The laid-out top of the line holding the character at index, rounded so equal lines
+		// compare equal.
+		private static double LineTopAt(TextBox box, int index)
+			=> Math.Round(PresenterOf(box).TextLayout.HitTestTextPosition(index).Top, 1);
+
+		private static double CaretX(Visual root, TextBox box)
+		{
+			var presenter = PresenterOf(box);
+			var caret = presenter.TextLayout.HitTestTextPosition(box.CaretIndex);
+			return presenter.TranslatePoint(new Point(caret.X, 0), root).Value.X;
+		}
+
+		[AvaloniaTest]
+		public void UpAndDownInWrappedText_MoveWithinTheValueBeforeLeavingIt()
+		{
+			// Window is chosen small enough to force vern and en values to wrap to at least three lines.
+			var (window, view) = Show(240, 400, Field("Before"), WrappingMultiWsField(),
+				Field("After"));
+			var vern = Find<TextBox>(view, "Wrap.vern");
+			var en = Find<TextBox>(view, "Wrap.en");
+			var length = vern.Text.Length;
+			var tops = Enumerable.Range(0, length + 1).Select(i => LineTopAt(vern, i))
+				.Distinct().OrderBy(t => t).ToList();
+			Assert.That(tops.Count, Is.GreaterThanOrEqualTo(3),
+				"the value must wrap to at least three lines for this test to mean anything");
+
+			vern.Focus();
+			vern.CaretIndex = 0;
+			Dispatcher.UIThread.RunJobs();
+			Press(window, PhysicalKey.ArrowDown);
+			Assert.That(FocusedAutomationId(view), Is.EqualTo("Wrap.vern"),
+				"Down from the first line of a wrapped value stays in it");
+			Assert.That(LineTopAt(vern, vern.CaretIndex), Is.EqualTo(tops[1]).Within(1),
+				"and moves the caret to the second line");
+
+			var lastLineStart = Enumerable.Range(0, length + 1)
+				.First(i => LineTopAt(vern, i) == tops[tops.Count - 1]);
+			vern.CaretIndex = Math.Min(lastLineStart + 4, length);
+			var x = CaretX(view, vern);
+			Press(window, PhysicalKey.ArrowDown);
+			Assert.That(FocusedAutomationId(view), Is.EqualTo("Wrap.en"),
+				"Down from the last line moves to the next writing system");
+			Assert.That(LineTopAt(en, en.CaretIndex), Is.EqualTo(LineTopAt(en, 0)).Within(1),
+				"landing on its first line");
+
+			// Check that caret is within 15 px of the horizontal position it left in previous value.
+			// The 15 px allowance is chosen to be roughly one character width.
+			Assert.That(CaretX(view, en), Is.EqualTo(x).Within(15),
+				"near the horizontal position the caret left");
+
+			x = CaretX(view, en);
+			Press(window, PhysicalKey.ArrowUp);
+			Assert.That(FocusedAutomationId(view), Is.EqualTo("Wrap.vern"),
+				"Up from the first line moves to the previous writing system");
+			Assert.That(LineTopAt(vern, vern.CaretIndex), Is.EqualTo(tops[tops.Count - 1]).Within(1),
+				"landing on its last line");
+
+			// Check that caret is within 15 px of the horizontal position it left in previous value.
+			// The 15 px allowance is chosen to be roughly one character width.
+			Assert.That(CaretX(view, vern), Is.EqualTo(x).Within(15),
+				"near the horizontal position the caret left");
 		}
 
 		[AvaloniaTest]
