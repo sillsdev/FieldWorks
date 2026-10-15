@@ -107,6 +107,48 @@ namespace FwAvaloniaTests
 			Assert.That(FindEditor(second, "GlossEditor.vern").IsFocused, Is.True);
 		}
 
+		// A gesture replaced the focused row's object with a new one, whose rows carry ids the
+		// outgoing view cannot know: the first row showing that object takes focus.
+		[AvaloniaTest]
+		public void RequestedObjectFocus_FocusesTheFirstRowShowingTheObject()
+		{
+			var first = NewViewOfForm(8);
+			var window = new Window { Content = first, Width = 420, Height = 200 };
+			window.Show();
+			Dispatcher.UIThread.RunJobs();
+			FindEditor(first, "LexEntry/identity/#0@8.vern").Focus();
+			Dispatcher.UIThread.RunJobs();
+
+			first.RequestObjectFocusOnRebuild(9);
+			var memento = DetailFocusMemory.Capture(first);
+			Assert.That(memento.AutomationId, Is.EqualTo("LexEntry/identity/#0@8.vern"), "precondition: the replaced form's editor had focus");
+			Assert.That(memento.ObjectHvo, Is.EqualTo(9));
+
+			var second = NewViewOfForm(9);
+			DetailFocusMemory.RestoreAfterLayout(second, memento);
+			window.Content = second;
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(FindEditor(second, "LexEntry/identity/#0@8.vern"), Is.Null, "precondition: the remembered editor is gone");
+			Assert.That(FindEditor(second, "LexEntry/identity/#0@9.vern").IsFocused, Is.True,
+				"the new form's editor takes focus");
+		}
+
+		// A view whose Lexeme Form row shows the form with the given hvo, its row ids derived
+		// from the stable ids as the composer derives them.
+		private static DataTree NewViewOfForm(int formHvo)
+		{
+			var values = new List<DetailWsValue> { new DetailWsValue("vern", "casa") };
+			var fields = new List<DetailField>
+			{
+				new DetailField("LexEntry/identity/#0@" + formHvo, "Lexeme Form", "Form", "vernacular", DetailFieldKind.Text,
+					EditorClassification.Known, null, null, HostRouting.Product, values, null, null, objectHvo: formHvo),
+				new DetailField("LexEntry/identity/#1@3", "Gloss", "Gloss", "analysis", DetailFieldKind.Text,
+					EditorClassification.Known, null, null, HostRouting.Product, values, null, null, objectHvo: 3)
+			};
+			return new DataTree(new DetailModel("LexEntry", "identity", fields, new List<ViewDiagnostic>()));
+		}
+
 		private static DataTree NewLongView()
 		{
 			var roots = new List<ViewNode>();

@@ -283,13 +283,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		void IReferenceItemMenuHost.FilterByAnthroItem(string tool, int anthroItemHvo)
-		{
-			SettleDetailEdits();
-#pragma warning disable 618 // suppress obsolete warning
-			m_mediator.PostMessage("FollowLink",
-				AnthroItemFilterLink.Create(Cache.ProjectId.Handle, tool, anthroItemHvo));
-#pragma warning restore 618
-		}
+			=> FollowLink(AnthroItemFilterLink.Create(Cache.ProjectId.Handle, tool, anthroItemHvo));
 
 		// Model edits of their own: pending edits settle first (a rollback cancels the mark), so
 		// each is its own undo step; the change re-shows through PropChanged.

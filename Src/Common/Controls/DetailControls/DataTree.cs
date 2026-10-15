@@ -4631,119 +4631,21 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		}
 
 		/// <summary>
-		/// Common logic shared between OnDisplayJumpToTool and OnJumpToTool.
-		/// forEnableOnly is true when called from OnDisplayJumpToTool.
+		/// Common logic shared between OnDisplayJumpToTool and OnJumpToTool: the target
+		/// <see cref="DetailJumpTargets"/> resolves for the current slice, or the root when
+		/// there is none. A real jump to the notebook first creates the record a text lacks.
 		/// </summary>
+		/// <param name="forEnableOnly">True when called from OnDisplayJumpToTool.</param>
 		internal Guid GetGuidForJumpToTool(Command cmd, bool forEnableOnly, out string tool)
 		{
 			tool = XmlUtils.GetMandatoryAttributeValue(cmd.Parameters[0], "tool");
 			string className = XmlUtils.GetMandatoryAttributeValue(cmd.Parameters[0], "className");
-			ICmObject targetObject;
-			if (CurrentSlice == null)
-				targetObject = Root;
-			else
-				targetObject = CurrentSlice.Object;
-			if (targetObject != null)
-			{
-				var owner = targetObject.Owner;
-				if (tool == "concordance")
-				{
-					int flidSlice = 0;
-					if (CurrentSlice != null && !CurrentSlice.IsHeaderNode)
-					{
-						flidSlice = CurrentSlice.Flid;
-						if (flidSlice == 0 || m_mdc.get_IsVirtual(flidSlice))
-							return cmd.TargetId;
-					}
-					switch (className)
-					{
-						case "LexEntry":
-							if (m_root != null && m_root.ClassID == LexEntryTags.kClassId)
-							{
-								if (cmd.Id == "CmdRootEntryJumpToConcordance")
-								{
-									return m_root.Guid;
-								}
-
-								if (targetObject.ClassID == LexEntryRefTags.kClassId)
-									return cmd.TargetId;
-
-								if (targetObject.ClassID == LexEntryTags.kClassId)
-									return targetObject.Guid;
-
-								var lexEntry = targetObject.OwnerOfClass<ILexEntry>();
-								return lexEntry == null ? cmd.TargetId : lexEntry.Guid;
-							}
-							break;
-						case "LexSense":
-							if (targetObject.ClassID == LexSenseTags.kClassId)
-							{
-								if (((ILexSense)targetObject).Entry == m_root)
-									return targetObject.Guid;
-							}
-							break;
-						case "MoForm":
-							if (m_cache.ClassIsOrInheritsFrom(targetObject.ClassID, MoFormTags.kClassId))
-							{
-								if (flidSlice == MoFormTags.kflidForm)
-									return targetObject.Guid;
-							}
-							break;
-					}
-				}
-				else if (tool == "lexiconEdit")
-				{
-					if (owner != null && owner != m_root && owner.ClassID == LexEntryTags.kClassId)
-					{
-						return owner.Guid;
-					}
-				}
-				else if (tool == "notebookEdit")
-				{
-					if (owner != null &&
-						owner.ClassID == RnGenericRecTags.kClassId)
-						return owner.Guid;
-					if (targetObject is IText)
-					{
-						IRnGenericRec referringRecord;
-						if (NotebookRecordRefersToThisText(targetObject as IText, out referringRecord))
-							return referringRecord.Guid;
-
-						// Text is not already associated with a notebook record. So there's nothing yet to jump to.
-						// If the user is really doing the jump we need to make it now.
-						// Otherwise we just need to return something non-null to indicate the jump
-						// is possible (though this is not currently used).
-						if (forEnableOnly)
-							return targetObject.Guid;
-						// User is really making the jump. Create a notebook record, associate it, and jump.
-						var newNotebookRec = CreateAndAssociateNotebookRecord();
-						return newNotebookRec.Guid;
-					}
-					// Try TargetId by default
-				}
-				else if (tool == "interlinearEdit")
-				{
-					if (targetObject.ClassID == TextTags.kClassId)
-					{
-						return targetObject.Guid;
-					}
-				}
-			}
-			return cmd.TargetId;
-		}
-
-		private IRnGenericRec CreateAndAssociateNotebookRecord()
-		{
-			if (!(CurrentSlice.Object is IText))
-				throw new ArgumentException("CurrentSlice.Object ought to be a Text object.");
-
-			IText textObj = CurrentSlice.Object as IText;
-			// Create new Notebook record
-
-			((IText)CurrentSlice.Object).AssociateWithNotebook(true);
-			IRnGenericRec referringRecord;
-			NotebookRecordRefersToThisText(CurrentSlice.Object as IText, out referringRecord);
-			return referringRecord;
+			var target = CurrentSlice == null ? m_root : CurrentSlice.Object;
+			int? flid = CurrentSlice != null && !CurrentSlice.IsHeaderNode ? CurrentSlice.Flid : (int?)null;
+			var jump = DetailJumpTargets.Resolve(tool, className, cmd.Id, cmd.TargetId, m_root, target, flid);
+			if (jump.TextWithoutRecord != null && !forEnableOnly)
+				return DetailJumpTargets.AssociateWithNotebook(jump.TextWithoutRecord).Guid;
+			return jump.Guid;
 		}
 
 		internal static bool NotebookRecordRefersToThisText(IText text, out IRnGenericRec referringRecord)

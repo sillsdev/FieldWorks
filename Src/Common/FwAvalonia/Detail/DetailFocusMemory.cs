@@ -31,7 +31,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		{
 			public Memento(string automationId, int caretIndex, double verticalOffset = 0,
 				string vectorAutomationId = null, string vectorItemKey = null, int vectorItemIndex = -1,
-				bool focusVectorItem = false, IReadOnlyList<string> rowAutomationIds = null)
+				bool focusVectorItem = false, IReadOnlyList<string> rowAutomationIds = null,
+				int objectHvo = 0)
 			{
 				AutomationId = automationId;
 				CaretIndex = caretIndex;
@@ -41,7 +42,14 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				VectorItemIndex = vectorItemIndex;
 				FocusVectorItem = focusVectorItem;
 				RowAutomationIds = rowAutomationIds;
+				ObjectHvo = objectHvo;
 			}
+
+			/// <summary>
+			/// The object whose first row the outgoing view asked to focus after the rebuild
+			/// (a gesture replaced the focused row's object); 0 when none.
+			/// </summary>
+			public int ObjectHvo { get; }
 
 			/// <summary>
 			/// The automation ids of the rows the outgoing view asked to try focusing after
@@ -94,10 +102,11 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			var vectorIndex = selectedVector?.SelectedItemIndex ?? -1;
 			var focusVector = tree?.VectorFocusRequested ?? false;
 			var focusRow = tree?.RowFocusRequested;
+			var focusObject = tree?.ObjectFocusRequested ?? 0;
 
 			var focusManager = TopLevel.GetTopLevel(root)?.FocusManager;
 			if (!(focusManager?.GetFocusedElement() is Control focused) || !root.IsVisualAncestorOf(focused))
-				return new Memento(null, -1, verticalOffset, vectorId, vectorKey, vectorIndex, focusVector, focusRow);
+				return new Memento(null, -1, verticalOffset, vectorId, vectorKey, vectorIndex, focusVector, focusRow, focusObject);
 
 			// The editor itself carries the stable id (e.g. "LexemeFormEditor.vern"); walk up in
 			// case focus landed on an inner template part.
@@ -107,11 +116,11 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				if (!string.IsNullOrEmpty(id))
 				{
 					return new Memento(id, (focused as TextBox)?.CaretIndex ?? -1, verticalOffset,
-						vectorId, vectorKey, vectorIndex, focusVector, focusRow);
+						vectorId, vectorKey, vectorIndex, focusVector, focusRow, focusObject);
 				}
 			}
 
-			return new Memento(null, -1, verticalOffset, vectorId, vectorKey, vectorIndex, focusVector, focusRow);
+			return new Memento(null, -1, verticalOffset, vectorId, vectorKey, vectorIndex, focusVector, focusRow, focusObject);
 		}
 
 		// Whether the rebuilt view should focus the vector row's current item: the outgoing view
@@ -220,7 +229,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		/// vector row's current item, then focus -- the remembered editor, else that current
 		/// item when the memento asks for it (a move or removal made from the row keeps the
 		/// keyboard in the row), else the first surviving row the outgoing view asked for (a
-		/// gesture removed the focused row). Safe to call before the view is attached.
+		/// gesture removed the focused row), else the first row of the object it asked for (a
+		/// gesture replaced the row's object). Safe to call before the view is attached.
 		/// </summary>
 		public static void RestoreAfterLayout(Control root, Memento memento)
 		{
@@ -246,6 +256,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 						vector.FocusItemAt(vector.SelectedItemIndex);
 					else if (memento.RowAutomationIds != null)
 						(root as DataTree)?.FocusFirstRow(memento.RowAutomationIds);
+					else if (memento.ObjectHvo != 0)
+						(root as DataTree)?.FocusFirstRowOf(memento.ObjectHvo);
 				}
 				// A bring-into-view request queued by a focus change is applied by the next
 				// arrange; the remembered offset is re-asserted after it.
