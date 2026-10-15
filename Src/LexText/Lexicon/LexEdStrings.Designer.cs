@@ -565,15 +565,6 @@ namespace SIL.FieldWorks.XWorks.LexEd {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to You are deleting the following Reversal Index:.
-        /// </summary>
-        internal static string ksDeletingThisRevIndex {
-            get {
-                return ResourceManager.GetString("ksDeletingThisRevIndex", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Edit {0}.
         /// </summary>
         internal static string ksEditX {
@@ -759,15 +750,6 @@ namespace SIL.FieldWorks.XWorks.LexEd {
         internal static string ksNormallyHidden {
             get {
                 return ResourceManager.GetString("ksNormallyHidden", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Do you really want to delete this Reversal Index?.
-        /// </summary>
-        internal static string ksReallyWantToDeleteRevIndex {
-            get {
-                return ResourceManager.GetString("ksReallyWantToDeleteRevIndex", resourceCulture);
             }
         }
         

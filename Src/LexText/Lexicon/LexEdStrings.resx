@@ -162,9 +162,6 @@
   <data name="ksDeleteSequenceCollectionB" xml:space="preserve">
     <value> relation.</value>
   </data>
-  <data name="ksDeletingThisRevIndex" xml:space="preserve">
-    <value>You are deleting the following Reversal Index:</value>
-  </data>
   <data name="ksEditX" xml:space="preserve">
     <value>Edit {0}</value>
   </data>
@@ -217,9 +214,6 @@
   <data name="ksNormallyHidden" xml:space="preserve">
     <value>Normally hidden</value>
     <comment>menu item</comment>
-  </data>
-  <data name="ksReallyWantToDeleteRevIndex" xml:space="preserve">
-    <value>Do you really want to delete this Reversal Index?</value>
   </data>
   <data name="ksReassignHomographs" xml:space="preserve">
     <value>Reassign Homographs</value>
