@@ -391,6 +391,73 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
+		public void GenerateCharacterStyleFromLcmStyleSheet_StyleFontIsDefaultFont_UsesWritingSystemDefaultFont()
+		{
+			var vernWs = Cache.ServiceLocator.WritingSystemManager.Get(Cache.DefaultVernWs);
+			var originalFont = vernWs.DefaultFont;
+			vernWs.DefaultFont = new FontDefinition("Charis SIL") { Features = "ss11=1" };
+			var styleName = AddStyleWithDefaultFont();
+			// The parent element's font must not reach a style that names the WS font.
+			var parentRunProps = new StyleRunProperties(new RunFonts { Ascii = "Parent Font" });
+			try
+			{
+				var style = WordStylesGenerator.GenerateCharacterStyleFromLcmStyleSheet(styleName, vernWs.Handle,
+					new ReadOnlyPropertyTable(m_propertyTable), parentRunProps);
+
+				var runProps = style.GetFirstChild<StyleRunProperties>();
+				Assert.That(runProps, Is.Not.Null);
+				Assert.That(runProps.GetFirstChild<RunFonts>()?.Ascii?.Value, Is.EqualTo("Charis SIL"));
+				var styleSet = runProps.GetFirstChild<W14.StylisticSets>()?.Elements<W14.StyleSet>().Single();
+				Assert.That(styleSet?.Id?.Value, Is.EqualTo(11U));
+			}
+			finally
+			{
+				vernWs.DefaultFont = originalFont;
+				FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable).Styles.Remove(styleName);
+			}
+		}
+
+		[Test]
+		public void GenerateCharacterStyleFromLcmStyleSheet_StyleFontIsDefaultFontWithNoWritingSystem_SetsNoFont()
+		{
+			var styleName = AddStyleWithDefaultFont();
+			try
+			{
+				var style = WordStylesGenerator.GenerateCharacterStyleFromLcmStyleSheet(styleName,
+					WordStylesGenerator.DefaultStyle, new ReadOnlyPropertyTable(m_propertyTable));
+
+				Assert.That(style.GetFirstChild<StyleRunProperties>()?.GetFirstChild<RunFonts>(), Is.Null);
+			}
+			finally
+			{
+				FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable).Styles.Remove(styleName);
+			}
+		}
+
+		[Test]
+		public void GetExplicitFontProperties_FontIsDefaultFont_SetsNoFont()
+		{
+			var fontInfo = new FontInfo { m_fontName = { ExplicitValue = StyleServices.DefaultFont } };
+
+			var runProps = WordStylesGenerator.GetExplicitFontProperties(fontInfo);
+
+			Assert.That(runProps.GetFirstChild<RunFonts>(), Is.Null);
+		}
+
+		/// <summary>
+		/// Adds a character style whose font is "&lt;default font&gt;" for all writing systems
+		/// and returns its name.
+		/// </summary>
+		private string AddStyleWithDefaultFont()
+		{
+			var styleName = "DefaultFontStyle" + Guid.NewGuid().ToString("N");
+			var fontInfo = new FontInfo { m_fontName = { ExplicitValue = StyleServices.DefaultFont } };
+			var projectStyle = new TestStyle(fontInfo, Cache) { Name = styleName, IsParagraphStyle = false };
+			FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable).Styles.Add(projectStyle);
+			return styleName;
+		}
+
+		[Test]
 		[Category("ManualDocx")]
 		public void GenerateManualDocxArtifact_CharisBaseline_NoFontOptions()
 		{
