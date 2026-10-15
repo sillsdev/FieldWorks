@@ -3225,6 +3225,114 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
+		public void GenerateCssForConfiguration_StyleFontIsDefaultFont_UsesWritingSystemDefaultFont()
+		{
+			var vernWs = Cache.ServiceLocator.WritingSystemManager.Get(Cache.DefaultVernWs);
+			var originalFont = vernWs.DefaultFont;
+			vernWs.DefaultFont = new FontDefinition("Charis SIL") { Features = "ss11=1" };
+			try
+			{
+				var cssResult = GenerateCssForHeadwordStyledWithDefaultFont(vernWs, null);
+
+				Assert.That(cssResult, Does.Not.Contain(StyleServices.DefaultFont));
+				Assert.That(cssResult, Does.Match(
+					@"\[lang='" + vernWs.LanguageTag + @"'\]\{font-family:'Charis SIL',serif;font-feature-settings:""ss11"" 1;"));
+			}
+			finally
+			{
+				vernWs.DefaultFont = originalFont;
+				SafelyRemoveStyleFromSheetAndTable("DefaultFontStyle");
+			}
+		}
+
+		[Test]
+		public void GenerateCssForConfiguration_NormalStyleFontIsDefaultFont_UsesWritingSystemDefaultFont()
+		{
+			var vernWs = Cache.ServiceLocator.WritingSystemManager.Get(Cache.DefaultVernWs);
+			var originalFont = vernWs.DefaultFont;
+			vernWs.DefaultFont = new FontDefinition("Charis SIL");
+			var style = GenerateEmptyStyle("Normal");
+			style.IsParagraphStyle = true;
+			style.SetDefaultFontInfo(new FontInfo { m_fontName = { ExplicitValue = StyleServices.DefaultFont } });
+			try
+			{
+				var glossNode = new ConfigurableDictionaryNode
+				{
+					FieldDescription = "Gloss",
+					DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] { vernWs.LanguageTag })
+				};
+				var testSensesNode = new ConfigurableDictionaryNode
+				{
+					FieldDescription = "Senses",
+					Children = new List<ConfigurableDictionaryNode> { glossNode }
+				};
+				var testEntryNode = new ConfigurableDictionaryNode
+				{
+					FieldDescription = "LexEntry",
+					Children = new List<ConfigurableDictionaryNode> { testSensesNode }
+				};
+				var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { testEntryNode } };
+				PopulateFieldsForTesting(testEntryNode);
+
+				var cssResult = Regex.Replace(CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable), @"\t|\n|\r", "");
+
+				Assert.That(cssResult, Does.Not.Contain(StyleServices.DefaultFont));
+				Assert.That(cssResult, Contains.Substring("span[lang='" + vernWs.LanguageTag + "']{font-family:'Charis SIL',serif;"));
+			}
+			finally
+			{
+				vernWs.DefaultFont = originalFont;
+				SafelyRemoveStyleFromSheetAndTable("Normal");
+			}
+		}
+
+		[Test]
+		public void GenerateCssForConfiguration_StyleFontIsDefaultFont_StyleFeaturesBeatWritingSystemFeatures()
+		{
+			var vernWs = Cache.ServiceLocator.WritingSystemManager.Get(Cache.DefaultVernWs);
+			var originalFont = vernWs.DefaultFont;
+			vernWs.DefaultFont = new FontDefinition("Charis SIL") { Features = "ss11=1" };
+			try
+			{
+				var cssResult = GenerateCssForHeadwordStyledWithDefaultFont(vernWs, "smcp=1");
+
+				Assert.That(cssResult, Does.Match(
+					@"\[lang='" + vernWs.LanguageTag + @"'\]\{font-family:'Charis SIL',serif;font-feature-settings:""smcp"" 1;"));
+				Assert.That(cssResult, Does.Not.Contain("ss11"));
+			}
+			finally
+			{
+				vernWs.DefaultFont = originalFont;
+				SafelyRemoveStyleFromSheetAndTable("DefaultFontStyle");
+			}
+		}
+
+		/// <summary>
+		/// Generates CSS for a headword node whose style sets its font to "&lt;default font&gt;"
+		/// for all writing systems, with <paramref name="styleFeatures"/> as the style's own
+		/// font features.
+		/// </summary>
+		private string GenerateCssForHeadwordStyledWithDefaultFont(CoreWritingSystemDefinition ws, string styleFeatures)
+		{
+			ConfiguredLcmGenerator.AssemblyFile = "xWorksTests";
+			var style = GenerateEmptyStyle("DefaultFontStyle");
+			var fontInfo = new FontInfo { m_fontName = { ExplicitValue = StyleServices.DefaultFont } };
+			if (styleFeatures != null)
+				fontInfo.m_features.ExplicitValue = styleFeatures;
+			style.SetDefaultFontInfo(fontInfo);
+			var headwordNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SIL.FieldWorks.XWorks.TestRootClass",
+				Label = "Headword",
+				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] { ws.LanguageTag }),
+				Style = "DefaultFontStyle",
+				IsEnabled = true
+			};
+			var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { headwordNode } };
+			return Regex.Replace(CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable), @"\t|\n|\r", "");
+		}
+
+		[Test]
 		public void GenerateCssForConfiguration_NormalStyleForWsDoesNotOverrideNodeStyle()
 		{
 			// Set up Normal style to default to Green, except for English which is Red
@@ -3426,6 +3534,35 @@ namespace SIL.FieldWorks.XWorks
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
 			const string regExPected = @".senses\s>\s.sensecontent:before.*{.*content:'\\25A0';.*font-size:14pt;.*color:Green;.*font-family:Arial;.*font-weight:bold;.*font-style:italic;.*background-color:Brown;.*}";
 			VerifyRegex(cssResult, regExPected, "Bulleted style not generated.");
+		}
+
+		[Test]
+		public void GenerateCssForBulletStyleForSenses_BulletFontIsDefaultFont_OmitsFontFamily()
+		{
+			GenerateBulletStyle("Bulleted List", StyleServices.DefaultFont);
+			var senses = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SensesOS",
+				CSSClassNameOverride = "Senses",
+				DictionaryNodeOptions = new DictionaryNodeSenseOptions
+				{
+					NumberStyle = "Dictionary-SenseNum", DisplayEachSenseInAParagraph = true
+				},
+				Style = "Bulleted List"
+			};
+			var entry = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry",
+				CSSClassNameOverride = "lexentry",
+				Children = new List<ConfigurableDictionaryNode> { senses }
+			};
+			var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { entry } };
+			PopulateFieldsForTesting(model);
+			// SUT
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
+			VerifyRegex(cssResult, @".senses\s>\s.sensecontent:before.*{.*content:'\\25A0';.*font-size:14pt;.*color:Green;.*font-weight:bold;",
+				"Bulleted style not generated.");
+			Assert.That(cssResult, Does.Not.Contain(StyleServices.DefaultFont));
 		}
 
 		[Test]
@@ -4233,12 +4370,12 @@ namespace SIL.FieldWorks.XWorks
 				m_owningTable.Remove(name);
 		}
 
-		private void GenerateBulletStyle(string name)
+		private void GenerateBulletStyle(string name, string bulletFontName = "Arial")
 		{
 			var fontInfo = new FontInfo();
 			fontInfo.m_fontColor.ExplicitValue = Color.Green;
 			fontInfo.m_fontSize.ExplicitValue = 14000;
-			fontInfo.m_fontName.ExplicitValue = "Arial";
+			fontInfo.m_fontName.ExplicitValue = bulletFontName;
 			fontInfo.m_bold.ExplicitValue = true;
 			fontInfo.m_italic.ExplicitValue = true;
 			fontInfo.m_underline.ExplicitValue = FwUnderlineType.kuntNone;
