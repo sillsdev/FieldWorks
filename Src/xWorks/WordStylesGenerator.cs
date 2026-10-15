@@ -463,8 +463,8 @@ namespace SIL.FieldWorks.XWorks
 				: defaultFontInfo.FontName.ValueIsSet ? defaultFontInfo.FontName.Value : null;
 
 			// An explicit "<default font>" names the writing system's default font, as the Views
-			// renderer reads it. A style with no writing system then sets no font, so the writing
-			// system styles apply.
+			// renderer reads it. With no writing system, styles other than Normal set no font,
+			// so the writing system styles apply.
 			var usesWsDefaultFont = fontName == StyleServices.DefaultFont;
 			if (usesWsDefaultFont)
 			{

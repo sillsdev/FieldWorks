@@ -3246,6 +3246,47 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
+		public void GenerateCssForConfiguration_NormalStyleFontIsDefaultFont_UsesWritingSystemDefaultFont()
+		{
+			var vernWs = Cache.ServiceLocator.WritingSystemManager.Get(Cache.DefaultVernWs);
+			var originalFont = vernWs.DefaultFont;
+			vernWs.DefaultFont = new FontDefinition("Charis SIL");
+			var style = GenerateEmptyStyle("Normal");
+			style.IsParagraphStyle = true;
+			style.SetDefaultFontInfo(new FontInfo { m_fontName = { ExplicitValue = StyleServices.DefaultFont } });
+			try
+			{
+				var glossNode = new ConfigurableDictionaryNode
+				{
+					FieldDescription = "Gloss",
+					DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] { vernWs.LanguageTag })
+				};
+				var testSensesNode = new ConfigurableDictionaryNode
+				{
+					FieldDescription = "Senses",
+					Children = new List<ConfigurableDictionaryNode> { glossNode }
+				};
+				var testEntryNode = new ConfigurableDictionaryNode
+				{
+					FieldDescription = "LexEntry",
+					Children = new List<ConfigurableDictionaryNode> { testSensesNode }
+				};
+				var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { testEntryNode } };
+				PopulateFieldsForTesting(testEntryNode);
+
+				var cssResult = Regex.Replace(CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable), @"\t|\n|\r", "");
+
+				Assert.That(cssResult, Does.Not.Contain(StyleServices.DefaultFont));
+				Assert.That(cssResult, Contains.Substring("span[lang='" + vernWs.LanguageTag + "']{font-family:'Charis SIL',serif;"));
+			}
+			finally
+			{
+				vernWs.DefaultFont = originalFont;
+				SafelyRemoveStyleFromSheetAndTable("Normal");
+			}
+		}
+
+		[Test]
 		public void GenerateCssForConfiguration_StyleFontIsDefaultFont_StyleFeaturesBeatWritingSystemFeatures()
 		{
 			var vernWs = Cache.ServiceLocator.WritingSystemManager.Get(Cache.DefaultVernWs);
