@@ -805,48 +805,8 @@ namespace SIL.FieldWorks.XWorks
 		/// <returns>true if we can insert into the given object</returns>
 		protected bool CanInsertFieldIntoObj(LcmCache fdoCache, string fieldName, ICmObject parentObj, out int index)
 		{
-			index = -1; // atomic or not possible
-			if (fdoCache == null || parentObj == null || (!parentObj.IsValidObject) || String.IsNullOrEmpty(fieldName))
-				return false;
-			var mdc = fdoCache.ServiceLocator.GetInstance<IFwMetaDataCacheManaged>();
-
-			// class not specified, depends on the object we're testing.
-			int flid = GetFlidIfPossible(parentObj.ClassID, fieldName, mdc);
-			if (flid == 0)
-				return false; // Some kind of fake field, or wrong type of object, so bail out.
-			var type = (CellarPropertyType) mdc.GetFieldType(flid);
-
-			// we can only insert new objects into virtual reference properties
-			if (fdoCache.IsReferenceProperty(flid) && !mdc.get_IsVirtual(flid))
-				return false;
-
-			if (type == CellarPropertyType.OwningSequence ||
-				type == CellarPropertyType.OwningCollection ||
-				type == CellarPropertyType.ReferenceCollection ||
-				type == CellarPropertyType.ReferenceSequence)
-			{
-				index = fdoCache.DomainDataByFlid.get_VecSize(parentObj.Hvo, flid);
-				return true;
-			}
-
-			// if its an atomic field, see if it's already been filled.
-			if (type == CellarPropertyType.OwningAtomic || type == CellarPropertyType.ReferenceAtomic)
-			{
-				return fdoCache.DomainDataByFlid.get_ObjectProp(parentObj.Hvo, flid) == 0;
-			}
-			return false;
-		}
-
-		/// <summary>
-		/// This seems a bit clumsy, but the metadata cache now throws an exception if the class
-		/// id/field name pair isn't valid for GetFieldId2(). So we check first in cases where
-		/// we want a zero if not found.
-		/// </summary>
-		private int GetFlidIfPossible(int clid, string fieldName, IFwMetaDataCacheManaged mdc)
-		{
-			if (!mdc.FieldExists(clid, fieldName, true))
-				return 0;
-			return mdc.GetFieldId2(clid, fieldName, true);
+			index = -1;
+			return fdoCache != null && DetailObjectInsertion.CanInsertInto(parentObj, fieldName, out index);
 		}
 
 		/// <summary>

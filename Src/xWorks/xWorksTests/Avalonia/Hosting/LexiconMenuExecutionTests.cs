@@ -31,8 +31,14 @@ namespace SIL.FieldWorks.XWorks
 		private PropertyTable m_propertyTable;
 		private List<ICmObject> m_createdObjects;
 		private ILexEntry m_entry;
+		private ILexSense m_sense1;
+		private ILexSense m_sense2;
 		private ILexExampleSentence m_example;
 		private ICmTranslation m_translation;
+		private ILexExtendedNote m_note1;
+		private ILexExtendedNote m_note2;
+		private ILexEtymology m_etymology1;
+		private ILexEtymology m_etymology2;
 		private ILexEntryRef m_complexFormRef;
 		private RecordEditView m_view;
 
@@ -167,12 +173,111 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(RecordEditView.RowsToFocusAfterDeleting(null, m_translation), Is.Empty);
 		}
 
-		// Builds the row's label menu as the host does and runs the named item's own Execute.
-		private void InvokeDelete(DetailField row, string label)
+		[Test]
+		public void InsertSubsense_FromTheSubsensesRow_AppendsItUnderTheSense_InOneUndoableStep()
 		{
-			var ids = RecordEditView.ComposeSliceMenuIds(row.MenuId, row.IsMultiStringRow).ToArray();
+			var row = Rows().Single(f => f.MenuId == "mnuDataTree-Subsenses" && f.ObjectHvo == m_sense1.Hvo);
+			Assert.That(row.GhostPrompt, Is.Not.Null, "precondition: no subsense yet, so the prompt row binds the id");
+
+			InvokeItem(row, DetailMenuKind.SliceMenu, "Insert Subsense");
+
+			Assert.That(m_sense1.SensesOS, Has.Count.EqualTo(1));
+			var subsense = m_sense1.SensesOS[0];
+			Assert.That(subsense.MorphoSyntaxAnalysisRA, Is.SameAs(m_sense1.MorphoSyntaxAnalysisRA),
+				"the new subsense takes its parent's grammatical info");
+			Assert.That(Rows().Any(f => f.ObjectHvo == subsense.Hvo), Is.True, "the recomposed view shows it");
+
+			Assert.That(Cache.ActionHandlerAccessor.CanUndo(), Is.True);
+			Cache.ActionHandlerAccessor.Undo();
+			Assert.That(m_sense1.SensesOS, Is.Empty, "one Undo removes it");
+		}
+
+		[Test]
+		public void InsertSense_FromTheFirstSensesHotlinks_GoesRightAfterIt()
+		{
+			InvokeItem(HeaderRowOf(m_sense1), DetailMenuKind.Hotlinks, "Insert Sense");
+
+			Assert.That(m_entry.SensesOS, Has.Count.EqualTo(3));
+			Assert.That(m_entry.SensesOS[0], Is.SameAs(m_sense1));
+			Assert.That(m_entry.SensesOS[2], Is.SameAs(m_sense2), "the new sense sits between the two");
+			Assert.That(m_entry.SensesOS[1].MorphoSyntaxAnalysisRA, Is.SameAs(m_sense1.MorphoSyntaxAnalysisRA),
+				"the new sense takes the grammatical info of the one before it");
+		}
+
+		[Test]
+		public void InsertExample_FromTheSensesHotlinks_GoesLast()
+		{
+			InvokeItem(HeaderRowOf(m_sense1), DetailMenuKind.Hotlinks, "Insert Example");
+
+			Assert.That(m_sense1.ExamplesOS, Has.Count.EqualTo(2));
+			Assert.That(m_sense1.ExamplesOS[0], Is.SameAs(m_example));
+		}
+
+		[Test]
+		public void InsertExtendedNote_FromTheFirstNotesHotlinks_GoesRightAfterIt()
+		{
+			InvokeItem(HeaderRowOf(m_note1), DetailMenuKind.Hotlinks, "Insert Extended Note");
+
+			Assert.That(m_sense1.ExtendedNoteOS, Has.Count.EqualTo(3));
+			Assert.That(m_sense1.ExtendedNoteOS[0], Is.SameAs(m_note1));
+			Assert.That(m_sense1.ExtendedNoteOS[2], Is.SameAs(m_note2), "the new note sits between the two");
+		}
+
+		// The Extended Notes section shows only with data, so no prompt row inserts the first.
+		[Test]
+		public void InsertExtendedNote_FromTheSectionRow_GoesLast()
+		{
+			var section = Rows().Single(f => f.MenuId == "mnuDataTree-ExtendedNotes" && f.ObjectHvo == m_sense1.Hvo);
+			Assert.That(section.Kind, Is.EqualTo(DetailFieldKind.Header), "precondition: the section header binds the id");
+			Assert.That(Rows().Any(f => f.MenuId == "mnuDataTree-ExtendedNotes" && f.ObjectHvo == m_sense2.Hvo), Is.False,
+				"precondition: the second sense has no note, so no section row");
+
+			InvokeItem(section, DetailMenuKind.SliceMenu, "Insert Extended Note");
+
+			Assert.That(m_sense1.ExtendedNoteOS, Has.Count.EqualTo(3));
+			Assert.That(m_sense1.ExtendedNoteOS[1], Is.SameAs(m_note2), "the new note is last");
+		}
+
+		[Test]
+		public void InsertEtymology_FromTheFirstEtymologysHotlinks_GoesRightAfterIt()
+		{
+			InvokeItem(HeaderRowOf(m_etymology1), DetailMenuKind.Hotlinks, "Insert Etymology");
+
+			Assert.That(m_entry.EtymologyOS, Has.Count.EqualTo(3));
+			Assert.That(m_entry.EtymologyOS[0], Is.SameAs(m_etymology1));
+			Assert.That(m_entry.EtymologyOS[2], Is.SameAs(m_etymology2), "the new etymology sits between the two");
+		}
+
+		[Test]
+		public void InsertDetailObject_ReturnsTheNewObject_AndNothingWhenTheRowsObjectIsGone()
+		{
+			var leaf = XCoreMenuBridge.ResolveMenu(m_propertyTable.GetValue<XWindow>("window"), "mnuDataTree-Etymology-Hotlinks")
+				.Leaves.Single();
+			var row = HeaderRowOf(m_etymology2);
+			var gone = new DetailField(row.StableId, row.Label, row.Field, null, DetailFieldKind.Header,
+				EditorClassification.GroupingNone, null, null, HostRouting.Inherit, null, null, null,
+				hotlinksId: row.HotlinksId, objectHvo: int.MaxValue - 1);
+
+			var created = m_view.InsertDetailObject(row, leaf.Command);
+
+			Assert.That(created, Is.InstanceOf<ILexEtymology>());
+			Assert.That(created.Owner, Is.SameAs(m_entry));
+			Assert.That(m_view.InsertDetailObject(gone, leaf.Command), Is.Null);
+			Assert.That(m_entry.EtymologyOS, Has.Count.EqualTo(3));
+		}
+
+		// Builds the row's label menu as the host does and runs the named item's own Execute.
+		private void InvokeDelete(DetailField row, string label) => InvokeItem(row, DetailMenuKind.SliceMenu, label);
+
+		// Builds the row's menu of the given kind as the host does and runs the named item's
+		// own Execute.
+		private void InvokeItem(DetailField row, DetailMenuKind kind, string label)
+		{
+			var ids = kind == DetailMenuKind.Hotlinks
+				? new[] { row.HotlinksId }
+				: RecordEditView.ComposeSliceMenuIds(row.MenuId, row.IsMultiStringRow).ToArray();
 			var window = m_propertyTable.GetValue<XWindow>("window");
-			var request = DetailMenuRequest.FromAnchor(null, row, DetailMenuKind.SliceMenu);
+			var request = DetailMenuRequest.FromAnchor(null, row, kind);
 			var items = XCoreMenuBridge.CreateMenuItems(window, ids, null, null, m_view.CreateMenuAuthority(request));
 			var item = items.FirstOrDefault(i => i.Label == label);
 			Assert.That(item, Is.Not.Null, "the menu offers '{0}'", label);
@@ -181,17 +286,36 @@ namespace SIL.FieldWorks.XWorks
 			DrainMediatorAndIdleQueues();
 		}
 
+		private IReadOnlyList<DetailField> Rows() => DetailComposer.Compose(m_entry, Cache).Model.Fields;
+
+		// The object's item header row, the one its hotlinks hang off.
+		private DetailField HeaderRowOf(ICmObject obj)
+			=> Rows().First(f => f.ObjectHvo == obj.Hvo && f.Kind == DetailFieldKind.Header && f.HotlinksId != null);
+
 		private DetailField TranslationRow()
 			=> DetailComposer.Compose(m_entry, Cache).Model.Fields
 				.Single(f => f.Field == "Translation" && f.ObjectHvo == m_translation.Hvo);
 
+		// An entry with two senses and two etymologies; the first sense has an example with
+		// a free translation and two extended notes. The entry is a complex form of another.
 		private void CreateTestEntry()
 		{
 			var stemMorphType = GetMorphTypeOrCreateOne("stem");
 			var noun = GetGrammaticalCategoryOrCreateOne("noun", Cache.LangProject.PartsOfSpeechOA);
 			m_entry = AddLexeme(m_createdObjects, "command-entry", stemMorphType, "first gloss", noun);
+			m_sense1 = m_entry.SensesOS[0];
+			m_sense2 = Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
+			m_entry.SensesOS.Add(m_sense2);
+			m_note1 = Cache.ServiceLocator.GetInstance<ILexExtendedNoteFactory>().Create();
+			m_sense1.ExtendedNoteOS.Add(m_note1);
+			m_note2 = Cache.ServiceLocator.GetInstance<ILexExtendedNoteFactory>().Create();
+			m_sense1.ExtendedNoteOS.Add(m_note2);
+			m_etymology1 = Cache.ServiceLocator.GetInstance<ILexEtymologyFactory>().Create();
+			m_entry.EtymologyOS.Add(m_etymology1);
+			m_etymology2 = Cache.ServiceLocator.GetInstance<ILexEtymologyFactory>().Create();
+			m_entry.EtymologyOS.Add(m_etymology2);
 			m_example = Cache.ServiceLocator.GetInstance<ILexExampleSentenceFactory>().Create();
-			m_entry.SensesOS[0].ExamplesOS.Add(m_example);
+			m_sense1.ExamplesOS.Add(m_example);
 			m_example.Example.set_String(Cache.DefaultVernWs, TsStringUtils.MakeString("una casa", Cache.DefaultVernWs));
 			var type = Cache.ServiceLocator.GetInstance<ICmPossibilityRepository>()
 				.GetObject(CmPossibilityTags.kguidTranFreeTranslation);

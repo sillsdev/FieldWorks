@@ -1935,12 +1935,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				|| slice.Object.Equals(ContainingDataTree.Root)) // Other cases.
 			{
 				// The slice's object has an acceptable type provided it implements the required field.
-				// See if the current slice's object has the field named.
-				int flid = slice.GetFlid(fieldName);
-				var mdc = Cache.MetaDataCacheAccessor as IFwMetaDataCacheManaged;
-				int flidT = ContainingDataTree.GetFlidIfPossible(ownerClassId, fieldName, mdc);
-				if (flidT != 0 && flid != flidT)
-					flid = flidT;
+				int flid = DetailObjectInsertion.ResolveFlid(slice.Object, fieldName, ownerClassId);
 				if (flid == 0)
 					return false;
 				// Found a suitable slice. Do the insertion.
@@ -2027,65 +2022,25 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 			newObject = null;
 
-			bool fAbstract = m_cache.DomainDataByFlid.MetaDataCache.GetAbstract(newObjectClassId);
-			if (fAbstract)
-			{
-				// We've been handed an abstract class to insert.  Try to determine the desired
-				// concrete from the context.
-				if (newObjectClassId == MoFormTags.kClassId && Object is ILexEntry)
-				{
-					var entry = (Object as ILexEntry);
-					newObjectClassId = entry.GetDefaultClassForNewAllomorph();
-				}
-				else
-				{
-					return -1;
-				}
-			}
+			newObjectClassId = DetailObjectInsertion.ConcreteClass(Object, newObjectClassId);
+			if (newObjectClassId == 0)
+				return -1;
 			// OK, we can add to property flid of the object of slice slice.
-			int insertionPosition = 0;//leave it at 0 if it does not matter
-			int hvoOwner = Object.Hvo;
-			int clidOwner = Object.ClassID;
-			int clidOfFlid = flid / 1000;
-			if (clidOwner != clidOfFlid && clidOfFlid == Object.Owner.ClassID)
+			var owner = DetailObjectInsertion.OwnerOf(Object, flid);
+			if (owner == null)
+				return -1;
+			int hvoOwner = owner.Hvo;
+			int insertionPosition;
+			try
 			{
-				hvoOwner = Object.Owner.Hvo;
+				// The current slice's key says where in the property it sits, so the new
+				// object goes after it. We might not be on the right slice to insert this
+				// item. See FWR-898.
+				insertionPosition = DetailObjectInsertion.InsertionPosition(owner, flid, CurrentSliceKeyHvos());
 			}
-			int type = GetFieldType(flid);
-			if (type == (int)CellarPropertyType.OwningSequence)
+			catch
 			{
-				try
-				{
-					// We might not be on the right slice to insert this item.  See FWR-898.
-					insertionPosition = Cache.DomainDataByFlid.get_VecSize(hvoOwner, flid);
-				}
-				catch
-				{
-					return -1;
-				}
-				if (ContainingDataTree != null && ContainingDataTree.CurrentSlice != null)
-				{
-					ISilDataAccess sda = m_cache.DomainDataByFlid;
-					int chvo = insertionPosition;
-					// See if the current slice in any way indicates a position in that property.
-					object[] key = ContainingDataTree.CurrentSlice.Key;
-					bool fGotIt = false;
-					for (int ikey = key.Length - 1; ikey >= 0 && !fGotIt; ikey--)
-					{
-						if (!(key[ikey] is int))
-							continue;
-						var hvoTarget = (int)key[ikey];
-						for (int i = 0; i < chvo; i++)
-						{
-							if (hvoTarget == sda.get_VecItem(hvoOwner, flid, i))
-							{
-								insertionPosition = i + 1; // insert after current object.
-								fGotIt = true; // break outer loop
-								break;
-							}
-						}
-					}
-				}
+				return -1;
 			}
 			var slices = new HashSet<Slice>(ContainingDataTree.Slices);
 
@@ -2095,16 +2050,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			{
 				dtContainer.SetCurrentObjectFlids(hvoOwner, flid);
 				var fieldType = (CellarPropertyType) m_cache.MetaDataCacheAccessor.GetFieldType(flid);
-				switch (fieldType)
-				{
-					case CellarPropertyType.OwningCollection:
-						insertionPosition = -1;
-						break;
-
-					case CellarPropertyType.OwningAtomic:
-						insertionPosition = -2;
-						break;
-				}
 				using (CmObjectUi uiObj = CmObjectUi.CreateNewUiObject(m_mediator, m_propertyTable, newObjectClassId, hvoOwner, flid, insertionPosition))
 				{
 					// If uiObj is null, typically CreateNewUiObject displayed a dialog and the user cancelled.
@@ -2179,6 +2124,19 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				dtContainer.ClearCurrentObjectFlids();
 			}
 			return insertionPosition;
+		}
+
+		// The objects of the current slice's key, deepest first; none without a current slice.
+		private IEnumerable<int> CurrentSliceKeyHvos()
+		{
+			var key = ContainingDataTree?.CurrentSlice?.Key;
+			if (key == null)
+				yield break;
+			for (int ikey = key.Length - 1; ikey >= 0; ikey--)
+			{
+				if (key[ikey] is int hvo)
+					yield return hvo;
+			}
 		}
 
 		/// <summary>

@@ -32,27 +32,44 @@ namespace SIL.FieldWorks.XWorks
 	[Apartment(System.Threading.ApartmentState.STA)]
 	public class LexiconMenuAuthorityTests : XWorksAppTestBase
 	{
-		// The ids owned today: every leaf of each sends DataTreeDelete. Ownership is by message
-		// over the whole window configuration, so other areas' ids and unbound ids count too.
+		// The ids owned today: every leaf of each is a Delete or an in-scope Insert. Ownership
+		// is by message over the whole configuration, so other areas' and unbound ids count.
 		private static readonly string[] PinnedOwnedIds =
 		{
 			// Lexicon rows: Translation, and Complex Form Type on a complex form.
 			"mnuDataTree-Translation", "mnuDataTree-ComplexFormSpec",
+			// Lexicon rows: the Subsenses and Extended Notes section rows, and the hotlinks of
+			// a sense, an extended note and an etymology.
+			"mnuDataTree-Subsenses", "mnuDataTree-ExtendedNotes", "mnuDataTree-Sense-Hotlinks",
+			"mnuDataTree-ExtendedNote-Hotlinks", "mnuDataTree-Etymology-Hotlinks",
 			// Lexicon ids no part reaches (-CmMedia's pronunciation part does not exist).
 			"mnuDataTree-CmMedia", "mnuDataTree-Variant", "mnuDataTree-DeleteEtymology",
-			"mnuDataTree-DeletePronunciation",
-			// Grammar: two posEdit rows (Inflection Class Name, Stem Allomorph Label), then
-			// tools without an Avalonia detail view.
+			"mnuDataTree-DeletePronunciation", "mnuDataTree-Translations", "mnuDataTree-Senses", "mnuDataTree-MSAs",
+			// Grammar: posEdit rows (two item rows, five section rows: Affix Templates, Affix
+			// Slots, Inflection Classes, Subclasses, Stem Allomorph Labels), then other tools.
 			"mnuDataTree-POS-InflectionClass", "mnuDataTree-POS-StemName",
-			"mnuDataTree-ClosedFeature-Value", "mnuDataTree-MoStemName-Region", "mnuDataTree-Phoneme-Code",
+			"mnuDataTree-POS-AffixTemplates", "mnuDataTree-POS-AffixSlots", "mnuDataTree-POS-InflectionClasses",
+			"mnuDataTree-POS-InflectionClass-Subclasses", "mnuDataTree-POS-StemNames",
+			"mnuDataTree-ClosedFeature-Value", "mnuDataTree-ClosedFeature-Values", "mnuDataTree-MoStemName-Region",
+			"mnuDataTree-MoStemName-Regions", "mnuDataTree-Phoneme-Code", "mnuDataTree-Phoneme-Codes",
 			"mnuDataTree-Delete-Adhoc-Allomorph", "mnuDataTree-Delete-Adhoc-Group",
-			"mnuDataTree-Delete-Adhoc-Morpheme",
-			// Lists: no Avalonia detail view.
-			"mnuDataTree-DeleteCustomItem", "mnuDataTree-DeletePossibility", "mnuDataTree-DeleteQuestion"
+			"mnuDataTree-Delete-Adhoc-Morpheme", "mnuDataTree-Adhoc-Group-Members",
+			// Lists and Reversal: no Avalonia detail view.
+			"mnuDataTree-DeleteCustomItem", "mnuDataTree-DeletePossibility", "mnuDataTree-DeleteQuestion",
+			"mnuDataTree-InsertQuestion", "mnuDataTree-InsertReversalSubentry", "mnuDataTree-InsertReversalSubentry-Hotlinks"
 		};
 
-		// The ids a Lexicon Edit row raises, the rows the contracts below are proved on.
-		private static readonly string[] LexiconRowIds = { "mnuDataTree-Translation", "mnuDataTree-ComplexFormSpec" };
+		// The owned ids a Lexicon Edit row binds as its label menu and as its hotlinks: the
+		// rows the contracts below are proved on.
+		private static readonly string[] LexiconLabelMenuIds =
+		{
+			"mnuDataTree-Translation", "mnuDataTree-ComplexFormSpec", "mnuDataTree-Subsenses", "mnuDataTree-ExtendedNotes"
+		};
+
+		private static readonly string[] LexiconHotlinksIds =
+		{
+			"mnuDataTree-Sense-Hotlinks", "mnuDataTree-ExtendedNote-Hotlinks", "mnuDataTree-Etymology-Hotlinks"
+		};
 
 		// The messages of mnuDataTree-Object's six leaves, the test subject for the predicate.
 		private static readonly string[] ObjectMenuMessages =
@@ -65,6 +82,8 @@ namespace SIL.FieldWorks.XWorks
 		private List<ICmObject> m_createdObjects;
 		private ILexEntry m_entry;
 		private ICmTranslation m_translation;
+		private ILexExtendedNote m_note;
+		private ILexEtymology m_etymology;
 		private RecordEditView m_view;
 
 		protected override void Init()
@@ -134,7 +153,8 @@ namespace SIL.FieldWorks.XWorks
 			var owned = ContextMenuIds().Where(authority.Owns).ToList();
 
 			Assert.That(owned, Is.EquivalentTo(PinnedOwnedIds),
-				"the authority's owned ids changed; update the pin so the PR shows which menus switched over");
+				"the authority's owned ids changed; update the pin so the PR shows which menus switched over. Owned now: "
+				+ string.Join(", ", owned.OrderBy(id => id, StringComparer.Ordinal)));
 			foreach (var id in owned)
 			{
 				foreach (var leaf in XCoreMenuBridge.ResolveMenu(window, id).Leaves)
@@ -208,55 +228,65 @@ namespace SIL.FieldWorks.XWorks
 				MultiStringMenuAuthority.WritingSystemListId), Throws.InvalidOperationException);
 		}
 
-		// Contract: on every Lexicon Edit row binding an owned id, the owned menu renders what
-		// the adapter path rendered; the row's other groups are proved by their own authorities.
+		// Contract: on every Lexicon Edit row binding an owned id (label menu or hotlinks), the
+		// owned menu renders what the adapter path rendered.
 		[Test]
 		public void OwnedMenu_RendersWhatTheAdapterPathRendered_OnEveryLexiconRowThatBindsOne()
 		{
-			var rows = DetailComposer.Compose(m_entry, Cache).Model.Fields
-				.Where(f => LexiconRowIds.Contains(f.MenuId)).ToList();
-			Assert.That(rows.Select(f => f.Label), Is.EquivalentTo(new[] { "Translations 1", "Translation", "Complex Form Type" }),
-				"precondition: the entry composes the rows the owned ids are bound to");
+			var rows = OwnedMenuRows();
+			Assert.That(rows.Select(r => r.MenuId).Distinct(), Is.EquivalentTo(
+				LexiconLabelMenuIds.Concat(LexiconHotlinksIds)),
+				"precondition: the entry composes a row for every owned id");
 
 			var mismatches = new List<string>();
-			foreach (var row in rows)
+			foreach (var (row, menuId, kind) in rows)
 			{
 				EnsureAdapter(row.ObjectHvo, row.Field);
 				Assert.That(AdapterTree.CurrentSlice?.Object?.Hvo, Is.EqualTo(row.ObjectHvo),
 					"precondition: the adapter targets the row's object for " + row.Label);
-				var ids = new[] { row.MenuId };
+				var ids = new[] { menuId };
 				var before = Describe(XCoreMenuBridge.CreateMenuItems(Window, ids, null, null, null));
 				var after = Describe(XCoreMenuBridge.CreateMenuItems(Window, ids, null, null,
-					m_view.CreateMenuAuthority(LabelMenuRequest(row))));
+					m_view.CreateMenuAuthority(MenuRequest(row, kind))));
 				Assert.That(after, Does.Contain("enabled=True checked=False executes=True"),
-					row.Label + ": Delete is offered and runs");
+					row.Label + ": " + menuId + " offers a command that runs");
+				if (menuId == "mnuDataTree-ExtendedNote-Hotlinks")
+				{
+					// The one accepted divergence: the adapter path disables the insert under
+					// a note, since neither the entry nor the note has ExtendedNote; natively
+					// the sense that owns the note takes it.
+					Assert.That(before, Is.EqualTo("Insert Extended Note [enabled=False checked=False executes=False]"));
+					Assert.That(after, Is.EqualTo("Insert Extended Note [enabled=True checked=False executes=True]"));
+					continue;
+				}
 				if (!string.Equals(before, after, StringComparison.Ordinal))
 				{
 					mismatches.Add(string.Format("{0} ({1}):{2}--- adapter path{2}{3}{2}--- authority{2}{4}",
-						row.Label, row.Field, Environment.NewLine, before, after));
+						row.Label, menuId, Environment.NewLine, before, after));
 				}
 			}
 			Assert.That(mismatches, Is.Empty, string.Join(Environment.NewLine, mismatches));
 		}
 
-		// Contract: an owned label menu never asks the mediator and never builds the adapter.
+		// Contract: an owned menu never asks the mediator and never builds the adapter.
 		[Test]
-		public void OwnedLabelMenus_AreBuiltWithoutTheAdapterOrTheMediator()
+		public void OwnedMenus_AreBuiltWithoutTheAdapterOrTheMediator()
 		{
 			Assert.That(HiddenTreeExists, Is.False, "precondition: no hidden tree yet");
-			var rows = DetailComposer.Compose(m_entry, Cache).Model.Fields
-				.Where(f => LexiconRowIds.Contains(f.MenuId)).ToList();
-			Assert.That(rows, Has.Count.EqualTo(3), "precondition");
-			foreach (var row in rows)
+			var rows = OwnedMenuRows();
+			Assert.That(rows, Has.Count.EqualTo(8), "precondition: seven ids, -Translation on two rows");
+			foreach (var (row, menuId, kind) in rows)
 			{
-				var ids = RecordEditView.ComposeSliceMenuIds(row.MenuId, row.IsMultiStringRow).ToArray();
-				var authority = m_view.CreateMenuAuthority(LabelMenuRequest(row));
-				Assert.That(XCoreMenuBridge.OwnsAll(authority, ids), Is.True, row.Label + ": every id of the label menu is owned");
+				var ids = kind == DetailMenuKind.Hotlinks
+					? new[] { menuId }
+					: RecordEditView.ComposeSliceMenuIds(menuId, row.IsMultiStringRow).ToArray();
+				var authority = m_view.CreateMenuAuthority(MenuRequest(row, kind));
+				Assert.That(XCoreMenuBridge.OwnsAll(authority, ids), Is.True, row.Label + ": every id of the menu is owned");
 
 				var items = BuildWithSpy(ids, authority, out var asked);
 
 				Assert.That(asked, Is.False, row.Label + ": the mediator was asked");
-				Assert.That(items.Any(i => i.Label.StartsWith("Delete", StringComparison.Ordinal)), Is.True);
+				Assert.That(items.Any(i => i.Execute != null), Is.True, row.Label + ": " + menuId + " offers a command");
 			}
 			Assert.That(HiddenTreeExists, Is.False, "an owned menu never builds the hidden tree");
 		}
@@ -307,6 +337,54 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(refused.Label, Does.EndWith(note));
 		}
 
+		// Offered for the row's object (a ghost row's included); disabled where neither the
+		// shown entry nor the row's object has the field; absent with no row or no object.
+		[Test]
+		public void InsertLeaf_IsOfferedOnTheGhostRow_DisabledWithoutATarget_AndAbsentWithoutAnObject()
+		{
+			var subsense = Leaf("mnuDataTree-Subsenses", "CmdDataTree-Insert-SubSense");
+			var extendedNote = Leaf("mnuDataTree-ExtendedNotes", "CmdDataTree-Insert-ExtNote");
+			var subsensesRow = Rows().Single(f => f.MenuId == "mnuDataTree-Subsenses");
+			var notesRow = Rows().Single(f => f.MenuId == "mnuDataTree-ExtendedNotes");
+			var etymologyRow = Rows().First(f => f.ObjectHvo == m_etymology.Hvo);
+			var noObject = new DetailField("Row", "Row", "Senses", null, DetailFieldKind.Header,
+				EditorClassification.GroupingNone, null, null, HostRouting.Inherit, null, null, null, menuId: subsensesRow.MenuId);
+
+			Assert.That(subsensesRow.GhostPrompt, Is.Not.Null, "precondition: a sense without subsenses shows the prompt row");
+			var onGhost = m_view.InsertItem(subsense, subsensesRow);
+			Assert.That(onGhost.IsEnabled, Is.True, "the ghost row inserts into the sense it stands in for");
+			Assert.That(onGhost.Label, Is.EqualTo("Insert Subsense"));
+			Assert.That(m_view.InsertItem(extendedNote, notesRow).IsEnabled, Is.True, "the sense has ExtendedNote");
+			var noTarget = m_view.InsertItem(extendedNote, etymologyRow);
+			Assert.That(noTarget.IsEnabled, Is.False, "neither the entry nor an etymology has ExtendedNote");
+			Assert.That(noTarget.Execute, Is.Null);
+			Assert.That(noTarget.Label, Is.EqualTo("Insert Extended Note"));
+			Assert.That(m_view.InsertItem(subsense, null), Is.Null, "no row");
+			Assert.That(m_view.InsertItem(subsense, noObject), Is.Null, "no object");
+		}
+
+		// The inserts with rules of their own stay with the adapter, so their ids do too:
+		// the allomorph inserts, an insert into a reference field, a SubPossibilities insert.
+		[Test]
+		public void InsertLeaves_OutsideTheScope_LeaveTheirIdsWithTheAdapter()
+		{
+			var authority = m_view.CreateLexiconMenuAuthority(TranslationRow());
+
+			Assert.That(m_view.InsertLeafInScope(Leaf("mnuDataTree-Subsenses", "CmdDataTree-Insert-SubSense")), Is.True);
+			Assert.That(m_view.InsertLeafInScope(Leaf("mnuDataTree-AlternateForms-Hotlinks", "CmdDataTree-Insert-AlternateForm")),
+				Is.False, "the abstract MoForm, chosen by the entry's morph type");
+			Assert.That(m_view.InsertLeafInScope(Leaf("mnuDataTree-AlternateForms", "CmdDataTree-Insert-AffixProcess")),
+				Is.False, "shown only on an affix entry");
+			Assert.That(m_view.InsertLeafInScope(Leaf("mnuDataTree-Variants", "CmdDataTree-Insert-Variant")),
+				Is.False, "a virtual back reference: a dialog creates the variant");
+			Assert.That(m_view.InsertLeafInScope(Leaf("mnuDataTree-POS-SubPossibilities", "CmdDataTree-Insert-POS-SubPossibilities")),
+				Is.False, "SubPossibilities needs the whole tree");
+			Assert.That(authority.Owns("mnuDataTree-AlternateForms-Hotlinks"), Is.False);
+			Assert.That(authority.Owns("mnuDataTree-Variants"), Is.False);
+			Assert.That(() => authority.Build("mnuDataTree-Variants", Leaf("mnuDataTree-Variants", "CmdDataTree-Insert-Variant")),
+				Throws.InvalidOperationException, "a leaf outside the scope is not answered");
+		}
+
 		private XWindow Window => m_propertyTable.GetValue<XWindow>("window");
 
 		private bool HiddenTreeExists => (bool)GetField(m_view, "m_dataTreeInitialized");
@@ -322,15 +400,31 @@ namespace SIL.FieldWorks.XWorks
 		private static DetailMenuItem Echo(DetailMenuLeaf leaf)
 			=> new DetailMenuItem(XCoreMenuBridge.StripAccelerator(leaf.Label), isEnabled: true);
 
-		private static DetailMenuRequest LabelMenuRequest(DetailField field)
-			=> DetailMenuRequest.FromAnchor(null, field, DetailMenuKind.SliceMenu);
+		private static DetailMenuRequest MenuRequest(DetailField field, DetailMenuKind kind)
+			=> DetailMenuRequest.FromAnchor(null, field, kind);
+
+		private IReadOnlyList<DetailField> Rows() => DetailComposer.Compose(m_entry, Cache).Model.Fields;
 
 		private DetailField TranslationRow()
-			=> DetailComposer.Compose(m_entry, Cache).Model.Fields
-				.Single(f => f.Field == "Translation" && f.ObjectHvo == m_translation.Hvo);
+			=> Rows().Single(f => f.Field == "Translation" && f.ObjectHvo == m_translation.Hvo);
+
+		// Every (row, owned id, menu kind) the entry's rows bind: the label menus first, then
+		// the hotlinks.
+		private List<(DetailField Row, string MenuId, DetailMenuKind Kind)> OwnedMenuRows()
+		{
+			var rows = Rows();
+			var bound = rows.Where(f => LexiconLabelMenuIds.Contains(f.MenuId))
+				.Select(f => (f, f.MenuId, DetailMenuKind.SliceMenu));
+			bound = bound.Concat(rows.Where(f => LexiconHotlinksIds.Contains(f.HotlinksId))
+				.Select(f => (f, f.HotlinksId, DetailMenuKind.Hotlinks)));
+			return bound.ToList();
+		}
 
 		private DetailMenuLeaf DeleteTranslationLeaf()
 			=> XCoreMenuBridge.ResolveMenu(Window, "mnuDataTree-Translation").Leaves.Single();
+
+		private DetailMenuLeaf Leaf(string menuId, string commandId)
+			=> XCoreMenuBridge.ResolveMenu(Window, menuId).Leaves.Single(l => l.CommandId == commandId);
 
 		// Every context-menu id the window configuration defines, each once.
 		private IEnumerable<string> ContextMenuIds()
@@ -377,6 +471,11 @@ namespace SIL.FieldWorks.XWorks
 				Asked = true;
 				return false;
 			}
+			public bool OnDisplayDataTreeInsert(object commandObject, ref UIItemDisplayProperties display)
+			{
+				Asked = true;
+				return false;
+			}
 		}
 
 		private static string Describe(IReadOnlyList<DetailMenuItem> items, string indent = "")
@@ -405,13 +504,17 @@ namespace SIL.FieldWorks.XWorks
 			method.Invoke(m_view, new object[] { targetHvo, fieldName });
 		}
 
-		// An entry with a sense whose example has a free translation, made a complex form of
-		// another entry so its own LexEntryRef shows the Complex Form Type row.
+		// A complex form (its LexEntryRef shows Complex Form Type) with an etymology and a
+		// sense that has an example with a free translation, an extended note, no subsense.
 		private void CreateTestEntry()
 		{
 			var stemMorphType = GetMorphTypeOrCreateOne("stem");
 			var noun = GetGrammaticalCategoryOrCreateOne("noun", Cache.LangProject.PartsOfSpeechOA);
 			m_entry = AddLexeme(m_createdObjects, "command-entry", stemMorphType, "first gloss", noun);
+			m_note = Cache.ServiceLocator.GetInstance<ILexExtendedNoteFactory>().Create();
+			m_entry.SensesOS[0].ExtendedNoteOS.Add(m_note);
+			m_etymology = Cache.ServiceLocator.GetInstance<ILexEtymologyFactory>().Create();
+			m_entry.EtymologyOS.Add(m_etymology);
 			var example = Cache.ServiceLocator.GetInstance<ILexExampleSentenceFactory>().Create();
 			m_entry.SensesOS[0].ExamplesOS.Add(example);
 			example.Example.set_String(Cache.DefaultVernWs, TsStringUtils.MakeString("una casa", Cache.DefaultVernWs));
