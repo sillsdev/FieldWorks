@@ -552,7 +552,8 @@ namespace SIL.FieldWorks.XWorks
 					bulletRule.Declarations.Add(new Property("font-size") { Term = new PrimitiveTerm(UnitType.Point, MilliPtToPt(wsFontInfo.FontSize.Value)) });
 					bulletRule.Declarations.Add(new Property("color") { Term = new PrimitiveTerm(UnitType.RGB, wsFontInfo.FontColor.Value.Name) });
 					// "<default font>" names no font on a bullet, which has no writing system;
-					// leaving it unset lets the bullet take the font of the sense it precedes.
+					// leaving it unset lets the bullet inherit the font of its sense content
+					// element, not of the styled sense inside it.
 					if (wsFontInfo.FontName.Value != StyleServices.DefaultFont)
 						bulletRule.Declarations.Add(new Property("font-family") { Term = new PrimitiveTerm(UnitType.Ident, wsFontInfo.FontName.Value) });
 					bulletRule.Declarations.Add(new Property("font-weight") { Term = new PrimitiveTerm(UnitType.Ident, wsFontInfo.Bold.Value ? "bold" : "normal") });
