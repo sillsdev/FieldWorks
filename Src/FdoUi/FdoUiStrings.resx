@@ -340,4 +340,31 @@ Without these, we cannot find related entries.</value>
   <data name="ksCannotDeleteWordformBecauseOfAnnotations" xml:space="preserve">
     <value>Sorry, FieldWorks cannot delete this wordform because there are parsing annotations attached.  Please invoke "Remove Parser annotations" in Tools &gt; Utilities first.</value>
   </data>
+  <data name="ksConvertFormLoseCaption" xml:space="preserve">
+    <value>Warning!</value>
+  </data>
+  <data name="ksConvertFormLoseEnv" xml:space="preserve">
+    <value>The environment will be lost! Do you still want to continue?</value>
+  </data>
+  <data name="ksConvertFormLoseEnvGramInfo" xml:space="preserve">
+    <value>The environment and some grammatical information will be lost! Do you still want to continue?</value>
+  </data>
+  <data name="ksConvertFormLoseEnvInfixLoc" xml:space="preserve">
+    <value>The environment and infix position will be lost! Do you still want to continue?</value>
+  </data>
+  <data name="ksConvertFormLoseEnvInfixLocGramInfo" xml:space="preserve">
+    <value>The environment, infix position, and some grammatical information will be lost! Do you still want to continue?</value>
+  </data>
+  <data name="ksConvertFormLoseGramInfo" xml:space="preserve">
+    <value>Some grammatical information will be lost! Do you still want to continue?</value>
+  </data>
+  <data name="ksConvertFormLoseInfixLoc" xml:space="preserve">
+    <value>The infix position will be lost! Do you still want to continue?</value>
+  </data>
+  <data name="ksConvertFormLoseInfixLocGramInfo" xml:space="preserve">
+    <value>The infix position and some grammatical information will be lost! Do you still want to continue?</value>
+  </data>
+  <data name="ksConvertFormLoseRule" xml:space="preserve">
+    <value>The affix process rule will be lost! Do you still want to continue?</value>
+  </data>
 </root>

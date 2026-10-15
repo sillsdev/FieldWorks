@@ -1994,16 +1994,18 @@ namespace SIL.FieldWorks.XWorks
 					oldActiveClerk?.BecomeInactive();
 					m_propertyTable.SetProperty("OldActiveClerk", oldActiveClerk, false);
 					m_propertyTable.SetPropertyPersistence("OldActiveClerk", false);
-					m_propertyTable.SetProperty("ActiveClerk", this, true);
-					m_propertyTable.SetPropertyPersistence("ActiveClerk", false);
 					// We are adding this property so that EntryDlgListener can get access to the owning object
 					// without first getting a RecordClerk, since getting a RecordClerk at that level causes a
 					// circular dependency in compilation.
 					m_propertyTable.SetProperty("ActiveClerkOwningObject", OwningObject, false);
 					m_propertyTable.SetPropertyPersistence("ActiveClerkOwningObject", false);
+					Cache.DomainDataByFlid.AddNotification(this);
+					// Both broadcasting sets come last, ActiveClerk first, so the
+					// activation is complete before a change notification runs.
+					m_propertyTable.SetProperty("ActiveClerk", this, true);
+					m_propertyTable.SetPropertyPersistence("ActiveClerk", false);
 					m_propertyTable.SetProperty("ActiveClerkSelectedObject", CurrentObject, true);
 					m_propertyTable.SetPropertyPersistence("ActiveClerkSelectedObject", false);
-					Cache.DomainDataByFlid.AddNotification(this);
 				}
 			}
 			get

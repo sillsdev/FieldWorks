@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows.Forms;
 using System.Xml;
+using SIL.FieldWorks.Common.DetailRules;
 using SIL.FieldWorks.Common.Framework.DetailControls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
@@ -374,15 +375,6 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			return true;
 		}
 
-		private void SwapAllomorphWithLexeme(ILexEntry entry, IMoForm allomorph, Command cmd)
-		{
-			UndoableUnitOfWorkHelper.Do(cmd.UndoText, cmd.RedoText, entry, () =>
-			{
-				entry.AlternateFormsOS.Insert(allomorph.IndexInOwner, entry.LexemeFormOA);
-				entry.LexemeFormOA = allomorph;
-			});
-		}
-
 		public virtual bool OnSwapAllomorphWithLexeme(object cmd)
 		{
 			Slice slice = m_dataEntryForm.CurrentSlice;
@@ -390,7 +382,8 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			IMoForm allomorph = slice.Object as IMoForm;
 			if (entry != null && allomorph != null)
 			{
-				SwapAllomorphWithLexeme(entry, allomorph, cmd as Command);
+				var command = (Command)cmd;
+				LexemeFormConversion.Swap(entry, allomorph, command.UndoText, command.RedoText);
 			}
 			return true;
 		}
@@ -416,7 +409,8 @@ namespace SIL.FieldWorks.XWorks.LexEd
 						dlg.SetDlgInfo(cache, m_propertyTable, entry);
 						if (DialogResult.OK == dlg.ShowDialog(mainWindow))
 						{
-							SwapAllomorphWithLexeme(entry, dlg.SelectedAllomorph, cmd as Command);
+							var command = (Command)cmd;
+							LexemeFormConversion.Swap(entry, dlg.SelectedAllomorph, command.UndoText, command.RedoText);
 						}
 					}
 				}
@@ -426,8 +420,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 		public virtual bool OnDisplaySwapLexemeWithAllomorph(object commandObject, ref UIItemDisplayProperties display)
 		{
-			ILexEntry entry = m_dataEntryForm.Root as ILexEntry;
-			bool enable = entry != null && entry.AlternateFormsOS.Count > 0;
+			bool enable = LexemeFormConversion.CanSwap(m_dataEntryForm.Root as ILexEntry);
 			display.Visible = enable;
 			display.Enabled = enable;
 			return true;
@@ -438,7 +431,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			Command cmd = commandObject as Command;
 			int fromClsid = m_dataEntryForm.Cache.MetaDataCacheAccessor.GetClassId(cmd.GetParameter("fromClassName"));
 			ILexEntry entry = m_dataEntryForm.Root as ILexEntry;
-			bool enable = entry != null && fromClsid != 0 && entry.LexemeFormOA.ClassID == fromClsid;
+			bool enable = entry != null && LexemeFormConversion.CanConvert(entry.LexemeFormOA, fromClsid);
 			display.Visible = enable;
 			display.Enabled = enable;
 			return true;
@@ -450,23 +443,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			var toClsid = m_dataEntryForm.Cache.MetaDataCacheAccessor.GetClassId(command.GetParameter("toClassName"));
 			var entry = m_dataEntryForm.Root as ILexEntry;
 			if (entry != null)
-			{
-				if (CheckForFormDataLoss(entry.LexemeFormOA, toClsid))
-				{
-					var mainWindow = m_propertyTable.GetValue<Form>("window");
-					IMoForm newForm = null;
-					using (new WaitCursor(mainWindow))
-					{
-						UndoableUnitOfWorkHelper.Do(command.UndoText, command.RedoText, entry, () =>
-						{
-							newForm = CreateNewForm(entry, toClsid);
-							entry.ReplaceMoForm(entry.LexemeFormOA, newForm);
-						});
-						m_dataEntryForm.RefreshList(false);
-					}
-					SelectNewFormSlice(newForm);
-				}
-			}
+				ConvertForm(entry, entry.LexemeFormOA, toClsid, command);
 			return true;
 		}
 
@@ -476,7 +453,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			int fromClsid = m_dataEntryForm.Cache.MetaDataCacheAccessor.GetClassId(cmd.GetParameter("fromClassName"));
 			Slice slice = m_dataEntryForm.CurrentSlice;
 			IMoForm allomorph = slice.Object as IMoForm;
-			bool enable = allomorph != null && fromClsid != 0 && allomorph.ClassID == fromClsid;
+			bool enable = LexemeFormConversion.CanConvert(allomorph, fromClsid);
 			display.Visible = enable;
 			display.Enabled = enable;
 			return true;
@@ -490,40 +467,24 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			var slice = m_dataEntryForm.CurrentSlice;
 			var allomorph = slice.Object as IMoForm;
 			if (entry != null && allomorph != null && toClsid != 0)
-			{
-				if (CheckForFormDataLoss(allomorph, toClsid))
-				{
-					var mainWindow = m_propertyTable.GetValue<Form>("window");
-					IMoForm newForm = null;
-					using (new WaitCursor(mainWindow))
-					{
-						UndoableUnitOfWorkHelper.Do(command.UndoText, command.RedoText, entry, () =>
-						{
-							newForm = CreateNewForm(entry, toClsid);
-							entry.ReplaceMoForm(allomorph, newForm);
-						});
-						m_dataEntryForm.RefreshList(false);
-					}
-					SelectNewFormSlice(newForm);
-				}
-			}
+				ConvertForm(entry, allomorph, toClsid, command);
 			return true;
 		}
 
-		IMoForm CreateNewForm(ILexEntry parent, int clsid)
+		// Converts the form after the user accepts any data loss, then shows and selects the
+		// new form's slice.
+		private void ConvertForm(ILexEntry entry, IMoForm form, int toClsid, Command command)
 		{
-			switch (clsid)
+			if (!CheckForFormDataLoss(form))
+				return;
+			var mainWindow = m_propertyTable.GetValue<Form>("window");
+			IMoForm newForm;
+			using (new WaitCursor(mainWindow))
 			{
-				case MoAffixProcessTags.kClassId:
-					return parent.Services.GetInstance<IMoAffixProcessFactory>().Create();
-
-				case MoAffixAllomorphTags.kClassId:
-					return parent.Services.GetInstance<IMoAffixAllomorphFactory>().Create();
-
-				case MoStemAllomorphTags.kClassId:
-					return parent.Services.GetInstance<IMoStemAllomorphFactory>().Create();
+				newForm = LexemeFormConversion.Convert(entry, form, toClsid, command.UndoText, command.RedoText);
+				m_dataEntryForm.RefreshList(false);
 			}
-			return null;
+			SelectNewFormSlice(newForm);
 		}
 
 		void SelectNewFormSlice(IMoForm newForm)
@@ -538,44 +499,12 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			}
 		}
 
-		bool CheckForFormDataLoss(IMoForm origForm, int toClsid)
+		bool CheckForFormDataLoss(IMoForm origForm)
 		{
-			string msg = null;
-			switch (origForm.ClassID)
-			{
-				case MoAffixAllomorphTags.kClassId:
-					IMoAffixAllomorph affAllo = origForm as IMoAffixAllomorph;
-					bool loseEnv = affAllo.PhoneEnvRC.Count > 0;
-					bool losePos = affAllo.PositionRS.Count > 0;
-					bool loseGram = affAllo.MsEnvFeaturesOA != null || affAllo.MsEnvPartOfSpeechRA != null;
-					if (loseEnv && losePos && loseGram)
-						msg = LexEdStrings.ksConvertFormLoseEnvInfixLocGramInfo;
-					else if (loseEnv && losePos)
-						msg = LexEdStrings.ksConvertFormLoseEnvInfixLoc;
-					else if (loseEnv && loseGram)
-						msg = LexEdStrings.ksConvertFormLoseEnvGramInfo;
-					else if (losePos && loseGram)
-						msg = LexEdStrings.ksConvertFormLoseInfixLocGramInfo;
-					else if (loseEnv)
-						msg = LexEdStrings.ksConvertFormLoseEnv;
-					else if (losePos)
-						msg = LexEdStrings.ksConvertFormLoseInfixLoc;
-					else if (loseGram)
-						msg = LexEdStrings.ksConvertFormLoseGramInfo;
-					break;
-
-				case MoAffixProcessTags.kClassId:
-					msg = LexEdStrings.ksConvertFormLoseRule;
-					break;
-
-				case MoStemAllomorphTags.kClassId:
-					// not implemented
-					break;
-			}
-
+			string msg = LexemeFormConversion.DataLossMessage(origForm);
 			if (msg != null)
 			{
-				DialogResult result = MessageBox.Show(msg, LexEdStrings.ksConvertFormLoseCaption,
+				DialogResult result = MessageBox.Show(msg, LexemeFormConversion.DataLossCaption,
 					MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
 				return result == DialogResult.Yes;
 			}

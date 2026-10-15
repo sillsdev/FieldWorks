@@ -2,6 +2,7 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -22,17 +23,24 @@ namespace SIL.FieldWorks.XWorks
 	/// End-to-end proof that the Lexicon menu commands the native authority answers change
 	/// the model through the product <see cref="RecordEditView"/>: the item's own Execute runs
 	/// the host, which asks for confirmation, edits in one undoable step and tells the re-show
-	/// where to put the keyboard.
+	/// where to put the keyboard. Jumps post the link the view follows.
 	/// </summary>
 	[TestFixture]
 	[Apartment(System.Threading.ApartmentState.STA)]
 	public class LexiconMenuExecutionTests : XWorksAppTestBase
 	{
+		private const string LexemeFormMenuId = "mnuDataTree-LexemeForm";
+		private const string VariantFormContextMenuId = "mnuDataTree-VariantFormContext";
+
 		private PropertyTable m_propertyTable;
 		private List<ICmObject> m_createdObjects;
 		private ILexEntry m_entry;
 		private ILexSense m_sense1;
 		private ILexSense m_sense2;
+		private IMoStemAllomorph m_allomorph;
+		private ILexEntry m_variant;
+		private ILexEntry m_affix;
+		private SIL.LCModel.IText m_text;
 		private ILexExampleSentence m_example;
 		private ICmTranslation m_translation;
 		private ILexExtendedNote m_note1;
@@ -108,12 +116,12 @@ namespace SIL.FieldWorks.XWorks
 			};
 			var translationHvo = m_translation.Hvo;
 
-			InvokeDelete(TranslationRow(), "Delete Translation");
+			InvokeLabelMenuItem(TranslationRow(), "Delete Translation");
 
 			Assert.That(confirmed, Is.EqualTo(1));
 			Assert.That(Cache.ServiceLocator.ObjectRepository.IsValidObjectId(translationHvo), Is.False, "the translation is gone");
 			Assert.That(m_example.TranslationsOC, Is.Empty);
-			Assert.That(DetailComposer.Compose(m_entry, Cache).Model.Fields.Any(f => f.ObjectHvo == translationHvo), Is.False,
+			Assert.That(Rows(m_entry).Any(f => f.ObjectHvo == translationHvo), Is.False,
 				"the recomposed detail view has no row for it");
 
 			Assert.That(Cache.ActionHandlerAccessor.CanUndo(), Is.True);
@@ -126,7 +134,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			m_view.DeleteConfirmation = ui => false;
 
-			InvokeDelete(TranslationRow(), "Delete Translation");
+			InvokeLabelMenuItem(TranslationRow(), "Delete Translation");
 
 			Assert.That(m_translation.IsValidObject, Is.True);
 			Assert.That(m_example.TranslationsOC, Has.Count.EqualTo(1));
@@ -136,11 +144,10 @@ namespace SIL.FieldWorks.XWorks
 		public void DeleteComplexFormInfo_RemovesTheEntryRef()
 		{
 			m_view.DeleteConfirmation = ui => true;
-			var row = DetailComposer.Compose(m_entry, Cache).Model.Fields
-				.Single(f => f.MenuId == "mnuDataTree-ComplexFormSpec");
+			var row = Rows(m_entry).Single(f => f.MenuId == "mnuDataTree-ComplexFormSpec");
 			Assert.That(row.ObjectHvo, Is.EqualTo(m_complexFormRef.Hvo), "precondition: the row shows the entry's own ref");
 
-			InvokeDelete(row, "Delete Complex Form Info");
+			InvokeLabelMenuItem(row, "Delete Complex Form Info");
 
 			Assert.That(m_entry.EntryRefsOS, Is.Empty);
 			Assert.That(m_entry.IsValidObject, Is.True, "only the ref goes, not the entry");
@@ -174,18 +181,146 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
+		public void SwapLexemeForm_MakesThePickedAllomorphTheLexemeForm_InOneUndoableStep()
+		{
+			var oldLexemeForm = m_entry.LexemeFormOA;
+			ILexEntry asked = null;
+			m_view.AllomorphToSwap = entry =>
+			{
+				asked = entry;
+				return m_allomorph;
+			};
+
+			InvokeLabelMenuItem(LexemeFormRow(m_entry), "Swap Lexeme Form with Allomorph...");
+
+			Assert.That(asked, Is.SameAs(m_entry), "the user picks among the shown entry's allomorphs");
+			Assert.That(m_entry.LexemeFormOA, Is.SameAs(m_allomorph));
+			Assert.That(m_entry.AlternateFormsOS, Is.EqualTo(new IMoForm[] { oldLexemeForm }));
+			Assert.That(LexemeFormRow(m_entry).ObjectHvo, Is.EqualTo(m_allomorph.Hvo), "the recomposed row shows the new lexeme form");
+
+			Assert.That(Cache.ActionHandlerAccessor.CanUndo(), Is.True);
+			Cache.ActionHandlerAccessor.Undo();
+			Assert.That(m_entry.LexemeFormOA, Is.SameAs(oldLexemeForm), "one Undo swaps them back");
+			Assert.That(m_entry.AlternateFormsOS, Is.EqualTo(new IMoForm[] { m_allomorph }));
+		}
+
+		[Test]
+		public void SwapLexemeForm_LeavesTheModelAlone_WhenTheUserCancels()
+		{
+			var oldLexemeForm = m_entry.LexemeFormOA;
+			m_view.AllomorphToSwap = entry => null;
+
+			InvokeLabelMenuItem(LexemeFormRow(m_entry), "Swap Lexeme Form with Allomorph...");
+
+			Assert.That(m_entry.LexemeFormOA, Is.SameAs(oldLexemeForm));
+			Assert.That(m_entry.AlternateFormsOS, Is.EqualTo(new IMoForm[] { m_allomorph }));
+		}
+
+		[Test]
+		public void ConvertLexemeForm_ReplacesTheForm_WithoutAskingWhenNothingIsLost()
+		{
+			ShowEntry(m_affix);
+			var oldForm = m_affix.LexemeFormOA;
+			m_view.ConversionLossAccepted = warning => throw new InvalidOperationException("nothing is lost: no question");
+
+			InvokeLabelMenuItem(LexemeFormRow(m_affix), "Convert to Affix Process");
+
+			Assert.That(m_affix.LexemeFormOA, Is.InstanceOf<IMoAffixProcess>());
+			Assert.That(m_affix.LexemeFormOA.Form.get_String(Cache.DefaultVernWs).Text, Is.EqualTo("ing"), "the form text carries over");
+			Assert.That(oldForm.IsValidObject, Is.False);
+			Assert.That(LexemeFormRow(m_affix).ObjectHvo, Is.EqualTo(m_affix.LexemeFormOA.Hvo), "the recomposed row shows the new form");
+			Assert.That(Cache.ActionHandlerAccessor.CanUndo(), Is.True);
+			Cache.ActionHandlerAccessor.Undo();
+			Assert.That(m_affix.LexemeFormOA, Is.InstanceOf<IMoAffixAllomorph>(), "one Undo restores the old form");
+		}
+
+		[Test]
+		public void ConvertLexemeForm_AsksAboutTheLoss_AndConvertsOnlyWhenTheUserAccepts()
+		{
+			ShowEntry(m_affix);
+			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
+			{
+				var environment = Cache.ServiceLocator.GetInstance<IPhEnvironmentFactory>().Create();
+				Cache.LangProject.PhonologicalDataOA.EnvironmentsOS.Add(environment);
+				((IMoAffixAllomorph)m_affix.LexemeFormOA).PhoneEnvRC.Add(environment);
+			});
+			var warnings = new List<string>();
+			m_view.ConversionLossAccepted = warning =>
+			{
+				warnings.Add(warning);
+				return false;
+			};
+
+			InvokeLabelMenuItem(LexemeFormRow(m_affix), "Convert to Affix Process");
+
+			Assert.That(warnings, Is.EqualTo(new[] { "The environment will be lost! Do you still want to continue?" }));
+			Assert.That(m_affix.LexemeFormOA, Is.InstanceOf<IMoAffixAllomorph>(), "declined: nothing changes");
+
+			m_view.ConversionLossAccepted = warning => true;
+			InvokeLabelMenuItem(LexemeFormRow(m_affix), "Convert to Affix Process");
+
+			Assert.That(m_affix.LexemeFormOA, Is.InstanceOf<IMoAffixProcess>(), "accepted: the form converts");
+		}
+
+		[Test]
+		public void InStringJumps_FollowTheLinkTheRowResolves()
+		{
+			var lexemeForm = LexemeFormRow(m_entry);
+			var variantForm = Rows(m_entry).Single(f => f.ContextMenuId == VariantFormContextMenuId);
+			Assert.That(variantForm.ObjectHvo, Is.EqualTo(m_variant.LexemeFormOA.Hvo), "precondition: the variant's form row");
+
+			var toConcordance = CaptureFollowLink(() => InvokeInStringMenuItem(lexemeForm, "Show Lexeme Form in Concordance"));
+			Assert.That(toConcordance?.ToolName, Is.EqualTo("concordance"));
+			Assert.That(toConcordance.TargetGuid, Is.EqualTo(m_entry.LexemeFormOA.Guid));
+
+			var toEntry = CaptureFollowLink(() => InvokeInStringMenuItem(lexemeForm, "Show Entry in Concordance"));
+			Assert.That(toEntry?.TargetGuid, Is.EqualTo(m_entry.Guid), "the entry owning the form");
+
+			var toVariant = CaptureFollowLink(() => InvokeInStringMenuItem(variantForm, "Show Entry in Lexicon"));
+			Assert.That(toVariant?.ToolName, Is.EqualTo("lexiconEdit"));
+			Assert.That(toVariant.TargetGuid, Is.EqualTo(m_variant.Guid), "the variant entry, not the shown one");
+		}
+
+		// The one jump that writes: a text without a notebook record gets one, associated with
+		// it, and the jump shows that record. A second jump reuses it.
+		[Test]
+		public void NotebookJump_FromATextWithoutARecord_CreatesTheRecord_AndShowsIt()
+		{
+			var leaf = XCoreMenuBridge.ResolveMenu(m_propertyTable.GetValue<XWindow>("window"), "mnuTextInfo-Notebook")
+				.Leaves.Single();
+			var row = new DetailField("Text/notebook@" + m_text.Hvo, "Notebook Record", null, null, DetailFieldKind.Header,
+				EditorClassification.GroupingNone, null, null, HostRouting.Inherit, null, null, null,
+				menuId: "mnuTextInfo-Notebook", objectHvo: m_text.Hvo);
+			Assert.That(m_text.AssociatedNotebookRecord, Is.Null, "precondition: the text has no record");
+			var item = m_view.JumpItem(leaf, row);
+			Assert.That(item.Execute, Is.Not.Null, "the jump is offered before the record exists");
+
+			var link = CaptureFollowLink(item.Execute);
+
+			var record = m_text.AssociatedNotebookRecord;
+			Assert.That(record, Is.Not.Null, "the jump created the record and associated it with the text");
+			m_createdObjects.Add(record);
+			Assert.That(link?.ToolName, Is.EqualTo("notebookEdit"));
+			Assert.That(link.TargetGuid, Is.EqualTo(record.Guid), "the jump shows the new record, not the text");
+
+			var again = CaptureFollowLink(m_view.JumpItem(leaf, row).Execute);
+			Assert.That(m_text.AssociatedNotebookRecord, Is.SameAs(record), "no second record");
+			Assert.That(again?.TargetGuid, Is.EqualTo(record.Guid));
+		}
+
+		[Test]
 		public void InsertSubsense_FromTheSubsensesRow_AppendsItUnderTheSense_InOneUndoableStep()
 		{
-			var row = Rows().Single(f => f.MenuId == "mnuDataTree-Subsenses" && f.ObjectHvo == m_sense1.Hvo);
+			var row = Rows(m_entry).Single(f => f.MenuId == "mnuDataTree-Subsenses" && f.ObjectHvo == m_sense1.Hvo);
 			Assert.That(row.GhostPrompt, Is.Not.Null, "precondition: no subsense yet, so the prompt row binds the id");
 
-			InvokeItem(row, DetailMenuKind.SliceMenu, "Insert Subsense");
+			InvokeLabelMenuItem(row, "Insert Subsense");
 
 			Assert.That(m_sense1.SensesOS, Has.Count.EqualTo(1));
 			var subsense = m_sense1.SensesOS[0];
 			Assert.That(subsense.MorphoSyntaxAnalysisRA, Is.SameAs(m_sense1.MorphoSyntaxAnalysisRA),
 				"the new subsense takes its parent's grammatical info");
-			Assert.That(Rows().Any(f => f.ObjectHvo == subsense.Hvo), Is.True, "the recomposed view shows it");
+			Assert.That(Rows(m_entry).Any(f => f.ObjectHvo == subsense.Hvo), Is.True, "the recomposed view shows it");
 
 			Assert.That(Cache.ActionHandlerAccessor.CanUndo(), Is.True);
 			Cache.ActionHandlerAccessor.Undo();
@@ -195,7 +330,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void InsertSense_FromTheFirstSensesHotlinks_GoesRightAfterIt()
 		{
-			InvokeItem(HeaderRowOf(m_sense1), DetailMenuKind.Hotlinks, "Insert Sense");
+			InvokeHotlinksItem(HeaderRowOf(m_sense1), "Insert Sense");
 
 			Assert.That(m_entry.SensesOS, Has.Count.EqualTo(3));
 			Assert.That(m_entry.SensesOS[0], Is.SameAs(m_sense1));
@@ -207,7 +342,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void InsertExample_FromTheSensesHotlinks_GoesLast()
 		{
-			InvokeItem(HeaderRowOf(m_sense1), DetailMenuKind.Hotlinks, "Insert Example");
+			InvokeHotlinksItem(HeaderRowOf(m_sense1), "Insert Example");
 
 			Assert.That(m_sense1.ExamplesOS, Has.Count.EqualTo(2));
 			Assert.That(m_sense1.ExamplesOS[0], Is.SameAs(m_example));
@@ -216,7 +351,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void InsertExtendedNote_FromTheFirstNotesHotlinks_GoesRightAfterIt()
 		{
-			InvokeItem(HeaderRowOf(m_note1), DetailMenuKind.Hotlinks, "Insert Extended Note");
+			InvokeHotlinksItem(HeaderRowOf(m_note1), "Insert Extended Note");
 
 			Assert.That(m_sense1.ExtendedNoteOS, Has.Count.EqualTo(3));
 			Assert.That(m_sense1.ExtendedNoteOS[0], Is.SameAs(m_note1));
@@ -227,12 +362,12 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void InsertExtendedNote_FromTheSectionRow_GoesLast()
 		{
-			var section = Rows().Single(f => f.MenuId == "mnuDataTree-ExtendedNotes" && f.ObjectHvo == m_sense1.Hvo);
+			var section = Rows(m_entry).Single(f => f.MenuId == "mnuDataTree-ExtendedNotes" && f.ObjectHvo == m_sense1.Hvo);
 			Assert.That(section.Kind, Is.EqualTo(DetailFieldKind.Header), "precondition: the section header binds the id");
-			Assert.That(Rows().Any(f => f.MenuId == "mnuDataTree-ExtendedNotes" && f.ObjectHvo == m_sense2.Hvo), Is.False,
+			Assert.That(Rows(m_entry).Any(f => f.MenuId == "mnuDataTree-ExtendedNotes" && f.ObjectHvo == m_sense2.Hvo), Is.False,
 				"precondition: the second sense has no note, so no section row");
 
-			InvokeItem(section, DetailMenuKind.SliceMenu, "Insert Extended Note");
+			InvokeLabelMenuItem(section, "Insert Extended Note");
 
 			Assert.That(m_sense1.ExtendedNoteOS, Has.Count.EqualTo(3));
 			Assert.That(m_sense1.ExtendedNoteOS[1], Is.SameAs(m_note2), "the new note is last");
@@ -241,7 +376,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void InsertEtymology_FromTheFirstEtymologysHotlinks_GoesRightAfterIt()
 		{
-			InvokeItem(HeaderRowOf(m_etymology1), DetailMenuKind.Hotlinks, "Insert Etymology");
+			InvokeHotlinksItem(HeaderRowOf(m_etymology1), "Insert Etymology");
 
 			Assert.That(m_entry.EtymologyOS, Has.Count.EqualTo(3));
 			Assert.That(m_entry.EtymologyOS[0], Is.SameAs(m_etymology1));
@@ -267,15 +402,21 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		// Builds the row's label menu as the host does and runs the named item's own Execute.
-		private void InvokeDelete(DetailField row, string label) => InvokeItem(row, DetailMenuKind.SliceMenu, label);
+		private void InvokeLabelMenuItem(DetailField row, string label)
+			=> Invoke(RecordEditView.ComposeSliceMenuIds(row.MenuId, row.IsMultiStringRow).ToArray(), row,
+				DetailMenuKind.SliceMenu, label);
 
-		// Builds the row's menu of the given kind as the host does and runs the named item's
-		// own Execute.
-		private void InvokeItem(DetailField row, DetailMenuKind kind, string label)
+		// Builds the row's in-string menu as the host does and runs the named item's own Execute.
+		private void InvokeInStringMenuItem(DetailField row, string label)
+			=> Invoke(RecordEditView.ComposeInStringMenuIds(row.ContextMenuId).ToArray(), row,
+				DetailMenuKind.ContextMenu, label);
+
+		// Builds the row's hotlinks menu as the host does and runs the named item's own Execute.
+		private void InvokeHotlinksItem(DetailField row, string label)
+			=> Invoke(new[] { row.HotlinksId }, row, DetailMenuKind.Hotlinks, label);
+
+		private void Invoke(string[] ids, DetailField row, DetailMenuKind kind, string label)
 		{
-			var ids = kind == DetailMenuKind.Hotlinks
-				? new[] { row.HotlinksId }
-				: RecordEditView.ComposeSliceMenuIds(row.MenuId, row.IsMultiStringRow).ToArray();
 			var window = m_propertyTable.GetValue<XWindow>("window");
 			var request = DetailMenuRequest.FromAnchor(null, row, kind);
 			var items = XCoreMenuBridge.CreateMenuItems(window, ids, null, null, m_view.CreateMenuAuthority(request));
@@ -286,18 +427,30 @@ namespace SIL.FieldWorks.XWorks
 			DrainMediatorAndIdleQueues();
 		}
 
-		private IReadOnlyList<DetailField> Rows() => DetailComposer.Compose(m_entry, Cache).Model.Fields;
+		// Runs an action and returns the link it posts, once the post has been delivered.
+		private FwLinkArgs CaptureFollowLink(Action action)
+			=> FollowLinkSpy.Capture(m_propertyTable.GetValue<XWindow>("window").Mediator, action,
+				DrainMediatorAndIdleQueues);
+
+		private void ShowEntry(ILexEntry entry)
+		{
+			m_view.Clerk.JumpToRecord(entry.Hvo);
+			DrainMediatorAndIdleQueues();
+		}
+
+		private IReadOnlyList<DetailField> Rows(ILexEntry entry) => DetailComposer.Compose(entry, Cache).Model.Fields;
+
+		private DetailField TranslationRow()
+			=> Rows(m_entry).Single(f => f.Field == "Translation" && f.ObjectHvo == m_translation.Hvo);
+
+		private DetailField LexemeFormRow(ILexEntry entry) => Rows(entry).Single(f => f.MenuId == LexemeFormMenuId);
 
 		// The object's item header row, the one its hotlinks hang off.
 		private DetailField HeaderRowOf(ICmObject obj)
-			=> Rows().First(f => f.ObjectHvo == obj.Hvo && f.Kind == DetailFieldKind.Header && f.HotlinksId != null);
+			=> Rows(m_entry).First(f => f.ObjectHvo == obj.Hvo && f.Kind == DetailFieldKind.Header && f.HotlinksId != null);
 
-		private DetailField TranslationRow()
-			=> DetailComposer.Compose(m_entry, Cache).Model.Fields
-				.Single(f => f.Field == "Translation" && f.ObjectHvo == m_translation.Hvo);
-
-		// An entry with two senses and two etymologies; the first sense has an example with
-		// a free translation and two extended notes. The entry is a complex form of another.
+		// A complex-form stem entry with a spelling variant, an allomorph, two etymologies and
+		// two senses (the first with a translated example and two notes); a suffix; a text.
 		private void CreateTestEntry()
 		{
 			var stemMorphType = GetMorphTypeOrCreateOne("stem");
@@ -314,6 +467,9 @@ namespace SIL.FieldWorks.XWorks
 			m_entry.EtymologyOS.Add(m_etymology1);
 			m_etymology2 = Cache.ServiceLocator.GetInstance<ILexEtymologyFactory>().Create();
 			m_entry.EtymologyOS.Add(m_etymology2);
+			m_allomorph = Cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>().Create();
+			m_entry.AlternateFormsOS.Add(m_allomorph);
+			m_allomorph.Form.set_String(Cache.DefaultVernWs, TsStringUtils.MakeString("command-allomorph", Cache.DefaultVernWs));
 			m_example = Cache.ServiceLocator.GetInstance<ILexExampleSentenceFactory>().Create();
 			m_sense1.ExamplesOS.Add(m_example);
 			m_example.Example.set_String(Cache.DefaultVernWs, TsStringUtils.MakeString("una casa", Cache.DefaultVernWs));
@@ -330,6 +486,20 @@ namespace SIL.FieldWorks.XWorks
 			m_complexFormRef.PrimaryLexemesRS.Add(component);
 			m_complexFormRef.ComplexEntryTypesRS.Add(Cache.ServiceLocator.GetInstance<ILexEntryTypeRepository>()
 				.GetObject(LexEntryTypeTags.kguidLexTypCompound));
+
+			m_variant = AddLexeme(m_createdObjects, "command-variant", stemMorphType, "variant gloss", noun);
+			var variantRef = Cache.ServiceLocator.GetInstance<ILexEntryRefFactory>().Create();
+			m_variant.EntryRefsOS.Add(variantRef);
+			variantRef.RefType = LexEntryRefTags.krtVariant;
+			variantRef.ComponentLexemesRS.Add(m_entry);
+			variantRef.VariantEntryTypesRS.Add(Cache.ServiceLocator.GetInstance<ILexEntryTypeRepository>()
+				.GetObject(LexEntryTypeTags.kguidLexTypSpellingVar));
+
+			m_affix = AddLexeme(m_createdObjects, "ing", GetMorphTypeOrCreateOne("suffix"), "suffix gloss", noun);
+			Assert.That(m_affix.LexemeFormOA, Is.InstanceOf<IMoAffixAllomorph>(), "precondition: a suffix entry has an affix form");
+
+			m_text = Cache.ServiceLocator.GetInstance<ITextFactory>().Create();
+			m_createdObjects.Add(m_text);
 		}
 
 		private void LoadRecordEditView(string toolValue)

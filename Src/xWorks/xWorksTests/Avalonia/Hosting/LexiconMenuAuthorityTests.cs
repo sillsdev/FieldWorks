@@ -32,12 +32,16 @@ namespace SIL.FieldWorks.XWorks
 	[Apartment(System.Threading.ApartmentState.STA)]
 	public class LexiconMenuAuthorityTests : XWorksAppTestBase
 	{
-		// The ids owned today: every leaf of each is a Delete or an in-scope Insert. Ownership
-		// is by message over the whole configuration, so other areas' and unbound ids count.
+		// The ids owned today: each leaf sends an answered message, an Insert only in
+		// scope. Ownership is by message, so other areas' and unbound ids count too.
 		private static readonly string[] PinnedOwnedIds =
 		{
 			// Lexicon rows: Translation, and Complex Form Type on a complex form.
 			"mnuDataTree-Translation", "mnuDataTree-ComplexFormSpec",
+			// Lexicon rows: the Lexeme Form row's label menu and the in-string menus of the
+			// Lexeme Form, Citation Form and variant form rows.
+			"mnuDataTree-LexemeForm", "mnuDataTree-LexemeFormContext", "mnuDataTree-CitationFormContext",
+			"mnuDataTree-VariantFormContext",
 			// Lexicon rows: the Subsenses and Extended Notes section rows, and the hotlinks of
 			// a sense, an extended note and an etymology.
 			"mnuDataTree-Subsenses", "mnuDataTree-ExtendedNotes", "mnuDataTree-Sense-Hotlinks",
@@ -54,22 +58,31 @@ namespace SIL.FieldWorks.XWorks
 			"mnuDataTree-MoStemName-Regions", "mnuDataTree-Phoneme-Code", "mnuDataTree-Phoneme-Codes",
 			"mnuDataTree-Delete-Adhoc-Allomorph", "mnuDataTree-Delete-Adhoc-Group",
 			"mnuDataTree-Delete-Adhoc-Morpheme", "mnuDataTree-Adhoc-Group-Members",
+			// Texts: the Info tab's jumps to the interlinear text and its notebook record; no
+			// Avalonia detail view.
+			"mnuDataTree-Text", "mnuTextInfo-Notebook",
 			// Lists and Reversal: no Avalonia detail view.
 			"mnuDataTree-DeleteCustomItem", "mnuDataTree-DeletePossibility", "mnuDataTree-DeleteQuestion",
 			"mnuDataTree-InsertQuestion", "mnuDataTree-InsertReversalSubentry", "mnuDataTree-InsertReversalSubentry-Hotlinks"
 		};
 
-		// The owned ids a Lexicon Edit row binds as its label menu and as its hotlinks: the
-		// rows the contracts below are proved on.
+		// The owned ids a Lexicon Edit row binds as its label menu, its in-string menu and its
+		// hotlinks: the rows the contracts below are proved on.
 		private static readonly string[] LexiconLabelMenuIds =
 		{
-			"mnuDataTree-Translation", "mnuDataTree-ComplexFormSpec", "mnuDataTree-Subsenses", "mnuDataTree-ExtendedNotes"
+			"mnuDataTree-Translation", "mnuDataTree-ComplexFormSpec", "mnuDataTree-LexemeForm",
+			"mnuDataTree-Subsenses", "mnuDataTree-ExtendedNotes"
 		};
+
+		private static readonly string[] LexiconInStringMenuIds =
+			{ "mnuDataTree-LexemeFormContext", "mnuDataTree-CitationFormContext", "mnuDataTree-VariantFormContext" };
 
 		private static readonly string[] LexiconHotlinksIds =
 		{
 			"mnuDataTree-Sense-Hotlinks", "mnuDataTree-ExtendedNote-Hotlinks", "mnuDataTree-Etymology-Hotlinks"
 		};
+
+		private const string LexemeFormContextMenuId = "mnuDataTree-LexemeFormContext";
 
 		// The messages of mnuDataTree-Object's six leaves, the test subject for the predicate.
 		private static readonly string[] ObjectMenuMessages =
@@ -81,6 +94,8 @@ namespace SIL.FieldWorks.XWorks
 		private PropertyTable m_propertyTable;
 		private List<ICmObject> m_createdObjects;
 		private ILexEntry m_entry;
+		private IMoStemAllomorph m_allomorph;
+		private ILexEntry m_variant;
 		private ICmTranslation m_translation;
 		private ILexExtendedNote m_note;
 		private ILexEtymology m_etymology;
@@ -228,14 +243,14 @@ namespace SIL.FieldWorks.XWorks
 				MultiStringMenuAuthority.WritingSystemListId), Throws.InvalidOperationException);
 		}
 
-		// Contract: on every Lexicon Edit row binding an owned id (label menu or hotlinks), the
+		// Contract: on every Lexicon Edit row binding an owned id, by any menu kind, the
 		// owned menu renders what the adapter path rendered.
 		[Test]
 		public void OwnedMenu_RendersWhatTheAdapterPathRendered_OnEveryLexiconRowThatBindsOne()
 		{
 			var rows = OwnedMenuRows();
 			Assert.That(rows.Select(r => r.MenuId).Distinct(), Is.EquivalentTo(
-				LexiconLabelMenuIds.Concat(LexiconHotlinksIds)),
+				LexiconLabelMenuIds.Concat(LexiconInStringMenuIds).Concat(LexiconHotlinksIds)),
 				"precondition: the entry composes a row for every owned id");
 
 			var mismatches = new List<string>();
@@ -274,10 +289,12 @@ namespace SIL.FieldWorks.XWorks
 		{
 			Assert.That(HiddenTreeExists, Is.False, "precondition: no hidden tree yet");
 			var rows = OwnedMenuRows();
-			Assert.That(rows, Has.Count.EqualTo(8), "precondition: seven ids, -Translation on two rows");
+			Assert.That(rows, Has.Count.EqualTo(12), "precondition: ten ids, -Translation on two rows");
 			foreach (var (row, menuId, kind) in rows)
 			{
-				var ids = kind == DetailMenuKind.Hotlinks
+				var ids = kind == DetailMenuKind.ContextMenu
+					? RecordEditView.ComposeInStringMenuIds(menuId).ToArray()
+					: kind == DetailMenuKind.Hotlinks
 					? new[] { menuId }
 					: RecordEditView.ComposeSliceMenuIds(menuId, row.IsMultiStringRow).ToArray();
 				var authority = m_view.CreateMenuAuthority(MenuRequest(row, kind));
@@ -335,6 +352,54 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(goneItem.Label, Is.EqualTo("Delete Translation" + note));
 			Assert.That(refused.IsEnabled, Is.False, "the rule refuses the last item of a required field");
 			Assert.That(refused.Label, Does.EndWith(note));
+		}
+
+		// A jump is enabled only on a row the rule resolves a target for; with no row the
+		// shown entry stands in. The adapter path showed a targetless jump enabled and
+		// inert; natively it is disabled.
+		[Test]
+		public void JumpLeaf_IsEnabledOnlyWhenTheRowOffersATarget()
+		{
+			var formJump = Leaf(LexemeFormContextMenuId, "CmdLexemeFormJumpToConcordance");
+			var entryJump = Leaf(LexemeFormContextMenuId, "CmdEntryJumpToConcordance");
+			var lexemeForm = LexemeFormRow();
+			var citationForm = Rows().Single(f => f.Field == "CitationForm" && f.ObjectHvo == m_entry.Hvo);
+
+			Assert.That(m_view.JumpItem(formJump, lexemeForm).IsEnabled, Is.True, "the Form field of the lexeme form");
+			Assert.That(m_view.JumpItem(formJump, citationForm).IsEnabled, Is.False, "the entry is no form");
+			Assert.That(m_view.JumpItem(formJump, null).IsEnabled, Is.False, "no row: the shown entry is no form");
+			Assert.That(m_view.JumpItem(entryJump, citationForm).IsEnabled, Is.True);
+			Assert.That(m_view.JumpItem(entryJump, lexemeForm).IsEnabled, Is.True, "the entry owning the form");
+			Assert.That(m_view.JumpItem(entryJump, null).IsEnabled, Is.True, "no row: the shown entry");
+			Assert.That(m_view.JumpItem(entryJump, null).Label, Is.EqualTo("Show Entry in Concordance"));
+		}
+
+		[Test]
+		public void SwapLeaf_IsAbsentWithoutAnAllomorph_AndConvertLeaves_FollowTheFormsClass()
+		{
+			var swap = Leaf("mnuDataTree-LexemeForm", "CmdDataTree-Swap-LexemeForm");
+			var toProcess = Leaf("mnuDataTree-LexemeForm", "CmdDataTree-Convert-LexemeForm-AffixProcess");
+			var toAffixForm = Leaf("mnuDataTree-LexemeForm", "CmdDataTree-Convert-LexemeForm-AffixAllomorph");
+			var lexemeForm = LexemeFormRow();
+
+			Assert.That(m_view.SwapLexemeFormItem(swap, lexemeForm)?.IsEnabled, Is.True, "the entry has an allomorph");
+			Assert.That(m_view.SwapLexemeFormItem(swap, lexemeForm).Label, Is.EqualTo("Swap Lexeme Form with Allomorph..."));
+			Assert.That(m_view.SwapLexemeFormItem(swap, null)?.IsEnabled, Is.True, "no row: the shown entry");
+			Assert.That(m_view.ConvertLexemeFormItem(toProcess, lexemeForm), Is.Null, "a stem converts to nothing");
+			Assert.That(m_view.ConvertLexemeFormItem(toAffixForm, lexemeForm), Is.Null);
+			Assert.That(m_view.ConvertLexemeFormItem(toProcess, null), Is.Null, "no row: no form");
+
+			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
+			{
+				m_entry.AlternateFormsOS.Clear();
+				m_entry.LexemeFormOA = Cache.ServiceLocator.GetInstance<IMoAffixAllomorphFactory>().Create();
+			});
+			var affixForm = LexemeFormRow();
+
+			Assert.That(m_view.SwapLexemeFormItem(swap, affixForm), Is.Null, "nothing to swap with");
+			Assert.That(m_view.ConvertLexemeFormItem(toProcess, affixForm)?.IsEnabled, Is.True, "an affix form converts to a process");
+			Assert.That(m_view.ConvertLexemeFormItem(toProcess, affixForm).Label, Is.EqualTo("Convert to Affix Process"));
+			Assert.That(m_view.ConvertLexemeFormItem(toAffixForm, affixForm), Is.Null, "it already is one");
 		}
 
 		// Offered for the row's object (a ghost row's included); disabled where neither the
@@ -408,13 +473,17 @@ namespace SIL.FieldWorks.XWorks
 		private DetailField TranslationRow()
 			=> Rows().Single(f => f.Field == "Translation" && f.ObjectHvo == m_translation.Hvo);
 
+		private DetailField LexemeFormRow() => Rows().Single(f => f.MenuId == "mnuDataTree-LexemeForm");
+
 		// Every (row, owned id, menu kind) the entry's rows bind: the label menus first, then
-		// the hotlinks.
+		// the in-string menus, then the hotlinks.
 		private List<(DetailField Row, string MenuId, DetailMenuKind Kind)> OwnedMenuRows()
 		{
 			var rows = Rows();
 			var bound = rows.Where(f => LexiconLabelMenuIds.Contains(f.MenuId))
 				.Select(f => (f, f.MenuId, DetailMenuKind.SliceMenu));
+			bound = bound.Concat(rows.Where(f => LexiconInStringMenuIds.Contains(f.ContextMenuId))
+				.Select(f => (f, f.ContextMenuId, DetailMenuKind.ContextMenu)));
 			bound = bound.Concat(rows.Where(f => LexiconHotlinksIds.Contains(f.HotlinksId))
 				.Select(f => (f, f.HotlinksId, DetailMenuKind.Hotlinks)));
 			return bound.ToList();
@@ -471,6 +540,21 @@ namespace SIL.FieldWorks.XWorks
 				Asked = true;
 				return false;
 			}
+			public bool OnDisplayJumpToTool(object commandObject, ref UIItemDisplayProperties display)
+			{
+				Asked = true;
+				return false;
+			}
+			public bool OnDisplaySwapLexemeWithAllomorph(object commandObject, ref UIItemDisplayProperties display)
+			{
+				Asked = true;
+				return false;
+			}
+			public bool OnDisplayConvertLexemeForm(object commandObject, ref UIItemDisplayProperties display)
+			{
+				Asked = true;
+				return false;
+			}
 			public bool OnDisplayDataTreeInsert(object commandObject, ref UIItemDisplayProperties display)
 			{
 				Asked = true;
@@ -504,8 +588,8 @@ namespace SIL.FieldWorks.XWorks
 			method.Invoke(m_view, new object[] { targetHvo, fieldName });
 		}
 
-		// A complex form (its LexEntryRef shows Complex Form Type) with an etymology and a
-		// sense that has an example with a free translation, an extended note, no subsense.
+		// A complex form (Complex Form Type row) with an allomorph, a spelling variant and
+		// an etymology; its sense has a translated example, an extended note, no subsense.
 		private void CreateTestEntry()
 		{
 			var stemMorphType = GetMorphTypeOrCreateOne("stem");
@@ -515,6 +599,9 @@ namespace SIL.FieldWorks.XWorks
 			m_entry.SensesOS[0].ExtendedNoteOS.Add(m_note);
 			m_etymology = Cache.ServiceLocator.GetInstance<ILexEtymologyFactory>().Create();
 			m_entry.EtymologyOS.Add(m_etymology);
+			m_allomorph = Cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>().Create();
+			m_entry.AlternateFormsOS.Add(m_allomorph);
+			m_allomorph.Form.set_String(Cache.DefaultVernWs, TsStringUtils.MakeString("command-allomorph", Cache.DefaultVernWs));
 			var example = Cache.ServiceLocator.GetInstance<ILexExampleSentenceFactory>().Create();
 			m_entry.SensesOS[0].ExamplesOS.Add(example);
 			example.Example.set_String(Cache.DefaultVernWs, TsStringUtils.MakeString("una casa", Cache.DefaultVernWs));
@@ -531,6 +618,14 @@ namespace SIL.FieldWorks.XWorks
 			complexFormRef.PrimaryLexemesRS.Add(component);
 			complexFormRef.ComplexEntryTypesRS.Add(Cache.ServiceLocator.GetInstance<ILexEntryTypeRepository>()
 				.GetObject(LexEntryTypeTags.kguidLexTypCompound));
+
+			m_variant = AddLexeme(m_createdObjects, "command-variant", stemMorphType, "variant gloss", noun);
+			var variantRef = Cache.ServiceLocator.GetInstance<ILexEntryRefFactory>().Create();
+			m_variant.EntryRefsOS.Add(variantRef);
+			variantRef.RefType = LexEntryRefTags.krtVariant;
+			variantRef.ComponentLexemesRS.Add(m_entry);
+			variantRef.VariantEntryTypesRS.Add(Cache.ServiceLocator.GetInstance<ILexEntryTypeRepository>()
+				.GetObject(LexEntryTypeTags.kguidLexTypSpellingVar));
 		}
 
 		private void LoadRecordEditView(string toolValue)

@@ -4,8 +4,11 @@
 
 using System;
 using System.Collections.Generic;
+using System.Windows.Forms;
 using SIL.FieldWorks.Common.DetailRules;
+using SIL.FieldWorks.Common.Framework.DetailControls;
 using SIL.FieldWorks.Common.FwAvalonia.Detail;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FdoUi;
 using SIL.LCModel;
 using SIL.LCModel.Infrastructure;
@@ -24,6 +27,16 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>The message every Delete leaf of the detail menus sends.</summary>
 		internal const string DeleteMessage = "DataTreeDelete";
 
+		/// <summary>The message every jump leaf (Show ... in ...) of the detail menus
+		/// sends.</summary>
+		internal const string JumpMessage = "JumpToTool";
+
+		/// <summary>The message of Swap Lexeme Form with Allomorph.</summary>
+		internal const string SwapLexemeFormMessage = "SwapLexemeWithAllomorph";
+
+		/// <summary>The message of Convert to Affix Process / Convert to Affix Form.</summary>
+		internal const string ConvertLexemeFormMessage = "ConvertLexemeForm";
+
 		/// <summary>The message every Insert leaf of the detail menus sends.</summary>
 		internal const string InsertMessage = "DataTreeInsert";
 
@@ -37,6 +50,21 @@ namespace SIL.FieldWorks.XWorks
 		internal Func<CmObjectUi, bool> DeleteConfirmation { get; set; } = ui => ui.ConfirmDelete();
 
 		/// <summary>
+		/// Picks the allomorph to swap with the entry's lexeme form, or null to cancel: the
+		/// product asks with <see cref="SwapLexemeWithAllomorphDlg"/>; a headless test
+		/// answers for the user.
+		/// </summary>
+		internal Func<ILexEntry, IMoForm> AllomorphToSwap { get; set; }
+
+		/// <summary>
+		/// Asks the user to accept the data a form conversion loses, given the warning text:
+		/// the product shows it; a headless test answers for the user.
+		/// </summary>
+		internal Func<string, bool> ConversionLossAccepted { get; set; } = warning =>
+			MessageBox.Show(warning, LexemeFormConversion.DataLossCaption, MessageBoxButtons.YesNo,
+				MessageBoxIcon.Warning) == DialogResult.Yes;
+
+		/// <summary>
 		/// The message-keyed authority for the Lexicon menus, owning by predicate and
 		/// answering for <paramref name="field"/>; with no row every answer is hidden.
 		/// </summary>
@@ -45,6 +73,9 @@ namespace SIL.FieldWorks.XWorks
 			var window = m_propertyTable.GetValue<XWindow>("window");
 			var authority = new LexiconMenuAuthority(id => XCoreMenuBridge.ResolveMenu(window, id));
 			authority.Answer(DeleteMessage, leaf => DeleteItem(leaf, field));
+			authority.Answer(JumpMessage, leaf => JumpItem(leaf, field));
+			authority.Answer(SwapLexemeFormMessage, leaf => SwapLexemeFormItem(leaf, field));
+			authority.Answer(ConvertLexemeFormMessage, leaf => ConvertLexemeFormItem(leaf, field));
 			authority.Answer(InsertMessage, leaf => InsertItem(leaf, field), InsertLeafInScope);
 			return authority;
 		}
@@ -244,6 +275,166 @@ namespace SIL.FieldWorks.XWorks
 					return true;
 			}
 			return false;
+		}
+
+		/// <summary>
+		/// The jump item (Show Entry in Concordance and the like) for the row: enabled when
+		/// <see cref="DetailJumpTargets"/> resolves a target for the row's object and field,
+		/// disabled otherwise. With no row, or a row without an object, the shown record is
+		/// the target, as it is for a tree with no current slice.
+		/// </summary>
+		internal DetailMenuItem JumpItem(DetailMenuLeaf leaf, DetailField field)
+		{
+			var label = XCoreMenuBridge.StripAccelerator(leaf.Label);
+			var tool = XmlUtils.GetMandatoryAttributeValue(leaf.Command.Parameters[0], "tool");
+			var className = XmlUtils.GetMandatoryAttributeValue(leaf.Command.Parameters[0], "className");
+			var root = ResolveShownRecord(Clerk?.CurrentObject);
+			var target = JumpSourceOf(field, root, out var flid);
+			var jump = DetailJumpTargets.Resolve(tool, className, leaf.CommandId, Guid.Empty, root, target, flid);
+			if (jump.Guid == Guid.Empty)
+				return DetailMenuItem.Disabled(label);
+			return new DetailMenuItem(label, isEnabled: true, isChecked: false, children: null,
+				execute: () => Jump(tool, jump));
+		}
+
+		// The object and field a row's jump resolves from: no row or no object means the
+		// root with no field; a header row has no field; else the row's object and field.
+		private ICmObject JumpSourceOf(DetailField field, ICmObject root, out int? flid)
+		{
+			flid = null;
+			if (field == null || field.ObjectHvo == 0)
+				return root;
+			if (!Cache.ServiceLocator.ObjectRepository.TryGetObject(field.ObjectHvo, out var target))
+				return null;
+			if (field.Kind != DetailFieldKind.Header)
+				flid = FieldIdOf(target, field.Field);
+			return target;
+		}
+
+		// The field id of the named field on the object's class, 0 when it has none.
+		private int FieldIdOf(ICmObject target, string fieldName)
+		{
+			if (string.IsNullOrEmpty(fieldName))
+				return 0;
+			var mdc = (IFwMetaDataCacheManaged)Cache.MetaDataCacheAccessor;
+			return mdc.FieldExists(target.ClassID, fieldName, true) ? mdc.GetFieldId2(target.ClassID, fieldName, true) : 0;
+		}
+
+		// Follows the resolved jump; a notebook jump from a text without a record creates the
+		// record first (its own unit of work, so pending edits settle before it) and shows that.
+		private void Jump(string tool, DetailJumpTarget jump)
+		{
+			SettleDetailEdits();
+			var guid = jump.TextWithoutRecord != null
+				? DetailJumpTargets.AssociateWithNotebook(jump.TextWithoutRecord).Guid
+				: jump.Guid;
+			FollowLink(new FwLinkArgs(tool, guid));
+		}
+
+		/// <summary>
+		/// The Swap Lexeme Form with Allomorph item for the row: absent unless the entry
+		/// the row's object belongs to (the shown entry with no row) has a lexeme form and
+		/// allomorphs to swap it with.
+		/// </summary>
+		internal DetailMenuItem SwapLexemeFormItem(DetailMenuLeaf leaf, DetailField field)
+		{
+			var entry = EntryOf(field);
+			if (!LexemeFormConversion.CanSwap(entry))
+				return null;
+			return new DetailMenuItem(XCoreMenuBridge.StripAccelerator(leaf.Label), isEnabled: true, isChecked: false,
+				children: null, execute: () => SwapLexemeForm(entry, leaf.Command));
+		}
+
+		/// <summary>
+		/// Swaps the entry's lexeme form with the allomorph the user picks: pending edits
+		/// settle first, the swap is one undoable step, and the view re-shows.
+		/// </summary>
+		/// <returns>True when the forms were swapped.</returns>
+		internal bool SwapLexemeForm(ILexEntry entry, Command command)
+		{
+			SettleDetailEdits();
+			if (!LexemeFormConversion.CanSwap(entry))
+				return false;
+			var allomorph = (AllomorphToSwap ?? ChooseAllomorphWithDialog)(entry);
+			if (allomorph == null || !entry.AlternateFormsOS.Contains(allomorph))
+				return false;
+			LexemeFormConversion.Swap(entry, allomorph, command.UndoText, command.RedoText);
+			OnAvaloniaDetailEditCompleted(this, EventArgs.Empty);
+			return true;
+		}
+
+		private IMoForm ChooseAllomorphWithDialog(ILexEntry entry)
+		{
+			var mainWindow = m_propertyTable.GetValue<Form>("window");
+			using (new WaitCursor(mainWindow))
+			using (var dlg = new SwapLexemeWithAllomorphDlg())
+			{
+				dlg.SetDlgInfo(Cache, m_propertyTable, entry);
+				return dlg.ShowDialog(mainWindow) == DialogResult.OK ? dlg.SelectedAllomorph : null;
+			}
+		}
+
+		/// <summary>
+		/// The Convert to Affix Process / Convert to Affix Form item for the row: absent
+		/// unless the row's form is of the class the command converts from.
+		/// </summary>
+		internal DetailMenuItem ConvertLexemeFormItem(DetailMenuLeaf leaf, DetailField field)
+		{
+			var form = FormOf(field);
+			var entry = form?.OwnerOfClass<ILexEntry>();
+			var toClassId = ClassIdOf(leaf.Command.GetParameter("toClassName"));
+			if (entry == null || toClassId == 0
+				|| !LexemeFormConversion.CanConvert(form, ClassIdOf(leaf.Command.GetParameter("fromClassName"))))
+			{
+				return null;
+			}
+			return new DetailMenuItem(XCoreMenuBridge.StripAccelerator(leaf.Label), isEnabled: true, isChecked: false,
+				children: null, execute: () => ConvertForm(entry, form, toClassId, leaf.Command));
+		}
+
+		/// <summary>
+		/// Converts the form to <paramref name="toClassId"/> once the user accepts what the
+		/// conversion loses: pending edits settle first, the conversion is one undoable step,
+		/// and the re-show focuses the new form's row.
+		/// </summary>
+		/// <returns>True when the form was converted.</returns>
+		internal bool ConvertForm(ILexEntry entry, IMoForm form, int toClassId, Command command)
+		{
+			SettleDetailEdits();
+			if (!form.IsValidObject || form.Owner != entry)
+				return false;
+			var warning = LexemeFormConversion.DataLossMessage(form);
+			if (warning != null && !ConversionLossAccepted(warning))
+				return false;
+			var newForm = LexemeFormConversion.Convert(entry, form, toClassId, command.UndoText, command.RedoText);
+			m_avaloniaEntryForm?.FocusObjectOnNextShow(newForm.Hvo);
+			OnAvaloniaDetailEditCompleted(this, EventArgs.Empty);
+			return true;
+		}
+
+		// The row's object as a form, null when it is none or gone.
+		private IMoForm FormOf(DetailField field)
+		{
+			if (field == null || field.ObjectHvo == 0 || field.GhostPrompt != null)
+				return null;
+			return Cache.ServiceLocator.ObjectRepository.TryGetObject(field.ObjectHvo, out var target) ? target as IMoForm : null;
+		}
+
+		// The entry the row's object belongs to, or the shown entry when the row shows none.
+		private ILexEntry EntryOf(DetailField field)
+		{
+			if (field != null && field.ObjectHvo != 0
+				&& Cache.ServiceLocator.ObjectRepository.TryGetObject(field.ObjectHvo, out var target))
+			{
+				return target as ILexEntry ?? target.OwnerOfClass<ILexEntry>();
+			}
+			return ResolveShownRecord(Clerk?.CurrentObject) as ILexEntry;
+		}
+
+		private int ClassIdOf(string className)
+		{
+			var mdc = (IFwMetaDataCacheManaged)Cache.MetaDataCacheAccessor;
+			return !string.IsNullOrEmpty(className) && mdc.ClassExists(className) ? mdc.GetClassId(className) : 0;
 		}
 	}
 }

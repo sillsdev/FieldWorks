@@ -178,6 +178,87 @@ namespace SIL.FieldWorks.FdoUi {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Warning!.
+        /// </summary>
+        internal static string ksConvertFormLoseCaption {
+            get {
+                return ResourceManager.GetString("ksConvertFormLoseCaption", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The environment will be lost! Do you still want to continue?.
+        /// </summary>
+        internal static string ksConvertFormLoseEnv {
+            get {
+                return ResourceManager.GetString("ksConvertFormLoseEnv", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The environment and some grammatical information will be lost! Do you still want to continue?.
+        /// </summary>
+        internal static string ksConvertFormLoseEnvGramInfo {
+            get {
+                return ResourceManager.GetString("ksConvertFormLoseEnvGramInfo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The environment and infix position will be lost! Do you still want to continue?.
+        /// </summary>
+        internal static string ksConvertFormLoseEnvInfixLoc {
+            get {
+                return ResourceManager.GetString("ksConvertFormLoseEnvInfixLoc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The environment, infix position, and some grammatical information will be lost! Do you still want to continue?.
+        /// </summary>
+        internal static string ksConvertFormLoseEnvInfixLocGramInfo {
+            get {
+                return ResourceManager.GetString("ksConvertFormLoseEnvInfixLocGramInfo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Some grammatical information will be lost! Do you still want to continue?.
+        /// </summary>
+        internal static string ksConvertFormLoseGramInfo {
+            get {
+                return ResourceManager.GetString("ksConvertFormLoseGramInfo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The infix position will be lost! Do you still want to continue?.
+        /// </summary>
+        internal static string ksConvertFormLoseInfixLoc {
+            get {
+                return ResourceManager.GetString("ksConvertFormLoseInfixLoc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The infix position and some grammatical information will be lost! Do you still want to continue?.
+        /// </summary>
+        internal static string ksConvertFormLoseInfixLocGramInfo {
+            get {
+                return ResourceManager.GetString("ksConvertFormLoseInfixLocGramInfo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The affix process rule will be lost! Do you still want to continue?.
+        /// </summary>
+        internal static string ksConvertFormLoseRule {
+            get {
+                return ResourceManager.GetString("ksConvertFormLoseRule", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to  (Ctrl-Click).
         /// </summary>
         internal static string ksCtrlClick {

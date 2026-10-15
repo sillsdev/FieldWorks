@@ -318,4 +318,13 @@
   <data name="ksPopupMenusDisabled" xml:space="preserve">
     <value>Context menus are disabled in popup windows.</value>
   </data>
+  <data name="ksSwapLexWithAllo" xml:space="preserve">
+    <value>Swap Lexeme Form with Allomorph</value>
+  </data>
+  <data name="ksAlternateForms" xml:space="preserve">
+    <value>Alternate Forms</value>
+  </data>
+  <data name="ksSwapXWithY" xml:space="preserve">
+    <value>Swap: "{0}"{2}With: "{1}"</value>
+  </data>
 </root>

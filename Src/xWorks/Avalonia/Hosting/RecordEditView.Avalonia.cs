@@ -1045,26 +1045,32 @@ namespace SIL.FieldWorks.XWorks
 
 		/// <summary>
 		/// Follows a chooser jump link (e.g. "Edit the Publications list" on Publish In) the
-		/// EXACT way the legacy chooser does on link click -- the dialog closes, then
-		/// <c>ReallySimpleListChooser.HandleAnyJump</c> posts <c>FollowLink</c> with the
-		/// <c>FwLinkArgs(tool, guid)</c> built from the layout's <c>chooserLink</c>
-		/// (ReallySimpleListChooser.cs:900/1657). Here the flyout has already closed; any open
-		/// fenced edit session settles first (the jump navigates away from this record), then the
-		/// same mediator message posts.
+		/// way <c>ReallySimpleListChooser.HandleAnyJump</c> does on link click: the flyout has
+		/// already closed, then the link built from the layout's <c>chooserLink</c> is followed.
 		/// </summary>
 		private void OnDetailLinkRequested(DetailLinkRequest request)
 		{
 			try
 			{
-				SettleDetailEdits();
-#pragma warning disable 618 // legacy parity: ReallySimpleListChooser.HandleAnyJump posts the same way
-				m_mediator.PostMessage("FollowLink", CreateFollowLinkArgs(request));
-#pragma warning restore 618
+				FollowLink(CreateFollowLinkArgs(request));
 			}
 			catch (Exception e)
 			{
 				Logger.WriteError("Detail chooser link jump failed.", e);
 			}
+		}
+
+		/// <summary>
+		/// Follows a link from the detail view: pending edits settle first, since the jump
+		/// leaves the record, then the link is posted. Every native jump comes through here,
+		/// so replacing the post reaches them all at once.
+		/// </summary>
+		internal void FollowLink(FwLinkArgs link)
+		{
+			SettleDetailEdits();
+#pragma warning disable 618 // suppress obsolete warning
+			m_mediator.PostMessage("FollowLink", link);
+#pragma warning restore 618
 		}
 
 		/// <summary>

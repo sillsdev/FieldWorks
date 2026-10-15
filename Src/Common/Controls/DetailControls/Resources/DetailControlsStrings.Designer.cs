@@ -71,6 +71,15 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Alternate Forms.
+        /// </summary>
+        internal static string ksAlternateForms {
+            get {
+                return ResourceManager.GetString("ksAlternateForms", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Editor type &apos;{0}&apos; not implemented..
         /// </summary>
         internal static string ksBadEditorType {
@@ -481,6 +490,24 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls.Resources {
         internal static string ksSliceConfigureWssDlgTitle {
             get {
                 return ResourceManager.GetString("ksSliceConfigureWssDlgTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Swap Lexeme Form with Allomorph.
+        /// </summary>
+        internal static string ksSwapLexWithAllo {
+            get {
+                return ResourceManager.GetString("ksSwapLexWithAllo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Swap: &quot;{0}&quot;{2}With: &quot;{1}&quot;.
+        /// </summary>
+        internal static string ksSwapXWithY {
+            get {
+                return ResourceManager.GetString("ksSwapXWithY", resourceCulture);
             }
         }
         
