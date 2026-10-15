@@ -565,6 +565,9 @@ namespace SIL.FieldWorks.XWorks
 				//m_flid = RecordClerk.GetFlidOfVectorFromName(m_vectorName, Cache, out m_owningObject);
 				RecordClerk clerk = Clerk;
 				clerk.ActivateUI(false);
+				// This view never shows the record bar. Set once the clerk is active,
+				// before UpdateList, which reads it while populating the bar.
+				m_propertyTable.SetProperty("ShowRecordList", false, true);
 				// Enhance JohnT: could use logic similar to RecordView.InitBase to load persisted list contents (filtered and sorted).
 				if (clerk.RequestedLoadWhileSuppressed)
 					clerk.UpdateList(false);
@@ -756,8 +759,6 @@ namespace SIL.FieldWorks.XWorks
 			ReadParameters();
 
 			m_mediator.AddColleague(this);
-
-			m_propertyTable.SetProperty("ShowRecordList", false, true);
 
 			SetupDataContext();
 			ShowRecord();

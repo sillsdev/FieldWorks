@@ -2842,9 +2842,11 @@ namespace SIL.FieldWorks.Common.RootSites
 				int oldWritingSystemHvo = int.Parse(s);
 				if (oldWritingSystemHvo != ws)
 				{
+					// Flag before the set: the handler must find it however the
+					// change is delivered.
+					m_fSuppressNextWritingSystemHvoChanged = true;
 					rs.PropTable.SetProperty("WritingSystemHvo", ws.ToString(), true);
 					rs.PropTable.SetPropertyPersistence("WritingSystemHvo", false);
-					m_fSuppressNextWritingSystemHvoChanged = true;
 				}
 			}
 		}

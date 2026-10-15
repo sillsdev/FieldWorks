@@ -2580,7 +2580,64 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			Assert.That(newTypeNode1.Label, Is.EqualTo("Single Sense"), "A custom field copies its label properly during conversion");
 		}
 
+		[Test]
+		public void MigratePublicationLayoutSelection_IsWrittenOnlyWhenApplied()
+		{
+			const string dictionary = "DictionaryPublicationLayout";
+			const string newPath = "C:\\config\\Stem.fwdictconfig";
+			try
+			{
+				m_propertyTable.SetProperty(dictionary, "publishStem", false);
+
+				m_migrator.MigratePublicationLayoutSelection("publishStem", newPath);
+				Assert.That(SelectedLayout(dictionary), Is.EqualTo("publishStem"),
+					"The selection waits until the migration's unit of work has ended");
+
+				m_migrator.ApplyPendingLayoutSelections();
+				Assert.That(SelectedLayout(dictionary), Is.EqualTo(newPath));
+			}
+			finally
+			{
+				m_propertyTable.RemoveProperty(dictionary);
+			}
+		}
+
+		[Test]
+		public void MigratePublicationLayoutSelection_PendingSelectionShadowsTheTable()
+		{
+			const string dictionary = "DictionaryPublicationLayout";
+			const string reversal = "ReversalIndexPublicationLayout";
+			const string stemPath = "C:\\config\\Stem.fwdictconfig";
+			const string stemCopyPath = "C:\\config\\Stem-copy.fwdictconfig";
+			const string reversalPath = "C:\\config\\en.fwdictconfig";
+			try
+			{
+				m_propertyTable.SetProperty(dictionary, "publishStem", false);
+				m_propertyTable.SetProperty(reversal, "publishReversal-en", false);
+
+				m_migrator.MigratePublicationLayoutSelection("publishStem", stemPath);
+				// A second layout type of the same name compares against the pending
+				// path, not the table.
+				m_migrator.MigratePublicationLayoutSelection("publishStem", stemCopyPath);
+				m_migrator.MigratePublicationLayoutSelection("publishReversal-en", reversalPath);
+				m_migrator.ApplyPendingLayoutSelections();
+
+				Assert.That(SelectedLayout(dictionary), Is.EqualTo(stemPath));
+				Assert.That(SelectedLayout(reversal), Is.EqualTo(reversalPath));
+			}
+			finally
+			{
+				m_propertyTable.RemoveProperty(dictionary);
+				m_propertyTable.RemoveProperty(reversal);
+			}
+		}
+
 		#region Helper
+		private string SelectedLayout(string property)
+		{
+			return m_propertyTable.GetStringProperty(property, null);
+		}
+
 		private void DeleteStyleSheet(string styleName)
 		{
 			var style = m_styleSheet.FindStyle(styleName);

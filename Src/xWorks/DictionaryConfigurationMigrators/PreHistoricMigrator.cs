@@ -57,6 +57,14 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 		internal string m_configDirSuffixBeingMigrated;
 
 		/// <summary>
+		/// Layout selections (property name, converted configuration path) found while
+		/// migrating, written to the property table once the migration's unit of work
+		/// has ended.
+		/// </summary>
+		private readonly List<KeyValuePair<string, string>> m_pendingLayoutSelections =
+			new List<KeyValuePair<string, string>>();
+
+		/// <summary>
 		/// The mediator is needed to retrieve information about the prehistoric configurations
 		/// </summary>
 		public PreHistoricMigrator(Mediator mediator) : this(null, mediator, null) {}
@@ -97,16 +105,32 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 				m_logger.WriteLine("Migrating dictionary configurations");
 				m_configDirSuffixBeingMigrated = DictionaryConfigurationListener.DictConfigDirName;
 				Directory.CreateDirectory(Path.Combine(projectPath, m_configDirSuffixBeingMigrated));
-				UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(
-					"Undo Migrate old Dictionary Configurations", "Redo Migrate old Dictionary Configurations",
-					Cache.ActionHandlerAccessor, PerformMigrationUOW);
+				MigrateInUnitOfWork("Undo Migrate old Dictionary Configurations",
+					"Redo Migrate old Dictionary Configurations");
 				m_logger.WriteLine(string.Format("Migrating Reversal Index configurations, if any - {0}",
 					DateTime.Now.ToLongTimeString()));
 				m_configDirSuffixBeingMigrated = DictionaryConfigurationListener.RevIndexConfigDirName;
 				Directory.CreateDirectory(Path.Combine(projectPath, m_configDirSuffixBeingMigrated));
-				UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(
-					"Undo Migrate old Reversal Configurations", "Redo Migrate old Reversal Configurations",
+				MigrateInUnitOfWork("Undo Migrate old Reversal Configurations",
+					"Redo Migrate old Reversal Configurations");
+			}
+		}
+
+		/// <summary>
+		/// Runs PerformMigrationUOW in a unit of work, then writes the layout
+		/// selections it found. They are written even when the migration throws:
+		/// the converted files are already saved.
+		/// </summary>
+		private void MigrateInUnitOfWork(string undoText, string redoText)
+		{
+			try
+			{
+				UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(undoText, redoText,
 					Cache.ActionHandlerAccessor, PerformMigrationUOW);
+			}
+			finally
+			{
+				ApplyPendingLayoutSelections();
 			}
 		}
 
@@ -1028,16 +1052,54 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			return wsLabel.Split(',').Select(item => new DictionaryNodeListOptions.DictionaryNodeOption { Id = item.Trim(), IsEnabled = true }).ToList();
 		}
 
-		private void MigratePublicationLayoutSelection(string oldLayout, string newPath)
+		/// <summary>
+		/// Records that the configuration at <paramref name="newPath"/> replaces
+		/// <paramref name="oldLayout"/> as the selected layout, if that layout is
+		/// selected.
+		/// </summary>
+		/// <remarks>Internal only for tests; production entry point is
+		/// MigrateIfNeeded()</remarks>
+		internal void MigratePublicationLayoutSelection(string oldLayout, string newPath)
 		{
-			if (oldLayout.Equals(m_propertyTable.GetStringProperty("DictionaryPublicationLayout", string.Empty)))
+			if (oldLayout.Equals(CurrentLayoutSelection("DictionaryPublicationLayout")))
 			{
-				m_propertyTable.SetProperty("DictionaryPublicationLayout", newPath, true);
+				m_pendingLayoutSelections.Add(
+					new KeyValuePair<string, string>("DictionaryPublicationLayout", newPath));
 			}
-			else if (oldLayout.Equals(m_propertyTable.GetStringProperty("ReversalIndexPublicationLayout", string.Empty)))
+			else if (oldLayout.Equals(CurrentLayoutSelection("ReversalIndexPublicationLayout")))
 			{
-				m_propertyTable.SetProperty("ReversalIndexPublicationLayout", newPath, true);
+				m_pendingLayoutSelections.Add(
+					new KeyValuePair<string, string>("ReversalIndexPublicationLayout", newPath));
 			}
+		}
+
+		/// <summary>
+		/// The selected layout as the migration sees it: a pending selection shadows
+		/// the table.
+		/// </summary>
+		private string CurrentLayoutSelection(string propertyName)
+		{
+			var pending = m_pendingLayoutSelections.LastOrDefault(
+				selection => selection.Key == propertyName);
+			return pending.Key == propertyName
+				? pending.Value
+				: m_propertyTable.GetStringProperty(propertyName, string.Empty);
+		}
+
+		/// <summary>
+		/// Writes the recorded layout selections to the property table. Called outside
+		/// the migration's unit of work, so that a change notification can never run
+		/// inside it.
+		/// </summary>
+		/// <remarks>Internal only for tests; production entry point is
+		/// MigrateIfNeeded()</remarks>
+		internal void ApplyPendingLayoutSelections()
+		{
+			foreach (var selection in m_pendingLayoutSelections)
+			{
+				m_propertyTable.SetProperty(selection.Key, selection.Value, true);
+			}
+			m_pendingLayoutSelections.Clear();
 		}
 
 		#region trivial portions of the ILayoutConverter implementation
