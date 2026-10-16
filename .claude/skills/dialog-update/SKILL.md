@@ -19,7 +19,9 @@ believe a divergence is warranted, stop and ask; do not encode it and move on.
 
 Approved divergences must be recorded (see *Divergence register* below) with a
 one-line reason and the approver — otherwise the next person reads it as a bug
-and "fixes" it, thrashing the code.
+and "fixes" it, thrashing the code. A difference that applies to dialogs in
+general (button order, help, input checking) is a UX guide rule in
+`Docs/ux/README.md`, not a per-dialog divergence.
 
 ## The dialog pairs (start here)
 
