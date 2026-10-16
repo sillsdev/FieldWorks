@@ -152,7 +152,7 @@ namespace SIL.FieldWorks.XWorks
 			var target = ResolveInsertTarget(rowObject, command);
 			if (target == null)
 			{
-				Logger.WriteEvent(string.Format("Insert did nothing: no owning {0} field for a {1} resolves from {2} {3}.",
+				Logger.WriteEvent(string.Format("Insert did nothing: no owning {0} field that can take a {1} resolves from {2} {3}.",
 					command.GetParameter("field"), command.GetParameter("className"), rowObject.ClassName, rowObject.Hvo));
 				return null;
 			}

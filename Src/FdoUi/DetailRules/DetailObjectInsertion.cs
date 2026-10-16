@@ -192,7 +192,7 @@ namespace SIL.FieldWorks.Common.DetailRules
 		/// (the owner first when <paramref name="insertAtOwner"/>) with the command's field,
 		/// the object that owns that field, the concrete class, and the position after the
 		/// row's object or the nearest of its owners among the field's items. Null when no
-		/// owning target resolves.
+		/// owning target resolves, or the field is atomic and already filled.
 		/// </summary>
 		/// <param name="ownerClassName">The class expected to own the field; when empty, the
 		/// class of the row's object's owner.</param>
@@ -224,6 +224,12 @@ namespace SIL.FieldWorks.Common.DetailRules
 				var owner = OwnerOf(candidate, flid);
 				if (owner == null)
 					continue;
+				// A filled atomic field takes no new object: it would replace the old one.
+				if ((CellarPropertyType)mdc.GetFieldType(flid) == CellarPropertyType.OwningAtomic
+					&& cache.DomainDataByFlid.get_ObjectProp(owner.Hvo, flid) != 0)
+				{
+					return null;
+				}
 				var concreteClass = ConcreteClass(owner, classId);
 				if (concreteClass == 0)
 					return null;

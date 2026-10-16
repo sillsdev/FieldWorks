@@ -257,10 +257,25 @@ namespace SIL.FieldWorks.FdoUi
 		}
 
 		[Test]
-		public void ResolveTarget_IsNull_ForAReferenceField_AnUnknownClass_OrNoFieldUpTheChain()
+		public void ResolveTarget_AnEmptyAtomicField_TakesTheNewObject()
+		{
+			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () => _entry.LexemeFormOA = null);
+
+			var target = DetailObjectInsertion.ResolveTarget(_entry, "LexemeForm", "MoStemAllomorph", null, false);
+
+			Assert.That(target.Owner, Is.SameAs(_entry));
+			Assert.That(target.Flid, Is.EqualTo(LexEntryTags.kflidLexemeForm));
+			Assert.That(target.Position, Is.EqualTo(DetailObjectInsertion.AtomicPosition));
+		}
+
+		[Test]
+		public void ResolveTarget_IsNull_ForAReferenceField_AFilledAtomicField_AnUnknownClass_OrNoFieldUpTheChain()
 		{
 			Assert.That(DetailObjectInsertion.ResolveTarget(_entry, "VariantFormEntryBackRefs", "LexEntry", null, false), Is.Null,
 				"a reference field takes no new object");
+			Assert.That(_entry.LexemeFormOA, Is.Not.Null, "precondition: the entry has a lexeme form");
+			Assert.That(DetailObjectInsertion.ResolveTarget(_entry, "LexemeForm", "MoStemAllomorph", null, false), Is.Null,
+				"a filled atomic field: inserting would replace its object");
 			Assert.That(DetailObjectInsertion.ResolveTarget(_sense1, "Senses", "NoSuchClass", null, false), Is.Null);
 			Assert.That(DetailObjectInsertion.ResolveTarget(_etymology1, "ExtendedNote", "LexExtendedNote", null, false), Is.Null,
 				"nothing from the etymology up to the entry has ExtendedNote");
