@@ -12,17 +12,18 @@ namespace SIL.FieldWorks.XWorks
 	/// The native authority for the Lexicon detail menus, answered by the message each
 	/// command sends (Insert, Delete, Move, Merge and the rest) and parameterized by the
 	/// command's configuration. It owns a menu id by predicate: when it has an answerer for
-	/// the message of every leaf under the id and the id carries neither a list-populated
-	/// submenu nor an item no authority can answer. Adding an answerer therefore switches
-	/// over every id it completes, and the ownership test pins the resulting list.
+	/// the message of every leaf under the id, each leaf within its answerer's scope, and the
+	/// id carries neither a list-populated submenu nor an item no authority can answer.
+	/// Adding an answerer therefore switches over every id it completes, and the ownership
+	/// test pins the resulting list.
 	/// </summary>
 	internal sealed class LexiconMenuAuthority : IDetailMenuAuthority
 	{
 		private readonly Func<string, DetailMenuDefinition> _resolve;
 		private readonly Dictionary<string, DetailMenuDefinition> _resolved
 			= new Dictionary<string, DetailMenuDefinition>(StringComparer.Ordinal);
-		private readonly Dictionary<string, Func<DetailMenuLeaf, DetailMenuItem>> _answerers
-			= new Dictionary<string, Func<DetailMenuLeaf, DetailMenuItem>>(StringComparer.Ordinal);
+		private readonly Dictionary<string, Answerer> _answerers
+			= new Dictionary<string, Answerer>(StringComparer.Ordinal);
 
 		/// <param name="resolve">Resolves a menu id to its configured item tree.</param>
 		public LexiconMenuAuthority(Func<string, DetailMenuDefinition> resolve)
@@ -37,11 +38,15 @@ namespace SIL.FieldWorks.XWorks
 		/// Registers the answerer for every leaf whose command sends <paramref name="message"/>;
 		/// the ids it completes become owned. One answerer per message.
 		/// </summary>
-		internal void Answer(string message, Func<DetailMenuLeaf, DetailMenuItem> answerer)
+		/// <param name="scope">Which of the message's leaves the answerer takes, by the
+		/// command's configuration; null for all of them. A leaf outside it leaves its id
+		/// with the adapter in full.</param>
+		internal void Answer(string message, Func<DetailMenuLeaf, DetailMenuItem> answerer,
+			Func<DetailMenuLeaf, bool> scope = null)
 		{
 			if (string.IsNullOrEmpty(message))
 				throw new ArgumentException("A message is required.", nameof(message));
-			_answerers.Add(message, answerer ?? throw new ArgumentNullException(nameof(answerer)));
+			_answerers.Add(message, new Answerer(answerer ?? throw new ArgumentNullException(nameof(answerer)), scope));
 		}
 
 		public bool Owns(string menuId)
@@ -51,7 +56,7 @@ namespace SIL.FieldWorks.XWorks
 				return false;
 			foreach (var leaf in menu.Leaves)
 			{
-				if (!_answerers.ContainsKey(leaf.Message))
+				if (!_answerers.TryGetValue(leaf.Message, out var answerer) || !answerer.Takes(leaf))
 					return false;
 			}
 			return true;
@@ -61,8 +66,8 @@ namespace SIL.FieldWorks.XWorks
 		{
 			if (leaf == null)
 				throw new ArgumentNullException(nameof(leaf));
-			if (_answerers.TryGetValue(leaf.Message, out var answer))
-				return answer(leaf);
+			if (_answerers.TryGetValue(leaf.Message, out var answerer) && answerer.Takes(leaf))
+				return answerer.Answer(leaf);
 			throw new InvalidOperationException(string.Format(
 				"Menu '{0}' has a leaf '{1}' this authority does not answer.", menuId, leaf.CommandId));
 		}
@@ -82,6 +87,22 @@ namespace SIL.FieldWorks.XWorks
 				_resolved.Add(menuId, menu);
 			}
 			return menu;
+		}
+
+		// One message's answerer and the leaves it takes.
+		private sealed class Answerer
+		{
+			private readonly Func<DetailMenuLeaf, bool> _scope;
+
+			public Answerer(Func<DetailMenuLeaf, DetailMenuItem> answer, Func<DetailMenuLeaf, bool> scope)
+			{
+				Answer = answer;
+				_scope = scope;
+			}
+
+			public Func<DetailMenuLeaf, DetailMenuItem> Answer { get; }
+
+			public bool Takes(DetailMenuLeaf leaf) => _scope == null || _scope(leaf);
 		}
 	}
 }

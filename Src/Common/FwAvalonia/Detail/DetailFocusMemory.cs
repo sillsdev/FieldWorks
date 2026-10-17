@@ -226,11 +226,12 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		/// <summary>
 		/// Restores the memento once the incoming view has laid out: the scroll offset first (an
 		/// offset set before layout is clamped to zero by the still-empty extent), then the
-		/// vector row's current item, then focus -- the remembered editor, else that current
-		/// item when the memento asks for it (a move or removal made from the row keeps the
-		/// keyboard in the row), else the first surviving row the outgoing view asked for (a
-		/// gesture removed the focused row), else the first row of the object it asked for (a
-		/// gesture replaced the row's object). Safe to call before the view is attached.
+		/// vector row's current item, then focus -- the object the outgoing view asked for (a
+		/// gesture added or replaced one) first of all; else the remembered editor; else that
+		/// current item when the memento asks for it (a move or removal made from the row keeps
+		/// the keyboard in the row); else the first surviving row the outgoing view asked for
+		/// (a gesture removed the focused row), which comes before the remembered editor only
+		/// when that is a row's menu button. Safe to call before the view is attached.
 		/// </summary>
 		public static void RestoreAfterLayout(Control root, Memento memento)
 		{
@@ -250,14 +251,17 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				if (needsScroll)
 					TryRestoreScroll(root, memento);
 				var vector = RestoreVectorSelection(root, memento);
-				if (!TryRestoreFocus(root, memento))
+				// The object a gesture added or replaced takes the keyboard outright. A row
+				// request yields to a surviving editor, unless the gesture was made from a
+				// row's menu button, which left focus on that button.
+				var focused = (memento.ObjectHvo != 0 || RemembersAMenuButton(memento))
+					&& RestoreRequestedFocus(root, memento);
+				if (!focused && !TryRestoreFocus(root, memento))
 				{
 					if (vector != null && WantsVectorFocus(memento))
 						vector.FocusItemAt(vector.SelectedItemIndex);
-					else if (memento.RowAutomationIds != null)
-						(root as DataTree)?.FocusFirstRow(memento.RowAutomationIds);
-					else if (memento.ObjectHvo != 0)
-						(root as DataTree)?.FocusFirstRowOf(memento.ObjectHvo);
+					else
+						RestoreRequestedFocus(root, memento);
 				}
 				// A bring-into-view request queued by a focus change is applied by the next
 				// arrange; the remembered offset is re-asserted after it.
@@ -268,6 +272,23 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				}
 			};
 			root.LayoutUpdated += onLayout;
+		}
+
+		// Whether the remembered control is a row's field-options button or hotlinks link
+		// rather than an editor.
+		private static bool RemembersAMenuButton(Memento memento)
+			=> memento.AutomationId != null
+				&& (memento.AutomationId.EndsWith(".FieldMenu", StringComparison.Ordinal)
+					|| memento.AutomationId.EndsWith(".Hotlinks", StringComparison.Ordinal));
+
+		// Focuses what the outgoing view asked for: the first surviving row of those named,
+		// else the first row of the object named; false when it asked for nothing or none can.
+		private static bool RestoreRequestedFocus(Control root, Memento memento)
+		{
+			var tree = root as DataTree;
+			if (memento.RowAutomationIds != null)
+				return tree?.FocusFirstRow(memento.RowAutomationIds) == true;
+			return memento.ObjectHvo != 0 && tree?.FocusFirstRowOf(memento.ObjectHvo) == true;
 		}
 
 		/// <summary>

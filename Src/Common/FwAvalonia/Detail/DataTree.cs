@@ -124,11 +124,17 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		public void RequestObjectFocusOnRebuild(int hvo) => ObjectFocusRequested = hvo;
 
 		/// <summary>
-		/// Focuses the first shown row of the object with <paramref name="hvo"/> that can
-		/// take focus; false when none can.
+		/// Focuses the first shown editor row of the object with <paramref name="hvo"/> that
+		/// can take focus, else its first header row that can; false when none can.
 		/// </summary>
 		internal bool FocusFirstRowOf(int hvo)
-			=> hvo != 0 && FocusFirstRow(Model.Fields.Where(f => f.ObjectHvo == hvo).Select(f => f.RowAutomationId));
+		{
+			if (hvo == 0)
+				return false;
+			var rows = Model.Fields.Where(f => f.ObjectHvo == hvo).ToList();
+			return FocusFirstRow(rows.Where(f => f.Kind != DetailFieldKind.Header).Select(f => f.RowAutomationId))
+				|| FocusFirstRow(rows.Where(f => f.Kind == DetailFieldKind.Header).Select(f => f.RowAutomationId));
+		}
 
 		/// <summary>
 		/// Focuses the first row of <paramref name="rowAutomationIds"/> that is shown and
