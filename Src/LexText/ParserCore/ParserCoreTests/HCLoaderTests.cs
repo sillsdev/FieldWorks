@@ -5,6 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Xml.Linq;
 using NUnit.Framework;
 using SIL.Extensions;
 using SIL.LCModel.Core.Text;
@@ -1500,6 +1501,61 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			Assert.That(m_lang.Strata[0].CharacterDefinitionTable.Count, Is.EqualTo(27));
 			Assert.That(m_loadErrors.Count, Is.EqualTo(1));
 			Assert.That(m_loadErrors[0].Item1, Is.EqualTo(LoadErrorType.DuplicateGrapheme));
+		}
+
+		private XElement TraceWord(string word)
+		{
+			LoadLanguage();
+			var morpher = new Morpher(new FwXmlTraceManager(Cache), m_lang);
+			morpher.TraceManager.IsTracing = true;
+			morpher.ParseWord(word, out object trace).ToList();
+			return (XElement)trace;
+		}
+
+		/// <summary>Try A Word names each environment of a stem that failed all of
+		/// them, rather than running them together.</summary>
+		[Test]
+		public void Trace_StemFailingTwoEnvironmentsListsEach()
+		{
+			ILexEntry entry = AddEntry(MoMorphTypeTags.kguidMorphStem, "pit", "gloss",
+				new SandboxGenericMSA { MsaType = MsaType.kStem, MainPOS = m_noun });
+			var allo = (IMoStemAllomorph)entry.LexemeFormOA;
+			allo.PhoneEnvRC.Add(AddEnvironment("/ _ a"));
+			allo.PhoneEnvRC.Add(AddEnvironment("/ _ i"));
+
+			XElement trace = TraceWord("pit");
+
+			XElement reason = trace.Descendants("FailureReason")
+				.Single(r => (string)r.Attribute("type") == "environment");
+			Assert.That(reason.Elements("Environment").Select(e => e.Value),
+				Is.EquivalentTo(new[] { "/ _ a", "/ _ i" }));
+		}
+
+		/// <summary>Try A Word names the circumfix environment that its stem did not
+		/// match, rather than showing an empty one.</summary>
+		[Test]
+		public void Trace_CircumfixPatternFailureNamesItsEnvironment()
+		{
+			ILexEntry circumfix = AddEntry(MoMorphTypeTags.kguidMorphCircumfix, "d- -t", "gloss",
+				new SandboxGenericMSA { MsaType = MsaType.kUnclassified });
+			((IMoAffixAllomorph)circumfix.AlternateFormsOS[0]).PhoneEnvRC.Add(AddEnvironment("/ # _ k"));
+			AddEntry(MoMorphTypeTags.kguidMorphStem, "ap", "gloss",
+				new SandboxGenericMSA { MsaType = MsaType.kStem, MainPOS = m_noun });
+			// Deleting k lets analysis propose the stem "ap", which synthesis then rejects.
+			IPhRegularRule kDeletion = Cache.ServiceLocator.GetInstance<IPhRegularRuleFactory>().Create();
+			Cache.LanguageProject.PhonologicalDataOA.PhonRulesOS.Add(kDeletion);
+			kDeletion.Name.SetAnalysisDefaultWritingSystem("k deletion");
+			kDeletion.StrucDescOS.Add(AddSegContext("k"));
+
+			XElement trace = TraceWord("dapt");
+
+			var reasons = trace.Descendants("MorphologicalRuleSynthesisTrace")
+				.Elements("FailureReason")
+				.Where(r => (string)r.Attribute("type") == "environment").ToList();
+			Assert.That(reasons, Is.Not.Empty);
+			foreach (XElement reason in reasons)
+				Assert.That(reason.Elements("Environment").Select(e => e.Value),
+					Is.EqualTo(new[] { "/ # _ k" }));
 		}
 	}
 }
