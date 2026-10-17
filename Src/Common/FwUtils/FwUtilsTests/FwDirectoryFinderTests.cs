@@ -220,6 +220,129 @@ namespace SIL.FieldWorks.Common.FwUtils
 			return root;
 		}
 
+		[TestCase("RootCodeDir", false)]
+		[TestCase("RootDataDir", false)]
+		[TestCase("RootCodeDir", true)]
+		[TestCase("RootDataDir", true)]
+		[TestCase("ProjectsDir", true)]
+		public void TestRegistryInitialization_PreservesDirectoryOverrides(
+			string valueName, bool withUserOverride)
+		{
+			using (var userKey = FwRegistryHelper.FieldWorksRegistryKey)
+			{
+				var originalValue = userKey.GetValue(valueName);
+				try
+				{
+					if (withUserOverride)
+						userKey.SetValue(valueName, "InstalledDirectory");
+					else
+						userKey.DeleteValue(valueName, false);
+
+					new Attributes.InitializeFwRegistryHelperAttribute().BeforeTest(null);
+
+					Assert.That(userKey.GetValue(valueName),
+						Is.EqualTo(withUserOverride ? "InstalledDirectory" : null));
+				}
+				finally
+				{
+					if (originalValue == null)
+						userKey.DeleteValue(valueName, false);
+					else
+						userKey.SetValue(valueName, originalValue);
+				}
+			}
+		}
+
+		[TestCase("RootCodeDir", true, true)]
+		[TestCase("RootDataDir", true, true)]
+		[TestCase("RootCodeDir", false, true)]
+		[TestCase("RootDataDir", false, true)]
+		[TestCase("RootCodeDir", true, false)]
+		[TestCase("RootDataDir", true, false)]
+		public void InstalledDirectory_SourceTreeUserOverrideFallsBack(
+			string valueName, bool withMachineOverride, bool withDistFiles)
+		{
+			var treeRoot = CreateFakeSourceTree(withSolutionFile: true);
+			try
+			{
+				if (!withDistFiles)
+					Directory.Delete(Path.Combine(treeRoot, "DistFiles"));
+				var devPath = Path.Combine(treeRoot, "DistFiles") + Path.DirectorySeparatorChar;
+				AssertRegistryDirectory(valueName, devPath,
+					withMachineOverride ? "MachineInstall" : null, "DefaultInstall",
+					withMachineOverride ? "MachineInstall" : "DefaultInstall");
+			}
+			finally
+			{
+				Directory.Delete(treeRoot, true);
+			}
+		}
+
+		[TestCase("RootCodeDir")]
+		[TestCase("RootDataDir")]
+		[TestCase("ProjectsDir")]
+		public void RegistryDirectory_NonSourceUserOverrideWins(string valueName)
+		{
+			var installRoot = CreateFakeSourceTree(withSolutionFile: false);
+			try
+			{
+				var userPath = Path.Combine(installRoot, "DistFiles");
+				AssertRegistryDirectory(valueName, userPath, "MachineInstall", "DefaultInstall", userPath);
+			}
+			finally
+			{
+				Directory.Delete(installRoot, true);
+			}
+		}
+
+		[Test]
+		public void RegistryDirectory_SourceTreeProjectsOverrideWins()
+		{
+			var treeRoot = CreateFakeSourceTree(withSolutionFile: true);
+			try
+			{
+				var projects = Path.Combine(treeRoot, "DistFiles", "Projects");
+				AssertRegistryDirectory("ProjectsDir", projects, "MachineProjects", "DefaultProjects", projects);
+			}
+			finally
+			{
+				Directory.Delete(treeRoot, true);
+			}
+		}
+
+		private static void AssertRegistryDirectory(string name, string userValue,
+			string machineValue, string defaultDirectory, string expected)
+		{
+			using (var userKey = FwRegistryHelper.FieldWorksRegistryKey)
+			using (var machineKey = FwRegistryHelper.FieldWorksRegistryKeyLocalMachine)
+			{
+				var originalUser = userKey.GetValue(name);
+				var originalMachine = machineKey.GetValue(name);
+				try
+				{
+					userKey.SetValue(name, userValue);
+					if (machineValue == null)
+						machineKey.DeleteValue(name, false);
+					else
+						machineKey.SetValue(name, machineValue);
+					Assert.That(FwDirectoryFinder.GetDirectory(name, defaultDirectory),
+						Is.EqualTo(expected));
+					Assert.That(userKey.GetValue(name), Is.EqualTo(userValue));
+				}
+				finally
+				{
+					if (originalUser == null)
+						userKey.DeleteValue(name, false);
+					else
+						userKey.SetValue(name, originalUser);
+					if (originalMachine == null)
+						machineKey.DeleteValue(name, false);
+					else
+						machineKey.SetValue(name, originalMachine);
+				}
+			}
+		}
+
 		/// <summary>
 		/// Verify that the user project key falls back to the local machine.
 		/// </summary>
