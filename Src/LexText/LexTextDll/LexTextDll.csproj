@@ -28,7 +28,6 @@
     <PackageReference Include="SIL.LCModel.Core" GeneratePathProperty="true" />
     <PackageReference Include="SIL.LCModel.Utils" />
     <PackageReference Include="SIL.DesktopAnalytics" />
-    <PackageReference Include="SIL.Machine.Morphology.HermitCrab" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System.Drawing" />
@@ -48,7 +47,6 @@
     <ProjectReference Include="../../xWorks/xWorks.csproj" />
     <ProjectReference Include="../Interlinear/ITextDll.csproj" />
     <ProjectReference Include="../LexTextControls/LexTextControls.csproj" />
-    <ProjectReference Include="../ParserCore/ParserCore.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Compile Remove="LexTextDllTests/**" />
