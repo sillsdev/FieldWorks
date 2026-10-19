@@ -524,8 +524,32 @@ namespace ConvertLib
 			// Avoiding DirectoryFinder so this isn't dependent on lots of FW dlls.
 			using (var regKey = key.OpenSubKey(@"Software\SIL\FieldWorks\8"))
 			{
-				return (regKey == null) ? null : regKey.GetValue("RootCodeDir") as string;
+				var value = (regKey == null) ? null : regKey.GetValue("RootCodeDir") as string;
+				return IsInSourceTree(value) ? null : value;
 			}
+		}
+
+		/// <summary>
+		/// A RootCodeDir inside a source tree (under a FieldWorks.sln) is a dev build's
+		/// leftover, so it is not used. Inlined to avoid depending on FW dlls.
+		/// </summary>
+		private static bool IsInSourceTree(string path)
+		{
+			if (string.IsNullOrEmpty(path) || !Path.IsPathRooted(path))
+				return false;
+			try
+			{
+				for (var dir = Path.GetFullPath(path); !string.IsNullOrEmpty(dir);
+					dir = Path.GetDirectoryName(dir))
+				{
+					if (File.Exists(Path.Combine(dir, "FieldWorks.sln")))
+						return true;
+				}
+			}
+			catch (ArgumentException)
+			{
+			}
+			return false;
 		}
 
 		private string GetModelName() //Locate the Model File
