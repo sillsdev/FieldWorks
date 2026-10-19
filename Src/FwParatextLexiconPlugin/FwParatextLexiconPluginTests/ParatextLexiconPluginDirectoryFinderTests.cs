@@ -10,7 +10,8 @@ using NUnit.Framework;
 namespace SIL.FieldWorks.ParatextLexiconPlugin
 {
 	/// <summary>
-	/// Tests that the plugin does not follow per-user paths a source-tree build left behind
+	/// Tests that the plugin does not follow per-user code or data paths a source-tree build left
+	/// behind, and still shares the projects folder
 	/// (LT-22840). Uses throw-away keys under a test hive, never the FieldWorks keys.
 	/// </summary>
 	[TestFixture]
@@ -47,7 +48,6 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 
 		[TestCase("RootCodeDir")]
 		[TestCase("RootDataDir")]
-		[TestCase("ProjectsDir")]
 		public void SourceTreeUserValue_FallsBackToMachineValue(string name)
 		{
 			m_userKey.SetValue(name, Path.Combine(m_root, "tree", "DistFiles"));
@@ -58,6 +58,15 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 		private static string ExpectedMachineValue(string name)
 		{
 			return name == "RootCodeDir" ? "MachineCode" : name == "RootDataDir" ? "MachineData" : "MachineProjects";
+		}
+
+		[Test]
+		public void SourceTreeProjectsDir_IsHonoured()
+		{
+			var projects = Path.Combine(m_root, "tree", "DistFiles", "Projects");
+			m_userKey.SetValue("ProjectsDir", projects);
+			Assert.That(ParatextLexiconPluginDirectoryFinder.GetDirectory(
+				m_userKey, m_machineKey, "ProjectsDir", "Default"), Is.EqualTo(projects));
 		}
 
 		[TestCase("RootCodeDir")]

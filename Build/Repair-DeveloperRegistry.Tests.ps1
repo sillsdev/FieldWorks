@@ -87,15 +87,15 @@ try {
 	& $preflightScript -Force
 	Assert-True ($registryState.Removed.Count -eq 0) 'Preflight must be read-only, including -Force'
 	& $repairScript -Confirm:$false
-	Assert-True ($registryState.Removed.Count -eq 8) 'Only source code/data/projects/ICU overrides are removed'
+	Assert-True ($registryState.Removed.Count -eq 7) 'Only source code/data/ICU/converter/silfw overrides are removed'
 	Assert-True (-not $registryState.Values[$fieldWorksPath].ContainsKey('RootCodeDir')) `
 		'Source code override must be removed'
 	Assert-True (-not $registryState.Values[$fieldWorksPath].ContainsKey('RootDataDir')) `
 		'Source data override must be removed'
 	Assert-True (-not $registryState.Values[$companyPath].ContainsKey('Icu70DataDir')) `
 		'Source ICU override must be removed'
-	Assert-True (-not $registryState.Values[$fieldWorksPath].ContainsKey('ProjectsDir')) `
-		'Source projects override must be removed'
+	Assert-True ($registryState.Values[$fieldWorksPath].ContainsKey('ProjectsDir')) `
+		'Shared projects override must be kept, even inside a source tree'
 	Assert-True ($registryState.Values[$companyPath].Icu99DataDir -eq $installPath) `
 		'Installed ICU override must be preserved'
 	Assert-True ($registryState.Values[$companyPath].ContainsKey('OtherDataDir')) `
@@ -113,10 +113,10 @@ try {
 	$registryState.Values[$repoPath] = @{ Registry = Join-Path $installPath 'mappingRegistry.xml' }
 	$registryState.Values[$silfwCommandPath] = @{ '(default)' = '"' + (Join-Path $installPath 'FieldWorks.exe') + '" %1' }
 	& $repairScript -Confirm:$false
-	Assert-True ($registryState.Removed.Count -eq 8) 'Installed silfw/encoding values must be kept'
+	Assert-True ($registryState.Removed.Count -eq 7) 'Installed silfw/encoding values must be kept'
 	Assert-True ($registryState.Values.ContainsKey($silfwCommandPath)) 'Installed silfw handler kept'
 	& $repairScript -WhatIf | Out-Null
-	Assert-True ($registryState.Removed.Count -eq 8) 'Preview must not remove silfw'
+	Assert-True ($registryState.Removed.Count -eq 7) 'Preview must not remove silfw'
 	$registryState.Values[$silfwCommandPath] = @{ '(default)' = '"' + (Join-Path $sourceRoot 'Output\Release\FieldWorks.exe') + '" %1' }
 	& $repairScript -WhatIf | Out-Null
 	Assert-True ($registryState.Values.ContainsKey($silfwCommandPath)) 'Preview must keep a source silfw handler'
@@ -125,21 +125,21 @@ try {
 	$registryState.Values[$fieldWorksPath].RootCodeDir = $installPath
 	$registryState.Values[$fieldWorksPath].RootDataDir = 'relative/path'
 	& $repairScript -Confirm:$false
-	Assert-True ($registryState.Removed.Count -eq 8) 'Installed and relative overrides must be preserved'
+	Assert-True ($registryState.Removed.Count -eq 7) 'Installed and relative overrides must be preserved'
 	$registryState.Values[$fieldWorksPath].RootDataDir = 42
 	& $repairScript -Confirm:$false
-	Assert-True ($registryState.Removed.Count -eq 8) 'Non-string overrides must be preserved'
+	Assert-True ($registryState.Removed.Count -eq 7) 'Non-string overrides must be preserved'
 	$registryState.Values[$fieldWorksPath].RootDataDir = 'C:relative'
 	& $repairScript -Confirm:$false
-	Assert-True ($registryState.Removed.Count -eq 8) 'Drive-relative overrides must be preserved'
+	Assert-True ($registryState.Removed.Count -eq 7) 'Drive-relative overrides must be preserved'
 	Remove-Item -LiteralPath (Join-Path $sourceRoot 'FieldWorks.sln')
 	$registryState.Values[$fieldWorksPath].RootCodeDir = $distFiles
 	& $repairScript -Confirm:$false
-	Assert-True ($registryState.Removed.Count -eq 8) 'A path without the source marker must be preserved'
+	Assert-True ($registryState.Removed.Count -eq 7) 'A path without the source marker must be preserved'
 	$registryState.Values = @{}
 	& $repairScript -Confirm:$false
 	& $preflightScript
-	Assert-True ($registryState.Removed.Count -eq 8) 'Missing registry keys must be harmless'
+	Assert-True ($registryState.Removed.Count -eq 7) 'Missing registry keys must be harmless'
 	Write-Host "Developer registry tests: $($registryState.Checks) checks passed."
 }
 finally {

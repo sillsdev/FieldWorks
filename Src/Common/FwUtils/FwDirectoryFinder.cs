@@ -243,7 +243,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		}
 
 		/// <summary>
-		/// Resolves a registry directory. Per-user source-tree code, data and projects paths
+		/// Resolves a registry directory. Per-user source-tree code and data paths
 		/// fall back to machine settings, then the default directory.
 		/// </summary>
 		internal static string GetDirectory(string registryValue, string defaultDir)
@@ -252,8 +252,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			{
 				var userValue = userKey?.GetValue(registryValue);
 				if (userValue == null ||
-					((registryValue == "RootCodeDir" || registryValue == ksRootDataDir
-						|| registryValue == ksProjectsDir)
+					((registryValue == "RootCodeDir" || registryValue == ksRootDataDir)
 						&& IsSourceTreePath(userValue as string)))
 					return GetDirectoryLocalMachine(registryValue, defaultDir);
 				return GetDirectory(userKey, registryValue, defaultDir);
@@ -614,9 +613,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 			{
 				if (RunningFromSourceTree)
 				{
-					// A source-tree build must not leave a per-user ProjectsDir that an
-					// installed FieldWorks would then follow (LT-22840); it keeps the
-					// choice for this process only.
+					// A source-tree run never writes the per-user ProjectsDir, which dev and
+					// installed runs share (LT-22840); it keeps the choice for this process.
 					s_devProjectsDirectory = value;
 					return;
 				}

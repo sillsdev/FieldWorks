@@ -309,17 +309,21 @@ namespace SIL.FieldWorks.Common.FwUtils
 			}
 		}
 
-		[TestCase(true)]
-		[TestCase(false)]
-		public void RegistryDirectory_SourceTreeProjectsOverrideFallsBack(bool withMachineOverride)
+		[TestCase(true, true)]
+		[TestCase(true, false)]
+		[TestCase(false, true)]
+		[TestCase(false, false)]
+		public void RegistryDirectory_SourceTreeProjectsOverrideIsHonoured(
+			bool withMachineOverride, bool devRun)
 		{
+			// Dev and installed runs share the projects folder, even one inside a source tree.
+			FwDirectoryFinder.RunningFromSourceTreeOverride = devRun;
 			var treeRoot = CreateFakeSourceTree(withSolutionFile: true);
 			try
 			{
 				var projects = Path.Combine(treeRoot, "DistFiles", "Projects");
 				AssertRegistryDirectory("ProjectsDir", projects,
-					withMachineOverride ? "MachineProjects" : null, "DefaultProjects",
-					withMachineOverride ? "MachineProjects" : "DefaultProjects");
+					withMachineOverride ? "MachineProjects" : null, "DefaultProjects", projects);
 			}
 			finally
 			{
@@ -358,14 +362,14 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 		/// <summary>
 		/// Direction one: a dev run happens last, then an installed run. The dev run leaves the
-		/// per-user key as it found it, and a stale source-tree leftover from an older dev build
-		/// is not followed by the installed run.
+		/// per-user key as it found it, and a stale source-tree code or data path from an older
+		/// dev build is not followed by the installed run. The shared projects folder is.
 		/// </summary>
 		[Test]
 		public void Walk_DevRunThenInstalledRun_InstalledIgnoresDevPaths()
 		{
 			var treeRoot = CreateFakeSourceTree(withSolutionFile: true);
-			var names = new[] { "RootCodeDir", "RootDataDir", "ProjectsDir" };
+			var names = new[] { "RootCodeDir", "RootDataDir" };
 			try
 			{
 				using (var userKey = FwRegistryHelper.FieldWorksRegistryKey)
@@ -397,6 +401,11 @@ namespace SIL.FieldWorks.Common.FwUtils
 				foreach (var name in names)
 					Assert.That(FwDirectoryFinder.GetDirectory(name, "Default"),
 						Is.EqualTo("Installed" + name), name);
+				var projects = Path.Combine(treeRoot, "DistFiles", "Projects");
+				using (var userKey = FwRegistryHelper.FieldWorksRegistryKey)
+					userKey.SetValue("ProjectsDir", projects);
+				Assert.That(FwDirectoryFinder.GetDirectory("ProjectsDir", "Default"),
+					Is.EqualTo(projects), "the shared projects folder stays visible");
 			}
 			finally
 			{
@@ -408,6 +417,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 						userKey.DeleteValue(name, false);
 						machineKey.DeleteValue(name, false);
 					}
+					userKey.DeleteValue("ProjectsDir", false);
+					machineKey.DeleteValue("ProjectsDir", false);
 				}
 				Directory.Delete(treeRoot, true);
 			}

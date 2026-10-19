@@ -71,7 +71,8 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 
 		/// <summary>
 		/// Resolves a directory from the per-user key, else the machine key, else the default.
-		/// A per-user path inside a source tree is a dev build's leftover, so it is skipped.
+		/// A per-user code or data path inside a source tree is a dev build's leftover, so it is
+		/// skipped.
 		/// </summary>
 		internal static string GetDirectory(RegistryKey userKey, RegistryKey machineKey,
 			string registryValue, string defaultDir)
@@ -79,8 +80,7 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 			var registryKey = userKey;
 			var userValue = userKey?.GetValue(registryValue);
 			if (userValue == null ||
-				((registryValue == RootCodeDir || registryValue == RootDataDir ||
-					registryValue == ProjectsDir) &&
+				((registryValue == RootCodeDir || registryValue == RootDataDir) &&
 				FwDirectoryFinder.IsSourceTreePath(userValue as string)))
 			{
 				registryKey = machineKey;
