@@ -1,13 +1,13 @@
 <#
 .SYNOPSIS
-    Previews source-tree registry overrides that can redirect an installed FieldWorks.
+	Previews source-tree registry overrides that can redirect an installed FieldWorks.
 .DESCRIPTION
-    Dev builds resolve code and data from their own source tree. This preflight is
-    read-only; use Build/Repair-DeveloperRegistry.ps1 explicitly to remove overrides.
+	Dev builds resolve code and data from their own source tree. This preflight is
+	read-only; use Build/Repair-DeveloperRegistry.ps1 explicitly to remove overrides.
 .PARAMETER Force
-    Accepted for existing callers. The preflight remains read-only.
+	Accepted for existing callers. The preflight remains read-only.
 .OUTPUTS
-    RESULT=READ_ONLY after the preview completes.
+	RESULT=READ_ONLY after the preview completes.
 #>
 [CmdletBinding()]
 param([switch]$Force)

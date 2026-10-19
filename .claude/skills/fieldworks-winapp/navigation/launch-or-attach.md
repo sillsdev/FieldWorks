@@ -98,10 +98,10 @@ See the script headers and `../references/mcp-setup.md`.
   relaunch (Step 0 above). If it is STILL blank in Legacy mode, check whether the
   process memory is *flat* (via `tasklist`): flat ≈ loaded-but-stuck (a modal that
   is not enumerated, or the main window failed to build), climbing ≈ still loading
-  (a Debug build + Sena 3 migration can take minutes -- keep waiting). A current dev build
+  (a Debug build + Sena 3 migration can take minutes — keep waiting). A current dev build
   resolves code and data from its own source tree. For installed releases, run the read-only
   registry preflight to check for worktree overrides; use the explicit repair described above.
-
+  `ProjectsDir` stays shared with the installed app on purpose; the repair keeps it.
 
 ## Exit
 
