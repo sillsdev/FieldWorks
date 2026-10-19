@@ -546,7 +546,9 @@ namespace ConvertLib
 						return true;
 				}
 			}
-			catch (ArgumentException)
+			catch (Exception e) when (e is ArgumentException || e is NotSupportedException ||
+				e is PathTooLongException || e is System.Security.SecurityException ||
+				e is UnauthorizedAccessException || e is IOException)
 			{
 			}
 			return false;

@@ -595,6 +595,10 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// Gets or sets the dir where projects are stored. Setting to null will delete the HKCU
 		/// key, so that the HKLM key (system default) will be used for this user.
 		/// </summary>
+		/// <remarks>
+		/// A source-tree run keeps the value in memory only: it never writes HKCU, and setting
+		/// null does not delete a real HKCU ProjectsDir (LT-22840).
+		/// </remarks>
 		/// <exception cref="SecurityException">If user does not have permission to write to HKLM
 		/// </exception>
 		/// ------------------------------------------------------------------------------------
