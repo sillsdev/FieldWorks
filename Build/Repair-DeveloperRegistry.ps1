@@ -39,6 +39,8 @@ $fieldWorksPath = Join-Path $companyPath 'FieldWorks\9'
 $locations = @{
 	$fieldWorksPath = @('RootCodeDir', 'RootDataDir', 'ProjectsDir')
 	$companyPath = @()
+	(Join-Path $companyPath 'SilEncConverters40') = @('RootDir', 'DeveloperPluginDir')
+	(Join-Path $companyPath 'EncodingConverterRepository') = @('Registry')
 }
 foreach ($registryPath in $locations.Keys) {
 	if (-not (Test-Path -LiteralPath $registryPath)) { continue }
@@ -52,6 +54,22 @@ foreach ($registryPath in $locations.Keys) {
 		if (Test-FieldWorksSourcePath $value) {
 			if ($PSCmdlet.ShouldProcess("$registryPath\$name = $value", 'Remove developer override')) {
 				Remove-ItemProperty -LiteralPath $registryPath -Name $name
+			}
+		}
+	}
+}
+
+# The silfw:// handler a dev build registered launches that build's exe, so it goes as a whole
+# key.
+$silfwPath = 'HKCU:\SOFTWARE\Classes\silfw'
+$silfwCommandPath = Join-Path $silfwPath 'shell\open\command'
+if (Test-Path -LiteralPath $silfwCommandPath) {
+	$command = (Get-ItemProperty -LiteralPath $silfwCommandPath).'(default)'
+	if ($command -is [string] -and $command -match '^\s*"?([^"]+?\.exe)"?(\s|$)') {
+		$exePath = $Matches[1]
+		if (Test-FieldWorksSourcePath $exePath) {
+			if ($PSCmdlet.ShouldProcess("$silfwPath (command = $command)", 'Remove developer silfw:// handler')) {
+				Remove-Item -LiteralPath $silfwPath -Recurse -Force
 			}
 		}
 	}

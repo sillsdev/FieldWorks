@@ -33,6 +33,18 @@ function Remove-ItemProperty {
 	$registryState.Values[$LiteralPath].Remove($Name)
 }
 
+function Remove-Item {
+	param([string]$LiteralPath, [switch]$Recurse, [switch]$Force)
+	if ($LiteralPath.StartsWith('HKCU:')) {
+		$registryState.Removed += $LiteralPath
+		foreach ($key in @($registryState.Values.Keys)) {
+			if ($key -eq $LiteralPath -or $key.StartsWith($LiteralPath + '\')) { $registryState.Values.Remove($key) }
+		}
+		return
+	}
+	Microsoft.PowerShell.Management\Remove-Item -LiteralPath $LiteralPath -Recurse:$Recurse -Force:$Force
+}
+
 function Set-ItemProperty { throw 'Launch preflight must not write registry values' }
 function Set-DevDirs { throw 'Launch preflight must not realign registry values' }
 
@@ -45,7 +57,17 @@ try {
 	Set-Content -LiteralPath (Join-Path $sourceRoot 'FieldWorks.sln') -Value ''
 	$companyPath = 'HKCU:\SOFTWARE\SIL'
 	$fieldWorksPath = Join-Path $companyPath 'FieldWorks\9'
+	$encPath = Join-Path $companyPath 'SilEncConverters40'
+	$repoPath = Join-Path $companyPath 'EncodingConverterRepository'
+	$silfwPath = 'HKCU:\SOFTWARE\Classes\silfw'
+	$silfwCommandPath = Join-Path $silfwPath 'shell\open\command'
 	$registryState.Values = @{
+		$encPath = @{
+			RootDir = Join-Path $sourceRoot 'Output\Release'
+			DeveloperPluginDir = Join-Path $sourceRoot 'Output\Release\EC\Plugins'
+		}
+		$repoPath = @{ Registry = Join-Path $distFiles 'SIL\Repository\mappingRegistry.xml' }
+		$silfwCommandPath = @{ '(default)' = '"' + (Join-Path $sourceRoot 'Output\Release\FieldWorks.exe') + '" %1' }
 		$fieldWorksPath = @{
 			RootCodeDir = $distFiles + '\'
 			RootDataDir = $distFiles
@@ -65,7 +87,7 @@ try {
 	& $preflightScript -Force
 	Assert-True ($registryState.Removed.Count -eq 0) 'Preflight must be read-only, including -Force'
 	& $repairScript -Confirm:$false
-	Assert-True ($registryState.Removed.Count -eq 4) 'Only source code/data/projects/ICU overrides are removed'
+	Assert-True ($registryState.Removed.Count -eq 8) 'Only source code/data/projects/ICU overrides are removed'
 	Assert-True (-not $registryState.Values[$fieldWorksPath].ContainsKey('RootCodeDir')) `
 		'Source code override must be removed'
 	Assert-True (-not $registryState.Values[$fieldWorksPath].ContainsKey('RootDataDir')) `
@@ -79,24 +101,45 @@ try {
 	Assert-True ($registryState.Values[$companyPath].ContainsKey('OtherDataDir')) `
 		'Unrelated values must be preserved'
 
+	Assert-True (-not $registryState.Values.ContainsKey($silfwCommandPath)) `
+		'Source silfw handler must be removed'
+	Assert-True (-not $registryState.Values[$encPath].ContainsKey('RootDir')) `
+		'Source encoding converter root must be removed'
+	Assert-True (-not $registryState.Values[$repoPath].ContainsKey('Registry')) `
+		'Source encoding repository must be removed'
+
+	# Installed (non-source) values are kept.
+	$registryState.Values[$encPath] = @{ RootDir = $installPath }
+	$registryState.Values[$repoPath] = @{ Registry = Join-Path $installPath 'mappingRegistry.xml' }
+	$registryState.Values[$silfwCommandPath] = @{ '(default)' = '"' + (Join-Path $installPath 'FieldWorks.exe') + '" %1' }
+	& $repairScript -Confirm:$false
+	Assert-True ($registryState.Removed.Count -eq 8) 'Installed silfw/encoding values must be kept'
+	Assert-True ($registryState.Values.ContainsKey($silfwCommandPath)) 'Installed silfw handler kept'
+	& $repairScript -WhatIf | Out-Null
+	Assert-True ($registryState.Removed.Count -eq 8) 'Preview must not remove silfw'
+	$registryState.Values[$silfwCommandPath] = @{ '(default)' = '"' + (Join-Path $sourceRoot 'Output\Release\FieldWorks.exe') + '" %1' }
+	& $repairScript -WhatIf | Out-Null
+	Assert-True ($registryState.Values.ContainsKey($silfwCommandPath)) 'Preview must keep a source silfw handler'
+	$registryState.Values.Remove($silfwCommandPath)
+
 	$registryState.Values[$fieldWorksPath].RootCodeDir = $installPath
 	$registryState.Values[$fieldWorksPath].RootDataDir = 'relative/path'
 	& $repairScript -Confirm:$false
-	Assert-True ($registryState.Removed.Count -eq 4) 'Installed and relative overrides must be preserved'
+	Assert-True ($registryState.Removed.Count -eq 8) 'Installed and relative overrides must be preserved'
 	$registryState.Values[$fieldWorksPath].RootDataDir = 42
 	& $repairScript -Confirm:$false
-	Assert-True ($registryState.Removed.Count -eq 4) 'Non-string overrides must be preserved'
+	Assert-True ($registryState.Removed.Count -eq 8) 'Non-string overrides must be preserved'
 	$registryState.Values[$fieldWorksPath].RootDataDir = 'C:relative'
 	& $repairScript -Confirm:$false
-	Assert-True ($registryState.Removed.Count -eq 4) 'Drive-relative overrides must be preserved'
+	Assert-True ($registryState.Removed.Count -eq 8) 'Drive-relative overrides must be preserved'
 	Remove-Item -LiteralPath (Join-Path $sourceRoot 'FieldWorks.sln')
 	$registryState.Values[$fieldWorksPath].RootCodeDir = $distFiles
 	& $repairScript -Confirm:$false
-	Assert-True ($registryState.Removed.Count -eq 4) 'A path without the source marker must be preserved'
+	Assert-True ($registryState.Removed.Count -eq 8) 'A path without the source marker must be preserved'
 	$registryState.Values = @{}
 	& $repairScript -Confirm:$false
 	& $preflightScript
-	Assert-True ($registryState.Removed.Count -eq 4) 'Missing registry keys must be harmless'
+	Assert-True ($registryState.Removed.Count -eq 8) 'Missing registry keys must be harmless'
 	Write-Host "Developer registry tests: $($registryState.Checks) checks passed."
 }
 finally {
