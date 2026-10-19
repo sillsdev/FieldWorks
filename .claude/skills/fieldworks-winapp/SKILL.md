@@ -121,7 +121,7 @@ verifies that launch will succeed.
 - `scripts/Resolve-FieldWorksDevRegistry.ps1`: read-only preview of code/data/ICU overrides
   pointing into a source tree. Dev builds use their own `DistFiles`; installed releases can
   be redirected by those shared overrides. `Build/Repair-DeveloperRegistry.ps1 -WhatIf`
-  previews an explicit repair; applying it preserves `ProjectsDir` and non-source paths.
+  previews an explicit repair; applying it preserves paths outside source trees.
 - `references/headless-rendering.md`: why FieldWorks needs a display-bound desktop; what works/doesn't for
   invisible capture (winforms-mcp HEADLESS does NOT render FieldWorks; a Virtual Display Driver was tried
   and abandoned — see the doc for why; use visible capture, or RDP for true invisibility). Starts with the

@@ -243,8 +243,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 		}
 
 		/// <summary>
-		/// Resolves a registry directory. Per-user source-tree code/data paths fall back
-		/// to machine settings, then the default directory.
+		/// Resolves a registry directory. Per-user source-tree code, data and projects paths
+		/// fall back to machine settings, then the default directory.
 		/// </summary>
 		internal static string GetDirectory(string registryValue, string defaultDir)
 		{
@@ -252,14 +252,19 @@ namespace SIL.FieldWorks.Common.FwUtils
 			{
 				var userValue = userKey?.GetValue(registryValue);
 				if (userValue == null ||
-					((registryValue == "RootCodeDir" || registryValue == ksRootDataDir)
+					((registryValue == "RootCodeDir" || registryValue == ksRootDataDir
+						|| registryValue == ksProjectsDir)
 						&& IsSourceTreePath(userValue as string)))
 					return GetDirectoryLocalMachine(registryValue, defaultDir);
 				return GetDirectory(userKey, registryValue, defaultDir);
 			}
 		}
 
-		private static bool IsSourceTreePath(string path)
+		/// <summary>
+		/// True if <paramref name="path"/> lies inside a source tree, that is under a directory
+		/// holding FieldWorks.sln. Installed FieldWorks must not follow such a path.
+		/// </summary>
+		public static bool IsSourceTreePath(string path)
 		{
 			if (string.IsNullOrEmpty(path))
 				return false;
@@ -389,6 +394,27 @@ namespace SIL.FieldWorks.Common.FwUtils
 					return distFiles;
 			}
 			return null;
+		}
+
+		/// <summary>Test seam: forces <see cref="RunningFromSourceTree"/> when not
+		/// null.</summary>
+		internal static bool? RunningFromSourceTreeOverride { get; set; }
+
+		private static string s_devProjectsDirectory;
+
+		/// <summary>Forgets the projects folder a source-tree run chose in memory.</summary>
+		internal static void ResetDevProjectsDirectory()
+		{
+			s_devProjectsDirectory = null;
+		}
+
+		/// <summary>True when this assembly runs from a source tree, not an install.</summary>
+		internal static bool RunningFromSourceTree
+		{
+			get
+			{
+				return RunningFromSourceTreeOverride ?? GetDevDistFilesPath() != null;
+			}
 		}
 
 		private static string GetDevDistFilesPath()
@@ -574,9 +600,22 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// ------------------------------------------------------------------------------------
 		public static string ProjectsDirectory
 		{
-			get { return GetDirectory(ksProjectsDir, Path.Combine(DataDirectory, ksProjects)); }
+			get
+			{
+				if (s_devProjectsDirectory != null)
+					return s_devProjectsDirectory;
+				return GetDirectory(ksProjectsDir, Path.Combine(DataDirectory, ksProjects));
+			}
 			set
 			{
+				if (RunningFromSourceTree)
+				{
+					// A source-tree build must not leave a per-user ProjectsDir that an
+					// installed FieldWorks would then follow (LT-22840); it keeps the
+					// choice for this process only.
+					s_devProjectsDirectory = value;
+					return;
+				}
 				if (ProjectsDirectory == value)
 					return; // no change.
 

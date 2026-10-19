@@ -1,9 +1,10 @@
 <#
 .SYNOPSIS
-	Removes per-user code, data, and ICU overrides that point into a FieldWorks source tree.
+	Removes per-user code, data, projects, and ICU overrides that point into a FieldWorks source
+	tree.
 .DESCRIPTION
-	Use -WhatIf to preview. ProjectsDir and paths without an ancestor containing
-	FieldWorks.sln are preserved. Close installed FieldWorks before applying a repair.
+	Use -WhatIf to preview. Paths without an ancestor containing FieldWorks.sln
+	are preserved. Close installed FieldWorks before applying a repair.
 #>
 [CmdletBinding(SupportsShouldProcess)]
 param()
@@ -36,7 +37,7 @@ function Test-FieldWorksSourcePath {
 $companyPath = 'HKCU:\SOFTWARE\SIL'
 $fieldWorksPath = Join-Path $companyPath 'FieldWorks\9'
 $locations = @{
-	$fieldWorksPath = @('RootCodeDir', 'RootDataDir')
+	$fieldWorksPath = @('RootCodeDir', 'RootDataDir', 'ProjectsDir')
 	$companyPath = @()
 }
 foreach ($registryPath in $locations.Keys) {

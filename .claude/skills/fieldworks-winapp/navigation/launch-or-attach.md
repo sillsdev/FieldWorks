@@ -27,7 +27,7 @@ returns empty and `winforms_take_screenshot` is blank even though the process is
   source tree. It is read-only, including with `-Force`. Dev builds use their own `DistFiles`;
   these shared overrides can redirect an installed release into incompatible worktree files.
   For an explicit repair, preview `Build/Repair-DeveloperRegistry.ps1 -WhatIf`, then run it
-  without `-WhatIf` after closing installed FieldWorks. It preserves `ProjectsDir` and
+  without `-WhatIf` after closing installed FieldWorks. It preserves
   overrides outside identifiable source trees. It cannot identify a checkout whose solution
   file has been deleted or moved.
 

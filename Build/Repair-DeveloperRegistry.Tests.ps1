@@ -65,15 +65,15 @@ try {
 	& $preflightScript -Force
 	Assert-True ($registryState.Removed.Count -eq 0) 'Preflight must be read-only, including -Force'
 	& $repairScript -Confirm:$false
-	Assert-True ($registryState.Removed.Count -eq 3) 'Only source code/data/ICU overrides are removed'
+	Assert-True ($registryState.Removed.Count -eq 4) 'Only source code/data/projects/ICU overrides are removed'
 	Assert-True (-not $registryState.Values[$fieldWorksPath].ContainsKey('RootCodeDir')) `
 		'Source code override must be removed'
 	Assert-True (-not $registryState.Values[$fieldWorksPath].ContainsKey('RootDataDir')) `
 		'Source data override must be removed'
 	Assert-True (-not $registryState.Values[$companyPath].ContainsKey('Icu70DataDir')) `
 		'Source ICU override must be removed'
-	Assert-True ($registryState.Values[$fieldWorksPath].ContainsKey('ProjectsDir')) `
-		'Shared projects override must be preserved'
+	Assert-True (-not $registryState.Values[$fieldWorksPath].ContainsKey('ProjectsDir')) `
+		'Source projects override must be removed'
 	Assert-True ($registryState.Values[$companyPath].Icu99DataDir -eq $installPath) `
 		'Installed ICU override must be preserved'
 	Assert-True ($registryState.Values[$companyPath].ContainsKey('OtherDataDir')) `
@@ -82,21 +82,21 @@ try {
 	$registryState.Values[$fieldWorksPath].RootCodeDir = $installPath
 	$registryState.Values[$fieldWorksPath].RootDataDir = 'relative/path'
 	& $repairScript -Confirm:$false
-	Assert-True ($registryState.Removed.Count -eq 3) 'Installed and relative overrides must be preserved'
+	Assert-True ($registryState.Removed.Count -eq 4) 'Installed and relative overrides must be preserved'
 	$registryState.Values[$fieldWorksPath].RootDataDir = 42
 	& $repairScript -Confirm:$false
-	Assert-True ($registryState.Removed.Count -eq 3) 'Non-string overrides must be preserved'
+	Assert-True ($registryState.Removed.Count -eq 4) 'Non-string overrides must be preserved'
 	$registryState.Values[$fieldWorksPath].RootDataDir = 'C:relative'
 	& $repairScript -Confirm:$false
-	Assert-True ($registryState.Removed.Count -eq 3) 'Drive-relative overrides must be preserved'
+	Assert-True ($registryState.Removed.Count -eq 4) 'Drive-relative overrides must be preserved'
 	Remove-Item -LiteralPath (Join-Path $sourceRoot 'FieldWorks.sln')
 	$registryState.Values[$fieldWorksPath].RootCodeDir = $distFiles
 	& $repairScript -Confirm:$false
-	Assert-True ($registryState.Removed.Count -eq 3) 'A path without the source marker must be preserved'
+	Assert-True ($registryState.Removed.Count -eq 4) 'A path without the source marker must be preserved'
 	$registryState.Values = @{}
 	& $repairScript -Confirm:$false
 	& $preflightScript
-	Assert-True ($registryState.Removed.Count -eq 3) 'Missing registry keys must be harmless'
+	Assert-True ($registryState.Removed.Count -eq 4) 'Missing registry keys must be harmless'
 	Write-Host "Developer registry tests: $($registryState.Checks) checks passed."
 }
 finally {
