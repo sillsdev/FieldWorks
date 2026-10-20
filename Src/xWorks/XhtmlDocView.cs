@@ -1123,8 +1123,7 @@ namespace SIL.FieldWorks.XWorks
 			switch (name)
 			{
 				case "SelectedPublication":
-					var validConfiguration = SetCurrentDictionaryPublicationLayout();
-					UpdateContent(validConfiguration);
+					ShowSelectedPublication();
 					break;
 				case "DictionaryPublicationLayout":
 				case "ReversalIndexPublicationLayout":
@@ -1422,15 +1421,39 @@ namespace SIL.FieldWorks.XWorks
 				// The Configure dialog sets the layout silently, so sync the guid.
 				SyncReversalIndexGuidToConfiguration();
 			}
-			var currentPublication = GetCurrentPublication();
-			var validPublication = GetValidPublicationForConfiguration(currentConfig) ?? xWorksStrings.AllEntriesPublication;
-			if (currentPublication != xWorksStrings.AllEntriesPublication && currentPublication != validPublication)
-			{
-				m_propertyTable.SetProperty("SelectedPublication", validPublication, true);
-			}
 			// Force a refresh.
 			m_loadedConfig = null;
-			UpdateContent(currentConfig);
+			ShowConfiguration(currentConfig);
+		}
+
+		/// <summary>
+		/// Loads a configuration. When it excludes the selected publication, the publication
+		/// first moves, without broadcasting, to one the configuration includes, or to All
+		/// Entries when it includes none, and the load is then of the configuration valid for
+		/// that publication. All Entries never moves.
+		/// </summary>
+		internal void ShowConfiguration(string configuration)
+		{
+			var currentPublication = GetCurrentPublication();
+			var validPublication = GetValidPublicationForConfiguration(configuration) ?? xWorksStrings.AllEntriesPublication;
+			if (currentPublication != xWorksStrings.AllEntriesPublication && currentPublication != validPublication)
+			{
+				m_propertyTable.SetProperty("SelectedPublication", validPublication, false);
+				ShowSelectedPublication();
+			}
+			else
+			{
+				UpdateContent(configuration);
+			}
+		}
+
+		/// <summary>
+		/// Stores the configuration valid for the selected publication, without broadcasting,
+		/// and loads it.
+		/// </summary>
+		private void ShowSelectedPublication()
+		{
+			UpdateContent(SetCurrentDictionaryPublicationLayout());
 		}
 
 		public bool RefreshDisplay()
@@ -1603,13 +1626,20 @@ namespace SIL.FieldWorks.XWorks
 			return true; //we've handled this
 		}
 
+		/// <summary>
+		/// Mediator handler for the Show All Entries command: selects All Entries and shows it.
+		/// Choosing it again changes nothing.
+		/// </summary>
 		public bool OnShowAllEntries(object args)
 		{
-			m_propertyTable.SetProperty("SelectedPublication", xWorksStrings.AllEntriesPublication, true);
+			if (GetCurrentPublication() == xWorksStrings.AllEntriesPublication)
+				return true;
+			m_propertyTable.SetProperty("SelectedPublication", xWorksStrings.AllEntriesPublication, false);
+			ShowSelectedPublication();
 			return true;
 		}
 
-		private void UpdateContent(string configurationFile, bool allOnOnePage = false)
+		protected virtual void UpdateContent(string configurationFile, bool allOnOnePage = false)
 		{
 			SetInfoBarText();
 			var htmlErrorMessage = xWorksStrings.ksErrorDisplayingPublication;

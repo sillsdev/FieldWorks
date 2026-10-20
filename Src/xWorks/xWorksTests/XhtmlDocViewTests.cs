@@ -655,8 +655,185 @@ namespace SIL.FieldWorks.XWorks
 
 		#endregion
 
+		#region Direct publication selection
+
+		[Test]
+		public void OnShowAllEntries_SelectsAllEntriesAndLoadsTheCurrentConfigurationOnce()
+		{
+			using (new UndoableUnitOfWorkHelper(Cache.ActionHandlerAccessor, "doit", "undoit"))
+			{
+				CreatePublication("TestPub");
+				using (var scenario = new PublicationScenario(Cache, "TestPub", "TestPub"))
+				{
+					// SUT
+					scenario.View.OnShowAllEntries(null);
+
+					Assert.That(scenario.SelectedPublication, Is.EqualTo(xWorksStrings.AllEntriesPublication));
+					Assert.That(scenario.View.LoadedConfigurations, Is.EqualTo(new[] { scenario.ConfigurationPath }));
+					Assert.That(scenario.Mediator.JobItems, Is.Zero, "the publication must change without a broadcast");
+				}
+			}
+		}
+
+		[Test]
+		public void OnShowAllEntries_WhenAllEntriesIsSelected_LoadsNothing()
+		{
+			using (new UndoableUnitOfWorkHelper(Cache.ActionHandlerAccessor, "doit", "undoit"))
+			{
+				CreatePublication("TestPub");
+				using (var scenario = new PublicationScenario(Cache, "TestPub", xWorksStrings.AllEntriesPublication))
+				{
+					// SUT
+					scenario.View.OnShowAllEntries(null);
+
+					Assert.That(scenario.View.LoadedConfigurations, Is.Empty);
+					Assert.That(scenario.Mediator.JobItems, Is.Zero);
+				}
+			}
+		}
+
+		[Test]
+		public void ShowConfiguration_ExcludedPublicationSelected_MovesToAnIncludedOneAndLoadsOnce()
+		{
+			using (new UndoableUnitOfWorkHelper(Cache.ActionHandlerAccessor, "doit", "undoit"))
+			{
+				CreatePublication("TestPub");
+				CreatePublication("OtherPub");
+				using (var scenario = new PublicationScenario(Cache, "TestPub", "OtherPub"))
+				{
+					// SUT
+					scenario.View.ShowConfiguration(scenario.ConfigurationPath);
+
+					Assert.That(scenario.SelectedPublication, Is.EqualTo("TestPub"));
+					Assert.That(scenario.View.LoadedConfigurations, Is.EqualTo(new[] { scenario.ConfigurationPath }),
+						"one load, of the configuration valid for the publication moved to");
+					Assert.That(scenario.Mediator.JobItems, Is.Zero, "the publication must change without a broadcast");
+				}
+			}
+		}
+
+		[Test]
+		public void ShowConfiguration_ValidConfigurationIsAnotherFile_LoadsOnlyTheValidOne()
+		{
+			using (new UndoableUnitOfWorkHelper(Cache.ActionHandlerAccessor, "doit", "undoit"))
+			{
+				CreatePublication("TestPub");
+				CreatePublication("OtherPub");
+				using (var scenario = new PublicationScenario(Cache, "TestPub", "OtherPub"))
+				using (var outsideConfig = TempFile.WithFilename(Path.Combine(Path.GetTempPath(),
+					"OutsideTheProject" + DictionaryConfigurationModel.FileExtension)))
+				{
+					// Outside the project folder, so the publication's valid configuration is the
+					// project one, not this file
+					File.WriteAllText(outsideConfig.Path, ConfigurationTemplate.Replace("</Publications>",
+						"<Publication>TestPub</Publication></Publications>"));
+					scenario.PropertyTable.SetProperty("DictionaryPublicationLayout", outsideConfig.Path, false);
+
+					// SUT
+					scenario.View.ShowConfiguration(outsideConfig.Path);
+
+					Assert.That(scenario.SelectedPublication, Is.EqualTo("TestPub"));
+					Assert.That(scenario.View.LoadedConfigurations, Is.EqualTo(new[] { scenario.ConfigurationPath }),
+						"the configuration passed in must not be loaded when the publication moved");
+					Assert.That(scenario.PropertyTable.GetStringProperty("DictionaryPublicationLayout", null),
+						Is.EqualTo(scenario.ConfigurationPath));
+				}
+			}
+		}
+
+		[Test]
+		public void ShowConfiguration_AllEntriesSelected_KeepsAllEntriesAndLoadsOnce()
+		{
+			using (new UndoableUnitOfWorkHelper(Cache.ActionHandlerAccessor, "doit", "undoit"))
+			{
+				CreatePublication("TestPub");
+				using (var scenario = new PublicationScenario(Cache, "TestPub", xWorksStrings.AllEntriesPublication))
+				{
+					// SUT
+					scenario.View.ShowConfiguration(scenario.ConfigurationPath);
+
+					Assert.That(scenario.SelectedPublication, Is.EqualTo(xWorksStrings.AllEntriesPublication));
+					Assert.That(scenario.View.LoadedConfigurations, Is.EqualTo(new[] { scenario.ConfigurationPath }));
+				}
+			}
+		}
+
+		private void CreatePublication(string name)
+		{
+			var publication = Cache.ServiceLocator.GetInstance<ICmPossibilityFactory>().Create();
+			var enId = Cache.WritingSystemFactory.GetWsFromStr("en");
+			Cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS.Add(publication);
+			publication.Name.set_String(enId, TsStringUtils.MakeString(name, enId));
+		}
+
+		/// <summary>
+		/// A colleague registered so the Mediator queues broadcasts: with no colleague it
+		/// discards them before queueing, and the job count would prove nothing.
+		/// </summary>
+		private sealed class ListeningColleague : IxCoreColleague
+		{
+			public void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters) { }
+			public IxCoreColleague[] GetMessageTargets() => new IxCoreColleague[] { this };
+			public bool ShouldNotCall => false;
+			public int Priority => (int)ColleaguePriority.High;
+		}
+
+		/// <summary>
+		/// A Dictionary-tool view on its own Mediator and PropertyTable, whose current
+		/// configuration is a user configuration listing only the publication named at
+		/// creation. Disposing it removes that configuration file.
+		/// </summary>
+		private sealed class PublicationScenario : IDisposable
+		{
+			public Mediator Mediator { get; }
+			public PropertyTable PropertyTable { get; }
+			public TestXhtmlDocView View { get; }
+			public string ConfigurationPath => m_configuration.Path;
+			public string SelectedPublication => PropertyTable.GetStringProperty("SelectedPublication", null);
+			private readonly TempFile m_configuration;
+
+			public PublicationScenario(LcmCache cache, string publicationInConfiguration, string selectedPublication)
+			{
+				Mediator = new Mediator();
+				Mediator.AddColleague(new ListeningColleague());
+				PropertyTable = new PropertyTable(Mediator);
+				PropertyTable.SetProperty("cache", cache, false);
+				var configDirectory = Path.Combine(LcmFileHelper.GetConfigSettingsDir(cache.ProjectId.ProjectFolder), "Dictionary");
+				Directory.CreateDirectory(configDirectory);
+				m_configuration = TempFile.WithFilename(Path.Combine(configDirectory,
+					"OnlyOnePublication" + DictionaryConfigurationModel.FileExtension));
+				File.WriteAllText(m_configuration.Path, ConfigurationTemplate.Replace("</Publications>",
+					"<Publication>" + publicationInConfiguration + "</Publication></Publications>"));
+				PropertyTable.SetProperty("currentContentControl", "lexiconDictionary", false);
+				PropertyTable.SetProperty("DictionaryPublicationLayout", m_configuration.Path, false);
+				PropertyTable.SetProperty("SelectedPublication", selectedPublication, false);
+				View = new TestXhtmlDocView();
+				View.SetConfigObjectName("Dictionary");
+				View.SetMediator(Mediator);
+				View.SetPropertyTable(PropertyTable);
+			}
+
+			public void Dispose()
+			{
+				View.Dispose();
+				m_configuration.Dispose();
+				PropertyTable.Dispose();
+				Mediator.Dispose();
+			}
+		}
+
+		#endregion
+
 		private class TestXhtmlDocView : XhtmlDocView
 		{
+			/// <summary>The configurations handed to UpdateContent, in call order.</summary>
+			internal readonly List<string> LoadedConfigurations = new List<string>();
+
+			protected override void UpdateContent(string configurationFile, bool allOnOnePage = false)
+			{
+				LoadedConfigurations.Add(configurationFile);
+			}
+
 			internal void SetConfigObjectName(string name)
 			{
 				m_configObjectName = name;
