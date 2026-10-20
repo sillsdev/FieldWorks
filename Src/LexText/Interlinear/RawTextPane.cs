@@ -349,13 +349,7 @@ namespace SIL.FieldWorks.IText
 					break;
 				case "ShowInvisibleSpaces":
 					newVal = ShowInvisibleSpaces;
-					if (newVal != m_showSpaceDa.ShowSpaces)
-					{
-						m_showSpaceDa.ShowSpaces = newVal;
-						var saveSelection = SelectionHelper.Create(this);
-						m_rootb.Reconstruct();
-						saveSelection.SetSelection(true);
-					}
+					ApplyShowInvisibleSpaces(newVal);
 					if (!newVal && ClickInvisibleSpace)
 						TurnOffClickInvisibleSpace();
 					break;
@@ -380,20 +374,41 @@ namespace SIL.FieldWorks.IText
 				NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () => para.ParseIsCurrent = false);
 		}
 
+		/// <summary>
+		/// Turns on ShowInvisibleSpaces and redraws here; the set does not broadcast,
+		/// because this pane is its only listener.
+		/// </summary>
 		private void TurnOnShowInvisibleSpaces()
 		{
-			if (m_propertyTable != null)
-			{
-				m_propertyTable.SetProperty("ShowInvisibleSpaces", true, true);
-			}
+			if (m_propertyTable == null)
+				return;
+			m_propertyTable.SetProperty("ShowInvisibleSpaces", true, false);
+			ApplyShowInvisibleSpaces(true);
 		}
 
+		/// <summary>
+		/// Turns off ClickInvisibleSpace and records it here; the set does not broadcast,
+		/// because this pane is its only listener.
+		/// </summary>
 		private void TurnOffClickInvisibleSpace()
 		{
-			if (m_propertyTable != null)
-			{
-				m_propertyTable.SetProperty("ClickInvisibleSpace", false, true);
-			}
+			if (m_propertyTable == null)
+				return;
+			m_propertyTable.SetProperty("ClickInvisibleSpace", false, false);
+			m_fClickInsertsZws = false;
+		}
+
+		/// <summary>
+		/// Redraws the text, keeping the selection, when invisible spaces are shown or hidden.
+		/// </summary>
+		private void ApplyShowInvisibleSpaces(bool show)
+		{
+			if (show == m_showSpaceDa.ShowSpaces)
+				return;
+			m_showSpaceDa.ShowSpaces = show;
+			var saveSelection = SelectionHelper.Create(this);
+			m_rootb.Reconstruct();
+			saveSelection?.SetSelection(true);
 		}
 
 		private bool ShowInvisibleSpaces
