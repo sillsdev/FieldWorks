@@ -28,3 +28,4 @@ editing the next time the code changes, it belongs in one of the other three.
 | [0001](0001-alias-semi-semantic-tokens.md) | Alias Semi's semantic tokens instead of inventing a FieldWorks palette |
 | [0002](0002-whole-tree-token-hygiene-check.md) | token-hygiene.ps1 enforces full conformance across the Avalonia surface, with no grandfathering |
 | [0003](0003-geometric-assertions-not-pixel-diff.md) | Assert geometry, not pixel diffs, for layout parity |
+| [0004](0004-interface-font-controlled-by-the-theme.md) | Control the Avalonia interface font through a theme token; data text keeps its writing-system font |
