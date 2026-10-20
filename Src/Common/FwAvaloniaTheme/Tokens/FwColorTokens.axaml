@@ -106,8 +106,14 @@
 
 	</ResourceDictionary.ThemeDictionaries>
 
-	<!-- No light/dark variance. Off Semi's Small/Regular (12/14) steps: pinned to the legacy
-	     WinForms 11pt baseline for compact-density parity. -->
+	<!-- No light/dark variance. Off Semi's Small/Regular (12/14) steps: pinned to 11 px (about
+	     8.25 pt) for compact-density parity with the WinForms dialogs. -->
 	<x:Double x:Key="FwSurfaceFontSize">11</x:Double>
+
+	<!--
+		Interface font for all Avalonia chrome: the bundled default font (Andika), registered by
+		FwUiFont. Data
+	     text keeps its writing-system font. -->
+	<FontFamily x:Key="FwUiFontFamily">fonts:FieldWorks#Andika</FontFamily>
 
 </ResourceDictionary>
