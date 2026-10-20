@@ -75,6 +75,15 @@ namespace FwAvaloniaDialogsTests
 				.First(b => Avalonia.Automation.AutomationProperties.GetAutomationId(b)
 					== "AddNewSense.Gloss." + wsTag);
 
+		[AvaloniaTest]
+		public void DialogText_UsesTheAndikaInterfaceFont()
+		{
+			var (view, _) = Show(BasicInput(), "AddNewSense-00-font");
+			var text = view.GetVisualDescendants().OfType<TextBlock>()
+				.First(t => !string.IsNullOrEmpty(t.Text) && t.FindAncestorOfType<TextBox>() == null);
+			Assert.That(text.FontFamily, Is.EqualTo(FwUiFont.UiFontFamily));
+		}
+
 		// ----- OK gating: empty gloss blocks OK, typing enables it (legacy ksFillInGloss) -----
 
 		[AvaloniaTest]

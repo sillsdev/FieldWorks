@@ -38,9 +38,10 @@ namespace FwBuildTasks
 	{
 		private static readonly XNamespace XamlNs = "http://schemas.microsoft.com/winfx/2006/xaml";
 
-		/// <summary>Every top-level ThemeDictionary entry becomes a key constant.</summary>
+		/// <summary>Every top-level ThemeDictionary entry becomes a key constant. FontFamily
+		/// entries are included, so the interface font family has a constant too.</summary>
 		private static readonly HashSet<string> TokenElementNames = new HashSet<string>(
-			new[] { "SolidColorBrush", "Color", "Double", "Thickness", "CornerRadius", "StaticResource" });
+			new[] { "SolidColorBrush", "Color", "Double", "Thickness", "CornerRadius", "FontFamily", "StaticResource" });
 
 		/// <summary>.axaml files whose EVERY x:Key becomes a generated constant.</summary>
 		[Required]

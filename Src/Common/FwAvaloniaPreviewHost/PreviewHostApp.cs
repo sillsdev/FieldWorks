@@ -39,6 +39,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.PreviewHost
 			// Shared dialog spacing/border tokens, so the Dialog* keys this assembly
 			// publishes as generated constants are actually registered here too.
 			MergeTokens("avares://FwAvaloniaTheme/Tokens/DialogTokens.axaml");
+			FwUiFont.ApplyTo(this);
 		}
 
 		private void MergeTokens(string avaresUri)

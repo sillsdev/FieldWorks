@@ -59,6 +59,18 @@ namespace FwAvaloniaTests
 		}
 
 		[AvaloniaTest]
+		public void Preview_WsText_KeepsWsFonts_WhileLabelsUseTheInterfaceFont()
+		{
+			var window = ShowPreview();
+			Assert.That(Find<TextBox>(window, "LexemeFormEditor.seh").FontFamily.Name, Is.EqualTo("Charis SIL"));
+			Assert.That(Find<TextBox>(window, "LexemeFormEditor.en").FontFamily.Name, Is.EqualTo("Times New Roman"));
+
+			var label = window.GetVisualDescendants().OfType<TextBlock>()
+				.First(t => !string.IsNullOrEmpty(t.Text) && t.FindAncestorOfType<TextBox>() == null);
+			Assert.That(label.FontFamily, Is.EqualTo(SIL.FieldWorks.Common.FwAvalonia.FwUiFont.UiFontFamily));
+		}
+
+		[AvaloniaTest]
 		public void Preview_MorphTypeChooser_UsesSharedOptionPicker_AndReturnsFocus()
 		{
 			var window = ShowPreview();
