@@ -21,8 +21,6 @@ namespace SIL.FieldWorks.XWorks
 	public abstract class DetailEditContextBase : IDetailEditContext
 	{
 		private LcmDetailEditSession _session;
-		// The owner key of every write in the open session, or null once writes under
-		// different keys (or no key) have mixed in.
 		private string _sessionOwnerKey;
 		private readonly Dictionary<string, Func<bool>> _pendingEditFlushes =
 			new Dictionary<string, Func<bool>>(StringComparer.Ordinal);
@@ -169,10 +167,8 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
-		/// Whether the open session holds only edits staged under <paramref name="ownerKey"/>:
-		/// a <see cref="Stage(Func{bool}, string, string)"/> call with that key opened it, and
-		/// every later staged write used the same key. False when no session is open or the key
-		/// is null.
+		/// Whether every write in the open session was staged under <paramref name="ownerKey"/>.
+		/// False when no session is open or the key is null.
 		/// </summary>
 		protected bool IsSessionOwnedBy(string ownerKey)
 			=> IsOpen && ownerKey != null
@@ -250,9 +246,8 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
-		/// As <see cref="Stage(Func{bool}, string)"/>, and records the write under
-		/// <paramref name="ownerKey"/> for <see cref="IsSessionOwnedBy"/>. A null key, or a key
-		/// different from the one that opened the session, leaves the session owned by no one.
+		/// As <see cref="Stage(Func{bool}, string)"/>, recording the write under
+		/// <paramref name="ownerKey"/> for <see cref="IsSessionOwnedBy"/>.
 		/// </summary>
 		protected bool Stage(Func<bool> setter, string fieldLabel, string ownerKey)
 		{

@@ -1555,18 +1555,16 @@ namespace SIL.FieldWorks.XWorks
 				"no bare object was created behind the user's back");
 		}
 
-		// The sense's Examples ghost row (ghost="Example" ghostWs="vernacular").
 		private static DetailField ExampleGhost(ComposedDetail composed, ILexSense sense)
 			=> composed.Model.Fields.FirstOrDefault(f => f.Field == "Examples"
 				&& f.StableId.EndsWith(DetailField.GhostStableIdSuffix) && f.ObjectHvo == sense.Hvo);
 
-		// The sense's own Senses ghost row, labelled SubSenses. The layout gives it no ghost=
-		// attribute; LT-22690 approves the row, typing into it the new subsense's Gloss.
+		// The layout gives SubSenses no ghost= attribute; LT-22690 approves its ghost row.
 		private static DetailField SubsenseGhost(ComposedDetail composed, ILexSense sense)
 			=> composed.Model.Fields.FirstOrDefault(f => f.Field == "Senses"
 				&& f.StableId.EndsWith(DetailField.GhostStableIdSuffix) && f.ObjectHvo == sense.Hvo);
 
-		// Stages text the way the view does, one value per keystroke.
+		// One stage per keystroke, as the view does.
 		private static void TypeInto(ComposedDetail composed, DetailField field, string text)
 		{
 			for (var length = 1; length <= text.Length; length++)
@@ -1637,8 +1635,7 @@ namespace SIL.FieldWorks.XWorks
 				"clearing the row is accepted");
 			var sessionOpenAfterClear = composed.EditContext.IsOpen;
 			var examplesAfterClear = sense.ExamplesOS.Count;
-			// Closes the session before asserting, so a failure here cannot leave the next
-			// test's setup inside an open undo task.
+			// Close the session first, so a failure cannot break the next test's setup.
 			composed.EditContext.Commit();
 
 			Assert.That(sessionOpenAfterClear, Is.False, "clearing the row ends its edit session");
@@ -1652,8 +1649,6 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(sense.ExamplesOS[0].Example.get_String(Cache.DefaultVernWs).Text, Is.EqualTo("b"));
 		}
 
-		// Clearing the ghost row must not cancel an edit another row staged into the same
-		// session.
 		[Test]
 		public void Compose_GhostExample_ClearedAfterAnotherRowsEdit_KeepsThatEdit()
 		{
@@ -1666,8 +1661,7 @@ namespace SIL.FieldWorks.XWorks
 			var typedStaged = composed.EditContext.TrySetText(ghost, ghost.Values[0].WsAbbrev, "u");
 			var clearStaged = composed.EditContext.TrySetText(ghost, ghost.Values[0].WsAbbrev, "");
 			var sessionOpenAfterClear = composed.EditContext.IsOpen;
-			// Closes the session before asserting, so a failure here cannot leave the next
-			// test's setup inside an open undo task.
+			// Close the session first, so a failure cannot break the next test's setup.
 			composed.EditContext.Commit();
 
 			Assert.That(glossStaged && typedStaged && clearStaged, Is.True, "every edit stages");
