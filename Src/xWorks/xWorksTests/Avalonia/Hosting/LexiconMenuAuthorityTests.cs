@@ -46,9 +46,14 @@ namespace SIL.FieldWorks.XWorks
 			// a sense, an extended note and an etymology.
 			"mnuDataTree-Subsenses", "mnuDataTree-ExtendedNotes", "mnuDataTree-Sense-Hotlinks",
 			"mnuDataTree-ExtendedNote-Hotlinks", "mnuDataTree-Etymology-Hotlinks",
+			// Lexicon rows: the Allomorphs, Variants and Examples section rows, and the
+			// Allomorphs and Variants hotlinks.
+			"mnuDataTree-AlternateForms", "mnuDataTree-VariantForms", "mnuDataTree-Examples",
+			"mnuDataTree-AlternateForms-Hotlinks", "mnuDataTree-VariantForms-Hotlinks",
 			// Lexicon ids no part reaches (-CmMedia's pronunciation part does not exist).
 			"mnuDataTree-CmMedia", "mnuDataTree-Variant", "mnuDataTree-DeleteEtymology",
 			"mnuDataTree-DeletePronunciation", "mnuDataTree-Translations", "mnuDataTree-Senses", "mnuDataTree-MSAs",
+			"mnuDataTree-Allomorphs", "mnuDataTree-Allomorphs-Hotlinks", "mnuDataTree-Variants",
 			// Grammar: posEdit rows (two item rows, five section rows: Affix Templates, Affix
 			// Slots, Inflection Classes, Subclasses, Stem Allomorph Labels), then other tools.
 			"mnuDataTree-POS-InflectionClass", "mnuDataTree-POS-StemName",
@@ -58,6 +63,7 @@ namespace SIL.FieldWorks.XWorks
 			"mnuDataTree-MoStemName-Regions", "mnuDataTree-Phoneme-Code", "mnuDataTree-Phoneme-Codes",
 			"mnuDataTree-Delete-Adhoc-Allomorph", "mnuDataTree-Delete-Adhoc-Group",
 			"mnuDataTree-Delete-Adhoc-Morpheme", "mnuDataTree-Adhoc-Group-Members",
+			"mnuDataTree-CompoundRule-LinkerAffixAllomorph",
 			// Texts: the Info tab's jumps to the interlinear text and its notebook record; no
 			// Avalonia detail view.
 			"mnuDataTree-Text", "mnuTextInfo-Notebook",
@@ -71,7 +77,8 @@ namespace SIL.FieldWorks.XWorks
 		private static readonly string[] LexiconLabelMenuIds =
 		{
 			"mnuDataTree-Translation", "mnuDataTree-ComplexFormSpec", "mnuDataTree-LexemeForm",
-			"mnuDataTree-Subsenses", "mnuDataTree-ExtendedNotes"
+			"mnuDataTree-Subsenses", "mnuDataTree-ExtendedNotes", "mnuDataTree-AlternateForms",
+			"mnuDataTree-VariantForms", "mnuDataTree-Examples"
 		};
 
 		private static readonly string[] LexiconInStringMenuIds =
@@ -79,7 +86,8 @@ namespace SIL.FieldWorks.XWorks
 
 		private static readonly string[] LexiconHotlinksIds =
 		{
-			"mnuDataTree-Sense-Hotlinks", "mnuDataTree-ExtendedNote-Hotlinks", "mnuDataTree-Etymology-Hotlinks"
+			"mnuDataTree-Sense-Hotlinks", "mnuDataTree-ExtendedNote-Hotlinks", "mnuDataTree-Etymology-Hotlinks",
+			"mnuDataTree-AlternateForms-Hotlinks", "mnuDataTree-VariantForms-Hotlinks"
 		};
 
 		private const string LexemeFormContextMenuId = "mnuDataTree-LexemeFormContext";
@@ -289,7 +297,8 @@ namespace SIL.FieldWorks.XWorks
 		{
 			Assert.That(HiddenTreeExists, Is.False, "precondition: no hidden tree yet");
 			var rows = OwnedMenuRows();
-			Assert.That(rows, Has.Count.EqualTo(12), "precondition: ten ids, -Translation on two rows");
+			Assert.That(rows, Has.Count.EqualTo(18),
+				"precondition: sixteen ids, -Translation and -VariantForms on two rows each");
 			foreach (var (row, menuId, kind) in rows)
 			{
 				var ids = kind == DetailMenuKind.ContextMenu
@@ -428,8 +437,8 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(m_view.InsertItem(subsense, noObject), Is.Null, "no object");
 		}
 
-		// The inserts with rules of their own stay with the adapter, so their ids do too:
-		// the allomorph inserts, an insert into a reference field, a SubPossibilities insert.
+		// Only the inserts that need the whole tree stay with the adapter, so their ids do
+		// too: SubPossibilities, and an insert into a plain reference field.
 		[Test]
 		public void InsertLeaves_OutsideTheScope_LeaveTheirIdsWithTheAdapter()
 		{
@@ -437,17 +446,75 @@ namespace SIL.FieldWorks.XWorks
 
 			Assert.That(m_view.InsertLeafInScope(Leaf("mnuDataTree-Subsenses", "CmdDataTree-Insert-SubSense")), Is.True);
 			Assert.That(m_view.InsertLeafInScope(Leaf("mnuDataTree-AlternateForms-Hotlinks", "CmdDataTree-Insert-AlternateForm")),
-				Is.False, "the abstract MoForm, chosen by the entry's morph type");
-			Assert.That(m_view.InsertLeafInScope(Leaf("mnuDataTree-AlternateForms", "CmdDataTree-Insert-AffixProcess")),
-				Is.False, "shown only on an affix entry");
-			Assert.That(m_view.InsertLeafInScope(Leaf("mnuDataTree-Variants", "CmdDataTree-Insert-Variant")),
-				Is.False, "a virtual back reference: a dialog creates the variant");
+				Is.True, "the abstract MoForm: the entry chooses the class");
+			Assert.That(m_view.InsertLeafInScope(Leaf("mnuDataTree-AlternateForms", "CmdDataTree-Insert-AffixProcess")), Is.True);
+			Assert.That(m_view.InsertLeafInScope(Leaf("mnuDataTree-VariantForms", "CmdDataTree-Insert-VariantForm")),
+				Is.True, "a virtual back reference: the dialog adds the variant");
 			Assert.That(m_view.InsertLeafInScope(Leaf("mnuDataTree-POS-SubPossibilities", "CmdDataTree-Insert-POS-SubPossibilities")),
 				Is.False, "SubPossibilities needs the whole tree");
-			Assert.That(authority.Owns("mnuDataTree-AlternateForms-Hotlinks"), Is.False);
-			Assert.That(authority.Owns("mnuDataTree-Variants"), Is.False);
-			Assert.That(() => authority.Build("mnuDataTree-Variants", Leaf("mnuDataTree-Variants", "CmdDataTree-Insert-Variant")),
+			Assert.That(m_view.InsertLeafInScope(Leaf("mnuDataTree-SubEntryLink", "CmdDataTree-Insert-SubEntryLink")),
+				Is.False, "a reference field with no class to create");
+			Assert.That(authority.Owns("mnuDataTree-POS-SubPossibilities"), Is.False);
+			Assert.That(() => authority.Build("mnuDataTree-POS-SubPossibilities",
+				Leaf("mnuDataTree-POS-SubPossibilities", "CmdDataTree-Insert-POS-SubPossibilities")),
 				Throws.InvalidOperationException, "a leaf outside the scope is not answered");
+		}
+
+		// The allomorph inserts follow the entry: an affix process only on an affix entry, a
+		// stem or affix allomorph only while the first allomorph is of that kind.
+		[Test]
+		public void AllomorphInserts_AreOfferedByTheEntrysMorphTypeAndFirstAllomorph()
+		{
+			var section = Rows().Single(f => f.MenuId == "mnuDataTree-AlternateForms");
+			var affixProcess = Leaf("mnuDataTree-AlternateForms", "CmdDataTree-Insert-AffixProcess");
+			var allomorph = Leaf("mnuDataTree-AlternateForms", "CmdDataTree-Insert-AlternateForm");
+			var stem = Leaf("mnuDataTree-Allomorphs", "CmdDataTree-Insert-StemAllomorph");
+			var affix = Leaf("mnuDataTree-Allomorphs", "CmdDataTree-Insert-AffixAllomorph");
+
+			Assert.That(m_view.InsertItem(affixProcess, section), Is.Null, "a stem entry has no affix process");
+			Assert.That(m_view.InsertItem(allomorph, section)?.IsEnabled, Is.True);
+			Assert.That(m_view.InsertItem(allomorph, section).Label, Is.EqualTo("Insert Allomorph"));
+			Assert.That(m_view.InsertItem(stem, section)?.IsEnabled, Is.True, "the first allomorph is a stem");
+			Assert.That(m_view.InsertItem(affix, section), Is.Null);
+			Assert.That(m_view.InsertItem(affix, LexemeFormRow()), Is.Null, "a row inside the entry asks the entry");
+
+			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () => m_entry.LexemeFormOA.MorphTypeRA =
+				GetMorphTypeOrCreateOne("suffix"));
+
+			Assert.That(m_view.InsertItem(affixProcess, section)?.IsEnabled, Is.True, "a suffix entry has affix processes");
+		}
+
+		// Offered on any row of the shown entry, for the row's entry or else the shown one.
+		[Test]
+		public void VariantInsert_IsOfferedForTheEntry_AndAbsentWithoutAnObject()
+		{
+			var leaf = Leaf("mnuDataTree-VariantForms", "CmdDataTree-Insert-VariantForm");
+			var rows = Rows().Where(f => f.MenuId == "mnuDataTree-VariantForms").ToList();
+			var section = rows.Single(f => f.HotlinksId != null);
+			var banner = rows.Single(f => f.Field == "VariantFormEntryBackRefs");
+			var noObject = new DetailField("Row", "Row", "VariantFormEntryBackRefs", null, DetailFieldKind.Header,
+				EditorClassification.GroupingNone, null, null, HostRouting.Inherit, null, null, null, menuId: section.MenuId);
+
+			Assert.That(rows, Has.Count.EqualTo(2), "precondition: the section row and the banner over the variants");
+			Assert.That(m_view.InsertItem(leaf, section)?.IsEnabled, Is.True);
+			Assert.That(m_view.InsertItem(leaf, banner)?.IsEnabled, Is.True);
+			Assert.That(m_view.InsertItem(leaf, section).Label, Is.EqualTo("Insert Variant"));
+			Assert.That(m_view.InsertItem(leaf, TranslationRow())?.IsEnabled, Is.True, "a row of another class: the shown entry");
+			Assert.That(m_view.InsertItem(leaf, noObject), Is.Null);
+		}
+
+		[Test]
+		public void FindExampleSentence_IsOfferedOnARowWithAnObject()
+		{
+			var leaf = Leaf("mnuDataTree-Examples", "CmdFindExampleSentence");
+			var examples = Rows().Single(f => f.MenuId == "mnuDataTree-Examples");
+			var noObject = new DetailField("Row", "Row", "Examples", null, DetailFieldKind.Header,
+				EditorClassification.GroupingNone, null, null, HostRouting.Inherit, null, null, null, menuId: examples.MenuId);
+
+			Assert.That(m_view.GuiControlItem(leaf, examples)?.IsEnabled, Is.True);
+			Assert.That(m_view.GuiControlItem(leaf, examples).Label, Is.EqualTo("Find example sentence..."));
+			Assert.That(m_view.GuiControlItem(leaf, null), Is.Null, "no row");
+			Assert.That(m_view.GuiControlItem(leaf, noObject), Is.Null, "no object");
 		}
 
 		private XWindow Window => m_propertyTable.GetValue<XWindow>("window");
@@ -556,6 +623,11 @@ namespace SIL.FieldWorks.XWorks
 				return false;
 			}
 			public bool OnDisplayDataTreeInsert(object commandObject, ref UIItemDisplayProperties display)
+			{
+				Asked = true;
+				return false;
+			}
+			public bool OnDisplayLaunchGuiControl(object commandObject, ref UIItemDisplayProperties display)
 			{
 				Asked = true;
 				return false;

@@ -10,6 +10,7 @@ using SIL.FieldWorks.Common.Framework.DetailControls;
 using SIL.FieldWorks.Common.FwAvalonia.Detail;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FdoUi;
+using SIL.FieldWorks.LexText.Controls;
 using SIL.LCModel;
 using SIL.LCModel.Infrastructure;
 using SIL.Reporting;
@@ -40,8 +41,9 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>The message every Insert leaf of the detail menus sends.</summary>
 		internal const string InsertMessage = "DataTreeInsert";
 
-		// The command-id suffixes of the allomorph inserts.
-		private static readonly string[] AllomorphInsertSuffixes = { "AffixProcess", "AffixAllomorph", "StemAllomorph" };
+		/// <summary>The message of a leaf that opens a configured dialog, such as Find example
+		/// sentence.</summary>
+		internal const string LaunchGuiControlMessage = "LaunchGuiControl";
 
 		/// <summary>
 		/// Asks the user to confirm a delete: the product shows the object's confirmation
@@ -65,6 +67,19 @@ namespace SIL.FieldWorks.XWorks
 				MessageBoxIcon.Warning) == DialogResult.Yes;
 
 		/// <summary>
+		/// Adds a variant to the entry and returns its entry ref, or null when the user
+		/// cancels: the product asks with <see cref="InsertVariantDlg"/>, which links the
+		/// variant in its own undoable step; a headless test answers for the user.
+		/// </summary>
+		internal Func<ILexEntry, ILexEntryRef> VariantToInsert { get; set; }
+
+		/// <summary>
+		/// Opens the dialog a command's <c>guicontrol</c> parameter configures, for the
+		/// object of the given UI: the product shows it; a headless test records the call.
+		/// </summary>
+		internal Action<CmObjectUi, Command> GuiControlLaunch { get; set; } = (ui, command) => ui.LaunchGuiControl(command);
+
+		/// <summary>
 		/// The message-keyed authority for the Lexicon menus, owning by predicate and
 		/// answering for <paramref name="field"/>; with no row every answer is hidden.
 		/// </summary>
@@ -77,11 +92,14 @@ namespace SIL.FieldWorks.XWorks
 			authority.Answer(SwapLexemeFormMessage, leaf => SwapLexemeFormItem(leaf, field));
 			authority.Answer(ConvertLexemeFormMessage, leaf => ConvertLexemeFormItem(leaf, field));
 			authority.Answer(InsertMessage, leaf => InsertItem(leaf, field), InsertLeafInScope);
+			authority.Answer(LaunchGuiControlMessage, leaf => GuiControlItem(leaf, field));
 			return authority;
 		}
 
 		/// <summary>
-		/// The Insert leaves answered natively: a concrete class created in an owning field.
+		/// The Insert leaves answered natively: a class created in an owning field, or a
+		/// variant added through the entry's variant back references. Inserts into
+		/// SubPossibilities stay with the adapter.
 		/// </summary>
 		internal bool InsertLeafInScope(DetailMenuLeaf leaf)
 		{
@@ -90,20 +108,16 @@ namespace SIL.FieldWorks.XWorks
 			var className = command.GetParameter("className", null);
 			if (string.IsNullOrEmpty(fieldName) || string.IsNullOrEmpty(className) || fieldName == "SubPossibilities")
 				return false;
-			foreach (var suffix in AllomorphInsertSuffixes)
-			{
-				if (command.Id.EndsWith(suffix, StringComparison.Ordinal))
-					return false;
-			}
-			var mdc = (IFwMetaDataCacheManaged)Cache.MetaDataCacheAccessor;
-			if (!mdc.ClassExists(className) || mdc.GetAbstract(mdc.GetClassId(className)))
+			if (!((IFwMetaDataCacheManaged)Cache.MetaDataCacheAccessor).ClassExists(className))
 				return false;
-			return DetailObjectInsertion.IsOwningFieldName(Cache, fieldName);
+			return DetailObjectInsertion.IsOwningFieldName(Cache, fieldName)
+				|| DetailObjectInsertion.IsVariantInsert(fieldName, className);
 		}
 
 		/// <summary>
-		/// The Insert item for the row: absent with no row or no object; enabled when the
-		/// command resolves an owning target from the row's object (a ghost row's included),
+		/// The Insert item for the row: absent with no row or no object, and absent when the
+		/// entry of the row or the shown entry does not offer an allomorph insert; enabled
+		/// when the command resolves a target from the row's object (a ghost row's included),
 		/// disabled otherwise. With <c>displayNumber</c> the label carries the position the
 		/// shown record's or the row's object's field would give.
 		/// </summary>
@@ -112,19 +126,110 @@ namespace SIL.FieldWorks.XWorks
 			var rowObject = RowObjectOf(field);
 			if (rowObject == null)
 				return null;
-			var label = XCoreMenuBridge.StripAccelerator(leaf.Label);
 			var command = leaf.Command;
+			var root = ResolveShownRecord(Clerk?.CurrentObject);
+			var entry = rowObject as ILexEntry ?? root as ILexEntry;
+			if (entry != null && !DetailObjectInsertion.IsOfferedOnEntry(entry, command.Id))
+				return null;
+			var label = XCoreMenuBridge.StripAccelerator(leaf.Label);
 			var fieldName = command.GetParameter("field");
 			if (XmlUtils.GetOptionalBooleanAttributeValue(command.Parameters[0], "displayNumber", false)
-				&& DetailObjectInsertion.CanInsert(ResolveShownRecord(Clerk?.CurrentObject), rowObject, fieldName, out var index)
+				&& DetailObjectInsertion.CanInsert(root, rowObject, fieldName, out var index)
 				&& index >= 0)
 			{
 				label += " " + (index + 1);
+			}
+			var className = command.GetParameter("className");
+			if (DetailObjectInsertion.IsVariantInsert(fieldName, className))
+			{
+				if (DetailObjectInsertion.VariantInsertTarget(rowObject, root, fieldName, className) == null)
+					return DetailMenuItem.Disabled(label);
+				return new DetailMenuItem(label, isEnabled: true, isChecked: false, children: null,
+					execute: () => InsertVariant(field, command));
 			}
 			if (ResolveInsertTarget(rowObject, command) == null)
 				return DetailMenuItem.Disabled(label);
 			return new DetailMenuItem(label, isEnabled: true, isChecked: false, children: null,
 				execute: () => InsertDetailObject(field, command));
+		}
+
+		/// <summary>
+		/// Adds a variant to the entry the row's variant insert resolves, through
+		/// <see cref="VariantToInsert"/>: pending edits settle first, and the re-show focuses
+		/// the variant's Variant Form editor.
+		/// </summary>
+		/// <returns>The variant's entry ref, or null when nothing was added.</returns>
+		internal ILexEntryRef InsertVariant(DetailField field, Command command)
+		{
+			SettleDetailEdits();
+			var entry = DetailObjectInsertion.VariantInsertTarget(RowObjectOf(field), ResolveShownRecord(Clerk?.CurrentObject),
+				command.GetParameter("field"), command.GetParameter("className"));
+			if (entry == null)
+			{
+				Logger.WriteEvent("Insert Variant did nothing: neither the row's object nor the shown record is an entry.");
+				return null;
+			}
+			var entryRef = (VariantToInsert ?? InsertVariantWithDialog)(entry);
+			if (entryRef == null || !entryRef.IsValidObject)
+				return null;
+			m_avaloniaEntryForm?.FocusObjectOnNextShow(VariantFocusTarget(entryRef).Hvo);
+			OnAvaloniaDetailEditCompleted(this, EventArgs.Empty);
+			return entryRef;
+		}
+
+		/// <summary>
+		/// The object whose row takes focus once a variant is added: the variant's lexeme
+		/// form, whose Variant Form row heads the variant's rows; the entry ref when the
+		/// variant has no lexeme form.
+		/// </summary>
+		internal static ICmObject VariantFocusTarget(ILexEntryRef entryRef)
+			=> (entryRef.Owner as ILexEntry)?.LexemeFormOA ?? (ICmObject)entryRef;
+
+		private ILexEntryRef InsertVariantWithDialog(ILexEntry entry)
+		{
+			using (var dlg = new InsertVariantDlg())
+			{
+				dlg.SetHelpTopic("khtpInsertVariantDlg");
+				dlg.SetDlgInfo(Cache, m_mediator, m_propertyTable, entry);
+				return dlg.ShowDialog(m_propertyTable.GetValue<Form>("window")) == DialogResult.OK
+					? dlg.VariantEntryRefResult
+					: null;
+			}
+		}
+
+		/// <summary>
+		/// The item that opens the dialog the command configures (Find example sentence) for
+		/// the row's object: absent with no row or no object, enabled otherwise.
+		/// </summary>
+		internal DetailMenuItem GuiControlItem(DetailMenuLeaf leaf, DetailField field)
+		{
+			if (RowObjectOf(field) == null)
+				return null;
+			return new DetailMenuItem(XCoreMenuBridge.StripAccelerator(leaf.Label), isEnabled: true, isChecked: false,
+				children: null, execute: () => OpenGuiControl(field, leaf.Command));
+		}
+
+		/// <summary>
+		/// Opens the command's dialog for the row's object through
+		/// <see cref="GuiControlLaunch"/>: pending edits settle first, and the view re-shows
+		/// whatever the dialog changed.
+		/// </summary>
+		internal void OpenGuiControl(DetailField field, Command command)
+		{
+			SettleDetailEdits();
+			var rowObject = RowObjectOf(field);
+			if (rowObject == null)
+			{
+				Logger.WriteEvent("The dialog did not open: the row's object " + field?.ObjectHvo + " no longer exists.");
+				return;
+			}
+			using (var ui = CmObjectUi.MakeUi(rowObject))
+			{
+				ui.Mediator = m_mediator;
+				ui.PropTable = m_propertyTable;
+				GuiControlLaunch(ui, command);
+			}
+			OnAvaloniaDetailEditCompleted(this, EventArgs.Empty);
 		}
 
 		// The command's target from the row's object, by its field, className, ownerClass and

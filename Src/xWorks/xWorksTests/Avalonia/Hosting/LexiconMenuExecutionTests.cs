@@ -401,6 +401,92 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(m_entry.EtymologyOS, Has.Count.EqualTo(3));
 		}
 
+		[Test]
+		public void InsertAllomorph_FromTheAllomorphsRow_CreatesTheEntrysAllomorphClass_InOneUndoableStep()
+		{
+			InvokeLabelMenuItem(SectionRow(m_entry, "mnuDataTree-AlternateForms"), "Insert Allomorph");
+
+			Assert.That(m_entry.AlternateFormsOS, Has.Count.EqualTo(2));
+			Assert.That(m_entry.AlternateFormsOS[1], Is.InstanceOf<IMoStemAllomorph>(), "a stem entry takes stem allomorphs");
+			Assert.That(Rows(m_entry).Any(f => f.ObjectHvo == m_entry.AlternateFormsOS[1].Hvo), Is.True,
+				"the recomposed view shows it");
+
+			Assert.That(Cache.ActionHandlerAccessor.CanUndo(), Is.True);
+			Cache.ActionHandlerAccessor.Undo();
+			Assert.That(m_entry.AlternateFormsOS, Is.EqualTo(new IMoForm[] { m_allomorph }), "one Undo removes it");
+		}
+
+		[Test]
+		public void InsertAffixProcess_OnAnAffixEntry_AddsAProcess()
+		{
+			ShowEntry(m_affix);
+
+			InvokeLabelMenuItem(SectionRow(m_affix, "mnuDataTree-AlternateForms"), "Insert Affix Process");
+
+			Assert.That(m_affix.AlternateFormsOS, Has.Count.EqualTo(1));
+			Assert.That(m_affix.AlternateFormsOS[0], Is.InstanceOf<IMoAffixProcess>());
+		}
+
+		[Test]
+		public void InsertVariant_FromTheVariantsHotlinks_LinksTheVariantTheUserGives()
+		{
+			ILexEntry asked = null;
+			ILexEntryRef added = null;
+			m_view.VariantToInsert = entry =>
+			{
+				asked = entry;
+				UndoableUnitOfWorkHelper.Do("undo", "redo", Cache.ActionHandlerAccessor, () =>
+					added = entry.CreateVariantEntryAndBackRef(null, TsStringUtils.MakeString("new-variant", Cache.DefaultVernWs)));
+				m_createdObjects.Add(added.Owner);
+				return added;
+			};
+
+			InvokeHotlinksItem(VariantsRow(), "Insert Variant");
+
+			Assert.That(asked, Is.SameAs(m_entry), "the user adds a variant of the shown entry");
+			Assert.That(m_entry.VariantFormEntryBackRefs, Does.Contain(added));
+			Assert.That(Rows(m_entry).Any(f => f.ObjectHvo == added.Hvo), Is.True, "the recomposed view shows its entry ref");
+			var target = RecordEditView.VariantFocusTarget(added);
+			Assert.That(target, Is.SameAs(((ILexEntry)added.Owner).LexemeFormOA), "focus goes to the variant's form");
+			Assert.That(Rows(m_entry).First(f => f.ObjectHvo == target.Hvo && f.Kind != DetailFieldKind.Header).Field,
+				Is.EqualTo("Form"), "the form's first editor row is the Variant Form editor");
+		}
+
+		[Test]
+		public void InsertVariant_LeavesTheModelAlone_WhenTheUserCancels()
+		{
+			var before = m_entry.VariantFormEntryBackRefs.ToList();
+			m_view.VariantToInsert = entry => null;
+			var leaf = XCoreMenuBridge.ResolveMenu(m_propertyTable.GetValue<XWindow>("window"), "mnuDataTree-VariantForms")
+				.Leaves.Single();
+
+			Assert.That(m_view.InsertVariant(VariantsRow(), leaf.Command), Is.Null);
+			Assert.That(m_entry.VariantFormEntryBackRefs, Is.EqualTo(before));
+		}
+
+		[Test]
+		public void FindExampleSentence_OpensTheConfiguredDialog_ForTheRowsSense()
+		{
+			var launched = new List<(int Hvo, string Control)>();
+			m_view.GuiControlLaunch = (ui, command) => launched.Add((ui.Object.Hvo, command.GetParameter("guicontrol")));
+			var examples = Rows(m_entry).Single(f => f.MenuId == "mnuDataTree-Examples" && f.ObjectHvo == m_sense1.Hvo);
+
+			InvokeLabelMenuItem(examples, "Find example sentence...");
+
+			Assert.That(launched, Is.EqualTo(new[] { (m_sense1.Hvo, "findExampleSentences") }));
+		}
+
+		[Test]
+		public void InsertExample_FromTheExamplesRow_GoesLast()
+		{
+			var examples = Rows(m_entry).Single(f => f.MenuId == "mnuDataTree-Examples" && f.ObjectHvo == m_sense1.Hvo);
+
+			InvokeLabelMenuItem(examples, "Insert Example");
+
+			Assert.That(m_sense1.ExamplesOS, Has.Count.EqualTo(2));
+			Assert.That(m_sense1.ExamplesOS[0], Is.SameAs(m_example));
+		}
+
 		// Builds the row's label menu as the host does and runs the named item's own Execute.
 		private void InvokeLabelMenuItem(DetailField row, string label)
 			=> Invoke(RecordEditView.ComposeSliceMenuIds(row.MenuId, row.IsMultiStringRow).ToArray(), row,
@@ -444,6 +530,13 @@ namespace SIL.FieldWorks.XWorks
 			=> Rows(m_entry).Single(f => f.Field == "Translation" && f.ObjectHvo == m_translation.Hvo);
 
 		private DetailField LexemeFormRow(ILexEntry entry) => Rows(entry).Single(f => f.MenuId == LexemeFormMenuId);
+
+		// The entry's row binding the given section menu.
+		private DetailField SectionRow(ILexEntry entry, string menuId)
+			=> Rows(entry).Single(f => f.MenuId == menuId && f.ObjectHvo == entry.Hvo);
+
+		private DetailField VariantsRow()
+			=> Rows(m_entry).Single(f => f.HotlinksId == "mnuDataTree-VariantForms-Hotlinks");
 
 		// The object's item header row, the one its hotlinks hang off.
 		private DetailField HeaderRowOf(ICmObject obj)

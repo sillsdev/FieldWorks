@@ -64,34 +64,16 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				return true;
 			}
 			XCore.Command command = (XCore.Command)commandObject;
-
+			var offered = DetailObjectInsertion.IsOfferedOnEntry(entry, command.Id);
 			if (command.Id.EndsWith("AffixProcess"))
 			{
-				var mmt = entry.PrimaryMorphType;
-				bool enable = mmt != null && mmt.IsAffixType;
-				display.Enabled = enable;
-				display.Visible = enable;
-				return true;
+				display.Enabled = offered;
+				display.Visible = offered;
 			}
-
-			//if there aren't any alternate forms, go ahead and let the user choose either kind
-			if (entry.AlternateFormsOS.Count==0)
-				return true;
-
-			if (command.Id.EndsWith("AffixAllomorph"))
+			else if (!offered)
 			{
-				if (!(entry.AlternateFormsOS[0] is IMoAffixAllomorph))
-					display.Visible = false;
-				return true;
+				display.Visible = false;
 			}
-
-			if (command.Id.EndsWith("StemAllomorph"))
-			{
-				if (!(entry.AlternateFormsOS[0] is IMoStemAllomorph))
-					display.Visible = false;
-				return true;
-			}
-
 			return true;//we handled this, no need to ask anyone else.
 		}
 

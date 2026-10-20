@@ -1969,32 +1969,21 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		internal static int InsertObjectIntoVirtualBackref(LcmCache cache, Mediator mediator, PropertyTable propertyTable,
 			int hvoSlice, int clidNewObj, int flid)
 		{
-			var metadata = cache.ServiceLocator.GetInstance<IFwMetaDataCacheManaged>();
-			if (metadata.get_IsVirtual(flid))
+			var sliceObj = cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvoSlice);
+			if (!DetailObjectInsertion.IsVariantInsert(sliceObj, flid, clidNewObj))
+				return -1;
+			using (var dlg = new InsertVariantDlg())
 			{
-				var sliceObj = cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvoSlice);
-				int clidSlice = sliceObj.ClassID;
-				if (clidNewObj == LexEntryTags.kClassId &&
-					clidSlice == LexEntryTags.kClassId)
+				var entOld = (ILexEntry) sliceObj;
+				dlg.SetHelpTopic("khtpInsertVariantDlg");
+				dlg.SetDlgInfo(cache, mediator, propertyTable, entOld);
+				if (dlg.ShowDialog() == DialogResult.OK && dlg.NewlyCreatedVariantEntryRefResult)
 				{
-					if (metadata.GetFieldName(flid) == "VariantFormEntryBackRefs")
-					{
-						using (var dlg = new InsertVariantDlg())
-						{
-							var entOld = (ILexEntry) sliceObj;
-							dlg.SetHelpTopic("khtpInsertVariantDlg");
-							dlg.SetDlgInfo(cache, mediator, propertyTable, entOld);
-							if (dlg.ShowDialog() == DialogResult.OK && dlg.NewlyCreatedVariantEntryRefResult)
-							{
-								return entOld.VariantFormEntryBackRefs.Count();
-							}
-							// say we've handled this.
-							return -2;
-						}
-					}
+					return entOld.VariantFormEntryBackRefs.Count();
 				}
+				// say we've handled this.
+				return -2;
 			}
-			return -1;
 		}
 
 		Slice NextSlice

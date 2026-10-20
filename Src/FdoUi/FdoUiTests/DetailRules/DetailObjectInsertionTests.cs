@@ -11,7 +11,8 @@ namespace SIL.FieldWorks.FdoUi
 {
 	/// <summary>
 	/// The Insert rule of a detail row: which fields take a new object, which object and
-	/// field a row's command resolves to, and where the new object goes.
+	/// field a row's command resolves to, and where the new object goes; which allomorph
+	/// inserts an entry offers, and which entry a variant insert extends.
 	/// </summary>
 	[TestFixture]
 	public class DetailObjectInsertionTests : MemoryOnlyBackendProviderTestBase
@@ -191,6 +192,76 @@ namespace SIL.FieldWorks.FdoUi
 			Assert.That(DetailObjectInsertion.ConcreteClass(_entry, CmObjectTags.kClassId), Is.EqualTo(0),
 				"any other abstract class");
 			Assert.That(DetailObjectInsertion.ConcreteClass(_entry, 0), Is.EqualTo(0));
+		}
+
+		[Test]
+		public void IsOfferedOnEntry_AnAffixProcess_OnlyOnAnAffixEntry()
+		{
+			const string affixProcess = "CmdDataTree-Insert-AffixProcess";
+			Assert.That(DetailObjectInsertion.IsOfferedOnEntry(_entry, affixProcess), Is.False, "a stem entry");
+
+			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () => _entry.LexemeFormOA.MorphTypeRA =
+				Cache.ServiceLocator.GetInstance<IMoMorphTypeRepository>().GetObject(MoMorphTypeTags.kguidMorphSuffix));
+
+			Assert.That(DetailObjectInsertion.IsOfferedOnEntry(_entry, affixProcess), Is.True, "a suffix entry");
+		}
+
+		[Test]
+		public void IsOfferedOnEntry_AStemOrAffixAllomorph_FollowsTheFirstAllomorph()
+		{
+			const string stem = "CmdDataTree-Insert-StemAllomorph";
+			const string affix = "CmdDataTree-Insert-AffixAllomorph";
+			Assert.That(DetailObjectInsertion.IsOfferedOnEntry(_entry, stem), Is.True, "no allomorph yet: either kind");
+			Assert.That(DetailObjectInsertion.IsOfferedOnEntry(_entry, affix), Is.True);
+
+			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
+				_entry.AlternateFormsOS.Add(Cache.ServiceLocator.GetInstance<IMoAffixAllomorphFactory>().Create()));
+
+			Assert.That(DetailObjectInsertion.IsOfferedOnEntry(_entry, stem), Is.False, "the first allomorph is an affix");
+			Assert.That(DetailObjectInsertion.IsOfferedOnEntry(_entry, affix), Is.True);
+			Assert.That(DetailObjectInsertion.IsOfferedOnEntry(_entry, "CmdDataTree-Insert-AlternateForm"), Is.True,
+				"any other insert");
+			Assert.That(DetailObjectInsertion.IsOfferedOnEntry(null, "CmdDataTree-Insert-AlternateForm"), Is.False);
+		}
+
+		[Test]
+		public void IsVariantInsert_IsAnEntryInsertedIntoTheVirtualVariantBackReferences()
+		{
+			var mdc = (IFwMetaDataCacheManaged)Cache.MetaDataCacheAccessor;
+			var backRefs = mdc.GetFieldId2(LexEntryTags.kClassId, DetailObjectInsertion.VariantBackRefField, true);
+
+			Assert.That(DetailObjectInsertion.IsVariantInsert("VariantFormEntryBackRefs", "LexEntry"), Is.True);
+			Assert.That(DetailObjectInsertion.IsVariantInsert("VariantFormEntryBackRefs", "LexSense"), Is.False);
+			Assert.That(DetailObjectInsertion.IsVariantInsert("Senses", "LexEntry"), Is.False);
+			Assert.That(DetailObjectInsertion.IsVariantInsert(_entry, backRefs, LexEntryTags.kClassId), Is.True);
+			Assert.That(DetailObjectInsertion.IsVariantInsert(_sense1, backRefs, LexEntryTags.kClassId), Is.False,
+				"only an entry has variants");
+			Assert.That(DetailObjectInsertion.IsVariantInsert(_entry, backRefs, LexSenseTags.kClassId), Is.False);
+			Assert.That(DetailObjectInsertion.IsVariantInsert(_entry, LexEntryTags.kflidSenses, LexEntryTags.kClassId), Is.False);
+			Assert.That(DetailObjectInsertion.IsVariantInsert(_entry, 0, LexEntryTags.kClassId), Is.False);
+		}
+
+		[Test]
+		public void VariantInsertTarget_IsTheRowsEntry_ElseTheShownEntry()
+		{
+			const string field = DetailObjectInsertion.VariantBackRefField;
+			ILexEntry other = null;
+			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
+				other = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create());
+			try
+			{
+				Assert.That(DetailObjectInsertion.VariantInsertTarget(other, _entry, field, "LexEntry"), Is.SameAs(other),
+					"the row's entry wins");
+				Assert.That(DetailObjectInsertion.VariantInsertTarget(_sense1, _entry, field, "LexEntry"), Is.SameAs(_entry),
+					"a row of another class: the shown entry");
+				Assert.That(DetailObjectInsertion.VariantInsertTarget(_sense1, _sense2, field, "LexEntry"), Is.Null);
+				Assert.That(DetailObjectInsertion.VariantInsertTarget(_entry, _entry, "Senses", "LexSense"), Is.Null,
+					"no variant insert");
+			}
+			finally
+			{
+				NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () => other.Delete());
+			}
 		}
 
 		[Test]
