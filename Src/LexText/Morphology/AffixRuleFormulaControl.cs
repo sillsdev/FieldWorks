@@ -841,7 +841,9 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			var natClasses = new HashSet<ICmObject>();
 			foreach (var nc in m_cache.LangProject.PhonologicalDataOA.NaturalClassesOS)
 			{
-				if (nc.ClassID == PhNCFeaturesTags.kClassId)
+				// Rule mappings only allow feature-based, user-defined natural classes
+				// to be selected.
+				if (nc is IPhNCFeatures featNC && IsFeatureBasedNCUserDefined(featNC))
 					natClasses.Add(nc);
 			}
 			var selectedNc = DisplayChooser(MEStrings.ksRuleNCOpt, MEStrings.ksRuleNCChooserLink,

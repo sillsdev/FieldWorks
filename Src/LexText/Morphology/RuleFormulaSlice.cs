@@ -173,6 +173,12 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		{
 			CheckDisposed();
 			bool enable = RuleFormulaControl.IsNCContextCurrent;
+
+			// If the current context is a feature-based natural class,
+			// we only want to allow jumping to the natural class if it is user-defined.
+			if (RuleFormulaControl.IsFeatsNCContextCurrent)
+				enable = RuleFormulaControl.IsFeatureBasedNCUserDefined();
+
 			display.Enabled = enable;
 			display.Visible = enable;
 			return true;
