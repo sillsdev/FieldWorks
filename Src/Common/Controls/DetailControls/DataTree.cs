@@ -4789,7 +4789,12 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		{
 			foreach (var slice in closeSlices)
 			{
-				if (!slice.IsDisposed && slice.ContainingDataTree == this && slice.TakeFocus(false))
+				if (slice.IsDisposed || slice.ContainingDataTree != this
+					|| (slice.Object != null && !slice.Object.IsValidObject))
+				{
+					continue;
+				}
+				if (slice.TakeFocus(false))
 					break;
 			}
 		}
