@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.Linq;
 using SIL.FieldWorks.Common.FwAvalonia.Detail;
 using SIL.LCModel;
-using SIL.LCModel.Core.KernelInterfaces;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -82,8 +81,15 @@ namespace SIL.FieldWorks.XWorks
 			var setter = Handler(field)?.Text;
 			if (setter == null)
 				return false;
+
+			if (string.IsNullOrEmpty(value) && field.GhostPrompt != null
+				&& IsSessionOwnedBy(field.StableId) && CanRollBackSession)
+			{
+				Cancel();
+				return true;
+			}
 			// A single field's edit names the undo label (e.g. "Undo change to Gloss").
-			return Stage(() => setter(ws, value), FieldLabelFor(field));
+			return Stage(() => setter(ws, value), FieldLabelFor(field), field.StableId);
 		}
 
 		public override bool TrySetRichText(DetailField field, string ws, DetailRichTextValue value)

@@ -21,6 +21,7 @@ namespace SIL.FieldWorks.XWorks
 	public abstract class DetailEditContextBase : IDetailEditContext
 	{
 		private LcmDetailEditSession _session;
+		private string _sessionOwnerKey;
 		private readonly Dictionary<string, Func<bool>> _pendingEditFlushes =
 			new Dictionary<string, Func<bool>>(StringComparer.Ordinal);
 
@@ -154,14 +155,30 @@ namespace SIL.FieldWorks.XWorks
 		/// <inheritdoc />
 		public void Commit()
 		{
+			_sessionOwnerKey = null;
 			_session?.Commit();
 		}
 
 		/// <inheritdoc />
 		public void Cancel()
 		{
+			_sessionOwnerKey = null;
 			_session?.Cancel();
 		}
+
+		/// <summary>
+		/// Whether every write in the open session was staged under <paramref name="ownerKey"/>.
+		/// False when no session is open or the key is null.
+		/// </summary>
+		protected bool IsSessionOwnedBy(string ownerKey)
+			=> IsOpen && ownerKey != null
+				&& string.Equals(_sessionOwnerKey, ownerKey, StringComparison.Ordinal);
+
+		/// <summary>
+		/// Whether <see cref="Cancel"/> would roll back the open session's writes. False when the
+		/// session joined an undo task opened elsewhere, which only that task's opener can end.
+		/// </summary>
+		protected bool CanRollBackSession => _session != null && _session.CanRollBack;
 
 		/// <summary>
 		/// Opens the fenced session on the first staged edit; later calls are no-ops. The generic
@@ -231,6 +248,15 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		public bool Stage(Func<bool> setter, string fieldLabel)
 		{
+			return Stage(setter, fieldLabel, null);
+		}
+
+		/// <summary>
+		/// As <see cref="Stage(Func{bool}, string)"/>, recording a write that stages under
+		/// <paramref name="ownerKey"/> for <see cref="IsSessionOwnedBy"/>.
+		/// </summary>
+		protected bool Stage(Func<bool> setter, string fieldLabel, string ownerKey)
+		{
 			if (setter == null)
 				return false;
 			var wasOpen = IsOpen;
@@ -238,14 +264,25 @@ namespace SIL.FieldWorks.XWorks
 			try
 			{
 				var staged = setter();
-				if (!staged && !wasOpen)
+				if (staged)
+				{
+					if (!wasOpen)
+						_sessionOwnerKey = ownerKey;
+					else if (!string.Equals(_sessionOwnerKey, ownerKey, StringComparison.Ordinal))
+						_sessionOwnerKey = null;
+				}
+				else if (!wasOpen)
+				{
 					Cancel();
+				}
 				return staged;
 			}
 			catch
 			{
 				if (!wasOpen)
 					Cancel();
+				else
+					_sessionOwnerKey = null; // a throwing setter may have written before it threw
 				throw;
 			}
 		}

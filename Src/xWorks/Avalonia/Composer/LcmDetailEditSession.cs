@@ -43,6 +43,12 @@ namespace SIL.FieldWorks.XWorks
 		/// <inheritdoc />
 		public bool IsOpen { get; private set; }
 
+		/// <summary>
+		/// Whether <see cref="Cancel"/> would roll back this session's writes: it is open and
+		/// owns its undo task, which is still the open one.
+		/// </summary>
+		public bool CanRollBack => IsOpen && _ownsTask && TaskStillOpen;
+
 		/// <inheritdoc />
 		public void Commit()
 		{
