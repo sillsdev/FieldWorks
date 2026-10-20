@@ -1672,6 +1672,55 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
+		public void Compose_GhostExample_ClearedAfterAnotherRowsRejectedEdit_CreatesNothing()
+		{
+			var sense = m_entry.SensesOS[0];
+			var composed = DetailComposer.Compose(m_entry, Cache);
+			var gloss = composed.Model.Fields.First(f => f.Field == "Gloss" && f.ObjectHvo == sense.Hvo);
+			var ghost = ExampleGhost(composed, sense);
+
+			TypeInto(composed, ghost, "u");
+			var glossStaged = composed.EditContext.TrySetText(gloss, "no-such-ws", "home");
+			var clearStaged = composed.EditContext.TrySetText(ghost, ghost.Values[0].WsAbbrev, "");
+			var sessionOpenAfterClear = composed.EditContext.IsOpen;
+			var examplesAfterClear = sense.ExamplesOS.Count;
+			// Close the session first, so a failure cannot break the next test's setup.
+			composed.EditContext.Commit();
+
+			Assert.That(glossStaged, Is.False, "precondition: the gloss row rejects an unknown writing system");
+			Assert.That(clearStaged, Is.True);
+			Assert.That(sessionOpenAfterClear, Is.False,
+				"a rejected edit wrote nothing, so the session still holds only the ghost row's edits");
+			Assert.That(examplesAfterClear, Is.Zero, "clearing the row removes the example it created");
+		}
+
+		// An undo task opened before the row is typed into belongs to its opener, and cancelling
+		// the edit session cannot roll it back.
+		[Test]
+		public void Compose_GhostExample_ClearedInsideAnOuterUndoTask_KeepsNoTypedText()
+		{
+			var sense = m_entry.SensesOS[0];
+			var composed = DetailComposer.Compose(m_entry, Cache);
+			var ghost = ExampleGhost(composed, sense);
+
+			Cache.DomainDataByFlid.BeginUndoTask("outer", "outer");
+			try
+			{
+				TypeInto(composed, ghost, "u");
+				Assert.That(composed.EditContext.TrySetText(ghost, ghost.Values[0].WsAbbrev, ""), Is.True,
+					"clearing the row is accepted");
+				composed.EditContext.Commit();
+			}
+			finally
+			{
+				Cache.DomainDataByFlid.EndUndoTask();
+			}
+
+			Assert.That(sense.ExamplesOS.Select(e => e.Example.get_String(Cache.DefaultVernWs).Text ?? ""),
+				Has.All.Empty, "the text the user cleared is not saved by the outer task");
+		}
+
+		[Test]
 		public void Compose_GhostSubsense_TypingCreatesASubsense_WithTheTypedGloss()
 		{
 			var sense = m_entry.SensesOS[0];

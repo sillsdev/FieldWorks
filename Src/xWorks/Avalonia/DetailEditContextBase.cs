@@ -175,6 +175,12 @@ namespace SIL.FieldWorks.XWorks
 				&& string.Equals(_sessionOwnerKey, ownerKey, StringComparison.Ordinal);
 
 		/// <summary>
+		/// Whether <see cref="Cancel"/> would roll back the open session's writes. False when the
+		/// session joined an undo task opened elsewhere, which only that task's opener can end.
+		/// </summary>
+		protected bool CanRollBackSession => _session != null && _session.CanRollBack;
+
+		/// <summary>
 		/// Opens the fenced session on the first staged edit; later calls are no-ops. The generic
 		/// "Undo/Redo Edit Entry" label is used -- the batch/bulk path that stages several fields
 		/// with no
@@ -246,7 +252,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
-		/// As <see cref="Stage(Func{bool}, string)"/>, recording the write under
+		/// As <see cref="Stage(Func{bool}, string)"/>, recording a write that stages under
 		/// <paramref name="ownerKey"/> for <see cref="IsSessionOwnedBy"/>.
 		/// </summary>
 		protected bool Stage(Func<bool> setter, string fieldLabel, string ownerKey)
@@ -254,22 +260,29 @@ namespace SIL.FieldWorks.XWorks
 			if (setter == null)
 				return false;
 			var wasOpen = IsOpen;
-			if (!wasOpen)
-				_sessionOwnerKey = ownerKey;
-			else if (!string.Equals(_sessionOwnerKey, ownerKey, StringComparison.Ordinal))
-				_sessionOwnerKey = null;
 			EnsureOpen(fieldLabel);
 			try
 			{
 				var staged = setter();
-				if (!staged && !wasOpen)
+				if (staged)
+				{
+					if (!wasOpen)
+						_sessionOwnerKey = ownerKey;
+					else if (!string.Equals(_sessionOwnerKey, ownerKey, StringComparison.Ordinal))
+						_sessionOwnerKey = null;
+				}
+				else if (!wasOpen)
+				{
 					Cancel();
+				}
 				return staged;
 			}
 			catch
 			{
 				if (!wasOpen)
 					Cancel();
+				else
+					_sessionOwnerKey = null; // a throwing setter may have written before it threw
 				throw;
 			}
 		}

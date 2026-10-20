@@ -83,7 +83,7 @@ namespace SIL.FieldWorks.XWorks
 				return false;
 
 			if (string.IsNullOrEmpty(value) && field.GhostPrompt != null
-				&& IsSessionOwnedBy(field.StableId))
+				&& IsSessionOwnedBy(field.StableId) && CanRollBackSession)
 			{
 				Cancel();
 				return true;
