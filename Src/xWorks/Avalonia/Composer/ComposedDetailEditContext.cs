@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.Linq;
 using SIL.FieldWorks.Common.FwAvalonia.Detail;
 using SIL.LCModel;
-using SIL.LCModel.Core.KernelInterfaces;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -82,7 +81,7 @@ namespace SIL.FieldWorks.XWorks
 			var setter = Handler(field)?.Text;
 			if (setter == null)
 				return false;
-			// A ghost row cleared while it owns the session creates nothing (LT-22690).
+
 			if (string.IsNullOrEmpty(value) && field.GhostPrompt != null
 				&& IsSessionOwnedBy(field.StableId))
 			{
