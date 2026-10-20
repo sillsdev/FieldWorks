@@ -25,3 +25,13 @@ DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVI
 DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
 WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
 ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+## Andika 7.000 (https://software.sil.org/andika/):
+
+The FieldWorks Avalonia interface draws in Andika, copyright (c) 2004-2025 SIL Global, with
+Reserved Font Names "Andika" and "SIL". The font files are unmodified.
+
+### License
+
+SIL Open Font License, Version 1.1. The full text is in
+`Src/Common/FwAvaloniaTheme/Assets/Fonts/OFL.txt`, embedded in FwAvaloniaTheme.dll beside the font.

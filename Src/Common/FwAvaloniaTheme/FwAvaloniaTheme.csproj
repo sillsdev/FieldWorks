@@ -32,6 +32,12 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<!-- Andika 7.000 plus its licence and notice, so the OFL text travels inside the assembly
+		     with the font. Registered at startup by FwUiFont as the "fonts:FieldWorks" collection. -->
+		<AvaloniaResource Include="Assets\Fonts\*.ttf;Assets\Fonts\OFL.txt;Assets\Fonts\NOTICE.txt" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<Compile Include="..\..\CommonAssemblyInfo.cs" Link="Properties\CommonAssemblyInfo.cs" />
 	</ItemGroup>
 

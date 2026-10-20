@@ -1,0 +1,16 @@
+Andika 7.000
+
+Copyright (c) 2004-2025 SIL Global (https://www.sil.org/), with Reserved Font Names "Andika" and "SIL".
+Source: https://software.sil.org/andika/
+License: SIL Open Font License, Version 1.1. The full text is in OFL.txt beside this file.
+
+The font files are unmodified copies of the upstream release. They are embedded in
+FwAvaloniaTheme.dll so the FieldWorks Avalonia interface draws in Andika on machines where it
+is not installed.
+
+SHA-256 of each file:
+- Andika-Regular.ttf: 27484fdc98d0d63f90407f8266e28295f6fb16d2b13c5024df0214f17152919a
+- Andika-Italic.ttf: b5a2d47f6205a6b885e5a8ff6a29b5430c35222dc4dfe27158a0da3e9f853580
+- Andika-Bold.ttf: 3ad43a77a29ea060528be69a9e0e81c9dbbe8dff894a26ae1818d3c472393319
+- Andika-BoldItalic.ttf: dc5bdeb0a2c053d7c41d8985596ae76f08319814fd354fa4379a7008237a2825
+- Andika-SemiBold.ttf: 73c4df767769af2e545bf66ca4caabd4294ce61eb7206a9908eedfd6a7cc965e
