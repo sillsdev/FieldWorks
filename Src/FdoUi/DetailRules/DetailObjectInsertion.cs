@@ -2,6 +2,7 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System;
 using System.Collections.Generic;
 using SIL.LCModel;
 using SIL.LCModel.Core.Cellar;
@@ -13,8 +14,9 @@ namespace SIL.FieldWorks.Common.DetailRules
 {
 	/// <summary>
 	/// The Insert command of a detail row (message DataTreeInsert): whether a field can take
-	/// a new object now, which object and field the row's command inserts into, and where.
-	/// Creation stays with <c>CmObjectUi.CreateNewUiObject</c>.
+	/// a new object now, which object and field the row's command inserts into, and where;
+	/// which allomorph inserts an entry offers, and which entry a variant insert extends.
+	/// Creation stays with <c>CmObjectUi.CreateNewUiObject</c> and the variant dialog.
 	/// </summary>
 	public static class DetailObjectInsertion
 	{
@@ -23,6 +25,9 @@ namespace SIL.FieldWorks.Common.DetailRules
 
 		/// <summary>The insertion position of a new object in an owning atomic field.</summary>
 		public const int AtomicPosition = -2;
+
+		/// <summary>The entry's virtual field of its variants' entry refs.</summary>
+		public const string VariantBackRefField = "VariantFormEntryBackRefs";
 
 		/// <summary>
 		/// Whether a new object can go into <paramref name="fieldName"/> of
@@ -148,6 +153,62 @@ namespace SIL.FieldWorks.Common.DetailRules
 			if (classId == MoFormTags.kClassId && owner is ILexEntry entry)
 				return entry.GetDefaultClassForNewAllomorph();
 			return 0;
+		}
+
+		/// <summary>
+		/// Whether an entry offers an allomorph Insert command, chosen by the end of its id:
+		/// Insert Affix Process only on an affix entry; Insert Stem or Affix Allomorph while the
+		/// entry has no allomorph or its first is of that kind. It offers any other command.
+		/// </summary>
+		public static bool IsOfferedOnEntry(ILexEntry entry, string commandId)
+		{
+			if (entry == null || !entry.IsValidObject)
+				return false;
+			if (commandId.EndsWith("AffixProcess", StringComparison.Ordinal))
+				return entry.PrimaryMorphType != null && entry.PrimaryMorphType.IsAffixType;
+			if (entry.AlternateFormsOS.Count == 0)
+				return true;
+			if (commandId.EndsWith("AffixAllomorph", StringComparison.Ordinal))
+				return entry.AlternateFormsOS[0] is IMoAffixAllomorph;
+			if (commandId.EndsWith("StemAllomorph", StringComparison.Ordinal))
+				return entry.AlternateFormsOS[0] is IMoStemAllomorph;
+			return true;
+		}
+
+		/// <summary>
+		/// Whether a command inserting a <paramref name="className"/> into
+		/// <paramref name="fieldName"/> adds a variant to an entry: an entry, new or existing,
+		/// linked through the entry's virtual variant back references, which a dialog chooses.
+		/// </summary>
+		public static bool IsVariantInsert(string fieldName, string className)
+			=> fieldName == VariantBackRefField && className == "LexEntry";
+
+		/// <summary>
+		/// Whether inserting a <paramref name="classId"/> into <paramref name="flid"/> of
+		/// <paramref name="target"/> adds a variant to it, as
+		/// <see cref="IsVariantInsert(string, string)"/> describes.
+		/// </summary>
+		public static bool IsVariantInsert(ICmObject target, int flid, int classId)
+		{
+			if (!(target is ILexEntry) || classId != LexEntryTags.kClassId || flid == 0)
+				return false;
+			var mdc = (IFwMetaDataCacheManaged)target.Cache.MetaDataCacheAccessor;
+			return mdc.get_IsVirtual(flid) && mdc.GetFieldName(flid) == VariantBackRefField;
+		}
+
+		/// <summary>
+		/// The entry a row's variant insert adds a variant to: the row's object when it is an
+		/// entry, else the shown record when it is one. Null when neither is, or the command
+		/// is no variant insert.
+		/// </summary>
+		public static ILexEntry VariantInsertTarget(ICmObject rowObject, ICmObject root, string fieldName,
+			string className)
+		{
+			if (!IsVariantInsert(fieldName, className))
+				return null;
+			if (rowObject is ILexEntry entry && entry.IsValidObject)
+				return entry;
+			return root is ILexEntry shown && shown.IsValidObject ? shown : null;
 		}
 
 		/// <summary>
