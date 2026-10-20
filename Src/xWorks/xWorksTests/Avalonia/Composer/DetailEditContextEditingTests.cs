@@ -1555,6 +1555,160 @@ namespace SIL.FieldWorks.XWorks
 				"no bare object was created behind the user's back");
 		}
 
+		// The sense's Examples ghost row (ghost="Example" ghostWs="vernacular").
+		private static DetailField ExampleGhost(ComposedDetail composed, ILexSense sense)
+			=> composed.Model.Fields.FirstOrDefault(f => f.Field == "Examples"
+				&& f.StableId.EndsWith(DetailField.GhostStableIdSuffix) && f.ObjectHvo == sense.Hvo);
+
+		// The sense's own Senses ghost row, labelled SubSenses. The layout gives it no ghost=
+		// attribute; LT-22690 approves the row, typing into it the new subsense's Gloss.
+		private static DetailField SubsenseGhost(ComposedDetail composed, ILexSense sense)
+			=> composed.Model.Fields.FirstOrDefault(f => f.Field == "Senses"
+				&& f.StableId.EndsWith(DetailField.GhostStableIdSuffix) && f.ObjectHvo == sense.Hvo);
+
+		// Stages text the way the view does, one value per keystroke.
+		private static void TypeInto(ComposedDetail composed, DetailField field, string text)
+		{
+			for (var length = 1; length <= text.Length; length++)
+			{
+				Assert.That(composed.EditContext.TrySetText(field, field.Values[0].WsAbbrev,
+					text.Substring(0, length)), Is.True, "each keystroke stages");
+			}
+		}
+
+		[Test]
+		public void Compose_GhostExample_TypingCreatesTheExample_AndRecomposesIntoItsRows()
+		{
+			var sense = m_entry.SensesOS[0];
+			var composed = DetailComposer.Compose(m_entry, Cache);
+			var ghost = ExampleGhost(composed, sense);
+			Assert.That(ghost, Is.Not.Null, "a sense with no examples shows the Example ghost row");
+			Assert.That(ghost.IsEditable, Is.True);
+			Assert.That(ghost.GhostPrompt, Does.Contain("Example"));
+
+			TypeInto(composed, ghost, "una casa");
+			composed.EditContext.Commit();
+
+			Assert.That(sense.ExamplesOS.Count, Is.EqualTo(1), "typing created the example");
+			var example = sense.ExamplesOS[0];
+			Assert.That(example.Example.get_String(Cache.DefaultVernWs).Text, Is.EqualTo("una casa"),
+				"the typed text landed in the Example field, in the vernacular writing system");
+
+			var recomposed = DetailComposer.Compose(m_entry, Cache);
+			Assert.That(ExampleGhost(recomposed, sense), Is.Null,
+				"with an example present the ghost row gives way to the example's own rows");
+			var exampleRow = recomposed.Model.Fields.FirstOrDefault(f =>
+				f.Field == "Example" && f.ObjectHvo == example.Hvo);
+			Assert.That(exampleRow, Is.Not.Null, "the new example composes its Example row");
+			Assert.That(exampleRow.Values.Any(v => v.Value == "una casa"), Is.True,
+				"the Example row shows the typed text");
+		}
+
+		[Test]
+		public void Compose_GhostExample_CreationAndTyping_AreOneUndoStep()
+		{
+			var sense = m_entry.SensesOS[0];
+			var composed = DetailComposer.Compose(m_entry, Cache);
+			var stepsBefore = Cache.ActionHandlerAccessor.UndoableSequenceCount;
+
+			TypeInto(composed, ExampleGhost(composed, sense), "una casa");
+			composed.EditContext.Commit();
+			Assert.That(Cache.ActionHandlerAccessor.UndoableSequenceCount, Is.EqualTo(stepsBefore + 1),
+				"creating the example and every keystroke typed into it are one undo step");
+
+			Cache.ActionHandlerAccessor.Undo();
+			Assert.That(sense.ExamplesOS.Count, Is.Zero, "one undo removes the example");
+			Assert.That(ExampleGhost(DetailComposer.Compose(m_entry, Cache), sense), Is.Not.Null,
+				"after the undo the sense shows its Example ghost row again");
+		}
+
+		[Test]
+		public void Compose_GhostExample_TypedThenCleared_CreatesNothing()
+		{
+			var sense = m_entry.SensesOS[0];
+			var composed = DetailComposer.Compose(m_entry, Cache);
+			var ghost = ExampleGhost(composed, sense);
+			var stepsBefore = Cache.ActionHandlerAccessor.UndoableSequenceCount;
+
+			TypeInto(composed, ghost, "un");
+			Assert.That(sense.ExamplesOS.Count, Is.EqualTo(1), "the first keystroke creates the example");
+			Assert.That(composed.EditContext.TrySetText(ghost, ghost.Values[0].WsAbbrev, "u"), Is.True);
+			Assert.That(composed.EditContext.TrySetText(ghost, ghost.Values[0].WsAbbrev, ""), Is.True,
+				"clearing the row is accepted");
+			var sessionOpenAfterClear = composed.EditContext.IsOpen;
+			var examplesAfterClear = sense.ExamplesOS.Count;
+			// Closes the session before asserting, so a failure here cannot leave the next
+			// test's setup inside an open undo task.
+			composed.EditContext.Commit();
+
+			Assert.That(sessionOpenAfterClear, Is.False, "clearing the row ends its edit session");
+			Assert.That(examplesAfterClear, Is.Zero, "clearing the row removes the example it created");
+			Assert.That(Cache.ActionHandlerAccessor.UndoableSequenceCount, Is.EqualTo(stepsBefore),
+				"nothing reaches the undo stack, not even a step that changes nothing");
+
+			TypeInto(composed, ghost, "b");
+			composed.EditContext.Commit();
+			Assert.That(sense.ExamplesOS.Count, Is.EqualTo(1), "typing again creates the example afresh");
+			Assert.That(sense.ExamplesOS[0].Example.get_String(Cache.DefaultVernWs).Text, Is.EqualTo("b"));
+		}
+
+		// Clearing the ghost row must not cancel an edit another row staged into the same
+		// session.
+		[Test]
+		public void Compose_GhostExample_ClearedAfterAnotherRowsEdit_KeepsThatEdit()
+		{
+			var sense = m_entry.SensesOS[0];
+			var composed = DetailComposer.Compose(m_entry, Cache);
+			var gloss = composed.Model.Fields.First(f => f.Field == "Gloss" && f.ObjectHvo == sense.Hvo);
+			var ghost = ExampleGhost(composed, sense);
+
+			var glossStaged = composed.EditContext.TrySetText(gloss, gloss.Values[0].WsAbbrev, "home");
+			var typedStaged = composed.EditContext.TrySetText(ghost, ghost.Values[0].WsAbbrev, "u");
+			var clearStaged = composed.EditContext.TrySetText(ghost, ghost.Values[0].WsAbbrev, "");
+			var sessionOpenAfterClear = composed.EditContext.IsOpen;
+			// Closes the session before asserting, so a failure here cannot leave the next
+			// test's setup inside an open undo task.
+			composed.EditContext.Commit();
+
+			Assert.That(glossStaged && typedStaged && clearStaged, Is.True, "every edit stages");
+			Assert.That(sessionOpenAfterClear, Is.True,
+				"the session holds another row's edit, so clearing the ghost row does not cancel it");
+			Assert.That(sense.Gloss.get_String(Cache.DefaultAnalWs).Text, Is.EqualTo("home"),
+				"the other row's edit is saved");
+		}
+
+		[Test]
+		public void Compose_GhostSubsense_TypingCreatesASubsense_WithTheTypedGloss()
+		{
+			var sense = m_entry.SensesOS[0];
+			var composed = DetailComposer.Compose(m_entry, Cache);
+			var ghost = SubsenseGhost(composed, sense);
+			Assert.That(ghost, Is.Not.Null, "a sense with no subsenses shows the SubSenses ghost row");
+			Assert.That(ghost.IsEditable, Is.True);
+			var stepsBefore = Cache.ActionHandlerAccessor.UndoableSequenceCount;
+
+			TypeInto(composed, ghost, "small house");
+			composed.EditContext.Commit();
+
+			Assert.That(sense.SensesOS.Count, Is.EqualTo(1), "typing created the subsense");
+			var subsense = sense.SensesOS[0];
+			Assert.That(subsense.Gloss.get_String(Cache.DefaultAnalWs).Text, Is.EqualTo("small house"),
+				"the typed text became the subsense's gloss");
+			Assert.That(Cache.ActionHandlerAccessor.UndoableSequenceCount, Is.EqualTo(stepsBefore + 1),
+				"creating the subsense and typing its gloss are one undo step");
+
+			var recomposed = DetailComposer.Compose(m_entry, Cache);
+			Assert.That(SubsenseGhost(recomposed, sense), Is.Null,
+				"with a subsense present the ghost row gives way to the subsense's own rows");
+			Assert.That(recomposed.Model.Fields.Any(f => f.Field == "Gloss" && f.ObjectHvo == subsense.Hvo),
+				Is.True, "the new subsense composes its Gloss row");
+
+			Cache.ActionHandlerAccessor.Undo();
+			Assert.That(sense.SensesOS.Count, Is.Zero, "one undo removes the subsense");
+			Assert.That(SubsenseGhost(DetailComposer.Compose(m_entry, Cache), sense), Is.Not.Null,
+				"after the undo the sense shows its SubSenses ghost row again");
+		}
+
 		// Conditional display: the real shipped variant/complex-form
 		// divergence. LexEntryRef/Normal's VariantEntryTypes and ComplexEntryTypes parts are
 		// <if field="RefType" intequals="0|1"> twins (LexEntryParts.xml:1133-1162); exactly one may

@@ -82,8 +82,16 @@ namespace SIL.FieldWorks.XWorks
 			var setter = Handler(field)?.Text;
 			if (setter == null)
 				return false;
+			// A ghost row cleared before the user leaves it creates nothing (LT-22690): when its
+			// edits are the whole open session, roll back the object its first keystroke made.
+			if (string.IsNullOrEmpty(value) && field.GhostPrompt != null
+				&& IsSessionOwnedBy(field.StableId))
+			{
+				Cancel();
+				return true;
+			}
 			// A single field's edit names the undo label (e.g. "Undo change to Gloss").
-			return Stage(() => setter(ws, value), FieldLabelFor(field));
+			return Stage(() => setter(ws, value), FieldLabelFor(field), field.StableId);
 		}
 
 		public override bool TrySetRichText(DetailField field, string ws, DetailRichTextValue value)
