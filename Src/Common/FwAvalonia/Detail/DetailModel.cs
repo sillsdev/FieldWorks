@@ -1702,6 +1702,12 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			set => _expansionKey = value;
 		}
 
+		/// <summary>
+		/// The text a collapsible header shows while collapsed; null when it shows
+		/// <see cref="Label"/> in both states.
+		/// </summary>
+		public string CollapsedLabel { get; set; }
+
 		/// <summary>Legacy slice menu id (layout `menu=`) for right-click on the row/label (13.x).</summary>
 		public string MenuId { get; }
 

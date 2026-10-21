@@ -342,6 +342,31 @@ namespace FwAvaloniaTests
 				"the link is not the button theme's semibold");
 		}
 
+		// LT-22689: a header with a collapsed line (a sense, etymology, extended note or
+		// subrecord) shows it while collapsed and its own label while expanded.
+		[AvaloniaTest]
+		public void CollapsibleHeader_ShowsItsCollapsedLine_OnlyWhileCollapsed()
+		{
+			var sense = Header("sense", "Sense 1", 0);
+			sense.CollapsedLabel = "Sense 1 - house - n";
+			var note = Header("note", "Extended Note", 0, expanded: false);
+			note.CollapsedLabel = "Extended Note - use - formal";
+			var view = Show(sense, Text("g1", "Gloss", 1), note, Text("d1", "Discussion", 1));
+			string Shown(string id) => SectionHeader(view, id).GetVisualDescendants().OfType<TextBlock>().Single().Text;
+
+			Assert.That(Shown("sense"), Is.EqualTo("Sense 1"));
+			Assert.That(Shown("note"), Is.EqualTo("Extended Note - use - formal"),
+				"a header that starts collapsed shows its collapsed line");
+
+			ClickHeader(SectionHeader(view, "sense"));
+			Assert.That(Shown("sense"), Is.EqualTo("Sense 1 - house - n"));
+			Assert.That(AutomationProperties.GetName(SectionHeader(view, "sense")), Is.EqualTo("Sense 1 - house - n"),
+				"assistive technology reads the line that is shown");
+
+			ClickHeader(SectionHeader(view, "sense"));
+			Assert.That(Shown("sense"), Is.EqualTo("Sense 1"));
+		}
+
 		[AvaloniaTest]
 		public void HeaderWithNothingUnderIt_DrawsNoBox_AndIgnoresClicks()
 		{

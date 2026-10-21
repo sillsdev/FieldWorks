@@ -752,8 +752,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				Control header;
 				if (field.IsCollapsible)
 				{
-					var button = new DetailSectionHeader(headerLabel, IsExpanded(field),
-						_toggleableHeaders.Contains(row));
+					var button = new DetailSectionHeader(headerLabel, field.CollapsedLabel,
+						IsExpanded(field), _toggleableHeaders.Contains(row));
 					button.Click += (s, e) => ToggleSection(field, button);
 					shown.Header = button;
 					header = button;
@@ -766,12 +766,12 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 					// A null background only hit-tests the glyphs; the whole header area must
 					// take the right-click.
 					label.Background = FwAvaloniaDensity.TransparentBrush;
+					AutomationProperties.SetName(label, field.Label ?? string.Empty);
 					header = label;
 				}
 
 				header.Margin = new Thickness(indent.Left, 4, 0, FwAvaloniaDensity.FieldSpacing);
 				AutomationProperties.SetAutomationId(header, automationId);
-				AutomationProperties.SetName(header, field.Label ?? string.Empty);
 				// The header answers right-click with its slice menu; the hover
 				// "..." field-menu button (in a thin gutter to the left of the header)
 				// opens the section menu/hotlinks.

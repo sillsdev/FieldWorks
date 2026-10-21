@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Xml;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.Controls;
@@ -358,16 +359,16 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(m_sense1.ExtendedNoteOS[2], Is.SameAs(m_note2), "the new note sits between the two");
 		}
 
-		// The Extended Notes section shows only with data, so no prompt row inserts the first.
+		// No section row sits over a sense's notes; the sense's own menu inserts one last.
 		[Test]
-		public void InsertExtendedNote_FromTheSectionRow_GoesLast()
+		public void InsertExtendedNote_FromTheSenseMenu_GoesLast()
 		{
-			var section = Rows(m_entry).Single(f => f.MenuId == "mnuDataTree-ExtendedNotes" && f.ObjectHvo == m_sense1.Hvo);
-			Assert.That(section.Kind, Is.EqualTo(DetailFieldKind.Header), "precondition: the section header binds the id");
-			Assert.That(Rows(m_entry).Any(f => f.MenuId == "mnuDataTree-ExtendedNotes" && f.ObjectHvo == m_sense2.Hvo), Is.False,
-				"precondition: the second sense has no note, so no section row");
+			var sense = HeaderRowOf(m_sense1);
+			Assert.That(sense.MenuId, Is.EqualTo("mnuDataTree-Sense"), "precondition: the sense header binds its menu");
+			Assert.That(Rows(m_entry).Any(f => f.MenuId == "mnuDataTree-ExtendedNotes"), Is.False,
+				"precondition: no section row over the notes");
 
-			InvokeLabelMenuItem(section, "Insert Extended Note");
+			InvokeLabelMenuItem(sense, "Insert Extended Note");
 
 			Assert.That(m_sense1.ExtendedNoteOS, Has.Count.EqualTo(3));
 			Assert.That(m_sense1.ExtendedNoteOS[1], Is.SameAs(m_note2), "the new note is last");
@@ -505,7 +506,14 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var window = m_propertyTable.GetValue<XWindow>("window");
 			var request = DetailMenuRequest.FromAnchor(null, row, kind);
-			var items = XCoreMenuBridge.CreateMenuItems(window, ids, null, null, m_view.CreateMenuAuthority(request));
+			var authority = m_view.CreateMenuAuthority(request);
+			// As in the host, a menu no authority fully owns targets the adapter at the row.
+			if (!XCoreMenuBridge.OwnsAll(authority, ids))
+			{
+				typeof(RecordEditView).GetMethod("SyncMenuCommandAdapter", BindingFlags.Instance | BindingFlags.NonPublic)
+					.Invoke(m_view, new object[] { row });
+			}
+			var items = XCoreMenuBridge.CreateMenuItems(window, ids, null, null, authority);
 			var item = items.FirstOrDefault(i => i.Label == label);
 			Assert.That(item, Is.Not.Null, "the menu offers '{0}'", label);
 			Assert.That(item.Execute, Is.Not.Null, "'{0}' is enabled", label);

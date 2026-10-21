@@ -1356,27 +1356,30 @@ namespace SIL.FieldWorks.XWorks
 				"a subsense header indents under its sense");
 		}
 
+		// LT-22689: sense headers read "Sense 1" and "Sense 1.1" while expanded, and add the
+		// gloss and grammatical info while collapsed, as the WinForms sense summary does.
 		[Test]
-		public void Compose_SenseHeaders_UseHierarchicalNumbering_WithGlossSummary()
+		public void Compose_SenseHeaders_UseHierarchicalNumbers_AndTheGlossWhileCollapsed()
 		{
+			ILexSense sub = null;
 			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
 			{
-				var sub = Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
+				sub = Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
 				m_entry.SensesOS[0].SensesOS.Add(sub);
 				sub.Gloss.set_String(Cache.DefaultAnalWs, TsStringUtils.MakeString("subgloss", Cache.DefaultAnalWs));
 			});
 
-			var fields = DetailComposer.Compose(m_entry, Cache).Model.Fields;
-			var headers = fields.Where(f => f.Kind == DetailFieldKind.Header).Select(f => f.Label).ToList();
+			var senseHeaders = DetailComposer.Compose(m_entry, Cache).Model.Fields
+				.Where(f => f.Kind == DetailFieldKind.Header && f.Field == "Senses").ToList();
+			var top = senseHeaders.Single(h => h.ObjectHvo == m_entry.SensesOS[0].Hvo);
+			var nested = senseHeaders.Single(h => h.ObjectHvo == sub.Hvo);
+			var gloss = m_entry.SensesOS[0].Gloss.get_String(Cache.DefaultAnalWs).Text;
 
-			Assert.That(headers.Any(h => h.StartsWith("1 ") || h.StartsWith("1 ") || h.StartsWith("1 ", System.StringComparison.Ordinal) || h.StartsWith("1")), Is.True,
-				"top senses are numbered: " + string.Join(" | ", headers));
-			Assert.That(headers.Any(h => h.StartsWith("1.1")), Is.True,
-				"subsenses use hierarchical numbers (1.1): " + string.Join(" | ", headers));
-			Assert.That(headers.Any(h => h.Contains("gloss 1")), Is.True,
-				"sense headers carry the gloss summary like legacy sense lines");
-			Assert.That(fields.First(f => f.Label != null && f.Label.StartsWith("1.1")).IsCollapsible, Is.True,
-				"sense items are collapsible");
+			Assert.That(top.Label, Is.EqualTo("Sense 1"));
+			Assert.That(nested.Label, Is.EqualTo("Sense 1.1"));
+			Assert.That(top.CollapsedLabel, Does.StartWith("Sense 1 - " + gloss + " - "));
+			Assert.That(nested.CollapsedLabel, Does.StartWith("Sense 1.1 - subgloss - "));
+			Assert.That(nested.IsCollapsible, Is.True);
 		}
 
 		[Test]
