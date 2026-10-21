@@ -1127,7 +1127,8 @@ namespace FwAvaloniaTests
 				isEditable: true, indent: 0, ghostPrompt: "Click here to add Lexeme Form");
 			var model = new DetailModel("LexEntry", "Normal",
 				new List<DetailField> { ghost }, new List<ViewDiagnostic>());
-			var view = new DataTree(model, new FakeDetailEditContext());
+			var context = new FakeDetailEditContext();
+			var view = new DataTree(model, context);
 			var window = new Window { Content = view, Width = 480, Height = 200 };
 			window.Show();
 			Dispatcher.UIThread.RunJobs();
@@ -1144,6 +1145,9 @@ namespace FwAvaloniaTests
 			Dispatcher.UIThread.RunJobs();
 			Assert.That(box.Watermark, Is.EqualTo("Click here to add Lexeme Form"),
 				"leaving without typing restores the prompt");
+			Assert.That(context.TextEdits, Is.Empty,
+				"focusing and leaving the ghost row stages nothing, so nothing is created");
+			Assert.That(context.CommitCount, Is.Zero, "with nothing staged there is nothing to save");
 		}
 
 		// A search-backed reference vector (SearchOptions

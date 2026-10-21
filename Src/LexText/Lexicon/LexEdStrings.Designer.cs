@@ -268,15 +268,6 @@ namespace SIL.FieldWorks.XWorks.LexEd {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Alternate Forms.
-        /// </summary>
-        internal static string ksAlternateForms {
-            get {
-                return ResourceManager.GetString("ksAlternateForms", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Always visible.
         /// </summary>
         internal static string ksAlwaysVisible {
@@ -363,87 +354,6 @@ namespace SIL.FieldWorks.XWorks.LexEd {
         internal static string ksCircularRefsFixed {
             get {
                 return ResourceManager.GetString("ksCircularRefsFixed", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Warning!.
-        /// </summary>
-        internal static string ksConvertFormLoseCaption {
-            get {
-                return ResourceManager.GetString("ksConvertFormLoseCaption", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The environment will be lost! Do you still want to continue?.
-        /// </summary>
-        internal static string ksConvertFormLoseEnv {
-            get {
-                return ResourceManager.GetString("ksConvertFormLoseEnv", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The environment and some grammatical information will be lost! Do you still want to continue?.
-        /// </summary>
-        internal static string ksConvertFormLoseEnvGramInfo {
-            get {
-                return ResourceManager.GetString("ksConvertFormLoseEnvGramInfo", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The environment and infix position will be lost! Do you still want to continue?.
-        /// </summary>
-        internal static string ksConvertFormLoseEnvInfixLoc {
-            get {
-                return ResourceManager.GetString("ksConvertFormLoseEnvInfixLoc", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The environment, infix position, and some grammatical information will be lost! Do you still want to continue?.
-        /// </summary>
-        internal static string ksConvertFormLoseEnvInfixLocGramInfo {
-            get {
-                return ResourceManager.GetString("ksConvertFormLoseEnvInfixLocGramInfo", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Some grammatical information will be lost! Do you still want to continue?.
-        /// </summary>
-        internal static string ksConvertFormLoseGramInfo {
-            get {
-                return ResourceManager.GetString("ksConvertFormLoseGramInfo", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The infix position will be lost! Do you still want to continue?.
-        /// </summary>
-        internal static string ksConvertFormLoseInfixLoc {
-            get {
-                return ResourceManager.GetString("ksConvertFormLoseInfixLoc", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The infix position and some grammatical information will be lost! Do you still want to continue?.
-        /// </summary>
-        internal static string ksConvertFormLoseInfixLocGramInfo {
-            get {
-                return ResourceManager.GetString("ksConvertFormLoseInfixLocGramInfo", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The affix process rule will be lost! Do you still want to continue?.
-        /// </summary>
-        internal static string ksConvertFormLoseRule {
-            get {
-                return ResourceManager.GetString("ksConvertFormLoseRule", resourceCulture);
             }
         }
         
@@ -561,15 +471,6 @@ namespace SIL.FieldWorks.XWorks.LexEd {
         internal static string ksDeleteSequenceCollectionB {
             get {
                 return ResourceManager.GetString("ksDeleteSequenceCollectionB", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to You are deleting the following Reversal Index:.
-        /// </summary>
-        internal static string ksDeletingThisRevIndex {
-            get {
-                return ResourceManager.GetString("ksDeletingThisRevIndex", resourceCulture);
             }
         }
         
@@ -759,15 +660,6 @@ namespace SIL.FieldWorks.XWorks.LexEd {
         internal static string ksNormallyHidden {
             get {
                 return ResourceManager.GetString("ksNormallyHidden", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Do you really want to delete this Reversal Index?.
-        /// </summary>
-        internal static string ksReallyWantToDeleteRevIndex {
-            get {
-                return ResourceManager.GetString("ksReallyWantToDeleteRevIndex", resourceCulture);
             }
         }
         
@@ -1128,24 +1020,6 @@ namespace SIL.FieldWorks.XWorks.LexEd {
         internal static string ksStars {
             get {
                 return ResourceManager.GetString("ksStars", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Swap Lexeme Form with Allomorph.
-        /// </summary>
-        internal static string ksSwapLexWithAllo {
-            get {
-                return ResourceManager.GetString("ksSwapLexWithAllo", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Swap: &quot;{0}&quot;{2}With: &quot;{1}&quot;.
-        /// </summary>
-        internal static string ksSwapXWithY {
-            get {
-                return ResourceManager.GetString("ksSwapXWithY", resourceCulture);
             }
         }
         

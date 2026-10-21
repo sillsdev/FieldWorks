@@ -1081,6 +1081,16 @@ namespace XCore
 			}
 		}
 
+		/// <summary>
+		/// Shows <paramref name="text"/> in the status bar panel configured with the id
+		/// <paramref name="panelId"/>. Does nothing when no panel has that id.
+		/// </summary>
+		public void SetStatusPanelText(string panelId, string text)
+		{
+			if (panelId != null && m_statusPanels.TryGetValue(panelId, out var panel))
+				panel.Text = text;
+		}
+
 		protected void RestoreWindowSettings(bool wasCrashDuringPreviousStartup)
 		{
 			string id = XmlUtils.GetAttributeValue(m_windowConfigurationNode, "settingsId");
@@ -1903,18 +1913,6 @@ namespace XCore
 				case "WritingSystemHvo":
 				case "BestStyleName":
 					SynchronizedOnIdleTime();
-					break;
-
-				default:
-					if (name.Length > 11 && name.Substring(0, 11) == "StatusPanel")
-					{
-						string panelName = name.Substring(11);
-						if (m_statusPanels.ContainsKey(panelName))
-						{
-							StatusBarPanel panel = m_statusPanels[panelName];
-							panel.Text = m_propertyTable.GetStringProperty(name, "");
-						}
-					}
 					break;
 			}
 		}

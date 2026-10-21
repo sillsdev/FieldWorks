@@ -131,9 +131,6 @@
   <data name="ks_Replace" xml:space="preserve">
     <value>&amp;Replace</value>
   </data>
-  <data name="ksAlternateForms" xml:space="preserve">
-    <value>Alternate Forms</value>
-  </data>
   <data name="ksAlwaysVisible" xml:space="preserve">
     <value>Always visible</value>
     <comment>menu item</comment>
@@ -161,9 +158,6 @@
   </data>
   <data name="ksDeleteSequenceCollectionB" xml:space="preserve">
     <value> relation.</value>
-  </data>
-  <data name="ksDeletingThisRevIndex" xml:space="preserve">
-    <value>You are deleting the following Reversal Index:</value>
   </data>
   <data name="ksEditX" xml:space="preserve">
     <value>Edit {0}</value>
@@ -218,9 +212,6 @@
     <value>Normally hidden</value>
     <comment>menu item</comment>
   </data>
-  <data name="ksReallyWantToDeleteRevIndex" xml:space="preserve">
-    <value>Do you really want to delete this Reversal Index?</value>
-  </data>
   <data name="ksReassignHomographs" xml:space="preserve">
     <value>Reassign Homographs</value>
   </data>
@@ -268,12 +259,6 @@
     <value>***</value>
     <comment>signals missing/unknown value</comment>
   </data>
-  <data name="ksSwapLexWithAllo" xml:space="preserve">
-    <value>Swap Lexeme Form with Allomorph</value>
-  </data>
-  <data name="ksSwapXWithY" xml:space="preserve">
-    <value>Swap: "{0}"{2}With: "{1}"</value>
-  </data>
   <data name="ksUndoAddRevToSense" xml:space="preserve">
     <value>Undo Add Reversal Entry to Sense</value>
   </data>
@@ -312,33 +297,6 @@
   </data>
   <data name="ksShowInReversalIndex" xml:space="preserve">
     <value>Show in Reversal Index (Ctrl-Click)</value>
-  </data>
-  <data name="ksConvertFormLoseCaption" xml:space="preserve">
-    <value>Warning!</value>
-  </data>
-  <data name="ksConvertFormLoseEnv" xml:space="preserve">
-    <value>The environment will be lost! Do you still want to continue?</value>
-  </data>
-  <data name="ksConvertFormLoseEnvGramInfo" xml:space="preserve">
-    <value>The environment and some grammatical information will be lost! Do you still want to continue?</value>
-  </data>
-  <data name="ksConvertFormLoseEnvInfixLoc" xml:space="preserve">
-    <value>The environment and infix position will be lost! Do you still want to continue?</value>
-  </data>
-  <data name="ksConvertFormLoseEnvInfixLocGramInfo" xml:space="preserve">
-    <value>The environment, infix position, and some grammatical information will be lost! Do you still want to continue?</value>
-  </data>
-  <data name="ksConvertFormLoseGramInfo" xml:space="preserve">
-    <value>Some grammatical information will be lost! Do you still want to continue?</value>
-  </data>
-  <data name="ksConvertFormLoseInfixLoc" xml:space="preserve">
-    <value>The infix position will be lost! Do you still want to continue?</value>
-  </data>
-  <data name="ksConvertFormLoseInfixLocGramInfo" xml:space="preserve">
-    <value>The infix position and some grammatical information will be lost! Do you still want to continue?</value>
-  </data>
-  <data name="ksConvertFormLoseRule" xml:space="preserve">
-    <value>The affix process rule will be lost! Do you still want to continue?</value>
   </data>
   <data name="ksRedoAddComponent" xml:space="preserve">
     <value>Redo Add Component</value>

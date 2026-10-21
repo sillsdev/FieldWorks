@@ -462,9 +462,11 @@ namespace SIL.FieldWorks.XWorks
 			var fontName = wsFontInfo.m_fontName.ValueIsSet ? wsFontInfo.m_fontName.Value
 				: defaultFontInfo.FontName.ValueIsSet ? defaultFontInfo.FontName.Value : null;
 
-			// If font is explicitly set in FLEx to "<default font>", this gets picked up as the fontname.
-			// In that case, we want to set fontName to null in the word style so that it can be inherited from the WS.
-			if (fontName == "<default font>")
+			// An explicit "<default font>" names the writing system's default font, as the Views
+			// renderer reads it. With no writing system, styles other than Normal set no font,
+			// so the writing system styles apply.
+			var usesWsDefaultFont = fontName == StyleServices.DefaultFont;
+			if (usesWsDefaultFont)
 			{
 				fontName = null;
 			}
@@ -472,7 +474,8 @@ namespace SIL.FieldWorks.XWorks
 			// fontName still null means not set in Normal Style, then get default fonts from WritingSystems configuration.
 			// Comparison, projectStyle.Name == "Normal", required to limit the font-family definition to the
 			// empty span (ie char). If not included, font-family will be added to many more spans.
-			if (fontName == null && projectStyle.Name == NormalParagraphStyleName)
+			var isNormalStyle = projectStyle.Name == NormalParagraphStyleName;
+			if (fontName == null && (usesWsDefaultFont || isNormalStyle))
 			{
 				var lgWritingSystem = cache.ServiceLocator.WritingSystemManager.get_EngineOrNull(wsId);
 				if (lgWritingSystem != null)
@@ -480,7 +483,7 @@ namespace SIL.FieldWorks.XWorks
 					fontName = lgWritingSystem.DefaultFontName;
 					defaultFontFeatures = lgWritingSystem.DefaultFontFeatures;
 				}
-				else
+				else if (isNormalStyle)
 				{
 					CoreWritingSystemDefinition defAnalWs = cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem;
 					lgWritingSystem = cache.ServiceLocator.WritingSystemManager.get_EngineOrNull(defAnalWs.Handle);
@@ -646,7 +649,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 			string fontFeatures;
 			if (GetFontValue(wsFontInfo.m_features, defaultFontInfo.Features, out fontFeatures) ||
-				(projectStyle.Name == NormalParagraphStyleName && !string.IsNullOrEmpty(defaultFontFeatures) &&
+				((isNormalStyle || usesWsDefaultFont) && !string.IsNullOrEmpty(defaultFontFeatures) &&
 					!defaultFontInfo.Features.ValueIsSet && !wsFontInfo.m_features.ValueIsSet &&
 					(fontFeatures = defaultFontFeatures) != null))
 			{
@@ -664,8 +667,10 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var runProps = new RunProperties();
 
-			// FontName
-			if (((InheritableStyleProp<string>)fontInfo.FontName).IsExplicit)
+			// FontName. "<default font>" names no font here, where there is no writing system to
+			// read it from.
+			if (((InheritableStyleProp<string>)fontInfo.FontName).IsExplicit &&
+				fontInfo.FontName.Value != StyleServices.DefaultFont)
 			{
 				// Note: if desired, multiple fonts can be used for different text types in a single run
 				// by separately specifying font names to use for ASCII, High ANSI, Complex Script, and East Asian content.

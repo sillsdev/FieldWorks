@@ -101,6 +101,12 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 		public void FocusRowOnNextShow(IReadOnlyList<string> rowAutomationIds)
 			=> (CurrentContent as DataTree)?.RequestRowFocusOnRebuild(rowAutomationIds);
 
+		/// <summary>
+		/// Asks the next re-show to give keyboard focus to the first row showing the object
+		/// with <paramref name="hvo"/>, for a gesture that replaced the focused row's object.
+		/// </summary>
+		public void FocusObjectOnNextShow(int hvo) => (CurrentContent as DataTree)?.RequestObjectFocusOnRebuild(hvo);
+
 		/// <summary>The detail model shown now; null before the first show.</summary>
 		public DetailModel ShownDetail => (CurrentContent as DataTree)?.Model;
 	}

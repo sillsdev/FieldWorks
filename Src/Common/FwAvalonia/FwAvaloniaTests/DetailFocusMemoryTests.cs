@@ -2,6 +2,7 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Avalonia.Automation;
@@ -105,6 +106,126 @@ namespace FwAvaloniaTests
 			Dispatcher.UIThread.RunJobs();
 
 			Assert.That(FindEditor(second, "GlossEditor.vern").IsFocused, Is.True);
+		}
+
+		// A gesture replaced the focused row's object with a new one, whose rows carry ids the
+		// outgoing view cannot know: the first row showing that object takes focus.
+		[AvaloniaTest]
+		public void RequestedObjectFocus_FocusesTheFirstRowShowingTheObject()
+		{
+			var first = NewViewOfForm(8);
+			var window = new Window { Content = first, Width = 420, Height = 200 };
+			window.Show();
+			Dispatcher.UIThread.RunJobs();
+			FindEditor(first, "LexEntry/identity/#0@8.vern").Focus();
+			Dispatcher.UIThread.RunJobs();
+
+			first.RequestObjectFocusOnRebuild(9);
+			var memento = DetailFocusMemory.Capture(first);
+			Assert.That(memento.AutomationId, Is.EqualTo("LexEntry/identity/#0@8.vern"), "precondition: the replaced form's editor had focus");
+			Assert.That(memento.ObjectHvo, Is.EqualTo(9));
+
+			var second = NewViewOfForm(9);
+			DetailFocusMemory.RestoreAfterLayout(second, memento);
+			window.Content = second;
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(FindEditor(second, "LexEntry/identity/#0@8.vern"), Is.Null, "precondition: the remembered editor is gone");
+			Assert.That(FindEditor(second, "LexEntry/identity/#0@9.vern").IsFocused, Is.True,
+				"the new form's editor takes focus");
+		}
+
+		// A gesture made from a header's hotlinks link added an object: the link survives the
+		// re-show and is remembered, but the object asked for takes focus over it.
+		[AvaloniaTest]
+		public void RequestedObjectFocus_WinsOverTheRememberedHotlinksLink()
+		{
+			var first = NewViewOfForm(8, withHotlinks: true);
+			var window = new Window { Content = first, Width = 420, Height = 200 };
+			window.Show();
+			Dispatcher.UIThread.RunJobs();
+			var link = first.GetVisualDescendants().OfType<Button>()
+				.Single(b => AutomationProperties.GetAutomationId(b) == "LexEntry/identity/senses.Hotlinks");
+			link.Focus();
+			Dispatcher.UIThread.RunJobs();
+
+			first.RequestObjectFocusOnRebuild(9);
+			var memento = DetailFocusMemory.Capture(first);
+			Assert.That(memento.AutomationId, Is.EqualTo("LexEntry/identity/senses.Hotlinks"), "precondition: the link had focus");
+
+			var second = NewViewOfForm(9, withHotlinks: true);
+			DetailFocusMemory.RestoreAfterLayout(second, memento);
+			window.Content = second;
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(FindEditor(second, "LexEntry/identity/#0@9.vern").IsFocused, Is.True,
+				"the new object's editor takes focus, not the surviving link");
+		}
+
+		// An insert made from another row's menu leaves that row's editor focused and alive;
+		// the new object still takes the keyboard, as a row request would not.
+		[AvaloniaTest]
+		public void RequestedObjectFocus_WinsOverASurvivingEditor()
+		{
+			var first = NewViewOfForm(8);
+			var window = new Window { Content = first, Width = 420, Height = 200 };
+			window.Show();
+			Dispatcher.UIThread.RunJobs();
+			FindEditor(first, "LexEntry/identity/#1@3.vern").Focus();
+			Dispatcher.UIThread.RunJobs();
+			first.RequestObjectFocusOnRebuild(8);
+			var memento = DetailFocusMemory.Capture(first);
+			Assert.That(memento.AutomationId, Is.EqualTo("LexEntry/identity/#1@3.vern"), "precondition: Gloss had focus");
+
+			var second = NewViewOfForm(8);
+			DetailFocusMemory.RestoreAfterLayout(second, memento);
+			window.Content = second;
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(FindEditor(second, "LexEntry/identity/#0@8.vern").IsFocused, Is.True,
+				"the object asked for, not the surviving Gloss editor");
+		}
+
+		// The object asked for has a header row before its editor rows: its first editor takes
+		// focus, so typing can start at once; the header only when no editor can.
+		[AvaloniaTest]
+		public void RequestedObjectFocus_PrefersTheObjectsFirstEditor_OverItsHeader()
+		{
+			var first = NewViewOfForm(8, withHotlinks: true);
+			var window = new Window { Content = first, Width = 420, Height = 200 };
+			window.Show();
+			Dispatcher.UIThread.RunJobs();
+			first.RequestObjectFocusOnRebuild(3);
+			var memento = DetailFocusMemory.Capture(first);
+
+			var second = NewViewOfForm(8, withHotlinks: true);
+			DetailFocusMemory.RestoreAfterLayout(second, memento);
+			window.Content = second;
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(FindEditor(second, "LexEntry/identity/#1@3.vern").IsFocused, Is.True,
+				"the Gloss editor of object 3, not its Senses header");
+		}
+
+		// A view whose Lexeme Form row shows the form with the given hvo, its row ids derived
+		// from the stable ids as the composer derives them; with hotlinks, a Senses header
+		// row with a hotlinks link comes first.
+		private static DataTree NewViewOfForm(int formHvo, bool withHotlinks = false)
+		{
+			var values = new List<DetailWsValue> { new DetailWsValue("vern", "casa") };
+			var fields = new List<DetailField>();
+			if (withHotlinks)
+			{
+				fields.Add(new DetailField("LexEntry/identity/senses", "Senses", "Senses", null, DetailFieldKind.Header,
+					EditorClassification.GroupingNone, null, null, HostRouting.Product, null, null, null,
+					isEditable: false, isCollapsible: true, hotlinksId: "mnuDataTree-Sense-Hotlinks", objectHvo: 3));
+			}
+			fields.Add(new DetailField("LexEntry/identity/#0@" + formHvo, "Lexeme Form", "Form", "vernacular", DetailFieldKind.Text,
+				EditorClassification.Known, null, null, HostRouting.Product, values, null, null, objectHvo: formHvo));
+			fields.Add(new DetailField("LexEntry/identity/#1@3", "Gloss", "Gloss", "analysis", DetailFieldKind.Text,
+				EditorClassification.Known, null, null, HostRouting.Product, values, null, null, objectHvo: 3));
+			return new DataTree(new DetailModel("LexEntry", "identity", fields, new List<ViewDiagnostic>()),
+				menuRequested: withHotlinks ? request => { } : (Action<DetailMenuRequest>)null);
 		}
 
 		private static DataTree NewLongView()

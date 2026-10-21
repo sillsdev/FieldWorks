@@ -551,7 +551,11 @@ namespace SIL.FieldWorks.XWorks
 					var wsFontInfo = exportStyleInfo.BulletInfo.FontInfo;
 					bulletRule.Declarations.Add(new Property("font-size") { Term = new PrimitiveTerm(UnitType.Point, MilliPtToPt(wsFontInfo.FontSize.Value)) });
 					bulletRule.Declarations.Add(new Property("color") { Term = new PrimitiveTerm(UnitType.RGB, wsFontInfo.FontColor.Value.Name) });
-					bulletRule.Declarations.Add(new Property("font-family") { Term = new PrimitiveTerm(UnitType.Ident, wsFontInfo.FontName.Value) });
+					// "<default font>" names no font on a bullet, which has no writing system;
+					// leaving it unset lets the bullet inherit the font of its sense content
+					// element, not of the styled sense inside it.
+					if (wsFontInfo.FontName.Value != StyleServices.DefaultFont)
+						bulletRule.Declarations.Add(new Property("font-family") { Term = new PrimitiveTerm(UnitType.Ident, wsFontInfo.FontName.Value) });
 					bulletRule.Declarations.Add(new Property("font-weight") { Term = new PrimitiveTerm(UnitType.Ident, wsFontInfo.Bold.Value ? "bold" : "normal") });
 					bulletRule.Declarations.Add(new Property("font-style") { Term = new PrimitiveTerm(UnitType.Ident, wsFontInfo.Italic.Value ? "italic" : "normal") });
 					bulletRule.Declarations.Add(new Property("background-color") { Term = new PrimitiveTerm(UnitType.RGB, wsFontInfo.BackColor.Value.Name) });
@@ -1553,14 +1557,14 @@ namespace SIL.FieldWorks.XWorks
 			// fontName still null means not set in Normal Style, then get default fonts from WritingSystems configuration.
 			// Comparison, projectStyle.Name == "Normal", required to limit the font-family definition to the
 			// empty span (ie span[lang="en"]{}. If not included, font-family will be added to many more spans.
-			if (fontName == null && projectStyle.Name == "Normal")
+			// An explicit "<default font>" names the writing system's default font, as the Views
+			// renderer reads it. A rule with no writing system then sets no font, so the writing
+			// system rules apply.
+			if (fontName == StyleServices.DefaultFont || (fontName == null && projectStyle.Name == "Normal"))
 			{
 				var lgWritingSystem = cache.ServiceLocator.WritingSystemManager.get_EngineOrNull(wsId);
-				if(lgWritingSystem != null)
-				{
-					fontName = lgWritingSystem.DefaultFontName;
-					defaultFontFeatures = lgWritingSystem.DefaultFontFeatures;
-				}
+				fontName = lgWritingSystem?.DefaultFontName;
+				defaultFontFeatures = lgWritingSystem?.DefaultFontFeatures;
 			}
 
 			if (fontName != null)

@@ -6,6 +6,7 @@ using System;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Diagnostics;
+using SIL.FieldWorks.Common.Framework.DetailControls.Resources;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.LCModel;
 using XCore;
@@ -14,7 +15,7 @@ using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.KernelInterfaces;
 
-namespace SIL.FieldWorks.XWorks.LexEd
+namespace SIL.FieldWorks.Common.Framework.DetailControls
 {
 	/// <summary>
 	/// Summary description for SwapLexemeWithAllomorphDlg.
@@ -132,8 +133,8 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			//    StartPosition = FormStartPosition.Manual;
 			//}
 			m_lvAlloOptions.Items[0].Selected = true;
-			Text = LexEdStrings.ksSwapLexWithAllo;
-			label2.Text = LexEdStrings.ksAlternateForms;
+			Text = DetailControlsStrings.ksSwapLexWithAllo;
+			label2.Text = DetailControlsStrings.ksAlternateForms;
 
 			// Determine the help file to use, if any
 			m_helpTopic = "khtpSwapLexemeWithAllomorph";
@@ -193,7 +194,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			m_fwTextBoxBottomMsg.WritingSystemCode = userWs;
 			string sLexVal = m_entry.LexemeFormOA.Form.VernacularDefaultWritingSystem.Text ?? "";
 			// Treat null value as empty string.  This fixes LT-5889, LT-5891, and LT-5914.
-			string sFmt = LexEdStrings.ksSwapXWithY;
+			string sFmt = DetailControlsStrings.ksSwapXWithY;
 			string sWithVal = m_allomorph.Form.VernacularDefaultWritingSystem.Text ?? "";
 			ITsString tss = TsStringUtils.MakeString(String.Format(sFmt, sLexVal, sWithVal, StringUtils.kChHardLB), userWs);
 			m_fwTextBoxBottomMsg.Tss = tss;

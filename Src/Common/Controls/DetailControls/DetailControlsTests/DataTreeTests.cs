@@ -391,6 +391,42 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			Assert.That((m_dtree.Controls[0] as Slice).Label, Is.EqualTo("Header"));
 		}
 
+		// LT-22848: a delete postpones the rebuild, so the deleted object's slice is still
+		// listed. Focusing it in a tree never shown builds a view that looks the object up.
+		[Test]
+		public void SelectFirstPossibleSlice_SkipsTheSliceOfADeletedObject_InATreeNeverShown()
+		{
+			var senseFactory = Cache.ServiceLocator.GetInstance<ILexSenseFactory>();
+			var deletedSense = senseFactory.Create();
+			m_entry.SensesOS.Add(deletedSense);
+			deletedSense.Gloss.SetAnalysisDefaultWritingSystem("cat");
+			deletedSense.ScientificName = TsStringUtils.MakeString("Felis catus", Cache.DefaultAnalWs);
+			var survivingSense = senseFactory.Create();
+			m_entry.SensesOS.Add(survivingSense);
+			survivingSense.Gloss.SetAnalysisDefaultWritingSystem("dog");
+			m_dtree.Initialize(Cache, false, m_layouts, m_parts);
+			m_dtree.ShowObject(m_entry, "OptSensesEty", null, m_entry, false);
+			Slice deletedSlice = null;
+			var closeSlices = new List<Slice>();
+			foreach (var slice in m_dtree.Slices)
+			{
+				if (slice is StringSlice && slice.Object == deletedSense)
+					deletedSlice = slice;
+			}
+			Assert.That(deletedSlice, Is.Not.Null, "precondition: the sense's ScientificName shows in a string slice");
+			closeSlices.Add(deletedSlice);
+			closeSlices.AddRange(m_dtree.Slices);
+
+			m_entry.SensesOS.Remove(deletedSense);
+			Assert.That(deletedSlice.IsDisposed, Is.False,
+				"precondition: inside the open unit of work the tree has not rebuilt yet");
+
+			Assert.That(() => m_dtree.SelectFirstPossibleSlice(closeSlices), Throws.Nothing,
+				"choosing the next slice must not build the deleted object's view");
+			Assert.That(m_dtree.CurrentSlice, Is.Not.SameAs(deletedSlice),
+				"the deleted object's slice never becomes current");
+		}
+
 		[Test]
 		public void GetGuidForJumpToTool_UsesRootObject_WhenNoCurrentSlice()
 		{
