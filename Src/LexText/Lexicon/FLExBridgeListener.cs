@@ -107,6 +107,10 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 		#endregion
 
+		/// <summary>Whether a Send/Receive or LIFT transfer is showing its progress
+		/// dialog.</summary>
+		internal bool IsTransferInProgress => _progressDlg != null;
+
 		#region XCore message handlers
 
 		#region FLExLiftBridge Toolbar messages
@@ -521,20 +525,18 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 		private string GetFullProjectFileName()
 		{
-			return Path.Combine(Cache.ProjectId.ProjectFolder, Cache.ProjectId.Name + LcmFileHelper.ksFwDataXmlFileExtension);
+			return ProjectLifecycle.GetFullProjectFileName(Cache);
 		}
 
 		private void SaveAllDataToDisk()
 		{
-			//Give all forms the opportunity to save any uncommitted data
-			//(important for analysis sandboxes)
-			var activeForm = _propertyTable.GetValue<Form>("window");
-			if (activeForm != null)
-			{
-				activeForm.ValidateChildren(ValidationConstraints.Enabled);
-			}
-			//Commit all the data in the cache and save to disk
+			ValidatePendingEditorData();
 			ProjectLockingService.UnlockCurrentProject(Cache);
+		}
+
+		private void ValidatePendingEditorData()
+		{
+			ProjectLifecycle.ValidatePendingEditorData(_propertyTable);
 		}
 
 		#endregion LiftBridge S/R messages
@@ -875,7 +877,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// </summary>
 		private void StopParser()
 		{
-			Publisher.Publish(new PublisherParameterObject(EventConstants.StopParser, null, _propertyTable.GetWindow()));
+			ProjectLifecycle.StopParser(_propertyTable);
 		}
 
 		/// <summary>
@@ -1407,12 +1409,6 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			ObtainProjectMethod.ReportDuplicateBridge();
 		}
 
-		// currently duplicated in MorphologyListener, to avoid an assembly dependency.
-		private static bool IsVernacularSpellingEnabled(PropertyTable propertyTable)
-		{
-			return propertyTable.GetBoolProperty("UseVernSpellingDictionary", false);
-		}
-
 		private static bool CheckForExistingFileName(string projectFolder, string revisedFileName)
 		{
 			if (File.Exists(Path.Combine(projectFolder, revisedFileName + LcmFileHelper.ksFwDataXmlFileExtension)))
@@ -1431,14 +1427,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 		private static FwXWindow RefreshCacheWindowAndAll(LexTextApp app, string fullProjectFileName)
 		{
-			var manager = app.FwManager;
-			var appArgs = new FwAppArgs(fullProjectFileName);
-			var newAppWindow =
-				(FwXWindow)manager.ReopenProject(manager.Cache.ProjectId.Name, appArgs).ActiveMainWindow;
-			if (IsVernacularSpellingEnabled(newAppWindow.PropTable))
-				WfiWordformServices.ConformSpellingDictToWordforms(newAppWindow.Cache);
-			newAppWindow.RefreshDisplay();
-			return newAppWindow;
+			return ProjectLifecycle.RefreshCacheWindowAndAll(app, fullProjectFileName);
 		}
 
 		private static bool DetectLiftConflicts(string path, Dictionary<string, long> savedState)
