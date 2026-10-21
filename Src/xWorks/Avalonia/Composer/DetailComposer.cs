@@ -3445,10 +3445,11 @@ namespace SIL.FieldWorks.XWorks
 					&& FollowsEnclosingHeader(depth)
 					&& ItemRootIsLabelled(node, obj, flid, count);
 
-				// Nested sense sequences (Senses on a sense) don't repeat the section banner; the
-				// numbered items carry it.
-				if (!flatten && !(isSenses && obj is ILexSense))
+				// Senses get no section banner: each sense's numbered header carries it. An
+				// entry's sense headers sit at its own level; subsenses indent under their sense.
+				if (!flatten && !isSenses)
 					AddHeader(node, obj, depth, sectionLabel);
+				var itemDepth = isSenses && !(obj is ILexSense) ? depth : depth + 1;
 
 				for (var i = 0; i < count; i++)
 				{
@@ -3484,7 +3485,7 @@ namespace SIL.FieldWorks.XWorks
 					AddField(new DetailField($"{StableId(node, obj)}/item{i}",
 						itemLabel, node.Field, null, DetailFieldKind.Header,
 						EditorClassification.GroupingNone, null, null, HostRouting.Inherit,
-						null, null, null, isEditable: false, indent: depth + 1,
+						null, null, null, isEditable: false, indent: itemDepth,
 						isCollapsible: true, isInitiallyExpanded: expanded,
 						menuId: itemBinding.MenuId ?? node.MenuId,
 						hotlinksId: itemBinding.HotlinksId ?? node.HotlinksId,
@@ -3492,7 +3493,7 @@ namespace SIL.FieldWorks.XWorks
 					{
 						ExpansionKey = ExpansionKey(node.StableId + "/item", item)
 					});
-					DescendInto(node, item, depth + 1);
+					DescendInto(node, item, itemDepth);
 				}
 			}
 
