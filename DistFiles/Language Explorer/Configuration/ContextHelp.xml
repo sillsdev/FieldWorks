@@ -91,7 +91,6 @@
 
 	<item id="Show_DictionaryPubPreview">Display the dictionary entry for this lexeme above the Lexicon Edit pane.</item>
 	<item id="ShowHiddenFields">Display all possible fields.</item>
-	<item id="CmdToggleRawAndInterlinear">Toggle between the baseline and interlinear text view.</item>
 	<item id="CmdChangeFilterClearAll">Turn off all filters.</item>
 	<item id="ShowInvisibleSpaces">View the invisible, zero-width spaces in this text.</item>
 	<!--

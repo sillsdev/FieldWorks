@@ -616,12 +616,10 @@ namespace FwAvaloniaTests
 		}
 
 		/// <summary>
-		/// With the metadata-driven base-class walk the importer
-		/// resolves every shipped part ref that legacy DataTree resolves. What remains is EXACTLY the
-		/// set of layout refs with no <c>{class-chain}-Detail-{ref}</c> part anywhere in the shipped
-		/// inventories -- refs legacy DataTree also silently omits ("Just omit the missing part",
-		/// DataTree.cs:2455-2457; the detail view has no PartGenerator). Asserting the exact set keeps
-		/// both regressions (new unresolved refs) and silent improvements (parts added) visible.
+		/// The part refs with no part in Language Explorer/Configuration/Parts, pinned
+		/// exactly so new unresolved refs and added parts both show. At runtime DataTree
+		/// also loads DistFiles/Parts (StandardParts.xml and the build's GeneratedParts.xml),
+		/// which resolves every one of them.
 		/// </summary>
 		[Test]
 		public void ShippedLayouts_UnresolvedParts_AreExactlyTheLegacyUnresolvableSet()
@@ -630,39 +628,28 @@ namespace FwAvaloniaTests
 			var (layouts, parts) = LoadShippedFiles(repoRoot);
 			var report = LayoutImportCoverage.Run(layouts, parts, LoadBaseClassMap(repoRoot));
 
-			// Every entry below was verified to have no matching part id (case-insensitive) on the
-			// class or any base class in the shipped *Parts.xml files; legacy omits them too. Most are
-			// summary/section header parts that were never shipped, plus the DateCreated/DateModified
-			// refs Notebook hides (visibility='never') whose parts never existed in the detail view.
+			// Summary, section and message refs resolve to StandardParts.xml's CmObject parts;
+			// field refs resolve to the build's GeneratedParts.xml.
 			var legacyUnresolvable = new SortedDictionary<string, int>(StringComparer.Ordinal)
 			{
 				{ "CmAnthroItem-Summary", 1 },
-				{ "CmPerson-Role", 1 },
 				{ "CmPossibility-Summary", 1 },
 				{ "CmSemanticDomain-Summary", 1 },
-				{ "FsClosedValue-Summary", 1 },
 				{ "FsComplexFeature-Message", 1 },
-				{ "FsComplexValue-Summary", 1 },
-				{ "FsFeatStruc-Blank", 1 },
 				{ "FsFeatStrucType-Message", 1 },
-				{ "FsFeatureSpecification-Summary", 1 },
 				{ "LexEntry-ImportResidue", 1 },
 				{ "LexEntryInflType-Summary", 1 },
 				{ "LexEntryType-Summary", 2 },
 				{ "LexEtymology-NormalSummary", 1 },
 				{ "LexExtendedNote-NormalSummary", 1 },
 				{ "LexPronunciation-MediaFiles", 1 },
-				{ "LexReference-ShowSingleReference", 1 },
 				{ "LexSense-HeavySummary", 1 },
 				{ "LexSense-ImportResidue", 1 },
-				// LexSense `Pictures` has no LexSense-Detail-Pictures part, so legacy DataTree (and this
-				// importer) omit sense pictures.
 				{ "LexSense-Pictures", 1 },
 				{ "MoAlloAdhocProhib-Message", 1 },
 				{ "MoEndoCompound-HeadLast", 2 },
 				{ "MoExoCompound-ToMsa", 1 },
 				{ "MoInflAffixSlot-Optional", 1 },
-				{ "MoInflClass-SubclassesAllA", 1 },
 				{ "MoMorphAdhocProhib-Message", 1 },
 				{ "PartOfSpeech-Section", 2 },
 				{ "PhPhoneme-Codes", 1 },
@@ -677,8 +664,8 @@ namespace FwAvaloniaTests
 
 			Assert.That(report.UnresolvedPartRefs, Is.EquivalentTo(legacyUnresolvable),
 				"the unresolved-part set changed; if a part was added/renamed update this set, if a "
-				+ "resolution rule regressed fix the resolver (B10 baseline: 63 occurrences, was 259)");
-			Assert.That(report.UnresolvedPartRefs.Values.Sum(), Is.EqualTo(63),
+				+ "resolution rule regressed fix the resolver (now 56 occurrences; B10 baseline 63, was 259)");
+			Assert.That(report.UnresolvedPartRefs.Values.Sum(), Is.EqualTo(56),
 				"B10 unresolved-part occurrence ceiling");
 		}
 

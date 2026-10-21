@@ -75,7 +75,6 @@
 		<command id="CmdNextIncompleteBundle" label="Approve and _Jump to Next Incomplete" message="NextIncompleteBundle" shortcut="Ctrl+J"/>
 		<command id="CmdNextIncompleteBundleNc" label="_Jump to Next" message="NextIncompleteBundleNc" shortcut="Shift+Ctrl+J"/>
 		<command id="CmdPrevIncompleteBundle" label="Previous Incomplete Word" message="PrevIncompleteBundle"/>
-		<!--<command id="CmdToggleRawAndInterlinear" label="Toggle _Baseline and Interlinearize" message="ToggleRawAndInterlinear" shortcut="Ctrl+R"/>-->
 		<command id="CmdShowMorphology" label="Show _Morphology" message="ShowMorphology" shortcut="Ctrl+M"/>
 		<command id="CmdBreakPhrase" label="_Break phrase into words" message="BreakPhrase" icon="breakPhrase" shortcut="Ctrl+W"/>
 		<command id="CmdMakePhrase" label="_Make phrase with next word" message="JoinWords" icon="linkWords" shortcut="Ctrl+M"/>
@@ -93,9 +92,6 @@
 			<parameters title="Go To Wordform" formlabel="Go _To..." okbuttonlabel="_Go"/>
 		</command>
 		<command id="CmdShowWordformConc" label="Assign Analysis..." message="ShowWordformConc"/>
-		<!--<command id="CmdWordformSpellingStatusUnknown" label="Unknown" message="SpellingStatusUnknown"/>
-		<command id="CmdWordformSpellingStatusGood" label="Good" message="SpellingStatusGood"/>
-		<command id="CmdWordformSpellingStatusDisapprove" label="Disapproved" message="SpellingStatusDisapprove"/>-->
 		<command id="CmdDataTree-Merge-MainWordform" label="Merge Wordform..." message="MergeWordform"/>
 		<command id="CmdDataTree-Delete-MainWordform" label="Delete Wordform..." message="DeleteRecord" icon="Delete"/>
 		<command id="CmdWordformEditForm" label="Edit..." message="WordformEditForm"/>
@@ -318,7 +314,6 @@
 		</menu>
 		<menu id="View">
 			<item command="CmdChooseTexts" defaultVisible="false"/>
-			<!--<item command="CmdToggleRawAndInterlinear" defaultVisible="false"/>-->
 		</menu>
 
 		<menu id="Data">
@@ -426,12 +421,6 @@
 				<item command="CmdWordformChangeCase"/>
 			</menu>
 			-->
-			<!--<menu id="mnuDataTree-WordformSpellingStatus" label="Spelling Status">
-				<item command="CmdWordformSpellingStatusUnknown"/>
-				<item command="CmdWordformSpellingStatusGood"/>
-				<item command="CmdWordformSpellingStatusDisapprove"/>
-			</menu>
-			<item label="-" translate="do not translate"/>-->
 			<!-- Not implemented yet
 			<item command="CmdDataTree-Merge-MainWordform"/>
 			-->
