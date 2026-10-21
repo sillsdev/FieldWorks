@@ -451,8 +451,10 @@ namespace SIL.FieldWorks.XWorks
 				"each sense's gloss binds its own object");
 			Assert.That(glossFields.All(f => f.Indent > 0), Is.True, "sense fields are indented");
 
-			Assert.That(fields.Any(f => f.Kind == DetailFieldKind.Header && f.Field == "Senses"), Is.True,
-				"the senses sequence renders a section header");
+			var senseHeaderObjects = fields.Where(f => f.Kind == DetailFieldKind.Header && f.Field == "Senses")
+				.Select(f => f.ObjectHvo).ToList();
+			Assert.That(senseHeaderObjects, Is.EquivalentTo(m_entry.SensesOS.Select(s => s.Hvo)),
+				"each sense renders its own header, with no section header over them");
 		}
 
 		[Test]
@@ -1327,6 +1329,31 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(enumCombo, Is.Not.Null, "the lexeme form composes its own IsAbstract row");
 			Assert.That(enumCombo.Kind, Is.EqualTo(DetailFieldKind.Unsupported),
 				"the closed enum combo over the same field stays out of scope");
+		}
+
+		// LT-22689: as in the WinForms DataTree, no "Senses" row sits over an entry's senses.
+		// Each sense's header sits at the entry's own level, and a subsense's indents under it.
+		[Test]
+		public void Compose_Senses_HaveNoBanner_AndSubsensesIndentUnderTheirSense()
+		{
+			ILexSense subsense = null;
+			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
+			{
+				subsense = Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
+				m_entry.SensesOS[0].SensesOS.Add(subsense);
+				subsense.Gloss.set_String(Cache.DefaultAnalWs, TsStringUtils.MakeString("hut", Cache.DefaultAnalWs));
+			});
+
+			var senseHeaders = DetailComposer.Compose(m_entry, Cache).Model.Fields
+				.Where(f => f.Kind == DetailFieldKind.Header && f.Field == "Senses").ToList();
+
+			Assert.That(senseHeaders.Any(h => h.ObjectHvo == m_entry.Hvo), Is.False,
+				"no section header over the entry's senses");
+			var senseHeader = senseHeaders.Single(h => h.ObjectHvo == m_entry.SensesOS[0].Hvo);
+			var subsenseHeader = senseHeaders.Single(h => h.ObjectHvo == subsense.Hvo);
+			Assert.That(senseHeader.Indent, Is.EqualTo(0), "a sense header sits at the entry's own level");
+			Assert.That(subsenseHeader.Indent, Is.GreaterThan(senseHeader.Indent),
+				"a subsense header indents under its sense");
 		}
 
 		[Test]
