@@ -26,12 +26,21 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 	{
 		private DetailSectionHeaderAutomationPeer _peer;
 		private bool _isExpanded;
+		private readonly string _label;
+		private readonly string _collapsedLabel;
+		private readonly TextBlock _text;
 
-		/// <summary>Creates a header showing <paramref name="label"/>.</summary>
-		public DetailSectionHeader(string label, bool isExpanded, bool canToggle)
+		/// <summary>
+		/// Creates a header showing <paramref name="label"/> while expanded and
+		/// <paramref name="collapsedLabel"/> while collapsed; a null
+		/// <paramref name="collapsedLabel"/> shows <paramref name="label"/> in both states.
+		/// </summary>
+		public DetailSectionHeader(string label, string collapsedLabel, bool isExpanded, bool canToggle)
 		{
 			CanToggle = canToggle;
 			_isExpanded = isExpanded;
+			_label = label ?? string.Empty;
+			_collapsedLabel = collapsedLabel ?? _label;
 			Box = new DetailExpanderBox(isExpanded) { Opacity = canToggle ? 1 : 0 };
 			Background = FwAvaloniaDensity.TransparentBrush;
 			BorderThickness = new Thickness(0);
@@ -39,15 +48,19 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			// A section header hugs the left edge.
 			HorizontalAlignment = HorizontalAlignment.Left;
 			HorizontalContentAlignment = HorizontalAlignment.Left;
-			var text = CreateLabel(label);
-			text.VerticalAlignment = VerticalAlignment.Center;
+			_text = CreateLabel(CurrentLabel);
+			_text.VerticalAlignment = VerticalAlignment.Center;
+			AutomationProperties.SetName(this, CurrentLabel);
 			Content = new StackPanel
 			{
 				Orientation = Orientation.Horizontal,
 				Spacing = FwAvaloniaDensity.TreeBoxGap,
-				Children = { Box, text }
+				Children = { Box, _text }
 			};
 		}
+
+		/// <summary>The text shown for the current state.</summary>
+		public string CurrentLabel => _isExpanded ? _label : _collapsedLabel;
 
 		/// <summary>
 		/// The section header label text, in the section header size, colour and bold weight,
@@ -68,8 +81,9 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		public bool CanToggle { get; }
 
 		/// <summary>
-		/// Whether the rows under the header are shown. Setting it redraws the +/- box and tells
-		/// assistive technology the state changed; it does not show or hide any rows.
+		/// Whether the rows under the header are shown. Setting it redraws the +/- box, shows
+		/// the label for the new state, and tells assistive technology the state changed; it
+		/// does not show or hide any rows.
 		/// </summary>
 		public bool IsExpanded
 		{
@@ -81,6 +95,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				var old = ExpandCollapseState;
 				_isExpanded = value;
 				Box.IsExpanded = value;
+				_text.Text = CurrentLabel;
+				AutomationProperties.SetName(this, CurrentLabel);
 				_peer?.RaiseExpandCollapseStateChanged(old, ExpandCollapseState);
 			}
 		}
