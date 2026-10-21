@@ -207,21 +207,16 @@ namespace SIL.FieldWorks.FdoUi
 		}
 
 		[Test]
-		public void IsOfferedOnEntry_AStemOrAffixAllomorph_FollowsTheFirstAllomorph()
+		public void IsOfferedOnEntry_AnyOtherInsert_OnAnyEntry()
 		{
-			const string stem = "CmdDataTree-Insert-StemAllomorph";
-			const string affix = "CmdDataTree-Insert-AffixAllomorph";
-			Assert.That(DetailObjectInsertion.IsOfferedOnEntry(_entry, stem), Is.True, "no allomorph yet: either kind");
-			Assert.That(DetailObjectInsertion.IsOfferedOnEntry(_entry, affix), Is.True);
+			const string allomorph = "CmdDataTree-Insert-AlternateForm";
+			Assert.That(DetailObjectInsertion.IsOfferedOnEntry(_entry, allomorph), Is.True, "no allomorph yet");
 
 			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
 				_entry.AlternateFormsOS.Add(Cache.ServiceLocator.GetInstance<IMoAffixAllomorphFactory>().Create()));
 
-			Assert.That(DetailObjectInsertion.IsOfferedOnEntry(_entry, stem), Is.False, "the first allomorph is an affix");
-			Assert.That(DetailObjectInsertion.IsOfferedOnEntry(_entry, affix), Is.True);
-			Assert.That(DetailObjectInsertion.IsOfferedOnEntry(_entry, "CmdDataTree-Insert-AlternateForm"), Is.True,
-				"any other insert");
-			Assert.That(DetailObjectInsertion.IsOfferedOnEntry(null, "CmdDataTree-Insert-AlternateForm"), Is.False);
+			Assert.That(DetailObjectInsertion.IsOfferedOnEntry(_entry, allomorph), Is.True, "the first allomorph is an affix");
+			Assert.That(DetailObjectInsertion.IsOfferedOnEntry(null, allomorph), Is.False);
 		}
 
 		[Test]

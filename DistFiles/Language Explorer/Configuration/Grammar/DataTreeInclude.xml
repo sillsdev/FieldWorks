@@ -40,15 +40,6 @@
 	  <parameters field="Members" className="MoAdhocProhibGr"/>
 	</command>
 <!--
-	Compound Rules
-	-->
-	<command id="CmdDataTree-Create-CompoundRule-LinkerAffixAllomorph" label="Create Linker Form" message="DataTreeInsert">
-	  <parameters field="Linker" className="MoAffixAllomorph"/>
-	</command>
-	<command id="CmdDataTree-Delete-CompoundRule-LinkerAffixAllomorph" label="Delete Linker Form" message="DataTreeDelete" icon="Delete">
-	  <parameters field="Linker" className="MoAffixAllomorph"/>
-	</command>
-<!--
 	Features
 	-->
 	<command id="CmdDataTree-Insert-ClosedFeature-Value" label="Insert Feature Value" message="DataTreeInsert">
@@ -184,14 +175,6 @@
 	  <!-- <item command="CmdDataTree-Help"/> -->
 	</menu>
 
-<!--
-	Compound Rules
-	-->
-	<menu id="mnuDataTree-CompoundRule-LinkerAffixAllomorph">
-	  <item command="CmdDataTree-Create-CompoundRule-LinkerAffixAllomorph"/>
-	  <item command="CmdDataTree-Delete-CompoundRule-LinkerAffixAllomorph"/>
-	  <!-- <item command="CmdDataTree-Help"/> -->
-	</menu>
 	<menu id="mnuDataTree-FeatureStructure-Feature">
 	  <item command="CmdDataTree-Delete-FeatureStructure-Feature"/>
 	  <!-- <item command="CmdDataTree-Help"/> -->

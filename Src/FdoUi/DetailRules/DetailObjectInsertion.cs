@@ -15,7 +15,7 @@ namespace SIL.FieldWorks.Common.DetailRules
 	/// <summary>
 	/// The Insert command of a detail row (message DataTreeInsert): whether a field can take
 	/// a new object now, which object and field the row's command inserts into, and where;
-	/// which allomorph inserts an entry offers, and which entry a variant insert extends.
+	/// whether an entry offers Insert Affix Process, and which entry a variant insert extends.
 	/// Creation stays with <c>CmObjectUi.CreateNewUiObject</c> and the variant dialog.
 	/// </summary>
 	public static class DetailObjectInsertion
@@ -156,9 +156,8 @@ namespace SIL.FieldWorks.Common.DetailRules
 		}
 
 		/// <summary>
-		/// Whether an entry offers an allomorph Insert command, chosen by the end of its id:
-		/// Insert Affix Process only on an affix entry; Insert Stem or Affix Allomorph while the
-		/// entry has no allomorph or its first is of that kind. It offers any other command.
+		/// Whether an entry offers an Insert command: Insert Affix Process, chosen by the end
+		/// of its id, only on an affix entry; any other command always.
 		/// </summary>
 		public static bool IsOfferedOnEntry(ILexEntry entry, string commandId)
 		{
@@ -166,12 +165,6 @@ namespace SIL.FieldWorks.Common.DetailRules
 				return false;
 			if (commandId.EndsWith("AffixProcess", StringComparison.Ordinal))
 				return entry.PrimaryMorphType != null && entry.PrimaryMorphType.IsAffixType;
-			if (entry.AlternateFormsOS.Count == 0)
-				return true;
-			if (commandId.EndsWith("AffixAllomorph", StringComparison.Ordinal))
-				return entry.AlternateFormsOS[0] is IMoAffixAllomorph;
-			if (commandId.EndsWith("StemAllomorph", StringComparison.Ordinal))
-				return entry.AlternateFormsOS[0] is IMoStemAllomorph;
 			return true;
 		}
 

@@ -64,15 +64,11 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				return true;
 			}
 			XCore.Command command = (XCore.Command)commandObject;
-			var offered = DetailObjectInsertion.IsOfferedOnEntry(entry, command.Id);
 			if (command.Id.EndsWith("AffixProcess"))
 			{
+				var offered = DetailObjectInsertion.IsOfferedOnEntry(entry, command.Id);
 				display.Enabled = offered;
 				display.Visible = offered;
-			}
-			else if (!offered)
-			{
-				display.Visible = false;
 			}
 			return true;//we handled this, no need to ask anyone else.
 		}

@@ -163,14 +163,8 @@
 	  <menu id="PaneBar-ShowHiddenFields-recTypeEdit" label="">
 		  <item label="Show Hidden Fields" boolProperty="ShowHiddenFields-recTypeEdit" defaultVisible="true" settingsGroup="local"/>
 	  </menu>
-	  <menu id="PaneBar-ShowHiddenFields-scrNoteTypesEdit" label="">
-		  <item label="Show Hidden Fields" boolProperty="ShowHiddenFields-scrNoteTypesEdit" defaultVisible="true" settingsGroup="local"/>
-	  </menu>
 	  <menu id="PaneBar-ShowHiddenFields-timeOfDayEdit" label="">
 		  <item label="Show Hidden Fields" boolProperty="ShowHiddenFields-timeOfDayEdit" defaultVisible="true" settingsGroup="local"/>
-	  </menu>
-	  <menu id="PaneBar-ShowHiddenFields-weatherConditionEdit" label="">
-		  <item label="Show Hidden Fields" boolProperty="ShowHiddenFields-weatherConditionEdit" defaultVisible="true" settingsGroup="local"/>
 	  </menu>
 
 	<menu id="PaneBar-ShowHiddenFields-textMarkupTagsEdit" label="">

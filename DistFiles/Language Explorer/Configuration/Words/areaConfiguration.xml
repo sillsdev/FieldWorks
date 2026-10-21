@@ -79,10 +79,6 @@
 		<command id="CmdShowMorphology" label="Show _Morphology" message="ShowMorphology" shortcut="Ctrl+M"/>
 		<command id="CmdBreakPhrase" label="_Break phrase into words" message="BreakPhrase" icon="breakPhrase" shortcut="Ctrl+W"/>
 		<command id="CmdMakePhrase" label="_Make phrase with next word" message="JoinWords" icon="linkWords" shortcut="Ctrl+M"/>
-		<!-- The next three commands have different labels, but the same message. -->
-		<command id="CmdDeleteFreeTrans" label="Delete Free Translation" message="DeleteFreeform"/>
-		<command id="CmdDeleteLitTrans" label="Delete Literal Translation" message="DeleteFreeform"/>
-		<command id="CmdDeleteNote" label="Delete Note" message="DeleteFreeform"/>
 		<command id="CmdConfigureInterlinear" label="Interlinear..." message="ConfigureInterlinear"/>
 		<command id="CmdExportInterlinear" label="_Export Interlinear..." message="ExportInterlinear"/>
 		<command id="CmdExportDiscourseChart" label="Export Discourse Chart..." message="ExportDiscourse"/>
@@ -383,15 +379,6 @@
 		<menu id="PaneBar-ITextContent" label="">
 			<item label="Add Words to Lexicon" boolProperty="ITexts_AddWordsToLexicon" defaultVisible="false" settingsGroup="local"/>
 			<item label="Show Hidden Fields" boolProperty="ShowHiddenFields-interlinearEdit" defaultVisible="false" settingsGroup="local"/>
-		</menu>
-		<menu id="mnuIText-FreeTrans">
-			<item command="CmdDeleteFreeTrans"/>
-		</menu>
-		<menu id="mnuIText-LitTrans">
-			<item command="CmdDeleteLitTrans"/>
-		</menu>
-		<menu id="mnuIText-Note">
-			<item command="CmdDeleteNote"/>
 		</menu>
 		<menu id="mnuIText-RawText">
 			<item command="CmdCut"/>

@@ -116,7 +116,7 @@ namespace SIL.FieldWorks.XWorks
 
 		/// <summary>
 		/// The Insert item for the row: absent with no row or no object, and absent when the
-		/// entry of the row or the shown entry does not offer an allomorph insert; enabled
+		/// entry of the row or the shown entry does not offer the insert; enabled
 		/// when the command resolves a target from the row's object (a ghost row's included),
 		/// disabled otherwise. With <c>displayNumber</c> the label carries the position the
 		/// shown record's or the row's object's field would give.

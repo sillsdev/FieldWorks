@@ -54,9 +54,6 @@
   -->
   <contextMenus>
 	<!--<include query="window/contextMenus/*"/>-->
-	<menu id="mnuInflAffixTemplate-Help">
-	  <item command="CmdInflAffixTemplate-Help"/>
-	</menu>
 <!--
 	Inflectional Affix Template
 	-->
