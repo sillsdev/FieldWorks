@@ -2,6 +2,7 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows.Forms;
@@ -64,7 +65,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				return true;
 			}
 			XCore.Command command = (XCore.Command)commandObject;
-			if (command.Id.EndsWith("AffixProcess"))
+			if (command.Id.EndsWith("AffixProcess", StringComparison.Ordinal))
 			{
 				var offered = DetailObjectInsertion.IsOfferedOnEntry(entry, command.Id);
 				display.Enabled = offered;

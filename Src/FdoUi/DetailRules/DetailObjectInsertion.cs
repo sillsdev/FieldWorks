@@ -157,7 +157,7 @@ namespace SIL.FieldWorks.Common.DetailRules
 
 		/// <summary>
 		/// Whether an entry offers an Insert command: Insert Affix Process, chosen by the end
-		/// of its id, only on an affix entry; any other command always.
+		/// of its id, only on an affix entry; any other command on any valid entry.
 		/// </summary>
 		public static bool IsOfferedOnEntry(ILexEntry entry, string commandId)
 		{

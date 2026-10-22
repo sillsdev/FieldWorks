@@ -622,7 +622,7 @@ namespace FwAvaloniaTests
 		/// which resolves every one of them.
 		/// </summary>
 		[Test]
-		public void ShippedLayouts_UnresolvedParts_AreExactlyTheLegacyUnresolvableSet()
+		public void ShippedLayouts_UnresolvedParts_AreExactlyTheRefsWithNoConfigurationPart()
 		{
 			var repoRoot = FindRepoRoot();
 			var (layouts, parts) = LoadShippedFiles(repoRoot);
@@ -630,7 +630,7 @@ namespace FwAvaloniaTests
 
 			// Summary, section and message refs resolve to StandardParts.xml's CmObject parts;
 			// field refs resolve to the build's GeneratedParts.xml.
-			var legacyUnresolvable = new SortedDictionary<string, int>(StringComparer.Ordinal)
+			var noConfigurationPart = new SortedDictionary<string, int>(StringComparer.Ordinal)
 			{
 				{ "CmAnthroItem-Summary", 1 },
 				{ "CmPossibility-Summary", 1 },
@@ -662,7 +662,7 @@ namespace FwAvaloniaTests
 				{ "WfiWordform-HeavySummary", 1 }
 			};
 
-			Assert.That(report.UnresolvedPartRefs, Is.EquivalentTo(legacyUnresolvable),
+			Assert.That(report.UnresolvedPartRefs, Is.EquivalentTo(noConfigurationPart),
 				"the unresolved-part set changed; if a part was added/renamed update this set, if a "
 				+ "resolution rule regressed fix the resolver (now 56 occurrences; B10 baseline 63, was 259)");
 			Assert.That(report.UnresolvedPartRefs.Values.Sum(), Is.EqualTo(56),
