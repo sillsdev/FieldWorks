@@ -92,9 +92,6 @@
 		<command id="CmdDataTree-Insert-SenseBelow" label="Insert _Sense" message="DataTreeInsert">
 			<parameters field="Senses" className="LexSense" slice="owner" recomputeVirtual="LexSense.LexSenseOutline"/>
 		</command>
-		<command id="CmdDataTree-Insert-Entry-Sense" label="Insert _Top-Level Sense" message="DataTreeInsert">
-			<parameters field="Senses" className="LexSense" ownerClass="LexEntry" recomputeVirtual="LexSense.LexSenseOutline"/>
-		</command>
 		<command id="CmdDataTree-Delete-Sense" label="Delete this Sense and any Subsenses" message="DataTreeDeleteSense" icon="Delete">
 			<parameters field="Senses" className="LexSense"/>
 		</command>
@@ -102,12 +99,6 @@
 			<parameters field="Senses" className="LexSense"/>
 		</command>
 		<command id="CmdDataTree-MoveUp-Sense" label="Move Sense _Up" message="MoveUpObjectInSequence" icon="MoveUp">
-			<parameters field="Senses" className="LexSense"/>
-		</command>
-		<command id="CmdDataTree-MoveDown-Sense-Symbol" label="↓" message="MoveDownObjectInSequence">
-			<parameters field="Senses" className="LexSense"/>
-		</command>
-		<command id="CmdDataTree-MoveUp-Sense-Symbol" label="↑" message="MoveUpObjectInSequence">
 			<parameters field="Senses" className="LexSense"/>
 		</command>
 		<command id="CmdDataTree-MoveDown-Sense" label="Move Sense Down" message="MoveDownObjectInSequence" icon="MoveDown">
@@ -198,9 +189,6 @@
 			<parameters field="Pronunciations" className="LexPronunciation"/>
 		</command>
 		<command id="CmdDataTree-MoveDown-Pronunciation" label="Move Pronunciation _Down" message="MoveDownObjectInSequence" icon="MoveDown">
-			<parameters field="Pronunciations" className="LexPronunciation"/>
-		</command>
-		<command id="CmdDataTree-Pronunciation-WritingSystems" label="Writing Systems" message="PronunciationWritingSystems">
 			<parameters field="Pronunciations" className="LexPronunciation"/>
 		</command>
 
@@ -374,9 +362,6 @@
 			<item command="CmdDataTree-Delete-Sense"/>
 		</menu>
 		<menu id="mnuDataTree-Sense-Hotlinks">
-			<!--       <item command="CmdDataTree-MoveDown-Sense-Symbol"/>
-	  <item command="CmdDataTree-MoveUp-Sense-Symbol"/>
--->
 			<item command="CmdDataTree-Insert-Example"/>
 			<item command="CmdDataTree-Insert-SenseBelow"/>
 		</menu>
@@ -429,8 +414,6 @@
 			<item command="CmdDataTree-MoveDown-Pronunciation"/>
 			<item label="-" translate="do not translate"/>
 			<item command="CmdDataTree-Delete-Pronunciation"/>
-			<item label="-" translate="do not translate"/>
-			<!-- item command="CmdDataTree-Pronunciation-WritingSystems"/ -->
 			<!-- <item command="CmdDataTree-Help"/> -->
 		</menu>
 		<menu id="mnuDataTree-Subsenses">

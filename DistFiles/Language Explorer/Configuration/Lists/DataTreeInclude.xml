@@ -43,9 +43,6 @@
 			<parameters field="SubPossibilities" className="CmLocation"/>
 		</command>
 		<!-- Reversal POS -->
-		<command id="CmdDataTree-Insert-ReversalSubPOS" label="Insert Reversal Subcategory" message="DataTreeInsert">
-			<parameters field="SubPossibilities" className="PartOfSpeech"/>
-		</command>
 		<command id="CmdDataTree-Move-MoveReversalPOS" label="Move Category..." message="MoveReversalPOS">
 			<!--<parameters field="SubPossibilities" className="PartOfSpeech"/>-->
 		</command>

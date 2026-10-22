@@ -995,18 +995,6 @@ namespace SIL.FieldWorks.XWorks
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Start logging events.
-		/// </summary>
-		/// <param name="args"></param>
-		/// <returns></returns>
-		/// ------------------------------------------------------------------------------------
-		protected bool OnStartLogging(object args)
-		{
-			return true;
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
 		///
 		/// </summary>
 		/// <param name="command"></param>
