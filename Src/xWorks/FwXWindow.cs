@@ -10,7 +10,6 @@ using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwAvalonia;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.Common.UIAdapters;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.FwCoreDlgControls;
 using SIL.FieldWorks.FwCoreDlgs;
@@ -1128,25 +1127,6 @@ namespace SIL.FieldWorks.XWorks
 
 			ReapRamp ramp = new ReapRamp();
 			return ramp.ArchiveNow(this, MainMenuStrip.Font, Icon, filesToArchive, m_propertyTable, m_app, Cache);
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Update Archive With RAMP menu item
-		/// </summary>
-		/// <param name="args">the toolbar/menu item properties</param>
-		/// <returns>true if handled</returns>
-		/// ------------------------------------------------------------------------------------
-		public bool OnUpdateArchiveWithRamp(object args)
-		{
-			TMItemProperties itemProps = args as TMItemProperties;
-			if (itemProps != null)
-			{
-				itemProps.Visible = !(Platform.IsMono);
-				itemProps.Update = true;
-				return true;
-			}
-			return false;
 		}
 
 		/// ------------------------------------------------------------------------------------
