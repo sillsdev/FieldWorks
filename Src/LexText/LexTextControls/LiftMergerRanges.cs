@@ -344,7 +344,9 @@ namespace SIL.FieldWorks.LexText.Controls
 		private static bool TryGetPossibilityMatchingTrait(string traitValue, IDictionary<string, ICmPossibility> dict,
 			out ICmPossibility poss)
 		{
-			return dict.TryGetValue(traitValue, out poss) || dict.TryGetValue(traitValue.ToLowerInvariant(), out poss);
+			string trimmed = traitValue.Trim();
+			return dict.TryGetValue(traitValue, out poss) || dict.TryGetValue(traitValue.ToLowerInvariant(), out poss)
+				|| dict.TryGetValue(trimmed, out poss) || dict.TryGetValue(trimmed.ToLowerInvariant(), out poss);
 		}
 
 		private static void UpdatePossibilityWithTraitValue(int ws, ICmPossibility poss, string traitValue,

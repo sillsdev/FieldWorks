@@ -4803,6 +4803,47 @@ namespace LexTextControlsTests
 			Assert.That(Cache.LangProject.AnthroListOA.PossibilitiesOS, Has.Count.EqualTo(1), "Should have merged import with ICmAnthroItem from input");
 		}
 
+		/// <summary>
+		/// Semantic domain lists from FieldWorks templates before 2017 have trailing spaces
+		/// in some English names (e.g., "Necessary "), which other programs trim before
+		/// writing LIFT.
+		/// </summary>
+		[Test]
+		public void ImportSemanticDomainTrait_MatchesExistingDomainWithUntrimmedName()
+		{
+			SetWritingSystems("fr");
+			var en = Cache.WritingSystemFactory.GetWsFromStr("en");
+			var semDomList = Cache.LangProject.SemanticDomainListOA;
+			var semDom = Cache.ServiceLocator.GetInstance<ICmSemanticDomainFactory>().Create();
+			semDomList.PossibilitiesOS.Add(semDom);
+			semDom.Abbreviation.set_String(en, "9.4.2.3");
+			semDom.Name.set_String(en, "Necessary ");
+			var semDomCount = semDomList.ReallyReallyAllPossibilities.Count;
+			var liftData = new[]
+			{
+				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
+				"<lift producer=\"The Combine\" version=\"0.13\">",
+				"<entry id=\"baba_aef5e807-c841-4f35-9591-c8a998dc2465\" guid=\"aef5e807-c841-4f35-9591-c8a998dc2465\">",
+				"<lexical-unit>",
+				"<form lang=\"fr\"><text>baba</text></form>",
+				"</lexical-unit>",
+				"<sense id=\"c2a0ad53-5b6e-4c1f-a4b1-0d84ec0f1a9e\">",
+				"<trait name=\"semantic-domain-ddp4\" value=\"9.4.2.3 Necessary\"/>",
+				"</sense>",
+				"</entry>",
+				"</lift>"
+			};
+
+			var sOrigFile = CreateInputFile(liftData);
+			var logFile = TryImport(sOrigFile, 1);
+			File.Delete(sOrigFile);
+			File.Delete(logFile);
+
+			Assert.That(semDomList.ReallyReallyAllPossibilities, Has.Count.EqualTo(semDomCount), "Should not create a new semantic domain");
+			var sense = Cache.ServiceLocator.GetInstance<ILexSenseRepository>().AllInstances().Single();
+			Assert.That(sense.SemanticDomainsRC.Single(), Is.SameAs(semDom));
+		}
+
 		[Test]
 		public void ImportRangeWithExistingObject_DoesNotDuplicate_UnifiesData()
 		{
