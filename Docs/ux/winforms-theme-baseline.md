@@ -50,7 +50,7 @@ How to read and keep it:
 
 | Element | WinForms value | Source | Avalonia token | Match / differs |
 | --- | --- | --- | --- | --- |
-| OK / Cancel / Help button size | 75 × 23 px | `FwCoreDlgs/FwStylesDlg.resx:516-517, 546-547` | `DialogMinControlHeight` (Semi `SemiHeightControlSmall`, 24) | Differs: 24 px minimum height, kept for the pointer-target size (token comment); no register entry |
+| OK / Cancel / Help button size | 75 × 23 px | `FwCoreDlgs/FwStylesDlg.resx:516-517, 546-547` | `DialogMinControlHeight` (Semi `SemiHeightControlSmall`, 24) | Differs: 24 px minimum height, per the target-size rule in [*Keyboard and assistive access*](README.md#keyboard-and-assistive-access) |
 | Gap between dialog buttons | 6 px | `FwCoreDlgs/FwStylesDlg.resx:513-514, 543-544` | `DialogButtonStripGap` (Semi `SemiSpacingTight`) | Check: Semi step value not yet confirmed |
 | Interface font | MS Sans Serif, 8.25 pt | Form designer defaults (for example `FwCoreDlgs/FwStylesDlg.resx`) | `FwSurfaceFontSize` (11 px, about 8.25 pt) | Match |
 

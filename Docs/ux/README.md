@@ -147,6 +147,11 @@ something needs a look the theme doesn't have, add a named token for its purpose
 (for example "approved guess background"), not a raw value at the point of use.
 The same purpose always uses the same token, so one meaning has one look
 everywhere, and a theme change reaches every screen.
+Color tokens are defined per theme variant and referenced so they update when
+the variant changes (in Avalonia, `ThemeDictionaries` and `DynamicResource`),
+so a dark theme stays possible later. FieldWorks tokens alias Semi.Avalonia's
+keys (ADR 0001) and never redefine a Semi key; a component that needs different
+values uses its own token or control theme.
 
 ### Localizable text
 
@@ -164,11 +169,20 @@ meant for the development team.
 **Everything works without a mouse and can be read by assistive tools.** Every
 control the user can act on can be reached and operated from the keyboard, in a
 sensible Tab order that follows the visual reading order, and the focused item
-is always visibly marked. Every such control has an accessible name in the
+is always visibly marked and never fully hidden behind other content. Every
+such control has an accessible name in the
 interface language (usually its visible label) and a stable automation id that
 does not change with language or layout, so screen readers and automated tests
-can find it. Icon-only buttons always have a tooltip that matches their
-accessible name.
+can find it. Automation ids are never built from translated text, are unique
+within their window, and start with the name of their dialog or view
+(`AddNewSense.Ok`). Icon-only buttons always have a tooltip that matches their
+accessible name. Text and the parts of controls the user must see meet WCAG 2.2
+AA contrast: 4.5:1 for text (3:1 for large text), and 3:1 for control borders,
+icons and focus marks. No automated check catches contrast, so check new colors
+when adding them. Buttons, check boxes, links and other controls are at least
+24 DIP high or spaced so that a 24 DIP target around each does not overlap its
+neighbors (WCAG 2.5.8). Rows in dense data views follow the view's own row
+height.
 
 ### Views remember their state
 
@@ -183,6 +197,17 @@ These settings are kept per project and per user. Anything remembered can be
 returned to its default from where it was set (Show All in a filter, the default
 sort, the default columns).
 
+### Long-running work
+
+**Long work never freezes the window.** Work that takes more than a moment says
+in words what it is doing. When the amount of work is known, show specific
+progress ("Parsing word 120 of 500" with a bar that fills); when it isn't, show
+an indeterminate bar. Offer Cancel when stopping is safe, and say when the work
+has finished or failed rather than just letting the bar disappear. Reuse the
+existing progress classes (`ProgressDialogWithTask` / `IThreadedProgress` for
+blocking work, `StatusBarProgressHandler` for the status bar) rather than
+writing a new one.
+
 ## Dialogs
 
 ### Dialog buttons
@@ -194,7 +219,9 @@ alternative ways to confirm (Create and Edit); Cancel; Apply, if the dialog has
 it; then Help when a help topic exists. Buttons that act without closing the
 dialog (Browse, Restore Defaults, Select All, More) do not join that group:
 place them next to the content they affect, or at the bottom left. Enter
-activates the confirming button and Esc cancels. A dialog that only shows
+activates the confirming button and Esc cancels, except in a confirmation that
+deletes data or can't be undone: there Cancel has the focus and no button is
+the default, so Enter does not delete. A dialog that only shows
 information, or applies changes immediately, offers Close instead of OK and
 Cancel, and Esc closes it. Buttons share one standard size from the theme.
 
@@ -205,13 +232,16 @@ opened it: it opens centered on that window, stays in front of it, has no
 minimize or maximize button, and doesn't appear separately in the taskbar. It
 shows the FieldWorks icon. Layout is compact, matching the density users know
 from FieldWorks rather than roomy default spacing. A dialog whose content can
-grow (lists, trees, previews, long text) is resizable, has a sensible minimum
-size, and remembers its size and position, always reopening fully on screen; a
-dialog with fixed content is not resizable.
+grow (lists, trees, previews, long text) is resizable, has a minimum size at
+which every control stays visible and usable, and remembers its size and
+position, always reopening fully on screen; a dialog with fixed content is not
+resizable. Every screen is checked at 100% and 150% display scaling before it
+ships.
 
 ### Checking input
 
-> **Needs team consensus.** Intentional departure from WinForms; modernization.
+> **Needs team consensus** (UX-6). Intentional departure from WinForms;
+> modernization.
 
 **Show problems where they are, and never lose the user's input.** When
 something the user entered can't be accepted, say so next to that field, in
@@ -233,7 +263,7 @@ title-bar "?" button is not used.
 
 ### Advanced options
 
-> **Needs team consensus.** Replaces five WinForms patterns with one.
+> **Needs team consensus** (UX-7). Replaces five WinForms patterns with one.
 
 **Advanced options use one pattern.** A dialog that has options most users don't
 need opens showing only the common ones, with a single "More options" expander
@@ -430,8 +460,8 @@ and analysis writing systems, vernacular comes first.
 
 ### Saving and undo
 
-> **Needs team consensus.** Last sentence: field-level problem display replaces
-> WinForms message boxes.
+> **Needs team consensus** (UX-8). Last sentence: field-level problem display
+> replaces WinForms message boxes.
 
 **Edits save themselves, one undoable step per field.** There is no Save button
 in a detail view. A change to a field is committed when the user leaves that
@@ -440,7 +470,8 @@ undo step, named for the field ("Undo change Gloss"), so Undo reverses exactly
 one field at a time. While the user is typing in a field, Undo works within the
 text first. If a value can't be accepted, the problem is shown at that field in
 plain words, the user's typing is kept, and focus stays there until it's fixed
-or the change is undone, as in *Checking input* for dialogs.
+or the change is undone, as in *Checking input* for dialogs. A command that
+can't be undone says so before it runs.
 
 ### Tab and focus
 
@@ -536,13 +567,16 @@ Each entry has one status:
 A superseded entry stays in the table, marked as superseded and pointing to the
 entry that replaces it.
 
-| Decision | Status | Revisit trigger / end condition | Decided |
-| --- | --- | --- | --- |
-| Empty or appendable sequences in detail views show a "Type to add {item}" row as an extra in-place way to add; insert commands stay in the menus and section commands. | Adopted | — | 2026-08-11, LT-22687 |
-| Sections that offer commands show them on the section header at all times (see *Sections and expansion*). | Adopted | — | 2026-08-11, LT-22687 |
-| Section commands appear as one "Field options" link per section that opens a menu (WinForms shows one link per command), and that link is a Tab stop. | Provisional | LT-22693 | 2026-08-11, LT-22687 |
-| Edit boxes in detail views have a visible border. | Provisional | Users push back on the look | 2026-08-11, LT-22687 |
-| Tab stops at the first and last detail-view row instead of carrying on into the rest of the window. | Temporary | The whole window is Avalonia (LT-22688) | 2026-09-22, commit 23965cd67 |
+| ID | Decision | Status | Revisit trigger / end condition | Decided |
+| --- | --- | --- | --- | --- |
+| UX-1 | Empty or appendable sequences in detail views show a "Type to add {item}" row as an extra in-place way to add; insert commands stay in the menus and section commands. | Adopted | — | 2026-08-11, LT-22687 |
+| UX-2 | Sections that offer commands show them on the section header at all times (see *Sections and expansion*). | Adopted | — | 2026-08-11, LT-22687 |
+| UX-3 | Section commands appear as one "Field options" link per section that opens a menu (WinForms shows one link per command), and that link is a Tab stop. | Provisional | LT-22693 | 2026-08-11, LT-22687 |
+| UX-4 | Edit boxes in detail views have a visible border. | Provisional | A Jira issue or user-testing report asks to remove the border | 2026-08-11, LT-22687 |
+| UX-5 | Tab stops at the first and last detail-view row instead of carrying on into the rest of the window. | Temporary | The whole window is Avalonia (LT-22688) | 2026-09-22, commit 23965cd67 |
+| UX-6 | Input problems show next to the field, in plain words, keeping the user's input; WinForms message boxes are not used for them (see *Checking input*). | Provisional | Team consensus on LT-22687 | 2026-10-23, LT-22687 |
+| UX-7 | Advanced options use one "More options" expander, replacing five WinForms patterns (see *Advanced options*). | Provisional | Team consensus on LT-22687 | 2026-10-23, LT-22687 |
+| UX-8 | Detail views show field problems at the field, as in UX-6, not in message boxes (see *Saving and undo*). | Provisional | Team consensus on LT-22687 | 2026-10-23, LT-22687 |
 
 ## Appendix: terms and where they live in code
 
