@@ -32,6 +32,10 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 		/// DataTree.PickerCornerRadius).</summary>
 		public static CornerRadius RequireCornerRadius(string key) => (CornerRadius)Require(key);
 
+		/// <summary>Resolves a required <see cref="FontFamily"/> token (e.g.
+		/// FwUiFontFamily).</summary>
+		public static FontFamily RequireFontFamily(string key) => (FontFamily)Require(key);
+
 		/// <summary>No fallback default on a miss: both hosts merge the token dictionaries
 		/// unconditionally at Initialize(), so a missing key means the wiring is broken and must
 		/// fail loudly rather than silently substitute a hardcoded value.</summary>

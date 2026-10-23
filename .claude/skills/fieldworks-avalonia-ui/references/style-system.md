@@ -8,7 +8,7 @@ toward the Fluent theme per the migration hub's `architecture-patterns.md` §12.
 
 ## Why a global token system (and why it renders headlessly)
 
-`FwAvaloniaApp` adds `new FluentTheme()`, which ships ~14px fonts and ~32px control floors app-wide.
+`FwAvaloniaApp` adds Semi core plus Ursa Semi (no Fluent), which ships ~14px fonts and ~32px control floors app-wide.
 Density/borders must be layered ON TOP of Fluent. The reliable mechanism — proven by a prior agent —
 is **per-control-tree `.Styles`**, added to each view's own `Styles` collection by its view ctor.
 App-level `Application.Styles` did **not** apply in the headless test app, so that path is rejected.
@@ -41,6 +41,12 @@ sit inside a `Border.fwFieldHost` that supplies the box.
 `DialogTheme.axaml`'s `{StaticResource FwSurfaceFontSize}` all resolve that one token
 directly (not three independently-maintained copies) -- see
 `Src/Common/FwAvalonia/FwThemeResources.cs`.
+
+**Font family:** the bundled Andika 7.000, token `FwUiFontFamily` (`fonts:FieldWorks#Andika`) in the same
+file. `FwUiFont.ApplyTo` (called from both `Application.Initialize` overrides) registers the collection
+and points Semi's `DefaultFontFamily`, `ContentControlThemeFontFamily` and `SemiFontFamilyRegular` at it, so
+chrome inherits it. The stack continues with fallback fonts for UI languages whose script Andika lacks (`FwUiFont.FallbackFamiliesFor`). Data text keeps its writing-system font. Measure UI text with `FwUiFont.UiFontFamily`,
+never `FontFamily.Default`. See ADR 0004.
 
 **Control height:** `TextBox`/`ComboBox`/`Button` `MinHeight = 24` (WinForms runs ~21-23px; 24 is the
 pointer-accessibility floor — see the "Why `DialogMinControlHeight` is 24, not 22" note below — still far
