@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <window>
-	<!--<include path="../CommonDataTreeInclude.xml"/>-->
 	<!--
   ===========================================================
   Commands
@@ -28,17 +27,8 @@
 		<command id="CmdDataTree-Insert-CustomItem" label="Insert subitem" message="DataTreeInsert" icon="AddSubItem">
 			<parameters field="SubPossibilities" className="CmCustomItem"/>
 		</command>
-		<command id="CmdDataTree-Delete-CustomItem" label="Delete subitem and its subitems" message="DataTreeDelete" icon="Delete">
-			<parameters field="SubPossibilities" className="CmCustomItem"/>
-		</command>
 		<command id="CmdDataTree-Insert-SemanticDomain" label="Insert subdomain" message="DataTreeInsert" icon="AddSubItem">
 			<parameters field="SubPossibilities" className="CmSemanticDomain"/>
-		</command>
-		<command id="CmdDataTree-Insert-AnnotationDefn" label="Insert Annotation Definition" message="DataTreeInsert" icon="AddSubItem">
-			<parameters field="SubPossibilities" className="CmAnnotationDefn"/>
-		</command>
-		<command id="CmdDataTree-Insert-MorphType" label="Insert Morpheme Type" message="DataTreeInsert" icon="AddSubItem">
-			<parameters field="SubPossibilities" className="MoMorphType"/>
 		</command>
 	<command id="CmdDataTree-Insert-LexEntryInflType" label="Insert Subtype" message="DataTreeInsert" icon="AddSubItem">
 	  <parameters field="SubPossibilities" className="LexEntryInflType"/>
@@ -53,9 +43,6 @@
 			<parameters field="SubPossibilities" className="CmLocation"/>
 		</command>
 		<!-- Reversal POS -->
-		<command id="CmdDataTree-Insert-ReversalSubPOS" label="Insert Reversal Subcategory" message="DataTreeInsert">
-			<parameters field="SubPossibilities" className="PartOfSpeech"/>
-		</command>
 		<command id="CmdDataTree-Move-MoveReversalPOS" label="Move Category..." message="MoveReversalPOS">
 			<!--<parameters field="SubPossibilities" className="PartOfSpeech"/>-->
 		</command>
@@ -87,15 +74,6 @@
 		<menu id="mnuDataTree-SubSemanticDomain">
 			<item command="CmdDataTree-Insert-SemanticDomain"/>
 		</menu>
-		<menu id="mnuDataTree-SubCustomItem">
-			<item command="CmdDataTree-Insert-CustomItem"/>
-		</menu>
-		<menu id="mnuDataTree-SubAnnotationDefn">
-			<item command="CmdDataTree-Insert-AnnotationDefn"/>
-		</menu>
-		<menu id="mnuDataTree-SubMorphType">
-			<item command="CmdDataTree-Insert-MorphType"/>
-		</menu>
 		<menu id="mnuDataTree-SubComplexEntryType">
 			<item command="CmdDataTree-Insert-LexEntryType"/>
 		</menu>
@@ -107,9 +85,6 @@
 		</menu>
 		<menu id="mnuDataTree-DeletePossibility">
 			<item command="CmdDataTree-Delete-Possibility"/>
-		</menu>
-		<menu id="mnuDataTree-DeleteCustomItem">
-			<item command="CmdDataTree-Delete-CustomItem"/>
 		</menu>
 		<menu id="mnuDataTree-SubLocation">
 			<item command="CmdDataTree-Insert-Location"/>

@@ -216,30 +216,6 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		#region XCore Message handlers
 
 		/// <summary>
-		///
-		/// </summary>
-		/// <param name="commandObject"></param>
-		/// <param name="display"></param>
-		/// <returns></returns>
-		public virtual bool OnDisplayMergeWordform(object commandObject,
-			ref UIItemDisplayProperties display)
-		{
-			CheckDisposed();
-
-			display.Enabled = display.Visible = InFriendlyArea;
-			return true; //we've handled this
-		}
-		public bool OnMergeWordform(object argument)
-		{
-			CheckDisposed();
-
-			// Do something meaningful,
-			// whenever the definition of merging wordforms gets developed.
-			MessageBox.Show(MEStrings.ksCannotMergeWordformsYet);
-			return true;
-		}
-
-		/// <summary>
 		/// Enable the spelling tool always. Correct the property value if need be to match whether
 		/// we are actually showing vernacular spelling.
 		/// </summary>
@@ -801,14 +777,6 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 		#region Approval Status Message handlers
 
-		public virtual bool OnDisplayAnalysisApprove(object commandObject,
-			ref UIItemDisplayProperties display)
-		{
-			display.Enabled = display.Visible = InFriendlyArea;
-			display.Checked = Analysis != null && Analysis.IsValidObject && Analysis.ApprovalStatusIcon == 1;
-			return true; //we've handled this
-		}
-
 		/// <summary>
 		/// Insert Word Gloss and Approve Analysis
 		/// </summary>
@@ -819,22 +787,18 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 				// Insert word gloss.
 				OnDataTreeInsert(cmd);
 			}
-			OnAnalysisApprove(cmd);
+			ApproveAnalysis();
 			return true;
 		}
 
 		/// <summary>
-		///
+		/// Marks the current analysis approved.
 		/// </summary>
-		/// <param name="argument">The xCore Command object.</param>
-		/// <returns>true</returns>
-		public bool OnAnalysisApprove(object argument)
+		private void ApproveAnalysis()
 		{
 			IWfiAnalysis anal = Analysis;
 			Debug.Assert(anal != null, "Could not find analysis object.");
 			SetNewStatus(anal, 1);
-
-			return true;
 		}
 
 		public virtual bool OnDisplayAnalysisUnknown(object commandObject,
@@ -883,71 +847,6 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 		#endregion Approval Status Message handlers
 
-#if NOTYET
-		#region SpellingStatus Message handlers
-
-		public virtual bool OnDisplaySpellingStatusUnknown(object commandObject,
-			ref UIItemDisplayProperties display)
-		{
-			display.Enabled = display.Visible = InFriendlyArea;
-			return true; //we've handled this
-		}
-
-		/// <summary>
-		///
-		/// </summary>
-		/// <param name="argument">The xCore Command object.</param>
-		/// <returns>true</returns>
-		public bool OnSpellingStatusUnknown(object argument)
-		{
-			MessageBox.Show("TODO: Set spelling status to 'Unknown' goes here, when the integer values that get stored in the database get defined.");
-
-			return true;
-		}
-
-		public virtual bool OnDisplaySpellingStatusGood(object commandObject,
-			ref UIItemDisplayProperties display)
-		{
-			display.Enabled = display.Visible = InFriendlyArea;
-			return true; //we've handled this
-		}
-
-		/// <summary>
-		///
-		/// </summary>
-		/// <param name="argument">The xCore Command object.</param>
-		/// <returns>true</returns>
-		public bool OnSpellingStatusGood(object argument)
-		{
-			MessageBox.Show("TODO: Set spelling status to 'Good' goes here, when the integer values that get stored in the database get defined.");
-
-			return true;
-		}
-
-		public virtual bool OnDisplaySpellingStatusDisapprove(object commandObject,
-			ref UIItemDisplayProperties display)
-		{
-			display.Enabled = display.Visible = InFriendlyArea;
-			return true; //we've handled this
-		}
-
-		/// <summary>
-		///
-		/// </summary>
-		/// <param name="argument">The xCore Command object.</param>
-		/// <returns>true</returns>
-		public bool OnSpellingStatusDisapprove(object argument)
-		{
-			MessageBox.Show("TODO: Set spelling status to 'Disapproved' goes here, when the integer values that get stored in the database get defined.");
-
-			return true;
-		}
-
-		#endregion SpellingStatus Message handlers
-#endif
-
-		#region Wordform edit Message handlers
-
 		protected override bool DeleteObject(Command command)
 		{
 			if (base.DeleteObject(command))
@@ -960,46 +859,6 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			}
 			return false;
 		}
-
-		public virtual bool OnDisplayWordformEditForm(object commandObject,
-			ref UIItemDisplayProperties display)
-		{
-			display.Enabled = display.Visible = InFriendlyArea;
-			return true; //we've handled this
-		}
-
-		/// <summary>
-		///
-		/// </summary>
-		/// <param name="argument">The xCore Command object.</param>
-		/// <returns>true</returns>
-		public bool OnWordformEditForm(object argument)
-		{
-			MessageBox.Show(MEStrings.ksTodo_WordformEditing);
-
-			return true;
-		}
-
-		public virtual bool OnDisplayWordformChangeCase(object commandObject,
-			ref UIItemDisplayProperties display)
-		{
-			display.Enabled = display.Visible = InFriendlyArea;
-			return true; //we've handled this
-		}
-
-		/// <summary>
-		///
-		/// </summary>
-		/// <param name="argument">The xCore Command object.</param>
-		/// <returns>true</returns>
-		public bool OnWordformChangeCase(object argument)
-		{
-			MessageBox.Show("TODO: Case changing editing happens here.");
-
-			return true;
-		}
-
-		#endregion Wordform edit Message handlers
 
 		#region New analysis message handler
 

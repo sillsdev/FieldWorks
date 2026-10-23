@@ -51,7 +51,6 @@
 		<command id="CmdPreviousRecord" label="_Previous" icon="previousRecord" message="PreviousRecord" shortcut="Alt+P"/>
 		<command id="CmdNextRecord" label="_Next" icon="nextRecord" message="NextRecord" shortcut="Alt+N"/>
 		<command id="CmdListPropertiesTable" label="_List Properties Table" message="ListPropertiesTable"/>
-		<command id="CmdListColleagues" label="List _Colleagues" message="ListColleagues"/>
 		<command id="CmdNewWindow" label="_New Window" message="NewWindow"/>
 		<command id="CmdRefresh" label="_Refresh" message="MasterRefresh" icon="Refresh" shortcut="F5" oneatatime="true"/>
 
@@ -67,7 +66,6 @@
 		</command>
 		<command id="CmdArchiveWithRamp" label="_Archive with RAMP (SIL)..." message="ArchiveWithRamp" icon="ArchiveWithRamp"/>
 		<command id="CmdUploadToWebonary" label="Upload to _Webonary..." message="UploadToWebonary"/>
-		<command id="CmdPageSetup" label="Page Setup..." message="PageSetup"/>
       <command id="CmdImportSFMLexicon" label="_Standard Format Lexicon..." message="SFMImport"/>
       <command id="CmdImportPhonology" label="_Phonology..." message="ImportPhonology"/>
       <command id="CmdImportSFMNotebook" label="Standard Format _Notebook data..." message="LaunchConnectedDialog">
@@ -108,7 +106,6 @@
 		<command id="CmdImportTranslatedLists" label="_Translated List Content" message="ImportTranslatedLists"/>
 		<command id="CmdImportTranslatedGramCats" label="Translated _Grammatical Category Content" message="ImportTranslatedGramCats"/>
 		<command id="CmdExport" label="_Export..." message="Export"/>
-		<command id="CmdSynch" label="S_ynchronize with LiftShare..." message="Synchronize" translate="This command tries to update from an external source of lexical data."/>
 		<command id="CmdAddCustomField" label="Custom _Fields..." message="AddCustomField"/>
 		<command id="CmdConfigureColumns" label="_Columns..." icon="columnChooser" message="ConfigureColumns"/>
 		<command id="CmdEditSpellingStatus" label="Edit Spelling Status" message="EditSpellingStatus"/>
@@ -128,11 +125,6 @@
 		<command id="CmdAnalysisWritingSystemProperties" label="Set up _Analysis Writing Systems..." message="AnalyWritingSystemProperties"/>
 		<command id="CmdBackup" label="_Back up this Project..." message="BackupThisProject"/>
 		<command id="CmdRestoreFromBackup" label="_Restore a Project..." message="RestoreAProject"/>
-		<!-- this will require something dynamic unless we somehow make a way to define it specifically in the
-			 configuration files of various applications. we could perhaps make it possible to define the label here
-			 using the property value: label="{MainObjectLabel}" and then add to XCore the ability to define this:
-			 <property id="MainObjectLabel">Lexical Database</property>-->
-		<command id="CmdMainObjectProperties" label="?? Properties (TODO)" message="MainObjectProperties"/>
 		<command id="CmdUndo" label="_Undo" message="Undo" icon="Undo" shortcut="Ctrl+Z"/>
 		<command id="CmdRedo" label="_Redo" message="Redo" icon="Redo" shortcut="Ctrl+Y"/>
 		<command id="CmdCopy" label="_Copy" message="EditCopy" icon="Copy" shortcut="Ctrl+C"/>
@@ -147,7 +139,6 @@
 		<command id="CmdHelpLanguageExplorer" label="_Language Explorer..." message="HelpLanguageExplorer" shortcut="F1"/>
 		<command id="CmdHelpTraining" label="_Training" message="HelpTraining" />
 		<command id="CmdHelpDemoMovies" label="_Demo Movies (Online)..." message="HelpDemoMovies"/>
-		<!-- LT-15886 <command id="CmdHelpCheckForUpdates" label="Check for _Updates..." message="HelpCheckForUpdates"/> -->
 		<command id="CmdHelpReportBug" label="_Report a Problem..." message="HelpReportProblem"/>
 		<command id="CmdHelpMakeSuggestion" label="_Make a Suggestion..." message="HelpMakeSuggestion"/>
 		<command id="CmdHelpMorphologyInto" label="Introduction to _Parsing..." message="HelpMorphologyIntro"/>
@@ -173,7 +164,6 @@
 		<command id="CmdHistoryBack" label="Go Back" message="HistoryBack" icon="historyBack" shortcut="Alt+Left"/>
 		<command id="CmdHistoryForward" label="Go Forward" message="HistoryForward" icon="historyForward" shortcut="Alt+Right"/>
 		<command id="CmdCopyLocationAsHyperlink" label="Copy _Location as Hyperlink" message="CopyLocationAsHyperlink"/>
-		<command id="CmdStartLogging" label="Start Logging" message="StartLogging"/>
 		<command id="CmdRequestDebugInfo" label="Request Debug Info" message="RequestDebugInfo" shortcut="Ctrl+Shift+I"/>
 		<command id="CmdExportText" label="Export Text of browse view" message="ExportText" shortcut="Ctrl+Shift+E"/>
 		<command id="CmdChangeFilterClearAll" label="Turn off all filters" message="ChangeFilterClearAll" icon="NoFilter"/>
@@ -416,7 +406,6 @@
 			<item command="CmdArchiveWithRamp" />
 			<item command="CmdUploadToWebonary" />
 			<item label="-" translate="do not translate"/>
-			<item command="CmdPageSetup"/>
 			<item command="CmdPrint"/>
 			<item label="-" translate="do not translate"/>
 			<menu id="Import" label="_Import">
@@ -435,12 +424,7 @@
 			</menu>
 			<item command="CmdExport"/>
 			<include path="Words/areaConfiguration.xml" query="root/menuAddOn/menu[@id='FileExport']/*"/>
-			<!--item command="CmdSynch"/-->
-			<!-- needs more work to implement. -->
 			<item label="-" translate="do not translate"/>
-			<!-- (this was ToDo even in 6.0) <menu id="Properties" label="P_roperties">
-				<item command="CmdMainObjectProperties" />
-				</menu>-->
 
 			<item command="CmdClose"/>
 		</menu>
@@ -618,8 +602,6 @@
 				<item command="CmdHelpXLingPap"/>
 			</menu>
 			<item label="-" translate="do not translate"/>
-			<!-- LT-15886 <item command="CmdHelpCheckForUpdates"/>
-			This feature was never completed because FLEx would crash after updating on some machines for unexplained reasons.-->
 			<item command="CmdHelpReportBug"/>
 			<item command="CmdHelpMakeSuggestion"/>
 			<item label="-" translate="do not translate"/>

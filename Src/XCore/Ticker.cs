@@ -226,17 +226,6 @@ namespace XCore
 			WriteLine(m_propertyTable.GetPropertiesDumpString());
 			return true;//we handled this, no need to ask anyone else.
 		}
-		/// <summary>
-		/// Receives the  message "ListPropertiesTable"
-		/// </summary>
-		public bool OnListColleagues(object argument)
-		{
-			CheckDisposed();
-
-			WriteLine ("--------Colleagues");
-			WriteLine(m_mediator.GetColleaguesDumpString());
-			return true;//we handled this, no need to ask anyone else.
-		}
 
 		/// <summary>
 		/// enable this command because we are listening for it.

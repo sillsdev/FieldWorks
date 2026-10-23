@@ -108,10 +108,6 @@
 		<part ref="TranslationAllA" />
 	</layout>
 
-	<layout class="LexReference" type="detail" name="ShowSingleReference">
-		<part ref="ShowSingleReference"/>
-	</layout>
-
 	 <layout class="LexSense" type="jtview" name="CrossRefPub">
 		<part ref="OwnerOutlinePub" label="Referenced Sense Headword" before="" after=" " visibility="ifdata" ws="vernacular" sep=" " showLabels="false" style="Dictionary-CrossReferences"/>
 		<part ref="GlossPub" label="Gloss" before="" after=" " visibility="never" ws="all analysis" sep=" " showLabels="false"/>

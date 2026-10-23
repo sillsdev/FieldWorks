@@ -31,11 +31,6 @@
 		<command id="CmdInsertPhoneme" label="Phoneme" message="InsertItemInVector" icon="phoneme" shortcut="Ctrl+I">
 			<params className="PhPhoneme"/>
 		</command>
-		<!--  In Stage 1, there is only one boundary marker: word boundary (#).  It is inserted when a new language is created.
-		Therefore, there is no need for this tool in Stage 1.
-		<command id="CmdInsertBoundaryMarker" label="Boundary Marker" message="InsertItemInVector" icon="boundaryMarker">
-			<params className="PhBdryMarker"/>
-		</command>  -->
 		<command id="CmdInsertPhEnvironment" label="Environment" message="InsertItemInVector" icon="environment" shortcut="Ctrl+I">
 			<params className="PhEnvironment"/>
 		</command>
@@ -280,10 +275,6 @@
 			<item command="CmdInsertPhoneme" defaultVisible="false"/>
 			<item command="CmdDataTree-Insert-Phoneme-Code" defaultVisible="false"/>
 			<item label="-" translate="do not translate"/>
-			<!-- In Stage 1, there is only one boundary marker: word boundary (#).  It is inserted when a new language is created.
-		Therefore, there is no need for this tool in Stage 1.
-			<item command="CmdInsertBoundaryMarker"/>
-			<item label="-" translate="do not translate"/>  -->
 			<item command="CmdInsertSegmentNaturalClasses" defaultVisible="false"/>
 			<item command="CmdInsertFeatureNaturalClasses" defaultVisible="false"/>
 			<item label="-" translate="do not translate"/>
@@ -365,10 +356,6 @@
 	  <item command="CmdInsertComplexFeature" defaultVisible="false"/>
 			<item label="-" translate="do not translate"/>
 			<item command="CmdInsertPhoneme" defaultVisible="false"/>
-			<!--  In Stage 1, there is only one boundary marker: word boundary (#).  It is inserted when a new language is created.
-		Therefore, there is no need for this tool in Stage 1.
-			<item label="-" translate="do not translate"/>
-			<item command="CmdInsertBoundaryMarker"/>  -->
 			<item label="-" translate="do not translate"/>
 	  <item command="CmdInsertSegmentNaturalClasses" defaultVisible="false"/>
 	  <item command="CmdInsertFeatureNaturalClasses" defaultVisible="false"/>

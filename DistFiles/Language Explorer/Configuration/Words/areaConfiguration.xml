@@ -51,7 +51,6 @@
 		<command id="CmdAddWordGlossesToFreeTrans" label="_Word Glosses" message="AddWordGlossesToFreeTrans" shortcut="Enter"/>
 
 		<command id="CmdGuessWordBreaks" label="_Guess Word Breaks" message="GuessWordBreaks"/>
-		<command id="CmdParse" label="_Parse" message="ReParse"/>
 
 		<command id="CmdApproveAll" label="Approve All" message="ApproveAll" icon="approveAll"/>
 		<command id="CmdApprove" label="Approve and _Stay" message="ApproveAndStayPut" shortcut="Ctrl+S"/>
@@ -63,26 +62,15 @@
 		<command id="CmdBrowseMoveNextSameLine" label="Move Next, _Same Line" message="BrowseMoveNextSameLine" shortcut="Shift+Ctrl+Enter"/>
 		<command id="CmdMoveFocusBoxRight" label="Move _Right" message="MoveFocusBoxRight" shortcut="Ctrl+Right"/>
 		<command id="CmdMoveFocusBoxLeft" label="Move _Left" message="MoveFocusBoxLeft" shortcut="Ctrl+Left"/>
-		<command id="CmdBundleDown" label="Move _Down" message="BundleDown" shortcut="Ctrl+Down"/>
-		<command id="CmdBundleUp" label="Move _Up" message="BundleUp" shortcut="Ctrl+Up"/>
 		<command id="CmdMoveFocusBoxRightNc" label="Move _Right" message="MoveFocusBoxRightNc" shortcut="Shift+Ctrl+Right"/>
 		<command id="CmdMoveFocusBoxLeftNc" label="Move _Left" message="MoveFocusBoxLeftNc" shortcut="Shift+Ctrl+Left"/>
-		<command id="CmdBundleDownNc" label="Move _Down" message="BundleDownNc" shortcut="Ctrl+Shift+Down"/>
-		<command id="CmdBundleUpNc" label="Move _Up" message="BundleUpNc" shortcut="Ctrl+Shift+Up"/>
 		<command id="CmdLastBundle" label="Last Word" message="LastBundle" shortcut="Ctrl+End"/>
 		<command id="CmdFirstBundle" label="First Word" message="FirstBundle" shortcut="Ctrl+Home"/>
 		<command id="CmdOpenCombo" label="Open Combo" message="OpenCombo" shortcut="Alt+Down"/>
 		<command id="CmdNextIncompleteBundle" label="Approve and _Jump to Next Incomplete" message="NextIncompleteBundle" shortcut="Ctrl+J"/>
 		<command id="CmdNextIncompleteBundleNc" label="_Jump to Next" message="NextIncompleteBundleNc" shortcut="Shift+Ctrl+J"/>
-		<command id="CmdPrevIncompleteBundle" label="Previous Incomplete Word" message="PrevIncompleteBundle"/>
-		<!--<command id="CmdToggleRawAndInterlinear" label="Toggle _Baseline and Interlinearize" message="ToggleRawAndInterlinear" shortcut="Ctrl+R"/>-->
-		<command id="CmdShowMorphology" label="Show _Morphology" message="ShowMorphology" shortcut="Ctrl+M"/>
 		<command id="CmdBreakPhrase" label="_Break phrase into words" message="BreakPhrase" icon="breakPhrase" shortcut="Ctrl+W"/>
 		<command id="CmdMakePhrase" label="_Make phrase with next word" message="JoinWords" icon="linkWords" shortcut="Ctrl+M"/>
-		<!-- The next three commands have different labels, but the same message. -->
-		<command id="CmdDeleteFreeTrans" label="Delete Free Translation" message="DeleteFreeform"/>
-		<command id="CmdDeleteLitTrans" label="Delete Literal Translation" message="DeleteFreeform"/>
-		<command id="CmdDeleteNote" label="Delete Note" message="DeleteFreeform"/>
 		<command id="CmdConfigureInterlinear" label="Interlinear..." message="ConfigureInterlinear"/>
 		<command id="CmdExportInterlinear" label="_Export Interlinear..." message="ExportInterlinear"/>
 		<command id="CmdExportDiscourseChart" label="Export Discourse Chart..." message="ExportDiscourse"/>
@@ -97,13 +85,7 @@
 			<parameters title="Go To Wordform" formlabel="Go _To..." okbuttonlabel="_Go"/>
 		</command>
 		<command id="CmdShowWordformConc" label="Assign Analysis..." message="ShowWordformConc"/>
-		<!--<command id="CmdWordformSpellingStatusUnknown" label="Unknown" message="SpellingStatusUnknown"/>
-		<command id="CmdWordformSpellingStatusGood" label="Good" message="SpellingStatusGood"/>
-		<command id="CmdWordformSpellingStatusDisapprove" label="Disapproved" message="SpellingStatusDisapprove"/>-->
-		<command id="CmdDataTree-Merge-MainWordform" label="Merge Wordform..." message="MergeWordform"/>
 		<command id="CmdDataTree-Delete-MainWordform" label="Delete Wordform..." message="DeleteRecord" icon="Delete"/>
-		<command id="CmdWordformEditForm" label="Edit..." message="WordformEditForm"/>
-		<command id="CmdWordformChangeCase" label="Change Case..." message="WordformChangeCase"/>
 		<!-- Analysis commands -->
 		<command id="CmdShowHumanApprovedAnalysisConc" label="Assign Analysis..." message="ShowHumanApprovedAnalysisConc"/>
 		<command id="CmdDataTree-Delete-HumanApprovedAnalysis" label="Delete Analysis..." message="DataTreeDelete" icon="Delete">
@@ -115,7 +97,6 @@
 		<command id="CmdDataTree-Delete-HumanDisapprovedAnalysis" label="Delete Disapproved Analysis..." message="DataTreeDelete" icon="Delete">
 			<parameters field="Analyses" className="WfiAnalysis"/>
 		</command>
-		<command id="CmdAnalysisApprove" label="Approve" message="AnalysisApprove"/>
 		<command id="CmdAnalysisUnknown" label="Unknown" message="AnalysisUnknown"/>
 		<command id="CmdAnalysisDisapprove" label="Disapprove" message="AnalysisDisapprove"/>
 		<!-- WfiGloss commands -->
@@ -322,11 +303,9 @@
 		</menu>
 		<menu id="View">
 			<item command="CmdChooseTexts" defaultVisible="false"/>
-			<!--<item command="CmdToggleRawAndInterlinear" defaultVisible="false"/>-->
 		</menu>
 
 		<menu id="Data">
-			<item command="CmdParse" defaultVisible="false"/>
 			<item label="-" translate="do not translate"/>
 			<item command="CmdApproveAndMoveNext" defaultVisible="false"/>
 			<item command="CmdApproveForWholeTextAndMoveNext" defaultVisible="false"/>
@@ -384,15 +363,6 @@
 			<item label="Add Words to Lexicon" boolProperty="ITexts_AddWordsToLexicon" defaultVisible="false" settingsGroup="local"/>
 			<item label="Show Hidden Fields" boolProperty="ShowHiddenFields-interlinearEdit" defaultVisible="false" settingsGroup="local"/>
 		</menu>
-		<menu id="mnuIText-FreeTrans">
-			<item command="CmdDeleteFreeTrans"/>
-		</menu>
-		<menu id="mnuIText-LitTrans">
-			<item command="CmdDeleteLitTrans"/>
-		</menu>
-		<menu id="mnuIText-Note">
-			<item command="CmdDeleteNote"/>
-		</menu>
 		<menu id="mnuIText-RawText">
 			<item command="CmdCut"/>
 			<item command="CmdCopy"/>
@@ -433,29 +403,12 @@
 		<menu id="mnuDataTree-MainWordform">
 			<item command="CmdShowWordformConc"/>
 			<item command="CmdRespeller"/>
-			<!-- Not implemented yet
-			<menu id="mnuDataTree-WordformEdit" label="Form">
-				<item command="CmdWordformEditForm"/>
-				<item command="CmdWordformChangeCase"/>
-			</menu>
-			-->
-			<!--<menu id="mnuDataTree-WordformSpellingStatus" label="Spelling Status">
-				<item command="CmdWordformSpellingStatusUnknown"/>
-				<item command="CmdWordformSpellingStatusGood"/>
-				<item command="CmdWordformSpellingStatusDisapprove"/>
-			</menu>
-			<item label="-" translate="do not translate"/>-->
-			<!-- Not implemented yet
-			<item command="CmdDataTree-Merge-MainWordform"/>
-			-->
 			<item command="CmdDataTree-Delete-MainWordform"/>
 		</menu>
 		<menu id="mnuDataTree-WordformSpelling">
 			<item command="CmdRespeller"/>
 		</menu>
 		<menu id="mnuDataTree-MainWordform-Hotlinks">
-			<!--<item command="CmdWordformEditForm"/>
-			<item command="CmdWordformChangeCase"/>-->
 			<item command="CmdShowWordformConc"/>
 		</menu>
 		<menu id="mnuDataTree-HumanApprovedAnalysisSummary">
@@ -490,10 +443,6 @@
 			<item label="-" translate="do not translate"/>
 			<item command="CmdDataTree-Delete-ParserProducedAnalysis"/>
 		</menu>
-		<!--<menu id="mnuDataTree-ParserProducedAnalysis-Hotlinks">
-			<item command="CmdAnalysisApprove"/>
-			<item command="CmdAnalysisDisapprove"/>
-		</menu>-->
 		<menu id="mnuDataTree-HumanDisapprovedAnalysis">
 			<menu id="mnuDataTree-HumanDisapprovedStatus" label="User Opinion">
 				<item command="CmdDataTree-Insert-WordGloss-And-Approve"/>
@@ -503,10 +452,6 @@
 			<item label="-" translate="do not translate"/>
 			<item command="CmdDataTree-Delete-HumanDisapprovedAnalysis"/>
 		</menu>
-		<!--<menu id="mnuDataTree-HumanDisapprovedAnalysis-Hotlinks">
-			<item command="CmdAnalysisApprove"/>
-			<item command="CmdAnalysisUnknown"/>
-		</menu>-->
 		<menu id="mnuDataTree-WordGlossForm">
 			<item command="CmdShowWordGlossConc"/>
 			<item command="CmdWordGlossJumpToConcordance"/>

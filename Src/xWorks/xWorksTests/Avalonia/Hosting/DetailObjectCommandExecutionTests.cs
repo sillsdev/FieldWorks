@@ -1356,8 +1356,9 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(asked, Is.True, "the mediator path decides submenu visibility by asking colleagues");
 		}
 
-		// The XML walk must see what ChoiceGroup.Populate sees. The mediator path drops a
-		// submenu no colleague shows, so nested leaves compare as a subset, top-level exactly.
+		// The XML walk sees what ChoiceGroup.Populate sees: top-level leaves exactly, nested
+		// ones as a subset (the mediator drops unshown submenus). No item may name a missing
+		// command.
 		[Test]
 		public void ResolveMenu_ReadsWhatChoiceGroupPopulates_ForEveryContextMenuId()
 		{
@@ -1386,8 +1387,8 @@ namespace SIL.FieldWorks.XWorks
 				undefinedCommands.AddRange(resolved.Unanswerable.Where(u => u.StartsWith("command", StringComparison.Ordinal))
 					.Select(u => id + ": " + u));
 			}
-			TestContext.WriteLine("Context-menu items naming an undefined command (ChoiceGroup fails on them at display time):"
-				+ Environment.NewLine + string.Join(Environment.NewLine, undefinedCommands));
+			Assert.That(undefinedCommands, Is.Empty,
+				"context-menu items naming an undefined command (ChoiceGroup fails on them at display time)");
 		}
 
 		// Walks the ChoiceGroup side exactly as the configuration-walk side describes a leaf;

@@ -152,9 +152,6 @@
 						<dynamicloaderinfo assemblyPath="MorphologyEditorDll.dll" class="SIL.FieldWorks.XWorks.MorphologyEditor.AssignFeaturesToPhonemes"/>
 						<parameters area="grammar" id="PhonemesBulkEdit" clerk="phonemes" convertDummiesSelected="true" treeBarAvailability="NotAllowed" filterBar="true" bulkEdit="true" bulkEditListItemsClasses="PhPhoneme" selectColumn="true" altTitleId="PhPhoneme-Plural">
 							<enableBulkEditTabs enableBEListChoice="true" enableBEBulkCopy="false" enableBEClickCopy="false" enableBEProcess="false" enableBEFindReplace="false" enableBEOther="false" bulkEditListItemsGhostFields="PhonFeats" bulkEditListItemsClasses="PhPhoneme"/>
-							<!--<include path="../reusableBrowseControlConfiguration.xml" query="reusableControls/control[@id='wordListColumns']/columns">-->
-							<!-- NOTE Overrides syntax: override nodes that have children replace entire target (included) node -->
-							<!--								<overrides>-->
 							<columns generate="objectValuePartsForParentLayouts">
 								<column label="Phoneme" width="5%" layout="Name" ws="$ws=best vernacular" field="Name"/>
 								<!-- Phonological Feature Defns (generated)-->
@@ -181,8 +178,6 @@
 								<column label="Graphemes" width="34%" multipara="true" layout="Codes" visibility="menu"/>
 								<column label="IPA Symbol" width="33%" layout="BasicIPASymbol" visibility="menu"/>
 							</columns>
-							<!--								</overrides>-->
-							<!--							</include>-->
 						</parameters>
 					</control>
 				</parameters>

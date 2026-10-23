@@ -50,10 +50,8 @@ namespace SIL.FieldWorks.XWorks
 			// Allomorphs and Variants hotlinks.
 			"mnuDataTree-AlternateForms", "mnuDataTree-VariantForms", "mnuDataTree-Examples",
 			"mnuDataTree-AlternateForms-Hotlinks", "mnuDataTree-VariantForms-Hotlinks",
-			// Lexicon ids no part reaches (-CmMedia's pronunciation part does not exist).
-			"mnuDataTree-CmMedia", "mnuDataTree-Variant", "mnuDataTree-DeleteEtymology",
-			"mnuDataTree-DeletePronunciation", "mnuDataTree-Translations", "mnuDataTree-Senses", "mnuDataTree-MSAs",
-			"mnuDataTree-Allomorphs", "mnuDataTree-Allomorphs-Hotlinks", "mnuDataTree-Variants",
+			// Lexicon: an id no part reaches (its pronunciation part does not exist).
+			"mnuDataTree-CmMedia",
 			// Grammar: posEdit rows (two item rows, five section rows: Affix Templates, Affix
 			// Slots, Inflection Classes, Subclasses, Stem Allomorph Labels), then other tools.
 			"mnuDataTree-POS-InflectionClass", "mnuDataTree-POS-StemName",
@@ -63,12 +61,11 @@ namespace SIL.FieldWorks.XWorks
 			"mnuDataTree-MoStemName-Regions", "mnuDataTree-Phoneme-Code", "mnuDataTree-Phoneme-Codes",
 			"mnuDataTree-Delete-Adhoc-Allomorph", "mnuDataTree-Delete-Adhoc-Group",
 			"mnuDataTree-Delete-Adhoc-Morpheme", "mnuDataTree-Adhoc-Group-Members",
-			"mnuDataTree-CompoundRule-LinkerAffixAllomorph",
 			// Texts: the Info tab's jumps to the interlinear text and its notebook record; no
 			// Avalonia detail view.
 			"mnuDataTree-Text", "mnuTextInfo-Notebook",
 			// Lists and Reversal: no Avalonia detail view.
-			"mnuDataTree-DeleteCustomItem", "mnuDataTree-DeletePossibility", "mnuDataTree-DeleteQuestion",
+			"mnuDataTree-DeletePossibility", "mnuDataTree-DeleteQuestion",
 			"mnuDataTree-InsertQuestion", "mnuDataTree-InsertReversalSubentry", "mnuDataTree-InsertReversalSubentry-Hotlinks"
 		};
 
@@ -438,7 +435,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		// Only the inserts that need the whole tree stay with the adapter, so their ids do
-		// too: SubPossibilities, and an insert into a plain reference field.
+		// too: SubPossibilities.
 		[Test]
 		public void InsertLeaves_OutsideTheScope_LeaveTheirIdsWithTheAdapter()
 		{
@@ -452,31 +449,25 @@ namespace SIL.FieldWorks.XWorks
 				Is.True, "a virtual back reference: the dialog adds the variant");
 			Assert.That(m_view.InsertLeafInScope(Leaf("mnuDataTree-POS-SubPossibilities", "CmdDataTree-Insert-POS-SubPossibilities")),
 				Is.False, "SubPossibilities needs the whole tree");
-			Assert.That(m_view.InsertLeafInScope(Leaf("mnuDataTree-SubEntryLink", "CmdDataTree-Insert-SubEntryLink")),
-				Is.False, "a reference field with no class to create");
 			Assert.That(authority.Owns("mnuDataTree-POS-SubPossibilities"), Is.False);
 			Assert.That(() => authority.Build("mnuDataTree-POS-SubPossibilities",
 				Leaf("mnuDataTree-POS-SubPossibilities", "CmdDataTree-Insert-POS-SubPossibilities")),
 				Throws.InvalidOperationException, "a leaf outside the scope is not answered");
 		}
 
-		// The allomorph inserts follow the entry: an affix process only on an affix entry, a
-		// stem or affix allomorph only while the first allomorph is of that kind.
+		// The allomorph inserts follow the entry: an affix process only on an affix entry, an
+		// allomorph on any entry.
 		[Test]
-		public void AllomorphInserts_AreOfferedByTheEntrysMorphTypeAndFirstAllomorph()
+		public void AllomorphInserts_AreOfferedByTheEntrysMorphType()
 		{
 			var section = Rows().Single(f => f.MenuId == "mnuDataTree-AlternateForms");
 			var affixProcess = Leaf("mnuDataTree-AlternateForms", "CmdDataTree-Insert-AffixProcess");
 			var allomorph = Leaf("mnuDataTree-AlternateForms", "CmdDataTree-Insert-AlternateForm");
-			var stem = Leaf("mnuDataTree-Allomorphs", "CmdDataTree-Insert-StemAllomorph");
-			var affix = Leaf("mnuDataTree-Allomorphs", "CmdDataTree-Insert-AffixAllomorph");
 
 			Assert.That(m_view.InsertItem(affixProcess, section), Is.Null, "a stem entry has no affix process");
+			Assert.That(m_view.InsertItem(affixProcess, LexemeFormRow()), Is.Null, "a row inside the entry asks the entry");
 			Assert.That(m_view.InsertItem(allomorph, section)?.IsEnabled, Is.True);
 			Assert.That(m_view.InsertItem(allomorph, section).Label, Is.EqualTo("Insert Allomorph"));
-			Assert.That(m_view.InsertItem(stem, section)?.IsEnabled, Is.True, "the first allomorph is a stem");
-			Assert.That(m_view.InsertItem(affix, section), Is.Null);
-			Assert.That(m_view.InsertItem(affix, LexemeFormRow()), Is.Null, "a row inside the entry asks the entry");
 
 			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () => m_entry.LexemeFormOA.MorphTypeRA =
 				GetMorphTypeOrCreateOne("suffix"));

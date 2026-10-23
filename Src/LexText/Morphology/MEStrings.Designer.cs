@@ -178,15 +178,6 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Merging wordforms needs serious definition, before it can be done. Sorry..
-        /// </summary>
-        internal static string ksCannotMergeWordformsYet {
-            get {
-                return ResourceManager.GetString("ksCannotMergeWordformsYet", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Sorry. We are not able to support respelling the wordform in the required writing system at this time..
         /// </summary>
         internal static string ksCannotRespellWordform {
@@ -948,15 +939,6 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor {
         internal static string ksTargetFeature {
             get {
                 return ResourceManager.GetString("ksTargetFeature", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to TODO: Basic wordform editing happens here..
-        /// </summary>
-        internal static string ksTodo_WordformEditing {
-            get {
-                return ResourceManager.GetString("ksTodo_WordformEditing", resourceCulture);
             }
         }
         
