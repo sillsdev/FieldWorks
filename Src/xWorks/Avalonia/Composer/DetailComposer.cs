@@ -1111,8 +1111,9 @@ namespace SIL.FieldWorks.XWorks
 						WalkMsaChooser(node, obj, depth);
 						break;
 					case DetailEditorCategory.Summary:
-						// Summary slices are section header rows in legacy too, except an item's
-						// opening summary row, which its sequence item header already stands for.
+						// Summary slices are section header rows, as in the WinForms
+						// DataTree, except an item's opening summary row: its sequence
+						// item header stands for it.
 						if (obj.Hvo == _itemSummaryHvo)
 							break;
 						AddHeader(node, obj, depth, Localize(node.Label) ?? node.Field);
