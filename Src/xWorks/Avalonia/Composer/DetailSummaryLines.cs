@@ -6,16 +6,18 @@ using System.Collections.Generic;
 using System.Linq;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.Infrastructure;
 
 namespace SIL.FieldWorks.XWorks
 {
 	/// <summary>
 	/// The header lines of the objects whose detail layout opens with a summary row carrying a
-	/// collapsed variant: a sense, an etymology and an extended note. Each pair follows that
-	/// class's Summary and SummaryCollapsed parts in the shipped configuration
-	/// (LexSenseParts.xml, LexEntryParts.xml), with their literal text localized through the
-	/// string table.
+	/// collapsed variant: a sense, an etymology, an extended note and a notebook record. Each
+	/// pair follows that class's Summary and SummaryCollapsed parts in the shipped
+	/// configuration (LexSenseParts.xml, LexEntryParts.xml, NotebookParts.xml), with their
+	/// literal text localized through the string table.
 	/// </summary>
 	internal sealed class DetailSummaryLines
 	{
@@ -29,7 +31,7 @@ namespace SIL.FieldWorks.XWorks
 
 		/// <summary>True when <paramref name="obj"/>'s class has a summary line pair.</summary>
 		public static bool Covers(ICmObject obj)
-			=> obj is ILexSense || obj is ILexEtymology || obj is ILexExtendedNote;
+			=> obj is ILexSense || obj is ILexEtymology || obj is ILexExtendedNote || obj is IRnGenericRec;
 
 		/// <summary>
 		/// True when <paramref name="obj"/>'s layout opens with a NormalSummary row rather than
@@ -60,6 +62,10 @@ namespace SIL.FieldWorks.XWorks
 					expanded = Lit("Extended Note");
 					collapsed = expanded + Lit(" - ") + Abbreviation(note.ExtendedNoteTypeRA) + Lit(" - ")
 						+ BestAnalysis(note.Discussion);
+					return true;
+				case IRnGenericRec record:
+					expanded = IndexInOwner(record) + Lit(" ") + Name(record.TypeRA);
+					collapsed = expanded + Lit(" - ") + record.Title?.Text;
 					return true;
 				default:
 					expanded = collapsed = null;
@@ -102,11 +108,31 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
+		// A record's IndexInOwnerTSS (its number among its owner's subrecords).
+		private string IndexInOwner(IRnGenericRec record)
+		{
+			var mdc = (IFwMetaDataCacheManaged)_cache.MetaDataCacheAccessor;
+			if (mdc.FieldExists(RnGenericRecTags.kClassName, "IndexInOwnerTSS", true))
+			{
+				var flid = mdc.GetFieldId(RnGenericRecTags.kClassName, "IndexInOwnerTSS", true);
+				return _cache.DomainDataByFlid.get_StringProp(record.Hvo, flid)?.Text ?? string.Empty;
+			}
+			return (record.IndexInOwner + 1).ToString();
+		}
+
 		private string Abbreviation(ICmPossibility possibility)
 			=> possibility == null ? string.Empty : BestAnalysis(possibility.Abbreviation);
 
+		private string Name(ICmPossibility possibility)
+			=> possibility == null
+				? string.Empty
+				: Best(possibility.Name, AnalysisWritingSystems.Concat(VernacularWritingSystems));
+
 		private IEnumerable<CoreWritingSystemDefinition> AnalysisWritingSystems
 			=> _cache.LangProject.CurrentAnalysisWritingSystems;
+
+		private IEnumerable<CoreWritingSystemDefinition> VernacularWritingSystems
+			=> _cache.LangProject.CurrentVernacularWritingSystems;
 
 		// The first non-empty alternative in the analysis writing systems, in project order.
 		private string BestAnalysis(IMultiAccessorBase value) => Best(value, AnalysisWritingSystems);
