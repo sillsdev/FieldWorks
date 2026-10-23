@@ -345,6 +345,7 @@ namespace SIL.FieldWorks.XWorks
 			// binding is derived from the compiled layout's root, which can differ per choice variant. It is
 			// correct ONLY because descent currently compiles every embedded object with choiceGuid=null
 			// (CompileForObjectWithOverrides), so within one compose there is no choice variance to collide.
+			// WalkSublayout compiles with a choice, but its model never feeds these memos.
 			// If descent is ever changed to thread choiceGuid through, change this key to
 			// (ClassId, LayoutName, choiceGuid) in the SAME change, or this becomes a wrong-menu bug.
 			private readonly Dictionary<(int ClassId, string LayoutName), (string MenuId, string HotlinksId)> _itemMenuBindings
@@ -678,6 +679,33 @@ namespace SIL.FieldWorks.XWorks
 						// Legacy <choice> -- first passing <where> (or the <otherwise>) only.
 						WalkChoiceGroup(node, obj, depth);
 						break;
+					case ViewNodeKind.Sublayout:
+						WalkSublayout(node, obj, depth);
+						break;
+				}
+			}
+
+			// A <sublayout>: the named layout of this same object, picked by its choice field as
+			// the shown record's is, laid out in place at this depth.
+			private void WalkSublayout(ViewNode node, ICmObject obj, int depth)
+			{
+				var layoutName = node.TargetLayout;
+				if (string.IsNullOrEmpty(layoutName) || !_visited.Add((obj.Hvo, layoutName)))
+					return;
+				try
+				{
+					var choiceGuid = ResolveLayoutChoiceGuid(_cache, obj, node.Field);
+					var compiled = CompileForObject(_cache, obj, layoutName, choiceGuid, _overrides);
+					if (compiled == null)
+						return;
+					EnterModel(compiled);
+					foreach (var child in compiled.Roots)
+						Walk(child, obj, depth);
+					ExitModel();
+				}
+				finally
+				{
+					_visited.Remove((obj.Hvo, layoutName));
 				}
 			}
 
@@ -1115,7 +1143,12 @@ namespace SIL.FieldWorks.XWorks
 						// DataTree, except an item's opening summary row: its sequence
 						// item header stands for it.
 						if (obj.Hvo == _itemSummaryHvo)
-							break;
+						{
+							// What the row would hold sits under that item header instead.
+							foreach (var child in node.Children)
+								Walk(child, obj, depth);
+							return;
+						}
 						AddHeader(node, obj, depth, Localize(node.Label) ?? node.Field);
 						break;
 					case DetailEditorCategory.Literal:

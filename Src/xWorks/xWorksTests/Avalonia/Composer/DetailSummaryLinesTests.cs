@@ -2,6 +2,8 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwAvalonia.Detail;
@@ -244,6 +246,91 @@ namespace SIL.FieldWorks.XWorks
 			var section = headers.Single(h => h.Label == "Subrecords");
 			Assert.That(subrecordHeaders[0].Indent, Is.EqualTo(section.Indent + 1),
 				"the subrecord sits directly under the Subrecords section, with no banner between");
+		}
+
+		// The Event record Type: its Normal layout shows Hypothesis and hides an empty Sources,
+		// and the layout with no choiceGuid does the reverse.
+		private static readonly Guid EventTypeGuid = new Guid("82290763-1633-4998-8317-0EC3F5027FBD");
+
+		private ICmPossibility EventType()
+		{
+			var types = Cache.LangProject.ResearchNotebookOA.RecTypesOA;
+			return types.PossibilitiesOS.FirstOrDefault(p => p.Guid == EventTypeGuid)
+				?? Cache.ServiceLocator.GetInstance<ICmPossibilityFactory>().Create(EventTypeGuid, types);
+		}
+
+		private IRnGenericRec AddSubrecord(IRnGenericRec owner, string title)
+		{
+			var sub = Cache.ServiceLocator.GetInstance<IRnGenericRecFactory>().Create();
+			owner.SubRecordsOS.Add(sub);
+			sub.Title = Analysis(title);
+			return sub;
+		}
+
+		// The non-header rows composed for the object.
+		private static List<DetailField> RowsOf(IReadOnlyList<DetailField> fields, ICmObject obj)
+			=> fields.Where(f => f.ObjectHvo == obj.Hvo && f.Kind != DetailFieldKind.Header).ToList();
+
+		// LT-22858
+		[Test]
+		public void Compose_ASubrecord_ShowsItsFields_UnderItsHeader_ChosenByItsType()
+		{
+			var record = RecordWithSubrecord(out var untyped);
+			IRnGenericRec eventSub = null;
+			Do(() =>
+			{
+				untyped.TypeRA = null;
+				eventSub = AddSubrecord(record, "Harvest");
+				eventSub.TypeRA = EventType();
+			});
+
+			var fields = DetailComposer.Compose(record, Cache).Model.Fields;
+
+			foreach (var sub in new[] { untyped, eventSub })
+			{
+				var header = fields.Single(f => f.Kind == DetailFieldKind.Header && f.ObjectHvo == sub.Hvo);
+				var title = RowsOf(fields, sub).FirstOrDefault(f => f.Field == "Title");
+				Assert.That(title, Is.Not.Null, "the subrecord's own fields compose under its header");
+				Assert.That(title.Indent, Is.EqualTo(header.Indent + 1), "one level under the header");
+			}
+			var eventFields = RowsOf(fields, eventSub).Select(f => f.Field).ToList();
+			var untypedFields = RowsOf(fields, untyped).Select(f => f.Field).ToList();
+			Assert.That(eventFields, Does.Contain("Hypothesis").And.Not.Contain("Sources"),
+				"an Event subrecord gets the Event layout");
+			Assert.That(untypedFields, Does.Contain("Sources").And.Not.Contain("Hypothesis"),
+				"a subrecord with no Type gets the layout with no choice");
+		}
+
+		[Test]
+		public void Edit_ASubrecordsTitle_UnderItsHeader_SavesToTheSubrecord()
+		{
+			var record = RecordWithSubrecord(out var sub);
+			Do(() => record.Title = Analysis("Field trip"));
+			var composed = DetailComposer.Compose(record, Cache);
+			var title = RowsOf(composed.Model.Fields, sub).Single(f => f.Field == "Title");
+
+			Assert.That(composed.EditContext.TrySetText(title, title.Values[0].WsAbbrev, "Fish market"), Is.True);
+			composed.EditContext.Commit();
+
+			Assert.That(sub.Title.Text, Is.EqualTo("Fish market"));
+			Assert.That(record.Title.Text, Is.EqualTo("Field trip"), "only the subrecord changed");
+		}
+
+		[Test]
+		public void Compose_ASubrecordOfASubrecord_ShowsItsFieldsOneLevelFurtherIn()
+		{
+			var record = RecordWithSubrecord(out var sub);
+			IRnGenericRec subSub = null;
+			Do(() => subSub = AddSubrecord(sub, "Stall prices"));
+
+			var fields = DetailComposer.Compose(record, Cache).Model.Fields;
+
+			var subTitle = RowsOf(fields, sub).Single(f => f.Field == "Title");
+			var subSubHeader = fields.Single(f => f.Kind == DetailFieldKind.Header && f.ObjectHvo == subSub.Hvo);
+			var subSubTitle = RowsOf(fields, subSub).SingleOrDefault(f => f.Field == "Title");
+			Assert.That(subSubTitle, Is.Not.Null, "the nested subrecord's fields compose too");
+			Assert.That(subSubHeader.Indent, Is.GreaterThan(subTitle.Indent), "its header nests inside the subrecord");
+			Assert.That(subSubTitle.Indent, Is.EqualTo(subSubHeader.Indent + 1));
 		}
 
 		[Test]
