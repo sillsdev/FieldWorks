@@ -786,11 +786,10 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				// through the existing host bridge identically.
 				var hotlinkStrip = CreateHotlinkStrip(field, automationId, indent);
 
-				// Top-level sections get the heavy-weight separator rule. The header cell and
-				// its hotlink strip travel together: the strip is part of the header row,
-				// hidden and shown with it.
+				// Top-level sections get the heavy rule unless the layout gives them normal
+				// weight. The hotlink strip is part of the header row, shown and hidden with it.
 				Control headerControl;
-				if (field.Indent == 0 && row > 0)
+				if (field.Indent == 0 && row > 0 && !field.IsNormalWeight)
 				{
 					var withRule = new StackPanel();
 					withRule.Children.Add(new Border

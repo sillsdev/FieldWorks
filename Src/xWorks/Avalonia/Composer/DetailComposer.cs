@@ -3491,7 +3491,8 @@ namespace SIL.FieldWorks.XWorks
 						objectHvo: item.Hvo)
 					{
 						ExpansionKey = ExpansionKey(node.StableId + "/item", item),
-						CollapsedLabel = collapsedLabel
+						CollapsedLabel = collapsedLabel,
+						IsNormalWeight = summarized && DetailSummaryLines.IsNormalWeight(item)
 					});
 					DescendInto(node, item, itemDepth);
 				}

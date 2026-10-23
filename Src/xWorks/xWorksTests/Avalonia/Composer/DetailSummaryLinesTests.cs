@@ -222,6 +222,10 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(etymologyHeader.Indent, Is.EqualTo(0), "an etymology header sits at the entry's level");
 			var noteHeader = headers.Single(h => h.ObjectHvo == note.Hvo);
 			Assert.That((noteHeader.Label, noteHeader.CollapsedLabel), Is.EqualTo(Lines(note)));
+			Assert.That(etymologyHeader.IsNormalWeight && noteHeader.IsNormalWeight, Is.True,
+				"etymologies and extended notes open with a NormalSummary row");
+			Assert.That(headers.Single(h => h.ObjectHvo == m_sense.Hvo).IsNormalWeight, Is.False,
+				"a sense opens with a HeavySummary row");
 		}
 	}
 }

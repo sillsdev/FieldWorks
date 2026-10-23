@@ -1708,6 +1708,12 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		/// </summary>
 		public string CollapsedLabel { get; set; }
 
+		/// <summary>
+		/// True for a header whose layout gives it normal rather than heavy weight (a
+		/// NormalSummary row); it gets no heavy section rule even at the top level.
+		/// </summary>
+		public bool IsNormalWeight { get; set; }
+
 		/// <summary>Legacy slice menu id (layout `menu=`) for right-click on the row/label (13.x).</summary>
 		public string MenuId { get; }
 
