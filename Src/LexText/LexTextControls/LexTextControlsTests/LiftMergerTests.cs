@@ -4851,15 +4851,57 @@ namespace LexTextControlsTests
 		{
 			SetWritingSystems("fr");
 			var lexDb = Cache.LangProject.LexDbOA;
-			var listFactory = Cache.ServiceLocator.GetInstance<ICmPossibilityListFactory>();
-			if (lexDb.VariantEntryTypesOA == null)
-				lexDb.VariantEntryTypesOA = listFactory.Create();
-			if (lexDb.ComplexEntryTypesOA == null)
-				lexDb.ComplexEntryTypesOA = listFactory.Create();
-			var variantType = Cache.ServiceLocator.GetInstance<ILexEntryTypeFactory>().Create();
-			lexDb.VariantEntryTypesOA.PossibilitiesOS.Add(variantType);
-			variantType.Name.set_String(Cache.WritingSystemFactory.GetWsFromStr("en"), "Foo ");
-			var complexTypeCount = lexDb.ComplexEntryTypesOA.ReallyReallyAllPossibilities.Count;
+			var variantType = CreateEnglishEntryType(EnsureEntryTypeList(false), "Foo ");
+			var complexTypeCount = EnsureEntryTypeList(true).ReallyReallyAllPossibilities.Count;
+
+			var entryRef = ImportOldEntryTypeTrait("Foo");
+
+			Assert.That(entryRef.RefType, Is.EqualTo(LexEntryRefTags.krtVariant));
+			Assert.That(entryRef.VariantEntryTypesRS.Single(), Is.SameAs(variantType));
+			Assert.That(lexDb.ComplexEntryTypesOA.ReallyReallyAllPossibilities, Has.Count.EqualTo(complexTypeCount), "Should not create a new complex form type");
+		}
+
+		[Test]
+		public void ImportOldEntryTypeTrait_PrefersExactVariantTypeOverTrimmedComplexFormType()
+		{
+			SetWritingSystems("fr");
+			CreateEnglishEntryType(EnsureEntryTypeList(true), "Foo ");
+			var variantType = CreateEnglishEntryType(EnsureEntryTypeList(false), "Foo");
+
+			var entryRef = ImportOldEntryTypeTrait("Foo");
+
+			Assert.That(entryRef.RefType, Is.EqualTo(LexEntryRefTags.krtVariant));
+			Assert.That(entryRef.VariantEntryTypesRS.Single(), Is.SameAs(variantType));
+		}
+
+		private ICmPossibilityList EnsureEntryTypeList(bool complex)
+		{
+			var lexDb = Cache.LangProject.LexDbOA;
+			var list = complex ? lexDb.ComplexEntryTypesOA : lexDb.VariantEntryTypesOA;
+			if (list != null)
+				return list;
+			list = Cache.ServiceLocator.GetInstance<ICmPossibilityListFactory>().Create();
+			if (complex)
+				lexDb.ComplexEntryTypesOA = list;
+			else
+				lexDb.VariantEntryTypesOA = list;
+			return list;
+		}
+
+		private ILexEntryType CreateEnglishEntryType(ICmPossibilityList list, string name)
+		{
+			var entryType = Cache.ServiceLocator.GetInstance<ILexEntryTypeFactory>().Create();
+			list.PossibilitiesOS.Add(entryType);
+			entryType.Name.set_String(Cache.WritingSystemFactory.GetWsFromStr("en"), name);
+			return entryType;
+		}
+
+		/// <summary>
+		/// Import an entry with an old entry-type trait and a component relation to another
+		/// entry, and return the resulting entry reference.
+		/// </summary>
+		private ILexEntryRef ImportOldEntryTypeTrait(string entryType)
+		{
 			var liftData = new[]
 			{
 				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
@@ -4869,7 +4911,7 @@ namespace LexTextControlsTests
 				"</entry>",
 				"<entry id=\"bebe_5e2d8c1a-9b47-4c3e-8f6a-1d0b2e4c7a93\" guid=\"5e2d8c1a-9b47-4c3e-8f6a-1d0b2e4c7a93\">",
 				"<lexical-unit><form lang=\"fr\"><text>bebe</text></form></lexical-unit>",
-				"<trait name=\"entry-type\" value=\"Foo\"/>",
+				$"<trait name=\"entry-type\" value=\"{entryType}\"/>",
 				"<relation type=\"_component-lexeme\" ref=\"baba_0b6c3f2e-6a0d-4f7b-9a54-2d1f3c8e7a10\"/>",
 				"</entry>",
 				"</lift>"
@@ -4880,12 +4922,8 @@ namespace LexTextControlsTests
 			File.Delete(sOrigFile);
 			File.Delete(logFile);
 
-			var variantEntry = Cache.ServiceLocator.GetInstance<ILexEntryRepository>()
-				.GetObject(new Guid("5e2d8c1a-9b47-4c3e-8f6a-1d0b2e4c7a93"));
-			var entryRef = variantEntry.EntryRefsOS.Single();
-			Assert.That(entryRef.RefType, Is.EqualTo(LexEntryRefTags.krtVariant));
-			Assert.That(entryRef.VariantEntryTypesRS.Single(), Is.SameAs(variantType));
-			Assert.That(lexDb.ComplexEntryTypesOA.ReallyReallyAllPossibilities, Has.Count.EqualTo(complexTypeCount), "Should not create a new complex form type");
+			return Cache.ServiceLocator.GetInstance<ILexEntryRepository>()
+				.GetObject(new Guid("5e2d8c1a-9b47-4c3e-8f6a-1d0b2e4c7a93")).EntryRefsOS.Single();
 		}
 
 		private ICmSemanticDomain CreateEnglishSemanticDomain(string abbr, string name)
