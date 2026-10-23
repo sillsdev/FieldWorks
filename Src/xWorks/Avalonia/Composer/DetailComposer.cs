@@ -276,9 +276,6 @@ namespace SIL.FieldWorks.XWorks
 			private readonly IFwMetaDataCacheManaged _mdc;
 			private readonly HashSet<(int hvo, string layout)> _visited = new HashSet<(int, string)>();
 			private readonly DetailSummaryLines _summaryLines;
-			// The sequence item whose header was just emitted with its summary lines, until the
-			// next row is added; that item's own opening summary row is not emitted again.
-			private int _itemSummaryHvo;
 
 			public readonly List<DetailField> Fields = new List<DetailField>();
 			// One edit handler per composed field, keyed by StableId. A field's text/rich-text/option/
@@ -399,7 +396,6 @@ namespace SIL.FieldWorks.XWorks
 				StampHelpTopic(field);
 
 				Fields.Add(field);
-				_itemSummaryHvo = 0;
 			}
 
 			// The node whose walk is adding rows right now (see Walk).
@@ -1111,11 +1107,7 @@ namespace SIL.FieldWorks.XWorks
 						WalkMsaChooser(node, obj, depth);
 						break;
 					case DetailEditorCategory.Summary:
-						// Summary slices are section header rows, as in the WinForms
-						// DataTree, except an item's opening summary row: its sequence
-						// item header stands for it.
-						if (obj.Hvo == _itemSummaryHvo)
-							break;
+						// Summary slices are section header rows in legacy too.
 						AddHeader(node, obj, depth, Localize(node.Label) ?? node.Field);
 						break;
 					case DetailEditorCategory.Literal:
@@ -3445,9 +3437,9 @@ namespace SIL.FieldWorks.XWorks
 				var sectionLabel = Localize(node.Label) ?? node.Field;
 				var firstItem = _cache.ServiceLocator.ObjectRepository.GetObject(_sda.get_VecItem(obj.Hvo, flid, 0));
 
-				// Items with a summary line pair (senses, etymologies, extended notes, notebook
-				// records) are sections of their own: each item's header stands for the summary
-				// row its layout opens with, and no banner sits over them.
+				// Items with a summary line pair (senses, etymologies, extended notes) are
+				// sections of their own: each item's header carries its summary lines, and no
+				// banner sits over them.
 				var summarized = DetailSummaryLines.Covers(firstItem);
 
 				// A sequence sitting directly under a section header that already names it (the
@@ -3501,10 +3493,7 @@ namespace SIL.FieldWorks.XWorks
 						ExpansionKey = ExpansionKey(node.StableId + "/item", item),
 						CollapsedLabel = collapsedLabel
 					});
-					if (summarized)
-						_itemSummaryHvo = item.Hvo;
 					DescendInto(node, item, itemDepth);
-					_itemSummaryHvo = 0;
 				}
 			}
 
