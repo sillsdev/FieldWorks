@@ -49,14 +49,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			HorizontalAlignment = HorizontalAlignment.Left;
 			HorizontalContentAlignment = HorizontalAlignment.Left;
 			_text = CreateLabel(CurrentLabel);
-			_text.VerticalAlignment = VerticalAlignment.Center;
 			AutomationProperties.SetName(this, CurrentLabel);
-			Content = new StackPanel
-			{
-				Orientation = Orientation.Horizontal,
-				Spacing = FwAvaloniaDensity.TreeBoxGap,
-				Children = { Box, _text }
-			};
+			Content = new BoxAndLabelPanel { Children = { Box, _text } };
 		}
 
 		/// <summary>The text shown for the current state.</summary>
@@ -71,8 +65,48 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			Text = label ?? string.Empty,
 			FontSize = FwAvaloniaDensity.SectionHeaderFontSize,
 			Foreground = FwAvaloniaDensity.SectionHeaderBrush,
-			FontWeight = FontWeight.Bold
+			FontWeight = FontWeight.Bold,
+			// Long lines wrap to the pane width, as the WinForms summary does.
+			TextWrapping = TextWrapping.Wrap
 		};
+
+		/// <summary>
+		/// Lays out the +/- box and the label side by side: the label wraps in the width left
+		/// after the box, and the box sits centred on the label's first line.
+		/// </summary>
+		private sealed class BoxAndLabelPanel : Panel
+		{
+			private Control BoxChild => Children[0];
+			private TextBlock LabelChild => (TextBlock)Children[1];
+
+			protected override Size MeasureOverride(Size availableSize)
+			{
+				BoxChild.Measure(Size.Infinity);
+				var boxWidth = BoxChild.DesiredSize.Width + FwAvaloniaDensity.TreeBoxGap;
+				LabelChild.Measure(new Size(Math.Max(0, availableSize.Width - boxWidth), availableSize.Height));
+				return new Size(boxWidth + LabelChild.DesiredSize.Width,
+					Math.Max(BoxChild.DesiredSize.Height, LabelChild.DesiredSize.Height));
+			}
+
+			protected override Size ArrangeOverride(Size finalSize)
+			{
+				var box = BoxChild.DesiredSize;
+				var boxWidth = box.Width + FwAvaloniaDensity.TreeBoxGap;
+				var label = LabelChild.DesiredSize;
+				var firstLine = FirstLineHeight(LabelChild, label.Height);
+				var lineTop = Math.Max(0, (box.Height - firstLine) / 2);
+				BoxChild.Arrange(new Rect(0, Math.Max(0, (firstLine - box.Height) / 2), box.Width, box.Height));
+				LabelChild.Arrange(new Rect(boxWidth, lineTop, Math.Max(0, finalSize.Width - boxWidth), label.Height));
+				return finalSize;
+			}
+
+			// The height of the label's first line, or the whole label when it has no lines yet.
+			private static double FirstLineHeight(TextBlock label, double whole)
+			{
+				var lines = label.TextLayout.TextLines;
+				return lines.Count > 0 ? lines[0].Height : whole;
+			}
+		}
 
 		/// <summary>Themed as a plain <see cref="Button"/>.</summary>
 		protected override Type StyleKeyOverride => typeof(Button);

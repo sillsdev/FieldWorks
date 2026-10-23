@@ -32,6 +32,12 @@ namespace SIL.FieldWorks.XWorks
 			=> obj is ILexSense || obj is ILexEtymology || obj is ILexExtendedNote;
 
 		/// <summary>
+		/// True when <paramref name="obj"/>'s layout opens with a NormalSummary row rather than
+		/// a HeavySummary one: an etymology or an extended note, not a sense.
+		/// </summary>
+		public static bool IsNormalWeight(ICmObject obj) => obj is ILexEtymology || obj is ILexExtendedNote;
+
+		/// <summary>
 		/// The header text of <paramref name="obj"/> while expanded and while collapsed. Returns
 		/// false, with both null, when its class has no summary line pair.
 		/// </summary>
