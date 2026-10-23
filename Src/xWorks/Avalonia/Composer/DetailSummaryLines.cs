@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Linq;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
-using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.Infrastructure;
 
