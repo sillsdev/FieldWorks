@@ -46,7 +46,14 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 		/// (<c>&lt;where&gt;</c>/<c>&lt;otherwise&gt;</c>); only the FIRST branch whose condition
 		/// passes renders, matching <c>DataTree.ProcessSubpartNode</c>'s choice handling.
 		/// </summary>
-		ChoiceGroup
+		ChoiceGroup,
+
+		/// <summary>
+		/// Another layout of the same object laid out in place (<c>&lt;sublayout&gt;</c>):
+		/// <see cref="ViewNode.TargetLayout"/> names it, and <see cref="ViewNode.Field"/>,
+		/// when set, is the field whose value picks its <c>choiceGuid</c> variant.
+		/// </summary>
+		Sublayout
 	}
 
 	/// <summary>Field visibility, mirroring the legacy <c>visibility</c> attribute.</summary>

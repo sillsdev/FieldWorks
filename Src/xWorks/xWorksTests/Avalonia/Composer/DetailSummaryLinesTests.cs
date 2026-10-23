@@ -2,6 +2,8 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwAvalonia.Detail;
@@ -193,6 +195,166 @@ namespace SIL.FieldWorks.XWorks
 			});
 
 			Assert.That(Lines(note), Is.EqualTo(("Extended Note", "Extended Note - use - formal speech")));
+		}
+
+		private IRnGenericRec RecordWithSubrecord(out IRnGenericRec subrecord)
+		{
+			IRnGenericRec record = null, sub = null;
+			Do(() =>
+			{
+				if (Cache.LangProject.ResearchNotebookOA == null)
+					Cache.LangProject.ResearchNotebookOA = Cache.ServiceLocator.GetInstance<IRnResearchNbkFactory>().Create();
+				var notebook = Cache.LangProject.ResearchNotebookOA;
+				if (notebook.RecTypesOA == null)
+					notebook.RecTypesOA = Cache.ServiceLocator.GetInstance<ICmPossibilityListFactory>().Create();
+				var type = Cache.ServiceLocator.GetInstance<ICmPossibilityFactory>().Create();
+				notebook.RecTypesOA.PossibilitiesOS.Add(type);
+				type.Name.set_String(Cache.DefaultAnalWs, Analysis("Observation"));
+				record = Cache.ServiceLocator.GetInstance<IRnGenericRecFactory>().Create();
+				notebook.RecordsOC.Add(record);
+				sub = Cache.ServiceLocator.GetInstance<IRnGenericRecFactory>().Create();
+				record.SubRecordsOS.Add(sub);
+				sub.TypeRA = type;
+				sub.Title = Analysis("Market day");
+			});
+			subrecord = sub;
+			return record;
+		}
+
+		[Test]
+		public void Subrecord_ShowsItsNumberAndType_AndWhileCollapsed_ItsTitle()
+		{
+			RecordWithSubrecord(out var subrecord);
+
+			var lines = Lines(subrecord);
+
+			Assert.That(lines.Expanded, Does.StartWith("1").And.EndWith(" Observation"));
+			Assert.That(lines.Collapsed, Is.EqualTo(lines.Expanded + " - Market day"));
+		}
+
+		[Test]
+		public void Compose_ASubrecord_HasOneHeaderOfItsOwn_UnderTheSubrecordsSection()
+		{
+			var record = RecordWithSubrecord(out var subrecord);
+
+			var headers = DetailComposer.Compose(record, Cache).Model.Fields
+				.Where(f => f.Kind == DetailFieldKind.Header).ToList();
+
+			var subrecordHeaders = headers.Where(h => h.ObjectHvo == subrecord.Hvo).ToList();
+			Assert.That(subrecordHeaders.Select(h => h.Label), Is.EqualTo(new[] { Lines(subrecord).Expanded }),
+				"one header for the subrecord, carrying its summary line");
+			var section = headers.Single(h => h.Label == "Subrecords");
+			Assert.That(subrecordHeaders[0].Indent, Is.EqualTo(section.Indent + 1),
+				"the subrecord sits directly under the Subrecords section, with no banner between");
+		}
+
+		// The Event record Type: its Normal layout shows Hypothesis and hides an empty Sources,
+		// and the layout with no choiceGuid does the reverse.
+		private static readonly Guid EventTypeGuid = new Guid("82290763-1633-4998-8317-0EC3F5027FBD");
+
+		private ICmPossibility EventType()
+		{
+			var types = Cache.LangProject.ResearchNotebookOA.RecTypesOA;
+			return types.PossibilitiesOS.FirstOrDefault(p => p.Guid == EventTypeGuid)
+				?? Cache.ServiceLocator.GetInstance<ICmPossibilityFactory>().Create(EventTypeGuid, types);
+		}
+
+		private IRnGenericRec AddSubrecord(IRnGenericRec owner, string title)
+		{
+			var sub = Cache.ServiceLocator.GetInstance<IRnGenericRecFactory>().Create();
+			owner.SubRecordsOS.Add(sub);
+			sub.Title = Analysis(title);
+			return sub;
+		}
+
+		// The non-header rows composed for the object.
+		private static List<DetailField> RowsOf(IReadOnlyList<DetailField> fields, ICmObject obj)
+			=> fields.Where(f => f.ObjectHvo == obj.Hvo && f.Kind != DetailFieldKind.Header).ToList();
+
+		// LT-22858
+		[Test]
+		public void Compose_ASubrecord_ShowsItsFields_UnderItsHeader_ChosenByItsType()
+		{
+			var record = RecordWithSubrecord(out var untyped);
+			IRnGenericRec eventSub = null;
+			Do(() =>
+			{
+				untyped.TypeRA = null;
+				eventSub = AddSubrecord(record, "Harvest");
+				eventSub.TypeRA = EventType();
+			});
+
+			var fields = DetailComposer.Compose(record, Cache).Model.Fields;
+
+			foreach (var sub in new[] { untyped, eventSub })
+			{
+				var header = fields.Single(f => f.Kind == DetailFieldKind.Header && f.ObjectHvo == sub.Hvo);
+				var title = RowsOf(fields, sub).FirstOrDefault(f => f.Field == "Title");
+				Assert.That(title, Is.Not.Null, "the subrecord's own fields compose under its header");
+				Assert.That(title.Indent, Is.EqualTo(header.Indent + 1), "one level under the header");
+			}
+			var eventFields = RowsOf(fields, eventSub).Select(f => f.Field).ToList();
+			var untypedFields = RowsOf(fields, untyped).Select(f => f.Field).ToList();
+			Assert.That(eventFields, Does.Contain("Hypothesis").And.Not.Contain("Sources"),
+				"an Event subrecord gets the Event layout");
+			Assert.That(untypedFields, Does.Contain("Sources").And.Not.Contain("Hypothesis"),
+				"a subrecord with no Type gets the layout with no choice");
+		}
+
+		[Test]
+		public void Edit_ASubrecordsTitle_UnderItsHeader_SavesToTheSubrecord()
+		{
+			var record = RecordWithSubrecord(out var sub);
+			Do(() => record.Title = Analysis("Field trip"));
+			var composed = DetailComposer.Compose(record, Cache);
+			var title = RowsOf(composed.Model.Fields, sub).Single(f => f.Field == "Title");
+
+			Assert.That(composed.EditContext.TrySetText(title, title.Values[0].WsAbbrev, "Fish market"), Is.True);
+			composed.EditContext.Commit();
+
+			Assert.That(sub.Title.Text, Is.EqualTo("Fish market"));
+			Assert.That(record.Title.Text, Is.EqualTo("Field trip"), "only the subrecord changed");
+		}
+
+		// LT-22844: the SubRecords list names no ghost field, so it has no prompt row.
+		[Test]
+		public void Compose_ARecordWithNoSubrecords_KeepsTheSubrecordsHeader_WithNoPromptRow()
+		{
+			var record = RecordWithSubrecord(out var sub);
+			IRnGenericRec empty = null;
+			Do(() =>
+			{
+				empty = Cache.ServiceLocator.GetInstance<IRnGenericRecFactory>().Create();
+				Cache.LangProject.ResearchNotebookOA.RecordsOC.Add(empty);
+			});
+
+			var fields = DetailComposer.Compose(empty, Cache).Model.Fields;
+
+			var section = fields.Single(f => f.Kind == DetailFieldKind.Header && f.Label == "Subrecords");
+			Assert.That(section.HotlinksId, Is.EqualTo("mnuDataTree-SubRecords-Hotlinks"),
+				"Insert Subrecord stays on the header's hotlinks");
+			Assert.That(fields.Any(f => f.Field == "SubRecords" && f.GhostPrompt != null), Is.False,
+				"no prompt row for an empty Subrecords list");
+			var nested = DetailComposer.Compose(record, Cache).Model.Fields;
+			Assert.That(nested.Any(f => f.ObjectHvo == sub.Hvo && f.Field == "SubRecords" && f.GhostPrompt != null), Is.False,
+				"no prompt row inside a subrecord that has no subrecords");
+		}
+
+		[Test]
+		public void Compose_ASubrecordOfASubrecord_ShowsItsFieldsOneLevelFurtherIn()
+		{
+			var record = RecordWithSubrecord(out var sub);
+			IRnGenericRec subSub = null;
+			Do(() => subSub = AddSubrecord(sub, "Stall prices"));
+
+			var fields = DetailComposer.Compose(record, Cache).Model.Fields;
+
+			var subTitle = RowsOf(fields, sub).Single(f => f.Field == "Title");
+			var subSubHeader = fields.Single(f => f.Kind == DetailFieldKind.Header && f.ObjectHvo == subSub.Hvo);
+			var subSubTitle = RowsOf(fields, subSub).SingleOrDefault(f => f.Field == "Title");
+			Assert.That(subSubTitle, Is.Not.Null, "the nested subrecord's fields compose too");
+			Assert.That(subSubHeader.Indent, Is.GreaterThan(subTitle.Indent), "its header nests inside the subrecord");
+			Assert.That(subSubTitle.Indent, Is.EqualTo(subSubHeader.Indent + 1));
 		}
 
 		[Test]
