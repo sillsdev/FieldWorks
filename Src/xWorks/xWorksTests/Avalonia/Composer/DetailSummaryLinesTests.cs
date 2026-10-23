@@ -195,6 +195,57 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(Lines(note), Is.EqualTo(("Extended Note", "Extended Note - use - formal speech")));
 		}
 
+		private IRnGenericRec RecordWithSubrecord(out IRnGenericRec subrecord)
+		{
+			IRnGenericRec record = null, sub = null;
+			Do(() =>
+			{
+				if (Cache.LangProject.ResearchNotebookOA == null)
+					Cache.LangProject.ResearchNotebookOA = Cache.ServiceLocator.GetInstance<IRnResearchNbkFactory>().Create();
+				var notebook = Cache.LangProject.ResearchNotebookOA;
+				if (notebook.RecTypesOA == null)
+					notebook.RecTypesOA = Cache.ServiceLocator.GetInstance<ICmPossibilityListFactory>().Create();
+				var type = Cache.ServiceLocator.GetInstance<ICmPossibilityFactory>().Create();
+				notebook.RecTypesOA.PossibilitiesOS.Add(type);
+				type.Name.set_String(Cache.DefaultAnalWs, Analysis("Observation"));
+				record = Cache.ServiceLocator.GetInstance<IRnGenericRecFactory>().Create();
+				notebook.RecordsOC.Add(record);
+				sub = Cache.ServiceLocator.GetInstance<IRnGenericRecFactory>().Create();
+				record.SubRecordsOS.Add(sub);
+				sub.TypeRA = type;
+				sub.Title = Analysis("Market day");
+			});
+			subrecord = sub;
+			return record;
+		}
+
+		[Test]
+		public void Subrecord_ShowsItsNumberAndType_AndWhileCollapsed_ItsTitle()
+		{
+			RecordWithSubrecord(out var subrecord);
+
+			var lines = Lines(subrecord);
+
+			Assert.That(lines.Expanded, Does.StartWith("1").And.EndWith(" Observation"));
+			Assert.That(lines.Collapsed, Is.EqualTo(lines.Expanded + " - Market day"));
+		}
+
+		[Test]
+		public void Compose_ASubrecord_HasOneHeaderOfItsOwn_UnderTheSubrecordsSection()
+		{
+			var record = RecordWithSubrecord(out var subrecord);
+
+			var headers = DetailComposer.Compose(record, Cache).Model.Fields
+				.Where(f => f.Kind == DetailFieldKind.Header).ToList();
+
+			var subrecordHeaders = headers.Where(h => h.ObjectHvo == subrecord.Hvo).ToList();
+			Assert.That(subrecordHeaders.Select(h => h.Label), Is.EqualTo(new[] { Lines(subrecord).Expanded }),
+				"one header for the subrecord, carrying its summary line");
+			var section = headers.Single(h => h.Label == "Subrecords");
+			Assert.That(subrecordHeaders[0].Indent, Is.EqualTo(section.Indent + 1),
+				"the subrecord sits directly under the Subrecords section, with no banner between");
+		}
+
 		[Test]
 		public void Compose_EtymologiesAndExtendedNotes_HaveNoBanner_AndCarryTheirSummaryLines()
 		{
