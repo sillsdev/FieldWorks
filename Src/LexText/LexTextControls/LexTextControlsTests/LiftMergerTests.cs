@@ -4803,6 +4803,171 @@ namespace LexTextControlsTests
 			Assert.That(Cache.LangProject.AnthroListOA.PossibilitiesOS, Has.Count.EqualTo(1), "Should have merged import with ICmAnthroItem from input");
 		}
 
+		/// <summary>
+		/// Semantic domain lists from FieldWorks templates before 2017 have trailing spaces
+		/// in some English names (e.g., "Necessary "), which other programs trim before
+		/// writing LIFT.
+		/// </summary>
+		[Test]
+		public void ImportSemanticDomainTrait_MatchesExistingDomainWithUntrimmedName()
+		{
+			SetWritingSystems("fr");
+			var semDom = CreateEnglishSemanticDomain("9.4.2.3", "Necessary ");
+			var semDomCount = Cache.LangProject.SemanticDomainListOA.ReallyReallyAllPossibilities.Count;
+
+			var senses = ImportSenseSemanticDomainTraits("9.4.2.3 Necessary");
+
+			Assert.That(Cache.LangProject.SemanticDomainListOA.ReallyReallyAllPossibilities, Has.Count.EqualTo(semDomCount), "Should not create a new semantic domain");
+			Assert.That(senses.Single().SemanticDomainsRC.Single(), Is.SameAs(semDom));
+		}
+
+		[Test]
+		public void ImportSemanticDomainTrait_PrefersExactMatchOverTrimmedMatch()
+		{
+			SetWritingSystems("fr");
+			CreateEnglishSemanticDomain("9.4.2.3", "Necessary ");
+			var exactSemDom = CreateEnglishSemanticDomain("9.4.2.3", "Necessary");
+
+			var senses = ImportSenseSemanticDomainTraits("9.4.2.3 Necessary");
+
+			Assert.That(senses.Single().SemanticDomainsRC.Single(), Is.SameAs(exactSemDom));
+		}
+
+		[TestCase("9.4.2.3 Necessary ", "9.4.2.3 Necessary")]
+		[TestCase("9.4.2.3 Necessary", "9.4.2.3 Necessary ")]
+		public void ImportSemanticDomainTraits_DifferingOnlyInWhitespace_CreateOneDomain(string first, string second)
+		{
+			SetWritingSystems("fr");
+			var semDomCount = Cache.LangProject.SemanticDomainListOA.ReallyReallyAllPossibilities.Count;
+
+			var senses = ImportSenseSemanticDomainTraits(first, second);
+
+			Assert.That(Cache.LangProject.SemanticDomainListOA.ReallyReallyAllPossibilities, Has.Count.EqualTo(semDomCount + 1));
+			Assert.That(senses[1].SemanticDomainsRC.Single(), Is.SameAs(senses[0].SemanticDomainsRC.Single()));
+		}
+
+		[Test]
+		public void ImportOldEntryTypeTrait_MatchesExistingVariantTypeWithUntrimmedName()
+		{
+			SetWritingSystems("fr");
+			var lexDb = Cache.LangProject.LexDbOA;
+			var variantType = CreateEnglishEntryType(EnsureEntryTypeList(false), "Foo ");
+			var complexTypeCount = EnsureEntryTypeList(true).ReallyReallyAllPossibilities.Count;
+
+			var entryRef = ImportOldEntryTypeTrait("Foo");
+
+			Assert.That(entryRef.RefType, Is.EqualTo(LexEntryRefTags.krtVariant));
+			Assert.That(entryRef.VariantEntryTypesRS.Single(), Is.SameAs(variantType));
+			Assert.That(lexDb.ComplexEntryTypesOA.ReallyReallyAllPossibilities, Has.Count.EqualTo(complexTypeCount), "Should not create a new complex form type");
+		}
+
+		[Test]
+		public void ImportOldEntryTypeTrait_PrefersExactVariantTypeOverTrimmedComplexFormType()
+		{
+			SetWritingSystems("fr");
+			CreateEnglishEntryType(EnsureEntryTypeList(true), "Foo ");
+			var variantType = CreateEnglishEntryType(EnsureEntryTypeList(false), "Foo");
+
+			var entryRef = ImportOldEntryTypeTrait("Foo");
+
+			Assert.That(entryRef.RefType, Is.EqualTo(LexEntryRefTags.krtVariant));
+			Assert.That(entryRef.VariantEntryTypesRS.Single(), Is.SameAs(variantType));
+		}
+
+		private ICmPossibilityList EnsureEntryTypeList(bool complex)
+		{
+			var lexDb = Cache.LangProject.LexDbOA;
+			var list = complex ? lexDb.ComplexEntryTypesOA : lexDb.VariantEntryTypesOA;
+			if (list != null)
+				return list;
+			list = Cache.ServiceLocator.GetInstance<ICmPossibilityListFactory>().Create();
+			if (complex)
+				lexDb.ComplexEntryTypesOA = list;
+			else
+				lexDb.VariantEntryTypesOA = list;
+			return list;
+		}
+
+		private ILexEntryType CreateEnglishEntryType(ICmPossibilityList list, string name)
+		{
+			var entryType = Cache.ServiceLocator.GetInstance<ILexEntryTypeFactory>().Create();
+			list.PossibilitiesOS.Add(entryType);
+			entryType.Name.set_String(Cache.WritingSystemFactory.GetWsFromStr("en"), name);
+			return entryType;
+		}
+
+		/// <summary>
+		/// Import an entry with an old entry-type trait and a component relation to another
+		/// entry, and return the resulting entry reference.
+		/// </summary>
+		private ILexEntryRef ImportOldEntryTypeTrait(string entryType)
+		{
+			var liftData = new[]
+			{
+				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
+				"<lift producer=\"WeSay\" version=\"0.13\">",
+				"<entry id=\"baba_0b6c3f2e-6a0d-4f7b-9a54-2d1f3c8e7a10\" guid=\"0b6c3f2e-6a0d-4f7b-9a54-2d1f3c8e7a10\">",
+				"<lexical-unit><form lang=\"fr\"><text>baba</text></form></lexical-unit>",
+				"</entry>",
+				"<entry id=\"bebe_5e2d8c1a-9b47-4c3e-8f6a-1d0b2e4c7a93\" guid=\"5e2d8c1a-9b47-4c3e-8f6a-1d0b2e4c7a93\">",
+				"<lexical-unit><form lang=\"fr\"><text>bebe</text></form></lexical-unit>",
+				$"<trait name=\"entry-type\" value=\"{entryType}\"/>",
+				"<relation type=\"_component-lexeme\" ref=\"baba_0b6c3f2e-6a0d-4f7b-9a54-2d1f3c8e7a10\"/>",
+				"</entry>",
+				"</lift>"
+			};
+
+			var sOrigFile = CreateInputFile(liftData);
+			var logFile = TryImport(sOrigFile, 2);
+			File.Delete(sOrigFile);
+			File.Delete(logFile);
+
+			return Cache.ServiceLocator.GetInstance<ILexEntryRepository>()
+				.GetObject(new Guid("5e2d8c1a-9b47-4c3e-8f6a-1d0b2e4c7a93")).EntryRefsOS.Single();
+		}
+
+		private ICmSemanticDomain CreateEnglishSemanticDomain(string abbr, string name)
+		{
+			var en = Cache.WritingSystemFactory.GetWsFromStr("en");
+			var semDom = Cache.ServiceLocator.GetInstance<ICmSemanticDomainFactory>().Create();
+			Cache.LangProject.SemanticDomainListOA.PossibilitiesOS.Add(semDom);
+			semDom.Abbreviation.set_String(en, abbr);
+			semDom.Name.set_String(en, name);
+			return semDom;
+		}
+
+		/// <summary>
+		/// Import one entry with a sense for each semantic domain trait value, and return its
+		/// senses in order.
+		/// </summary>
+		private IList<ILexSense> ImportSenseSemanticDomainTraits(params string[] traitValues)
+		{
+			var liftData = new List<string>
+			{
+				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
+				"<lift producer=\"The Combine\" version=\"0.13\">",
+				"<entry id=\"baba_aef5e807-c841-4f35-9591-c8a998dc2465\" guid=\"aef5e807-c841-4f35-9591-c8a998dc2465\">",
+				"<lexical-unit>",
+				"<form lang=\"fr\"><text>baba</text></form>",
+				"</lexical-unit>"
+			};
+			foreach (var traitValue in traitValues)
+			{
+				liftData.Add($"<sense id=\"{Guid.NewGuid()}\">");
+				liftData.Add($"<trait name=\"semantic-domain-ddp4\" value=\"{traitValue}\"/>");
+				liftData.Add("</sense>");
+			}
+			liftData.Add("</entry>");
+			liftData.Add("</lift>");
+
+			var sOrigFile = CreateInputFile(liftData);
+			var logFile = TryImport(sOrigFile, 1);
+			File.Delete(sOrigFile);
+			File.Delete(logFile);
+
+			return Cache.ServiceLocator.GetInstance<ILexEntryRepository>().AllInstances().Single().SensesOS.ToList();
+		}
+
 		[Test]
 		public void ImportRangeWithExistingObject_DoesNotDuplicate_UnifiesData()
 		{

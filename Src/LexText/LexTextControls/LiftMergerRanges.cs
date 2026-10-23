@@ -256,26 +256,24 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		}
 
-		private ILexEntryType FindComplexFormType(string sOldEntryType)
+		/// <summary>
+		/// Find the complex form type or variant type named by an old entry-type value, setting
+		/// at most one of the two. An exact or lowercase match beats a trimmed one; between
+		/// matches of equal strength, a complex form type beats a variant type.
+		/// </summary>
+		private void FindOldEntryType(string sOldEntryType, out ILexEntryType letComplex, out ILexEntryType letVar)
 		{
+			letComplex = null;
+			letVar = null;
 			ICmPossibility poss;
-			if (m_dictComplexFormType.TryGetValue(sOldEntryType, out poss) ||
-				m_dictComplexFormType.TryGetValue(sOldEntryType.ToLowerInvariant(), out poss))
-			{
-				return poss as ILexEntryType;
-			}
-			return null;
-		}
-
-		private ILexEntryType FindVariantType(string sOldEntryType)
-		{
-			ICmPossibility poss;
-			if (m_dictVariantType.TryGetValue(sOldEntryType, out poss) ||
-				m_dictVariantType.TryGetValue(sOldEntryType.ToLowerInvariant(), out poss))
-			{
-				return poss as ILexEntryType;
-			}
-			return null;
+			if (TryGetPossibilityMatchingExactly(sOldEntryType, m_dictComplexFormType, out poss))
+				letComplex = poss as ILexEntryType;
+			else if (TryGetPossibilityMatchingExactly(sOldEntryType, m_dictVariantType, out poss))
+				letVar = poss as ILexEntryType;
+			else if (TryGetPossibilityMatchingTrimmed(sOldEntryType, m_dictComplexFormType, out poss))
+				letComplex = poss as ILexEntryType;
+			else if (TryGetPossibilityMatchingTrimmed(sOldEntryType, m_dictVariantType, out poss))
+				letVar = poss as ILexEntryType;
 		}
 
 		private ILexEntryType FindOrCreateComplexFormType(string sType)
@@ -344,7 +342,39 @@ namespace SIL.FieldWorks.LexText.Controls
 		private static bool TryGetPossibilityMatchingTrait(string traitValue, IDictionary<string, ICmPossibility> dict,
 			out ICmPossibility poss)
 		{
+			return TryGetPossibilityMatchingExactly(traitValue, dict, out poss)
+				|| TryGetPossibilityMatchingTrimmed(traitValue, dict, out poss);
+		}
+
+		private static bool TryGetPossibilityMatchingExactly(string traitValue, IDictionary<string, ICmPossibility> dict,
+			out ICmPossibility poss)
+		{
 			return dict.TryGetValue(traitValue, out poss) || dict.TryGetValue(traitValue.ToLowerInvariant(), out poss);
+		}
+
+		/// <summary>
+		/// Match a key that equals the trait value once both are trimmed of surrounding
+		/// whitespace. Some names have stray whitespace (e.g., in semantic domain lists from
+		/// FieldWorks templates before 2017) that other programs trim before writing LIFT.
+		/// </summary>
+		private static bool TryGetPossibilityMatchingTrimmed(string traitValue, IDictionary<string, ICmPossibility> dict,
+			out ICmPossibility poss)
+		{
+			poss = null;
+			string trimmed = traitValue.Trim();
+			if (trimmed.Length == 0)
+				return false;
+			string trimmedLower = trimmed.ToLowerInvariant();
+			foreach (var kvp in dict)
+			{
+				string key = kvp.Key.Trim();
+				if (key == trimmed || key == trimmedLower)
+				{
+					poss = kvp.Value;
+					return true;
+				}
+			}
+			return false;
 		}
 
 		private static void UpdatePossibilityWithTraitValue(int ws, ICmPossibility poss, string traitValue,
