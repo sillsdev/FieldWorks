@@ -4846,6 +4846,48 @@ namespace LexTextControlsTests
 			Assert.That(senses[1].SemanticDomainsRC.Single(), Is.SameAs(senses[0].SemanticDomainsRC.Single()));
 		}
 
+		[Test]
+		public void ImportOldEntryTypeTrait_MatchesExistingVariantTypeWithUntrimmedName()
+		{
+			SetWritingSystems("fr");
+			var lexDb = Cache.LangProject.LexDbOA;
+			var listFactory = Cache.ServiceLocator.GetInstance<ICmPossibilityListFactory>();
+			if (lexDb.VariantEntryTypesOA == null)
+				lexDb.VariantEntryTypesOA = listFactory.Create();
+			if (lexDb.ComplexEntryTypesOA == null)
+				lexDb.ComplexEntryTypesOA = listFactory.Create();
+			var variantType = Cache.ServiceLocator.GetInstance<ILexEntryTypeFactory>().Create();
+			lexDb.VariantEntryTypesOA.PossibilitiesOS.Add(variantType);
+			variantType.Name.set_String(Cache.WritingSystemFactory.GetWsFromStr("en"), "Foo ");
+			var complexTypeCount = lexDb.ComplexEntryTypesOA.ReallyReallyAllPossibilities.Count;
+			var liftData = new[]
+			{
+				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
+				"<lift producer=\"WeSay\" version=\"0.13\">",
+				"<entry id=\"baba_0b6c3f2e-6a0d-4f7b-9a54-2d1f3c8e7a10\" guid=\"0b6c3f2e-6a0d-4f7b-9a54-2d1f3c8e7a10\">",
+				"<lexical-unit><form lang=\"fr\"><text>baba</text></form></lexical-unit>",
+				"</entry>",
+				"<entry id=\"bebe_5e2d8c1a-9b47-4c3e-8f6a-1d0b2e4c7a93\" guid=\"5e2d8c1a-9b47-4c3e-8f6a-1d0b2e4c7a93\">",
+				"<lexical-unit><form lang=\"fr\"><text>bebe</text></form></lexical-unit>",
+				"<trait name=\"entry-type\" value=\"Foo\"/>",
+				"<relation type=\"_component-lexeme\" ref=\"baba_0b6c3f2e-6a0d-4f7b-9a54-2d1f3c8e7a10\"/>",
+				"</entry>",
+				"</lift>"
+			};
+
+			var sOrigFile = CreateInputFile(liftData);
+			var logFile = TryImport(sOrigFile, 2);
+			File.Delete(sOrigFile);
+			File.Delete(logFile);
+
+			var variantEntry = Cache.ServiceLocator.GetInstance<ILexEntryRepository>()
+				.GetObject(new Guid("5e2d8c1a-9b47-4c3e-8f6a-1d0b2e4c7a93"));
+			var entryRef = variantEntry.EntryRefsOS.Single();
+			Assert.That(entryRef.RefType, Is.EqualTo(LexEntryRefTags.krtVariant));
+			Assert.That(entryRef.VariantEntryTypesRS.Single(), Is.SameAs(variantType));
+			Assert.That(lexDb.ComplexEntryTypesOA.ReallyReallyAllPossibilities, Has.Count.EqualTo(complexTypeCount), "Should not create a new complex form type");
+		}
+
 		private ICmSemanticDomain CreateEnglishSemanticDomain(string abbr, string name)
 		{
 			var en = Cache.WritingSystemFactory.GetWsFromStr("en");

@@ -259,23 +259,17 @@ namespace SIL.FieldWorks.LexText.Controls
 		private ILexEntryType FindComplexFormType(string sOldEntryType)
 		{
 			ICmPossibility poss;
-			if (m_dictComplexFormType.TryGetValue(sOldEntryType, out poss) ||
-				m_dictComplexFormType.TryGetValue(sOldEntryType.ToLowerInvariant(), out poss))
-			{
-				return poss as ILexEntryType;
-			}
-			return null;
+			return TryGetPossibilityMatchingTrait(sOldEntryType, m_dictComplexFormType, out poss)
+				? poss as ILexEntryType
+				: null;
 		}
 
 		private ILexEntryType FindVariantType(string sOldEntryType)
 		{
 			ICmPossibility poss;
-			if (m_dictVariantType.TryGetValue(sOldEntryType, out poss) ||
-				m_dictVariantType.TryGetValue(sOldEntryType.ToLowerInvariant(), out poss))
-			{
-				return poss as ILexEntryType;
-			}
-			return null;
+			return TryGetPossibilityMatchingTrait(sOldEntryType, m_dictVariantType, out poss)
+				? poss as ILexEntryType
+				: null;
 		}
 
 		private ILexEntryType FindOrCreateComplexFormType(string sType)
