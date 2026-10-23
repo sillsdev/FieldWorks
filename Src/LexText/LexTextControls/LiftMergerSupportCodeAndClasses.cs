@@ -3083,10 +3083,11 @@ namespace SIL.FieldWorks.LexText.Controls
 					sOldEntryType = "Irregularly Inflected Form";
 				else if (sOldEntryType == "inflectional variant")
 					sOldEntryType = "irregularly inflected form";
-				ILexEntryType letComplex = FindComplexFormType(sOldEntryType);
+				ILexEntryType letComplex;
+				ILexEntryType letVar;
+				FindOldEntryType(sOldEntryType, out letComplex, out letVar);
 				if (letComplex == null)
 				{
-					ILexEntryType letVar = FindVariantType(sOldEntryType);
 					if (letVar == null && sOldEntryType.ToLowerInvariant() != "main entry")
 					{
 						if (String.IsNullOrEmpty(sOldCondition))
