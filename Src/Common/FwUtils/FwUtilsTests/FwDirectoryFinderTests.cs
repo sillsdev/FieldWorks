@@ -3,6 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using NUnit.Framework;
@@ -25,7 +26,20 @@ namespace SIL.FieldWorks.Common.FwUtils
 		[OneTimeTearDown]
 		public void TearDown()
 		{
+			FwDirectoryFinder.RunningFromSourceTreeOverride = null;
+			FwDirectoryFinder.ResetDevProjectsDirectory();
 			FwRegistryHelper.Manager.Reset();
+		}
+
+		/// <summary>
+		/// These tests run inside a source tree, so each starts as an installed run unless it
+		/// says otherwise.
+		/// </summary>
+		[SetUp]
+		public void SetUp()
+		{
+			FwDirectoryFinder.RunningFromSourceTreeOverride = false;
+			FwDirectoryFinder.ResetDevProjectsDirectory();
 		}
 
 		/// <summary>
@@ -218,6 +232,291 @@ namespace SIL.FieldWorks.Common.FwUtils
 			if (withSolutionFile)
 				File.WriteAllText(Path.Combine(root, "FieldWorks.sln"), string.Empty);
 			return root;
+		}
+
+		[TestCase("RootCodeDir", false)]
+		[TestCase("RootDataDir", false)]
+		[TestCase("RootCodeDir", true)]
+		[TestCase("RootDataDir", true)]
+		[TestCase("ProjectsDir", true)]
+		public void TestRegistryInitialization_PreservesDirectoryOverrides(
+			string valueName, bool withUserOverride)
+		{
+			using (var userKey = FwRegistryHelper.FieldWorksRegistryKey)
+			{
+				var originalValue = userKey.GetValue(valueName);
+				try
+				{
+					if (withUserOverride)
+						userKey.SetValue(valueName, "InstalledDirectory");
+					else
+						userKey.DeleteValue(valueName, false);
+
+					new Attributes.InitializeFwRegistryHelperAttribute().BeforeTest(null);
+
+					Assert.That(userKey.GetValue(valueName),
+						Is.EqualTo(withUserOverride ? "InstalledDirectory" : null));
+				}
+				finally
+				{
+					if (originalValue == null)
+						userKey.DeleteValue(valueName, false);
+					else
+						userKey.SetValue(valueName, originalValue);
+				}
+			}
+		}
+
+		[TestCase("RootCodeDir", true, true)]
+		[TestCase("RootDataDir", true, true)]
+		[TestCase("RootCodeDir", false, true)]
+		[TestCase("RootDataDir", false, true)]
+		[TestCase("RootCodeDir", true, false)]
+		[TestCase("RootDataDir", true, false)]
+		public void InstalledDirectory_SourceTreeUserOverrideFallsBack(
+			string valueName, bool withMachineOverride, bool withDistFiles)
+		{
+			var treeRoot = CreateFakeSourceTree(withSolutionFile: true);
+			try
+			{
+				if (!withDistFiles)
+					Directory.Delete(Path.Combine(treeRoot, "DistFiles"));
+				var devPath = Path.Combine(treeRoot, "DistFiles") + Path.DirectorySeparatorChar;
+				AssertRegistryDirectory(valueName, devPath,
+					withMachineOverride ? "MachineInstall" : null, "DefaultInstall",
+					withMachineOverride ? "MachineInstall" : "DefaultInstall");
+			}
+			finally
+			{
+				Directory.Delete(treeRoot, true);
+			}
+		}
+
+		[TestCase("RootCodeDir")]
+		[TestCase("RootDataDir")]
+		[TestCase("ProjectsDir")]
+		public void RegistryDirectory_NonSourceUserOverrideWins(string valueName)
+		{
+			var installRoot = CreateFakeSourceTree(withSolutionFile: false);
+			try
+			{
+				var userPath = Path.Combine(installRoot, "DistFiles");
+				AssertRegistryDirectory(valueName, userPath, "MachineInstall", "DefaultInstall", userPath);
+			}
+			finally
+			{
+				Directory.Delete(installRoot, true);
+			}
+		}
+
+		[TestCase(true, true)]
+		[TestCase(true, false)]
+		[TestCase(false, true)]
+		[TestCase(false, false)]
+		public void RegistryDirectory_SourceTreeProjectsOverrideIsHonoured(
+			bool withMachineOverride, bool devRun)
+		{
+			// Dev and installed runs share the projects folder, even one inside a source tree.
+			FwDirectoryFinder.RunningFromSourceTreeOverride = devRun;
+			var treeRoot = CreateFakeSourceTree(withSolutionFile: true);
+			try
+			{
+				var projects = Path.Combine(treeRoot, "DistFiles", "Projects");
+				AssertRegistryDirectory("ProjectsDir", projects,
+					withMachineOverride ? "MachineProjects" : null, "DefaultProjects", projects);
+			}
+			finally
+			{
+				Directory.Delete(treeRoot, true);
+			}
+		}
+
+		private static Dictionary<string, object> SnapshotUserValues()
+		{
+			using (var userKey = FwRegistryHelper.FieldWorksRegistryKey)
+				return userKey.GetValueNames().ToDictionary(n => n, n => userKey.GetValue(n));
+		}
+
+		/// <summary>
+		/// A source-tree run keeps its projects folder for the process only, so an installed
+		/// FieldWorks never inherits it (LT-22840).
+		/// </summary>
+		[Test]
+		public void ProjectsDirectory_SetFromSourceTreeRun_DoesNotPersist()
+		{
+			var before = SnapshotUserValues();
+			FwDirectoryFinder.RunningFromSourceTreeOverride = true;
+
+			FwDirectoryFinder.ProjectsDirectory = Path.Combine(Path.GetTempPath(), "DevProjects");
+
+			Assert.That(FwDirectoryFinder.ProjectsDirectory,
+				Is.EqualTo(Path.Combine(Path.GetTempPath(), "DevProjects")),
+				"the choice still applies to the running process");
+			Assert.That(SnapshotUserValues(), Is.EquivalentTo(before),
+				"nothing may be written to the per-user key");
+			FwDirectoryFinder.RunningFromSourceTreeOverride = false;
+			FwDirectoryFinder.ResetDevProjectsDirectory();
+			Assert.That(FwDirectoryFinder.ProjectsDirectory,
+				Is.Not.EqualTo(Path.Combine(Path.GetTempPath(), "DevProjects")));
+		}
+
+		/// <summary>
+		/// Direction one: a dev run happens last, then an installed run. The dev run leaves the
+		/// per-user key as it found it, and a stale source-tree code or data path from an older
+		/// dev build is not followed by the installed run. The shared projects folder is.
+		/// </summary>
+		[Test]
+		public void Walk_DevRunThenInstalledRun_InstalledIgnoresDevPaths()
+		{
+			var treeRoot = CreateFakeSourceTree(withSolutionFile: true);
+			var names = new[] { "RootCodeDir", "RootDataDir" };
+			try
+			{
+				using (var userKey = FwRegistryHelper.FieldWorksRegistryKey)
+				using (var machineKey = FwRegistryHelper.FieldWorksRegistryKeyLocalMachine)
+				{
+					foreach (var name in names)
+					{
+						userKey.DeleteValue(name, false);
+						machineKey.SetValue(name, "Installed" + name);
+					}
+				}
+				var before = SnapshotUserValues();
+
+				FwDirectoryFinder.RunningFromSourceTreeOverride = true;
+				FwDirectoryFinder.ProjectsDirectory = Path.Combine(treeRoot, "DistFiles", "Projects");
+				var devDir = FwDirectoryFinder.CodeDirectory;
+				Assert.That(devDir, Is.SamePath(FwDirectoryFinder.FindDevDistFiles(UtilsAssemblyDir)));
+				Assert.That(SnapshotUserValues(), Is.EquivalentTo(before), "dev run wrote HKCU");
+
+				// An older dev build left tree paths behind: the installed run still resolves
+				// its own directories.
+				FwDirectoryFinder.RunningFromSourceTreeOverride = false;
+				FwDirectoryFinder.ResetDevProjectsDirectory();
+				using (var userKey = FwRegistryHelper.FieldWorksRegistryKey)
+				{
+					foreach (var name in names)
+						userKey.SetValue(name, Path.Combine(treeRoot, "DistFiles"));
+				}
+				foreach (var name in names)
+					Assert.That(FwDirectoryFinder.GetDirectory(name, "Default"),
+						Is.EqualTo("Installed" + name), name);
+				var projects = Path.Combine(treeRoot, "DistFiles", "Projects");
+				using (var userKey = FwRegistryHelper.FieldWorksRegistryKey)
+					userKey.SetValue("ProjectsDir", projects);
+				Assert.That(FwDirectoryFinder.GetDirectory("ProjectsDir", "Default"),
+					Is.EqualTo(projects), "the shared projects folder stays visible");
+			}
+			finally
+			{
+				using (var userKey = FwRegistryHelper.FieldWorksRegistryKey)
+				using (var machineKey = FwRegistryHelper.FieldWorksRegistryKeyLocalMachine)
+				{
+					foreach (var name in names)
+					{
+						userKey.DeleteValue(name, false);
+						machineKey.DeleteValue(name, false);
+					}
+					userKey.DeleteValue("ProjectsDir", false);
+					machineKey.DeleteValue("ProjectsDir", false);
+				}
+				Directory.Delete(treeRoot, true);
+			}
+		}
+
+		/// <summary>
+		/// Direction two: an installed run happens last, then a dev run. The per-user key holds
+		/// the installed settings; the dev run resolves code and data from its own tree and
+		/// leaves those settings untouched.
+		/// </summary>
+		[Test]
+		public void Walk_InstalledRunThenDevRun_DevUsesItsTreeAndLeavesHkcuAlone()
+		{
+			using (var userKey = FwRegistryHelper.FieldWorksRegistryKey)
+			{
+				userKey.SetValue("RootCodeDir", Path.Combine(Path.GetTempPath(), "InstalledCode"));
+				userKey.SetValue("RootDataDir", Path.Combine(Path.GetTempPath(), "InstalledData"));
+				userKey.SetValue("ProjectsDir", Path.Combine(Path.GetTempPath(), "InstalledProjects"));
+			}
+			var before = SnapshotUserValues();
+			try
+			{
+				FwDirectoryFinder.RunningFromSourceTreeOverride = true;
+				var distFiles = FwDirectoryFinder.FindDevDistFiles(UtilsAssemblyDir);
+				Assert.That(FwDirectoryFinder.CodeDirectory, Is.SamePath(distFiles));
+				Assert.That(FwDirectoryFinder.DataDirectory, Is.SamePath(distFiles));
+				FwDirectoryFinder.ProjectsDirectory = Path.Combine(distFiles, "Projects");
+				Assert.That(SnapshotUserValues(), Is.EquivalentTo(before), "dev run wrote HKCU");
+				FwDirectoryFinder.RunningFromSourceTreeOverride = false;
+				FwDirectoryFinder.ResetDevProjectsDirectory();
+				Assert.That(FwDirectoryFinder.ProjectsDirectory,
+					Is.EqualTo(Path.Combine(Path.GetTempPath(), "InstalledProjects")));
+			}
+			finally
+			{
+				using (var userKey = FwRegistryHelper.FieldWorksRegistryKey)
+				{
+					foreach (var name in before.Keys)
+						userKey.DeleteValue(name, false);
+				}
+			}
+		}
+
+		/// <summary>
+		/// The build scripts must not write per-user registry values: those redirect an
+		/// installed FieldWorks to a source tree.
+		/// </summary>
+		[Test]
+		public void BuildScripts_WriteNoRegistryKeys()
+		{
+			var distFiles = FwDirectoryFinder.FindDevDistFiles(UtilsAssemblyDir);
+			Assert.That(distFiles, Is.Not.Null);
+			var buildDir = Path.Combine(Path.GetDirectoryName(distFiles), "Build");
+			var files = Directory.GetFiles(buildDir, "*.targets").Concat(
+				Directory.GetFiles(buildDir, "*.proj")).ToList();
+			Assert.That(files, Is.Not.Empty);
+			foreach (var file in files)
+			{
+				var text = File.ReadAllText(file);
+				Assert.That(text, Does.Not.Contain("<WriteRegistry"), file);
+				Assert.That(text, Does.Not.Contain("setKeysInHKCU"), file);
+				foreach (var value in new[] { "RootCodeDir", "RootDataDir", "ProjectsDir",
+					"SOFTWARE/Classes/silfw", "SilEncConverters40/RootDir", "EncodingConverterRepository" })
+					Assert.That(text, Does.Not.Contain(value), file);
+			}
+		}
+
+		private static void AssertRegistryDirectory(string name, string userValue,
+			string machineValue, string defaultDirectory, string expected)
+		{
+			using (var userKey = FwRegistryHelper.FieldWorksRegistryKey)
+			using (var machineKey = FwRegistryHelper.FieldWorksRegistryKeyLocalMachine)
+			{
+				var originalUser = userKey.GetValue(name);
+				var originalMachine = machineKey.GetValue(name);
+				try
+				{
+					userKey.SetValue(name, userValue);
+					if (machineValue == null)
+						machineKey.DeleteValue(name, false);
+					else
+						machineKey.SetValue(name, machineValue);
+					Assert.That(FwDirectoryFinder.GetDirectory(name, defaultDirectory),
+						Is.EqualTo(expected));
+					Assert.That(userKey.GetValue(name), Is.EqualTo(userValue));
+				}
+				finally
+				{
+					if (originalUser == null)
+						userKey.DeleteValue(name, false);
+					else
+						userKey.SetValue(name, originalUser);
+					if (originalMachine == null)
+						machineKey.DeleteValue(name, false);
+					else
+						machineKey.SetValue(name, originalMachine);
+				}
+			}
 		}
 
 		/// <summary>

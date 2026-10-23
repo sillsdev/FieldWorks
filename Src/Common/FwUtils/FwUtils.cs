@@ -176,27 +176,14 @@ namespace SIL.FieldWorks.Common.FwUtils
 				using (var userKey = RegistryHelper.CompanyKey)
 				using (var machineKey = RegistryHelper.CompanyKeyLocalMachine)
 				{
-					string dir = null;
-					if (userKey != null && userKey.GetValue(icuDirValueName) != null)
-					{
-						dir = userKey.GetValue(icuDirValueName, dir) as string;
-					}
-					else if (machineKey != null && machineKey.GetValue(icuDirValueName) != null)
-					{
-
-						dir = machineKey.GetValue(icuDirValueName, dir) as string;
-					}
+					// The running source tree wins over any registry value, so that a stale or
+					// foreign Icu key cannot redirect a dev build (LT-22840).
+					var dir = ChooseIcuDataDir(TryGetDevIcuDataDir(),
+						userKey?.GetValue(icuDirValueName) as string,
+						machineKey?.GetValue(icuDirValueName) as string);
 					if (!string.IsNullOrEmpty(dir))
 						Environment.SetEnvironmentVariable("ICU_DATA", dir);
 				}
-			}
-			// If ICU_DATA still isn't set (common on clean dev/test machines), fall back to
-			// the repo/worktree DistFiles ICU payload so tests can run without a machine install.
-			if (string.IsNullOrEmpty(Environment.GetEnvironmentVariable("ICU_DATA")))
-			{
-				var devIcuDir = TryGetDevIcuDataDir();
-				if (!string.IsNullOrEmpty(devIcuDir))
-					Environment.SetEnvironmentVariable("ICU_DATA", devIcuDir);
 			}
 			// ICU_DATA should point to the directory that contains nfc_fw.nrm and nfkc_fw.nrm
 			// (i.e. icudt54l).
@@ -212,6 +199,25 @@ namespace SIL.FieldWorks.Common.FwUtils
 			CustomIcu.InitIcuDataDir();
 		}
 
+		/// <summary>
+		/// Picks the ICU data directory: the running tree's, else the per-user registry value,
+		/// else the machine one. A registry value that does not exist or lies inside a source
+		/// tree is ignored, because an installed FieldWorks must not follow a dev build's key.
+		/// </summary>
+		internal static string ChooseIcuDataDir(string devDir, string userValue,
+			string machineValue)
+		{
+			if (!string.IsNullOrEmpty(devDir))
+				return devDir;
+			foreach (var value in new[] { userValue, machineValue })
+			{
+				if (!string.IsNullOrEmpty(value) && Directory.Exists(value)
+					&& !FwDirectoryFinder.IsSourceTreePath(value))
+					return value;
+			}
+			return null;
+		}
+
 		private static string TryGetDevIcuDataDir()
 		{
 			try
@@ -224,7 +230,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 				// Not FwDirectoryFinder.FindDevDistFiles: on the InitIcuDataDir bootstrap path
 				// that dependency is an initialisation-order question. See LT-22768.
 				var distFiles = Path.GetFullPath(Path.Combine(assemblyDir, "..", "..", "DistFiles"));
-				if (!Directory.Exists(distFiles))
+				if (!Directory.Exists(distFiles) ||
+					!File.Exists(Path.Combine(distFiles, "..", "FieldWorks.sln")))
 					return null;
 
 				var candidate = Path.Combine(distFiles, $"Icu{ver}", $"icudt{ver}l");

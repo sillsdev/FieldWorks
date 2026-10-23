@@ -18,6 +18,7 @@ using SIL.FieldWorks.Resources;
 using SIL.LCModel;
 using SIL.LCModel.Utils;
 using SIL.PlatformUtilities;
+using SIL.Reporting;
 
 namespace SIL.FieldWorks.Common.FwUtils
 {
@@ -241,28 +242,50 @@ namespace SIL.FieldWorks.Common.FwUtils
 			return Path.Combine(CodeDirectory, filename);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Gets a subdirectory of FieldWorks either by reading the
-		/// <paramref name="registryValue"/> or by getting <paramref name="defaultDir"/>.
-		/// Will not return <c>null</c>.
+		/// Resolves a registry directory. Per-user source-tree code and data paths
+		/// fall back to machine settings, then the default directory.
 		/// </summary>
-		/// <param name="registryValue">The name of the registry value to read from the FW root
-		/// key in HKLM.</param>
-		/// <param name="defaultDir">The default directory to use if there is no value in the
-		/// registry.</param>
-		/// <returns>
-		/// The desired subdirectory of FieldWorks (without trailing directory separator).
-		/// </returns>
-		/// ------------------------------------------------------------------------------------
-		private static string GetDirectory(string registryValue, string defaultDir)
+		internal static string GetDirectory(string registryValue, string defaultDir)
 		{
 			using (var userKey = FwRegistryHelper.FieldWorksRegistryKey)
 			{
-				if (userKey == null || userKey.GetValue(registryValue) == null)
+				var userValue = userKey?.GetValue(registryValue);
+				if (userValue == null ||
+					((registryValue == "RootCodeDir" || registryValue == ksRootDataDir)
+						&& IsSourceTreePath(userValue as string)))
 					return GetDirectoryLocalMachine(registryValue, defaultDir);
 				return GetDirectory(userKey, registryValue, defaultDir);
 			}
+		}
+
+		/// <summary>
+		/// True if <paramref name="path"/> lies inside a source tree, that is under a directory
+		/// holding FieldWorks.sln. Installed FieldWorks must not follow such a path.
+		/// </summary>
+		public static bool IsSourceTreePath(string path)
+		{
+			if (string.IsNullOrEmpty(path))
+				return false;
+			try
+			{
+				if (!Path.IsPathRooted(path) ||
+					(Platform.IsWindows && Path.GetPathRoot(path).Length < 3))
+					return false;
+				for (var directory = Path.GetFullPath(path); !string.IsNullOrEmpty(directory);
+					directory = Path.GetDirectoryName(directory.TrimEnd(
+						Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar)))
+				{
+					if (File.Exists(Path.Combine(directory, ksSolutionFilename)))
+						return true;
+				}
+			}
+			catch (Exception error) when (error is ArgumentException ||
+				error is NotSupportedException || error is PathTooLongException)
+			{
+				Logger.WriteError("Could not inspect the FieldWorks registry directory", error);
+			}
+			return false;
 		}
 
 		/// <summary>
@@ -370,6 +393,27 @@ namespace SIL.FieldWorks.Common.FwUtils
 					return distFiles;
 			}
 			return null;
+		}
+
+		/// <summary>Test seam: forces <see cref="RunningFromSourceTree"/> when not
+		/// null.</summary>
+		internal static bool? RunningFromSourceTreeOverride { get; set; }
+
+		private static string s_devProjectsDirectory;
+
+		/// <summary>Forgets the projects folder a source-tree run chose in memory.</summary>
+		internal static void ResetDevProjectsDirectory()
+		{
+			s_devProjectsDirectory = null;
+		}
+
+		/// <summary>True when this assembly runs from a source tree, not an install.</summary>
+		internal static bool RunningFromSourceTree
+		{
+			get
+			{
+				return RunningFromSourceTreeOverride ?? GetDevDistFilesPath() != null;
+			}
 		}
 
 		private static string GetDevDistFilesPath()
@@ -550,14 +594,30 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// Gets or sets the dir where projects are stored. Setting to null will delete the HKCU
 		/// key, so that the HKLM key (system default) will be used for this user.
 		/// </summary>
+		/// <remarks>
+		/// A source-tree run keeps the value in memory only: it never writes HKCU, and setting
+		/// null does not delete a real HKCU ProjectsDir (LT-22840).
+		/// </remarks>
 		/// <exception cref="SecurityException">If user does not have permission to write to HKLM
 		/// </exception>
 		/// ------------------------------------------------------------------------------------
 		public static string ProjectsDirectory
 		{
-			get { return GetDirectory(ksProjectsDir, Path.Combine(DataDirectory, ksProjects)); }
+			get
+			{
+				if (s_devProjectsDirectory != null)
+					return s_devProjectsDirectory;
+				return GetDirectory(ksProjectsDir, Path.Combine(DataDirectory, ksProjects));
+			}
 			set
 			{
+				if (RunningFromSourceTree)
+				{
+					// A source-tree run never writes the per-user ProjectsDir, which dev and
+					// installed runs share (LT-22840); it keeps the choice for this process.
+					s_devProjectsDirectory = value;
+					return;
+				}
 				if (ProjectsDirectory == value)
 					return; // no change.
 

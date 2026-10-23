@@ -23,14 +23,13 @@ returns empty and `winforms_take_screenshot` is blank even though the process is
 ```
 - `Set-FieldWorksLegacyMode.ps1` forces `UIMode=Legacy` in libpalaso's settings store
   (`%LOCALAPPDATA%\SIL\SIL FieldWorks\*\user.config`).
-- `Resolve-FieldWorksDevRegistry.ps1` ensures `HKCU\SOFTWARE\SIL\FieldWorks\9` `RootCodeDir`/`RootDataDir`
-  point at THIS worktree's `DistFiles` (a mismatch leaves the main window unbuilt — blank). It auto-realigns
-  when the other worktree is NOT active (no FieldWorks.exe running from it) and was NOT used in the last 24h
-  (registry key write time). If it prints `RESULT=ASK_USER`, the other worktree may be active — **ask the
-  user** before realigning, then re-run with `-Force` if they approve.
-  Since `FwDirectoryFinder` learned to anchor on the source tree it runs from, an exe built from a current
-  worktree already reads its own `DistFiles`; keep running the script for older builds, and for the other
-  registry values (`ProjectsDir`), which are still shared across worktrees.
+- `Resolve-FieldWorksDevRegistry.ps1` previews code/data/ICU registry overrides pointing into a
+  source tree. It is read-only, including with `-Force`. Dev builds use their own `DistFiles`;
+  these shared overrides can redirect an installed release into incompatible worktree files.
+  For an explicit repair, preview `Build/Repair-DeveloperRegistry.ps1 -WhatIf`, then run it
+  without `-WhatIf` after closing installed FieldWorks. It preserves
+  overrides outside identifiable source trees. It cannot identify a checkout whose solution
+  file has been deleted or moved.
 
 See the script headers and `../references/mcp-setup.md`.
 
@@ -99,12 +98,10 @@ See the script headers and `../references/mcp-setup.md`.
   relaunch (Step 0 above). If it is STILL blank in Legacy mode, check whether the
   process memory is *flat* (via `tasklist`): flat ≈ loaded-but-stuck (a modal that
   is not enumerated, or the main window failed to build), climbing ≈ still loading
-  (a Debug build + Sena 3 migration can take minutes — keep waiting). Also verify
-  the dev registry points the running exe at its OWN DistFiles:
-  `HKCU\SOFTWARE\SIL\FieldWorks\9` `RootCodeDir`/`RootDataDir` should match the
-  worktree of the launched `Output/Debug/FieldWorks.exe`; a mismatch (a different
-  worktree's DistFiles) can leave the main window unbuilt. Aligning it is a dev
-  registry change — confirm with the user before editing.
+  (a Debug build + Sena 3 migration can take minutes — keep waiting). A current dev build
+  resolves code and data from its own source tree. For installed releases, run the read-only
+  registry preflight to check for worktree overrides; use the explicit repair described above.
+  `ProjectsDir` stays shared with the installed app on purpose; the repair keeps it.
 
 ## Exit
 
