@@ -1562,27 +1562,19 @@ namespace SIL.FieldWorks.XWorks
 				"the new translation is typed Free Translation, like legacy");
 		}
 
-		// A ghost prompt whose layout authors NO ghost field (and no init method)
-		// must compose NON-editable -- an editable one would call MakeNewObject on typing and
-		// silently DISCARD the typed text (nothing exists to receive the string). The shipped
-		// AlternateForms seq (LexEntryParts.xml:119, no ghost= attribute) is exactly that case.
+		// LT-22844: AlternateForms names no ghost field and can create nothing, so it has no
+		// prompt row; SubSenses names none either but types a gloss into a new sense.
 		[Test]
-		public void Compose_GhostWithoutGhostField_IsNotEditable_SoTypingCannotCreateAndDiscard()
+		public void Compose_AnEmptyListWithNoGhostField_HasNoPromptRow_UnlessTypingCanCreate()
 		{
 			var composed = DetailComposer.Compose(m_entry, Cache);
-			var ghost = composed.Model.Fields.FirstOrDefault(f =>
-				f.Field == "AlternateForms" && f.StableId.EndsWith("/ghost"));
-			Assert.That(ghost, Is.Not.Null,
-				"the empty always-visible alternate-forms sequence still renders its prompt row");
-			Assert.That(ghost.IsEditable, Is.False,
-				"no ghost field anywhere to route the text: the prompt must not accept typing");
 
-			var before = m_entry.AlternateFormsOS.Count;
-			Assert.That(composed.EditContext.TrySetText(ghost, ghost.Values[0].WsAbbrev, "lost"),
-				Is.False, "no setter is registered for the non-editable prompt");
-			Assert.That(composed.EditContext.IsOpen, Is.False, "nothing staged, no session opened");
-			Assert.That(m_entry.AlternateFormsOS.Count, Is.EqualTo(before),
-				"no bare object was created behind the user's back");
+			Assert.That(m_entry.AlternateFormsOS, Is.Empty, "precondition: no allomorphs");
+			Assert.That(composed.Model.Fields.Any(f =>
+				f.Field == "AlternateForms" && f.StableId.EndsWith(DetailField.GhostStableIdSuffix)), Is.False,
+				"no prompt row that could only discard what is typed");
+			var subsense = SubsenseGhost(composed, m_entry.SensesOS[0]);
+			Assert.That(subsense?.IsEditable, Is.True, "the subsense prompt still creates a sense");
 		}
 
 		private static DetailField ExampleGhost(ComposedDetail composed, ILexSense sense)
