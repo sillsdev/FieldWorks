@@ -42,7 +42,7 @@ namespace SIL.FieldWorks.XWorks
 			// Lexeme Form, Citation Form and variant form rows.
 			"mnuDataTree-LexemeForm", "mnuDataTree-LexemeFormContext", "mnuDataTree-CitationFormContext",
 			"mnuDataTree-VariantFormContext",
-			// Lexicon rows: the Subsenses and Extended Notes section rows, and the hotlinks of
+			// Lexicon rows: the Subsenses and Extended Notes prompt rows, and the hotlinks of
 			// a sense, an extended note and an etymology.
 			"mnuDataTree-Subsenses", "mnuDataTree-ExtendedNotes", "mnuDataTree-Sense-Hotlinks",
 			"mnuDataTree-ExtendedNote-Hotlinks", "mnuDataTree-Etymology-Hotlinks",
@@ -74,8 +74,8 @@ namespace SIL.FieldWorks.XWorks
 		private static readonly string[] LexiconLabelMenuIds =
 		{
 			"mnuDataTree-Translation", "mnuDataTree-ComplexFormSpec", "mnuDataTree-LexemeForm",
-			"mnuDataTree-Subsenses", "mnuDataTree-ExtendedNotes", "mnuDataTree-AlternateForms",
-			"mnuDataTree-VariantForms", "mnuDataTree-Examples"
+			"mnuDataTree-Subsenses", "mnuDataTree-AlternateForms", "mnuDataTree-VariantForms",
+			"mnuDataTree-Examples"
 		};
 
 		private static readonly string[] LexiconInStringMenuIds =
@@ -294,8 +294,8 @@ namespace SIL.FieldWorks.XWorks
 		{
 			Assert.That(HiddenTreeExists, Is.False, "precondition: no hidden tree yet");
 			var rows = OwnedMenuRows();
-			Assert.That(rows, Has.Count.EqualTo(18),
-				"precondition: sixteen ids, -Translation and -VariantForms on two rows each");
+			Assert.That(rows, Has.Count.EqualTo(17),
+				"precondition: fifteen ids, -Translation and -VariantForms on two rows each");
 			foreach (var (row, menuId, kind) in rows)
 			{
 				var ids = kind == DetailMenuKind.ContextMenu
@@ -416,7 +416,7 @@ namespace SIL.FieldWorks.XWorks
 			var subsense = Leaf("mnuDataTree-Subsenses", "CmdDataTree-Insert-SubSense");
 			var extendedNote = Leaf("mnuDataTree-ExtendedNotes", "CmdDataTree-Insert-ExtNote");
 			var subsensesRow = Rows().Single(f => f.MenuId == "mnuDataTree-Subsenses");
-			var notesRow = Rows().Single(f => f.MenuId == "mnuDataTree-ExtendedNotes");
+			var senseRow = Rows().First(f => f.ObjectHvo == m_entry.SensesOS[0].Hvo && f.Kind == DetailFieldKind.Header);
 			var etymologyRow = Rows().First(f => f.ObjectHvo == m_etymology.Hvo);
 			var noObject = new DetailField("Row", "Row", "Senses", null, DetailFieldKind.Header,
 				EditorClassification.GroupingNone, null, null, HostRouting.Inherit, null, null, null, menuId: subsensesRow.MenuId);
@@ -425,7 +425,7 @@ namespace SIL.FieldWorks.XWorks
 			var onGhost = m_view.InsertItem(subsense, subsensesRow);
 			Assert.That(onGhost.IsEnabled, Is.True, "the ghost row inserts into the sense it stands in for");
 			Assert.That(onGhost.Label, Is.EqualTo("Insert Subsense"));
-			Assert.That(m_view.InsertItem(extendedNote, notesRow).IsEnabled, Is.True, "the sense has ExtendedNote");
+			Assert.That(m_view.InsertItem(extendedNote, senseRow).IsEnabled, Is.True, "the sense has ExtendedNote");
 			var noTarget = m_view.InsertItem(extendedNote, etymologyRow);
 			Assert.That(noTarget.IsEnabled, Is.False, "neither the entry nor an etymology has ExtendedNote");
 			Assert.That(noTarget.Execute, Is.Null);

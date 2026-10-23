@@ -16,6 +16,7 @@ using Avalonia.Threading;
 using Avalonia.VisualTree;
 using FwAvaloniaTests.VisualChecks;
 using NUnit.Framework;
+using SIL.FieldWorks.Common.FwAvalonia;
 using SIL.FieldWorks.Common.FwAvalonia.Detail;
 using SIL.FieldWorks.Common.FwAvalonia.ViewDefinition;
 
@@ -340,6 +341,68 @@ namespace FwAvaloniaTests
 			Assert.That(link.FontSize, Is.EqualTo(linkSize));
 			Assert.That(link.FontWeight, Is.EqualTo(Avalonia.Media.FontWeight.Normal),
 				"the link is not the button theme's semibold");
+		}
+
+		// LT-22689: a header with a collapsed line (a sense, etymology, extended note or
+		// subrecord) shows it while collapsed and its own label while expanded.
+		[AvaloniaTest]
+		public void CollapsibleHeader_ShowsItsCollapsedLine_OnlyWhileCollapsed()
+		{
+			var sense = Header("sense", "Sense 1", 0);
+			sense.CollapsedLabel = "Sense 1 - house - n";
+			var note = Header("note", "Extended Note", 0, expanded: false);
+			note.CollapsedLabel = "Extended Note - use - formal";
+			var view = Show(sense, Text("g1", "Gloss", 1), note, Text("d1", "Discussion", 1));
+			string Shown(string id) => SectionHeader(view, id).GetVisualDescendants().OfType<TextBlock>().Single().Text;
+
+			Assert.That(Shown("sense"), Is.EqualTo("Sense 1"));
+			Assert.That(Shown("note"), Is.EqualTo("Extended Note - use - formal"),
+				"a header that starts collapsed shows its collapsed line");
+
+			ClickHeader(SectionHeader(view, "sense"));
+			Assert.That(Shown("sense"), Is.EqualTo("Sense 1 - house - n"));
+			Assert.That(AutomationProperties.GetName(SectionHeader(view, "sense")), Is.EqualTo("Sense 1 - house - n"),
+				"assistive technology reads the line that is shown");
+
+			ClickHeader(SectionHeader(view, "sense"));
+			Assert.That(Shown("sense"), Is.EqualTo("Sense 1"));
+		}
+
+		// A collapsed sense line with a sentence-long definition wraps to the pane, as the
+		// WinForms summary does, with the +/- box beside its first line.
+		[AvaloniaTest]
+		public void LongHeaderLine_WrapsWithinThePane_WithTheBoxBesideItsFirstLine()
+		{
+			var longLine = "Sense 1 - " + string.Concat(Enumerable.Repeat("a long definition word ", 12)) + "- n";
+			var sense = Header("sense", "Sense 1", 0, expanded: false);
+			sense.CollapsedLabel = longLine;
+			var view = Show(Header("short", "Sense 2", 0), Text("g2", "Gloss", 1), sense, Text("g1", "Gloss", 1));
+			var header = SectionHeader(view, "sense");
+			var text = header.GetVisualDescendants().OfType<TextBlock>().Single();
+			var oneLine = SectionHeader(view, "short").GetVisualDescendants().OfType<TextBlock>().Single();
+
+			Assert.That(text.Text, Is.EqualTo(longLine), "precondition: the collapsed line is shown");
+			Assert.That(text.Bounds.Height, Is.GreaterThan(oneLine.Bounds.Height * 1.5), "the line wraps");
+			var right = text.TranslatePoint(new Point(text.Bounds.Width, 0), view).Value.X;
+			Assert.That(right, Is.LessThanOrEqualTo(view.Bounds.Width), "nothing runs past the pane");
+			var boxMiddle = header.Box.TranslatePoint(new Point(0, header.Box.Bounds.Height / 2), text).Value.Y;
+			Assert.That(boxMiddle, Is.LessThan(oneLine.Bounds.Height), "the box sits beside the first line");
+		}
+
+		// A NormalSummary header (an etymology, an extended note) at the top level draws no
+		// heavy section rule; a HeavySummary one (a sense) does.
+		[AvaloniaTest]
+		public void NormalWeightHeader_DrawsNoHeavyRule_AtTheTopLevel()
+		{
+			var etymology = Header("etymology", "Etymology", 0);
+			etymology.IsNormalWeight = true;
+			var view = Show(Header("sense1", "Sense 1", 0), Text("g1", "Gloss", 1),
+				Header("sense2", "Sense 2", 0), Text("g2", "Gloss", 1), etymology, Text("e1", "Gloss", 1));
+			int RulesAbove(string id) => SectionHeader(view, id).GetVisualAncestors().OfType<StackPanel>()
+				.SelectMany(p => p.Children.OfType<Border>()).Count(b => b.Background == FwAvaloniaDensity.SectionRuleBrush);
+
+			Assert.That(RulesAbove("sense2"), Is.EqualTo(1), "precondition: a top-level sense gets the heavy rule");
+			Assert.That(RulesAbove("etymology"), Is.EqualTo(0));
 		}
 
 		[AvaloniaTest]
