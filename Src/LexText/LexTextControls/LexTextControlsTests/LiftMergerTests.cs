@@ -4812,36 +4812,80 @@ namespace LexTextControlsTests
 		public void ImportSemanticDomainTrait_MatchesExistingDomainWithUntrimmedName()
 		{
 			SetWritingSystems("fr");
+			var semDom = CreateEnglishSemanticDomain("9.4.2.3", "Necessary ");
+			var semDomCount = Cache.LangProject.SemanticDomainListOA.ReallyReallyAllPossibilities.Count;
+
+			var senses = ImportSenseSemanticDomainTraits("9.4.2.3 Necessary");
+
+			Assert.That(Cache.LangProject.SemanticDomainListOA.ReallyReallyAllPossibilities, Has.Count.EqualTo(semDomCount), "Should not create a new semantic domain");
+			Assert.That(senses.Single().SemanticDomainsRC.Single(), Is.SameAs(semDom));
+		}
+
+		[Test]
+		public void ImportSemanticDomainTrait_PrefersExactMatchOverTrimmedMatch()
+		{
+			SetWritingSystems("fr");
+			CreateEnglishSemanticDomain("9.4.2.3", "Necessary ");
+			var exactSemDom = CreateEnglishSemanticDomain("9.4.2.3", "Necessary");
+
+			var senses = ImportSenseSemanticDomainTraits("9.4.2.3 Necessary");
+
+			Assert.That(senses.Single().SemanticDomainsRC.Single(), Is.SameAs(exactSemDom));
+		}
+
+		[TestCase("9.4.2.3 Necessary ", "9.4.2.3 Necessary")]
+		[TestCase("9.4.2.3 Necessary", "9.4.2.3 Necessary ")]
+		public void ImportSemanticDomainTraits_DifferingOnlyInWhitespace_CreateOneDomain(string first, string second)
+		{
+			SetWritingSystems("fr");
+			var semDomCount = Cache.LangProject.SemanticDomainListOA.ReallyReallyAllPossibilities.Count;
+
+			var senses = ImportSenseSemanticDomainTraits(first, second);
+
+			Assert.That(Cache.LangProject.SemanticDomainListOA.ReallyReallyAllPossibilities, Has.Count.EqualTo(semDomCount + 1));
+			Assert.That(senses[1].SemanticDomainsRC.Single(), Is.SameAs(senses[0].SemanticDomainsRC.Single()));
+		}
+
+		private ICmSemanticDomain CreateEnglishSemanticDomain(string abbr, string name)
+		{
 			var en = Cache.WritingSystemFactory.GetWsFromStr("en");
-			var semDomList = Cache.LangProject.SemanticDomainListOA;
 			var semDom = Cache.ServiceLocator.GetInstance<ICmSemanticDomainFactory>().Create();
-			semDomList.PossibilitiesOS.Add(semDom);
-			semDom.Abbreviation.set_String(en, "9.4.2.3");
-			semDom.Name.set_String(en, "Necessary ");
-			var semDomCount = semDomList.ReallyReallyAllPossibilities.Count;
-			var liftData = new[]
+			Cache.LangProject.SemanticDomainListOA.PossibilitiesOS.Add(semDom);
+			semDom.Abbreviation.set_String(en, abbr);
+			semDom.Name.set_String(en, name);
+			return semDom;
+		}
+
+		/// <summary>
+		/// Import one entry with a sense for each semantic domain trait value, and return its
+		/// senses in order.
+		/// </summary>
+		private IList<ILexSense> ImportSenseSemanticDomainTraits(params string[] traitValues)
+		{
+			var liftData = new List<string>
 			{
 				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
 				"<lift producer=\"The Combine\" version=\"0.13\">",
 				"<entry id=\"baba_aef5e807-c841-4f35-9591-c8a998dc2465\" guid=\"aef5e807-c841-4f35-9591-c8a998dc2465\">",
 				"<lexical-unit>",
 				"<form lang=\"fr\"><text>baba</text></form>",
-				"</lexical-unit>",
-				"<sense id=\"c2a0ad53-5b6e-4c1f-a4b1-0d84ec0f1a9e\">",
-				"<trait name=\"semantic-domain-ddp4\" value=\"9.4.2.3 Necessary\"/>",
-				"</sense>",
-				"</entry>",
-				"</lift>"
+				"</lexical-unit>"
 			};
+			foreach (var traitValue in traitValues)
+			{
+				liftData.Add($"<sense id=\"{Guid.NewGuid()}\">");
+				liftData.Add($"<trait name=\"semantic-domain-ddp4\" value=\"{traitValue}\"/>");
+				liftData.Add("</sense>");
+			}
+			liftData.Add("</entry>");
+			liftData.Add("</lift>");
 
 			var sOrigFile = CreateInputFile(liftData);
 			var logFile = TryImport(sOrigFile, 1);
 			File.Delete(sOrigFile);
 			File.Delete(logFile);
 
-			Assert.That(semDomList.ReallyReallyAllPossibilities, Has.Count.EqualTo(semDomCount), "Should not create a new semantic domain");
-			var sense = Cache.ServiceLocator.GetInstance<ILexSenseRepository>().AllInstances().Single();
-			Assert.That(sense.SemanticDomainsRC.Single(), Is.SameAs(semDom));
+			return Cache.ServiceLocator.GetInstance<ILexEntryRepository>().AllInstances().Single().SensesOS.ToList();
 		}
 
 		[Test]

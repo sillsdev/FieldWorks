@@ -344,9 +344,25 @@ namespace SIL.FieldWorks.LexText.Controls
 		private static bool TryGetPossibilityMatchingTrait(string traitValue, IDictionary<string, ICmPossibility> dict,
 			out ICmPossibility poss)
 		{
+			if (dict.TryGetValue(traitValue, out poss) || dict.TryGetValue(traitValue.ToLowerInvariant(), out poss))
+				return true;
+
+			// Some names have stray whitespace (e.g., in semantic domain lists from FieldWorks
+			// templates before 2017) that other programs trim before writing LIFT.
 			string trimmed = traitValue.Trim();
-			return dict.TryGetValue(traitValue, out poss) || dict.TryGetValue(traitValue.ToLowerInvariant(), out poss)
-				|| dict.TryGetValue(trimmed, out poss) || dict.TryGetValue(trimmed.ToLowerInvariant(), out poss);
+			if (trimmed.Length == 0)
+				return false;
+			string trimmedLower = trimmed.ToLowerInvariant();
+			foreach (var kvp in dict)
+			{
+				string key = kvp.Key.Trim();
+				if (key == trimmed || key == trimmedLower)
+				{
+					poss = kvp.Value;
+					return true;
+				}
+			}
+			return false;
 		}
 
 		private static void UpdatePossibilityWithTraitValue(int ws, ICmPossibility poss, string traitValue,
