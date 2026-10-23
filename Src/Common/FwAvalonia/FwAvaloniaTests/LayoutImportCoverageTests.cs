@@ -129,16 +129,33 @@ namespace FwAvaloniaTests
 			Assert.That(model.Roots, Is.Empty, "an unevaluable condition must not import its content");
 		}
 
+		// LT-22858: Notebook's SubRecord layout brings a subrecord's fields in this way.
 		[Test]
-		public void SublayoutElement_RaisesInfoDropDiagnostic()
+		public void SublayoutElement_ImportsAsANode_NamingItsLayoutAndChoiceField()
 		{
 			var model = Import(@"
-<layout class='LexEntry' type='detail' name='T'>
-  <sublayout name='domainLabel' group='para'/>
+<layout class='RnGenericRec' type='detail' name='T'>
+  <sublayout name='Normal' layoutChoiceField='Type'/>
 </layout>");
 
+			var sublayout = model.Roots.Single();
+			Assert.That(sublayout.Kind, Is.EqualTo(ViewNodeKind.Sublayout));
+			Assert.That(sublayout.TargetLayout, Is.EqualTo("Normal"));
+			Assert.That(sublayout.Field, Is.EqualTo("Type"));
+			Assert.That(model.Diagnostics.Any(d => d.Code == "sublayout-dropped"), Is.False);
+		}
+
+		[Test]
+		public void SublayoutElement_WithoutAName_IsDroppedWithAWarning()
+		{
+			var model = Import(@"
+<layout class='RnGenericRec' type='detail' name='T'>
+  <sublayout layoutChoiceField='Type'/>
+</layout>");
+
+			Assert.That(model.Roots, Is.Empty);
 			Assert.That(model.Diagnostics.Single(d => d.Code == "sublayout-dropped").Severity,
-				Is.EqualTo(ViewDiagnosticSeverity.Info));
+				Is.EqualTo(ViewDiagnosticSeverity.Warning));
 		}
 
 		[Test]
