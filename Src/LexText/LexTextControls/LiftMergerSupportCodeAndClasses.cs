@@ -145,12 +145,20 @@ namespace SIL.FieldWorks.LexText.Controls
 		private static void AddToPossibilityMap(ITsString tss, ICmPossibility poss, Dictionary<string, ICmPossibility> dict)
 		{
 			if (tss.Length > 0)
+				AddKeysToPossibilityMap(tss.Text.Normalize(), poss, dict);
+		}
+
+		/// <summary>
+		/// Add the key as is, lowercased, and trimmed of surrounding whitespace. Some names
+		/// have stray whitespace (e.g., in semantic domain lists from FieldWorks templates
+		/// before 2017) that other programs trim before writing LIFT.
+		/// </summary>
+		private static void AddKeysToPossibilityMap(string key, ICmPossibility poss, Dictionary<string, ICmPossibility> dict)
+		{
+			string trimmed = key.Trim();
+			foreach (string s in new[] { key, key.ToLowerInvariant(), trimmed, trimmed.ToLowerInvariant() })
 			{
-				string s = tss.Text.Normalize();
-				if (!dict.ContainsKey(s))
-					dict.Add(s, poss);
-				s = s.ToLowerInvariant();
-				if (!dict.ContainsKey(s))
+				if (s.Length > 0 && !dict.ContainsKey(s))
 					dict.Add(s, poss);
 			}
 		}
@@ -198,12 +206,8 @@ namespace SIL.FieldWorks.LexText.Controls
 						{
 							string sAbbr = tssAbbr.Text;
 							string sName = tssName.Text;
-							string sKey = String.Format("{0} {1}", sAbbr, sName);
-							if (!dict.ContainsKey(sKey))
-								dict.Add(sKey, poss);
-							sKey = sKey.ToLowerInvariant();
-							if (!dict.ContainsKey(sKey))
-								dict.Add(sKey, poss);
+							AddKeysToPossibilityMap(String.Format("{0} {1}", sAbbr, sName), poss, dict);
+							AddKeysToPossibilityMap(String.Format("{0} {1}", sAbbr.Trim(), sName.Trim()), poss, dict);
 						}
 					}
 				}
