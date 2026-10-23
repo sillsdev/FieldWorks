@@ -316,6 +316,30 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(record.Title.Text, Is.EqualTo("Field trip"), "only the subrecord changed");
 		}
 
+		// LT-22844: the SubRecords list names no ghost field, so it has no prompt row.
+		[Test]
+		public void Compose_ARecordWithNoSubrecords_KeepsTheSubrecordsHeader_WithNoPromptRow()
+		{
+			var record = RecordWithSubrecord(out var sub);
+			IRnGenericRec empty = null;
+			Do(() =>
+			{
+				empty = Cache.ServiceLocator.GetInstance<IRnGenericRecFactory>().Create();
+				Cache.LangProject.ResearchNotebookOA.RecordsOC.Add(empty);
+			});
+
+			var fields = DetailComposer.Compose(empty, Cache).Model.Fields;
+
+			var section = fields.Single(f => f.Kind == DetailFieldKind.Header && f.Label == "Subrecords");
+			Assert.That(section.HotlinksId, Is.EqualTo("mnuDataTree-SubRecords-Hotlinks"),
+				"Insert Subrecord stays on the header's hotlinks");
+			Assert.That(fields.Any(f => f.Field == "SubRecords" && f.GhostPrompt != null), Is.False,
+				"no prompt row for an empty Subrecords list");
+			var nested = DetailComposer.Compose(record, Cache).Model.Fields;
+			Assert.That(nested.Any(f => f.ObjectHvo == sub.Hvo && f.Field == "SubRecords" && f.GhostPrompt != null), Is.False,
+				"no prompt row inside a subrecord that has no subrecords");
+		}
+
 		[Test]
 		public void Compose_ASubrecordOfASubrecord_ShowsItsFieldsOneLevelFurtherIn()
 		{

@@ -3304,8 +3304,13 @@ namespace SIL.FieldWorks.XWorks
 				var prompt = string.Format(
 					SIL.FieldWorks.Common.FwAvalonia.FwAvaloniaStrings.GhostAddPromptFormat, label);
 
-				var stableId = StableId(node, obj) + DetailField.GhostStableIdSuffix;
 				var ghost = ResolveGhostCreation(node, obj);
+				// The WinForms DataTree shows a prompt only where the layout names a ghost
+				// field; a prompt that names none and can create nothing is left out.
+				if (ghost == null && string.IsNullOrEmpty(node.GhostField))
+					return;
+
+				var stableId = StableId(node, obj) + DetailField.GhostStableIdSuffix;
 				AddField(new DetailField(stableId, label, node.Field,
 					node.WritingSystem, DetailFieldKind.Text, node.EditorClassification,
 					node.AutomationId, node.LocalizationKey, node.Routing,

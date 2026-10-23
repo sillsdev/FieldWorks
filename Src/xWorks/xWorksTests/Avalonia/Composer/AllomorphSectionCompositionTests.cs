@@ -212,19 +212,21 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
-		/// An entry with no allomorphs offers the watermarked add row rather than nothing.
+		/// An entry with no allomorphs shows only the Allomorphs header, as the WinForms view
+		/// does: the list names no ghost field, and the header's menu inserts the first one.
 		/// </summary>
 		[Test]
-		public void Compose_EmptyAllomorphSection_ShowsGhostAddRow()
+		public void Compose_EmptyAllomorphSection_ShowsOnlyItsHeader_WithInsertOnItsMenu()
 		{
 			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor,
 				() => m_entry.AlternateFormsOS.Clear());
 
 			var subtree = ComposeSectionSubtree();
 
-			Assert.That(subtree.Any(f => !string.IsNullOrEmpty(f.GhostPrompt)), Is.True,
-				"an empty allomorph sequence composes the ghost add row. Composed:\n"
-				+ Describe(subtree));
+			Assert.That(subtree.Any(f => !string.IsNullOrEmpty(f.GhostPrompt)), Is.False,
+				"no prompt row for an empty allomorph sequence. Composed:\n" + Describe(subtree));
+			Assert.That(subtree.Single(f => f.Kind == DetailFieldKind.Header).MenuId,
+				Is.EqualTo("mnuDataTree-AlternateForms"), "the header keeps Insert Allomorph");
 		}
 
 		/// <summary>
