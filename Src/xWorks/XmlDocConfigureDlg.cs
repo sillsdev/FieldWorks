@@ -1249,7 +1249,6 @@ namespace SIL.FieldWorks.XWorks
 						fixCombo();
 				},
 				defaultStyle, m_styleSheet,
-				m_callbacks != null ? m_callbacks.MaxStyleLevelToShow : 0,
 				m_callbacks != null ? m_callbacks.HvoAppRootObject : 0,
 				m_cache, this, m_propertyTable.GetValue<IApp>("App"),
 				m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"),

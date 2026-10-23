@@ -903,7 +903,4 @@
   <data name="m_cboTypes.Items3" xml:space="preserve">
 	<value>User-modified Styles</value>
   </data>
-  <data name="m_cboTypes.Items4" xml:space="preserve">
-	<value>Dictionary</value>
-  </data>
 </root>

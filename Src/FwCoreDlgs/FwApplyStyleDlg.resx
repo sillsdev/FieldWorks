@@ -154,49 +154,7 @@
 	<value>m_pnlMasterGrid</value>
   </data>
   <data name="&gt;&gt;label1.ZOrder" xml:space="preserve">
-	<value>1</value>
-  </data>
-  <metadata name="label2.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-	<value>False</value>
-  </metadata>
-  <data name="label2.AutoSize" type="System.Boolean, mscorlib">
-	<value>True</value>
-  </data>
-  <data name="label2.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
-	<value>Fill</value>
-  </data>
-  <data name="label2.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-	<value>NoControl</value>
-  </data>
-  <data name="label2.Location" type="System.Drawing.Point, System.Drawing">
-	<value>0, 0</value>
-  </data>
-  <data name="label2.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-	<value>0, 0, 0, 0</value>
-  </data>
-  <data name="label2.Size" type="System.Drawing.Size, System.Drawing">
-	<value>26, 27</value>
-  </data>
-  <data name="label2.TabIndex" type="System.Int32, mscorlib">
-	<value>5</value>
-  </data>
-  <data name="label2.Text" xml:space="preserve">
-	<value>&amp;List:</value>
-  </data>
-  <data name="label2.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
-	<value>MiddleLeft</value>
-  </data>
-  <data name="&gt;&gt;label2.Name" xml:space="preserve">
-	<value>label2</value>
-  </data>
-  <data name="&gt;&gt;label2.Type" xml:space="preserve">
-	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;label2.Parent" xml:space="preserve">
-	<value>m_pnlTypesCombo</value>
-  </data>
-  <data name="&gt;&gt;label2.ZOrder" xml:space="preserve">
-	<value>1</value>
+	<value>0</value>
   </data>
   <data name="helpToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
 	<value>99, 22</value>
@@ -238,7 +196,7 @@
 	<value>m_pnlMasterGrid</value>
   </data>
   <data name="&gt;&gt;m_lstStyles.ZOrder" xml:space="preserve">
-	<value>2</value>
+	<value>1</value>
   </data>
   <data name="m_btnOk.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
 	<value>Bottom, Left</value>
@@ -327,86 +285,17 @@
   <data name="&gt;&gt;m_btnHelp.ZOrder" xml:space="preserve">
 	<value>4</value>
   </data>
-  <data name="m_cboTypes.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
-	<value>Fill</value>
-  </data>
-  <data name="m_cboTypes.Items" xml:space="preserve">
-	<value>Basic Styles</value>
-  </data>
-  <data name="m_cboTypes.Items1" xml:space="preserve">
-	<value>All Styles</value>
-  </data>
-  <data name="m_cboTypes.Items2" xml:space="preserve">
-	<value>Custom Styles</value>
-  </data>
-  <data name="m_cboTypes.Location" type="System.Drawing.Point, System.Drawing">
-	<value>29, 3</value>
-  </data>
-  <data name="m_cboTypes.Size" type="System.Drawing.Size, System.Drawing">
-	<value>200, 21</value>
-  </data>
-  <data name="m_cboTypes.TabIndex" type="System.Int32, mscorlib">
-	<value>6</value>
-  </data>
-  <data name="&gt;&gt;m_cboTypes.Name" xml:space="preserve">
-	<value>m_cboTypes</value>
-  </data>
-  <data name="&gt;&gt;m_cboTypes.Type" xml:space="preserve">
-	<value>System.Windows.Forms.ComboBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;m_cboTypes.Parent" xml:space="preserve">
-	<value>m_pnlTypesCombo</value>
-  </data>
-  <data name="&gt;&gt;m_cboTypes.ZOrder" xml:space="preserve">
-	<value>0</value>
-  </data>
   <data name="m_pnlMasterGrid.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
 	<value>Top, Bottom, Left, Right</value>
   </data>
   <data name="m_pnlMasterGrid.ColumnCount" type="System.Int32, mscorlib">
 	<value>1</value>
   </data>
-  <data name="m_pnlTypesCombo.ColumnCount" type="System.Int32, mscorlib">
-	<value>2</value>
-  </data>
-  <data name="m_pnlTypesCombo.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
-	<value>Fill</value>
-  </data>
-  <data name="m_pnlTypesCombo.Location" type="System.Drawing.Point, System.Drawing">
-	<value>3, 314</value>
-  </data>
-  <data name="m_pnlTypesCombo.RowCount" type="System.Int32, mscorlib">
-	<value>1</value>
-  </data>
-  <data name="m_pnlTypesCombo.Size" type="System.Drawing.Size, System.Drawing">
-	<value>232, 24</value>
-  </data>
-  <data name="m_pnlTypesCombo.TabIndex" type="System.Int32, mscorlib">
-	<value>16</value>
-  </data>
-  <data name="m_pnlTypesCombo.Visible" type="System.Boolean, mscorlib">
-	<value>False</value>
-  </data>
-  <data name="&gt;&gt;m_pnlTypesCombo.Name" xml:space="preserve">
-	<value>m_pnlTypesCombo</value>
-  </data>
-  <data name="&gt;&gt;m_pnlTypesCombo.Type" xml:space="preserve">
-	<value>System.Windows.Forms.TableLayoutPanel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;m_pnlTypesCombo.Parent" xml:space="preserve">
-	<value>m_pnlMasterGrid</value>
-  </data>
-  <data name="&gt;&gt;m_pnlTypesCombo.ZOrder" xml:space="preserve">
-	<value>0</value>
-  </data>
-  <data name="m_pnlTypesCombo.LayoutSettings" type="System.Windows.Forms.TableLayoutSettings, System.Windows.Forms">
-	<value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="m_cboTypes" Row="0" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="label2" Row="0" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="AutoSize,0,Percent,100" /&gt;&lt;Rows Styles="AutoSize,0" /&gt;&lt;/TableLayoutSettings&gt;</value>
-  </data>
   <data name="m_pnlMasterGrid.Location" type="System.Drawing.Point, System.Drawing">
 	<value>12, 9</value>
   </data>
   <data name="m_pnlMasterGrid.RowCount" type="System.Int32, mscorlib">
-	<value>3</value>
+	<value>2</value>
   </data>
   <data name="m_pnlMasterGrid.Size" type="System.Drawing.Size, System.Drawing">
 	<value>236, 341</value>
@@ -427,7 +316,7 @@
 	<value>1</value>
   </data>
   <data name="m_pnlMasterGrid.LayoutSettings" type="System.Windows.Forms.TableLayoutSettings, System.Windows.Forms">
-	<value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="m_pnlTypesCombo" Row="2" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="label1" Row="0" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="m_lstStyles" Row="1" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="AutoSize,0" /&gt;&lt;Rows Styles="AutoSize,0,Percent,100,AutoSize,0" /&gt;&lt;/TableLayoutSettings&gt;</value>
+	<value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="label1" Row="0" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="m_lstStyles" Row="1" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="AutoSize,0" /&gt;&lt;Rows Styles="AutoSize,0,Percent,100" /&gt;&lt;/TableLayoutSettings&gt;</value>
   </data>
   <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
 	<value>True</value>
