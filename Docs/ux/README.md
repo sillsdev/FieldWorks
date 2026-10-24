@@ -238,6 +238,19 @@ position, always reopening fully on screen; a dialog with fixed content is not
 resizable. Every screen is checked at 100% and 150% display scaling before it
 ships.
 
+### Modal and modeless windows
+
+**A converted window blocks the rest of FieldWorks exactly when its WinForms
+version did.** In WinForms almost every dialog is modal: a dialog that asks for
+input, offers a choice, confirms an action or changes settings blocks the window
+that opened it until it closes, and its result takes effect then. A window is
+modeless only when the user works with it alongside the main window: a tool
+that acts on the content behind it (Find and Replace, find in an HTML view), or
+a companion window kept open during work (Try A Word, parser reports). Opening
+a modeless tool again brings the open one forward instead of starting a second.
+Progress windows follow *Long-running work*. An Avalonia window that changes
+its modality from the WinForms one needs a decision register entry.
+
 ### Checking input
 
 > **Needs team consensus** (UX-6). Intentional departure from WinForms;
