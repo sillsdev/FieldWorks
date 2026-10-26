@@ -275,6 +275,7 @@ namespace SIL.FieldWorks.XWorks
 			private readonly ISilDataAccess _sda;
 			private readonly IFwMetaDataCacheManaged _mdc;
 			private readonly HashSet<(int hvo, string layout)> _visited = new HashSet<(int, string)>();
+			private readonly DetailSummaryLines _summaryLines;
 
 			public readonly List<DetailField> Fields = new List<DetailField>();
 			// One edit handler per composed field, keyed by StableId. A field's text/rich-text/option/
@@ -369,6 +370,7 @@ namespace SIL.FieldWorks.XWorks
 				_showAllWsFields = showAllWritingSystemsFields;
 				_sda = cache.DomainDataByFlid;
 				_mdc = (IFwMetaDataCacheManaged)cache.DomainDataByFlid.MetaDataCache;
+				_summaryLines = new DetailSummaryLines(cache);
 			}
 
 			// Track which compiled model the walk is currently inside so each emitted
@@ -3433,6 +3435,12 @@ namespace SIL.FieldWorks.XWorks
 				var expanded = node.Expansion != ViewExpansion.Collapsed;
 				var isSenses = node.Field == "Senses";
 				var sectionLabel = Localize(node.Label) ?? node.Field;
+				var firstItem = _cache.ServiceLocator.ObjectRepository.GetObject(_sda.get_VecItem(obj.Hvo, flid, 0));
+
+				// Items with a summary line pair (senses, etymologies, extended notes) are
+				// sections of their own: each item's header carries its summary lines, and no
+				// banner sits over them.
+				var summarized = DetailSummaryLines.Covers(firstItem);
 
 				// A sequence sitting directly under a section header that already names it (the
 				// Allomorphs/Variants shape: a summary slice wrapping an <indent> with one seq)
@@ -3440,15 +3448,16 @@ namespace SIL.FieldWorks.XWorks
 				// item rows their own layouts already label. Both are duplicates, and with no
 				// label authored on the part ref or the <seq> the banner falls back to the raw
 				// model field name, which bypasses StringTable and cannot be translated.
-				var flatten = !isSenses
+				var flatten = !summarized
 					&& string.IsNullOrEmpty(node.Label)
 					&& FollowsEnclosingHeader(depth)
 					&& ItemRootIsLabelled(node, obj, flid, count);
 
-				// Nested sense sequences (Senses on a sense) don't repeat the section banner; the
-				// numbered items carry it.
-				if (!flatten && !(isSenses && obj is ILexSense))
+				if (!flatten && !summarized)
 					AddHeader(node, obj, depth, sectionLabel);
+				// Summarized items sit at the sequence's own level; subsenses indent under their
+				// sense.
+				var itemDepth = summarized && !(isSenses && obj is ILexSense) ? depth : depth + 1;
 
 				for (var i = 0; i < count; i++)
 				{
@@ -3461,19 +3470,10 @@ namespace SIL.FieldWorks.XWorks
 						continue;
 					}
 
-					string itemLabel;
-					if (isSenses && item is ILexSense sense)
-					{
-						// Legacy sense numbering: 1, 2, ... and 1.1 for subsenses, with the sense's
-						// summary text (ShortName = gloss) in the header line. The number
-						// is the domain's own LexSenseOutline (the dictionary/bulk-edit outline), so
-						// the entry pane cannot diverge from the other views.
-						itemLabel = ($"{sense.LexSenseOutline.Text}  {item.ShortName}").TrimEnd();
-					}
-					else
-					{
+					string itemLabel = null;
+					string collapsedLabel = null;
+					if (!summarized || !_summaryLines.TryGet(item, out itemLabel, out collapsedLabel))
 						itemLabel = $"{sectionLabel} {i + 1}";
-					}
 
 					// The item's own layout carries the slice menu (e.g. the sense's
 					// HeavySummary part ref binds mnuDataTree-Sense in LexSense.fwlayout) -- the
@@ -3484,15 +3484,17 @@ namespace SIL.FieldWorks.XWorks
 					AddField(new DetailField($"{StableId(node, obj)}/item{i}",
 						itemLabel, node.Field, null, DetailFieldKind.Header,
 						EditorClassification.GroupingNone, null, null, HostRouting.Inherit,
-						null, null, null, isEditable: false, indent: depth + 1,
+						null, null, null, isEditable: false, indent: itemDepth,
 						isCollapsible: true, isInitiallyExpanded: expanded,
 						menuId: itemBinding.MenuId ?? node.MenuId,
 						hotlinksId: itemBinding.HotlinksId ?? node.HotlinksId,
 						objectHvo: item.Hvo)
 					{
-						ExpansionKey = ExpansionKey(node.StableId + "/item", item)
+						ExpansionKey = ExpansionKey(node.StableId + "/item", item),
+						CollapsedLabel = collapsedLabel,
+						IsNormalWeight = summarized && DetailSummaryLines.IsNormalWeight(item)
 					});
-					DescendInto(node, item, depth + 1);
+					DescendInto(node, item, itemDepth);
 				}
 			}
 
