@@ -63,10 +63,9 @@ namespace SIL.FieldWorks.XWorks
 	/// </summary>
 	public static class DetailComposer
 	{
-		// The visited (hvo, layout) guard is the real recursion stop. This depth cap is only a
-		// backstop for malformed layouts, so it must still allow the deepest shipped lexeme-edit
-		// detail paths (e.g. sense -> extended note -> example -> nested custom fields).
-		private const int MaxDepth = 12;
+		// The visited (hvo, layout) guard stops recursion; this cap is a backstop for malformed
+		// layouts. Nested subrecords take three levels each and WinForms has no limit.
+		private const int MaxDepth = 48;
 		private static readonly ViewDefinitionCompiler Compiler = new ViewDefinitionCompiler();
 
 		// Deliberately NOT a Lazy -- a failed load must not be cached as null for
@@ -276,6 +275,9 @@ namespace SIL.FieldWorks.XWorks
 			private readonly IFwMetaDataCacheManaged _mdc;
 			private readonly HashSet<(int hvo, string layout)> _visited = new HashSet<(int, string)>();
 			private readonly DetailSummaryLines _summaryLines;
+			// The sequence item whose header was just emitted with its summary lines, until the
+			// next row is added; that item's own opening summary row is not emitted again.
+			private int _itemSummaryHvo;
 
 			public readonly List<DetailField> Fields = new List<DetailField>();
 			// One edit handler per composed field, keyed by StableId. A field's text/rich-text/option/
@@ -342,6 +344,7 @@ namespace SIL.FieldWorks.XWorks
 			// binding is derived from the compiled layout's root, which can differ per choice variant. It is
 			// correct ONLY because descent currently compiles every embedded object with choiceGuid=null
 			// (CompileForObjectWithOverrides), so within one compose there is no choice variance to collide.
+			// WalkSublayout compiles with a choice, but its model never feeds these memos.
 			// If descent is ever changed to thread choiceGuid through, change this key to
 			// (ClassId, LayoutName, choiceGuid) in the SAME change, or this becomes a wrong-menu bug.
 			private readonly Dictionary<(int ClassId, string LayoutName), (string MenuId, string HotlinksId)> _itemMenuBindings
@@ -396,6 +399,7 @@ namespace SIL.FieldWorks.XWorks
 				StampHelpTopic(field);
 
 				Fields.Add(field);
+				_itemSummaryHvo = 0;
 			}
 
 			// The node whose walk is adding rows right now (see Walk).
@@ -674,6 +678,33 @@ namespace SIL.FieldWorks.XWorks
 						// Legacy <choice> -- first passing <where> (or the <otherwise>) only.
 						WalkChoiceGroup(node, obj, depth);
 						break;
+					case ViewNodeKind.Sublayout:
+						WalkSublayout(node, obj, depth);
+						break;
+				}
+			}
+
+			// A <sublayout>: the named layout of this same object, picked by its choice field as
+			// the shown record's is, laid out in place at this depth.
+			private void WalkSublayout(ViewNode node, ICmObject obj, int depth)
+			{
+				var layoutName = node.TargetLayout;
+				if (string.IsNullOrEmpty(layoutName) || !_visited.Add((obj.Hvo, layoutName)))
+					return;
+				try
+				{
+					var choiceGuid = ResolveLayoutChoiceGuid(_cache, obj, node.Field);
+					var compiled = CompileForObject(_cache, obj, layoutName, choiceGuid, _overrides);
+					if (compiled == null)
+						return;
+					EnterModel(compiled);
+					foreach (var child in compiled.Roots)
+						Walk(child, obj, depth);
+					ExitModel();
+				}
+				finally
+				{
+					_visited.Remove((obj.Hvo, layoutName));
 				}
 			}
 
@@ -1107,7 +1138,16 @@ namespace SIL.FieldWorks.XWorks
 						WalkMsaChooser(node, obj, depth);
 						break;
 					case DetailEditorCategory.Summary:
-						// Summary slices are section header rows in legacy too.
+						// Summary slices are section header rows, as in the WinForms
+						// DataTree, except an item's opening summary row: its sequence
+						// item header stands for it.
+						if (obj.Hvo == _itemSummaryHvo)
+						{
+							// What the row would hold sits under that item header instead.
+							foreach (var child in node.Children)
+								Walk(child, obj, depth);
+							return;
+						}
 						AddHeader(node, obj, depth, Localize(node.Label) ?? node.Field);
 						break;
 					case DetailEditorCategory.Literal:
@@ -3263,8 +3303,13 @@ namespace SIL.FieldWorks.XWorks
 				var prompt = string.Format(
 					SIL.FieldWorks.Common.FwAvalonia.FwAvaloniaStrings.GhostAddPromptFormat, label);
 
-				var stableId = StableId(node, obj) + DetailField.GhostStableIdSuffix;
 				var ghost = ResolveGhostCreation(node, obj);
+				// The WinForms DataTree shows a prompt only where the layout names a ghost
+				// field; a prompt that names none and can create nothing is left out.
+				if (ghost == null && string.IsNullOrEmpty(node.GhostField))
+					return;
+
+				var stableId = StableId(node, obj) + DetailField.GhostStableIdSuffix;
 				AddField(new DetailField(stableId, label, node.Field,
 					node.WritingSystem, DetailFieldKind.Text, node.EditorClassification,
 					node.AutomationId, node.LocalizationKey, node.Routing,
@@ -3437,9 +3482,9 @@ namespace SIL.FieldWorks.XWorks
 				var sectionLabel = Localize(node.Label) ?? node.Field;
 				var firstItem = _cache.ServiceLocator.ObjectRepository.GetObject(_sda.get_VecItem(obj.Hvo, flid, 0));
 
-				// Items with a summary line pair (senses, etymologies, extended notes) are
-				// sections of their own: each item's header carries its summary lines, and no
-				// banner sits over them.
+				// Items with a summary line pair (senses, etymologies, extended notes, notebook
+				// records) are sections of their own: each item's header stands for the summary
+				// row its layout opens with, and no banner sits over them.
 				var summarized = DetailSummaryLines.Covers(firstItem);
 
 				// A sequence sitting directly under a section header that already names it (the
@@ -3494,7 +3539,10 @@ namespace SIL.FieldWorks.XWorks
 						CollapsedLabel = collapsedLabel,
 						IsNormalWeight = summarized && DetailSummaryLines.IsNormalWeight(item)
 					});
+					if (summarized)
+						_itemSummaryHvo = item.Hvo;
 					DescendInto(node, item, itemDepth);
+					_itemSummaryHvo = 0;
 				}
 			}
 
