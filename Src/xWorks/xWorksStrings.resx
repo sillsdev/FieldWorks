@@ -540,6 +540,18 @@ Are you SURE you want to delete the field {2}?</value>
   <data name="ksUndoInsertPicture" xml:space="preserve">
     <value>Undo Insert Picture</value>
   </data>
+  <data name="ksRedoUpdatePicture" xml:space="preserve">
+    <value>Redo Update Picture</value>
+  </data>
+  <data name="ksUndoUpdatePicture" xml:space="preserve">
+    <value>Undo Update Picture</value>
+  </data>
+  <data name="ksRedoCreatePronunciation" xml:space="preserve">
+    <value>Redo Create Pronunciation</value>
+  </data>
+  <data name="ksUndoCreatePronunciation" xml:space="preserve">
+    <value>Undo Create Pronunciation</value>
+  </data>
   <data name="ksDictionaryView" xml:space="preserve">
     <value>Choose dictionary layout to configure:</value>
   </data>

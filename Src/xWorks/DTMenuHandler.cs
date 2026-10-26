@@ -291,100 +291,59 @@ namespace SIL.FieldWorks.XWorks
 		{
 			string filter = ResourceHelper.BuildFileFilter(FileFilterType.AllAudio,
 				FileFilterType.AllVideo, FileFilterType.AllFiles);
-			string keyCaption = "kstidInsertMediaChooseFileCaption";
-			string defaultCaption = xWorksStrings.ChooseSoundOrMovieFile;
-			return InsertMediaFile(cmd, filter, keyCaption, defaultCaption);
+			return InsertMediaFile(cmd, filter, xWorksStrings.ChooseSoundOrMovieFile);
 		}
 
-		private bool InsertMediaFile(object cmd, string filter, string keyCaption, string defaultCaption)
+		private bool InsertMediaFile(object cmd, string filter, string caption)
 		{
-			ICmObject obj;
-			int flid;
-			bool fOnPronunciationSlice = CanInsertPictureOrMediaFile(cmd, out flid);
-			if (fOnPronunciationSlice)
+			ILexPronunciation pronunciation;
+			if (CanInsertPictureOrMediaFile(cmd, out _))
 			{
-				obj = m_dataEntryForm.CurrentSlice.Object;
+				pronunciation = (ILexPronunciation)m_dataEntryForm.CurrentSlice.Object;
 			}
 			else
 			{
-				// Find the first pronunciation object on the current entry, creating it if
-				// necessary.
+				// Not on a pronunciation: the entry's first, created when it has none.
 				var le = m_dataEntryForm.Root as ILexEntry;
 				if (le == null)
 					return false;
-				if (le.PronunciationsOS.Count == 0)
-				{
-					// Ensure that the pronunciation writing systems have been initialized.
-					// Otherwise, the crash reported in FWR-2086 can happen!
-					int wsPron = Cache.DefaultPronunciationWs;
-					UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW("Undo Create Pronuciation",
-						"Redo Create Pronunciation", Cache.ActionHandlerAccessor, () =>
-						{
-							le.PronunciationsOS.Add(Cache.ServiceLocator.GetInstance<ILexPronunciationFactory>().Create());
-						});
-				}
-				obj = le.PronunciationsOS[0];
-				flid = LexPronunciationTags.kflidMediaFiles;
+				pronunciation = MediaFileInsertion.FirstOrCreatePronunciation(le, xWorksStrings.ksUndoCreatePronunciation,
+					xWorksStrings.ksRedoCreatePronunciation);
 			}
+			string[] fileNames = ChooseMediaFiles(Cache, m_propertyTable, filter, caption);
+			if (fileNames.Length == 0 || !pronunciation.IsValidObject)
+				return true; // cancelled, or another client deleted it while we were choosing the file
+			MediaFileInsertion.Insert(pronunciation, fileNames, xWorksStrings.ksUndoInsertMedia, xWorksStrings.ksRedoInsertMedia);
+			return true;
+		}
+
+		/// <summary>
+		/// Asks the user for sound or movie files and moves or copies them into the
+		/// linked-files folder as the user chooses, remembering the directory for next time.
+		/// </summary>
+		/// <returns>The files' names under the linked-files folder; empty when the user
+		/// cancels.</returns>
+		internal static string[] ChooseMediaFiles(LcmCache cache, PropertyTable propertyTable, string filter, string caption)
+		{
 			using (var dlg = new OpenFileDialogAdapter())
 			{
-				string defaultDirectory = Cache.LangProject.LinkedFilesRootDir;
-				dlg.InitialDirectory = m_mediator != null ? m_propertyTable.GetStringProperty("InsertMediaFile-LastDirectory", defaultDirectory)
-					: defaultDirectory;
+				string defaultDirectory = cache.LangProject.LinkedFilesRootDir;
+				dlg.InitialDirectory = propertyTable.GetStringProperty("InsertMediaFile-LastDirectory", defaultDirectory);
 				dlg.Filter = filter;
 				dlg.FilterIndex = 1;
-				if (string.IsNullOrEmpty(dlg.Title) || dlg.Title == "*" + keyCaption + "*")
-				{
-					dlg.Title = defaultCaption;
-				}
+				dlg.Title = caption;
 				dlg.RestoreDirectory = true;
 				dlg.CheckFileExists = true;
 				dlg.CheckPathExists = true;
 				dlg.Multiselect = true;
-
-				DialogResult dialogResult = DialogResult.None;
-				while (dialogResult != DialogResult.OK && dialogResult != DialogResult.Cancel)
-				{
-					dialogResult = dlg.ShowDialog();
-					if (dialogResult == DialogResult.OK)
-					{
-						string[] fileNames = MoveOrCopyFilesController.MoveCopyOrLeaveMediaFiles(dlg.FileNames,
-							Cache.LangProject.LinkedFilesRootDir, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"));
-						string sFolderName = StringTable.Table.GetString("kstidMediaFolder");
-						if (string.IsNullOrEmpty(sFolderName) || sFolderName == "*kstidMediaFolder*")
-						{
-							sFolderName = CmFolderTags.LocalMedia;
-						}
-						if (!obj.IsValidObject)
-							return true; // Probably some other client deleted it while we were choosing the file.
-
-						int chvo = obj.Cache.DomainDataByFlid.get_VecSize(obj.Hvo, flid);
-						UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(
-							xWorksStrings.ksUndoInsertMedia, xWorksStrings.ksRedoInsertMedia,
-							Cache.ActionHandlerAccessor, () =>
-							{
-								foreach (string fileName in fileNames.Where(f => !string.IsNullOrEmpty(f)))
-								{
-									int hvo = obj.Cache.DomainDataByFlid.MakeNewObject(CmMediaTags.kClassId, obj.Hvo, flid, chvo);
-									ICmMedia media = Cache.ServiceLocator.GetInstance<ICmMediaRepository>().GetObject(hvo);
-									ICmFolder folder = DomainObjectServices.FindOrCreateFolder(obj.Cache, LangProjectTags.kflidMedia, sFolderName);
-									media.MediaFileRA = DomainObjectServices.FindOrCreateFile(folder, fileName);
-								}
-							});
-
-						if (m_mediator != null)
-						{
-							string fileName = dlg.FileNames.FirstOrDefault(f => !string.IsNullOrEmpty(f));
-							if (fileName != null)
-							{
-								string directory = Path.GetDirectoryName(fileName);
-								m_propertyTable.SetProperty("InsertMediaFile-LastDirectory", directory, false);
-							}
-						}
-					}
-				}
+				if (dlg.ShowDialog() != DialogResult.OK)
+					return new string[0];
+				string fileName = dlg.FileNames.FirstOrDefault(f => !string.IsNullOrEmpty(f));
+				if (fileName != null)
+					propertyTable.SetProperty("InsertMediaFile-LastDirectory", Path.GetDirectoryName(fileName), false);
+				return MoveOrCopyFilesController.MoveCopyOrLeaveMediaFiles(dlg.FileNames, cache.LangProject.LinkedFilesRootDir,
+					propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"));
 			}
-			return true;
 		}
 
 		/// <summary>
@@ -1111,19 +1070,7 @@ namespace SIL.FieldWorks.XWorks
 			Debug.Assert(slice != null, "No slice was current");
 			Debug.Assert(!slice.IsDisposed, "The current slice is already disposed??");
 			if (slice != null)
-			{
-				var cache = m_dataEntryForm.Cache;
-				var obj = slice.Object.Owner;
-				int flid = slice.Object.OwningFlid;
-				int ihvo = cache.DomainDataByFlid.GetObjIndex(obj.Hvo, (int)flid, slice.Object.Hvo);
-				if (ihvo > 0)
-				{
-					// We found it in the sequence, and it isn't already the first.
-					UndoableUnitOfWorkHelper.Do(xWorksStrings.UndoMoveItem, xWorksStrings.RedoMoveItem, cache.ActionHandlerAccessor,
-					()=>cache.DomainDataByFlid.MoveOwnSeq(obj.Hvo, (int)flid, ihvo, ihvo,
-						obj.Hvo, (int)flid, ihvo - 1));
-				}
-			}
+				DetailSequenceMove.MoveUp(slice.Object, xWorksStrings.UndoMoveItem, xWorksStrings.RedoMoveItem);
 			return true;	//we handled this.
 		}
 
@@ -1138,45 +1085,14 @@ namespace SIL.FieldWorks.XWorks
 		{
 			Slice slice = m_dataEntryForm.CurrentSlice;
 			Debug.Assert(slice == null || !slice.IsDisposed, "The current slice is already disposed??");
-			if (slice == null || slice.Object == null)
+			var target = slice?.Object;
+			if (!DetailSequenceMove.IsInSequence(target))
 			{
 				display.Enabled = false;
 				display.Visible = false;
 				return true;
 			}
-			var cache = m_dataEntryForm.Cache;
-			// FWR-2742 Handle a slice Object (like LexEntry) being unowned (and OwningFlid = 0)
-			var type = CellarPropertyType.ReferenceAtomic;
-			if (slice.Object.OwningFlid > 0)
-				type = (CellarPropertyType) cache.DomainDataByFlid.MetaDataCache.GetFieldType(slice.Object.OwningFlid);
-			if (type != CellarPropertyType.OwningSequence && type != CellarPropertyType.ReferenceSequence)
-			{
-				display.Enabled = false;
-				display.Visible = false;
-				return true;
-			}
-			int chvo = cache.DomainDataByFlid.get_VecSize(slice.Object.Owner.Hvo, (int)slice.Object.OwningFlid);
-			if (chvo < 2)
-			{
-				display.Enabled = false;
-			}
-			else
-			{
-				int hvo = cache.DomainDataByFlid.get_VecItem(slice.Object.Owner.Hvo, (int)slice.Object.OwningFlid,
-					0);
-				display.Enabled = slice.Object.Hvo != hvo;
-				// if the first LexEntryRef in LexEntry.EntryRefs is a complex form, and the
-				// slice displays the second LexEntryRef in the sequence, then we can't move it
-				// up, since the first slot is reserved for the complex form.
-				if (display.Enabled && slice.Object.OwningFlid == LexEntryTags.kflidEntryRefs)
-				{
-					if (cache.DomainDataByFlid.get_VecSize(hvo, LexEntryRefTags.kflidComplexEntryTypes) > 0)
-					{
-						int hvo1 = cache.DomainDataByFlid.get_VecItem(slice.Object.Owner.Hvo, (int)slice.Object.OwningFlid, 1);
-						display.Enabled = slice.Object.Hvo != hvo1;
-					}
-				}
-			}
+			display.Enabled = DetailSequenceMove.CanMoveUp(target);
 			display.Visible = true;
 			return true; //we've handled this
 		}
@@ -1192,23 +1108,7 @@ namespace SIL.FieldWorks.XWorks
 			Debug.Assert(slice != null, "No slice was current");
 			Debug.Assert(!slice.IsDisposed, "The current slice is already disposed??");
 			if (slice != null)
-			{
-				var cache = m_dataEntryForm.Cache;
-				int hvoOwner = slice.Object.Owner.Hvo;
-				int flid = slice.Object.OwningFlid;
-				int chvo = cache.DomainDataByFlid.get_VecSize(hvoOwner, (int)flid);
-				int ihvo = cache.DomainDataByFlid.GetObjIndex(hvoOwner, (int)flid, slice.Object.Hvo);
-				if (ihvo >= 0 && ihvo + 1 < chvo)
-				{
-					// We found it in the sequence, and it isn't already the last.
-					// Quoting from VwOleDbDa.cpp, "Insert the selected records before the
-					// DstStart object".  This means we need + 2 instead of + 1 for the
-					// new location.
-					UndoableUnitOfWorkHelper.Do(xWorksStrings.UndoMoveItem, xWorksStrings.RedoMoveItem, cache.ActionHandlerAccessor,
-					()=>cache.DomainDataByFlid.MoveOwnSeq(hvoOwner, (int)flid, ihvo, ihvo,
-						hvoOwner, (int)flid, ihvo + 2));
-				}
-			}
+				DetailSequenceMove.MoveDown(slice.Object, xWorksStrings.UndoMoveItem, xWorksStrings.RedoMoveItem);
 			return true;	//we handled this.
 		}
 
@@ -1223,35 +1123,14 @@ namespace SIL.FieldWorks.XWorks
 		{
 			Slice slice = m_dataEntryForm.CurrentSlice;
 			Debug.Assert(slice == null || !slice.IsDisposed, "The current slice is already disposed??");
-			if (slice == null || slice.Object == null)
+			var target = slice?.Object;
+			if (!DetailSequenceMove.IsInSequence(target))
 			{
 				display.Enabled = false;
 				display.Visible = false;
 				return true;
 			}
-			LcmCache cache = m_dataEntryForm.Cache;
-			IFwMetaDataCache mdc = cache.DomainDataByFlid.MetaDataCache;
-			// FWR-2742 Handle a slice Object (like LexEntry) being unowned (and OwningFlid = 0)
-			var type = CellarPropertyType.ReferenceAtomic;
-			if (slice.Object.OwningFlid > 0)
-				type = (CellarPropertyType)cache.DomainDataByFlid.MetaDataCache.GetFieldType(slice.Object.OwningFlid);
-			if (type != CellarPropertyType.OwningSequence && type != CellarPropertyType.ReferenceSequence)
-			{
-				display.Enabled = false;
-				display.Visible = false;
-				return true;
-			}
-			int chvo = cache.DomainDataByFlid.get_VecSize(slice.Object.Owner.Hvo, (int)slice.Object.OwningFlid);
-			if (chvo < 2)
-			{
-				display.Enabled = false;
-			}
-			else
-			{
-				int hvo = cache.DomainDataByFlid.get_VecItem(slice.Object.Owner.Hvo, (int)slice.Object.OwningFlid,
-					chvo - 1);
-				display.Enabled = slice.Object.Hvo != hvo;
-			}
+			display.Enabled = DetailSequenceMove.CanMoveDown(target);
 			display.Visible = true;
 			return true; //we've handled this
 		}

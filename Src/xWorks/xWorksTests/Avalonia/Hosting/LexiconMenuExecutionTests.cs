@@ -15,6 +15,7 @@ using SIL.FieldWorks.Common.FwAvalonia.ViewDefinition;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Core.Text;
+using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
 using XCore;
 
@@ -49,6 +50,11 @@ namespace SIL.FieldWorks.XWorks
 		private ILexEtymology m_etymology1;
 		private ILexEtymology m_etymology2;
 		private ILexEntryRef m_complexFormRef;
+		private ILexEntryRef m_variantRef1;
+		private ILexEntryRef m_variantRef2;
+		private ILexPronunciation m_pronunciation1;
+		private ILexPronunciation m_pronunciation2;
+		private ICmPicture m_picture;
 		private RecordEditView m_view;
 
 		protected override void Init()
@@ -150,7 +156,7 @@ namespace SIL.FieldWorks.XWorks
 
 			InvokeLabelMenuItem(row, "Delete Complex Form Info");
 
-			Assert.That(m_entry.EntryRefsOS, Is.Empty);
+			Assert.That(m_entry.EntryRefsOS.ToList(), Is.EqualTo(new[] { m_variantRef1, m_variantRef2 }), "the variant refs stay");
 			Assert.That(m_entry.IsValidObject, Is.True, "only the ref goes, not the entry");
 		}
 
@@ -488,6 +494,114 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(m_sense1.ExamplesOS[0], Is.SameAs(m_example));
 		}
 
+		[Test]
+		public void MoveEtymologyDown_SwapsItWithTheNext_InOneUndoableStep()
+		{
+			InvokeLabelMenuItem(HeaderRowOf(m_etymology1), "Move Etymology Down");
+
+			Assert.That(m_entry.EtymologyOS.ToList(), Is.EqualTo(new[] { m_etymology2, m_etymology1 }));
+			Assert.That(Cache.ActionHandlerAccessor.GetUndoText(), Is.EqualTo(xWorksStrings.UndoMoveItem));
+			Cache.ActionHandlerAccessor.Undo();
+			Assert.That(m_entry.EtymologyOS.ToList(), Is.EqualTo(new[] { m_etymology1, m_etymology2 }), "one Undo restores the order");
+		}
+
+		[Test]
+		public void MovePronunciationUp_FromItsFormRow_SwapsItWithThePrevious()
+		{
+			var row = Rows(m_entry).Single(f => f.Field == "Form" && f.ObjectHvo == m_pronunciation2.Hvo);
+
+			InvokeLabelMenuItem(row, "Move Pronunciation Up");
+
+			Assert.That(m_entry.PronunciationsOS.ToList(), Is.EqualTo(new[] { m_pronunciation2, m_pronunciation1 }));
+		}
+
+		// The entry's refs are the complex form, then two variants: the third moves to second,
+		// and from there no further up.
+		[Test]
+		public void MoveVariantInfoUp_MovesTheRef_NeverPastTheComplexForm()
+		{
+			var row = Rows(m_entry).Single(f => f.MenuId == "mnuDataTree-VariantSpec" && f.ObjectHvo == m_variantRef2.Hvo);
+
+			InvokeLabelMenuItem(row, "Move Variant Info Up");
+
+			Assert.That(m_entry.EntryRefsOS.ToList(), Is.EqualTo(new[] { m_complexFormRef, m_variantRef2, m_variantRef1 }));
+			var moved = Rows(m_entry).Single(f => f.MenuId == "mnuDataTree-VariantSpec" && f.ObjectHvo == m_variantRef2.Hvo);
+			var up = XCoreMenuBridge.ResolveMenu(m_propertyTable.GetValue<XWindow>("window"), "mnuDataTree-VariantSpec")
+				.Leaves.Single(l => l.CommandId == "CmdDataTree-MoveUp-VariantSpec");
+			Assert.That(m_view.MoveItem(up, moved, up: true).IsEnabled, Is.False, "the first slot stays the complex form's");
+		}
+
+		[Test]
+		public void InsertSoundOrMovie_FromAPronunciationRow_LinksTheFilesToThatPronunciation_InOneUndoableStep()
+		{
+			m_view.MediaFilesToInsert = () => new[] { "two.mp4", "one.wav" };
+			var row = Rows(m_entry).Single(f => f.Field == "Form" && f.ObjectHvo == m_pronunciation2.Hvo);
+
+			InvokeLabelMenuItem(row, "Insert Sound or Movie");
+
+			Assert.That(m_pronunciation2.MediaFilesOS.Select(m => m.MediaFileRA.InternalPath), Is.EqualTo(new[] { "one.wav", "two.mp4" }));
+			Assert.That(m_pronunciation1.MediaFilesOS, Is.Empty, "the row's pronunciation takes them, not the entry's first");
+			Assert.That(Cache.ActionHandlerAccessor.GetUndoText(), Is.EqualTo(xWorksStrings.ksUndoInsertMedia));
+			Cache.ActionHandlerAccessor.Undo();
+			Assert.That(m_pronunciation2.MediaFilesOS, Is.Empty, "one Undo removes both links");
+		}
+
+		// An entry without a pronunciation gets its first, but only once the user has picked
+		// files: a cancelled dialog leaves the entry as it was.
+		[Test]
+		public void InsertSoundOrMovie_OnAnEntryWithoutPronunciations_CreatesTheFirst_OnlyOnceFilesArePicked()
+		{
+			ShowEntry(m_affix);
+			Assert.That(m_affix.PronunciationsOS, Is.Empty, "precondition");
+			m_view.MediaFilesToInsert = () => new string[0];
+
+			Assert.That(m_view.InsertMediaFiles(LexemeFormRow(m_affix)), Is.Empty);
+			Assert.That(m_affix.PronunciationsOS, Is.Empty, "cancelled: no pronunciation either");
+
+			m_view.MediaFilesToInsert = () => new[] { "affix.wav" };
+			var created = m_view.InsertMediaFiles(LexemeFormRow(m_affix));
+			DrainMediatorAndIdleQueues();
+
+			Assert.That(m_affix.PronunciationsOS, Has.Count.EqualTo(1));
+			Assert.That(m_affix.PronunciationsOS[0].MediaFilesOS.ToList(), Is.EqualTo(created));
+			Assert.That(Rows(m_affix).Any(f => f.ObjectHvo == m_affix.PronunciationsOS[0].Hvo), Is.True,
+				"the recomposed view shows the new pronunciation");
+			Assert.That(Cache.ActionHandlerAccessor.GetUndoText(), Is.EqualTo(xWorksStrings.ksUndoInsertMedia));
+			Cache.ActionHandlerAccessor.Undo();
+			Assert.That(m_affix.PronunciationsOS, Is.Empty, "one Undo removes the pronunciation with its link");
+		}
+
+		// The picture row is built: no Avalonia row shows a picture yet (LT-22772).
+		[Test]
+		public void PictureProperties_PointsThePictureAtTheFileTheUserPicks_InOneUndoableStep()
+		{
+			var leaf = XCoreMenuBridge.ResolveMenu(m_propertyTable.GetValue<XWindow>("window"), "mnuDataTree-Picture")
+				.Leaves.Single(l => l.CommandId == "CmdDataTree-Properties-Picture");
+			var row = new DetailField("Picture/caption@" + m_picture.Hvo, "Caption", "Caption", null, DetailFieldKind.Text,
+				EditorClassification.Known, null, null, HostRouting.Inherit, null, null, null,
+				menuId: "mnuDataTree-Picture", objectHvo: m_picture.Hvo);
+			ICmPicture asked = null;
+			m_view.PictureFileChosen = picture =>
+			{
+				asked = picture;
+				return null;
+			};
+
+			m_view.PicturePropertiesItem(leaf, row).Execute();
+
+			Assert.That(asked, Is.SameAs(m_picture), "the dialog opens on the row's picture");
+			Assert.That(m_picture.PictureFileRA.InternalPath, Does.EndWith("command-picture.jpg"), "cancelled: unchanged");
+
+			m_view.PictureFileChosen = picture => Path.Combine(Path.GetTempPath(), "new-picture.jpg");
+			m_view.PicturePropertiesItem(leaf, row).Execute();
+			DrainMediatorAndIdleQueues();
+
+			Assert.That(m_picture.PictureFileRA.InternalPath, Does.EndWith("new-picture.jpg"));
+			Assert.That(Cache.ActionHandlerAccessor.GetUndoText(), Is.EqualTo(xWorksStrings.ksUndoUpdatePicture));
+			Cache.ActionHandlerAccessor.Undo();
+			Assert.That(m_picture.PictureFileRA.InternalPath, Does.EndWith("command-picture.jpg"), "one Undo restores the file");
+		}
+
 		// Builds the row's label menu as the host does and runs the named item's own Execute.
 		private void InvokeLabelMenuItem(DetailField row, string label)
 			=> Invoke(RecordEditView.ComposeSliceMenuIds(row.MenuId, row.IsMultiStringRow).ToArray(), row,
@@ -550,8 +664,9 @@ namespace SIL.FieldWorks.XWorks
 		private DetailField HeaderRowOf(ICmObject obj)
 			=> Rows(m_entry).First(f => f.ObjectHvo == obj.Hvo && f.Kind == DetailFieldKind.Header && f.HotlinksId != null);
 
-		// A complex-form stem entry with a spelling variant, an allomorph, two etymologies and
-		// two senses (the first with a translated example and two notes); a suffix; a text.
+		// A complex form that is also two variants, with an allomorph, two etymologies, two
+		// pronunciations and two senses, the first with a translated example, two notes and a
+		// picture; a suffix; a text.
 		private void CreateTestEntry()
 		{
 			var stemMorphType = GetMorphTypeOrCreateOne("stem");
@@ -587,6 +702,28 @@ namespace SIL.FieldWorks.XWorks
 			m_complexFormRef.PrimaryLexemesRS.Add(component);
 			m_complexFormRef.ComplexEntryTypesRS.Add(Cache.ServiceLocator.GetInstance<ILexEntryTypeRepository>()
 				.GetObject(LexEntryTypeTags.kguidLexTypCompound));
+			var spellingVariant = Cache.ServiceLocator.GetInstance<ILexEntryTypeRepository>()
+				.GetObject(LexEntryTypeTags.kguidLexTypSpellingVar);
+			m_variantRef1 = Cache.ServiceLocator.GetInstance<ILexEntryRefFactory>().Create();
+			m_entry.EntryRefsOS.Add(m_variantRef1);
+			m_variantRef1.RefType = LexEntryRefTags.krtVariant;
+			m_variantRef1.ComponentLexemesRS.Add(component);
+			m_variantRef1.VariantEntryTypesRS.Add(spellingVariant);
+			m_variantRef2 = Cache.ServiceLocator.GetInstance<ILexEntryRefFactory>().Create();
+			m_entry.EntryRefsOS.Add(m_variantRef2);
+			m_variantRef2.RefType = LexEntryRefTags.krtVariant;
+			m_variantRef2.ComponentLexemesRS.Add(component);
+			m_variantRef2.VariantEntryTypesRS.Add(spellingVariant);
+			m_pronunciation1 = Cache.ServiceLocator.GetInstance<ILexPronunciationFactory>().Create();
+			m_entry.PronunciationsOS.Add(m_pronunciation1);
+			m_pronunciation1.Form.set_String(Cache.DefaultVernWs, TsStringUtils.MakeString("pro", Cache.DefaultVernWs));
+			m_pronunciation2 = Cache.ServiceLocator.GetInstance<ILexPronunciationFactory>().Create();
+			m_entry.PronunciationsOS.Add(m_pronunciation2);
+			m_picture = Cache.ServiceLocator.GetInstance<ICmPictureFactory>().Create();
+			m_sense1.PicturesOS.Add(m_picture);
+			m_picture.PictureFileRA = DomainObjectServices.FindOrCreateFile(
+				DomainObjectServices.FindOrCreateFolder(Cache, LangProjectTags.kflidPictures, CmFolderTags.DefaultPictureFolder),
+				"command-picture.jpg");
 
 			m_variant = AddLexeme(m_createdObjects, "command-variant", stemMorphType, "variant gloss", noun);
 			var variantRef = Cache.ServiceLocator.GetInstance<ILexEntryRefFactory>().Create();
