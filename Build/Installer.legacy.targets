@@ -115,6 +115,16 @@
 				in SIL.LCModel 11.0.0-beta0176, so nothing copies StructureMap.dll to the output any more. -->
 			<RemovedSinceLastBase Include="$(dir-outputBase)/StructureMap.dll" />
 			<RemovedSinceLastBase Include="$(dir-outputBase)/Avalonia.Themes.Fluent.dll" />
+			<!--
+				The base ships UIAdapterInterfaces, one satellite per UI culture, and
+				FwTMDefinition.xml; the build makes none of them.
+			-->
+			<_UIAdapterInterfacesCulture Include="ar;az;bn;de;es;fa;fr;hi;hu;id;km;ko;ml;ms;my;ne;pt;ru;rw;sw;ta;te;th;tr;ur;vi;yo;zh-CN;zlm" />
+			<RemovedSinceLastBase Include="$(dir-outputBase)/UIAdapterInterfaces.dll" />
+			<RemovedSinceLastBase Include="$(dir-outputBase)/UIAdapterInterfaces.dll.config" />
+			<RemovedSinceLastBase Include="$(dir-outputBase)/UIAdapterInterfaces.pdb" />
+			<RemovedSinceLastBase Include="@(_UIAdapterInterfacesCulture-&gt;'$(dir-outputBase)/%(Identity)/UIAdapterInterfaces.resources.dll')" />
+			<RemovedSinceLastBase Include="$(dir-outputBase)/FwTMDefinition.xml" />
 		</ItemGroup>
 		<WriteLinesToFile
 			File="%(RemovedSinceLastBase.FullPath)"
