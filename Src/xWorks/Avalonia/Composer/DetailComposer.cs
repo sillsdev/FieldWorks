@@ -63,10 +63,9 @@ namespace SIL.FieldWorks.XWorks
 	/// </summary>
 	public static class DetailComposer
 	{
-		// The visited (hvo, layout) guard is the real recursion stop. This depth cap is only a
-		// backstop for malformed layouts, so it must still allow the deepest shipped lexeme-edit
-		// detail paths (e.g. sense -> extended note -> example -> nested custom fields).
-		private const int MaxDepth = 12;
+		// The visited (hvo, layout) guard stops recursion; this cap is a backstop for malformed
+		// layouts. Nested subrecords take three levels each and WinForms has no limit.
+		private const int MaxDepth = 48;
 		private static readonly ViewDefinitionCompiler Compiler = new ViewDefinitionCompiler();
 
 		// Deliberately NOT a Lazy -- a failed load must not be cached as null for

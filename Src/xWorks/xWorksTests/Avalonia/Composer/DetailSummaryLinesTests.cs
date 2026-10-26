@@ -357,6 +357,26 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(subSubTitle.Indent, Is.EqualTo(subSubHeader.Indent + 1));
 		}
 
+		// Each nesting level takes three composer levels; the WinForms view has no limit, so a
+		// subrecord several levels down still shows, and a record inserted under it appears.
+		[Test]
+		public void Compose_DeeplyNestedSubrecords_AllShowTheirHeadersAndFields()
+		{
+			var record = RecordWithSubrecord(out var level);
+			Do(() =>
+			{
+				for (var i = 2; i <= 8; i++)
+					level = AddSubrecord(level, "Level " + i);
+			});
+
+			var fields = DetailComposer.Compose(record, Cache).Model.Fields;
+
+			Assert.That(fields.Any(f => f.Kind == DetailFieldKind.Header && f.ObjectHvo == level.Hvo), Is.True,
+				"the eighth-level subrecord has its header");
+			Assert.That(RowsOf(fields, level).Any(f => f.Field == "Title"), Is.True,
+				"and its fields");
+		}
+
 		[Test]
 		public void Compose_EtymologiesAndExtendedNotes_HaveNoBanner_AndCarryTheirSummaryLines()
 		{
