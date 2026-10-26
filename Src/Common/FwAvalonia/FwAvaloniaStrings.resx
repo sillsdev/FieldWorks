@@ -57,7 +57,7 @@
   </data>
   <data name="FwAvalonia.EmbeddedObjectReadOnly" xml:space="preserve">
     <value>This text contains formatting the new view cannot edit safely yet.</value>
-    <comment>Tooltip on a text row the managed editor holds read-only because a plain-text edit would corrupt it: the value carries an embedded object (ORC) the runs cannot rebuild, or a run carries a TsString property the model does not round-trip (e.g. colour, offset, superscript). The lossless original is preserved for display and stays fully editable in the classic view.</comment>
+    <comment>Tooltip on a field the new view shows read-only, because its text has formatting (such as superscript or a color) or an embedded item (such as a picture or footnote) that the new view can't edit safely yet. The text can still be edited in the classic view.</comment>
   </data>
   <data name="FwAvalonia.Save" xml:space="preserve">
     <value>Save</value>
@@ -73,30 +73,30 @@
   </data>
   <data name="FwAvalonia.UndoChangeToFormat" xml:space="preserve">
     <value>Undo change to {0}</value>
-    <comment>"Undo change to {0}" -- field-specific undo label for the fenced lexical-edit session when a single field's edit opened it ({0} = the field label). Falls back to &lt;see cref="UndoEditEntry"/&gt; for the batch/bulk path where no single field applies.</comment>
+    <comment>Undo command label after the user changes one field. {0} = the field's label, e.g. "Undo change to Gloss".</comment>
   </data>
   <data name="FwAvalonia.RedoChangeToFormat" xml:space="preserve">
     <value>Redo change to {0}</value>
-    <comment>"Redo change to {0}" -- the redo counterpart of &lt;see cref="UndoChangeToFormat"/&gt;.</comment>
+    <comment>Redo command label after the user undoes a change to one field. {0} = the field's label, e.g. "Redo change to Gloss".</comment>
   </data>
   <data name="FwAvalonia.LexemeFormRequired" xml:space="preserve">
     <value>Lexeme Form is required.</value>
   </data>
   <data name="FwAvalonia.PossibilityNameOrAbbreviationRequired" xml:space="preserve">
     <value>A name or abbreviation is required.</value>
-    <comment>Validation message when a list item (CmPossibility) has neither a Name nor an Abbreviation.</comment>
+    <comment>Error shown when the user leaves both the Name and the Abbreviation of a list item empty.</comment>
   </data>
   <data name="FwAvalonia.EditDiscardedInvalid" xml:space="preserve">
     <value>Your edit was discarded because it is invalid: {0}</value>
-    <comment>Warning shown when a pending lexical edit is rolled back on navigate/close because it fails validation (the edit is not silently lost -- the user is told why). {0} is the validation reason(s).</comment>
+    <comment>Warning shown when the user moves to another entry or closes the view while an edit is invalid, so the edit is thrown away. {0} = the reason it is invalid, such as "Lexeme Form is required."</comment>
   </data>
   <data name="FwAvalonia.EditDiscardedInvalidTitle" xml:space="preserve">
     <value>Invalid edit discarded</value>
-    <comment>Title of the EditDiscardedInvalid warning.</comment>
+    <comment>Title of the warning shown when an invalid edit is thrown away.</comment>
   </data>
   <data name="FwAvalonia.AudioRecordingReadOnly" xml:space="preserve">
     <value>Audio recording (read-only in the new view)</value>
-    <comment>Placeholder shown in a read-only text row for a voice/audio (IsVoice) writing system: the new view cannot yet play or record audio, so the row stays read-only and visible rather than a blank editable box that would corrupt the recording on edit. Editing stays available in the classic view.</comment>
+    <comment>Tooltip on a field in a writing system that holds audio recordings, which the new view can't yet play or record. The recording can still be used in the classic view.</comment>
   </data>
   <data name="FwAvalonia.DetailAreaName" xml:space="preserve">
     <value>Detail area</value>
@@ -112,31 +112,31 @@
   </data>
   <data name="FwAvalonia.Remove" xml:space="preserve">
     <value>Remove</value>
-    <comment>"Remove" -- reference-vector item context command.</comment>
+    <comment>Menu item that removes one item from a field that holds a list of items.</comment>
   </data>
   <data name="FwAvalonia.AddItem" xml:space="preserve">
     <value>Add item</value>
-    <comment>"Add item" -- reference-vector add-slot launcher name.</comment>
+    <comment>Placeholder text and screen-reader name of the box and button for adding an item to a field that holds a list of items.</comment>
   </data>
   <data name="FwAvalonia.SearchPrompt" xml:space="preserve">
     <value>Type to search</value>
-    <comment>"Type to search" -- the search-backed add slot's type-ahead watermark.</comment>
+    <comment>Placeholder text in a chooser's search box.</comment>
   </data>
   <data name="FwAvalonia.AddSelected" xml:space="preserve">
     <value>Add</value>
-    <comment>"Add" -- confirm button of the multi-select reference-vector add picker; commits the checked set in one undoable step.</comment>
+    <comment>Button in a chooser that lets the user check several items; adds all the checked items to the field.</comment>
   </data>
   <data name="FwAvalonia.CreateOptionPrompt" xml:space="preserve">
     <value>Create "{0}"</value>
-    <comment>Create row of a picker that can mint a new item from typed text ({0} = the text). Only shown by rows whose edit context supports creation.</comment>
+    <comment>Last row in a chooser's list, which creates a new item from what the user typed. {0} = the typed text, e.g. Create "Sky".</comment>
   </data>
   <data name="FwAvalonia.LaunchDialog" xml:space="preserve">
     <value>Open dialog</value>
-    <comment>Accessible name of the "..." dialog-launcher button.</comment>
+    <comment>Screen-reader name of a field's settings button, which opens a dialog for the field.</comment>
   </data>
   <data name="FwAvalonia.LauncherUnavailable" xml:space="preserve">
     <value>This dialog is not available here.</value>
-    <comment>Tooltip of a disabled launcher button: no host dialog service.</comment>
+    <comment>Tooltip on a field's settings button when its dialog can't be opened from this view.</comment>
   </data>
   <data name="FwAvalonia.FieldSettings" xml:space="preserve">
     <value>{0} settings</value>
@@ -144,27 +144,27 @@
   </data>
   <data name="FwAvalonia.EditListFormat" xml:space="preserve">
     <value>Edit the {0} list</value>
-    <comment>"Edit the {0} list" -- label/tooltip of a configure-gear jump derived from the row's possibility list (the legacy chooser dialog's "Edit the ... list" link text).</comment>
+    <comment>Link in a list field's chooser that opens the list for editing. {0} = the list's name, e.g. "Edit the Semantic Domains list".</comment>
   </data>
   <data name="FwAvalonia.LexemeFormLabel" xml:space="preserve">
     <value>Lexeme Form</value>
-    <comment>"Lexeme Form" -- first-slice row label (compiled override and authored fallback).</comment>
+    <comment>Field label in the lexical entry editor.</comment>
   </data>
   <data name="FwAvalonia.MorphTypeLabel" xml:space="preserve">
     <value>Morph Type</value>
-    <comment>"Morph Type" -- first-slice row label (authored fallback).</comment>
+    <comment>Field label in the lexical entry editor.</comment>
   </data>
   <data name="FwAvalonia.GlossLabel" xml:space="preserve">
     <value>Gloss</value>
-    <comment>"Gloss" -- first-slice row label (authored fallback).</comment>
+    <comment>Field label in the lexical entry editor.</comment>
   </data>
   <data name="FwAvalonia.FieldOptionsMenu" xml:space="preserve">
     <value>Field options</value>
-    <comment>Accessible name / tooltip of the hover-revealed "..." field-options button on each field row (opens the Field Visibility / Move Field / Help menu -- the affordance that replaced right-click).</comment>
+    <comment>Screen-reader name and tooltip of the "..." button on each field row, which opens a menu with Field Visibility, Move Field and Help.</comment>
   </data>
   <data name="FwAvalonia.CharacterStyle" xml:space="preserve">
     <value>Character Style</value>
-    <comment>Accessible name / tooltip of the character-style picker affordance on an editable text row that opens the list of the project's character styles to apply to the current selection.</comment>
+    <comment>Menu item in a text field's right-click menu; opens the list of the project's character styles to apply to the selected text.</comment>
   </data>
   <data name="FwAvalonia.DefaultCharacterStyle" xml:space="preserve">
     <value>Default</value>
@@ -172,19 +172,19 @@
   </data>
   <data name="FwAvalonia.WritingSystem" xml:space="preserve">
     <value>Writing System</value>
-    <comment>Accessible name / tooltip of the writing-system picker affordance on an editable text row that opens the list of the project's writing systems to retag the current selection.</comment>
+    <comment>Menu item in a text field's right-click menu; opens the list of the project's writing systems, to change the writing system of the selected text.</comment>
   </data>
   <data name="FwAvalonia.Pos.NotSure" xml:space="preserve">
     <value>&lt;Not sure&gt;</value>
-    <comment>"&lt;Not sure&gt;" -- the default empty / unspecified Part-of-Speech entry (legacy PopupTreeManager "&lt;Not sure&gt;").</comment>
+    <comment>"&lt;Not sure&gt;" -- the empty Part-of-Speech choice, for when the user hasn't chosen a part of speech.</comment>
   </data>
   <data name="FwAvalonia.Pos.Any" xml:space="preserve">
     <value>&lt;Any&gt;</value>
-    <comment>"&lt;Any&gt;" -- the unspecified Part-of-Speech entry when the host treats unspecified as "any" (legacy MSAGroupBox NotSureIsAny).</comment>
+    <comment>"&lt;Any&gt;" -- the empty Part-of-Speech choice where leaving it empty means any part of speech (used instead of "&lt;Not sure&gt;").</comment>
   </data>
   <data name="FwAvalonia.Pos.CreateNew" xml:space="preserve">
     <value>Create a new Part of Speech...</value>
-    <comment>"Create a new Part of Speech..." -- the inline create affordance at the bottom of the POS tree (legacy "More..." item that launched MasterCategoryListDlg).</comment>
+    <comment>Last item in the part-of-speech chooser; opens a dialog to add a new part of speech.</comment>
   </data>
   <data name="FwAvalonia.Pos.ChooserName" xml:space="preserve">
     <value>Part of Speech</value>
@@ -192,15 +192,15 @@
   </data>
   <data name="FwAvalonia.StText.AddParagraph" xml:space="preserve">
     <value>Add paragraph</value>
-    <comment>Accessible name / tooltip of the per-paragraph "add paragraph" affordance in a structured-text field.</comment>
+    <comment>Screen-reader name and tooltip of the "+" button beside each paragraph in a field that holds several paragraphs; adds a paragraph.</comment>
   </data>
   <data name="FwAvalonia.StText.DeleteParagraph" xml:space="preserve">
     <value>Delete paragraph</value>
-    <comment>Accessible name / tooltip of the per-paragraph "delete paragraph" affordance in a structured-text field.</comment>
+    <comment>Screen-reader name and tooltip of the "×" button beside each paragraph in a field that holds several paragraphs; deletes that paragraph.</comment>
   </data>
   <data name="FwAvalonia.StText.ParagraphStyle" xml:space="preserve">
     <value>Paragraph Style</value>
-    <comment>Accessible name / tooltip of the per-paragraph style picker in a structured-text field: opens the list of the project's paragraph styles to apply to this paragraph.</comment>
+    <comment>Button beside each paragraph in a field that holds several paragraphs; opens the list of the project's paragraph styles to apply to that paragraph.</comment>
   </data>
   <data name="FwAvalonia.StText.DefaultParagraphStyle" xml:space="preserve">
     <value>Default</value>
@@ -208,43 +208,43 @@
   </data>
   <data name="FwAvalonia.Link" xml:space="preserve">
     <value>Link</value>
-    <comment>Accessible name / tooltip of the external-link affordance on an editable text row that opens a small URL prompt that inserts a hyperlink over the selection, or edits an existing link's URL.</comment>
+    <comment>Menu item in a text field's right-click menu; adds a link to the selected text, or edits the link already there.</comment>
   </data>
   <data name="FwAvalonia.LinkUrlPrompt" xml:space="preserve">
     <value>Address (URL)</value>
-    <comment>Watermark / accessible name of the URL entry in the link prompt flyout.</comment>
+    <comment>Placeholder text of the box where the user types the link's address.</comment>
   </data>
   <data name="FwAvalonia.LinkApply" xml:space="preserve">
     <value>Apply</value>
-    <comment>The confirm button of the link prompt flyout: insert / update the hyperlink.</comment>
+    <comment>Button that adds the link, or updates an existing one.</comment>
   </data>
   <data name="FwAvalonia.DeleteEmbeddedObject" xml:space="preserve">
     <value>Delete embedded object</value>
-    <comment>Accessible name / tooltip of the delete-embedded-object affordance that removes the embedded object (link, picture, footnote, ...) under the selection. Any ORC kind is deletable here even when its insert/edit path lives elsewhere.</comment>
+    <comment>Menu item that deletes the embedded item (such as a link, picture or footnote) at the selection.</comment>
   </data>
   <data name="FwAvalonia.Audio.Play" xml:space="preserve">
     <value>Play</value>
-    <comment>Play affordance for an existing audio recording on a voice-WS row (legacy ShortSoundFieldControl play).</comment>
+    <comment>Button that plays the field's audio recording.</comment>
   </data>
   <data name="FwAvalonia.Audio.Record" xml:space="preserve">
     <value>Record</value>
-    <comment>Record affordance for a voice-WS row (legacy ShortSoundFieldControl record).</comment>
+    <comment>Button that records audio into the field.</comment>
   </data>
   <data name="FwAvalonia.Audio.Clear" xml:space="preserve">
     <value>Clear</value>
-    <comment>Clear-the-recording affordance for a voice-WS row (legacy ShortSoundFieldControl delete).</comment>
+    <comment>Button that deletes the field's audio recording.</comment>
   </data>
   <data name="FwAvalonia.Audio.RecordUnavailable" xml:space="preserve">
     <value>Recording is available on Windows in the new view; use the classic view on this platform.</value>
-    <comment>Tooltip on the record affordance when recording is unavailable on this platform.</comment>
+    <comment>Tooltip on the Record button on platforms where the new view can't record audio.</comment>
   </data>
   <data name="FwAvalonia.Audio.NoRecording" xml:space="preserve">
     <value>(no recording)</value>
-    <comment>Placeholder shown for a voice-WS row that has no recording yet.</comment>
+    <comment>Shown in an audio field that has no recording yet.</comment>
   </data>
   <data name="FwAvalonia.StructuredText.ParagraphName" xml:space="preserve">
     <value>{0} paragraph {1}</value>
-    <comment>Screen-reader name for one paragraph editor in a multi-paragraph StText field. {0} = the field label, {1} = the 1-based paragraph number.</comment>
+    <comment>Screen-reader name for one paragraph in a field that holds several paragraphs. {0} = the field label, {1} = the paragraph number, starting at 1.</comment>
   </data>
   <data name="FwAvalonia.FeatureGroup.LexicalEntryDialogs" xml:space="preserve">
     <value>Dialogs (lexical entry)</value>
@@ -280,7 +280,7 @@
   </data>
   <data name="FwAvalonia.Chooser.EmptyItemLabel" xml:space="preserve">
     <value>&lt;Empty&gt;</value>
-    <comment>The empty-choice label a list chooser leads with when the field allows no value. English must match the legacy launchers' &lt;c&gt;ksNullLabel&lt;/c&gt; so both frameworks show the same word.</comment>
+    <comment>First choice in a list chooser, for leaving the field empty. Translate it the same as "&lt;Empty&gt;" in the classic view's choosers.</comment>
   </data>
   <data name="FwAvalonia.Reversal.ShowInReversalIndex" xml:space="preserve">
     <value>Show in Reversal Index (Ctrl-Click)</value>
