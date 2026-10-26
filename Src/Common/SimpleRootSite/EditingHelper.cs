@@ -1592,20 +1592,6 @@ namespace SIL.FieldWorks.Common.RootSites
 
 			return (Control is SimpleRootSite) ? ((SimpleRootSite)Control).IBeamCursor : Cursors.IBeam;
 		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Convert this instance to type T.
-		/// </summary>
-		/// <typeparam name="T">Desired type to cast to.</typeparam>
-		/// <returns>Editing helper cast as T.</returns>
-		/// <remarks>We added this method so that we can retrieve the TeEditingHelper from the
-		/// PublicationEditingHelper (which internally contains an TeEditingHelper).</remarks>
-		/// ------------------------------------------------------------------------------------
-		public virtual T CastAs<T>() where T : EditingHelper
-		{
-			return this as T;
-		}
 		#endregion
 
 		#region Style related methods

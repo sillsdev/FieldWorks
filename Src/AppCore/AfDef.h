@@ -61,7 +61,6 @@ Last reviewed:
 #define kcidTyping						123
 #define kcidDeleteKey					124
 
-#define kcidFilePageSetup				125
 #define kcidEditSelAll					126
 #define kcidFmtFnt						127
 #define kcidFmtWrtgSys					128

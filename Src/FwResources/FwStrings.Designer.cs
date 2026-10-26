@@ -1146,24 +1146,6 @@ namespace SIL.FieldWorks.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Page Set&amp;up....
-        /// </summary>
-        internal static string kstidFilePageSetupMenuName {
-            get {
-                return ResourceManager.GetString("kstidFilePageSetupMenuName", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Page Setup for Printing..
-        /// </summary>
-        internal static string kstidFilePageSetupMsg {
-            get {
-                return ResourceManager.GetString("kstidFilePageSetupMsg", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to &amp;Print....
         /// </summary>
         internal static string kstidFilePrintMenuName {
@@ -1963,15 +1945,6 @@ namespace SIL.FieldWorks.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Page Setup - {0}.
-        /// </summary>
-        internal static string kstidPageSetupWithViewName {
-            get {
-                return ResourceManager.GetString("kstidPageSetupWithViewName", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Page Width.
         /// </summary>
         internal static string kstidPageWidth {
@@ -2639,15 +2612,6 @@ namespace SIL.FieldWorks.Resources {
         internal static string kstidUndoMultipleActions {
             get {
                 return ResourceManager.GetString("kstidUndoMultipleActions", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Page Setup Changes.
-        /// </summary>
-        internal static string kstidUndoPageSetupChanges {
-            get {
-                return ResourceManager.GetString("kstidUndoPageSetupChanges", resourceCulture);
             }
         }
         

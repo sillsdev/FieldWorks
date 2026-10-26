@@ -10,7 +10,6 @@ using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwAvalonia;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.Common.UIAdapters;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.FwCoreDlgControls;
 using SIL.FieldWorks.FwCoreDlgs;
@@ -235,21 +234,6 @@ namespace SIL.FieldWorks.XWorks
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Gets the setting for style levels to show. If custom lists or sub-lists of styles
-		/// are displayed in the application, this setting should be overridden.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public virtual int MaxStyleLevelToShow
-		{
-			get
-			{
-				CheckDisposed();
-				return Int32.MaxValue;
-			}
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
 		/// Called when styles are renamed or deleted.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
@@ -262,20 +246,6 @@ namespace SIL.FieldWorks.XWorks
 			PrepareToRefresh();
 			//FinishRefresh();
 			Refresh();
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Allows individual implementations to override the default behavior when populating
-		/// the paragraph style list.
-		/// </summary>
-		/// <returns><c>false</c> by default, but overridden versions may return <c>true</c> if
-		/// to prevent the default behavior.
-		/// </returns>
-		/// ------------------------------------------------------------------------------------
-		public virtual bool PopulateParaStyleListOverride()
-		{
-			return false;
 		}
 		#endregion
 
@@ -1120,25 +1090,6 @@ namespace SIL.FieldWorks.XWorks
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Update Archive With RAMP menu item
-		/// </summary>
-		/// <param name="args">the toolbar/menu item properties</param>
-		/// <returns>true if handled</returns>
-		/// ------------------------------------------------------------------------------------
-		public bool OnUpdateArchiveWithRamp(object args)
-		{
-			TMItemProperties itemProps = args as TMItemProperties;
-			if (itemProps != null)
-			{
-				itemProps.Visible = !(Platform.IsMono);
-				itemProps.Update = true;
-				return true;
-			}
-			return false;
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
 		/// Handle whether to enable Archive With RAMP menu item (enabled iff properly installed)
 		/// </summary>
 		/// <param name="command">Not used</param>
@@ -1869,7 +1820,7 @@ namespace SIL.FieldWorks.XWorks
 				return false;
 			ShowApplyStyleDialog(
 				ParaStyleListHelper != null ? ParaStyleListHelper.SelectedStyle.Name : null,
-				CharStyleListHelper != null ? CharStyleListHelper.SelectedStyle.Name : null, 0);
+				CharStyleListHelper != null ? CharStyleListHelper.SelectedStyle.Name : null);
 			return true;
 		}
 
@@ -1879,12 +1830,10 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		/// <param name="paraStyleName">The currently-selected Paragraph style name</param>
 		/// <param name="charStyleName">The currently-selected Character style name</param>
-		/// <param name="maxStyleLevel">The maximum style level that will be shown in this
-		/// dialog. (apps that do not use style levels in their stylesheets can pass 0)</param>
 		/// ------------------------------------------------------------------------------------
-		public void ShowApplyStyleDialog(string paraStyleName, string charStyleName, int maxStyleLevel)
+		public void ShowApplyStyleDialog(string paraStyleName, string charStyleName)
 		{
-			m_delegate.ShowApplyStyleDialog(paraStyleName, charStyleName, maxStyleLevel);
+			m_delegate.ShowApplyStyleDialog(paraStyleName, charStyleName);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -2521,32 +2470,6 @@ namespace SIL.FieldWorks.XWorks
 			m_StyleSheet.Init(Cache, Cache.LanguageProject.Hvo, LangProjectTags.kflidStyles);
 			if (m_rebarAdapter is IUIAdapterForceRegenerate)
 				((IUIAdapterForceRegenerate)m_rebarAdapter).ForceFullRegenerate();
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets or sets a value indicating whether or not to show the style type combo box
-		/// in the styles dialog where the user can select the type of styles to show
-		/// (all, basic, or custom styles).  False indicates a FLEx style type combo box
-		/// (all, basic, dictionary, or custom styles).
-		/// </summary>
-		/// <value>The default implementation always returns <c>false</c></value>
-		/// ------------------------------------------------------------------------------------
-		public virtual bool ShowTEStylesComboInStylesDialog
-		{
-			get { return false; }
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets a value indicating whether the user can select a background color on the
-		/// paragraph tab in the styles dialog. This is possible in all apps except TE.
-		/// </summary>
-		/// <value>The default implementation always return <c>true</c>.</value>
-		/// ------------------------------------------------------------------------------------
-		public virtual bool CanSelectParagraphBackgroundColor
-		{
-			get { return true; }
 		}
 		#endregion implementation of (some of) IMainWindowDelegateCallbacks
 

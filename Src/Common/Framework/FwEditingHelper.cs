@@ -439,9 +439,7 @@ namespace SIL.FieldWorks.Common.Framework
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// This method is broken out so TeEditingHelper can override and adjust annotations.
-		/// Probably anything else that does it will need to adjust annotations, too, but nothing
-		/// else yet uses this kind of picture in an StText.
+		/// Inserts an ORC for the picture into the string and stores the result in the property.
 		/// </summary>
 		/// <param name="pict">The picture to insert an ORC for</param>
 		/// <param name="tss">The initial value of the TsString into which the ORC is to be
