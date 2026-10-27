@@ -9,8 +9,11 @@ using SIL.FieldWorks.Common.DetailRules;
 using SIL.FieldWorks.Common.Framework.DetailControls;
 using SIL.FieldWorks.Common.FwAvalonia.Detail;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FdoUi;
+using SIL.FieldWorks.FwCoreDlgs;
 using SIL.FieldWorks.LexText.Controls;
+using SIL.FieldWorks.Resources;
 using SIL.LCModel;
 using SIL.LCModel.Infrastructure;
 using SIL.Reporting;
@@ -44,6 +47,18 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>The message of a leaf that opens a configured dialog, such as Find example
 		/// sentence.</summary>
 		internal const string LaunchGuiControlMessage = "LaunchGuiControl";
+
+		/// <summary>The message every Move ... Up leaf of the detail menus sends.</summary>
+		internal const string MoveUpMessage = "MoveUpObjectInSequence";
+
+		/// <summary>The message every Move ... Down leaf of the detail menus sends.</summary>
+		internal const string MoveDownMessage = "MoveDownObjectInSequence";
+
+		/// <summary>The message of Insert Sound or Movie.</summary>
+		internal const string InsertMediaFileMessage = "InsertMediaFile";
+
+		/// <summary>The message of Picture Properties.</summary>
+		internal const string PicturePropertiesMessage = "PictureProperties";
 
 		/// <summary>
 		/// Asks the user to confirm a delete: the product shows the object's confirmation
@@ -80,6 +95,19 @@ namespace SIL.FieldWorks.XWorks
 		internal Action<CmObjectUi, Command> GuiControlLaunch { get; set; } = (ui, command) => ui.LaunchGuiControl(command);
 
 		/// <summary>
+		/// Picks the sound or movie files to link, by their names under the linked-files
+		/// folder, or an empty list to cancel: the product asks with the file dialog and
+		/// offers to move or copy the files there; a headless test answers for the user.
+		/// </summary>
+		internal Func<IReadOnlyList<string>> MediaFilesToInsert { get; set; }
+
+		/// <summary>
+		/// Picks the picture's new file, or null to leave it: the product asks with
+		/// <see cref="PicturePropertiesDialog"/>; a headless test answers for the user.
+		/// </summary>
+		internal Func<ICmPicture, string> PictureFileChosen { get; set; }
+
+		/// <summary>
 		/// The message-keyed authority for the Lexicon menus, owning by predicate and
 		/// answering for <paramref name="field"/>; with no row every answer is hidden.
 		/// </summary>
@@ -93,6 +121,10 @@ namespace SIL.FieldWorks.XWorks
 			authority.Answer(ConvertLexemeFormMessage, leaf => ConvertLexemeFormItem(leaf, field));
 			authority.Answer(InsertMessage, leaf => InsertItem(leaf, field), InsertLeafInScope);
 			authority.Answer(LaunchGuiControlMessage, leaf => GuiControlItem(leaf, field));
+			authority.Answer(MoveUpMessage, leaf => MoveItem(leaf, field, up: true));
+			authority.Answer(MoveDownMessage, leaf => MoveItem(leaf, field, up: false));
+			authority.Answer(InsertMediaFileMessage, leaf => InsertMediaItem(leaf, field));
+			authority.Answer(PicturePropertiesMessage, leaf => PicturePropertiesItem(leaf, field));
 			return authority;
 		}
 
@@ -284,9 +316,10 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
-		/// The Delete item for the row's object: absent on a row with no object or a ghost
-		/// row; disabled when the object is gone from the repository or
-		/// <see cref="DetailObjectDeletion.CanDeleteNow"/> refuses it.
+		/// The Delete item for the row's object: absent on a row with no object, a ghost row
+		/// and a row whose object the command does not act on; disabled when the object is
+		/// gone from the repository or <see cref="DetailObjectDeletion.CanDeleteNow"/> refuses
+		/// it.
 		/// </summary>
 		internal DetailMenuItem DeleteItem(DetailMenuLeaf leaf, DetailField field)
 		{
@@ -298,6 +331,8 @@ namespace SIL.FieldWorks.XWorks
 				Logger.WriteEvent("Delete is disabled: the row's object " + field.ObjectHvo + " no longer exists.");
 				return DetailMenuItem.Disabled(DetailObjectDeletion.DeleteLabel(label, null, false));
 			}
+			if (!CommandActsOn(target, leaf.Command))
+				return null;
 			var canDelete = DetailObjectDeletion.CanDeleteNow(target);
 			var text = DetailObjectDeletion.DeleteLabel(label, target, canDelete);
 			return new DetailMenuItem(text, isEnabled: canDelete, isChecked: false, children: null,
@@ -540,6 +575,176 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var mdc = (IFwMetaDataCacheManaged)Cache.MetaDataCacheAccessor;
 			return !string.IsNullOrEmpty(className) && mdc.ClassExists(className) ? mdc.GetClassId(className) : 0;
+		}
+
+		/// <summary>
+		/// Whether a Delete or Move command acts on <paramref name="target"/>: its
+		/// <c>className</c> is the target's class, or the class of the owner whose
+		/// <c>field</c> holds the target (the picture commands name the sense). A command
+		/// naming no class, or one the model lacks, acts on any object. This keeps the items
+		/// off a section row, whose object is the sequence's owner.
+		/// </summary>
+		internal static bool CommandActsOn(ICmObject target, Command command)
+		{
+			var className = command.GetParameter("className", null);
+			if (string.IsNullOrEmpty(className))
+				return true;
+			var cache = target.Cache;
+			var mdc = (IFwMetaDataCacheManaged)cache.MetaDataCacheAccessor;
+			if (!mdc.ClassExists(className))
+				return true;
+			var classId = mdc.GetClassId(className);
+			if (cache.ClassIsOrInheritsFrom(target.ClassID, classId))
+				return true;
+			var owner = target.Owner;
+			var fieldName = command.GetParameter("field", null);
+			return owner != null && !string.IsNullOrEmpty(fieldName) && cache.ClassIsOrInheritsFrom(owner.ClassID, classId)
+				&& mdc.GetFieldName(target.OwningFlid) == fieldName;
+		}
+
+		/// <summary>
+		/// The Move Up or Move Down item for the row's object: absent on a row with no
+		/// object, a ghost row, a row whose object the command does not act on, and an object
+		/// outside an owning sequence; disabled at the end it would move past.
+		/// </summary>
+		/// <param name="up">True for Move Up, false for Move Down.</param>
+		internal DetailMenuItem MoveItem(DetailMenuLeaf leaf, DetailField field, bool up)
+		{
+			var target = RowObjectOf(field);
+			if (target == null || field.GhostPrompt != null || !CommandActsOn(target, leaf.Command)
+				|| !DetailSequenceMove.IsInSequence(target))
+			{
+				return null;
+			}
+			var label = XCoreMenuBridge.StripAccelerator(leaf.Label);
+			if (!(up ? DetailSequenceMove.CanMoveUp(target) : DetailSequenceMove.CanMoveDown(target)))
+				return DetailMenuItem.Disabled(label);
+			return new DetailMenuItem(label, isEnabled: true, isChecked: false, children: null,
+				execute: () => MoveDetailObject(field, up));
+		}
+
+		/// <summary>
+		/// Moves the row's object one place up or down in its owning sequence: pending edits
+		/// settle first, the move is one undoable step, and the re-show keeps the keyboard on
+		/// the moved object's rows.
+		/// </summary>
+		/// <returns>True when the object moved.</returns>
+		internal bool MoveDetailObject(DetailField field, bool up)
+		{
+			SettleDetailEdits();
+			var target = RowObjectOf(field);
+			if (target == null)
+			{
+				Logger.WriteEvent("Move did nothing: the row's object " + field?.ObjectHvo + " no longer exists.");
+				return false;
+			}
+			var moved = up
+				? DetailSequenceMove.MoveUp(target, xWorksStrings.UndoMoveItem, xWorksStrings.RedoMoveItem)
+				: DetailSequenceMove.MoveDown(target, xWorksStrings.UndoMoveItem, xWorksStrings.RedoMoveItem);
+			if (!moved)
+				return false;
+			m_avaloniaEntryForm?.FocusObjectOnNextShow(target.Hvo);
+			OnAvaloniaDetailEditCompleted(this, EventArgs.Empty);
+			return true;
+		}
+
+		/// <summary>
+		/// The Insert Sound or Movie item for the row: absent with no row or no object, and
+		/// when neither the row's object nor the shown record belongs to an entry; enabled
+		/// otherwise. The files go to the row's pronunciation, else the entry's first, created
+		/// when it has none.
+		/// </summary>
+		internal DetailMenuItem InsertMediaItem(DetailMenuLeaf leaf, DetailField field)
+		{
+			var rowObject = RowObjectOf(field);
+			if (rowObject == null || MediaFileInsertion.TargetEntry(rowObject, ResolveShownRecord(Clerk?.CurrentObject)) == null)
+				return null;
+			return new DetailMenuItem(XCoreMenuBridge.StripAccelerator(leaf.Label), isEnabled: true, isChecked: false,
+				children: null, execute: () => InsertMediaFiles(field));
+		}
+
+		/// <summary>
+		/// Links the files the user picks to the row's pronunciation, else to the entry's
+		/// first, created once the user has picked: pending edits settle first, the
+		/// pronunciation and its links are one undoable step, and the re-show focuses the
+		/// pronunciation.
+		/// </summary>
+		/// <returns>The media objects created.</returns>
+		internal IReadOnlyList<ICmMedia> InsertMediaFiles(DetailField field)
+		{
+			SettleDetailEdits();
+			var root = ResolveShownRecord(Clerk?.CurrentObject);
+			var rowObject = RowObjectOf(field);
+			var entry = MediaFileInsertion.TargetEntry(rowObject, root);
+			if (entry == null)
+			{
+				Logger.WriteEvent("Insert Sound or Movie did nothing: no entry for the row's object " + field?.ObjectHvo + ".");
+				return new ICmMedia[0];
+			}
+			var files = (MediaFilesToInsert ?? ChooseMediaFilesWithDialog)();
+			if (files == null || files.Count == 0)
+				return new ICmMedia[0];
+			ILexPronunciation pronunciation = null;
+			IReadOnlyList<ICmMedia> created = null;
+			UndoableUnitOfWorkHelper.Do(xWorksStrings.ksUndoInsertMedia, xWorksStrings.ksRedoInsertMedia, Cache.ActionHandlerAccessor, () =>
+			{
+				pronunciation = MediaFileInsertion.TargetPronunciation(rowObject, root)
+					?? MediaFileInsertion.FirstOrCreatePronunciation(entry, xWorksStrings.ksUndoCreatePronunciation,
+						xWorksStrings.ksRedoCreatePronunciation);
+				created = MediaFileInsertion.Insert(pronunciation, files, xWorksStrings.ksUndoInsertMedia, xWorksStrings.ksRedoInsertMedia);
+			});
+			m_avaloniaEntryForm?.FocusObjectOnNextShow(pronunciation.Hvo);
+			OnAvaloniaDetailEditCompleted(this, EventArgs.Empty);
+			return created;
+		}
+
+		private IReadOnlyList<string> ChooseMediaFilesWithDialog()
+			=> DTMenuHandler.ChooseMediaFiles(Cache, m_propertyTable,
+				ResourceHelper.BuildFileFilter(FileFilterType.AllAudio, FileFilterType.AllVideo, FileFilterType.AllFiles),
+				xWorksStrings.ChooseSoundOrMovieFile);
+
+		/// <summary>
+		/// The Picture Properties item for the row: absent unless the row's object is a
+		/// picture, enabled then.
+		/// </summary>
+		internal DetailMenuItem PicturePropertiesItem(DetailMenuLeaf leaf, DetailField field)
+		{
+			if (!(RowObjectOf(field) is ICmPicture))
+				return null;
+			return new DetailMenuItem(XCoreMenuBridge.StripAccelerator(leaf.Label), isEnabled: true, isChecked: false,
+				children: null, execute: () => EditPictureProperties(field));
+		}
+
+		/// <summary>
+		/// Points the row's picture at the file the user picks: pending edits settle first,
+		/// the update is one undoable step, and the view re-shows.
+		/// </summary>
+		/// <returns>True when the picture changed.</returns>
+		internal bool EditPictureProperties(DetailField field)
+		{
+			SettleDetailEdits();
+			if (!(RowObjectOf(field) is ICmPicture picture))
+			{
+				Logger.WriteEvent("Picture Properties did nothing: the row's object " + field?.ObjectHvo + " is no picture.");
+				return false;
+			}
+			var file = (PictureFileChosen ?? ChoosePictureFileWithDialog)(picture);
+			if (string.IsNullOrEmpty(file))
+				return false;
+			UndoableUnitOfWorkHelper.Do(xWorksStrings.ksUndoUpdatePicture, xWorksStrings.ksRedoUpdatePicture, picture,
+				() => picture.UpdatePicture(file, null, CmFolderTags.DefaultPictureFolder, 0));
+			OnAvaloniaDetailEditCompleted(this, EventArgs.Empty);
+			return true;
+		}
+
+		private string ChoosePictureFileWithDialog(ICmPicture picture)
+		{
+			using (var dlg = new PicturePropertiesDialog(Cache, picture, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"),
+				m_propertyTable.GetValue<IApp>("App")))
+			{
+				dlg.Initialize();
+				return dlg.ShowDialog(m_propertyTable.GetValue<Form>("window")) == DialogResult.OK ? dlg.CurrentFile : null;
+			}
 		}
 	}
 }

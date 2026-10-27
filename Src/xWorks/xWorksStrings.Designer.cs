@@ -2023,7 +2023,25 @@ namespace SIL.FieldWorks.XWorks {
                 return ResourceManager.GetString("ksRedoInsertPicture", resourceCulture);
             }
         }
-        
+
+        /// <summary>
+        ///   Looks up a localized string similar to Redo Update Picture.
+        /// </summary>
+        internal static string ksRedoUpdatePicture {
+            get {
+                return ResourceManager.GetString("ksRedoUpdatePicture", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Redo Create Pronunciation.
+        /// </summary>
+        internal static string ksRedoCreatePronunciation {
+            get {
+                return ResourceManager.GetString("ksRedoCreatePronunciation", resourceCulture);
+            }
+        }
+
         /// <summary>
         ///   Looks up a localized string similar to Redo {0}.
         /// </summary>
@@ -2418,7 +2436,25 @@ namespace SIL.FieldWorks.XWorks {
                 return ResourceManager.GetString("ksUndoInsertPicture", resourceCulture);
             }
         }
-        
+
+        /// <summary>
+        ///   Looks up a localized string similar to Undo Update Picture.
+        /// </summary>
+        internal static string ksUndoUpdatePicture {
+            get {
+                return ResourceManager.GetString("ksUndoUpdatePicture", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Undo Create Pronunciation.
+        /// </summary>
+        internal static string ksUndoCreatePronunciation {
+            get {
+                return ResourceManager.GetString("ksUndoCreatePronunciation", resourceCulture);
+            }
+        }
+
         /// <summary>
         ///   Looks up a localized string similar to Undo {0}.
         /// </summary>
