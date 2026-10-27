@@ -124,6 +124,7 @@ namespace FwAvaloniaTests
 		[TestCase("lexiconEdit")]
 		[TestCase("notebookEdit")]
 		[TestCase("posEdit")]
+		[TestCase("ProdRestrictEdit")]
 		public void BaseDetailEditorTools_StayActive(string tool)
 		{
 			Assert.That(UIFrameworkResolver.SupportsAvaloniaForTool(tool), Is.True,

@@ -299,6 +299,9 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 		public static string FeaturePosEditName => Text("FwAvalonia.Feature.PosEditName");
 		public static string FeaturePosEditDescription => Text("FwAvalonia.Feature.PosEditDescription");
 
+		public static string FeatureProdRestrictEditName => Text("FwAvalonia.Feature.ProdRestrictEditName");
+		public static string FeatureProdRestrictEditDescription => Text("FwAvalonia.Feature.ProdRestrictEditDescription");
+
 		/// <summary>The empty-choice label a list chooser leads with when the field allows no value.
 		/// English must match the legacy launchers' <c>ksNullLabel</c> so both frameworks show the same word.</summary>
 		public static string ChooserEmptyItemLabel => Text("FwAvalonia.Chooser.EmptyItemLabel");
