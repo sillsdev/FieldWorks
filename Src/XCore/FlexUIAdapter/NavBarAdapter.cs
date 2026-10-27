@@ -26,6 +26,7 @@ namespace XCore
 		private ChoiceGroupCollection m_choiceGroupCollectionCache; // cache of what was received by CreateUIForChoiceGroupCollection()
 		private List<ChoiceGroup> m_choiceGroupCache = new List<ChoiceGroup>(); // cache of what was received by CreateUIForChoiceGroup()
 		private string areasLabel; // label of the special case ChoiceGroup for Areas
+		private bool m_selectingInSidePane; // true while the adapter's own SelectTab/SelectItem runs
 
 		#region Disposable stuff
 		#if DEBUG
@@ -141,10 +142,13 @@ namespace XCore
 		}
 
 		/// <summary>
-		/// Handle when an item on the sidepane is clicked.
+		/// Handle when an item on the sidepane is clicked. A selection the adapter itself makes
+		/// while reflecting a property change raises the same event and is ignored here.
 		/// </summary>
 		private void SidePaneItemClickedHandler(Item itemClicked)
 		{
+			if (m_selectingInSidePane)
+				return;
 			var choice = itemClicked.Tag as ChoiceBase;
 			Debug.Assert(choice != null, "SidePaneItemClickedHandler received an Item with an invalid Tag.");
 			if (choice != null)
@@ -152,14 +156,34 @@ namespace XCore
 		}
 
 		/// <summary>
-		/// Handle when a tab on the sidepane is clicked.
+		/// Handle when a tab on the sidepane is clicked. A selection the adapter itself makes
+		/// while reflecting a property change raises the same event and is ignored here.
 		/// </summary>
 		private void SidePaneTabClickedHandler(Tab tabClicked)
 		{
+			if (m_selectingInSidePane)
+				return;
 			var choice = tabClicked.Tag as ChoiceBase;
 			Debug.Assert(choice != null, "SidePaneTabClickedHandler received a Tab with an invalid Tag.");
 			if (choice != null)
 				choice.OnClick(this, null);
+		}
+
+		/// <summary>
+		/// Runs one of the side pane's selection calls with the click handlers silenced, so
+		/// that showing a property's value does not set that property again.
+		/// </summary>
+		private bool SelectInSidePane(Func<bool> select)
+		{
+			m_selectingInSidePane = true;
+			try
+			{
+				return select();
+			}
+			finally
+			{
+				m_selectingInSidePane = false;
+			}
 		}
 
 		public override void PersistLayout()
@@ -555,12 +579,12 @@ namespace XCore
 									// overwriting the property table value.  See FWR-2004.
 									string propToolForArea = "ToolForAreaNamed_" + areaName;
 									string toolForArea = m_propertyTable.GetStringProperty(propToolForArea, null);
-									m_sidepane.SelectTab(tab);
+									SelectInSidePane(() => m_sidepane.SelectTab(tab));
 									// FWR-2895 Deleting a Custom list could result in needing to
 									// update the PropertyTable.
 									if (!String.IsNullOrEmpty(toolForArea) && !toolForArea.StartsWith("?"))
 									{
-										var fsuccess = m_sidepane.SelectItem(tab, toolForArea);
+										var fsuccess = SelectInSidePane(() => m_sidepane.SelectItem(tab, toolForArea));
 										if (!fsuccess)
 										{
 											m_propertyTable.SetProperty(propToolForArea, null, true);
@@ -605,7 +629,7 @@ namespace XCore
 						// calling the SelectItem if it is already the CurrentItem.
 						if(m_sidepane.CurrentItem != item)
 						{
-							m_sidepane.SelectItem(tab, item.Name);
+							SelectInSidePane(() => m_sidepane.SelectItem(tab, item.Name));
 						}
 						break;
 					}
