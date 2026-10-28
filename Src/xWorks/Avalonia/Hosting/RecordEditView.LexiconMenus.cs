@@ -15,6 +15,7 @@ using SIL.FieldWorks.FwCoreDlgs;
 using SIL.FieldWorks.LexText.Controls;
 using SIL.FieldWorks.Resources;
 using SIL.LCModel;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Infrastructure;
 using SIL.Reporting;
 using SIL.Utils;
@@ -60,11 +61,65 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>The message of Picture Properties.</summary>
 		internal const string PicturePropertiesMessage = "PictureProperties";
 
+		/// <summary>The message every Merge ... into leaf of the detail menus sends.</summary>
+		internal const string MergeMessage = "DataTreeMerge";
+
+		/// <summary>The message of Delete Reference on a variant's row.</summary>
+		internal const string DeleteReferenceMessage = "DataTreeDeleteReference";
+
+		/// <summary>The message of Add Reference and Replace Reference on a lexical-relation
+		/// row.</summary>
+		internal const string AddReferenceMessage = "DataTreeAddReference";
+
+		/// <summary>The message of Edit Reference Set Details.</summary>
+		internal const string EditReferenceMessage = "DataTreeEdit";
+
+		/// <summary>The message of Swap Allomorph with Lexeme Form.</summary>
+		internal const string SwapAllomorphMessage = "SwapAllomorphWithLexeme";
+
+		/// <summary>The message of Convert to Affix Process / Convert to Affix Allomorph on an
+		/// allomorph's row.</summary>
+		internal const string ConvertAllomorphMessage = "ConvertAllomorph";
+
 		/// <summary>
 		/// Asks the user to confirm a delete: the product shows the object's confirmation
 		/// dialog; a headless test answers for the user.
 		/// </summary>
 		internal Func<CmObjectUi, bool> DeleteConfirmation { get; set; } = ui => ui.ConfirmDelete();
+
+		/// <summary>
+		/// Asks the user to confirm deleting a relation, with the note on what else the
+		/// delete affects (null for none): the product shows the relation's confirmation
+		/// dialog; a headless test answers for the user.
+		/// </summary>
+		internal Func<CmObjectUi, ITsString, bool> RelationDeleteConfirmation { get; set; } = (ui, note) => ui.ConfirmDelete(note);
+
+		/// <summary>
+		/// Picks the survivor of a merge among the sorted candidates, by hvo, or 0 to cancel:
+		/// the product asks with <see cref="MergeObjectDlg"/> (null here); a headless test
+		/// answers for the user.
+		/// </summary>
+		internal Func<IReadOnlyList<DummyCmObject>, int> MergeSurvivor { get; set; }
+
+		/// <summary>
+		/// Picks the entry or sense to add to a lexical relation or put in place of its
+		/// reference, or null to cancel: the product asks with the chooser the request
+		/// describes; a headless test answers for the user.
+		/// </summary>
+		internal Func<LexicalRelationChooser, ICmObject> RelationTargetChosen { get; set; }
+
+		/// <summary>
+		/// Edits a relation's name and comment, or returns null to cancel: the product asks
+		/// with <see cref="LexReferenceDetailsDlg"/>; a headless test answers for the user.
+		/// </summary>
+		internal Func<ILexReference, RelationDetails> RelationDetailsEdited { get; set; }
+
+		/// <summary>The name and comment Edit Reference Set Details gives a relation.</summary>
+		internal sealed class RelationDetails
+		{
+			public string Name { get; set; }
+			public string Comment { get; set; }
+		}
 
 		/// <summary>
 		/// Picks the allomorph to swap with the entry's lexeme form, or null to cancel: the
@@ -125,6 +180,12 @@ namespace SIL.FieldWorks.XWorks
 			authority.Answer(MoveDownMessage, leaf => MoveItem(leaf, field, up: false));
 			authority.Answer(InsertMediaFileMessage, leaf => InsertMediaItem(leaf, field));
 			authority.Answer(PicturePropertiesMessage, leaf => PicturePropertiesItem(leaf, field));
+			authority.Answer(MergeMessage, leaf => MergeItem(leaf, field));
+			authority.Answer(DeleteReferenceMessage, leaf => DeleteReferenceItem(leaf, field));
+			authority.Answer(AddReferenceMessage, leaf => AddReferenceItem(leaf, field));
+			authority.Answer(EditReferenceMessage, leaf => EditReferenceItem(leaf, field));
+			authority.Answer(SwapAllomorphMessage, leaf => SwapAllomorphItem(leaf, field));
+			authority.Answer(ConvertAllomorphMessage, leaf => ConvertLexemeFormItem(leaf, field));
 			return authority;
 		}
 
@@ -315,11 +376,16 @@ namespace SIL.FieldWorks.XWorks
 			return Cache.ServiceLocator.ObjectRepository.TryGetObject(field.ObjectHvo, out var target) ? target : null;
 		}
 
+		// The object a row's Delete or Merge acts on: the variant entry on a variant's rows,
+		// else the row's object.
+		private ICmObject CommandTargetOf(ICmObject rowObject)
+			=> VariantBackReferences.CommandTarget(ResolveShownRecord(Clerk?.CurrentObject), rowObject);
+
 		/// <summary>
-		/// The Delete item for the row's object: absent on a row with no object, a ghost row
-		/// and a row whose object the command does not act on; disabled when the object is
-		/// gone from the repository or <see cref="DetailObjectDeletion.CanDeleteNow"/> refuses
-		/// it.
+		/// The Delete item for the row's object (the variant entry on a variant's row): absent
+		/// on a row with no object, a ghost row and a row whose object the command does not act
+		/// on; disabled when the object is gone from the repository or
+		/// <see cref="DetailObjectDeletion.CanDeleteNow"/> refuses it.
 		/// </summary>
 		internal DetailMenuItem DeleteItem(DetailMenuLeaf leaf, DetailField field)
 		{
@@ -331,6 +397,7 @@ namespace SIL.FieldWorks.XWorks
 				Logger.WriteEvent("Delete is disabled: the row's object " + field.ObjectHvo + " no longer exists.");
 				return DetailMenuItem.Disabled(DetailObjectDeletion.DeleteLabel(label, null, false));
 			}
+			target = CommandTargetOf(target);
 			if (!CommandActsOn(target, leaf.Command))
 				return null;
 			var canDelete = DetailObjectDeletion.CanDeleteNow(target);
@@ -340,9 +407,10 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
-		/// Deletes the row's object after confirmation: pending edits settle first, the
-		/// object's UI runs the delete, and the re-show focuses the nearest surviving row, the
-		/// one before the deleted object's rows when it survives.
+		/// Deletes the row's object (the variant entry on a variant's row) after confirmation:
+		/// pending edits settle first, the object's UI runs the delete, and the re-show focuses
+		/// the nearest surviving row, the one before the deleted object's rows when it survives.
+		/// A relation row runs <see cref="DeleteRelation"/> instead.
 		/// </summary>
 		/// <returns>True when the object was deleted.</returns>
 		internal bool DeleteDetailObject(DetailField field)
@@ -353,6 +421,9 @@ namespace SIL.FieldWorks.XWorks
 				Logger.WriteEvent("Delete did nothing: the row's object " + field.ObjectHvo + " no longer exists.");
 				return false;
 			}
+			if (target is ILexReference relation)
+				return DeleteRelation(field, relation);
+			target = CommandTargetOf(target);
 			var focusRows = RowsToFocusAfterDeleting(m_avaloniaEntryForm?.ShownDetail, target);
 			bool deleted;
 			using (var ui = CmObjectUi.MakeUi(Cache, target.Hvo))
@@ -745,6 +816,329 @@ namespace SIL.FieldWorks.XWorks
 				dlg.Initialize();
 				return dlg.ShowDialog(m_propertyTable.GetValue<Form>("window")) == DialogResult.OK ? dlg.CurrentFile : null;
 			}
+		}
+
+		/// <summary>
+		/// The Merge item for the row's object (the variant entry on a variant's row): absent
+		/// on a row with no object, a ghost row and a row whose object the command does not act
+		/// on; disabled when <see cref="DetailObjectMerge.CanMergeNow"/> refuses it.
+		/// </summary>
+		internal DetailMenuItem MergeItem(DetailMenuLeaf leaf, DetailField field)
+		{
+			var rowObject = RowObjectOf(field);
+			if (rowObject == null || field.GhostPrompt != null)
+				return null;
+			var target = CommandTargetOf(rowObject);
+			if (!CommandActsOn(target, leaf.Command))
+				return null;
+			var canMerge = DetailObjectMerge.CanMergeNow(target);
+			var label = DetailObjectMerge.MergeLabel(XCoreMenuBridge.StripAccelerator(leaf.Label), canMerge);
+			return new DetailMenuItem(label, isEnabled: canMerge, isChecked: false, children: null,
+				execute: canMerge ? (Action)(() => MergeDetailObject(field)) : null);
+		}
+
+		/// <summary>
+		/// Merges the row's object into the survivor the user picks through
+		/// <see cref="MergeSurvivor"/>: pending edits settle first, the object's UI runs the
+		/// merge in one undoable step, and the re-show focuses the survivor.
+		/// </summary>
+		/// <returns>True when the objects were merged.</returns>
+		internal bool MergeDetailObject(DetailField field)
+		{
+			SettleDetailEdits();
+			var target = CommandTargetOf(RowObjectOf(field));
+			if (target == null)
+			{
+				Logger.WriteEvent("Merge did nothing: the row's object " + field?.ObjectHvo + " no longer exists.");
+				return false;
+			}
+			if (!DetailObjectMerge.CanMergeNow(target))
+				return false;
+			int survivor;
+			using (var ui = CmObjectUi.MakeUi(Cache, target.Hvo))
+			{
+				ui.Mediator = m_mediator;
+				ui.PropTable = m_propertyTable;
+				survivor = ui.MergeUnderlyingObject(true, MergeSurvivor);
+			}
+			if (survivor == 0)
+				return false;
+			m_avaloniaEntryForm?.FocusObjectOnNextShow(survivor);
+			OnAvaloniaDetailEditCompleted(this, EventArgs.Empty);
+			return true;
+		}
+
+		/// <summary>
+		/// The Delete Reference item for a variant's row: absent with no row, no object or a
+		/// ghost row; enabled when the row's variant has a ref to the shown entry, disabled
+		/// (with the cannot-delete note) on any other row.
+		/// </summary>
+		internal DetailMenuItem DeleteReferenceItem(DetailMenuLeaf leaf, DetailField field)
+		{
+			var rowObject = RowObjectOf(field);
+			if (rowObject == null || field.GhostPrompt != null)
+				return null;
+			var label = XCoreMenuBridge.StripAccelerator(leaf.Label);
+			if (VariantReferenceOf(field, rowObject) == null)
+				return DetailMenuItem.Disabled(label + StringTable.Table.GetString(DetailObjectDeletion.CannotDeleteKey));
+			return new DetailMenuItem(label, isEnabled: true, isChecked: false, children: null,
+				execute: () => DeleteVariantReference(field));
+		}
+
+		/// <summary>
+		/// Unlinks the row's variant from the shown entry: pending edits settle first, the
+		/// ref goes in one undoable step, and the re-show focuses the nearest surviving row.
+		/// </summary>
+		/// <returns>True when the ref was deleted.</returns>
+		internal bool DeleteVariantReference(DetailField field)
+		{
+			SettleDetailEdits();
+			var rowObject = RowObjectOf(field);
+			var reference = rowObject == null ? null : VariantReferenceOf(field, rowObject);
+			if (!(ResolveShownRecord(Clerk?.CurrentObject) is ILexEntry root) || reference == null)
+			{
+				Logger.WriteEvent("Delete Reference did nothing: no variant ref to the shown entry on row " + field?.StableId + ".");
+				return false;
+			}
+			var focusRows = RowsToFocusAfterDeleting(m_avaloniaEntryForm?.ShownDetail, reference.OwningEntry);
+			VariantBackReferences.DeleteReference(root, reference);
+			if (focusRows.Count > 0)
+				m_avaloniaEntryForm?.FocusRowOnNextShow(focusRows);
+			OnAvaloniaDetailEditCompleted(this, EventArgs.Empty);
+			return true;
+		}
+
+		// The ref linking the row's variant to the shown entry: the only one, or among
+		// several the one whose own rows follow the row in the shown model, as a variant's
+		// Variant Info rows follow its form.
+		private ILexEntryRef VariantReferenceOf(DetailField field, ICmObject rowObject)
+		{
+			var root = ResolveShownRecord(Clerk?.CurrentObject) as ILexEntry;
+			var variant = VariantBackReferences.BackReferencedEntry(root, rowObject);
+			if (variant == null)
+				return null;
+			var references = VariantBackReferences.ReferencesTo(root, variant);
+			if (references.Count == 0)
+				return null;
+			var fields = m_avaloniaEntryForm?.ShownDetail?.Fields;
+			if (references.Count > 1 && fields != null)
+			{
+				var index = IndexOfRow(fields, field);
+				for (var i = index + 1; index >= 0 && i < fields.Count; i++)
+				{
+					foreach (var reference in references)
+					{
+						if (reference.Hvo == fields[i].ObjectHvo)
+							return reference;
+					}
+				}
+			}
+			return references[0];
+		}
+
+		// The row's index among the shown fields: the row itself, else the first row with its
+		// id (a variant linked twice shows its Form row twice under one id).
+		private static int IndexOfRow(IReadOnlyList<DetailField> fields, DetailField field)
+		{
+			var byId = -1;
+			for (var i = 0; i < fields.Count; i++)
+			{
+				if (ReferenceEquals(fields[i], field))
+					return i;
+				if (byId < 0 && fields[i].StableId == field.StableId)
+					byId = i;
+			}
+			return byId;
+		}
+
+		// The entry or sense a lexical-relation row belongs to, from its id; null for any
+		// other row or when it is gone.
+		private ICmObject LexicalRelationOwnerOf(DetailField field)
+		{
+			if (field == null || !DetailComposer.TryGetLexicalRelationOwner(field.StableId, out var hvo))
+				return null;
+			return Cache.ServiceLocator.ObjectRepository.TryGetObject(hvo, out var owner) ? owner : null;
+		}
+
+		/// <summary>
+		/// Runs Delete Relation for the row's relation: after confirmation with the note on
+		/// what else it affects, the entry or sense leaves the relation or the relation goes
+		/// (<see cref="LexicalRelationEditing.DeleteKind"/>), in one undoable step, and the
+		/// re-show focuses the nearest surviving row.
+		/// </summary>
+		/// <returns>True when the relation changed.</returns>
+		internal bool DeleteRelation(DetailField field, ILexReference relation)
+		{
+			var current = LexicalRelationOwnerOf(field);
+			if (current == null)
+			{
+				Logger.WriteEvent("Delete Relation did nothing: row " + field?.StableId + " names no entry or sense.");
+				return false;
+			}
+			var focusRows = RowsToFocusAfterDeleting(m_avaloniaEntryForm?.ShownDetail, relation);
+			bool confirmed;
+			using (var ui = CmObjectUi.MakeUi(Cache, relation.Hvo))
+			{
+				ui.Mediator = m_mediator;
+				ui.PropTable = m_propertyTable;
+				confirmed = RelationDeleteConfirmation(ui, LexicalRelationEditing.DeleteNote(relation, current));
+			}
+			if (!confirmed)
+				return false;
+			LexicalRelationEditing.Delete(relation, current);
+			if (focusRows.Count > 0)
+				m_avaloniaEntryForm?.FocusRowOnNextShow(focusRows);
+			OnAvaloniaDetailEditCompleted(this, EventArgs.Empty);
+			return true;
+		}
+
+		/// <summary>
+		/// The Add Reference / Replace Reference item for a lexical-relation row: absent
+		/// unless the row's object is a relation of a known entry or sense; enabled then.
+		/// </summary>
+		internal DetailMenuItem AddReferenceItem(DetailMenuLeaf leaf, DetailField field)
+		{
+			if (!(RowObjectOf(field) is ILexReference) || LexicalRelationOwnerOf(field) == null)
+				return null;
+			return new DetailMenuItem(XCoreMenuBridge.StripAccelerator(leaf.Label), isEnabled: true, isChecked: false,
+				children: null, execute: () => AddOrReplaceReference(field));
+		}
+
+		/// <summary>
+		/// Adds the entry or sense the user picks through <see cref="RelationTargetChosen"/>
+		/// to the row's relation, or puts it in place of the row's reference
+		/// (<see cref="LexicalRelationEditing.AddOrReplace"/>): pending edits settle first,
+		/// the change is one undoable step, and the re-show focuses the relation's row.
+		/// </summary>
+		/// <returns>The relation the row's entry or sense is now in; null when nothing
+		/// changed.</returns>
+		internal ILexReference AddOrReplaceReference(DetailField field)
+		{
+			SettleDetailEdits();
+			var relation = RowObjectOf(field) as ILexReference;
+			var current = LexicalRelationOwnerOf(field);
+			if (relation == null || current == null)
+			{
+				Logger.WriteEvent("Add Reference did nothing: row " + field?.StableId + " names no relation of an entry or sense.");
+				return null;
+			}
+			var chooser = LexicalRelationEditing.Chooser(relation, current);
+			var chosen = (RelationTargetChosen ?? ChooseRelationTargetWithDialog)(chooser);
+			if (chosen == null)
+				return null;
+			var result = LexicalRelationEditing.AddOrReplace(relation, current, chosen);
+			if (result == null)
+				return null;
+			m_avaloniaEntryForm?.FocusObjectOnNextShow(result.Hvo);
+			OnAvaloniaDetailEditCompleted(this, EventArgs.Empty);
+			return result;
+		}
+
+		private ICmObject ChooseRelationTargetWithDialog(LexicalRelationChooser chooser)
+		{
+			var mainWindow = m_propertyTable.GetValue<Form>("window");
+			if (chooser.UseLinkDialog)
+			{
+				return LcmLinkEntryOrSenseDialogLauncher.Show(Cache, m_mediator, m_propertyTable, null, mainWindow,
+					LexicalRelationEditing.ChooserHelpTopic, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider", null),
+					allowSenses: chooser.AllowSenses, sensesOnly: chooser.SensesOnly, title: chooser.Title,
+					okButtonText: chooser.ButtonText);
+			}
+			using (var dlg = new EntryGoDlg())
+			{
+				dlg.SetDlgInfo(Cache, new WindowParams { m_title = chooser.Title, m_btnText = chooser.ButtonText }, m_mediator,
+					m_propertyTable);
+				dlg.SetHelpTopic(LexicalRelationEditing.ChooserHelpTopic);
+				return dlg.ShowDialog(mainWindow) == DialogResult.OK ? dlg.SelectedObject : null;
+			}
+		}
+
+		/// <summary>
+		/// The Edit Reference Set Details item for a lexical-relation row: absent unless the
+		/// row's object is a relation; enabled then.
+		/// </summary>
+		internal DetailMenuItem EditReferenceItem(DetailMenuLeaf leaf, DetailField field)
+		{
+			if (!(RowObjectOf(field) is ILexReference))
+				return null;
+			return new DetailMenuItem(XCoreMenuBridge.StripAccelerator(leaf.Label), isEnabled: true, isChecked: false,
+				children: null, execute: () => EditReferenceDetails(field));
+		}
+
+		/// <summary>
+		/// Gives the row's relation the name and comment the user enters through
+		/// <see cref="RelationDetailsEdited"/>: pending edits settle first, the change is one
+		/// undoable step, and the view re-shows.
+		/// </summary>
+		/// <returns>True when the relation changed.</returns>
+		internal bool EditReferenceDetails(DetailField field)
+		{
+			SettleDetailEdits();
+			if (!(RowObjectOf(field) is ILexReference relation))
+			{
+				Logger.WriteEvent("Edit Reference Set Details did nothing: the row's object " + field?.ObjectHvo + " is no relation.");
+				return false;
+			}
+			var details = (RelationDetailsEdited ?? EditRelationDetailsWithDialog)(relation);
+			if (details == null)
+				return false;
+			LexicalRelationEditing.SetDetails(relation, details.Name, details.Comment);
+			OnAvaloniaDetailEditCompleted(this, EventArgs.Empty);
+			return true;
+		}
+
+		private RelationDetails EditRelationDetailsWithDialog(ILexReference relation)
+		{
+			using (var dlg = new LexReferenceDetailsDlg(m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider")))
+			{
+				dlg.ReferenceName = relation.Name.AnalysisDefaultWritingSystem.Text;
+				dlg.ReferenceComment = relation.Comment.AnalysisDefaultWritingSystem.Text;
+				return dlg.ShowDialog(m_propertyTable.GetValue<Form>("window")) == DialogResult.OK
+					? new RelationDetails { Name = dlg.ReferenceName, Comment = dlg.ReferenceComment }
+					: null;
+			}
+		}
+
+		/// <summary>
+		/// The Swap Allomorph with Lexeme Form item for the row: absent unless the row's
+		/// object is a form; enabled when it is an allomorph of an entry that has a lexeme
+		/// form, disabled otherwise.
+		/// </summary>
+		internal DetailMenuItem SwapAllomorphItem(DetailMenuLeaf leaf, DetailField field)
+		{
+			var form = FormOf(field);
+			if (form == null)
+				return null;
+			var label = XCoreMenuBridge.StripAccelerator(leaf.Label);
+			if (!CanSwapAllomorph(form))
+				return DetailMenuItem.Disabled(label);
+			return new DetailMenuItem(label, isEnabled: true, isChecked: false, children: null,
+				execute: () => SwapAllomorph(field, leaf.Command));
+		}
+
+		// Whether the form is an allomorph of an entry with a lexeme form to swap it with.
+		private static bool CanSwapAllomorph(IMoForm form)
+		{
+			var entry = form.OwnerOfClass<ILexEntry>();
+			return LexemeFormConversion.CanSwap(entry) && entry.AlternateFormsOS.Contains(form);
+		}
+
+		/// <summary>
+		/// Makes the row's allomorph its entry's lexeme form, the old lexeme form taking its
+		/// place: pending edits settle first, the swap is one undoable step, and the re-show
+		/// focuses the form's new row.
+		/// </summary>
+		/// <returns>True when the forms were swapped.</returns>
+		internal bool SwapAllomorph(DetailField field, Command command)
+		{
+			SettleDetailEdits();
+			var form = FormOf(field);
+			if (form == null || !CanSwapAllomorph(form))
+				return false;
+			LexemeFormConversion.Swap(form.OwnerOfClass<ILexEntry>(), form, command.UndoText, command.RedoText);
+			m_avaloniaEntryForm?.FocusObjectOnNextShow(form.Hvo);
+			OnAvaloniaDetailEditCompleted(this, EventArgs.Empty);
+			return true;
 		}
 	}
 }

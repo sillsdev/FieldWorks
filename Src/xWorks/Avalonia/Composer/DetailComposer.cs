@@ -2080,7 +2080,7 @@ namespace SIL.FieldWorks.XWorks
 					if (row == null)
 						continue;
 
-					var stableId = StableId(node, obj) + "/lexref:" + relation.Guid;
+					var stableId = StableId(node, obj) + LexicalRelationIdMarker + relation.Guid;
 					var items = row.Targets
 						.Select(target => new DetailChoiceOption(target.Guid.ToString(), ResolveEntryOrSenseName(target)))
 						.ToList();
@@ -3705,6 +3705,26 @@ namespace SIL.FieldWorks.XWorks
 
 			private static string Localize(string label)
 				=> string.IsNullOrEmpty(label) ? label : StringTable.Table.LocalizeAttributeValue(label);
+		}
+
+		/// <summary>
+		/// What a lexical-relation row's id adds, with the relation's guid, after the id of
+		/// the entry or sense whose detail shows the relation.
+		/// </summary>
+		internal const string LexicalRelationIdMarker = "/lexref:";
+
+		/// <summary>The entry or sense a lexical-relation row belongs to, from its id.</summary>
+		/// <returns>False for any other row's id.</returns>
+		internal static bool TryGetLexicalRelationOwner(string stableId, out int hvo)
+		{
+			hvo = 0;
+			if (string.IsNullOrEmpty(stableId))
+				return false;
+			var marker = stableId.IndexOf(LexicalRelationIdMarker, StringComparison.Ordinal);
+			if (marker < 0)
+				return false;
+			var at = stableId.LastIndexOf('@', marker);
+			return at >= 0 && int.TryParse(stableId.Substring(at + 1, marker - at - 1), out hvo) && hvo != 0;
 		}
 
 		// Mirrors legacy's GetMagicWsIdFromName/GetWritingSystemList; override falls back to all.

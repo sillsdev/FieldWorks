@@ -230,12 +230,6 @@
   <data name="ksRootNoComponentsMessage" xml:space="preserve">
     <value>An entry that has components cannot have a morph type of root, since by definition a root is indivisible. Would you like Language Explorer to delete the references to components in this entry?</value>
   </data>
-  <data name="ksRedoDeleteRef" xml:space="preserve">
-    <value>Redo Delete Reference</value>
-  </data>
-  <data name="ksUndoDeleteRef" xml:space="preserve">
-    <value>Undo Delete Reference</value>
-  </data>
   <data name="ksRedoUpdatePicture" xml:space="preserve">
     <value>Redo Update Picture</value>
   </data>

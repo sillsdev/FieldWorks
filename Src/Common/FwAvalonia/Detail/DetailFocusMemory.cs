@@ -231,7 +231,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		/// current item when the memento asks for it (a move or removal made from the row keeps
 		/// the keyboard in the row); else the first surviving row the outgoing view asked for
 		/// (a gesture removed the focused row), which comes before the remembered editor only
-		/// when that is a row's menu button. Safe to call before the view is attached.
+		/// when that is a row's menu button. The scroll offset yields to the row of the object
+		/// asked for. Safe to call before the view is attached.
 		/// </summary>
 		public static void RestoreAfterLayout(Control root, Memento memento)
 		{
@@ -263,12 +264,18 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 					else
 						RestoreRequestedFocus(root, memento);
 				}
-				// A bring-into-view request queued by a focus change is applied by the next
-				// arrange; the remembered offset is re-asserted after it.
+				// After the next arrange: re-assert the remembered offset, or bring the row
+				// of the object the gesture chose into view wherever it sits.
 				if (needsScroll)
 				{
-					Avalonia.Threading.Dispatcher.UIThread.Post(() => TryRestoreScroll(root, memento),
-						Avalonia.Threading.DispatcherPriority.Background);
+					var showsRequestedObject = focused && memento.ObjectHvo != 0;
+					Avalonia.Threading.Dispatcher.UIThread.Post(() =>
+					{
+						if (showsRequestedObject)
+							(TopLevel.GetTopLevel(root)?.FocusManager?.GetFocusedElement() as Control)?.BringIntoView();
+						else
+							TryRestoreScroll(root, memento);
+					}, Avalonia.Threading.DispatcherPriority.Background);
 				}
 			};
 			root.LayoutUpdated += onLayout;

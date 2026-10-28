@@ -55,6 +55,10 @@ namespace SIL.FieldWorks.XWorks
 			// pronunciation and Variant Info; the picture menu, no Avalonia row yet (LT-22772).
 			"mnuDataTree-Etymology", "mnuDataTree-ExtendedNote", "mnuDataTree-ExtendedNote-Examples",
 			"mnuDataTree-Example", "mnuDataTree-Pronunciation", "mnuDataTree-VariantSpec", "mnuDataTree-Picture",
+			// Lexicon rows: the item menus of a stem or affix allomorph and of an affix process,
+			// a variant's form row, and the lexical-relation rows (add or replace a reference).
+			"mnuDataTree-Allomorph", "mnuDataTree-AffixProcess", "mnuDataTree-VariantForm",
+			"mnuDataTree-DeleteAddLexReference", "mnuDataTree-DeleteReplaceLexReference",
 			// Lexicon: an id no part reaches (its pronunciation part does not exist).
 			"mnuDataTree-CmMedia",
 			// Grammar: posEdit rows (two item rows, five section rows: Affix Templates, Affix
@@ -82,7 +86,8 @@ namespace SIL.FieldWorks.XWorks
 			"mnuDataTree-Subsenses", "mnuDataTree-AlternateForms", "mnuDataTree-VariantForms",
 			"mnuDataTree-Examples", "mnuDataTree-Etymology", "mnuDataTree-ExtendedNote",
 			"mnuDataTree-ExtendedNote-Examples", "mnuDataTree-Example", "mnuDataTree-Pronunciation",
-			"mnuDataTree-VariantSpec"
+			"mnuDataTree-VariantSpec", "mnuDataTree-Allomorph", "mnuDataTree-AffixProcess", "mnuDataTree-VariantForm",
+			"mnuDataTree-DeleteAddLexReference", "mnuDataTree-DeleteReplaceLexReference"
 		};
 
 		private static readonly string[] LexiconInStringMenuIds =
@@ -107,7 +112,11 @@ namespace SIL.FieldWorks.XWorks
 		private List<ICmObject> m_createdObjects;
 		private ILexEntry m_entry;
 		private IMoStemAllomorph m_allomorph;
+		private IMoAffixProcess m_affixProcess;
 		private ILexEntry m_variant;
+		private ILexReference m_synonymSet;
+		private ILexReference m_antonymPair;
+		private ILexReference m_partOfWhole;
 		private ICmTranslation m_translation;
 		private ILexExtendedNote m_note;
 		private ILexExtendedNote m_note2;
@@ -317,8 +326,8 @@ namespace SIL.FieldWorks.XWorks
 		{
 			Assert.That(HiddenTreeExists, Is.False, "precondition: no hidden tree yet");
 			var rows = OwnedMenuRows();
-			Assert.That(rows, Has.Count.EqualTo(35),
-				"precondition: twenty-one ids; -Translation and -VariantForms on two rows each, the item ids and hotlinks on every item's rows");
+			Assert.That(rows, Has.Count.EqualTo(41),
+				"precondition: twenty-six ids; -Translation, -VariantForms and -DeleteReplaceLexReference on two rows each, the item ids and hotlinks on every item's rows");
 			foreach (var (row, menuId, kind) in rows)
 			{
 				var ids = kind == DetailMenuKind.ContextMenu
@@ -363,12 +372,14 @@ namespace SIL.FieldWorks.XWorks
 			var gone = new DetailField(translation.StableId, "Translation", "Translation", null, DetailFieldKind.Text,
 				EditorClassification.Known, null, null, HostRouting.Inherit, null, null, null,
 				menuId: translation.MenuId, objectHvo: int.MaxValue - 1);
-			// A sense of an entry without entry refs sits in a required field: the only one
-			// stays. The sense's own Delete command names its class.
+			// An entry without entry refs requires its senses, so the only one stays. The entry
+			// is shown, so its sense is no other entry's part (a variant back reference).
 			ILexEntry plain = null;
 			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
 				plain = AddLexeme(m_createdObjects, "plain", GetMorphTypeOrCreateOne("stem"), "plain gloss",
 					GetGrammaticalCategoryOrCreateOne("noun", Cache.LangProject.PartsOfSpeechOA)));
+			m_view.Clerk.JumpToRecord(plain.Hvo);
+			DrainMediatorAndIdleQueues();
 			var onlySense = new DetailField("Sense", "Sense", "Senses", null, DetailFieldKind.Header,
 				EditorClassification.GroupingNone, null, null, HostRouting.Inherit, null, null, null,
 				menuId: "mnuDataTree-Sense", objectHvo: plain.SensesOS[0].Hvo);
@@ -663,7 +674,97 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(m_view.GuiControlItem(leaf, noObject), Is.Null, "no object");
 		}
 
+		[Test]
+		public void MergeLeaf_IsEnabledWithACandidate_DisabledWithTheNoteWithout_AndAbsentOnAGhostRow()
+		{
+			var leaf = Leaf("mnuDataTree-Allomorph", "CmdDataTree-Merge-Allomorph");
+			var stem = FormRow(m_allomorph);
+			var process = FormRow(m_affixProcess);
+			var ghost = new DetailField(stem.StableId + DetailField.GhostStableIdSuffix, "Form", "Form", null,
+				DetailFieldKind.Text, EditorClassification.Known, null, null, HostRouting.Inherit, null, null, null,
+				menuId: stem.MenuId, objectHvo: stem.ObjectHvo, ghostPrompt: "Add a form");
+
+			Assert.That(m_view.MergeItem(leaf, stem)?.IsEnabled, Is.True, "the lexeme form is of the stem's class");
+			Assert.That(m_view.MergeItem(leaf, stem).Label, Is.EqualTo("Merge Allomorph into..."));
+			Assert.That(m_view.MergeItem(leaf, process)?.IsEnabled, Is.False, "nothing of the process's class to merge into");
+			Assert.That(m_view.MergeItem(leaf, process).Label,
+				Is.EqualTo("Merge Allomorph into..." + StringTable.Table.GetString(DetailObjectMerge.CannotMergeKey)));
+			Assert.That(m_view.MergeItem(leaf, ghost), Is.Null, "a ghost row has no object to merge");
+			Assert.That(m_view.MergeItem(leaf, null), Is.Null, "no row");
+		}
+
+		// A variant's form row shows the variant's lexeme form, but Delete Variant and Delete
+		// Reference act on the variant entry and its ref to the shown entry.
+		[Test]
+		public void VariantFormRow_DeleteActsOnTheVariantEntry_AndDeleteReferenceNeedsItsRef()
+		{
+			var row = VariantFormRow();
+			var deleteVariant = Leaf("mnuDataTree-VariantForm", "CmdDataTree-Delete-Variant");
+			var deleteReference = Leaf("mnuDataTree-VariantForm", "CmdDataTree-Delete-VariantReference");
+			var note = StringTable.Table.GetString(DetailObjectDeletion.CannotDeleteKey);
+
+			Assert.That(m_view.DeleteItem(deleteVariant, row)?.IsEnabled, Is.True, "an entry is unowned, so it can go");
+			Assert.That(m_view.DeleteItem(deleteVariant, row).Label, Is.EqualTo("Delete Variant"));
+			Assert.That(m_view.DeleteReferenceItem(deleteReference, row)?.IsEnabled, Is.True);
+			Assert.That(m_view.DeleteReferenceItem(deleteReference, row).Label, Is.EqualTo("Delete Reference"));
+
+			var allomorph = FormRow(m_allomorph);
+			Assert.That(m_view.DeleteItem(deleteVariant, allomorph), Is.Null, "the shown entry's own form is no LexEntry");
+			Assert.That(m_view.DeleteReferenceItem(deleteReference, allomorph)?.IsEnabled, Is.False, "no variant, no ref");
+			Assert.That(m_view.DeleteReferenceItem(deleteReference, allomorph).Label, Is.EqualTo("Delete Reference" + note));
+			var ghost = new DetailField(row.StableId + DetailField.GhostStableIdSuffix, "Variant Form", "Form", null,
+				DetailFieldKind.Text, EditorClassification.Known, null, null, HostRouting.Inherit, null, null, null,
+				menuId: row.MenuId, objectHvo: m_variant.Hvo, ghostPrompt: "Add a form");
+			Assert.That(m_view.DeleteReferenceItem(deleteReference, ghost), Is.Null, "a ghost row offers no delete");
+		}
+
+		[Test]
+		public void SwapAllomorphLeaf_IsEnabledOnAnAllomorph_DisabledWithoutALexemeForm_AndAbsentOffAForm()
+		{
+			var leaf = Leaf("mnuDataTree-Allomorph", "CmdDataTree-Swap-Allomorph");
+			var stem = FormRow(m_allomorph);
+
+			Assert.That(m_view.SwapAllomorphItem(leaf, stem)?.IsEnabled, Is.True);
+			Assert.That(m_view.SwapAllomorphItem(leaf, TranslationRow()), Is.Null, "no form on the row");
+			Assert.That(m_view.SwapAllomorphItem(leaf, null), Is.Null, "no row");
+
+			// The fixture is rebuilt per test, so the lexeme form need not come back.
+			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () => m_entry.LexemeFormOA = null);
+			Assert.That(m_view.SwapAllomorphItem(leaf, stem)?.IsEnabled, Is.False, "nothing to swap with");
+		}
+
+		[Test]
+		public void RelationLeaves_AreEnabledOnARelationRow_AndAbsentElsewhere()
+		{
+			var add = Leaf("mnuDataTree-DeleteAddLexReference", "CmdDataTree-Add-ToLexReference");
+			var replace = Leaf("mnuDataTree-DeleteReplaceLexReference", "CmdDataTree-Replace-LexReference");
+			var edit = Leaf("mnuDataTree-DeleteAddLexReference", "CmdDataTree-EditDetails-LexReference");
+			var delete = Leaf("mnuDataTree-DeleteAddLexReference", "CmdDataTree-Delete-LexReference");
+			var synonyms = RelationRow(m_synonymSet);
+			var antonym = RelationRow(m_antonymPair);
+			Assert.That(synonyms.MenuId, Is.EqualTo("mnuDataTree-DeleteAddLexReference"), "precondition");
+			Assert.That(antonym.MenuId, Is.EqualTo("mnuDataTree-DeleteReplaceLexReference"), "precondition");
+			Assert.That(RelationRow(m_partOfWhole).MenuId, Is.EqualTo("mnuDataTree-DeleteReplaceLexReference"),
+				"precondition: a part sees its whole");
+
+			Assert.That(m_view.AddReferenceItem(add, synonyms)?.IsEnabled, Is.True);
+			Assert.That(m_view.AddReferenceItem(replace, antonym)?.IsEnabled, Is.True);
+			Assert.That(m_view.EditReferenceItem(edit, synonyms)?.IsEnabled, Is.True);
+			Assert.That(m_view.DeleteItem(delete, synonyms)?.IsEnabled, Is.True);
+			Assert.That(m_view.DeleteItem(delete, synonyms).Label, Is.EqualTo("Delete Relation"));
+			Assert.That(m_view.AddReferenceItem(add, TranslationRow()), Is.Null, "no relation on the row");
+			Assert.That(m_view.EditReferenceItem(edit, TranslationRow()), Is.Null);
+			Assert.That(m_view.AddReferenceItem(add, null), Is.Null, "no row");
+		}
+
 		private XWindow Window => m_propertyTable.GetValue<XWindow>("window");
+
+		private DetailField FormRow(IMoForm form) => Rows().Single(f => f.ObjectHvo == form.Hvo && f.Field == "Form");
+
+		private DetailField VariantFormRow()
+			=> Rows().Single(f => f.MenuId == "mnuDataTree-VariantForm" && f.ObjectHvo == m_variant.LexemeFormOA.Hvo);
+
+		private DetailField RelationRow(ILexReference relation) => Rows().Single(f => f.ObjectHvo == relation.Hvo);
 
 		private bool HiddenTreeExists => (bool)GetField(m_view, "m_dataTreeInitialized");
 
@@ -815,6 +916,36 @@ namespace SIL.FieldWorks.XWorks
 				Asked = true;
 				return false;
 			}
+			public bool OnDisplayDataTreeMerge(object commandObject, ref UIItemDisplayProperties display)
+			{
+				Asked = true;
+				return false;
+			}
+			public bool OnDisplayDataTreeDeleteReference(object commandObject, ref UIItemDisplayProperties display)
+			{
+				Asked = true;
+				return false;
+			}
+			public bool OnDisplayDataTreeAddReference(object commandObject, ref UIItemDisplayProperties display)
+			{
+				Asked = true;
+				return false;
+			}
+			public bool OnDisplayDataTreeEdit(object commandObject, ref UIItemDisplayProperties display)
+			{
+				Asked = true;
+				return false;
+			}
+			public bool OnDisplaySwapAllomorphWithLexeme(object commandObject, ref UIItemDisplayProperties display)
+			{
+				Asked = true;
+				return false;
+			}
+			public bool OnDisplayConvertAllomorph(object commandObject, ref UIItemDisplayProperties display)
+			{
+				Asked = true;
+				return false;
+			}
 		}
 
 		private static string Describe(IReadOnlyList<DetailMenuItem> items, string indent = "")
@@ -843,9 +974,9 @@ namespace SIL.FieldWorks.XWorks
 			method.Invoke(m_view, new object[] { targetHvo, fieldName });
 		}
 
-		// A complex form and variant with an allomorph, a spelling variant, two etymologies and
-		// two pronunciations; its sense has a translated example, two pictures and two notes,
-		// the first with an example.
+		// A complex form and variant: two allomorphs, a spelling variant, two etymologies,
+		// two pronunciations, an antonym and a whole; its sense has an example, pictures,
+		// notes and synonyms.
 		private void CreateTestEntry()
 		{
 			var stemMorphType = GetMorphTypeOrCreateOne("stem");
@@ -877,6 +1008,8 @@ namespace SIL.FieldWorks.XWorks
 			m_allomorph = Cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>().Create();
 			m_entry.AlternateFormsOS.Add(m_allomorph);
 			m_allomorph.Form.set_String(Cache.DefaultVernWs, TsStringUtils.MakeString("command-allomorph", Cache.DefaultVernWs));
+			m_affixProcess = Cache.ServiceLocator.GetInstance<IMoAffixProcessFactory>().Create();
+			m_entry.AlternateFormsOS.Add(m_affixProcess);
 			var example = Cache.ServiceLocator.GetInstance<ILexExampleSentenceFactory>().Create();
 			m_entry.SensesOS[0].ExamplesOS.Add(example);
 			example.Example.set_String(Cache.DefaultVernWs, TsStringUtils.MakeString("una casa", Cache.DefaultVernWs));
@@ -908,6 +1041,28 @@ namespace SIL.FieldWorks.XWorks
 			variantRef.ComponentLexemesRS.Add(m_entry);
 			variantRef.VariantEntryTypesRS.Add(Cache.ServiceLocator.GetInstance<ILexEntryTypeRepository>()
 				.GetObject(LexEntryTypeTags.kguidLexTypSpellingVar));
+
+			if (Cache.LangProject.LexDbOA.ReferencesOA == null)
+				Cache.LangProject.LexDbOA.ReferencesOA = Cache.ServiceLocator.GetInstance<ICmPossibilityListFactory>().Create();
+			m_synonymSet = AddRelation("Synonyms", LexRefTypeTags.MappingTypes.kmtSenseCollection,
+				m_entry.SensesOS[0], component.SensesOS[0], baseEntry.SensesOS[0]);
+			m_antonymPair = AddRelation("Antonym", LexRefTypeTags.MappingTypes.kmtEntryPair, m_entry, baseEntry);
+			m_partOfWhole = AddRelation("Whole", LexRefTypeTags.MappingTypes.kmtEntryTree, component, m_entry);
+		}
+
+		// A relation of a new type of the given mapping, over the targets in that order.
+		private ILexReference AddRelation(string typeName, LexRefTypeTags.MappingTypes mapping, params ICmObject[] targets)
+		{
+			var type = Cache.ServiceLocator.GetInstance<ILexRefTypeFactory>().Create();
+			Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.Add(type);
+			m_createdObjects.Add(type);
+			type.MappingType = (int)mapping;
+			type.Name.set_String(Cache.DefaultAnalWs, TsStringUtils.MakeString(typeName, Cache.DefaultAnalWs));
+			var relation = Cache.ServiceLocator.GetInstance<ILexReferenceFactory>().Create();
+			type.MembersOC.Add(relation);
+			foreach (var target in targets)
+				relation.TargetsRS.Add(target);
+			return relation;
 		}
 
 		private void LoadRecordEditView(string toolValue)

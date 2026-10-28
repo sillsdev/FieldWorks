@@ -735,5 +735,185 @@ namespace SIL.FieldWorks.FdoUi {
                 return ResourceManager.GetString("ksWordsRelatedBySemanticDomain", resourceCulture);
             }
         }
+
+        /// <summary>
+        ///   Looks up a localized string similar to &amp;Add.
+        /// </summary>
+        internal static string ks_Add {
+            get {
+                return ResourceManager.GetString("ks_Add", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to &amp;Replace.
+        /// </summary>
+        internal static string ks_Replace {
+            get {
+                return ResourceManager.GetString("ks_Replace", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Note: this will remove this entire {0} reference set tree..
+        /// </summary>
+        internal static string ksDeleteLexTree {
+            get {
+                return ResourceManager.GetString("ksDeleteLexTree", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Note: the listed references will still be {0} related in a .
+        /// </summary>
+        internal static string ksDeleteSequenceCollectionA {
+            get {
+                return ResourceManager.GetString("ksDeleteSequenceCollectionA", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to  relation..
+        /// </summary>
+        internal static string ksDeleteSequenceCollectionB {
+            get {
+                return ResourceManager.GetString("ksDeleteSequenceCollectionB", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Add Reference ({0}).
+        /// </summary>
+        internal static string ksIdentifyXEntry {
+            get {
+                return ResourceManager.GetString("ksIdentifyXEntry", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Add Reference ({0}).
+        /// </summary>
+        internal static string ksIdentifyXLexEntry {
+            get {
+                return ResourceManager.GetString("ksIdentifyXLexEntry", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Add Reference ({0}).
+        /// </summary>
+        internal static string ksIdentifyXLexEntryOrSense {
+            get {
+                return ResourceManager.GetString("ksIdentifyXLexEntryOrSense", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Add Reference ({0}).
+        /// </summary>
+        internal static string ksIdentifyXSense {
+            get {
+                return ResourceManager.GetString("ksIdentifyXSense", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Replace Reference.
+        /// </summary>
+        internal static string ksReplaceXEntry {
+            get {
+                return ResourceManager.GetString("ksReplaceXEntry", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Redo Add Reference.
+        /// </summary>
+        internal static string ksRedoAddRef {
+            get {
+                return ResourceManager.GetString("ksRedoAddRef", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Redo Delete Relation.
+        /// </summary>
+        internal static string ksRedoDeleteRelation {
+            get {
+                return ResourceManager.GetString("ksRedoDeleteRelation", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Redo Replace Reference.
+        /// </summary>
+        internal static string ksRedoReplaceRef {
+            get {
+                return ResourceManager.GetString("ksRedoReplaceRef", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Undo Add Reference.
+        /// </summary>
+        internal static string ksUndoAddRef {
+            get {
+                return ResourceManager.GetString("ksUndoAddRef", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Undo Delete Relation.
+        /// </summary>
+        internal static string ksUndoDeleteRelation {
+            get {
+                return ResourceManager.GetString("ksUndoDeleteRelation", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Undo Replace Reference.
+        /// </summary>
+        internal static string ksUndoReplaceRef {
+            get {
+                return ResourceManager.GetString("ksUndoReplaceRef", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Undo Edit Reference Set Details.
+        /// </summary>
+        internal static string ksUndoEditRefSetDetails {
+            get {
+                return ResourceManager.GetString("ksUndoEditRefSetDetails", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Redo Edit Reference Set Details.
+        /// </summary>
+        internal static string ksRedoEditRefSetDetails {
+            get {
+                return ResourceManager.GetString("ksRedoEditRefSetDetails", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Undo Delete Reference.
+        /// </summary>
+        internal static string ksUndoDeleteRef {
+            get {
+                return ResourceManager.GetString("ksUndoDeleteRef", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Redo Delete Reference.
+        /// </summary>
+        internal static string ksRedoDeleteRef {
+            get {
+                return ResourceManager.GetString("ksRedoDeleteRef", resourceCulture);
+            }
+        }
     }
 }

@@ -368,15 +368,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Redo Delete Reference.
-        /// </summary>
-        internal static string ksRedoDeleteRef {
-            get {
-                return ResourceManager.GetString("ksRedoDeleteRef", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Redo Demote.
         /// </summary>
         internal static string ksRedoDemote {
@@ -580,15 +571,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls.Resources {
         internal static string ksUndoDeleteItem {
             get {
                 return ResourceManager.GetString("ksUndoDeleteItem", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Undo Delete Reference.
-        /// </summary>
-        internal static string ksUndoDeleteRef {
-            get {
-                return ResourceManager.GetString("ksUndoDeleteRef", resourceCulture);
             }
         }
         

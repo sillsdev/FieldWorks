@@ -15,6 +15,7 @@ using SIL.LCModel.Core.Text;
 using SIL.LCModel;
 using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.Common.Controls;
+using SIL.FieldWorks.Common.DetailRules;
 using SIL.FieldWorks.FdoUi;
 using SIL.FieldWorks.FdoUi.Dialogs;
 using SIL.LCModel.Utils;
@@ -628,7 +629,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			var helpProvider = m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider", null);
 			return LcmLinkEntryOrSenseDialogLauncher.Show(m_cache, Mediator, m_propertyTable, startingEntry,
 				FindForm(), "khtpChooseLexicalRelationAdd", helpProvider, allowSenses: allowSenses,
-				sensesOnly: sensesOnly, title: sTitle, okButtonText: LexEdStrings.ks_Add);
+				sensesOnly: sensesOnly, title: sTitle, okButtonText: LexicalRelationEditing.AddButtonText);
 		}
 
 		/// <summary>
@@ -659,7 +660,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 					Debug.Assert(lrt.MappingType == (int)LexRefTypeTags.MappingTypes.kmtSenseAsymmetricPair || lrt.MappingType == (int)LexRefTypeTags.MappingTypes.kmtSenseTree);
 					return null;
 			}
-			var sTitle = String.Format(LexEdStrings.ksIdentifyXEntry, lrt.ReverseName.BestAnalysisAlternative.Text);
+			var sTitle = LexicalRelationEditing.AddReferenceTitle(lrt.ReverseName.BestAnalysisAlternative.Text);
 
 			// New-UI gate (mirrors the EntrySequence gate): the LinkEntryOrSense relations use the Avalonia
 			// Choose-Lexical-Entry-or-Sense dialog in New mode; the entry-only mappings keep their EntryGoDlg.
@@ -674,7 +675,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				if (useLinkDlg)
 					((LinkEntryOrSenseDlg)dlg).SelectSensesOnly = sensesOnly;
 				Debug.Assert(dlg != null);
-				var wp = new WindowParams { m_title = sTitle, m_btnText = LexEdStrings.ks_Add };
+				var wp = new WindowParams { m_title = sTitle, m_btnText = LexicalRelationEditing.AddButtonText };
 				dlg.SetDlgInfo(m_cache, wp, Mediator, m_propertyTable);
 				dlg.SetHelpTopic("khtpChooseLexicalRelationAdd");
 				if (dlg.ShowDialog(FindForm()) == DialogResult.OK)
@@ -706,7 +707,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				case LexRefTypeTags.MappingTypes.kmtEntryOrSenseAsymmetricPair:
 					// Entry or sense pair with different Forward/Reverse
 					useLinkDlg = true; allowSenses = true;
-					sTitle = String.Format(LexEdStrings.ksIdentifyXLexEntryOrSense, lrt.Name.BestAnalysisAlternative.Text);
+					sTitle = LexicalRelationEditing.AddReferenceTitle((LexRefTypeTags.MappingTypes)lrt.MappingType, lrt.Name.BestAnalysisAlternative.Text);
 					break;
 
 				case LexRefTypeTags.MappingTypes.kmtSenseCollection:
@@ -717,7 +718,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				case LexRefTypeTags.MappingTypes.kmtSenseSequence:
 				case LexRefTypeTags.MappingTypes.kmtSenseTree:
 					useLinkDlg = true; sensesOnly = true;
-					sTitle = String.Format(LexEdStrings.ksIdentifyXSense, lrt.Name.BestAnalysisAlternative.Text);
+					sTitle = LexicalRelationEditing.AddReferenceTitle((LexRefTypeTags.MappingTypes)lrt.MappingType, lrt.Name.BestAnalysisAlternative.Text);
 					break;
 
 				case LexRefTypeTags.MappingTypes.kmtEntryCollection:
@@ -727,7 +728,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				// Entry pair with different Forward/Reverse names
 				case LexRefTypeTags.MappingTypes.kmtEntrySequence:
 				case LexRefTypeTags.MappingTypes.kmtEntryTree:
-					sTitle = String.Format(LexEdStrings.ksIdentifyXLexEntry, lrt.Name.BestAnalysisAlternative.Text);
+					sTitle = LexicalRelationEditing.AddReferenceTitle((LexRefTypeTags.MappingTypes)lrt.MappingType, lrt.Name.BestAnalysisAlternative.Text);
 					break;
 
 				case LexRefTypeTags.MappingTypes.kmtEntryOrSenseCollection:
@@ -735,7 +736,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				case LexRefTypeTags.MappingTypes.kmtEntryOrSenseTree:
 				case LexRefTypeTags.MappingTypes.kmtEntryOrSenseUnidirectional:
 					useLinkDlg = true; allowSenses = true;
-					sTitle = String.Format(LexEdStrings.ksIdentifyXLexEntryOrSense, lrt.Name.BestAnalysisAlternative.Text);
+					sTitle = LexicalRelationEditing.AddReferenceTitle((LexRefTypeTags.MappingTypes)lrt.MappingType, lrt.Name.BestAnalysisAlternative.Text);
 					break;
 				default:
 					Debug.Assert(lrt.MappingType == (int)LexRefTypeTags.MappingTypes.kmtSenseAsymmetricPair || lrt.MappingType == (int)LexRefTypeTags.MappingTypes.kmtSenseTree);
@@ -762,7 +763,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				if (useLinkDlg)
 					((LinkEntryOrSenseDlg)dlg).SelectSensesOnly = sensesOnly;
 				Debug.Assert(dlg != null);
-				var wp = new WindowParams { m_title = sTitle, m_btnText = LexEdStrings.ks_Add };
+				var wp = new WindowParams { m_title = sTitle, m_btnText = LexicalRelationEditing.AddButtonText };
 				dlg.StartingEntry = startingEntry;
 
 				dlg.SetDlgInfo(m_cache, wp, Mediator, m_propertyTable);
@@ -838,144 +839,29 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 
 		/// <summary>
-		/// This method is called when a user selects Delete Relation on a Lexical Relation slice.
-		/// For: sequence relations (eg. Calendar)
-		///     collection relations (eg. Synonym)
-		///     tree relation (parts/whole when deleting a Whole slice)
+		/// Delete Relation on one of this slice's relation rows: once the user confirms, this
+		/// object leaves the relation or the relation goes, as
+		/// <see cref="LexicalRelationEditing.DeleteKind"/> decides from its type and side.
 		/// </summary>
-		/// <param name="hvo"></param>
-		public void DeleteFromReference(ILexReference lr)
+		public void DeleteRelation(ILexReference lr)
 		{
 			CheckDisposed();
 			if (lr == null)
 			{
 				throw new ConfigurationException("Slice:GetObjectHvoForMenusToOperateOn is either messed up or should not have been called, because it could not find the object to be deleted.", m_configurationNode);
 			}
-			else
+			var mainWindow = m_propertyTable.GetValue<Form>("window");
+			using (new WaitCursor(mainWindow))
+			using (var ui = CmObjectUi.MakeUi(m_cache, lr.Hvo))
 			{
-				var mainWindow = m_propertyTable.GetValue<Form>("window");
-				using (new WaitCursor(mainWindow))
-				{
-					using (var dlg = new ConfirmDeleteObjectDlg(m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider")))
-					{
-
-						var ui = CmObjectUi.MakeUi(m_cache, lr.Hvo);
-						ui.Mediator = Mediator;
-						ui.PropTable = m_propertyTable;
-
-						//We need this to determine which kind of relation we are deleting
-						var lrtOwner = (ILexRefType) lr.Owner;
-
-						var analWs = lrtOwner.Services.WritingSystems.DefaultAnalysisWritingSystem.Handle;
-						var userWs = m_cache.WritingSystemFactory.UserWs;
-						var tisb = TsStringUtils.MakeIncStrBldr();
-						tisb.SetIntPropValues((int)FwTextPropType.ktptWs, 0, userWs);
-
-						switch ((LexRefTypeTags.MappingTypes)lrtOwner.MappingType)
-						{
-							case LexRefTypeTags.MappingTypes.kmtSenseSequence:
-							case LexRefTypeTags.MappingTypes.kmtEntrySequence:
-							case LexRefTypeTags.MappingTypes.kmtEntryOrSenseSequence:
-							case LexRefTypeTags.MappingTypes.kmtEntryOrSenseCollection:
-							case LexRefTypeTags.MappingTypes.kmtEntryCollection:
-							case LexRefTypeTags.MappingTypes.kmtSenseCollection:
-								if (lr.TargetsRS.Count > 2)
-								{
-									tisb.SetIntPropValues((int)FwTextPropType.ktptWs, 0, userWs);
-									tisb.Append(String.Format(LexEdStrings.ksDeleteSequenceCollectionA,
-										StringUtils.kChHardLB.ToString()));
-									tisb.SetIntPropValues((int)FwTextPropType.ktptWs, 0, analWs);
-									tisb.Append(lrtOwner.ShortName);
-									tisb.SetIntPropValues((int)FwTextPropType.ktptWs, 0, userWs);
-									tisb.Append(LexEdStrings.ksDeleteSequenceCollectionB);
-
-									dlg.SetDlgInfo(ui, m_cache, Mediator, m_propertyTable, tisb.GetString());
-								}
-								else
-								{
-									dlg.SetDlgInfo(ui, m_cache, Mediator, m_propertyTable);
-								}
-								break;
-							default:
-								dlg.SetDlgInfo(ui, m_cache, Mediator, m_propertyTable);
-								break;
-						}
-
-						if (DialogResult.Yes == dlg.ShowDialog(mainWindow))
-						{
-							UndoableUnitOfWorkHelper.Do(LexEdStrings.ksUndoDeleteRelation, LexEdStrings.ksRedoDeleteRelation, m_obj, () =>
-							{
-								//If the user selected Yes, then we need to delete 'this' sense or entry
-								lr.TargetsRS.Remove(m_obj);
-							});
-							//Update the display because we have removed this slice from the Lexical entry.
-							UpdateForDelete(lr);
-						 }
-					}
-				}
+				ui.Mediator = Mediator;
+				ui.PropTable = m_propertyTable;
+				if (!ui.ConfirmDelete(LexicalRelationEditing.DeleteNote(lr, m_obj)))
+					return;
 			}
-		}
-
-		/// <summary>
-		/// This method is called when a user selects Delete Relation on a Lexical Relation slice.
-		/// For: Pair relation (eg. Antonym)
-		///     tree relation (parts/whole when deleting a Parts slice)
-		/// </summary>
-		/// <param name="hvo"></param>
-		public void DeleteReference(ILexReference lr)
-		{
-			CheckDisposed();
-			if (lr == null)
-			{
-				throw new ConfigurationException("Slice:GetObjectHvoForMenusToOperateOn is either messed up or should not have been called, because it could not find the object to be deleted.", m_configurationNode);
-			}
-			else
-			{
-				var mainWindow = m_propertyTable.GetValue<Form>("window");
-				using (new WaitCursor(mainWindow))
-				{
-					using (var dlg = new ConfirmDeleteObjectDlg(m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider")))
-					{
-						var ui = CmObjectUi.MakeUi(m_cache, lr.Hvo);
-						ui.Mediator = Mediator;
-						ui.PropTable = m_propertyTable;
-
-						//We need this to determine which kind of relation we are deleting
-						var lrtOwner = lr.Owner as ILexRefType;
-
-						var userWs = m_cache.WritingSystemFactory.UserWs;
-						var tisb = TsStringUtils.MakeIncStrBldr();
-						tisb.SetIntPropValues((int)FwTextPropType.ktptWs, 0, userWs);
-
-						switch ((LexRefTypeTags.MappingTypes)lrtOwner.MappingType)
-						{
-						case LexRefTypeTags.MappingTypes.kmtSenseTree:
-						case LexRefTypeTags.MappingTypes.kmtEntryTree:
-						case LexRefTypeTags.MappingTypes.kmtEntryOrSenseTree:
-						case LexRefTypeTags.MappingTypes.kmtSenseUnidirectional:
-						case LexRefTypeTags.MappingTypes.kmtEntryUnidirectional:
-						case LexRefTypeTags.MappingTypes.kmtEntryOrSenseUnidirectional:
-							tisb.SetIntPropValues((int)FwTextPropType.ktptWs, 0, userWs);
-							tisb.Append(String.Format(LexEdStrings.ksDeleteLexTree, StringUtils.kChHardLB));
-							dlg.SetDlgInfo(ui, m_cache, Mediator, m_propertyTable, tisb.GetString());
-							break;
-						default:
-							dlg.SetDlgInfo(ui, m_cache, Mediator, m_propertyTable);
-							break;
-						}
-
-						if (DialogResult.Yes == dlg.ShowDialog(mainWindow))
-						{
-							UndoableUnitOfWorkHelper.Do(LexEdStrings.ksUndoDeleteRelation, LexEdStrings.ksRedoDeleteRelation, m_obj, () =>
-							{
-								m_cache.DomainDataByFlid.DeleteObj(lr.Hvo);
-							});
-							//Update the display because we have removed this slice from the Lexical entry.
-							UpdateForDelete(lr);
-						}
-					}
-				}
-			}
+			LexicalRelationEditing.Delete(lr, m_obj);
+			//Update the display because we have removed this slice from the Lexical entry.
+			UpdateForDelete(lr);
 		}
 
 		private void UpdateForDelete(ILexReference lr)
@@ -1007,15 +893,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 					dlg.ReferenceName = lr.Name.AnalysisDefaultWritingSystem.Text;
 					dlg.ReferenceComment = lr.Comment.AnalysisDefaultWritingSystem.Text;
 					if (dlg.ShowDialog() == DialogResult.OK)
-					{
-						using (UndoableUnitOfWorkHelper helper = new UndoableUnitOfWorkHelper(m_cache.ActionHandlerAccessor,
-							LexEdStrings.ksUndoEditRefSetDetails, LexEdStrings.ksRedoEditRefSetDetails))
-						{
-							lr.Name.SetAnalysisDefaultWritingSystem(dlg.ReferenceName);
-							lr.Comment.SetAnalysisDefaultWritingSystem(dlg.ReferenceComment);
-							helper.RollBack = false;
-						}
-					}
+						LexicalRelationEditing.SetDetails(lr, dlg.ReferenceName, dlg.ReferenceComment);
 				}
 			}
 		}

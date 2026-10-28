@@ -42,7 +42,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		public override bool HandleDeleteCommand(Command cmd)
 		{
 			CheckDisposed();
-			((LexReferenceMultiSlice)m_parentSlice).DeleteFromReference(GetObjectForMenusToOperateOn() as ILexReference);
+			((LexReferenceMultiSlice)m_parentSlice).DeleteRelation(GetObjectForMenusToOperateOn() as ILexReference);
 			return true; // delete was done
 		}
 
