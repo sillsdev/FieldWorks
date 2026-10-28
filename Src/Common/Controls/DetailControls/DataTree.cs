@@ -1071,7 +1071,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			// Initialize our internal state with the state of the PropertyTable
 			m_fShowAllFields = m_propertyTable.GetBoolProperty("ShowHiddenFields-" + toolName, false, PropertyTable.SettingsGroup.LocalSettings);
 			m_propertyTable.SetPropertyPersistence("ShowHiddenFields-" + toolName, true, PropertyTable.SettingsGroup.LocalSettings);
-			m_propertyTable.SetDefault("ShowHiddenFields", m_fShowAllFields, PropertyTable.SettingsGroup.LocalSettings, false);
+			m_propertyTable.SetDefault("ShowHiddenFields", m_fShowAllFields, PropertyTable.SettingsGroup.LocalSettings);
 			SetCurrentSlicePropertyNames();
 			m_currentSlicePartName = m_propertyTable.GetStringProperty(m_sPartNameProperty, null, PropertyTable.SettingsGroup.LocalSettings);
 			m_currentSliceObjGuid = m_propertyTable.GetValue(m_sObjGuidProperty, PropertyTable.SettingsGroup.LocalSettings, Guid.Empty);

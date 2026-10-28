@@ -3,7 +3,9 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Xml;
 using NUnit.Framework;
 using XCore.Properties;
 
@@ -733,22 +735,22 @@ namespace XCore
 		public void SetDefault()
 		{
 			// Try changing existing Global & Local values, check that they don't overwrite existing ones.
-			m_propertyTable.SetDefault("BooleanPropertyA", false, PropertyTable.SettingsGroup.LocalSettings, false);
-			m_propertyTable.SetDefault("BooleanPropertyA", true, PropertyTable.SettingsGroup.GlobalSettings, false);
+			m_propertyTable.SetDefault("BooleanPropertyA", false, PropertyTable.SettingsGroup.LocalSettings);
+			m_propertyTable.SetDefault("BooleanPropertyA", true, PropertyTable.SettingsGroup.GlobalSettings);
 			bool gpba = m_propertyTable.GetValue<bool>("BooleanPropertyA", PropertyTable.SettingsGroup.GlobalSettings);
 			Assert.That(gpba, Is.False, String.Format("Invalid value for {0} {1}.", "global", "BooleanPropertyA"));
 			bool lpba = m_propertyTable.GetValue<bool>("BooleanPropertyA", PropertyTable.SettingsGroup.LocalSettings);
 			Assert.That(lpba, Is.True, String.Format("Invalid value for {0} {1}.", "local", "BooleanPropertyA"));
 
-			m_propertyTable.SetDefault("IntegerPropertyA", 253, PropertyTable.SettingsGroup.LocalSettings, false);
-			m_propertyTable.SetDefault("IntegerPropertyA", -253, PropertyTable.SettingsGroup.GlobalSettings, false);
+			m_propertyTable.SetDefault("IntegerPropertyA", 253, PropertyTable.SettingsGroup.LocalSettings);
+			m_propertyTable.SetDefault("IntegerPropertyA", -253, PropertyTable.SettingsGroup.GlobalSettings);
 			int gpia = m_propertyTable.GetValue<int>("IntegerPropertyA", PropertyTable.SettingsGroup.GlobalSettings);
 			Assert.That(gpia, Is.EqualTo(253), String.Format("Invalid value for {0} {1}.", "global", "IntegerPropertyA"));
 			int lpia = m_propertyTable.GetValue<int>("IntegerPropertyA", PropertyTable.SettingsGroup.LocalSettings);
 			Assert.That(lpia, Is.EqualTo(333), String.Format("Invalid value for {0} {1}.", "local", "IntegerPropertyA"));
 
-			m_propertyTable.SetDefault("StringPropertyA", "local_StringPropertyC_value", PropertyTable.SettingsGroup.LocalSettings, false);
-			m_propertyTable.SetDefault("StringPropertyA", "global_StringPropertyC_value", PropertyTable.SettingsGroup.GlobalSettings, false);
+			m_propertyTable.SetDefault("StringPropertyA", "local_StringPropertyC_value", PropertyTable.SettingsGroup.LocalSettings);
+			m_propertyTable.SetDefault("StringPropertyA", "global_StringPropertyC_value", PropertyTable.SettingsGroup.GlobalSettings);
 			string gpsa = m_propertyTable.GetValue("StringPropertyA", PropertyTable.SettingsGroup.GlobalSettings, "local_StringPropertyC_value");
 			Assert.That(gpsa, Is.EqualTo("global_StringPropertyA_value"), String.Format("Invalid value for {0} {1}.", "global", "StringPropertyA"));
 			string lpsa = m_propertyTable.GetValue<string>("StringPropertyA", PropertyTable.SettingsGroup.LocalSettings);
@@ -756,34 +758,34 @@ namespace XCore
 
 			// Make new properties. ------------------
 			//---- Global Settings
-			m_propertyTable.SetDefault("BooleanPropertyC", true, PropertyTable.SettingsGroup.GlobalSettings, true);
+			m_propertyTable.SetDefault("BooleanPropertyC", true, PropertyTable.SettingsGroup.GlobalSettings);
 			bool gpbc = m_propertyTable.GetBoolProperty("BooleanPropertyC", false, PropertyTable.SettingsGroup.GlobalSettings);
 			Assert.That(gpbc, Is.True, String.Format("Invalid value for {0} {1}.", "global", "BooleanPropertyC"));
 
-			m_propertyTable.SetDefault("IntegerPropertyC", 352, PropertyTable.SettingsGroup.GlobalSettings, true);
+			m_propertyTable.SetDefault("IntegerPropertyC", 352, PropertyTable.SettingsGroup.GlobalSettings);
 			int gpic = m_propertyTable.GetIntProperty("IntegerPropertyC", -352, PropertyTable.SettingsGroup.GlobalSettings);
 			Assert.That(gpic, Is.EqualTo(352), String.Format("Invalid value for {0} {1}.", "global", "IntegerPropertyC"));
 
-			m_propertyTable.SetDefault("StringPropertyC", "global_StringPropertyC_value", PropertyTable.SettingsGroup.GlobalSettings, true);
+			m_propertyTable.SetDefault("StringPropertyC", "global_StringPropertyC_value", PropertyTable.SettingsGroup.GlobalSettings);
 			string gpsc = m_propertyTable.GetStringProperty("StringPropertyC", "local_StringPropertyC_value", PropertyTable.SettingsGroup.GlobalSettings);
 			Assert.That(gpsc, Is.EqualTo("global_StringPropertyC_value"), String.Format("Invalid value for {0} {1}.", "global", "StringPropertyC"));
 
 			//---- Local Settings
-			m_propertyTable.SetDefault("BooleanPropertyC", false, PropertyTable.SettingsGroup.LocalSettings, false);
+			m_propertyTable.SetDefault("BooleanPropertyC", false, PropertyTable.SettingsGroup.LocalSettings);
 			bool lpbc = m_propertyTable.GetBoolProperty("BooleanPropertyC", true, PropertyTable.SettingsGroup.LocalSettings);
 			Assert.That(lpbc, Is.False, String.Format("Invalid value for {0} {1}.", "local", "BooleanPropertyC"));
 
-			m_propertyTable.SetDefault("IntegerPropertyC", 111, PropertyTable.SettingsGroup.LocalSettings, false);
+			m_propertyTable.SetDefault("IntegerPropertyC", 111, PropertyTable.SettingsGroup.LocalSettings);
 			int lpic = m_propertyTable.GetIntProperty("IntegerPropertyC", -111, PropertyTable.SettingsGroup.LocalSettings);
 			Assert.That(lpic, Is.EqualTo(111), String.Format("Invalid value for {0} {1}.", "local", "IntegerPropertyC"));
 
-			m_propertyTable.SetDefault("StringPropertyC", "local_StringPropertyC_value", PropertyTable.SettingsGroup.LocalSettings, false);
+			m_propertyTable.SetDefault("StringPropertyC", "local_StringPropertyC_value", PropertyTable.SettingsGroup.LocalSettings);
 			string lpsc = m_propertyTable.GetStringProperty("StringPropertyC", "local_StringPropertyC_value", PropertyTable.SettingsGroup.LocalSettings);
 			Assert.That(lpsc, Is.EqualTo("local_StringPropertyC_value"), String.Format("Invalid value for {0} {1}.", "local", "StringPropertyC"));
 
 			object nullObject;
 			// Set best setting on unique globals.
-			m_propertyTable.SetDefault("BestBooleanPropertyA", false, PropertyTable.SettingsGroup.BestSettings, false);
+			m_propertyTable.SetDefault("BestBooleanPropertyA", false, PropertyTable.SettingsGroup.BestSettings);
 			bool ubpba = m_propertyTable.GetValue<bool>("BestBooleanPropertyA", PropertyTable.SettingsGroup.BestSettings);
 			Assert.That(ubpba, Is.True, String.Format("Invalid value for {0} {1}.", "best", "BestBooleanPropertyA"));
 			bool ugpba = m_propertyTable.GetValue<bool>("BestBooleanPropertyA", PropertyTable.SettingsGroup.GlobalSettings);
@@ -791,7 +793,7 @@ namespace XCore
 			nullObject = m_propertyTable.GetValue<object>("BestBooleanPropertyA", PropertyTable.SettingsGroup.LocalSettings);
 			Assert.That(nullObject, Is.Null, String.Format("Invalid value for {0} {1}.", "best", "BestBooleanPropertyA"));
 
-			m_propertyTable.SetDefault("BestIntegerPropertyA", 101, PropertyTable.SettingsGroup.BestSettings, false);
+			m_propertyTable.SetDefault("BestIntegerPropertyA", 101, PropertyTable.SettingsGroup.BestSettings);
 			int ubpia = m_propertyTable.GetValue<int>("BestIntegerPropertyA", PropertyTable.SettingsGroup.BestSettings);
 			Assert.That(ubpia, Is.EqualTo(-101), String.Format("Invalid value for {0} {1}.", "best", "BestIntegerPropertyA"));
 			int ugpia = m_propertyTable.GetValue<int>("BestIntegerPropertyA", PropertyTable.SettingsGroup.GlobalSettings);
@@ -799,7 +801,7 @@ namespace XCore
 			nullObject = m_propertyTable.GetValue<object>("BestIntegerPropertyA", PropertyTable.SettingsGroup.LocalSettings);
 			Assert.That(nullObject, Is.Null, String.Format("Invalid value for {0} {1}.", "best", "BestIntegerPropertyA"));
 
-			m_propertyTable.SetDefault("BestStringPropertyA", "best_BestStringPropertyA_value", PropertyTable.SettingsGroup.BestSettings, false);
+			m_propertyTable.SetDefault("BestStringPropertyA", "best_BestStringPropertyA_value", PropertyTable.SettingsGroup.BestSettings);
 			string ubpsa = m_propertyTable.GetValue<string>("BestStringPropertyA", PropertyTable.SettingsGroup.BestSettings);
 			Assert.That(ubpsa, Is.EqualTo("global_BestStringPropertyA_value"), String.Format("Invalid value for {0} {1}.", "best", "BestStringPropertyA"));
 			string ugpsa = m_propertyTable.GetValue<string>("BestStringPropertyA", PropertyTable.SettingsGroup.GlobalSettings);
@@ -808,7 +810,7 @@ namespace XCore
 			Assert.That(nullObject, Is.Null, String.Format("Invalid value for {0} {1}.", "best", "BestStringPropertyA"));
 
 			// Set best setting on unique locals
-			m_propertyTable.SetDefault("BestBooleanPropertyB", true, PropertyTable.SettingsGroup.BestSettings, false);
+			m_propertyTable.SetDefault("BestBooleanPropertyB", true, PropertyTable.SettingsGroup.BestSettings);
 			ubpba = m_propertyTable.GetValue<bool>("BestBooleanPropertyB", PropertyTable.SettingsGroup.BestSettings);
 			Assert.That(ubpba, Is.False, String.Format("Invalid value for {0} {1}.", "best", "BestBooleanPropertyB"));
 			bool ulpba = m_propertyTable.GetValue<bool>("BestBooleanPropertyB", PropertyTable.SettingsGroup.LocalSettings);
@@ -816,7 +818,7 @@ namespace XCore
 			nullObject = m_propertyTable.GetValue<object>("BestBooleanPropertyB", PropertyTable.SettingsGroup.GlobalSettings);
 			Assert.That(nullObject, Is.Null, String.Format("Invalid value for {0} {1}.", "best", "BestBooleanPropertyB"));
 
-			m_propertyTable.SetDefault("BestIntegerPropertyB", 586, PropertyTable.SettingsGroup.BestSettings, false);
+			m_propertyTable.SetDefault("BestIntegerPropertyB", 586, PropertyTable.SettingsGroup.BestSettings);
 			ubpia = m_propertyTable.GetValue<int>("BestIntegerPropertyB", PropertyTable.SettingsGroup.BestSettings);
 			Assert.That(ubpia, Is.EqualTo(-586), String.Format("Invalid value for {0} {1}.", "best", "BestIntegerPropertyB"));
 			int ulpia = m_propertyTable.GetValue<int>("BestIntegerPropertyB", PropertyTable.SettingsGroup.LocalSettings);
@@ -824,7 +826,7 @@ namespace XCore
 			nullObject = m_propertyTable.GetValue<object>("BestIntegerPropertyB", PropertyTable.SettingsGroup.GlobalSettings);
 			Assert.That(nullObject, Is.Null, String.Format("Invalid value for {0} {1}.", "best", "BestIntegerPropertyB"));
 
-			m_propertyTable.SetDefault("BestStringPropertyB", "best_BestStringPropertyB_value", PropertyTable.SettingsGroup.BestSettings, false);
+			m_propertyTable.SetDefault("BestStringPropertyB", "best_BestStringPropertyB_value", PropertyTable.SettingsGroup.BestSettings);
 			ubpsa = m_propertyTable.GetValue<string>("BestStringPropertyB", PropertyTable.SettingsGroup.BestSettings);
 			Assert.That(ubpsa, Is.EqualTo("local_BestStringPropertyB_value"), String.Format("Invalid value for {0} {1}.", "best", "BestStringPropertyB"));
 			string ulpsa = m_propertyTable.GetValue<string>("BestStringPropertyB", PropertyTable.SettingsGroup.LocalSettings);
@@ -833,7 +835,7 @@ namespace XCore
 			Assert.That(nullObject, Is.Null, String.Format("Invalid value for {0} {1}.", "best", "BestStringPropertyB"));
 
 			// Make new best (global) properties
-			m_propertyTable.SetDefault("BestBooleanPropertyC", false, false);
+			m_propertyTable.SetDefault("BestBooleanPropertyC", false);
 			ugpba = m_propertyTable.GetValue<bool>("BestBooleanPropertyC");
 			Assert.That(ugpba, Is.False, String.Format("Invalid value for {0} {1}.", "best", "BestBooleanPropertyC"));
 			ugpba = m_propertyTable.GetValue<bool>("BestBooleanPropertyC", PropertyTable.SettingsGroup.GlobalSettings);
@@ -841,7 +843,7 @@ namespace XCore
 			nullObject = m_propertyTable.GetValue<object>("BestBooleanPropertyC", PropertyTable.SettingsGroup.LocalSettings);
 			Assert.That(nullObject, Is.Null, String.Format("Invalid value for {0} {1}.", "local", "BestBooleanPropertyC"));
 
-			m_propertyTable.SetDefault("BestIntegerPropertyC", -818, false);
+			m_propertyTable.SetDefault("BestIntegerPropertyC", -818);
 			ugpia = m_propertyTable.GetValue<int>("BestIntegerPropertyC");
 			Assert.That(ugpia, Is.EqualTo(-818), String.Format("Invalid value for {0} {1}.", "best", "BestIntegerPropertyC"));
 			ugpia = m_propertyTable.GetValue<int>("BestIntegerPropertyC", PropertyTable.SettingsGroup.GlobalSettings);
@@ -849,13 +851,74 @@ namespace XCore
 			nullObject = m_propertyTable.GetValue<object>("BestIntegerPropertyC", PropertyTable.SettingsGroup.LocalSettings);
 			Assert.That(nullObject, Is.Null, String.Format("Invalid value for {0} {1}.", "local", "BestIntegerPropertyC"));
 
-			m_propertyTable.SetDefault("BestStringPropertyC", "global_BestStringPropertyC_value", false);
+			m_propertyTable.SetDefault("BestStringPropertyC", "global_BestStringPropertyC_value");
 			ugpsa = m_propertyTable.GetValue<string>("BestStringPropertyC");
 			Assert.That(ugpsa, Is.EqualTo("global_BestStringPropertyC_value"), String.Format("Invalid value for {0} {1}.", "best", "BestStringPropertyC"));
 			ugpsa = m_propertyTable.GetValue<string>("BestStringPropertyC", PropertyTable.SettingsGroup.GlobalSettings);
 			Assert.That(ugpsa, Is.EqualTo("global_BestStringPropertyC_value"), String.Format("Invalid value for {0} {1}.", "best", "BestStringPropertyC"));
 			nullObject = m_propertyTable.GetValue<object>("BestStringPropertyA", PropertyTable.SettingsGroup.LocalSettings);
 			Assert.That(nullObject, Is.Null, String.Format("Invalid value for {0} {1}.", "local", "BestStringPropertyA"));
+		}
+
+		/// <summary>
+		/// A read with a default and SetDefault store the value for an absent or null-valued key
+		/// and
+		/// deliver no OnPropertyChanged; a SetProperty with the flag still does.
+		/// </summary>
+		[Test]
+		public void GetWithDefaultAndSetDefault_StoreWithoutBroadcast()
+		{
+			var spy = new PropertyChangeSpy();
+			m_mediator.AddColleague(spy);
+			try
+			{
+				Assert.That(m_mediator.ProcessMessages, Is.True);
+				m_propertyTable.SetProperty("ReadNullValued", null, false);
+				Assert.That(m_propertyTable.GetStringProperty("ReadNullValued", "filled"), Is.EqualTo("filled"));
+				Assert.That(m_propertyTable.GetBoolProperty("ReadBool", true), Is.True);
+				Assert.That(m_propertyTable.GetIntProperty("ReadInt", 7), Is.EqualTo(7));
+				Assert.That(m_propertyTable.GetStringProperty("ReadString", "s"), Is.EqualTo("s"));
+				Assert.That(m_propertyTable.GetStringProperty("ReadLocalString", "ls",
+					PropertyTable.SettingsGroup.LocalSettings), Is.EqualTo("ls"));
+				Assert.That(m_propertyTable.GetValue("ReadGeneric", 3.5), Is.EqualTo(3.5));
+				m_propertyTable.SetDefault("DefaultBest", "d");
+				m_propertyTable.SetDefault("DefaultLocal", "dl", PropertyTable.SettingsGroup.LocalSettings);
+				DrainMediator();
+				Assert.That(spy.Names, Is.Empty);
+				Assert.That(m_propertyTable.GetValue<string>("ReadNullValued"), Is.EqualTo("filled"));
+				foreach (var name in new[] { "ReadBool", "ReadInt", "ReadString", "ReadGeneric", "DefaultBest" })
+					Assert.That(m_propertyTable.PropertyExists(name), Is.True, name);
+				foreach (var name in new[] { "ReadLocalString", "DefaultLocal" })
+					Assert.That(m_propertyTable.PropertyExists(name, PropertyTable.SettingsGroup.LocalSettings), Is.True, name);
+
+				m_propertyTable.SetProperty("ReadBool", false, true);
+				DrainMediator();
+				Assert.That(spy.Names, Is.EqualTo(new[] { "ReadBool" }));
+			}
+			finally
+			{
+				m_mediator.RemoveColleague(spy);
+			}
+		}
+
+		private void DrainMediator()
+		{
+			for (var i = 0; m_mediator.JobItems > 0; i++)
+			{
+				Assert.That(i, Is.LessThan(100), "Mediator queue did not drain");
+				m_mediator.ProcessItem();
+			}
+		}
+
+		/// <summary>Records every OnPropertyChanged name the Mediator delivers.</summary>
+		private sealed class PropertyChangeSpy : IxCoreColleague
+		{
+			public List<string> Names { get; } = new List<string>();
+			public void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters) { }
+			public IxCoreColleague[] GetMessageTargets() => new IxCoreColleague[] { this };
+			public bool ShouldNotCall => false;
+			public int Priority => (int)ColleaguePriority.Medium;
+			public void OnPropertyChanged(string name) => Names.Add(name);
 		}
 
 		[Test]
