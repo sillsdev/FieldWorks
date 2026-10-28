@@ -172,6 +172,7 @@ namespace SIL.FieldWorks.XWorks
 		// adds the corresponding TestCase row here.
 		[TestCase("notebookEdit")]
 		[TestCase("posEdit")]
+		[TestCase("ProdRestrictEdit")]
 		public void RegisteredRecordEditTools_ResolveToAvalonia_WhenUIModeIsNew(string toolValue)
 		{
 			m_propertyTable.SetProperty("UIMode", "New", true);
