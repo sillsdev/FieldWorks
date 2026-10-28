@@ -10,9 +10,11 @@ using System.Reflection;
 using System.Xml;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.Controls;
+using SIL.FieldWorks.Common.DetailRules;
 using SIL.FieldWorks.Common.FwAvalonia.Detail;
 using SIL.FieldWorks.Common.FwAvalonia.ViewDefinition;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.FdoUi;
 using SIL.LCModel;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.DomainServices;
@@ -32,6 +34,7 @@ namespace SIL.FieldWorks.XWorks
 	public class LexiconMenuExecutionTests : XWorksAppTestBase
 	{
 		private const string LexemeFormMenuId = "mnuDataTree-LexemeForm";
+		private const string VariantFormMenuId = "mnuDataTree-VariantForm";
 		private const string VariantFormContextMenuId = "mnuDataTree-VariantFormContext";
 
 		private PropertyTable m_propertyTable;
@@ -42,6 +45,12 @@ namespace SIL.FieldWorks.XWorks
 		private IMoStemAllomorph m_allomorph;
 		private ILexEntry m_variant;
 		private ILexEntry m_affix;
+		private IMoAffixAllomorph m_affixAllomorph;
+		private ILexEntry m_component;
+		private ILexEntry m_spare;
+		private ILexReference m_synonymSet;
+		private ILexReference m_antonymPair;
+		private ILexReference m_partOfWhole;
 		private SIL.LCModel.IText m_text;
 		private ILexExampleSentence m_example;
 		private ICmTranslation m_translation;
@@ -430,8 +439,8 @@ namespace SIL.FieldWorks.XWorks
 
 			InvokeLabelMenuItem(SectionRow(m_affix, "mnuDataTree-AlternateForms"), "Insert Affix Process");
 
-			Assert.That(m_affix.AlternateFormsOS, Has.Count.EqualTo(1));
-			Assert.That(m_affix.AlternateFormsOS[0], Is.InstanceOf<IMoAffixProcess>());
+			Assert.That(m_affix.AlternateFormsOS, Has.Count.EqualTo(2), "after the fixture's affix allomorph");
+			Assert.That(m_affix.AlternateFormsOS[1], Is.InstanceOf<IMoAffixProcess>());
 		}
 
 		[Test]
@@ -602,6 +611,251 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(m_picture.PictureFileRA.InternalPath, Does.EndWith("command-picture.jpg"), "one Undo restores the file");
 		}
 
+		[Test]
+		public void MergeAllomorph_IntoThePickedSurvivor_InOneUndoableStep()
+		{
+			var lexemeForm = m_entry.LexemeFormOA;
+			IReadOnlyList<DummyCmObject> offered = null;
+			m_view.MergeSurvivor = candidates =>
+			{
+				offered = candidates;
+				return lexemeForm.Hvo;
+			};
+
+			InvokeLabelMenuItem(FormRow(m_entry, m_allomorph), "Merge Allomorph into...");
+
+			Assert.That(offered.Select(c => c.Hvo), Is.EqualTo(new[] { lexemeForm.Hvo }), "the lexeme form is the one candidate");
+			Assert.That(m_allomorph.IsValidObject, Is.False, "the allomorph merged away");
+			Assert.That(m_entry.AlternateFormsOS, Is.Empty);
+			Assert.That(m_entry.LexemeFormOA, Is.SameAs(lexemeForm));
+			Assert.That(Cache.ActionHandlerAccessor.CanUndo(), Is.True);
+			Cache.ActionHandlerAccessor.Undo();
+			Assert.That(m_entry.AlternateFormsOS, Has.Count.EqualTo(1), "one Undo brings the allomorph back");
+		}
+
+		[Test]
+		public void MergeAllomorph_LeavesTheModelAlone_WhenTheUserCancels()
+		{
+			m_view.MergeSurvivor = candidates => 0;
+
+			InvokeLabelMenuItem(FormRow(m_entry, m_allomorph), "Merge Allomorph into...");
+
+			Assert.That(m_allomorph.IsValidObject, Is.True);
+			Assert.That(m_entry.AlternateFormsOS, Is.EqualTo(new IMoForm[] { m_allomorph }));
+		}
+
+		[Test]
+		public void DeleteVariant_DeletesTheVariantEntry_WhenTheUserConfirms()
+		{
+			var row = VariantFormRow();
+			ICmObject asked = null;
+			m_view.DeleteConfirmation = ui =>
+			{
+				asked = ui.Object;
+				return true;
+			};
+
+			InvokeLabelMenuItem(row, "Delete Variant");
+
+			Assert.That(asked, Is.SameAs(m_variant), "the confirmation names the variant entry, not its form");
+			Assert.That(m_variant.IsValidObject, Is.False);
+			Assert.That(Rows(m_entry).Any(f => f.MenuId == VariantFormMenuId), Is.False, "the recomposed view has no variant row");
+			Cache.ActionHandlerAccessor.Undo();
+			Assert.That(m_entry.VariantFormEntryBackRefs.Count(), Is.EqualTo(1), "one Undo brings the variant back");
+		}
+
+		[Test]
+		public void DeleteReference_UnlinksTheVariant_AndKeepsTheEntry()
+		{
+			var row = VariantFormRow();
+			var reference = m_variant.EntryRefsOS[0];
+
+			InvokeLabelMenuItem(row, "Delete Reference");
+
+			Assert.That(m_variant.IsValidObject, Is.True, "the variant entry stays");
+			Assert.That(reference.IsValidObject, Is.False, "its ref to the shown entry is gone");
+			Assert.That(m_variant.EntryRefsOS, Is.Empty);
+			Assert.That(Rows(m_entry).Any(f => f.MenuId == VariantFormMenuId), Is.False, "the recomposed view has no variant row");
+			Assert.That(Cache.ActionHandlerAccessor.GetUndoText(), Is.EqualTo("Undo Delete Reference"));
+			Cache.ActionHandlerAccessor.Undo();
+			Assert.That(m_variant.EntryRefsOS[0].ComponentLexemesRS.ToList(), Is.EqualTo(new[] { m_entry }));
+		}
+
+		// A variant linked twice to the shown entry shows two groups of rows; the ref deleted
+		// is the one whose Variant Info rows follow the clicked Form row.
+		[Test]
+		public void DeleteReference_OnAVariantLinkedTwice_RemovesTheRefOfTheClickedGroup()
+		{
+			var first = m_variant.EntryRefsOS[0];
+			ILexEntryRef second = null;
+			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
+			{
+				second = Cache.ServiceLocator.GetInstance<ILexEntryRefFactory>().Create();
+				m_variant.EntryRefsOS.Add(second);
+				second.RefType = LexEntryRefTags.krtVariant;
+				second.ComponentLexemesRS.Add(m_entry);
+				second.VariantEntryTypesRS.Add(Cache.ServiceLocator.GetInstance<ILexEntryTypeRepository>()
+					.GetObject(LexEntryTypeTags.kguidLexTypSpellingVar));
+			});
+			ShowEntry(m_entry);
+			// Both Form rows share one id, so the clicked row must be the shown model's own.
+			var rows = ShownRows();
+			var formRows = rows.Where(f => f.MenuId == VariantFormMenuId && f.ObjectHvo == m_variant.LexemeFormOA.Hvo).ToList();
+			Assert.That(formRows, Has.Count.EqualTo(2), "precondition: one Form row per ref");
+			var clicked = formRows[1];
+			var expected = rows.Skip(rows.IndexOf(clicked) + 1)
+				.Select(f => f.ObjectHvo == first.Hvo ? first : f.ObjectHvo == second.Hvo ? second : null)
+				.First(r => r != null);
+
+			InvokeLabelMenuItem(clicked, "Delete Reference");
+
+			Assert.That(expected.IsValidObject, Is.False, "the clicked group's ref is gone");
+			Assert.That(m_variant.EntryRefsOS, Has.Count.EqualTo(1), "the other ref stays");
+		}
+
+		[Test]
+		public void SwapAllomorph_MakesTheRowsFormTheLexemeForm_InOneUndoableStep()
+		{
+			var oldLexemeForm = m_entry.LexemeFormOA;
+
+			InvokeLabelMenuItem(FormRow(m_entry, m_allomorph), "Swap Allomorph with Lexeme Form");
+
+			Assert.That(m_entry.LexemeFormOA, Is.SameAs(m_allomorph));
+			Assert.That(m_entry.AlternateFormsOS, Is.EqualTo(new IMoForm[] { oldLexemeForm }));
+			Assert.That(LexemeFormRow(m_entry).ObjectHvo, Is.EqualTo(m_allomorph.Hvo), "the recomposed Lexeme Form row shows it");
+			Cache.ActionHandlerAccessor.Undo();
+			Assert.That(m_entry.LexemeFormOA, Is.SameAs(oldLexemeForm), "one Undo swaps them back");
+		}
+
+		[Test]
+		public void ConvertAllomorph_ReplacesTheRowsForm_AndFocusesTheNewOne()
+		{
+			ShowEntry(m_affix);
+			m_view.ConversionLossAccepted = warning => throw new InvalidOperationException("nothing is lost: no question");
+
+			InvokeLabelMenuItem(FormRow(m_affix, m_affixAllomorph), "Convert to Affix Process");
+
+			Assert.That(m_affix.AlternateFormsOS, Has.Count.EqualTo(1));
+			var converted = m_affix.AlternateFormsOS[0];
+			Assert.That(converted, Is.InstanceOf<IMoAffixProcess>());
+			Assert.That(converted.Form.get_String(Cache.DefaultVernWs).Text, Is.EqualTo("in"), "the form text carries over");
+			Assert.That(m_affix.LexemeFormOA, Is.InstanceOf<IMoAffixAllomorph>(), "the lexeme form is untouched");
+			Assert.That(Rows(m_affix).Single(f => f.ObjectHvo == converted.Hvo && f.Field == "Form").MenuId,
+				Is.EqualTo("mnuDataTree-AffixProcess"), "the recomposed row binds the process menu");
+		}
+
+		[Test]
+		public void DeleteRelation_RemovesTheSenseFromItsSynonyms_WithTheNoteOnTheOthers()
+		{
+			string note = null;
+			m_view.RelationDeleteConfirmation = (ui, tss) =>
+			{
+				Assert.That(ui.Object, Is.SameAs(m_synonymSet), "the confirmation names the relation");
+				note = tss?.Text;
+				return true;
+			};
+
+			InvokeLabelMenuItem(RelationRow(m_synonymSet), "Delete Relation");
+
+			Assert.That(note, Does.Contain("Synonyms"), "the other two stay related");
+			Assert.That(m_synonymSet.IsValidObject, Is.True);
+			Assert.That(m_synonymSet.TargetsRS, Has.Count.EqualTo(2));
+			Assert.That(m_synonymSet.TargetsRS.Contains(m_sense1), Is.False);
+			Assert.That(Rows(m_entry).Any(f => f.ObjectHvo == m_synonymSet.Hvo), Is.False, "the recomposed view has no row for it");
+			Assert.That(Cache.ActionHandlerAccessor.GetUndoText(), Is.EqualTo("Undo Delete Relation"));
+			Cache.ActionHandlerAccessor.Undo();
+			Assert.That(m_synonymSet.TargetsRS.Contains(m_sense1), Is.True);
+		}
+
+		[Test]
+		public void DeleteRelation_DeletesAnAntonymPair_AndDoesNothingWhenDeclined()
+		{
+			var notes = new List<string>();
+			m_view.RelationDeleteConfirmation = (ui, tss) =>
+			{
+				notes.Add(tss?.Text);
+				return false;
+			};
+			InvokeLabelMenuItem(RelationRow(m_antonymPair), "Delete Relation");
+			Assert.That(m_antonymPair.IsValidObject, Is.True, "declined");
+			Assert.That(notes, Is.EqualTo(new string[] { null }), "a pair adds no note");
+
+			m_view.RelationDeleteConfirmation = (ui, tss) => true;
+			InvokeLabelMenuItem(RelationRow(m_antonymPair), "Delete Relation");
+			Assert.That(m_antonymPair.IsValidObject, Is.False, "a pair goes whole");
+		}
+
+		[Test]
+		public void AddReference_AddsTheChosenSense_ThroughTheSenseChooser()
+		{
+			LexicalRelationChooser asked = null;
+			var chosen = m_spare.SensesOS[0];
+			m_view.RelationTargetChosen = chooser =>
+			{
+				asked = chooser;
+				return chosen;
+			};
+
+			InvokeLabelMenuItem(RelationRow(m_synonymSet), "Add Reference");
+
+			Assert.That(asked.UseLinkDialog && asked.SensesOnly, Is.True, "a sense collection picks among senses");
+			Assert.That(asked.IsReplace, Is.False);
+			Assert.That(m_synonymSet.TargetsRS.Last(), Is.SameAs(chosen));
+			Assert.That(Cache.ActionHandlerAccessor.GetUndoText(), Is.EqualTo("Undo Add Reference"));
+		}
+
+		[Test]
+		public void ReplaceReference_OnAPair_ReplacesThePartner_AndOnAPart_MovesItUnderTheChosenWhole()
+		{
+			m_view.RelationTargetChosen = chooser =>
+			{
+				Assert.That(chooser.IsReplace, Is.True);
+				Assert.That(chooser.UseLinkDialog, Is.False, "an entry type picks among entries");
+				return m_spare;
+			};
+
+			InvokeLabelMenuItem(RelationRow(m_antonymPair), "Replace Reference");
+			Assert.That(m_antonymPair.TargetsRS.ToList(), Is.EqualTo(new ICmObject[] { m_entry, m_spare }));
+			Assert.That(Cache.ActionHandlerAccessor.GetUndoText(), Is.EqualTo("Undo Replace Reference"));
+
+			InvokeLabelMenuItem(RelationRow(m_partOfWhole), "Replace Reference");
+			Assert.That(m_partOfWhole.TargetsRS.ToList(), Is.EqualTo(new ICmObject[] { m_spare, m_entry }),
+				"the only part keeps its relation, now under the chosen whole");
+			Assert.That(Rows(m_entry).Single(f => f.ObjectHvo == m_partOfWhole.Hvo).Items.Single().Name,
+				Does.Contain("spare"), "the recomposed row shows the new whole");
+		}
+
+		// The host composes with the tool's slice filter and the view overrides; the relation
+		// rows must survive that path too, not only a bare compose.
+		[Test]
+		public void RelationRows_AreShownByTheHost_OnTheEntryAndItsSense()
+		{
+			var shown = ShownRows();
+			Assert.That(shown.Any(f => f.ObjectHvo == m_antonymPair.Hvo), Is.True, "the entry's pair row");
+			Assert.That(shown.Any(f => f.ObjectHvo == m_partOfWhole.Hvo), Is.True, "the entry's whole row");
+			Assert.That(shown.Any(f => f.ObjectHvo == m_synonymSet.Hvo), Is.True, "the sense's synonyms row");
+		}
+
+		[Test]
+		public void EditReferenceDetails_SetsTheNameAndComment_InOneUndoableStep()
+		{
+			m_view.RelationDetailsEdited = relation =>
+			{
+				Assert.That(relation, Is.SameAs(m_synonymSet));
+				return new RecordEditView.RelationDetails { Name = "body parts", Comment = "the usual" };
+			};
+
+			InvokeLabelMenuItem(RelationRow(m_synonymSet), "Edit Reference Set Details");
+
+			Assert.That(m_synonymSet.Name.AnalysisDefaultWritingSystem.Text, Is.EqualTo("body parts"));
+			Assert.That(m_synonymSet.Comment.AnalysisDefaultWritingSystem.Text, Is.EqualTo("the usual"));
+			Assert.That(Cache.ActionHandlerAccessor.GetUndoText(), Is.EqualTo("Undo Edit Reference Set Details"));
+
+			m_view.RelationDetailsEdited = relation => null;
+			InvokeLabelMenuItem(RelationRow(m_synonymSet), "Edit Reference Set Details");
+			Assert.That(m_synonymSet.Name.AnalysisDefaultWritingSystem.Text, Is.EqualTo("body parts"), "cancelled: unchanged");
+		}
+
 		// Builds the row's label menu as the host does and runs the named item's own Execute.
 		private void InvokeLabelMenuItem(DetailField row, string label)
 			=> Invoke(RecordEditView.ComposeSliceMenuIds(row.MenuId, row.IsMultiStringRow).ToArray(), row,
@@ -648,10 +902,29 @@ namespace SIL.FieldWorks.XWorks
 
 		private IReadOnlyList<DetailField> Rows(ILexEntry entry) => DetailComposer.Compose(entry, Cache).Model.Fields;
 
+		// The rows of the model the host shows now, the instances its menus are asked about.
+		private List<DetailField> ShownRows()
+		{
+			var hostField = typeof(RecordEditView).GetField("m_avaloniaEntryForm", BindingFlags.Instance | BindingFlags.NonPublic);
+			Assert.That(hostField, Is.Not.Null, "Missing private field: m_avaloniaEntryForm");
+			var host = (SIL.FieldWorks.Common.FwAvalonia.DetailHostControl)hostField.GetValue(m_view);
+			return host.ShownDetail.Fields.ToList();
+		}
+
 		private DetailField TranslationRow()
 			=> Rows(m_entry).Single(f => f.Field == "Translation" && f.ObjectHvo == m_translation.Hvo);
 
 		private DetailField LexemeFormRow(ILexEntry entry) => Rows(entry).Single(f => f.MenuId == LexemeFormMenuId);
+
+		// The Form row of one of the entry's allomorphs.
+		private DetailField FormRow(ILexEntry entry, IMoForm form)
+			=> Rows(entry).Single(f => f.ObjectHvo == form.Hvo && f.Field == "Form");
+
+		// The shown entry's row for its variant's form.
+		private DetailField VariantFormRow()
+			=> Rows(m_entry).Single(f => f.MenuId == VariantFormMenuId && f.ObjectHvo == m_variant.LexemeFormOA.Hvo);
+
+		private DetailField RelationRow(ILexReference relation) => Rows(m_entry).Single(f => f.ObjectHvo == relation.Hvo);
 
 		// The entry's row binding the given section menu.
 		private DetailField SectionRow(ILexEntry entry, string menuId)
@@ -664,9 +937,9 @@ namespace SIL.FieldWorks.XWorks
 		private DetailField HeaderRowOf(ICmObject obj)
 			=> Rows(m_entry).First(f => f.ObjectHvo == obj.Hvo && f.Kind == DetailFieldKind.Header && f.HotlinksId != null);
 
-		// A complex form that is also two variants, with an allomorph, two etymologies, two
-		// pronunciations and two senses, the first with a translated example, two notes and a
-		// picture; a suffix; a text.
+		// A complex form and double variant with an allomorph, an antonym, a whole and two
+		// senses (the first with example, notes, picture, synonyms); a suffix with an
+		// allomorph; a spare entry; a text.
 		private void CreateTestEntry()
 		{
 			var stemMorphType = GetMorphTypeOrCreateOne("stem");
@@ -694,7 +967,7 @@ namespace SIL.FieldWorks.XWorks
 			m_translation = Cache.ServiceLocator.GetInstance<ICmTranslationFactory>().Create(m_example, type);
 			m_translation.Translation.set_String(Cache.DefaultAnalWs, TsStringUtils.MakeString("a house", Cache.DefaultAnalWs));
 
-			var component = AddLexeme(m_createdObjects, "part", stemMorphType, "part gloss", noun);
+			var component = m_component = AddLexeme(m_createdObjects, "part", stemMorphType, "part gloss", noun);
 			m_complexFormRef = Cache.ServiceLocator.GetInstance<ILexEntryRefFactory>().Create();
 			m_entry.EntryRefsOS.Add(m_complexFormRef);
 			m_complexFormRef.RefType = LexEntryRefTags.krtComplexForm;
@@ -735,9 +1008,35 @@ namespace SIL.FieldWorks.XWorks
 
 			m_affix = AddLexeme(m_createdObjects, "ing", GetMorphTypeOrCreateOne("suffix"), "suffix gloss", noun);
 			Assert.That(m_affix.LexemeFormOA, Is.InstanceOf<IMoAffixAllomorph>(), "precondition: a suffix entry has an affix form");
+			m_affixAllomorph = Cache.ServiceLocator.GetInstance<IMoAffixAllomorphFactory>().Create();
+			m_affix.AlternateFormsOS.Add(m_affixAllomorph);
+			m_affixAllomorph.Form.set_String(Cache.DefaultVernWs, TsStringUtils.MakeString("in", Cache.DefaultVernWs));
 
 			m_text = Cache.ServiceLocator.GetInstance<ITextFactory>().Create();
 			m_createdObjects.Add(m_text);
+
+			m_spare = AddLexeme(m_createdObjects, "spare", stemMorphType, "spare gloss", noun);
+			if (Cache.LangProject.LexDbOA.ReferencesOA == null)
+				Cache.LangProject.LexDbOA.ReferencesOA = Cache.ServiceLocator.GetInstance<ICmPossibilityListFactory>().Create();
+			m_synonymSet = AddRelation("Synonyms", LexRefTypeTags.MappingTypes.kmtSenseCollection,
+				m_sense1, component.SensesOS[0], m_variant.SensesOS[0]);
+			m_antonymPair = AddRelation("Antonym", LexRefTypeTags.MappingTypes.kmtEntryPair, m_entry, component);
+			m_partOfWhole = AddRelation("Whole", LexRefTypeTags.MappingTypes.kmtEntryTree, component, m_entry);
+		}
+
+		// A relation of a new type of the given mapping, over the targets in that order.
+		private ILexReference AddRelation(string typeName, LexRefTypeTags.MappingTypes mapping, params ICmObject[] targets)
+		{
+			var type = Cache.ServiceLocator.GetInstance<ILexRefTypeFactory>().Create();
+			Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.Add(type);
+			m_createdObjects.Add(type);
+			type.MappingType = (int)mapping;
+			type.Name.set_String(Cache.DefaultAnalWs, TsStringUtils.MakeString(typeName, Cache.DefaultAnalWs));
+			var relation = Cache.ServiceLocator.GetInstance<ILexReferenceFactory>().Create();
+			type.MembersOC.Add(relation);
+			foreach (var target in targets)
+				relation.TargetsRS.Add(target);
+			return relation;
 		}
 
 		private void LoadRecordEditView(string toolValue)

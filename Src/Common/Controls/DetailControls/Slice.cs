@@ -2320,24 +2320,9 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		public virtual void HandleDeleteReferenceCommand(Command cmd)
 		{
 			CheckDisposed();
-			if (NextSlice != null && NextSlice.Object != null)
+			if (NextSlice?.Object is ILexEntryRef ler && ContainingDataTree.Root is ILexEntry root)
 			{
-				var ler = NextSlice.Object as ILexEntryRef;
-				if (ler != null)
-				{
-					UndoableUnitOfWorkHelper.Do(DetailControlsStrings.ksUndoDeleteRef, DetailControlsStrings.ksRedoDeleteRef, ler, () =>
-					{
-						ler.ComponentLexemesRS.Remove(ContainingDataTree.Root);
-						// probably not needed, but safe...
-						if (ler.PrimaryLexemesRS.Contains(ContainingDataTree.Root))
-							ler.PrimaryLexemesRS.Remove(ContainingDataTree.Root);
-
-						ILexEntry entry;
-						entry = (ILexEntry)m_cache.ServiceLocator.GetObject(ler.OwningEntry.Hvo);
-						if (entry.EntryRefsOS.Contains(ler))
-							entry.EntryRefsOS.Remove(ler);
-					});
-				}
+				VariantBackReferences.DeleteReference(root, ler);
 			}
 		}
 
@@ -2385,38 +2370,9 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			}
 		}
 
-		private bool FromVariantBackRefField
-		{
-			get
-			{
-				var rootObj = ContainingDataTree.Root;
-				int clidRoot = rootObj.ClassID;
-				return clidRoot == LexEntryTags.kClassId &&
-					Object != null && Object != rootObj &&
-					Object.Owner != null && Object.Owner != rootObj &&
-					(Object.ClassID == clidRoot || Object.Owner.ClassID == clidRoot);
-			}
-		}
+		private bool FromVariantBackRefField => BackRefObject != null;
 
-		private ICmObject BackRefObject
-		{
-			get
-			{
-				var rootObj = ContainingDataTree.Root;
-				int clidRoot = rootObj.ClassID;
-				if (clidRoot == LexEntryTags.kClassId &&
-					Object != null && Object != rootObj &&
-					Object.Owner != null && Object.Owner != rootObj)
-				{
-					if (Object.ClassID == clidRoot)
-						return Object;
-
-					if (Object.Owner.ClassID == clidRoot)
-						return Object.Owner;
-				}
-				return null;
-			}
-		}
+		private ICmObject BackRefObject => VariantBackReferences.BackReferencedEntry(ContainingDataTree.Root, Object);
 
 		/// <summary>
 		/// is it possible to do a deletion menu command on this slice right now?
@@ -2435,53 +2391,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		{
 			CheckDisposed();
 
-			var obj = GetObjectForMenusToOperateOn();
-			if (obj == null)
-				return false;
-
-			var owner = obj.Owner;
-			int flid = obj.OwningFlid;
-			// No support yet for atomic properties.
-			if (!Cache.IsVectorProperty(flid))
-				return false;
-
-			// Special handling for allomorphs, as they can be merged into the lexeme form.
-			int clsid = obj.ClassID;
-			if (flid == LexEntryTags.kflidAlternateForms)
-			{
-				// We can merge an alternate with the lexeme form,
-				// if it is the same class.
-				if (clsid == ((ILexEntry) owner).LexemeFormOA.ClassID)
-					return true;
-			}
-			// A subsense can always merge into its owning sense.
-			if (flid == LexSenseTags.kflidSenses)
-				return true;
-
-			int vectorSize = Cache.DomainDataByFlid.get_VecSize(owner.Hvo, flid);
-			if (owner.IsFieldRequired(flid)
-				&& vectorSize < 2)
-				return false;
-
-			// Check now to see if there are any other objects of the same class in the flid,
-			// since only objects of the same class can be merged.
-			int[] contents;
-			int chvoMax = Cache.DomainDataByFlid.get_VecSize(owner.Hvo, flid);
-			using (ArrayPtr arrayPtr = MarshalEx.ArrayToNative<int>(chvoMax))
-			{
-				Cache.DomainDataByFlid.VecProp(owner.Hvo, flid, chvoMax, out chvoMax, arrayPtr);
-				contents = MarshalEx.NativeToArray<int>(arrayPtr, chvoMax);
-			}
-			foreach (int hvoInner in contents)
-			{
-				var innerObj = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvoInner);
-				if (innerObj != obj && clsid == innerObj.ClassID)
-				{
-					return true;
-				}
-			}
-
-			return false;
+			return DetailObjectMerge.CanMergeNow(GetObjectForMenusToOperateOn());
 		}
 
 		/// <summary></summary>

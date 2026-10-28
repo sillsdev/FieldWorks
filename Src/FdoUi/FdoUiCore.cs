@@ -1068,16 +1068,28 @@ namespace SIL.FieldWorks.FdoUi
 		/// </summary>
 		public bool ConfirmDelete()
 		{
+			return ConfirmDelete(null);
+		}
+
+		/// <summary>
+		/// Asks the user to confirm deleting the object, telling them when it cannot be
+		/// deleted, else showing <paramref name="note"/> under it; true when they confirm.
+		/// </summary>
+		/// <param name="note">What else the delete affects; null for nothing.</param>
+		public bool ConfirmDelete(ITsString note)
+		{
 			CheckDisposed();
 
 			var mainWindow = m_propertyTable.GetValue<Form>("window");
 			using (var dlg = new ConfirmDeleteObjectDlg(m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider")))
 			{
 				string cannotDeleteMsg;
-				if (CanDelete(out cannotDeleteMsg))
+				if (!CanDelete(out cannotDeleteMsg))
+					note = TsStringUtils.MakeString(cannotDeleteMsg, m_cache.DefaultUserWs);
+				if (note == null)
 					dlg.SetDlgInfo(this, m_cache, Mediator, m_propertyTable);
 				else
-					dlg.SetDlgInfo(this, m_cache, Mediator, m_propertyTable, TsStringUtils.MakeString(cannotDeleteMsg, m_cache.DefaultUserWs));
+					dlg.SetDlgInfo(this, m_cache, Mediator, m_propertyTable, note);
 				return DialogResult.Yes == dlg.ShowDialog(mainWindow);
 			}
 		}
@@ -1182,24 +1194,47 @@ namespace SIL.FieldWorks.FdoUi
 		{
 			CheckDisposed();
 
+			if (MergeUnderlyingObject(fLoseNoTextData, null) != 0)
+			{
+				// Refresh in case "Sense Number" was 0 in the target and non-0 in the source
+				// (LT-22155).
+				Publisher.Publish(new PublisherParameterObject(EventConstants.MasterRefresh, null, m_propertyTable.GetWindow()));
+			}
+		}
+
+		/// <summary>
+		/// Merges the object into the survivor <paramref name="chooseSurvivor"/> picks among
+		/// the sorted candidates <see cref="GetMergeinfo"/> lists; null asks the user with
+		/// <see cref="MergeObjectDlg"/>. A pick of 0 cancels.
+		/// </summary>
+		/// <returns>The survivor's hvo, or 0 when nothing was merged.</returns>
+		public int MergeUnderlyingObject(bool fLoseNoTextData, Func<IReadOnlyList<DummyCmObject>, int> chooseSurvivor)
+		{
+			CheckDisposed();
+
+			var wp = new WindowParams();
+			var mergeCandidates = new List<DummyCmObject>();
+			string guiControl, helpTopic;
+			DummyCmObject dObj = GetMergeinfo(wp, mergeCandidates, out guiControl, out helpTopic);
+			mergeCandidates.Sort();
+			var survivor = chooseSurvivor != null
+				? chooseSurvivor(mergeCandidates)
+				: ChooseSurvivorWithDialog(wp, dObj, mergeCandidates, guiControl, helpTopic);
+			if (survivor == 0)
+				return 0;
+			ReallyMergeUnderlyingObject(survivor, fLoseNoTextData);
+			return survivor;
+		}
+
+		private int ChooseSurvivorWithDialog(WindowParams wp, DummyCmObject dObj, List<DummyCmObject> mergeCandidates,
+			string guiControl, string helpTopic)
+		{
 			var mainWindow = m_propertyTable.GetValue<Form>("window");
 			using (new WaitCursor(mainWindow))
+			using (var dlg = new MergeObjectDlg(m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider")))
 			{
-				using (var dlg = new MergeObjectDlg(m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider")))
-				{
-					var wp = new WindowParams();
-					var mergeCandidates = new List<DummyCmObject>();
-					string guiControl, helpTopic;
-					DummyCmObject dObj = GetMergeinfo(wp, mergeCandidates, out guiControl, out helpTopic);
-					mergeCandidates.Sort();
-					dlg.SetDlgInfo(m_cache, m_mediator, m_propertyTable, wp, dObj, mergeCandidates, guiControl, helpTopic);
-					if (DialogResult.OK == dlg.ShowDialog(mainWindow))
-					{
-						ReallyMergeUnderlyingObject(dlg.Hvo, fLoseNoTextData);
-						// Refresh in case "Sense Number" was 0 in the target and non-0 in the source (LT-22155).
-						Publisher.Publish(new PublisherParameterObject(EventConstants.MasterRefresh, null, m_propertyTable.GetWindow()));
-					}
-				}
+				dlg.SetDlgInfo(m_cache, m_mediator, m_propertyTable, wp, dObj, mergeCandidates, guiControl, helpTopic);
+				return DialogResult.OK == dlg.ShowDialog(mainWindow) ? dlg.Hvo : 0;
 			}
 		}
 
@@ -2673,7 +2708,7 @@ namespace SIL.FieldWorks.FdoUi
 				}
 			}
 
-			if (le.LexemeFormOA.ClassID == Object.ClassID)
+			if (le.LexemeFormOA != null && le.LexemeFormOA.ClassID == Object.ClassID)
 			{
 				// Add the lexeme form.
 				mergeCandidates.Add(

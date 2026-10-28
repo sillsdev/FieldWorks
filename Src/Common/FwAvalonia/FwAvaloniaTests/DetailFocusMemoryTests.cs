@@ -135,6 +135,35 @@ namespace FwAvaloniaTests
 				"the new form's editor takes focus");
 		}
 
+		// A gesture replaced an object whose row sits far from where the user had scrolled (a
+		// merge into the lexeme form from an allomorph near the bottom): the focused row shows
+		// instead of the remembered offset.
+		[AvaloniaTest]
+		public void RequestedObjectFocus_ScrollsToTheObjectsRow_InsteadOfKeepingTheOffset()
+		{
+			var first = NewLongViewOfForm(8);
+			var window = new Window { Content = first, Width = 420, Height = 200 };
+			window.Show();
+			Dispatcher.UIThread.RunJobs();
+			FindScroller(first).Offset = new Avalonia.Vector(0, 400);
+			Dispatcher.UIThread.RunJobs();
+			Assert.That(FindScroller(first).Offset.Y, Is.EqualTo(400).Within(0.5), "precondition: scrolled well down");
+
+			first.RequestObjectFocusOnRebuild(9);
+			var memento = DetailFocusMemory.Capture(first);
+			var second = NewLongViewOfForm(9);
+			DetailFocusMemory.RestoreAfterLayout(second, memento);
+			window.Content = second;
+			Dispatcher.UIThread.RunJobs();
+			second.UpdateLayout();
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(FindEditor(second, "LexEntry/identity/#0@9.vern").IsFocused, Is.True, "the new form's editor takes focus");
+			// The editor, not the row, is brought into view: a few pixels of row padding stay
+			// above.
+			Assert.That(FindScroller(second).Offset.Y, Is.LessThan(10), "the view scrolled up to the editor's row");
+		}
+
 		// A gesture made from a header's hotlinks link added an object: the link survives the
 		// re-show and is remembered, but the object asked for takes focus over it.
 		[AvaloniaTest]
@@ -226,6 +255,21 @@ namespace FwAvaloniaTests
 				EditorClassification.Known, null, null, HostRouting.Product, values, null, null, objectHvo: 3));
 			return new DataTree(new DetailModel("LexEntry", "identity", fields, new List<ViewDiagnostic>()),
 				menuRequested: withHotlinks ? request => { } : (Action<DetailMenuRequest>)null);
+		}
+
+		// A long view whose first row shows the form with the given hvo; the rest show object 3.
+		private static DataTree NewLongViewOfForm(int formHvo)
+		{
+			var values = new List<DetailWsValue> { new DetailWsValue("vern", "casa") };
+			var fields = new List<DetailField>();
+			fields.Add(new DetailField("LexEntry/identity/#0@" + formHvo, "Lexeme Form", "Form", "vernacular", DetailFieldKind.Text,
+				EditorClassification.Known, null, null, HostRouting.Product, values, null, null, objectHvo: formHvo));
+			for (var i = 1; i < 60; i++)
+			{
+				fields.Add(new DetailField("LexEntry/identity/#" + i + "@3", "Field " + i, "Gloss", "analysis", DetailFieldKind.Text,
+					EditorClassification.Known, null, null, HostRouting.Product, values, null, null, objectHvo: 3));
+			}
+			return new DataTree(new DetailModel("LexEntry", "identity", fields, new List<ViewDiagnostic>()));
 		}
 
 		private static DataTree NewLongView()

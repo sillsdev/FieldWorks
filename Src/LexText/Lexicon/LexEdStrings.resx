@@ -117,19 +117,12 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="ks_Add" xml:space="preserve">
-    <value>&amp;Add</value>
-    <comment>button label</comment>
-  </data>
   <data name="ks_Link" xml:space="preserve">
     <value>&amp;Link</value>
     <comment>button label</comment>
   </data>
   <data name="ks_MoveEntry" xml:space="preserve">
     <value>&amp;Move Entry</value>
-  </data>
-  <data name="ks_Replace" xml:space="preserve">
-    <value>&amp;Replace</value>
   </data>
   <data name="ksAlwaysVisible" xml:space="preserve">
     <value>Always visible</value>
@@ -147,17 +140,6 @@
   <data name="ksCreateLexRefType_" xml:space="preserve">
     <value>Create New Lexical Relation...</value>
     <comment>menu item</comment>
-  </data>
-  <data name="ksDeleteLexTree" xml:space="preserve">
-    <value>Note: this will remove this entire {0} reference set tree.</value>
-    <comment>{0} is a line feed</comment>
-  </data>
-  <data name="ksDeleteSequenceCollectionA" xml:space="preserve">
-    <value>Note: the listed references will still be {0} related in a </value>
-    <comment>{0} is a line feed.</comment>
-  </data>
-  <data name="ksDeleteSequenceCollectionB" xml:space="preserve">
-    <value> relation.</value>
   </data>
   <data name="ksEditX" xml:space="preserve">
     <value>Edit {0}</value>
@@ -185,18 +167,6 @@
   </data>
   <data name="ksIdentifySense" xml:space="preserve">
     <value>Identify sense</value>
-  </data>
-  <data name="ksIdentifyXEntry" xml:space="preserve">
-    <value>Add Reference ({0})</value>
-  </data>
-  <data name="ksIdentifyXLexEntry" xml:space="preserve">
-    <value>Add Reference ({0})</value>
-  </data>
-  <data name="ksIdentifyXLexEntryOrSense" xml:space="preserve">
-    <value>Add Reference ({0})</value>
-  </data>
-  <data name="ksIdentifyXSense" xml:space="preserve">
-    <value>Add Reference ({0})</value>
   </data>
   <data name="ksLexRelation2" xml:space="preserve">
     <value>{0}/{1} relation</value>
@@ -244,9 +214,6 @@
   </data>
   <data name="ksRedoSetRevEntries" xml:space="preserve">
     <value>Redo Set Reversal Entries</value>
-  </data>
-  <data name="ksReplaceXEntry" xml:space="preserve">
-    <value>Replace Reference</value>
   </data>
   <data name="ksSenses" xml:space="preserve">
     <value>Senses</value>
@@ -310,29 +277,11 @@
   <data name="ksUndoVariantOf" xml:space="preserve">
     <value>Undo Variant Of</value>
   </data>
-  <data name="ksRedoAddRef" xml:space="preserve">
-    <value>Redo Add Reference</value>
-  </data>
-  <data name="ksRedoDeleteRelation" xml:space="preserve">
-    <value>Redo Delete Relation</value>
-  </data>
   <data name="ksRedoInsertRelation" xml:space="preserve">
     <value>Redo {0}</value>
   </data>
-  <data name="ksRedoReplaceRef" xml:space="preserve">
-    <value>Redo Replace Reference</value>
-  </data>
-  <data name="ksUndoAddRef" xml:space="preserve">
-    <value>Undo Add Reference</value>
-  </data>
-  <data name="ksUndoDeleteRelation" xml:space="preserve">
-    <value>Undo Delete Relation</value>
-  </data>
   <data name="ksUndoInsertRelation" xml:space="preserve">
     <value>Undo {0}</value>
-  </data>
-  <data name="ksUndoReplaceRef" xml:space="preserve">
-    <value>Undo Replace Reference</value>
   </data>
   <data name="ksRedoDeleteRef" xml:space="preserve">
     <value>Redo Delete Reference</value>
@@ -387,12 +336,6 @@
   </data>
   <data name="ksUndoCreateReversalIndex" xml:space="preserve">
     <value>Undo Create Reversal Index</value>
-  </data>
-  <data name="ksUndoEditRefSetDetails" xml:space="preserve">
-    <value>Undo Edit Reference Set Details</value>
-  </data>
-  <data name="ksRedoEditRefSetDetails" xml:space="preserve">
-    <value>Redo Edit Reference Set Details</value>
   </data>
   <data name="ksRedoDemote" xml:space="preserve">
     <value>Redo Demote</value>

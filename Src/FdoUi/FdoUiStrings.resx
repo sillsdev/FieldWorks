@@ -367,4 +367,67 @@ Without these, we cannot find related entries.</value>
   <data name="ksConvertFormLoseRule" xml:space="preserve">
     <value>The affix process rule will be lost! Do you still want to continue?</value>
   </data>
+  <data name="ks_Add" xml:space="preserve">
+    <value>&amp;Add</value>
+    <comment>button label</comment>
+  </data>
+  <data name="ks_Replace" xml:space="preserve">
+    <value>&amp;Replace</value>
+  </data>
+  <data name="ksDeleteLexTree" xml:space="preserve">
+    <value>Note: this will remove this entire {0} reference set tree.</value>
+    <comment>{0} is a line feed</comment>
+  </data>
+  <data name="ksDeleteSequenceCollectionA" xml:space="preserve">
+    <value>Note: the listed references will still be {0} related in a </value>
+    <comment>{0} is a line feed.</comment>
+  </data>
+  <data name="ksDeleteSequenceCollectionB" xml:space="preserve">
+    <value> relation.</value>
+  </data>
+  <data name="ksIdentifyXEntry" xml:space="preserve">
+    <value>Add Reference ({0})</value>
+  </data>
+  <data name="ksIdentifyXLexEntry" xml:space="preserve">
+    <value>Add Reference ({0})</value>
+  </data>
+  <data name="ksIdentifyXLexEntryOrSense" xml:space="preserve">
+    <value>Add Reference ({0})</value>
+  </data>
+  <data name="ksIdentifyXSense" xml:space="preserve">
+    <value>Add Reference ({0})</value>
+  </data>
+  <data name="ksReplaceXEntry" xml:space="preserve">
+    <value>Replace Reference</value>
+  </data>
+  <data name="ksRedoAddRef" xml:space="preserve">
+    <value>Redo Add Reference</value>
+  </data>
+  <data name="ksRedoDeleteRelation" xml:space="preserve">
+    <value>Redo Delete Relation</value>
+  </data>
+  <data name="ksRedoReplaceRef" xml:space="preserve">
+    <value>Redo Replace Reference</value>
+  </data>
+  <data name="ksUndoAddRef" xml:space="preserve">
+    <value>Undo Add Reference</value>
+  </data>
+  <data name="ksUndoDeleteRelation" xml:space="preserve">
+    <value>Undo Delete Relation</value>
+  </data>
+  <data name="ksUndoReplaceRef" xml:space="preserve">
+    <value>Undo Replace Reference</value>
+  </data>
+  <data name="ksUndoEditRefSetDetails" xml:space="preserve">
+    <value>Undo Edit Reference Set Details</value>
+  </data>
+  <data name="ksRedoEditRefSetDetails" xml:space="preserve">
+    <value>Redo Edit Reference Set Details</value>
+  </data>
+  <data name="ksUndoDeleteRef" xml:space="preserve">
+    <value>Undo Delete Reference</value>
+  </data>
+  <data name="ksRedoDeleteRef" xml:space="preserve">
+    <value>Redo Delete Reference</value>
+  </data>
 </root>

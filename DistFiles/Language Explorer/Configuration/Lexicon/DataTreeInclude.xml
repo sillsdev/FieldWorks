@@ -56,19 +56,7 @@
 		<!--
 	  AlternateForms
 	   -->
-		<command id="CmdDataTree-MoveUp-AlternateForm" label="Move Form _Up" message="MoveUpObjectInSequence" icon="MoveUp">
-			<parameters field="AlternateForms" className="MoForm"/>
-		</command>
-		<command id="CmdDataTree-MoveDown-AlternateForm" label="Move Form _Down" message="MoveDownObjectInSequence" icon="MoveDown">
-			<parameters field="AlternateForms" className="MoForm"/>
-		</command>
 		<command id="CmdDataTree-Insert-AlternateForm" label="Insert Allomorph" message="DataTreeInsert">
-			<parameters field="AlternateForms" className="MoForm"/>
-		</command>
-		<command id="CmdDataTree-Delete-AlternateForm" label="Delete AlternateForm" message="DataTreeDelete" icon="Delete">
-			<parameters field="AlternateForms" className="MoForm"/>
-		</command>
-		<command id="CmdDataTree-Merge-AlternateForm" label="Merge AlternateForm into..." message="DataTreeMerge">
 			<parameters field="AlternateForms" className="MoForm"/>
 		</command>
 		<command id="CmdDataTree-Swap-Allomorph" label="Swap Allomorph with Lexeme Form" message="SwapAllomorphWithLexeme">
@@ -334,13 +322,6 @@
 			<item command="CmdDataTree-MoveDown-Picture"/>
 			<item label="-" translate="do not translate"/>
 			<item command="CmdDataTree-Delete-Picture"/>
-		</menu>
-		<menu id="mnuDataTree-AlternateForm">
-			<item command="CmdDataTree-MoveUp-AlternateForm"/>
-			<item command="CmdDataTree-MoveDown-AlternateForm"/>
-			<item label="-" translate="do not translate"/>
-			<item command="CmdDataTree-Merge-AlternateForm"/>
-			<item command="CmdDataTree-Delete-AlternateForm"/>
 		</menu>
 		<menu id="mnuDataTree-Sense">
 			<item command="CmdDataTree-Insert-Example"/>
