@@ -28,7 +28,6 @@ using SIL.Lift;
 using SIL.Lift.Migration;
 using SIL.Lift.Parsing;
 using SIL.IO;
-using SIL.PlatformUtilities;
 using XCore;
 
 namespace SIL.FieldWorks.XWorks.LexEd
@@ -152,21 +151,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// <returns></returns>
 		public bool OnFLExLiftBridge(object commandObject)
 		{
-			if (Platform.IsMono)
-			{
-				// This is a horrible workaround for a nasty bug in Mono. The toolbar button captures the mouse,
-				// and does not release it before calling this event handler. If we proceed to run the bridge,
-				// which freezes our UI thread until FlexBridge returns, the mouse stays captured...and the whole
-				// system UI is frozen, for all applications.
-				_mediator.IdleQueue.Add(IdleQueuePriority.High,
-					obj =>
-						{
-							RunFLExLiftBridge(commandObject);
-							return true; // task is complete, don't try again, remove from idle queue.
-						});
-			}
-			else
-				RunFLExLiftBridge(commandObject); // on windows we can safely do it right away.
+			RunFLExLiftBridge(commandObject);
 			return true; // we handled it
 		}
 
@@ -548,16 +533,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// </summary>
 		public bool OnDisplayCheckForFlexBridgeUpdates(object commandObject, ref UIItemDisplayProperties display)
 		{
-			if (Platform.IsUnix)
-			{
-				display.Visible = false;
-				display.Enabled = false;
-			}
-			else
-			{
-				CheckForFlexBridgeInstalledAndSetMenuItemProperties(display);
-			}
-
+			CheckForFlexBridgeInstalledAndSetMenuItemProperties(display);
 			return true; // We dealt with it.
 		}
 
