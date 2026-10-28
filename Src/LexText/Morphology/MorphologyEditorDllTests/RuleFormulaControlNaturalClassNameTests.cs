@@ -63,18 +63,20 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		}
 
 		/// <summary>
-		/// Projects hold rule-generated names that carry a prefix ahead of the generated text, so
-		/// the generated text is recognised wherever it sits in the name.
+		/// If a project contains a NC whose name was generated but a user has added text before
+		/// or after the generated name, it is user defined.
 		/// </summary>
 		[Test]
-		public void ClassNamedForARuleBehindAPrefix_IsNotUserDefined()
+		public void ClassNamedForARuleWithUserAssignedPrefixOrPostfix_IsUserDefined()
 		{
 			IPhNCFeatures natClass = AddFeatureNaturalClass(null, null,
 				new FeatVals { { "vd", "+" } });
 			natClass.Name.SetUserWritingSystem("Phonemes s and t - "
 				+ string.Format(MEStrings.ksRuleNCFeatsName, "s to n"));
-
-			Assert.That(RuleFormulaControl.IsFeatureBasedNCUserDefined(natClass), Is.False);
+			Assert.That(RuleFormulaControl.IsFeatureBasedNCUserDefined(natClass), Is.True);
+			natClass.Name.SetUserWritingSystem(string.Format(MEStrings.ksRuleNCFeatsName, "s to n")
+				+ " - phonemes s and t");
+			Assert.That(RuleFormulaControl.IsFeatureBasedNCUserDefined(natClass), Is.True);
 		}
 
 		[Test]
