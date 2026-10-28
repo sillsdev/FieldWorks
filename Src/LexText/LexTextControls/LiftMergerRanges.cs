@@ -266,9 +266,9 @@ namespace SIL.FieldWorks.LexText.Controls
 			letComplex = null;
 			letVar = null;
 			ICmPossibility poss;
-			if (TryGetPossibilityMatchingExactly(sOldEntryType, m_dictComplexFormType, out poss))
+			if (TryGetPossibilityMatchingUntrimmed(sOldEntryType, m_dictComplexFormType, out poss))
 				letComplex = poss as ILexEntryType;
-			else if (TryGetPossibilityMatchingExactly(sOldEntryType, m_dictVariantType, out poss))
+			else if (TryGetPossibilityMatchingUntrimmed(sOldEntryType, m_dictVariantType, out poss))
 				letVar = poss as ILexEntryType;
 			else if (TryGetPossibilityMatchingTrimmed(sOldEntryType, m_dictComplexFormType, out poss))
 				letComplex = poss as ILexEntryType;
@@ -342,20 +342,21 @@ namespace SIL.FieldWorks.LexText.Controls
 		private static bool TryGetPossibilityMatchingTrait(string traitValue, IDictionary<string, ICmPossibility> dict,
 			out ICmPossibility poss)
 		{
-			return TryGetPossibilityMatchingExactly(traitValue, dict, out poss)
+			return TryGetPossibilityMatchingUntrimmed(traitValue, dict, out poss)
 				|| TryGetPossibilityMatchingTrimmed(traitValue, dict, out poss);
 		}
 
-		private static bool TryGetPossibilityMatchingExactly(string traitValue, IDictionary<string, ICmPossibility> dict,
+		private static bool TryGetPossibilityMatchingUntrimmed(string traitValue, IDictionary<string, ICmPossibility> dict,
 			out ICmPossibility poss)
 		{
 			return dict.TryGetValue(traitValue, out poss) || dict.TryGetValue(traitValue.ToLowerInvariant(), out poss);
 		}
 
 		/// <summary>
-		/// Match a key that equals the trait value once both are trimmed of surrounding
-		/// whitespace. Some names have stray whitespace (e.g., in semantic domain lists from
-		/// FieldWorks templates before 2017) that other programs trim before writing LIFT.
+		/// Match a key that equals the trait value, or its lowercase form, once both are trimmed
+		/// of surrounding whitespace; a key with no surrounding whitespace wins. Some names have
+		/// stray whitespace (e.g., in semantic domain lists from FieldWorks templates before
+		/// 2017) that other programs trim before writing LIFT.
 		/// </summary>
 		private static bool TryGetPossibilityMatchingTrimmed(string traitValue, IDictionary<string, ICmPossibility> dict,
 			out ICmPossibility poss)
@@ -364,6 +365,8 @@ namespace SIL.FieldWorks.LexText.Controls
 			string trimmed = traitValue.Trim();
 			if (trimmed.Length == 0)
 				return false;
+			if (TryGetPossibilityMatchingUntrimmed(trimmed, dict, out poss))
+				return true;
 			string trimmedLower = trimmed.ToLowerInvariant();
 			foreach (var kvp in dict)
 			{
