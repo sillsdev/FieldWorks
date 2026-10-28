@@ -311,7 +311,8 @@ namespace SIL.FieldWorks.Common.DetailRules
 		/// Makes <paramref name="chosen"/> the reference for <paramref name="current"/>, in
 		/// one undoable step: a pair's other member is replaced, a tree's part joins the
 		/// relation whose whole is the choice, and any other relation gains the choice as a
-		/// member unless it is one already.
+		/// member. A choice the relation already gives <paramref name="current"/> changes
+		/// nothing.
 		/// </summary>
 		/// <returns>The relation <paramref name="current"/> is now in; null when nothing
 		/// changed.</returns>
@@ -327,13 +328,19 @@ namespace SIL.FieldWorks.Common.DetailRules
 			ILexReference result = relation;
 			if (IsPair(mapping))
 			{
-				var replace = PairPartner(relation, current) != null;
+				var partner = PairPartner(relation, current);
+				if (partner == chosen)
+					return null;
+				var replace = partner != null;
 				UndoableUnitOfWorkHelper.Do(replace ? FdoUiStrings.ksUndoReplaceRef : FdoUiStrings.ksUndoAddRef,
 					replace ? FdoUiStrings.ksRedoReplaceRef : FdoUiStrings.ksRedoAddRef, relation,
 					() => ReplacePairPartner(relation, current, chosen));
 			}
 			else if (IsTree(mapping) && !IsFirstTarget(relation, current))
 			{
+				// The part's own whole (LT-10987).
+				if (relation.TargetsRS[0] == chosen)
+					return null;
 				UndoableUnitOfWorkHelper.Do(FdoUiStrings.ksUndoReplaceRef, FdoUiStrings.ksRedoReplaceRef, relation,
 					() => result = ReplaceTreeWhole(relation, current, chosen));
 			}

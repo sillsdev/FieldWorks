@@ -173,6 +173,10 @@ namespace SIL.FieldWorks.FdoUi
 
 			Cache.ActionHandlerAccessor.Undo();
 			Assert.That(_antonymPair.TargetsRS.ToList(), Is.EqualTo(new ICmObject[] { _face, _nose }));
+
+			Assert.That(LexicalRelationEditing.AddOrReplace(_antonymPair, _nose, _face), Is.Null,
+				"choosing the current partner changes nothing");
+			Assert.That(_antonymPair.TargetsRS.ToList(), Is.EqualTo(new ICmObject[] { _face, _nose }));
 		}
 
 		[Test]
@@ -198,7 +202,7 @@ namespace SIL.FieldWorks.FdoUi
 			Assert.That(result, Is.SameAs(_faceParts), "the only part keeps its relation, retargeted (LT-14926)");
 			Assert.That(_faceParts.TargetsRS.ToList(), Is.EqualTo(new ICmObject[] { _head, _nose }));
 
-			Assert.That(LexicalRelationEditing.AddOrReplace(_faceParts, _nose, _head), Is.SameAs(_faceParts),
+			Assert.That(LexicalRelationEditing.AddOrReplace(_faceParts, _nose, _head), Is.Null,
 				"choosing the current whole changes nothing (LT-10987)");
 			Assert.That(_faceParts.TargetsRS.ToList(), Is.EqualTo(new ICmObject[] { _head, _nose }));
 		}
