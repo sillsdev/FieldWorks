@@ -307,6 +307,39 @@ namespace LexTextControlsTests
 		}
 
 		[Test]
+		public void AddAllomorph_BuildInput_OpensOnTheFormsWritingSystem()
+		{
+			var spanish = AddSecondVernacularWs();
+			_perro.LexemeFormOA.Form.set_String(spanish, "chucho");
+			var tssForm = TsStringUtils.MakeString("chu", spanish);
+
+			var input = LcmAddAllomorphDialogLauncher.BuildInput(Cache, null, null, tssForm);
+
+			Assert.That(input.SearchField.SelectedWritingSystemId, Is.EqualTo("es"));
+			Assert.That(input.Search("chu").Select(r => r.Id), Is.EqualTo(new[] { Hvo(_perro) }),
+				"the form's own writing system is searched from the start");
+		}
+
+		[Test]
+		public void AddAllomorph_BuildInput_FormInANonCurrentWs_OpensOnTheDefaultVernacular()
+		{
+			Cache.ServiceLocator.WritingSystemManager.GetOrSet("de", out var german);
+			var writingSystems = Cache.ServiceLocator.WritingSystems;
+			Assert.That(writingSystems.AllWritingSystems.Where(ws =>
+					writingSystems.CurrentVernacularWritingSystems.Contains(ws)
+					|| writingSystems.CurrentAnalysisWritingSystems.Contains(ws))
+				.Select(ws => ws.Id), Does.Not.Contain("de"), "precondition: German is not current");
+			var tssForm = TsStringUtils.MakeString("ca", german.Handle);
+
+			var input = LcmAddAllomorphDialogLauncher.BuildInput(Cache, null, null, tssForm);
+
+			Assert.That(input.SearchField.SelectedWritingSystemId,
+				Is.EqualTo(writingSystems.DefaultVernacularWritingSystem.Id));
+			Assert.That(input.Search("ca").Select(r => r.Id),
+				Is.EquivalentTo(new[] { Hvo(_casa), Hvo(_cantar) }));
+		}
+
+		[Test]
 		public void AddAllomorph_Search_FindsAnyEntry_NothingExcluded()
 		{
 			var search = LcmAddAllomorphDialogLauncher.BuildSearch(Cache, null, null);
@@ -576,6 +609,31 @@ namespace LexTextControlsTests
 			var casa = search("casa").Single(r => r.Id == Hvo(_casa));
 			Assert.That(casa.LexemeForm, Is.EqualTo("casa"), "the row carries the entry's lexeme form");
 			Assert.That(casa.Gloss, Is.EqualTo("house"), "the row carries the senses' gloss(es)");
+		}
+
+		[Test]
+		public void HeadwordText_NoDefaultVernacularForm_UsesAnotherVernacularForm()
+		{
+			var spanish = AddSecondVernacularWs();
+			var components = new LexEntryComponents
+			{
+				MorphType = Cache.ServiceLocator.GetInstance<IMoMorphTypeRepository>()
+					.GetObject(MoMorphTypeTags.kguidMorphStem)
+			};
+			components.LexemeFormAlternatives.Add(TsStringUtils.MakeString("chucho", spanish));
+			var entry = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create(components);
+
+			Assert.That(EntryGoLauncherShared.HeadwordText(entry), Is.EqualTo("chucho"),
+				"a form in any current writing system beats the missing-form placeholder");
+		}
+
+		[Test]
+		public void HeadwordText_DefaultVernacularForm_IsPreferred()
+		{
+			var spanish = AddSecondVernacularWs();
+			_casa.LexemeFormOA.Form.set_String(spanish, "casita");
+
+			Assert.That(EntryGoLauncherShared.HeadwordText(_casa), Is.EqualTo("casa"));
 		}
 
 		[Test]

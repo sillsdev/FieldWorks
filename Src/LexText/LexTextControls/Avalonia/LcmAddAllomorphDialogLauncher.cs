@@ -11,6 +11,7 @@ using FwAvaloniaDialogs;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Core.Text;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
 using XCore;
@@ -106,7 +107,11 @@ namespace SIL.FieldWorks.LexText.Controls
 		internal static EntryGoDialogInput BuildInput(LcmCache cache, Mediator mediator, PropertyTable propertyTable,
 			ITsString tssForm)
 		{
-			var searchWs = new EntryGoLauncherShared.SearchWritingSystem();
+			// The search starts in the form's own writing system.
+			var searchWs = new EntryGoLauncherShared.SearchWritingSystem
+			{
+				Handle = tssForm != null && tssForm.Length > 0 ? TsStringUtils.GetWsAtOffset(tssForm, 0) : 0
+			};
 			return new EntryGoDialogInput
 			{
 				Title = FwAvaloniaDialogsStrings.AddAllomorphTitle,
