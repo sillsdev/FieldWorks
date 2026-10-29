@@ -11,6 +11,7 @@ using FwAvaloniaDialogs;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Core.Text;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
 using XCore;
@@ -106,6 +107,11 @@ namespace SIL.FieldWorks.LexText.Controls
 		internal static EntryGoDialogInput BuildInput(LcmCache cache, Mediator mediator, PropertyTable propertyTable,
 			ITsString tssForm)
 		{
+			// The search starts in the form's own writing system.
+			var searchWs = new EntryGoLauncherShared.SearchWritingSystem
+			{
+				Handle = tssForm != null && tssForm.Length > 0 ? TsStringUtils.GetWsAtOffset(tssForm, 0) : 0
+			};
 			return new EntryGoDialogInput
 			{
 				Title = FwAvaloniaDialogsStrings.AddAllomorphTitle,
@@ -113,9 +119,8 @@ namespace SIL.FieldWorks.LexText.Controls
 				SearchPrompt = FwAvaloniaDialogsStrings.EntryGoResultsLabel,
 				InitialQuery = tssForm?.Text,
 				HelpTopic = "khtpFindEntryToAddAllomorph",
-				Search = BuildSearch(cache, mediator, propertyTable),
-				// The search box types the vernacular form being added (see BuildVernacularSearchFieldSpec).
-				SearchField = EntryGoLauncherShared.BuildVernacularSearchFieldSpec(cache),
+				Search = BuildSearch(cache, mediator, propertyTable, searchWs),
+				SearchField = EntryGoLauncherShared.BuildSearchFieldSpec(cache, searchWs),
 				// The matching list's default columns (headword + glosses in their ws typography).
 				ResultColumns = EntryGoLauncherShared.BuildDefaultResultColumns(cache)
 			};
@@ -126,10 +131,12 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// entry (the Add-Allomorph dialog has no starting entry to exclude). Internal so it is unit-testable.
 		/// </summary>
 		internal static Func<string, IReadOnlyList<EntryGoSearchResult>> BuildSearch(LcmCache cache,
-			Mediator mediator, PropertyTable propertyTable)
+			Mediator mediator, PropertyTable propertyTable,
+			EntryGoLauncherShared.SearchWritingSystem searchWs = null)
 		{
 			return EntryGoLauncherShared.BuildEntrySearch(cache, mediator, propertyTable,
-				excludedEntryHvo: 0, "AvaloniaAddAllomorphSearchEngine", filter: null);
+				excludedEntryHvo: 0, "AvaloniaAddAllomorphSearchEngine", filter: null,
+				searchWs);
 		}
 
 		protected override EntryGoDialogViewModel CreateViewModel(EntryGoDialogInput state)

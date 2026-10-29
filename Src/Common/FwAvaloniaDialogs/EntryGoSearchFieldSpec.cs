@@ -3,6 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Collections.Generic;
 
 namespace FwAvaloniaDialogs
 {
@@ -34,5 +35,25 @@ namespace FwAvaloniaDialogs
 		/// system's keyboard (the legacy vernacular FwTextBox switched keyboards on focus). Null means no-op.
 		/// </summary>
 		public Action Focused { get; set; }
+
+		/// <summary>
+		/// The writing systems the user can choose to search in. Null or empty hides the
+		/// selector, and the search box keeps this spec's own typography.
+		/// </summary>
+		public IReadOnlyList<EntryGoWritingSystemOption> WritingSystems { get; set; }
+
+		/// <summary>
+		/// The <see cref="EntryGoWritingSystemOption.Id"/> selected when the dialog opens; the
+		/// search delegate must already search in it. Null or an unknown id selects the first
+		/// option and reports it through <see cref="WritingSystemChanged"/>.
+		/// </summary>
+		public string SelectedWritingSystemId { get; set; }
+
+		/// <summary>
+		/// Invoked with the newly selected <see cref="EntryGoWritingSystemOption.Id"/> before
+		/// the dialog re-runs the search, so the search delegate can switch writing systems.
+		/// Null means no-op.
+		/// </summary>
+		public Action<string> WritingSystemChanged { get; set; }
 	}
 }

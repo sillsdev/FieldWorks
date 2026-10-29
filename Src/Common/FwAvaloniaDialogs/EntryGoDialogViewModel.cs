@@ -56,6 +56,17 @@ namespace FwAvaloniaDialogs
 			HelpTopic = _input.HelpTopic;
 			HasHelp = !string.IsNullOrEmpty(_input.HelpTopic);
 			SearchField = _input.SearchField;
+			WritingSystems = SearchField?.WritingSystems?.Where(o => o != null).ToList()
+				?? (IReadOnlyList<EntryGoWritingSystemOption>)Array.Empty<EntryGoWritingSystemOption>();
+			// Set through the field, before the first search, so the change handler does not run.
+			_selectedWritingSystem = WritingSystems.FirstOrDefault(o =>
+				string.Equals(o.Id, SearchField?.SelectedWritingSystemId, StringComparison.Ordinal));
+			if (_selectedWritingSystem == null && WritingSystems.Count > 0)
+			{
+				_selectedWritingSystem = WritingSystems[0];
+				SearchField.WritingSystemChanged?.Invoke(_selectedWritingSystem.Id);
+			}
+			_searchedWritingSystem = _selectedWritingSystem;
 
 			// Opt-in entry/sense capability (the legacy LinkEntryOrSenseDlg Entry/Sense radio). The toggle shows
 			// only when the consumer enables it AND supplies a mode-aware search; SensesOnly forces sense mode and
@@ -136,6 +147,31 @@ namespace FwAvaloniaDialogs
 		/// The view applies it to the realized search TextBox; null keeps the plain search box.
 		/// </summary>
 		public EntryGoSearchFieldSpec SearchField { get; }
+
+		/// <summary>The writing systems the user can search in; empty when none.</summary>
+		public IReadOnlyList<EntryGoWritingSystemOption> WritingSystems { get; }
+
+		/// <summary>True when the writing-system selector shows.</summary>
+		public bool HasWritingSystemSelector => WritingSystems.Count > 0;
+
+		/// <summary>The writing-system selector's label.</summary>
+		public string WritingSystemLabel => FwAvaloniaDialogsStrings.EntryGoWritingSystemLabel;
+
+		/// <summary>
+		/// The writing system being searched. Changing it reports the new id through
+		/// <see cref="EntryGoSearchFieldSpec.WritingSystemChanged"/> and re-runs the search.
+		/// </summary>
+		[ObservableProperty]
+		private EntryGoWritingSystemOption _selectedWritingSystem;
+
+		// The writing system the search runs in; unlike the selection, never cleared once set.
+		private EntryGoWritingSystemOption _searchedWritingSystem;
+
+		/// <summary>
+		/// The search box's current typography: that of the writing system being searched, or
+		/// <see cref="SearchField"/>'s own when there is no writing-system choice.
+		/// </summary>
+		public EntryGoSearchFieldSpec SearchTypography => _searchedWritingSystem?.Typography ?? SearchField;
 
 		/// <summary>
 		/// True when the Entry/Sense mode toggle is shown (the consumer opted into the Link-Entry-or-Sense
@@ -366,6 +402,18 @@ namespace FwAvaloniaDialogs
 		partial void OnIsSenseModeChanged(bool value)
 		{
 			OnPropertyChanged(nameof(IsEntryMode));
+			RunSearch(SearchText);
+		}
+
+		// Raised by the source generator when the writing-system selector changes. A cleared
+		// selection keeps searching in the last writing system.
+		partial void OnSelectedWritingSystemChanged(EntryGoWritingSystemOption value)
+		{
+			if (value == null)
+				return;
+			_searchedWritingSystem = value;
+			SearchField?.WritingSystemChanged?.Invoke(value.Id);
+			OnPropertyChanged(nameof(SearchTypography));
 			RunSearch(SearchText);
 		}
 
