@@ -81,6 +81,21 @@ namespace SIL.FieldWorks.XWorks
 		/// allomorph's row.</summary>
 		internal const string ConvertAllomorphMessage = "ConvertAllomorph";
 
+		/// <summary>The message of Delete this Sense and any Subsenses.</summary>
+		internal const string DeleteSenseMessage = "DataTreeDeleteSense";
+
+		/// <summary>The message of Demote on a sense.</summary>
+		internal const string DemoteSenseMessage = "DemoteSense";
+
+		/// <summary>The message of Promote on a sense.</summary>
+		internal const string PromoteSenseMessage = "PromoteSense";
+
+		/// <summary>The message of Move Sense to a New Entry.</summary>
+		internal const string SplitMessage = "DataTreeSplit";
+
+		/// <summary>The message of Insert Picture.</summary>
+		internal const string InsertPictureMessage = "InsertPicture";
+
 		/// <summary>
 		/// Asks the user to confirm a delete: the product shows the object's confirmation
 		/// dialog; a headless test answers for the user.
@@ -157,8 +172,9 @@ namespace SIL.FieldWorks.XWorks
 		internal Func<IReadOnlyList<string>> MediaFilesToInsert { get; set; }
 
 		/// <summary>
-		/// Picks the picture's new file, or null to leave it: the product asks with
-		/// <see cref="PicturePropertiesDialog"/>; a headless test answers for the user.
+		/// Picks the file for the picture given, or for a new picture when it is null; null
+		/// leaves it: the product asks with <see cref="PicturePropertiesDialog"/>; a headless
+		/// test answers for the user.
 		/// </summary>
 		internal Func<ICmPicture, string> PictureFileChosen { get; set; }
 
@@ -186,6 +202,11 @@ namespace SIL.FieldWorks.XWorks
 			authority.Answer(EditReferenceMessage, leaf => EditReferenceItem(leaf, field));
 			authority.Answer(SwapAllomorphMessage, leaf => SwapAllomorphItem(leaf, field));
 			authority.Answer(ConvertAllomorphMessage, leaf => ConvertLexemeFormItem(leaf, field));
+			authority.Answer(DeleteSenseMessage, leaf => DeleteItem(leaf, field));
+			authority.Answer(DemoteSenseMessage, leaf => SenseNestingItem(leaf, field, demote: true));
+			authority.Answer(PromoteSenseMessage, leaf => SenseNestingItem(leaf, field, demote: false));
+			authority.Answer(SplitMessage, leaf => SplitItem(leaf, field));
+			authority.Answer(InsertPictureMessage, leaf => InsertPictureItem(leaf, field));
 			return authority;
 		}
 
@@ -819,6 +840,48 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
+		/// The Insert Picture item for the row: absent unless
+		/// <see cref="PictureInsertion.TargetField"/> finds the command's field on the row's
+		/// object; enabled then.
+		/// </summary>
+		internal DetailMenuItem InsertPictureItem(DetailMenuLeaf leaf, DetailField field)
+		{
+			if (PictureTargetField(RowObjectOf(field), leaf.Command) == 0)
+				return null;
+			return new DetailMenuItem(XCoreMenuBridge.StripAccelerator(leaf.Label), isEnabled: true, isChecked: false,
+				children: null, execute: () => InsertPicture(field, leaf.Command));
+		}
+
+		/// <summary>
+		/// Adds a picture of the file the user picks through <see cref="PictureFileChosen"/>
+		/// to the row's object: pending edits settle first, the picture is one undoable step,
+		/// and the re-show focuses it.
+		/// </summary>
+		/// <returns>The new picture, or null when nothing was inserted.</returns>
+		internal ICmPicture InsertPicture(DetailField field, Command command)
+		{
+			SettleDetailEdits();
+			var owner = RowObjectOf(field);
+			var flid = PictureTargetField(owner, command);
+			if (flid == 0)
+			{
+				Logger.WriteEvent("Insert Picture did nothing: the row's object " + field?.ObjectHvo + " takes no picture.");
+				return null;
+			}
+			var file = (PictureFileChosen ?? ChoosePictureFileWithDialog)(null);
+			if (string.IsNullOrEmpty(file))
+				return null;
+			var picture = PictureInsertion.Insert(owner, flid, file, xWorksStrings.ksUndoInsertPicture,
+				xWorksStrings.ksRedoInsertPicture);
+			m_avaloniaEntryForm?.FocusObjectOnNextShow(picture.Hvo);
+			OnAvaloniaDetailEditCompleted(this, EventArgs.Empty);
+			return picture;
+		}
+
+		private static int PictureTargetField(ICmObject rowObject, Command command)
+			=> PictureInsertion.TargetField(rowObject, command.GetParameter("className", null), command.GetParameter("field", null));
+
+		/// <summary>
 		/// The Merge item for the row's object (the variant entry on a variant's row): absent
 		/// on a row with no object, a ghost row and a row whose object the command does not act
 		/// on; disabled when <see cref="DetailObjectMerge.CanMergeNow"/> refuses it.
@@ -1137,6 +1200,93 @@ namespace SIL.FieldWorks.XWorks
 				return false;
 			LexemeFormConversion.Swap(form.OwnerOfClass<ILexEntry>(), form, command.UndoText, command.RedoText);
 			m_avaloniaEntryForm?.FocusObjectOnNextShow(form.Hvo);
+			OnAvaloniaDetailEditCompleted(this, EventArgs.Empty);
+			return true;
+		}
+
+		/// <summary>
+		/// The Demote or Promote item for the row's sense: absent on a row with no object, a
+		/// ghost row and a row whose object the command does not act on; disabled when
+		/// <see cref="SenseNesting"/> refuses the move.
+		/// </summary>
+		/// <param name="demote">True for Demote, false for Promote.</param>
+		internal DetailMenuItem SenseNestingItem(DetailMenuLeaf leaf, DetailField field, bool demote)
+		{
+			var target = RowObjectOf(field);
+			if (target == null || field.GhostPrompt != null || !CommandActsOn(target, leaf.Command))
+				return null;
+			var label = XCoreMenuBridge.StripAccelerator(leaf.Label);
+			if (!(demote ? SenseNesting.CanDemote(target) : SenseNesting.CanPromote(target)))
+				return DetailMenuItem.Disabled(label);
+			return new DetailMenuItem(label, isEnabled: true, isChecked: false, children: null,
+				execute: () => NestSense(field, demote));
+		}
+
+		/// <summary>
+		/// Demotes or promotes the row's sense: pending edits settle first, the move is one
+		/// undoable step, and the re-show focuses the sense.
+		/// </summary>
+		/// <param name="demote">True for Demote, false for Promote.</param>
+		/// <returns>True when the sense moved.</returns>
+		internal bool NestSense(DetailField field, bool demote)
+		{
+			SettleDetailEdits();
+			if (!(RowObjectOf(field) is ILexSense sense))
+			{
+				Logger.WriteEvent("Demote or Promote did nothing: the row's object " + field?.ObjectHvo + " is no sense.");
+				return false;
+			}
+			if (!(demote ? SenseNesting.Demote(sense) : SenseNesting.Promote(sense)))
+				return false;
+			m_avaloniaEntryForm?.FocusObjectOnNextShow(sense.Hvo);
+			OnAvaloniaDetailEditCompleted(this, EventArgs.Empty);
+			return true;
+		}
+
+		/// <summary>
+		/// The Move Sense to a New Entry item for the row's object: absent on a row with no
+		/// object, a ghost row and a row whose object the command does not act on; disabled
+		/// when <see cref="DetailObjectSplit.CanSplitNow"/> refuses it.
+		/// </summary>
+		internal DetailMenuItem SplitItem(DetailMenuLeaf leaf, DetailField field)
+		{
+			var target = RowObjectOf(field);
+			if (target == null || field.GhostPrompt != null || !CommandActsOn(target, leaf.Command))
+				return null;
+			var label = XCoreMenuBridge.StripAccelerator(leaf.Label);
+			if (!DetailObjectSplit.CanSplitNow(target))
+				return DetailMenuItem.Disabled(label);
+			return new DetailMenuItem(label, isEnabled: true, isChecked: false, children: null,
+				execute: () => SplitDetailObject(field));
+		}
+
+		/// <summary>
+		/// Moves the row's object to a copy of its owner (a sense to a new entry) through the
+		/// object's UI: pending edits settle first, the shown record stays, and the re-show
+		/// focuses the nearest surviving row.
+		/// </summary>
+		/// <returns>True when the object moved.</returns>
+		internal bool SplitDetailObject(DetailField field)
+		{
+			SettleDetailEdits();
+			var target = RowObjectOf(field);
+			if (target == null || !DetailObjectSplit.CanSplitNow(target))
+			{
+				Logger.WriteEvent("Move to a new entry did nothing: the row's object " + field?.ObjectHvo + " cannot move.");
+				return false;
+			}
+			var focusRows = RowsToFocusAfterDeleting(m_avaloniaEntryForm?.ShownDetail, target);
+			var oldOwner = target.Owner;
+			using (var ui = CmObjectUi.MakeUi(Cache, target.Hvo))
+			{
+				ui.Mediator = m_mediator;
+				ui.PropTable = m_propertyTable;
+				ui.MoveUnderlyingObjectToCopyOfOwner();
+			}
+			if (target.Owner == oldOwner)
+				return false;
+			if (focusRows.Count > 0)
+				m_avaloniaEntryForm?.FocusRowOnNextShow(focusRows);
 			OnAvaloniaDetailEditCompleted(this, EventArgs.Empty);
 			return true;
 		}

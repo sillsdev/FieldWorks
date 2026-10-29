@@ -216,11 +216,10 @@ namespace SIL.FieldWorks.XWorks
 		/// <returns></returns>
 		public bool OnInsertPicture(object cmd)
 		{
-			int flid;
-			if (!CanInsertPictureOrMediaFile(cmd, out flid))
+			var obj = CurrentSliceObject();
+			int flid = InsertTargetField(cmd, obj);
+			if (flid == 0)
 				return false; // should not happen, but play safe
-			var obj = m_dataEntryForm.CurrentSlice.Object;
-			int chvo = obj.Cache.DomainDataByFlid.get_VecSize(obj.Hvo, flid);
 			IApp app = m_propertyTable.GetValue<IApp>("App");
 			using (PicturePropertiesDialog dlg = new PicturePropertiesDialog(obj.Cache, null,
 				m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), app))
@@ -228,44 +227,25 @@ namespace SIL.FieldWorks.XWorks
 				dlg.Initialize();
 				if (dlg.ShowDialog() == DialogResult.OK)
 				{
-					UndoableUnitOfWorkHelper.Do(xWorksStrings.ksUndoInsertPicture, xWorksStrings.ksRedoInsertPicture, obj, () =>
-					{
-						string strLocalPictures = CmFolderTags.DefaultPictureFolder;
-						int hvoPic = obj.Cache.DomainDataByFlid.MakeNewObject(CmPictureTags.kClassId, obj.Hvo, flid, chvo);
-						var picture = Cache.ServiceLocator.GetInstance<ICmPictureRepository>().GetObject(hvoPic);
-						picture.UpdatePicture(dlg.CurrentFile, null, strLocalPictures, 0);
-					});
+					PictureInsertion.Insert(obj, flid, dlg.CurrentFile, xWorksStrings.ksUndoInsertPicture,
+						xWorksStrings.ksRedoInsertPicture);
 				}
 			}
 			return true;
 		}
 
-		private bool CanInsertPictureOrMediaFile(object cmd, out int flid)
+		// The current slice's object; null with no slice (LT-3347: an empty data set has none).
+		private ICmObject CurrentSliceObject()
 		{
-			Command command = (Command) cmd;
-			string field = command.GetParameter("field");
-			string className = command.GetParameter("className");
 			Slice current = m_dataEntryForm.CurrentSlice;
-			if (current == null || current.IsDisposed)	// LT-3347: there are no slices in this empty data set
-			{
-				flid = 0;
-				return false;
-			}
-			var obj = current.Object;
-			if (obj == null || !obj.IsValidObject)
-			{
-				// Something has gone horribly wrong, but let's not die.
-				flid = 0;
-				return false;
-			}
-			IFwMetaDataCache mdc = obj.Cache.DomainDataByFlid.MetaDataCache;
-			int clid = 0;
-			try { clid = mdc.GetClassId(className); }
-			catch { throw new ConfigurationException("Unknown class for insert command: " + className); }
-			try { flid = mdc.GetFieldId2(clid, field, true); }
-			catch { throw new ConfigurationException("Unknown field: " + className + "." + field); }
-			int clidObj = obj.ClassID;
-			return (clidObj == clid); // enhance JohnT: we could allow clidObj to be a subclass of clid.
+			return current == null || current.IsDisposed ? null : current.Object;
+		}
+
+		// The field of obj that takes the command's picture or media files; 0 when none does.
+		private static int InsertTargetField(object cmd, ICmObject obj)
+		{
+			Command command = (Command)cmd;
+			return PictureInsertion.TargetField(obj, command.GetParameter("className"), command.GetParameter("field"));
 		}
 
 		/// <summary>
@@ -277,8 +257,7 @@ namespace SIL.FieldWorks.XWorks
 		public virtual bool OnDisplayInsertPicture(object commandObject,
 			ref UIItemDisplayProperties display)
 		{
-			int flid;
-			display.Enabled = CanInsertPictureOrMediaFile(commandObject, out flid);
+			display.Enabled = InsertTargetField(commandObject, CurrentSliceObject()) != 0;
 			return true;//we handled this, no need to ask anyone else.
 		}
 
@@ -297,7 +276,7 @@ namespace SIL.FieldWorks.XWorks
 		private bool InsertMediaFile(object cmd, string filter, string caption)
 		{
 			ILexPronunciation pronunciation;
-			if (CanInsertPictureOrMediaFile(cmd, out _))
+			if (InsertTargetField(cmd, CurrentSliceObject()) != 0)
 			{
 				pronunciation = (ILexPronunciation)m_dataEntryForm.CurrentSlice.Object;
 			}

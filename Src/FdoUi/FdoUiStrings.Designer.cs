@@ -915,5 +915,41 @@ namespace SIL.FieldWorks.FdoUi {
                 return ResourceManager.GetString("ksRedoDeleteRef", resourceCulture);
             }
         }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Undo Demote.
+        /// </summary>
+        internal static string ksUndoDemote {
+            get {
+                return ResourceManager.GetString("ksUndoDemote", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Redo Demote.
+        /// </summary>
+        internal static string ksRedoDemote {
+            get {
+                return ResourceManager.GetString("ksRedoDemote", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Undo Promote.
+        /// </summary>
+        internal static string ksUndoPromote {
+            get {
+                return ResourceManager.GetString("ksUndoPromote", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Redo Promote.
+        /// </summary>
+        internal static string ksRedoPromote {
+            get {
+                return ResourceManager.GetString("ksRedoPromote", resourceCulture);
+            }
+        }
     }
 }

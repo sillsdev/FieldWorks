@@ -11,7 +11,6 @@ using SIL.FieldWorks.Common.DetailRules;
 using SIL.FieldWorks.Common.Framework.DetailControls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
-using SIL.LCModel.Infrastructure;
 using XCore;
 
 namespace SIL.FieldWorks.XWorks.LexEd
@@ -171,28 +170,10 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 		public bool OnDemoteSense(object cmd)
 		{
-			Command command = (Command) cmd;
 			Slice slice = m_dataEntryForm.CurrentSlice;
 			Debug.Assert(slice != null, "No slice was current");
-			if (slice != null)
-			{
-				LcmCache cache = m_dataEntryForm.Cache;
-				int hvoOwner = slice.Object.Owner.Hvo;
-				int flid = slice.Object.OwningFlid;
-				int chvo = cache.DomainDataByFlid.get_VecSize(hvoOwner, flid);
-				int ihvo = cache.DomainDataByFlid.GetObjIndex(hvoOwner, flid, slice.Object.Hvo);
-				Debug.Assert(ihvo >= 0);
-				if (ihvo >= 0)
-				{
-					int ihvoNewOwner = (ihvo == 0) ? 1 : ihvo - 1;
-					int hvoNewOwner = cache.DomainDataByFlid.get_VecItem(hvoOwner, flid, ihvoNewOwner);
-					int chvoDst = cache.DomainDataByFlid.get_VecSize(hvoNewOwner,
-						LexSenseTags.kflidSenses);
-					UndoableUnitOfWorkHelper.Do(LexEdStrings.ksUndoDemote, LexEdStrings.ksRedoDemote, Cache.ActionHandlerAccessor,
-						()=>cache.DomainDataByFlid.MoveOwnSeq(hvoOwner, flid, ihvo, ihvo, hvoNewOwner,
-						LexSenseTags.kflidSenses, chvoDst));
-				}
-			}
+			if (slice?.Object is ILexSense sense)
+				SenseNesting.Demote(sense);
 			return true;
 		}
 
@@ -240,50 +221,16 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		public virtual bool OnDisplayDemoteSense(object commandObject,
 			ref UIItemDisplayProperties display)
 		{
-			Slice slice = m_dataEntryForm.CurrentSlice;
-			if (slice == null || slice.Object == null ||
-				(slice.Object.OwningFlid != LexSenseTags.kflidSenses) &&
-				(slice.Object.OwningFlid != LexEntryTags.kflidSenses))
-			{
-				display.Enabled = false;
-			}
-			else
-			{
-				int chvo = m_dataEntryForm.Cache.DomainDataByFlid.get_VecSize(slice.Object.Owner.Hvo,
-					(int)slice.Object.OwningFlid);
-				display.Enabled = chvo > 1;
-			}
+			display.Enabled = SenseNesting.CanDemote(m_dataEntryForm.CurrentSlice?.Object);
 			return true; //we've handled this
 		}
 
 		public bool OnPromoteSense(object cmd)
 		{
-			Command command = (Command) cmd;
 			Slice slice = m_dataEntryForm.CurrentSlice;
 			Debug.Assert(slice != null, "No slice was current");
-			if (slice != null)
-			{
-				var target = slice.Object as ILexSense;
-				var oldOwner = slice.Object.Owner as ILexSense;
-				if (target == null || oldOwner == null)
-					return true; // done, but can't promote top-level sense or something that isn't one.
-				var index = oldOwner.IndexInOwner;
-				var newOwner = oldOwner.Owner;
-				UndoableUnitOfWorkHelper.Do(LexEdStrings.ksUndoDemote, LexEdStrings.ksRedoDemote, Cache.ActionHandlerAccessor,
-					() =>
-						{
-							if (newOwner is ILexEntry)
-							{
-								var newOwningEntry = (ILexEntry) newOwner;
-								newOwningEntry.SensesOS.Insert(index + 1, target);
-							}
-							else
-							{
-								var newOwningSense = (ILexSense) newOwner;
-								newOwningSense.SensesOS.Insert(index + 1, target);
-							}
-						});
-			}
+			if (slice?.Object is ILexSense sense)
+				SenseNesting.Promote(sense);
 			return true;
 		}
 
@@ -296,16 +243,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		public virtual bool OnDisplayPromoteSense(object commandObject,
 			ref UIItemDisplayProperties display)
 		{
-			Slice slice = m_dataEntryForm.CurrentSlice;
-			if (slice == null || slice.Object == null ||
-				slice.Object.OwningFlid != LexSenseTags.kflidSenses)
-			{
-				display.Enabled = false;
-			}
-			else
-			{
-				display.Enabled = true;
-			}
+			display.Enabled = SenseNesting.CanPromote(m_dataEntryForm.CurrentSlice?.Object);
 			return true; //we've handled this
 		}
 
