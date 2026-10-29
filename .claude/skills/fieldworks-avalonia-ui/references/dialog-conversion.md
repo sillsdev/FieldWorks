@@ -243,10 +243,16 @@ glosses (`EntryGoDlg.GetFields`), so the search and the selector share one mutab
 `EntryGoLauncherShared.SearchWritingSystem` that every search delegate reads per query
 (`GetSearchFields`: vernacular → citation/lexeme/alternate forms, analysis → glosses, both → both).
 Options are every current analysis + vernacular ws once, sorted by `DisplayLabel`, each with its
-`DefaultFontName` + `RightToLeftScript` (the per-ws derivation the region value rows use); the default
-vernacular ws is selected; `Focused` activates the SELECTED ws's keyboard
+`DefaultFontName` + `RightToLeftScript` (the per-ws derivation the region value rows use); the ws the
+`SearchWritingSystem` starts with is selected, or the default vernacular ws when it starts empty or on a
+ws that is not current; `Focused` activates the SELECTED ws's keyboard
 (`ws.LocalKeyboard?.Activate()`, default-keyboard fallback, all exceptions swallowed). Every Go-family
-launcher's `BuildInput` creates one `SearchWritingSystem` and passes it to both its search and the spec.
+launcher's `BuildInput` creates one `SearchWritingSystem` and passes it to both its search and the spec;
+Add Allomorph starts it on the writing system of the form being added (`BaseGoDlg.SetDlgInfo(…, tssform)`
+parity). Because the selector reaches entries with no default-vernacular form, result rows take their
+headword from `EntryGoLauncherShared.HeadwordText`, which falls back across current vernacular then
+analysis writing systems (the browser column's `best vernoranal`) instead of LCM's default-vernacular-only
+`HeadWord`.
 Tests: `EntryGoDialogTests.WritingSystemSelector_*` (ViewModel + view) and
 `EntryGoDialogLauncherTests` (`SharedSearch_*WsSelected*`, `BuildSearchFieldSpec_*`,
 `GoFamilyBuildInputs_SelectorDrivesTheirSearch`).
