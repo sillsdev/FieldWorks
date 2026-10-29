@@ -104,7 +104,7 @@ namespace SIL.FieldWorks.IText
 		/// A colleague registered so the Mediator queues broadcasts: with no colleague it
 		/// discards them before queueing, and the job count would prove nothing.
 		/// </summary>
-		private sealed class ListeningColleague : IxCoreColleague
+		internal sealed class ListeningColleague : IxCoreColleague
 		{
 			public void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters) { }
 			public IxCoreColleague[] GetMessageTargets() => new IxCoreColleague[] { this };
