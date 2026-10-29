@@ -35,16 +35,27 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 		private static readonly Dictionary<string, string[]> FallbacksByLanguage =
 			new Dictionary<string, string[]>(StringComparer.OrdinalIgnoreCase)
 		{
+			["ar"] = new[] { "Segoe UI", "Scheherazade New" },
+			["bn"] = new[] { "Nirmala UI", "Noto Sans Bengali" },
 			["fa"] = new[] { "Segoe UI", "Scheherazade New" },
 			["hi"] = new[] { "Nirmala UI", "Annapurna SIL" },
+			["km"] = new[] { "Leelawadee UI", "Khmer UI", "Noto Sans Khmer" },
 			["ko"] = new[] { "Malgun Gothic", "Noto Sans CJK KR" },
+			["ml"] = new[] { "Nirmala UI", "Noto Sans Malayalam" },
+			["my"] = new[] { "Myanmar Text", "Padauk" },
+			["ne"] = new[] { "Nirmala UI", "Annapurna SIL" },
+			["ta"] = new[] { "Nirmala UI", "Noto Sans Tamil" },
 			["te"] = new[] { "Nirmala UI", "Noto Sans Telugu" },
+			["th"] = new[] { "Leelawadee UI", "Noto Sans Thai" },
+			["ur"] = new[] { "Segoe UI", "Scheherazade New" },
 			["zh"] = new[] { "Microsoft YaHei UI", "Noto Sans CJK SC" },
 		};
 
 		private static FontManager s_registeredWith;
 
-		/// <summary>The interface font family in effect for the UI language at application startup.</summary>
+		/// <summary>
+		/// The interface font family in effect for the UI language at application startup.
+		/// </summary>
 		public static FontFamily UiFontFamily
 			=> FwThemeResources.RequireFontFamily(DefaultFontFamilyKey);
 
@@ -60,7 +71,10 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 				? families : new string[0];
 		}
 
-		/// <summary>The theme font, UI-language fallbacks, and platform default for <paramref name="uiCulture"/>.</summary>
+		/// <summary>
+		/// The theme font, UI-language fallbacks, and platform default for
+		/// <paramref name="uiCulture"/>.
+		/// </summary>
 		public static FontFamily FamilyFor(CultureInfo uiCulture)
 		{
 			var names = new List<string>

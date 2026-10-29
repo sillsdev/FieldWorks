@@ -6,20 +6,17 @@ proposed Andika default has taller line metrics. Line-height tokens remain a
 separate decision.
 
 `FwUiFont.ApplyTo` registers the bundled Andika collection and assigns the
-interface font family to Semi's `DefaultFontFamily`,
+interface font stack to Semi's `DefaultFontFamily`,
 `ContentControlThemeFontFamily`, and `SemiFontFamilyRegular` resources. The
-family stack ends with the platform default, so a system without Segoe UI can
-use its own default. Data text continues to use its writing-system font.
-Andika 7.000 remains bundled in a private collection; a plain `Andika` family
-still names the system font for writing-system data.
+stack combines the theme default, fallbacks for the UI language, and the
+platform default. It is chosen at startup and applies across the application:
+menus and other interface chrome should not change when the project changes.
 
-The current implementation still adds five language-specific fallback lists.
-Reading the language project's `UiElement` style and replacing that table are
-not implemented yet. Project-specific font selection needs to be applied to the
-corresponding Avalonia host without changing other open project windows. The
-factory `UiElement` entries for en, es, fr, id and pt specify Microsoft Sans
-Serif; their treatment must be reconciled with the chosen Segoe UI default.
+The language project's `UiElement` style continues to control UI-writing-system
+text drawn in Views; Avalonia interface chrome does not read that style. Data
+text continues to use its writing-system font. Andika 7.000 remains bundled
+in a private collection; a plain `Andika` family still names the system font
+for writing-system data.
 
-Windows validation must measure density, clipping, script glyph fallback and
-project-specific settings. Screenshot baselines still depict Andika and must be
-refreshed on Windows after the implementation is complete.
+Windows validation must measure density, clipping and script glyph fallback.
+Screenshot baselines still depict Andika and must be refreshed on Windows.
