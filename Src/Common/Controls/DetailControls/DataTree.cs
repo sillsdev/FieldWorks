@@ -4683,10 +4683,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				bool fShowAllFields = m_propertyTable.GetBoolProperty(name, false, PropertyTable.SettingsGroup.LocalSettings);
 				HandleShowHiddenFields(fShowAllFields);
 			}
-			else if (name == "currentContentControlObject")
-			{
-				m_fCurrentContentControlObjectTriggered = true;
-			}
 		}
 
 		/// <summary>

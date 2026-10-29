@@ -223,7 +223,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 		private void SetReversalIndexGuid(Guid ReversalIndexGuid)
 		{
-			m_propertyTable.SetProperty("ReversalIndexGuid", ReversalIndexGuid.ToString(), true);
+			m_propertyTable.SetProperty("ReversalIndexGuid", ReversalIndexGuid.ToString(), false);
 			m_propertyTable.SetPropertyPersistence("ReversalIndexGuid", true);
 		}
 

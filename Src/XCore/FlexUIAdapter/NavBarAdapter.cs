@@ -580,15 +580,9 @@ namespace XCore
 									string propToolForArea = "ToolForAreaNamed_" + areaName;
 									string toolForArea = m_propertyTable.GetStringProperty(propToolForArea, null);
 									SelectInSidePane(() => m_sidepane.SelectTab(tab));
-									// FWR-2895 Deleting a Custom list could result in needing to
-									// update the PropertyTable.
 									if (!String.IsNullOrEmpty(toolForArea) && !toolForArea.StartsWith("?"))
 									{
-										var fsuccess = SelectInSidePane(() => m_sidepane.SelectItem(tab, toolForArea));
-										if (!fsuccess)
-										{
-											m_propertyTable.SetProperty(propToolForArea, null, true);
-										}
+										SelectInSidePane(() => m_sidepane.SelectItem(tab, toolForArea));
 									}
 								}
 								break;
