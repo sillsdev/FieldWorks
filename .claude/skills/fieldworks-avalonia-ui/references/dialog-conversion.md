@@ -222,15 +222,34 @@ The exemplar for giving an Avalonia input the legacy `FwTextBox` writing-system 
 font, RTL, keyboard switch on focus). The shared side is an LCModel-free spec —
 `EntryGoSearchFieldSpec` (`Src/Common/FwAvaloniaDialogs/EntryGoSearchFieldSpec.cs`: font family,
 point size with 0 = the shared default, `RightToLeft`, and a `Focused` callback) — carried as the opt-in
-`EntryGoDialogInput.SearchField` and applied by `EntryGoDialogView.axaml.cs` when the ViewModel arrives
-(FontFamily / FontSize / FlowDirection on `PART_SearchBox`; `Focused` fires on each GotFocus). Null
-spec → the box is untouched (pinned by test). The product side derives the values in
-`EntryGoLauncherShared.BuildVernacularSearchFieldSpec(cache)`: the DEFAULT VERNACULAR ws's
-`DefaultFontName` + `RightToLeftScript` (the same per-ws derivation the region value rows use) and a
-fail-safe keyboard activation (`ws.LocalKeyboard?.Activate()`, default-keyboard fallback, all
-exceptions swallowed). Every Go-family launcher's `BuildInput` opts in. Deferred: the legacy
-writing-system SELECTOR combo (`BaseGoDlg.m_cbWritingSystems`, the user picking WHICH ws to search)
-is not yet migrated — the search box carries the default vernacular ws only.
+`EntryGoDialogInput.SearchField` and applied by `EntryGoDialogView.axaml.cs` whenever the ViewModel's
+`SearchTypography` changes (FontFamily / FontSize / FlowDirection on `PART_SearchBox`, each CLEARED
+back to the shared default when the current typography leaves it unset; `Focused` fires on each
+GotFocus). Null spec → the box is untouched (pinned by test).
+
+**Writing-system selector** (`BaseGoDlg.m_cbWritingSystems` parity, LT-22671). The spec's opt-in
+`WritingSystems` (`EntryGoWritingSystemOption`: id, display name, per-option typography),
+`SelectedWritingSystemId`, and `WritingSystemChanged` callback make the dialog show a "Writing System:"
+row under the search box: a dropdown `FwOptionChooser` built by the view's code-behind into
+`PART_WritingSystemHost` (never an ad-hoc ComboBox). Picking one sets
+`EntryGoDialogViewModel.SelectedWritingSystem`, which reports the id, re-derives `SearchTypography`, and
+re-runs the search; a cleared selection keeps the last writing system. Focus stays on the picker after a
+switch (arrow-browsing the collapsed picker must keep working); the keyboard switches when the user
+returns to the box.
+
+The product side is `EntryGoLauncherShared.BuildSearchFieldSpec(cache, searchWs)`. The legacy selector
+is NOT presentation-only: an ANALYSIS writing system switches the searched fields from forms to sense
+glosses (`EntryGoDlg.GetFields`), so the search and the selector share one mutable
+`EntryGoLauncherShared.SearchWritingSystem` that every search delegate reads per query
+(`GetSearchFields`: vernacular → citation/lexeme/alternate forms, analysis → glosses, both → both).
+Options are every current analysis + vernacular ws once, sorted by `DisplayLabel`, each with its
+`DefaultFontName` + `RightToLeftScript` (the per-ws derivation the region value rows use); the default
+vernacular ws is selected; `Focused` activates the SELECTED ws's keyboard
+(`ws.LocalKeyboard?.Activate()`, default-keyboard fallback, all exceptions swallowed). Every Go-family
+launcher's `BuildInput` creates one `SearchWritingSystem` and passes it to both its search and the spec.
+Tests: `EntryGoDialogTests.WritingSystemSelector_*` (ViewModel + view) and
+`EntryGoDialogLauncherTests` (`SharedSearch_*WsSelected*`, `BuildSearchFieldSpec_*`,
+`GoFamilyBuildInputs_SelectorDrivesTheirSearch`).
 
 ## 3. Build wiring for a NEW dialog *project* (only when adding one; usually you just add files)
 

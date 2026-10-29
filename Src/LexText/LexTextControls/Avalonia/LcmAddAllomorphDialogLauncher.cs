@@ -106,6 +106,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		internal static EntryGoDialogInput BuildInput(LcmCache cache, Mediator mediator, PropertyTable propertyTable,
 			ITsString tssForm)
 		{
+			var searchWs = new EntryGoLauncherShared.SearchWritingSystem();
 			return new EntryGoDialogInput
 			{
 				Title = FwAvaloniaDialogsStrings.AddAllomorphTitle,
@@ -113,9 +114,8 @@ namespace SIL.FieldWorks.LexText.Controls
 				SearchPrompt = FwAvaloniaDialogsStrings.EntryGoResultsLabel,
 				InitialQuery = tssForm?.Text,
 				HelpTopic = "khtpFindEntryToAddAllomorph",
-				Search = BuildSearch(cache, mediator, propertyTable),
-				// The search box types the vernacular form being added (see BuildVernacularSearchFieldSpec).
-				SearchField = EntryGoLauncherShared.BuildVernacularSearchFieldSpec(cache),
+				Search = BuildSearch(cache, mediator, propertyTable, searchWs),
+				SearchField = EntryGoLauncherShared.BuildSearchFieldSpec(cache, searchWs),
 				// The matching list's default columns (headword + glosses in their ws typography).
 				ResultColumns = EntryGoLauncherShared.BuildDefaultResultColumns(cache)
 			};
@@ -126,10 +126,12 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// entry (the Add-Allomorph dialog has no starting entry to exclude). Internal so it is unit-testable.
 		/// </summary>
 		internal static Func<string, IReadOnlyList<EntryGoSearchResult>> BuildSearch(LcmCache cache,
-			Mediator mediator, PropertyTable propertyTable)
+			Mediator mediator, PropertyTable propertyTable,
+			EntryGoLauncherShared.SearchWritingSystem searchWs = null)
 		{
 			return EntryGoLauncherShared.BuildEntrySearch(cache, mediator, propertyTable,
-				excludedEntryHvo: 0, "AvaloniaAddAllomorphSearchEngine", filter: null);
+				excludedEntryHvo: 0, "AvaloniaAddAllomorphSearchEngine", filter: null,
+				searchWs);
 		}
 
 		protected override EntryGoDialogViewModel CreateViewModel(EntryGoDialogInput state)
