@@ -428,7 +428,7 @@ namespace XCore
 			if (prop == null)
 			{
 				result = defaultValue;
-				SetDefaultInternal(key, defaultValue, true);
+				SetDefaultInternal(key, defaultValue);
 			}
 			else
 			{
@@ -436,7 +436,6 @@ namespace XCore
 				{
 					prop.value = defaultValue;
 					result = defaultValue;
-					SetDefaultInternal(key, defaultValue, true);
 				}
 				else
 				{
@@ -454,52 +453,35 @@ namespace XCore
 		}
 
 		/// <summary>
-		/// set the default; does nothing if this value is already in the PropertyTable (local or global).
+		/// Stores the default under the best settings group; does nothing if the property already
+		/// exists there.
 		/// </summary>
-		/// <param name="name"></param>
-		/// <param name="defaultValue"></param>
-		/// <param name="doBroadcastIfChanged">
-		/// "true" if the property should be broadcast, and then, only if it has changed.
-		/// "false" to not broadcast it at all.
-		/// </param>
-		public void SetDefault(string name, object defaultValue, bool doBroadcastIfChanged)
+		public void SetDefault(string name, object defaultValue)
 		{
 			CheckDisposed();
-			SetDefault(name, defaultValue, SettingsGroup.BestSettings, doBroadcastIfChanged);
+			SetDefault(name, defaultValue, SettingsGroup.BestSettings);
 		}
 
 		/// <summary>
-		/// set the default; does nothing if this value is already in the specified settingsGroup.
+		/// Stores the default; does nothing if the property already exists in the specified
+		/// settingsGroup.
 		/// </summary>
-		/// <param name="name"></param>
-		/// <param name="defaultValue"></param>
-		/// <param name="settingsGroup"></param>
-		/// <param name="doBroadcastIfChanged">
-		/// "true" if the property should be broadcast, and then, only if it has changed.
-		/// "false" to not broadcast it at all.
-		/// </param>
-		public void SetDefault(string name, object defaultValue, SettingsGroup settingsGroup, bool doBroadcastIfChanged)
+		public void SetDefault(string name, object defaultValue, SettingsGroup settingsGroup)
 		{
 			CheckDisposed();
 			string key;
 			GetBestSettingsGroupAndKey(name, settingsGroup, out key);
-			SetDefaultInternal(key, defaultValue, doBroadcastIfChanged);
+			SetDefaultInternal(key, defaultValue);
 		}
 
 		/// <summary>
-		/// set a default; does nothing if this value is already in the PropertyTable.
+		/// Stores the default; does nothing if the key already exists.
 		/// </summary>
-		/// <param name="key"></param>
-		/// <param name="defaultValue"></param>
-		/// <param name="doBroadcastIfChanged">
-		/// "true" if the property should be broadcast, and then, only if it has changed.
-		/// "false" to not broadcast it at all.
-		/// </param>
-		private void SetDefaultInternal(string key, object defaultValue, bool doBroadcastIfChanged)
+		private void SetDefaultInternal(string key, object defaultValue)
 		{
 			if (!m_properties.ContainsKey(key))
 			{
-				SetPropertyInternal(key, defaultValue, doBroadcastIfChanged);
+				SetPropertyInternal(key, defaultValue, false);
 			}
 		}
 

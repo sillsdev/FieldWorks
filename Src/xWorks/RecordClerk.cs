@@ -353,7 +353,7 @@ namespace SIL.FieldWorks.XWorks
 						{
 							m_activeMenuBarFilter = menuBarFilterOption;
 							m_filterProvider.OnAdjustFilterSelection(m_activeMenuBarFilter);
-							m_propertyTable.SetDefault(CurrentFilterPropertyTableId, m_activeMenuBarFilter.id, PropertyTable.SettingsGroup.LocalSettings, false);
+							m_propertyTable.SetDefault(CurrentFilterPropertyTableId, m_activeMenuBarFilter.id, PropertyTable.SettingsGroup.LocalSettings);
 							fSetFilterMenu = true;
 							break;
 						}

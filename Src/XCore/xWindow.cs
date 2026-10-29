@@ -526,16 +526,14 @@ namespace XCore
 					m_propertyTable.SetDefault(
 						name,
 						XmlUtils.GetBooleanAttributeValue(node, "bool"),
-						settingsGroup,
-						true);
+						settingsGroup);
 				}
 				else if (node.Attributes["intValue"] != null)
 				{
 					m_propertyTable.SetDefault(
 						name,
 						XmlUtils.GetMandatoryIntegerAttributeValue(node, "intValue"),
-						settingsGroup,
-						true);
+						settingsGroup);
 				}
 					//this one allows us to just create an object on-the-fly and stick it directly in a property.
 				else if (node.Attributes["assemblyPath"] != null)
@@ -543,8 +541,7 @@ namespace XCore
 					m_propertyTable.SetDefault(
 						name,
 						DynamicLoader.CreateObject(node, m_mediator),
-						settingsGroup,
-						true);
+						settingsGroup);
 					m_propertyTable.SetPropertyPersistence(name, false, settingsGroup);
 				}
 				else
@@ -555,8 +552,7 @@ namespace XCore
 						m_propertyTable.SetDefault(
 							name,
 							XmlUtils.GetMandatoryAttributeValue(node, "value"),
-							settingsGroup,
-							true);
+							settingsGroup);
 					}
 				}
 

@@ -995,10 +995,10 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 			// set default property, so it doesn't accidentally get set
 			// in OnPropertyChanged() when user right clicks for the first time (cf. LT-2789).
-			m_propertyTable.SetDefault("SortedFromEnd", false, PropertyTable.SettingsGroup.LocalSettings, false);
+			m_propertyTable.SetDefault("SortedFromEnd", false, PropertyTable.SettingsGroup.LocalSettings);
 			// set default property, so it doesn't accidentally get set
 			// in OnPropertyChanged() when user right clicks for the first time (cf. LT-2789).
-			m_propertyTable.SetDefault("SortedByLength", false, PropertyTable.SettingsGroup.LocalSettings, false);
+			m_propertyTable.SetDefault("SortedByLength", false, PropertyTable.SettingsGroup.LocalSettings);
 
 			//
 			// FilterBar
