@@ -149,6 +149,18 @@ namespace XCore
 			Assert.That(m_propertyTable.PropertyExists("areaChoiceParameters"), Is.False);
 		}
 
+		// A remembered tool can vanish, as a deleted custom list does. The area listener has
+		// already fallen back to the default tool and stores that tool once it is built.
+		[Test]
+		public void AreaChoiceChange_RememberedToolIsGone_LeavesItsNameWithoutSettingAnyProperty()
+		{
+			ShowArea("grammar", "deletedList");
+
+			Assert.That(m_propertyTable.GetStringProperty("ToolForAreaNamed_grammar", null),
+				Is.EqualTo("deletedList"));
+			Assert.That(m_mediator.JobItems, Is.EqualTo(0), "the failed selection must not set a property");
+		}
+
 		[Test]
 		public void ReturnToAnArea_SelectsTheToolRememberedSinceTheLastVisit()
 		{

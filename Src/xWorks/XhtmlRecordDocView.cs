@@ -174,7 +174,7 @@ namespace SIL.FieldWorks.XWorks
 			if (cmo != null && cmo.Hvo > 0)
 			{
 				// Pass in cmo for popup lexical entry editor.
-				var configurationFile = DictionaryConfigurationListener.GetCurrentConfiguration(m_propertyTable, null, cmo);
+				var configurationFile = DictionaryConfigurationListener.GetCurrentConfiguration(m_propertyTable, false, null, cmo);
 				if (String.IsNullOrEmpty(configurationFile))
 				{
 					m_mainView.DocumentText = String.Format("<html><body><p>{0}</p></body></html>",
