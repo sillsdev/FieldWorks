@@ -337,12 +337,6 @@
   <data name="ksUndoCreateReversalIndex" xml:space="preserve">
     <value>Undo Create Reversal Index</value>
   </data>
-  <data name="ksRedoDemote" xml:space="preserve">
-    <value>Redo Demote</value>
-  </data>
-  <data name="ksUndoDemote" xml:space="preserve">
-    <value>Undo Demote</value>
-  </data>
   <data name="ksUndoCreatingEntry" xml:space="preserve">
     <value>Undo Creating Entry</value>
   </data>

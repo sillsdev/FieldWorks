@@ -430,4 +430,16 @@ Without these, we cannot find related entries.</value>
   <data name="ksRedoDeleteRef" xml:space="preserve">
     <value>Redo Delete Reference</value>
   </data>
+  <data name="ksUndoDemote" xml:space="preserve">
+    <value>Undo Demote</value>
+  </data>
+  <data name="ksRedoDemote" xml:space="preserve">
+    <value>Redo Demote</value>
+  </data>
+  <data name="ksUndoPromote" xml:space="preserve">
+    <value>Undo Promote</value>
+  </data>
+  <data name="ksRedoPromote" xml:space="preserve">
+    <value>Redo Promote</value>
+  </data>
 </root>

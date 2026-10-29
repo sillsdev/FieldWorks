@@ -59,6 +59,8 @@ namespace SIL.FieldWorks.XWorks
 			// a variant's form row, and the lexical-relation rows (add or replace a reference).
 			"mnuDataTree-Allomorph", "mnuDataTree-AffixProcess", "mnuDataTree-VariantForm",
 			"mnuDataTree-DeleteAddLexReference", "mnuDataTree-DeleteReplaceLexReference",
+			// Lexicon rows: a sense's header.
+			"mnuDataTree-Sense",
 			// Lexicon: an id no part reaches (its pronunciation part does not exist).
 			"mnuDataTree-CmMedia",
 			// Grammar: posEdit rows (two item rows, five section rows: Affix Templates, Affix
@@ -87,7 +89,7 @@ namespace SIL.FieldWorks.XWorks
 			"mnuDataTree-Examples", "mnuDataTree-Etymology", "mnuDataTree-ExtendedNote",
 			"mnuDataTree-ExtendedNote-Examples", "mnuDataTree-Example", "mnuDataTree-Pronunciation",
 			"mnuDataTree-VariantSpec", "mnuDataTree-Allomorph", "mnuDataTree-AffixProcess", "mnuDataTree-VariantForm",
-			"mnuDataTree-DeleteAddLexReference", "mnuDataTree-DeleteReplaceLexReference"
+			"mnuDataTree-DeleteAddLexReference", "mnuDataTree-DeleteReplaceLexReference", "mnuDataTree-Sense"
 		};
 
 		private static readonly string[] LexiconInStringMenuIds =
@@ -320,14 +322,49 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(mismatches, Is.Empty, string.Join(Environment.NewLine, mismatches));
 		}
 
+		// The fixture's entry has one sense, where Demote, Promote and Move Sense to a New Entry
+		// are all disabled; here a second sense and a subsense enable them.
+		[Test]
+		public void SenseMenu_RendersWhatTheAdapterPathRendered_WhereDemotePromoteAndSplitApply()
+		{
+			ILexSense second = null;
+			ILexSense subsense = null;
+			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
+			{
+				var senses = Cache.ServiceLocator.GetInstance<ILexSenseFactory>();
+				m_entry.SensesOS.Add(second = senses.Create());
+				second.SensesOS.Add(subsense = senses.Create());
+			});
+			DrainMediatorAndIdleQueues();
+			var ids = new[] { "mnuDataTree-Sense" };
+			var rendered = new Dictionary<ILexSense, string>();
+
+			foreach (var sense in new[] { m_entry.SensesOS[0], second, subsense })
+			{
+				var row = Rows().First(f => f.ObjectHvo == sense.Hvo && f.MenuId == "mnuDataTree-Sense");
+				EnsureAdapter(row.ObjectHvo, row.Field);
+				Assert.That(AdapterTree.CurrentSlice?.Object?.Hvo, Is.EqualTo(sense.Hvo),
+					"precondition: the adapter targets the sense of " + row.Label);
+				var before = Describe(XCoreMenuBridge.CreateMenuItems(Window, ids, null, null, null));
+				var after = Describe(XCoreMenuBridge.CreateMenuItems(Window, ids, null, null,
+					m_view.CreateMenuAuthority(MenuRequest(row, DetailMenuKind.SliceMenu))));
+				Assert.That(after, Is.EqualTo(before), row.Label);
+				rendered[sense] = after;
+			}
+
+			Assert.That(rendered[second], Does.Contain("Demote [enabled=True"));
+			Assert.That(rendered[second], Does.Contain("Move Sense to a New Entry [enabled=True"));
+			Assert.That(rendered[subsense], Does.Contain("Promote [enabled=True"));
+		}
+
 		// Contract: an owned menu never asks the mediator and never builds the adapter.
 		[Test]
 		public void OwnedMenus_AreBuiltWithoutTheAdapterOrTheMediator()
 		{
 			Assert.That(HiddenTreeExists, Is.False, "precondition: no hidden tree yet");
 			var rows = OwnedMenuRows();
-			Assert.That(rows, Has.Count.EqualTo(41),
-				"precondition: twenty-six ids; -Translation, -VariantForms and -DeleteReplaceLexReference on two rows each, the item ids and hotlinks on every item's rows");
+			Assert.That(rows, Has.Count.EqualTo(42),
+				"precondition: twenty-seven ids; -Translation, -VariantForms and -DeleteReplaceLexReference on two rows each, the item ids and hotlinks on every item's rows");
 			foreach (var (row, menuId, kind) in rows)
 			{
 				var ids = kind == DetailMenuKind.ContextMenu

@@ -2421,24 +2421,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		{
 			CheckDisposed();
 
-			var obj = GetObjectForMenusToOperateOn();
-			if (obj == null)
-				return false;
-
-			var owner = obj.Owner;
-			int flid = obj.OwningFlid;
-			if (!Cache.IsVectorProperty(flid))
-				return false;
-
-			// For example, a LexSense belonging to a LexSense can always be split off to a new
-			// LexEntry.
-			int clsid = obj.ClassID;
-			if (clsid == owner.ClassID)
-				return true;
-
-			// Otherwise, we need at least two vector items to be able to split off this one.
-			int vectorSize = Cache.DomainDataByFlid.get_VecSize(owner.Hvo, flid);
-			return (vectorSize >= 2);
+			return DetailObjectSplit.CanSplitNow(GetObjectForMenusToOperateOn());
 		}
 
 		protected override void OnValidating(System.ComponentModel.CancelEventArgs e)

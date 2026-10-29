@@ -880,15 +880,6 @@ namespace SIL.FieldWorks.XWorks.LexEd {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Redo Demote.
-        /// </summary>
-        internal static string ksRedoDemote {
-            get {
-                return ResourceManager.GetString("ksRedoDemote", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Redo Edit Function.
         /// </summary>
         internal static string ksRedoEditFunction {
@@ -1182,15 +1173,6 @@ namespace SIL.FieldWorks.XWorks.LexEd {
         internal static string ksUndoDeleteRevFromSense {
             get {
                 return ResourceManager.GetString("ksUndoDeleteRevFromSense", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Undo Demote.
-        /// </summary>
-        internal static string ksUndoDemote {
-            get {
-                return ResourceManager.GetString("ksUndoDemote", resourceCulture);
             }
         }
         

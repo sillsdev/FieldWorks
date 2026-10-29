@@ -856,6 +856,149 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(m_synonymSet.Name.AnalysisDefaultWritingSystem.Text, Is.EqualTo("body parts"), "cancelled: unchanged");
 		}
 
+		[Test]
+		public void DemoteSense_ThenPromote_MovesTheSenseUnderTheOneBefore_AndBack_EachInOneUndoableStep()
+		{
+			InvokeLabelMenuItem(HeaderRowOf(m_sense2), "Demote");
+
+			Assert.That(m_entry.SensesOS, Is.EqualTo(new[] { m_sense1 }));
+			Assert.That(m_sense1.SensesOS, Is.EqualTo(new[] { m_sense2 }));
+			Assert.That(Cache.ActionHandlerAccessor.GetUndoText(), Is.EqualTo("Undo Demote"));
+
+			InvokeLabelMenuItem(HeaderRowOf(m_sense2), "Promote");
+
+			Assert.That(m_entry.SensesOS, Is.EqualTo(new[] { m_sense1, m_sense2 }));
+			Assert.That(m_sense1.SensesOS, Is.Empty);
+			Assert.That(Cache.ActionHandlerAccessor.GetUndoText(), Is.EqualTo("Undo Promote"));
+			Cache.ActionHandlerAccessor.Undo();
+			Assert.That(m_sense1.SensesOS, Is.EqualTo(new[] { m_sense2 }), "one Undo reverses the promote");
+		}
+
+		[Test]
+		public void SenseMenu_DisablesPromoteOnATopLevelSense_AndDemoteOnAnOnlySense()
+		{
+			var promote = m_view.SenseNestingItem(SenseLeaf("CmdDataTree-Promote-Sense"), HeaderRowOf(m_sense1), demote: false);
+			Assert.That(promote.IsEnabled, Is.False);
+			Assert.That(promote.Execute, Is.Null);
+
+			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () => m_sense1.SensesOS.Add(m_sense2));
+
+			Assert.That(m_view.SenseNestingItem(SenseLeaf("CmdDataTree-MakeSub-Sense"), HeaderRowOf(m_sense1), demote: true).IsEnabled,
+				Is.False, "the only sense of the entry");
+			Assert.That(m_view.SenseNestingItem(SenseLeaf("CmdDataTree-MakeSub-Sense"), TranslationRow(), demote: true), Is.Null,
+				"a row of another class");
+		}
+
+		// The new entry copies the shown one; the view stays on the shown entry.
+		[Test]
+		public void MoveSenseToANewEntry_TakesTheSenseOutOfTheShownEntry()
+		{
+			ILexEntry newEntry;
+			try
+			{
+				InvokeLabelMenuItem(HeaderRowOf(m_sense2), "Move Sense to a New Entry");
+			}
+			finally
+			{
+				newEntry = m_sense2.Owner as ILexEntry;
+				if (newEntry != null && newEntry != m_entry)
+					m_createdObjects.Add(newEntry);
+			}
+
+			Assert.That(newEntry, Is.Not.Null.And.Not.SameAs(m_entry), "the sense is in a new entry");
+			Assert.That(newEntry.LexemeFormOA.Form.VernacularDefaultWritingSystem.Text, Is.EqualTo("command-entry"),
+				"the new entry copies the lexeme form");
+			Assert.That(m_entry.SensesOS, Is.EqualTo(new[] { m_sense1 }));
+			Assert.That(m_view.Clerk.CurrentObject, Is.SameAs(m_entry), "the shown entry stays");
+			Cache.ActionHandlerAccessor.Undo();
+			Assert.That(m_entry.SensesOS, Is.EqualTo(new[] { m_sense1, m_sense2 }), "one Undo brings the sense back");
+			Assert.That(newEntry.IsValidObject, Is.False, "and removes the new entry");
+		}
+
+		[Test]
+		public void MoveSenseToANewEntry_IsDisabled_OnTheOnlySense()
+		{
+			var split = SenseLeaf("CmdDataTree-Split-Sense");
+			Assert.That(m_view.SplitItem(split, HeaderRowOf(m_sense1)).IsEnabled, Is.True, "precondition: two senses");
+
+			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () => m_sense1.SensesOS.Add(m_sense2));
+
+			Assert.That(m_view.SplitItem(split, HeaderRowOf(m_sense1)).IsEnabled, Is.False);
+			Assert.That(m_view.SplitItem(split, HeaderRowOf(m_sense2)).IsEnabled, Is.True, "a subsense always splits off");
+		}
+
+		[Test]
+		public void DeleteSense_RemovesItAndItsSubsenses_WhenTheUserConfirms()
+		{
+			ILexSense subsense = null;
+			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
+				m_sense2.SensesOS.Add(subsense = Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create()));
+			m_view.DeleteConfirmation = ui =>
+			{
+				Assert.That(ui.Object, Is.SameAs(m_sense2), "the confirmation names the row's sense");
+				return true;
+			};
+
+			InvokeLabelMenuItem(HeaderRowOf(m_sense2), "Delete this Sense and any Subsenses");
+
+			Assert.That(m_sense2.IsValidObject, Is.False);
+			Assert.That(subsense.IsValidObject, Is.False);
+			Assert.That(m_entry.SensesOS, Is.EqualTo(new[] { m_sense1 }));
+		}
+
+		[Test]
+		public void MergeSense_IntoThePickedSense_InOneUndoableStep()
+		{
+			IReadOnlyList<DummyCmObject> offered = null;
+			m_view.MergeSurvivor = candidates =>
+			{
+				offered = candidates;
+				return m_sense1.Hvo;
+			};
+
+			InvokeLabelMenuItem(HeaderRowOf(m_sense2), "Merge Sense into...");
+
+			Assert.That(offered.Select(c => c.Hvo), Does.Contain(m_sense1.Hvo));
+			Assert.That(m_sense2.IsValidObject, Is.False, "the sense merged away");
+			Assert.That(m_entry.SensesOS, Is.EqualTo(new[] { m_sense1 }));
+			Cache.ActionHandlerAccessor.Undo();
+			Assert.That(m_entry.SensesOS, Has.Count.EqualTo(2), "one Undo brings the sense back");
+		}
+
+		// No Avalonia row shows the new picture yet (LT-22772).
+		[Test]
+		public void InsertPicture_FromTheSenseMenu_AddsAPictureOfTheFileTheUserPicks_InOneUndoableStep()
+		{
+			var asked = 0;
+			m_view.PictureFileChosen = picture =>
+			{
+				Assert.That(picture, Is.Null, "the dialog opens for a new picture");
+				asked++;
+				return Path.Combine(Path.GetTempPath(), "inserted-picture.jpg");
+			};
+
+			InvokeLabelMenuItem(HeaderRowOf(m_sense1), "Insert Picture");
+
+			Assert.That(asked, Is.EqualTo(1));
+			Assert.That(m_sense1.PicturesOS, Has.Count.EqualTo(2));
+			Assert.That(m_sense1.PicturesOS[0], Is.SameAs(m_picture), "the new picture goes last");
+			Assert.That(m_sense1.PicturesOS[1].PictureFileRA.InternalPath, Does.EndWith("inserted-picture.jpg"));
+			Assert.That(Cache.ActionHandlerAccessor.GetUndoText(), Is.EqualTo(xWorksStrings.ksUndoInsertPicture));
+			Cache.ActionHandlerAccessor.Undo();
+			Assert.That(m_sense1.PicturesOS, Is.EqualTo(new[] { m_picture }), "one Undo removes it");
+		}
+
+		[Test]
+		public void InsertPicture_LeavesTheModelAlone_WhenTheUserCancels_AndIsAbsentOffASense()
+		{
+			m_view.PictureFileChosen = picture => null;
+
+			InvokeLabelMenuItem(HeaderRowOf(m_sense1), "Insert Picture");
+
+			Assert.That(m_sense1.PicturesOS, Is.EqualTo(new[] { m_picture }));
+			Assert.That(m_view.InsertPictureItem(SenseLeaf("CmdInsertPicture"), TranslationRow()), Is.Null);
+		}
+
 		// Builds the row's label menu as the host does and runs the named item's own Execute.
 		private void InvokeLabelMenuItem(DetailField row, string label)
 			=> Invoke(RecordEditView.ComposeSliceMenuIds(row.MenuId, row.IsMultiStringRow).ToArray(), row,
@@ -888,6 +1031,10 @@ namespace SIL.FieldWorks.XWorks
 			item.Execute();
 			DrainMediatorAndIdleQueues();
 		}
+
+		private DetailMenuLeaf SenseLeaf(string commandId)
+			=> XCoreMenuBridge.ResolveMenu(m_propertyTable.GetValue<XWindow>("window"), "mnuDataTree-Sense")
+				.Leaves.Single(l => l.CommandId == commandId);
 
 		// Runs an action and returns the link it posts, once the post has been delivered.
 		private FwLinkArgs CaptureFollowLink(Action action)
