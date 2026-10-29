@@ -45,7 +45,7 @@ namespace FwAvaloniaTests
 		}
 
 		/// <summary>UI languages of the Localizations/l10ns satellites, with a sample string in
-		/// each one's script. Five have explicit fallback lists.</summary>
+		/// each one's script. These samples exercise the existing named fallbacks.</summary>
 		private static readonly object[] FallbackLanguages =
 		{
 			new object[] { "fa", "\u0641\u0627\u06CC\u0644" },
@@ -148,11 +148,30 @@ namespace FwAvaloniaTests
 			}
 		}
 
-		[AvaloniaTest]
-		public void FiveLanguages_HaveNamedFallbacks()
+		[TestCase("ar", "Segoe UI|Scheherazade New")]
+		[TestCase("ar-SA", "Segoe UI|Scheherazade New")]
+		[TestCase("bn", "Nirmala UI|Noto Sans Bengali")]
+		[TestCase("fa", "Segoe UI|Scheherazade New")]
+		[TestCase("hi", "Nirmala UI|Annapurna SIL")]
+		[TestCase("km", "Leelawadee UI|Khmer UI|Noto Sans Khmer")]
+		[TestCase("ko", "Malgun Gothic|Noto Sans CJK KR")]
+		[TestCase("ml", "Nirmala UI|Noto Sans Malayalam")]
+		[TestCase("my", "Myanmar Text|Padauk")]
+		[TestCase("ne", "Nirmala UI|Annapurna SIL")]
+		[TestCase("ta", "Nirmala UI|Noto Sans Tamil")]
+		[TestCase("te", "Nirmala UI|Noto Sans Telugu")]
+		[TestCase("th", "Leelawadee UI|Noto Sans Thai")]
+		[TestCase("ur", "Segoe UI|Scheherazade New")]
+		[TestCase("zh-CN", "Microsoft YaHei UI|Noto Sans CJK SC")]
+		[Test]
+		public void FallbackFamiliesFor_ReturnsOrderedFamiliesForUiLanguage(string tag, string families)
 		{
-			foreach (object[] row in FallbackLanguages)
-				Assert.That(FwUiFont.FallbackFamiliesFor(new CultureInfo((string)row[0])), Is.Not.Empty);
+			Assert.That(FwUiFont.FallbackFamiliesFor(new CultureInfo(tag)), Is.EqualTo(families.Split('|')));
+		}
+
+		[Test]
+		public void FallbackFamiliesFor_InvariantCultureHasNoNamedFamilies()
+		{
 			Assert.That(FwUiFont.FallbackFamiliesFor(CultureInfo.InvariantCulture), Is.Empty);
 		}
 
@@ -166,7 +185,7 @@ namespace FwAvaloniaTests
 		[TestCase("th", "\u0E44\u0E17\u0E22")]
 		[TestCase("ur", "\u0627\u0631\u062F\u0648")]
 		[AvaloniaTest]
-		public void InstallerLanguage_PlatformFallbackDrawsSample(string tag, string sample)
+		public void InstallerLanguage_NamedFallbackDrawsSample(string tag, string sample)
 		{
 			var glyphs = Shape(FwUiFont.FamilyFor(new CultureInfo(tag)), sample);
 			Assert.That(glyphs, Is.Not.Empty, tag);
