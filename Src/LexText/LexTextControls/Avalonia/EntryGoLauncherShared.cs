@@ -158,8 +158,9 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// Builds the search-box spec for a search that follows <paramref name="searchWs"/>. It
 		/// offers every current analysis and vernacular writing system once, sorted by display
 		/// name and each with its own font and direction, and selects the one
-		/// <paramref name="searchWs"/> holds, the default vernacular writing system when it holds
-		/// none. Selecting an option points <paramref name="searchWs"/> at it, and focusing the
+		/// <paramref name="searchWs"/> holds. When it holds none, or one that is not current, it
+		/// is pointed at the default vernacular writing system, which is selected instead.
+		/// Selecting an option points <paramref name="searchWs"/> at it, and focusing the
 		/// search box activates the selected writing system's keyboard. The spec's own typography
 		/// is the default vernacular writing system's.
 		/// </summary>
@@ -178,7 +179,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				.Select(group => group.First())
 				.OrderBy(ws => ws.DisplayLabel, StringComparer.CurrentCulture)
 				.ToList();
-			if (searchWs.Handle <= 0)
+			if (available.All(ws => ws.Handle != searchWs.Handle))
 				searchWs.Handle = cache.DefaultVernWs;
 
 			var spec = FieldSpecFor(writingSystems.DefaultVernacularWritingSystem);
@@ -314,8 +315,24 @@ namespace SIL.FieldWorks.LexText.Controls
 			};
 		}
 
+		/// <summary>
+		/// The entry's headword in the first current vernacular writing system that has a form,
+		/// default first, then the first current analysis one; the homograph form or the hvo
+		/// when no writing system has a form.
+		/// </summary>
 		internal static string HeadwordText(ILexEntry entry)
-			=> entry.HeadWord?.Text ?? entry.HomographForm ?? entry.Hvo.ToString(CultureInfo.InvariantCulture);
+		{
+			var writingSystems = entry.Cache.ServiceLocator.WritingSystems;
+			var candidates = writingSystems.CurrentVernacularWritingSystems
+				.Concat(writingSystems.CurrentAnalysisWritingSystems);
+			foreach (var ws in candidates)
+			{
+				var text = entry.HeadWordForWs(ws.Handle)?.Text;
+				if (!string.IsNullOrEmpty(text))
+					return text;
+			}
+			return entry.HomographForm ?? entry.Hvo.ToString(CultureInfo.InvariantCulture);
+		}
 
 		// The Lexeme Form column's value (the legacy LexemeFormForFindEntry part: LexemeForm.Form in the best
 		// vernacular-or-analysis ws).
