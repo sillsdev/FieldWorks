@@ -93,17 +93,17 @@ namespace SIL.FieldWorks.LexText.Controls
 		internal static EntryGoDialogInput BuildInput(LcmCache cache, Mediator mediator, PropertyTable propertyTable,
 			ILexEntry startingEntry)
 		{
+			var searchWs = new EntryGoLauncherShared.SearchWritingSystem();
 			return new EntryGoDialogInput
 			{
 				Title = FwAvaloniaDialogsStrings.LinkAllomorphTitle,
 				SearchPrompt = FwAvaloniaDialogsStrings.EntryGoResultsLabel,
 				ExcludedId = startingEntry?.Hvo.ToString(System.Globalization.CultureInfo.InvariantCulture),
 				HelpTopic = "hktpInsertAllomorphChooseAllomorph",
-				Search = BuildSearch(cache, mediator, propertyTable, startingEntry),
+				Search = BuildSearch(cache, mediator, propertyTable, startingEntry, searchWs),
 				AuxiliaryLabel = FwAvaloniaDialogsStrings.LinkAllomorphAllomorphLabel,
 				AuxiliaryOptions = result => GetAllomorphOptions(cache, result?.Id),
-				// The search box types the vernacular text being searched (see BuildVernacularSearchFieldSpec).
-				SearchField = EntryGoLauncherShared.BuildVernacularSearchFieldSpec(cache),
+				SearchField = EntryGoLauncherShared.BuildSearchFieldSpec(cache, searchWs),
 				// The matching list's default columns (headword + glosses in their ws typography).
 				ResultColumns = EntryGoLauncherShared.BuildDefaultResultColumns(cache)
 			};
@@ -152,10 +152,12 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// (they have no concrete allomorph to choose). Internal so it is unit-testable against a real cache.
 		/// </summary>
 		internal static Func<string, IReadOnlyList<EntryGoSearchResult>> BuildSearch(LcmCache cache,
-			Mediator mediator, PropertyTable propertyTable, ILexEntry startingEntry)
+			Mediator mediator, PropertyTable propertyTable, ILexEntry startingEntry,
+			EntryGoLauncherShared.SearchWritingSystem searchWs = null)
 		{
 			return EntryGoLauncherShared.BuildEntrySearch(cache, mediator, propertyTable,
-				startingEntry?.Hvo ?? 0, "AvaloniaLinkAllomorphSearchEngine", HasConcreteAllomorph);
+				startingEntry?.Hvo ?? 0, "AvaloniaLinkAllomorphSearchEngine", HasConcreteAllomorph,
+				searchWs);
 		}
 
 		/// <summary>

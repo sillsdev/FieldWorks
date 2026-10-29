@@ -16,6 +16,7 @@ using FwAvaloniaDialogs;
 using FwAvaloniaTests.VisualChecks; // DialogSnapshot — the per-stage PNG harness (linked in via the csproj)
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwAvalonia;
+using SIL.FieldWorks.Common.FwAvalonia.Detail;
 
 namespace FwAvaloniaDialogsTests
 {
@@ -958,6 +959,191 @@ namespace FwAvaloniaDialogsTests
 				"the shared density font size stays in charge");
 			Assert.That(box.FlowDirection, Is.EqualTo(FlowDirection.LeftToRight), "the flow stays left-to-right");
 			Assert.That(() => FocusSearch(view), Throws.Nothing, "focusing without a spec is a no-op");
+		}
+
+		// ===== Writing-system selector (LT-22671) =====
+
+		private static readonly EntryGoSearchFieldSpec RightToLeftTypography =
+			new EntryGoSearchFieldSpec { FontFamily = "Scheherazade New", RightToLeft = true };
+
+		private static List<EntryGoWritingSystemOption> WsOptions() => new List<EntryGoWritingSystemOption>
+		{
+			new EntryGoWritingSystemOption
+			{
+				Id = "en", DisplayName = "English",
+				Typography = new EntryGoSearchFieldSpec { FontFamily = "Segoe UI" }
+			},
+			new EntryGoWritingSystemOption
+			{
+				Id = "es", DisplayName = "Spanish",
+				Typography = new EntryGoSearchFieldSpec { FontFamily = "Charis SIL" }
+			},
+			new EntryGoWritingSystemOption { Id = "ar", DisplayName = "Arabic", Typography = RightToLeftTypography }
+		};
+
+		// Matches headwords while "es" is selected and glosses otherwise, standing in for a
+		// launcher whose search follows the selected writing system.
+		private static EntryGoDialogInput WsAwareInput(List<string> reported, string selectedId = "es")
+		{
+			var currentWs = selectedId;
+			var input = Input();
+			var all = Entries();
+			input.Search = query => all
+				.Where(e => (currentWs == "es" ? e.Text : e.Gloss ?? string.Empty)
+					.IndexOf(query ?? string.Empty, System.StringComparison.OrdinalIgnoreCase) >= 0)
+				.ToList();
+			input.SearchField = new EntryGoSearchFieldSpec
+			{
+				WritingSystems = WsOptions(),
+				SelectedWritingSystemId = selectedId,
+				WritingSystemChanged = id =>
+				{
+					reported.Add(id);
+					currentWs = id;
+				}
+			};
+			return input;
+		}
+
+		[Test]
+		public void WritingSystemSelector_OptionsAndInitialSelection_ComeFromTheSpec()
+		{
+			var reported = new List<string>();
+			var vm = new EntryGoDialogViewModel(WsAwareInput(reported));
+
+			Assert.That(vm.HasWritingSystemSelector, Is.True);
+			Assert.That(vm.WritingSystems.Select(o => o.Id), Is.EqualTo(new[] { "en", "es", "ar" }));
+			Assert.That(vm.SelectedWritingSystem?.Id, Is.EqualTo("es"));
+			Assert.That(vm.SearchTypography?.FontFamily, Is.EqualTo("Charis SIL"));
+			Assert.That(reported, Is.Empty, "opening on a known id reports nothing");
+		}
+
+		[Test]
+		public void WritingSystemSelector_UnknownInitialId_SelectsFirstAndReportsIt()
+		{
+			var reported = new List<string>();
+			var vm = new EntryGoDialogViewModel(WsAwareInput(reported, selectedId: "xx"));
+
+			Assert.That(vm.SelectedWritingSystem?.Id, Is.EqualTo("en"));
+			Assert.That(reported, Is.EqualTo(new[] { "en" }),
+				"the fallback selection is reported so the search follows it");
+		}
+
+		[Test]
+		public void WritingSystemSelector_Change_ReportsIdAndReRunsSearch()
+		{
+			var reported = new List<string>();
+			var vm = new EntryGoDialogViewModel(WsAwareInput(reported));
+			vm.SearchText = "ho";
+			Assert.That(vm.Results, Is.Empty, "no headword contains \"ho\"");
+
+			vm.SelectedWritingSystem = vm.WritingSystems.Single(o => o.Id == "en");
+
+			Assert.That(reported, Is.EqualTo(new[] { "en" }));
+			Assert.That(vm.Results.Select(r => r.Id), Is.EqualTo(new[] { "11" }),
+				"the search re-runs in the new writing system and matches the gloss \"house\"");
+		}
+
+		[Test]
+		public void WritingSystemSelector_Change_RaisesSearchTypographyChange()
+		{
+			var vm = new EntryGoDialogViewModel(WsAwareInput(new List<string>()));
+			var changed = new List<string>();
+			vm.PropertyChanged += (s, e) => changed.Add(e.PropertyName);
+
+			vm.SelectedWritingSystem = vm.WritingSystems.Single(o => o.Id == "ar");
+
+			Assert.That(changed, Does.Contain(nameof(EntryGoDialogViewModel.SearchTypography)));
+			Assert.That(vm.SearchTypography, Is.SameAs(RightToLeftTypography));
+		}
+
+		[Test]
+		public void WritingSystemSelector_Cleared_KeepsSearchingInTheLastWritingSystem()
+		{
+			var reported = new List<string>();
+			var vm = new EntryGoDialogViewModel(WsAwareInput(reported));
+			var typography = vm.SearchTypography;
+
+			vm.SelectedWritingSystem = null;
+
+			Assert.That(reported, Is.Empty, "a cleared selection reports nothing");
+			Assert.That(vm.SearchTypography, Is.SameAs(typography));
+		}
+
+		private static FwOptionChooser WsPicker(Control view)
+			=> FindByAutomationId<Border>(view, "EntryGo.WritingSystemHost").Child as FwOptionChooser;
+
+		// Picks a writing system the way a user does: highlight its row, then commit it.
+		private static void PickWs(FwOptionChooser picker, int index)
+		{
+			picker.OptionsList.SelectedIndex = index;
+			picker.CommitHighlighted();
+			Dispatcher.UIThread.RunJobs();
+		}
+
+		[AvaloniaTest]
+		public void WritingSystemSelector_View_ShowsLabelledPickerWithOptions()
+		{
+			var (view, _) = Show(WsAwareInput(new List<string>()), "EntryGo-10-ws-selector");
+
+			var picker = WsPicker(view);
+			Assert.That(picker, Is.Not.Null);
+			Assert.That(picker.IsEffectivelyVisible, Is.True);
+			Assert.That(picker.IsDropdown, Is.True, "the picker sits collapsed beside its label");
+			Assert.That(picker.OptionsList.ItemCount, Is.EqualTo(3));
+			Assert.That(picker.DropdownText, Is.EqualTo("Spanish"));
+			Assert.That(AutomationProperties.GetName(picker),
+				Is.EqualTo(FwAvaloniaDialogsStrings.EntryGoWritingSystemLabel));
+			Assert.That(SearchBox(view).FontFamily.Name, Is.EqualTo("Charis SIL"),
+				"the search box opens in the selected writing system's font");
+		}
+
+		[AvaloniaTest]
+		public void WritingSystemSelector_View_SwitchingAppliesAndResetsTypography()
+		{
+			var input = WsAwareInput(new List<string>());
+			((List<EntryGoWritingSystemOption>)input.SearchField.WritingSystems).Add(
+				new EntryGoWritingSystemOption { Id = "plain", DisplayName = "No typography" });
+			var (view, vm) = Show(input);
+			var picker = WsPicker(view);
+			var box = SearchBox(view);
+
+			PickWs(picker, 2);
+			Capture(view, "EntryGo-11-ws-selector-rtl");
+			Assert.That(vm.SelectedWritingSystem?.Id, Is.EqualTo("ar"), "the picker drives the selection");
+			Assert.That(picker.DropdownText, Is.EqualTo("Arabic"));
+			Assert.That(box.FontFamily.Name, Is.EqualTo("Scheherazade New"));
+			Assert.That(box.FlowDirection, Is.EqualTo(FlowDirection.RightToLeft));
+
+			PickWs(picker, 0);
+			Assert.That(box.FontFamily.Name, Is.EqualTo("Segoe UI"));
+			Assert.That(box.FlowDirection, Is.EqualTo(FlowDirection.LeftToRight),
+				"switching away from a right-to-left writing system restores left-to-right");
+
+			PickWs(picker, 3);
+			Assert.That(box.IsSet(TextBox.FontFamilyProperty), Is.False,
+				"a writing system without typography leaves the shared font in charge");
+			Assert.That(box.IsSet(TextBox.FlowDirectionProperty), Is.False);
+		}
+
+		[AvaloniaTest]
+		public void WritingSystemSelector_View_HiddenWithoutOptions()
+		{
+			var (view, _) = Show(Input());
+
+			var row = FindByAutomationId<Control>(view, "EntryGo.WritingSystemRow");
+			Assert.That(row, Is.Not.Null, "the row is in the tree, only hidden");
+			Assert.That(row.IsVisible, Is.False);
+		}
+
+		[Test]
+		public void WritingSystemSelector_NoOptions_IsHidden()
+		{
+			var vm = new EntryGoDialogViewModel(Input());
+
+			Assert.That(vm.HasWritingSystemSelector, Is.False);
+			Assert.That(vm.WritingSystems, Is.Empty);
+			Assert.That(vm.SelectedWritingSystem, Is.Null);
 		}
 	}
 }

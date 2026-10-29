@@ -48,6 +48,16 @@ Append one entry per completed migration (newest first). Keep entries to
 ~10 lines: link to the change, what was migrated, what was learned, which
 skill files changed.
 
+### 2026-10 — Go-family writing-system selector (LT-22671, closes GAP-WS-SELECTOR)
+
+- Added the `BaseGoDlg.m_cbWritingSystems` selector to every EntryGo-family dialog: spec options +
+  callback, a dropdown `FwOptionChooser` row, and a per-query `SearchWritingSystem` the search reads.
+- Lesson: the gap entry framed the selector as typography/keyboard only, but the legacy change handler
+  also switches the SEARCHED FIELDS (an analysis ws searches glosses). When porting a legacy selector,
+  read what its change handler does to the data path, not just the presentation.
+- Skill files changed: `control-exemplar-map.md` (gap promoted to a §2 row),
+  `dialog-conversion.md` §2d.
+
 ### 2026-06 — Legacy truth-PNG capture toolkit (legacy-screenshot-capture)
 
 - Change: `openspec/changes/legacy-screenshot-capture/` (relocated to the `phase1-docs` branch — not
