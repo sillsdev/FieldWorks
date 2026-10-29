@@ -20,24 +20,15 @@ using SIL.FieldWorks.Common.FwAvalonia.ViewDefinition;
 
 namespace FwAvaloniaTests
 {
-	/// <summary>
-	/// The Avalonia interface font is the one the FwUiFontFamily token names (today the Andika
-	/// bundled in FwAvaloniaTheme), drawn from its own font collection rather than from whatever
-	/// is installed on the machine, and it
-	/// reaches text in every kind of root the hosts create. Runs under the same headless app
-	/// (TestAppBuilder -> FwAvaloniaApp) as the rest of the suite.
-	/// </summary>
+	/// <summary>Checks interface font selection, bundled faces and glyph rendering.</summary>
 	[TestFixture]
 	public class FwUiFontTests
 	{
-		// The family name the token declares, so a change of default font needs no test edit.
-		private static string DefaultName => FwUiFont.UiFontFamily.FamilyNames.First();
-
 		private static IGlyphTypeface Resolve(FontWeight weight, FontStyle style = FontStyle.Normal)
 		{
-			var bundled = new FontFamily(FwUiFont.CollectionKey + "#" + DefaultName);
+			var bundled = new FontFamily(FwUiFont.CollectionKey + "#Andika");
 			Assert.That(FontManager.Current.TryGetGlyphTypeface(new Typeface(bundled, style, weight), out var face),
-				Is.True, DefaultName + " " + weight + " " + style + " must resolve from the bundled collection");
+				Is.True, "Andika " + weight + " " + style + " must resolve from the bundled collection");
 			return face;
 		}
 
@@ -54,7 +45,7 @@ namespace FwAvaloniaTests
 		}
 
 		/// <summary>UI languages of the Localizations/l10ns satellites, with a sample string in
-		/// each one's script. The scripts the default font lacks are the first five.</summary>
+		/// each one's script. Five have explicit fallback lists.</summary>
 		private static readonly object[] FallbackLanguages =
 		{
 			new object[] { "fa", "\u0641\u0627\u06CC\u0644" },
@@ -87,30 +78,28 @@ namespace FwAvaloniaTests
 			Assert.That(control.GetValue(TextElement.FontFamilyProperty), Is.EqualTo(FwUiFont.UiFontFamily),
 				control.GetType().Name + " must inherit the interface font family");
 			var latin = Shape(control.GetValue(TextElement.FontFamilyProperty), "Gloss");
-			Assert.That(latin.Select(g => g.Face.FamilyName).Distinct(), Is.EqualTo(new[] { DefaultName }));
+			Assert.That(latin, Is.Not.Empty);
+			Assert.That(latin.All(g => g.Glyph != 0), Is.True);
 		}
 
 		[AvaloniaTest]
-		public void UiFontFamilyToken_ResolvesToTheBundledDefault()
+		public void UiFontFamilyToken_NamesSegoeUi()
 		{
-			Assert.That(FwUiFont.UiFontFamily.FamilyNames.First(), Is.EqualTo("Andika"));
-			Assert.That(FwUiFont.UiFontFamily.Key?.ToString(), Is.EqualTo(FwUiFont.CollectionKey));
-			var face = Resolve(FontWeight.Normal);
-			Assert.That(face.FamilyName, Is.EqualTo(DefaultName));
+			Assert.That(FwUiFont.UiFontFamily.FamilyNames.First(), Is.EqualTo("Segoe UI"));
 		}
 
 		[AvaloniaTest]
 		public void PlainFamilyName_IsNotCapturedByThePrivateCollection()
 		{
-			Assert.That(new FontFamily(DefaultName).Key, Is.Null);
+			Assert.That(new FontFamily("Andika").Key, Is.Null);
 		}
 
 		[AvaloniaTest]
 		public void BundledFaces_ResolveForEveryWeightInUse()
 		{
 			foreach (var weight in new[] { FontWeight.Normal, FontWeight.SemiBold, FontWeight.Bold })
-				Assert.That(Resolve(weight).FamilyName, Does.StartWith(DefaultName));
-			Assert.That(Resolve(FontWeight.Normal, FontStyle.Italic).FamilyName, Is.EqualTo(DefaultName));
+				Assert.That(Resolve(weight).FamilyName, Does.StartWith("Andika"));
+			Assert.That(Resolve(FontWeight.Normal, FontStyle.Italic).FamilyName, Is.EqualTo("Andika"));
 		}
 
 		private static void AssertFallbackLanguageDrawsItsSample(string tag, string sample)
@@ -123,7 +112,6 @@ namespace FwAvaloniaTests
 			foreach (var (face, glyph) in shaped)
 			{
 				Assert.That(glyph, Is.Not.EqualTo((ushort)0), tag + " has a missing glyph in " + face.FamilyName);
-				Assert.That(face.FamilyName, Is.Not.EqualTo(DefaultName), tag + " cannot be drawn by the default font");
 			}
 		}
 
@@ -143,7 +131,7 @@ namespace FwAvaloniaTests
 		public void SimplifiedChinese_SampleResolvesToFaceWithItsGlyphs() => AssertFallbackLanguageDrawsItsSample("zh-CN", Sample("zh-CN"));
 
 		[AvaloniaTest]
-		public void LanguagesTheDefaultFontCovers_NeedNoFallbackAndDrawInTheDefaultFont()
+		public void LanguagesWithoutNamedFallback_DrawTheirSamples()
 		{
 			foreach (object[] row in LanguagesWithoutFallback)
 			{
@@ -156,24 +144,40 @@ namespace FwAvaloniaTests
 				foreach (var (face, glyph) in shaped)
 				{
 					Assert.That(glyph, Is.Not.EqualTo((ushort)0), tag);
-					Assert.That(face.FamilyName, Is.EqualTo(DefaultName), tag);
 				}
 			}
 		}
 
 		[AvaloniaTest]
-		public void TheFiveFallbackLanguages_AreTheOnesTheDefaultFontLacks()
+		public void FiveLanguages_HaveNamedFallbacks()
 		{
 			foreach (object[] row in FallbackLanguages)
 				Assert.That(FwUiFont.FallbackFamiliesFor(new CultureInfo((string)row[0])), Is.Not.Empty);
 			Assert.That(FwUiFont.FallbackFamiliesFor(CultureInfo.InvariantCulture), Is.Empty);
 		}
 
+		[TestCase("ar", "\u0645\u0644\u0641")]
+		[TestCase("bn", "\u09AC\u09BE\u0982\u09B2\u09BE")]
+		[TestCase("km", "\u1781\u17D2\u1798\u17C2\u179A")]
+		[TestCase("ml", "\u0D2E\u0D32\u0D2F\u0D3E\u0D33\u0D02")]
+		[TestCase("my", "\u1019\u103C\u1014\u103A\u1019\u102C")]
+		[TestCase("ne", "\u0928\u0947\u092A\u093E\u0932\u0940")]
+		[TestCase("ta", "\u0BA4\u0BAE\u0BBF\u0BB4\u0BCD")]
+		[TestCase("th", "\u0E44\u0E17\u0E22")]
+		[TestCase("ur", "\u0627\u0631\u062F\u0648")]
+		[AvaloniaTest]
+		public void InstallerLanguage_PlatformFallbackDrawsSample(string tag, string sample)
+		{
+			var glyphs = Shape(FwUiFont.FamilyFor(new CultureInfo(tag)), sample);
+			Assert.That(glyphs, Is.Not.Empty, tag);
+			Assert.That(glyphs.All(g => g.Glyph != 0), Is.True, tag);
+		}
+
 		[AvaloniaTest]
 		public void ApplyTo_CalledAgain_ChangesNothing()
 		{
 			FwUiFont.ApplyTo(Application.Current);
-			Assert.That(Resolve(FontWeight.Normal).FamilyName, Is.EqualTo(DefaultName));
+			Assert.That(Resolve(FontWeight.Normal).FamilyName, Is.EqualTo("Andika"));
 		}
 
 		[AvaloniaTest]
