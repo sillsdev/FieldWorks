@@ -174,7 +174,7 @@ host. Treat difficulty here as a design signal, not a tooling problem.
   button belong to the modal host form. You cannot style them from the
   `.axaml`, and neither loop above shows them.
 - **Converted dialogs render on the Semi theme background, not WinForms grey**,
-  and use the FieldWorks interface font (the bundled Andika, `FwUiFontFamily`,
+  and use the FieldWorks interface font (`FwUiFontFamily`,
   ADR 0004). That is stack-wide, not something your dialog did.
   Changing it means editing `DialogTheme.axaml`'s `fwDialogRoot` style, which
   restyles **every** converted dialog -- treat it as its own change, with dark

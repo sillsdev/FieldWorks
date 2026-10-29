@@ -110,10 +110,7 @@
 	     8.25 pt) for compact-density parity with the WinForms dialogs. -->
 	<x:Double x:Key="FwSurfaceFontSize">11</x:Double>
 
-	<!--
-		Interface font for all Avalonia chrome: the bundled default font (Andika), registered by
-		FwUiFont. Data
-	     text keeps its writing-system font. -->
-	<FontFamily x:Key="FwUiFontFamily">fonts:FieldWorks#Andika</FontFamily>
+	<!-- Interface font for Avalonia chrome; data text keeps its writing-system font. -->
+	<FontFamily x:Key="FwUiFontFamily">Segoe UI</FontFamily>
 
 </ResourceDictionary>

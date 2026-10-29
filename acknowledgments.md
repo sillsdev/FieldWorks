@@ -28,7 +28,7 @@ ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF S
 
 ## Andika 7.000 (https://software.sil.org/andika/):
 
-The FieldWorks Avalonia interface draws in Andika, copyright (c) 2004-2025 SIL Global, with
+FieldWorks bundles Andika, copyright (c) 2004-2025 SIL Global, with
 Reserved Font Names "Andika" and "SIL". The font files are unmodified.
 
 ### License
