@@ -30,6 +30,16 @@ namespace SIL.FieldWorks.LexText.Controls
 	internal static class EntryGoLauncherShared
 	{
 		/// <summary>
+		/// The writing system an entry search matches against. A search delegate reads it on
+		/// every query, so changing <see cref="Handle"/> applies to the next search.
+		/// </summary>
+		internal sealed class SearchWritingSystem
+		{
+			/// <summary>The writing system's handle.</summary>
+			public int Handle { get; set; }
+		}
+
+		/// <summary>
 		/// Builds the search delegate the dialog drives: it reuses the shared <see cref="EntryGoSearchEngine"/> (the
 		/// SAME matching the legacy EntryGoDlg uses, cached on the property table when one is supplied) wrapped to
 		/// EXCLUDE <paramref name="excludedEntryHvo"/> (the legacy starting entry that cannot be a match) and an
@@ -41,15 +51,14 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// </summary>
 		internal static Func<string, IReadOnlyList<EntryGoSearchResult>> BuildEntrySearch(LcmCache cache,
 			Mediator mediator, PropertyTable propertyTable, int excludedEntryHvo, string engineCacheKey,
-			Func<ILexEntry, bool> filter)
+			Func<ILexEntry, bool> filter, SearchWritingSystem searchWs = null)
 		{
 			var engine = GetSearchEngine(cache, mediator, propertyTable, excludedEntryHvo, engineCacheKey);
-			var ws = cache.DefaultVernWs;
 			var repo = cache.ServiceLocator.GetInstance<ILexEntryRepository>();
 
 			return query =>
 			{
-				var fields = GetSearchFields(query ?? string.Empty, ws);
+				var fields = GetSearchFields(cache, query ?? string.Empty, SelectedWs(cache, searchWs));
 				var hvos = engine.Search(fields);
 				var results = new List<EntryGoSearchResult>();
 				foreach (var hvo in hvos)
@@ -67,17 +76,29 @@ namespace SIL.FieldWorks.LexText.Controls
 		}
 
 		/// <summary>
-		/// The legacy <see cref="EntryGoDlg.GetFields"/> vernacular field set (citation / lexeme / alternate forms)
-		/// for the current vernacular default WS -- the same fields the EntryGoDlg children prime
-		/// with.
+		/// The fields an entry search matches in <paramref name="ws"/>: sense glosses when it
+		/// is a current analysis writing system, and citation, lexeme, and alternate forms
+		/// otherwise. A writing system that is both analysis and vernacular matches both sets.
 		/// </summary>
-		internal static IEnumerable<SearchField> GetSearchFields(string str, int ws)
+		internal static IEnumerable<SearchField> GetSearchFields(LcmCache cache, string str, int ws)
 		{
 			var tssKey = TsStringUtils.MakeString(str, ws);
-			yield return new SearchField(LexEntryTags.kflidCitationForm, tssKey);
-			yield return new SearchField(LexEntryTags.kflidLexemeForm, tssKey);
-			yield return new SearchField(LexEntryTags.kflidAlternateForms, tssKey);
+			var writingSystems = cache.ServiceLocator.WritingSystems;
+			var isAnalysis = writingSystems.CurrentAnalysisWritingSystems.Any(w => w.Handle == ws);
+			var isVernacular = writingSystems.CurrentVernacularWritingSystems.Any(w => w.Handle == ws);
+			if (isVernacular || !isAnalysis)
+			{
+				yield return new SearchField(LexEntryTags.kflidCitationForm, tssKey);
+				yield return new SearchField(LexEntryTags.kflidLexemeForm, tssKey);
+				yield return new SearchField(LexEntryTags.kflidAlternateForms, tssKey);
+			}
+			if (isAnalysis)
+				yield return new SearchField(LexSenseTags.kflidGloss, tssKey);
 		}
+
+		// The selected writing system, or the default vernacular one when none is selected.
+		private static int SelectedWs(LcmCache cache, SearchWritingSystem searchWs)
+			=> searchWs?.Handle > 0 ? searchWs.Handle : cache.DefaultVernWs;
 
 		/// <summary>
 		/// Builds the mode-aware search the Link-Entry-or-Sense dialog drives: in ENTRY mode it returns the same
@@ -88,15 +109,15 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// sense. Internal so it is unit-testable against a real cache.
 		/// </summary>
 		internal static Func<string, bool, IReadOnlyList<EntryGoSearchResult>> BuildEntryOrSenseSearch(LcmCache cache,
-			Mediator mediator, PropertyTable propertyTable, int excludedEntryHvo, string engineCacheKey)
+			Mediator mediator, PropertyTable propertyTable, int excludedEntryHvo, string engineCacheKey,
+			SearchWritingSystem searchWs = null)
 		{
 			var engine = GetSearchEngine(cache, mediator, propertyTable, excludedEntryHvo, engineCacheKey);
-			var ws = cache.DefaultVernWs;
 			var repo = cache.ServiceLocator.GetInstance<ILexEntryRepository>();
 
 			return (query, senseMode) =>
 			{
-				var fields = GetSearchFields(query ?? string.Empty, ws);
+				var fields = GetSearchFields(cache, query ?? string.Empty, SelectedWs(cache, searchWs));
 				var hvos = engine.Search(fields);
 				var results = new List<EntryGoSearchResult>();
 				foreach (var hvo in hvos)
@@ -134,20 +155,48 @@ namespace SIL.FieldWorks.LexText.Controls
 		}
 
 		/// <summary>
-		/// Builds the writing-system presentation spec for the search box from the DEFAULT VERNACULAR writing
-		/// system -- the parity contract for the legacy <c>BaseGoDlg</c>'s vernacular
-		/// <c>FwTextBox</c>: the ws's
-		/// default font (<c>DefaultFontName</c>, the same per-ws font derivation the detail view's value rows
-		/// use), its right-to-left script flag, and a focus callback that activates the ws's keyboard (the legacy
-		/// <c>EditingHelper.SetKeyboardForWs</c> behavior). Internal so the derivation is unit-testable against a
-		/// real cache.
+		/// Builds the search-box spec for a search that follows <paramref name="searchWs"/>. It
+		/// offers every current analysis and vernacular writing system once, sorted by display
+		/// name and each with its own font and direction, and selects the one
+		/// <paramref name="searchWs"/> holds, the default vernacular writing system when it holds
+		/// none. Selecting an option points <paramref name="searchWs"/> at it, and focusing the
+		/// search box activates the selected writing system's keyboard. The spec's own typography
+		/// is the default vernacular writing system's.
 		/// </summary>
-		internal static EntryGoSearchFieldSpec BuildVernacularSearchFieldSpec(LcmCache cache)
+		/// <exception cref="ArgumentNullException">
+		/// <paramref name="searchWs"/> is null.
+		/// </exception>
+		internal static EntryGoSearchFieldSpec BuildSearchFieldSpec(LcmCache cache,
+			SearchWritingSystem searchWs)
 		{
-			var ws = cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
-			var wsId = ws.Id;
-			var spec = FieldSpecFor(ws);
-			spec.Focused = () => ActivateKeyboardForWritingSystem(cache, wsId);
+			if (searchWs == null)
+				throw new ArgumentNullException(nameof(searchWs));
+			var writingSystems = cache.ServiceLocator.WritingSystems;
+			var available = writingSystems.CurrentAnalysisWritingSystems
+				.Concat(writingSystems.CurrentVernacularWritingSystems)
+				.GroupBy(ws => ws.Id)
+				.Select(group => group.First())
+				.OrderBy(ws => ws.DisplayLabel, StringComparer.CurrentCulture)
+				.ToList();
+			if (searchWs.Handle <= 0)
+				searchWs.Handle = cache.DefaultVernWs;
+
+			var spec = FieldSpecFor(writingSystems.DefaultVernacularWritingSystem);
+			spec.WritingSystems = available.Select(ws => new EntryGoWritingSystemOption
+			{
+				Id = ws.Id,
+				DisplayName = ws.DisplayLabel,
+				Typography = FieldSpecFor(ws)
+			}).ToList();
+			spec.SelectedWritingSystemId = available.FirstOrDefault(ws => ws.Handle == searchWs.Handle)?.Id;
+			spec.WritingSystemChanged = id =>
+			{
+				var chosen = available.FirstOrDefault(ws => ws.Id == id);
+				if (chosen != null)
+					searchWs.Handle = chosen.Handle;
+			};
+			spec.Focused = () => ActivateKeyboardForWritingSystem(cache,
+				available.FirstOrDefault(ws => ws.Handle == searchWs.Handle)?.Id);
 			return spec;
 		}
 

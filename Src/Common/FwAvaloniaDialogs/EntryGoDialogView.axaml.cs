@@ -2,6 +2,8 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System.ComponentModel;
+using System.Linq;
 using Avalonia;
 using Avalonia.Automation;
 using Avalonia.Controls;
@@ -9,6 +11,7 @@ using Avalonia.Controls.Templates;
 using Avalonia.Input;
 using Avalonia.Media;
 using SIL.FieldWorks.Common.FwAvalonia;
+using SIL.FieldWorks.Common.FwAvalonia.Detail;
 
 namespace FwAvaloniaDialogs
 {
@@ -72,28 +75,90 @@ namespace FwAvaloniaDialogs
 			// The matching list's header + row cells come from the VM's column spec, so build them on VM arrival.
 			DataContextChanged += OnDataContextChangedBuildResultColumns;
 
-			// The search box's writing-system presentation (font / RTL) comes from the opt-in spec on the VM, so
-			// apply it once the VM arrives; a null spec touches nothing (the plain search box).
-			DataContextChanged += OnDataContextChangedApplySearchFieldSpec;
+			// The search box's writing-system presentation (font / RTL) follows the ViewModel's
+			// SearchTypography, which changes with the selected writing system.
+			DataContextChanged += OnDataContextChangedTrackSearchTypography;
+
+			// The writing-system picker lists the ViewModel's options, so build it on VM arrival.
+			DataContextChanged += OnDataContextChangedBuildWritingSystemPicker;
 		}
 
-		// Applies the search-field spec to the search box: the writing system's font
-		// family/size and RTL flow (empty family or zero size keeps defaults). The
-		// keyboard switch fires from OnSearchBoxGotFocus.
-		private void OnDataContextChangedApplySearchFieldSpec(object sender, System.EventArgs e)
+		// The writing-system picker in PART_WritingSystemHost; null when there is no choice.
+		private FwOptionChooser _writingSystemPicker;
+
+		private void OnDataContextChangedBuildWritingSystemPicker(object sender, System.EventArgs e)
 		{
-			var spec = ViewModel?.SearchField;
-			if (spec == null)
+			var host = this.FindControl<Border>("PART_WritingSystemHost");
+			if (host == null)
 				return;
+			if (_writingSystemPicker != null)
+			{
+				_writingSystemPicker.OptionCommitted -= OnWritingSystemCommitted;
+				host.Child = null;
+				_writingSystemPicker = null;
+			}
+			var vm = ViewModel;
+			if (vm == null || !vm.HasWritingSystemSelector)
+				return;
+			var options = vm.WritingSystems
+				.Select(o => new DetailChoiceOption(o.Id, o.ToString()))
+				.ToList();
+			_writingSystemPicker = new FwOptionChooser(options, searchOptions: null,
+				"EntryGo.WritingSystem", dropdown: true, selectedKey: vm.SelectedWritingSystem?.Id);
+			AutomationProperties.SetName(_writingSystemPicker, vm.WritingSystemLabel);
+			_writingSystemPicker.OptionCommitted += OnWritingSystemCommitted;
+			host.Child = _writingSystemPicker;
+		}
+
+		private void OnWritingSystemCommitted(DetailChoiceOption option)
+		{
+			var vm = ViewModel;
+			var chosen = vm?.WritingSystems.FirstOrDefault(o => o.Id == option?.Key);
+			if (chosen == null)
+				return;
+			vm.SelectedWritingSystem = chosen;
+			_writingSystemPicker?.SelectByKey(chosen.Id);
+		}
+
+		// The ViewModel whose SearchTypography changes this view is following.
+		private EntryGoDialogViewModel _typographySource;
+
+		private void OnDataContextChangedTrackSearchTypography(object sender, System.EventArgs e)
+		{
+			if (_typographySource != null)
+				_typographySource.PropertyChanged -= OnViewModelPropertyChanged;
+			_typographySource = ViewModel;
+			if (_typographySource != null)
+				_typographySource.PropertyChanged += OnViewModelPropertyChanged;
+			ApplySearchTypography();
+		}
+
+		private void OnViewModelPropertyChanged(object sender, PropertyChangedEventArgs e)
+		{
+			if (e.PropertyName == nameof(EntryGoDialogViewModel.SearchTypography))
+				ApplySearchTypography();
+		}
+
+		// Applies the current search typography to the search box. A value the typography leaves
+		// unset (empty family, zero size, left-to-right) is cleared back to the shared default.
+		private void ApplySearchTypography()
+		{
 			var searchBox = this.FindControl<TextBox>("PART_SearchBox");
 			if (searchBox == null)
 				return;
-			if (!string.IsNullOrEmpty(spec.FontFamily))
+			var spec = ViewModel?.SearchTypography;
+			if (!string.IsNullOrEmpty(spec?.FontFamily))
 				searchBox.FontFamily = new FontFamily(spec.FontFamily);
-			if (spec.FontSize > 0)
+			else
+				searchBox.ClearValue(TextBox.FontFamilyProperty);
+			if (spec?.FontSize > 0)
 				searchBox.FontSize = spec.FontSize;
-			if (spec.RightToLeft)
+			else
+				searchBox.ClearValue(TextBox.FontSizeProperty);
+			if (spec?.RightToLeft == true)
 				searchBox.FlowDirection = FlowDirection.RightToLeft;
+			else
+				searchBox.ClearValue(TextBox.FlowDirectionProperty);
 		}
 
 		// The writing-system typography application for a matching-list cell: font family / point size (zero
