@@ -967,6 +967,7 @@ namespace SIL.FieldWorks.IText
 				return;				// We get another call when there is one.
 			}
 			var hvoRoot = Clerk.CurrentObjectHvo;
+			var fForcedRawText = false;
 			if (Clerk.CurrentObjectHvo != 0 && !Cache.ServiceLocator.IsValidObjectId(Clerk.CurrentObjectHvo))	// RecordClerk is tracking an analysis
 			{
 				// This pane, as well as knowing how to work with a record list of Texts, knows
@@ -992,7 +993,10 @@ namespace SIL.FieldWorks.IText
 					// since we have no text, we should not sit on any of the analyses tabs,
 					// the info tab is still useful though.
 					if (InterlinearTab != TabPageSelection.Info && InterlinearTab != TabPageSelection.RawText)
+					{
 						InterlinearTab = TabPageSelection.RawText;
+						fForcedRawText = true;
+					}
 					// Don't steal the focus from another window.  See FWR-1795.
 					if (ParentForm == Form.ActiveForm)
 						m_rtPane.Focus();
@@ -1012,6 +1016,10 @@ namespace SIL.FieldWorks.IText
 			else
 			{
 				SelectAnnotation(); // select an annotation in the current text.
+				// The same text is shown again, so nothing above moved the tab control off the
+				// analysis tab; move it to the Baseline tab chosen for the empty text.
+				if (fForcedRawText)
+					ShowTabView();
 			}
 
 			// This takes a lot of time, and the view is never visible by now, and it gets done
@@ -1251,7 +1259,7 @@ namespace SIL.FieldWorks.IText
 
 			set
 			{
-				m_propertyTable.SetProperty("InterlinearTab", value.ToString(), true);
+				m_propertyTable.SetProperty("InterlinearTab", value.ToString(), false);
 			}
 		}
 
