@@ -185,11 +185,24 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// </summary>
 		private bool DefaultConfirm(ILexEntry current, ILexEntry survivor)
 		{
-			var message = string.Format(CultureInfo.CurrentCulture, FwAvaloniaDialogsStrings.MergeConfirm,
-				EntryGoLauncherShared.HeadwordText(current), EntryGoLauncherShared.HeadwordText(survivor));
-			var result = FwMessageBox.Show(_owner, message, FwAvaloniaDialogsStrings.MergeTitle,
-				FwMessageBoxButtons.YesNo, FwMessageBoxIcon.Warning);
+			var result = FwMessageBox.Show(_owner, ConfirmMessage(current, survivor),
+				FwAvaloniaDialogsStrings.MergeTitle, FwMessageBoxButtons.YesNo, FwMessageBoxIcon.Warning);
 			return result == FwMessageBoxResult.Yes;
+		}
+
+		/// <summary>
+		/// The merge-confirmation text naming <paramref name="current"/> and
+		/// <paramref name="survivor"/>. An entry with no form in any current writing system is
+		/// named by LCM's headword, so the sentence never has a blank name.
+		/// </summary>
+		internal static string ConfirmMessage(ILexEntry current, ILexEntry survivor)
+			=> string.Format(CultureInfo.CurrentCulture, FwAvaloniaDialogsStrings.MergeConfirm,
+				ConfirmName(current), ConfirmName(survivor));
+
+		private static string ConfirmName(ILexEntry entry)
+		{
+			var name = EntryGoLauncherShared.HeadwordText(entry);
+			return string.IsNullOrEmpty(name) ? entry.HeadWord?.Text ?? string.Empty : name;
 		}
 
 		/// <summary>

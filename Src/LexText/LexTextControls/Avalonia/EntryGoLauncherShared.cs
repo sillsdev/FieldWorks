@@ -273,7 +273,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		// The display gloss for a sense row (the best-analysis gloss; fall back to the chooser name's text).
 		private static string SenseGloss(ILexSense sense)
 		{
-			var gloss = sense.Gloss?.BestAnalysisAlternative?.Text;
+			var gloss = FirstText(sense.Cache, sense.Gloss, analysisFirst: true);
 			return string.IsNullOrEmpty(gloss) ? sense.ChooserNameTS?.Text ?? string.Empty : gloss;
 		}
 
@@ -317,8 +317,8 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		/// <summary>
 		/// The entry's headword in the first current vernacular writing system that has a form,
-		/// default first, then the first current analysis one; the homograph form or the hvo
-		/// when no writing system has a form.
+		/// default first, then the first current analysis one; empty when no writing system has
+		/// a form.
 		/// </summary>
 		internal static string HeadwordText(ILexEntry entry)
 		{
@@ -331,20 +331,20 @@ namespace SIL.FieldWorks.LexText.Controls
 				if (!string.IsNullOrEmpty(text))
 					return text;
 			}
-			return entry.HomographForm ?? entry.Hvo.ToString(CultureInfo.InvariantCulture);
+			return string.Empty;
 		}
 
 		// The Lexeme Form column's value (the legacy LexemeFormForFindEntry part: LexemeForm.Form in the best
 		// vernacular-or-analysis ws).
 		internal static string LexemeFormText(ILexEntry entry)
-			=> entry.LexemeFormOA?.Form?.BestVernacularAnalysisAlternative?.Text ?? string.Empty;
+			=> FirstText(entry.Cache, entry.LexemeFormOA?.Form, analysisFirst: false);
 
 		// The Glosses column's value (the legacy GlossesForFindEntry part: the entry's senses' glosses in the
 		// best analysis-or-vernacular ws, comma-separated).
 		internal static string GlossesText(ILexEntry entry)
 		{
 			var glosses = entry.SensesOS
-				.Select(sense => sense.Gloss?.BestAnalysisVernacularAlternative?.Text)
+				.Select(sense => FirstText(entry.Cache, sense.Gloss, analysisFirst: true))
 				.Where(gloss => !string.IsNullOrEmpty(gloss));
 			return string.Join(", ", glosses);
 		}
@@ -353,8 +353,32 @@ namespace SIL.FieldWorks.LexText.Controls
 		private static string DescriptionText(ILexEntry entry)
 		{
 			var firstSense = entry.SensesOS.FirstOrDefault();
-			var gloss = firstSense?.Gloss?.BestAnalysisAlternative?.Text;
+			var gloss = firstSense == null ? string.Empty : FirstText(entry.Cache, firstSense.Gloss, analysisFirst: true);
 			return string.IsNullOrEmpty(gloss) ? HeadwordText(entry) : $"{HeadwordText(entry)} : {gloss}";
+		}
+
+		/// <summary>
+		/// The first non-empty value of <paramref name="multi"/> across the current analysis and
+		/// vernacular writing systems: analysis first when <paramref name="analysisFirst"/> is
+		/// true, vernacular first otherwise. Empty when none has a value or
+		/// <paramref name="multi"/> is null; unlike LCM's best-alternative properties it never
+		/// returns a placeholder.
+		/// </summary>
+		internal static string FirstText(LcmCache cache, IMultiAccessorBase multi, bool analysisFirst)
+		{
+			if (multi == null)
+				return string.Empty;
+			var writingSystems = cache.ServiceLocator.WritingSystems;
+			var analysis = writingSystems.CurrentAnalysisWritingSystems;
+			var vernacular = writingSystems.CurrentVernacularWritingSystems;
+			var candidates = analysisFirst ? analysis.Concat(vernacular) : vernacular.Concat(analysis);
+			foreach (var ws in candidates)
+			{
+				var text = multi.StringOrNull(ws.Handle)?.Text;
+				if (!string.IsNullOrEmpty(text))
+					return text;
+			}
+			return string.Empty;
 		}
 
 		// Gets (creating + caching on the property table, like the legacy dialog) a search engine that uses the
