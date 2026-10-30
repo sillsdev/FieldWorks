@@ -319,6 +319,11 @@ not as the active source of truth.
 - The Avalonia XAML compiler composes fine with the customized net48 build: it runs after
   `ResolveAssemblyReferences` and is unaffected by the repo's customized targets, so the XAML projects
   need no isolated/serial build path (see the comment in `FieldWorks.proj`).
+- **LCM's display shortcuts carry placeholders.** `Best*Alternative` returns `***` when nothing is
+  stored, and `ILexEntry.HeadWord` / `HomographForm` return `???`; the WinForms views render the stored
+  string and show a blank. For list or column text use `EntryGoLauncherShared.FirstText` (first non-empty
+  `StringOrNull` across current writing systems) and `HeadwordText`, which return empty (LT-22883). A
+  sentence that names an entry (the Merge confirmation) keeps LCM's `???` instead of a blank name.
 
 ## 7. Author tiers / scope
 
