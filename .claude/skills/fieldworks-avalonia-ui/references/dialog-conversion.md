@@ -199,8 +199,10 @@ The Go-family matching entries are a PERSISTENT, multi-column list filling the d
 search box (parity with the legacy `MatchingObjectsBrowser` the `BaseGoDlg` embeds): a header row + rows
 whose columns come from the launcher's `EntryGoDialogInput.ResultColumns` spec (localized header, result
 field, per-column WS typography; default = Headword + Glosses, the legacy default-visible columns, built
-by `EntryGoLauncherShared.BuildDefaultResultColumns`). Up/Down in the search box move the list selection
-without leaving the box (`BaseGoDlg.m_tbForm_KeyDown` parity) and Enter commits the highlighted row.
+by `EntryGoLauncherShared.BuildDefaultResultColumns`). A row's `HeadwordTypography` -- the writing system
+its headword came from -- overrides the column's for that cell (LT-22884). Up/Down in the search box move
+the list selection without leaving the box (`BaseGoDlg.m_tbForm_KeyDown` parity) and Enter commits the
+highlighted row.
 
 The exemplar for legacy `BaseGoDlg`/`EntryGoDlg` children that add controls UNDER the matching list (the
 per-entry combo in `LinkMSADlg` / `LinkAllomorphDlg`): the shared `EntryGoDialogViewModel` has an opt-in

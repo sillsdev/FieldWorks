@@ -133,7 +133,8 @@ namespace SIL.FieldWorks.LexText.Controls
 					}
 					// Sense mode: one row per sense (the legacy m_fwcbSenses populated from entry.AllSenses). The
 					// row's gloss column shows the SENSE's gloss (via the SubText fallback), not the entry's list.
-					var head = HeadwordText(entry);
+					var head = Headword(entry, out var headwordWs);
+					var headwordTypography = TypographyOf(headwordWs);
 					var lexemeForm = LexemeFormText(entry);
 					foreach (var sense in entry.AllSenses)
 					{
@@ -144,7 +145,8 @@ namespace SIL.FieldWorks.LexText.Controls
 							subText: SenseGloss(sense),
 							description: $"{head} : {SenseGloss(sense)}")
 						{
-							LexemeForm = lexemeForm
+							LexemeForm = lexemeForm,
+							HeadwordTypography = headwordTypography
 						});
 					}
 				}
@@ -307,11 +309,12 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			return new EntryGoSearchResult(
 				entry.Hvo.ToString(CultureInfo.InvariantCulture),
-				HeadwordText(entry),
+				Headword(entry, out var headwordWs),
 				DescriptionText(entry))
 			{
 				LexemeForm = LexemeFormText(entry),
-				Gloss = GlossesText(entry)
+				Gloss = GlossesText(entry),
+				HeadwordTypography = TypographyOf(headwordWs)
 			};
 		}
 
@@ -320,7 +323,10 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// default first, then the first current analysis one; empty when no writing system has
 		/// a form.
 		/// </summary>
-		internal static string HeadwordText(ILexEntry entry)
+		internal static string HeadwordText(ILexEntry entry) => Headword(entry, out _);
+
+		// HeadwordText, plus the writing system it came from (null when none has a form).
+		private static string Headword(ILexEntry entry, out CoreWritingSystemDefinition headwordWs)
 		{
 			var writingSystems = entry.Cache.ServiceLocator.WritingSystems;
 			var candidates = writingSystems.CurrentVernacularWritingSystems
@@ -329,10 +335,18 @@ namespace SIL.FieldWorks.LexText.Controls
 			{
 				var text = entry.HeadWordForWs(ws.Handle)?.Text;
 				if (!string.IsNullOrEmpty(text))
+				{
+					headwordWs = ws;
 					return text;
+				}
 			}
+			headwordWs = null;
 			return string.Empty;
 		}
+
+		// The typography a value in ws renders in; null (the column's applies) for no ws.
+		private static EntryGoSearchFieldSpec TypographyOf(CoreWritingSystemDefinition ws)
+			=> ws == null ? null : FieldSpecFor(ws);
 
 		// The Lexeme Form column's value (the legacy LexemeFormForFindEntry part: LexemeForm.Form in the best
 		// vernacular-or-analysis ws).

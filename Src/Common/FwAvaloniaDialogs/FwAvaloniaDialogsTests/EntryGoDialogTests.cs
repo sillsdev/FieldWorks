@@ -266,6 +266,43 @@ namespace FwAvaloniaDialogsTests
 				"an analysis column's cells render in the analysis font");
 		}
 
+		[AvaloniaTest]
+		public void ResultRow_HeadwordTypography_OverridesTheColumnTypography()
+		{
+			var input = Input();
+			input.ResultColumns = new[]
+			{
+				new EntryGoResultColumn
+				{
+					Header = FwAvaloniaDialogsStrings.EntryGoHeadwordColumnHeader,
+					Field = EntryGoResultField.Headword,
+					Typography = new EntryGoSearchFieldSpec { FontFamily = "Charis SIL" }
+				},
+				new EntryGoResultColumn
+				{
+					Header = FwAvaloniaDialogsStrings.EntryGoGlossesColumnHeader,
+					Field = EntryGoResultField.Gloss,
+					Typography = new EntryGoSearchFieldSpec { FontFamily = "Segoe UI" }
+				}
+			};
+			input.Search = query => new[]
+			{
+				new EntryGoSearchResult("21", "kalb") { Gloss = "dog", HeadwordTypography = RightToLeftTypography },
+				new EntryGoSearchResult("11", "casa") { Gloss = "house" }
+			};
+			var (view, _) = Show(input, "EntryGo-12-per-row-headword-typography");
+
+			var cells = ResultsList(view).GetVisualDescendants().OfType<TextBlock>().ToList();
+			var otherWsHeadword = cells.First(t => t.Text == "kalb");
+			Assert.That(otherWsHeadword.FontFamily.Name, Is.EqualTo("Scheherazade New"));
+			Assert.That(otherWsHeadword.FlowDirection, Is.EqualTo(FlowDirection.RightToLeft));
+			var columnHeadword = cells.First(t => t.Text == "casa");
+			Assert.That(columnHeadword.FontFamily.Name, Is.EqualTo("Charis SIL"));
+			Assert.That(columnHeadword.FlowDirection, Is.EqualTo(FlowDirection.LeftToRight));
+			Assert.That(cells.First(t => t.Text == "dog").FontFamily.Name, Is.EqualTo("Segoe UI"),
+				"the row's headword typography leaves its other cells on their column's");
+		}
+
 		// ===== Arrow-key navigation from the search box: Up/Down move the matching-list selection while
 		// the caret stays in the box. =====
 

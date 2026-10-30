@@ -161,9 +161,8 @@ namespace FwAvaloniaDialogs
 				searchBox.ClearValue(TextBox.FlowDirectionProperty);
 		}
 
-		// The writing-system typography application for a matching-list cell: font family / point size (zero
-		// keeps the shared default) and right-to-left flow, from the column's LCModel-free spec (the same
-		// value-application rules the search box uses; the spec's Focused callback is ignored for columns).
+		// Applies a matching-list cell's writing-system typography: font family, point size (zero
+		// keeps the default) and right-to-left flow. The spec's Focused callback is ignored.
 		private static void ApplyColumnTypography(TextBlock cell, EntryGoSearchFieldSpec spec)
 		{
 			if (spec == null)
@@ -246,7 +245,7 @@ namespace FwAvaloniaDialogs
 		}
 
 		// One matching-list row: a grid with the same proportional columns as the header, each cell showing the
-		// row's value for that column's field in the column's typography (vernacular vs analysis fonts).
+		// row's value for that field in the row's typography for it, else the column's.
 		private static Control BuildRow(EntryGoSearchResult row,
 			System.Collections.Generic.IReadOnlyList<EntryGoResultColumn> columns)
 		{
@@ -263,7 +262,7 @@ namespace FwAvaloniaDialogs
 					Margin = CellGap,
 					TextTrimming = TextTrimming.CharacterEllipsis
 				};
-				ApplyColumnTypography(cell, column.Typography);
+				ApplyColumnTypography(cell, row?.TypographyFor(column.Field) ?? column.Typography);
 				Grid.SetColumn(cell, i);
 				grid.Children.Add(cell);
 			}

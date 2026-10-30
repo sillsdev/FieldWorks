@@ -11,7 +11,9 @@ using NUnit.Framework;
 using SIL.FieldWorks.LexText.Controls;
 using SIL.LCModel;
 using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.DomainServices;
+using SIL.WritingSystems;
 
 namespace LexTextControlsTests
 {
@@ -698,6 +700,77 @@ namespace LexTextControlsTests
 			_casa.LexemeFormOA.Form.set_String(Cache.DefaultVernWs, TsStringUtils.EmptyString(Cache.DefaultVernWs));
 
 			Assert.That(EntryGoLauncherShared.HeadwordText(_casa), Is.Empty);
+		}
+
+		// Adds a current right-to-left vernacular writing system whose default font differs from
+		// the default vernacular one's.
+		private CoreWritingSystemDefinition AddRightToLeftVernacularWs()
+		{
+			Cache.ServiceLocator.WritingSystemManager.GetOrSet("ar", out var arabic);
+			arabic.DefaultFont = new FontDefinition("Scheherazade New");
+			arabic.RightToLeftScript = true;
+			Cache.ServiceLocator.WritingSystems.AddToCurrentVernacularWritingSystems(arabic);
+			return arabic;
+		}
+
+		// Moves _perro's only form from the default vernacular writing system to arabic.
+		private void MovePerroFormTo(CoreWritingSystemDefinition arabic)
+		{
+			_perro.LexemeFormOA.Form.set_String(Cache.DefaultVernWs, TsStringUtils.EmptyString(Cache.DefaultVernWs));
+			_perro.LexemeFormOA.Form.set_String(arabic.Handle, "kalb");
+		}
+
+		[Test]
+		public void SharedSearch_HeadwordFromAnotherWs_CarriesThatWsTypography()
+		{
+			var arabic = AddRightToLeftVernacularWs();
+			MovePerroFormTo(arabic);
+			var search = SearchIn(new EntryGoLauncherShared.SearchWritingSystem { Handle = arabic.Handle });
+
+			var row = search("ka").Single(r => r.Id == Hvo(_perro));
+
+			Assert.That(row.Text, Is.EqualTo("kalb"));
+			Assert.That(row.HeadwordTypography?.FontFamily, Is.EqualTo("Scheherazade New"));
+			Assert.That(row.HeadwordTypography?.RightToLeft, Is.True);
+		}
+
+		[Test]
+		public void SharedSearch_DefaultVernacularHeadword_CarriesItsTypography()
+		{
+			var vernacular = Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
+			AddRightToLeftVernacularWs();
+
+			var row = SearchIn(null)("casa").Single(r => r.Id == Hvo(_casa));
+
+			Assert.That(row.HeadwordTypography?.FontFamily, Is.EqualTo(vernacular.DefaultFontName));
+			Assert.That(row.HeadwordTypography?.RightToLeft, Is.EqualTo(vernacular.RightToLeftScript));
+		}
+
+		[Test]
+		public void SharedSearch_EntryWithNoForm_LeavesTheColumnTypography()
+		{
+			_casa.LexemeFormOA.Form.set_String(Cache.DefaultVernWs, TsStringUtils.EmptyString(Cache.DefaultVernWs));
+			var search = SearchIn(new EntryGoLauncherShared.SearchWritingSystem { Handle = Cache.DefaultAnalWs });
+
+			var row = search("house").Single(r => r.Id == Hvo(_casa));
+
+			Assert.That(row.HeadwordTypography, Is.Null);
+		}
+
+		[Test]
+		public void SharedEntryOrSenseSearch_HeadwordFromAnotherWs_SenseRowsCarryThatWsTypography()
+		{
+			var arabic = AddRightToLeftVernacularWs();
+			MovePerroFormTo(arabic);
+			var search = EntryGoLauncherShared.BuildEntryOrSenseSearch(Cache, null, null,
+				excludedEntryHvo: 0, "TestSearchEngine",
+				new EntryGoLauncherShared.SearchWritingSystem { Handle = arabic.Handle });
+
+			var row = search("ka", true).Single();
+
+			Assert.That(row.IsSense, Is.True);
+			Assert.That(row.HeadwordTypography?.FontFamily, Is.EqualTo("Scheherazade New"));
+			Assert.That(row.HeadwordTypography?.RightToLeft, Is.True);
 		}
 
 		[Test]
