@@ -1127,6 +1127,25 @@ namespace FwAvaloniaDialogsTests
 		}
 
 		[AvaloniaTest]
+		public void WritingSystemSelector_View_DismissingAHighlight_KeepsTheActiveWritingSystem()
+		{
+			var reported = new List<string>();
+			var (view, vm) = Show(WsAwareInput(reported));
+			var picker = WsPicker(view);
+			picker.OpenDropdown();
+			Dispatcher.UIThread.RunJobs();
+			picker.OptionsList.SelectedIndex = 0; // "English"
+
+			picker.FilterBox.RaiseEvent(new KeyEventArgs { RoutedEvent = InputElement.KeyDownEvent, Key = Key.Escape });
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(vm.SelectedWritingSystem?.Id, Is.EqualTo("es"), "Escape does not switch the search");
+			Assert.That(reported, Is.Empty);
+			Assert.That(picker.DropdownText, Is.EqualTo("Spanish"),
+				"the picker shows the writing system the search still uses");
+		}
+
+		[AvaloniaTest]
 		public void WritingSystemSelector_View_HiddenWithoutOptions()
 		{
 			var (view, _) = Show(Input());
