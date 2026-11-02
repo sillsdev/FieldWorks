@@ -697,6 +697,56 @@ namespace FwAvaloniaTests
 			Assert.That(committed, Is.Empty, "Escape never commits");
 		}
 
+		// Opens the dropdown and moves the highlight off the committed "Universe" onto "Sky".
+		private static void OpenAndHighlightAnother(FwOptionChooser picker)
+		{
+			picker.OpenDropdown();
+			Dispatcher.UIThread.RunJobs();
+			RaiseKey(picker.FilterBox, Key.Down);
+			Assert.That(picker.OptionsList.SelectedIndex, Is.EqualTo(1), "Down highlights \"Sky\"");
+		}
+
+		// The committed "Universe" is still what the collapsed dropdown shows and reports.
+		private static void AssertStillShowsUniverse(FwOptionChooser picker)
+		{
+			Assert.That(picker.DropdownText, Is.EqualTo("Universe"));
+			Assert.That(picker.SelectedOption?.Key, Is.EqualTo("u"));
+			Assert.That(picker.OptionsList.SelectedIndex, Is.EqualTo(0),
+				"the highlight returns to the committed row for the next open");
+		}
+
+		[AvaloniaTest]
+		public void Dropdown_HighlightThenEscape_KeepsTheCommittedSelection()
+		{
+			var (picker, _, committed) = ShowDropdown();
+			OpenAndHighlightAnother(picker);
+			Assert.That(picker.DropdownText, Is.EqualTo("Universe"),
+				"moving the highlight while open leaves the committed value alone");
+
+			RaiseKey(picker.FilterBox, Key.Escape);
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(committed, Is.Empty);
+			AssertStillShowsUniverse(picker);
+		}
+
+		[AvaloniaTest]
+		public void Dropdown_HighlightThenCloseWithoutPicking_KeepsTheCommittedSelection()
+		{
+			// Unchecking the toggle hides the flyout the way a click-away does: no commit.
+			var (picker, _, committed) = ShowDropdown();
+			OpenAndHighlightAnother(picker);
+			var toggle = picker.GetVisualDescendants().OfType<ToggleButton>()
+				.Single(b => AutomationProperties.GetAutomationId(b) == "Domains.Dropdown");
+
+			toggle.IsChecked = false;
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(picker.IsDropdownOpen, Is.False);
+			Assert.That(committed, Is.Empty);
+			AssertStillShowsUniverse(picker);
+		}
+
 		[AvaloniaTest]
 		public void InlineMode_HasNoDropdownToggle_AndIsNotDropdown()
 		{
