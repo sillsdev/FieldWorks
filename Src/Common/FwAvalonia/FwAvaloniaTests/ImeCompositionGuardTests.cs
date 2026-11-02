@@ -170,6 +170,22 @@ namespace FwAvaloniaTests
 		}
 
 		[AvaloniaTest]
+		public void PageDown_WhileComposing_DoesNotFinishTheComposition()
+		{
+			var (control, window, _) = ShowTwoRows();
+			var ime = new FakeInputMethod(window);
+			ImeCompositionGuard.CompleteOpenComposition = ime.Complete;
+			Boxes(control)[0].Focus();
+			Dispatcher.UIThread.RunJobs();
+
+			ime.Compose("nihao");
+			window.KeyPress(Key.PageDown, RawInputModifiers.None, PhysicalKey.PageDown, null);
+
+			Assert.That(ime.CompletionRequests, Is.Zero,
+				"no editor moves focus on Page Down, so the composition stays open");
+		}
+
+		[AvaloniaTest]
 		public void ClickInsideTheComposingRow_DoesNotFinishTheComposition()
 		{
 			var (control, window, _) = ShowTwoRows();

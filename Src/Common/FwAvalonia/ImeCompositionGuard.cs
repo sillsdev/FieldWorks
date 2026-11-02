@@ -78,8 +78,6 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 				case Key.Down:
 				case Key.Left:
 				case Key.Right:
-				case Key.PageUp:
-				case Key.PageDown:
 					return true;
 				default:
 					return false;
