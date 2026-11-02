@@ -128,6 +128,47 @@ namespace FwAvaloniaTests
 				"the text is staged under the composing row's writing system only");
 		}
 
+		// Models an input method that leaves its composition open but passes the arrow key on, so
+		// the row navigation sees a plain arrow key on the composing row's last line.
+		[AvaloniaTest]
+		public void ArrowToAnotherRow_WhileComposing_FinishesTheTextInTheComposingRow()
+		{
+			var (control, window, context) = ShowTwoRows();
+			var ime = new FakeInputMethod(window);
+			ImeCompositionGuard.CompleteOpenComposition = ime.Complete;
+			var chinese = Boxes(control)[0];
+			var english = Boxes(control)[1];
+			chinese.Focus();
+			Dispatcher.UIThread.RunJobs();
+
+			ime.Compose("nihao");
+			window.KeyPress(Key.Down, RawInputModifiers.None, PhysicalKey.ArrowDown, null);
+			Dispatcher.UIThread.RunJobs();
+			ime.FinishIfOpen();
+
+			Assert.That(english.IsFocused, Is.True, "the arrow key still moves to the next row");
+			Assert.That(chinese.Text, Is.EqualTo("nihao"), "the composed text stays in the row it was typed in");
+			Assert.That(english.Text ?? string.Empty, Is.Empty, "nothing lands in the next row");
+			Assert.That(context.TextEdits, Is.EqualTo(new[] { ("Example", "zh", "nihao") }),
+				"the text is staged under the composing row's writing system only");
+		}
+
+		[AvaloniaTest]
+		public void ImeProcessedKey_WhileComposing_DoesNotFinishTheComposition()
+		{
+			var (control, window, _) = ShowTwoRows();
+			var ime = new FakeInputMethod(window);
+			ImeCompositionGuard.CompleteOpenComposition = ime.Complete;
+			Boxes(control)[0].Focus();
+			Dispatcher.UIThread.RunJobs();
+
+			ime.Compose("nihao");
+			window.KeyPress(Key.ImeProcessed, RawInputModifiers.None, PhysicalKey.None, null);
+
+			Assert.That(ime.CompletionRequests, Is.Zero,
+				"a key the input method consumes is part of the composition");
+		}
+
 		[AvaloniaTest]
 		public void ClickInsideTheComposingRow_DoesNotFinishTheComposition()
 		{

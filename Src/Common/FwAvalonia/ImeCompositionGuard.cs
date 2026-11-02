@@ -14,9 +14,10 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 {
 	/// <summary>
 	/// Finishes an open input-method (IME) composition into the text box that owns it before a
-	/// pointer press moves focus away (LT-22887). Avalonia's Windows input-method bridge
-	/// retargets itself to the newly focused box without completing the composition, so the
-	/// finished text would otherwise be inserted, and saved, in whichever box was clicked.
+	/// pointer press or navigation key moves focus away (LT-22887). Avalonia's Windows
+	/// input-method bridge retargets itself to the newly focused box without completing the
+	/// composition, so the finished text would otherwise be inserted, and saved, in whichever
+	/// box receives focus.
 	/// </summary>
 	public static class ImeCompositionGuard
 	{
@@ -42,6 +43,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 			s_installed = true;
 			InputElement.PointerPressedEvent.AddClassHandler<TopLevel>(OnPreviewPointerPressed,
 				RoutingStrategies.Tunnel, handledEventsToo: true);
+			InputElement.KeyDownEvent.AddClassHandler<TopLevel>(OnPreviewKeyDown,
+				RoutingStrategies.Tunnel, handledEventsToo: true);
 		}
 
 		// The tunnel pass reaches the root before focus moves to the pressed element, so the box
@@ -54,6 +57,33 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 				return;
 
 			CompleteOpenComposition?.Invoke();
+		}
+
+		// A key the input method consumes arrives as Key.ImeProcessed. A navigation key that
+		// reaches the editors instead can move focus, so the composition is finished first.
+		private static void OnPreviewKeyDown(TopLevel root, KeyEventArgs e)
+		{
+			if (!IsNavigationKey(e.Key) || !(root.FocusManager?.GetFocusedElement() is TextBox))
+				return;
+
+			CompleteOpenComposition?.Invoke();
+		}
+
+		private static bool IsNavigationKey(Key key)
+		{
+			switch (key)
+			{
+				case Key.Tab:
+				case Key.Up:
+				case Key.Down:
+				case Key.Left:
+				case Key.Right:
+				case Key.PageUp:
+				case Key.PageDown:
+					return true;
+				default:
+					return false;
+			}
 		}
 
 		private static class Imm32
