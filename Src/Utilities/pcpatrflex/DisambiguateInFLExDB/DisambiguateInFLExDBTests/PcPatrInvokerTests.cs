@@ -44,7 +44,7 @@ namespace SIL.DisambiguateInFLExDBTests
 			{
 				AndString = streamReader.ReadToEnd().Replace("\r", "");
 			}
-			var invoker = new PCPatrInvoker(grammarFile, anaFile, "Off");
+			var invoker = new PCPatrInvoker(grammarFile, anaFile, "Off", ShowFailures.Off);
 			invoker.Invoke();
 			Assert.AreEqual(true, invoker.InvocationSucceeded);
 			string andResult = "";
@@ -134,9 +134,25 @@ namespace SIL.DisambiguateInFLExDBTests
 			string grammarFile = "GrammarFail.grm";
 			File.Copy(Path.Combine(TestDataDir, grammarFile), Path.Combine(Path.GetTempPath(), grammarFile), true);
 			string anaFile = Path.Combine(TestDataDir, "InvokerFail.ana");
-			var invoker = new PCPatrInvoker(grammarFile, anaFile, "Off");
+			var invoker = new PCPatrInvoker(grammarFile, anaFile, "Off", ShowFailures.Off);
 			invoker.Invoke();
 			Assert.AreEqual(false, invoker.InvocationSucceeded);
+		}
+		[Test]
+		public void PcPatrInvokerCreateTakeFileTest()
+		{
+			var invoker = new PCPatrInvoker(null, null, null, ShowFailures.Off);
+			var sbTake = new StringBuilder();
+			invoker.HandleShowFailures(sbTake);
+			Assert.AreEqual("", sbTake.ToString());
+			sbTake.Clear();
+			invoker.ShowFailures = ShowFailures.PSROnly;
+			invoker.HandleShowFailures(sbTake);
+			Assert.AreEqual("set unification off\n", sbTake.ToString());
+			sbTake.Clear();
+			invoker.ShowFailures = ShowFailures.On;
+			invoker.HandleShowFailures(sbTake);
+			Assert.AreEqual("set failures on\n", sbTake.ToString());
 		}
 	}
 }

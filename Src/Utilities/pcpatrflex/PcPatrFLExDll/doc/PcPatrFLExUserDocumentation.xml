@@ -20,10 +20,12 @@ type="tPcPatrFLEx"
 ><emailAddress
 >andy_black@sil.org</emailAddress
 ><date
->3 April, 2026</date
+>3 November, 2026</date
 ><version
 contentType="ctKeyColor"
->Version 1.12.0 Beta</version
+><comment
+>Version 1.12.0 Beta</comment
+></version
 ><version
 >Copyright © 2018-2026 SIL International</version
 ><contents
@@ -240,7 +242,19 @@ type="tPcPatrGrammar"
 > file to use, click on the Browse button. By convention, <object
 type="tPcPatrGrammar"
 ></object
-> files have an extension of “.grm” so this is what the file browser uses.</p
+> files have an extension of “.grm” so this is what the file browser uses.  <object
+type="tBold"
+>IMPORTANT</object
+>: the path to your grammar file (including the grammar file name itself) cannot have any spaces in it.  If it does, then <object
+type="tPcPatr"
+></object
+> will not find the file.  See <genericRef
+gref="gGrammarPath"
+>below</genericRef
+> in section <sectionRef
+sec="sKnownProblems"
+></sectionRef
+> for some suggestions on where you can avoid using spaces in the file path.</p
 ></section2
 ><section2
 id="sRootGloss"
@@ -294,7 +308,7 @@ width="450"
 ></chart
 ></example
 ><p
->There are three options:</p
+>There are several options:</p
 ><ol
 ><li
 >“Maximum number of ambiguities to output:” is the maximum number of ambiguities that will appear in the <object
@@ -308,7 +322,39 @@ type="tPcPatrBrowser"
 type="tPcPatrFLEx"
 ></object
 > parse each segment for a maximum number of seconds given by the parsing time limit. Without this option, the maximum time limit is for the entire text. With this option, the maximum time limit is for each segment.</li
+><li
+>“Show Failures” has three possibilities:<ol
+><li
+>“Off: do not show failures” is the default. This is for normal, production work.</li
+><li
+>“Only use phrase structure rules” is for when a segment does not parse and you want to see if the phrase structure rules alone produce a parse for the segment. That is, no unification constraints will be applied.<endnote
+id="nUnificationOff"
+><p
+>The PC-PATR documentation has this to say about this option: “set unification off turns off feature unification in the grammar. Only the context-free phrase structure rules are used to guide the parse; the feature contraints are ignored. This can be dangerous, as it is easy to introduce infinite cycles in recursive phrase structure rules.”</p
+></endnote
+></li
+><li
+>“Use phrase structure rules and all constraints” is to tell <object
+type="tPcPatr"
+></object
+> to use its “show failures” mode. It will report everything it tried while attempting to parse the current segment. Note that this can take a long time so you should only use this when parsing portions of a segment or trying to figure out why a given segment is not parsing at all.</li
 ></ol
+></li
+></ol
+><p
+><object
+type="tBold"
+>IMPORTANT</object
+>: when using either the second or third options, you should minimize the number of rules the <object
+type="tPcPatrGrammar"
+></object
+> file uses.  See appendix <appendixRef
+app="aGrammarAsXML"
+></appendixRef
+> for a tool that makes this relatively easy.  If you do not limit the number of rules, <object
+type="tPcPatr"
+></object
+> will run for a very, very long time.</p
 ><p
 ><object
 type="tPcPatrFLEx"
@@ -738,17 +784,22 @@ type="tPcPatrFLEx"
 >:</p
 ><ol
 ><li
-contentType="ctKeyColor"
-><object
-type="tPcPatrFLEx"
+><genericTarget
+id="gGrammarPath"
+></genericTarget
+>The path to the grammar file cannot contain any spaces.  The <object
+type="tPcPatr"
 ></object
-> only works with version <object
-type="tFLExVersion"
-></object
-> or higher of <object
+> program will not find the grammar file if there are.  One work-around is to put the grammar file in a directory inside a folder at the top level (C:).  If your <object
 type="tFLEx"
 ></object
->.</li
+> project does not have a space in its name, then you can also try putting the grammar file in “C:\ProgramData\SIL\FieldWorks\Projects\<object
+type="tItalic"
+>your project name</object
+>\SupportingFiles”.  The advantage of the latter is that your grammar file can be included in every backup you make of your <object
+type="tFLEx"
+></object
+> project and can be included in a Send/Receive operation.</li
 ><li
 ><object
 type="tPcPatrFLEx"
@@ -782,6 +833,8 @@ type="tFLEx"
 >When a morpheme in a word analysis has just the form but no sense or grammatical info, then the gloss showing in the output will be the gloss of the first sense of the entry for the morpheme.</li
 ><li
 >When a morpheme in a word analysis has the form and grammatical info but no sense overtly indicated and there are two or more senses using the grammatical info in the entry, then the gloss showing in the output will be the gloss of the first sense which uses the grammatical info.</li
+><li
+>Using the </li
 ><li
 >The user interface is in English only.</li
 ></ol
@@ -1010,10 +1063,9 @@ type="tKey"
 ></section1
 ></appendix
 ><appendix
-contentType="ctKeyColor"
 id="aGrammarAsXML"
 ><secTitle
->Another way to edit a <object
+>A good way to edit a <object
 type="tPcPatrGrammar"
 ></object
 > file</secTitle
@@ -1023,32 +1075,19 @@ type="tPcPatrGrammar"
 ></object
 > file is that it is a plain text file. If one wants to try and debug a grammar, one has to comment off a large amount of lines. It can get to be tricky.</p
 ><p
->Some tentative work has been done on a tool that will take a <object
+>There is now a nice tool to help you edit <object
 type="tPcPatrGrammar"
 ></object
-> file and convert it to a form that can be used in a tool like the <object
-type="tXXE"
+> files.  It is called <object
+type="tPcPatrEditor"
 ></object
->. Some advantages of this are that one can:</p
-><ol
-><li
->Quickly enable/disable given rules</li
-><li
->Quickly enable/disable given templates</li
-></ol
-><p
->A major disadvantage is that once converted to this form, large <object
-type="tPcPatrGrammar"
-></object
-> files are quite slow to load into the <object
-type="tXXE"
-></object
->.s</p
-><p
->If you are interested in trying this, please contact <link
-href="mailto:blackhandrew@gmail.com"
->blackhandrew@gmail.com</link
->.</p
+>.  Check out the user documentation at <link
+href="https://software.sil.org/downloads/r/paws/pcpatreditor/UserDocumentation.pdf"
+>https://​software.​sil.​org/​downloads/​r/​paws/​pcpatreditor/​UserDocumentation.pdf</link
+>.  You can download the latest version at <link
+href="https://software.sil.org/downloads/r/paws/pcpatreditor/PcPatrEditorInstaller.exe"
+>https://​software.​sil.​org/​downloads/​r/​paws/​pcpatreditor/PcPatrEditorInstaller.exe</link
+>. </p
 ></appendix
 ><endnotes
 ></endnotes
@@ -1240,6 +1279,12 @@ font-style="italic"
 id="tPcPatrBrowser"
 ></type
 ><type
+before="PcPatrEditor"
+color="navy"
+font-style="italic"
+id="tPcPatrEditor"
+></type
+><type
 before="Use PC-PATR with FLEx"
 color="navy"
 font-style="italic"
@@ -1351,6 +1396,7 @@ decoration="underline"
 ><exampleRefLinkLayout
 ></exampleRefLinkLayout
 ><genericRefLinkLayout
+showmarking="yes"
 ></genericRefLinkLayout
 ><indexLinkLayout
 ></indexLinkLayout
