@@ -3,6 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using FwAvaloniaDialogs;
@@ -306,6 +307,39 @@ namespace LexTextControlsTests
 		}
 
 		[Test]
+		public void AddAllomorph_BuildInput_OpensOnTheFormsWritingSystem()
+		{
+			var spanish = AddSecondVernacularWs();
+			_perro.LexemeFormOA.Form.set_String(spanish, "chucho");
+			var tssForm = TsStringUtils.MakeString("chu", spanish);
+
+			var input = LcmAddAllomorphDialogLauncher.BuildInput(Cache, null, null, tssForm);
+
+			Assert.That(input.SearchField.SelectedWritingSystemId, Is.EqualTo("es"));
+			Assert.That(input.Search("chu").Select(r => r.Id), Is.EqualTo(new[] { Hvo(_perro) }),
+				"the form's own writing system is searched from the start");
+		}
+
+		[Test]
+		public void AddAllomorph_BuildInput_FormInANonCurrentWs_OpensOnTheDefaultVernacular()
+		{
+			Cache.ServiceLocator.WritingSystemManager.GetOrSet("de", out var german);
+			var writingSystems = Cache.ServiceLocator.WritingSystems;
+			Assert.That(writingSystems.AllWritingSystems.Where(ws =>
+					writingSystems.CurrentVernacularWritingSystems.Contains(ws)
+					|| writingSystems.CurrentAnalysisWritingSystems.Contains(ws))
+				.Select(ws => ws.Id), Does.Not.Contain("de"), "precondition: German is not current");
+			var tssForm = TsStringUtils.MakeString("ca", german.Handle);
+
+			var input = LcmAddAllomorphDialogLauncher.BuildInput(Cache, null, null, tssForm);
+
+			Assert.That(input.SearchField.SelectedWritingSystemId,
+				Is.EqualTo(writingSystems.DefaultVernacularWritingSystem.Id));
+			Assert.That(input.Search("ca").Select(r => r.Id),
+				Is.EquivalentTo(new[] { Hvo(_casa), Hvo(_cantar) }));
+		}
+
+		[Test]
 		public void AddAllomorph_Search_FindsAnyEntry_NothingExcluded()
 		{
 			var search = LcmAddAllomorphDialogLauncher.BuildSearch(Cache, null, null);
@@ -358,11 +392,12 @@ namespace LexTextControlsTests
 		// ----- Writing-system-aware search box (the legacy BaseGoDlg vernacular FwTextBox) -----
 
 		[Test]
-		public void BuildVernacularSearchFieldSpec_CarriesTheDefaultVernacularTypography()
+		public void BuildSearchFieldSpec_CarriesTheDefaultVernacularTypography()
 		{
 			var ws = Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
 
-			var spec = EntryGoLauncherShared.BuildVernacularSearchFieldSpec(Cache);
+			var spec = EntryGoLauncherShared.BuildSearchFieldSpec(Cache,
+				new EntryGoLauncherShared.SearchWritingSystem());
 
 			Assert.That(spec.FontFamily, Is.EqualTo(ws.DefaultFontName),
 				"the default vernacular ws's default font drives the search box (legacy BaseGoDlg font)");
@@ -389,6 +424,178 @@ namespace LexTextControlsTests
 				Is.Not.Null);
 		}
 
+		// ----- Searching in the selected writing system (LT-22671) -----
+
+		private Func<string, System.Collections.Generic.IReadOnlyList<EntryGoSearchResult>> SearchIn(
+			EntryGoLauncherShared.SearchWritingSystem searchWs)
+		{
+			return EntryGoLauncherShared.BuildEntrySearch(Cache, null, null, excludedEntryHvo: 0,
+				"TestSearchEngine", filter: null, searchWs: searchWs);
+		}
+
+		// Adds a second vernacular writing system, to hold forms the default one lacks.
+		private int AddSecondVernacularWs()
+		{
+			Cache.ServiceLocator.WritingSystemManager.GetOrSet("es", out var spanish);
+			Cache.ServiceLocator.WritingSystems.AddToCurrentVernacularWritingSystems(spanish);
+			return spanish.Handle;
+		}
+
+		[Test]
+		public void SharedSearch_AnalysisWsSelected_FindsEntryByGloss()
+		{
+			var search = SearchIn(new EntryGoLauncherShared.SearchWritingSystem
+			{
+				Handle = Cache.DefaultAnalWs
+			});
+
+			Assert.That(search("hou").Select(r => r.Id), Is.EqualTo(new[] { Hvo(_casa) }),
+				"an analysis writing system matches sense glosses");
+		}
+
+		[Test]
+		public void SharedSearch_VernacularWsSelected_DoesNotMatchGlosses()
+		{
+			var search = SearchIn(new EntryGoLauncherShared.SearchWritingSystem
+			{
+				Handle = Cache.DefaultVernWs
+			});
+
+			Assert.That(search("hou"), Is.Empty, "a vernacular writing system matches forms only");
+		}
+
+		[Test]
+		public void SharedSearch_SecondVernacularWsSelected_FindsEntryByFormInThatWs()
+		{
+			var spanish = AddSecondVernacularWs();
+			_perro.LexemeFormOA.Form.set_String(spanish, "chucho");
+
+			var defaultSearch = SearchIn(null);
+			var spanishSearch = SearchIn(new EntryGoLauncherShared.SearchWritingSystem
+			{
+				Handle = spanish
+			});
+
+			Assert.That(defaultSearch("chu"), Is.Empty,
+				"the form exists only in the second vernacular writing system");
+			Assert.That(spanishSearch("chu").Select(r => r.Id), Is.EqualTo(new[] { Hvo(_perro) }));
+		}
+
+		[Test]
+		public void SharedSearch_SelectionChangedAfterBuild_NextSearchUsesNewWs()
+		{
+			var searchWs = new EntryGoLauncherShared.SearchWritingSystem { Handle = Cache.DefaultVernWs };
+			var search = SearchIn(searchWs);
+			Assert.That(search("hou"), Is.Empty);
+
+			searchWs.Handle = Cache.DefaultAnalWs;
+
+			Assert.That(search("hou").Select(r => r.Id), Is.EqualTo(new[] { Hvo(_casa) }),
+				"the search reads the selection on every query");
+		}
+
+		[Test]
+		public void SharedEntryOrSenseSearch_AnalysisWsSelected_SenseModeFindsSenseByGloss()
+		{
+			var search = EntryGoLauncherShared.BuildEntryOrSenseSearch(Cache, null, null,
+				excludedEntryHvo: 0, "TestSearchEngine",
+				new EntryGoLauncherShared.SearchWritingSystem { Handle = Cache.DefaultAnalWs });
+
+			var results = search("hou", true);
+
+			Assert.That(results.Select(r => r.Id), Is.EqualTo(new[] { Hvo(_casa.SensesOS[0]) }));
+			Assert.That(results.Single().IsSense, Is.True);
+		}
+
+		[Test]
+		public void BuildSearchFieldSpec_OffersEveryAnalysisAndVernacularWritingSystem()
+		{
+			AddSecondVernacularWs();
+			var writingSystems = Cache.ServiceLocator.WritingSystems;
+			var expected = writingSystems.CurrentAnalysisWritingSystems
+				.Concat(writingSystems.CurrentVernacularWritingSystems)
+				.Select(ws => ws.Id).Distinct().ToList();
+
+			var spec = EntryGoLauncherShared.BuildSearchFieldSpec(Cache,
+				new EntryGoLauncherShared.SearchWritingSystem());
+			var ids = spec.WritingSystems.Select(o => o.Id).ToList();
+
+			Assert.That(ids, Is.EquivalentTo(expected), "each current writing system appears once");
+			Assert.That(spec.WritingSystems.Select(o => o.DisplayName),
+				Is.Ordered.Using((IComparer<string>)StringComparer.CurrentCulture));
+			Assert.That(spec.SelectedWritingSystemId,
+				Is.EqualTo(writingSystems.DefaultVernacularWritingSystem.Id));
+		}
+
+		[Test]
+		public void BuildSearchFieldSpec_OptionsCarryTheirWritingSystemsTypography()
+		{
+			var spec = EntryGoLauncherShared.BuildSearchFieldSpec(Cache,
+				new EntryGoLauncherShared.SearchWritingSystem());
+
+			foreach (var option in spec.WritingSystems)
+			{
+				var ws = Cache.ServiceLocator.WritingSystemManager.Get(option.Id);
+				Assert.That(option.DisplayName, Is.EqualTo(ws.DisplayLabel));
+				Assert.That(option.Typography?.FontFamily, Is.EqualTo(ws.DefaultFontName));
+				Assert.That(option.Typography?.RightToLeft, Is.EqualTo(ws.RightToLeftScript));
+			}
+		}
+
+		[Test]
+		public void BuildSearchFieldSpec_WritingSystemChanged_PointsTheSearchAtIt()
+		{
+			var searchWs = new EntryGoLauncherShared.SearchWritingSystem();
+			var spec = EntryGoLauncherShared.BuildSearchFieldSpec(Cache, searchWs);
+			var analysis = Cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem;
+
+			spec.WritingSystemChanged(analysis.Id);
+
+			Assert.That(searchWs.Handle, Is.EqualTo(analysis.Handle));
+			Assert.That(() => spec.Focused(), Throws.Nothing,
+				"activating the selected writing system's keyboard is fail-safe");
+		}
+
+		[Test]
+		public void BuildSearchFieldSpec_NullSelection_Throws()
+		{
+			Assert.That(() => EntryGoLauncherShared.BuildSearchFieldSpec(Cache, null),
+				Throws.TypeOf<ArgumentNullException>());
+		}
+
+		[Test]
+		public void GoFamilyBuildInputs_SelectorDrivesTheirSearch()
+		{
+			// _casa is the starting entry where a dialog has one, so the probe targets _perro.
+			var tssForm = TsStringUtils.MakeString("nuevo", Cache.DefaultVernWs);
+			var inputs = new[]
+			{
+				LcmGoToEntryDialogLauncher.BuildInput(Cache, null, null),
+				LcmMergeEntryDialogLauncher.BuildInput(Cache, null, null, _casa),
+				LcmAddAllomorphDialogLauncher.BuildInput(Cache, null, null, tssForm),
+				LcmLinkAllomorphDialogLauncher.BuildInput(Cache, null, null, _casa),
+				LcmLinkMsaDialogLauncher.BuildInput(Cache, null, null, _casa),
+				LcmLinkEntryOrSenseDialogLauncher.BuildInput(Cache, null, null, _casa, allowSenses: true)
+			};
+			var analysisId = Cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Id;
+
+			foreach (var input in inputs)
+			{
+				Assert.That(input.Search("do"), Is.Empty, $"{input.Title}: no form contains \"do\"");
+
+				input.SearchField.WritingSystemChanged(analysisId);
+
+				Assert.That(input.Search("do").Select(r => r.Id), Is.EqualTo(new[] { Hvo(_perro) }),
+					$"{input.Title}: the analysis selection searches glosses");
+				if (input.SearchByMode != null)
+				{
+					Assert.That(input.SearchByMode("do", true).Select(r => r.Id),
+						Is.EqualTo(new[] { Hvo(_perro.SensesOS[0]) }),
+						$"{input.Title}: sense mode follows the selection too");
+				}
+			}
+		}
+
 		// ----- The persistent matching list's per-column values + default column spec (the legacy
 		// matchingEntries browser's default-visible columns: Headword + Glosses) -----
 
@@ -402,6 +609,31 @@ namespace LexTextControlsTests
 			var casa = search("casa").Single(r => r.Id == Hvo(_casa));
 			Assert.That(casa.LexemeForm, Is.EqualTo("casa"), "the row carries the entry's lexeme form");
 			Assert.That(casa.Gloss, Is.EqualTo("house"), "the row carries the senses' gloss(es)");
+		}
+
+		[Test]
+		public void HeadwordText_NoDefaultVernacularForm_UsesAnotherVernacularForm()
+		{
+			var spanish = AddSecondVernacularWs();
+			var components = new LexEntryComponents
+			{
+				MorphType = Cache.ServiceLocator.GetInstance<IMoMorphTypeRepository>()
+					.GetObject(MoMorphTypeTags.kguidMorphStem)
+			};
+			components.LexemeFormAlternatives.Add(TsStringUtils.MakeString("chucho", spanish));
+			var entry = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create(components);
+
+			Assert.That(EntryGoLauncherShared.HeadwordText(entry), Is.EqualTo("chucho"),
+				"a form in any current writing system beats the missing-form placeholder");
+		}
+
+		[Test]
+		public void HeadwordText_DefaultVernacularForm_IsPreferred()
+		{
+			var spanish = AddSecondVernacularWs();
+			_casa.LexemeFormOA.Form.set_String(spanish, "casita");
+
+			Assert.That(EntryGoLauncherShared.HeadwordText(_casa), Is.EqualTo("casa"));
 		}
 
 		[Test]
