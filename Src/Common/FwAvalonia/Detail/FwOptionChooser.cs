@@ -858,10 +858,12 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			{
 				case Key.Down:
 					MoveHighlight(1);
+					CommitClosedDropdownMove(before);
 					e.Handled = true;
 					break;
 				case Key.Up:
 					MoveHighlight(-1);
+					CommitClosedDropdownMove(before);
 					e.Handled = true;
 					break;
 				case Key.Enter:
@@ -878,6 +880,14 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 
 			Log($"KeyDown key={e.Key} source={e.Source?.GetType().Name} focused={focused} " +
 				$"handled={e.Handled} selIndex {before}->{_list.SelectedIndex}");
+		}
+
+		// A closed dropdown commits an arrow move at once, like a WinForms drop-down list. Open,
+		// a move is only a highlight until Enter or a click.
+		private void CommitClosedDropdownMove(int indexBefore)
+		{
+			if (_dropdown && !_dropdownOpen && _list.SelectedIndex != indexBefore)
+				CommitHighlighted();
 		}
 
 		private void MoveHighlight(int delta)

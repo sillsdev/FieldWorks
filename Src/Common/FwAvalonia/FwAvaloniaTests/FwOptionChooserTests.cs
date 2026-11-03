@@ -748,6 +748,41 @@ namespace FwAvaloniaTests
 		}
 
 		[AvaloniaTest]
+		public void Dropdown_ClosedArrowKeys_CommitTheNextOption()
+		{
+			// A closed dropdown behaves like a WinForms drop-down list: an arrow commits at once.
+			var (picker, _, committed) = ShowDropdown();
+			var toggle = picker.GetVisualDescendants().OfType<ToggleButton>()
+				.Single(b => AutomationProperties.GetAutomationId(b) == "Domains.Dropdown");
+
+			RaiseKey(toggle, Key.Down);
+
+			Assert.That(picker.IsDropdownOpen, Is.False, "an arrow on the closed box does not open it");
+			Assert.That(committed.Select(o => o.Key), Is.EqualTo(new[] { "u-sky" }));
+			Assert.That(picker.SelectedOption?.Key, Is.EqualTo("u-sky"));
+			Assert.That(picker.DropdownText, Is.EqualTo("Sky"));
+
+			RaiseKey(toggle, Key.Up);
+
+			Assert.That(committed.Select(o => o.Key), Is.EqualTo(new[] { "u-sky", "u" }));
+			Assert.That(picker.SelectedOption?.Key, Is.EqualTo("u"));
+			Assert.That(picker.DropdownText, Is.EqualTo("Universe"));
+		}
+
+		[AvaloniaTest]
+		public void Dropdown_ClosedArrowPastTheEnd_CommitsNothing()
+		{
+			var (picker, _, committed) = ShowDropdown();
+			var toggle = picker.GetVisualDescendants().OfType<ToggleButton>()
+				.Single(b => AutomationProperties.GetAutomationId(b) == "Domains.Dropdown");
+
+			RaiseKey(toggle, Key.Up);
+
+			Assert.That(committed, Is.Empty, "Up on the first option has nowhere to go");
+			Assert.That(picker.SelectedOption?.Key, Is.EqualTo("u"));
+		}
+
+		[AvaloniaTest]
 		public void InlineMode_HasNoDropdownToggle_AndIsNotDropdown()
 		{
 			// Proof the existing (default) consumers are UNCHANGED: no collapsed toggle, IsDropdown false,
