@@ -130,6 +130,17 @@ namespace FwAvaloniaDialogs
 			set => _gloss = value;
 		}
 
+		/// <summary>
+		/// The typography of this row's headword: that of the writing system the headword came
+		/// from, which the view prefers over the Headword column's. Null keeps the column's.
+		/// </summary>
+		public EntryGoSearchFieldSpec HeadwordTypography { get; set; }
+
+		/// <summary>The typography of this row's <paramref name="field"/> cell; null keeps the
+		/// column's.</summary>
+		public EntryGoSearchFieldSpec TypographyFor(EntryGoResultField field)
+			=> field == EntryGoResultField.Headword ? HeadwordTypography : null;
+
 		/// <summary>The display value of <paramref name="field"/> for this row -- the matching
 		/// list's cell text.</summary>
 		public string ValueFor(EntryGoResultField field)
