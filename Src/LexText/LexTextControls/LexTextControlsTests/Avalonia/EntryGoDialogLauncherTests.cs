@@ -636,6 +636,70 @@ namespace LexTextControlsTests
 			Assert.That(EntryGoLauncherShared.HeadwordText(_casa), Is.EqualTo("casa"));
 		}
 
+		// ----- No LCM missing-value placeholders in the results list (LT-22883) -----
+
+		// Empties the default analysis gloss of the entry's first sense.
+		private void ClearFirstGloss(ILexEntry entry)
+			=> entry.SensesOS[0].Gloss.set_String(Cache.DefaultAnalWs, TsStringUtils.EmptyString(Cache.DefaultAnalWs));
+
+		[Test]
+		public void GlossesText_UnglossedSense_IsBlank()
+		{
+			ClearFirstGloss(_perro);
+
+			Assert.That(EntryGoLauncherShared.GlossesText(_perro), Is.Empty);
+		}
+
+		[Test]
+		public void GlossesText_UnglossedSenseAmongGlossedOnes_IsSkipped()
+		{
+			var second = Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
+			_casa.SensesOS.Add(second);
+
+			Assert.That(EntryGoLauncherShared.GlossesText(_casa), Is.EqualTo("house"));
+		}
+
+		[Test]
+		public void SharedSearch_UnglossedSense_DescriptionShowsNoPlaceholder()
+		{
+			ClearFirstGloss(_perro);
+			var search = LcmGoToEntryDialogLauncher.BuildSearch(Cache, null, null);
+
+			var row = search("perro").Single(r => r.Id == Hvo(_perro));
+
+			Assert.That(row.Gloss, Is.Empty);
+			Assert.That(row.Description, Is.EqualTo("perro"));
+		}
+
+		[Test]
+		public void SharedEntryOrSenseSearch_UnglossedSense_RowFallsBackToChooserName()
+		{
+			ClearFirstGloss(_perro);
+			var search = EntryGoLauncherShared.BuildEntryOrSenseSearch(Cache, null, null,
+				excludedEntryHvo: 0, "TestSearchEngine");
+
+			var row = search("perro", true).Single();
+
+			Assert.That(row.SubText, Does.Not.Contain("***"));
+			Assert.That(row.SubText, Is.EqualTo(_perro.SensesOS[0].ChooserNameTS?.Text ?? string.Empty));
+		}
+
+		[Test]
+		public void LexemeFormText_NoFormInAnyWs_IsBlank()
+		{
+			_casa.LexemeFormOA.Form.set_String(Cache.DefaultVernWs, TsStringUtils.EmptyString(Cache.DefaultVernWs));
+
+			Assert.That(EntryGoLauncherShared.LexemeFormText(_casa), Is.Empty);
+		}
+
+		[Test]
+		public void HeadwordText_NoFormInAnyWs_IsBlank()
+		{
+			_casa.LexemeFormOA.Form.set_String(Cache.DefaultVernWs, TsStringUtils.EmptyString(Cache.DefaultVernWs));
+
+			Assert.That(EntryGoLauncherShared.HeadwordText(_casa), Is.Empty);
+		}
+
 		[Test]
 		public void GlossesText_JoinsMultipleSenseGlosses()
 		{
