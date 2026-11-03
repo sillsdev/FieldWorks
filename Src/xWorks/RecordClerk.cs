@@ -353,7 +353,9 @@ namespace SIL.FieldWorks.XWorks
 						{
 							m_activeMenuBarFilter = menuBarFilterOption;
 							m_filterProvider.OnAdjustFilterSelection(m_activeMenuBarFilter);
-							m_propertyTable.SetDefault(CurrentFilterPropertyTableId, m_activeMenuBarFilter.id, PropertyTable.SettingsGroup.LocalSettings);
+							// The restore above adjusted the menu before this filter was
+							// known; replace that value rather than default it.
+							m_propertyTable.SetProperty(CurrentFilterPropertyTableId, m_activeMenuBarFilter.id, PropertyTable.SettingsGroup.LocalSettings, false);
 							fSetFilterMenu = true;
 							break;
 						}
@@ -362,7 +364,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 			if (!fSetFilterMenu)
 			{
-				OnAdjustFilterSelection(null);
+				AdjustFilterSelection();
 			}
 
 			// we never want to persist this value, since it is dependent upon the filter property.
@@ -2812,9 +2814,8 @@ namespace SIL.FieldWorks.XWorks
 				string persistFilter = DynamicLoader.PersistObject(Filter, "filter");
 				m_propertyTable.SetProperty(GetFilterPropertyTableId(), persistFilter, PropertyTable.SettingsGroup.LocalSettings, false);
 				// adjust menu bar items according to current state of Filter, where needed.
-#pragma warning disable 618 // suppress obsolete warning
-				m_mediator.BroadcastMessage("AdjustFilterSelection", Filter);
-#pragma warning restore 618
+				AdjustFilterSelection();
+				m_filterProvider?.OnAdjustFilterSelection(Filter);
 				UpdateFilterStatusBarPanel();
 				if (m_list.Filter != null)
 					Logger.WriteEvent("Filter changed: "+m_list.Filter);
@@ -2829,9 +2830,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Make Filters menuBar item selection adjustments as necessary.
 		/// </summary>
-		/// <param name="argument"></param>
-		/// <returns></returns>
-		public bool OnAdjustFilterSelection(object argument)
+		private void AdjustFilterSelection()
 		{
 			CheckDisposed();
 
@@ -2851,8 +2850,6 @@ namespace SIL.FieldWorks.XWorks
 				// Resetting the table property value to NoFilters checks this item.
 				m_propertyTable.SetProperty(CurrentFilterPropertyTableId, (new NoFilters()).Name, PropertyTable.SettingsGroup.LocalSettings, false);
 			}
-			// allow others to process this.
-			return false;
 		}
 
 		/// <summary>

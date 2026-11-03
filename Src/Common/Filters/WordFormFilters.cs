@@ -185,7 +185,6 @@ namespace SIL.FieldWorks.Filters
 		public override void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configuration)
 		{
 			base.Init(mediator, propertyTable, configuration);
-			m_mediator.AddColleague(this);
 			m_cache = m_propertyTable.GetValue<LcmCache>("cache");
 			ReLoad();
 		}
