@@ -233,9 +233,10 @@ GotFocus). Null spec → the box is untouched (pinned by test).
 row under the search box: a dropdown `FwOptionChooser` built by the view's code-behind into
 `PART_WritingSystemHost` (never an ad-hoc ComboBox). Picking one sets
 `EntryGoDialogViewModel.SelectedWritingSystem`, which reports the id, re-derives `SearchTypography`, and
-re-runs the search; a cleared selection keeps the last writing system. Focus stays on the picker after a
-switch (arrow-browsing the collapsed picker must keep working); the keyboard switches when the user
-returns to the box.
+re-runs the search; a cleared selection keeps the last writing system. Up/Down on the collapsed picker
+commit the next option at once, as a WinForms drop-down list does (`FwOptionChooser` dropdown mode;
+open, a move is only a highlight). Focus stays on the picker after a switch so that arrow-browsing keeps
+working; the keyboard switches when the user returns to the box.
 
 The product side is `EntryGoLauncherShared.BuildSearchFieldSpec(cache, searchWs)`. The legacy selector
 is NOT presentation-only: an ANALYSIS writing system switches the searched fields from forms to sense

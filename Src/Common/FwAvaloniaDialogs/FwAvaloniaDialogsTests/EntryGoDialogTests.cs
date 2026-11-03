@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Avalonia.Automation;
 using Avalonia.Controls;
+using Avalonia.Controls.Primitives;
 using Avalonia.Input;
 using Avalonia.Headless;
 using Avalonia.Headless.NUnit;
@@ -1143,6 +1144,25 @@ namespace FwAvaloniaDialogsTests
 			Assert.That(reported, Is.Empty);
 			Assert.That(picker.DropdownText, Is.EqualTo("Spanish"),
 				"the picker shows the writing system the search still uses");
+		}
+
+		[AvaloniaTest]
+		public void WritingSystemSelector_View_ArrowOnTheClosedPicker_SwitchesTheSearch()
+		{
+			var reported = new List<string>();
+			var (view, vm) = Show(WsAwareInput(reported));
+			var picker = WsPicker(view);
+			var toggle = picker.GetVisualDescendants().OfType<ToggleButton>()
+				.Single(b => AutomationProperties.GetAutomationId(b) == "EntryGo.WritingSystem.Dropdown");
+
+			toggle.RaiseEvent(new KeyEventArgs { RoutedEvent = InputElement.KeyDownEvent, Key = Key.Up });
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(picker.DropdownText, Is.EqualTo("English"));
+			Assert.That(vm.SelectedWritingSystem?.Id, Is.EqualTo("en"),
+				"the search follows the writing system the picker shows");
+			Assert.That(reported, Is.EqualTo(new[] { "en" }));
+			Assert.That(SearchBox(view).FontFamily.Name, Is.EqualTo("Segoe UI"));
 		}
 
 		[AvaloniaTest]
