@@ -120,7 +120,7 @@ namespace SIL.PrepFLExDBTests
 			Assert.AreEqual(35, possListRepository.AllInstances().Count());
 			var pcPatrList = possListRepository.AllInstances().Last();
 			Assert.AreEqual(PcPatrConstants.PcPatrFeatureDescriptorList, pcPatrList.Name.BestAnalysisAlternative.Text);
-			Assert.AreEqual(665, pcPatrList.PossibilitiesOS.Count);
+			Assert.AreEqual(669, pcPatrList.PossibilitiesOS.Count);
 			CheckMatch(pcPatrList, "+root"); // first
 			CheckMatch(pcPatrList, "causative_syntax"); // early middle
 			CheckMatch(pcPatrList, "indefinite"); // late middle
