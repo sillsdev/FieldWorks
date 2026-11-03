@@ -110,7 +110,7 @@ namespace SIL.DisambiguateInFLExDB
 			sbTake.Append("\n");
 			sbTake.Append("set timing on\n");
 			sbTake.Append("set gloss on\n");
-			sbTake.Append("set features all\n");
+			HandleSetFeatures(sbTake);
 			HandleRootGloss(sbTake);
 			sbTake.Append("set tree xml\n");
 			sbTake.Append("set ambiguities ");
@@ -142,6 +142,16 @@ namespace SIL.DisambiguateInFLExDB
 			result = GetRootGlossStateValue();
 			sbTake.Append(result + "\n");
 		}
+		// is public for testing
+		public void HandleSetFeatures(StringBuilder sbTake)
+		{
+			sbTake.Append("set features ");
+			if (ShowFailures == ShowFailures.PSROnly)
+				sbTake.Append("off\n");
+			else
+				sbTake.Append("all\n");
+		}
+
 		// is public for testing
 		public void HandleShowFailures(StringBuilder sbTake)
 		{
