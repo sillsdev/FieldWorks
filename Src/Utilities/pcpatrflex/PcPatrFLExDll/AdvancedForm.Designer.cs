@@ -1,4 +1,4 @@
-namespace SIL.PcPatrFLEx
+﻿namespace SIL.PcPatrFLEx
 {
     partial class AdvancedForm
     {
@@ -36,11 +36,6 @@ namespace SIL.PcPatrFLEx
 			this.cbRunIndividually = new System.Windows.Forms.CheckBox();
 			this.tbMaxAmbiguities = new System.Windows.Forms.TextBox();
 			this.tbTimeLimit = new System.Windows.Forms.TextBox();
-			this.gbShowFailures = new System.Windows.Forms.GroupBox();
-			this.rbShowFailuresOn = new System.Windows.Forms.RadioButton();
-			this.rbShowFailuresPhraseStructureRules = new System.Windows.Forms.RadioButton();
-			this.rbShowFailuresOff = new System.Windows.Forms.RadioButton();
-			this.gbShowFailures.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// btnCancel
@@ -88,44 +83,10 @@ namespace SIL.PcPatrFLEx
 			this.tbTimeLimit.Name = "tbTimeLimit";
 			this.tbTimeLimit.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.tbTimeLimit_KeyPress);
 			// 
-			// gbShowFailures
-			// 
-			this.gbShowFailures.Controls.Add(this.rbShowFailuresOn);
-			this.gbShowFailures.Controls.Add(this.rbShowFailuresPhraseStructureRules);
-			this.gbShowFailures.Controls.Add(this.rbShowFailuresOff);
-			resources.ApplyResources(this.gbShowFailures, "gbShowFailures");
-			this.gbShowFailures.Name = "gbShowFailures";
-			this.gbShowFailures.TabStop = false;
-			// 
-			// rbShowFailuresOn
-			// 
-			resources.ApplyResources(this.rbShowFailuresOn, "rbShowFailuresOn");
-			this.rbShowFailuresOn.Name = "rbShowFailuresOn";
-			this.rbShowFailuresOn.TabStop = true;
-			this.rbShowFailuresOn.UseVisualStyleBackColor = true;
-			this.rbShowFailuresOn.CheckedChanged += new System.EventHandler(this.rbShowFailuresOn_CheckedChanged);
-			// 
-			// rbShowFailuresPhraseStructureRules
-			// 
-			resources.ApplyResources(this.rbShowFailuresPhraseStructureRules, "rbShowFailuresPhraseStructureRules");
-			this.rbShowFailuresPhraseStructureRules.Name = "rbShowFailuresPhraseStructureRules";
-			this.rbShowFailuresPhraseStructureRules.TabStop = true;
-			this.rbShowFailuresPhraseStructureRules.UseVisualStyleBackColor = true;
-			this.rbShowFailuresPhraseStructureRules.CheckedChanged += new System.EventHandler(this.rbShowFailuresPhraseStructureRules_CheckedChanged);
-			// 
-			// rbShowFailuresOff
-			// 
-			resources.ApplyResources(this.rbShowFailuresOff, "rbShowFailuresOff");
-			this.rbShowFailuresOff.Name = "rbShowFailuresOff";
-			this.rbShowFailuresOff.TabStop = true;
-			this.rbShowFailuresOff.UseVisualStyleBackColor = true;
-			this.rbShowFailuresOff.CheckedChanged += new System.EventHandler(this.rbShowFailuresOff_CheckedChanged);
-			// 
 			// AdvancedForm
 			// 
 			resources.ApplyResources(this, "$this");
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.Controls.Add(this.gbShowFailures);
 			this.Controls.Add(this.tbTimeLimit);
 			this.Controls.Add(this.tbMaxAmbiguities);
 			this.Controls.Add(this.cbRunIndividually);
@@ -134,8 +95,6 @@ namespace SIL.PcPatrFLEx
 			this.Controls.Add(this.btnOK);
 			this.Controls.Add(this.btnCancel);
 			this.Name = "AdvancedForm";
-			this.gbShowFailures.ResumeLayout(false);
-			this.gbShowFailures.PerformLayout();
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -150,9 +109,5 @@ namespace SIL.PcPatrFLEx
         private System.Windows.Forms.CheckBox cbRunIndividually;
         private System.Windows.Forms.TextBox tbMaxAmbiguities;
         private System.Windows.Forms.TextBox tbTimeLimit;
-		private System.Windows.Forms.GroupBox gbShowFailures;
-		private System.Windows.Forms.RadioButton rbShowFailuresPhraseStructureRules;
-		private System.Windows.Forms.RadioButton rbShowFailuresOff;
-		private System.Windows.Forms.RadioButton rbShowFailuresOn;
-	}
+    }
 }

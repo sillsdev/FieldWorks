@@ -1,4 +1,3 @@
-using SIL.DisambiguateInFLExDB;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -17,14 +16,13 @@ namespace SIL.PcPatrFLEx
 		public int TimeLimit { get; set; }
 		public bool RunIndividually { get; set; }
 		public bool OkPressed { get; set; }
-		public ShowFailures ShowFailures { get; set; }
 
 		public AdvancedForm()
 		{
 			InitializeComponent();
 		}
 
-		public void Initialize(int max, int time, bool runIndividually, ShowFailures showFailures)
+		public void initialize(int max, int time, bool runIndividually)
 		{
 			MaxAmbigs = max;
 			TimeLimit = time;
@@ -32,8 +30,6 @@ namespace SIL.PcPatrFLEx
 			tbTimeLimit.Text = time.ToString();
 			cbRunIndividually.Checked = runIndividually;
 			OkPressed = false;
-			ShowFailures = showFailures;
-			UpdateShowFailuresChecked();
 		}
 
 		private void tbMaxAmbiguities_KeyPress(object sender, KeyPressEventArgs e)
@@ -82,41 +78,6 @@ namespace SIL.PcPatrFLEx
 		private void tbMaxAmbiguities_TextChanged(object sender, EventArgs e)
 		{
 
-		}
-
-		private void rbShowFailuresOff_CheckedChanged(object sender, EventArgs e)
-		{
-			UpdateShowFailuresValue();
-		}
-
-		private void rbShowFailuresPhraseStructureRules_CheckedChanged(object sender, EventArgs e)
-		{
-			UpdateShowFailuresValue();
-
-		}
-
-		private void rbShowFailuresOn_CheckedChanged(object sender, EventArgs e)
-		{
-			UpdateShowFailuresValue();
-
-		}
-		private void UpdateShowFailuresValue()
-		{
-			if (rbShowFailuresOff.Checked)
-				ShowFailures = ShowFailures.Off;
-			else if (rbShowFailuresPhraseStructureRules.Checked)
-				ShowFailures = ShowFailures.PSROnly;
-			else
-				ShowFailures = ShowFailures.On;
-		}
-		private void UpdateShowFailuresChecked()
-		{
-			if (ShowFailures == ShowFailures.Off)
-				rbShowFailuresOff.Checked = true;
-			else if (ShowFailures == ShowFailures.PSROnly)
-				rbShowFailuresPhraseStructureRules.Checked = true;
-			else
-				rbShowFailuresOn.Checked = true;
 		}
 	}
 }
