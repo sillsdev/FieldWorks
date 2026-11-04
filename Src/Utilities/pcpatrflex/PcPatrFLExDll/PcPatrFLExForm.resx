@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -123,7 +123,7 @@
   </data>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="btnParse.Location" type="System.Drawing.Point, System.Drawing">
-    <value>519, 151</value>
+    <value>519, 193</value>
   </data>
   <data name="btnParse.Size" type="System.Drawing.Size, System.Drawing">
     <value>267, 38</value>
@@ -145,13 +145,13 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;btnParse.ZOrder" xml:space="preserve">
-    <value>11</value>
+    <value>12</value>
   </data>
   <data name="splitContainer1.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Bottom, Left</value>
   </data>
   <data name="splitContainer1.Location" type="System.Drawing.Point, System.Drawing">
-    <value>3, 208</value>
+    <value>3, 260</value>
   </data>
   <data name="lbTexts.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Fill</value>
@@ -163,7 +163,7 @@
     <value>0, 0</value>
   </data>
   <data name="lbTexts.Size" type="System.Drawing.Size, System.Drawing">
-    <value>355, 789</value>
+    <value>355, 737</value>
   </data>
   <data name="lbTexts.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
@@ -220,7 +220,7 @@
     <value>MiddleRight</value>
   </data>
   <data name="ssSegments.Location" type="System.Drawing.Point, System.Drawing">
-    <value>0, 757</value>
+    <value>0, 705</value>
   </data>
   <data name="ssSegments.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>2, 0, 21, 0</value>
@@ -256,7 +256,7 @@
     <value>0, 0</value>
   </data>
   <data name="lbSegments.Size" type="System.Drawing.Size, System.Drawing">
-    <value>437, 789</value>
+    <value>437, 737</value>
   </data>
   <data name="lbSegments.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
@@ -286,7 +286,7 @@
     <value>1</value>
   </data>
   <data name="splitContainer1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>796, 789</value>
+    <value>796, 737</value>
   </data>
   <data name="splitContainer1.SplitterDistance" type="System.Int32, mscorlib">
     <value>355</value>
@@ -304,7 +304,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;splitContainer1.ZOrder" xml:space="preserve">
-    <value>10</value>
+    <value>11</value>
   </data>
   <data name="lblTexts.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -313,7 +313,7 @@
     <value>Microsoft Sans Serif, 10pt</value>
   </data>
   <data name="lblTexts.Location" type="System.Drawing.Point, System.Drawing">
-    <value>9, 162</value>
+    <value>9, 204</value>
   </data>
   <data name="lblTexts.Size" type="System.Drawing.Size, System.Drawing">
     <value>61, 25</value>
@@ -334,7 +334,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;lblTexts.ZOrder" xml:space="preserve">
-    <value>9</value>
+    <value>10</value>
   </data>
   <data name="lblSegments.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -343,7 +343,7 @@
     <value>Microsoft Sans Serif, 10pt</value>
   </data>
   <data name="lblSegments.Location" type="System.Drawing.Point, System.Drawing">
-    <value>368, 162</value>
+    <value>368, 204</value>
   </data>
   <data name="lblSegments.Size" type="System.Drawing.Size, System.Drawing">
     <value>101, 25</value>
@@ -364,7 +364,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;lblSegments.ZOrder" xml:space="preserve">
-    <value>8</value>
+    <value>9</value>
   </data>
   <data name="label1.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -391,7 +391,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;label1.ZOrder" xml:space="preserve">
-    <value>7</value>
+    <value>8</value>
   </data>
   <data name="tbGrammarFile.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Left, Right</value>
@@ -415,7 +415,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;tbGrammarFile.ZOrder" xml:space="preserve">
-    <value>6</value>
+    <value>7</value>
   </data>
   <data name="btnBrowse.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Right</value>
@@ -442,10 +442,10 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;btnBrowse.ZOrder" xml:space="preserve">
-    <value>5</value>
+    <value>6</value>
   </data>
   <data name="btnDisambiguate.Location" type="System.Drawing.Point, System.Drawing">
-    <value>76, 151</value>
+    <value>76, 193</value>
   </data>
   <data name="btnDisambiguate.Size" type="System.Drawing.Size, System.Drawing">
     <value>282, 38</value>
@@ -466,7 +466,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;btnDisambiguate.ZOrder" xml:space="preserve">
-    <value>4</value>
+    <value>5</value>
   </data>
   <data name="rbAll.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -598,7 +598,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;gbRootGloss.ZOrder" xml:space="preserve">
-    <value>3</value>
+    <value>4</value>
   </data>
   <data name="btnRefresh.Location" type="System.Drawing.Point, System.Drawing">
     <value>18, 77</value>
@@ -622,7 +622,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;btnRefresh.ZOrder" xml:space="preserve">
-    <value>2</value>
+    <value>3</value>
   </data>
   <data name="btnAdvanced.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Right</value>
@@ -649,7 +649,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;btnAdvanced.ZOrder" xml:space="preserve">
-    <value>1</value>
+    <value>2</value>
   </data>
   <data name="btnHelp.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Right</value>
@@ -676,6 +676,144 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;btnHelp.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="rbShowFailuresOn.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="rbShowFailuresOn.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="rbShowFailuresOn.Location" type="System.Drawing.Point, System.Drawing">
+    <value>608, 18</value>
+  </data>
+  <data name="rbShowFailuresOn.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 5, 4, 5</value>
+  </data>
+  <data name="rbShowFailuresOn.Size" type="System.Drawing.Size, System.Drawing">
+    <value>353, 24</value>
+  </data>
+  <data name="rbShowFailuresOn.TabIndex" type="System.Int32, mscorlib">
+    <value>3</value>
+  </data>
+  <data name="rbShowFailuresOn.Text" xml:space="preserve">
+    <value>Use phrase structure rules and all constraints</value>
+  </data>
+  <data name="&gt;&gt;rbShowFailuresOn.Name" xml:space="preserve">
+    <value>rbShowFailuresOn</value>
+  </data>
+  <data name="&gt;&gt;rbShowFailuresOn.Type" xml:space="preserve">
+    <value>System.Windows.Forms.RadioButton, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;rbShowFailuresOn.Parent" xml:space="preserve">
+    <value>gbShowFailures</value>
+  </data>
+  <data name="&gt;&gt;rbShowFailuresOn.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="rbShowFailuresPhraseStructureRules.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="rbShowFailuresPhraseStructureRules.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Microsoft Sans Serif, 8pt</value>
+  </data>
+  <data name="rbShowFailuresPhraseStructureRules.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="rbShowFailuresPhraseStructureRules.Location" type="System.Drawing.Point, System.Drawing">
+    <value>342, 18</value>
+  </data>
+  <data name="rbShowFailuresPhraseStructureRules.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 5, 4, 5</value>
+  </data>
+  <data name="rbShowFailuresPhraseStructureRules.Size" type="System.Drawing.Size, System.Drawing">
+    <value>253, 24</value>
+  </data>
+  <data name="rbShowFailuresPhraseStructureRules.TabIndex" type="System.Int32, mscorlib">
+    <value>1</value>
+  </data>
+  <data name="rbShowFailuresPhraseStructureRules.Text" xml:space="preserve">
+    <value>Only use phrase structure rules</value>
+  </data>
+  <data name="&gt;&gt;rbShowFailuresPhraseStructureRules.Name" xml:space="preserve">
+    <value>rbShowFailuresPhraseStructureRules</value>
+  </data>
+  <data name="&gt;&gt;rbShowFailuresPhraseStructureRules.Type" xml:space="preserve">
+    <value>System.Windows.Forms.RadioButton, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;rbShowFailuresPhraseStructureRules.Parent" xml:space="preserve">
+    <value>gbShowFailures</value>
+  </data>
+  <data name="&gt;&gt;rbShowFailuresPhraseStructureRules.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="rbShowFailuresOff.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="rbShowFailuresOff.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Microsoft Sans Serif, 8pt</value>
+  </data>
+  <data name="rbShowFailuresOff.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="rbShowFailuresOff.Location" type="System.Drawing.Point, System.Drawing">
+    <value>124, 18</value>
+  </data>
+  <data name="rbShowFailuresOff.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 5, 4, 5</value>
+  </data>
+  <data name="rbShowFailuresOff.Size" type="System.Drawing.Size, System.Drawing">
+    <value>205, 24</value>
+  </data>
+  <data name="rbShowFailuresOff.TabIndex" type="System.Int32, mscorlib">
+    <value>0</value>
+  </data>
+  <data name="rbShowFailuresOff.Text" xml:space="preserve">
+    <value>Off: do not show failures</value>
+  </data>
+  <data name="&gt;&gt;rbShowFailuresOff.Name" xml:space="preserve">
+    <value>rbShowFailuresOff</value>
+  </data>
+  <data name="&gt;&gt;rbShowFailuresOff.Type" xml:space="preserve">
+    <value>System.Windows.Forms.RadioButton, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;rbShowFailuresOff.Parent" xml:space="preserve">
+    <value>gbShowFailures</value>
+  </data>
+  <data name="&gt;&gt;rbShowFailuresOff.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="gbShowFailures.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Microsoft Sans Serif, 8pt</value>
+  </data>
+  <data name="gbShowFailures.Location" type="System.Drawing.Point, System.Drawing">
+    <value>76, 125</value>
+  </data>
+  <data name="gbShowFailures.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 5, 4, 5</value>
+  </data>
+  <data name="gbShowFailures.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 5, 4, 5</value>
+  </data>
+  <data name="gbShowFailures.Size" type="System.Drawing.Size, System.Drawing">
+    <value>987, 53</value>
+  </data>
+  <data name="gbShowFailures.TabIndex" type="System.Int32, mscorlib">
+    <value>15</value>
+  </data>
+  <data name="gbShowFailures.Text" xml:space="preserve">
+    <value>Show Failures</value>
+  </data>
+  <data name="&gt;&gt;gbShowFailures.Name" xml:space="preserve">
+    <value>gbShowFailures</value>
+  </data>
+  <data name="&gt;&gt;gbShowFailures.Type" xml:space="preserve">
+    <value>System.Windows.Forms.GroupBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;gbShowFailures.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;gbShowFailures.ZOrder" xml:space="preserve">
     <value>0</value>
   </data>
   <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">

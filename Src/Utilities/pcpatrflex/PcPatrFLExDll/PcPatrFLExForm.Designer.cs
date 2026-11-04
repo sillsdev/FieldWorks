@@ -50,12 +50,17 @@ namespace SIL.PcPatrFLEx
 			this.btnRefresh = new System.Windows.Forms.Button();
 			this.btnAdvanced = new System.Windows.Forms.Button();
 			this.btnHelp = new System.Windows.Forms.Button();
+			this.gbShowFailures = new System.Windows.Forms.GroupBox();
+			this.rbShowFailuresOn = new System.Windows.Forms.RadioButton();
+			this.rbShowFailuresPhraseStructureRules = new System.Windows.Forms.RadioButton();
+			this.rbShowFailuresOff = new System.Windows.Forms.RadioButton();
 			((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
 			this.splitContainer1.Panel1.SuspendLayout();
 			this.splitContainer1.Panel2.SuspendLayout();
 			this.splitContainer1.SuspendLayout();
 			this.ssSegments.SuspendLayout();
 			this.gbRootGloss.SuspendLayout();
+			this.gbShowFailures.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// btnParse
@@ -215,10 +220,44 @@ namespace SIL.PcPatrFLEx
 			this.btnHelp.UseVisualStyleBackColor = true;
 			this.btnHelp.Click += new System.EventHandler(this.btnHelp_Click);
 			// 
+			// gbShowFailures
+			// 
+			this.gbShowFailures.Controls.Add(this.rbShowFailuresOn);
+			this.gbShowFailures.Controls.Add(this.rbShowFailuresPhraseStructureRules);
+			this.gbShowFailures.Controls.Add(this.rbShowFailuresOff);
+			resources.ApplyResources(this.gbShowFailures, "gbShowFailures");
+			this.gbShowFailures.Name = "gbShowFailures";
+			this.gbShowFailures.TabStop = false;
+			// 
+			// rbShowFailuresOn
+			// 
+			resources.ApplyResources(this.rbShowFailuresOn, "rbShowFailuresOn");
+			this.rbShowFailuresOn.Name = "rbShowFailuresOn";
+			this.rbShowFailuresOn.TabStop = true;
+			this.rbShowFailuresOn.UseVisualStyleBackColor = true;
+			this.rbShowFailuresOn.CheckedChanged += new System.EventHandler(this.rbShowFailuresOn_CheckedChanged);
+			// 
+			// rbShowFailuresPhraseStructureRules
+			// 
+			resources.ApplyResources(this.rbShowFailuresPhraseStructureRules, "rbShowFailuresPhraseStructureRules");
+			this.rbShowFailuresPhraseStructureRules.Name = "rbShowFailuresPhraseStructureRules";
+			this.rbShowFailuresPhraseStructureRules.TabStop = true;
+			this.rbShowFailuresPhraseStructureRules.UseVisualStyleBackColor = true;
+			this.rbShowFailuresPhraseStructureRules.CheckedChanged += new System.EventHandler(this.rbShowFailuresPhraseStructureRules_CheckedChanged);
+			// 
+			// rbShowFailuresOff
+			// 
+			resources.ApplyResources(this.rbShowFailuresOff, "rbShowFailuresOff");
+			this.rbShowFailuresOff.Name = "rbShowFailuresOff";
+			this.rbShowFailuresOff.TabStop = true;
+			this.rbShowFailuresOff.UseVisualStyleBackColor = true;
+			this.rbShowFailuresOff.CheckedChanged += new System.EventHandler(this.rbShowFailuresOff_CheckedChanged);
+			// 
 			// PcPatrFLExForm
 			// 
 			resources.ApplyResources(this, "$this");
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			this.Controls.Add(this.gbShowFailures);
 			this.Controls.Add(this.btnHelp);
 			this.Controls.Add(this.btnAdvanced);
 			this.Controls.Add(this.btnRefresh);
@@ -242,6 +281,8 @@ namespace SIL.PcPatrFLEx
 			this.ssSegments.PerformLayout();
 			this.gbRootGloss.ResumeLayout(false);
 			this.gbRootGloss.PerformLayout();
+			this.gbShowFailures.ResumeLayout(false);
+			this.gbShowFailures.PerformLayout();
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -270,6 +311,10 @@ namespace SIL.PcPatrFLEx
         private System.Windows.Forms.Button btnRefresh;
         private System.Windows.Forms.Button btnAdvanced;
         private System.Windows.Forms.Button btnHelp;
-    }
+		private System.Windows.Forms.GroupBox gbShowFailures;
+		private System.Windows.Forms.RadioButton rbShowFailuresPhraseStructureRules;
+		private System.Windows.Forms.RadioButton rbShowFailuresOff;
+		private System.Windows.Forms.RadioButton rbShowFailuresOn;
+	}
 }
 

@@ -69,6 +69,10 @@ namespace SIL.PcPatrFLEx
 		public int TimeLimit { get; set; }
 		public bool RunIndividually { get; set; }
 		public ShowFailures ShowFailures { get; set; }
+		private Timer flashTimer;
+		private bool isHighlightState = false;
+		// Track the currently selected radio button that needs to flash
+		private RadioButton activeFlashingButton = null;
 		public PropertyTable PropTable { get; set; }
 
 		private RegistryKey regkey;
@@ -129,6 +133,8 @@ namespace SIL.PcPatrFLEx
 					else
 						btnDisambiguate.Enabled = false;
 					Cursor.Current = Cursors.Default;
+					SetupFlashingTimer();
+					UpdateShowFailuresChecked();
 				}
 				AdjustSplitterLocation();
 			}
@@ -815,8 +821,86 @@ namespace SIL.PcPatrFLEx
 					MaxAmbiguities = dialog.MaxAmbigs;
 					TimeLimit = dialog.TimeLimit;
 					RunIndividually = dialog.RunIndividually;
-					ShowFailures = dialog.ShowFailures;
+					//ShowFailures = dialog.ShowFailures;
 				}
+			}
+		}
+		private void rbShowFailuresOff_CheckedChanged(object sender, EventArgs e)
+		{
+			UpdateShowFailuresValue(sender);
+		}
+
+		private void rbShowFailuresPhraseStructureRules_CheckedChanged(object sender, EventArgs e)
+		{
+			UpdateShowFailuresValue(sender);
+
+		}
+
+		private void rbShowFailuresOn_CheckedChanged(object sender, EventArgs e)
+		{
+			UpdateShowFailuresValue(sender);
+
+		}
+		private void UpdateShowFailuresValue(object sender)
+		{
+			RadioButton rb = sender as RadioButton;
+			if (rb != null)
+			{
+				if (rbShowFailuresOff.Checked)
+				{
+					ShowFailures = ShowFailures.Off;
+					if (activeFlashingButton != null)
+						activeFlashingButton.ForeColor = SystemColors.ControlText;
+					flashTimer.Stop();
+				}
+				else if (rbShowFailuresPhraseStructureRules.Checked)
+				{
+					ShowFailures = ShowFailures.PSROnly;
+					FlashShowFailuresButton(rbShowFailuresPhraseStructureRules);
+					rbShowFailuresOn.ForeColor = SystemColors.ControlText;
+				}
+				else
+				{
+					ShowFailures = ShowFailures.On;
+					FlashShowFailuresButton(rbShowFailuresOn);
+					rbShowFailuresPhraseStructureRules.ForeColor = SystemColors.ControlText;
+				}
+			}
+		}
+		private void FlashShowFailuresButton(RadioButton rb)
+		{
+			activeFlashingButton = rb;
+			isHighlightState = true;
+			rb.ForeColor = Color.Red;
+			flashTimer.Start();
+		}
+		private void UpdateShowFailuresChecked()
+		{
+			if (ShowFailures == ShowFailures.Off)
+				rbShowFailuresOff.Checked = true;
+			else if (ShowFailures == ShowFailures.PSROnly)
+				rbShowFailuresPhraseStructureRules.Checked = true;
+			else
+				rbShowFailuresOn.Checked = true;
+		}
+		// following fro makingthe ShowFailures debug options flash or blink
+		// to help user from invoking parsing options hat mogtht take a long time
+		private void SetupFlashingTimer()
+		{
+			flashTimer = new Timer();
+			flashTimer.Interval = 500; // Toggle color every 500ms
+			flashTimer.Tick += FlashTimer_Tick;
+		}
+
+		private void FlashTimer_Tick(object sender, EventArgs e)
+		{
+			if (activeFlashingButton != null && activeFlashingButton.Checked)
+			{
+				isHighlightState = !isHighlightState;
+
+				// Alternate between red and default control text color
+				if (activeFlashingButton != null)
+					activeFlashingButton.ForeColor = isHighlightState ? Color.Red : SystemColors.ControlText;
 			}
 		}
 	}
