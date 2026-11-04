@@ -110,7 +110,7 @@ namespace SIL.DisambiguateInFLExDB
 			sbTake.Append("\n");
 			sbTake.Append("set timing on\n");
 			sbTake.Append("set gloss on\n");
-			HandleSetFeatures(sbTake);
+			HandleSetFeaturesAndShowFailures(sbTake);
 			HandleRootGloss(sbTake);
 			sbTake.Append("set tree xml\n");
 			sbTake.Append("set ambiguities ");
@@ -122,7 +122,6 @@ namespace SIL.DisambiguateInFLExDB
 				sbTake.Append(TimeLimit);
 				sbTake.Append("\n");
 			}
-			HandleShowFailures(sbTake);
 			sbTake.Append("set write-ample-parses on\n");
 			// since the batch fle defaults to the temp directory, we just use the invoker files as they are
 			sbTake.Append("file disambiguate Invoker.ana Invoker.and\n");
@@ -143,27 +142,20 @@ namespace SIL.DisambiguateInFLExDB
 			sbTake.Append(result + "\n");
 		}
 		// is public for testing
-		public void HandleSetFeatures(StringBuilder sbTake)
+		public void HandleSetFeaturesAndShowFailures(StringBuilder sbTake)
 		{
 			sbTake.Append("set features ");
-			if (ShowFailures == ShowFailures.PSROnly)
-				sbTake.Append("off\n");
-			else
-				sbTake.Append("all\n");
-		}
-
-		// is public for testing
-		public void HandleShowFailures(StringBuilder sbTake)
-		{
 			switch (ShowFailures)
 			{
 				case ShowFailures.Off:
-					// nothing to do
+					sbTake.Append("all\n");
 					break;
 				case ShowFailures.On:
+					sbTake.Append("all\n");
 					sbTake.Append("set failures on\n");
 					break;
 				case ShowFailures.PSROnly:
+					sbTake.Append("off\n");
 					sbTake.Append("set unification off\n");
 					break;
 			}

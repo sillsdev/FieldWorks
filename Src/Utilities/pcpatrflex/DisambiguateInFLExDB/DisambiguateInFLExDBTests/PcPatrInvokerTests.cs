@@ -139,36 +139,20 @@ namespace SIL.DisambiguateInFLExDBTests
 			Assert.AreEqual(false, invoker.InvocationSucceeded);
 		}
 		[Test]
-		public void PcPatrInvokerHandleShowFailuresTest()
+		public void PcPatrInvokerHandleSetFeaturesAndShowFailuresTest()
 		{
 			var invoker = new PCPatrInvoker(null, null, null, ShowFailures.Off);
 			var sbTake = new StringBuilder();
-			invoker.HandleShowFailures(sbTake);
-			Assert.AreEqual("", sbTake.ToString());
-			sbTake.Clear();
-			invoker.ShowFailures = ShowFailures.PSROnly;
-			invoker.HandleShowFailures(sbTake);
-			Assert.AreEqual("set unification off\n", sbTake.ToString());
-			sbTake.Clear();
-			invoker.ShowFailures = ShowFailures.On;
-			invoker.HandleShowFailures(sbTake);
-			Assert.AreEqual("set failures on\n", sbTake.ToString());
-		}
-		[Test]
-		public void PcPatrInvokerHandleSetFeaturesTest()
-		{
-			var invoker = new PCPatrInvoker(null, null, null, ShowFailures.Off);
-			var sbTake = new StringBuilder();
-			invoker.HandleSetFeatures(sbTake);
+			invoker.HandleSetFeaturesAndShowFailures(sbTake);
 			Assert.AreEqual("set features all\n", sbTake.ToString());
 			sbTake.Clear();
 			invoker.ShowFailures = ShowFailures.PSROnly;
-			invoker.HandleSetFeatures(sbTake);
-			Assert.AreEqual("set features off\n", sbTake.ToString());
+			invoker.HandleSetFeaturesAndShowFailures(sbTake);
+			Assert.AreEqual("set features off\nset unification off\n", sbTake.ToString());
 			sbTake.Clear();
 			invoker.ShowFailures = ShowFailures.On;
-			invoker.HandleSetFeatures(sbTake);
-			Assert.AreEqual("set features all\n", sbTake.ToString());
+			invoker.HandleSetFeaturesAndShowFailures(sbTake);
+			Assert.AreEqual("set features all\nset failures on\n", sbTake.ToString());
 		}
 	}
 }
