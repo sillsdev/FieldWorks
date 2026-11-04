@@ -123,6 +123,20 @@ namespace SIL.FieldWorks.FdoUi
 		}
 
 		[Test]
+		public void CanInsert_InsertSubsense_OnlyOnASensesOwnRow()
+		{
+			const string subsense = DetailObjectInsertion.InsertSubsenseCommandId;
+			Assert.That(DetailObjectInsertion.CanInsert(_entry, _sense1, subsense, "Senses", out var index), Is.True);
+			Assert.That(index, Is.EqualTo(-1));
+			Assert.That(DetailObjectInsertion.CanInsert(_entry, _example, subsense, "Senses", out _), Is.False,
+				"an example's row is no sense's own row, though the entry takes senses");
+			Assert.That(DetailObjectInsertion.CanInsert(_entry, _entry, subsense, "Senses", out _), Is.False);
+			Assert.That(DetailObjectInsertion.CanInsert(_entry, _example, "CmdInsertSense", "Senses", out index), Is.True,
+				"any other command asks the root first");
+			Assert.That(index, Is.EqualTo(2));
+		}
+
+		[Test]
 		public void IsOwningFieldName_TellsOwningFieldsFromReferenceOnes()
 		{
 			Assert.That(DetailObjectInsertion.IsOwningFieldName(Cache, "ExtendedNote"), Is.True);

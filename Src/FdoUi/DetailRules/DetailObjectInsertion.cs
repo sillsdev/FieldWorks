@@ -82,6 +82,27 @@ namespace SIL.FieldWorks.Common.DetailRules
 			return rowObject != root && CanInsertInto(rowObject, fieldName, out index);
 		}
 
+		/// <summary>The id of the Insert menu's Insert Subsense command.</summary>
+		public const string InsertSubsenseCommandId = "CmdInsertSubsense";
+
+		/// <summary>
+		/// The display rule of the Insert command <paramref name="commandId"/>: as
+		/// <see cref="CanInsert(ICmObject, ICmObject, string, out int)"/>, except that Insert
+		/// Subsense on a row with an object is enabled only when that object is itself a sense.
+		/// </summary>
+		/// <param name="index">The end of the vector that answered; -1 otherwise.</param>
+		public static bool CanInsert(ICmObject root, ICmObject rowObject, string commandId, string fieldName,
+			out int index)
+		{
+			if (commandId == InsertSubsenseCommandId && fieldName == "Senses" && rowObject != null
+				&& rowObject.IsValidObject)
+			{
+				index = -1;
+				return rowObject.ClassID == LexSenseTags.kClassId;
+			}
+			return CanInsert(root, rowObject, fieldName, out index);
+		}
+
 		/// <summary>
 		/// Whether some class owns objects in a field named <paramref name="fieldName"/>, so
 		/// an Insert into it creates an object rather than choosing one.

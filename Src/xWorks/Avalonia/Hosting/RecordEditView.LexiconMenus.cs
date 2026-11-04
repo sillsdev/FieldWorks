@@ -283,6 +283,17 @@ namespace SIL.FieldWorks.XWorks
 				Logger.WriteEvent("Insert Variant did nothing: neither the row's object nor the shown record is an entry.");
 				return null;
 			}
+			return AddVariant(entry);
+		}
+
+		/// <summary>
+		/// Adds a variant to <paramref name="entry"/> through <see cref="VariantToInsert"/>,
+		/// with pending edits already settled; the re-show focuses the variant's Variant Form
+		/// editor.
+		/// </summary>
+		/// <returns>The variant's entry ref, or null when nothing was added.</returns>
+		private ILexEntryRef AddVariant(ILexEntry entry)
+		{
 			var entryRef = (VariantToInsert ?? InsertVariantWithDialog)(entry);
 			if (entryRef == null || !entryRef.IsValidObject)
 				return null;

@@ -31,7 +31,7 @@ namespace SIL.FieldWorks.XWorks
 	/// </summary>
 	[TestFixture]
 	[Apartment(System.Threading.ApartmentState.STA)]
-	public class LexiconMenuExecutionTests : XWorksAppTestBase
+	public partial class LexiconMenuExecutionTests : XWorksAppTestBase
 	{
 		private const string LexemeFormMenuId = "mnuDataTree-LexemeForm";
 		private const string VariantFormMenuId = "mnuDataTree-VariantForm";

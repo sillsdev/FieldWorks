@@ -26,6 +26,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 		// The root object of the detail last shown, or 0 when none was given.
 		private int _shownRootHvo;
 
+		private readonly DetailCurrentRow _currentRow = new DetailCurrentRow();
+
 		/// <inheritdoc />
 		public override bool IsDetailInteractionInFlight
 			=> CurrentContent is DataTree tree
@@ -74,9 +76,12 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 				});
 			view.EditCompleted += (s, e) => RaiseDetailEditCompleted();
 			view.InteractionCompleted += (s, e) => RaiseDetailInteractionCompleted();
+			view.RowFocused += _currentRow.Remember;
 
 			if (rootHvo != 0 && rootHvo == _shownRootHvo && CurrentContent is DataTree previous)
 				view.RevealObjectsAddedSince(previous);
+			else
+				_currentRow.Forget();
 			_shownRootHvo = rootHvo;
 
 			// Continuity across the re-show, applied once the new view lays out. Focus leaves the
@@ -105,9 +110,19 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 		/// Asks the next re-show to give keyboard focus to the first row showing the object
 		/// with <paramref name="hvo"/>, for a gesture that replaced the focused row's object.
 		/// </summary>
-		public void FocusObjectOnNextShow(int hvo) => (CurrentContent as DataTree)?.RequestObjectFocusOnRebuild(hvo);
+		/// <param name="fieldName">The field whose row of that object to focus first; null
+		/// for none.</param>
+		public void FocusObjectOnNextShow(int hvo, string fieldName = null)
+			=> (CurrentContent as DataTree)?.RequestObjectFocusOnRebuild(hvo, fieldName);
 
 		/// <summary>The detail model shown now; null before the first show.</summary>
 		public DetailModel ShownDetail => (CurrentContent as DataTree)?.Model;
+
+		/// <summary>
+		/// The row of the shown record that last had keyboard focus, as the shown detail has
+		/// it; null when no row of the record has had focus since it was shown, or the row is
+		/// gone.
+		/// </summary>
+		public DetailField CurrentRow => _currentRow.ResolveIn(ShownDetail);
 	}
 }
