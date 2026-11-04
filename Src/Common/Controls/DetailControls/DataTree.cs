@@ -4968,14 +4968,16 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			// We may be in transition: if so, disable without crashing.  See LT-9698.
 			if (m_cache == null || m_root == null)
 				return display.Enabled = false;
-			var command = (Command)commandObject;
-			string className = XmlUtils.GetMandatoryAttributeValue(command.Parameters[0], "className");
-			if (className != m_root.ClassName)
-				return display.Enabled = false;
-			string restrictToTool = XmlUtils.GetOptionalAttributeValue(command.Parameters[0], "restrictToTool");
-			if (restrictToTool != null && restrictToTool != m_propertyTable.GetStringProperty("currentContentControl", String.Empty))
-				return display.Enabled = false;
-			return display.Enabled = true;
+			return display.Enabled = AppliesToRoot((Command)commandObject);
+		}
+
+		// Whether a command that acts on the root object applies to it in the current tool.
+		private bool AppliesToRoot(Command command)
+		{
+			var parameters = command.Parameters[0];
+			return ShownRecordCommandScope.Applies(m_root, XmlUtils.GetMandatoryAttributeValue(parameters, "className"),
+				XmlUtils.GetOptionalAttributeValue(parameters, "restrictToTool"),
+				m_propertyTable.GetStringProperty("currentContentControl", String.Empty));
 		}
 
 		/// <summary>
@@ -4987,16 +4989,12 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			CheckDisposed();
 
 			var command = (Command)argument;
-			string className = XmlUtils.GetMandatoryAttributeValue(command.Parameters[0], "className");
-			if (className != m_root.ClassName)
-				return false;
-			string restrictToTool = XmlUtils.GetOptionalAttributeValue(command.Parameters[0], "restrictToTool");
-			if (restrictToTool != null && restrictToTool != m_propertyTable.GetStringProperty("currentContentControl", String.Empty))
+			if (!AppliesToRoot(command))
 				return false;
 			string fieldName = XmlUtils.GetOptionalAttributeValue(command.Parameters[0], "fieldName");
 			if (String.IsNullOrEmpty(fieldName))
 				return false;
-			int flid = m_mdc.GetFieldId(className, fieldName, true);
+			int flid = m_mdc.GetFieldId(m_root.ClassName, fieldName, true);
 			int insertPos = Slice.InsertObjectIntoVirtualBackref(m_cache, m_mediator, m_propertyTable,
 				m_root.Hvo, m_root.ClassID, flid);
 			return insertPos >= 0;

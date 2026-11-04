@@ -187,6 +187,7 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		private void TearDownAvaloniaEntryForm()
 		{
+			UnregisterCommandAuthority();
 			if (m_avaloniaEntryForm != null)
 			{
 				m_avaloniaEntryForm.DetailEditCompleted -= OnAvaloniaDetailEditCompleted;
@@ -1383,6 +1384,7 @@ namespace SIL.FieldWorks.XWorks
 			// EnsureAvaloniaRefreshController is idempotent (its m_avaloniaRefreshController != null guard),
 			// so the later ShowAvaloniaEntry call is a no-op rather than a duplicate registration.
 			EnsureAvaloniaRefreshController();
+			RegisterCommandAuthority();
 
 			DetachDataTreeFromPanel();
 			m_avaloniaEntryForm.Show();

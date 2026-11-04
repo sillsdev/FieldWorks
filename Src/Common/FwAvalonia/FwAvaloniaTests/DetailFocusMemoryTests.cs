@@ -236,6 +236,28 @@ namespace FwAvaloniaTests
 				"the Gloss editor of object 3, not its Senses header");
 		}
 
+		// A gesture added an object whose first row is not the one to fill in next: the row
+		// of the field the gesture names takes focus.
+		[AvaloniaTest]
+		public void RequestedObjectFocus_WithAField_FocusesThatFieldsRowOfTheObject()
+		{
+			var first = NewViewOfForm(3);
+			var window = new Window { Content = first, Width = 420, Height = 200 };
+			window.Show();
+			Dispatcher.UIThread.RunJobs();
+			first.RequestObjectFocusOnRebuild(3, "Gloss");
+			var memento = DetailFocusMemory.Capture(first);
+			Assert.That(memento.ObjectField, Is.EqualTo("Gloss"));
+
+			var second = NewViewOfForm(3);
+			DetailFocusMemory.RestoreAfterLayout(second, memento);
+			window.Content = second;
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(FindEditor(second, "LexEntry/identity/#1@3.vern").IsFocused, Is.True,
+				"the Gloss row, not the object's first row");
+		}
+
 		// A view whose Lexeme Form row shows the form with the given hvo, its row ids derived
 		// from the stable ids as the composer derives them; with hotlinks, a Senses header
 		// row with a hotlinks link comes first.

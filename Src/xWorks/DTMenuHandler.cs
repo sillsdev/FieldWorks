@@ -713,24 +713,8 @@ namespace SIL.FieldWorks.XWorks
 				if(!currentSlice.ContainingDataTree.HasSubPossibilitiesSlice)
 					return false;
 			}
-			// "Insert Subsense" should be enabled only for Sense related slices, not for entry
-			// related slices.  This isn't perfect, but behaves the same as "Insert Picture".
-			if (command.Id == "CmdInsertSubsense" && fieldName == "Senses")
-			{
-				if (currentSlice.Object != null && currentSlice.Object.IsValidObject)
-					return currentSlice.Object.ClassID == LexSenseTags.kClassId;
-			}
-			// First, see if the command can insert something that belongs to
-			// the current slice containing tree root object.
-			bool fCanInsert;
-			fCanInsert = CanInsertFieldIntoObj(Cache, fieldName, rootObj, out index);
-			// Otherwise, see if the command can insert something that belongs
-			// to the current slice object.
-			if (!fCanInsert && currentSlice.Object != rootObj)
-			{
-				fCanInsert = CanInsertFieldIntoObj(Cache, fieldName, currentSlice.Object, out index);
-			}
-			return fCanInsert;
+			return Cache != null
+				&& DetailObjectInsertion.CanInsert(rootObj, currentSlice.Object, command.Id, fieldName, out index);
 		}
 
 		/// <summary>
@@ -1122,7 +1106,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <returns></returns>
 		public bool OnDisplayConvertEntryIntoVariant(object commandObject, ref UIItemDisplayProperties display)
 		{
-			display.Enabled = DisplayConvertLexEntry(commandObject);
+			display.Enabled = ConvertibleEntry(commandObject) != null;
 			return true;
 		}
 
@@ -1133,7 +1117,12 @@ namespace SIL.FieldWorks.XWorks
 		/// <returns></returns>
 		public bool OnConvertEntryIntoVariant(object argument)
 		{
-			return AddNewLexEntryRef(argument, LexEntryRefTags.kflidVariantEntryTypes);
+			var entry = ConvertibleEntry(argument);
+			if (entry == null)
+				return false;
+			var command = (Command)argument;
+			EntryConversion.ConvertIntoVariant(entry, command.UndoText, command.RedoText);
+			return true;
 		}
 
 		/// <summary>
@@ -1144,20 +1133,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <returns></returns>
 		public bool OnDisplayConvertEntryIntoComplexForm(object commandObject, ref UIItemDisplayProperties display)
 		{
-			bool fDisplay = DisplayConvertLexEntry(commandObject);
-			if (fDisplay)
-			{
-				if (!m_dataEntryForm.Root.IsValidObject)
-					return true;
-				foreach (var ler in (m_dataEntryForm.Root as ILexEntry).EntryRefsOS)
-				{
-					if (ler.ComplexEntryTypesRS.Count == 0)
-						continue;
-					fDisplay = false;
-					break;
-				}
-			}
-			display.Enabled = fDisplay;
+			display.Enabled = EntryConversion.CanConvertIntoComplexForm(ConvertibleEntry(commandObject));
 			return true;
 		}
 
@@ -1168,69 +1144,27 @@ namespace SIL.FieldWorks.XWorks
 		/// <returns></returns>
 		public bool OnConvertEntryIntoComplexForm(object argument)
 		{
-			return AddNewLexEntryRef(argument, LexEntryRefTags.kflidComplexEntryTypes);
+			var entry = ConvertibleEntry(argument);
+			if (entry == null)
+				return false;
+			var command = (Command)argument;
+			EntryConversion.ConvertIntoComplexForm(entry, command.UndoText, command.RedoText);
+			return true;
 		}
 
-		private bool DisplayConvertLexEntry(object commandObject)
+		// The shown entry when the conversion command applies to it; null otherwise, and while
+		// no data is set up yet (LT-9712).
+		private ILexEntry ConvertibleEntry(object commandObject)
 		{
-			// We may not have any data set up yet.  See LT-9712.
-			if (Cache == null || m_dataEntryForm == null || m_dataEntryForm.Root == null)
-				return false;
-			Command command = (Command)commandObject;
-			string className = XmlUtils.GetMandatoryAttributeValue(command.Parameters[0], "className");
-			if (className != m_dataEntryForm.Root.ClassName)
-				return false;
-			string restrictToTool = XmlUtils.GetOptionalAttributeValue(command.Parameters[0], "restrictToTool");
-			if (restrictToTool != null && restrictToTool != m_propertyTable.GetStringProperty("currentContentControl", String.Empty))
-				return false;
-			return m_dataEntryForm.Root is ILexEntry;
-		}
-
-		private bool AddNewLexEntryRef(object argument, int flidTypes)
-		{
-			Command command = (Command)argument;
-			string className = XmlUtils.GetMandatoryAttributeValue(command.Parameters[0], "className");
-			if (className != m_dataEntryForm.Root.ClassName)
-				return false;
-			string restrictToTool = XmlUtils.GetOptionalAttributeValue(command.Parameters[0], "restrictToTool");
-			if (restrictToTool != null && restrictToTool != m_propertyTable.GetStringProperty("currentContentControl", String.Empty))
-				return false;
-
-			var ent = m_dataEntryForm.Root as ILexEntry;
-			if (ent != null)
-			{
-				UndoableUnitOfWorkHelper.Do(command.UndoText, command.RedoText, ent,
-					() =>
-						{
-							var ler = Cache.ServiceLocator.GetInstance<ILexEntryRefFactory>().Create();
-							int insertPos;
-							if (flidTypes == LexEntryRefTags.kflidVariantEntryTypes)
-							{
-								insertPos = ent.EntryRefsOS.Count;
-								ent.EntryRefsOS.Add(ler);
-								const string unspecVariantEntryTypeGuid = "3942addb-99fd-43e9-ab7d-99025ceb0d4e";
-								var type = ent.Cache.LangProject.LexDbOA.VariantEntryTypesOA.PossibilitiesOS
-									.First(lrt => lrt.Guid.ToString() == unspecVariantEntryTypeGuid) as ILexEntryType;
-								ler.VariantEntryTypesRS.Add(type);
-								ler.RefType = LexEntryRefTags.krtVariant;
-								ler.HideMinorEntry = 0;
-							}
-							else
-							{
-								insertPos = 0;
-								ent.EntryRefsOS.Insert(insertPos, ler);
-								const string unspecComplexFormEntryTypeGuid = "fec038ed-6a8c-4fa5-bc96-a4f515a98c50";
-								var type = ent.Cache.LangProject.LexDbOA.ComplexEntryTypesOA.PossibilitiesOS
-									.First(lrt => lrt.Guid.ToString() == unspecComplexFormEntryTypeGuid) as ILexEntryType;
-								ler.ComplexEntryTypesRS.Add(type);
-								ler.RefType = LexEntryRefTags.krtComplexForm;
-								ler.HideMinorEntry = 0; // LT-10928
-								ent.ChangeRootToStem();
-							}
-						});
-				return true;
-			}
-			return false;
+			if (Cache == null || m_dataEntryForm == null)
+				return null;
+			var parameters = ((Command)commandObject).Parameters[0];
+			var root = m_dataEntryForm.Root;
+			return ShownRecordCommandScope.Applies(root, XmlUtils.GetMandatoryAttributeValue(parameters, "className"),
+				XmlUtils.GetOptionalAttributeValue(parameters, "restrictToTool"),
+				m_propertyTable.GetStringProperty("currentContentControl", String.Empty))
+				? root as ILexEntry
+				: null;
 		}
 
 		public bool OnDisplayAddComponentToPrimary(object commandObject, ref UIItemDisplayProperties display)

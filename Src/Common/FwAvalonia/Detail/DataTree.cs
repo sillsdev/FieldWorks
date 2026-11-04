@@ -73,9 +73,17 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			public TextBlock Label;
 			public double LabelReserved;
 			public DetailSectionHeader Header;
+			// The row's content and label cell, the parts a focused control can sit in.
+			public Control[] Parts;
 		}
 
 		private IEnumerable<ShownRow> ShownRows => _rows.Where(row => row != null);
+
+		// The field index of each shown row, by each of its parts.
+		private readonly Dictionary<Control, int> _rowIndexByPart = new Dictionary<Control, int>();
+
+		/// <summary>Raised when keyboard focus moves into a row, with that row's field.</summary>
+		public event Action<DetailField> RowFocused;
 
 		/// <summary>The reference-vector row that has a current item; null when none
 		/// does.</summary>
@@ -116,23 +124,36 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		/// 0 when none was requested.</summary>
 		internal int ObjectFocusRequested { get; private set; }
 
+		/// <summary>The field of that object whose row the rebuild that follows should focus
+		/// first; null for none.</summary>
+		internal string ObjectFieldFocusRequested { get; private set; }
+
 		/// <summary>
 		/// Asks the rebuild that follows to give keyboard focus to the first row showing
 		/// <paramref name="hvo"/>, for a gesture that replaced the focused row's object with
 		/// a new one (its rows have ids the outgoing view cannot know).
 		/// </summary>
-		public void RequestObjectFocusOnRebuild(int hvo) => ObjectFocusRequested = hvo;
+		/// <param name="fieldName">The field whose row of that object to focus first; null
+		/// for none.</param>
+		public void RequestObjectFocusOnRebuild(int hvo, string fieldName = null)
+		{
+			ObjectFocusRequested = hvo;
+			ObjectFieldFocusRequested = fieldName;
+		}
 
 		/// <summary>
-		/// Focuses the first shown editor row of the object with <paramref name="hvo"/> that
-		/// can take focus, else its first header row that can; false when none can.
+		/// Focuses the first shown row of the object with <paramref name="hvo"/> that shows
+		/// <paramref name="fieldName"/> and can take focus, else its first editor row that can,
+		/// else its first header row that can; false when none can.
 		/// </summary>
-		internal bool FocusFirstRowOf(int hvo)
+		/// <param name="fieldName">Null to skip the first choice.</param>
+		internal bool FocusFirstRowOf(int hvo, string fieldName = null)
 		{
 			if (hvo == 0)
 				return false;
 			var rows = Model.Fields.Where(f => f.ObjectHvo == hvo).ToList();
-			return FocusFirstRow(rows.Where(f => f.Kind != DetailFieldKind.Header).Select(f => f.RowAutomationId))
+			return fieldName != null && FocusFirstRow(rows.Where(f => f.Field == fieldName).Select(f => f.RowAutomationId))
+				|| FocusFirstRow(rows.Where(f => f.Kind != DetailFieldKind.Header).Select(f => f.RowAutomationId))
 				|| FocusFirstRow(rows.Where(f => f.Kind == DetailFieldKind.Header).Select(f => f.RowAutomationId));
 		}
 
@@ -409,10 +430,19 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			}
 		}
 
-		// Scrolls newly focused rows into view (LT-22688).
+		// Scrolls newly focused rows into view (LT-22688) and reports the row.
 		private void OnRowGotFocus(object sender, Avalonia.Input.GotFocusEventArgs e)
 		{
-			(e.Source as Control)?.BringIntoView();
+			var source = e.Source as Control;
+			source?.BringIntoView();
+			for (var control = source; control != null && control != this; control = control.GetVisualParent() as Control)
+			{
+				if (_rowIndexByPart.TryGetValue(control, out var index))
+				{
+					RowFocused?.Invoke(Model.Fields[index]);
+					return;
+				}
+			}
 		}
 
 		/// <summary>
@@ -621,6 +651,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 						_form.Items.RemoveAt(position);
 						_rows[i] = null;
 						_rowFocusTargets.Remove(Model.Fields[i].RowAutomationId);
+						foreach (var part in row.Parts)
+							_rowIndexByPart.Remove(part);
 						removed.Add(row);
 					}
 					continue;
@@ -710,6 +742,9 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			else
 				FormItem.SetNoLabel(content, true);
 			row.Item = content;
+			row.Parts = new[] { fieldContent.Content, fieldContent.Label }.Where(part => part != null).ToArray();
+			foreach (var part in row.Parts)
+				_rowIndexByPart[part] = index;
 			return row;
 		}
 
