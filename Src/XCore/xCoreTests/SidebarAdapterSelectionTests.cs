@@ -187,6 +187,21 @@ namespace XCore
 			Assert.That(m_propertyTable.PropertyExists("currentContentControl"), Is.False);
 		}
 
+		// No tab is selected until the first areaChoice change reaches the adapter.
+		[Test]
+		public void ToolForAreaChange_BeforeAnyTabIsSelected_SelectsThatTool()
+		{
+			m_propertyTable.SetProperty("areaChoice", "lexicon", false);
+			m_propertyTable.SetProperty("ToolForAreaNamed_lexicon", "lexiconBrowse", false);
+			Assert.That(AllItemWidgets().Any(widget => widget.Selected), Is.False, "precondition");
+
+			m_adapter.OnPropertyChanged("ToolForAreaNamed_lexicon");
+
+			Assert.That(SelectedToolInTheListHolding("lexiconBrowse"), Is.EqualTo("lexiconBrowse"));
+			Assert.That(m_mediator.JobItems, Is.EqualTo(0), "the selection must not set a property");
+			Assert.That(m_propertyTable.PropertyExists("currentContentControl"), Is.False);
+		}
+
 		[Test]
 		public void ItemSelectedOutsideTheAdapter_StillSetsTheProperty()
 		{
