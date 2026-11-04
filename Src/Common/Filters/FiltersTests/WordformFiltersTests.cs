@@ -14,7 +14,7 @@ namespace SIL.FieldWorks.Filters
 	{
 
 		[Test]
-		public void OnAdjustFilterSelection()
+		public void AdjustFilterSelection()
 		{
 			var flp = new WfiRecordFilterListProvider();
 			var wfiset = Cache.ServiceLocator.GetInstance<IWfiWordSetFactory>().Create();
@@ -28,11 +28,17 @@ namespace SIL.FieldWorks.Filters
 			using (var propertyTable = new PropertyTable(mediator))
 			{
 				propertyTable.SetProperty("cache", Cache, true);
-				flp.Init(mediator, propertyTable, null);
+				flp.Init(propertyTable);
 				wsf.Cache = Cache;
 				andFilter.Add(wsf);
 				flp.Filters.Add(wsf);
-				flp.OnAdjustFilterSelection(andFilter);
+				flp.AdjustFilterSelection(andFilter);
+				Assert.That(flp.Filters[0], Is.InstanceOf<WordSetNullFilter>(),
+					"a word-set filter in use offers the Clear item first");
+
+				flp.AdjustFilterSelection(null);
+				Assert.That(flp.Filters, Has.None.InstanceOf<WordSetNullFilter>(),
+					"no word-set filter in use removes the Clear item");
 			}
 		}
 	}
