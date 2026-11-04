@@ -675,8 +675,14 @@ namespace XCore
 			{
 				m_fHandlingClick = true;
 				//parent gets first crack at it, then calls us back if we should handle it.
-				m_parent.HandleItemClick(this);
-				m_fHandlingClick = false;
+				try
+				{
+					m_parent.HandleItemClick(this);
+				}
+				finally
+				{
+					m_fHandlingClick = false;
+				}
 			}
 		}
 
