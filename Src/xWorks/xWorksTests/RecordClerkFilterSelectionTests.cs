@@ -76,7 +76,7 @@ namespace SIL.FieldWorks.XWorks
 			var wordSet = Cache.ServiceLocator.GetInstance<IWfiWordSetFactory>().Create();
 			Cache.LangProject.MorphologicalDataOA.TestSetsOC.Add(wordSet);
 			var provider = new WfiRecordFilterListProvider();
-			provider.Init(m_mediator, m_propertyTable, null);
+			provider.Init(m_propertyTable);
 			var wordSetFilter = (RecordFilter)provider.Filters[0];
 			m_clerk.UseProvider(provider);
 			m_clerk.ChooseMenuFilter(wordSetFilter);
@@ -98,7 +98,7 @@ namespace SIL.FieldWorks.XWorks
 			var wordSet = Cache.ServiceLocator.GetInstance<IWfiWordSetFactory>().Create();
 			Cache.LangProject.MorphologicalDataOA.TestSetsOC.Add(wordSet);
 			var provider = new WfiRecordFilterListProvider();
-			provider.Init(m_mediator, m_propertyTable, null);
+			provider.Init(m_propertyTable);
 			var wordSetFilter = (RecordFilter)provider.Filters[0];
 			m_clerk.UseProvider(provider);
 			m_clerk.ChooseMenuFilter(wordSetFilter);

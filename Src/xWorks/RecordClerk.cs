@@ -342,7 +342,7 @@ namespace SIL.FieldWorks.XWorks
 			bool fSetFilterMenu = false;
 			if (recordFilterListProviderNode != null)
 			{
-				m_filterProvider = RecordFilterListProvider.Create(m_mediator, m_propertyTable, recordFilterListProviderNode);
+				m_filterProvider = RecordFilterListProvider.Create(m_propertyTable, recordFilterListProviderNode);
 				if (m_filterProvider != null && m_list.Filter != null)
 				{
 					// find any matching persisted menubar filter
@@ -352,7 +352,7 @@ namespace SIL.FieldWorks.XWorks
 						if (m_list.Filter.Contains(menuBarFilterOption))
 						{
 							m_activeMenuBarFilter = menuBarFilterOption;
-							m_filterProvider.OnAdjustFilterSelection(m_activeMenuBarFilter);
+							m_filterProvider.AdjustFilterSelection(m_activeMenuBarFilter);
 							// The restore above adjusted the menu before this filter was
 							// known; replace that value rather than default it.
 							m_propertyTable.SetProperty(CurrentFilterPropertyTableId, m_activeMenuBarFilter.id, PropertyTable.SettingsGroup.LocalSettings, false);
@@ -2815,7 +2815,7 @@ namespace SIL.FieldWorks.XWorks
 				m_propertyTable.SetProperty(GetFilterPropertyTableId(), persistFilter, PropertyTable.SettingsGroup.LocalSettings, false);
 				// adjust menu bar items according to current state of Filter, where needed.
 				AdjustFilterSelection();
-				m_filterProvider?.OnAdjustFilterSelection(Filter);
+				m_filterProvider?.AdjustFilterSelection(Filter);
 				UpdateFilterStatusBarPanel();
 				if (m_list.Filter != null)
 					Logger.WriteEvent("Filter changed: "+m_list.Filter);
