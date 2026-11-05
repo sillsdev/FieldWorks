@@ -2383,7 +2383,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// warning the user unless <paramref name="runSilent"/> is set. A blank or missing
 		/// database file is checked first and is always unusable (LT-21638).
 		/// </summary>
-		internal bool UsesInvalidFileNames(bool runSilent)
+		private bool UsesInvalidFileNames(bool runSilent)
 		{
 			if (!File.Exists(m_DatabaseFileName.Text))
 			{
