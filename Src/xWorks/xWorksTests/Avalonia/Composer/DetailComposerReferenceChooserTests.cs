@@ -5,6 +5,7 @@
 using System.Linq;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwAvalonia.Detail;
+using SIL.FieldWorks.Common.FwAvalonia.ViewDefinition;
 using SIL.LCModel;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Infrastructure;
@@ -408,6 +409,22 @@ namespace SIL.FieldWorks.XWorks
 
 			Assert.That(row, Is.Not.Null, "an excluded publication is data, so the row shows");
 			Assert.That(row.Items, Is.Empty, "it displays the publications the sense is still in");
+		}
+
+		// A visField naming a field that holds no list cannot decide visibility, so the row
+		// is judged on what it displays, as if the part named no visField.
+		[Test]
+		public void ComposeModel_VisFieldNotAVector_FallsBackToTheDisplayedField()
+		{
+			var node = new ViewNode("t/#0", ViewNodeKind.Field, "Publish Sense In", null, "PublishIn",
+				"defaultVectorReference", EditorClassification.Known, null, ViewVisibility.IfData,
+				ViewExpansion.NotApplicable, false, null, null, visibilityField: "Gloss");
+			var model = new ViewDefinitionModel("LexSense", "Test", "detail", new[] { node }, null);
+
+			var composed = DetailComposer.ComposeModel(m_sense, Cache, model, "Test");
+
+			Assert.That(SensePublishIn(composed)?.Items, Has.Count.EqualTo(1),
+				"Gloss is a multistring, so the row shows because it lists Main Dictionary");
 		}
 
 		// Gear = configure: a chooser whose layout authored NO chooserLink (MorphologyParts.xml's

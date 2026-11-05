@@ -159,6 +159,21 @@ namespace SIL.FieldWorks.XWorks
 			if (root == null)
 				return null;
 
+			return ComposeModel(obj, cache, root, layoutName, showHiddenFields, plugins, overrides,
+				showAllWritingSystemsFields, writingSystemFocused, hiddenSliceIds);
+		}
+
+		/// <summary>
+		/// Composes the detail view of <paramref name="obj"/> from an already compiled
+		/// <paramref name="root"/> layout. The remaining arguments mean what they do for the
+		/// <c>Compose</c> overload that takes an <see cref="ICmObject"/>.
+		/// </summary>
+		internal static ComposedDetail ComposeModel(ICmObject obj, LcmCache cache,
+			ViewDefinitionModel root, string layoutName, bool showHiddenFields = false,
+			SlicePluginRegistry plugins = null, ViewDefinitionOverrideResolver overrides = null,
+			ISet<string> showAllWritingSystemsFields = null,
+			Action<string> writingSystemFocused = null, ISet<string> hiddenSliceIds = null)
+		{
 			// Plugin rows close over the detail view's own edit context, which
 			// only exists once the walk gathers every setter -- a deferred accessor
 			// bridges the gap (plugin factories run at render time, not compose).
@@ -3687,13 +3702,29 @@ namespace SIL.FieldWorks.XWorks
 
 			/// <summary>
 			/// The item count that decides whether an "ifdata" vector row has data: that of
-			/// the node's <see cref="ViewNode.VisibilityField"/> when it names a field of
+			/// the node's <see cref="ViewNode.VisibilityField"/> when it names a vector field of
 			/// <paramref name="obj"/>, otherwise <paramref name="displayedCount"/> (LT-22661).
 			/// </summary>
 			private int VisibilityCount(ViewNode node, ICmObject obj, int displayedCount)
 			{
 				var visibilityFlid = GetFlid(obj, node.VisibilityField);
-				return visibilityFlid == 0 ? displayedCount : _sda.get_VecSize(obj.Hvo, visibilityFlid);
+				if (visibilityFlid == 0 || !IsVectorField(visibilityFlid))
+					return displayedCount;
+				return _sda.get_VecSize(obj.Hvo, visibilityFlid);
+			}
+
+			private bool IsVectorField(int flid)
+			{
+				switch ((CellarPropertyType)_mdc.GetFieldType(flid))
+				{
+					case CellarPropertyType.OwningCollection:
+					case CellarPropertyType.OwningSequence:
+					case CellarPropertyType.ReferenceCollection:
+					case CellarPropertyType.ReferenceSequence:
+						return true;
+					default:
+						return false;
+				}
 			}
 
 			private string ResolveShortName(int hvo)
