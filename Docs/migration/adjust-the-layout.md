@@ -173,8 +173,9 @@ host. Treat difficulty here as a design signal, not a tooling problem.
 - **The host window is WinForms, not Avalonia.** Title bar, icon, and close
   button belong to the modal host form. You cannot style them from the
   `.axaml`, and neither loop above shows them.
-- **Converted dialogs render on the Fluent background, not WinForms grey**, and
-  use the Fluent font family. That is stack-wide, not something your dialog did.
+- **Converted dialogs render on the Semi theme background, not WinForms grey**,
+  and use the FieldWorks interface font (`FwUiFontFamily`,
+  ADR 0004). That is stack-wide, not something your dialog did.
   Changing it means editing `DialogTheme.axaml`'s `fwDialogRoot` style, which
   restyles **every** converted dialog -- treat it as its own change, with dark
   mode considered.
