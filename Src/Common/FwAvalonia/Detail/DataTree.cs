@@ -59,7 +59,11 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		private readonly Action<string, bool> _expansionChanged;
 		private readonly Action<DetailMenuRequest> _menuRequested;
 		private readonly Action<DetailLinkRequest> _linkRequested;
+		private readonly Func<DetailField, IReadOnlyList<DetailMenuItem>> _hotlinkItems;
 		private bool _disposed;
+
+		// The field index of the header whose hotlinks are shown; -1 when none are.
+		private int _activeHotlinksHeader = -1;
 
 		// The parts of one shown row the view itself acts on after building it.
 		private sealed class ShownRow
@@ -73,6 +77,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			public TextBlock Label;
 			public double LabelReserved;
 			public DetailSectionHeader Header;
+			public DetailHotlinkStrip Hotlinks;
 			// The row's content and label cell, the parts a focused control can sit in.
 			public Control[] Parts;
 		}
@@ -206,6 +211,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		/// <paramref name="getLabelColumnWidth"/>/<paramref name="labelColumnWidthChanged"/> persist
 		/// the splitter position the same way: the host owns the remembered width so it
 		/// survives re-shows WITHOUT a process-global field -- each host/window keeps its own.
+		/// <paramref name="hotlinkItems"/> supplies a header's hotlink commands, asked when
+		/// keyboard focus enters that header's section; without it no hotlinks are shown.
 		/// </summary>
 		public DataTree(DetailModel model, IDetailEditContext editContext = null,
 			Action<string> writingSystemFocused = null,
@@ -215,7 +222,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			Action<DetailLinkRequest> linkRequested = null,
 			IFwClipboard clipboard = null,
 			Func<double?> getLabelColumnWidth = null,
-			Action<double> labelColumnWidthChanged = null)
+			Action<double> labelColumnWidthChanged = null,
+			Func<DetailField, IReadOnlyList<DetailMenuItem>> hotlinkItems = null)
 		{
 			Model = model ?? throw new ArgumentNullException(nameof(model));
 			_rows = new ShownRow[Model.Fields.Count];
@@ -227,6 +235,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			_expansionChanged = expansionChanged;
 			_menuRequested = menuRequested;
 			_linkRequested = linkRequested;
+			_hotlinkItems = hotlinkItems;
 			_clipboard = clipboard;
 			_labelColumnWidthChanged = labelColumnWidthChanged;
 			_wsAbbrevColumnWidth = FwMultiWsTextField.ComputeWsAbbrevColumnWidth(Model);
@@ -430,7 +439,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			}
 		}
 
-		// Scrolls newly focused rows into view (LT-22688) and reports the row.
+		// Scrolls newly focused rows into view (LT-22688), reports the row, and shows the
+		// hotlinks of the section it is in.
 		private void OnRowGotFocus(object sender, Avalonia.Input.GotFocusEventArgs e)
 		{
 			var source = e.Source as Control;
@@ -440,10 +450,85 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				if (_rowIndexByPart.TryGetValue(control, out var index))
 				{
 					RowFocused?.Invoke(Model.Fields[index]);
+					ShowHotlinksFor(index);
 					return;
 				}
 			}
 		}
+
+		/// <summary>
+		/// Makes the section holding the field at <paramref name="index"/> the one being worked
+		/// in, whose hotlinks are shown. Focus moving within that section leaves its links as
+		/// they are.
+		/// </summary>
+		private void ShowHotlinksFor(int index)
+		{
+			if (_hotlinkItems == null)
+				return;
+			var header = DetailVisibility.GetHotlinksHeaderIndex(Model.Fields, index);
+			if (header == _activeHotlinksHeader)
+				return;
+			_activeHotlinksHeader = header;
+			UpdateHotlinks();
+		}
+
+		/// <summary>
+		/// Shows the hotlinks of the section being worked in, and of every section that shows no
+		/// field (it is empty or collapsed), since focus cannot enter such a section to bring its
+		/// links. Clears every other header's links. A header already showing its links keeps
+		/// them as they are.
+		/// </summary>
+		private void UpdateHotlinks()
+		{
+			if (_hotlinkItems == null)
+				return;
+			for (var i = 0; i < _rows.Length; i++)
+			{
+				var strip = _rows[i]?.Hotlinks;
+				if (strip == null)
+					continue;
+				var offered = i == _activeHotlinksHeader || !SectionShowsAField(i);
+				if (offered && !strip.IsShown)
+					FillHotlinks(i);
+				else if (!offered && strip.IsShown)
+					strip.Clear();
+			}
+		}
+
+		// Whether a row under the header at headerIndex is shown that is not itself a header;
+		// a header is not a Tab stop, so it gives the keyboard no way into the section.
+		private bool SectionShowsAField(int headerIndex)
+		{
+			var indent = Model.Fields[headerIndex].Indent;
+			for (var i = headerIndex + 1; i < Model.Fields.Count && Model.Fields[i].Indent > indent; i++)
+			{
+				if (_rows[i] != null && Model.Fields[i].Kind != DetailFieldKind.Header)
+					return true;
+			}
+			return false;
+		}
+
+		/// <summary>
+		/// Shows the hotlinks of the header row with <paramref name="headerAutomationId"/>, as
+		/// focus entering its section would; does nothing when no such header is shown.
+		/// </summary>
+		internal void ShowHotlinksOf(string headerAutomationId)
+		{
+			for (var i = 0; i < Model.Fields.Count; i++)
+			{
+				if (Model.Fields[i].RowAutomationId == headerAutomationId)
+				{
+					ShowHotlinksFor(i);
+					return;
+				}
+			}
+		}
+
+		// The hotlink strip of a shown header row; null when the row is not shown or has none.
+		private DetailHotlinkStrip HotlinksOf(int index)
+			=> index < 0 ? null : _rows[index]?.Hotlinks;
+
+		private void FillHotlinks(int index) => HotlinksOf(index)?.Show(_hotlinkItems(Model.Fields[index]));
 
 		/// <summary>
 		/// Applies <paramref name="row"/> as the TabIndex of <paramref name="root"/> and every
@@ -670,6 +755,9 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				}
 				position++;
 			}
+			// A rebuilt header row, or a section whose fields were just shown or hidden, needs
+			// its links decided again.
+			UpdateHotlinks();
 
 			// Only once the form has let go of them, so a focus loss their removal raises still
 			// reaches their own handlers and stages what they hold.
@@ -807,22 +895,24 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 
 				header.Margin = new Thickness(indent.Left, 4, 0, FwAvaloniaDensity.FieldSpacing);
 				AutomationProperties.SetAutomationId(header, automationId);
+
+				// A header with hotlinks offers its commands as links at the right of its own
+				// line while its section is the one being worked in.
+				var headerLine = header;
+				if (_hotlinkItems != null && !string.IsNullOrEmpty(field.HotlinksId))
+				{
+					shown.Hotlinks = new DetailHotlinkStrip(automationId);
+					headerLine = new DetailHeaderLine(header, shown.Hotlinks);
+				}
+
 				// The header answers right-click with its slice menu; the hover
 				// "..." field-menu button (in a thin gutter to the left of the header)
 				// opens the section menu/hotlinks.
-				var headerCell = WrapWithFieldMenu(header, field, automationId, out var headerKebab);
+				var headerCell = WrapWithFieldMenu(headerLine, field, automationId, out var headerKebab);
 				_rowFocusTargets[automationId] = (header, headerKebab);
 
-				// Discoverability parity (legacy SummaryCommandControl): a section header with hotlinks
-				// shows its commands as an ALWAYS-VISIBLE inline command-link strip directly beneath the
-				// header -- the kebab alone is a hover-gated discoverability regression. The
-				// strip raises
-				// the SAME hotlinks request the kebab does (DetailMenuKind.Hotlinks), so it dispatches
-				// through the existing host bridge identically.
-				var hotlinkStrip = CreateHotlinkStrip(field, automationId, indent);
-
 				// Top-level sections get the heavy rule unless the layout gives them normal
-				// weight. The hotlink strip is part of the header row, shown and hidden with it.
+				// weight.
 				Control headerControl;
 				if (field.Indent == 0 && row > 0 && !field.IsNormalWeight)
 				{
@@ -834,16 +924,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 						Margin = FwAvaloniaDensity.SectionRuleMargin
 					});
 					withRule.Children.Add(headerCell);
-					if (hotlinkStrip != null)
-						withRule.Children.Add(hotlinkStrip);
 					headerControl = withRule;
-				}
-				else if (hotlinkStrip != null)
-				{
-					var stack = new StackPanel();
-					stack.Children.Add(headerCell);
-					stack.Children.Add(hotlinkStrip);
-					headerControl = stack;
 				}
 				else
 				{
@@ -852,8 +933,6 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 
 				if (headerKebab != null)
 					HoverReveal.Attach(new[] { headerCell }, new[] { headerKebab });
-				// The hotlink strip's "Field Options" button gets no TabIndex any other
-				// way, so it would default to int.MaxValue and sort dead last (LT-22688).
 				ApplyRowTabIndex(headerControl, row);
 				return new FieldContent { Content = headerControl, Label = null };
 			}
@@ -1068,44 +1147,6 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 					DetailMenuKind.SliceMenu, selection));
 				e.Handled = true;
 			}, Avalonia.Interactivity.RoutingStrategies.Bubble);
-		}
-
-		// Legacy command-link blue (SummaryCommandControl LinkLabel) for the hotlinks strip.
-		// A property, not a field: resolved at point-of-use, after the Application has started.
-		private static IBrush HotlinkBrush => FwAvaloniaDensity.HotlinkBrush;
-
-		// An always-visible flat command link opening the same hotlinks menu as the kebab.
-		private Control CreateHotlinkStrip(DetailField field, string automationId, Thickness indent)
-		{
-			if (_menuRequested == null || string.IsNullOrEmpty(field.HotlinksId))
-				return null;
-
-			var link = new Button
-			{
-				Content = FwAvaloniaStrings.FieldOptionsMenu,
-				Foreground = HotlinkBrush,
-				FontSize = FwAvaloniaDensity.HotlinkFontSize,
-				FontWeight = FontWeight.Normal,
-				Background = FwAvaloniaDensity.TransparentBrush,
-				BorderThickness = new Thickness(0),
-				Padding = new Thickness(0),
-				Cursor = new Avalonia.Input.Cursor(Avalonia.Input.StandardCursorType.Hand),
-				HorizontalAlignment = HorizontalAlignment.Left,
-				// Indent under the header (the gutter rail width + the header's own indent) so the strip
-				// reads as belonging to its section.
-				Margin = new Thickness(indent.Left + FieldMenuGutterWidth, 0, 0, FwAvaloniaDensity.FieldSpacing)
-			};
-			AutomationProperties.SetAutomationId(link, automationId + ".Hotlinks");
-			// Reuse the existing localized affordance name; the strip is the always-visible twin of the
-			// kebab's hotlinks section, so it announces the same "field options"/commands intent.
-			AutomationProperties.SetName(link, FwAvaloniaStrings.FieldOptionsMenu);
-			ToolTip.SetTip(link, FwAvaloniaStrings.FieldOptionsMenu);
-			link.Click += (s, e) =>
-			{
-				// Drops from the link's bottom-left.
-				_menuRequested(DetailMenuRequest.FromAnchor(link, field, DetailMenuKind.Hotlinks));
-			};
-			return link;
 		}
 
 		// The field->control dispatch is shared with the browse in-cell editor through

@@ -32,9 +32,10 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			public Memento(string automationId, int caretIndex, double verticalOffset = 0,
 				string vectorAutomationId = null, string vectorItemKey = null, int vectorItemIndex = -1,
 				bool focusVectorItem = false, IReadOnlyList<string> rowAutomationIds = null,
-				int objectHvo = 0, string objectField = null)
+				int objectHvo = 0, string objectField = null, bool keyboardFocusVisible = false)
 			{
 				AutomationId = automationId;
+				KeyboardFocusVisible = keyboardFocusVisible;
 				CaretIndex = caretIndex;
 				VerticalOffset = verticalOffset;
 				VectorAutomationId = vectorAutomationId;
@@ -73,6 +74,13 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			public bool FocusVectorItem { get; }
 
 			public string AutomationId { get; }
+
+			/// <summary>
+			/// True when the focused control was showing its keyboard focus indicator, as after
+			/// Tab or Shift+Tab, rather than having been focused by the pointer or by code.
+			/// </summary>
+			public bool KeyboardFocusVisible { get; }
+
 			public int CaretIndex { get; }
 			public double VerticalOffset { get; }
 
@@ -125,7 +133,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				if (!string.IsNullOrEmpty(id))
 				{
 					return new Memento(id, (focused as TextBox)?.CaretIndex ?? -1, verticalOffset,
-						vectorId, vectorKey, vectorIndex, focusVector, focusRow, focusObject, focusObjectField);
+						vectorId, vectorKey, vectorIndex, focusVector, focusRow, focusObject, focusObjectField,
+						focused.Classes.Contains(":focus-visible"));
 				}
 			}
 
@@ -291,12 +300,12 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			root.LayoutUpdated += onLayout;
 		}
 
-		// Whether the remembered control is a row's field-options button or hotlinks link
-		// rather than an editor.
+		// Whether the remembered control is a row's field-options button or one of its
+		// hotlinks rather than an editor.
 		private static bool RemembersAMenuButton(Memento memento)
 			=> memento.AutomationId != null
 				&& (memento.AutomationId.EndsWith(".FieldMenu", StringComparison.Ordinal)
-					|| memento.AutomationId.EndsWith(".Hotlinks", StringComparison.Ordinal));
+					|| memento.AutomationId.Contains(DetailHotlinkStrip.LinkIdSegment));
 
 		// Focuses what the outgoing view asked for: the first surviving row of those named,
 		// else the first row of the object named; false when it asked for nothing or none can.
@@ -317,6 +326,12 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		{
 			if (root == null || string.IsNullOrEmpty(memento?.AutomationId))
 				return false;
+
+			// A hotlink exists only while its section is the one being worked in, so a remembered
+			// link first brings its section's links back.
+			var linkAt = memento.AutomationId.LastIndexOf(DetailHotlinkStrip.LinkIdSegment, StringComparison.Ordinal);
+			if (linkAt > 0)
+				(root as DataTree)?.ShowHotlinksOf(memento.AutomationId.Substring(0, linkAt));
 
 			// First pass: the exact stable id (the common case -- the same field survived the
 			// re-show).
@@ -358,7 +373,12 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 
 		private static void FocusMatch(Control control, Memento memento)
 		{
-			control.Focus();
+			// Focus that showed its keyboard indicator shows it again. A text box is focused
+			// plainly: keyboard focus there would move the caret the memento restores.
+			if (memento.KeyboardFocusVisible && !(control is TextBox))
+				control.Focus(Avalonia.Input.NavigationMethod.Tab);
+			else
+				control.Focus();
 			if (control is TextBox box && memento.CaretIndex >= 0)
 				box.CaretIndex = Math.Min(memento.CaretIndex, box.Text?.Length ?? 0);
 		}
