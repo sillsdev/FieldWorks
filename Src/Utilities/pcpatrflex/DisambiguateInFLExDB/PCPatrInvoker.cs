@@ -25,15 +25,17 @@ namespace SIL.DisambiguateInFLExDB
 		public string LogFile { get; set; }
 		public string BatchFile { get; set; }
 		public string RootGlossState { get; set; }
+		public ShowFailures ShowFailures { get; set; }
 		public Boolean InvocationSucceeded { get; set; }
 		public string MaxAmbiguities { get; set; }
 		public string TimeLimit { get; set; }
 
-		public PCPatrInvoker(string grammarFile, string anaFile, string rootglossState)
+		public PCPatrInvoker(string grammarFile, string anaFile, string rootglossState, ShowFailures showFailures)
 		{
 			GrammarFile = grammarFile;
 			AnaFile = anaFile;
 			RootGlossState = rootglossState;
+			ShowFailures = showFailures;
 			LogFile = Path.Combine(Path.GetTempPath(), logFileName);
 			MaxAmbiguities = "100";
 			TimeLimit = "0";
@@ -108,7 +110,7 @@ namespace SIL.DisambiguateInFLExDB
 			sbTake.Append("\n");
 			sbTake.Append("set timing on\n");
 			sbTake.Append("set gloss on\n");
-			sbTake.Append("set features all\n");
+			HandleSetFeatures(sbTake);
 			HandleRootGloss(sbTake);
 			sbTake.Append("set tree xml\n");
 			sbTake.Append("set ambiguities ");
@@ -120,6 +122,7 @@ namespace SIL.DisambiguateInFLExDB
 				sbTake.Append(TimeLimit);
 				sbTake.Append("\n");
 			}
+			HandleShowFailures(sbTake);
 			sbTake.Append("set write-ample-parses on\n");
 			// since the batch fle defaults to the temp directory, we just use the invoker files as they are
 			sbTake.Append("file disambiguate Invoker.ana Invoker.and\n");
@@ -138,6 +141,32 @@ namespace SIL.DisambiguateInFLExDB
 			string result;
 			result = GetRootGlossStateValue();
 			sbTake.Append(result + "\n");
+		}
+		// is public for testing
+		public void HandleSetFeatures(StringBuilder sbTake)
+		{
+			sbTake.Append("set features ");
+			if (ShowFailures == ShowFailures.PSROnly)
+				sbTake.Append("off\n");
+			else
+				sbTake.Append("all\n");
+		}
+
+		// is public for testing
+		public void HandleShowFailures(StringBuilder sbTake)
+		{
+			switch (ShowFailures)
+			{
+				case ShowFailures.Off:
+					// nothing to do
+					break;
+				case ShowFailures.On:
+					sbTake.Append("set failures on\n");
+					break;
+				case ShowFailures.PSROnly:
+					sbTake.Append("set unification off\n");
+					break;
+			}
 		}
 
 		public string GetRootGlossStateValue()
@@ -162,5 +191,11 @@ namespace SIL.DisambiguateInFLExDB
 
 			return result;
 		}
+	}
+	public enum ShowFailures
+	{
+		Off,
+		PSROnly,
+		On
 	}
 }

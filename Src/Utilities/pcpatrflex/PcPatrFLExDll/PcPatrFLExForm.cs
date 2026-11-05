@@ -48,6 +48,7 @@ namespace SIL.PcPatrFLEx
 		const string m_strMaxAmbiguities = "MaxAmbiguities";
 		const string m_strTimeLimit = "TimeLimit";
 		const string m_strRunIndividually = "RunIndividually";
+		const string m_strShowFailures = "ShowFailures";
 		private int SplitterLocationRetrieved { get; set; }
 
 		const string m_strAll = "All";
@@ -67,6 +68,7 @@ namespace SIL.PcPatrFLEx
 		public int MaxAmbiguities { get; set; }
 		public int TimeLimit { get; set; }
 		public bool RunIndividually { get; set; }
+		public ShowFailures ShowFailures { get; set; }
 		public PropertyTable PropTable { get; set; }
 
 		private RegistryKey regkey;
@@ -183,6 +185,13 @@ namespace SIL.PcPatrFLEx
 				RunIndividually = true;
 			else
 				RunIndividually = false;
+			sTemp = (string)regkey.GetValue(m_strShowFailures, "Off");
+			if (sTemp.Equals("Off"))
+				ShowFailures = ShowFailures.Off;
+			else if (sTemp.Equals("On"))
+				ShowFailures = ShowFailures.On;
+			else
+				ShowFailures = ShowFailures.PSROnly;
 		}
 
 		public void SaveRegistryInfo()
@@ -213,6 +222,7 @@ namespace SIL.PcPatrFLEx
 			regkey.SetValue(m_strMaxAmbiguities, MaxAmbiguities);
 			regkey.SetValue(m_strTimeLimit, TimeLimit);
 			regkey.SetValue(m_strRunIndividually, RunIndividually);
+			regkey.SetValue(m_strShowFailures, ShowFailures);
 			regkey.Close();
 		}
 
@@ -597,7 +607,7 @@ namespace SIL.PcPatrFLEx
 		{
 			string anaFile = Path.Combine(Path.GetTempPath(), "Invoker.ana");
 			File.WriteAllText(anaFile, ana);
-			var invoker = new PCPatrInvoker(GrammarFile, anaFile, LastRootGlossSelection);
+			var invoker = new PCPatrInvoker(GrammarFile, anaFile, LastRootGlossSelection, ShowFailures);
 			invoker.MaxAmbiguities = MaxAmbiguities.ToString();
 			invoker.TimeLimit = TimeLimit.ToString();
 			invoker.Invoke();
@@ -658,7 +668,7 @@ namespace SIL.PcPatrFLEx
 						}
 						string anaFile = Path.Combine(Path.GetTempPath(), "Invoker.ana");
 						File.WriteAllText(anaFile, sb.ToString());
-						var invoker = new PCPatrInvoker(GrammarFile, anaFile, LastRootGlossSelection);
+						var invoker = new PCPatrInvoker(GrammarFile, anaFile, LastRootGlossSelection, ShowFailures);
 						invoker.MaxAmbiguities = MaxAmbiguities.ToString();
 						invoker.TimeLimit = TimeLimit.ToString();
 						invoker.Invoke();
@@ -798,13 +808,14 @@ namespace SIL.PcPatrFLEx
 		{
 			using (var dialog = new AdvancedForm())
 			{
-				dialog.initialize(MaxAmbiguities, TimeLimit, RunIndividually);
+				dialog.Initialize(MaxAmbiguities, TimeLimit, RunIndividually, ShowFailures);
 				dialog.ShowDialog();
 				if (dialog.OkPressed)
 				{
 					MaxAmbiguities = dialog.MaxAmbigs;
 					TimeLimit = dialog.TimeLimit;
 					RunIndividually = dialog.RunIndividually;
+					ShowFailures = dialog.ShowFailures;
 				}
 			}
 		}
