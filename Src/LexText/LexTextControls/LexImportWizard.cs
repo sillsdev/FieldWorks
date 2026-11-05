@@ -2115,7 +2115,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			if (m_dirtySenseLastSave || (Control.ModifierKeys & Keys.Shift) == Keys.Shift)
 			{
 				// LT-7057, LT-21638: if no settings file or no input file, don't ask to save
-				if (string.IsNullOrEmpty(m_DatabaseFileName.Text) || UsesInvalidFileNames(true))
+				if (UsesInvalidFileNames(true))
 					return;
 
 				// if we're importing a phaseX file, save settings automatically; otherwise, ask first.
@@ -2371,8 +2371,28 @@ namespace SIL.FieldWorks.LexText.Controls
 			AllowQuickFinishButton();	// make it visible if needed, or hidden if not
 		}
 
-		private bool UsesInvalidFileNames(bool runSilent)
+		/// <summary>
+		/// Reports whether the database, settings, or settings-save file name is unusable,
+		/// warning the user unless <paramref name="runSilent"/> is set. Saving settings or
+		/// importing needs an existing database file, so a blank or missing one is rejected
+		/// first (LT-21638).
+		/// </summary>
+		internal bool UsesInvalidFileNames(bool runSilent)
 		{
+			if (!File.Exists(m_DatabaseFileName.Text))
+			{
+				if (!runSilent)
+				{
+					string msg = string.IsNullOrWhiteSpace(m_DatabaseFileName.Text)
+						? LexTextControls.ksUndefinedDatabaseFile
+						: String.Format(LexTextControls.ksInvalidDatabaseFileX, m_DatabaseFileName.Text);
+					MessageBox.Show(this, msg, LexTextControls.ksInvalidFile,
+						MessageBoxButtons.OK, MessageBoxIcon.Warning);
+				}
+				m_DatabaseFileName.Focus();
+				return true;
+			}
+
 			bool fStayHere = false;
 			if (!File.Exists(m_SettingsFileName.Text))
 			{
