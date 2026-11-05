@@ -102,8 +102,12 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public void TestRegistryInitialization_PreservesDirectoryOverrides(
 			string valueName, bool withUserOverride)
 		{
+			// The fixture swaps in DummyFwRegistryHelper, so this is the scratch key under
+			// HKCU\Software\SIL\FieldWorks\UnitTests. Refuse to write if that ever changes.
 			using (var userKey = FwRegistryHelper.FieldWorksRegistryKey)
 			{
+				Assert.That(userKey.Name, Does.Contain(@"\FieldWorks\UnitTests\"),
+					"this test writes registry values, so it must run on the scratch key");
 				var originalValue = userKey.GetValue(valueName);
 				try
 				{
