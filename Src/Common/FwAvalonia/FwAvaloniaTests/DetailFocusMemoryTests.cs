@@ -8,6 +8,7 @@ using System.Linq;
 using Avalonia.Automation;
 using Avalonia.Controls;
 using Avalonia.Headless.NUnit;
+using Avalonia.Input;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
 using NUnit.Framework;
@@ -208,10 +209,12 @@ namespace FwAvaloniaTests
 				.Single(b => AutomationProperties.GetAutomationId(b) == "LexEntry/identity/senses").Focus();
 			Dispatcher.UIThread.RunJobs();
 			first.GetVisualDescendants().OfType<Button>()
-				.Single(b => AutomationProperties.GetAutomationId(b) == "LexEntry/identity/senses.Hotlinks.0").Focus();
+				.Single(b => AutomationProperties.GetAutomationId(b) == "LexEntry/identity/senses.Hotlinks.0")
+				.Focus(NavigationMethod.Tab);
 			Dispatcher.UIThread.RunJobs();
 			var memento = DetailFocusMemory.Capture(first);
 			Assert.That(memento.AutomationId, Is.EqualTo("LexEntry/identity/senses.Hotlinks.0"), "precondition: the link had focus");
+			Assert.That(memento.KeyboardFocusVisible, Is.True, "precondition: reached from the keyboard");
 
 			var second = NewViewOfForm(8, withHotlinks: true);
 			DetailFocusMemory.RestoreAfterLayout(second, memento);
@@ -222,6 +225,8 @@ namespace FwAvaloniaTests
 			Assert.That(focused == null ? null : AutomationProperties.GetAutomationId(focused),
 				Is.EqualTo("LexEntry/identity/senses.Hotlinks.0"),
 				"the new view shows the section's links again and focuses the same one");
+			Assert.That(focused.Classes.Contains(":focus-visible"), Is.True,
+				"the keyboard focus indicator comes back with it");
 		}
 
 		// An insert made from another row's menu leaves that row's editor focused and alive;
