@@ -46,7 +46,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 		/// object as the previous show, any collapsed section hiding an object that was not in
 		/// the previous view is expanded, so an object inserted into a collapsed section is
 		/// shown, except a section the user collapsed after the previous view's own edit. A
-		/// <paramref name="rootHvo"/> of 0 never matches.
+		/// <paramref name="rootHvo"/> of 0 never matches. <paramref name="hotlinkItems"/>
+		/// supplies a section header's hotlink commands; without it no hotlinks are shown.
 		/// </summary>
 		public void ShowDetail(DetailModel detail, IDetailEditContext editContext = null,
 			Action<string> writingSystemFocused = null,
@@ -57,7 +58,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 			IFwClipboard clipboard = null,
 			Func<double?> getLabelColumnWidth = null,
 			Action<double> labelColumnWidthChanged = null,
-			int rootHvo = 0)
+			int rootHvo = 0,
+			Func<DetailField, IReadOnlyList<DetailMenuItem>> hotlinkItems = null)
 		{
 			if (detail == null) throw new ArgumentNullException(nameof(detail));
 			// Splitter position persists per-HOST across re-shows: this long-lived host owns
@@ -73,7 +75,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 				{
 					_rememberedLabelColumnWidth = w;
 					labelColumnWidthChanged?.Invoke(w);
-				});
+				},
+				hotlinkItems);
 			view.EditCompleted += (s, e) => RaiseDetailEditCompleted();
 			view.InteractionCompleted += (s, e) => RaiseDetailInteractionCompleted();
 			view.RowFocused += _currentRow.Remember;

@@ -355,6 +355,56 @@ namespace SIL.FieldWorks.XWorks
 				"the new sense takes the grammatical info of the one before it");
 		}
 
+		// The links the view draws come from the host's hotlink items, one per command, in
+		// menu order (LT-22693).
+		[Test]
+		public void HotlinkItemsFor_ASenseHeader_OffersEachCommand_AndRunsIt()
+		{
+			var items = m_view.HotlinkItemsFor(HeaderRowOf(m_sense1));
+
+			Assert.That(items.Select(i => i.Label), Is.EqualTo(new[] { "Insert Example", "Insert Sense" }));
+			Assert.That(items.All(i => i.IsEnabled && i.Execute != null), Is.True, "both run on a sense");
+
+			items.Single(i => i.Label == "Insert Sense").Execute();
+			DrainMediatorAndIdleQueues();
+
+			Assert.That(m_entry.SensesOS, Has.Count.EqualTo(3), "the link's own item inserts the sense");
+			Assert.That(m_entry.SensesOS[0], Is.SameAs(m_sense1));
+			Assert.That(m_entry.SensesOS[2], Is.SameAs(m_sense2), "the new sense sits right after the first");
+		}
+
+		[Test]
+		public void HotlinkItemsFor_StripsTheAccelerator_FromTheLabel()
+		{
+			Assert.That(m_view.HotlinkItemsFor(HeaderRowOf(m_etymology1)).Select(i => i.Label),
+				Is.EqualTo(new[] { "Insert Etymology" }), "the menu text is 'Insert _Etymology'");
+		}
+
+		// No native authority owns the Notebook's menus: their links show without asking the
+		// mediator, which needs the hidden command adapter pointed at the row first.
+		[Test]
+		public void HotlinkItemsFor_AMenuNoAuthorityOwns_OffersItsCommandsByLabel()
+		{
+			var row = new DetailField("RnGenericRec/subrecords", "Subrecords", "SubRecords", null, DetailFieldKind.Header,
+				EditorClassification.GroupingNone, null, null, HostRouting.Inherit, null, null, null,
+				hotlinksId: "mnuDataTree-SubRecords-Hotlinks", objectHvo: m_entry.Hvo);
+			Assert.That(XCoreMenuBridge.OwnsAll(
+				m_view.CreateMenuAuthority(DetailMenuRequest.FromAnchor(null, row, DetailMenuKind.Hotlinks)),
+				new[] { row.HotlinksId }), Is.False, "precondition: the mediator answers this menu");
+
+			var items = m_view.HotlinkItemsFor(row);
+
+			Assert.That(items.Select(i => i.Label), Is.EqualTo(new[] { "Insert Subrecord" }));
+			Assert.That(items[0].IsEnabled && items[0].Execute != null, Is.True,
+				"the command is resolved for the row when the link is clicked");
+		}
+
+		[Test]
+		public void HotlinkItemsFor_ARowWithoutHotlinks_OffersNothing()
+		{
+			Assert.That(m_view.HotlinkItemsFor(TranslationRow()), Is.Empty);
+		}
+
 		[Test]
 		public void InsertExample_FromTheSensesHotlinks_GoesLast()
 		{

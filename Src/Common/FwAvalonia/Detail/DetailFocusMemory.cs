@@ -291,12 +291,12 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			root.LayoutUpdated += onLayout;
 		}
 
-		// Whether the remembered control is a row's field-options button or hotlinks link
-		// rather than an editor.
+		// Whether the remembered control is a row's field-options button or one of its
+		// hotlinks rather than an editor.
 		private static bool RemembersAMenuButton(Memento memento)
 			=> memento.AutomationId != null
 				&& (memento.AutomationId.EndsWith(".FieldMenu", StringComparison.Ordinal)
-					|| memento.AutomationId.EndsWith(".Hotlinks", StringComparison.Ordinal));
+					|| memento.AutomationId.Contains(DetailHotlinkStrip.LinkIdSegment));
 
 		// Focuses what the outgoing view asked for: the first surviving row of those named,
 		// else the first row of the object named; false when it asked for nothing or none can.

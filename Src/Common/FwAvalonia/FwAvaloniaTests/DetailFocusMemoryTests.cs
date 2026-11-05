@@ -164,8 +164,8 @@ namespace FwAvaloniaTests
 			Assert.That(FindScroller(second).Offset.Y, Is.LessThan(10), "the view scrolled up to the editor's row");
 		}
 
-		// A gesture made from a header's hotlinks link added an object: the link survives the
-		// re-show and is remembered, but the object asked for takes focus over it.
+		// A gesture made from one of a header's hotlinks added an object: the object asked for
+		// takes focus over the remembered link.
 		[AvaloniaTest]
 		public void RequestedObjectFocus_WinsOverTheRememberedHotlinksLink()
 		{
@@ -173,14 +173,18 @@ namespace FwAvaloniaTests
 			var window = new Window { Content = first, Width = 420, Height = 200 };
 			window.Show();
 			Dispatcher.UIThread.RunJobs();
+			// Focus in the section shows its links.
+			first.GetVisualDescendants().OfType<Button>()
+				.Single(b => AutomationProperties.GetAutomationId(b) == "LexEntry/identity/senses").Focus();
+			Dispatcher.UIThread.RunJobs();
 			var link = first.GetVisualDescendants().OfType<Button>()
-				.Single(b => AutomationProperties.GetAutomationId(b) == "LexEntry/identity/senses.Hotlinks");
+				.Single(b => AutomationProperties.GetAutomationId(b) == "LexEntry/identity/senses.Hotlinks.0");
 			link.Focus();
 			Dispatcher.UIThread.RunJobs();
 
 			first.RequestObjectFocusOnRebuild(9);
 			var memento = DetailFocusMemory.Capture(first);
-			Assert.That(memento.AutomationId, Is.EqualTo("LexEntry/identity/senses.Hotlinks"), "precondition: the link had focus");
+			Assert.That(memento.AutomationId, Is.EqualTo("LexEntry/identity/senses.Hotlinks.0"), "precondition: the link had focus");
 
 			var second = NewViewOfForm(9, withHotlinks: true);
 			DetailFocusMemory.RestoreAfterLayout(second, memento);
@@ -276,7 +280,10 @@ namespace FwAvaloniaTests
 			fields.Add(new DetailField("LexEntry/identity/#1@3", "Gloss", "Gloss", "analysis", DetailFieldKind.Text,
 				EditorClassification.Known, null, null, HostRouting.Product, values, null, null, objectHvo: 3));
 			return new DataTree(new DetailModel("LexEntry", "identity", fields, new List<ViewDiagnostic>()),
-				menuRequested: withHotlinks ? request => { } : (Action<DetailMenuRequest>)null);
+				menuRequested: withHotlinks ? request => { } : (Action<DetailMenuRequest>)null,
+				hotlinkItems: withHotlinks
+					? field => new[] { new DetailMenuItem("Insert Sense", execute: () => { }) }
+					: (Func<DetailField, IReadOnlyList<DetailMenuItem>>)null);
 		}
 
 		// A long view whose first row shows the form with the given hvo; the rest show object 3.
