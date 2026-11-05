@@ -70,6 +70,50 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 		}
 
+		[Test]
+		public void CanLeaveFileStep_MissingPhaseFile_IsFalse()
+		{
+			var phaseFile = Path.Combine(m_tempDir, "Phase1Output.xml");
+
+			Assert.That(LexImportWizard.CanLeaveFileStep(phaseFile, true, "", "MDFImport.map"),
+				Is.False);
+		}
+
+		[Test]
+		public void CanLeaveFileStep_ExistingPhaseFile_IsTrue()
+		{
+			var phaseFile = CreateFile("Phase1Output.xml");
+
+			Assert.That(LexImportWizard.CanLeaveFileStep(phaseFile, true, "", "MDFImport.map"),
+				Is.True);
+		}
+
+		[TestCase("")]
+		[TestCase("   ")]
+		public void CanLeaveFileStep_BlankDatabaseFile_IsFalse(string databaseFile)
+		{
+			Assert.That(LexImportWizard.CanLeaveFileStep(databaseFile, false, "out.map",
+				"MDFImport.map"), Is.False);
+		}
+
+		[Test]
+		public void CanLeaveFileStep_SavingOverShippedMap_IsFalse()
+		{
+			var databaseFile = CreateFile("lexicon.db");
+
+			Assert.That(LexImportWizard.CanLeaveFileStep(databaseFile, false, "MDFImport.map",
+				"MDFImport.map"), Is.False);
+		}
+
+		[Test]
+		public void CanLeaveFileStep_ExistingDatabaseFile_IsTrue()
+		{
+			var databaseFile = CreateFile("lexicon.db");
+
+			Assert.That(LexImportWizard.CanLeaveFileStep(databaseFile, false, "out.map",
+				"MDFImport.map"), Is.True);
+		}
+
 		private string CreateFile(string name)
 		{
 			var path = Path.Combine(m_tempDir, name);
