@@ -1085,6 +1085,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				requiredFS.AddValue(m_posFeature, LoadAllPartsOfSpeech(msa.FromPartsOfSpeechRC));
 			requiredFS.Freeze();
 			mrule.RequiredSyntacticFeatureStruct = requiredFS;
+			mrule.IsCliticRule = true;
 
 			mrule.Properties[HCParser.MsaID] = msa.Hvo;
 
