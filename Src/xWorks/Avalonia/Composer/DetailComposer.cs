@@ -159,6 +159,21 @@ namespace SIL.FieldWorks.XWorks
 			if (root == null)
 				return null;
 
+			return ComposeModel(obj, cache, root, layoutName, showHiddenFields, plugins, overrides,
+				showAllWritingSystemsFields, writingSystemFocused, hiddenSliceIds);
+		}
+
+		/// <summary>
+		/// Composes the detail view of <paramref name="obj"/> from an already compiled
+		/// <paramref name="root"/> layout. The remaining arguments mean what they do for the
+		/// <c>Compose</c> overload that takes an <see cref="ICmObject"/>.
+		/// </summary>
+		internal static ComposedDetail ComposeModel(ICmObject obj, LcmCache cache,
+			ViewDefinitionModel root, string layoutName, bool showHiddenFields = false,
+			SlicePluginRegistry plugins = null, ViewDefinitionOverrideResolver overrides = null,
+			ISet<string> showAllWritingSystemsFields = null,
+			Action<string> writingSystemFocused = null, ISet<string> hiddenSliceIds = null)
+		{
 			// Plugin rows close over the detail view's own edit context, which
 			// only exists once the walk gathers every setter -- a deferred accessor
 			// bridges the gap (plugin factories run at render time, not compose).
@@ -3031,14 +3046,14 @@ namespace SIL.FieldWorks.XWorks
 			private void WalkReferenceVectorField(ViewNode node, ICmObject obj, int depth, int flid)
 			{
 				var count = _sda.get_VecSize(obj.Hvo, flid);
+				if (HideWhenEmpty(node) && VisibilityCount(node, obj, count) == 0)
+					return;
 
 				// A vector whose targets live in a possibility list becomes an editable
 				// ReferenceVector row (legacy slice, trailing type-ahead add slot), even
 				// when empty, so the field always offers the add affordance.
 				if (obj.ReferenceTargetOwner(flid) is ICmPossibilityList list)
 				{
-					if (count == 0 && HideWhenEmpty(node))
-						return;
 					AddReferenceVector(node, obj, depth, flid, list, count);
 					return;
 				}
@@ -3050,8 +3065,6 @@ namespace SIL.FieldWorks.XWorks
 				// (lexicons search, possibility lists enumerate).
 				if (IsEntryOrSenseReferenceVector(node, flid))
 				{
-					if (count == 0 && HideWhenEmpty(node))
-						return;
 					AddEntryReferenceVector(node, obj, depth, flid, count);
 					return;
 				}
@@ -3066,8 +3079,6 @@ namespace SIL.FieldWorks.XWorks
 				var backRefKind = ResolveEditableBackRefKind(node, flid, obj);
 				if (backRefKind != BackRefVectorKind.None)
 				{
-					if (count == 0 && HideWhenEmpty(node))
-						return;
 					AddBackRefReferenceVector(node, obj, depth, flid, count, backRefKind);
 					return;
 				}
@@ -3083,8 +3094,6 @@ namespace SIL.FieldWorks.XWorks
 				var createsFromText = EditorKindMap.CreatesReferenceItemsFromText(node.RawEditor);
 				if (createsFromText || (genericCandidates != null && genericCandidates.Count > 0))
 				{
-					if (count == 0 && HideWhenEmpty(node))
-						return;
 					AddGenericReferenceVector(node, obj, depth, flid, count,
 						genericCandidates ?? Array.Empty<ICmObject>());
 					return;
@@ -3092,7 +3101,7 @@ namespace SIL.FieldWorks.XWorks
 
 				if (count == 0)
 				{
-					AddRowUnlessHiddenWhenEmpty(node, obj, depth);
+					AddReadOnlyRow(node, obj, depth, string.Empty);
 					return;
 				}
 
@@ -3688,6 +3697,33 @@ namespace SIL.FieldWorks.XWorks
 				catch (Exception)
 				{
 					return 0;
+				}
+			}
+
+			/// <summary>
+			/// The item count that decides whether an "ifdata" vector row has data: that of
+			/// the node's <see cref="ViewNode.VisibilityField"/> when it names a vector field of
+			/// <paramref name="obj"/>, otherwise <paramref name="displayedCount"/> (LT-22661).
+			/// </summary>
+			private int VisibilityCount(ViewNode node, ICmObject obj, int displayedCount)
+			{
+				var visibilityFlid = GetFlid(obj, node.VisibilityField);
+				if (visibilityFlid == 0 || !IsVectorField(visibilityFlid))
+					return displayedCount;
+				return _sda.get_VecSize(obj.Hvo, visibilityFlid);
+			}
+
+			private bool IsVectorField(int flid)
+			{
+				switch ((CellarPropertyType)_mdc.GetFieldType(flid))
+				{
+					case CellarPropertyType.OwningCollection:
+					case CellarPropertyType.OwningSequence:
+					case CellarPropertyType.ReferenceCollection:
+					case CellarPropertyType.ReferenceSequence:
+						return true;
+					default:
+						return false;
 				}
 			}
 

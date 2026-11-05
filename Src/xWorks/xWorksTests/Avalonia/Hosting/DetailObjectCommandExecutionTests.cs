@@ -1746,7 +1746,8 @@ namespace SIL.FieldWorks.XWorks
 		{
 			UseHelpProvider(KnowsEveryTopic);
 			var sense = m_entry.SensesOS[0];
-			var field = DetailComposer.Compose(m_entry, Cache).Model.Fields
+			// A sense excluded from no publication hides this row unless hidden fields show.
+			var field = DetailComposer.Compose(m_entry, Cache, showHiddenFields: true).Model.Fields
 				.Single(f => f.ObjectHvo == sense.Hvo && f.Field == "PublishIn");
 			EnsureAdapter(field.ObjectHvo, field.Field);
 			TestContext.WriteLine("adapter topic: " + AdapterTree.CurrentSlice?.GetSliceHelpTopicID());

@@ -60,7 +60,8 @@ namespace FwAvaloniaTests
 					EditorClassification.Known, "vern", ViewVisibility.Always,
 					ViewExpansion.NotApplicable, false, null, null,
 					enumStringList: options, visibleWritingSystems: writingSystems, toggleValue: true,
-					helpTopicId: "khtpField-LexEntry-Form", sliceId: "CmPossibilityStatus")));
+					helpTopicId: "khtpField-LexEntry-Form", sliceId: "CmPossibilityStatus",
+					visibilityField: "DoNotPublishIn")));
 			var patch = new ViewDefinitionOverride("LexEntry", "detail", "jtview",
 				new[]
 				{
@@ -82,6 +83,8 @@ namespace FwAvaloniaTests
 			Assert.That(rebuilt.SliceId, Is.EqualTo("CmPossibilityStatus"),
 				"and so does the slice id a tool's filter list names; losing it would show a "
 				+ "withheld row in every layout carrying an override");
+			Assert.That(rebuilt.VisibilityField, Is.EqualTo("DoNotPublishIn"),
+				"the field that decides ifdata visibility survives the rebuild");
 		}
 
 		// The writing-system subset a user picks for one field, recorded against its stable id.
@@ -170,7 +173,8 @@ namespace FwAvaloniaTests
 				new ViewNode("g/a", ViewNodeKind.Field, "A", null, "F", "string",
 					EditorClassification.Known, "vern", ViewVisibility.Always,
 					ViewExpansion.NotApplicable, false, null, null,
-					helpTopicId: "khtpField-LexEntry-Form", sliceId: "CmPossibilityStatus")));
+					helpTopicId: "khtpField-LexEntry-Form", sliceId: "CmPossibilityStatus",
+					visibilityField: "DoNotPublishIn")));
 			var patch = new ViewDefinitionOverride("LexEntry", "detail", "jtview",
 				new[]
 				{
@@ -183,6 +187,7 @@ namespace FwAvaloniaTests
 			Assert.That(copy.StableId, Is.EqualTo("g/a-copy"), "precondition: this is the copy");
 			Assert.That(copy.SliceId, Is.EqualTo("CmPossibilityStatus"));
 			Assert.That(copy.HelpTopicId, Is.EqualTo("khtpField-LexEntry-Form"));
+			Assert.That(copy.VisibilityField, Is.EqualTo("DoNotPublishIn"));
 		}
 
 		[Test]
