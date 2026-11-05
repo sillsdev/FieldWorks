@@ -473,6 +473,22 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			FillHotlinks(header);
 		}
 
+		/// <summary>
+		/// Shows the hotlinks of the header row with <paramref name="headerAutomationId"/>, as
+		/// focus entering its section would; does nothing when no such header is shown.
+		/// </summary>
+		internal void ShowHotlinksOf(string headerAutomationId)
+		{
+			for (var i = 0; i < Model.Fields.Count; i++)
+			{
+				if (Model.Fields[i].RowAutomationId == headerAutomationId)
+				{
+					ShowHotlinksFor(i);
+					return;
+				}
+			}
+		}
+
 		// The hotlink strip of a shown header row; null when the row is not shown or has none.
 		private DetailHotlinkStrip HotlinksOf(int index)
 			=> index < 0 ? null : _rows[index]?.Hotlinks;

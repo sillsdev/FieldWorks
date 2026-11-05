@@ -318,6 +318,12 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			if (root == null || string.IsNullOrEmpty(memento?.AutomationId))
 				return false;
 
+			// A hotlink exists only while its section is the one being worked in, so a remembered
+			// link first brings its section's links back.
+			var linkAt = memento.AutomationId.LastIndexOf(DetailHotlinkStrip.LinkIdSegment, StringComparison.Ordinal);
+			if (linkAt > 0)
+				(root as DataTree)?.ShowHotlinksOf(memento.AutomationId.Substring(0, linkAt));
+
 			// First pass: the exact stable id (the common case -- the same field survived the
 			// re-show).
 			foreach (var visual in root.GetVisualDescendants())

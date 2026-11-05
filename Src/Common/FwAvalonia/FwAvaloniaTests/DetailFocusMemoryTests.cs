@@ -195,6 +195,35 @@ namespace FwAvaloniaTests
 				"the new object's editor takes focus, not the surviving link");
 		}
 
+		// LT-22693: Shift+Tab out of an edited field onto a hotlink autosaves, and the re-show
+		// that follows asks for no object; the keyboard stays on the same link.
+		[AvaloniaTest]
+		public void ReshowWithNoRequest_KeepsFocusOnTheRememberedHotlink()
+		{
+			var first = NewViewOfForm(8, withHotlinks: true);
+			var window = new Window { Content = first, Width = 420, Height = 200 };
+			window.Show();
+			Dispatcher.UIThread.RunJobs();
+			first.GetVisualDescendants().OfType<Button>()
+				.Single(b => AutomationProperties.GetAutomationId(b) == "LexEntry/identity/senses").Focus();
+			Dispatcher.UIThread.RunJobs();
+			first.GetVisualDescendants().OfType<Button>()
+				.Single(b => AutomationProperties.GetAutomationId(b) == "LexEntry/identity/senses.Hotlinks.0").Focus();
+			Dispatcher.UIThread.RunJobs();
+			var memento = DetailFocusMemory.Capture(first);
+			Assert.That(memento.AutomationId, Is.EqualTo("LexEntry/identity/senses.Hotlinks.0"), "precondition: the link had focus");
+
+			var second = NewViewOfForm(8, withHotlinks: true);
+			DetailFocusMemory.RestoreAfterLayout(second, memento);
+			window.Content = second;
+			Dispatcher.UIThread.RunJobs();
+
+			var focused = window.FocusManager?.GetFocusedElement() as Control;
+			Assert.That(focused == null ? null : AutomationProperties.GetAutomationId(focused),
+				Is.EqualTo("LexEntry/identity/senses.Hotlinks.0"),
+				"the new view shows the section's links again and focuses the same one");
+		}
+
 		// An insert made from another row's menu leaves that row's editor focused and alive;
 		// the new object still takes the keyboard, as a row request would not.
 		[AvaloniaTest]
