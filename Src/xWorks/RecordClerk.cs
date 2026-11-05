@@ -439,7 +439,7 @@ namespace SIL.FieldWorks.XWorks
 			bool updateAndNotify, DictionaryConfigurationModel dictConfig = null)
 		{
 			RecordFilter filter = null;
-			string persistFilter = m_propertyTable.GetStringProperty(GetFilterPropertyTableId(dictConfig), null, PropertyTable.SettingsGroup.LocalSettings);
+			string persistFilter = m_list.GetPersistedSetting("filter", dictConfig);
 			if (m_list.Filter != null)
 			{
 				// if the persisted object string of the existing filter matches the one in the property table
@@ -459,13 +459,16 @@ namespace SIL.FieldWorks.XWorks
 						filter.Cache = cache;
 					}
 				}
-				catch
+				catch (Exception e)
 				{
-					filter = null; // If anything goes wrong, ignore the persisted value.
+					Logger.WriteEvent("Persisted filter not restored, using the default: " + e.Message);
+					filter = null;
 				}
 			}
 			if (filter == null || !filter.IsValid)
 			{
+				if (filter != null)
+					Logger.WriteEvent("Persisted filter is not valid, using the default: " + filter);
 				m_filterNode = ToolConfiguration.GetDefaultFilter(clerkConfiguration);
 				filter = m_filterNode != null ? RecordFilter.Create(cache, m_filterNode) : null;
 			}
@@ -494,9 +497,9 @@ namespace SIL.FieldWorks.XWorks
 		/// <c>false</c>if the one installed matches the one we had stored to persist.</returns>
 		protected virtual bool TryRestoreSorter(XmlNode clerkConfiguration, LcmCache cache, DictionaryConfigurationModel dictConfig = null)
 		{
-			SortName = m_propertyTable.GetStringProperty(GetSortNamePropertyTableId(dictConfig), null, PropertyTable.SettingsGroup.LocalSettings);
+			SortName = m_list.GetPersistedSetting("sortName", dictConfig);
 
-			string persistSorter = m_propertyTable.GetStringProperty(GetSorterPropertyTableId(dictConfig), null, PropertyTable.SettingsGroup.LocalSettings);
+			string persistSorter = m_list.GetPersistedSetting("sorter", dictConfig);
 			if (m_list.Sorter != null)
 			{
 				// if the persisted object string of the existing sorter matches the one in the property table
@@ -512,9 +515,10 @@ namespace SIL.FieldWorks.XWorks
 				{
 					sorter = DynamicLoader.RestoreObject(persistSorter) as RecordSorter;
 				}
-				catch
+				catch (Exception e)
 				{
-					sorter = null; // If anything goes wrong, ignore the persisted value.
+					Logger.WriteEvent("Persisted sorter not restored, using the default: " + e.Message);
+					sorter = null;
 				}
 			}
 			if (sorter == null)
@@ -2812,7 +2816,9 @@ namespace SIL.FieldWorks.XWorks
 				m_list.OnChangeFilter(args);
 				// Remember the active filter for this list.
 				string persistFilter = DynamicLoader.PersistObject(Filter, "filter");
-				m_propertyTable.SetProperty(GetFilterPropertyTableId(), persistFilter, PropertyTable.SettingsGroup.LocalSettings, false);
+				var filterId = GetFilterPropertyTableId();
+				if (filterId != null)
+					m_propertyTable.SetProperty(filterId, persistFilter, PropertyTable.SettingsGroup.LocalSettings, false);
 				// adjust menu bar items according to current state of Filter, where needed.
 				AdjustFilterSelection();
 				m_filterProvider?.OnAdjustFilterSelection(Filter);
@@ -3021,12 +3027,16 @@ namespace SIL.FieldWorks.XWorks
 			m_isDefaultSort = isDefaultSort;
 
 			SortName = sortName;
-			m_propertyTable.SetProperty(GetSortNamePropertyTableId(), SortName, PropertyTable.SettingsGroup.LocalSettings, false);
+			var sortNameId = GetSortNamePropertyTableId();
+			if (sortNameId != null)
+				m_propertyTable.SetProperty(sortNameId, SortName, PropertyTable.SettingsGroup.LocalSettings, false);
 
 			m_list.ChangeSorter(sorter);
 			// Remember how we're sorted.
 			string persistSorter = DynamicLoader.PersistObject(Sorter, "sorter");
-			m_propertyTable.SetProperty(GetSorterPropertyTableId(), persistSorter, PropertyTable.SettingsGroup.LocalSettings, false);
+			var sorterId = GetSorterPropertyTableId();
+			if (sorterId != null)
+				m_propertyTable.SetProperty(sorterId, persistSorter, PropertyTable.SettingsGroup.LocalSettings, false);
 
 			UpdateSortStatusBarPanel();
 		}
