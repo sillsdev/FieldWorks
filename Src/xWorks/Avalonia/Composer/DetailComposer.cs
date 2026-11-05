@@ -3031,14 +3031,14 @@ namespace SIL.FieldWorks.XWorks
 			private void WalkReferenceVectorField(ViewNode node, ICmObject obj, int depth, int flid)
 			{
 				var count = _sda.get_VecSize(obj.Hvo, flid);
+				if (HideWhenEmpty(node) && VisibilityCount(node, obj, count) == 0)
+					return;
 
 				// A vector whose targets live in a possibility list becomes an editable
 				// ReferenceVector row (legacy slice, trailing type-ahead add slot), even
 				// when empty, so the field always offers the add affordance.
 				if (obj.ReferenceTargetOwner(flid) is ICmPossibilityList list)
 				{
-					if (count == 0 && HideWhenEmpty(node))
-						return;
 					AddReferenceVector(node, obj, depth, flid, list, count);
 					return;
 				}
@@ -3050,8 +3050,6 @@ namespace SIL.FieldWorks.XWorks
 				// (lexicons search, possibility lists enumerate).
 				if (IsEntryOrSenseReferenceVector(node, flid))
 				{
-					if (count == 0 && HideWhenEmpty(node))
-						return;
 					AddEntryReferenceVector(node, obj, depth, flid, count);
 					return;
 				}
@@ -3066,8 +3064,6 @@ namespace SIL.FieldWorks.XWorks
 				var backRefKind = ResolveEditableBackRefKind(node, flid, obj);
 				if (backRefKind != BackRefVectorKind.None)
 				{
-					if (count == 0 && HideWhenEmpty(node))
-						return;
 					AddBackRefReferenceVector(node, obj, depth, flid, count, backRefKind);
 					return;
 				}
@@ -3083,8 +3079,6 @@ namespace SIL.FieldWorks.XWorks
 				var createsFromText = EditorKindMap.CreatesReferenceItemsFromText(node.RawEditor);
 				if (createsFromText || (genericCandidates != null && genericCandidates.Count > 0))
 				{
-					if (count == 0 && HideWhenEmpty(node))
-						return;
 					AddGenericReferenceVector(node, obj, depth, flid, count,
 						genericCandidates ?? Array.Empty<ICmObject>());
 					return;
@@ -3092,7 +3086,7 @@ namespace SIL.FieldWorks.XWorks
 
 				if (count == 0)
 				{
-					AddRowUnlessHiddenWhenEmpty(node, obj, depth);
+					AddReadOnlyRow(node, obj, depth, string.Empty);
 					return;
 				}
 
@@ -3689,6 +3683,17 @@ namespace SIL.FieldWorks.XWorks
 				{
 					return 0;
 				}
+			}
+
+			/// <summary>
+			/// The item count that decides whether an "ifdata" vector row has data: that of
+			/// the node's <see cref="ViewNode.VisibilityField"/> when it names a field of
+			/// <paramref name="obj"/>, otherwise <paramref name="displayedCount"/> (LT-22661).
+			/// </summary>
+			private int VisibilityCount(ViewNode node, ICmObject obj, int displayedCount)
+			{
+				var visibilityFlid = GetFlid(obj, node.VisibilityField);
+				return visibilityFlid == 0 ? displayedCount : _sda.get_VecSize(obj.Hvo, visibilityFlid);
 			}
 
 			private string ResolveShortName(int hvo)

@@ -37,7 +37,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 				"id", "label", "abbr", "field", "ws", "editor", "visibility", "expansion",
 				"localizationKey", "labelId", "automationId", "routing", "menu", "contextMenu", "hotlinks",
 				"forVariant", "visibleWritingSystems", "reorder", "helpTopicID",
-				"optionalWs", "forceIncludeEnglish"
+				"optionalWs", "forceIncludeEnglish", "visField"
 			};
 
 		public static readonly HashSet<string> HandledObjSeqAttributes =
@@ -439,7 +439,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 						reorder: ParseOptionalBool(Attr(contentEl, "reorder")) ?? false,
 						helpTopicId: Attr(contentEl, "helpTopicID"),
 						optionalWritingSystem: optionalWs,
-						forceIncludeEnglish: forceEnglish);
+						forceIncludeEnglish: forceEnglish,
+						visibilityField: Attr(contentEl, "visField"));
 				}
 				case "obj":
 				case "seq":
