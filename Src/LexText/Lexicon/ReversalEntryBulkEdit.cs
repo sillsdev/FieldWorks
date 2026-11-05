@@ -136,7 +136,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// <summary>
 		/// Reads the setting under the writing-system key. A value found only under a key built
 		/// from a configuration file path or an empty layout property moves to the writing-system
-		/// key, which every later read for this index uses.
+		/// key, which every later read for this index uses, and the old key is removed.
 		/// </summary>
 		protected override string GetPersistedSetting(string sorterOrFilter, DictionaryConfigurationModel revConfig = null)
 		{
@@ -155,7 +155,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				if (value == null)
 					continue;
 				m_propertyTable.SetProperty(PropertyTableIdFor(wsId, sorterOrFilter), value, PropertyTable.SettingsGroup.LocalSettings, false);
-				m_propertyTable.SetProperty(id, null, PropertyTable.SettingsGroup.LocalSettings, false);
+				m_propertyTable.RemoveProperty(id, PropertyTable.SettingsGroup.LocalSettings);
 				return value;
 			}
 			return null;
@@ -178,33 +178,59 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 		/// <summary>
 		/// The keys built from the text after the first '-' of a configuration file path: from
-		/// the layout property when it names this writing system (or is empty while this is the
-		/// current index), and from the project's configuration file for the writing system.
+		/// the layout property when it is for this writing system (or is empty while this is the
+		/// current index), from the project's configuration file named for the writing system,
+		/// and from every other project configuration file that declares it, such as a copy.
 		/// </summary>
 		private IEnumerable<string> PathDerivedPropertyTableIds(string wsId, bool isCurrentIndex, string sorterOrFilter)
 		{
-			string layoutId = null;
+			var paths = new List<string>();
 			var layout = m_propertyTable.GetStringProperty("ReversalIndexPublicationLayout", null);
-			if (layout != null && (layout.Length == 0 ? isCurrentIndex : NamesWritingSystem(layout, wsId)))
+			if (layout != null && (layout.Length == 0 ? isCurrentIndex : IsConfigurationFor(layout, wsId)))
+				paths.Add(layout);
+			var configDir = Path.Combine(LcmFileHelper.GetConfigSettingsDir(m_cache.ProjectId.ProjectFolder),
+				ReversalIndexServices.RevIndexDir);
+			paths.Add(Path.Combine(configDir, wsId + DictionaryConfigurationModel.FileExtension));
+			if (Directory.Exists(configDir))
 			{
-				layoutId = PropertyTableIdFor(layout.Substring(layout.IndexOf('-') + 1), sorterOrFilter);
-				yield return layoutId;
+				paths.AddRange(Directory.EnumerateFiles(configDir, "*" + DictionaryConfigurationModel.FileExtension)
+					.Where(path => DeclaresWritingSystem(path, wsId)));
 			}
-			var projectPath = Path.Combine(LcmFileHelper.GetConfigSettingsDir(m_cache.ProjectId.ProjectFolder),
-				ReversalIndexServices.RevIndexDir, wsId + DictionaryConfigurationModel.FileExtension);
-			var projectId = PropertyTableIdFor(projectPath.Substring(projectPath.IndexOf('-') + 1), sorterOrFilter);
-			if (projectId != layoutId)
-				yield return projectId;
+			return paths.Select(path => PropertyTableIdFor(path.Substring(path.IndexOf('-') + 1), sorterOrFilter)).Distinct();
 		}
 
 		/// <summary>
-		/// Whether the layout value is a path whose file name is the writing system id; a value
+		/// Whether the layout value is a configuration file path for the writing system: its
+		/// file name is the writing system id, or the file declares that writing system. A value
 		/// that cannot be a path never is.
 		/// </summary>
-		private static bool NamesWritingSystem(string layout, string wsId)
+		private static bool IsConfigurationFor(string layout, string wsId)
 		{
 			return layout.IndexOfAny(Path.GetInvalidPathChars()) < 0
-				&& Path.GetFileNameWithoutExtension(layout) == wsId;
+				&& (Path.GetFileNameWithoutExtension(layout) == wsId || DeclaresWritingSystem(layout, wsId));
+		}
+
+		/// <summary>
+		/// Whether a configuration file exists at the path and its root element declares the
+		/// writing system. Only that attribute is read.
+		/// </summary>
+		private static bool DeclaresWritingSystem(string path, string wsId)
+		{
+			if (!File.Exists(path))
+				return false;
+			try
+			{
+				using (var stream = File.OpenRead(path))
+				using (var reader = XmlReader.Create(stream))
+				{
+					reader.MoveToContent();
+					return reader.GetAttribute("writingSystem") == wsId;
+				}
+			}
+			catch (Exception e) when (e is XmlException || e is IOException || e is UnauthorizedAccessException)
+			{
+				return false;
+			}
 		}
 
 		private string PropertyTableIdFor(string reversalLang, string sorterOrFilter)

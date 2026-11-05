@@ -5,6 +5,7 @@
 using System.IO;
 using System.Xml;
 using NUnit.Framework;
+using SIL.IO;
 using SIL.LCModel;
 using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.XWorks;
@@ -22,6 +23,7 @@ namespace LexEdDllTests
 	{
 		const string FieldName = "field";
 		private IReversalIndex m_enIndex;
+		private string m_projectFolder;
 
 		[OneTimeSetUp]
 		public override void FixtureSetup()
@@ -29,6 +31,20 @@ namespace LexEdDllTests
 			base.FixtureSetup();
 			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
 				m_enIndex = Cache.ServiceLocator.GetInstance<IReversalIndexRepository>().FindOrCreateIndexForWs(Cache.DefaultAnalWs));
+			// A project folder of its own, so the tests can write configuration files into it.
+			m_projectFolder = Path.Combine(Path.GetTempPath(), "ReversalEntryBulkEditTests");
+			if (Directory.Exists(m_projectFolder))
+				Directory.Delete(m_projectFolder, true);
+			Directory.CreateDirectory(m_projectFolder);
+			Cache.ProjectId.Path = Path.Combine(m_projectFolder, "ReversalEntryBulkEditTests.fwdata");
+		}
+
+		[OneTimeTearDown]
+		public override void FixtureTeardown()
+		{
+			base.FixtureTeardown();
+			if (Directory.Exists(m_projectFolder))
+				Directory.Delete(m_projectFolder, true);
 		}
 
 		private PropertyTable MakePropertyTable(Mediator mediator)
@@ -48,9 +64,30 @@ namespace LexEdDllTests
 		/// </summary>
 		private string ConfigurationPathKey(string wsId)
 		{
-			var configPath = Path.Combine(LcmFileHelper.GetConfigSettingsDir(Cache.ProjectId.ProjectFolder),
-				ReversalIndexServices.RevIndexDir, wsId + DictionaryConfigurationModel.FileExtension);
+			return PathKey(Path.Combine(ProjectConfigurationDir(), wsId + DictionaryConfigurationModel.FileExtension));
+		}
+
+		private static string PathKey(string configPath)
+		{
 			return "ReversalIndex.AllEntries-" + configPath.Substring(configPath.IndexOf('-') + 1) + "_" + FieldName;
+		}
+
+		private string ProjectConfigurationDir()
+		{
+			return Path.Combine(LcmFileHelper.GetConfigSettingsDir(Cache.ProjectId.ProjectFolder), ReversalIndexServices.RevIndexDir);
+		}
+
+		/// <summary>
+		/// Writes a reversal configuration file declaring the writing system, as a copy made in
+		/// Configure Dictionary is named and declared.
+		/// </summary>
+		private static TempFile WriteConfiguration(string directory, string label, string wsId)
+		{
+			Directory.CreateDirectory(directory);
+			var file = TempFile.WithFilename(Path.Combine(directory, label + DictionaryConfigurationModel.FileExtension));
+			File.WriteAllText(file.Path, "<?xml version='1.0' encoding='utf-8'?><DictionaryConfiguration name='" + label
+				+ "' writingSystem='" + wsId + "'/>");
+			return file;
 		}
 
 		[Test]
@@ -112,8 +149,8 @@ namespace LexEdDllTests
 				Assert.That(recordList.GetPersisted(FieldName), Is.EqualTo("by empty layout"));
 				Assert.That(propertyTable.GetStringProperty(WsKey(wsId), null, PropertyTable.SettingsGroup.LocalSettings),
 					Is.EqualTo("by empty layout"), "moved to the writing-system key");
-				Assert.That(propertyTable.GetStringProperty(emptyKey, null, PropertyTable.SettingsGroup.LocalSettings),
-					Is.Null, "cleared from the empty-layout key");
+				Assert.That(propertyTable.PropertyExists(emptyKey, PropertyTable.SettingsGroup.LocalSettings),
+					Is.False, "the empty-layout key is removed");
 			}
 		}
 
@@ -131,8 +168,8 @@ namespace LexEdDllTests
 				Assert.That(recordList.GetPersisted(FieldName), Is.EqualTo("by path"));
 				Assert.That(propertyTable.GetStringProperty(WsKey(wsId), null, PropertyTable.SettingsGroup.LocalSettings),
 					Is.EqualTo("by path"), "moved to the writing-system key");
-				Assert.That(propertyTable.GetStringProperty(ConfigurationPathKey(wsId), null, PropertyTable.SettingsGroup.LocalSettings),
-					Is.Null, "cleared from the path key");
+				Assert.That(propertyTable.PropertyExists(ConfigurationPathKey(wsId), PropertyTable.SettingsGroup.LocalSettings),
+					Is.False, "the path key is removed");
 			}
 		}
 
@@ -154,8 +191,56 @@ namespace LexEdDllTests
 				Assert.That(recordList.GetPersisted(FieldName), Is.EqualTo("by layout path"));
 				Assert.That(propertyTable.GetStringProperty(WsKey(wsId), null, PropertyTable.SettingsGroup.LocalSettings),
 					Is.EqualTo("by layout path"), "moved to the writing-system key");
-				Assert.That(propertyTable.GetStringProperty(layoutKey, null, PropertyTable.SettingsGroup.LocalSettings),
-					Is.Null, "cleared from the layout path key");
+				Assert.That(propertyTable.PropertyExists(layoutKey, PropertyTable.SettingsGroup.LocalSettings),
+					Is.False, "the layout path key is removed");
+			}
+		}
+
+		[Test]
+		public void GetPersistedSetting_ReadsLayoutPathKeyWhenTheFileDeclaresTheWritingSystem()
+		{
+			var wsId = m_enIndex.WritingSystem;
+			// Outside the project's folder, so only the layout property can lead to it.
+			using (var copy = WriteConfiguration(Path.Combine(m_projectFolder, "Elsewhere"), "Copy of English", wsId))
+			using (var mediator = new Mediator())
+			using (var propertyTable = MakePropertyTable(mediator))
+			using (var recordList = new TestReversalRecordList(Cache, mediator, propertyTable))
+			{
+				propertyTable.SetProperty("ReversalIndexGuid", m_enIndex.Guid.ToString(), false);
+				propertyTable.SetProperty("ReversalIndexPublicationLayout", copy.Path, false);
+				propertyTable.SetProperty(PathKey(copy.Path), "by copied layout", PropertyTable.SettingsGroup.LocalSettings, false);
+
+				Assert.That(recordList.GetPersisted(FieldName), Is.EqualTo("by copied layout"));
+				Assert.That(propertyTable.GetStringProperty(WsKey(wsId), null, PropertyTable.SettingsGroup.LocalSettings),
+					Is.EqualTo("by copied layout"), "moved to the writing-system key");
+				Assert.That(propertyTable.PropertyExists(PathKey(copy.Path), PropertyTable.SettingsGroup.LocalSettings),
+					Is.False, "the layout path key is removed");
+			}
+		}
+
+		[Test]
+		public void GetPersistedSetting_ReadsProjectConfigurationKeyDeclaringTheWritingSystem()
+		{
+			var wsId = m_enIndex.WritingSystem;
+			using (var enCopy = WriteConfiguration(ProjectConfigurationDir(), "Copy of English", wsId))
+			using (var frCopy = WriteConfiguration(ProjectConfigurationDir(), "Copy of French", "fr"))
+			using (var mediator = new Mediator())
+			using (var propertyTable = MakePropertyTable(mediator))
+			using (var recordList = new TestReversalRecordList(Cache, mediator, propertyTable))
+			{
+				propertyTable.SetProperty("ReversalIndexGuid", m_enIndex.Guid.ToString(), false);
+				// The view has moved on to the French copy since the English setting was saved.
+				propertyTable.SetProperty("ReversalIndexPublicationLayout", frCopy.Path, false);
+				propertyTable.SetProperty(PathKey(frCopy.Path), "by French copy", PropertyTable.SettingsGroup.LocalSettings, false);
+				propertyTable.SetProperty(PathKey(enCopy.Path), "by English copy", PropertyTable.SettingsGroup.LocalSettings, false);
+
+				Assert.That(recordList.GetPersisted(FieldName), Is.EqualTo("by English copy"));
+				Assert.That(propertyTable.GetStringProperty(WsKey(wsId), null, PropertyTable.SettingsGroup.LocalSettings),
+					Is.EqualTo("by English copy"), "moved to the writing-system key");
+				Assert.That(propertyTable.PropertyExists(PathKey(enCopy.Path), PropertyTable.SettingsGroup.LocalSettings),
+					Is.False, "the copy's path key is removed");
+				Assert.That(propertyTable.GetStringProperty(PathKey(frCopy.Path), null, PropertyTable.SettingsGroup.LocalSettings),
+					Is.EqualTo("by French copy"), "a configuration for another writing system is left alone");
 			}
 		}
 

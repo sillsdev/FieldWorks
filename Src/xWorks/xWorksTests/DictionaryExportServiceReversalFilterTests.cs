@@ -12,6 +12,7 @@ using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Filters;
+using SIL.IO;
 using SIL.LCModel;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.WritingSystems;
@@ -243,6 +244,38 @@ namespace SIL.FieldWorks.XWorks
 			var enEntries = exportService.GetReversalFilteredAndSortedEntries(en.Guid, decorator, enConfig, clerk);
 
 			Assert.That(Forms(enEntries), Is.EqualTo("swing, apple"), "filtered and reverse sorted after visiting French");
+		}
+
+		[Test]
+		public void GetReversalFilteredAndSortedEntries_RestoresSettingsPersistedUnderCopiedConfigurationPath()
+		{
+			CreateIndexes(out var en, out var fr, out var wsEn);
+			var enConfig = MakeReversalConfig("en");
+			var frConfig = MakeReversalConfig("fr");
+			// A copy made in Configure Dictionary is named after its label and declares the
+			// writing system of the configuration it copies.
+			var configDir = Path.GetDirectoryName(ProjectConfigurationPath("en"));
+			Directory.CreateDirectory(configDir);
+			using (var copy = TempFile.WithFilename(Path.Combine(configDir, "Copy of English" + DictionaryConfigurationModel.FileExtension)))
+			{
+				File.WriteAllText(copy.Path,
+					"<?xml version='1.0' encoding='utf-8'?><DictionaryConfiguration name='Copy of English' writingSystem='en'/>");
+				m_propertyTable.SetProperty(LayoutProperty, copy.Path, false);
+				m_propertyTable.SetProperty(GuidProperty, en.Guid.ToString(), false);
+				SetLocalSetting(PathKey(copy.Path, "filter"), FilterXml.Replace("WSHANDLE", wsEn.ToString()));
+				SetLocalSetting(PathKey(copy.Path, "sorter"), ReverseSorterXml);
+				SetLocalSetting(PathKey(copy.Path, "sortName"), "Reversal Form");
+
+				var exportService = new DictionaryExportService(m_propertyTable, m_mediator);
+				var clerk = exportService.GetReversalClerk();
+				Assert.That(clerk.Filter, Is.Not.Null, "restored when the clerk is created");
+				var decorator = ConfiguredLcmGenerator.CurrentDecorator(m_propertyTable, Cache, clerk);
+
+				exportService.GetReversalFilteredAndSortedEntries(fr.Guid, decorator, frConfig, clerk);
+				var enEntries = exportService.GetReversalFilteredAndSortedEntries(en.Guid, decorator, enConfig, clerk);
+
+				Assert.That(Forms(enEntries), Is.EqualTo("swing, apple"), "filtered and reverse sorted after visiting French");
+			}
 		}
 
 		[Test]
