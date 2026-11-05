@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Xml;
 using SIL.LCModel;
@@ -120,33 +121,125 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			ReloadList();
 		}
 
+		/// <summary>
+		/// The settings key for this list's sorter, sort name or filter, keyed by the writing
+		/// system of its reversal index, or null when no reversal index is current.
+		/// </summary>
+		/// <param name="revConfig">Names the reversal index by its writing system. When null,
+		/// the index is the one the ReversalIndexGuid property names.</param>
 		protected override string PropertyTableId(string sorterOrFilter, DictionaryConfigurationModel revConfig = null)
 		{
-			string reversalPub = null;
-			if (revConfig != null)
-			{
-				reversalPub = revConfig.FilePath;
-			}
-			else
-			{
-				reversalPub = m_propertyTable.GetStringProperty("ReversalIndexPublicationLayout", null);
-			}
+			var wsId = ReversalWritingSystemId(revConfig);
+			return wsId == null ? null : PropertyTableIdFor(wsId, sorterOrFilter);
+		}
 
-			if (reversalPub == null)
-				return null; // there is no current Reversal Index; don't try to find Properties (sorter & filter) for a nonexistant Reversal Index
-			var reversalLang = reversalPub.Substring(reversalPub.IndexOf('-') + 1); // strip initial "publishReversal-"
+		/// <summary>
+		/// Reads the setting under the writing-system key. A value found only under a key built
+		/// from a configuration file path or an empty layout property moves to the writing-system
+		/// key, which every later read for this index uses, and the old key is removed.
+		/// </summary>
+		protected override string GetPersistedSetting(string sorterOrFilter, DictionaryConfigurationModel revConfig = null)
+		{
+			var value = base.GetPersistedSetting(sorterOrFilter, revConfig);
+			if (value != null)
+				return value;
+			var wsId = ReversalWritingSystemId(revConfig);
+			if (wsId == null)
+				return null;
+			var isCurrentIndex = revConfig == null || wsId == ReversalWritingSystemId(null);
+			foreach (var id in PathDerivedPropertyTableIds(wsId, isCurrentIndex, sorterOrFilter))
+			{
+				if (!m_propertyTable.PropertyExists(id, PropertyTable.SettingsGroup.LocalSettings))
+					continue;
+				value = m_propertyTable.GetStringProperty(id, null, PropertyTable.SettingsGroup.LocalSettings);
+				if (value == null)
+					continue;
+				m_propertyTable.SetProperty(PropertyTableIdFor(wsId, sorterOrFilter), value, PropertyTable.SettingsGroup.LocalSettings, false);
+				m_propertyTable.RemoveProperty(id, PropertyTable.SettingsGroup.LocalSettings);
+				return value;
+			}
+			return null;
+		}
 
+		/// <summary>
+		/// The writing system id of the reversal index the settings belong to: the
+		/// configuration's when one is given, otherwise that of the index the ReversalIndexGuid
+		/// property names.
+		/// </summary>
+		private string ReversalWritingSystemId(DictionaryConfigurationModel revConfig)
+		{
+			if (!string.IsNullOrEmpty(revConfig?.WritingSystem))
+				return revConfig.WritingSystem;
+			var riGuid = ReversalIndexEntryUi.GetReversalIndexGuid(m_propertyTable);
+			if (riGuid == Guid.Empty)
+				return null;
+			return (m_cache.ServiceLocator.GetObject(riGuid) as IReversalIndex)?.WritingSystem;
+		}
+
+		/// <summary>
+		/// The keys built from the text after the first '-' of a configuration file path: from
+		/// the layout property when it is for this writing system (or is empty while this is the
+		/// current index), from the project's configuration file named for the writing system,
+		/// and from every other project configuration file that declares it, such as a copy.
+		/// </summary>
+		private IEnumerable<string> PathDerivedPropertyTableIds(string wsId, bool isCurrentIndex, string sorterOrFilter)
+		{
+			var paths = new List<string>();
+			var layout = m_propertyTable.GetStringProperty("ReversalIndexPublicationLayout", null);
+			if (layout != null && (layout.Length == 0 ? isCurrentIndex : IsConfigurationFor(layout, wsId)))
+				paths.Add(layout);
+			var configDir = Path.Combine(LcmFileHelper.GetConfigSettingsDir(m_cache.ProjectId.ProjectFolder),
+				ReversalIndexServices.RevIndexDir);
+			paths.Add(Path.Combine(configDir, wsId + DictionaryConfigurationModel.FileExtension));
+			if (Directory.Exists(configDir))
+			{
+				paths.AddRange(Directory.EnumerateFiles(configDir, "*" + DictionaryConfigurationModel.FileExtension)
+					.Where(path => DeclaresWritingSystem(path, wsId)));
+			}
+			return paths.Select(path => PropertyTableIdFor(path.Substring(path.IndexOf('-') + 1), sorterOrFilter)).Distinct();
+		}
+
+		/// <summary>
+		/// Whether the layout value is a configuration file path for the writing system: its
+		/// file name is the writing system id, or the file declares that writing system. A value
+		/// that cannot be a path never is.
+		/// </summary>
+		private static bool IsConfigurationFor(string layout, string wsId)
+		{
+			return layout.IndexOfAny(Path.GetInvalidPathChars()) < 0
+				&& (Path.GetFileNameWithoutExtension(layout) == wsId || DeclaresWritingSystem(layout, wsId));
+		}
+
+		/// <summary>
+		/// Whether a configuration file exists at the path and its root element declares the
+		/// writing system. Only that attribute is read.
+		/// </summary>
+		private static bool DeclaresWritingSystem(string path, string wsId)
+		{
+			if (!File.Exists(path))
+				return false;
+			try
+			{
+				using (var stream = File.OpenRead(path))
+				using (var reader = XmlReader.Create(stream))
+				{
+					reader.MoveToContent();
+					return reader.GetAttribute("writingSystem") == wsId;
+				}
+			}
+			catch (Exception e) when (e is XmlException || e is IOException || e is UnauthorizedAccessException)
+			{
+				return false;
+			}
+		}
+
+		private string PropertyTableIdFor(string reversalLang, string sorterOrFilter)
+		{
 			// Dependent lists do not have owner/property set. Rather they have class/field.
 			string className = VirtualListPublisher.MetaDataCache.GetOwnClsName((int)m_flid);
 			string fieldName = VirtualListPublisher.MetaDataCache.GetFieldName((int)m_flid);
-			if (String.IsNullOrEmpty(PropertyName) || PropertyName == fieldName)
-			{
-				return String.Format("{0}.{1}-{2}_{3}", className, fieldName, reversalLang, sorterOrFilter);
-			}
-			else
-			{
-				return String.Format("{0}.{1}-{2}_{3}", className, PropertyName, reversalLang, sorterOrFilter);
-			}
+			var propertyName = String.IsNullOrEmpty(PropertyName) || PropertyName == fieldName ? fieldName : PropertyName;
+			return String.Format("{0}.{1}-{2}_{3}", className, propertyName, reversalLang, sorterOrFilter);
 		}
 	}
 
