@@ -447,7 +447,8 @@ above it, so the user can scan the form by section. A section or nested record
 that can be expanded shows whether it is expanded, starts expanded, and can be
 collapsed or expanded by mouse or keyboard. Collapsing something applies to that
 record only, and the record remembers it. The current row's section header is
-where that section's commands appear.
+where that section's commands appear. A section showing no rows, because it is
+empty or collapsed, shows its commands at all times.
 
 ### Labels
 
@@ -590,7 +591,7 @@ entry that replaces it.
 | UX-6 | Input problems show next to the field, in plain words, keeping the user's input; WinForms message boxes are not used for them (see *Checking input*). | Provisional | Team consensus on LT-22687 | 2026-10-23, LT-22687 |
 | UX-7 | Advanced options use one "More options" expander, replacing five WinForms patterns (see *Advanced options*). | Provisional | Team consensus on LT-22687 | 2026-10-23, LT-22687 |
 | UX-8 | Detail views show field problems at the field, as in UX-6, not in message boxes (see *Saving and undo*). | Provisional | Team consensus on LT-22687 | 2026-10-23, LT-22687 |
-| UX-9 | Section commands appear as one small button per command, right-aligned on the section header's own line, and only on the section that holds the current row (see *Sections and expansion*), as in WinForms. Each button is the command's name on a light primary tint, which deepens under the pointer; an unavailable command is grey text on the theme's neutral grey button fill. WinForms draws underlined blue links instead; the tinted button was chosen from five candidate looks. Links that don't fit the width are left out. Unlike WinForms, the links are Tab stops, reached with Shift+Tab from the section's first field, since they are the keyboard's only way to some of these commands. A header marked `commandVisible="true"` (the Words tool's wordform header) shows its links at all times in WinForms; the new view doesn't support it yet. | Provisional | User testing asks for links on every section | 2026-11-04, LT-22693 |
+| UX-9 | Section commands appear as one small button per command, right-aligned on the section header's own line, and only on the section that holds the current row (see *Sections and expansion*), as in WinForms. Each button is the command's name on a light primary tint, which deepens under the pointer; an unavailable command is grey text on the theme's neutral grey button fill. WinForms draws underlined blue links instead; the tinted button was chosen from five candidate looks. Links that don't fit the width are left out. Unlike WinForms, the links are Tab stops, reached with Shift+Tab from the section's first field, since they are the keyboard's only way to some of these commands. A section showing no fields, because it is empty or collapsed, shows its links at all times, since focus cannot enter it to bring them. A header marked `commandVisible="true"` (the Words tool's wordform header) shows its links at all times in WinForms; the new view doesn't support it yet. | Provisional | User testing asks for links on every section | 2026-11-04, LT-22693 |
 
 ## Appendix: terms and where they live in code
 

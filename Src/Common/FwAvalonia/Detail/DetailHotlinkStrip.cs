@@ -42,6 +42,12 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		}
 
 		/// <summary>
+		/// Whether the strip is showing its section's links: true after <see cref="Show"/>,
+		/// even when there were none to show, and false after <see cref="Clear"/>.
+		/// </summary>
+		public bool IsShown { get; private set; }
+
+		/// <summary>
 		/// Replaces the links with one per command leaf of <paramref name="items"/>; separators
 		/// and submenus are skipped. A disabled command's link is shown greyed and cannot be
 		/// clicked. Null shows nothing.
@@ -49,6 +55,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		public void Show(IReadOnlyList<DetailMenuItem> items)
 		{
 			Children.Clear();
+			IsShown = true;
 			if (items == null)
 				return;
 			foreach (var item in items.Where(i => !i.IsSeparator && i.Children.Count == 0))
@@ -56,7 +63,11 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		}
 
 		/// <summary>Removes every link.</summary>
-		public void Clear() => Children.Clear();
+		public void Clear()
+		{
+			Children.Clear();
+			IsShown = false;
+		}
 
 		private Button CreateLink(DetailMenuItem item, int index)
 		{

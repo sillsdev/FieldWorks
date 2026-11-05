@@ -657,8 +657,9 @@ namespace SIL.FieldWorks.XWorks
 				var authority = CreateMenuAuthority(DetailMenuRequest.FromAnchor(null, field, DetailMenuKind.Hotlinks));
 				if (XCoreMenuBridge.OwnsAll(authority, ids))
 					return XCoreMenuBridge.CreateMenuItems(window, ids, null, null, authority);
-				// Asking the mediator for enablement first needs the hidden command adapter
-				// pointed at this row, too costly to do for every section focus enters.
+				// Enablement needs the hidden command adapter pointed at this row, too costly per
+				// section. Lists every configured command, submenus' too, unfiltered by display
+				// handlers.
 				return XCoreMenuBridge.ResolveMenu(window, field.HotlinksId).Leaves
 					.Select(leaf => XCoreMenuBridge.StripAccelerator(leaf.Label))
 					.Select(label => new DetailMenuItem(label, execute: () => RunAdapterHotlink(field, label)))

@@ -457,9 +457,9 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		}
 
 		/// <summary>
-		/// Shows the hotlinks of the section holding the field at <paramref name="index"/> and
-		/// hides any other section's, so only the section being worked in offers them. Focus
-		/// moving within that section leaves its links as they are.
+		/// Makes the section holding the field at <paramref name="index"/> the one being worked
+		/// in, whose hotlinks are shown. Focus moving within that section leaves its links as
+		/// they are.
 		/// </summary>
 		private void ShowHotlinksFor(int index)
 		{
@@ -468,9 +468,44 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			var header = DetailVisibility.GetHotlinksHeaderIndex(Model.Fields, index);
 			if (header == _activeHotlinksHeader)
 				return;
-			HotlinksOf(_activeHotlinksHeader)?.Clear();
 			_activeHotlinksHeader = header;
-			FillHotlinks(header);
+			UpdateHotlinks();
+		}
+
+		/// <summary>
+		/// Shows the hotlinks of the section being worked in, and of every section that shows no
+		/// field (it is empty or collapsed), since focus cannot enter such a section to bring its
+		/// links. Clears every other header's links. A header already showing its links keeps
+		/// them as they are.
+		/// </summary>
+		private void UpdateHotlinks()
+		{
+			if (_hotlinkItems == null)
+				return;
+			for (var i = 0; i < _rows.Length; i++)
+			{
+				var strip = _rows[i]?.Hotlinks;
+				if (strip == null)
+					continue;
+				var offered = i == _activeHotlinksHeader || !SectionShowsAField(i);
+				if (offered && !strip.IsShown)
+					FillHotlinks(i);
+				else if (!offered && strip.IsShown)
+					strip.Clear();
+			}
+		}
+
+		// Whether a row under the header at headerIndex is shown that is not itself a header;
+		// a header is not a Tab stop, so it gives the keyboard no way into the section.
+		private bool SectionShowsAField(int headerIndex)
+		{
+			var indent = Model.Fields[headerIndex].Indent;
+			for (var i = headerIndex + 1; i < Model.Fields.Count && Model.Fields[i].Indent > indent; i++)
+			{
+				if (_rows[i] != null && Model.Fields[i].Kind != DetailFieldKind.Header)
+					return true;
+			}
+			return false;
 		}
 
 		/// <summary>
@@ -720,6 +755,9 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				}
 				position++;
 			}
+			// A rebuilt header row, or a section whose fields were just shown or hidden, needs
+			// its links decided again.
+			UpdateHotlinks();
 
 			// Only once the form has let go of them, so a focus loss their removal raises still
 			// reaches their own handlers and stages what they hold.
@@ -896,10 +934,6 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				if (headerKebab != null)
 					HoverReveal.Attach(new[] { headerCell }, new[] { headerKebab });
 				ApplyRowTabIndex(headerControl, row);
-				// A row rebuilt while its section is being worked in (a collapse and expand
-				// above it) shows its links again.
-				if (row == _activeHotlinksHeader)
-					shown.Hotlinks?.Show(_hotlinkItems(field));
 				return new FieldContent { Content = headerControl, Label = null };
 			}
 

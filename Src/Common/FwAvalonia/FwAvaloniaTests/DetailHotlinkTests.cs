@@ -91,10 +91,11 @@ namespace FwAvaloniaTests
 	{
 		private const string SenseHotlinks = "mnuDataTree-Sense-Hotlinks";
 
-		private static DetailField Header(string id, int indent = 0, string hotlinks = SenseHotlinks)
+		private static DetailField Header(string id, int indent = 0, string hotlinks = SenseHotlinks,
+			bool expanded = true)
 			=> new DetailField(id, id, id, null, DetailFieldKind.Header,
 				EditorClassification.Known, id, null, HostRouting.Inherit, null, null, null,
-				isEditable: false, indent: indent, isCollapsible: true, isInitiallyExpanded: true,
+				isEditable: false, indent: indent, isCollapsible: true, isInitiallyExpanded: expanded,
 				hotlinksId: hotlinks, objectHvo: 1234);
 
 		private static DetailField Text(string id, int indent)
@@ -272,6 +273,43 @@ namespace FwAvaloniaTests
 
 			Assert.That(FocusedId(host.Window), Does.StartWith("Gloss"));
 			Assert.That(Links(host.View, "Sense1"), Has.Count.EqualTo(2), "arriving shows the section's links");
+		}
+
+		[AvaloniaTest]
+		public void AnEmptySection_ShowsItsHotlinks_WithoutFocus_AndTabReachesThem()
+		{
+			var host = Show(field => new[] { new DetailMenuItem("Insert Variant", execute: () => { }) }, 480,
+				Text("Citation", 0), Header("Variants"), Text("Etymology", 0));
+
+			Assert.That(Links(host.View, "Variants"), Has.Count.EqualTo(1),
+				"no field in the section can take focus to bring its links");
+			var link = Link(host.View, "Variants", 0);
+			FocusEditorOf(host.View, "Etymology");
+			Assert.That(Link(host.View, "Variants", 0), Is.SameAs(link), "focus elsewhere keeps them");
+
+			FocusEditorOf(host.View, "Citation");
+			PressKey(host.Window, PhysicalKey.Tab);
+
+			Assert.That(FocusedId(host.Window), Is.EqualTo("Variants.Hotlinks.0"));
+			Assert.That(Link(host.View, "Variants", 0), Is.SameAs(link), "the focused link is not rebuilt");
+			Assert.That(host.AskedFor, Is.EqualTo(new[] { "Variants" }));
+		}
+
+		[AvaloniaTest]
+		public void ACollapsedSection_ShowsItsHotlinks_UntilItIsExpanded()
+		{
+			var host = Show(SenseCommands, 480,
+				Header("Sense1", expanded: false), Text("Gloss", 1), Text("Etymology", 0));
+			Assert.That(Links(host.View, "Sense1"), Has.Count.EqualTo(2), "its fields are hidden");
+
+			var header = host.View.GetVisualDescendants().OfType<Control>()
+				.First(c => AutomationProperties.GetAutomationId(c) == "Sense1");
+			LeftClick(host.Window, header);
+			FocusEditorOf(host.View, "Etymology");
+			Assert.That(Links(host.View, "Sense1"), Is.Empty, "expanded, its fields can take focus");
+
+			LeftClick(host.Window, header);
+			Assert.That(Links(host.View, "Sense1"), Has.Count.EqualTo(2), "collapsed again");
 		}
 
 		private static IBrush DrawnBackground(Button link)
