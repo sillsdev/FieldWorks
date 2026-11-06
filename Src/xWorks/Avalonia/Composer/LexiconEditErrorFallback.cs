@@ -96,7 +96,6 @@ namespace SIL.FieldWorks.XWorks
 		// live here.
 		private IReadOnlyList<DetailWsValue> GetLexemeFormValues(ViewNode node)
 		{
-			// The part's fontsize percentage and bold, as the composer applies them.
 			var scale = node.FontScalePercent > 0 ? node.FontScalePercent / 100.0 : 1.0;
 			return DetailValueFactory.CreateMultiWsValues(
 				_cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems, ws =>
