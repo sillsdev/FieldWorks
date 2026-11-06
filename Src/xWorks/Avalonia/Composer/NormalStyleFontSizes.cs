@@ -3,7 +3,10 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.CompilerServices;
 using SIL.LCModel;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.DomainServices;
 
 namespace SIL.FieldWorks.XWorks
@@ -20,19 +23,41 @@ namespace SIL.FieldWorks.XWorks
 		private const double MillipointsPerPoint = 1000.0;
 		private const double UnitsPerPoint = 96.0 / 72.0;
 
+		private static readonly ConditionalWeakTable<LcmCache, NormalStyleFontSizes> s_byProject =
+			new ConditionalWeakTable<LcmCache, NormalStyleFontSizes>();
+
+		private readonly ITsTextProps _rules;
 		private readonly BaseStyleInfo _normal;
 		private readonly Dictionary<int, double> _sizes = new Dictionary<int, double>();
 
-		/// <summary>Reads the Normal style of <paramref name="cache"/>'s project.</summary>
-		public NormalStyleFontSizes(LcmCache cache)
+		/// <summary>
+		/// The sizes for <paramref name="cache"/>'s project as its Normal style is now. Reuses
+		/// the last result until the style's rules change, as saving the Styles dialog does.
+		/// </summary>
+		public static NormalStyleFontSizes ForProject(LcmCache cache)
 		{
-			if (cache.LangProject == null)
+			var rules = NormalStyle(cache)?.Rules;
+			if (s_byProject.TryGetValue(cache, out var sizes) && ReferenceEquals(sizes._rules, rules))
+				return sizes;
+			sizes = new NormalStyleFontSizes(cache, rules);
+			s_byProject.Remove(cache);
+			s_byProject.Add(cache, sizes);
+			return sizes;
+		}
+
+		private NormalStyleFontSizes(LcmCache cache, ITsTextProps rules)
+		{
+			_rules = rules;
+			if (rules == null)
 				return;
 			var styleSheet = new LcmStyleSheet();
 			styleSheet.Init(cache, cache.LangProject.Hvo, LangProjectTags.kflidStyles);
 			if (styleSheet.Styles.Contains(StyleServices.NormalStyleName))
 				_normal = styleSheet.Styles[StyleServices.NormalStyleName];
 		}
+
+		private static IStStyle NormalStyle(LcmCache cache)
+			=> cache.LangProject?.StylesOC.FirstOrDefault(s => s.Name == StyleServices.NormalStyleName);
 
 		/// <summary>
 		/// Normal's size for the writing system with handle <paramref name="ws"/>: its own size

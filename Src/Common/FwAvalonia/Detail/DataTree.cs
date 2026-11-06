@@ -1109,15 +1109,15 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			return link;
 		}
 
-		// The field->control dispatch is shared with the browse in-cell editor through
-		// SliceFactory. The detail pane passes its full callback set (per-WS keyboard, slice
-		// menu, link, clipboard) and routes reference-vector gesture completion to its validation-gated
-		// OnSave (the autosave). New DetailFieldKinds are added once, in the factory.
 		// Shows the editor's data at the model's value size, the Normal style's, in place of the
 		// surface font (LT-22811).
 		private void ApplyValueFontSize(Control editor)
 			=> FwSurfaceStyles.ApplyValueFontSize(editor, Model.ValueFontSize);
 
+		// The field->control dispatch is shared with the browse in-cell editor through
+		// SliceFactory. The detail pane passes its full callback set (per-WS keyboard, slice
+		// menu, link, clipboard) and routes reference-vector gesture completion to its validation-gated
+		// OnSave (the autosave). New DetailFieldKinds are added once, in the factory.
 		private Control CreateEditor(DetailField field, string automationId)
 			=> SliceFactory.Build(field, automationId, new SliceFactoryContext(
 				editContext: _editContext,

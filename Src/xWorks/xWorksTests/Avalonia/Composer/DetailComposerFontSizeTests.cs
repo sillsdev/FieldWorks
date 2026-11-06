@@ -91,6 +91,33 @@ namespace SIL.FieldWorks.XWorks
 				"the analysis gloss keeps Normal's size for all writing systems");
 		}
 
+		// The sizes are reused between composes, so this pins that a Styles-dialog change to
+		// Normal still reaches the next compose.
+		[Test]
+		public void Compose_AfterNormalChanges_UsesTheNewSize()
+		{
+			NormalStyle(20000);
+			DetailComposer.Compose(m_entry, Cache);
+			NormalStyle(30000);
+
+			var composed = DetailComposer.Compose(m_entry, Cache);
+
+			Assert.That(Value(composed, "house").FontSize, Is.EqualTo(30 * UnitsPerPoint).Within(0.01));
+		}
+
+		[Test]
+		public void ErrorFallback_ShowsValuesAtTheNormalStyleSize()
+		{
+			NormalStyle(20000);
+
+			var model = LexiconEditErrorFallback.Build(m_entry, Cache);
+
+			Assert.That(model.ValueFontSize, Is.EqualTo(20 * UnitsPerPoint).Within(0.01));
+			var gloss = model.Fields.Single(f => f.Field == "Gloss").Values
+				.Single(v => v.Value == "house");
+			Assert.That(gloss.FontSize, Is.EqualTo(20 * UnitsPerPoint).Within(0.01));
+		}
+
 		[Test]
 		public void Compose_WithNoNormalStyle_ShowsValuesAtTenPoints()
 		{

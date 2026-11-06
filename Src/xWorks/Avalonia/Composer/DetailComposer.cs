@@ -375,7 +375,7 @@ namespace SIL.FieldWorks.XWorks
 				_sda = cache.DomainDataByFlid;
 				_mdc = (IFwMetaDataCacheManaged)cache.DomainDataByFlid.MetaDataCache;
 				_summaryLines = new DetailSummaryLines(cache);
-				_normalFontSizes = new NormalStyleFontSizes(cache);
+				_normalFontSizes = NormalStyleFontSizes.ForProject(cache);
 			}
 
 			private readonly NormalStyleFontSizes _normalFontSizes;
