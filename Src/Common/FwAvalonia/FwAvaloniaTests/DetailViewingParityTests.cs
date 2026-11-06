@@ -9,6 +9,7 @@ using Avalonia.Automation;
 using Avalonia.Automation.Peers;
 using Avalonia.Automation.Provider;
 using Avalonia.Controls;
+using Avalonia.Controls.Presenters;
 using Avalonia.Headless;
 using Avalonia.Headless.NUnit;
 using Avalonia.Interactivity;
@@ -47,10 +48,12 @@ namespace FwAvaloniaTests
 			return field;
 		}
 
-		private static DataTree Show(params DetailField[] fields)
+		private static DataTree Show(params DetailField[] fields) => ShowSized(0, fields);
+
+		private static DataTree ShowSized(double valueFontSize, params DetailField[] fields)
 		{
 			var model = new DetailModel("LexEntry", "Normal",
-				fields.ToList(), new List<ViewDiagnostic>());
+				fields.ToList(), new List<ViewDiagnostic>(), valueFontSize);
 			var view = new DataTree(model);
 			var window = new Window { Content = view, Width = 480, Height = 300 };
 			window.Show();
@@ -680,6 +683,73 @@ namespace FwAvaloniaTests
 				"11.15: the lexeme form's legacy bold emphasis applies");
 			Assert.That(box.FontSize, Is.EqualTo(14.4).Within(0.01), "11.15: the 120% fontsize applies");
 			Assert.That(box.ContextFlyout, Is.Not.Null, "11.17: rows carry the Copy context menu");
+		}
+
+		// LT-22811: the model's value size reaches every kind of value over the theme's size;
+		// labels, writing-system abbreviations and a value with its own size keep theirs.
+		[AvaloniaTest]
+		public void ValueFontSize_SizesEveryValue_ButNotLabelsOrSizedValues()
+		{
+			const double normalSize = 20;
+			var chooser = new DetailField("c", "Morph Type", "MorphType", null,
+				DetailFieldKind.Chooser, EditorClassification.Known, "c", null,
+				HostRouting.Inherit, null,
+				new List<DetailChoiceOption> { new DetailChoiceOption("mt-stem", "stem") },
+				"mt-stem");
+			var ownSize = new DetailField("s", "Lexeme Form", "Form", null, DetailFieldKind.Text,
+				EditorClassification.Known, "s", null, HostRouting.Inherit,
+				new List<DetailWsValue> { new DetailWsValue("seh", "casa", null, 30, false, "seh") },
+				null, null);
+			var themed = Show(Text("t", "Gloss", 0));
+			var view = ShowSized(normalSize, Text("t", "Gloss", 0), chooser, ownSize);
+			TextBox Box(Control root, string text)
+				=> root.GetVisualDescendants().OfType<TextBox>().Single(b => b.Text == text);
+
+			Assert.That(Box(themed, "value").FontSize, Is.Not.EqualTo(normalSize),
+				"precondition: the theme's own size differs");
+			Assert.That(Box(view, "value").FontSize, Is.EqualTo(normalSize), "a text value");
+			var chooserText = view.GetVisualDescendants().OfType<TextBlock>()
+				.FirstOrDefault(t => t.Text == "stem");
+			Assert.That(chooserText?.FontSize, Is.EqualTo(normalSize), "a chooser's value");
+			Assert.That(Box(view, "casa").FontSize, Is.EqualTo(30), "a value's own size wins");
+			TextPresenter Drawn(string text) => Box(view, text).GetVisualDescendants()
+				.OfType<TextPresenter>().Single();
+			Assert.That(Drawn("casa").FontSize, Is.EqualTo(30), "and it is the size the box draws");
+			Assert.That(Drawn("value").FontSize, Is.EqualTo(normalSize));
+			var label = view.GetVisualDescendants().OfType<TextBlock>()
+				.First(t => AutomationProperties.GetAutomationId(t) == "t.Label");
+			Assert.That(label.FontSize,
+				Is.EqualTo(SIL.FieldWorks.Common.FwAvalonia.FwAvaloniaDensity.LabelFontSize));
+			var abbrev = view.GetVisualDescendants().OfType<TextBlock>().First(t => t.Text == "en");
+			Assert.That(abbrev.FontSize,
+				Is.EqualTo(SIL.FieldWorks.Common.FwAvalonia.FwAvaloniaDensity.WsAbbrevFontSize));
+		}
+
+		// LT-22811: a styled value shows through a read-only display until clicked; it keeps the
+		// value's own size and bold, as the lexeme form's 120% emphasis needs.
+		[AvaloniaTest]
+		public void ValueFontSize_StyledValueDisplay_KeepsTheValuesSizeAndBold()
+		{
+			var rich = new DetailRichTextValue("dog", new[]
+			{
+				new DetailTextRun("do", "seh"),
+				new DetailTextRun("g", "seh", namedStyle: "Emphasis")
+			});
+			var styled = new DetailField("s", "Lexeme Form", "Form", null, DetailFieldKind.Text,
+				EditorClassification.Known, "s", null, HostRouting.Inherit,
+				new List<DetailWsValue>
+				{
+					new DetailWsValue("seh", "dog", null, 30, false, "seh", bold: true, richText: rich)
+				},
+				null, null);
+			var view = ShowSized(20, styled);
+
+			var display = view.GetVisualDescendants().OfType<TextBlock>()
+				.Single(t => (AutomationProperties.GetAutomationId(t) ?? string.Empty)
+					.EndsWith(".Display", System.StringComparison.Ordinal));
+			Assert.That(display.IsVisible, Is.True, "precondition: the styled value shows its display");
+			Assert.That(display.FontSize, Is.EqualTo(30), "the value's own size, not the view's");
+			Assert.That(display.FontWeight, Is.EqualTo(Avalonia.Media.FontWeight.Bold));
 		}
 
 		[AvaloniaTest]

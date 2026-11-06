@@ -2114,18 +2114,27 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			string className,
 			string layoutName,
 			IReadOnlyList<DetailField> fields,
-			IReadOnlyList<ViewDiagnostic> diagnostics)
+			IReadOnlyList<ViewDiagnostic> diagnostics,
+			double valueFontSize = 0)
 		{
 			ClassName = className;
 			LayoutName = layoutName;
 			Fields = fields ?? new List<DetailField>();
 			Diagnostics = diagnostics ?? new List<ViewDiagnostic>();
+			ValueFontSize = valueFontSize;
 		}
 
 		public string ClassName { get; }
 		public string LayoutName { get; }
 		public IReadOnlyList<DetailField> Fields { get; }
 		public IReadOnlyList<ViewDiagnostic> Diagnostics { get; }
+
+		/// <summary>
+		/// The font size of the field values, in device-independent units: the project's Normal
+		/// style size. A value that carries its own <see cref="DetailWsValue.FontSize"/> shows at
+		/// that instead. 0 leaves the values at the theme's size.
+		/// </summary>
+		public double ValueFontSize { get; }
 	}
 
 	/// <summary>
