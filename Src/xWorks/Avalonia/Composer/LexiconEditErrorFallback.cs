@@ -83,7 +83,7 @@ namespace SIL.FieldWorks.XWorks
 			switch (fieldNode.Field)
 			{
 				case LexemeFormField:
-					return GetLexemeFormValues();
+					return GetLexemeFormValues(fieldNode);
 				case GlossField:
 					return GetGlossValues();
 				default:
@@ -94,8 +94,10 @@ namespace SIL.FieldWorks.XWorks
 		// One row per current writing system, using the shared DetailValueFactory per-ws row
 		// recipe (same as the composer), so both views render consistently; only the text reads
 		// live here.
-		private IReadOnlyList<DetailWsValue> GetLexemeFormValues()
+		private IReadOnlyList<DetailWsValue> GetLexemeFormValues(ViewNode node)
 		{
+			// The part's fontsize percentage and bold, as the composer applies them.
+			var scale = node.FontScalePercent > 0 ? node.FontScalePercent / 100.0 : 1.0;
 			return DetailValueFactory.CreateMultiWsValues(
 				_cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems, ws =>
 				{
@@ -103,7 +105,8 @@ namespace SIL.FieldWorks.XWorks
 					if ((text == null || text.Length == 0) && ws.Handle == _cache.DefaultVernWs)
 						text = _entry.CitationForm.get_String(ws.Handle); // legacy fallback, default ws only
 					return text;
-				}, _cache.WritingSystemFactory, ws => _fontSizes.For(ws.Handle));
+				}, _cache.WritingSystemFactory, ws => _fontSizes.For(ws.Handle) * scale,
+				node.BoldEmphasis);
 		}
 
 		private IReadOnlyList<DetailWsValue> GetGlossValues()

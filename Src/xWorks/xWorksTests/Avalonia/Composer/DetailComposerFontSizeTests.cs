@@ -116,6 +116,11 @@ namespace SIL.FieldWorks.XWorks
 			var gloss = model.Fields.Single(f => f.Field == "Gloss").Values
 				.Single(v => v.Value == "house");
 			Assert.That(gloss.FontSize, Is.EqualTo(20 * UnitsPerPoint).Within(0.01));
+			var lexemeForm = model.Fields.Single(f => f.Field == "Form").Values
+				.Single(v => v.Value == "casa");
+			Assert.That(lexemeForm.FontSize, Is.EqualTo(1.2 * 20 * UnitsPerPoint).Within(0.01),
+				"the lexeme form keeps its 120%, as in the composed view");
+			Assert.That(lexemeForm.Bold, Is.True, "and its bold");
 		}
 
 		[Test]
