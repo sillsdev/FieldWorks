@@ -62,22 +62,23 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 				surface.Styles.Add(style);
 		}
 
+		/// <summary>
+		/// Shows the text under <paramref name="editor"/> at <paramref name="fontSize"/> in place
+		/// of the surface font, for the controls the surface font sizes. A size a control sets
+		/// for itself still wins. Does nothing for a null editor or a size that is not positive.
+		/// </summary>
+		public static void ApplyValueFontSize(Control editor, double fontSize)
+		{
+			if (editor == null || fontSize <= 0)
+				return;
+			foreach (var style in TextFontStyles(fontSize))
+				editor.Styles.Add(style);
+		}
+
 		private static IEnumerable<IStyle> Build()
 		{
-			// TextBlock -- the detail view labels/values and browse cells/headers. A
-			// per-control FontSize is a LOCAL value that outranks this setter, so only
-			// the unset Fluent default is replaced.
-			yield return new Style(s => s.OfType<TextBlock>())
-			{
-				Setters = { new Setter(TextBlock.FontSizeProperty, SurfaceFontSize) }
-			};
-			// TextBox -- the editable detail values / browse cells. Font only: the editors
-			// are deliberately borderless/transparent, so no border or min-height floor
-			// here, unlike the boxed dialog inputs.
-			yield return new Style(s => s.OfType<TextBox>())
-			{
-				Setters = { new Setter(TemplatedControl.FontSizeProperty, SurfaceFontSize) }
-			};
+			foreach (var style in TextFontStyles(SurfaceFontSize))
+				yield return style;
 			// TabItem -- the bulk-edit bar's mode tabs. Fluent's default tab headers are large
 			// (~16px semibold
 			// with tall padding); with several tabs on a narrow bar they WRAP to a second row, eating the bar
@@ -99,6 +100,26 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 
 			// Semi sizes CheckBox/RadioButton controls from overridable resources; FwSemiDensity
 			// retargets those once at the Application level.
+		}
+
+		// Sizes exactly TextBlock and TextBox, never a control inside a TextBox's template, so
+		// the text a box draws inherits the box's own size.
+		private static IEnumerable<IStyle> TextFontStyles(double fontSize)
+		{
+			// TextBlock -- the detail view labels/values and browse cells/headers. A
+			// per-control FontSize is a LOCAL value that outranks this setter, so only
+			// the unset Fluent default is replaced.
+			yield return new Style(s => s.OfType<TextBlock>())
+			{
+				Setters = { new Setter(TextBlock.FontSizeProperty, fontSize) }
+			};
+			// TextBox -- the editable detail values / browse cells. Font only: the editors
+			// are deliberately borderless/transparent, so no border or min-height floor
+			// here, unlike the boxed dialog inputs.
+			yield return new Style(s => s.OfType<TextBox>())
+			{
+				Setters = { new Setter(TemplatedControl.FontSizeProperty, fontSize) }
+			};
 		}
 	}
 }

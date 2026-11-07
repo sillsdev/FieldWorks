@@ -937,6 +937,12 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			var rtl = box.FlowDirection == FlowDirection.RightToLeft;
 			var display = DetailRichTextChrome.CreatePerRunFontDisplay(currentRich, field.WritingSystemFonts,
 				automationId + "." + wsKey + ".Display", rtl);
+			// The display stands in for the box, so it shows the value's own size and emphasis
+			// (LT-22811).
+			if (box.IsSet(TextBox.FontSizeProperty))
+				display.FontSize = box.FontSize;
+			if (box.IsSet(TextBox.FontWeightProperty))
+				display.FontWeight = box.FontWeight;
 			_valueStops.AttachDisplay(valueStop, display);
 
 			// Exactly ONE of {display, box} occupies the row at a time (IsVisible collapses the other out
