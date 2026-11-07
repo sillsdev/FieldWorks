@@ -73,6 +73,12 @@ namespace SIL.FieldWorks.XWorks
 			return size;
 		}
 
+		/// <summary>
+		/// Normal's size for the writing system with handle <paramref name="ws"/>, scaled by a
+		/// part's fontsize <paramref name="percent"/>; 0 or less leaves it unscaled.
+		/// </summary>
+		public double For(int ws, int percent) => For(ws) * (percent > 0 ? percent / 100.0 : 1.0);
+
 		private int Millipoints(int ws)
 		{
 			if (_normal == null)

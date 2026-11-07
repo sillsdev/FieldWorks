@@ -725,6 +725,29 @@ namespace FwAvaloniaTests
 				Is.EqualTo(SIL.FieldWorks.Common.FwAvalonia.FwAvaloniaDensity.WsAbbrevFontSize));
 		}
 
+		// LT-22811: a value's own Copy menu keeps the menu size; the value size is for the data.
+		[AvaloniaTest]
+		public void ValueFontSize_LeavesTheValuesCopyMenuAtItsOwnSize()
+		{
+			double MenuTextSize(DataTree view)
+			{
+				var box = view.GetVisualDescendants().OfType<TextBox>().Single(b => b.Text == "value");
+				var flyout = (MenuFlyout)box.ContextFlyout;
+				flyout.ShowAt(box);
+				Dispatcher.UIThread.RunJobs();
+				var size = flyout.Items.OfType<MenuItem>().First()
+					.GetVisualDescendants().OfType<TextBlock>().First().FontSize;
+				flyout.Hide();
+				return size;
+			}
+
+			var themed = MenuTextSize(Show(Text("t", "Gloss", 0)));
+			var sized = MenuTextSize(ShowSized(20, Text("t", "Gloss", 0)));
+
+			Assert.That(sized, Is.EqualTo(themed), "the menu text is the size it is without a value size");
+			Assert.That(sized, Is.Not.EqualTo(20));
+		}
+
 		// LT-22811: a styled value shows through a read-only display until clicked; it keeps the
 		// value's own size and bold, as the lexeme form's 120% emphasis needs.
 		[AvaloniaTest]

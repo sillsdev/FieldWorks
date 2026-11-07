@@ -1359,9 +1359,8 @@ namespace SIL.FieldWorks.XWorks
 				var dataSeen = false;
 				// Each alternative shows at the Normal style's size for its writing system,
 				// scaled by the part's fontsize percentage (the lexeme form's 120%).
-				var scale = node.FontScalePercent > 0 ? node.FontScalePercent / 100.0 : 1.0;
 				Func<CoreWritingSystemDefinition, double> fontSize =
-					ws => _normalFontSizes.For(ws.Handle) * scale;
+					ws => _normalFontSizes.For(ws.Handle, node.FontScalePercent);
 				// The per-ws value rows build through the shared factory
 				// (LexiconEditErrorFallback uses the same one), this path only supplies the text.
 				IReadOnlyList<DetailWsValue> values;
@@ -3323,10 +3322,16 @@ namespace SIL.FieldWorks.XWorks
 					return;
 
 				var stableId = StableId(node, obj) + DetailField.GhostStableIdSuffix;
+				// Typed text goes into the ghost's writing system, so it shows at that size.
+				var ghostFontSize = ghost == null ? 0 : _normalFontSizes.For(ghost.WsHandle);
 				AddField(new DetailField(stableId, label, node.Field,
 					node.WritingSystem, DetailFieldKind.Text, node.EditorClassification,
 					node.AutomationId, node.LocalizationKey, node.Routing,
-					new List<DetailWsValue> { new DetailWsValue(ghost?.WsAbbrev ?? "", string.Empty, wsTag: ghost?.WsTag) },
+					new List<DetailWsValue>
+					{
+						new DetailWsValue(ghost?.WsAbbrev ?? "", string.Empty, fontSize: ghostFontSize,
+							wsTag: ghost?.WsTag)
+					},
 					null, null, isEditable: ghost != null, indent: depth,
 					menuId: node.MenuId, hotlinksId: node.HotlinksId, objectHvo: obj.Hvo,
 					ghostPrompt: prompt));
@@ -3339,6 +3344,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				public string WsAbbrev;
 				public string WsTag; // unique IETF tag (ws.Id), the edit-routing identity
+				public int WsHandle;
 				public Func<string, string, bool> Setter;
 			}
 
@@ -3408,6 +3414,7 @@ namespace SIL.FieldWorks.XWorks
 				{
 					WsAbbrev = ws.Abbreviation,
 					WsTag = ws.Id,
+					WsHandle = ws.Handle,
 					Setter = (wsKey, value) =>
 					{
 						// The closure outlives the edit session: a Cancel rolls MakeNewObject

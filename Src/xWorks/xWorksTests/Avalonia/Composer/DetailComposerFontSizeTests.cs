@@ -91,6 +91,32 @@ namespace SIL.FieldWorks.XWorks
 				"the analysis gloss keeps Normal's size for all writing systems");
 		}
 
+		// Text typed into a ghost row lands in the ghost's writing system, so the row shows at
+		// Normal's size for that writing system.
+		[Test]
+		public void Compose_GhostRows_UseTheirWritingSystemsSize()
+		{
+			var normal = NormalStyle(20000);
+			var info = new StyleInfo(normal);
+			info.FontInfoForWs(Cache.DefaultVernWs).m_fontSize.ExplicitValue = 30000;
+			info.SaveToDB(normal, true, true);
+
+			var ghosts = DetailComposer.Compose(m_entry, Cache).Model.Fields
+				.Where(f => f.StableId.EndsWith(DetailField.GhostStableIdSuffix)
+					&& f.Values != null)
+				.SelectMany(f => f.Values)
+				.Where(v => !string.IsNullOrEmpty(v.WsTag))
+				.ToList();
+
+			Assert.That(ghosts, Is.Not.Empty, "precondition: the entry shows editable ghost rows");
+			foreach (var ghost in ghosts)
+			{
+				var points = Cache.WritingSystemFactory.GetWsFromStr(ghost.WsTag) == Cache.DefaultVernWs
+					? 30 : 20;
+				Assert.That(ghost.FontSize, Is.EqualTo(points * UnitsPerPoint).Within(0.01), ghost.WsTag);
+			}
+		}
+
 		// The sizes are reused between composes, so this pins that a Styles-dialog change to
 		// Normal still reaches the next compose.
 		[Test]

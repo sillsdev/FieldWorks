@@ -96,7 +96,6 @@ namespace SIL.FieldWorks.XWorks
 		// live here.
 		private IReadOnlyList<DetailWsValue> GetLexemeFormValues(ViewNode node)
 		{
-			var scale = node.FontScalePercent > 0 ? node.FontScalePercent / 100.0 : 1.0;
 			return DetailValueFactory.CreateMultiWsValues(
 				_cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems, ws =>
 				{
@@ -104,7 +103,7 @@ namespace SIL.FieldWorks.XWorks
 					if ((text == null || text.Length == 0) && ws.Handle == _cache.DefaultVernWs)
 						text = _entry.CitationForm.get_String(ws.Handle); // legacy fallback, default ws only
 					return text;
-				}, _cache.WritingSystemFactory, ws => _fontSizes.For(ws.Handle) * scale,
+				}, _cache.WritingSystemFactory, ws => _fontSizes.For(ws.Handle, node.FontScalePercent),
 				node.BoldEmphasis);
 		}
 
