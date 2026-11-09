@@ -209,6 +209,8 @@ namespace SIL.FieldWorks.XWorks
 			m_detailEditContext.DetachUndoGuard();
 			m_detailEditContext.InvalidEditRolledBack = null;
 			m_avaloniaRefreshController?.Dispose();
+			m_refreshQuietTimer?.Dispose();
+			m_refreshQuietTimer = null;
 			SettleDetailEdits();
 			m_detailEditContext.Clear();
 			m_avaloniaEntryForm?.Dispose();
@@ -302,7 +304,8 @@ namespace SIL.FieldWorks.XWorks
 				new RefreshCoordinator(),
 				ScheduleOnUiThread,
 				// This lexical host's relevance rule; the controller itself stays host-agnostic.
-				changed => IsChangeWithinEntry(changed, Clerk?.CurrentObject));
+				changed => IsChangeWithinEntry(changed, Clerk?.CurrentObject),
+				DeferUntilQuiet);
 			// Global Undo/Redo while a fenced session is open would re-enter the UOW write lock
 			// (LockRecursionException); the guard settles the pending edit instead.
 			m_detailEditContext.AttachUndoGuard(Cache.ActionHandlerAccessor);
@@ -341,6 +344,38 @@ namespace SIL.FieldWorks.XWorks
 		// UI-thread deferral for the controller's coalesced refresh queue: posting to the message
 		// queue lets the current call stack (commit/rollback PropChanged, the focus transition
 		// that triggered an auto-save) unwind before the view is rebuilt.
+		// How long a burst of changes made outside the detail view must go quiet before the
+		// view rebuilds once for the rest of it, in milliseconds (LT-22692).
+		private const int RefreshQuietMilliseconds = 250;
+
+		private System.Windows.Forms.Timer m_refreshQuietTimer;
+		private Action m_afterRefreshQuiet;
+
+		// Runs the action once RefreshQuietMilliseconds pass with no further call; each call
+		// restarts the wait and replaces the action.
+		private void DeferUntilQuiet(Action action)
+		{
+			if (IsDisposed)
+				return;
+			m_afterRefreshQuiet = action;
+			if (m_refreshQuietTimer == null)
+			{
+				m_refreshQuietTimer = new System.Windows.Forms.Timer
+				{
+					Interval = RefreshQuietMilliseconds
+				};
+				m_refreshQuietTimer.Tick += (sender, e) =>
+				{
+					m_refreshQuietTimer.Stop();
+					var pending = m_afterRefreshQuiet;
+					m_afterRefreshQuiet = null;
+					pending?.Invoke();
+				};
+			}
+			m_refreshQuietTimer.Stop();
+			m_refreshQuietTimer.Start();
+		}
+
 		private void ScheduleOnUiThread(Action runner)
 		{
 			if (IsDisposed)
