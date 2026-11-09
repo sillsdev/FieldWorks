@@ -380,6 +380,70 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
+		private ILexEntry CreateEntryWithSense()
+		{
+			ILexEntry entry = null;
+			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
+			{
+				entry = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create();
+				entry.SensesOS.Add(Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create());
+			});
+			return entry;
+		}
+
+		[Test]
+		public void RefreshController_BurstGoesQuietAfterNavigating_DoesNotRebuildTheNewRecord()
+		{
+			var scheduled = new List<Action>();
+			var quiet = new List<Action>();
+			var refreshes = 0;
+			ICmObject shown = m_entry;
+			var other = CreateEntryWithSense();
+			using (new AvaloniaDetailRefreshController(
+				Cache, () => shown, () => false, () => refreshes++, new RefreshCoordinator(),
+				schedule: scheduled.Add,
+				isRelevant: changed => RecordEditView.IsChangeWithinEntry(changed, shown),
+				deferUntilQuiet: quiet.Add))
+			{
+				ChangeGloss("a");
+				scheduled[0]();
+				ChangeGloss("ab");
+
+				shown = other;
+				quiet[quiet.Count - 1]();
+
+				Assert.That(scheduled.Count, Is.EqualTo(1),
+					"showing the other entry already read current state");
+			}
+		}
+
+		[Test]
+		public void RefreshController_ChangeToTheNewRecordDuringABurst_StillRebuilds()
+		{
+			var scheduled = new List<Action>();
+			var quiet = new List<Action>();
+			var refreshes = 0;
+			ICmObject shown = m_entry;
+			var other = CreateEntryWithSense();
+			using (new AvaloniaDetailRefreshController(
+				Cache, () => shown, () => false, () => refreshes++, new RefreshCoordinator(),
+				schedule: scheduled.Add,
+				isRelevant: changed => RecordEditView.IsChangeWithinEntry(changed, shown),
+				deferUntilQuiet: quiet.Add))
+			{
+				ChangeGloss("a");
+				scheduled[0]();
+
+				shown = other;
+				NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
+					other.SensesOS[0].Gloss.set_String(Cache.DefaultAnalWs,
+						TsStringUtils.MakeString("b", Cache.DefaultAnalWs)));
+				quiet[quiet.Count - 1]();
+
+				Assert.That(scheduled.Count, Is.EqualTo(2), "the shown entry's own change rebuilds");
+			}
+		}
+
 		// Review round 2: a rebuild can raise PropChanged (settle-commit inside);
 		// already covered since recompose reads current domain state -- so it
 		// must coalesce into the running delivery, not re-queue.
