@@ -76,7 +76,7 @@ namespace FwAvaloniaDialogsTests
 					== "AddNewSense.Gloss." + wsTag);
 
 		[AvaloniaTest]
-		public void DialogText_UsesTheAndikaInterfaceFont()
+		public void DialogText_UsesTheInterfaceFont()
 		{
 			var (view, _) = Show(BasicInput(), "AddNewSense-00-font");
 			var text = view.GetVisualDescendants().OfType<TextBlock>()
