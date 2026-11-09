@@ -20,18 +20,10 @@ using SIL.FieldWorks.Common.FwAvalonia.ViewDefinition;
 
 namespace FwAvaloniaTests
 {
-	/// <summary>Checks interface font selection, bundled faces and glyph rendering.</summary>
+	/// <summary>Checks interface font selection, UI-language fallbacks and glyph rendering.</summary>
 	[TestFixture]
 	public class FwUiFontTests
 	{
-		private static IGlyphTypeface Resolve(FontWeight weight, FontStyle style = FontStyle.Normal)
-		{
-			var bundled = new FontFamily(FwUiFont.CollectionKey + "#Andika");
-			Assert.That(FontManager.Current.TryGetGlyphTypeface(new Typeface(bundled, style, weight), out var face),
-				Is.True, "Andika " + weight + " " + style + " must resolve from the bundled collection");
-			return face;
-		}
-
 		// Shapes the text in the interface font and returns the typeface and glyph id of each
 		// character, so a missing glyph (id 0) or a wrong face fails with the language named.
 		private static List<(IGlyphTypeface Face, ushort Glyph)> Shape(FontFamily family, string text)
@@ -86,20 +78,6 @@ namespace FwAvaloniaTests
 		public void UiFontFamilyToken_NamesSegoeUi()
 		{
 			Assert.That(FwUiFont.UiFontFamily.FamilyNames.First(), Is.EqualTo("Segoe UI"));
-		}
-
-		[AvaloniaTest]
-		public void PlainFamilyName_IsNotCapturedByThePrivateCollection()
-		{
-			Assert.That(new FontFamily("Andika").Key, Is.Null);
-		}
-
-		[AvaloniaTest]
-		public void BundledFaces_ResolveForEveryWeightInUse()
-		{
-			foreach (var weight in new[] { FontWeight.Normal, FontWeight.SemiBold, FontWeight.Bold })
-				Assert.That(Resolve(weight).FamilyName, Does.StartWith("Andika"));
-			Assert.That(Resolve(FontWeight.Normal, FontStyle.Italic).FamilyName, Is.EqualTo("Andika"));
 		}
 
 		private static void AssertFallbackLanguageDrawsItsSample(string tag, string sample)
@@ -195,8 +173,9 @@ namespace FwAvaloniaTests
 		[AvaloniaTest]
 		public void ApplyTo_CalledAgain_ChangesNothing()
 		{
+			var before = FwUiFont.UiFontFamily.ToString();
 			FwUiFont.ApplyTo(Application.Current);
-			Assert.That(Resolve(FontWeight.Normal).FamilyName, Is.EqualTo("Andika"));
+			Assert.That(FwUiFont.UiFontFamily.ToString(), Is.EqualTo(before));
 		}
 
 		[AvaloniaTest]

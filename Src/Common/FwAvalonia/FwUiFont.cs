@@ -8,25 +8,15 @@ using System.Globalization;
 using System.Linq;
 using Avalonia;
 using Avalonia.Media;
-using Avalonia.Media.Fonts;
 
 namespace SIL.FieldWorks.Common.FwAvalonia
 {
 	/// <summary>
 	/// Applies the interface font token and UI-language fallbacks to Semi's resources.
-	/// Data text retains its writing-system font. The private Andika collection is
-	/// registered independently of the default interface family.
+	/// Data text retains its writing-system font.
 	/// </summary>
 	public static class FwUiFont
 	{
-		/// <summary>Key of the private font collection holding the bundled interface
-		/// font.</summary>
-		public const string CollectionKey = "fonts:FieldWorks";
-
-		/// <summary>Location of the bundled interface font files inside
-		/// FwAvaloniaTheme.dll.</summary>
-		public const string AssetsUri = "avares://FwAvaloniaTheme/Assets/Fonts";
-
 		private const string DefaultFontFamilyKey = "DefaultFontFamily";
 
 		/// <summary>Named UI-language fallbacks, in the order tried. Each list names a Windows
@@ -50,8 +40,6 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 			["ur"] = new[] { "Segoe UI", "Scheherazade New" },
 			["zh"] = new[] { "Microsoft YaHei UI", "Noto Sans CJK SC" },
 		};
-
-		private static FontManager s_registeredWith;
 
 		/// <summary>
 		/// The interface font family in effect for the UI language at application startup.
@@ -86,20 +74,11 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 			return FontFamily.Parse(string.Join(", ", names));
 		}
 
-		/// <summary>Registers the bundled font and points Semi's text-font resources at the
-		/// interface family stack for the current UI language. Calling it again for the same
-		/// process re-registers nothing. The FwAvaloniaTheme token dictionary must already be
-		/// merged into <paramref name="app"/>.</summary>
+		/// <summary>Points Semi's text-font resources at the interface family stack for the
+		/// current UI language. The FwAvaloniaTheme token dictionary must already be merged
+		/// into <paramref name="app"/>.</summary>
 		public static void ApplyTo(Application app)
 		{
-			var fonts = FontManager.Current;
-			if (!ReferenceEquals(s_registeredWith, fonts))
-			{
-				var collectionUri = new Uri(CollectionKey);
-				fonts.AddFontCollection(new EmbeddedFontCollection(collectionUri, new Uri(AssetsUri)));
-				s_registeredWith = fonts;
-			}
-
 			var family = FamilyFor(CultureInfo.CurrentUICulture);
 			app.Resources[DefaultFontFamilyKey] = family;
 			app.Resources["ContentControlThemeFontFamily"] = family;

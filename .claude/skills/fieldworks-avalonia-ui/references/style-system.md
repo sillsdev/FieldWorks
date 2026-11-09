@@ -42,9 +42,9 @@ sit inside a `Border.fwFieldHost` that supplies the box.
 directly (not three independently-maintained copies) -- see
 `Src/Common/FwAvalonia/FwThemeResources.cs`.
 
-**Font family:** Segoe UI, named by `FwUiFontFamily`. `FwUiFont.ApplyTo` registers
-bundled Andika and points Semi's font resources at the theme family stack. Named
-UI-language fallbacks and the platform default follow it. Data text keeps its
+**Font family:** Segoe UI, named by `FwUiFontFamily`. `FwUiFont.ApplyTo` points Semi's
+font resources at the theme family stack. Named UI-language fallbacks and the platform
+default follow it. Data text keeps its
 writing-system font. Measure UI text with `FwUiFont.UiFontFamily`. See ADR 0004.
 
 **Control height:** `TextBox`/`ComboBox`/`Button` `MinHeight = 24` (WinForms runs ~21-23px; 24 is the
