@@ -293,6 +293,8 @@ namespace SIL.PcPatrFLEx
 
 		private void OnFormClosing(object sender, EventArgs e)
 		{
+			flashTimer?.Stop();
+			flashTimer?.Dispose();
 			SaveRegistryInfo();
 		}
 
