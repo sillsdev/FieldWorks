@@ -278,6 +278,108 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
+		// One unit of work per call, as each keystroke typed in another view is.
+		private void ChangeGloss(string text)
+			=> NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
+				m_entry.SensesOS[0].Gloss.set_String(Cache.DefaultAnalWs,
+					TsStringUtils.MakeString(text, Cache.DefaultAnalWs)));
+
+		// LT-22692: typing in another view rebuilt the detail view on every keystroke.
+		[Test]
+		public void RefreshController_OutsideBurst_RefreshesFirstAtOnce_AndTheRestOnceWhenQuiet()
+		{
+			var scheduled = new List<Action>();
+			var quiet = new List<Action>();
+			var refreshes = 0;
+			using (new AvaloniaDetailRefreshController(
+				Cache, () => m_entry, () => false, () => refreshes++, new RefreshCoordinator(),
+				schedule: scheduled.Add, isRelevant: LexicalRelevance, deferUntilQuiet: quiet.Add))
+			{
+				ChangeGloss("a");
+				Assert.That(scheduled.Count, Is.EqualTo(1), "the first change refreshes at once");
+				scheduled[0]();
+				Assert.That(refreshes, Is.EqualTo(1));
+
+				ChangeGloss("ab");
+				ChangeGloss("abc");
+				Assert.That(scheduled.Count, Is.EqualTo(1), "the rest of the burst waits");
+				Assert.That(quiet.Count, Is.EqualTo(3), "each change restarts the quiet wait");
+
+				quiet[quiet.Count - 1]();
+				Assert.That(scheduled.Count, Is.EqualTo(2), "going quiet refreshes once");
+				scheduled[1]();
+				Assert.That(refreshes, Is.EqualTo(2));
+			}
+		}
+
+		[Test]
+		public void RefreshController_SingleOutsideChange_RefreshesOnce()
+		{
+			var scheduled = new List<Action>();
+			var quiet = new List<Action>();
+			var refreshes = 0;
+			using (new AvaloniaDetailRefreshController(
+				Cache, () => m_entry, () => false, () => refreshes++, new RefreshCoordinator(),
+				schedule: scheduled.Add, isRelevant: LexicalRelevance, deferUntilQuiet: quiet.Add))
+			{
+				ChangeGloss("a");
+				scheduled[0]();
+				quiet[quiet.Count - 1]();
+
+				Assert.That(scheduled.Count, Is.EqualTo(1), "going quiet with nothing waiting adds nothing");
+				Assert.That(refreshes, Is.EqualTo(1));
+			}
+		}
+
+		[Test]
+		public void RefreshController_HostRefreshDuringABurst_CoversTheWaitingChanges()
+		{
+			var scheduled = new List<Action>();
+			var quiet = new List<Action>();
+			var refreshes = 0;
+			using (var controller = new AvaloniaDetailRefreshController(
+				Cache, () => m_entry, () => false, () => refreshes++, new RefreshCoordinator(),
+				schedule: scheduled.Add, isRelevant: LexicalRelevance, deferUntilQuiet: quiet.Add))
+			{
+				ChangeGloss("a");
+				scheduled[0]();
+				ChangeGloss("ab");
+
+				controller.RequestRefresh();
+				Assert.That(scheduled.Count, Is.EqualTo(2), "the view's own request is not held");
+				scheduled[1]();
+				quiet[quiet.Count - 1]();
+
+				Assert.That(scheduled.Count, Is.EqualTo(2), "that refresh covered the waiting change");
+				Assert.That(refreshes, Is.EqualTo(2));
+			}
+		}
+
+		[Test]
+		public void RefreshController_BurstGoesQuietWhileEditing_HoldsTheRefresh()
+		{
+			var scheduled = new List<Action>();
+			var quiet = new List<Action>();
+			var refreshes = 0;
+			var editing = false;
+			var coordinator = new RefreshCoordinator();
+			using (new AvaloniaDetailRefreshController(
+				Cache, () => m_entry, () => editing, () => refreshes++, coordinator,
+				schedule: scheduled.Add, isRelevant: LexicalRelevance, deferUntilQuiet: quiet.Add))
+			{
+				ChangeGloss("a");
+				scheduled[0]();
+				ChangeGloss("ab");
+
+				editing = true;
+				quiet[quiet.Count - 1]();
+				scheduled[scheduled.Count - 1]();
+
+				Assert.That(refreshes, Is.EqualTo(1), "the user's open edit is not rebuilt under them");
+				Assert.That(coordinator.IsSuspended, Is.True, "the refresh waits for the edit");
+			}
+		}
+
 		// Review round 2: a rebuild can raise PropChanged (settle-commit inside);
 		// already covered since recompose reads current domain state -- so it
 		// must coalesce into the running delivery, not re-queue.

@@ -35,7 +35,10 @@ namespace SIL.FieldWorks.XWorks
 		private readonly IDetailRefreshCoordinator _coordinator;
 		private readonly Action<Action> _schedule;
 		private readonly Func<ICmObject, bool> _isRelevant;
+		private readonly Action<Action> _deferUntilQuiet;
 		private bool _refreshQueued;
+		private bool _burstOpen;
+		private bool _trailingChange;
 		private bool _disposed;
 
 		/// <param name="cache">The shared LCModel cache whose notification bus is observed.</param>
@@ -50,6 +53,13 @@ namespace SIL.FieldWorks.XWorks
 		/// supplies the ILexEntry owner-walk (see RecordEditView.EnsureAvaloniaRefreshController);
 		/// when null, only changes to the displayed record itself trigger a refresh.
 		/// </param>
+		/// <param name="deferUntilQuiet">
+		/// Optional: runs the given action once no further call has arrived for a short while;
+		/// each call restarts that wait and replaces the action. With it, the first change from
+		/// outside the view refreshes at once, and the rest of a burst, such as typing in
+		/// another view, refreshes once when it goes quiet (LT-22692). Without it, every change
+		/// refreshes.
+		/// </param>
 		public AvaloniaDetailRefreshController(
 			LcmCache cache,
 			Func<ICmObject> currentRecord,
@@ -57,8 +67,10 @@ namespace SIL.FieldWorks.XWorks
 			Action refresh,
 			IDetailRefreshCoordinator coordinator,
 			Action<Action> schedule = null,
-			Func<ICmObject, bool> isRelevant = null)
+			Func<ICmObject, bool> isRelevant = null,
+			Action<Action> deferUntilQuiet = null)
 		{
+			_deferUntilQuiet = deferUntilQuiet;
 			_cache = cache ?? throw new ArgumentNullException(nameof(cache));
 			_currentRecord = currentRecord ?? throw new ArgumentNullException(nameof(currentRecord));
 			_isEditing = isEditing ?? throw new ArgumentNullException(nameof(isEditing));
@@ -96,7 +108,37 @@ namespace SIL.FieldWorks.XWorks
 			}
 
 			if (_coordinator.RequestRefresh())
+				DeliverOutsideChange();
+		}
+
+		// The first change of a burst refreshes at once; later ones wait for the burst to go
+		// quiet and refresh once, so typing in another view does not rebuild per keystroke.
+		private void DeliverOutsideChange()
+		{
+			if (_deferUntilQuiet == null)
+			{
 				ScheduleRefresh();
+				return;
+			}
+			if (_burstOpen)
+			{
+				_trailingChange = true;
+			}
+			else
+			{
+				_burstOpen = true;
+				ScheduleRefresh();
+			}
+			_deferUntilQuiet(EndBurst);
+		}
+
+		private void EndBurst()
+		{
+			_burstOpen = false;
+			if (_disposed || !_trailingChange)
+				return;
+			_trailingChange = false;
+			ScheduleRefresh();
 		}
 
 		/// <summary>
@@ -162,6 +204,9 @@ namespace SIL.FieldWorks.XWorks
 						_coordinator.RequestRefresh();
 						return;
 					}
+					// This rebuild reads current state, so it covers any change still waiting
+					// for its burst to go quiet.
+					_trailingChange = false;
 					_refresh();
 				}
 				finally
