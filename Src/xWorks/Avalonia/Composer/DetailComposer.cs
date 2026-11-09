@@ -173,8 +173,36 @@ namespace SIL.FieldWorks.XWorks
 
 			var context = new ComposedDetailEditContext(cache, obj, state.Handlers);
 			composedContext = context;
-			var model = new DetailModel(obj.ClassName, layoutName, state.Fields, root.Diagnostics);
+			var model = new DetailModel(obj.ClassName, layoutName, state.Fields, root.Diagnostics)
+			{
+				UiElementFontFamily = UiElementFontName(cache)
+			};
 			return new ComposedDetail(model, context);
+		}
+
+		/// <summary>
+		/// The font family the project's <c>UiElement</c> style gives the UI writing system, the
+		/// font the WinForms detail view draws its section headings in. Null when the style is
+		/// missing or leaves the font at the default, so the theme interface font applies.
+		/// </summary>
+		internal static string UiElementFontName(LcmCache cache)
+		{
+			try
+			{
+				var style = cache.LangProject?.StylesOC
+					.FirstOrDefault(s => s.Name == StyleServices.UiElementStylename);
+				if (style == null)
+					return null;
+				var name = new FwCoreDlgControls.StyleInfo(style)
+					.FontInfoForWs(cache.DefaultUserWs).m_fontName;
+				return name.ValueIsSet && !string.IsNullOrEmpty(name.Value)
+					&& name.Value != StyleServices.DefaultFont ? name.Value : null;
+			}
+			catch (Exception e)
+			{
+				Logger.WriteError("Reading the UiElement style failed; section headings use the interface font.", e);
+				return null;
+			}
 		}
 
 		/// <summary>

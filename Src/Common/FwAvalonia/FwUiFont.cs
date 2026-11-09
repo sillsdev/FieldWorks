@@ -60,6 +60,17 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 		}
 
 		/// <summary>
+		/// The family for text that follows the project's <c>UiElement</c> style (data-entry
+		/// section headings): <paramref name="uiElementFontName"/> first, then the interface
+		/// font stack so missing glyphs still draw. A null or empty name means the style sets
+		/// no font, and the interface font applies.
+		/// </summary>
+		public static FontFamily UiElementFamily(string uiElementFontName)
+			=> string.IsNullOrWhiteSpace(uiElementFontName)
+				? UiFontFamily
+				: FontFamily.Parse(uiElementFontName.Trim() + ", " + string.Join(", ", UiFontFamily.FamilyNames));
+
+		/// <summary>
 		/// The theme font, UI-language fallbacks, and platform default for
 		/// <paramref name="uiCulture"/>.
 		/// </summary>

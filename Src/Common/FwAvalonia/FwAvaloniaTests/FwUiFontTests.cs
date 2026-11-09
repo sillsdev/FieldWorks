@@ -13,6 +13,7 @@ using Avalonia.Headless.NUnit;
 using Avalonia.Media;
 using Avalonia.Media.TextFormatting;
 using Avalonia.Threading;
+using Avalonia.VisualTree;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwAvalonia;
 using SIL.FieldWorks.Common.FwAvalonia.Detail;
@@ -20,7 +21,8 @@ using SIL.FieldWorks.Common.FwAvalonia.ViewDefinition;
 
 namespace FwAvaloniaTests
 {
-	/// <summary>Checks interface font selection, UI-language fallbacks and glyph rendering.</summary>
+	/// <summary>Checks interface font selection, UI-language fallbacks and glyph
+	/// rendering.</summary>
 	[TestFixture]
 	public class FwUiFontTests
 	{
@@ -236,6 +238,81 @@ namespace FwAvaloniaTests
 			Dispatcher.UIThread.RunJobs();
 
 			AssertUsesInterfaceFont(item);
+		}
+
+		// A data-entry view with a collapsible section heading, a plain heading and a field
+		// label, shown in a window; returns the text block drawing each of the three.
+		private static (TextBlock Collapsible, TextBlock Plain, TextBlock FieldLabel) ShowHeadings(
+			string uiElementFont)
+		{
+			var values = new List<DetailWsValue> { new DetailWsValue("vern", "casa") };
+			var fields = new List<DetailField>
+			{
+				new DetailField("LexEntry/identity/senses", "Senses", "Senses", null, DetailFieldKind.Header,
+					EditorClassification.GroupingNone, null, null, HostRouting.Product, null, null, null,
+					isEditable: false, isCollapsible: true),
+				new DetailField("LexEntry/identity/etymology", "Etymology", "Etymology", null, DetailFieldKind.Header,
+					EditorClassification.GroupingNone, null, null, HostRouting.Product, null, null, null,
+					isEditable: false),
+				new DetailField("LexEntry/identity/#0@1", "Lexeme Form", "Form", "vernacular", DetailFieldKind.Text,
+					EditorClassification.Known, null, null, HostRouting.Product, values, null, null, objectHvo: 1)
+			};
+			var model = new DetailModel("LexEntry", "identity", fields, new List<ViewDiagnostic>())
+			{
+				UiElementFontFamily = uiElementFont
+			};
+			var window = new Window { Content = new DataTree(model) };
+			window.Show();
+			Dispatcher.UIThread.RunJobs();
+			TextBlock Find(string text) => window.GetVisualDescendants().OfType<TextBlock>()
+				.First(t => t.Text == text);
+			return (Find("Senses"), Find("Etymology"), Find("Lexeme Form"));
+		}
+
+		[AvaloniaTest]
+		public void SectionHeadings_FollowTheUiElementFont_FieldLabelsStayOnTheThemeFont()
+		{
+			var (collapsible, plain, fieldLabel) = ShowHeadings("Times New Roman");
+
+			Assert.That(collapsible.FontFamily.FamilyNames.First(), Is.EqualTo("Times New Roman"));
+			Assert.That(plain.FontFamily.FamilyNames.First(), Is.EqualTo("Times New Roman"));
+			Assert.That(fieldLabel.FontFamily, Is.EqualTo(FwUiFont.UiFontFamily),
+				"field labels have never followed UiElement; they take the theme font");
+		}
+
+		[AvaloniaTest]
+		public void SectionHeadings_WithoutAUiElementFont_UseTheThemeFont()
+		{
+			var (collapsible, plain, _) = ShowHeadings(null);
+
+			Assert.That(collapsible.FontFamily, Is.EqualTo(FwUiFont.UiFontFamily));
+			Assert.That(plain.FontFamily, Is.EqualTo(FwUiFont.UiFontFamily));
+		}
+
+		[AvaloniaTest]
+		public void UiElementFamily_FallsBackToTheThemeStack()
+		{
+			var family = FwUiFont.UiElementFamily("Microsoft Sans Serif");
+
+			Assert.That(family.FamilyNames.ToList(), Is.EqualTo(new[] { "Microsoft Sans Serif" }
+				.Concat(FwUiFont.UiFontFamily.FamilyNames).ToList()));
+			Assert.That(FwUiFont.UiElementFamily(""), Is.EqualTo(FwUiFont.UiFontFamily));
+		}
+
+		[AvaloniaTest]
+		public void MenusAndDialogControls_IgnoreTheUiElementFont()
+		{
+			ShowHeadings("Times New Roman");
+			var item = new MenuItem { Header = "Copy" };
+			var anchor = new Button { Content = "Target", ContextMenu = new ContextMenu { Items = { item } } };
+			var window = new Window { Content = anchor };
+			window.Show();
+			Dispatcher.UIThread.RunJobs();
+			anchor.ContextMenu.Open(anchor);
+			Dispatcher.UIThread.RunJobs();
+
+			AssertUsesInterfaceFont(item);
+			AssertUsesInterfaceFont(anchor);
 		}
 
 		[AvaloniaTest]

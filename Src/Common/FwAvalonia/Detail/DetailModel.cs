@@ -2126,6 +2126,15 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		public string LayoutName { get; }
 		public IReadOnlyList<DetailField> Fields { get; }
 		public IReadOnlyList<ViewDiagnostic> Diagnostics { get; }
+
+		/// <summary>
+		/// The font family the project's <c>UiElement</c> style gives the UI writing system,
+		/// supplied by the composer. Section headings follow it, as they do in the WinForms
+		/// detail view; menus, dialogs and field labels stay on the theme interface font. Null
+		/// when the style sets no font. A property of this window's model, so a second project
+		/// window never changes the first.
+		/// </summary>
+		public string UiElementFontFamily { get; set; }
 	}
 
 	/// <summary>
