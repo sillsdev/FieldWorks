@@ -79,6 +79,7 @@ namespace SIL.PcPatrFLEx
 
 		private ContextMenuStrip helpContextMenu;
 		string UserDocumentation = PcPatrFLExDll_Strings.ksUserDocumentation;
+		string FLExCategories = PcPatrFLExDll_Strings.ksFLExCategories;
 		string PCPATRReferenceManual = PcPatrFLExDll_Strings.ksPcPatrReference;
 		string helpsPath = "";
 
@@ -159,10 +160,14 @@ namespace SIL.PcPatrFLEx
 			ToolStripMenuItem userDoc = new ToolStripMenuItem(UserDocumentation);
 			userDoc.Click += new EventHandler(UserDoc_Click);
 			userDoc.Name = UserDocumentation;
+			ToolStripMenuItem flexCats = new ToolStripMenuItem(FLExCategories);
+			flexCats.Click += new EventHandler(FLExCats_Click);
+			flexCats.Name = FLExCategories;
 			ToolStripMenuItem pcpatrDoc = new ToolStripMenuItem(PCPATRReferenceManual);
 			pcpatrDoc.Click += new EventHandler(PCPATRDoc_Click);
 			pcpatrDoc.Name = PCPATRReferenceManual;
 			helpContextMenu.Items.Add(userDoc);
+			helpContextMenu.Items.Add(flexCats);
 			helpContextMenu.Items.Add(pcpatrDoc);
 		}
 
@@ -741,6 +746,14 @@ namespace SIL.PcPatrFLEx
 			}
 		}
 
+		void FLExCats_Click(object sender, EventArgs e)
+		{
+			ToolStripItem menuItem = (ToolStripItem)sender;
+			if (menuItem.Name == FLExCategories)
+			{
+				Process.Start(Path.Combine(helpsPath, "Language Explorer", "Utilities", "FLExCategories.htm"));
+			}
+		}
 		private static string GetAppBaseDir()
 		{
 			string basedir;
@@ -814,7 +827,7 @@ namespace SIL.PcPatrFLEx
 		{
 			using (var dialog = new AdvancedForm())
 			{
-				dialog.Initialize(MaxAmbiguities, TimeLimit, RunIndividually, ShowFailures);
+				dialog.initialize(MaxAmbiguities, TimeLimit, RunIndividually);
 				dialog.ShowDialog();
 				if (dialog.OkPressed)
 				{
@@ -849,21 +862,20 @@ namespace SIL.PcPatrFLEx
 				if (rbShowFailuresOff.Checked)
 				{
 					ShowFailures = ShowFailures.Off;
-					if (activeFlashingButton != null)
-						activeFlashingButton.ForeColor = SystemColors.ControlText;
+					TurnOffShowFailuresWarningColors(activeFlashingButton);
 					flashTimer.Stop();
 				}
 				else if (rbShowFailuresPhraseStructureRules.Checked)
 				{
 					ShowFailures = ShowFailures.PSROnly;
 					FlashShowFailuresButton(rbShowFailuresPhraseStructureRules);
-					rbShowFailuresOn.ForeColor = SystemColors.ControlText;
+					TurnOffShowFailuresWarningColors(rbShowFailuresOn);
 				}
 				else
 				{
 					ShowFailures = ShowFailures.On;
 					FlashShowFailuresButton(rbShowFailuresOn);
-					rbShowFailuresPhraseStructureRules.ForeColor = SystemColors.ControlText;
+					TurnOffShowFailuresWarningColors(rbShowFailuresPhraseStructureRules);
 				}
 			}
 		}
@@ -871,7 +883,7 @@ namespace SIL.PcPatrFLEx
 		{
 			activeFlashingButton = rb;
 			isHighlightState = true;
-			rb.ForeColor = Color.Red;
+			SetShowFailuresWarningColors();
 			flashTimer.Start();
 		}
 		private void UpdateShowFailuresChecked()
@@ -883,12 +895,12 @@ namespace SIL.PcPatrFLEx
 			else
 				rbShowFailuresOn.Checked = true;
 		}
-		// following fro makingthe ShowFailures debug options flash or blink
-		// to help user from invoking parsing options hat mogtht take a long time
+		// following for making the ShowFailures debug options flash or blink
+		// to help a user from invoking parsing options that might take a long time
 		private void SetupFlashingTimer()
 		{
 			flashTimer = new Timer();
-			flashTimer.Interval = 500; // Toggle color every 500ms
+			flashTimer.Interval = 500; // Toggle display every 500ms
 			flashTimer.Tick += FlashTimer_Tick;
 		}
 
@@ -897,10 +909,23 @@ namespace SIL.PcPatrFLEx
 			if (activeFlashingButton != null && activeFlashingButton.Checked)
 			{
 				isHighlightState = !isHighlightState;
-
-				// Alternate between red and default control text color
-				if (activeFlashingButton != null)
-					activeFlashingButton.ForeColor = isHighlightState ? Color.Red : SystemColors.ControlText;
+				SetShowFailuresWarningColors();
+			}
+		}
+		private void SetShowFailuresWarningColors()
+		{
+			if (activeFlashingButton != null)
+			{
+				activeFlashingButton.ForeColor = isHighlightState ? Color.Yellow : rbOff.ForeColor;
+				activeFlashingButton.BackColor = isHighlightState ? Color.Red : rbOff.BackColor;
+			}
+		}
+		private void TurnOffShowFailuresWarningColors(RadioButton rb)
+		{
+			if (rb != null)
+			{
+				rb.ForeColor = rbOff.ForeColor;
+				rb.BackColor = rbOff.BackColor;
 			}
 		}
 	}
