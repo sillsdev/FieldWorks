@@ -134,9 +134,9 @@ namespace SIL.PcPatrFLEx
 					else
 						btnDisambiguate.Enabled = false;
 					Cursor.Current = Cursors.Default;
-					SetupFlashingTimer();
-					UpdateShowFailuresChecked();
 				}
+				SetupFlashingTimer();
+				UpdateShowFailuresChecked();
 				AdjustSplitterLocation();
 			}
 			catch (Exception e)
