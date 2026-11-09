@@ -83,7 +83,7 @@ namespace SIL.DisambiguateInFLExDB
 				process.PriorityClass = ProcessPriorityClass.High;
 				process.WaitForExit();
 				string error = process.StandardError.ReadToEnd();
-				if (error.Contains("ERROR "))
+				if (error.Contains("ERROR ") || error.Contains("WARNING"))
 				{
 					InvocationSucceeded = false;
 				}
