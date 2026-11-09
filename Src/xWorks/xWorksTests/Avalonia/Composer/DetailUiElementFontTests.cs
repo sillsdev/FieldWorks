@@ -5,6 +5,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
+using SIL.FieldWorks.Common.FwAvalonia.Detail;
 using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Core.Text;
@@ -67,6 +68,24 @@ namespace SIL.FieldWorks.XWorks
 			AddUiElementStyle(StyleServices.DefaultFont);
 
 			Assert.That(DetailComposer.UiElementFontName(Cache), Is.Null);
+		}
+
+		// A LiteralString summary part composes as a header row, which the data tree draws in the
+		// model's UiElement font.
+		[Test]
+		public void PublicationSettingsHeading_ComposesAsAHeaderInTheUiElementFont()
+		{
+			AddUiElementStyle("Microsoft Sans Serif");
+			ILexEntry entry = null;
+			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
+				entry = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create());
+
+			var model = DetailComposer.Compose(entry, Cache).Model;
+
+			var heading = model.Fields.FirstOrDefault(f => f.Label == "Publication Settings");
+			Assert.That(heading, Is.Not.Null, "precondition: the entry composes the heading");
+			Assert.That(heading.Kind, Is.EqualTo(DetailFieldKind.Header));
+			Assert.That(model.UiElementFontFamily, Is.EqualTo("Microsoft Sans Serif"));
 		}
 	}
 }

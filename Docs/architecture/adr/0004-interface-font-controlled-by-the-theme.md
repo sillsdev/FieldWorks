@@ -28,6 +28,10 @@ window has its own and a second window never changes the first. Menus, dialog
 controls and field labels use the theme font: nothing in them reads `UiElement`
 today (slice labels are fixed 10 pt sans serif). The browse filter bar's
 `UiElement` text has no Avalonia counterpart yet and follows when one exists.
+The same holds for the interlinear text view's labels and writing-system tags
+(8 pt `UiElement` in WinForms, from `InterlinVc` and
+`WsListManager.LanguageCodeTextProps`): they take `UiElement` when that view
+moves to Avalonia.
 Data text continues to use its writing-system font.
 
 Windows validation must measure density, clipping and script glyph fallback.
