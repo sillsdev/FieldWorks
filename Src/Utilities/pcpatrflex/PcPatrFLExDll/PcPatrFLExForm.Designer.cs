@@ -272,6 +272,7 @@ namespace SIL.PcPatrFLEx
 			this.Controls.Add(this.btnParse);
 			this.Name = "PcPatrFLExForm";
 			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.OnFormClosing);
+			this.Shown += new System.EventHandler(this.Form_Shown);
 			this.splitContainer1.Panel1.ResumeLayout(false);
 			this.splitContainer1.Panel2.ResumeLayout(false);
 			this.splitContainer1.Panel2.PerformLayout();

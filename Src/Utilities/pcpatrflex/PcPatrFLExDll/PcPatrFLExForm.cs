@@ -154,6 +154,14 @@ namespace SIL.PcPatrFLEx
 			splitContainer1.Size = new Size(x, y);
 		}
 
+		private void Form_Shown(object sender, EventArgs e)
+		{
+			if (regkey == null)
+			{
+				// Center the vertical splitter as a default
+				splitContainer1.SplitterDistance = splitContainer1.Width / 2;
+			}
+		}
 		private void BuildHelpContextMenu()
 		{
 			helpContextMenu = new ContextMenuStrip();
