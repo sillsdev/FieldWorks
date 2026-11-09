@@ -71,7 +71,6 @@ namespace SIL.FieldWorks.XWorks
 			Func<ICmObject, bool> isRelevant = null,
 			Action<Action> deferUntilQuiet = null)
 		{
-			_deferUntilQuiet = deferUntilQuiet;
 			_cache = cache ?? throw new ArgumentNullException(nameof(cache));
 			_currentRecord = currentRecord ?? throw new ArgumentNullException(nameof(currentRecord));
 			_isEditing = isEditing ?? throw new ArgumentNullException(nameof(isEditing));
@@ -79,6 +78,7 @@ namespace SIL.FieldWorks.XWorks
 			_coordinator = coordinator ?? throw new ArgumentNullException(nameof(coordinator));
 			_schedule = schedule;
 			_isRelevant = isRelevant;
+			_deferUntilQuiet = deferUntilQuiet;
 			cache.DomainDataByFlid.AddNotification(this);
 		}
 
