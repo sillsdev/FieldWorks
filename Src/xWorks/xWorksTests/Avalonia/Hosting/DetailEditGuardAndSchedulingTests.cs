@@ -284,7 +284,7 @@ namespace SIL.FieldWorks.XWorks
 				m_entry.SensesOS[0].Gloss.set_String(Cache.DefaultAnalWs,
 					TsStringUtils.MakeString(text, Cache.DefaultAnalWs)));
 
-		// LT-22692: typing in another view rebuilt the detail view on every keystroke.
+		// LT-22692: outside edits refresh immediately, then once after the burst goes quiet.
 		[Test]
 		public void RefreshController_OutsideBurst_RefreshesFirstAtOnce_AndTheRestOnceWhenQuiet()
 		{
