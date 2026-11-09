@@ -39,6 +39,7 @@ namespace SIL.FieldWorks.XWorks
 		private bool _refreshQueued;
 		private bool _burstOpen;
 		private bool _trailingChange;
+		private int _trailingRecordHvo;
 		private bool _disposed;
 
 		/// <param name="cache">The shared LCModel cache whose notification bus is observed.</param>
@@ -123,6 +124,7 @@ namespace SIL.FieldWorks.XWorks
 			if (_burstOpen)
 			{
 				_trailingChange = true;
+				_trailingRecordHvo = _currentRecord()?.Hvo ?? 0;
 			}
 			else
 			{
@@ -132,13 +134,16 @@ namespace SIL.FieldWorks.XWorks
 			_deferUntilQuiet(EndBurst);
 		}
 
+		// Only a change to the record shown now rebuilds: showing a different record already
+		// read current state.
 		private void EndBurst()
 		{
 			_burstOpen = false;
 			if (_disposed || !_trailingChange)
 				return;
 			_trailingChange = false;
-			ScheduleRefresh();
+			if ((_currentRecord()?.Hvo ?? 0) == _trailingRecordHvo)
+				ScheduleRefresh();
 		}
 
 		/// <summary>

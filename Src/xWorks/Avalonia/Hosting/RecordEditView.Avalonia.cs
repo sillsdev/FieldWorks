@@ -341,9 +341,6 @@ namespace SIL.FieldWorks.XWorks
 			return false;
 		}
 
-		// UI-thread deferral for the controller's coalesced refresh queue: posting to the message
-		// queue lets the current call stack (commit/rollback PropChanged, the focus transition
-		// that triggered an auto-save) unwind before the view is rebuilt.
 		// How long a burst of changes made outside the detail view must go quiet before the
 		// view rebuilds once for the rest of it, in milliseconds (LT-22692).
 		private const int RefreshQuietMilliseconds = 250;
@@ -351,12 +348,24 @@ namespace SIL.FieldWorks.XWorks
 		private System.Windows.Forms.Timer m_refreshQuietTimer;
 		private Action m_afterRefreshQuiet;
 
-		// Runs the action once RefreshQuietMilliseconds pass with no further call; each call
-		// restarts the wait and replaces the action.
+		// Runs the action on the UI thread once RefreshQuietMilliseconds pass with no further
+		// call; each call restarts the wait and replaces the action.
 		private void DeferUntilQuiet(Action action)
 		{
 			if (IsDisposed)
 				return;
+			if (InvokeRequired)
+			{
+				try
+				{
+					BeginInvoke((Action)(() => DeferUntilQuiet(action)));
+				}
+				catch (InvalidOperationException)
+				{
+					// The view is going away; there is nothing left to refresh.
+				}
+				return;
+			}
 			m_afterRefreshQuiet = action;
 			if (m_refreshQuietTimer == null)
 			{
@@ -376,6 +385,9 @@ namespace SIL.FieldWorks.XWorks
 			m_refreshQuietTimer.Start();
 		}
 
+		// UI-thread deferral for the controller's coalesced refresh queue: posting to the message
+		// queue lets the current call stack (commit/rollback PropChanged, the focus transition
+		// that triggered an auto-save) unwind before the view is rebuilt.
 		private void ScheduleOnUiThread(Action runner)
 		{
 			if (IsDisposed)
