@@ -194,6 +194,29 @@ namespace SIL.FieldWorks.XWorks
 				toolValue);
 		}
 
+		// LT-22692: refresh relevance follows what the view shows, the record and the objects its
+		// rows are bound to, so a change to one of them redraws the view.
+		[Test]
+		public void ShowingARecord_RemembersItAndItsRowObjects_ForRefreshRelevance()
+		{
+			m_propertyTable.SetProperty("UIMode", "New", true);
+			m_propertyTable.SetPropertyPersistence("UIMode", false);
+
+			LoadRecordEditView();
+			DrainMediatorAndIdleQueues();
+
+			var control = m_propertyTable.GetValue<object>("currentContentControlObject", null) as RecordEditView;
+			Assert.That(control, Is.Not.Null);
+			EnsureCurrentRecord(control);
+
+			var entry = (ILexEntry)control.Clerk.CurrentObject;
+			Assert.That(GetPrivateField<ICmObject>(control, "m_shownRecord"), Is.SameAs(entry));
+			var rowObjects = GetPrivateField<HashSet<int>>(control, "m_shownRowObjects");
+			Assert.That(rowObjects, Does.Contain(entry.Hvo));
+			foreach (var sense in entry.SensesOS)
+				Assert.That(rowObjects, Does.Contain(sense.Hvo), "a sense's rows are bound to it");
+		}
+
 		// LT-22811: View > Refresh and closing the Styles dialog reach the Avalonia view through
 		// RefreshDisplay, which recomposes it at Normal's new size.
 		[Test]

@@ -94,6 +94,10 @@ namespace SIL.FieldWorks.XWorks
 		private readonly HashSet<string> m_showAllWsFields = new HashSet<string>(StringComparer.Ordinal);
 		// The record m_showAllWsFields belongs to; a different record expires the reveal.
 		private int m_showAllWsRecordHvo;
+		// The record the Avalonia view shows now, and the objects its rows are bound to: what
+		// a change must touch to refresh the view. Null and empty while no record is shown.
+		private ICmObject m_shownRecord;
+		private HashSet<int> m_shownRowObjects = new HashSet<int>();
 
 		private bool ShouldUseAvaloniaLexiconEdit
 		{
@@ -218,6 +222,7 @@ namespace SIL.FieldWorks.XWorks
 			// resurrect a stale reveal.
 			m_showAllWsFields.Clear();
 			m_showAllWsRecordHvo = 0;
+			SetShownRecord(null, null);
 			// Null the host + refresh controller after disposing them. The recreation guards
 			// (EnsureAvaloniaEntryFormInitialized / EnsureAvaloniaRefreshController) key on `== null`, so a
 			// runtime flip New->Legacy->New rebuilds a fresh entry form instead of re-showing a disposed one.
@@ -294,7 +299,9 @@ namespace SIL.FieldWorks.XWorks
 			// the controller's runner before recomposing.
 			m_avaloniaRefreshController = new AvaloniaDetailRefreshController(
 				Cache,
-				() => Clerk?.CurrentObject,
+				// The record on display, which is the top-level record when the tool shows a
+				// current subrecord inside its root.
+				() => m_shownRecord,
 				// "Busy" means an open session OR a click in flight: Commit clears IsOpen BEFORE
 				// EndUndoTask raises PropChanged, so its own notification would recompose
 				// midclick.
@@ -304,7 +311,7 @@ namespace SIL.FieldWorks.XWorks
 				new RefreshCoordinator(),
 				ScheduleOnUiThread,
 				// This lexical host's relevance rule; the controller itself stays host-agnostic.
-				changed => IsChangeWithinEntry(changed, Clerk?.CurrentObject),
+				changed => IsChangeWithinEntry(changed, m_shownRecord, m_shownRowObjects),
 				DeferUntilQuiet);
 			// Global Undo/Redo while a fenced session is open would re-enter the UOW write lock
 			// (LockRecursionException); the guard settles the pending edit instead.
@@ -323,12 +330,15 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
-		/// The lexical host's refresh relevance: a change is relevant when the changed
-		/// object is, or is owned by, the entry on display. This is the predicate the host injects
-		/// into <see cref="AvaloniaDetailRefreshController"/>; static and internal so it is
-		/// unit-testable without a live view.
+		/// The host's refresh relevance: a change is relevant when the changed object is, or is
+		/// owned by, the record on display, or an object one of its rows is bound to (in
+		/// <paramref name="shownRowObjects"/>; null for none). Bound objects reach what the
+		/// record only references, such as a notebook record's Text (LT-22692). This is the
+		/// predicate the host injects into <see cref="AvaloniaDetailRefreshController"/>; static
+		/// and internal so it is unit-testable without a live view.
 		/// </summary>
-		internal static bool IsChangeWithinEntry(ICmObject changed, ICmObject current)
+		internal static bool IsChangeWithinEntry(ICmObject changed, ICmObject current,
+			ICollection<int> shownRowObjects = null)
 		{
 			if (changed == null || current == null)
 				return false;
@@ -336,8 +346,10 @@ namespace SIL.FieldWorks.XWorks
 			// any record class, not just entries, so nested edits also trigger the coalesced
 			// refresh.
 			for (var o = changed; o != null; o = o.Owner)
-				if (o.Hvo == current.Hvo)
+			{
+				if (o.Hvo == current.Hvo || (shownRowObjects?.Contains(o.Hvo) ?? false))
 					return true;
+			}
 			return false;
 		}
 
@@ -468,6 +480,7 @@ namespace SIL.FieldWorks.XWorks
 			if (obj == null)
 			{
 				m_detailEditContext.Clear();
+				SetShownRecord(null, null);
 				m_avaloniaEntryForm.ShowMessage(FwAvaloniaStrings.EntryTypeUnsupported);
 				return;
 			}
@@ -509,6 +522,7 @@ namespace SIL.FieldWorks.XWorks
 					// No first-slice fallback exists for a non-LexEntry root: show the unsupported state
 					// rather than crash.
 					m_detailEditContext.Clear();
+					SetShownRecord(null, null);
 					m_avaloniaEntryForm.ShowMessage(FwAvaloniaStrings.EntryTypeUnsupported);
 					return;
 				}
@@ -528,6 +542,7 @@ namespace SIL.FieldWorks.XWorks
 			// cross-window-undo mitigation would be silently lost for this host's lifetime.
 			if (!m_detailEditContext.IsDeactivateHookAttached)
 				m_detailEditContext.AttachDeactivateHook(FindForm());
+			SetShownRecord(obj, detail);
 			m_avaloniaEntryForm.ShowDetail(detail, editContext,
 				OnDetailWritingSystemFocused,
 				GetPersistedExpansionState, PersistExpansionState,
@@ -535,6 +550,14 @@ namespace SIL.FieldWorks.XWorks
 				new FwTsStringClipboard(Cache.WritingSystemFactory),
 				GetPersistedLabelColumnWidth, PersistLabelColumnWidth,
 				rootHvo: obj.Hvo, hotlinkItems: HotlinkItemsFor);
+		}
+
+		private void SetShownRecord(ICmObject record, DetailModel detail)
+		{
+			m_shownRecord = record;
+			m_shownRowObjects = detail == null
+				? new HashSet<int>()
+				: new HashSet<int>(detail.Fields.Select(f => f.ObjectHvo).Where(hvo => hvo != 0));
 		}
 
 		/// <summary>
