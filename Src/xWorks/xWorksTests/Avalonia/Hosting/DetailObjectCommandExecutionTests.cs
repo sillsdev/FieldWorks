@@ -2227,6 +2227,80 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
+		private ILexEntry AddOtherEntry()
+		{
+			ILexEntry other = null;
+			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
+			{
+				var stemMorphType = GetMorphTypeOrCreateOne("stem");
+				var noun = GetGrammaticalCategoryOrCreateOne("noun", Cache.LangProject.PartsOfSpeechOA);
+				other = AddLexeme(m_createdObjects, "other-entry", stemMorphType, "other gloss", noun);
+			});
+			return other;
+		}
+
+		// LT-22692: leaving a record with an edit still open builds the next record's view once;
+		// the left record's commit is judged against the record about to be shown.
+		[Test]
+		public void LeavingARecordWithAnOpenEdit_BuildsTheNextRecordOnce()
+		{
+			var other = AddOtherEntry();
+			m_view.Clerk.JumpToRecord(m_entry.Hvo);
+			DrainMediatorAndIdleQueues();
+
+			var holder = (DetailEditContextHolder)GetField(m_view, "m_detailEditContext");
+			var shown = ((DetailHostControl)GetField(m_view, "m_avaloniaEntryForm")).ShownDetail;
+			var gloss = shown.Fields.First(f => f.Field == "Gloss" && f.IsEditable
+				&& f.Values != null && f.Values.Count > 0);
+			Assert.That(holder.Current.TrySetText(gloss, gloss.Values[0].WsTag, "edited gloss"),
+				Is.True);
+			Assert.That(holder.Current.IsOpen, Is.True, "precondition: the edit is still open");
+
+			var shows = m_view.DetailShowCount;
+			m_view.Clerk.JumpToRecord(other.Hvo);
+			DrainMediatorAndIdleQueues();
+
+			Assert.That(m_view.DetailShowCount, Is.EqualTo(shows + 1),
+				"the next record is built once, not again for the left record's commit");
+		}
+
+		// LT-22692: while no record is recorded as shown, an outside change to the clerk's
+		// current record still brings it up.
+		[Test]
+		public void OutsideChange_WithNoRecordShown_ShowsTheClerksCurrentRecord()
+		{
+			m_view.Clerk.JumpToRecord(m_entry.Hvo);
+			DrainMediatorAndIdleQueues();
+			typeof(RecordEditView).GetMethod("SetShownRecord",
+				BindingFlags.Instance | BindingFlags.NonPublic).Invoke(m_view, new object[] { null, null });
+
+			var shows = m_view.DetailShowCount;
+			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
+				m_entry.Bibliography.set_String(Cache.DefaultAnalWs,
+					TsStringUtils.MakeString("outside", Cache.DefaultAnalWs)));
+			DrainMediatorAndIdleQueues();
+
+			Assert.That(m_view.DetailShowCount, Is.EqualTo(shows + 1));
+			Assert.That(GetField(m_view, "m_shownRecord"), Is.SameAs(m_entry));
+		}
+
+		// LT-22692: the quiet wait runs only the last action deferred to it, and only once.
+		[Test]
+		public void DeferUntilQuiet_RunsOnlyTheLastAction_Once()
+		{
+			var ran = new List<string>();
+			m_view.DeferUntilQuiet(() => ran.Add("first"));
+			m_view.DeferUntilQuiet(() => ran.Add("second"));
+			Assert.That(m_view.IsRefreshQuietPending, Is.True, "the wait is running");
+
+			m_view.OnRefreshQuiet();
+			Assert.That(ran, Is.EqualTo(new[] { "second" }));
+			Assert.That(m_view.IsRefreshQuietPending, Is.False, "and stops once it has run");
+
+			m_view.OnRefreshQuiet();
+			Assert.That(ran.Count, Is.EqualTo(1), "nothing runs twice");
+		}
+
 		// The reveal survives everything within the record and expires only when the shown
 		// record changes.
 		[Test]
@@ -2236,13 +2310,7 @@ namespace SIL.FieldWorks.XWorks
 			InvokeShowAllRightNow(field);
 			Assert.That(RevealedFields(), Does.Contain(TemplateId(field)), "precondition: revealed");
 
-			ILexEntry other = null;
-			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
-			{
-				var stemMorphType = GetMorphTypeOrCreateOne("stem");
-				var noun = GetGrammaticalCategoryOrCreateOne("noun", Cache.LangProject.PartsOfSpeechOA);
-				other = AddLexeme(m_createdObjects, "other-entry", stemMorphType, "other gloss", noun);
-			});
+			var other = AddOtherEntry();
 			m_view.Clerk.JumpToRecord(other.Hvo);
 			DrainMediatorAndIdleQueues();
 
