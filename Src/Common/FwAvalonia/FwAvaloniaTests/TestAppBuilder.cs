@@ -13,8 +13,8 @@ namespace FwAvaloniaTests
 {
 	/// <summary>
 	/// Headless Avalonia application builder for the FwAvalonia tests. Uses <see cref="FwAvaloniaApp"/>
-	/// so the Fluent theme is applied and the pure-C# controls receive templates under the headless
-	/// platform.
+	/// so the Semi theme and the FieldWorks interface font are applied and the pure-C# controls
+	/// receive templates under the headless platform.
 	/// Skia drawing (instead of the null headless drawing backend) enables rendered-frame capture for
 	/// visual parity evidence; all other headless behavior (input, focus, layout) is unchanged.
 	/// </summary>

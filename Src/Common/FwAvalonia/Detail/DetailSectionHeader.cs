@@ -53,6 +53,9 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			Content = new BoxAndLabelPanel { Children = { Box, _text } };
 		}
 
+		/// <summary>Sets the font family of the heading text.</summary>
+		public void SetLabelFontFamily(FontFamily family) => _text.FontFamily = family;
+
 		/// <summary>The text shown for the current state.</summary>
 		public string CurrentLabel => _isExpanded ? _label : _collapsedLabel;
 
