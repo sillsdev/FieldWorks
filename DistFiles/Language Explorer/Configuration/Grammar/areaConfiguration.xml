@@ -439,6 +439,8 @@
 					<recordList owner="MorphologicalData" property="Phonemes"/>
 		</clerk>
 				<clerk id="naturalClasses">
+					<dynamicloaderinfo assemblyPath="MorphologyEditorDll.dll"
+						class="SIL.FieldWorks.XWorks.MorphologyEditor.NaturalClassRecordClerk"/>
 					<recordList owner="MorphologicalData" property="NaturalClasses">
 					  <dynamicloaderinfo assemblyPath="MorphologyEditorDll.dll" class="SIL.FieldWorks.XWorks.MorphologyEditor.NaturalClassRecordList"/>
 					</recordList>
