@@ -63,21 +63,34 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 		}
 
 		/// <summary>
-		/// Shows the text under <paramref name="editor"/> at <paramref name="fontSize"/> in place
-		/// of the surface font, for the controls the surface font sizes. A size a control sets
-		/// for itself still wins. Does nothing for a null editor or a size that is not positive.
+		/// The style class that marks a <see cref="TextBlock"/> or <see cref="TextBox"/> as
+		/// showing field data rather than interface text.
+		/// </summary>
+		public const string ValueTextClass = "fwValueText";
+
+		/// <summary>
+		/// Marks <paramref name="text"/> as showing field data, so a value font size applies to
+		/// it. Interface text is left unmarked and keeps the surface font.
+		/// </summary>
+		public static void MarkValueText(StyledElement text) => text?.Classes.Add(ValueTextClass);
+
+		/// <summary>
+		/// Shows the marked data text under <paramref name="editor"/> at
+		/// <paramref name="fontSize"/> in place of the surface font (see
+		/// <see cref="MarkValueText"/>). A size a control sets for itself still wins. Does
+		/// nothing for a null editor or a size that is not positive.
 		/// </summary>
 		public static void ApplyValueFontSize(Control editor, double fontSize)
 		{
 			if (editor == null || fontSize <= 0)
 				return;
-			foreach (var style in TextFontStyles(fontSize))
+			foreach (var style in TextFontStyles(fontSize, ValueTextClass))
 				editor.Styles.Add(style);
 		}
 
 		private static IEnumerable<IStyle> Build()
 		{
-			foreach (var style in TextFontStyles(SurfaceFontSize))
+			foreach (var style in TextFontStyles(SurfaceFontSize, null))
 				yield return style;
 			// TabItem -- the bulk-edit bar's mode tabs. Fluent's default tab headers are large
 			// (~16px semibold
@@ -103,23 +116,26 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 		}
 
 		// Sizes exactly TextBlock and TextBox, never a control inside a TextBox's template, so
-		// the text a box draws inherits the box's own size.
-		private static IEnumerable<IStyle> TextFontStyles(double fontSize)
+		// the text a box draws inherits the box's own size. A class limits it to those marked.
+		private static IEnumerable<IStyle> TextFontStyles(double fontSize, string styleClass)
 		{
 			// TextBlock -- the detail view labels/values and browse cells/headers. A
 			// per-control FontSize is a LOCAL value that outranks this setter, so only
 			// the unset Fluent default is replaced.
-			yield return new Style(s => s.OfType<TextBlock>())
+			yield return new Style(s => WithClass(s.OfType<TextBlock>(), styleClass))
 			{
 				Setters = { new Setter(TextBlock.FontSizeProperty, fontSize) }
 			};
 			// TextBox -- the editable detail values / browse cells. Font only: the editors
 			// are deliberately borderless/transparent, so no border or min-height floor
 			// here, unlike the boxed dialog inputs.
-			yield return new Style(s => s.OfType<TextBox>())
+			yield return new Style(s => WithClass(s.OfType<TextBox>(), styleClass))
 			{
 				Setters = { new Setter(TemplatedControl.FontSizeProperty, fontSize) }
 			};
 		}
+
+		private static Selector WithClass(Selector selector, string styleClass)
+			=> string.IsNullOrEmpty(styleClass) ? selector : selector.Class(styleClass);
 	}
 }

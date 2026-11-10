@@ -725,6 +725,72 @@ namespace FwAvaloniaTests
 				Is.EqualTo(SIL.FieldWorks.Common.FwAvalonia.FwAvaloniaDensity.WsAbbrevFontSize));
 		}
 
+		// LT-22811: only the data in the value column takes the value size. Message rows, the
+		// Unsupported placeholder, a watermark prompt and a button caption keep the surface font.
+		[AvaloniaTest]
+		public void ValueFontSize_SizesTheData_NotTheInterfaceTextBesideIt()
+		{
+			const double normalSize = 20;
+			DetailField[] Fields() => new[]
+			{
+				new DetailField("lit", "", "Message", null, DetailFieldKind.Literal,
+					EditorClassification.Known, "lit", null, HostRouting.Inherit,
+					new List<DetailWsValue> { new DetailWsValue("", "A message") }, null, null),
+				new DetailField("bad", "Odd", "Odd", null, DetailFieldKind.Unsupported,
+					EditorClassification.Unknown, "bad", null, HostRouting.Inherit, null, null, null),
+				new DetailField("ghost", "Lexeme Form", "LexemeForm", null, DetailFieldKind.Text,
+					EditorClassification.Known, "ghost", null, HostRouting.Inherit,
+					new List<DetailWsValue> { new DetailWsValue("vern", "") }, null, null,
+					isEditable: true, indent: 0, ghostPrompt: "Click here to add Lexeme Form"),
+				new DetailField("pub", "Publish In", "PublishIn", null, DetailFieldKind.ReferenceVector,
+					EditorClassification.Known, "pub", null, HostRouting.Inherit, null,
+					new List<DetailChoiceOption>
+					{
+						new DetailChoiceOption("p1", "Main Dictionary"),
+						new DetailChoiceOption("p2", "Pocket")
+					},
+					null, isEditable: true, indent: 0,
+					items: new List<DetailChoiceOption> { new DetailChoiceOption("p1", "Main Dictionary") })
+			};
+			TextBlock Block(Control root, string text)
+				=> root.GetVisualDescendants().OfType<TextBlock>().First(t => t.Text == text);
+			double Caption(Control root)
+			{
+				// The add button is a hover affordance, outside the tree until revealed.
+				var vector = root.GetVisualDescendants().OfType<FwReferenceVectorField>().Single();
+				var add = ((IHoverAffordanceProvider)vector).HoverAffordances.OfType<Button>()
+					.First(b => (AutomationProperties.GetAutomationId(b) ?? string.Empty).EndsWith(".Add",
+						System.StringComparison.Ordinal));
+				add.ApplyTemplate();
+				add.Presenter?.UpdateChild();
+				return add.GetVisualDescendants().OfType<TextBlock>().First().FontSize;
+			}
+
+			// An edit context, so the reference list offers its add button.
+			DataTree ShowEditable(double valueFontSize)
+			{
+				var model = new DetailModel("LexEntry", "Normal", Fields().ToList(),
+					new List<ViewDiagnostic>(), valueFontSize);
+				var tree = new DataTree(model, new FakeDetailEditContext());
+				new Window { Content = tree, Width = 480, Height = 300 }.Show();
+				Dispatcher.UIThread.RunJobs();
+				return tree;
+			}
+
+			var themed = ShowEditable(0);
+			var view = ShowEditable(normalSize);
+
+			foreach (var text in new[] { "A message", FwAvaloniaStrings.UnsupportedEditor,
+				"Click here to add Lexeme Form" })
+			{
+				Assert.That(Block(view, text).FontSize, Is.EqualTo(Block(themed, text).FontSize), text);
+				Assert.That(Block(view, text).FontSize, Is.Not.EqualTo(normalSize), text);
+			}
+			Assert.That(Caption(view), Is.EqualTo(Caption(themed)), "the add button's caption");
+			Assert.That(Block(view, "Main Dictionary").FontSize, Is.EqualTo(normalSize),
+				"a reference item is data and follows the value size");
+		}
+
 		// LT-22811: a value's own Copy menu keeps the menu size; the value size is for the data.
 		[AvaloniaTest]
 		public void ValueFontSize_LeavesTheValuesCopyMenuAtItsOwnSize()
