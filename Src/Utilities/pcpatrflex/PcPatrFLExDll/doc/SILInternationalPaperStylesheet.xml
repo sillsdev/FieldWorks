@@ -58,6 +58,7 @@ decoration="underline"
 ><exampleRefLinkLayout
 ></exampleRefLinkLayout
 ><genericRefLinkLayout
+showmarking="yes"
 ></genericRefLinkLayout
 ><indexLinkLayout
 ></indexLinkLayout
@@ -218,7 +219,6 @@ textalign="center"
 ><versionLayout
 font-size="10pt"
 textalign="center"
-textbefore="Version: "
 ></versionLayout
 ><contentsLayout
 font-size="14pt"
@@ -373,11 +373,14 @@ textbefore=" "
 ><tablenumberedLayout
 captionLocation="after"
 ><tablenumberedLabelLayout
+font-weight="bold"
 textafter=" "
 ></tablenumberedLabelLayout
 ><tablenumberedNumberLayout
+textafter=": "
 ></tablenumberedNumberLayout
 ><tablenumberedCaptionLayout
+font-style="italic"
 textbefore="  "
 ></tablenumberedCaptionLayout
 ></tablenumberedLayout

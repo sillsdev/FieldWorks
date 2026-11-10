@@ -229,3 +229,6 @@ Build/Agent/comment-hygiene-report.json
 .claude/.jira-issue-prefs.json
 # Local NuGet feed for packs made by build.ps1 -LocalLibraries
 .localfeed/
+
+# XLingPaper-based Documentation
+XLingPaperPDFTemp/
