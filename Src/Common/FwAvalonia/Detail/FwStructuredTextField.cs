@@ -105,6 +105,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				Background = FwAvaloniaDensity.TransparentBrush,
 				TextWrapping = TextWrapping.Wrap
 			};
+			FwSurfaceStyles.MarkValueText(box);
 			var paragraphStop = _paragraphStops.Add(box);
 			AutomationProperties.SetAutomationId(box, automationId + ".Para." + index);
 			AutomationProperties.SetName(box, FwAvaloniaStrings.StructuredTextParagraphName(field.Label ?? automationId, index + 1));

@@ -370,6 +370,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				Background = FwAvaloniaDensity.TransparentBrush,
 				TextWrapping = TextWrapping.NoWrap
 			};
+			FwSurfaceStyles.MarkValueText(editor);
 			box = editor;
 			if (!string.IsNullOrEmpty(group.FontFamily))
 				editor.FontFamily = new FontFamily(group.FontFamily);
@@ -852,6 +853,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				Padding = FwAvaloniaDensity.EditorPadding,
 				FlowDirection = FlowDirection.LeftToRight
 			};
+			FwSurfaceStyles.MarkValueText(block);
 			block.Inlines.Add(new Run("["));
 			for (var i = 0; i < row.OtherWsForms.Count; i++)
 			{

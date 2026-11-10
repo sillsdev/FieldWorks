@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
 using System.Xml;
@@ -9,6 +10,9 @@ using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwAvalonia;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
 using XCore;
 
@@ -189,6 +193,95 @@ namespace SIL.FieldWorks.XWorks
 				"Tool '{0}' is registered for the Avalonia edit framework (§20.3), so New mode resolves to Avalonia.",
 				toolValue);
 		}
+
+		// LT-22811: View > Refresh and closing the Styles dialog reach the Avalonia view through
+		// RefreshDisplay, which recomposes it at Normal's new size.
+		[Test]
+		public void RefreshDisplay_InNewMode_RecomposesAtNormalsNewSize()
+		{
+			m_propertyTable.SetProperty("UIMode", "New", true);
+			m_propertyTable.SetPropertyPersistence("UIMode", false);
+
+			LoadRecordEditView();
+			DrainMediatorAndIdleQueues();
+
+			var control = m_propertyTable.GetValue<object>("currentContentControlObject", null) as RecordEditView;
+			Assert.That(control, Is.Not.Null);
+			EnsureCurrentRecord(control);
+			Assert.That(GetPrivateField<DetailHostControl>(control, "m_avaloniaEntryForm")?.ShownDetail,
+				Is.Not.Null, "precondition: the Avalonia view shows the entry");
+
+			IStStyle normal = null;
+			ITsTextProps originalRules = null;
+			var createdNormal = false;
+			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
+			{
+				normal = Cache.LangProject.StylesOC
+					.FirstOrDefault(s => s.Name == StyleServices.NormalStyleName);
+				createdNormal = normal == null;
+				if (createdNormal)
+				{
+					normal = Cache.ServiceLocator.GetInstance<IStStyleFactory>().Create();
+					Cache.LangProject.StylesOC.Add(normal);
+					normal.Name = StyleServices.NormalStyleName;
+					normal.Type = StyleType.kstParagraph;
+				}
+				originalRules = normal.Rules;
+				var props = TsStringUtils.MakePropsBldr();
+				props.SetIntPropValues((int)FwTextPropType.ktptFontSize,
+					(int)FwTextPropVar.ktpvMilliPoint, 20000);
+				normal.Rules = props.GetTextProps();
+			});
+			try
+			{
+				DrainMediatorAndIdleQueues();
+				Assert.That(ShownValueFontSize(control), Is.Not.EqualTo(20 * UnitsPerPoint).Within(0.01),
+					"precondition: changing the style alone does not recompose the view");
+
+				Assert.That(control.RefreshDisplay(), Is.False,
+					"the views inside still refresh themselves");
+				DrainMediatorAndIdleQueues();
+
+				Assert.That(ShownValueFontSize(control), Is.EqualTo(20 * UnitsPerPoint).Within(0.01));
+			}
+			finally
+			{
+				NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
+				{
+					if (createdNormal)
+						Cache.LangProject.StylesOC.Remove(normal);
+					else
+						normal.Rules = originalRules;
+				});
+			}
+		}
+
+		// LT-22811: in the WinForms UI mode, RefreshDisplay leaves the refresh to the
+		// views inside.
+		[Test]
+		public void RefreshDisplay_InLegacyMode_LeavesTheRefreshToTheViewsInside()
+		{
+			m_propertyTable.SetProperty("UIMode", "Legacy", true);
+			m_propertyTable.SetPropertyPersistence("UIMode", false);
+
+			LoadRecordEditView();
+			DrainMediatorAndIdleQueues();
+
+			var control = m_propertyTable.GetValue<object>("currentContentControlObject", null) as RecordEditView;
+			Assert.That(control, Is.Not.Null);
+			EnsureCurrentRecord(control);
+
+			Assert.That(control.RefreshDisplay(), Is.False);
+			DrainMediatorAndIdleQueues();
+			Assert.That(GetPrivateFieldValue(control, "m_avaloniaEntryForm"), Is.Null,
+				"no Avalonia view is built");
+		}
+
+		// Avalonia sizes text in device-independent units, 96 to the inch.
+		private const double UnitsPerPoint = 96.0 / 72.0;
+
+		private static double ShownValueFontSize(RecordEditView control)
+			=> GetPrivateField<DetailHostControl>(control, "m_avaloniaEntryForm").ShownDetail.ValueFontSize;
 
 		private void LoadRecordEditView()
 		{

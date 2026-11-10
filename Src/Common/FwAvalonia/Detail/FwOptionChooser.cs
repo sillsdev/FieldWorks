@@ -156,6 +156,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				BorderThickness = new Thickness(0),
 				Watermark = FwAvaloniaStrings.SearchPrompt
 			};
+			// What is typed here matches the option names, so it shows at their size.
+			FwSurfaceStyles.MarkValueText(_filterBox);
 			AutomationProperties.SetAutomationId(_filterBox, automationId + ".Search");
 			AutomationProperties.SetName(_filterBox, FwAvaloniaStrings.SearchPrompt);
 			_filterBox.TextChanged += (s, e) => ApplyFilter();
@@ -226,6 +228,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 					VerticalAlignment = VerticalAlignment.Center,
 					Foreground = FwAvaloniaDensity.PickerForegroundBrush
 				};
+				FwSurfaceStyles.MarkValueText(_dropdownLabel);
 				var chevron = new TextBlock
 				{
 					Text = "▾", // ▾ collapsed-dropdown affordance
@@ -948,6 +951,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 						VerticalAlignment = VerticalAlignment.Center,
 						Foreground = FwAvaloniaDensity.HotlinkBrush
 					};
+					FwSurfaceStyles.MarkValueText(create);
 					AutomationProperties.SetAutomationId(create, _automationId + ".Create");
 					AutomationProperties.SetName(create, option.Name);
 					return create;
@@ -959,6 +963,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 					Foreground = IsOptionAvailable(option) ? FwAvaloniaDensity.PickerForegroundBrush : FwAvaloniaDensity.DisabledOptionBrush,
 					Opacity = IsOptionAvailable(option) ? 1.0 : 0.55
 				};
+				FwSurfaceStyles.MarkValueText(label);
 				if (!_multiSelect)
 				{
 					label.Margin = new Thickness(option.Depth * 14, 0, 0, 0);

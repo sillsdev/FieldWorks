@@ -1,4 +1,4 @@
-// Copyright (c) 2026 SIL International
+﻿// Copyright (c) 2026 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -968,6 +968,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			AutomationProperties.SetName(labelBlock, field.Label ?? field.Field ?? string.Empty);
 			ToolTip.SetTip(labelBlock, field.Label ?? field.Field); // the label text is its own tip
 			var editor = CreateEditor(field, automationId);
+			ApplyValueFontSize(editor);
 			if (editor is IDisposable disposable)
 				shown.Editor = disposable;
 			editor.Margin = new Thickness(0, 0, 0, FwAvaloniaDensity.FieldSpacing);
@@ -1148,6 +1149,11 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				e.Handled = true;
 			}, Avalonia.Interactivity.RoutingStrategies.Bubble);
 		}
+
+		// Shows the editor's data at the model's value size, the Normal style's, in place of the
+		// surface font (LT-22811).
+		private void ApplyValueFontSize(Control editor)
+			=> FwSurfaceStyles.ApplyValueFontSize(editor, Model.ValueFontSize);
 
 		// The field->control dispatch is shared with the browse in-cell editor through
 		// SliceFactory. The detail pane passes its full callback set (per-WS keyboard, slice

@@ -40,8 +40,20 @@ namespace SIL.FieldWorks.XWorks
 	/// Form/Form.Designer.cs split) so the legacy-facing file stays small; nothing here
 	/// changes behavior when <c>UIMode</c> is Legacy.
 	/// </summary>
-	public partial class RecordEditView
+	public partial class RecordEditView : IRefreshableRoot
 	{
+		/// <summary>
+		/// Recomposes the Avalonia detail view when the window refreshes, as after View >
+		/// Refresh or the Styles dialog (LT-22811); an open edit completes first. Always false,
+		/// so the views this one contains still refresh themselves.
+		/// </summary>
+		public bool RefreshDisplay()
+		{
+			if (ShouldUseAvaloniaLexiconEdit)
+				m_avaloniaRefreshController?.RequestRefresh();
+			return false;
+		}
+
 		private UIFramework m_activeUIFramework;
 		private readonly EditControlFactory m_lexicalEditControlFactory;
 		private readonly UIFrameworkSelectionService m_frameworkSelectionService = new UIFrameworkSelectionService();

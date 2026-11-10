@@ -188,7 +188,8 @@ namespace SIL.FieldWorks.XWorks
 
 			var context = new ComposedDetailEditContext(cache, obj, state.Handlers);
 			composedContext = context;
-			var model = new DetailModel(obj.ClassName, layoutName, state.Fields, root.Diagnostics);
+			var model = new DetailModel(obj.ClassName, layoutName, state.Fields, root.Diagnostics,
+				state.ValueFontSize);
 			return new ComposedDetail(model, context);
 		}
 
@@ -389,7 +390,16 @@ namespace SIL.FieldWorks.XWorks
 				_sda = cache.DomainDataByFlid;
 				_mdc = (IFwMetaDataCacheManaged)cache.DomainDataByFlid.MetaDataCache;
 				_summaryLines = new DetailSummaryLines(cache);
+				_normalFontSizes = NormalStyleFontSizes.ForProject(cache);
 			}
+
+			private readonly NormalStyleFontSizes _normalFontSizes;
+
+			/// <summary>
+			/// The size of data that is not tied to one writing system: the Normal style's size
+			/// in the default analysis writing system.
+			/// </summary>
+			public double ValueFontSize => _normalFontSizes.For(_cache.DefaultAnalWs);
 
 			// Track which compiled model the walk is currently inside so each emitted
 			// field is stamped with its (class, layout). EnterModel/ExitModel bracket each compiled model's
@@ -1362,8 +1372,10 @@ namespace SIL.FieldWorks.XWorks
 				IReadOnlyList<CoreWritingSystemDefinition> systems, ViewNode node, out bool anyData, out bool anyAudio)
 			{
 				var dataSeen = false;
-				// The lexeme form's legacy bold/120% <properties> emphasis.
-				var fontSize = node.FontScalePercent > 0 ? 12.0 * node.FontScalePercent / 100.0 : 0;
+				// Each alternative shows at the Normal style's size for its writing system,
+				// scaled by the part's fontsize percentage (the lexeme form's 120%).
+				Func<CoreWritingSystemDefinition, double> fontSize =
+					ws => _normalFontSizes.For(ws.Handle, node.FontScalePercent);
 				// The per-ws value rows build through the shared factory
 				// (LexiconEditErrorFallback uses the same one), this path only supplies the text.
 				IReadOnlyList<DetailWsValue> values;
@@ -1405,7 +1417,7 @@ namespace SIL.FieldWorks.XWorks
 							// of a plain text box.
 							rebuilt.Add(new DetailWsValue(ws.Abbreviation,
 								values[i]?.Value ?? string.Empty,
-								ws.DefaultFontName, fontSize,
+								ws.DefaultFontName, fontSize(ws),
 								ws.RightToLeftScript, ws.Id, node.BoldEmphasis, isAudio: true));
 						}
 						else
@@ -3319,10 +3331,16 @@ namespace SIL.FieldWorks.XWorks
 					return;
 
 				var stableId = StableId(node, obj) + DetailField.GhostStableIdSuffix;
+				// Typed text goes into the ghost's writing system, so it shows at that size.
+				var ghostFontSize = ghost == null ? 0 : _normalFontSizes.For(ghost.WsHandle);
 				AddField(new DetailField(stableId, label, node.Field,
 					node.WritingSystem, DetailFieldKind.Text, node.EditorClassification,
 					node.AutomationId, node.LocalizationKey, node.Routing,
-					new List<DetailWsValue> { new DetailWsValue(ghost?.WsAbbrev ?? "", string.Empty, wsTag: ghost?.WsTag) },
+					new List<DetailWsValue>
+					{
+						new DetailWsValue(ghost?.WsAbbrev ?? "", string.Empty, fontSize: ghostFontSize,
+							wsTag: ghost?.WsTag)
+					},
 					null, null, isEditable: ghost != null, indent: depth,
 					menuId: node.MenuId, hotlinksId: node.HotlinksId, objectHvo: obj.Hvo,
 					ghostPrompt: prompt));
@@ -3335,6 +3353,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				public string WsAbbrev;
 				public string WsTag; // unique IETF tag (ws.Id), the edit-routing identity
+				public int WsHandle;
 				public Func<string, string, bool> Setter;
 			}
 
@@ -3404,6 +3423,7 @@ namespace SIL.FieldWorks.XWorks
 				{
 					WsAbbrev = ws.Abbreviation,
 					WsTag = ws.Id,
+					WsHandle = ws.Handle,
 					Setter = (wsKey, value) =>
 					{
 						// The closure outlives the edit session: a Cancel rolls MakeNewObject

@@ -799,6 +799,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				Background = FwAvaloniaDensity.TransparentBrush,
 				TextWrapping = TextWrapping.Wrap // long values wrap; the row grows vertically
 			};
+			FwSurfaceStyles.MarkValueText(box);
 			// A voice/audio writing system has no sound player in this view yet, so the row
 			// is read-only and says why (a distinct message from the rich-content read-only case).
 			if (value.IsAudio)
@@ -937,6 +938,12 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			var rtl = box.FlowDirection == FlowDirection.RightToLeft;
 			var display = DetailRichTextChrome.CreatePerRunFontDisplay(currentRich, field.WritingSystemFonts,
 				automationId + "." + wsKey + ".Display", rtl);
+			// The display stands in for the box, so it shows the value's own size and emphasis
+			// (LT-22811).
+			if (box.IsSet(TextBox.FontSizeProperty))
+				display.FontSize = box.FontSize;
+			if (box.IsSet(TextBox.FontWeightProperty))
+				display.FontWeight = box.FontWeight;
 			_valueStops.AttachDisplay(valueStop, display);
 
 			// Exactly ONE of {display, box} occupies the row at a time (IsVisible collapses the other out
@@ -1137,6 +1144,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				Text = CurrentName(field),
 				VerticalAlignment = VerticalAlignment.Center
 			};
+			FwSurfaceStyles.MarkValueText(_valueText);
 			ApplyEmptyValueWidth();
 			var content = new StackPanel
 			{
@@ -1440,6 +1448,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 						BorderThickness = new Thickness(0),
 						Background = FwAvaloniaDensity.TransparentBrush
 					};
+					FwSurfaceStyles.MarkValueText(box);
 					// Held to the width its text measures, so the last character is not
 					// cut, and kept in step while typing.
 					FloorWidthToText(box);
@@ -1493,6 +1502,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 						Background = FwAvaloniaDensity.TransparentBrush
 					};
 				}
+				FwSurfaceStyles.MarkValueText(text);
 				AutomationProperties.SetAutomationId(text, ItemAutomationId(automationId, item.Key));
 				// Any button selects, so a right-click's menu acts on the item under the pointer;
 				// focus selects too. The first item is a chip row's one Tab stop; the editors of
@@ -1678,6 +1688,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 					Background = FwAvaloniaDensity.TransparentBrush,
 					Watermark = FwAvaloniaStrings.AddItem
 				};
+				FwSurfaceStyles.MarkValueText(newItem);
 				// Keeps its empty width until what is typed needs more than that.
 				FloorWidthToText(newItem, FwAvaloniaDensity.NewItemSlotMinWidth);
 				AutomationProperties.SetAutomationId(newItem, automationId + ".New");
@@ -2187,6 +2198,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				Margin = FwAvaloniaDensity.TrailingGap,
 				Background = FwAvaloniaDensity.TransparentBrush // the value text is the hover surface
 			};
+			FwSurfaceStyles.MarkValueText(text);
 			AutomationProperties.SetName(text, label ?? string.Empty);
 
 			DockPanel.SetDock(_button, Dock.Right);

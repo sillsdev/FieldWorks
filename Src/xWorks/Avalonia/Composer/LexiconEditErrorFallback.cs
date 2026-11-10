@@ -33,11 +33,13 @@ namespace SIL.FieldWorks.XWorks
 
 		private readonly ILexEntry _entry;
 		private readonly LcmCache _cache;
+		private readonly NormalStyleFontSizes _fontSizes;
 
 		private LexiconEditErrorFallback(ILexEntry entry, LcmCache cache)
 		{
 			_entry = entry;
 			_cache = cache;
+			_fontSizes = NormalStyleFontSizes.ForProject(cache);
 		}
 
 		/// <summary>
@@ -50,7 +52,8 @@ namespace SIL.FieldWorks.XWorks
 				return null;
 
 			var provider = new LexiconEditErrorFallback(entry, cache);
-			return DetailModelProjector.FromViewDefinition(FirstSliceDefinition.Value, provider);
+			return DetailModelProjector.FromViewDefinition(FirstSliceDefinition.Value, provider,
+				provider._fontSizes.For(cache.DefaultAnalWs));
 		}
 
 		/// <summary>
@@ -80,7 +83,7 @@ namespace SIL.FieldWorks.XWorks
 			switch (fieldNode.Field)
 			{
 				case LexemeFormField:
-					return GetLexemeFormValues();
+					return GetLexemeFormValues(fieldNode);
 				case GlossField:
 					return GetGlossValues();
 				default:
@@ -91,7 +94,7 @@ namespace SIL.FieldWorks.XWorks
 		// One row per current writing system, using the shared DetailValueFactory per-ws row
 		// recipe (same as the composer), so both views render consistently; only the text reads
 		// live here.
-		private IReadOnlyList<DetailWsValue> GetLexemeFormValues()
+		private IReadOnlyList<DetailWsValue> GetLexemeFormValues(ViewNode node)
 		{
 			return DetailValueFactory.CreateMultiWsValues(
 				_cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems, ws =>
@@ -100,7 +103,8 @@ namespace SIL.FieldWorks.XWorks
 					if ((text == null || text.Length == 0) && ws.Handle == _cache.DefaultVernWs)
 						text = _entry.CitationForm.get_String(ws.Handle); // legacy fallback, default ws only
 					return text;
-				}, _cache.WritingSystemFactory);
+				}, _cache.WritingSystemFactory, ws => _fontSizes.For(ws.Handle, node.FontScalePercent),
+				node.BoldEmphasis);
 		}
 
 		private IReadOnlyList<DetailWsValue> GetGlossValues()
@@ -111,7 +115,8 @@ namespace SIL.FieldWorks.XWorks
 			var gloss = _entry.SensesOS[0].Gloss;
 			return DetailValueFactory.CreateMultiWsValues(
 				_cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems,
-				ws => gloss.get_String(ws.Handle), _cache.WritingSystemFactory);
+				ws => gloss.get_String(ws.Handle), _cache.WritingSystemFactory,
+				ws => _fontSizes.For(ws.Handle));
 		}
 
 		/// <inheritdoc />

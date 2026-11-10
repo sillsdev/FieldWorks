@@ -15,9 +15,15 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 	/// </summary>
 	public static class DetailModelProjector
 	{
+		/// <summary>
+		/// Projects <paramref name="definition"/> into a detail model whose rows read their
+		/// values from <paramref name="values"/>. <paramref name="valueFontSize"/> becomes the
+		/// model's <see cref="DetailModel.ValueFontSize"/> (0 leaves the theme's size).
+		/// </summary>
 		public static DetailModel FromViewDefinition(
 			ViewDefinitionModel definition,
-			IDetailValueProvider values)
+			IDetailValueProvider values,
+			double valueFontSize = 0)
 		{
 			if (definition == null)
 				throw new System.ArgumentNullException(nameof(definition));
@@ -34,7 +40,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				definition.ClassName,
 				definition.LayoutName,
 				fields,
-				definition.Diagnostics);
+				definition.Diagnostics,
+				valueFontSize);
 		}
 
 		private static void CollectFields(
