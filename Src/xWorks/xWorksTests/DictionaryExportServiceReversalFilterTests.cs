@@ -86,7 +86,7 @@ namespace SIL.FieldWorks.XWorks
 				foreach (var kind in new[] { "filter", "sorter", "sortName" })
 					m_settingNames.Add(WsKey(wsId, kind));
 			foreach (var name in m_settingNames)
-				m_propertyTable.SetProperty(name, null, PropertyTable.SettingsGroup.LocalSettings, false);
+				m_propertyTable.RemoveProperty(name, PropertyTable.SettingsGroup.LocalSettings);
 			m_settingNames.Clear();
 			m_propertyTable.RemoveProperty(LayoutProperty);
 			m_propertyTable.RemoveProperty(GuidProperty);
@@ -100,7 +100,7 @@ namespace SIL.FieldWorks.XWorks
 
 		private static string WsKey(string wsId, string kind)
 		{
-			return "ReversalIndex.AllEntries-" + wsId + "_" + kind;
+			return "ReversalIndex.AllEntries:" + wsId + "_" + kind;
 		}
 
 		private static string PathKey(string configPath, string kind)
@@ -290,8 +290,29 @@ namespace SIL.FieldWorks.XWorks
 			clerk.OnChangeFilter(new FilterChangeEventArgs(MakeRegexFilter("^[^z]", wsEn), null));
 
 			Assert.That(clerk.Filter, Is.Not.Null);
-			Assert.That(m_propertyTable.GetStringProperty(WsKey("en", "filter"), null, PropertyTable.SettingsGroup.LocalSettings), Is.Null,
+			Assert.That(m_propertyTable.PropertyExists(WsKey("en", "filter"), PropertyTable.SettingsGroup.LocalSettings), Is.False,
 				"no reversal index is current, so there is no key to persist under");
+		}
+
+		[Test]
+		public void GetReversalFilteredAndSortedEntries_KeepsAClearedFilterCleared_WhenAnOlderKeyHoldsOne()
+		{
+			CreateIndexes(out var en, out var fr, out var wsEn);
+			m_propertyTable.SetProperty(GuidProperty, en.Guid.ToString(), false);
+			// Cleared in the view, while the named configuration's key still holds a filter.
+			SetLocalSetting(WsKey("en", "filter"), null);
+			SetLocalSetting(PathKey(ProjectConfigurationPath("en"), "filter"), FilterXml.Replace("WSHANDLE", wsEn.ToString()));
+
+			var exportService = new DictionaryExportService(m_propertyTable, m_mediator);
+			var clerk = exportService.GetReversalClerk();
+			Assert.That(clerk.Filter, Is.Null, "nothing restored when the clerk is created");
+			var decorator = ConfiguredLcmGenerator.CurrentDecorator(m_propertyTable, Cache, clerk);
+
+			exportService.GetReversalFilteredAndSortedEntries(fr.Guid, decorator, MakeReversalConfig("fr"), clerk);
+			var enEntries = exportService.GetReversalFilteredAndSortedEntries(en.Guid, decorator, MakeReversalConfig("en"), clerk);
+
+			Assert.That(Forms(enEntries), Does.Contain("zoo"), "the English export is not filtered");
+			Assert.That(clerk.Filter, Is.Null, "the view still has no filter");
 		}
 	}
 }

@@ -130,35 +130,31 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		protected override string PropertyTableId(string sorterOrFilter, DictionaryConfigurationModel revConfig = null)
 		{
 			var wsId = ReversalWritingSystemId(revConfig);
-			return wsId == null ? null : PropertyTableIdFor(wsId, sorterOrFilter);
+			return wsId == null ? null : WritingSystemPropertyTableId(wsId, sorterOrFilter);
 		}
 
 		/// <summary>
-		/// Reads the setting under the writing-system key. A value found only under a key built
-		/// from a configuration file path or an empty layout property moves to the writing-system
-		/// key, which every later read for this index uses, and the old key is removed.
+		/// Reads the setting under the writing-system key, which decides once it exists, even
+		/// with no value. Until then one older key decides: its value, empty or not, moves to
+		/// the writing-system key and the older key is removed.
 		/// </summary>
 		protected override string GetPersistedSetting(string sorterOrFilter, DictionaryConfigurationModel revConfig = null)
 		{
-			var value = base.GetPersistedSetting(sorterOrFilter, revConfig);
-			if (value != null)
-				return value;
 			var wsId = ReversalWritingSystemId(revConfig);
 			if (wsId == null)
 				return null;
+			var wsKey = WritingSystemPropertyTableId(wsId, sorterOrFilter);
+			if (m_propertyTable.PropertyExists(wsKey, PropertyTable.SettingsGroup.LocalSettings))
+				return m_propertyTable.GetStringProperty(wsKey, null, PropertyTable.SettingsGroup.LocalSettings);
 			var isCurrentIndex = revConfig == null || wsId == ReversalWritingSystemId(null);
-			foreach (var id in PathDerivedPropertyTableIds(wsId, isCurrentIndex, sorterOrFilter))
-			{
-				if (!m_propertyTable.PropertyExists(id, PropertyTable.SettingsGroup.LocalSettings))
-					continue;
-				value = m_propertyTable.GetStringProperty(id, null, PropertyTable.SettingsGroup.LocalSettings);
-				if (value == null)
-					continue;
-				m_propertyTable.SetProperty(PropertyTableIdFor(wsId, sorterOrFilter), value, PropertyTable.SettingsGroup.LocalSettings, false);
-				m_propertyTable.RemoveProperty(id, PropertyTable.SettingsGroup.LocalSettings);
-				return value;
-			}
-			return null;
+			var olderKey = OlderPropertyTableIds(wsId, isCurrentIndex, sorterOrFilter)
+				.FirstOrDefault(id => m_propertyTable.PropertyExists(id, PropertyTable.SettingsGroup.LocalSettings));
+			if (olderKey == null)
+				return null;
+			var value = m_propertyTable.GetStringProperty(olderKey, null, PropertyTable.SettingsGroup.LocalSettings);
+			m_propertyTable.SetProperty(wsKey, value, PropertyTable.SettingsGroup.LocalSettings, false);
+			m_propertyTable.RemoveProperty(olderKey, PropertyTable.SettingsGroup.LocalSettings);
+			return value;
 		}
 
 		/// <summary>
@@ -177,26 +173,26 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		}
 
 		/// <summary>
-		/// The keys built from the text after the first '-' of a configuration file path: from
-		/// the layout property when it is for this writing system (or is empty while this is the
-		/// current index), from the project's configuration file named for the writing system,
-		/// and from every other project configuration file that declares it, such as a copy.
+		/// The older keys to try, in order. When the layout is for this index, or is empty
+		/// while this is the current index, only the layout's key, which holds what the view
+		/// showed. Otherwise the keys of the project's configuration file named for the
+		/// writing system, then of the other project files declaring it, sorted by path.
 		/// </summary>
-		private IEnumerable<string> PathDerivedPropertyTableIds(string wsId, bool isCurrentIndex, string sorterOrFilter)
+		private IEnumerable<string> OlderPropertyTableIds(string wsId, bool isCurrentIndex, string sorterOrFilter)
 		{
-			var paths = new List<string>();
 			var layout = m_propertyTable.GetStringProperty("ReversalIndexPublicationLayout", null);
 			if (layout != null && (layout.Length == 0 ? isCurrentIndex : IsConfigurationFor(layout, wsId)))
-				paths.Add(layout);
+				return new[] { OlderPropertyTableId(layout, sorterOrFilter) };
 			var configDir = Path.Combine(LcmFileHelper.GetConfigSettingsDir(m_cache.ProjectId.ProjectFolder),
 				ReversalIndexServices.RevIndexDir);
-			paths.Add(Path.Combine(configDir, wsId + DictionaryConfigurationModel.FileExtension));
+			var paths = new List<string> { Path.Combine(configDir, wsId + DictionaryConfigurationModel.FileExtension) };
 			if (Directory.Exists(configDir))
 			{
 				paths.AddRange(Directory.EnumerateFiles(configDir, "*" + DictionaryConfigurationModel.FileExtension)
-					.Where(path => DeclaresWritingSystem(path, wsId)));
+					.Where(path => DeclaresWritingSystem(path, wsId))
+					.OrderBy(path => path, StringComparer.OrdinalIgnoreCase));
 			}
-			return paths.Select(path => PropertyTableIdFor(path.Substring(path.IndexOf('-') + 1), sorterOrFilter)).Distinct();
+			return paths.Select(path => OlderPropertyTableId(path, sorterOrFilter)).Distinct();
 		}
 
 		/// <summary>
@@ -233,13 +229,32 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			}
 		}
 
-		private string PropertyTableIdFor(string reversalLang, string sorterOrFilter)
+		/// <summary>
+		/// The settings key for a reversal index's writing system. The ':' keeps it distinct
+		/// from the '-' keys a settings file may hold, even ones named by a writing system.
+		/// </summary>
+		private string WritingSystemPropertyTableId(string wsId, string sorterOrFilter)
+		{
+			return String.Format("{0}:{1}_{2}", ListSettingsName(), wsId, sorterOrFilter);
+		}
+
+		/// <summary>
+		/// An older settings key, built from the text after the first '-' of a layout value
+		/// or a configuration file path.
+		/// </summary>
+		private string OlderPropertyTableId(string layoutOrPath, string sorterOrFilter)
+		{
+			return String.Format("{0}-{1}_{2}", ListSettingsName(),
+				layoutOrPath.Substring(layoutOrPath.IndexOf('-') + 1), sorterOrFilter);
+		}
+
+		private string ListSettingsName()
 		{
 			// Dependent lists do not have owner/property set. Rather they have class/field.
 			string className = VirtualListPublisher.MetaDataCache.GetOwnClsName((int)m_flid);
 			string fieldName = VirtualListPublisher.MetaDataCache.GetFieldName((int)m_flid);
 			var propertyName = String.IsNullOrEmpty(PropertyName) || PropertyName == fieldName ? fieldName : PropertyName;
-			return String.Format("{0}.{1}-{2}_{3}", className, propertyName, reversalLang, sorterOrFilter);
+			return className + "." + propertyName;
 		}
 	}
 

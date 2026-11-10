@@ -54,9 +54,24 @@ namespace LexEdDllTests
 			return propertyTable;
 		}
 
-		private string WsKey(string wsId)
+		private static string WsKey(string wsId)
 		{
-			return "ReversalIndex.AllEntries-" + wsId + "_" + FieldName;
+			return "ReversalIndex.AllEntries:" + wsId + "_" + FieldName;
+		}
+
+		private static bool HasLocal(PropertyTable propertyTable, string key)
+		{
+			return propertyTable.PropertyExists(key, PropertyTable.SettingsGroup.LocalSettings);
+		}
+
+		private static string GetLocal(PropertyTable propertyTable, string key)
+		{
+			return propertyTable.GetStringProperty(key, null, PropertyTable.SettingsGroup.LocalSettings);
+		}
+
+		private static void SetLocal(PropertyTable propertyTable, string key, string value)
+		{
+			propertyTable.SetProperty(key, value, PropertyTable.SettingsGroup.LocalSettings, false);
 		}
 
 		/// <summary>
@@ -241,6 +256,128 @@ namespace LexEdDllTests
 					Is.False, "the copy's path key is removed");
 				Assert.That(propertyTable.GetStringProperty(PathKey(frCopy.Path), null, PropertyTable.SettingsGroup.LocalSettings),
 					Is.EqualTo("by French copy"), "a configuration for another writing system is left alone");
+			}
+		}
+
+		[Test]
+		public void GetPersistedSetting_LayoutKeyWithNoValue_RestoresNothing()
+		{
+			var wsId = m_enIndex.WritingSystem;
+			var namedPath = Path.Combine(ProjectConfigurationDir(), wsId + DictionaryConfigurationModel.FileExtension);
+			using (var copy = WriteConfiguration(ProjectConfigurationDir(), "Copy of English", wsId))
+			using (var mediator = new Mediator())
+			using (var propertyTable = MakePropertyTable(mediator))
+			using (var recordList = new TestReversalRecordList(Cache, mediator, propertyTable))
+			{
+				propertyTable.SetProperty("ReversalIndexGuid", m_enIndex.Guid.ToString(), false);
+				propertyTable.SetProperty("ReversalIndexPublicationLayout", copy.Path, false);
+				// Cleared under the copy, while the named configuration still holds a filter.
+				SetLocal(propertyTable, PathKey(copy.Path), null);
+				SetLocal(propertyTable, PathKey(namedPath), "by named configuration");
+
+				Assert.That(recordList.GetPersisted(FieldName), Is.Null);
+				Assert.That(HasLocal(propertyTable, WsKey(wsId)), Is.True, "the cleared state moved to the writing-system key");
+				Assert.That(HasLocal(propertyTable, PathKey(copy.Path)), Is.False, "the copy's key is removed");
+				Assert.That(GetLocal(propertyTable, PathKey(namedPath)), Is.EqualTo("by named configuration"),
+					"another configuration's key is left alone");
+
+				propertyTable.SetProperty("ReversalIndexPublicationLayout", namedPath, false);
+				Assert.That(recordList.GetPersisted(FieldName), Is.Null, "still cleared after the layout changes");
+			}
+		}
+
+		[Test]
+		public void GetPersistedSetting_LayoutKeyMissing_RestoresNothing()
+		{
+			var wsId = m_enIndex.WritingSystem;
+			using (var copy = WriteConfiguration(ProjectConfigurationDir(), "Copy of English", wsId))
+			using (var mediator = new Mediator())
+			using (var propertyTable = MakePropertyTable(mediator))
+			using (var recordList = new TestReversalRecordList(Cache, mediator, propertyTable))
+			{
+				propertyTable.SetProperty("ReversalIndexGuid", m_enIndex.Guid.ToString(), false);
+				propertyTable.SetProperty("ReversalIndexPublicationLayout", copy.Path, false);
+				SetLocal(propertyTable, ConfigurationPathKey(wsId), "by named configuration");
+
+				Assert.That(recordList.GetPersisted(FieldName), Is.Null);
+				Assert.That(HasLocal(propertyTable, WsKey(wsId)), Is.False, "nothing is written");
+				Assert.That(GetLocal(propertyTable, ConfigurationPathKey(wsId)), Is.EqualTo("by named configuration"));
+			}
+		}
+
+		[Test]
+		public void GetPersistedSetting_EmptyLayoutWithoutItsKey_RestoresNothing()
+		{
+			var wsId = m_enIndex.WritingSystem;
+			using (var mediator = new Mediator())
+			using (var propertyTable = MakePropertyTable(mediator))
+			using (var recordList = new TestReversalRecordList(Cache, mediator, propertyTable))
+			{
+				propertyTable.SetProperty("ReversalIndexGuid", m_enIndex.Guid.ToString(), false);
+				propertyTable.SetProperty("ReversalIndexPublicationLayout", "", false);
+				SetLocal(propertyTable, ConfigurationPathKey(wsId), "by named configuration");
+
+				Assert.That(recordList.GetPersisted(FieldName), Is.Null);
+				Assert.That(GetLocal(propertyTable, ConfigurationPathKey(wsId)), Is.EqualTo("by named configuration"));
+			}
+		}
+
+		[Test]
+		public void GetPersistedSetting_WritingSystemKeyWithNoValue_IgnoresOlderKeys()
+		{
+			var wsId = m_enIndex.WritingSystem;
+			using (var mediator = new Mediator())
+			using (var propertyTable = MakePropertyTable(mediator))
+			using (var recordList = new TestReversalRecordList(Cache, mediator, propertyTable))
+			{
+				propertyTable.SetProperty("ReversalIndexGuid", m_enIndex.Guid.ToString(), false);
+				// Cleared after a read moved a filter; another older key is left over.
+				SetLocal(propertyTable, WsKey(wsId), null);
+				SetLocal(propertyTable, ConfigurationPathKey(wsId), "by named configuration");
+
+				Assert.That(recordList.GetPersisted(FieldName), Is.Null);
+				Assert.That(GetLocal(propertyTable, ConfigurationPathKey(wsId)), Is.EqualTo("by named configuration"));
+			}
+		}
+
+		[Test]
+		public void GetPersistedSetting_ScanStopsAtFirstExistingKey_EvenWithNoValue()
+		{
+			var wsId = m_enIndex.WritingSystem;
+			using (var enCopy = WriteConfiguration(ProjectConfigurationDir(), "Copy of English", wsId))
+			using (var frCopy = WriteConfiguration(ProjectConfigurationDir(), "Copy of French", "fr"))
+			using (var mediator = new Mediator())
+			using (var propertyTable = MakePropertyTable(mediator))
+			using (var recordList = new TestReversalRecordList(Cache, mediator, propertyTable))
+			{
+				propertyTable.SetProperty("ReversalIndexGuid", m_enIndex.Guid.ToString(), false);
+				propertyTable.SetProperty("ReversalIndexPublicationLayout", frCopy.Path, false);
+				SetLocal(propertyTable, ConfigurationPathKey(wsId), null);
+				SetLocal(propertyTable, PathKey(enCopy.Path), "by English copy");
+
+				Assert.That(recordList.GetPersisted(FieldName), Is.Null);
+				Assert.That(HasLocal(propertyTable, WsKey(wsId)), Is.True, "the cleared state moved to the writing-system key");
+				Assert.That(HasLocal(propertyTable, ConfigurationPathKey(wsId)), Is.False, "the named configuration's key is removed");
+				Assert.That(GetLocal(propertyTable, PathKey(enCopy.Path)), Is.EqualTo("by English copy"));
+			}
+		}
+
+		[Test]
+		public void GetPersistedSetting_IgnoresDashKeyNamedByWritingSystem()
+		{
+			var wsId = m_enIndex.WritingSystem;
+			var layoutPath = Path.Combine(ProjectConfigurationDir(), wsId + DictionaryConfigurationModel.FileExtension);
+			using (var mediator = new Mediator())
+			using (var propertyTable = MakePropertyTable(mediator))
+			using (var recordList = new TestReversalRecordList(Cache, mediator, propertyTable))
+			{
+				propertyTable.SetProperty("ReversalIndexGuid", m_enIndex.Guid.ToString(), false);
+				propertyTable.SetProperty("ReversalIndexPublicationLayout", layoutPath, false);
+				// 2015 builds formed this key from a "publishReversal-en" layout name.
+				SetLocal(propertyTable, "ReversalIndex.AllEntries-" + wsId + "_" + FieldName, "stale");
+				SetLocal(propertyTable, PathKey(layoutPath), "by layout");
+
+				Assert.That(recordList.GetPersisted(FieldName), Is.EqualTo("by layout"));
 			}
 		}
 
