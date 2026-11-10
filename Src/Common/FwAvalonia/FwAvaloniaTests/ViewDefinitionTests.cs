@@ -58,6 +58,10 @@ namespace FwAvaloniaTests
    <slice label='Pronunciation' editor='multistring' field='Form'
    ws='all pronunciation' optionalWs='all vernacular' forceIncludeEnglish='true'/>
   </part>
+  <part id='LexEntry-Detail-PublishIn'>
+    <slice label='Publish Entry In' editor='defaultVectorReference' field='PublishIn'
+     visField='DoNotPublishIn'/>
+  </part>
 </bin></PartInventory>";
 
 		private static ViewDefinitionModel Import(string layoutXml)
@@ -249,6 +253,26 @@ namespace FwAvaloniaTests
 			Assert.That(model.Roots[0].OptionalWritingSystem, Is.Null,
 				"a part with no optionalWs offers only its own writing systems");
 			Assert.That(model.Roots[0].ForceIncludeEnglish, Is.False);
+			Assert.That(model.Roots[0].VisibilityField, Is.Null,
+				"a part with no visField decides visibility on its own field");
+		}
+
+		// LT-22661: Publish In displays the complement of DoNotPublishIn, so its ifdata
+		// visibility must be decided on the field the slice names in visField.
+		[Test]
+		public void Import_VisField_RidesTheNode_AndIsNotReportedUnhandled()
+		{
+			var model = Import(@"
+<layout class='LexEntry' type='detail' name='Pub'>
+  <part ref='PublishIn' visibility='ifdata'/>
+</layout>");
+
+			var field = model.Roots[0];
+			Assert.That(field.Field, Is.EqualTo("PublishIn"));
+			Assert.That(field.VisibilityField, Is.EqualTo("DoNotPublishIn"));
+			Assert.That(field.Visibility, Is.EqualTo(ViewVisibility.IfData));
+			Assert.That(model.Diagnostics.Select(d => d.Message),
+				Has.None.Contains("visField"), "visField is imported, not dropped");
 		}
 
 		[Test]
