@@ -215,6 +215,7 @@ namespace SIL.FieldWorks.XWorks
 			m_avaloniaRefreshController?.Dispose();
 			m_refreshQuietTimer?.Dispose();
 			m_refreshQuietTimer = null;
+			m_afterRefreshQuiet = null;
 			SettleDetailEdits();
 			m_detailEditContext.Clear();
 			m_avaloniaEntryForm?.Dispose();
@@ -301,7 +302,7 @@ namespace SIL.FieldWorks.XWorks
 				Cache,
 				// The record on display, which is the top-level record when the tool shows a
 				// current subrecord inside its root.
-				() => m_shownRecord,
+				() => RefreshRecord,
 				// "Busy" means an open session OR a click in flight: Commit clears IsOpen BEFORE
 				// EndUndoTask raises PropChanged, so its own notification would recompose
 				// midclick.
@@ -310,8 +311,8 @@ namespace SIL.FieldWorks.XWorks
 				RefreshAvaloniaDetail,
 				new RefreshCoordinator(),
 				ScheduleOnUiThread,
-				// This lexical host's relevance rule; the controller itself stays host-agnostic.
-				changed => IsChangeWithinEntry(changed, m_shownRecord, m_shownRowObjects),
+				// This host's relevance rule; the controller itself stays host-agnostic.
+				changed => IsChangeWithinEntry(changed, RefreshRecord, m_shownRowObjects),
 				DeferUntilQuiet);
 			// Global Undo/Redo while a fenced session is open would re-enter the UOW write lock
 			// (LockRecursionException); the guard settles the pending edit instead.
@@ -360,9 +361,11 @@ namespace SIL.FieldWorks.XWorks
 		private System.Windows.Forms.Timer m_refreshQuietTimer;
 		private Action m_afterRefreshQuiet;
 
-		// Runs the action on the UI thread once RefreshQuietMilliseconds pass with no further
-		// call; each call restarts the wait and replaces the action.
-		private void DeferUntilQuiet(Action action)
+		/// <summary>
+		/// Runs <paramref name="action"/> on the UI thread once RefreshQuietMilliseconds pass
+		/// with no further call; each call restarts the wait and replaces the action.
+		/// </summary>
+		internal void DeferUntilQuiet(Action action)
 		{
 			if (IsDisposed)
 				return;
@@ -385,17 +388,25 @@ namespace SIL.FieldWorks.XWorks
 				{
 					Interval = RefreshQuietMilliseconds
 				};
-				m_refreshQuietTimer.Tick += (sender, e) =>
-				{
-					m_refreshQuietTimer.Stop();
-					var pending = m_afterRefreshQuiet;
-					m_afterRefreshQuiet = null;
-					pending?.Invoke();
-				};
+				m_refreshQuietTimer.Tick += (sender, e) => OnRefreshQuiet();
 			}
 			m_refreshQuietTimer.Stop();
 			m_refreshQuietTimer.Start();
 		}
+
+		/// <summary>
+		/// The quiet wait has run out: runs the last deferred action, once.
+		/// </summary>
+		internal void OnRefreshQuiet()
+		{
+			m_refreshQuietTimer?.Stop();
+			var pending = m_afterRefreshQuiet;
+			m_afterRefreshQuiet = null;
+			pending?.Invoke();
+		}
+
+		/// <summary>Whether a deferred action is waiting for the quiet wait to run out.</summary>
+		internal bool IsRefreshQuietPending => m_refreshQuietTimer?.Enabled == true;
 
 		// UI-thread deferral for the controller's coalesced refresh queue: posting to the message
 		// queue lets the current call stack (commit/rollback PropChanged, the focus transition
@@ -543,6 +554,7 @@ namespace SIL.FieldWorks.XWorks
 			if (!m_detailEditContext.IsDeactivateHookAttached)
 				m_detailEditContext.AttachDeactivateHook(FindForm());
 			SetShownRecord(obj, detail);
+			DetailShowCount++;
 			m_avaloniaEntryForm.ShowDetail(detail, editContext,
 				OnDetailWritingSystemFocused,
 				GetPersistedExpansionState, PersistExpansionState,
@@ -558,6 +570,28 @@ namespace SIL.FieldWorks.XWorks
 			m_shownRowObjects = detail == null
 				? new HashSet<int>()
 				: new HashSet<int>(detail.Fields.Select(f => f.ObjectHvo).Where(hvo => hvo != 0));
+		}
+
+		// The record a change must touch to refresh the view: the one shown, or the clerk's
+		// current record while none is, so a record the clerk selects without a show still
+		// refreshes on an outside change.
+		private ICmObject RefreshRecord => m_shownRecord ?? Clerk?.CurrentObject;
+
+		/// <summary>How many times this view has built its Avalonia detail view.</summary>
+		internal int DetailShowCount { get; private set; }
+
+		// Forgets the shown record once the clerk has moved to a different one, so settling the
+		// edit left open on it is judged against the record about to be shown (LT-22692).
+		private void ForgetShownRecordIfLeaving()
+		{
+			if (m_shownRecord == null)
+				return;
+			var next = Clerk?.CurrentObject;
+			if (next == null || !next.IsValidObject
+				|| ResolveShownRecord(next).Hvo != m_shownRecord.Hvo)
+			{
+				SetShownRecord(null, null);
+			}
 		}
 
 		/// <summary>

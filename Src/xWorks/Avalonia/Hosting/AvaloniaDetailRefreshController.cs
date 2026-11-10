@@ -50,9 +50,9 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="schedule">Optional UI-thread deferral for coalesced delivery.</param>
 		/// <param name="isRelevant">
 		/// Host-supplied relevance for a changed object that is NOT the displayed record itself
-		/// (the controller already treats the displayed record as relevant). The lexical host
-		/// supplies the ILexEntry owner-walk (see RecordEditView.EnsureAvaloniaRefreshController);
-		/// when null, only changes to the displayed record itself trigger a refresh.
+		/// (the controller already treats the displayed record as relevant), such as an object it
+		/// owns or one of its rows is bound to; when null, only changes to the displayed record
+		/// itself trigger a refresh.
 		/// </param>
 		/// <param name="deferUntilQuiet">
 		/// Optional: runs the given action once no further call has arrived for a short while;
@@ -240,10 +240,8 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		// A change to the displayed record is always relevant; anything else is
-		// the host's call. The lexical host walks OwnerOfClass<ILexEntry>
-		// (injected), so other hosts reuse the controller with their own
-		// rule.
+		// A change to the displayed record is always relevant; anything else is the host's
+		// call, so each host reuses the controller with its own rule.
 		private bool IsRelevant(int hvo)
 		{
 			var current = _currentRecord();

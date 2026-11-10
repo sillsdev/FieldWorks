@@ -385,6 +385,7 @@ namespace SIL.FieldWorks.XWorks
 			Debug.Assert(m_dataEntryForm != null);
 
 			var rni = (RecordNavigationInfo) parameter;
+			ForgetShownRecordIfLeaving();
 			// Auto-save (14.4) must run BEFORE the clerk's save-on-change-record:
 			// RecordClerk.SaveOnChangeRecord force-EndUndoTasks any open undo task wholesale
 			// (LT-16673), which would commit invalid staged state past the validation gate.
@@ -402,6 +403,7 @@ namespace SIL.FieldWorks.XWorks
 					// Active-host contract: do not touch the legacy DataTree while Avalonia is active.
 					// The record may be gone (deleted elsewhere); cancel rather than orphan the session.
 					m_detailEditContext.Clear();
+					SetShownRecord(null, null);
 					EnsureAvaloniaEntryFormActive();
 					m_avaloniaEntryForm.Clear();
 					// Adapter hygiene: drop slices over a possibly deleted record,
