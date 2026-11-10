@@ -14,7 +14,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 	{
 		/// <summary>
 		/// Brings the "shared" label on every generated natural class name up to date before the
-		/// list is shown. A label change means the class has joined or left the list to display,
+		/// list is shown. A label change means the class may have joined or left the list to display,
 		/// so the list is reloaded when any label changes.
 		/// </summary>
 		public override void ActivateUI(bool useRecordTreeBar, bool updateStatusBar = true)
@@ -22,7 +22,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			bool changed = false;
 			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor,
 				() => changed = RuleFormulaControl.SyncSharedPrefixes(Cache));
-			// A class whose name changed has also gained or lost its place in the list.
+			// A class whose name changed may have gained or lost its place in the list.
 			if (changed)
 				m_list.ReloadList();
 
