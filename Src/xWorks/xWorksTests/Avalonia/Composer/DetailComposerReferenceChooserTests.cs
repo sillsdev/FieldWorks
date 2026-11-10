@@ -5,6 +5,7 @@
 using System.Linq;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwAvalonia.Detail;
+using SIL.FieldWorks.Common.FwAvalonia.ViewDefinition;
 using SIL.LCModel;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Infrastructure;
@@ -380,6 +381,50 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(link.Tool, Is.EqualTo("publicationsEdit"));
 			Assert.That(link.TargetGuid, Is.Null,
 				"legacy m_guidLink stays Guid.Empty for this link — a plain tool jump");
+		}
+
+		private DetailField SensePublishIn(ComposedDetail composed)
+			=> composed.Model.Fields.SingleOrDefault(f => f.Field == "PublishIn" && f.ObjectHvo == m_sense.Hvo);
+
+		// LT-22661: Publish Sense In is "ifdata" judged on DoNotPublishIn (its visField). A
+		// sense excluded from nothing shows every publication, yet has no data to show.
+		[Test]
+		public void Compose_PublishSenseIn_NoExclusions_IsHidden()
+		{
+			var shown = SensePublishIn(Compose(showHidden: true));
+			Assert.That(shown?.Items, Has.Count.EqualTo(1),
+				"precondition: the row displays Main Dictionary when hidden fields are shown");
+
+			Assert.That(SensePublishIn(Compose()), Is.Null);
+		}
+
+		[Test]
+		public void Compose_PublishSenseIn_WithAnExclusion_IsShown()
+		{
+			var mainDictionary = Cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS[0];
+			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor,
+				() => m_sense.DoNotPublishInRC.Add(mainDictionary));
+
+			var row = SensePublishIn(Compose());
+
+			Assert.That(row, Is.Not.Null, "an excluded publication is data, so the row shows");
+			Assert.That(row.Items, Is.Empty, "it displays the publications the sense is still in");
+		}
+
+		// A visField naming a field that holds no list cannot decide visibility, so the row
+		// is judged on what it displays, as if the part named no visField.
+		[Test]
+		public void ComposeModel_VisFieldNotAVector_FallsBackToTheDisplayedField()
+		{
+			var node = new ViewNode("t/#0", ViewNodeKind.Field, "Publish Sense In", null, "PublishIn",
+				"defaultVectorReference", EditorClassification.Known, null, ViewVisibility.IfData,
+				ViewExpansion.NotApplicable, false, null, null, visibilityField: "Gloss");
+			var model = new ViewDefinitionModel("LexSense", "Test", "detail", new[] { node }, null);
+
+			var composed = DetailComposer.ComposeModel(m_sense, Cache, model, "Test");
+
+			Assert.That(SensePublishIn(composed)?.Items, Has.Count.EqualTo(1),
+				"Gloss is a multistring, so the row shows because it lists Main Dictionary");
 		}
 
 		// Gear = configure: a chooser whose layout authored NO chooserLink (MorphologyParts.xml's
