@@ -658,6 +658,64 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(RecordEditView.IsChangeWithinEntry(m_entry, null), Is.False);
 		}
 
+		// A notebook record with a subrecord, and a Text the record references (not owns), with
+		// one paragraph.
+		private (IRnGenericRec record, IRnGenericRec subrecord, IStTxtPara paragraph) CreateNotebookRecord()
+		{
+			IRnGenericRec record = null;
+			IRnGenericRec subrecord = null;
+			IStTxtPara paragraph = null;
+			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
+			{
+				if (Cache.LangProject.ResearchNotebookOA == null)
+				{
+					Cache.LangProject.ResearchNotebookOA =
+						Cache.ServiceLocator.GetInstance<IRnResearchNbkFactory>().Create();
+				}
+				var recordFactory = Cache.ServiceLocator.GetInstance<IRnGenericRecFactory>();
+				record = recordFactory.Create();
+				Cache.LangProject.ResearchNotebookOA.RecordsOC.Add(record);
+				subrecord = recordFactory.Create();
+				record.SubRecordsOS.Add(subrecord);
+				var text = Cache.ServiceLocator.GetInstance<ITextFactory>().Create();
+				text.ContentsOA = Cache.ServiceLocator.GetInstance<IStTextFactory>().Create();
+				paragraph = Cache.ServiceLocator.GetInstance<IStTxtParaFactory>().Create();
+				text.ContentsOA.ParagraphsOS.Add(paragraph);
+				record.TextRA = text;
+			});
+			return (record, subrecord, paragraph);
+		}
+
+		// LT-22692: Notebook's Text row shows a Text the record only references, so a change to
+		// its paragraphs counts through the row's bound object.
+		[Test]
+		public void IsChangeWithinEntry_ReachesAReferencedTextThroughTheRowsBoundObject()
+		{
+			var (record, _, paragraph) = CreateNotebookRecord();
+			var text = record.TextRA;
+
+			Assert.That(RecordEditView.IsChangeWithinEntry(paragraph, record), Is.False,
+				"precondition: the record does not own its Text");
+			Assert.That(RecordEditView.IsChangeWithinEntry(paragraph, record, new[] { text.Hvo }),
+				Is.True, "the Text row's bound object reaches its paragraphs");
+			Assert.That(RecordEditView.IsChangeWithinEntry(paragraph, record, new[] { m_entry.Hvo }),
+				Is.False, "an unrelated bound object does not");
+		}
+
+		// LT-22692: Notebook shows the top-level record while a subrecord is current, so the
+		// view's own fields must count against that record, not the current subrecord.
+		[Test]
+		public void IsChangeWithinEntry_TheShownRootCoversItsFields_WhenASubrecordIsCurrent()
+		{
+			var (record, subrecord, _) = CreateNotebookRecord();
+
+			Assert.That(RecordEditView.IsChangeWithinEntry(record, subrecord), Is.False,
+				"precondition: judged against the current subrecord, the root's change is missed");
+			Assert.That(RecordEditView.IsChangeWithinEntry(record, record), Is.True);
+			Assert.That(RecordEditView.IsChangeWithinEntry(subrecord, record), Is.True,
+				"and the subrecord is still within the shown root");
+		}
+
 		/// <summary>
 		/// A click in flight must hold the refresh, exactly as an open session does.
 		///
