@@ -380,23 +380,23 @@ namespace SIL.FieldWorks.XWorks
 				Is.EqualTo(new[] { "Insert Etymology" }), "the menu text is 'Insert _Etymology'");
 		}
 
-		// No native authority owns the Notebook's menus: their links show without asking the
-		// mediator, which needs the hidden command adapter pointed at the row first.
+		// No native authority owns the Words wordform's hotlinks; that tool has no Avalonia
+		// detail view yet.
 		[Test]
-		public void HotlinkItemsFor_AMenuNoAuthorityOwns_OffersItsCommandsByLabel()
+		public void HotlinkItemsFor_AMenuNoAuthorityOwns_ShowsItsCommandsDisabled()
 		{
-			var row = new DetailField("RnGenericRec/subrecords", "Subrecords", "SubRecords", null, DetailFieldKind.Header,
+			var row = new DetailField("WfiWordform/main", "Wordform", "Form", null, DetailFieldKind.Header,
 				EditorClassification.GroupingNone, null, null, HostRouting.Inherit, null, null, null,
-				hotlinksId: "mnuDataTree-SubRecords-Hotlinks", objectHvo: m_entry.Hvo);
+				hotlinksId: "mnuDataTree-MainWordform-Hotlinks", objectHvo: m_entry.Hvo);
 			Assert.That(XCoreMenuBridge.OwnsAll(
 				m_view.CreateMenuAuthority(DetailMenuRequest.FromAnchor(null, row, DetailMenuKind.Hotlinks)),
-				new[] { row.HotlinksId }), Is.False, "precondition: the mediator answers this menu");
+				new[] { row.HotlinksId }), Is.False, "precondition: no native authority owns this menu");
 
 			var items = m_view.HotlinkItemsFor(row);
 
-			Assert.That(items.Select(i => i.Label), Is.EqualTo(new[] { "Insert Subrecord" }));
-			Assert.That(items[0].IsEnabled && items[0].Execute != null, Is.True,
-				"the command is resolved for the row when the link is clicked");
+			Assert.That(items.Select(i => i.Label), Is.EqualTo(new[] { "Assign Analysis..." }));
+			Assert.That(items[0].IsEnabled || items[0].Execute != null, Is.False,
+				"the hidden tree never answers a section link");
 		}
 
 		[Test]

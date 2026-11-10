@@ -75,6 +75,9 @@ namespace SIL.FieldWorks.XWorks
 			// Texts: the Info tab's jumps to the interlinear text and its notebook record; no
 			// Avalonia detail view.
 			"mnuDataTree-Text", "mnuTextInfo-Notebook",
+			// Notebook rows: the Subrecords section's menus and a subrecord's.
+			"mnuDataTree-SubRecords", "mnuDataTree-SubRecords-Hotlinks", "mnuDataTree-Subrecord-Hotlinks",
+			"mnuDataTree-SubRecordSummary",
 			// Lists and Reversal: no Avalonia detail view.
 			"mnuDataTree-DeletePossibility", "mnuDataTree-DeleteQuestion",
 			"mnuDataTree-InsertQuestion", "mnuDataTree-InsertReversalSubentry", "mnuDataTree-InsertReversalSubentry-Hotlinks"

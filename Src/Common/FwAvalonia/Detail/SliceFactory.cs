@@ -32,8 +32,10 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			Action save = null,
 			bool showWritingSystemAbbreviation = true,
 			double? wsAbbrevColumnWidth = null,
-			Action cancel = null)
+			Action cancel = null,
+			Action<DetailTextSelectionSnapshot> textSelectionChanged = null)
 		{
+			TextSelectionChanged = textSelectionChanged;
 			EditContext = editContext;
 			WritingSystemFocused = writingSystemFocused;
 			MenuRequested = menuRequested;
@@ -62,6 +64,10 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 
 		/// <summary>Clipboard seam for text fields (null -> framework default).</summary>
 		public IFwClipboard Clipboard { get; }
+
+		/// <summary>Told a structured-text paragraph's selection while it has focus (null ->
+		/// not reported).</summary>
+		public Action<DetailTextSelectionSnapshot> TextSelectionChanged { get; }
 
 		/// <summary>
 		/// Validation-gated commit invoked when a reference-vector add/remove gesture completes (the detail
@@ -130,7 +136,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 					// compose-time snapshot). A host owning its own commit passes a null Save.
 					return new FwStructuredTextField(field, automationId, context.EditContext,
 						context.WritingSystemFocused,
-						context.EditContext == null ? null : context.Save, context.Clipboard);
+						context.EditContext == null ? null : context.Save, context.Clipboard,
+						context.MenuRequested, context.TextSelectionChanged);
 				case DetailFieldKind.Chooser:
 					// Commits on the pick, for the same reason the toggle below does.
 					return new FwChooserField(field, automationId, context.EditContext,

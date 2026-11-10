@@ -1934,6 +1934,61 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		void EndMenuGesture();
 	}
 
+	/// <summary>
+	/// A structured-text editor's selection: the row, which of its paragraphs, that paragraph's
+	/// text with its runs as edited so far, and the selection in it. Commands that act on
+	/// the word at the selection read it.
+	/// </summary>
+	public sealed class DetailTextSelectionSnapshot
+	{
+		/// <param name="field">The structured-text row.</param>
+		/// <param name="paragraphIndex">The paragraph's index in the row.</param>
+		/// <param name="text">The paragraph's text, with any edits not yet saved.</param>
+		/// <param name="anchor">Where the selection was started.</param>
+		/// <param name="end">The selection's other end, the caret.</param>
+		/// <param name="canEdit">Whether the paragraph accepts edits.</param>
+		public DetailTextSelectionSnapshot(DetailField field, int paragraphIndex, DetailRichTextValue text,
+			int anchor, int end, bool canEdit)
+		{
+			Field = field ?? throw new ArgumentNullException(nameof(field));
+			ParagraphIndex = paragraphIndex;
+			Text = text;
+			Anchor = anchor;
+			End = end;
+			CanEdit = canEdit;
+		}
+
+		public DetailField Field { get; }
+		public int ParagraphIndex { get; }
+		public DetailRichTextValue Text { get; }
+		public int Anchor { get; }
+		public int End { get; }
+		public bool CanEdit { get; }
+
+		/// <summary>The paragraph's plain text; empty when it has none.</summary>
+		public string PlainText => Text?.PlainText ?? string.Empty;
+
+		/// <summary>The selected text; empty for a caret.</summary>
+		public string SelectedText
+		{
+			get
+			{
+				var text = PlainText;
+				var start = Math.Max(0, Math.Min(Math.Min(Anchor, End), text.Length));
+				var limit = Math.Max(start, Math.Min(Math.Max(Anchor, End), text.Length));
+				return text.Substring(start, limit - start);
+			}
+		}
+	}
+
+	/// <summary>A text editor that describes its selection with the paragraph and runs it
+	/// edits.</summary>
+	public interface IDetailTextSnapshotSource
+	{
+		/// <summary>The editor's selection now.</summary>
+		DetailTextSelectionSnapshot TakeSnapshot();
+	}
+
 	/// <summary>Which configured menu a context-menu request maps to.</summary>
 	public enum DetailMenuKind
 	{
@@ -1989,6 +2044,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				EditorSelectionAnchor = -1;
 				EditorSelectionEnd = -1;
 			}
+			TextSnapshot = _textSelection == null ? null : (selection as IDetailTextSnapshotSource)?.TakeSnapshot();
 		}
 
 		private readonly IDetailTextSelection _textSelection;
@@ -2083,6 +2139,10 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		/// <summary>The editor's selection end (the caret) at request time; -1 without an
 		/// editor.</summary>
 		public int EditorSelectionEnd { get; }
+
+		/// <summary>A structured-text editor's paragraph and selection at request time; null
+		/// for other editors.</summary>
+		public DetailTextSelectionSnapshot TextSnapshot { get; }
 
 		/// <summary>
 		/// Replaces the selection the request snapshotted with <paramref name="text"/>, leaving

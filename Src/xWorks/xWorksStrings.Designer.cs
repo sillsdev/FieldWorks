@@ -2438,24 +2438,6 @@ namespace SIL.FieldWorks.XWorks {
         }
 
         /// <summary>
-        ///   Looks up a localized string similar to Sorry, that command is not available at the moment.
-        /// </summary>
-        internal static string ksHotlinkCommandUnavailable {
-            get {
-                return ResourceManager.GetString("ksHotlinkCommandUnavailable", resourceCulture);
-            }
-        }
-
-        /// <summary>
-        ///   Looks up a localized string similar to Command disabled.
-        /// </summary>
-        internal static string ksHotlinkCommandDisabled {
-            get {
-                return ResourceManager.GetString("ksHotlinkCommandDisabled", resourceCulture);
-            }
-        }
-
-        /// <summary>
         ///   Looks up a localized string similar to Undo Update Picture.
         /// </summary>
         internal static string ksUndoUpdatePicture {

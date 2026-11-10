@@ -640,11 +640,10 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
-		/// The commands a section header's hotlinks offer, one leaf per command in menu order;
-		/// empty when the header has no hotlinks menu, the menu offers no command, or it cannot
-		/// be built. When a native authority owns the menu, each item carries its command's
-		/// current enabled state. Otherwise each item shows as enabled, and the command is
-		/// resolved for the row when the link is clicked.
+		/// The commands a section header's hotlinks offer, one leaf per command in menu order,
+		/// each with its command's current enabled state; empty when the header has no hotlinks
+		/// menu, the menu offers no command, or it cannot be built. A menu no native authority
+		/// owns shows its commands disabled.
 		/// </summary>
 		internal IReadOnlyList<DetailMenuItem> HotlinkItemsFor(DetailField field)
 		{
@@ -657,45 +656,16 @@ namespace SIL.FieldWorks.XWorks
 				var authority = CreateMenuAuthority(DetailMenuRequest.FromAnchor(null, field, DetailMenuKind.Hotlinks));
 				if (XCoreMenuBridge.OwnsAll(authority, ids))
 					return XCoreMenuBridge.CreateMenuItems(window, ids, null, null, authority);
-				// Enablement needs the hidden command adapter pointed at this row, too costly per
-				// section. Lists every configured command, submenus' too, unfiltered by display
-				// handlers.
+				Logger.WriteEvent("No native authority owns the hotlinks '" + field.HotlinksId
+					+ "'; its commands show disabled.");
 				return XCoreMenuBridge.ResolveMenu(window, field.HotlinksId).Leaves
-					.Select(leaf => XCoreMenuBridge.StripAccelerator(leaf.Label))
-					.Select(label => new DetailMenuItem(label, execute: () => RunAdapterHotlink(field, label)))
+					.Select(leaf => DetailMenuItem.Disabled(XCoreMenuBridge.StripAccelerator(leaf.Label)))
 					.ToList();
 			}
 			catch (Exception e)
 			{
 				Logger.WriteError("Building the hotlinks of '" + field.HotlinksId + "' failed; none are shown.", e);
 				return Array.Empty<DetailMenuItem>();
-			}
-		}
-
-		/// <summary>
-		/// Runs the command labelled <paramref name="label"/> in the row's hotlinks menu through
-		/// the hidden command adapter, pointed at the row first. A command that is unavailable
-		/// for the row tells the user so instead of running.
-		/// </summary>
-		private void RunAdapterHotlink(DetailField field, string label)
-		{
-			try
-			{
-				SyncMenuCommandAdapter(field);
-				var window = m_propertyTable.GetValue<XWindow>("window");
-				var item = XCoreMenuBridge.CreateMenuItems(window, new[] { field.HotlinksId })
-					.FirstOrDefault(i => i.Label == label);
-				if (item?.Execute != null)
-				{
-					item.Execute();
-					return;
-				}
-				MessageBox.Show(this, xWorksStrings.ksHotlinkCommandUnavailable,
-					xWorksStrings.ksHotlinkCommandDisabled);
-			}
-			catch (Exception e)
-			{
-				Logger.WriteError("Running the hotlink '" + label + "' of '" + field.HotlinksId + "' failed.", e);
 			}
 		}
 
@@ -813,6 +783,7 @@ namespace SIL.FieldWorks.XWorks
 			return new CompositeMenuAuthority(
 				CreateReorderVectorAuthority(request),
 				new EnvironmentInsertMenuAuthority(request, this),
+				new StructuredTextMenuAuthority(request, StructuredTextItem),
 				CreateMultiStringMenuAuthority(request.Field, objectMenu),
 				objectMenu,
 				CreateLexiconMenuAuthority(request.Field));

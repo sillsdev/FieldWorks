@@ -28,6 +28,9 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 
 		private readonly DetailCurrentRow _currentRow = new DetailCurrentRow();
 
+		// The last selection a structured-text paragraph of the shown record reported.
+		private DetailTextSelectionSnapshot _textSelection;
+
 		/// <inheritdoc />
 		public override bool IsDetailInteractionInFlight
 			=> CurrentContent is DataTree tree
@@ -80,11 +83,15 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 			view.EditCompleted += (s, e) => RaiseDetailEditCompleted();
 			view.InteractionCompleted += (s, e) => RaiseDetailInteractionCompleted();
 			view.RowFocused += _currentRow.Remember;
+			view.TextSelectionChanged += snapshot => _textSelection = snapshot;
 
 			if (rootHvo != 0 && rootHvo == _shownRootHvo && CurrentContent is DataTree previous)
 				view.RevealObjectsAddedSince(previous);
 			else
+			{
 				_currentRow.Forget();
+				_textSelection = null;
+			}
 			_shownRootHvo = rootHvo;
 
 			// Continuity across the re-show, applied once the new view lays out. Focus leaves the
@@ -127,5 +134,22 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 		/// gone.
 		/// </summary>
 		public DetailField CurrentRow => _currentRow.ResolveIn(ShownDetail);
+
+		/// <summary>
+		/// The selection the current row's structured-text editor last reported while it had
+		/// focus; null when the current row is another row or has reported none.
+		/// </summary>
+		public DetailTextSelectionSnapshot CurrentTextSelection
+		{
+			get
+			{
+				var selection = _textSelection;
+				var row = CurrentRow;
+				return selection != null && row != null
+					&& string.Equals(selection.Field.RowAutomationId, row.RowAutomationId, StringComparison.Ordinal)
+					? selection
+					: null;
+			}
+		}
 	}
 }

@@ -90,6 +90,10 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		/// <summary>Raised when keyboard focus moves into a row, with that row's field.</summary>
 		public event Action<DetailField> RowFocused;
 
+		/// <summary>Raised with a structured-text paragraph's selection while that paragraph
+		/// has focus.</summary>
+		public event Action<DetailTextSelectionSnapshot> TextSelectionChanged;
+
 		/// <summary>The reference-vector row that has a current item; null when none
 		/// does.</summary>
 		internal FwReferenceVectorField SelectedVector { get; private set; }
@@ -1165,6 +1169,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				// single value unlabelled, so the gutter follows the row's own kind.
 				showWritingSystemAbbreviation: field.IsMultiStringRow,
 				wsAbbrevColumnWidth: _wsAbbrevColumnWidth,
-				cancel: _editContext == null ? (Action)null : OnCancel));
+				cancel: _editContext == null ? (Action)null : OnCancel,
+				textSelectionChanged: snapshot => TextSelectionChanged?.Invoke(snapshot)));
 	}
 }
