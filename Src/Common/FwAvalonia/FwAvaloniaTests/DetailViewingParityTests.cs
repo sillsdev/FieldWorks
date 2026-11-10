@@ -307,10 +307,10 @@ namespace FwAvaloniaTests
 			Assert.That(TextBoxPresent(view, "g1"), Is.True);
 		}
 
-		// LT-22689: header and "Field Options" text take the slice label size, and header text
-		// takes the section header colour.
+		// LT-22689, LT-22693: header and hotlink text take the slice label size, header text
+		// takes the section header colour, and hotlink text the hotlink button's colour.
 		[AvaloniaTest]
-		public void SectionHeaderAndFieldOptionsText_TakeTheirOwnSizeAndColour()
+		public void SectionHeaderAndHotlinkText_TakeTheirOwnSizeAndColour()
 		{
 			var collapsible = new DetailField("hdr", "Allomorphs", null, null, DetailFieldKind.Header,
 				EditorClassification.GroupingNone, null, null, HostRouting.Inherit, null, null, null,
@@ -320,9 +320,13 @@ namespace FwAvaloniaTests
 				isEditable: false, indent: 0, isCollapsible: false);
 			var view = new DataTree(new DetailModel("LexEntry", "Normal",
 				new List<DetailField> { collapsible, Text("f1", "Form", 1), plain }, new List<ViewDiagnostic>()),
-				menuRequested: request => { });
+				menuRequested: request => { },
+				hotlinkItems: field => new[] { new DetailMenuItem("Insert Allomorph", execute: () => { }) });
 			var window = new Window { Content = view, Width = 480, Height = 300 };
 			window.Show();
+			Dispatcher.UIThread.RunJobs();
+			// A section's hotlinks show while focus is in it.
+			view.GetVisualDescendants().OfType<TextBox>().First().Focus();
 			Dispatcher.UIThread.RunJobs();
 			DialogSnapshot.Capture(window, "Detail-SectionExpander-03-header-and-link-text");
 
@@ -337,10 +341,11 @@ namespace FwAvaloniaTests
 			Assert.That(TextOf("Allomorphs").Foreground, Is.SameAs(headerInk),
 				"a collapsible header is not the button theme's blue");
 			Assert.That(TextOf("Grammatical Info.").Foreground, Is.SameAs(headerInk));
-			var link = TextOf(SIL.FieldWorks.Common.FwAvalonia.FwAvaloniaStrings.FieldOptionsMenu);
+			var link = TextOf("Insert Allomorph");
 			Assert.That(link.FontSize, Is.EqualTo(linkSize));
 			Assert.That(link.FontWeight, Is.EqualTo(Avalonia.Media.FontWeight.Normal),
 				"the link is not the button theme's semibold");
+			Assert.That(link.Foreground, Is.SameAs(SIL.FieldWorks.Common.FwAvalonia.FwAvaloniaDensity.HotlinkButtonForeground));
 		}
 
 		// LT-22689: a header with a collapsed line (a sense, etymology, extended note or
