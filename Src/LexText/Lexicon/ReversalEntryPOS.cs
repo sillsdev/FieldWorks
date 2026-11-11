@@ -10,6 +10,7 @@ using System.Xml;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework.DetailControls;
 using SIL.FieldWorks.Common.FwUtils;
+using static SIL.FieldWorks.Common.FwUtils.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Infrastructure;
 using XCore;
@@ -95,9 +96,8 @@ namespace SIL.FieldWorks.XWorks.LexEd
 							});
 					// Note: PropChanged should happen on the old owner and the new in the 'Add" method call.
 					// Have to jump to a main PartOfSpeech, as RecordClerk doesn't know anything about subcategories.
-#pragma warning disable 618 // suppress obsolete warning
-					m_mediator.BroadcastMessageUntilHandled("JumpToRecord", newOwner.MainPossibility.Hvo);
-#pragma warning restore 618
+					Publisher.Publish(new PublisherParameterObject(EventConstants.JumpToRecord,
+						newOwner.MainPossibility.Hvo, m_propertyTable.GetWindow()));
 				}
 			}
 
@@ -165,9 +165,8 @@ namespace SIL.FieldWorks.XWorks.LexEd
 						()=> survivor.MergeObject(currentPOS, false));
 					// Note: PropChanged should happen on the old owner and the new in the 'Add" method call.
 					// Have to jump to a main PartOfSpeech, as RecordClerk doesn't know anything about subcategories.
-#pragma warning disable 618 // suppress obsolete warning
-					m_mediator.BroadcastMessageUntilHandled("JumpToRecord", survivor.MainPossibility.Hvo);
-#pragma warning restore 618
+					Publisher.Publish(new PublisherParameterObject(EventConstants.JumpToRecord,
+						survivor.MainPossibility.Hvo, m_propertyTable.GetWindow()));
 				}
 			}
 
