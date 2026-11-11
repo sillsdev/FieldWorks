@@ -9,6 +9,7 @@ using Avalonia;
 using Avalonia.Automation;
 using Avalonia.Controls;
 using Avalonia.Media;
+using Avalonia.Headless;
 using Avalonia.Headless.NUnit;
 using Avalonia.Input;
 using Avalonia.Interactivity;
@@ -829,6 +830,68 @@ namespace FwAvaloniaTests
 			Assert.That(context.CancelCount, Is.EqualTo(1));
 			Assert.That(context.CommitCount, Is.EqualTo(0));
 			Assert.That(completed, Is.EqualTo(1));
+		}
+
+		// LT-22820: the first Ctrl+Z after typing saves the typing as its own undo step and
+		// goes no further. The text box does not undo the letters itself.
+		[AvaloniaTest]
+		public void CtrlZ_WhileEditing_SavesTheEdit_AndStopsAtTheView()
+		{
+			var (view, context, window) = ShowEditable();
+			var box = Find<TextBox>(view, "LexemeFormEditor.vern");
+			var lastKeyHandled = RecordLastKeyDownHandled(window);
+			var typed = TypeInto(window, box, "perro");
+			Assert.That(context.IsOpen, Is.True, "precondition: typing opened an edit");
+
+			PressKey(window, PhysicalKey.Z, RawInputModifiers.Control);
+
+			Assert.That(context.CommitCount, Is.EqualTo(1), "the typing is saved");
+			Assert.That(box.Text, Is.EqualTo(typed), "and kept");
+			Assert.That(lastKeyHandled(), Is.True, "the key goes no further than the view");
+		}
+
+		// With no edit open, Ctrl+Z and Ctrl+Y must stay unhandled: only then does the host
+		// window run FieldWorks' own Undo and Redo.
+		[AvaloniaTest]
+		public void CtrlZAndCtrlY_WithNoOpenEdit_AreLeftForFieldWorks()
+		{
+			var (view, context, window) = ShowEditable();
+			var box = Find<TextBox>(view, "LexemeFormEditor.vern");
+			var lastKeyHandled = RecordLastKeyDownHandled(window);
+			var typed = TypeInto(window, box, "perro");
+			PressKey(window, PhysicalKey.Z, RawInputModifiers.Control);
+			Assert.That(context.IsOpen, Is.False, "precondition: the first Ctrl+Z saved the edit");
+
+			PressKey(window, PhysicalKey.Z, RawInputModifiers.Control);
+			Assert.That(lastKeyHandled(), Is.False, "Ctrl+Z reaches FieldWorks");
+			Assert.That(box.Text, Is.EqualTo(typed), "the text box undid none of the typing");
+
+			PressKey(window, PhysicalKey.Y, RawInputModifiers.Control);
+			Assert.That(lastKeyHandled(), Is.False, "Ctrl+Y reaches FieldWorks");
+			Assert.That(context.CommitCount, Is.EqualTo(1), "nothing more was saved");
+		}
+
+		private static string TypeInto(Window window, TextBox box, string text)
+		{
+			box.Focus();
+			window.KeyTextInput(text);
+			Dispatcher.UIThread.RunJobs();
+			return box.Text;
+		}
+
+		private static void PressKey(Window window, PhysicalKey key, RawInputModifiers modifiers)
+		{
+			window.KeyPressQwerty(key, modifiers);
+			Dispatcher.UIThread.RunJobs();
+		}
+
+		// Whether the last key press was handled by the time it bubbled up to the window.
+		private static Func<bool?> RecordLastKeyDownHandled(Window window)
+		{
+			bool? handled = null;
+			window.AddHandler(InputElement.KeyDownEvent, (s, e) => handled = e.Handled,
+				RoutingStrategies.Bubble, handledEventsToo: true);
+			return () => handled;
 		}
 
 		[AvaloniaTest]
