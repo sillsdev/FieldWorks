@@ -179,8 +179,8 @@ namespace SIL.FieldWorks.XWorks
 		internal Func<ICmPicture, string> PictureFileChosen { get; set; }
 
 		/// <summary>
-		/// The message-keyed authority for the Lexicon menus, owning by predicate and
-		/// answering for <paramref name="field"/>; with no row every answer is hidden.
+		/// The message-keyed authority for the Lexicon and Notebook menus, owning by predicate
+		/// and answering for <paramref name="field"/>; with no row every answer is hidden.
 		/// </summary>
 		internal LexiconMenuAuthority CreateLexiconMenuAuthority(DetailField field)
 		{
@@ -207,6 +207,11 @@ namespace SIL.FieldWorks.XWorks
 			authority.Answer(PromoteSenseMessage, leaf => SenseNestingItem(leaf, field, demote: false));
 			authority.Answer(SplitMessage, leaf => SplitItem(leaf, field));
 			authority.Answer(InsertPictureMessage, leaf => InsertPictureItem(leaf, field));
+			authority.Answer(InsertItemInVectorMessage, ClerkInsertItem);
+			authority.Answer(MoveRecordUpMessage, leaf => MoveItem(leaf, field, up: true));
+			authority.Answer(MoveRecordDownMessage, leaf => MoveItem(leaf, field, up: false));
+			authority.Answer(PromoteSubrecordMessage, leaf => RecordNestingItem(leaf, field, demote: false));
+			authority.Answer(DemoteSubrecordMessage, leaf => RecordNestingItem(leaf, field, demote: true));
 			return authority;
 		}
 

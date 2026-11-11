@@ -1948,7 +1948,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 
 		// TextBox applies this rule on the right RELEASE, after the request has snapshotted the
 		// selection, so it is applied on the press; a press inside a range keeps the range.
-		private static void PlaceCaretAtPointer(TextBox box, PointerPressedEventArgs e)
+		internal static void PlaceCaretAtPointer(TextBox box, PointerPressedEventArgs e)
 		{
 			var presenter = Avalonia.VisualTree.VisualExtensions.GetVisualDescendants(box)
 				.OfType<Avalonia.Controls.Presenters.TextPresenter>().FirstOrDefault();

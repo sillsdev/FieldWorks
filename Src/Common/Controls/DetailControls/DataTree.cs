@@ -5009,16 +5009,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 			var command = (Command)commandObject;
 			string className = XmlUtils.GetMandatoryAttributeValue(command.Parameters[0], "className");
-			bool fIsValid = false;
-			if (className == "RnGenericRec")
-			{
-				if (Root != null && Root is IRnGenericRec)
-				{
-					if (Root.Owner is IRnResearchNbk && (Root.Owner as IRnResearchNbk).RecordsOC.Count > 1)
-						fIsValid = true;
-				}
-			}
-			display.Enabled = fIsValid;
+			display.Enabled = className == "RnGenericRec" && RecordNesting.CanDemoteRecord(Root);
 			return true;
 		}
 		/// <summary>
@@ -5028,64 +5019,13 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		{
 			CheckDisposed();
 
-			if (Root == null)
+			if (!(Root is IRnGenericRec rec) || !RecordNesting.CanDemoteRecord(rec))
 				return false;
-			IRnGenericRec rec = Root as IRnGenericRec;
-			if (rec == null)
-				return false;		// shouldn't get here
-			IRnGenericRec newOwner = null;
-			if (Root.Owner is IRnResearchNbk)
-			{
-				IRnResearchNbk notebk = Root.Owner as IRnResearchNbk;
-				List<IRnGenericRec> owners = new List<IRnGenericRec>();
-				foreach (var recT in notebk.RecordsOC)
-				{
-					if (recT != Root)
-						owners.Add(recT);
-				}
-				if (owners.Count == 1)
-				{
-					newOwner = owners[0];
-				}
-				else
-				{
-					newOwner = ChooseNewOwner(owners.ToArray(),
-						Resources.DetailControlsStrings.ksChooseOwnerOfDemotedRecord);
-				}
-			}
-			else
-			{
-				return false;
-			}
-			if (newOwner == null)
-				return true;
-			if (newOwner == rec)
-				throw new Exception("RnGenericRec cannot own itself!");
-
-			UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(Resources.DetailControlsStrings.ksUndoDemote,
-				Resources.DetailControlsStrings.ksRedoDemote, Cache.ActionHandlerAccessor, () =>
-				{
-					newOwner.SubRecordsOS.Insert(0, rec);
-				});
+			var newOwner = RecordNesting.ChooseOwner(RecordNesting.RecordDemoteOwners(rec),
+				candidates => DemotedRecordOwnerChooser.ChooseForRecord(m_cache, m_mediator, m_propertyTable, candidates));
+			if (newOwner != null)
+				RecordNesting.Demote(rec, newOwner);
 			return true;
-		}
-
-		internal IRnGenericRec ChooseNewOwner(IRnGenericRec[] records, string sTitle)
-		{
-
-			var helpTopic = "khtpDataNotebook-ChooseOwnerOfDemotedRecord";
-			var persistProvider = new PersistenceProvider(m_mediator, m_propertyTable);
-			var labels = ObjectLabel.CreateObjectLabels(m_cache, records,
-					"ShortName", m_cache.WritingSystemFactory.GetStrFromWs(m_cache.DefaultAnalWs));
-			using (var dlg = new ReallySimpleListChooser(persistProvider, labels,
-				String.Empty, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider")))
-			{
-				dlg.Text = sTitle;
-				dlg.SetHelpTopic(helpTopic);
-				if (dlg.ShowDialog() == DialogResult.OK)
-					return dlg.SelectedObject as IRnGenericRec;
-			}
-			return null;
 		}
 
 		/// <summary>

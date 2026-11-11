@@ -3180,7 +3180,8 @@ namespace SIL.FieldWorks.XWorks
 				var field = new DetailField(stableId, Localize(node.Label) ?? node.Field, node.Field,
 					node.WritingSystem, DetailFieldKind.StructuredText, node.EditorClassification,
 					node.AutomationId, node.LocalizationKey, node.Routing, null, null, null,
-					isEditable: true, indent: depth, menuId: node.MenuId, contextMenuId: node.ContextMenuId,
+					isEditable: true, indent: depth, menuId: node.MenuId,
+					contextMenuId: node.ContextMenuId ?? StructuredTextMenuId,
 					hotlinksId: node.HotlinksId, objectHvo: obj.Hvo, paragraphs: paragraphs);
 				field.AvailableParagraphStyles = ParagraphStyleNames();
 				// The StText paragraph rows also expose the run-level character-style + ws pickers and
@@ -3768,6 +3769,10 @@ namespace SIL.FieldWorks.XWorks
 		/// the entry or sense whose detail shows the relation.
 		/// </summary>
 		internal const string LexicalRelationIdMarker = "/lexref:";
+
+		/// <summary>The text menu of a structured-text row whose part names none: Cut, Copy,
+		/// Paste, Find in Dictionary and Add to Dictionary.</summary>
+		internal const string StructuredTextMenuId = "mnuStTextChoices";
 
 		/// <summary>The entry or sense a lexical-relation row belongs to, from its id.</summary>
 		/// <returns>False for any other row's id.</returns>

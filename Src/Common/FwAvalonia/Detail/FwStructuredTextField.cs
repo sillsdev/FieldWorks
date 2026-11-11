@@ -11,6 +11,7 @@ using Avalonia.Controls.Primitives;
 using Avalonia.Input;
 using Avalonia.Layout;
 using Avalonia.Media;
+using Avalonia.VisualTree;
 using SIL.FieldWorks.Common.FwAvalonia.Seams;
 
 namespace SIL.FieldWorks.Common.FwAvalonia.Detail
@@ -40,19 +41,29 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 	{
 		private readonly List<Action> _teardown = new List<Action>();
 		private readonly DetailValueStopGroup _paragraphStops = new DetailValueStopGroup();
+		private readonly Action<DetailMenuRequest> _menuRequested;
+		private readonly Action<DetailTextSelectionSnapshot> _textSelectionChanged;
 		private bool _disposed;
 
 		/// <param name="gestureCompleted">Invoked after a SUCCESSFUL structural gesture (add/delete/style)
 		/// so the host commits the one undoable step and re-shows the row (like the reference vector). Null
 		/// on hosts that drive their own commit; structural gestures then just stage.</param>
+		/// <param name="menuRequested">Raises the row's text menu on a right-click in a
+		/// paragraph; null keeps the theme's own text menu.</param>
+		/// <param name="textSelectionChanged">Told each paragraph's selection while that
+		/// paragraph has focus; null when nothing listens.</param>
 		public FwStructuredTextField(
 			DetailField field,
 			string automationId,
 			IDetailEditContext editContext,
 			Action<string> writingSystemFocused = null,
 			Action gestureCompleted = null,
-			IFwClipboard clipboard = null)
+			IFwClipboard clipboard = null,
+			Action<DetailMenuRequest> menuRequested = null,
+			Action<DetailTextSelectionSnapshot> textSelectionChanged = null)
 		{
+			_menuRequested = menuRequested;
+			_textSelectionChanged = textSelectionChanged;
 			Spacing = FwAvaloniaDensity.RowSpacing;
 			AutomationProperties.SetAutomationId(this, automationId);
 			AutomationProperties.SetName(this, field.Label ?? field.Field ?? automationId);
@@ -211,6 +222,12 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			var valueContent = CreateValueContentWithFontSwap(field, automationId, index, box, currentRich,
 				paraEditable, paragraphStop);
 
+			var selection = new ParagraphSelection(field, index, box, () => currentRich, paraEditable);
+			if (_menuRequested != null)
+				WireParagraphMenu(field, box, valueContent, selection);
+			if (_textSelectionChanged != null)
+				WireSelectionReports(box, selection);
+
 			// Dense bordered paragraph row: a thin left rule marks the paragraph boundary (the legacy
 			// StText paragraph gutter), the style button leads, the value box fills, add/delete trail.
 			var rowPanel = new DockPanel { Background = FwAvaloniaDensity.TransparentBrush };
@@ -296,6 +313,135 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			};
 			box.TextChanged += textChanged;
 			_teardown.Add(() => box.TextChanged -= textChanged);
+		}
+
+		// The row's text menu on a paragraph replaces the theme's. A right press first moves
+		// the caret to the pointer, keeping a selection it lands in.
+		private void WireParagraphMenu(DetailField field, TextBox box, Control valueContent,
+			ParagraphSelection selection)
+		{
+			box.ContextFlyout = null;
+			// On the per-run display the press has just swapped the box in, so it is laid out
+			// before the caret is placed.
+			EventHandler<PointerPressedEventArgs> rightPress = (s, e) =>
+			{
+				if (!e.GetCurrentPoint(valueContent).Properties.IsRightButtonPressed || !box.IsVisible)
+					return;
+				if (!box.IsFocused)
+					box.Focus();
+				valueContent.UpdateLayout();
+				FwReferenceVectorField.PlaceCaretAtPointer(box, e);
+			};
+			valueContent.AddHandler(InputElement.PointerPressedEvent, rightPress,
+				Avalonia.Interactivity.RoutingStrategies.Bubble, handledEventsToo: true);
+			EventHandler<ContextRequestedEventArgs> requested = (s, e) =>
+			{
+				_menuRequested(DetailMenuRequest.FromContextRequested(box, e, field, DetailMenuKind.ContextMenu,
+					selection));
+				e.Handled = true;
+			};
+			valueContent.AddHandler(ContextRequestedEvent, requested);
+			_teardown.Add(() =>
+			{
+				valueContent.RemoveHandler(InputElement.PointerPressedEvent, rightPress);
+				valueContent.RemoveHandler(ContextRequestedEvent, requested);
+			});
+		}
+
+		// Reports the paragraph's selection whenever it or the text changes while the paragraph
+		// has focus, and on focus; the collapse a TextBox makes when it loses focus is not one.
+		private void WireSelectionReports(TextBox box, ParagraphSelection selection)
+		{
+			void Report()
+			{
+				if (box.IsFocused)
+					_textSelectionChanged(selection.TakeSnapshot());
+			}
+			EventHandler<AvaloniaPropertyChangedEventArgs> selectionChanged = (s, e) =>
+			{
+				if (e.Property == TextBox.SelectionStartProperty || e.Property == TextBox.SelectionEndProperty)
+					Report();
+			};
+			EventHandler<TextChangedEventArgs> textChanged = (s, e) => Report();
+			EventHandler<GotFocusEventArgs> gotFocus = (s, e) => Report();
+			box.PropertyChanged += selectionChanged;
+			box.TextChanged += textChanged;
+			box.GotFocus += gotFocus;
+			_teardown.Add(() =>
+			{
+				box.PropertyChanged -= selectionChanged;
+				box.TextChanged -= textChanged;
+				box.GotFocus -= gotFocus;
+			});
+		}
+
+		// One paragraph's editor as the row's text menu sees it.
+		private sealed class ParagraphSelection : IDetailItemSelection, IDetailTextSelection, IDetailTextSnapshotSource
+		{
+			private readonly DetailField _field;
+			private readonly int _index;
+			private readonly TextBox _box;
+			private readonly Func<DetailRichTextValue> _text;
+			private readonly bool _editable;
+			private bool _refocusAfterGesture;
+
+			public ParagraphSelection(DetailField field, int index, TextBox box, Func<DetailRichTextValue> text,
+				bool editable)
+			{
+				_field = field;
+				_index = index;
+				_box = box;
+				_text = text;
+				_editable = editable;
+			}
+
+			public string SelectedItemKey => null;
+			public int SelectedItemIndex => -1;
+			public bool HasTextEditor => true;
+			public string EditorText => _box.Text ?? string.Empty;
+			public int EditorSelectionAnchor => _box.SelectionStart;
+			public int EditorSelectionEnd => _box.SelectionEnd;
+
+			public bool ReplaceEditorText(int selectionAnchor, int selectionEnd, string text, int caretBack)
+			{
+				if (!_editable || text == null)
+					return false;
+				var current = _box.Text ?? string.Empty;
+				var start = Math.Max(0, Math.Min(Math.Min(selectionAnchor, selectionEnd), current.Length));
+				var end = Math.Max(start, Math.Min(Math.Max(selectionAnchor, selectionEnd), current.Length));
+				_box.Text = current.Substring(0, start) + text + current.Substring(end);
+				var caret = Math.Max(start, start + text.Length - caretBack);
+				_box.CaretIndex = caret;
+				_box.SelectionStart = caret;
+				_box.SelectionEnd = caret;
+				return true;
+			}
+
+			public void BeginMenuGesture() => _refocusAfterGesture = _box.IsFocused;
+
+			// Focus returns to the paragraph unless a re-show replaced it while the menu was
+			// open.
+			public void EndMenuGesture()
+			{
+				if (_refocusAfterGesture && _box.GetVisualRoot() != null)
+					_box.Focus();
+				_refocusAfterGesture = false;
+			}
+
+			public DetailTextSelectionSnapshot TakeSnapshot()
+				=> new DetailTextSelectionSnapshot(_field, _index, CurrentText(), _box.SelectionStart,
+					_box.SelectionEnd, _editable);
+
+			// The runs as last staged, unless the box holds text not staged yet.
+			private DetailRichTextValue CurrentText()
+			{
+				var text = _text();
+				var plain = _box.Text ?? string.Empty;
+				return text != null && text.PlainText == plain
+					? text
+					: DetailRichTextEditAlgorithms.ApplyPlainTextEdit(
+						text ?? DetailRichTextEditAlgorithms.FromRuns(string.Empty, Array.Empty<DetailTextRun>()), plain);
+			}
 		}
 
 		// The per-paragraph named-style picker: a small "Paragraph Style" button opening the shared
