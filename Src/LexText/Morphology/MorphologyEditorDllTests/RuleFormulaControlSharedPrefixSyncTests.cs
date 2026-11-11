@@ -105,6 +105,17 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		}
 
 		[Test]
+		public void AbbreviatedSharedClass_DoesNotGetThePrefix()
+		{
+			IPhNCFeatures natClass = AddClassNamed(GeneratedName);
+			natClass.Abbreviation.SetAnalysisDefaultWritingSystem("Vd");
+			UseInRules(natClass, 2);
+
+			Assert.That(RuleFormulaControl.SyncSharedPrefix(natClass), Is.False);
+			Assert.That(NameOf(natClass), Is.EqualTo(GeneratedName));
+		}
+
+		[Test]
 		public void NullOrUnnamedClass_IsNotChanged()
 		{
 			IPhNCFeatures unnamed = AddFeatureNaturalClass(null, null,
