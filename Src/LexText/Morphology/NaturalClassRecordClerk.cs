@@ -7,15 +7,16 @@ using SIL.LCModel.Infrastructure;
 namespace SIL.FieldWorks.XWorks.MorphologyEditor
 {
 	/// <summary>
-	/// A record clerk over natural classes that keeps the "shared" label on generated natural
-	/// class names current, so the label shown matches whether more than one rule uses the class.
+	/// A record clerk over natural classes that keeps the "shared" prefix on generated natural
+	/// class names current, so whether a prefix exists matches whether more than one rule uses
+	/// the class.
 	/// </summary>
 	public class NaturalClassRecordClerk : RecordClerk
 	{
 		/// <summary>
-		/// Brings the "shared" label on every generated natural class name up to date before the
-		/// list is shown. A label change means the class may have joined or left the list to display,
-		/// so the list is reloaded when any label changes.
+		/// Brings the "shared" prefix on every generated natural class name up to date
+		/// before the list is shown. A prefix change means the class may have joined or
+		/// left the list to display, so the list is reloaded when any prefix changes.
 		/// </summary>
 		public override void ActivateUI(bool useRecordTreeBar, bool updateStatusBar = true)
 		{

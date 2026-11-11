@@ -223,7 +223,8 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		// A generated name with the shared prefix should be recognized as generated.
 		[TestCase(PrefixedName, true, true, GeneratedName)]
 
-		// A name with extra text before or after the generated name should not be recognized as generated.
+		// A name with extra text before or after the generated name should not be recognized
+		// as generated.
 		[TestCase("Extra " + PrefixedName, false, false, null)]
 		[TestCase(PrefixedName + " extra", false, false, null)]
 
