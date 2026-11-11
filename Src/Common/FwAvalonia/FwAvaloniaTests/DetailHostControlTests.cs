@@ -24,6 +24,55 @@ namespace FwAvaloniaTests
 		private sealed class TestHost : AvaloniaHostControlBase
 		{
 			public void Set(Avalonia.Controls.Control content) => SetHostContent(content);
+
+			public bool OfferUndoRedoKey(Avalonia.Input.Key key, Avalonia.Input.KeyModifiers modifiers)
+				=> RaiseUndoRedoKeyUnhandled(key, modifiers);
+		}
+
+		// LT-22820: the owner matches the key against FieldWorks' shortcuts, which are WinForms
+		// key data.
+		[AvaloniaTest]
+		public void UnhandledUndoRedoKey_ReachesTheOwner_AsWinFormsKeyData()
+		{
+			using (var host = new TestHost())
+			{
+				var seen = Keys.None;
+				host.UndoRedoKeyUnhandled += (s, e) =>
+				{
+					seen = e.KeyData;
+					e.Handled = true;
+				};
+
+				var taken = host.OfferUndoRedoKey(Avalonia.Input.Key.Z,
+					Avalonia.Input.KeyModifiers.Control);
+
+				Assert.That(seen, Is.EqualTo(Keys.Control | Keys.Z));
+				Assert.That(taken, Is.True, "the owner's Handled comes back");
+			}
+		}
+
+		[AvaloniaTest]
+		public void UnhandledUndoRedoKey_WithNoOwner_IsNotTaken()
+		{
+			using (var host = new TestHost())
+			{
+				Assert.That(host.OfferUndoRedoKey(Avalonia.Input.Key.Y,
+					Avalonia.Input.KeyModifiers.Control), Is.False);
+			}
+		}
+
+		[Test]
+		public void ToWinFormsKeys_MapsLettersAndModifiers_AndNothingElse()
+		{
+			Assert.That(AvaloniaHostControlBase.ToWinFormsKeys(Avalonia.Input.Key.Y,
+				Avalonia.Input.KeyModifiers.Control), Is.EqualTo(Keys.Control | Keys.Y));
+			Assert.That(AvaloniaHostControlBase.ToWinFormsKeys(Avalonia.Input.Key.Z,
+				Avalonia.Input.KeyModifiers.Control | Avalonia.Input.KeyModifiers.Shift),
+				Is.EqualTo(Keys.Control | Keys.Shift | Keys.Z));
+			Assert.That(AvaloniaHostControlBase.ToWinFormsKeys(Avalonia.Input.Key.A,
+				Avalonia.Input.KeyModifiers.Alt), Is.EqualTo(Keys.Alt | Keys.A));
+			Assert.That(AvaloniaHostControlBase.ToWinFormsKeys(Avalonia.Input.Key.F5,
+				Avalonia.Input.KeyModifiers.Control), Is.EqualTo(Keys.None));
 		}
 
 		[AvaloniaTest]

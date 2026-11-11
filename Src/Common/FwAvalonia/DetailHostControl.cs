@@ -79,6 +79,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 				hotlinkItems);
 			view.EditCompleted += (s, e) => RaiseDetailEditCompleted();
 			view.InteractionCompleted += (s, e) => RaiseDetailInteractionCompleted();
+			view.UndoRedoKeyUnhandled += (s, e) =>
+				e.Handled = RaiseUndoRedoKeyUnhandled(e.Key, e.KeyModifiers);
 			view.RowFocused += _currentRow.Remember;
 
 			if (rootHvo != 0 && rootHvo == _shownRootHvo && CurrentContent is DataTree previous)

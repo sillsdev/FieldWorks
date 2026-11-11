@@ -352,6 +352,9 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			// Tunnel, to reach an undo or redo key before the focused editor does.
 			AddHandler(Avalonia.Input.InputElement.KeyDownEvent, OnUndoRedoKeyDown,
 				Avalonia.Interactivity.RoutingStrategies.Tunnel);
+			// Bubble, so it sees only what the view left unhandled.
+			AddHandler(Avalonia.Input.InputElement.KeyDownEvent, OnUnhandledUndoRedoKey,
+				Avalonia.Interactivity.RoutingStrategies.Bubble);
 
 			// Auto-save: the view commits as the user moves on, so any editor losing focus
 			// while a session is open commits it (validation-gated; one undo step per field).
@@ -450,13 +453,19 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		}
 
 		// An undo or redo key while an edit is open saves that edit as its own step and goes no
-		// further. With nothing open, the key is left unhandled for FieldWorks' Undo or Redo.
+		// further. With nothing open, the key goes on to the host for FieldWorks' Undo or Redo.
 		private void OnUndoRedoKeyDown(object sender, Avalonia.Input.KeyEventArgs e)
 		{
 			if (_editContext == null || !_editContext.IsOpen || !IsUndoOrRedoKey(e))
 				return;
 			OnSave();
 			e.Handled = true;
+		}
+
+		private void OnUnhandledUndoRedoKey(object sender, Avalonia.Input.KeyEventArgs e)
+		{
+			if (IsUndoOrRedoKey(e))
+				UndoRedoKeyUnhandled?.Invoke(this, e);
 		}
 
 		private static bool IsUndoOrRedoKey(Avalonia.Input.KeyEventArgs e)
@@ -627,6 +636,13 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		/// opened is still up -- so a host holding a refresh can deliver it.
 		/// </summary>
 		public event EventHandler InteractionCompleted;
+
+		/// <summary>
+		/// Raised for an undo or redo key that nothing in the view handled, so the host can
+		/// give it to FieldWorks' Undo or Redo. FieldWorks never sees keys typed into Avalonia
+		/// otherwise (LT-22820). A handler that takes the key marks it handled.
+		/// </summary>
+		public event EventHandler<Avalonia.Input.KeyEventArgs> UndoRedoKeyUnhandled;
 
 		// No Save/Cancel buttons: the view saves as you go. The footer carries only the
 		// inline validation messages (a failed autosave is never silent).

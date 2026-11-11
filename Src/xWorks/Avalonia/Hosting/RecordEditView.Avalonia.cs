@@ -204,6 +204,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				m_avaloniaEntryForm.DetailEditCompleted -= OnAvaloniaDetailEditCompleted;
 				m_avaloniaEntryForm.DetailInteractionCompleted -= OnAvaloniaInteractionCompleted;
+				m_avaloniaEntryForm.UndoRedoKeyUnhandled -= OnAvaloniaUndoRedoKey;
 			}
 			m_detailEditContext.DetachDeactivateHook();
 			m_detailEditContext.DetachUndoGuard();
@@ -272,6 +273,7 @@ namespace SIL.FieldWorks.XWorks
 			m_avaloniaEntryForm.Dock = DockStyle.Fill;
 			m_avaloniaEntryForm.DetailEditCompleted += OnAvaloniaDetailEditCompleted;
 			m_avaloniaEntryForm.DetailInteractionCompleted += OnAvaloniaInteractionCompleted;
+			m_avaloniaEntryForm.UndoRedoKeyUnhandled += OnAvaloniaUndoRedoKey;
 			if (!m_panel.Controls.Contains(m_avaloniaEntryForm))
 				m_panel.Controls.Add(m_avaloniaEntryForm);
 		}
@@ -1396,6 +1398,19 @@ namespace SIL.FieldWorks.XWorks
 		private void OnAvaloniaInteractionCompleted(object sender, EventArgs e)
 		{
 			m_avaloniaRefreshController?.ReleaseHeldRefresh();
+		}
+
+		// The window's KeyDown runs FieldWorks' shortcuts, checking each command is enabled.
+		// Keys typed into Avalonia never reach it, so these are handed to it (LT-22820).
+		private void OnAvaloniaUndoRedoKey(object sender, KeyEventArgs e)
+		{
+			var window = m_propertyTable?.GetValue<XWindow>("window");
+			if (window == null)
+				return;
+			e.Handled = true;
+			var keyData = e.KeyData;
+			// Posted, so an undo that re-shows this view does not rebuild it mid key event.
+			ScheduleOnUiThread(() => window.HandleKeyDown(new KeyEventArgs(keyData)));
 		}
 
 		private void OnAvaloniaDetailEditCompleted(object sender, EventArgs e)

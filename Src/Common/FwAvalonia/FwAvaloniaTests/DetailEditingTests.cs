@@ -850,25 +850,51 @@ namespace FwAvaloniaTests
 			Assert.That(lastKeyHandled(), Is.True, "the key goes no further than the view");
 		}
 
-		// With no edit open, Ctrl+Z and Ctrl+Y must stay unhandled: only then does the host
-		// window run FieldWorks' own Undo and Redo.
+		// With no edit open, Ctrl+Z and Ctrl+Y go to the host for FieldWorks' own Undo and
+		// Redo, every time: the key that saved an edit must not leave later presses stranded.
 		[AvaloniaTest]
-		public void CtrlZAndCtrlY_WithNoOpenEdit_AreLeftForFieldWorks()
+		public void CtrlZAndCtrlY_WithNoOpenEdit_AreOfferedToTheHost()
 		{
 			var (view, context, window) = ShowEditable();
 			var box = Find<TextBox>(view, "LexemeFormEditor.vern");
+			var offered = new List<string>();
+			view.UndoRedoKeyUnhandled += (s, e) => offered.Add(e.KeyModifiers + "+" + e.Key);
 			var lastKeyHandled = RecordLastKeyDownHandled(window);
 			var typed = TypeInto(window, box, "perro");
 			PressKey(window, PhysicalKey.Z, RawInputModifiers.Control);
 			Assert.That(context.IsOpen, Is.False, "precondition: the first Ctrl+Z saved the edit");
+			Assert.That(offered, Is.Empty, "the key that saved the edit goes no further");
 
 			PressKey(window, PhysicalKey.Z, RawInputModifiers.Control);
-			Assert.That(lastKeyHandled(), Is.False, "Ctrl+Z reaches FieldWorks");
-			Assert.That(box.Text, Is.EqualTo(typed), "the text box undid none of the typing");
-
+			PressKey(window, PhysicalKey.Z, RawInputModifiers.Control);
 			PressKey(window, PhysicalKey.Y, RawInputModifiers.Control);
-			Assert.That(lastKeyHandled(), Is.False, "Ctrl+Y reaches FieldWorks");
+
+			Assert.That(offered, Is.EqualTo(new[] { "Control+Z", "Control+Z", "Control+Y" }));
+			Assert.That(lastKeyHandled(), Is.False, "a host that declines leaves the key unhandled");
+			Assert.That(box.Text, Is.EqualTo(typed), "the text box undid none of the typing");
 			Assert.That(context.CommitCount, Is.EqualTo(1), "nothing more was saved");
+		}
+
+		[AvaloniaTest]
+		public void UndoKey_TheHostTakes_IsHandled_AndOtherKeysAreNotOffered()
+		{
+			var (view, _, window) = ShowEditable();
+			var box = Find<TextBox>(view, "LexemeFormEditor.vern");
+			var offered = 0;
+			view.UndoRedoKeyUnhandled += (s, e) =>
+			{
+				offered++;
+				e.Handled = true;
+			};
+			var lastKeyHandled = RecordLastKeyDownHandled(window);
+			box.Focus();
+
+			PressKey(window, PhysicalKey.Q, RawInputModifiers.Control);
+			Assert.That(offered, Is.EqualTo(0), "only undo and redo keys are offered");
+
+			PressKey(window, PhysicalKey.Z, RawInputModifiers.Control);
+			Assert.That(offered, Is.EqualTo(1));
+			Assert.That(lastKeyHandled(), Is.True);
 		}
 
 		private static string TypeInto(Window window, TextBox box, string text)
