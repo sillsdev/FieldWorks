@@ -1014,7 +1014,6 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			if (rule != null)
 			{
 				rules.Add(rule);
-				return;
 			}
 
 			// If the object isn't a phonological context, any other referring objects are
