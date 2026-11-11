@@ -13,6 +13,7 @@ using System.Xml;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework.DetailControls.Resources;
 using SIL.FieldWorks.Common.FwUtils;
+using static SIL.FieldWorks.Common.FwUtils.FwUtils;
 using SIL.FieldWorks.Common.DetailRules;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FdoUi;
@@ -2091,10 +2092,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					else
 					{
 						// If possible, jump to the newly inserted sub item.
-#pragma warning disable 618 // suppress obsolete warning
-						if (m_mediator.BroadcastMessageUntilHandled("JumpToRecord", uiObj.Object.Hvo))
-#pragma warning restore 618
-							return insertionPosition;
+						Publisher.Publish(new PublisherParameterObject(EventConstants.JumpToRecord,
+							uiObj.Object.Hvo, m_propertyTable.GetWindow()));
 						// If we haven't found a slice...common now, because there's rarely a need to expand anything...
 						// and some slice was added, focus it.
 						foreach (Slice slice in Parent.Controls)
