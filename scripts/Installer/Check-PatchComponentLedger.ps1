@@ -44,6 +44,9 @@ $previous = Select-PreviousPublishedPatch `
 	-LedgerKeys $publishedLedgerKeys `
 	-BaseBuildNumber $BaseBuildNumber `
 	-PatchVersion $PatchVersion
+$previousPatchText = if ($previous.PatchKey) { $previous.PatchKey } else { '(none)' }
+$previousLedgerText = if ($previous.LedgerKey) { $previous.LedgerKey } else { '(none)' }
+Write-Output "Previous published patch: $previousPatchText; its ledger: $previousLedgerText"
 
 $ledgerFiles = New-Object System.Collections.Generic.List[string]
 if ($previous.LedgerKey) {
