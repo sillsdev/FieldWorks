@@ -222,5 +222,35 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 			Assert.That(IsUserDefined(natClass), Is.False);
 		}
+
+		private IPhNCFeatures AddPrefixedGeneratedClass()
+		{
+			IPhNCFeatures natClass = AddGeneratedClass();
+			natClass.Name.SetUserWritingSystem(string.Format(MEStrings.ksRuleNCSharedNameFormat,
+				natClass.Name.UserDefaultWritingSystem.Text));
+			return natClass;
+		}
+
+		/// <summary>
+		/// The shared prefix alone does not make a class the user's; it must actually be used
+		/// by more than one rule to be considered user defined.
+		/// </summary>
+		[Test]
+		public void PrefixedGeneratedNameUsedByOneRule_IsNotUserDefined()
+		{
+			IPhNCFeatures natClass = AddPrefixedGeneratedClass();
+			AddStrucDescNCContext(AddRegularRule("rule A"), natClass);
+
+			Assert.That(IsUserDefined(natClass), Is.False);
+		}
+
+		public void PrefixedGeneratedNameUsedByTwoRules_IsUserDefined()
+		{
+			IPhNCFeatures natClass = AddPrefixedGeneratedClass();
+			AddStrucDescNCContext(AddRegularRule("rule A"), natClass);
+			AddStrucDescNCContext(AddRegularRule("rule B"), natClass);
+
+			Assert.That(IsUserDefined(natClass), Is.True);
+		}
 	}
 }
