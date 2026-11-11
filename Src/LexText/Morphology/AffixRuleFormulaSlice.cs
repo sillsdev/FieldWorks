@@ -62,7 +62,11 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		public bool OnDisplayMappingJumpToNaturalClass(object commandObject, ref XCore.UIItemDisplayProperties display)
 		{
 			CheckDisposed();
-			bool enable = AffixRuleFormulaControl.IsNCIndexCurrent;
+			// Note that a mapping's Natural Class is always feature-based.
+			// For feature-based NCs, we only want to allow jumping to the NC
+			// if it is user-defined.
+			var mapping = AffixRuleFormulaControl.CurrentObject as IMoModifyFromInput;
+			bool enable = mapping != null && RuleFormulaControl.IsFeatureBasedNCUserDefined(mapping.ModificationRA);
 			display.Enabled = enable;
 			display.Visible = enable;
 			return true;

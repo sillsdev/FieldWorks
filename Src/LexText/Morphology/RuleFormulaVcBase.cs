@@ -135,7 +135,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 								// User-defined feature-based natural classes should display
 								// only the abbreviation.
-								if (RuleFormulaControl.IsFeatureBasedNCNameUserDefined(natClass))
+								if (RuleFormulaControl.IsFeatureBasedNCUserDefined(natClass))
 								{
 									if (!isOuterIterCtxt)
 										OpenSingleLinePile(vwenv, GetMaxNumLines());
@@ -561,7 +561,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 						// User-defined, feature-based natural classes should display
 						// only the abbreviation, which is a single line.
-						if (RuleFormulaControl.IsFeatureBasedNCNameUserDefined(natClass))
+						if (RuleFormulaControl.IsFeatureBasedNCUserDefined(natClass))
 							return 1;
 
 						// Otherwise, the list of features is displayed.
@@ -679,7 +679,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 				// User-defined feature-based natural classes display only the abbreviation,
 				// so get width of the abbreviation.
 				var natClass = (IPhNCFeatures)ctxt.FeatureStructureRA;
-				if (RuleFormulaControl.IsFeatureBasedNCNameUserDefined(natClass))
+				if (RuleFormulaControl.IsFeatureBasedNCUserDefined(natClass))
 				{
 					int len = GetStrWidth(ctxt.FeatureStructureRA.Abbreviation.BestAnalysisAlternative, null, vwenv);
 					len += GetStrWidth(m_leftBracket, null, vwenv);
