@@ -343,18 +343,10 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			AddHandler(Avalonia.Input.InputElement.KeyDownEvent, OnViewKeyDown,
 				Avalonia.Interactivity.RoutingStrategies.Bubble);
 
-			// Ctrl+Z and Ctrl+Y are FieldWorks' Undo and Redo, not an editor's (LT-22820). An
-			// editor keeping its own undo would mark them handled before FieldWorks saw them.
-			Styles.Add(new Style(s => s.Is<TextBox>())
-			{
-				Setters = { new Setter(TextBox.IsUndoEnabledProperty, false) }
-			});
-			// Tunnel, to reach an undo or redo key before the focused editor does.
+			// Ctrl+Z and Ctrl+Y are FieldWorks' Undo and Redo, not an editor's (LT-22820).
+			// Tunnel, to reach them before an editor's own undo does.
 			AddHandler(Avalonia.Input.InputElement.KeyDownEvent, OnUndoRedoKeyDown,
 				Avalonia.Interactivity.RoutingStrategies.Tunnel);
-			// Bubble, so it sees only what the view left unhandled.
-			AddHandler(Avalonia.Input.InputElement.KeyDownEvent, OnUnhandledUndoRedoKey,
-				Avalonia.Interactivity.RoutingStrategies.Bubble);
 
 			// Auto-save: the view commits as the user moves on, so any editor losing focus
 			// while a session is open commits it (validation-gated; one undo step per field).
@@ -452,36 +444,25 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			}
 		}
 
-		// An undo or redo key while an edit is open saves that edit as its own step and goes no
-		// further. With nothing open, the key goes on to the host for FieldWorks' Undo or Redo.
+		// With an edit open, an undo or redo key saves it as its own step and stops; otherwise
+		// the host gets it. A popup, such as a chooser's filter box, keeps it for its editor.
 		private void OnUndoRedoKeyDown(object sender, Avalonia.Input.KeyEventArgs e)
 		{
-			if (_editContext == null || !_editContext.IsOpen || !IsUndoOrRedoKey(e))
+			if (!IsUndoOrRedoKey(e) || !(e.Source is Visual source)
+				|| (source != this && !this.IsVisualAncestorOf(source)))
 				return;
-			OnSave();
-			e.Handled = true;
-		}
-
-		private void OnUnhandledUndoRedoKey(object sender, Avalonia.Input.KeyEventArgs e)
-		{
-			if (IsUndoOrRedoKey(e))
-				UndoRedoKeyUnhandled?.Invoke(this, e);
+			if (_editContext != null && _editContext.IsOpen)
+			{
+				OnSave();
+				e.Handled = true;
+				return;
+			}
+			UndoRedoKeyUnhandled?.Invoke(this, e);
 		}
 
 		private static bool IsUndoOrRedoKey(Avalonia.Input.KeyEventArgs e)
-		{
-			const Avalonia.Input.KeyModifiers ctrl = Avalonia.Input.KeyModifiers.Control;
-			switch (e.Key)
-			{
-				case Avalonia.Input.Key.Z:
-					return e.KeyModifiers == ctrl
-						|| e.KeyModifiers == (ctrl | Avalonia.Input.KeyModifiers.Shift);
-				case Avalonia.Input.Key.Y:
-					return e.KeyModifiers == ctrl;
-				default:
-					return false;
-			}
-		}
+			=> e.KeyModifiers == Avalonia.Input.KeyModifiers.Control
+				&& (e.Key == Avalonia.Input.Key.Z || e.Key == Avalonia.Input.Key.Y);
 
 		// Scrolls newly focused rows into view (LT-22688), reports the row, and shows the
 		// hotlinks of the section it is in.
@@ -638,9 +619,10 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		public event EventHandler InteractionCompleted;
 
 		/// <summary>
-		/// Raised for an undo or redo key that nothing in the view handled, so the host can
+		/// Raised for an undo or redo key pressed in the view with no edit open, so the host can
 		/// give it to FieldWorks' Undo or Redo. FieldWorks never sees keys typed into Avalonia
-		/// otherwise (LT-22820). A handler that takes the key marks it handled.
+		/// otherwise (LT-22820). A handler that takes the key marks it handled; one that does
+		/// not leaves it to the focused editor.
 		/// </summary>
 		public event EventHandler<Avalonia.Input.KeyEventArgs> UndoRedoKeyUnhandled;
 

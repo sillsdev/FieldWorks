@@ -858,7 +858,11 @@ namespace FwAvaloniaTests
 			var (view, context, window) = ShowEditable();
 			var box = Find<TextBox>(view, "LexemeFormEditor.vern");
 			var offered = new List<string>();
-			view.UndoRedoKeyUnhandled += (s, e) => offered.Add(e.KeyModifiers + "+" + e.Key);
+			view.UndoRedoKeyUnhandled += (s, e) =>
+			{
+				offered.Add(e.KeyModifiers + "+" + e.Key);
+				e.Handled = true;
+			};
 			var lastKeyHandled = RecordLastKeyDownHandled(window);
 			var typed = TypeInto(window, box, "perro");
 			PressKey(window, PhysicalKey.Z, RawInputModifiers.Control);
@@ -870,31 +874,46 @@ namespace FwAvaloniaTests
 			PressKey(window, PhysicalKey.Y, RawInputModifiers.Control);
 
 			Assert.That(offered, Is.EqualTo(new[] { "Control+Z", "Control+Z", "Control+Y" }));
-			Assert.That(lastKeyHandled(), Is.False, "a host that declines leaves the key unhandled");
+			Assert.That(lastKeyHandled(), Is.True, "the host took each key");
 			Assert.That(box.Text, Is.EqualTo(typed), "the text box undid none of the typing");
 			Assert.That(context.CommitCount, Is.EqualTo(1), "nothing more was saved");
 		}
 
 		[AvaloniaTest]
-		public void UndoKey_TheHostTakes_IsHandled_AndOtherKeysAreNotOffered()
+		public void OnlyCtrlZAndCtrlY_AreOfferedToTheHost()
 		{
 			var (view, _, window) = ShowEditable();
 			var box = Find<TextBox>(view, "LexemeFormEditor.vern");
 			var offered = 0;
-			view.UndoRedoKeyUnhandled += (s, e) =>
-			{
-				offered++;
-				e.Handled = true;
-			};
-			var lastKeyHandled = RecordLastKeyDownHandled(window);
+			view.UndoRedoKeyUnhandled += (s, e) => offered++;
 			box.Focus();
 
 			PressKey(window, PhysicalKey.Q, RawInputModifiers.Control);
-			Assert.That(offered, Is.EqualTo(0), "only undo and redo keys are offered");
+			PressKey(window, PhysicalKey.Z, RawInputModifiers.Control | RawInputModifiers.Shift);
 
+			Assert.That(offered, Is.EqualTo(0));
+		}
+
+		// A popup's editor, such as a chooser's filter box, keeps Ctrl+Z for its own undo:
+		// FieldWorks' Undo must not change the record under an open picker.
+		[AvaloniaTest]
+		public void CtrlZ_InAPopupEditor_IsLeftToThatEditor()
+		{
+			var (view, context, window) = ShowEditable();
+			var anchor = Find<TextBox>(view, "LexemeFormEditor.vern");
+			var offered = 0;
+			view.UndoRedoKeyUnhandled += (s, e) => offered++;
+			var filter = new TextBox();
+			var flyout = new Flyout { Content = filter };
+			flyout.ShowAt(anchor);
+			Dispatcher.UIThread.RunJobs();
+
+			TypeInto(window, filter, "ab");
 			PressKey(window, PhysicalKey.Z, RawInputModifiers.Control);
-			Assert.That(offered, Is.EqualTo(1));
-			Assert.That(lastKeyHandled(), Is.True);
+
+			Assert.That(offered, Is.EqualTo(0), "the key is not offered to FieldWorks");
+			Assert.That(context.CommitCount, Is.EqualTo(0), "and saves nothing");
+			Assert.That(filter.Text, Is.Not.EqualTo("ab"), "the filter box undid its own typing");
 		}
 
 		private static string TypeInto(Window window, TextBox box, string text)
