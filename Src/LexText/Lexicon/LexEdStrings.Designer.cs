@@ -19,7 +19,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class LexEdStrings {
@@ -196,15 +196,6 @@ namespace SIL.FieldWorks.XWorks.LexEd {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &amp;Add.
-        /// </summary>
-        internal static string ks_Add {
-            get {
-                return ResourceManager.GetString("ks_Add", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to &amp;Link.
         /// </summary>
         internal static string ks_Link {
@@ -219,15 +210,6 @@ namespace SIL.FieldWorks.XWorks.LexEd {
         internal static string ks_MoveEntry {
             get {
                 return ResourceManager.GetString("ks_MoveEntry", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to &amp;Replace.
-        /// </summary>
-        internal static string ks_Replace {
-            get {
-                return ResourceManager.GetString("ks_Replace", resourceCulture);
             }
         }
         
@@ -273,6 +255,123 @@ namespace SIL.FieldWorks.XWorks.LexEd {
         internal static string ksAlwaysVisible {
             get {
                 return ResourceManager.GetString("ksAlwaysVisible", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This project is in use by another FieldWorks window or a transfer. Finish the other work, then try again..
+        /// </summary>
+        internal static string ksApplyMotifBusy {
+            get {
+                return ResourceManager.GetString("ksApplyMotifBusy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Apply Motif changes.
+        /// </summary>
+        internal static string ksApplyMotifChangesTitle {
+            get {
+                return ResourceManager.GetString("ksApplyMotifChangesTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Save this project and apply the changes you approved in Motif? FieldWorks may reload the project afterward..
+        /// </summary>
+        internal static string ksApplyMotifConfirmation {
+            get {
+                return ResourceManager.GetString("ksApplyMotifConfirmation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The project file {0} is missing after Motif ran, so FieldWorks has not reopened the project. A backup may be at {1}. Contact support before you open the project again..
+        /// </summary>
+        internal static string ksApplyMotifMissingProjectFile {
+            get {
+                return ResourceManager.GetString("ksApplyMotifMissingProjectFile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to There are no Motif changes waiting to be applied..
+        /// </summary>
+        internal static string ksApplyMotifNoChanges {
+            get {
+                return ResourceManager.GetString("ksApplyMotifNoChanges", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to FieldWorks could not save the project, so Motif was not started. {0}.
+        /// </summary>
+        internal static string ksApplyMotifPreparationFailed {
+            get {
+                return ResourceManager.GetString("ksApplyMotifPreparationFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Motif could not confirm whether the changes were applied. FieldWorks has reloaded the project. Open Motif to see what happened before you try again..
+        /// </summary>
+        internal static string ksApplyMotifReconciliation {
+            get {
+                return ResourceManager.GetString("ksApplyMotifReconciliation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to FieldWorks could not reopen the project after Motif ran. Close FieldWorks, then open the project again. {0}.
+        /// </summary>
+        internal static string ksApplyMotifRecoveryFailed {
+            get {
+                return ResourceManager.GetString("ksApplyMotifRecoveryFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Some Motif changes no longer fit this project. No changes were applied. Open Motif to review them, then try again..
+        /// </summary>
+        internal static string ksApplyMotifRefused {
+            get {
+                return ResourceManager.GetString("ksApplyMotifRefused", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Motif did not finish in time and could not be stopped. FieldWorks has not reopened the project, so that it does not overwrite Motif's changes. Close FieldWorks, wait for Motif to finish, then open the project again..
+        /// </summary>
+        internal static string ksApplyMotifStillRunning {
+            get {
+                return ResourceManager.GetString("ksApplyMotifStillRunning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Motif changes were applied. FieldWorks has reloaded the project..
+        /// </summary>
+        internal static string ksApplyMotifSuccess {
+            get {
+                return ResourceManager.GetString("ksApplyMotifSuccess", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Motif changes were applied. FieldWorks has reloaded the project. {0}.
+        /// </summary>
+        internal static string ksApplyMotifSuccessWithSummary {
+            get {
+                return ResourceManager.GetString("ksApplyMotifSuccessWithSummary", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Motif did not finish in time and was stopped. FieldWorks has reloaded the project. Open Motif to see whether the changes were applied before you try again..
+        /// </summary>
+        internal static string ksApplyMotifTimedOut {
+            get {
+                return ResourceManager.GetString("ksApplyMotifTimedOut", resourceCulture);
             }
         }
         
@@ -448,33 +547,6 @@ namespace SIL.FieldWorks.XWorks.LexEd {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Note: this will remove this entire {0} reference set tree..
-        /// </summary>
-        internal static string ksDeleteLexTree {
-            get {
-                return ResourceManager.GetString("ksDeleteLexTree", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Note: the listed references will still be {0} related in a .
-        /// </summary>
-        internal static string ksDeleteSequenceCollectionA {
-            get {
-                return ResourceManager.GetString("ksDeleteSequenceCollectionA", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to  relation..
-        /// </summary>
-        internal static string ksDeleteSequenceCollectionB {
-            get {
-                return ResourceManager.GetString("ksDeleteSequenceCollectionB", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Edit {0}.
         /// </summary>
         internal static string ksEditX {
@@ -583,42 +655,6 @@ namespace SIL.FieldWorks.XWorks.LexEd {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Add Reference ({0}).
-        /// </summary>
-        internal static string ksIdentifyXEntry {
-            get {
-                return ResourceManager.GetString("ksIdentifyXEntry", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Add Reference ({0}).
-        /// </summary>
-        internal static string ksIdentifyXLexEntry {
-            get {
-                return ResourceManager.GetString("ksIdentifyXLexEntry", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Add Reference ({0}).
-        /// </summary>
-        internal static string ksIdentifyXLexEntryOrSense {
-            get {
-                return ResourceManager.GetString("ksIdentifyXLexEntryOrSense", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Add Reference ({0}).
-        /// </summary>
-        internal static string ksIdentifyXSense {
-            get {
-                return ResourceManager.GetString("ksIdentifyXSense", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to {0}/{1} relation.
         /// </summary>
         internal static string ksLexRelation2 {
@@ -633,6 +669,33 @@ namespace SIL.FieldWorks.XWorks.LexEd {
         internal static string ksMakeComponentOf {
             get {
                 return ResourceManager.GetString("ksMakeComponentOf", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Motif is busy with this project..
+        /// </summary>
+        internal static string ksMotifBusy {
+            get {
+                return ResourceManager.GetString("ksMotifBusy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Motif could not be started. Check the installation and try again..
+        /// </summary>
+        internal static string ksMotifCouldNotStart {
+            get {
+                return ResourceManager.GetString("ksMotifCouldNotStart", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Motif is not installed on this computer..
+        /// </summary>
+        internal static string ksMotifNotFound {
+            get {
+                return ResourceManager.GetString("ksMotifNotFound", resourceCulture);
             }
         }
         
@@ -727,15 +790,6 @@ namespace SIL.FieldWorks.XWorks.LexEd {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Redo Add Reference.
-        /// </summary>
-        internal static string ksRedoAddRef {
-            get {
-                return ResourceManager.GetString("ksRedoAddRef", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Redo Add Reversal Entry to Sense.
         /// </summary>
         internal static string ksRedoAddRevToSense {
@@ -817,15 +871,6 @@ namespace SIL.FieldWorks.XWorks.LexEd {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Redo Delete Relation.
-        /// </summary>
-        internal static string ksRedoDeleteRelation {
-            get {
-                return ResourceManager.GetString("ksRedoDeleteRelation", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Redo Delete Reversal Entry from Sense.
         /// </summary>
         internal static string ksRedoDeleteRevFromSense {
@@ -835,29 +880,11 @@ namespace SIL.FieldWorks.XWorks.LexEd {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Redo Demote.
-        /// </summary>
-        internal static string ksRedoDemote {
-            get {
-                return ResourceManager.GetString("ksRedoDemote", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Redo Edit Function.
         /// </summary>
         internal static string ksRedoEditFunction {
             get {
                 return ResourceManager.GetString("ksRedoEditFunction", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Redo Edit Reference Set Details.
-        /// </summary>
-        internal static string ksRedoEditRefSetDetails {
-            get {
-                return ResourceManager.GetString("ksRedoEditRefSetDetails", resourceCulture);
             }
         }
         
@@ -925,15 +952,6 @@ namespace SIL.FieldWorks.XWorks.LexEd {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Redo Replace Reference.
-        /// </summary>
-        internal static string ksRedoReplaceRef {
-            get {
-                return ResourceManager.GetString("ksRedoReplaceRef", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Redo Set Reversal Entries.
         /// </summary>
         internal static string ksRedoSetRevEntries {
@@ -957,15 +975,6 @@ namespace SIL.FieldWorks.XWorks.LexEd {
         internal static string ksRemovingCircularComponentLexeme {
             get {
                 return ResourceManager.GetString("ksRemovingCircularComponentLexeme", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Replace Reference.
-        /// </summary>
-        internal static string ksReplaceXEntry {
-            get {
-                return ResourceManager.GetString("ksReplaceXEntry", resourceCulture);
             }
         }
         
@@ -1078,15 +1087,6 @@ namespace SIL.FieldWorks.XWorks.LexEd {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Undo Add Reference.
-        /// </summary>
-        internal static string ksUndoAddRef {
-            get {
-                return ResourceManager.GetString("ksUndoAddRef", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Undo Add Reversal Entry to Sense.
         /// </summary>
         internal static string ksUndoAddRevToSense {
@@ -1168,15 +1168,6 @@ namespace SIL.FieldWorks.XWorks.LexEd {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Undo Delete Relation.
-        /// </summary>
-        internal static string ksUndoDeleteRelation {
-            get {
-                return ResourceManager.GetString("ksUndoDeleteRelation", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Undo Delete Reversal Entry from Sense.
         /// </summary>
         internal static string ksUndoDeleteRevFromSense {
@@ -1186,29 +1177,11 @@ namespace SIL.FieldWorks.XWorks.LexEd {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Undo Demote.
-        /// </summary>
-        internal static string ksUndoDemote {
-            get {
-                return ResourceManager.GetString("ksUndoDemote", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Undo Edit Function.
         /// </summary>
         internal static string ksUndoEditFunction {
             get {
                 return ResourceManager.GetString("ksUndoEditFunction", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Undo Edit Reference Set Details.
-        /// </summary>
-        internal static string ksUndoEditRefSetDetails {
-            get {
-                return ResourceManager.GetString("ksUndoEditRefSetDetails", resourceCulture);
             }
         }
         
@@ -1272,15 +1245,6 @@ namespace SIL.FieldWorks.XWorks.LexEd {
         internal static string ksUndoPromote {
             get {
                 return ResourceManager.GetString("ksUndoPromote", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Undo Replace Reference.
-        /// </summary>
-        internal static string ksUndoReplaceRef {
-            get {
-                return ResourceManager.GetString("ksUndoReplaceRef", resourceCulture);
             }
         }
         

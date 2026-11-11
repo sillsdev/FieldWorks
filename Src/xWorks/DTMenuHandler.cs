@@ -216,11 +216,10 @@ namespace SIL.FieldWorks.XWorks
 		/// <returns></returns>
 		public bool OnInsertPicture(object cmd)
 		{
-			int flid;
-			if (!CanInsertPictureOrMediaFile(cmd, out flid))
+			var obj = CurrentSliceObject();
+			int flid = InsertTargetField(cmd, obj);
+			if (flid == 0)
 				return false; // should not happen, but play safe
-			var obj = m_dataEntryForm.CurrentSlice.Object;
-			int chvo = obj.Cache.DomainDataByFlid.get_VecSize(obj.Hvo, flid);
 			IApp app = m_propertyTable.GetValue<IApp>("App");
 			using (PicturePropertiesDialog dlg = new PicturePropertiesDialog(obj.Cache, null,
 				m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), app))
@@ -228,44 +227,25 @@ namespace SIL.FieldWorks.XWorks
 				dlg.Initialize();
 				if (dlg.ShowDialog() == DialogResult.OK)
 				{
-					UndoableUnitOfWorkHelper.Do(xWorksStrings.ksUndoInsertPicture, xWorksStrings.ksRedoInsertPicture, obj, () =>
-					{
-						string strLocalPictures = CmFolderTags.DefaultPictureFolder;
-						int hvoPic = obj.Cache.DomainDataByFlid.MakeNewObject(CmPictureTags.kClassId, obj.Hvo, flid, chvo);
-						var picture = Cache.ServiceLocator.GetInstance<ICmPictureRepository>().GetObject(hvoPic);
-						picture.UpdatePicture(dlg.CurrentFile, null, strLocalPictures, 0);
-					});
+					PictureInsertion.Insert(obj, flid, dlg.CurrentFile, xWorksStrings.ksUndoInsertPicture,
+						xWorksStrings.ksRedoInsertPicture);
 				}
 			}
 			return true;
 		}
 
-		private bool CanInsertPictureOrMediaFile(object cmd, out int flid)
+		// The current slice's object; null with no slice (LT-3347: an empty data set has none).
+		private ICmObject CurrentSliceObject()
 		{
-			Command command = (Command) cmd;
-			string field = command.GetParameter("field");
-			string className = command.GetParameter("className");
 			Slice current = m_dataEntryForm.CurrentSlice;
-			if (current == null || current.IsDisposed)	// LT-3347: there are no slices in this empty data set
-			{
-				flid = 0;
-				return false;
-			}
-			var obj = current.Object;
-			if (obj == null || !obj.IsValidObject)
-			{
-				// Something has gone horribly wrong, but let's not die.
-				flid = 0;
-				return false;
-			}
-			IFwMetaDataCache mdc = obj.Cache.DomainDataByFlid.MetaDataCache;
-			int clid = 0;
-			try { clid = mdc.GetClassId(className); }
-			catch { throw new ConfigurationException("Unknown class for insert command: " + className); }
-			try { flid = mdc.GetFieldId2(clid, field, true); }
-			catch { throw new ConfigurationException("Unknown field: " + className + "." + field); }
-			int clidObj = obj.ClassID;
-			return (clidObj == clid); // enhance JohnT: we could allow clidObj to be a subclass of clid.
+			return current == null || current.IsDisposed ? null : current.Object;
+		}
+
+		// The field of obj that takes the command's picture or media files; 0 when none does.
+		private static int InsertTargetField(object cmd, ICmObject obj)
+		{
+			Command command = (Command)cmd;
+			return PictureInsertion.TargetField(obj, command.GetParameter("className"), command.GetParameter("field"));
 		}
 
 		/// <summary>
@@ -277,8 +257,7 @@ namespace SIL.FieldWorks.XWorks
 		public virtual bool OnDisplayInsertPicture(object commandObject,
 			ref UIItemDisplayProperties display)
 		{
-			int flid;
-			display.Enabled = CanInsertPictureOrMediaFile(commandObject, out flid);
+			display.Enabled = InsertTargetField(commandObject, CurrentSliceObject()) != 0;
 			return true;//we handled this, no need to ask anyone else.
 		}
 
@@ -291,100 +270,59 @@ namespace SIL.FieldWorks.XWorks
 		{
 			string filter = ResourceHelper.BuildFileFilter(FileFilterType.AllAudio,
 				FileFilterType.AllVideo, FileFilterType.AllFiles);
-			string keyCaption = "kstidInsertMediaChooseFileCaption";
-			string defaultCaption = xWorksStrings.ChooseSoundOrMovieFile;
-			return InsertMediaFile(cmd, filter, keyCaption, defaultCaption);
+			return InsertMediaFile(cmd, filter, xWorksStrings.ChooseSoundOrMovieFile);
 		}
 
-		private bool InsertMediaFile(object cmd, string filter, string keyCaption, string defaultCaption)
+		private bool InsertMediaFile(object cmd, string filter, string caption)
 		{
-			ICmObject obj;
-			int flid;
-			bool fOnPronunciationSlice = CanInsertPictureOrMediaFile(cmd, out flid);
-			if (fOnPronunciationSlice)
+			ILexPronunciation pronunciation;
+			if (InsertTargetField(cmd, CurrentSliceObject()) != 0)
 			{
-				obj = m_dataEntryForm.CurrentSlice.Object;
+				pronunciation = (ILexPronunciation)m_dataEntryForm.CurrentSlice.Object;
 			}
 			else
 			{
-				// Find the first pronunciation object on the current entry, creating it if
-				// necessary.
+				// Not on a pronunciation: the entry's first, created when it has none.
 				var le = m_dataEntryForm.Root as ILexEntry;
 				if (le == null)
 					return false;
-				if (le.PronunciationsOS.Count == 0)
-				{
-					// Ensure that the pronunciation writing systems have been initialized.
-					// Otherwise, the crash reported in FWR-2086 can happen!
-					int wsPron = Cache.DefaultPronunciationWs;
-					UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW("Undo Create Pronuciation",
-						"Redo Create Pronunciation", Cache.ActionHandlerAccessor, () =>
-						{
-							le.PronunciationsOS.Add(Cache.ServiceLocator.GetInstance<ILexPronunciationFactory>().Create());
-						});
-				}
-				obj = le.PronunciationsOS[0];
-				flid = LexPronunciationTags.kflidMediaFiles;
+				pronunciation = MediaFileInsertion.FirstOrCreatePronunciation(le, xWorksStrings.ksUndoCreatePronunciation,
+					xWorksStrings.ksRedoCreatePronunciation);
 			}
+			string[] fileNames = ChooseMediaFiles(Cache, m_propertyTable, filter, caption);
+			if (fileNames.Length == 0 || !pronunciation.IsValidObject)
+				return true; // cancelled, or another client deleted it while we were choosing the file
+			MediaFileInsertion.Insert(pronunciation, fileNames, xWorksStrings.ksUndoInsertMedia, xWorksStrings.ksRedoInsertMedia);
+			return true;
+		}
+
+		/// <summary>
+		/// Asks the user for sound or movie files and moves or copies them into the
+		/// linked-files folder as the user chooses, remembering the directory for next time.
+		/// </summary>
+		/// <returns>The files' names under the linked-files folder; empty when the user
+		/// cancels.</returns>
+		internal static string[] ChooseMediaFiles(LcmCache cache, PropertyTable propertyTable, string filter, string caption)
+		{
 			using (var dlg = new OpenFileDialogAdapter())
 			{
-				string defaultDirectory = Cache.LangProject.LinkedFilesRootDir;
-				dlg.InitialDirectory = m_mediator != null ? m_propertyTable.GetStringProperty("InsertMediaFile-LastDirectory", defaultDirectory)
-					: defaultDirectory;
+				string defaultDirectory = cache.LangProject.LinkedFilesRootDir;
+				dlg.InitialDirectory = propertyTable.GetStringProperty("InsertMediaFile-LastDirectory", defaultDirectory);
 				dlg.Filter = filter;
 				dlg.FilterIndex = 1;
-				if (string.IsNullOrEmpty(dlg.Title) || dlg.Title == "*" + keyCaption + "*")
-				{
-					dlg.Title = defaultCaption;
-				}
+				dlg.Title = caption;
 				dlg.RestoreDirectory = true;
 				dlg.CheckFileExists = true;
 				dlg.CheckPathExists = true;
 				dlg.Multiselect = true;
-
-				DialogResult dialogResult = DialogResult.None;
-				while (dialogResult != DialogResult.OK && dialogResult != DialogResult.Cancel)
-				{
-					dialogResult = dlg.ShowDialog();
-					if (dialogResult == DialogResult.OK)
-					{
-						string[] fileNames = MoveOrCopyFilesController.MoveCopyOrLeaveMediaFiles(dlg.FileNames,
-							Cache.LangProject.LinkedFilesRootDir, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"));
-						string sFolderName = StringTable.Table.GetString("kstidMediaFolder");
-						if (string.IsNullOrEmpty(sFolderName) || sFolderName == "*kstidMediaFolder*")
-						{
-							sFolderName = CmFolderTags.LocalMedia;
-						}
-						if (!obj.IsValidObject)
-							return true; // Probably some other client deleted it while we were choosing the file.
-
-						int chvo = obj.Cache.DomainDataByFlid.get_VecSize(obj.Hvo, flid);
-						UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(
-							xWorksStrings.ksUndoInsertMedia, xWorksStrings.ksRedoInsertMedia,
-							Cache.ActionHandlerAccessor, () =>
-							{
-								foreach (string fileName in fileNames.Where(f => !string.IsNullOrEmpty(f)))
-								{
-									int hvo = obj.Cache.DomainDataByFlid.MakeNewObject(CmMediaTags.kClassId, obj.Hvo, flid, chvo);
-									ICmMedia media = Cache.ServiceLocator.GetInstance<ICmMediaRepository>().GetObject(hvo);
-									ICmFolder folder = DomainObjectServices.FindOrCreateFolder(obj.Cache, LangProjectTags.kflidMedia, sFolderName);
-									media.MediaFileRA = DomainObjectServices.FindOrCreateFile(folder, fileName);
-								}
-							});
-
-						if (m_mediator != null)
-						{
-							string fileName = dlg.FileNames.FirstOrDefault(f => !string.IsNullOrEmpty(f));
-							if (fileName != null)
-							{
-								string directory = Path.GetDirectoryName(fileName);
-								m_propertyTable.SetProperty("InsertMediaFile-LastDirectory", directory, false);
-							}
-						}
-					}
-				}
+				if (dlg.ShowDialog() != DialogResult.OK)
+					return new string[0];
+				string fileName = dlg.FileNames.FirstOrDefault(f => !string.IsNullOrEmpty(f));
+				if (fileName != null)
+					propertyTable.SetProperty("InsertMediaFile-LastDirectory", Path.GetDirectoryName(fileName), false);
+				return MoveOrCopyFilesController.MoveCopyOrLeaveMediaFiles(dlg.FileNames, cache.LangProject.LinkedFilesRootDir,
+					propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"));
 			}
-			return true;
 		}
 
 		/// <summary>
@@ -775,24 +713,8 @@ namespace SIL.FieldWorks.XWorks
 				if(!currentSlice.ContainingDataTree.HasSubPossibilitiesSlice)
 					return false;
 			}
-			// "Insert Subsense" should be enabled only for Sense related slices, not for entry
-			// related slices.  This isn't perfect, but behaves the same as "Insert Picture".
-			if (command.Id == "CmdInsertSubsense" && fieldName == "Senses")
-			{
-				if (currentSlice.Object != null && currentSlice.Object.IsValidObject)
-					return currentSlice.Object.ClassID == LexSenseTags.kClassId;
-			}
-			// First, see if the command can insert something that belongs to
-			// the current slice containing tree root object.
-			bool fCanInsert;
-			fCanInsert = CanInsertFieldIntoObj(Cache, fieldName, rootObj, out index);
-			// Otherwise, see if the command can insert something that belongs
-			// to the current slice object.
-			if (!fCanInsert && currentSlice.Object != rootObj)
-			{
-				fCanInsert = CanInsertFieldIntoObj(Cache, fieldName, currentSlice.Object, out index);
-			}
-			return fCanInsert;
+			return Cache != null
+				&& DetailObjectInsertion.CanInsert(rootObj, currentSlice.Object, command.Id, fieldName, out index);
 		}
 
 		/// <summary>
@@ -1111,19 +1033,7 @@ namespace SIL.FieldWorks.XWorks
 			Debug.Assert(slice != null, "No slice was current");
 			Debug.Assert(!slice.IsDisposed, "The current slice is already disposed??");
 			if (slice != null)
-			{
-				var cache = m_dataEntryForm.Cache;
-				var obj = slice.Object.Owner;
-				int flid = slice.Object.OwningFlid;
-				int ihvo = cache.DomainDataByFlid.GetObjIndex(obj.Hvo, (int)flid, slice.Object.Hvo);
-				if (ihvo > 0)
-				{
-					// We found it in the sequence, and it isn't already the first.
-					UndoableUnitOfWorkHelper.Do(xWorksStrings.UndoMoveItem, xWorksStrings.RedoMoveItem, cache.ActionHandlerAccessor,
-					()=>cache.DomainDataByFlid.MoveOwnSeq(obj.Hvo, (int)flid, ihvo, ihvo,
-						obj.Hvo, (int)flid, ihvo - 1));
-				}
-			}
+				DetailSequenceMove.MoveUp(slice.Object, xWorksStrings.UndoMoveItem, xWorksStrings.RedoMoveItem);
 			return true;	//we handled this.
 		}
 
@@ -1138,45 +1048,14 @@ namespace SIL.FieldWorks.XWorks
 		{
 			Slice slice = m_dataEntryForm.CurrentSlice;
 			Debug.Assert(slice == null || !slice.IsDisposed, "The current slice is already disposed??");
-			if (slice == null || slice.Object == null)
+			var target = slice?.Object;
+			if (!DetailSequenceMove.IsInSequence(target))
 			{
 				display.Enabled = false;
 				display.Visible = false;
 				return true;
 			}
-			var cache = m_dataEntryForm.Cache;
-			// FWR-2742 Handle a slice Object (like LexEntry) being unowned (and OwningFlid = 0)
-			var type = CellarPropertyType.ReferenceAtomic;
-			if (slice.Object.OwningFlid > 0)
-				type = (CellarPropertyType) cache.DomainDataByFlid.MetaDataCache.GetFieldType(slice.Object.OwningFlid);
-			if (type != CellarPropertyType.OwningSequence && type != CellarPropertyType.ReferenceSequence)
-			{
-				display.Enabled = false;
-				display.Visible = false;
-				return true;
-			}
-			int chvo = cache.DomainDataByFlid.get_VecSize(slice.Object.Owner.Hvo, (int)slice.Object.OwningFlid);
-			if (chvo < 2)
-			{
-				display.Enabled = false;
-			}
-			else
-			{
-				int hvo = cache.DomainDataByFlid.get_VecItem(slice.Object.Owner.Hvo, (int)slice.Object.OwningFlid,
-					0);
-				display.Enabled = slice.Object.Hvo != hvo;
-				// if the first LexEntryRef in LexEntry.EntryRefs is a complex form, and the
-				// slice displays the second LexEntryRef in the sequence, then we can't move it
-				// up, since the first slot is reserved for the complex form.
-				if (display.Enabled && slice.Object.OwningFlid == LexEntryTags.kflidEntryRefs)
-				{
-					if (cache.DomainDataByFlid.get_VecSize(hvo, LexEntryRefTags.kflidComplexEntryTypes) > 0)
-					{
-						int hvo1 = cache.DomainDataByFlid.get_VecItem(slice.Object.Owner.Hvo, (int)slice.Object.OwningFlid, 1);
-						display.Enabled = slice.Object.Hvo != hvo1;
-					}
-				}
-			}
+			display.Enabled = DetailSequenceMove.CanMoveUp(target);
 			display.Visible = true;
 			return true; //we've handled this
 		}
@@ -1192,23 +1071,7 @@ namespace SIL.FieldWorks.XWorks
 			Debug.Assert(slice != null, "No slice was current");
 			Debug.Assert(!slice.IsDisposed, "The current slice is already disposed??");
 			if (slice != null)
-			{
-				var cache = m_dataEntryForm.Cache;
-				int hvoOwner = slice.Object.Owner.Hvo;
-				int flid = slice.Object.OwningFlid;
-				int chvo = cache.DomainDataByFlid.get_VecSize(hvoOwner, (int)flid);
-				int ihvo = cache.DomainDataByFlid.GetObjIndex(hvoOwner, (int)flid, slice.Object.Hvo);
-				if (ihvo >= 0 && ihvo + 1 < chvo)
-				{
-					// We found it in the sequence, and it isn't already the last.
-					// Quoting from VwOleDbDa.cpp, "Insert the selected records before the
-					// DstStart object".  This means we need + 2 instead of + 1 for the
-					// new location.
-					UndoableUnitOfWorkHelper.Do(xWorksStrings.UndoMoveItem, xWorksStrings.RedoMoveItem, cache.ActionHandlerAccessor,
-					()=>cache.DomainDataByFlid.MoveOwnSeq(hvoOwner, (int)flid, ihvo, ihvo,
-						hvoOwner, (int)flid, ihvo + 2));
-				}
-			}
+				DetailSequenceMove.MoveDown(slice.Object, xWorksStrings.UndoMoveItem, xWorksStrings.RedoMoveItem);
 			return true;	//we handled this.
 		}
 
@@ -1223,35 +1086,14 @@ namespace SIL.FieldWorks.XWorks
 		{
 			Slice slice = m_dataEntryForm.CurrentSlice;
 			Debug.Assert(slice == null || !slice.IsDisposed, "The current slice is already disposed??");
-			if (slice == null || slice.Object == null)
+			var target = slice?.Object;
+			if (!DetailSequenceMove.IsInSequence(target))
 			{
 				display.Enabled = false;
 				display.Visible = false;
 				return true;
 			}
-			LcmCache cache = m_dataEntryForm.Cache;
-			IFwMetaDataCache mdc = cache.DomainDataByFlid.MetaDataCache;
-			// FWR-2742 Handle a slice Object (like LexEntry) being unowned (and OwningFlid = 0)
-			var type = CellarPropertyType.ReferenceAtomic;
-			if (slice.Object.OwningFlid > 0)
-				type = (CellarPropertyType)cache.DomainDataByFlid.MetaDataCache.GetFieldType(slice.Object.OwningFlid);
-			if (type != CellarPropertyType.OwningSequence && type != CellarPropertyType.ReferenceSequence)
-			{
-				display.Enabled = false;
-				display.Visible = false;
-				return true;
-			}
-			int chvo = cache.DomainDataByFlid.get_VecSize(slice.Object.Owner.Hvo, (int)slice.Object.OwningFlid);
-			if (chvo < 2)
-			{
-				display.Enabled = false;
-			}
-			else
-			{
-				int hvo = cache.DomainDataByFlid.get_VecItem(slice.Object.Owner.Hvo, (int)slice.Object.OwningFlid,
-					chvo - 1);
-				display.Enabled = slice.Object.Hvo != hvo;
-			}
+			display.Enabled = DetailSequenceMove.CanMoveDown(target);
 			display.Visible = true;
 			return true; //we've handled this
 		}
@@ -1264,7 +1106,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <returns></returns>
 		public bool OnDisplayConvertEntryIntoVariant(object commandObject, ref UIItemDisplayProperties display)
 		{
-			display.Enabled = DisplayConvertLexEntry(commandObject);
+			display.Enabled = ConvertibleEntry(commandObject) != null;
 			return true;
 		}
 
@@ -1275,7 +1117,12 @@ namespace SIL.FieldWorks.XWorks
 		/// <returns></returns>
 		public bool OnConvertEntryIntoVariant(object argument)
 		{
-			return AddNewLexEntryRef(argument, LexEntryRefTags.kflidVariantEntryTypes);
+			var entry = ConvertibleEntry(argument);
+			if (entry == null)
+				return false;
+			var command = (Command)argument;
+			EntryConversion.ConvertIntoVariant(entry, command.UndoText, command.RedoText);
+			return true;
 		}
 
 		/// <summary>
@@ -1286,20 +1133,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <returns></returns>
 		public bool OnDisplayConvertEntryIntoComplexForm(object commandObject, ref UIItemDisplayProperties display)
 		{
-			bool fDisplay = DisplayConvertLexEntry(commandObject);
-			if (fDisplay)
-			{
-				if (!m_dataEntryForm.Root.IsValidObject)
-					return true;
-				foreach (var ler in (m_dataEntryForm.Root as ILexEntry).EntryRefsOS)
-				{
-					if (ler.ComplexEntryTypesRS.Count == 0)
-						continue;
-					fDisplay = false;
-					break;
-				}
-			}
-			display.Enabled = fDisplay;
+			display.Enabled = EntryConversion.CanConvertIntoComplexForm(ConvertibleEntry(commandObject));
 			return true;
 		}
 
@@ -1310,69 +1144,27 @@ namespace SIL.FieldWorks.XWorks
 		/// <returns></returns>
 		public bool OnConvertEntryIntoComplexForm(object argument)
 		{
-			return AddNewLexEntryRef(argument, LexEntryRefTags.kflidComplexEntryTypes);
+			var entry = ConvertibleEntry(argument);
+			if (entry == null)
+				return false;
+			var command = (Command)argument;
+			EntryConversion.ConvertIntoComplexForm(entry, command.UndoText, command.RedoText);
+			return true;
 		}
 
-		private bool DisplayConvertLexEntry(object commandObject)
+		// The shown entry when the conversion command applies to it; null otherwise, and while
+		// no data is set up yet (LT-9712).
+		private ILexEntry ConvertibleEntry(object commandObject)
 		{
-			// We may not have any data set up yet.  See LT-9712.
-			if (Cache == null || m_dataEntryForm == null || m_dataEntryForm.Root == null)
-				return false;
-			Command command = (Command)commandObject;
-			string className = XmlUtils.GetMandatoryAttributeValue(command.Parameters[0], "className");
-			if (className != m_dataEntryForm.Root.ClassName)
-				return false;
-			string restrictToTool = XmlUtils.GetOptionalAttributeValue(command.Parameters[0], "restrictToTool");
-			if (restrictToTool != null && restrictToTool != m_propertyTable.GetStringProperty("currentContentControl", String.Empty))
-				return false;
-			return m_dataEntryForm.Root is ILexEntry;
-		}
-
-		private bool AddNewLexEntryRef(object argument, int flidTypes)
-		{
-			Command command = (Command)argument;
-			string className = XmlUtils.GetMandatoryAttributeValue(command.Parameters[0], "className");
-			if (className != m_dataEntryForm.Root.ClassName)
-				return false;
-			string restrictToTool = XmlUtils.GetOptionalAttributeValue(command.Parameters[0], "restrictToTool");
-			if (restrictToTool != null && restrictToTool != m_propertyTable.GetStringProperty("currentContentControl", String.Empty))
-				return false;
-
-			var ent = m_dataEntryForm.Root as ILexEntry;
-			if (ent != null)
-			{
-				UndoableUnitOfWorkHelper.Do(command.UndoText, command.RedoText, ent,
-					() =>
-						{
-							var ler = Cache.ServiceLocator.GetInstance<ILexEntryRefFactory>().Create();
-							int insertPos;
-							if (flidTypes == LexEntryRefTags.kflidVariantEntryTypes)
-							{
-								insertPos = ent.EntryRefsOS.Count;
-								ent.EntryRefsOS.Add(ler);
-								const string unspecVariantEntryTypeGuid = "3942addb-99fd-43e9-ab7d-99025ceb0d4e";
-								var type = ent.Cache.LangProject.LexDbOA.VariantEntryTypesOA.PossibilitiesOS
-									.First(lrt => lrt.Guid.ToString() == unspecVariantEntryTypeGuid) as ILexEntryType;
-								ler.VariantEntryTypesRS.Add(type);
-								ler.RefType = LexEntryRefTags.krtVariant;
-								ler.HideMinorEntry = 0;
-							}
-							else
-							{
-								insertPos = 0;
-								ent.EntryRefsOS.Insert(insertPos, ler);
-								const string unspecComplexFormEntryTypeGuid = "fec038ed-6a8c-4fa5-bc96-a4f515a98c50";
-								var type = ent.Cache.LangProject.LexDbOA.ComplexEntryTypesOA.PossibilitiesOS
-									.First(lrt => lrt.Guid.ToString() == unspecComplexFormEntryTypeGuid) as ILexEntryType;
-								ler.ComplexEntryTypesRS.Add(type);
-								ler.RefType = LexEntryRefTags.krtComplexForm;
-								ler.HideMinorEntry = 0; // LT-10928
-								ent.ChangeRootToStem();
-							}
-						});
-				return true;
-			}
-			return false;
+			if (Cache == null || m_dataEntryForm == null)
+				return null;
+			var parameters = ((Command)commandObject).Parameters[0];
+			var root = m_dataEntryForm.Root;
+			return ShownRecordCommandScope.Applies(root, XmlUtils.GetMandatoryAttributeValue(parameters, "className"),
+				XmlUtils.GetOptionalAttributeValue(parameters, "restrictToTool"),
+				m_propertyTable.GetStringProperty("currentContentControl", String.Empty))
+				? root as ILexEntry
+				: null;
 		}
 
 		public bool OnDisplayAddComponentToPrimary(object commandObject, ref UIItemDisplayProperties display)

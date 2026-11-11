@@ -63,10 +63,9 @@ namespace SIL.FieldWorks.XWorks
 	/// </summary>
 	public static class DetailComposer
 	{
-		// The visited (hvo, layout) guard is the real recursion stop. This depth cap is only a
-		// backstop for malformed layouts, so it must still allow the deepest shipped lexeme-edit
-		// detail paths (e.g. sense -> extended note -> example -> nested custom fields).
-		private const int MaxDepth = 12;
+		// The visited (hvo, layout) guard stops recursion; this cap is a backstop for malformed
+		// layouts. Nested subrecords take three levels each and WinForms has no limit.
+		private const int MaxDepth = 48;
 		private static readonly ViewDefinitionCompiler Compiler = new ViewDefinitionCompiler();
 
 		// Deliberately NOT a Lazy -- a failed load must not be cached as null for
@@ -160,6 +159,21 @@ namespace SIL.FieldWorks.XWorks
 			if (root == null)
 				return null;
 
+			return ComposeModel(obj, cache, root, layoutName, showHiddenFields, plugins, overrides,
+				showAllWritingSystemsFields, writingSystemFocused, hiddenSliceIds);
+		}
+
+		/// <summary>
+		/// Composes the detail view of <paramref name="obj"/> from an already compiled
+		/// <paramref name="root"/> layout. The remaining arguments mean what they do for the
+		/// <c>Compose</c> overload that takes an <see cref="ICmObject"/>.
+		/// </summary>
+		internal static ComposedDetail ComposeModel(ICmObject obj, LcmCache cache,
+			ViewDefinitionModel root, string layoutName, bool showHiddenFields = false,
+			SlicePluginRegistry plugins = null, ViewDefinitionOverrideResolver overrides = null,
+			ISet<string> showAllWritingSystemsFields = null,
+			Action<string> writingSystemFocused = null, ISet<string> hiddenSliceIds = null)
+		{
 			// Plugin rows close over the detail view's own edit context, which
 			// only exists once the walk gathers every setter -- a deferred accessor
 			// bridges the gap (plugin factories run at render time, not compose).
@@ -174,7 +188,8 @@ namespace SIL.FieldWorks.XWorks
 
 			var context = new ComposedDetailEditContext(cache, obj, state.Handlers);
 			composedContext = context;
-			var model = new DetailModel(obj.ClassName, layoutName, state.Fields, root.Diagnostics);
+			var model = new DetailModel(obj.ClassName, layoutName, state.Fields, root.Diagnostics,
+				state.ValueFontSize);
 			return new ComposedDetail(model, context);
 		}
 
@@ -275,6 +290,10 @@ namespace SIL.FieldWorks.XWorks
 			private readonly ISilDataAccess _sda;
 			private readonly IFwMetaDataCacheManaged _mdc;
 			private readonly HashSet<(int hvo, string layout)> _visited = new HashSet<(int, string)>();
+			private readonly DetailSummaryLines _summaryLines;
+			// The sequence item whose header was just emitted with its summary lines, until the
+			// next row is added; that item's own opening summary row is not emitted again.
+			private int _itemSummaryHvo;
 
 			public readonly List<DetailField> Fields = new List<DetailField>();
 			// One edit handler per composed field, keyed by StableId. A field's text/rich-text/option/
@@ -341,6 +360,7 @@ namespace SIL.FieldWorks.XWorks
 			// binding is derived from the compiled layout's root, which can differ per choice variant. It is
 			// correct ONLY because descent currently compiles every embedded object with choiceGuid=null
 			// (CompileForObjectWithOverrides), so within one compose there is no choice variance to collide.
+			// WalkSublayout compiles with a choice, but its model never feeds these memos.
 			// If descent is ever changed to thread choiceGuid through, change this key to
 			// (ClassId, LayoutName, choiceGuid) in the SAME change, or this becomes a wrong-menu bug.
 			private readonly Dictionary<(int ClassId, string LayoutName), (string MenuId, string HotlinksId)> _itemMenuBindings
@@ -369,7 +389,17 @@ namespace SIL.FieldWorks.XWorks
 				_showAllWsFields = showAllWritingSystemsFields;
 				_sda = cache.DomainDataByFlid;
 				_mdc = (IFwMetaDataCacheManaged)cache.DomainDataByFlid.MetaDataCache;
+				_summaryLines = new DetailSummaryLines(cache);
+				_normalFontSizes = NormalStyleFontSizes.ForProject(cache);
 			}
+
+			private readonly NormalStyleFontSizes _normalFontSizes;
+
+			/// <summary>
+			/// The size of data that is not tied to one writing system: the Normal style's size
+			/// in the default analysis writing system.
+			/// </summary>
+			public double ValueFontSize => _normalFontSizes.For(_cache.DefaultAnalWs);
 
 			// Track which compiled model the walk is currently inside so each emitted
 			// field is stamped with its (class, layout). EnterModel/ExitModel bracket each compiled model's
@@ -394,6 +424,7 @@ namespace SIL.FieldWorks.XWorks
 				StampHelpTopic(field);
 
 				Fields.Add(field);
+				_itemSummaryHvo = 0;
 			}
 
 			// The node whose walk is adding rows right now (see Walk).
@@ -672,6 +703,33 @@ namespace SIL.FieldWorks.XWorks
 						// Legacy <choice> -- first passing <where> (or the <otherwise>) only.
 						WalkChoiceGroup(node, obj, depth);
 						break;
+					case ViewNodeKind.Sublayout:
+						WalkSublayout(node, obj, depth);
+						break;
+				}
+			}
+
+			// A <sublayout>: the named layout of this same object, picked by its choice field as
+			// the shown record's is, laid out in place at this depth.
+			private void WalkSublayout(ViewNode node, ICmObject obj, int depth)
+			{
+				var layoutName = node.TargetLayout;
+				if (string.IsNullOrEmpty(layoutName) || !_visited.Add((obj.Hvo, layoutName)))
+					return;
+				try
+				{
+					var choiceGuid = ResolveLayoutChoiceGuid(_cache, obj, node.Field);
+					var compiled = CompileForObject(_cache, obj, layoutName, choiceGuid, _overrides);
+					if (compiled == null)
+						return;
+					EnterModel(compiled);
+					foreach (var child in compiled.Roots)
+						Walk(child, obj, depth);
+					ExitModel();
+				}
+				finally
+				{
+					_visited.Remove((obj.Hvo, layoutName));
 				}
 			}
 
@@ -1105,7 +1163,16 @@ namespace SIL.FieldWorks.XWorks
 						WalkMsaChooser(node, obj, depth);
 						break;
 					case DetailEditorCategory.Summary:
-						// Summary slices are section header rows in legacy too.
+						// Summary slices are section header rows, as in the WinForms
+						// DataTree, except an item's opening summary row: its sequence
+						// item header stands for it.
+						if (obj.Hvo == _itemSummaryHvo)
+						{
+							// What the row would hold sits under that item header instead.
+							foreach (var child in node.Children)
+								Walk(child, obj, depth);
+							return;
+						}
 						AddHeader(node, obj, depth, Localize(node.Label) ?? node.Field);
 						break;
 					case DetailEditorCategory.Literal:
@@ -1305,8 +1372,10 @@ namespace SIL.FieldWorks.XWorks
 				IReadOnlyList<CoreWritingSystemDefinition> systems, ViewNode node, out bool anyData, out bool anyAudio)
 			{
 				var dataSeen = false;
-				// The lexeme form's legacy bold/120% <properties> emphasis.
-				var fontSize = node.FontScalePercent > 0 ? 12.0 * node.FontScalePercent / 100.0 : 0;
+				// Each alternative shows at the Normal style's size for its writing system,
+				// scaled by the part's fontsize percentage (the lexeme form's 120%).
+				Func<CoreWritingSystemDefinition, double> fontSize =
+					ws => _normalFontSizes.For(ws.Handle, node.FontScalePercent);
 				// The per-ws value rows build through the shared factory
 				// (LexiconEditErrorFallback uses the same one), this path only supplies the text.
 				IReadOnlyList<DetailWsValue> values;
@@ -1348,7 +1417,7 @@ namespace SIL.FieldWorks.XWorks
 							// of a plain text box.
 							rebuilt.Add(new DetailWsValue(ws.Abbreviation,
 								values[i]?.Value ?? string.Empty,
-								ws.DefaultFontName, fontSize,
+								ws.DefaultFontName, fontSize(ws),
 								ws.RightToLeftScript, ws.Id, node.BoldEmphasis, isAudio: true));
 						}
 						else
@@ -2038,7 +2107,7 @@ namespace SIL.FieldWorks.XWorks
 					if (row == null)
 						continue;
 
-					var stableId = StableId(node, obj) + "/lexref:" + relation.Guid;
+					var stableId = StableId(node, obj) + LexicalRelationIdMarker + relation.Guid;
 					var items = row.Targets
 						.Select(target => new DetailChoiceOption(target.Guid.ToString(), ResolveEntryOrSenseName(target)))
 						.ToList();
@@ -2989,14 +3058,14 @@ namespace SIL.FieldWorks.XWorks
 			private void WalkReferenceVectorField(ViewNode node, ICmObject obj, int depth, int flid)
 			{
 				var count = _sda.get_VecSize(obj.Hvo, flid);
+				if (HideWhenEmpty(node) && VisibilityCount(node, obj, count) == 0)
+					return;
 
 				// A vector whose targets live in a possibility list becomes an editable
 				// ReferenceVector row (legacy slice, trailing type-ahead add slot), even
 				// when empty, so the field always offers the add affordance.
 				if (obj.ReferenceTargetOwner(flid) is ICmPossibilityList list)
 				{
-					if (count == 0 && HideWhenEmpty(node))
-						return;
 					AddReferenceVector(node, obj, depth, flid, list, count);
 					return;
 				}
@@ -3008,8 +3077,6 @@ namespace SIL.FieldWorks.XWorks
 				// (lexicons search, possibility lists enumerate).
 				if (IsEntryOrSenseReferenceVector(node, flid))
 				{
-					if (count == 0 && HideWhenEmpty(node))
-						return;
 					AddEntryReferenceVector(node, obj, depth, flid, count);
 					return;
 				}
@@ -3024,8 +3091,6 @@ namespace SIL.FieldWorks.XWorks
 				var backRefKind = ResolveEditableBackRefKind(node, flid, obj);
 				if (backRefKind != BackRefVectorKind.None)
 				{
-					if (count == 0 && HideWhenEmpty(node))
-						return;
 					AddBackRefReferenceVector(node, obj, depth, flid, count, backRefKind);
 					return;
 				}
@@ -3041,8 +3106,6 @@ namespace SIL.FieldWorks.XWorks
 				var createsFromText = EditorKindMap.CreatesReferenceItemsFromText(node.RawEditor);
 				if (createsFromText || (genericCandidates != null && genericCandidates.Count > 0))
 				{
-					if (count == 0 && HideWhenEmpty(node))
-						return;
 					AddGenericReferenceVector(node, obj, depth, flid, count,
 						genericCandidates ?? Array.Empty<ICmObject>());
 					return;
@@ -3050,7 +3113,7 @@ namespace SIL.FieldWorks.XWorks
 
 				if (count == 0)
 				{
-					AddRowUnlessHiddenWhenEmpty(node, obj, depth);
+					AddReadOnlyRow(node, obj, depth, string.Empty);
 					return;
 				}
 
@@ -3117,7 +3180,8 @@ namespace SIL.FieldWorks.XWorks
 				var field = new DetailField(stableId, Localize(node.Label) ?? node.Field, node.Field,
 					node.WritingSystem, DetailFieldKind.StructuredText, node.EditorClassification,
 					node.AutomationId, node.LocalizationKey, node.Routing, null, null, null,
-					isEditable: true, indent: depth, menuId: node.MenuId, contextMenuId: node.ContextMenuId,
+					isEditable: true, indent: depth, menuId: node.MenuId,
+					contextMenuId: node.ContextMenuId ?? StructuredTextMenuId,
 					hotlinksId: node.HotlinksId, objectHvo: obj.Hvo, paragraphs: paragraphs);
 				field.AvailableParagraphStyles = ParagraphStyleNames();
 				// The StText paragraph rows also expose the run-level character-style + ws pickers and
@@ -3261,12 +3325,23 @@ namespace SIL.FieldWorks.XWorks
 				var prompt = string.Format(
 					SIL.FieldWorks.Common.FwAvalonia.FwAvaloniaStrings.GhostAddPromptFormat, label);
 
-				var stableId = StableId(node, obj) + DetailField.GhostStableIdSuffix;
 				var ghost = ResolveGhostCreation(node, obj);
+				// The WinForms DataTree shows a prompt only where the layout names a ghost
+				// field; a prompt that names none and can create nothing is left out.
+				if (ghost == null && string.IsNullOrEmpty(node.GhostField))
+					return;
+
+				var stableId = StableId(node, obj) + DetailField.GhostStableIdSuffix;
+				// Typed text goes into the ghost's writing system, so it shows at that size.
+				var ghostFontSize = ghost == null ? 0 : _normalFontSizes.For(ghost.WsHandle);
 				AddField(new DetailField(stableId, label, node.Field,
 					node.WritingSystem, DetailFieldKind.Text, node.EditorClassification,
 					node.AutomationId, node.LocalizationKey, node.Routing,
-					new List<DetailWsValue> { new DetailWsValue(ghost?.WsAbbrev ?? "", string.Empty, wsTag: ghost?.WsTag) },
+					new List<DetailWsValue>
+					{
+						new DetailWsValue(ghost?.WsAbbrev ?? "", string.Empty, fontSize: ghostFontSize,
+							wsTag: ghost?.WsTag)
+					},
 					null, null, isEditable: ghost != null, indent: depth,
 					menuId: node.MenuId, hotlinksId: node.HotlinksId, objectHvo: obj.Hvo,
 					ghostPrompt: prompt));
@@ -3279,6 +3354,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				public string WsAbbrev;
 				public string WsTag; // unique IETF tag (ws.Id), the edit-routing identity
+				public int WsHandle;
 				public Func<string, string, bool> Setter;
 			}
 
@@ -3348,6 +3424,7 @@ namespace SIL.FieldWorks.XWorks
 				{
 					WsAbbrev = ws.Abbreviation,
 					WsTag = ws.Id,
+					WsHandle = ws.Handle,
 					Setter = (wsKey, value) =>
 					{
 						// The closure outlives the edit session: a Cancel rolls MakeNewObject
@@ -3433,6 +3510,12 @@ namespace SIL.FieldWorks.XWorks
 				var expanded = node.Expansion != ViewExpansion.Collapsed;
 				var isSenses = node.Field == "Senses";
 				var sectionLabel = Localize(node.Label) ?? node.Field;
+				var firstItem = _cache.ServiceLocator.ObjectRepository.GetObject(_sda.get_VecItem(obj.Hvo, flid, 0));
+
+				// Items with a summary line pair (senses, etymologies, extended notes, notebook
+				// records) are sections of their own: each item's header stands for the summary
+				// row its layout opens with, and no banner sits over them.
+				var summarized = DetailSummaryLines.Covers(firstItem);
 
 				// A sequence sitting directly under a section header that already names it (the
 				// Allomorphs/Variants shape: a summary slice wrapping an <indent> with one seq)
@@ -3440,15 +3523,16 @@ namespace SIL.FieldWorks.XWorks
 				// item rows their own layouts already label. Both are duplicates, and with no
 				// label authored on the part ref or the <seq> the banner falls back to the raw
 				// model field name, which bypasses StringTable and cannot be translated.
-				var flatten = !isSenses
+				var flatten = !summarized
 					&& string.IsNullOrEmpty(node.Label)
 					&& FollowsEnclosingHeader(depth)
 					&& ItemRootIsLabelled(node, obj, flid, count);
 
-				// Nested sense sequences (Senses on a sense) don't repeat the section banner; the
-				// numbered items carry it.
-				if (!flatten && !(isSenses && obj is ILexSense))
+				if (!flatten && !summarized)
 					AddHeader(node, obj, depth, sectionLabel);
+				// Summarized items sit at the sequence's own level; subsenses indent under their
+				// sense.
+				var itemDepth = summarized && !(isSenses && obj is ILexSense) ? depth : depth + 1;
 
 				for (var i = 0; i < count; i++)
 				{
@@ -3461,19 +3545,10 @@ namespace SIL.FieldWorks.XWorks
 						continue;
 					}
 
-					string itemLabel;
-					if (isSenses && item is ILexSense sense)
-					{
-						// Legacy sense numbering: 1, 2, ... and 1.1 for subsenses, with the sense's
-						// summary text (ShortName = gloss) in the header line. The number
-						// is the domain's own LexSenseOutline (the dictionary/bulk-edit outline), so
-						// the entry pane cannot diverge from the other views.
-						itemLabel = ($"{sense.LexSenseOutline.Text}  {item.ShortName}").TrimEnd();
-					}
-					else
-					{
+					string itemLabel = null;
+					string collapsedLabel = null;
+					if (!summarized || !_summaryLines.TryGet(item, out itemLabel, out collapsedLabel))
 						itemLabel = $"{sectionLabel} {i + 1}";
-					}
 
 					// The item's own layout carries the slice menu (e.g. the sense's
 					// HeavySummary part ref binds mnuDataTree-Sense in LexSense.fwlayout) -- the
@@ -3484,15 +3559,20 @@ namespace SIL.FieldWorks.XWorks
 					AddField(new DetailField($"{StableId(node, obj)}/item{i}",
 						itemLabel, node.Field, null, DetailFieldKind.Header,
 						EditorClassification.GroupingNone, null, null, HostRouting.Inherit,
-						null, null, null, isEditable: false, indent: depth + 1,
+						null, null, null, isEditable: false, indent: itemDepth,
 						isCollapsible: true, isInitiallyExpanded: expanded,
 						menuId: itemBinding.MenuId ?? node.MenuId,
 						hotlinksId: itemBinding.HotlinksId ?? node.HotlinksId,
 						objectHvo: item.Hvo)
 					{
-						ExpansionKey = ExpansionKey(node.StableId + "/item", item)
+						ExpansionKey = ExpansionKey(node.StableId + "/item", item),
+						CollapsedLabel = collapsedLabel,
+						IsNormalWeight = summarized && DetailSummaryLines.IsNormalWeight(item)
 					});
-					DescendInto(node, item, depth + 1);
+					if (summarized)
+						_itemSummaryHvo = item.Hvo;
+					DescendInto(node, item, itemDepth);
+					_itemSummaryHvo = 0;
 				}
 			}
 
@@ -3641,6 +3721,33 @@ namespace SIL.FieldWorks.XWorks
 				}
 			}
 
+			/// <summary>
+			/// The item count that decides whether an "ifdata" vector row has data: that of
+			/// the node's <see cref="ViewNode.VisibilityField"/> when it names a vector field of
+			/// <paramref name="obj"/>, otherwise <paramref name="displayedCount"/> (LT-22661).
+			/// </summary>
+			private int VisibilityCount(ViewNode node, ICmObject obj, int displayedCount)
+			{
+				var visibilityFlid = GetFlid(obj, node.VisibilityField);
+				if (visibilityFlid == 0 || !IsVectorField(visibilityFlid))
+					return displayedCount;
+				return _sda.get_VecSize(obj.Hvo, visibilityFlid);
+			}
+
+			private bool IsVectorField(int flid)
+			{
+				switch ((CellarPropertyType)_mdc.GetFieldType(flid))
+				{
+					case CellarPropertyType.OwningCollection:
+					case CellarPropertyType.OwningSequence:
+					case CellarPropertyType.ReferenceCollection:
+					case CellarPropertyType.ReferenceSequence:
+						return true;
+					default:
+						return false;
+				}
+			}
+
 			private string ResolveShortName(int hvo)
 			{
 				return _cache.ServiceLocator.ObjectRepository.TryGetObject(hvo, out var target)
@@ -3655,6 +3762,30 @@ namespace SIL.FieldWorks.XWorks
 
 			private static string Localize(string label)
 				=> string.IsNullOrEmpty(label) ? label : StringTable.Table.LocalizeAttributeValue(label);
+		}
+
+		/// <summary>
+		/// What a lexical-relation row's id adds, with the relation's guid, after the id of
+		/// the entry or sense whose detail shows the relation.
+		/// </summary>
+		internal const string LexicalRelationIdMarker = "/lexref:";
+
+		/// <summary>The text menu of a structured-text row whose part names none: Cut, Copy,
+		/// Paste, Find in Dictionary and Add to Dictionary.</summary>
+		internal const string StructuredTextMenuId = "mnuStTextChoices";
+
+		/// <summary>The entry or sense a lexical-relation row belongs to, from its id.</summary>
+		/// <returns>False for any other row's id.</returns>
+		internal static bool TryGetLexicalRelationOwner(string stableId, out int hvo)
+		{
+			hvo = 0;
+			if (string.IsNullOrEmpty(stableId))
+				return false;
+			var marker = stableId.IndexOf(LexicalRelationIdMarker, StringComparison.Ordinal);
+			if (marker < 0)
+				return false;
+			var at = stableId.LastIndexOf('@', marker);
+			return at >= 0 && int.TryParse(stableId.Substring(at + 1, marker - at - 1), out hvo) && hvo != 0;
 		}
 
 		// Mirrors legacy's GetMagicWsIdFromName/GetWritingSystemList; override falls back to all.

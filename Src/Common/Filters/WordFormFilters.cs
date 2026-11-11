@@ -176,16 +176,13 @@ namespace SIL.FieldWorks.Filters
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Initialize the filter list. this is called because we are an IxCoreColleague
+		/// Initialize the filter list. Called by Create.
 		/// </summary>
-		/// <param name="mediator">The mediator.</param>
-		/// <param name="propertyTable"></param>
-		/// <param name="configuration">The configuration.</param>
+		/// <param name="propertyTable">The PropertyTable; must hold the "cache"</param>
 		/// ------------------------------------------------------------------------------------
-		public override void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configuration)
+		public override void Init(PropertyTable propertyTable)
 		{
-			base.Init(mediator, propertyTable, configuration);
-			m_mediator.AddColleague(this);
+			base.Init(propertyTable);
 			m_cache = m_propertyTable.GetValue<LcmCache>("cache");
 			ReLoad();
 		}
@@ -237,16 +234,14 @@ namespace SIL.FieldWorks.Filters
 		/// a WordSetNullFilter() in our Filters, otherwise remove our WordSetNullFilter();
 		/// We also make sure the current filter has a valid set of word references loaded.
 		/// </summary>
-		/// <param name="argument">current filter</param>
-		/// <returns>true if handled.</returns>
-		public override bool OnAdjustFilterSelection(object argument)
+		/// <param name="currentFilter">the clerk's current filter; may be null</param>
+		public override void AdjustFilterSelection(object currentFilter)
 		{
 			if (Filters.Count == 0)
-				return false;	// we aren't providing any items.
+				return;	// we aren't providing any items.
 
-			RecordFilter currentFilter = argument as RecordFilter;
 			RecordFilter matchingFilter;
-			if (ContainsOurFilter(currentFilter, out matchingFilter))
+			if (ContainsOurFilter(currentFilter as RecordFilter, out matchingFilter))
 			{
 				// we found a match. if we don't already have a WordSetNullFilter, add it now.
 				if (!(Filters[0] is WordSetNullFilter))
@@ -260,9 +255,6 @@ namespace SIL.FieldWorks.Filters
 				// the current filter doesn't have one of our filters, so remove the WordSetNullFilter.
 				Filters.RemoveAt(0);
 			}
-
-			// allow others to handle this message.
-			return false;
 		}
 
 		/// <summary>

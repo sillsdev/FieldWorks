@@ -9,6 +9,7 @@ using System.Windows.Forms;
 
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.KernelInterfaces;
+using SIL.FieldWorks.Common.DetailRules;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.ViewsInterfaces;
@@ -58,8 +59,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			int ws;
 			ITsString tss;
 			GetWordLimitsOfSelection(out ichMin, out ichLim, out hvo, out tag, out ws, out tss);
-			if (ichLim > ichMin)
-				display.Enabled = true;
+			display.Enabled = TextWordCommands.CanLookUp(ichMin, ichLim);
 			return true;
 		}
 
@@ -103,7 +103,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			int ws;
 			ITsString tss;
 			GetWordLimitsOfSelection(out ichMin, out ichLim, out hvo, out tag, out ws, out tss);
-			if (ichLim > ichMin)
+			if (TextWordCommands.CanLookUp(ichMin, ichLim))
 			{
 				LexEntryUi.DisplayOrCreateEntry(m_cache, hvo, tag, ws, ichMin, ichLim, this,
 					m_mediator, m_propertyTable, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), "UserHelpFile");
@@ -143,29 +143,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			int ws;
 			ITsString tss;
 			GetWordLimitsOfSelection(out ichMin, out ichLim, out hvo, out tag, out ws, out tss);
-			if (ws == 0)
-				ws = GetWsFromString(tss, ichMin, ichLim);
-			if (ichLim > ichMin && ws == m_cache.DefaultVernWs)
-				display.Enabled = true;
+			display.Enabled = TextWordCommands.CanAddToLexicon(m_cache, tss, ichMin, ichLim, ws);
 			return true;
-		}
-
-		private static int GetWsFromString(ITsString tss, int ichMin, int ichLim)
-		{
-			if (tss == null || tss.Length == 0 || ichMin >= ichLim)
-				return 0;
-			int runMin = tss.get_RunAt(ichMin);
-			int runMax = tss.get_RunAt(ichLim - 1);
-			int ws = tss.get_WritingSystem(runMin);
-			if (runMin == runMax)
-				return ws;
-			for (int i = runMin + 1; i <= runMax; ++i)
-			{
-				int wsT = tss.get_WritingSystem(i);
-				if (wsT != ws)
-					return 0;
-			}
-			return ws;
 		}
 
 		public bool OnAddToLexicon(object argument)
@@ -179,16 +158,9 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			int ws;
 			ITsString tss;
 			GetWordLimitsOfSelection(out ichMin, out ichLim, out hvo, out tag, out ws, out tss);
-			if (ws == 0)
-				ws = GetWsFromString(tss, ichMin, ichLim);
-			if (ichLim > ichMin && ws == m_cache.DefaultVernWs)
+			if (TextWordCommands.CanAddToLexicon(m_cache, tss, ichMin, ichLim, ws))
 			{
-				ITsStrBldr tsb = tss.GetBldr();
-				if (ichLim < tsb.Length)
-					tsb.Replace(ichLim, tsb.Length, null, null);
-				if (ichMin > 0)
-					tsb.Replace(0, ichMin, null, null);
-				ITsString tssForm = tsb.GetString();
+				ITsString tssForm = TextWordCommands.FormOf(tss, ichMin, ichLim);
 				using (var dlg = new InsertEntryDlg())
 				{
 					dlg.SetDlgInfo(m_cache, tssForm, m_mediator, m_propertyTable);

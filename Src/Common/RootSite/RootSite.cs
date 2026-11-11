@@ -463,8 +463,7 @@ namespace SIL.FieldWorks.Common.RootSites
 					string oldBest = m_propertyTable.GetStringProperty("BestStyleName", null);
 					if (oldBest != bestStyle)
 					{
-						EditingHelper.SuppressNextBestStyleNameChanged = true;
-						m_propertyTable.SetProperty("BestStyleName", bestStyle, true);
+						m_propertyTable.SetProperty("BestStyleName", bestStyle, false);
 						m_propertyTable.SetPropertyPersistence("BestStyleName", false);
 					}
 				}

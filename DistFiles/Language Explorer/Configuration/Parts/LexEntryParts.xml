@@ -116,7 +116,7 @@
 				   header="true" helpTopicID="khtpField-LexEntry-AlternateFormsSection"/>
 		</part>
 		<part id="LexEntry-Detail-AlternateForms" type="Detail">
-			<seq field="AlternateForms" menu="mnuDataTree-AlternateForm" />
+			<seq field="AlternateForms" />
 		</part>
 		<part id="LexEntry-Jt-HeadWordInPara" type="jtview">
 			<para>

@@ -9,9 +9,13 @@ using SIL.FieldWorks.Common.DetailRules;
 using SIL.FieldWorks.Common.Framework.DetailControls;
 using SIL.FieldWorks.Common.FwAvalonia.Detail;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FdoUi;
+using SIL.FieldWorks.FwCoreDlgs;
 using SIL.FieldWorks.LexText.Controls;
+using SIL.FieldWorks.Resources;
 using SIL.LCModel;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Infrastructure;
 using SIL.Reporting;
 using SIL.Utils;
@@ -45,11 +49,92 @@ namespace SIL.FieldWorks.XWorks
 		/// sentence.</summary>
 		internal const string LaunchGuiControlMessage = "LaunchGuiControl";
 
+		/// <summary>The message every Move ... Up leaf of the detail menus sends.</summary>
+		internal const string MoveUpMessage = "MoveUpObjectInSequence";
+
+		/// <summary>The message every Move ... Down leaf of the detail menus sends.</summary>
+		internal const string MoveDownMessage = "MoveDownObjectInSequence";
+
+		/// <summary>The message of Insert Sound or Movie.</summary>
+		internal const string InsertMediaFileMessage = "InsertMediaFile";
+
+		/// <summary>The message of Picture Properties.</summary>
+		internal const string PicturePropertiesMessage = "PictureProperties";
+
+		/// <summary>The message every Merge ... into leaf of the detail menus sends.</summary>
+		internal const string MergeMessage = "DataTreeMerge";
+
+		/// <summary>The message of Delete Reference on a variant's row.</summary>
+		internal const string DeleteReferenceMessage = "DataTreeDeleteReference";
+
+		/// <summary>The message of Add Reference and Replace Reference on a lexical-relation
+		/// row.</summary>
+		internal const string AddReferenceMessage = "DataTreeAddReference";
+
+		/// <summary>The message of Edit Reference Set Details.</summary>
+		internal const string EditReferenceMessage = "DataTreeEdit";
+
+		/// <summary>The message of Swap Allomorph with Lexeme Form.</summary>
+		internal const string SwapAllomorphMessage = "SwapAllomorphWithLexeme";
+
+		/// <summary>The message of Convert to Affix Process / Convert to Affix Allomorph on an
+		/// allomorph's row.</summary>
+		internal const string ConvertAllomorphMessage = "ConvertAllomorph";
+
+		/// <summary>The message of Delete this Sense and any Subsenses.</summary>
+		internal const string DeleteSenseMessage = "DataTreeDeleteSense";
+
+		/// <summary>The message of Demote on a sense.</summary>
+		internal const string DemoteSenseMessage = "DemoteSense";
+
+		/// <summary>The message of Promote on a sense.</summary>
+		internal const string PromoteSenseMessage = "PromoteSense";
+
+		/// <summary>The message of Move Sense to a New Entry.</summary>
+		internal const string SplitMessage = "DataTreeSplit";
+
+		/// <summary>The message of Insert Picture.</summary>
+		internal const string InsertPictureMessage = "InsertPicture";
+
 		/// <summary>
 		/// Asks the user to confirm a delete: the product shows the object's confirmation
 		/// dialog; a headless test answers for the user.
 		/// </summary>
 		internal Func<CmObjectUi, bool> DeleteConfirmation { get; set; } = ui => ui.ConfirmDelete();
+
+		/// <summary>
+		/// Asks the user to confirm deleting a relation, with the note on what else the
+		/// delete affects (null for none): the product shows the relation's confirmation
+		/// dialog; a headless test answers for the user.
+		/// </summary>
+		internal Func<CmObjectUi, ITsString, bool> RelationDeleteConfirmation { get; set; } = (ui, note) => ui.ConfirmDelete(note);
+
+		/// <summary>
+		/// Picks the survivor of a merge among the sorted candidates, by hvo, or 0 to cancel:
+		/// the product asks with <see cref="MergeObjectDlg"/> (null here); a headless test
+		/// answers for the user.
+		/// </summary>
+		internal Func<IReadOnlyList<DummyCmObject>, int> MergeSurvivor { get; set; }
+
+		/// <summary>
+		/// Picks the entry or sense to add to a lexical relation or put in place of its
+		/// reference, or null to cancel: the product asks with the chooser the request
+		/// describes; a headless test answers for the user.
+		/// </summary>
+		internal Func<LexicalRelationChooser, ICmObject> RelationTargetChosen { get; set; }
+
+		/// <summary>
+		/// Edits a relation's name and comment, or returns null to cancel: the product asks
+		/// with <see cref="LexReferenceDetailsDlg"/>; a headless test answers for the user.
+		/// </summary>
+		internal Func<ILexReference, RelationDetails> RelationDetailsEdited { get; set; }
+
+		/// <summary>The name and comment Edit Reference Set Details gives a relation.</summary>
+		internal sealed class RelationDetails
+		{
+			public string Name { get; set; }
+			public string Comment { get; set; }
+		}
 
 		/// <summary>
 		/// Picks the allomorph to swap with the entry's lexeme form, or null to cancel: the
@@ -80,8 +165,22 @@ namespace SIL.FieldWorks.XWorks
 		internal Action<CmObjectUi, Command> GuiControlLaunch { get; set; } = (ui, command) => ui.LaunchGuiControl(command);
 
 		/// <summary>
-		/// The message-keyed authority for the Lexicon menus, owning by predicate and
-		/// answering for <paramref name="field"/>; with no row every answer is hidden.
+		/// Picks the sound or movie files to link, by their names under the linked-files
+		/// folder, or an empty list to cancel: the product asks with the file dialog and
+		/// offers to move or copy the files there; a headless test answers for the user.
+		/// </summary>
+		internal Func<IReadOnlyList<string>> MediaFilesToInsert { get; set; }
+
+		/// <summary>
+		/// Picks the file for the picture given, or for a new picture when it is null; null
+		/// leaves it: the product asks with <see cref="PicturePropertiesDialog"/>; a headless
+		/// test answers for the user.
+		/// </summary>
+		internal Func<ICmPicture, string> PictureFileChosen { get; set; }
+
+		/// <summary>
+		/// The message-keyed authority for the Lexicon and Notebook menus, owning by predicate
+		/// and answering for <paramref name="field"/>; with no row every answer is hidden.
 		/// </summary>
 		internal LexiconMenuAuthority CreateLexiconMenuAuthority(DetailField field)
 		{
@@ -93,6 +192,26 @@ namespace SIL.FieldWorks.XWorks
 			authority.Answer(ConvertLexemeFormMessage, leaf => ConvertLexemeFormItem(leaf, field));
 			authority.Answer(InsertMessage, leaf => InsertItem(leaf, field), InsertLeafInScope);
 			authority.Answer(LaunchGuiControlMessage, leaf => GuiControlItem(leaf, field));
+			authority.Answer(MoveUpMessage, leaf => MoveItem(leaf, field, up: true));
+			authority.Answer(MoveDownMessage, leaf => MoveItem(leaf, field, up: false));
+			authority.Answer(InsertMediaFileMessage, leaf => InsertMediaItem(leaf, field));
+			authority.Answer(PicturePropertiesMessage, leaf => PicturePropertiesItem(leaf, field));
+			authority.Answer(MergeMessage, leaf => MergeItem(leaf, field));
+			authority.Answer(DeleteReferenceMessage, leaf => DeleteReferenceItem(leaf, field));
+			authority.Answer(AddReferenceMessage, leaf => AddReferenceItem(leaf, field));
+			authority.Answer(EditReferenceMessage, leaf => EditReferenceItem(leaf, field));
+			authority.Answer(SwapAllomorphMessage, leaf => SwapAllomorphItem(leaf, field));
+			authority.Answer(ConvertAllomorphMessage, leaf => ConvertLexemeFormItem(leaf, field));
+			authority.Answer(DeleteSenseMessage, leaf => DeleteItem(leaf, field));
+			authority.Answer(DemoteSenseMessage, leaf => SenseNestingItem(leaf, field, demote: true));
+			authority.Answer(PromoteSenseMessage, leaf => SenseNestingItem(leaf, field, demote: false));
+			authority.Answer(SplitMessage, leaf => SplitItem(leaf, field));
+			authority.Answer(InsertPictureMessage, leaf => InsertPictureItem(leaf, field));
+			authority.Answer(InsertItemInVectorMessage, ClerkInsertItem);
+			authority.Answer(MoveRecordUpMessage, leaf => MoveItem(leaf, field, up: true));
+			authority.Answer(MoveRecordDownMessage, leaf => MoveItem(leaf, field, up: false));
+			authority.Answer(PromoteSubrecordMessage, leaf => RecordNestingItem(leaf, field, demote: false));
+			authority.Answer(DemoteSubrecordMessage, leaf => RecordNestingItem(leaf, field, demote: true));
 			return authority;
 		}
 
@@ -116,7 +235,7 @@ namespace SIL.FieldWorks.XWorks
 
 		/// <summary>
 		/// The Insert item for the row: absent with no row or no object, and absent when the
-		/// entry of the row or the shown entry does not offer an allomorph insert; enabled
+		/// entry of the row or the shown entry does not offer the insert; enabled
 		/// when the command resolves a target from the row's object (a ghost row's included),
 		/// disabled otherwise. With <c>displayNumber</c> the label carries the position the
 		/// shown record's or the row's object's field would give.
@@ -169,6 +288,17 @@ namespace SIL.FieldWorks.XWorks
 				Logger.WriteEvent("Insert Variant did nothing: neither the row's object nor the shown record is an entry.");
 				return null;
 			}
+			return AddVariant(entry);
+		}
+
+		/// <summary>
+		/// Adds a variant to <paramref name="entry"/> through <see cref="VariantToInsert"/>,
+		/// with pending edits already settled; the re-show focuses the variant's Variant Form
+		/// editor.
+		/// </summary>
+		/// <returns>The variant's entry ref, or null when nothing was added.</returns>
+		private ILexEntryRef AddVariant(ILexEntry entry)
+		{
 			var entryRef = (VariantToInsert ?? InsertVariantWithDialog)(entry);
 			if (entryRef == null || !entryRef.IsValidObject)
 				return null;
@@ -283,9 +413,15 @@ namespace SIL.FieldWorks.XWorks
 			return Cache.ServiceLocator.ObjectRepository.TryGetObject(field.ObjectHvo, out var target) ? target : null;
 		}
 
+		// The object a row's Delete or Merge acts on: the variant entry on a variant's rows,
+		// else the row's object.
+		private ICmObject CommandTargetOf(ICmObject rowObject)
+			=> VariantBackReferences.CommandTarget(ResolveShownRecord(Clerk?.CurrentObject), rowObject);
+
 		/// <summary>
-		/// The Delete item for the row's object: absent on a row with no object or a ghost
-		/// row; disabled when the object is gone from the repository or
+		/// The Delete item for the row's object (the variant entry on a variant's row): absent
+		/// on a row with no object, a ghost row and a row whose object the command does not act
+		/// on; disabled when the object is gone from the repository or
 		/// <see cref="DetailObjectDeletion.CanDeleteNow"/> refuses it.
 		/// </summary>
 		internal DetailMenuItem DeleteItem(DetailMenuLeaf leaf, DetailField field)
@@ -298,6 +434,9 @@ namespace SIL.FieldWorks.XWorks
 				Logger.WriteEvent("Delete is disabled: the row's object " + field.ObjectHvo + " no longer exists.");
 				return DetailMenuItem.Disabled(DetailObjectDeletion.DeleteLabel(label, null, false));
 			}
+			target = CommandTargetOf(target);
+			if (!CommandActsOn(target, leaf.Command))
+				return null;
 			var canDelete = DetailObjectDeletion.CanDeleteNow(target);
 			var text = DetailObjectDeletion.DeleteLabel(label, target, canDelete);
 			return new DetailMenuItem(text, isEnabled: canDelete, isChecked: false, children: null,
@@ -305,9 +444,10 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
-		/// Deletes the row's object after confirmation: pending edits settle first, the
-		/// object's UI runs the delete, and the re-show focuses the nearest surviving row, the
-		/// one before the deleted object's rows when it survives.
+		/// Deletes the row's object (the variant entry on a variant's row) after confirmation:
+		/// pending edits settle first, the object's UI runs the delete, and the re-show focuses
+		/// the nearest surviving row, the one before the deleted object's rows when it survives.
+		/// A relation row runs <see cref="DeleteRelation"/> instead.
 		/// </summary>
 		/// <returns>True when the object was deleted.</returns>
 		internal bool DeleteDetailObject(DetailField field)
@@ -318,6 +458,9 @@ namespace SIL.FieldWorks.XWorks
 				Logger.WriteEvent("Delete did nothing: the row's object " + field.ObjectHvo + " no longer exists.");
 				return false;
 			}
+			if (target is ILexReference relation)
+				return DeleteRelation(field, relation);
+			target = CommandTargetOf(target);
 			var focusRows = RowsToFocusAfterDeleting(m_avaloniaEntryForm?.ShownDetail, target);
 			bool deleted;
 			using (var ui = CmObjectUi.MakeUi(Cache, target.Hvo))
@@ -540,6 +683,628 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var mdc = (IFwMetaDataCacheManaged)Cache.MetaDataCacheAccessor;
 			return !string.IsNullOrEmpty(className) && mdc.ClassExists(className) ? mdc.GetClassId(className) : 0;
+		}
+
+		/// <summary>
+		/// Whether a Delete or Move command acts on <paramref name="target"/>: its
+		/// <c>className</c> is the target's class, or the class of the owner whose
+		/// <c>field</c> holds the target (the picture commands name the sense). A command
+		/// naming no class, or one the model lacks, acts on any object. This keeps the items
+		/// off a section row, whose object is the sequence's owner.
+		/// </summary>
+		internal static bool CommandActsOn(ICmObject target, Command command)
+		{
+			var className = command.GetParameter("className", null);
+			if (string.IsNullOrEmpty(className))
+				return true;
+			var cache = target.Cache;
+			var mdc = (IFwMetaDataCacheManaged)cache.MetaDataCacheAccessor;
+			if (!mdc.ClassExists(className))
+				return true;
+			var classId = mdc.GetClassId(className);
+			if (cache.ClassIsOrInheritsFrom(target.ClassID, classId))
+				return true;
+			var owner = target.Owner;
+			var fieldName = command.GetParameter("field", null);
+			return owner != null && !string.IsNullOrEmpty(fieldName) && cache.ClassIsOrInheritsFrom(owner.ClassID, classId)
+				&& mdc.GetFieldName(target.OwningFlid) == fieldName;
+		}
+
+		/// <summary>
+		/// The Move Up or Move Down item for the row's object: absent on a row with no
+		/// object, a ghost row, a row whose object the command does not act on, and an object
+		/// outside an owning sequence; disabled at the end it would move past.
+		/// </summary>
+		/// <param name="up">True for Move Up, false for Move Down.</param>
+		internal DetailMenuItem MoveItem(DetailMenuLeaf leaf, DetailField field, bool up)
+		{
+			var target = RowObjectOf(field);
+			if (target == null || field.GhostPrompt != null || !CommandActsOn(target, leaf.Command)
+				|| !DetailSequenceMove.IsInSequence(target))
+			{
+				return null;
+			}
+			var label = XCoreMenuBridge.StripAccelerator(leaf.Label);
+			if (!(up ? DetailSequenceMove.CanMoveUp(target) : DetailSequenceMove.CanMoveDown(target)))
+				return DetailMenuItem.Disabled(label);
+			return new DetailMenuItem(label, isEnabled: true, isChecked: false, children: null,
+				execute: () => MoveDetailObject(field, up));
+		}
+
+		/// <summary>
+		/// Moves the row's object one place up or down in its owning sequence: pending edits
+		/// settle first, the move is one undoable step, and the re-show keeps the keyboard on
+		/// the moved object's rows.
+		/// </summary>
+		/// <returns>True when the object moved.</returns>
+		internal bool MoveDetailObject(DetailField field, bool up)
+		{
+			SettleDetailEdits();
+			var target = RowObjectOf(field);
+			if (target == null)
+			{
+				Logger.WriteEvent("Move did nothing: the row's object " + field?.ObjectHvo + " no longer exists.");
+				return false;
+			}
+			var moved = up
+				? DetailSequenceMove.MoveUp(target, xWorksStrings.UndoMoveItem, xWorksStrings.RedoMoveItem)
+				: DetailSequenceMove.MoveDown(target, xWorksStrings.UndoMoveItem, xWorksStrings.RedoMoveItem);
+			if (!moved)
+				return false;
+			m_avaloniaEntryForm?.FocusObjectOnNextShow(target.Hvo);
+			OnAvaloniaDetailEditCompleted(this, EventArgs.Empty);
+			return true;
+		}
+
+		/// <summary>
+		/// The Insert Sound or Movie item for the row: absent with no row or no object, and
+		/// when neither the row's object nor the shown record belongs to an entry; enabled
+		/// otherwise. The files go to the row's pronunciation, else the entry's first, created
+		/// when it has none.
+		/// </summary>
+		internal DetailMenuItem InsertMediaItem(DetailMenuLeaf leaf, DetailField field)
+		{
+			var rowObject = RowObjectOf(field);
+			if (rowObject == null || MediaFileInsertion.TargetEntry(rowObject, ResolveShownRecord(Clerk?.CurrentObject)) == null)
+				return null;
+			return new DetailMenuItem(XCoreMenuBridge.StripAccelerator(leaf.Label), isEnabled: true, isChecked: false,
+				children: null, execute: () => InsertMediaFiles(field));
+		}
+
+		/// <summary>
+		/// Links the files the user picks to the row's pronunciation, else to the entry's
+		/// first, created once the user has picked: pending edits settle first, the
+		/// pronunciation and its links are one undoable step, and the re-show focuses the
+		/// pronunciation.
+		/// </summary>
+		/// <returns>The media objects created.</returns>
+		internal IReadOnlyList<ICmMedia> InsertMediaFiles(DetailField field)
+		{
+			SettleDetailEdits();
+			var root = ResolveShownRecord(Clerk?.CurrentObject);
+			var rowObject = RowObjectOf(field);
+			var entry = MediaFileInsertion.TargetEntry(rowObject, root);
+			if (entry == null)
+			{
+				Logger.WriteEvent("Insert Sound or Movie did nothing: no entry for the row's object " + field?.ObjectHvo + ".");
+				return new ICmMedia[0];
+			}
+			var files = (MediaFilesToInsert ?? ChooseMediaFilesWithDialog)();
+			if (files == null || files.Count == 0)
+				return new ICmMedia[0];
+			ILexPronunciation pronunciation = null;
+			IReadOnlyList<ICmMedia> created = null;
+			UndoableUnitOfWorkHelper.Do(xWorksStrings.ksUndoInsertMedia, xWorksStrings.ksRedoInsertMedia, Cache.ActionHandlerAccessor, () =>
+			{
+				pronunciation = MediaFileInsertion.TargetPronunciation(rowObject, root)
+					?? MediaFileInsertion.FirstOrCreatePronunciation(entry, xWorksStrings.ksUndoCreatePronunciation,
+						xWorksStrings.ksRedoCreatePronunciation);
+				created = MediaFileInsertion.Insert(pronunciation, files, xWorksStrings.ksUndoInsertMedia, xWorksStrings.ksRedoInsertMedia);
+			});
+			m_avaloniaEntryForm?.FocusObjectOnNextShow(pronunciation.Hvo);
+			OnAvaloniaDetailEditCompleted(this, EventArgs.Empty);
+			return created;
+		}
+
+		private IReadOnlyList<string> ChooseMediaFilesWithDialog()
+			=> DTMenuHandler.ChooseMediaFiles(Cache, m_propertyTable,
+				ResourceHelper.BuildFileFilter(FileFilterType.AllAudio, FileFilterType.AllVideo, FileFilterType.AllFiles),
+				xWorksStrings.ChooseSoundOrMovieFile);
+
+		/// <summary>
+		/// The Picture Properties item for the row: absent unless the row's object is a
+		/// picture, enabled then.
+		/// </summary>
+		internal DetailMenuItem PicturePropertiesItem(DetailMenuLeaf leaf, DetailField field)
+		{
+			if (!(RowObjectOf(field) is ICmPicture))
+				return null;
+			return new DetailMenuItem(XCoreMenuBridge.StripAccelerator(leaf.Label), isEnabled: true, isChecked: false,
+				children: null, execute: () => EditPictureProperties(field));
+		}
+
+		/// <summary>
+		/// Points the row's picture at the file the user picks: pending edits settle first,
+		/// the update is one undoable step, and the view re-shows.
+		/// </summary>
+		/// <returns>True when the picture changed.</returns>
+		internal bool EditPictureProperties(DetailField field)
+		{
+			SettleDetailEdits();
+			if (!(RowObjectOf(field) is ICmPicture picture))
+			{
+				Logger.WriteEvent("Picture Properties did nothing: the row's object " + field?.ObjectHvo + " is no picture.");
+				return false;
+			}
+			var file = (PictureFileChosen ?? ChoosePictureFileWithDialog)(picture);
+			if (string.IsNullOrEmpty(file))
+				return false;
+			UndoableUnitOfWorkHelper.Do(xWorksStrings.ksUndoUpdatePicture, xWorksStrings.ksRedoUpdatePicture, picture,
+				() => picture.UpdatePicture(file, null, CmFolderTags.DefaultPictureFolder, 0));
+			OnAvaloniaDetailEditCompleted(this, EventArgs.Empty);
+			return true;
+		}
+
+		private string ChoosePictureFileWithDialog(ICmPicture picture)
+		{
+			using (var dlg = new PicturePropertiesDialog(Cache, picture, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"),
+				m_propertyTable.GetValue<IApp>("App")))
+			{
+				dlg.Initialize();
+				return dlg.ShowDialog(m_propertyTable.GetValue<Form>("window")) == DialogResult.OK ? dlg.CurrentFile : null;
+			}
+		}
+
+		/// <summary>
+		/// The Insert Picture item for the row: absent unless
+		/// <see cref="PictureInsertion.TargetField"/> finds the command's field on the row's
+		/// object; enabled then.
+		/// </summary>
+		internal DetailMenuItem InsertPictureItem(DetailMenuLeaf leaf, DetailField field)
+		{
+			if (PictureTargetField(RowObjectOf(field), leaf.Command) == 0)
+				return null;
+			return new DetailMenuItem(XCoreMenuBridge.StripAccelerator(leaf.Label), isEnabled: true, isChecked: false,
+				children: null, execute: () => InsertPicture(field, leaf.Command));
+		}
+
+		/// <summary>
+		/// Adds a picture of the file the user picks through <see cref="PictureFileChosen"/>
+		/// to the row's object: pending edits settle first, the picture is one undoable step,
+		/// and the re-show focuses it.
+		/// </summary>
+		/// <returns>The new picture, or null when nothing was inserted.</returns>
+		internal ICmPicture InsertPicture(DetailField field, Command command)
+		{
+			SettleDetailEdits();
+			var owner = RowObjectOf(field);
+			var flid = PictureTargetField(owner, command);
+			if (flid == 0)
+			{
+				Logger.WriteEvent("Insert Picture did nothing: the row's object " + field?.ObjectHvo + " takes no picture.");
+				return null;
+			}
+			var file = (PictureFileChosen ?? ChoosePictureFileWithDialog)(null);
+			if (string.IsNullOrEmpty(file))
+				return null;
+			var picture = PictureInsertion.Insert(owner, flid, file, xWorksStrings.ksUndoInsertPicture,
+				xWorksStrings.ksRedoInsertPicture);
+			m_avaloniaEntryForm?.FocusObjectOnNextShow(picture.Hvo);
+			OnAvaloniaDetailEditCompleted(this, EventArgs.Empty);
+			return picture;
+		}
+
+		private static int PictureTargetField(ICmObject rowObject, Command command)
+			=> PictureInsertion.TargetField(rowObject, command.GetParameter("className", null), command.GetParameter("field", null));
+
+		/// <summary>
+		/// The Merge item for the row's object (the variant entry on a variant's row): absent
+		/// on a row with no object, a ghost row and a row whose object the command does not act
+		/// on; disabled when <see cref="DetailObjectMerge.CanMergeNow"/> refuses it.
+		/// </summary>
+		internal DetailMenuItem MergeItem(DetailMenuLeaf leaf, DetailField field)
+		{
+			var rowObject = RowObjectOf(field);
+			if (rowObject == null || field.GhostPrompt != null)
+				return null;
+			var target = CommandTargetOf(rowObject);
+			if (!CommandActsOn(target, leaf.Command))
+				return null;
+			var canMerge = DetailObjectMerge.CanMergeNow(target);
+			var label = DetailObjectMerge.MergeLabel(XCoreMenuBridge.StripAccelerator(leaf.Label), canMerge);
+			return new DetailMenuItem(label, isEnabled: canMerge, isChecked: false, children: null,
+				execute: canMerge ? (Action)(() => MergeDetailObject(field)) : null);
+		}
+
+		/// <summary>
+		/// Merges the row's object into the survivor the user picks through
+		/// <see cref="MergeSurvivor"/>: pending edits settle first, the object's UI runs the
+		/// merge in one undoable step, and the re-show focuses the survivor.
+		/// </summary>
+		/// <returns>True when the objects were merged.</returns>
+		internal bool MergeDetailObject(DetailField field)
+		{
+			SettleDetailEdits();
+			var target = CommandTargetOf(RowObjectOf(field));
+			if (target == null)
+			{
+				Logger.WriteEvent("Merge did nothing: the row's object " + field?.ObjectHvo + " no longer exists.");
+				return false;
+			}
+			if (!DetailObjectMerge.CanMergeNow(target))
+				return false;
+			int survivor;
+			using (var ui = CmObjectUi.MakeUi(Cache, target.Hvo))
+			{
+				ui.Mediator = m_mediator;
+				ui.PropTable = m_propertyTable;
+				survivor = ui.MergeUnderlyingObject(true, MergeSurvivor);
+			}
+			if (survivor == 0)
+				return false;
+			m_avaloniaEntryForm?.FocusObjectOnNextShow(survivor);
+			OnAvaloniaDetailEditCompleted(this, EventArgs.Empty);
+			return true;
+		}
+
+		/// <summary>
+		/// The Delete Reference item for a variant's row: absent with no row, no object or a
+		/// ghost row; enabled when the row's variant has a ref to the shown entry, disabled
+		/// (with the cannot-delete note) on any other row.
+		/// </summary>
+		internal DetailMenuItem DeleteReferenceItem(DetailMenuLeaf leaf, DetailField field)
+		{
+			var rowObject = RowObjectOf(field);
+			if (rowObject == null || field.GhostPrompt != null)
+				return null;
+			var label = XCoreMenuBridge.StripAccelerator(leaf.Label);
+			if (VariantReferenceOf(field, rowObject) == null)
+				return DetailMenuItem.Disabled(label + StringTable.Table.GetString(DetailObjectDeletion.CannotDeleteKey));
+			return new DetailMenuItem(label, isEnabled: true, isChecked: false, children: null,
+				execute: () => DeleteVariantReference(field));
+		}
+
+		/// <summary>
+		/// Unlinks the row's variant from the shown entry: pending edits settle first, the
+		/// ref goes in one undoable step, and the re-show focuses the nearest surviving row.
+		/// </summary>
+		/// <returns>True when the ref was deleted.</returns>
+		internal bool DeleteVariantReference(DetailField field)
+		{
+			SettleDetailEdits();
+			var rowObject = RowObjectOf(field);
+			var reference = rowObject == null ? null : VariantReferenceOf(field, rowObject);
+			if (!(ResolveShownRecord(Clerk?.CurrentObject) is ILexEntry root) || reference == null)
+			{
+				Logger.WriteEvent("Delete Reference did nothing: no variant ref to the shown entry on row " + field?.StableId + ".");
+				return false;
+			}
+			var focusRows = RowsToFocusAfterDeleting(m_avaloniaEntryForm?.ShownDetail, reference.OwningEntry);
+			VariantBackReferences.DeleteReference(root, reference);
+			if (focusRows.Count > 0)
+				m_avaloniaEntryForm?.FocusRowOnNextShow(focusRows);
+			OnAvaloniaDetailEditCompleted(this, EventArgs.Empty);
+			return true;
+		}
+
+		// The ref linking the row's variant to the shown entry: the only one, or among
+		// several the one whose own rows follow the row in the shown model, as a variant's
+		// Variant Info rows follow its form.
+		private ILexEntryRef VariantReferenceOf(DetailField field, ICmObject rowObject)
+		{
+			var root = ResolveShownRecord(Clerk?.CurrentObject) as ILexEntry;
+			var variant = VariantBackReferences.BackReferencedEntry(root, rowObject);
+			if (variant == null)
+				return null;
+			var references = VariantBackReferences.ReferencesTo(root, variant);
+			if (references.Count == 0)
+				return null;
+			var fields = m_avaloniaEntryForm?.ShownDetail?.Fields;
+			if (references.Count > 1 && fields != null)
+			{
+				var index = IndexOfRow(fields, field);
+				for (var i = index + 1; index >= 0 && i < fields.Count; i++)
+				{
+					foreach (var reference in references)
+					{
+						if (reference.Hvo == fields[i].ObjectHvo)
+							return reference;
+					}
+				}
+			}
+			return references[0];
+		}
+
+		// The row's index among the shown fields: the row itself, else the first row with its
+		// id (a variant linked twice shows its Form row twice under one id).
+		private static int IndexOfRow(IReadOnlyList<DetailField> fields, DetailField field)
+		{
+			var byId = -1;
+			for (var i = 0; i < fields.Count; i++)
+			{
+				if (ReferenceEquals(fields[i], field))
+					return i;
+				if (byId < 0 && fields[i].StableId == field.StableId)
+					byId = i;
+			}
+			return byId;
+		}
+
+		// The entry or sense a lexical-relation row belongs to, from its id; null for any
+		// other row or when it is gone.
+		private ICmObject LexicalRelationOwnerOf(DetailField field)
+		{
+			if (field == null || !DetailComposer.TryGetLexicalRelationOwner(field.StableId, out var hvo))
+				return null;
+			return Cache.ServiceLocator.ObjectRepository.TryGetObject(hvo, out var owner) ? owner : null;
+		}
+
+		/// <summary>
+		/// Runs Delete Relation for the row's relation: after confirmation with the note on
+		/// what else it affects, the entry or sense leaves the relation or the relation goes
+		/// (<see cref="LexicalRelationEditing.DeleteKind"/>), in one undoable step, and the
+		/// re-show focuses the nearest surviving row.
+		/// </summary>
+		/// <returns>True when the relation changed.</returns>
+		internal bool DeleteRelation(DetailField field, ILexReference relation)
+		{
+			var current = LexicalRelationOwnerOf(field);
+			if (current == null)
+			{
+				Logger.WriteEvent("Delete Relation did nothing: row " + field?.StableId + " names no entry or sense.");
+				return false;
+			}
+			var focusRows = RowsToFocusAfterDeleting(m_avaloniaEntryForm?.ShownDetail, relation);
+			bool confirmed;
+			using (var ui = CmObjectUi.MakeUi(Cache, relation.Hvo))
+			{
+				ui.Mediator = m_mediator;
+				ui.PropTable = m_propertyTable;
+				confirmed = RelationDeleteConfirmation(ui, LexicalRelationEditing.DeleteNote(relation, current));
+			}
+			if (!confirmed)
+				return false;
+			LexicalRelationEditing.Delete(relation, current);
+			if (focusRows.Count > 0)
+				m_avaloniaEntryForm?.FocusRowOnNextShow(focusRows);
+			OnAvaloniaDetailEditCompleted(this, EventArgs.Empty);
+			return true;
+		}
+
+		/// <summary>
+		/// The Add Reference / Replace Reference item for a lexical-relation row: absent
+		/// unless the row's object is a relation of a known entry or sense; enabled then.
+		/// </summary>
+		internal DetailMenuItem AddReferenceItem(DetailMenuLeaf leaf, DetailField field)
+		{
+			if (!(RowObjectOf(field) is ILexReference) || LexicalRelationOwnerOf(field) == null)
+				return null;
+			return new DetailMenuItem(XCoreMenuBridge.StripAccelerator(leaf.Label), isEnabled: true, isChecked: false,
+				children: null, execute: () => AddOrReplaceReference(field));
+		}
+
+		/// <summary>
+		/// Adds the entry or sense the user picks through <see cref="RelationTargetChosen"/>
+		/// to the row's relation, or puts it in place of the row's reference
+		/// (<see cref="LexicalRelationEditing.AddOrReplace"/>): pending edits settle first,
+		/// the change is one undoable step, and the re-show focuses the relation's row.
+		/// </summary>
+		/// <returns>The relation the row's entry or sense is now in; null when nothing
+		/// changed.</returns>
+		internal ILexReference AddOrReplaceReference(DetailField field)
+		{
+			SettleDetailEdits();
+			var relation = RowObjectOf(field) as ILexReference;
+			var current = LexicalRelationOwnerOf(field);
+			if (relation == null || current == null)
+			{
+				Logger.WriteEvent("Add Reference did nothing: row " + field?.StableId + " names no relation of an entry or sense.");
+				return null;
+			}
+			var chooser = LexicalRelationEditing.Chooser(relation, current);
+			var chosen = (RelationTargetChosen ?? ChooseRelationTargetWithDialog)(chooser);
+			if (chosen == null)
+				return null;
+			var result = LexicalRelationEditing.AddOrReplace(relation, current, chosen);
+			if (result == null)
+				return null;
+			m_avaloniaEntryForm?.FocusObjectOnNextShow(result.Hvo);
+			OnAvaloniaDetailEditCompleted(this, EventArgs.Empty);
+			return result;
+		}
+
+		private ICmObject ChooseRelationTargetWithDialog(LexicalRelationChooser chooser)
+		{
+			var mainWindow = m_propertyTable.GetValue<Form>("window");
+			if (chooser.UseLinkDialog)
+			{
+				return LcmLinkEntryOrSenseDialogLauncher.Show(Cache, m_mediator, m_propertyTable, null, mainWindow,
+					LexicalRelationEditing.ChooserHelpTopic, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider", null),
+					allowSenses: chooser.AllowSenses, sensesOnly: chooser.SensesOnly, title: chooser.Title,
+					okButtonText: chooser.ButtonText);
+			}
+			using (var dlg = new EntryGoDlg())
+			{
+				dlg.SetDlgInfo(Cache, new WindowParams { m_title = chooser.Title, m_btnText = chooser.ButtonText }, m_mediator,
+					m_propertyTable);
+				dlg.SetHelpTopic(LexicalRelationEditing.ChooserHelpTopic);
+				return dlg.ShowDialog(mainWindow) == DialogResult.OK ? dlg.SelectedObject : null;
+			}
+		}
+
+		/// <summary>
+		/// The Edit Reference Set Details item for a lexical-relation row: absent unless the
+		/// row's object is a relation; enabled then.
+		/// </summary>
+		internal DetailMenuItem EditReferenceItem(DetailMenuLeaf leaf, DetailField field)
+		{
+			if (!(RowObjectOf(field) is ILexReference))
+				return null;
+			return new DetailMenuItem(XCoreMenuBridge.StripAccelerator(leaf.Label), isEnabled: true, isChecked: false,
+				children: null, execute: () => EditReferenceDetails(field));
+		}
+
+		/// <summary>
+		/// Gives the row's relation the name and comment the user enters through
+		/// <see cref="RelationDetailsEdited"/>: pending edits settle first, the change is one
+		/// undoable step, and the view re-shows.
+		/// </summary>
+		/// <returns>True when the relation changed.</returns>
+		internal bool EditReferenceDetails(DetailField field)
+		{
+			SettleDetailEdits();
+			if (!(RowObjectOf(field) is ILexReference relation))
+			{
+				Logger.WriteEvent("Edit Reference Set Details did nothing: the row's object " + field?.ObjectHvo + " is no relation.");
+				return false;
+			}
+			var details = (RelationDetailsEdited ?? EditRelationDetailsWithDialog)(relation);
+			if (details == null)
+				return false;
+			LexicalRelationEditing.SetDetails(relation, details.Name, details.Comment);
+			OnAvaloniaDetailEditCompleted(this, EventArgs.Empty);
+			return true;
+		}
+
+		private RelationDetails EditRelationDetailsWithDialog(ILexReference relation)
+		{
+			using (var dlg = new LexReferenceDetailsDlg(m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider")))
+			{
+				dlg.ReferenceName = relation.Name.AnalysisDefaultWritingSystem.Text;
+				dlg.ReferenceComment = relation.Comment.AnalysisDefaultWritingSystem.Text;
+				return dlg.ShowDialog(m_propertyTable.GetValue<Form>("window")) == DialogResult.OK
+					? new RelationDetails { Name = dlg.ReferenceName, Comment = dlg.ReferenceComment }
+					: null;
+			}
+		}
+
+		/// <summary>
+		/// The Swap Allomorph with Lexeme Form item for the row: absent unless the row's
+		/// object is a form; enabled when it is an allomorph of an entry that has a lexeme
+		/// form, disabled otherwise.
+		/// </summary>
+		internal DetailMenuItem SwapAllomorphItem(DetailMenuLeaf leaf, DetailField field)
+		{
+			var form = FormOf(field);
+			if (form == null)
+				return null;
+			var label = XCoreMenuBridge.StripAccelerator(leaf.Label);
+			if (!CanSwapAllomorph(form))
+				return DetailMenuItem.Disabled(label);
+			return new DetailMenuItem(label, isEnabled: true, isChecked: false, children: null,
+				execute: () => SwapAllomorph(field, leaf.Command));
+		}
+
+		// Whether the form is an allomorph of an entry with a lexeme form to swap it with.
+		private static bool CanSwapAllomorph(IMoForm form)
+		{
+			var entry = form.OwnerOfClass<ILexEntry>();
+			return LexemeFormConversion.CanSwap(entry) && entry.AlternateFormsOS.Contains(form);
+		}
+
+		/// <summary>
+		/// Makes the row's allomorph its entry's lexeme form, the old lexeme form taking its
+		/// place: pending edits settle first, the swap is one undoable step, and the re-show
+		/// focuses the form's new row.
+		/// </summary>
+		/// <returns>True when the forms were swapped.</returns>
+		internal bool SwapAllomorph(DetailField field, Command command)
+		{
+			SettleDetailEdits();
+			var form = FormOf(field);
+			if (form == null || !CanSwapAllomorph(form))
+				return false;
+			LexemeFormConversion.Swap(form.OwnerOfClass<ILexEntry>(), form, command.UndoText, command.RedoText);
+			m_avaloniaEntryForm?.FocusObjectOnNextShow(form.Hvo);
+			OnAvaloniaDetailEditCompleted(this, EventArgs.Empty);
+			return true;
+		}
+
+		/// <summary>
+		/// The Demote or Promote item for the row's sense: absent on a row with no object, a
+		/// ghost row and a row whose object the command does not act on; disabled when
+		/// <see cref="SenseNesting"/> refuses the move.
+		/// </summary>
+		/// <param name="demote">True for Demote, false for Promote.</param>
+		internal DetailMenuItem SenseNestingItem(DetailMenuLeaf leaf, DetailField field, bool demote)
+		{
+			var target = RowObjectOf(field);
+			if (target == null || field.GhostPrompt != null || !CommandActsOn(target, leaf.Command))
+				return null;
+			var label = XCoreMenuBridge.StripAccelerator(leaf.Label);
+			if (!(demote ? SenseNesting.CanDemote(target) : SenseNesting.CanPromote(target)))
+				return DetailMenuItem.Disabled(label);
+			return new DetailMenuItem(label, isEnabled: true, isChecked: false, children: null,
+				execute: () => NestSense(field, demote));
+		}
+
+		/// <summary>
+		/// Demotes or promotes the row's sense: pending edits settle first, the move is one
+		/// undoable step, and the re-show focuses the sense.
+		/// </summary>
+		/// <param name="demote">True for Demote, false for Promote.</param>
+		/// <returns>True when the sense moved.</returns>
+		internal bool NestSense(DetailField field, bool demote)
+		{
+			SettleDetailEdits();
+			if (!(RowObjectOf(field) is ILexSense sense))
+			{
+				Logger.WriteEvent("Demote or Promote did nothing: the row's object " + field?.ObjectHvo + " is no sense.");
+				return false;
+			}
+			if (!(demote ? SenseNesting.Demote(sense) : SenseNesting.Promote(sense)))
+				return false;
+			m_avaloniaEntryForm?.FocusObjectOnNextShow(sense.Hvo);
+			OnAvaloniaDetailEditCompleted(this, EventArgs.Empty);
+			return true;
+		}
+
+		/// <summary>
+		/// The Move Sense to a New Entry item for the row's object: absent on a row with no
+		/// object, a ghost row and a row whose object the command does not act on; disabled
+		/// when <see cref="DetailObjectSplit.CanSplitNow"/> refuses it.
+		/// </summary>
+		internal DetailMenuItem SplitItem(DetailMenuLeaf leaf, DetailField field)
+		{
+			var target = RowObjectOf(field);
+			if (target == null || field.GhostPrompt != null || !CommandActsOn(target, leaf.Command))
+				return null;
+			var label = XCoreMenuBridge.StripAccelerator(leaf.Label);
+			if (!DetailObjectSplit.CanSplitNow(target))
+				return DetailMenuItem.Disabled(label);
+			return new DetailMenuItem(label, isEnabled: true, isChecked: false, children: null,
+				execute: () => SplitDetailObject(field));
+		}
+
+		/// <summary>
+		/// Moves the row's object to a copy of its owner (a sense to a new entry) through the
+		/// object's UI: pending edits settle first, the shown record stays, and the re-show
+		/// focuses the nearest surviving row.
+		/// </summary>
+		/// <returns>True when the object moved.</returns>
+		internal bool SplitDetailObject(DetailField field)
+		{
+			SettleDetailEdits();
+			var target = RowObjectOf(field);
+			if (target == null || !DetailObjectSplit.CanSplitNow(target))
+			{
+				Logger.WriteEvent("Move to a new entry did nothing: the row's object " + field?.ObjectHvo + " cannot move.");
+				return false;
+			}
+			var focusRows = RowsToFocusAfterDeleting(m_avaloniaEntryForm?.ShownDetail, target);
+			var oldOwner = target.Owner;
+			using (var ui = CmObjectUi.MakeUi(Cache, target.Hvo))
+			{
+				ui.Mediator = m_mediator;
+				ui.PropTable = m_propertyTable;
+				ui.MoveUnderlyingObjectToCopyOfOwner();
+			}
+			if (target.Owner == oldOwner)
+				return false;
+			if (focusRows.Count > 0)
+				m_avaloniaEntryForm?.FocusRowOnNextShow(focusRows);
+			OnAvaloniaDetailEditCompleted(this, EventArgs.Empty);
+			return true;
 		}
 	}
 }

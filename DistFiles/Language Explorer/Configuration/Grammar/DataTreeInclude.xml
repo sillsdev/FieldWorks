@@ -1,13 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <window>
-	<!--<include path="../CommonDataTreeInclude.xml"/> -->
 <!--
   ===========================================================
   Commands
   ===========================================================
   -->
   <commands>
-	<!--<include query="window/commands/*"/> -->
 	  <command id="CmdJumpToText" label="Show in Interlinear Texts view" message="JumpToTool">
 		  <parameters tool="interlinearEdit" className="Text"/>
 	  </command>
@@ -40,15 +38,6 @@
 	  <parameters field="Members" className="MoAdhocProhibGr"/>
 	</command>
 <!--
-	Compound Rules
-	-->
-	<command id="CmdDataTree-Create-CompoundRule-LinkerAffixAllomorph" label="Create Linker Form" message="DataTreeInsert">
-	  <parameters field="Linker" className="MoAffixAllomorph"/>
-	</command>
-	<command id="CmdDataTree-Delete-CompoundRule-LinkerAffixAllomorph" label="Delete Linker Form" message="DataTreeDelete" icon="Delete">
-	  <parameters field="Linker" className="MoAffixAllomorph"/>
-	</command>
-<!--
 	Features
 	-->
 	<command id="CmdDataTree-Insert-ClosedFeature-Value" label="Insert Feature Value" message="DataTreeInsert">
@@ -57,19 +46,6 @@
 	<command id="CmdDataTree-Delete-ClosedFeature-Value" label="Delete Feature Value" message="DataTreeDelete" icon="Delete">
 	  <parameters field="Values" className="FsSymFeatVal"/>
 	</command>
-<!--    <command id="CmdDataTree-Insert-FeatureStructure-ClosedFeature" label="Insert Closed Feature" message="DataTreeInsert">
-	  <parameters field="FeatureSpecs" className="FsClosedValue"/>
-	</command>
-	<command id="CmdDataTree-Delete-FeatureStructure-Feature" label="Delete Feature" message="DataTreeDelete" icon="Delete">
-	  <parameters field="FeatureSpecs" className="FsFeatureSpecification"/>
-	</command>
-	<command id="CmdDataTree-Insert-FeatureStructure-ComplexFeature" label="Insert Complex Feature" message="DataTreeInsert">
-	  <parameters field="FeatureSpecs" className="FsComplexValue"/>
-	</command>
-	<command id="CmdDataTree-Delete-FeatureStructure-ComplexFeature" label="Delete Complex Feature" message="DataTreeDelete" icon="Delete">
-	  <parameters field="FeatureSpecs" className="FsComplexValue"/>
-	</command>
-	-->
 <!--
 	Parts of Speech
 	-->
@@ -151,7 +127,6 @@
   ===========================================================
   -->
   <contextMenus>
-	<!--<include query="window/contextMenus/*"/> -->
 	<menu id="mnuDataTree-Help">
 	  <!-- <item command="CmdDataTree-Help"/> -->
 	</menu>
@@ -185,18 +160,6 @@
 	</menu>
 
 <!--
-	Compound Rules
-	-->
-	<menu id="mnuDataTree-CompoundRule-LinkerAffixAllomorph">
-	  <item command="CmdDataTree-Create-CompoundRule-LinkerAffixAllomorph"/>
-	  <item command="CmdDataTree-Delete-CompoundRule-LinkerAffixAllomorph"/>
-	  <!-- <item command="CmdDataTree-Help"/> -->
-	</menu>
-	<menu id="mnuDataTree-FeatureStructure-Feature">
-	  <item command="CmdDataTree-Delete-FeatureStructure-Feature"/>
-	  <!-- <item command="CmdDataTree-Help"/> -->
-	</menu>
-<!--
 	Features
 	-->
 	<menu id="mnuDataTree-ClosedFeature-Values">
@@ -205,13 +168,6 @@
 	</menu>
 	<menu id="mnuDataTree-ClosedFeature-Value">
 	  <item command="CmdDataTree-Delete-ClosedFeature-Value"/>
-	  <!-- <item command="CmdDataTree-Help"/> -->
-	</menu>
-	<menu id="mnuDataTree-FeatureStructure-Features">
-<!--      <item command="CmdDataTree-Insert-FeatureStructure-ClosedFeature"/>
-	  <item command="CmdDataTree-Insert-FeatureStructure-ComplexFeature"/>
-	  <item command="CmdDataTree-Delete-FeatureStructure-Feature"/>
-	  <item command="CmdDataTree-Delete-FeatureStructure-ComplexFeature"/> -->
 	  <!-- <item command="CmdDataTree-Help"/> -->
 	</menu>
 <!--

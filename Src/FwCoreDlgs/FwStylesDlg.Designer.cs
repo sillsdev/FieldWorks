@@ -154,8 +154,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			resources.GetString("m_cboTypes.Items"),
 			resources.GetString("m_cboTypes.Items1"),
 			resources.GetString("m_cboTypes.Items2"),
-			resources.GetString("m_cboTypes.Items3"),
-			resources.GetString("m_cboTypes.Items4")});
+			resources.GetString("m_cboTypes.Items3")});
 			resources.ApplyResources(this.m_cboTypes, "m_cboTypes");
 			this.m_cboTypes.Name = "m_cboTypes";
 			this.m_cboTypes.SelectedIndexChanged += new System.EventHandler(this.m_cboTypes_SelectedIndexChanged);

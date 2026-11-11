@@ -313,7 +313,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 				n.ChooserLinks, n.EnumStringList, visibleWritingSystems, n.ToggleValue, n.Reorder,
 				helpTopicId: n.HelpTopicId, sliceId: n.SliceId,
 				optionalWritingSystem: n.OptionalWritingSystem,
-				forceIncludeEnglish: n.ForceIncludeEnglish);
+				forceIncludeEnglish: n.ForceIncludeEnglish,
+				visibilityField: n.VisibilityField);
 
 		// Copy a (leaf) node under a new StableId; AutomationId is dropped so the duplicate gets a fresh,
 		// non-colliding identity (the renderer derives one from the new StableId by convention).
@@ -327,6 +328,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 				n.ChooserLinks, n.EnumStringList, n.VisibleWritingSystems, n.ToggleValue, n.Reorder,
 				helpTopicId: n.HelpTopicId, sliceId: n.SliceId,
 				optionalWritingSystem: n.OptionalWritingSystem,
-				forceIncludeEnglish: n.ForceIncludeEnglish);
+				forceIncludeEnglish: n.ForceIncludeEnglish,
+				visibilityField: n.VisibilityField);
 	}
 }

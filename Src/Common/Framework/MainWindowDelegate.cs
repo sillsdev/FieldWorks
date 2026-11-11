@@ -104,10 +104,8 @@ namespace SIL.FieldWorks.Common.Framework
 		/// </summary>
 		/// <param name="paraStyleName">Name of the initially selected paragraph style.</param>
 		/// <param name="charStyleName">Name of the initially selected character style.</param>
-		/// <param name="maxStyleLevel">The maximum style level that will be shown in this
-		/// dialog. (apps that do not use style levels in their stylesheets can pass 0)</param>
 		/// ------------------------------------------------------------------------------------
-		void ShowApplyStyleDialog(string paraStyleName, string charStyleName, int maxStyleLevel);
+		void ShowApplyStyleDialog(string paraStyleName, string charStyleName);
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -178,33 +176,9 @@ namespace SIL.FieldWorks.Common.Framework
 		/// </summary>
 		int HvoAppRootObject { get; }
 		/// <summary>
-		/// Gets the maximum style level to show. Default value is max int to show all styles.
-		/// </summary>
-		int MaxStyleLevelToShow { get; }
-		/// <summary>
 		/// Called when styles are renamed or deleted.
 		/// </summary>
 		void OnStylesRenamedOrDeleted();
-		/// <summary>
-		/// Allows individual implementations to override the default behavior when populating
-		/// the paragraph style list.
-		/// </summary>
-		/// <returns><c>true</c> if implementation overrides the default; <c>false</c> if the
-		/// default behavior is desired.</returns>
-		bool PopulateParaStyleListOverride();
-		/// <summary>
-		/// Gets or sets a value indicating whether or not to show the TE style type combo box
-		/// in the styles dialog where the user can select the type of styles to show
-		/// (all, basic, or custom styles).  False indicates a FLEx style type combo box
-		/// (all, basic, dictionary, or custom styles).
-		/// </summary>
-		bool ShowTEStylesComboInStylesDialog { get; }
-		/// <summary>
-		/// Gets a value indicating whether the user can select a background color on the
-		/// paragraph tab in the styles dialog. This is possible in all apps except TE.
-		/// </summary>
-		/// <value>The default implementation always return <c>true</c>.</value>
-		bool CanSelectParagraphBackgroundColor { get; }
 	}
 	#endregion
 
@@ -298,16 +272,6 @@ namespace SIL.FieldWorks.Common.Framework
 		private ComboBox WritingSystemSelector
 		{
 			get { return m_callbacks.WritingSystemSelector; }
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets the setting for the maximum style level to show.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		private int MaxStyleLevelToShow
-		{
-			get { return m_callbacks.MaxStyleLevelToShow; }
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -588,9 +552,6 @@ namespace SIL.FieldWorks.Common.Framework
 		/// ------------------------------------------------------------------------------------
 		public void RefreshParaStyleComboBoxList(IStStyle style, IRootSite view)
 		{
-			if (m_callbacks.PopulateParaStyleListOverride())
-				return;
-
 			if (ParaStyleListHelper.ActiveView == view && style != null &&
 					m_prevParaStyleContext == style.Context)
 			{
@@ -684,14 +645,13 @@ namespace SIL.FieldWorks.Common.Framework
 				Cache, ActiveStyleSheet, (vc == null) ? false : vc.RightToLeft,
 				Cache.ServiceLocator.WritingSystems.AllWritingSystems.Any(ws => ws.RightToLeftScript),
 				ActiveStyleSheet.GetDefaultBasedOnStyleName(),
-				MaxStyleLevelToShow, m_app.MeasurementSystem, paraStyleName, charStyleName,
+				m_app.MeasurementSystem, paraStyleName, charStyleName,
 				HvoAppRootObject, m_app, m_app))
 			{
 				stylesDlg.SetPropsToFactorySettings = setPropsToFactorySettings;
 				stylesDlg.StylesRenamedOrDeleted += m_callbacks.OnStylesRenamedOrDeleted;
 				stylesDlg.AllowSelectStyleTypes = true;
-				stylesDlg.ShowTEStyleTypes = m_callbacks.ShowTEStylesComboInStylesDialog;
-				stylesDlg.CanSelectParagraphBackgroundColor = m_callbacks.CanSelectParagraphBackgroundColor;
+				stylesDlg.CanSelectParagraphBackgroundColor = true;
 				return (stylesDlg.ShowDialog(m_callbacks) == DialogResult.OK &&
 					((stylesDlg.ChangeType & StyleChangeType.DefChanged) > 0 ||
 					(stylesDlg.ChangeType & StyleChangeType.Added) > 0));
@@ -718,10 +678,8 @@ namespace SIL.FieldWorks.Common.Framework
 		/// </summary>
 		/// <param name="paraStyleName">Name of the para style.</param>
 		/// <param name="charStyleName">Name of the char style.</param>
-		/// <param name="maxStyleLevel">The maximum style level that will be shown in this
-		/// dialog. (apps that do not use style levels in their stylesheets can pass 0)</param>
 		/// ------------------------------------------------------------------------------------
-		public void ShowApplyStyleDialog(string paraStyleName, string charStyleName, int maxStyleLevel)
+		public void ShowApplyStyleDialog(string paraStyleName, string charStyleName)
 		{
 			SimpleRootSite rootsite = (ActiveView as SimpleRootSite);
 			try
@@ -742,7 +700,7 @@ namespace SIL.FieldWorks.Common.Framework
 				ActiveView.CastAsIVwRootSite().RootBox.GetRootObject(out hvoRoot, out vc, out frag, out ss);
 				using (FwApplyStyleDlg applyStyleDlg = new FwApplyStyleDlg(ActiveView.CastAsIVwRootSite(),
 					Cache, ActiveStyleSheet.RootObjectHvo, StyleSheetOwningFlid,
-					ActiveStyleSheet.GetDefaultBasedOnStyleName(), maxStyleLevel,
+					ActiveStyleSheet.GetDefaultBasedOnStyleName(),
 					paraStyleName, charStyleName, hvoRoot, m_app, m_app))
 				{
 					if (FwEditingHelper != null)
@@ -756,7 +714,6 @@ namespace SIL.FieldWorks.Common.Framework
 						if (m_app.DefaultStyleContexts != null)
 							applyStyleDlg.ApplicableStyleContexts = m_app.DefaultStyleContexts;
 					}
-					applyStyleDlg.AllowSelectStyleTypes = m_callbacks.ShowTEStylesComboInStylesDialog;
 					applyStyleDlg.CanApplyCharacterStyle = sel.CanFormatChar;
 					applyStyleDlg.CanApplyParagraphStyle = sel.CanFormatPara;
 

@@ -19,9 +19,11 @@ Not to be confused with:
   work, indexed for reading before planning in a covered area.
 - `openspec/` — proposed changes with their specs and task lists, which are
   archived once implemented.
+- `Docs/ux/` — the living UX guide: how the user interface should look and
+  behave, with its own register of provisional and temporary UX decisions.
 
 An ADR records *why a constraint exists*. If what you are writing will need
-editing the next time the code changes, it belongs in one of the other three.
+editing the next time the code changes, it belongs in one of the others.
 
 | ADR | Decision |
 | --- | --- |

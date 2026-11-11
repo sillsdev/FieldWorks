@@ -40,8 +40,20 @@ namespace SIL.FieldWorks.XWorks
 	/// Form/Form.Designer.cs split) so the legacy-facing file stays small; nothing here
 	/// changes behavior when <c>UIMode</c> is Legacy.
 	/// </summary>
-	public partial class RecordEditView
+	public partial class RecordEditView : IRefreshableRoot
 	{
+		/// <summary>
+		/// Recomposes the Avalonia detail view when the window refreshes, as after View >
+		/// Refresh or the Styles dialog (LT-22811); an open edit completes first. Always false,
+		/// so the views this one contains still refresh themselves.
+		/// </summary>
+		public bool RefreshDisplay()
+		{
+			if (ShouldUseAvaloniaLexiconEdit)
+				m_avaloniaRefreshController?.RequestRefresh();
+			return false;
+		}
+
 		private UIFramework m_activeUIFramework;
 		private readonly EditControlFactory m_lexicalEditControlFactory;
 		private readonly UIFrameworkSelectionService m_frameworkSelectionService = new UIFrameworkSelectionService();
@@ -187,6 +199,7 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		private void TearDownAvaloniaEntryForm()
 		{
+			UnregisterCommandAuthority();
 			if (m_avaloniaEntryForm != null)
 			{
 				m_avaloniaEntryForm.DetailEditCompleted -= OnAvaloniaDetailEditCompleted;
@@ -474,7 +487,7 @@ namespace SIL.FieldWorks.XWorks
 				OnDetailMenuRequested, OnDetailLinkRequested,
 				new FwTsStringClipboard(Cache.WritingSystemFactory),
 				GetPersistedLabelColumnWidth, PersistLabelColumnWidth,
-				rootHvo: obj.Hvo);
+				rootHvo: obj.Hvo, hotlinkItems: HotlinkItemsFor);
 		}
 
 		/// <summary>
@@ -638,6 +651,36 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
+		/// <summary>
+		/// The commands a section header's hotlinks offer, one leaf per command in menu order,
+		/// each with its command's current enabled state; empty when the header has no hotlinks
+		/// menu, the menu offers no command, or it cannot be built. A menu no native authority
+		/// owns shows its commands disabled.
+		/// </summary>
+		internal IReadOnlyList<DetailMenuItem> HotlinkItemsFor(DetailField field)
+		{
+			if (string.IsNullOrEmpty(field?.HotlinksId))
+				return Array.Empty<DetailMenuItem>();
+			try
+			{
+				var ids = new[] { field.HotlinksId };
+				var window = m_propertyTable.GetValue<XWindow>("window");
+				var authority = CreateMenuAuthority(DetailMenuRequest.FromAnchor(null, field, DetailMenuKind.Hotlinks));
+				if (XCoreMenuBridge.OwnsAll(authority, ids))
+					return XCoreMenuBridge.CreateMenuItems(window, ids, null, null, authority);
+				Logger.WriteEvent("No native authority owns the hotlinks '" + field.HotlinksId
+					+ "'; its commands show disabled.");
+				return XCoreMenuBridge.ResolveMenu(window, field.HotlinksId).Leaves
+					.Select(leaf => DetailMenuItem.Disabled(XCoreMenuBridge.StripAccelerator(leaf.Label)))
+					.ToList();
+			}
+			catch (Exception e)
+			{
+				Logger.WriteError("Building the hotlinks of '" + field.HotlinksId + "' failed; none are shown.", e);
+				return Array.Empty<DetailMenuItem>();
+			}
+		}
+
 		// The adapter fallback needs a raw screen point: cursor position for a right-click,
 		// the anchor's bottom-left otherwise. Both corners are mapped since
 		// RTL flow mirrors X in PointToScreen.
@@ -752,6 +795,7 @@ namespace SIL.FieldWorks.XWorks
 			return new CompositeMenuAuthority(
 				CreateReorderVectorAuthority(request),
 				new EnvironmentInsertMenuAuthority(request, this),
+				new StructuredTextMenuAuthority(request, StructuredTextItem),
 				CreateMultiStringMenuAuthority(request.Field, objectMenu),
 				objectMenu,
 				CreateLexiconMenuAuthority(request.Field));
@@ -1383,6 +1427,7 @@ namespace SIL.FieldWorks.XWorks
 			// EnsureAvaloniaRefreshController is idempotent (its m_avaloniaRefreshController != null guard),
 			// so the later ShowAvaloniaEntry call is a no-op rather than a duplicate registration.
 			EnsureAvaloniaRefreshController();
+			RegisterCommandAuthority();
 
 			DetachDataTreeFromPanel();
 			m_avaloniaEntryForm.Show();

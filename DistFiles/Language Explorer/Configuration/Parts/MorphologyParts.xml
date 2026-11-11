@@ -1876,9 +1876,6 @@
 		</part>
 	</bin>
 	<bin class="FsFeatStruc">
-		<part id="FsFeatStruc-Detail-FeatureSpecs" type="Detail">
-			<slice label="Features" weight="light" editor="custom" assemblyPath="LexEdDll.dll" class="SIL.FieldWorks.XWorks.LexEd.MsaInflectionFeatureListDlgLauncherSlice"/>
-		</part>
 		<part id="FsFeatStruc-Detail-RegionFeatureSpecs" type="Detail">
 			<slice label="Region Features" weight="light" editor="custom" assemblyPath="LexEdDll.dll" class="SIL.FieldWorks.XWorks.LexEd.MsaInflectionFeatureListDlgLauncherSlice"/>
 		</part>
@@ -1901,59 +1898,6 @@
 		-->
 		<part id="FsFeatStruc-Jt-PhonFeats_$fieldName" type="jtview">
 			<computedString method="GetFeatureValueTSS" argument="$fieldName"/>
-		</part>
-	</bin>
-	<bin class="FsFeatureSpecification">
-		<part id="FsFeatureSpecification-Detail-Feature" type="Detail">
-			<slice field="Feature" label="Feature" editor="defaultAtomicReference" menu="mnuDataTree-Help"/>
-		</part>
-		<part id="FsFeatureSpecification-Detail-FeatureSpecs" type="Detail">
-			<slice field="Feature" label="Feature" editor="defaultAtomicReference" menu="mnuDataTree-Help"/>
-		</part>
-		<part id="FsFeatureSpecification-Jt-FeatureSummary" type="jtview">
-			<lit/>
-		</part>
-	</bin>
-	<bin class="FsClosedValue">
-		<part id="FsClosedValue-Detail-Feature" type="Detail">
-			<slice field="Feature" label="Name" editor="defaultAtomicReference" menu="mnuDataTree-Help"/>
-		</part>
-		<part id="FsClosedValue-Detail-Value" type="Detail">
-			<slice field="Value" label="Value" editor="defaultAtomicReference" menu="mnuDataTree-Help"/>
-		</part>
-		<part id="FsClosedValue-Detail-FeatureSpecs" type="Detail">
-			<!-- I don't know why the following just comes out as a plain old atomic ref chooser -->
-			<slice field="Feature" label="Feature" editor="defaultAtomicReference" menu="mnuDataTree-Help">
-				<deParams ws="best analysis"/>
-				<chooserInfo text="The following features are available.">
-					<chooserLink type="goto" label="Edit the Category Inflectable Features" tool="posEdit"/>
-				</chooserInfo>
-			</slice>
-			<slice field="Value" label="Value" editor="defaultAtomicReference" menu="mnuDataTree-Help"/>
-		</part>
-		<part id="FsClosedValue-Jt-FeatureSummary" type="jtview">
-			<lit/>
-		</part>
-	</bin>
-	<bin class="FsComplexValue">
-		<part id="FsComplexValue-Detail-Feature" type="Detail">
-			<slice field="Feature" label="Name" editor="defaultAtomicReference" menu="mnuDataTree-Help"/>
-		</part>
-		<part id="FsComplexValue-Detail-Value" type="Detail">
-			<obj field="Value" label="Nested Features" layout="NestedInflFeats"/>
-		</part>
-		<part id="FsComplexValue-Detail-FeatureSpecs" type="Detail">
-			<!-- I don't know why the following just comes out as a plain old atomic ref chooser -->
-			<slice field="Feature" label="Feature" editor="defaultAtomicReference" menu="mnuDataTree-Help">
-				<deParams ws="best analysis"/>
-				<chooserInfo text="The following features are available.">
-					<chooserLink type="goto" label="Edit the Category Inflectable Features" tool="posEdit"/>
-				</chooserInfo>
-			</slice>
-			<slice field="Value" label="Value" editor="defaultAtomicReference" menu="mnuDataTree-Help"/>
-		</part>
-		<part id="FsComplexValue-Jt-FeatureSummary" type="jtview">
-			<lit/>
 		</part>
 	</bin>
 	<bin class="FsFeatDefn">

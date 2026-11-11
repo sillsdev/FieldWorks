@@ -96,8 +96,6 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 
 		/// <summary>True to show internal styles, false otherwise</summary>
 		protected bool m_showInternalStyles = false;
-		/// <summary>True to show only user-modified styles, false otherwise</summary>
-		protected bool m_showOnlyUserModifiedStyles = false;
 
 		/// <summary>
 		/// Stores only what style types will be shown in the list. When this value is
@@ -563,17 +561,6 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 			get { return m_showUserDefinedStyles; }
 			set { m_showUserDefinedStyles = value; }
 		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Indicates whether to show only user-defined styles
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public bool ShowOnlyUserModifiedStyles
-		{
-			get { return m_showOnlyUserModifiedStyles; }
-			set { m_showOnlyUserModifiedStyles = value; }
-		}
 		#endregion
 
 		#region Control Delegate Methods
@@ -922,9 +909,6 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 
 			// Check the style level to see if the style is excluded
 			if (item.UserLevel > MaxStyleLevel)
-				return false;
-
-			if (m_showOnlyUserModifiedStyles && !item.IsUserModifiedStyle)
 				return false;
 
 			// If there's an excluded context list and the item's context is in it,

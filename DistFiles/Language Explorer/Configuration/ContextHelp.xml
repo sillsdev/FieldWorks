@@ -37,7 +37,6 @@
 	<item id="CmdSave">Save</item>
 	<item id="CmdArchiveWithRamp">Starts RAMP (if it is installed) and prepares an archive package for uploading.</item>
 	<item id="CmdRefresh">Refresh the screen.</item>
-	<item id="CmdPageSetup">Determine page layout options for printing.</item>
 	<item id="CmdPrint">Print</item>
 	<item id="CmdImport">Import an existing lexicon.</item>
 	<item id="CmdExport">Export this FieldWorks project to a file.</item>
@@ -45,7 +44,6 @@
 	<item id="CmdRestoreFromBackup">Restore a FieldWorks project.</item>
 	<item id="CmdDeleteProject">Delete FieldWorks project.</item>
 	<item id="CmdCreateProjectShortcut">Create a desktop shortcut to this project.</item>
-	<!-- What is this?                <item id="CmdMainObjectProperties"/> -->
 	<item id="CmdProjectProperties">Edit the special properties of this FieldWorks project (such as name and writing systems).</item>
 	<!-- Send/Receive menu -->
 	<item id="CmdFLExBridge">Send/Receive this Project (lexicon and texts)</item>
@@ -91,7 +89,6 @@
 
 	<item id="Show_DictionaryPubPreview">Display the dictionary entry for this lexeme above the Lexicon Edit pane.</item>
 	<item id="ShowHiddenFields">Display all possible fields.</item>
-	<item id="CmdToggleRawAndInterlinear">Toggle between the baseline and interlinear text view.</item>
 	<item id="CmdChangeFilterClearAll">Turn off all filters.</item>
 	<item id="ShowInvisibleSpaces">View the invisible, zero-width spaces in this text.</item>
 	<!--

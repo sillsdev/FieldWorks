@@ -40,7 +40,7 @@ Extensive catalog of shared dialogs covering backup/restore, project setup, writ
 Paratext plug-in exposing FLEx lexicons via LexiconPlugin interfaces with project pickers, data wrappers, and UI so translators can consume FieldWorks lexical content inside Paratext.
 
 ### FwResources
-Shared image and string libraries (FwStrings, FwTMStrings, HelpTopicPaths, toolbar assets) plus helper utilities that provide consistent branding and localization across the suite.
+Shared image and string libraries (FwStrings, HelpTopicPaths, toolbar assets) plus helper utilities that provide consistent branding and localization across the suite.
 
 ### GenerateHCConfig
 Command-line tool that loads FLEx morphology/phonology data and exports HermitCrab XML configuration so the parser can run outside FieldWorks.
@@ -121,9 +121,6 @@ Paratext interoperability layer supplying project discovery, scripture text acce
 
 ### Common/SimpleRootSite
 Simplified IVwRootSite implementation with editing, selection, printing, and activation helpers that makes hosting Views content easy for most UI scenarios.
-
-### Common/UIAdapterInterfaces
-Adapter contracts (ITMAdapter, ISIBInterface, helpers) that decouple XCore mediator tooling from concrete WinForms controls and enable UI test doubles.
 
 ### Common/ViewsInterfaces
 Managed COM interface definitions and wrappers (IVw* families, DispPropOverrideFactory, ComWrapper utilities) that bridge .NET code to the native Views text-rendering engine.

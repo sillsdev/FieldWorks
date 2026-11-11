@@ -37,7 +37,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 				"id", "label", "abbr", "field", "ws", "editor", "visibility", "expansion",
 				"localizationKey", "labelId", "automationId", "routing", "menu", "contextMenu", "hotlinks",
 				"forVariant", "visibleWritingSystems", "reorder", "helpTopicID",
-				"optionalWs", "forceIncludeEnglish"
+				"optionalWs", "forceIncludeEnglish", "visField"
 			};
 
 		public static readonly HashSet<string> HandledObjSeqAttributes =
@@ -137,12 +137,20 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 						break;
 					}
 					case "sublayout":
-						diagnostics.Add(new ViewDiagnostic(
-							ViewDiagnosticSeverity.Info,
-							"sublayout-dropped",
-							$"<sublayout name='{(string)el.Attribute("name")}'> is a publishing construct and is not imported for detail views.",
-							$"{parentPath}/#{output.Count}"));
+					{
+						var stableId = $"{parentPath}/#{output.Count}";
+						var layoutName = Attr(el, "name");
+						if (string.IsNullOrEmpty(layoutName))
+						{
+							diagnostics.Add(new ViewDiagnostic(ViewDiagnosticSeverity.Warning, "sublayout-dropped",
+								"A <sublayout> has no 'name' attribute.", stableId));
+							break;
+						}
+						output.Add(MakeLeaf(stableId, ViewNodeKind.Sublayout, null, null,
+							Attr(el, "layoutChoiceField"), null, EditorClassification.GroupingNone, null,
+							ViewVisibility.Always, ViewExpansion.NotApplicable, indented, layoutName));
 						break;
+					}
 					default:
 						diagnostics.Add(new ViewDiagnostic(
 							ViewDiagnosticSeverity.Warning,
@@ -431,7 +439,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 						reorder: ParseOptionalBool(Attr(contentEl, "reorder")) ?? false,
 						helpTopicId: Attr(contentEl, "helpTopicID"),
 						optionalWritingSystem: optionalWs,
-						forceIncludeEnglish: forceEnglish);
+						forceIncludeEnglish: forceEnglish,
+						visibilityField: Attr(contentEl, "visField"));
 				}
 				case "obj":
 				case "seq":

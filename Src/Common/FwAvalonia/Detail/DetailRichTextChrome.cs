@@ -60,6 +60,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				Background = FwAvaloniaDensity.TransparentBrush,
 				FlowDirection = rightToLeft ? FlowDirection.RightToLeft : FlowDirection.LeftToRight
 			};
+			FwSurfaceStyles.MarkValueText(display);
 			AutomationProperties.SetAutomationId(display, automationId);
 
 			foreach (var run in rich.Runs)

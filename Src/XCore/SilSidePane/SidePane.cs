@@ -347,7 +347,8 @@ namespace SIL.SilSidePane
 		{
 			get
 			{
-				return _itemAreas[CurrentTab].CurrentItem;
+				var currentTab = CurrentTab;
+				return currentTab == null ? null : _itemAreas[currentTab].CurrentItem;
 			}
 		}
 

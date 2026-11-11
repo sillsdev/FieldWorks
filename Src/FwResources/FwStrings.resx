@@ -198,10 +198,6 @@ Please reapply your style change</value>
     <value>An error has occurred while creating a new project.</value>
     <comment>Displayed in a dialog box when an error occurs while creating a new project.</comment>
   </data>
-  <data name="kstidPageSetupWithViewName" xml:space="preserve">
-    <value>Page Setup - {0}</value>
-    <comment>Title of the Page Setup dialog that also shows the name of the print layout view.</comment>
-  </data>
   <data name="kstidFileOpenToolTip" xml:space="preserve">
     <value>Open Project</value>
     <comment>Tool tip for Open Project toolbar button</comment>
@@ -561,10 +557,6 @@ only in multiple-paragraph fields like 'Description'</value>
     <value>Project &amp;Management</value>
     <comment>This is the text for the project managment option on the file menu.</comment>
   </data>
-  <data name="kstidFilePageSetupMenuName" xml:space="preserve">
-    <value>Page Set&amp;up...</value>
-    <comment>This is the text for the page setup option on the file menu.</comment>
-  </data>
   <data name="kstidFilePrintMenuName" xml:space="preserve">
     <value>&amp;Print...</value>
     <comment>This is the text for the print option on the file menu.</comment>
@@ -696,10 +688,6 @@ only in multiple-paragraph fields like 'Description'</value>
   <data name="kstidFileDeleteMsg" xml:space="preserve">
     <value>Delete a FieldWorks project.</value>
     <comment>This is the status bar message for the delete project menu option.</comment>
-  </data>
-  <data name="kstidFilePageSetupMsg" xml:space="preserve">
-    <value>Page Setup for Printing.</value>
-    <comment>This is the status bar message for the page setup menu option.</comment>
   </data>
   <data name="kstidFilePrintMsg" xml:space="preserve">
     <value>Prints current view.</value>
@@ -1159,10 +1147,6 @@ FieldWorks ReadMe for help in this area.</value>
   <data name="kstidLIFT" xml:space="preserve">
     <value>LIFT files</value>
     <comment>Used in the list of file types in file save dialogs</comment>
-  </data>
-  <data name="kstidUndoPageSetupChanges" xml:space="preserve">
-    <value>Page Setup Changes</value>
-    <comment>for Undo</comment>
   </data>
   <data name="kstidStyleWsOverideInheritedFromMsg" xml:space="preserve">
     <value>(Inherited from {0})</value>

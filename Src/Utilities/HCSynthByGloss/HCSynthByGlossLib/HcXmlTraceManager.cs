@@ -555,7 +555,8 @@ namespace HCSynthByGloss
 							"FailureReason",
 							new XAttribute("type", "environment"),
 							CreateAllomorphElement(allomorph),
-							new XElement("Environment", failureObj)
+							((IEnumerable<AllomorphEnvironment>)failureObj)
+								.Select(env => new XElement("Environment", env))
 						)
 					);
 					break;

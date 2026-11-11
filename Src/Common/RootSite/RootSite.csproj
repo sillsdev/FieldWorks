@@ -41,7 +41,6 @@
     <ProjectReference Include="../../XCore/xCoreInterfaces/xCoreInterfaces.csproj" />
     <ProjectReference Include="../FwUtils/FwUtils.csproj" />
     <ProjectReference Include="../SimpleRootSite/SimpleRootSite.csproj" />
-    <ProjectReference Include="../UIAdapterInterfaces/UIAdapterInterfaces.csproj" />
     <ProjectReference Include="../ViewsInterfaces/ViewsInterfaces.csproj" />
   </ItemGroup>
   <ItemGroup>

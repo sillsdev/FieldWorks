@@ -231,38 +231,6 @@
 		<part ref="RegionFeatureSpecs" label="Feature Set" menu="mnuDataTree-MoStemName-Region"/>
 	</layout>
 
-	<layout class="FsFeatStruc" type="detail" name="FeatureSpecs">
-		<part ref="FeatureSpecs" label="Features" menu="mnuDataTree-FeatureStructure-Features" visibility="ifdata"/>
-	</layout>
-
-	<layout class="FsFeatStruc" type="detail" name="MsFeatures">
-		<part ref="FeatureSpecs" label="Inflection Features" menu="mnuDataTree-FeatureStructure-Features"/>
-	</layout>
-  <layout class="FsFeatStruc" type="detail" name="MsEnvFeatures">
-	<part ref="FeatureSpecs" label="Required Features" menu="mnuDataTree-FeatureStructure-Features"/>
-  </layout>
-  <layout class="FsFeatStruc" type="detail" name="FromMsFeatures">
-		<part ref="FeatureSpecs" label="From Inflection Features" menu="mnuDataTree-FeatureStructure-Features"/>
-	</layout>
-	<layout class="FsFeatStruc" type="detail" name="ToMsFeatures">
-		<part ref="FeatureSpecs" label="To Inflection Features" menu="mnuDataTree-FeatureStructure-Features"/>
-	</layout>
-	<layout class="FsFeatStruc" type="detail" name="InflFeats">
-		<part ref="FeatureSpecs" label="Inflection Features" menu="mnuDataTree-FeatureStructure-Features"/>
-</layout>
-
-	<layout class="FsFeatStruc" type="detail" name="NestedInflFeats">
-		<part ref="Blank" label="Nested Inflection Features"  menu="mnuDataTree-Help">
-			<indent>
-				<part ref="FeatureSpecs" expansion="expanded" label="Features" menu="mnuDataTree-FeatureStructure-Features"/>
-			</indent>
-		</part>
-</layout>
-
-	<layout class="FsFeatStruc" type="detail" name="EditFeatureSpecs">
-		<part ref="FeatureSpecs" label="Features" expansion="expanded" menu="mnuDataTree-FeatureStructure-Features"/>
-	</layout>
-
   <layout class="FsFeatStruc" type="jtview" name="PhonFeats">
 	  <part ref="Long" label="Features"/>
   </layout>
@@ -336,32 +304,6 @@
 	<part ref="DescriptionAllA" visibility="ifdata" >
 	</part>
   </layout>
-
-  <layout class="FsFeatureSpecification" type="detail" name="EditFeatureSpec">
-		<part ref="Summary" label="Feature" param="FeatureSummary">
-		<indent>
-		<part ref="Feature"/>
-		</indent>
-		</part>
-	</layout>
-
-	<layout class="FsClosedValue" type="detail" name="EditFeatureSpec">
-		<part ref="Summary" label="Feature" param="FeatureSummary" menu="mnuDataTree-FeatureStructure-Feature">
-		<indent>
-		<part ref="Feature"/>
-		<part ref="Value"/>
-		</indent>
-		</part>
-	</layout>
-
-	<layout class="FsComplexValue" type="detail" name="EditFeatureSpec">
-		<part ref="Summary" label="Complex Feature" param="FeatureSummary" menu="mnuDataTree-FeatureStructure-Feature">
-		<indent>
-		<part ref="Feature"/>
-		<part ref="Value"/>
-		</indent>
-		</part>
-	</layout>
 
 	<layout class="FsComplexFeature" type="detail" name="Edit">
 		<part ref="Message" label="Special Note" param="SpecialNote"/>
@@ -490,11 +432,6 @@
 			</part>
 		</indent>
 	</layout>
-   <layout class="MoInflClass" type="detail" name="SubClasses">
-	  <part ref="SubclassesAllA" label="Subclass" >
-		 </part>
-   </layout>
-
 	<layout class="MoEndoCompound" type="detail" name="Edit">
 	 <part ref="NameAllA" label="Name" menu="mnuDataTree-Help"/>
 		<part ref="DescriptionAllA" label="Description" menu="mnuDataTree-Help"/>

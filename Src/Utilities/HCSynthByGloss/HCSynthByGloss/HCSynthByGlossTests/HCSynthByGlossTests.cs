@@ -8,6 +8,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
+using SIL.Machine.FeatureModel;
 using SIL.Machine.Morphology;
 using SIL.Machine.Morphology.HermitCrab;
 using System.Reflection;
@@ -122,6 +124,26 @@ namespace SIL.HCSynthByGlossTests
 			string expectedWordForms = File.ReadAllText(expectedWordFormsFile, Encoding.UTF8)
 				.Replace("\r", "");
 			Assert.AreEqual(expectedWordForms, synthesizedWordForms);
+		}
+
+		/// <summary>The synthesis trace names each environment a root failed, rather than
+		/// running them together (LT-22836).</summary>
+		[Test]
+		public void TraceListsEachFailedEnvironment()
+		{
+			string testDataDir = Path.GetDirectoryName(glossFile);
+			Language lang = XmlLanguageLoader.Load(Path.Combine(testDataDir, "EnvironmentFailureTrace.xml"));
+			var traceManager = new HcXmlTraceManager { IsTracing = true };
+			var generator = new Morpher(traceManager, lang);
+			LexEntry pit = lang.Strata.SelectMany(s => s.Entries).Single(e => e.Gloss == "pit");
+
+			generator.GenerateWords(pit, Enumerable.Empty<Morpheme>(), new FeatureStruct(), out object trace)
+				.ToList();
+
+			XElement reason = ((XElement)trace).Descendants("FailureReason")
+				.Single(r => (string)r.Attribute("type") == "environment");
+			Assert.That(reason.Elements("Environment").Select(e => e.Value).ToList(),
+				Has.Count.EqualTo(2).And.All.Not.Empty);
 		}
 	}
 }

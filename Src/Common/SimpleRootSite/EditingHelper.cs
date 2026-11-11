@@ -250,7 +250,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		public event FwPasteFixTssEventHandler PasteFixTssEvent;
 
 		private bool m_fSuppressNextWritingSystemHvoChanged;
-		private bool m_fSuppressNextBestStyleNameChanged;
 		private long m_TimestampOfLastGotFocus;
 
 		/// <summary>Flag to prevent reentrancy while setting keyboard.</summary>
@@ -1591,20 +1590,6 @@ namespace SIL.FieldWorks.Common.RootSites
 			}
 
 			return (Control is SimpleRootSite) ? ((SimpleRootSite)Control).IBeamCursor : Cursors.IBeam;
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Convert this instance to type T.
-		/// </summary>
-		/// <typeparam name="T">Desired type to cast to.</typeparam>
-		/// <returns>Editing helper cast as T.</returns>
-		/// <remarks>We added this method so that we can retrieve the TeEditingHelper from the
-		/// PublicationEditingHelper (which internally contains an TeEditingHelper).</remarks>
-		/// ------------------------------------------------------------------------------------
-		public virtual T CastAs<T>() where T : EditingHelper
-		{
-			return this as T;
 		}
 		#endregion
 
@@ -2983,21 +2968,8 @@ namespace SIL.FieldWorks.Common.RootSites
 			Keyboard.Controller.ActivateDefaultKeyboard();
 		}
 
-		/// <summary>
-		/// Allow a change to BestStyleName not to cause all the work in the next function.
-		/// </summary>
-		public bool SuppressNextBestStyleNameChanged
-		{
-			get { return m_fSuppressNextBestStyleNameChanged; }
-			set { m_fSuppressNextBestStyleNameChanged = value; }
-		}
 		internal void BestStyleNameChanged()
 		{
-			if (m_fSuppressNextBestStyleNameChanged)
-			{
-				m_fSuppressNextBestStyleNameChanged = false;
-				return;
-			}
 			// For now, we are only handling SimpleRootSite cases, e.g. for the Data Tree.
 			// If we need this in print layout, consider adding the mediator to the Callbacks
 			// interface.

@@ -24,6 +24,11 @@ A region is not "migrated" until it passes the symbol audit, parity gates,
 and has zero runtime dependency on native Views/DataTree infrastructure —
 otherwise you have only wrapped the old system.
 
+How converted UI should look and behave is set by the UX guide,
+`Docs/ux/README.md`; this skill covers how to build it. A decision that applies
+across views goes in the guide's decision register; a difference in one
+converted screen goes in that conversion's Jira issue.
+
 ## Established Architecture — Reuse, Don't Reinvent
 
 Past migrations already decided the paradigms below. Before writing any new

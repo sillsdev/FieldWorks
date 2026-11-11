@@ -4,11 +4,11 @@
 
 using System;
 using System.Runtime.CompilerServices;
-using System.Collections.Generic;
 using System.Windows.Forms;
 using System.Diagnostics;
 
 using SIL.LCModel;
+using SIL.FieldWorks.Common.DetailRules;
 using SIL.FieldWorks.Common.Framework.DetailControls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.LexText.Controls;
@@ -44,17 +44,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			{
 				Debug.Assert(value != null);
 
-				int index = 0;
-				var lr = m_obj as ILexReference;
-				var item = lr.TargetsRS[0];
-				if (item == m_displayParent)
-					index = 1;
-#if WANTPORTMULTI
-				(lr as ILexReference).UpdateTargetTimestamps();
-				(co as ICmObject).UpdateTimestampForVirtualChange();
-#endif
-				// LT-13729: Remove old and then Insert new might cause the deletion of the lr, then the insert fails.
-				lr.TargetsRS.Replace(index, (index < lr.TargetsRS.Count) ? 1 : 0, new List<ICmObject>() { value });
+				LexicalRelationEditing.ReplacePairPartner((ILexReference)m_obj, m_displayParent, value);
 			}
 		}
 
@@ -73,56 +63,29 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// </summary>
 		protected override void HandleChooser()
 		{
-			ILexRefType lrt = (ILexRefType)m_obj.Owner;
-			LexRefTypeTags.MappingTypes type = (LexRefTypeTags.MappingTypes)lrt.MappingType;
-			bool useLinkDlg = false, sensesOnly = false, allowSenses = false;
-			switch (type)
-			{
-				case LexRefTypeTags.MappingTypes.kmtSensePair:
-				case LexRefTypeTags.MappingTypes.kmtSenseAsymmetricPair: // Sense pair with different Forward/Reverse names
-					useLinkDlg = true; sensesOnly = true;
-					break;
-				case LexRefTypeTags.MappingTypes.kmtEntryPair:
-				case LexRefTypeTags.MappingTypes.kmtEntryAsymmetricPair: // Entry pair with different Forward/Reverse names
-					break;
-				case LexRefTypeTags.MappingTypes.kmtEntryOrSensePair:
-				case LexRefTypeTags.MappingTypes.kmtEntryOrSenseAsymmetricPair: // Entry or sense pair with different Forward/Reverse
-					useLinkDlg = true; allowSenses = true;
-					break;
-			}
 			//on creating Pair Lexical Relation have an Add button and Add in the title bar; otherwise Replacing
-			string sTitle, btnText;
-			if (Target == null)
-			{
-				sTitle = String.Format(LexEdStrings.ksIdentifyXEntry, lrt.Name.BestAnalysisAlternative.Text);
-				btnText = LexEdStrings.ks_Add;
-			}
-			else
-			{
-				sTitle = String.Format(LexEdStrings.ksReplaceXEntry);
-				btnText = LexEdStrings.ks_Replace;
-			}
+			var chooser = LexicalRelationEditing.Chooser((ILexReference)m_obj, m_displayParent);
 
 			// New-UI gate (mirrors the EntrySequence gate): the LinkEntryOrSense relations use the Avalonia
 			// Choose-Lexical-Entry-or-Sense dialog in New mode; the entry-only entry pairs keep their EntryGoDlg.
 			var uiMode = m_propertyTable.GetStringProperty("UIMode", null);
-			if (useLinkDlg && UIModeGates.ShouldUseAvaloniaUI(uiMode))
+			if (chooser.UseLinkDialog && UIModeGates.ShouldUseAvaloniaUI(uiMode))
 			{
-				ShowAvaloniaLinkDialog(allowSenses, sensesOnly, sTitle, btnText);
+				ShowAvaloniaLinkDialog(chooser.AllowSenses, chooser.SensesOnly, chooser.Title, chooser.ButtonText);
 				return;
 			}
 
 			BaseGoDlg dlg = null;
 			try
 			{
-				dlg = useLinkDlg ? (BaseGoDlg)new LinkEntryOrSenseDlg() : new EntryGoDlg();
-				if (useLinkDlg)
-					((LinkEntryOrSenseDlg)dlg).SelectSensesOnly = sensesOnly;
+				dlg = chooser.UseLinkDialog ? (BaseGoDlg)new LinkEntryOrSenseDlg() : new EntryGoDlg();
+				if (chooser.UseLinkDialog)
+					((LinkEntryOrSenseDlg)dlg).SelectSensesOnly = chooser.SensesOnly;
 				Debug.Assert(dlg != null);
-				var wp = new WindowParams { m_title = sTitle, m_btnText = btnText };
+				var wp = new WindowParams { m_title = chooser.Title, m_btnText = chooser.ButtonText };
 
 				dlg.SetDlgInfo(m_cache, wp, m_mediator, m_propertyTable);
-				dlg.SetHelpTopic("khtpChooseLexicalRelationAdd");
+				dlg.SetHelpTopic(LexicalRelationEditing.ChooserHelpTopic);
 				if (dlg.ShowDialog(FindForm()) == DialogResult.OK)
 				{
 					if (dlg.SelectedObject != null)
@@ -146,13 +109,13 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			string undoStr, redoStr;
 			if (Target == null)
 			{
-				undoStr = LexEdStrings.ksUndoAddRef;
-				redoStr = LexEdStrings.ksRedoAddRef;
+				undoStr = LexicalRelationEditing.UndoAddReference;
+				redoStr = LexicalRelationEditing.RedoAddReference;
 			}
 			else
 			{
-				undoStr = LexEdStrings.ksUndoReplaceRef;
-				redoStr = LexEdStrings.ksRedoReplaceRef;
+				undoStr = LexicalRelationEditing.UndoReplaceReference;
+				redoStr = LexicalRelationEditing.RedoReplaceReference;
 			}
 			AddItem(obj, undoStr, redoStr);
 		}

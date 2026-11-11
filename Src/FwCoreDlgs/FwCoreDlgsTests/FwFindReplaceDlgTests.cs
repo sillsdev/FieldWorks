@@ -993,6 +993,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
+		[Category("DesktopRequired")]
 		public void ApplyWS_ToSelectedString()
 		{
 			SelectionHelper helper = SelectionHelper.Create(m_vwRootsite);

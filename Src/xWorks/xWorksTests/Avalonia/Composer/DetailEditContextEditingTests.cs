@@ -451,8 +451,10 @@ namespace SIL.FieldWorks.XWorks
 				"each sense's gloss binds its own object");
 			Assert.That(glossFields.All(f => f.Indent > 0), Is.True, "sense fields are indented");
 
-			Assert.That(fields.Any(f => f.Kind == DetailFieldKind.Header && f.Field == "Senses"), Is.True,
-				"the senses sequence renders a section header");
+			var senseHeaderObjects = fields.Where(f => f.Kind == DetailFieldKind.Header && f.Field == "Senses")
+				.Select(f => f.ObjectHvo).ToList();
+			Assert.That(senseHeaderObjects, Is.EquivalentTo(m_entry.SensesOS.Select(s => s.Hvo)),
+				"each sense renders its own header, with no section header over them");
 		}
 
 		[Test]
@@ -1329,27 +1331,55 @@ namespace SIL.FieldWorks.XWorks
 				"the closed enum combo over the same field stays out of scope");
 		}
 
+		// LT-22689: as in the WinForms DataTree, no "Senses" row sits over an entry's senses.
+		// Each sense's header sits at the entry's own level, and a subsense's indents under it.
 		[Test]
-		public void Compose_SenseHeaders_UseHierarchicalNumbering_WithGlossSummary()
+		public void Compose_Senses_HaveNoBanner_AndSubsensesIndentUnderTheirSense()
 		{
+			ILexSense subsense = null;
 			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
 			{
-				var sub = Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
+				subsense = Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
+				m_entry.SensesOS[0].SensesOS.Add(subsense);
+				subsense.Gloss.set_String(Cache.DefaultAnalWs, TsStringUtils.MakeString("hut", Cache.DefaultAnalWs));
+			});
+
+			var senseHeaders = DetailComposer.Compose(m_entry, Cache).Model.Fields
+				.Where(f => f.Kind == DetailFieldKind.Header && f.Field == "Senses").ToList();
+
+			Assert.That(senseHeaders.Any(h => h.ObjectHvo == m_entry.Hvo), Is.False,
+				"no section header over the entry's senses");
+			var senseHeader = senseHeaders.Single(h => h.ObjectHvo == m_entry.SensesOS[0].Hvo);
+			var subsenseHeader = senseHeaders.Single(h => h.ObjectHvo == subsense.Hvo);
+			Assert.That(senseHeader.Indent, Is.EqualTo(0), "a sense header sits at the entry's own level");
+			Assert.That(subsenseHeader.Indent, Is.GreaterThan(senseHeader.Indent),
+				"a subsense header indents under its sense");
+		}
+
+		// LT-22689: sense headers read "Sense 1" and "Sense 1.1" while expanded, and add the
+		// gloss and grammatical info while collapsed, as the WinForms sense summary does.
+		[Test]
+		public void Compose_SenseHeaders_UseHierarchicalNumbers_AndTheGlossWhileCollapsed()
+		{
+			ILexSense sub = null;
+			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
+			{
+				sub = Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
 				m_entry.SensesOS[0].SensesOS.Add(sub);
 				sub.Gloss.set_String(Cache.DefaultAnalWs, TsStringUtils.MakeString("subgloss", Cache.DefaultAnalWs));
 			});
 
-			var fields = DetailComposer.Compose(m_entry, Cache).Model.Fields;
-			var headers = fields.Where(f => f.Kind == DetailFieldKind.Header).Select(f => f.Label).ToList();
+			var senseHeaders = DetailComposer.Compose(m_entry, Cache).Model.Fields
+				.Where(f => f.Kind == DetailFieldKind.Header && f.Field == "Senses").ToList();
+			var top = senseHeaders.Single(h => h.ObjectHvo == m_entry.SensesOS[0].Hvo);
+			var nested = senseHeaders.Single(h => h.ObjectHvo == sub.Hvo);
+			var gloss = m_entry.SensesOS[0].Gloss.get_String(Cache.DefaultAnalWs).Text;
 
-			Assert.That(headers.Any(h => h.StartsWith("1 ") || h.StartsWith("1 ") || h.StartsWith("1 ", System.StringComparison.Ordinal) || h.StartsWith("1")), Is.True,
-				"top senses are numbered: " + string.Join(" | ", headers));
-			Assert.That(headers.Any(h => h.StartsWith("1.1")), Is.True,
-				"subsenses use hierarchical numbers (1.1): " + string.Join(" | ", headers));
-			Assert.That(headers.Any(h => h.Contains("gloss 1")), Is.True,
-				"sense headers carry the gloss summary like legacy sense lines");
-			Assert.That(fields.First(f => f.Label != null && f.Label.StartsWith("1.1")).IsCollapsible, Is.True,
-				"sense items are collapsible");
+			Assert.That(top.Label, Is.EqualTo("Sense 1"));
+			Assert.That(nested.Label, Is.EqualTo("Sense 1.1"));
+			Assert.That(top.CollapsedLabel, Does.StartWith("Sense 1 - " + gloss + " - "));
+			Assert.That(nested.CollapsedLabel, Does.StartWith("Sense 1.1 - subgloss - "));
+			Assert.That(nested.IsCollapsible, Is.True);
 		}
 
 		[Test]
@@ -1532,27 +1562,19 @@ namespace SIL.FieldWorks.XWorks
 				"the new translation is typed Free Translation, like legacy");
 		}
 
-		// A ghost prompt whose layout authors NO ghost field (and no init method)
-		// must compose NON-editable -- an editable one would call MakeNewObject on typing and
-		// silently DISCARD the typed text (nothing exists to receive the string). The shipped
-		// AlternateForms seq (LexEntryParts.xml:119, no ghost= attribute) is exactly that case.
+		// LT-22844: AlternateForms names no ghost field and can create nothing, so it has no
+		// prompt row; SubSenses names none either but types a gloss into a new sense.
 		[Test]
-		public void Compose_GhostWithoutGhostField_IsNotEditable_SoTypingCannotCreateAndDiscard()
+		public void Compose_AnEmptyListWithNoGhostField_HasNoPromptRow_UnlessTypingCanCreate()
 		{
 			var composed = DetailComposer.Compose(m_entry, Cache);
-			var ghost = composed.Model.Fields.FirstOrDefault(f =>
-				f.Field == "AlternateForms" && f.StableId.EndsWith("/ghost"));
-			Assert.That(ghost, Is.Not.Null,
-				"the empty always-visible alternate-forms sequence still renders its prompt row");
-			Assert.That(ghost.IsEditable, Is.False,
-				"no ghost field anywhere to route the text: the prompt must not accept typing");
 
-			var before = m_entry.AlternateFormsOS.Count;
-			Assert.That(composed.EditContext.TrySetText(ghost, ghost.Values[0].WsAbbrev, "lost"),
-				Is.False, "no setter is registered for the non-editable prompt");
-			Assert.That(composed.EditContext.IsOpen, Is.False, "nothing staged, no session opened");
-			Assert.That(m_entry.AlternateFormsOS.Count, Is.EqualTo(before),
-				"no bare object was created behind the user's back");
+			Assert.That(m_entry.AlternateFormsOS, Is.Empty, "precondition: no allomorphs");
+			Assert.That(composed.Model.Fields.Any(f =>
+				f.Field == "AlternateForms" && f.StableId.EndsWith(DetailField.GhostStableIdSuffix)), Is.False,
+				"no prompt row that could only discard what is typed");
+			var subsense = SubsenseGhost(composed, m_entry.SensesOS[0]);
+			Assert.That(subsense?.IsEditable, Is.True, "the subsense prompt still creates a sense");
 		}
 
 		private static DetailField ExampleGhost(ComposedDetail composed, ILexSense sense)

@@ -176,16 +176,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 				using (var userKey = RegistryHelper.CompanyKey)
 				using (var machineKey = RegistryHelper.CompanyKeyLocalMachine)
 				{
-					string dir = null;
-					if (userKey != null && userKey.GetValue(icuDirValueName) != null)
-					{
-						dir = userKey.GetValue(icuDirValueName, dir) as string;
-					}
-					else if (machineKey != null && machineKey.GetValue(icuDirValueName) != null)
-					{
-
-						dir = machineKey.GetValue(icuDirValueName, dir) as string;
-					}
+					var dir = ChooseIcuDataDir(userKey?.GetValue(icuDirValueName) as string,
+						machineKey?.GetValue(icuDirValueName) as string);
 					if (!string.IsNullOrEmpty(dir))
 						Environment.SetEnvironmentVariable("ICU_DATA", dir);
 				}
@@ -210,6 +202,15 @@ namespace SIL.FieldWorks.Common.FwUtils
 			}
 
 			CustomIcu.InitIcuDataDir();
+		}
+
+		internal static string ChooseIcuDataDir(string userValue, string machineValue)
+		{
+			if (!string.IsNullOrEmpty(userValue) && Directory.Exists(userValue))
+				return userValue;
+			if (!string.IsNullOrEmpty(machineValue) && Directory.Exists(machineValue))
+				return machineValue;
+			return null;
 		}
 
 		private static string TryGetDevIcuDataDir()

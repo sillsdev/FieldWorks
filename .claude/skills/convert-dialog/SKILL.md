@@ -210,7 +210,9 @@ create-integration-test skill consumes this file verbatim.
    in the migration skill).
 3. From the analysis document's layout section, propose an Avalonia layout
    that AT MINIMUM replicates the WinForms capability; exceed it where the
-   effort is low.
+   effort is low. Check it against the Universal and Dialogs rules in
+   `Docs/ux/README.md` (buttons, window behavior, help, input checking,
+   choosers); the guide's rule wins over a WinForms habit it replaces.
 4. For items with no exemplar: catalog the item's purpose and capabilities,
    then look for an adequate replacement in Avalonia packages -- both those
    already imported and others not yet used (an un-imported package is a

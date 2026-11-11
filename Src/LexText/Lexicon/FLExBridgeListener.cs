@@ -28,7 +28,6 @@ using SIL.Lift;
 using SIL.Lift.Migration;
 using SIL.Lift.Parsing;
 using SIL.IO;
-using SIL.PlatformUtilities;
 using XCore;
 
 namespace SIL.FieldWorks.XWorks.LexEd
@@ -107,6 +106,10 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 		#endregion
 
+		/// <summary>Whether a Send/Receive or LIFT transfer is showing its progress
+		/// dialog.</summary>
+		internal bool IsTransferInProgress => _progressDlg != null;
+
 		#region XCore message handlers
 
 		#region FLExLiftBridge Toolbar messages
@@ -148,21 +151,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// <returns></returns>
 		public bool OnFLExLiftBridge(object commandObject)
 		{
-			if (Platform.IsMono)
-			{
-				// This is a horrible workaround for a nasty bug in Mono. The toolbar button captures the mouse,
-				// and does not release it before calling this event handler. If we proceed to run the bridge,
-				// which freezes our UI thread until FlexBridge returns, the mouse stays captured...and the whole
-				// system UI is frozen, for all applications.
-				_mediator.IdleQueue.Add(IdleQueuePriority.High,
-					obj =>
-						{
-							RunFLExLiftBridge(commandObject);
-							return true; // task is complete, don't try again, remove from idle queue.
-						});
-			}
-			else
-				RunFLExLiftBridge(commandObject); // on windows we can safely do it right away.
+			RunFLExLiftBridge(commandObject);
 			return true; // we handled it
 		}
 
@@ -521,20 +510,18 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 		private string GetFullProjectFileName()
 		{
-			return Path.Combine(Cache.ProjectId.ProjectFolder, Cache.ProjectId.Name + LcmFileHelper.ksFwDataXmlFileExtension);
+			return ProjectLifecycle.GetFullProjectFileName(Cache);
 		}
 
 		private void SaveAllDataToDisk()
 		{
-			//Give all forms the opportunity to save any uncommitted data
-			//(important for analysis sandboxes)
-			var activeForm = _propertyTable.GetValue<Form>("window");
-			if (activeForm != null)
-			{
-				activeForm.ValidateChildren(ValidationConstraints.Enabled);
-			}
-			//Commit all the data in the cache and save to disk
+			ValidatePendingEditorData();
 			ProjectLockingService.UnlockCurrentProject(Cache);
+		}
+
+		private void ValidatePendingEditorData()
+		{
+			ProjectLifecycle.ValidatePendingEditorData(_propertyTable);
 		}
 
 		#endregion LiftBridge S/R messages
@@ -546,16 +533,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// </summary>
 		public bool OnDisplayCheckForFlexBridgeUpdates(object commandObject, ref UIItemDisplayProperties display)
 		{
-			if (Platform.IsUnix)
-			{
-				display.Visible = false;
-				display.Enabled = false;
-			}
-			else
-			{
-				CheckForFlexBridgeInstalledAndSetMenuItemProperties(display);
-			}
-
+			CheckForFlexBridgeInstalledAndSetMenuItemProperties(display);
 			return true; // We dealt with it.
 		}
 
@@ -875,7 +853,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// </summary>
 		private void StopParser()
 		{
-			Publisher.Publish(new PublisherParameterObject(EventConstants.StopParser, null, _propertyTable.GetWindow()));
+			ProjectLifecycle.StopParser(_propertyTable);
 		}
 
 		/// <summary>
@@ -1407,12 +1385,6 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			ObtainProjectMethod.ReportDuplicateBridge();
 		}
 
-		// currently duplicated in MorphologyListener, to avoid an assembly dependency.
-		private static bool IsVernacularSpellingEnabled(PropertyTable propertyTable)
-		{
-			return propertyTable.GetBoolProperty("UseVernSpellingDictionary", false);
-		}
-
 		private static bool CheckForExistingFileName(string projectFolder, string revisedFileName)
 		{
 			if (File.Exists(Path.Combine(projectFolder, revisedFileName + LcmFileHelper.ksFwDataXmlFileExtension)))
@@ -1431,14 +1403,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 		private static FwXWindow RefreshCacheWindowAndAll(LexTextApp app, string fullProjectFileName)
 		{
-			var manager = app.FwManager;
-			var appArgs = new FwAppArgs(fullProjectFileName);
-			var newAppWindow =
-				(FwXWindow)manager.ReopenProject(manager.Cache.ProjectId.Name, appArgs).ActiveMainWindow;
-			if (IsVernacularSpellingEnabled(newAppWindow.PropTable))
-				WfiWordformServices.ConformSpellingDictToWordforms(newAppWindow.Cache);
-			newAppWindow.RefreshDisplay();
-			return newAppWindow;
+			return ProjectLifecycle.RefreshCacheWindowAndAll(app, fullProjectFileName);
 		}
 
 		private static bool DetectLiftConflicts(string path, Dictionary<string, long> savedState)

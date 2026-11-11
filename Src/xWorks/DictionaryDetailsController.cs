@@ -896,7 +896,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			// If the combo is not enabled, don't allow the Styles dialog to change it (pass null instead). FixStyles will ensure a refresh.
 			FwStylesDlg.RunStylesDialogForCombo(combo.Enabled ? combo : null, FixStyles(combo.Enabled),
-				defaultStyle, m_styleSheet, 0, 0, m_cache, View.TopLevelControl, m_propertyTable.GetValue<IApp>("App"),
+				defaultStyle, m_styleSheet, 0, m_cache, View.TopLevelControl, m_propertyTable.GetValue<IApp>("App"),
 				m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), new FlexStylesXmlAccessor(m_cache.LanguageProject.LexDbOA).SetPropsToFactorySettings);
 		}
 

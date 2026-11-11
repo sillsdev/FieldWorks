@@ -26,6 +26,11 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 		// The root object of the detail last shown, or 0 when none was given.
 		private int _shownRootHvo;
 
+		private readonly DetailCurrentRow _currentRow = new DetailCurrentRow();
+
+		// The last selection a structured-text paragraph of the shown record reported.
+		private DetailTextSelectionSnapshot _textSelection;
+
 		/// <inheritdoc />
 		public override bool IsDetailInteractionInFlight
 			=> CurrentContent is DataTree tree
@@ -44,7 +49,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 		/// object as the previous show, any collapsed section hiding an object that was not in
 		/// the previous view is expanded, so an object inserted into a collapsed section is
 		/// shown, except a section the user collapsed after the previous view's own edit. A
-		/// <paramref name="rootHvo"/> of 0 never matches.
+		/// <paramref name="rootHvo"/> of 0 never matches. <paramref name="hotlinkItems"/>
+		/// supplies a section header's hotlink commands; without it no hotlinks are shown.
 		/// </summary>
 		public void ShowDetail(DetailModel detail, IDetailEditContext editContext = null,
 			Action<string> writingSystemFocused = null,
@@ -55,7 +61,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 			IFwClipboard clipboard = null,
 			Func<double?> getLabelColumnWidth = null,
 			Action<double> labelColumnWidthChanged = null,
-			int rootHvo = 0)
+			int rootHvo = 0,
+			Func<DetailField, IReadOnlyList<DetailMenuItem>> hotlinkItems = null)
 		{
 			if (detail == null) throw new ArgumentNullException(nameof(detail));
 			// Splitter position persists per-HOST across re-shows: this long-lived host owns
@@ -71,12 +78,20 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 				{
 					_rememberedLabelColumnWidth = w;
 					labelColumnWidthChanged?.Invoke(w);
-				});
+				},
+				hotlinkItems);
 			view.EditCompleted += (s, e) => RaiseDetailEditCompleted();
 			view.InteractionCompleted += (s, e) => RaiseDetailInteractionCompleted();
+			view.RowFocused += _currentRow.Remember;
+			view.TextSelectionChanged += snapshot => _textSelection = snapshot;
 
 			if (rootHvo != 0 && rootHvo == _shownRootHvo && CurrentContent is DataTree previous)
 				view.RevealObjectsAddedSince(previous);
+			else
+			{
+				_currentRow.Forget();
+				_textSelection = null;
+			}
 			_shownRootHvo = rootHvo;
 
 			// Continuity across the re-show, applied once the new view lays out. Focus leaves the
@@ -105,9 +120,36 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 		/// Asks the next re-show to give keyboard focus to the first row showing the object
 		/// with <paramref name="hvo"/>, for a gesture that replaced the focused row's object.
 		/// </summary>
-		public void FocusObjectOnNextShow(int hvo) => (CurrentContent as DataTree)?.RequestObjectFocusOnRebuild(hvo);
+		/// <param name="fieldName">The field whose row of that object to focus first; null
+		/// for none.</param>
+		public void FocusObjectOnNextShow(int hvo, string fieldName = null)
+			=> (CurrentContent as DataTree)?.RequestObjectFocusOnRebuild(hvo, fieldName);
 
 		/// <summary>The detail model shown now; null before the first show.</summary>
 		public DetailModel ShownDetail => (CurrentContent as DataTree)?.Model;
+
+		/// <summary>
+		/// The row of the shown record that last had keyboard focus, as the shown detail has
+		/// it; null when no row of the record has had focus since it was shown, or the row is
+		/// gone.
+		/// </summary>
+		public DetailField CurrentRow => _currentRow.ResolveIn(ShownDetail);
+
+		/// <summary>
+		/// The selection the current row's structured-text editor last reported while it had
+		/// focus; null when the current row is another row or has reported none.
+		/// </summary>
+		public DetailTextSelectionSnapshot CurrentTextSelection
+		{
+			get
+			{
+				var selection = _textSelection;
+				var row = CurrentRow;
+				return selection != null && row != null
+					&& string.Equals(selection.Field.RowAutomationId, row.RowAutomationId, StringComparison.Ordinal)
+					? selection
+					: null;
+			}
+		}
 	}
 }

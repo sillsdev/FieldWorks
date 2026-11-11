@@ -135,16 +135,6 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Gets a value indicating whether this instance is a user-modified style.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public bool IsUserModifiedStyle
-		{
-			get { return m_styleInfo.IsModified; }
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
 		/// Gets a value indicating the list item's style name.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------

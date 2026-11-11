@@ -112,8 +112,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		private readonly TextBlock _dropdownLabel;
 		private readonly Flyout _dropdownFlyout;
 		private bool _dropdownOpen;
-		// The committed selection shown collapsed (dropdown mode); tracks OptionCommitted and external
-		// SelectedIndex moves (the VM's derive-on-type reselection) so the closed label stays in sync.
+		// The committed selection shown collapsed (dropdown mode); tracks OptionCommitted and,
+		// while closed, external SelectedIndex moves (the VM's derive-on-type reselection).
 		private DetailChoiceOption _selectedOption;
 
 		public FwOptionChooser(IReadOnlyList<DetailChoiceOption> options,
@@ -156,6 +156,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				BorderThickness = new Thickness(0),
 				Watermark = FwAvaloniaStrings.SearchPrompt
 			};
+			// What is typed here matches the option names, so it shows at their size.
+			FwSurfaceStyles.MarkValueText(_filterBox);
 			AutomationProperties.SetAutomationId(_filterBox, automationId + ".Search");
 			AutomationProperties.SetName(_filterBox, FwAvaloniaStrings.SearchPrompt);
 			_filterBox.TextChanged += (s, e) => ApplyFilter();
@@ -226,6 +228,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 					VerticalAlignment = VerticalAlignment.Center,
 					Foreground = FwAvaloniaDensity.PickerForegroundBrush
 				};
+				FwSurfaceStyles.MarkValueText(_dropdownLabel);
 				var chevron = new TextBlock
 				{
 					Text = "▾", // ▾ collapsed-dropdown affordance
@@ -384,6 +387,10 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			_dropdownOpen = false;
 			if (_dropdownButton != null && _dropdownButton.IsChecked == true)
 				_dropdownButton.IsChecked = false;
+			// Closing without a pick (Escape, click-away) drops the highlight back to the
+			// committed row.
+			if (_selectedOption != null && !ReferenceEquals(_list.SelectedItem, _selectedOption))
+				_list.SelectedItem = _selectedOption;
 		}
 
 		private void CloseDropdown()
@@ -394,10 +401,12 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				_dropdownButton.IsChecked = false;
 		}
 
-		// Mirror the list's current selection into the collapsed label (called on external SelectedIndex
-		// moves, e.g. the VM's initial select and derive-on-type reselection).
+		// Mirror an external SelectedIndex move (the VM's initial select, derive-on-type
+		// reselection) into the collapsed label. While open, a move is only a highlight.
 		private void SyncDropdownLabel()
 		{
+			if (_dropdownOpen)
+				return;
 			if (_list.SelectedItem is DetailChoiceOption option)
 				_selectedOption = option;
 			UpdateDropdownLabel();
@@ -852,10 +861,12 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			{
 				case Key.Down:
 					MoveHighlight(1);
+					CommitClosedDropdownMove(before);
 					e.Handled = true;
 					break;
 				case Key.Up:
 					MoveHighlight(-1);
+					CommitClosedDropdownMove(before);
 					e.Handled = true;
 					break;
 				case Key.Enter:
@@ -872,6 +883,14 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 
 			Log($"KeyDown key={e.Key} source={e.Source?.GetType().Name} focused={focused} " +
 				$"handled={e.Handled} selIndex {before}->{_list.SelectedIndex}");
+		}
+
+		// A closed dropdown commits an arrow move at once, like a WinForms drop-down list. Open,
+		// a move is only a highlight until Enter or a click.
+		private void CommitClosedDropdownMove(int indexBefore)
+		{
+			if (_dropdown && !_dropdownOpen && _list.SelectedIndex != indexBefore)
+				CommitHighlighted();
 		}
 
 		private void MoveHighlight(int delta)
@@ -932,6 +951,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 						VerticalAlignment = VerticalAlignment.Center,
 						Foreground = FwAvaloniaDensity.HotlinkBrush
 					};
+					FwSurfaceStyles.MarkValueText(create);
 					AutomationProperties.SetAutomationId(create, _automationId + ".Create");
 					AutomationProperties.SetName(create, option.Name);
 					return create;
@@ -943,6 +963,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 					Foreground = IsOptionAvailable(option) ? FwAvaloniaDensity.PickerForegroundBrush : FwAvaloniaDensity.DisabledOptionBrush,
 					Opacity = IsOptionAvailable(option) ? 1.0 : 0.55
 				};
+				FwSurfaceStyles.MarkValueText(label);
 				if (!_multiSelect)
 				{
 					label.Margin = new Thickness(option.Depth * 14, 0, 0, 0);

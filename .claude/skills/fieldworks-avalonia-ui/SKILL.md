@@ -19,6 +19,10 @@ description: "Build, review, or fix Avalonia UI code in FieldWorks: XAML, MVVM, 
 
 ## Start From the Established Patterns
 
+The user-visible rules (labels, menus, keyboard, theme values, dialog buttons,
+browse and detail behavior) are in the UX guide, `Docs/ux/README.md`; follow
+it, and record any new view-wide UX decision in its register.
+
 Do not design controls or seams from scratch. The migration hub skill
 (`fieldworks-winforms-to-avalonia-migration`) documents the decided
 architecture; its

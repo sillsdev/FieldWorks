@@ -15,7 +15,7 @@ namespace SIL.FieldWorks.Common.DetailRules
 	/// <summary>
 	/// The Insert command of a detail row (message DataTreeInsert): whether a field can take
 	/// a new object now, which object and field the row's command inserts into, and where;
-	/// which allomorph inserts an entry offers, and which entry a variant insert extends.
+	/// whether an entry offers Insert Affix Process, and which entry a variant insert extends.
 	/// Creation stays with <c>CmObjectUi.CreateNewUiObject</c> and the variant dialog.
 	/// </summary>
 	public static class DetailObjectInsertion
@@ -80,6 +80,27 @@ namespace SIL.FieldWorks.Common.DetailRules
 			if (CanInsertInto(root, fieldName, out index))
 				return true;
 			return rowObject != root && CanInsertInto(rowObject, fieldName, out index);
+		}
+
+		/// <summary>The id of the Insert menu's Insert Subsense command.</summary>
+		public const string InsertSubsenseCommandId = "CmdInsertSubsense";
+
+		/// <summary>
+		/// The display rule of the Insert command <paramref name="commandId"/>: as
+		/// <see cref="CanInsert(ICmObject, ICmObject, string, out int)"/>, except that Insert
+		/// Subsense on a row with an object is enabled only when that object is itself a sense.
+		/// </summary>
+		/// <param name="index">The end of the vector that answered; -1 otherwise.</param>
+		public static bool CanInsert(ICmObject root, ICmObject rowObject, string commandId, string fieldName,
+			out int index)
+		{
+			if (commandId == InsertSubsenseCommandId && fieldName == "Senses" && rowObject != null
+				&& rowObject.IsValidObject)
+			{
+				index = -1;
+				return rowObject.ClassID == LexSenseTags.kClassId;
+			}
+			return CanInsert(root, rowObject, fieldName, out index);
 		}
 
 		/// <summary>
@@ -156,9 +177,8 @@ namespace SIL.FieldWorks.Common.DetailRules
 		}
 
 		/// <summary>
-		/// Whether an entry offers an allomorph Insert command, chosen by the end of its id:
-		/// Insert Affix Process only on an affix entry; Insert Stem or Affix Allomorph while the
-		/// entry has no allomorph or its first is of that kind. It offers any other command.
+		/// Whether an entry offers an Insert command: Insert Affix Process, chosen by the end
+		/// of its id, only on an affix entry; any other command on any valid entry.
 		/// </summary>
 		public static bool IsOfferedOnEntry(ILexEntry entry, string commandId)
 		{
@@ -166,12 +186,6 @@ namespace SIL.FieldWorks.Common.DetailRules
 				return false;
 			if (commandId.EndsWith("AffixProcess", StringComparison.Ordinal))
 				return entry.PrimaryMorphType != null && entry.PrimaryMorphType.IsAffixType;
-			if (entry.AlternateFormsOS.Count == 0)
-				return true;
-			if (commandId.EndsWith("AffixAllomorph", StringComparison.Ordinal))
-				return entry.AlternateFormsOS[0] is IMoAffixAllomorph;
-			if (commandId.EndsWith("StemAllomorph", StringComparison.Ordinal))
-				return entry.AlternateFormsOS[0] is IMoStemAllomorph;
 			return true;
 		}
 

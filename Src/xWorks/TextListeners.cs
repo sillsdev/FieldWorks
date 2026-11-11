@@ -152,7 +152,7 @@ namespace SIL.FieldWorks.XWorks
 			//don't know just what good having this default is, but it's at least safer
 			m_propertyTable.SetProperty("WritingSystemHvo",
 				cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle.ToString(),
-				true);
+				false);
 			m_propertyTable.SetPropertyPersistence("WritingSystemHvo", false);
 
 			Subscriber.Subscribe(EventConstants.WritingSystemUnderCursorChanged,

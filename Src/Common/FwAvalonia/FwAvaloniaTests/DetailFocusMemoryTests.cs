@@ -8,6 +8,7 @@ using System.Linq;
 using Avalonia.Automation;
 using Avalonia.Controls;
 using Avalonia.Headless.NUnit;
+using Avalonia.Input;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
 using NUnit.Framework;
@@ -135,8 +136,37 @@ namespace FwAvaloniaTests
 				"the new form's editor takes focus");
 		}
 
-		// A gesture made from a header's hotlinks link added an object: the link survives the
-		// re-show and is remembered, but the object asked for takes focus over it.
+		// A gesture replaced an object whose row sits far from where the user had scrolled (a
+		// merge into the lexeme form from an allomorph near the bottom): the focused row shows
+		// instead of the remembered offset.
+		[AvaloniaTest]
+		public void RequestedObjectFocus_ScrollsToTheObjectsRow_InsteadOfKeepingTheOffset()
+		{
+			var first = NewLongViewOfForm(8);
+			var window = new Window { Content = first, Width = 420, Height = 200 };
+			window.Show();
+			Dispatcher.UIThread.RunJobs();
+			FindScroller(first).Offset = new Avalonia.Vector(0, 400);
+			Dispatcher.UIThread.RunJobs();
+			Assert.That(FindScroller(first).Offset.Y, Is.EqualTo(400).Within(0.5), "precondition: scrolled well down");
+
+			first.RequestObjectFocusOnRebuild(9);
+			var memento = DetailFocusMemory.Capture(first);
+			var second = NewLongViewOfForm(9);
+			DetailFocusMemory.RestoreAfterLayout(second, memento);
+			window.Content = second;
+			Dispatcher.UIThread.RunJobs();
+			second.UpdateLayout();
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(FindEditor(second, "LexEntry/identity/#0@9.vern").IsFocused, Is.True, "the new form's editor takes focus");
+			// The editor, not the row, is brought into view: a few pixels of row padding stay
+			// above.
+			Assert.That(FindScroller(second).Offset.Y, Is.LessThan(10), "the view scrolled up to the editor's row");
+		}
+
+		// A gesture made from one of a header's hotlinks added an object: the object asked for
+		// takes focus over the remembered link.
 		[AvaloniaTest]
 		public void RequestedObjectFocus_WinsOverTheRememberedHotlinksLink()
 		{
@@ -144,14 +174,18 @@ namespace FwAvaloniaTests
 			var window = new Window { Content = first, Width = 420, Height = 200 };
 			window.Show();
 			Dispatcher.UIThread.RunJobs();
+			// Focus in the section shows its links.
+			first.GetVisualDescendants().OfType<Button>()
+				.Single(b => AutomationProperties.GetAutomationId(b) == "LexEntry/identity/senses").Focus();
+			Dispatcher.UIThread.RunJobs();
 			var link = first.GetVisualDescendants().OfType<Button>()
-				.Single(b => AutomationProperties.GetAutomationId(b) == "LexEntry/identity/senses.Hotlinks");
+				.Single(b => AutomationProperties.GetAutomationId(b) == "LexEntry/identity/senses.Hotlinks.0");
 			link.Focus();
 			Dispatcher.UIThread.RunJobs();
 
 			first.RequestObjectFocusOnRebuild(9);
 			var memento = DetailFocusMemory.Capture(first);
-			Assert.That(memento.AutomationId, Is.EqualTo("LexEntry/identity/senses.Hotlinks"), "precondition: the link had focus");
+			Assert.That(memento.AutomationId, Is.EqualTo("LexEntry/identity/senses.Hotlinks.0"), "precondition: the link had focus");
 
 			var second = NewViewOfForm(9, withHotlinks: true);
 			DetailFocusMemory.RestoreAfterLayout(second, memento);
@@ -160,6 +194,39 @@ namespace FwAvaloniaTests
 
 			Assert.That(FindEditor(second, "LexEntry/identity/#0@9.vern").IsFocused, Is.True,
 				"the new object's editor takes focus, not the surviving link");
+		}
+
+		// LT-22693: Shift+Tab out of an edited field onto a hotlink autosaves, and the re-show
+		// that follows asks for no object; the keyboard stays on the same link.
+		[AvaloniaTest]
+		public void ReshowWithNoRequest_KeepsFocusOnTheRememberedHotlink()
+		{
+			var first = NewViewOfForm(8, withHotlinks: true);
+			var window = new Window { Content = first, Width = 420, Height = 200 };
+			window.Show();
+			Dispatcher.UIThread.RunJobs();
+			first.GetVisualDescendants().OfType<Button>()
+				.Single(b => AutomationProperties.GetAutomationId(b) == "LexEntry/identity/senses").Focus();
+			Dispatcher.UIThread.RunJobs();
+			first.GetVisualDescendants().OfType<Button>()
+				.Single(b => AutomationProperties.GetAutomationId(b) == "LexEntry/identity/senses.Hotlinks.0")
+				.Focus(NavigationMethod.Tab);
+			Dispatcher.UIThread.RunJobs();
+			var memento = DetailFocusMemory.Capture(first);
+			Assert.That(memento.AutomationId, Is.EqualTo("LexEntry/identity/senses.Hotlinks.0"), "precondition: the link had focus");
+			Assert.That(memento.KeyboardFocusVisible, Is.True, "precondition: reached from the keyboard");
+
+			var second = NewViewOfForm(8, withHotlinks: true);
+			DetailFocusMemory.RestoreAfterLayout(second, memento);
+			window.Content = second;
+			Dispatcher.UIThread.RunJobs();
+
+			var focused = window.FocusManager?.GetFocusedElement() as Control;
+			Assert.That(focused == null ? null : AutomationProperties.GetAutomationId(focused),
+				Is.EqualTo("LexEntry/identity/senses.Hotlinks.0"),
+				"the new view shows the section's links again and focuses the same one");
+			Assert.That(focused.Classes.Contains(":focus-visible"), Is.True,
+				"the keyboard focus indicator comes back with it");
 		}
 
 		// An insert made from another row's menu leaves that row's editor focused and alive;
@@ -207,6 +274,28 @@ namespace FwAvaloniaTests
 				"the Gloss editor of object 3, not its Senses header");
 		}
 
+		// A gesture added an object whose first row is not the one to fill in next: the row
+		// of the field the gesture names takes focus.
+		[AvaloniaTest]
+		public void RequestedObjectFocus_WithAField_FocusesThatFieldsRowOfTheObject()
+		{
+			var first = NewViewOfForm(3);
+			var window = new Window { Content = first, Width = 420, Height = 200 };
+			window.Show();
+			Dispatcher.UIThread.RunJobs();
+			first.RequestObjectFocusOnRebuild(3, "Gloss");
+			var memento = DetailFocusMemory.Capture(first);
+			Assert.That(memento.ObjectField, Is.EqualTo("Gloss"));
+
+			var second = NewViewOfForm(3);
+			DetailFocusMemory.RestoreAfterLayout(second, memento);
+			window.Content = second;
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(FindEditor(second, "LexEntry/identity/#1@3.vern").IsFocused, Is.True,
+				"the Gloss row, not the object's first row");
+		}
+
 		// A view whose Lexeme Form row shows the form with the given hvo, its row ids derived
 		// from the stable ids as the composer derives them; with hotlinks, a Senses header
 		// row with a hotlinks link comes first.
@@ -225,7 +314,25 @@ namespace FwAvaloniaTests
 			fields.Add(new DetailField("LexEntry/identity/#1@3", "Gloss", "Gloss", "analysis", DetailFieldKind.Text,
 				EditorClassification.Known, null, null, HostRouting.Product, values, null, null, objectHvo: 3));
 			return new DataTree(new DetailModel("LexEntry", "identity", fields, new List<ViewDiagnostic>()),
-				menuRequested: withHotlinks ? request => { } : (Action<DetailMenuRequest>)null);
+				menuRequested: withHotlinks ? request => { } : (Action<DetailMenuRequest>)null,
+				hotlinkItems: withHotlinks
+					? field => new[] { new DetailMenuItem("Insert Sense", execute: () => { }) }
+					: (Func<DetailField, IReadOnlyList<DetailMenuItem>>)null);
+		}
+
+		// A long view whose first row shows the form with the given hvo; the rest show object 3.
+		private static DataTree NewLongViewOfForm(int formHvo)
+		{
+			var values = new List<DetailWsValue> { new DetailWsValue("vern", "casa") };
+			var fields = new List<DetailField>();
+			fields.Add(new DetailField("LexEntry/identity/#0@" + formHvo, "Lexeme Form", "Form", "vernacular", DetailFieldKind.Text,
+				EditorClassification.Known, null, null, HostRouting.Product, values, null, null, objectHvo: formHvo));
+			for (var i = 1; i < 60; i++)
+			{
+				fields.Add(new DetailField("LexEntry/identity/#" + i + "@3", "Field " + i, "Gloss", "analysis", DetailFieldKind.Text,
+					EditorClassification.Known, null, null, HostRouting.Product, values, null, null, objectHvo: 3));
+			}
+			return new DataTree(new DetailModel("LexEntry", "identity", fields, new List<ViewDiagnostic>()));
 		}
 
 		private static DataTree NewLongView()

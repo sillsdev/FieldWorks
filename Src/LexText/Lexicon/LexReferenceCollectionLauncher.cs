@@ -7,6 +7,7 @@ using System.Runtime.CompilerServices;
 using System.Windows.Forms;
 using System.Diagnostics;
 
+using SIL.FieldWorks.Common.DetailRules;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.FieldWorks.LexText.Controls;
@@ -42,45 +43,28 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// </summary>
 		protected override void HandleChooser()
 		{
-			var lrt = (ILexRefType)m_obj.Owner;
-			var type = (LexRefTypeTags.MappingTypes)lrt.MappingType;
-			bool useLinkDlg = false, sensesOnly = false, allowSenses = false;
-			string sTitle = string.Empty;
-			switch (type)
-			{
-				case LexRefTypeTags.MappingTypes.kmtSenseCollection:
-					useLinkDlg = true; sensesOnly = true;
-					sTitle = String.Format(LexEdStrings.ksIdentifyXSense, lrt.Name.BestAnalysisAlternative.Text);
-					break;
-				case LexRefTypeTags.MappingTypes.kmtEntryCollection:
-					sTitle = String.Format(LexEdStrings.ksIdentifyXLexEntry, lrt.Name.BestAnalysisAlternative.Text);
-					break;
-				case LexRefTypeTags.MappingTypes.kmtEntryOrSenseCollection:
-					useLinkDlg = true; allowSenses = true;
-					sTitle = String.Format(LexEdStrings.ksIdentifyXLexEntryOrSense, lrt.Name.BestAnalysisAlternative.Text);
-					break;
-			}
+			var chooser = LexicalRelationEditing.Chooser((ILexReference)m_obj, m_displayParent);
 
 			// New-UI gate (mirrors the EntrySequence gate): in New mode the LinkEntryOrSense relations use the
 			// Avalonia Choose-Lexical-Entry-or-Sense dialog (sense / entry-or-sense per mapping type); the
 			// entry-only kmtEntryCollection keeps its EntryGoDlg (out of this slice's scope). Legacy keeps WinForms.
 			var uiMode = m_propertyTable.GetStringProperty("UIMode", null);
-			if (useLinkDlg && UIModeGates.ShouldUseAvaloniaUI(uiMode))
+			if (chooser.UseLinkDialog && UIModeGates.ShouldUseAvaloniaUI(uiMode))
 			{
-				ShowAvaloniaLinkDialog(allowSenses, sensesOnly, sTitle);
+				ShowAvaloniaLinkDialog(chooser.AllowSenses, chooser.SensesOnly, chooser.Title);
 				return;
 			}
 
 			BaseGoDlg dlg = null;
 			try
 			{
-				dlg = useLinkDlg ? (BaseGoDlg)new LinkEntryOrSenseDlg() : new EntryGoDlg();
-				if (useLinkDlg)
-					((LinkEntryOrSenseDlg)dlg).SelectSensesOnly = sensesOnly;
+				dlg = chooser.UseLinkDialog ? (BaseGoDlg)new LinkEntryOrSenseDlg() : new EntryGoDlg();
+				if (chooser.UseLinkDialog)
+					((LinkEntryOrSenseDlg)dlg).SelectSensesOnly = chooser.SensesOnly;
 				Debug.Assert(dlg != null);
-				var wp = new WindowParams { m_title = sTitle, m_btnText = LexEdStrings.ks_Add };
+				var wp = new WindowParams { m_title = chooser.Title, m_btnText = chooser.ButtonText };
 				dlg.SetDlgInfo(m_cache, wp, m_mediator, m_propertyTable);
-				dlg.SetHelpTopic("khtpChooseLexicalRelationAdd");
+				dlg.SetHelpTopic(LexicalRelationEditing.ChooserHelpTopic);
 				if (dlg.ShowDialog(FindForm()) == DialogResult.OK && dlg.SelectedObject != null)
 				{
 					if (!((ILexReference)m_obj).TargetsRS.Contains(dlg.SelectedObject))
@@ -96,7 +80,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 		public override void AddItem(ICmObject obj)
 		{
-			AddItem(obj, LexEdStrings.ksUndoAddRef, LexEdStrings.ksRedoAddRef);
+			AddItem(obj, LexicalRelationEditing.UndoAddReference, LexicalRelationEditing.RedoAddReference);
 		}
 
 		protected override VectorReferenceView CreateVectorReferenceView()
@@ -137,7 +121,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			var helpProvider = m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider", null);
 			var chosen = LcmLinkEntryOrSenseDialogLauncher.Show(m_cache, m_mediator, m_propertyTable, null,
 				FindForm(), "khtpChooseLexicalRelationAdd", helpProvider, allowSenses: allowSenses,
-				sensesOnly: sensesOnly, title: sTitle, okButtonText: LexEdStrings.ks_Add);
+				sensesOnly: sensesOnly, title: sTitle, okButtonText: LexicalRelationEditing.AddButtonText);
 			if (chosen != null && !((ILexReference)m_obj).TargetsRS.Contains(chosen))
 				AddItem(chosen);
 		}

@@ -26,12 +26,21 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 	{
 		private DetailSectionHeaderAutomationPeer _peer;
 		private bool _isExpanded;
+		private readonly string _label;
+		private readonly string _collapsedLabel;
+		private readonly TextBlock _text;
 
-		/// <summary>Creates a header showing <paramref name="label"/>.</summary>
-		public DetailSectionHeader(string label, bool isExpanded, bool canToggle)
+		/// <summary>
+		/// Creates a header showing <paramref name="label"/> while expanded and
+		/// <paramref name="collapsedLabel"/> while collapsed; a null
+		/// <paramref name="collapsedLabel"/> shows <paramref name="label"/> in both states.
+		/// </summary>
+		public DetailSectionHeader(string label, string collapsedLabel, bool isExpanded, bool canToggle)
 		{
 			CanToggle = canToggle;
 			_isExpanded = isExpanded;
+			_label = label ?? string.Empty;
+			_collapsedLabel = collapsedLabel ?? _label;
 			Box = new DetailExpanderBox(isExpanded) { Opacity = canToggle ? 1 : 0 };
 			Background = FwAvaloniaDensity.TransparentBrush;
 			BorderThickness = new Thickness(0);
@@ -39,15 +48,13 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			// A section header hugs the left edge.
 			HorizontalAlignment = HorizontalAlignment.Left;
 			HorizontalContentAlignment = HorizontalAlignment.Left;
-			var text = CreateLabel(label);
-			text.VerticalAlignment = VerticalAlignment.Center;
-			Content = new StackPanel
-			{
-				Orientation = Orientation.Horizontal,
-				Spacing = FwAvaloniaDensity.TreeBoxGap,
-				Children = { Box, text }
-			};
+			_text = CreateLabel(CurrentLabel);
+			AutomationProperties.SetName(this, CurrentLabel);
+			Content = new BoxAndLabelPanel { Children = { Box, _text } };
 		}
+
+		/// <summary>The text shown for the current state.</summary>
+		public string CurrentLabel => _isExpanded ? _label : _collapsedLabel;
 
 		/// <summary>
 		/// The section header label text, in the section header size, colour and bold weight,
@@ -58,8 +65,48 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			Text = label ?? string.Empty,
 			FontSize = FwAvaloniaDensity.SectionHeaderFontSize,
 			Foreground = FwAvaloniaDensity.SectionHeaderBrush,
-			FontWeight = FontWeight.Bold
+			FontWeight = FontWeight.Bold,
+			// Long lines wrap to the pane width, as the WinForms summary does.
+			TextWrapping = TextWrapping.Wrap
 		};
+
+		/// <summary>
+		/// Lays out the +/- box and the label side by side: the label wraps in the width left
+		/// after the box, and the box sits centred on the label's first line.
+		/// </summary>
+		private sealed class BoxAndLabelPanel : Panel
+		{
+			private Control BoxChild => Children[0];
+			private TextBlock LabelChild => (TextBlock)Children[1];
+
+			protected override Size MeasureOverride(Size availableSize)
+			{
+				BoxChild.Measure(Size.Infinity);
+				var boxWidth = BoxChild.DesiredSize.Width + FwAvaloniaDensity.TreeBoxGap;
+				LabelChild.Measure(new Size(Math.Max(0, availableSize.Width - boxWidth), availableSize.Height));
+				return new Size(boxWidth + LabelChild.DesiredSize.Width,
+					Math.Max(BoxChild.DesiredSize.Height, LabelChild.DesiredSize.Height));
+			}
+
+			protected override Size ArrangeOverride(Size finalSize)
+			{
+				var box = BoxChild.DesiredSize;
+				var boxWidth = box.Width + FwAvaloniaDensity.TreeBoxGap;
+				var label = LabelChild.DesiredSize;
+				var firstLine = FirstLineHeight(LabelChild, label.Height);
+				var lineTop = Math.Max(0, (box.Height - firstLine) / 2);
+				BoxChild.Arrange(new Rect(0, Math.Max(0, (firstLine - box.Height) / 2), box.Width, box.Height));
+				LabelChild.Arrange(new Rect(boxWidth, lineTop, Math.Max(0, finalSize.Width - boxWidth), label.Height));
+				return finalSize;
+			}
+
+			// The height of the label's first line, or the whole label when it has no lines yet.
+			private static double FirstLineHeight(TextBlock label, double whole)
+			{
+				var lines = label.TextLayout.TextLines;
+				return lines.Count > 0 ? lines[0].Height : whole;
+			}
+		}
 
 		/// <summary>Themed as a plain <see cref="Button"/>.</summary>
 		protected override Type StyleKeyOverride => typeof(Button);
@@ -68,8 +115,9 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		public bool CanToggle { get; }
 
 		/// <summary>
-		/// Whether the rows under the header are shown. Setting it redraws the +/- box and tells
-		/// assistive technology the state changed; it does not show or hide any rows.
+		/// Whether the rows under the header are shown. Setting it redraws the +/- box, shows
+		/// the label for the new state, and tells assistive technology the state changed; it
+		/// does not show or hide any rows.
 		/// </summary>
 		public bool IsExpanded
 		{
@@ -81,6 +129,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				var old = ExpandCollapseState;
 				_isExpanded = value;
 				Box.IsExpanded = value;
+				_text.Text = CurrentLabel;
+				AutomationProperties.SetName(this, CurrentLabel);
 				_peer?.RaiseExpandCollapseStateChanged(old, ExpandCollapseState);
 			}
 		}

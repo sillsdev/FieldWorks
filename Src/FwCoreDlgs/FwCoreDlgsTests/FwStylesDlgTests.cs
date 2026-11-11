@@ -30,7 +30,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			/// </summary>
 			/// --------------------------------------------------------------------------------
 			public DummyFwStylesDlg()
-				: base(null, null, new LcmStyleSheet(), false, false, "TestDefault", 0,
+				: base(null, null, new LcmStyleSheet(), false, false, "TestDefault",
 				MsrSysType.Cm, string.Empty, string.Empty, 0, null, null)
 			{
 				m_generalTab.RenamedStyles = m_renamedStyles;
@@ -39,11 +39,11 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			/// <inheritdoc/>
 			public DummyFwStylesDlg(IVwRootSite rootSite, LcmCache cache, LcmStyleSheet styleSheet,
 				bool defaultRightToLeft, bool showBiDiLabels, string normalStyleName,
-				int customUserLevel, MsrSysType userMeasurementType, string paraStyleName,
+				MsrSysType userMeasurementType, string paraStyleName,
 				string charStyleName, int hvoRootObject, IApp app,
 				IHelpTopicProvider helpTopicProvider)
 				: base(rootSite, cache, styleSheet, defaultRightToLeft, showBiDiLabels,
-					normalStyleName, customUserLevel, userMeasurementType, paraStyleName,
+					normalStyleName, userMeasurementType, paraStyleName,
 					charStyleName, hvoRootObject, app, helpTopicProvider)
 			{
 			}
@@ -183,7 +183,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			var stylesheet = new LcmStyleSheet();
 			stylesheet.Init(Cache, Cache.LangProject.Hvo, LangProjectTags.kflidStyles);
 
-			var sut = new DummyFwStylesDlg(null, Cache, stylesheet, false, false, "Normal", 0, MsrSysType.Cm,
+			var sut = new DummyFwStylesDlg(null, Cache, stylesheet, false, false, "Normal", MsrSysType.Cm,
 				selectedStyle, string.Empty, 0, null, null);
 
 			Assert.That(sut.TabControl.TabCount, Is.EqualTo(visibleTabs));

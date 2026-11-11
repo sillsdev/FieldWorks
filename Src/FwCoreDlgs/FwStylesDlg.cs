@@ -69,15 +69,12 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private StyleInfo m_normalStyleInfo;
 		private int m_hvoRootObject;
 
-		private int m_customUserLevel = 0;
 		private StyleChangeType m_changeType = StyleChangeType.None;
 		private IVwRootSite m_rootSite;
 		private IApp m_app;
 		private MsrSysType m_userMeasurementType;
 		private IHelpTopicProvider m_helpTopicProvider;
 
-		private bool m_fShowTEStyleTypes = false;
-		private object m_lastStyleTypeEntryForOtherApp;
 		private bool m_fOkToSaveTabsToStyle = true;
 		private static string m_oldStyle = "Dictionary-Normal";
 		#endregion
@@ -92,9 +89,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private FwStylesDlg()
 		{
 			InitializeComponent();
-			Debug.Assert(m_cboTypes.Items.Count == 5);
-			m_lastStyleTypeEntryForOtherApp = m_cboTypes.Items[4];
-			m_cboTypes.Items.RemoveAt(4);
 			m_btnAdd.Image = ResourceHelper.ButtonMenuArrowIcon;
 		}
 
@@ -115,7 +109,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// will automatically be BiDi enabled. If this value is false, then simple "Left" and
 		/// "Right" labels will be used in the display, rather than "Leading" and "Trailing".</param>
 		/// <param name="normalStyleName">Name of the normal style. Selected when the dialog starts if there is no paragraph style.</param>
-		/// <param name="customUserLevel">The custom user level.</param>
 		/// <param name="userMeasurementType">User's preferred measurement units.</param>
 		/// <param name="paraStyleName">Name of the currently selected paragraph style. Selected when the dialog starts.</param>
 		/// <param name="charStyleName">Name of the currently selected character style.</param>
@@ -125,13 +118,12 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// ------------------------------------------------------------------------------------
 		public FwStylesDlg(IVwRootSite rootSite, LcmCache cache, LcmStyleSheet styleSheet,
 			bool defaultRightToLeft, bool showBiDiLabels, string normalStyleName,
-			int customUserLevel, MsrSysType userMeasurementType, string paraStyleName,
+			MsrSysType userMeasurementType, string paraStyleName,
 			string charStyleName, int hvoRootObject, IApp app, IHelpTopicProvider helpTopicProvider)
 			: this()
 		{
 			m_rootSite = rootSite;
 			m_cache = cache;
-			m_customUserLevel = customUserLevel;
 			m_hvoRootObject = hvoRootObject;
 			m_app = app;
 			showBiDiLabels |= defaultRightToLeft;
@@ -200,7 +192,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <param name="fixCombo">An action to run after the dialog closes</param>
 		/// <param name="defaultStyle">style to select in the combo if none chosen in the dialog</param>
 		/// <param name="stylesheet">that the dialog will configure</param>
-		/// <param name="nMaxStyleLevel">optional constraint on which styles show</param>
 		/// <param name="hvoAppRoot">root HVO for the application, e.g., Scripture for TE</param>
 		/// <param name="cache"></param>
 		/// <param name="owner">parent window</param>
@@ -208,7 +199,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <param name="helpTopicProvider"></param>
 		/// <param name="setPropsToFactorySettings">Method to be called if user requests to reset a style to factory settings.</param>
 		public static void RunStylesDialogForCombo(ComboBox combo, Action fixCombo, string defaultStyle,
-			LcmStyleSheet stylesheet, int nMaxStyleLevel, int hvoAppRoot, LcmCache cache,
+			LcmStyleSheet stylesheet, int hvoAppRoot, LcmCache cache,
 			IWin32Window owner, IApp app, IHelpTopicProvider helpTopicProvider,
 			Action<StyleInfo> setPropsToFactorySettings)
 		{
@@ -224,7 +215,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				fRightToLeft,
 				cache.ServiceLocator.WritingSystems.AllWritingSystems.Any(ws => ws.RightToLeftScript),
 				stylesheet.GetDefaultBasedOnStyleName(),
-				nMaxStyleLevel,
 				app.MeasurementSystem,
 				dialogStartingSelectedStyle,
 				comboStartingSelectedStyle,
@@ -232,7 +222,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				app,
 				helpTopicProvider))
 			{
-				stylesDlg.ShowTEStyleTypes = false;
 				stylesDlg.CanSelectParagraphBackgroundColor = false;
 				stylesDlg.SetPropsToFactorySettings = setPropsToFactorySettings;
 				if (stylesDlg.ShowDialog(owner) == DialogResult.OK && stylesDlg.ChangeType != StyleChangeType.None)
@@ -335,39 +324,13 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets or sets a value indicating whether or not to show the combo box where the user
-		/// can select the type of styles to show (all, basic, or custom styles). This combo
-		/// box is shown in TE but not in the other apps.
+		/// can select the type of styles to show (basic, all, custom, or user-modified styles).
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		public bool AllowSelectStyleTypes
 		{
 			get { return m_pnlTypesCombo.Visible; }
 			set { m_pnlTypesCombo.Visible = value; }
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets or sets a value indicating whether to show the TE list of style types (all,
-		/// basic, or custom styles), or the FLEx list of style types (all, basic, dictionary,
-		/// or custom styles).
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public bool ShowTEStyleTypes
-		{
-			get { return m_fShowTEStyleTypes; }
-			set
-			{
-				if (m_fShowTEStyleTypes == value)
-					return;
-
-				// TE and FLEx need to show a different entry as the last style type in the
-				// list, so swap which one is there.
-				m_fShowTEStyleTypes = value;
-				object temp = m_lastStyleTypeEntryForOtherApp;
-				Debug.Assert(m_cboTypes.Items.Count == 4);
-				m_lastStyleTypeEntryForOtherApp = m_cboTypes.Items[3];
-				m_cboTypes.Items[3] = temp;
-			}
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -551,41 +514,16 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			if (m_styleListHelper == null)
 				return;
-			if (m_fShowTEStyleTypes)
+			StyleListItem current = m_styleListHelper.SelectedStyle;
+			m_styleListHelper.MaxStyleLevel = Int32.MaxValue;
+			m_styleListHelper.ExplicitStylesToDisplay = null;
+			List<string> stylesToExclude = GetExcludedFlexStyleNames();
+			if (current != null && stylesToExclude.Contains(current.Name))
 			{
-				m_styleListHelper.ShowOnlyUserModifiedStyles = false;
-				switch (m_cboTypes.SelectedIndex)
-				{
-					case 0:	// basic
-						m_styleListHelper.MaxStyleLevel = 0;
-						break;
-
-					case 1:	// all
-						m_styleListHelper.MaxStyleLevel = Int32.MaxValue;
-						break;
-
-					case 2:	// custom
-						m_styleListHelper.MaxStyleLevel = m_customUserLevel;
-						break;
-					case 3:	// user-modified
-						m_styleListHelper.MaxStyleLevel = Int32.MaxValue;
-						m_styleListHelper.ShowOnlyUserModifiedStyles = true;
-						break;
-				}
+				UpdateChanges((StyleInfo)current.StyleInfo);
+				stylesToExclude = GetExcludedFlexStyleNames();	// in case style name changed in interesting way.
 			}
-			else
-			{
-				StyleListItem current = m_styleListHelper.SelectedStyle;
-				m_styleListHelper.MaxStyleLevel = Int32.MaxValue;
-				m_styleListHelper.ExplicitStylesToDisplay = null;
-				List<string> stylesToExclude = GetExcludedFlexStyleNames();
-				if (current != null && stylesToExclude.Contains(current.Name))
-				{
-					UpdateChanges((StyleInfo)current.StyleInfo);
-					stylesToExclude = GetExcludedFlexStyleNames();	// in case style name changed in interesting way.
-				}
-				m_styleListHelper.ExplicitStylesToExclude = stylesToExclude;
-			}
+			m_styleListHelper.ExplicitStylesToExclude = stylesToExclude;
 			m_styleListHelper.Refresh();
 			if (m_lstStyles.SelectedValue == null)
 			{
@@ -624,11 +562,11 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					styles.Add(StyleUtils.DefaultParaCharsStyleName);
 					break;
 
-				case 3: // dictionary -- use current table of styles to obtain names
-					foreach (var style in m_styleTable.Keys)
+				case 3: // user-modified -- styles changed from their factory settings
+					foreach (var style in m_styleTable)
 					{
-						if (!style.StartsWith("Dictionary") && !style.StartsWith("Classified"))
-							styles.Add(style);
+						if (!style.Value.IsModified)
+							styles.Add(style.Key);
 					}
 					styles.Add(StyleUtils.DefaultParaCharsStyleName);
 					break;

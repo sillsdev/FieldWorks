@@ -866,7 +866,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			CheckDisposed();
 
-			m_propertyTable.SetProperty("ShowRecordList", m_previousShowTreeBarValue, true);
+			m_propertyTable.SetProperty("ShowRecordList", m_previousShowTreeBarValue, false);
 			return true;
 		}
 

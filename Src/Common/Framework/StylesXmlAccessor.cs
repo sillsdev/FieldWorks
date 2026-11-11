@@ -302,8 +302,6 @@ namespace SIL.FieldWorks.Common.Framework
 			MoveStylesFromScriptureToLangProject();
 
 			// Populate hashtable with initial set of styles
-			// these are NOT from the *Styles.xml files or from TeStylesXmlAccessor.InitReservedStyles()
-			// They are from loading scripture styles in TE tests only.
 			foreach (var sty in m_databaseStyles)
 				m_htOrigStyles[sty.Name] = sty;
 
@@ -356,28 +354,6 @@ namespace SIL.FieldWorks.Common.Framework
 				// Adding the style to our database will automatically remove the style from Scripture.
 				m_databaseStyles.Add(style);
 			}
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets the application specific default font. This is usually the default font, but
-		/// in the case of TE it is the body font.
-		/// </summary>
-		/// <value>The app default font.</value>
-		/// ------------------------------------------------------------------------------------
-		protected virtual string AppDefaultFont
-		{
-			get { return StyleServices.DefaultFont; }
-		}
-
-		/// <summary>
-		/// Return true if this is the 'normal' style that all others inherit from. TE overrides.
-		/// </summary>
-		/// <param name="styleName"></param>
-		/// <returns></returns>
-		protected virtual bool IsNormalStyle(string styleName)
-		{
-			return styleName == "Normal";
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -751,23 +727,12 @@ namespace SIL.FieldWorks.Common.Framework
 			switch(sType)
 			{
 				case "paragraph":
-					ValidateParagraphContext(context, styleName);
 					return StyleType.kstParagraph;
 				case "character":
 					return StyleType.kstCharacter;
 				default:
 					throw new ArgumentOutOfRangeException($"Unrecognized type attribute for style {styleName} in {ResourceFileName}: {sType}");
 			}
-		}
-
-		/// <summary>
-		/// Throw an exception if the specified context is not valid for the specified paragraph style.
-		/// TE overrides to forbid 'general' paragraph styles. This default does nothing.
-		/// </summary>
-		/// <param name="context"></param>
-		/// <param name="styleName"></param>
-		protected virtual void ValidateParagraphContext(ContextValues context, string styleName)
-		{
 		}
 		#endregion
 

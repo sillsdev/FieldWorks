@@ -51,6 +51,9 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 				FwAvaloniaStrings.FeatureGroupOtherRecordTypes),
 			new LexiconFeatureDescriptor("posEdit",
 				FwAvaloniaStrings.FeaturePosEditName, FwAvaloniaStrings.FeaturePosEditDescription,
+				FwAvaloniaStrings.FeatureGroupOtherRecordTypes),
+			new LexiconFeatureDescriptor("ProdRestrictEdit",
+				FwAvaloniaStrings.FeatureProdRestrictEditName, FwAvaloniaStrings.FeatureProdRestrictEditDescription,
 				FwAvaloniaStrings.FeatureGroupOtherRecordTypes)
 		};
 

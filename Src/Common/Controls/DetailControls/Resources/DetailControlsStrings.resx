@@ -230,12 +230,6 @@
   <data name="ksRootNoComponentsMessage" xml:space="preserve">
     <value>An entry that has components cannot have a morph type of root, since by definition a root is indivisible. Would you like Language Explorer to delete the references to components in this entry?</value>
   </data>
-  <data name="ksRedoDeleteRef" xml:space="preserve">
-    <value>Redo Delete Reference</value>
-  </data>
-  <data name="ksUndoDeleteRef" xml:space="preserve">
-    <value>Undo Delete Reference</value>
-  </data>
   <data name="ksRedoUpdatePicture" xml:space="preserve">
     <value>Redo Update Picture</value>
   </data>
@@ -260,12 +254,6 @@
   <data name="ksRedoTextChange" xml:space="preserve">
     <value>Redo Text Change</value>
   </data>
-  <data name="ksUndoDemote" xml:space="preserve">
-    <value>Undo Demote</value>
-  </data>
-  <data name="ksRedoDemote" xml:space="preserve">
-    <value>Redo Demote</value>
-  </data>
   <data name="ksChooseOwnerOfDemotedRecord" xml:space="preserve">
     <value>Choose Owner of Demoted Record</value>
   </data>
@@ -280,12 +268,6 @@
   </data>
   <data name="ksRedoMoveDown" xml:space="preserve">
     <value>Redo Move Down</value>
-  </data>
-  <data name="ksUndoPromote" xml:space="preserve">
-    <value>Undo Promote</value>
-  </data>
-  <data name="ksRedoPromote" xml:space="preserve">
-    <value>Redo Promote</value>
   </data>
   <data name="ksChooseOwnerOfDemotedSubrecord" xml:space="preserve">
     <value>Choose Owner of Demoted Subrecord</value>

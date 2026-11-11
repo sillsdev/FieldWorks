@@ -133,18 +133,12 @@
   <data name="ksFindWordform" xml:space="preserve">
     <value>Find Wordform</value>
   </data>
-  <data name="ksCannotMergeWordformsYet" xml:space="preserve">
-    <value>Merging wordforms needs serious definition, before it can be done. Sorry.</value>
-  </data>
   <data name="ksAnalysisX" xml:space="preserve">
     <value>Analysis {0}</value>
     <comment>{0} is a number ("Analysis 1" for first, etc)</comment>
   </data>
   <data name="ksNoAnalysis" xml:space="preserve">
     <value>no analysis</value>
-  </data>
-  <data name="ksTodo_WordformEditing" xml:space="preserve">
-    <value>TODO: Basic wordform editing happens here.</value>
   </data>
   <data name="ks_GoTo" xml:space="preserve">
     <value>&amp;Go To</value>

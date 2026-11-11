@@ -498,32 +498,6 @@ namespace SIL.FieldWorks.XWorks.LexText
 		}
 
 		/// <summary>
-		/// This implements the "Synchronize with LiftShare..." menu command.
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <returns></returns>
-		/// <remarks>Until LiftShare is fully implemented, this is irrelevant.</remarks>
-		public bool OnSynchronize(object sender)
-		{
-#if WANTPORT // FWR-2845; this was not enabled in 6.0 and may be superseded by Randy's LiftBridge.
-			Form formActive = ActiveForm;
-			if (cache != null)
-			{
-				FwXWindow wndActive = formActive as FwXWindow;
-				LiftSynchronizeDlg dlg = new LiftSynchronizeDlg(Cache, wndActive.Mediator);
-				dlg.ShowDialog(formActive);
-				return true;
-			}
-			else
-			{
-				return false;
-			}
-#else
-			return false;
-#endif
-		}
-
-		/// <summary>
 		/// On Refresh, we want to reload the XML configuration files.  This greatly facilitates developing
 		/// those files, even though it's not as useful for normal use.  It might prove useful whenever we
 		/// get around to allowing user customization (or it might not).

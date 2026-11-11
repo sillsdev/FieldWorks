@@ -1071,7 +1071,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			// Initialize our internal state with the state of the PropertyTable
 			m_fShowAllFields = m_propertyTable.GetBoolProperty("ShowHiddenFields-" + toolName, false, PropertyTable.SettingsGroup.LocalSettings);
 			m_propertyTable.SetPropertyPersistence("ShowHiddenFields-" + toolName, true, PropertyTable.SettingsGroup.LocalSettings);
-			m_propertyTable.SetDefault("ShowHiddenFields", m_fShowAllFields, PropertyTable.SettingsGroup.LocalSettings, false);
+			m_propertyTable.SetDefault("ShowHiddenFields", m_fShowAllFields, PropertyTable.SettingsGroup.LocalSettings);
 			SetCurrentSlicePropertyNames();
 			m_currentSlicePartName = m_propertyTable.GetStringProperty(m_sPartNameProperty, null, PropertyTable.SettingsGroup.LocalSettings);
 			m_currentSliceObjGuid = m_propertyTable.GetValue(m_sObjGuidProperty, PropertyTable.SettingsGroup.LocalSettings, Guid.Empty);
@@ -4683,10 +4683,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				bool fShowAllFields = m_propertyTable.GetBoolProperty(name, false, PropertyTable.SettingsGroup.LocalSettings);
 				HandleShowHiddenFields(fShowAllFields);
 			}
-			else if (name == "currentContentControlObject")
-			{
-				m_fCurrentContentControlObjectTriggered = true;
-			}
 		}
 
 		/// <summary>
@@ -4972,14 +4968,16 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			// We may be in transition: if so, disable without crashing.  See LT-9698.
 			if (m_cache == null || m_root == null)
 				return display.Enabled = false;
-			var command = (Command)commandObject;
-			string className = XmlUtils.GetMandatoryAttributeValue(command.Parameters[0], "className");
-			if (className != m_root.ClassName)
-				return display.Enabled = false;
-			string restrictToTool = XmlUtils.GetOptionalAttributeValue(command.Parameters[0], "restrictToTool");
-			if (restrictToTool != null && restrictToTool != m_propertyTable.GetStringProperty("currentContentControl", String.Empty))
-				return display.Enabled = false;
-			return display.Enabled = true;
+			return display.Enabled = AppliesToRoot((Command)commandObject);
+		}
+
+		// Whether a command that acts on the root object applies to it in the current tool.
+		private bool AppliesToRoot(Command command)
+		{
+			var parameters = command.Parameters[0];
+			return ShownRecordCommandScope.Applies(m_root, XmlUtils.GetMandatoryAttributeValue(parameters, "className"),
+				XmlUtils.GetOptionalAttributeValue(parameters, "restrictToTool"),
+				m_propertyTable.GetStringProperty("currentContentControl", String.Empty));
 		}
 
 		/// <summary>
@@ -4991,16 +4989,12 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			CheckDisposed();
 
 			var command = (Command)argument;
-			string className = XmlUtils.GetMandatoryAttributeValue(command.Parameters[0], "className");
-			if (className != m_root.ClassName)
-				return false;
-			string restrictToTool = XmlUtils.GetOptionalAttributeValue(command.Parameters[0], "restrictToTool");
-			if (restrictToTool != null && restrictToTool != m_propertyTable.GetStringProperty("currentContentControl", String.Empty))
+			if (!AppliesToRoot(command))
 				return false;
 			string fieldName = XmlUtils.GetOptionalAttributeValue(command.Parameters[0], "fieldName");
 			if (String.IsNullOrEmpty(fieldName))
 				return false;
-			int flid = m_mdc.GetFieldId(className, fieldName, true);
+			int flid = m_mdc.GetFieldId(m_root.ClassName, fieldName, true);
 			int insertPos = Slice.InsertObjectIntoVirtualBackref(m_cache, m_mediator, m_propertyTable,
 				m_root.Hvo, m_root.ClassID, flid);
 			return insertPos >= 0;
@@ -5015,16 +5009,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 			var command = (Command)commandObject;
 			string className = XmlUtils.GetMandatoryAttributeValue(command.Parameters[0], "className");
-			bool fIsValid = false;
-			if (className == "RnGenericRec")
-			{
-				if (Root != null && Root is IRnGenericRec)
-				{
-					if (Root.Owner is IRnResearchNbk && (Root.Owner as IRnResearchNbk).RecordsOC.Count > 1)
-						fIsValid = true;
-				}
-			}
-			display.Enabled = fIsValid;
+			display.Enabled = className == "RnGenericRec" && RecordNesting.CanDemoteRecord(Root);
 			return true;
 		}
 		/// <summary>
@@ -5034,64 +5019,13 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		{
 			CheckDisposed();
 
-			if (Root == null)
+			if (!(Root is IRnGenericRec rec) || !RecordNesting.CanDemoteRecord(rec))
 				return false;
-			IRnGenericRec rec = Root as IRnGenericRec;
-			if (rec == null)
-				return false;		// shouldn't get here
-			IRnGenericRec newOwner = null;
-			if (Root.Owner is IRnResearchNbk)
-			{
-				IRnResearchNbk notebk = Root.Owner as IRnResearchNbk;
-				List<IRnGenericRec> owners = new List<IRnGenericRec>();
-				foreach (var recT in notebk.RecordsOC)
-				{
-					if (recT != Root)
-						owners.Add(recT);
-				}
-				if (owners.Count == 1)
-				{
-					newOwner = owners[0];
-				}
-				else
-				{
-					newOwner = ChooseNewOwner(owners.ToArray(),
-						Resources.DetailControlsStrings.ksChooseOwnerOfDemotedRecord);
-				}
-			}
-			else
-			{
-				return false;
-			}
-			if (newOwner == null)
-				return true;
-			if (newOwner == rec)
-				throw new Exception("RnGenericRec cannot own itself!");
-
-			UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(Resources.DetailControlsStrings.ksUndoDemote,
-				Resources.DetailControlsStrings.ksRedoDemote, Cache.ActionHandlerAccessor, () =>
-				{
-					newOwner.SubRecordsOS.Insert(0, rec);
-				});
+			var newOwner = RecordNesting.ChooseOwner(RecordNesting.RecordDemoteOwners(rec),
+				candidates => DemotedRecordOwnerChooser.ChooseForRecord(m_cache, m_mediator, m_propertyTable, candidates));
+			if (newOwner != null)
+				RecordNesting.Demote(rec, newOwner);
 			return true;
-		}
-
-		internal IRnGenericRec ChooseNewOwner(IRnGenericRec[] records, string sTitle)
-		{
-
-			var helpTopic = "khtpDataNotebook-ChooseOwnerOfDemotedRecord";
-			var persistProvider = new PersistenceProvider(m_mediator, m_propertyTable);
-			var labels = ObjectLabel.CreateObjectLabels(m_cache, records,
-					"ShortName", m_cache.WritingSystemFactory.GetStrFromWs(m_cache.DefaultAnalWs));
-			using (var dlg = new ReallySimpleListChooser(persistProvider, labels,
-				String.Empty, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider")))
-			{
-				dlg.Text = sTitle;
-				dlg.SetHelpTopic(helpTopic);
-				if (dlg.ShowDialog() == DialogResult.OK)
-					return dlg.SelectedObject as IRnGenericRec;
-			}
-			return null;
 		}
 
 		/// <summary>

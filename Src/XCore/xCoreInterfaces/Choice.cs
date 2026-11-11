@@ -117,6 +117,13 @@ namespace XCore
 
 		//		abstract public void HandleClick();
 
+		/// <summary>
+		/// The window's command authorities, which answer this item ahead of the mediator; null
+		/// in a menu raised on a target, which answers for that target.
+		/// </summary>
+		protected ICommandAuthority CommandAuthority
+			=> m_parent != null && m_parent.IsInMenuRaisedOnTarget ? null : CommandAuthorities.Of(m_propertyTable);
+
 		protected override void Populate()
 		{
 		}
@@ -233,7 +240,7 @@ namespace XCore
 
 		override public UIItemDisplayProperties GetDisplayProperties()
 		{
-			return QueryDisplayProperties(m_parent, m_mediator, CommandObject, m_defaultVisible, Label);
+			return QueryDisplayProperties(m_parent, m_mediator, CommandAuthority, CommandObject, m_defaultVisible, Label);
 		}
 
 
@@ -249,7 +256,18 @@ namespace XCore
 		static public UIItemDisplayProperties QueryDisplayProperties(Mediator mediator, Command command, bool defaultVisible, string label)
 		{
 			ChoiceGroup group = null;
-			return QueryDisplayProperties(group, mediator, command, defaultVisible, label);
+			return QueryDisplayProperties(group, mediator, null, command, defaultVisible, label);
+		}
+
+		/// <summary>
+		/// Find out the enabled state and other display stuff from the command authorities
+		/// registered with <paramref name="propertyTable"/>, else from interested colleagues.
+		/// </summary>
+		static public UIItemDisplayProperties QueryDisplayProperties(Mediator mediator, PropertyTable propertyTable,
+			Command command, bool defaultVisible, string label)
+		{
+			return QueryDisplayProperties(null, mediator, CommandAuthorities.Of(propertyTable), command, defaultVisible,
+				label);
 		}
 
 		/// <summary>
@@ -258,12 +276,21 @@ namespace XCore
 		/// <param name="group">This provides more context for colleagues to know whether to add a command to a menu.
 		/// colleagues who want to support short-cut keys should be able to handle <c>null</c>, apart from a context menu group.</param>
 		/// <param name="mediator"></param>
+		/// <param name="authority">Answers ahead of the mediator; null for none.</param>
 		/// <param name="command"></param>
 		/// <param name="defaultVisible"></param>
 		/// <param name="label"></param>
 		/// <returns></returns>
-		private static UIItemDisplayProperties QueryDisplayProperties(ChoiceGroup group, Mediator mediator, Command command, bool defaultVisible, string label)
+		private static UIItemDisplayProperties QueryDisplayProperties(ChoiceGroup group, Mediator mediator,
+			ICommandAuthority authority, Command command, bool defaultVisible, string label)
 		{
+			if (authority != null)
+			{
+				var answered = new UIItemDisplayProperties(group, label, defaultVisible, command.IconName, defaultVisible);
+				if (authority.UpdateDisplay(command, answered))
+					return answered;
+			}
+
 			// Let the default be that it is enabled if it is visible by default and we know that it has
 			//at least one potential receiver, based on the method signatures of the
 			//current set of colleagues.
@@ -296,7 +323,7 @@ namespace XCore
 
 		override public void OnClick(object sender, System.EventArgs args)
 		{
-			CommandObject.InvokeCommand();
+			CommandObject.InvokeCommand(CommandAuthority);
 			//			HandleClick();
 		}
 
@@ -382,6 +409,8 @@ namespace XCore
 		{
 			//if we are a a boolProperty widget, the parent will call us back at HandleClick()
 			Debug.Assert(this.BoolPropertyName != "");
+			if (CommandAuthority?.ToggleProperty(BoolPropertyName) == true)
+				return;
 			//toggle our value
 			m_propertyTable.SetProperty(BoolPropertyName, !BoolPropertyValue, PropertyTableGroup, true);
 		}
@@ -403,9 +432,12 @@ namespace XCore
 			// known group are those starting with ShowHiddenFields-), partly because they occur in settings
 			// files as well as the program. So we change any hyphens to underscore so that it's actually possible
 			// to implement the method that this code is looking for.
+			if (CommandAuthority?.UpdatePropertyDisplay(BoolPropertyName, display) != true)
+			{
 #pragma warning disable 618 // suppress obsolete warning
-			m_mediator.SendMessage("Display" + BoolPropertyName.Replace('-', '_'), null, ref display);
+				m_mediator.SendMessage("Display" + BoolPropertyName.Replace('-', '_'), null, ref display);
 #pragma warning restore 618
+			}
 			if (display.Text.StartsWith("$"))
 			{
 				int iOfEquals = display.Text.IndexOf("=");
@@ -643,8 +675,14 @@ namespace XCore
 			{
 				m_fHandlingClick = true;
 				//parent gets first crack at it, then calls us back if we should handle it.
-				m_parent.HandleItemClick(this);
-				m_fHandlingClick = false;
+				try
+				{
+					m_parent.HandleItemClick(this);
+				}
+				finally
+				{
+					m_fHandlingClick = false;
+				}
 			}
 		}
 

@@ -9,6 +9,7 @@ using Avalonia.Automation;
 using Avalonia.Automation.Peers;
 using Avalonia.Automation.Provider;
 using Avalonia.Controls;
+using Avalonia.Controls.Presenters;
 using Avalonia.Headless;
 using Avalonia.Headless.NUnit;
 using Avalonia.Interactivity;
@@ -16,6 +17,7 @@ using Avalonia.Threading;
 using Avalonia.VisualTree;
 using FwAvaloniaTests.VisualChecks;
 using NUnit.Framework;
+using SIL.FieldWorks.Common.FwAvalonia;
 using SIL.FieldWorks.Common.FwAvalonia.Detail;
 using SIL.FieldWorks.Common.FwAvalonia.ViewDefinition;
 
@@ -46,10 +48,12 @@ namespace FwAvaloniaTests
 			return field;
 		}
 
-		private static DataTree Show(params DetailField[] fields)
+		private static DataTree Show(params DetailField[] fields) => ShowSized(0, fields);
+
+		private static DataTree ShowSized(double valueFontSize, params DetailField[] fields)
 		{
 			var model = new DetailModel("LexEntry", "Normal",
-				fields.ToList(), new List<ViewDiagnostic>());
+				fields.ToList(), new List<ViewDiagnostic>(), valueFontSize);
 			var view = new DataTree(model);
 			var window = new Window { Content = view, Width = 480, Height = 300 };
 			window.Show();
@@ -306,10 +310,10 @@ namespace FwAvaloniaTests
 			Assert.That(TextBoxPresent(view, "g1"), Is.True);
 		}
 
-		// LT-22689: header and "Field Options" text take the slice label size, and header text
-		// takes the section header colour.
+		// LT-22689, LT-22693: header and hotlink text take the slice label size, header text
+		// takes the section header colour, and hotlink text the hotlink button's colour.
 		[AvaloniaTest]
-		public void SectionHeaderAndFieldOptionsText_TakeTheirOwnSizeAndColour()
+		public void SectionHeaderAndHotlinkText_TakeTheirOwnSizeAndColour()
 		{
 			var collapsible = new DetailField("hdr", "Allomorphs", null, null, DetailFieldKind.Header,
 				EditorClassification.GroupingNone, null, null, HostRouting.Inherit, null, null, null,
@@ -319,9 +323,13 @@ namespace FwAvaloniaTests
 				isEditable: false, indent: 0, isCollapsible: false);
 			var view = new DataTree(new DetailModel("LexEntry", "Normal",
 				new List<DetailField> { collapsible, Text("f1", "Form", 1), plain }, new List<ViewDiagnostic>()),
-				menuRequested: request => { });
+				menuRequested: request => { },
+				hotlinkItems: field => new[] { new DetailMenuItem("Insert Allomorph", execute: () => { }) });
 			var window = new Window { Content = view, Width = 480, Height = 300 };
 			window.Show();
+			Dispatcher.UIThread.RunJobs();
+			// A section's hotlinks show while focus is in it.
+			view.GetVisualDescendants().OfType<TextBox>().First().Focus();
 			Dispatcher.UIThread.RunJobs();
 			DialogSnapshot.Capture(window, "Detail-SectionExpander-03-header-and-link-text");
 
@@ -336,10 +344,73 @@ namespace FwAvaloniaTests
 			Assert.That(TextOf("Allomorphs").Foreground, Is.SameAs(headerInk),
 				"a collapsible header is not the button theme's blue");
 			Assert.That(TextOf("Grammatical Info.").Foreground, Is.SameAs(headerInk));
-			var link = TextOf(SIL.FieldWorks.Common.FwAvalonia.FwAvaloniaStrings.FieldOptionsMenu);
+			var link = TextOf("Insert Allomorph");
 			Assert.That(link.FontSize, Is.EqualTo(linkSize));
 			Assert.That(link.FontWeight, Is.EqualTo(Avalonia.Media.FontWeight.Normal),
 				"the link is not the button theme's semibold");
+			Assert.That(link.Foreground, Is.SameAs(SIL.FieldWorks.Common.FwAvalonia.FwAvaloniaDensity.HotlinkButtonForeground));
+		}
+
+		// LT-22689: a header with a collapsed line (a sense, etymology, extended note or
+		// subrecord) shows it while collapsed and its own label while expanded.
+		[AvaloniaTest]
+		public void CollapsibleHeader_ShowsItsCollapsedLine_OnlyWhileCollapsed()
+		{
+			var sense = Header("sense", "Sense 1", 0);
+			sense.CollapsedLabel = "Sense 1 - house - n";
+			var note = Header("note", "Extended Note", 0, expanded: false);
+			note.CollapsedLabel = "Extended Note - use - formal";
+			var view = Show(sense, Text("g1", "Gloss", 1), note, Text("d1", "Discussion", 1));
+			string Shown(string id) => SectionHeader(view, id).GetVisualDescendants().OfType<TextBlock>().Single().Text;
+
+			Assert.That(Shown("sense"), Is.EqualTo("Sense 1"));
+			Assert.That(Shown("note"), Is.EqualTo("Extended Note - use - formal"),
+				"a header that starts collapsed shows its collapsed line");
+
+			ClickHeader(SectionHeader(view, "sense"));
+			Assert.That(Shown("sense"), Is.EqualTo("Sense 1 - house - n"));
+			Assert.That(AutomationProperties.GetName(SectionHeader(view, "sense")), Is.EqualTo("Sense 1 - house - n"),
+				"assistive technology reads the line that is shown");
+
+			ClickHeader(SectionHeader(view, "sense"));
+			Assert.That(Shown("sense"), Is.EqualTo("Sense 1"));
+		}
+
+		// A collapsed sense line with a sentence-long definition wraps to the pane, as the
+		// WinForms summary does, with the +/- box beside its first line.
+		[AvaloniaTest]
+		public void LongHeaderLine_WrapsWithinThePane_WithTheBoxBesideItsFirstLine()
+		{
+			var longLine = "Sense 1 - " + string.Concat(Enumerable.Repeat("a long definition word ", 12)) + "- n";
+			var sense = Header("sense", "Sense 1", 0, expanded: false);
+			sense.CollapsedLabel = longLine;
+			var view = Show(Header("short", "Sense 2", 0), Text("g2", "Gloss", 1), sense, Text("g1", "Gloss", 1));
+			var header = SectionHeader(view, "sense");
+			var text = header.GetVisualDescendants().OfType<TextBlock>().Single();
+			var oneLine = SectionHeader(view, "short").GetVisualDescendants().OfType<TextBlock>().Single();
+
+			Assert.That(text.Text, Is.EqualTo(longLine), "precondition: the collapsed line is shown");
+			Assert.That(text.Bounds.Height, Is.GreaterThan(oneLine.Bounds.Height * 1.5), "the line wraps");
+			var right = text.TranslatePoint(new Point(text.Bounds.Width, 0), view).Value.X;
+			Assert.That(right, Is.LessThanOrEqualTo(view.Bounds.Width), "nothing runs past the pane");
+			var boxMiddle = header.Box.TranslatePoint(new Point(0, header.Box.Bounds.Height / 2), text).Value.Y;
+			Assert.That(boxMiddle, Is.LessThan(oneLine.Bounds.Height), "the box sits beside the first line");
+		}
+
+		// A NormalSummary header (an etymology, an extended note) at the top level draws no
+		// heavy section rule; a HeavySummary one (a sense) does.
+		[AvaloniaTest]
+		public void NormalWeightHeader_DrawsNoHeavyRule_AtTheTopLevel()
+		{
+			var etymology = Header("etymology", "Etymology", 0);
+			etymology.IsNormalWeight = true;
+			var view = Show(Header("sense1", "Sense 1", 0), Text("g1", "Gloss", 1),
+				Header("sense2", "Sense 2", 0), Text("g2", "Gloss", 1), etymology, Text("e1", "Gloss", 1));
+			int RulesAbove(string id) => SectionHeader(view, id).GetVisualAncestors().OfType<StackPanel>()
+				.SelectMany(p => p.Children.OfType<Border>()).Count(b => b.Background == FwAvaloniaDensity.SectionRuleBrush);
+
+			Assert.That(RulesAbove("sense2"), Is.EqualTo(1), "precondition: a top-level sense gets the heavy rule");
+			Assert.That(RulesAbove("etymology"), Is.EqualTo(0));
 		}
 
 		[AvaloniaTest]
@@ -617,6 +688,162 @@ namespace FwAvaloniaTests
 				"11.15: the lexeme form's legacy bold emphasis applies");
 			Assert.That(box.FontSize, Is.EqualTo(14.4).Within(0.01), "11.15: the 120% fontsize applies");
 			Assert.That(box.ContextFlyout, Is.Not.Null, "11.17: rows carry the Copy context menu");
+		}
+
+		// LT-22811: the model's value size reaches every kind of value over the theme's size;
+		// labels, writing-system abbreviations and a value with its own size keep theirs.
+		[AvaloniaTest]
+		public void ValueFontSize_SizesEveryValue_ButNotLabelsOrSizedValues()
+		{
+			const double normalSize = 20;
+			var chooser = new DetailField("c", "Morph Type", "MorphType", null,
+				DetailFieldKind.Chooser, EditorClassification.Known, "c", null,
+				HostRouting.Inherit, null,
+				new List<DetailChoiceOption> { new DetailChoiceOption("mt-stem", "stem") },
+				"mt-stem");
+			var ownSize = new DetailField("s", "Lexeme Form", "Form", null, DetailFieldKind.Text,
+				EditorClassification.Known, "s", null, HostRouting.Inherit,
+				new List<DetailWsValue> { new DetailWsValue("seh", "casa", null, 30, false, "seh") },
+				null, null);
+			var themed = Show(Text("t", "Gloss", 0));
+			var view = ShowSized(normalSize, Text("t", "Gloss", 0), chooser, ownSize);
+			TextBox Box(Control root, string text)
+				=> root.GetVisualDescendants().OfType<TextBox>().Single(b => b.Text == text);
+
+			Assert.That(Box(themed, "value").FontSize, Is.Not.EqualTo(normalSize),
+				"precondition: the theme's own size differs");
+			Assert.That(Box(view, "value").FontSize, Is.EqualTo(normalSize), "a text value");
+			var chooserText = view.GetVisualDescendants().OfType<TextBlock>()
+				.FirstOrDefault(t => t.Text == "stem");
+			Assert.That(chooserText?.FontSize, Is.EqualTo(normalSize), "a chooser's value");
+			Assert.That(Box(view, "casa").FontSize, Is.EqualTo(30), "a value's own size wins");
+			TextPresenter Drawn(string text) => Box(view, text).GetVisualDescendants()
+				.OfType<TextPresenter>().Single();
+			Assert.That(Drawn("casa").FontSize, Is.EqualTo(30), "and it is the size the box draws");
+			Assert.That(Drawn("value").FontSize, Is.EqualTo(normalSize));
+			var label = view.GetVisualDescendants().OfType<TextBlock>()
+				.First(t => AutomationProperties.GetAutomationId(t) == "t.Label");
+			Assert.That(label.FontSize,
+				Is.EqualTo(SIL.FieldWorks.Common.FwAvalonia.FwAvaloniaDensity.LabelFontSize));
+			var abbrev = view.GetVisualDescendants().OfType<TextBlock>().First(t => t.Text == "en");
+			Assert.That(abbrev.FontSize,
+				Is.EqualTo(SIL.FieldWorks.Common.FwAvalonia.FwAvaloniaDensity.WsAbbrevFontSize));
+		}
+
+		// LT-22811: only the data in the value column takes the value size. Message rows, the
+		// Unsupported placeholder, a watermark prompt and a button caption keep the surface font.
+		[AvaloniaTest]
+		public void ValueFontSize_SizesTheData_NotTheInterfaceTextBesideIt()
+		{
+			const double normalSize = 20;
+			DetailField[] Fields() => new[]
+			{
+				new DetailField("lit", "", "Message", null, DetailFieldKind.Literal,
+					EditorClassification.Known, "lit", null, HostRouting.Inherit,
+					new List<DetailWsValue> { new DetailWsValue("", "A message") }, null, null),
+				new DetailField("bad", "Odd", "Odd", null, DetailFieldKind.Unsupported,
+					EditorClassification.Unknown, "bad", null, HostRouting.Inherit, null, null, null),
+				new DetailField("ghost", "Lexeme Form", "LexemeForm", null, DetailFieldKind.Text,
+					EditorClassification.Known, "ghost", null, HostRouting.Inherit,
+					new List<DetailWsValue> { new DetailWsValue("vern", "") }, null, null,
+					isEditable: true, indent: 0, ghostPrompt: "Click here to add Lexeme Form"),
+				new DetailField("pub", "Publish In", "PublishIn", null, DetailFieldKind.ReferenceVector,
+					EditorClassification.Known, "pub", null, HostRouting.Inherit, null,
+					new List<DetailChoiceOption>
+					{
+						new DetailChoiceOption("p1", "Main Dictionary"),
+						new DetailChoiceOption("p2", "Pocket")
+					},
+					null, isEditable: true, indent: 0,
+					items: new List<DetailChoiceOption> { new DetailChoiceOption("p1", "Main Dictionary") })
+			};
+			TextBlock Block(Control root, string text)
+				=> root.GetVisualDescendants().OfType<TextBlock>().First(t => t.Text == text);
+			double Caption(Control root)
+			{
+				// The add button is a hover affordance, outside the tree until revealed.
+				var vector = root.GetVisualDescendants().OfType<FwReferenceVectorField>().Single();
+				var add = ((IHoverAffordanceProvider)vector).HoverAffordances.OfType<Button>()
+					.First(b => (AutomationProperties.GetAutomationId(b) ?? string.Empty).EndsWith(".Add",
+						System.StringComparison.Ordinal));
+				add.ApplyTemplate();
+				add.Presenter?.UpdateChild();
+				return add.GetVisualDescendants().OfType<TextBlock>().First().FontSize;
+			}
+
+			// An edit context, so the reference list offers its add button.
+			DataTree ShowEditable(double valueFontSize)
+			{
+				var model = new DetailModel("LexEntry", "Normal", Fields().ToList(),
+					new List<ViewDiagnostic>(), valueFontSize);
+				var tree = new DataTree(model, new FakeDetailEditContext());
+				new Window { Content = tree, Width = 480, Height = 300 }.Show();
+				Dispatcher.UIThread.RunJobs();
+				return tree;
+			}
+
+			var themed = ShowEditable(0);
+			var view = ShowEditable(normalSize);
+
+			foreach (var text in new[] { "A message", FwAvaloniaStrings.UnsupportedEditor,
+				"Click here to add Lexeme Form" })
+			{
+				Assert.That(Block(view, text).FontSize, Is.EqualTo(Block(themed, text).FontSize), text);
+				Assert.That(Block(view, text).FontSize, Is.Not.EqualTo(normalSize), text);
+			}
+			Assert.That(Caption(view), Is.EqualTo(Caption(themed)), "the add button's caption");
+			Assert.That(Block(view, "Main Dictionary").FontSize, Is.EqualTo(normalSize),
+				"a reference item is data and follows the value size");
+		}
+
+		// LT-22811: a value's own Copy menu keeps the menu size; the value size is for the data.
+		[AvaloniaTest]
+		public void ValueFontSize_LeavesTheValuesCopyMenuAtItsOwnSize()
+		{
+			double MenuTextSize(DataTree view)
+			{
+				var box = view.GetVisualDescendants().OfType<TextBox>().Single(b => b.Text == "value");
+				var flyout = (MenuFlyout)box.ContextFlyout;
+				flyout.ShowAt(box);
+				Dispatcher.UIThread.RunJobs();
+				var size = flyout.Items.OfType<MenuItem>().First()
+					.GetVisualDescendants().OfType<TextBlock>().First().FontSize;
+				flyout.Hide();
+				return size;
+			}
+
+			var themed = MenuTextSize(Show(Text("t", "Gloss", 0)));
+			var sized = MenuTextSize(ShowSized(20, Text("t", "Gloss", 0)));
+
+			Assert.That(sized, Is.EqualTo(themed), "the menu text is the size it is without a value size");
+			Assert.That(sized, Is.Not.EqualTo(20));
+		}
+
+		// LT-22811: a styled value shows through a read-only display until clicked; it keeps the
+		// value's own size and bold, as the lexeme form's 120% emphasis needs.
+		[AvaloniaTest]
+		public void ValueFontSize_StyledValueDisplay_KeepsTheValuesSizeAndBold()
+		{
+			var rich = new DetailRichTextValue("dog", new[]
+			{
+				new DetailTextRun("do", "seh"),
+				new DetailTextRun("g", "seh", namedStyle: "Emphasis")
+			});
+			var styled = new DetailField("s", "Lexeme Form", "Form", null, DetailFieldKind.Text,
+				EditorClassification.Known, "s", null, HostRouting.Inherit,
+				new List<DetailWsValue>
+				{
+					new DetailWsValue("seh", "dog", null, 30, false, "seh", bold: true, richText: rich)
+				},
+				null, null);
+			var view = ShowSized(20, styled);
+
+			var display = view.GetVisualDescendants().OfType<TextBlock>()
+				.Single(t => (AutomationProperties.GetAutomationId(t) ?? string.Empty)
+					.EndsWith(".Display", System.StringComparison.Ordinal));
+			Assert.That(display.IsVisible, Is.True, "precondition: the styled value shows its display");
+			Assert.That(display.FontSize, Is.EqualTo(30), "the value's own size, not the view's");
+			Assert.That(display.FontWeight, Is.EqualTo(Avalonia.Media.FontWeight.Bold));
 		}
 
 		[AvaloniaTest]

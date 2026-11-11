@@ -619,26 +619,6 @@ namespace SIL.FieldWorks.Common.RootSites
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// This information is useful for an override of MakeSpellCheckMenuOptions in TeEditingHelper.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public string Word
-		{
-			get { return m_word; }
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// The writing system of the actual mis-spelled word.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public int WritingSystem
-		{
-			get { return m_wsText; }
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
 		/// Add the word to the spelling dictionary.
 		/// Overrides to also add to the wordform inventory.
 		/// </summary>

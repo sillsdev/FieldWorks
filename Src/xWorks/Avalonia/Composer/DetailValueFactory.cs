@@ -26,18 +26,20 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// One <see cref="DetailWsValue"/> per writing system, in list order, carrying the
 		/// project's per-ws display metadata (abbreviation, default font, RTL, IETF tag);
-		/// <paramref name="readText"/> supplies each alternative's text (null reads as empty).
+		/// <paramref name="readText"/> supplies each alternative's text (null reads as empty) and
+		/// <paramref name="fontSize"/>, when given, its font size (0 leaves the view's size).
 		/// </summary>
 		internal static IReadOnlyList<DetailWsValue> CreateMultiWsValues(
 			IEnumerable<CoreWritingSystemDefinition> systems,
 			Func<CoreWritingSystemDefinition, string> readText,
-			double fontSize = 0, bool boldEmphasis = false)
+			Func<CoreWritingSystemDefinition, double> fontSize = null, bool boldEmphasis = false)
 		{
 			var values = new List<DetailWsValue>();
 			foreach (var ws in systems)
 			{
 				values.Add(new DetailWsValue(ws.Abbreviation, readText(ws) ?? string.Empty,
-					ws.DefaultFontName, fontSize, ws.RightToLeftScript, ws.Id, boldEmphasis));
+					ws.DefaultFontName, fontSize?.Invoke(ws) ?? 0, ws.RightToLeftScript, ws.Id,
+					boldEmphasis));
 			}
 			return values;
 		}
@@ -45,13 +47,14 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// One <see cref="DetailWsValue"/> per writing system from an <c>ITsString</c>-backed value,
 		/// preserving the source rich-text runs in a neutral Avalonia-facing shape while keeping the
-		/// common project free of any LCModel dependency.
+		/// common project free of any LCModel dependency. <paramref name="fontSize"/>, when
+		/// given, supplies each alternative's font size (0 leaves the view's size).
 		/// </summary>
 		internal static IReadOnlyList<DetailWsValue> CreateMultiWsValues(
 			IEnumerable<CoreWritingSystemDefinition> systems,
 			Func<CoreWritingSystemDefinition, ITsString> readText,
 			ILgWritingSystemFactory writingSystemFactory,
-			double fontSize = 0, bool boldEmphasis = false)
+			Func<CoreWritingSystemDefinition, double> fontSize = null, bool boldEmphasis = false)
 		{
 			var values = new List<DetailWsValue>();
 			foreach (var ws in systems)
@@ -59,7 +62,8 @@ namespace SIL.FieldWorks.XWorks
 				var tss = readText(ws);
 				var richText = DetailRichTextAdapter.FromTsString(tss, writingSystemFactory);
 				values.Add(new DetailWsValue(ws.Abbreviation, tss?.Text ?? string.Empty,
-					ws.DefaultFontName, fontSize, ws.RightToLeftScript, ws.Id, boldEmphasis, richText));
+					ws.DefaultFontName, fontSize?.Invoke(ws) ?? 0, ws.RightToLeftScript, ws.Id,
+					boldEmphasis, richText));
 			}
 			return values;
 		}

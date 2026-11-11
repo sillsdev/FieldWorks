@@ -94,6 +94,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 			AddIfPresent(o, "optionalWs", node.OptionalWritingSystem);
 			if (node.ForceIncludeEnglish)
 				o["forceIncludeEnglish"] = true;
+			AddIfPresent(o, "visField", node.VisibilityField);
 			// The stored selection travels with the two facts above: options without the
 			// checked set would round-trip a field into the wrong checkmarks.
 			if (node.VisibleWritingSystems != null && node.VisibleWritingSystems.Count > 0)
@@ -226,6 +227,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 				sliceId: (string)o["sliceId"],
 				optionalWritingSystem: (string)o["optionalWs"],
 				forceIncludeEnglish: (bool?)o["forceIncludeEnglish"] ?? false,
+				visibilityField: (string)o["visField"],
 				visibleWritingSystems: ((JArray)o["visibleWritingSystems"])?.Select(t => (string)t).ToList());
 		}
 

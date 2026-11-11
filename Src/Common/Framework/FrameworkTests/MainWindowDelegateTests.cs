@@ -30,12 +30,6 @@ namespace SIL.FieldWorks.Common.Framework
 		}
 
 		/// <summary/>
-		public bool PopulateParaStyleListOverride()
-		{
-			throw new NotImplementedException();
-		}
-
-		/// <summary/>
 		public LcmCache Cache { get; set; }
 
 		/// <summary/>
@@ -103,27 +97,6 @@ namespace SIL.FieldWorks.Common.Framework
 
 		/// <summary/>
 		public int HvoAppRootObject {
-			get {
-				throw new NotImplementedException();
-			}
-		}
-
-		/// <summary/>
-		public int MaxStyleLevelToShow {
-			get {
-				throw new NotImplementedException();
-			}
-		}
-
-		/// <summary/>
-		public bool ShowTEStylesComboInStylesDialog {
-			get {
-				throw new NotImplementedException();
-			}
-		}
-
-		/// <summary/>
-		public bool CanSelectParagraphBackgroundColor {
 			get {
 				throw new NotImplementedException();
 			}

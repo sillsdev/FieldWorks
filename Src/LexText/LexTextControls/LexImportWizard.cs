@@ -2115,7 +2115,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			if (m_dirtySenseLastSave || (Control.ModifierKeys & Keys.Shift) == Keys.Shift)
 			{
 				// LT-7057, LT-21638: if no settings file or no input file, don't ask to save
-				if (string.IsNullOrEmpty(m_DatabaseFileName.Text) || UsesInvalidFileNames(true))
+				if (UsesInvalidFileNames(true))
 					return;
 
 				// if we're importing a phaseX file, save settings automatically; otherwise, ask first.
@@ -2219,6 +2219,17 @@ namespace SIL.FieldWorks.LexText.Controls
 			return false;
 		}
 
+		/// <summary>
+		/// Whether the file-selection step may advance: the database file must exist, and unless
+		/// it is a phase output file, the settings must not be saved over the shipped
+		/// <paramref name="mdfImportMap"/> (LT-21638).
+		/// </summary>
+		internal static bool CanLeaveFileStep(string databaseFile, bool isPhaseInputFile,
+			string saveAsFile, string mdfImportMap)
+		{
+			return File.Exists(databaseFile) && (isPhaseInputFile || saveAsFile != mdfImportMap);
+		}
+
 		private bool EnableNextButton()
 		{
 			AllowQuickFinishButton();	// this should be done atleast before each step
@@ -2227,13 +2238,9 @@ namespace SIL.FieldWorks.LexText.Controls
 			{
 				switch (CurrentStepNumber)
 				{
-				case 1: // has to have a dictionary file to allow 'next'
-					if (m_isPhaseInputFile || (m_DatabaseFileName.Text.Length > 0 &&
-						System.IO.File.Exists(m_DatabaseFileName.Text) &&
-						m_SaveAsFileName.Text != m_sMDFImportMap))		// not same as MDFImport.map file
-					{
-						rval = true;
-					}
+				case 1:
+					rval = CanLeaveFileStep(m_DatabaseFileName.Text, m_isPhaseInputFile,
+						m_SaveAsFileName.Text, m_sMDFImportMap);
 					break;
 
 				case 2:	// preparing to display the languages info
@@ -2371,8 +2378,27 @@ namespace SIL.FieldWorks.LexText.Controls
 			AllowQuickFinishButton();	// make it visible if needed, or hidden if not
 		}
 
+		/// <summary>
+		/// Reports whether the database, settings, or settings-save file name is unusable,
+		/// warning the user unless <paramref name="runSilent"/> is set. A blank or missing
+		/// database file is checked first and is always unusable (LT-21638).
+		/// </summary>
 		private bool UsesInvalidFileNames(bool runSilent)
 		{
+			if (!File.Exists(m_DatabaseFileName.Text))
+			{
+				if (!runSilent)
+				{
+					string msg = string.IsNullOrWhiteSpace(m_DatabaseFileName.Text)
+						? LexTextControls.ksUndefinedDatabaseFile
+						: String.Format(LexTextControls.ksInvalidDatabaseFileX, m_DatabaseFileName.Text);
+					MessageBox.Show(this, msg, LexTextControls.ksInvalidFile,
+						MessageBoxButtons.OK, MessageBoxIcon.Warning);
+				}
+				m_DatabaseFileName.Focus();
+				return true;
+			}
+
 			bool fStayHere = false;
 			if (!File.Exists(m_SettingsFileName.Text))
 			{
@@ -2465,7 +2491,7 @@ namespace SIL.FieldWorks.LexText.Controls
 					tabSteps.SelectedIndex = 0;	// 0-7
 					UpdateStepLabel();
 				}
-				if (GetDictionaryFileAsPhaseFileNumber() > 0)
+				else if (GetDictionaryFileAsPhaseFileNumber() > 0)
 				{
 					// we need to skip to the final step now, also handle back processing from there
 					m_CurrentStepNumber = 7;	// 1-8

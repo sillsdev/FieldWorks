@@ -207,6 +207,16 @@ namespace XCore
 		protected string m_propertyName;
 		protected PropertyTable.SettingsGroup m_settingsGroup = PropertyTable.SettingsGroup.Undecided;
 
+		/// <summary>
+		/// Whether this group is a menu raised on a target (a row, an item, a header) that it
+		/// answers for, so its items never ask the window's command authorities. Set on the
+		/// menu's root group.
+		/// </summary>
+		public bool IsRaisedOnTarget { get; set; }
+
+		/// <summary>Whether this group is, or is part of, a menu raised on a target.</summary>
+		public bool IsInMenuRaisedOnTarget => IsRaisedOnTarget || (m_parent != null && m_parent.IsInMenuRaisedOnTarget);
+
 		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Initializes a new instance of the <see cref="ControlGroup"/> class.

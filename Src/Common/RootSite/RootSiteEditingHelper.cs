@@ -15,7 +15,6 @@ using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Common.UIAdapters;
 using SIL.LCModel;
 using SIL.LCModel.Application;
 using SIL.LCModel.DomainServices;
@@ -37,24 +36,9 @@ namespace SIL.FieldWorks.Common.RootSites
 		internal static int kMaxSpellingSuggestionsInRootMenu = 7;
 		#endregion
 
-		#region Enums
-		/// <summary></summary>
-		public enum SpellCheckStatus
-		{
-			/// <summary>spell checking is enabled but word is in dictionary</summary>
-			WordInDictionary,
-			/// <summary>spell checking enabled with word not in dictionary,
-			/// whether or not suggestions exist</summary>
-			Enabled,
-			/// <summary>spell checking disabled</summary>
-			Disabled
-		}
-		#endregion
-
 		#region Member variables
 		/// <summary>The FDO cache</summary>
 		protected LcmCache m_cache;
-		private SpellCheckStatus m_spellCheckStatus = SpellCheckStatus.Disabled;
 		private SpellCheckHelper m_spellCheckHelper = null;
 		private int m_undoCountBeforeMerge;
 		#endregion
@@ -148,195 +132,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		protected virtual SpellCheckHelper CreateSpellCheckHelper()
 		{
 			return new SpellCheckHelper(Cache);
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets a value indicating what the status of the spell checking system is for the
-		/// sake of the the context menu that's being shown in the ShowContextMenu method.
-		/// This property is only valid when the context menu popped-up in that method is
-		/// in the process of being shown. This property is used for the SimpleRootSites who
-		/// need to handle the update messages for those spelling options.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public SpellCheckStatus SpellCheckingStatus
-		{
-			get { return m_spellCheckStatus; }
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Displays the specified context menu for the specified rootsite at the specified
-		/// mouse position. This will also determine whether or not to include the spelling
-		/// correction options.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public void ShowContextMenu(Point mousePos, ITMAdapter tmAdapter,
-			RootSite rootsite, string contextMenuName, string addToDictMenuName,
-			string insertBeforeMenuName, string changeMultipleMenuName, bool fShowSpellingOptions)
-		{
-			CheckDisposed();
-
-			m_spellCheckStatus = SpellCheckStatus.Disabled;
-			List<string> menuItemNames = null;
-
-			if (fShowSpellingOptions)
-			{
-				Debug.Assert(rootsite.RootBox == Callbacks.EditedRootBox);
-				menuItemNames = MakeSpellCheckMenuOptions(mousePos, rootsite, tmAdapter,
-					contextMenuName, addToDictMenuName, insertBeforeMenuName,
-					changeMultipleMenuName);
-
-				m_spellCheckStatus = (menuItemNames == null ?
-					SpellCheckStatus.WordInDictionary : SpellCheckStatus.Enabled);
-			}
-
-			Point pt = rootsite.PointToScreen(mousePos);
-			tmAdapter.PopupMenu(contextMenuName, pt.X, pt.Y, menuItemNames);
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Make spell checking menu options using the DotNetBar adapter.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		private List<string> MakeSpellCheckMenuOptions(Point mousePos, RootSite rootsite,
-			ITMAdapter tmAdapter, string menuName, string addToDictMenuName,
-			string changeMultipleMenuName, string insertBeforeMenuName)
-		{
-			int hvoObj, tag, wsAlt, wsText;
-			string word;
-			ISpellEngine dict;
-			bool nonSpellingError;
-			ICollection<SpellCorrectMenuItem> suggestions = SpellCheckHelper.GetSuggestions(mousePos, rootsite,
-				out hvoObj, out tag, out wsAlt, out wsText, out word, out dict, out nonSpellingError);
-
-			IVwRootBox rootb = rootsite.RootBox;
-			// These two menu items are disabled for non-spelling errors. In addition, for addToDict, we need
-			// to set the tag to an AddToDictMenuItem which can actually do the work.
-			UpdateItemProps(tmAdapter, addToDictMenuName, nonSpellingError, new AddToDictMenuItem(dict, word, rootb,
-				hvoObj, tag, wsAlt, wsText, RootSiteStrings.ksAddToDictionary, Cache));
-			// any non-null value of tag will indicate the item should be enabled, tested in TeMainWnd.UpdateSpellingMenus.
-			UpdateItemProps(tmAdapter, changeMultipleMenuName, nonSpellingError, "ok to change");
-
-			if (suggestions == null)
-				return null;
-
-			// Make the menu options.
-			List<string> menuItemNames = new List<string>();
-			TMItemProperties itemProps;
-			if (suggestions.Count == 0)
-			{
-				itemProps = new TMItemProperties();
-				itemProps.Name = "noSpellingSuggestion";
-				itemProps.Text = RootSiteStrings.ksNoSuggestions;
-				itemProps.Enabled = false;
-				menuItemNames.Add(itemProps.Name);
-				tmAdapter.AddContextMenuItem(itemProps, menuName, insertBeforeMenuName);
-			}
-
-			int cSuggestions = 0;
-			string additionalSuggestionsMenuName = "additionalSpellSuggestion";
-
-			foreach (SpellCorrectMenuItem scmi in suggestions)
-			{
-				itemProps = new TMItemProperties();
-				itemProps.Name = "spellSuggestion" + scmi.Text;
-				itemProps.Text = scmi.Text;
-				itemProps.Message = "SpellingSuggestionChosen";
-				itemProps.CommandId = "CmdSpellingSuggestionChosen";
-				itemProps.Tag = scmi;
-				itemProps.Font = (wsText == 0) ? null : GetFontForNormalStyle(wsText,
-					rootb.Stylesheet, rootb.DataAccess.WritingSystemFactory);
-
-				if (cSuggestions++ == kMaxSpellingSuggestionsInRootMenu)
-				{
-					TMItemProperties tmpItemProps = new TMItemProperties();
-					tmpItemProps.Name = additionalSuggestionsMenuName;
-					tmpItemProps.Text = RootSiteStrings.ksAdditionalSuggestions;
-					menuItemNames.Add(tmpItemProps.Name);
-					tmAdapter.AddContextMenuItem(tmpItemProps, menuName, insertBeforeMenuName);
-					insertBeforeMenuName = null;
-				}
-
-				if (insertBeforeMenuName != null)
-				{
-					menuItemNames.Add(itemProps.Name);
-					tmAdapter.AddContextMenuItem(itemProps, menuName, insertBeforeMenuName);
-				}
-				else
-				{
-					tmAdapter.AddContextMenuItem(itemProps, menuName,
-						additionalSuggestionsMenuName, null);
-				}
-			}
-
-			return menuItemNames;
-		}
-
-		void UpdateItemProps(ITMAdapter tmAdapter, string menuName, bool nonSpellingError, object tag)
-		{
-			TMItemProperties itemProps = tmAdapter.GetItemProperties(menuName);
-			if (itemProps != null)
-			{
-				if (nonSpellingError)
-				{
-					itemProps.Tag = null; // disable
-				}
-				else
-				{
-					itemProps.Tag = tag;
-				}
-				itemProps.Update = true;
-				tmAdapter.SetItemProperties(menuName, itemProps);
-			}
-		}
-
-		// This is part of an alternate strategy for spell checking that allows spell checking options to be added
-		// to an xCore-managed menu. It was developed to the point of a submenu, but not enhanced to allow the
-		// top seven suggestions to be at the top level. If we want to do that, I think we'll need to enhance the
-		// colleague with specific methods to enable and change the text of seven distinct menu items (which will
-		// need to be defined in the XML), like CmdFirstSpellSuggestion, CmdSecondSpellSuggestion, etc.
-		// For example, something like this in main.xml, at the start of mnuObjectChoices, works with the current code
-		// (see e.g., call to MakeSpellCheckColleague commented out in SandboxBase).
-		//		<menu label="Correct Spelling" id="CorrectSpelling" list="PossibleCorrections" behavior="command" message="CorrectSpelling" defaultVisible="false"/>
-		//		<item command="CmdAddToSpellDict" defaultVisible="false"/>
-		// The enhaned version might look more like this:
-		//		<item command="CmdFirstSuggestion" defaultVisible="false"/>
-		//		<item command="CmdSecondSuggestion" defaultVisible="false"/>
-		//		<menu label="Other Suggestions" id="OtherSuggestions" list="OtherPossibleCorrections" behavior="command" message="OtherSuggestions" defaultVisible="false"/>
-		//		<item command="CmdAddToSpellDict" defaultVisible="false"/>
-		// Also need to define the commands, e.g.,
-		//		<command id="CmdCorrectSpelling" label="Correct Spelling" message="CorrectSpelling"/>
-		//		<command id="CmdAddToSpellDict" label="Add to Spelling Dictionary" message="AddToSpellDict"/>
-		///// -----------------------------------------------------------------------------------
-		///// <summary>
-		///// If the mousePos is part of a word that is not properly spelled, make a colleague
-		///// which can handle the menu options for correcting it or adding it to the dictionary.
-		///// Otherwise, answer null.
-		///// </summary>
-		///// <param name="mousePos">The location of the mouse</param>
-		///// <param name="rootb">The rootbox</param>
-		///// <param name="rcSrcRoot"></param>
-		///// <param name="rcDstRoot"></param>
-		///// -----------------------------------------------------------------------------------
-		//public IxCoreColleague MakeSpellCheckColleague(Point mousePos, IVwRootBox rootb,
-		//    Rectangle rcSrcRoot, Rectangle rcDstRoot)
-		//{
-		//    CheckDisposed();
-		//    int ichMin, ichLim, hvoObj, tag, wsAlt, wsText;
-		//    string word;
-		//    Dictionary dict;
-		//    ICollection<string> suggestions = GetSuggestions(mousePos, rootb, rcSrcRoot, rcDstRoot,
-		//        out hvoObj, out tag, out wsAlt, out wsText, out ichMin, out ichLim, out word, out dict);
-		//    if (suggestions == null)
-		//        return null;
-		//    return new SpellCorrectColleague(rootb, suggestions, hvoObj, tag, wsAlt, wsText, ichMin, ichLim, word, dict, this);
-		//
-
-		void itemAdd_Click(object sender, EventArgs e)
-		{
-			(sender as AddToDictMenuItem).AddWordToDictionary();
 		}
 
 		/// ------------------------------------------------------------------------------------

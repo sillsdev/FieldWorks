@@ -32,7 +32,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private string m_charStyleName;
 
 		private string m_chosenStyleName;
-		private int m_customUserLevel = 0;
 		private bool m_fCanApplyCharacterStyle = true;
 		private bool m_fCanApplyParagraphStyle = true;
 		private List<ContextValues> m_applicableStyleContexts;
@@ -50,7 +49,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <param name="hvoStylesOwner">The hvo of the object which owns the style.</param>
 		/// <param name="stylesTag">The "flid" in which the styles are owned.</param>
 		/// <param name="normalStyleName">Name of the normal style.</param>
-		/// <param name="customUserLevel">The custom user level.</param>
 		/// <param name="paraStyleName">Name of the currently selected paragraph style.</param>
 		/// <param name="charStyleName">Name of the currently selected character style.</param>
 		/// <param name="hvoRootObject">The hvo of the root object in the current view.</param>
@@ -58,13 +56,12 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <param name="helpTopicProvider">The help topic provider.</param>
 		/// ------------------------------------------------------------------------------------
 		public FwApplyStyleDlg(IVwRootSite rootSite, LcmCache cache, int hvoStylesOwner,
-			int stylesTag, string normalStyleName, int customUserLevel, string paraStyleName,
+			int stylesTag, string normalStyleName, string paraStyleName,
 			string charStyleName, int hvoRootObject, IApp app,
 			IHelpTopicProvider helpTopicProvider)
 		{
 			m_rootSite = rootSite;
 			InitializeComponent();
-			m_customUserLevel = customUserLevel;
 			m_helpTopicProvider = helpTopicProvider;
 			m_paraStyleName = paraStyleName;
 			m_charStyleName = charStyleName;
@@ -72,8 +69,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			// Cache is null in tests
 			if (cache == null)
 				return;
-
-			m_cboTypes.SelectedIndex = 1; // All Styles
 
 			// Load the style information
 			m_styleTable = new StyleInfoTable(normalStyleName,
@@ -159,32 +154,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		#region Event handlers
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Handles the SelectedIndexChanged event of the m_cboTypes control.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		private void m_cboTypes_SelectedIndexChanged(object sender, EventArgs e)
-		{
-			if (m_styleListHelper == null)
-				return;
-			switch (m_cboTypes.SelectedIndex)
-			{
-				case 0:	// basic
-					m_styleListHelper.MaxStyleLevel = 0;
-					break;
-
-				case 1:	// all
-					m_styleListHelper.MaxStyleLevel = Int32.MaxValue;
-					break;
-
-				case 2:	// custom
-					m_styleListHelper.MaxStyleLevel = m_customUserLevel;
-					break;
-			}
-			m_styleListHelper.Refresh();
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
 		/// Handles the Click event of the m_btnOk control.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
@@ -256,19 +225,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		#endregion
 
 		#region Properties
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets or sets a value indicating whether or not to show the combo box where the user
-		/// can select the type of styles to show (all, basic, or custom styles). This combo
-		/// box is shown in TE but not in the other apps.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public bool AllowSelectStyleTypes
-		{
-			get { return m_pnlTypesCombo.Visible; }
-			set { m_pnlTypesCombo.Visible = value; }
-		}
-
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Sets a value indicating whether character styles should be shown in the list of

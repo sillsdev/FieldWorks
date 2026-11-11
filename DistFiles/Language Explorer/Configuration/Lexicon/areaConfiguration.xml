@@ -272,7 +272,6 @@
 		<!--	Brings out bug where showing a list forces the list to set a current value which then propogates messages to a world that is not ready for them!
 
 		<toolbar id="BarViews" list="ListViews" behavior="singlePropertyAtomicValue" property="currentContentControl"/> -->
-		<!--    <include query="window/toolbars/*"/> -->
 		<toolbar id="Insert">
 			<item command="CmdInsertLexEntry" defaultVisible="false"/>
 			<item command="CmdGoToEntry" defaultVisible="false"/>

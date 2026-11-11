@@ -117,6 +117,7 @@ namespace FwAvaloniaDialogs
 		public static string EntryGoMustSelect => Text("FwAvaloniaDialogs.EntryGoMustSelect");
 		public static string EntryGoSearchWatermark => Text("FwAvaloniaDialogs.EntryGoSearchWatermark");
 		public static string EntryGoResultsLabel => Text("FwAvaloniaDialogs.EntryGoResultsLabel");
+		public static string EntryGoWritingSystemLabel => Text("FwAvaloniaDialogs.EntryGoWritingSystemLabel");
 		// The two-stage OK gate when the dependent auxiliary picker has no chosen option yet (legacy: the
 		// LinkMSADlg/LinkAllomorphDlg OK button stayed disabled while the per-entry combo was empty).
 		public static string EntryGoMustSelectOption => Text("FwAvaloniaDialogs.EntryGoMustSelectOption");
