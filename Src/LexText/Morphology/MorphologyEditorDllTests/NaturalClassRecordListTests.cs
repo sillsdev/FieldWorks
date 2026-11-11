@@ -77,7 +77,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 		/// <summary>
 		/// A class with the "shared" prefix is not considered user defined if it is used
-		/// by at most one rule, so it not display in the NC list.
+		/// by at most one rule, so it should not display in the NC list.
 		/// </summary>
 		[Test]
 		public void PrefixedClassUsedByOneRule_IsExcluded()
