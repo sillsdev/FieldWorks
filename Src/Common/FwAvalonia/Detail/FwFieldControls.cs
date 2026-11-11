@@ -1384,6 +1384,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		private readonly List<Control> _itemBlocks = new List<Control>();
 		private readonly List<Func<bool>> _unstaged = new List<Func<bool>>();
 		private readonly List<Action> _discardUnstaged = new List<Action>();
+		private readonly List<Func<bool>> _stageUnstaged = new List<Func<bool>>();
 		private int _selectedIndex = -1;
 		private bool _disposed;
 
@@ -1472,6 +1473,13 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 						if (textEditing.TrySetReferenceItemText(field, itemKey, typed))
 							gestureCompleted?.Invoke();
 					};
+					_stageUnstaged.Add(() =>
+					{
+						if (box.Text == submitted)
+							return false;
+						commitText();
+						return true;
+					});
 					EventHandler<Avalonia.Interactivity.RoutedEventArgs> commitOnBlur =
 						(s2, e2) => CommitUnlessMenuGesture(commitText);
 					box.LostFocus += commitOnBlur;
@@ -1705,6 +1713,13 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 					if (textEditing.TryCreateAndAddReferenceItem(field, typed))
 						gestureCompleted?.Invoke();
 				};
+				_stageUnstaged.Add(() =>
+				{
+					if ((newItem.Text ?? string.Empty) == submittedNew)
+						return false;
+					commitNew();
+					return true;
+				});
 				EventHandler<Avalonia.Interactivity.RoutedEventArgs> newOnBlur =
 					(s2, e2) => CommitUnlessMenuGesture(commitNew);
 				newItem.LostFocus += newOnBlur;
@@ -2131,6 +2146,19 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		{
 			foreach (var discard in _discardUnstaged)
 				discard();
+		}
+
+		/// <summary>
+		/// Offers the domain any text an editor holds, as leaving that editor would. Lets a key
+		/// that must not act on an earlier change, such as Undo, finish the edit first.
+		/// </summary>
+		/// <returns>Whether an editor held text, whether or not the domain accepted it.</returns>
+		public bool StageUnstagedText()
+		{
+			var held = false;
+			foreach (var stage in _stageUnstaged)
+				held |= stage();
+			return held;
 		}
 
 		private void AddSeparatorBar()

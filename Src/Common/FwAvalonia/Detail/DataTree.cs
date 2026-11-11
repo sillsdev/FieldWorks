@@ -444,20 +444,26 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			}
 		}
 
-		// With an edit open, an undo or redo key saves it as its own step and stops; otherwise
-		// the host gets it. A popup, such as a chooser's filter box, keeps it for its editor.
+		// With an edit open or reference text typed, an undo or redo key saves it as its own step
+		// and stops; otherwise the host gets it. A popup's editor keeps it for its own undo.
 		private void OnUndoRedoKeyDown(object sender, Avalonia.Input.KeyEventArgs e)
 		{
 			if (!IsUndoOrRedoKey(e) || !(e.Source is Visual source)
 				|| (source != this && !this.IsVisualAncestorOf(source)))
 				return;
+			// Typed reference text opens no edit session. Refused text still takes the key, so
+			// the step before it is not undone in its place.
+			var heldText = false;
+			foreach (var vector in VectorRows)
+				heldText |= vector.StageUnstagedText();
 			if (_editContext != null && _editContext.IsOpen)
-			{
 				OnSave();
-				e.Handled = true;
+			else if (!heldText)
+			{
+				UndoRedoKeyUnhandled?.Invoke(this, e);
 				return;
 			}
-			UndoRedoKeyUnhandled?.Invoke(this, e);
+			e.Handled = true;
 		}
 
 		private static bool IsUndoOrRedoKey(Avalonia.Input.KeyEventArgs e)

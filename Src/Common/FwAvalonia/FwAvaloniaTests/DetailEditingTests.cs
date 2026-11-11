@@ -24,8 +24,27 @@ using SIL.FieldWorks.Common.FwAvalonia.ViewDefinition;
 namespace FwAvaloniaTests
 {
 	/// <summary>Records edit-context traffic so view editing behavior can be asserted without LCModel.</summary>
-	internal sealed class FakeDetailEditContext : IDetailEditContext, IStructuredTextEditing
+	internal sealed class FakeDetailEditContext : IDetailEditContext, IStructuredTextEditing,
+		IReferenceTextEditing
 	{
+		/// <summary>Whether vector rows offer a typed slot; off, so other rows stay as they
+		/// were.</summary>
+		public bool CreatableReferences;
+		/// <summary>What the next typed-slot create reports (false = refused).</summary>
+		public bool CreateResult = true;
+		public readonly List<(string Field, string Text)> ReferenceCreates = new List<(string, string)>();
+
+		public bool CanCreateReferenceItem(DetailField field) => CreatableReferences;
+
+		public bool TryCreateAndAddReferenceItem(DetailField field, string text)
+		{
+			ReferenceCreates.Add((field.Field, text));
+			return CreateResult;
+		}
+
+		public bool CanEditReferenceItemText(DetailField field) => false;
+		public bool TrySetReferenceItemText(DetailField field, string itemKey, string text) => false;
+
 		public readonly List<(string Field, string Ws, string Value)> TextEdits = new List<(string, string, string)>();
 		public readonly List<(string Field, string Ws, DetailRichTextValue Value)> RichTextEdits
 			= new List<(string, string, DetailRichTextValue)>();
@@ -914,6 +933,45 @@ namespace FwAvaloniaTests
 			Assert.That(offered, Is.EqualTo(0), "the key is not offered to FieldWorks");
 			Assert.That(context.CommitCount, Is.EqualTo(0), "and saves nothing");
 			Assert.That(filter.Text, Is.Not.EqualTo("ab"), "the filter box undid its own typing");
+		}
+
+		// Text typed into a reference row's add slot opens no edit session until it is
+		// staged. The first Ctrl+Z stages it, as for any other edit, rather than undoing the
+		// change before it.
+		[AvaloniaTest]
+		[TestCase(true, TestName = "CtrlZ_InAReferenceSlotHoldingText_StagesIt_AndStopsAtTheView")]
+		[TestCase(false, TestName = "CtrlZ_InAReferenceSlotHoldingRefusedText_StillStopsAtTheView")]
+		public void CtrlZ_InAReferenceSlotHoldingText_StopsAtTheView(bool accepted)
+		{
+			var model = new DetailModel("LexEntry", "test",
+				new List<DetailField> { SecondVectorField() }, new List<ViewDiagnostic>());
+			var context = new FakeDetailEditContext
+			{
+				CreatableReferences = true,
+				CreateResult = accepted
+			};
+			var view = new DataTree(model, context);
+			var window = new Window { Content = view, Width = 500, Height = 260 };
+			window.Show();
+			Dispatcher.UIThread.RunJobs();
+			var slot = view.GetVisualDescendants().OfType<TextBox>().Single(
+				b => (AutomationProperties.GetAutomationId(b) ?? string.Empty).EndsWith(".New"));
+			var offered = 0;
+			view.UndoRedoKeyUnhandled += (s, e) => offered++;
+			var lastKeyHandled = RecordLastKeyDownHandled(window);
+			TypeInto(window, slot, "Two");
+			Assert.That(context.IsOpen, Is.False, "precondition: typing in the slot opened no edit");
+			Assert.That(view.HasUnsubmittedText, Is.True, "precondition: the slot holds the text");
+
+			PressKey(window, PhysicalKey.Z, RawInputModifiers.Control);
+
+			Assert.That(context.ReferenceCreates, Is.EqualTo(new[] { ("Second", "Two") }),
+				"the typed text is offered to the domain");
+			Assert.That(context.CommitCount, Is.EqualTo(accepted ? 1 : 0),
+				"and saved as its own step when accepted");
+			Assert.That(offered, Is.EqualTo(0), "FieldWorks' Undo does not run on an earlier change");
+			Assert.That(lastKeyHandled(), Is.True, "the key goes no further than the view");
+			Assert.That(view.HasUnsubmittedText, Is.False, "nothing is left to stage later");
 		}
 
 		private static string TypeInto(Window window, TextBox box, string text)
