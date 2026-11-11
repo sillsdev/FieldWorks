@@ -70,6 +70,9 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		protected ICmObject m_moveObj;
 
+		// The Move command that opened the category list, for its undo text.
+		private Command m_moveCommand;
+
 		/// <summary>
 		/// Object just created.
 		/// </summary>
@@ -515,6 +518,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			Slice currentSlice = m_dataEntryForm.CurrentSlice;
 			m_moveObj = currentSlice.Object;
+			m_moveCommand = cmd as Command;
 			if (m_moveObj is IMoInflAffixSlot slot)
 			{
 				ShowPartsOfSpeech(slot.Owner.Hvo);
@@ -566,79 +570,12 @@ namespace SIL.FieldWorks.XWorks
 				repo.TryGetObject((e.Node as HvoTreeNode).Hvo, out selectedPOS);
 			if (selectedPOS != null)
 			{
-				if (m_moveObj is IMoInflAffixSlot slot)
-				{
-					MoveSlot(slot, selectedPOS);
+				CategoryItemMove.Move(m_moveObj, selectedPOS, m_moveCommand?.UndoText ?? xWorksStrings.UndoMoveItem,
+					m_moveCommand?.RedoText ?? xWorksStrings.RedoMoveItem);
+				if (m_moveObj is IMoInflAffixSlot)
 					Publisher.Publish(new PublisherParameterObject(EventConstants.MasterRefresh, null, m_propertyTable.GetWindow()));
-				}
-				if (m_moveObj is IMoInflAffixTemplate template)
-				{
-					MoveTemplate(template, selectedPOS);
-				}
 			}
 		}
-
-		private void MoveSlot(IMoInflAffixSlot slot, IPartOfSpeech selectedPOS)
-		{
-			UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW("Undo Move Slot",
-									"Redo Move Slot", Cache.ActionHandlerAccessor, () =>
-									{
-										selectedPOS.AffixSlotsOC.Add(slot);
-										foreach (IMoInflAffMsa msa in slot.Affixes)
-										{
-											msa.PartOfSpeechRA = selectedPOS;
-										}
-									});
-		}
-		private void MoveTemplate(IMoInflAffixTemplate template, IPartOfSpeech selectedPOS)
-		{
-			if (template.Owner == selectedPOS)
-			{
-				// Don't move the template to selectedPOS if it is already there.
-				return;
-			}
-			UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW("Undo Move Template",
-									"Redo Move Template", Cache.ActionHandlerAccessor, () =>
-									{
-										// Get the template POS before the template is moved.
-										IPartOfSpeech templatePOS = template.Owner as IPartOfSpeech;
-										// Move the template.
-										selectedPOS.AffixTemplatesOS.Add(template);
-										if (templatePOS.Owner == selectedPOS)
-										{
-											// Move template slots up, too.
-											IList<IMoInflAffixSlot> slots = template.PrefixSlotsRS.ToList();
-											slots.AddRange(template.SuffixSlotsRS.ToList());
-											foreach (IMoInflAffixSlot slot in slots)
-											{
-												IPartOfSpeech slotPOS = slot.Owner as IPartOfSpeech;
-												IPartOfSpeech slotPOSOwner = slotPOS.Owner as IPartOfSpeech;
-												// Move a slot if it is at the same level as the template
-												// and moving it couldn't cause a name conflict.
-												string slotName = slot.Name.BestAnalysisVernacularAlternative.Text;
-												if (slotPOS == templatePOS && GetPOSSlot(slotPOSOwner, slotName) == null)
-													MoveSlot(slot, selectedPOS);
-											}
-										}
-									});
-		}
-
-		public static IMoInflAffixSlot GetPOSSlot(IPartOfSpeech partOfSpeech, string name)
-		{
-			while (partOfSpeech != null)
-			{
-				foreach (IMoInflAffixSlot slot in partOfSpeech.AllAffixSlots)
-				{
-					// NB: BestAnalysisVernacularAlternative always returns something.
-					if (slot.Name.BestAnalysisVernacularAlternative.Text == name)
-						return slot;
-				}
-				partOfSpeech = partOfSpeech.Owner as IPartOfSpeech;
-			}
-			return null;
-		}
-
-
 
 		private bool SliceConfiguredForField(XmlNode node, string field)
 		{
@@ -686,32 +623,16 @@ namespace SIL.FieldWorks.XWorks
 			string fieldName;
 			string cmdClassName;
 			ExtractInsertCommandInfo(command, out fieldName, out cmdClassName);
-			string rootObjClassName = string.Empty;
 			var rootObj = currentSlice.ContainingDataTree.Root;
 			if (rootObj != null && !rootObj.IsValidObject)
 				return false;
-			try
+			if (!DetailObjectInsertion.OffersSubItem(rootObj, fieldName, cmdClassName))
+				return false;
+			// A sub-item also needs its section among the slices.
+			if (fieldName == DetailObjectInsertion.SubItemsField
+				&& !currentSlice.ContainingDataTree.HasSubPossibilitiesSlice)
 			{
-				if (rootObj != null)
-					rootObjClassName = rootObj.ClassName;
-			}
-			catch
-			{
-			}
-			// For a SubPossibilities insertion, the class associated with this field
-			// in the command node must match the class of the parentObject so that
-			// we filter out commands to insert an item into the wrong CmPossibility class.
-			// (If we need to do anything else exceptional for CmPossibilities try subclassing
-			// DTMenuHandler to handle these things. That requires a menuHandler node in the parameters
-			// for each of the tools based on a CmPossibility list.)
-			if (fieldName == "SubPossibilities")
-			{
-				// we can insert only if we are are inserting into the same class.
-				if (cmdClassName != rootObjClassName)
-					return false;
-				// we can insert only if the ContainingDataTree has a SubPossibilities slice
-				if(!currentSlice.ContainingDataTree.HasSubPossibilitiesSlice)
-					return false;
+				return false;
 			}
 			return Cache != null
 				&& DetailObjectInsertion.CanInsert(rootObj, currentSlice.Object, command.Id, fieldName, out index);
