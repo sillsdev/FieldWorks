@@ -98,6 +98,9 @@ namespace SIL.FieldWorks.XWorks
 		// a change must touch to refresh the view. Null and empty while no record is shown.
 		private ICmObject m_shownRecord;
 		private HashSet<int> m_shownRowObjects = new HashSet<int>();
+		// The clerk's current object when the shown record was shown: a subrecord, when the
+		// tool shows a current subrecord inside its root. 0 while no record is shown.
+		private int m_shownForHvo;
 
 		private bool ShouldUseAvaloniaLexiconEdit
 		{
@@ -567,6 +570,7 @@ namespace SIL.FieldWorks.XWorks
 		private void SetShownRecord(ICmObject record, DetailModel detail)
 		{
 			m_shownRecord = record;
+			m_shownForHvo = record == null ? 0 : Clerk?.CurrentObject?.Hvo ?? record.Hvo;
 			m_shownRowObjects = detail == null
 				? new HashSet<int>()
 				: new HashSet<int>(detail.Fields.Select(f => f.ObjectHvo).Where(hvo => hvo != 0));
@@ -580,18 +584,15 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>How many times this view has built its Avalonia detail view.</summary>
 		internal int DetailShowCount { get; private set; }
 
-		// Forgets the shown record once the clerk has moved to a different one, so settling the
-		// edit left open on it is judged against the record about to be shown (LT-22692).
+		// Forgets the shown record once the clerk's current object changes, even to a sibling
+		// subrecord, so settling the edit left open is judged against the next one (LT-22692).
 		private void ForgetShownRecordIfLeaving()
 		{
 			if (m_shownRecord == null)
 				return;
 			var next = Clerk?.CurrentObject;
-			if (next == null || !next.IsValidObject
-				|| ResolveShownRecord(next).Hvo != m_shownRecord.Hvo)
-			{
+			if (next == null || !next.IsValidObject || next.Hvo != m_shownForHvo)
 				SetShownRecord(null, null);
-			}
 		}
 
 		/// <summary>
