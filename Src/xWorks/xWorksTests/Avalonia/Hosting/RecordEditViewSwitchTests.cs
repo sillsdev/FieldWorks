@@ -194,6 +194,29 @@ namespace SIL.FieldWorks.XWorks
 				toolValue);
 		}
 
+		// Switching from New to the WinForms view with no current record must still initialize
+		// the DataTree: leaving the tool (or closing the window) calls its PrepareToGoAway.
+		[Test]
+		public void FlipNewToLegacy_WithNoCurrentRecord_PrepareToGoAwaySucceeds()
+		{
+			m_propertyTable.SetProperty("UIMode", "New", true);
+			m_propertyTable.SetPropertyPersistence("UIMode", false);
+
+			LoadRecordEditView("ProdRestrictEdit");
+			DrainMediatorAndIdleQueues();
+
+			var control = m_propertyTable.GetValue<object>("currentContentControlObject", null) as RecordEditView;
+			Assert.That(control, Is.Not.Null);
+			Assert.That(control.Clerk.CurrentObject, Is.Null, "precondition: the list is empty");
+			Assert.That(GetPrivateFieldValue(control, "m_activeUIFramework"), Is.EqualTo(UIFramework.Avalonia));
+
+			m_propertyTable.SetProperty("UIMode", "Legacy", true);
+			DrainMediatorAndIdleQueues();
+			Assert.That(GetPrivateFieldValue(control, "m_activeUIFramework"), Is.EqualTo(UIFramework.Legacy));
+
+			Assert.That(control.PrepareToGoAway(), Is.True);
+		}
+
 		// LT-22811: View > Refresh and closing the Styles dialog reach the Avalonia view through
 		// RefreshDisplay, which recomposes it at Normal's new size.
 		[Test]
