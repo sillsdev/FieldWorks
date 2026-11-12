@@ -242,7 +242,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 				// Each sibling after the first needs its own stable id so they don't collide.
 				var childStableId = i == 0 ? stableId : $"{parentPath}/#{output.Count}";
 				var node = CreateNode(contents[i], callerEl, parts, className, layoutType, childStableId,
-					indented, diagnostics);
+					indented, diagnostics, partRefId: stableId);
 				if (node != null)
 				{
 					output.Add(node);
@@ -259,12 +259,15 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 			string stableId,
 			bool indented,
 			List<ViewDiagnostic> diagnostics,
-			bool insideConditional = false)
+			bool insideConditional = false,
+			string partRefId = null)
 		{
 			// Content inside a part's conditional takes the part ref as its caller; the
 			// conditional's own node has already reported that part ref.
 			var hasPartRef = !ReferenceEquals(callerEl, contentEl);
 			var reportPartRef = hasPartRef && !insideConditional;
+			// Each branch's node holds the part ref's values, so each records which part ref.
+			var heldPartRefId = insideConditional ? partRefId : null;
 			var label = Attr(callerEl, "label") ?? Attr(contentEl, "label");
 			var abbreviation = Attr(callerEl, "abbr") ?? Attr(contentEl, "abbr");
 			var visibility = ParseVisibility(Attr(callerEl, "visibility") ?? Attr(contentEl, "visibility"));
@@ -417,7 +420,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 							sliceId: Attr(contentEl, "id"),
 							helpTopicId: Attr(contentEl, "helpTopicID"),
 							optionalWritingSystem: optionalWs,
-							forceIncludeEnglish: forceEnglish);
+							forceIncludeEnglish: forceEnglish,
+							partRefId: heldPartRefId);
 					}
 
 					// Dynamic custom slices keep their legacy class/assembly identity so the host can
@@ -445,7 +449,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 						helpTopicId: Attr(contentEl, "helpTopicID"),
 						optionalWritingSystem: optionalWs,
 						forceIncludeEnglish: forceEnglish,
-						visibilityField: Attr(contentEl, "visField"));
+						visibilityField: Attr(contentEl, "visField"),
+						partRefId: heldPartRefId);
 				}
 				case "obj":
 				case "seq":
@@ -477,7 +482,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 						ghostLabel: Attr(contentEl, "ghostLabel") ?? Attr(callerEl, "ghostLabel"),
 						// The layout's post-create hook rides the node so the composer's ghost
 						// setter can invoke it the way GhostStringSliceView.MakeRealObject does.
-						ghostInitMethod: Attr(contentEl, "ghostInitMethod") ?? Attr(callerEl, "ghostInitMethod"));
+						ghostInitMethod: Attr(contentEl, "ghostInitMethod") ?? Attr(callerEl, "ghostInitMethod"),
+						partRefId: heldPartRefId);
 				}
 				// Conditional display: <if>/<ifnot> shows content only when the condition
 				// passes (fails, for ifnot), evaluated via XmlVc.ConditionPasses. Preserved
@@ -491,8 +497,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 						return null; // unsupported condition form; diagnostic already raised
 
 					var children = new List<ViewNode>();
-					AddConditionalChildren(contentEl, hasPartRef ? callerEl : null, parts, className,
-						layoutType, stableId, indented, children, diagnostics);
+					AddConditionalChildren(contentEl, hasPartRef ? callerEl : null, partRefId, parts,
+						className, layoutType, stableId, indented, children, diagnostics);
 					// A part ref's visibility is held by the content nodes, one per row.
 					return new ViewNode(stableId, ViewNodeKind.Conditional, label, abbreviation,
 						Attr(contentEl, "field"), null, EditorClassification.GroupingNone, null,
@@ -529,8 +535,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 						}
 
 						var branchChildren = new List<ViewNode>();
-						AddConditionalChildren(clause, hasPartRef ? callerEl : null, parts, className,
-							layoutType, branchId, indented, branchChildren, diagnostics);
+						AddConditionalChildren(clause, hasPartRef ? callerEl : null, partRefId, parts,
+							className, layoutType, branchId, indented, branchChildren, diagnostics);
 						branches.Add(new ViewNode(branchId, ViewNodeKind.Conditional, null, null,
 							Attr(clause, "field"), null, EditorClassification.GroupingNone, null,
 							ViewVisibility.Always, ViewExpansion.NotApplicable, indented, null,
@@ -631,6 +637,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 		private void AddConditionalChildren(
 			XElement container,
 			XElement partRef,
+			string partRefId,
 			IPartResolver parts,
 			string className,
 			string layoutType,
@@ -652,7 +659,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 					{
 						var node = CreateNode(child, partRef ?? child, parts, className, layoutType,
 							$"{parentPath}/#{output.Count}", indented, diagnostics,
-							insideConditional: partRef != null);
+							insideConditional: partRef != null, partRefId: partRefId);
 						if (node != null)
 							output.Add(node);
 						break;

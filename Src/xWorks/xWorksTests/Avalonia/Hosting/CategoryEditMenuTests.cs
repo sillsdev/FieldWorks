@@ -5,9 +5,11 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwAvalonia.Detail;
+using SIL.FieldWorks.Common.FwAvalonia.ViewDefinition;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Infrastructure;
@@ -286,6 +288,42 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(m_restriction.SubPossibilitiesOS, Has.Count.EqualTo(1));
 		}
 
+		// The template's Description part holds one row per state of Active; hiding the row
+		// holds in both.
+		[Test]
+		public void FieldVisibility_OnATemplatesDescription_HoldsWhenActiveIsUnticked()
+		{
+			ShowCategory(m_verb);
+			var row = DescriptionRow(m_finite);
+			Assert.That(row, Is.Not.Null, "precondition: an active template shows its Description");
+			var store = OverrideStore();
+			store.Save(new ViewDefinitionOverride(row.ClassName, row.LayoutName, "detail", null, null));
+			try
+			{
+				var window = m_propertyTable.GetValue<XWindow>("window");
+				var items = XCoreMenuBridge.CreateMenuItems(window, new[] { ObjectMenuAuthority.MenuId },
+					null, null, m_view.CreateObjectMenuAuthority(row));
+				Run(Item(items, "Field Visibility").Children, "Normally hidden");
+				DrainMediatorAndIdleQueues();
+
+				var ops = store.TryGet(row.ClassName, row.LayoutName).Operations;
+				Assert.That(ops.Select(o => o.Kind), Is.All.EqualTo(ViewOverrideOperationKind.SetVisibility));
+				Assert.That(ops, Has.Count.EqualTo(2), "one write per state of Active");
+				Assert.That(ops.Select(o => o.Visibility), Is.All.EqualTo(ViewVisibility.Never));
+				Assert.That(DescriptionRow(m_finite), Is.Null, "hidden while active");
+
+				NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () => m_finite.Disabled = true);
+				m_view.RefreshDisplay();
+				DrainMediatorAndIdleQueues();
+
+				Assert.That(DescriptionRow(m_finite), Is.Null, "still hidden once Active is unticked");
+			}
+			finally
+			{
+				store.Save(new ViewDefinitionOverride(row.ClassName, row.LayoutName, "detail", null, null));
+			}
+		}
+
 		// Verb (two slots, two templates, the subcategory Irregular) and Noun in a
 		// hierarchical category list; one exception feature in its flat list.
 		private void CreateData()
@@ -340,6 +378,14 @@ namespace SIL.FieldWorks.XWorks
 			=> ShownRows().First(f => f.ObjectHvo == template.Hvo && f.MenuId == TemplateMenuId);
 
 		private DetailField SubcategoriesRow() => ShownRows().First(f => f.MenuId == SubcategoriesMenuId);
+
+		private DetailField DescriptionRow(IMoInflAffixTemplate template)
+			=> ShownRows().FirstOrDefault(f => f.ObjectHvo == template.Hvo && f.Field == "Description");
+
+		private ViewDefinitionOverrideStore OverrideStore()
+			=> (ViewDefinitionOverrideStore)typeof(RecordEditView)
+				.GetProperty("ViewOverrideStore", BindingFlags.Instance | BindingFlags.NonPublic)
+				.GetValue(m_view);
 
 		// The menus of the rows that some id leaves to the hidden tree.
 		private List<string> UnansweredMenus(IEnumerable<DetailField> rows)

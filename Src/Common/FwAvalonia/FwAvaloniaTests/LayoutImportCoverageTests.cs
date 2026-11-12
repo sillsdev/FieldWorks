@@ -460,6 +460,34 @@ namespace FwAvaloniaTests
 				Is.EqualTo(ViewVisibility.Never));
 		}
 
+		// Field Visibility on one branch's row reaches every branch of the same part ref.
+		[Test]
+		public void PartRefBranches_ShareOneVisibilityTarget()
+		{
+			var model = ImportLayout("MoInflAffixTemplate",
+				"<part ref='NameAllA'><indent><part ref='Active'/></indent></part>"
+				+ "<part ref='NameAllA'/>");
+			var first = model.Roots.Take(2).Select(c => c.Children.Single()).ToList();
+			var second = model.Roots.Skip(2).Select(c => c.Children.Single()).ToList();
+			var active = first[0].Children.Single();
+			Assert.That(model.Roots.Select(r => r.PartRefId), Is.All.Null);
+
+			// The applier and the canonical JSON both keep the part ref.
+			var hideOne = new ViewOverrideOperation(ViewOverrideOperationKind.SetVisibility,
+				first[1].StableId, visibility: ViewVisibility.Never);
+			var patched = ViewDefinitionOverrideApplier.Apply(
+				ViewDefinitionJsonSerializer.Deserialize(ViewDefinitionJsonSerializer.Serialize(model)),
+				new ViewDefinitionOverride("MoInflAffixTemplate", "T", "detail", new[] { hideOne }, null));
+
+			Assert.That(ViewDefinitionOverrideEditor.LocateTarget(patched, first[1].StableId)
+				.VisibilityTargets, Is.EqualTo(first.Select(s => s.StableId)));
+			Assert.That(ViewDefinitionOverrideEditor.LocateTarget(patched, second[0].StableId)
+				.VisibilityTargets, Is.EqualTo(second.Select(s => s.StableId)));
+			Assert.That(ViewDefinitionOverrideEditor.LocateTarget(patched, active.StableId)
+				.VisibilityTargets, Is.EqualTo(new[] { active.StableId }),
+				"the part ref's own child rows are rows of their own");
+		}
+
 		[Test]
 		public void PartRefChildren_LandUnderTheSliceInsideTheConditional()
 		{
