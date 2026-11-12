@@ -411,6 +411,8 @@ namespace SIL.FieldWorks.XWorks
 				}
 				else
 				{
+					// Switching from New with no record leaves the tree uninitialized.
+					EnsureDataTreeInitialized();
 					EnsureDataTreeVisible();
 					m_dataEntryForm.Hide();
 					m_dataEntryForm.Reset();	// in case user deleted the object it was based upon.
