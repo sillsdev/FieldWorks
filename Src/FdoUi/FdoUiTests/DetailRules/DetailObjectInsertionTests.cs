@@ -2,6 +2,8 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System.Collections.Generic;
+using System.Linq;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.DetailRules;
 using SIL.LCModel;
@@ -25,6 +27,7 @@ namespace SIL.FieldWorks.FdoUi
 		private ILexExtendedNote _note2;
 		private ILexEtymology _etymology1;
 		private ILexEtymology _etymology2;
+		private readonly List<IPartOfSpeech> _categories = new List<IPartOfSpeech>();
 
 		// A stem entry with two senses, two etymologies, and on the first sense one example
 		// and two extended notes.
@@ -62,7 +65,10 @@ namespace SIL.FieldWorks.FdoUi
 			{
 				if (_entry.IsValidObject)
 					_entry.Delete();
+				foreach (var category in _categories.Where(c => c.IsValidObject))
+					category.Delete();
 			});
+			_categories.Clear();
 		}
 
 		[Test]
@@ -355,6 +361,79 @@ namespace SIL.FieldWorks.FdoUi
 			Assert.That(DetailObjectInsertion.ResolveTarget(_etymology1, "ExtendedNote", "LexExtendedNote", null, false), Is.Null,
 				"nothing from the etymology up to the entry has ExtendedNote");
 			Assert.That(DetailObjectInsertion.ResolveTarget(null, "Senses", "LexSense", null, false), Is.Null);
+		}
+
+		[Test]
+		public void OffersSubItem_OnlyToAShownRecordOfTheCommandsClass()
+		{
+			var category = MakeCategory(null);
+
+			Assert.That(DetailObjectInsertion.OffersSubItem(category, "SubPossibilities", "PartOfSpeech"), Is.True);
+			Assert.That(DetailObjectInsertion.OffersSubItem(category, "SubPossibilities", "CmPossibility"), Is.False,
+				"another list's kind of sub-item");
+			Assert.That(DetailObjectInsertion.OffersSubItem(null, "SubPossibilities", "PartOfSpeech"), Is.False);
+			Assert.That(DetailObjectInsertion.OffersSubItem(_entry, "Senses", "PartOfSpeech"), Is.True,
+				"a command that inserts no sub-item applies to any record");
+		}
+
+		// The Subcategory command asks for the owner; a row of the shown category itself
+		// inserts under that category all the same, top-level or nested.
+		[Test]
+		public void ResolveTarget_ASubcategoryFromARowOfTheShownCategory_GoesUnderIt()
+		{
+			var top = MakeCategory(null);
+			var nested = MakeCategory(top);
+
+			foreach (var shown in new[] { top, nested })
+			{
+				var target = DetailObjectInsertion.ResolveTarget(shown, shown, "SubPossibilities", "PartOfSpeech", null,
+					insertAtOwner: true);
+
+				Assert.That(target.Owner, Is.SameAs(shown));
+				Assert.That(target.Flid, Is.EqualTo(CmPossibilityTags.kflidSubPossibilities));
+				Assert.That(target.ClassId, Is.EqualTo(PartOfSpeechTags.kClassId));
+			}
+		}
+
+		[Test]
+		public void ResolveTarget_ASubcategoryFromARowOfASubcategory_GoesRightAfterIt()
+		{
+			var top = MakeCategory(null);
+			var first = MakeCategory(top);
+			MakeCategory(top);
+
+			var target = DetailObjectInsertion.ResolveTarget(top, first, "SubPossibilities", "PartOfSpeech", null,
+				insertAtOwner: true);
+
+			Assert.That(target.Owner, Is.SameAs(top));
+			Assert.That(target.Position, Is.EqualTo(1), "after the first subcategory, before the second");
+		}
+
+		[Test]
+		public void ResolveTarget_ASubItemOfAnotherClassThanTheShownRecord_ResolvesNone()
+		{
+			var category = MakeCategory(null);
+
+			Assert.That(DetailObjectInsertion.ResolveTarget(category, category, "SubPossibilities", "CmPossibility", null, false),
+				Is.Null);
+			Assert.That(DetailObjectInsertion.ResolveTarget(_entry, _sense1, "Senses", "LexSense", "LexSense", false).Owner,
+				Is.SameAs(_sense1), "any other command resolves as without a shown record");
+		}
+
+		// A category at the top of the list, or under another; deleted with the test.
+		private IPartOfSpeech MakeCategory(IPartOfSpeech owner)
+		{
+			IPartOfSpeech category = null;
+			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
+			{
+				category = Cache.ServiceLocator.GetInstance<IPartOfSpeechFactory>().Create();
+				if (owner == null)
+					Cache.LangProject.PartsOfSpeechOA.PossibilitiesOS.Add(category);
+				else
+					owner.SubPossibilitiesOS.Add(category);
+			});
+			_categories.Add(category);
+			return category;
 		}
 	}
 }

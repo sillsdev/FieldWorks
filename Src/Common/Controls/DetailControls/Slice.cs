@@ -2464,14 +2464,11 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			if (newObj == null)
 				throw new ConfigurationException("NewSlice:GetObjectHvoForMenusToOperateOn is either messed up or should not have been called, because it could not find the object to be moved to a copy of its owner.", m_configurationNode);
 
-			if (origObj is ICloneableCmObject)
+			if (DetailObjectDuplication.CanCopy(origObj))
 			{
 				string undoMsg = String.Format("Undo {0}", label);
 				string redoMsg = String.Format("Redo {0}", label);
-				UndoableUnitOfWorkHelper.Do(undoMsg, redoMsg, m_cache.ActionHandlerAccessor,
-					() => {
-						((ICloneableCmObject)origObj).SetCloneProperties(newObj);
-					});
+				DetailObjectDuplication.CopyProperties(origObj, newObj, undoMsg, redoMsg);
 			}
 			else
 			{

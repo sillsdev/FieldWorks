@@ -6,11 +6,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Reflection;
-using System.Xml;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.Common.FwAvalonia;
 using SIL.FieldWorks.Common.FwAvalonia.Detail;
 using SIL.FieldWorks.Common.FwAvalonia.Seams;
 using SIL.FieldWorks.Common.FwUtils;
@@ -18,6 +15,7 @@ using SIL.LCModel;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Infrastructure;
 using XCore;
+using static SIL.FieldWorks.XWorks.DetailMenuTestSupport;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -67,7 +65,7 @@ namespace SIL.FieldWorks.XWorks
 			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, CreateRecords);
 			m_propertyTable.SetProperty("UIMode", "New", true);
 			m_propertyTable.SetPropertyPersistence("UIMode", false);
-			LoadRecordEditView("notebookEdit");
+			LoadRecordEditView(m_propertyTable, "notebookEdit");
 			DrainMediatorAndIdleQueues();
 			m_view = m_propertyTable.GetValue<object>("currentContentControlObject", null) as RecordEditView;
 			Assert.That(m_view, Is.Not.Null, "expected the notebook edit RecordEditView to load");
@@ -387,40 +385,12 @@ namespace SIL.FieldWorks.XWorks
 		private DetailField SubrecordRow(IRnGenericRec subrecord)
 			=> ShownRows().First(f => f.ObjectHvo == subrecord.Hvo && f.MenuId == SubrecordMenuId);
 
-		private static IEnumerable<(DetailMenuKind Kind, string[] Ids)> MenusOf(DetailField row)
-		{
-			var label = RecordEditView.ComposeSliceMenuIds(row.MenuId, row.IsMultiStringRow).ToArray();
-			if (label.Length > 0)
-				yield return (DetailMenuKind.SliceMenu, label);
-			var inString = RecordEditView.ComposeInStringMenuIds(row.ContextMenuId).ToArray();
-			if (inString.Length > 0)
-				yield return (DetailMenuKind.ContextMenu, inString);
-			if (!string.IsNullOrEmpty(row.HotlinksId))
-				yield return (DetailMenuKind.Hotlinks, new[] { row.HotlinksId });
-		}
-
-		// The row's label menu as the host builds it, which no hidden tree may answer.
 		private IReadOnlyList<DetailMenuItem> MenuItems(DetailField row)
-		{
-			var window = m_propertyTable.GetValue<XWindow>("window");
-			var ids = RecordEditView.ComposeSliceMenuIds(row.MenuId, row.IsMultiStringRow).ToArray();
-			var authority = m_view.CreateMenuAuthority(DetailMenuRequest.FromAnchor(null, row, DetailMenuKind.SliceMenu));
-			Assert.That(XCoreMenuBridge.OwnsAll(authority, ids), Is.True, "the menu is answered natively");
-			return XCoreMenuBridge.CreateMenuItems(window, ids, null, null, authority);
-		}
-
-		private static DetailMenuItem Item(IReadOnlyList<DetailMenuItem> items, string label)
-		{
-			var item = items.FirstOrDefault(i => i.Label == label);
-			Assert.That(item, Is.Not.Null, "the menu offers '{0}'", label);
-			return item;
-		}
+			=> DetailMenuTestSupport.MenuItems(m_view, m_propertyTable, row);
 
 		private void Invoke(DetailField row, string label)
 		{
-			var item = Item(MenuItems(row), label);
-			Assert.That(item.Execute, Is.Not.Null, "'{0}' is enabled", label);
-			item.Execute();
+			Run(MenuItems(row), label);
 			DrainMediatorAndIdleQueues();
 		}
 
@@ -428,33 +398,8 @@ namespace SIL.FieldWorks.XWorks
 			=> XCoreMenuBridge.ResolveMenu(m_propertyTable.GetValue<XWindow>("window"), StructuredTextMenuAuthority.MenuId)
 				.Leaves.Single(l => l.Message == message);
 
-		private Command CommandOf(string id)
-			=> (Command)m_propertyTable.GetValue<XWindow>("window").Mediator.CommandSet[id];
+		private Command CommandOf(string id) => DetailMenuTestSupport.CommandOf(m_propertyTable, id);
 
-		private static UIItemDisplayProperties Display() => new UIItemDisplayProperties(null, "item", false, null, true);
-
-		// The rows of the model the host shows now, the instances its menus are asked about.
-		private List<DetailField> ShownRows()
-		{
-			var hostField = typeof(RecordEditView).GetField("m_avaloniaEntryForm", BindingFlags.Instance | BindingFlags.NonPublic);
-			Assert.That(hostField, Is.Not.Null, "Missing private field: m_avaloniaEntryForm");
-			var host = (DetailHostControl)hostField.GetValue(m_view);
-			return host.ShownDetail.Fields.ToList();
-		}
-
-		private void LoadRecordEditView(string toolValue)
-		{
-			var windowConfiguration = m_propertyTable.GetValue<XmlNode>("WindowConfiguration");
-			Assert.That(windowConfiguration, Is.Not.Null);
-			var controlNode = windowConfiguration.SelectSingleNode(string.Format(
-				"//tool[@value='{0}']/control//control[dynamicloaderinfo/@class='SIL.FieldWorks.XWorks.RecordEditView']",
-				toolValue));
-			Assert.That(controlNode, Is.Not.Null, "Expected the RecordEditView configuration node for tool '{0}'.", toolValue);
-
-			m_propertyTable.SetProperty("currentContentControlParameters", controlNode, true);
-			m_propertyTable.SetPropertyPersistence("currentContentControlParameters", false);
-			m_propertyTable.SetProperty("currentContentControl", toolValue, true);
-			m_propertyTable.SetPropertyPersistence("currentContentControl", false);
-		}
+		private List<DetailField> ShownRows() => DetailMenuTestSupport.ShownRows(m_view);
 	}
 }

@@ -212,20 +212,21 @@ namespace SIL.FieldWorks.XWorks
 			authority.Answer(MoveRecordDownMessage, leaf => MoveItem(leaf, field, up: false));
 			authority.Answer(PromoteSubrecordMessage, leaf => RecordNestingItem(leaf, field, demote: false));
 			authority.Answer(DemoteSubrecordMessage, leaf => RecordNestingItem(leaf, field, demote: true));
+			authority.Answer(DuplicateMessage, leaf => DuplicateItem(leaf, field));
+			authority.Answer(MoveToCategoryMessage, leaf => MoveToCategoryItem(leaf, field));
 			return authority;
 		}
 
 		/// <summary>
 		/// The Insert leaves answered natively: a class created in an owning field, or a
-		/// variant added through the entry's variant back references. Inserts into
-		/// SubPossibilities stay with the adapter.
+		/// variant added through the entry's variant back references.
 		/// </summary>
 		internal bool InsertLeafInScope(DetailMenuLeaf leaf)
 		{
 			var command = leaf.Command;
 			var fieldName = command.GetParameter("field", null);
 			var className = command.GetParameter("className", null);
-			if (string.IsNullOrEmpty(fieldName) || string.IsNullOrEmpty(className) || fieldName == "SubPossibilities")
+			if (string.IsNullOrEmpty(fieldName) || string.IsNullOrEmpty(className))
 				return false;
 			if (!((IFwMetaDataCacheManaged)Cache.MetaDataCacheAccessor).ClassExists(className))
 				return false;
@@ -362,10 +363,13 @@ namespace SIL.FieldWorks.XWorks
 			OnAvaloniaDetailEditCompleted(this, EventArgs.Empty);
 		}
 
-		// The command's target from the row's object, by its field, className, ownerClass and
-		// slice parameters; null when none resolves.
-		private static DetailInsertTarget ResolveInsertTarget(ICmObject rowObject, Command command)
-			=> DetailObjectInsertion.ResolveTarget(rowObject, command.GetParameter("field"), command.GetParameter("className"),
+		/// <summary>
+		/// The command's target from the row's object in the shown record's view, by its field,
+		/// className, ownerClass and slice parameters; null when none resolves.
+		/// </summary>
+		internal DetailInsertTarget ResolveInsertTarget(ICmObject rowObject, Command command)
+			=> DetailObjectInsertion.ResolveTarget(ResolveShownRecord(Clerk?.CurrentObject), rowObject,
+				command.GetParameter("field"), command.GetParameter("className"),
 				command.GetParameter("ownerClass", null), command.GetParameter("slice", null) == "owner");
 
 		/// <summary>

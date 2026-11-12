@@ -17,9 +17,10 @@ namespace SIL.FieldWorks.XWorks
 	/// <summary>
 	/// The Avalonia detail view's answers to commands outside its own menus: View > Show Hidden
 	/// Fields and Show Dictionary Preview in every tool, in Lexicon Edit the Insert menu's and
-	/// pane bar's inserts and conversions, and in Notebook Edit Find in Dictionary, Add to
-	/// Dictionary and Demote Record. They act on the current row, the row of the shown record
-	/// that last had keyboard focus, else on the shown record itself.
+	/// pane bar's inserts and conversions, in Category Edit the Insert menu's inserts, and in
+	/// Notebook Edit Find in Dictionary, Add to Dictionary and Demote Record. They act on the
+	/// current row, the row of the shown record that last had keyboard focus, else on the
+	/// shown record itself.
 	/// </summary>
 	public partial class RecordEditView
 	{
@@ -68,9 +69,11 @@ namespace SIL.FieldWorks.XWorks
 				authority.Answer(DemoteRecordMessage, DemoteRecordItem);
 				return authority;
 			}
-			if (CurrentTool != LexiconEditTool)
+			if (CurrentTool != LexiconEditTool && CurrentTool != CategoryEditTool)
 				return authority;
 			authority.Answer(InsertMessage, MainMenuInsertItem);
+			if (CurrentTool == CategoryEditTool)
+				return authority;
 			authority.Answer(InsertMediaFileMessage, leaf => InsertMediaItem(leaf, MainMenuRow()));
 			authority.Answer(InsertPictureMessage, leaf => InsertPictureItem(leaf, MainMenuRow()));
 			authority.Answer(InsertVariantOfShownEntryMessage, InsertVariantOfShownEntryItem);

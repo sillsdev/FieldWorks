@@ -29,6 +29,9 @@ namespace SIL.FieldWorks.Common.DetailRules
 		/// <summary>The entry's virtual field of its variants' entry refs.</summary>
 		public const string VariantBackRefField = "VariantFormEntryBackRefs";
 
+		/// <summary>The field that holds the sub-items of a list item.</summary>
+		public const string SubItemsField = "SubPossibilities";
+
 		/// <summary>
 		/// Whether a new object can go into <paramref name="fieldName"/> of
 		/// <paramref name="owner"/>: a vector, a virtual reference vector, or an empty atomic
@@ -101,6 +104,19 @@ namespace SIL.FieldWorks.Common.DetailRules
 				return rowObject.ClassID == LexSenseTags.kClassId;
 			}
 			return CanInsert(root, rowObject, fieldName, out index);
+		}
+
+		/// <summary>
+		/// Whether the shown record takes what a command inserts: a command that inserts a
+		/// sub-item applies only to a shown record of exactly its class, so each list offers
+		/// its own kind of sub-item. Any other command applies.
+		/// </summary>
+		/// <param name="root">The shown record.</param>
+		public static bool OffersSubItem(ICmObject root, string fieldName, string className)
+		{
+			if (fieldName != SubItemsField)
+				return true;
+			return root != null && root.IsValidObject && root.ClassName == className;
 		}
 
 		/// <summary>
@@ -312,6 +328,21 @@ namespace SIL.FieldWorks.Common.DetailRules
 				return new DetailInsertTarget(owner, flid, concreteClass, position);
 			}
 			return null;
+		}
+
+		/// <summary>
+		/// The target of a row's Insert command in the view of <paramref name="root"/>: as
+		/// <see cref="ResolveTarget(ICmObject, string, string, string, bool)"/>, except that
+		/// none resolves when <see cref="OffersSubItem"/> refuses the command, and a row of
+		/// the shown record itself never inserts at its owner, which the view does not show.
+		/// </summary>
+		/// <param name="root">The shown record.</param>
+		public static DetailInsertTarget ResolveTarget(ICmObject root, ICmObject rowObject, string fieldName,
+			string className, string ownerClassName, bool insertAtOwner)
+		{
+			if (!OffersSubItem(root, fieldName, className))
+				return null;
+			return ResolveTarget(rowObject, fieldName, className, ownerClassName, insertAtOwner && rowObject != root);
 		}
 
 		// The object and its owners, nearest first.
