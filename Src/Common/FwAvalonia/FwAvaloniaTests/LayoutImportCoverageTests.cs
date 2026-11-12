@@ -333,6 +333,40 @@ namespace FwAvaloniaTests
       <slice field='Gloss' editor='multistring'/>
     </if>
   </part>
+  <part id='MoInflAffixTemplate-Detail-NameAllA'>
+	<if field='Disabled' boolequals='true'>
+	  <slice field='Name' label='Name' editor='multistring' ws='all analysis' menu='mnuDataTree-Help'/>
+	</if>
+	<if field='Disabled' boolequals='false'>
+	  <slice field='Name' label='Name' editor='multistring' ws='all analysis' menu='mnuDataTree-Help'/>
+	</if>
+  </part>
+  <part id='MoInflAffixTemplate-Detail-Active'>
+	<slice field='Disabled' label='Active' editor='checkbox'/>
+  </part>
+  <part id='MoInflAffixTemplate-Detail-NestedCondition'>
+	<if field='Disabled' boolequals='false'>
+	  <ifnot field='Final' boolequals='true'>
+		<slice field='Name' label='Name' editor='multistring' ws='all analysis'/>
+	  </ifnot>
+	</if>
+  </part>
+  <part id='PartOfSpeech-Detail-SubPossibilities'>
+	<choice>
+	  <where target='owner' is='CmPossibilityList' field='Depth' intlessthan='2'/>
+	  <otherwise>
+		<seq field='SubPossibilities' layout='SubCategories' label='Own Label'/>
+	  </otherwise>
+	</choice>
+  </part>
+  <part id='PartOfSpeech-Detail-DefaultFeatures'>
+	<if field='Depth' intlessthan='2'>
+	  <obj field='DefaultFeatures' layout='Features'/>
+	</if>
+  </part>
+  <part id='PartOfSpeech-Detail-CategoryName'>
+	<slice field='Name' label='Name' editor='multistring' ws='all analysis'/>
+  </part>
 </bin></PartInventory>";
 
 		private static ViewDefinitionModel Import(string className, string refName)
@@ -340,6 +374,156 @@ namespace FwAvaloniaTests
 			var parts = new DictionaryPartResolver(XElement.Parse(PartsXml));
 			return new XmlLayoutImporter().Import(XElement.Parse(
 				$"<layout class='{className}' type='detail' name='T'><part ref='{refName}'/></layout>"), parts);
+		}
+
+		private static ViewDefinitionModel ImportLayout(string className, string layoutContent)
+		{
+			var parts = new DictionaryPartResolver(XElement.Parse(PartsXml));
+			return new XmlLayoutImporter().Import(XElement.Parse(
+				$"<layout class='{className}' type='detail' name='T'>{layoutContent}</layout>"), parts);
+		}
+
+		[Test]
+		public void PartRefOverrides_ReachASliceInsideEachIf()
+		{
+			var model = ImportLayout("MoInflAffixTemplate",
+				"<part ref='NameAllA' label='Template Name' abbr='TN' visibility='ifdata'"
+				+ " menu='mnuDataTree-POS-AffixTemplate' hotlinks='mnuTemplate-Hotlinks'/>");
+
+			Assert.That(model.Roots.Count, Is.EqualTo(2), "one conditional per <if>");
+			foreach (var conditional in model.Roots)
+			{
+				var slice = conditional.Children.Single();
+				Assert.That(slice.Label, Is.EqualTo("Template Name"));
+				Assert.That(slice.Abbreviation, Is.EqualTo("TN"));
+				Assert.That(slice.MenuId, Is.EqualTo("mnuDataTree-POS-AffixTemplate"));
+				Assert.That(slice.HotlinksId, Is.EqualTo("mnuTemplate-Hotlinks"));
+				Assert.That(slice.Visibility, Is.EqualTo(ViewVisibility.IfData));
+			}
+		}
+
+		[Test]
+		public void PartRefOverrides_ReachSlicesInsideWhereAndOtherwise()
+		{
+			var model = ImportLayout("MoAffixAllomorph",
+				"<part ref='AsPosition' label='Position' menu='mnuPosition'/>");
+
+			var choice = model.Roots.Single();
+			foreach (var branch in choice.Children)
+			{
+				var slice = branch.Children.Single();
+				Assert.That(slice.Label, Is.EqualTo("Position"));
+				Assert.That(slice.MenuId, Is.EqualTo("mnuPosition"));
+			}
+		}
+
+		[Test]
+		public void PartRefOverrides_ReachASliceInsideANestedConditional()
+		{
+			var model = ImportLayout("MoInflAffixTemplate",
+				"<part ref='NestedCondition' label='Template Name'/>");
+
+			var slice = model.Roots.Single().Children.Single().Children.Single();
+			Assert.That(slice.Kind, Is.EqualTo(ViewNodeKind.Field));
+			Assert.That(slice.Label, Is.EqualTo("Template Name"));
+		}
+
+		// A sequence item's heading takes its menu from the item layout's root nodes.
+		[Test]
+		public void PartRefLabelAndMenu_StayOnTheConditionalNode()
+		{
+			var model = ImportLayout("MoInflAffixTemplate",
+				"<part ref='NameAllA' label='Template Name' menu='mnuDataTree-POS-AffixTemplate'/>");
+
+			Assert.That(model.Roots.Select(r => r.Label), Is.All.EqualTo("Template Name"));
+			Assert.That(model.Roots.Select(r => r.MenuId),
+				Is.All.EqualTo("mnuDataTree-POS-AffixTemplate"));
+		}
+
+		// Field Visibility reads and sets the row's own node, so that node holds the value.
+		[Test]
+		public void PartRefVisibility_IsHeldByTheContent_NotTheConditional()
+		{
+			var template = ImportLayout("MoInflAffixTemplate",
+				"<part ref='NameAllA' visibility='never'/>");
+			foreach (var conditional in template.Roots)
+			{
+				Assert.That(conditional.Visibility, Is.EqualTo(ViewVisibility.Always));
+				Assert.That(conditional.Children.Single().Visibility,
+					Is.EqualTo(ViewVisibility.Never));
+			}
+
+			var choice = ImportLayout("PartOfSpeech",
+				"<part ref='SubPossibilities' visibility='never'/>").Roots.Single();
+			Assert.That(choice.Visibility, Is.EqualTo(ViewVisibility.Always));
+			Assert.That(choice.Children[1].Children.Single().Visibility,
+				Is.EqualTo(ViewVisibility.Never));
+		}
+
+		[Test]
+		public void PartRefChildren_LandUnderTheSliceInsideTheConditional()
+		{
+			var model = ImportLayout("MoInflAffixTemplate",
+				"<part ref='NameAllA'><indent><part ref='Active'/></indent></part>");
+
+			foreach (var conditional in model.Roots)
+			{
+				var child = conditional.Children.Single().Children.Single();
+				Assert.That(child.Field, Is.EqualTo("Disabled"));
+				Assert.That(child.Indented, Is.True);
+			}
+		}
+
+		[Test]
+		public void SequenceInsideAChoice_TakesTheTargetLayout_ButKeepsItsOwnLabel()
+		{
+			var model = ImportLayout("PartOfSpeech",
+				"<part ref='SubPossibilities' label='Subcategories' abbr='Sub' param='nested'"
+				+ " menu='mnuSub'/>");
+
+			var sequence = model.Roots.Single().Children[1].Children.Single();
+			Assert.That(sequence.Kind, Is.EqualTo(ViewNodeKind.Sequence));
+			Assert.That(sequence.TargetLayout, Is.EqualTo("nested"));
+			Assert.That(sequence.MenuId, Is.EqualTo("mnuSub"));
+			Assert.That(sequence.Label, Is.EqualTo("Own Label"));
+			Assert.That(sequence.Abbreviation, Is.Null);
+		}
+
+		[Test]
+		public void ObjectInsideAnIf_TakesTheRefsLayoutAndChildren_ButNotItsLabel()
+		{
+			var model = ImportLayout("PartOfSpeech",
+				"<part ref='DefaultFeatures' label='Features' param='Brief' visibility='ifdata'>"
+				+ "<part ref='CategoryName'/></part>");
+
+			var atom = model.Roots.Single().Children.Single();
+			Assert.That(atom.Kind, Is.EqualTo(ViewNodeKind.ObjectAtom));
+			Assert.That(atom.TargetLayout, Is.EqualTo("Brief"));
+			Assert.That(atom.Visibility, Is.EqualTo(ViewVisibility.IfData));
+			Assert.That(atom.Label, Is.Null);
+			Assert.That(atom.Children.Single().Field, Is.EqualTo("Name"));
+		}
+
+		[Test]
+		public void ConditionalWrittenInALayout_LeavesItsPartRefsAlone()
+		{
+			var model = ImportLayout("MoInflAffixTemplate",
+				"<if field='Disabled' boolequals='false'><part ref='Active'/></if>");
+
+			var conditional = model.Roots.Single();
+			Assert.That(conditional.Label, Is.Null);
+			Assert.That(conditional.Children.Single().Label, Is.EqualTo("Active"));
+			Assert.That(model.Diagnostics, Is.Empty);
+		}
+
+		[Test]
+		public void PartRefDiagnostics_AreReportedOncePerConditional_NotAgainPerSlice()
+		{
+			var model = ImportLayout("MoInflAffixTemplate",
+				"<part ref='NameAllA' ghostInitMethod='CreateAllomorph'/>");
+
+			Assert.That(model.Diagnostics.Count(d => d.Code == "unhandled-attribute"),
+				Is.EqualTo(model.Roots.Count));
 		}
 
 		[Test]
@@ -785,6 +969,28 @@ namespace FwAvaloniaTests
 			Assert.That(complex.Condition.IntEquals, Is.EqualTo(1), "RefType 1 = complex form");
 			Assert.That(model.Diagnostics.Where(d => d.Code == "conditional-dropped"), Is.Empty,
 				"every condition form LexEntryRef/Normal uses is in the supported set");
+		}
+
+		/// <summary>
+		/// The affix template's name part wraps its slice in a Disabled test, and its layout
+		/// renames the row and binds the template menu.
+		/// </summary>
+		[Test]
+		public void ShippedMoInflAffixTemplateDefault_NameRow_TakesTheLayoutLabelAndMenu()
+		{
+			var repoRoot = FindRepoRoot();
+			var (layouts, parts) = LoadShippedFiles(repoRoot);
+			var model = ImportShippedLayout(repoRoot, layouts, parts, "MoInflAffixTemplate", "default");
+
+			var nameRows = model.Roots
+				.Where(r => r.Kind == ViewNodeKind.Conditional)
+				.SelectMany(r => r.Children)
+				.Where(n => n.Field == "Name")
+				.ToList();
+			Assert.That(nameRows.Count, Is.EqualTo(2), "one per Disabled state");
+			Assert.That(nameRows.Select(n => n.Label), Is.All.EqualTo("Template Name"));
+			Assert.That(nameRows.Select(n => n.MenuId),
+				Is.All.EqualTo("mnuDataTree-POS-AffixTemplate"));
 		}
 
 		/// <summary>
