@@ -278,6 +278,172 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
+		// One unit of work per call, as each keystroke typed in another view is.
+		private void ChangeGloss(string text)
+			=> NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
+				m_entry.SensesOS[0].Gloss.set_String(Cache.DefaultAnalWs,
+					TsStringUtils.MakeString(text, Cache.DefaultAnalWs)));
+
+		// LT-22692: outside edits refresh immediately, then once after the burst goes quiet.
+		[Test]
+		public void RefreshController_OutsideBurst_RefreshesFirstAtOnce_AndTheRestOnceWhenQuiet()
+		{
+			var scheduled = new List<Action>();
+			var quiet = new List<Action>();
+			var refreshes = 0;
+			using (new AvaloniaDetailRefreshController(
+				Cache, () => m_entry, () => false, () => refreshes++, new RefreshCoordinator(),
+				schedule: scheduled.Add, isRelevant: LexicalRelevance, deferUntilQuiet: quiet.Add))
+			{
+				ChangeGloss("a");
+				Assert.That(scheduled.Count, Is.EqualTo(1), "the first change refreshes at once");
+				scheduled[0]();
+				Assert.That(refreshes, Is.EqualTo(1));
+
+				ChangeGloss("ab");
+				ChangeGloss("abc");
+				Assert.That(scheduled.Count, Is.EqualTo(1), "the rest of the burst waits");
+				Assert.That(quiet.Count, Is.EqualTo(3), "each change restarts the quiet wait");
+
+				quiet[quiet.Count - 1]();
+				Assert.That(scheduled.Count, Is.EqualTo(2), "going quiet refreshes once");
+				scheduled[1]();
+				Assert.That(refreshes, Is.EqualTo(2));
+			}
+		}
+
+		[Test]
+		public void RefreshController_SingleOutsideChange_RefreshesOnce()
+		{
+			var scheduled = new List<Action>();
+			var quiet = new List<Action>();
+			var refreshes = 0;
+			using (new AvaloniaDetailRefreshController(
+				Cache, () => m_entry, () => false, () => refreshes++, new RefreshCoordinator(),
+				schedule: scheduled.Add, isRelevant: LexicalRelevance, deferUntilQuiet: quiet.Add))
+			{
+				ChangeGloss("a");
+				scheduled[0]();
+				quiet[quiet.Count - 1]();
+
+				Assert.That(scheduled.Count, Is.EqualTo(1), "going quiet with nothing waiting adds nothing");
+				Assert.That(refreshes, Is.EqualTo(1));
+			}
+		}
+
+		[Test]
+		public void RefreshController_HostRefreshDuringABurst_CoversTheWaitingChanges()
+		{
+			var scheduled = new List<Action>();
+			var quiet = new List<Action>();
+			var refreshes = 0;
+			using (var controller = new AvaloniaDetailRefreshController(
+				Cache, () => m_entry, () => false, () => refreshes++, new RefreshCoordinator(),
+				schedule: scheduled.Add, isRelevant: LexicalRelevance, deferUntilQuiet: quiet.Add))
+			{
+				ChangeGloss("a");
+				scheduled[0]();
+				ChangeGloss("ab");
+
+				controller.RequestRefresh();
+				Assert.That(scheduled.Count, Is.EqualTo(2), "the view's own request is not held");
+				scheduled[1]();
+				quiet[quiet.Count - 1]();
+
+				Assert.That(scheduled.Count, Is.EqualTo(2), "that refresh covered the waiting change");
+				Assert.That(refreshes, Is.EqualTo(2));
+			}
+		}
+
+		[Test]
+		public void RefreshController_BurstGoesQuietWhileEditing_HoldsTheRefresh()
+		{
+			var scheduled = new List<Action>();
+			var quiet = new List<Action>();
+			var refreshes = 0;
+			var editing = false;
+			var coordinator = new RefreshCoordinator();
+			using (new AvaloniaDetailRefreshController(
+				Cache, () => m_entry, () => editing, () => refreshes++, coordinator,
+				schedule: scheduled.Add, isRelevant: LexicalRelevance, deferUntilQuiet: quiet.Add))
+			{
+				ChangeGloss("a");
+				scheduled[0]();
+				ChangeGloss("ab");
+
+				editing = true;
+				quiet[quiet.Count - 1]();
+				scheduled[scheduled.Count - 1]();
+
+				Assert.That(refreshes, Is.EqualTo(1), "the user's open edit is not rebuilt under them");
+				Assert.That(coordinator.IsSuspended, Is.True, "the refresh waits for the edit");
+			}
+		}
+
+		private ILexEntry CreateEntryWithSense()
+		{
+			ILexEntry entry = null;
+			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
+			{
+				entry = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create();
+				entry.SensesOS.Add(Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create());
+			});
+			return entry;
+		}
+
+		[Test]
+		public void RefreshController_BurstGoesQuietAfterNavigating_DoesNotRebuildTheNewRecord()
+		{
+			var scheduled = new List<Action>();
+			var quiet = new List<Action>();
+			var refreshes = 0;
+			ICmObject shown = m_entry;
+			var other = CreateEntryWithSense();
+			using (new AvaloniaDetailRefreshController(
+				Cache, () => shown, () => false, () => refreshes++, new RefreshCoordinator(),
+				schedule: scheduled.Add,
+				isRelevant: changed => RecordEditView.IsChangeWithinEntry(changed, shown),
+				deferUntilQuiet: quiet.Add))
+			{
+				ChangeGloss("a");
+				scheduled[0]();
+				ChangeGloss("ab");
+
+				shown = other;
+				quiet[quiet.Count - 1]();
+
+				Assert.That(scheduled.Count, Is.EqualTo(1),
+					"showing the other entry already read current state");
+			}
+		}
+
+		[Test]
+		public void RefreshController_ChangeToTheNewRecordDuringABurst_StillRebuilds()
+		{
+			var scheduled = new List<Action>();
+			var quiet = new List<Action>();
+			var refreshes = 0;
+			ICmObject shown = m_entry;
+			var other = CreateEntryWithSense();
+			using (new AvaloniaDetailRefreshController(
+				Cache, () => shown, () => false, () => refreshes++, new RefreshCoordinator(),
+				schedule: scheduled.Add,
+				isRelevant: changed => RecordEditView.IsChangeWithinEntry(changed, shown),
+				deferUntilQuiet: quiet.Add))
+			{
+				ChangeGloss("a");
+				scheduled[0]();
+
+				shown = other;
+				NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
+					other.SensesOS[0].Gloss.set_String(Cache.DefaultAnalWs,
+						TsStringUtils.MakeString("b", Cache.DefaultAnalWs)));
+				quiet[quiet.Count - 1]();
+
+				Assert.That(scheduled.Count, Is.EqualTo(2), "the shown entry's own change rebuilds");
+			}
+		}
+
 		// Review round 2: a rebuild can raise PropChanged (settle-commit inside);
 		// already covered since recompose reads current domain state -- so it
 		// must coalesce into the running delivery, not re-queue.
@@ -490,6 +656,64 @@ namespace SIL.FieldWorks.XWorks
 				"an object outside the entry");
 			Assert.That(RecordEditView.IsChangeWithinEntry(null, m_entry), Is.False);
 			Assert.That(RecordEditView.IsChangeWithinEntry(m_entry, null), Is.False);
+		}
+
+		// A notebook record with a subrecord, and a Text the record references (not owns), with
+		// one paragraph.
+		private (IRnGenericRec record, IRnGenericRec subrecord, IStTxtPara paragraph) CreateNotebookRecord()
+		{
+			IRnGenericRec record = null;
+			IRnGenericRec subrecord = null;
+			IStTxtPara paragraph = null;
+			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
+			{
+				if (Cache.LangProject.ResearchNotebookOA == null)
+				{
+					Cache.LangProject.ResearchNotebookOA =
+						Cache.ServiceLocator.GetInstance<IRnResearchNbkFactory>().Create();
+				}
+				var recordFactory = Cache.ServiceLocator.GetInstance<IRnGenericRecFactory>();
+				record = recordFactory.Create();
+				Cache.LangProject.ResearchNotebookOA.RecordsOC.Add(record);
+				subrecord = recordFactory.Create();
+				record.SubRecordsOS.Add(subrecord);
+				var text = Cache.ServiceLocator.GetInstance<ITextFactory>().Create();
+				text.ContentsOA = Cache.ServiceLocator.GetInstance<IStTextFactory>().Create();
+				paragraph = Cache.ServiceLocator.GetInstance<IStTxtParaFactory>().Create();
+				text.ContentsOA.ParagraphsOS.Add(paragraph);
+				record.TextRA = text;
+			});
+			return (record, subrecord, paragraph);
+		}
+
+		// LT-22692: Notebook's Text row shows a Text the record only references, so a change to
+		// its paragraphs counts through the row's bound object.
+		[Test]
+		public void IsChangeWithinEntry_ReachesAReferencedTextThroughTheRowsBoundObject()
+		{
+			var (record, _, paragraph) = CreateNotebookRecord();
+			var text = record.TextRA;
+
+			Assert.That(RecordEditView.IsChangeWithinEntry(paragraph, record), Is.False,
+				"precondition: the record does not own its Text");
+			Assert.That(RecordEditView.IsChangeWithinEntry(paragraph, record, new[] { text.Hvo }),
+				Is.True, "the Text row's bound object reaches its paragraphs");
+			Assert.That(RecordEditView.IsChangeWithinEntry(paragraph, record, new[] { m_entry.Hvo }),
+				Is.False, "an unrelated bound object does not");
+		}
+
+		// LT-22692: Notebook shows the top-level record while a subrecord is current, so the
+		// view's own fields must count against that record, not the current subrecord.
+		[Test]
+		public void IsChangeWithinEntry_TheShownRootCoversItsFields_WhenASubrecordIsCurrent()
+		{
+			var (record, subrecord, _) = CreateNotebookRecord();
+
+			Assert.That(RecordEditView.IsChangeWithinEntry(record, subrecord), Is.False,
+				"precondition: judged against the current subrecord, the root's change is missed");
+			Assert.That(RecordEditView.IsChangeWithinEntry(record, record), Is.True);
+			Assert.That(RecordEditView.IsChangeWithinEntry(subrecord, record), Is.True,
+				"and the subrecord is still within the shown root");
 		}
 
 		/// <summary>

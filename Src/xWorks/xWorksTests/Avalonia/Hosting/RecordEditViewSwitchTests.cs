@@ -217,6 +217,92 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(control.PrepareToGoAway(), Is.True);
 		}
 
+		// LT-22692: refresh relevance follows what the view shows, the record and the objects its
+		// rows are bound to, so a change to one of them redraws the view.
+		[Test]
+		public void ShowingARecord_RemembersItAndItsRowObjects_ForRefreshRelevance()
+		{
+			m_propertyTable.SetProperty("UIMode", "New", true);
+			m_propertyTable.SetPropertyPersistence("UIMode", false);
+
+			LoadRecordEditView();
+			DrainMediatorAndIdleQueues();
+
+			var control = m_propertyTable.GetValue<object>("currentContentControlObject", null) as RecordEditView;
+			Assert.That(control, Is.Not.Null);
+			EnsureCurrentRecord(control);
+
+			var entry = (ILexEntry)control.Clerk.CurrentObject;
+			Assert.That(GetPrivateField<ICmObject>(control, "m_shownRecord"), Is.SameAs(entry));
+			var rowObjects = GetPrivateField<HashSet<int>>(control, "m_shownRowObjects");
+			Assert.That(rowObjects, Does.Contain(entry.Hvo));
+			foreach (var sense in entry.SensesOS)
+				Assert.That(rowObjects, Does.Contain(sense.Hvo), "a sense's rows are bound to it");
+		}
+
+		// LT-22692: moving between two subrecords keeps their record on display in Notebook;
+		// settling the edit left open must not rebuild the view a second time.
+		[Test]
+		public void LeavingASubrecordWithAnOpenEdit_BuildsTheViewOnce()
+		{
+			IRnGenericRec record = null, first = null, second = null;
+			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
+			{
+				if (Cache.LangProject.ResearchNotebookOA == null)
+				{
+					Cache.LangProject.ResearchNotebookOA =
+						Cache.ServiceLocator.GetInstance<IRnResearchNbkFactory>().Create();
+				}
+				var factory = Cache.ServiceLocator.GetInstance<IRnGenericRecFactory>();
+				record = factory.Create();
+				Cache.LangProject.ResearchNotebookOA.RecordsOC.Add(record);
+				record.Title = TsStringUtils.MakeString("parent", Cache.DefaultAnalWs);
+				first = factory.Create();
+				record.SubRecordsOS.Add(first);
+				first.Title = TsStringUtils.MakeString("first", Cache.DefaultAnalWs);
+				second = factory.Create();
+				record.SubRecordsOS.Add(second);
+				second.Title = TsStringUtils.MakeString("second", Cache.DefaultAnalWs);
+			});
+			try
+			{
+				m_propertyTable.SetProperty("UIMode", "New", true);
+				m_propertyTable.SetPropertyPersistence("UIMode", false);
+				LoadRecordEditView("notebookEdit");
+				DrainMediatorAndIdleQueues();
+				var control = m_propertyTable.GetValue<object>("currentContentControlObject", null) as RecordEditView;
+				Assert.That(control, Is.Not.Null);
+
+				control.Clerk.JumpToRecord(first.Hvo);
+				DrainMediatorAndIdleQueues();
+				Assert.That(GetPrivateField<ICmObject>(control, "m_shownRecord"), Is.SameAs(record),
+					"precondition: Notebook shows the subrecord inside its record");
+
+				var holder = GetPrivateField<DetailEditContextHolder>(control, "m_detailEditContext");
+				var shown = GetPrivateField<DetailHostControl>(control, "m_avaloniaEntryForm").ShownDetail;
+				var title = shown.Fields.First(f => f.ObjectHvo == first.Hvo && f.Field == "Title"
+					&& f.IsEditable && f.Values != null && f.Values.Count > 0);
+				Assert.That(holder.Current.TrySetText(title, title.Values[0].WsTag, "first edited"),
+					Is.True);
+				Assert.That(holder.Current.IsOpen, Is.True, "precondition: the edit is still open");
+
+				var shows = control.DetailShowCount;
+				control.Clerk.JumpToRecord(second.Hvo);
+				DrainMediatorAndIdleQueues();
+
+				Assert.That(control.DetailShowCount, Is.EqualTo(shows + 1),
+					"the view is built once, not again for the left subrecord's commit");
+			}
+			finally
+			{
+				NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
+				{
+					if (record.IsValidObject)
+						record.Delete();
+				});
+			}
+		}
+
 		// LT-22811: View > Refresh and closing the Styles dialog reach the Avalonia view through
 		// RefreshDisplay, which recomposes it at Normal's new size.
 		[Test]

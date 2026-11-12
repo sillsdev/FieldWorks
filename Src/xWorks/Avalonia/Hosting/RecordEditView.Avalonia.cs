@@ -94,6 +94,13 @@ namespace SIL.FieldWorks.XWorks
 		private readonly HashSet<string> m_showAllWsFields = new HashSet<string>(StringComparer.Ordinal);
 		// The record m_showAllWsFields belongs to; a different record expires the reveal.
 		private int m_showAllWsRecordHvo;
+		// The record the Avalonia view shows now, and the objects its rows are bound to: what
+		// a change must touch to refresh the view. Null and empty while no record is shown.
+		private ICmObject m_shownRecord;
+		private HashSet<int> m_shownRowObjects = new HashSet<int>();
+		// The clerk's current object when the shown record was shown: a subrecord, when the
+		// tool shows a current subrecord inside its root. 0 while no record is shown.
+		private int m_shownForHvo;
 
 		private bool ShouldUseAvaloniaLexiconEdit
 		{
@@ -209,6 +216,9 @@ namespace SIL.FieldWorks.XWorks
 			m_detailEditContext.DetachUndoGuard();
 			m_detailEditContext.InvalidEditRolledBack = null;
 			m_avaloniaRefreshController?.Dispose();
+			m_refreshQuietTimer?.Dispose();
+			m_refreshQuietTimer = null;
+			m_afterRefreshQuiet = null;
 			SettleDetailEdits();
 			m_detailEditContext.Clear();
 			m_avaloniaEntryForm?.Dispose();
@@ -216,6 +226,7 @@ namespace SIL.FieldWorks.XWorks
 			// resurrect a stale reveal.
 			m_showAllWsFields.Clear();
 			m_showAllWsRecordHvo = 0;
+			SetShownRecord(null, null);
 			// Null the host + refresh controller after disposing them. The recreation guards
 			// (EnsureAvaloniaEntryFormInitialized / EnsureAvaloniaRefreshController) key on `== null`, so a
 			// runtime flip New->Legacy->New rebuilds a fresh entry form instead of re-showing a disposed one.
@@ -292,7 +303,9 @@ namespace SIL.FieldWorks.XWorks
 			// the controller's runner before recomposing.
 			m_avaloniaRefreshController = new AvaloniaDetailRefreshController(
 				Cache,
-				() => Clerk?.CurrentObject,
+				// The record on display, which is the top-level record when the tool shows a
+				// current subrecord inside its root.
+				() => RefreshRecord,
 				// "Busy" means an open session OR a click in flight: Commit clears IsOpen BEFORE
 				// EndUndoTask raises PropChanged, so its own notification would recompose
 				// midclick.
@@ -301,8 +314,9 @@ namespace SIL.FieldWorks.XWorks
 				RefreshAvaloniaDetail,
 				new RefreshCoordinator(),
 				ScheduleOnUiThread,
-				// This lexical host's relevance rule; the controller itself stays host-agnostic.
-				changed => IsChangeWithinEntry(changed, Clerk?.CurrentObject));
+				// This host's relevance rule; the controller itself stays host-agnostic.
+				changed => IsChangeWithinEntry(changed, RefreshRecord, m_shownRowObjects),
+				DeferUntilQuiet);
 			// Global Undo/Redo while a fenced session is open would re-enter the UOW write lock
 			// (LockRecursionException); the guard settles the pending edit instead.
 			m_detailEditContext.AttachUndoGuard(Cache.ActionHandlerAccessor);
@@ -320,12 +334,15 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
-		/// The lexical host's refresh relevance: a change is relevant when the changed
-		/// object is, or is owned by, the entry on display. This is the predicate the host injects
-		/// into <see cref="AvaloniaDetailRefreshController"/>; static and internal so it is
-		/// unit-testable without a live view.
+		/// The host's refresh relevance: a change is relevant when the changed object is, or is
+		/// owned by, the record on display, or an object one of its rows is bound to (in
+		/// <paramref name="shownRowObjects"/>; null for none). Bound objects reach what the
+		/// record only references, such as a notebook record's Text (LT-22692). This is the
+		/// predicate the host injects into <see cref="AvaloniaDetailRefreshController"/>; static
+		/// and internal so it is unit-testable without a live view.
 		/// </summary>
-		internal static bool IsChangeWithinEntry(ICmObject changed, ICmObject current)
+		internal static bool IsChangeWithinEntry(ICmObject changed, ICmObject current,
+			ICollection<int> shownRowObjects = null)
 		{
 			if (changed == null || current == null)
 				return false;
@@ -333,10 +350,66 @@ namespace SIL.FieldWorks.XWorks
 			// any record class, not just entries, so nested edits also trigger the coalesced
 			// refresh.
 			for (var o = changed; o != null; o = o.Owner)
-				if (o.Hvo == current.Hvo)
+			{
+				if (o.Hvo == current.Hvo || (shownRowObjects?.Contains(o.Hvo) ?? false))
 					return true;
+			}
 			return false;
 		}
+
+		// How long a burst of changes made outside the detail view must go quiet before the
+		// view rebuilds once for the rest of it, in milliseconds (LT-22692).
+		private const int RefreshQuietMilliseconds = 250;
+
+		private System.Windows.Forms.Timer m_refreshQuietTimer;
+		private Action m_afterRefreshQuiet;
+
+		/// <summary>
+		/// Runs <paramref name="action"/> on the UI thread once RefreshQuietMilliseconds pass
+		/// with no further call; each call restarts the wait and replaces the action.
+		/// </summary>
+		internal void DeferUntilQuiet(Action action)
+		{
+			if (IsDisposed)
+				return;
+			if (InvokeRequired)
+			{
+				try
+				{
+					BeginInvoke((Action)(() => DeferUntilQuiet(action)));
+				}
+				catch (InvalidOperationException)
+				{
+					// The view is going away; there is nothing left to refresh.
+				}
+				return;
+			}
+			m_afterRefreshQuiet = action;
+			if (m_refreshQuietTimer == null)
+			{
+				m_refreshQuietTimer = new System.Windows.Forms.Timer
+				{
+					Interval = RefreshQuietMilliseconds
+				};
+				m_refreshQuietTimer.Tick += (sender, e) => OnRefreshQuiet();
+			}
+			m_refreshQuietTimer.Stop();
+			m_refreshQuietTimer.Start();
+		}
+
+		/// <summary>
+		/// The quiet wait has run out: runs the last deferred action, once.
+		/// </summary>
+		internal void OnRefreshQuiet()
+		{
+			m_refreshQuietTimer?.Stop();
+			var pending = m_afterRefreshQuiet;
+			m_afterRefreshQuiet = null;
+			pending?.Invoke();
+		}
+
+		/// <summary>Whether a deferred action is waiting for the quiet wait to run out.</summary>
+		internal bool IsRefreshQuietPending => m_refreshQuietTimer?.Enabled == true;
 
 		// UI-thread deferral for the controller's coalesced refresh queue: posting to the message
 		// queue lets the current call stack (commit/rollback PropChanged, the focus transition
@@ -421,6 +494,7 @@ namespace SIL.FieldWorks.XWorks
 			if (obj == null)
 			{
 				m_detailEditContext.Clear();
+				SetShownRecord(null, null);
 				m_avaloniaEntryForm.ShowMessage(FwAvaloniaStrings.EntryTypeUnsupported);
 				return;
 			}
@@ -462,6 +536,7 @@ namespace SIL.FieldWorks.XWorks
 					// No first-slice fallback exists for a non-LexEntry root: show the unsupported state
 					// rather than crash.
 					m_detailEditContext.Clear();
+					SetShownRecord(null, null);
 					m_avaloniaEntryForm.ShowMessage(FwAvaloniaStrings.EntryTypeUnsupported);
 					return;
 				}
@@ -481,6 +556,8 @@ namespace SIL.FieldWorks.XWorks
 			// cross-window-undo mitigation would be silently lost for this host's lifetime.
 			if (!m_detailEditContext.IsDeactivateHookAttached)
 				m_detailEditContext.AttachDeactivateHook(FindForm());
+			SetShownRecord(obj, detail);
+			DetailShowCount++;
 			m_avaloniaEntryForm.ShowDetail(detail, editContext,
 				OnDetailWritingSystemFocused,
 				GetPersistedExpansionState, PersistExpansionState,
@@ -488,6 +565,34 @@ namespace SIL.FieldWorks.XWorks
 				new FwTsStringClipboard(Cache.WritingSystemFactory),
 				GetPersistedLabelColumnWidth, PersistLabelColumnWidth,
 				rootHvo: obj.Hvo, hotlinkItems: HotlinkItemsFor);
+		}
+
+		private void SetShownRecord(ICmObject record, DetailModel detail)
+		{
+			m_shownRecord = record;
+			m_shownForHvo = record == null ? 0 : Clerk?.CurrentObject?.Hvo ?? record.Hvo;
+			m_shownRowObjects = detail == null
+				? new HashSet<int>()
+				: new HashSet<int>(detail.Fields.Select(f => f.ObjectHvo).Where(hvo => hvo != 0));
+		}
+
+		// The record a change must touch to refresh the view: the one shown, or the clerk's
+		// current record while none is, so a record the clerk selects without a show still
+		// refreshes on an outside change.
+		private ICmObject RefreshRecord => m_shownRecord ?? Clerk?.CurrentObject;
+
+		/// <summary>How many times this view has built its Avalonia detail view.</summary>
+		internal int DetailShowCount { get; private set; }
+
+		// Forgets the shown record once the clerk's current object changes, even to a sibling
+		// subrecord, so settling the edit left open is judged against the next one (LT-22692).
+		private void ForgetShownRecordIfLeaving()
+		{
+			if (m_shownRecord == null)
+				return;
+			var next = Clerk?.CurrentObject;
+			if (next == null || !next.IsValidObject || next.Hvo != m_shownForHvo)
+				SetShownRecord(null, null);
 		}
 
 		/// <summary>
