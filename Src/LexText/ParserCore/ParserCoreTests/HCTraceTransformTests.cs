@@ -90,6 +90,25 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			Assert.That(Text(Transform(CompoundFailure(type))), Does.Contain("Reason: Unknown reason."));
 		}
 
+		/// <summary>Names the required slot whose affixes the word cannot supply.</summary>
+		[Test]
+		public void TemplateFailure_NamesUnreachableRequiredSlot()
+		{
+			var node = new XElement("MorphologicalRuleAnalysisTrace",
+				new XElement("MorphologicalRule", new XAttribute("type", "affix"), "suffix"),
+				new XElement("Output", "a"),
+				new XElement("TemplateAnalysisTraceOut",
+					new XElement("AffixTemplate", new XAttribute("id", 0), "verb template"),
+					new XElement("Output", "*None*"),
+					new XElement("FailureReason", new XAttribute("type", "unreachableRequiredSlot"),
+						new XElement("Slot", "subject slot"))));
+
+			var text = Text(Transform(node));
+
+			Assert.That(text, Does.Contain("failed."));
+			Assert.That(text, Does.Contain("(Reason: The required slot 'subject slot' cannot be filled"));
+		}
+
 		private static XElement Allomorph()
 		{
 			return new XElement("Allomorph", new XAttribute("id", 42),

@@ -828,6 +828,16 @@ ShowMsaInfo
 							<xsl:when test="@type = 'maxAppCount'">
 								<xsl:text>An affix cannot be applied more than once.</xsl:text>
 							</xsl:when>
+							<xsl:when test="@type = 'unreachableRequiredSlot'">
+								<xsl:text>The required slot '</xsl:text>
+								<span>
+									<xsl:attribute name="style">
+										<xsl:call-template name="GetAnalysisFont"/>
+									</xsl:attribute>
+									<xsl:value-of select="Slot"/>
+								</span>
+								<xsl:text>' cannot be filled: no affix in this slot can be found in what remains of the word, in the order and position the template requires.</xsl:text>
+							</xsl:when>
 						</xsl:choose>
 						<xsl:text>)</xsl:text>
 					</span>

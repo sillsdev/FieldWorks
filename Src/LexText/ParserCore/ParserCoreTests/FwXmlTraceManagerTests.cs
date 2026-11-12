@@ -109,6 +109,21 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			Assert.That((string)reason.Attribute("type"), Is.EqualTo("unknown"));
 		}
 
+		/// <summary>Records which required slot made a template fail.</summary>
+		[Test]
+		public void TemplateFailure_RecordsUnreachableRequiredSlot()
+		{
+			var template = new AffixTemplate { Name = "synthetic template" };
+			var slot = new AffixTemplateSlot(new AffixProcessRule()) { Name = "synthetic slot" };
+
+			m_manager.EndUnapplyTemplate(template, m_word, false,
+				FailureReason.UnreachableRequiredSlot, slot);
+
+			var reason = m_trace.Element("TemplateAnalysisTraceOut").Element("FailureReason");
+			Assert.That((string)reason.Attribute("type"), Is.EqualTo("unreachableRequiredSlot"));
+			Assert.That(reason.Element("Slot").Value, Is.EqualTo("synthetic slot"));
+		}
+
 		private RootAllomorph CreateRoot(string headword)
 		{
 			var entry = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create(

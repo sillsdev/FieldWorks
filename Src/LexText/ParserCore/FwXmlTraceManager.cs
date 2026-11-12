@@ -69,7 +69,8 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				CreateWordElement("Input", input, true)));
 		}
 
-		public void EndUnapplyTemplate(AffixTemplate template, Word output, bool unapplied, FailureReason reason)
+		public void EndUnapplyTemplate(AffixTemplate template, Word output, bool unapplied, FailureReason reason,
+			object failureObj)
 		{
 			var trace = new XElement(
 				"TemplateAnalysisTraceOut",
@@ -81,6 +82,11 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				trace.Add(
 					new XElement("FailureReason", new XAttribute("type", "nonPartialRuleAfterFinalTemplate"))
 				);
+			}
+			else if (reason == FailureReason.UnreachableRequiredSlot)
+			{
+				trace.Add(new XElement("FailureReason", new XAttribute("type", "unreachableRequiredSlot"),
+					new XElement("Slot", (failureObj as AffixTemplateSlot)?.Name)));
 			}
 			((XElement)output.CurrentTrace).Add(trace);
 		}
