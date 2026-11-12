@@ -517,6 +517,22 @@ namespace FwAvaloniaTests
 		}
 
 		[Test]
+		public void ChoiceWrittenInALayout_KeepsItsOwnVisibility()
+		{
+			var choice = ImportLayout("MoInflAffixTemplate",
+				"<choice visibility='never'><where field='Disabled' boolequals='false'>"
+				+ "<part ref='Active'/></where></choice>").Roots.Single();
+			Assert.That(choice.Kind, Is.EqualTo(ViewNodeKind.ChoiceGroup));
+			Assert.That(choice.Visibility, Is.EqualTo(ViewVisibility.Never));
+
+			// An <if> has no visibility of its own: the attribute is not a condition attribute.
+			var ifModel = ImportLayout("MoInflAffixTemplate",
+				"<if field='Disabled' boolequals='false' visibility='never'><part ref='Active'/></if>");
+			Assert.That(ifModel.Roots, Is.Empty);
+			Assert.That(ifModel.Diagnostics.Single().Code, Is.EqualTo("conditional-dropped"));
+		}
+
+		[Test]
 		public void PartRefDiagnostics_AreReportedOncePerConditional_NotAgainPerSlice()
 		{
 			var model = ImportLayout("MoInflAffixTemplate",

@@ -493,12 +493,12 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 					var children = new List<ViewNode>();
 					AddConditionalChildren(contentEl, hasPartRef ? callerEl : null, parts, className,
 						layoutType, stableId, indented, children, diagnostics);
-					// The part ref's visibility is held by the content nodes, one per row.
+					// A part ref's visibility is held by the content nodes, one per row.
 					return new ViewNode(stableId, ViewNodeKind.Conditional, label, abbreviation,
 						Attr(contentEl, "field"), null, EditorClassification.GroupingNone, null,
-						ViewVisibility.Always, expansion, indented, null, children, localizationKey,
-						automationId, routing, menuId: menuId, contextMenuId: contextMenuId,
-						hotlinksId: hotlinksId, condition: condition);
+						hasPartRef ? ViewVisibility.Always : visibility, expansion, indented, null,
+						children, localizationKey, automationId, routing, menuId: menuId,
+						contextMenuId: contextMenuId, hotlinksId: hotlinksId, condition: condition);
 				}
 
 				// <choice> holds <where> branches (first passing one renders) and an optional
@@ -538,8 +538,9 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 					}
 
 					return new ViewNode(stableId, ViewNodeKind.ChoiceGroup, label, abbreviation, null,
-						null, EditorClassification.GroupingNone, null, ViewVisibility.Always, expansion,
-						indented, null, branches, localizationKey, automationId, routing, menuId: menuId,
+						null, EditorClassification.GroupingNone, null,
+						hasPartRef ? ViewVisibility.Always : visibility, expansion, indented, null,
+						branches, localizationKey, automationId, routing, menuId: menuId,
 						contextMenuId: contextMenuId, hotlinksId: hotlinksId);
 				}
 
