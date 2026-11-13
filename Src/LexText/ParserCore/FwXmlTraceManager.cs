@@ -393,6 +393,14 @@ namespace SIL.FieldWorks.WordWorks.Parser
 							CreateInflFeaturesElement("RequiredInflFeatures", (FeatureStruct) failureObj)));
 					break;
 
+				case FailureReason.LexicalLookupFeatures:
+					trace = CreateParseCompleteElement(word,
+						new XElement("FailureReason", new XAttribute("type", "affixInflFeats"),
+							CreateAllomorphElement(allomorph),
+							CreateInflFeaturesElement("InflFeatures", (FeatureStruct)failureObj),
+							CreateInflFeaturesElement("RequiredInflFeatures", word.SyntacticFeatureStruct)));
+					break;
+
 				case FailureReason.RequiredStemName:
 					trace = CreateParseCompleteElement(word,
 						new XElement("FailureReason", new XAttribute("type", "requiredStemName"),
@@ -436,7 +444,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 		private static XElement CreateInflFeaturesElement(string name, FeatureStruct fs)
 		{
-			string feat = (fs.Head() == null) ? "" : fs.Head().ToString().Replace(",", "");
+			string feat = (fs.Head() == null) ? fs.ToString() : fs.Head().ToString().Replace(",", "");
 			return new XElement(name, feat);
 		}
 
