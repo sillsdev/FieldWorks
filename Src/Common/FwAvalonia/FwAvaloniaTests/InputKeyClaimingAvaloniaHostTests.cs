@@ -56,6 +56,28 @@ namespace FwAvaloniaTests
 				Is.False, "a detail pane host leaves Enter to WinForms");
 		}
 
+		// LT-22820: a detail pane claims Ctrl+Z and Ctrl+Y so the Edit menu's shortcuts do not
+		// run FieldWorks' Undo before the focused text box undoes its own typing.
+		[TestCase(Keys.Control | Keys.Z)]
+		[TestCase(Keys.Control | Keys.Y)]
+		public void UndoAndRedoKeys_AreClaimedOnlyWhenOptedIn(Keys key)
+		{
+			Assert.That(InputKeyClaimPolicy.ShouldClaimKey(key, hostContainsFocus: true,
+				claimEnterKey: false, claimUndoRedoKeys: true), Is.True, "a detail pane claims it");
+			Assert.That(InputKeyClaimPolicy.ShouldClaimKey(key, hostContainsFocus: true,
+				claimEnterKey: true), Is.False, "other hosts leave it to WinForms");
+			Assert.That(InputKeyClaimPolicy.ShouldClaimKey(key, hostContainsFocus: false,
+				claimEnterKey: false, claimUndoRedoKeys: true), Is.False, "and only while focused");
+		}
+
+		[TestCase(Keys.Control | Keys.Shift | Keys.Z)]
+		[TestCase(Keys.Control | Keys.Q)]
+		public void OtherControlKeys_AreNotClaimed_AsUndoOrRedo(Keys key)
+		{
+			Assert.That(InputKeyClaimPolicy.ShouldClaimKey(key, hostContainsFocus: true,
+				claimEnterKey: false, claimUndoRedoKeys: true), Is.False);
+		}
+
 		[TestCase(Keys.A)]
 		[TestCase(Keys.Escape)]
 		public void OtherKeys_AreNeverClaimed(Keys key)

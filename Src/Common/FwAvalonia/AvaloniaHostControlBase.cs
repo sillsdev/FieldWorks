@@ -43,10 +43,12 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 			Dock = DockStyle.Fill;
 			TabStop = true;
 
-			// The host claims the arrow keys for the hosted Avalonia control so WinForms does not consume them as
-			// control navigation before the hosted content sees them (Enter stays with WinForms in a pane).
+			// The host claims the arrow keys, so WinForms navigation does not take them first,
+			// and
+			// Ctrl+Z and Ctrl+Y, so the Edit menu's Undo does not run before a text box's own.
 			Host = new InputKeyClaimingAvaloniaHost
 			{
+				ClaimUndoRedoKeys = true,
 				Dock = DockStyle.Fill,
 				Name = "AvaloniaHost",
 				AccessibleName = FwAvaloniaStrings.AvaloniaHostName

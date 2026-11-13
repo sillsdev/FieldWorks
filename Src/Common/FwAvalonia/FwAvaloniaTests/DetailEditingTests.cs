@@ -888,31 +888,154 @@ namespace FwAvaloniaTests
 			Assert.That(completed, Is.EqualTo(1));
 		}
 
-		// LT-22820: the first Ctrl+Z after typing saves the typing as its own undo step and
-		// goes no further. The text box does not undo the letters itself.
+		// LT-22820: Ctrl+Z undoes typing in the text box first. With nothing left to undo
+		// there, the edit nets to nothing and is cancelled; the next press reaches FieldWorks.
 		[AvaloniaTest]
-		public void CtrlZ_WhileEditing_SavesTheEdit_AndStopsAtTheView()
+		public void CtrlZ_WhileTyping_UndoesTheTyping_ThenGoesToTheHost()
 		{
 			var (view, context, window) = ShowEditable();
 			var box = Find<TextBox>(view, "LexemeFormEditor.vern");
+			var original = box.Text;
+			var offered = 0;
+			view.UndoRedoKeyUnhandled += (s, e) =>
+			{
+				offered++;
+				e.Handled = true;
+			};
 			var lastKeyHandled = RecordLastKeyDownHandled(window);
 			var typed = TypeInto(window, box, "perro");
+			Assert.That(typed, Is.Not.EqualTo(original), "precondition: the typing changed the text");
 			Assert.That(context.IsOpen, Is.True, "precondition: typing opened an edit");
+
+			for (var press = 0; press < 10 && box.CanUndo; press++)
+				PressKey(window, PhysicalKey.Z, RawInputModifiers.Control);
+
+			Assert.That(box.Text, Is.EqualTo(original), "the text box undid the typing");
+			Assert.That(offered, Is.EqualTo(0), "FieldWorks' Undo has not run");
+			Assert.That(context.CommitCount + context.CancelCount, Is.EqualTo(0),
+				"and the edit is still open");
 
 			PressKey(window, PhysicalKey.Z, RawInputModifiers.Control);
 
-			Assert.That(context.CommitCount, Is.EqualTo(1), "the typing is saved");
-			Assert.That(box.Text, Is.EqualTo(typed), "and kept");
+			Assert.That(context.CancelCount, Is.EqualTo(1), "the edit that nets to nothing is dropped");
+			Assert.That(context.CommitCount, Is.EqualTo(0), "not saved as an empty step");
+			Assert.That(offered, Is.EqualTo(1), "and FieldWorks' Undo runs");
+			Assert.That(lastKeyHandled(), Is.True, "the host took the key");
+		}
+
+		// Typing that outruns the box's undo history is dropped by one press of its own, back to
+		// the shown value, so that press does not also run FieldWorks' Undo.
+		[AvaloniaTest]
+		public void CtrlZ_AfterTypingBeyondTheUndoHistory_DropsTheRest_AndStops()
+		{
+			var (view, context, window) = ShowEditable();
+			var box = Find<TextBox>(view, "LexemeFormEditor.vern");
+			var offered = 0;
+			view.UndoRedoKeyUnhandled += (s, e) => offered++;
+			var lastKeyHandled = RecordLastKeyDownHandled(window);
+			box.Focus();
+			Dispatcher.UIThread.RunJobs();
+			box.UndoLimit = 1;
+			TypeInto(window, box, " perro gato raton");
+
+			for (var press = 0; press < 10 && box.CanUndo; press++)
+				PressKey(window, PhysicalKey.Z, RawInputModifiers.Control);
+			Assert.That(box.Text, Is.Not.EqualTo("casa"),
+				"precondition: the box's history ran out before the shown value");
+			Assert.That(offered, Is.EqualTo(0), "precondition: FieldWorks' Undo has not run");
+
+			PressKey(window, PhysicalKey.Z, RawInputModifiers.Control);
+
+			Assert.That(context.CancelCount, Is.EqualTo(1), "the leftover typing is dropped");
+			Assert.That(context.CommitCount, Is.EqualTo(0));
+			Assert.That(offered, Is.EqualTo(0), "and FieldWorks' Undo does not run too");
 			Assert.That(lastKeyHandled(), Is.True, "the key goes no further than the view");
 		}
 
-		// With no edit open, Ctrl+Z and Ctrl+Y go to the host for FieldWorks' own Undo and
-		// Redo, every time: the key that saved an edit must not leave later presses stranded.
+		[AvaloniaTest]
+		public void CtrlY_AfterCtrlZ_RedoesTheTyping_InTheTextBox()
+		{
+			var (view, context, window) = ShowEditable();
+			var box = Find<TextBox>(view, "LexemeFormEditor.vern");
+			var offered = 0;
+			view.UndoRedoKeyUnhandled += (s, e) => offered++;
+			var typed = TypeInto(window, box, "perro");
+
+			PressKey(window, PhysicalKey.Z, RawInputModifiers.Control);
+			Assert.That(box.Text, Is.Not.EqualTo(typed), "precondition: the text box undid typing");
+			PressKey(window, PhysicalKey.Y, RawInputModifiers.Control);
+
+			Assert.That(box.Text, Is.EqualTo(typed), "the text box redid it");
+			Assert.That(offered, Is.EqualTo(0), "FieldWorks' Redo has not run");
+			Assert.That(context.CommitCount + context.CancelCount, Is.EqualTo(0));
+		}
+
+		// Typing since the last undo step leaves FieldWorks nothing to redo, so Ctrl+Y with the
+		// text box's own redo used up does nothing.
+		[AvaloniaTest]
+		public void CtrlY_WhileTyping_WithNothingToRedo_GoesNowhere()
+		{
+			var (view, context, window) = ShowEditable();
+			var box = Find<TextBox>(view, "LexemeFormEditor.vern");
+			var offered = 0;
+			view.UndoRedoKeyUnhandled += (s, e) => offered++;
+			var lastKeyHandled = RecordLastKeyDownHandled(window);
+			var typed = TypeInto(window, box, "perro");
+
+			PressKey(window, PhysicalKey.Y, RawInputModifiers.Control);
+
+			Assert.That(box.Text, Is.EqualTo(typed));
+			Assert.That(offered, Is.EqualTo(0));
+			Assert.That(lastKeyHandled(), Is.True, "the key goes no further than the view");
+			Assert.That(context.IsOpen, Is.True, "the edit stays open");
+		}
+
+		// With focus outside a text box, an open edit is saved, so FieldWorks' Undo takes it
+		// back in the same press and its Redo can restore it.
+		[AvaloniaTest]
+		public void CtrlZ_OutsideATextBox_SavesTheOpenEdit_ThenGoesToTheHost()
+		{
+			var (view, context, window) = ShowEditable();
+			var box = Find<TextBox>(view, "LexemeFormEditor.vern");
+			var offered = 0;
+			view.UndoRedoKeyUnhandled += (s, e) => offered++;
+			TypeInto(window, box, "perro");
+
+			RaiseUndoKeyOnView(view);
+
+			Assert.That(context.CommitCount, Is.EqualTo(1), "the edit is saved");
+			Assert.That(offered, Is.EqualTo(1), "and FieldWorks' Undo runs");
+		}
+
+		// An edit that failed validation is the latest change, so Ctrl+Z with nothing left
+		// for a text box to undo drops it, as Escape does, rather than repeating the error.
+		[AvaloniaTest]
+		public void CtrlZ_WithAnInvalidEditOpen_CancelsIt_LikeEscape()
+		{
+			var (view, context, window) = ShowEditable();
+			var box = Find<TextBox>(view, "LexemeFormEditor.vern");
+			var offered = 0;
+			view.UndoRedoKeyUnhandled += (s, e) => offered++;
+			TypeInto(window, box, "perro");
+			context.ValidateResult = new List<string> { "Lexeme Form is required." };
+
+			RaiseUndoKeyOnView(view);
+
+			Assert.That(context.CancelCount, Is.EqualTo(1), "the invalid edit is dropped");
+			Assert.That(context.CommitCount, Is.EqualTo(0));
+			Assert.That(offered, Is.EqualTo(0), "the step before it is not undone too");
+			Assert.That(Find<TextBlock>(view, "DetailEditor.ValidationErrors").IsVisible,
+				Is.False, "and its error is cleared");
+		}
+
+		// With no edit open and a text box that has nothing to undo, Ctrl+Z and Ctrl+Y go to
+		// the host every time. A freshly shown value is not something the box can undo.
 		[AvaloniaTest]
 		public void CtrlZAndCtrlY_WithNoOpenEdit_AreOfferedToTheHost()
 		{
 			var (view, context, window) = ShowEditable();
 			var box = Find<TextBox>(view, "LexemeFormEditor.vern");
+			var original = box.Text;
 			var offered = new List<string>();
 			view.UndoRedoKeyUnhandled += (s, e) =>
 			{
@@ -920,10 +1043,8 @@ namespace FwAvaloniaTests
 				e.Handled = true;
 			};
 			var lastKeyHandled = RecordLastKeyDownHandled(window);
-			var typed = TypeInto(window, box, "perro");
-			PressKey(window, PhysicalKey.Z, RawInputModifiers.Control);
-			Assert.That(context.IsOpen, Is.False, "precondition: the first Ctrl+Z saved the edit");
-			Assert.That(offered, Is.Empty, "the key that saved the edit goes no further");
+			box.Focus();
+			Dispatcher.UIThread.RunJobs();
 
 			PressKey(window, PhysicalKey.Z, RawInputModifiers.Control);
 			PressKey(window, PhysicalKey.Z, RawInputModifiers.Control);
@@ -931,8 +1052,21 @@ namespace FwAvaloniaTests
 
 			Assert.That(offered, Is.EqualTo(new[] { "Control+Z", "Control+Z", "Control+Y" }));
 			Assert.That(lastKeyHandled(), Is.True, "the host took each key");
-			Assert.That(box.Text, Is.EqualTo(typed), "the text box undid none of the typing");
-			Assert.That(context.CommitCount, Is.EqualTo(1), "nothing more was saved");
+			Assert.That(box.Text, Is.EqualTo(original), "the text box changed nothing");
+			Assert.That(context.CommitCount + context.CancelCount, Is.EqualTo(0));
+		}
+
+		// A Ctrl+Z raised on the view itself, as when focus is on no text box.
+		private static void RaiseUndoKeyOnView(DataTree view)
+		{
+			view.RaiseEvent(new KeyEventArgs
+			{
+				RoutedEvent = InputElement.KeyDownEvent,
+				Key = Key.Z,
+				KeyModifiers = KeyModifiers.Control,
+				Source = view
+			});
+			Dispatcher.UIThread.RunJobs();
 		}
 
 		[AvaloniaTest]
@@ -972,40 +1106,34 @@ namespace FwAvaloniaTests
 			Assert.That(filter.Text, Is.Not.EqualTo("ab"), "the filter box undid its own typing");
 		}
 
-		// Typed reference text opens no edit session. The first Ctrl+Z saves it rather than
-		// undoing the change before it; the next press goes on to FieldWorks' Undo.
+		// Typed reference text opens no edit session. Ctrl+Z undoes it in the box, staging
+		// nothing; once the box has nothing left, the next press goes on to FieldWorks' Undo.
 		[AvaloniaTest]
-		[TestCase(true, true, TestName = "CtrlZ_InAReferenceSlotHoldingText_SavesIt_ThenUndoes")]
-		[TestCase(true, false, TestName = "CtrlZ_InAReferenceSlotHoldingRefusedText_StopsOnce")]
-		[TestCase(false, true, TestName = "CtrlZ_InAReferenceItemHoldingText_SavesIt_ThenUndoes")]
-		[TestCase(false, false, TestName = "CtrlZ_InAReferenceItemHoldingRefusedText_StopsOnce")]
-		public void CtrlZ_InAReferenceRowHoldingText_StopsOnce(bool inSlot, bool accepted)
+		[TestCase(true, TestName = "CtrlZ_InAReferenceSlot_UndoesTheTyping_ThenGoesToTheHost")]
+		[TestCase(false, TestName = "CtrlZ_InAReferenceItem_UndoesTheTyping_ThenGoesToTheHost")]
+		public void CtrlZ_InAReferenceRow_UndoesTheTyping_ThenGoesToTheHost(bool inSlot)
 		{
-			var (view, context, window) = ShowTypedVector(inSlot, accepted);
+			var (view, context, window) = ShowTypedVector(inSlot, accepted: true);
 			var box = inSlot ? AddSlot(view) : ItemBox(view, "One");
+			var original = box.Text ?? string.Empty;
 			var offered = 0;
 			view.UndoRedoKeyUnhandled += (s, e) => offered++;
-			var lastKeyHandled = RecordLastKeyDownHandled(window);
-			var typed = TypeInto(window, box, "Two");
-			Assert.That(context.IsOpen, Is.False, "precondition: typing in the row opened no edit");
+			TypeInto(window, box, "Two");
 			Assert.That(view.HasUnsubmittedText, Is.True, "precondition: the row holds the text");
 
-			PressKey(window, PhysicalKey.Z, RawInputModifiers.Control);
+			for (var press = 0; press < 10 && box.CanUndo; press++)
+				PressKey(window, PhysicalKey.Z, RawInputModifiers.Control);
 
-			var staged = inSlot
-				? context.ReferenceCreates.Select(c => c.Text)
-				: context.ReferenceRetypes.Select(r => r.Text);
-			Assert.That(staged, Is.EqualTo(new[] { typed }), "the typed text is offered to the domain");
-			Assert.That(context.CommitCount, Is.EqualTo(accepted ? 1 : 0),
-				"and saved as its own step when accepted");
-			Assert.That(offered, Is.EqualTo(0), "FieldWorks' Undo does not run on an earlier change");
-			Assert.That(lastKeyHandled(), Is.True, "the key goes no further than the view");
+			Assert.That(box.Text ?? string.Empty, Is.EqualTo(original), "the box undid the typing");
+			Assert.That(context.ReferenceCreates.Count + context.ReferenceRetypes.Count,
+				Is.EqualTo(0), "nothing was offered to the domain");
+			Assert.That(offered, Is.EqualTo(0), "FieldWorks' Undo has not run");
 			Assert.That(view.HasUnsubmittedText, Is.False, "nothing is left to stage later");
 
 			PressKey(window, PhysicalKey.Z, RawInputModifiers.Control);
 
-			Assert.That(offered, Is.EqualTo(1),
-				"the next press undoes, even when the text was refused");
+			Assert.That(offered, Is.EqualTo(1), "the next press goes to FieldWorks' Undo");
+			Assert.That(context.CommitCount + context.CancelCount, Is.EqualTo(0));
 		}
 
 		// Menu and toolbar Undo never reach the view; the host's undo guard flushes the context

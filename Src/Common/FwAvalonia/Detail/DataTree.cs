@@ -343,8 +343,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			AddHandler(Avalonia.Input.InputElement.KeyDownEvent, OnViewKeyDown,
 				Avalonia.Interactivity.RoutingStrategies.Bubble);
 
-			// Ctrl+Z and Ctrl+Y are FieldWorks' Undo and Redo, not an editor's (LT-22820).
-			// Tunnel, to reach them before an editor's own undo does.
+			// Ctrl+Z and Ctrl+Y undo typing, then reach FieldWorks' Undo and Redo (LT-22820).
+			// Tunnel, to decide before a text box's own undo does.
 			AddHandler(Avalonia.Input.InputElement.KeyDownEvent, OnUndoRedoKeyDown,
 				Avalonia.Interactivity.RoutingStrategies.Tunnel);
 
@@ -444,27 +444,104 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			}
 		}
 
-		// With an edit open or reference text typed, an undo or redo key saves it as its own step
-		// and stops; otherwise the host gets it. A popup's editor keeps it for its own undo.
+		// The focused text box undoes and redoes its own typing first. Once it has nothing left,
+		// the field's edit is closed and the host gets the key. A popup's editor keeps it.
 		private void OnUndoRedoKeyDown(object sender, Avalonia.Input.KeyEventArgs e)
 		{
 			if (!IsUndoOrRedoKey(e) || !(e.Source is Visual source)
 				|| (source != this && !this.IsVisualAncestorOf(source)))
 				return;
+			var redo = e.Key == Avalonia.Input.Key.Y;
+			var box = source.FindAncestorOfType<TextBox>(includeSelf: true);
+			if (box != null && box.IsUndoEnabled && (redo ? box.CanRedo : box.CanUndo))
+				return;
+			// A long edit can outrun the box's history. The typing left over is then the oldest
+			// change, so this press drops it, and only the next one reaches FieldWorks.
+			if (!redo && box != null && HasTypingBeyondUndoHistory(box))
+			{
+				OnCancel();
+				e.Handled = true;
+				return;
+			}
 			// Typed reference text opens no edit session. Refused text still takes the key, so
 			// the step before it is not undone in its place.
 			var heldText = false;
 			foreach (var vector in VectorRows)
 				heldText |= vector.StageUnstagedText();
-			if (_editContext != null && _editContext.IsOpen)
-				OnSave();
-			else if (!heldText)
+			var editOpen = _editContext != null && _editContext.IsOpen;
+			if (heldText)
 			{
-				UndoRedoKeyUnhandled?.Invoke(this, e);
+				if (editOpen)
+					OnSave();
+				e.Handled = true;
 				return;
 			}
-			e.Handled = true;
+			if (editOpen && !CloseEditBeforeUndoOrRedo(redo, box != null))
+			{
+				e.Handled = true;
+				return;
+			}
+			UndoRedoKeyUnhandled?.Invoke(this, e);
 		}
+
+		/// <summary>
+		/// Closes the open edit so FieldWorks can undo or redo past it.
+		/// </summary>
+		/// <param name="redo">Whether the key is Redo rather than Undo.</param>
+		/// <param name="inTextBox">Whether focus is in a text box with no typing left to
+		/// undo.</param>
+		/// <returns>Whether the key should go on to FieldWorks.</returns>
+		private bool CloseEditBeforeUndoOrRedo(bool redo, bool inTextBox)
+		{
+			// Changing the record since the last step left nothing for FieldWorks to redo.
+			if (redo)
+				return false;
+			// An invalid edit is the latest change, so this press undoes it, as Escape does.
+			if (_editContext.Validate().Count > 0)
+			{
+				OnCancel();
+				return false;
+			}
+			// The text box has undone its typing, so cancelling loses nothing. Any other open
+			// edit is saved first, so FieldWorks undoes it and Redo can bring it back.
+			if (inTextBox)
+				OnCancel();
+			else
+				OnSave();
+			return true;
+		}
+
+		/// <summary>
+		/// Empties the undo history of a text box gaining focus with nothing pending. A text box
+		/// records the value it was given as an undoable change, so its first Ctrl+Z would blank
+		/// the field instead of reaching FieldWorks' Undo.
+		/// </summary>
+		/// <param name="source">The control that gained focus.</param>
+		private void ForgetShownValueAsUndoable(Control source)
+		{
+			if (source == null || (_editContext != null && _editContext.IsOpen) || HasUnsubmittedText)
+				return;
+			var box = source.FindAncestorOfType<TextBox>(includeSelf: true);
+			if (box == null || !box.IsUndoEnabled || !this.IsVisualAncestorOf(box))
+				return;
+			// Turning undo off empties the history, as in WPF's TextBox.
+			box.IsUndoEnabled = false;
+			box.IsUndoEnabled = true;
+			_shownTextAtFocus.Remove(box);
+			_shownTextAtFocus.Add(box, box.Text ?? string.Empty);
+		}
+
+		// Whether the box still differs from the value it showed when its history was emptied.
+		private bool HasTypingBeyondUndoHistory(TextBox box)
+		{
+			string shown;
+			return _shownTextAtFocus.TryGetValue(box, out shown)
+				&& !string.Equals(box.Text ?? string.Empty, shown, StringComparison.Ordinal);
+		}
+
+		// The value each text box showed when its undo history was last emptied.
+		private readonly System.Runtime.CompilerServices.ConditionalWeakTable<TextBox, string>
+			_shownTextAtFocus = new System.Runtime.CompilerServices.ConditionalWeakTable<TextBox, string>();
 
 		private static bool IsUndoOrRedoKey(Avalonia.Input.KeyEventArgs e)
 			=> e.KeyModifiers == Avalonia.Input.KeyModifiers.Control
@@ -475,6 +552,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		private void OnRowGotFocus(object sender, Avalonia.Input.GotFocusEventArgs e)
 		{
 			var source = e.Source as Control;
+			ForgetShownValueAsUndoable(source);
 			source?.BringIntoView();
 			for (var control = source; control != null && control != this; control = control.GetVisualParent() as Control)
 			{
@@ -625,10 +703,10 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		public event EventHandler InteractionCompleted;
 
 		/// <summary>
-		/// Raised for an undo or redo key pressed in the view with no edit open, so the host can
-		/// give it to FieldWorks' Undo or Redo. FieldWorks never sees keys typed into Avalonia
-		/// otherwise (LT-22820). A handler that takes the key marks it handled; one that does
-		/// not leaves it to the focused editor.
+		/// Raised for an undo or redo key pressed in the view once the focused text box has
+		/// nothing left to undo or redo and any open edit is closed, so the host can give it to
+		/// FieldWorks' Undo or Redo. FieldWorks never sees keys typed into Avalonia otherwise
+		/// (LT-22820). A handler that takes the key marks it handled.
 		/// </summary>
 		public event EventHandler<Avalonia.Input.KeyEventArgs> UndoRedoKeyUnhandled;
 
