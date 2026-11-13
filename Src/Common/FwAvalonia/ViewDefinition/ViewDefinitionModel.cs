@@ -398,8 +398,10 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 			string sliceId = null,
 			string optionalWritingSystem = null,
 			bool forceIncludeEnglish = false,
-			string visibilityField = null)
+			string visibilityField = null,
+			string partRefId = null)
 		{
+			PartRefId = partRefId;
 			VisibilityField = visibilityField;
 			OptionalWritingSystem = optionalWritingSystem;
 			ForceIncludeEnglish = forceIncludeEnglish;
@@ -507,6 +509,13 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 		/// only when that exclusion list does. Null when the slice names none.
 		/// </summary>
 		public string VisibilityField { get; }
+
+		/// <summary>
+		/// The layout part ref this node came from, when that part's content sits inside a
+		/// conditional: every branch's node then holds the part ref's own values, visibility
+		/// included. Null on every other node.
+		/// </summary>
+		public string PartRefId { get; }
 
 		public IReadOnlyList<ViewNode> Children { get; }
 

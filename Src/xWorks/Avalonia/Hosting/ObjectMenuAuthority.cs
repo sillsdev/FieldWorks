@@ -121,14 +121,10 @@ namespace SIL.FieldWorks.XWorks
 	/// </summary>
 	internal sealed class OverrideTarget
 	{
-		public OverrideTarget(string templateId, ViewNodeLocation location)
+		public OverrideTarget(ViewNodeLocation location)
 		{
-			TemplateId = templateId ?? throw new ArgumentNullException(nameof(templateId));
 			Location = location ?? throw new ArgumentNullException(nameof(location));
 		}
-
-		/// <summary>The row's template id, without its runtime suffix.</summary>
-		public string TemplateId { get; }
 
 		/// <summary>The node's position and visibility among its siblings.</summary>
 		public ViewNodeLocation Location { get; }

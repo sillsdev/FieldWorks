@@ -870,14 +870,14 @@ namespace SIL.FieldWorks.XWorks
 
 			// Unknown/stale target: leave the field commands on mediator dispatch rather than
 			// guess.
-			if (!TryLocateOverrideTarget(field, out var templateId, out var location))
+			if (!TryLocateOverrideTarget(field, out _, out var location))
 				return;
 			registry.Add("CmdAlwaysVisible",
-				(c, d) => VisibilityItem(LabelOf(d), field, templateId, location, ViewVisibility.Always));
+				(c, d) => VisibilityItem(LabelOf(d), field, location, ViewVisibility.Always));
 			registry.Add("CmdIfData",
-				(c, d) => VisibilityItem(LabelOf(d), field, templateId, location, ViewVisibility.IfData));
+				(c, d) => VisibilityItem(LabelOf(d), field, location, ViewVisibility.IfData));
 			registry.Add("CmdNormallyHidden",
-				(c, d) => VisibilityItem(LabelOf(d), field, templateId, location, ViewVisibility.Never));
+				(c, d) => VisibilityItem(LabelOf(d), field, location, ViewVisibility.Never));
 			registry.Add("CmdDataTree-MoveFieldUp",
 				(c, d) => MoveItem(LabelOf(d), field, location, up: true));
 			registry.Add("CmdDataTree-MoveFieldDown",
@@ -922,7 +922,7 @@ namespace SIL.FieldWorks.XWorks
 		internal IDetailMenuAuthority CreateObjectMenuAuthority(DetailField field)
 			=> new ObjectMenuAuthority(field, LocateOverrideTarget,
 				fieldVisibility: (label, target, visibility) =>
-					VisibilityItem(label, field, target.TemplateId, target.Location, visibility),
+					VisibilityItem(label, field, target.Location, visibility),
 				moveField: (label, target, up) => MoveItem(label, field, target.Location, up),
 				helpTopic: KnownHelpTopic,
 				showHelp: ShowDetailHelp);
@@ -933,8 +933,8 @@ namespace SIL.FieldWorks.XWorks
 		{
 			try
 			{
-				return TryLocateOverrideTarget(field, out var templateId, out var location)
-					? new OverrideTarget(templateId, location)
+				return TryLocateOverrideTarget(field, out _, out var location)
+					? new OverrideTarget(location)
 					: null;
 			}
 			catch (Exception e)
@@ -1034,11 +1034,11 @@ namespace SIL.FieldWorks.XWorks
 		// SetVisibility override mutation (idempotent -- re-choosing the current value is a
 		// harmless write).
 		private DetailMenuItem VisibilityItem(string label, DetailField field,
-			string templateId, ViewNodeLocation location, ViewVisibility target)
+			ViewNodeLocation location, ViewVisibility target)
 		{
 			var isChecked = location.Visibility == target;
 			return new DetailMenuItem(label, isEnabled: true, isChecked: isChecked, children: null,
-				execute: () => ApplyFieldVisibility(field, templateId, target));
+				execute: () => ApplyFieldVisibility(field, location, target));
 		}
 
 		// A Move Field item: disabled at the first sibling (up) / last sibling (down) / when alone.
@@ -1139,12 +1139,14 @@ namespace SIL.FieldWorks.XWorks
 					}
 				});
 
-		// Writes a SetVisibility op for the field's template id into the project override and recomposes.
-		private void ApplyFieldVisibility(DetailField field, string templateId, ViewVisibility target)
+		// Writes a SetVisibility op for each of the location's visibility targets into the
+		// project override and recomposes.
+		private void ApplyFieldVisibility(DetailField field, ViewNodeLocation location,
+			ViewVisibility target)
 		{
-			var op = new ViewOverrideOperation(ViewOverrideOperationKind.SetVisibility, templateId,
-				visibility: target);
-			MutateOverrideAndRefresh(field, op);
+			var ops = location.VisibilityTargets.Select(id => new ViewOverrideOperation(
+				ViewOverrideOperationKind.SetVisibility, id, visibility: target)).ToArray();
+			MutateOverrideAndRefresh(field, ops);
 		}
 
 		// Writes a ReorderChildren op on the field's PARENT into the project override, then
@@ -1163,15 +1165,15 @@ namespace SIL.FieldWorks.XWorks
 		// Loads-or-creates the (class, layout) override, folds the op in, saves it, and
 		// recomposes the Avalonia detail view. Only the override file is written -- not the
 		// shipped XML or the part-ref inventory.
-		private void MutateOverrideAndRefresh(DetailField field, ViewOverrideOperation op)
+		private void MutateOverrideAndRefresh(DetailField field, params ViewOverrideOperation[] ops)
 		{
-			if (TryMutateOverride(field, op))
+			if (TryMutateOverride(field, ops))
 				RefreshAvaloniaDetail();
 		}
 
-		// Folds the op into the (class, layout) override and saves it, WITHOUT recomposing.
+		// Folds the ops into the (class, layout) override and saves it once, WITHOUT recomposing.
 		// Returns whether the save succeeded, so a failed save can leave view state untouched.
-		private bool TryMutateOverride(DetailField field, ViewOverrideOperation op)
+		private bool TryMutateOverride(DetailField field, params ViewOverrideOperation[] ops)
 		{
 			try
 			{
@@ -1179,9 +1181,10 @@ namespace SIL.FieldWorks.XWorks
 				if (store == null)
 					return false;
 
-				var existing = store.TryGet(field.ClassName, field.LayoutName)
+				var merged = store.TryGet(field.ClassName, field.LayoutName)
 					?? new ViewDefinitionOverride(field.ClassName, field.LayoutName, "detail", null, null);
-				var merged = ViewDefinitionOverrideEditor.MergeOperation(existing, op);
+				foreach (var op in ops)
+					merged = ViewDefinitionOverrideEditor.MergeOperation(merged, op);
 				store.Save(merged);
 				return true;
 			}

@@ -111,6 +111,8 @@ namespace SIL.FieldWorks.XWorks
 			var context = new LexiconFirstSliceEditContext(entry, Cache);
 			Assert.That(context.TrySetText(Field("Form"), "vern", "   "), Is.True, "whitespace stages");
 			Assert.That(context.Validate(), Is.Not.Empty, "a whitespace-only lexeme form fails validation");
+			// The staged write holds an undo task open; the fixture cannot be torn down with it.
+			context.Cancel();
 		}
 
 		[Test]
