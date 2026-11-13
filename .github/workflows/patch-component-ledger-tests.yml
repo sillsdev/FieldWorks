@@ -1,0 +1,38 @@
+name: Patch component ledger tests
+
+on:
+  pull_request:
+    paths:
+      - 'scripts/Installer/PatchComponentLedger.psm1'
+      - 'scripts/Installer/PatchComponentLedger.Tests.ps1'
+      - 'scripts/Installer/Check-PatchComponentLedger.ps1'
+      - 'Build/Installer.legacy.targets'
+      - '.github/workflows/patch-component-ledger-tests.yml'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  ledger-tests:
+    runs-on: windows-2022
+    steps:
+      - uses: actions/checkout@v7
+
+      # The patch build runs the ledger check under PowerShell 7; run the
+      # tests under Windows PowerShell 5.1 as well, as CI.yml does for the
+      # hygiene suites.
+      - name: Ledger tests (PowerShell 7)
+        shell: pwsh
+        run: |
+          scripts/Installer/PatchComponentLedger.Tests.ps1
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+      - name: Ledger tests (Windows PowerShell 5.1)
+        shell: powershell
+        run: |
+          scripts\Installer\PatchComponentLedger.Tests.ps1
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }

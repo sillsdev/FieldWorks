@@ -67,6 +67,28 @@ try {
         Select-PreviousPublishedPatch -PatchKeys @($patch2758, $patch2760) -LedgerKeys @($patch2758 -replace '\.msp$', '_components.tsv') -BaseBuildNumber '1452' -PatchVersion '9.3.12.2761'
     } 'Bootstrap has ended'
 
+	# Serve a fixed update-bucket listing so the keys pass through the real listing and selection
+	# functions.
+	$listing = '<ListBucketResult><IsTruncated>false</IsTruncated>' +
+		((@($patch2758, $patch2760, $ledger2760) | ForEach-Object { "<Contents><Key>$_</Key></Contents>" }) -join '') +
+		'</ListBucketResult>'
+	& (Get-Module PatchComponentLedger) {
+		param($Content)
+		$script:FakeListing = $Content
+		function script:Invoke-WebRequest { param($Uri, [switch]$UseBasicParsing) [pscustomobject]@{ Content = $script:FakeListing } }
+	} $listing
+	$listedPatches = @(Get-PublishedPatchKeys -BaseBuildNumber '1452' -Wildcard '*.msp')
+	$listedLedgers = @(Get-PublishedPatchKeys -BaseBuildNumber '1452' -Wildcard '*_components.tsv')
+	Assert-Equal ($listedPatches -join '|') "$patch2758|$patch2760" 'Listed patch keys must arrive as one string per key.'
+	$listedSelection = Select-PreviousPublishedPatch -PatchKeys $listedPatches -LedgerKeys $listedLedgers -BaseBuildNumber '1452' -PatchVersion '9.3.12.2761'
+	Assert-Equal "$($listedSelection.PatchKey)|$($listedSelection.LedgerKey)" "$patch2760|$ledger2760" 'Listed keys must select the latest earlier patch and its ledger.'
+	$singlePatch = @(Get-PublishedPatchKeys -BaseBuildNumber '1452' -Wildcard '*.tsv')
+	Assert-Equal ($singlePatch -join '|') $ledger2760 'A single listed key must arrive as a one-element array.'
+	$noPatches = @(Get-PublishedPatchKeys -BaseBuildNumber '1453' -Wildcard '*.msp')
+	Assert-Equal $noPatches.Count 0 'A base with no published patches must list no keys.'
+	$firstPatch = Select-PreviousPublishedPatch -PatchKeys $noPatches -LedgerKeys @() -BaseBuildNumber '1453' -PatchVersion '9.3.12.2761'
+	Assert-Equal "$($firstPatch.PatchKey)|$($firstPatch.LedgerKey)" '|' 'The first patch on a base must have no previous patch.'
+
     $master = @{
         '{33333333-3333-3333-3333-333333333333}' = [pscustomobject]@{
             ComponentId = '{33333333-3333-3333-3333-333333333333}'

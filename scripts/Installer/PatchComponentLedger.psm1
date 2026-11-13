@@ -204,7 +204,7 @@ function Get-PublishedPatchKeys {
 		[Parameter(Mandatory = $true)][string]$BaseBuildNumber,
 		[Parameter(Mandatory = $true)][string]$Wildcard
 	)
-	return , (Get-UpdateBucketKeys -Prefix $script:PatchPrefix -Like "*_b${BaseBuildNumber}_$Wildcard")
+	return (Get-UpdateBucketKeys -Prefix $script:PatchPrefix -Like "*_b${BaseBuildNumber}_$Wildcard")
 }
 
 function Save-PublishedFile {
@@ -237,7 +237,7 @@ function Select-PreviousPublishedPatch {
 	Selects the previous patch and matching ledger for a base and version.
 	#>
 	param(
-		[Parameter(Mandatory = $true)][string[]]$PatchKeys,
+		[Parameter(Mandatory = $true)][AllowEmptyCollection()][string[]]$PatchKeys,
 		[string[]]$LedgerKeys = @(),
 		[Parameter(Mandatory = $true)][string]$BaseBuildNumber,
 		[Parameter(Mandatory = $true)][string]$PatchVersion
