@@ -341,9 +341,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				dlg.SetHelpTopic("khtpFindLexicalEntry");
 				if (dlg.ShowDialog() == DialogResult.OK)
 				{
-#pragma warning disable 618 // suppress obsolete warning
-					m_mediator.BroadcastMessageUntilHandled("JumpToRecord", dlg.SelectedObject.Hvo);
-#pragma warning restore 618
+					Publisher.Publish(new PublisherParameterObject(EventConstants.JumpToRecord, dlg.SelectedObject.Hvo, m_propertyTable.GetWindow()));
 				}
 			}
 			return true;
@@ -400,9 +398,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				Form.ActiveForm, helpProvider);
 			if (entry != null)
 			{
-#pragma warning disable 618 // suppress obsolete warning
-				m_mediator.BroadcastMessageUntilHandled("JumpToRecord", entry.Hvo);
-#pragma warning restore 618
+				Publisher.Publish(new PublisherParameterObject(EventConstants.JumpToRecord, entry.Hvo, m_propertyTable.GetWindow()));
 			}
 		}
 
