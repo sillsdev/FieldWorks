@@ -89,6 +89,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 			Subscriber.Subscribe(EventConstants.DictionaryConfigured, RefreshAllContent, m_propertyTable.GetWindow());
 			Subscriber.Subscribe(EventConstants.RefreshCurrentView, RefreshCurrentView, m_propertyTable.GetWindow());
+			Clerk.PublishedJumpStarting += PrepareForJump;
 		}
 
 		protected override void Dispose(bool disposing)
@@ -101,6 +102,8 @@ namespace SIL.FieldWorks.XWorks
 			{
 				Subscriber.Unsubscribe(EventConstants.DictionaryConfigured, RefreshAllContent);
 				Subscriber.Unsubscribe(EventConstants.RefreshCurrentView, RefreshCurrentView);
+				if (ExistingClerk != null)
+					ExistingClerk.PublishedJumpStarting -= PrepareForJump;
 			}
 			base.Dispose(disposing);
 		}
@@ -191,25 +194,39 @@ namespace SIL.FieldWorks.XWorks
 		/// <returns></returns>
 		public bool OnJumpToRecord(object argument)
 		{
-			var hvoTarget = (int)argument;
-			var currControl = m_propertyTable.GetStringProperty("currentContentControl", "");
-			if (hvoTarget > 0 && currControl == ksLexDictionary)
-			{
-				DictionaryConfigurationController.ExclusionReasonCode xrc;
-				// Make sure we explain to the user in case hvoTarget is not visible due to
-				// the current Publication layout or Configuration view.
-				if (!IsObjectVisible(hvoTarget, Cache, m_propertyTable, out xrc))
-				{
-					// Tell the user why we aren't jumping to his record
-					GiveSimpleWarning(xrc);
-				}
-			}
-			// Wait until SetActiveSelectedEntryOnView to call UpdateContent.
-			m_updateContentLater = true;
+			PrepareForJump((int)argument);
 			return false;
 		}
 
-		private void GiveSimpleWarning(DictionaryConfigurationController.ExclusionReasonCode xrc)
+		/// <summary>
+		/// Readies the view for a jump its clerk is about to make. Dictionary warns when the
+		/// current publication or configuration hides the target entry; every other tool
+		/// defers its next content update until the clerk has moved.
+		/// </summary>
+		private void PrepareForJump(int hvoTarget)
+		{
+			if (m_propertyTable.GetStringProperty("currentContentControl", "") != ksLexDictionary)
+			{
+				// Wait until SetActiveSelectedEntryOnView to call UpdateContent. Not in
+				// Dictionary: it never makes that call, and the flag would block its
+				// reload when the configuration changes.
+				m_updateContentLater = true;
+				return;
+			}
+			var objects = Cache.ServiceLocator.GetInstance<ICmObjectRepository>();
+			ICmObject target;
+			// Only a lexical entry can be hidden by a publication or a configuration.
+			if (hvoTarget <= 0 || !objects.TryGetObject(hvoTarget, out target)
+				|| !(target is ILexEntry))
+			{
+				return;
+			}
+			DictionaryConfigurationController.ExclusionReasonCode xrc;
+			if (!IsObjectVisible(hvoTarget, Cache, m_propertyTable, out xrc))
+				GiveSimpleWarning(xrc);
+		}
+
+		protected virtual void GiveSimpleWarning(DictionaryConfigurationController.ExclusionReasonCode xrc)
 		{
 			// Tell the user why we aren't jumping to his record
 			string caption;

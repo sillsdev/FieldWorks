@@ -152,6 +152,11 @@ namespace SIL.FieldWorks.XWorks
 		#region Event Handling
 		public event EventHandler SorterChangedByClerk;
 		public event FilterChangeHandler FilterChangedByClerk;
+		/// <summary>
+		/// Raised with the target hvo just before this clerk acts on a published JumpToRecord.
+		/// A jump that reaches the clerk any other way does not raise it.
+		/// </summary>
+		internal event Action<int> PublishedJumpStarting;
 		#endregion Event Handling
 
 		#region IDisposable & Co. implementation
@@ -1030,6 +1035,7 @@ namespace SIL.FieldWorks.XWorks
 		/// Subclasses can override this to route the jump elsewhere first (the concordance
 		/// clerk lets its ConcordanceControl try the jump before falling back to this base
 		/// implementation).
+		/// This base implementation raises <see cref="PublishedJumpStarting"/> before it jumps.
 		/// Note: Mediator broadcasts of "JumpToRecord" still arrive via OnJumpToRecord
 		/// until those senders are also converted to Pub/Sub.
 		/// </summary>
@@ -1037,6 +1043,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			if (!IsActiveClerk)
 				return;
+			PublishedJumpStarting?.Invoke((int)argument);
 			JumpToRecord(argument);
 		}
 
