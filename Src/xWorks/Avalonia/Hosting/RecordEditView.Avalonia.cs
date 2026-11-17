@@ -901,18 +901,19 @@ namespace SIL.FieldWorks.XWorks
 				CreateReorderVectorAuthority(request),
 				new EnvironmentInsertMenuAuthority(request, this),
 				new StructuredTextMenuAuthority(request, StructuredTextItem),
-				CreateMultiStringMenuAuthority(request.Field, objectMenu),
+				CreateWritingSystemsMenuAuthority(request.Field, objectMenu),
 				objectMenu,
 				CreateLexiconMenuAuthority(request.Field));
 		}
 
-		/// <summary>The native authority for a multi-writing-system row's label menu.</summary>
-		internal IDetailMenuAuthority CreateMultiStringMenuAuthority(DetailField field)
-			=> CreateMultiStringMenuAuthority(field, CreateObjectMenuAuthority(field));
+		/// <summary>The native authority for the label menu of a row that chooses its
+		/// writing systems.</summary>
+		internal IDetailMenuAuthority CreateWritingSystemsMenuAuthority(DetailField field)
+			=> CreateWritingSystemsMenuAuthority(field, CreateObjectMenuAuthority(field));
 
-		private IDetailMenuAuthority CreateMultiStringMenuAuthority(DetailField field,
+		private IDetailMenuAuthority CreateWritingSystemsMenuAuthority(DetailField field,
 			IDetailMenuAuthority sharedLeaves)
-			=> new MultiStringMenuAuthority(field, sharedLeaves,
+			=> new WritingSystemsMenuAuthority(field, sharedLeaves,
 				menu: WritingSystemMenuOf,
 				show: ShowWritingSystems,
 				showAll: ShowAllWritingSystemsItem,
@@ -1062,9 +1063,19 @@ namespace SIL.FieldWorks.XWorks
 					RefreshAvaloniaDetail();
 				});
 
-		// The row's Writing Systems menu, from the shared rule and the row's own layout facts.
+		// The row's Writing Systems menu, checked from its stored selection.
 		private IReadOnlyList<WritingSystemMenuOption> WritingSystemMenuOf(DetailField field)
-			=> FieldWritingSystemOptions.Menu(Cache, WritingSystemSpecOf(field), field.VisibleWritingSystems);
+			=> WritingSystemChoicesOf(field).Menu(field.VisibleWritingSystems);
+
+		/// <summary>
+		/// The writing systems the row offers and shows, from the shared rule its kind of row
+		/// follows: the Reversal Entries rule, or the multi-string rule over the row's own
+		/// layout facts. The menu and the Configure dialog both read these.
+		/// </summary>
+		internal WritingSystemChoices WritingSystemChoicesOf(DetailField field)
+			=> ReversalIndexEntryPlugin.Built(field)
+				? ReversalEntryWritingSystems.Choices(Cache)
+				: FieldWritingSystemOptions.Choices(Cache, WritingSystemSpecOf(field));
 
 		private static WritingSystemFieldSpec WritingSystemSpecOf(DetailField field)
 			=> WritingSystemFieldSpec.FromLayout(field.ObjectHvo, field.WritingSystem,
@@ -1115,10 +1126,10 @@ namespace SIL.FieldWorks.XWorks
 				{
 					try
 					{
-						var spec = WritingSystemSpecOf(field);
-						var shown = FieldWritingSystemOptions.Shown(Cache, spec, field.VisibleWritingSystems);
+						var choices = WritingSystemChoicesOf(field);
+						var shown = choices.Shown(field.VisibleWritingSystems);
 						using (var dlg = new ConfigureWritingSystemsDlg(
-							FieldWritingSystemOptions.Options(Cache, spec), shown,
+							choices.Options, shown,
 							m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider")))
 						{
 							dlg.Text = ConfigureWritingSystemsDlg.TitleFor(field.Label);

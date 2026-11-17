@@ -1235,12 +1235,12 @@ namespace SIL.FieldWorks.XWorks
 				LabelMenuIds(multiString)), Is.True,
 				"a multi-string row's menu, writing-system list included, is answered natively");
 			var lexemeForm = LexemeFormField();
-			Assert.That(m_view.CreateMultiStringMenuAuthority(lexemeForm).Owns(MultiStringMenuAuthority.MenuId),
+			Assert.That(m_view.CreateWritingSystemsMenuAuthority(lexemeForm).Owns(WritingSystemsMenuAuthority.MenuId),
 				Is.True, "the shared multi-string group is owned on the Lexeme Form row too");
 			Assert.That(XCoreMenuBridge.OwnsAll(m_view.CreateMenuAuthority(LabelMenuRequest(lexemeForm, NoItem)),
 				LabelMenuIds(lexemeForm)), Is.True,
 				"the Lexeme Form row's menu, its own jump, swap and convert leaves included, is answered natively");
-			Assert.That(m_view.CreateMultiStringMenuAuthority(subentries).Owns(MultiStringMenuAuthority.MenuId),
+			Assert.That(m_view.CreateWritingSystemsMenuAuthority(subentries).Owns(WritingSystemsMenuAuthority.MenuId),
 				Is.False, "a row that is not multi-string never claims the multi-string menu");
 			Assert.That(XCoreMenuBridge.OwnsAll(null, new[] { ReorderVectorMenuAuthority.MenuId }), Is.False);
 		}
@@ -1528,41 +1528,41 @@ namespace SIL.FieldWorks.XWorks
 		// the row and the shared rule, the rest delegated to the per-object authority.
 
 		[Test]
-		public void MultiStringMenuAuthority_AnswersEveryLeafOfItsMenu()
+		public void WritingSystemsMenuAuthority_AnswersEveryLeafOfItsMenu()
 		{
-			var authority = m_view.CreateMultiStringMenuAuthority(LexemeFormField());
+			var authority = m_view.CreateWritingSystemsMenuAuthority(LexemeFormField());
 			var window = m_propertyTable.GetValue<XWindow>("window");
-			var menu = XCoreMenuBridge.ResolveMenu(window, MultiStringMenuAuthority.MenuId);
+			var menu = XCoreMenuBridge.ResolveMenu(window, WritingSystemsMenuAuthority.MenuId);
 
 			Assert.That(menu.Leaves.Select(l => l.CommandId), Is.EquivalentTo(new[]
 			{
-				MultiStringMenuAuthority.ShowAllCommandId, MultiStringMenuAuthority.ConfigureCommandId,
+				WritingSystemsMenuAuthority.ShowAllCommandId, WritingSystemsMenuAuthority.ConfigureCommandId,
 				ObjectMenuAuthority.AlwaysVisibleCommandId, ObjectMenuAuthority.IfDataCommandId,
 				ObjectMenuAuthority.NormallyHiddenCommandId, ObjectMenuAuthority.MoveFieldUpCommandId,
 				ObjectMenuAuthority.MoveFieldDownCommandId, ObjectMenuAuthority.HelpCommandId
 			}), "the shipped menu defines exactly the leaves the authority knows");
 			foreach (var leaf in menu.Leaves)
 			{
-				Assert.That(() => authority.Build(MultiStringMenuAuthority.MenuId, leaf), Throws.Nothing,
+				Assert.That(() => authority.Build(WritingSystemsMenuAuthority.MenuId, leaf), Throws.Nothing,
 					"the authority does not answer leaf '{0}'", leaf.CommandId);
 			}
 			// The list submenu has no configured leaves; the authority supplies its items.
-			Assert.That(menu.ListIds, Is.EqualTo(new[] { MultiStringMenuAuthority.WritingSystemListId }),
+			Assert.That(menu.ListIds, Is.EqualTo(new[] { WritingSystemsMenuAuthority.WritingSystemListId }),
 				"the writing-system list is the menu's one list submenu");
-			Assert.That(authority.BuildList(MultiStringMenuAuthority.MenuId,
-				MultiStringMenuAuthority.WritingSystemListId), Is.Not.Empty,
+			Assert.That(authority.BuildList(WritingSystemsMenuAuthority.MenuId,
+				WritingSystemsMenuAuthority.WritingSystemListId), Is.Not.Empty,
 				"the writing-system list offers the row's options");
 		}
 
 		[Test]
-		public void MultiStringMenuAuthority_RejectsWhatItDoesNotAnswer()
+		public void WritingSystemsMenuAuthority_RejectsWhatItDoesNotAnswer()
 		{
-			var authority = m_view.CreateMultiStringMenuAuthority(LexemeFormField());
+			var authority = m_view.CreateWritingSystemsMenuAuthority(LexemeFormField());
 			var foreignLeaf = LeafOf(ReorderVectorMenuAuthority.MenuId, ReorderVectorMenuAuthority.AlphabeticalOrderCommandId);
 
-			Assert.That(() => authority.Build(MultiStringMenuAuthority.MenuId, foreignLeaf),
+			Assert.That(() => authority.Build(WritingSystemsMenuAuthority.MenuId, foreignLeaf),
 				Throws.InvalidOperationException, "a foreign leaf is refused, never left to the mediator");
-			Assert.That(() => authority.BuildList(MultiStringMenuAuthority.MenuId, "SomeOtherList"),
+			Assert.That(() => authority.BuildList(WritingSystemsMenuAuthority.MenuId, "SomeOtherList"),
 				Throws.InvalidOperationException, "a foreign list is refused too");
 		}
 

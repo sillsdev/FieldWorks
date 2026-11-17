@@ -11,12 +11,12 @@ using SIL.FieldWorks.Common.FwAvalonia.Detail;
 namespace SIL.FieldWorks.XWorks
 {
 	/// <summary>
-	/// The native authority for a multi-writing-system row's label menu: the Writing Systems
-	/// submenu answered from the row and the shared writing-system rule, and the Field
-	/// Visibility, Move Field and Help leaves delegated to the per-object authority. Owns its
-	/// id only on a genuine multi-string row; any other row that binds it keeps the mediator.
+	/// The native authority for the label menu of a row that chooses its writing systems: the
+	/// Writing Systems submenu answered from the row and its shared writing-system rule, and
+	/// the Field Visibility, Move Field and Help leaves delegated to the per-object authority.
+	/// Owns its id only on such a row; any other row that binds it keeps the mediator.
 	/// </summary>
-	internal sealed class MultiStringMenuAuthority : IDetailMenuAuthority
+	internal sealed class WritingSystemsMenuAuthority : IDetailMenuAuthority
 	{
 		internal const string MenuId = RecordEditView.MultiStringSliceMenuId;
 		internal const string WritingSystemListId = "WritingSystemOptionsForSlice";
@@ -38,7 +38,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="show">Makes the row show exactly the given writing systems.</param>
 		/// <param name="showAll">Builds the Show all right now item from (label, row).</param>
 		/// <param name="configure">Builds the Configure item from (label, row).</param>
-		public MultiStringMenuAuthority(DetailField field, IDetailMenuAuthority sharedLeaves,
+		public WritingSystemsMenuAuthority(DetailField field, IDetailMenuAuthority sharedLeaves,
 			Func<DetailField, IReadOnlyList<WritingSystemMenuOption>> menu,
 			Action<DetailField, IReadOnlyList<string>> show,
 			Func<string, DetailField, DetailMenuItem> showAll,
@@ -53,7 +53,14 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		public bool Owns(string menuId)
-			=> _field.IsMultiStringRow && string.Equals(menuId, MenuId, StringComparison.Ordinal);
+			=> ChoosesWritingSystems(_field) && string.Equals(menuId, MenuId, StringComparison.Ordinal);
+
+		/// <summary>
+		/// Whether the row chooses which writing systems it shows: a multi-writing-system row,
+		/// or a sense's Reversal Entries row.
+		/// </summary>
+		internal static bool ChoosesWritingSystems(DetailField field)
+			=> field.IsMultiStringRow || ReversalIndexEntryPlugin.Built(field);
 
 		public DetailMenuItem Build(string menuId, DetailMenuLeaf leaf)
 		{

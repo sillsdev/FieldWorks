@@ -114,6 +114,80 @@ namespace SIL.FieldWorks.Common.DetailRules
 	}
 
 	/// <summary>
+	/// The writing systems one field offers, and which of them it shows and may switch off
+	/// for a given stored selection. Each kind of field builds one from its own rule.
+	/// </summary>
+	public sealed class WritingSystemChoices
+	{
+		private readonly Func<IReadOnlyList<CoreWritingSystemDefinition>> _defaultShown;
+
+		/// <param name="options">Every writing system the field can be told to show.</param>
+		/// <param name="defaultShown">What the field shows when nothing usable is stored;
+		/// asked for only then.</param>
+		internal WritingSystemChoices(IReadOnlyList<CoreWritingSystemDefinition> options,
+			Func<IReadOnlyList<CoreWritingSystemDefinition>> defaultShown)
+		{
+			Options = options ?? throw new ArgumentNullException(nameof(options));
+			_defaultShown = defaultShown ?? throw new ArgumentNullException(nameof(defaultShown));
+		}
+
+		/// <summary>Every writing system the field can be told to show, in menu order.</summary>
+		public IReadOnlyList<CoreWritingSystemDefinition> Options { get; }
+
+		/// <summary>
+		/// The writing systems the field shows: the stored selection, restricted to the ids
+		/// that are still options and in the options' order; the field's default set when
+		/// none of them is.
+		/// </summary>
+		/// <param name="storedSelection">The field's persisted selection, or null for
+		/// none.</param>
+		public IReadOnlyList<CoreWritingSystemDefinition> Shown(IReadOnlyList<string> storedSelection)
+		{
+			var stored = Select(storedSelection);
+			return stored.Count > 0 ? stored : _defaultShown();
+		}
+
+		/// <summary>
+		/// The field's Writing Systems menu: every option in order, each marked with whether
+		/// the field shows it and whether it may be switched off.
+		/// </summary>
+		/// <param name="storedSelection">The field's persisted selection, or null for
+		/// none.</param>
+		public IReadOnlyList<WritingSystemMenuOption> Menu(IReadOnlyList<string> storedSelection)
+		{
+			var shown = new HashSet<string>(Shown(storedSelection).Select(ws => ws.Id),
+				StringComparer.OrdinalIgnoreCase);
+			// The last shown writing system cannot be switched off, so a field is never blank.
+			var last = shown.Count == 1;
+			return Options
+				.Select(ws =>
+				{
+					var isChecked = shown.Contains(ws.Id);
+					return new WritingSystemMenuOption(ws, isChecked, !(isChecked && last));
+				})
+				.ToList();
+		}
+
+		// The options the stored selection names, in OPTION order: a re-checked writing system
+		// lands at the end of the stored list, and the rows must not reorder on a rebuild.
+		private IReadOnlyList<CoreWritingSystemDefinition> Select(IReadOnlyList<string> stored)
+		{
+			if (stored == null || stored.Count == 0)
+				return Array.Empty<CoreWritingSystemDefinition>();
+			var wanted = new HashSet<string>(stored.Where(id => !string.IsNullOrEmpty(id)),
+				StringComparer.OrdinalIgnoreCase);
+			var result = new List<CoreWritingSystemDefinition>();
+			var seen = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+			foreach (var ws in Options)
+			{
+				if (wanted.Contains(ws.Id) && seen.Add(ws.Id))
+					result.Add(ws);
+			}
+			return result;
+		}
+	}
+
+	/// <summary>
 	/// Which writing systems a multi-writing-system field offers, which of them it shows, and
 	/// which may be switched off. Both detail views answer their Writing Systems menu from
 	/// here, so neither can drift from the other.
@@ -166,10 +240,7 @@ namespace SIL.FieldWorks.Common.DetailRules
 		/// none.</param>
 		public static IReadOnlyList<CoreWritingSystemDefinition> Shown(LcmCache cache,
 			WritingSystemFieldSpec spec, IReadOnlyList<string> storedSelection)
-		{
-			var stored = Select(Options(cache, spec), storedSelection);
-			return stored.Count > 0 ? stored : DefaultShown(cache, spec);
-		}
+			=> Choices(cache, spec).Shown(storedSelection);
 
 		/// <summary>
 		/// The field's Writing Systems menu: every option in order, each marked with whether
@@ -179,43 +250,14 @@ namespace SIL.FieldWorks.Common.DetailRules
 		/// none.</param>
 		public static IReadOnlyList<WritingSystemMenuOption> Menu(LcmCache cache,
 			WritingSystemFieldSpec spec, IReadOnlyList<string> storedSelection)
-		{
-			// Options once, then the shown set from it: recomputing would query the writing
-			// systems a second time.
-			var options = Options(cache, spec);
-			var stored = Select(options, storedSelection);
-			var shown = new HashSet<string>(
-				(stored.Count > 0 ? stored : DefaultShown(cache, spec)).Select(ws => ws.Id),
-				StringComparer.OrdinalIgnoreCase);
-			// The last shown writing system cannot be switched off, so a field is never blank.
-			var last = shown.Count == 1;
-			return options
-				.Select(ws =>
-				{
-					var isChecked = shown.Contains(ws.Id);
-					return new WritingSystemMenuOption(ws, isChecked, !(isChecked && last));
-				})
-				.ToList();
-		}
+			=> Choices(cache, spec).Menu(storedSelection);
 
-		// The options the stored selection names, in OPTION order: a re-checked writing system
-		// lands at the end of the stored list, and the rows must not reorder on a rebuild.
-		private static IReadOnlyList<CoreWritingSystemDefinition> Select(
-			IReadOnlyList<CoreWritingSystemDefinition> options, IReadOnlyList<string> stored)
-		{
-			if (stored == null || stored.Count == 0)
-				return Array.Empty<CoreWritingSystemDefinition>();
-			var wanted = new HashSet<string>(stored.Where(id => !string.IsNullOrEmpty(id)),
-				StringComparer.OrdinalIgnoreCase);
-			var result = new List<CoreWritingSystemDefinition>();
-			var seen = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-			foreach (var ws in options)
-			{
-				if (wanted.Contains(ws.Id) && seen.Add(ws.Id))
-					result.Add(ws);
-			}
-			return result;
-		}
+		/// <summary>
+		/// The field's choices: its options now, and its default shown set asked for only
+		/// when a stored selection names none of them.
+		/// </summary>
+		public static WritingSystemChoices Choices(LcmCache cache, WritingSystemFieldSpec spec)
+			=> new WritingSystemChoices(Options(cache, spec), () => DefaultShown(cache, spec));
 
 		private static IReadOnlyList<CoreWritingSystemDefinition> ListFor(LcmCache cache, int magicId,
 			WritingSystemFieldSpec spec, bool includeUnchecked)
