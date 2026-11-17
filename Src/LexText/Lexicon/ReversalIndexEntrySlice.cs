@@ -11,6 +11,7 @@ using System.Text;
 using SIL.LCModel;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.RootSites;
+using SIL.FieldWorks.Common.DetailRules;
 using SIL.FieldWorks.Common.Framework.DetailControls;
 using SIL.LCModel.DomainServices;
 using SIL.FieldWorks.Common.FwUtils;
@@ -23,6 +24,7 @@ using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.DomainImpl;
 using SIL.LCModel.Utils;
+using SIL.Utils;
 using XCore;
 
 namespace SIL.FieldWorks.XWorks.LexEd
@@ -107,8 +109,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		public override void FinishInit()
 		{
 			CheckDisposed();
-			ReversalIndexEntrySliceView ctrl = new ReversalIndexEntrySliceView(Object.Hvo, () => StringSliceUtils.GetVisibleWSSPropertyValue(PartRef(),
-				Cache.LanguageProject.AnalysisWritingSystems))
+			ReversalIndexEntrySliceView ctrl = new ReversalIndexEntrySliceView(Object.Hvo, VisibleWritingSystemIds)
 			{
 				Cache = m_propertyTable.GetValue<LcmCache>("cache")
 			};
@@ -123,32 +124,36 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		}
 
 		/// <summary>
+		/// The ids of the writing systems this slice shows, comma-separated: the selection
+		/// stored on its part ref, or every option when it stores none.
+		/// </summary>
+		protected string VisibleWritingSystemIds()
+			=> StringSliceUtils.EncodeWssToDisplayPropertyValue(
+				ReversalEntryWritingSystems.Shown(Cache, StoredWritingSystems()));
+
+		// The selection persisted on this slice's part ref, or null when it has none.
+		private IReadOnlyList<string> StoredWritingSystems()
+		{
+			var stored = XmlUtils.GetOptionalAttributeValue(PartRef(), "visibleWritingSystems", null);
+			return stored == null ? null : ChoiceGroup.DecodeSinglePropertySequenceValue(stored);
+		}
+
+		/// <summary>
 		/// Populate the writing system options for the slice.
 		/// </summary>
 		public bool OnDisplayWritingSystemOptionsForSlice(object parameter, ref UIListDisplayProperties display)
 		{
 			CheckDisposed();
 			display.List.Clear();
-			m_propertyTable.SetProperty(display.PropertyName, StringSliceUtils.GetVisibleWSSPropertyValue(PartRef(),
-				Cache.LanguageProject.AnalysisWritingSystems), false);
-			AddWritingSystemListWithIcuLocales(display, Cache.LanguageProject.AnalysisWritingSystems);
+			// Options, checkmarks and the cannot-empty-the-set rule all come from the shared
+			// rule, so this menu and the Avalonia one offer the same list.
+			var options = ReversalEntryWritingSystems.Menu(Cache, StoredWritingSystems());
+			m_propertyTable.SetProperty(display.PropertyName,
+				ChoiceGroup.EncodeSinglePropertySequenceValue(
+					options.Where(o => o.IsChecked).Select(o => o.Id).ToArray()), false);
+			foreach (var option in options)
+				display.List.Add(option.Label, option.Id, null, null, option.CanUncheck);
 			return true;//we handled this, no need to ask anyone else.
-		}
-
-		/// <summary>
-		/// stores the list values in terms of icu locale
-		/// </summary>
-		private void AddWritingSystemListWithIcuLocales(UIListDisplayProperties display, IEnumerable<CoreWritingSystemDefinition> list)
-		{
-			var active = StringSliceUtils.GetVisibleWSSPropertyValue(PartRef(),
-				Cache.LanguageProject.AnalysisWritingSystems).Split(',');
-			foreach (var ws in list)
-			{
-				// generally enable all items, but if only one is checked that one is disabled;
-				// it can't be turned off.
-				bool enabled = (active.Length != 1 || ws.Id != active[0]);
-				display.List.Add(ws.DisplayLabel, ws.Id, null, null, enabled);
-			}
 		}
 
 		/// <summary>

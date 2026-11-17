@@ -1761,6 +1761,12 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		public IReadOnlyList<string> VisibleWritingSystems { get; set; }
 
 		/// <summary>
+		/// The layout class (<c>class=</c>) whose plugin built this row's editor; null on every
+		/// row the composer builds itself. It tells which plugin's rules the row follows.
+		/// </summary>
+		public string CustomEditorClass { get; set; }
+
+		/// <summary>
 		/// How this row's domain decides two option names are the same name, for rows that mint
 		/// items from typed text. Environments compare with spaces stripped, so the picker must
 		/// too, or it filters out the very option the typed text resolves to and then offers to

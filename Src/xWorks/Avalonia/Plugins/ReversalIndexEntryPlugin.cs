@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Avalonia.Controls;
+using SIL.FieldWorks.Common.DetailRules;
 using SIL.FieldWorks.Common.FwAvalonia;
 using SIL.FieldWorks.Common.FwAvalonia.Detail;
 using SIL.FieldWorks.Common.FwAvalonia.ViewDefinition;
@@ -40,6 +41,11 @@ namespace SIL.FieldWorks.XWorks
 		public const string ReversalIndexTool = "reversalToolEditComplete";
 
 		public string LegacyClassName => ReversalIndexEntrySliceClassName;
+
+		/// <summary>Whether this plugin built the row's editor.</summary>
+		internal static bool Built(DetailField field)
+			=> string.Equals(field?.CustomEditorClass, ReversalIndexEntrySliceClassName,
+				StringComparison.Ordinal);
 
 		public Control BuildControl(SlicePluginBuildContext context)
 		{
@@ -166,9 +172,9 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
-		/// The groups to show, one per analysis writing system allowed by
-		/// <paramref name="visibleWritingSystems"/> (null or empty allows all) that has a
-		/// reversal index. A writing system that is not a current analysis one shows only when
+		/// The groups to show, one per writing system the field shows for the selection
+		/// <paramref name="visibleWritingSystems"/> (null or empty shows every option) that has
+		/// a reversal index. A writing system that is not a current analysis one shows only when
 		/// the sense has entries in it. Issues fresh row keys and forgets the previous ones.
 		/// </summary>
 		internal IReadOnlyList<DetailReversalGroup> CreateGroups(IReadOnlyList<string> visibleWritingSystems)
@@ -177,8 +183,7 @@ namespace SIL.FieldWorks.XWorks
 			var linked = _sense.ReferringReversalIndexEntries.ToList();
 			var current = new HashSet<string>(
 				_cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems.Select(ws => ws.Id));
-			var systems = DetailComposer.ApplyVisibleWritingSystems(
-				_cache.LanguageProject.AnalysisWritingSystems.ToList(), visibleWritingSystems);
+			var systems = ReversalEntryWritingSystems.Shown(_cache, visibleWritingSystems);
 
 			var groups = new List<DetailReversalGroup>();
 			foreach (var ws in systems)

@@ -296,7 +296,7 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(() => authority.Build(RecordEditView.ObjectMenuId, help),
 				Throws.InvalidOperationException, "an owned id must be answered in full, never partially");
 			Assert.That(() => authority.BuildList(RecordEditView.MultiStringSliceMenuId,
-				MultiStringMenuAuthority.WritingSystemListId), Throws.InvalidOperationException);
+				WritingSystemsMenuAuthority.WritingSystemListId), Throws.InvalidOperationException);
 		}
 
 		// Contract: on every Lexicon Edit row binding an owned id, by any menu kind, the

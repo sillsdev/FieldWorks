@@ -3277,7 +3277,13 @@ namespace SIL.FieldWorks.XWorks
 					isEditable: true, indent: depth,
 					menuId: node.MenuId, contextMenuId: node.ContextMenuId, hotlinksId: node.HotlinksId,
 					objectHvo: obj.Hvo,
-					controlFactory: factory));
+					controlFactory: factory)
+				{
+					// A plugin row with a Writing Systems menu answers it from its plugin's
+					// rule and the stored selection.
+					CustomEditorClass = node.CustomEditorClass,
+					VisibleWritingSystems = node.VisibleWritingSystems
+				});
 			}
 
 			// An ifdata custom row hides when its own field is an empty vector. Any other
