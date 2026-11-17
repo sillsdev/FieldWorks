@@ -125,6 +125,12 @@
 			<RemovedSinceLastBase Include="$(dir-outputBase)/UIAdapterInterfaces.pdb" />
 			<RemovedSinceLastBase Include="@(_UIAdapterInterfacesCulture-&gt;'$(dir-outputBase)/%(Identity)/UIAdapterInterfaces.resources.dll')" />
 			<RemovedSinceLastBase Include="$(dir-outputBase)/FwTMDefinition.xml" />
+			<!--
+				Patches on base 1452 before 9.3.12.2815 shipped the AI export templates;
+				the build makes neither.
+			-->
+			<RemovedSinceLastBase Include="$(dir-outputBase)/Language Explorer/Export Templates/AIExportInstructions.md" />
+			<RemovedSinceLastBase Include="$(dir-outputBase)/Language Explorer/Export Templates/GrammarAndTextsForAI.xml" />
 		</ItemGroup>
 		<WriteLinesToFile
 			File="%(RemovedSinceLastBase.FullPath)"
