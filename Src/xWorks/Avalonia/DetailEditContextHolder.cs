@@ -37,6 +37,7 @@ namespace SIL.FieldWorks.XWorks
 		private IActionHandlerExtensions m_undoHook;
 		private Form m_deactivateForm;
 		private EventHandler m_settleOnDeactivate;
+		private int m_deactivateSettleHolds;
 
 		/// <summary>The context currently bound to the shown detail view, or null.</summary>
 		public IDetailEditContext Current { get; private set; }
@@ -175,9 +176,44 @@ namespace SIL.FieldWorks.XWorks
 			DetachDeactivateHook();
 			if (form == null)
 				return;
-			m_settleOnDeactivate = (sender, e) => Settle();
+			m_settleOnDeactivate = (sender, e) =>
+			{
+				if (m_deactivateSettleHolds == 0)
+					Settle();
+			};
 			form.Deactivate += m_settleOnDeactivate;
 			m_deactivateForm = form;
+		}
+
+		/// <summary>
+		/// Keeps window deactivation from saving the open edit until the returned object is
+		/// disposed. For a modal dialog whose result goes into that edit, such as the natural
+		/// class an environment insert types: saving first would end the edit the result
+		/// belongs to. A modal dialog blocks every window, so no undo can run elsewhere
+		/// meanwhile.
+		/// </summary>
+		public IDisposable HoldSettleOnDeactivate()
+		{
+			m_deactivateSettleHolds++;
+			return new SettleOnDeactivateHold(this);
+		}
+
+		private sealed class SettleOnDeactivateHold : IDisposable
+		{
+			private DetailEditContextHolder m_holder;
+
+			public SettleOnDeactivateHold(DetailEditContextHolder holder)
+			{
+				m_holder = holder;
+			}
+
+			public void Dispose()
+			{
+				if (m_holder == null)
+					return;
+				m_holder.m_deactivateSettleHolds--;
+				m_holder = null;
+			}
 		}
 
 		/// <summary>Stops settling on window deactivation. Safe to call when not attached.</summary>

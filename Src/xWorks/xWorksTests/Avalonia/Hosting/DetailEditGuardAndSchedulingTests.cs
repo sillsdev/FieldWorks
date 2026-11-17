@@ -224,6 +224,52 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
+		private sealed class DeactivatingForm : System.Windows.Forms.Form
+		{
+			public void RaiseDeactivate() => OnDeactivate(EventArgs.Empty);
+		}
+
+		// LT-22820: a modal chooser deactivates the window. Saving the typed environment
+		// then would end the edit its natural class is about to be typed into.
+		[Test]
+		public void Deactivate_WhileHeldForADialog_LeavesTheEditorsEditUnsaved()
+		{
+			var context = new LexiconFirstSliceEditContext(m_entry, Cache);
+			var held = "perro";
+			context.AddPendingEditFlush("Form", () =>
+			{
+				if (held == null)
+					return false;
+				context.TrySetText(DetailEditContextEditingTests.F("Form"), "vern", held);
+				held = null;
+				return true;
+			});
+			var holder = new DetailEditContextHolder();
+			using (var form = new DeactivatingForm())
+			{
+				holder.AttachDeactivateHook(form);
+				try
+				{
+					holder.Replace(context);
+					using (holder.HoldSettleOnDeactivate())
+						form.RaiseDeactivate();
+
+					Assert.That(held, Is.EqualTo("perro"), "the editor still holds its edit");
+					Assert.That(context.IsOpen, Is.False, "nothing was staged");
+					Assert.That(LexemeText, Is.EqualTo("casa"), "nothing was saved");
+
+					form.RaiseDeactivate();
+					Assert.That(LexemeText, Is.EqualTo("perro"), "once released, leaving saves it");
+				}
+				finally
+				{
+					holder.DetachDeactivateHook();
+					if (context.IsOpen)
+						context.Cancel();
+				}
+			}
+		}
+
 		[Test]
 		public void UndoGuard_Detached_StopsIntercepting()
 		{
