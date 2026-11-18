@@ -466,7 +466,7 @@
 			<slice field="DialectLabels" label="Dialect Labels (Sense)" editor="possVectorReference" menu="mnuDataTree-Help">
 				<deParams ws="best vernoranal" displayProperty="BestAbbreviation" changeRequiresRefresh="true"/>
 				<chooserInfo>
-					<chooserLink type="goto" label="Edit the Dialect Labels list" tool="dialectsListEdit" />
+					<chooserLink type="goto" label="Edit the Dialect Labels list" tool="dialectLabelListEdit" />
 				</chooserInfo>
 			</slice>
 		</part>

@@ -229,7 +229,7 @@ namespace SIL.FieldWorks.XWorks
 				{ ("LangProject", "TimeOfDay"), "timeOfDayEdit" },
 				{ ("LangProject", "TranslationTags"), "translationTypeEdit" },
 				{ ("LexDb", "ComplexEntryTypes"), "complexEntryTypeEdit" },
-				{ ("LexDb", "DialectLabels"), "dialectsListEdit" },
+				{ ("LexDb", "DialectLabels"), "dialectLabelListEdit" },
 				{ ("LexDb", "DomainTypes"), "domainTypeEdit" },
 				{ ("LexDb", "ExtendedNoteTypes"), "extNoteTypeEdit" },
 				{ ("LexDb", "Languages"), "languagesListEdit" },
