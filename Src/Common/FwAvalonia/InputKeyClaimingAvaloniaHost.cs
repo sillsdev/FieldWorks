@@ -19,12 +19,16 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 		/// <summary>
 		/// Whether the host claims <paramref name="keyData"/> as an input key: the arrow keys
 		/// and Tab (excluding Ctrl+Tab) always, Enter only when <paramref name="claimEnterKey"/>
-		/// is set, and never unless the host holds focus.
+		/// is set, Ctrl+Z and Ctrl+Y only when <paramref name="claimUndoRedoKeys"/> is set, and
+		/// never unless the host holds focus.
 		/// </summary>
-		public static bool ShouldClaimKey(Keys keyData, bool hostContainsFocus, bool claimEnterKey)
+		public static bool ShouldClaimKey(Keys keyData, bool hostContainsFocus, bool claimEnterKey,
+			bool claimUndoRedoKeys = false)
 		{
 			if (!hostContainsFocus)
 				return false;
+			if (keyData == (Keys.Control | Keys.Z) || keyData == (Keys.Control | Keys.Y))
+				return claimUndoRedoKeys;
 			switch ((int)(keyData & Keys.KeyCode))
 			{
 				case 0x26: // Up
@@ -74,7 +78,14 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 			_claimEnterKey = claimEnterKey;
 		}
 
-		private bool ShouldClaim(Keys keyData) => InputKeyClaimPolicy.ShouldClaimKey(keyData, ContainsFocus, _claimEnterKey);
+		/// <summary>
+		/// Whether Ctrl+Z and Ctrl+Y go to the hosted content rather than to the form's menu
+		/// shortcuts, so the content can undo typing before offering the key back.
+		/// </summary>
+		public bool ClaimUndoRedoKeys { get; set; }
+
+		private bool ShouldClaim(Keys keyData) => InputKeyClaimPolicy.ShouldClaimKey(keyData,
+			ContainsFocus, _claimEnterKey, ClaimUndoRedoKeys);
 
 		private void LogInterop(string message)
 		{

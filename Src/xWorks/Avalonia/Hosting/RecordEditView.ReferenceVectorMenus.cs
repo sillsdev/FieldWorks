@@ -304,19 +304,25 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		// The same chooser the WinForms environment slices open, persisted under the same key.
+		// The typed environment stays unsaved while it is open, so the class goes into it.
 		IPhNaturalClass IEnvironmentMenuHost.ChooseNaturalClass()
 		{
 			var persistence = new PersistenceProvider(m_mediator, m_propertyTable, DataTreePersistContext);
-			return ReallySimpleListChooser.ChooseNaturalClass(Cache, persistence, m_mediator, m_propertyTable);
+			using (m_detailEditContext.HoldSettleOnDeactivate())
+				return ReallySimpleListChooser.ChooseNaturalClass(Cache, persistence, m_mediator, m_propertyTable);
 		}
 
 		string IEnvironmentMenuHost.DescribeEnvironmentError(string text)
 			=> EnvironmentErrors.Describe(EnvironmentErrors.CreateRecognizer(Cache), text);
 
+		// The environment being described stays unsaved, as in the WinForms slices.
 		void IEnvironmentMenuHost.ShowEnvironmentError(string message)
 		{
-			System.Windows.Forms.MessageBox.Show(FindForm(), message, xWorksStrings.ksEnvironmentErrorTitle,
-				System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Information);
+			using (m_detailEditContext.HoldSettleOnDeactivate())
+			{
+				System.Windows.Forms.MessageBox.Show(FindForm(), message, xWorksStrings.ksEnvironmentErrorTitle,
+					System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Information);
+			}
 		}
 	}
 }

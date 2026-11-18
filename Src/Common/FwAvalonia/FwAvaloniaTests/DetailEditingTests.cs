@@ -9,6 +9,7 @@ using Avalonia;
 using Avalonia.Automation;
 using Avalonia.Controls;
 using Avalonia.Media;
+using Avalonia.Headless;
 using Avalonia.Headless.NUnit;
 using Avalonia.Input;
 using Avalonia.Interactivity;
@@ -23,8 +24,63 @@ using SIL.FieldWorks.Common.FwAvalonia.ViewDefinition;
 namespace FwAvaloniaTests
 {
 	/// <summary>Records edit-context traffic so view editing behavior can be asserted without LCModel.</summary>
-	internal sealed class FakeDetailEditContext : IDetailEditContext, IStructuredTextEditing
+	internal sealed class FakeDetailEditContext : IDetailEditContext, IStructuredTextEditing,
+		IReferenceTextEditing, IPendingEditFlushRegistry
 	{
+		/// <summary>Whether vector rows offer a typed slot; off by default.</summary>
+		public bool CreatableReferences;
+		/// <summary>Whether vector rows show their items as editors; off by default.</summary>
+		public bool RetypableReferences;
+		/// <summary>What the next typed create or retype reports (false = refused).</summary>
+		public bool CreateResult = true;
+		public readonly List<(string Field, string Text)> ReferenceCreates = new List<(string, string)>();
+		public readonly List<(string Field, string Key, string Text)> ReferenceRetypes
+			= new List<(string, string, string)>();
+		// Typed reference text the domain took, which opens the session as other stages do.
+		private int _acceptedReferenceText;
+
+		public bool CanCreateReferenceItem(DetailField field) => CreatableReferences;
+
+		public bool TryCreateAndAddReferenceItem(DetailField field, string text)
+		{
+			ReferenceCreates.Add((field.Field, text));
+			if (CreateResult)
+				_acceptedReferenceText++;
+			return CreateResult;
+		}
+
+		public bool CanEditReferenceItemText(DetailField field) => RetypableReferences;
+
+		public bool TrySetReferenceItemText(DetailField field, string itemKey, string text)
+		{
+			ReferenceRetypes.Add((field.Field, itemKey, text));
+			if (CreateResult)
+				_acceptedReferenceText++;
+			return CreateResult;
+		}
+
+		public readonly Dictionary<string, Func<bool>> PendingEditFlushes
+			= new Dictionary<string, Func<bool>>();
+
+		public void AddPendingEditFlush(string ownerKey, Func<bool> flush)
+			=> PendingEditFlushes[ownerKey] = flush;
+
+		public void RemovePendingEditFlush(string ownerKey, Func<bool> flush)
+		{
+			if (PendingEditFlushes.TryGetValue(ownerKey, out var registered) && registered == flush)
+				PendingEditFlushes.Remove(ownerKey);
+		}
+
+		/// <summary>Runs every registered flush, as the product context does before an
+		/// undo.</summary>
+		public bool FlushPendingEdits()
+		{
+			var held = false;
+			foreach (var flush in PendingEditFlushes.Values.ToList())
+				held |= flush();
+			return held;
+		}
+
 		public readonly List<(string Field, string Ws, string Value)> TextEdits = new List<(string, string, string)>();
 		public readonly List<(string Field, string Ws, DetailRichTextValue Value)> RichTextEdits
 			= new List<(string, string, DetailRichTextValue)>();
@@ -69,7 +125,8 @@ namespace FwAvaloniaTests
 			= new List<(string, string, string)>();
 		private int _stagedBoundary;
 
-		public bool IsOpen => TextEdits.Count + OptionEdits.Count + ParagraphTextEdits.Count > 0
+		public bool IsOpen => TextEdits.Count + OptionEdits.Count + ParagraphTextEdits.Count
+				+ _acceptedReferenceText > 0
 			&& CommitCount == 0 && CancelCount == 0;
 
 		/// <summary>What the next text stage reports (false = rejected, e.g. a non-numeric integer).</summary>
@@ -829,6 +886,341 @@ namespace FwAvaloniaTests
 			Assert.That(context.CancelCount, Is.EqualTo(1));
 			Assert.That(context.CommitCount, Is.EqualTo(0));
 			Assert.That(completed, Is.EqualTo(1));
+		}
+
+		// LT-22820: Ctrl+Z undoes typing in the text box first. With nothing left to undo
+		// there, the edit nets to nothing and is cancelled; the next press reaches FieldWorks.
+		[AvaloniaTest]
+		public void CtrlZ_WhileTyping_UndoesTheTyping_ThenGoesToTheHost()
+		{
+			var (view, context, window) = ShowEditable();
+			var box = Find<TextBox>(view, "LexemeFormEditor.vern");
+			var original = box.Text;
+			var offered = 0;
+			view.UndoRedoKeyUnhandled += (s, e) =>
+			{
+				offered++;
+				e.Handled = true;
+			};
+			var lastKeyHandled = RecordLastKeyDownHandled(window);
+			var typed = TypeInto(window, box, "perro");
+			Assert.That(typed, Is.Not.EqualTo(original), "precondition: the typing changed the text");
+			Assert.That(context.IsOpen, Is.True, "precondition: typing opened an edit");
+
+			for (var press = 0; press < 10 && box.CanUndo; press++)
+				PressKey(window, PhysicalKey.Z, RawInputModifiers.Control);
+
+			Assert.That(box.Text, Is.EqualTo(original), "the text box undid the typing");
+			Assert.That(offered, Is.EqualTo(0), "FieldWorks' Undo has not run");
+			Assert.That(context.CommitCount + context.CancelCount, Is.EqualTo(0),
+				"and the edit is still open");
+
+			PressKey(window, PhysicalKey.Z, RawInputModifiers.Control);
+
+			Assert.That(context.CancelCount, Is.EqualTo(1), "the edit that nets to nothing is dropped");
+			Assert.That(context.CommitCount, Is.EqualTo(0), "not saved as an empty step");
+			Assert.That(offered, Is.EqualTo(1), "and FieldWorks' Undo runs");
+			Assert.That(lastKeyHandled(), Is.True, "the host took the key");
+		}
+
+		// Typing that outruns the box's undo history is dropped by one press of its own, back to
+		// the shown value, so that press does not also run FieldWorks' Undo.
+		[AvaloniaTest]
+		public void CtrlZ_AfterTypingBeyondTheUndoHistory_DropsTheRest_AndStops()
+		{
+			var (view, context, window) = ShowEditable();
+			var box = Find<TextBox>(view, "LexemeFormEditor.vern");
+			var offered = 0;
+			view.UndoRedoKeyUnhandled += (s, e) => offered++;
+			var lastKeyHandled = RecordLastKeyDownHandled(window);
+			box.Focus();
+			Dispatcher.UIThread.RunJobs();
+			box.UndoLimit = 1;
+			TypeInto(window, box, " perro gato raton");
+
+			for (var press = 0; press < 10 && box.CanUndo; press++)
+				PressKey(window, PhysicalKey.Z, RawInputModifiers.Control);
+			Assert.That(box.Text, Is.Not.EqualTo("casa"),
+				"precondition: the box's history ran out before the shown value");
+			Assert.That(offered, Is.EqualTo(0), "precondition: FieldWorks' Undo has not run");
+
+			PressKey(window, PhysicalKey.Z, RawInputModifiers.Control);
+
+			Assert.That(context.CancelCount, Is.EqualTo(1), "the leftover typing is dropped");
+			Assert.That(context.CommitCount, Is.EqualTo(0));
+			Assert.That(offered, Is.EqualTo(0), "and FieldWorks' Undo does not run too");
+			Assert.That(lastKeyHandled(), Is.True, "the key goes no further than the view");
+		}
+
+		[AvaloniaTest]
+		public void CtrlY_AfterCtrlZ_RedoesTheTyping_InTheTextBox()
+		{
+			var (view, context, window) = ShowEditable();
+			var box = Find<TextBox>(view, "LexemeFormEditor.vern");
+			var offered = 0;
+			view.UndoRedoKeyUnhandled += (s, e) => offered++;
+			var typed = TypeInto(window, box, "perro");
+
+			PressKey(window, PhysicalKey.Z, RawInputModifiers.Control);
+			Assert.That(box.Text, Is.Not.EqualTo(typed), "precondition: the text box undid typing");
+			PressKey(window, PhysicalKey.Y, RawInputModifiers.Control);
+
+			Assert.That(box.Text, Is.EqualTo(typed), "the text box redid it");
+			Assert.That(offered, Is.EqualTo(0), "FieldWorks' Redo has not run");
+			Assert.That(context.CommitCount + context.CancelCount, Is.EqualTo(0));
+		}
+
+		// Typing since the last undo step leaves FieldWorks nothing to redo, so Ctrl+Y with the
+		// text box's own redo used up does nothing.
+		[AvaloniaTest]
+		public void CtrlY_WhileTyping_WithNothingToRedo_GoesNowhere()
+		{
+			var (view, context, window) = ShowEditable();
+			var box = Find<TextBox>(view, "LexemeFormEditor.vern");
+			var offered = 0;
+			view.UndoRedoKeyUnhandled += (s, e) => offered++;
+			var lastKeyHandled = RecordLastKeyDownHandled(window);
+			var typed = TypeInto(window, box, "perro");
+
+			PressKey(window, PhysicalKey.Y, RawInputModifiers.Control);
+
+			Assert.That(box.Text, Is.EqualTo(typed));
+			Assert.That(offered, Is.EqualTo(0));
+			Assert.That(lastKeyHandled(), Is.True, "the key goes no further than the view");
+			Assert.That(context.IsOpen, Is.True, "the edit stays open");
+		}
+
+		// With focus outside a text box, an open edit is saved, so FieldWorks' Undo takes it
+		// back in the same press and its Redo can restore it.
+		[AvaloniaTest]
+		public void CtrlZ_OutsideATextBox_SavesTheOpenEdit_ThenGoesToTheHost()
+		{
+			var (view, context, window) = ShowEditable();
+			var box = Find<TextBox>(view, "LexemeFormEditor.vern");
+			var offered = 0;
+			view.UndoRedoKeyUnhandled += (s, e) => offered++;
+			TypeInto(window, box, "perro");
+
+			RaiseUndoKeyOnView(view);
+
+			Assert.That(context.CommitCount, Is.EqualTo(1), "the edit is saved");
+			Assert.That(offered, Is.EqualTo(1), "and FieldWorks' Undo runs");
+		}
+
+		// An edit that failed validation is the latest change, so Ctrl+Z with nothing left
+		// for a text box to undo drops it, as Escape does, rather than repeating the error.
+		[AvaloniaTest]
+		public void CtrlZ_WithAnInvalidEditOpen_CancelsIt_LikeEscape()
+		{
+			var (view, context, window) = ShowEditable();
+			var box = Find<TextBox>(view, "LexemeFormEditor.vern");
+			var offered = 0;
+			view.UndoRedoKeyUnhandled += (s, e) => offered++;
+			TypeInto(window, box, "perro");
+			context.ValidateResult = new List<string> { "Lexeme Form is required." };
+
+			RaiseUndoKeyOnView(view);
+
+			Assert.That(context.CancelCount, Is.EqualTo(1), "the invalid edit is dropped");
+			Assert.That(context.CommitCount, Is.EqualTo(0));
+			Assert.That(offered, Is.EqualTo(0), "the step before it is not undone too");
+			Assert.That(Find<TextBlock>(view, "DetailEditor.ValidationErrors").IsVisible,
+				Is.False, "and its error is cleared");
+		}
+
+		// With no edit open and a text box that has nothing to undo, Ctrl+Z and Ctrl+Y go to
+		// the host every time. A freshly shown value is not something the box can undo.
+		[AvaloniaTest]
+		public void CtrlZAndCtrlY_WithNoOpenEdit_AreOfferedToTheHost()
+		{
+			var (view, context, window) = ShowEditable();
+			var box = Find<TextBox>(view, "LexemeFormEditor.vern");
+			var original = box.Text;
+			var offered = new List<string>();
+			view.UndoRedoKeyUnhandled += (s, e) =>
+			{
+				offered.Add(e.KeyModifiers + "+" + e.Key);
+				e.Handled = true;
+			};
+			var lastKeyHandled = RecordLastKeyDownHandled(window);
+			box.Focus();
+			Dispatcher.UIThread.RunJobs();
+
+			PressKey(window, PhysicalKey.Z, RawInputModifiers.Control);
+			PressKey(window, PhysicalKey.Z, RawInputModifiers.Control);
+			PressKey(window, PhysicalKey.Y, RawInputModifiers.Control);
+
+			Assert.That(offered, Is.EqualTo(new[] { "Control+Z", "Control+Z", "Control+Y" }));
+			Assert.That(lastKeyHandled(), Is.True, "the host took each key");
+			Assert.That(box.Text, Is.EqualTo(original), "the text box changed nothing");
+			Assert.That(context.CommitCount + context.CancelCount, Is.EqualTo(0));
+		}
+
+		// A Ctrl+Z raised on the view itself, as when focus is on no text box.
+		private static void RaiseUndoKeyOnView(DataTree view)
+		{
+			view.RaiseEvent(new KeyEventArgs
+			{
+				RoutedEvent = InputElement.KeyDownEvent,
+				Key = Key.Z,
+				KeyModifiers = KeyModifiers.Control,
+				Source = view
+			});
+			Dispatcher.UIThread.RunJobs();
+		}
+
+		[AvaloniaTest]
+		public void OnlyCtrlZAndCtrlY_AreOfferedToTheHost()
+		{
+			var (view, _, window) = ShowEditable();
+			var box = Find<TextBox>(view, "LexemeFormEditor.vern");
+			var offered = 0;
+			view.UndoRedoKeyUnhandled += (s, e) => offered++;
+			box.Focus();
+
+			PressKey(window, PhysicalKey.Q, RawInputModifiers.Control);
+			PressKey(window, PhysicalKey.Z, RawInputModifiers.Control | RawInputModifiers.Shift);
+
+			Assert.That(offered, Is.EqualTo(0));
+		}
+
+		// A popup's editor, such as a chooser's filter box, keeps Ctrl+Z for its own undo:
+		// FieldWorks' Undo must not change the record under an open picker.
+		[AvaloniaTest]
+		public void CtrlZ_InAPopupEditor_IsLeftToThatEditor()
+		{
+			var (view, context, window) = ShowEditable();
+			var anchor = Find<TextBox>(view, "LexemeFormEditor.vern");
+			var offered = 0;
+			view.UndoRedoKeyUnhandled += (s, e) => offered++;
+			var filter = new TextBox();
+			var flyout = new Flyout { Content = filter };
+			flyout.ShowAt(anchor);
+			Dispatcher.UIThread.RunJobs();
+
+			TypeInto(window, filter, "ab");
+			PressKey(window, PhysicalKey.Z, RawInputModifiers.Control);
+
+			Assert.That(offered, Is.EqualTo(0), "the key is not offered to FieldWorks");
+			Assert.That(context.CommitCount, Is.EqualTo(0), "and saves nothing");
+			Assert.That(filter.Text, Is.Not.EqualTo("ab"), "the filter box undid its own typing");
+		}
+
+		// Typed reference text opens no edit session. Ctrl+Z undoes it in the box, staging
+		// nothing; once the box has nothing left, the next press goes on to FieldWorks' Undo.
+		[AvaloniaTest]
+		[TestCase(true, TestName = "CtrlZ_InAReferenceSlot_UndoesTheTyping_ThenGoesToTheHost")]
+		[TestCase(false, TestName = "CtrlZ_InAReferenceItem_UndoesTheTyping_ThenGoesToTheHost")]
+		public void CtrlZ_InAReferenceRow_UndoesTheTyping_ThenGoesToTheHost(bool inSlot)
+		{
+			var (view, context, window) = ShowTypedVector(inSlot, accepted: true);
+			var box = inSlot ? AddSlot(view) : ItemBox(view, "One");
+			var original = box.Text ?? string.Empty;
+			var offered = 0;
+			view.UndoRedoKeyUnhandled += (s, e) => offered++;
+			TypeInto(window, box, "Two");
+			Assert.That(view.HasUnsubmittedText, Is.True, "precondition: the row holds the text");
+
+			for (var press = 0; press < 10 && box.CanUndo; press++)
+				PressKey(window, PhysicalKey.Z, RawInputModifiers.Control);
+
+			Assert.That(box.Text ?? string.Empty, Is.EqualTo(original), "the box undid the typing");
+			Assert.That(context.ReferenceCreates.Count + context.ReferenceRetypes.Count,
+				Is.EqualTo(0), "nothing was offered to the domain");
+			Assert.That(offered, Is.EqualTo(0), "FieldWorks' Undo has not run");
+			Assert.That(view.HasUnsubmittedText, Is.False, "nothing is left to stage later");
+
+			PressKey(window, PhysicalKey.Z, RawInputModifiers.Control);
+
+			Assert.That(offered, Is.EqualTo(1), "the next press goes to FieldWorks' Undo");
+			Assert.That(context.CommitCount + context.CancelCount, Is.EqualTo(0));
+		}
+
+		// Menu and toolbar Undo never reach the view; the host's undo guard flushes the context
+		// first. A reference row's flush stages typed text and leaves the save to the guard.
+		[AvaloniaTest]
+		[TestCase(true, TestName = "AReferenceSlot_RegistersAFlush_ThatStagesWithoutSaving")]
+		[TestCase(false, TestName = "AReferenceItem_RegistersAFlush_ThatStagesWithoutSaving")]
+		public void AReferenceRow_RegistersAFlush_ThatStagesWithoutSaving(bool inSlot)
+		{
+			var (view, context, window) = ShowTypedVector(inSlot, accepted: true);
+			var typed = TypeInto(window, inSlot ? AddSlot(view) : ItemBox(view, "One"), "Two");
+
+			Assert.That(context.FlushPendingEdits(), Is.True, "the row held text");
+
+			var staged = inSlot
+				? context.ReferenceCreates.Select(c => c.Text)
+				: context.ReferenceRetypes.Select(r => r.Text);
+			Assert.That(staged, Is.EqualTo(new[] { typed }));
+			Assert.That(context.IsOpen, Is.True, "the text is staged on the session");
+			Assert.That(context.CommitCount, Is.EqualTo(0), "and left for the guard to save");
+			Assert.That(context.FlushPendingEdits(), Is.False, "a second flush finds nothing");
+
+			view.Dispose();
+
+			Assert.That(context.PendingEditFlushes, Is.Empty, "a disposed row unregisters");
+		}
+
+		[AvaloniaTest]
+		public void AReferenceRowWithNothingToType_RegistersNoFlush()
+		{
+			var model = new DetailModel("LexEntry", "test",
+				new List<DetailField> { SecondVectorField() }, new List<ViewDiagnostic>());
+			var context = new FakeDetailEditContext();
+			var view = new DataTree(model, context);
+			var window = new Window { Content = view, Width = 500, Height = 260 };
+			window.Show();
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(context.PendingEditFlushes, Is.Empty);
+		}
+
+		private static (DataTree View, FakeDetailEditContext Context, Window Window)
+			ShowTypedVector(bool inSlot, bool accepted)
+		{
+			var model = new DetailModel("LexEntry", "test",
+				new List<DetailField> { SecondVectorField() }, new List<ViewDiagnostic>());
+			var context = new FakeDetailEditContext
+			{
+				CreatableReferences = inSlot,
+				RetypableReferences = !inSlot,
+				CreateResult = accepted
+			};
+			var view = new DataTree(model, context);
+			var window = new Window { Content = view, Width = 500, Height = 260 };
+			window.Show();
+			Dispatcher.UIThread.RunJobs();
+			return (view, context, window);
+		}
+
+		private static TextBox AddSlot(DataTree view)
+			=> view.GetVisualDescendants().OfType<TextBox>().Single(
+				b => (AutomationProperties.GetAutomationId(b) ?? string.Empty).EndsWith(".New"));
+
+		private static TextBox ItemBox(DataTree view, string text)
+			=> view.GetVisualDescendants().OfType<TextBox>().Single(b => b.Text == text);
+
+		private static string TypeInto(Window window, TextBox box, string text)
+		{
+			box.Focus();
+			window.KeyTextInput(text);
+			Dispatcher.UIThread.RunJobs();
+			return box.Text;
+		}
+
+		private static void PressKey(Window window, PhysicalKey key, RawInputModifiers modifiers)
+		{
+			window.KeyPressQwerty(key, modifiers);
+			Dispatcher.UIThread.RunJobs();
+		}
+
+		// Whether the last key press was handled by the time it bubbled up to the window.
+		private static Func<bool?> RecordLastKeyDownHandled(Window window)
+		{
+			bool? handled = null;
+			window.AddHandler(InputElement.KeyDownEvent, (s, e) => handled = e.Handled,
+				RoutingStrategies.Bubble, handledEventsToo: true);
+			return () => handled;
 		}
 
 		[AvaloniaTest]

@@ -1384,6 +1384,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		private readonly List<Control> _itemBlocks = new List<Control>();
 		private readonly List<Func<bool>> _unstaged = new List<Func<bool>>();
 		private readonly List<Action> _discardUnstaged = new List<Action>();
+		private readonly List<Func<bool>> _stageUnstaged = new List<Func<bool>>();
 		private int _selectedIndex = -1;
 		private bool _disposed;
 
@@ -1463,15 +1464,26 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 					var submitted = original;
 					_unstaged.Add(() => box.Text != submitted);
 					_discardUnstaged.Add(() => box.Text = submitted);
-					Action commitText = () =>
+					// Whether the domain took the text; staging alone does not save it.
+					Func<bool> stageText = () =>
 					{
 						var typed = box.Text;
 						submitted = typed;
-						if (typed == original)
-							return;
-						if (textEditing.TrySetReferenceItemText(field, itemKey, typed))
+						return typed != original
+							&& textEditing.TrySetReferenceItemText(field, itemKey, typed);
+					};
+					Action commitText = () =>
+					{
+						if (stageText())
 							gestureCompleted?.Invoke();
 					};
+					_stageUnstaged.Add(() =>
+					{
+						if (box.Text == submitted)
+							return false;
+						stageText();
+						return true;
+					});
 					EventHandler<Avalonia.Interactivity.RoutedEventArgs> commitOnBlur =
 						(s2, e2) => CommitUnlessMenuGesture(commitText);
 					box.LostFocus += commitOnBlur;
@@ -1696,15 +1708,25 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				var submittedNew = string.Empty;
 				_unstaged.Add(() => (newItem.Text ?? string.Empty) != submittedNew);
 				_discardUnstaged.Add(() => newItem.Text = submittedNew);
-				Action commitNew = () =>
+				Func<bool> stageNew = () =>
 				{
 					var typed = newItem.Text;
 					submittedNew = typed ?? string.Empty;
-					if (string.IsNullOrWhiteSpace(typed))
-						return;
-					if (textEditing.TryCreateAndAddReferenceItem(field, typed))
+					return !string.IsNullOrWhiteSpace(typed)
+						&& textEditing.TryCreateAndAddReferenceItem(field, typed);
+				};
+				Action commitNew = () =>
+				{
+					if (stageNew())
 						gestureCompleted?.Invoke();
 				};
+				_stageUnstaged.Add(() =>
+				{
+					if ((newItem.Text ?? string.Empty) == submittedNew)
+						return false;
+					stageNew();
+					return true;
+				});
 				EventHandler<Avalonia.Interactivity.RoutedEventArgs> newOnBlur =
 					(s2, e2) => CommitUnlessMenuGesture(commitNew);
 				newItem.LostFocus += newOnBlur;
@@ -1750,6 +1772,17 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				}
 				Children.Add(newItem);
 				AddSeparatorBar();
+			}
+
+			// An undo started outside this view, from the menu or toolbar, stages typed text
+			// through the context first; it would otherwise undo an earlier change instead.
+			var registry = editContext as IPendingEditFlushRegistry;
+			if (registry != null && _stageUnstaged.Count > 0)
+			{
+				var ownerKey = "reference/" + field.StableId;
+				Func<bool> flush = StageUnstagedText;
+				registry.AddPendingEditFlush(ownerKey, flush);
+				_teardown.Add(() => registry.RemovePendingEditFlush(ownerKey, flush));
 			}
 
 			var addButton = new Button
@@ -2131,6 +2164,22 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		{
 			foreach (var discard in _discardUnstaged)
 				discard();
+		}
+
+		/// <summary>
+		/// Stages any text an editor holds on the edit session, without saving it, so Undo can
+		/// close that edit first instead of undoing an earlier change. The caller saves the
+		/// session. Does nothing once disposed.
+		/// </summary>
+		/// <returns>Whether an editor held text, whether or not the domain accepted it.</returns>
+		public bool StageUnstagedText()
+		{
+			if (_disposed)
+				return false;
+			var held = false;
+			foreach (var stage in _stageUnstaged)
+				held |= stage();
+			return held;
 		}
 
 		private void AddSeparatorBar()
