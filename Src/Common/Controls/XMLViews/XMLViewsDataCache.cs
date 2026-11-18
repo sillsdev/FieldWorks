@@ -76,6 +76,46 @@ namespace SIL.FieldWorks.Common.Controls
 		private readonly Dictionary<HvoFlidKey, int> m_integerCache = new Dictionary<HvoFlidKey, int>();
 		private readonly Dictionary<HvoFlidWSKey, ITsString> m_mlStringCache = new Dictionary<HvoFlidWSKey, ITsString>();
 		private readonly Dictionary<HvoFlidKey, ITsString> m_stringCache = new Dictionary<HvoFlidKey, ITsString>();
+		private readonly Dictionary<int, PreviewItems> m_previewItems = new Dictionary<int, PreviewItems>();
+
+		/// <summary>
+		/// The individual list items a bulk edit preview would change an object's list from and
+		/// to, in display order.
+		/// </summary>
+		public sealed class PreviewItems
+		{
+			/// <summary/>
+			public PreviewItems(ITsString[] original, ITsString[] alternate)
+			{
+				Original = original;
+				Alternate = alternate;
+			}
+
+			/// <summary>The names of the items the object has now.</summary>
+			public ITsString[] Original { get; }
+
+			/// <summary>The names of the items the preview would give the object.</summary>
+			public ITsString[] Alternate { get; }
+		}
+
+		/// <summary>
+		/// Store the list items a preview of a list-choice bulk edit shows for hvo, replacing
+		/// any stored before. This makes no PropChanged call.
+		/// </summary>
+		public void SetPreviewItems(int hvo, ITsString[] original, ITsString[] alternate)
+		{
+			m_previewItems[hvo] = new PreviewItems(original, alternate);
+		}
+
+		/// <summary>
+		/// Get the list items most recently stored for hvo by SetPreviewItems, or null if none
+		/// have been.
+		/// </summary>
+		public PreviewItems GetPreviewItems(int hvo)
+		{
+			PreviewItems items;
+			return m_previewItems.TryGetValue(hvo, out items) ? items : null;
+		}
 
 		/// <summary>
 		/// This virtual flid needs special treatment, as we need to maintain any separators

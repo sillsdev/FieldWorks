@@ -547,6 +547,16 @@ namespace SIL.FieldWorks.Discourse
 			throw new NotImplementedException();
 		}
 
+		public void OpenWrapGroup(ITsString tssSeparator)
+		{
+			throw new NotImplementedException();
+		}
+
+		public void CloseWrapGroup()
+		{
+			throw new NotImplementedException();
+		}
+
 		public void OpenTaggedPara()
 		{
 			throw new NotImplementedException();

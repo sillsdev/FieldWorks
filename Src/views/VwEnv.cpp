@@ -1586,6 +1586,35 @@ STDMETHODIMP VwEnv::CloseInnerPile()
 
 
 /*----------------------------------------------------------------------------------------------
+	Start a wrap group: a pile whose contents go side by side on one line, with
+	ptssSeparator (which may be null) drawn between them, when they all fit, and stack
+	otherwise. Like a paragraph, it may only be opened inside some kind of pile.
+----------------------------------------------------------------------------------------------*/
+STDMETHODIMP VwEnv::OpenWrapGroup(ITsString * ptssSeparator)
+{
+	BEGIN_COM_METHOD;
+	ChkComArgPtrN(ptssSeparator);
+
+	Assert(dynamic_cast<VwPileBox *>(m_pgboxCurr));
+	OpenFlowObject(NewObj VwWrapGroupBox(m_qzvps, ptssSeparator));
+
+	END_COM_METHOD(dfactEnv, IID_IVwEnv);
+}
+
+/*----------------------------------------------------------------------------------------------
+	End a wrap group.
+----------------------------------------------------------------------------------------------*/
+STDMETHODIMP VwEnv::CloseWrapGroup()
+{
+	BEGIN_COM_METHOD;
+
+	Assert(!m_pgboxCurr || dynamic_cast<VwWrapGroupBox *>(m_pgboxCurr));
+	CloseFlowObject();
+
+	END_COM_METHOD(dfactEnv, IID_IVwEnv);
+}
+
+/*----------------------------------------------------------------------------------------------
 	Delimit span (group of sub-para objects sharing properties)
 ----------------------------------------------------------------------------------------------*/
 STDMETHODIMP VwEnv::OpenSpan()

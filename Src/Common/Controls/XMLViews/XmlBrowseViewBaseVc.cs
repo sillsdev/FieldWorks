@@ -23,6 +23,7 @@ using SIL.FieldWorks.Common.RootSites;
 using SIL.LCModel.Core.Cellar;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Core.Text;
 using SIL.Utils;
 using XCore;
 
@@ -1114,6 +1115,17 @@ namespace SIL.FieldWorks.Common.Controls
 					(int)FwTextPropVar.ktpvEnum, IsWritingSystemRTL(node) ? -1 : 0);
 			}
 
+			var previewItems = fIsCellActive && !MultiColumnPreview && IsListChoiceColumn(node)
+				? (m_sda as XMLViewsDataCache)?.GetPreviewItems(hvo)
+				: null;
+			if (previewItems != null)
+			{
+				AddListPreview(vwenv, node, hvo, previewItems);
+				vwenv.CloseTableCell();
+				m_wsBest = 0;
+				return;
+			}
+
 			// According to LT-8947, in bulk edit preview mode, we want to try to show the
 			// original cell contents on the same line with the preview arrow and the new cell contents.
 			// to accomplish this, we use 3 InnerPiles in a paragraph
@@ -1289,6 +1301,56 @@ namespace SIL.FieldWorks.Common.Controls
 				AddAlternateCellContents(vwenv, icol);
 			}
 			vwenv.CloseInnerPile();
+		}
+
+		private static readonly HashSet<string> s_listChoiceBulkEditTypes = new HashSet<string>
+		{
+			"complexListMultiple", "semanticDomainListMultiple", "variantEntryTypes", "complexEntryTypes"
+		};
+
+		/// <summary>
+		/// True if the column's bulk edit chooses several items from a list.
+		/// </summary>
+		private static bool IsListChoiceColumn(XmlNode node)
+		{
+			return s_listChoiceBulkEditTypes.Contains(
+				XmlUtils.GetOptionalAttributeValue(node, "bulkEdit", string.Empty));
+		}
+
+		/// <summary>
+		/// Show a list-choice preview as the current items, the preview arrow, then the new
+		/// items. All of it goes on one line, items separated by commas, when it fits the
+		/// column; otherwise every item and the arrow go on a line of their own.
+		/// </summary>
+		private void AddListPreview(IVwEnv vwenv, XmlNode node, int hvo,
+			XMLViewsDataCache.PreviewItems previewItems)
+		{
+			// The stored items change only together with the preview value.
+			vwenv.NoteDependency(new[] { hvo }, new[] { XMLViewsDataCache.ktagAlternateValue }, 1);
+			var tssSeparator = TsStringUtils.MakeString(", ",
+				m_cache.ServiceLocator.WritingSystemManager.UserWs);
+			vwenv.OpenWrapGroup(null);
+			AddListPreviewItems(vwenv, tssSeparator, previewItems.Original);
+			vwenv.set_IntProperty((int)FwTextPropType.ktptPadTrailing,
+				(int)FwTextPropVar.ktpvMilliPoint, 2500);
+			vwenv.set_IntProperty((int)FwTextPropType.ktptPadLeading,
+				(int)FwTextPropVar.ktpvMilliPoint, 2500);
+			AddPreviewArrow(vwenv, node);
+			AddListPreviewItems(vwenv, tssSeparator, previewItems.Alternate);
+			vwenv.CloseWrapGroup();
+		}
+
+		private static void AddListPreviewItems(IVwEnv vwenv, ITsString tssSeparator,
+			ITsString[] items)
+		{
+			vwenv.OpenWrapGroup(tssSeparator);
+			foreach (var tssItem in items)
+			{
+				vwenv.OpenParagraph();
+				vwenv.AddString(tssItem);
+				vwenv.CloseParagraph();
+			}
+			vwenv.CloseWrapGroup();
 		}
 
 		private void AddPreviewArrow(IVwEnv vwenv, XmlNode node)

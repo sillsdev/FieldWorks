@@ -2728,6 +2728,18 @@ Last reviewed:
 		HRESULT OpenSpan();
 		// End a group of sub-para objects sharing properties
 		HRESULT CloseSpan();
+
+		// Start a wrap group, which may go wherever a paragraph may. Its contents (paragraphs,
+		// or nested wrap groups) go side by side on one line when they all fit in the available
+		// width, and are stacked one per line otherwise. A wrap group nested directly in another
+		// follows the outer group's choice, so the whole outer group switches at once.
+		// @param ptssSeparator Drawn between the contents when they are on one line; it cannot
+		// be selected. May be null for no separator.
+		HRESULT OpenWrapGroup(
+			[in] ITsString * ptssSeparator);
+		// End a wrap group.
+		HRESULT CloseWrapGroup();
+
 		//:> ENHANCE JohnT: VwLength is used only in three places now. Would it be better to
 		//:> just have an int plus a FwTextPropVar?
 

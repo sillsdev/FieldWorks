@@ -1705,6 +1705,37 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(complexEntryRef.VariantEntryTypesRS.Count, Is.EqualTo(0));
 		}
 
+		[Test]
+		public void ListChoicePreview_StoresTheCurrentAndNewItemsOfEachChangedRow()
+		{
+			var variantList = AddOneVariantEachToHimbiliraSenseAndPusEntry();
+			var variantRef = variantList[1].EntryRefsOS[0];
+			var currentType = variantRef.VariantEntryTypesRS[0];
+			var choiceFreeVariant = GetVariantTypeOrCreateOne("Free Variant");
+
+			m_bulkEditBar.SwitchTab("ListChoice");
+			m_bv.ShowColumn("VariantEntryTypesBrowse");
+			m_bulkEditBar.SetTargetField("Variant Types");
+			RecordClerk clerk = (m_bv.Parent as RecordBrowseViewForTests).Clerk;
+			clerk.JumpToRecord(variantRef.Hvo);
+			((MockFwXWindow)m_window).ProcessPendingItems();
+			var listChoiceControl =
+				(ComplexListChooserBEditControl)m_bulkEditBar.CurrentBulkEditSpecControl;
+			m_bv.OnUncheckAll();
+			m_bv.SetCheckedItems(new List<int> { variantRef.Hvo });
+			listChoiceControl.ChosenObjects = new ICmObject[] { choiceFreeVariant };
+			listChoiceControl.ReplaceMode = false;
+
+			m_bulkEditBar.ClickPreview();
+
+			var items = m_bv.SpecialCache.GetPreviewItems(variantRef.Hvo);
+			Assert.That(items, Is.Not.Null);
+			Assert.That(items.Original.Select(tss => tss.Text),
+				Is.EqualTo(new[] { currentType.ShortNameTSS.Text }));
+			Assert.That(items.Alternate.Select(tss => tss.Text),
+				Is.EqualTo(new[] { currentType.ShortNameTSS.Text, choiceFreeVariant.ShortNameTSS.Text }));
+		}
+
 		private ILexEntry AddOneComplexEntry(ILexEntry part)
 		{
 			ILexEntry result = null;

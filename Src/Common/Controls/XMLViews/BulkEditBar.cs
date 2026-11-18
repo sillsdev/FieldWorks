@@ -6512,6 +6512,7 @@ namespace SIL.FieldWorks.Common.Controls
 			// Report progress 50 times or every 100 items, whichever is more (but no more than once per item!)
 			int interval = Math.Min(100, Math.Max(itemsToChange.Count() / 50, 1));
 			ITsString tssChosenVal = BuildValueString(chosenObjs);
+			ITsString[] chosenItems = BuildValueItems(chosenObjs);
 			foreach (int hvoItem in itemsToChange)
 			{
 				i++;
@@ -6531,6 +6532,9 @@ namespace SIL.FieldWorks.Common.Controls
 					{
 						if (newVal != chosenObjs)
 							tssVal = BuildValueString(newVal);
+						// The items must be in place before SetString redraws the row.
+						m_sda.SetPreviewItems(hvoItem, BuildValueItems(oldVals),
+							newVal == chosenObjs ? chosenItems : BuildValueItems(newVal));
 						m_sda.SetString(hvoItem, tagFakeFlid, tssVal);
 					}
 				}
@@ -6648,6 +6652,16 @@ namespace SIL.FieldWorks.Common.Controls
 				baseClid = m_cache.MetaDataCacheAccessor.GetBaseClsId(baseClid);
 
 			return baseClid == clidField;
+		}
+
+		/// <summary>
+		/// Return the display name of each object, in order, as shown in the preview.
+		/// </summary>
+		private ITsString[] BuildValueItems(IEnumerable<ICmObject> objs)
+		{
+			return objs.Select(obj =>
+				(ITsString)obj.GetType().GetProperty(m_displayNameProperty).GetValue(obj, null))
+				.ToArray();
 		}
 
 		private ITsString BuildValueString(IEnumerable<ICmObject> chosenObjs)
