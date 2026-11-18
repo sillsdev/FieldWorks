@@ -953,9 +953,22 @@ namespace SIL.FieldWorks.XWorks
 			Slice slice = m_dataEntryForm.CurrentSlice;
 			Debug.Assert(slice != null, "No slice was current");
 			Debug.Assert(!slice.IsDisposed, "The current slice is already disposed??");
-			if (slice != null)
-				DetailSequenceMove.MoveUp(slice.Object, xWorksStrings.UndoMoveItem, xWorksStrings.RedoMoveItem);
+			if (slice != null && DetailSequenceMove.MoveUp(slice.Object,
+				xWorksStrings.UndoMoveItem, xWorksStrings.RedoMoveItem))
+			{
+				RefreshDocumentView();
+			}
 			return true;	//we handled this.
+		}
+
+		/// <summary>
+		/// Asks a document view in this window to regenerate its content. Nothing happens
+		/// where no such view is listening.
+		/// </summary>
+		protected void RefreshDocumentView()
+		{
+			Publisher.Publish(new PublisherParameterObject(EventConstants.RefreshCurrentView,
+				new ReturnObject(null), m_propertyTable.GetWindow()));
 		}
 
 		/// <summary>
@@ -991,8 +1004,11 @@ namespace SIL.FieldWorks.XWorks
 			Slice slice = m_dataEntryForm.CurrentSlice;
 			Debug.Assert(slice != null, "No slice was current");
 			Debug.Assert(!slice.IsDisposed, "The current slice is already disposed??");
-			if (slice != null)
-				DetailSequenceMove.MoveDown(slice.Object, xWorksStrings.UndoMoveItem, xWorksStrings.RedoMoveItem);
+			if (slice != null && DetailSequenceMove.MoveDown(slice.Object,
+				xWorksStrings.UndoMoveItem, xWorksStrings.RedoMoveItem))
+			{
+				RefreshDocumentView();
+			}
 			return true;	//we handled this.
 		}
 

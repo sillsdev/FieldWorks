@@ -78,6 +78,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 									}
 							}
 						});
+				RefreshDocumentView();
 				// We may need to notify everyone that a virtual property changed.
 				//NotifyVirtualChanged(cache, slice);
 			}
@@ -140,6 +141,8 @@ namespace SIL.FieldWorks.XWorks.LexEd
 					// Have to jump to a main entry, as RecordClerk doesn't know anything about subentries.
 					Publisher.Publish(new PublisherParameterObject(EventConstants.JumpToRecord,
 						newOwner.MainEntry.Hvo, m_propertyTable.GetWindow()));
+					// After the jump, so the preview generates the page the clerk is now on.
+					RefreshDocumentView();
 				}
 			}
 			return true;

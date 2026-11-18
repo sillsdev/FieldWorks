@@ -938,16 +938,79 @@ namespace SIL.FieldWorks.XWorks
 
 		#endregion
 
+		#region Loading content once
+
+		[TestCase(false)]
+		[TestCase(true)]
+		public void ShowConfiguration_AlreadyShowingItForThePublication_LoadsNothing(bool allEntries)
+		{
+			using (new UndoableUnitOfWorkHelper(Cache.ActionHandlerAccessor, "doit", "undoit"))
+			{
+				CreatePublication("TestPub");
+				var publication = allEntries ? xWorksStrings.AllEntriesPublication : "TestPub";
+				using (var scenario = new PublicationScenario(Cache, "TestPub", publication))
+				{
+					scenario.View.ShowConfiguration(scenario.ConfigurationPath);
+
+					// SUT
+					scenario.View.ShowConfiguration(scenario.ConfigurationPath);
+
+					Assert.That(scenario.View.LoadedConfigurations, Is.EqualTo(new[] { scenario.ConfigurationPath }));
+				}
+			}
+		}
+
+		[Test]
+		public void OnShowAllEntries_ConfigurationShowingForAnotherPublication_LoadsItAgain()
+		{
+			using (new UndoableUnitOfWorkHelper(Cache.ActionHandlerAccessor, "doit", "undoit"))
+			{
+				CreatePublication("TestPub");
+				using (var scenario = new PublicationScenario(Cache, "TestPub", "TestPub"))
+				{
+					scenario.View.ShowConfiguration(scenario.ConfigurationPath);
+
+					// SUT
+					scenario.View.OnShowAllEntries(null);
+
+					Assert.That(scenario.View.LoadedConfigurations,
+						Is.EqualTo(new[] { scenario.ConfigurationPath, scenario.ConfigurationPath }));
+				}
+			}
+		}
+
+		[Test]
+		public void SelectedPublicationChanged_ConfigurationShowingForAllEntries_LoadsItAgain()
+		{
+			using (new UndoableUnitOfWorkHelper(Cache.ActionHandlerAccessor, "doit", "undoit"))
+			{
+				CreatePublication("TestPub");
+				using (var scenario = new PublicationScenario(Cache, "TestPub", xWorksStrings.AllEntriesPublication))
+				{
+					scenario.View.ShowConfiguration(scenario.ConfigurationPath);
+					scenario.PropertyTable.SetProperty("SelectedPublication", "TestPub", false);
+
+					// SUT
+					scenario.View.OnPropertyChanged("SelectedPublication");
+
+					Assert.That(scenario.View.LoadedConfigurations,
+						Is.EqualTo(new[] { scenario.ConfigurationPath, scenario.ConfigurationPath }));
+				}
+			}
+		}
+
+		#endregion
+
 		private class TestXhtmlDocView : XhtmlDocView
 		{
-			/// <summary>The configurations handed to UpdateContent, in call order.</summary>
+			/// <summary>The configurations the view loaded, in call order.</summary>
 			internal readonly List<string> LoadedConfigurations = new List<string>();
 
 			/// <summary>The reasons the view warned of a hidden entry, in call order.</summary>
 			internal readonly List<DictionaryConfigurationController.ExclusionReasonCode> Warnings =
 				new List<DictionaryConfigurationController.ExclusionReasonCode>();
 
-			protected override void UpdateContent(string configurationFile, bool allOnOnePage = false)
+			protected override void ShowContent(string configurationFile, bool allOnOnePage)
 			{
 				LoadedConfigurations.Add(configurationFile);
 			}

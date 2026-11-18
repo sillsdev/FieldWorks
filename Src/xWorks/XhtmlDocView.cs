@@ -54,6 +54,10 @@ namespace SIL.FieldWorks.XWorks
 		private const string FieldWorksPrintLimitEnv = "FIELDWORKS_PRINT_LIMIT";
 		private bool m_updateContentLater = false; // Whether we should postpone calling UpdateContent
 		private string m_loadedConfig = null;
+		// The publication that m_loadedConfig was loaded for.
+		private string m_loadedPublication;
+		// True while content is generated: the progress dialog handles queued messages.
+		private bool m_generatingContent;
 
 		private GeckoWebBrowser GeckoBrowser => (GeckoWebBrowser)m_mainView.NativeBrowser;
 
@@ -967,7 +971,8 @@ namespace SIL.FieldWorks.XWorks
 
 		private void GenerateReloadAndPrint()
 		{
-			// Generate all entries
+			// Generate all entries. The configuration is loaded a page at a time, so force it.
+			m_loadedConfig = null;
 			UpdateContent(GetCurrentConfiguration(false), true);
 
 			// The Control.Refresh command to load the newly-generated page returns before it is finished,
@@ -1184,6 +1189,9 @@ namespace SIL.FieldWorks.XWorks
 
 		private void LoadPageIfNecessary(GeckoWebBrowser browser)
 		{
+			// The generation under way is of the page that holds the clerk's record.
+			if (m_generatingContent)
+				return;
 			var currentObjectHvo = Clerk.CurrentObjectHvo;
 			var currentObjectIndex = Array.IndexOf(PublicationDecorator.GetEntriesToPublish(m_propertyTable, Clerk.VirtualFlid), currentObjectHvo);
 			if (currentObjectIndex < 0 || browser == null || browser.Document == null) // If the current item is not to be displayed (invalid, not in this publication) just quit
@@ -1656,27 +1664,40 @@ namespace SIL.FieldWorks.XWorks
 			return true;
 		}
 
-		protected virtual void UpdateContent(string configurationFile, bool allOnOnePage = false)
+		/// <summary>
+		/// Shows a configuration for the selected publication, unless the view already shows
+		/// that configuration for that publication.
+		/// </summary>
+		private void UpdateContent(string configurationFile, bool allOnOnePage = false)
 		{
 			SetInfoBarText();
-			var htmlErrorMessage = xWorksStrings.ksErrorDisplayingPublication;
-			if (string.IsNullOrEmpty(configurationFile))
+			if (!string.IsNullOrEmpty(configurationFile))
 			{
-				htmlErrorMessage = xWorksStrings.NoConfigsMatchPub;
-			}
-			else
-			{
-				// Don't load the configuration file twice.
 				var currentPublication = GetCurrentPublication();
-				if (configurationFile == m_loadedConfig && currentPublication == m_pubDecorator?.Publication?.ChooserNameTS?.Text)
+				if (configurationFile == m_loadedConfig && currentPublication == m_loadedPublication)
 					return;
 				m_loadedConfig = configurationFile;
+				m_loadedPublication = currentPublication;
+			}
+			ShowContent(configurationFile, allOnOnePage);
+		}
+
+		/// <summary>
+		/// Generates a configuration's content and shows it. With no configuration, or when
+		/// the generation produces nothing, a message is shown in its place.
+		/// </summary>
+		protected virtual void ShowContent(string configurationFile, bool allOnOnePage)
+		{
+			var htmlErrorMessage = xWorksStrings.NoConfigsMatchPub;
+			if (!string.IsNullOrEmpty(configurationFile))
+			{
 				var xhtmlPath = SaveConfiguredXhtmlWithProgress(configurationFile, allOnOnePage);
 				if (xhtmlPath != null)
 				{
 					m_mainView.Navigate(new Uri(xhtmlPath));
 					return;
 				}
+				htmlErrorMessage = xWorksStrings.ksErrorDisplayingPublication;
 			}
 			m_mainView.DocumentText = $"<html><body>{htmlErrorMessage}</body></html>";
 		}
@@ -1689,7 +1710,18 @@ namespace SIL.FieldWorks.XWorks
 				progressDlg.AllowCancel = true;
 				progressDlg.CancelLabelText = xWorksStrings.ksCancelingPublicationLabel;
 				progressDlg.Title = xWorksStrings.ksPreparingPublicationDisplay;
-				if (progressDlg.RunTask(true, SaveConfiguredXhtml, PublicationDecorator, configurationFile, allOnePage) is string xhtmlPath)
+				object result;
+				var wasGenerating = m_generatingContent;
+				m_generatingContent = true;
+				try
+				{
+					result = progressDlg.RunTask(true, SaveConfiguredXhtml, PublicationDecorator, configurationFile, allOnePage);
+				}
+				finally
+				{
+					m_generatingContent = wasGenerating;
+				}
+				if (result is string xhtmlPath)
 				{
 					if (progressDlg.IsCanceling)
 					{

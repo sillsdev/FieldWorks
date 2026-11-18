@@ -20,6 +20,7 @@ using SIL.LCModel.Infrastructure;
 using SIL.Reporting;
 using SIL.Utils;
 using XCore;
+using static SIL.FieldWorks.Common.FwUtils.FwUtils;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -755,6 +756,10 @@ namespace SIL.FieldWorks.XWorks
 				: DetailSequenceMove.MoveDown(target, xWorksStrings.UndoMoveItem, xWorksStrings.RedoMoveItem);
 			if (!moved)
 				return false;
+			// A document view in this window regenerates to show the new order. It does so
+			// behind a progress dialog, so the re-show that takes the keyboard comes after.
+			Publisher.Publish(new PublisherParameterObject(EventConstants.RefreshCurrentView,
+				new ReturnObject(null), m_propertyTable.GetWindow()));
 			m_avaloniaEntryForm?.FocusObjectOnNextShow(target.Hvo);
 			OnAvaloniaDetailEditCompleted(this, EventArgs.Empty);
 			return true;
