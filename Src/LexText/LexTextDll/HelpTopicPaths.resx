@@ -3284,15 +3284,15 @@
     <value>Using_Tools/Lexicon_tools/Lexicon_Edit/Choose_a_dialect_label.htm</value>
     <comment>Choose Dialect label (Sense)</comment>
   </data>
-  <data name="khtpField-dialectsListEdit-CmPossibility-Abbreviation" xml:space="preserve">
+  <data name="khtpField-dialectLabelListEdit-CmPossibility-Abbreviation" xml:space="preserve">
     <value>User_Interface/Field_Descriptions/Lists/Dialect_Labels/Abbreviation_field_(Dialect_Labels).htm</value>
     <comment>Dialect Labels List: Abbreviation</comment>
   </data>
-  <data name="khtpField-dialectsListEdit-CmPossibility-Description" xml:space="preserve">
+  <data name="khtpField-dialectLabelListEdit-CmPossibility-Description" xml:space="preserve">
     <value>User_Interface/Field_Descriptions/Lists/Dialect_Labels/Short_Description_field_(Dialect_Labels).htm</value>
     <comment>Dialect Labels List: Short Description:</comment>
   </data>
-  <data name="khtpField-dialectsListEdit-CmPossibility-Name" xml:space="preserve">
+  <data name="khtpField-dialectLabelListEdit-CmPossibility-Name" xml:space="preserve">
     <value>User_Interface/Field_Descriptions/Lists/Dialect_Labels/Full_Name_field_(Dialect_Labels).htm</value>
     <comment>Dialect Labels List: Full Name:</comment>
   </data>
