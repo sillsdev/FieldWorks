@@ -80,31 +80,42 @@ namespace SIL.FieldWorks.Common.Controls
 
 		/// <summary>
 		/// The individual list items a bulk edit preview would change an object's list from and
-		/// to, in display order.
+		/// to, in display order, each with a fallback name to show if the item cannot be shown
+		/// the way its column normally shows it. Each name's array is parallel to its
+		/// objects array.
 		/// </summary>
 		public sealed class PreviewItems
 		{
 			/// <summary/>
-			public PreviewItems(ITsString[] original, ITsString[] alternate)
+			public PreviewItems(int[] original, ITsString[] originalNames, int[] alternate,
+				ITsString[] alternateNames)
 			{
 				Original = original;
+				OriginalNames = originalNames;
 				Alternate = alternate;
+				AlternateNames = alternateNames;
 			}
 
+			/// <summary>The items the object has now.</summary>
+			public int[] Original { get; }
+
 			/// <summary>The names of the items the object has now.</summary>
-			public ITsString[] Original { get; }
+			public ITsString[] OriginalNames { get; }
+
+			/// <summary>The items the preview would give the object.</summary>
+			public int[] Alternate { get; }
 
 			/// <summary>The names of the items the preview would give the object.</summary>
-			public ITsString[] Alternate { get; }
+			public ITsString[] AlternateNames { get; }
 		}
 
 		/// <summary>
 		/// Store the list items a preview of a list-choice bulk edit shows for hvo, replacing
 		/// any stored before. This makes no PropChanged call.
 		/// </summary>
-		public void SetPreviewItems(int hvo, ITsString[] original, ITsString[] alternate)
+		public void SetPreviewItems(int hvo, PreviewItems items)
 		{
-			m_previewItems[hvo] = new PreviewItems(original, alternate);
+			m_previewItems[hvo] = items;
 		}
 
 		/// <summary>

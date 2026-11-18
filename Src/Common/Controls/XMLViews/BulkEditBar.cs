@@ -6533,8 +6533,10 @@ namespace SIL.FieldWorks.Common.Controls
 						if (newVal != chosenObjs)
 							tssVal = BuildValueString(newVal);
 						// The items must be in place before SetString redraws the row.
-						m_sda.SetPreviewItems(hvoItem, BuildValueItems(oldVals),
-							newVal == chosenObjs ? chosenItems : BuildValueItems(newVal));
+						m_sda.SetPreviewItems(hvoItem, new XMLViewsDataCache.PreviewItems(
+							oldVals.Select(obj => obj.Hvo).ToArray(), BuildValueItems(oldVals),
+							newVal.Select(obj => obj.Hvo).ToArray(),
+							newVal == chosenObjs ? chosenItems : BuildValueItems(newVal)));
 						m_sda.SetString(hvoItem, tagFakeFlid, tssVal);
 					}
 				}
@@ -6655,7 +6657,7 @@ namespace SIL.FieldWorks.Common.Controls
 		}
 
 		/// <summary>
-		/// Return the display name of each object, in order, as shown in the preview.
+		/// Return the display name of each object, in order.
 		/// </summary>
 		private ITsString[] BuildValueItems(IEnumerable<ICmObject> objs)
 		{
