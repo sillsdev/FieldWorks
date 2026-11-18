@@ -396,7 +396,7 @@ namespace SIL.FieldWorks.XWorks
 
 			Assert.That(items.Select(i => i.Label), Is.EqualTo(new[] { "Assign Analysis..." }));
 			Assert.That(items[0].IsEnabled || items[0].Execute != null, Is.False,
-				"the hidden tree never answers a section link");
+				"a section link no authority owns cannot run");
 		}
 
 		[Test]
@@ -1068,13 +1068,7 @@ namespace SIL.FieldWorks.XWorks
 			var window = m_propertyTable.GetValue<XWindow>("window");
 			var request = DetailMenuRequest.FromAnchor(null, row, kind);
 			var authority = m_view.CreateMenuAuthority(request);
-			// As in the host, a menu no authority fully owns targets the adapter at the row.
-			if (!XCoreMenuBridge.OwnsAll(authority, ids))
-			{
-				typeof(RecordEditView).GetMethod("SyncMenuCommandAdapter", BindingFlags.Instance | BindingFlags.NonPublic)
-					.Invoke(m_view, new object[] { row });
-			}
-			var items = XCoreMenuBridge.CreateMenuItems(window, ids, null, null, authority);
+			var items = XCoreMenuBridge.CreateMenuItems(window, ids, authority);
 			var item = items.FirstOrDefault(i => i.Label == label);
 			Assert.That(item, Is.Not.Null, "the menu offers '{0}'", label);
 			Assert.That(item.Execute, Is.Not.Null, "'{0}' is enabled", label);

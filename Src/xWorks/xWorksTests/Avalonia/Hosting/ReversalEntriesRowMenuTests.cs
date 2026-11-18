@@ -122,14 +122,14 @@ namespace SIL.FieldWorks.XWorks
 			var authority = m_view.CreateMenuAuthority(DetailMenuRequest.FromAnchor(null, row, DetailMenuKind.SliceMenu));
 
 			Assert.That(XCoreMenuBridge.OwnsAll(authority, ids), Is.True,
-				"the hidden tree is never pointed at this row");
+				"the row's whole label menu has a native authority");
 			var window = m_propertyTable.GetValue<XWindow>("window");
 			var spy = new MenuDisplaySpyColleague();
 			window.Mediator.AddColleague(spy);
 			IReadOnlyList<DetailMenuItem> items;
 			try
 			{
-				items = XCoreMenuBridge.CreateMenuItems(window, ids, null, null, authority);
+				items = XCoreMenuBridge.CreateMenuItems(window, ids, authority);
 			}
 			finally
 			{
@@ -149,7 +149,7 @@ namespace SIL.FieldWorks.XWorks
 
 			var own = MenuItems(m_view, m_propertyTable, row).Where(i => i.Label != WritingSystemsLabel).ToList();
 			var perObject = XCoreMenuBridge.CreateMenuItems(window, new[] { RecordEditView.ObjectMenuId },
-				null, null, m_view.CreateObjectMenuAuthority(row));
+				m_view.CreateObjectMenuAuthority(row));
 
 			Assert.That(Describe(own), Is.EqualTo(Describe(perObject)),
 				"Field Visibility, Move Field and Help answer as on any other row");

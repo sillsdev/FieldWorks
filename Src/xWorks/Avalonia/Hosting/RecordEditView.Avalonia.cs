@@ -70,14 +70,8 @@ namespace SIL.FieldWorks.XWorks
 		// Inventory
 		// store untouched.
 		private ViewDefinitionOverrideStore m_viewOverrideStore;
-		// The approved baseline-adapter ids -- the ONLY routes allowed to drive hidden legacy
-		// infrastructure while Avalonia is active.
-		internal const string CommandMenuRoutingAdapterId = "command-menu-routing";
-		private static readonly string[] ApprovedBaselineAdapters = { CommandMenuRoutingAdapterId };
-		// The active-host contract for the CURRENT framework, kept in sync with every
-		// m_activeUIFramework assignment (SetUIFramework) from the approved set above.
-		// Assert sites only pass the adapter id they claim, so an unlisted id actually trips -- a
-		// contract constructed at the assert site from the very id it then asserts could never fail.
+		// The active-host contract for the current framework, kept in sync by SetUIFramework.
+		// While Avalonia is active, nothing may build or drive the WinForms DataTree.
 		private ActiveHostContract m_activeHostContract;
 
 		// Expansion state by DetailField.ExpansionKey for this session; a PropertyTable local
@@ -480,11 +474,8 @@ namespace SIL.FieldWorks.XWorks
 				m_showAllWsFields.Clear();
 			m_showAllWsRecordHvo = obj?.Hvo ?? 0;
 
-			// Adapter hygiene: the hidden command-routing DataTree must never answer mediator
-			// commands for a PREVIOUS record -- reset it whenever the shown record changes; the
-			// next
-			// right-click re-syncs it (EnsureMenuCommandAdapter). Without this, Insert Sense from
-			// the main menu could silently target the entry that was last right-clicked.
+			// A WinForms DataTree left from before a switch to the New UI drops its slices when
+			// the shown record changes.
 			if (m_dataTreeInitialized && m_dataEntryForm?.Root != null && obj != null
 				&& m_dataEntryForm.Root.Hvo != obj.Hvo)
 			{
@@ -694,66 +685,48 @@ namespace SIL.FieldWorks.XWorks
 				}
 
 				var idArray = ids.Where(id => !string.IsNullOrEmpty(id)).ToArray();
-				var window = m_propertyTable.GetValue<XWindow>("window");
 
-				// Only ids without a native authority need the hidden command adapter. An adapter
-				// failure must not suppress the menu: its items disable, the rest still works.
-				var authority = CreateMenuAuthority(request);
-				var ownsAll = XCoreMenuBridge.OwnsAll(authority, idArray);
-				if (!ownsAll)
-					SyncMenuCommandAdapter(request.Field);
+				// A menu that offers nothing is not shown; one that cannot be built is logged
+				// below and not shown either.
+				var items = BuildMenuItems(idArray, request);
+				if (items.Count == 0)
+					return;
 
-				// Render the SAME xCore menu natively in Avalonia -- identical items,
-				// enablement, and mediator dispatch; only rendering changes. The WinForms
-				// adapter menu remains the fallback if materialization fails.
+				// A keyboard-opened menu anchors under the row it came from; a right-click opens
+				// it at the pointer. The menu may take focus from the row's editor, which holds
+				// its commit until the menu closes.
+				request.BeginMenuGesture();
 				try
 				{
-					// On the mediator path Field Visibility / Move Field retarget to the override
-					// layer; other mediator-answered commands keep their dispatch. An owned menu
-					// never consults the interceptor, so it is not built.
-					Func<ChoiceBase, UIItemDisplayProperties, DetailMenuItem> interceptor = null;
-					if (!ownsAll)
-					{
-						var registry = new OverrideCommandRegistry();
-						AddOverrideCommands(registry, request.Field);
-						interceptor = registry.TryBuild;
-					}
-					var items = XCoreMenuBridge.CreateMenuItems(window, idArray, interceptor, null, authority);
-					if (items.Count > 0)
-					{
-						// A keyboard-opened menu anchors under the row it came from; a
-						// right-click opens it at the pointer. The menu may take focus from the
-						// row's editor, which holds its commit until the menu closes.
-						request.BeginMenuGesture();
-						try
-						{
-							m_avaloniaEntryForm.ShowContextMenu(items, request.AnchorControl,
-								request.OpenAtPointer, request.EndMenuGesture);
-						}
-						catch
-						{
-							request.EndMenuGesture();
-							throw;
-						}
-						return;
-					}
+					m_avaloniaEntryForm.ShowContextMenu(items, request.AnchorControl,
+						request.OpenAtPointer, request.EndMenuGesture);
 				}
-				catch (Exception nativeMenuError)
+				catch
 				{
-					Logger.WriteError("Avalonia-native menu failed; falling back to the adapter menu.",
-						nativeMenuError);
+					request.EndMenuGesture();
+					throw;
 				}
-
-				// The adapter menu answers from the hidden tree's current slice, which an owned
-				// menu never pointed at this row.
-				if (ownsAll)
-					SyncMenuCommandAdapter(request.Field);
-				window.ShowContextMenu(idArray, AdapterMenuScreenPoint(request), null, null);
 			}
 			catch (Exception e)
 			{
-				Logger.WriteError("Detail context menu failed.", e);
+				Logger.WriteError("Detail context menu failed; nothing is shown.", e);
 			}
+		}
+
+		/// <summary>
+		/// The merged menu of the given ids for a request, answered by the row's native
+		/// authorities. An id none of them owns shows its commands disabled, and a log line
+		/// names it.
+		/// </summary>
+		internal IReadOnlyList<DetailMenuItem> BuildMenuItems(string[] menuIds, DetailMenuRequest request)
+		{
+			var authority = CreateMenuAuthority(request);
+			foreach (var id in menuIds)
+			{
+				if (!authority.Owns(id))
+					Logger.WriteEvent("No native authority owns the menu '" + id + "'; its commands show disabled.");
+			}
+			return XCoreMenuBridge.CreateMenuItems(m_propertyTable.GetValue<XWindow>("window"), menuIds, authority);
 		}
 
 		/// <summary>
@@ -768,37 +741,14 @@ namespace SIL.FieldWorks.XWorks
 				return Array.Empty<DetailMenuItem>();
 			try
 			{
-				var ids = new[] { field.HotlinksId };
-				var window = m_propertyTable.GetValue<XWindow>("window");
-				var authority = CreateMenuAuthority(DetailMenuRequest.FromAnchor(null, field, DetailMenuKind.Hotlinks));
-				if (XCoreMenuBridge.OwnsAll(authority, ids))
-					return XCoreMenuBridge.CreateMenuItems(window, ids, null, null, authority);
-				Logger.WriteEvent("No native authority owns the hotlinks '" + field.HotlinksId
-					+ "'; its commands show disabled.");
-				return XCoreMenuBridge.ResolveMenu(window, field.HotlinksId).Leaves
-					.Select(leaf => DetailMenuItem.Disabled(XCoreMenuBridge.StripAccelerator(leaf.Label)))
-					.ToList();
+				return BuildMenuItems(new[] { field.HotlinksId },
+					DetailMenuRequest.FromAnchor(null, field, DetailMenuKind.Hotlinks));
 			}
 			catch (Exception e)
 			{
 				Logger.WriteError("Building the hotlinks of '" + field.HotlinksId + "' failed; none are shown.", e);
 				return Array.Empty<DetailMenuItem>();
 			}
-		}
-
-		// The adapter fallback needs a raw screen point: cursor position for a right-click,
-		// the anchor's bottom-left otherwise. Both corners are mapped since
-		// RTL flow mirrors X in PointToScreen.
-		private static System.Drawing.Point AdapterMenuScreenPoint(DetailMenuRequest request)
-		{
-			var anchor = request.AnchorControl;
-			if (request.OpenAtPointer || anchor == null)
-				return System.Windows.Forms.Cursor.Position;
-			var left = Avalonia.VisualExtensions.PointToScreen(anchor,
-				new Avalonia.Point(0, anchor.Bounds.Height));
-			var right = Avalonia.VisualExtensions.PointToScreen(anchor,
-				new Avalonia.Point(anchor.Bounds.Width, anchor.Bounds.Height));
-			return new System.Drawing.Point(Math.Min(left.X, right.X), left.Y);
 		}
 
 		// The per-(class, layout) override file lives in this project's
@@ -854,43 +804,8 @@ namespace SIL.FieldWorks.XWorks
 					+ "'; using the shipped definition.", error));
 
 		/// <summary>
-		/// Registers the per-field Field Visibility and Move Field commands that retarget to
-		/// the project override layer for the Avalonia detail view. Registers nothing
-		/// (every command keeps its normal mediator dispatch) when the clicked row carries no
-		/// (class, layout) context, e.g. the first-slice fallback rows, so ordinary dispatch
-		/// stays in force when the override layer cannot be addressed.
-		/// </summary>
-		internal void AddOverrideCommands(OverrideCommandRegistry registry, DetailField field)
-		{
-			if (field == null || string.IsNullOrEmpty(field.ClassName) || string.IsNullOrEmpty(field.LayoutName)
-				|| ViewOverrideStore == null)
-			{
-				return;
-			}
-
-			// Unknown/stale target: leave the field commands on mediator dispatch rather than
-			// guess.
-			if (!TryLocateOverrideTarget(field, out _, out var location))
-				return;
-			registry.Add("CmdAlwaysVisible",
-				(c, d) => VisibilityItem(LabelOf(d), field, location, ViewVisibility.Always));
-			registry.Add("CmdIfData",
-				(c, d) => VisibilityItem(LabelOf(d), field, location, ViewVisibility.IfData));
-			registry.Add("CmdNormallyHidden",
-				(c, d) => VisibilityItem(LabelOf(d), field, location, ViewVisibility.Never));
-			registry.Add("CmdDataTree-MoveFieldUp",
-				(c, d) => MoveItem(LabelOf(d), field, location, up: true));
-			registry.Add("CmdDataTree-MoveFieldDown",
-				(c, d) => MoveItem(LabelOf(d), field, location, up: false));
-		}
-
-		private static string LabelOf(UIItemDisplayProperties display)
-			=> XCoreMenuBridge.StripAccelerator(display.Text);
-
-		/// <summary>
-		/// The native authorities for the request's row, asked in order: the four that own
-		/// their menu ids outright, then the Lexicon authority that owns by predicate. A label
-		/// menu made only of owned ids needs nothing from the hidden command adapter.
+		/// The native authorities for the request's row, asked in order: the five that own
+		/// their menu ids outright, then the Lexicon authority that owns by predicate.
 		/// </summary>
 		internal IDetailMenuAuthority CreateMenuAuthority(DetailMenuRequest request)
 		{
@@ -1000,13 +915,13 @@ namespace SIL.FieldWorks.XWorks
 			catch (Exception e)
 			{
 				Logger.WriteError("Resolving the field's override target failed; its Field Visibility "
-					+ "and Move Field commands are not retargeted to the override layer.", e);
+					+ "and Move Field commands are disabled.", e);
 				return false;
 			}
 			if (location == null)
 			{
 				Logger.WriteEvent(string.Format("Detail row '{0}' has no node in its compiled model; its "
-					+ "Field Visibility and Move Field commands are not retargeted to the override layer.",
+					+ "Field Visibility and Move Field commands are disabled.",
 					templateId));
 				return false;
 			}
@@ -1250,172 +1165,6 @@ namespace SIL.FieldWorks.XWorks
 			return new FwLinkArgs(request.Link.Tool, target);
 		}
 
-		// Approved baseline adapter "command-menu-routing": the hidden legacy DataTree +
-		// DTMenuHandler provide the colleague chain and CurrentSlice context the legacy command
-		// handlers require. Created lazily on first right-click; never attached/visible while the
-		// Avalonia is active.
-		private void EnsureMenuCommandAdapter(int targetHvo, string fieldName)
-		{
-			// The active-host contract is enforced, not just documented: driving the hidden
-			// legacy DataTree is legal only through an adapter id the host's contract lists. The
-			// contract was built from ApprovedBaselineAdapters when the view activated; this
-			// site only claims its own id (the fallback covers a menu raised before activation).
-			(m_activeHostContract ?? ActiveHostContract.ForAvalonia(ApprovedBaselineAdapters))
-				.AssertLegacyDataTreeDriveAllowed(CommandMenuRoutingAdapterId);
-
-			if (!m_dataTreeInitialized)
-			{
-				EnsureDataTreeInitialized();
-				DetachDataTreeFromPanel(); // adapter only: Avalonia stays active
-			}
-			// Display logic gating on Visible (e.g. OnDisplayDataTreeInsert) treats the hidden
-			// adapter tree as active.
-			m_dataEntryForm.IsExternalCommandAdapter = true;
-
-			var current = Clerk?.CurrentObject;
-			if (current == null)
-			{
-				// No current record: drop any target left by a previous interaction, same
-				// fail-loud rule as the no-slice-found path below.
-				m_dataEntryForm.ClearCurrentSlice();
-				return;
-			}
-			m_dataEntryForm.ShowObject(current, m_layoutName, m_layoutChoiceField, current, true);
-
-			if (targetHvo == 0)
-			{
-				// The row carries no object, so no slice can be its target.
-				m_dataEntryForm.ClearCurrentSlice();
-				return;
-			}
-
-			// Targeting hardening: the legacy command handlers act on m_dataEntryForm.CurrentSlice,
-			// so the adapter must point CurrentSlice at the slice bound to the clicked row's object. A first
-			// pass over the already-realized slices handles the common case (small sequences build their
-			// slices instantly). When the target lives inside an UNREALIZED DummyObjectSlice (a sequence with
-			// >= DataTree.kInstantSliceMax items builds lazy placeholders whose Object is the OWNER, not the
-			// target), no real slice carries the target hvo yet -- realize the lazy slices and
-			// retry rather
-			// than silently leaving the wrong (or stale) CurrentSlice pointed, which would make the command
-			// mutate the wrong object or, for Merge's class guard, silently fail.
-			if (TrySetCurrentSliceForRow(targetHvo, fieldName))
-				return;
-
-			if (RealizeLazySlicesAndRetry(targetHvo, fieldName))
-				return;
-
-			// Fail loud, not silent: if we still cannot produce a slice for the target we must NOT leave
-			// CurrentSlice pointed at whatever the previous interaction selected (it would mis-target the
-			// command). Clear it so command handlers see "no current slice" and no-op, and log so the
-			// degradation is diagnosable from the field rather than only in a debugger.
-			m_dataEntryForm.ClearCurrentSlice();
-			Logger.WriteEvent(string.Format(
-				"Detail menu command adapter found no DataTree slice for target hvo {0} field '{1}'; "
-				+ "CurrentSlice was cleared so the command no-ops rather than mis-targeting another object.",
-				targetHvo, fieldName ?? string.Empty));
-		}
-
-		/// <summary>
-		/// Picks the slice a menu request targets. Sibling rows can share one object (a MoForm's
-		/// Form, Morph Type, ...) while handlers key on <c>CurrentSlice.Flid</c>, so prefer a
-		/// match on object AND field; fall back to object alone (headers, ghosts, custom rows).
-		/// Returns -1 when nothing matches.
-		/// </summary>
-		internal static int ChooseTargetSliceIndex(IReadOnlyList<(int Hvo, string FieldName)> candidates,
-			int targetHvo, string fieldName)
-		{
-			if (candidates == null)
-				return -1;
-
-			if (!string.IsNullOrEmpty(fieldName))
-			{
-				for (var i = 0; i < candidates.Count; i++)
-				{
-					if (candidates[i].Hvo == targetHvo
-						&& string.Equals(candidates[i].FieldName, fieldName, StringComparison.Ordinal))
-					{
-						return i;
-					}
-				}
-			}
-
-			for (var i = 0; i < candidates.Count; i++)
-			{
-				if (candidates[i].Hvo == targetHvo)
-					return i;
-			}
-			return -1;
-		}
-
-		// Targets the best realized slice for the row; false when nothing matches (the
-		// target may still sit inside a lazy placeholder).
-		private bool TrySetCurrentSliceForRow(int targetHvo, string fieldName)
-		{
-			// Not filtered on Slice.IsRealSlice: for a view slice that is
-			// RootSite.AllowLayout, false forever in a tree that never lays out. Lazy
-			// placeholders report their OWNER, so exclude them by type instead.
-			var candidates = new List<Slice>();
-			foreach (var sliceObj in m_dataEntryForm.Slices)
-			{
-				if (sliceObj is Slice slice && slice.Object != null && !slice.IsLazyPlaceholder)
-					candidates.Add(slice);
-			}
-
-			// Field names are only ever compared for hvo matches, so skip the metadata
-			// lookup for every other slice (and entirely when no field name was requested).
-			var index = ChooseTargetSliceIndex(
-				candidates.Select(s => (
-					s.Object.Hvo,
-					s.Object.Hvo == targetHvo && !string.IsNullOrEmpty(fieldName)
-						? SliceFieldName(s)
-						: null)).ToList(),
-				targetHvo, fieldName);
-			if (index < 0)
-				return false;
-
-			// ShowObject suspends ordinary CurrentSlice assignment until idle; the
-			// command-target setter applies immediately.
-			m_dataEntryForm.SetCurrentSliceForCommandTarget(candidates[index]);
-			return true;
-		}
-
-		// The model field name a slice edits, or null (header/object rows, unknown flids).
-		private string SliceFieldName(Slice slice)
-		{
-			var flid = slice.Flid;
-			// A ViewPropertySlice can carry its field only in FieldId, with no "field"
-			// attribute on its configuration node.
-			if (flid == 0 && slice is ViewPropertySlice viewPropertySlice)
-				flid = viewPropertySlice.FieldId;
-			// Virtual and decorator-only flids are absent from the MDC and never field-match.
-			var mdc = (IFwMetaDataCacheManaged)Cache.MetaDataCacheAccessor;
-			return flid != 0 && mdc.FieldExists(flid) ? mdc.GetFieldName(flid) : null;
-		}
-
-		/// <summary>
-		/// Expands every lazy placeholder in place, then retries the match: a placeholder reports
-		/// its OWNER as its Object, so the target cannot match until expansion. Walks by index
-		/// because the collection mutates as placeholders expand.
-		/// </summary>
-		private bool RealizeLazySlicesAndRetry(int targetHvo, string fieldName)
-		{
-			try
-			{
-				for (var i = 0; i < m_dataEntryForm.Slices.Count; i++)
-				{
-					if (m_dataEntryForm.Slices[i] is Slice slice && slice.IsLazyPlaceholder)
-						m_dataEntryForm.FieldAt(i); // expands the placeholder at i in place
-				}
-			}
-			catch (Exception e)
-			{
-				Logger.WriteError("Realizing lazy DataTree slices for detail command targeting failed.", e);
-				return false;
-			}
-
-			return TrySetCurrentSliceForRow(targetHvo, fieldName);
-		}
-
 		internal bool? GetPersistedExpansionState(string expansionKey)
 		{
 			if (m_expansionStates.TryGetValue(expansionKey, out var expanded))
@@ -1520,7 +1269,7 @@ namespace SIL.FieldWorks.XWorks
 			if (m_activeHostContract == null || m_activeHostContract.ActiveUIFramework != kind)
 			{
 				m_activeHostContract = ShouldUseAvaloniaLexiconEdit
-					? ActiveHostContract.ForAvalonia(ApprovedBaselineAdapters)
+					? ActiveHostContract.ForAvalonia()
 					: ActiveHostContract.ForLegacy();
 			}
 		}

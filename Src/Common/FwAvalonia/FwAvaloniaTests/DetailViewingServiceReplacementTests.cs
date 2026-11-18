@@ -106,8 +106,8 @@ namespace FwAvaloniaTests
 			Assert.That(names.Any(n => n.IndexOf("ORC", StringComparison.OrdinalIgnoreCase) >= 0
 					|| n.IndexOf("embedded-object", StringComparison.OrdinalIgnoreCase) >= 0),
 				"embedded-object (ORC) editing stays a named deferral");
-			Assert.That(names.Any(n => n.IndexOf("command", StringComparison.OrdinalIgnoreCase) >= 0),
-				"the hidden-DataTree command-routing adapter stays a named, contract-gated deferral");
+			Assert.That(names.Any(n => n.IndexOf("command", StringComparison.OrdinalIgnoreCase) >= 0), Is.False,
+				"context-menu commands are answered natively, so no deferral names them");
 		}
 
 		// A text value carrying an embedded object (ORC) the managed editor cannot

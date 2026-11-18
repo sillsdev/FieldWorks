@@ -160,14 +160,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 					"text-editing follow-up (revisit if real data shows common ORC runs in plain string fields)",
 					"ORC-bearing values render read-only with an explicit affordance "
 					+ "(FwAvaloniaStrings.EmbeddedObjectReadOnly); the TsString is preserved losslessly and "
-					+ "remains editable in the legacy view."),
-				new DeferredViewingConcern("Context-menu command routing",
-					"The xCore command/menu pipeline is not yet managed; insert/delete/move commands still "
-					+ "need the legacy colleague chain and CurrentSlice context.",
-					"shell phase (avalonia-command-focus global phase, task 10.9)",
-					"A hidden, detached legacy DataTree + DTMenuHandler is driven only as the active-host "
-					+ "contract's approved 'command-menu-routing' baseline adapter (task 3.10/13.4), built "
-					+ "lazily on first right-click and never shown.")
+					+ "remains editable in the legacy view.")
 			};
 	}
 }

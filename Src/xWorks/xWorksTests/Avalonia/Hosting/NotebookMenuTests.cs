@@ -109,7 +109,7 @@ namespace SIL.FieldWorks.XWorks
 						unanswered.Add(row.Field + " " + menu.Kind + ": " + string.Join(", ", menu.Ids));
 				}
 			}
-			Assert.That(unanswered, Is.Empty, "no Notebook menu needs the hidden tree");
+			Assert.That(unanswered, Is.Empty, "every Notebook menu has a native authority");
 		}
 
 		[Test]

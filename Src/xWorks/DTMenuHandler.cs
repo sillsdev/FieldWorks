@@ -374,10 +374,6 @@ namespace SIL.FieldWorks.XWorks
 			string className = command.GetParameter("className");
 			string ownerClassName = command.GetParameter("ownerClass", "");
 			Slice current = m_dataEntryForm.CurrentSlice;
-			// On the hidden command adapter a null CurrentSlice is the deliberate no-target
-			// state; substituting another slice would insert relative to the wrong object.
-			if (current == null && m_dataEntryForm.IsExternalCommandAdapter)
-				return false;
 			if (current != null)
 			{
 				current.Validate();
@@ -663,20 +659,12 @@ namespace SIL.FieldWorks.XWorks
 		{
 			XCore.Command command = commandObject as XCore.Command;
 			Slice slice = m_dataEntryForm.CurrentSlice;
-			// On the hidden command adapter a null CurrentSlice is the deliberate no-target
-			// state; substituting the first slice would enable the insert against another object.
-			if (slice == null && m_dataEntryForm.Slices.Count > 0
-				&& !m_dataEntryForm.IsExternalCommandAdapter)
-			{
+			if (slice == null && m_dataEntryForm.Slices.Count > 0)
 				slice = m_dataEntryForm.FieldAt(0);
-			}
 
 			int index = -1;
-			// 15.4: the hidden command-routing adapter tree counts as active -- the user-visible
-			// UI (Avalonia) is elsewhere, and the insert itself never needs visibility.
 			if (command != null && slice != null && !slice.IsDisposed &&
-				(m_dataEntryForm.Visible || m_dataEntryForm.IsExternalCommandAdapter) &&
-				this.CanInsert(command, slice, out index))
+				m_dataEntryForm.Visible && this.CanInsert(command, slice, out index))
 			{
 				display.Enabled = true;
 				string toolTipInsert = display.Text.Replace("_", string.Empty);	// strip any menu keyboard accelerator marker;
@@ -701,13 +689,8 @@ namespace SIL.FieldWorks.XWorks
 		{
 			XCore.Command command = commandObject as XCore.Command;
 			Slice slice = m_dataEntryForm.CurrentSlice;
-			// Same no-target rule as OnDisplayDataTreeInsert: on the hidden command adapter,
-			// never substitute the first slice for a deliberately cleared CurrentSlice.
-			if (slice == null && m_dataEntryForm.Slices.Count > 0
-				&& !m_dataEntryForm.IsExternalCommandAdapter)
-			{
+			if (slice == null && m_dataEntryForm.Slices.Count > 0)
 				slice = m_dataEntryForm.FieldAt(0);
-			}
 
 			int index = -1;
 			if (command != null && slice != null && !slice.IsDisposed && this.CanInsert(command, slice, out index))

@@ -90,18 +90,20 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(panel.Controls.Contains(legacyDataTree), Is.False,
 				"The dormant legacy DataTree must not remain parented in the panel while Avalonia is active.");
 
-			// The host's contract instance is built from the approved baseline-adapter set when the
-			// Avalonia activates -- NOT constructed ad hoc at an assert site from the very
-			// adapter id it then asserts (which could never fail). An unlisted id must trip it.
+			// The host's contract approves no adapter, so nothing may build or drive the WinForms
+			// DataTree while Avalonia is active: asking the view to build it trips the contract.
 			var contract = (ActiveHostContract)GetPrivateFieldValue(control, "m_activeHostContract");
 			Assert.That(contract, Is.Not.Null,
 				"Activating Avalonia must build the host's active-host contract.");
 			Assert.That(contract.ActiveUIFramework, Is.EqualTo(UIFramework.Avalonia));
-			Assert.That(() => contract.AssertLegacyDataTreeDriveAllowed(RecordEditView.CommandMenuRoutingAdapterId),
-				Throws.Nothing, "The approved command-menu-routing baseline adapter stays permitted.");
-			Assert.That(() => contract.AssertLegacyDataTreeDriveAllowed("unlisted-adapter"),
-				Throws.InvalidOperationException,
-				"An adapter id outside the approved set must trip the contract.");
+			Assert.That(contract.AllowedBaselineAdapters, Is.Empty);
+			var buildDataTree = typeof(RecordEditView).GetMethod("EnsureDataTreeInitialized",
+				BindingFlags.Instance | BindingFlags.NonPublic);
+			Assert.That(buildDataTree, Is.Not.Null, "Missing private method: EnsureDataTreeInitialized");
+			Assert.That(() => buildDataTree.Invoke(control, null),
+				Throws.TargetInvocationException.With.InnerException.TypeOf<InvalidOperationException>(),
+				"Building the WinForms DataTree while Avalonia is active must trip the contract.");
+			Assert.That(GetPrivateFieldValue(control, "m_dataTreeInitialized"), Is.EqualTo(false));
 
 			// Note: realizing the Avalonia WinForms-interop host requires a real UI context, which this
 			// headless xWorks harness does not provide, so we do not assert the host was created here. The

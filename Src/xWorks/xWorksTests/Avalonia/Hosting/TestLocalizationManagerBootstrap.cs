@@ -31,8 +31,8 @@ namespace SIL.FieldWorks.XWorks
 	/// <c>LocalizationManager</c> so legacy DataTree slices that localize strings can be built
 	/// headlessly.
 	///
-	/// The lexicon "detail" layout includes the <c>MessageSlice</c> (a Chorus NotesBar). When the
-	/// hidden command-routing DataTree adapter builds that slice, <c>NotesBarView</c> calls
+	/// The lexicon "detail" layout includes the <c>MessageSlice</c> (a Chorus NotesBar). When a
+	/// test shows the WinForms DataTree, building that slice makes <c>NotesBarView</c> call
 	/// <c>LocalizationManager.GetString</c>, which throws
 	/// "You must create at least one LocalizationManager before trying to localize any strings"
 	/// when NO manager of any kind exists in the process. The product app never hits this because

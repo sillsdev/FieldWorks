@@ -53,8 +53,8 @@ namespace SIL.FieldWorks.XWorks
 	/// dictionary-visibility marks of a complex form, and Move Left / Move Right; on an
 	/// environment item, the jump, Describe Error and the five inserts into the item's editor.
 	/// Every answer comes from the row, the clicked item and the item's object UI, which is
-	/// called directly rather than registered on the mediator, so the menu needs neither the
-	/// hidden DataTree adapter nor a colleague.
+	/// called directly rather than registered on the mediator, so the menu needs no
+	/// colleague.
 	/// </summary>
 	internal sealed class ReferenceItemMenuAuthority : IDetailMenuAuthority
 	{
