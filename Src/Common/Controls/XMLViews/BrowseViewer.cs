@@ -331,19 +331,6 @@ namespace SIL.FieldWorks.Common.Controls
 		}
 
 		/// <summary>
-		/// Update the selected cache for the given item.
-		/// </summary>
-		public void OnUpdateItemCheckedState(object obj)
-		{
-			if (obj is ICmObject)
-			{
-				int hvoItem = ((ICmObject)obj).Hvo;
-				int currentValue = GetCheckState(hvoItem);
-				SetItemCheckedState(hvoItem, currentValue, false);
-			}
-		}
-
-		/// <summary>
 		/// This supports external clients using the Bulk Edit Preview functionality.
 		/// To turn on, set to the index of the column that should have the preview
 		/// (zero based, not counting the check box column). To turn off, set to -1.
@@ -4296,6 +4283,18 @@ namespace SIL.FieldWorks.Common.Controls
 			base.Init(mediator, propertyTable, configurationParameters);
 
 			// Set the initial value
+			SetCheckStatesFromData();
+			ReconstructView();
+			SpecialCache.AddNotification(this);
+		}
+
+		#endregion
+
+		/// <summary>
+		/// Set the check box of every item in the list from its data.
+		/// </summary>
+		private void SetCheckStatesFromData()
+		{
 			int chvo = SpecialCache.get_VecSize(RootObjectHvo, MainTag);
 			int[] contents;
 			using (ArrayPtr arrayPtr = MarshalEx.ArrayToNative<int>(chvo))
@@ -4304,18 +4303,16 @@ namespace SIL.FieldWorks.Common.Controls
 				contents = MarshalEx.NativeToArray<int>(arrayPtr, chvo);
 			}
 
+			var objects = Cache.ServiceLocator.ObjectRepository;
 			foreach (int hvoItem in contents)
 			{
+				// An item deleted since the list was loaded has no data to read.
+				if (!objects.IsValidObjectId(hvoItem))
+					continue;
 				int currentValue = GetCheckState(hvoItem);
 				SetItemCheckedState(hvoItem, currentValue, false);
 			}
-			using (new ReconstructPreservingBVScrollPosition(this))
-			{
-			}
-			SpecialCache.AddNotification(this);
 		}
-
-		#endregion
 
 		#region IVwNotifyChange implementation
 
@@ -4333,6 +4330,11 @@ namespace SIL.FieldWorks.Common.Controls
 			{
 				int currentValue = GetCheckState(hvo);
 				SetItemCheckedState(hvo, currentValue, false);
+			}
+			else if (hvo == RootObjectHvo && tag == MainTag)
+			{
+				// A new item sends no change of its own Disabled value.
+				SetCheckStatesFromData();
 			}
 		}
 
