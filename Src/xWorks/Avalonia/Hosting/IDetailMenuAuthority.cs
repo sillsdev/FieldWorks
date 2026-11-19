@@ -10,9 +10,9 @@ namespace SIL.FieldWorks.XWorks
 	/// <summary>
 	/// The complete native answer for every leaf of the context-menu ids it owns: display
 	/// (visible, enabled, checked, label) and execution together, computed from the Avalonia
-	/// row alone. Nothing on the mediator, the hidden DataTree command adapter included, takes
-	/// part in an owned id. An owned submenu shows, with its configured label, whenever any of
-	/// its leaves does; no colleague can hide or relabel it.
+	/// row alone. Nothing on the mediator takes part in an owned id. An owned submenu shows,
+	/// with its configured label, whenever any of its leaves does; no colleague can hide or
+	/// relabel it.
 	/// </summary>
 	public interface IDetailMenuAuthority
 	{

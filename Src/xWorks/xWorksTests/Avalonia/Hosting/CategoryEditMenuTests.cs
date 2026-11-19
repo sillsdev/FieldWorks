@@ -2,6 +2,7 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -50,10 +51,6 @@ namespace SIL.FieldWorks.XWorks
 		{
 			m_application = new MockFwXApp(new MockFwManager { Cache = Cache }, null, null);
 			m_configFilePath = Path.Combine(FwDirectoryFinder.CodeDirectory, m_application.DefaultConfigurationPathname);
-			// The hidden DataTree the equivalence baseline drives loads the layout Inventory,
-			// which is keyed by the project path.
-			Cache.ProjectId.Path = Path.Combine(Path.GetTempPath(), Cache.ProjectId.Name,
-				Cache.ProjectId.Name + ".junk");
 		}
 
 		[SetUp]
@@ -64,9 +61,7 @@ namespace SIL.FieldWorks.XWorks
 			m_propertyTable = m_window.PropTable;
 			m_propertyTable.RemoveLocalAndGlobalSettings();
 			m_window.LoadUI(m_configFilePath);
-			TestLocalizationManagerBootstrap.EnsureInitialized();
 			TestLocalizationManagerBootstrap.EnsureHelpTopicProvider(m_propertyTable);
-			LayoutCache.InitializePartInventories(Cache.ProjectId.Name, m_application, Cache.ProjectId.Path);
 			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, CreateData);
 			m_propertyTable.SetProperty("UIMode", "New", true);
 			m_propertyTable.SetPropertyPersistence("UIMode", false);
@@ -103,40 +98,56 @@ namespace SIL.FieldWorks.XWorks
 			foreach (var id in new[] { SlotMenuId, TemplateMenuId, SubcategoriesMenuId })
 				Assert.That(rows.Any(r => r.MenuId == id), Is.True, "precondition: a row binds " + id);
 
-			Assert.That(UnansweredMenus(rows), Is.Empty, "no Category Edit menu needs the hidden tree");
+			Assert.That(UnansweredMenus(rows), Is.Empty, "every Category Edit menu has a native authority");
 		}
 
-		// Contract: the item menus and the Subcategories menu render what the adapter path
-		// rendered, and are built without the mediator.
+		// Contract: the item menus and the Subcategories menu render their pinned items, which
+		// are what the WinForms menus of the same rows offer, and are built without the mediator.
 		[Test]
-		public void TheSlotTemplateAndSubcategoriesMenus_RenderWhatTheAdapterPathRendered_WithoutTheMediator()
+		public void TheSlotTemplateAndSubcategoriesMenus_RenderTheirPinnedItems_WithoutTheMediator()
 		{
 			ShowCategory(m_verb);
 			var window = m_propertyTable.GetValue<XWindow>("window");
+			var rendered = new List<string>();
 			foreach (var row in new[] { SlotRow(m_tense), TemplateRow(m_finite), SubcategoriesRow() })
 			{
 				var ids = new[] { row.MenuId };
 				var authority = m_view.CreateMenuAuthority(DetailMenuRequest.FromAnchor(null, row, DetailMenuKind.SliceMenu));
 				var spy = new MenuDisplaySpyColleague();
 				window.Mediator.AddColleague(spy);
-				string native;
+				IReadOnlyList<DetailMenuItem> items;
 				try
 				{
-					native = Describe(XCoreMenuBridge.CreateMenuItems(window, ids, null, null, authority));
+					items = XCoreMenuBridge.CreateMenuItems(window, ids, authority);
 				}
 				finally
 				{
 					window.Mediator.RemoveColleague(spy);
 				}
 				Assert.That(spy.Asked, Is.False, row.MenuId + ": the mediator was asked");
-				Assert.That(native, Does.Contain("enabled=True checked=False executes=True"), row.MenuId);
-
-				EnsureAdapter(row.ObjectHvo, row.Field);
-				var adapter = Describe(XCoreMenuBridge.CreateMenuItems(window, ids, null, null, null));
-
-				Assert.That(native, Is.EqualTo(adapter), row.MenuId);
+				rendered.Add("== " + row.MenuId);
+				rendered.AddRange(Outline(items));
 			}
+
+			TestContext.WriteLine(string.Join(Environment.NewLine, rendered));
+			Assert.That(rendered, Is.EqualTo(PinnedMenus));
 		}
+
+		private static readonly string[] PinnedMenus =
+		{
+			"== mnuDataTree-POS-AffixSlot",
+			"Duplicate Affix Slot",
+			"Move Affix Slot",
+			"Delete Affix Slot",
+			"== mnuDataTree-POS-AffixTemplate",
+			"Delete Affix Template",
+			"Duplicate Affix Template",
+			"Move Affix Template",
+			"(Move Affix Template Up)",
+			"Move Affix Template Down",
+			"== mnuDataTree-POS-SubPossibilities",
+			"Insert Subcategory..."
+		};
 
 		[Test]
 		public void DuplicateAffixSlot_CopiesTheSlotIntoItsCategory_InOneUndoableStep()
@@ -302,7 +313,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				var window = m_propertyTable.GetValue<XWindow>("window");
 				var items = XCoreMenuBridge.CreateMenuItems(window, new[] { ObjectMenuAuthority.MenuId },
-					null, null, m_view.CreateObjectMenuAuthority(row));
+					m_view.CreateObjectMenuAuthority(row));
 				Run(Item(items, "Field Visibility").Children, "Normally hidden");
 				DrainMediatorAndIdleQueues();
 
@@ -387,7 +398,7 @@ namespace SIL.FieldWorks.XWorks
 				.GetProperty("ViewOverrideStore", BindingFlags.Instance | BindingFlags.NonPublic)
 				.GetValue(m_view);
 
-		// The menus of the rows that some id leaves to the hidden tree.
+		// The menus of the rows with an id no native authority owns.
 		private List<string> UnansweredMenus(IEnumerable<DetailField> rows)
 		{
 			var unanswered = new List<string>();
@@ -413,9 +424,6 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		private Command CommandOf(string id) => DetailMenuTestSupport.CommandOf(m_propertyTable, id);
-
-		private void EnsureAdapter(int targetHvo, string fieldName)
-			=> DetailMenuTestSupport.EnsureAdapter(m_view, targetHvo, fieldName);
 
 		private List<DetailField> ShownRows() => DetailMenuTestSupport.ShownRows(m_view);
 	}

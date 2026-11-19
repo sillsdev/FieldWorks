@@ -60,8 +60,8 @@ namespace SIL.FieldWorks.XWorks
 				yield return (DetailMenuKind.Hotlinks, new[] { row.HotlinksId });
 		}
 
-		/// <summary>The row's label menu as the host builds it, which no hidden tree may
-		/// answer.</summary>
+		/// <summary>The row's label menu as the host builds it, every id of which a native
+		/// authority must own.</summary>
 		public static IReadOnlyList<DetailMenuItem> MenuItems(RecordEditView view, PropertyTable propertyTable,
 			DetailField row)
 		{
@@ -69,7 +69,7 @@ namespace SIL.FieldWorks.XWorks
 			var ids = RecordEditView.ComposeSliceMenuIds(row.MenuId, row.IsMultiStringRow).ToArray();
 			var authority = view.CreateMenuAuthority(DetailMenuRequest.FromAnchor(null, row, DetailMenuKind.SliceMenu));
 			Assert.That(XCoreMenuBridge.OwnsAll(authority, ids), Is.True, "the menu is answered natively");
-			return XCoreMenuBridge.CreateMenuItems(window, ids, null, null, authority);
+			return XCoreMenuBridge.CreateMenuItems(window, ids, authority);
 		}
 
 		/// <summary>The item with that label, which the menu must offer.</summary>
@@ -93,8 +93,8 @@ namespace SIL.FieldWorks.XWorks
 
 		public static UIItemDisplayProperties Display() => new UIItemDisplayProperties(null, "item", false, null, true);
 
-		/// <summary>One line per item with its state, submenus indented, for comparing two
-		/// builds of a menu.</summary>
+		/// <summary>One line per item with its state, submenus indented, for comparing a
+		/// menu with its pinned text.</summary>
 		public static string Describe(IReadOnlyList<DetailMenuItem> items, string indent = "")
 		{
 			var lines = new List<string>();
@@ -113,14 +113,28 @@ namespace SIL.FieldWorks.XWorks
 			return string.Join(Environment.NewLine, lines);
 		}
 
-		/// <summary>Points the hidden tree at a row, for the menu the adapter path
-		/// renders.</summary>
-		public static void EnsureAdapter(RecordEditView view, int targetHvo, string fieldName)
+		/// <summary>One line per item, submenus indented, for pinning a menu: a disabled item
+		/// in parentheses, a checked one after "[x] ", a separator as "---". A leaf that is
+		/// enabled but runs nothing says so.</summary>
+		public static List<string> Outline(IReadOnlyList<DetailMenuItem> items, string indent = "")
 		{
-			var method = typeof(RecordEditView).GetMethod("EnsureMenuCommandAdapter",
-				BindingFlags.Instance | BindingFlags.NonPublic);
-			Assert.That(method, Is.Not.Null, "EnsureMenuCommandAdapter must exist (adapter targeting seam)");
-			method.Invoke(view, new object[] { targetHvo, fieldName });
+			var lines = new List<string>();
+			foreach (var item in items)
+			{
+				if (item.IsSeparator)
+				{
+					lines.Add(indent + "---");
+					continue;
+				}
+				var label = (item.IsChecked ? "[x] " : string.Empty) + item.Label;
+				if (!item.IsEnabled)
+					label = "(" + label + ")";
+				else if (item.Execute == null && item.Children.Count == 0)
+					label += " [runs nothing]";
+				lines.Add(indent + label);
+				lines.AddRange(Outline(item.Children, indent + "  "));
+			}
+			return lines;
 		}
 	}
 

@@ -87,7 +87,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		// The layout and part files DataTree loads: Language Explorer's and the shared ones.
-		private static IEnumerable<string> ShippedLayoutFiles()
+		internal static IEnumerable<string> ShippedLayoutFiles()
 		{
 			var folders = new[]
 			{

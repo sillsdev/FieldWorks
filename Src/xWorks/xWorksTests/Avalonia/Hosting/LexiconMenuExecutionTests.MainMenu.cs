@@ -17,8 +17,8 @@ namespace SIL.FieldWorks.XWorks
 {
 	/// <summary>
 	/// The Insert menu's and pane bar's inserts and conversions in Lexicon Edit, and the View
-	/// menu's toggles, answered by the view's command authority: no hidden tree is built and
-	/// the mediator is never asked. Commands act on the current row, else the shown entry.
+	/// menu's toggles, answered by the view's command authority: the mediator is never asked.
+	/// Commands act on the current row, else the shown entry.
 	/// </summary>
 	public partial class LexiconMenuExecutionTests
 	{
@@ -61,7 +61,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
-		public void EveryInsertAndConversion_IsShown_WithoutTheHiddenTreeOrTheMediator()
+		public void EveryInsertAndConversion_IsShown_WithoutTheMediator()
 		{
 			var spy = new MainMenuSpyColleague();
 			Window.Mediator.AddColleague(spy);
@@ -82,7 +82,6 @@ namespace SIL.FieldWorks.XWorks
 			}
 
 			Assert.That(spy.Asked, Is.Empty, "the mediator is never asked");
-			Assert.That(HiddenTreeBuilt, Is.False);
 		}
 
 		[Test]
@@ -131,7 +130,6 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(m_entry.SensesOS[0], Is.SameAs(m_sense1));
 			Assert.That(m_entry.SensesOS[2], Is.SameAs(m_sense2), "the new sense goes right after the current one");
 			Assert.That(spy.Asked, Is.Empty, "the click never reaches the mediator");
-			Assert.That(HiddenTreeBuilt, Is.False);
 
 			m_view.CurrentRowSource = () => null;
 			RunMainMenuCommand("CmdInsertSense");
@@ -251,7 +249,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
-		public void ShowHiddenFields_FromTheViewMenu_FlipsThisToolsSetting_WithoutTheHiddenTreeOrTheMediator()
+		public void ShowHiddenFields_FromTheViewMenu_FlipsThisToolsSetting_WithoutTheMediator()
 		{
 			var item = ViewMenuItem(PropertyConstants.ShowHiddenFields);
 			var rowsBefore = ShownRows().Count;
@@ -279,7 +277,6 @@ namespace SIL.FieldWorks.XWorks
 				"the View menu's own property is left alone");
 			Assert.That(ShownRows().Count, Is.GreaterThan(rowsBefore), "the view shows the hidden fields");
 			Assert.That(spy.Asked, Is.Empty);
-			Assert.That(HiddenTreeBuilt, Is.False);
 		}
 
 		[Test]
@@ -295,10 +292,6 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		private XWindow Window => m_propertyTable.GetValue<XWindow>("window");
-
-		private bool HiddenTreeBuilt
-			=> (bool)typeof(RecordEditView).GetField("m_dataTreeInitialized", BindingFlags.Instance | BindingFlags.NonPublic)
-				.GetValue(m_view);
 
 		private Command CommandOf(string id) => (Command)Window.Mediator.CommandSet[id];
 
