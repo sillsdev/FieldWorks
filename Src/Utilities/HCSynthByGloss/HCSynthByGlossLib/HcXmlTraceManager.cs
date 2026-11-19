@@ -584,6 +584,22 @@ namespace HCSynthByGloss
 					);
 					break;
 
+				case FailureReason.LexicalLookupFeatures:
+					trace = CreateParseCompleteElement(
+						word,
+						new XElement(
+							"FailureReason",
+							new XAttribute("type", "affixInflFeats"),
+							CreateAllomorphElement(allomorph),
+							CreateInflFeaturesElement("InflFeatures", (FeatureStruct)failureObj),
+							CreateInflFeaturesElement(
+								"RequiredInflFeatures",
+								word.SyntacticFeatureStruct
+							)
+						)
+					);
+					break;
+
 				case FailureReason.RequiredStemName:
 					trace = CreateParseCompleteElement(
 						word,
@@ -661,7 +677,8 @@ namespace HCSynthByGloss
 
 		private static XElement CreateInflFeaturesElement(string name, FeatureStruct fs)
 		{
-			return new XElement(name, fs.Head().ToString().Replace(",", ""));
+			string feat = (fs.Head() == null) ? fs.ToString() : fs.Head().ToString().Replace(",", "");
+			return new XElement(name, feat);
 		}
 
 		private static XElement CreateWordElement(string name, Word word, bool analysis)
