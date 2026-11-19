@@ -96,6 +96,9 @@ namespace SIL.FieldWorks.XWorks
 			var control = m_propertyTable.GetValue<object>("currentContentControlObject", null) as RecordEditView;
 			Assert.That(control, Is.Not.Null);
 			EnsureCurrentRecord(control);
+			var winFormsTargets = control.GetMessageTargets();
+			Assert.That(winFormsTargets, Has.Some.SameAs(control.DatTree), "the WinForms view's tree answers commands");
+			Assert.That(winFormsTargets.OfType<DTMenuHandler>(), Is.Not.Empty, "so does its menu handler");
 
 			m_propertyTable.SetProperty("UIMode", "New", true);
 			DrainMediatorAndIdleQueues();
@@ -104,6 +107,10 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(sameControl, Is.SameAs(control), "Changing the UI mode should update the live content control rather than requiring a tool reload in the test harness.");
 			Assert.That(control.Clerk.CurrentObject, Is.Not.Null);
 			Assert.That(GetPrivateFieldValue(control, "m_activeUIFramework"), Is.EqualTo(UIFramework.Avalonia));
+			// The tree left from the WinForms view stays, but answers no New UI command.
+			var newUiTargets = control.GetMessageTargets();
+			Assert.That(newUiTargets, Has.None.SameAs(control.DatTree), "the tree left from the WinForms view");
+			Assert.That(newUiTargets.OfType<DTMenuHandler>(), Is.Empty, "its menu handler");
 		}
 
 		// LT-22582: flipping New->Legacy must tear down the Avalonia refresh controller + host NOW
