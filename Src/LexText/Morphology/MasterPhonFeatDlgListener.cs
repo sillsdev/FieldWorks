@@ -126,14 +126,12 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 				{
 					case DialogResult.OK: // Fall through.
 					case DialogResult.Yes:
-						// Deferred processing, so that the JumpToRecord can be processed last.
+						// Jump after the refresh has rebuilt the window's views.
+						Publisher.Publish(new PublisherParameterObject(EventConstants.MasterRefresh, null, m_propertyTable.GetWindow()));
 						if (dlg.SelectedFeatDefn != null)
 						{
-#pragma warning disable 618 // suppress obsolete warning
-							m_mediator.BroadcastMessageUntilHandled("JumpToRecord", dlg.SelectedFeatDefn.Hvo);
-#pragma warning restore 618
+							Publisher.Publish(new PublisherParameterObject(EventConstants.JumpToRecord, dlg.SelectedFeatDefn.Hvo, m_propertyTable.GetWindow()));
 						}
-						Publisher.Publish(new PublisherParameterObject(EventConstants.MasterRefresh, null, m_propertyTable.GetWindow()));
 						break;
 				}
 			}

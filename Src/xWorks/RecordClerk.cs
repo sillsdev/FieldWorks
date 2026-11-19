@@ -2673,8 +2673,6 @@ namespace SIL.FieldWorks.XWorks
 			}
 
 #pragma warning disable 618 // suppress obsolete warning
-			if (newObj != null)
-				m_mediator.BroadcastMessage("UpdateItemCheckedState", newObj);
 			m_mediator.BroadcastMessage("FocusFirstPossibleSlice", null);
 #pragma warning restore 618
 			return result;
